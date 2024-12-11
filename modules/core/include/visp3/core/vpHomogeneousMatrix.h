@@ -326,6 +326,13 @@ public:
    * std::ofstream f("homogeneous.dat");
    * M.save(f);
    * \endcode
+   * The content of "homogeneous.dat" is the following:
+   * \verbatim
+   * 0.7071067812  0.7071067812  0  1
+   * 0.7071067812  -0.7071067812  -1.224646799e-16  2
+   * -8.659560562e-17  8.659560562e-17  -1  3
+   * 0  0  0  1
+   * \endverbatim
    *
    * \sa save(const std::string &), load(std::ifstream &)
    */
@@ -348,6 +355,13 @@ public:
    * // Save the content of the matrix in "homogeneous.dat"
    * M.save("homogeneous.dat");
    * \endcode
+   * The content of "homogeneous.dat" is the following:
+   * \verbatim
+   * 0.7071067812  0.7071067812  0  1
+   * 0.7071067812  -0.7071067812  -1.224646799e-16  2
+   * -8.659560562e-17  8.659560562e-17  -1  3
+   * 0  0  0  1
+   * \endverbatim
    *
    * \sa save(std::ofstream &), load(const std::string &)
    */
@@ -420,6 +434,8 @@ public:
 
 protected:
   unsigned int m_index;
+private:
+  static const unsigned int constr_value_4;
 };
 
 #ifdef VISP_HAVE_NLOHMANN_JSON

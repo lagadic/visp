@@ -43,15 +43,17 @@
 BEGIN_VISP_NAMESPACE
 void vpPoint::init()
 {
+  const unsigned int val_3 = 3;
+  const unsigned int val_4 = 4;
   const unsigned int index_2 = 2;
   const unsigned int index_3 = 3;
-  p.resize(3);
+  p.resize(val_3);
   p = 0;
   p[index_2] = 1.;
-  oP.resize(4);
+  oP.resize(val_4);
   oP = 0.;
   oP[index_3] = 1.;
-  cP.resize(4);
+  cP.resize(val_4);
   cP = 0.;
   cP[index_3] = 1.;
 
@@ -246,10 +248,11 @@ vpColVector vpPoint::getWorldCoordinates(void) { return this->oP; }
 */
 void vpPoint::projection(const vpColVector &v_cP, vpColVector &v_p) const
 {
+  const unsigned int val_3 = 3;
   const unsigned int index_0 = 0;
   const unsigned int index_1 = 1;
   const unsigned int index_2 = 2;
-  v_p.resize(3, false);
+  v_p.resize(val_3, false);
 
   v_p[index_0] = v_cP[index_0] / v_cP[index_2];
   v_p[index_1] = v_cP[index_1] / v_cP[index_2];
@@ -266,11 +269,12 @@ void vpPoint::projection(const vpColVector &v_cP, vpColVector &v_p) const
 */
 void vpPoint::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &v_cP) const
 {
+  const unsigned int val_4 = 4;
   const unsigned int index_0 = 0;
   const unsigned int index_1 = 1;
   const unsigned int index_2 = 2;
   const unsigned int index_3 = 3;
-  v_cP.resize(4, false);
+  v_cP.resize(val_4, false);
 
   v_cP[index_0] = (cMo[index_0][index_0] * oP[index_0]) + (cMo[index_0][index_1] * oP[index_1]) + (cMo[index_0][index_2] * oP[index_2]) + (cMo[index_0][index_3] * oP[index_3]);
   v_cP[index_1] = (cMo[index_1][index_0] * oP[index_0]) + (cMo[index_1][index_1] * oP[index_1]) + (cMo[index_1][index_2] * oP[index_2]) + (cMo[index_1][index_3] * oP[index_3]);

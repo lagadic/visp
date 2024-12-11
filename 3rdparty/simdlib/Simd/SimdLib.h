@@ -71,7 +71,7 @@ typedef unsigned __int64  uint64_t;
 typedef enum
 {
     SimdFalse = 0, /*!< False value. */
-    SimdTrue = 1, /*!< True value. */
+    SimdTrue = 1 /*!< True value. */
 } SimdBool;
 
 /*! @ingroup c_types
@@ -91,7 +91,7 @@ typedef enum
     /*! equal to: a < b */
     SimdCompareLesser,
     /*! equal to: a <= b */
-    SimdCompareLesserOrEqual,
+    SimdCompareLesserOrEqual
 } SimdCompareType;
 
 /*! @ingroup c_types
@@ -111,7 +111,7 @@ typedef enum
     SimdCpuInfoAvx512bw, /*!< Availability of AVX-512BW (x86). */
     SimdCpuInfoVmx, /*!< Availability of VMX or Altivec (PowerPC). */
     SimdCpuInfoVsx, /*!< Availability of VSX (PowerPC). */
-    SimdCpuInfoNeon, /*!< Availability of NEON (ARM). */
+    SimdCpuInfoNeon /*!< Availability of NEON (ARM). */
 } SimdCpuInfoType;
 
 /*! @ingroup c_types
@@ -132,7 +132,7 @@ typedef enum
     /*! A PNG (Portable Network Graphics) image file format. */
     SimdImageFilePng,
     /*! A JPEG (Joint Photographic Experts Group) image file format. */
-    SimdImageFileJpeg,
+    SimdImageFileJpeg
 } SimdImageFileType;
 
 /*! @ingroup c_types
@@ -158,7 +158,7 @@ typedef enum
     /*! Subtracts unsigned 8-bit integer b from unsigned 8-bit integer a (for every channel of every point of the images). */
     SimdOperationBinary8uSubtraction,
     /*! Adds unsigned 8-bit integer b from unsigned 8-bit integer a (for every channel of every point of the images). */
-    SimdOperationBinary8uAddition,
+    SimdOperationBinary8uAddition
 } SimdOperationBinary8uType;
 
 /*! @ingroup c_types
@@ -189,7 +189,7 @@ typedef enum
     /*! A 24-bit (3 8-bit channels) RGB (Red, Green, Blue) pixel format. */
     SimdPixelFormatRgb24,
     /*! A 32-bit (4 8-bit channels) RGBA (Red, Green, Blue, Alpha) pixel format. */
-    SimdPixelFormatRgba32,
+    SimdPixelFormatRgba32
 } SimdPixelFormatType;
 
 /*! @ingroup c_types
@@ -200,7 +200,7 @@ enum SimdReduceType
     SimdReduce2x2, /*!< Using of function ::SimdReduceGray2x2 for image reducing. */
     SimdReduce3x3, /*!< Using of function ::SimdReduceGray3x3 for image reducing. */
     SimdReduce4x4, /*!< Using of function ::SimdReduceGray4x4 for image reducing. */
-    SimdReduce5x5, /*!< Using of function ::SimdReduceGray5x5 for image reducing. */
+    SimdReduce5x5 /*!< Using of function ::SimdReduceGray5x5 for image reducing. */
 };
 
 /*! @ingroup resizing
@@ -213,7 +213,7 @@ typedef enum
     /*! 16-bit integer channel type.  */
     SimdResizeChannelShort,
     /*! 32-bit float channel type.  */
-    SimdResizeChannelFloat,
+    SimdResizeChannelFloat
 } SimdResizeChannelType;
 
 /*! @ingroup resizing
@@ -236,7 +236,7 @@ typedef enum
     /*! Area method. */
     SimdResizeMethodArea,
     /*! Area method for previously reduced in 2 times image. */
-    SimdResizeMethodAreaFast,
+    SimdResizeMethodAreaFast
 } SimdResizeMethodType;
 
 /*! @ingroup yuv_conversion
@@ -248,7 +248,7 @@ typedef enum
     SimdYuvBt601, /*!< Corresponds to BT.601 standard. Uses Kr=0.299, Kb=0.114. Restricts Y to range [16..235], U and V to [16..240]. */
     SimdYuvBt709, /*!< Corresponds to BT.709 standard. Uses Kr=0.2126, Kb=0.0722. Restricts Y to range [16..235], U and V to [16..240]. */
     SimdYuvBt2020, /*!< Corresponds to BT.2020 standard. Uses Kr=0.2627, Kb=0.0593. Restricts Y to range [16..235], U and V to [16..240]. */
-    SimdYuvTrect871, /*!< Corresponds to T-REC-T.871 standard. Uses Kr=0.299, Kb=0.114. Y, U and V use full range [0..255]. */
+    SimdYuvTrect871 /*!< Corresponds to T-REC-T.871 standard. Uses Kr=0.299, Kb=0.114. Y, U and V use full range [0..255]. */
 } SimdYuvType;
 
 // ViSP custom SIMD code

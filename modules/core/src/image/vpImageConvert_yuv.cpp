@@ -53,7 +53,7 @@ void vpSAT(int &c)
     c = val_255;
   }
 }
-};
+}
 
 BEGIN_VISP_NAMESPACE
 /*!
@@ -206,12 +206,14 @@ void vpImageConvert::YUYVToRGB(unsigned char *yuyv, unsigned char *rgb, unsigned
 */
 void vpImageConvert::YUYVToGrey(unsigned char *yuyv, unsigned char *grey, unsigned int size)
 {
+  const unsigned int val_2 = 2;
+  const unsigned int val_4 = 4;
   unsigned int i = 0, j = 0;
   const unsigned int doubleSize = size * 2;
   while (j < doubleSize) {
     grey[i++] = yuyv[j];
-    grey[i++] = yuyv[j + 2];
-    j += 4;
+    grey[i++] = yuyv[j + val_2];
+    j += val_4;
   }
 }
 
@@ -382,16 +384,20 @@ void vpImageConvert::YUV411ToGrey(unsigned char *yuv, unsigned char *grey, unsig
 {
   unsigned int i = 0, j = 0;
   const unsigned int val_2 = 2;
-  const unsigned int iterLimit = (size * 3) / val_2;
+  const unsigned int val_3 = 3;
+  const unsigned int val_4 = 4;
+  const unsigned int val_5 = 5;
+  const unsigned int val_6 = 6;
+  const unsigned int iterLimit = (size * val_3) / val_2;
   while (j < iterLimit) {
     grey[i] = yuv[j + 1];
-    grey[i + 1] = yuv[j + 2];
-    grey[i + 2] = yuv[j + 4];
-    grey[i + 3] = yuv[j + 5];
+    grey[i + 1] = yuv[j + val_2];
+    grey[i + val_2] = yuv[j + val_4];
+    grey[i + val_3] = yuv[j + val_5];
 
-    i += 4;
+    i += val_4;
 
-    j += 6;
+    j += val_6;
   }
 }
 
@@ -464,13 +470,15 @@ void vpImageConvert::YUV422ToRGB(unsigned char *yuv, unsigned char *rgb, unsigne
 */
 void vpImageConvert::YUV422ToGrey(unsigned char *yuv, unsigned char *grey, unsigned int size)
 {
+  const unsigned int val_3 = 3;
+  const unsigned int val_4 = 4;
   unsigned int i = 0, j = 0;
   const unsigned int doubleSize = size * 2;
 
   while (j < doubleSize) {
     grey[i++] = yuv[j + 1];
-    grey[i++] = yuv[j + 3];
-    j += 4;
+    grey[i++] = yuv[j + val_3];
+    j += val_4;
   }
 }
 
@@ -775,7 +783,7 @@ void vpImageConvert::YUV420ToRGB(unsigned char *yuv, unsigned char *rgb, unsigne
       rgb = (rgb - (val_3 * width)) + 1;
     }
     yuv += width;
-    rgb += 3 * width;
+    rgb += val_3 * width;
   }
 }
 
@@ -886,10 +894,11 @@ void vpImageConvert::YUV444ToRGB(unsigned char *yuv, unsigned char *rgb, unsigne
 */
 void vpImageConvert::YUV444ToGrey(unsigned char *yuv, unsigned char *grey, unsigned int size)
 {
+  const unsigned int val_3 = 3;
   ++yuv;
   for (unsigned int i = 0; i < size; ++i) {
     *grey++ = *yuv;
-    yuv = yuv + 3;
+    yuv = yuv + val_3;
   }
 }
 
@@ -920,10 +929,10 @@ void vpImageConvert::YV12ToRGBa(unsigned char *yuv, unsigned char *rgba, unsigne
     for (unsigned int j = 0; j < halfWidth; ++j) {
       U = static_cast<int>(((*iU) - val_128) * 0.354);
       ++iU;
-      U5 = 5 * U;
+      U5 = val_5 * U;
       V = static_cast<int>(((*iV) - val_128) * 0.707);
       ++iV;
-      V2 = 2 * V;
+      V2 = val_2 * V;
       UV = -U - V;
       Y0 = *yuv;
       ++yuv;
@@ -1073,7 +1082,7 @@ void vpImageConvert::YV12ToRGB(unsigned char *yuv, unsigned char *rgb, unsigned 
       *rgb++ = static_cast<unsigned char>(R);
       *rgb++ = static_cast<unsigned char>(G);
       *rgb = static_cast<unsigned char>(B);
-      rgb = rgb + ((val_3 * width) - 5);
+      rgb = rgb + ((val_3 * width) - val_5);
 
       //---
       R = Y2 + V2;
@@ -1344,6 +1353,7 @@ void vpImageConvert::YVU9ToRGB(unsigned char *yuv, unsigned char *rgb, unsigned 
   const unsigned int val_4 = 4;
   const unsigned int val_5 = 5;
   const unsigned int val_9 = 9;
+  const unsigned int val_11 = 11;
   const unsigned int val_16 = 16;
   const unsigned int val_17 = 17;
   unsigned int size = width * height;
@@ -1419,7 +1429,7 @@ void vpImageConvert::YVU9ToRGB(unsigned char *yuv, unsigned char *rgb, unsigned 
       G = Y3 + UV;
       B = Y3 + U5;
       YVU9ToRGBsubroutine(rgb, R, G, B);
-      rgb = rgb + ((val_3 * width) - 11);
+      rgb = rgb + ((val_3 * width) - val_11);
 
       R = Y4 + V2;
       G = Y4 + UV;
@@ -1443,7 +1453,7 @@ void vpImageConvert::YVU9ToRGB(unsigned char *yuv, unsigned char *rgb, unsigned 
       G = Y7 + UV;
       B = Y7 + U5;
       YVU9ToRGBsubroutine(rgb, R, G, B);
-      rgb = rgb + ((val_3 * width) - 11);
+      rgb = rgb + ((val_3 * width) - val_11);
 
       R = Y8 + V2;
       G = Y8 + UV;
@@ -1467,7 +1477,7 @@ void vpImageConvert::YVU9ToRGB(unsigned char *yuv, unsigned char *rgb, unsigned 
       G = Y11 + UV;
       B = Y11 + U5;
       YVU9ToRGBsubroutine(rgb, R, G, B);
-      rgb = (rgb + (val_3 * width)) - 11;
+      rgb = (rgb + (val_3 * width)) - val_11;
 
       R = Y12 + V2;
       G = Y12 + UV;

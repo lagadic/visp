@@ -276,7 +276,9 @@ public:
   }
 
   /**
-   * \brief Set the minimum stack size, expressed in bytes, due to the recursivity of the algorithm.
+   * \brief Set the minimum stack size, expressed in bytes, due to the recursive algorithm.
+   * If not called, the stack size is left at its default value when running the
+   * Canny edge detection algorithm.
    *
    * \note The stack size is changed back to its original value after
    * before leaving the detect() function.
@@ -299,7 +301,7 @@ public:
     (void)requiredStackSize;
     static bool hasNotBeenDisplayed = true;
     if (hasNotBeenDisplayed) {
-      std::cerr << "setStackSize has no effect on non-POSIX systems. The stack size is defined during compilation." << std::endl;
+      std::cerr << "vpCannyEdgeDetection::setStackSize() has no effect on non-POSIX systems. The stack size is defined during compilation." << std::endl;
       hasNotBeenDisplayed = false;
     }
   }

@@ -29,8 +29,7 @@
  *
  * Description:
  * Velocity twist transformation matrix.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpVelocityTwistMatrix.cpp
@@ -47,6 +46,7 @@
 #include <visp3/core/vpVelocityTwistMatrix.h>
 
 BEGIN_VISP_NAMESPACE
+const unsigned int vpVelocityTwistMatrix::constr_val_6 = 6;
 /*!
   Copy operator that allow to set a velocity twist matrix from an other one.
 
@@ -54,8 +54,10 @@ BEGIN_VISP_NAMESPACE
 */
 vpVelocityTwistMatrix &vpVelocityTwistMatrix::operator=(const vpVelocityTwistMatrix &V)
 {
-  for (int i = 0; i < 6; ++i) {
-    for (int j = 0; j < 6; ++j) {
+  // why not unsigned int
+  const int val_6 = 6;
+  for (int i = 0; i < val_6; ++i) {
+    for (int j = 0; j < val_6; ++j) {
       rowPtrs[i][j] = V.rowPtrs[i][j];
     }
   }
@@ -84,7 +86,7 @@ void vpVelocityTwistMatrix::eye()
 /*!
   Initialize a velocity twist transformation matrix as identity.
 */
-vpVelocityTwistMatrix::vpVelocityTwistMatrix() : vpArray2D<double>(6, 6) { eye(); }
+vpVelocityTwistMatrix::vpVelocityTwistMatrix() : vpArray2D<double>(constr_val_6, constr_val_6) { eye(); }
 
 /*!
   Initialize a velocity twist transformation matrix from another velocity
@@ -92,7 +94,7 @@ vpVelocityTwistMatrix::vpVelocityTwistMatrix() : vpArray2D<double>(6, 6) { eye()
 
   \param V : Velocity twist matrix used as initializer.
 */
-vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpVelocityTwistMatrix &V) : vpArray2D<double>(6, 6) { *this = V; }
+vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpVelocityTwistMatrix &V) : vpArray2D<double>(constr_val_6, constr_val_6) { *this = V; }
 
 /*!
 
@@ -112,7 +114,7 @@ vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpVelocityTwistMatrix &V) : v
   {\bf 0}_{3\times 3} & {\bf R} \end{array} \right] \f]
 
 */
-vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpHomogeneousMatrix &M, bool full) : vpArray2D<double>(6, 6)
+vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpHomogeneousMatrix &M, bool full) : vpArray2D<double>(constr_val_6, constr_val_6)
 {
   if (full) {
     buildFrom(M);
@@ -137,7 +139,7 @@ vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpHomogeneousMatrix &M, bool 
 
 */
 vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpTranslationVector &t, const vpThetaUVector &thetau)
-  : vpArray2D<double>(6, 6)
+  : vpArray2D<double>(constr_val_6, constr_val_6)
 {
   buildFrom(t, thetau);
 }
@@ -154,7 +156,7 @@ vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpTranslationVector &t, const
   vector \f$R\f$ .
 
 */
-vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpThetaUVector &thetau) : vpArray2D<double>(6, 6)
+vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpThetaUVector &thetau) : vpArray2D<double>(constr_val_6, constr_val_6)
 {
   buildFrom(thetau);
 }
@@ -173,7 +175,7 @@ vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpThetaUVector &thetau) : vpA
 
 */
 vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpTranslationVector &t, const vpRotationMatrix &R)
-  : vpArray2D<double>(6, 6)
+  : vpArray2D<double>(constr_val_6, constr_val_6)
 {
   buildFrom(t, R);
 }
@@ -189,7 +191,7 @@ vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpTranslationVector &t, const
   \param R : Rotation matrix.
 
 */
-vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpRotationMatrix &R) : vpArray2D<double>(6, 6) { buildFrom(R); }
+vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpRotationMatrix &R) : vpArray2D<double>(constr_val_6, constr_val_6) { buildFrom(R); }
 
 /*!
 
@@ -207,7 +209,7 @@ vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpRotationMatrix &R) : vpArra
   radians used to initialize \f$R\f$.
 */
 vpVelocityTwistMatrix::vpVelocityTwistMatrix(double tx, double ty, double tz, double tux, double tuy, double tuz)
-  : vpArray2D<double>(6, 6)
+  : vpArray2D<double>(constr_val_6, constr_val_6)
 {
   vpTranslationVector t(tx, ty, tz);
   vpThetaUVector tu(tux, tuy, tuz);
@@ -348,12 +350,13 @@ vpColVector vpVelocityTwistMatrix::operator*(const vpColVector &v) const
 */
 vpVelocityTwistMatrix &vpVelocityTwistMatrix::buildFrom(const vpRotationMatrix &R)
 {
+  const unsigned int index_3 = 3;
   const unsigned int val_3 = 3;
   for (unsigned int i = 0; i < val_3; ++i) {
     for (unsigned int j = 0; j < val_3; ++j) {
       (*this)[i][j] = R[i][j];
-      (*this)[i + 3][j + 3] = R[i][j];
-      (*this)[i][j + 3] = 0;
+      (*this)[i + index_3][j + index_3] = R[i][j];
+      (*this)[i][j + index_3] = 0;
     }
   }
   return *this;
@@ -377,12 +380,13 @@ vpVelocityTwistMatrix &vpVelocityTwistMatrix::buildFrom(const vpTranslationVecto
 {
   vpMatrix skewaR = t.skew(t) * R;
 
+  const unsigned int index_3 = 3;
   const unsigned int val_3 = 3;
   for (unsigned int i = 0; i < val_3; ++i) {
     for (unsigned int j = 0; j < val_3; ++j) {
       (*this)[i][j] = R[i][j];
-      (*this)[i + 3][j + 3] = R[i][j];
-      (*this)[i][j + 3] = skewaR[i][j];
+      (*this)[i + index_3][j + index_3] = R[i][j];
+      (*this)[i][j + index_3] = skewaR[i][j];
     }
   }
 

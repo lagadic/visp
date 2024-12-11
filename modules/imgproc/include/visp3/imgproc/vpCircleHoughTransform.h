@@ -1042,9 +1042,38 @@ public:
     }
   }
 
+  /*!
+   * \brief Set the mask that permits to ignore some pixels when performing the circle detection.
+   *
+   * \param[in] mask A boolean image where pixels set to true means that the pixel
+   * must be considered and set to false means that the pixel must be ignored.
+   */
   inline void setMask(const vpImage<bool> &mask)
   {
     mp_mask = &mask;
+  }
+
+  /*!
+   * \brief Set the mask that permits to ignore some pixels when performing the circle detection.
+   *
+   * \param[in] mask Either a boolean image where pixels set to true means that the pixel
+   * must be considered and set to false means that the pixel must be ignored, or nullptr
+   * to deactivate the mask.
+   */
+  inline void setMask(const vpImage<bool> *mask)
+  {
+    mp_mask = mask;
+  }
+
+  /*!
+   * \brief Permits to either activate or deactivate the memorization
+   * of the points that voted for the detected circles.
+   *
+   * \param[in] record True to activate the feature, false to deactivate it.
+   */
+  inline void setRecordVotingPoints(const bool &record)
+  {
+    m_algoParams.m_recordVotingPoints = record;
   }
   //@}
 
@@ -1178,6 +1207,25 @@ public:
   inline std::vector<unsigned int> getDetectionsVotes() const
   {
     return m_finalCircleVotes;
+  }
+
+  /*!
+   * Get the points that voted for the detections that are outputed by vpCircleHoughTransform::detect().
+   */
+  inline std::vector<std::vector<std::pair<unsigned int, unsigned int> > > getDetectionsVotingPoints() const
+  {
+    if (!m_algoParams.m_recordVotingPoints) {
+      throw(vpException(vpException::fatalError, "Asking voting points when it was not asked to remember them."));
+    }
+    return m_finalCirclesVotingPoints;
+  }
+
+  /*!
+   * Returns true if it was asked to record the points that voted for the detections.
+   */
+  inline bool getRecordVotingPoints() const
+  {
+    return m_algoParams.getRecordVotingPoints();
   }
   //@}
 

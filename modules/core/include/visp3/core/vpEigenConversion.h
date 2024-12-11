@@ -57,7 +57,8 @@ void eigen2visp(const Eigen::Quaternion<Type> &src, vpQuaternionVector &dst)
 template <typename Type>
 void eigen2visp(const Eigen::AngleAxis<Type> &src, vpThetaUVector &dst)
 {
-  dst.buildFrom(src.angle() * src.axis()(0), src.angle() * src.axis()(1), src.angle() * src.axis()(2));
+  const unsigned int val_2 = 2;
+  dst.buildFrom(src.angle() * src.axis()(0), src.angle() * src.axis()(1), src.angle() * src.axis()(val_2));
 }
 
 VISP_EXPORT void eigen2visp(const Eigen::VectorXd &src, vpColVector &dst);

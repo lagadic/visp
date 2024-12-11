@@ -228,6 +228,8 @@ public:
 
 protected:
   unsigned int m_index;
+private:
+  static const unsigned int constr_val_3;
 };
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

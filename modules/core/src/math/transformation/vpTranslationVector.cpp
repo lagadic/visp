@@ -42,6 +42,7 @@
 #include <visp3/core/vpTranslationVector.h>
 
 BEGIN_VISP_NAMESPACE
+const unsigned int vpTranslationVector::constr_val_3 = 3;
 /*!
   Construct a translation vector \f$ \bf t \f$ from 3 doubles.
 
@@ -49,7 +50,7 @@ BEGIN_VISP_NAMESPACE
   in meters.
 
 */
-vpTranslationVector::vpTranslationVector(double tx, double ty, double tz) : vpArray2D<double>(3, 1), m_index(0)
+vpTranslationVector::vpTranslationVector(double tx, double ty, double tz) : vpArray2D<double>(constr_val_3, 1), m_index(0)
 {
   const unsigned int index_0 = 0;
   const unsigned int index_1 = 1;
@@ -66,7 +67,7 @@ vpTranslationVector::vpTranslationVector(double tx, double ty, double tz) : vpAr
   \param M : Homogeneous matrix where translations are in meters.
 
 */
-vpTranslationVector::vpTranslationVector(const vpHomogeneousMatrix &M) : vpArray2D<double>(3, 1), m_index(0)
+vpTranslationVector::vpTranslationVector(const vpHomogeneousMatrix &M) : vpArray2D<double>(constr_val_3, 1), m_index(0)
 {
   M.extract(*this);
 }
@@ -78,7 +79,7 @@ vpTranslationVector::vpTranslationVector(const vpHomogeneousMatrix &M) : vpArray
   \param p : Pose vector where translations are in meters.
 
 */
-vpTranslationVector::vpTranslationVector(const vpPoseVector &p) : vpArray2D<double>(3, 1), m_index(0)
+vpTranslationVector::vpTranslationVector(const vpPoseVector &p) : vpArray2D<double>(constr_val_3, 1), m_index(0)
 {
   const unsigned int index_0 = 0;
   const unsigned int index_1 = 1;
@@ -116,7 +117,8 @@ vpTranslationVector::vpTranslationVector(const vpTranslationVector &tv) : vpArra
 */
 vpTranslationVector::vpTranslationVector(const vpColVector &v) : vpArray2D<double>(v), m_index(0)
 {
-  if (v.size() != 3) {
+  const unsigned int val_3 = 3;
+  if (v.size() != val_3) {
     throw(vpException(vpException::dimensionError,
                       "Cannot construct a translation vector from a "
                       "%d-dimension column vector",
@@ -269,13 +271,13 @@ vpTranslationVector vpTranslationVector::operator+(const vpTranslationVector &tv
 */
 vpTranslationVector vpTranslationVector::operator+(const vpColVector &v) const
 {
-  if (v.size() != 3) {
+  const unsigned int val_3 = 3;
+  if (v.size() != val_3) {
     throw(vpException(vpException::dimensionError, "Cannot add translation vector to a %d-dimension column vector",
                       v.size()));
   }
   vpTranslationVector s;
 
-  const unsigned int val_3 = 3;
   for (unsigned int i = 0; i < val_3; ++i) {
     s[i] = (*this)[i] + v[i];
   }
@@ -459,7 +461,8 @@ vpTranslationVector vpTranslationVector::operator/(double x) const
 */
 vpTranslationVector &vpTranslationVector::operator=(const vpColVector &tv)
 {
-  if (tv.size() != 3) {
+  const unsigned int val_3 = 3;
+  if (tv.size() != val_3) {
     throw(vpException(vpException::dimensionError,
                       "Cannot initialize a translation vector from a "
                       "%d-dimension col vector",
@@ -524,7 +527,8 @@ vpTranslationVector &vpTranslationVector::operator=(double x)
 {
   double *d = data;
 
-  for (int i = 0; i < 3; ++i) {
+  const int val_3 = 3;
+  for (int i = 0; i < val_3; ++i) {
     *(d++) = x;
   }
 
@@ -662,7 +666,8 @@ void vpTranslationVector::skew(const vpTranslationVector &tv, vpMatrix &M)
   const unsigned int index_0 = 0;
   const unsigned int index_1 = 1;
   const unsigned int index_2 = 2;
-  M.resize(3, 3);
+  const unsigned int val_3 = 3;
+  M.resize(val_3, val_3);
   M[index_0][index_0] = 0;
   M[index_0][index_1] = -tv[index_2];
   M[index_0][index_2] = tv[index_1];

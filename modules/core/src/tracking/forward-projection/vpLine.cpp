@@ -122,7 +122,8 @@ void vpLine::setWorldCoordinates(const double &oA1, const double &oB1, const dou
 */
 void vpLine::setWorldCoordinates(const vpColVector &oP_)
 {
-  if (oP_.getRows() != 8) {
+  const unsigned int val_8 = 8;
+  if (oP_.getRows() != val_8) {
     throw vpException(vpException::dimensionError, "Size of oP is not equal to 8 as it should be");
   }
   this->oP = oP_;
@@ -151,16 +152,16 @@ void vpLine::setWorldCoordinates(const vpColVector &oP_)
 */
 void vpLine::setWorldCoordinates(const vpColVector &oP1, const vpColVector &oP2)
 {
-  if (oP1.getRows() != 4) {
+  const unsigned int val_4 = 4;
+  if (oP1.getRows() != val_4) {
     throw vpException(vpException::dimensionError, "Size of oP1 is not equal to 4 as it should be");
   }
-  if (oP2.getRows() != 4) {
+  if (oP2.getRows() != val_4) {
     throw vpException(vpException::dimensionError, "Size of oP2 is not equal to 4 as it should be");
   }
-  const unsigned int val_4 = 4;
   for (unsigned int i = 0; i < val_4; ++i) {
     oP[i] = oP1[i];
-    oP[i + 4] = oP2[i];
+    oP[i + val_4] = oP2[i];
   }
 }
 
@@ -219,10 +220,12 @@ void vpLine::projection() { projection(cP, p); }
 */
 void vpLine::projection(const vpColVector &cP_, vpColVector &p_) const
 {
-  p_.resize(2, false);
+  const unsigned int val_2 = 2;
+  const unsigned int val_8 = 8;
+  p_.resize(val_2, false);
   // projection
 
-  if (cP.getRows() != 8) {
+  if (cP.getRows() != val_8) {
     throw vpException(vpException::dimensionError, "Size of cP is not equal to 8 as it should be");
   }
   double A1, A2, B1, B2, C1, C2, D1, D2;
@@ -344,7 +347,8 @@ void vpLine::changeFrame(const vpHomogeneousMatrix &cMo) { changeFrame(cMo, cP);
 */
 void vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP_) const
 {
-  cP_.resize(8, false);
+  const unsigned int val_8 = 8;
+  cP_.resize(val_8, false);
 
   double a1, a2, b1, b2, c1, c2, d1, d2;
   double A1, A2, B1, B2, C1, C2, D1, D2;
@@ -437,10 +441,10 @@ void vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP_) const
     D2 = -D2;
   }
 
-  cP_[4] = A2;
-  cP_[5] = B2;
-  cP_[6] = C2;
-  cP_[7] = D2;
+  cP_[index_4] = A2;
+  cP_[index_5] = B2;
+  cP_[index_6] = C2;
+  cP_[index_7] = D2;
 }
 
 /*!

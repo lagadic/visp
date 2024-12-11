@@ -13,8 +13,8 @@ class ids and confidence values of a single or of multiple classes.
 For other tasks such as image segmentation or more complicated uses, you should use directly the
 <a href="https://docs.opencv.org/master/d6/d0f/group__dnn.html">OpenCV DNN API</a>.
 
-This class supports `Faster-RCNN`, `SSD-MobileNet`, `ResNet 10`, `Yolo v3`, `Yolo v4`, `Yolo v5`, `Yolo v7` and
-`Yolo v8` convolutional networks that simultaneously predict object boundaries and prediction scores at each position.
+This class supports `Faster-RCNN`, `SSD-MobileNet`, `ResNet 10`, `Yolo v3`, `Yolo v4`, `Yolo v5`, `Yolo v7`,
+`Yolo v8` and `Yolo v11` convolutional networks that simultaneously predict object boundaries and prediction scores at each position.
 If you want to use another type of network, you can define your own parsing method of the DNN detection results and
 give it to the `vpDetectorDNNOpenCV` object.
 
@@ -74,13 +74,13 @@ $ sudo apt install libgtk-3-dev \
   libx11-dev
 \endcode
 
-6. Get the sources. The \b vpDetectorDNNOpenCV has been tested with **OpenCV 4.7**. First, get the OpenCV_contrib
-sources, that contain the Cuda DNN module.
+6. Get the sources. The \b vpDetectorDNNOpenCV has been tested with **OpenCV 4.7** and **OpenCV 4.10**. First,
+get the OpenCV_contrib sources, that contain the Cuda DNN module.
 On a Debian distribution, you would run:
 \code{.sh}
 $ cd ${HOME}/visp_ws/3rdparty/
-$ git clone --branch 4.7.0 https://github.com/opencv/opencv_contrib
-$ git clone --branch 4.7.0 https://github.com/opencv/opencv
+$ git clone --branch 4.10.0 https://github.com/opencv/opencv_contrib
+$ git clone --branch 4.10.0 https://github.com/opencv/opencv
 \endcode
 
 7. Compile OpenCV and install it from source. On a Debian distribution, you would run:
@@ -149,6 +149,7 @@ on DNN models learned from the following networks:
 - Yolo v5
 - Yolo v7
 - Yolo v8
+- Yolo v11
 
 It uses video capture capability from OpenCV to capture images from a camera and detect objects using a DNN model
 learned using one of the previous networks.

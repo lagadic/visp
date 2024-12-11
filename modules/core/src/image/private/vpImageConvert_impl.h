@@ -92,7 +92,8 @@ BEGIN_VISP_NAMESPACE
   }
 #endif
 
-  for (int i = 2; i < 0x10000; ++i) {
+  const unsigned int val_0x10000 = 0x10000;
+  for (unsigned int i = 2; i < val_0x10000; ++i) {
     histogram[i] += histogram[i - 1]; // Build a cumulative histogram for the indices in [1,0xFFFF]
   }
   dest_depth.resize(src_depth.getHeight(), src_depth.getWidth());
@@ -149,7 +150,8 @@ void vp_createDepthHistogram(const vpImage<uint16_t> &src_depth, vpImage<unsigne
   }
 #endif
 
-  for (int i = 2; i < 0x10000; ++i) {
+  const unsigned int val_0x10000 = 0x10000;
+  for (unsigned int i = 2; i < val_0x10000; ++i) {
     histogram[i] += histogram[i - 1]; // Build a cumulative histogram for the indices in [1,0xFFFF]
   }
   dest_depth.resize(src_depth.getHeight(), src_depth.getWidth());
@@ -193,9 +195,14 @@ void vp_createDepthHistogram(const vpImage<float> &src_depth, vpImage<vpRGBa> &d
     }
   }
 
-  for (int i = 2; i < 0x10000; ++i) {
+  const unsigned int val_0x10000 = 0x10000;
+  for (unsigned int i = 2; i < val_0x10000; ++i) {
     histogram[i] += histogram[i - 1]; // Build a cumulative histogram for the indices in [1,0xFFFF]
   }
+
+  const unsigned char val_uc_5 = 5;
+  const unsigned char val_uc_20 = 20;
+  const unsigned char val_uc_255 = 255;
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
@@ -203,14 +210,14 @@ void vp_createDepthHistogram(const vpImage<float> &src_depth, vpImage<vpRGBa> &d
     uint16_t d = static_cast<uint16_t>(src_depth.bitmap[i]);
     if (d) {
       unsigned char f = static_cast<unsigned char>((histogram[d] * 255) / histogram[0xFFFF]); // 0-255 based on histogram location
-      dest_depth.bitmap[i].R = 255 - f;
+      dest_depth.bitmap[i].R = val_uc_255 - f;
       dest_depth.bitmap[i].G = 0;
       dest_depth.bitmap[i].B = f;
       dest_depth.bitmap[i].A = vpRGBa::alpha_default;
     }
     else {
-      dest_depth.bitmap[i].R = 20;
-      dest_depth.bitmap[i].G = 5;
+      dest_depth.bitmap[i].R = val_uc_20;
+      dest_depth.bitmap[i].G = val_uc_5;
       dest_depth.bitmap[i].B = 0;
       dest_depth.bitmap[i].A = vpRGBa::alpha_default;
     }
@@ -237,26 +244,29 @@ void vp_createDepthHistogram(const vpImage<uint16_t> &src_depth, vpImage<vpRGBa>
     ++histogram[static_cast<uint32_t>(src_depth.bitmap[i])];
   }
 
-  for (unsigned int i = 2; i < 0x10000; ++i) {
+  const unsigned int val_0x10000 = 0x10000;
+  for (unsigned int i = 2; i < val_0x10000; ++i) {
     histogram[i] += histogram[i - 1]; // Build a cumulative histogram for the indices in [1,0xFFFF]
   }
 
+  const unsigned char val_uc_5 = 5;
+  const unsigned char val_uc_20 = 20;
+  const unsigned char val_uc_255 = 255;
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-
   for (int i = 0; i < src_depth_size; ++i) {
     uint16_t d = src_depth.bitmap[i];
     if (d) {
       unsigned char f = static_cast<unsigned char>((histogram[d] * 255) / histogram[0xFFFF]); // 0-255 based on histogram location
-      dest_depth.bitmap[i].R = 255 - f;
+      dest_depth.bitmap[i].R = val_uc_255 - f;
       dest_depth.bitmap[i].G = 0;
       dest_depth.bitmap[i].B = f;
       dest_depth.bitmap[i].A = vpRGBa::alpha_default;
     }
     else {
-      dest_depth.bitmap[i].R = 20;
-      dest_depth.bitmap[i].G = 5;
+      dest_depth.bitmap[i].R = val_uc_20;
+      dest_depth.bitmap[i].G = val_uc_5;
       dest_depth.bitmap[i].B = 0;
       dest_depth.bitmap[i].A = vpRGBa::alpha_default;
     }

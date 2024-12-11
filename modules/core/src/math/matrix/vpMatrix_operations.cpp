@@ -66,7 +66,8 @@ void vpMatrix::transpose(vpMatrix &At) const
 {
   At.resize(colNum, rowNum, false, false);
 
-  if ((rowNum <= 16) || (colNum <= 16)) {
+  const unsigned int val_16 = 16;
+  if ((rowNum <= val_16) || (colNum <= val_16)) {
     for (unsigned int i = 0; i < rowNum; ++i) {
       for (unsigned int j = 0; j < colNum; ++j) {
         At[j][i] = (*this)[i][j];
@@ -209,7 +210,8 @@ void vpMatrix::mult2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
 */
 void vpMatrix::mult2Matrices(const vpMatrix &A, const vpMatrix &B, vpRotationMatrix &C)
 {
-  if ((A.colNum != 3) || (A.rowNum != 3) || (B.colNum != 3) || (B.rowNum != 3)) {
+  const unsigned int val_3 = 3;
+  if ((A.colNum != val_3) || (A.rowNum != val_3) || (B.colNum != val_3) || (B.rowNum != val_3)) {
     throw(vpException(vpException::dimensionError,
                       "Cannot multiply (%dx%d) matrix by (%dx%d) matrix as a "
                       "rotation matrix",
@@ -246,7 +248,8 @@ void vpMatrix::mult2Matrices(const vpMatrix &A, const vpMatrix &B, vpRotationMat
 */
 void vpMatrix::mult2Matrices(const vpMatrix &A, const vpMatrix &B, vpHomogeneousMatrix &C)
 {
-  if ((A.colNum != 4) || (A.rowNum != 4) || (B.colNum != 4) || (B.rowNum != 4)) {
+  const unsigned int val_4 = 4;
+  if ((A.colNum != val_4) || (A.rowNum != val_4) || (B.colNum != val_4) || (B.rowNum != val_4)) {
     throw(vpException(vpException::dimensionError,
                       "Cannot multiply (%dx%d) matrix by (%dx%d) matrix as a "
                       "rotation matrix",
@@ -560,7 +563,9 @@ void vpMatrix::AAt(vpMatrix &B) const
         // sum (row i .* row j)
         double ssum = 0;
         for (unsigned int k = 0; k < colNum; ++k) {
-          ssum += *(pi++) * *(pj++);
+          ssum += (*pi) * (*pj);
+          ++pi;
+          ++pj;
         }
 
         B[i][j] = ssum; // upper triangle
@@ -841,7 +846,8 @@ void vpMatrix::kron(const vpMatrix &m1, const vpMatrix &m2, vpMatrix &out)
       unsigned int coffset = c * c2;
       for (unsigned int rr = 0; rr < r2; ++rr) {
         for (unsigned int cc = 0; cc < c2; ++cc) {
-          out[roffset + rr][coffset + cc] = alpha * *(m2ptr++);
+          out[roffset + rr][coffset + cc] = alpha * (*m2ptr);
+          ++m2ptr;
         }
       }
     }
@@ -880,7 +886,8 @@ vpMatrix vpMatrix::kron(const vpMatrix &m1, const vpMatrix &m2)
       unsigned int coffset = c * c2;
       for (unsigned int rr = 0; rr < r2; ++rr) {
         for (unsigned int cc = 0; cc < c2; ++cc) {
-          out[roffset + rr][coffset + cc] = alpha * *(m2ptr++);
+          out[roffset + rr][coffset + cc] = alpha * (*m2ptr);
+          ++m2ptr;
         }
       }
     }

@@ -115,6 +115,34 @@ $ sudo apt-get install libpng-dev
 $ su -c "yum install libpng-devel"
 \endverbatim
 
+\section soft_ar 3D Rendering and Augmented Reality
+
+These are the optional 3rd-parties supported by ViSP in \ref module_ar for 3D Rendering and Augmented Reality.
+
+\subsection soft_ar_Ogre3D Ogre3D
+
+- <b>Ubuntu or debian installation since Ubuntu 24.04</b>
+\code{.sh}
+$ sudo apt-get install libogre-1.12-dev libois-dev
+\endcode
+- <b>Ubuntu or debian installation for Ubuntu 22.04 or before</b>
+\code{.sh}
+$ sudo apt-get install libogre-1.9-dev libois-dev
+\endcode
+- <b>Fedora or RedHat installation</b>
+\code{.sh}
+$ su -c "yum install ogre-devel ogre-samples ois-devel"
+\endcode
+
+\subsection soft_ar_Panda3D Panda3D
+
+Panda3D installation instructions are provided in \ref tutorial-panda3d.
+- <b>\ref tutorial-panda3d-install-ubuntu</b>
+
+- <b>\ref tutorial-panda3d-install-macos</b>
+
+- <b>\ref tutorial-panda3d-install-windows</b>
+
 \section soft_robot Robot Control
 
 The following optional third-parties are used in \ref module_robot to enable the robot arms usage supported by ViSP.

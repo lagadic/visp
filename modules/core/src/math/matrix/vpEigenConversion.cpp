@@ -46,7 +46,8 @@ void eigen2visp(const Eigen::MatrixXd &src, vpMatrix &dst)
 
 void eigen2visp(const Eigen::MatrixXd &src, vpHomogeneousMatrix &dst)
 {
-  if ((src.rows() != 4) || (src.cols() != 4)) {
+  const Eigen::Index index_4 = 4;
+  if ((src.rows() != index_4) || (src.cols() != index_4)) {
     throw  vpException(vpException::dimensionError, "Input Eigen Matrix must be of size (4,4)!");
   }
 

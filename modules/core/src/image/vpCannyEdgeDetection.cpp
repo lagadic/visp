@@ -26,8 +26,7 @@
  *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpCannyEdgeDetection.h>
 
@@ -56,7 +55,7 @@ static void scaleFilter(
     }
   }
 }
-};
+}
 #endif
 
 BEGIN_VISP_NAMESPACE
@@ -103,17 +102,21 @@ vpCannyEdgeDetection::vpCannyEdgeDetection()
   , m_lowerThresholdRatio(0.6f)
   , m_upperThreshold(-1.f)
   , m_upperThresholdRatio(0.8f)
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+  , m_minStackSize(0)  // Deactivated by default
+#endif
   , mp_mask(nullptr)
 {
   initGaussianFilters();
   initGradientFilters();
 }
 
-vpCannyEdgeDetection::vpCannyEdgeDetection(const int &gaussianKernelSize, const float &gaussianStdev
-                                           , const unsigned int &sobelAperture, const float &lowerThreshold, const float &upperThreshold
-                                           , const float &lowerThresholdRatio, const float &upperThresholdRatio
-                                           , const vpImageFilter::vpCannyFilteringAndGradientType &filteringType
-                                           , const bool &storeEdgePoints
+vpCannyEdgeDetection::vpCannyEdgeDetection(const int &gaussianKernelSize, const float &gaussianStdev,
+                                           const unsigned int &sobelAperture, const float &lowerThreshold,
+                                           const float &upperThreshold, const float &lowerThresholdRatio,
+                                           const float &upperThresholdRatio,
+                                           const vpImageFilter::vpCannyFilteringAndGradientType &filteringType,
+                                           const bool &storeEdgePoints
 )
   : m_filteringAndGradientType(filteringType)
   , m_gaussianKernelSize(gaussianKernelSize)
@@ -125,7 +128,7 @@ vpCannyEdgeDetection::vpCannyEdgeDetection(const int &gaussianKernelSize, const 
   , m_upperThreshold(upperThreshold)
   , m_upperThresholdRatio(upperThresholdRatio)
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  , m_minStackSize(65532000)  // Maximum stack size on MacOS, see https://stackoverflow.com/a/13261334
+  , m_minStackSize(0)  // Deactivated by default
 #endif
   , m_storeListEdgePoints(storeEdgePoints)
   , mp_mask(nullptr)
@@ -139,6 +142,9 @@ vpCannyEdgeDetection::vpCannyEdgeDetection(const int &gaussianKernelSize, const 
 using json = nlohmann::json;
 
 vpCannyEdgeDetection::vpCannyEdgeDetection(const std::string &jsonPath)
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+  : m_minStackSize(0)  // Deactivated by default
+#endif
 {
   initFromJSON(jsonPath);
 }
@@ -173,7 +179,8 @@ vpCannyEdgeDetection::initFromJSON(const std::string &jsonPath)
 void
 vpCannyEdgeDetection::initGaussianFilters()
 {
-  if ((m_gaussianKernelSize % 2) == 0) {
+  const int val_2 = 2;
+  if ((m_gaussianKernelSize % val_2) == 0) {
     throw(vpException(vpException::badValue, "The Gaussian kernel size should be odd"));
   }
   m_fg.resize(1, (m_gaussianKernelSize + 1) / 2);
@@ -183,7 +190,8 @@ vpCannyEdgeDetection::initGaussianFilters()
 void
 vpCannyEdgeDetection::initGradientFilters()
 {
-  if ((m_gradientFilterKernelSize % 2) != 1) {
+  const int val_2 = 2;
+  if ((m_gradientFilterKernelSize % val_2) != 1) {
     throw vpException(vpException::badValue, "Gradient filters kernel size should be odd.");
   }
   m_gradientFilterX.resize(m_gradientFilterKernelSize, m_gradientFilterKernelSize);
@@ -205,13 +213,13 @@ vpCannyEdgeDetection::initGradientFilters()
   float scaleY = 1.f;
 
   if (m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING) {
-    scaleX = vpImageFilter::getSobelKernelX(m_gradientFilterX.data, (m_gradientFilterKernelSize - 1) / 2);
-    scaleY = vpImageFilter::getSobelKernelY(m_gradientFilterY.data, (m_gradientFilterKernelSize - 1) / 2);
+    scaleX = vpImageFilter::getSobelKernelX(m_gradientFilterX.data, (m_gradientFilterKernelSize - 1) / val_2);
+    scaleY = vpImageFilter::getSobelKernelY(m_gradientFilterY.data, (m_gradientFilterKernelSize - 1) / val_2);
   }
   else if (m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING) {
     // Compute the Scharr filters
-    scaleX = vpImageFilter::getScharrKernelX(m_gradientFilterX.data, (m_gradientFilterKernelSize - 1) / 2);
-    scaleY = vpImageFilter::getScharrKernelY(m_gradientFilterY.data, (m_gradientFilterKernelSize - 1) / 2);
+    scaleX = vpImageFilter::getScharrKernelX(m_gradientFilterX.data, (m_gradientFilterKernelSize - 1) / val_2);
+    scaleY = vpImageFilter::getScharrKernelY(m_gradientFilterY.data, (m_gradientFilterKernelSize - 1) / val_2);
   }
   else {
     std::string errMsg = "[vpCannyEdgeDetection::initGradientFilters] Error: gradient filtering method \"";
@@ -247,26 +255,29 @@ vpImage<unsigned char>
 vpCannyEdgeDetection::detect(const vpImage<unsigned char> &I)
 {
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  // Increase stack size due to the recursive algorithm
-  rlim_t initialStackSize;
+  rlim_t initialStackSize = 0;
   struct rlimit rl;
   int result;
-  result = getrlimit(RLIMIT_STACK, &rl);
-  if (result == 0) {
-    initialStackSize = rl.rlim_cur;
-    if (rl.rlim_cur < m_minStackSize) {
-      rl.rlim_cur = m_minStackSize;
-      result = setrlimit(RLIMIT_STACK, &rl);
-      if (result != 0) {
-        throw(vpException(vpException::fatalError, "setrlimit returned result = %d\n", result));
+  if (m_minStackSize > 0) {
+    // Check the current stack size
+    result = getrlimit(RLIMIT_STACK, &rl);
+    if (result == 0) {
+      initialStackSize = rl.rlim_cur;
+      if (rl.rlim_cur < m_minStackSize) {
+        // Increase stack size due to the recursive algorithm
+        rl.rlim_cur = m_minStackSize;
+        result = setrlimit(RLIMIT_STACK, &rl);
+        if (result != 0) {
+          throw(vpException(vpException::fatalError, "setrlimit returned result = %d\n", result));
+        }
       }
     }
-  }
-  else {
-    throw(vpException(vpException::fatalError, "getrlimit returned result = %d\n", result));
+    else {
+      throw(vpException(vpException::fatalError, "getrlimit returned result = %d\n", result));
+    }
   }
 #endif
-// // Clearing the previous results
+  // // Clearing the previous results
   m_edgeMap.resize(I.getHeight(), I.getWidth(), 0);
   m_edgeCandidateAndGradient.clear();
   m_edgePointsCandidates.clear();
@@ -301,13 +312,15 @@ vpCannyEdgeDetection::detect(const vpImage<unsigned char> &I)
   performEdgeTracking();
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  // Reset stack size to its original value
-  if (rl.rlim_cur > initialStackSize) {
-    rl.rlim_cur = initialStackSize;
-    result = setrlimit(RLIMIT_STACK, &rl);
-    if (result != 0) {
-      throw(vpException(vpException::fatalError, "setrlimit returned result = %d\n", result));
+  if (m_minStackSize > 0) {
+    if (rl.rlim_cur > initialStackSize) {
+      // Reset stack size to its original value
+      rl.rlim_cur = initialStackSize;
+      result = setrlimit(RLIMIT_STACK, &rl);
+      if (result != 0) {
+        throw(vpException(vpException::fatalError, "setrlimit returned result = %d\n", result));
 
+      }
     }
   }
 #endif
@@ -530,11 +543,12 @@ vpCannyEdgeDetection::performHysteresisThresholding(const float &lowerThreshold,
 void
 vpCannyEdgeDetection::performEdgeTracking()
 {
+  const unsigned char var_uc_255 = 255;
   std::map<std::pair<unsigned int, unsigned int>, EdgeType>::iterator it;
   std::map<std::pair<unsigned int, unsigned int>, EdgeType>::iterator m_edgePointsCandidates_end = m_edgePointsCandidates.end();
   for (it = m_edgePointsCandidates.begin(); it != m_edgePointsCandidates_end; ++it) {
     if (it->second == STRONG_EDGE) {
-      m_edgeMap[it->first.first][it->first.second] = 255;
+      m_edgeMap[it->first.first][it->first.second] = var_uc_255;
       if (m_storeListEdgePoints) {
         m_edgePointsList.push_back(vpImagePoint(it->first.first, it->first.second));
       }
@@ -599,9 +613,10 @@ vpCannyEdgeDetection::recursiveSearchForStrongEdge(const std::pair<unsigned int,
     }
     ++dr;
   }
+  const unsigned char var_uc_255 = 255;
   if (hasFoundStrongEdge) {
     m_edgePointsCandidates[coordinates] = STRONG_EDGE;
-    m_edgeMap[coordinates.first][coordinates.second] = 255;
+    m_edgeMap[coordinates.first][coordinates.second] = var_uc_255;
     if (m_storeListEdgePoints) {
       m_edgePointsList.push_back(vpImagePoint(coordinates.first, coordinates.second));
     }

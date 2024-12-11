@@ -1054,5 +1054,5 @@ void vpVirtuose::stopPeriodicFunction()
 END_VISP_NAMESPACE
 #else
 // Work around to avoid warning
-void dummy_vpVirtuose() { };
+void dummy_vpVirtuose() { }
 #endif

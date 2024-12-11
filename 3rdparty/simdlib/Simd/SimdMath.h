@@ -953,7 +953,7 @@ namespace Simd
             vst1q_f32(_a, a);
             float r[4] = { 1.0f / _a[0], 1.0f / _a[1], 1.0f / _a[2], 1.0f / _a[3] };
             return vld1q_f32(r);
-        };
+        }
 
         template<> SIMD_INLINE float32x4_t Reciprocal<0>(const float32x4_t & a)
         {
@@ -985,7 +985,7 @@ namespace Simd
             vst1q_f32(_b, b);
             float c[4] = { _a[0] / _b[0], _a[1] / _b[1], _a[2] / _b[2], _a[3] / _b[3] };
             return vld1q_f32(c);
-        };
+        }
 
         template <int iter> SIMD_INLINE float32x4_t ReciprocalSqrt(const float32x4_t & a);
 

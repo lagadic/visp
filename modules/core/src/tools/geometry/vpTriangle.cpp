@@ -100,7 +100,7 @@ vpTriangle &vpTriangle::operator=(const vpTriangle &tri)
   apex2 = tri.apex2;
   apex3 = tri.apex3;
   return *this;
-};
+}
 
 /*!
   Initialise the triangle thanks to the three 2D points \f$ iP1 \f$, \f$ iP2
