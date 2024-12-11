@@ -1,4 +1,5 @@
 //! \example tutorial-bridge-opencv-matrix.cpp
+#include <iostream>
 #include <visp3/core/vpConfig.h>
 
 #if defined(HAVE_OPENCV_CORE)
