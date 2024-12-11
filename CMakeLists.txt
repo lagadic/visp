@@ -1928,6 +1928,13 @@ endif()
 if(USE_YARP)
   status("    Yarp dir:" "${YARP_DIR}")
 endif()
+if(USE_OGRE)
+  if(NOT ${OGRE_DIR} STREQUAL "")
+    status("    Ogre dir:" "${OGRE_DIR}")
+  else()
+    status("    Ogre dir:" "includes in ${OGRE_INCLUDE_DIR} , core lib in ${OGRE_LIBRARY_REL} , other libs in ${OGRE_PLUGIN_DIR_REL}")
+  endif()
+endif()
 
 # ========================== auxiliary ==========================
 status("")
