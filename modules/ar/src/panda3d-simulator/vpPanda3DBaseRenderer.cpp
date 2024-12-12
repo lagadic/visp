@@ -48,22 +48,27 @@ const vpHomogeneousMatrix vpPanda3DBaseRenderer::VISP_T_PANDA({
 });
 const vpHomogeneousMatrix vpPanda3DBaseRenderer::PANDA_T_VISP(vpPanda3DBaseRenderer::VISP_T_PANDA.inverse());
 
+
+PandaFramework vpPanda3DBaseRenderer::framework;
+bool vpPanda3DBaseRenderer::frameworkIsOpen(false);
+
+
 void vpPanda3DBaseRenderer::initFramework()
 {
-  if (m_framework.use_count() > 0) {
-    throw vpException(vpException::notImplementedError,
-    "Panda3D renderer: Reinitializing is not supported!");
+
+  if (!frameworkIsOpen) {
+    frameworkIsOpen = true;
+    framework.open_framework();
   }
-  m_framework = std::shared_ptr<PandaFramework>(new PandaFramework());
-  m_framework->open_framework();
+
   WindowProperties winProps;
   winProps.set_size(LVecBase2i(m_renderParameters.getImageWidth(), m_renderParameters.getImageHeight()));
   int flags = GraphicsPipe::BF_refuse_window;
-  m_window = m_framework->open_window(winProps, flags);
+  m_window = framework.open_window(winProps, flags);
   // try and reopen with visible window
   if (m_window == nullptr) {
     winProps.set_minimized(true);
-    m_window = m_framework->open_window(winProps, 0);
+    m_window = framework.open_window(winProps, 0);
   }
   if (m_window == nullptr) {
     throw vpException(vpException::notInitialized,
@@ -76,9 +81,8 @@ void vpPanda3DBaseRenderer::initFramework()
   //m_window->get_display_region_3d()->set_camera(m_cameraPath);
 }
 
-void vpPanda3DBaseRenderer::initFromParent(std::shared_ptr<PandaFramework> framework, PointerTo<WindowFramework> window)
+void vpPanda3DBaseRenderer::initFromParent(PointerTo<WindowFramework> window)
 {
-  m_framework = framework;
   m_window = window;
   setupScene();
   setupCamera();
@@ -87,7 +91,7 @@ void vpPanda3DBaseRenderer::initFromParent(std::shared_ptr<PandaFramework> frame
 
 void vpPanda3DBaseRenderer::initFromParent(const vpPanda3DBaseRenderer &renderer)
 {
-  initFromParent(renderer.m_framework, renderer.m_window);
+  initFromParent(renderer.m_window);
 }
 
 void vpPanda3DBaseRenderer::setupScene()
@@ -109,7 +113,7 @@ void vpPanda3DBaseRenderer::setupCamera()
 void vpPanda3DBaseRenderer::renderFrame()
 {
   beforeFrameRendered();
-  m_framework->get_graphics_engine()->render_frame();
+  m_window->get_graphics_output()->get_engine()->render_frame();
   afterFrameRendered();
 }
 
@@ -273,7 +277,7 @@ void vpPanda3DBaseRenderer::enableSharedDepthBuffer(vpPanda3DBaseRenderer &sourc
 
 NodePath vpPanda3DBaseRenderer::loadObject(const std::string &nodeName, const std::string &modelPath)
 {
-  NodePath model = m_window->load_model(m_framework->get_models(), modelPath);
+  NodePath model = m_window->load_model(framework.get_models(), modelPath);
   for (int i = 0; i < model.get_num_children(); ++i) {
     model.get_child(i).clear_transform();
   }
