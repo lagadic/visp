@@ -62,12 +62,20 @@
 #include <OgreFrameListener.h>
 
 #if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 10<<8 | 0))
+#include <OgreComponents.h>
 #include <Bites/OgreBitesConfigDialog.h>
 #endif
 
 #if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 11<<8 | 0))
 #include <Bites/OgreWindowEventUtilities.h>
 #endif
+
+#ifdef OGRE_BUILD_COMPONENT_RTSHADERSYSTEM
+#include <RTShaderSystem/OgreShaderGenerator.h>
+#if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 10<<8 | 0))
+#include <Bites/OgreSGTechniqueResolverListener.h>
+#endif
+#endif // INCLUDE_RTSHADER_SYSTEM
 
 #ifdef VISP_HAVE_OIS
 #include <OIS.h>
@@ -353,6 +361,10 @@ private:
 
   bool stopTest(const Ogre::FrameEvent &evt);
 
+  bool initialiseRTShaderSystem();
+
+  void destroyRTShaderSystem();
+
 protected:
   // Attributes
   Ogre::String name; /**Name of th Window*/
@@ -370,6 +382,13 @@ protected:
   OIS::InputManager *mInputManager;
   OIS::Keyboard *mKeyboard;
 #endif
+
+#ifdef OGRE_BUILD_COMPONENT_RTSHADERSYSTEM
+  Ogre::RTShader::ShaderGenerator *mShaderGenerator; // The Shader generator instance.
+#if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 10<<8 | 0))
+  OgreBites::SGTechniqueResolverListener *mMaterialMgrListener; // Shader generator material manager listener.
+#endif
+#endif // INCLUDE_RTSHADER_SYSTEM
 
   // ViSP AR System
   bool keepOn;                                     /** Has the application received a signal to stop(false) or not

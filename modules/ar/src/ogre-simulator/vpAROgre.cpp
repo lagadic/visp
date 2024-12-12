@@ -85,7 +85,64 @@ vpAROgre::vpAROgre(const vpCameraParameters &cam, unsigned int width, unsigned i
   mImageRGBA(), mImage(), mPixelBuffer(), mBackground(nullptr), mBackgroundHeight(0), mBackgroundWidth(0),
   mWindowHeight(height), mWindowWidth(width), windowHidden(false), mNearClipping(0.001), mFarClipping(200), mcam(cam),
   mshowConfigDialog(true), mOptionalResourceLocation()
-{ }
+{
+#ifdef OGRE_BUILD_COMPONENT_RTSHADERSYSTEM
+#if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 10<<8 | 0))
+  mMaterialMgrListener = NULL;
+#endif
+  mShaderGenerator = NULL;
+#endif
+}
+
+/**
+Initialize the RT Shader system.
+*/
+bool vpAROgre::initialiseRTShaderSystem()
+{
+#ifdef OGRE_BUILD_COMPONENT_RTSHADERSYSTEM
+  if (Ogre::RTShader::ShaderGenerator::initialize()) {
+    mShaderGenerator = Ogre::RTShader::ShaderGenerator::getSingletonPtr();
+
+#if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 10<<8 | 0))
+// Create and register the material manager listener if it doesn't exist yet.
+    if (!mMaterialMgrListener) {
+      mMaterialMgrListener = new OgreBites::SGTechniqueResolverListener(mShaderGenerator);
+      Ogre::MaterialManager::getSingleton().addListener(mMaterialMgrListener);
+    }
+#else
+//TODO
+#endif
+    return true;
+  }
+#endif
+  return false;
+}
+
+/**
+Destroy the RT Shader system.
+*/
+void vpAROgre::destroyRTShaderSystem()
+{
+#ifdef OGRE_BUILD_COMPONENT_RTSHADERSYSTEM
+  // Restore default scheme.
+  Ogre::MaterialManager::getSingleton().setActiveScheme(Ogre::MaterialManager::DEFAULT_SCHEME_NAME);
+
+#if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 10<<8 | 0))
+  // Unregister the material manager listener.
+  if (mMaterialMgrListener != NULL) {
+    Ogre::MaterialManager::getSingleton().removeListener(mMaterialMgrListener);
+    delete mMaterialMgrListener;
+    mMaterialMgrListener = NULL;
+  }
+#endif
+
+// Destroy RTShader system.
+  if (mShaderGenerator != NULL) {
+    Ogre::RTShader::ShaderGenerator::destroy();
+    mShaderGenerator = NULL;
+  }
+#endif
+}
 
 /*!
   Initialisation of Ogre with a grey level background.
@@ -256,6 +313,18 @@ void vpAROgre::init(bool
     mRoot = Ogre::Root::getSingletonPtr();
   }
 
+#if (VISP_HAVE_OGRE_VERSION < (1<<16 | 10<<8 | 0))
+  mSceneMgr = mRoot->createSceneManager(Ogre::ST_GENERIC);
+#else
+  mSceneMgr = mRoot->createSceneManager(Ogre::DefaultSceneManagerFactory::FACTORY_TYPE_NAME, Ogre::BLANKSTRING);
+#endif
+
+  // Initialize the RTShaderSystem, if available
+  bool hasInitializedTheRTSS = initialiseRTShaderSystem();
+  if (!hasInitializedTheRTSS) {
+    std::cout << "[vpAROgre::init] RTSS is not available." << std::endl;
+  }
+
   // Load resource paths from config file
 
   // File format is:
@@ -293,8 +362,8 @@ void vpAROgre::init(bool
         typeName = i->first;
         archName = i->second;
         Ogre::ResourceGroupManager::getSingleton().addResourceLocation(archName, typeName, secName);
-      }
-    }
+  }
+}
 #else
     const  Ogre::ConfigFile::SettingsBySection_ &sectionsNamesAndSettigns = cf.getSettingsBySection();
     Ogre::String secName, typeName, archName;
@@ -309,7 +378,7 @@ void vpAROgre::init(bool
       }
     }
 #endif
-  }
+}
   if (!resourcesFileExists) {
     std::string errorMsg = std::string("Error: the requested resource file \"resources.cfg\"") +
       std::string("doesn't exist in ") + std::string(mResourcePath);
@@ -418,12 +487,6 @@ void vpAROgre::init(bool
   //    ST_INTERIOR = Quake3 BSP
   //-----------------------------------------------------
 
-#if (VISP_HAVE_OGRE_VERSION < (1<<16 | 10<<8 | 0))
-  mSceneMgr = mRoot->createSceneManager(Ogre::ST_GENERIC);
-#else
-  mSceneMgr = mRoot->createSceneManager(Ogre::DefaultSceneManagerFactory::FACTORY_TYPE_NAME, Ogre::BLANKSTRING);
-#endif
-
 // Create the camera
   createCamera();
 
@@ -495,6 +558,9 @@ vpAROgre::~vpAROgre(void)
   // Close OIS
   closeOIS();
 
+  // Destroy the RTSS, if available
+  destroyRTShaderSystem();
+
   if (mWindow) {
     OgreWindowEventUtilities::removeWindowEventListener(mWindow, this);
     windowClosed(mWindow);
@@ -505,7 +571,7 @@ vpAROgre::~vpAROgre(void)
 #if (VISP_HAVE_OGRE_VERSION < (1<<16 | 10<<8 | 0))
   if (Ogre::Root::getSingletonPtr()) {
     hasNoMoreElements = !Ogre::Root::getSingletonPtr()->getSceneManagerIterator().hasMoreElements();
-  }
+}
 #else
   if (Ogre::Root::getSingletonPtr()) {
     hasNoMoreElements = Ogre::Root::getSingletonPtr()->getSceneManagers().empty();
@@ -516,13 +582,13 @@ vpAROgre::~vpAROgre(void)
     delete mRoot;
   }
   mRoot = 0;
-}
+  }
 
-/*!
-  Function testing if the program must stop rendering or not.
-  \param evt : Frame event to process.
-  \return False if the program must be stopped.
-*/
+  /*!
+    Function testing if the program must stop rendering or not.
+    \param evt : Frame event to process.
+    \return False if the program must be stopped.
+  */
 bool vpAROgre::stopTest(const Ogre::FrameEvent &evt)
 {
   // Always keep this part
@@ -988,7 +1054,7 @@ void vpAROgre::closeOIS(void)
 
     OIS::InputManager::destroyInputSystem(mInputManager);
     mInputManager = 0;
-  }
+}
 #endif
   }
 
@@ -1072,11 +1138,11 @@ void vpAROgre::updateBackgroundTexture(const vpImage<vpRGBa> &I)
 
   // Unlock the pixel buffer
   mPixelBuffer->unlock();
-}
+  }
 
-/*!
-  Update Camera parameters from a pose calculation.
-*/
+  /*!
+    Update Camera parameters from a pose calculation.
+  */
 void vpAROgre::updateCameraParameters(const vpHomogeneousMatrix &cMw)
 {
   // The matrix is given to Ogre with some changes to fit with the world
@@ -1138,7 +1204,7 @@ void vpAROgre::getRenderingOutput(vpImage<vpRGBa> &I, const vpHomogeneousMatrix 
 
   // Unlock the pixel buffer
   mPixelBuffer->unlock();
-}
+  }
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_ar.a(vpAROgre.cpp.o) has no symbols
