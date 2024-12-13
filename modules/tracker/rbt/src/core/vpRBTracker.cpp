@@ -397,6 +397,8 @@ void vpRBTracker::updateRender(vpRBFeatureTrackerInput &frame)
 {
   m_renderer.setCameraPose(m_cMo.inverse());
 
+  frame.renders.cMo = m_cMo;
+
   // Update clipping distances
   frame.renders.normals.resize(m_imageHeight, m_imageWidth);
   frame.renders.silhouetteCanny.resize(m_imageHeight, m_imageWidth);
@@ -496,7 +498,7 @@ std::vector<vpRBSilhouettePoint> vpRBTracker::extractSilhouettePoints(
 #if defined(VISP_DEBUG_RB_TRACKER)
       if (fabs(theta) > M_PI + 1e-6) {
         throw vpException(vpException::badValue, "Theta expected to be in -Pi, Pi range but was not");
-      }
+    }
 #endif
       points.push_back(vpRBSilhouettePoint(n, m, norm, theta, Z));
       // if (Zn > 0) {
@@ -521,8 +523,8 @@ std::vector<vpRBSilhouettePoint> vpRBTracker::extractSilhouettePoints(
       // if (noNeighbor) {
       //   points.push_back(vpRBSilhouettePoint(n, m, norm, theta, Z));
       // }
-    }
   }
+}
 
   return points;
 }

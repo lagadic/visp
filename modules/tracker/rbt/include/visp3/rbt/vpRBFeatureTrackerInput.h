@@ -59,6 +59,7 @@ struct VISP_EXPORT vpRBRenderData
   vpImage<unsigned char> isSilhouette; //! Binary image indicating whether a given pixel is part of the silhouette
   double zNear, zFar; // clipping values
   vpRect boundingBox;
+  vpHomogeneousMatrix cMo; //! Pose of the object in the camera frame for which the renders were generated.
 
   vpRBRenderData() : zNear(0.0), zFar(0.0), boundingBox() { }
 
@@ -82,6 +83,7 @@ struct VISP_EXPORT vpRBRenderData
     zNear = o.zNear;
     zFar = o.zFar;
     boundingBox = o.boundingBox;
+    cMo = o.cMo;
     return *this;
   }
 
@@ -95,6 +97,7 @@ struct VISP_EXPORT vpRBRenderData
     zNear = std::move(o.zNear);
     zFar = std::move(o.zFar);
     boundingBox = std::move(o.boundingBox);
+    cMo = std::move(o.cMo);
     return *this;
   }
 };
