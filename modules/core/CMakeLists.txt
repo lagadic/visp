@@ -240,8 +240,8 @@ endif()
 
 # Misc: xml, pthread, zlib
 if(USE_XML2)
-  list(APPEND opt_incs ${XML2_INCLUDE_DIRS})
-  list(APPEND opt_libs ${XML2_LIBRARIES})
+  include_directories(${XML2_INCLUDE_DIRS})
+  list(APPEND opt_libs_private ${XML2_LIBRARIES})
 endif()
 
 if(USE_THREADS)
