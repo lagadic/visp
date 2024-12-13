@@ -50,6 +50,7 @@ void vpPanda3DRendererSet::initFramework()
     frameworkIsOpen = true;
     framework.open_framework();
   }
+  m_isWindowOwner = true;
 
   WindowProperties winProps;
   winProps.set_size(LVecBase2i(m_renderParameters.getImageWidth(), m_renderParameters.getImageHeight()));

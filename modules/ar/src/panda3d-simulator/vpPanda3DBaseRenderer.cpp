@@ -61,6 +61,8 @@ void vpPanda3DBaseRenderer::initFramework()
     framework.open_framework();
   }
 
+  m_isWindowOwner = true;
+
   WindowProperties winProps;
   winProps.set_size(LVecBase2i(m_renderParameters.getImageWidth(), m_renderParameters.getImageHeight()));
   int flags = GraphicsPipe::BF_refuse_window;
@@ -83,6 +85,7 @@ void vpPanda3DBaseRenderer::initFramework()
 
 void vpPanda3DBaseRenderer::initFromParent(PointerTo<WindowFramework> window)
 {
+  m_isWindowOwner = false;
   m_window = window;
   setupScene();
   setupCamera();
@@ -91,6 +94,7 @@ void vpPanda3DBaseRenderer::initFromParent(PointerTo<WindowFramework> window)
 
 void vpPanda3DBaseRenderer::initFromParent(const vpPanda3DBaseRenderer &renderer)
 {
+  m_isWindowOwner = false;
   initFromParent(renderer.m_window);
 }
 

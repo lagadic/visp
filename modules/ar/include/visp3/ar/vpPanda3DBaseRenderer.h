@@ -58,12 +58,24 @@ class VISP_EXPORT vpPanda3DBaseRenderer
 {
 public:
   vpPanda3DBaseRenderer(const std::string &rendererName)
-    : m_name(rendererName), m_renderOrder(-100), m_window(nullptr), m_camera(nullptr)
+    : m_name(rendererName), m_renderOrder(-100), m_window(nullptr), m_camera(nullptr), m_isWindowOwner(false)
   {
     setVerticalSyncEnabled(false);
   }
 
-  virtual ~vpPanda3DBaseRenderer() = default;
+  virtual ~vpPanda3DBaseRenderer()
+  {
+    if (m_window != nullptr) {
+      for (GraphicsOutput *buffer: m_buffers) {
+        buffer->get_engine()->remove_window(buffer);
+      }
+    }
+    if (m_isWindowOwner) {
+      framework.close_window(m_window);
+    }
+
+    m_window = nullptr;
+  }
 
   /**
    * @brief Initialize the whole Panda3D framework. Create a new PandaFramework object and a new window.
@@ -278,6 +290,7 @@ protected:
   PointerTo<Camera> m_camera;
   NodePath m_cameraPath; //! NodePath of the camera
   std::vector<GraphicsOutput *> m_buffers; //! Set of buffers that this renderer uses. This storage contains weak refs to those buffers and should not deallocate them.
+  bool m_isWindowOwner; // Whether this panda subrenderer is the "owner" of the window framework and should close all associated windows when getting destroyed
 };
 
 END_VISP_NAMESPACE
