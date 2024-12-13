@@ -1,13 +1,20 @@
 /*! \example tutorial-grabber-opencv.cpp */
-#include <stdlib.h>
+#include <iostream>
+
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpImageConvert.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/io/vpImageStorageWorker.h>
+
+#if defined(HAVE_OPENCV_HIGHGUI) && \
+  ((VISP_HAVE_OPENCV_VERSION < 0x030000) || ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)))
 
 #if defined(HAVE_OPENCV_VIDEOIO)
 #include <opencv2/videoio.hpp>
 #endif
+
+#include <opencv2/highgui/highgui.hpp>
+
+#include <visp3/core/vpImageConvert.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/io/vpImageStorageWorker.h>
 
 #define USE_COLOR // Comment to acquire gray level images
 
@@ -119,7 +126,6 @@ int main(int argc, const char *argv[])
     std::cout << "Record name: " << opt_seqname << std::endl;
   }
 
-#if defined(HAVE_OPENCV_VIDEOIO) && defined(HAVE_OPENCV_HIGHGUI) && defined(VISP_HAVE_THREADS)
   try {
     cv::VideoCapture cap(opt_device); // open the default camera
     if (!cap.isOpened()) {            // check if we succeeded
@@ -181,14 +187,15 @@ int main(int argc, const char *argv[])
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
+}
 #else
-  (void)argc;
-  (void)argv;
-#if !defined(HAVE_OPENCV_VIDEOIO)
-  std::cout << "Install OpenCV videoio module, configure and build ViSP again to use this example" << std::endl;
+int main()
+{
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000) && !defined(HAVE_OPENCV_VIDEOIO)
+  std::cout << "Install OpenCV videoio module, configure and build ViSP again to use this tutorial." << std::endl;
 #endif
-#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-  std::cout << "This tutorial should be built with c++11 support" << std::endl;
-#endif
+#if !defined(HAVE_OPENCV_HIGHGUI)
+  std::cout << "Install OpenCV highgui module, configure and build ViSP again to use this tutorial." << std::endl;
 #endif
 }
+#endif

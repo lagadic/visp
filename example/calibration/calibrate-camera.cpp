@@ -44,6 +44,11 @@
 #elif defined(HAVE_OPENCV_CALIB)
 #include <opencv2/calib.hpp>
 #endif
+
+#if defined(HAVE_OPENCV_CONTRIB)
+#include <opencv2/contrib/contrib.hpp> // Needed on Ubuntu 16.04 with OpenCV 2.4.9.1
+#endif
+
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>

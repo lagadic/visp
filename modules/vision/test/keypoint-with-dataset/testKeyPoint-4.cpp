@@ -237,8 +237,13 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
   cv::Ptr<cv::DescriptorMatcher> matcher;
 
 #if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
   detector = cv::ORB::create(500, 1.2f, 1);
   extractor = cv::ORB::create(500, 1.2f, 1);
+#elif (VISP_HAVE_OPENCV_VERSION >= 0x020301)
+  detector = cv::FeatureDetector::create("ORB");
+  extractor = cv::DescriptorExtractor::create("ORB");
+#endif
 #endif
   matcher = cv::DescriptorMatcher::create("BruteForce-Hamming");
 

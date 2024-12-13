@@ -47,7 +47,7 @@
 #include <visp3/core/vpSphere.h>
 
 #if defined(VISP_HAVE_OPENCV)
-#include <opencv2/core/types.hpp>
+#include <opencv2/core/core.hpp>
 #endif
 
 BEGIN_VISP_NAMESPACE

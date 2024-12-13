@@ -57,7 +57,7 @@
 
 #if VISP_HAVE_OPENCV_VERSION >= 0x030000
 #include <opencv2/core.hpp>
-#include <opencv2/highgui.hpp>
+#include <opencv2/highgui/highgui.hpp>
 #endif
 
 #ifdef ENABLE_VISP_NAMESPACE

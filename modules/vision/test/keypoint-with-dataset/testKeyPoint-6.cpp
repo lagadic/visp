@@ -238,8 +238,10 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
   descriptorNames.push_back("BoostDesc");
 #endif
 #if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_XFEATURES2D))
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
   descriptorNames.push_back("KAZE");
   descriptorNames.push_back("AKAZE");
+#endif
 #endif
 #if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
   std::string detectorName = "FAST";

@@ -201,13 +201,18 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
   detectorNames.push_back("ORB");
 #endif
 #if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_XFEATURES2D))
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
   detectorNames.push_back("PyramidAGAST");
-  detectorNames.push_back("AGAST");  detectorNames.push_back("PyramidBRISK");
+  detectorNames.push_back("AGAST");
+#endif
+  detectorNames.push_back("PyramidBRISK");
   detectorNames.push_back("BRISK");
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
   detectorNames.push_back("PyramidKAZE");
   detectorNames.push_back("KAZE");
   detectorNames.push_back("PyramidAKAZE");
   detectorNames.push_back("AKAZE");
+#endif
 #endif
 
 #if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_XFEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))

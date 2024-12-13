@@ -1,13 +1,29 @@
 /*! \example tutorial-video-recorder.cpp */
+#include <iostream>
+
 #include <visp3/core/vpConfig.h>
+
+//! [Undef grabber]
+// Comment / uncomment following lines to use the specific 3rd party compatible with your camera
+#undef VISP_HAVE_V4L2
+// #undef HAVE_OPENCV_HIGHGUI
+// #undef HAVE_OPENCV_VIDEOIO
+//! [Undef grabber]
+
+#if defined(VISP_HAVE_DISPLAY) && \
+  (defined(VISP_HAVE_V4L2) || \
+  (((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))))
+
 #include <visp3/core/vpTime.h>
 #include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/io/vpVideoWriter.h>
 #include <visp3/sensor/vpV4l2Grabber.h>
 
-#if defined(HAVE_OPENCV_VIDEOIO)
-#include <opencv2/videoio.hpp>
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)
+#include <opencv2/highgui/highgui.hpp> // for cv::VideoCapture
+#elif (VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)
+#include <opencv2/videoio/videoio.hpp> // for cv::VideoCapture
 #endif
 
 /*!
@@ -29,7 +45,6 @@
  */
 int main(int argc, const char *argv[])
 {
-#if (defined(VISP_HAVE_V4L2) || defined(HAVE_OPENCV_VIDEOIO)) && defined(VISP_HAVE_DISPLAY)
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
 #endif
@@ -67,7 +82,7 @@ int main(int argc, const char *argv[])
     g.setScale(1); // Acquire full resolution images
     g.open(I);
     g.acquire(I);
-#elif defined(HAVE_OPENCV_VIDEOIO)
+#elif ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
     std::cout << "Use OpenCV grabber..." << std::endl;
     cv::VideoCapture g(opt_device);
     if (!g.isOpened()) { // check if we succeeded
@@ -101,7 +116,7 @@ int main(int argc, const char *argv[])
     for (;;) {
 #if defined(VISP_HAVE_V4L2)
       g.acquire(I);
-#elif defined(HAVE_OPENCV_VIDEOIO)
+#elif ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
       g >> frame;
       vpImageConvert::convert(frame, I);
 #endif
@@ -128,10 +143,21 @@ int main(int argc, const char *argv[])
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
-#else
-  (void)argc;
-  (void)argv;
-  std::cout << "Install OpenCV and rebuild ViSP to use this example." << std::endl;
-#endif
   return EXIT_SUCCESS;
 }
+
+#else
+
+int main()
+{
+#if !defined(VISP_HAVE_DISPLAY)
+  std::cout << "Install a 3rdparty to enable display feature (X11, GDI...) and rebuild ViSP to use this tutorial." << std::endl;
+#endif
+#if !(defined(VISP_HAVE_V4L2) || \
+  (((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || \
+   ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))))
+  std::cout << "Install V4l2 or OpenCV 3rdparty and rebuild ViSP to use this tutorial." << std::endl;
+#endif
+}
+
+#endif

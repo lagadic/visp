@@ -1,5 +1,25 @@
 //! \example tutorial-mb-generic-tracker-live.cpp
+#include <iostream>
+
 #include <visp3/core/vpConfig.h>
+
+//! [Undef grabber]
+// #undef VISP_HAVE_V4L2
+// #undef VISP_HAVE_DC1394
+// #undef VISP_HAVE_CMU1394
+// #undef VISP_HAVE_FLYCAPTURE
+// #undef VISP_HAVE_REALSENSE2
+// #undef HAVE_OPENCV_HIGHGUI
+// #undef HAVE_OPENCV_VIDEOIO
+//! [Undef grabber]
+
+#if (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || \
+   defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2) || \
+   ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || \
+   ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))) && \
+  ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_FEATURES2D)) || \
+  ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D) && defined(HAVE_OPENCV_FEATURES))
+
 #ifdef VISP_HAVE_MODULE_SENSOR
 #include <visp3/sensor/vp1394CMUGrabber.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
@@ -18,27 +38,14 @@
 #include <visp3/mbt/vpMbGenericTracker.h>
 //! [Include]
 
-#if defined(HAVE_OPENCV_VIDEOIO)
-#include <opencv2/videoio.hpp>
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)
+#include <opencv2/highgui/highgui.hpp> // for cv::VideoCapture
+#elif (VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)
+#include <opencv2/videoio/videoio.hpp> // for cv::VideoCapture
 #endif
-
-//! [Undef grabber]
-// #undef VISP_HAVE_V4L2
-// #undef VISP_HAVE_DC1394
-// #undef VISP_HAVE_CMU1394
-// #undef VISP_HAVE_FLYCAPTURE
-// #undef VISP_HAVE_REALSENSE2
-// #undef VISP_HAVE_OPENCV
-//! [Undef grabber]
 
 int main(int argc, char **argv)
 {
-#if defined(HAVE_OPENCV_VIDEOIO) && \
-  (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || \
-    defined(HAVE_OPENCV_HIGHGUI) || defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2)) && \
-  ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_FEATURES2D)) || \
-  ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D) && defined(HAVE_OPENCV_FEATURES))
-
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
 #endif
@@ -103,7 +110,9 @@ int main(int argc, char **argv)
           << " [--tracker <0=egde|1=keypoint|2=hybrid> (default: 2)]"
           << " [--use_ogre] [--use_scanline]"
           << " [--max_proj_error <allowed projection error> (default: 30)]"
-          << " [--learn] [--auto_init] [--learning_data <data-learned.bin> (default: learning/data-learned.bin)]"
+          << " [--learn]"
+          << " [--auto_init]"
+          << " [--learning_data <data-learned.bin> (default: learning/data-learned.bin)]"
           << " [--display_proj_error]"
           << " [--help] [-h]\n"
           << std::endl;
@@ -162,7 +171,7 @@ int main(int argc, char **argv)
     }
 #endif
 
-//! [cMo]
+    //! [cMo]
     vpHomogeneousMatrix cMo;
     //! [cMo]
 
@@ -203,7 +212,7 @@ int main(int argc, char **argv)
 
     std::cout << "Read camera parameters from Realsense device" << std::endl;
     cam = g.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithoutDistortion);
-#elif defined(HAVE_OPENCV_VIDEOIO)
+#elif ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI))|| ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
     std::cout << "Use OpenCV grabber on device " << opt_device << std::endl;
     cv::VideoCapture g(opt_device); // Open the default camera
     if (!g.isOpened()) {            // Check if we succeeded
@@ -227,10 +236,9 @@ int main(int argc, char **argv)
     display->init(I, 100, 100, "Model-based tracker");
 
     while (true) {
-#if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) ||                              \
-    defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2)
+#if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2)
       g.acquire(I);
-#elif defined(HAVE_OPENCV_VIDEOIO)
+#elif ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI))|| ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
       g >> frame;
       vpImageConvert::convert(frame, I);
 #endif
@@ -346,10 +354,14 @@ int main(int argc, char **argv)
       keypoint.setExtractor(extractorName);
       keypoint.setMatcher(matcherName);
 #if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
+      keypoint.setDetectorParameter("ORB", "nLevels", 1);
+#else
       cv::Ptr<cv::ORB> orb_detector = keypoint.getDetector("ORB").dynamicCast<cv::ORB>();
       if (orb_detector) {
         orb_detector->setNLevels(1);
       }
+#endif
 #endif
     }
 
@@ -379,10 +391,9 @@ int main(int argc, char **argv)
 
     while (!quit) {
       double t_begin = vpTime::measureTimeMs();
-#if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) ||                              \
-    defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2)
+#if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2)
       g.acquire(I);
-#elif defined(HAVE_OPENCV_VIDEOIO)
+#elif ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI))|| ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
       g >> frame;
       vpImageConvert::convert(frame, I);
 #endif
@@ -538,15 +549,20 @@ int main(int argc, char **argv)
   catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
   }
-#elif defined(VISP_HAVE_OPENCV)
-  (void)argc;
-  (void)argv;
+}
+
+#else
+
+int main()
+{
+#if defined(VISP_HAVE_OPENCV)
   std::cout << "Install a 3rd party dedicated to frame grabbing (dc1394, cmu1394, v4l2, OpenCV, FlyCapture, "
-    "Realsense2), configure and build ViSP again to use this example"
+    << "Realsense2), configure and build ViSP again to use this tutorial."
     << std::endl;
 #else
-  (void)argc;
-  (void)argv;
-  std::cout << "Install OpenCV 3rd party, configure and build ViSP again to use this example" << std::endl;
+  std::cout << "Install OpenCV 3rd party, configure and build ViSP again to use this tutorial." << std::endl;
 #endif
+  return EXIT_SUCCESS;
 }
+
+#endif

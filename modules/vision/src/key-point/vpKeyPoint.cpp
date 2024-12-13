@@ -49,7 +49,7 @@
 #endif
 
 #if (VISP_HAVE_OPENCV_VERSION <0x050000)
-#include <opencv2/calib3d.hpp>
+#include <opencv2/calib3d/calib3d.hpp>
 #endif
 
 #if defined(HAVE_OPENCV_XFEATURES2D)
@@ -2240,9 +2240,11 @@ void vpKeyPoint::initFeatureNames()
 #endif
 #if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_XFEATURES2D))
   m_mapOfDetectorNames[DETECTOR_BRISK] = "BRISK";
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
   m_mapOfDetectorNames[DETECTOR_KAZE] = "KAZE";
   m_mapOfDetectorNames[DETECTOR_AKAZE] = "AKAZE";
   m_mapOfDetectorNames[DETECTOR_AGAST] = "AGAST";
+#endif
 #endif
 #if defined(HAVE_OPENCV_XFEATURES2D)
   m_mapOfDetectorNames[DETECTOR_STAR] = "STAR";
@@ -2275,8 +2277,10 @@ void vpKeyPoint::initFeatureNames()
   m_mapOfDescriptorNames[DESCRIPTOR_SURF] = "SURF";
 #endif
 #if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_XFEATURES2D))
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
   m_mapOfDescriptorNames[DESCRIPTOR_KAZE] = "KAZE";
   m_mapOfDescriptorNames[DESCRIPTOR_AKAZE] = "AKAZE";
+#endif
 #endif
 #if defined(HAVE_OPENCV_XFEATURES2D)
   m_mapOfDescriptorNames[DESCRIPTOR_DAISY] = "DAISY";

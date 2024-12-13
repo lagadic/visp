@@ -1,6 +1,13 @@
 //! \example tutorial-klt-tracker.cpp
-//! [Include]
+#include <iostream>
+
 #include <visp3/core/vpConfig.h>
+
+//! [Check 3rd party]
+#if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO) && defined(HAVE_OPENCV_VIDEOIO)
+//! [Check 3rd party]
+
+//! [Include]
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/io/vpVideoReader.h>
@@ -9,9 +16,6 @@
 
 int main(int argc, const char *argv[])
 {
-//! [Check 3rd party]
-#if (defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO) || defined(VISP_HAVE_V4L2)) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
-  //! [Check 3rd party]
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
 #endif
@@ -93,7 +97,7 @@ int main(int argc, const char *argv[])
       tracker.initTracking(cvI, feature);
     }
     else {
-   //! [Init tracker]
+      //! [Init tracker]
       tracker.initTracking(cvI);
       //! [Init tracker]
     }
@@ -152,9 +156,25 @@ int main(int argc, const char *argv[])
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
-#else
-  (void)argc;
-  (void)argv;
-#endif
   return EXIT_SUCCESS;
 }
+
+#else
+
+int main()
+{
+#if !defined(HAVE_OPENCV_HIGHGUI)
+  std::cout << "This tutorial needs OpenCV highgui module that is missing." << std::endl;
+#endif
+#if !defined(HAVE_OPENCV_IMGPROC)
+  std::cout << "This tutorial needs OpenCV imgproc module that is missing." << std::endl;
+#endif
+#if !defined(HAVE_OPENCV_VIDEO)
+  std::cout << "This tutorial needs OpenCV video module that is missing." << std::endl;
+#endif
+#if !defined(HAVE_OPENCV_VIDEOIO)
+  std::cout << "This tutorial needs OpenCV videoio module that is missing." << std::endl;
+#endif
+}
+
+#endif

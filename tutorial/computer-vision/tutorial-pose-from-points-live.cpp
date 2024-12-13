@@ -1,5 +1,24 @@
 /*! \example tutorial-pose-from-points-live.cpp */
+#include <iostream>
+
 #include <visp3/core/vpConfig.h>
+
+//! [Undef grabber]
+// Comment / uncomment following lines to use the specific 3rd party compatible with your camera
+// #undef VISP_HAVE_V4L2
+// #undef VISP_HAVE_DC1394
+// #undef VISP_HAVE_CMU1394
+// #undef VISP_HAVE_FLYCAPTURE
+// #undef VISP_HAVE_REALSENSE2
+// #undef HAVE_OPENCV_HIGHGUI
+// #undef HAVE_OPENCV_VIDEOIO
+//! [Undef grabber]
+
+#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)) && defined(VISP_HAVE_PUGIXML) && \
+    (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || \
+     defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2)) || \
+     ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI))|| ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
+
 #ifdef VISP_HAVE_MODULE_SENSOR
 #include <visp3/sensor/vp1394CMUGrabber.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
@@ -12,27 +31,16 @@
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 
-#if defined(HAVE_OPENCV_VIDEOIO)
-#include <opencv2/videoio.hpp>
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)
+#include <opencv2/highgui/highgui.hpp> // for cv::VideoCapture
+#elif (VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)
+#include <opencv2/videoio/videoio.hpp> // for cv::VideoCapture
 #endif
 
 #include "pose_helper.h"
 
-// Comment / uncomment following lines to use the specific 3rd party compatible with your camera
-//! [Undef grabber]
-// #undef VISP_HAVE_V4L2
-// #undef VISP_HAVE_DC1394
-// #undef VISP_HAVE_CMU1394
-// #undef VISP_HAVE_FLYCAPTURE
-// #undef VISP_HAVE_REALSENSE2
-// #undef HAVE_OPENCV_VIDEOIO
-//! [Undef grabber]
-
 int main(int argc, char **argv)
 {
-#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)) && defined(VISP_HAVE_PUGIXML) && \
-    (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || \
-     defined(HAVE_OPENCV_VIDEOIO) || defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2))
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
 #endif
@@ -112,7 +120,7 @@ int main(int argc, char **argv)
 
     std::cout << "Read camera parameters from Realsense device" << std::endl;
     cam = g.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithoutDistortion);
-#elif defined(HAVE_OPENCV_VIDEOIO)
+#elif ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI))|| ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
     std::cout << "Use OpenCV grabber on device " << opt_device << std::endl;
     cv::VideoCapture g(opt_device); // Open the default camera
     if (!g.isOpened()) {            // Check if we succeeded
@@ -173,7 +181,7 @@ int main(int argc, char **argv)
 #if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || \
     defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2)
       g.acquire(I);
-#elif defined(HAVE_OPENCV_VIDEOIO)
+#elif ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI))|| ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
       g >> frame;
       vpImageConvert::convert(frame, I);
 #endif
@@ -230,17 +238,13 @@ int main(int argc, char **argv)
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
   }
-#elif (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
-  (void)argc;
-  (void)argv;
-  std::cout << "Install a 3rd party dedicated to frame grabbing (dc1394, cmu1394, v4l2, OpenCV, FlyCapture, "
-    "Realsense2), configure and build ViSP again to use this example"
-    << std::endl;
-#else
-  (void)argc;
-  (void)argv;
-  std::cout << "Install a 3rd party dedicated to image display (X11, GDI, OpenCV), configure and build ViSP again to "
-    "use this example"
-    << std::endl;
-#endif
 }
+
+#else
+
+int main()
+{
+  std::cout << "There are missing 3rd parties to run this tutorial" << std::endl;
+}
+
+#endif

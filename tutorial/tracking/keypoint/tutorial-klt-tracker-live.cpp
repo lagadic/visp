@@ -1,5 +1,19 @@
-/*! \example tutorial-klt-tracker-live-v4l2.cpp */
+/*! \example tutorial-klt-tracker-live.cpp */
+#include <iostream>
+
 #include <visp3/core/vpConfig.h>
+
+//! [Undef grabber]
+// Comment / uncomment following lines to use the specific 3rd party compatible with your camera
+// #undef VISP_HAVE_V4L2
+// #undef HAVE_OPENCV_HIGHGUI
+// #undef HAVE_OPENCV_VIDEOIO
+//! [Undef grabber]
+
+#if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO) && \
+  (defined(VISP_HAVE_V4L2) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || \
+                              ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)))
+
 #ifdef VISP_HAVE_MODULE_SENSOR
 #include <visp3/sensor/vpV4l2Grabber.h>
 #endif
@@ -8,13 +22,14 @@
 #include <visp3/io/vpVideoReader.h>
 #include <visp3/klt/vpKltOpencv.h>
 
-#if defined(HAVE_OPENCV_VIDEOIO)
-#include <opencv2/videoio.hpp>
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)
+#include <opencv2/highgui/highgui.hpp> // for cv::VideoCapture
+#elif (VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)
+#include <opencv2/videoio/videoio.hpp>
 #endif
 
 int main(int argc, const char *argv[])
 {
-#if (defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO) || defined(VISP_HAVE_V4L2)) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
 #endif
@@ -39,13 +54,15 @@ int main(int argc, const char *argv[])
     vpImage<unsigned char> I;
 
 #if defined(VISP_HAVE_V4L2)
+    std::cout << "Use v4l2 grabber..." << std::endl;
     vpV4l2Grabber g;
     std::ostringstream device;
     device << "/dev/video" << opt_device;
     g.setDevice(device.str());
     g.open(I);
     g.acquire(I);
-#elif defined(HAVE_OPENCV_VIDEOIO)
+#elif ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
+    std::cout << "Use OpenCV grabber..." << std::endl;
     cv::VideoCapture g(opt_device);
     if (!g.isOpened()) { // check if we succeeded
       std::cout << "Failed to open the camera" << std::endl;
@@ -101,7 +118,7 @@ int main(int argc, const char *argv[])
     while (1) {
 #if defined(VISP_HAVE_V4L2)
       g.acquire(I);
-#elif defined(HAVE_OPENCV_VIDEOIO)
+#elif ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
       g >> frame;
       vpImageConvert::convert(frame, I);
 #endif
@@ -121,9 +138,26 @@ int main(int argc, const char *argv[])
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
-#else
-  (void)argc;
-  (void)argv;
-#endif
   return EXIT_SUCCESS;
 }
+
+#else
+
+int main()
+{
+#if !defined(HAVE_OPENCV_HIGHGUI)
+  std::cout << "This tutorial needs OpenCV highgui module that is missing." << std::endl;
+#endif
+#if !defined(HAVE_OPENCV_IMGPROC)
+  std::cout << "This tutorial needs OpenCV imgproc module that is missing." << std::endl;
+#endif
+#if !defined(HAVE_OPENCV_VIDEO)
+  std::cout << "This tutorial needs OpenCV video module that is missing." << std::endl;
+#endif
+#if !(defined(VISP_HAVE_V4L2) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || \
+                                 ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)))
+  std::cout << "This tutorial needs V4l2 or OpenCV grabber capabilities." << std::endl;
+#endif
+}
+
+#endif

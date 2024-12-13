@@ -36,6 +36,15 @@
 
 #include <visp3/core/vpConfig.h>
 
+//! [Undef grabber]
+// Comment / uncomment following lines to use the specific 3rd party compatible with your camera
+// #undef VISP_HAVE_V4L2
+// #undef VISP_HAVE_DC1394
+// #undef VISP_HAVE_CMU1394
+// #undef HAVE_OPENCV_HIGHGUI
+// #undef HAVE_OPENCV_VIDEOIO
+//! [Undef grabber]
+
 #include <visp3/blob/vpDot2.h>
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
@@ -53,11 +62,15 @@
 #include <visp3/visual_features/vpFeaturePoint.h>
 #include <visp3/vs/vpServo.h>
 
-#if defined(HAVE_OPENCV_VIDEOIO)
-#include <opencv2/videoio.hpp>
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)
+#include <opencv2/highgui/highgui.hpp> // for cv::VideoCapture
+#elif (VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)
+#include <opencv2/videoio/videoio.hpp> // for cv::VideoCapture
 #endif
 
-#if defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_CMU1394) || defined(HAVE_OPENCV_VIDEOIO)
+#if defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_CMU1394) || \
+  ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || \
+  ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
 #if defined(VISP_HAVE_PIONEER)
 #define TEST_COULD_BE_ACHIEVED
@@ -65,31 +78,28 @@
 #endif
 #endif
 
-#undef VISP_HAVE_OPENCV // To use a firewire camera
-#undef VISP_HAVE_V4L2   // To use a firewire camera
+/*!
+  \example servoPioneerPoint2DDepth.cpp
 
- /*!
-   \example servoPioneerPoint2DDepth.cpp
+  Example that shows how to control the Pioneer mobile robot by IBVS visual
+  servoing with respect to a blob. The current visual features that are used
+  are s = (x, log(Z/Z*)). The desired one are s* = (x*, 0), with:
+  - x the abscise of the point corresponding to the blob center of gravity
+  measured at each iteration,
+  - x* the desired abscise position of the point (x* = 0)
+  - Z the depth of the point measured at each iteration
+  - Z* the desired depth of the point equal to the initial one.
 
-   Example that shows how to control the Pioneer mobile robot by IBVS visual
-   servoing with respect to a blob. The current visual features that are used
-   are s = (x, log(Z/Z*)). The desired one are s* = (x*, 0), with:
-   - x the abscise of the point corresponding to the blob center of gravity
-   measured at each iteration,
-   - x* the desired abscise position of the point (x* = 0)
-   - Z the depth of the point measured at each iteration
-   - Z* the desired depth of the point equal to the initial one.
+  The degrees of freedom that are controlled are (vx, wz), where wz is the
+  rotational velocity and vx the translational velocity of the mobile platform
+  at point M located at the middle between the two wheels.
 
-   The degrees of freedom that are controlled are (vx, wz), where wz is the
-   rotational velocity and vx the translational velocity of the mobile platform
-   at point M located at the middle between the two wheels.
+  The feature x allows to control wy, while log(Z/Z*) allows to control vz.
+  The value of x is measured thanks to a blob tracker.
+  The value of Z is estimated from the surface of the blob that is
+  proportional to the depth Z.
 
-   The feature x allows to control wy, while log(Z/Z*) allows to control vz.
-   The value of x is measured thanks to a blob tracker.
-   The value of Z is estimated from the surface of the blob that is
-   proportional to the depth Z.
-
-  */
+*/
 #ifdef TEST_COULD_BE_ACHIEVED
 int main(int argc, char **argv)
 {
@@ -137,7 +147,7 @@ int main(int argc, char **argv)
     vpCameraParameters cam;
 
     // Create the camera framegrabber
-#if defined(HAVE_OPENCV_VIDEOIO)
+#if ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI))|| ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
     int device = 1;
     std::cout << "Use device: " << device << std::endl;
     cv::VideoCapture g(device); // open the default camera
@@ -181,7 +191,7 @@ int main(int argc, char **argv)
 #endif
 
     // Acquire an image from the grabber
-#if defined(HAVE_OPENCV_VIDEOIO)
+#if ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI))|| ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
     g >> frame; // get a new frame from camera
     vpImageConvert::convert(frame, I);
 #else
@@ -262,7 +272,7 @@ int main(int argc, char **argv)
 
     while (1) {
       // Acquire a new image
-#if defined(HAVE_OPENCV_VIDEOIO)
+#if ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI))|| ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
       g >> frame; // get a new frame from camera
       vpImageConvert::convert(frame, I);
 #else

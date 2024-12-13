@@ -3,18 +3,23 @@
 #include <iostream>
 
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpImageConvert.h>
-#include <visp3/core/vpTime.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayX.h>
 
-#if defined(HAVE_OPENCV_VIDEOIO) && defined(VISP_HAVE_THREADS)
+#if defined(VISP_HAVE_THREADS) && \
+  (((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)))
 
 #include <thread>
 #include <mutex>
 
-#include <opencv2/highgui.hpp>
-#include <opencv2/videoio.hpp>
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)
+#include <opencv2/highgui/highgui.hpp> // for cv::VideoCapture
+#elif (VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)
+#include <opencv2/videoio/videoio.hpp> // for cv::VideoCapture
+#endif
+
+#include <visp3/core/vpImageConvert.h>
+#include <visp3/core/vpTime.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayX.h>
 
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;
@@ -168,11 +173,17 @@ int main(int argc, const char *argv[])
 #else
 int main()
 {
-#ifndef VISP_HAVE_OPENCV
-  std::cout << "You should install OpenCV videoio module to make this example working..." << std::endl;
-#elif !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  std::cout << "You should enable pthread usage and rebuild ViSP..." << std::endl;
-#else
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000) && !defined(HAVE_OPENCV_HIGHGUI)
+  std::cout << "Install OpenCV highgui module, configure and build ViSP again to use this tutorial." << std::endl;
+#endif
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000) && !defined(HAVE_OPENCV_VIDEOIO)
+  std::cout << "Install OpenCV videoio module, configure and build ViSP again to use this tutorial." << std::endl;
+#endif
+#if !defined(HAVE_OPENCV_HIGHGUI)
+  std::cout << "Install OpenCV highgui module, configure and build ViSP again to use this tutorial." << std::endl;
+#endif
+#if !defined(VISP_HAVE_THREADS) // UNIX
+  std::cout << "This tutorial cannot run without std::thread usage." << std::endl;
   std::cout << "Multi-threading seems not supported on this platform" << std::endl;
 #endif
   return EXIT_SUCCESS;

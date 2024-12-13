@@ -129,10 +129,14 @@ int main(int argc, char **argv)
     //! [Keypoint declaration]
     vpKeyPoint keypoint_learning("ORB", "ORB", "BruteForce-Hamming");
 #if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
+    keypoint_learning.setDetectorParameter("ORB", "nLevels", 1);
+#else
     cv::Ptr<cv::ORB> orb_learning = keypoint_learning.getDetector("ORB").dynamicCast<cv::ORB>();
     if (orb_learning) {
       orb_learning->setNLevels(1);
     }
+#endif
 #endif
     //! [Keypoint declaration]
 
@@ -205,11 +209,15 @@ int main(int argc, char **argv)
      //! [Init keypoint detection]
     vpKeyPoint keypoint_detection("ORB", "ORB", "BruteForce-Hamming");
 #if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
+    keypoint_detection.setDetectorParameter("ORB", "nLevels", 1);
+#else
     cv::Ptr<cv::ORB> orb_detector = keypoint_detection.getDetector("ORB").dynamicCast<cv::ORB>();
     orb_detector = keypoint_detection.getDetector("ORB").dynamicCast<cv::ORB>();
     if (orb_detector) {
       orb_detector->setNLevels(1);
     }
+#endif
 #endif
     //! [Init keypoint detection]
 

@@ -45,7 +45,7 @@
 #include <visp3/core/vpMath.h>
 
 #if defined(VISP_HAVE_OPENCV)
-#include <opencv2/core/mat.hpp>
+#include <opencv2/core/core.hpp>
 #endif
 
 BEGIN_VISP_NAMESPACE

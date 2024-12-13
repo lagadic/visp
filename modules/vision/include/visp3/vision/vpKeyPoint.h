@@ -64,7 +64,7 @@
 #include <visp3/core/vpPolygon.h>
 #include <visp3/vision/vpXmlConfigParserKeyPoint.h>
 
-#include <opencv2/core/types.hpp>
+#include <opencv2/core/core.hpp>
 
 #if defined(HAVE_OPENCV_FEATURES2D)
 #include <opencv2/features2d/features2d.hpp>
@@ -76,7 +76,6 @@
 
 #if defined(HAVE_OPENCV_IMGPROC)
 #include <opencv2/imgproc/imgproc.hpp>
-//#include <opencv2/imgproc/imgproc_c.h>
 #endif
 
 #if defined(HAVE_OPENCV_NONFREE)
@@ -326,12 +325,16 @@ public:
 #  endif
 #else // OpenCV < 5.0.0
 #  if defined(HAVE_OPENCV_FEATURES2D)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
     DETECTOR_AGAST,      //!< AGAST detector
     DETECTOR_AKAZE,      //!< AKAZE detector
+#endif
     DETECTOR_BRISK,      //!< BRISK detector
     DETECTOR_FAST,       //!< FAST detector
     DETECTOR_GFTT,       //!< GFTT detector
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
     DETECTOR_KAZE,       //!< KAZE detector
+#endif
     DETECTOR_MSER,       //!< MSER detector
     DETECTOR_ORB,        //!< ORB detector
     DETECTOR_SimpleBlob, //!< SimpleBlob detector
@@ -373,9 +376,13 @@ public:
 #  endif
 #else // opencv < 5.0.0
 #  if defined(HAVE_OPENCV_FEATURES2D)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
     DESCRIPTOR_AKAZE,     //!< AKAZE descriptor
+#endif
     DESCRIPTOR_BRISK,     //!< BRISK descriptor
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
     DESCRIPTOR_KAZE,      //!< KAZE descriptor
+#endif
     DESCRIPTOR_ORB,       //!< ORB descriptor
 #  endif
 #  if defined(HAVE_OPENCV_XFEATURES2D)

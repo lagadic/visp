@@ -105,7 +105,7 @@ tutorials given in \ref tutorial_install_src.
 Once build, to see the options that are available, just run:
 \code
 $ ./tutorial-mb-generic-tracker-apriltag-webcam --help
-Usage: ./tutorial-mb-generic-tracker-apriltag-webcam [--input <camera id>] [--cube_size <size in m>] [--tag-size <size in m>] [--quad-decimate <decimation>] [--nthreads <nb>] [--intrinsic <xml intrinsic file>] [--camera-name <camera name in xml file>] [--tag-family <0: TAG_36h11, 1: TAG_36h10, 2: TAG_36ARTOOLKIT,  3: TAG_25h9, 4: TAG_25h7, 5: TAG_16h5>] [--display-off] [--texture] [--projection_error <30 - 100>] [--help]
+Usage: ./tutorial-mb-generic-tracker-apriltag-webcam [--input <camera id>] [--cube-size <size in m>] [--tag-size <size in m>] [--quad-decimate <decimation>] [--nthreads <nb>] [--intrinsic <xml intrinsic file>] [--camera-name <camera name in xml file>] [--tag-family <0: TAG_36h11, 1: TAG_36h10, 2: TAG_36ARTOOLKIT,  3: TAG_25h9, 4: TAG_25h7, 5: TAG_16h5>] [--display-off] [--texture] [--projection-error <30 - 100>] [--help]
 \endcode
 
 To test the tracker on a 12.5 cm wide cube that has an AprilTag of size 8 by 8 cm, and enable moving-edges and
@@ -126,7 +126,7 @@ $ ./tutorial-mb-generic-tracker-apriltag-webcam --input 1
 \endcode
 - The default size of the cube is 0.125 meter large. To use rather a 0.20 meter large cube, run:
 \code
-$ ./tutorial-mb-generic-tracker-apriltag-webcam --cube_size 0.20
+$ ./tutorial-mb-generic-tracker-apriltag-webcam --cube-size 0.20
 \endcode
 - The AprilTag size is 0.08 by 0.08 meters. To change the tag size to let say 0.10 meter square, use:
 \code
@@ -160,7 +160,7 @@ $ ./tutorial-mb-generic-tracker-apriltag-webcam --display_off
   The default value of this threshold is set to 40 degrees. To decrease this threshold to 30 degrees (meaning that we
   accept less projection error and thus trigger a new AprilTag detection more often) you may run:
 \code
-$ ./tutorial-mb-generic-tracker-apriltag-webcam --projection_error 30
+$ ./tutorial-mb-generic-tracker-apriltag-webcam --projection-error 30
 \endcode
 
 \subsection mb_generic_apriltag_webcam_result Expected results
@@ -202,7 +202,7 @@ provided in the tutorials available from \ref tutorial_install_src.
 Once build, to see the options that are available, just run:
 \code
 $ ./tutorial-mb-generic-tracker-apriltag-rs2 --help
-Usage: ./tutorial-mb-generic-tracker-apriltag-rs2 [--cube_size <size in m>] [--tag-size <size in m>] [--quad-decimate <decimation>] [--nthreads <nb>] [--tag-family <0: TAG_36h11, 1: TAG_36h10, 2: TAG_36ARTOOLKIT,  3: TAG_25h9, 4: TAG_25h7, 5: TAG_16h5>] [--display-off] [--texture] [--depth] [--projection_error <30 - 100>] [--help]
+Usage: ./tutorial-mb-generic-tracker-apriltag-rs2 [--cube-size <size in m>] [--tag-size <size in m>] [--quad-decimate <decimation>] [--nthreads <nb>] [--tag-family <0: TAG_36h11, 1: TAG_36h10, 2: TAG_36ARTOOLKIT,  3: TAG_25h9, 4: TAG_25h7, 5: TAG_16h5>] [--display-off] [--texture] [--depth] [--projection-error <30 - 100>] [--help]
 \endcode
 
 To test the tracker on a 12.5 cm wide cube that has an AprilTag of size 8 by 8 cm, and enable moving-edges, keypoints
@@ -224,7 +224,7 @@ $ ./tutorial-mb-generic-tracker-apriltag-rs2
 By default, the following settings are used: <br>
 - Default size of the cube is 0.125 meter large. To use rather a 0.20 meter large cube, run:
 \code
-$ ./tutorial-mb-generic-tracker-apriltag-rs2 --cube_size 0.20
+$ ./tutorial-mb-generic-tracker-apriltag-rs2 --cube-size 0.20
 \endcode
 - The AprilTag size is 0.08 by 0.08 meters. To change the tag size to let say 0.10 meter square, use:
 \code
@@ -251,7 +251,7 @@ $ ./tutorial-mb-generic-tracker-apriltag-rs2 --display_off
   The default value of this threshold is set to 40 degrees. To decrease this threshold to 30 degrees (meaning that
   we accept less projection error and thus trigger a new AprilTag detection more often) you may run:
 \code
-$ ./tutorial-mb-generic-tracker-apriltag-webcam --projection_error 30
+$ ./tutorial-mb-generic-tracker-apriltag-webcam --projection-error 30
 \endcode
 
 \subsection mb_generic_apriltag_realsense_result Expected results

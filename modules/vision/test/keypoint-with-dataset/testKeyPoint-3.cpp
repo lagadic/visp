@@ -50,7 +50,7 @@
 #endif
 
 #if defined(HAVE_OPENCV_FEATURES2D)
-#include <opencv2/features2d.hpp>
+#include <opencv2/features2d/features2d.hpp>
 #endif
 
 #include <visp3/core/vpImage.h>
