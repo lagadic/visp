@@ -53,22 +53,26 @@ using namespace VISP_NAMESPACE_NAME;
 
 #include <random>
 
+
+vpPanda3DRenderParameters defaultRenderParams()
+{
+  vpCameraParameters cam(600, 600, 160, 120);
+  return vpPanda3DRenderParameters(cam, 240, 320, 0.001, 1.0);
+}
+
 SCENARIO("Instanciating multiple Panda3D renderers", "[Panda3D]")
 {
   GIVEN("A single renderer")
   {
-    vpCameraParameters cam(600, 600, 160, 120);
-    vpPanda3DRenderParameters renderParams(cam, 240, 320, 0.001, 1.0);
     vpPanda3DGeometryRenderer r1(vpPanda3DGeometryRenderer::CAMERA_NORMALS);
-    r1.setRenderParameters(renderParams);
+    r1.setRenderParameters(defaultRenderParams());
     r1.initFramework();
 
-    WHEN("Creating another, uncoupled renderer")
+    THEN("Creating another, uncoupled renderer is ok and its destruction does not raise an error")
     {
-      // vpPanda3DGeometryRenderer r2(vpPanda3DGeometryRenderer::CAMERA_NORMALS);
-      // r2.setRenderParameters(renderParams);
-      // r2.initFramework();
-
+      vpPanda3DGeometryRenderer r2(vpPanda3DGeometryRenderer::CAMERA_NORMALS);
+      r2.setRenderParameters(defaultRenderParams());
+      r2.initFramework();
     }
   }
 }

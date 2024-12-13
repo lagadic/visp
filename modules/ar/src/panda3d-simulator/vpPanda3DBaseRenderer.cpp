@@ -117,7 +117,18 @@ void vpPanda3DBaseRenderer::setupCamera()
 void vpPanda3DBaseRenderer::renderFrame()
 {
   beforeFrameRendered();
+  // Disable rendering for all the other renderers
+  for (int i = 0; i < framework.get_num_windows(); ++i) {
+    WindowFramework *fi = framework.get_window(i);
+    if (fi != m_window) {
+      fi->get_graphics_output()->get_gsg()->set_active(false);
+    }
+  }
   m_window->get_graphics_output()->get_engine()->render_frame();
+  for (int i = 0; i < framework.get_num_windows(); ++i) {
+    WindowFramework *fi = framework.get_window(i);
+    fi->get_graphics_output()->get_gsg()->set_active(true);
+  }
   afterFrameRendered();
 }
 
