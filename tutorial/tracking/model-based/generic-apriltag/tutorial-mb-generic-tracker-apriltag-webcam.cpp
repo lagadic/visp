@@ -338,7 +338,7 @@ int main(int argc, const char **argv)
 #if defined(VISP_HAVE_V4L2)
       g.acquire(I);
 #elif ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI))|| ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
-      cap >> frame;
+      g >> frame;
       vpImageConvert::convert(frame, I);
 #endif
 
