@@ -546,13 +546,14 @@ void vpAROgre::init(bool
   /*Ogre::Viewport* Viewport =*/RTarget->addViewport(mCamera);
   RTarget->getViewport(0)->setClearEveryFrame(true);
   RTarget->getViewport(0)->setOverlaysEnabled(false);
-  }
+}
 
-  /*!
-    Destructor.
-  */
+/*!
+  Destructor.
+*/
 vpAROgre::~vpAROgre(void)
 {
+  mPixelBuffer.reset();
   // Destroy 3D scene
   destroyScene();
   // Close OIS
@@ -566,7 +567,7 @@ vpAROgre::~vpAROgre(void)
     windowClosed(mWindow);
   }
 
-  // Delete root
+// Delete root
   bool hasNoMoreElements = false;
 #if (VISP_HAVE_OGRE_VERSION < (1<<16 | 10<<8 | 0))
   if (Ogre::Root::getSingletonPtr()) {
