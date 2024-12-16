@@ -313,90 +313,6 @@ void vpAROgre::init(bool
     mRoot = Ogre::Root::getSingletonPtr();
   }
 
-#if (VISP_HAVE_OGRE_VERSION < (1<<16 | 10<<8 | 0))
-  mSceneMgr = mRoot->createSceneManager(Ogre::ST_GENERIC);
-#else
-  mSceneMgr = mRoot->createSceneManager(Ogre::DefaultSceneManagerFactory::FACTORY_TYPE_NAME, Ogre::BLANKSTRING);
-#endif
-
-  // Initialize the RTShaderSystem, if available
-  bool hasInitializedTheRTSS = initialiseRTShaderSystem();
-  if (!hasInitializedTheRTSS) {
-    std::cout << "[vpAROgre::init] RTSS is not available." << std::endl;
-  }
-
-  // Load resource paths from config file
-
-  // File format is:
-  //  [ResourceGroupName]
-  //  ArchiveType=Path
-  //  .. repeat
-  // For example:
-  //  [General]
-  //  FileSystem=media/
-  //  Zip=packages/level1.zip
-
-  // mResourcePath may contain more than one folder location separated by ";"
-  bool resourcesFileExists = false;
-  std::string resourceFile;
-  std::vector<std::string> resourcesPaths = vpIoTools::splitChain(std::string(mResourcePath), std::string(";"));
-  for (size_t i = 0; i < resourcesPaths.size(); i++) {
-    resourceFile = resourcesPaths[i] + "/resources.cfg";
-    if (!vpIoTools::checkFilename(resourceFile)) {
-      continue;
-    }
-    resourcesFileExists = true;
-    std::cout << "######################### Load resource file: " << resourceFile << std::endl;
-    Ogre::ConfigFile cf;
-    cf.load(resourceFile);
-    // Go through all sections & settings in the file
-#if (VISP_HAVE_OGRE_VERSION < (1<<16 | 10<<8 | 0))
-    Ogre::ConfigFile::SectionIterator seci = cf.getSectionIterator();
-
-    Ogre::String secName, typeName, archName;
-    while (seci.hasMoreElements()) {
-      secName = seci.peekNextKey();
-      Ogre::ConfigFile::SettingsMultiMap *settings = seci.getNext();
-      Ogre::ConfigFile::SettingsMultiMap::iterator i;
-      for (i = settings->begin(); i != settings->end(); ++i) {
-        typeName = i->first;
-        archName = i->second;
-        Ogre::ResourceGroupManager::getSingleton().addResourceLocation(archName, typeName, secName);
-  }
-}
-#else
-    const  Ogre::ConfigFile::SettingsBySection_ &sectionsNamesAndSettigns = cf.getSettingsBySection();
-    Ogre::String secName, typeName, archName;
-    for (std::pair<Ogre::String, Ogre::ConfigFile::SettingsMultiMap> name_settings : sectionsNamesAndSettigns) {
-      secName = name_settings.first;
-      Ogre::ConfigFile::SettingsMultiMap settings = name_settings.second;
-      Ogre::ConfigFile::SettingsMultiMap::iterator i;
-      for (i = settings.begin(); i != settings.end(); ++i) {
-        typeName = i->first;
-        archName = i->second;
-        Ogre::ResourceGroupManager::getSingleton().addResourceLocation(archName, typeName, secName);
-      }
-    }
-#endif
-}
-  if (!resourcesFileExists) {
-    std::string errorMsg = std::string("Error: the requested resource file \"resources.cfg\"") +
-      std::string("doesn't exist in ") + std::string(mResourcePath);
-
-    std::cout << errorMsg << std::endl << std::flush;
-
-    throw(vpException(vpException::ioError, errorMsg));
-  }
-
-
-  std::cout << "##################### add resources" << std::endl;
-  // Add Optional resources (given by the user).
-  for (std::list<std::string>::const_iterator iter = mOptionalResourceLocation.begin();
-       iter != mOptionalResourceLocation.end(); ++iter) {
-    Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
-        *iter, "FileSystem", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-  }
-
   // Create the window
   bool canInit = true;
   if (mshowConfigDialog) {
@@ -430,6 +346,12 @@ void vpAROgre::init(bool
 
     mRoot->initialise(false);
   }
+
+#if (VISP_HAVE_OGRE_VERSION < (1<<16 | 10<<8 | 0))
+  mSceneMgr = mRoot->createSceneManager(Ogre::ST_GENERIC);
+#else
+  mSceneMgr = mRoot->createSceneManager(Ogre::DefaultSceneManagerFactory::FACTORY_TYPE_NAME, Ogre::BLANKSTRING);
+#endif
 
   bool fullscreen = false;
   Ogre::NameValuePairList misc;
@@ -474,6 +396,84 @@ void vpAROgre::init(bool
 #endif
   }
   mWindow = mRoot->createRenderWindow(name, mWindowWidth, mWindowHeight, fullscreen, &misc);
+
+  // Initialize the RTShaderSystem, if available
+  bool hasInitializedTheRTSS = initialiseRTShaderSystem();
+  if (!hasInitializedTheRTSS) {
+    std::cout << "[vpAROgre::init] RTSS is not available." << std::endl;
+  }
+
+  // Load resource paths from config file
+
+  // File format is:
+  //  [ResourceGroupName]
+  //  ArchiveType=Path
+  //  .. repeat
+  // For example:
+  //  [General]
+  //  FileSystem=media/
+  //  Zip=packages/level1.zip
+
+  // mResourcePath may contain more than one folder location separated by ";"
+  bool resourcesFileExists = false;
+  std::string resourceFile;
+  std::vector<std::string> resourcesPaths = vpIoTools::splitChain(std::string(mResourcePath), std::string(";"));
+  for (size_t i = 0; i < resourcesPaths.size(); i++) {
+    resourceFile = resourcesPaths[i] + "/resources.cfg";
+    if (!vpIoTools::checkFilename(resourceFile)) {
+      continue;
+    }
+    resourcesFileExists = true;
+    std::cout << "######################### Load resource file: " << resourceFile << std::endl;
+    Ogre::ConfigFile cf;
+    cf.load(resourceFile);
+    // Go through all sections & settings in the file
+#if (VISP_HAVE_OGRE_VERSION < (1<<16 | 10<<8 | 0))
+    Ogre::ConfigFile::SectionIterator seci = cf.getSectionIterator();
+
+    Ogre::String secName, typeName, archName;
+    while (seci.hasMoreElements()) {
+      secName = seci.peekNextKey();
+      Ogre::ConfigFile::SettingsMultiMap *settings = seci.getNext();
+      Ogre::ConfigFile::SettingsMultiMap::iterator i;
+      for (i = settings->begin(); i != settings->end(); ++i) {
+        typeName = i->first;
+        archName = i->second;
+        Ogre::ResourceGroupManager::getSingleton().addResourceLocation(archName, typeName, secName);
+      }
+    }
+#else
+    const  Ogre::ConfigFile::SettingsBySection_ &sectionsNamesAndSettigns = cf.getSettingsBySection();
+    Ogre::String secName, typeName, archName;
+    for (std::pair<Ogre::String, Ogre::ConfigFile::SettingsMultiMap> name_settings : sectionsNamesAndSettigns) {
+      secName = name_settings.first;
+      Ogre::ConfigFile::SettingsMultiMap settings = name_settings.second;
+      Ogre::ConfigFile::SettingsMultiMap::iterator i;
+      for (i = settings.begin(); i != settings.end(); ++i) {
+        typeName = i->first;
+        archName = i->second;
+        Ogre::ResourceGroupManager::getSingleton().addResourceLocation(archName, typeName, secName);
+      }
+    }
+#endif
+  }
+  if (!resourcesFileExists) {
+    std::string errorMsg = std::string("Error: the requested resource file \"resources.cfg\"") +
+      std::string("doesn't exist in ") + std::string(mResourcePath);
+
+    std::cout << errorMsg << std::endl << std::flush;
+
+    throw(vpException(vpException::ioError, errorMsg));
+  }
+
+
+  std::cout << "##################### add resources" << std::endl;
+  // Add Optional resources (given by the user).
+  for (std::list<std::string>::const_iterator iter = mOptionalResourceLocation.begin();
+       iter != mOptionalResourceLocation.end(); ++iter) {
+    Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+        *iter, "FileSystem", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+  }
 
   // Initialise resources
   Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
@@ -546,11 +546,11 @@ void vpAROgre::init(bool
   /*Ogre::Viewport* Viewport =*/RTarget->addViewport(mCamera);
   RTarget->getViewport(0)->setClearEveryFrame(true);
   RTarget->getViewport(0)->setOverlaysEnabled(false);
-}
+  }
 
-/*!
-  Destructor.
-*/
+  /*!
+    Destructor.
+  */
 vpAROgre::~vpAROgre(void)
 {
   // Destroy 3D scene
@@ -571,7 +571,7 @@ vpAROgre::~vpAROgre(void)
 #if (VISP_HAVE_OGRE_VERSION < (1<<16 | 10<<8 | 0))
   if (Ogre::Root::getSingletonPtr()) {
     hasNoMoreElements = !Ogre::Root::getSingletonPtr()->getSceneManagerIterator().hasMoreElements();
-}
+  }
 #else
   if (Ogre::Root::getSingletonPtr()) {
     hasNoMoreElements = Ogre::Root::getSingletonPtr()->getSceneManagers().empty();
@@ -582,13 +582,13 @@ vpAROgre::~vpAROgre(void)
     delete mRoot;
   }
   mRoot = 0;
-  }
+}
 
-  /*!
-    Function testing if the program must stop rendering or not.
-    \param evt : Frame event to process.
-    \return False if the program must be stopped.
-  */
+/*!
+  Function testing if the program must stop rendering or not.
+  \param evt : Frame event to process.
+  \return False if the program must be stopped.
+*/
 bool vpAROgre::stopTest(const Ogre::FrameEvent &evt)
 {
   // Always keep this part
@@ -1054,15 +1054,15 @@ void vpAROgre::closeOIS(void)
 
     OIS::InputManager::destroyInputSystem(mInputManager);
     mInputManager = 0;
-}
-#endif
   }
+#endif
+}
 
-  /*!
-    Update the projection parameters of the camera.
-  */
-  // Note: equation taken from:
-  // http://strawlab.org/2011/11/05/augmented-reality-with-OpenGL/
+/*!
+  Update the projection parameters of the camera.
+*/
+// Note: equation taken from:
+// http://strawlab.org/2011/11/05/augmented-reality-with-OpenGL/
 void vpAROgre::updateCameraProjection(void)
 {
   if (mCamera != 0) {
@@ -1138,11 +1138,11 @@ void vpAROgre::updateBackgroundTexture(const vpImage<vpRGBa> &I)
 
   // Unlock the pixel buffer
   mPixelBuffer->unlock();
-  }
+}
 
-  /*!
-    Update Camera parameters from a pose calculation.
-  */
+/*!
+  Update Camera parameters from a pose calculation.
+*/
 void vpAROgre::updateCameraParameters(const vpHomogeneousMatrix &cMw)
 {
   // The matrix is given to Ogre with some changes to fit with the world
@@ -1204,7 +1204,7 @@ void vpAROgre::getRenderingOutput(vpImage<vpRGBa> &I, const vpHomogeneousMatrix 
 
   // Unlock the pixel buffer
   mPixelBuffer->unlock();
-  }
+}
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_ar.a(vpAROgre.cpp.o) has no symbols
