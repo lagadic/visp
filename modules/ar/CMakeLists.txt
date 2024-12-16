@@ -51,7 +51,6 @@ if(USE_OGRE)
   endif()
 
   # hack to fix possible presence of NOTFOUND in OGRE_INCLUDE_DIRS
-  #message("OGRE_INCLUDE_DIRS: ${OGRE_INCLUDE_DIRS}")
   foreach(inc_ ${OGRE_INCLUDE_DIRS})
     if(NOT ${inc_} MATCHES "NOTFOUND")
       list(APPEND opt_system_incs ${inc_})
@@ -67,6 +66,18 @@ if(USE_OGRE)
     endforeach()
   else()
     list(APPEND opt_libs ${OGRE_LIBRARIES})
+  endif()
+
+  if(${OGRE_VERSION} GREATER_EQUAL "1.12.0")
+    foreach(component ${OGRE_COMPONENTS})
+      set(ogre_target "OGRE_${component}_LIBRARIES")
+      if(TARGET ${${ogre_target}})
+        get_target_property(inc_dirs ${${ogre_target}} INTERFACE_INCLUDE_DIRECTORIES)
+        if(inc_dirs)
+          list(APPEND opt_system_incs ${inc_dirs})
+        endif()
+      endif()
+    endforeach()
   endif()
 endif(USE_OGRE)
 
@@ -187,7 +198,6 @@ endif()
 
 vp_add_module(ar visp_core)
 vp_glob_module_sources()
-
 
 vp_module_include_directories(${opt_incs} SYSTEM ${opt_system_incs})
 vp_create_module(${opt_libs})
