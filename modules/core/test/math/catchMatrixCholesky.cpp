@@ -142,9 +142,9 @@ TEST_CASE("3 x 3 input", "[cholesky]")
   }
 #endif
 
-// There is a bug with OpenCV 3.1.0
+// There is a bug with OpenCV 2.4.9 and OpenCV 3.1.0
 // See https://answers.opencv.org/question/99704/cholesky-function-in-opencv/
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION != 0x030100)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION != 0x020409) && (VISP_HAVE_OPENCV_VERSION != 0x030100)
   SECTION("OPENCV")
   {
     vpMatrix L = M.choleskyByOpenCV();
@@ -183,9 +183,9 @@ TEST_CASE("4 x 4 input", "[cholesky]")
   }
 #endif
 
-// There is a bug with OpenCV 3.1.0
+// There is a bug with OpenCV 2.4.9 and OpenCV 3.1.0
 // See https://answers.opencv.org/question/99704/cholesky-function-in-opencv/
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION != 0x030100)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION != 0x020409) && (VISP_HAVE_OPENCV_VERSION != 0x030100)
   SECTION("OPENCV")
   {
     vpMatrix L = M.choleskyByOpenCV();

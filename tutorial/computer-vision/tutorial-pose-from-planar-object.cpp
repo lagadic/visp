@@ -135,7 +135,7 @@ inline Model::Model(const std::string &model_filename)
       data_curr_line++;
     }
     catch (...) {
-   // Line is empty or incomplete. We skeep it
+      // Line is empty or incomplete. We skeep it
     }
   }
 
@@ -167,7 +167,7 @@ std::ostream &operator<<(std::ostream &os, const Model &model)
       << std::setw(6) << std::setfill(' ') << bound.get_X() << ", "
       << std::setw(6) << std::setfill(' ') << bound.get_Y() << ", "
       << std::setw(6) << std::setfill(' ') << bound.get_Z() << std::endl;
-   // clang-format on
+    // clang-format on
   }
 
   os << "-Keypoints:" << std::endl;
@@ -177,7 +177,7 @@ std::ostream &operator<<(std::ostream &os, const Model &model)
       << std::setw(6) << std::setfill(' ') << keypoint.get_X() << ", "
       << std::setw(6) << std::setfill(' ') << keypoint.get_Y() << ", "
       << std::setw(6) << std::setfill(' ') << keypoint.get_Z() << std::endl;
-   // clang-format on
+    // clang-format on
   }
 
   return os;

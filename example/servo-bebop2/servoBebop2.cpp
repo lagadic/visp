@@ -161,7 +161,7 @@ int main(int argc, char **argv)
     else if (argc >= 2 && (std::string(argv[1]) == "--help" || std::string(argv[1]) == "-h")) {
       std::cout << "\nUsage:\n"
         << "  " << argv[0]
-        << " [--tag_size <size>] [--ip <drone ip>] [--distance_to_tag <distance>] [--intrinsic <xml file>] "
+        << " [--tag-size <size>] [--ip <drone ip>] [--distance_to_tag <distance>] [--intrinsic <xml file>] "
         << "[--hd_stream] [--verbose] [-v] [--help] [-h]\n"
         << std::endl
         << "Description:\n"

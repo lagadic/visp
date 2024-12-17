@@ -90,25 +90,20 @@ int main(int argc, const char *argv[])
     unsigned int opt_height = 480;
 
     for (int i = 1; i < argc; i++) {
-      if (std::string(argv[i]) == "--fps") {
-        opt_fps = std::atoi(argv[i + 1]);
-        i++;
+      if (std::string(argv[i]) == "--fps" && i + 1 < argc) {
+        opt_fps = std::atoi(argv[++i]);
       }
-      else if (std::string(argv[i]) == "--seqname") {
-        opt_seqname = std::string(argv[i + 1]);
-        i++;
+      else if (std::string(argv[i]) == "--seqname" && i + 1 < argc) {
+        opt_seqname = std::string(argv[++i]);
       }
-      else if (std::string(argv[i]) == "--width") {
-        opt_width = std::atoi(argv[i + 1]);
-        i++;
+      else if (std::string(argv[i]) == "--width" && i + 1 < argc) {
+        opt_width = std::atoi(argv[++i]);
       }
-      else if (std::string(argv[i]) == "--height") {
-        opt_height = std::atoi(argv[i + 1]);
-        i++;
+      else if (std::string(argv[i]) == "--height" && i + 1 < argc) {
+        opt_height = std::atoi(argv[++i]);
       }
-      else if (std::string(argv[i]) == "--record") {
-        opt_record_mode = std::atoi(argv[i + 1]);
-        i++;
+      else if (std::string(argv[i]) == "--record" && i + 1 < argc) {
+        opt_record_mode = std::atoi(argv[++i]);
       }
       else if (std::string(argv[i]) == "--no-display") {
         opt_display = false;

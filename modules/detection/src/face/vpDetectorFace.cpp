@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +29,10 @@
  *
  * Description:
  * Detect faces.
- *
-*****************************************************************************/
+ */
 #include <visp3/core/vpConfig.h>
 
-#if defined(HAVE_OPENCV_OBJDETECT)
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_OBJDETECT)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_XOBJDETECT))
 
 #include <algorithm>
 
@@ -47,14 +45,14 @@ BEGIN_VISP_NAMESPACE
 /*!
   Default constructor.
  */
-vpDetectorFace::vpDetectorFace() : m_faces(), m_face_cascade(), m_frame_gray() { }
+  vpDetectorFace::vpDetectorFace() : m_faces(), m_face_cascade(), m_frame_gray() { }
 
-/*!
-  Set the name of the OpenCV cascade classifier file used for face detection.
-  \param filename : Full path to access to the file. Such a file can be found
-  in OpenCV. Within the last versions it was name
-  "haarcascade_frontalface_alt.xml".
- */
+  /*!
+    Set the name of the OpenCV cascade classifier file used for face detection.
+    \param filename : Full path to access to the file. Such a file can be found
+    in OpenCV. Within the last versions it was name
+    "haarcascade_frontalface_alt.xml".
+   */
 void vpDetectorFace::setCascadeClassifierFile(const std::string &filename)
 {
   if (!m_face_cascade.load(filename)) {

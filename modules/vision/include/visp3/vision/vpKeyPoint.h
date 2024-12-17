@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +30,13 @@
  * Description:
  * Key point functionalities.
  */
-#ifndef _vpKeyPoint_h_
-#define _vpKeyPoint_h_
+#ifndef VP_KEYPOINT_H
+#define VP_KEYPOINT_H
+
+#include <visp3/core/vpConfig.h>
+
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_FEATURES2D)) || \
+  ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D) && defined(HAVE_OPENCV_FEATURES))
 
 #include <algorithm> // std::transform
 #include <float.h>   // DBL_MAX
@@ -43,7 +48,6 @@
 #include <time.h>   // time
 #include <vector>   // std::vector
 
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpPixelMeterConversion.h>
@@ -60,16 +64,21 @@
 #include <visp3/core/vpPolygon.h>
 #include <visp3/vision/vpXmlConfigParserKeyPoint.h>
 
-// Require at least OpenCV >= 2.1.1
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_FEATURES2D)
-#include <opencv2/features2d/features2d.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/imgproc/imgproc_c.h>
+#include <opencv2/core/core.hpp>
 
-#if defined(VISP_HAVE_OPENCV_XFEATURES2D) // OpenCV >= 3.0.0
+#if defined(HAVE_OPENCV_FEATURES2D)
+#include <opencv2/features2d/features2d.hpp>
+#endif
+
+#if defined(HAVE_OPENCV_XFEATURES2D)
 #include <opencv2/xfeatures2d.hpp>
-#elif defined(VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION >= 0x020400) && \
-    (VISP_HAVE_OPENCV_VERSION < 0x030000)
+#endif
+
+#if defined(HAVE_OPENCV_IMGPROC)
+#include <opencv2/imgproc/imgproc.hpp>
+#endif
+
+#if defined(HAVE_OPENCV_NONFREE)
 #include <opencv2/nonfree/nonfree.hpp>
 #endif
 
@@ -78,7 +87,7 @@ BEGIN_VISP_NAMESPACE
  * \class vpKeyPoint
  * \ingroup group_vision_keypoints group_detection_keypoint group_detection_mbt_object
  *
- * \brief Class that allows keypoints detection (and descriptors extraction)
+ * \brief Class that allows keypoints 2D features detection (and descriptors extraction)
  * and matching thanks to OpenCV library. Thus to enable this class OpenCV should
  * be installed. Installation instructions are provided here
  * https://visp.inria.fr/3rd_opencv.
@@ -92,6 +101,43 @@ BEGIN_VISP_NAMESPACE
  * called nonfree module in OpenCV version before 3.0.0 and in xfeatures2d
  * from 3.0.0. You have to check you have the corresponding module to use SIFT
  * and SURF.
+ *
+ * Depending on OpenCV version, the table below shows which OpenCV module
+ * is required to be able to use a given 2D features detectors.
+ *
+ * 2D features detectors | OpenCV < 5.0 | OpenCV >= 5.0
+ * :-------------------: | :----------: | :-----------:
+ * AGAST                 | features2d   | xfeatures2d
+ * AKAZE                 | features2d   | xfeatures2d
+ * BRISK                 | features2d   | xfeatures2d
+ * GFTTDetector          | features2d   | features
+ * FAST                  | features2d   | features
+ * KAZE                  | features2d   | xfeatures2d
+ * MSDDetector           | xfeatures2d  | xfeatures2d
+ * MSER                  | features2d   | features
+ * ORB                   | features2d   | features
+ * SIFT                  | xfeatures2d  | features
+ * SimpleBlobDetector    | features2d   | features
+ * STAR                  | xfeatures2d  | xfeatures2d
+ * SURF                  | xfeatures2d  | xfeatures2d
+ *
+ * Depending on OpenCV version, the table below shows which OpenCV module
+ * is required to be able to use a given 2D features descriptor.
+ *
+ * 2D features descriptors | OpenCV < 5.0 | OpenCV >= 5.0
+ * :---------------------: | :----------: | :-----------:
+ * AKAZE                   | features2d   | xfeatures2d
+ * BRIEF                   | xfeatures2d  | xfeatures2d
+ * BRISK                   | features2d   | xfeatures2d
+ * BoostDesc               | xfeatures2d  | xfeatures2d
+ * DAISY                   | xfeatures2d  | xfeatures2d
+ * FREAK                   | xfeatures2d  | xfeatures2d
+ * KAZE                    | features2d   | xfeatures2d
+ * LATCH                   | xfeatures2d  | xfeatures2d
+ * ORB                     | features2d   | features
+ * SIFT                    | xfeatures2d  | features
+ * SURF                    | xfeatures2d  | xfeatures2d
+ * VGG                     | xfeatures2d  | xfeatures2d
  *
  * The goal of this class is to provide a tool to match reference keypoints
  * from a reference image (or train keypoints in OpenCV terminology) and detected
@@ -257,65 +303,104 @@ public:
   /*! Predefined constant for feature detection type. */
   enum vpFeatureDetectorType
   {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020403)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x050000)
+#  if defined(HAVE_OPENCV_FEATURES)
     DETECTOR_FAST,       //!< FAST detector
+    DETECTOR_GFTT,       //!< GFTT detector
     DETECTOR_MSER,       //!< MSER detector
     DETECTOR_ORB,        //!< ORB detector
-    DETECTOR_BRISK,      //!< BRISK detector
-    DETECTOR_GFTT,       //!< GFTT detector
-    DETECTOR_SimpleBlob, //!< SimpleBlob detector
-#if (VISP_HAVE_OPENCV_VERSION < 0x030000) || (defined(VISP_HAVE_OPENCV_XFEATURES2D))
-    DETECTOR_STAR,       //!< STAR detector
-#endif
-#if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D) || \
-    (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)
     DETECTOR_SIFT,       //!< SIFT detector
-#endif
-#if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D)
+    DETECTOR_SimpleBlob, //!< SimpleBlob detector
+#  endif
+#  if defined(HAVE_OPENCV_XFEATURES2D)
+    DETECTOR_AGAST,      //!< AGAST detector
+    DETECTOR_AKAZE,      //!< AKAZE detector
+    DETECTOR_BRISK,      //!< BRISK detector
+    DETECTOR_KAZE,       //!< KAZE detector
+    DETECTOR_MSD,        //!< MSD detector
+    DETECTOR_STAR,       //!< STAR detector
+#  endif
+#  if defined(OPENCV_ENABLE_NONFREE) && defined(HAVE_OPENCV_XFEATURES2D)
     DETECTOR_SURF,       //!< SURF detector
+#  endif
+#else // OpenCV < 5.0.0
+#  if defined(HAVE_OPENCV_FEATURES2D)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+    DETECTOR_AGAST,      //!< AGAST detector
+    DETECTOR_AKAZE,      //!< AKAZE detector
 #endif
+    DETECTOR_BRISK,      //!< BRISK detector
+    DETECTOR_FAST,       //!< FAST detector
+    DETECTOR_GFTT,       //!< GFTT detector
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
     DETECTOR_KAZE,       //!< KAZE detector
-    DETECTOR_AKAZE,      //!< AKAZE detector
-    DETECTOR_AGAST,      //!< AGAST detector
 #endif
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030100) && defined(VISP_HAVE_OPENCV_XFEATURES2D)
+    DETECTOR_MSER,       //!< MSER detector
+    DETECTOR_ORB,        //!< ORB detector
+    DETECTOR_SimpleBlob, //!< SimpleBlob detector
+#  endif
+#  if defined(HAVE_OPENCV_XFEATURES2D)
     DETECTOR_MSD,        //!< MSD detector
+    DETECTOR_SIFT,       //!< SIFT detector
+    DETECTOR_STAR,       //!< STAR detector
+#  endif
+#  if defined(OPENCV_ENABLE_NONFREE) && defined(HAVE_OPENCV_XFEATURES2D)
+    DETECTOR_SURF,       //!< SURF detector
+#  endif
 #endif
-#endif
+
     DETECTOR_TYPE_SIZE   //!< Number of detectors available
   };
 
   /*! Predefined constant for descriptor extraction type. */
   enum vpFeatureDescriptorType
   {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020403)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x050000)
+#  if defined(HAVE_OPENCV_FEATURES)
     DESCRIPTOR_ORB,       //!< ORB descriptor
-    DESCRIPTOR_BRISK,     //!< BRISK descriptor
-#if (VISP_HAVE_OPENCV_VERSION < 0x030000) || (defined(VISP_HAVE_OPENCV_XFEATURES2D))
-    DESCRIPTOR_FREAK,     //!< FREAK descriptor
-    DESCRIPTOR_BRIEF,     //!< BRIEF descriptor
-#endif
-#if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D) || \
-    (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)
     DESCRIPTOR_SIFT,      //!< SIFT descriptor
+#  endif
+#  if defined(HAVE_OPENCV_XFEATURES2D)
+    DESCRIPTOR_AKAZE,     //!< AKAZE descriptor
+    DESCRIPTOR_BRISK,     //!< BRISK descriptor
+    DESCRIPTOR_BoostDesc, //!< BoostDesc descriptor
+    DESCRIPTOR_BRIEF,     //!< BRIEF descriptor
+    DESCRIPTOR_DAISY,     //!< DAISY descriptor
+    DESCRIPTOR_FREAK,     //!< FREAK descriptor
+    DESCRIPTOR_KAZE,      //!< KAZE descriptor
+    DESCRIPTOR_LATCH,     //!< LATCH descriptor
+    DESCRIPTOR_VGG,       //!< VGG descriptor
+#  endif
+#  if defined(OPENCV_ENABLE_NONFREE) && defined(HAVE_OPENCV_XFEATURES2D)
+    DESCRIPTOR_SURF,      //!< SURF descriptor
+#  endif
+#else // opencv < 5.0.0
+#  if defined(HAVE_OPENCV_FEATURES2D)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+    DESCRIPTOR_AKAZE,     //!< AKAZE descriptor
 #endif
-#if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D)
-    DESCRIPTOR_SURF,      //!< SUFT descriptor
-#endif
+    DESCRIPTOR_BRISK,     //!< BRISK descriptor
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
     DESCRIPTOR_KAZE,      //!< KAZE descriptor
-    DESCRIPTOR_AKAZE,     //!< AKAZE descriptor
-#if defined(VISP_HAVE_OPENCV_XFEATURES2D)
+#endif
+    DESCRIPTOR_ORB,       //!< ORB descriptor
+#  endif
+#  if defined(HAVE_OPENCV_XFEATURES2D)
+    DESCRIPTOR_BRIEF,     //!< BRIEF descriptor
     DESCRIPTOR_DAISY,     //!< DAISY descriptor
+    DESCRIPTOR_FREAK,     //!< FREAK descriptor
     DESCRIPTOR_LATCH,     //!< LATCH descriptor
+    DESCRIPTOR_SIFT,      //!< SIFT descriptor
+#  endif
+#  if defined(OPENCV_ENABLE_NONFREE) && defined(HAVE_OPENCV_XFEATURES2D)
+    DESCRIPTOR_SURF,      //!< SURF descriptor
+#  endif
+#  if defined(HAVE_OPENCV_XFEATURES2D) && (VISP_HAVE_OPENCV_VERSION >= 0x030200)
+    DESCRIPTOR_BoostDesc, //!< BoostDesc descriptor, only with OpenCV >= 3.2.0
+    DESCRIPTOR_VGG,       //!< VGG descriptor, only with OpenCV >= 3.2.0
+#  endif
 #endif
-#endif
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030200) && defined(VISP_HAVE_OPENCV_XFEATURES2D)
-    DESCRIPTOR_VGG,       //!< VGG descriptor
-    DESCRIPTOR_BoostDesc, //!< BoostDesc descriptor
-#endif
-#endif
+
     DESCRIPTOR_TYPE_SIZE  //!< Number of descriptors available
   };
 
@@ -971,19 +1056,16 @@ public:
   {
     if (!m_computeCovariance) {
       std::cout << "Warning : The covariance matrix has not been computed. "
-        "See setCovarianceComputation() to do it."
+        << "See setCovarianceComputation() to do it."
         << std::endl;
       return vpMatrix();
     }
 
     if (m_computeCovariance && !m_useRansacVVS) {
       std::cout << "Warning : The covariance matrix can only be computed "
-        "with a Virtual Visual Servoing approach."
-        << std::endl
+        << "with a Virtual Visual Servoing approach." << std::endl
         << "Use setUseRansacVVS(true) to choose to use a pose "
-        "estimation method based on a Virtual Visual Servoing "
-        "approach."
-        << std::endl;
+        << "estimation method based on a Virtual Visual Servoing approach." << std::endl;
       return vpMatrix();
     }
 
@@ -1008,9 +1090,7 @@ public:
   {
     std::map<vpFeatureDetectorType, std::string>::const_iterator it_name = m_mapOfDetectorNames.find(type);
     if (it_name == m_mapOfDetectorNames.end()) {
-      std::cerr << "Internal problem with the feature type and the "
-        "corresponding name!"
-        << std::endl;
+      std::cerr << "Internal problem with the feature type and the corresponding name!" << std::endl;
     }
 
     std::map<std::string, cv::Ptr<cv::FeatureDetector> >::const_iterator findDetector =
@@ -1064,9 +1144,7 @@ public:
   {
     std::map<vpFeatureDescriptorType, std::string>::const_iterator it_name = m_mapOfDescriptorNames.find(type);
     if (it_name == m_mapOfDescriptorNames.end()) {
-      std::cerr << "Internal problem with the feature type and the "
-        "corresponding name!"
-        << std::endl;
+      std::cerr << "Internal problem with the feature type and the corresponding name!" << std::endl;
     }
 
     std::map<std::string, cv::Ptr<cv::DescriptorExtractor> >::const_iterator findExtractor =
@@ -1551,12 +1629,10 @@ public:
     m_computeCovariance = flag;
     if (!m_useRansacVVS) {
       std::cout << "Warning : The covariance matrix can only be computed "
-        "with a Virtual Visual Servoing approach."
-        << std::endl
+        << "with a Virtual Visual Servoing approach." << std::endl
         << "Use setUseRansacVVS(true) to choose to use a pose "
-        "estimation method based on a Virtual "
-        "Visual Servoing approach."
-        << std::endl;
+        << "estimation method based on a Virtual "
+        << "Visual Servoing approach." << std::endl;
     }
   }
 
@@ -1923,8 +1999,8 @@ public:
     }
     else if (m_matcher != nullptr && m_useKnn && m_matcherName == "BruteForce") {
       std::cout << "Warning, you try to set the crossCheck parameter with a "
-        "BruteForce matcher but knn is enabled";
-      std::cout << " (the filtering method uses a ratio constraint)" << std::endl;
+        << "BruteForce matcher but knn is enabled"
+        << " (the filtering method uses a ratio constraint)" << std::endl;
     }
   }
 #endif

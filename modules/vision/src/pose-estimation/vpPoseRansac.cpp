@@ -480,7 +480,6 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, FuncCheckValidityPose func)
       best_consensus = sequentialRansac.getBestConsensus();
     }
   }
-
   if (foundSolution) {
     const unsigned int nbMinRandom = 4;
 

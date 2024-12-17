@@ -50,13 +50,13 @@ BEGIN_VISP_NAMESPACE
 */
 vpVideoWriter::vpVideoWriter()
   :
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO)
+#if ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
   m_writer(), m_framerate(25.0),
 #endif
   m_formatType(FORMAT_UNKNOWN), m_videoName(), m_frameName(), m_initFileName(false), m_isOpen(false), m_frameCount(0),
   m_firstFrame(0), m_width(0), m_height(0), m_frameStep(1)
 {
-#if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO)
+#if ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
   m_fourcc = cv::VideoWriter::fourcc('P', 'I', 'M', '1');
 #else
@@ -125,7 +125,7 @@ void vpVideoWriter::open(vpImage<vpRGBa> &I)
   }
   else if (m_formatType == FORMAT_AVI || m_formatType == FORMAT_MPEG || m_formatType == FORMAT_MPEG4 ||
           m_formatType == FORMAT_MOV) {
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO)
+#if ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
     m_writer = cv::VideoWriter(m_videoName, m_fourcc, m_framerate,
                                cv::Size(static_cast<int>(I.getWidth()), static_cast<int>(I.getHeight())));
 
@@ -165,7 +165,7 @@ void vpVideoWriter::open(vpImage<unsigned char> &I)
   }
   else if (m_formatType == FORMAT_AVI || m_formatType == FORMAT_MPEG || m_formatType == FORMAT_MPEG4 ||
           m_formatType == FORMAT_MOV) {
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO)
+#if ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
     m_writer = cv::VideoWriter(m_videoName, m_fourcc, m_framerate,
                                cv::Size(static_cast<int>(I.getWidth()), static_cast<int>(I.getHeight())));
 
@@ -205,7 +205,7 @@ void vpVideoWriter::saveFrame(vpImage<vpRGBa> &I)
     m_frameName = std::string(name);
   }
   else {
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO)
+#if ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
     cv::Mat matFrame;
     vpImageConvert::convert(I, matFrame);
     m_writer << matFrame;
@@ -238,7 +238,7 @@ void vpVideoWriter::saveFrame(vpImage<unsigned char> &I)
     m_frameName = std::string(name);
   }
   else {
-#if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO)
+#if ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
     cv::Mat matFrame, rgbMatFrame;
     vpImageConvert::convert(I, matFrame);

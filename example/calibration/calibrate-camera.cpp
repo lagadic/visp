@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,18 +29,26 @@
  *
  * Description:
  * Camera calibration with chessboard or circle calibration grid.
- *
-*****************************************************************************/
+ */
 #include <iostream>
 
 #include <visp3/core/vpConfig.h>
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_HIGHGUI) && \
-  defined(HAVE_OPENCV_IMGPROC) && defined(VISP_HAVE_PUGIXML)
+#if defined(HAVE_OPENCV_HIGHGUI) &&  defined(HAVE_OPENCV_IMGPROC) && defined(VISP_HAVE_PUGIXML) \
+  && (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D)))
 
 #include <map>
 
+#if defined(HAVE_OPENCV_CALIB3D)
 #include <opencv2/calib3d/calib3d.hpp>
+#elif defined(HAVE_OPENCV_CALIB)
+#include <opencv2/calib.hpp>
+#endif
+
+#if defined(HAVE_OPENCV_CONTRIB)
+#include <opencv2/contrib/contrib.hpp> // Needed on Ubuntu 16.04 with OpenCV 2.4.9.1
+#endif
+
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -674,14 +681,21 @@ int main(int argc, const char *argv[])
 #else
 int main()
 {
-#if !((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_HIGHGUI) &&  defined(HAVE_OPENCV_IMGPROC))
-  std::cout << "OpenCV calib3d, highgui and imgproc modules are requested to run the calibration." << std::endl;
-  std::cout << "Tip:" << std::endl;
-  std::cout << "- Install OpenCV, configure again ViSP using cmake and build again this example" << std::endl;
+#if !defined(HAVE_OPENCV_IMGPROC)
+  std::cout << "This example requires OpenCV imgproc module." << std::endl;
+#endif
+#if !defined(HAVE_OPENCV_HIGHGUI)
+  std::cout << "This example requires OpenCV highgui module." << std::endl;
+#endif
+#if (VISP_HAVE_OPENCV_VERSION < 0x050000) && !defined(HAVE_OPENCV_CALIB3D)
+  std::cout << "This example requires OpenCV calib3d module." << std::endl;
+#endif
+#if (VISP_HAVE_OPENCV_VERSION >= 0x050000) && !defined(HAVE_OPENCV_3D)
+  std::cout << "This example requires OpenCV 3d module." << std::endl;
 #endif
 #if !defined(VISP_HAVE_PUGIXML)
   std::cout << "pugixml built-in 3rdparty is requested to run the calibration." << std::endl;
 #endif
   return EXIT_SUCCESS;
-  }
+}
 #endif
