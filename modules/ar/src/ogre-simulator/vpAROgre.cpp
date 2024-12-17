@@ -86,10 +86,8 @@ vpAROgre::vpAROgre(const vpCameraParameters &cam, unsigned int width, unsigned i
   mWindowHeight(height), mWindowWidth(width), windowHidden(false), mNearClipping(0.001), mFarClipping(200), mcam(cam),
   mshowConfigDialog(true), mOptionalResourceLocation()
 {
-#ifdef OGRE_BUILD_COMPONENT_RTSHADERSYSTEM
-#if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 10<<8 | 0))
+#if defined(OGRE_BUILD_COMPONENT_RTSHADERSYSTEM) & (VISP_HAVE_OGRE_VERSION >= (1<<16 | 10 <<8 | 0))
   mMaterialMgrListener = NULL;
-#endif
   mShaderGenerator = NULL;
 #endif
 }
@@ -99,19 +97,15 @@ Initialize the RT Shader system.
 */
 bool vpAROgre::initialiseRTShaderSystem()
 {
-#ifdef OGRE_BUILD_COMPONENT_RTSHADERSYSTEM
+#if defined(OGRE_BUILD_COMPONENT_RTSHADERSYSTEM) & (VISP_HAVE_OGRE_VERSION >= (1<<16 | 10 <<8 | 0))
   if (Ogre::RTShader::ShaderGenerator::initialize()) {
     mShaderGenerator = Ogre::RTShader::ShaderGenerator::getSingletonPtr();
 
-#if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 10<<8 | 0))
-// Create and register the material manager listener if it doesn't exist yet.
+    // Create and register the material manager listener if it doesn't exist yet.
     if (!mMaterialMgrListener) {
       mMaterialMgrListener = new OgreBites::SGTechniqueResolverListener(mShaderGenerator);
       Ogre::MaterialManager::getSingleton().addListener(mMaterialMgrListener);
     }
-#else
-//TODO
-#endif
     return true;
   }
 #endif
@@ -123,20 +117,18 @@ Destroy the RT Shader system.
 */
 void vpAROgre::destroyRTShaderSystem()
 {
-#ifdef OGRE_BUILD_COMPONENT_RTSHADERSYSTEM
+#if defined(OGRE_BUILD_COMPONENT_RTSHADERSYSTEM) & (VISP_HAVE_OGRE_VERSION >= (1<<16 | 10 <<8 | 0))
   // Restore default scheme.
   Ogre::MaterialManager::getSingleton().setActiveScheme(Ogre::MaterialManager::DEFAULT_SCHEME_NAME);
 
-#if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 10<<8 | 0))
   // Unregister the material manager listener.
   if (mMaterialMgrListener != NULL) {
     Ogre::MaterialManager::getSingleton().removeListener(mMaterialMgrListener);
     delete mMaterialMgrListener;
     mMaterialMgrListener = NULL;
   }
-#endif
 
-// Destroy RTShader system.
+  // Destroy RTShader system.
   if (mShaderGenerator != NULL) {
     Ogre::RTShader::ShaderGenerator::destroy();
     mShaderGenerator = NULL;
@@ -553,8 +545,12 @@ void vpAROgre::init(bool
 */
 vpAROgre::~vpAROgre(void)
 {
+#if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 10<<8 | 0))
   mPixelBuffer.reset();
-  // Destroy 3D scene
+#else
+  mPixelBuffer.setNull();
+#endif
+// Destroy 3D scene
   destroyScene();
   // Close OIS
   closeOIS();

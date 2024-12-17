@@ -61,8 +61,7 @@
 #include <Ogre.h>
 #include <OgreFrameListener.h>
 
-#if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 10<<8 | 0))
-#include <OgreComponents.h>
+#if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 10 <<8 | 0))
 #include <Bites/OgreBitesConfigDialog.h>
 #endif
 
@@ -70,11 +69,15 @@
 #include <Bites/OgreWindowEventUtilities.h>
 #endif
 
-#ifdef OGRE_BUILD_COMPONENT_RTSHADERSYSTEM
-#include <RTShaderSystem/OgreShaderGenerator.h>
-#if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 10<<8 | 0))
-#include <Bites/OgreSGTechniqueResolverListener.h>
+#if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 12 <<8 | 0))
+#include <OgreComponents.h>
+#elif (VISP_HAVE_OGRE_VERSION >= (1<<16 | 10 <<8 | 0))
+#include <OgreBuildSettings.h>
 #endif
+
+#if defined(OGRE_BUILD_COMPONENT_RTSHADERSYSTEM) & (VISP_HAVE_OGRE_VERSION >= (1<<16 | 10 <<8 | 0))
+#include <RTShaderSystem/OgreShaderGenerator.h>
+#include <Bites/OgreSGTechniqueResolverListener.h>
 #endif // INCLUDE_RTSHADER_SYSTEM
 
 #ifdef VISP_HAVE_OIS
@@ -383,11 +386,9 @@ protected:
   OIS::Keyboard *mKeyboard;
 #endif
 
-#ifdef OGRE_BUILD_COMPONENT_RTSHADERSYSTEM
+#if defined(OGRE_BUILD_COMPONENT_RTSHADERSYSTEM) & (VISP_HAVE_OGRE_VERSION >= (1<<16 | 10 <<8 | 0))
   Ogre::RTShader::ShaderGenerator *mShaderGenerator; // The Shader generator instance.
-#if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 10<<8 | 0))
   OgreBites::SGTechniqueResolverListener *mMaterialMgrListener; // Shader generator material manager listener.
-#endif
 #endif // INCLUDE_RTSHADER_SYSTEM
 
   // ViSP AR System
