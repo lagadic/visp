@@ -82,6 +82,7 @@ int main(int argc, char **argv)
     }
 
     vpImage<unsigned char> I;
+    vpCameraParameters cam;
 
     //! [Grabber]
 #if defined(VISP_HAVE_V4L2)
@@ -92,21 +93,25 @@ int main(int argc, char **argv)
     g.setDevice(device.str());
     g.setScale(1);
     g.open(I);
+    cam.initPersProjWithoutDistortion(840, 840, I.getWidth() / 2, I.getHeight() / 2); // Default parameters
 #elif defined(VISP_HAVE_DC1394)
     (void)opt_device; // To avoid non used warning
     std::cout << "Use DC1394 grabber" << std::endl;
     vp1394TwoGrabber g;
     g.open(I);
+    cam.initPersProjWithoutDistortion(840, 840, I.getWidth() / 2, I.getHeight() / 2); // Default parameters
 #elif defined(VISP_HAVE_CMU1394)
     (void)opt_device; // To avoid non used warning
     std::cout << "Use CMU1394 grabber" << std::endl;
     vp1394CMUGrabber g;
     g.open(I);
+    cam.initPersProjWithoutDistortion(840, 840, I.getWidth() / 2, I.getHeight() / 2); // Default parameters
 #elif defined(VISP_HAVE_FLYCAPTURE)
     (void)opt_device; // To avoid non used warning
     std::cout << "Use FlyCapture grabber" << std::endl;
     vpFlyCaptureGrabber g;
     g.open(I);
+    cam.initPersProjWithoutDistortion(840, 840, I.getWidth() / 2, I.getHeight() / 2); // Default parameters
 #elif defined(VISP_HAVE_REALSENSE2)
     (void)opt_device; // To avoid non used warning
     std::cout << "Use Realsense 2 grabber" << std::endl;
@@ -130,11 +135,11 @@ int main(int argc, char **argv)
     cv::Mat frame;
     g >> frame; // get a new frame from camera
     vpImageConvert::convert(frame, I);
+    cam.initPersProjWithoutDistortion(840, 840, I.getWidth() / 2, I.getHeight() / 2); // Default parameters
 #endif
     //! [Grabber]
 
     // Parameters of our camera
-    vpCameraParameters cam(840, 840, I.getWidth() / 2, I.getHeight() / 2); // Default parameters
     vpXmlParserCamera parser;
     if (!opt_intrinsic_file.empty() && !opt_camera_name.empty()) {
       std::cout << "Intrinsic file: " << opt_intrinsic_file << std::endl;
