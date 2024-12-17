@@ -108,7 +108,6 @@ macro(vp_create_ogre_plugin_config_file)
   endif()
 
   if(OGRE_PLUGIN_DIR_REL)
-    list(APPEND PLUGIN_REL ${OGRE_RTShaderSystem_LIBRARY_REL})
     list(APPEND PLUGIN_REL ${OGRE_RenderSystem_Direct3D9_LIBRARY_REL})
     list(APPEND PLUGIN_REL ${OGRE_RenderSystem_Direct3D10_LIBRARY_REL})
     list(APPEND PLUGIN_REL ${OGRE_RenderSystem_Direct3D11_LIBRARY_REL})
