@@ -37,10 +37,11 @@ BEGIN_VISP_NAMESPACE
 /**
  * @brief Extract the geometric features from the list of collected silhouette points
 */
-void vpRBSilhouetteMeTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix &cMo)
+void vpRBSilhouetteMeTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix &/*cMo*/)
 {
   m_controlPoints.clear();
   m_controlPoints.reserve(frame.silhouettePoints.size());
+  const vpHomogeneousMatrix &cMo = frame.renders.cMo;
   const vpHomogeneousMatrix oMc = cMo.inverse();
   vpColVector oC = oMc.getRotationMatrix() * vpColVector({ 0.0, 0.0, -1.0 });
   for (const vpRBSilhouettePoint &sp: frame.silhouettePoints) {

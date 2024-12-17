@@ -144,10 +144,11 @@ public:
 vpRBSilhouetteCCDTracker::vpRBSilhouetteCCDTracker() : vpRBFeatureTracker(), m_vvsConvergenceThreshold(0.0), m_temporalSmoothingFac(0.1), m_useMask(false), m_minMaskConfidence(0.0)
 { }
 
-void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput & /*previousFrame*/, const vpHomogeneousMatrix &cMo)
+void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput & /*previousFrame*/, const vpHomogeneousMatrix &/*cMo*/)
 {
   m_controlPoints.clear();
   //m_controlPoints.reserve(frame.silhouettePoints.size());
+  const vpHomogeneousMatrix cMo = frame.renders.cMo;
   const vpHomogeneousMatrix oMc = cMo.inverse();
   for (const vpRBSilhouettePoint &sp : frame.silhouettePoints) {
     // std::cout << m_ccdParameters.h << std::endl;
@@ -386,7 +387,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
 #if VISP_DEBUG_CCD_TRACKER
     if (std::isnan(nv_ptr[0]) || std::isnan(nv_ptr[1])) {
       throw vpException(vpException::fatalError, "x: %f, theta = %f", p.xs, p.getTheta());
-    }
+  }
 #endif
 
     int k = 0;
@@ -465,7 +466,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
       vic_ptr[10 * negative_normal + 9] = exp(-dist2[0] * dist2[0] / (2 * sigma * sigma)) / (sqrt(2 * CV_PI) * sigma);
       normalized_param[kk][1] += vic_ptr[10 * negative_normal + 7];
     }
-    }
+}
 
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
@@ -580,7 +581,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
       cov_vic_ptr[9 + m * 3 + m] += m_ccdParameters.kappa;
     }
   }
-  }
+}
 
 void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
 {

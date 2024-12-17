@@ -79,10 +79,11 @@ vpRBKltTracker::vpRBKltTracker() :
   m_maxErrorOutliersPixels(10.0), m_useMask(false), m_minMaskConfidence(0.0)
 { }
 
-void vpRBKltTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput & /*previousFrame*/, const vpHomogeneousMatrix &cMo)
+void vpRBKltTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput & /*previousFrame*/, const vpHomogeneousMatrix &/*cMo*/)
 {
   m_Iprev = m_I;
   vpImageConvert::convert(frame.I, m_I);
+  const vpHomogeneousMatrix &cMo = frame.renders.cMo;
   const vpHomogeneousMatrix oMc = cMo.inverse();
   if (m_maxErrorOutliersPixels > 0.0) {
     const double distanceThresholdPxSquare = vpMath::sqr(m_maxErrorOutliersPixels);

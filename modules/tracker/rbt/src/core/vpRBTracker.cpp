@@ -245,7 +245,25 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
       throw vpException(vpException::badValue, "Could not extract silhouette from depth canny: Object may not be in image");
     }
   }
-  m_logger.setSilhouetteTime(m_logger.endTimer());
+
+  if (m_odometry) {
+    m_logger.startTimer();
+    m_odometry->compute(input, m_previousFrame);
+    vpHomogeneousMatrix cnTc = m_odometry->getCameraMotion();
+    m_cMo = cnTc * m_cMo;
+    updateRender(input);
+    m_logger.setOdometryTime(m_logger.endTimer());
+  }
+
+  if (requiresSilhouetteCandidates) {
+    const vpHomogeneousMatrix cTcp = m_cMo * m_cMoPrev.inverse();
+    input.silhouettePoints = extractSilhouettePoints(input.renders.normals, input.renders.depth,
+                                                    input.renders.silhouetteCanny, input.renders.isSilhouette, input.cam, cTcp);
+    if (input.silhouettePoints.size() == 0) {
+      throw vpException(vpException::badValue, "Could not extract silhouette from depth canny: Object may not be in image");
+    }
+  }
+
 
   int id = 0;
   for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
@@ -281,14 +299,7 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
     id += 1;
   }
 
-  if (m_odometry) {
-    m_logger.startTimer();
-    m_odometry->compute(input, m_previousFrame);
-    vpHomogeneousMatrix cnTc = m_odometry->getCameraMotion();
-    m_cMo = cnTc * m_cMo;
-    updateRender(input);
-    m_logger.setOdometryTime(m_logger.endTimer());
-  }
+
 
   id = 0;
   for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
@@ -498,7 +509,7 @@ std::vector<vpRBSilhouettePoint> vpRBTracker::extractSilhouettePoints(
 #if defined(VISP_DEBUG_RB_TRACKER)
       if (fabs(theta) > M_PI + 1e-6) {
         throw vpException(vpException::badValue, "Theta expected to be in -Pi, Pi range but was not");
-    }
+      }
 #endif
       points.push_back(vpRBSilhouettePoint(n, m, norm, theta, Z));
       // if (Zn > 0) {
@@ -523,8 +534,8 @@ std::vector<vpRBSilhouettePoint> vpRBTracker::extractSilhouettePoints(
       // if (noNeighbor) {
       //   points.push_back(vpRBSilhouettePoint(n, m, norm, theta, Z));
       // }
+    }
   }
-}
 
   return points;
 }
@@ -550,26 +561,6 @@ void vpRBTracker::display(const vpImage<unsigned char> &I, const vpImage<vpRGBa>
     return;
   }
 
-  // vpRect bb = m_currentFrame.boundingBox;
-  // unsigned int bottom = bb.getBottom();
-  // for (unsigned int i = bb.getTop(); i < bottom; ++i) {
-  //   unsigned int linear_index = i * IRGB.getWidth() + static_cast<unsigned int>(bb.getLeft());
-  //   unsigned int stop = linear_index + static_cast<unsigned int>(bb.getWidth());
-  //   while (linear_index < stop) {
-  //     const vpRGBf &normal = m_currentFrame.renders.normals.bitmap[linear_index];
-  //     if (normal.R == 0.f && normal.G == 0.f && normal.B == 0.f) {
-  //       ++linear_index;
-  //       continue;
-  //     }
-  //     const vpRGBa rgb = IRGB.bitmap[linear_index];
-  //     const float blendFactor = 0.5;
-  //     const vpRGBf rgbF = vpRGBf(static_cast<float>(rgb.R), static_cast<float>(rgb.G), static_cast<float>(rgb.B));
-  //     vpRGBf blendF = ((normal + vpRGBf(1.f)) * 127.5f) * blendFactor + rgbF * (1.f - blendFactor);
-  //     IRGB.bitmap[linear_index] = vpRGBa(static_cast<unsigned char>(blendF.R), static_cast<unsigned char>(blendF.G), static_cast<unsigned char>(blendF.B));
-  //     ++linear_index;
-  //   }
-  // }
-  vpDisplay::display(IRGB);
 
   for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
     if (tracker->featuresShouldBeDisplayed()) {

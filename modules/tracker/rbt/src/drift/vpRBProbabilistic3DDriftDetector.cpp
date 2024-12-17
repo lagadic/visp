@@ -44,8 +44,9 @@ BEGIN_VISP_NAMESPACE
 
 void vpRBProbabilistic3DDriftDetector::update(const vpRBFeatureTrackerInput &previousFrame,
                                               const vpRBFeatureTrackerInput &frame,
-                                              const vpHomogeneousMatrix &cTo, const vpHomogeneousMatrix &cprevTo)
+                                              const vpHomogeneousMatrix &cTo, const vpHomogeneousMatrix &/*cprevTo*/)
 {
+  const vpHomogeneousMatrix &cprevTo = frame.renders.cMo;
   const vpTranslationVector t = cprevTo.inverse().getTranslationVector();
 
   if (m_points.size() > 0) {
@@ -83,18 +84,19 @@ void vpRBProbabilistic3DDriftDetector::update(const vpRBFeatureTrackerInput &pre
 
       vpRGBf normalObject = frame.renders.normals[p.projPrevPx[1]][p.projPrevPx[0]];
 
-      vpColVector vector({ t[0] - p.X[0], t[1] - p.X[1], t[2] - p.X[2] });
+      vpColVector cameraRay({ t[0] - p.X[0], t[1] - p.X[1], t[2] - p.X[2] });
 
-      vector.normalize();
-      double angle = acos(vpColVector::dotProd(vpColVector({ normalObject.R, normalObject.G, normalObject.B }).normalize(), vector));
+      cameraRay.normalize();
+      double angle = acos(vpColVector::dotProd(vpColVector({ normalObject.R, normalObject.G, normalObject.B }).normalize(), cameraRay));
       if (angle > vpMath::rad(75)) {
         p.visible = false;
         continue;
       }
 
+      // Filter points that are too close to the silhouette edges
       if (frame.silhouettePoints.size() > 0) {
         for (const vpRBSilhouettePoint &sp: frame.silhouettePoints) {
-          if (std::pow(static_cast<double>(sp.i) - p.projPrevPx[1], 2) + std::pow(static_cast<double>(sp.j) - p.projPrevPx[0], 2) < vpMath::sqr(5)) {
+          if (std::pow(static_cast<double>(sp.i) - p.projPrevPx[1], 2) + std::pow(static_cast<double>(sp.j) - p.projPrevPx[0], 2) < vpMath::sqr(3)) {
             p.visible = false;
             break;
           }

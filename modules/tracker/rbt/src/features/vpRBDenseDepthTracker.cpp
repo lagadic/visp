@@ -52,11 +52,12 @@ void fastProjection(const vpHomogeneousMatrix &oTc, double X, double Y, double Z
   p.set_oW(1.0);
 }
 
-void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &/*previousFrame*/, const vpHomogeneousMatrix &cMo)
+void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &/*previousFrame*/, const vpHomogeneousMatrix &/*cMo*/)
 {
   const vpImage<float> &depthMap = frame.depth;
   const vpImage<float> &renderDepth = frame.renders.depth;
   vpRect bb = frame.renders.boundingBox;
+  const vpHomogeneousMatrix &cMo = frame.renders.cMo;
   vpHomogeneousMatrix oMc = cMo.inverse();
   vpRotationMatrix cRo = cMo.getRotationMatrix();
   bool useMask = m_useMask && frame.hasMask();
