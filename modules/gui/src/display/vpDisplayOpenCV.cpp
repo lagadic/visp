@@ -58,8 +58,9 @@
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#if (VISP_HAVE_OPENCV_VERSION < 0x050000)
 #include <opencv2/core/core_c.h> // for CV_FILLED versus cv::FILLED
-
+#endif
 #if defined(HAVE_OPENCV_IMGPROC)
 #include <opencv2/imgproc/imgproc.hpp>
 #endif

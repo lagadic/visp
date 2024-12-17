@@ -79,7 +79,7 @@ public:
    * Thus, if a renderer B depends on A for its render, and if B.getRenderOrder() > A.getRenderOrder() it can rely on A being initialized when B.initFromParent is called (along with the setupCamera, setupRenderTarget).
    */
   void initFramework() VP_OVERRIDE;
-  void initFromParent(std::shared_ptr<PandaFramework> framework, PointerTo<WindowFramework> window) VP_OVERRIDE;
+  void initFromParent(PointerTo<WindowFramework> window) VP_OVERRIDE;
   void initFromParent(const vpPanda3DBaseRenderer &renderer) VP_OVERRIDE;
 
   /**

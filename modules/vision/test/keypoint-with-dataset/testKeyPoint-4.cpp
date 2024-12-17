@@ -43,15 +43,14 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_FEATURES2D)
+#if defined(HAVE_OPENCV_IMGPROC) && \
+  ((VISP_HAVE_OPENCV_VERSION < 0x050000)  && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_FEATURES2D)) || \
+  ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D) && defined(HAVE_OPENCV_FEATURES))
 
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpIoTools.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/io/vpVideoReader.h>
@@ -151,7 +150,7 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
 
 template <typename Type>
 void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_display, vpImage<Type> &I,
-  vpImage<Type> &Imatch, vpImage<Type> &Iref)
+              vpImage<Type> &Imatch, vpImage<Type> &Iref)
 {
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
   std::string ext("png");
@@ -167,23 +166,20 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
   Iref = I;
   std::string filenameCur = vpIoTools::createFilePath(dirname, "image%04d." + ext);
 
-#if defined(VISP_HAVE_X11)
-  vpDisplayX display, display2;
-#elif defined(VISP_HAVE_GTK)
-  vpDisplayGTK display, display2;
-#elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI display, display2;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-  vpDisplayOpenCV display, display2;
-#endif
+  vpDisplay *display = nullptr, *display2 = nullptr;
 
   if (opt_display) {
-    display.setDownScalingFactor(vpDisplay::SCALE_AUTO);
-    display.init(I, 0, 0, "ORB keypoints matching");
     Imatch.resize(I.getHeight(), 2 * I.getWidth());
     Imatch.insert(I, vpImagePoint(0, 0));
-    display2.setDownScalingFactor(vpDisplay::SCALE_AUTO);
-    display2.init(Imatch, 0, (int)I.getHeight() / vpDisplay::getDownScalingFactor(I) + 70, "ORB keypoints matching");
+
+#ifdef VISP_HAVE_DISPLAY
+    display = vpDisplayFactory::allocateDisplay(I, 0, 0, "ORB keypoints matching");
+    display->setDownScalingFactor(vpDisplay::SCALE_AUTO);
+    display2 = vpDisplayFactory::allocateDisplay(Imatch, 0, (int)I.getHeight() / vpDisplay::getDownScalingFactor(I) + 40, "ORB keypoints matching");
+    display2->setDownScalingFactor(vpDisplay::SCALE_AUTO);
+#else
+    std::cout << "No image viewer is available..." << std::endl;
+#endif
   }
 
   vpCameraParameters cam;
@@ -240,6 +236,7 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
   cv::Ptr<cv::DescriptorExtractor> extractor;
   cv::Ptr<cv::DescriptorMatcher> matcher;
 
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
   detector = cv::ORB::create(500, 1.2f, 1);
   extractor = cv::ORB::create(500, 1.2f, 1);
@@ -247,11 +244,8 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
   detector = cv::FeatureDetector::create("ORB");
   extractor = cv::DescriptorExtractor::create("ORB");
 #endif
-  matcher = cv::DescriptorMatcher::create("BruteForce-Hamming");
-
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
-  detector->set("nLevels", 1);
 #endif
+  matcher = cv::DescriptorMatcher::create("BruteForce-Hamming");
 
   // Detect keypoints on the current image
   std::vector<cv::KeyPoint> trainKeyPoints;
@@ -286,7 +280,7 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
 
   bool opt_click = false;
   vpMouseButton::vpMouseButtonType button;
-  while ((opt_display && !g.end()) || (!opt_display && g.getFrameIndex() < 30)) {
+  while (g.getFrameIndex() < 30) {
     g.acquire(I);
 
     vpImageConvert::convert(I, matImg);
@@ -326,12 +320,16 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
     bool is_pose_estimated = false;
     if (estimated_pose.npt >= 4) {
       try {
-        unsigned int nb_inliers = (unsigned int)(0.6 * estimated_pose.npt);
+        unsigned int nb_inliers = static_cast<unsigned int>(0.7 * estimated_pose.npt);
         estimated_pose.setRansacNbInliersToReachConsensus(nb_inliers);
-        estimated_pose.setRansacThreshold(0.01);
+        estimated_pose.setRansacThreshold(0.001);
         estimated_pose.setRansacMaxTrials(500);
-        estimated_pose.computePose(vpPose::RANSAC, cMo);
-        is_pose_estimated = true;
+        if (estimated_pose.computePose(vpPose::RANSAC, cMo)) {
+          is_pose_estimated = true; // success
+        }
+        else {
+          is_pose_estimated = false;
+        }
       }
       catch (...) {
         is_pose_estimated = false;
@@ -380,6 +378,13 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
         }
       }
     }
+  }
+
+  if (display) {
+    delete display;
+  }
+  if (display2) {
+    delete display2;
   }
 }
 

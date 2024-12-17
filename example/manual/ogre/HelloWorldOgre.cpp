@@ -36,21 +36,31 @@
   \example HelloWorldOgre.cpp
 
   \brief Example that shows how to exploit the vpAROgre class.
-
 */
 
 #include <iostream>
 
+#include <visp3/core/vpConfig.h>
+
+//! [Undef grabber]
+// Comment / uncomment following lines to use the specific 3rd party compatible with your camera
+// #undef VISP_HAVE_V4L2
+// #undef VISP_HAVE_DC1394
+// #undef HAVE_OPENCV_HIGHGUI
+// #undef HAVE_OPENCV_VIDEOIO
+//! [Undef grabber]
+
 #include <visp3/ar/vpAROgre.h>
 #include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 #include <visp3/sensor/vpV4l2Grabber.h>
 
-#if defined(HAVE_OPENCV_VIDEOIO)
-#include <opencv2/videoio.hpp>
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)
+#include <opencv2/highgui/highgui.hpp> // for cv::VideoCapture
+#elif (VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)
+#include <opencv2/videoio/videoio.hpp> // for cv::VideoCapture
 #endif
 
 int main()
@@ -61,7 +71,9 @@ int main()
 
   try {
 #if defined(VISP_HAVE_OGRE)
-#if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(HAVE_OPENCV_VIDEOIO)
+#if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || \
+  ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || \
+  ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
 
     // Image to stock gathered data
     // Here we acquire a color image. The consequence will be that
@@ -79,7 +91,7 @@ int main()
     vp1394TwoGrabber grabber;
     grabber.open(I);
     grabber.acquire(I);
-#elif defined(HAVE_OPENCV_VIDEOIO)
+#elif ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI))|| ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
     // OpenCV to gather images
     cv::VideoCapture grabber(0); // open the default camera
     if (!grabber.isOpened()) {   // check if we succeeded
@@ -142,7 +154,7 @@ int main()
       // Acquire a new image
 #if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394)
       grabber.acquire(I);
-#elif defined(HAVE_OPENCV_VIDEOIO)
+#elif ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI))|| ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
       grabber >> frame;
       vpImageConvert::convert(frame, I);
 #endif

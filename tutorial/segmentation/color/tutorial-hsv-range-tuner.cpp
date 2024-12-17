@@ -7,7 +7,7 @@
 #if defined(HAVE_OPENCV_HIGHGUI) && defined(VISP_HAVE_X11)
 #include <vector>
 
-#include <opencv2/highgui.hpp>
+#include <opencv2/highgui/highgui.hpp>
 
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpImageConvert.h>

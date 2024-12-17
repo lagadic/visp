@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,14 +39,15 @@
   implemented with opencv.
 */
 
-#ifndef _vpKltOpencv_h_
-#define _vpKltOpencv_h_
+#ifndef VP_KLT_OPENCV_H
+#define VP_KLT_OPENCV_H
+
+#include <visp3/core/vpConfig.h>
+
+#if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
 
 #include <visp3/core/vpColor.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
-
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
 
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>

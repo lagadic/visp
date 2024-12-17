@@ -48,7 +48,7 @@
 #include <visp3/sensor/vpRealSense2.h>
 
 #include <opencv2/core.hpp>
-#include <opencv2/highgui.hpp>
+#include <opencv2/highgui/highgui.hpp>
 
 namespace
 {

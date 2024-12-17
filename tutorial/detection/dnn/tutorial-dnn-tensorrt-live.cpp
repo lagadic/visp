@@ -13,6 +13,7 @@
 //
 
 #include <iostream>
+
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_TENSORRT) && defined(VISP_HAVE_OPENCV)

@@ -43,14 +43,13 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_FEATURES2D) && defined(HAVE_OPENCV_VIDEO)
+#if defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO) && \
+  ((VISP_HAVE_OPENCV_VERSION < 0x050000)  && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_FEATURES2D)) || \
+  ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D) && defined(HAVE_OPENCV_FEATURES))
 
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpIoTools.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/vision/vpKeyPoint.h>
@@ -158,64 +157,65 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
   vpImageIo::read(Iinput, filename);
   Iinput.halfSizeImage(I);
 
-#if defined(VISP_HAVE_X11)
-  vpDisplayX display;
-#elif defined(VISP_HAVE_GTK)
-  vpDisplayGTK display;
-#elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI display;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-  vpDisplayOpenCV display;
-#endif
+  vpDisplay *display = nullptr;
 
   if (opt_display) {
-    display.init(I, 0, 0, "KeyPoints detection.");
+#ifdef VISP_HAVE_DISPLAY
+    display = vpDisplayFactory::allocateDisplay(I, 0, 0, "KeyPoints detection.");
+#else
+    std::cout << "No image viewer is available..." << std::endl;
+#endif
   }
 
   // Here, we want to test feature detection on a pyramid of images even for
   // features that are scale invariant to detect potential problem in ViSP.
   std::cout << "INFORMATION: " << std::endl;
   std::cout << "Here, we want to test feature detection on a pyramid of images  even for features "
-    "that are scale invariant to detect potential problem in ViSP."
-    << std::endl
+    << "that are scale invariant to detect potential problem in ViSP." << std::endl
     << std::endl;
   vpKeyPoint keyPoints;
 
   // Will test the different types of keypoints detection to see if there is
   // a problem  between OpenCV versions, modules or constructors
   std::vector<std::string> detectorNames;
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
   detectorNames.push_back("PyramidFAST");
   detectorNames.push_back("FAST");
+#endif
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
   detectorNames.push_back("PyramidMSER");
   detectorNames.push_back("MSER");
   detectorNames.push_back("PyramidGFTT");
   detectorNames.push_back("GFTT");
   detectorNames.push_back("PyramidSimpleBlob");
   detectorNames.push_back("SimpleBlob");
-// In contrib modules
-#if (VISP_HAVE_OPENCV_VERSION < 0x030000) || defined(VISP_HAVE_OPENCV_XFEATURES2D)
+#endif
+
+  // In contrib modules
+#if defined(HAVE_OPENCV_XFEATURES2D)
   detectorNames.push_back("PyramidSTAR");
   detectorNames.push_back("STAR");
 #endif
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
+  detectorNames.push_back("PyramidORB");
+  detectorNames.push_back("ORB");
+#endif
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_XFEATURES2D))
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
   detectorNames.push_back("PyramidAGAST");
   detectorNames.push_back("AGAST");
 #endif
-  detectorNames.push_back("PyramidORB");
-  detectorNames.push_back("ORB");
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020403)
   detectorNames.push_back("PyramidBRISK");
   detectorNames.push_back("BRISK");
-#endif
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
   detectorNames.push_back("PyramidKAZE");
   detectorNames.push_back("KAZE");
   detectorNames.push_back("PyramidAKAZE");
   detectorNames.push_back("AKAZE");
 #endif
+#endif
 
-#if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D) || \
-    (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_XFEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
 #if (VISP_HAVE_OPENCV_VERSION != 0x040504) && (VISP_HAVE_OPENCV_VERSION != 0x040505) && \
     (VISP_HAVE_OPENCV_VERSION != 0x040600) && (VISP_HAVE_OPENCV_VERSION != 0x040700) && \
     (VISP_HAVE_OPENCV_VERSION != 0x040900) && (VISP_HAVE_OPENCV_VERSION != 0x040A00) && \
@@ -228,7 +228,7 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
   detectorNames.push_back("SIFT");
 #endif
 #endif
-#if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D)
+#if defined(OPENCV_ENABLE_NONFREE) && defined(HAVE_OPENCV_XFEATURES2D)
   detectorNames.push_back("PyramidSURF");
   detectorNames.push_back("SURF");
 #endif
@@ -268,8 +268,7 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
 
   std::map<vpKeyPoint::vpFeatureDetectorType, std::string> mapOfDetectorNames = keyPoints.getDetectorNames();
   for (int i = 0; i < vpKeyPoint::DETECTOR_TYPE_SIZE; i++) {
-#if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D) || \
-    (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_XFEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
 #if ((VISP_HAVE_OPENCV_VERSION == 0x040504) || (VISP_HAVE_OPENCV_VERSION == 0x040505) ||  \
      (VISP_HAVE_OPENCV_VERSION == 0x040600) || (VISP_HAVE_OPENCV_VERSION == 0x040700) || \
      (VISP_HAVE_OPENCV_VERSION == 0x040900) || (VISP_HAVE_OPENCV_VERSION == 0x040A00)) && \
@@ -313,6 +312,10 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
         vpDisplay::getClick(I);
       }
     }
+  }
+
+  if (display) {
+    delete display;
   }
 }
 

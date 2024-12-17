@@ -11,7 +11,8 @@
 int main(int argc, const char *argv[])
 {
 //! [Macro defined]
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_OBJDETECT)
+#if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC) && \
+  (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_OBJDETECT)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_XOBJDETECT)))
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
 #endif
@@ -22,13 +23,17 @@ int main(int argc, const char *argv[])
     std::string opt_video = "video.mp4";
     //! [Default settings]
 
-    for (int i = 0; i < argc; i++) {
-      if (std::string(argv[i]) == "--haar")
-        opt_face_cascade_name = std::string(argv[i + 1]);
-      else if (std::string(argv[i]) == "--video")
-        opt_video = std::string(argv[i + 1]);
-      else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-        std::cout << "Usage: " << argv[0] << " [--haar <haarcascade xml filename>] [--video <input video file>]"
+    for (int i = 1; i < argc; i++) {
+      if (std::string(argv[i]) == "--haar" && i + 1 < argc) {
+        opt_face_cascade_name = std::string(argv[++i]);
+      }
+      else if (std::string(argv[i]) == "--video" && i + 1 < argc) {
+        opt_video = std::string(argv[++i]);
+      }
+      else if ((std::string(argv[i]) == "--help") || (std::string(argv[i]) == "-h")) {
+        std::cout << "Usage: " << argv[0]
+          << " [--haar <haarcascade xml filename>]"
+          << " [--video <input video file>]"
           << " [--help] [-h]" << std::endl;
         return EXIT_SUCCESS;
       }
@@ -90,8 +95,22 @@ int main(int argc, const char *argv[])
   }
   catch (const vpException &e) {
     std::cout << e.getMessage() << std::endl;
-}
+  }
 #else
+
+#if !defined(HAVE_OPENCV_HIGHGUI)
+  std::cout << "This tutorial needs OpenCV highgui module that is missing." << std::endl;
+#endif
+#if !defined(HAVE_OPENCV_IMGPROC)
+  std::cout << "This tutorial needs OpenCV imgproc module that is missing." << std::endl;
+#endif
+#if (VISP_HAVE_OPENCV_VERSION < 0x050000) && !defined(HAVE_OPENCV_OBJDETECT)
+  std::cout << "This tutorial needs OpenCV objdetect module that is missing." << std::endl;
+#endif
+#if ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && !defined(HAVE_OPENCV_XOBJDETECT))
+  std::cout << "This tutorial needs OpenCV xobjdetect module that is missing." << std::endl;
+#endif
+
   (void)argc;
   (void)argv;
 #endif
