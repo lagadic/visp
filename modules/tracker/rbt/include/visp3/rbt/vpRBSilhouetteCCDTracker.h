@@ -61,6 +61,15 @@
 
 BEGIN_VISP_NAMESPACE
 
+
+enum vpRBSilhouetteCCDDisplayType
+{
+  SIMPLE = 0,
+  WEIGHT = 1,
+  ERROR = 2,
+  INVALID = 3
+};
+
 class VISP_EXPORT vpCCDParameters
 {
 public:
@@ -239,6 +248,11 @@ public:
     m_minMaskConfidence = confidence;
   }
 
+  void setDisplayType(vpRBSilhouetteCCDDisplayType type)
+  {
+    m_displayType = type;
+  }
+
   /**
    * @}
    */
@@ -258,7 +272,7 @@ public:
     m_cov = m_sigma;
   }
 
-  void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth, const vpRBFeatureDisplayType type) const VP_OVERRIDE;
+  void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth) const VP_OVERRIDE;
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
   virtual void loadJsonConfiguration(const nlohmann::json &j) VP_OVERRIDE
@@ -303,6 +317,8 @@ protected:
 
   bool m_useMask;
   double m_minMaskConfidence;
+
+  vpRBSilhouetteCCDDisplayType m_displayType;
 };
 
 END_VISP_NAMESPACE

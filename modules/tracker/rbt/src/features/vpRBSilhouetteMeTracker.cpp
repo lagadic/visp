@@ -184,80 +184,14 @@ void vpRBSilhouetteMeTracker::computeVVSIter(const vpRBFeatureTrackerInput &fram
 }
 
 void vpRBSilhouetteMeTracker::display(const vpCameraParameters &/*cam*/, const vpImage<unsigned char> &I,
-                                      const vpImage<vpRGBa> &/*IRGB*/, const vpImage<unsigned char> &/*depth*/,
-                                      const vpRBFeatureDisplayType type) const
+                                      const vpImage<vpRGBa> &/*IRGB*/, const vpImage<unsigned char> &/*depth*/) const
 {
 
-  if (type == vpRBFeatureDisplayType::SIMPLE) {
-    for (const vpRBSilhouetteControlPoint &p: m_controlPoints) {
-      const vpMeSite &s = p.getSite();
-      s.display(I);
-      // vpImagePoint diff(p.nys * m_me.getRange(), p.nxs * m_me.getRange());
-      // vpImagePoint ip2 = p.icpoint + diff;
-      // vpDisplay::displayLine(I, p.icpoint, ip2, vpColor::lightBlue, 2);
-      // vpDisplay::displayPoint(I, p.icpoint, vpColor::red, 2);
-
-    }
-    // vpColor cs[6] = {
-    //   vpColor::red,
-    //   vpColor::blue,
-    //   vpColor::green,
-    //   vpColor::purple,
-    //   vpColor::cyan,
-    //   vpColor::darkGreen
-
-    // };
-    // unsigned colorIndex = 0;
-    // for (const vpTrackedSilhouetteLine &line: m_lines) {
-    //   if (line.getPoints().size() > 10) {
-    //     for (const vpRBSilhouetteControlPoint *p: line.getPoints()) {
-    //       vpDisplay::displayCross(I, p->getSite().m_i, p->getSite().m_j, 3, cs[colorIndex]);
-    //     }
-    //     colorIndex = (colorIndex + 1) % 6;
-    //   }
-    //   //line.getLine().display(I, cam);
-    // }
+  for (const vpRBSilhouetteControlPoint &p: m_controlPoints) {
+    const vpMeSite &s = p.getSite();
+    s.display(I);
   }
-  else if (type == vpRBFeatureDisplayType::IMPORTANCE) {
-    const double maxWeight = m_weights.getMaxValue();
-    unsigned idx = 0;
-    const vpColor bestColor = vpColor::green;
-    for (const vpRBSilhouetteControlPoint &p: m_controlPoints) {
-      const vpMeSite &s = p.getSite();
 
-      if (s.getState() == vpMeSite::NO_SUPPRESSION) {
-        double weight = m_weights[idx] / maxWeight;
-        vpColor c((unsigned char)((double)(bestColor.R) * weight), (unsigned char)((double)(bestColor.G) * weight), (unsigned char)((double)(bestColor.B) * weight));
-        vpDisplay::displayCross(I, s.get_i(), s.get_j(), 3, c, 1);
-      }
-      else {
-        s.display(I);
-      }
-      ++idx;
-    }
-  }
-  else if (type == vpRBFeatureDisplayType::ERROR) {
-    unsigned idx = 0;
-    const vpColor bestColor = vpColor::green;
-    double maxError = m_error.getMaxValue();
-
-    for (const vpRBSilhouetteControlPoint &p: m_controlPoints) {
-      const vpMeSite &s = p.getSite();
-
-      if (s.getState() == vpMeSite::NO_SUPPRESSION) {
-        double weight = m_error[idx] / maxError;
-        vpColor c((unsigned char)((double)(bestColor.R) * weight), (unsigned char)((double)(bestColor.G) * weight), (unsigned char)((double)(bestColor.B) * weight));
-        vpDisplay::displayCross(I, s.get_i(), s.get_j(), 3, c, 1);
-      }
-      else {
-        s.display(I);
-      }
-      ++idx;
-    }
-  }
-  else {
-    throw vpException(vpException::notImplementedError, "Display not implemented for unknown type");
-  }
 }
 
 END_VISP_NAMESPACE

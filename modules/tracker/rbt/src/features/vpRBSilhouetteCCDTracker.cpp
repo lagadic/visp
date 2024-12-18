@@ -141,7 +141,7 @@ public:
 
 };
 
-vpRBSilhouetteCCDTracker::vpRBSilhouetteCCDTracker() : vpRBFeatureTracker(), m_vvsConvergenceThreshold(0.0), m_temporalSmoothingFac(0.1), m_useMask(false), m_minMaskConfidence(0.0)
+vpRBSilhouetteCCDTracker::vpRBSilhouetteCCDTracker() : vpRBFeatureTracker(), m_vvsConvergenceThreshold(0.0), m_temporalSmoothingFac(0.1), m_useMask(false), m_minMaskConfidence(0.0), m_displayType(vpRBSilhouetteCCDDisplayType::SIMPLE)
 { }
 
 void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput & /*previousFrame*/, const vpHomogeneousMatrix &/*cMo*/)
@@ -258,12 +258,11 @@ void vpRBSilhouetteCCDTracker::computeVVSIter(const vpRBFeatureTrackerInput &fra
 }
 
 void vpRBSilhouetteCCDTracker::display(const vpCameraParameters &/*cam*/, const vpImage<unsigned char> &/*I*/,
-                                       const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &/*depth*/,
-                                       const vpRBFeatureDisplayType type) const
+                                       const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &/*depth*/) const
 {
   unsigned normal_points_number = floor(m_ccdParameters.h / m_ccdParameters.delta_h);
   unsigned nerror_per_point = 2 * normal_points_number * 3;
-  if (type == vpRBFeatureDisplayType::SIMPLE) {
+  if (m_displayType == vpRBSilhouetteCCDDisplayType::SIMPLE) {
 
     for (unsigned int i = 0; i < m_controlPoints.size(); ++i) {
       const vpRBSilhouetteControlPoint &p = m_controlPoints[i];
@@ -274,7 +273,7 @@ void vpRBSilhouetteCCDTracker::display(const vpCameraParameters &/*cam*/, const 
       // vpDisplay::displayArrow(IRGB, p.icpoint, ip2, p.invnormal ? vpColor::red : vpColor::lightBlue);
     }
   }
-  else if (type == vpRBFeatureDisplayType::ERROR) {
+  else if (m_displayType == vpRBSilhouetteCCDDisplayType::ERROR) {
     vpColVector errorPerPoint(m_controlPoints.size());
     double maxPointError = 0.0;
     for (unsigned int i = 0; i < m_controlPoints.size(); ++i) {
@@ -305,7 +304,7 @@ void vpRBSilhouetteCCDTracker::display(const vpCameraParameters &/*cam*/, const 
       ++idx;
     }
   }
-  else if (type == vpRBFeatureDisplayType::IMPORTANCE) {
+  else if (m_displayType == vpRBSilhouetteCCDDisplayType::WEIGHT) {
     vpColVector weightPerPoint(m_controlPoints.size());
     for (unsigned int i = 0; i < m_controlPoints.size(); ++i) {
       double sum = 0.0;
@@ -387,7 +386,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
 #if VISP_DEBUG_CCD_TRACKER
     if (std::isnan(nv_ptr[0]) || std::isnan(nv_ptr[1])) {
       throw vpException(vpException::fatalError, "x: %f, theta = %f", p.xs, p.getTheta());
-  }
+    }
 #endif
 
     int k = 0;
@@ -466,7 +465,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
       vic_ptr[10 * negative_normal + 9] = exp(-dist2[0] * dist2[0] / (2 * sigma * sigma)) / (sqrt(2 * CV_PI) * sigma);
       normalized_param[kk][1] += vic_ptr[10 * negative_normal + 7];
     }
-}
+  }
 
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for

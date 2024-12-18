@@ -97,14 +97,14 @@ public:
       override(&frame, cMo, iteration);
     }
   }
-  virtual void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth, const vpRBFeatureDisplayType type) const VP_OVERRIDE
+  virtual void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth) const VP_OVERRIDE
   {
     pybind11::gil_scoped_acquire gil;  // Acquire the GIL while in this scope.
     // Try to look up the overridden method on the Python side.
     pybind11::function override = pybind11::get_override(this, "display");
     if (override) {  // method is found
       // Pybind seems to copy the frames, so we pass the pointers
-      override(cam, &I, &IRGB, &depth, type);
+      override(cam, &I, &IRGB, &depth);
     }
   }
   virtual const vpMatrix getCovariance() const VP_OVERRIDE

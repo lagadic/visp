@@ -205,7 +205,7 @@ int main(int argc, const char **argv)
       vpDisplay::display(IdepthDisplay);
       vpDisplay::display(Id);
       // vpDisplay::display(Icol);
-      tracker.display(Id, Icol, IdepthDisplay, vpRBFeatureDisplayType::SIMPLE);
+      tracker.display(Id, Icol, IdepthDisplay);
       vpDisplay::displayFrame(Icol, cMo, cam, 0.05, vpColor::none, 2);
       vpDisplay::displayText(Id, 20, 5, "Right click to exit", vpColor::red);
       vpMouseButton::vpMouseButtonType button;

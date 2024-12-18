@@ -50,12 +50,6 @@
 #include VISP_NLOHMANN_JSON(json.hpp)
 #endif
 
-enum vpRBFeatureDisplayType
-{
-  SIMPLE = 0,
-  IMPORTANCE = 1,
-  ERROR = 2
-};
 
 BEGIN_VISP_NAMESPACE
 /**
@@ -155,8 +149,7 @@ public:
     const vpCameraParameters &cam,
     const vpImage<unsigned char> &I,
     const vpImage<vpRGBa> &IRGB,
-    const vpImage<unsigned char> &depth,
-    const vpRBFeatureDisplayType type) const = 0;
+    const vpImage<unsigned char> &depth) const = 0;
 
   /**
    * @}

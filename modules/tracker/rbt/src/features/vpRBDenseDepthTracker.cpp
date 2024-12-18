@@ -152,8 +152,7 @@ void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &/*fram
 }
 
 void vpRBDenseDepthTracker::display(const vpCameraParameters &/*cam*/, const vpImage<unsigned char> &/*I*/,
-                                    const vpImage<vpRGBa> &/*IRGB*/, const vpImage<unsigned char> &depth,
-                                    const vpRBFeatureDisplayType /*type*/) const
+                                    const vpImage<vpRGBa> &/*IRGB*/, const vpImage<unsigned char> &depth) const
 {
   for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
     const vpDepthPoint &p = m_depthPoints[i];

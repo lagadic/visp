@@ -555,7 +555,7 @@ void vpRBTracker::displayMask(vpImage<unsigned char> &Imask) const
   }
 }
 
-void vpRBTracker::display(const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth, const vpRBFeatureDisplayType type)
+void vpRBTracker::display(const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth)
 {
   if (m_currentFrame.renders.normals.getSize() == 0) {
     return;
@@ -564,15 +564,13 @@ void vpRBTracker::display(const vpImage<unsigned char> &I, const vpImage<vpRGBa>
 
   for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
     if (tracker->featuresShouldBeDisplayed()) {
-      tracker->display(m_currentFrame.cam, I, IRGB, depth, type);
+      tracker->display(m_currentFrame.cam, I, IRGB, depth);
     }
   }
 
   if (m_driftDetector) {
     m_driftDetector->display(IRGB);
   }
-
-  // vpDisplay::displayRectangle(IRGB, m_renderer.getBoundingBox(), vpColor::red);
 }
 
 vpObjectCentricRenderer &vpRBTracker::getRenderer()
@@ -594,7 +592,6 @@ void vpRBTracker::loadConfigurationFile(const std::string &filename)
   catch (nlohmann::json::parse_error &e) {
     std::stringstream msg;
     msg << "Could not parse JSON file : \n";
-
     msg << e.what() << std::endl;
     msg << "Byte position of error: " << e.byte;
     throw vpException(vpException::ioError, msg.str());

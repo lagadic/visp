@@ -311,8 +311,7 @@ void vpRBKltTracker::computeVVSIter(const vpRBFeatureTrackerInput &/*frame*/, co
 }
 
 void vpRBKltTracker::display(const vpCameraParameters &cam, const vpImage<unsigned char> &I,
-                             const vpImage<vpRGBa> &/*IRGB*/, const vpImage<unsigned char> &/*depth*/,
-                             const vpRBFeatureDisplayType /*type*/) const
+                             const vpImage<vpRGBa> &/*IRGB*/, const vpImage<unsigned char> &/*depth*/) const
 {
   for (const std::pair<const long, vpTrackedKltPoint> &p : m_points) {
     double u = 0.0, v = 0.0;

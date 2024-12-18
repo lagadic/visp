@@ -211,7 +211,7 @@ public:
    * @{
    */
   void displayMask(vpImage<unsigned char> &Imask) const;
-  void display(const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth, const vpRBFeatureDisplayType type);
+  void display(const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth);
   /**
    * @}
    */
@@ -272,8 +272,6 @@ protected:
   std::shared_ptr<vpRBDriftDetector> m_driftDetector;
   std::shared_ptr<vpRBVisualOdometry> m_odometry;
 
-
-  // vpRBTrackerFilter m_filter;
 };
 
 END_VISP_NAMESPACE
