@@ -420,7 +420,7 @@ void vpAROgre::init(bool
     Ogre::ConfigFile cf;
     cf.load(resourceFile);
     // Go through all sections & settings in the file
-#if (VISP_HAVE_OGRE_VERSION < (1<<16 | 10<<8 | 0))
+#if (VISP_HAVE_OGRE_VERSION < (1<<16 | 11<<8 | 0))
     Ogre::ConfigFile::SectionIterator seci = cf.getSectionIterator();
 
     Ogre::String secName, typeName, archName;
@@ -545,7 +545,7 @@ void vpAROgre::init(bool
 */
 vpAROgre::~vpAROgre(void)
 {
-#if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 10<<8 | 0))
+#if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 11<<8 | 0))
   mPixelBuffer.reset();
 #else
   mPixelBuffer.setNull();
@@ -565,7 +565,7 @@ vpAROgre::~vpAROgre(void)
 
 // Delete root
   bool hasNoMoreElements = false;
-#if (VISP_HAVE_OGRE_VERSION < (1<<16 | 10<<8 | 0))
+#if (VISP_HAVE_OGRE_VERSION < (1<<16 | 11<<8 | 0))
   if (Ogre::Root::getSingletonPtr()) {
     hasNoMoreElements = !Ogre::Root::getSingletonPtr()->getSceneManagerIterator().hasMoreElements();
   }
@@ -945,7 +945,7 @@ void vpAROgre::createBackground(vpImage<unsigned char> & /* I */)
   Backgroundmaterial->getTechnique(0)->getPass(0)->setDepthCheckEnabled(false); // Background
   Backgroundmaterial->getTechnique(0)->getPass(0)->setDepthWriteEnabled(false); // Background
   Backgroundmaterial->getTechnique(0)->getPass(0)->createTextureUnitState("BackgroundTexture");
-#if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 10<<8 | 0))
+#if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 11<<8 | 0))
   mBackground->setMaterial(Backgroundmaterial);                  // Attach the material to the rectangle
 #else
   mBackground->setMaterial("BackgroundMaterial");                  // Attach the material to the rectangle
@@ -1024,7 +1024,7 @@ void vpAROgre::createBackground(vpImage<vpRGBa> & /* I */)
   Backgroundmaterial->getTechnique(0)->getPass(0)->setDepthWriteEnabled(false); // Background
   Backgroundmaterial->getTechnique(0)->getPass(0)->createTextureUnitState("BackgroundTexture");
 
-#if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 10<<8 | 0))
+#if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 11<<8 | 0))
   mBackground->setMaterial(Backgroundmaterial);                  // Attach the material to the rectangle
 #else
   mBackground->setMaterial("BackgroundMaterial");                  // Attach the material to the rectangle
