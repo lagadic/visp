@@ -43,6 +43,10 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColVector.h>
 
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
+#include <type_traits>
+#endif
+
 BEGIN_VISP_NAMESPACE
 
 /*!
@@ -103,7 +107,7 @@ public:
   /*!
     Copy constructor.
   */
-  inline vpRGBf(const vpRGBf &v) : R(v.R), G(v.G), B(v.B) { }
+  inline vpRGBf(const vpRGBf &v) = default;
 
   /*!
     Create a RGB value from a 3 dimensional column vector.
@@ -116,9 +120,9 @@ public:
 
   vpRGBf &operator=(float v);
   vpRGBf &operator=(int v);
-  vpRGBf &operator=(const vpRGBf &v);
+  vpRGBf &operator=(const vpRGBf &v) = default;
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  vpRGBf &operator=(const vpRGBf &&v);
+  vpRGBf &operator=(vpRGBf &&v) = default;
 #endif
   vpRGBf &operator=(const vpColVector &v);
   bool operator==(const vpRGBf &v) const;
@@ -144,5 +148,12 @@ public:
   friend VISP_EXPORT vpRGBf operator*(double x, const vpRGBf &rgb);
   friend VISP_EXPORT vpRGBf operator*(float x, const vpRGBf &rgb);
 };
+
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
+static_assert(std::is_trivially_assignable_v<vpRGBf, vpRGBf>);
+static_assert(std::is_trivially_copyable_v<vpRGBf>);
+#endif
+
 END_VISP_NAMESPACE
+
 #endif

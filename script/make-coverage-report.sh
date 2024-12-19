@@ -18,7 +18,7 @@ fi
 
 cd $build_dir
 lcov --zerocounters --directory .
-cmake $source_dir -DBUILD_COVERAGE=ON -DBUILD_DEPRECATED_FUNCTIONS=OFF
+cmake $source_dir -DBUILD_COVERAGE=ON -DBUILD_DEPRECATED_FUNCTIONS=OFF -DCMAKE_BUILD_TYPE=Debug
 cmake --build . --target all -j$(nproc)
 cmake --build . --target test -j$(nproc)
 lcov --directory . --capture --output-file visp-coverage.info

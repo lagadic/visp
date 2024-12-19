@@ -1,9 +1,15 @@
 {
-  "ignored_headers": ["vpPoseException.h", "vpCalibrationException.h", "vpPoseFeatures.h"],
+  "ignored_headers": [
+    "vpPoseException.h",
+    "vpCalibrationException.h",
+    "vpPoseFeatures.h"
+  ],
+  "user_defined_headers": [
+    "vision.hpp"
+  ],
   "classes": {
-    "vpHomography" : {
-      "methods":
-      [
+    "vpHomography": {
+      "methods": [
         {
           "static": true,
           "signature": "void computeDisplacement(const vpHomography &, const vpColVector &, vpRotationMatrix &, vpTranslationVector &, vpColVector &)",
@@ -18,6 +24,17 @@
           "static": true,
           "signature": "void computeDisplacement(const vpHomography &, double , double , std::list<vpRotationMatrix> &, std::list<vpTranslationVector> &, std::list<vpColVector> &)",
           "custom_name": "computeHomographyDisplacement"
+        }
+      ]
+    },
+    "vpPose": {
+      "additional_bindings": "bindings_vpPose",
+      "methods": [
+        {
+          "static": true,
+          "signature": "bool computePlanarObjectPoseFromRGBD(const vpImage<float>&, const std::vector<vpImagePoint>&, const vpCameraParameters&, const std::vector<vpPoint>&, vpHomogeneousMatrix&, double*)",
+          "ignore": true,
+          "custom_implem": true
         }
       ]
     }

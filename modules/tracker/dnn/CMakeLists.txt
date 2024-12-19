@@ -34,8 +34,11 @@
 #############################################################################
 
 if(USE_NLOHMANN_JSON)
+  get_target_property(_inc_dirs "nlohmann_json::nlohmann_json" INTERFACE_INCLUDE_DIRECTORIES)
+  list(APPEND opt_incs ${_inc_dirs})
+
   vp_add_module(dnn_tracker visp_core)
   vp_glob_module_sources()
-  vp_module_include_directories()
+  vp_module_include_directories(${opt_incs})
   vp_create_module()
 endif()

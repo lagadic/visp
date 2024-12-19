@@ -53,6 +53,10 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/video/tracking.hpp>
 
+#if defined(VISP_HAVE_NLOHMANN_JSON)
+#include <nlohmann/json.hpp>
+#endif
+
 BEGIN_VISP_NAMESPACE
 /*!
  * \class vpKltOpencv
@@ -384,6 +388,11 @@ public:
    */
   void suppressFeature(const int &index);
 
+#ifdef VISP_HAVE_NLOHMANN_JSON
+  friend void to_json(nlohmann::json &j, const vpKltOpencv &array);
+  friend void from_json(const nlohmann::json &j, vpKltOpencv &array);
+#endif
+
 protected:
   cv::Mat m_gray; //!< Gray image
   cv::Mat m_prevGray; //!< Previous gray image
@@ -402,6 +411,35 @@ protected:
   long m_next_points_id; //!< Id for the newt keypoint
   bool m_initial_guess; //!< true when initial guess is provided
 };
+
+#ifdef VISP_HAVE_NLOHMANN_JSON
+inline void to_json(nlohmann::json &j, const vpKltOpencv &klt)
+{
+  j = nlohmann::json {
+      {"maxFeatures", klt.getMaxFeatures()},
+      {"windowSize", klt.getWindowSize()},
+      {"quality", klt.getQuality()},
+      {"minDistance", klt.getMinDistance()},
+      {"useHarris", klt.m_useHarrisDetector},
+      {"harris", klt.getHarrisFreeParameter()},
+      {"blockSize", klt.getBlockSize()},
+      {"pyramidLevels", klt.getPyramidLevels()}
+  };
+}
+
+inline void from_json(const nlohmann::json &j, vpKltOpencv &klt)
+{
+  klt.setMaxFeatures(j.value("maxFeatures", 10000));
+  klt.setWindowSize(j.value("windowSize", 5));
+  klt.setQuality(j.value("quality", 0.01));
+  klt.setMinDistance(j.value("minDistance", 5));
+  klt.setUseHarris(j.value("useHarris", 1));
+  klt.setHarrisFreeParameter(j.value("harris", 0.01));
+  klt.setBlockSize(j.value("blockSize", 3));
+  klt.setPyramidLevels(j.value("pyramidLevels", 3));
+}
+#endif
+
 END_VISP_NAMESPACE
 #endif
 #endif

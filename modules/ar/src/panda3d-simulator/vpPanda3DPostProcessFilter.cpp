@@ -61,8 +61,8 @@ void vpPanda3DPostProcessFilter::setupScene()
     "Cannot add a postprocess filter to a renderer that does not define getMainOutputBuffer()");
   }
   m_shader = Shader::make(Shader::ShaderLanguage::SL_GLSL,
-                        FILTER_VERTEX_SHADER,
-                        m_fragmentShader);
+                          FILTER_VERTEX_SHADER,
+                          m_fragmentShader);
   m_renderRoot.set_shader(m_shader);
   m_renderRoot.set_shader_input("dp", LVector2f(1.0 / buffer->get_texture()->get_x_size(), 1.0 / buffer->get_texture()->get_y_size()));
   m_renderRoot.set_texture(buffer->get_texture());
