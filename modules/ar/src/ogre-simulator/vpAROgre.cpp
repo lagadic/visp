@@ -389,11 +389,13 @@ void vpAROgre::init(bool
   }
   mWindow = mRoot->createRenderWindow(name, mWindowWidth, mWindowHeight, fullscreen, &misc);
 
+#if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 10 <<8 | 0))
   // Initialize the RTShaderSystem, if available
   bool hasInitializedTheRTSS = initialiseRTShaderSystem();
   if (!hasInitializedTheRTSS) {
     std::cout << "[vpAROgre::init] RTSS is not available." << std::endl;
   }
+#endif
 
   // Load resource paths from config file
 
