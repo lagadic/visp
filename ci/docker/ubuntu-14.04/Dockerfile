@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:14.04
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG USER_UID=1001
@@ -18,18 +18,8 @@ RUN apt-get update \
       locales \
       locate \
       lsb-release \
-      mercurial \
       nano \
       net-tools \
-      python3 \
-      python3-dev \
-      python3-pip \
-      python3-dbg \
-      python3-empy \
-      python3-numpy \
-      python3-pip \
-      python3-psutil \
-      python3-venv \
       software-properties-common \
       sudo \
       tzdata \
@@ -52,14 +42,12 @@ RUN apt-get update \
 # Update aptitude with other optional ViSP 3rd parties
 RUN apt-get update \
     && apt-get install -y \
-      libpcl-dev \
       libcoin80-dev \
       libjpeg-dev \
       libpng-dev \
       libogre-1.9-dev \
       libois-dev \
       libdmtx-dev \
-      libgsl-dev \
     && apt-get clean
 
 # Set Locale
@@ -90,6 +78,16 @@ RUN mkdir -p ${VISP_WS} \
     && git clone https://github.com/lagadic/visp-images.git \
     && echo "export VISP_WS=${HOME}/visp-ws" >> ${HOME}/.bashrc \
     && echo "export VISP_INPUT_IMAGE_PATH=${HOME}/visp-ws/visp-images" >> ${HOME}/.bashrc
+
+# Download cmake 3.32.2 linux-x86_64
+RUN mkdir -p ${VISP_WS}/3rdparty/cmake \
+    && cd ${VISP_WS}/3rdparty/cmake \
+    && curl -SLO https://github.com/Kitware/CMake/archive/refs/tags/v3.10.0.tar.gz \
+    && tar xvzf v3.10.0.tar.gz \
+    && cd CMake-3.10.0 \
+    && sh bootstrap --prefix=/usr \
+    && make -j$(nproc) \
+    && sudo make install
 
 # Get visp
 RUN cd ${VISP_WS} \

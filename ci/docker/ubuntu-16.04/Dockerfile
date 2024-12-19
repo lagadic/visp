@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:16.04
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG USER_UID=1001
@@ -90,6 +90,12 @@ RUN mkdir -p ${VISP_WS} \
     && git clone https://github.com/lagadic/visp-images.git \
     && echo "export VISP_WS=${HOME}/visp-ws" >> ${HOME}/.bashrc \
     && echo "export VISP_INPUT_IMAGE_PATH=${HOME}/visp-ws/visp-images" >> ${HOME}/.bashrc
+
+# Download cmake 3.32.2 linux-x86_64
+RUN mkdir -p ${VISP_WS}/3rdparty/cmake \
+    && cd ${VISP_WS}/3rdparty/cmake \
+    && curl -SLO https://github.com/Kitware/CMake/releases/download/v3.31.2/cmake-3.31.2-linux-x86_64.sh \
+    && sudo sh cmake-3.31.2-linux-x86_64.sh --prefix=/usr --skip-license
 
 # Get visp
 RUN cd ${VISP_WS} \
