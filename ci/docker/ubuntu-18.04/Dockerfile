@@ -67,7 +67,7 @@ RUN locale-gen en_US en_US.UTF-8 && \
     update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8 && \
     export LANG=en_US.UTF-8
 
-ENV USERNAME vispci
+ENV USERNAME=vispci
 
 RUN useradd -U --uid $USER_UID -ms /bin/bash ${USERNAME} \
     && echo "${USERNAME}:${USERNAME}" | chpasswd \
@@ -82,11 +82,11 @@ USER ${USERNAME}
 WORKDIR /home/$USERNAME
 
 # Create visp workspace
-ENV VISP_WS /home/$USERNAME/visp-ws
+ENV VISP_WS=/home/$USERNAME/visp-ws
 
 # Install visp-images
-RUN mkdir -p ${HOME}/visp-ws \
-    && cd ${HOME}/visp-ws \
+RUN mkdir -p ${VISP_WS} \
+    && cd ${VISP_WS} \
     && git clone https://github.com/lagadic/visp-images.git \
     && echo "export VISP_WS=${HOME}/visp-ws" >> ${HOME}/.bashrc \
     && echo "export VISP_INPUT_IMAGE_PATH=${HOME}/visp-ws/visp-images" >> ${HOME}/.bashrc
