@@ -101,7 +101,7 @@ bool vpAROgre::initialiseRTShaderSystem()
   if (Ogre::RTShader::ShaderGenerator::initialize()) {
     mShaderGenerator = Ogre::RTShader::ShaderGenerator::getSingletonPtr();
 
-    // Create and register the material manager listener if it doesn't exist yet.
+// Create and register the material manager listener if it doesn't exist yet.
     if (!mMaterialMgrListener) {
       mMaterialMgrListener = new OgreBites::SGTechniqueResolverListener(mShaderGenerator);
       Ogre::MaterialManager::getSingleton().addListener(mMaterialMgrListener);
@@ -182,6 +182,12 @@ void vpAROgre::init(vpImage<unsigned char> &I,
       false,
 #endif
       hidden);
+
+#if (VISP_HAVE_OGRE_VERSION >= (13 <<16 | 0 <<8 | 0))
+// Register the scene manager.
+  Ogre::RTShader::ShaderGenerator::getSingleton().addSceneManager(Ogre::Root::getSingletonPtr()->getSceneManager("SceneManagerInstance0"));
+#endif
+
   // Create the background image which will come from the grabber
   createBackground(I);
 }
@@ -232,6 +238,12 @@ void vpAROgre::init(vpImage<vpRGBa> &I,
       false,
 #endif
       hidden);
+
+#if (VISP_HAVE_OGRE_VERSION >= (13 <<16 | 0 <<8 | 0))
+// Register the scene manager.
+  Ogre::RTShader::ShaderGenerator::getSingleton().addSceneManager(Ogre::Root::getSingletonPtr()->getSceneManager("SceneManagerInstance0"));
+#endif
+
   // Create the background image which will come from the grabber
   createBackground(I);
 }
@@ -342,7 +354,7 @@ void vpAROgre::init(bool
 #if (VISP_HAVE_OGRE_VERSION < (1<<16 | 10<<8 | 0))
   mSceneMgr = mRoot->createSceneManager(Ogre::ST_GENERIC);
 #else
-  mSceneMgr = mRoot->createSceneManager(Ogre::DefaultSceneManagerFactory::FACTORY_TYPE_NAME, Ogre::BLANKSTRING);
+  mSceneMgr = mRoot->createSceneManager(Ogre::DefaultSceneManagerFactory::FACTORY_TYPE_NAME, "SceneManagerInstance0");
 #endif
 
   bool fullscreen = false;
