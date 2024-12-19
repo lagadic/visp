@@ -181,7 +181,7 @@ void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, bool *p_isPlan, double *
   const unsigned int index_5 = 5;
 
   // determination of the plane equation a X + b Y + c Z + d = 0
-  double a, b, c, d;
+  double a = 0, b = 0, c = 0, d = 0;
 
   // Checking if coplanar has already been called and if the plan coefficients have been given
   bool p_isplan_and_p_a_no_null = (p_isPlan != nullptr) && (p_a != nullptr);

@@ -46,7 +46,7 @@ int main()
   vpImage<unsigned char> I; // Create a gray level image container
   int opt_device = 0; // For OpenCV and V4l2 grabber to set the camera device
 
-    //! [Grabber]
+  //! [Grabber]
 #if defined(VISP_HAVE_V4L2)
   vpV4l2Grabber g;
   std::ostringstream device;
@@ -80,9 +80,6 @@ int main()
   config.enable_stream(RS2_STREAM_COLOR, 640, 480, RS2_FORMAT_RGBA8, 30);
   g.open(config);
   g.acquire(I);
-
-  std::cout << "Read camera parameters from Realsense device" << std::endl;
-  cam = g.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithoutDistortion);
 #elif ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI))|| ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
   cv::VideoCapture g(opt_device); // open the default camera
   if (!g.isOpened()) {   // check if we succeeded
@@ -116,7 +113,7 @@ int main()
   bool germ_selected = false;
   vpMouseButton::vpMouseButtonType button;
 
-  while (! quit) {
+  while (!quit) {
     try {
 #if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2)
       g.acquire(I);
