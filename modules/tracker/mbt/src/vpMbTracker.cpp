@@ -1679,6 +1679,8 @@ std::map<std::string, std::string> vpMbTracker::parseParameters(std::string &end
 void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::string> &vectorOfModelFilename,
                                int &startIdFace, bool verbose, bool parent, const vpHomogeneousMatrix &odTo)
 {
+  const unsigned int maxDataCAO = 100000; // arbitrary value
+
   std::ifstream fileId;
   fileId.exceptions(std::ifstream::failbit | std::ifstream::eofbit);
   fileId.open(modelFile.c_str(), std::ifstream::in);
@@ -1845,17 +1847,14 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
       std::cout << "> " << caoNbrPoint << " points" << std::endl;
     }
 
-    if (caoNbrPoint > 100000) {
+    if (caoNbrPoint > maxDataCAO) {
       throw vpException(vpException::badValue, "Exceed the max number of points in the CAO model.");
     }
 
     if (caoNbrPoint == 0 && !header) {
       throw vpException(vpException::badValue, "in vpMbTracker::loadCAOModel() -> no points are defined");
     }
-    vpPoint *caoPoints = new vpPoint[caoNbrPoint];
-
-    int i; // image coordinate (used for matching)
-    int j;
+    std::vector<vpPoint> caoPoints(caoNbrPoint);
 
     for (unsigned int k = 0; k < caoNbrPoint; k++) {
       removeComment(fileId);
@@ -1866,6 +1865,8 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
       fileId >> pt_3d[2];
 
       if (caoVersion == 2) {
+        // glob values (not used in MBT but for matching)
+        int i, j; // image coordinate (used for matching)
         fileId >> i;
         fileId >> j;
       }
@@ -1886,7 +1887,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
     fileId.ignore(std::numeric_limits<std::streamsize>::max(), fileId.widen('\n')); // skip the rest of the line
 
     nbLines += caoNbrLine;
-    unsigned int *caoLinePoints = nullptr;
+    std::vector<unsigned int> caoLinePoints;
     if (verbose || (parent && !header)) {
 #if defined(VISP_HAVE_THREADS)
       std::lock_guard<std::mutex> lock(g_mutex_cout);
@@ -1894,13 +1895,12 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
       std::cout << "> " << caoNbrLine << " lines" << std::endl;
     }
 
-    if (caoNbrLine > 100000) {
-      delete[] caoPoints;
+    if (caoNbrLine > maxDataCAO) {
       throw vpException(vpException::badValue, "Exceed the max number of lines in the CAO model.");
     }
 
     if (caoNbrLine > 0)
-      caoLinePoints = new unsigned int[2 * caoNbrLine];
+      caoLinePoints.resize(2 * caoNbrLine);
 
     unsigned int index1, index2;
     // Initialization of idFace with startIdFace for dealing with recursive
@@ -1976,9 +1976,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
       std::cout << "> " << caoNbrPolygonLine << " polygon lines" << std::endl;
     }
 
-    if (caoNbrPolygonLine > 100000) {
-      delete[] caoPoints;
-      delete[] caoLinePoints;
+    if (caoNbrPolygonLine > maxDataCAO) {
       throw vpException(vpException::badValue, "Exceed the max number of polygon lines.");
     }
 
@@ -1989,7 +1987,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
       unsigned int nbLinePol;
       fileId >> nbLinePol;
       std::vector<vpPoint> corners;
-      if (nbLinePol > 100000) {
+      if (nbLinePol > maxDataCAO) {
         throw vpException(vpException::badValue, "Exceed the max number of lines.");
       }
 
@@ -2065,7 +2063,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
       std::cout << "> " << caoNbrPolygonPoint << " polygon points" << std::endl;
     }
 
-    if (caoNbrPolygonPoint > 100000) {
+    if (caoNbrPolygonPoint > maxDataCAO) {
       throw vpException(vpException::badValue, "Exceed the max number of polygon point.");
     }
 
@@ -2074,7 +2072,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
       unsigned int nbPointPol;
       fileId >> nbPointPol;
-      if (nbPointPol > 100000) {
+      if (nbPointPol > maxDataCAO) {
         throw vpException(vpException::badValue, "Exceed the max number of points.");
       }
       std::vector<vpPoint> corners;
@@ -2121,8 +2119,6 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
       if (fileId.eof()) { // check if not at the end of the file (for old
                           // style files)
-        delete[] caoPoints;
-        delete[] caoLinePoints;
         return;
       }
 
@@ -2138,7 +2134,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
         std::cout << "> " << caoNbCylinder << " cylinders" << std::endl;
       }
 
-      if (caoNbCylinder > 100000) {
+      if (caoNbCylinder > maxDataCAO) {
         throw vpException(vpException::badValue, "Exceed the max number of cylinders.");
       }
 
@@ -2203,68 +2199,76 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
       if (fileId.eof()) { // check if not at the end of the file (for old
                           // style files)
-        delete[] caoPoints;
-        delete[] caoLinePoints;
         return;
       }
 
-      /* Extract the circles */
-      fileId >> caoNbCircle;
-      fileId.ignore(std::numeric_limits<std::streamsize>::max(), fileId.widen('\n')); // skip the rest of the line
+      // To handle CAO model file without no new line at the end, we check if the first char is zero or not
+      // Otherwise "fileId >> caoNbCircle;" gives:
+      //   "Cannot get the number of circles. Defaulting to zero."
+      //   "Exception: basic_ios::clear: iostream error"
+      char c_circle;
+      fileId.get(c_circle);
+      int nb_circles = c_circle - '0';
+      if (nb_circles > 0) {
+        fileId.unget();
 
-      nbCircles += caoNbCircle;
-      if (verbose || (parent && !header)) {
+        /* Extract the circles */
+        fileId >> caoNbCircle;
+        fileId.ignore(std::numeric_limits<std::streamsize>::max(), fileId.widen('\n')); // skip the rest of the line
+
+        nbCircles += caoNbCircle;
+        if (verbose || (parent && !header)) {
 #if defined(VISP_HAVE_THREADS)
-        std::lock_guard<std::mutex> lock(g_mutex_cout);
+          std::lock_guard<std::mutex> lock(g_mutex_cout);
 #endif
-        std::cout << "> " << caoNbCircle << " circles" << std::endl;
-      }
+          std::cout << "> " << caoNbCircle << " circles" << std::endl;
+        }
 
-      if (caoNbCircle > 100000) {
-        throw vpException(vpException::badValue, "Exceed the max number of cicles.");
-      }
+        if (caoNbCircle > maxDataCAO) {
+          throw vpException(vpException::badValue, "Exceed the max number of cicles.");
+        }
 
-      for (unsigned int k = 0; k < caoNbCircle; ++k) {
-        removeComment(fileId);
+        for (unsigned int k = 0; k < caoNbCircle; ++k) {
+          removeComment(fileId);
 
-        double radius;
-        unsigned int indexP1, indexP2, indexP3;
-        fileId >> radius;
-        fileId >> indexP1;
-        fileId >> indexP2;
-        fileId >> indexP3;
+          double radius;
+          unsigned int indexP1, indexP2, indexP3;
+          fileId >> radius;
+          fileId >> indexP1;
+          fileId >> indexP2;
+          fileId >> indexP3;
 
-        //////////////////////////Read the parameter value if present//////////////////////////
-        // Get the end of the line
-        std::string endLine = "";
-        if (safeGetline(fileId, endLine).good()) {
-          std::map<std::string, std::string> mapOfParams = parseParameters(endLine);
+          //////////////////////////Read the parameter value if present//////////////////////////
+          // Get the end of the line
+          std::string endLine = "";
+          if (safeGetline(fileId, endLine).good()) {
+            std::map<std::string, std::string> mapOfParams = parseParameters(endLine);
 
-          std::string polygonName = "";
-          bool useLod = !applyLodSettingInConfig ? useLodGeneral : false;
-          double minPolygonAreaThreshold = !applyLodSettingInConfig ? minPolygonAreaThresholdGeneral : 2500.0;
-          if (mapOfParams.find("name") != mapOfParams.end()) {
-            polygonName = mapOfParams["name"];
+            std::string polygonName = "";
+            bool useLod = !applyLodSettingInConfig ? useLodGeneral : false;
+            double minPolygonAreaThreshold = !applyLodSettingInConfig ? minPolygonAreaThresholdGeneral : 2500.0;
+            if (mapOfParams.find("name") != mapOfParams.end()) {
+              polygonName = mapOfParams["name"];
+            }
+            if (mapOfParams.find("minPolygonAreaThreshold") != mapOfParams.end()) {
+              minPolygonAreaThreshold = std::atof(mapOfParams["minPolygonAreaThreshold"].c_str());
+            }
+            if (mapOfParams.find("useLod") != mapOfParams.end()) {
+              useLod = vpIoTools::parseBoolean(mapOfParams["useLod"]);
+            }
+
+            addPolygon(caoPoints[indexP1], caoPoints[indexP2], caoPoints[indexP3], radius, idFace, polygonName, useLod,
+                      minPolygonAreaThreshold);
+
+            initCircle(caoPoints[indexP1], caoPoints[indexP2], caoPoints[indexP3], radius, idFace, polygonName);
+
+            addProjectionErrorPolygon(caoPoints[indexP1], caoPoints[indexP2], caoPoints[indexP3], radius, idFace,
+                                      polygonName, useLod, minPolygonAreaThreshold);
+            initProjectionErrorCircle(caoPoints[indexP1], caoPoints[indexP2], caoPoints[indexP3], radius, idFace++,
+                                      polygonName);
           }
-          if (mapOfParams.find("minPolygonAreaThreshold") != mapOfParams.end()) {
-            minPolygonAreaThreshold = std::atof(mapOfParams["minPolygonAreaThreshold"].c_str());
-          }
-          if (mapOfParams.find("useLod") != mapOfParams.end()) {
-            useLod = vpIoTools::parseBoolean(mapOfParams["useLod"]);
-          }
-
-          addPolygon(caoPoints[indexP1], caoPoints[indexP2], caoPoints[indexP3], radius, idFace, polygonName, useLod,
-                     minPolygonAreaThreshold);
-
-          initCircle(caoPoints[indexP1], caoPoints[indexP2], caoPoints[indexP3], radius, idFace, polygonName);
-
-          addProjectionErrorPolygon(caoPoints[indexP1], caoPoints[indexP2], caoPoints[indexP3], radius, idFace,
-                                    polygonName, useLod, minPolygonAreaThreshold);
-          initProjectionErrorCircle(caoPoints[indexP1], caoPoints[indexP2], caoPoints[indexP3], radius, idFace++,
-                                    polygonName);
         }
       }
-
     }
     catch (const std::exception &e) {
       std::cerr << "Cannot get the number of circles. Defaulting to zero." << std::endl;
@@ -2273,9 +2277,6 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
     }
 
     startIdFace = idFace;
-
-    delete[] caoPoints;
-    delete[] caoLinePoints;
 
     if (header && parent) {
       if (verbose) {
