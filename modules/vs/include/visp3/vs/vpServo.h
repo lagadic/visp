@@ -273,6 +273,11 @@ public:
   //  }
   //#endif
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  vpServo(const vpServo &) = delete; // non construction-copyable
+  vpServo &operator=(const vpServo &) = delete; // non copyable
+#endif
+
 public:
   /*!
    * Default constructor that initializes the following settings:
