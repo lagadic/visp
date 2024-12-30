@@ -131,6 +131,11 @@ protected:
   //  }
   //#endif
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  vpMoment(const vpMoment &) = delete; // non construction-copyable
+  vpMoment &operator=(const vpMoment &) = delete; // non copyable
+#endif
+
 public:
   vpMoment();
 

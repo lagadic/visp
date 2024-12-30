@@ -121,6 +121,11 @@ public:
   //    }
   //#endif
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  vpMbtDistanceCircle(const vpMbtDistanceCircle &) = delete; // non construction-copyable
+  vpMbtDistanceCircle &operator=(const vpMbtDistanceCircle &) = delete; // non copyable
+#endif
+
 public:
   vpMbtDistanceCircle();
   virtual ~vpMbtDistanceCircle();

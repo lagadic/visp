@@ -126,6 +126,11 @@ private:
   //  }
   //#endif
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  vpMomentCommon(const vpMomentCommon &) = delete; // non construction-copyable
+  vpMomentCommon &operator=(const vpMomentCommon &) = delete; // non copyable
+#endif
+
 public:
   vpMomentCommon(double dstSurface, const std::vector<double> &ref, double refAlpha, double dstZ = 1.0,
                  bool flg_sxsyfromnormalized = false);
