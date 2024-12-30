@@ -58,9 +58,14 @@ int main()
     // Add an optional point light source
     Ogre::Light *light = ogre.getSceneManager()->createLight();
     light->setDiffuseColour(1, 1, 1);  // scaled RGB values
-    light->setSpecularColour(1, 1, 1); // scaled RGB values
-    light->setPosition((Ogre::Real)cdMo[0][3], (Ogre::Real)cdMo[1][3], (Ogre::Real)(-cdMo[2][3]));
     light->setType(Ogre::Light::LT_POINT);
+#if (VISP_HAVE_OGRE_VERSION < (1 << 16 | 10 << 8 | 0))
+    light->setPosition((Ogre::Real)cdMo[0][3], (Ogre::Real)cdMo[1][3], (Ogre::Real)(-cdMo[2][3]));
+#else
+    Ogre::SceneNode *spotLightNode = ogre.getSceneManager()->getRootSceneNode()->createChildSceneNode();
+    spotLightNode->attachObject(light);
+    spotLightNode->setPosition((Ogre::Real)cdMo[0][3], (Ogre::Real)cdMo[1][3], (Ogre::Real)(-cdMo[2][3]));
+#endif
 #endif
 
     vpServo task;
@@ -89,7 +94,7 @@ int main()
       for (int i = 0; i < 4; i++) {
         point[i].track(cMo);
         vpFeatureBuilder::create(p[i], point[i]);
-    }
+      }
 #if defined(VISP_HAVE_OGRE)
       // Update the scene from the new camera position
       ogre.display(background, cMo);
@@ -97,8 +102,8 @@ int main()
       vpColVector v = task.computeControlLaw();
       robot.setVelocity(vpRobot::CAMERA_FRAME, v);
       vpTime::wait(robot.getSamplingTime() * 1000);
+    }
   }
-}
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }

@@ -224,7 +224,13 @@ protected:
     light->setDiffuseColour(1.0, 1.0, 1.0);  // scaled RGB values
     light->setSpecularColour(1.0, 1.0, 1.0); // scaled RGB values
     // Lumiere ponctuelle
+#if (VISP_HAVE_OGRE_VERSION < (1 << 16 | 10 << 8 | 0))
     light->setPosition(-5, -5, 10);
+#else
+    Ogre::SceneNode *spotLightNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+    spotLightNode->attachObject(light);
+    spotLightNode->setPosition(Ogre::Vector3(-5, -5, 10));
+#endif
     light->setType(Ogre::Light::LT_POINT);
     light->setAttenuation((Ogre::Real)100, (Ogre::Real)1.0, (Ogre::Real)0.045, (Ogre::Real)0.0075);
     // Ombres
@@ -655,7 +661,6 @@ int main(int argc, const char **argv)
     vpAROgreExample ogre(mcam, (unsigned int)grabber.getWidth(), (unsigned int)grabber.getHeight());
     // Initialize it
     ogre.init(IC);
-
     double t0 = vpTime::measureTimeMs();
 
     // Rendering loop
@@ -734,5 +739,5 @@ int main()
   std::cout << "- Install Ogre3D, configure again ViSP using cmake and build again this example" << std::endl;
 #endif
   return EXIT_SUCCESS;
-  }
+}
 #endif

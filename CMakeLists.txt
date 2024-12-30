@@ -142,6 +142,13 @@ set(VISP_SOVERSION "${VISP_VERSION_MAJOR}.${VISP_VERSION_MINOR}")
 # Package revision number
 set(VISP_REVISION "1")
 
+# Try to locate visp-images and, if it exists, its version
+vp_find_dataset(VISP_DATASET_FOUND VISP_DATASET_LOCATION
+                    VISP_DATASET_VERSION
+                    VISP_DATASET_VERSION_MAJOR
+                    VISP_DATASET_VERSION_MINOR
+                    VISP_DATASET_VERSION_PATCH)
+
 #-----------------------------------------------------------------------------
 # TO BE CHECKED BEFORE NEXT RELEASE
 #
@@ -984,6 +991,7 @@ include(cmake/VISPExtraTargets.cmake)
 include(cmake/OgreTools.cmake)
 if(USE_OGRE)
   vp_set_ogre_media()
+  set(VISP_HAVE_OGRE_VERSION "(${OGRE_VERSION_MAJOR}<<16 | ${OGRE_VERSION_MINOR}<<8 | ${OGRE_VERSION_PATCH})") # for vpConfig.h
 endif()
 
 #----------------------------------------------------------------------
@@ -1903,6 +1911,13 @@ if(USE_PANDA3D)
 endif()
 if(USE_YARP)
   status("    Yarp dir:" "${YARP_DIR}")
+endif()
+if(USE_OGRE)
+  if(NOT ${OGRE_DIR} STREQUAL "")
+    status("    Ogre dir:" "${OGRE_DIR}")
+  else()
+    status("    Ogre dir:" "includes in ${OGRE_INCLUDE_DIR} , core lib in ${OGRE_LIBRARY_REL} , other libs in ${OGRE_PLUGIN_DIR_REL}")
+  endif()
 endif()
 
 # ========================== auxiliary ==========================

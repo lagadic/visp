@@ -990,12 +990,6 @@ macro(vp_add_tests)
   if(BUILD_TESTS AND EXISTS "${test_path}")
     __vp_parse_test_sources(TEST ${ARGN})
 
-    vp_find_dataset(VISP_DATASET_FOUND VISP_DATASET_LOCATION
-                    VISP_DATASET_VERSION
-                    VISP_DATASET_VERSION_MAJOR
-                    VISP_DATASET_VERSION_MINOR
-                    VISP_DATASET_VERSION_PATCH)
-
     set(__exclude_ctest "")
     foreach(__folder ${VISP_TEST_${the_module}_CTEST_EXCLUDE_FOLDER} )
       file(GLOB_RECURSE __files "${CMAKE_CURRENT_LIST_DIR}/test/${__folder}/*.cpp")
