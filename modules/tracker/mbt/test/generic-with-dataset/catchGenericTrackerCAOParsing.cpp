@@ -83,6 +83,258 @@ TEST_CASE("vpMbGenericTracker load CAO model Windows line ending", "[vpMbGeneric
   CHECK(circles.size() == 1);
 }
 
+#if (VISP_HAVE_DATASET_VERSION >= 0x030700)
+static const double margin = 1e-9;
+
+static void printFacesInfo(vpMbHiddenFaces<vpMbtPolygon> &faces)
+{
+  std::cout << "Number of faces: " << faces.size() << std::endl;
+
+  for (unsigned int i = 0; i < faces.size(); i++) {
+    std::vector<vpMbtPolygon *> &poly = faces.getPolygon();
+    std::cout << "face " << i << " with index: " << poly[i]->getIndex()
+      << (poly[i]->getName().empty() ? "" : (" with name: " + poly[i]->getName()))
+      << " is " << (poly[i]->isVisible() ? "visible" : "not visible")
+      << " and has " << poly[i]->getNbPoint() << " points"
+      << " and LOD is " << (poly[i]->useLod ? "enabled" : "disabled") << std::endl;
+
+    for (unsigned int j = 0; j < poly[i]->getNbPoint(); j++) {
+      vpPoint P = poly[i]->getPoint(j);
+      std::cout << " P obj " << j << ": " << P.get_oX() << " " << P.get_oY() << " " << P.get_oZ() << std::endl;
+    }
+  }
+}
+
+TEST_CASE("vpMbGenericTracker load CAO model [lines]", "[vpMbGenericTracker CAO parsing]")
+{
+  const std::string cao_filename =
+    vpIoTools::createFilePath(ipath, "mbt-cao/line_model.cao");
+  vpMbGenericTracker tracker;
+  const bool verbose = true;
+  REQUIRE_NOTHROW(tracker.loadModel(cao_filename, verbose));
+
+  std::list<vpMbtDistanceLine *> lines;
+  tracker.getLline(lines);
+  REQUIRE(lines.size() == 2);
+
+  int idx = 0;
+  std::vector<std::string> line_names = { "line_0", "line_1" };
+  for (auto line : lines) {
+    CHECK_THAT(line->p1->get_oX(), Catch::Matchers::WithinAbs(idx*3 + 0, margin));
+    CHECK_THAT(line->p1->get_oY(), Catch::Matchers::WithinAbs(idx*3 + 1, margin));
+    CHECK_THAT(line->p1->get_oZ(), Catch::Matchers::WithinAbs(idx*3 + 2, margin));
+    CHECK(line->getName() == line_names[idx]);
+    ++idx;
+  }
+}
+
+TEST_CASE("vpMbGenericTracker load CAO model [face from lines]", "[vpMbGenericTracker CAO parsing]")
+{
+  const std::string cao_filename =
+    vpIoTools::createFilePath(ipath, "mbt-cao/face_from_lines_model.cao");
+  vpMbGenericTracker tracker;
+  const bool verbose = true;
+  REQUIRE_NOTHROW(tracker.loadModel(cao_filename, verbose));
+
+  std::list<vpMbtDistanceLine *> lines;
+  tracker.getLline(lines);
+  CHECK(lines.size() == 3);
+
+  vpMbHiddenFaces<vpMbtPolygon> &faces = tracker.getFaces();
+  CHECK(faces.size() == 1);
+
+  for (unsigned int i = 0; i < faces.size(); i++) {
+    const std::vector<vpMbtPolygon *> &poly = faces.getPolygon();
+    CHECK(poly[i]->getNbPoint() == 4);
+    CHECK(poly[i]->getName() == "face_from_3D_lines");
+
+    for (unsigned int j = 0; j < poly[i]->getNbPoint(); j++) {
+      vpPoint P = poly[i]->getPoint(j);
+      if (j == 3) {
+        CHECK_THAT(P.get_oX(), Catch::Matchers::WithinAbs(0, margin));
+        CHECK_THAT(P.get_oY(), Catch::Matchers::WithinAbs(1, margin));
+        CHECK_THAT(P.get_oZ(), Catch::Matchers::WithinAbs(2, margin));
+      }
+      else {
+        CHECK_THAT(P.get_oX(), Catch::Matchers::WithinAbs(j*3 + 0, margin));
+        CHECK_THAT(P.get_oY(), Catch::Matchers::WithinAbs(j*3 + 1, margin));
+        CHECK_THAT(P.get_oZ(), Catch::Matchers::WithinAbs(j*3 + 2, margin));
+      }
+    }
+  }
+}
+
+TEST_CASE("vpMbGenericTracker load CAO model [face from points]", "[vpMbGenericTracker CAO parsing]")
+{
+  const std::string cao_filename =
+    vpIoTools::createFilePath(ipath, "mbt-cao/face_from_points_model.cao");
+  vpMbGenericTracker tracker;
+  const bool verbose = true;
+  REQUIRE_NOTHROW(tracker.loadModel(cao_filename, verbose));
+
+  std::list<vpMbtDistanceLine *> lines;
+  tracker.getLline(lines);
+  CHECK(lines.size() == 3);
+
+  vpMbHiddenFaces<vpMbtPolygon> &faces = tracker.getFaces();
+  CHECK(faces.size() == 1);
+
+  for (unsigned int i = 0; i < faces.size(); i++) {
+    const std::vector<vpMbtPolygon *> &poly = faces.getPolygon();
+    CHECK(poly[i]->getNbPoint() == 3);
+    CHECK(poly[i]->getName() == "face_from_3D_points");
+
+    for (unsigned int j = 0; j < poly[i]->getNbPoint(); j++) {
+      vpPoint P = poly[i]->getPoint(j);
+      CHECK_THAT(P.get_oX(), Catch::Matchers::WithinAbs(j*3 + 0, margin));
+      CHECK_THAT(P.get_oY(), Catch::Matchers::WithinAbs(j*3 + 1, margin));
+      CHECK_THAT(P.get_oZ(), Catch::Matchers::WithinAbs(j*3 + 2, margin));
+    }
+  }
+}
+
+TEST_CASE("vpMbGenericTracker load CAO model [cylinder]", "[vpMbGenericTracker CAO parsing]")
+{
+  const std::string cao_filename =
+    vpIoTools::createFilePath(ipath, "mbt-cao/cylinder_model.cao");
+  vpMbGenericTracker tracker;
+  const bool verbose = true;
+  REQUIRE_NOTHROW(tracker.loadModel(cao_filename, verbose));
+
+  std::list<vpMbtDistanceCylinder *> cylinders;
+  tracker.getLcylinder(cylinders);
+  CHECK(cylinders.size() == 1);
+
+  vpMbtDistanceCylinder *cylinder = cylinders.front();
+  CHECK(cylinder->getName() == "cylinder");
+  CHECK_THAT(cylinder->radius, Catch::Matchers::WithinAbs(0.5, margin));
+
+  CHECK_THAT(cylinder->p1->get_oX(), Catch::Matchers::WithinAbs(0, margin));
+  CHECK_THAT(cylinder->p1->get_oY(), Catch::Matchers::WithinAbs(1, margin));
+  CHECK_THAT(cylinder->p1->get_oZ(), Catch::Matchers::WithinAbs(2, margin));
+
+  CHECK_THAT(cylinder->p2->get_oX(), Catch::Matchers::WithinAbs(3, margin));
+  CHECK_THAT(cylinder->p2->get_oY(), Catch::Matchers::WithinAbs(4, margin));
+  CHECK_THAT(cylinder->p2->get_oZ(), Catch::Matchers::WithinAbs(5, margin));
+
+  vpMbHiddenFaces<vpMbtPolygon> &faces = tracker.getFaces();
+  CHECK(faces.size() == 5);
+  printFacesInfo(faces);
+}
+
+TEST_CASE("vpMbGenericTracker load CAO model [circle]", "[vpMbGenericTracker CAO parsing]")
+{
+  const std::string cao_filename =
+    vpIoTools::createFilePath(ipath, "mbt-cao/circle_model.cao");
+  vpMbGenericTracker tracker;
+  const bool verbose = true;
+  REQUIRE_NOTHROW(tracker.loadModel(cao_filename, verbose));
+
+  std::list<vpMbtDistanceCircle *> circles;
+  tracker.getLcircle(circles);
+  CHECK(circles.size() == 1);
+
+  vpMbtDistanceCircle *circle = circles.front();
+  CHECK(circle->getName() == "circle");
+  CHECK_THAT(circle->radius, Catch::Matchers::WithinAbs(0.5, margin));
+
+  CHECK_THAT(circle->p1->get_oX(), Catch::Matchers::WithinAbs(0, margin));
+  CHECK_THAT(circle->p1->get_oY(), Catch::Matchers::WithinAbs(1, margin));
+  CHECK_THAT(circle->p1->get_oZ(), Catch::Matchers::WithinAbs(2, margin));
+
+  CHECK_THAT(circle->p2->get_oX(), Catch::Matchers::WithinAbs(3, margin));
+  CHECK_THAT(circle->p2->get_oY(), Catch::Matchers::WithinAbs(4, margin));
+  CHECK_THAT(circle->p2->get_oZ(), Catch::Matchers::WithinAbs(5, margin));
+
+  CHECK_THAT(circle->p3->get_oX(), Catch::Matchers::WithinAbs(6, margin));
+  CHECK_THAT(circle->p3->get_oY(), Catch::Matchers::WithinAbs(7, margin));
+  CHECK_THAT(circle->p3->get_oZ(), Catch::Matchers::WithinAbs(8, margin));
+
+  vpMbHiddenFaces<vpMbtPolygon> &faces = tracker.getFaces();
+  CHECK(faces.size() == 1);
+  printFacesInfo(faces);
+}
+
+TEST_CASE("vpMbGenericTracker load CAO model [hierarchical]", "[vpMbGenericTracker CAO parsing]")
+{
+  const std::string cao_filename =
+    vpIoTools::createFilePath(ipath, "mbt-cao/hierarchical_model.cao");
+  vpMbGenericTracker tracker;
+  const bool verbose = true;
+  REQUIRE_NOTHROW(tracker.loadModel(cao_filename, verbose));
+
+  // Lines
+  {
+    std::list<vpMbtDistanceLine *> lines;
+    tracker.getLline(lines);
+    REQUIRE(lines.size() == 2);
+    std::vector<std::string> line_names = { "line_0", "line_1" };
+
+    int idx = 0;
+    for (auto line : lines) {
+      CHECK_THAT(line->p1->get_oX(), Catch::Matchers::WithinAbs(idx*3 + 0, margin));
+      CHECK_THAT(line->p1->get_oY(), Catch::Matchers::WithinAbs(idx*3 + 1, margin));
+      CHECK_THAT(line->p1->get_oZ(), Catch::Matchers::WithinAbs(idx*3 + 2, margin));
+      CHECK(line->getName() == line_names[idx]);
+      ++idx;
+    }
+  }
+
+  // Face from points
+  {
+    vpMbHiddenFaces<vpMbtPolygon> &faces = tracker.getFaces();
+    // vpMbtDistanceLine --> 2 faces
+    // vpMbtDistanceCylinder --> 1 + 4 faces
+    // vpMbtDistanceCircle --> 1 face
+    CHECK(faces.size() == 8);
+    printFacesInfo(faces);
+  }
+
+  // Cylinder
+  {
+    std::list<vpMbtDistanceCylinder *> cylinders;
+    tracker.getLcylinder(cylinders);
+    CHECK(cylinders.size() == 1);
+
+    vpMbtDistanceCylinder *cylinder = cylinders.front();
+    CHECK(cylinder->getName() == "cylinder");
+    CHECK_THAT(cylinder->radius, Catch::Matchers::WithinAbs(0.5, margin));
+
+    CHECK_THAT(cylinder->p1->get_oX(), Catch::Matchers::WithinAbs(0, margin));
+    CHECK_THAT(cylinder->p1->get_oY(), Catch::Matchers::WithinAbs(1, margin));
+    CHECK_THAT(cylinder->p1->get_oZ(), Catch::Matchers::WithinAbs(2, margin));
+
+    CHECK_THAT(cylinder->p2->get_oX(), Catch::Matchers::WithinAbs(3, margin));
+    CHECK_THAT(cylinder->p2->get_oY(), Catch::Matchers::WithinAbs(4, margin));
+    CHECK_THAT(cylinder->p2->get_oZ(), Catch::Matchers::WithinAbs(5, margin));
+  }
+
+  // Circle
+  {
+    std::list<vpMbtDistanceCircle *> circles;
+    tracker.getLcircle(circles);
+    CHECK(circles.size() == 1);
+
+    vpMbtDistanceCircle *circle = circles.front();
+    CHECK(circle->getName() == "circle");
+    CHECK_THAT(circle->radius, Catch::Matchers::WithinAbs(0.5, margin));
+
+    CHECK_THAT(circle->p1->get_oX(), Catch::Matchers::WithinAbs(0, margin));
+    CHECK_THAT(circle->p1->get_oY(), Catch::Matchers::WithinAbs(1, margin));
+    CHECK_THAT(circle->p1->get_oZ(), Catch::Matchers::WithinAbs(2, margin));
+
+    CHECK_THAT(circle->p2->get_oX(), Catch::Matchers::WithinAbs(3, margin));
+    CHECK_THAT(circle->p2->get_oY(), Catch::Matchers::WithinAbs(4, margin));
+    CHECK_THAT(circle->p2->get_oZ(), Catch::Matchers::WithinAbs(5, margin));
+
+    CHECK_THAT(circle->p3->get_oX(), Catch::Matchers::WithinAbs(6, margin));
+    CHECK_THAT(circle->p3->get_oY(), Catch::Matchers::WithinAbs(7, margin));
+    CHECK_THAT(circle->p3->get_oZ(), Catch::Matchers::WithinAbs(8, margin));
+  }
+}
+
+#endif
+
 int main(int argc, char *argv[])
 {
   Catch::Session session;
