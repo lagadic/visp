@@ -52,7 +52,7 @@ BEGIN_VISP_NAMESPACE
 /*!
  * Default constructor that consider a 6 DoF Jaco arm. Use setDoF() to change the degrees of freedom.
  */
-vpRobotKinova::vpRobotKinova()
+  vpRobotKinova::vpRobotKinova()
   : m_eMc(), m_plugin_location("./"), m_verbose(false), m_plugin_loaded(false), m_devices_count(0),
   m_devices_list(nullptr), m_active_device(-1), m_command_layer(CMD_LAYER_UNSET), m_command_layer_handle()
 {
@@ -195,7 +195,7 @@ void vpRobotKinova::setCartVelocity(const vpRobot::vpControlFrameType frame, con
     // Input velocity is expressed in camera or tool frame
     v_c = v;
 
-    // Tranform velocity in end-effector
+    // Transform velocity in end-effector
     v_e = eVc * v_c;
 
     // Convert end-effector translation velocity in base frame, rotation velocity is unchanged
