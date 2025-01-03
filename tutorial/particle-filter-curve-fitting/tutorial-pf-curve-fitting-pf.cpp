@@ -32,6 +32,7 @@
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
+#include <visp3/core/vpMath.h>
 #include <visp3/core/vpMouseButton.h>
 #include <visp3/core/vpTime.h>
 #include <visp3/core/vpUniRand.h>
@@ -391,7 +392,7 @@ public:
           initPoints.push_back(pt);
         }
       }
-      else if (nbPoints == 1.) {
+      else if (vpMath::equal(nbPoints, 1.)) {
         // The weight of the particle make it have only one control point
         // We sample it at the middle of the image
         vpTutoParabolaModel curve(particles[i], m_height, m_width);
