@@ -126,9 +126,13 @@ public:
   }
 
   /*!
-    Copy constructor.
-  */
+   * Copy constructor.
+   */
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   inline vpRGBa(const vpRGBa &v) = default;
+#else
+  inline vpRGBa(const vpRGBa &v) : R(v.R), G(v.G), B(v.B), A(v.A) { }
+#endif
 
   /*!
     Create a RGBa value from a 4 dimension column vector.
@@ -148,9 +152,11 @@ public:
   vpRGBa &operator=(const unsigned char &v);
   vpRGBa &operator=(const unsigned int &v);
   vpRGBa &operator=(const int &v);
-  vpRGBa &operator=(const vpRGBa &v) = default;
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpRGBa &operator=(vpRGBa &&v) = default;
+  vpRGBa &operator=(const vpRGBa &v) = default;
+#else
+  vpRGBa &operator=(const vpRGBa &v);
 #endif
   vpRGBa &operator=(const vpColVector &v);
   bool operator==(const vpRGBa &v) const;
