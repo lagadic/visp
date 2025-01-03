@@ -5302,7 +5302,8 @@ void vpMbGenericTracker::testTracking()
       tracker->testTracking();
       isOneTestTrackingOk = true;
     }
-    catch (...) {
+    catch (const vpException &e) {
+      std::cerr << "[" << it->first << "] " << e.what() << std::endl;
     }
   }
 
