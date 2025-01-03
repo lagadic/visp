@@ -105,10 +105,13 @@ public:
   }
 
   /*!
-    Copy constructor.
-  */
+   * Copy constructor.
+   */
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   inline vpRGBf(const vpRGBf &v) = default;
-
+#else
+  inline vpRGBf(const vpRGBf &v) : R(v.R), G(v.G), B(v.B) { }
+#endif
   /*!
     Create a RGB value from a 3 dimensional column vector.
 
@@ -120,9 +123,11 @@ public:
 
   vpRGBf &operator=(float v);
   vpRGBf &operator=(int v);
-  vpRGBf &operator=(const vpRGBf &v) = default;
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  vpRGBf &operator=(const vpRGBf &v) = default;
   vpRGBf &operator=(vpRGBf &&v) = default;
+#else
+  vpRGBf &operator=(const vpRGBf &v);
 #endif
   vpRGBf &operator=(const vpColVector &v);
   bool operator==(const vpRGBf &v) const;

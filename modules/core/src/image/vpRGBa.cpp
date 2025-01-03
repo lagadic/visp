@@ -86,6 +86,20 @@ vpRGBa &vpRGBa::operator=(const int &v)
   return *this;
 }
 
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+/*!
+ * Copy operator.
+ */
+vpRGBa &vpRGBa::operator=(const vpRGBa &v)
+{
+  this->R = v.R;
+  this->G = v.G;
+  this->B = v.B;
+  this->A = v.A;
+  return *this;
+}
+#endif
+
 /*!
   Cast a vpColVector in a vpRGBa
 
