@@ -267,7 +267,7 @@ typedef struct vpTutoCommonData
 #if defined(VISP_HAVE_DISPLAY)
     const int horOffset = 20, vertOffset = 25;
     std::string skeletonTitle("Skeletonized image (");
-    skeletonTitle += (vpMath::equal(m_ratioSaltPepperNoise, 0.) ? "without" : std::to_string(static_cast<unsigned int>(m_ratioSaltPepperNoise * 100.)) + "%");
+    skeletonTitle += (VISP_NAMESPACE_ADDRESSING vpMath::equal(m_ratioSaltPepperNoise, 0.) ? "without" : std::to_string(static_cast<unsigned int>(m_ratioSaltPepperNoise * 100.)) + "%");
     skeletonTitle += " noise)";
     m_displayOrig = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::createDisplay(m_I_orig, horOffset, vertOffset, "Original image");
     m_displaySegmented = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::createDisplay(m_I_segmented, 2 * horOffset + m_I_orig.getWidth(), vertOffset, "Segmented image");
@@ -304,7 +304,7 @@ typedef struct vpTutoCommonData
     return true;
   }
 #endif
-}vpTutoCommonData;
+} vpTutoCommonData;
 }
 #endif
 #endif
