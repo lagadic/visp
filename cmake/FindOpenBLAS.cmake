@@ -59,8 +59,10 @@
 set(OpenBLAS_INCLUDE_SEARCH_PATHS
   $ENV{OpenBLAS_HOME}
   $ENV{OpenBLAS_HOME}/include
+  $ENV{OpenBLAS_HOME}/include/openblas
   $ENV{OpenBLAS_DIR}
   $ENV{OpenBLAS_DIR}/include
+  $ENV{OpenBLAS_DIR}/include/openblas
   /opt/OpenBLAS/include
   /usr/local/opt/openblas/include
   /usr/local/include/openblas
@@ -134,13 +136,15 @@ if(OpenBLAS_FOUND)
   else()
     set(OpenBLAS_LIBRARIES ${OpenBLAS_LAPACK_LIB})
   endif()
-  if(NOT OpenBLAS_FIND_QUIETLY)
-    message(STATUS "Found OpenBLAS libraries: ${OpenBLAS_LAPACK_LIB}")
-    message(STATUS "Found OpenBLAS include: ${OpenBLAS_INCLUDE_DIR}")
-  endif()
 
   get_filename_component(OpenBLAS_LIB_DIR ${OpenBLAS_LIB} PATH)
   vp_parse_header3(OpenBLAS "${OpenBLAS_INCLUDE_DIR}/openblas_config.h" "OPENBLAS_VERSION" OpenBLAS_VERSION)
+  if(NOT OpenBLAS_FIND_QUIETLY)
+    message(STATUS "Found OpenBLAS Lapack libraries: ${OpenBLAS_LAPACK_LIB}")
+    message(STATUS "Found OpenBLAS include dir: ${OpenBLAS_INCLUDE_DIR}")
+    message(STATUS "Found OpenBLAS library dir: ${OpenBLAS_LIB}")
+    message(STATUS "Found OpenBLAS version: ${OpenBLAS_VERSION}")
+  endif()
 else()
   if(OpenBLAS_FIND_REQUIRED)
     message(FATAL_ERROR "Could not find OpenBLAS")
