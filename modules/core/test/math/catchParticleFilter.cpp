@@ -45,6 +45,7 @@
 
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpImagePoint.h>
+#include <visp3/core/vpMath.h>
 #include <visp3/core/vpParticleFilter.h>
 #include <visp3/core/vpUniRand.h>
 
@@ -386,7 +387,7 @@ public:
           initPoints.push_back(pt);
         }
       }
-      else if (nbPoints == 1.) {
+      else if (vpMath::equal(nbPoints, 1.)) {
         vpParabolaModel curve(particles[i], m_height, m_width);
         double u = static_cast<double>(m_width) / 2.;
         double v = curve.eval(u);

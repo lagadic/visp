@@ -41,6 +41,7 @@
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpImageFilter.h>
 #include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpMath.h>
 #include <visp3/core/vpRGBa.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
@@ -538,7 +539,7 @@ int main(int argc, const char *argv[])
       }
       double median = vpImageFilter::median(I_median);
       double expectedMedian = 4.;
-      test = (median == expectedMedian);
+      test = vpMath::equal(median, expectedMedian);
       std::cout << "(median (=" << median << ") == expectedMedian(" << expectedMedian << "))? " << test << std::endl;
 
       if (!test) {
@@ -558,7 +559,7 @@ int main(int argc, const char *argv[])
       std::vector<float> median_rgba = vpImageFilter::median(I_median_rgba);
       std::vector<float> expected_median_rgba = { 4.f, 8.f, 12.f };
       for (unsigned int i = 0; i < 3; i++) {
-        bool test_local = (median_rgba[i] == expected_median_rgba[i]);
+        bool test_local = vpMath::equal(median_rgba[i], expected_median_rgba[i]);
         test &= test_local;
         std::cout << "(median_rgba[" << i << "] (=" << median_rgba[i] << ") == expected_median_rgba[" << i << "] ( " << expected_median_rgba[i] << "))? " << test_local << std::endl;
       }
