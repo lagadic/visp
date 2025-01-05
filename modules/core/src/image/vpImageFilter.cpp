@@ -320,6 +320,13 @@ void vpImageFilter::gaussianBlur<double, double>(const vpImage<double> &I, vpIma
 void vpImageFilter::gaussianBlur(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &GI, unsigned int size, double sigma, bool normalize,
                                  const vpImage<bool> *p_mask)
 {
+  if (size-1 > I.getWidth() || size-1 > I.getHeight()) {
+    std::ostringstream oss;
+    oss << "Image size (" << I.getWidth() << "x" << I.getHeight() << ") is too small for the Gaussian kernel ("
+      << "size=" << size << "), min size is " << (size-1);
+    throw vpException(vpException::dimensionError, oss.str());
+  }
+
   double *fg = new double[(size + 1) / 2];
   vpImageFilter::getGaussianKernel(fg, size, sigma, normalize);
   vpImage<vpRGBa> GIx;
