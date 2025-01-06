@@ -217,6 +217,8 @@ public:
     updateCameraProjection();
   }
 
+  void setMaterial(const std::string &entityName, const std::string &materialName);
+
   /*!
     Set the near distance for clipping.
 

@@ -353,8 +353,10 @@ void vpAROgre::init(bool
 
 #if (VISP_HAVE_OGRE_VERSION < (1<<16 | 10<<8 | 0))
   mSceneMgr = mRoot->createSceneManager(Ogre::ST_GENERIC);
-#else
+#elif (VISP_HAVE_OGRE_VERSION < (14<<16 | 0<<8 | 0))
   mSceneMgr = mRoot->createSceneManager(Ogre::DefaultSceneManagerFactory::FACTORY_TYPE_NAME, "SceneManagerInstance0");
+#else
+  mSceneMgr = mRoot->createSceneManager(Ogre::SMT_DEFAULT, "SceneManagerInstance0");
 #endif
 
   bool fullscreen = false;
@@ -790,6 +792,18 @@ void vpAROgre::load(const std::string &entityName, const std::string &model)
   Ogre::Entity *newEntity = mSceneMgr->createEntity(entityName, model);
   Ogre::SceneNode *newNode = mSceneMgr->getRootSceneNode()->createChildSceneNode(entityName);
   newNode->attachObject(newEntity);
+}
+
+/*!
+  Change the material of an entity.
+  \param entityName : Name of the Entity and SceneNode to create.
+  \param materialName : Name of the material to use, as known by the MaterialManager.
+*/
+void vpAROgre::setMaterial(const std::string &entityName, const std::string &materialName)
+{
+  // Reset the position
+  Ogre::Entity *entity = mSceneMgr->getEntity(entityName);
+  entity->setMaterialName(materialName);
 }
 
 /*!
