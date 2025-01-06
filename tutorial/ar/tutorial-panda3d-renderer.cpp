@@ -160,7 +160,7 @@ int main(int argc, const char **argv)
   double factor = 1.0;
   vpPanda3DRenderParameters renderParams(vpCameraParameters(600 * factor, 600 * factor, 320 * factor, 240 * factor), int(480 * factor), int(640 * factor), 0.01, 10.0);
   unsigned h = renderParams.getImageHeight(), w = renderParams.getImageWidth();
-  vpPanda3DRendererSet renderer(renderParams);
+  vpPanda3DRendererSet renderer;
   renderer.setRenderParameters(renderParams);
   renderer.setVerticalSyncEnabled(false);
   renderer.setAbortOnPandaError(true);

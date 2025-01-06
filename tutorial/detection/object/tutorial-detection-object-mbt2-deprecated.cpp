@@ -12,7 +12,10 @@
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_FEATURES2D)
+#if defined(HAVE_OPENCV_IMGPROC) && \
+  ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_FEATURES2D)) || \
+  ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D) && defined(HAVE_OPENCV_FEATURES))
+
 void learnCube(const vpImage<unsigned char> &I, vpMbEdgeTracker &tracker, vpKeyPoint &keypoint_learning, int id)
 {
   //! [Keypoints reference detection]
@@ -50,16 +53,21 @@ void learnCube(const vpImage<unsigned char> &I, vpMbEdgeTracker &tracker, vpKeyP
 
 int main(int argc, char **argv)
 {
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_FEATURES2D)
+#if defined(HAVE_OPENCV_IMGPROC) && \
+  ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
+
   //! [MBT code]
   try {
     std::string videoname = "cube.mp4";
 
-    for (int i = 0; i < argc; i++) {
-      if (std::string(argv[i]) == "--name")
-        videoname = std::string(argv[i + 1]);
-      else if (std::string(argv[i]) == "--help") {
-        std::cout << "\nUsage: " << argv[0] << " [--name <video name>] [--help]\n" << std::endl;
+    for (int i = 1; i < argc; i++) {
+      if (std::string(argv[i]) == "--name" && i + 1 < argc) {
+        videoname = std::string(argv[++i]);
+      }
+      else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+        std::cout << "\nUsage: " << argv[0]
+          << " [--name <video name>]"
+          << "[--help] [-h]\n" << std::endl;
         return EXIT_SUCCESS;
       }
     }
@@ -119,6 +127,7 @@ int main(int argc, char **argv)
 
     //! [Keypoint declaration]
     vpKeyPoint keypoint_learning("ORB", "ORB", "BruteForce-Hamming");
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
 #if (VISP_HAVE_OPENCV_VERSION < 0x030000)
     keypoint_learning.setDetectorParameter("ORB", "nLevels", 1);
 #else
@@ -126,6 +135,7 @@ int main(int argc, char **argv)
     if (orb_learning) {
       orb_learning->setNLevels(1);
     }
+#endif
 #endif
     //! [Keypoint declaration]
 
@@ -197,6 +207,7 @@ int main(int argc, char **argv)
      */
      //! [Init keypoint detection]
     vpKeyPoint keypoint_detection("ORB", "ORB", "BruteForce-Hamming");
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
 #if (VISP_HAVE_OPENCV_VERSION < 0x030000)
     keypoint_detection.setDetectorParameter("ORB", "nLevels", 1);
 #else
@@ -205,6 +216,7 @@ int main(int argc, char **argv)
     if (orb_detector) {
       orb_detector->setNLevels(1);
     }
+#endif
 #endif
     //! [Init keypoint detection]
 

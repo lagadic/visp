@@ -9,7 +9,7 @@ set(tutorial_cpp
   tutorial-bridge-opencv-image.cpp
   tutorial-bridge-opencv-matrix.cpp)
 
-list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/chessboard.pgm" )
+list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/chessboard.jpeg" )
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/monkey.jpeg" )
 
 foreach(cpp ${tutorial_cpp})

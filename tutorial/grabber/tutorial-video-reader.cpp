@@ -14,18 +14,20 @@
  */
 int main(int argc, char **argv)
 {
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO)
+#if ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
 #endif
   try {
     std::string videoname = "video.mp4";
 
-    for (int i = 0; i < argc; i++) {
-      if (std::string(argv[i]) == "--name")
-        videoname = std::string(argv[i + 1]);
+    for (int i = 1; i < argc; i++) {
+      if (std::string(argv[i]) == "--name" && i + 1 < argc) {
+        videoname = std::string(argv[++i]);
+      }
       else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-        std::cout << "\nUsage: " << argv[0] << " [--name <video name> (default: " << videoname << ")]"
+        std::cout << "\nUsage: " << argv[0]
+          << " [--name <video name> (default: " << videoname << ")]"
           << " [--help] [-h]\n"
           << std::endl;
         return EXIT_SUCCESS;

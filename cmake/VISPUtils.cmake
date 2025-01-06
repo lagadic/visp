@@ -1849,7 +1849,11 @@ function(vp_find_dataset found location version major minor patch)
 
   # Check version
   if(_found)
-    if(EXISTS "${_location}/circle/circle.png")
+    if(EXISTS "${_location}/mbt-cao/circle_model.cao")
+      set(_major "3")
+      set(_minor "7")
+      set(_patch "0")
+    elseif(EXISTS "${_location}/circle/circle.png")
       set(_major "3")
       set(_minor "6")
       set(_patch "0")

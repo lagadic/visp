@@ -1,19 +1,38 @@
 //! \example tutorial-mb-generic-tracker-apriltag-webcam.cpp
-#include <fstream>
-#include <ios>
 #include <iostream>
 
 #include <visp3/core/vpConfig.h>
+
+//! [Undef grabber]
+// #undef VISP_HAVE_V4L2
+// #undef HAVE_OPENCV_HIGHGUI
+// #undef HAVE_OPENCV_VIDEOIO
+//! [Undef grabber]
+
+//! [Macro defined]
+#if defined(VISP_HAVE_APRILTAG) && defined(VISP_HAVE_MODULE_MBT) && \
+  (defined(VISP_HAVE_V4L2) || \
+   ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || \
+   ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)))
+//! [Macro defined]
+
+#include <fstream>
+#include <ios>
+
+#ifdef VISP_HAVE_MODULE_SENSOR
+#include <visp3/sensor/vpV4l2Grabber.h>
+#endif
 #include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/detection/vpDetectorAprilTag.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/mbt/vpMbGenericTracker.h>
-#include <visp3/sensor/vpV4l2Grabber.h>
 
-#if defined(HAVE_OPENCV_VIDEOIO)
-#include <opencv2/videoio.hpp>
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)
+#include <opencv2/highgui/highgui.hpp> // for cv::VideoCapture
+#elif (VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)
+#include <opencv2/videoio/videoio.hpp> // for cv::VideoCapture
 #endif
 
 #ifdef ENABLE_VISP_NAMESPACE
@@ -58,9 +77,8 @@ void createCaoFile(double cubeEdgeSize)
   fileStream.close();
 }
 
-#if defined(VISP_HAVE_APRILTAG)
 state_t detectAprilTag(const vpImage<unsigned char> &I, vpDetectorAprilTag &detector, double tagSize,
-  const vpCameraParameters &cam, vpHomogeneousMatrix &cMo)
+                       const vpCameraParameters &cam, vpHomogeneousMatrix &cMo)
 {
   std::vector<vpHomogeneousMatrix> cMo_vec;
 
@@ -77,14 +95,13 @@ state_t detectAprilTag(const vpImage<unsigned char> &I, vpDetectorAprilTag &dete
   if (ret && detector.getNbObjects() > 0) { // if tag detected, we pick the first one
     cMo = cMo_vec[0];
     return state_tracking;
-}
+  }
 
   return state_detection;
 }
-#endif // #if defined(VISP_HAVE_APRILTAG)
 
 state_t track(const vpImage<unsigned char> &I, vpMbGenericTracker &tracker, double projection_error_threshold,
-  vpHomogeneousMatrix &cMo)
+              vpHomogeneousMatrix &cMo)
 {
   vpCameraParameters cam;
   tracker.getCameraParameters(cam);
@@ -120,10 +137,6 @@ state_t track(const vpImage<unsigned char> &I, vpMbGenericTracker &tracker, doub
 
 int main(int argc, const char **argv)
 {
-  //! [Macro defined]
-#if defined(VISP_HAVE_APRILTAG) && (defined(VISP_HAVE_V4L2) || defined(HAVE_OPENCV_VIDEOIO)) &&  defined(VISP_HAVE_MODULE_MBT)
-  //! [Macro defined]
-
   int opt_device = 0;
   vpDetectorAprilTag::vpAprilTagFamily opt_tag_family = vpDetectorAprilTag::TAG_36h11;
   double opt_tag_size = 0.08;
@@ -150,7 +163,7 @@ int main(int argc, const char **argv)
     else if (std::string(argv[i]) == "--input" && i + 1 < argc) {
       opt_device = atoi(argv[i + 1]);
     }
-    else if (std::string(argv[i]) == "--quad_decimate" && i + 1 < argc) {
+    else if (std::string(argv[i]) == "--quad-decimate" && i + 1 < argc) {
       opt_quad_decimate = (float)atof(argv[i + 1]);
     }
     else if (std::string(argv[i]) == "--nthreads" && i + 1 < argc) {
@@ -159,16 +172,16 @@ int main(int argc, const char **argv)
     else if (std::string(argv[i]) == "--intrinsic" && i + 1 < argc) {
       opt_intrinsic_file = std::string(argv[i + 1]);
     }
-    else if (std::string(argv[i]) == "--camera_name" && i + 1 < argc) {
+    else if (std::string(argv[i]) == "--camera-name" && i + 1 < argc) {
       opt_camera_name = std::string(argv[i + 1]);
     }
-    else if (std::string(argv[i]) == "--display_off") {
+    else if (std::string(argv[i]) == "--display-off") {
       display_off = true;
     }
-    else if (std::string(argv[i]) == "--tag_family" && i + 1 < argc) {
+    else if (std::string(argv[i]) == "--tag-family" && i + 1 < argc) {
       opt_tag_family = (vpDetectorAprilTag::vpAprilTagFamily)atoi(argv[i + 1]);
     }
-    else if (std::string(argv[i]) == "--cube_size" && i + 1 < argc) {
+    else if (std::string(argv[i]) == "--cube-size" && i + 1 < argc) {
       opt_cube_size = atof(argv[i + 1]);
 #ifdef VISP_HAVE_OPENCV
     }
@@ -176,20 +189,25 @@ int main(int argc, const char **argv)
       opt_use_texture = true;
 #endif
     }
-    else if (std::string(argv[i]) == "--projection_error" && i + 1 < argc) {
+    else if (std::string(argv[i]) == "--projection-error" && i + 1 < argc) {
       opt_projection_error_threshold = atof(argv[i + 1]);
     }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "Usage: " << argv[0]
-        << " [--input <camera id>] [--cube_size <size in m>] [--tag_size <size in m>]"
-        " [--quad_decimate <decimation>] [--nthreads <nb>]"
-        " [--intrinsic <xml intrinsic file>] [--camera_name <camera name in xml file>]"
-        " [--tag_family <0: TAG_36h11, 1: TAG_36h10, 2: TAG_36ARTOOLKIT, "
-        " 3: TAG_25h9, 4: TAG_25h7, 5: TAG_16h5>]";
+        << " [--input <camera id>]"
+        << " [--cube-size <size in m>]"
+        << " [--tag-size <size in m>]"
+        << " [--quad-decimate <decimation>]"
+        << " [--nthreads <nb>]"
+        << " [--intrinsic <xml intrinsic file>]"
+        << " [--camera-name <camera name in xml file>]"
+        << " [--tag-family <0: TAG_36h11, 1: TAG_36h10, 2: TAG_36ARTOOLKIT, 3: TAG_25h9, 4: TAG_25h7, 5: TAG_16h5>]";
 #if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
-      std::cout << " [--display_off]";
+      std::cout << " [--display-off]";
 #endif
-      std::cout << " [--texture] [--projection_error <30 - 100>] [--help]" << std::endl;
+      std::cout << " [--texture]"
+        << " [--projection-error <30 - 100>]"
+        << " [--help,-h]" << std::endl;
       return EXIT_SUCCESS;
     }
   }
@@ -214,21 +232,22 @@ int main(int argc, const char **argv)
     vpV4l2Grabber g;
     std::ostringstream device;
     device << "/dev/video" << opt_device;
-    std::cout << "Use device " << device.str() << " (v4l2 grabber)" << std::endl;
+    std::cout << "Use Video 4 Linux grabber on device " << device.str() << std::endl;
     g.setDevice(device.str());
     g.setScale(1);
-    g.acquire(I);
-#elif defined(HAVE_OPENCV_VIDEOIO)
-    std::cout << "Use device " << opt_device << " (OpenCV grabber)" << std::endl;
-    cv::VideoCapture cap(opt_device); // open the default camera
-    if (!cap.isOpened()) {            // check if we succeeded
+    g.open(I);
+#elif ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI))|| ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
+    std::cout << "Use OpenCV grabber on device " << opt_device << std::endl;
+    cv::VideoCapture g(opt_device); // Open the default camera
+    if (!g.isOpened()) {            // Check if we succeeded
       std::cout << "Failed to open the camera" << std::endl;
       return EXIT_FAILURE;
     }
     cv::Mat frame;
-    cap >> frame; // get a new frame from camera
+    g >> frame; // get a new frame from camera
     vpImageConvert::convert(frame, I);
 #endif
+    //! [Construct grabber]
     if (!camIsInit) {
       cam.initPersProjWithoutDistortion(600, 600, I.getWidth() / 2., I.getHeight() / 2.);
     }
@@ -318,8 +337,8 @@ int main(int argc, const char **argv)
 
 #if defined(VISP_HAVE_V4L2)
       g.acquire(I);
-#elif defined(HAVE_OPENCV_VIDEOIO)
-      cap >> frame;
+#elif ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI))|| ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
+      g >> frame;
       vpImageConvert::convert(frame, I);
 #endif
 
@@ -356,16 +375,22 @@ int main(int argc, const char **argv)
   }
 
   return EXIT_SUCCESS;
+}
+
 #else
-  (void)argc;
-  (void)argv;
-#ifndef VISP_HAVE_APRILTAG
+
+int main()
+{
+#if !defined(VISP_HAVE_APRILTAG)
   std::cout << "ViSP is not build with Apriltag support" << std::endl;
 #endif
 #if !(defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_OPENCV))
   std::cout << "ViSP is not build with v4l2 or OpenCV support" << std::endl;
-#endif
+#else
   std::cout << "Install missing 3rd parties, configure and build ViSP to run this tutorial" << std::endl;
 #endif
+
   return EXIT_SUCCESS;
 }
+
+#endif

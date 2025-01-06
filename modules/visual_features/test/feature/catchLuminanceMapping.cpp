@@ -37,15 +37,16 @@
  * \example catchLuminanceMapping.cpp
  */
 
-#include <visp3/visual_features/vpFeatureLuminanceMapping.h>
+#include <visp3/core/vpConfig.h>
 
-#include <visp3/core/vpSubMatrix.h>
-
-#include <visp3/core/vpUniRand.h>
-#include <visp3/core/vpIoTools.h>
 #if defined(VISP_HAVE_CATCH2)
 
 #include <catch_amalgamated.hpp>
+
+#include <visp3/core/vpSubMatrix.h>
+#include <visp3/core/vpUniRand.h>
+#include <visp3/core/vpIoTools.h>
+#include <visp3/visual_features/vpFeatureLuminanceMapping.h>
 
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;
@@ -314,103 +315,97 @@ SCENARIO("Using DCT features", "[visual_features]")
 {
   GIVEN("A matrix")
   {
-    std::vector<std::tuple<vpMatrix, vpColVector, vpMatrix>> data = {
+    vpMatrix M1({
+      {0.0, 1.0, 2.0},
+      {3.0, 4.0, 5.0},
+      {6.0, 7.0, 8.0}
+    });
+    vpColVector v(
+      { 0.0, 1.0, 3.0, 6.0, 4.0, 2.0, 5.0, 7.0, 8.0 }
+    );
+    vpMatrix M2({
+      {0.0, 1.0, 5.0},
+      {2.0, 4.0, 6.0},
+      {3.0, 7.0, 8.0}
+    });
+    std::tuple<vpMatrix, vpColVector, vpMatrix> data(M1, v, M2);
+
+    WHEN("Building the associated zigzag indexing matrix")
+    {
+      vpMatrix m = std::get<0>(data);
+      vpColVector contentAsZigzag = std::get<1>(data);
+      const vpMatrix mAfterWriterVec = std::get<2>(data);
+      vpLuminanceDCT::vpMatrixZigZagIndex zigzag;
+      zigzag.init(m.getRows(), m.getCols());
+      vpColVector s;
+      THEN("Calling getValues with wrong matrix rows throws")
       {
-        vpMatrix({
-          {0.0, 1.0, 2.0},
-          {3.0, 4.0, 5.0},
-          {6.0, 7.0, 8.0}
-        }),
-        vpColVector(
-          { 0.0, 1.0, 3.0, 6.0, 4.0, 2.0, 5.0, 7.0, 8.0 }
-        ),
-        vpMatrix({
-          {0.0, 1.0, 5.0},
-          {2.0, 4.0, 6.0},
-          {3.0, 7.0, 8.0}
-        })
+        vpMatrix wrongM(m.getRows() + 1, m.getCols());
+        REQUIRE_THROWS(zigzag.getValues(wrongM, 0, 2, s));
       }
-    };
-    for (unsigned int i = 0; i < data.size(); ++i) {
-      WHEN("Building the associated zigzag indexing matrix")
+      THEN("Calling getValues with wrong matrix cols throws")
       {
-        vpMatrix m = std::get<0>(data[i]);
-        vpColVector contentAsZigzag = std::get<1>(data[i]);
-        const vpMatrix mAfterWriterVec = std::get<2>(data[i]);
-        vpLuminanceDCT::vpMatrixZigZagIndex zigzag;
-        zigzag.init(m.getRows(), m.getCols());
-        vpColVector s;
-        THEN("Calling getValues with wrong matrix rows throws")
-        {
-          vpMatrix wrongM(m.getRows() + 1, m.getCols());
-          REQUIRE_THROWS(zigzag.getValues(wrongM, 0, 2, s));
-        }
-        THEN("Calling getValues with wrong matrix cols throws")
-        {
-          vpMatrix wrongM(m.getRows(), m.getCols() + 1);
-          REQUIRE_THROWS(zigzag.getValues(wrongM, 0, 2, s));
-        }
-        THEN("Calling getValues with wrong start and end arguments throws")
-        {
-          REQUIRE_THROWS(zigzag.getValues(m, 2, 1, s));
-        }
-        THEN("Calling getValues and querying all values returns correct result")
-        {
-          REQUIRE_NOTHROW(zigzag.getValues(m, 0, m.size(), s));
-          REQUIRE(s == contentAsZigzag);
-        }
-        THEN("Calling getValues and querying a subset of the values is correct")
-        {
-          REQUIRE_NOTHROW(zigzag.getValues(m, 0, m.size() / 2, s));
-          REQUIRE(s == contentAsZigzag.extract(0, m.size() / 2));
-          REQUIRE_NOTHROW(zigzag.getValues(m, m.size() / 2, m.size(), s));
-          REQUIRE(s == contentAsZigzag.extract(m.size() / 2, m.size() - m.size() / 2));
-        }
-        THEN("Calling setValues with wrong matrix rows throws")
-        {
-          vpMatrix wrongM(m.getRows() + 1, m.getCols());
-          REQUIRE_THROWS(zigzag.setValues(contentAsZigzag, 0, wrongM));
-        }
-        THEN("Calling setValues with wrong matrix cols throws")
-        {
-          vpMatrix wrongM(m.getRows(), m.getCols() + 1);
-          REQUIRE_THROWS(zigzag.setValues(contentAsZigzag, 0, wrongM));
-        }
+        vpMatrix wrongM(m.getRows(), m.getCols() + 1);
+        REQUIRE_THROWS(zigzag.getValues(wrongM, 0, 2, s));
+      }
+      THEN("Calling getValues with wrong start and end arguments throws")
+      {
+        REQUIRE_THROWS(zigzag.getValues(m, 2, 1, s));
+      }
+      THEN("Calling getValues and querying all values returns correct result")
+      {
+        REQUIRE_NOTHROW(zigzag.getValues(m, 0, m.size(), s));
+        REQUIRE(s == contentAsZigzag);
+      }
+      THEN("Calling getValues and querying a subset of the values is correct")
+      {
+        REQUIRE_NOTHROW(zigzag.getValues(m, 0, m.size() / 2, s));
+        REQUIRE(s == contentAsZigzag.extract(0, m.size() / 2));
+        REQUIRE_NOTHROW(zigzag.getValues(m, m.size() / 2, m.size(), s));
+        REQUIRE(s == contentAsZigzag.extract(m.size() / 2, m.size() - m.size() / 2));
+      }
+      THEN("Calling setValues with wrong matrix rows throws")
+      {
+        vpMatrix wrongM(m.getRows() + 1, m.getCols());
+        REQUIRE_THROWS(zigzag.setValues(contentAsZigzag, 0, wrongM));
+      }
+      THEN("Calling setValues with wrong matrix cols throws")
+      {
+        vpMatrix wrongM(m.getRows(), m.getCols() + 1);
+        REQUIRE_THROWS(zigzag.setValues(contentAsZigzag, 0, wrongM));
+      }
 
-        THEN("Calling setValues with wrong start and vector size arguments throws")
-        {
-          REQUIRE_THROWS(zigzag.setValues(contentAsZigzag, m.size() - contentAsZigzag.size() + 1, m));
+      THEN("Calling setValues with wrong start and vector size arguments throws")
+      {
+        REQUIRE_THROWS(zigzag.setValues(contentAsZigzag, m.size() - contentAsZigzag.size() + 1, m));
+      }
+
+      THEN("Calling setValues leads to expected result")
+      {
+        vpMatrix mWrite(m.getRows(), m.getCols());
+        vpColVector powered = contentAsZigzag;
+        for (unsigned i = 0; i < powered.size(); ++i) {
+          powered[i] *= powered[i];
         }
+        vpColVector poweredRead;
+        REQUIRE_NOTHROW(zigzag.setValues(powered, 0, mWrite));
+        REQUIRE_NOTHROW(zigzag.getValues(mWrite, 0, mWrite.size(), poweredRead));
+        REQUIRE(powered == poweredRead);
 
-        THEN("Calling setValues leads to expected result")
-        {
-          vpMatrix mWrite(m.getRows(), m.getCols());
-          vpColVector powered = contentAsZigzag;
-          for (unsigned i = 0; i < powered.size(); ++i) {
-            powered[i] *= powered[i];
-          }
-          vpColVector poweredRead;
-          REQUIRE_NOTHROW(zigzag.setValues(powered, 0, mWrite));
-          REQUIRE_NOTHROW(zigzag.getValues(mWrite, 0, mWrite.size(), poweredRead));
-          REQUIRE(powered == poweredRead);
-
-          vpColVector indices = contentAsZigzag;
-          for (unsigned i = 0; i < powered.size(); ++i) {
-            indices[i] = static_cast<double>(i);
-          }
-          vpColVector indicesRead;
-          REQUIRE_NOTHROW(zigzag.setValues(indices, 0, mWrite));
-          REQUIRE(mWrite == mAfterWriterVec);
-
-          vpMatrix m2(m.getRows(), m.getCols(), 0.0);
-          zigzag.setValues(contentAsZigzag.extract(0, 3), 0, m2);
-
-          vpColVector s2;
-          zigzag.getValues(m2, 0, 3, s2);
-          REQUIRE(s2 == contentAsZigzag.extract(0, 3));
-
+        vpColVector indices = contentAsZigzag;
+        for (unsigned i = 0; i < powered.size(); ++i) {
+          indices[i] = static_cast<double>(i);
         }
+        vpColVector indicesRead;
+        REQUIRE_NOTHROW(zigzag.setValues(indices, 0, mWrite));
+        REQUIRE(mWrite == mAfterWriterVec);
 
+        vpMatrix m2(m.getRows(), m.getCols(), 0.0);
+        zigzag.setValues(contentAsZigzag.extract(0, 3), 0, m2);
+
+        vpColVector s2;
+        zigzag.getValues(m2, 0, 3, s2);
+        REQUIRE(s2 == contentAsZigzag.extract(0, 3));
       }
     }
 

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
+#if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
 
 #include <string>
 
@@ -95,7 +95,6 @@ void vpKltOpencv::initTracking(const cv::Mat &I, const cv::Mat &mask)
 {
   m_next_points_id = 0;
 
-  // cvtColor(I, m_gray, cv::COLOR_BGR2GRAY);
   I.copyTo(m_gray);
 
   for (size_t i = 0; i < 2; i++) {

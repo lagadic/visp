@@ -41,11 +41,13 @@
 
 #include <string>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/io/vpDiskGrabber.h>
 
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_VIDEOIO) && defined(HAVE_OPENCV_HIGHGUI)
-#include <opencv2/videoio/videoio.hpp>
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)
 #include <opencv2/highgui/highgui.hpp>
+#elif (VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)
+#include <opencv2/videoio/videoio.hpp>
 #endif
 
 BEGIN_VISP_NAMESPACE
@@ -180,7 +182,7 @@ class VISP_EXPORT vpVideoReader : public vpFrameGrabber
 private:
   //! To read sequences of images
   vpDiskGrabber *m_imSequence;
-#if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO)
+#if ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI))|| ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
   //! To read video files with OpenCV
   cv::VideoCapture m_capture;
   cv::Mat m_frame;

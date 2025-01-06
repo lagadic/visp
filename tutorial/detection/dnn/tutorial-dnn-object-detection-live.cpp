@@ -1,14 +1,19 @@
 //! \example tutorial-dnn-object-detection-live.cpp
+#include <iostream>
+
 #include <visp3/core/vpConfig.h>
+
+  // Check if std:c++17 or higher
+#if defined(HAVE_OPENCV_DNN) && defined(HAVE_OPENCV_VIDEOIO) && \
+    ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
+
 #include <visp3/core/vpIoTools.h>
 #include <visp3/detection/vpDetectorDNNOpenCV.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 
-#if defined(HAVE_OPENCV_VIDEOIO)
 #include <opencv2/videoio.hpp>
-#endif
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include VISP_NLOHMANN_JSON(json.hpp)
@@ -70,9 +75,6 @@ std::string getAvailableDetectionContainer()
 
 int main(int argc, const char *argv[])
 {
-  // Check if std:c++17 or higher
-#if defined(HAVE_OPENCV_DNN) && defined(HAVE_OPENCV_VIDEOIO) && \
-    ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
   try {
     std::string opt_device("0");
     //! [OpenCV DNN face detector]
@@ -455,9 +457,22 @@ int main(int argc, const char *argv[])
   catch (const vpException &e) {
     std::cout << e.what() << std::endl;
   }
+}
+
 #else
-  (void)argc;
-  (void)argv;
+
+int main()
+{
+#if !defined(HAVE_OPENCV_DNN)
+  std::cout << "This tutorial needs OpenCV dnn module that is missing." << std::endl;
+#endif
+#if !defined(HAVE_OPENCV_VIDEOIO)
+  std::cout << "This tutorial needs OpenCV videoio module that is missing." << std::endl;
+#endif
+#if (__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L))
+  std::cout << "This tutorial needs std::c++17 standard enabled." << std::endl;
 #endif
   return EXIT_SUCCESS;
 }
+
+#endif

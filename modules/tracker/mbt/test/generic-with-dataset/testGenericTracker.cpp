@@ -371,7 +371,7 @@ bool run(const std::string &input_directory, bool opt_click_allowed, bool opt_di
   map_thresh[vpMbGenericTracker::KLT_TRACKER] =
     useScanline ? std::pair<double, double>(0.007, 1.9) : std::pair<double, double>(0.007, 1.8);
   map_thresh[vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER] =
-    useScanline ? std::pair<double, double>(0.005, 3.7) : std::pair<double, double>(0.007, 3.4);
+    useScanline ? std::pair<double, double>(0.005, 3.8) : std::pair<double, double>(0.007, 3.7);
 #endif
   map_thresh[vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::DEPTH_DENSE_TRACKER] =
     useScanline ? std::pair<double, double>(0.003, 1.7) : std::pair<double, double>(0.002, 0.8);

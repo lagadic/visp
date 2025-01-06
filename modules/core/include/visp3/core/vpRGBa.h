@@ -45,6 +45,11 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColVector.h>
 
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
+#include <type_traits>
+#endif
+
+
 BEGIN_VISP_NAMESPACE
 /*!
   \class vpRGBa
@@ -121,9 +126,13 @@ public:
   }
 
   /*!
-    Copy constructor.
-  */
+   * Copy constructor.
+   */
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  inline vpRGBa(const vpRGBa &v) = default;
+#else
   inline vpRGBa(const vpRGBa &v) : R(v.R), G(v.G), B(v.B), A(v.A) { }
+#endif
 
   /*!
     Create a RGBa value from a 4 dimension column vector.
@@ -143,9 +152,11 @@ public:
   vpRGBa &operator=(const unsigned char &v);
   vpRGBa &operator=(const unsigned int &v);
   vpRGBa &operator=(const int &v);
-  vpRGBa &operator=(const vpRGBa &v);
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  vpRGBa &operator=(const vpRGBa &&v);
+  vpRGBa &operator=(vpRGBa &&v) = default;
+  vpRGBa &operator=(const vpRGBa &v) = default;
+#else
+  vpRGBa &operator=(const vpRGBa &v);
 #endif
   vpRGBa &operator=(const vpColVector &v);
   bool operator==(const vpRGBa &v) const;
@@ -171,5 +182,11 @@ public:
 
   friend VISP_EXPORT vpRGBa operator*(const double &x, const vpRGBa &rgb);
 };
+
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
+static_assert(std::is_trivially_assignable_v<vpRGBa, vpRGBa>);
+static_assert(std::is_trivially_copyable_v<vpRGBa>);
+#endif
+
 END_VISP_NAMESPACE
 #endif

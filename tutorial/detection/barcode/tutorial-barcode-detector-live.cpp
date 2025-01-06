@@ -1,5 +1,18 @@
 //! \example tutorial-barcode-detector-live.cpp
+#include <iostream>
+
 #include <visp3/core/vpConfig.h>
+
+//! [Undef grabber]
+// Comment / uncomment following lines to use the specific 3rd party compatible with your camera
+// #undef VISP_HAVE_V4L2
+// #undef HAVE_OPENCV_HIGHGUI
+// #undef HAVE_OPENCV_VIDEOIO
+//! [Undef grabber]
+
+#if (defined(VISP_HAVE_ZBAR) || defined(VISP_HAVE_DMTX)) && (defined(VISP_HAVE_V4L2) || \
+     ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI))|| ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)))
+
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/detection/vpDetectorDataMatrixCode.h>
 #include <visp3/detection/vpDetectorQRCode.h>
@@ -10,28 +23,32 @@
 #include <visp3/sensor/vpV4l2Grabber.h>
 #endif
 
-#if defined(HAVE_OPENCV_VIDEOIO)
-#include <opencv2/videoio.hpp>
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)
+#include <opencv2/highgui/highgui.hpp> // for cv::VideoCapture
+#elif (VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)
+#include <opencv2/videoio/videoio.hpp> // for cv::VideoCapture
 #endif
 
 int main(int argc, const char **argv)
 {
-#if (defined(VISP_HAVE_V4L2) || defined(HAVE_OPENCV_VIDEOIO)) && (defined(VISP_HAVE_ZBAR) || defined(VISP_HAVE_DMTX))
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
 #endif
   int opt_device = 0;
   int opt_barcode = 0; // 0=QRCode, 1=DataMatrix
 
-  for (int i = 0; i < argc; i++) {
-    if (std::string(argv[i]) == "--device")
-      opt_device = atoi(argv[i + 1]);
-    else if (std::string(argv[i]) == "--code-type")
-      opt_barcode = atoi(argv[i + 1]);
+  for (int i = 1; i < argc; i++) {
+    if (std::string(argv[i]) == "--device" && i + 1 < argc) {
+      opt_device = atoi(argv[++i]);
+    }
+    else if (std::string(argv[i]) == "--code-type" && i + 1 < argc) {
+      opt_barcode = atoi(argv[++i]);
+    }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "Usage: " << argv[0]
-        << " [--device <camera number>] [--code-type <0 for QR code | "
-        "1 for DataMatrix code>] [--help] [-h]"
+        << " [--device <camera number>]"
+        << " [--code-type <0 for QR code | 1 for DataMatrix code>]"
+        << " [--help] [-h]"
         << std::endl;
       return EXIT_SUCCESS;
     }
@@ -49,7 +66,7 @@ int main(int argc, const char **argv)
     g.setDevice(device.str());
     g.setScale(1);
     g.acquire(I);
-#elif defined(HAVE_OPENCV_VIDEOIO)
+#elif ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI))|| ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
     cv::VideoCapture cap(opt_device); // open the default camera
     if (!cap.isOpened()) {            // check if we succeeded
       std::cout << "Failed to open the camera" << std::endl;
@@ -88,7 +105,7 @@ int main(int argc, const char **argv)
       //! [Acquisition]
 #if defined(VISP_HAVE_V4L2)
       g.acquire(I);
-#elif defined(HAVE_OPENCV_VIDEOIO)
+#elif ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI))|| ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
       cap >> frame; // get a new frame from camera
       vpImageConvert::convert(frame, I);
 #endif
@@ -126,8 +143,13 @@ int main(int argc, const char **argv)
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
-#else
-  (void)argc;
-  (void)argv;
-#endif
 }
+
+#else
+
+int main()
+{
+  std::cout << "There are missing 3rd parties to run this tutorial" << std::endl;
+}
+
+#endif

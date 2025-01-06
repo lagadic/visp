@@ -35,19 +35,18 @@
 #include <lightRampAttrib.h>
 
 BEGIN_VISP_NAMESPACE
-const char *vpPanda3DPostProcessFilter::FILTER_VERTEX_SHADER = R"shader(
-#version 330
-in vec4 p3d_Vertex;
-uniform mat4 p3d_ModelViewProjectionMatrix;
-in vec2 p3d_MultiTexCoord0;
-out vec2 texcoords;
+const std::string vpPanda3DPostProcessFilter::FILTER_VERTEX_SHADER =
+"#version 330\n"
+"in vec4 p3d_Vertex;\n"
+"uniform mat4 p3d_ModelViewProjectionMatrix;\n"
+"in vec2 p3d_MultiTexCoord0;\n"
+"out vec2 texcoords;\n"
 
-void main()
-{
-  gl_Position = p3d_ModelViewProjectionMatrix * p3d_Vertex;
-  texcoords = p3d_MultiTexCoord0;
-}
-)shader";
+"void main()\n"
+"{\n"
+"  gl_Position = p3d_ModelViewProjectionMatrix * p3d_Vertex;\n"
+"  texcoords = p3d_MultiTexCoord0;\n"
+"}\n";
 
 void vpPanda3DPostProcessFilter::setupScene()
 {
@@ -62,8 +61,8 @@ void vpPanda3DPostProcessFilter::setupScene()
     "Cannot add a postprocess filter to a renderer that does not define getMainOutputBuffer()");
   }
   m_shader = Shader::make(Shader::ShaderLanguage::SL_GLSL,
-                        FILTER_VERTEX_SHADER,
-                        m_fragmentShader);
+                          FILTER_VERTEX_SHADER,
+                          m_fragmentShader);
   m_renderRoot.set_shader(m_shader);
   m_renderRoot.set_shader_input("dp", LVector2f(1.0 / buffer->get_texture()->get_x_size(), 1.0 / buffer->get_texture()->get_y_size()));
   m_renderRoot.set_texture(buffer->get_texture());

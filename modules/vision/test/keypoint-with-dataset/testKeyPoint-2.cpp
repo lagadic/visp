@@ -41,14 +41,13 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_FEATURES2D) && defined(HAVE_OPENCV_VIDEO)
+#if defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO) && \
+  ((VISP_HAVE_OPENCV_VERSION < 0x050000)  && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_FEATURES2D)) || \
+  ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D) && defined(HAVE_OPENCV_FEATURES))
 
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpIoTools.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/io/vpVideoReader.h>
@@ -169,19 +168,15 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
   vpImageIo::read(I, filenameRef);
   std::string filenameCur = vpIoTools::createFilePath(dirname, "image%04d." + ext);
 
-#if defined(VISP_HAVE_X11)
-  vpDisplayX display;
-#elif defined(VISP_HAVE_GTK)
-  vpDisplayGTK display;
-#elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI display;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-  vpDisplayOpenCV display;
-#endif
+  vpDisplay *display = nullptr;
 
   if (opt_display) {
-    display.setDownScalingFactor(vpDisplay::SCALE_AUTO);
-    display.init(I, 0, 0, "ORB keypoints matching and pose estimation");
+#ifdef VISP_HAVE_DISPLAY
+    display = vpDisplayFactory::allocateDisplay(I, 0, 0, "ORB keypoints matching and pose estimation");
+    display->setDownScalingFactor(vpDisplay::SCALE_AUTO);
+#else
+    std::cout << "No image viewer is available..." << std::endl;
+#endif
   }
 
   vpCameraParameters cam;
@@ -321,21 +316,15 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
   g.open(I);
   g.acquire(I);
 
-#if defined(VISP_HAVE_X11)
-  vpDisplayX display2;
-#elif defined(VISP_HAVE_GTK)
-  vpDisplayGTK display2;
-#elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI display2;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-  vpDisplayOpenCV display2;
-#endif
+  vpDisplay *display2 = nullptr;
 
   keypoints.createImageMatching(I, IMatching);
 
   if (opt_display) {
-    display2.setDownScalingFactor(vpDisplay::SCALE_AUTO);
-    display2.init(IMatching, 0, (int)I.getHeight() / vpDisplay::getDownScalingFactor(I) + 80, "IMatching");
+#ifdef VISP_HAVE_DISPLAY
+    display2 = vpDisplayFactory::allocateDisplay(IMatching, 0, (int)I.getHeight() / vpDisplay::getDownScalingFactor(I) + 30, "IMatching");
+    display2->setDownScalingFactor(vpDisplay::SCALE_AUTO);
+#endif
   }
 
   bool opt_click = false;
@@ -422,6 +411,13 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
         }
       }
     }
+  }
+
+  if (display) {
+    delete display;
+  }
+  if (display2) {
+    delete display2;
   }
 
   if (!times_vec.empty()) {

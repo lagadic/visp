@@ -32,40 +32,40 @@ a v4l2 live camera that can be an usb camera, or a Raspberry Pi camera module.
 
 \subsection live-firewire From a firewire live camera
 
-The following code also available in tutorial-blob-tracker-live-firewire.cpp file provided in ViSP source code tree
+The following code also available in tutorial-blob-tracker-live.cpp file provided in ViSP source code tree
 allows to grab images from a firewire camera and track a blob. The initialisation is done with a user mouse click on
 a pixel that belongs to the blob.
 
 To acquire images from a firewire camera we use vp1394TwoGrabber class on unix-like systems or vp1394CMUGrabber class
 under Windows. These classes are described in the \ref tutorial-grabber.
 
-\include tutorial-blob-tracker-live-firewire.cpp
+\include tutorial-blob-tracker-live.cpp
 
 From now, we assume that you have successfully followed the \ref tutorial-getting-started and the \ref tutorial-grabber.
 Here after we explain the new lines that are introduced.
 
-\snippet tutorial-blob-tracker-live-firewire.cpp Construction
+\snippet tutorial-blob-tracker-live.cpp Construction
 
 Then we are modifying some default settings to allow drawings in overlay the contours pixels and the position of the
 center of gravity with a thickness of 2 pixels.
-\snippet tutorial-blob-tracker-live-firewire.cpp Setting
+\snippet tutorial-blob-tracker-live.cpp Setting
 
 Then we are waiting for a user initialization throw a mouse click event in the blob to track.
-\snippet tutorial-blob-tracker-live-firewire.cpp Init
+\snippet tutorial-blob-tracker-live.cpp Init
 
 The tracker is now initialized. The tracking can be performed on new images:
-\snippet tutorial-blob-tracker-live-firewire.cpp Track
+\snippet tutorial-blob-tracker-live.cpp Track
 
 \subsection live-v4l2 From a v4l2 live camera
 
-The following code also available in tutorial-blob-tracker-live-v4l2.cpp file provided in ViSP source code tree allows
+The following code also available in tutorial-blob-tracker-live.cpp file provided in ViSP source code tree allows
 to grab images from a camera compatible with video for linux two driver (v4l2) and track a blob. Webcams or more
 generally USB cameras, but also the Raspberry Pi Camera Module can be considered.
 
 To acquire images from a v4l2 camera we use vpV4l2Grabber class on unix-like systems. This class is described in the
 \ref tutorial-grabber.
 
-\include tutorial-blob-tracker-live-v4l2.cpp
+\include tutorial-blob-tracker-live.cpp
 
 The code is the same than the one presented in the previous subsection, except that here we use the vpV4l2Grabber
 class to grab images from usb cameras. Here we have also modified the while loop in order to catch an exception when

@@ -86,28 +86,16 @@ vpRGBa &vpRGBa::operator=(const int &v)
   return *this;
 }
 
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
 /*!
-  Copy operator.
-*/
+ * Copy operator.
+ */
 vpRGBa &vpRGBa::operator=(const vpRGBa &v)
 {
   this->R = v.R;
   this->G = v.G;
   this->B = v.B;
   this->A = v.A;
-  return *this;
-}
-
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-/*!
-  Move operator.
-*/
-vpRGBa &vpRGBa::operator=(const vpRGBa &&v)
-{
-  this->R = std::move(v.R);
-  this->G = std::move(v.G);
-  this->B = std::move(v.B);
-  this->A = std::move(v.A);
   return *this;
 }
 #endif

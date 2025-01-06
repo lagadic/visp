@@ -24,20 +24,20 @@ int main(int argc, char **argv)
     int opt_tracker1 = vpMbGenericTracker::EDGE_TRACKER;
     int opt_tracker2 = vpMbGenericTracker::EDGE_TRACKER;
 
-    for (int i = 0; i < argc; i++) {
+    for (int i = 1; i < argc; i++) {
       if (std::string(argv[i]) == "--name" && i + 2 < argc) {
-        opt_videoname_left = std::string(argv[i + 1]);
-        opt_videoname_right = std::string(argv[i + 2]);
+        opt_videoname_left = std::string(argv[++i]);
+        opt_videoname_right = std::string(argv[++i]);
       }
       else if (std::string(argv[i]) == "--tracker" && i + 2 < argc) {
-        opt_tracker1 = atoi(argv[i + 1]);
-        opt_tracker2 = atoi(argv[i + 2]);
+        opt_tracker1 = atoi(argv[++i]);
+        opt_tracker2 = atoi(argv[++i]);
       }
-      else if (std::string(argv[i]) == "--help") {
+      else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
         std::cout << "\nUsage: " << argv[0]
           << " [--name <video name left> <video name right>]"
-          " [--tracker <1=egde|2=klt|3=hybrid> <1=egde|2=klt|3=hybrid>]"
-          " [--help]\n"
+          << " [--tracker <1=egde|2=klt|3=hybrid> <1=egde|2=klt|3=hybrid>]"
+          << " [--help,-h]\n"
           << std::endl;
         return EXIT_SUCCESS;
       }

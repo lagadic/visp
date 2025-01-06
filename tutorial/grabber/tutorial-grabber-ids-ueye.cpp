@@ -127,44 +127,44 @@ int main(int argc, const char *argv[])
     bool opt_display = true;
 
     for (int i = 1; i < argc; i++) {
-      if (std::string(argv[i]) == "--device") {
-        opt_device = static_cast<unsigned int>(std::atoi(argv[i + 1]));
+      if (std::string(argv[i]) == "--device" && i + 1 < argc) {
+        opt_device = static_cast<unsigned int>(std::atoi(argv[++i]));
         i++;
       }
-      else if (std::string(argv[i]) == "--config-file") {
-        opt_config_file = std::string(argv[i + 1]);
+      else if (std::string(argv[i]) == "--config-file" && i + 1 < argc) {
+        opt_config_file = std::string(argv[++i]);
         i++;
       }
-      else if (std::string(argv[i]) == "--fps") {
-        opt_fps = std::string(argv[i + 1]);
+      else if (std::string(argv[i]) == "--fps" && i + 1 < argc) {
+        opt_fps = std::string(argv[++i]);
         i++;
       }
-      else if (std::string(argv[i]) == "--gain") {
-        opt_gain = std::string(argv[i + 1]);
+      else if (std::string(argv[i]) == "--gain" && i + 1 < argc) {
+        opt_gain = std::string(argv[++i]);
         i++;
       }
-      else if (std::string(argv[i]) == "--shutter") {
-        opt_shutter = std::string(argv[i + 1]);
+      else if (std::string(argv[i]) == "--shutter" && i + 1 < argc) {
+        opt_shutter = std::string(argv[++i]);
         i++;
       }
-      else if (std::string(argv[i]) == "--subsample") {
-        opt_subsample = std::atoi(argv[i + 1]);
+      else if (std::string(argv[i]) == "--subsample" && i + 1 < argc) {
+        opt_subsample = std::atoi(argv[++i]);
         i++;
       }
-      else if (std::string(argv[i]) == "--white-balance") {
-        opt_white_balance = std::atoi(argv[i + 1]);
+      else if (std::string(argv[i]) == "--white-balance" && i + 1 < argc) {
+        opt_white_balance = std::atoi(argv[++i]);
         i++;
       }
-      else if (std::string(argv[i]) == "--color-mode") {
-        opt_color_mode = std::string(argv[i + 1]);
+      else if (std::string(argv[i]) == "--color-mode" && i + 1 < argc) {
+        opt_color_mode = std::string(argv[++i]);
         i++;
       }
-      else if (std::string(argv[i]) == "--seqname") {
-        opt_seqname = std::string(argv[i + 1]);
+      else if (std::string(argv[i]) == "--seqname" && i + 1 < argc) {
+        opt_seqname = std::string(argv[++i]);
         i++;
       }
-      else if (std::string(argv[i]) == "--record") {
-        opt_record_mode = std::atoi(argv[i + 1]);
+      else if (std::string(argv[i]) == "--record" && i + 1 < argc) {
+        opt_record_mode = std::atoi(argv[++i]);
         i++;
       }
       else if (std::string(argv[i]) == "--verbose" || std::string(argv[i]) == "-v") {
@@ -366,7 +366,7 @@ int main(int argc, const char *argv[])
   }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-}
+  }
 #else
   (void)argc;
   (void)argv;

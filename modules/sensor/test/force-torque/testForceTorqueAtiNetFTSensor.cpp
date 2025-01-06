@@ -55,16 +55,20 @@ int main(int argc, char **argv)
   int opt_port = 49152;
   bool opt_no_display = false;
 
-  for (int i = 0; i < argc; i++) {
-    if (std::string(argv[i]) == "--ip")
-      opt_ip = std::string(argv[i + 1]);
-    else if (std::string(argv[i]) == "--port")
-      opt_port = atoi(argv[i + 1]);
-    else if (std::string(argv[i]) == "--no-display" || std::string(argv[i]) == "-d")
+  for (int i = 1; i < argc; i++) {
+    if (std::string(argv[i]) == "--ip" && i + 1 < argc) {
+      opt_ip = std::string(argv[++i]);
+    }
+    else if (std::string(argv[i]) == "--port" && i + 1 < argc) {
+      opt_port = atoi(argv[++i]);
+    }
+    else if (std::string(argv[i]) == "--no-display" || std::string(argv[i]) == "-d") {
       opt_no_display = true;
+    }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "\nUsage: " << argv[0]
-        << " [--ip <Net F/T IP address (default: 192.168.1.1)>] [--port <Ethernet port (default: 49152)>]"
+        << " [--ip <Net F/T IP address (default: 192.168.1.1)>]"
+        << " [--port <Ethernet port (default: 49152)>]"
         << " [--no-display] [-d] [--help] [-h]\n"
         << std::endl;
       return EXIT_SUCCESS;

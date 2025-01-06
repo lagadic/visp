@@ -144,7 +144,7 @@ int test_moment_alpha(const std::string &name, bool symmetry, const std::vector<
     malpha.compute();                                            // Compute alpha AFTER centered moments.
 
     if (!symmetry) {
-      // Tranform input angle from [0; 360] to [-180; +180] range
+      // Transform input angle from [0; 360] to [-180; +180] range
       double angle = vec_angle[i];
       if (angle > 180)
         angle -= 360;
@@ -159,11 +159,11 @@ int test_moment_alpha(const std::string &name, bool symmetry, const std::vector<
       }
     }
     else {
-   // Tranform input angle from [0; 360] to [0; 180] range
+      // Transform input angle from [0; 360] to [0; 180] range
       double angle_des1 = vec_angle[i];
       double angle_des2 = vec_angle[i] - 180;
 
-      // Tranform input angle from [0; 360] to [0; 180] range
+      // Transform input angle from [0; 360] to [0; 180] range
       double alpha = vpMath::deg(malpha.get());
 
       std::cout << "alpha expected " << angle_des1 << " or " << angle_des2 << " computed " << alpha << " deg"

@@ -44,7 +44,8 @@ BEGIN_VISP_NAMESPACE
 /**
  * \ingroup group_ar_renderer_panda3d
  *
- * @brief Class that rendering multiple datatypes, in a single pass. A RendererSet contains multiple subrenderers, all inheriting from vpPanda3DBaseRenderer.
+ * @brief Class that renders multiple datatypes, in a single pass.
+ * A renderer set contains multiple subrenderers, all inheriting from vpPanda3DBaseRenderer.
  * The renderer set synchronizes all scene properties for the different subrenderers. This includes:
  *  * The camera properties (intrinsics, resolution) and extrinsics
  *  * The pose and properties of every object in the scene
@@ -53,13 +54,20 @@ BEGIN_VISP_NAMESPACE
  * The overall usage workflow is the following:
  *  1. Create vpPanda3DRendererSet instance
  *  2. Create the subrenderers (e.g, vpPanda3DGeometryRenderer)
- *  3. Add the subrenderers to the set with addSubRenderer
- *  4. Call renderFrame() on the rendererSet. Each subrenderer now has its output computed and ready to be retrieved
- *  5. Retrieve relevant outputs in ViSP format with something similar to `rendererSet.getRenderer<RendererType>("MyRendererName").getRender(I)` where RendererType is the relevant subclass of vpPanda3DBaseRenderer and "MyRendererName" its name (see vpPanda3DBaseRenderer::getName)
+ *  3. Add the subrenderers to the set with addSubRenderer()
+ *  4. Call renderFrame() on the renderer set. Each subrenderer now has its output computed and ready
+ *     to be retrieved
+ *  5. Retrieve relevant outputs in ViSP format with something similar to
+ *     \code
+ *     rendererSet.getRenderer<RendererType>("MyRendererName").getRender(I)
+ *     \endcode
+ *     where `RendererType` is the relevant subclass of vpPanda3DBaseRenderer and `"MyRendererName"`
+ *     its name (see vpPanda3DBaseRenderer::getName())
 */
 class VISP_EXPORT vpPanda3DRendererSet : public vpPanda3DBaseRenderer, public vpPanda3DLightable
 {
 public:
+  vpPanda3DRendererSet();
   vpPanda3DRendererSet(const vpPanda3DRenderParameters &renderParameters);
 
   virtual ~vpPanda3DRendererSet() = default;
@@ -71,7 +79,7 @@ public:
    * Thus, if a renderer B depends on A for its render, and if B.getRenderOrder() > A.getRenderOrder() it can rely on A being initialized when B.initFromParent is called (along with the setupCamera, setupRenderTarget).
    */
   void initFramework() VP_OVERRIDE;
-  void initFromParent(std::shared_ptr<PandaFramework> framework, PointerTo<WindowFramework> window) VP_OVERRIDE;
+  void initFromParent(PointerTo<WindowFramework> window) VP_OVERRIDE;
   void initFromParent(const vpPanda3DBaseRenderer &renderer) VP_OVERRIDE;
 
   /**

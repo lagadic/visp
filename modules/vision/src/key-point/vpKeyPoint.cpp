@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,13 +31,30 @@
  * Key point functionalities.
  */
 
+#include <visp3/core/vpConfig.h>
+
+// opencv_xfeatures2d and opencv_nonfree are optional
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_FEATURES2D)) || \
+  ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D) && defined(HAVE_OPENCV_FEATURES))
+
 #include <iomanip>
 #include <limits>
 
 #include <visp3/core/vpIoTools.h>
 #include <visp3/vision/vpKeyPoint.h>
 
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_FEATURES2D)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x050000)
+#include <opencv2/3d.hpp>
+#include <opencv2/features.hpp>
+#endif
+
+#if (VISP_HAVE_OPENCV_VERSION <0x050000)
+#include <opencv2/calib3d/calib3d.hpp>
+#endif
+
+#if defined(HAVE_OPENCV_XFEATURES2D)
+#include <opencv2/xfeatures2d.hpp>
+#endif
 
 #if defined(VISP_HAVE_PUGIXML)
 #include <pugixml.hpp>
@@ -206,7 +223,6 @@ unsigned int vpKeyPoint::buildReference(const vpImage<vpRGBa> &I_color, const vp
 {
   return buildReference(I_color, vpRect(iP, width, height));
 }
-
 
 unsigned int vpKeyPoint::buildReference(const vpImage<unsigned char> &I, const vpRect &rectangle)
 {
@@ -553,11 +569,10 @@ void vpKeyPoint::compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, co
 }
 
 
-void vpKeyPoint::compute3DForPointsOnCylinders(
-    const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, std::vector<cv::KeyPoint> &candidates,
-    const std::vector<vpCylinder> &cylinders,
-    const std::vector<std::vector<std::vector<vpImagePoint> > > &vectorOfCylinderRois, std::vector<cv::Point3f> &points,
-    cv::Mat *descriptors)
+void vpKeyPoint::compute3DForPointsOnCylinders(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                                               std::vector<cv::KeyPoint> &candidates, const std::vector<vpCylinder> &cylinders,
+                                               const std::vector<std::vector<std::vector<vpImagePoint> > > &vectorOfCylinderRois,
+                                               std::vector<cv::Point3f> &points, cv::Mat *descriptors)
 {
   std::vector<cv::KeyPoint> candidatesToCheck = candidates;
   candidates.clear();
@@ -613,11 +628,10 @@ void vpKeyPoint::compute3DForPointsOnCylinders(
   }
 }
 
-void vpKeyPoint::compute3DForPointsOnCylinders(
-    const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, std::vector<vpImagePoint> &candidates,
-    const std::vector<vpCylinder> &cylinders,
-    const std::vector<std::vector<std::vector<vpImagePoint> > > &vectorOfCylinderRois, std::vector<vpPoint> &points,
-    cv::Mat *descriptors)
+void vpKeyPoint::compute3DForPointsOnCylinders(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                                               std::vector<vpImagePoint> &candidates, const std::vector<vpCylinder> &cylinders,
+                                               const std::vector<std::vector<std::vector<vpImagePoint> > > &vectorOfCylinderRois,
+                                               std::vector<vpPoint> &points, cv::Mat *descriptors)
 {
   std::vector<vpImagePoint> candidatesToCheck = candidates;
   candidates.clear();
@@ -708,24 +722,24 @@ bool vpKeyPoint::computePose(const std::vector<cv::Point2f> &imagePoints, const 
                        0.99, // confidence=0.99 (default) – The probability
                              // that the algorithm produces a useful result.
                        inlierIndex, cv::SOLVEPNP_ITERATIVE);
-// SOLVEPNP_ITERATIVE (default): Iterative method is based on
-// Levenberg-Marquardt optimization.  In this case the function finds such a
-// pose that minimizes reprojection error, that is the sum of squared
-// distances between the observed projections imagePoints and the projected
-// (using projectPoints() ) objectPoints .  SOLVEPNP_P3P: Method is based on
-// the paper of X.S. Gao, X.-R. Hou, J. Tang, H.-F. Chang “Complete Solution
-// Classification  for the Perspective-Three-Point Problem”. In this case the
-// function requires exactly four object and image points.  SOLVEPNP_EPNP:
-// Method has been introduced by F.Moreno-Noguer, V.Lepetit and P.Fua in the
-// paper “EPnP: Efficient  Perspective-n-Point Camera Pose Estimation”.
-// SOLVEPNP_DLS: Method is based on the paper of Joel A. Hesch and Stergios I.
-// Roumeliotis. “A Direct Least-Squares (DLS)  Method for PnP”.  SOLVEPNP_UPNP
-// Method is based on the paper of A.Penate-Sanchez, J.Andrade-Cetto,
-// F.Moreno-Noguer. “Exhaustive Linearization for Robust Camera Pose and Focal
-// Length Estimation”. In this case the function also  estimates the
-// parameters
-// f_x and f_y assuming that both have the same value. Then the cameraMatrix
-// is updated with the  estimated focal length.
+    // SOLVEPNP_ITERATIVE (default): Iterative method is based on
+    // Levenberg-Marquardt optimization.  In this case the function finds such a
+    // pose that minimizes reprojection error, that is the sum of squared
+    // distances between the observed projections imagePoints and the projected
+    // (using projectPoints() ) objectPoints .  SOLVEPNP_P3P: Method is based on
+    // the paper of X.S. Gao, X.-R. Hou, J. Tang, H.-F. Chang “Complete Solution
+    // Classification  for the Perspective-Three-Point Problem”. In this case the
+    // function requires exactly four object and image points.  SOLVEPNP_EPNP:
+    // Method has been introduced by F.Moreno-Noguer, V.Lepetit and P.Fua in the
+    // paper “EPnP: Efficient  Perspective-n-Point Camera Pose Estimation”.
+    // SOLVEPNP_DLS: Method is based on the paper of Joel A. Hesch and Stergios I.
+    // Roumeliotis. “A Direct Least-Squares (DLS)  Method for PnP”.  SOLVEPNP_UPNP
+    // Method is based on the paper of A.Penate-Sanchez, J.Andrade-Cetto,
+    // F.Moreno-Noguer. “Exhaustive Linearization for Robust Camera Pose and Focal
+    // Length Estimation”. In this case the function also  estimates the
+    // parameters
+    // f_x and f_y assuming that both have the same value. Then the cameraMatrix
+    // is updated with the  estimated focal length.
 #else
     int nbInlierToReachConsensus = m_nbRansacMinInlierCount;
     if (m_useConsensusPercentage) {
@@ -998,9 +1012,14 @@ void vpKeyPoint::detect(const vpImage<unsigned char> &I, std::vector<cv::KeyPoin
   cv::Mat mask = cv::Mat::zeros(matImg.rows, matImg.cols, CV_8U);
 
   if (rectangle.getWidth() > 0 && rectangle.getHeight() > 0) {
+#if VISP_HAVE_OPENCV_VERSION >= 0x030000
+    int filled = cv::FILLED;
+#else
+    int filled = CV_FILLED;
+#endif
     cv::Point leftTop((int)rectangle.getLeft(), (int)rectangle.getTop()),
       rightBottom((int)rectangle.getRight(), (int)rectangle.getBottom());
-    cv::rectangle(mask, leftTop, rightBottom, cv::Scalar(255), CV_FILLED);
+    cv::rectangle(mask, leftTop, rightBottom, cv::Scalar(255), filled);
   }
   else {
     mask = cv::Mat::ones(matImg.rows, matImg.cols, CV_8U) * 255;
@@ -1017,9 +1036,14 @@ void vpKeyPoint::detect(const vpImage<vpRGBa> &I_color, std::vector<cv::KeyPoint
   cv::Mat mask = cv::Mat::zeros(matImg.rows, matImg.cols, CV_8U);
 
   if (rectangle.getWidth() > 0 && rectangle.getHeight() > 0) {
+#if VISP_HAVE_OPENCV_VERSION >= 0x030000
+    int filled = cv::FILLED;
+#else
+    int filled = CV_FILLED;
+#endif
     cv::Point leftTop((int)rectangle.getLeft(), (int)rectangle.getTop()),
       rightBottom((int)rectangle.getRight(), (int)rectangle.getBottom());
-    cv::rectangle(mask, leftTop, rightBottom, cv::Scalar(255), CV_FILLED);
+    cv::rectangle(mask, leftTop, rightBottom, cv::Scalar(255), filled);
   }
   else {
     mask = cv::Mat::ones(matImg.rows, matImg.cols, CV_8U) * 255;
@@ -1192,7 +1216,7 @@ void vpKeyPoint::displayMatching(const vpImage<unsigned char> &ICurrent, vpImage
     displayMatching(m_mapOfImages.begin()->second, IMatching, crossSize);
   }
   else {
- // Multiple training images, display them as a mosaic image
+    // Multiple training images, display them as a mosaic image
     int nbImgSqrt = vpMath::round(std::sqrt((double)nbImg)); //(int) std::floor(std::sqrt((double) nbImg) + 0.5);
     int nbWidth = nbImgSqrt;
     int nbHeight = nbImgSqrt;
@@ -1229,8 +1253,8 @@ void vpKeyPoint::displayMatching(const vpImage<unsigned char> &ICurrent, vpImage
         current_class_id_index = mapOfImageIdIndex[m_mapOfImageId[it->class_id]];
       }
       else {
-     // Shift of one unity the index of the training images which are after
-     // the current image
+        // Shift of one unity the index of the training images which are after
+        // the current image
         current_class_id_index = mapOfImageIdIndex[m_mapOfImageId[it->class_id]] + 1;
       }
 
@@ -1266,8 +1290,8 @@ void vpKeyPoint::displayMatching(const vpImage<unsigned char> &ICurrent, vpImage
         current_class_id = mapOfImageIdIndex[m_mapOfImageId[m_trainKeyPoints[(size_t)it->trainIdx].class_id]];
       }
       else {
-     // Shift of one unity the index of the training images which are after
-     // the current image
+        // Shift of one unity the index of the training images which are after
+        // the current image
         current_class_id = mapOfImageIdIndex[m_mapOfImageId[m_trainKeyPoints[(size_t)it->trainIdx].class_id]] + 1;
       }
 
@@ -1305,7 +1329,7 @@ void vpKeyPoint::displayMatching(const vpImage<vpRGBa> &ICurrent, vpImage<vpRGBa
     displayMatching(m_mapOfImages.begin()->second, IMatching, crossSize);
   }
   else {
- // Multiple training images, display them as a mosaic image
+    // Multiple training images, display them as a mosaic image
     int nbImgSqrt = vpMath::round(std::sqrt((double)nbImg)); //(int) std::floor(std::sqrt((double) nbImg) + 0.5);
     int nbWidth = nbImgSqrt;
     int nbHeight = nbImgSqrt;
@@ -1342,8 +1366,8 @@ void vpKeyPoint::displayMatching(const vpImage<vpRGBa> &ICurrent, vpImage<vpRGBa
         current_class_id_index = mapOfImageIdIndex[m_mapOfImageId[it->class_id]];
       }
       else {
-     // Shift of one unity the index of the training images which are after
-     // the current image
+        // Shift of one unity the index of the training images which are after
+        // the current image
         current_class_id_index = mapOfImageIdIndex[m_mapOfImageId[it->class_id]] + 1;
       }
 
@@ -1379,8 +1403,8 @@ void vpKeyPoint::displayMatching(const vpImage<vpRGBa> &ICurrent, vpImage<vpRGBa
         current_class_id = mapOfImageIdIndex[m_mapOfImageId[m_trainKeyPoints[(size_t)it->trainIdx].class_id]];
       }
       else {
-     // Shift of one unity the index of the training images which are after
-     // the current image
+        // Shift of one unity the index of the training images which are after
+        // the current image
         current_class_id = mapOfImageIdIndex[m_mapOfImageId[m_trainKeyPoints[(size_t)it->trainIdx].class_id]] + 1;
       }
 
@@ -1478,13 +1502,13 @@ void vpKeyPoint::extract(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPo
         }
       }
       else {
-     // Extract descriptors for the given list of keypoints
+        // Extract descriptors for the given list of keypoints
         itd->second->compute(matImg, keyPoints, descriptors);
       }
     }
     else {
-   // Copy the input list of keypoints, keypoints that cannot be computed
-   // are removed in the function compute
+      // Copy the input list of keypoints, keypoints that cannot be computed
+      // are removed in the function compute
       std::vector<cv::KeyPoint> keyPoints_tmp = keyPoints;
 
       cv::Mat desc;
@@ -1717,10 +1741,10 @@ void vpKeyPoint::getTrainPoints(std::vector<vpPoint> &points) const { points = m
 void vpKeyPoint::init()
 {
 // Require 2.4.0 <= opencv < 3.0.0
-#if defined(VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION >= 0x020400) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
+#if defined(HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION >= 0x020400) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
   // The following line must be called in order to use SIFT or SURF
   if (!cv::initModule_nonfree()) {
-    std::cerr << "Cannot init module non free, SIFT or SURF cannot be used." << std::endl;
+    std::cerr << "Cannot init module non free, SURF cannot be used." << std::endl;
   }
 #endif
 
@@ -1757,7 +1781,8 @@ void vpKeyPoint::initDetector(const std::string &detectorName)
   }
 
   if (detectorNameTmp == "SIFT") {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x040500) // OpenCV >= 4.5.0
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_XFEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
+#  if (VISP_HAVE_OPENCV_VERSION >= 0x040500) // OpenCV >= 4.5.0
     cv::Ptr<cv::FeatureDetector> siftDetector = cv::SiftFeatureDetector::create();
     if (!usePyramid) {
       m_detectors[detectorNameTmp] = siftDetector;
@@ -1765,25 +1790,19 @@ void vpKeyPoint::initDetector(const std::string &detectorName)
     else {
       m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(siftDetector);
     }
-#else
-#if defined(VISP_HAVE_OPENCV_XFEATURES2D) || (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) ||         \
-    (VISP_HAVE_OPENCV_VERSION >= 0x040400)
+#  elif (VISP_HAVE_OPENCV_VERSION >= 0x030411)
     // SIFT is no more patented since 09/03/2020
     cv::Ptr<cv::FeatureDetector> siftDetector;
     if (m_maxFeatures > 0) {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)
       siftDetector = cv::SIFT::create(m_maxFeatures);
-#else
-      siftDetector = cv::xfeatures2d::SIFT::create(m_maxFeatures);
-#endif
     }
     else {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)
       siftDetector = cv::SIFT::create();
-#else
-      siftDetector = cv::xfeatures2d::SIFT::create();
-#endif
     }
+#   else
+    cv::Ptr<cv::FeatureDetector> siftDetector;
+    siftDetector = cv::xfeatures2d::SIFT::create();
+#   endif
     if (!usePyramid) {
       m_detectors[detectorNameTmp] = siftDetector;
     }
@@ -1791,16 +1810,14 @@ void vpKeyPoint::initDetector(const std::string &detectorName)
       std::cerr << "You should not use SIFT with Pyramid feature detection!" << std::endl;
       m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(siftDetector);
     }
-#else
+# else
     std::stringstream ss_msg;
-    ss_msg << "Fail to initialize the detector: SIFT. OpenCV version " << std::hex << VISP_HAVE_OPENCV_VERSION
-      << " was not build with xFeatures2d module.";
+    ss_msg << "Failed to initialize the SIFT 2D features detector with OpenCV version " << std::hex << VISP_HAVE_OPENCV_VERSION;
     throw vpException(vpException::fatalError, ss_msg.str());
-#endif
 #endif
   }
   else if (detectorNameTmp == "SURF") {
-#ifdef VISP_HAVE_OPENCV_XFEATURES2D
+#if defined(OPENCV_ENABLE_NONFREE) && defined(HAVE_OPENCV_XFEATURES2D)
     cv::Ptr<cv::FeatureDetector> surfDetector = cv::xfeatures2d::SURF::create();
     if (!usePyramid) {
       m_detectors[detectorNameTmp] = surfDetector;
@@ -1811,12 +1828,12 @@ void vpKeyPoint::initDetector(const std::string &detectorName)
     }
 #else
     std::stringstream ss_msg;
-    ss_msg << "Fail to initialize the detector: SURF. OpenCV version  " << std::hex << VISP_HAVE_OPENCV_VERSION
-      << " was not build with xFeatures2d module.";
+    ss_msg << "Failed to initialize the SURF 2D features detector with OpenCV version " << std::hex << VISP_HAVE_OPENCV_VERSION;
     throw vpException(vpException::fatalError, ss_msg.str());
 #endif
   }
   else if (detectorNameTmp == "FAST") {
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
     cv::Ptr<cv::FeatureDetector> fastDetector = cv::FastFeatureDetector::create();
     if (!usePyramid) {
       m_detectors[detectorNameTmp] = fastDetector;
@@ -1824,8 +1841,14 @@ void vpKeyPoint::initDetector(const std::string &detectorName)
     else {
       m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(fastDetector);
     }
+#else
+    std::stringstream ss_msg;
+    ss_msg << "Failed to initialize the FAST 2D features detector with OpenCV version " << std::hex << VISP_HAVE_OPENCV_VERSION;
+    throw vpException(vpException::fatalError, ss_msg.str());
+#endif
   }
   else if (detectorNameTmp == "MSER") {
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
     cv::Ptr<cv::FeatureDetector> fastDetector = cv::MSER::create();
     if (!usePyramid) {
       m_detectors[detectorNameTmp] = fastDetector;
@@ -1833,8 +1856,14 @@ void vpKeyPoint::initDetector(const std::string &detectorName)
     else {
       m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(fastDetector);
     }
+#else
+    std::stringstream ss_msg;
+    ss_msg << "Failed to initialize the MSER 2D features detector with OpenCV version " << std::hex << VISP_HAVE_OPENCV_VERSION;
+    throw vpException(vpException::fatalError, ss_msg.str());
+#endif
   }
   else if (detectorNameTmp == "ORB") {
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
     cv::Ptr<cv::FeatureDetector> orbDetector;
     if (m_maxFeatures > 0) {
       orbDetector = cv::ORB::create(m_maxFeatures);
@@ -1849,9 +1878,19 @@ void vpKeyPoint::initDetector(const std::string &detectorName)
       std::cerr << "You should not use ORB with Pyramid feature detection!" << std::endl;
       m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(orbDetector);
     }
+#else
+    std::stringstream ss_msg;
+    ss_msg << "Failed to initialize the ORB 2D features detector with OpenCV version " << std::hex << VISP_HAVE_OPENCV_VERSION;
+    throw vpException(vpException::fatalError, ss_msg.str());
+#endif
   }
   else if (detectorNameTmp == "BRISK") {
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_XFEATURES2D))
+#if (VISP_HAVE_OPENCV_VERSION >= 0x050000)
+    cv::Ptr<cv::FeatureDetector> briskDetector = cv::xfeatures2d::BRISK::create();
+#else
     cv::Ptr<cv::FeatureDetector> briskDetector = cv::BRISK::create();
+#endif
     if (!usePyramid) {
       m_detectors[detectorNameTmp] = briskDetector;
     }
@@ -1859,9 +1898,20 @@ void vpKeyPoint::initDetector(const std::string &detectorName)
       std::cerr << "You should not use BRISK with Pyramid feature detection!" << std::endl;
       m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(briskDetector);
     }
+#else
+    std::stringstream ss_msg;
+
+    ss_msg << "Failed to initialize the BRISK 2D features detector with OpenCV version " << std::hex << VISP_HAVE_OPENCV_VERSION;
+    throw vpException(vpException::fatalError, ss_msg.str());
+#endif
   }
   else if (detectorNameTmp == "KAZE") {
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_XFEATURES2D))
+#if (VISP_HAVE_OPENCV_VERSION >= 0x050000)
+    cv::Ptr<cv::FeatureDetector> kazeDetector = cv::xfeatures2d::KAZE::create();
+#else
     cv::Ptr<cv::FeatureDetector> kazeDetector = cv::KAZE::create();
+#endif
     if (!usePyramid) {
       m_detectors[detectorNameTmp] = kazeDetector;
     }
@@ -1869,9 +1919,19 @@ void vpKeyPoint::initDetector(const std::string &detectorName)
       std::cerr << "You should not use KAZE with Pyramid feature detection!" << std::endl;
       m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(kazeDetector);
     }
+#else
+    std::stringstream ss_msg;
+    ss_msg << "Failed to initialize the KAZE 2D features detector with OpenCV version " << std::hex << VISP_HAVE_OPENCV_VERSION;
+    throw vpException(vpException::fatalError, ss_msg.str());
+#endif
   }
   else if (detectorNameTmp == "AKAZE") {
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_XFEATURES2D))
+#if (VISP_HAVE_OPENCV_VERSION >= 0x050000)
+    cv::Ptr<cv::FeatureDetector> akazeDetector = cv::xfeatures2d::AKAZE::create();
+#else
     cv::Ptr<cv::FeatureDetector> akazeDetector = cv::AKAZE::create();
+#endif
     if (!usePyramid) {
       m_detectors[detectorNameTmp] = akazeDetector;
     }
@@ -1879,8 +1939,14 @@ void vpKeyPoint::initDetector(const std::string &detectorName)
       std::cerr << "You should not use AKAZE with Pyramid feature detection!" << std::endl;
       m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(akazeDetector);
     }
+#else
+    std::stringstream ss_msg;
+    ss_msg << "Failed to initialize the AKAZE 2D features detector with OpenCV version " << std::hex << VISP_HAVE_OPENCV_VERSION;
+    throw vpException(vpException::fatalError, ss_msg.str());
+#endif
   }
   else if (detectorNameTmp == "GFTT") {
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
     cv::Ptr<cv::FeatureDetector> gfttDetector = cv::GFTTDetector::create();
     if (!usePyramid) {
       m_detectors[detectorNameTmp] = gfttDetector;
@@ -1888,8 +1954,14 @@ void vpKeyPoint::initDetector(const std::string &detectorName)
     else {
       m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(gfttDetector);
     }
+#else
+    std::stringstream ss_msg;
+    ss_msg << "Failed to initialize the GFTT 2D features detector with OpenCV version " << std::hex << VISP_HAVE_OPENCV_VERSION;
+    throw vpException(vpException::fatalError, ss_msg.str());
+#endif
   }
   else if (detectorNameTmp == "SimpleBlob") {
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
     cv::Ptr<cv::FeatureDetector> simpleBlobDetector = cv::SimpleBlobDetector::create();
     if (!usePyramid) {
       m_detectors[detectorNameTmp] = simpleBlobDetector;
@@ -1897,9 +1969,14 @@ void vpKeyPoint::initDetector(const std::string &detectorName)
     else {
       m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(simpleBlobDetector);
     }
+#else
+    std::stringstream ss_msg;
+    ss_msg << "Failed to initialize the SimpleBlob 2D features detector with OpenCV version " << std::hex << VISP_HAVE_OPENCV_VERSION;
+    throw vpException(vpException::fatalError, ss_msg.str());
+#endif
   }
   else if (detectorNameTmp == "STAR") {
-#ifdef VISP_HAVE_OPENCV_XFEATURES2D
+#if defined(HAVE_OPENCV_XFEATURES2D)
     cv::Ptr<cv::FeatureDetector> starDetector = cv::xfeatures2d::StarDetector::create();
     if (!usePyramid) {
       m_detectors[detectorNameTmp] = starDetector;
@@ -1909,23 +1986,31 @@ void vpKeyPoint::initDetector(const std::string &detectorName)
     }
 #else
     std::stringstream ss_msg;
-    ss_msg << "Fail to initialize the detector: STAR. OpenCV version  " << std::hex << VISP_HAVE_OPENCV_VERSION
-      << " was not build with xFeatures2d module.";
+    ss_msg << "Failed to initialize the STAR 2D features detector with OpenCV version " << std::hex << VISP_HAVE_OPENCV_VERSION;
     throw vpException(vpException::fatalError, ss_msg.str());
 #endif
   }
   else if (detectorNameTmp == "AGAST") {
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_XFEATURES2D))
+#if (VISP_HAVE_OPENCV_VERSION >= 0x050000)
+    cv::Ptr<cv::FeatureDetector> agastDetector = cv::xfeatures2d::AgastFeatureDetector::create();
+#else
     cv::Ptr<cv::FeatureDetector> agastDetector = cv::AgastFeatureDetector::create();
+#endif
     if (!usePyramid) {
       m_detectors[detectorNameTmp] = agastDetector;
     }
     else {
       m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(agastDetector);
     }
+#else
+    std::stringstream ss_msg;
+    ss_msg << "Failed to initialize the STAR 2D features detector with OpenCV version " << std::hex << VISP_HAVE_OPENCV_VERSION;
+    throw vpException(vpException::fatalError, ss_msg.str());
+#endif
   }
   else if (detectorNameTmp == "MSD") {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030100)
-#if defined(VISP_HAVE_OPENCV_XFEATURES2D)
+#if defined(HAVE_OPENCV_XFEATURES2D)
     cv::Ptr<cv::FeatureDetector> msdDetector = cv::xfeatures2d::MSDDetector::create();
     if (!usePyramid) {
       m_detectors[detectorNameTmp] = msdDetector;
@@ -1936,14 +2021,8 @@ void vpKeyPoint::initDetector(const std::string &detectorName)
     }
 #else
     std::stringstream ss_msg;
-    ss_msg << "Fail to initialize the detector: MSD. OpenCV version " << std::hex << VISP_HAVE_OPENCV_VERSION
-      << " was not build with xFeatures2d module.";
+    ss_msg << "Failed to initialize the MSD 2D features detector with OpenCV version " << std::hex << VISP_HAVE_OPENCV_VERSION;
     throw vpException(vpException::fatalError, ss_msg.str());
-#endif
-#else
-    std::stringstream ss_msg;
-    ss_msg << "Feature " << detectorName << " is not available in OpenCV version: " << std::hex
-      << VISP_HAVE_OPENCV_VERSION << " (require >= OpenCV 3.1).";
 #endif
   }
   else {
@@ -1956,7 +2035,7 @@ void vpKeyPoint::initDetector(const std::string &detectorName)
     detectorInitialized = !m_detectors[detectorNameTmp].empty();
   }
   else {
- // if not null and to avoid warning C4800: forcing value to bool 'true' or 'false' (performance warning)
+    // if not null and to avoid warning C4800: forcing value to bool 'true' or 'false' (performance warning)
     detectorInitialized = !m_detectors[detectorName].empty();
   }
 
@@ -1982,131 +2061,128 @@ void vpKeyPoint::initExtractor(const std::string &extractorName)
   m_extractors[extractorName] = cv::DescriptorExtractor::create(extractorName);
 #else
   if (extractorName == "SIFT") {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x040500) // OpenCV >= 4.5.0
-    m_extractors[extractorName] = cv::SIFT::create();
-#else
-#if defined(VISP_HAVE_OPENCV_XFEATURES2D) || (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) ||         \
-    (VISP_HAVE_OPENCV_VERSION >= 0x040400)
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_XFEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
     // SIFT is no more patented since 09/03/2020
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)
+#  if (VISP_HAVE_OPENCV_VERSION >= 0x030411)
     m_extractors[extractorName] = cv::SIFT::create();
-#else
+#  else
     m_extractors[extractorName] = cv::xfeatures2d::SIFT::create();
-#endif
+#  endif
 #else
     std::stringstream ss_msg;
-    ss_msg << "Fail to initialize the extractor: SIFT. OpenCV version  " << std::hex << VISP_HAVE_OPENCV_VERSION
-      << " was not build with xFeatures2d module.";
+    ss_msg << "Fail to initialize the SIFT 2D features extractor with OpenCV version " << std::hex << VISP_HAVE_OPENCV_VERSION;
     throw vpException(vpException::fatalError, ss_msg.str());
-#endif
 #endif
   }
   else if (extractorName == "SURF") {
-#ifdef VISP_HAVE_OPENCV_XFEATURES2D
+#if defined(OPENCV_ENABLE_NONFREE) && defined(HAVE_OPENCV_XFEATURES2D)
     // Use extended set of SURF descriptors (128 instead of 64)
     m_extractors[extractorName] = cv::xfeatures2d::SURF::create(100, 4, 3, true);
 #else
     std::stringstream ss_msg;
-    ss_msg << "Fail to initialize the extractor: SURF. OpenCV version  " << std::hex << VISP_HAVE_OPENCV_VERSION
-      << " was not build with xFeatures2d module.";
+    ss_msg << "Fail to initialize the SURF 2D features extractor with OpenCV version " << std::hex << VISP_HAVE_OPENCV_VERSION;
     throw vpException(vpException::fatalError, ss_msg.str());
 #endif
   }
   else if (extractorName == "ORB") {
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
     m_extractors[extractorName] = cv::ORB::create();
+#else
+    std::stringstream ss_msg;
+    ss_msg << "Fail to initialize the ORB 2D features extractor with OpenCV version " << std::hex << VISP_HAVE_OPENCV_VERSION;
+    throw vpException(vpException::fatalError, ss_msg.str());
+#endif
   }
   else if (extractorName == "BRISK") {
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_XFEATURES2D))
+#if (VISP_HAVE_OPENCV_VERSION >= 0x050000)
+    m_extractors[extractorName] = cv::xfeatures2d::BRISK::create();
+#else
     m_extractors[extractorName] = cv::BRISK::create();
+#endif
+#else
+    std::stringstream ss_msg;
+    ss_msg << "Fail to initialize the BRISK 2D features extractor with OpenCV version " << std::hex << VISP_HAVE_OPENCV_VERSION;
+    throw vpException(vpException::fatalError, ss_msg.str());
+#endif
   }
   else if (extractorName == "FREAK") {
-#ifdef VISP_HAVE_OPENCV_XFEATURES2D
+#if defined(HAVE_OPENCV_XFEATURES2D)
     m_extractors[extractorName] = cv::xfeatures2d::FREAK::create();
 #else
     std::stringstream ss_msg;
-    ss_msg << "Fail to initialize the extractor: " << extractorName << ". OpenCV version " << std::hex
-      << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
+    ss_msg << "Fail to initialize the FREAK 2D features extractor with OpenCV version " << std::hex << VISP_HAVE_OPENCV_VERSION;
     throw vpException(vpException::fatalError, ss_msg.str());
 #endif
   }
   else if (extractorName == "BRIEF") {
-#ifdef VISP_HAVE_OPENCV_XFEATURES2D
+#if defined(HAVE_OPENCV_XFEATURES2D)
     m_extractors[extractorName] = cv::xfeatures2d::BriefDescriptorExtractor::create();
 #else
     std::stringstream ss_msg;
-    ss_msg << "Fail to initialize the extractor: " << extractorName << ". OpenCV version " << std::hex
-      << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
+    ss_msg << "Fail to initialize the BRIEF 2D features extractor with OpenCV version " << std::hex << VISP_HAVE_OPENCV_VERSION;
     throw vpException(vpException::fatalError, ss_msg.str());
 #endif
   }
   else if (extractorName == "KAZE") {
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_XFEATURES2D))
+#if (VISP_HAVE_OPENCV_VERSION >= 0x050000)
+    m_extractors[extractorName] = cv::xfeatures2d::KAZE::create();
+#else
     m_extractors[extractorName] = cv::KAZE::create();
+#endif
+#else
+    std::stringstream ss_msg;
+    ss_msg << "Fail to initialize the KAZE 2D features extractor with OpenCV version " << std::hex << VISP_HAVE_OPENCV_VERSION;
+    throw vpException(vpException::fatalError, ss_msg.str());
+#endif
   }
   else if (extractorName == "AKAZE") {
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_XFEATURES2D))
+#if (VISP_HAVE_OPENCV_VERSION >= 0x050000)
+    m_extractors[extractorName] = cv::xfeatures2d::AKAZE::create();
+#else
     m_extractors[extractorName] = cv::AKAZE::create();
+#endif
+#else
+    std::stringstream ss_msg;
+    ss_msg << "Fail to initialize the AKAZE 2D features extractor with OpenCV version " << std::hex << VISP_HAVE_OPENCV_VERSION;
+    throw vpException(vpException::fatalError, ss_msg.str());
+#endif
   }
   else if (extractorName == "DAISY") {
-#ifdef VISP_HAVE_OPENCV_XFEATURES2D
+#if defined(HAVE_OPENCV_XFEATURES2D)
     m_extractors[extractorName] = cv::xfeatures2d::DAISY::create();
 #else
     std::stringstream ss_msg;
-    ss_msg << "Fail to initialize the extractor: " << extractorName << ". OpenCV version " << std::hex
-      << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
+    ss_msg << "Fail to initialize the DAISY 2D features extractor with OpenCV version " << std::hex << VISP_HAVE_OPENCV_VERSION;
     throw vpException(vpException::fatalError, ss_msg.str());
 #endif
   }
   else if (extractorName == "LATCH") {
-#ifdef VISP_HAVE_OPENCV_XFEATURES2D
+#if defined(HAVE_OPENCV_XFEATURES2D)
     m_extractors[extractorName] = cv::xfeatures2d::LATCH::create();
 #else
     std::stringstream ss_msg;
-    ss_msg << "Fail to initialize the extractor: " << extractorName << ". OpenCV version " << std::hex
-      << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
-    throw vpException(vpException::fatalError, ss_msg.str());
-#endif
-  }
-  else if (extractorName == "LUCID") {
-#ifdef VISP_HAVE_OPENCV_XFEATURES2D
-    //    m_extractors[extractorName] = cv::xfeatures2d::LUCID::create(1, 2);
-    // Not possible currently, need a color image
-    throw vpException(vpException::badValue, "Not possible currently as it needs a color image.");
-#else
-    std::stringstream ss_msg;
-    ss_msg << "Fail to initialize the extractor: " << extractorName << ". OpenCV version " << std::hex
-      << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
+    ss_msg << "Fail to initialize the LATCH 2D features extractor with OpenCV version " << std::hex << VISP_HAVE_OPENCV_VERSION;
     throw vpException(vpException::fatalError, ss_msg.str());
 #endif
   }
   else if (extractorName == "VGG") {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030200)
-#if defined(VISP_HAVE_OPENCV_XFEATURES2D)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030200) && defined(HAVE_OPENCV_XFEATURES2D)
     m_extractors[extractorName] = cv::xfeatures2d::VGG::create();
 #else
     std::stringstream ss_msg;
-    ss_msg << "Fail to initialize the extractor: " << extractorName << ". OpenCV version " << std::hex
-      << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
-    throw vpException(vpException::fatalError, ss_msg.str());
-#endif
-#else
-    std::stringstream ss_msg;
-    ss_msg << "Fail to initialize the extractor: " << extractorName << ". OpenCV version " << std::hex
-      << VISP_HAVE_OPENCV_VERSION << " but requires at least OpenCV 3.2.";
+    ss_msg << "Fail to initialize the VGG 2D features extractor with OpenCV version " << std::hex << VISP_HAVE_OPENCV_VERSION;
     throw vpException(vpException::fatalError, ss_msg.str());
 #endif
   }
   else if (extractorName == "BoostDesc") {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030200)
-#if defined(VISP_HAVE_OPENCV_XFEATURES2D)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030200) && defined(HAVE_OPENCV_XFEATURES2D)
     m_extractors[extractorName] = cv::xfeatures2d::BoostDesc::create();
 #else
     std::stringstream ss_msg;
-    ss_msg << "Fail to initialize the extractor: " << extractorName << ". OpenCV version " << std::hex
-      << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
-    throw vpException(vpException::fatalError, ss_msg.str());
-#endif
-#else
-    std::stringstream ss_msg;
-    ss_msg << "Fail to initialize the extractor: " << extractorName << ". OpenCV version " << std::hex
-      << VISP_HAVE_OPENCV_VERSION << " but requires at least OpenCV 3.2.";
+    ss_msg << "Fail to initialize the BoostDesc 2D features extractor with OpenCV version " << std::hex << VISP_HAVE_OPENCV_VERSION;
     throw vpException(vpException::fatalError, ss_msg.str());
 #endif
   }
@@ -2155,59 +2231,64 @@ void vpKeyPoint::initExtractors(const std::vector<std::string> &extractorNames)
 void vpKeyPoint::initFeatureNames()
 {
 // Create map enum to string
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020403)
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
   m_mapOfDetectorNames[DETECTOR_FAST] = "FAST";
   m_mapOfDetectorNames[DETECTOR_MSER] = "MSER";
   m_mapOfDetectorNames[DETECTOR_ORB] = "ORB";
-  m_mapOfDetectorNames[DETECTOR_BRISK] = "BRISK";
   m_mapOfDetectorNames[DETECTOR_GFTT] = "GFTT";
   m_mapOfDetectorNames[DETECTOR_SimpleBlob] = "SimpleBlob";
-#if (VISP_HAVE_OPENCV_VERSION < 0x030000) || (defined(VISP_HAVE_OPENCV_XFEATURES2D))
-  m_mapOfDetectorNames[DETECTOR_STAR] = "STAR";
 #endif
-#if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D) ||                                      \
-    (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)
-  m_mapOfDetectorNames[DETECTOR_SIFT] = "SIFT";
-#endif
-#if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D)
-  m_mapOfDetectorNames[DETECTOR_SURF] = "SURF";
-#endif
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_XFEATURES2D))
+  m_mapOfDetectorNames[DETECTOR_BRISK] = "BRISK";
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
   m_mapOfDetectorNames[DETECTOR_KAZE] = "KAZE";
   m_mapOfDetectorNames[DETECTOR_AKAZE] = "AKAZE";
   m_mapOfDetectorNames[DETECTOR_AGAST] = "AGAST";
 #endif
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030100) && defined(VISP_HAVE_OPENCV_XFEATURES2D)
+#endif
+#if defined(HAVE_OPENCV_XFEATURES2D)
+  m_mapOfDetectorNames[DETECTOR_STAR] = "STAR";
   m_mapOfDetectorNames[DETECTOR_MSD] = "MSD";
 #endif
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_XFEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
+  m_mapOfDetectorNames[DETECTOR_SIFT] = "SIFT";
+#endif
+#if defined(OPENCV_ENABLE_NONFREE) && defined(HAVE_OPENCV_XFEATURES2D)
+  m_mapOfDetectorNames[DETECTOR_SURF] = "SURF";
+#endif
+#if defined(HAVE_OPENCV_XFEATURES2D)
+  m_mapOfDetectorNames[DETECTOR_MSD] = "MSD";
 #endif
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020403)
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
   m_mapOfDescriptorNames[DESCRIPTOR_ORB] = "ORB";
+#endif
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_XFEATURES2D))
   m_mapOfDescriptorNames[DESCRIPTOR_BRISK] = "BRISK";
-#if (VISP_HAVE_OPENCV_VERSION < 0x030000) || (defined(VISP_HAVE_OPENCV_XFEATURES2D))
+#endif
+#if defined(HAVE_OPENCV_XFEATURES2D)
   m_mapOfDescriptorNames[DESCRIPTOR_FREAK] = "FREAK";
   m_mapOfDescriptorNames[DESCRIPTOR_BRIEF] = "BRIEF";
 #endif
-#if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D) ||                                      \
-    (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_XFEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
   m_mapOfDescriptorNames[DESCRIPTOR_SIFT] = "SIFT";
 #endif
-#if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D)
+#if defined(OPENCV_ENABLE_NONFREE) && defined(HAVE_OPENCV_XFEATURES2D)
   m_mapOfDescriptorNames[DESCRIPTOR_SURF] = "SURF";
 #endif
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_XFEATURES2D))
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
   m_mapOfDescriptorNames[DESCRIPTOR_KAZE] = "KAZE";
   m_mapOfDescriptorNames[DESCRIPTOR_AKAZE] = "AKAZE";
-#if defined(VISP_HAVE_OPENCV_XFEATURES2D)
+#endif
+#endif
+#if defined(HAVE_OPENCV_XFEATURES2D)
   m_mapOfDescriptorNames[DESCRIPTOR_DAISY] = "DAISY";
   m_mapOfDescriptorNames[DESCRIPTOR_LATCH] = "LATCH";
 #endif
-#endif
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030200) && defined(VISP_HAVE_OPENCV_XFEATURES2D)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030200) && defined(HAVE_OPENCV_XFEATURES2D)
   m_mapOfDescriptorNames[DESCRIPTOR_VGG] = "VGG";
   m_mapOfDescriptorNames[DESCRIPTOR_BoostDesc] = "BoostDesc";
-#endif
 #endif
 }
 
@@ -3776,7 +3857,7 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
       int class_id = m_trainKeyPoints[i_].class_id;
       vpIoTools::writeBinaryValueLE(file, class_id);
 
-// Write image_id
+      // Write image_id
 #ifdef VISP_HAVE_MODULE_IO
       std::map<int, int>::const_iterator it_findImgId = m_mapOfImageId.find(m_trainKeyPoints[i_].class_id);
       int image_id = (saveTrainingImages && it_findImgId != m_mapOfImageId.end()) ? it_findImgId->second : -1;
@@ -4211,7 +4292,11 @@ void vpKeyPoint::PyramidAdaptedFeatureDetector::detectImpl(const cv::Mat &image,
       src = dst;
 
       if (!mask.empty())
+#if (VISP_HAVE_OPENCV_VERSION >= 0x050000)
+        resize(dilated_mask, src_mask, src.size(), 0, 0, cv::INTER_AREA);
+#else
         resize(dilated_mask, src_mask, src.size(), 0, 0, CV_INTER_AREA);
+#endif
     }
   }
 

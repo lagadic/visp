@@ -75,8 +75,7 @@ BEGIN_VISP_NAMESPACE
  *
  * The following code demonstrates a calculation of a reference alpha and then
  * uses this alpha to estimate the orientation of the same object after
- * performing a 180 degrees rotation. Therefore the first and second alpha should
- * have opposite values.
+ * performing a 180 degrees rotation. Therefore the first and second alpha differ by 180 degrees.
  *
  * \code
  * #include <visp3/core/vpMomentAlpha.h>
@@ -96,7 +95,7 @@ BEGIN_VISP_NAMESPACE
  * int main()
  * {
  *   vpPoint p;
- *  std::vector<vpPoint> vec_p; // Vector that contains the vertices of the contour polygon
+ *   std::vector<vpPoint> vec_p; // Vector that contains the vertices of the contour polygon
  *   p.set_x(1); p.set_y(1);     // Coordinates in meters in the image plane (vertex 1)
  *   vec_p.push_back(p);
  *   p.set_x(2); p.set_y(2);     // Coordinates in meters in the image plane (vertex 2)
@@ -136,17 +135,16 @@ BEGIN_VISP_NAMESPACE
  *   std::for_each (mu3ref.begin(), mu3ref.end(), print);
  *   std::cout << std::endl;
  *
- *   ////////////CURRENT VALUES (same object rotated 180deg - must be
- *   ////////////entered in reverse order)////////////////
+ *   ////////////CURRENT VALUES (same object rotated 180deg)////////////////
  *   vec_p.clear();
  *
- *   p.set_x(-3); p.set_y(1);                       // Coordinates in meters in the image plane (vertex 4)
+ *   p.set_x(-1); p.set_y(-1);                      // Coordinates in meters in the image plane (vertex 4)
  *   vec_p.push_back(p);
- *   p.set_x(-3); p.set_y(0);                       // Coordinates in meters in the image plane (vertex 3)
+ *   p.set_x(-2); p.set_y(-2);                      // Coordinates in meters in the image plane (vertex 3)
  *   vec_p.push_back(p);
- *   p.set_x(2); p.set_y(-2);                       // Coordinates in meters in the image plane (vertex 2)
+ *   p.set_x(3); p.set_y(-0);                       // Coordinates in meters in the image plane (vertex 2)
  *   vec_p.push_back(p);
- *   p.set_x(1); p.set_y(-1);                       // Coordinates in meters in the image plane (vertex 1)
+ *   p.set_x(3); p.set_y(1);                        // Coordinates in meters in the image plane (vertex 1)
  *   vec_p.push_back(p);
  *
  *   vpMomentObject obj(3);                         // Second object. Order 3 is also required because of the Alpha
@@ -182,7 +180,7 @@ BEGIN_VISP_NAMESPACE
  * alphaRef=25.3019 deg
  * mu3=1.80552  0.921882  0.385828  0.122449
  * --- current object ---
- * alpha=-25.3019 deg
+ * alpha=-154.698 deg
  * \endcode
  *
  * There is also testMomentAlpha.cpp example that shows how to compute alpha in the range \f$ [-\pi ; \pi] \f$

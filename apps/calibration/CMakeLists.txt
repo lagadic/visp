@@ -17,7 +17,7 @@ if(VISP_HAVE_UR_RTDE)
   list(APPEND apps_cpp visp-acquire-universal-robots-calib-data.cpp)
 endif()
 
-file(GLOB apps_data "*.yaml" "*.py" "camera.xml" "*.png")
+file(GLOB apps_data "*.yaml" "*.py" "camera.xml" "*.jpg")
 
 foreach(cpp ${apps_cpp})
   visp_add_app(${cpp})

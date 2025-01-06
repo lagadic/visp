@@ -79,7 +79,7 @@ BEGIN_VISP_NAMESPACE
   uses vpRealSense2 class.
 
   \code
-  cmake_minimum_required(VERSION 3.5)
+  10)
 
   project(sample)
 

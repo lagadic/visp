@@ -46,8 +46,8 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpSphere.h>
 
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_CALIB3D)
-#include <opencv2/calib3d/calib3d.hpp>
+#if defined(VISP_HAVE_OPENCV)
+#include <opencv2/core/core.hpp>
 #endif
 
 BEGIN_VISP_NAMESPACE
@@ -343,7 +343,7 @@ public:
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
   //@}
 
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_CALIB3D)
+#if (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_CALIB) && defined(HAVE_OPENCV_3D)))
   /** @name Using OpenCV camera parameters  */
   //@{
   static void convertEllipse(const cv::Mat &cameraMatrix, const vpCircle &circle, vpImagePoint &center, double &n20_p,

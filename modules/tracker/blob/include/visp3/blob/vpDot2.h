@@ -103,10 +103,10 @@ BEGIN_VISP_NAMESPACE
  *   can also be used to find a certain type of dots in the full image.
  *
  * The following sample code available in
- * tutorial-blob-tracker-live-firewire.cpp shows how to grab images from a
+ * tutorial-blob-tracker-live.cpp shows how to grab images from a
  * firewire camera, track a blob and display the tracking results.
  *
- * \include tutorial-blob-tracker-live-firewire.cpp
+ * \include tutorial-blob-tracker-live.cpp
  * A line by line explanation of the previous example is provided in
  * \ref tutorial-tracking-blob.
  *

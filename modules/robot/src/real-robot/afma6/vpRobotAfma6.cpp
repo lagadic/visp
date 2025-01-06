@@ -1670,7 +1670,7 @@ void vpRobotAfma6::setVelocity(const vpRobot::vpControlFrameType frame, const vp
     break;
   }
   case vpRobot::END_EFFECTOR_FRAME: {
-    // Tranform in camera frame
+    // Transform in camera frame
     vpHomogeneousMatrix cMe;
     this->get_cMe(cMe);
     vpVelocityTwistMatrix cVe(cMe);
