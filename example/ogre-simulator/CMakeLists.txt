@@ -57,4 +57,8 @@ foreach(cpp ${example_cpp})
   endif()
 endforeach()
 
+# Add test only if dataset found for isolated build
+visp_find_dataset(DATASET_FOUND)
+if(DATASET_FOUND)
 visp_add_test(AROgreBasic AROgreBasic ${OPTION_TO_DESACTIVE_DISPLAY} -c)
+endif()
