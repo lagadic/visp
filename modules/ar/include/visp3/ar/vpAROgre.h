@@ -371,12 +371,14 @@ private:
   void destroyRTShaderSystem();
 
 protected:
+  static unsigned int sID;
   // Attributes
   Ogre::String name; /**Name of th Window*/
 
   // OGRE 3D System
   Ogre::Root *mRoot;             /** Application's root */
   Ogre::Camera *mCamera;         /** Camera */
+  Ogre::String mSceneManagerName; /**Name of th scene manager*/
   Ogre::SceneManager *mSceneMgr; /** Scene manager */
   Ogre::RenderWindow *mWindow;   /** Display window */
   Ogre::String mResourcePath;    /** Path to resources.cfg */

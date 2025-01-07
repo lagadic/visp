@@ -59,6 +59,8 @@ typedef Ogre::WindowEventUtilities OgreWindowEventUtilities;
 #endif
 
 BEGIN_VISP_NAMESPACE
+unsigned int vpAROgre::sID = 0;
+
 /*!
   Constructor.
 
@@ -86,6 +88,10 @@ vpAROgre::vpAROgre(const vpCameraParameters &cam, unsigned int width, unsigned i
   mWindowHeight(height), mWindowWidth(width), windowHidden(false), mNearClipping(0.001), mFarClipping(200), mcam(cam),
   mshowConfigDialog(true), mOptionalResourceLocation()
 {
+  std::stringstream nameSceneManager;
+  nameSceneManager << "SceneManagerInstance" << sID;
+  mSceneManagerName = nameSceneManager.str();
+  ++sID;
 #if defined(OGRE_BUILD_COMPONENT_RTSHADERSYSTEM) & (VISP_HAVE_OGRE_VERSION >= (1<<16 | 10 <<8 | 0))
   mMaterialMgrListener = NULL;
   mShaderGenerator = NULL;
@@ -185,7 +191,7 @@ void vpAROgre::init(vpImage<unsigned char> &I,
 
 #if (VISP_HAVE_OGRE_VERSION >= (13 <<16 | 0 <<8 | 0))
 // Register the scene manager.
-  Ogre::RTShader::ShaderGenerator::getSingleton().addSceneManager(Ogre::Root::getSingletonPtr()->getSceneManager("SceneManagerInstance0"));
+  Ogre::RTShader::ShaderGenerator::getSingleton().addSceneManager(Ogre::Root::getSingletonPtr()->getSceneManager(mSceneManagerName));
 #endif
 
   // Create the background image which will come from the grabber
@@ -241,7 +247,7 @@ void vpAROgre::init(vpImage<vpRGBa> &I,
 
 #if (VISP_HAVE_OGRE_VERSION >= (13 <<16 | 0 <<8 | 0))
 // Register the scene manager.
-  Ogre::RTShader::ShaderGenerator::getSingleton().addSceneManager(Ogre::Root::getSingletonPtr()->getSceneManager("SceneManagerInstance0"));
+  Ogre::RTShader::ShaderGenerator::getSingleton().addSceneManager(Ogre::Root::getSingletonPtr()->getSceneManager(mSceneManagerName));
 #endif
 
   // Create the background image which will come from the grabber
@@ -354,9 +360,9 @@ void vpAROgre::init(bool
 #if (VISP_HAVE_OGRE_VERSION < (1<<16 | 10<<8 | 0))
   mSceneMgr = mRoot->createSceneManager(Ogre::ST_GENERIC);
 #elif (VISP_HAVE_OGRE_VERSION < (14<<16 | 0<<8 | 0))
-  mSceneMgr = mRoot->createSceneManager(Ogre::DefaultSceneManagerFactory::FACTORY_TYPE_NAME, "SceneManagerInstance0");
+  mSceneMgr = mRoot->createSceneManager(Ogre::DefaultSceneManagerFactory::FACTORY_TYPE_NAME, mSceneManagerName);
 #else
-  mSceneMgr = mRoot->createSceneManager(Ogre::SMT_DEFAULT, "SceneManagerInstance0");
+  mSceneMgr = mRoot->createSceneManager(Ogre::SMT_DEFAULT, mSceneManagerName);
 #endif
 
   bool fullscreen = false;
@@ -545,13 +551,8 @@ void vpAROgre::init(bool
       "rtf", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, Ogre::TEX_TYPE_2D, mWindow->getWidth(),
       mWindow->getHeight(), 0, Ogre::PF_R8G8B8A8, Ogre::TU_RENDERTARGET);
 
-  //   Ogre::TexturePtr Texture =
-  //   Ogre::TextureManager::getSingleton().createManual("rtf",
-  //   Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,Ogre::TEX_TYPE_2D,
-  //                                                                                640,480, 0, Ogre::PF_R8G8B8A8,
-  //                                                                                Ogre::TU_RENDERTARGET);
   Ogre::RenderTexture *RTarget = Texture->getBuffer()->getRenderTarget();
-  /*Ogre::Viewport* Viewport =*/RTarget->addViewport(mCamera);
+  RTarget->addViewport(mCamera);
   RTarget->getViewport(0)->setClearEveryFrame(true);
   RTarget->getViewport(0)->setOverlaysEnabled(false);
 }
