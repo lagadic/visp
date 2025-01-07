@@ -78,7 +78,7 @@ unsigned int vpAROgre::sID = 0;
 */
 vpAROgre::vpAROgre(const vpCameraParameters &cam, unsigned int width, unsigned int height, const char *resourcePath,
                    const char *pluginsPath)
-  : name("ViSP - Augmented Reality"), mRoot(0), mCamera(0), mSceneMgr(0), mWindow(0), mResourcePath(resourcePath),
+  : name("ViSP - Augmented Reality"), mInitialized(false), mRoot(0), mCamera(0), mSceneMgr(0), mWindow(0), mResourcePath(resourcePath),
   mPluginsPath(pluginsPath),
 #ifdef VISP_HAVE_OIS
   mInputManager(0), mKeyboard(0),
@@ -547,14 +547,21 @@ void vpAROgre::init(bool
 #endif
 
   // Initialise a render to texture to be able to retrieve a screenshot
-  Ogre::TexturePtr Texture = Ogre::TextureManager::getSingleton().createManual(
-      "rtf", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, Ogre::TEX_TYPE_2D, mWindow->getWidth(),
-      mWindow->getHeight(), 0, Ogre::PF_R8G8B8A8, Ogre::TU_RENDERTARGET);
+  try {
+    Ogre::TexturePtr Texture = Ogre::TextureManager::getSingleton().createManual(
+        "rtf", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, Ogre::TEX_TYPE_2D, mWindow->getWidth(),
+        mWindow->getHeight(), 0, Ogre::PF_R8G8B8A8, Ogre::TU_RENDERTARGET);
 
-  Ogre::RenderTexture *RTarget = Texture->getBuffer()->getRenderTarget();
-  RTarget->addViewport(mCamera);
-  RTarget->getViewport(0)->setClearEveryFrame(true);
-  RTarget->getViewport(0)->setOverlaysEnabled(false);
+    Ogre::RenderTexture *RTarget = Texture->getBuffer()->getRenderTarget();
+    RTarget->addViewport(mCamera);
+    RTarget->getViewport(0)->setClearEveryFrame(true);
+    RTarget->getViewport(0)->setOverlaysEnabled(false);
+  }
+  catch (const Ogre::Exception &e) {
+    std::cout << "Info: Texture rtf is already known by the resource manager." << std::endl;
+  }
+
+  mInitialized = true;
 }
 
 /*!
@@ -562,6 +569,9 @@ void vpAROgre::init(bool
 */
 vpAROgre::~vpAROgre(void)
 {
+  if (!mInitialized) {
+    return;
+  }
 #if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 11<<8 | 0))
   mPixelBuffer.reset();
 #else
@@ -935,20 +945,30 @@ void vpAROgre::createBackground(vpImage<unsigned char> & /* I */)
   // If we are using opengl we can boost a little bit performances with a
   // dynamic texture
   if (mRoot->getRenderSystem()->getName() == "OpenGL Rendering Subsystem") {
-    Ogre::TextureManager::getSingleton().createManual(
+    try {
+      Ogre::TextureManager::getSingleton().createManual(
         "BackgroundTexture", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, Ogre::TEX_TYPE_2D,
         mBackgroundWidth,  // width
         mBackgroundHeight, // height
         0,                 // num of mip maps
         Ogre::PF_BYTE_L, Ogre::TU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
+    }
+    catch (const Ogre::Exception &e) {
+      std::cout << "Info: Texture BackgroundTexture is already known by the resource manager." << std::endl;
+    }
   }
   else {
-    Ogre::TextureManager::getSingleton().createManual(
+    try {
+      Ogre::TextureManager::getSingleton().createManual(
         "BackgroundTexture", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, Ogre::TEX_TYPE_2D,
         mBackgroundWidth,  // width
         mBackgroundHeight, // height
         0,                 // num of mip maps
         Ogre::PF_BYTE_L, Ogre::TU_DEFAULT);
+    }
+    catch (const Ogre::Exception &e) {
+      std::cout << "Info: Texture BackgroundTexture is already known by the resource manager." << std::endl;
+    }
   }
 
   // Pointer to the dynamic texture
@@ -961,25 +981,24 @@ void vpAROgre::createBackground(vpImage<unsigned char> & /* I */)
   mPixelBuffer = dynTexPtr->getBuffer();
 
   // Material to apply the texture to the background
-  Ogre::MaterialPtr Backgroundmaterial = Ogre::MaterialManager::getSingleton().create(
+  try {
+    Ogre::MaterialPtr Backgroundmaterial = Ogre::MaterialManager::getSingleton().create(
       "BackgroundMaterial", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-  //#if ( OGRE_VERSION >= (1 << 16 | 9 << 8 | 0) )
-  //      .dynamicCast<Ogre::Material>();
-  //#else
-  //      ;
-  //#endif
-  Ogre::Technique *Backgroundtechnique = Backgroundmaterial->createTechnique();
-  Backgroundtechnique->createPass();
-  Backgroundmaterial->getTechnique(0)->getPass(0)->setLightingEnabled(false);
-  Backgroundmaterial->getTechnique(0)->getPass(0)->setDepthCheckEnabled(false); // Background
-  Backgroundmaterial->getTechnique(0)->getPass(0)->setDepthWriteEnabled(false); // Background
-  Backgroundmaterial->getTechnique(0)->getPass(0)->createTextureUnitState("BackgroundTexture");
+    Ogre::Technique *Backgroundtechnique = Backgroundmaterial->createTechnique();
+    Backgroundtechnique->createPass();
+    Backgroundmaterial->getTechnique(0)->getPass(0)->setLightingEnabled(false);
+    Backgroundmaterial->getTechnique(0)->getPass(0)->setDepthCheckEnabled(false); // Background
+    Backgroundmaterial->getTechnique(0)->getPass(0)->setDepthWriteEnabled(false); // Background
+    Backgroundmaterial->getTechnique(0)->getPass(0)->createTextureUnitState("BackgroundTexture");
 #if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 11<<8 | 0))
-  mBackground->setMaterial(Backgroundmaterial);                  // Attach the material to the rectangle
+    mBackground->setMaterial(Backgroundmaterial);                  // Attach the material to the rectangle
 #else
-  mBackground->setMaterial("BackgroundMaterial");                  // Attach the material to the rectangle
+    mBackground->setMaterial("BackgroundMaterial");                  // Attach the material to the rectangle
 #endif
-  mBackground->setRenderQueueGroup(Ogre::RENDER_QUEUE_BACKGROUND); // To be rendered in Background
+  }
+  catch (const Ogre::Exception &e) {
+    std::cout << "Info: Material BackgroundMaterial is already known by the resource manager." << std::endl;
+  }
 
   // Add the background to the Scene Graph so it will be rendered
   Ogre::SceneNode *BackgroundNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("BackgoundNode");
@@ -1008,23 +1027,31 @@ void vpAROgre::createBackground(vpImage<vpRGBa> & /* I */)
   // If we are using opengl we can boost a little bit performances with a
   // dynamic texture
   if (mRoot->getRenderSystem()->getName() == "OpenGL Rendering Subsystem") {
-    Ogre::TextureManager::getSingleton().createManual(
+    try {
+      Ogre::TextureManager::getSingleton().createManual(
         "BackgroundTexture", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, Ogre::TEX_TYPE_2D,
         mBackgroundWidth,  // width
         mBackgroundHeight, // height
         0,                 // num of mip maps
-        // Ogre::PF_BYTE_RGBA,
         Ogre::PF_BYTE_BGRA, Ogre::TU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
+    }
+    catch (const Ogre::Exception &e) {
+      std::cout << "Info: Texture BackgroundTexture is already known by the resource manager." << std::endl;
+    }
   }
   else { // As that texture does not seem to work properly with direct3D we
         // use a default texture
-    Ogre::TextureManager::getSingleton().createManual(
-        "BackgroundTexture", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, Ogre::TEX_TYPE_2D,
-        mBackgroundWidth,  // width
-        mBackgroundHeight, // height
-        0,                 // num of mip maps
-        // Ogre::PF_BYTE_RGBA,
-        Ogre::PF_BYTE_BGRA, Ogre::TU_DEFAULT);
+    try {
+      Ogre::TextureManager::getSingleton().createManual(
+         "BackgroundTexture", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, Ogre::TEX_TYPE_2D,
+         mBackgroundWidth,  // width
+         mBackgroundHeight, // height
+         0,                 // num of mip maps
+         Ogre::PF_BYTE_BGRA, Ogre::TU_DEFAULT);
+    }
+    catch (const Ogre::Exception &e) {
+      std::cout << "Info: Texture BackgroundTexture is already known by the resource manager." << std::endl;
+    }
   }
 
   // Pointer to the dynamic texture
@@ -1039,25 +1066,25 @@ void vpAROgre::createBackground(vpImage<vpRGBa> & /* I */)
   mPixelBuffer = dynTexPtr->getBuffer();
 
   // Material to apply the texture to the background
-  Ogre::MaterialPtr Backgroundmaterial = Ogre::MaterialManager::getSingleton().create(
+  try {
+    Ogre::MaterialPtr Backgroundmaterial = Ogre::MaterialManager::getSingleton().create(
       "BackgroundMaterial", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-  //#if ( OGRE_VERSION >= (1 << 16 | 9 << 8 | 0) )
-  //      .dynamicCast<Ogre::Material>();
-  //#else
-  //      ;
-  //#endif
-  Ogre::Technique *Backgroundtechnique = Backgroundmaterial->createTechnique();
-  Backgroundtechnique->createPass();
-  Backgroundmaterial->getTechnique(0)->getPass(0)->setLightingEnabled(false);
-  Backgroundmaterial->getTechnique(0)->getPass(0)->setDepthCheckEnabled(false); // Background
-  Backgroundmaterial->getTechnique(0)->getPass(0)->setDepthWriteEnabled(false); // Background
-  Backgroundmaterial->getTechnique(0)->getPass(0)->createTextureUnitState("BackgroundTexture");
+    Ogre::Technique *Backgroundtechnique = Backgroundmaterial->createTechnique();
+    Backgroundtechnique->createPass();
+    Backgroundmaterial->getTechnique(0)->getPass(0)->setLightingEnabled(false);
+    Backgroundmaterial->getTechnique(0)->getPass(0)->setDepthCheckEnabled(false); // Background
+    Backgroundmaterial->getTechnique(0)->getPass(0)->setDepthWriteEnabled(false); // Background
+    Backgroundmaterial->getTechnique(0)->getPass(0)->createTextureUnitState("BackgroundTexture");
 
 #if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 11<<8 | 0))
-  mBackground->setMaterial(Backgroundmaterial);                  // Attach the material to the rectangle
+    mBackground->setMaterial(Backgroundmaterial);                  // Attach the material to the rectangle
 #else
-  mBackground->setMaterial("BackgroundMaterial");                  // Attach the material to the rectangle
+    mBackground->setMaterial("BackgroundMaterial");                  // Attach the material to the rectangle
 #endif
+  }
+  catch (const Ogre::Exception &e) {
+    std::cout << "Info: Material BackgroundMaterial is already known by the resource manager." << std::endl;
+  }
   mBackground->setRenderQueueGroup(Ogre::RENDER_QUEUE_BACKGROUND); // To be rendered in Background
 
   // Add the background to the Scene Graph so it will be rendered

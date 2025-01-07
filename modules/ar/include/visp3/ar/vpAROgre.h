@@ -374,11 +374,12 @@ protected:
   static unsigned int sID;
   // Attributes
   Ogre::String name; /**Name of th Window*/
+  bool mInitialized; /** True once init(bool, bool) has been called.*/
 
   // OGRE 3D System
   Ogre::Root *mRoot;             /** Application's root */
   Ogre::Camera *mCamera;         /** Camera */
-  Ogre::String mSceneManagerName; /**Name of th scene manager*/
+  Ogre::String mSceneManagerName; /**Name of the scene manager*/
   Ogre::SceneManager *mSceneMgr; /** Scene manager */
   Ogre::RenderWindow *mWindow;   /** Display window */
   Ogre::String mResourcePath;    /** Path to resources.cfg */
