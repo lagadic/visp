@@ -56,3 +56,5 @@ foreach(cpp ${example_cpp})
     visp_add_dependency(${cpp} "examples")
   endif()
 endforeach()
+
+visp_add_test(AROgreBasic AROgreBasic ${OPTION_TO_DESACTIVE_DISPLAY} -c)

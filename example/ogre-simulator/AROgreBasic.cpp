@@ -73,7 +73,7 @@
 #include <visp3/vision/vpPose.h>
 
 // List of allowed command line options
-#define GETOPTARGS "ci:p:h"
+#define GETOPTARGS "cdi:p:h"
 
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;
@@ -126,6 +126,9 @@ OPTIONS:                                               Default\n\
      Disable the mouse click. Useful to automate the \n\
      execution of this program without human intervention.\n\
 \n\
+  -d\n\
+     Disable the display.\n\
+\n\
   -h\n\
      Print the help.\n",
           ipath.c_str(), ext.c_str(), ppath.c_str(), ext.c_str());
@@ -142,11 +145,12 @@ OPTIONS:                                               Default\n\
   \param ipath : Input image path.
   \param ppath : Personal image path.
   \param click_allowed : Mouse click activation.
+  \param use_display : Activate the display.
 
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath, bool &click_allowed)
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath, bool &click_allowed, bool &use_display)
 {
   const char *optarg_;
   int c;
@@ -155,6 +159,9 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
     switch (c) {
     case 'c':
       click_allowed = false;
+      break;
+    case 'd':
+      use_display = false;
       break;
     case 'i':
       ipath = optarg_;
@@ -192,29 +199,32 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
   world
 */
 void computeInitialPose(vpCameraParameters *mcam, vpImage<unsigned char> &I, vpPose *mPose, vpDot2 *md,
-                        vpImagePoint *mcog, vpHomogeneousMatrix *cMo, vpPoint *mP, const bool &opt_click_allowed)
+                        vpImagePoint *mcog, vpHomogeneousMatrix *cMo, vpPoint *mP, const bool &opt_click_allowed, bool opt_display)
 {
   // ---------------------------------------------------
   //    Code inspired from ViSP example of camera pose
   // ----------------------------------------------------
-  bool opt_display = true;
-
-  //#if defined(VISP_HAVE_X11) && ! defined(APPLE)
+  vpDisplay *display = nullptr;
+  if (opt_display) {
 #if defined(VISP_HAVE_X11) && !(defined(__APPLE__) && defined(__MACH__))
-  // produce an error on OSX: ‘typedef int Cursor’
-  // /usr/X11R6/include/X11/X.h:108: error: ‘Cursor’ has a previous
-  // declaration as ‘typedef XID Cursor’. That's why it should not be
-  // used on APPLE platforms
-  vpDisplayX display;
+    // produce an error on OSX: ‘typedef int Cursor’
+    // /usr/X11R6/include/X11/X.h:108: error: ‘Cursor’ has a previous
+    // declaration as ‘typedef XID Cursor’. That's why it should not be
+    // used on APPLE platforms
+    display = new vpDisplayX();
 #elif defined(VISP_HAVE_GTK)
-  vpDisplayGTK display;
+    display = new vpDisplayGTK();
 #elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI display;
+    display = new vpDisplayGDI();
 #elif defined(HAVE_OPENCV_HIGHGUI)
-  vpDisplayOpenCV display;
+    display = new vpDisplayOpenCV();
 #elif defined(VISP_HAVE_D3D9)
-  vpDisplayD3D display;
+    display = new vpDisplayD3D();
+#else
+    opt_display = false; // No display is available
 #endif
+  }
+  //#if defined(VISP_HAVE_X11) && ! defined(APPLE)
 
   for (unsigned int i = 0; i < 4; i++) {
     if (opt_display) {
@@ -228,7 +238,7 @@ void computeInitialPose(vpCameraParameters *mcam, vpImage<unsigned char> &I, vpP
   if (opt_display) {
     try {
       // Display size is automatically defined by the image (I) size
-      display.init(I, 100, 100, "Preliminary Pose Calculation");
+      display->init(I, 100, 100, "Preliminary Pose Calculation");
       // display the image
       // The image class has a member that specify a pointer toward
       // the display that has been initialized in the display declaration
@@ -288,9 +298,11 @@ void computeInitialPose(vpCameraParameters *mcam, vpImage<unsigned char> &I, vpP
         md[j].display(I);
 
       // flush the display buffer
-      vpDisplay::flush(I);
+      if (opt_display) {
+        vpDisplay::flush(I);
+      }
       try {
-        if (opt_click_allowed) {
+        if (opt_click_allowed && opt_display) {
           md[i].initTracking(I);
           // std::cout << "click " << i << " " << md[i] << std::endl;
         }
@@ -392,6 +404,10 @@ void computeInitialPose(vpCameraParameters *mcam, vpImage<unsigned char> &I, vpP
     vpDisplay::flush(I);
     vpTime::wait(1000);
   }
+
+  if (opt_display && display != nullptr) {
+    delete display;
+  }
 }
 
 int main(int argc, const char **argv)
@@ -409,6 +425,7 @@ int main(int argc, const char **argv)
     std::string dirname;
     std::string filename;
     bool opt_click_allowed = true;
+    bool opt_display = true;
 
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
     // environment variable value
@@ -419,7 +436,7 @@ int main(int argc, const char **argv)
       ipath = env_ipath;
 
     // Read the command line options
-    if (getOptions(argc, argv, opt_ipath, opt_ppath, opt_click_allowed) == false) {
+    if (getOptions(argc, argv, opt_ipath, opt_ppath, opt_click_allowed, opt_display) == false) {
       return EXIT_FAILURE;
     }
 
@@ -449,6 +466,12 @@ int main(int argc, const char **argv)
         << "  use personal images." << std::endl
         << std::endl;
 
+      return EXIT_FAILURE;
+    }
+
+    if (!opt_display && opt_click_allowed) {
+      std::cerr << std::endl << "ERROR:" << std::endl;
+      std::cerr << "  Display is disabled but clicks are required !" << std::endl;
       return EXIT_FAILURE;
     }
 
@@ -499,7 +522,7 @@ int main(int argc, const char **argv)
       grabber.acquire(Idisplay);
       vpCameraParameters mcamTmp(592, 570, grabber.getWidth() / 2, grabber.getHeight() / 2);
       // Compute the initial pose of the camera
-      computeInitialPose(&mcamTmp, Idisplay, &mPose, md, mcog, &cMo, mP, opt_click_allowed);
+      computeInitialPose(&mcamTmp, Idisplay, &mPose, md, mcog, &cMo, mP, opt_click_allowed, opt_display);
       // Close the framegrabber
       grabber.close();
 
@@ -518,7 +541,8 @@ int main(int argc, const char **argv)
     // Create a vpRAOgre object with color background
     vpAROgre ogre(mcam, grabber.getWidth(), grabber.getHeight());
     // Initialize it
-    ogre.init(IC);
+    ogre.setShowConfigDialog(opt_display);
+    ogre.init(IC, false, !opt_display);
     ogre.load("Robot", "robot.mesh");
     ogre.setScale("Robot", 0.001f, 0.001f, 0.001f);
     ogre.setRotation("Robot", vpRotationMatrix(vpRxyzVector(M_PI / 2, -M_PI / 2, 0)));
@@ -571,9 +595,11 @@ int main(int argc, const char **argv)
       mPose.computePose(vpPose::VIRTUAL_VS, cMo);
 
       // Display with ogre
-      ogre.display(IC, cMo);
+      if (opt_display) {
+        ogre.display(IC, cMo);
+      }
 
-      // Wait so that the video does not go too fast
+// Wait so that the video does not go too fast
       vpTime::wait(15);
     }
     // Close the grabber
