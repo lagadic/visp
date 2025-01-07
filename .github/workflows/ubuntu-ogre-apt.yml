@@ -37,13 +37,16 @@ jobs:
     - name: Print compiler information
       run: dpkg --list | grep compiler
 
+    - name: Install ViSP dependencies
+      run: sudo apt-get update && sudo apt-get install -y libx11-dev libdc1394-dev libv4l-dev liblapack-dev libopenblas-dev libeigen3-dev libopencv-dev nlohmann-json3-dev
+
     - name: Install dependencies for Ogre 1.9
       if: matrix.ogre == 'ogre-1.9'
-      run: sudo apt-get update && sudo apt-get install -y libx11-dev libdc1394-dev libv4l-dev liblapack-dev libopenblas-dev libeigen3-dev libopencv-dev nlohmann-json3-dev libogre-1.9-dev
+      run: sudo apt-get update && sudo apt-get install -y libgles2-mesa-dev libvulkan-dev glslang-dev libxrandr-dev libxaw7-dev libx11-dev libzzip-dev libsdl2-dev libogre-1.9-dev
 
     - name: Install dependencies for Ogre 1.12
       if: matrix.ogre == 'ogre-1.12'
-      run: sudo apt-get update && sudo apt-get install -y libx11-dev libdc1394-dev libv4l-dev liblapack-dev libopenblas-dev libeigen3-dev libopencv-dev nlohmann-json3-dev libogre-1.12-dev
+      run: sudo apt-get update && sudo apt-get install -y libgles2-mesa-dev libvulkan-dev glslang-dev libxrandr-dev libxaw7-dev libx11-dev libzzip-dev libsdl2-dev libogre-1.12-dev
 
     - name: Clone visp-images
       env:
