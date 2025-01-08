@@ -41,7 +41,7 @@ jobs:
       run: sudo apt-get update && sudo apt-get install -y libx11-dev libdc1394-dev libv4l-dev liblapack-dev libopenblas-dev libeigen3-dev libopencv-dev nlohmann-json3-dev
 
     - name: Install Ogre 1.9
-      if: matrix.ogre == 'ogre-1.9'
+      if: matrix.ogre == 'ogre-1.9' && matrix.standard != '17'
       run: sudo apt-get update && sudo apt-get install -y libogre-1.9-dev
 
     - name: Install Ogre 1.12
