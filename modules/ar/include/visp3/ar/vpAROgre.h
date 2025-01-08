@@ -38,7 +38,6 @@
 
   \warning The content of this file is only available if Ogre3D and
   one of the renderer (OpenGL or DirectX) are installed.
-
 */
 
 #ifndef VP_AR_OGRE_H
