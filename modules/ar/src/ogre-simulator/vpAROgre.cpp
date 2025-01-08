@@ -60,6 +60,7 @@ typedef Ogre::WindowEventUtilities OgreWindowEventUtilities;
 
 BEGIN_VISP_NAMESPACE
 unsigned int vpAROgre::sID = 0;
+unsigned int vpAROgre::sRTSSUsers = 0;
 
 /*!
   Constructor.
@@ -104,7 +105,8 @@ Initialize the RT Shader system.
 bool vpAROgre::initialiseRTShaderSystem()
 {
 #if defined(OGRE_BUILD_COMPONENT_RTSHADERSYSTEM) & (VISP_HAVE_OGRE_VERSION >= (1<<16 | 10 <<8 | 0))
-  if (Ogre::RTShader::ShaderGenerator::initialize()) {
+  if (Ogre::RTShader::ShaderGenerator::initialize() || (sRTSSUsers > 0)) {
+    ++sRTSSUsers;
     mShaderGenerator = Ogre::RTShader::ShaderGenerator::getSingletonPtr();
 
 // Create and register the material manager listener if it doesn't exist yet.
@@ -136,7 +138,12 @@ void vpAROgre::destroyRTShaderSystem()
 
   // Destroy RTShader system.
   if (mShaderGenerator != NULL) {
-    Ogre::RTShader::ShaderGenerator::destroy();
+    if (sRTSSUsers > 0) {
+      --sRTSSUsers;
+    }
+    if (sRTSSUsers == 0) {
+      Ogre::RTShader::ShaderGenerator::destroy();
+    }
     mShaderGenerator = NULL;
   }
 #endif

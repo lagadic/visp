@@ -372,6 +372,7 @@ private:
 
 protected:
   static unsigned int sID;
+  static unsigned int sRTSSUsers;
   // Attributes
   Ogre::String name; /**Name of th Window*/
   bool mInitialized; /** True once init(bool, bool) has been called.*/
