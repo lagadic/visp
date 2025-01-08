@@ -90,14 +90,15 @@ def sort_headers(headers: List['HeaderFile']) -> List['HeaderFile']:
   return result
 
 class HeaderEnvironment():
-  def __init__(self, data: ParsedData):
-    self.mapping: Dict[str, str] = self.build_naive_mapping(data.namespace, {})
-    # Step 2: resolve enumeration names that are possibly hidden behind typedefs
-    from visp_python_bindgen.enum_binding import resolve_enums_and_typedefs_to_enums
-    enum_reprs, _ = resolve_enums_and_typedefs_to_enums(data.namespace, self.mapping)
-    for enum_repr in enum_reprs:
-      for value in enum_repr.values:
-        self.mapping[value.name] = enum_repr.name + '::' + value.name
+  def __init__(self, data: Optional[ParsedData]):
+    if data is not None:
+      self.mapping: Dict[str, str] = self.build_naive_mapping(data.namespace, {})
+      # Step 2: resolve enumeration names that are possibly hidden behind typedefs
+      from visp_python_bindgen.enum_binding import resolve_enums_and_typedefs_to_enums
+      enum_reprs, _ = resolve_enums_and_typedefs_to_enums(data.namespace, self.mapping)
+      for enum_repr in enum_reprs:
+        for value in enum_repr.values:
+          self.mapping[value.name] = enum_repr.name + '::' + value.name
 
   def build_naive_mapping(self, data: Union[NamespaceScope, ClassScope], mapping, scope: str = ''):
     current_mapping = mapping.copy()
@@ -133,3 +134,8 @@ class HeaderEnvironment():
   def update_with_dependencies(self, other_envs: List['HeaderEnvironment']) -> None:
     for env in other_envs:
       self.mapping.update(env)
+
+  def copy(self):
+    h = HeaderEnvironment(None)
+    h.mapping = self.mapping.copy()
+    return h

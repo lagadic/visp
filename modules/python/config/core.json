@@ -986,6 +986,22 @@
         }
       ]
     },
+    "vpParticleFilter": {
+      "specializations": [
+        {
+          "python_name": "ParticleFilterVector",
+          "arguments": [
+            "vpColVector"
+          ]
+        },
+        {
+          "python_name": "ParticleFilterMatrix",
+          "arguments": [
+            "vpMatrix"
+          ]
+        }
+      ]
+    },
     "vpImageFilter": {
       "methods": [
         {
