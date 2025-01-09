@@ -161,6 +161,54 @@
           "static": true,
           "signature": "void skew(const vpTranslationVector &, vpMatrix&)",
           "custom_name": "skewOf"
+        },
+        {
+          "static": false,
+          "signature": "vpTranslationVector& buildFrom(const double&, const double&, const double&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpTranslationVector& buildFrom(const vpHomogeneousMatrix&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpTranslationVector& buildFrom(const vpPoseVector&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpTranslationVector& buildFrom(const vpColVector&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
         }
       ]
     },
@@ -197,6 +245,64 @@
           "static": false,
           "signature": "vpColVector& operator=(vpColVector&&)",
           "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "std::ostream& cppPrint(std::ostream&, const std::string&, bool)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "std::ostream& csvPrint(std::ostream&)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "vpColVector& deg2rad()",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpColVector& normalize()",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpColVector& normalize(vpColVector&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpColVector& rad2deg()",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
         }
       ]
     },
@@ -243,6 +349,30 @@
           "static": false,
           "signature": "vpRowVector& operator=(vpRowVector&&)",
           "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "vpRowVector& normalize()",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpRowVector& normalize(vpRowVector&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
         }
       ]
     },
@@ -335,7 +465,45 @@
     },
     "vpRotationMatrix": {
       "additional_bindings": "bindings_vpRotationMatrix",
-      "use_buffer_protocol": true
+      "use_buffer_protocol": true,
+      "methods": [
+        {
+          "static": false,
+          "signature": "vpRotationMatrix& buildFrom(const vpRzyxVector&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpRotationMatrix& buildFrom(const vpQuaternionVector&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpRotationMatrix& buildFrom(const double&, const double&, const double&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        }
+      ]
     },
     "vpHomogeneousMatrix": {
       "additional_bindings": "bindings_vpHomogeneousMatrix",
@@ -356,14 +524,520 @@
           "static": false,
           "signature": "void convert(std::vector<float>&)",
           "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "vpHomogeneousMatrix& buildFrom(const vpTranslationVector&, const vpRotationMatrix&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpHomogeneousMatrix& buildFrom(const vpTranslationVector&, const vpThetaUVector&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpHomogeneousMatrix& buildFrom(const vpTranslationVector&, const vpQuaternionVector&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpHomogeneousMatrix& buildFrom(const vpPoseVector&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpHomogeneousMatrix& buildFrom(const std::vector<float>&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpHomogeneousMatrix& buildFrom(const std::vector<double>&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpHomogeneousMatrix& buildFrom(const double&, const double&, const double&, const double&, const double&, const double&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
         }
       ]
     },
     "vpRotationVector": {
       "additional_bindings": "bindings_vpRotationVector"
     },
+    "vpRxyzVector": {
+      "methods": [
+        {
+          "static": false,
+          "signature": "vpRxyzVector& buildFrom(const vpRotationMatrix&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpRxyzVector& buildFrom(const vpThetaUVector&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpRxyzVector& buildFrom(const vpColVector&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpRxyzVector& buildFrom(const std::vector<double>&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpRxyzVector& buildFrom(const double&, const double&, const double&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        }
+      ]
+    },
+    "vpRzyzVector": {
+      "methods": [
+        {
+          "static": false,
+          "signature": "vpRzyzVector& buildFrom(const vpRotationMatrix&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpRzyzVector& buildFrom(const vpThetaUVector&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpRzyzVector& buildFrom(const vpColVector&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpRzyzVector& buildFrom(const std::vector<double>&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpRzyzVector& buildFrom(const double&, const double&, const double&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        }
+      ]
+    },
+    "vpRzyxVector": {
+      "methods": [
+        {
+          "static": false,
+          "signature": "vpRzyxVector& buildFrom(const vpThetaUVector&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpRzyxVector& buildFrom(const vpColVector&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpRzyxVector& buildFrom(const std::vector<double>&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpRzyxVector& buildFrom(const double&, const double&, const double&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        }
+      ]
+    },
+    "vpQuaternionVector": {
+      "methods": [
+        {
+          "static": false,
+          "signature": "vpQuaternionVector& buildFrom(const double&, const double&, const double&, const double&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpQuaternionVector& buildFrom(const vpRotationMatrix&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpQuaternionVector& buildFrom(const vpThetaUVector&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpQuaternionVector& buildFrom(const vpColVector&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpQuaternionVector& buildFrom(const std::vector<double>&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        }
+      ]
+    },
     "vpPoseVector": {
-      "additional_bindings": "bindings_vpPoseVector"
+      "additional_bindings": "bindings_vpPoseVector",
+      "methods": [
+        {
+          "static": false,
+          "signature": "vpPoseVector& buildFrom(const double&, const double&, const double&, const double&, const double&, const double&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpPoseVector& buildFrom(const vpHomogeneousMatrix&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpPoseVector& buildFrom(const vpTranslationVector&, const vpThetaUVector&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpPoseVector& buildFrom(const vpTranslationVector&, const vpRotationMatrix&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        }
+      ]
+    },
+    "vpVelocityTwistMatrix": {
+      "methods": [
+        {
+          "static": false,
+          "signature": "vpVelocityTwistMatrix& buildFrom(const vpTranslationVector&, const vpRotationMatrix&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpVelocityTwistMatrix& buildFrom(const vpTranslationVector&, const vpThetaUVector&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpVelocityTwistMatrix& buildFrom(const vpHomogeneousMatrix&, bool)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpVelocityTwistMatrix& buildFrom(const vpRotationMatrix&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpVelocityTwistMatrix& buildFrom(const vpThetaUVector&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        }
+      ]
+    },
+    "vpForceTwistMatrix": {
+      "methods": [
+        {
+          "static": false,
+          "signature": "vpForceTwistMatrix& buildFrom(const vpTranslationVector&, const vpRotationMatrix&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpForceTwistMatrix& buildFrom(const vpTranslationVector&, const vpThetaUVector&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpForceTwistMatrix& buildFrom(const vpHomogeneousMatrix&, bool)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpForceTwistMatrix& buildFrom(const vpRotationMatrix&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpForceTwistMatrix& buildFrom(const vpThetaUVector&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        }
+      ]
     },
     "vpThetaUVector": {
       "methods": [
@@ -388,6 +1062,126 @@
           "static": false,
           "signature": "vpRobust& operator=(const vpRobust&&)",
           "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "vpThetaUVector& buildFrom(const vpHomogeneousMatrix&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpThetaUVector& buildFrom(const vpPoseVector&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpThetaUVector& buildFrom(const vpRotationMatrix&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpThetaUVector& buildFrom(const vpRzyxVector&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpThetaUVector& buildFrom(const vpRzyzVector&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpThetaUVector& buildFrom(const vpRxyzVector&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpThetaUVector& buildFrom(const vpQuaternionVector&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpThetaUVector& buildFrom(const vpColVector&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpThetaUVector& buildFrom(const std::vector<double>&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpThetaUVector& buildFrom(const double&, const double&, const double&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
         }
       ]
     }

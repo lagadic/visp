@@ -581,8 +581,7 @@ class HeaderFile():
 
     # Warning for potential double frees
     acknowledged_pointer_fields = cls_config.get('acknowledge_pointer_or_ref_fields') or []
-    refs_or_ptr_fields = list(filter(lambda tn: '&' in tn or '*' in tn,
-                                map(lambda field: get_type(field.type, {}, header_env_base.mapping),
+    refs_or_ptr_fields = list(map(lambda field: get_type(field.type, {}, header_env_base.mapping), filter(lambda field: isinstance(field.type, types.Pointer) or isinstance(field.type, types.Reference),
                                     cls.fields)))
 
     # If some pointer or refs are not acknowledged as existing by user, emit a warning
