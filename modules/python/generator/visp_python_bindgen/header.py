@@ -304,24 +304,12 @@ class HeaderFile():
         template_str = f'<{", ".join(template_strs)}>'
         name_cpp += template_str
 
-      # TODO: This is an ugly solution: Ideally, we wouldn't use string replacement,
-      # as it may break when the name is simple or appears in multiple classes (e.g. typename T for template names)
+      # When a class is templated, we should update its mappings so that inner typedefs are correctly resolved
+      # See vpParticleFilter for an instance where this is needed
       if template_decl is not None:
         header_env = header_env.copy()
         header_env.update_naive_mapping_with_template_instanciation(name_cpp_no_template, name_cpp, owner_specs)
-      # if 'ParticleFilter' in name_cpp:
-      #   logging.warning(f'VS: name_cpp_notemplate {name_cpp_no_template}, name_cpp = {name_cpp}')
-      #   header_env = header_env.copy()
-      #   logging.warning(header_env.mapping)
-      #   replace_token = name_cpp + '::'
-      #   # Replace non templated name with templated name
-      #   for k in header_env.mapping.keys():
-      #     # if replace_token in header_env.mapping[k]:
-      #     header_env.mapping[k] = header_env.mapping[k].replace(name_cpp_no_template, name_cpp)
-      #     for template_type, replacement_type  in owner_specs.items():
-      #       header_env.mapping[k] = header_env.mapping[k].replace(template_type, replacement_type)
 
-      #   logging.warning(header_env.mapping)
 
       # Reference public base classes when creating pybind class binding
       base_class_strs = list(map(lambda base_class: get_typename(base_class.typename, owner_specs, header_env.mapping),
@@ -521,8 +509,6 @@ class HeaderFile():
                                                                   is_operator=False, is_constructor=False))
 
       # Check for potential error-generating definitions
-      print(name_cpp)
-      print(header_env.mapping)
       error_generating_overloads = get_static_and_instance_overloads(generated_methods)
       if len(error_generating_overloads) > 0:
         logging.error(f'Overloads defined for instance and class, this will generate a pybind error')
