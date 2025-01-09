@@ -83,6 +83,16 @@ py::buffer_info get_buffer_info(vpTranslationVector &array)
   return make_array_buffer<double, 1>(array.data, { 3 }, false);
 }
 template<>
+py::buffer_info get_buffer_info(vpPoseVector &array)
+{
+  return make_array_buffer<double, 1>(array.data, { 6 }, false);
+}
+template<>
+py::buffer_info get_buffer_info(vpRotationVector &array)
+{
+  return make_array_buffer<double, 1>(array.data, { array.getRows() }, false);
+}
+template<>
 py::buffer_info get_buffer_info(vpRotationMatrix &array)
 {
   return make_array_buffer<double, 2>(array.data, { array.getRows(), array.getCols() }, true);
@@ -604,6 +614,55 @@ Construct a row vector by **copying** a 1D numpy array.
   add_print_helper(pyRowVector, &vpRowVector::matlabPrint, "strMatlab", matlab_str_help);
   add_cpp_print_helper(pyRowVector, &vpRowVector::cppPrint);
 }
+
+void bindings_vpPoseVector(py::class_<vpPoseVector, std::shared_ptr<vpPoseVector>, vpArray2D<double>> &pyPoseVector)
+{
+  pyPoseVector.def_buffer(&get_buffer_info<vpPoseVector>);
+
+  pyPoseVector.def("numpy", [](vpPoseVector &self) -> np_array_cf<double> {
+    return py::cast(self).cast<np_array_cf<double>>();
+  }, numpy_fn_doc_writable, py::keep_alive<0, 1>());
+
+  pyPoseVector.def(py::init([](np_array_cf<double> np_array) {
+    verify_array_shape_and_dims(np_array, 1, "ViSP pose vector");
+    const std::vector<py::ssize_t> shape = np_array.request().shape;
+    vpPoseVector result;
+    copy_data_from_np(np_array, result.data);
+    return result;
+                            }), R"doc(
+Construct a pose vector by **copying** a 1D numpy array.
+
+:param np_array: The numpy 1D array to copy.
+
+)doc", py::arg("np_array"));
+  define_get_item_1d_array<py::class_<vpPoseVector, std::shared_ptr<vpPoseVector>, vpArray2D<double>>, vpPoseVector, double>(pyPoseVector);
+  define_set_item_1d_array<py::class_<vpPoseVector, std::shared_ptr<vpPoseVector>, vpArray2D<double>>, vpPoseVector, double>(pyPoseVector);
+}
+
+void bindings_vpRotationVector(py::class_<vpRotationVector, std::shared_ptr<vpRotationVector>, vpArray2D<double>> &pyRotationVector)
+{
+  pyRotationVector.def_buffer(&get_buffer_info<vpRotationVector>);
+
+  pyRotationVector.def("numpy", [](vpRotationVector &self) -> np_array_cf<double> {
+    return py::cast(self).cast<np_array_cf<double>>();
+  }, numpy_fn_doc_writable, py::keep_alive<0, 1>());
+
+  pyRotationVector.def(py::init([](np_array_cf<double> np_array) {
+    verify_array_shape_and_dims(np_array, 1, "ViSP rotation vector");
+    const std::vector<py::ssize_t> shape = np_array.request().shape;
+    vpRotationVector result(shape[0]);
+    copy_data_from_np(np_array, result.data);
+    return result;
+                                }), R"doc(
+Construct a rotaiton vector by **copying** a 1D numpy array.
+
+:param np_array: The numpy 1D array to copy.
+
+)doc", py::arg("np_array"));
+  define_get_item_1d_array<py::class_<vpRotationVector, std::shared_ptr<vpRotationVector>, vpArray2D<double>>, vpPoseVector, double>(pyRotationVector);
+  define_set_item_1d_array<py::class_<vpRotationVector, std::shared_ptr<vpRotationVector>, vpArray2D<double>>, vpPoseVector, double>(pyRotationVector);
+}
+
 
 
 #endif
