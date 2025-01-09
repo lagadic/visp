@@ -4,6 +4,11 @@
       "ignore_repr": true,
       "additional_bindings": "bindings_vpImage",
       "use_buffer_protocol": true,
+      "acknowledge_pointer_or_ref_fields": [
+        "Type*",
+        "vpDisplay*",
+        "Type**"
+      ],
       "specializations": [
         {
           "python_name": "ImageGray",
@@ -91,6 +96,11 @@
           "static": false,
           "signature": "vpRGBf& operator=(const vpRGBf&&)",
           "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "vpRGBf& operator=(vpRGBf&&)",
+          "ignore": true
         }
       ]
     },
@@ -99,6 +109,11 @@
         {
           "static": false,
           "signature": "vpRGBa& operator=(const vpRGBa&&)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "vpRGBa& operator=(vpRGBa&&)",
           "ignore": true
         }
       ]
@@ -119,7 +134,28 @@
               "double"
             ],
             [
-              "uint16_t"
+              "vpRGBa"
+            ]
+          ]
+        },
+        {
+          "static": true,
+          "signature": "void undistort(const vpImage<Type>&, const vpCameraParameters&, vpImage<Type>&, unsigned int)",
+          "specializations": [
+            [
+              "unsigned char"
+            ],
+            [
+              "vpRGBa"
+            ]
+          ]
+        },
+        {
+          "static": true,
+          "signature": "void undistort(const vpImage<Type>&, vpArray2D<int>, vpArray2D<int>, vpArray2D<float>, vpArray2D<float>, vpImage<Type>&)",
+          "specializations": [
+            [
+              "unsigned char"
             ],
             [
               "vpRGBa"

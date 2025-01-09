@@ -11,7 +11,26 @@
           ]
         }
       ],
+      "acknowledge_pointer_or_ref_fields": [
+        "Type*",
+        "Type**"
+      ],
       "methods": [
+        {
+          "static": false,
+          "signature": "Type* operator[](unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "vpArray2D<Type>& operator=(vpArray2D<Type>&&)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": " vpArray2D(vpArray2D<Type>&&)",
+          "ignore": true
+        },
         {
           "static": true,
           "signature": "void insert(const vpArray2D<Type> &, const vpArray2D<Type> &, vpArray2D<Type> &, unsigned int, unsigned int)",
@@ -502,6 +521,54 @@
             ]
           ],
           "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpRotationMatrix& buildFrom(const vpPoseVector&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpRotationMatrix& buildFrom(const vpRzyzVector&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpRotationMatrix& buildFrom(const vpRxyzVector&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpRotationMatrix& buildFrom(const vpThetaUVector&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
         }
       ]
     },
@@ -791,6 +858,18 @@
             ]
           ],
           "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpRzyxVector& buildFrom(const vpRotationMatrix&)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
         }
       ]
     },
@@ -1053,15 +1132,6 @@
             true,
             true
           ]
-        }
-      ]
-    },
-    "vpRobust": {
-      "methods": [
-        {
-          "static": false,
-          "signature": "vpRobust& operator=(const vpRobust&&)",
-          "ignore": true
         },
         {
           "static": false,
@@ -1183,6 +1253,30 @@
           ],
           "returns_ref_ok": true
         }
+      ]
+    },
+    "vpRobust": {
+      "methods": [
+        {
+          "static": false,
+          "signature": "vpRobust& operator=(const vpRobust&&)",
+          "ignore": true
+        }
+      ]
+    },
+    "vpSubRowVector": {
+      "acknowledge_pointer_or_ref_fields": [
+        "vpRowVector*"
+      ]
+    },
+    "vpSubColVector": {
+      "acknowledge_pointer_or_ref_fields": [
+        "vpColVector*"
+      ]
+    },
+    "vpSubMatrix": {
+      "acknowledge_pointer_or_ref_fields": [
+        "vpMatrix*"
       ]
     }
   }

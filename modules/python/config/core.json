@@ -108,6 +108,21 @@
       "static": false,
       "signature": "void npz_save(std::string, std::string, const std::vector<T>, std::string)",
       "ignore": true
+    },
+    {
+      "static": false,
+      "signature": "bool convertFromTypeAndBuildFrom(const nlohmann::json&, T&)",
+      "ignore": true
+    },
+    {
+      "static": false,
+      "signature": "nlohmann::json flagsToJSON(const int, const std::vector<E>&)",
+      "ignore": true
+    },
+    {
+      "static": false,
+      "signature": "int flagsFromJSON(const nlohmann::json&)",
+      "ignore": true
     }
   ],
   "classes": {
@@ -478,6 +493,31 @@
           "param_is_output": [
             true
           ]
+        },
+        {
+          "static": true,
+          "signature": "vpBasisFunction* computeBasisFuns(double, unsigned int, unsigned int, const std::vector<double>&)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "vpBasisFunction* computeBasisFuns(double)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "vpBasisFunction** computeDersBasisFuns(double, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "vpImagePoint* computeCurveDers(double, unsigned int, unsigned int, unsigned int, const std::vector<double>&, const std::vector<vpImagePoint>&)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "vpImagePoint* computeCurveDers(double, unsigned int)",
+          "ignore": true
         }
       ]
     },
@@ -624,6 +664,24 @@
         }
       ]
     },
+    "vpStatisticalTestAbstract": {
+      "acknowledge_pointer_or_ref_fields": [
+        "float*"
+      ],
+      "methods": [
+        {
+          "static": false,
+          "signature": "void getLimits(float&, float&)",
+          "use_default_param_policy": true
+        }
+      ]
+    },
+    "vpMoment": {
+      "acknowledge_pointer_or_ref_fields": [
+        "vpMomentObject*",
+        "vpMomentDatabase*"
+      ]
+    },
     "vpMomentDatabase": {
       "methods": [
         {
@@ -639,6 +697,11 @@
             true
           ]
         }
+      ]
+    },
+    "vpMomentCommon": {
+      "acknowledge_pointer_or_ref_fields": [
+        "vpMomentCInvariant*"
       ]
     },
     "vpMomentObject": {
@@ -1180,6 +1243,15 @@
               "TypePythonScalar"
             ]
           ]
+        },
+        {
+          "static": true,
+          "signature": "std::vector<T> shuffleVector(const std::vector<T>&, const int32_t&)",
+          "specializations": [
+            [
+              "TypePythonScalar"
+            ]
+          ]
         }
       ]
     },
@@ -1218,6 +1290,31 @@
             true
           ]
         }
+      ]
+    },
+    "vpXmlParserCamera": {
+      "acknowledge_pointer_or_ref_fields": [
+        "Impl*"
+      ]
+    },
+    "vpXmlParserHomogeneousMatrix": {
+      "acknowledge_pointer_or_ref_fields": [
+        "Impl*"
+      ]
+    },
+    "vpXmlParserRectOriented": {
+      "acknowledge_pointer_or_ref_fields": [
+        "Impl*"
+      ]
+    },
+    "vpGaussianFilter": {
+      "acknowledge_pointer_or_ref_fields": [
+        "Impl*"
+      ]
+    },
+    "vpCannyEdgeDetection": {
+      "acknowledge_pointer_or_ref_fields": [
+        "const vpImage<bool>*"
       ]
     }
   }
