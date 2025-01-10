@@ -182,6 +182,10 @@ public:
     //    }
     //#endif
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    vpScopedLock &operator=(const vpScopedLock &) = delete; // non copyable
+#endif
+
   public:
     //! Constructor that locks the mutex.
     vpScopedLock(vpMutex &mutex) : _mutex(mutex) { _mutex.lock(); }
