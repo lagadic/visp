@@ -500,6 +500,11 @@
           "ignore": true
         },
         {
+          "static": true,
+          "signature": "vpBasisFunction** computeDersBasisFuns(double, unsigned int, unsigned int, unsigned int, const std::vector<double>&)",
+          "ignore": true
+        },
+        {
           "static": false,
           "signature": "vpBasisFunction* computeBasisFuns(double)",
           "ignore": true
@@ -1170,6 +1175,15 @@
         {
           "static": false,
           "signature": "void addDecodingRequest(vpRequest*)",
+          "ignore": true
+        }
+      ]
+    },
+    "vpRequest": {
+      "methods": [
+        {
+          "static": false,
+          "signature": "void addParameterObject(T*, const int&)",
           "ignore": true
         }
       ]

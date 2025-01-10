@@ -267,6 +267,11 @@
         },
         {
           "static": false,
+          "signature": "vpColVector& operator<<(double*)",
+          "ignore": true
+        },
+        {
+          "static": false,
           "signature": "std::ostream& cppPrint(std::ostream&, const std::string&, bool)",
           "ignore": true
         },
@@ -478,6 +483,11 @@
         {
           "static": false,
           "signature": "vpMatrix& operator=(vpMatrix&&)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "vpMatrix& operator<<(double*)",
           "ignore": true
         }
       ]

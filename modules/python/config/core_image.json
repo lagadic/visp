@@ -140,6 +140,24 @@
         },
         {
           "static": true,
+          "signature": "void binarise(vpImage<Type>&, Type, Type, Type, Type, Type, bool)",
+          "specializations": [
+            [
+              "unsigned char"
+            ],
+            [
+              "float"
+            ],
+            [
+              "double"
+            ],
+            [
+              "vpRGBa"
+            ]
+          ]
+        },
+        {
+          "static": true,
           "signature": "void undistort(const vpImage<Type>&, const vpCameraParameters&, vpImage<Type>&, unsigned int)",
           "specializations": [
             [
