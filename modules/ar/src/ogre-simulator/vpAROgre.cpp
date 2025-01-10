@@ -536,6 +536,7 @@ void vpAROgre::init(bool
 
   // Register as a Window listener
   OgreWindowEventUtilities::addWindowEventListener(mWindow, this);
+  OgreWindowEventUtilities::_addRenderWindow(mWindow);
 
 #ifdef VISP_HAVE_OIS
   // Initialise OIS
@@ -713,6 +714,21 @@ bool vpAROgre::customframeStarted(const Ogre::FrameEvent & /*evt*/)
   \return True if everything went well.
 */
 bool vpAROgre::customframeEnded(const Ogre::FrameEvent & /*evt*/) { return true; }
+
+/**
+ * \brief Check if the window that is currently closing is the one attached to the object.
+ *
+ * \param[in] rw The RenderWindow that is closing.
+ * \return true It corresponds to the vpAROgre object.
+ * \return false It is another window that is closing.
+ */
+bool vpAROgre::windowClosing(Ogre::RenderWindow *rw)
+{
+  if (rw == mWindow) {
+    keepOn = false;
+  }
+  return !keepOn;
+}
 
 /*!
 

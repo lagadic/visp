@@ -302,7 +302,9 @@ public:
     mWindow->reposition(static_cast<int>(win_x), static_cast<int>(win_y));
   }
 
-  virtual void windowClosed(Ogre::RenderWindow *rw);
+  virtual bool windowClosing(Ogre::RenderWindow *rw) VP_OVERRIDE;
+
+  virtual void windowClosed(Ogre::RenderWindow *rw) VP_OVERRIDE;
 
 protected:
   virtual void init(bool bufferedKeys = false, bool hidden = false);
