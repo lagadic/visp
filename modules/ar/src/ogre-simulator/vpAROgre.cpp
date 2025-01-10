@@ -460,7 +460,12 @@ void vpAROgre::init(bool
       for (i = settings->begin(); i != settings->end(); ++i) {
         typeName = i->first;
         archName = i->second;
-        Ogre::ResourceGroupManager::getSingleton().addResourceLocation(archName, typeName, secName);
+        if (vpIoTools::checkDirectory(archName) || vpIoTools::checkFilename(archName)) {
+          Ogre::ResourceGroupManager::getSingleton().addResourceLocation(archName, typeName, secName);
+        }
+        else {
+          std::cout << "INFO: Resource \"" << archName << "\" of type \"" << typeName << "\" does not exist." << std::endl;
+        }
       }
     }
 #else
@@ -473,7 +478,12 @@ void vpAROgre::init(bool
       for (i = settings.begin(); i != settings.end(); ++i) {
         typeName = i->first;
         archName = i->second;
-        Ogre::ResourceGroupManager::getSingleton().addResourceLocation(archName, typeName, secName);
+        if (vpIoTools::checkDirectory(archName) || vpIoTools::checkFilename(archName)) {
+          Ogre::ResourceGroupManager::getSingleton().addResourceLocation(archName, typeName, secName);
+        }
+        else {
+          std::cout << "INFO: Resource \"" << archName << "\" of type \"" << typeName << "\" does not exist." << std::endl;
+        }
       }
     }
 #endif
