@@ -188,6 +188,11 @@ protected:
   //  }
   //#endif
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  vpFeatureMoment(const vpFeatureMoment &) = delete; // non construction-copyable
+  vpFeatureMoment &operator=(const vpFeatureMoment &) = delete; // non copyable
+#endif
+
 public:
   /*!
    * Initializes the feature with information about the database of moment

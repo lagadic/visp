@@ -130,6 +130,11 @@ public:
   //    }
   //#endif
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  vpMbtDistanceLine(const vpMbtDistanceLine &) = delete; // non construction-copyable
+  vpMbtDistanceLine &operator=(const vpMbtDistanceLine &) = delete; // non copyable
+#endif
+
 public:
   vpMbtDistanceLine();
   virtual ~vpMbtDistanceLine();

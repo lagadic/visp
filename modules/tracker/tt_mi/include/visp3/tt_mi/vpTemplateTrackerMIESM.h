@@ -96,6 +96,11 @@ protected:
   //  }
   //#endif
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  vpTemplateTrackerMIESM(const vpTemplateTrackerMIESM &) = delete; // non construction-copyable
+  vpTemplateTrackerMIESM &operator=(const vpTemplateTrackerMIESM &) = delete; // non copyable
+#endif
+
 public:
   //! Default constructor.
   vpTemplateTrackerMIESM()
