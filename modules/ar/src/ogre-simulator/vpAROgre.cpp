@@ -416,14 +416,6 @@ void vpAROgre::init(bool
   }
   mWindow = mRoot->createRenderWindow(name, mWindowWidth, mWindowHeight, fullscreen, &misc);
 
-#if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 10 <<8 | 0))
-  // Initialize the RTShaderSystem, if available
-  bool hasInitializedTheRTSS = initialiseRTShaderSystem();
-  if (!hasInitializedTheRTSS) {
-    std::cout << "[vpAROgre::init] RTSS is not available." << std::endl;
-  }
-#endif
-
   // Load resource paths from config file
 
   // File format is:
@@ -460,10 +452,16 @@ void vpAROgre::init(bool
       for (i = settings->begin(); i != settings->end(); ++i) {
         typeName = i->first;
         archName = i->second;
-        if (vpIoTools::checkDirectory(archName) || vpIoTools::checkFilename(archName)) {
-          Ogre::ResourceGroupManager::getSingleton().addResourceLocation(archName, typeName, secName);
+        bool doesResourceExist = vpIoTools::checkDirectory(archName) || vpIoTools::checkFilename(archName);
+        if (doesResourceExist) {
+          if (!Ogre::ResourceGroupManager::getSingleton().resourceLocationExists(archName, secName)) {
+            Ogre::ResourceGroupManager::getSingleton().addResourceLocation(archName, typeName, secName);
+          }
+          else {
+            std::cout << "INFO: Resource location \"" << archName << "\" of type \"" << typeName << "\" has already been added to the list of known resource locations." << std::endl;
+          }
         }
-        else {
+        else if (!doesResourceExist) {
           std::cout << "INFO: Resource \"" << archName << "\" of type \"" << typeName << "\" does not exist." << std::endl;
         }
       }
@@ -478,10 +476,16 @@ void vpAROgre::init(bool
       for (i = settings.begin(); i != settings.end(); ++i) {
         typeName = i->first;
         archName = i->second;
-        if (vpIoTools::checkDirectory(archName) || vpIoTools::checkFilename(archName)) {
-          Ogre::ResourceGroupManager::getSingleton().addResourceLocation(archName, typeName, secName);
+        bool doesResourceExist = vpIoTools::checkDirectory(archName) || vpIoTools::checkFilename(archName);
+        if (doesResourceExist) {
+          if (!Ogre::ResourceGroupManager::getSingleton().resourceLocationExists(archName, secName)) {
+            Ogre::ResourceGroupManager::getSingleton().addResourceLocation(archName, typeName, secName);
+          }
+          else {
+            std::cout << "INFO: Resource location \"" << archName << "\" of type \"" << typeName << "\" has already been added to the list of known resource locations." << std::endl;
+          }
         }
-        else {
+        else if (!doesResourceExist) {
           std::cout << "INFO: Resource \"" << archName << "\" of type \"" << typeName << "\" does not exist." << std::endl;
         }
       }
@@ -497,16 +501,36 @@ void vpAROgre::init(bool
     throw(vpException(vpException::ioError, errorMsg));
   }
 
-
-  std::cout << "##################### add resources" << std::endl;
   // Add Optional resources (given by the user).
+  std::cout << "##################### add optional resource locations given by the user" << std::endl;
   for (std::list<std::string>::const_iterator iter = mOptionalResourceLocation.begin();
        iter != mOptionalResourceLocation.end(); ++iter) {
-    Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
-        *iter, "FileSystem", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+    const Ogre::String typeName("FileSystem");
+    bool doesResourceExist = vpIoTools::checkDirectory(*iter) || vpIoTools::checkFilename(*iter);
+    if (doesResourceExist) {
+      if (!Ogre::ResourceGroupManager::getSingleton().resourceLocationExists(*iter, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME)) {
+        Ogre::ResourceGroupManager::getSingleton().addResourceLocation(*iter, typeName, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+      }
+      else {
+        std::cout << "INFO: Resource location \"" << *iter << "\" of type \"" << typeName << "\" has already been added to the list of known resource locations." << std::endl;
+      }
+    }
+    else if (!doesResourceExist) {
+      std::cout << "INFO: Resource \"" << *iter << "\" of type \"" << typeName << "\" does not exist." << std::endl;
+    }
   }
 
+
+#if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 10 <<8 | 0))
+  // Initialize the RTShaderSystem, if available
+  bool hasInitializedTheRTSS = initialiseRTShaderSystem();
+  if (!hasInitializedTheRTSS) {
+    std::cout << "[vpAROgre::init] RTSS is not available." << std::endl;
+  }
+#endif
+
   // Initialise resources
+  std::cout << "##################### add resources" << std::endl;
   Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
   //-----------------------------------------------------
   // 4 Create the SceneManager
@@ -536,7 +560,7 @@ void vpAROgre::init(bool
 
   // Register as a Window listener
   OgreWindowEventUtilities::addWindowEventListener(mWindow, this);
-  OgreWindowEventUtilities::_addRenderWindow(mWindow);
+  // OgreWindowEventUtilities::_addRenderWindow(mWindow);
 
 #ifdef VISP_HAVE_OIS
   // Initialise OIS
