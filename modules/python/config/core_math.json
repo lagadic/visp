@@ -6,11 +6,18 @@
       "specializations": [
         {
           "python_name": "ArrayDouble2D",
-          "arguments": ["double"]
+          "arguments": [
+            "double"
+          ]
+        },
+        {
+          "python_name": "ArrayInt2D",
+          "arguments": [
+            "int"
+          ]
         }
       ],
-      "methods":
-      [
+      "methods": [
         {
           "static": true,
           "signature": "void insert(const vpArray2D<Type> &, const vpArray2D<Type> &, vpArray2D<Type> &, unsigned int, unsigned int)",
@@ -28,7 +35,7 @@
         }
       ]
     },
-    "vpMath" :{
+    "vpMath": {
       "methods": [
         {
           "static": true,
@@ -95,39 +102,62 @@
         {
           "static": true,
           "signature": "std::vector<double> linspace(T, T, unsigned int)",
-          "specializations": [["TypePythonScalar"]]
+          "specializations": [
+            [
+              "TypePythonScalar"
+            ]
+          ]
         },
         {
           "static": true,
           "signature": "Type abs(const Type&)",
-          "specializations": [["TypePythonScalar"]]
+          "specializations": [
+            [
+              "TypePythonScalar"
+            ]
+          ]
         },
         {
           "static": true,
           "signature": "void swap(Type&, Type&)",
-          "specializations": [["TypePythonScalar"]]
+          "specializations": [
+            [
+              "TypePythonScalar"
+            ]
+          ]
         },
         {
           "static": true,
           "signature": "Type minimum(const Type&, const Type&)",
-          "specializations": [["TypePythonScalar"]]
+          "specializations": [
+            [
+              "TypePythonScalar"
+            ]
+          ]
         },
         {
           "static": true,
           "signature": "Type maximum(const Type&, const Type&)",
-          "specializations": [["TypePythonScalar"]]
+          "specializations": [
+            [
+              "TypePythonScalar"
+            ]
+          ]
         },
         {
           "static": true,
           "signature": "T clamp(const T&, const T&, const T&)",
-          "specializations": [["TypePythonScalar"]]
+          "specializations": [
+            [
+              "TypePythonScalar"
+            ]
+          ]
         }
       ]
     },
     "vpTranslationVector": {
       "additional_bindings": "bindings_vpTranslationVector",
-      "methods":
-      [
+      "methods": [
         {
           "static": true,
           "signature": "vpMatrix skew(const vpTranslationVector &)",
@@ -226,34 +256,28 @@
       "ignore_repr": true,
       "additional_bindings": "bindings_vpMatrix",
       "use_buffer_protocol": true,
-      "methods":
-      [
+      "methods": [
         {
-
           "static": true,
           "signature": "vpMatrix insert(const vpMatrix &, const vpMatrix &, unsigned int , unsigned int)",
           "custom_name": "insertMatrixInMatrix"
         },
         {
-
           "static": true,
           "signature": "void insert(const vpMatrix &, const vpMatrix &, vpMatrix &, unsigned int , unsigned int)",
           "custom_name": "insertMatrixInMatrix"
         },
         {
-
           "static": true,
           "signature": "void kron(const vpMatrix &, const vpMatrix &, vpMatrix &)",
           "custom_name": "kronStatic"
         },
         {
-
           "static": true,
           "signature": "vpMatrix kron(const vpMatrix &, const vpMatrix &)",
           "custom_name": "kronStatic"
         },
         {
-
           "signature": "vpMatrix stack(const vpMatrix &, const vpMatrix &)",
           "static": true,
           "custom_name": "stackMatrices"
@@ -264,7 +288,6 @@
           "custom_name": "stackRow"
         },
         {
-
           "signature": "vpMatrix stack(const vpMatrix &, const vpColVector &)",
           "static": true,
           "custom_name": "stackColumn"
