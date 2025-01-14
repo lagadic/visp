@@ -194,8 +194,9 @@ protected:
   Ogre::Entity *robot;
 
   // Our scene will just be a plane
-  void createScene()
+  void createScene() VP_OVERRIDE
   {
+    //![Light creation]
     // Set lights
     mSceneMgr->setAmbientLight(Ogre::ColourValue((float)0.6, (float)0.6, (float)0.6)); // Default value of lightning
     Ogre::Light *light = mSceneMgr->createLight();
@@ -213,7 +214,9 @@ protected:
     light->setAttenuation((Ogre::Real)100, (Ogre::Real)1.0, (Ogre::Real)0.045, (Ogre::Real)0.0075);
     // Ombres
     light->setCastShadows(true);
+    //![Light creation]
 
+    //![Mesh insertion]
     // Create the Entity
     robot = mSceneMgr->createEntity("Robot", "robot.mesh");
     // Attach robot to scene graph
@@ -224,7 +227,9 @@ protected:
     RobotNode->yaw(Ogre::Degree(-90));
     robot->setCastShadows(true);
     mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_MODULATIVE);
+    //![Mesh insertion]
 
+    //![Animating the mesh]
     // Add an animation
     // Set the good animation
     mAnimationState = robot->getAnimationState("Idle");
@@ -232,7 +237,9 @@ protected:
     mAnimationState->setLoop(true);
     // Animation enabled
     mAnimationState->setEnabled(true);
+    //![Animating the mesh]
 
+    //![Ground insertion]
     // Add a ground
     Ogre::Plane plan;
     plan.d = 0;
@@ -243,8 +250,10 @@ protected:
     Ogre::SceneNode *PlaneNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("Entitesol");
     PlaneNode->attachObject(ent);
     ent->setMaterialName("Examples/GrassFloor");
+    //![Ground insertion]
   }
 
+  //![Updating the animation]
   bool customframeEnded(const Ogre::FrameEvent &evt)
   {
     // Update animation
@@ -252,7 +261,9 @@ protected:
     mAnimationState->addTime(evt.timeSinceLastFrame);
     return true;
   }
+  //![Updating the animation]
 
+//![Listening for keyboard events]
 #ifdef VISP_HAVE_OIS
   bool processInputEvent(const Ogre::FrameEvent & /*evt*/)
   {
@@ -306,6 +317,7 @@ protected:
     return true;
   }
 #endif
+//![Listening for keyboard events]
 };
 
 /*!
@@ -603,21 +615,27 @@ int main(int argc, const char **argv)
       return EXIT_FAILURE;
     }
 
+    //![Ogre initialization]
     // Create a vpAROgre object with color background
     vpAROgreExample ogre(mcam, (unsigned int)grabber.getWidth(), (unsigned int)grabber.getHeight());
     // Initialize it
-    ogre.init(IC);
+    bool bufferedKeys = false, hidden = false;
+    ogre.init(IC, bufferedKeys, hidden);
+    //![Ogre initialization]
     double t0 = vpTime::measureTimeMs();
     bool quit = false;
 
-    // Rendering loop
+    //![Rendering loop]
     while (ogre.continueRendering() && !grabber.end() && !quit) {
+      //![Image acquisition]
       // Acquire a frame
       grabber.acquire(IC);
 
       // Convert it to a grey level image for tracking purpose
       vpImageConvert::convert(IC, I);
+      //![Image acquisition]
 
+      //![Pose computation]
       // kill the point list
       mPose.clearPoint();
 
@@ -643,9 +661,12 @@ int main(int argc, const char **argv)
       // Dementhon or lagrange is no longer necessary, pose at the
       // previous iteration is sufficient
       mPose.computePose(vpPose::VIRTUAL_VS, cMo);
+      //![Pose computation]
 
+      //![Rendering]
       // Display with ogre
       ogre.display(IC, cMo);
+      //![Rendering]
 
       // Wait so that the video does not go too fast
       vpTime::wait(15);
@@ -655,6 +676,7 @@ int main(int argc, const char **argv)
       std::cout << "\r> " << 1000 / (t1 - t0) << " fps";
       t0 = t1;
     }
+    //![Rendering loop]
     // Close the grabber
     grabber.close();
 

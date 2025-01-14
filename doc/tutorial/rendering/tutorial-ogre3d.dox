@@ -1,0 +1,152 @@
+/**
+\page tutorial-ogre Rendering a 3D scene with ogre
+\tableofcontents
+
+\section tutorial-ogre-intro Introduction
+
+[ogre](https://www.ogre.org/) is a cross-platform 3D rendering library. It is open-source and hosted on [github](https://github.com/OGRECave).
+
+This renderer can output a color image, with support for textures and lighting.
+
+It can also be used in the Model-Based Tracker to check the visibility of the object (see \ref mbdep_settings_visibility_ogre ).
+
+\section tutorial-ogre-install ogre installation
+\subsection tutorial-ogre-install-ubuntu Installation on Ubuntu
+
+- It is recommended to install ogre from the apt packages.
+
+  To install the 1.9 version of ogre, run:
+  \code{.sh}
+  $ sudo apt install libogre-1.9-dev
+  \endcode
+
+  To install the 1.12 version of ogre, run:
+  \code{.sh}
+  $ sudo apt install libogre-1.12-dev
+  \endcode
+
+  Other Ogre packages exist but their compatibility with ViSP has not been tested at the moment.
+
+- If you want newer versions of Ogre, you can download the sources and compile it manually.
+
+  First, install Ogre dependencies:
+  \code{.sh}
+  $ sudo apt install libgles2-mesa-dev libvulkan-dev glslang-dev libxrandr-dev libxaw7-dev libx11-dev libzzip-dev libsdl2-dev
+  \endcode
+
+  Then, get Ogre sources and compile it:
+  \code{.sh}
+  $ mkdir -p $VISP_WS/3rdparty
+  $ cd $VISP_WS/3rdparty
+  $ git clone https://github.com/OGRECave/ogre
+  $ cd ogre
+  $ git checkout $OGRE_VERSION # where OGRE_VERSION is a tag name corresponding to a version of ogre, such as v13.1.0 or v14.0.0
+  $ mkdir build && mkdir install
+  $ cd build
+  $ cmake ../ -DCMAKE_INSTALL_PREFIX=$VISP_WS/3rdparty/ogre/install
+  \endcode
+
+  \note Only the tags v1.12.10 , v13.1.0 and v14.0.0 were tested.
+
+  Finally, to build ViSP with ogre support, run the following commands:
+  \code{.sh}
+  $ cd $VISP_WS/visp-build
+  $ cmake ../visp -DOGRE_DIR=$VISP_WS/3rdparty/ogre/install/lib/OGRE/cmake/
+  $ make -j$(nproc)
+  \endcode
+
+\subsection tutorial-ogre-install-otherplatforms Installation on other platforms
+
+- See [Ogre download section](https://www.ogre.org/download/sdk/sdk-ogre) to see the available binaries
+  or the [Ogre building guide](https://ogrecave.github.io/ogre/api/latest/building-ogre.html) to see how to compile
+  it from sources.
+
+\section tutorial-ogre-usage Using Ogre for rendering
+
+An example that shows how to exploit Ogre in ViSP to render a color image with support for textures and lighting in
+camera space is given in AROgre.cpp.
+
+To be able to run the program, you need to have downloaded [ViSP dataset](https://github.com/lagadic/visp-images) and
+correctly made ViSP detect this dataset (following e.g. \ref install_brew_dataset \ref install_win10_mingw_dataset or \ref install_ubuntu_dataset)
+
+\subsection tutorial-ogre-usage-inheriting-class Inheriting from vpAROgre to extend its functionalities.
+
+In order to extend the default behavior, we will write a class `vpAROgreExample` that inherits from the `vpAROgre` class.
+A class inheriting from the `vpAROgre` class should be instanciated with the camera parameters that must be used to
+render the scene (which correspond to the real camera in case of an Augmented Reality application). The width and height
+of the rendering window must also be given.
+
+The vpAROgre::init method must be called in order to load the resources and create the
+Ogre scene. The vpAROgre::init method should be called either with a color image or a gray-scale image. You should also
+indicate if you want to listen to keyboard events (which is possible only if you install OIS library on your computer)
+and if you want to hide the rendering window.
+
+\note When using Ogre 14.0.0, the hidden attribute does not seem to work.
+
+The creation and initialization of the `vpAROgreExample` object can be found below:
+\snippet AROgre.cpp Ogre initialization
+
+It will call the overriden vpAROgre::createScene method that creates the different components needed in the scene.
+
+A light must be added in the scene for the rendering. The Ogre API must be used to do so:
+\snippet AROgre.cpp Light creation
+
+Additionally, the robot that we want to insert in our AR application must be added to the scene:
+\snippet AROgre.cpp Mesh insertion
+
+To make it more fun, let's animate the robot:
+\snippet AROgre.cpp Animating the mesh
+
+To update the animation, the following method must be defined and will be called at the end of each frame:
+\snippet AROgre.cpp Updating the animation
+
+To make it less weird, we will add a plane on which the robot will stand:
+\snippet AROgre.cpp Ground insertion
+
+Finally, a method to manage keyboard events is written in case of the OIS library is installed:
+\snippet AROgre.cpp Listening for keyboard events
+
+\subsection tutorial-ogre-usage-rendering-loop Rendering loop
+
+The rendering loop is given below:
+\snippet AROgre.cpp Rendering loop
+
+First, the image is acquired and converted in gray-scale format:
+\snippet AROgre.cpp Image acquisition
+
+Then, the pose of the object in the image is computed from the tracked dots:
+\snippet AROgre.cpp Pose computation
+
+This pose is then used by the renderer in order to display the virtual object at the correct
+location in the image:
+\snippet AROgre.cpp Rendering
+
+\section tutorial-ogre-full-code Tutorial full code
+
+The full code of AROgre.cpp is given below.
+\include AROgre.cpp
+
+\section tutorial-ogre-run Running the tutorial
+
+- Once ViSP is built, you may run the tutorial by:
+  \code{.sh}
+  $ cd $VISP_WS/visp-build/example/ogre-simulator
+  $ ./AROgre -c
+  \endcode
+
+  The `-c` option permits not to click on the dots of the marker when initializing the sequence.
+
+  A window will appear to select the value of the Ogre settings, such as should we display in full screen mode or the
+  size of the window that will appear.
+
+\section tutorial-ogre-issue Known issues
+\subsection tutorial-ogre-issue-library-texture Texture not displayed
+
+When running the example, the texture of the robot can not be displayed properly.
+Changing the rendering subsystem should fix the issue.
+
+\subsection tutorial-ogre-issue-display Problem of display with OpenGL ES renderer
+
+When using OpenGL ES renderer, the window might appear entirely black.
+Chosing another renderer subsystem should fix the issue.
+*/
