@@ -560,7 +560,7 @@ void vpAROgre::init(bool
 
   // Register as a Window listener
   OgreWindowEventUtilities::addWindowEventListener(mWindow, this);
-  // OgreWindowEventUtilities::_addRenderWindow(mWindow);
+  OgreWindowEventUtilities::_addRenderWindow(mWindow);
 
 #ifdef VISP_HAVE_OIS
   // Initialise OIS
@@ -629,6 +629,7 @@ vpAROgre::~vpAROgre(void)
 
   if (mWindow) {
     OgreWindowEventUtilities::removeWindowEventListener(mWindow, this);
+    OgreWindowEventUtilities::_removeRenderWindow(mWindow);
     windowClosed(mWindow);
   }
 
