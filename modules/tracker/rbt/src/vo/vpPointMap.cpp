@@ -3,7 +3,7 @@
 
 void vpPointMap::getPoints(const vpArray2D<int> &indices, vpMatrix &X)
 {
-  X.resize(indices.getRows(), 3);
+  X.resize(indices.getRows(), 3, false, false);
   for (unsigned int i = 0; i < indices.getRows(); ++i) {
     unsigned idx = indices[i][0];
     X[i][0] = m_X[idx][0];
@@ -69,4 +69,176 @@ void vpPointMap::getVisiblePoints(const unsigned int h, const unsigned int w, co
     }
     indices.push_back(i);
   }
+}
+
+void vpPointMap::getVisiblePoints(const unsigned int h, const unsigned int w, const vpCameraParameters &cam, const vpHomogeneousMatrix &cTw, const vpImage<float> &depth, std::list<int> &indices)
+{
+  indices.clear();
+  vpColVector cX(3);
+  vpColVector oX(3);
+  const vpRotationMatrix cRw = cTw.getRotationMatrix();
+  const vpTranslationVector t = cTw.getTranslationVector();
+
+  double u, v;
+  for (unsigned int i = 0; i < m_X.getRows(); ++i) {
+    oX[0] = m_X[i][0];
+    oX[1] = m_X[i][1];
+    oX[2] = m_X[i][2];
+
+    cX = cRw * oX;
+    cX += t;
+    const double Z = cX[2];
+    if (Z <= 0.0) {
+      continue;
+    }
+
+    const double x = cX[0] / Z, y = cX[1] / Z;
+    vpMeterPixelConversion::convertPointWithoutDistortion(cam, x, y, u, v);
+    if (u < 0 || v < 0 || u >= w || v >= h) {
+      continue;
+    }
+    unsigned int uint = static_cast<unsigned int>(u), vint = static_cast<unsigned int>(v);
+    if (fabs(Z - depth[vint][uint]) > m_maxDepthError) {
+      continue;
+    }
+
+    indices.push_back(i);
+  }
+}
+
+
+
+
+void vpPointMap::getOutliers(const vpArray2D<int> &originalIndices, const vpMatrix &uvs, const vpMatrix &observations, std::list<int> &indices)
+{
+  if (uvs.getRows() != observations.getRows()) {
+    throw vpException(vpException::dimensionError, "Uvs and observations should have same number of rows");
+  }
+  double thresholdSqr = vpMath::sqr(m_outlierThreshold);
+  for (unsigned int i = 0; i < uvs.getRows(); ++i) {
+    const double error = vpMath::sqr(uvs[i][0] - observations[i][0]) + vpMath::sqr(uvs[i][1] - observations[i][1]);
+    if (error >= thresholdSqr) {
+      indices.push_back(originalIndices[i][0]);
+    }
+  }
+}
+
+void vpPointMap::selectValidNewCandidates(const vpCameraParameters &cam, const vpHomogeneousMatrix &cTw, const vpArray2D<int> &originalIndices, const vpMatrix &uvs, const vpImage<float> &depth, vpMatrix &oXs, std::list<int> &validCandidateIndices)
+{
+  if (originalIndices.getRows() != uvs.getRows()) {
+    throw vpException(vpException::dimensionError, "Indices and keypoint locations should have the same dimensions");
+  }
+  validCandidateIndices.clear();
+  double x, y;
+  vpColVector oX(3);
+  vpColVector cX(3);
+  const vpHomogeneousMatrix wTc = cTw.inverse();
+  const vpRotationMatrix wRc = wTc.getRotationMatrix();
+  const vpTranslationVector t = wTc.getTranslationVector();
+  double farEnoughThresholdSq = m_minDistNewPoint * m_minDistNewPoint;
+
+  std::list<vpColVector> validoXList;
+
+  for (unsigned int i = 0; i < uvs.getRows(); ++i) {
+    double u = uvs[i][0], v = uvs[i][1];
+    unsigned int uint = static_cast<unsigned int>(u), vint = static_cast<unsigned int>(v);
+    double Z = static_cast<double>(depth[vint][uint]);
+    if (Z <= 0.0) {
+      continue;
+    }
+
+    vpPixelMeterConversion::convertPointWithoutDistortion(cam, u, v, x, y);
+    cX[0] = x * Z;
+    cX[1] = y * Z;
+    cX[2] = Z;
+    oX = wRc * cX;
+    oX += t;
+
+    bool isFarEnoughFromOtherPoints = true;
+    for (unsigned int j = 0; j < m_X.getRows(); ++j) {
+      double errSq = vpMath::sqr(oX[0] - m_X[j][0]) + vpMath::sqr(oX[1] - m_X[j][1]) + vpMath::sqr(oX[2] - m_X[j][2]);
+      if (errSq < farEnoughThresholdSq) {
+        isFarEnoughFromOtherPoints = false;
+        break;
+      }
+    }
+    if (isFarEnoughFromOtherPoints) {
+      validoXList.push_back(oX);
+      validCandidateIndices.push_back(originalIndices[i][0]);
+    }
+  }
+
+  oXs.resize(validoXList.size(), 3);
+  unsigned int i = 0;
+  for (const vpColVector &oX: validoXList) {
+    oXs[i][0] = oX[0];
+    oXs[i][1] = oX[1];
+    oXs[i][2] = oX[2];
+
+    ++i;
+  }
+}
+
+void vpPointMap::updatePoints(const vpArray2D<int> &indicesToRemove, const vpMatrix &pointsToAdd, std::list<int> &removedIndices, unsigned int &numAddedPoints)
+{
+
+  int newSize = m_X.getRows() - indicesToRemove.getRows() + pointsToAdd.getRows();
+  std::cout << "m_X.getRows() =" << m_X.getRows()<< ", indicesToRemove.getRows() = " << indicesToRemove.getRows() <<  "pointsToAdd.getRows() = "<< pointsToAdd.getRows() << std::endl;
+  for (unsigned int i = 0; i < indicesToRemove.getRows(); ++i) {
+    removedIndices.push_back(indicesToRemove[i][0]);
+  }
+
+  removedIndices.sort();
+  if (newSize > m_maxPoints) {
+    int shouldBeRemoved = newSize - m_maxPoints;
+    newSize = m_maxPoints;
+
+    // If the first values are filtered by indicesToRemove, we need to further increment the start index
+    std::list<int> startingIndices;
+    auto removedIt = removedIndices.begin();
+    int i = 0;
+    // std::cout << "Should be removed = " << shouldBeRemoved << std::endl;
+    while (startingIndices.size() < shouldBeRemoved && i < m_X.getRows()) {
+
+      if (removedIt == removedIndices.end() || i < (*removedIt)) {
+        startingIndices.push_back(i);
+      }
+      else {
+        ++removedIt;
+      }
+      ++i;
+    }
+
+    removedIndices.merge(startingIndices);
+  }
+  vpMatrix newX(newSize, 3);
+
+  unsigned int newXIndex = 0;
+  unsigned int oldXIndex = 0;
+  // Copy between removed rows
+  for (int removedRow : removedIndices) {
+    unsigned int copiedRows = removedRow - oldXIndex;
+    if (copiedRows > 0) {
+      memcpy(newX[newXIndex], m_X[oldXIndex], copiedRows * 3);
+      newXIndex += copiedRows;
+    }
+    oldXIndex = removedRow + 1;
+  }
+  // Copy from last removed row to the end of the array
+  unsigned int copiedRows = m_X.getRows() - oldXIndex;
+  if (copiedRows > 0) {
+    memcpy(newX[newXIndex], m_X[oldXIndex], copiedRows * 3);
+    newXIndex += copiedRows;
+  }
+  numAddedPoints = 0;
+  for (unsigned int i = 0; i < pointsToAdd.getRows() && newXIndex < newSize; ++i) {
+    for (unsigned int j = 0; j < 3; ++j) {
+      newX[newXIndex][j] = pointsToAdd[i][j];
+    }
+    ++newXIndex;
+    ++numAddedPoints;
+  }
+
+  m_X = std::move(newX);
+
 }

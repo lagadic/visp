@@ -330,14 +330,39 @@
         },
         {
           "static": false,
-          "signature": "void updatePoints(const vpArray2D<int>&, const vpMatrix&, std::list<int>&)",
+          "signature": "void updatePoints(const vpArray2D<int>&, const vpMatrix&, std::list<int>&, unsigned int&)",
           "use_default_param_policy": false,
           "param_is_input": [
+            true,
+            true,
+            false,
+            false
+          ],
+          "param_is_output": [
+            false,
+            false,
+            true,
+            true
+          ]
+        },
+        {
+          "static": false,
+          "signature": "void selectValidNewCandidates(const vpCameraParameters&, const vpHomogeneousMatrix&, const vpArray2D<int>&, const vpMatrix&, const vpImage<float>&, vpMatrix&, std::list<int>&)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            true,
+            true,
+            true,
+            true,
             true,
             true,
             false
           ],
           "param_is_output": [
+            false,
+            false,
+            false,
+            false,
             false,
             false,
             true
@@ -345,10 +370,9 @@
         },
         {
           "static": false,
-          "signature": "void selectValidNewCandidates(const vpCameraParameters&, const vpHomogeneousMatrix&, const vpArray2D<int>&, const vpMatrix&, vpImage<float>&, vpMatrix&, std::list<int>&)",
+          "signature": "void getVisiblePoints(const unsigned int, const unsigned int, const vpCameraParameters&, const vpHomogeneousMatrix&, const vpImage<float>&, std::list<int>&)",
           "use_default_param_policy": false,
           "param_is_input": [
-            true,
             true,
             true,
             true,
@@ -362,9 +386,20 @@
             false,
             false,
             false,
-            false,
             true
           ]
+        },
+        {
+          "static": false,
+          "signature": "const vpMatrix& getPoints()",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
         }
       ]
     }
