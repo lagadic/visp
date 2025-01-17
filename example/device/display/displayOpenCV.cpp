@@ -44,10 +44,10 @@
 #include <iostream>
 #include <stdlib.h>
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpDebug.h>
 
 #if defined(HAVE_OPENCV_HIGHGUI)
 
+#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
@@ -463,5 +463,5 @@ int main()
   std::cout << "Tip:" << std::endl;
   std::cout << "- Install OpenCV, configure again ViSP using cmake and build again this example" << std::endl;
   return EXIT_SUCCESS;
-  }
+}
 #endif
