@@ -8,21 +8,22 @@
 
 This renderer can output a color image, with support for textures and lighting.
 
-It can also be used in the Model-Based Tracker to check the visibility of the object (see \ref mbdep_settings_visibility_ogre ).
+It can also be used in the Model-Based Tracker to check the visibility of the object (see \ref mbdep_settings_visibility_ogre).
+There is also the optional [OIS](https://github.com/wgois/OIS) library that can be used to animate the rendered object using the keyboard.
 
 \section tutorial-ogre-install Ogre installation
 \subsection tutorial-ogre-install-ubuntu Installation on Ubuntu
 
-- It is recommended to install Ogre from the apt packages.
+- It is recommended to install Ogre and OIS from the apt packages.
 
   To install the 1.9 version of Ogre, run:
   \code{.sh}
-  $ sudo apt install libogre-1.9-dev
+  $ sudo apt install libogre-1.9-dev libois-dev
   \endcode
 
   To install the 1.12 version of Ogre, run:
   \code{.sh}
-  $ sudo apt install libogre-1.12-dev
+  $ sudo apt install libogre-1.12-dev libois-dev
   \endcode
 
   Other Ogre packages exist but their compatibility with ViSP has not been tested at the moment.
@@ -31,7 +32,7 @@ It can also be used in the Model-Based Tracker to check the visibility of the ob
 
   First, install Ogre dependencies:
   \code{.sh}
-  $ sudo apt install libgles2-mesa-dev libvulkan-dev glslang-dev libxrandr-dev libxaw7-dev libx11-dev libzzip-dev libsdl2-dev
+  $ sudo apt install libgles2-mesa-dev libvulkan-dev glslang-dev libxrandr-dev libxaw7-dev libx11-dev libzzip-dev libsdl2-dev libois-dev
   \endcode
 
   Then, get Ogre sources and compile it:
@@ -66,6 +67,10 @@ It can also be used in the Model-Based Tracker to check the visibility of the ob
 
 An example that shows how to exploit Ogre in ViSP to render a color image with support for textures and lighting in
 camera space is given in AROgre.cpp.
+
+This example reads a sequence of images, on each image calculates the pose of the camera with respect the a
+frame located at the center of the 4 small blobs, then using the estimated pose, renders a new image with the image
+of the sequence in the background, augmented by a grass plate and an animated robot.
 
 To be able to run the program, you need to have downloaded [ViSP dataset](https://github.com/lagadic/visp-images) and
 correctly made ViSP detect this dataset (following e.g. \ref install_brew_dataset \ref install_win10_mingw_dataset or \ref install_ubuntu_dataset)
@@ -129,17 +134,25 @@ The full code of AROgre.cpp is given below.
 
 \section tutorial-ogre-run Running the tutorial
 
-- Once ViSP is built, you may run the tutorial by:
-  \code{.sh}
-  $ cd $VISP_WS/visp-build/example/ogre-simulator
-  $ ./AROgre -c
-  \endcode
+Once ViSP is built, you may run the tutorial by:
+\code{.sh}
+$ cd $VISP_WS/visp-build/example/ogre-simulator
+$ ./AROgre -c
+\endcode
 
-  The `-c` option permits not to click on the dots of the marker when initializing the sequence.
+The `-c` option permits not to click on the dots of the marker when initializing the sequence.
 
-  A window will appear to select the value of the Ogre settings, such as should we display in full screen mode or the
-  size of the window that will appear.
-  \image html img-ogre-settings-windows.jpg Ogre settings window
+When this `-c` option is not used, you have to click counter clockwise on the 4 small white blobs like in the following image:
+\image html img-ogre-init-pose.jpg Location of the points to click to initialize AROgre example.
+
+A window will appear to select the value of the Ogre settings, such as should we display in `Full Screen` mode or the
+`Video Mode` that specifies the size of the window that will appear to render the sceen.
+\image html img-ogre-settings-windows.jpg Ogre settings window.
+
+Once settings are accepted, you should see a virtual robot moving on a grass floor. When OIS third-party is
+enabled, this robot can be animated using keyboard arrows.
+
+\image html img-ogre-robot.jpg Robot added in augmented reality.
 
 \section tutorial-ogre-issue Known issues
 \subsection tutorial-ogre-issue-library-texture Texture not displayed
