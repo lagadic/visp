@@ -113,14 +113,24 @@ public:
   /*!
    * Display the ellipse or arc of ellipse
    *
-   * \warning To effectively display the ellipse a call to
-   * vpDisplay::flush() is needed.
+   * \warning To effectively display the ellipse a call to vpDisplay::flush() is needed.
    *
    * \param I : Image in which the ellipse appears.
    * \param col : Color of the displayed ellipse.
    * \param thickness : Thickness of the drawing.
    */
   void display(const vpImage<unsigned char> &I, const vpColor &col, unsigned int thickness = 1);
+
+  /*!
+   * Display the ellipse or arc of ellipse
+   *
+   * \warning To effectively display the ellipse a call to vpDisplay::flush() is needed.
+   *
+   * \param I : Image in which the ellipse appears.
+   * \param col : Color of the displayed ellipse.
+   * \param thickness : Thickness of the drawing.
+   */
+  void display(const vpImage<vpRGBa> &I, const vpColor &col, unsigned int thickness = 1);
 
   /*!
    * Gets the second order normalized centered moment \f$ n_{ij} \f$

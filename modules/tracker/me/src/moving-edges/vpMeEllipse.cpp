@@ -565,6 +565,11 @@ void vpMeEllipse::display(const vpImage<unsigned char> &I, const vpColor &col, u
   vpMeEllipse::displayEllipse(I, m_iPc, m_a, m_b, m_e, m_alpha1, m_alpha2, col, thickness);
 }
 
+void vpMeEllipse::display(const vpImage<vpRGBa> &I, const vpColor &col, unsigned int thickness)
+{
+  vpMeEllipse::displayEllipse(I, m_iPc, m_a, m_b, m_e, m_alpha1, m_alpha2, col, thickness);
+}
+
 void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, bool trackCircle, bool trackArc)
 {
   unsigned int n = 5; // by default, 5 points for an ellipse

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Example of dot tracking.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file trackDot.cpp
@@ -46,24 +44,14 @@
 */
 
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpDebug.h>
 
-#include <iomanip>
-#include <sstream>
-#include <stdio.h>
-#include <stdlib.h>
-
-#if defined(VISP_HAVE_MODULE_BLOB) &&                                                                                  \
-    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+#if defined(VISP_HAVE_MODULE_BLOB) && defined(VISP_HAVE_DISPLAY)
 
 #include <visp3/blob/vpDot.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpIoTools.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
 
@@ -282,6 +270,7 @@ int main(int argc, const char **argv)
     // it size is not defined yet, it will be defined when the image will
     // read on the disk
     vpImage<unsigned char> I;
+    vpDisplay *display = nullptr;
 
     unsigned iter = opt_first;
     std::ostringstream s;
@@ -316,12 +305,12 @@ int main(int argc, const char **argv)
     // vpImageIo::read() may throw various exception if, for example,
     // the file does not exist, or if the memory cannot be allocated
     try {
-      vpCTRACE << "Load: " << filename << std::endl;
+      std::cout << "Load: " << filename << std::endl;
 
       vpImageIo::read(I, filename);
     }
     catch (...) {
-   // If an exception is thrown by vpImageIo::read() it will result in the end of the program.
+      // If an exception is thrown by vpImageIo::read() it will result in the end of the program.
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot read " << filename << std::endl;
       if (opt_ppath.empty()) {
@@ -334,20 +323,11 @@ int main(int argc, const char **argv)
       return EXIT_FAILURE;
     }
 
-// We open a window using either X11, GTK or GDI.
-#if defined(VISP_HAVE_X11)
-    vpDisplayX display;
-#elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK display;
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI display;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV display;
-#endif
-
     if (opt_display) {
+      // We open a window using either X11, GTK, OpenCV or GDI
+      display = vpDisplayFactory::allocateDisplay();
       // Display size is automatically defined by the image (I) size
-      display.init(I, 100, 100, "Display...");
+      display->init(I, 100, 100, "Display...");
       // Display the image
       // The image class has a member that specify a pointer toward
       // the display that has been initialized in the display declaration
@@ -381,17 +361,17 @@ int main(int argc, const char **argv)
       d.initTracking(I);
     }
     else {
-   // dot location can also be specified explicitly in the
-   // initTracking method : d.initTracking(I,ip) where ip is the
-   // image point from which the dot is searched
+      // dot location can also be specified explicitly in the
+      // initTracking method : d.initTracking(I,ip) where ip is the
+      // image point from which the dot is searched
       vpImagePoint ip;
       ip.set_u(160);
       ip.set_v(212);
       d.initTracking(I, ip);
     }
 
-    vpImagePoint cog;
-    while (iter < opt_last) {
+    bool quit = false;
+    while ((iter < opt_last) && (!quit)) {
       // set the new image name
       if (opt_ppath.empty()) {
         s.str("");
@@ -417,7 +397,7 @@ int main(int argc, const char **argv)
       d.track(I);
 
       std::cout << "COG (" << vpTime::measureTimeMs() - time << " ms): " << std::endl;
-      cog = d.getCog();
+      vpImagePoint cog = d.getCog();
       std::cout << cog.get_u() << " " << cog.get_v() << std::endl;
       std::cout << "Size:" << std::endl;
       std::cout << "  w: " << d.getWidth() << " h: " << d.getHeight() << std::endl;
@@ -439,16 +419,24 @@ int main(int argc, const char **argv)
         // display a red cross (size 10) in the image at the dot center
         // of gravity location
         vpDisplay::displayCross(I, cog, 10, vpColor::red);
+
+        vpDisplay::displayText(I, 20, 20, "Click to quit...", vpColor::red);
+        if (vpDisplay::getClick(I, false)) {
+          quit = true;
+        }
         // flush the X11 buffer
         vpDisplay::flush(I);
       }
       iter += opt_step;
     }
 
-    if (opt_display && opt_click_allowed) {
+    if (opt_display && opt_click_allowed && !quit) {
       std::cout << "\nA click to exit..." << std::endl;
       // Wait for a blocking mouse click
       vpDisplay::getClick(I);
+    }
+    if (display) {
+      delete display;
     }
     return EXIT_SUCCESS;
   }
@@ -466,6 +454,6 @@ int main()
     "functionalities are required..."
     << std::endl;
   return EXIT_SUCCESS;
-  }
+}
 
 #endif

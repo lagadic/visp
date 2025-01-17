@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,39 +29,26 @@
  *
  * Description:
  * Test auto detection of dots.
- *
-*****************************************************************************/
+ */
+
 /*!
   \file trackDot2WithAutoDetection.cpp
-
-  \brief Example of auto detection of dots using vpDot2.
-*/
-
-/*!
   \example trackDot2WithAutoDetection.cpp
 
-  Example of auto detection of dots using vpDot2.
+  \brief Example of auto detection of dots using vpDot2.
 */
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 
-#include <iomanip>
-#include <sstream>
-#include <stdio.h>
-#include <stdlib.h>
 
-#if defined(VISP_HAVE_MODULE_BLOB) &&                                                                                  \
-    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+#if defined(VISP_HAVE_MODULE_BLOB) && defined(VISP_HAVE_DISPLAY)
 
 #include <visp3/blob/vpDot2.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpIoTools.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
 
@@ -74,7 +60,6 @@ using namespace VISP_NAMESPACE_NAME;
 #endif
 
 /*!
-
   Print the program options.
 
   \param name : Program name.
@@ -87,8 +72,6 @@ using namespace VISP_NAMESPACE_NAME;
   \param sizePrecision : precision of the size of dots.
   \param grayLevelPrecision : precision of the gray level of dots.
   \param ellipsoidShapePrecision : precision of the ellipsoid shape of dots.
-
-
 */
 void usage(const char *name, const char *badparam, std::string ipath, std::string ppath, unsigned first,
            unsigned last, unsigned step, double sizePrecision, double grayLevelPrecision,
@@ -329,6 +312,7 @@ int main(int argc, const char **argv)
     // it size is not defined yet, it will be defined when the image will
     // read on the disk
     vpImage<unsigned char> I;
+    vpDisplay *display = nullptr;
     std::ostringstream s;
     char cfilename[FILENAME_MAX];
     unsigned iter = opt_first; // Image number
@@ -367,7 +351,7 @@ int main(int argc, const char **argv)
       vpImageIo::read(I, filename);
     }
     catch (...) {
-   // If an exception is thrown by vpImageIo::read() it will result in the end of the program.
+      // If an exception is thrown by vpImageIo::read() it will result in the end of the program.
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot read " << filename << std::endl;
       if (opt_ppath.empty()) {
@@ -380,20 +364,11 @@ int main(int argc, const char **argv)
       return EXIT_FAILURE;
     }
 
-// We open a window using either GTK, X11 or GDI.
-#if defined(VISP_HAVE_GTK)
-    vpDisplayGTK display;
-#elif defined(VISP_HAVE_X11)
-    vpDisplayX display;
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI display;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV display;
-#endif
-
     if (opt_display) {
+      // We open a window using either X11, GTK, OpenCV or GDI
+      display = vpDisplayFactory::allocateDisplay();
       // Display size is automatically defined by the image (I) size
-      display.init(I, 100, 100, "Display...");
+      display->init(I, 100, 100, "Display...");
       // Display the image
       // The image class has a member that specify a pointer toward
       // the display that has been initialized in the display declaration
@@ -432,7 +407,7 @@ int main(int argc, const char **argv)
       printf("  ellipsoidShapePrecision: %lf\n", d.getEllipsoidShapePrecision());
     }
     else {
-   //  Set dot characteristics for the auto detection
+      //  Set dot characteristics for the auto detection
       d.setGraphics(true);
       d.setWidth(15.0);
       d.setHeight(12.0);
@@ -444,11 +419,10 @@ int main(int argc, const char **argv)
       d.setEllipsoidShapePrecision(opt_ellipsoidShapePrecision);
     }
 
-    while (iter < opt_last) {
+    bool quit = false;
+    while ((iter < opt_last) && (!quit)) {
       // set the new image name
-
       if (opt_ppath.empty()) {
-
         s.str("");
         s << "image." << std::setw(4) << std::setfill('0') << iter << "." << ext;
         filename = vpIoTools::createFilePath(dirname, s.str());
@@ -486,28 +460,34 @@ int main(int argc, const char **argv)
 
             vpDisplay::displayCross(I, cog, 16, vpColor::blue, 3);
           }
+          if (opt_click_allowed) {
+            vpDisplay::displayText(I, 20, 20, "Left  click to continue on next image", vpColor::red);
+            vpDisplay::displayText(I, 40, 20, "Right click to quit", vpColor::red);
+            vpMouseButton::vpMouseButtonType button;
+            if (vpDisplay::getClick(I, button, true)) {
+              if (button == vpMouseButton::button3) {
+                quit = true;
+              }
+            }
+          }
           vpDisplay::flush(I);
         }
       }
 
-      // If click is allowed, wait for a mouse click to launch the next
-      // iteration
-      if (opt_display && opt_click_allowed) {
-        std::cout << "\nA click to continue..." << std::endl;
-        // Wait for a blocking mouse click
-        vpDisplay::getClick(I);
-      }
-
       iter += opt_step;
     }
-    if (opt_display && opt_click_allowed) {
+    if (opt_display && opt_click_allowed && !quit) {
       std::cout << "\nA click to exit..." << std::endl;
       // Wait for a blocking mouse click
       vpDisplay::getClick(I);
     }
 
-    return EXIT_SUCCESS;
+    if (display) {
+      delete display;
     }
+
+    return EXIT_SUCCESS;
+  }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
@@ -522,6 +502,6 @@ int main()
     "functionalities are required..."
     << std::endl;
   return EXIT_SUCCESS;
-  }
+}
 
 #endif

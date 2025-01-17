@@ -36,13 +36,13 @@
  * \brief Implementation of a line used by the model-based tracker.
  */
 
-#ifndef vpMbtMeLine_HH
-#define vpMbtMeLine_HH
+#ifndef VP_MBT_ME_LINE_H
+#define VP_MBT_ME_LINE_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpPoint.h>
 #include <visp3/me/vpMe.h>
-#include <visp3/me/vpMeTracker.h>
+#include <visp3/me/vpMeLine.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -52,15 +52,8 @@ BEGIN_VISP_NAMESPACE
  * \brief Implementation of a line used by the model-based tracker.
  * \ingroup group_mbt_features
 */
-class VISP_EXPORT vpMbtMeLine : public vpMeTracker
+class VISP_EXPORT vpMbtMeLine : public vpMeLine
 {
-private:
-  vpMeSite m_PExt[2];
-  double m_rho, m_theta, m_theta_1;
-  double m_delta, m_delta_1;
-  int m_sign;
-  double m_a, m_b, m_c;
-
 public:
   int imin, imax;
   int jmin, jmax;
@@ -68,7 +61,7 @@ public:
 
 public:
   vpMbtMeLine();
-  virtual ~vpMbtMeLine() VP_OVERRIDE;
+  vpMbtMeLine(const vpMbtMeLine &meline);
 
   void computeProjectionError(const vpImage<unsigned char> &_I, double &_sumErrorRad, unsigned int &_nbFeatures,
                               const vpMatrix &SobelX, const vpMatrix &SobelY, bool display, unsigned int length,
@@ -111,15 +104,11 @@ public:
                         double theta);
 
 private:
-  void bubbleSortI();
-  void bubbleSortJ();
-  void sample(const vpImage<unsigned char> &image, bool doNotTrack = false) VP_OVERRIDE;
-  void seekExtremities(const vpImage<unsigned char> &I);
-  void setExtremities();
+  virtual unsigned int seekExtremities(const vpImage<unsigned char> &I) VP_OVERRIDE;
+
   void suppressPoints(const vpImage<unsigned char> &I);
-  void reSample(const vpImage<unsigned char> &image);
+  // void reSample(const vpImage<unsigned char> &image);
   void reSample(const vpImage<unsigned char> &image, const vpImagePoint &ip1, const vpImagePoint &ip2);
-  void updateDelta();
 };
 END_VISP_NAMESPACE
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS

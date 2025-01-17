@@ -224,7 +224,6 @@ void vpMbtDistanceCircle::updateMovingEdge(const vpImage<unsigned char> &I, cons
     }
 
     try {
-
       vpImagePoint ic;
       double n20_p, n11_p, n02_p;
       vpMeterPixelConversion::convertEllipse(cam, *circle, ic, n20_p, n11_p, n02_p);

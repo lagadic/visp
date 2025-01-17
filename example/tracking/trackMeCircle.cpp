@@ -44,23 +44,13 @@
 */
 
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpDebug.h>
 
-#include <iomanip>
-#include <sstream>
-#include <stdio.h>
-#include <stdlib.h>
-
-#if defined(VISP_HAVE_MODULE_ME) &&                                                                                    \
-    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+#if defined(VISP_HAVE_MODULE_ME) &&  defined(VISP_HAVE_DISPLAY)
 
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpIoTools.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/me/vpMeEllipse.h>
@@ -235,6 +225,7 @@ int main(int argc, const char **argv)
     // it size is not defined yet, it will be defined when the image will
     // read on the disk
     vpImage<unsigned char> I;
+    vpDisplay *display = nullptr;
 
     // Set the path location of the image sequence
     dirname = vpIoTools::createFilePath(ipath, "circle");
@@ -246,7 +237,7 @@ int main(int argc, const char **argv)
     // vpImageIo::read() may throw various exception if, for example,
     // the file does not exist, or if the memory cannot be allocated
     try {
-      vpCTRACE << "Load: " << filename << std::endl;
+      std::cout << "Load: " << filename << std::endl;
 
       vpImageIo::read(I, filename);
     }
@@ -261,20 +252,11 @@ int main(int argc, const char **argv)
       return EXIT_FAILURE;
     }
 
-    // We open a window using either X11, GTK or GDI.
-#if defined(VISP_HAVE_X11)
-    vpDisplayX display;
-#elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK display;
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI display;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV display;
-#endif
-
+    // We open a window using either X11, GTK or GDI
     if (opt_display) {
+      display = vpDisplayFactory::allocateDisplay();
       // Display size is automatically defined by the image (I) size
-      display.init(I, 100, 100, "Display...");
+      display->init(I, 100, 100, "Display...");
       // Display the image
       // The image class has a member that specify a pointer toward
       // the display that has been initialized in the display declaration
@@ -288,7 +270,7 @@ int main(int argc, const char **argv)
 
     vpMe me;
     me.setRange(20);
-    me.setSampleStep(2);
+    me.setSampleStep(10);
     me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
     me.setThreshold(20);
 
@@ -316,7 +298,7 @@ int main(int argc, const char **argv)
       vpDisplay::flush(I);
     }
 
-    vpTRACE("sample step %f ", E1.getMe()->getSampleStep());
+    std::cout << "Sample step: " << E1.getMe()->getSampleStep() << std::endl;
     std::cout << "Tracking on image: " << filename << std::endl;
     E1.track(I);
     if (opt_display) {
@@ -327,7 +309,10 @@ int main(int argc, const char **argv)
       std::cout << "A click to exit..." << std::endl;
       vpDisplay::getClick(I);
     }
-    std::cout << "------------------------------------------------------------" << std::endl;
+
+    if (display) {
+      delete display;
+    }
     return EXIT_SUCCESS;
   }
   catch (const vpException &e) {
