@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@
  * \brief Moving edges on a line
 */
 
-#ifndef vpMeLine_HH
-#define vpMeLine_HH
+#ifndef VP_ME_LINE_H
+#define VP_ME_LINE_H
 
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpMatrix.h>
@@ -47,6 +47,7 @@
 #include <math.h>
 
 BEGIN_VISP_NAMESPACE
+
 /*!
  * \class vpMeLine
  *
@@ -150,28 +151,6 @@ BEGIN_VISP_NAMESPACE
 */
 class VISP_EXPORT vpMeLine : public vpMeTracker
 {
-private:
-  static void update_indices(double theta, int incr, int i, int j, int &i1, int &i2, int &j1, int &j2);
-
-protected:
-  vpMeSite m_PExt[2]; //!< Line extremities
-
-  double m_rho; //!< rho parameter of the line
-  double m_theta; //!< theta parameter of the line
-  double m_delta; //!< Angle in rad between the extremities
-  double m_delta_1; //!< Angle in rad between the extremities
-  double m_angle; //!< Angle in deg between the extremities
-  double m_angle_1; //!< Angle in deg between the extremities
-  int m_sign; //!< Sign
-
-  //! Flag to specify wether the intensity of the image at the middle point is
-  //! used to compute the sign of rho or not.
-  bool m_useIntensityForRho;
-
-  double m_a; //!< Parameter a of the line equation a*i + b*j + c = 0
-  double m_b; //!< Parameter b of the line equation a*i + b*j + c = 0
-  double m_c; //!< Parameter c of the line equation a*i + b*j + c = 0
-
 public:
   /*!
    * Basic constructor that calls the constructor of the class vpMeTracker.
@@ -189,10 +168,9 @@ public:
   virtual ~vpMeLine() VP_OVERRIDE;
 
   /*!
-   * Display line.
+   * Display me line.
    *
-   * \warning To effectively display the line a call to
-   * vpDisplay::flush() is needed.
+   * \warning To effectively display the line a call to vpDisplay::flush() is needed.
    *
    * \param I : Image in which the line appears.
    * \param color : Color of the displayed line. Note that a moving edge
@@ -202,69 +180,84 @@ public:
   void display(const vpImage<unsigned char> &I, const vpColor &color, unsigned int thickness = 1);
 
   /*!
-   * Track the line in the image I.
+   * Display me line.
+   *
+   * \warning To effectively display the line a call to vpDisplay::flush() is needed.
    *
    * \param I : Image in which the line appears.
+   * \param color : Color of the displayed line. Note that a moving edge
+   * that is considered as an outlier is displayed in green.
+   * \param thickness : Drawings thickness.
    */
-  void track(const vpImage<unsigned char> &I);
+  void display(const vpImage<vpRGBa> &I, const vpColor &color, unsigned int thickness = 1);
 
   /*!
-   * Construct a list of vpMeSite moving edges at a particular sampling
-   * step between the two extremities of the line.
+   * Gets the parameters a,b,c of the line with equation a*x + b*y + c = 0 as a
+   * 3-dim vector.
    *
-   * \param I : Image in which the line appears.
-   * \param doNotTrack : Inherited parameter, not used.
+   * \return 3-dim vector containing a, b and c line parameters.
+   */
+  vpColVector get_ABC() const
+  {
+    vpColVector abc(3);
+    abc[0] = m_a;
+    abc[1] = m_b;
+    abc[2] = m_c;
+    return abc;
+  }
+
+  /*!
+   * Get the extremities of the line. These two points strictly belong to
+   * the line. They are the projection of m_Pext[2] on the line
    *
-   * \exception vpTrackingException::initializationError : Moving edges not
-   * initialized.
+   * \param ip1 : Coordinates of the first extremity.
+   * \param ip2 : Coordinates of the second extremity.
    */
-  virtual void sample(const vpImage<unsigned char> &I, bool doNotTrack = false) VP_OVERRIDE;
+  void getExtremities(vpImagePoint &ip1, vpImagePoint &ip2) const;
 
   /*!
-   * Resample the line if the number of sample is less than 80% of the
-   * expected value.
+   * Returns the value of \f$\rho\f$, the distance between the origin and the point on the line
+   * that belongs to the normal to the line passing through the origin.
    *
-   * \note The expected value is computed thanks to the length of the
-   * line and the parameter which indicates the number of pixel between
-   * two points (vpMe::sample_step).
+   * Depending on the convention described at the beginning of this
+   * class, \f$\rho\f$ is signed.
    *
-   * \param I : Image in which the line appears.
+   * \sa getTheta(), getRhoTheta()
    */
-  void reSample(const vpImage<unsigned char> &I);
+  inline double getRho() const
+  {
+    return m_rho;
+  }
 
   /*!
-   * Least squares method used to make the tracking more robust. It
-   * ensures that the points taken into account to compute the right
-   * equation belong to the line.
-   */
-  void leastSquare();
-
-  /*!
-   * Set the alpha value of the different vpMeSite to the value of delta.
-   */
-  void updateDelta();
-
-  /*!
-   * Seek in the list of available points the two extremities of the line.
-   */
-  void setExtremities();
-
-  /*!
-   * Seek along the line defined by its equation, the two extremities of
-   * the line. This function is useful in case of translation of the
-   * line.
+   * Returns the value of \f$\rho, \theta\f$ as a 2-dim vector.
+   * - \f$\rho\f$ is the distance between the origin and the point on the line
+   *   that belongs to the normal to the line passing through the origin.
+   * - \f$\theta\f$ is the angle in radian between the vertical axis and the
+   *   normal to the line passing through the origin.
    *
-   * \param I : Image in which the line appears.
+   * Depending on the convention described at the beginning of this
+   * class, \f$\rho\f$ is signed.
    *
-   * \exception vpTrackingException::initializationError : Moving edges not
-   * initialized.
+   * \sa getRho(), getTheta()
    */
-  void seekExtremities(const vpImage<unsigned char> &I);
+  inline vpColVector getRhoTheta() const
+  {
+    vpColVector rho_theta(2);
+    rho_theta[0] = m_rho;
+    rho_theta[1] = m_theta;
+    return rho_theta;
+  }
 
   /*!
-   * Suppression of the points which belong no more to the line.
+   * Returns the value of the angle \f$\theta\f$.
+   *
+   * \sa getRho(), getRhoTheta()
    */
-  void suppressPoints();
+  inline double getTheta() const
+  {
+    return m_theta;
+  }
 
   /*!
    * Initialization of the tracking. Ask the user to click on two points
@@ -285,83 +278,24 @@ public:
   void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2);
 
   /*!
-   * Compute the two parameters \f$(\rho, \theta)\f$ of the line.
+   * This method allows to disable/enable the calculation of the sign of the rho attribute
+   * from the intensity of the central point of the line. When enabled, it allows to distinguish
+   * between a black/white edge and a white/black edge, but it can cause problems
+   * for example during a visual-servo, when this point can be occluded.
    *
-   * \param I : Image in which the line appears.
+   * \param useIntensityForRho : new value of the flag.
    */
-  void computeRhoTheta(const vpImage<unsigned char> &I);
-
-  /*!
-   * Get the value of \f$\rho\f$, the distance between the origin and the
-   * point on the line with belong to the normal to the line crossing
-   * the origin.
-   *
-   * Depending on the convention described at the beginning of this
-   * class, \f$\rho\f$ is signed.
-   */
-  double getRho() const;
-
-  /*!
-   * Get the value of the angle \f$\theta\f$.
-   */
-  double getTheta() const;
-
-  /*!
-   * Get the extremities of the line.
-   *
-   * \param ip1 : Coordinates of the first extremity.
-   * \param ip2 : Coordinates of the second extremity.
-   */
-  void getExtremities(vpImagePoint &ip1, vpImagePoint &ip2);
-
-  /*!
-    Gets the equation parameters of the line
-  */
-  void getEquationParam(double &A, double &B, double &C)
+  inline void setRhoSignFromIntensity(bool useIntensityForRho)
   {
-    A = m_a;
-    B = m_b;
-    C = m_c;
+    m_useIntensityForRho = useIntensityForRho;
   }
 
   /*!
-    Gets parameter a of the line equation a*i + b*j + c = 0
-  */
-  inline double getA() const { return m_a; }
-
-  /*!
-    Gets parameter b of the line equation a*i + b*j + c = 0
-  */
-  inline double getB() const { return m_b; }
-
-  /*!
-    Gets parameter c of the line equation a*i + b*j + c = 0
-  */
-  inline double getC() const { return m_c; }
-
-  /*!
-   * Computes the intersection point of two lines. The result is given in
-   * the (i,j) frame.
+   * Track the line in the image I.
    *
-   * \param line1 : The first line.
-   * \param line2 : The second line.
-   * \param ip : The coordinates of the intersection point.
-   *
-   * \return Returns a boolean value which depends on the computation
-   * success. True means that the computation ends successfully.
+   * \param I : Image in which the line appears.
    */
-  static bool intersection(const vpMeLine &line1, const vpMeLine &line2, vpImagePoint &ip);
-
-  /*!
-    This method allows to turn off the computation of the sign of the rho
-    attribute based on the intensity near the middle point of the line. This
-    is usually done to distinguish between a black/white and a white/black
-    edge but it may be source of problem (ex. for a servoing example) when
-    this point can be occluded.
-
-    \param useIntensityForRho : new value of the flag.
-  */
-  inline void computeRhoSignFromIntensity(bool useIntensityForRho) { m_useIntensityForRho = useIntensityForRho; }
+  void track(const vpImage<unsigned char> &I);
 
   /*!
    * Display of a moving line thanks to its equation parameters and its
@@ -433,7 +367,178 @@ public:
                           const std::list<vpMeSite> &site_list, const double &A, const double &B, const double &C,
                           const vpColor &color = vpColor::green, unsigned int thickness = 1);
 
+  /*!
+   * Computes the intersection point of two lines. The result is given in
+   * the (i,j) frame.
+   *
+   * \param line1 : The first line.
+   * \param line2 : The second line.
+   * \param ip : The coordinates of the intersection point.
+   *
+   * \return Returns a boolean value which depends on the computation
+   * success. True means that the computation ends successfully.
+   */
+  static bool intersection(const vpMeLine &line1, const vpMeLine &line2, vpImagePoint &iP);
+
+  static void project(double a, double b, double c, const vpMeSite &P, vpImagePoint &iP);
+
+protected:
+  void computeDelta(double &delta, double i1, double j1, double i2, double j2);
+
+  /*!
+   * Compute the two parameters \f$(\rho, \theta)\f$ of the line.
+   *
+   * \param I : Image in which the line appears.
+   */
+  void computeRhoTheta(const vpImage<unsigned char> &I);
+
+  /*!
+   * Least squares method used to make the tracking more robust. It
+   * ensures that the points taken into account to compute the right
+   * equation belong to the line.
+   *
+   * \param I : Image in which the line appears.
+   */
+  void leastSquare(const vpImage<unsigned char> &I);
+
+  void normalizeAngle(double &delta);
+
+  /*!
+   * Seek along the line defined by its equation to add points
+   * in the detected holes. Useful in case of temporary occlusion
+   *
+   * \param I : Image in which the line appears.
+   *
+   * \return The function returns the number of points added to the list.
+   *
+   * \exception vpTrackingException::initializationError : Moving edges not
+   * initialized.
+   */
+  unsigned int plugHoles(const vpImage<unsigned char> &I);
+
+  /*!
+   * Resample the line if the number of sample is less than 80% of the
+   * expected value.
+   *
+   * \note The expected value is computed thanks to the length of the
+   * line and the parameter which indicates the number of pixel between
+   * two points (vpMe::sample_step).
+   *
+   * \param I : Image in which the line appears.
+   */
+  void reSample(const vpImage<unsigned char> &I);
+
+  /*!
+   * Construct a list of vpMeSite moving edges at a particular sampling
+   * step between the two extremities of the line.
+   *
+   * \param I : Image in which the line appears.
+   * \param doNotTrack : Inherited parameter, not used.
+   *
+   * \exception vpTrackingException::initializationError : Moving edges not
+   * initialized.
+   */
+  virtual void sample(const vpImage<unsigned char> &I, bool doNotTrack = false) VP_OVERRIDE;
+
+  /*!
+   * Try to add points at both extremities of the line
+   *
+   * \param I : Image in which the line appears.
+   *
+   * \return The function returns the number of points added to the list.
+   *
+   * \exception vpTrackingException::initializationError : Moving edges not
+   * initialized.
+   */
+  virtual unsigned int seekExtremities(const vpImage<unsigned char> &I);
+
+  /*!
+   * Seek in the list of good points its two extremities m_PExt[2]
+   * These extremities are not strictly on the line
+   *
+   */
+  void setExtremities();
+
+  /*!
+   * Set the alpha value of the different vpMeSite to the value of delta.
+   */
+  void updateDelta();
+
+private:
+  static void update_indices(double theta, int incr, int i, int j, int &i1, int &i2, int &j1, int &j2);
+
+protected:
+  vpMeSite m_PExt[2]; //!< Both extremities of good points in the list.
+                      //!< These extremities are not strictly on the line
+
+  double m_rho;     //!< rho parameter of the line
+  double m_theta;   //!< theta parameter of the line
+  double m_delta;   //!< Angle in rad between the extremities
+  double m_delta_1; //!< Angle in rad between the extremities
+  double m_angle;   //!< Angle in deg between the extremities
+  double m_angle_1; //!< Angle in deg between the extremities
+  int m_sign;       //!< Sign
+
+  //! Flag to specify wether the intensity of the image at the middle point is
+  //! used to compute the sign of rho or not.
+  bool m_useIntensityForRho;
+
+  double m_a; //!< Parameter a of the line equation a*i + b*j + c = 0
+  double m_b; //!< Parameter b of the line equation a*i + b*j + c = 0
+  double m_c; //!< Parameter c of the line equation a*i + b*j + c = 0
+
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+public:
+  /*!
+   * @name Deprecated functions
+   */
+  //@{
+
+  /*!
+   * \deprecated This method is deprecated. You should rather use setRhoSignFromIntensity().
+   *
+   * This method allows to turn off the computation of the sign of the rho
+   * attribute based on the intensity near the middle point of the line. This
+   * is usually done to distinguish between a black/white and a white/black
+   * edge but it may be source of problem (ex. for a servoing example) when
+   * this point can be occluded.
+   *
+   * \param useIntensityForRho : new value of the flag.
+   */
+  VP_DEPRECATED inline void computeRhoSignFromIntensity(bool useIntensityForRho)
+  {
+    m_useIntensityForRho = useIntensityForRho;
+  }
+
+  /*!
+   * \deprecated Gets parameter a of the line equation a*i + b*j + c = 0
+   * You should rather use get_ABC().
+   */
+  VP_DEPRECATED inline double getA() const { return m_a; }
+
+  /*!
+   * \deprecated Gets parameter b of the line equation a*i + b*j + c = 0
+   * You should rather use get_ABC().
+   */
+  VP_DEPRECATED inline double getB() const { return m_b; }
+
+  /*!
+   * \deprecated Gets parameter c of the line equation a*i + b*j + c = 0
+   * You should rather use get_ABC().
+   */
+  VP_DEPRECATED inline double getC() const { return m_c; }
+
+  /*!
+   * \deprecated Gets the equation parameters of the line
+   * You should rather use get_ABC().
+   */
+  VP_DEPRECATED void getEquationParam(double &A, double &B, double &C) const
+  {
+    A = m_a;
+    B = m_b;
+    C = m_c;
+  }
+
   /*!
    * \deprecated Use rather displayLine().
    */
@@ -461,6 +566,7 @@ public:
   VP_DEPRECATED static void display(const vpImage<vpRGBa> &I, const vpMeSite &PExt1, const vpMeSite &PExt2,
                                     const std::list<vpMeSite> &site_list, const double &A, const double &B, const double &C,
                                     const vpColor &color = vpColor::green, unsigned int thickness = 1);
+  //@}
 #endif
 };
 END_VISP_NAMESPACE
