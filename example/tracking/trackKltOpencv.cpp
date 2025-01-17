@@ -36,8 +36,9 @@
   \brief Example of KLT tracking using OpenCV library.
 */
 
-#include <visp3/core/vpConfig.h>
+#include <iostream>
 
+#include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_DISPLAY)
 
@@ -456,9 +457,7 @@ int main()
 
 int main()
 {
-  std::cout << "visp_klt module or X11, GTK, GDI or OpenCV display "
-    "functionalities are required..."
-    << std::endl;
+  std::cout << "visp_klt module or X11, GTK, GDI or OpenCV display functionalities are required..." << std::endl;
 }
 
 #endif
