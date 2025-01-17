@@ -623,15 +623,16 @@ template <> inline void vpImage<float>::getMinMaxValue(float &min, float &max, b
 }
 
 /*!
-  \brief Look for the minimum and the maximum value within the 3-channels float bitmap
-  \param min : The minimal values within the bitmap.
-  \param max : The maximal values within the bitmap.
-  \param onlyFiniteVal : If true, consider only finite values.
-
-  \sa getMaxValue()
-  \sa getMinValue()
-  \sa getMinMaxLoc()
-*/
+ * \relates vpImage
+ * \brief Look for the minimum and the maximum value within the 3-channels float bitmap
+ * \param min : The minimal values within the bitmap.
+ * \param max : The maximal values within the bitmap.
+ * \param onlyFiniteVal : If true, consider only finite values.
+ *
+ * \sa getMaxValue()
+ * \sa getMinValue()
+ * \sa getMinMaxLoc()
+ */
 template <> inline void vpImage<vpRGBf>::getMinMaxValue(vpRGBf &min, vpRGBf &max, bool onlyFiniteVal) const
 {
   if (npixels == 0) {
