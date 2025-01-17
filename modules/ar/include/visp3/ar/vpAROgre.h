@@ -80,7 +80,7 @@
 #endif // INCLUDE_RTSHADER_SYSTEM
 
 #ifdef VISP_HAVE_OIS
-#include <OIS.h>
+#include <ois/OIS.h>
 #endif
 
 BEGIN_VISP_NAMESPACE
