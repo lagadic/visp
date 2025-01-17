@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Example of Hybrid Tracking of MBT and MBT KTL.
- *
-*****************************************************************************/
+ */
 
 /*!
   \example mbtGenericTracking.cpp
@@ -50,11 +48,7 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpMath.h>
-#include <visp3/gui/vpDisplayD3D.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/io/vpVideoReader.h>
@@ -362,6 +356,7 @@ int main(int argc, const char **argv)
       initFile = vpIoTools::createFilePath(env_ipath, "mbt/cube");
 
     vpImage<unsigned char> I1, I2;
+    vpDisplay *display1 = nullptr, *display2 = nullptr;
     vpVideoReader reader;
 
     reader.setFileName(ipath);
@@ -380,27 +375,15 @@ int main(int argc, const char **argv)
     reader.acquire(I1);
     I2 = I1;
 
-    // initialise a  display
-#if defined(VISP_HAVE_X11)
-    vpDisplayX display1, display2;
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI display1, display2;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV display1, display2;
-#elif defined(VISP_HAVE_D3D9)
-    vpDisplayD3D display1, display2;
-#elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK display1, display2;
-#else
-    opt_display = false;
-#endif
     if (opt_display) {
-#if defined(VISP_HAVE_DISPLAY)
-      display1.setDownScalingFactor(vpDisplay::SCALE_AUTO);
-      display2.setDownScalingFactor(vpDisplay::SCALE_AUTO);
-      display1.init(I1, 100, 100, "Test tracking (Left)");
-      display2.init(I2, (int)(I1.getWidth() / vpDisplay::getDownScalingFactor(I1)) + 110, 100, "Test tracking (Right)");
-#endif
+      // We open a window using either X11, GTK, OpenCV or GDI
+      display1 = vpDisplayFactory::allocateDisplay();
+      display2 = vpDisplayFactory::allocateDisplay();
+      display1->setDownScalingFactor(vpDisplay::SCALE_AUTO);
+      display2->setDownScalingFactor(vpDisplay::SCALE_AUTO);
+      display1->init(I1, 100, 100, "Test tracking (Left)");
+      display2->init(I2, (int)(I1.getWidth() / vpDisplay::getDownScalingFactor(I1)) + 110, 100, "Test tracking (Right)");
+
       vpDisplay::display(I1);
       vpDisplay::display(I2);
       vpDisplay::flush(I1);
@@ -617,7 +600,7 @@ int main(int argc, const char **argv)
       }
 
       if (opt_click_allowed && opt_display) {
-        vpDisplay::displayText(I1, 10, 10, "Click to quit", vpColor::red);
+        vpDisplay::displayText(I1, 20, 20, "Click to quit", vpColor::red);
         vpMouseButton::vpMouseButtonType button;
         if (vpDisplay::getClick(I1, button, click)) {
           switch (button) {
@@ -660,6 +643,12 @@ int main(int argc, const char **argv)
     delete tracker;
     tracker = nullptr;
 
+    if (display1) {
+      delete display1;
+    }
+    if (display2) {
+      delete display2;
+    }
     return EXIT_SUCCESS;
   }
   catch (const vpException &e) {

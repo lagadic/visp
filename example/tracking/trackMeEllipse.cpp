@@ -33,34 +33,20 @@
 
 /*!
   \file trackMeEllipse.cpp
+  \example trackMeEllipse.cpp
 
   \brief Tracking of an ellipse using vpMe.
 */
 
-/*!
-  \example trackMeEllipse.cpp
-
-  Tracking of an ellipse using vpMe.
-*/
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpDebug.h>
 
-#include <iomanip>
-#include <sstream>
-#include <stdio.h>
-#include <stdlib.h>
-
-#if defined(VISP_HAVE_MODULE_ME) &&                                                                                    \
-    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+#if defined(VISP_HAVE_MODULE_ME) &&  defined(VISP_HAVE_DISPLAY)
 
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpIoTools.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/io/vpVideoReader.h>
 #include <visp3/io/vpVideoWriter.h>
@@ -88,7 +74,7 @@ using namespace VISP_NAMESPACE_NAME;
   \param me_threshold : Moving-edges threshold.
 */
 void usage(const char *name, const char *badparam, const std::string &video_in_ipath, const std::string &video_in_ppath,
-  unsigned video_in_first, int video_in_last, int video_in_step, int me_range, int me_sample_step, int me_threshold)
+           unsigned video_in_first, int video_in_last, int video_in_step, int me_range, int me_sample_step, int me_threshold)
 {
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
   std::string ext("png");
@@ -397,15 +383,7 @@ int main(int argc, const char **argv)
 
     if (opt_display) {
       // We open a window using either X11, GTK, GDI or OpenCV
-#if defined(VISP_HAVE_X11)
-      display = new vpDisplayX;
-#elif defined(VISP_HAVE_GTK)
-      display = new vpDisplayGTK;
-#elif defined(VISP_HAVE_GDI)
-      display = new vpDisplayGDI;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-      display = new vpDisplayOpenCV;
-#endif
+      display = vpDisplayFactory::allocateDisplay();
       if (opt_display_scale_auto) {
         display->setDownScalingFactor(vpDisplay::SCALE_AUTO);
       }
@@ -495,6 +473,9 @@ int main(int argc, const char **argv)
         vpDisplay::displayText(I, 20, 10, ss.str(), vpColor::red);
         if (opt_click_allowed) {
           vpDisplay::displayText(I, 40, 10, "Click to exit...", vpColor::red);
+          if (vpDisplay::getClick(I, false)) {
+            quit = true;
+          }
         }
       }
       me_ellipse.track(I);
@@ -506,11 +487,6 @@ int main(int argc, const char **argv)
       if (!opt_save.empty()) {
         vpDisplay::getImage(I, O);
         writer->saveFrame(O);
-      }
-      if (opt_display && opt_click_allowed) {
-        if (vpDisplay::getClick(I, false)) {
-          quit = true;
-        }
       }
     }
 
