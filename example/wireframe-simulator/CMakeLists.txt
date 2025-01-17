@@ -33,9 +33,9 @@
 #
 #############################################################################
 
-project(example-wireframe-simulator)
-
 cmake_minimum_required(VERSION 3.10)
+
+project(example-wireframe-simulator)
 
 find_package(VISP REQUIRED visp_core visp_robot visp_io visp_gui)
 

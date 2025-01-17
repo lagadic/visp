@@ -1,6 +1,6 @@
-project(tutorial-tracking-mb-generic-rgbd)
-
 cmake_minimum_required(VERSION 3.10)
+
+project(tutorial-tracking-mb-generic-rgbd)
 
 find_package(VISP REQUIRED visp_core visp_mbt visp_io visp_gui visp_sensor)
 

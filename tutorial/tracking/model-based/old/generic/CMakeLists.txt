@@ -1,6 +1,6 @@
-project(tutorial-tracking-mb)
-
 cmake_minimum_required(VERSION 3.10)
+
+project(tutorial-tracking-mb)
 
 find_package(VISP REQUIRED visp_core visp_mbt visp_io visp_gui)
 

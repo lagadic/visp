@@ -33,9 +33,9 @@
 #
 #############################################################################
 
-project(example-servo-viper850)
-
 cmake_minimum_required(VERSION 3.10)
+
+project(example-servo-viper850)
 
 if(CMAKE_SYSTEM_NAME MATCHES WindowsPhone OR CMAKE_SYSTEM_NAME MATCHES WindowsStore)
   set(WINRT TRUE)

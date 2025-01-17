@@ -1,6 +1,6 @@
-project(tutorial-tracking-dnn)
-
 cmake_minimum_required(VERSION 3.10)
+
+project(tutorial-tracking-dnn)
 
 find_package(VISP REQUIRED visp_core visp_detection visp_dnn_tracker visp_io visp_gui visp_sensor)
 
