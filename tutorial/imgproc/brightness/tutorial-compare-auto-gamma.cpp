@@ -1,4 +1,4 @@
-//! \example tutorial-compare-auto-gamma
+//! \example tutorial-compare-auto-gamma.cpp
 
 #include <iostream>
 #include <visp3/core/vpConfig.h>

@@ -32,9 +32,9 @@
  */
 
 /*!
-  \file testMbtJsonSettings.cpp
+  \example catchRBT.cpp
 
-  Test test saving and parsing JSON configuration for vpMbGenericTracker
+  Test saving and parsing JSON configuration for vpRBTracker.
 */
 
 #include <visp3/core/vpConfig.h>
