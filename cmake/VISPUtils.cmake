@@ -1256,6 +1256,7 @@ endfunction()
 # to retrieve the values of these defines and compose a string version you may use
 #   vp_parse_header("header.hpp" LIB_VERSION_LINES LIB_VERSION_MAJOR LIB_VERSION_MINOR LIB_VERSION_PATCH)
 #   set(LIB_VERSION "${LIB_VERSION_MAJOR}.${LIB_VERSION_MINOR}.${LIB_VERSION_PATCH}")
+# Note that LIB_VERSION_LINES will contain "#define LIB_VERSION_MAJOR 1;#define LIB_VERSION_MINOR 2;#define LIB_VERSION_PATCH 3"
 macro(vp_parse_header FILENAME FILE_VAR)
   set(vars_regex "")
   set(__parent_scope OFF)
