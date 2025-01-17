@@ -33,9 +33,9 @@
 #
 #############################################################################
 
-project(example-servo-flir-ptu)
-
 cmake_minimum_required(VERSION 3.10)
+
+project(example-servo-flir-ptu)
 
 find_package(VISP REQUIRED visp_core visp_robot visp_sensor visp_vision visp_gui visp_vs visp_visual_features visp_detection)
 

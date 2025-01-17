@@ -1,6 +1,6 @@
-project(apps-calibration)
-
 cmake_minimum_required(VERSION 3.10)
+
+project(apps-calibration)
 
 find_package(VISP REQUIRED visp_vision visp_io OPTIONAL_COMPONENTS visp_gui visp_robot visp_sensor)
 
