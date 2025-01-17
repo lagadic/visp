@@ -45,6 +45,7 @@
 #include <visp3/visual_features/vpFeatureMomentDatabase.h>
 #include <visp3/visual_features/vpFeatureMomentGravityCenter.h>
 #include <visp3/visual_features/vpFeatureMomentGravityCenterNormalized.h>
+
 BEGIN_VISP_NAMESPACE
 /*!
  * Computes interaction matrix for centered and normalized moment. Called
