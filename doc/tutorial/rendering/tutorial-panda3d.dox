@@ -20,7 +20,7 @@ It is also possible to compute camera clipping values, depending on the pose of 
 This ensures that the depth buffer is as accurate as possible when considering this object.
 
 Below is a set of renders for a textured cube object.
-\image html img-cube-rendering-panda3d.png
+\image html img-cube-rendering-panda3d.jpg
 
 Multi-output rendering is performed via the vpPanda3DRendererSet class, which duplicates the scene across multiple
 renders and synchronizes changes to objects and the camera. Each Sub renderer implements a specific type of render:
