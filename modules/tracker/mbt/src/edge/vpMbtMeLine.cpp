@@ -60,12 +60,13 @@ vpMbtMeLine::vpMbtMeLine()
  * Copy constructor.
  */
 vpMbtMeLine::vpMbtMeLine(const vpMbtMeLine &meline)
+  : vpMeLine(meline)
 {
   imin = meline.imin;
   jmin = meline.jmin;
   imax = meline.imax;
   jmax = meline.jmax;
-  expecteddensity = expecteddensity;
+  expecteddensity = meline.expecteddensity;
 }
 
 /*!
