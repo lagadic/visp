@@ -35,6 +35,7 @@
 
 # Add optional 3rd parties
 set(opt_incs "")
+set(opt_system_incs "")
 set(opt_libs "")
 set(opt_libs_private "")
 
@@ -44,7 +45,7 @@ endif()
 
 if(USE_NLOHMANN_JSON)
   get_target_property(_inc_dirs "nlohmann_json::nlohmann_json" INTERFACE_INCLUDE_DIRECTORIES)
-  list(APPEND opt_incs ${_inc_dirs})
+  list(APPEND opt_system_incs ${_inc_dirs})
 endif()
 
 if(WITH_SIMDLIB)
@@ -56,7 +57,7 @@ endif()
 vp_add_module(rbt visp_vision visp_core visp_me visp_visual_features visp_ar OPTIONAL  visp_klt visp_gui PRIVATE_OPTIONAL ${opt_libs_private})
 vp_glob_module_sources()
 
-vp_module_include_directories(${opt_incs})
+vp_module_include_directories(${opt_incs} SYSTEM ${opt_system_incs})
 vp_create_module(${opt_libs})
 
 set(opt_test_incs "")

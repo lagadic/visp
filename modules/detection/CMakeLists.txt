@@ -45,7 +45,7 @@ if(USE_ZBAR)
 endif()
 
 if(USE_DMTX)
-  list(APPEND opt_incs ${DMTX_INCLUDE_DIRS})
+  list(APPEND opt_system_incs ${DMTX_INCLUDE_DIRS})
   list(APPEND opt_libs ${DMTX_LIBRARIES})
 endif()
 
@@ -68,7 +68,7 @@ endif()
 
 # TensorRT
 if(USE_TENSORRT)
-  list(APPEND opt_incs ${TENSORRT_INCLUDE_DIRS})
+  list(APPEND opt_system_incs ${TENSORRT_INCLUDE_DIRS})
   list(APPEND opt_libs ${TENSORRT_LIBRARIES})
 endif()
 
@@ -184,7 +184,7 @@ if(USE_OPENCV)
 #    list(APPEND opt_libs ${OpenCV_LIBS})
   endif()
   if(OpenCV_INCLUDE_DIRS)
-    list(APPEND opt_incs ${OpenCV_INCLUDE_DIRS})
+    list(APPEND opt_system_incs ${OpenCV_INCLUDE_DIRS})
   endif()
 endif(USE_OPENCV)
 
