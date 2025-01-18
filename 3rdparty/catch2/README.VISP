@@ -19,4 +19,4 @@ CONTENT:
 --------
 
 The catch_amalgamated.hpp and catch_amalgamated.cpp files are a copy of the latest version of the single header that
-was downloaded from https://github.com/catchorg/Catch2/releases/tag/v3.7.1
+was downloaded from https://github.com/catchorg/Catch2/releases/tag/v3.8.0
