@@ -235,10 +235,7 @@ or from a package manager
 C:\> cd %VISP_WS%\3rdparty
 C:\> git clone https://github.com/nlohmann/json.git
 C:\> cd json && mkdir build-vc17 && cd build-vc17
-C:\> cmake -G "Visual Studio 17 2022" -A "x64" .. \
-           -DCMAKE_INSTALL_PREFIX=%VISP_WS%\3rdparty\json\build-vc17\install \
-           -DBUILD_TESTING=OFF \
-           -DJSON_BuildTests=OFF
+C:\> cmake -G "Visual Studio 17 2022" -A "x64" .. -DCMAKE_INSTALL_PREFIX=%VISP_WS%\3rdparty\json\build-vc17\install -DJSON_BuildTests=OFF
 C:\> cmake --build . --config Release --target install
 \endverbatim
   JSON is now installed in `%%VISP_WS%\3rdparty\json\build-vc17\install` folder.
