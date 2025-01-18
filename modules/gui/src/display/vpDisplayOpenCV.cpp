@@ -285,11 +285,10 @@ public:
     int y = vpMath::round(center.get_v() / scale);
     int r = static_cast<int>(radius / scale);
     cv::Scalar cv_color;
-    if (color.id < vpColor::id_unknown) {
-      cv_color = col[color.id];
-    }
-    else {
+    if ((color.id < vpColor::id_black) || (color.id >= vpColor::id_unknown)) {
       cv_color = CV_RGB(color.R, color.G, color.B);
+    } else {
+      cv_color = col[color.id];
     }
 
     if (fill == false) {
@@ -516,15 +515,15 @@ public:
 
   void displayLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, const unsigned int &thickness, const unsigned int &scale)
   {
-    if (color.id < vpColor::id_unknown) {
-      cv::line(m_background, cv::Point(vpMath::round(ip1.get_u() / scale), vpMath::round(ip1.get_v() / scale)),
-               cv::Point(vpMath::round(ip2.get_u() / scale), vpMath::round(ip2.get_v() / scale)), col[color.id],
-               (int)thickness);
-    }
-    else {
+    if ((color.id < vpColor::id_black) || (color.id >= vpColor::id_unknown)) {
       cvcolor = CV_RGB(color.R, color.G, color.B);
       cv::line(m_background, cv::Point(vpMath::round(ip1.get_u() / scale), vpMath::round(ip1.get_v() / scale)),
                cv::Point(vpMath::round(ip2.get_u() / scale), vpMath::round(ip2.get_v() / scale)), cvcolor,
+               (int)thickness);
+    }
+    else {
+      cv::line(m_background, cv::Point(vpMath::round(ip1.get_u() / scale), vpMath::round(ip1.get_v() / scale)),
+               cv::Point(vpMath::round(ip2.get_u() / scale), vpMath::round(ip2.get_v() / scale)), col[color.id],
                (int)thickness);
     }
   }
@@ -532,16 +531,16 @@ public:
   void displayPoint(const vpImagePoint &ip, const vpColor &color, const unsigned int &thickness, const unsigned int &scale)
   {
     for (unsigned int i = 0; i < thickness; i++) {
-      if (color.id < vpColor::id_unknown) {
-        cv::line(m_background, cv::Point(vpMath::round(ip.get_u() / scale), vpMath::round(ip.get_v() / scale)),
-                 cv::Point(vpMath::round(ip.get_u() / scale + thickness - 1), vpMath::round(ip.get_v() / scale)),
-                 col[color.id], (int)thickness);
-      }
-      else {
+      if ((color.id < vpColor::id_black) || (color.id >= vpColor::id_unknown)) {
         cvcolor = CV_RGB(color.R, color.G, color.B);
         cv::line(m_background, cv::Point(vpMath::round(ip.get_u() / scale), vpMath::round(ip.get_v() / scale)),
                  cv::Point(vpMath::round(ip.get_u() / scale + thickness - 1), vpMath::round(ip.get_v() / scale)),
                  cvcolor, (int)thickness);
+      }
+      else {
+        cv::line(m_background, cv::Point(vpMath::round(ip.get_u() / scale), vpMath::round(ip.get_v() / scale)),
+                 cv::Point(vpMath::round(ip.get_u() / scale + thickness - 1), vpMath::round(ip.get_v() / scale)),
+                 col[color.id], (int)thickness);
       }
     }
   }
@@ -554,11 +553,11 @@ public:
     int right = vpMath::round((topLeft.get_u() + w) / scale);
     int bottom = vpMath::round((topLeft.get_v() + h) / scale);
     cv::Scalar cv_color;
-    if (color.id < vpColor::id_unknown) {
-      cv_color = col[color.id];
+    if ((color.id < vpColor::id_black) || (color.id >= vpColor::id_unknown)) {
+      cv_color = CV_RGB(color.R, color.G, color.B);
     }
     else {
-      cv_color = CV_RGB(color.R, color.G, color.B);
+      cv_color = col[color.id];
     }
 
     if (fill == false) {
@@ -581,16 +580,16 @@ public:
 
   void displayText(const vpImagePoint &ip, const std::string &text, const vpColor &color, const unsigned int &scale)
   {
-    if (color.id < vpColor::id_unknown) {
-      cv::putText(m_background, text,
-                  cv::Point(vpMath::round(ip.get_u() / scale), vpMath::round(ip.get_v() / scale + fontHeight)),
-                  font, fontScale, col[color.id]);
-    }
-    else {
+    if ((color.id < vpColor::id_black) || (color.id >= vpColor::id_unknown)) {
       cvcolor = CV_RGB(color.R, color.G, color.B);
       cv::putText(m_background, text,
-                  cv::Point(vpMath::round(ip.get_u() / scale), vpMath::round(ip.get_v() / scale + fontHeight)),
-                  font, fontScale, cvcolor);
+                  cv::Point(vpMath::round(ip.get_u() / scale), vpMath::round(ip.get_v() / scale + fontHeight)), font,
+                  fontScale, cvcolor);
+    }
+    else {
+      cv::putText(m_background, text,
+                  cv::Point(vpMath::round(ip.get_u() / scale), vpMath::round(ip.get_v() / scale + fontHeight)), font,
+                  fontScale, col[color.id]);
     }
   }
 
@@ -1480,8 +1479,8 @@ void vpDisplayOpenCV::displayRectangle(const vpImagePoint &topLeft, const vpImag
                                        const vpColor &color, bool fill, unsigned int thickness)
 {
   if (m_displayHasBeenInitialized) {
-    unsigned int w = bottomRight.get_u() - topLeft.get_u() + 1;
-    unsigned int h = bottomRight.get_v() - topLeft.get_v() + 1;
+    unsigned int w = static_cast<unsigned int>(bottomRight.get_u() - topLeft.get_u() + 1);
+    unsigned int h = static_cast<unsigned int>(bottomRight.get_v() - topLeft.get_v() + 1);
     displayRectangle(topLeft, w, h, color, fill, thickness);
   }
   else {
@@ -1505,7 +1504,7 @@ void vpDisplayOpenCV::displayRectangle(const vpImagePoint &topLeft, const vpImag
 void vpDisplayOpenCV::displayRectangle(const vpRect &rectangle, const vpColor &color, bool fill, unsigned int thickness)
 {
   if (m_displayHasBeenInitialized) {
-    displayRectangle(rectangle.getTopLeft(), rectangle.getWidth(), rectangle.getHeight(), color, fill, thickness);
+    displayRectangle(rectangle.getTopLeft(), static_cast<unsigned int>(rectangle.getWidth()), static_cast<unsigned int>(rectangle.getHeight()), color, fill, thickness);
   }
   else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "OpenCV not initialized"));
