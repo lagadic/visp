@@ -142,6 +142,13 @@ set(VISP_SOVERSION "${VISP_VERSION_MAJOR}.${VISP_VERSION_MINOR}")
 # Package revision number
 set(VISP_REVISION "1")
 
+# Try to locate visp-images and, if it exists, its version
+vp_find_dataset(VISP_DATASET_FOUND VISP_DATASET_LOCATION
+                    VISP_DATASET_VERSION
+                    VISP_DATASET_VERSION_MAJOR
+                    VISP_DATASET_VERSION_MINOR
+                    VISP_DATASET_VERSION_PATCH)
+
 #-----------------------------------------------------------------------------
 # TO BE CHECKED BEFORE NEXT RELEASE
 #
@@ -984,6 +991,7 @@ include(cmake/VISPExtraTargets.cmake)
 include(cmake/OgreTools.cmake)
 if(USE_OGRE)
   vp_set_ogre_media()
+  set(VISP_HAVE_OGRE_VERSION "(${OGRE_VERSION_MAJOR}<<16 | ${OGRE_VERSION_MINOR}<<8 | ${OGRE_VERSION_PATCH})") # for vpConfig.h
 endif()
 
 #----------------------------------------------------------------------
@@ -1435,10 +1443,6 @@ if(USE_JPEG)
       endif()
     endif()
   endif()
-endif()
-if(USE_OIS)
-  vp_parse_header("${OIS_INCLUDE_DIR}/OISPrereqs.h" OIS_VERSION_LINES OIS_VERSION_MAJOR OIS_VERSION_MINOR OIS_VERSION_PATCH)
-  set(OIS_VERSION "${OIS_VERSION_MAJOR}.${OIS_VERSION_MINOR}.${OIS_VERSION_PATCH}")
 endif()
 if(USE_EIGEN3)
   # Additionnal check to be sure that Eigen3 include dir os well detected
@@ -1903,6 +1907,15 @@ if(USE_PANDA3D)
 endif()
 if(USE_YARP)
   status("    Yarp dir:" "${YARP_DIR}")
+endif()
+if(USE_OGRE)
+  if(NOT ${OGRE_DIR} STREQUAL "")
+    status("    Ogre dir:" "${OGRE_DIR}")
+  else()
+    status("    Ogre inc dir:" "${OGRE_INCLUDE_DIR}")
+    status("    Ogre Main lib:" "${OGRE_LIBRARY_REL}")
+    status("    Ogre plugin dir:" "${OGRE_PLUGIN_DIR_REL}")
+  endif()
 endif()
 
 # ========================== auxiliary ==========================

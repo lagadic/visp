@@ -92,6 +92,7 @@ int main()
       s << "Sphere" << i;
       name[i] = s.str();
       ogre.load(name[i], "Sphere.mesh");
+      ogre.setMaterial(name[i], "UniformBlue");
       ogre.setScale(name[i], 0.02f, 0.02f,
                     0.02f); // Rescale the sphere to 2 cm radius
       // Set the position of each sphere in the object frame
@@ -101,10 +102,16 @@ int main()
 
     // Add an optional point light source
     Ogre::Light *light = ogre.getSceneManager()->createLight();
-    light->setDiffuseColour(1, 1, 1);  // scaled RGB values
-    light->setSpecularColour(1, 1, 1); // scaled RGB values
-    light->setPosition((Ogre::Real)cdMo[0][3], (Ogre::Real)cdMo[1][3], (Ogre::Real)(-cdMo[2][3]));
+    light->setDiffuseColour(1., 1., 1.);  // scaled RGB values
+    light->setSpecularColour(1., 1., 1.); // scaled RGB values
     light->setType(Ogre::Light::LT_POINT);
+#if (VISP_HAVE_OGRE_VERSION < (1 << 16 | 10 << 8 | 0))
+    light->setPosition((Ogre::Real)cdMo[0][3], (Ogre::Real)cdMo[1][3], (Ogre::Real)(-cdMo[2][3]));
+#else
+    Ogre::SceneNode *spotLightNode = ogre.getSceneManager()->getRootSceneNode()->createChildSceneNode();
+    spotLightNode->attachObject(light);
+    spotLightNode->setPosition((Ogre::Real)cdMo[0][3], (Ogre::Real)cdMo[1][3], (Ogre::Real)(-cdMo[2][3]));
+#endif
 
     vpServo task;
     task.setServo(vpServo::EYEINHAND_CAMERA);
@@ -229,4 +236,4 @@ int main()
   }
   return EXIT_SUCCESS;
 #endif
-  }
+}

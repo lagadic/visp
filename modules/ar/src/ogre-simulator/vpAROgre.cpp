@@ -50,7 +50,18 @@
 
 #include <OgreRectangle2D.h>
 
+#if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 11<<8 | 0))
+#include <OgreMatrix4.h>
+#include <Bites/OgreWindowEventUtilities.h>
+typedef OgreBites::WindowEventUtilities OgreWindowEventUtilities;
+#else
+typedef Ogre::WindowEventUtilities OgreWindowEventUtilities;
+#endif
+
 BEGIN_VISP_NAMESPACE
+unsigned int vpAROgre::sID = 0;
+unsigned int vpAROgre::sRTSSUsers = 0;
+
 /*!
   Constructor.
 
@@ -68,7 +79,7 @@ BEGIN_VISP_NAMESPACE
 */
 vpAROgre::vpAROgre(const vpCameraParameters &cam, unsigned int width, unsigned int height, const char *resourcePath,
                    const char *pluginsPath)
-  : name("ViSP - Augmented Reality"), mRoot(0), mCamera(0), mSceneMgr(0), mWindow(0), mResourcePath(resourcePath),
+  : name("ViSP - Augmented Reality"), mInitialized(false), mRoot(0), mCamera(0), mSceneMgr(0), mWindow(0), mResourcePath(resourcePath),
   mPluginsPath(pluginsPath),
 #ifdef VISP_HAVE_OIS
   mInputManager(0), mKeyboard(0),
@@ -77,7 +88,66 @@ vpAROgre::vpAROgre(const vpCameraParameters &cam, unsigned int width, unsigned i
   mImageRGBA(), mImage(), mPixelBuffer(), mBackground(nullptr), mBackgroundHeight(0), mBackgroundWidth(0),
   mWindowHeight(height), mWindowWidth(width), windowHidden(false), mNearClipping(0.001), mFarClipping(200), mcam(cam),
   mshowConfigDialog(true), mOptionalResourceLocation()
-{ }
+{
+  std::stringstream nameSceneManager;
+  nameSceneManager << "SceneManagerInstance" << sID;
+  mSceneManagerName = nameSceneManager.str();
+  ++sID;
+#if defined(OGRE_BUILD_COMPONENT_RTSHADERSYSTEM) & (VISP_HAVE_OGRE_VERSION >= (1<<16 | 10 <<8 | 0))
+  mMaterialMgrListener = NULL;
+  mShaderGenerator = NULL;
+#endif
+}
+
+/**
+Initialize the RT Shader system.
+*/
+bool vpAROgre::initialiseRTShaderSystem()
+{
+#if defined(OGRE_BUILD_COMPONENT_RTSHADERSYSTEM) & (VISP_HAVE_OGRE_VERSION >= (1<<16 | 10 <<8 | 0))
+  if (Ogre::RTShader::ShaderGenerator::initialize() || (sRTSSUsers > 0)) {
+    ++sRTSSUsers;
+    mShaderGenerator = Ogre::RTShader::ShaderGenerator::getSingletonPtr();
+
+// Create and register the material manager listener if it doesn't exist yet.
+    if (!mMaterialMgrListener) {
+      mMaterialMgrListener = new OgreBites::SGTechniqueResolverListener(mShaderGenerator);
+      Ogre::MaterialManager::getSingleton().addListener(mMaterialMgrListener);
+    }
+    return true;
+  }
+#endif
+  return false;
+}
+
+/**
+Destroy the RT Shader system.
+*/
+void vpAROgre::destroyRTShaderSystem()
+{
+#if defined(OGRE_BUILD_COMPONENT_RTSHADERSYSTEM) & (VISP_HAVE_OGRE_VERSION >= (1<<16 | 10 <<8 | 0))
+  // Restore default scheme.
+  Ogre::MaterialManager::getSingleton().setActiveScheme(Ogre::MaterialManager::DEFAULT_SCHEME_NAME);
+
+  // Unregister the material manager listener.
+  if (mMaterialMgrListener != NULL) {
+    Ogre::MaterialManager::getSingleton().removeListener(mMaterialMgrListener);
+    delete mMaterialMgrListener;
+    mMaterialMgrListener = NULL;
+  }
+
+  // Destroy RTShader system.
+  if (mShaderGenerator != NULL) {
+    if (sRTSSUsers > 0) {
+      --sRTSSUsers;
+    }
+    if (sRTSSUsers == 0) {
+      Ogre::RTShader::ShaderGenerator::destroy();
+    }
+    mShaderGenerator = NULL;
+  }
+#endif
+}
 
 /*!
   Initialisation of Ogre with a grey level background.
@@ -125,6 +195,12 @@ void vpAROgre::init(vpImage<unsigned char> &I,
       false,
 #endif
       hidden);
+
+#if (VISP_HAVE_OGRE_VERSION >= (13 <<16 | 0 <<8 | 0))
+// Register the scene manager.
+  Ogre::RTShader::ShaderGenerator::getSingleton().addSceneManager(Ogre::Root::getSingletonPtr()->getSceneManager(mSceneManagerName));
+#endif
+
   // Create the background image which will come from the grabber
   createBackground(I);
 }
@@ -175,6 +251,12 @@ void vpAROgre::init(vpImage<vpRGBa> &I,
       false,
 #endif
       hidden);
+
+#if (VISP_HAVE_OGRE_VERSION >= (13 <<16 | 0 <<8 | 0))
+// Register the scene manager.
+  Ogre::RTShader::ShaderGenerator::getSingleton().addSceneManager(Ogre::Root::getSingletonPtr()->getSceneManager(mSceneManagerName));
+#endif
+
   // Create the background image which will come from the grabber
   createBackground(I);
 }
@@ -248,67 +330,16 @@ void vpAROgre::init(bool
     mRoot = Ogre::Root::getSingletonPtr();
   }
 
-  // Load resource paths from config file
-
-  // File format is:
-  //  [ResourceGroupName]
-  //  ArchiveType=Path
-  //  .. repeat
-  // For example:
-  //  [General]
-  //  FileSystem=media/
-  //  Zip=packages/level1.zip
-
-  // mResourcePath may contain more than one folder location separated by ";"
-  bool resourcesFileExists = false;
-  std::string resourceFile;
-  std::vector<std::string> resourcesPaths = vpIoTools::splitChain(std::string(mResourcePath), std::string(";"));
-  for (size_t i = 0; i < resourcesPaths.size(); i++) {
-    resourceFile = resourcesPaths[i] + "/resources.cfg";
-    if (vpIoTools::checkFilename(resourceFile)) {
-      resourcesFileExists = true;
-      break;
-    }
-  }
-  if (!resourcesFileExists) {
-    std::string errorMsg = std::string("Error: the requested resource file \"resources.cfg\"") +
-      std::string("doesn't exist in ") + std::string(mResourcePath);
-
-    std::cout << errorMsg << std::endl;
-
-    throw(vpException(vpException::ioError, errorMsg));
-  }
-  std::cout << "######################### Load resource file: " << resourceFile << std::endl;
-  Ogre::ConfigFile cf;
-  cf.load(resourceFile);
-
-  // Go through all sections & settings in the file
-  Ogre::ConfigFile::SectionIterator seci = cf.getSectionIterator();
-
-  Ogre::String secName, typeName, archName;
-  while (seci.hasMoreElements()) {
-    secName = seci.peekNextKey();
-    Ogre::ConfigFile::SettingsMultiMap *settings = seci.getNext();
-    Ogre::ConfigFile::SettingsMultiMap::iterator i;
-    for (i = settings->begin(); i != settings->end(); ++i) {
-      typeName = i->first;
-      archName = i->second;
-      Ogre::ResourceGroupManager::getSingleton().addResourceLocation(archName, typeName, secName);
-    }
-  }
-  std::cout << "##################### add resources" << std::endl;
-  // Add Optional resources (given by the user).
-  for (std::list<std::string>::const_iterator iter = mOptionalResourceLocation.begin();
-       iter != mOptionalResourceLocation.end(); ++iter) {
-    Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
-        *iter, "FileSystem", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-  }
-
   // Create the window
   bool canInit = true;
   if (mshowConfigDialog) {
     mRoot->restoreConfig();
-    if (!mRoot->showConfigDialog()) {
+#if (VISP_HAVE_OGRE_VERSION < (1<<16 | 10<<8 | 0))
+    bool isOK = mRoot->showConfigDialog();
+#else
+    bool isOK = mRoot->showConfigDialog(OgreBites::getNativeConfigDialog());
+#endif
+    if (!isOK) {
       canInit = false;
     }
   }
@@ -332,6 +363,14 @@ void vpAROgre::init(bool
 
     mRoot->initialise(false);
   }
+
+#if (VISP_HAVE_OGRE_VERSION < (1<<16 | 10<<8 | 0))
+  mSceneMgr = mRoot->createSceneManager(Ogre::ST_GENERIC);
+#elif (VISP_HAVE_OGRE_VERSION < (14<<16 | 0<<8 | 0))
+  mSceneMgr = mRoot->createSceneManager(Ogre::DefaultSceneManagerFactory::FACTORY_TYPE_NAME, mSceneManagerName);
+#else
+  mSceneMgr = mRoot->createSceneManager(Ogre::SMT_DEFAULT, mSceneManagerName);
+#endif
 
   bool fullscreen = false;
   Ogre::NameValuePairList misc;
@@ -377,7 +416,121 @@ void vpAROgre::init(bool
   }
   mWindow = mRoot->createRenderWindow(name, mWindowWidth, mWindowHeight, fullscreen, &misc);
 
+  // Load resource paths from config file
+
+  // File format is:
+  //  [ResourceGroupName]
+  //  ArchiveType=Path
+  //  .. repeat
+  // For example:
+  //  [General]
+  //  FileSystem=media/
+  //  Zip=packages/level1.zip
+
+  // mResourcePath may contain more than one folder location separated by ";"
+  bool resourcesFileExists = false;
+  std::string resourceFile;
+  std::vector<std::string> resourcesPaths = vpIoTools::splitChain(std::string(mResourcePath), std::string(";"));
+  for (size_t i = 0; i < resourcesPaths.size(); i++) {
+    resourceFile = resourcesPaths[i] + "/resources.cfg";
+    if (!vpIoTools::checkFilename(resourceFile)) {
+      continue;
+    }
+    resourcesFileExists = true;
+    std::cout << "######################### Load resource file: " << resourceFile << std::endl;
+    Ogre::ConfigFile cf;
+    cf.load(resourceFile);
+    // Go through all sections & settings in the file
+#if (VISP_HAVE_OGRE_VERSION < (1<<16 | 11<<8 | 0))
+    Ogre::ConfigFile::SectionIterator seci = cf.getSectionIterator();
+
+    Ogre::String secName, typeName, archName;
+    while (seci.hasMoreElements()) {
+      secName = seci.peekNextKey();
+      Ogre::ConfigFile::SettingsMultiMap *settings = seci.getNext();
+      Ogre::ConfigFile::SettingsMultiMap::iterator i;
+      for (i = settings->begin(); i != settings->end(); ++i) {
+        typeName = i->first;
+        archName = i->second;
+        bool doesResourceExist = vpIoTools::checkDirectory(archName) || vpIoTools::checkFilename(archName);
+        if (doesResourceExist) {
+          if (!Ogre::ResourceGroupManager::getSingleton().resourceLocationExists(archName, secName)) {
+            Ogre::ResourceGroupManager::getSingleton().addResourceLocation(archName, typeName, secName);
+          }
+          else {
+            std::cout << "INFO: Resource location \"" << archName << "\" of type \"" << typeName << "\" has already been added to the list of known resource locations." << std::endl;
+          }
+        }
+        else if (!doesResourceExist) {
+          std::cout << "INFO: Resource \"" << archName << "\" of type \"" << typeName << "\" does not exist." << std::endl;
+        }
+      }
+    }
+#else
+    const  Ogre::ConfigFile::SettingsBySection_ &sectionsNamesAndSettigns = cf.getSettingsBySection();
+    Ogre::String secName, typeName, archName;
+    for (std::pair<Ogre::String, Ogre::ConfigFile::SettingsMultiMap> name_settings : sectionsNamesAndSettigns) {
+      secName = name_settings.first;
+      Ogre::ConfigFile::SettingsMultiMap settings = name_settings.second;
+      Ogre::ConfigFile::SettingsMultiMap::iterator i;
+      for (i = settings.begin(); i != settings.end(); ++i) {
+        typeName = i->first;
+        archName = i->second;
+        bool doesResourceExist = vpIoTools::checkDirectory(archName) || vpIoTools::checkFilename(archName);
+        if (doesResourceExist) {
+          if (!Ogre::ResourceGroupManager::getSingleton().resourceLocationExists(archName, secName)) {
+            Ogre::ResourceGroupManager::getSingleton().addResourceLocation(archName, typeName, secName);
+          }
+          else {
+            std::cout << "INFO: Resource location \"" << archName << "\" of type \"" << typeName << "\" has already been added to the list of known resource locations." << std::endl;
+          }
+        }
+        else if (!doesResourceExist) {
+          std::cout << "INFO: Resource \"" << archName << "\" of type \"" << typeName << "\" does not exist." << std::endl;
+        }
+      }
+    }
+#endif
+  }
+  if (!resourcesFileExists) {
+    std::string errorMsg = std::string("Error: the requested resource file \"resources.cfg\"") +
+      std::string("doesn't exist in ") + std::string(mResourcePath);
+
+    std::cout << errorMsg << std::endl << std::flush;
+
+    throw(vpException(vpException::ioError, errorMsg));
+  }
+
+  // Add Optional resources (given by the user).
+  std::cout << "##################### add optional resource locations given by the user" << std::endl;
+  for (std::list<std::string>::const_iterator iter = mOptionalResourceLocation.begin();
+       iter != mOptionalResourceLocation.end(); ++iter) {
+    const Ogre::String typeName("FileSystem");
+    bool doesResourceExist = vpIoTools::checkDirectory(*iter) || vpIoTools::checkFilename(*iter);
+    if (doesResourceExist) {
+      if (!Ogre::ResourceGroupManager::getSingleton().resourceLocationExists(*iter, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME)) {
+        Ogre::ResourceGroupManager::getSingleton().addResourceLocation(*iter, typeName, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+      }
+      else {
+        std::cout << "INFO: Resource location \"" << *iter << "\" of type \"" << typeName << "\" has already been added to the list of known resource locations." << std::endl;
+      }
+    }
+    else if (!doesResourceExist) {
+      std::cout << "INFO: Resource \"" << *iter << "\" of type \"" << typeName << "\" does not exist." << std::endl;
+    }
+  }
+
+
+#if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 10 <<8 | 0))
+  // Initialize the RTShaderSystem, if available
+  bool hasInitializedTheRTSS = initialiseRTShaderSystem();
+  if (!hasInitializedTheRTSS) {
+    std::cout << "[vpAROgre::init] RTSS is not available." << std::endl;
+  }
+#endif
+
   // Initialise resources
+  std::cout << "##################### add resources" << std::endl;
   Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
   //-----------------------------------------------------
   // 4 Create the SceneManager
@@ -389,9 +542,7 @@ void vpAROgre::init(bool
   //    ST_INTERIOR = Quake3 BSP
   //-----------------------------------------------------
 
-  mSceneMgr = mRoot->createSceneManager(Ogre::ST_GENERIC);
-
-  // Create the camera
+// Create the camera
   createCamera();
 
   // Create a viewport
@@ -408,7 +559,8 @@ void vpAROgre::init(bool
   mRoot->addFrameListener(this);
 
   // Register as a Window listener
-  Ogre::WindowEventUtilities::addWindowEventListener(mWindow, this);
+  OgreWindowEventUtilities::addWindowEventListener(mWindow, this);
+  OgreWindowEventUtilities::_addRenderWindow(mWindow);
 
 #ifdef VISP_HAVE_OIS
   // Initialise OIS
@@ -437,19 +589,21 @@ void vpAROgre::init(bool
 #endif
 
   // Initialise a render to texture to be able to retrieve a screenshot
-  Ogre::TexturePtr Texture = Ogre::TextureManager::getSingleton().createManual(
-      "rtf", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, Ogre::TEX_TYPE_2D, mWindow->getWidth(),
-      mWindow->getHeight(), 0, Ogre::PF_R8G8B8A8, Ogre::TU_RENDERTARGET);
+  try {
+    Ogre::TexturePtr Texture = Ogre::TextureManager::getSingleton().createManual(
+        "rtf", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, Ogre::TEX_TYPE_2D, mWindow->getWidth(),
+        mWindow->getHeight(), 0, Ogre::PF_R8G8B8A8, Ogre::TU_RENDERTARGET);
 
-  //   Ogre::TexturePtr Texture =
-  //   Ogre::TextureManager::getSingleton().createManual("rtf",
-  //   Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,Ogre::TEX_TYPE_2D,
-  //                                                                                640,480, 0, Ogre::PF_R8G8B8A8,
-  //                                                                                Ogre::TU_RENDERTARGET);
-  Ogre::RenderTexture *RTarget = Texture->getBuffer()->getRenderTarget();
-  /*Ogre::Viewport* Viewport =*/RTarget->addViewport(mCamera);
-  RTarget->getViewport(0)->setClearEveryFrame(true);
-  RTarget->getViewport(0)->setOverlaysEnabled(false);
+    Ogre::RenderTexture *RTarget = Texture->getBuffer()->getRenderTarget();
+    RTarget->addViewport(mCamera);
+    RTarget->getViewport(0)->setClearEveryFrame(true);
+    RTarget->getViewport(0)->setOverlaysEnabled(false);
+  }
+  catch (const Ogre::Exception &e) {
+    std::cout << "Info: Texture rtf is already known by the resource manager." << std::endl;
+  }
+
+  mInitialized = true;
 }
 
 /*!
@@ -457,19 +611,41 @@ void vpAROgre::init(bool
 */
 vpAROgre::~vpAROgre(void)
 {
-  // Destroy 3D scene
+  if (!mInitialized) {
+    return;
+  }
+#if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 11<<8 | 0))
+  mPixelBuffer.reset();
+#else
+  mPixelBuffer.setNull();
+#endif
+// Destroy 3D scene
   destroyScene();
   // Close OIS
   closeOIS();
 
+  // Destroy the RTSS, if available
+  destroyRTShaderSystem();
+
   if (mWindow) {
-    Ogre::WindowEventUtilities::removeWindowEventListener(mWindow, this);
+    OgreWindowEventUtilities::removeWindowEventListener(mWindow, this);
+    OgreWindowEventUtilities::_removeRenderWindow(mWindow);
     windowClosed(mWindow);
   }
 
-  // Delete root
-  if (Ogre::Root::getSingletonPtr() && !Ogre::Root::getSingletonPtr()->getSceneManagerIterator().hasMoreElements() &&
-      mRoot) {
+// Delete root
+  bool hasNoMoreElements = false;
+#if (VISP_HAVE_OGRE_VERSION < (1<<16 | 11<<8 | 0))
+  if (Ogre::Root::getSingletonPtr()) {
+    hasNoMoreElements = !Ogre::Root::getSingletonPtr()->getSceneManagerIterator().hasMoreElements();
+  }
+#else
+  if (Ogre::Root::getSingletonPtr()) {
+    hasNoMoreElements = Ogre::Root::getSingletonPtr()->getSceneManagers().empty();
+  }
+#endif
+
+  if (hasNoMoreElements && mRoot) {
     delete mRoot;
   }
   mRoot = 0;
@@ -506,7 +682,7 @@ bool vpAROgre::frameStarted(const Ogre::FrameEvent &evt)
   bool result = customframeStarted(evt);
 
   // Listen to the window
-  Ogre::WindowEventUtilities::messagePump();
+  OgreWindowEventUtilities::messagePump();
   processInputEvent(evt);
 
   // See if we have to stop rendering
@@ -563,6 +739,21 @@ bool vpAROgre::customframeStarted(const Ogre::FrameEvent & /*evt*/)
   \return True if everything went well.
 */
 bool vpAROgre::customframeEnded(const Ogre::FrameEvent & /*evt*/) { return true; }
+
+/**
+ * \brief Check if the window that is currently closing is the one attached to the object.
+ *
+ * \param[in] rw The RenderWindow that is closing.
+ * \return true It corresponds to the vpAROgre object.
+ * \return false It is another window that is closing.
+ */
+bool vpAROgre::windowClosing(Ogre::RenderWindow *rw)
+{
+  if (rw == mWindow) {
+    keepOn = false;
+  }
+  return !keepOn;
+}
 
 /*!
 
@@ -627,8 +818,9 @@ void vpAROgre::display(const vpImage<unsigned char> &I, const vpHomogeneousMatri
     mWindow->update();
     keepOn = true;
   }
-  else
+  else {
     keepOn = false;
+  }
 }
 
 /*!
@@ -643,8 +835,9 @@ void vpAROgre::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMw)
     mWindow->update();
     keepOn = true;
   }
-  else
+  else {
     keepOn = false;
+  }
 }
 
 /*!
@@ -668,6 +861,18 @@ void vpAROgre::load(const std::string &entityName, const std::string &model)
   Ogre::Entity *newEntity = mSceneMgr->createEntity(entityName, model);
   Ogre::SceneNode *newNode = mSceneMgr->getRootSceneNode()->createChildSceneNode(entityName);
   newNode->attachObject(newEntity);
+}
+
+/*!
+  Change the material of an entity.
+  \param entityName : Name of the Entity and SceneNode to create.
+  \param materialName : Name of the material to use, as known by the MaterialManager.
+*/
+void vpAROgre::setMaterial(const std::string &entityName, const std::string &materialName)
+{
+  // Reset the position
+  Ogre::Entity *entity = mSceneMgr->getEntity(entityName);
+  entity->setMaterialName(materialName);
 }
 
 /*!
@@ -798,20 +1003,30 @@ void vpAROgre::createBackground(vpImage<unsigned char> & /* I */)
   // If we are using opengl we can boost a little bit performances with a
   // dynamic texture
   if (mRoot->getRenderSystem()->getName() == "OpenGL Rendering Subsystem") {
-    Ogre::TextureManager::getSingleton().createManual(
+    try {
+      Ogre::TextureManager::getSingleton().createManual(
         "BackgroundTexture", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, Ogre::TEX_TYPE_2D,
         mBackgroundWidth,  // width
         mBackgroundHeight, // height
         0,                 // num of mip maps
         Ogre::PF_BYTE_L, Ogre::TU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
+    }
+    catch (const Ogre::Exception &e) {
+      std::cout << "Info: Texture BackgroundTexture is already known by the resource manager." << std::endl;
+    }
   }
   else {
-    Ogre::TextureManager::getSingleton().createManual(
+    try {
+      Ogre::TextureManager::getSingleton().createManual(
         "BackgroundTexture", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, Ogre::TEX_TYPE_2D,
         mBackgroundWidth,  // width
         mBackgroundHeight, // height
         0,                 // num of mip maps
         Ogre::PF_BYTE_L, Ogre::TU_DEFAULT);
+    }
+    catch (const Ogre::Exception &e) {
+      std::cout << "Info: Texture BackgroundTexture is already known by the resource manager." << std::endl;
+    }
   }
 
   // Pointer to the dynamic texture
@@ -824,21 +1039,24 @@ void vpAROgre::createBackground(vpImage<unsigned char> & /* I */)
   mPixelBuffer = dynTexPtr->getBuffer();
 
   // Material to apply the texture to the background
-  Ogre::MaterialPtr Backgroundmaterial = Ogre::MaterialManager::getSingleton().create(
+  try {
+    Ogre::MaterialPtr Backgroundmaterial = Ogre::MaterialManager::getSingleton().create(
       "BackgroundMaterial", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-  //#if ( OGRE_VERSION >= (1 << 16 | 9 << 8 | 0) )
-  //      .dynamicCast<Ogre::Material>();
-  //#else
-  //      ;
-  //#endif
-  Ogre::Technique *Backgroundtechnique = Backgroundmaterial->createTechnique();
-  Backgroundtechnique->createPass();
-  Backgroundmaterial->getTechnique(0)->getPass(0)->setLightingEnabled(false);
-  Backgroundmaterial->getTechnique(0)->getPass(0)->setDepthCheckEnabled(false); // Background
-  Backgroundmaterial->getTechnique(0)->getPass(0)->setDepthWriteEnabled(false); // Background
-  Backgroundmaterial->getTechnique(0)->getPass(0)->createTextureUnitState("BackgroundTexture");
-  mBackground->setMaterial("BackgroundMaterial");                  // Attach the material to the rectangle
-  mBackground->setRenderQueueGroup(Ogre::RENDER_QUEUE_BACKGROUND); // To be rendered in Background
+    Ogre::Technique *Backgroundtechnique = Backgroundmaterial->createTechnique();
+    Backgroundtechnique->createPass();
+    Backgroundmaterial->getTechnique(0)->getPass(0)->setLightingEnabled(false);
+    Backgroundmaterial->getTechnique(0)->getPass(0)->setDepthCheckEnabled(false); // Background
+    Backgroundmaterial->getTechnique(0)->getPass(0)->setDepthWriteEnabled(false); // Background
+    Backgroundmaterial->getTechnique(0)->getPass(0)->createTextureUnitState("BackgroundTexture");
+#if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 11<<8 | 0))
+    mBackground->setMaterial(Backgroundmaterial);                  // Attach the material to the rectangle
+#else
+    mBackground->setMaterial("BackgroundMaterial");                  // Attach the material to the rectangle
+#endif
+  }
+  catch (const Ogre::Exception &e) {
+    std::cout << "Info: Material BackgroundMaterial is already known by the resource manager." << std::endl;
+  }
 
   // Add the background to the Scene Graph so it will be rendered
   Ogre::SceneNode *BackgroundNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("BackgoundNode");
@@ -867,23 +1085,31 @@ void vpAROgre::createBackground(vpImage<vpRGBa> & /* I */)
   // If we are using opengl we can boost a little bit performances with a
   // dynamic texture
   if (mRoot->getRenderSystem()->getName() == "OpenGL Rendering Subsystem") {
-    Ogre::TextureManager::getSingleton().createManual(
+    try {
+      Ogre::TextureManager::getSingleton().createManual(
         "BackgroundTexture", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, Ogre::TEX_TYPE_2D,
         mBackgroundWidth,  // width
         mBackgroundHeight, // height
         0,                 // num of mip maps
-        // Ogre::PF_BYTE_RGBA,
         Ogre::PF_BYTE_BGRA, Ogre::TU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
+    }
+    catch (const Ogre::Exception &e) {
+      std::cout << "Info: Texture BackgroundTexture is already known by the resource manager." << std::endl;
+    }
   }
   else { // As that texture does not seem to work properly with direct3D we
         // use a default texture
-    Ogre::TextureManager::getSingleton().createManual(
-        "BackgroundTexture", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, Ogre::TEX_TYPE_2D,
-        mBackgroundWidth,  // width
-        mBackgroundHeight, // height
-        0,                 // num of mip maps
-        // Ogre::PF_BYTE_RGBA,
-        Ogre::PF_BYTE_BGRA, Ogre::TU_DEFAULT);
+    try {
+      Ogre::TextureManager::getSingleton().createManual(
+         "BackgroundTexture", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, Ogre::TEX_TYPE_2D,
+         mBackgroundWidth,  // width
+         mBackgroundHeight, // height
+         0,                 // num of mip maps
+         Ogre::PF_BYTE_BGRA, Ogre::TU_DEFAULT);
+    }
+    catch (const Ogre::Exception &e) {
+      std::cout << "Info: Texture BackgroundTexture is already known by the resource manager." << std::endl;
+    }
   }
 
   // Pointer to the dynamic texture
@@ -898,20 +1124,25 @@ void vpAROgre::createBackground(vpImage<vpRGBa> & /* I */)
   mPixelBuffer = dynTexPtr->getBuffer();
 
   // Material to apply the texture to the background
-  Ogre::MaterialPtr Backgroundmaterial = Ogre::MaterialManager::getSingleton().create(
+  try {
+    Ogre::MaterialPtr Backgroundmaterial = Ogre::MaterialManager::getSingleton().create(
       "BackgroundMaterial", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-  //#if ( OGRE_VERSION >= (1 << 16 | 9 << 8 | 0) )
-  //      .dynamicCast<Ogre::Material>();
-  //#else
-  //      ;
-  //#endif
-  Ogre::Technique *Backgroundtechnique = Backgroundmaterial->createTechnique();
-  Backgroundtechnique->createPass();
-  Backgroundmaterial->getTechnique(0)->getPass(0)->setLightingEnabled(false);
-  Backgroundmaterial->getTechnique(0)->getPass(0)->setDepthCheckEnabled(false); // Background
-  Backgroundmaterial->getTechnique(0)->getPass(0)->setDepthWriteEnabled(false); // Background
-  Backgroundmaterial->getTechnique(0)->getPass(0)->createTextureUnitState("BackgroundTexture");
-  mBackground->setMaterial("BackgroundMaterial");                  // Attach the material to the rectangle
+    Ogre::Technique *Backgroundtechnique = Backgroundmaterial->createTechnique();
+    Backgroundtechnique->createPass();
+    Backgroundmaterial->getTechnique(0)->getPass(0)->setLightingEnabled(false);
+    Backgroundmaterial->getTechnique(0)->getPass(0)->setDepthCheckEnabled(false); // Background
+    Backgroundmaterial->getTechnique(0)->getPass(0)->setDepthWriteEnabled(false); // Background
+    Backgroundmaterial->getTechnique(0)->getPass(0)->createTextureUnitState("BackgroundTexture");
+
+#if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 11<<8 | 0))
+    mBackground->setMaterial(Backgroundmaterial);                  // Attach the material to the rectangle
+#else
+    mBackground->setMaterial("BackgroundMaterial");                  // Attach the material to the rectangle
+#endif
+  }
+  catch (const Ogre::Exception &e) {
+    std::cout << "Info: Material BackgroundMaterial is already known by the resource manager." << std::endl;
+  }
   mBackground->setRenderQueueGroup(Ogre::RENDER_QUEUE_BACKGROUND); // To be rendered in Background
 
   // Add the background to the Scene Graph so it will be rendered
@@ -1034,7 +1265,12 @@ void vpAROgre::updateCameraParameters(const vpHomogeneousMatrix &cMw)
                     (Ogre::Real)-cMw[1][0], (Ogre::Real)-cMw[1][1], (Ogre::Real)-cMw[1][2], (Ogre::Real)-cMw[1][3],
                     (Ogre::Real)-cMw[2][0], (Ogre::Real)-cMw[2][1], (Ogre::Real)-cMw[2][2], (Ogre::Real)-cMw[2][3],
                     (Ogre::Real)0, (Ogre::Real)0, (Ogre::Real)0, (Ogre::Real)1);
+#if (VISP_HAVE_OGRE_VERSION >= (1 << 16 | 11 << 8 | 0))
+  Ogre::Affine3 ModelViewAsAffine(ModelView);
+  mCamera->setCustomViewMatrix(true, ModelViewAsAffine);
+#else
   mCamera->setCustomViewMatrix(true, ModelView);
+#endif
 }
 
 /*!

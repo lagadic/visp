@@ -56,3 +56,5 @@ foreach(cpp ${example_cpp})
     visp_add_dependency(${cpp} "examples")
   endif()
 endforeach()
+
+# AROgreBasic cannot be used as unit test because requires a valid X11 context

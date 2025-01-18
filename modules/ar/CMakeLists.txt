@@ -43,7 +43,54 @@ if(USE_OGRE)
   # With Ubuntu 20.04, OGRE_LIBRARIES contains Boost::thread that cannot
   # be exported as is on pain of producing a build issue when ViSP is used
   # as a 3rd party. That's why here we get its imported location.
+
+  if(NOT OGRE_VERSION)
+    set(OGRE_VERSION "${OGRE_VERSION_MAJOR}.${OGRE_VERSION_MINOR}.${OGRE_VERSION_PATCH}")
+  endif()
+
+  if(${OGRE_VERSION_MAJOR} EQUAL 1 AND (${OGRE_VERSION_MINOR} EQUAL 10 OR ${OGRE_VERSION_MINOR} EQUAL 11))
+    find_package(Boost REQUIRED COMPONENTS thread)
+    link_directories(${OGRE_LIBRARY_DIRS})
+    if(NOT(TARGET OgreMain))
+      find_library(OgreMainSEARCH NAMES OgreMain PATHS ${OGRE_LIBRARY_DIRS})
+      add_library(OgreMain SHARED IMPORTED)
+      set_property(TARGET OgreMain PROPERTY IMPORTED_LOCATION ${OgreMainSEARCH})
+    endif()
+  endif()
+
+  if(NOT(${OGRE_VERSION_MAJOR} EQUAL 1 AND ${OGRE_VERSION_MINOR} LESS_EQUAL 9))
+    foreach(component ${OGRE_COMPONENTS})
+      set(ogre_target "OGRE_${component}_LIBRARIES")
+      foreach(ogre_libray ${${ogre_target}})
+        if(TARGET ${ogre_libray})
+          get_target_property(inc_dirs ${ogre_libray} INTERFACE_INCLUDE_DIRECTORIES)
+          if(inc_dirs)
+            list(APPEND opt_system_incs ${inc_dirs})
+          endif()
+          ## The following lines are not needed for Ogre 1.9 and 1.12, but might be useful for compiled versions of Ogre
+          # get_target_property(interface_libs ${ogre_libray} INTERFACE_LINK_LIBRARIES)
+          # if(interface_libs)
+          #   list(APPEND opt_libs ${interface_libs})
+          # endif()
+        endif()
+        if(${OGRE_VERSION_MAJOR} EQUAL 1 AND (${OGRE_VERSION_MINOR} EQUAL 10 OR ${OGRE_VERSION_MINOR} EQUAL 11))
+          unset(MATCHED)
+          string(REGEX MATCH ".*O[gG][rR][eE].*" MATCHED ${ogre_libray})
+          if (NOT MATCHED)
+              continue()
+          endif()
+          if(NOT(TARGET ${ogre_libray}))
+            find_library(${ogre_libray}SEARCH NAMES ${ogre_libray} PATHS ${OGRE_LIBRARY_DIRS})
+            add_library(${ogre_libray} SHARED IMPORTED)
+            set_property(TARGET ${ogre_libray} PROPERTY IMPORTED_LOCATION ${${ogre_libray}SEARCH})
+          endif()
+        endif()
+      endforeach()
+    endforeach()
+  endif()
+
   vp_filter_libraries_with_imported_location(OGRE_LIBRARIES)
+
   mark_as_advanced(OGRE_SAMPLES_INCLUDEPATH)
   #message("OGRE_SAMPLES_INCLUDEPATH: ${OGRE_SAMPLES_INCLUDEPATH}")
   if(OGRE_SAMPLES_INCLUDEPATH)
@@ -51,7 +98,6 @@ if(USE_OGRE)
   endif()
 
   # hack to fix possible presence of NOTFOUND in OGRE_INCLUDE_DIRS
-  #message("OGRE_INCLUDE_DIRS: ${OGRE_INCLUDE_DIRS}")
   foreach(inc_ ${OGRE_INCLUDE_DIRS})
     if(NOT ${inc_} MATCHES "NOTFOUND")
       list(APPEND opt_system_incs ${inc_})
@@ -187,7 +233,6 @@ endif()
 
 vp_add_module(ar visp_core)
 vp_glob_module_sources()
-
 
 vp_module_include_directories(${opt_incs} SYSTEM ${opt_system_incs})
 vp_create_module(${opt_libs})

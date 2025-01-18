@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,44 +29,51 @@
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
 # Description:
-# Try to find Vicon SDK
+# Try to find OIS 3rd party used by vpAROgre class
 # Once run this will define:
 #
-# VICON_FOUND
-# VICON_INCLUDE_DIRS
-# VICON_LIBRARIES
+# OIS_FOUND
+# OIS_INCLUDE_DIRS
+# OIS_LIBRARIES
+# OIS_VERSION
 #
 #############################################################################
 
-find_path(VICON_INCLUDE_DIR
-  NAMES DataStreamClient.h
+find_path(OIS_INCLUDE_DIR
+  NAMES ois/OIS.h
   PATHS
-    $ENV{VICON_DIR}
-    ${VICON_DIR}
+    $ENV{OIS_DIR}/include/ois
+    ${OIS_DIR}/include/ois
     /usr/include
     /usr/local/include
 )
 
-find_library(VICON_LIBRARY
-  NAMES ViconDataStreamSDK_CPP
+find_library(OIS_LIBRARY
+  NAMES OIS
   PATHS
-    $ENV{VICON_DIR}
-    ${VICON_DIR}
-    $ENV{VICON_DIR}/bin/Release
-    ${VICON_DIR}/bin/Release
+    $ENV{OIS_DIR}/lib
+    ${OIS_DIR}/lib
     /usr/lib
     /usr/local/lib
     )
 
-if(VICON_LIBRARY AND VICON_INCLUDE_DIR)
-    set(VICON_INCLUDE_DIRS ${VICON_INCLUDE_DIR})
-    set(VICON_LIBRARIES ${VICON_LIBRARY})
-    set(VICON_FOUND TRUE)
+if(OIS_LIBRARY AND OIS_INCLUDE_DIR)
+  set(OIS_INCLUDE_DIRS ${OIS_INCLUDE_DIR})
+  set(OIS_LIBRARIES ${OIS_LIBRARY})
+  set(OIS_FOUND TRUE)
+
+  get_filename_component(OIS_LIB_DIR ${OIS_LIBRARY} PATH)
+  vp_get_version_from_pkg("OIS" "${OIS_LIB_DIR}/pkgconfig" OIS_VERSION)
+
+  if(NOT OIS_VERSION)
+    vp_parse_header("${OIS_INCLUDE_DIR}/ois/OISPrereqs.h" OIS_VERSION_LINES OIS_VERSION_MAJOR OIS_VERSION_MINOR OIS_VERSION_PATCH)
+    set(OIS_VERSION "${OIS_VERSION_MAJOR}.${OIS_VERSION_MINOR}.${OIS_VERSION_PATCH}")
+  endif()
 else()
-    set(VICON_FOUND FALSE)
+  set(OIS_FOUND FALSE)
 endif()
 
 mark_as_advanced(
-  VICON_INCLUDE_DIR
-  VICON_LIBRARY
+  OIS_INCLUDE_DIR
+  OIS_LIBRARY
 )
