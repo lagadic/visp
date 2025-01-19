@@ -1445,7 +1445,7 @@ if(USE_JPEG)
   endif()
 endif()
 if(USE_EIGEN3)
-  # Additionnal check to be sure that Eigen3 include dir os well detected
+  # Additional check to be sure that Eigen3 include dir os well detected
   if(NOT EXISTS ${EIGEN3_INCLUDE_DIR})
     message(WARNING "Eigen3 config file is detected in ${Eigen3_DIR}. Using ${Eigen3_DIR}/Eigen3Config.cmake doesn't allow to use a valid Eigen3 include dir: ${EIGEN3_INCLUDE_DIR}. Modify Eigen3_DIR to point to Eigen3Config.cmake file located in Eigen3 installation folder or turn USE_EIGEN3 OFF.")
   endif()

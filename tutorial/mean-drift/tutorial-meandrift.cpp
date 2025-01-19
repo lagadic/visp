@@ -324,7 +324,7 @@ typedef struct ParametersForAlgo
   bool m_hinkley_computealphadelta; /*!< If true, compute alpha and delta of the Hinkley's using the stdev of the signal.*/
   float m_hinkley_h; /*!< Alarm factor permitting to compute alpha from the standard deviation of the signal.*/
   float m_hinkley_k; /*!< Detection factor permitting to compute delta from the standard deviation of the signal.*/
-  bool m_shewhart_useWECO; /*!< If true, use the WECO rules for additionnal subtests for Shewhart's test.*/
+  bool m_shewhart_useWECO; /*!< If true, use the WECO rules for additional subtests for Shewhart's test.*/
   bool m_shewhart_rules[vpStatisticalTestShewhart::COUNT_WECO - 1]; /*!< Rules for the Shewart's test. True activate a WECO rule, false deactivate it.*/
   float m_sigma_h; /*!< Alarm factor for the sigma test.*/
 
@@ -656,11 +656,11 @@ int main(int argc, char *argv[])
         << "      Default: " << parameters.m_hinkley_k << std::endl
         << std::endl
         << "  --shewhart-rules <3-sigma:{on|off} 2-sigma:{on|off} 1-sigma:{on|off} same-side:{on|off}>" << std::endl
-        << "      Choose the WECO additionnal tests for the Shewhart's test to use. To activate them, --shewart-weco must be used." << std::endl
+        << "      Choose the WECO additional tests for the Shewhart's test to use. To activate them, --shewart-weco must be used." << std::endl
         << "      Default: ON ON ON ON" << std::endl
         << std::endl
         << "  --shewhart-weco" << std::endl
-        << "      Activate the WECO additionnal tests for the Shewhart's test." << std::endl
+        << "      Activate the WECO additional tests for the Shewhart's test." << std::endl
         << "      Default: deactivated" << std::endl
         << std::endl
         << "  --sigma-h <value>" << std::endl
