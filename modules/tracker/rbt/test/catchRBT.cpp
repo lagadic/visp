@@ -578,7 +578,10 @@ SCENARIO("Instantiating a render-based tracker", "[rbt]")
             "delta_h" : 1
           }
         }
-      ]
+      ],
+      "verbose": {
+        "enabled": true
+      }
     })JSON";
     const auto verifyBase = [&tracker]() {
       REQUIRE((tracker.getImageHeight() == 240 && tracker.getImageWidth() == 320));
@@ -590,7 +593,7 @@ SCENARIO("Instantiating a render-based tracker", "[rbt]")
 
       REQUIRE((tracker.getOptimizationGain() == 1.0 && tracker.getMaxOptimizationIters() == 10));
       REQUIRE((tracker.getOptimizationInitialMu() == 0.5 && tracker.getOptimizationMuIterFactor() == 0.1));
-      };
+    };
     nlohmann::json j = nlohmann::json::parse(jsonLiteral);
     THEN("Loading configuration with trackers")
     {
@@ -662,7 +665,7 @@ SCENARIO("Running tracker on static synthetic sequences", "[rbt]")
   const auto setupScene = [&objFile](vpPanda3DRendererSet &renderer) {
     renderer.addNodeToScene(renderer.loadObject("object", objFile));
     renderer.addLight(vpPanda3DAmbientLight("ambient", vpRGBf(1.f)));
-    };
+  };
   const unsigned int n = 100;
   std::vector<vpHomogeneousMatrix> cTw;
   std::vector<vpHomogeneousMatrix> oTw;
