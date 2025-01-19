@@ -89,7 +89,7 @@ BEGIN_VISP_NAMESPACE
 
   \b Note: the weights do not sum to one. Negative values can even be expected.
 
-  \b Additionnal \b note: the original author recommended to set \f$ \beta = 2 \f$ for Gaussian problems, \f$ \kappa = 3 - n \f$
+  \b Additional\b note: the original author recommended to set \f$ \beta = 2 \f$ for Gaussian problems, \f$ \kappa = 3 - n \f$
   and \f$ 0 \leq \alpha \leq 1 \f$, where a larger value for \f$ \alpha \f$ spreads the sigma points further from the mean,
   which can be a problem for highly non-linear problems.
 */

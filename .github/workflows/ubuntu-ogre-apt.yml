@@ -20,7 +20,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-22.04, ubuntu-latest]
-        compiler: [ {CC: /usr/bin/gcc-9, CXX: /usr/bin/g++-9}, {CC: /usr/bin/gcc-10, CXX: /usr/bin/g++-10}, {CC: /usr/bin/clang, CXX: /usr/bin/clang++} ]
+        compiler: [ {CC: /usr/bin/gcc, CXX: /usr/bin/g++}, {CC: /usr/bin/clang, CXX: /usr/bin/clang++} ]
         standard: [ 11, 17 ]
         ogre: [ogre-1.9, ogre-1.12]
 

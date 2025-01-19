@@ -60,12 +60,13 @@ vpMbtMeLine::vpMbtMeLine()
  * Copy constructor.
  */
 vpMbtMeLine::vpMbtMeLine(const vpMbtMeLine &meline)
+  : vpMeLine(meline)
 {
   imin = meline.imin;
   jmin = meline.jmin;
   imax = meline.imax;
   jmax = meline.jmax;
-  expecteddensity = expecteddensity;
+  expecteddensity = meline.expecteddensity;
 }
 
 /*!
@@ -171,7 +172,7 @@ unsigned int vpMbtMeLine::seekExtremities(const vpImage<unsigned char> &I)
 
     if ((id1 < imin) || (id1 > imax) || (jd1 < jmin) || (jd1 > jmax)) {
       if (vpDEBUG_ENABLE(3)) {
-        vpDisplay::displayCross(I, id1, jd1, 15, vpColor::cyan);
+        vpDisplay::displayCross(I, static_cast<int>(id1), static_cast<int>(jd1), 15, vpColor::cyan);
         vpDisplay::flush(I);
       }
     }
@@ -219,7 +220,7 @@ unsigned int vpMbtMeLine::seekExtremities(const vpImage<unsigned char> &I)
 
     if ((id2 < imin) || (id2 > imax) || (jd2 < jmin) || (jd2 > jmax)) {
       if (vpDEBUG_ENABLE(3)) {
-        vpDisplay::displayCross(I, id2, jd2, 5, vpColor::cyan);
+        vpDisplay::displayCross(I, static_cast<int>(id2), static_cast<int>(jd2), 5, vpColor::cyan);
         vpDisplay::flush(I);
       }
     }
