@@ -63,19 +63,7 @@ public:
     setVerticalSyncEnabled(false);
   }
 
-  virtual ~vpPanda3DBaseRenderer()
-  {
-    if (m_window != nullptr) {
-      for (GraphicsOutput *buffer: m_buffers) {
-        buffer->get_engine()->remove_window(buffer);
-      }
-    }
-    if (m_isWindowOwner) {
-      framework.close_window(m_window);
-    }
-
-    m_window = nullptr;
-  }
+  virtual ~vpPanda3DBaseRenderer();
 
   /**
    * @brief Initialize the whole Panda3D framework. Create a new PandaFramework object and a new window.

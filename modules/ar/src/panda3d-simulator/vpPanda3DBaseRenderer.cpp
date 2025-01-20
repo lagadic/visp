@@ -53,10 +53,29 @@ PandaFramework vpPanda3DBaseRenderer::framework;
 bool vpPanda3DBaseRenderer::frameworkIsOpen(false);
 
 
+vpPanda3DBaseRenderer::~vpPanda3DBaseRenderer()
+{
+  if (m_window != nullptr) {
+    for (GraphicsOutput *buffer: m_buffers) {
+      buffer->get_engine()->remove_window(buffer);
+    }
+  }
+  m_buffers.clear();
+
+  if (m_isWindowOwner) {
+    int n = framework.find_window(m_window);
+    // std::cout << m_window->get_graphics_output();
+    framework.close_window(n);
+  }
+  m_window = nullptr;
+}
+
 void vpPanda3DBaseRenderer::initFramework()
 {
-
   if (!frameworkIsOpen) {
+    load_prc_file_data("", "textures-power-2 none");
+    load_prc_file_data("", "gl-version 3 2");
+    load_prc_file_data("", "no-singular-invert");
     frameworkIsOpen = true;
     framework.open_framework();
   }
@@ -66,16 +85,17 @@ void vpPanda3DBaseRenderer::initFramework()
   WindowProperties winProps;
   winProps.set_size(LVecBase2i(m_renderParameters.getImageWidth(), m_renderParameters.getImageHeight()));
   int flags = GraphicsPipe::BF_refuse_window;
-  m_window = framework.open_window(winProps, flags);
+  m_window = framework.open_window(winProps, flags, nullptr, nullptr);
   // try and reopen with visible window
   if (m_window == nullptr) {
     winProps.set_minimized(true);
-    m_window = framework.open_window(winProps, 0);
+    m_window = framework.open_window(winProps, 0, nullptr, nullptr);
   }
   if (m_window == nullptr) {
     throw vpException(vpException::notInitialized,
     "Panda3D renderer: Could not create the requested window when performing initialization.");
   }
+  std::cout << "GSG = " << m_window->get_graphics_output()->get_gsg() << std::endl;
   m_window->set_background_type(WindowFramework::BackgroundType::BT_black);
   setupScene();
   setupCamera();
