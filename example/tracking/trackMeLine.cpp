@@ -33,36 +33,20 @@
 
 /*!
   \file trackMeLine.cpp
+  \example trackMeLine.cpp
 
   \brief Tracking of a line using vpMe.
 */
 
-/*!
-  \example trackMeLine.cpp
-
-  Tracking of a line using vpMe.
-*/
-
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpDebug.h>
 
-#include <iomanip>
-#include <sstream>
-#include <stdio.h>
-#include <stdlib.h>
-
-#if defined(VISP_HAVE_MODULE_ME) &&                                                                                    \
-    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+#if defined(VISP_HAVE_MODULE_ME) && defined(VISP_HAVE_DISPLAY)
 
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpIoTools.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/io/vpImageIo.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpVideoReader.h>
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/me/vpMeLine.h>
@@ -77,7 +61,6 @@ using namespace VISP_NAMESPACE_NAME;
 #endif
 
 /*!
-
   Print the program options.
 
   \param name : Program name.
@@ -87,7 +70,6 @@ using namespace VISP_NAMESPACE_NAME;
   \param first : First image.
   \param last : Last image.
   \param step : Step between two images.
-
 */
 void usage(const char *name, const char *badparam, std::string ipath, std::string ppath, unsigned first,
   unsigned last, unsigned step)
@@ -304,15 +286,8 @@ int main(int argc, const char **argv)
 
     if (opt_display) {
       // We open a window using either X11, GTK, GDI or OpenCV
-#if defined(VISP_HAVE_X11)
-      display = new vpDisplayX;
-#elif defined(VISP_HAVE_GTK)
-      display = new vpDisplayGTK;
-#elif defined(VISP_HAVE_GDI)
-      display = new vpDisplayGDI;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-      display = new vpDisplayOpenCV;
-#endif
+      display = vpDisplayFactory::allocateDisplay();
+
       // Display size is automatically defined by the image (I) size
       display->init(I, 10, 10, "Current image");
       // Display the image
@@ -327,13 +302,17 @@ int main(int argc, const char **argv)
     vpMeLine me_line;
 
     vpMe me;
-    me.setRange(15);
+    me.setRange(20);
     me.setPointsToTrack(160);
     me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
     me.setThreshold(20);
 
     me_line.setMe(&me);
     me_line.setDisplay(vpMeSite::RANGE_RESULT);
+    // ajout FC
+    const bool useIntensity = true;
+    me_line.setRhoSignFromIntensity(useIntensity);
+    // fin ajout FC
 
     std::cout << "Video settings" << std::endl;
     std::cout << "  Name       : " << g.getFrameName() << std::endl;
@@ -358,12 +337,12 @@ int main(int argc, const char **argv)
       ip2.set_j(211);
       me_line.initTracking(I, ip1, ip2);
     }
+    me_line.track(I);
 
     if (opt_display) {
       me_line.display(I, vpColor::green);
+      vpDisplay::flush(I);
     }
-
-    me_line.track(I);
     if (opt_display && opt_click_allowed) {
       std::cout << "A click to continue..." << std::endl;
       vpDisplay::getClick(I);
@@ -388,18 +367,27 @@ int main(int argc, const char **argv)
 
       me_line.track(I);
 
-      vpTRACE("me_line : %f %f", me_line.getRho(), vpMath::deg(me_line.getTheta()));
+      vpTRACE("me_line: rho %lf theta (dg) %lf", me_line.getRho(), vpMath::deg(me_line.getTheta()));
       vpFeatureBuilder::create(l, cam, me_line);
-      vpTRACE("me_line : %f %f", l.getRho(), vpMath::deg(l.getTheta()));
+      vpTRACE("fe_line: rho %lf theta (dg) %lf", l.getRho(), vpMath::deg(l.getTheta()));
+
+      // FC print
+      // printf("me_line: rho %lf theta (dg) %lf\n", me_line.getRho(), vpMath::deg(me_line.getTheta()));
+      // printf("fe_line: rho %lf theta (dg) %lf\n", l.getRho(), vpMath::deg(l.getTheta()));
+      // FC fin print
 
       if (opt_display) {
         me_line.display(I, vpColor::green, thickness);
         vpDisplay::flush(I);
-      }
-      if (opt_display && opt_click_allowed) {
-        if (vpDisplay::getClick(I, false)) {
-          quit = true;
+        if (opt_click_allowed) {
+          if (vpDisplay::getClick(I, false)) {
+            quit = true;
+          }
         }
+        // ajout FC
+        // std::cout << "A click to continue..." << std::endl;
+        // vpDisplay::getClick(I);
+        // fin ajout FC
       }
     }
     if (opt_display && opt_click_allowed && !quit) {
@@ -426,9 +414,7 @@ int main(int argc, const char **argv)
 
 int main()
 {
-  std::cout << "visp_me module or X11, GTK, GDI or OpenCV display "
-    "functionalities are required..."
-    << std::endl;
+  std::cout << "visp_me module or X11, GTK, GDI or OpenCV display functionalities are required..." << std::endl;
   return EXIT_SUCCESS;
 }
 

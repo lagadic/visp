@@ -158,7 +158,7 @@ if(USE_OPENCV)
   endif()
   if(OpenCV_INCLUDE_DIRS)
     # Append OpenCV include dirs as system to avoid warnings coming from OpenCV headers
-    list(APPEND opt_incs ${OpenCV_INCLUDE_DIRS})
+    list(APPEND opt_system_incs ${OpenCV_INCLUDE_DIRS})
   endif()
 endif(USE_OPENCV)
 
@@ -180,7 +180,7 @@ if(USE_YARP)
   vp_list_unique(YARP_IMPORTED_LIBS)
   vp_list_unique(YARP_IMPORTED_INCLUDE_DIRS)
 
-  list(APPEND opt_incs ${YARP_IMPORTED_INCLUDE_DIRS})
+  list(APPEND opt_system_incs ${YARP_IMPORTED_INCLUDE_DIRS})
 
   # Work around to add Yarp libraries and also third party libraries requested by Yarp
   list(REVERSE YARP_LIBRARIES) # to start with YARP_init, that depends on YARP_dev, YARP_sig and YARP_OS
@@ -215,22 +215,22 @@ if(USE_EIGEN3)
 endif()
 
 if(USE_GSL)
-  list(APPEND opt_incs ${GSL_INCLUDE_DIRS})
+  list(APPEND opt_system_incs ${GSL_INCLUDE_DIRS})
   list(APPEND opt_libs ${GSL_LIBRARIES})
 endif()
 
 if(USE_MKL)
-  list(APPEND opt_incs ${MKL_INCLUDE_DIRS})
+  list(APPEND opt_system_incs ${MKL_INCLUDE_DIRS})
   list(APPEND opt_libs ${MKL_LIBRARIES})
 endif()
 
 if(USE_OPENBLAS)
-  list(APPEND opt_incs ${OpenBLAS_INCLUDE_DIR})
+  list(APPEND opt_system_incs ${OpenBLAS_INCLUDE_DIR})
   list(APPEND opt_libs ${OpenBLAS_LIBRARIES})
 endif()
 
 if(USE_ATLAS)
-  list(APPEND opt_incs ${Atlas_INCLUDE_DIR})
+  list(APPEND opt_system_incs ${Atlas_INCLUDE_DIR})
   list(APPEND opt_libs ${Atlas_LIBRARIES})
 endif()
 
@@ -251,7 +251,7 @@ if(USE_THREADS)
 endif()
 
 if(USE_ZLIB)
-  list(APPEND opt_incs ${ZLIB_INCLUDE_DIRS})
+  list(APPEND opt_system_incs ${ZLIB_INCLUDE_DIRS})
   list(APPEND opt_libs ${ZLIB_LIBRARIES})
 endif()
 
@@ -274,14 +274,14 @@ endif()
 
 if(USE_NLOHMANN_JSON AND NOT VISP_HAVE_NLOHMANN_JSON_FROM_VTK)
   get_target_property(_inc_dirs "nlohmann_json::nlohmann_json" INTERFACE_INCLUDE_DIRECTORIES)
-  list(APPEND opt_incs ${_inc_dirs})
+  list(APPEND opt_system_incs ${_inc_dirs})
 endif()
 
 if(USE_PCL)
-  list(APPEND opt_incs ${PCL_INCLUDE_DIRS})
+  list(APPEND opt_system_incs ${PCL_INCLUDE_DIRS})
   # To ensure to build with VTK and other PCL 3rd parties we are not using PCL_LIBRARIES but PCL_DEPS_INCLUDE_DIRS
   # and PCL_DEPS_LIBRARIES instead
-  list(APPEND opt_incs ${PCL_DEPS_INCLUDE_DIRS})
+  list(APPEND opt_system_incs ${PCL_DEPS_INCLUDE_DIRS})
   list(APPEND opt_libs ${PCL_DEPS_LIBRARIES})
 endif()
 

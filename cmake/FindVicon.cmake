@@ -35,7 +35,6 @@
 # VICON_FOUND
 # VICON_INCLUDE_DIRS
 # VICON_LIBRARIES
-# VICON_VERSION
 #
 #############################################################################
 

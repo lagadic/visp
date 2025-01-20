@@ -38,7 +38,6 @@
 
   \warning The content of this file is only available if Ogre3D and
   one of the renderer (OpenGL or DirectX) are installed.
-
 */
 
 #ifndef VP_AR_OGRE_H
@@ -61,8 +60,27 @@
 #include <Ogre.h>
 #include <OgreFrameListener.h>
 
+#if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 10 <<8 | 0))
+#include <Bites/OgreBitesConfigDialog.h>
+#endif
+
+#if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 11<<8 | 0))
+#include <Bites/OgreWindowEventUtilities.h>
+#endif
+
+#if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 12 <<8 | 0))
+#include <OgreComponents.h>
+#elif (VISP_HAVE_OGRE_VERSION >= (1<<16 | 10 <<8 | 0))
+#include <OgreBuildSettings.h>
+#endif
+
+#if defined(OGRE_BUILD_COMPONENT_RTSHADERSYSTEM) & (VISP_HAVE_OGRE_VERSION >= (1<<16 | 10 <<8 | 0))
+#include <RTShaderSystem/OgreShaderGenerator.h>
+#include <Bites/OgreSGTechniqueResolverListener.h>
+#endif // INCLUDE_RTSHADER_SYSTEM
+
 #ifdef VISP_HAVE_OIS
-#include <OIS.h>
+#include <ois/OIS.h>
 #endif
 
 BEGIN_VISP_NAMESPACE
@@ -198,6 +216,8 @@ public:
     updateCameraProjection();
   }
 
+  void setMaterial(const std::string &entityName, const std::string &materialName);
+
   /*!
     Set the near distance for clipping.
 
@@ -282,7 +302,9 @@ public:
     mWindow->reposition(static_cast<int>(win_x), static_cast<int>(win_y));
   }
 
-  virtual void windowClosed(Ogre::RenderWindow *rw);
+  virtual bool windowClosing(Ogre::RenderWindow *rw) VP_OVERRIDE;
+
+  virtual void windowClosed(Ogre::RenderWindow *rw) VP_OVERRIDE;
 
 protected:
   virtual void init(bool bufferedKeys = false, bool hidden = false);
@@ -345,13 +367,21 @@ private:
 
   bool stopTest(const Ogre::FrameEvent &evt);
 
+  bool initialiseRTShaderSystem();
+
+  void destroyRTShaderSystem();
+
 protected:
+  static unsigned int sID;
+  static unsigned int sRTSSUsers;
   // Attributes
   Ogre::String name; /**Name of th Window*/
+  bool mInitialized; /** True once init(bool, bool) has been called.*/
 
   // OGRE 3D System
   Ogre::Root *mRoot;             /** Application's root */
   Ogre::Camera *mCamera;         /** Camera */
+  Ogre::String mSceneManagerName; /**Name of the scene manager*/
   Ogre::SceneManager *mSceneMgr; /** Scene manager */
   Ogre::RenderWindow *mWindow;   /** Display window */
   Ogre::String mResourcePath;    /** Path to resources.cfg */
@@ -362,6 +392,11 @@ protected:
   OIS::InputManager *mInputManager;
   OIS::Keyboard *mKeyboard;
 #endif
+
+#if defined(OGRE_BUILD_COMPONENT_RTSHADERSYSTEM) & (VISP_HAVE_OGRE_VERSION >= (1<<16 | 10 <<8 | 0))
+  Ogre::RTShader::ShaderGenerator *mShaderGenerator; // The Shader generator instance.
+  OgreBites::SGTechniqueResolverListener *mMaterialMgrListener; // Shader generator material manager listener.
+#endif // INCLUDE_RTSHADER_SYSTEM
 
   // ViSP AR System
   bool keepOn;                                     /** Has the application received a signal to stop(false) or not

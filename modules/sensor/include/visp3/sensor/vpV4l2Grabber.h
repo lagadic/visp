@@ -211,6 +211,11 @@ public:
   //  }
   //#endif
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  vpV4l2Grabber(const vpV4l2Grabber &) = delete; // non construction-copyable
+  vpV4l2Grabber &operator=(const vpV4l2Grabber &) = delete; // non copyable
+#endif
+
 public:
   vpV4l2Grabber();
   VP_EXPLICIT vpV4l2Grabber(bool verbose);

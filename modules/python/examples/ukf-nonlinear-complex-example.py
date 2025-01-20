@@ -73,7 +73,7 @@
 
    where \f$ w_m^i \f$ is the weight associated to the \f$ i^{th} \f$ measurements for the weighted mean.
 
-   Additionnally, the addition and subtraction of angles must be carefully done, as the result
+   Additionally, the addition and subtraction of angles must be carefully done, as the result
    must stay in the interval \f$[- \pi ; \pi ]\f$ or \f$[0 ; 2 \pi ]\f$ . We decided to use
    the interval \f$[- \pi ; \pi ]\f$ .
 """

@@ -33,9 +33,9 @@
 #
 #############################################################################
 
-project(example-device-kinect)
-
 cmake_minimum_required(VERSION 3.10)
+
+project(example-device-kinect)
 
 find_package(VISP REQUIRED visp_core visp_sensor visp_gui)
 

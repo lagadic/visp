@@ -1,6 +1,6 @@
-project(tutorial-contour)
-
 cmake_minimum_required(VERSION 3.10)
+
+project(tutorial-contour)
 
 find_package(VISP REQUIRED visp_core visp_io visp_gui visp_imgproc)
 

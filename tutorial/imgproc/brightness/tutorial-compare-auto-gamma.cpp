@@ -1,4 +1,4 @@
-//! \example tutorial-compare-auto-gamma
+//! \example tutorial-compare-auto-gamma.cpp
 
 #include <iostream>
 #include <visp3/core/vpConfig.h>
@@ -122,7 +122,7 @@ int main(int argc, const char **argv)
     }
     else if (std::string(argv[i]) == "--gaussian-std" && i + 1 < argc) {
       ++i;
-      gaussianStdev = std::atof(argv[i]);
+      gaussianStdev = static_cast<float>(std::atof(argv[i]));
     }
     else if (std::string(argv[i]) == "--aperture-size" && i + 1 < argc) {
       ++i;

@@ -187,6 +187,12 @@ protected:
   //    implemented!"); return *this;
   //  }
   //#endif
+#if !defined(VISP_MOMENTS_COMBINE_MATRICES)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  vpFeatureMoment(const vpFeatureMoment &) = delete; // non construction-copyable
+  vpFeatureMoment &operator=(const vpFeatureMoment &) = delete; // non copyable
+#endif
+#endif
 
 public:
   /*!

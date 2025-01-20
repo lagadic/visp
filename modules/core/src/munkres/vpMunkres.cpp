@@ -48,7 +48,7 @@ BEGIN_VISP_NAMESPACE
                                                        const unsigned int &row)
 {
   const auto it = std::find(begin(mask.at(row)), end(mask.at(row)), vpMunkres::ZERO_T::STARRED);
-  return it != end(mask.at(row)) ? std::make_optional<unsigned int>(std::distance(begin(mask.at(row)), it))
+  return it != end(mask.at(row)) ? std::make_optional<unsigned int>(static_cast<unsigned int>(std::distance(begin(mask.at(row)), it)))
     : std::nullopt;
 }
 
@@ -64,7 +64,8 @@ std::optional<unsigned int> vpMunkres::findStarInCol(const std::vector<std::vect
 {
   const auto it = std::find_if(begin(mask), end(mask),
                                [&col](const auto &row) { return row.at(col) == vpMunkres::ZERO_T::STARRED; });
-  return it != end(mask) ? std::make_optional<unsigned int>(std::distance(begin(mask), it)) : std::nullopt;
+  return it != end(mask) ? std::make_optional<unsigned int>(static_cast<unsigned int>(std::distance(begin(mask), it)))
+                                                            : std::nullopt;
 }
 
 /*!
@@ -78,7 +79,8 @@ std::optional<unsigned int> vpMunkres::findPrimeInRow(const std::vector<std::vec
                                                       const unsigned int &row)
 {
   const auto it = std::find(begin(mask.at(row)), end(mask.at(row)), vpMunkres::ZERO_T::PRIMED);
-  return it != end(mask.at(row)) ? std::make_optional<unsigned int>(std::distance(begin(mask.at(row)), it))
+  return it != end(mask.at(row))
+      ? std::make_optional<unsigned int>(static_cast<unsigned int>(std::distance(begin(mask.at(row)), it)))
     : std::nullopt;
 }
 

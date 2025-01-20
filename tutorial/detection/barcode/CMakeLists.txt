@@ -1,6 +1,6 @@
-project(tutorial-barcode)
-
 cmake_minimum_required(VERSION 3.10)
+
+project(tutorial-barcode)
 
 find_package(VISP REQUIRED visp_core visp_detection visp_io visp_gui visp_sensor)
 

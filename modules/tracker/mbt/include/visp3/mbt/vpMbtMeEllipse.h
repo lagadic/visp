@@ -36,8 +36,8 @@
  * \brief Moving edges on an ellipse
  */
 
-#ifndef vpMbtMeEllipse_HH
-#define vpMbtMeEllipse_HH
+#ifndef VP_MBT_ME_ELLIPSE_H
+#define VP_MBT_ME_ELLIPSE_H
 
 #include <list>
 #include <math.h>

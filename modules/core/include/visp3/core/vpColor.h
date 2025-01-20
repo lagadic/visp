@@ -159,47 +159,28 @@ public:
   /*! Predefined colors identifier. */
   typedef enum
   {
-    id_black = 0,  /*!< Identifier associated to the predefined vpColor::black
-                      color. */
-    id_white,      /*!< Identifier associated to the predefined vpColor::white
-                      color. */
-    id_lightGray,  /*!< Identifier associated to the predefined
-                      vpColor::lightGray color. */
-    id_gray,       /*!< Identifier associated to the predefined vpColor::gray color.
-                    */
-    id_darkGray,   /*!< Identifier associated to the predefined
-                      vpColor::darkGray color. */
-    id_lightRed,   /*!< Identifier associated to the predefined
-                      vpColor::lightRed color. */
-    id_red,        /*!< Identifier associated to the predefined vpColor::red color.
-                    */
-    id_darkRed,    /*!< Identifier associated to the predefined vpColor::darkRed
-                      color. */
-    id_lightGreen, /*!< Identifier associated to the predefined
-                      vpColor::lightGreen color. */
-    id_green,      /*!< Identifier associated to the predefined vpColor::green
-                      color. */
-    id_darkGreen,  /*!< Identifier associated to the predefined
-                      vpColor::darkGreen color. */
-    id_lightBlue,  /*!< Identifier associated to the predefined
-                      vpColor::lightBlue color. */
-    id_blue,       /*!< Identifier associated to the predefined vpColor::blue color.
-                    */
-    id_darkBlue,   /*!< Identifier associated to the predefined
-                      vpColor::darkBlue color. */
-    id_yellow,     /*!< Identifier associated to the predefined vpColor::yellow
-                      color. */
-    id_cyan,       /*!< Identifier associated to the predefined vpColor::cyan color.
-                    */
-    id_orange,     /*!< Identifier associated to the predefined vpColor::orange
-                      color. */
-    id_purple,     /*!< Identifier associated to the predefined vpColor::purple
-                      color. */
+    id_black = 0,  /*!< Identifier associated to the predefined vpColor::black color. */
+    id_white,      /*!< Identifier associated to the predefined vpColor::white color. */
+    id_lightGray,  /*!< Identifier associated to the predefined vpColor::lightGray color. */
+    id_gray,       /*!< Identifier associated to the predefined vpColor::gray color. */
+    id_darkGray,   /*!< Identifier associated to the predefined pColor::darkGray color. */
+    id_lightRed,   /*!< Identifier associated to the predefined vpColor::lightRed color. */
+    id_red,        /*!< Identifier associated to the predefined vpColor::red color. */
+    id_darkRed,    /*!< Identifier associated to the predefined vpColor::darkRed color. */
+    id_lightGreen, /*!< Identifier associated to the predefined vpColor::lightGreen color. */
+    id_green,      /*!< Identifier associated to the predefined vpColor::green color. */
+    id_darkGreen,  /*!< Identifier associated to the predefined vpColor::darkGreen color. */
+    id_lightBlue,  /*!< Identifier associated to the predefined vpColor::lightBlue color. */
+    id_blue,       /*!< Identifier associated to the predefined vpColor::blue color. */
+    id_darkBlue,   /*!< Identifier associated to the predefined vpColor::darkBlue color. */
+    id_yellow,     /*!< Identifier associated to the predefined vpColor::yellow color. */
+    id_cyan,       /*!< Identifier associated to the predefined vpColor::cyan color. */
+    id_orange,     /*!< Identifier associated to the predefined vpColor::orange color. */
+    id_purple,     /*!< Identifier associated to the predefined vpColor::purple color. */
 
-    id_unknown /*!< Identifier associated to unknowned
-                  colors. By unknowned, we mean not a predefined
-                  color. This identifier can also be used to know
-                  the number of predefined colors. */
+    id_unknown /*!< Identifier associated with unknown colors.
+                    By unknown, we mean that it is not a predefined colour.
+                    This identifier can also be used to find out the number of predefined colours */
 
   } vpColorIdentifier;
 

@@ -143,6 +143,10 @@ private:
   public:
     vpPixelOperation() { }
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    virtual ~vpPixelOperation() = default;
+#endif
+
     virtual T operator()(const T &, const T &) = 0;
   };
 

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,13 +29,12 @@
  *
  * Description:
  * Ogre example.
- *
-*****************************************************************************/
+ */
+
 /*!
   \example HelloWorldOgreAdvanced.cpp
 
   \brief Example that shows how to exploit the vpAROgre class.
-
 */
 
 #include <iostream>
@@ -89,6 +87,23 @@ public:
 protected:
   void createScene()
   {
+    mSceneMgr->setAmbientLight(Ogre::ColourValue((float)0.6, (float)0.6, (float)0.6)); // Default value of lightning
+    Ogre::Light *light = mSceneMgr->createLight();
+    light->setDiffuseColour(1.0, 1.0, 1.0);  // scaled RGB values
+    light->setSpecularColour(1.0, 1.0, 1.0); // scaled RGB values
+    // Lumiere ponctuelle
+#if (VISP_HAVE_OGRE_VERSION < (1 << 16 | 10 << 8 | 0))
+    light->setPosition(-5, -5, 10);
+#else
+    Ogre::SceneNode *spotLightNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+    spotLightNode->attachObject(light);
+    spotLightNode->setPosition(Ogre::Vector3(-5, -5, 10));
+#endif
+    light->setType(Ogre::Light::LT_POINT);
+    light->setAttenuation((Ogre::Real)100, (Ogre::Real)1.0, (Ogre::Real)0.045, (Ogre::Real)0.0075);
+    // Ombres
+    light->setCastShadows(true);
+
     // Create the Entity
     Ogre::Entity *robot = mSceneMgr->createEntity("Robot", "robot.mesh");
     // Attach robot to scene graph
@@ -99,6 +114,8 @@ protected:
     RobotNode->scale((Ogre::Real)0.001, (Ogre::Real)0.001, (Ogre::Real)0.001);
     RobotNode->pitch(Ogre::Degree(180));
     RobotNode->yaw(Ogre::Degree(-90));
+    robot->setCastShadows(true);
+    mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_MODULATIVE);
 
     // The animation
     // Set the good animation

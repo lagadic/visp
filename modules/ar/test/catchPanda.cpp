@@ -32,13 +32,12 @@
  */
 
 /*!
-  \example catchJsonCamera.cpp
+  \example catchPanda.cpp
 
-  Test saving and parsing JSON configuration for vpCameraParameters.
+  Test saving and parsing JSON configuration for Panda 3D renderer.
 */
 
-#include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_PANDA3D) && defined(VISP_HAVE_CATCH2)
 #include <visp3/ar/vpPanda3DBaseRenderer.h>
@@ -52,7 +51,6 @@ using namespace VISP_NAMESPACE_NAME;
 #endif
 
 #include <random>
-
 
 vpPanda3DRenderParameters defaultRenderParams()
 {
@@ -87,6 +85,8 @@ int main(int argc, char *argv[])
 }
 
 #else
+
+#include <stdlib.h>
 
 int main() { return EXIT_SUCCESS; }
 

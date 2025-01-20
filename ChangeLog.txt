@@ -43,9 +43,10 @@ ViSP 3.x.x (Version in development)
     . Update apriltag 3rdparty to 3.4.2 release
     . Update tinyexr 3rdparty to 1.0.9 release
     . Update stb_image 3rdparty to 2.30 version
-    . Update Catch2 3rdparty to 3.7.1 version
+    . Update Catch2 3rdparty to 3.8.0 version
     . Add compatibility with Yolo v11 in vpDetectorDNNOpenCV a wrapper over the OpenCV DNN module that allows
       to detect objects
+    . Introduce compat with Ogre 1.12.0 version
   - Applications
     . Migrate eye-to-hand tutorials in apps
   - Tutorials
@@ -74,6 +75,8 @@ ViSP 3.x.x (Version in development)
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-pf.html
     . New tutorial: Using Particle Filter to model a wire using polynomial interpolation
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-pf-curve-fitting.html
+    . New tutorial: Rendering a 3D scene with Ogre
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-ogre.html
   - Bug fixed
     . [#1251] Bug in vpDisplay::displayFrame()
     . [#1270] Build issue around std::clamp and optional header which are not found with cxx17
@@ -88,12 +91,17 @@ ViSP 3.x.x (Version in development)
     . [#1337] The pose of the automatic data generation pipeline from blenderproc seems wrong
     . [#1341] SVD computation fails with Lapack when m < n
     . [#1370] encountered compilation errors while building the ViSP library
+    . [#1404] Compilation error when no GUI library is available
     . [#1424] Unable to detect Yarp 3.9.0
     . [#1485] Build issue around nlohmann_json usage with VTK 9.2.0 or more recent version used as an embedded
               3rdparty by PCL
     . [#1487] Segfault with vpCannyEdgeDetection with a certain image
     . [#1494] Memory management issue in vpArray2D::resize()
     . [#1495] vpMeLine is unable to seek extremities
+    . [#1519] Dataset not detected when tests are disabled
+    . [#1521] Build issues with OpenCV 5.0.0
+    . [#1546] OIS 3rdparty not detected during CMake configuration
+    . [#1547] Build issue with Ogre 1.12.0 or more recent versions
 ----------------------------------------------
 ViSP 3.6.0 (released September 22, 2023)
   - Contributors:

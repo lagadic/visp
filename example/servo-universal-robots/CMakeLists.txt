@@ -33,9 +33,9 @@
 #
 #############################################################################
 
-project(example-servo-universal-robots)
-
 cmake_minimum_required(VERSION 3.10)
+
+project(example-servo-universal-robots)
 
 find_package(VISP REQUIRED visp_robot visp_io)
 

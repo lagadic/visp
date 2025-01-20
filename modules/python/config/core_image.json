@@ -4,34 +4,50 @@
       "ignore_repr": true,
       "additional_bindings": "bindings_vpImage",
       "use_buffer_protocol": true,
+      "acknowledge_pointer_or_ref_fields": [
+        "Type*",
+        "vpDisplay*",
+        "Type**"
+      ],
       "specializations": [
         {
           "python_name": "ImageGray",
-          "arguments": ["unsigned char"]
+          "arguments": [
+            "unsigned char"
+          ]
         },
         {
           "python_name": "ImageFloat",
-          "arguments": ["float"]
+          "arguments": [
+            "float"
+          ]
         },
         {
           "python_name": "ImageDouble",
-          "arguments": ["double"]
+          "arguments": [
+            "double"
+          ]
         },
         {
           "python_name": "ImageUInt16",
-          "arguments": ["uint16_t"]
+          "arguments": [
+            "uint16_t"
+          ]
         },
         {
           "python_name": "ImageRGBa",
-          "arguments": ["vpRGBa"]
+          "arguments": [
+            "vpRGBa"
+          ]
         },
         {
           "python_name": "ImageRGBf",
-          "arguments": ["vpRGBf"]
+          "arguments": [
+            "vpRGBf"
+          ]
         }
       ],
-      "methods":
-      [
+      "methods": [
         {
           "static": true,
           "signature": "void insert(const vpArray2D<Type> &, const vpArray2D<Type> &, vpArray2D<Type> &, unsigned int, unsigned int)",
@@ -80,6 +96,11 @@
           "static": false,
           "signature": "vpRGBf& operator=(const vpRGBf&&)",
           "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "vpRGBf& operator=(vpRGBf&&)",
+          "ignore": true
         }
       ]
     },
@@ -89,59 +110,161 @@
           "static": false,
           "signature": "vpRGBa& operator=(const vpRGBa&&)",
           "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "vpRGBa& operator=(vpRGBa&&)",
+          "ignore": true
         }
       ]
     },
     "vpImageTools": {
-      "methods":
-      [
+      "methods": [
         {
           "static": true,
           "signature": "void warpImage(const vpImage<Type>&, const vpMatrix&, vpImage<Type>&, const vpImageTools::vpImageInterpolationType&, bool, bool)",
-          "specializations":
-          [
-            ["unsigned char"],
-            ["float"],
-            ["double"],
-            ["uint16_t"],
-            ["vpRGBa"]
+          "specializations": [
+            [
+              "unsigned char"
+            ],
+            [
+              "float"
+            ],
+            [
+              "double"
+            ],
+            [
+              "vpRGBa"
+            ]
+          ]
+        },
+        {
+          "static": true,
+          "signature": "void binarise(vpImage<Type>&, Type, Type, Type, Type, Type, bool)",
+          "specializations": [
+            [
+              "unsigned char"
+            ],
+            [
+              "float"
+            ],
+            [
+              "double"
+            ],
+            [
+              "vpRGBa"
+            ]
+          ]
+        },
+        {
+          "static": true,
+          "signature": "void undistort(const vpImage<Type>&, const vpCameraParameters&, vpImage<Type>&, unsigned int)",
+          "specializations": [
+            [
+              "unsigned char"
+            ],
+            [
+              "vpRGBa"
+            ]
+          ]
+        },
+        {
+          "static": true,
+          "signature": "void undistort(const vpImage<Type>&, vpArray2D<int>, vpArray2D<int>, vpArray2D<float>, vpArray2D<float>, vpImage<Type>&)",
+          "specializations": [
+            [
+              "unsigned char"
+            ],
+            [
+              "vpRGBa"
+            ]
           ]
         },
         {
           "static": true,
           "signature": "void crop(const vpImage<Type>&, double, double, unsigned int, unsigned int, vpImage<Type>&, unsigned int, unsigned int)",
-          "specializations":
-          [
-            ["TypeImage"]
+          "specializations": [
+            [
+              "TypeImage"
+            ]
           ]
         },
         {
           "static": true,
           "signature": "void crop(const vpImage<Type>&, const vpImagePoint&, unsigned int, unsigned int, vpImage<Type>&, unsigned int, unsigned int)",
-          "specializations":
-          [
-            ["TypeImage"]
+          "specializations": [
+            [
+              "TypeImage"
+            ]
           ]
         },
         {
           "static": true,
           "signature": "void crop(const vpImage<Type>&, const vpRect&, vpImage<Type>&, unsigned int, unsigned int)",
-          "specializations":
-          [
-            ["TypeImage"]
+          "specializations": [
+            [
+              "TypeImage"
+            ]
           ]
         },
         {
           "static": true,
           "signature": "void crop(const unsigned char*, unsigned int, unsigned int, const vpRect&, vpImage<Type>&, unsigned int, unsigned int)",
           "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void flip(const vpImage<Type>&, vpImage<Type>&)",
+          "specializations": [
+            [
+              "TypeImage"
+            ]
+          ]
+        },
+        {
+          "static": true,
+          "signature": "void flip(vpImage<Type>&)",
+          "specializations": [
+            [
+              "TypeImage"
+            ]
+          ]
+        },
+        {
+          "static": true,
+          "signature": "void resize(const vpImage<Type>&, vpImage<Type>&, unsigned int, unsigned int, const vpImageTools::vpImageInterpolationType&, unsigned int)",
+          "specializations": [
+            [
+              "unsigned char"
+            ],
+            [
+              "uint16_t"
+            ],
+            [
+              "float"
+            ]
+          ]
+        },
+        {
+          "static": true,
+          "signature": "void resize(const vpImage<Type>&, vpImage<Type>&, const vpImageTools::vpImageInterpolationType&, unsigned int)",
+          "specializations": [
+            [
+              "unsigned char"
+            ],
+            [
+              "uint16_t"
+            ],
+            [
+              "float"
+            ]
+          ]
         }
       ]
     },
     "vpImageConvert": {
       "additional_bindings": "bindings_vpImageConvert",
-      "methods":
-      [
+      "methods": [
         {
           "static": true,
           "signature": "void RGBaToRGB(unsigned char*, unsigned char*, unsigned int)",
@@ -459,7 +582,6 @@
           "signature": "void demosaicGRBGToRGBaBilinear(const uint8_t*, uint8_t*, unsigned int, unsigned int, unsigned int)",
           "ignore": true,
           "custom_implem": true
-
         },
         {
           "static": true,
@@ -496,14 +618,12 @@
           "signature": "void demosaicGBRGToRGBaMalvar(const uint8_t*, uint8_t*, unsigned int, unsigned int, unsigned int)",
           "ignore": true,
           "custom_implem": true
-
         },
         {
           "static": true,
           "signature": "void demosaicGBRGToRGBaMalvar(const uint16_t*, uint16_t*, unsigned int, unsigned int, unsigned int)",
           "ignore": true,
           "custom_implem": true
-
         },
         {
           "static": true,
