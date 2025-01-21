@@ -133,6 +133,7 @@ void vpPanda3DGeometryRenderer::setupRenderTarget()
 
   m_normalDepthBuffer = engine->make_output(pipe, renderTypeToName(m_renderType), m_renderOrder, fbp, win_prop, flags,
                                             windowOutput->get_gsg(), windowOutput);
+  std::cout << "Graphics output ref count = " << m_normalDepthBuffer->get_ref_count() << std::endl;
 
   if (m_normalDepthBuffer == nullptr) {
     throw vpException(vpException::fatalError, "Could not create geometry info buffer");

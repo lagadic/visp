@@ -32,12 +32,14 @@
 
 #if defined(VISP_HAVE_PANDA3D)
 
+#include <visp3/ar/vpPanda3DFrameworkManager.h>
 #include <visp3/core/vpMath.h>
 
-#include "load_prc_file.h"
+
 #include <antialiasAttrib.h>
 #include "boundingSphere.h"
 #include "boundingBox.h"
+#include "thread.h"
 
 BEGIN_VISP_NAMESPACE
 const vpHomogeneousMatrix vpPanda3DBaseRenderer::VISP_T_PANDA({
@@ -49,9 +51,6 @@ const vpHomogeneousMatrix vpPanda3DBaseRenderer::VISP_T_PANDA({
 const vpHomogeneousMatrix vpPanda3DBaseRenderer::PANDA_T_VISP(vpPanda3DBaseRenderer::VISP_T_PANDA.inverse());
 
 
-PandaFramework vpPanda3DBaseRenderer::framework;
-bool vpPanda3DBaseRenderer::frameworkIsOpen(false);
-
 
 vpPanda3DBaseRenderer::~vpPanda3DBaseRenderer()
 {
@@ -61,24 +60,21 @@ vpPanda3DBaseRenderer::~vpPanda3DBaseRenderer()
     }
   }
   m_buffers.clear();
-
+  std::cout << "Window address is " << m_window << std::endl;
   if (m_isWindowOwner) {
-    int n = framework.find_window(m_window);
-    // std::cout << m_window->get_graphics_output();
-    framework.close_window(n);
+    vpPanda3DFrameworkManager &frameworkManager = vpPanda3DFrameworkManager::getInstance();
+    frameworkManager.registerDisabledWindow(m_window);
   }
+
   m_window = nullptr;
 }
 
 void vpPanda3DBaseRenderer::initFramework()
 {
-  if (!frameworkIsOpen) {
-    load_prc_file_data("", "textures-power-2 none");
-    load_prc_file_data("", "gl-version 3 2");
-    load_prc_file_data("", "no-singular-invert");
-    frameworkIsOpen = true;
-    framework.open_framework();
-  }
+
+  vpPanda3DFrameworkManager &frameworkManager = vpPanda3DFrameworkManager::getInstance();
+  PandaFramework &framework = frameworkManager.getFramework();
+  frameworkManager.initFramework();
 
   m_isWindowOwner = true;
 
@@ -138,17 +134,9 @@ void vpPanda3DBaseRenderer::renderFrame()
 {
   beforeFrameRendered();
   // Disable rendering for all the other renderers
-  for (int i = 0; i < framework.get_num_windows(); ++i) {
-    WindowFramework *fi = framework.get_window(i);
-    if (fi != m_window) {
-      fi->get_graphics_output()->get_gsg()->set_active(false);
-    }
-  }
+  vpPanda3DFrameworkManager::getInstance().disableAllOtherRenderers(m_window);
   m_window->get_graphics_output()->get_engine()->render_frame();
-  for (int i = 0; i < framework.get_num_windows(); ++i) {
-    WindowFramework *fi = framework.get_window(i);
-    fi->get_graphics_output()->get_gsg()->set_active(true);
-  }
+  vpPanda3DFrameworkManager::getInstance().enableAllRenderers();
   afterFrameRendered();
 }
 
@@ -312,6 +300,7 @@ void vpPanda3DBaseRenderer::enableSharedDepthBuffer(vpPanda3DBaseRenderer &sourc
 
 NodePath vpPanda3DBaseRenderer::loadObject(const std::string &nodeName, const std::string &modelPath)
 {
+  PandaFramework &framework = vpPanda3DFrameworkManager::getInstance().getFramework();
   NodePath model = m_window->load_model(framework.get_models(), modelPath);
   for (int i = 0; i < model.get_num_children(); ++i) {
     model.get_child(i).clear_transform();

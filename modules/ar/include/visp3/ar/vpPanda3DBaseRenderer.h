@@ -266,8 +266,6 @@ protected:
 
   const static vpHomogeneousMatrix VISP_T_PANDA; //! Homogeneous transformation matrix to convert from the Panda coordinate system (right-handed Z-up) to the ViSP coordinate system (right-handed Y-Down)
   const static vpHomogeneousMatrix PANDA_T_VISP; //! Inverse of VISP_T_PANDA
-  static PandaFramework framework; //! Panda Rendering framework
-  static bool frameworkIsOpen;
 
 protected:
   std::string m_name; //! name of the renderer
@@ -277,7 +275,7 @@ protected:
   NodePath m_renderRoot; //! Node containing all the objects and the camera for this renderer
   PointerTo<Camera> m_camera;
   NodePath m_cameraPath; //! NodePath of the camera
-  std::vector<GraphicsOutput *> m_buffers; //! Set of buffers that this renderer uses. This storage contains weak refs to those buffers and should not deallocate them.
+  std::vector<PointerTo<GraphicsOutput>> m_buffers; //! Set of buffers that this renderer uses. This storage contains weak refs to those buffers and should not deallocate them.
   bool m_isWindowOwner; // Whether this panda subrenderer is the "owner" of the window framework and should close all associated windows when getting destroyed
 };
 

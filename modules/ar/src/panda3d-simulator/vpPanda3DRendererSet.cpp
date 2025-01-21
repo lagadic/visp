@@ -32,6 +32,8 @@
 
 #if defined(VISP_HAVE_PANDA3D)
 
+#include <visp3/ar/vpPanda3DFrameworkManager.h>
+
 #include "load_prc_file.h"
 
 BEGIN_VISP_NAMESPACE
@@ -53,10 +55,9 @@ vpPanda3DRendererSet::vpPanda3DRendererSet(const vpPanda3DRenderParameters &rend
 void vpPanda3DRendererSet::initFramework()
 {
 
-  if (!frameworkIsOpen) {
-    frameworkIsOpen = true;
-    framework.open_framework();
-  }
+  vpPanda3DFrameworkManager &frameworkManager = vpPanda3DFrameworkManager::getInstance();
+  PandaFramework &framework = frameworkManager.getFramework();
+  frameworkManager.initFramework();
   m_isWindowOwner = true;
 
   WindowProperties winProps;
