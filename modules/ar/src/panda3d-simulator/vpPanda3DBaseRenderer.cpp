@@ -60,7 +60,6 @@ vpPanda3DBaseRenderer::~vpPanda3DBaseRenderer()
     }
   }
   m_buffers.clear();
-  std::cout << "Window address is " << m_window << std::endl;
   if (m_isWindowOwner) {
     vpPanda3DFrameworkManager &frameworkManager = vpPanda3DFrameworkManager::getInstance();
     frameworkManager.registerDisabledWindow(m_window);
@@ -91,7 +90,6 @@ void vpPanda3DBaseRenderer::initFramework()
     throw vpException(vpException::notInitialized,
     "Panda3D renderer: Could not create the requested window when performing initialization.");
   }
-  std::cout << "GSG = " << m_window->get_graphics_output()->get_gsg() << std::endl;
   m_window->set_background_type(WindowFramework::BackgroundType::BT_black);
   setupScene();
   setupCamera();

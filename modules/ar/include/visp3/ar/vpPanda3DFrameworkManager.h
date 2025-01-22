@@ -60,22 +60,7 @@ private:
   { }
 
   virtual ~vpPanda3DFrameworkManager()
-  {
-    std::cout << "Entering manager destructor" << std::endl << std::flush;
-    // std::cout << "size = " << m_disabledWindows.size() << std::endl << std::flush;
-    // m_disabledWindows[0]->get_graphics_output()->get_engine()->remove_all_windows();
-    m_framework.close_framework();
-    // for (PointerTo<WindowFramework> &f: m_disabledWindows) {
-    //   std::cout << "CLOSING WINDOW" << std::endl << std::flush;
-
-    //   int n = m_framework.find_window(f);
-    //   std::cout << "Ref count before nullptr = " << f->get_ref_count() << std::endl;
-    //   std::cout << "Ref count graphics_output = " << f->get_graphics_output()->get_ref_count() << std::endl;
-    //   f = nullptr;
-    //   m_framework.close_window(n);
-    // }
-    // m_disabledWindows.clear();
-  }
+  { }
 
 
 public:
@@ -92,12 +77,17 @@ public:
 
   }
 
+  void exit()
+  {
+    m_framework.close_framework();
+  }
+
   PandaFramework &getFramework() { return m_framework; }
 
   void registerDisabledWindow(PointerTo<WindowFramework> wf)
   {
-    std::cout << "REGISTERING DISABLED WINDOW" << std::endl;
-    // m_disabledWindows.push_back(wf);
+
+    m_disabledWindows.push_back(wf);
   }
 
   void disableAllOtherRenderers(PointerTo<WindowFramework> &active)
@@ -114,9 +104,9 @@ public:
   {
     for (int i = 0; i < m_framework.get_num_windows(); ++i) {
       WindowFramework *fi = m_framework.get_window(i);
-      fi->get_graphics_output()->get_gsg()->set_active(true);
-    // if (std::find(m_disabledWindows.begin(), m_disabledWindows.end(), fi) == m_disabledWindows.end()) {
-    // }
+      if (std::find(m_disabledWindows.begin(), m_disabledWindows.end(), fi) == m_disabledWindows.end()) {
+        fi->get_graphics_output()->get_gsg()->set_active(true);
+      }
     }
   }
 
@@ -132,7 +122,7 @@ protected:
 
   PandaFramework m_framework; //! Panda Rendering framework
   bool m_frameworkIsOpen;
-  // std::vector<PointerTo<WindowFramework>> m_disabledWindows;
+  std::vector<PointerTo<WindowFramework>> m_disabledWindows;
 
 };
 

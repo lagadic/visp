@@ -133,7 +133,6 @@ void vpPanda3DGeometryRenderer::setupRenderTarget()
 
   m_normalDepthBuffer = engine->make_output(pipe, renderTypeToName(m_renderType), m_renderOrder, fbp, win_prop, flags,
                                             windowOutput->get_gsg(), windowOutput);
-  std::cout << "Graphics output ref count = " << m_normalDepthBuffer->get_ref_count() << std::endl;
 
   if (m_normalDepthBuffer == nullptr) {
     throw vpException(vpException::fatalError, "Could not create geometry info buffer");
@@ -245,10 +244,6 @@ void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals) const
 void vpPanda3DGeometryRenderer::getRender(vpImage<float> &depth) const
 {
   depth.resize(m_normalDepthTexture->get_y_size(), m_normalDepthTexture->get_x_size());
-  std::cout << "Before fetching depth!" << std::endl;
-  std::cout << "Component type = " << m_normalDepthTexture->get_component_type() << std::endl;
-  std::cout << "y size = " << m_normalDepthTexture->get_y_size() << std::endl;
-  std::cout << "x size = " << m_normalDepthTexture->get_x_size() << std::endl;
 
   if (m_normalDepthTexture->get_component_type() != Texture::T_float) {
     throw vpException(vpException::badValue, "Unexpected data type in normals texture");

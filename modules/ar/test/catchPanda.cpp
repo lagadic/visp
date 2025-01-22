@@ -42,6 +42,7 @@
 #if defined(VISP_HAVE_PANDA3D) && defined(VISP_HAVE_CATCH2)
 #include <visp3/ar/vpPanda3DBaseRenderer.h>
 #include <visp3/ar/vpPanda3DRGBRenderer.h>
+#include <visp3/ar/vpPanda3DFrameworkManager.h>
 #include <visp3/ar/vpPanda3DGeometryRenderer.h>
 #include <visp3/core/vpCameraParameters.h>
 #include <catch_amalgamated.hpp>
@@ -58,75 +59,68 @@ vpPanda3DRenderParameters defaultRenderParams()
   return vpPanda3DRenderParameters(cam, 240, 320, 0.001, 1.0);
 }
 
-// SCENARIO("Instanciating multiple Panda3D renderers", "[Panda3D]")
-// {
-//   GIVEN("A single renderer")
-//   {
-//     vpPanda3DGeometryRenderer r1(vpPanda3DGeometryRenderer::CAMERA_NORMALS);
-//     r1.setRenderParameters(defaultRenderParams());
-//     r1.initFramework();
-//     r1.renderFrame();
-//     vpImage<float> depth;
-//     r1.getRender(depth);
+SCENARIO("Instanciating multiple Panda3D renderers", "[Panda3D]")
+{
+  GIVEN("A single renderer")
+  {
+    vpPanda3DGeometryRenderer r1(vpPanda3DGeometryRenderer::CAMERA_NORMALS);
+    r1.setRenderParameters(defaultRenderParams());
+    r1.initFramework();
+    r1.renderFrame();
+    vpImage<float> depth;
+    r1.getRender(depth);
 
-//     THEN("Creating another, uncoupled renderer is ok and its destruction does not raise an error")
-//     {
-//       std::cout << "Creating r2" << std::endl;
-//       vpPanda3DGeometryRenderer r2(vpPanda3DGeometryRenderer::CAMERA_NORMALS);
-//       r2.setRenderParameters(defaultRenderParams());
-//       r2.initFramework();
-//       std::cout << "After r2 initialization" << std::endl;
-//       r2.renderFrame();
-//       std::cout << "After r2 frame" << std::endl;
+    THEN("Creating another, uncoupled renderer is ok and its destruction does not raise an error")
+    {
+      vpPanda3DGeometryRenderer r2(vpPanda3DGeometryRenderer::CAMERA_NORMALS);
+      r2.setRenderParameters(defaultRenderParams());
+      r2.initFramework();
+      r2.renderFrame();
 
 
-//     }
-//     std::cout << "Calling r1.renderFrame after r2 destruction" << std::endl;
-//     r1.renderFrame();
-//     std::cout << "Fetching depth after r2 destruction" << std::endl;
+    }
+    r1.renderFrame();
 
-//     r1.getRender(depth);
-//   }
-// }
+    r1.getRender(depth);
+  }
+}
 
 
-// SCENARIO("Sequentially instanciating and destroying Panda3D renderers", "[Panda3D]")
-// {
-//   vpPanda3DGeometryRenderer r3(vpPanda3DGeometryRenderer::CAMERA_NORMALS);
-//   r3.setRenderParameters(defaultRenderParams());
-//   r3.initFramework();
-//   r3.renderFrame();
-//   vpImage<float> depth;
-//   r3.getRender(depth);
+SCENARIO("Sequentially instanciating and destroying Panda3D renderers", "[Panda3D]")
+{
+  vpPanda3DGeometryRenderer r3(vpPanda3DGeometryRenderer::CAMERA_NORMALS);
+  r3.setRenderParameters(defaultRenderParams());
+  r3.initFramework();
+  r3.renderFrame();
+  vpImage<float> depth;
+  r3.getRender(depth);
 
-//   {
-//     vpPanda3DGeometryRenderer r1(vpPanda3DGeometryRenderer::CAMERA_NORMALS);
-//     r1.setRenderParameters(defaultRenderParams());
-//     r1.initFramework();
-//     r1.renderFrame();
-//     r1.getRender(depth);
-//   }
+  {
+    vpPanda3DGeometryRenderer r1(vpPanda3DGeometryRenderer::CAMERA_NORMALS);
+    r1.setRenderParameters(defaultRenderParams());
+    r1.initFramework();
+    r1.renderFrame();
+    r1.getRender(depth);
+  }
 
-//   {
-//     std::cout << "Creating r2" << std::endl;
-//     vpPanda3DGeometryRenderer r2(vpPanda3DGeometryRenderer::CAMERA_NORMALS);
-//     r2.setRenderParameters(defaultRenderParams());
-//     r2.initFramework();
-//     vpImage<float> depth;
-//     r2.renderFrame();
-//     r2.getRender(depth);
-//     std::cout << "After r2 initialization" << std::endl;
+  {
+    vpPanda3DGeometryRenderer r2(vpPanda3DGeometryRenderer::CAMERA_NORMALS);
+    r2.setRenderParameters(defaultRenderParams());
+    r2.initFramework();
+    vpImage<float> depth;
+    r2.renderFrame();
+    r2.getRender(depth);
 
-//   }
-// }
+  }
+}
 
 SCENARIO("Using multiple panda3d renderers in parallel", "[Panda3D]")
 {
 
-  // vpPanda3DRGBRenderer r3(true);
-  // r3.setRenderParameters(defaultRenderParams());
-  // r3.initFramework();
-  // r3.renderFrame();
+  vpPanda3DRGBRenderer r3(true);
+  r3.setRenderParameters(defaultRenderParams());
+  r3.initFramework();
+  r3.renderFrame();
 
   vpPanda3DGeometryRenderer r1(vpPanda3DGeometryRenderer::CAMERA_NORMALS);
   r1.setRenderParameters(defaultRenderParams());
@@ -135,15 +129,15 @@ SCENARIO("Using multiple panda3d renderers in parallel", "[Panda3D]")
   vpImage<float> depth;
   r1.getRender(depth);
 
-  // vpPanda3DGeometryRenderer r2(vpPanda3DGeometryRenderer::CAMERA_NORMALS);
-  // r2.setRenderParameters(defaultRenderParams());
-  // r2.initFramework();
-  // r2.renderFrame();
-  // r2.getRender(depth);
+  vpPanda3DGeometryRenderer r2(vpPanda3DGeometryRenderer::CAMERA_NORMALS);
+  r2.setRenderParameters(defaultRenderParams());
+  r2.initFramework();
+  r2.renderFrame();
+  r2.getRender(depth);
 
 
-  // r1.renderFrame();
-  // r1.getRender(depth);
+  r1.renderFrame();
+  r1.getRender(depth);
 
 }
 
@@ -154,6 +148,8 @@ int main(int argc, char *argv[])
   session.applyCommandLine(argc, argv);
 
   int numFailed = session.run();
+  vpPanda3DFrameworkManager::getInstance().exit();
+
   return numFailed;
 }
 
