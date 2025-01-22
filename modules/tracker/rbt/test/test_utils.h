@@ -16,10 +16,11 @@ struct TrajectoryData
   std::vector<vpHomogeneousMatrix> cTo;
 };
 
-TrajectoryData generateTrajectory(vpPanda3DRendererSet renderer, const vpPanda3DRenderParameters &renderingParams,
+TrajectoryData generateTrajectory(const vpPanda3DRenderParameters &renderingParams,
                                   const std::function<void(vpPanda3DRendererSet &)> &makeScene,
                                   std::vector<vpHomogeneousMatrix> &cTw, std::vector<vpHomogeneousMatrix> &oTw)
 {
+  vpPanda3DRendererSet renderer;
   renderer.setRenderParameters(renderingParams);
   auto depthRenderer = std::make_shared<vpPanda3DGeometryRenderer>(vpPanda3DGeometryRenderer::OBJECT_NORMALS);
   auto rgbRenderer = std::make_shared<vpPanda3DRGBRenderer>(true);
@@ -53,11 +54,7 @@ TrajectoryData generateTrajectory(vpPanda3DRendererSet renderer, const vpPanda3D
     renderer.getRenderer<vpPanda3DGeometryRenderer>()->getRender(res.depth[i]);
     res.cTo[i] = cTw[i] * oTw[i].inverse();
   }
-  vpDisplayX d(res.rgb[0]);
-  vpDisplay::display(res.rgb[0]);
-  vpDisplay::flush(res.rgb[0]);
 
-  vpDisplay::getKeyboardEvent(res.rgb[0], true);
   return res;
 }
 

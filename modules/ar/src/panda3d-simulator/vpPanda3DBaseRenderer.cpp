@@ -40,6 +40,9 @@
 #include "boundingSphere.h"
 #include "boundingBox.h"
 #include "thread.h"
+#include "load_prc_file.h"
+#include "windowFramework.h"
+#include "graphicsOutput.h"
 
 BEGIN_VISP_NAMESPACE
 const vpHomogeneousMatrix vpPanda3DBaseRenderer::VISP_T_PANDA({
@@ -64,8 +67,6 @@ vpPanda3DBaseRenderer::~vpPanda3DBaseRenderer()
     vpPanda3DFrameworkManager &frameworkManager = vpPanda3DFrameworkManager::getInstance();
     frameworkManager.registerDisabledWindow(m_window);
   }
-
-  m_window = nullptr;
 }
 
 void vpPanda3DBaseRenderer::initFramework()
@@ -136,6 +137,14 @@ void vpPanda3DBaseRenderer::renderFrame()
   m_window->get_graphics_output()->get_engine()->render_frame();
   vpPanda3DFrameworkManager::getInstance().enableAllRenderers();
   afterFrameRendered();
+}
+
+void vpPanda3DBaseRenderer::afterFrameRendered()
+{
+  GraphicsOutput *mainBuffer = getMainOutputBuffer();
+  if (mainBuffer != nullptr) {
+    m_window->get_graphics_output()->get_engine()->extract_texture_data(mainBuffer->get_texture(), mainBuffer->get_gsg());
+  }
 }
 
 void vpPanda3DBaseRenderer::setRenderParameters(const vpPanda3DRenderParameters &params)
@@ -293,6 +302,15 @@ void vpPanda3DBaseRenderer::enableSharedDepthBuffer(vpPanda3DBaseRenderer &sourc
         throw vpException(vpException::fatalError, "Could not share depth buffer!");
       }
     }
+  }
+}
+
+void vpPanda3DBaseRenderer::setRenderOrder(int order)
+{
+  int previousOrder = m_renderOrder;
+  m_renderOrder = order;
+  for (GraphicsOutput *buffer: m_buffers) {
+    buffer->set_sort(buffer->get_sort() + (order - previousOrder));
   }
 }
 

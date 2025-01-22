@@ -37,6 +37,7 @@
 #include <visp3/ar/vpPanda3DBaseRenderer.h>
 #include "cardMaker.h"
 #include "orthographicLens.h"
+#include "frameBufferProperties.h"
 
 BEGIN_VISP_NAMESPACE
 /**

@@ -32,7 +32,11 @@
 
 #if defined(VISP_HAVE_PANDA3D)
 
-#include <lightRampAttrib.h>
+#include "lightRampAttrib.h"
+#include "graphicsOutput.h"
+#include "windowFramework.h"
+#include "graphicsEngine.h"
+#include "graphicsBuffer.h"
 
 BEGIN_VISP_NAMESPACE
 const std::string vpPanda3DPostProcessFilter::FILTER_VERTEX_SHADER =

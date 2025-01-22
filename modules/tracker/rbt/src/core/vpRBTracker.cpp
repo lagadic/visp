@@ -154,6 +154,7 @@ void vpRBTracker::setupRenderer(const std::string &file)
     m_renderer.addSubRenderer(std::make_shared<vpPanda3DDepthCannyFilter>(
       "depthCanny", geometryRenderer, true, 0.0));
   }
+  std::cout << "Before init framework in rbt" << std::endl;
   m_renderer.initFramework();
   m_renderer.addLight(vpPanda3DAmbientLight("ambient", vpRGBf(0.4f)));
   m_renderer.addNodeToScene(m_renderer.loadObject("object", file));

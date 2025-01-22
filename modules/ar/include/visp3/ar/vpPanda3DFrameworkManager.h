@@ -37,7 +37,7 @@
 
 #include <pandaFramework.h>
 #include <pandaSystem.h>
-#include "load_prc_file.h"
+
 
 BEGIN_VISP_NAMESPACE
 /**
@@ -65,52 +65,17 @@ private:
 
 public:
 
-  void initFramework()
-  {
-    if (!m_frameworkIsOpen) {
-      load_prc_file_data("", "textures-power-2 none");
-      load_prc_file_data("", "gl-version 3 2");
-      load_prc_file_data("", "no-singular-invert");
-      m_framework.open_framework();
-      m_frameworkIsOpen = true;
-    }
+  void initFramework();
 
-  }
-
-  void exit()
-  {
-    m_framework.close_framework();
-  }
+  void exit();
 
   PandaFramework &getFramework() { return m_framework; }
 
-  void registerDisabledWindow(PointerTo<WindowFramework> wf)
-  {
+  void registerDisabledWindow(PointerTo<WindowFramework> wf);
 
-    m_disabledWindows.push_back(wf);
-  }
+  void disableAllOtherRenderers(PointerTo<WindowFramework> &active);
 
-  void disableAllOtherRenderers(PointerTo<WindowFramework> &active)
-  {
-    for (int i = 0; i < m_framework.get_num_windows(); ++i) {
-      PointerTo<WindowFramework> fi = m_framework.get_window(i);
-      if (fi != active) {
-        fi->get_graphics_output()->get_gsg()->set_active(false);
-      }
-    }
-  }
-
-  void enableAllRenderers()
-  {
-    for (int i = 0; i < m_framework.get_num_windows(); ++i) {
-      WindowFramework *fi = m_framework.get_window(i);
-      if (std::find(m_disabledWindows.begin(), m_disabledWindows.end(), fi) == m_disabledWindows.end()) {
-        fi->get_graphics_output()->get_gsg()->set_active(true);
-      }
-    }
-  }
-
-
+  void enableAllRenderers();
 
   static vpPanda3DFrameworkManager &getInstance()
   {

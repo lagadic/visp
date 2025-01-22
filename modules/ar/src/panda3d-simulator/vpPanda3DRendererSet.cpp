@@ -34,22 +34,16 @@
 
 #include <visp3/ar/vpPanda3DFrameworkManager.h>
 
-#include "load_prc_file.h"
 
 BEGIN_VISP_NAMESPACE
 vpPanda3DRendererSet::vpPanda3DRendererSet() : vpPanda3DBaseRenderer("set")
 {
-  load_prc_file_data("", "textures-power-2 none");
-  load_prc_file_data("", "gl-version 3 2");
-  load_prc_file_data("", "no-singular-invert");
+
 }
 
 vpPanda3DRendererSet::vpPanda3DRendererSet(const vpPanda3DRenderParameters &renderParameters) : vpPanda3DBaseRenderer("set")
 {
   m_renderParameters = renderParameters;
-  load_prc_file_data("", "textures-power-2 none");
-  load_prc_file_data("", "gl-version 3 2");
-  load_prc_file_data("", "no-singular-invert");
 }
 
 void vpPanda3DRendererSet::initFramework()
@@ -57,6 +51,7 @@ void vpPanda3DRendererSet::initFramework()
 
   vpPanda3DFrameworkManager &frameworkManager = vpPanda3DFrameworkManager::getInstance();
   PandaFramework &framework = frameworkManager.getFramework();
+  std::cout << "Framework num windows = " << framework.get_num_windows() << std::endl;
   frameworkManager.initFramework();
   m_isWindowOwner = true;
 
@@ -64,6 +59,7 @@ void vpPanda3DRendererSet::initFramework()
   winProps.set_size(LVecBase2i(m_renderParameters.getImageWidth(), m_renderParameters.getImageHeight()));
   int flags = GraphicsPipe::BF_refuse_window;
   m_window = framework.open_window(winProps, flags);
+  std::cout << "m_window = " << m_window << std::endl;
   if (m_window == nullptr) {
     winProps.set_minimized(true);
     m_window = framework.open_window(winProps, 0);

@@ -38,8 +38,11 @@
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/ar/vpPanda3DRenderParameters.h>
 
-#include <pandaFramework.h>
-#include <pandaSystem.h>
+#include <nodePath.h>
+#include <pointerTo.h>
+#include <camera.h>
+
+class WindowFramework;
 
 BEGIN_VISP_NAMESPACE
 /**
@@ -76,13 +79,7 @@ public:
 
   virtual void beforeFrameRendered() { }
   virtual void renderFrame();
-  virtual void afterFrameRendered()
-  {
-    GraphicsOutput *mainBuffer = getMainOutputBuffer();
-    if (mainBuffer != nullptr) {
-      m_window->get_graphics_output()->get_engine()->extract_texture_data(mainBuffer->get_texture(), mainBuffer->get_gsg());
-    }
-  }
+  virtual void afterFrameRendered();
 
   /**
    * @brief Get the name of the renderer
@@ -122,14 +119,7 @@ public:
    */
   int getRenderOrder() const { return m_renderOrder; }
 
-  void setRenderOrder(int order)
-  {
-    int previousOrder = m_renderOrder;
-    m_renderOrder = order;
-    for (GraphicsOutput *buffer: m_buffers) {
-      buffer->set_sort(buffer->get_sort() + (order - previousOrder));
-    }
-  }
+  void setRenderOrder(int order);
 
   /**
    * @brief Set the camera's pose.

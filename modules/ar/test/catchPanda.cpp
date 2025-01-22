@@ -40,11 +40,12 @@
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_PANDA3D) && defined(VISP_HAVE_CATCH2)
+#include <visp3/core/vpCameraParameters.h>
 #include <visp3/ar/vpPanda3DBaseRenderer.h>
 #include <visp3/ar/vpPanda3DRGBRenderer.h>
 #include <visp3/ar/vpPanda3DFrameworkManager.h>
+#include <visp3/ar/vpPanda3DRendererSet.h>
 #include <visp3/ar/vpPanda3DGeometryRenderer.h>
-#include <visp3/core/vpCameraParameters.h>
 #include <catch_amalgamated.hpp>
 
 #ifdef ENABLE_VISP_NAMESPACE
@@ -112,6 +113,27 @@ SCENARIO("Sequentially instanciating and destroying Panda3D renderers", "[Panda3
     r2.getRender(depth);
 
   }
+}
+
+SCENARIO("Sequentially instanciating and destroying Panda3D renderer sets", "[Panda3D]")
+{
+  {
+    vpPanda3DRendererSet r1(defaultRenderParams());
+    r1.addSubRenderer(std::make_shared<vpPanda3DGeometryRenderer>(vpPanda3DGeometryRenderer::CAMERA_NORMALS));
+    r1.addSubRenderer(std::make_shared<vpPanda3DRGBRenderer>(true));
+    r1.initFramework();
+    r1.renderFrame();
+  }
+
+  {
+    vpPanda3DRendererSet r1(defaultRenderParams());
+    r1.addSubRenderer(std::make_shared<vpPanda3DGeometryRenderer>(vpPanda3DGeometryRenderer::CAMERA_NORMALS));
+    r1.addSubRenderer(std::make_shared<vpPanda3DRGBRenderer>(true));
+    r1.initFramework();
+    r1.renderFrame();
+  }
+
+
 }
 
 SCENARIO("Using multiple panda3d renderers in parallel", "[Panda3D]")

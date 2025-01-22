@@ -33,6 +33,10 @@
 
 #if defined(VISP_HAVE_PANDA3D)
 
+#include "windowFramework.h"
+#include "graphicsOutput.h"
+
+
 BEGIN_VISP_NAMESPACE
 const std::string vpPanda3DLuminanceFilter::FRAGMENT_SHADER =
 "#version 330\n"

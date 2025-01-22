@@ -35,6 +35,10 @@
 #include "orthographicLens.h"
 #include "cardMaker.h"
 #include "texturePool.h"
+#include "graphicsOutput.h"
+#include "graphicsEngine.h"
+#include "windowFramework.h"
+
 
 BEGIN_VISP_NAMESPACE
 const std::string vpPanda3DRGBRenderer::COOK_TORRANCE_VERT =

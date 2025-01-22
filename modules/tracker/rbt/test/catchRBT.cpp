@@ -49,6 +49,7 @@
 #include <visp3/rbt/vpRBSilhouetteCCDTracker.h>
 #include <visp3/rbt/vpRBKltTracker.h>
 #include <visp3/rbt/vpRBDenseDepthTracker.h>
+#include <visp3/ar/vpPanda3DFrameworkManager.h>
 
 #include "test_utils.h"
 
@@ -670,10 +671,10 @@ SCENARIO("Running tracker on static synthetic sequences", "[rbt]")
   std::vector<vpHomogeneousMatrix> oTw;
   for (unsigned int i = 0; i < n; ++i) {
     oTw.push_back(vpHomogeneousMatrix(0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-    cTw.push_back(vpHomogeneousMatrix(0.0, 0.0, 0.1, 0.0, 0.0, 0.0));
+    cTw.push_back(vpHomogeneousMatrix(0.0, 0.0, 0.5, 0.0, 0.0, 0.0));
   }
-  vpPanda3DRendererSet r;
-  TrajectoryData traj1 = generateTrajectory(r, renderParams, setupScene, cTw, oTw);
+
+  TrajectoryData traj1 = generateTrajectory(renderParams, setupScene, cTw, oTw);
 
   vpRBTracker tracker;
   tracker.addTracker(std::make_shared<vpRBSilhouetteMeTracker>());
@@ -701,6 +702,7 @@ int main(int argc, char *argv[])
   session.applyCommandLine(argc, argv);
 
   int numFailed = session.run();
+  vpPanda3DFrameworkManager::getInstance().exit();
   return numFailed;
 }
 
