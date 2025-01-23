@@ -320,7 +320,7 @@ void vpPanda3DRGBRenderer::setupRenderTarget()
   //m_colorBuffer->set_inverted(gsg->get_copy_texture_inverted());
   fbp.setup_color_texture(m_colorTexture);
   //m_colorTexture->set_format(Texture::Format::F_srgb_alpha);
-  m_colorBuffer->add_render_texture(m_colorTexture, GraphicsOutput::RenderTextureMode::RTM_bind_or_copy, GraphicsOutput::RenderTexturePlane::RTP_color);
+  m_colorBuffer->add_render_texture(m_colorTexture, GraphicsOutput::RenderTextureMode::RTM_copy_texture, GraphicsOutput::RenderTexturePlane::RTP_color);
   m_colorBuffer->set_clear_color(LColor(0.f));
   m_colorBuffer->set_clear_color_active(true);
   DisplayRegion *region = m_colorBuffer->make_display_region();
