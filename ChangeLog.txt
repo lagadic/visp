@@ -102,6 +102,7 @@ ViSP 3.x.x (Version in development)
     . [#1521] Build issues with OpenCV 5.0.0
     . [#1546] OIS 3rdparty not detected during CMake configuration
     . [#1547] Build issue with Ogre 1.12.0 or more recent versions
+    . [#1552] Unabled to use SIFT feature with opencv 4.5.4
 ----------------------------------------------
 ViSP 3.6.0 (released September 22, 2023)
   - Contributors:
