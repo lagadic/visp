@@ -36,7 +36,6 @@
 #include "graphicsOutput.h"
 #include "windowFramework.h"
 #include "graphicsEngine.h"
-#include "graphicsBuffer.h"
 
 BEGIN_VISP_NAMESPACE
 const std::string vpPanda3DPostProcessFilter::FILTER_VERTEX_SHADER =
@@ -102,9 +101,12 @@ void vpPanda3DPostProcessFilter::setupRenderTarget()
   GraphicsEngine *engine = windowOutput->get_engine();
   GraphicsStateGuardian *gsg = windowOutput->get_gsg();
   GraphicsPipe *pipe = windowOutput->get_pipe();
-  m_buffer = engine->make_output(pipe, m_name, m_renderOrder,
+  static int id = 0;
+  m_buffer = engine->make_output(pipe, m_name + std::to_string(id), m_renderOrder,
                                       fbp, win_prop, flags,
                                       gsg, windowOutput);
+
+  ++id;
   if (m_buffer == nullptr) {
     throw vpException(vpException::fatalError, "Could not create buffer");
   }
@@ -112,7 +114,7 @@ void vpPanda3DPostProcessFilter::setupRenderTarget()
   //m_buffer->set_inverted(true);
   m_texture = new Texture();
   fbp.setup_color_texture(m_texture);
-  m_buffer->add_render_texture(m_texture, m_isOutput ? GraphicsOutput::RenderTextureMode::RTM_bind_or_copy : GraphicsOutput::RenderTextureMode::RTM_copy_texture);
+  m_buffer->add_render_texture(m_texture, m_isOutput ? GraphicsOutput::RenderTextureMode::RTM_copy_texture : GraphicsOutput::RenderTextureMode::RTM_copy_texture);
   m_buffer->set_clear_color(LColor(0.f));
   m_buffer->set_clear_color_active(true);
   DisplayRegion *region = m_buffer->make_display_region();

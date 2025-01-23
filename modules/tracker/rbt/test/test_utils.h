@@ -5,7 +5,7 @@
 #include <visp3/ar/vpPanda3DGeometryRenderer.h>
 #include <visp3/ar/vpPanda3DRGBRenderer.h>
 
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 
 #include <vector>
 
@@ -48,11 +48,15 @@ TrajectoryData generateTrajectory(const vpPanda3DRenderParameters &renderingPara
     vpPanda3DRenderParameters renderingParamsFrame = renderingParams;
     renderingParamsFrame.setClippingDistance(nearV, farV);
     renderer.setRenderParameters(renderingParamsFrame);
-    std::cout << "Rendering trajectory frame " << i << std::endl;
     renderer.renderFrame();
     renderer.getRenderer<vpPanda3DRGBRenderer>()->getRender(res.rgb[i]);
     renderer.getRenderer<vpPanda3DGeometryRenderer>()->getRender(res.depth[i]);
     res.cTo[i] = cTw[i] * oTw[i].inverse();
+    // std::shared_ptr<vpDisplay> d = vpDisplayFactory::createDisplay(res.rgb[i]);
+    // vpDisplay::display(res.rgb[i]);
+    // vpDisplay::flush(res.rgb[i]);
+    // vpDisplay::getKeyboardEvent(res.rgb[i], true);
+
   }
 
   return res;

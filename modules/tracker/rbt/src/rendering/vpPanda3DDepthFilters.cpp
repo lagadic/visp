@@ -32,6 +32,10 @@
 
 #if defined(VISP_HAVE_PANDA3D)
 
+#include "graphicsOutput.h"
+#include "graphicsEngine.h"
+#include "windowFramework.h"
+
 BEGIN_VISP_NAMESPACE
 
 const std::string vpPanda3DDepthGaussianBlur::FRAGMENT_SHADER =

@@ -105,8 +105,6 @@ std::vector<std::pair<unsigned int, unsigned int>> vpSilhouettePointsExtractionS
 
   for (unsigned int n = m_border; n < rows - m_border; n += m_sampleStep) {
     for (unsigned int m = m_border; m < cols - m_border; m += m_sampleStep) {
-      //std::cout << "n = " << n << ", m = " << m << ", h = " << rows << ", w = " << cols <<  std::endl;
-      //std::cout << "m = " << m << ", n = " << n << ", s = " << (int)(validSilhouette[n][m]) << std::endl;
       if (validSilhouette[n][m] > 0) {
         candidates.push_back(std::make_pair(n, m));
       }

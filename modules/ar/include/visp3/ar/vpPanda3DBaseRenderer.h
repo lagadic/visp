@@ -38,11 +38,13 @@
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/ar/vpPanda3DRenderParameters.h>
 
+#include <windowFramework.h>
+#include <graphicsOutput.h>
+
 #include <nodePath.h>
 #include <pointerTo.h>
 #include <camera.h>
 
-class WindowFramework;
 
 BEGIN_VISP_NAMESPACE
 /**
@@ -228,7 +230,7 @@ public:
 
   void printStructure();
 
-  virtual GraphicsOutput *getMainOutputBuffer() { return nullptr; }
+  virtual PointerTo<GraphicsOutput> getMainOutputBuffer() { return nullptr; }
 
   virtual void enableSharedDepthBuffer(vpPanda3DBaseRenderer &sourceBuffer);
 

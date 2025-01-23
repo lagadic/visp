@@ -51,15 +51,18 @@ void vpPanda3DRendererSet::initFramework()
 
   vpPanda3DFrameworkManager &frameworkManager = vpPanda3DFrameworkManager::getInstance();
   PandaFramework &framework = frameworkManager.getFramework();
-  std::cout << "Framework num windows = " << framework.get_num_windows() << std::endl;
   frameworkManager.initFramework();
   m_isWindowOwner = true;
+
+  if (m_renderParameters.getImageHeight() == 0 || m_renderParameters.getImageWidth() == 0) {
+    throw vpException(vpException::badValue,
+    "Panda3D renderer: Cannot create a window with 0 height or width.");
+  }
 
   WindowProperties winProps;
   winProps.set_size(LVecBase2i(m_renderParameters.getImageWidth(), m_renderParameters.getImageHeight()));
   int flags = GraphicsPipe::BF_refuse_window;
   m_window = framework.open_window(winProps, flags);
-  std::cout << "m_window = " << m_window << std::endl;
   if (m_window == nullptr) {
     winProps.set_minimized(true);
     m_window = framework.open_window(winProps, 0);
