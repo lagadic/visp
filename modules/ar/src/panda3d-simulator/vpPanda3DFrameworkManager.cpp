@@ -6,18 +6,18 @@
 void vpPanda3DFrameworkManager::initFramework()
 {
   if (!m_frameworkIsOpen) {
-    load_prc_file_data("", "textures-power-2 none");
-    load_prc_file_data("", "gl-version 3 2");
-    load_prc_file_data("", "no-singular-invert");
-    load_prc_file_data("", "textures-power-2 none\n"
-                          "back-buffers 1\n"
-                          "auto-flip 0\n"
-                          // "pstats-gpu-timing 1\n"
-                          // "gl-finish 1\n"
-                          // "texture-minfilter mipmap\n"
-                          "load-file-type p3assimp\n"
-                          "audio-library-name null\n"
-                          "model-cache-dir\n");
+    load_prc_file_data("",
+      "gl-version 3 2\n"
+      "textures-power-2 none\n"
+      "back-buffers 0\n"
+      "auto-flip 1\n"
+      // "pstats-gpu-timing 1\n"
+      // "gl-finish 1\n"
+      // "texture-minfilter mipmap\n"
+      "no-singular-invert\n"
+      "load-file-type p3assimp\n"
+      "audio-library-name null\n"
+      "model-cache-dir\n");
     m_framework.open_framework();
     m_frameworkIsOpen = true;
   }
