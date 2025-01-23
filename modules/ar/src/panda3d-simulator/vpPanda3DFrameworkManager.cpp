@@ -1,4 +1,7 @@
 #include <visp3/ar/vpPanda3DFrameworkManager.h>
+
+#if defined(VISP_HAVE_PANDA3D)
+
 #include "load_prc_file.h"
 void vpPanda3DFrameworkManager::initFramework()
 {
@@ -55,3 +58,5 @@ void vpPanda3DFrameworkManager::enableAllRenderers()
     }
   }
 }
+
+#endif
