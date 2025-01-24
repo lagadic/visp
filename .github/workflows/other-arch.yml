@@ -82,6 +82,7 @@ jobs:
           else
           NB_PROC_TO_USE=1
           fi
+          echo "NB_PROC_TO_USE = ${NB_PROC_TO_USE}"
           make -j${NB_PROC_TO_USE}
 
           ctest -j${NB_PROC_TO_USE} --output-on-failure
