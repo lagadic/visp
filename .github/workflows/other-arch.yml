@@ -76,6 +76,12 @@ jobs:
           cmake .. -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TUTORIALS=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java=OFF -DBUILD_MODULE_visp_java_binding=OFF
           cat ViSP-third-party.txt
 
-          make -j$(nproc)
+          if [[ $(nproc) -gt 2 ]]
+          then
+          NB_PROC_TO_USE=`expr  $(nproc) - 2`
+          else
+          NB_PROC_TO_USE=1
+          fi
+          make -j${NB_PROC_TO_USE}
 
-          ctest -j$(nproc) --output-on-failure
+          ctest -j${NB_PROC_TO_USE} --output-on-failure
