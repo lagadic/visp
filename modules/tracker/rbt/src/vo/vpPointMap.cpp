@@ -183,7 +183,6 @@ void vpPointMap::updatePoints(const vpArray2D<int> &indicesToRemove, const vpMat
 {
 
   int newSize = m_X.getRows() - indicesToRemove.getRows() + pointsToAdd.getRows();
-  std::cout << "m_X.getRows() = " << m_X.getRows()<< ", indicesToRemove.getRows() = " << indicesToRemove.getRows() <<  "pointsToAdd.getRows() = "<< pointsToAdd.getRows() << std::endl;
   for (unsigned int i = 0; i < indicesToRemove.getRows(); ++i) {
     removedIndices.push_back(indicesToRemove[i][0]);
   }
@@ -197,7 +196,6 @@ void vpPointMap::updatePoints(const vpArray2D<int> &indicesToRemove, const vpMat
     std::list<int> startingIndices;
     auto removedIt = removedIndices.begin();
     int i = 0;
-    // std::cout << "Should be removed = " << shouldBeRemoved << std::endl;
     while (startingIndices.size() < shouldBeRemoved && i < m_X.getRows()) {
 
       if (removedIt == removedIndices.end() || i < (*removedIt)) {
