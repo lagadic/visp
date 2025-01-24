@@ -183,7 +183,7 @@ void vpPointMap::updatePoints(const vpArray2D<int> &indicesToRemove, const vpMat
 {
 
   int newSize = m_X.getRows() - indicesToRemove.getRows() + pointsToAdd.getRows();
-  std::cout << "m_X.getRows() =" << m_X.getRows()<< ", indicesToRemove.getRows() = " << indicesToRemove.getRows() <<  "pointsToAdd.getRows() = "<< pointsToAdd.getRows() << std::endl;
+  std::cout << "m_X.getRows() = " << m_X.getRows()<< ", indicesToRemove.getRows() = " << indicesToRemove.getRows() <<  "pointsToAdd.getRows() = "<< pointsToAdd.getRows() << std::endl;
   for (unsigned int i = 0; i < indicesToRemove.getRows(); ++i) {
     removedIndices.push_back(indicesToRemove[i][0]);
   }
@@ -219,7 +219,7 @@ void vpPointMap::updatePoints(const vpArray2D<int> &indicesToRemove, const vpMat
   for (int removedRow : removedIndices) {
     unsigned int copiedRows = removedRow - oldXIndex;
     if (copiedRows > 0) {
-      memcpy(newX[newXIndex], m_X[oldXIndex], copiedRows * 3);
+      memcpy(newX[newXIndex], m_X[oldXIndex], copiedRows * 3 * sizeof(double));
       newXIndex += copiedRows;
     }
     oldXIndex = removedRow + 1;
@@ -227,7 +227,7 @@ void vpPointMap::updatePoints(const vpArray2D<int> &indicesToRemove, const vpMat
   // Copy from last removed row to the end of the array
   unsigned int copiedRows = m_X.getRows() - oldXIndex;
   if (copiedRows > 0) {
-    memcpy(newX[newXIndex], m_X[oldXIndex], copiedRows * 3);
+    memcpy(newX[newXIndex], m_X[oldXIndex], copiedRows * 3 * sizeof(double));
     newXIndex += copiedRows;
   }
   numAddedPoints = 0;
