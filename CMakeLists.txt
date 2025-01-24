@@ -302,6 +302,7 @@ if(NOT IOS)
 
     # Alias variables to be consistent with previous detection method
     set(PYTHON3_FOUND ${Python3_FOUND})
+    set(PYTHON_DEFAULT_AVAILABLE TRUE)
     set(PYTHON3_EXECUTABLE ${Python3_EXECUTABLE})
     set(PYTHON_DEFAULT_EXECUTABLE ${PYTHON3_EXECUTABLE})
     set(PYTHON3INTERP_FOUND ${Python3_Interpreter_FOUND})
