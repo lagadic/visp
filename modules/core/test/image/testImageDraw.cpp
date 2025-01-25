@@ -47,12 +47,17 @@ int main(int argc, char *argv[])
   using namespace VISP_NAMESPACE_NAME;
 #endif
   bool save = false;
+  vpFont::vpFontFamily font_family = vpFont::TRUETYPE_FILE;
+
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--save") {
       save = true;
     }
+    else if (std::string(argv[i]) == "--mono") {
+      font_family = vpFont::GENERIC_MONOSPACE;
+    }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-      std::cout << "\nUsage: " << argv[0] << " [--save] [--help] [-h]\n" << std::endl;
+      std::cout << "\nUsage: " << argv[0] << " [--save] [--mono (GENERIC_MONOSPACE font)] [--help] [-h]\n" << std::endl;
       return EXIT_SUCCESS;
     }
   }
@@ -73,7 +78,7 @@ int main(int argc, char *argv[])
 
     iP1.set_i(20);
     iP1.set_j(60);
-    vpFont font(32);
+    vpFont font(32, font_family);
     font.drawText(I, "Test...", iP1, vpColor::blue);
 
     iP1.set_i(60);
@@ -88,7 +93,7 @@ int main(int argc, char *argv[])
     iP1.set_j(200);
     font.drawText(I, "Test...", iP1, vpColor::white, vpColor::black);
 
-    vpFont font2(20);
+    vpFont font2(26, font_family);
     vpImagePoint textSize = font2.getMeasure(visp);
     vpImagePoint textPos = vpImagePoint(24, 620 - textSize.get_j());
     font2.drawText(I, visp, textPos, vpColor::darkGreen);
@@ -207,7 +212,7 @@ int main(int argc, char *argv[])
 
     iP1.set_i(20);
     iP1.set_j(60);
-    vpFont font(32);
+    vpFont font(32, font_family);
     font.drawText(I, "Test...", iP1, color);
 
     iP1.set_i(60);
@@ -222,7 +227,7 @@ int main(int argc, char *argv[])
     iP1.set_j(200);
     font.drawText(I, "Test...", iP1, 0, 255);
 
-    vpFont font2(20);
+    vpFont font2(20, font_family);
     vpImagePoint textSize = font2.getMeasure(visp);
     vpImagePoint textPos = vpImagePoint(24, 620 - textSize.get_j());
     font2.drawText(I, visp, textPos, 255);

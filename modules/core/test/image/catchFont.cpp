@@ -97,6 +97,54 @@ TEST_CASE("Segmentation fault reproducer", "[draw_text_font]")
   }
 }
 
+TEST_CASE("Sanity check", "[draw_text_font]")
+{
+  const std::string text = "ViSP standing for Visual Servoing Platform is a modular cross platform library. "
+    "0123456789 ,;:!?./§ &é'(-è_çà)=";
+
+  SECTION("GENERIC_MONOSPACE")
+  {
+    vpFont font(16, vpFont::GENERIC_MONOSPACE);
+
+    SECTION("unsigned char")
+    {
+      REQUIRE_NOTHROW([&]() {
+        vpImage<unsigned char> I(32, 512);
+        font.drawText(I, text, vpImagePoint(10, 10), 200);
+      }());
+    }
+
+    SECTION("vpRGBa")
+    {
+      REQUIRE_NOTHROW([&]() {
+        vpImage<vpRGBa> I(32, 512);
+        font.drawText(I, text, vpImagePoint(10, 10), vpColor::red);
+      }());
+    }
+  }
+
+  SECTION("TRUETYPE_FILE")
+  {
+    vpFont font(16, vpFont::TRUETYPE_FILE);
+
+    SECTION("unsigned char")
+    {
+      REQUIRE_NOTHROW([&]() {
+        vpImage<unsigned char> I(32, 512);
+        font.drawText(I, text, vpImagePoint(10, 10), 200);
+      }());
+    }
+
+    SECTION("vpRGBa")
+    {
+      REQUIRE_NOTHROW([&]() {
+        vpImage<vpRGBa> I(32, 512);
+        font.drawText(I, text, vpImagePoint(10, 10), vpColor::red);
+      }());
+    }
+  }
+}
+
 int main(int argc, char *argv[])
 {
   Catch::Session session;
