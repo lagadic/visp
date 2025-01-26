@@ -11,6 +11,8 @@ concurrency:
 
 jobs:
   build-windows-clang:
+    if: ${{ always() }}
+    needs: build-windows-msvc
     runs-on: ${{ matrix.os }}
     defaults:
       run:

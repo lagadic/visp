@@ -19,6 +19,7 @@ env:
 
 jobs:
   build-ubuntu-ogre-src:
+    needs: [build-ubuntu-dep-apt, build-ubuntu-dep-src, build-ubuntu-ogre-apt]
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false

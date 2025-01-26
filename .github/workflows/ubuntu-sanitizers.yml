@@ -17,6 +17,8 @@ concurrency:
 
 jobs:
   build-ubuntu-sanitizers:
+    if: ${{ always() }}
+    needs: [build-ubuntu-dep-apt, build-ubuntu-dep-src]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false

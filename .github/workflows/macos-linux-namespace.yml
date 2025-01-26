@@ -12,7 +12,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-macos:
+  build-macos-namespace:
+    needs: build-macos
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false

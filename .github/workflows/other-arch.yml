@@ -16,6 +16,7 @@ concurrency:
 
 jobs:
   build-other-architectures:
+    needs: [build-ubuntu-dep-apt, build-ubuntu-dep-src]
     # The host should always be linux
     runs-on: ubuntu-latest
     name: Build on ${{ matrix.distro }} ${{ matrix.arch }} ${{ matrix.endianness }}

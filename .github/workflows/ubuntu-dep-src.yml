@@ -19,6 +19,8 @@ env:
 
 jobs:
   build-ubuntu-dep-src:
+    if: ${{ always() }}
+    needs: build-ubuntu-dep-apt
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false

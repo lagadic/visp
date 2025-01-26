@@ -16,6 +16,7 @@ concurrency:
 
 jobs:
   build-ubuntu-dep-apt-isolated:
+    needs: [build-ubuntu-dep-apt, build-ubuntu-dep-src]
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false

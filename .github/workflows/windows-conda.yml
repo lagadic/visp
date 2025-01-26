@@ -9,6 +9,8 @@ concurrency:
 
 jobs:
   build-windows-conda:
+    if: ${{ always() }}
+    needs: build-windows-msvc
     name: ${{ matrix.os }} ${{ matrix.compiler }} - Python ${{ matrix.python-version }} ${{ matrix.build_type }} ${{ matrix.cxx_options }}
     runs-on: ${{ matrix.os }}
 

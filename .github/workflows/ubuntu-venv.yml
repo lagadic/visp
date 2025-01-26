@@ -15,6 +15,7 @@ concurrency:
 
 jobs:
   build-ubuntu-dep-apt-venv:
+    needs: [build-ubuntu-dep-apt, build-ubuntu-dep-src]
     runs-on: ubuntu-latest
 
     steps:

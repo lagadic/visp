@@ -15,6 +15,7 @@ concurrency:
 
 jobs:
   build-ios:
+    needs: [build-macos, build-ubuntu-dep-apt, build-ubuntu-dep-src]
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false

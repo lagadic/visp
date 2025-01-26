@@ -12,6 +12,7 @@ concurrency:
 
 jobs:
   visp-conda:
+    needs: build-macos
     name: ${{ matrix.os }} - Python ${{ matrix.python-version }} ${{ matrix.build_type }} ${{ matrix.cxx_options }}
     runs-on: ${{ matrix.os }}
 
