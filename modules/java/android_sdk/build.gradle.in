@@ -90,13 +90,14 @@
 
 apply plugin: 'com.android.library'
 
-def vispVersionName = "@ ViSP_VERSION@"
-def vispVersionCode = ((@ ViSP_VERSION_MAJOR@ * 100 + @ ViSP_VERSION_MINOR@) * 100 + @ ViSP_VERSION_PATCH@) * 10 + 0
+def vispVersionName = "@ViSP_VERSION@"
+def vispVersionCode = ((@ViSP_VERSION_MAJOR@ * 100 + @ViSP_VERSION_MINOR@) * 100 + @ViSP_VERSION_PATCH@) * 10 + 0
 
 println "ViSP: " +vispVersionName + " " + project.buildscript.sourceFile
 
 android {
     compileSdkVersion @ANDROID_COMPILE_SDK_VERSION@
+    namespace "org.visp"
 
     defaultConfig {
         minSdkVersion @ANDROID_MIN_SDK_VERSION@
@@ -130,6 +131,10 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    buildFeatures {
+      aidl true
     }
 
     sourceSets {

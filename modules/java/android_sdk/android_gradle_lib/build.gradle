@@ -5,6 +5,7 @@ def vispVersionCode = ((@VISP_VERSION_MAJOR@ * 100 + @VISP_VERSION_MINOR@) * 100
 
 android {
     compileSdkVersion @ANDROID_COMPILE_SDK_VERSION@
+    namespace "org.visp"
 
     defaultConfig {
         minSdkVersion @ANDROID_MIN_SDK_VERSION@
@@ -19,6 +20,10 @@ android {
                 targets "visp_jni_shared"
             }
         }
+    }
+
+    buildFeatures {
+      aidl true
     }
 
     buildTypes {
