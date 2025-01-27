@@ -18,6 +18,7 @@ extern "C" {
 
 #include "listconverters.hpp"
 #include "visp_java.hpp"
+#include <visp3/core/vpConfig.h>
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4800 4244)
