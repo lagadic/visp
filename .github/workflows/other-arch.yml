@@ -23,7 +23,6 @@ jobs:
     # Run steps on a matrix of 3 arch/distro combinations
     strategy:
       fail-fast: false
-      compiler: [ {CC: /usr/bin/gcc-14, CXX: /usr/bin/g++-14}, {CC: /usr/bin/clang, CXX: /usr/bin/clang++} ]
       matrix:
         include:
           # - arch: armv6
@@ -36,6 +35,12 @@ jobs:
             distro: ubuntu:latest
             target: ARMV8
             endianness: (Little Endian)
+            compiler: {CC: /usr/bin/gcc-14, CXX: /usr/bin/g++-14}
+          - arch: aarch64
+            distro: ubuntu:latest
+            target: ARMV8
+            endianness: (Little Endian)
+            compiler: {CC: /usr/bin/clang, CXX: /usr/bin/clang++}
           # - arch: ppc64le
           #   distro: ubuntu20.04
           #   target: POWER8
@@ -43,6 +48,12 @@ jobs:
             distro: ubuntu:latest
             target: Z13
             endianness: (Big Endian)
+            compiler: {CC: /usr/bin/gcc-14, CXX: /usr/bin/g++-14}
+          - arch: s390x
+            distro: ubuntu:latest
+            target: Z13
+            endianness: (Big Endian)
+            compiler: {CC: /usr/bin/clang, CXX: /usr/bin/clang++}
 
     steps:
     - name: Checkout repository

@@ -35,19 +35,41 @@ jobs:
           - arch: aarch64
             distro: ubuntu:latest
             endianness: (Little Endian)
+            compiler: {CC: /usr/bin/gcc-14, CXX: /usr/bin/g++-14}
           - arch: riscv64
             distro: ubuntu:latest
             target: RISC-V
             endianness: (Little Endian)
+            compiler: {CC: /usr/bin/gcc-14, CXX: /usr/bin/g++-14}
           - arch: ppc64le
             distro: ubuntu:latest
             target: POWER8
             endianness: (Little Endian)
+            compiler: {CC: /usr/bin/gcc-14, CXX: /usr/bin/g++-14}
           - arch: s390x
             distro: ubuntu:latest
             target: Z13
             endianness: (Big Endian)
-
+            compiler: {CC: /usr/bin/gcc-14, CXX: /usr/bin/g++-14}
+          - arch: aarch64
+            distro: ubuntu:latest
+            endianness: (Little Endian)
+            compiler: {CC: /usr/bin/clang, CXX: /usr/bin/clang++}
+          - arch: riscv64
+            distro: ubuntu:latest
+            target: RISC-V
+            endianness: (Little Endian)
+            compiler: {CC: /usr/bin/clang, CXX: /usr/bin/clang++}
+          - arch: ppc64le
+            distro: ubuntu:latest
+            target: POWER8
+            endianness: (Little Endian)
+            compiler: {CC: /usr/bin/clang, CXX: /usr/bin/clang++}
+          - arch: s390x
+            distro: ubuntu:latest
+            target: Z13
+            endianness: (Big Endian)
+            compiler: {CC: /usr/bin/clang, CXX: /usr/bin/clang++}
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
