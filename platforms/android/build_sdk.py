@@ -234,6 +234,8 @@ class Builder:
         if self.use_ccache == True:
             cmd.append("-DNDK_CCACHE=ccache")
 
+        cmake_vars['BUILD_JAVA'] = "ON"
+
         cmake_vars.update(abi.cmake_vars)
         cmd += [ "-D%s='%s'" % (k, v) for (k, v) in cmake_vars.items() if v is not None]
         cmd.append(self.vispdir)
