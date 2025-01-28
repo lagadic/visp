@@ -39,13 +39,15 @@
 
 #include <visp3/core/vpConfig.h>
 
+#include <map>
+#include <set>
+
 
 #include <visp3/rbt/vpRBFeatureTracker.h>
 #include <visp3/core/vpPoint.h>
 #include <visp3/core/vpTrackingException.h>
 #include <visp3/core/vpRobust.h>
 #include <visp3/rbt/vpPointMap.h>
-
 
 BEGIN_VISP_NAMESPACE
 
@@ -68,6 +70,7 @@ public:
       m_cameras.pop_front();
     }
     m_cameras.push_back(CameraData(m_cam, cTw, indices3d, uvs));
+    m_mapView.update(m_cameras);
   }
 
   void updateEnvironment(const std::vector<unsigned int> &filteredIndices)
@@ -77,50 +80,97 @@ public:
     for (CameraData &camera: m_cameras) {
       camera.filter(sortedFilteredIndices);
     }
+    m_mapView.update(m_cameras);
   }
 
-  void asParamVector(vpColVector &e)
+  /**
+   * \brief Set the params vector as a flattened view of the optimization parameters.
+   *
+   * These parameters are:
+   * - The camera extrinsic parameters (N x 6 params) in the form (translation, thetaUVector)
+   * - The set of 3D points that are seen by at least one camera (M x 3)
+   *
+   * This results in a N * 6 * M * 3 params, where the N * 6 first values are the camera parameters
+   *
+   * \param params a 1D vector containing the optimisation variables
+  */
+  void asParamVector(vpColVector &params);
+
+  std::vector<vpHomogeneousMatrix> getCameraPoses()
   {
-    throw std::runtime_error("asparam not implemented");
+    std::vector<vpHomogeneousMatrix> poses;
+    for (const CameraData &camera: m_cameras) {
+      poses.push_back(vpHomogeneousMatrix(camera.pose()));
+    }
+    return poses;
   }
 
+  /**
+   * \brief Update the camera poses and 3D points from the modified optimisation variables.
+   *
+   * It should have the same dimension and content as when it was filled with \ref asParamVector
+   *
+   * \param params
+  */
   void updateFromParamVector(const vpColVector &params)
   {
+
     throw std::runtime_error("updateFromParamVector not implemented");
   }
 
-  void computeError(vpColVector &e)
+  void computeError(const vpColVector params, vpColVector &e)
   {
 
-    e.resize(numResiduals(), false);
-
+    e.resize(numResiduals(), true);
     unsigned int i = 0;
+    unsigned int cameraIndex = 0;
     for (CameraData &camera: m_cameras) {
-      camera.error(e, i);
+      camera.error(m_mapView, params, e, cameraIndex, m_cameras.size(), i);
+      i += camera.numResiduals();
+      ++cameraIndex;
     }
   }
 
-  void computeJacobian(vpMatrix &J)
+  void jacobianSparsity(vpMatrix &S)
   {
     unsigned int numParams = numCameras() * 6 + numPoints3d() * 3;
-    J.resize(numResiduals(), numParams, true, false);
+    S.resize(numResiduals(), numParams);
     unsigned int i = 0;
-    for (unsigned int cameraIndex = 0; cameraIndex < m_cameras.size(); ++cameraIndex) {
-      camera.jacobian(J, cameraIndex, i);
+    unsigned int cameraIndex = 0;
+    for (const CameraData &camera: m_cameras) {
+      camera.fillJacobianSparsity(m_mapView, S, cameraIndex, m_cameras.size(), i);
+      i += camera.numResiduals();
+      ++cameraIndex;
     }
+
+  }
+
+  void computeJacobian(const vpColVector &params, vpMatrix &J)
+  {
+    // unsigned int numParams = numCameras() * 6 + numPoints3d() * 3;
+    // J.resize(numResiduals(), numParams, true, false);
+    // unsigned int i = 0;
+    // unsigned int cameraIndex = 0;
+    // for (CameraData &camera: m_cameras) {
+    //   camera.jacobian(params, J, cameraIndex, i);
+    //   i += camera.numResiduals();
+    //   ++cameraIndex;
+    // }
   }
 
 
   unsigned int numCameras() const { return m_cameras.size(); }
-  unsigned int numPoints3d() const { return m_map->getPoints().getRows(); }
+  unsigned int numPoints3d() const { return m_mapView.numPoints(); }
   unsigned int numResiduals() const
   {
     unsigned int numResiduals = 0;
     for (const CameraData &camera: m_cameras) {
       numResiduals += camera.numResiduals();
     }
+    return numResiduals;
   }
 
+  class MapIndexView;
 
   class CameraData
   {
@@ -132,6 +182,10 @@ public:
       m_indices3d = indices3d;
 
 #ifdef DEBUG_RB_BA
+      if (m_indices3d.size() != uvs.getRows()) {
+        throw vpException(vpException::badValue, "Number of 3D points and 2D observations should be the same!");
+      }
+
       for (unsigned int i = 1; i < m_indices3d.size(); ++i) {
         if (m_indices3d[i] < m_indices3d[i - 1]) {
           throw vpException(vpException::badValue, "3D index list should be sorted!");
@@ -142,11 +196,16 @@ public:
       m_points2d.resize(uvs.getRows());
 
       for (unsigned int i = 0; i < uvs.getRows(); ++i) {
-        vpPixelMeterConversion::convertPoint(cam, uvs[i][0], uvs[i][1], m_points2d[i][0], m_points2d[i][1]);
+        vpPixelMeterConversion::convertPointWithoutDistortion(cam, uvs[i][0], uvs[i][1], m_points2d[i][0], m_points2d[i][1]);
       }
     }
 
+    void fillJacobianSparsity(const MapIndexView &mapView, vpMatrix &S, unsigned int cameraIndex, unsigned int numCameras, unsigned int startResidual) const;
 
+    vpPoseVector pose() const { return vpPoseVector(m_cTw); }
+    void setPose(const vpPoseVector &r) { m_cTw = r; }
+
+    void error(MapIndexView &mapView, const vpColVector &params, vpColVector &e, unsigned int cameraIndex, unsigned int numCameras, unsigned int startResidual) const;
 
     unsigned int numResiduals() const { return m_points2d.size() * 2; }
 
@@ -184,11 +243,49 @@ public:
       }
 
       m_indices3d = std::move(indicestoKeep);
+      m_points2d = std::move(newPoints2d);
+
+
+#ifdef DEBUG_RB_BA
+      if (m_indices3d.size() != m_points2d.size()) {
+        throw vpException(vpException::badValue, "Number of 3D points and 2D observations should be the same!");
+      }
+#endif
+
     }
+
+    const std::vector<unsigned int> &getPointsIndices() const { return m_indices3d; }
+
   private:
     vpHomogeneousMatrix m_cTw;
     std::vector<unsigned int> m_indices3d;
     std::vector<std::array<double, 2>> m_points2d;
+
+  };
+
+
+  /**
+   * \brief Helper class to associate a 3D point to its location in the parameters vector and the Jacobian Matrix
+   * Since not all map points may be used during the optimisation, This class will help ensure that no zero column appears in the Jacobian
+   * Reducing the complexity of the of the optimisation.
+   *
+   * Only points that are seen by at least one camera will be stored in this map. It should be updated every time the map or cameras change.
+   *
+  */
+  class MapIndexView
+  {
+  public:
+    MapIndexView() = default;
+
+    void update(const std::list<CameraData> &cameras);
+
+    inline unsigned int numPoints() const { return m_pointToView.size(); }
+    inline unsigned int getPointIndex(unsigned int viewIndex) const { return m_viewToPoint.find(viewIndex)->second; }
+    inline unsigned int getViewIndex(unsigned int pointIndex) const { return m_pointToView.find(pointIndex)->second; }
+
+  private:
+    std::map<unsigned int, unsigned int> m_pointToView;
+    std::map<unsigned int, unsigned int> m_viewToPoint;
 
   };
 
@@ -197,6 +294,7 @@ private:
   unsigned int m_numCams;
   vpPointMap *m_map;
   std::list<CameraData> m_cameras;
+  MapIndexView m_mapView;
 
 
 
@@ -206,5 +304,4 @@ private:
 
 END_VISP_NAMESPACE
 
-#endif
 #endif
