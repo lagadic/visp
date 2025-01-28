@@ -35,41 +35,41 @@ jobs:
           - arch: aarch64
             distro: ubuntu:latest
             endianness: (Little Endian)
-            compiler: {CC: /usr/bin/gcc-14, CXX: /usr/bin/g++-14}
+            compiler: g++
           - arch: riscv64
             distro: ubuntu:latest
             target: RISC-V
             endianness: (Little Endian)
-            compiler: {CC: /usr/bin/gcc-14, CXX: /usr/bin/g++-14}
+            compiler: g++
           - arch: ppc64le
             distro: ubuntu:latest
             target: POWER8
             endianness: (Little Endian)
-            compiler: {CC: /usr/bin/gcc-14, CXX: /usr/bin/g++-14}
+            compiler: g++
           - arch: s390x
             distro: ubuntu:latest
             target: Z13
             endianness: (Big Endian)
-            compiler: {CC: /usr/bin/gcc-14, CXX: /usr/bin/g++-14}
+            compiler: g++
           - arch: aarch64
             distro: ubuntu:latest
             endianness: (Little Endian)
-            compiler: {CC: /usr/bin/clang, CXX: /usr/bin/clang++}
+            compiler: clang
           - arch: riscv64
             distro: ubuntu:latest
             target: RISC-V
             endianness: (Little Endian)
-            compiler: {CC: /usr/bin/clang, CXX: /usr/bin/clang++}
+            compiler: clang
           - arch: ppc64le
             distro: ubuntu:latest
             target: POWER8
             endianness: (Little Endian)
-            compiler: {CC: /usr/bin/clang, CXX: /usr/bin/clang++}
+            compiler: clang
           - arch: s390x
             distro: ubuntu:latest
             target: Z13
             endianness: (Big Endian)
-            compiler: {CC: /usr/bin/clang, CXX: /usr/bin/clang++}
+            compiler: clang
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -84,12 +84,11 @@ jobs:
         arch: none
         distro: none
         base_image: "--platform=linux/${{ matrix.arch }} ${{ matrix.distro }}"
-        compiler: ${{ matrix.compiler }}
 
         run: |
           lscpu
 
-          apt-get update && apt-get install -y lsb-release git build-essential cmake
+          apt-get update && apt-get install -y lsb-release git make cmake ${{ matrix.compiler }}
           lsb_release -a
           dpkg --list | grep compiler
 

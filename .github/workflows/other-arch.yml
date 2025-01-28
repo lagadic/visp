@@ -35,12 +35,12 @@ jobs:
             distro: ubuntu:latest
             target: ARMV8
             endianness: (Little Endian)
-            compiler: {CC: /usr/bin/gcc-14, CXX: /usr/bin/g++-14}
+            compiler: g++
           - arch: aarch64
             distro: ubuntu:latest
             target: ARMV8
             endianness: (Little Endian)
-            compiler: {CC: /usr/bin/clang, CXX: /usr/bin/clang++}
+            compiler: clang
           # - arch: ppc64le
           #   distro: ubuntu20.04
           #   target: POWER8
@@ -48,12 +48,12 @@ jobs:
             distro: ubuntu:latest
             target: Z13
             endianness: (Big Endian)
-            compiler: {CC: /usr/bin/gcc-14, CXX: /usr/bin/g++-14}
+            compiler: g++
           - arch: s390x
             distro: ubuntu:latest
             target: Z13
             endianness: (Big Endian)
-            compiler: {CC: /usr/bin/clang, CXX: /usr/bin/clang++}
+            compiler: clang
 
     steps:
     - name: Checkout repository
@@ -69,12 +69,11 @@ jobs:
         arch: none
         distro: none
         base_image: "--platform=linux/${{ matrix.arch }} ${{ matrix.distro }}"
-        compiler: ${{ matrix.compiler }}
 
         run: |
           lscpu
 
-          apt-get update && apt-get install -y  lsb-release git build-essential cmake
+          apt-get update && apt-get install -y  lsb-release git make cmake ${{ matrix.compiler }}
           lsb_release -a
 
           apt-get update && apt-get install -y libx11-dev libdc1394-dev libv4l-dev gfortran liblapack-dev libopenblas-dev libeigen3-dev libopencv-dev
