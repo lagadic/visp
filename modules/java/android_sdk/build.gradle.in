@@ -91,7 +91,7 @@
 apply plugin: 'com.android.library'
 
 def vispVersionName = "@ViSP_VERSION@"
-def vispVersionCode = ((@ViSP_VERSION_MAJOR@ * 100 + @ViSP_VERSION_MINOR@) * 100 + @ViSP_VERSION_PATCH@) * 10 + 0
+def vispVersionCode = ((@VISP_VERSION_MAJOR@ * 100 + @VISP_VERSION_MINOR@) * 100 + @VISP_VERSION_PATCH@) * 10 + 0
 
 println "ViSP: " +vispVersionName + " " + project.buildscript.sourceFile
 
