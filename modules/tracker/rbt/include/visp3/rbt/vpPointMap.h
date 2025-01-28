@@ -35,7 +35,6 @@ public:
   void getVisiblePoints(const unsigned int h, const unsigned int w, const vpMatrix &cX, const vpMatrix &uvs, const vpColVector &expectedZ, std::list<int> &indices);
   void getVisiblePoints(const unsigned int h, const unsigned int w, const vpCameraParameters &cam, const vpHomogeneousMatrix &cTw, const vpImage<float> &depth, std::list<int> &indices);
 
-
   void getOutliers(const vpArray2D<int> &originalIndices, const vpMatrix &uvs,
   const vpMatrix &observations, std::list<int> &indices);
 
@@ -44,7 +43,12 @@ public:
    const vpImage<float> &depth, vpMatrix &oXs, std::list<int> &validCandidateIndices);
 
   void updatePoints(const vpArray2D<int> &indicesToRemove, const vpMatrix &pointsToAdd, std::list<int> &removedIndices, unsigned int &numAddedPoints);
-
+  void updatePoint(unsigned int index, double X, double Y, double Z)
+  {
+    m_X[index][0] = X;
+    m_X[index][1] = Y;
+    m_X[index][2] = Z;
+  }
 
 private:
   vpMatrix m_X; // N x 3, points expressed in world frame

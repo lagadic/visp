@@ -29,19 +29,15 @@
  */
 
 /*!
-  \file vpRBKltTracker.h
-  \brief KLT features in the context of render based tracking
+  \file vpRBBundleAdjustment.h
+  \brief A simple bundle adjustment problem resolution helper
 */
 #ifndef VP_RB_BUNDLE_ADJUSTMENT_H
 #define VP_RB_BUNDLE_ADJUSTMENT_H
 
-#define DEBUG_RB_BA 1
-
 #include <visp3/core/vpConfig.h>
 
 #include <map>
-#include <set>
-
 
 #include <visp3/rbt/vpRBFeatureTracker.h>
 #include <visp3/core/vpPoint.h>
@@ -54,35 +50,11 @@ BEGIN_VISP_NAMESPACE
 class VISP_EXPORT vpRBBundleAdjustment
 {
 public:
+  vpRBBundleAdjustment(unsigned int numCams, const vpCameraParameters &cam, vpPointMap &map);
 
+  void addNewCamera(const vpHomogeneousMatrix &cTw, const std::vector<unsigned int> &indices3d, const vpMatrix &uvs);
 
-
-  vpRBBundleAdjustment(unsigned int numCams, const vpCameraParameters &cam, vpPointMap &map)
-  {
-    m_numCams = numCams;
-    m_cam = cam;
-    m_map = &map;
-  }
-
-  void addNewCamera(const vpHomogeneousMatrix &cTw, const std::vector<unsigned int> &indices3d, const vpMatrix &uvs)
-  {
-    if (m_cameras.size() == m_numCams) {
-      m_cameras.pop_front();
-    }
-    m_cameras.push_back(CameraData(m_cam, cTw, indices3d, uvs));
-    m_mapView.update(m_cameras);
-  }
-
-  void updateEnvironment(const std::vector<unsigned int> &filteredIndices)
-  {
-    std::vector<unsigned int> sortedFilteredIndices(filteredIndices);
-    std::sort(sortedFilteredIndices.begin(), sortedFilteredIndices.end());
-    for (CameraData &camera: m_cameras) {
-      camera.filter(sortedFilteredIndices);
-    }
-    m_mapView.update(m_cameras);
-  }
-
+  void updateEnvironment(const std::vector<unsigned int> &filteredIndices);
   /**
    * \brief Set the params vector as a flattened view of the optimization parameters.
    *
@@ -94,16 +66,9 @@ public:
    *
    * \param params a 1D vector containing the optimisation variables
   */
-  void asParamVector(vpColVector &params);
+  void asParamVector(vpColVector &params) const;
 
-  std::vector<vpHomogeneousMatrix> getCameraPoses()
-  {
-    std::vector<vpHomogeneousMatrix> poses;
-    for (const CameraData &camera: m_cameras) {
-      poses.push_back(vpHomogeneousMatrix(camera.pose()));
-    }
-    return poses;
-  }
+  std::vector<vpHomogeneousMatrix> getCameraPoses() const;
 
   /**
    * \brief Update the camera poses and 3D points from the modified optimisation variables.
@@ -112,38 +77,23 @@ public:
    *
    * \param params
   */
-  void updateFromParamVector(const vpColVector &params)
-  {
+  void updateFromParamVector(const vpColVector &params);
 
-    throw std::runtime_error("updateFromParamVector not implemented");
-  }
+  /**
+   * @brief Compute the BA residuals, which are the reprojection errors between the projection of a 3D in a given camera with their associated 2D observation
+   * The errors are computed in normalized coordinate space since we assume that the camera intrinsics are the same for all cameras and are perfectly known.
+   *
+   * @param params The parameter vector, from which we compute the residuals. It should have been computed using asParamVector, and updated with an optimization algorithm
+   * @param e the residual vector, the reprojection errors.
+   */
+  void computeError(const vpColVector &params, vpColVector &e);
 
-  void computeError(const vpColVector params, vpColVector &e)
-  {
-
-    e.resize(numResiduals(), true);
-    unsigned int i = 0;
-    unsigned int cameraIndex = 0;
-    for (CameraData &camera: m_cameras) {
-      camera.error(m_mapView, params, e, cameraIndex, m_cameras.size(), i);
-      i += camera.numResiduals();
-      ++cameraIndex;
-    }
-  }
-
-  void jacobianSparsity(vpMatrix &S)
-  {
-    unsigned int numParams = numCameras() * 6 + numPoints3d() * 3;
-    S.resize(numResiduals(), numParams);
-    unsigned int i = 0;
-    unsigned int cameraIndex = 0;
-    for (const CameraData &camera: m_cameras) {
-      camera.fillJacobianSparsity(m_mapView, S, cameraIndex, m_cameras.size(), i);
-      i += camera.numResiduals();
-      ++cameraIndex;
-    }
-
-  }
+  /**
+   * @brief Compute the Jacobian sparsity matrix, that indicates which parameters are used when dealing with a given residual error
+   *
+   * @param S The Jacobian sparsity matrix, that has the same size as the jacobian
+   */
+  void jacobianSparsity(vpArray2D<int> &S);
 
   void computeJacobian(const vpColVector &params, vpMatrix &J)
   {
@@ -175,87 +125,18 @@ public:
   class CameraData
   {
   public:
-    CameraData(const vpCameraParameters &cam, const vpHomogeneousMatrix &cTw, const std::vector<unsigned int> &indices3d, const vpMatrix &uvs)
-    {
+    CameraData(const vpCameraParameters &cam, const vpHomogeneousMatrix &cTw, const std::vector<unsigned int> &indices3d, const vpMatrix &uvs);
 
-      m_cTw = cTw;
-      m_indices3d = indices3d;
 
-#ifdef DEBUG_RB_BA
-      if (m_indices3d.size() != uvs.getRows()) {
-        throw vpException(vpException::badValue, "Number of 3D points and 2D observations should be the same!");
-      }
-
-      for (unsigned int i = 1; i < m_indices3d.size(); ++i) {
-        if (m_indices3d[i] < m_indices3d[i - 1]) {
-          throw vpException(vpException::badValue, "3D index list should be sorted!");
-        }
-      }
-#endif
-
-      m_points2d.resize(uvs.getRows());
-
-      for (unsigned int i = 0; i < uvs.getRows(); ++i) {
-        vpPixelMeterConversion::convertPointWithoutDistortion(cam, uvs[i][0], uvs[i][1], m_points2d[i][0], m_points2d[i][1]);
-      }
-    }
-
-    void fillJacobianSparsity(const MapIndexView &mapView, vpMatrix &S, unsigned int cameraIndex, unsigned int numCameras, unsigned int startResidual) const;
-
+    unsigned int numResiduals() const { return m_points2d.size() * 2; }
+    const std::vector<unsigned int> &getPointsIndices() const { return m_indices3d; }
     vpPoseVector pose() const { return vpPoseVector(m_cTw); }
     void setPose(const vpPoseVector &r) { m_cTw = r; }
 
     void error(MapIndexView &mapView, const vpColVector &params, vpColVector &e, unsigned int cameraIndex, unsigned int numCameras, unsigned int startResidual) const;
+    void fillJacobianSparsity(const MapIndexView &mapView, vpArray2D<int> &S, unsigned int cameraIndex, unsigned int numCameras, unsigned int startResidual) const;
 
-    unsigned int numResiduals() const { return m_points2d.size() * 2; }
-
-    void filter(const std::vector<unsigned int> &filteredIndices)
-    {
-#ifdef DEBUG_RB_BA
-      for (unsigned int i = 1; i < filteredIndices.size(); ++i) {
-        if (filteredIndices[i] < filteredIndices[i - 1]) {
-          throw vpException(vpException::badValue, "Removed indices should be sorted!");
-        }
-      }
-#endif
-      std::vector<unsigned int> indicestoKeep;
-      unsigned int currentFilterIndex = 0;
-      unsigned int currentIndex = 0;
-      while (currentIndex < m_indices3d.size() && currentFilterIndex < filteredIndices.size()) {
-        unsigned int toRemove = filteredIndices[currentFilterIndex];
-        unsigned int currentValue = m_indices3d[currentIndex];
-        while (currentValue < toRemove) {
-          indicestoKeep.push_back(currentIndex);
-          ++currentIndex;
-          if (currentIndex > m_indices3d.size()) {
-            break;
-          }
-          currentValue = m_indices3d[currentIndex];
-        }
-
-        ++currentFilterIndex;
-      }
-
-      std::vector<std::array<double, 2>> newPoints2d(indicestoKeep.size());
-      for (unsigned int i = 0; i < indicestoKeep.size(); ++i) {
-        newPoints2d[i][0] = m_points2d[indicestoKeep[i]][0];
-        newPoints2d[i][1] = m_points2d[indicestoKeep[i]][1];
-      }
-
-      m_indices3d = std::move(indicestoKeep);
-      m_points2d = std::move(newPoints2d);
-
-
-#ifdef DEBUG_RB_BA
-      if (m_indices3d.size() != m_points2d.size()) {
-        throw vpException(vpException::badValue, "Number of 3D points and 2D observations should be the same!");
-      }
-#endif
-
-    }
-
-    const std::vector<unsigned int> &getPointsIndices() const { return m_indices3d; }
-
+    void filter(const std::vector<unsigned int> &filteredIndices);
   private:
     vpHomogeneousMatrix m_cTw;
     std::vector<unsigned int> m_indices3d;
@@ -269,7 +150,7 @@ public:
    * Since not all map points may be used during the optimisation, This class will help ensure that no zero column appears in the Jacobian
    * Reducing the complexity of the of the optimisation.
    *
-   * Only points that are seen by at least one camera will be stored in this map. It should be updated every time the map or cameras change.
+   * Only points that are seen by at least one camera will be stored in this map. It should be updated every time the map or the cameras change.
    *
   */
   class MapIndexView
@@ -290,15 +171,11 @@ public:
   };
 
 private:
-  vpCameraParameters m_cam;
-  unsigned int m_numCams;
-  vpPointMap *m_map;
-  std::list<CameraData> m_cameras;
-  MapIndexView m_mapView;
-
-
-
-
+  vpCameraParameters m_cam; //! Camera intrinsics associated with the considered camera poses
+  unsigned int m_numCams; // Max number of cameras that can be considered in the system
+  vpPointMap *m_map; // Map containing the 3D points that can be associated to 2D observations
+  std::list<CameraData> m_cameras; //! Data for each camera to optimize
+  MapIndexView m_mapView; //! Helper object to restrain the optimization variables to points that are observed by at least one camera
 };
 
 
