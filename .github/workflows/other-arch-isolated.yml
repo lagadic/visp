@@ -84,6 +84,7 @@ jobs:
         arch: none
         distro: none
         base_image: "--platform=linux/${{ matrix.arch }} ${{ matrix.distro }}"
+        compiler: ${{ matrix.compiler }}
 
         run: |
           lscpu
