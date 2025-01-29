@@ -5,9 +5,9 @@ message(STATUS "Android Gradle Plugin version: ${ANDROID_GRADLE_PLUGIN_VERSION}"
 set(GRADLE_VERSION "5.6.4" CACHE STRING "Gradle version")
 message(STATUS "Gradle version: ${GRADLE_VERSION}")
 
-set(ANDROID_COMPILE_SDK_VERSION "26" CACHE STRING "Android compileSdkVersion")
+set(ANDROID_COMPILE_SDK_VERSION "33" CACHE STRING "Android compileSdkVersion")
 set(ANDROID_MIN_SDK_VERSION "21" CACHE STRING "Android minSdkVersion")
-set(ANDROID_TARGET_SDK_VERSION "26" CACHE STRING "Android minSdkVersion")
+set(ANDROID_TARGET_SDK_VERSION "33" CACHE STRING "Android target Sdk Version")
 
 set(ANDROID_BUILD_BASE_DIR "${VISP_BINARY_DIR}/visp_android" CACHE INTERNAL "")
 set(ANDROID_TMP_INSTALL_BASE_DIR "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/install/visp_android")
@@ -66,10 +66,53 @@ foreach(fname ${GRADLE_WRAPPER_FILES})
 endforeach()
 
 file(WRITE "${ANDROID_BUILD_BASE_DIR}/settings.gradle" "
+pluginManagement {
+    repositories {
+        google {
+            content {
+                includeGroupByRegex(\"com\\\\.android.*\")
+                includeGroupByRegex(\"com\\\\.google.*\")
+                includeGroupByRegex(\"androidx.*\")
+            }
+        }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
 include ':visp'
 ")
 
 file(WRITE "${ANDROID_TMP_INSTALL_BASE_DIR}/settings.gradle" "
+
+pluginManagement {
+    repositories {
+        google {
+            content {
+                includeGroupByRegex(\"com\\\\.android.*\")
+                includeGroupByRegex(\"com\\\\.google.*\")
+                includeGroupByRegex(\"androidx.*\")
+            }
+        }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
 rootProject.name = 'visp_samples'
 
 def vispsdk='../'
@@ -79,6 +122,8 @@ include ':visp'
 project(':visp').projectDir = new File(vispsdk + '/sdk')
 ")
 
+file(WRITE "${ANDROID_BUILD_BASE_DIR}/local.properties" "sdk.dir=${ANDROID_SDK}")
+file(WRITE "${ANDROID_TMP_INSTALL_BASE_DIR}/local.properties" "sdk.dir=${ANDROID_SDK}")
 
 macro(add_android_project target path)
   get_filename_component(__dir "${path}" NAME)
@@ -107,6 +152,27 @@ macro(add_android_project target path)
   configure_file("${path}/build.gradle.in" "${ANDROID_BUILD_BASE_DIR}/${__dir}/build.gradle" @ONLY)
 
   file(APPEND "${ANDROID_BUILD_BASE_DIR}/settings.gradle" "
+  pluginManagement {
+    repositories {
+        google {
+            content {
+                includeGroupByRegex(\"com\\\\.android.*\")
+                includeGroupByRegex(\"com\\\\.google.*\")
+                includeGroupByRegex(\"androidx.*\")
+            }
+        }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
 include ':${__dir}'
 ")
 
