@@ -30,6 +30,8 @@ if(NOT INSTALL_CREATE_DISTRIB)
   set(ANDROID_INSTALL_ABI_FILTER "${ANDROID_BUILD_ABI_FILTER}")
 endif()
 
+file(WRITE "${VISP_BINARY_DIR}/root_android.txt" "${ANDROID_BUILD_BASE_DIR}")
+
 # BUG: Ninja generator generates broken targets with ANDROID_ABI_FILTER name (CMake 3.11.2)
 #set(__spaces "                        ")
 #string(REPLACE "\n" "\n${__spaces}" ANDROID_ABI_FILTER "${__spaces}${ANDROID_BUILD_ABI_FILTER}")

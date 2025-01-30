@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os, sys
+from distutils.dir_util import copy_tree
 import argparse
 import glob
 import re
@@ -219,8 +220,8 @@ class Builder:
             BUILD_ANDROID_EXAMPLES="ON",
             BUILD_ANDROID_SERVICE="ON",
             INSTALL_ANDROID_EXAMPLES="ON",
-            CMAKE_C_FLAGS="-fopenmp -static-openmp",
-            CMAKE_CXX_FLAGS="-fopenmp -static-openmp",
+            CMAKE_C_FLAGS="-fopenmp",
+            CMAKE_CXX_FLAGS="-fopenmp",
         )
         if self.ninja_path != 'ninja':
             cmake_vars['CMAKE_MAKE_PROGRAM'] = self.ninja_path
@@ -248,6 +249,20 @@ class Builder:
         execute([self.ninja_path, "install" if (self.debug_info or self.debug) else "install/strip"])
 
     def build_javadoc(self):
+      confFilePath = os.path.join(self.libdest, "root_android.txt")
+      confFileExists = os.path.exists(confFilePath)
+      print("Looking for file \"" + str(confFilePath) + "\"")
+      if confFileExists:
+        print("\tIt exists !")
+        line = ""
+        with open(confFilePath, "r") as file:
+          line = file.readline()
+        print("-> Read \"" + line + "\"")
+        rootJavadoc = os.path.join(line, "visp", "build", "docs", "javadoc")
+        print("\t->Copying content of \"" + str(rootJavadoc) + "\"")
+        copy_tree(rootJavadoc, self.docdest)
+      else:
+        print("\tIt DOES NOT exist =(")
         classpaths = []
         for dir, _, files in os.walk(os.environ["ANDROID_SDK"]):
             for f in files:
