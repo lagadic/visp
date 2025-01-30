@@ -243,10 +243,11 @@ vpMatrix &vpMatrix::operator=(const vpMatrix &A)
 vpMatrix &vpMatrix::operator=(vpMatrix &&other)
 {
   if (this != &other) {
-    if (data) {
+    if (isMemoryOwner && data != nullptr) {
       free(data);
+
     }
-    if (rowPtrs) {
+    if (isRowPtrsOwner && rowPtrs != nullptr) {
       free(rowPtrs);
     }
 
@@ -255,6 +256,8 @@ vpMatrix &vpMatrix::operator=(vpMatrix &&other)
     rowPtrs = other.rowPtrs;
     dsize = other.dsize;
     data = other.data;
+    isMemoryOwner = other.isMemoryOwner;
+    isRowPtrsOwner = other.isRowPtrsOwner;
 
     other.rowNum = 0;
     other.colNum = 0;
@@ -558,12 +561,12 @@ vpMatrix vpMatrix::operator*(const vpVelocityTwistMatrix &V) const
   }
 
   return M;
-}
+    }
 
-/*!
-  Operator that allow to multiply a matrix by a force/torque twist matrix.
-  The matrix should be of dimension m-by-6.
-*/
+    /*!
+      Operator that allow to multiply a matrix by a force/torque twist matrix.
+      The matrix should be of dimension m-by-6.
+    */
 vpMatrix vpMatrix::operator*(const vpForceTwistMatrix &V) const
 {
   if (colNum != V.getRows()) {
@@ -615,12 +618,12 @@ vpMatrix vpMatrix::operator*(const vpForceTwistMatrix &V) const
   }
 
   return M;
-}
+    }
 
-/*!
-  Operation C = A + B (A is unchanged).
-  \sa add2Matrices() to avoid matrix allocation for each use.
-*/
+    /*!
+      Operation C = A + B (A is unchanged).
+      \sa add2Matrices() to avoid matrix allocation for each use.
+    */
 vpMatrix vpMatrix::operator+(const vpMatrix &B) const
 {
   vpMatrix C;

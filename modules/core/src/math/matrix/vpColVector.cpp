@@ -473,14 +473,21 @@ std::vector<double> vpColVector::toStdVector() const
 vpColVector &vpColVector::operator=(vpColVector &&other)
 {
   if (this != &other) {
-    free(data);
-    free(rowPtrs);
+    if (isMemoryOwner && data != nullptr) {
+      free(data);
+
+    }
+    if (isRowPtrsOwner && rowPtrs != nullptr) {
+      free(rowPtrs);
+    }
 
     rowNum = other.rowNum;
     colNum = other.colNum;
     rowPtrs = other.rowPtrs;
     dsize = other.dsize;
     data = other.data;
+    isMemoryOwner = other.isMemoryOwner;
+    isRowPtrsOwner = other.isRowPtrsOwner;
 
     other.rowNum = 0;
     other.colNum = 0;
@@ -905,7 +912,7 @@ double vpColVector::sum() const
   double sum = 0.0;
   for (unsigned int i = 0; i < rowNum; ++i) {
     sum += (*this)[i];
-  }
+}
   return sum;
 #endif
 }
@@ -918,7 +925,7 @@ double vpColVector::sumSquare() const
   double sum_square = 0.0;
   for (unsigned int i = 0; i < rowNum; ++i) {
     sum_square += (*this)[i] * (*this)[i];
-  }
+}
   return sum_square;
 #endif
 }
@@ -943,7 +950,7 @@ vpColVector vpColVector::hadamard(const vpColVector &v) const
 #else
   for (unsigned int i = 0; i < dsize; ++i) {
     out.data[i] = data[i] * v.data[i];
-  }
+}
 #endif
   return out;
 }

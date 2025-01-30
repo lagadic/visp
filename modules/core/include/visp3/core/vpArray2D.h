@@ -151,7 +151,7 @@ public:
    * Basic constructor of a 2D array.
    * Number of columns and rows are set to zero.
    */
-  vpArray2D() : data(nullptr), rowNum(0), colNum(0), rowPtrs(nullptr), dsize(0) { }
+  vpArray2D() : data(nullptr), rowNum(0), colNum(0), rowPtrs(nullptr), dsize(0), isMemoryOwner(true), isRowPtrsOwner(true) { }
 
   /*!
     Copy constructor of a 2D array.
@@ -161,7 +161,7 @@ public:
 #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
     vpArray2D()
 #else
-    data(nullptr), rowNum(0), colNum(0), rowPtrs(nullptr), dsize(0)
+    data(nullptr), rowNum(0), colNum(0), rowPtrs(nullptr), dsize(0), isMemoryOwner(true), isRowPtrsOwner(true)
 #endif
   {
     resize(A.rowNum, A.colNum, false, false);
@@ -179,7 +179,7 @@ public:
 #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
     vpArray2D()
 #else
-    data(nullptr), rowNum(0), colNum(0), rowPtrs(nullptr), dsize(0)
+    data(nullptr), rowNum(0), colNum(0), rowPtrs(nullptr), dsize(0), isMemoryOwner(true), isRowPtrsOwner(true)
 #endif
   {
     resize(r, c);
@@ -197,7 +197,7 @@ public:
 #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
     vpArray2D()
 #else
-    data(nullptr), rowNum(0), colNum(0), rowPtrs(nullptr), dsize(0)
+    data(nullptr), rowNum(0), colNum(0), rowPtrs(nullptr), dsize(0), isMemoryOwner(true), isRowPtrsOwner(true)
 #endif
   {
     resize(r, c, false, false);
@@ -220,7 +220,7 @@ public:
 #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
     vpArray2D()
 #else
-    data(nullptr), rowNum(0), colNum(0), rowPtrs(nullptr), dsize(0)
+    data(nullptr), rowNum(0), colNum(0), rowPtrs(nullptr), dsize(0), isMemoryOwner(true), isRowPtrsOwner(true)
 #endif
   {
     if ((r > 0) && (c > 0)) {
@@ -264,6 +264,8 @@ public:
     rowPtrs = A.rowPtrs;
     dsize = A.dsize;
     data = A.data;
+    isMemoryOwner = A.isMemoryOwner;
+    isRowPtrsOwner = A.isRowPtrsOwner;
 
     A.rowNum = 0;
     A.colNum = 0;
@@ -279,7 +281,7 @@ public:
   }
 
   VP_EXPLICIT vpArray2D(unsigned int nrows, unsigned int ncols, const std::initializer_list<Type> &list)
-    : data(nullptr), rowNum(0), colNum(0), rowPtrs(nullptr), dsize(0)
+    : data(nullptr), rowNum(0), colNum(0), rowPtrs(nullptr), dsize(0), isMemoryOwner(true), isRowPtrsOwner(true)
   {
     if ((nrows * ncols) != static_cast<unsigned int>(list.size())) {
       std::ostringstream oss;
@@ -308,18 +310,62 @@ public:
   }
 #endif
 
+  /**
+   * \brief Creates a view of the Matrix A.
+   * A view shares the same underlying memory as the original array.
+   * It can be written into, modifying the original data. However, the array cannot be resized.
+   *
+   * When you use this method, it is your responsibility to ensure that the lifespan of the view does not exceed the lifespan of the original array.
+   *
+   * \param A the array to view
+   * \return vpArray2D<T>
+   */
+  static vpArray2D<Type> view(const vpArray2D<Type> &A)
+  {
+    vpArray2D<Type> v;
+    v.rowNum = A.rowNum;
+    v.colNum = A.colNum;
+    v.rowPtrs = A.rowPtrs;
+    v.dsize = A.dsize;
+    v.data = A.data;
+    v.isMemoryOwner = false;
+    v.isRowPtrsOwner = false;
+    return v;
+  }
+
+  static vpArray2D<Type> view(Type *data, unsigned int numRows, unsigned int numCols)
+  {
+    vpArray2D<Type> v;
+    v.rowNum = numRows;
+    v.colNum = numCols;
+    v.dsize = numRows * numCols;
+    v.data = data;
+    v.isMemoryOwner = false;
+    v.isRowPtrsOwner = true;
+    v.rowPtrs = reinterpret_cast<Type **>(malloc(v.rowNum * sizeof(Type *)));
+    for (unsigned int i = 0; i < v.rowNum; ++i) {
+      v.rowPtrs[i] = data + i * v.colNum;
+    }
+    return v;
+  }
+
+
   /*!
    * Destructor that deallocate memory.
    */
   virtual ~vpArray2D()
   {
     if (data != nullptr) {
-      free(data);
+      if (isMemoryOwner) {
+        free(data);
+      }
       data = nullptr;
     }
 
     if (rowPtrs != nullptr) {
-      free(rowPtrs);
+      if (isRowPtrsOwner) {
+        free(rowPtrs);
+      }
       rowPtrs = nullptr;
     }
     rowNum = 0;
@@ -361,6 +407,9 @@ public:
   */
   void resize(unsigned int nrows, unsigned int ncols, bool flagNullify = true, bool recopy_ = true)
   {
+    if (!isMemoryOwner) {
+      throw vpException(vpException::badValue, "Cannot resize an array that is a view of another array");
+    }
     if ((nrows == rowNum) && (ncols == colNum)) {
       if (flagNullify && (this->data != nullptr)) {
         memset(this->data, 0, this->dsize * sizeof(Type));
@@ -545,10 +594,10 @@ public:
   vpArray2D<Type> &operator=(vpArray2D<Type> &&other) noexcept
   {
     if (this != &other) {
-      if (data) {
+      if (isMemoryOwner && data) {
         free(data);
       }
-      if (rowPtrs) {
+      if (isRowPtrsOwner && rowPtrs) {
         free(rowPtrs);
       }
 
@@ -557,6 +606,8 @@ public:
       rowPtrs = other.rowPtrs;
       dsize = other.dsize;
       data = other.data;
+      isMemoryOwner = other.isMemoryOwner;
+      isRowPtrsOwner = other.isRowPtrsOwner;
 
       other.rowNum = 0;
       other.colNum = 0;
@@ -1105,6 +1156,11 @@ protected:
   Type **rowPtrs;
   //! Current array size (rowNum * colNum)
   unsigned int dsize;
+  //! Whether this array owns the memory it points to
+  bool isMemoryOwner;
+  //! Whether this array owns the row pointers
+  bool isRowPtrsOwner;
+
 };
 
 /*!

@@ -149,6 +149,9 @@ public:
   */
   void clear()
   {
+    if (!isMemoryOwner) {
+      throw vpException(vpException::fatalError, "Cannot clear a vector view");
+    }
     if (data != nullptr) {
       free(data);
       data = nullptr;

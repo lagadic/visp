@@ -133,14 +133,21 @@ vpRowVector &vpRowVector::operator=(double x)
 vpRowVector &vpRowVector::operator=(vpRowVector &&other)
 {
   if (this != &other) {
-    free(data);
-    free(rowPtrs);
+    if (isMemoryOwner && data != nullptr) {
+      free(data);
+
+    }
+    if (isRowPtrsOwner && rowPtrs != nullptr) {
+      free(rowPtrs);
+    }
 
     rowNum = other.rowNum;
     colNum = other.colNum;
     rowPtrs = other.rowPtrs;
     dsize = other.dsize;
     data = other.data;
+    isMemoryOwner = other.isMemoryOwner;
+    isRowPtrsOwner = other.isRowPtrsOwner;
 
     other.rowNum = 0;
     other.colNum = 0;
@@ -625,6 +632,8 @@ vpRowVector::vpRowVector(vpRowVector &&v) : vpArray2D<double>()
   rowPtrs = v.rowPtrs;
   dsize = v.dsize;
   data = v.data;
+  isMemoryOwner = v.isMemoryOwner;
+  isRowPtrsOwner = v.isRowPtrsOwner;
 
   v.rowNum = 0;
   v.colNum = 0;
@@ -1426,5 +1435,5 @@ vpRowVector vpRowVector::hadamard(const vpRowVector &v) const
   }
 #endif
   return out;
-}
+  }
 END_VISP_NAMESPACE
