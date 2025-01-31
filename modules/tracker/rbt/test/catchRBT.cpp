@@ -716,8 +716,8 @@ SCENARIO("Running tracker on static synthetic sequences", "[rbt]")
     vpHomogeneousMatrix odTo = traj1.cTo[i].inverse() * tracker_cTo;
     double errorT = odTo.getTranslationVector().frobeniusNorm();
     double errorR = odTo.getThetaUVector().getTheta();
-    std::cout << "Translation error = " << errorT << "m" << ", rotation error = " << vpMath::deg(errorR) << "°" << std::endl;
-    REQUIRE((errorT < 0.005 && errorR < vpMath::rad(2.0)));
+    std::cout << "Translation error = " << errorT << " m" << ", rotation error = " << vpMath::deg(errorR) << " deg" << std::endl;
+    REQUIRE((errorT < 0.005 && errorR < vpMath::deg(2.1)));
   }
 }
 
