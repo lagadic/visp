@@ -220,6 +220,8 @@ public:
 
       int wordUTF32_size = static_cast<int>(_wordUTF32.size());
 
+      int bottom = 0;
+      // https://github.com/justinmeiners/stb-truetype-example/blob/master/main.c
       for (int i = 0, x = 0; i < wordUTF32_size; i++) {
         /* how wide is this character */
         int ax = 0;
@@ -247,7 +249,7 @@ public:
         _bb.setTop(_bb.getTop() > d_y ? d_y : _bb.getTop());
 
         _bb.setWidth(d_x + d_w - _bb.getLeft());
-        _bb.setBottom(_bb.getBottom() < d_y + d_h ? d_y + d_h : _bb.getBottom());
+        bottom = (bottom < d_y + d_h) ? (d_y + d_h) : bottom;
 
         /* advance x */
         x += vpMath::round(ax * _fontScale);
@@ -259,6 +261,8 @@ public:
           x += vpMath::round(kern * _fontScale);
         }
       }
+
+      _bb.setBottom(bottom);
 
       Point bb;
       bb.x = static_cast<int>(_bb.getWidth());
@@ -300,9 +304,9 @@ public:
 
       if (_alpha.getSize()) {
         for (int i = 0; i < alphaRect.Height(); i++) {
-          int dstY = canvasRect.Top() + i;
+          int dstY = (canvasRect.Top() + i) % canvas.getHeight();
           for (int j = 0; j < alphaRect.Width(); j++) {
-            unsigned int dstX = static_cast<unsigned int>(canvasRect.Left() + j);
+            unsigned int dstX = static_cast<unsigned int>(canvasRect.Left() + j) % canvas.getWidth();
 
             // dst[x, y, c] = (pixel[c]*_alpha[x, y] + dst[x, y, c]*(255 - _alpha[x, y]))/255;
             int coeff = 255 - _alpha[i][j];
@@ -318,8 +322,8 @@ public:
     case TRUETYPE_FILE: {
       Measure(text);
       // Try to resize only if new size is bigger
-      _fontBuffer.resize(std::max<unsigned int>(_fontBuffer.getHeight(), static_cast<unsigned int>(_bb.getBottom() + 1)),
-                         std::max<unsigned int>(_fontBuffer.getWidth(), static_cast<unsigned int>(_bb.getRight() + 1)));
+      _fontBuffer.resize(std::max<unsigned int>(_fontBuffer.getHeight(), static_cast<unsigned int>(_bb.getBottom())),
+                         std::max<unsigned int>(_fontBuffer.getWidth(), static_cast<unsigned int>(_bb.getRight())));
 
       int wordUTF32_size = static_cast<int>(_wordUTF32.size());
 
@@ -336,10 +340,10 @@ public:
         int d_h = static_cast<int>(_bb_vec[i].getHeight());
 
         for (int y = d_y; y < d_y + d_h; y++) {
-          int dstY = static_cast<int>(position.get_v() + y - _bb.getTop());
+          int dstY = static_cast<int>(position.get_v() + y - _bb.getTop()) % canvas.getHeight();
 
           for (int x = d_x; x < d_x + d_w; x++) {
-            unsigned int dstX = static_cast<unsigned int>(position.get_u() + x - _bb.getLeft());
+            unsigned int dstX = static_cast<unsigned int>(position.get_u() + x - _bb.getLeft()) % canvas.getWidth();
 
             int coeff = 255 - _fontBuffer[y][x];
             unsigned char gray =
@@ -408,9 +412,9 @@ public:
 
       if (_alpha.getSize()) {
         for (int i = 0; i < alphaRect.Height(); i++) {
-          int dstY = canvasRect.Top() + i;
+          int dstY = (canvasRect.Top() + i) % canvas.getHeight();
           for (int j = 0; j < alphaRect.Width(); j++) {
-            unsigned int dstX = static_cast<unsigned int>(canvasRect.Left() + j);
+            unsigned int dstX = static_cast<unsigned int>(canvasRect.Left() + j) % canvas.getWidth();
 
             // dst[x, y, c] = (pixel[c]*_alpha[x, y] + dst[x, y, c]*(255 - _alpha[x, y]))/255;
             int coeff = 255 - _alpha[i][j];
@@ -429,8 +433,8 @@ public:
     case TRUETYPE_FILE: {
       Measure(text);
       // Try to resize only if new size is bigger
-      _fontBuffer.resize(std::max<unsigned int>(_fontBuffer.getHeight(), static_cast<unsigned int>(_bb.getBottom() + 1)),
-                         std::max<unsigned int>(_fontBuffer.getWidth(), static_cast<unsigned int>(_bb.getRight() + 1)));
+      _fontBuffer.resize(std::max<unsigned int>(_fontBuffer.getHeight(), static_cast<unsigned int>(_bb.getBottom())),
+                         std::max<unsigned int>(_fontBuffer.getWidth(), static_cast<unsigned int>(_bb.getRight())));
 
       int wordUTF32_size = static_cast<int>(_wordUTF32.size());
 
@@ -447,10 +451,10 @@ public:
         int d_h = static_cast<int>(_bb_vec[i].getHeight());
 
         for (int y = d_y; y < d_y + d_h; y++) {
-          int dstY = static_cast<int>(position.get_v() + y - _bb.getTop());
+          int dstY = static_cast<int>(position.get_v() + y - _bb.getTop()) % canvas.getHeight();
 
           for (int x = d_x; x < d_x + d_w; x++) {
-            unsigned int dstX = static_cast<unsigned int>(position.get_u() + x - _bb.getLeft());
+            unsigned int dstX = static_cast<unsigned int>(position.get_u() + x - _bb.getLeft()) % canvas.getWidth();
 
             int coeff = 255 - _fontBuffer[y][x];
             int R = (color.R * _fontBuffer[y][x] + coeff * canvas[dstY][dstX].R) / 255;
