@@ -209,6 +209,7 @@ vpMatrix::vpMatrix(vpMatrix &&A) : vpArray2D<double>()
   colNum = A.colNum;
   rowPtrs = A.rowPtrs;
   dsize = A.dsize;
+  data = A.data;
   isMemoryOwner = A.isMemoryOwner;
   isRowPtrsOwner = A.isRowPtrsOwner;
 
@@ -304,6 +305,24 @@ vpMatrix::vpMatrix(unsigned int nrows, unsigned int ncols, const std::initialize
  */
 vpMatrix::vpMatrix(const std::initializer_list<std::initializer_list<double> > &lists) : vpArray2D<double>(lists) { }
 #endif
+
+/**
+ * @brief Create a matrix view of a raw data array.
+ * The view can modify the contents of the raw data array,
+ * but may not resize it and does not own it: the memory is not released by the matrix
+ * and it should be freed by the user after the matrix view is released.
+ *
+ * @param data the raw data
+ * @param rows Number of rows
+ * @param cols Number of columns
+ * @return vpMatrix
+ */
+vpMatrix vpMatrix::view(double *data, unsigned int rows, unsigned int cols)
+{
+  vpMatrix M;
+  vpArray2D<double>::view(M, data, rows, cols);
+  return M;
+}
 
 /*!
   Initialize the matrix from a part of an input matrix \e M.
@@ -1237,7 +1256,7 @@ vpColVector vpMatrix::eigenValues() const
     gsl_vector_free(eval);
     gsl_matrix_free(m);
     gsl_matrix_free(evec);
-  }
+}
 #else
   {
     const char jobz = 'N';
@@ -1258,61 +1277,61 @@ vpColVector vpMatrix::eigenValues() const
                     "You should install Lapack 3rd party"));
 #endif
   return evalue;
+}
+
+/*!
+  Compute the eigenvalues of a n-by-n real symmetric matrix using
+  Lapack 3rd party.
+
+  \param evalue : Eigenvalues of the matrix, sorted in ascending order.
+
+  \param evector : Corresponding eigenvectors of the matrix.
+
+  \exception vpException::dimensionError If the matrix is not square.
+  \exception vpException::fatalError If the matrix is not symmetric.
+  \exception vpException::functionNotImplementedError If Lapack 3rd party is
+  not detected.
+
+  Here an example:
+  \code
+  #include <iostream>
+
+  #include <visp3/core/vpColVector.h>
+  #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpMatrix A(4,4); // A is a symmetric matrix
+    A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.; A[0][3] = 1/4.;
+    A[1][0] = 1/2.; A[1][1] = 1/3.; A[1][2] = 1/4.; A[1][3] = 1/5.;
+    A[2][0] = 1/3.; A[2][1] = 1/4.; A[2][2] = 1/5.; A[2][3] = 1/6.;
+    A[3][0] = 1/4.; A[3][1] = 1/5.; A[3][2] = 1/6.; A[3][3] = 1/7.;
+    std::cout << "Initial symmetric matrix: \n" << A << std::endl;
+
+    vpColVector d; // Eigenvalues
+    vpMatrix    V; // Eigenvectors
+
+    // Compute the eigenvalues and eigenvectors
+    A.eigenValues(d, V);
+    std::cout << "Eigen values: \n" << d << std::endl;
+    std::cout << "Eigen vectors: \n" << V << std::endl;
+
+    vpMatrix D;
+    D.diag(d); // Eigenvalues are on the diagonal
+
+    std::cout << "D: " << D << std::endl;
+
+    // Verification: A * V = V * D
+    std::cout << "AV-VD = 0 ? \n" << (A*V) - (V*D) << std::endl;
   }
+  \endcode
 
-  /*!
-    Compute the eigenvalues of a n-by-n real symmetric matrix using
-    Lapack 3rd party.
-
-    \param evalue : Eigenvalues of the matrix, sorted in ascending order.
-
-    \param evector : Corresponding eigenvectors of the matrix.
-
-    \exception vpException::dimensionError If the matrix is not square.
-    \exception vpException::fatalError If the matrix is not symmetric.
-    \exception vpException::functionNotImplementedError If Lapack 3rd party is
-    not detected.
-
-    Here an example:
-    \code
-    #include <iostream>
-
-    #include <visp3/core/vpColVector.h>
-    #include <visp3/core/vpMatrix.h>
-
-    #ifdef ENABLE_VISP_NAMESPACE
-    using namespace VISP_NAMESPACE_NAME;
-    #endif
-
-    int main()
-    {
-      vpMatrix A(4,4); // A is a symmetric matrix
-      A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.; A[0][3] = 1/4.;
-      A[1][0] = 1/2.; A[1][1] = 1/3.; A[1][2] = 1/4.; A[1][3] = 1/5.;
-      A[2][0] = 1/3.; A[2][1] = 1/4.; A[2][2] = 1/5.; A[2][3] = 1/6.;
-      A[3][0] = 1/4.; A[3][1] = 1/5.; A[3][2] = 1/6.; A[3][3] = 1/7.;
-      std::cout << "Initial symmetric matrix: \n" << A << std::endl;
-
-      vpColVector d; // Eigenvalues
-      vpMatrix    V; // Eigenvectors
-
-      // Compute the eigenvalues and eigenvectors
-      A.eigenValues(d, V);
-      std::cout << "Eigen values: \n" << d << std::endl;
-      std::cout << "Eigen vectors: \n" << V << std::endl;
-
-      vpMatrix D;
-      D.diag(d); // Eigenvalues are on the diagonal
-
-      std::cout << "D: " << D << std::endl;
-
-      // Verification: A * V = V * D
-      std::cout << "AV-VD = 0 ? \n" << (A*V) - (V*D) << std::endl;
-    }
-    \endcode
-
-    \sa eigenValues()
-  */
+  \sa eigenValues()
+*/
 void vpMatrix::eigenValues(vpColVector &evalue, vpMatrix &evector) const
 {
   if (rowNum != colNum) {
@@ -1369,7 +1388,7 @@ void vpMatrix::eigenValues(vpColVector &evalue, vpMatrix &evector) const
     gsl_vector_free(eval);
     gsl_matrix_free(m);
     gsl_matrix_free(evec);
-  }
+}
 #else  // defined(VISP_HAVE_GSL)
   {
     const char jobz = 'V';
@@ -1390,26 +1409,26 @@ void vpMatrix::eigenValues(vpColVector &evalue, vpMatrix &evector) const
   throw(vpException(vpException::functionNotImplementedError, "Eigen values computation is not implemented. "
                     "You should install Lapack 3rd party"));
 #endif
-  }
+}
 
-  /*!
-    Function to compute the null space (the kernel) of a m-by-n matrix \f$\bf
-    A\f$.
+/*!
+  Function to compute the null space (the kernel) of a m-by-n matrix \f$\bf
+  A\f$.
 
-    The null space of a matrix \f$\bf A\f$ is defined as \f$\mbox{Ker}({\bf A})
-    = { {\bf X} : {\bf A}*{\bf X} = {\bf 0}}\f$.
+  The null space of a matrix \f$\bf A\f$ is defined as \f$\mbox{Ker}({\bf A})
+  = { {\bf X} : {\bf A}*{\bf X} = {\bf 0}}\f$.
 
-    \param kerAt: The matrix that contains the null space (kernel) of \f$\bf
-    A\f$ defined by the matrix \f${\bf X}^T\f$. If matrix \f$\bf A\f$ is full
-    rank, the dimension of \c kerAt is (0, n), otherwise the dimension is (n-r,
-    n). This matrix is thus the transpose of \f$\mbox{Ker}({\bf A})\f$.
+  \param kerAt: The matrix that contains the null space (kernel) of \f$\bf
+  A\f$ defined by the matrix \f${\bf X}^T\f$. If matrix \f$\bf A\f$ is full
+  rank, the dimension of \c kerAt is (0, n), otherwise the dimension is (n-r,
+  n). This matrix is thus the transpose of \f$\mbox{Ker}({\bf A})\f$.
 
-    \param svThreshold: Threshold used to test the singular values. If
-    a singular value is lower than this threshold we consider that the
-    matrix is not full rank.
+  \param svThreshold: Threshold used to test the singular values. If
+  a singular value is lower than this threshold we consider that the
+  matrix is not full rank.
 
-    \return The rank of the matrix.
-  */
+  \return The rank of the matrix.
+*/
 unsigned int vpMatrix::kernel(vpMatrix &kerAt, double svThreshold) const
 {
   unsigned int nbline = getRows();

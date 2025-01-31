@@ -180,6 +180,7 @@ vpMatrix vpMatrix::inverseByLU() const
     inv[index_2][index_0] = (((*this)[index_1][index_0] * (*this)[index_2][index_1]) - ((*this)[index_1][index_1] * (*this)[index_2][index_0])) * d;
     inv[index_2][index_1] = (((*this)[index_0][index_1] * (*this)[index_2][index_0]) - ((*this)[index_0][index_0] * (*this)[index_2][index_1])) * d;
     inv[index_2][index_2] = (((*this)[index_0][index_0] * (*this)[index_1][index_1]) - ((*this)[index_0][index_1] * (*this)[index_1][index_0])) * d;
+    std::cout << "After computations" << std::endl;
     return inv;
   }
   else {

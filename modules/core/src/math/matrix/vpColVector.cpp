@@ -266,6 +266,8 @@ vpColVector::vpColVector(vpColVector &&v) : vpArray2D<double>()
   rowPtrs = v.rowPtrs;
   dsize = v.dsize;
   data = v.data;
+  isMemoryOwner = v.isMemoryOwner;
+  isRowPtrsOwner = v.isRowPtrsOwner;
 
   v.rowNum = 0;
   v.colNum = 0;
@@ -497,6 +499,23 @@ vpColVector &vpColVector::operator=(vpColVector &&other)
   }
 
   return *this;
+}
+
+/**
+ * @brief Create a column vector view of a raw data array.
+ * The view can modify the contents of the raw data array,
+ * but may not resize it and does not own it: the memory is not released by the vector
+ * and it should be freed by the user after the view is released.
+ *
+ * @param data the raw data
+ * @param rows Number of rows
+ * @return the column vector view
+ */
+vpColVector vpColVector::view(double *data, unsigned int rows)
+{
+  vpColVector v;
+  vpArray2D<double>::view(v, data, rows, 1);
+  return v;
 }
 
 vpColVector &vpColVector::operator=(const std::initializer_list<double> &list)
@@ -912,7 +931,7 @@ double vpColVector::sum() const
   double sum = 0.0;
   for (unsigned int i = 0; i < rowNum; ++i) {
     sum += (*this)[i];
-}
+  }
   return sum;
 #endif
 }
@@ -925,7 +944,7 @@ double vpColVector::sumSquare() const
   double sum_square = 0.0;
   for (unsigned int i = 0; i < rowNum; ++i) {
     sum_square += (*this)[i] * (*this)[i];
-}
+  }
   return sum_square;
 #endif
 }
@@ -950,7 +969,7 @@ vpColVector vpColVector::hadamard(const vpColVector &v) const
 #else
   for (unsigned int i = 0; i < dsize; ++i) {
     out.data[i] = data[i] * v.data[i];
-}
+  }
 #endif
   return out;
 }

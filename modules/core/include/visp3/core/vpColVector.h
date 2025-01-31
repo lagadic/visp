@@ -283,6 +283,8 @@ public:
   }
 #endif
 
+  static vpColVector view(double *data, unsigned int rows);
+
   /*!
    * Removes all elements from the vector (which are destroyed),
    * leaving the container with a size of 0.

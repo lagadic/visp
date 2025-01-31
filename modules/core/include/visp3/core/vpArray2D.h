@@ -332,10 +332,24 @@ public:
     v.isRowPtrsOwner = false;
     return v;
   }
-
+  /**
+   * @brief Create an array view of a raw data.
+   * This data is not owned by the resulting array and should be freed after the array is destroyed (not before)
+   *
+   * @param data Pointer to the raw data
+   * @param numRows Number of rows
+   * @param numCols Number of columns
+   * @return vpArray2D<Type>
+   */
   static vpArray2D<Type> view(Type *data, unsigned int numRows, unsigned int numCols)
   {
     vpArray2D<Type> v;
+    vpArray2D<Type>::view(v, data, numRows, numCols);
+    return v;
+  }
+
+  static void view(vpArray2D<Type> &v, Type *data, unsigned int numRows, unsigned int numCols)
+  {
     v.rowNum = numRows;
     v.colNum = numCols;
     v.dsize = numRows * numCols;
@@ -346,8 +360,8 @@ public:
     for (unsigned int i = 0; i < v.rowNum; ++i) {
       v.rowPtrs[i] = data + i * v.colNum;
     }
-    return v;
   }
+
 
 
   /*!
