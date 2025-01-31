@@ -5,6 +5,8 @@
 #include <visp3/ar/vpPanda3DGeometryRenderer.h>
 #include <visp3/ar/vpPanda3DRGBRenderer.h>
 
+#include <visp3/gui/vpDisplayFactory.h>
+
 #include <vector>
 
 struct TrajectoryData
@@ -18,10 +20,12 @@ TrajectoryData generateTrajectory(const vpPanda3DRenderParameters &renderingPara
                                   const std::function<void(vpPanda3DRendererSet &)> &makeScene,
                                   std::vector<vpHomogeneousMatrix> &cTw, std::vector<vpHomogeneousMatrix> &oTw)
 {
-  vpPanda3DRendererSet renderer(renderingParams);
+  vpPanda3DRendererSet renderer;
+  renderer.setRenderParameters(renderingParams);
+  auto depthRenderer = std::make_shared<vpPanda3DGeometryRenderer>(vpPanda3DGeometryRenderer::OBJECT_NORMALS);
   auto rgbRenderer = std::make_shared<vpPanda3DRGBRenderer>(true);
   renderer.addSubRenderer(rgbRenderer);
-  renderer.addSubRenderer(std::make_shared<vpPanda3DGeometryRenderer>(vpPanda3DGeometryRenderer::OBJECT_NORMALS));
+  renderer.addSubRenderer(depthRenderer);
   renderer.initFramework();
   makeScene(renderer);
 
@@ -39,17 +43,22 @@ TrajectoryData generateTrajectory(const vpPanda3DRenderParameters &renderingPara
     renderer.setNodePose("object", oTw[i].inverse());
     renderer.setCameraPose(cTw[i].inverse());
 
-    float nearV, farV;
-    rgbRenderer->computeNearAndFarPlanesFromNode("object", nearV, farV, true);
+    float nearV = 0.01, farV = 1.0;
+    depthRenderer->computeNearAndFarPlanesFromNode("object", nearV, farV, true);
     vpPanda3DRenderParameters renderingParamsFrame = renderingParams;
     renderingParamsFrame.setClippingDistance(nearV, farV);
     renderer.setRenderParameters(renderingParamsFrame);
-    // update clip
     renderer.renderFrame();
     renderer.getRenderer<vpPanda3DRGBRenderer>()->getRender(res.rgb[i]);
     renderer.getRenderer<vpPanda3DGeometryRenderer>()->getRender(res.depth[i]);
     res.cTo[i] = cTw[i] * oTw[i].inverse();
+    // std::shared_ptr<vpDisplay> d = vpDisplayFactory::createDisplay(res.rgb[i]);
+    // vpDisplay::display(res.rgb[i]);
+    // vpDisplay::flush(res.rgb[i]);
+    // vpDisplay::getKeyboardEvent(res.rgb[i], true);
+
   }
+
   return res;
 }
 

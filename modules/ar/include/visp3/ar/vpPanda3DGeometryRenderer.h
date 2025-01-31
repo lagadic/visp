@@ -61,7 +61,7 @@ public:
   };
 
   vpPanda3DGeometryRenderer(vpRenderType renderType);
-  ~vpPanda3DGeometryRenderer() = default;
+
 
   /**
    * @brief Get render results into ViSP readable structures
@@ -85,7 +85,7 @@ public:
    */
   void getRender(vpImage<float> &depth) const;
 
-  GraphicsOutput *getMainOutputBuffer() VP_OVERRIDE { return (GraphicsOutput *)m_normalDepthBuffer; }
+  PointerTo<GraphicsOutput> getMainOutputBuffer() VP_OVERRIDE { return m_normalDepthBuffer; }
 
 
 protected:
