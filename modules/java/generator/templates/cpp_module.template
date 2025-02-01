@@ -13,6 +13,10 @@ using namespace std;
 #undef throwJavaException
 #define throwJavaException throwJavaException_$m
 static void throwJavaException(JNIEnv *env, const std::exception *e, const char *method) {
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   std::string what = "unknown exception";
   jclass je = 0;
 
@@ -35,6 +39,10 @@ static void throwJavaException(JNIEnv *env, const std::exception *e, const char 
 }
 
 extern "C" {
+
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
 
 $code
 

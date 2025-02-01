@@ -2,6 +2,10 @@
 #define LOG_TAG "org.visp.utils.Converters"
 #include "common.h"
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 jlongArray vector_vpColVector_to_List(JNIEnv *env, const std::vector<vpColVector> &V)
 {
   jlongArray result = env->NewLongArray(V.size());
