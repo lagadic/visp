@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os, sys
+from distutils.dir_util import copy_tree
 import argparse
 import glob
 import re
@@ -217,7 +218,10 @@ class Builder:
             BUILD_TUTORIALS="OFF",
             BUILD_DEMOS="OFF",
             BUILD_ANDROID_EXAMPLES="ON",
+            BUILD_ANDROID_SERVICE="ON",
             INSTALL_ANDROID_EXAMPLES="ON",
+            CMAKE_C_FLAGS="-fopenmp",
+            CMAKE_CXX_FLAGS="-fopenmp",
         )
         if self.ninja_path != 'ninja':
             cmake_vars['CMAKE_MAKE_PROGRAM'] = self.ninja_path
@@ -234,6 +238,8 @@ class Builder:
         if self.use_ccache == True:
             cmd.append("-DNDK_CCACHE=ccache")
 
+        cmake_vars['BUILD_JAVA'] = "ON"
+
         cmake_vars.update(abi.cmake_vars)
         cmd += [ "-D%s='%s'" % (k, v) for (k, v) in cmake_vars.items() if v is not None]
         cmd.append(self.vispdir)
@@ -243,6 +249,20 @@ class Builder:
         execute([self.ninja_path, "install" if (self.debug_info or self.debug) else "install/strip"])
 
     def build_javadoc(self):
+      confFilePath = os.path.join(self.libdest, "root_android.txt")
+      confFileExists = os.path.exists(confFilePath)
+      print("Looking for file \"" + str(confFilePath) + "\"")
+      if confFileExists:
+        print("\tIt exists !")
+        line = ""
+        with open(confFilePath, "r") as file:
+          line = file.readline()
+        print("-> Read \"" + line + "\"")
+        rootJavadoc = os.path.join(line, "visp", "build", "docs", "javadoc")
+        print("\t->Copying content of \"" + str(rootJavadoc) + "\"")
+        copy_tree(rootJavadoc, self.docdest)
+      else:
+        print("\tIt DOES NOT exist =(")
         classpaths = []
         for dir, _, files in os.walk(os.environ["ANDROID_SDK"]):
             for f in files:
