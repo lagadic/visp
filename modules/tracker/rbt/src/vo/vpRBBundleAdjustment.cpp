@@ -17,6 +17,13 @@ void vpRBBundleAdjustment::addNewCamera(const vpHomogeneousMatrix &cTw, const st
   if (m_cameras.size() == m_numCams) {
     m_cameras.pop_front();
   }
+#ifdef DEBUG_RB_BA
+  for (unsigned int index : indices3d) {
+    if (index >= m_map->getPoints().getRows()) {
+      throw vpException(vpException::badValue, "Got a 3D index that was greater than number of points in the map");
+    }
+  }
+#endif
   m_cameras.push_back(CameraData(m_cam, cTw, indices3d, uvs));
   m_mapView.update(m_cameras);
 }
@@ -33,11 +40,14 @@ void vpRBBundleAdjustment::updateEnvironment(const std::vector<unsigned int> &fi
 
 void vpRBBundleAdjustment::asParamVector(vpColVector &params) const
 {
+
   unsigned int numUsedPoints = m_mapView.numPoints();
   params.resize(m_cameras.size() * 6 + numUsedPoints * 3, false);
   unsigned int i = 0;
   // First parameters are the camera poses
+  std::cout << "Updating poses" << std::endl;
   for (const CameraData &camera: m_cameras) {
+    std::cout << "i = " << i << std::endl;
     vpPoseVector r(camera.pose());
     double *rp = params.data + i;
     for (unsigned int j = 0; j < 6; ++j) {
@@ -45,12 +55,13 @@ void vpRBBundleAdjustment::asParamVector(vpColVector &params) const
     }
     i += 6;
   }
-
+  std::cout << "Updating points!" << std::endl;
   // Then, add 3D Points from the map
   const vpMatrix &Xs = m_map->getPoints();
   for (unsigned int vpi = 0; vpi < numUsedPoints; ++vpi) {
     double *pp = params.data + i;
     unsigned int pi = m_mapView.getPointIndex(vpi);
+    std::cout << "i = " << i << ", vpi = " << vpi << ", pi = " << pi << ", Xs.getRows() = " << Xs.getRows() << std::endl;
     pp[0] = Xs[pi][0];
     pp[1] = Xs[pi][1];
     pp[2] = Xs[pi][2];
@@ -62,11 +73,16 @@ void vpRBBundleAdjustment::asParamVector(vpColVector &params) const
     throw vpException(vpException::dimensionError, "Mismatch between stored number of cameras and points and param vector size");
   }
 #endif
-  }
+}
 
 void vpRBBundleAdjustment::updateFromParamVector(const vpColVector &params)
 {
 
+#ifdef DEBUG_RB_BA
+  if (params.size() != m_cameras.size() * 6 + m_mapView.numPoints() * 3) {
+    throw vpException(vpException::dimensionError, "Mismatch between param vector size and number of points/cameras");
+  }
+#endif
   unsigned int i = 0;
 
   // Update camera poses
@@ -81,7 +97,7 @@ void vpRBBundleAdjustment::updateFromParamVector(const vpColVector &params)
 
   for (unsigned int viewIndex = 0; viewIndex < numPoints; ++viewIndex) {
     const double *pp = params.data + i;
-    unsigned int pointIndex = m_mapView.getPointIndex(viewIndex);
+    const unsigned int pointIndex = m_mapView.getPointIndex(viewIndex);
     m_map->updatePoint(pointIndex, pp[0], pp[1], pp[2]);
     i += 3;
   }
@@ -92,7 +108,7 @@ void vpRBBundleAdjustment::updateFromParamVector(const vpColVector &params)
   }
 #endif
 
-  }
+}
 
 std::vector<vpHomogeneousMatrix> vpRBBundleAdjustment::getCameraPoses() const
 {
@@ -143,8 +159,8 @@ vpRBBundleAdjustment::CameraData::CameraData(const vpCameraParameters &cam, cons
   for (unsigned int i = 1; i < m_indices3d.size(); ++i) {
     if (m_indices3d[i] < m_indices3d[i - 1]) {
       throw vpException(vpException::badValue, "3D index list should be sorted!");
-}
-}
+    }
+  }
 #endif
 
   m_points2d.resize(uvs.getRows());
@@ -154,7 +170,8 @@ vpRBBundleAdjustment::CameraData::CameraData(const vpCameraParameters &cam, cons
   }
 }
 
-void vpRBBundleAdjustment::CameraData::error(MapIndexView &mapView, const vpColVector &params, vpColVector &e, unsigned int cameraIndex, unsigned int numCameras, unsigned int startResidual) const
+void vpRBBundleAdjustment::CameraData::error(MapIndexView &mapView, const vpColVector &params, vpColVector &e,
+  unsigned int cameraIndex, unsigned int numCameras, unsigned int startResidual) const
 {
   const double *cp = params.data + 6 * cameraIndex;
   const vpHomogeneousMatrix cTw(cp[0], cp[1], cp[2], cp[3], cp[4], cp[5]);
@@ -166,7 +183,7 @@ void vpRBBundleAdjustment::CameraData::error(MapIndexView &mapView, const vpColV
   vpColVector wX(3);
   vpColVector cX(3);
   for (unsigned int i = startResidual; i < startResidual + numResiduals(); i += 2) {
-    unsigned int pi = mapView.getViewIndex(m_indices3d[pointIndex]);
+    const unsigned int pi = mapView.getViewIndex(m_indices3d[pointIndex]);
     const double *pp = pointsParams + 3 * pi;
     wX[0] = pp[0];
     wX[1] = pp[1];
@@ -212,38 +229,57 @@ void vpRBBundleAdjustment::CameraData::filter(const std::vector<unsigned int> &f
       throw vpException(vpException::badValue, "Removed indices should be sorted!");
     }
   }
+  for (unsigned int i = 1; i < m_indices3d.size(); ++i) {
+    if (m_indices3d[i] < m_indices3d[i - 1]) {
+      throw vpException(vpException::badValue, "indices 3d are not sorted!");
+    }
+  }
 #endif
-  std::vector<unsigned int> indicestoKeep;
+  std::vector<unsigned int> indicesToKeep;
   unsigned int currentFilterIndex = 0;
   unsigned int currentIndex = 0;
   while (currentIndex < m_indices3d.size() && currentFilterIndex < filteredIndices.size()) {
     unsigned int toRemove = filteredIndices[currentFilterIndex];
     unsigned int currentValue = m_indices3d[currentIndex];
+
     while (currentValue < toRemove) {
-      indicestoKeep.push_back(currentIndex);
+
+      indicesToKeep.push_back(currentIndex);
       ++currentIndex;
-      if (currentIndex > m_indices3d.size()) {
+      if (currentIndex >= m_indices3d.size()) {
         break;
       }
       currentValue = m_indices3d[currentIndex];
     }
 
+    if (currentValue == toRemove) {
+      ++currentIndex;
+    }
     ++currentFilterIndex;
   }
 
-  std::vector<std::array<double, 2>> newPoints2d(indicestoKeep.size());
-  std::vector<unsigned int> newPointIndices3d(indicestoKeep.size());
+  std::vector<std::array<double, 2>> newPoints2d(indicesToKeep.size());
+  std::vector<unsigned int> newPointIndices3d(indicesToKeep.size());
 
-  for (unsigned int i = 0; i < indicestoKeep.size(); ++i) {
-    newPoints2d[i][0] = m_points2d[indicestoKeep[i]][0];
-    newPoints2d[i][1] = m_points2d[indicestoKeep[i]][1];
-    newPointIndices3d[i] = m_indices3d[indicestoKeep[i]];
+  for (unsigned int i = 0; i < indicesToKeep.size(); ++i) {
+    newPoints2d[i][0] = m_points2d[indicesToKeep[i]][0];
+    newPoints2d[i][1] = m_points2d[indicesToKeep[i]][1];
+    newPointIndices3d[i] = m_indices3d[indicesToKeep[i]];
   }
 
   m_indices3d = std::move(newPointIndices3d);
   m_points2d = std::move(newPoints2d);
 
 #ifdef DEBUG_RB_BA
+
+  for (unsigned int keptIndex : m_indices3d) {
+    for (unsigned int filteredIndex : filteredIndices) {
+      if (keptIndex == filteredIndex) {
+        throw vpException(vpException::fatalError, "Index that should have been filtered was not!");
+      }
+    }
+  }
+
   if (m_indices3d.size() != m_points2d.size()) {
     throw vpException(vpException::badValue, "Number of 3D points and 2D observations should be the same!");
   }
@@ -269,7 +305,14 @@ void vpRBBundleAdjustment::MapIndexView::update(const std::list<CameraData> &cam
 
   for (unsigned int i = 0; i < sortedPointIndices.size(); ++i) {
     unsigned int pointIndex = sortedPointIndices[i];
+    std::cout << "View index = " << i << ", Point index = " << pointIndex << std::endl;
     m_viewToPoint[i] = pointIndex;
     m_pointToView[pointIndex] = i;
   }
+
+#ifdef DEBUG_RB_BA
+  if (m_pointToView.size() != m_viewToPoint.size()) {
+    throw vpException(vpException::dimensionError, "Mismatch between map sizes!");
+  }
+#endif
 }
