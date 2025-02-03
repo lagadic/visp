@@ -259,21 +259,9 @@ vpColVector::vpColVector(const std::vector<float> &v) : vpArray2D<double>(static
 }
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-vpColVector::vpColVector(vpColVector &&v) : vpArray2D<double>()
+vpColVector::vpColVector(vpColVector &&v) : vpArray2D<double>(std::move(v))
 {
-  rowNum = v.rowNum;
-  colNum = v.colNum;
-  rowPtrs = v.rowPtrs;
-  dsize = v.dsize;
-  data = v.data;
-  isMemoryOwner = v.isMemoryOwner;
-  isRowPtrsOwner = v.isRowPtrsOwner;
 
-  v.rowNum = 0;
-  v.colNum = 0;
-  v.rowPtrs = nullptr;
-  v.dsize = 0;
-  v.data = nullptr;
 }
 #endif
 
@@ -474,30 +462,7 @@ std::vector<double> vpColVector::toStdVector() const
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 vpColVector &vpColVector::operator=(vpColVector &&other)
 {
-  if (this != &other) {
-    if (isMemoryOwner && data != nullptr) {
-      free(data);
-
-    }
-    if (isRowPtrsOwner && rowPtrs != nullptr) {
-      free(rowPtrs);
-    }
-
-    rowNum = other.rowNum;
-    colNum = other.colNum;
-    rowPtrs = other.rowPtrs;
-    dsize = other.dsize;
-    data = other.data;
-    isMemoryOwner = other.isMemoryOwner;
-    isRowPtrsOwner = other.isRowPtrsOwner;
-
-    other.rowNum = 0;
-    other.colNum = 0;
-    other.rowPtrs = nullptr;
-    other.dsize = 0;
-    other.data = nullptr;
-  }
-
+  vpArray2D<double>::operator=(std::move(other));
   return *this;
 }
 

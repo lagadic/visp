@@ -259,6 +259,7 @@ public:
 #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
   vpArray2D(vpArray2D<Type> &&A) noexcept
   {
+    std::cout << "IN vp array move constructor" << std::endl;
     rowNum = A.rowNum;
     colNum = A.colNum;
     rowPtrs = A.rowPtrs;
@@ -421,15 +422,16 @@ public:
   */
   void resize(unsigned int nrows, unsigned int ncols, bool flagNullify = true, bool recopy_ = true)
   {
-    if (!isMemoryOwner) {
-      throw vpException(vpException::badValue, "Cannot resize an array that is a view of another array");
-    }
+
     if ((nrows == rowNum) && (ncols == colNum)) {
       if (flagNullify && (this->data != nullptr)) {
         memset(this->data, 0, this->dsize * sizeof(Type));
       }
     }
     else {
+      if (!isMemoryOwner) {
+        throw vpException(vpException::badValue, "Cannot resize an array that is a view of another array");
+      }
       bool recopy = (!flagNullify) && recopy_; // priority to flagNullify
       bool colcond = (ncols != this->colNum) && (this->colNum > 0) && (ncols > 0);
       const bool recopyNeeded = colcond && ((!flagNullify) || recopy);
@@ -607,6 +609,7 @@ public:
 #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
   vpArray2D<Type> &operator=(vpArray2D<Type> &&other) noexcept
   {
+    std::cout << "In Array operator=" << std::endl;
     if (this != &other) {
       if (isMemoryOwner && data) {
         free(data);

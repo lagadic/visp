@@ -46,6 +46,10 @@ namespace py = pybind11;
 template<typename Item>
 using np_array_cf = py::array_t<Item, py::array::c_style | py::array::forcecast>;
 
+template<typename Item>
+using np_array_c = py::array_t<Item, py::array::c_style>;
+
+
 /*
  * Create a buffer info for a row major array
  */
@@ -99,6 +103,22 @@ void verify_array_shape_and_dims(np_array_cf<Item> np_array, unsigned dims, cons
     throw std::runtime_error(ss.str());
   }
 }
+
+template<typename Item>
+void verify_array_shape_and_dims(np_array_c<Item> np_array, unsigned dims, const char *class_name)
+{
+  py::buffer_info buffer = np_array.request();
+  std::vector<py::ssize_t> shape = buffer.shape;
+  if (shape.size() != dims) {
+    std::stringstream ss;
+    ss << "Tried to instanciate " << class_name
+      << " that expects a " << dims << "D array but got a numpy array of shape "
+      << shape_to_string(shape);
+
+    throw std::runtime_error(ss.str());
+  }
+}
+
 template<typename Item>
 void verify_array_shape_and_dims(np_array_cf<Item> np_array, std::vector<py::ssize_t> expected_dims, const char *class_name)
 {

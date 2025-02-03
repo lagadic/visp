@@ -203,22 +203,8 @@ vpMatrix::vpMatrix(const vpTranslationVector &t)
 }
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-vpMatrix::vpMatrix(vpMatrix &&A) : vpArray2D<double>()
-{
-  rowNum = A.rowNum;
-  colNum = A.colNum;
-  rowPtrs = A.rowPtrs;
-  dsize = A.dsize;
-  data = A.data;
-  isMemoryOwner = A.isMemoryOwner;
-  isRowPtrsOwner = A.isRowPtrsOwner;
-
-  A.rowNum = 0;
-  A.colNum = 0;
-  A.rowPtrs = nullptr;
-  A.dsize = 0;
-  A.data = nullptr;
-}
+vpMatrix::vpMatrix(vpMatrix &&A) : vpArray2D<double>(std::move(A))
+{ }
 
 /*!
   Construct a matrix from a list of double values.
@@ -1256,7 +1242,7 @@ vpColVector vpMatrix::eigenValues() const
     gsl_vector_free(eval);
     gsl_matrix_free(m);
     gsl_matrix_free(evec);
-}
+  }
 #else
   {
     const char jobz = 'N';
@@ -1388,7 +1374,7 @@ void vpMatrix::eigenValues(vpColVector &evalue, vpMatrix &evector) const
     gsl_vector_free(eval);
     gsl_matrix_free(m);
     gsl_matrix_free(evec);
-}
+  }
 #else  // defined(VISP_HAVE_GSL)
   {
     const char jobz = 'V';
