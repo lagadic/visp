@@ -259,7 +259,6 @@ public:
 #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
   vpArray2D(vpArray2D<Type> &&A) noexcept
   {
-    std::cout << "IN vp array move constructor" << std::endl;
     rowNum = A.rowNum;
     colNum = A.colNum;
     rowPtrs = A.rowPtrs;
@@ -609,7 +608,6 @@ public:
 #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
   vpArray2D<Type> &operator=(vpArray2D<Type> &&other) noexcept
   {
-    std::cout << "In Array operator=" << std::endl;
     if (this != &other) {
       if (isMemoryOwner && data) {
         free(data);
