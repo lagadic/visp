@@ -60,6 +60,10 @@
 #define CATCH_CONFIG_RUNNER
 #include <catch_amalgamated.hpp>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 const std::string objCube =
 "o Cube\n"
 "v -0.050000 -0.050000 0.050000\n"
