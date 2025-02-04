@@ -41,6 +41,7 @@
 
 #include <stdlib.h>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
@@ -48,11 +49,7 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpTime.h>
 #include <visp3/core/vpVelocityTwistMatrix.h>
-#include <visp3/gui/vpDisplayD3D.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/gui/vpPlot.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
@@ -161,6 +158,19 @@ bool getOptions(int argc, const char **argv, bool &display, bool &plot)
 
 int main(int argc, const char **argv)
 {
+  const unsigned int NB_DISPLAYS = 3;
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display[NB_DISPLAYS];
+  for (unsigned int i = 0; i < NB_DISPLAYS; ++i) {
+    display[i] = vpDisplayFactory::createDisplay();
+  }
+#else
+  vpDisplay *display[NB_DISPLAYS];
+  for (unsigned int i = 0; i < NB_DISPLAYS; ++i) {
+    display[i] = vpDisplayFactory::allocateDisplay();
+  }
+#endif
+  unsigned int exit_status = EXIT_SUCCESS;
   try {
     bool opt_display = true;
     bool opt_plot = true;
@@ -176,23 +186,11 @@ int main(int argc, const char **argv)
     vpImage<vpRGBa> Iext1(480, 640, vpRGBa(255));
     vpImage<vpRGBa> Iext2(480, 640, vpRGBa(255));
 
-#if defined(VISP_HAVE_X11)
-    vpDisplayX display[3];
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV display[3];
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI display[3];
-#elif defined(VISP_HAVE_D3D9)
-    vpDisplayD3D display[3];
-#elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK display[3];
-#endif
-
     if (opt_display) {
       // Display size is automatically defined by the image (I) size
-      display[0].init(Iint, 100, 100, "The internal view");
-      display[1].init(Iext1, 100, 100, "The first external view");
-      display[2].init(Iext2, 100, 100, "The second external view");
+      display[0]->init(Iint, 100, 100, "The internal view");
+      display[1]->init(Iext1, 100, 100, "The first external view");
+      display[2]->init(Iext2, 100, 100, "The second external view");
       vpDisplay::setWindowPosition(Iint, 0, 0);
       vpDisplay::setWindowPosition(Iext1, 750, 0);
       vpDisplay::setWindowPosition(Iext2, 0, 550);
@@ -484,12 +482,18 @@ int main(int argc, const char **argv)
 
     task.print();
 
-    return EXIT_SUCCESS;
+    exit_status = EXIT_SUCCESS;
   }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return EXIT_FAILURE;
+    exit_status = EXIT_FAILURE;
   }
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  for (unsigned int i = 0; i < NB_DISPLAYS; ++i) {
+    delete display[i];
+  }
+#endif
+  return exit_status;
 }
 #elif !(defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
 int main()
