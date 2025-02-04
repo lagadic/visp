@@ -332,14 +332,15 @@ public:
     v.isRowPtrsOwner = false;
     return v;
   }
+
   /**
-   * @brief Create an array view of a raw data.
+   * \brief Create an array view of a raw data pointer.
    * This data is not owned by the resulting array and should be freed after the array is destroyed (not before)
    *
-   * @param data Pointer to the raw data
-   * @param numRows Number of rows
-   * @param numCols Number of columns
-   * @return vpArray2D<Type>
+   * \param data Pointer to the raw data
+   * \param numRows Number of rows
+   * \param numCols Number of columns
+   * \return vpArray2D<Type>
    */
   static vpArray2D<Type> view(Type *data, unsigned int numRows, unsigned int numCols)
   {
@@ -348,13 +349,32 @@ public:
     return v;
   }
 
+  /**
+   * \brief Create an array view of a raw data pointer.
+   * After this function has been called, the array \ref data can be modified through the view \ref v.
+   * This data is not owned by the resulting array and should be freed after the array is destroyed (not before).
+   *
+   * \param v The resulting view array
+   * \param data Pointer to the raw data
+   * \param numRows Number of rows
+   * \param numCols Number of columns
+   */
   static void view(vpArray2D<Type> &v, Type *data, unsigned int numRows, unsigned int numCols)
   {
     v.rowNum = numRows;
     v.colNum = numCols;
     v.dsize = numRows * numCols;
+
+    if ((v.isMemoryOwner == true) && (v.data != nullptr)) {
+      free(v.data);
+    }
     v.data = data;
     v.isMemoryOwner = false;
+
+    if ((v.isRowPtrsOwner == true) && (v.rowPtrs != nullptr)) {
+      free(v.rowPtrs);
+    }
+
     v.isRowPtrsOwner = true;
     v.rowPtrs = reinterpret_cast<Type **>(malloc(v.rowNum * sizeof(Type *)));
     for (unsigned int i = 0; i < v.rowNum; ++i) {
@@ -421,7 +441,6 @@ public:
   */
   void resize(unsigned int nrows, unsigned int ncols, bool flagNullify = true, bool recopy_ = true)
   {
-
     if ((nrows == rowNum) && (ncols == colNum)) {
       if (flagNullify && (this->data != nullptr)) {
         memset(this->data, 0, this->dsize * sizeof(Type));

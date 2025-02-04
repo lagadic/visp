@@ -74,9 +74,6 @@ def test_visp_view_of_np_array():
   assert a[0] == 1
   assert v.getCols() == a.shape[0]
 
-
-
-
 def fn_test_not_writable_2d(R):
   R_np = np.array(R, copy=False)
   with pytest.raises(ValueError):
@@ -112,7 +109,6 @@ def test_numpy_constructor_interpreted_as_1d_vector():
     a = ArrayDouble2D(n_1d) # R = 0, c = 0
   ar = ArrayDouble2D(n_1d, r=len(n_1d))
   ac = ArrayDouble2D(n_1d, c=len(n_1d))
-
 
 def test_numpy_conversion_and_back():
   a = ArrayDouble2D(10, 10, 2.0)

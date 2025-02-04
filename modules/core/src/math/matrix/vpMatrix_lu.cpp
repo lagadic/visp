@@ -180,7 +180,6 @@ vpMatrix vpMatrix::inverseByLU() const
     inv[index_2][index_0] = (((*this)[index_1][index_0] * (*this)[index_2][index_1]) - ((*this)[index_1][index_1] * (*this)[index_2][index_0])) * d;
     inv[index_2][index_1] = (((*this)[index_0][index_1] * (*this)[index_2][index_0]) - ((*this)[index_0][index_0] * (*this)[index_2][index_1])) * d;
     inv[index_2][index_2] = (((*this)[index_0][index_0] * (*this)[index_1][index_1]) - ((*this)[index_0][index_1] * (*this)[index_1][index_0])) * d;
-    std::cout << "After computations" << std::endl;
     return inv;
   }
   else {
@@ -371,37 +370,37 @@ vpMatrix vpMatrix::inverseByLULapack() const
     return A;
   }
 #endif
-}
-
-/*!
-  Compute the determinant of a square matrix using the LU decomposition with
-  Lapack 3rd party.
-
-  \return The determinant of the matrix if the matrix is square.
-
-  \code
-  #include <iostream>
-
-  #include <visp3/core/vpMatrix.h>
-
-  #ifdef ENABLE_VISP_NAMESPACE
-  using namespace VISP_NAMESPACE_NAME;
-  #endif
-
-  int main()
-  {
-    vpMatrix A(3,3);
-    A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.;
-    A[1][0] = 1/3.; A[1][1] = 1/4.; A[1][2] = 1/5.;
-    A[2][0] = 1/6.; A[2][1] = 1/7.; A[2][2] = 1/8.;
-    std::cout << "Initial matrix: \n" << A << std::endl;
-
-    // Compute the determinant
-    std:: cout << "Determinant by LU decomposition (Lapack): " << A.detByLULapack() << std::endl;
   }
-  \endcode
-  \sa detByLU(), detByLUEigen3(), detByLUOpenCV()
-*/
+
+  /*!
+    Compute the determinant of a square matrix using the LU decomposition with
+    Lapack 3rd party.
+
+    \return The determinant of the matrix if the matrix is square.
+
+    \code
+    #include <iostream>
+
+    #include <visp3/core/vpMatrix.h>
+
+    #ifdef ENABLE_VISP_NAMESPACE
+    using namespace VISP_NAMESPACE_NAME;
+    #endif
+
+    int main()
+    {
+      vpMatrix A(3,3);
+      A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.;
+      A[1][0] = 1/3.; A[1][1] = 1/4.; A[1][2] = 1/5.;
+      A[2][0] = 1/6.; A[2][1] = 1/7.; A[2][2] = 1/8.;
+      std::cout << "Initial matrix: \n" << A << std::endl;
+
+      // Compute the determinant
+      std:: cout << "Determinant by LU decomposition (Lapack): " << A.detByLULapack() << std::endl;
+    }
+    \endcode
+    \sa detByLU(), detByLUEigen3(), detByLUOpenCV()
+  */
 double vpMatrix::detByLULapack() const
 {
 #if defined(VISP_HAVE_GSL)
@@ -473,7 +472,7 @@ double vpMatrix::detByLULapack() const
     return det;
   }
 #endif
-}
+  }
 #endif
 
 #if defined(VISP_HAVE_OPENCV)

@@ -49,7 +49,6 @@ using np_array_cf = py::array_t<Item, py::array::c_style | py::array::forcecast>
 template<typename Item>
 using np_array_c = py::array_t<Item, py::array::c_style>;
 
-
 /*
  * Create a buffer info for a row major array
  */

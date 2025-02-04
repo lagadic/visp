@@ -55,14 +55,14 @@
 BEGIN_VISP_NAMESPACE
 
 /**
-*@brief Create a row vector view of a raw data array.
+* \brief Create a row vector view of a raw data array.
 * The view can modify the contents of the raw data array,
-*but may not resize it and does not own it : the memory is not released by the vector
-*and it should be freed by the user after the view is released.
+* but may not resize it and does not own it : the memory is not released by the vector
+* and it should be freed by the user after the view is released.
 *
-*@param data the raw data
-*@param cols Number of columns
-*@return vpMatrix
+* \param data the raw data
+* \param cols Number of columns
+* \return vpMatrix
 */
 vpRowVector vpRowVector::view(double *data, unsigned int cols)
 {
