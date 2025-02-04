@@ -59,12 +59,9 @@ private:
   vpPanda3DFrameworkManager() : m_frameworkIsOpen(false)
   { }
 
+public:
   virtual ~vpPanda3DFrameworkManager()
   { }
-
-
-public:
-
   void initFramework();
 
   void exit();
