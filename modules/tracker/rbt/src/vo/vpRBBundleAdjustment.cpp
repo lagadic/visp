@@ -45,9 +45,7 @@ void vpRBBundleAdjustment::asParamVector(vpColVector &params) const
   params.resize(m_cameras.size() * 6 + numUsedPoints * 3, false);
   unsigned int i = 0;
   // First parameters are the camera poses
-  std::cout << "Updating poses" << std::endl;
   for (const CameraData &camera: m_cameras) {
-    std::cout << "i = " << i << std::endl;
     vpPoseVector r(camera.pose());
     double *rp = params.data + i;
     for (unsigned int j = 0; j < 6; ++j) {
@@ -55,13 +53,11 @@ void vpRBBundleAdjustment::asParamVector(vpColVector &params) const
     }
     i += 6;
   }
-  std::cout << "Updating points!" << std::endl;
   // Then, add 3D Points from the map
   const vpMatrix &Xs = m_map->getPoints();
   for (unsigned int vpi = 0; vpi < numUsedPoints; ++vpi) {
     double *pp = params.data + i;
     unsigned int pi = m_mapView.getPointIndex(vpi);
-    std::cout << "i = " << i << ", vpi = " << vpi << ", pi = " << pi << ", Xs.getRows() = " << Xs.getRows() << std::endl;
     pp[0] = Xs[pi][0];
     pp[1] = Xs[pi][1];
     pp[2] = Xs[pi][2];
@@ -201,6 +197,61 @@ void vpRBBundleAdjustment::CameraData::error(MapIndexView &mapView, const vpColV
   }
 }
 
+void vpRBBundleAdjustment::CameraData::jacobian(const MapIndexView &mapView, const vpColVector &params, vpMatrix &J, unsigned int cameraIndex, unsigned int numCameras, unsigned int startResidual) const
+{
+
+  const double *cp = params.data + cameraIndex * 6;
+  unsigned int ci = cameraIndex * 6;
+  const vpHomogeneousMatrix cTw(cp[0], cp[1], cp[2], cp[3], cp[4], cp[5]);
+  const vpRotationMatrix cRw(cTw);
+  const vpTranslationVector t(cTw);
+  const double *pointsParams = params.data + 6 * numCameras;
+  vpColVector wX(3);
+  vpColVector cX(3);
+
+
+  vpMatrix dpDXp(2, 3, 0.0);
+  vpMatrix dpDX(2, 3);
+  unsigned int pointIndex = 0;
+
+  for (unsigned int i = startResidual; i < startResidual + numResiduals(); i += 2) {
+    const unsigned int vpi = mapView.getViewIndex(m_indices3d[pointIndex]);
+    const double *pp = pointsParams + 3 * vpi;
+
+    wX[0] = pp[0];
+    wX[1] = pp[1];
+    wX[2] = pp[2];
+
+    cX = cRw * wX;
+    cX += t;
+
+    double x = cX[0] / cX[2];
+    double y = cX[1] / cX[2];
+
+    double Zinv = 1.0 / cX[2];
+
+    double *Jx = J[i];
+    double *Jy = J[i + 1];
+
+    // Camera jacobian for x
+    Jx[ci + 0] = -Zinv; Jx[ci + 1] = 0.0; Jx[ci + 2] = x * Zinv;
+    Jx[ci + 3] = x * y; Jx[ci + 4] = -(1.0 + x * x); Jx[ci + 5] = y;
+    // Camera Jacobian for y
+    Jy[ci + 0] = 0.0; Jy[ci + 1] = -Zinv; Jy[ci + 2] = y * Zinv;
+    Jy[ci + 3] = 1.0 + y * y; Jy[ci + 4] = -(x * y); Jy[ci + 5] = -x;
+
+    unsigned int pi = numCameras * 6 + vpi * 3;
+
+    dpDXp[0][0] = -Zinv; dpDXp[0][2] = x * Zinv;
+    dpDXp[1][1] = -Zinv; dpDXp[1][2] = y * Zinv;
+    dpDX = dpDXp * cRw;
+    Jx[pi + 0] = dpDX[0][0]; Jx[pi + 1] = dpDX[0][1]; Jx[pi + 2] = dpDX[0][2];
+    Jy[pi + 0] = dpDX[1][0]; Jy[pi + 1] = dpDX[1][1]; Jy[pi + 2] = dpDX[1][2];
+
+    ++pointIndex;
+  }
+}
+
 void vpRBBundleAdjustment::CameraData::fillJacobianSparsity(const MapIndexView &mapView, vpArray2D<int> &S, unsigned int cameraIndex, unsigned int numCameras, unsigned int startResidual) const
 {
   unsigned int pointIndex = 0;
@@ -236,6 +287,7 @@ void vpRBBundleAdjustment::CameraData::filter(const std::vector<unsigned int> &f
   }
 #endif
   std::vector<unsigned int> indicesToKeep;
+  std::vector<unsigned int> indices3dToKeep; // Since removing indices may shift values that are greater, we need to keep a separate list for 3D indices
   unsigned int currentFilterIndex = 0;
   unsigned int currentIndex = 0;
   while (currentIndex < m_indices3d.size() && currentFilterIndex < filteredIndices.size()) {
@@ -245,6 +297,8 @@ void vpRBBundleAdjustment::CameraData::filter(const std::vector<unsigned int> &f
     while (currentValue < toRemove) {
 
       indicesToKeep.push_back(currentIndex);
+      // If there are currentFilterIndex values that were removed before, substract it from the current value
+      indices3dToKeep.push_back(currentValue - currentFilterIndex);
       ++currentIndex;
       if (currentIndex >= m_indices3d.size()) {
         break;
@@ -264,22 +318,13 @@ void vpRBBundleAdjustment::CameraData::filter(const std::vector<unsigned int> &f
   for (unsigned int i = 0; i < indicesToKeep.size(); ++i) {
     newPoints2d[i][0] = m_points2d[indicesToKeep[i]][0];
     newPoints2d[i][1] = m_points2d[indicesToKeep[i]][1];
-    newPointIndices3d[i] = m_indices3d[indicesToKeep[i]];
+    newPointIndices3d[i] = indices3dToKeep[i];
   }
 
   m_indices3d = std::move(newPointIndices3d);
   m_points2d = std::move(newPoints2d);
 
 #ifdef DEBUG_RB_BA
-
-  for (unsigned int keptIndex : m_indices3d) {
-    for (unsigned int filteredIndex : filteredIndices) {
-      if (keptIndex == filteredIndex) {
-        throw vpException(vpException::fatalError, "Index that should have been filtered was not!");
-      }
-    }
-  }
-
   if (m_indices3d.size() != m_points2d.size()) {
     throw vpException(vpException::badValue, "Number of 3D points and 2D observations should be the same!");
   }
@@ -305,7 +350,6 @@ void vpRBBundleAdjustment::MapIndexView::update(const std::list<CameraData> &cam
 
   for (unsigned int i = 0; i < sortedPointIndices.size(); ++i) {
     unsigned int pointIndex = sortedPointIndices[i];
-    std::cout << "View index = " << i << ", Point index = " << pointIndex << std::endl;
     m_viewToPoint[i] = pointIndex;
     m_pointToView[pointIndex] = i;
   }

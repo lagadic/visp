@@ -181,7 +181,6 @@ void vpPointMap::selectValidNewCandidates(const vpCameraParameters &cam, const v
 
 void vpPointMap::updatePoints(const vpArray2D<int> &indicesToRemove, const vpMatrix &pointsToAdd, std::list<int> &removedIndices, unsigned int &numAddedPoints)
 {
-
   int newSize = m_X.getRows() - indicesToRemove.getRows() + pointsToAdd.getRows();
   for (unsigned int i = 0; i < indicesToRemove.getRows(); ++i) {
     removedIndices.push_back(indicesToRemove[i][0]);

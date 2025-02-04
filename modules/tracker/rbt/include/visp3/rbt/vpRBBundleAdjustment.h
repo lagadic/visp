@@ -97,15 +97,15 @@ public:
 
   void computeJacobian(const vpColVector &params, vpMatrix &J)
   {
-    // unsigned int numParams = numCameras() * 6 + numPoints3d() * 3;
-    // J.resize(numResiduals(), numParams, true, false);
-    // unsigned int i = 0;
-    // unsigned int cameraIndex = 0;
-    // for (CameraData &camera: m_cameras) {
-    //   camera.jacobian(params, J, cameraIndex, i);
-    //   i += camera.numResiduals();
-    //   ++cameraIndex;
-    // }
+    unsigned int numParams = numCameras() * 6 + numPoints3d() * 3;
+    J.resize(numResiduals(), numParams, true, false);
+    unsigned int i = 0;
+    unsigned int cameraIndex = 0;
+    for (CameraData &camera: m_cameras) {
+      camera.jacobian(m_mapView, params, J, cameraIndex, numCameras(), i);
+      i += camera.numResiduals();
+      ++cameraIndex;
+    }
   }
 
 
@@ -134,7 +134,9 @@ public:
     void setPose(const vpPoseVector &r) { m_cTw = r; }
 
     void error(MapIndexView &mapView, const vpColVector &params, vpColVector &e, unsigned int cameraIndex, unsigned int numCameras, unsigned int startResidual) const;
+    void jacobian(const MapIndexView &mapView, const vpColVector &params, vpMatrix &J, unsigned int cameraIndex, unsigned int numCameras, unsigned int startResidual) const;
     void fillJacobianSparsity(const MapIndexView &mapView, vpArray2D<int> &S, unsigned int cameraIndex, unsigned int numCameras, unsigned int startResidual) const;
+
 
     void filter(const std::vector<unsigned int> &filteredIndices);
   private:
