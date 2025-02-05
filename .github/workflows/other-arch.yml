@@ -19,7 +19,7 @@ jobs:
   if: false
   build-other-architectures:
     # The host should always be linux
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     name: Build on ${{ matrix.distro }} ${{ matrix.arch }} ${{ matrix.endianness }}
 
     # Run steps on a matrix of 3 arch/distro combinations
@@ -35,14 +35,14 @@ jobs:
           #   distro: ubuntu20.04
           #   target: ARMV7
           - arch: aarch64
-            distro: ubuntu:latest
+            distro: ubuntu2204
             target: ARMV8
             endianness: (Little Endian)
           # - arch: ppc64le
           #   distro: ubuntu20.04
           #   target: POWER8
           - arch: s390x
-            distro: ubuntu:latest
+            distro: ubuntu2204
             target: Z13
             endianness: (Big Endian)
 
