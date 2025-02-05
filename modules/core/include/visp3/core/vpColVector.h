@@ -283,12 +283,17 @@ public:
   }
 #endif
 
+  static vpColVector view(double *data, unsigned int rows);
+
   /*!
    * Removes all elements from the vector (which are destroyed),
    * leaving the container with a size of 0.
    */
   void clear()
   {
+    if (!isMemoryOwner) {
+      throw vpException(vpException::fatalError, "Cannot clear a vector view");
+    }
     if (data != nullptr) {
       free(data);
       data = nullptr;

@@ -143,12 +143,17 @@ public:
   VP_EXPLICIT vpRowVector(const std::initializer_list<double> &list) : vpArray2D<double>(list) { }
 #endif
 
+  static vpRowVector view(double *data, unsigned int cols);
+
   /*!
     Removes all elements from the vector (which are destroyed),
     leaving the container with a size of 0.
   */
   void clear()
   {
+    if (!isMemoryOwner) {
+      throw vpException(vpException::fatalError, "Cannot clear a vector view");
+    }
     if (data != nullptr) {
       free(data);
       data = nullptr;

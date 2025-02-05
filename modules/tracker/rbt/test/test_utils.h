@@ -9,6 +9,10 @@
 
 #include <vector>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 struct TrajectoryData
 {
   std::vector<vpImage<vpRGBa>> rgb;
