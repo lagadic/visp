@@ -244,7 +244,7 @@ class HeaderFile():
       logging.info(f'Parsing subnamespace {namespace_prefix + sub_ns}')
       self.parse_sub_namespace(bindings_container, ns.namespaces[sub_ns], namespace_prefix + sub_ns + '::', False)
 
-  def generate_class(self, bindings_container: BindingsContainer, cls: ClassScope, header_env: HeaderEnvironment, owner='submodule') -> None:
+  def generate_class(self, bindings_container: BindingsContainer, cls: ClassScope, header_env_base: HeaderEnvironment, owner='submodule') -> None:
     '''
     Generate the bindings for a single class:
     This method will generate one Python class per template instanciation.
@@ -253,11 +253,11 @@ class HeaderFile():
     If it is templated, the mapping (template argument types => Python class name) must be provided in the JSON config file
     Subclasses are also generated
     '''
-    def generate_class_with_potiental_specialization(name_python: str, owner_specs: 'OrderedDict[str, str]', cls_config: Dict) -> None:
+    def generate_class_with_potiental_specialization(name_python: str, owner_specs: 'OrderedDict[str, str]', cls_config: Dict, header_env: HeaderEnvironment) -> None:
       '''
       Generate the bindings of a single class, handling a potential template specialization.
       '''
-      python_ident = f'py{name_python}'
+      python_ident = f'py{name_python}' if owner == 'submodule' else f'py{owner}{name_python}'
       name_cpp = get_typename(cls.class_decl.typename, owner_specs, header_env.mapping)
       class_doc = None
 
@@ -295,12 +295,21 @@ class HeaderFile():
 
       # Declaration
       # Add template specializations to cpp class name. e.g., vpArray2D becomes vpArray2D<double> if the template T is double
+
       template_decl: Optional[types.TemplateDecl] = cls.class_decl.template
+      template_strs = None
       if template_decl is not None:
         template_strs = []
         template_strs = map(lambda t: owner_specs[t.name], template_decl.params)
         template_str = f'<{", ".join(template_strs)}>'
         name_cpp += template_str
+
+      # When a class is templated, we should update its mappings so that inner typedefs are correctly resolved
+      # See vpParticleFilter for an instance where this is needed
+      if template_decl is not None:
+        header_env = header_env.copy()
+        header_env.update_naive_mapping_with_template_instanciation(name_cpp_no_template, name_cpp, owner_specs)
+
 
       # Reference public base classes when creating pybind class binding
       base_class_strs = list(map(lambda base_class: get_typename(base_class.typename, owner_specs, header_env.mapping),
@@ -338,7 +347,7 @@ class HeaderFile():
       # Find bindable methods
       generated_methods: List[MethodData] = []
       bindable_methods_and_config, rejected_methods = get_bindable_methods_with_config(self.submodule, cls.methods,
-                                                                                    name_cpp_no_template, owner_specs, header_env.mapping)
+                                                                                    name_cpp_no_template, owner_specs, header_env_base.mapping)
       # Display rejected methods
       rejection_strs = []
       for rejected_method in rejected_methods:
@@ -368,10 +377,7 @@ class HeaderFile():
           py_arg_strs = add_method_doc_to_pyargs(method, py_arg_strs)
 
           ctor_str = f'''{python_ident}.{define_constructor(params_strs, py_arg_strs)};'''
-          if 'simpleAdd' in ctor_str:
-            print(params_strs)
-            print(header_env.mapping)
-            raise RuntimeError
+
           add_to_method_dict('__init__', MethodBinding(ctor_str, is_static=False, is_lambda=False,
                                                        is_operator=False, is_constructor=True))
 
@@ -562,7 +568,7 @@ class HeaderFile():
         if name_is_anonymous(subclass.class_decl.typename):
           logging.warning(f'Class {name_cpp} has a subclass that is hidden behind a typedef that was not generated!')
           continue
-        self.generate_class(bindings_container, subclass, header_env, python_ident)
+        self.generate_class(bindings_container, subclass, header_env, owner=python_ident)
 
 
     name_cpp_no_template = get_name(cls.class_decl.typename)
@@ -575,8 +581,7 @@ class HeaderFile():
 
     # Warning for potential double frees
     acknowledged_pointer_fields = cls_config.get('acknowledge_pointer_or_ref_fields') or []
-    refs_or_ptr_fields = list(filter(lambda tn: '&' in tn or '*' in tn,
-                                map(lambda field: get_type(field.type, {}, header_env.mapping),
+    refs_or_ptr_fields = list(map(lambda field: get_type(field.type, {}, header_env_base.mapping), filter(lambda field: isinstance(field.type, types.Pointer) or isinstance(field.type, types.Reference),
                                     cls.fields)))
 
     # If some pointer or refs are not acknowledged as existing by user, emit a warning
@@ -585,7 +590,7 @@ class HeaderFile():
 
     if cls.class_decl.template is None:
       name_python = name_cpp_no_template.replace('vp', '')
-      generate_class_with_potiental_specialization(name_python, {}, cls_config)
+      generate_class_with_potiental_specialization(name_python, {}, cls_config, header_env_base)
     else:
       if cls_config is None or 'specializations' not in cls_config or len(cls_config['specializations']) == 0:
         logging.warning(f'Could not find template specialization for class {name_cpp_no_template}: skipping!')
@@ -598,4 +603,4 @@ class HeaderFile():
           args = spec['arguments']
           assert len(template_names) == len(args), f'Specializing {name_cpp_no_template}: Template arguments are {template_names} but found specialization {args} which has the wrong number of arguments'
           spec_dict = OrderedDict(k for k in zip(template_names, args))
-          generate_class_with_potiental_specialization(name_python, spec_dict, cls_config)
+          generate_class_with_potiental_specialization(name_python, spec_dict, cls_config, header_env_base)

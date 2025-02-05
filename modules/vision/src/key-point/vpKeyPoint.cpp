@@ -1781,7 +1781,8 @@ void vpKeyPoint::initDetector(const std::string &detectorName)
   }
 
   if (detectorNameTmp == "SIFT") {
-#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_XFEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && ((VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)) && defined(HAVE_OPENCV_FEATURES2D)) \
+  || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
 #  if (VISP_HAVE_OPENCV_VERSION >= 0x040500) // OpenCV >= 4.5.0
     cv::Ptr<cv::FeatureDetector> siftDetector = cv::SiftFeatureDetector::create();
     if (!usePyramid) {
@@ -1976,7 +1977,8 @@ void vpKeyPoint::initDetector(const std::string &detectorName)
 #endif
   }
   else if (detectorNameTmp == "STAR") {
-#if defined(HAVE_OPENCV_XFEATURES2D)
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && (VISP_HAVE_OPENCV_VERSION < 0x030000) || (defined(VISP_HAVE_OPENCV_XFEATURES2D))) \
+   || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_XFEATURES2D))
     cv::Ptr<cv::FeatureDetector> starDetector = cv::xfeatures2d::StarDetector::create();
     if (!usePyramid) {
       m_detectors[detectorNameTmp] = starDetector;
@@ -2010,7 +2012,7 @@ void vpKeyPoint::initDetector(const std::string &detectorName)
 #endif
   }
   else if (detectorNameTmp == "MSD") {
-#if defined(HAVE_OPENCV_XFEATURES2D)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030100) && defined(VISP_HAVE_OPENCV_XFEATURES2D)
     cv::Ptr<cv::FeatureDetector> msdDetector = cv::xfeatures2d::MSDDetector::create();
     if (!usePyramid) {
       m_detectors[detectorNameTmp] = msdDetector;
@@ -2061,7 +2063,7 @@ void vpKeyPoint::initExtractor(const std::string &extractorName)
   m_extractors[extractorName] = cv::DescriptorExtractor::create(extractorName);
 #else
   if (extractorName == "SIFT") {
-#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_XFEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && ((VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
     // SIFT is no more patented since 09/03/2020
 #  if (VISP_HAVE_OPENCV_VERSION >= 0x030411)
     m_extractors[extractorName] = cv::SIFT::create();
@@ -2246,18 +2248,19 @@ void vpKeyPoint::initFeatureNames()
   m_mapOfDetectorNames[DETECTOR_AGAST] = "AGAST";
 #endif
 #endif
-#if defined(HAVE_OPENCV_XFEATURES2D)
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && (VISP_HAVE_OPENCV_VERSION < 0x030000) || (defined(VISP_HAVE_OPENCV_XFEATURES2D))) \
+   || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_XFEATURES2D))
   m_mapOfDetectorNames[DETECTOR_STAR] = "STAR";
+#endif
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030100) && defined(VISP_HAVE_OPENCV_XFEATURES2D)
   m_mapOfDetectorNames[DETECTOR_MSD] = "MSD";
 #endif
-#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_XFEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && ((VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)) && defined(HAVE_OPENCV_FEATURES2D)) \
+  || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
   m_mapOfDetectorNames[DETECTOR_SIFT] = "SIFT";
 #endif
 #if defined(OPENCV_ENABLE_NONFREE) && defined(HAVE_OPENCV_XFEATURES2D)
   m_mapOfDetectorNames[DETECTOR_SURF] = "SURF";
-#endif
-#if defined(HAVE_OPENCV_XFEATURES2D)
-  m_mapOfDetectorNames[DETECTOR_MSD] = "MSD";
 #endif
 
 #if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
@@ -2266,11 +2269,12 @@ void vpKeyPoint::initFeatureNames()
 #if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_XFEATURES2D))
   m_mapOfDescriptorNames[DESCRIPTOR_BRISK] = "BRISK";
 #endif
-#if defined(HAVE_OPENCV_XFEATURES2D)
-  m_mapOfDescriptorNames[DESCRIPTOR_FREAK] = "FREAK";
+#if defined(VISP_HAVE_OPENCV_XFEATURES2D)
   m_mapOfDescriptorNames[DESCRIPTOR_BRIEF] = "BRIEF";
+  m_mapOfDescriptorNames[DESCRIPTOR_FREAK] = "FREAK";
 #endif
-#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_XFEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && ((VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)) && defined(HAVE_OPENCV_FEATURES2D)) \
+  || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
   m_mapOfDescriptorNames[DESCRIPTOR_SIFT] = "SIFT";
 #endif
 #if defined(OPENCV_ENABLE_NONFREE) && defined(HAVE_OPENCV_XFEATURES2D)

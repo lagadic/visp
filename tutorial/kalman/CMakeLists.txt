@@ -37,7 +37,7 @@ cmake_minimum_required(VERSION 3.10)
 
 project(tutorial-kalman)
 
-find_package(VISP REQUIRED visp_core visp_gui)
+find_package(VISP REQUIRED visp_core visp_gui visp_vision)
 
 set(tutorial_cpp)
 

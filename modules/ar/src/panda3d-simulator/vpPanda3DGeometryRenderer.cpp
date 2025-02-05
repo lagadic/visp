@@ -33,6 +33,10 @@
 #if defined(VISP_HAVE_PANDA3D)
 
 #include <visp3/ar/vpPanda3DGeometryRenderer.h>
+#include "windowFramework.h"
+#include "graphicsOutput.h"
+#include "graphicsEngine.h"
+#include "graphicsBuffer.h"
 
 BEGIN_VISP_NAMESPACE
 
@@ -125,14 +129,16 @@ void vpPanda3DGeometryRenderer::setupRenderTarget()
   WindowProperties win_prop;
   win_prop.set_size(m_renderParameters.getImageWidth(), m_renderParameters.getImageHeight());
   // Don't open a window - force it to be an offscreen buffer.
-  int flags = GraphicsPipe::BF_refuse_window  | GraphicsPipe::BF_resizeable | GraphicsPipe::BF_refuse_parasite;
+  int flags = GraphicsPipe::BF_refuse_window  | GraphicsPipe::BF_resizeable;
   GraphicsOutput *windowOutput = m_window->get_graphics_output();
   GraphicsEngine *engine = windowOutput->get_engine();
   GraphicsPipe *pipe = windowOutput->get_pipe();
 
-  m_normalDepthBuffer = engine->make_output(pipe, renderTypeToName(m_renderType), m_renderOrder, fbp, win_prop, flags,
+  static int id = 0;
+  m_normalDepthBuffer = engine->make_output(pipe, renderTypeToName(m_renderType) + std::to_string(id), m_renderOrder, fbp, win_prop, flags,
                                             windowOutput->get_gsg(), windowOutput);
-
+  m_normalDepthTexture = new Texture("geometry texture " + std::to_string(id));
+  ++id;
   if (m_normalDepthBuffer == nullptr) {
     throw vpException(vpException::fatalError, "Could not create geometry info buffer");
   }
@@ -140,13 +146,13 @@ void vpPanda3DGeometryRenderer::setupRenderTarget()
   //   throw vpException(vpException::fatalError, "Geometry info buffer is invalid");
   // }
   m_buffers.push_back(m_normalDepthBuffer);
-  m_normalDepthTexture = new Texture();
   m_normalDepthBuffer->set_inverted(windowOutput->get_gsg()->get_copy_texture_inverted());
   fbp.setup_color_texture(m_normalDepthTexture);
   m_normalDepthTexture->set_format(Texture::F_rgba32);
-  m_normalDepthBuffer->add_render_texture(m_normalDepthTexture, GraphicsOutput::RenderTextureMode::RTM_bind_or_copy, GraphicsOutput::RenderTexturePlane::RTP_color);
+  m_normalDepthBuffer->add_render_texture(m_normalDepthTexture, GraphicsOutput::RenderTextureMode::RTM_copy_texture, GraphicsOutput::RenderTexturePlane::RTP_color);
   m_normalDepthBuffer->set_clear_color(LColor(0.f));
   m_normalDepthBuffer->set_clear_color_active(true);
+
   DisplayRegion *region = m_normalDepthBuffer->make_display_region();
   if (region == nullptr) {
     throw vpException(vpException::fatalError, "Could not create display region");
@@ -198,6 +204,9 @@ void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals, vpImage<floa
   if (numComponents != 4) {
     throw vpException(vpException::dimensionError, "Expected panda texture to have 4 components!");
   }
+  if (m_normalDepthTexture->get_component_type() != Texture::T_float) {
+    throw vpException(vpException::badValue, "Unexpected data type in normals texture");
+  }
 
   int image_width = static_cast<int>(m_renderParameters.getImageWidth());
   for (unsigned int i = 0; i < m_renderParameters.getImageHeight(); ++i) {
@@ -243,6 +252,7 @@ void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals) const
 void vpPanda3DGeometryRenderer::getRender(vpImage<float> &depth) const
 {
   depth.resize(m_normalDepthTexture->get_y_size(), m_normalDepthTexture->get_x_size());
+
   if (m_normalDepthTexture->get_component_type() != Texture::T_float) {
     throw vpException(vpException::badValue, "Unexpected data type in normals texture");
   }

@@ -35,6 +35,10 @@
 #include "orthographicLens.h"
 #include "cardMaker.h"
 #include "texturePool.h"
+#include "graphicsOutput.h"
+#include "graphicsEngine.h"
+#include "windowFramework.h"
+
 
 BEGIN_VISP_NAMESPACE
 const std::string vpPanda3DRGBRenderer::COOK_TORRANCE_VERT =
@@ -239,7 +243,7 @@ void vpPanda3DRGBRenderer::setBackgroundImage(const vpImage<vpRGBa> &background)
   m_backgroundTexture->setup_2d_texture(background.getWidth(), background.getHeight(),
                                     Texture::ComponentType::T_unsigned_byte,
                                     Texture::Format::F_rgba8);
-  //m_backgroundTexture = TexturePool::load_texture("/home/sfelton/IMG_20230221_165330430.jpg");
+
   unsigned char *data = (unsigned char *)m_backgroundTexture->modify_ram_image();
 
   for (unsigned int i = 0; i < background.getHeight(); ++i) {
@@ -274,6 +278,7 @@ void vpPanda3DRGBRenderer::getRender(vpImage<vpRGBa> &I) const
   }
 }
 
+
 void vpPanda3DRGBRenderer::setupScene()
 {
   vpPanda3DBaseRenderer::setupScene();
@@ -302,18 +307,20 @@ void vpPanda3DRGBRenderer::setupRenderTarget()
   GraphicsEngine *engine = windowOutput->get_engine();
   GraphicsStateGuardian *gsg = windowOutput->get_gsg();
   GraphicsPipe *pipe = windowOutput->get_pipe();
-  m_colorBuffer = engine->make_output(pipe, "Color Buffer", m_renderOrder,
+  static int id = 0;
+  m_colorBuffer = engine->make_output(pipe, "Color Buffer" + std::to_string(id), m_renderOrder,
                                       fbp, win_prop, flags,
                                       gsg, windowOutput);
+  m_colorTexture = new Texture("Color texture" + std::to_string(id));
+  ++id;
   if (m_colorBuffer == nullptr) {
     throw vpException(vpException::fatalError, "Could not create color buffer");
   }
   m_buffers.push_back(m_colorBuffer);
   //m_colorBuffer->set_inverted(gsg->get_copy_texture_inverted());
-  m_colorTexture = new Texture();
   fbp.setup_color_texture(m_colorTexture);
   //m_colorTexture->set_format(Texture::Format::F_srgb_alpha);
-  m_colorBuffer->add_render_texture(m_colorTexture, GraphicsOutput::RenderTextureMode::RTM_copy_texture);
+  m_colorBuffer->add_render_texture(m_colorTexture, GraphicsOutput::RenderTextureMode::RTM_copy_texture, GraphicsOutput::RenderTexturePlane::RTP_color);
   m_colorBuffer->set_clear_color(LColor(0.f));
   m_colorBuffer->set_clear_color_active(true);
   DisplayRegion *region = m_colorBuffer->make_display_region();

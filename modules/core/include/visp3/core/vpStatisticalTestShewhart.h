@@ -56,13 +56,13 @@ BEGIN_VISP_NAMESPACE
  * An upward alarm is raised if:
  * \f$ s(t) >= \mu + 3 \sigma \f$
  *
- * Additionnally, we can activate the WECO's rules that have been
- * proposed by the Western Electric Company to add additionnal verifications:
+ * Additionally, we can activate the WECO's rules that have been
+ * proposed by the Western Electric Company to add additional verifications:
  * - An alarm is raised if two out of three consecutive points fall beyond the \f$2\sigma\f$-limit, on the same side of the mean \f$ \mu \f$
  * - An alarm is raised if four out of five consecutive points fall beyond the \f$1\sigma\f$-limit, on the same side of the mean \f$ \mu \f$
  * - An alarm is raised if eight consecutive points fall on the same side of the mean \f$ \mu \f$.
  *
- * The user can decide to use or not the WECO's rules. Additionnally, the user can choose which WECO's
+ * The user can decide to use or not the WECO's rules. Additionally, the user can choose which WECO's
  * rule(s) to activate.
  *
  * To detect only downward drifts of the input signal \f$ s(t) \f$ use

@@ -78,8 +78,9 @@ BEGIN_VISP_NAMESPACE
   -std=c++11 compiler option. Hereafter we give an example of a CMakeLists.txt
   file that allows to build sample-realsense.cpp that uses vpRealSense class.
   \code
-  project(sample)
   cmake_minimum_required(VERSION 3.10)
+
+  project(sample)
 
   find_package(VISP REQUIRED)
   include_directories(${VISP_INCLUDE_DIRS})

@@ -54,7 +54,7 @@
 #include <opencv2/video/tracking.hpp>
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
-#include <nlohmann/json.hpp>
+#include VISP_NLOHMANN_JSON(json.hpp)
 #endif
 
 BEGIN_VISP_NAMESPACE
@@ -267,7 +267,7 @@ public:
    * However, it must be a positive integer.
    *
    * \param blockSize : Size of an average block for computing a derivative
-   * covariation matrix over each pixel neighborhood. Default value is set to 3.
+   * covariance matrix over each pixel neighborhood. Default value is set to 3.
    */
   void setBlockSize(int blockSize) { m_blockSize = blockSize; }
 

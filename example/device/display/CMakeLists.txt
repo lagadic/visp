@@ -33,9 +33,9 @@
 #
 #############################################################################
 
-project(example-device-display)
-
 cmake_minimum_required(VERSION 3.10)
+
+project(example-device-display)
 
 find_package(VISP REQUIRED visp_core visp_gui visp_io)
 

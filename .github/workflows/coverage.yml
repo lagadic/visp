@@ -60,23 +60,21 @@ jobs:
         lcov --zerocounters --directory .
         cmake --build . --target all -j$(nproc)
         cmake --build . --target test -j$(nproc)
-        lcov --directory . --capture --output-file visp-coverage.info
-        lcov --remove visp-coverage.info \
+        lcov --ignore mismatch --directory . --capture --output-file visp-coverage.info
+        lcov --ignore-errors unused --remove visp-coverage.info \
           '/usr/*' \
           '*/private/*' \
           '*/test/*' \
           "/*/3rdparty/*" \
           "/*/demo/*" \
           "/*/example/*" \
-          "/*/samples/*" \
           "/*/modules/gui*" \
           "/*/modules/io/src/parallel-port*" \
           "/*/modules/robot*" \
-          "/*/modules/sensor*" \
           --output-file visp-coverage.cleaned
 
     - name: Upload report to Codecov
-      uses: codecov/codecov-action@v4
+      uses: codecov/codecov-action@v5
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       with:

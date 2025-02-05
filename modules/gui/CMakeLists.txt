@@ -35,6 +35,7 @@
 
 # Add optional 3rd parties
 set(opt_incs "")
+set(opt_system_incs "")
 set(opt_libs "")
 set(opt_libs_private "")
 
@@ -59,20 +60,20 @@ if(USE_GDI)
 endif()
 
 if(USE_DIRECT3D)
-  list(APPEND opt_incs ${DIRECT3D_INCLUDE_DIRS})
+  list(APPEND opt_system_incs ${DIRECT3D_INCLUDE_DIRS})
   list(APPEND opt_libs ${DIRECT3D_LIBRARIES})
 endif()
 
 if(USE_PCL)
-  list(APPEND opt_incs ${PCL_INCLUDE_DIRS})
+  list(APPEND opt_system_incs ${PCL_INCLUDE_DIRS})
   # To ensure to build with VTK and other PCL 3rd parties we are not using PCL_LIBRARIES but PCL_DEPS_INCLUDE_DIRS
   # and PCL_DEPS_LIBRARIES instead
-  list(APPEND opt_incs ${PCL_DEPS_INCLUDE_DIRS})
+  list(APPEND opt_system_incs ${PCL_DEPS_INCLUDE_DIRS})
   list(APPEND opt_libs ${PCL_DEPS_LIBRARIES})
 endif()
 
 vp_add_module(gui visp_core PRIVATE_OPTIONAL ${opt_libs_private})
 vp_glob_module_sources()
-vp_module_include_directories(${opt_incs})
+vp_module_include_directories(${opt_incs} SYSTEM ${opt_system_incs})
 vp_create_module(${opt_libs})
 vp_add_tests(DEPENDS_ON visp_io)

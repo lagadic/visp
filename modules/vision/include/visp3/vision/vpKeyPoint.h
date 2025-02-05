@@ -325,23 +325,25 @@ public:
 #  endif
 #else // OpenCV < 5.0.0
 #  if defined(HAVE_OPENCV_FEATURES2D)
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-    DETECTOR_AGAST,      //!< AGAST detector
-    DETECTOR_AKAZE,      //!< AKAZE detector
-#endif
     DETECTOR_BRISK,      //!< BRISK detector
     DETECTOR_FAST,       //!< FAST detector
     DETECTOR_GFTT,       //!< GFTT detector
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-    DETECTOR_KAZE,       //!< KAZE detector
-#endif
     DETECTOR_MSER,       //!< MSER detector
     DETECTOR_ORB,        //!< ORB detector
     DETECTOR_SimpleBlob, //!< SimpleBlob detector
+#    if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+    DETECTOR_AGAST,      //!< AGAST detector
+    DETECTOR_AKAZE,      //!< AKAZE detector
+    DETECTOR_KAZE,       //!< KAZE detector
+#    endif
 #  endif
-#  if defined(HAVE_OPENCV_XFEATURES2D)
+#  if (VISP_HAVE_OPENCV_VERSION >= 0x030100) && defined(VISP_HAVE_OPENCV_XFEATURES2D)
     DETECTOR_MSD,        //!< MSD detector
+#  endif
+#  if ((VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)) && defined(HAVE_OPENCV_FEATURES2D)
     DETECTOR_SIFT,       //!< SIFT detector
+#  endif
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000) || (defined(VISP_HAVE_OPENCV_XFEATURES2D))
     DETECTOR_STAR,       //!< STAR detector
 #  endif
 #  if defined(OPENCV_ENABLE_NONFREE) && defined(HAVE_OPENCV_XFEATURES2D)
@@ -376,26 +378,26 @@ public:
 #  endif
 #else // opencv < 5.0.0
 #  if defined(HAVE_OPENCV_FEATURES2D)
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-    DESCRIPTOR_AKAZE,     //!< AKAZE descriptor
-#endif
     DESCRIPTOR_BRISK,     //!< BRISK descriptor
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-    DESCRIPTOR_KAZE,      //!< KAZE descriptor
-#endif
     DESCRIPTOR_ORB,       //!< ORB descriptor
+#    if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+    DESCRIPTOR_AKAZE,     //!< AKAZE descriptor
+    DESCRIPTOR_KAZE,      //!< KAZE descriptor
+#    endif
 #  endif
 #  if defined(HAVE_OPENCV_XFEATURES2D)
     DESCRIPTOR_BRIEF,     //!< BRIEF descriptor
     DESCRIPTOR_DAISY,     //!< DAISY descriptor
     DESCRIPTOR_FREAK,     //!< FREAK descriptor
     DESCRIPTOR_LATCH,     //!< LATCH descriptor
+#  endif
+#  if ((VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)) && defined(HAVE_OPENCV_FEATURES2D)
     DESCRIPTOR_SIFT,      //!< SIFT descriptor
 #  endif
 #  if defined(OPENCV_ENABLE_NONFREE) && defined(HAVE_OPENCV_XFEATURES2D)
     DESCRIPTOR_SURF,      //!< SURF descriptor
 #  endif
-#  if defined(HAVE_OPENCV_XFEATURES2D) && (VISP_HAVE_OPENCV_VERSION >= 0x030200)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030200) && defined(VISP_HAVE_OPENCV_XFEATURES2D)
     DESCRIPTOR_BoostDesc, //!< BoostDesc descriptor, only with OpenCV >= 3.2.0
     DESCRIPTOR_VGG,       //!< VGG descriptor, only with OpenCV >= 3.2.0
 #  endif

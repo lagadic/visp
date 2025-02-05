@@ -128,7 +128,7 @@ public:
   /*!
    * Copy constructor.
    */
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
   inline vpRGBa(const vpRGBa &v) = default;
 #else
   inline vpRGBa(const vpRGBa &v) : R(v.R), G(v.G), B(v.B), A(v.A) { }
@@ -152,11 +152,18 @@ public:
   vpRGBa &operator=(const unsigned char &v);
   vpRGBa &operator=(const unsigned int &v);
   vpRGBa &operator=(const int &v);
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
   vpRGBa &operator=(vpRGBa &&v) = default;
   vpRGBa &operator=(const vpRGBa &v) = default;
 #else
-  vpRGBa &operator=(const vpRGBa &v);
+  vpRGBa &operator=(const vpRGBa &v)
+  {
+    this->R = v.R;
+    this->G = v.G;
+    this->B = v.B;
+    this->A = v.A;
+    return *this;
+  }
 #endif
   vpRGBa &operator=(const vpColVector &v);
   bool operator==(const vpRGBa &v) const;
@@ -178,7 +185,7 @@ public:
   unsigned char R; //!< Red component.
   unsigned char G; //!< Green component.
   unsigned char B; //!< Blue component.
-  unsigned char A; //!< Additionnal component.
+  unsigned char A; //!< Additional component.
 
   friend VISP_EXPORT vpRGBa operator*(const double &x, const vpRGBa &rgb);
 };

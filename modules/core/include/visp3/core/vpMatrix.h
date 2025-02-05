@@ -224,6 +224,8 @@ public:
   VP_EXPLICIT vpMatrix(const vpRowVector &v);
   VP_EXPLICIT vpMatrix(const vpTranslationVector &t);
 
+  static vpMatrix view(double *data, unsigned int rows, unsigned int cols);
+
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpMatrix(vpMatrix &&A);
   VP_EXPLICIT vpMatrix(const std::initializer_list<double> &list);

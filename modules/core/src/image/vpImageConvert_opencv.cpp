@@ -222,12 +222,12 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<unsigned char> &dest, b
     else {
       if (flip) {
         for (unsigned int i = 0; i < destRows; ++i) {
-          memcpy(dest.bitmap + (i * destCols), src.data + ((destRows - i - 1) * src.step1()), static_cast<size_t>(src.step));
+          memcpy(dest.bitmap + (i * destCols), src.data + ((destRows - i - 1) * src.step1()), static_cast<size_t>(destCols * sizeof(unsigned char)));
         }
       }
       else {
         for (unsigned int i = 0; i < destRows; ++i) {
-          memcpy(dest.bitmap + (i * destCols), src.data + (i * src.step1()), static_cast<size_t>(src.step));
+          memcpy(dest.bitmap + (i * destCols), src.data + (i * src.step1()), static_cast<size_t>(destCols * sizeof(unsigned char)));
         }
       }
     }
@@ -365,12 +365,12 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<uint16_t> &dest, bool f
     else {
       if (flip) {
         for (unsigned int i = 0; i < destRows; ++i) {
-          memcpy(dest.bitmap + (i * destCols), src.data + ((destRows - i - 1) * src.step1() * sizeof(uint16_t)), static_cast<size_t>(src.step));
+          memcpy(dest.bitmap + (i * destCols), src.data + ((destRows - i - 1) * src.step1() * sizeof(uint16_t)), static_cast<size_t>(destCols * sizeof(uint16_t)));
         }
       }
       else {
         for (unsigned int i = 0; i < destRows; ++i) {
-          memcpy(dest.bitmap + (i * destCols), src.data + (i * src.step1() * sizeof(uint16_t)), static_cast<size_t>(src.step));
+          memcpy(dest.bitmap + (i * destCols), src.data + (i * src.step1() * sizeof(uint16_t)), static_cast<size_t>(destCols * sizeof(uint16_t)));
         }
       }
     }

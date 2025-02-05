@@ -84,7 +84,7 @@ else()
   endif()
 
   if(CMAKE_CXX14_COMPILE_FEATURES)
-    # Additionnal check in case of c++14 is incomplete and also needed to set CXX14_CXX_FLAGS
+    # Additional check in case of c++14 is incomplete and also needed to set CXX14_CXX_FLAGS
     vp_check_compiler_flag(CXX "" HAVE_CXX14_FLAG "${PROJECT_SOURCE_DIR}/cmake/checks/cxx14.cpp")
     if(HAVE_CXX14_FLAG)
       set(CXX14_STANDARD_FOUND ON CACHE STRING "cxx14 standard")

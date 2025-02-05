@@ -81,7 +81,7 @@ updateRadiusAccumulator(const vpDataUpdateRadAccum &data, std::vector<float> &ra
   float scalProd = (data.m_rx * gx) + (data.m_ry * gy);
   float scalProd2 = scalProd * scalProd;
   if (scalProd2 >= (data.m_circlePerfectness2 * data.m_r2 * grad2)) {
-    // Look for the Radius Candidate Bin RCB_k to which d_ij is "the closest" will have an additionnal vote
+    // Look for the Radius Candidate Bin RCB_k to which d_ij is "the closest" will have an additional vote
     float r = static_cast<float>(std::sqrt(data.m_r2));
     int r_bin = static_cast<int>(std::floor((r - data.m_minRadius) / data.m_mergingRadiusDiffThresh));
     r_bin = std::min<int>(r_bin, data.m_nbBins - 1);

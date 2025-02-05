@@ -235,7 +235,7 @@ int main(int argc, char **argv)
     vpFeatureTranslation t(vpFeatureTranslation::cdMc);
     vpFeatureThetaU tu(vpFeatureThetaU::cdRc);
     t.buildFrom(cdMc);
-    tu.buibuildFromld(cdMc);
+    tu.buildFrom(cdMc);
 
     vpFeatureTranslation td(vpFeatureTranslation::cdMc);
     vpFeatureThetaU tud(vpFeatureThetaU::cdRc);

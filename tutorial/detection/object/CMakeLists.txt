@@ -1,6 +1,6 @@
-project(tutorial-detection-object)
-
 cmake_minimum_required(VERSION 3.10)
+
+project(tutorial-detection-object)
 
 find_package(VISP REQUIRED visp_core visp_vision visp_mbt visp_io visp_gui)
 

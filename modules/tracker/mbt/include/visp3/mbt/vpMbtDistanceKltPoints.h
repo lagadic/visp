@@ -130,6 +130,11 @@ private:
   //    }
   //#endif
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  vpMbtDistanceKltPoints(const vpMbtDistanceKltPoints &) = delete; // non construction-copyable
+  vpMbtDistanceKltPoints &operator=(const vpMbtDistanceKltPoints &) = delete; // non copyable
+#endif
+
 public:
   vpMbtDistanceKltPoints();
   virtual ~vpMbtDistanceKltPoints();

@@ -285,7 +285,7 @@ vpRBSilhouetteControlPoint::buildSilhouettePoint(int n, int m, const double &Z, 
   buildPLine(oMc);
 #if VISP_DEBUG_RB_CONTROL_POINT
   if (std::isnan(line.getTheta())) {
-    std::cout << "Line in camera frame = " << line.cP << std::endl;
+    std::cerr << "Line in camera frame = " << line.cP << std::endl;
     throw vpException(vpException::fatalError, "Incorrect line definition");
 
   }
@@ -397,8 +397,8 @@ vpRBSilhouetteControlPoint::computeMeInteractionMatrixError(const vpHomogeneousM
     double theta0 = featureline.getTheta();
 #if VISP_DEBUG_RB_CONTROL_POINT
     if (std::isnan(theta0)) {
-      std::cout << "Line in camera frame = " << line.cP.t() << std::endl;
-      std::cout << "Line in object frame = " << line.oP.t() << std::endl;
+      std::cerr << "Line in camera frame = " << line.cP.t() << std::endl;
+      std::cerr << "Line in object frame = " << line.oP.t() << std::endl;
       featureline.print();
       throw vpException(vpException::fatalError, "Got nan theta in computeInteractionMatrixError");
     }

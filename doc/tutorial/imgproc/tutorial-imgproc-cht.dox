@@ -77,7 +77,7 @@ If the detections seem a bit off, you might need to change the parameters in `co
 command line.
 
 \note The default values of the program corresponds to these fine-tuned parameters. Running the program
-without any additionnal parameters should give the same result:
+without any additional parameters should give the same result:
 ```
 ./tutorial-circle-hough
 ```

@@ -129,6 +129,11 @@ private:
   //    }
   //#endif
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  vpMbtDistanceKltCylinder(const vpMbtDistanceKltCylinder &) = delete; // non construction-copyable
+  vpMbtDistanceKltCylinder &operator=(const vpMbtDistanceKltCylinder &) = delete; // non copyable
+#endif
+
 public:
   vpMbtDistanceKltCylinder();
   virtual ~vpMbtDistanceKltCylinder();

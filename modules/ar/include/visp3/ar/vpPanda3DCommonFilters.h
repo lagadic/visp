@@ -37,6 +37,7 @@
 
 #include <visp3/ar/vpPanda3DPostProcessFilter.h>
 
+
 BEGIN_VISP_NAMESPACE
 class vpPanda3DRGBRenderer;
 

@@ -32,9 +32,9 @@
  */
 
 /*!
-  \file testMbtJsonSettings.cpp
+  \example catchRBT.cpp
 
-  Test test saving and parsing JSON configuration for vpMbGenericTracker
+  Test saving and parsing JSON configuration for vpRBTracker.
 */
 
 #include <visp3/core/vpConfig.h>
@@ -49,6 +49,7 @@
 #include <visp3/rbt/vpRBSilhouetteCCDTracker.h>
 #include <visp3/rbt/vpRBKltTracker.h>
 #include <visp3/rbt/vpRBDenseDepthTracker.h>
+#include <visp3/ar/vpPanda3DFrameworkManager.h>
 
 #include "test_utils.h"
 
@@ -58,6 +59,10 @@
 
 #define CATCH_CONFIG_RUNNER
 #include <catch_amalgamated.hpp>
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 const std::string objCube =
 "o Cube\n"
@@ -578,7 +583,10 @@ SCENARIO("Instantiating a render-based tracker", "[rbt]")
             "delta_h" : 1
           }
         }
-      ]
+      ],
+      "verbose": {
+        "enabled": true
+      }
     })JSON";
     const auto verifyBase = [&tracker]() {
       REQUIRE((tracker.getImageHeight() == 240 && tracker.getImageWidth() == 320));
@@ -648,13 +656,14 @@ SCENARIO("Instantiating a render-based tracker", "[rbt]")
 
 SCENARIO("Running tracker on static synthetic sequences", "[rbt]")
 {
-  vpRBTracker tracker;
-  unsigned int h = 240, w = 320;
-  vpCameraParameters cam(300, 300, 160, 120);
+  unsigned int h = 480, w = 640;
+  vpCameraParameters cam(600, 600, 320, 240);
   vpPanda3DRenderParameters renderParams(cam, h, w, 0.01, 1.0);
 
   const std::string tempDir = vpIoTools::makeTempDirectory("visp_test_rbt_obj");
-  const std::string objFile = vpIoTools::createFilePath(tempDir, "cube.obj");
+  std::cout << tempDir << std::endl;
+  const std::string objFile = vpIoTools::getAbsolutePathname(vpIoTools::createFilePath(tempDir, "cube.obj"));
+
   std::ofstream f(objFile);
   f << objCube;
   f.close();
@@ -664,31 +673,55 @@ SCENARIO("Running tracker on static synthetic sequences", "[rbt]")
     renderer.addLight(vpPanda3DAmbientLight("ambient", vpRGBf(1.f)));
     };
   const unsigned int n = 100;
+
   std::vector<vpHomogeneousMatrix> cTw;
   std::vector<vpHomogeneousMatrix> oTw;
   for (unsigned int i = 0; i < n; ++i) {
-    oTw.push_back(vpHomogeneousMatrix(0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-    cTw.push_back(vpHomogeneousMatrix(0.0, 0.0, 0.3, 0.0, 0.0, 0.0));
+    oTw.push_back(vpHomogeneousMatrix(0.0, 0.0, 0.0, 0.0, vpMath::rad(60.0), vpMath::rad(45.0)));
+    cTw.push_back(vpHomogeneousMatrix(0.0, 0.001 * static_cast<double>(i), 0.3 + 0.001 * static_cast<double>(i), 0.0, 0.0, 0.0));
   }
 
   TrajectoryData traj1 = generateTrajectory(renderParams, setupScene, cTw, oTw);
 
-  tracker.addTracker(std::make_shared<vpRBSilhouetteMeTracker>());
+  vpRBTracker tracker;
+  tracker.setCameraParameters(cam, h, w);
+  std::shared_ptr<vpRBSilhouetteCCDTracker> silTracker = std::make_shared<vpRBSilhouetteCCDTracker>();
+  silTracker->setTemporalSmoothingFactor(0.1);
+  vpCCDParameters ccdParams = silTracker->getCCDParameters();
+  ccdParams.h = 8;
+  silTracker->setCCDParameters(ccdParams);
+
+  tracker.addTracker(silTracker);
+  // std::shared_ptr<vpRBDenseDepthTracker> denseDepthTracker = std::make_shared<vpRBDenseDepthTracker>();
+  // denseDepthTracker->setStep(4);
+  // tracker.addTracker(denseDepthTracker);
+
+  vpSilhouettePointsExtractionSettings silhouetteSettings;
+  silhouetteSettings.setSampleStep(1);
+  silhouetteSettings.setThresholdIsRelative(true);
+  silhouetteSettings.setThreshold(0.1);
+  silhouetteSettings.setPreferPreviousPoints(false);
+  silhouetteSettings.setMaxCandidates(1024);
+  tracker.setSilhouetteExtractionParameters(silhouetteSettings);
+  tracker.setOptimizationGain(0.25);
+  tracker.setMaxOptimizationIters(25);
+  tracker.setOptimizationInitialMu(0.01);
   tracker.setModelPath(objFile);
   tracker.startTracking();
-
   tracker.setPose(traj1.cTo[0]);
+
   vpImage<unsigned char> I;
-  std::cout << "Running tracker" << std::endl;
+
   for (unsigned int i = 0; i < traj1.cTo.size(); ++i) {
     vpImageConvert::convert(traj1.rgb[i], I);
-    tracker.track(I, traj1.rgb[i], traj1.depth[i]);
     vpHomogeneousMatrix tracker_cTo;
+    tracker.track(I, traj1.rgb[i], traj1.depth[i]);
     tracker.getPose(tracker_cTo);
-    vpHomogeneousMatrix cdTc = traj1.cTo[i] * tracker_cTo.inverse();
-    double errorT = cdTc.getTranslationVector().frobeniusNorm();
-    double errorR = cdTc.getThetaUVector().getTheta();
-    REQUIRE((errorT < 0.005 && errorR < vpMath::rad(0.5)));
+    vpHomogeneousMatrix odTo = traj1.cTo[i].inverse() * tracker_cTo;
+    double errorT = odTo.getTranslationVector().frobeniusNorm();
+    double errorR = odTo.getThetaUVector().getTheta();
+    std::cout << "Translation error = " << errorT << " m" << ", rotation error = " << vpMath::deg(errorR) << " deg" << std::endl;
+    REQUIRE((errorT < 0.005 && errorR < vpMath::deg(2.1)));
   }
 }
 
@@ -698,6 +731,7 @@ int main(int argc, char *argv[])
   session.applyCommandLine(argc, argv);
 
   int numFailed = session.run();
+  vpPanda3DFrameworkManager::getInstance().exit();
   return numFailed;
 }
 

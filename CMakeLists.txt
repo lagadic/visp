@@ -142,6 +142,13 @@ set(VISP_SOVERSION "${VISP_VERSION_MAJOR}.${VISP_VERSION_MINOR}")
 # Package revision number
 set(VISP_REVISION "1")
 
+# Try to locate visp-images and, if it exists, its version
+vp_find_dataset(VISP_DATASET_FOUND VISP_DATASET_LOCATION
+                    VISP_DATASET_VERSION
+                    VISP_DATASET_VERSION_MAJOR
+                    VISP_DATASET_VERSION_MINOR
+                    VISP_DATASET_VERSION_PATCH)
+
 #-----------------------------------------------------------------------------
 # TO BE CHECKED BEFORE NEXT RELEASE
 #
@@ -295,6 +302,7 @@ if(NOT IOS)
 
     # Alias variables to be consistent with previous detection method
     set(PYTHON3_FOUND ${Python3_FOUND})
+    set(PYTHON_DEFAULT_AVAILABLE TRUE)
     set(PYTHON3_EXECUTABLE ${Python3_EXECUTABLE})
     set(PYTHON_DEFAULT_EXECUTABLE ${PYTHON3_EXECUTABLE})
     set(PYTHON3INTERP_FOUND ${Python3_Interpreter_FOUND})
@@ -984,6 +992,7 @@ include(cmake/VISPExtraTargets.cmake)
 include(cmake/OgreTools.cmake)
 if(USE_OGRE)
   vp_set_ogre_media()
+  set(VISP_HAVE_OGRE_VERSION "(${OGRE_VERSION_MAJOR}<<16 | ${OGRE_VERSION_MINOR}<<8 | ${OGRE_VERSION_PATCH})") # for vpConfig.h
 endif()
 
 #----------------------------------------------------------------------
@@ -1436,12 +1445,8 @@ if(USE_JPEG)
     endif()
   endif()
 endif()
-if(USE_OIS)
-  vp_parse_header("${OIS_INCLUDE_DIR}/OISPrereqs.h" OIS_VERSION_LINES OIS_VERSION_MAJOR OIS_VERSION_MINOR OIS_VERSION_PATCH)
-  set(OIS_VERSION "${OIS_VERSION_MAJOR}.${OIS_VERSION_MINOR}.${OIS_VERSION_PATCH}")
-endif()
 if(USE_EIGEN3)
-  # Additionnal check to be sure that Eigen3 include dir os well detected
+  # Additional check to be sure that Eigen3 include dir os well detected
   if(NOT EXISTS ${EIGEN3_INCLUDE_DIR})
     message(WARNING "Eigen3 config file is detected in ${Eigen3_DIR}. Using ${Eigen3_DIR}/Eigen3Config.cmake doesn't allow to use a valid Eigen3 include dir: ${EIGEN3_INCLUDE_DIR}. Modify Eigen3_DIR to point to Eigen3Config.cmake file located in Eigen3 installation folder or turn USE_EIGEN3 OFF.")
   endif()
@@ -1463,7 +1468,7 @@ endif()
 #  System information
 # ----------------------------------------------------------------------------
 vp_system_information(NUMBER_OF_LOGICAL_CORES NUMBER_OF_PHYSICAL_CORES TOTAL_PHYSICAL_MEMORY OS_NAME OS_RELEASE
-                      OS_VERSION OS_PLATFORM PROCESSOR_NAME IS_64BIT HAS_FPU CPU_OPTIM)
+                      OS_VERSION OS_PLATFORM PROCESSOR_NAME PROCESSOR_DESCRIPTION IS_64BIT HAS_FPU CPU_OPTIM)
 
 # ----------------------------------------------------------------------------
 #  Autodetect if we are in a GIT repository
@@ -1559,9 +1564,21 @@ status("    OS release:"                                   "${OS_RELEASE}")
 status("    OS version:"                                   "${OS_VERSION}")
 status("    OS platform:"                                  "${OS_PLATFORM}")
 status("    CPU name:"                                     "${PROCESSOR_NAME}")
+status("    CPU description:"                              "${PROCESSOR_DESCRIPTION}")
 status("    Is the CPU 64-bit?"                            ${IS_64BIT} THEN "yes" ELSE "no")
 status("    Does the CPU have FPU?"                        ${HAS_FPU} THEN "yes" ELSE "no")
 status("    CPU optimization:"                             ${CPU_OPTIM})
+if(NOT ("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" LESS 3.20))
+# https://cmake.org/cmake/help/latest/variable/CMAKE_LANG_BYTE_ORDER.html
+# https://github.com/libevent/libevent/pull/1349/files
+  if(CMAKE_CXX_BYTE_ORDER STREQUAL "BIG_ENDIAN")
+    status("    CPU endianness:"                 "big-endian")
+  elseif(CMAKE_CXX_BYTE_ORDER STREQUAL "LITTLE_ENDIAN")
+    status("    CPU endianness:"                 "little-endian")
+  else()
+    status("    CPU endianness:"                 "unknown")
+  endif()
+endif()
 
 # ========================== C/C++ options ==========================
 if(CMAKE_CXX_COMPILER_VERSION)
@@ -1903,6 +1920,15 @@ if(USE_PANDA3D)
 endif()
 if(USE_YARP)
   status("    Yarp dir:" "${YARP_DIR}")
+endif()
+if(USE_OGRE)
+  if(NOT ${OGRE_DIR} STREQUAL "")
+    status("    Ogre dir:" "${OGRE_DIR}")
+  else()
+    status("    Ogre inc dir:" "${OGRE_INCLUDE_DIR}")
+    status("    Ogre Main lib:" "${OGRE_LIBRARY_REL}")
+    status("    Ogre plugin dir:" "${OGRE_PLUGIN_DIR_REL}")
+  endif()
 endif()
 
 # ========================== auxiliary ==========================
