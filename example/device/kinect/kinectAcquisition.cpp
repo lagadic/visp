@@ -45,14 +45,11 @@
 #include <visp3/core/vpConfig.h>
 #ifdef VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES
 
-#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GDI))
+#if defined(VISP_HAVE_DISPLAY)
 
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpTime.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/sensor/vpKinect.h>
 
 int main()
@@ -60,6 +57,12 @@ int main()
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
 #endif
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  vpDisplay *display = nullptr;
+  vpDisplay *displayRgb = nullptr;
+  vpDisplay *displayRgbWarped = nullptr;
+#endif
+  int exit_status = EXIT_SUCCESS;
   try {
     // Init Kinect
 #ifdef VISP_HAVE_LIBFREENECT_OLD
@@ -94,25 +97,19 @@ int main()
 #endif
     vpImage<vpRGBa> Irgb(480, 640), Iwarped(480, 640);
 
-#if defined(VISP_HAVE_X11)
-    vpDisplayX display, displayRgb, displayRgbWarped;
-#elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK display;
-    vpDisplayGTK displayRgb;
-    vpDisplayGTK displayRgbWarped;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV display;
-    vpDisplayOpenCV displayRgb;
-    vpDisplayOpenCV displayRgbWarped;
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI display;
-    vpDisplayGDI displayRgb;
-    vpDisplayGDI displayRgbWarped;
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    std::shared_ptr<vpDisplay> display = vpDisplayFactory::createDisplay();
+    std::shared_ptr<vpDisplay> displayRgb = vpDisplayFactory::createDisplay();
+    std::shared_ptr<vpDisplay> displayRgbWarped = vpDisplayFactory::createDisplay();
+#else
+    display = vpDisplayFactory::allocateDisplay();
+    displayRgb = vpDisplayFactory::allocateDisplay();
+    displayRgbWarped = vpDisplayFactory::allocateDisplay();
 #endif
 
-    display.init(Idmap, 100, 200, "Depth map");
-    displayRgb.init(Irgb, 900, 200, "Color Image");
-    displayRgbWarped.init(Iwarped, 900, 700, "Warped Color Image");
+    display->init(Idmap, 100, 200, "Depth map");
+    displayRgb->init(Irgb, 900, 200, "Color Image");
+    displayRgbWarped->init(Iwarped, 900, 700, "Warped Color Image");
 
     // A click to stop acquisition
     std::cout << "Click in one image to stop acquisition" << std::endl;
@@ -134,16 +131,32 @@ int main()
     }
     std::cout << "Stop acquisition" << std::endl;
     kinect.stop(); // Stop acquisition thread
-    return EXIT_SUCCESS;
+
+    exit_status = EXIT_SUCCESS;
   }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return EXIT_FAILURE;
+    exit_status = EXIT_FAILURE;
   }
   catch (...) {
     std::cout << "Catch an exception " << std::endl;
-    return EXIT_FAILURE;
+    exit_status = EXIT_FAILURE;
   }
+
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (display != nullptr) {
+    delete display;
+  }
+
+  if (displayRgb != nullptr) {
+    delete displayRgb;
+  }
+
+  if (displayRgbWarped != nullptr) {
+    delete displayRgbWarped;
+  }
+#endif
+  return exit_status;
 }
 
 #else

@@ -45,11 +45,7 @@
 
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMath.h>
-#include <visp3/gui/vpDisplayD3D.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/visual_features/vpFeatureLuminance.h>
@@ -175,6 +171,12 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_all
 int main(int argc, const char **argv)
 {
 #if (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> d, d1;
+#else
+  vpDisplay *d = nullptr;
+  vpDisplay *d1 = nullptr;
+#endif
   try {
     std::string env_ipath;
     std::string opt_ipath;
@@ -271,20 +273,13 @@ int main(int argc, const char **argv)
     sim.getImage(I, cam); // and aquire the image Id
     Id = I;
 
-    // display the image
-#if defined(VISP_HAVE_X11)
-    vpDisplayX d;
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI d;
-#elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK d;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV d;
-#endif
-
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_OPENCV)
+#if defined(VISP_HAVE_DISPLAY)
     if (opt_display) {
-      d.init(I, 20, 10, "Photometric visual servoing : s");
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+      d = vpDisplayFactory::createDisplay(I, 20, 10, "Photometric visual servoing : s");
+#else
+      d = vpDisplayFactory::allocateDisplay(I, 20, 10, "Photometric visual servoing : s");
+#endif
       vpDisplay::display(I);
       vpDisplay::flush(I);
     }
@@ -309,7 +304,7 @@ int main(int argc, const char **argv)
     I = 0u;
     sim.getImage(I, cam); // and aquire the image Id
 
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK)
+#if defined(VISP_HAVE_DISPLAY)
     if (opt_display) {
       vpDisplay::display(I);
       vpDisplay::flush(I);
@@ -326,16 +321,13 @@ int main(int argc, const char **argv)
     vpImageTools::imageDifference(I, Id, Idiff);
 
     // Affiche de l'image de difference
-#if defined(VISP_HAVE_X11)
-    vpDisplayX d1;
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI d1;
-#elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK d1;
-#endif
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK)
+#if defined(VISP_HAVE_DISPLAY)
     if (opt_display) {
-      d1.init(Idiff, 40 + static_cast<int>(I.getWidth()), 10, "photometric visual servoing : s-s* ");
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+      d1 = vpDisplayFactory::createDisplay(Idiff, 40 + static_cast<int>(I.getWidth()), 10, "photometric visual servoing : s-s* ");
+#else
+      d1 = vpDisplayFactory::allocateDisplay(Idiff, 40 + static_cast<int>(I.getWidth()), 10, "photometric visual servoing : s-s* ");
+#endif
       vpDisplay::display(Idiff);
       vpDisplay::flush(Idiff);
     }
@@ -392,14 +384,14 @@ int main(int argc, const char **argv)
       //  Acquire the new image
       sim.setCameraPosition(cMo);
       sim.getImage(I, cam);
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK)
+#if defined(VISP_HAVE_DISPLAY)
       if (opt_display) {
         vpDisplay::display(I);
         vpDisplay::flush(I);
       }
 #endif
       vpImageTools::imageDifference(I, Id, Idiff);
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK)
+#if defined(VISP_HAVE_DISPLAY)
       if (opt_display) {
         vpDisplay::display(Idiff);
         vpDisplay::flush(Idiff);
@@ -426,16 +418,32 @@ int main(int argc, const char **argv)
     v = 0;
     robot.setVelocity(vpRobot::CAMERA_FRAME, v);
 
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (d != nullptr) {
+      delete d;
+    }
+    if (d1 != nullptr) {
+      delete d1;
+    }
+#endif
     return EXIT_SUCCESS;
-  }
+    }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (d != nullptr) {
+      delete d;
+    }
+    if (d1 != nullptr) {
+      delete d1;
+    }
+#endif
     return EXIT_FAILURE;
-  }
+    }
 #else
   (void)argc;
   (void)argv;
   std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
   return EXIT_SUCCESS;
 #endif
-}
+  }
