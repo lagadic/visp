@@ -53,9 +53,7 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/detection/vpDetectorAprilTag.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/robot/vpRobotBiclops.h>
 #include <visp3/sensor/vpRealSense2.h>
@@ -148,6 +146,11 @@ bool getOptions(int argc, const char **argv, std::string &conf)
 
 int main(int argc, const char **argv)
 {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display;
+#else
+  vpDisplay *display = nullptr;
+#endif
   try {
     // Default unix configuration file path
     std::string opt_conf = "/usr/share/BiclopsDefault.cfg";
@@ -231,12 +234,10 @@ int main(int argc, const char **argv)
 
     // We open a window using either X11 or GTK or GDI.
     // Its size is automatically defined by the image (I) size
-#if defined(VISP_HAVE_X11)
-    vpDisplayX display(I, 100, 100, "Display X...");
-#elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK display(I, 100, 100, "Display GTK...");
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI display(I, 100, 100, "Display GDI...");
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    display = vpDisplayFactory::createDisplay(I, 100, 100, "Display GDI...");
+#else
+    display = vpDisplayFactory::allocateDisplay(I, 100, 100, "Display GDI...");
 #endif
 
     vpDisplay::display(I);
@@ -331,10 +332,20 @@ int main(int argc, const char **argv)
     std::cout << "Stop the robot " << std::endl;
     robot.setRobotState(vpRobot::STATE_STOP);
 
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+    }
+#endif
     return EXIT_SUCCESS;
   }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+  }
+#endif
     return EXIT_FAILURE;
   }
 }
