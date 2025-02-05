@@ -47,11 +47,7 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpMath.h>
-#include <visp3/gui/vpDisplayD3D.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/robot/vpWireFrameSimulator.h>
@@ -151,6 +147,12 @@ bool getOptions(int argc, const char **argv, bool &display, bool &click)
 
 int main(int argc, const char **argv)
 {
+  const unsigned int NB_DISPLAYS = 3;
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display[NB_DISPLAYS];
+#else
+  vpDisplay *display[NB_DISPLAYS];
+#endif
   try {
     bool opt_display = true;
     bool opt_click = true;
@@ -171,23 +173,17 @@ int main(int argc, const char **argv)
 /*
 Create a display for each different cameras.
 */
-#if defined(VISP_HAVE_X11)
-    vpDisplayX display[3];
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV display[3];
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI display[3];
-#elif defined(VISP_HAVE_D3D9)
-    vpDisplayD3D display[3];
-#elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK display[3];
-#endif
-
     if (opt_display) {
       // Display size is automatically defined by the image (I) size
-      display[0].init(Iint, 100, 100, "The internal view");
-      display[1].init(Iext1, 100, 100, "The first external view");
-      display[2].init(Iext2, 100, 100, "The second external view");
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+      display[0] = vpDisplayFactory::createDisplay(Iint, 100, 100, "The internal view");
+      display[1] = vpDisplayFactory::createDisplay(Iext1, 100, 100, "The first external view");
+      display[2] = vpDisplayFactory::createDisplay(Iext2, 100, 100, "The second external view");
+#else
+      display[0] = vpDisplayFactory::allocateDisplay(Iint, 100, 100, "The internal view");
+      display[1] = vpDisplayFactory::allocateDisplay(Iext1, 100, 100, "The first external view");
+      display[2] = vpDisplayFactory::allocateDisplay(Iext2, 100, 100, "The second external view");
+#endif
       vpDisplay::setWindowPosition(Iint, 0, 0);
       vpDisplay::setWindowPosition(Iext1, 700, 0);
       vpDisplay::setWindowPosition(Iext2, 0, 550);
@@ -343,10 +339,22 @@ Create a display for each different cameras.
       "refers to the html documentation to access the list of all "
       "functions"
       << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    for (unsigned int i = 0; i < NB_DISPLAYS; ++i) {
+      delete display[i];
+    }
+#endif
     return EXIT_SUCCESS;
   }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    for (unsigned int i = 0; i < NB_DISPLAYS; ++i) {
+      if (display[i] != nullptr) {
+        delete display[i];
+      }
+    }
+#endif
     return EXIT_SUCCESS;
   }
 }
