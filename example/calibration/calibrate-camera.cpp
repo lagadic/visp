@@ -61,11 +61,7 @@
 #include <visp3/core/vpPixelMeterConversion.h>
 #include <visp3/core/vpPoint.h>
 #include <visp3/core/vpXmlParserCamera.h>
-#include <visp3/gui/vpDisplayD3D.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpVideoReader.h>
 
 #include "calibration-helper.hpp"
@@ -110,6 +106,10 @@ int main(int argc, const char *argv[])
 {
 #if defined(ENABLE_VISP_NAMESPACE)
   using namespace VISP_NAMESPACE_NAME;
+#endif
+
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  vpDisplay *d = nullptr;
 #endif
 
   try {
@@ -192,14 +192,10 @@ int main(int argc, const char *argv[])
       return EXIT_FAILURE;
     }
 
-#if defined(VISP_HAVE_X11)
-    vpDisplayX d(I, vpDisplay::SCALE_AUTO);
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI d(I, vpDisplay::SCALE_AUTO);
-#elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK d(I, vpDisplay::SCALE_AUTO);
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV d(I, vpDisplay::SCALE_AUTO);
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    std::shared_ptr<vpDisplay> d = vpDisplayFactory::createDisplay(I, vpDisplay::SCALE_AUTO);
+#else
+    d = vpDisplayFactory::allocateDisplay(I, vpDisplay::SCALE_AUTO);
 #endif
 
     vpCameraParameters cam_init;
@@ -208,6 +204,11 @@ int main(int argc, const char *argv[])
       if (!vpIoTools::checkFilename(opt_init_camera_xml_file)) {
         std::cout << "Input camera file \"" << opt_init_camera_xml_file << "\" doesn't exist!" << std::endl;
         std::cout << "Modify [--init-from-xml <camera-init.xml>] option value" << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+        if (display != nullptr) {
+          delete display;
+        }
+#endif
         return EXIT_FAILURE;
       }
       init_from_xml = true;
@@ -220,6 +221,11 @@ int main(int argc, const char *argv[])
         std::cout << "Unable to find camera with name \"" << opt_camera_name
           << "\" in file: " << opt_init_camera_xml_file << std::endl;
         std::cout << "Modify [--camera-name <name>] option value" << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+        if (display != nullptr) {
+          delete display;
+        }
+#endif
         return EXIT_FAILURE;
       }
     }
@@ -339,6 +345,11 @@ int main(int argc, const char *argv[])
     // Calibrate by a non linear method based on virtual visual servoing
     if (calibrator.empty()) {
       std::cerr << "Unable to calibrate. Image processing failed !" << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+      if (display != nullptr) {
+        delete display;
+      }
+#endif
       return EXIT_FAILURE;
     }
 
@@ -479,6 +490,11 @@ int main(int argc, const char *argv[])
     }
     else {
       std::cout << "Calibration without distortion failed." << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+      if (display != nullptr) {
+        delete display;
+      }
+#endif
       return EXIT_FAILURE;
     }
     vpCameraParameters cam_without_dist = cam;
@@ -697,5 +713,5 @@ int main()
   std::cout << "pugixml built-in 3rdparty is requested to run the calibration." << std::endl;
 #endif
   return EXIT_SUCCESS;
-}
+  }
 #endif
