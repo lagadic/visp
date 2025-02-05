@@ -376,8 +376,8 @@ int main(int argc, const char *argv[])
 
     vpImage<vpRGBa> I_color;
     vpImageConvert::convert(imgColor, I_color);
-    d.close(I);
-    d.init(I_color, 0, 0, "Calibration pattern occupancy");
+    d->close(I);
+    d->init(I_color, 0, 0, "Calibration pattern occupancy");
 
     vpDisplay::display(I_color);
     vpDisplay::displayText(I_color, 15 * vpDisplay::getDownScalingFactor(I_color),
@@ -395,8 +395,8 @@ int main(int argc, const char *argv[])
       vpTime::wait(s.tempo * 1000);
     }
 
-    d.close(I_color);
-    d.init(I);
+    d->close(I_color);
+    d->init(I);
 
     std::stringstream ss_additional_info;
     ss_additional_info << "<date>" << vpTime::getDateTime() << "</date>";
@@ -552,8 +552,8 @@ int main(int argc, const char *argv[])
 
       vpImage<unsigned char> I_undist;
       vpImage<unsigned char> I_dist_undist(I.getHeight(), 2 * I.getWidth());
-      d.close(I);
-      d.init(I_dist_undist, 0, 0, "Straight lines have to be straight - distorted image / undistorted image");
+      d->close(I);
+      d->init(I_dist_undist, 0, 0, "Straight lines have to be straight - distorted image / undistorted image");
 
       for (size_t idx = 0; idx < calib_info.size(); idx++) {
         std::cout << "\nThis tool computes the line fitting error (mean distance error) on image points extracted from "
@@ -683,14 +683,29 @@ int main(int argc, const char *argv[])
     }
     else {
       std::cout << "Calibration with distortion failed." << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+      if (display != nullptr) {
+        delete display;
+      }
+#endif
       return EXIT_FAILURE;
     }
 
     std::cout << "\nCamera calibration succeeded. Results are savec in " << "\"" << opt_output_file_name << "\"" << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+    }
+#endif
     return EXIT_SUCCESS;
   }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+    }
+#endif
     return EXIT_FAILURE;
   }
 }
