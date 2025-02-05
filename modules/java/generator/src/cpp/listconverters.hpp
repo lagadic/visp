@@ -2,16 +2,17 @@
 #ifndef LISTCONVERTERS_HPP
 #define LISTCONVERTERS_HPP
 
+#include <visp3/core/vpConfig.h>
 #include "visp3/visp_core.h"
 #include "visp3/visp_modules.h"
 
-jlongArray vector_vpColVector_to_List(JNIEnv *env, const std::vector<vpColVector> &);
+jlongArray vector_vpColVector_to_List(JNIEnv *env, const std::vector<VISP_NAMESPACE_ADDRESSING vpColVector> &);
 
-jlongArray vector_vpHomogeneousMatrix_to_List(JNIEnv *env, const std::vector<vpHomogeneousMatrix> &);
+jlongArray vector_vpHomogeneousMatrix_to_List(JNIEnv *env, const std::vector<VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix> &);
 
-std::vector<vpHomogeneousMatrix> List_to_vector_vpHomogeneousMatrix(JNIEnv *env, jlongArray arr);
+std::vector<VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix> List_to_vector_vpHomogeneousMatrix(JNIEnv *env, jlongArray arr);
 
-std::vector<vpCameraParameters> List_to_vector_vpCameraParameters(JNIEnv *env, jlongArray arr);
+std::vector<VISP_NAMESPACE_ADDRESSING vpCameraParameters> List_to_vector_vpCameraParameters(JNIEnv *env, jlongArray arr);
 
 std::vector<int> List_to_vector_int(JNIEnv *env, jintArray arr);
 
@@ -19,7 +20,7 @@ std::vector<float> List_to_vector_float(JNIEnv *env, jfloatArray arr);
 
 std::vector<double> List_to_vector_double(JNIEnv *env, jdoubleArray arr);
 
-jobjectArray vector_vector_vpImagePoint_to_List(JNIEnv *env, const std::vector<std::vector<vpImagePoint> > &);
+jobjectArray vector_vector_vpImagePoint_to_List(JNIEnv *env, const std::vector<std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> > &);
 
 jobjectArray vector_vector_double_to_List(JNIEnv *env, const std::vector<std::vector<double> > &V);
 

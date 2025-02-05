@@ -203,20 +203,8 @@ vpMatrix::vpMatrix(const vpTranslationVector &t)
 }
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-vpMatrix::vpMatrix(vpMatrix &&A) : vpArray2D<double>()
-{
-  rowNum = A.rowNum;
-  colNum = A.colNum;
-  rowPtrs = A.rowPtrs;
-  dsize = A.dsize;
-  data = A.data;
-
-  A.rowNum = 0;
-  A.colNum = 0;
-  A.rowPtrs = nullptr;
-  A.dsize = 0;
-  A.data = nullptr;
-}
+vpMatrix::vpMatrix(vpMatrix &&A) : vpArray2D<double>(std::move(A))
+{ }
 
 /*!
   Construct a matrix from a list of double values.
@@ -303,6 +291,24 @@ vpMatrix::vpMatrix(unsigned int nrows, unsigned int ncols, const std::initialize
  */
 vpMatrix::vpMatrix(const std::initializer_list<std::initializer_list<double> > &lists) : vpArray2D<double>(lists) { }
 #endif
+
+/**
+ * @brief Create a matrix view of a raw data array.
+ * The view can modify the contents of the raw data array,
+ * but may not resize it and does not own it: the memory is not released by the matrix
+ * and it should be freed by the user after the matrix view is released.
+ *
+ * @param data the raw data
+ * @param rows Number of rows
+ * @param cols Number of columns
+ * @return vpMatrix
+ */
+vpMatrix vpMatrix::view(double *data, unsigned int rows, unsigned int cols)
+{
+  vpMatrix M;
+  vpArray2D<double>::view(M, data, rows, cols);
+  return M;
+}
 
 /*!
   Initialize the matrix from a part of an input matrix \e M.
@@ -1253,8 +1259,8 @@ vpColVector vpMatrix::eigenValues() const
   }
 #endif
 #else
-    throw(vpException(vpException::functionNotImplementedError, "Eigen values computation is not implemented. "
-                      "You should install Lapack 3rd party"));
+  throw(vpException(vpException::functionNotImplementedError, "Eigen values computation is not implemented. "
+                    "You should install Lapack 3rd party"));
 #endif
   return evalue;
 }
@@ -1386,8 +1392,8 @@ void vpMatrix::eigenValues(vpColVector &evalue, vpMatrix &evector) const
   }
 #endif // defined(VISP_HAVE_GSL)
 #else
-    throw(vpException(vpException::functionNotImplementedError, "Eigen values computation is not implemented. "
-                      "You should install Lapack 3rd party"));
+  throw(vpException(vpException::functionNotImplementedError, "Eigen values computation is not implemented. "
+                    "You should install Lapack 3rd party"));
 #endif
 }
 

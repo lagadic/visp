@@ -259,19 +259,9 @@ vpColVector::vpColVector(const std::vector<float> &v) : vpArray2D<double>(static
 }
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-vpColVector::vpColVector(vpColVector &&v) : vpArray2D<double>()
+vpColVector::vpColVector(vpColVector &&v) : vpArray2D<double>(std::move(v))
 {
-  rowNum = v.rowNum;
-  colNum = v.colNum;
-  rowPtrs = v.rowPtrs;
-  dsize = v.dsize;
-  data = v.data;
 
-  v.rowNum = 0;
-  v.colNum = 0;
-  v.rowPtrs = nullptr;
-  v.dsize = 0;
-  v.data = nullptr;
 }
 #endif
 
@@ -472,24 +462,25 @@ std::vector<double> vpColVector::toStdVector() const
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 vpColVector &vpColVector::operator=(vpColVector &&other)
 {
-  if (this != &other) {
-    free(data);
-    free(rowPtrs);
-
-    rowNum = other.rowNum;
-    colNum = other.colNum;
-    rowPtrs = other.rowPtrs;
-    dsize = other.dsize;
-    data = other.data;
-
-    other.rowNum = 0;
-    other.colNum = 0;
-    other.rowPtrs = nullptr;
-    other.dsize = 0;
-    other.data = nullptr;
-  }
-
+  vpArray2D<double>::operator=(std::move(other));
   return *this;
+}
+
+/**
+ * @brief Create a column vector view of a raw data array.
+ * The view can modify the contents of the raw data array,
+ * but may not resize it and does not own it: the memory is not released by the vector
+ * and it should be freed by the user after the view is released.
+ *
+ * @param data the raw data
+ * @param rows Number of rows
+ * @return the column vector view
+ */
+vpColVector vpColVector::view(double *data, unsigned int rows)
+{
+  vpColVector v;
+  vpArray2D<double>::view(v, data, rows, 1);
+  return v;
 }
 
 vpColVector &vpColVector::operator=(const std::initializer_list<double> &list)

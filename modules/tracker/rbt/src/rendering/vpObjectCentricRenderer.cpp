@@ -34,6 +34,9 @@
 
 #include "boundingSphere.h"
 #include "boundingBox.h"
+#include "graphicsOutput.h"
+#include "graphicsEngine.h"
+#include "windowFramework.h"
 #include "load_prc_file.h"
 
 BEGIN_VISP_NAMESPACE
@@ -42,15 +45,6 @@ vpObjectCentricRenderer::vpObjectCentricRenderer(const vpPanda3DRenderParameters
   : vpPanda3DRendererSet(renderParameters), m_enableCrop(true), m_shouldComputeBBPoints(true)
 {
   m_renderParameters = renderParameters;
-  load_prc_file_data("", "textures-power-2 none\n"
-                          "back-buffers 0\n"
-                          "auto-flip 1\n"
-                          // "pstats-gpu-timing 1\n"
-                          // "gl-finish 1\n"
-                          // "texture-minfilter mipmap\n"
-                          "load-file-type p3assimp\n"
-                          "audio-library-name null\n"
-                          "model-cache-dir\n");
 }
 
 void vpObjectCentricRenderer::beforeFrameRendered()
@@ -72,9 +66,8 @@ void vpObjectCentricRenderer::beforeFrameRendered()
 
     unsigned width = (unsigned)(m_bb.getWidth());
     unsigned height = (unsigned)(m_bb.getHeight());
-
     subParams.setImageResolution(height, width);
-
+    subParams.setClippingDistance(subParams.getNearClippingDistance() - 0.1, subParams.getFarClippingDistance());
     const vpCameraParameters cam = subParams.getCameraIntrinsics();
     subParams.setCameraIntrinsics(vpCameraParameters(cam.get_px(), cam.get_py(), cam.get_u0() - m_bb.getLeft(), cam.get_v0() - m_bb.getTop()));
     for (std::shared_ptr<vpPanda3DBaseRenderer> &subrenderer : m_subRenderers) {

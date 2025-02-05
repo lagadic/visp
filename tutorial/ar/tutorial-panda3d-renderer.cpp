@@ -14,13 +14,13 @@
 #include <visp3/gui/vpDisplayGTK.h>
 
 #include <visp3/io/vpParseArgv.h>
-
 #include <visp3/io/vpImageIo.h>
 
 #include <visp3/ar/vpPanda3DRGBRenderer.h>
 #include <visp3/ar/vpPanda3DGeometryRenderer.h>
 #include <visp3/ar/vpPanda3DRendererSet.h>
 #include <visp3/ar/vpPanda3DCommonFilters.h>
+#include <visp3/ar/vpPanda3DFrameworkManager.h>
 
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;
@@ -328,6 +328,11 @@ int main(int argc, const char **argv)
     renderer.setNodePose(objectName, wTo * oToo);
     //! [Move object]
   }
+
+  //! [Cleanup]
+  vpPanda3DFrameworkManager::getInstance().exit();
+  //! [Cleanup]
+
   if (renderTime.size() > 0) {
     std::cout << "Render time: " << vpMath::getMean(renderTime) << "ms +- " << vpMath::getStdev(renderTime) << "ms" << std::endl;
     std::cout << "Panda3D -> vpImage time: " << vpMath::getMean(fetchTime) << "ms +- " << vpMath::getStdev(fetchTime) << "ms" << std::endl;

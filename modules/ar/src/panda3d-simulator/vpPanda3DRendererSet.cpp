@@ -32,32 +32,32 @@
 
 #if defined(VISP_HAVE_PANDA3D)
 
-#include "load_prc_file.h"
+#include <visp3/ar/vpPanda3DFrameworkManager.h>
+
 
 BEGIN_VISP_NAMESPACE
 vpPanda3DRendererSet::vpPanda3DRendererSet() : vpPanda3DBaseRenderer("set")
 {
-  load_prc_file_data("", "textures-power-2 none");
-  load_prc_file_data("", "gl-version 3 2");
-  load_prc_file_data("", "no-singular-invert");
+
 }
 
 vpPanda3DRendererSet::vpPanda3DRendererSet(const vpPanda3DRenderParameters &renderParameters) : vpPanda3DBaseRenderer("set")
 {
   m_renderParameters = renderParameters;
-  load_prc_file_data("", "textures-power-2 none");
-  load_prc_file_data("", "gl-version 3 2");
-  load_prc_file_data("", "no-singular-invert");
 }
 
 void vpPanda3DRendererSet::initFramework()
 {
 
-  if (!frameworkIsOpen) {
-    frameworkIsOpen = true;
-    framework.open_framework();
-  }
+  vpPanda3DFrameworkManager &frameworkManager = vpPanda3DFrameworkManager::getInstance();
+  PandaFramework &framework = frameworkManager.getFramework();
+  frameworkManager.initFramework();
   m_isWindowOwner = true;
+
+  if (m_renderParameters.getImageHeight() == 0 || m_renderParameters.getImageWidth() == 0) {
+    throw vpException(vpException::badValue,
+    "Panda3D renderer: Cannot create a window with 0 height or width.");
+  }
 
   WindowProperties winProps;
   winProps.set_size(LVecBase2i(m_renderParameters.getImageWidth(), m_renderParameters.getImageHeight()));

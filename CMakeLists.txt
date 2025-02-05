@@ -302,6 +302,7 @@ if(NOT IOS)
 
     # Alias variables to be consistent with previous detection method
     set(PYTHON3_FOUND ${Python3_FOUND})
+    set(PYTHON_DEFAULT_AVAILABLE TRUE)
     set(PYTHON3_EXECUTABLE ${Python3_EXECUTABLE})
     set(PYTHON_DEFAULT_EXECUTABLE ${PYTHON3_EXECUTABLE})
     set(PYTHON3INTERP_FOUND ${Python3_Interpreter_FOUND})
@@ -1467,7 +1468,7 @@ endif()
 #  System information
 # ----------------------------------------------------------------------------
 vp_system_information(NUMBER_OF_LOGICAL_CORES NUMBER_OF_PHYSICAL_CORES TOTAL_PHYSICAL_MEMORY OS_NAME OS_RELEASE
-                      OS_VERSION OS_PLATFORM PROCESSOR_NAME IS_64BIT HAS_FPU CPU_OPTIM)
+                      OS_VERSION OS_PLATFORM PROCESSOR_NAME PROCESSOR_DESCRIPTION IS_64BIT HAS_FPU CPU_OPTIM)
 
 # ----------------------------------------------------------------------------
 #  Autodetect if we are in a GIT repository
@@ -1563,9 +1564,21 @@ status("    OS release:"                                   "${OS_RELEASE}")
 status("    OS version:"                                   "${OS_VERSION}")
 status("    OS platform:"                                  "${OS_PLATFORM}")
 status("    CPU name:"                                     "${PROCESSOR_NAME}")
+status("    CPU description:"                              "${PROCESSOR_DESCRIPTION}")
 status("    Is the CPU 64-bit?"                            ${IS_64BIT} THEN "yes" ELSE "no")
 status("    Does the CPU have FPU?"                        ${HAS_FPU} THEN "yes" ELSE "no")
 status("    CPU optimization:"                             ${CPU_OPTIM})
+if(NOT ("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" LESS 3.20))
+# https://cmake.org/cmake/help/latest/variable/CMAKE_LANG_BYTE_ORDER.html
+# https://github.com/libevent/libevent/pull/1349/files
+  if(CMAKE_CXX_BYTE_ORDER STREQUAL "BIG_ENDIAN")
+    status("    CPU endianness:"                 "big-endian")
+  elseif(CMAKE_CXX_BYTE_ORDER STREQUAL "LITTLE_ENDIAN")
+    status("    CPU endianness:"                 "little-endian")
+  else()
+    status("    CPU endianness:"                 "unknown")
+  endif()
+endif()
 
 # ========================== C/C++ options ==========================
 if(CMAKE_CXX_COMPILER_VERSION)

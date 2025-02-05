@@ -253,6 +253,97 @@ TEST_CASE("Test constructors with float", "[constructors]")
   }
 }
 
+TEST_CASE("Building array views", "[view]")
+{
+  std::cout << "Testing views" << std::endl;
+  SECTION("Modifying view modifies original array")
+  {
+    {
+      vpArray2D<int> A(5, 5, 0);
+      vpArray2D<int> v = vpArray2D<int>::view(A);
+      REQUIRE((A == v));
+      v[0][0] = 5;
+      v[0][1] = 2;
+      A[1][1] = 3;
+      REQUIRE((v[1][1] == 3));
+      REQUIRE((A[0][0] == 5));
+      REQUIRE((A == v));
+    }
+    {
+      int s = 5;
+      int *array = new int[s * s];
+      vpArray2D<int> v = vpArray2D<int>::view(array, s, s);
+      v[0][0] = 5;
+      v[s - 1][s - 1] = 2;
+      REQUIRE(array[0] == 5);
+      REQUIRE(array[s * s - 1] == 2);
+      delete[] array;
+    }
+  }
+  SECTION("A view can be moved and then used")
+  {
+    {
+      vpArray2D<int> A(5, 5, 0);
+      vpArray2D<int> v = vpArray2D<int>::view(A);
+      vpArray2D<int> v2 = std::move(v);
+      REQUIRE((A == v2));
+      v2[0][0] = 5;
+      v2[0][1] = 2;
+      REQUIRE((A[0][0] == 5));
+      REQUIRE((A == v2));
+    }
+    {
+      int s = 5;
+      int *array = new int[s * s];
+      vpArray2D<int> v = vpArray2D<int>::view(array, s, s);
+      vpArray2D<int> v2 = std::move(v);
+      v2[0][0] = 5;
+      v2[s - 1][s - 1] = 2;
+      REQUIRE(array[0] == 5);
+      REQUIRE(array[s * s - 1] == 2);
+      delete[] array;
+    }
+
+  }
+  SECTION("Array can still be used after destroying view")
+  {
+    int s = 5;
+    vpArray2D<int> A(s, s, 0);
+    {
+      vpArray2D<int> v = vpArray2D<int>::view(A);
+      v[0][0] = 5;
+      v[s - 1][s - 1] = 2;
+    }
+    REQUIRE((A[0][0] == 5));
+    REQUIRE(A[s - 1][s - 1] == 2);
+
+    int *array = new int[s * s];
+    {
+      vpArray2D<int> v = vpArray2D<int>::view(array, s, s);
+      v[0][0] = 5;
+      v[s - 1][s - 1] = 2;
+
+    }
+    REQUIRE(array[0] == 5);
+    REQUIRE(array[s * s - 1] == 2);
+    delete[] array;
+  }
+  SECTION("Cannot resize view")
+  {
+    int s = 5;
+    vpArray2D<int> A(s, s, 0);
+    vpArray2D<int> v = vpArray2D<int>::view(A);
+    REQUIRE_THROWS(v.resize(1, 5, false, false));
+
+
+    int *array = new int[s * s];
+    v = vpArray2D<int>::view(array, s, s);
+    REQUIRE_THROWS(v.resize(1, 5, false, false));
+    delete[] array;
+
+  }
+}
+
 TEST_CASE("Test Hadamar product", "[hadamar]")
 {
   vpArray2D<int> A1(3, 5), A2(3, 5), A3;
