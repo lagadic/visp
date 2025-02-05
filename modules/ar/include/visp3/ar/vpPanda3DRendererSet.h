@@ -198,14 +198,14 @@ public:
     return nullptr;
   }
 
-  void beforeFrameRendered() VP_OVERRIDE
+  virtual void beforeFrameRendered() VP_OVERRIDE
   {
     for (std::shared_ptr<vpPanda3DBaseRenderer> &renderer: m_subRenderers) {
       renderer->beforeFrameRendered();
     }
   }
 
-  void afterFrameRendered() VP_OVERRIDE
+  virtual void afterFrameRendered() VP_OVERRIDE
   {
     for (std::shared_ptr<vpPanda3DBaseRenderer> &renderer: m_subRenderers) {
       renderer->afterFrameRendered();

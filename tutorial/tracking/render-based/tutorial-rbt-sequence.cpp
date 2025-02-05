@@ -204,7 +204,7 @@ int main(int argc, const char **argv)
       vpDisplay::display(IProbaDisplay);
       vpDisplay::flush(IProbaDisplay);
       vpDisplay::display(Id);
-      // vpDisplay::display(Icol);
+      vpDisplay::display(Icol);
       tracker.display(Id, Icol, depthDisplay);
       vpDisplay::displayFrame(Icol, cMo, cam, 0.05, vpColor::none, 2);
 

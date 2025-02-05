@@ -253,16 +253,17 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
     m_cMo = cnTc * m_cMo;
     updateRender(input);
     m_logger.setOdometryTime(m_logger.endTimer());
-  }
+    if (requiresSilhouetteCandidates) {
+      const vpHomogeneousMatrix cTcp = m_cMo * m_cMoPrev.inverse();
 
-  if (requiresSilhouetteCandidates) {
-    const vpHomogeneousMatrix cTcp = m_cMo * m_cMoPrev.inverse();
-    input.silhouettePoints = extractSilhouettePoints(input.renders.normals, input.renders.depth,
-                                                    input.renders.silhouetteCanny, input.renders.isSilhouette, input.cam, cTcp);
-    if (input.silhouettePoints.size() == 0) {
-      throw vpException(vpException::badValue, "Could not extract silhouette from depth canny: Object may not be in image");
+      input.silhouettePoints = extractSilhouettePoints(input.renders.normals, input.renders.depth,
+                                                      input.renders.silhouetteCanny, input.renders.isSilhouette, input.cam, cTcp);
+      if (input.silhouettePoints.size() == 0) {
+        throw vpException(vpException::badValue, "Could not extract silhouette from depth canny: Object may not be in image");
+      }
     }
   }
+
 
 
   int id = 0;
@@ -476,7 +477,6 @@ void vpRBTracker::updateRender(vpRBFeatureTrackerInput &frame)
   }
 
 }
-
 std::vector<vpRBSilhouettePoint> vpRBTracker::extractSilhouettePoints(
   const vpImage<vpRGBf> &Inorm, const vpImage<float> &Idepth,
   const vpImage<vpRGBf> &silhouetteCanny, const vpImage<unsigned char> &Ivalid,

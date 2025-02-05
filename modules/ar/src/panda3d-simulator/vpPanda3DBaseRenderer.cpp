@@ -32,12 +32,17 @@
 
 #if defined(VISP_HAVE_PANDA3D)
 
+#include <visp3/ar/vpPanda3DFrameworkManager.h>
 #include <visp3/core/vpMath.h>
 
-#include "load_prc_file.h"
+
 #include <antialiasAttrib.h>
 #include "boundingSphere.h"
 #include "boundingBox.h"
+#include "thread.h"
+#include "load_prc_file.h"
+#include "windowFramework.h"
+#include "graphicsOutput.h"
 
 BEGIN_VISP_NAMESPACE
 const vpHomogeneousMatrix vpPanda3DBaseRenderer::VISP_T_PANDA({
@@ -49,16 +54,38 @@ const vpHomogeneousMatrix vpPanda3DBaseRenderer::VISP_T_PANDA({
 const vpHomogeneousMatrix vpPanda3DBaseRenderer::PANDA_T_VISP(vpPanda3DBaseRenderer::VISP_T_PANDA.inverse());
 
 
-PandaFramework vpPanda3DBaseRenderer::framework;
-bool vpPanda3DBaseRenderer::frameworkIsOpen(false);
 
+vpPanda3DBaseRenderer::~vpPanda3DBaseRenderer()
+{
+  // if (m_window != nullptr) {
+  //   for (GraphicsOutput *buffer: m_buffers) {
+  //     buffer->get_engine()->remove_window(buffer);
+  //   }
+  // }
+  // m_buffers.clear();
+  if (m_window != nullptr) {
+    for (GraphicsOutput *buffer: m_buffers) {
+      buffer->set_active(false);
+      buffer->clear_render_textures();
+    }
+  }
+  m_buffers.clear();
+  if (m_isWindowOwner) {
+    vpPanda3DFrameworkManager &frameworkManager = vpPanda3DFrameworkManager::getInstance();
+    frameworkManager.registerDisabledWindow(m_window);
+  }
+}
 
 void vpPanda3DBaseRenderer::initFramework()
 {
 
-  if (!frameworkIsOpen) {
-    frameworkIsOpen = true;
-    framework.open_framework();
+  vpPanda3DFrameworkManager &frameworkManager = vpPanda3DFrameworkManager::getInstance();
+  PandaFramework &framework = frameworkManager.getFramework();
+  frameworkManager.initFramework();
+
+  if (m_renderParameters.getImageHeight() == 0 || m_renderParameters.getImageWidth() == 0) {
+    throw vpException(vpException::badValue,
+    "Panda3D renderer: Cannot create a window with 0 height or width.");
   }
 
   m_isWindowOwner = true;
@@ -66,11 +93,11 @@ void vpPanda3DBaseRenderer::initFramework()
   WindowProperties winProps;
   winProps.set_size(LVecBase2i(m_renderParameters.getImageWidth(), m_renderParameters.getImageHeight()));
   int flags = GraphicsPipe::BF_refuse_window;
-  m_window = framework.open_window(winProps, flags);
+  m_window = framework.open_window(winProps, flags, nullptr, nullptr);
   // try and reopen with visible window
   if (m_window == nullptr) {
     winProps.set_minimized(true);
-    m_window = framework.open_window(winProps, 0);
+    m_window = framework.open_window(winProps, 0, nullptr, nullptr);
   }
   if (m_window == nullptr) {
     throw vpException(vpException::notInitialized,
@@ -118,18 +145,18 @@ void vpPanda3DBaseRenderer::renderFrame()
 {
   beforeFrameRendered();
   // Disable rendering for all the other renderers
-  for (int i = 0; i < framework.get_num_windows(); ++i) {
-    WindowFramework *fi = framework.get_window(i);
-    if (fi != m_window) {
-      fi->get_graphics_output()->get_gsg()->set_active(false);
-    }
-  }
+  vpPanda3DFrameworkManager::getInstance().disableAllOtherRenderers(m_window);
   m_window->get_graphics_output()->get_engine()->render_frame();
-  for (int i = 0; i < framework.get_num_windows(); ++i) {
-    WindowFramework *fi = framework.get_window(i);
-    fi->get_graphics_output()->get_gsg()->set_active(true);
-  }
+  vpPanda3DFrameworkManager::getInstance().enableAllRenderers();
   afterFrameRendered();
+}
+
+void vpPanda3DBaseRenderer::afterFrameRendered()
+{
+  GraphicsOutput *mainBuffer = getMainOutputBuffer();
+  if (mainBuffer != nullptr) {
+    mainBuffer->get_engine()->extract_texture_data(mainBuffer->get_texture(), mainBuffer->get_gsg());
+  }
 }
 
 void vpPanda3DBaseRenderer::setRenderParameters(const vpPanda3DRenderParameters &params)
@@ -280,7 +307,7 @@ void vpPanda3DBaseRenderer::computeNearAndFarPlanesFromNode(const std::string &n
 void vpPanda3DBaseRenderer::enableSharedDepthBuffer(vpPanda3DBaseRenderer &sourceBuffer)
 {
   if (isRendering3DScene()) {
-    GraphicsOutput *buffer = getMainOutputBuffer();
+    PointerTo<GraphicsOutput> buffer = getMainOutputBuffer();
     if (buffer != nullptr) {
       buffer->set_clear_depth_active(false);
       if (!buffer->share_depth_buffer(sourceBuffer.getMainOutputBuffer())) {
@@ -290,9 +317,22 @@ void vpPanda3DBaseRenderer::enableSharedDepthBuffer(vpPanda3DBaseRenderer &sourc
   }
 }
 
+void vpPanda3DBaseRenderer::setRenderOrder(int order)
+{
+  int previousOrder = m_renderOrder;
+  m_renderOrder = order;
+  for (GraphicsOutput *buffer: m_buffers) {
+    buffer->set_sort(buffer->get_sort() + (order - previousOrder));
+  }
+}
+
 NodePath vpPanda3DBaseRenderer::loadObject(const std::string &nodeName, const std::string &modelPath)
 {
+  PandaFramework &framework = vpPanda3DFrameworkManager::getInstance().getFramework();
   NodePath model = m_window->load_model(framework.get_models(), modelPath);
+  if (model.is_empty()) {
+    throw vpException(vpException::ioError, "Could not load model %s", modelPath.c_str());
+  }
   for (int i = 0; i < model.get_num_children(); ++i) {
     model.get_child(i).clear_transform();
   }

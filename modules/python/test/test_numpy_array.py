@@ -34,7 +34,7 @@
 #############################################################################
 
 import visp
-from visp.core import ArrayDouble2D, RotationMatrix, Matrix, HomogeneousMatrix, PoseVector
+from visp.core import ArrayDouble2D, RotationMatrix, Matrix, HomogeneousMatrix, PoseVector, ColVector, RowVector
 
 import numpy as np
 import pytest
@@ -48,6 +48,31 @@ def test_np_array_modifies_vp_array():
   assert np.all(array_np == 1.0)
   array_np[0:2, 0:2] = 2
   assert array.getMinValue() == 1 and array.getMaxValue() == 2
+
+def test_visp_view_of_np_array():
+  a = np.zeros((5, 5))
+  with pytest.raises(RuntimeError):
+    ColVector.view(a)
+  with pytest.raises(RuntimeError):
+    RowVector.view(a)
+  m = Matrix.view(a)
+  m[0, 0] = 1
+  assert a[0, 0] == 1
+  assert m.getRows() == a.shape[0] and m.getCols() == a.shape[1]
+  a = np.zeros(10)
+  with pytest.raises(RuntimeError):
+    Matrix.view(a)
+
+  v = ColVector.view(a)
+  v[0] = 1
+  assert a[0] == 1
+  assert v.getRows() == a.shape[0]
+
+  a = np.zeros(10)
+  v = RowVector.view(a)
+  v[0] = 1
+  assert a[0] == 1
+  assert v.getCols() == a.shape[0]
 
 def fn_test_not_writable_2d(R):
   R_np = np.array(R, copy=False)
@@ -84,7 +109,6 @@ def test_numpy_constructor_interpreted_as_1d_vector():
     a = ArrayDouble2D(n_1d) # R = 0, c = 0
   ar = ArrayDouble2D(n_1d, r=len(n_1d))
   ac = ArrayDouble2D(n_1d, c=len(n_1d))
-
 
 def test_numpy_conversion_and_back():
   a = ArrayDouble2D(10, 10, 2.0)

@@ -53,6 +53,24 @@
 #endif
 
 BEGIN_VISP_NAMESPACE
+
+/**
+* \brief Create a row vector view of a raw data array.
+* The view can modify the contents of the raw data array,
+* but may not resize it and does not own it : the memory is not released by the vector
+* and it should be freed by the user after the view is released.
+*
+* \param data the raw data
+* \param cols Number of columns
+* \return vpMatrix
+*/
+vpRowVector vpRowVector::view(double *data, unsigned int cols)
+{
+  vpRowVector v;
+  vpArray2D<double>::view(v, data, 1, cols);
+  return v;
+}
+
 //! Copy operator.   Allow operation such as A = v
 vpRowVector &vpRowVector::operator=(const vpRowVector &v)
 {
@@ -132,23 +150,7 @@ vpRowVector &vpRowVector::operator=(double x)
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 vpRowVector &vpRowVector::operator=(vpRowVector &&other)
 {
-  if (this != &other) {
-    free(data);
-    free(rowPtrs);
-
-    rowNum = other.rowNum;
-    colNum = other.colNum;
-    rowPtrs = other.rowPtrs;
-    dsize = other.dsize;
-    data = other.data;
-
-    other.rowNum = 0;
-    other.colNum = 0;
-    other.rowPtrs = nullptr;
-    other.dsize = 0;
-    other.data = nullptr;
-  }
-
+  vpArray2D<double>::operator=(std::move(other));
   return *this;
 }
 
@@ -618,20 +620,8 @@ vpRowVector::vpRowVector(const vpRowVector &v, unsigned int c, unsigned int ncol
 }
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-vpRowVector::vpRowVector(vpRowVector &&v) : vpArray2D<double>()
-{
-  rowNum = v.rowNum;
-  colNum = v.colNum;
-  rowPtrs = v.rowPtrs;
-  dsize = v.dsize;
-  data = v.data;
-
-  v.rowNum = 0;
-  v.colNum = 0;
-  v.rowPtrs = nullptr;
-  v.dsize = 0;
-  v.data = nullptr;
-}
+vpRowVector::vpRowVector(vpRowVector &&v) : vpArray2D<double>(std::move(v))
+{ }
 #endif
 
 /*!

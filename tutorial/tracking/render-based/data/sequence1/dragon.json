@@ -17,7 +17,7 @@
     "gain": 2.0,
     "maxIterations": 10
   },
-  "model": "data/sequence1/dragon.obj",
+  "model": "data/sequence1/dragon.bam",
   "silhouetteExtractionSettings": {
     "threshold": {
       "type": "relative",

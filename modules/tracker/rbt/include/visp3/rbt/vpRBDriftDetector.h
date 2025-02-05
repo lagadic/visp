@@ -41,7 +41,6 @@
 #include VISP_NLOHMANN_JSON(json_fwd.hpp)
 #endif
 
-
 BEGIN_VISP_NAMESPACE
 
 class vpRBFeatureTrackerInput;
