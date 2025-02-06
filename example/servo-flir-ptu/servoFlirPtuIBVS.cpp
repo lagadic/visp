@@ -61,8 +61,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/detection/vpDetectorAprilTag.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/gui/vpPlot.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/robot/vpRobotFlirPtu.h>
@@ -73,7 +72,7 @@
 #include <visp3/vs/vpServoDisplay.h>
 
 #if defined(VISP_HAVE_FLIR_PTU_SDK) && defined(VISP_HAVE_FLYCAPTURE) && \
-    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_PUGIXML)
+    defined(VISP_HAVE_DISPLAY) && defined(VISP_HAVE_PUGIXML)
 
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;
@@ -251,6 +250,12 @@ int main(int argc, char **argv)
 
   vpRobotFlirPtu robot;
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display;
+#else
+  vpDisplay *display = nullptr;
+#endif
+
   try {
     std::cout << "Try to connect FLIR PTU to port: " << opt_portname << " with baudrate: " << opt_baudrate << std::endl;
     robot.connect(opt_portname, opt_baudrate);
@@ -324,10 +329,10 @@ int main(int argc, char **argv)
 
     std::cout << "Considered intrinsic camera parameters:\n" << cam << "\n";
 
-#if defined(VISP_HAVE_X11)
-    vpDisplayX dc(I, 10, 10, "Color image");
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI dc(I, 10, 10, "Color image");
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    display = vpDisplayFactory::createDisplay(I, 10, 10, "Color image");
+#else
+    display = vpDisplayFactory::allocateDisplay(I, 10, 10, "Color image");
 #endif
 
     vpDetectorAprilTag::vpAprilTagFamily tagFamily = vpDetectorAprilTag::TAG_36h11;
@@ -539,6 +544,11 @@ int main(int argc, char **argv)
     robot.setRobotState(vpRobot::STATE_STOP);
   }
 
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (display != nullptr) {
+    delete display;
+  }
+#endif
   return EXIT_SUCCESS;
 }
 #else

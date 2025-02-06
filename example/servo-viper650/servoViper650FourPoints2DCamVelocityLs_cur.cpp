@@ -65,7 +65,7 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpPoint.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/robot/vpRobotViper650.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 #include <visp3/vision/vpPose.h>
@@ -156,6 +156,11 @@ int main()
   // Open the log file name
   std::ofstream flog(logfilename.c_str());
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display;
+#else
+  vpDisplay *display = nullptr;
+#endif
   try {
     vpRobotViper650 robot;
     // Load the end-effector to camera frame transformation obtained
@@ -178,7 +183,11 @@ int main()
 
     g.acquire(I);
 
-    vpDisplayX display(I, 100, 100, "Current image");
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    display = vpDisplayFactory::createDisplay(I, 100, 100, "Current image");
+#else
+    display = vpDisplayFactory::allocateDisplay(I, 100, 100, "Current image");
+#endif
     vpDisplay::display(I);
     vpDisplay::flush(I);
 
@@ -346,11 +355,21 @@ int main()
     std::cout << "Display task information: " << std::endl;
     task.print();
     flog.close(); // Close the log file
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+    }
+#endif
     return EXIT_SUCCESS;
   }
   catch (const vpException &e) {
     flog.close(); // Close the log file
     std::cout << "Catched an exception: " << e.getMessage() << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+  }
+#endif
     return EXIT_FAILURE;
   }
 }

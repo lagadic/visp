@@ -43,12 +43,11 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_REALSENSE2) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
+#if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_DISPLAY)
 
 #include <visp3/core/vpTime.h>
 #include <visp3/core/vpImageConvert.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/gui/vpDisplayPCL.h>
 #include <visp3/sensor/vpRealSense2.h>
 
@@ -56,6 +55,12 @@ int main()
 {
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
+#endif
+
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  vpDisplay *dc = nullptr;
+  vpDisplay *di = nullptr;
+  vpDisplay *dd = nullptr;
 #endif
 
   try {
@@ -100,14 +105,14 @@ int main()
 #endif
 #endif
 
-#if defined(VISP_HAVE_X11)
-    vpDisplayX dc(color, 10, 10, "Color image");
-    vpDisplayX di(infrared, static_cast<int>(color.getWidth()) + 80, 10, "Infrared image");
-    vpDisplayX dd(depth_display, 10, static_cast<int>(color.getHeight()) + 70, "Depth image");
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI dc(color, 10, 10, "Color image");
-    vpDisplayGDI di(infrared, color.getWidth() + 80, 10, "Infrared image");
-    vpDisplayGDI dd(depth_display, 10, color.getHeight() + 70, "Depth image");
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    std::shared_ptr<vpDisplay> dc = vpDisplayFactory::createDisplay(color, 10, 10, "Color image");
+    std::shared_ptr<vpDisplay> di = vpDisplayFactory::createDisplay(infrared, static_cast<int>(color.getWidth()) + 80, 10, "Infrared image");
+    std::shared_ptr<vpDisplay> dd = vpDisplayFactory::createDisplay(depth_display, 10, static_cast<int>(color.getHeight()) + 70, "Depth image");
+#else
+    dc = vpDisplayFactory::allocateDisplay(color, 10, 10, "Color image");
+    di = vpDisplayFactory::allocateDisplay(infrared, static_cast<int>(color.getWidth()) + 80, 10, "Infrared image");
+    dd = vpDisplayFactory::allocateDisplay(depth_display, 10, static_cast<int>(color.getHeight()) + 70, "Depth image");
 #endif
 
     while (true) {
@@ -149,6 +154,12 @@ int main()
   catch (const std::exception &e) {
     std::cerr << e.what() << std::endl;
   }
+
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  delete dc;
+  delete di;
+  delete dd;
+#endif
 
   return EXIT_SUCCESS;
 }

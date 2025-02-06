@@ -48,7 +48,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 
-#if (defined(VISP_HAVE_COIN3D_AND_GUI) && (defined(VISP_HAVE_GTK) || defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)))
+#if (defined(VISP_HAVE_COIN3D_AND_GUI) && defined(VISP_HAVE_DISPLAY))
 
 #include <visp3/ar/vpSimulator.h>
 #include <visp3/core/vpCameraParameters.h>
@@ -56,13 +56,7 @@
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpTime.h>
 
-#if defined(VISP_HAVE_X11)
-#include <visp3/gui/vpDisplayX.h>
-#elif defined(VISP_HAVE_GDI)
-#include <visp3/gui/vpDisplayGDI.h>
-#elif defined(VISP_HAVE_GTK)
-#include <visp3/gui/vpDisplayGTK.h>
-#endif
+#include <visp3/gui/vpDisplayFactory.h>
 // You may have strange compiler issues using the simulator based on SoQt
 // and the vpDisplayGTK. In that case prefer to use another display like
 // vpDisplayX under linux or vpDisplayGDI under Windows
@@ -139,15 +133,12 @@ static void *mainLoop(void *_simu)
   vpImage<unsigned char> I(height, width);
 
   // Display initialization
-#if defined(VISP_HAVE_X11)
-  vpDisplayX disp;
-#elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI disp;
-#elif defined(VISP_HAVE_GTK)
-  vpDisplayGTK disp;
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> disp = vpDisplayFactory::createDisplay(I, 100, 100, "Simulation display");
+#else
+  vpDisplay *disp = vpDisplayFactory::allocateDisplay(I, 100, 100, "Simulation display");
 #endif
-  disp.init(I, 100, 100, "Simulation display");
-  //  disp(I);
+
   // Get the current image
   vpTime::wait(500); // wait to be sure the image is generated
   simu->getInternalImage(I);
@@ -241,6 +232,11 @@ static void *mainLoop(void *_simu)
   simu->closeMainApplication();
 
   void *a = nullptr;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (disp != nullptr) {
+    delete disp;
+  }
+#endif
   return a;
 }
 

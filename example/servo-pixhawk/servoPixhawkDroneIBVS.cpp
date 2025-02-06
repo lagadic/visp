@@ -54,8 +54,7 @@
 #include <visp3/core/vpTime.h>
 #include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/detection/vpDetectorAprilTag.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/gui/vpPlot.h>
 #include <visp3/robot/vpRobotMavsdk.h>
 #include <visp3/sensor/vpRealSense2.h>
@@ -96,6 +95,11 @@ bool compareImagePoint(std::pair<size_t, vpImagePoint> p1, std::pair<size_t, vpI
  */
 int main(int argc, char **argv)
 {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display;
+#else
+  vpDisplay *display = nullptr;
+#endif
   try {
     std::string opt_connecting_info = "udp://:192.168.30.111:14552";
     double tagSize = -1;
@@ -218,18 +222,13 @@ int main(int argc, char **argv)
 
       vpImage<unsigned char> I(rs.getIntrinsics(RS2_STREAM_COLOR).height, rs.getIntrinsics(RS2_STREAM_COLOR).width);
 
-#if defined(VISP_HAVE_X11)
-      vpDisplayX display;
-#elif defined(VISP_HAVE_GTK)
-      vpDisplayGTK display;
-#elif defined(VISP_HAVE_GDI)
-      vpDisplayGDI display;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-      vpDisplayOpenCV display;
-#endif
       int orig_displayX = 100;
       int orig_displayY = 100;
-      display.init(I, orig_displayX, orig_displayY, "DRONE VIEW");
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+      display = vpDisplayFactory::createDisplay(I, orig_displayX, orig_displayY, "DRONE VIEW");
+#else
+      display = vpDisplayFactory::allocateDisplay(I, orig_displayX, orig_displayY, "DRONE VIEW");
+#endif
       vpDisplay::display(I);
       vpDisplay::flush(I);
       double time_since_last_display = vpTime::measureTimeMs();
@@ -561,15 +560,30 @@ int main(int argc, char **argv)
         vpTime::wait(startTime, 1000. / acq_fps);
       }
 
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+      if (display != nullptr) {
+        delete display;
+      }
+#endif
       return EXIT_SUCCESS;
     }
     else {
       std::cout << "ERROR : failed to setup drone control." << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+      if (display != nullptr) {
+        delete display;
+      }
+#endif
       return EXIT_FAILURE;
     }
   }
   catch (const vpException &e) {
     std::cout << "Caught an exception: " << e << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+  }
+#endif
     return EXIT_FAILURE;
   }
 }

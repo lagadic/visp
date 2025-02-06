@@ -48,9 +48,7 @@
 
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/sensor/vpFlyCaptureGrabber.h>
@@ -172,6 +170,11 @@ bool getOptions(int argc, const char **argv, bool &display, bool &click, bool &s
 //              1 to dial with a second camera attached to the computer
 int main(int argc, const char **argv)
 {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display;
+#else
+  vpDisplay *display = nullptr;
+#endif
   try {
     bool opt_display = true;
     bool opt_click = true;
@@ -193,14 +196,13 @@ int main(int argc, const char **argv)
     std::cout << "Camera serial: " << g.getCameraSerial(g.getCameraIndex()) << std::endl;
     std::cout << "Image size   : " << I.getWidth() << " " << I.getHeight() << std::endl;
 
-    vpDisplay *display = nullptr;
     if (opt_display) {
-#if defined(VISP_HAVE_X11)
-      display = new vpDisplayX(I);
-#elif defined(VISP_HAVE_GDI)
-      display = new vpDisplayGDI(I);
-#elif defined(HAVE_OPENCV_HIGHGUI)
-      display = new vpDisplayOpenCV(I);
+#if defined(VISP_HAVE_DISPLAY)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+      display = vpDisplayFactory::createDisplay(I);
+#else
+      display = vpDisplayFactory::allocateDisplay(I);
+#endif
 #else
       std::cout << "No image viewer is available..." << std::endl;
 #endif
@@ -231,14 +233,22 @@ int main(int argc, const char **argv)
           break;
       }
     }
-    if (display)
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
       delete display;
+    }
+#endif
 
     // The camera connection will be closed automatically in vpFlyCapture
     // destructor
     return EXIT_SUCCESS;
   }
   catch (const vpException &e) {
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+    }
+#endif
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
     return EXIT_FAILURE;
   }

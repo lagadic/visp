@@ -46,16 +46,13 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
+#if defined(VISP_HAVE_DISPLAY)
 
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpTime.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpIoTools.h>
@@ -73,6 +70,11 @@ int main()
   using namespace VISP_NAMESPACE_NAME;
 #endif
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> disp = vpDisplayFactory::createDisplay();
+#else
+  vpDisplay *disp = vpDisplayFactory::allocateDisplay();
+#endif
   try {
     //////////////////////////////////////////
     // sets the initial camera location
@@ -96,18 +98,8 @@ int main()
     vpImage<unsigned char> I(height, width);
 
     // Display initialization
-#if defined(VISP_HAVE_X11)
-    vpDisplayX disp;
-#elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK disp;
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI disp;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV disp;
-#endif
-
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
-    disp.init(I, 100, 100, "Simulation display");
+#if defined(VISP_HAVE_DISPLAY)
+    disp->init(I, 100, 100, "Simulation display");
 #endif
 
     ////////////////////////////////////////
@@ -208,10 +200,20 @@ int main()
       // Wait 40 ms
       vpTime::wait(t, 40);
     }
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (disp != nullptr) {
+      delete disp;
+    }
+#endif
     return EXIT_SUCCESS;
   }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (disp != nullptr) {
+      delete disp;
+    }
+#endif
     return EXIT_FAILURE;
   }
 }

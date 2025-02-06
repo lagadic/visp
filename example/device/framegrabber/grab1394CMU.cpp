@@ -46,8 +46,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpTime.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/sensor/vp1394CMUGrabber.h>
@@ -216,14 +215,16 @@ int main(int argc, const char **argv)
 #if (defined(VISP_HAVE_GDI) || defined(HAVE_OPENCV_HIGHGUI))
 
 // Creates a display
-#if defined(HAVE_OPENCV_HIGHGUI)
-  vpDisplayOpenCV display;
-#elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI display;
+#if defined(VISP_HAVE_DISPLAY)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display = vpDisplayFactory::createDisplay();
+#else
+  vpDisplay *display = vpDisplayFactory::allocateDisplay();
 #endif
   if (opt_display) {
-    display.init(I, 100, 100, "Current image");
+    display->init(I, 100, 100, "Current image");
   }
+#endif
 #endif
 
   try {
@@ -236,7 +237,7 @@ int main(int argc, const char **argv)
       // Acquires an RGBa image
       g.acquire(I);
 
-#if (defined(VISP_HAVE_GDI) || defined(HAVE_OPENCV_HIGHGUI))
+#if defined(VISP_HAVE_DISPLAY)
       if (opt_display) {
         // Displays the grabbed rgba image
         vpDisplay::display(I);
@@ -261,10 +262,21 @@ int main(int argc, const char **argv)
     }
     std::cout << "Mean loop time: " << ttotal / nframes << " ms" << std::endl;
     std::cout << "Mean frequency: " << 1000. / (ttotal / nframes) << " fps" << std::endl;
+
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11) && defined(VISP_HAVE_DISPLAY)
+    if (display != nullptr) {
+      delete display;
+    }
+#endif
     return EXIT_SUCCESS;
   }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11) && defined(VISP_HAVE_DISPLAY)
+    if (display != nullptr) {
+      delete display;
+    }
+#endif
     return EXIT_FAILURE;
   }
 }

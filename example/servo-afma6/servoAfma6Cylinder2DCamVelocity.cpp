@@ -50,9 +50,7 @@
 #if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_AFMA6)
 
 #include <visp3/core/vpImage.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/sensor/vpRealSense2.h>
 #include <visp3/core/vpCylinder.h>
@@ -107,6 +105,12 @@ int main(int argc, char **argv)
   // using a camera intrinsic model with distortion
   robot.init(vpAfma6::TOOL_INTEL_D435_CAMERA, projModel);
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display;
+#else
+  vpDisplay *display = nullptr;
+#endif
+
   try {
     std::cout << "WARNING: This example will move the robot! "
       << "Please make sure to have the user stop button at hand!" << std::endl
@@ -127,12 +131,10 @@ int main(int argc, char **argv)
       rs.acquire(I);
     }
 
-#ifdef VISP_HAVE_X11
-    vpDisplayX display(I, 100, 100, "Current image");
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV display(I, 100, 100, "Current image");
-#elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK display(I, 100, 100, "Current image");
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    std::shared_ptr<vpDisplay> display = vpDisplayFactory::createDisplay(I, 100, 100, "Current image");
+#else
+    vpDisplay *display = vpDisplayFactory::allocateDisplay(I, 100, 100, "Current image");
 #endif
     vpDisplay::display(I);
     vpDisplay::flush(I);
@@ -303,9 +305,19 @@ int main(int argc, char **argv)
     std::cout << "ViSP exception: " << e.what() << std::endl;
     std::cout << "Stop the robot " << std::endl;
     robot.setRobotState(vpRobot::STATE_STOP);
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+    }
+#endif
     return EXIT_FAILURE;
   }
 
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (display != nullptr) {
+    delete display;
+  }
+#endif
   return EXIT_SUCCESS;
 }
 

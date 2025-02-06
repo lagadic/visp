@@ -46,14 +46,13 @@
 #include <stdlib.h>
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
-#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
+#if defined(VISP_HAVE_DISPLAY)
 
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpTime.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpDiskGrabber.h>
 #include <visp3/io/vpParseArgv.h>
 
@@ -220,6 +219,9 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ba
 */
 int main(int argc, const char **argv)
 {
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  vpDisplay *display = nullptr;
+#endif
   try {
     std::string env_ipath;
     std::string opt_ipath;
@@ -306,18 +308,16 @@ int main(int argc, const char **argv)
 
     std::cout << "Image size: width : " << I.getWidth() << " height: " << I.getHeight() << std::endl;
 
-    // We open a window using either X11 or GDI.
+    // We open a window using either of the display library.
     // Its size is automatically defined by the image (I) size
-#if defined(VISP_HAVE_X11)
-    vpDisplayX display(I);
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI display(I);
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    std::shared_ptr<vpDisplay> display = vpDisplayFactory::createDisplay(I);
 #else
-    std::cout << "No image viewer is available..." << std::endl;
+    vpDisplay *display = vpDisplayFactory::allocateDisplay(I);
 #endif
 
     if (opt_display) {
-      display.init(I, 100, 100, "Disk Framegrabber");
+      display->init(I, 100, 100, "Disk Framegrabber");
 
       // display the image
       // The image class has a member that specify a pointer toward
@@ -343,10 +343,20 @@ int main(int argc, const char **argv)
       // Synchronise the loop to 40 ms
       vpTime::wait(tms, 40);
     }
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+    }
+#endif
     return EXIT_SUCCESS;
   }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+    }
+#endif
     return EXIT_FAILURE;
   }
 }
@@ -361,5 +371,5 @@ int main()
   std::cout << "Tip if you are on a windows-like system:" << std::endl;
   std::cout << "- Install GDI, configure again ViSP using cmake and build again this example" << std::endl;
   return EXIT_SUCCESS;
-  }
+}
 #endif

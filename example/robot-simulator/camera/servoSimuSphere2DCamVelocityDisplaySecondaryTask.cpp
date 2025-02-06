@@ -50,11 +50,7 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpSphere.h>
-#include <visp3/gui/vpDisplayD3D.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/gui/vpProjectionDisplay.h>
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/robot/vpSimulatorCamera.h>
@@ -167,6 +163,13 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display,
 int main(int argc, const char **argv)
 {
 #if (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> displayI;
+  std::shared_ptr<vpDisplay> displayExt;
+#else
+  vpDisplay *displayI = nullptr;
+  vpDisplay *displayExt = nullptr;
+#endif
   try {
     bool opt_display = true;
     bool opt_click_allowed = true;
@@ -180,31 +183,16 @@ int main(int argc, const char **argv)
     vpImage<unsigned char> I(512, 512, 0);
     vpImage<unsigned char> Iext(512, 512, 0);
 
-    // We open a window if a display is available
-#ifdef VISP_HAVE_DISPLAY
-#if defined(VISP_HAVE_X11)
-    vpDisplayX displayI;
-    vpDisplayX displayExt;
-#elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK displayI;
-    vpDisplayGTK displayExt;
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI displayI;
-    vpDisplayGDI displayExt;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV displayI;
-    vpDisplayOpenCV displayExt;
-#elif defined(VISP_HAVE_D3D9)
-    vpDisplayD3D displayI;
-    vpDisplayD3D displayExt;
-#endif
-#endif
-
     if (opt_display) {
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
+#if defined(VISP_HAVE_DISPLAY)
       // Display size is automatically defined by the image (I) size
-      displayI.init(I, 100, 100, "Camera view...");
-      displayExt.init(Iext, 130 + static_cast<int>(I.getWidth()), 100, "External view");
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+      displayI = vpDisplayFactory::createDisplay(I, 100, 100, "Camera view...");
+      displayExt = vpDisplayFactory::createDisplay(Iext, 130 + static_cast<int>(I.getWidth()), 100, "External view");
+#else
+      displayI = vpDisplayFactory::allocateDisplay(I, 100, 100, "Camera view...");
+      displayExt = vpDisplayFactory::allocateDisplay(Iext, 130 + static_cast<int>(I.getWidth()), 100, "External view");
+#endif
 #endif
       // Display the image
       // The image class has a member that specify a pointer toward
@@ -383,12 +371,28 @@ int main(int argc, const char **argv)
 
     // Display task information
     task.print();
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (displayI != nullptr) {
+      delete displayI;
+    }
+    if (displayExt != nullptr) {
+      delete displayExt;
+    }
+#endif
     return EXIT_SUCCESS;
   }
   catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (displayI != nullptr) {
+      delete displayI;
+    }
+    if (displayExt != nullptr) {
+      delete displayExt;
+    }
+#endif
     return EXIT_FAILURE;
-  }
+    }
 #else
   (void)argc;
   (void)argv;

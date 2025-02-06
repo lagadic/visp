@@ -47,13 +47,12 @@
 
 #ifdef VISP_HAVE_V4L2
 
-#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK))
+#if defined(VISP_HAVE_DISPLAY)
 
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpTime.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/sensor/vpV4l2Grabber.h>
@@ -251,6 +250,12 @@ bool getOptions(int argc, const char **argv, unsigned &fps, unsigned &input, uns
 */
 int main(int argc, const char **argv)
 {
+  // We create a display if a display library is available
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display = vpDisplayFactory::createDisplay();
+#else
+  vpDisplay *display = vpDisplayFactory::allocateDisplay();
+#endif
   try {
     unsigned int opt_fps = 25;
     unsigned int opt_input = 0;
@@ -307,14 +312,6 @@ int main(int argc, const char **argv)
       std::cout << "Color image size: width : " << Ic.getWidth() << " height: " << Ic.getHeight() << std::endl;
     }
 
-// We open a window using either X11 or GTK.
-// Its size is automatically defined by the image (I) size
-#if defined(VISP_HAVE_X11)
-    vpDisplayX display;
-#elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK display;
-#endif
-
     if (opt_display) {
       // Display the image
       // The image class has a member that specify a pointer toward
@@ -322,12 +319,12 @@ int main(int argc, const char **argv)
       // therefore is is no longer necessary to make a reference to the
       // display variable.
       if (opt_image_type == grey_image) {
-        display.init(Ig, 100, 100, "V4L2 grey images framegrabbing");
+        display->init(Ig, 100, 100, "V4L2 grey images framegrabbing");
         vpDisplay::display(Ig);
         vpDisplay::flush(Ig);
       }
       else {
-        display.init(Ic, 100, 100, "V4L2 color images framegrabbing");
+        display->init(Ic, 100, 100, "V4L2 color images framegrabbing");
         vpDisplay::display(Ic);
         vpDisplay::flush(Ic);
       }
@@ -375,10 +372,20 @@ int main(int argc, const char **argv)
     }
 
     g.close();
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+    }
+#endif
     return EXIT_SUCCESS;
   }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+    }
+#endif
     return EXIT_FAILURE;
   }
 }
@@ -391,7 +398,7 @@ int main()
   std::cout << "Tip if you are on a windows-like system:" << std::endl;
   std::cout << "- Install GTK, configure again ViSP using cmake and build again this example" << std::endl;
   return EXIT_SUCCESS;
-}
+  }
 #endif
 #else
 int main()

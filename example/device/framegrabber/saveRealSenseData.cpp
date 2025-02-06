@@ -38,7 +38,7 @@
 
 #include <visp3/core/vpConfig.h>
 #if (defined(VISP_HAVE_REALSENSE) || defined(VISP_HAVE_REALSENSE2)) && defined(VISP_HAVE_THREADS) \
-  && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_PUGIXML) \
+  && defined(VISP_HAVE_DISPLAY) && defined(VISP_HAVE_PUGIXML) \
   && ((__cplusplus >= 201402L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201402L)))
 
 #include <condition_variable>
@@ -62,8 +62,7 @@
 #include <visp3/core/vpIoException.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpXmlParserCamera.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/sensor/vpRealSense.h>
@@ -742,14 +741,18 @@ int main(int argc, const char *argv[])
   vpImage<uint16_t> I_depth_raw(height, width);
   vpImage<unsigned char> I_infrared(height, width);
 
-#ifdef VISP_HAVE_X11
-  vpDisplayX d1, d2, d3;
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> d1 = vpDisplayFactory::createDisplay();
+  std::shared_ptr<vpDisplay> d2 = vpDisplayFactory::createDisplay();
+  std::shared_ptr<vpDisplay> d3 = vpDisplayFactory::createDisplay();
 #else
-  vpDisplayGDI d1, d2, d3;
+  vpDisplay *d1 = vpDisplayFactory::allocateDisplay();
+  vpDisplay *d2 = vpDisplayFactory::allocateDisplay();
+  vpDisplay *d3 = vpDisplayFactory::allocateDisplay();
 #endif
-  d1.init(I_color, 0, 0, "RealSense color stream");
-  d2.init(I_depth, I_color.getWidth() + 80, 0, "RealSense depth stream");
-  d3.init(I_infrared, I_color.getWidth() + 80, I_color.getHeight() + 70, "RealSense infrared stream");
+  d1->init(I_color, 0, 0, "RealSense color stream");
+  d2->init(I_depth, I_color.getWidth() + 80, 0, "RealSense depth stream");
+  d3->init(I_infrared, I_color.getWidth() + 80, I_color.getHeight() + 70, "RealSense infrared stream");
 
   while (true) {
     double start = vpTime::measureTimeMs();
@@ -1012,6 +1015,18 @@ int main(int argc, const char *argv[])
     << 1000/median_vec_delta_time << " fps" << std::endl;
 
   storage_thread.join();
+
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (d1 != nullptr) {
+    delete d1;
+  }
+  if (d2 != nullptr) {
+    delete d2;
+  }
+  if (d3 != nullptr) {
+    delete d3;
+  }
+#endif
 
   return EXIT_SUCCESS;
 }

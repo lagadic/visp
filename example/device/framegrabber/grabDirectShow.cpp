@@ -45,12 +45,11 @@
 */
 
 #if defined(VISP_HAVE_DIRECTSHOW)
-#if (defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI))
+#if defined(VISP_HAVE_DISPLAY)
 
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpTime.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/sensor/vpDirectShowGrabber.h>
@@ -170,6 +169,9 @@ bool getOptions(int argc, const char **argv, bool &display, unsigned &nframes, b
 */
 int main(int argc, const char **argv)
 {
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  vpDisplay *display = nullptr;
+#endif
   try {
     bool opt_display = true;
     unsigned nframes = 50;
@@ -214,14 +216,14 @@ int main(int argc, const char **argv)
     std::cout << "Image size: width : " << I.getWidth() << " height: " << I.getHeight() << std::endl;
 
 // Creates a display
-#if defined(VISP_HAVE_GTK)
-    vpDisplayGTK display;
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI display;
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    std::shared_ptr<vpDisplay> display = vpDisplayFactory::createDisplay();
+#else
+    display = vpDisplayFactory::allocateDisplay();
 #endif
 
     if (opt_display) {
-      display.init(I, 100, 100, "DirectShow Framegrabber");
+      display->init(I, 100, 100, "DirectShow Framegrabber");
     }
 
     double tbegin = 0, ttotal = 0;
@@ -257,10 +259,20 @@ int main(int argc, const char **argv)
 
     // Release the framegrabber
     delete grabber;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+    }
+#endif
     return EXIT_SUCCESS;
   }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+    }
+#endif
     return EXIT_FAILURE;
   }
 }

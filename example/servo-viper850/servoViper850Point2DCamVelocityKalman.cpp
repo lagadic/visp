@@ -66,9 +66,7 @@
 #include <visp3/core/vpLinearKalmanFilterInstantiation.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpPoint.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/robot/vpRobotViper850.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
@@ -117,6 +115,12 @@ int main()
   std::ofstream flog(logfilename.c_str());
 
   vpServo task;
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display;
+#else
+  vpDisplay *display = nullptr;
+#endif
 
   try {
     // Initialize linear Kalman filter
@@ -175,12 +179,10 @@ int main()
       break;
     }
 
-#ifdef VISP_HAVE_X11
-    vpDisplayX display(I, (int)(100 + I.getWidth() + 30), 200, "Current image");
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV display(I, (int)(100 + I.getWidth() + 30), 200, "Current image");
-#elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK display(I, (int)(100 + I.getWidth() + 30), 200, "Current image");
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    display = vpDisplayFactory::createDisplay(I, (int)(100 + I.getWidth() + 30), 200, "Current image");
+#else
+    display = vpDisplayFactory::allocateDisplay(I, (int)(100 + I.getWidth() + 30), 200, "Current image");
 #endif
 
     vpDisplay::display(I);
@@ -327,6 +329,11 @@ int main()
         v = 0;
         // Stop robot
         robot.setVelocity(vpRobot::CAMERA_FRAME, v);
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+        if (display != nullptr) {
+          delete display;
+        }
+#endif
         return EXIT_FAILURE;
       }
 
@@ -369,11 +376,21 @@ int main()
     // Display task information
     task.print();
 
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+    }
+#endif
     return EXIT_SUCCESS;
   }
   catch (const vpException &e) {
     flog.close(); // Close the log file
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+  }
+#endif
     return EXIT_FAILURE;
   }
 }

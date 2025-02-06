@@ -37,14 +37,13 @@
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpXmlParserCamera.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/robot/vpRobotUniversalRobots.h>
 #include <visp3/sensor/vpRealSense2.h>
 
 #if defined(VISP_HAVE_REALSENSE2) && \
-    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_UR_RTDE) && defined(VISP_HAVE_PUGIXML) && \
+    defined(VISP_HAVE_DISPLAY) && defined(VISP_HAVE_UR_RTDE) && defined(VISP_HAVE_PUGIXML) && \
     defined(VISP_HAVE_MODULE_GUI) && defined(VISP_HAVE_MODULE_ROBOT) && defined(VISP_HAVE_MODULE_SENSOR) // optional
 
 void usage(const char **argv, int error, const std::string &robot_ip)
@@ -69,6 +68,9 @@ int main(int argc, const char **argv)
 {
 #if defined(ENABLE_VISP_NAMESPACE)
   using namespace VISP_NAMESPACE_NAME;
+#endif
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  vpDisplay *pdisp = nullptr;
 #endif
   try {
     std::string opt_robot_ip = "192.168.0.100";
@@ -110,10 +112,10 @@ int main(int argc, const char **argv)
     cam = g.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithDistortion);
     xml_camera.save(cam, "ur_camera.xml", "Camera", width, height);
 
-#if defined(VISP_HAVE_X11)
-    vpDisplayX dc(I, 10, 10, "Color image");
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI dc(I, 10, 10, "Color image");
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    std::shared_ptr<vpDisplay> pdisp = vpDisplayFactory::createDisplay(I, 10, 10, "Color image");
+#else
+    pdisp = vpDisplayFactory::allocateDisplay(I, 10, 10, "Color image");
 #endif
 
     bool end = false;
@@ -157,7 +159,11 @@ int main(int argc, const char **argv)
   catch (const std::exception &e) {
     std::cerr << e.what() << std::endl;
   }
-
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (pdisp != nullptr) {
+    delete pdisp;
+  }
+#endif
   return EXIT_SUCCESS;
 }
 #else

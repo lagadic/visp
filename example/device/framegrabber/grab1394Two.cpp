@@ -64,7 +64,7 @@
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 
-#define GRAB_CxOLOR
+#define GRAB_COLOR
 
 // List of allowed command line options
 #define GETOPTARGS "b:c:df:g:hH:L:mn:io:p:rsT:v:W:"
@@ -689,6 +689,6 @@ int main()
   std::cout << "Tip if you are on a unix-like system:" << std::endl;
   std::cout << "- Install libdc1394-2, configure again ViSP using cmake and build again this example" << std::endl;
   return EXIT_SUCCESS;
-  }
+}
 
 #endif

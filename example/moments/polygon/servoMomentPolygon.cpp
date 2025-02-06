@@ -48,11 +48,7 @@
 #include <visp3/core/vpMomentDatabase.h>
 #include <visp3/core/vpMomentObject.h>
 #include <visp3/core/vpPlane.h>
-#include <visp3/gui/vpDisplayD3D.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/gui/vpPlot.h>
 #include <visp3/robot/vpSimulatorAfma6.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
@@ -91,7 +87,7 @@ public:
   { }
   ~servoMoment()
   {
-#ifdef VISP_HAVE_DISPLAY
+#if defined(VISP_HAVE_DISPLAY) && (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
     if (m_displayInt) {
       delete m_displayInt;
     }
@@ -151,19 +147,12 @@ public:
     m_interaction_type = vpServo::CURRENT; // use interaction matrix for current position
 
 #ifdef VISP_HAVE_DISPLAY
-    // init the right display
-#if defined(VISP_HAVE_X11)
-    m_displayInt = new vpDisplayX;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    m_displayInt = new vpDisplayOpenCV;
-#elif defined(VISP_HAVE_GDI)
-    m_displayInt = new vpDisplayGDI;
-#elif defined(VISP_HAVE_D3D9)
-    m_displayInt = new vpDisplayD3D;
-#elif defined(VISP_HAVE_GTK)
-    m_displayInt = new vpDisplayGTK;
+    // init the display
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    m_displayInt = vpDisplayFactory::createDisplay(m_Iint, 50, 50, "Visual servoing with moments");
+#else
+    m_displayInt = vpDisplayFactory::allocateDisplay(m_Iint, 50, 50, "Visual servoing with moments");
 #endif
-    m_displayInt->init(m_Iint, 50, 50, "Visual servoing with moments");
 #endif
 
     paramRobot(); // set up robot parameters
@@ -432,7 +421,11 @@ protected:
   vpFeatureMomentCommon *m_featureMoments;
   vpFeatureMomentCommon *m_featureMomentsDes;
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> m_displayInt;
+#else
   vpDisplay *m_displayInt;
+#endif
 };
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 

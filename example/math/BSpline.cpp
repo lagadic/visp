@@ -54,11 +54,7 @@
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/io/vpImageIo.h>
 #ifdef VISP_HAVE_MODULE_GUI
-#include <visp3/gui/vpDisplayD3D.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h> // Should be after #include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #endif
 
 #include <cstdlib>
@@ -66,8 +62,7 @@
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpParseArgv.h>
 
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) ||         \
-    defined(VISP_HAVE_D3D9)
+#if defined(VISP_HAVE_DISPLAY)
 
  // List of allowed command line options
 #define GETOPTARGS "cdh"
@@ -162,6 +157,12 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
 
 int main(int argc, const char **argv)
 {
+  // We declare the display variable to be able to free it in the catch block if needed.
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display;
+#else
+  vpDisplay *display = nullptr;
+#endif
   try {
     bool opt_click_allowed = true;
     bool opt_display = true;
@@ -177,27 +178,18 @@ int main(int argc, const char **argv)
     vpImage<unsigned char> I(540, 480);
 
     // We open a window using either X11, GTK or GDI.
-
-#ifdef VISP_HAVE_MODULE_GUI
-#if defined(VISP_HAVE_X11)
-    vpDisplayX display;
-#elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK display;
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI display;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV display;
-#elif defined(VISP_HAVE_D3D9)
-    vpDisplayD3D display;
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    display = vpDisplayFactory::createDisplay();
+#else
+    display = vpDisplayFactory::allocateDisplay();
 #endif
 
     if (opt_display) {
       // Display size is automatically defined by the image (I) size
-      display.init(I, 100, 100, "Display image");
+      display->init(I, 100, 100, "Display image");
       vpDisplay::display(I);
       vpDisplay::flush(I);
     }
-#endif
 
     vpBSpline bSpline;
     std::list<double> knots;
@@ -296,13 +288,23 @@ int main(int argc, const char **argv)
       delete[] N2;
     }
 
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+    }
+#endif
     return EXIT_SUCCESS;
-  }
+    }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+    }
+#endif
     return EXIT_FAILURE;
+    }
   }
-}
 
 #else
 int main()
@@ -315,5 +317,5 @@ int main()
   std::cout << "Tip if you are on a windows-like system:" << std::endl;
   std::cout << "- Install GDI, configure again ViSP using cmake and build again this example" << std::endl;
   return EXIT_SUCCESS;
-  }
+}
 #endif
