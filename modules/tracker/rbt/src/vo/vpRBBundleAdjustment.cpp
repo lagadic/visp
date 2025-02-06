@@ -42,7 +42,7 @@ void vpRBBundleAdjustment::asParamVector(vpColVector &params) const
 {
 
   unsigned int numUsedPoints = m_mapView.numPoints();
-  params.resize(m_cameras.size() * 6 + numUsedPoints * 3, false);
+  params.resize(numParameters(), false);
   unsigned int i = 0;
   // First parameters are the camera poses
   for (const CameraData &camera: m_cameras) {
@@ -75,7 +75,7 @@ void vpRBBundleAdjustment::updateFromParamVector(const vpColVector &params)
 {
 
 #ifdef DEBUG_RB_BA
-  if (params.size() != m_cameras.size() * 6 + m_mapView.numPoints() * 3) {
+  if (params.size() != numParameters()) {
     throw vpException(vpException::dimensionError, "Mismatch between param vector size and number of points/cameras");
   }
 #endif
@@ -128,14 +128,15 @@ void vpRBBundleAdjustment::computeError(const vpColVector &params, vpColVector &
   }
 }
 
-void vpRBBundleAdjustment::jacobianSparsity(vpArray2D<int> &S)
+void vpRBBundleAdjustment::jacobianSparsityPattern(std::vector<unsigned int> &rowIndices, std::vector<unsigned int> &columnIndices)
 {
-  unsigned int numParams = numCameras() * 6 + numPoints3d() * 3;
-  S.resize(numResiduals(), numParams);
+  rowIndices.reserve(numResiduals() * 9);
+  columnIndices.reserve(numResiduals() * 9);
+
   unsigned int i = 0;
   unsigned int cameraIndex = 0;
   for (const CameraData &camera: m_cameras) {
-    camera.fillJacobianSparsity(m_mapView, S, cameraIndex, m_cameras.size(), i);
+    camera.jacobianSparsityPattern(m_mapView, rowIndices, columnIndices, cameraIndex, m_cameras.size(), i);
     i += camera.numResiduals();
     ++cameraIndex;
   }
@@ -144,7 +145,7 @@ void vpRBBundleAdjustment::jacobianSparsity(vpArray2D<int> &S)
 ////////// Camera data
 vpRBBundleAdjustment::CameraData::CameraData(const vpCameraParameters &cam, const vpHomogeneousMatrix &cTw, const std::vector<unsigned int> &indices3d, const vpMatrix &uvs)
 {
-  m_cTw = cTw;
+  m_r = cTw;
   m_indices3d = indices3d;
 
 #ifdef DEBUG_RB_BA
@@ -179,8 +180,8 @@ void vpRBBundleAdjustment::CameraData::error(MapIndexView &mapView, const vpColV
   vpColVector wX(3);
   vpColVector cX(3);
   for (unsigned int i = startResidual; i < startResidual + numResiduals(); i += 2) {
-    const unsigned int pi = mapView.getViewIndex(m_indices3d[pointIndex]);
-    const double *pp = pointsParams + 3 * pi;
+    const unsigned int vpi = mapView.getViewIndex(m_indices3d[pointIndex]);
+    const double *pp = pointsParams + 3 * vpi;
     wX[0] = pp[0];
     wX[1] = pp[1];
     wX[2] = pp[2];
@@ -209,9 +210,8 @@ void vpRBBundleAdjustment::CameraData::jacobian(const MapIndexView &mapView, con
   vpColVector wX(3);
   vpColVector cX(3);
 
-
-  vpMatrix dpDXp(2, 3, 0.0);
-  vpMatrix dpDX(2, 3);
+  vpMatrix dxydcX(2, 3, 0.0);
+  vpMatrix dxydwX(2, 3, 0.0);
   unsigned int pointIndex = 0;
 
   for (unsigned int i = startResidual; i < startResidual + numResiduals(); i += 2) {
@@ -225,50 +225,60 @@ void vpRBBundleAdjustment::CameraData::jacobian(const MapIndexView &mapView, con
     cX = cRw * wX;
     cX += t;
 
-    double x = cX[0] / cX[2];
-    double y = cX[1] / cX[2];
-
-    double Zinv = 1.0 / cX[2];
+    const double x = cX[0] / cX[2];
+    const double y = cX[1] / cX[2];
+    const double Zinv = 1.0 / cX[2];
 
     double *Jx = J[i];
     double *Jy = J[i + 1];
 
-    // Camera jacobian for x
-    Jx[ci + 0] = -Zinv; Jx[ci + 1] = 0.0; Jx[ci + 2] = x * Zinv;
-    Jx[ci + 3] = x * y; Jx[ci + 4] = -(1.0 + x * x); Jx[ci + 5] = y;
+    // Jacobian of the 2D projection of a 3D point (already in camera frame)
+    dxydcX[0][0] = Zinv; dxydcX[0][2] = -(x * Zinv);
+    dxydcX[1][1] = Zinv; dxydcX[1][2] = -(y * Zinv);
+
+    // Camera Jacobian for x
+    Jx[ci + 0] = dxydcX[0][0]; Jx[ci + 1] = dxydcX[0][1]; Jx[ci + 2] = dxydcX[0][2];
+
+    Jx[ci + 3] = -(x * y); Jx[ci + 4] = (1.0 + x * x); Jx[ci + 5] = -y;
     // Camera Jacobian for y
-    Jy[ci + 0] = 0.0; Jy[ci + 1] = -Zinv; Jy[ci + 2] = y * Zinv;
-    Jy[ci + 3] = 1.0 + y * y; Jy[ci + 4] = -(x * y); Jy[ci + 5] = -x;
+    Jy[ci + 0] = dxydcX[1][0]; Jy[ci + 1] = dxydcX[1][1]; Jy[ci + 2] = dxydcX[1][2];
 
+    Jy[ci + 3] = -(1.0 + y * y); Jy[ci + 4] = (x * y); Jy[ci + 5] = x;
+
+    // Point Jacobian
     unsigned int pi = numCameras * 6 + vpi * 3;
-
-    dpDXp[0][0] = -Zinv; dpDXp[0][2] = x * Zinv;
-    dpDXp[1][1] = -Zinv; dpDXp[1][2] = y * Zinv;
-    dpDX = dpDXp * cRw;
-    Jx[pi + 0] = dpDX[0][0]; Jx[pi + 1] = dpDX[0][1]; Jx[pi + 2] = dpDX[0][2];
-    Jy[pi + 0] = dpDX[1][0]; Jy[pi + 1] = dpDX[1][1]; Jy[pi + 2] = dpDX[1][2];
+    vpMatrix::mult2Matrices(dxydcX, cRw, dxydwX);
+    Jx[pi + 0] = dxydwX[0][0]; Jx[pi + 1] = dxydwX[0][1]; Jx[pi + 2] = dxydwX[0][2];
+    Jy[pi + 0] = dxydwX[1][0]; Jy[pi + 1] = dxydwX[1][1]; Jy[pi + 2] = dxydwX[1][2];
 
     ++pointIndex;
   }
 }
 
-void vpRBBundleAdjustment::CameraData::fillJacobianSparsity(const MapIndexView &mapView, vpArray2D<int> &S, unsigned int cameraIndex, unsigned int numCameras, unsigned int startResidual) const
+void vpRBBundleAdjustment::CameraData::jacobianSparsityPattern(const MapIndexView &mapView, std::vector<unsigned int> &rowIndices, std::vector<unsigned int> &columnIndices, unsigned int cameraIndex, unsigned int numCameras, unsigned int startResidual) const
 {
   unsigned int pointIndex = 0;
   for (unsigned int i = startResidual; i < startResidual + numResiduals(); i += 2) {
+    unsigned int pi = mapView.getViewIndex(m_indices3d[pointIndex]);
+    unsigned pIndex = numCameras * 6 + pi * 3;
     for (unsigned int j = 0; j < 6; ++j) {
-      S[i][cameraIndex * 6 + j] = 1;
-      S[i + 1][cameraIndex * 6 + j] = 1;
+      rowIndices.push_back(i);
+      columnIndices.push_back(cameraIndex * 6 + j);
+    }
+    for (unsigned int j = 0; j < 3; ++j) {
+      rowIndices.push_back(i);
+      columnIndices.push_back(pIndex + j);
     }
 
-
-    unsigned int pi = mapView.getViewIndex(m_indices3d[pointIndex]);
+    for (unsigned int j = 0; j < 6; ++j) {
+      rowIndices.push_back(i + 1);
+      columnIndices.push_back(cameraIndex * 6 + j);
+    }
     for (unsigned int j = 0; j < 3; ++j) {
-      S[i][numCameras * 6 + pi * 3 + j] = 1;
-      S[i + 1][numCameras * 6 + pi * 3 + j] = 1;
+      rowIndices.push_back(i + 1);
+      columnIndices.push_back(pIndex + j);
     }
     ++pointIndex;
-
   }
 }
 
@@ -340,6 +350,27 @@ void vpRBBundleAdjustment::MapIndexView::update(const std::list<CameraData> &cam
   for (const CameraData &camera: cameras) {
     const std::vector<unsigned int> &cameraIndices = camera.getPointsIndices();
     usedPointIndices.insert(cameraIndices.begin(), cameraIndices.end());
+  }
+
+  unsigned int index1 = 0;
+  for (const CameraData &c1: cameras) {
+    unsigned int index2 = 0;
+    for (const CameraData &c2: cameras) {
+      if (&c1 != &c2) {
+        std::vector<unsigned int> sharedPoints;
+        const std::vector<unsigned int> &cameraIndices = c1.getPointsIndices();
+        const std::vector<unsigned int> &cameraIndices2 = c2.getPointsIndices();
+        std::set_intersection(cameraIndices.begin(), cameraIndices.end(), cameraIndices2.begin(), cameraIndices2.end(), std::back_inserter(sharedPoints));
+        std::cout << "Camera " << index1 << " and camera " << index2 << " share " << sharedPoints.size() << " points.";
+        std::cout << " Camera " << index1 << " has " << cameraIndices.size() << " observed points.";
+        std::cout << " Camera " << index2 << " has " << cameraIndices2.size() << " observed points." << std::endl;
+
+
+      }
+
+      ++index2;
+    }
+    ++index1;
   }
 
   std::vector<unsigned int> sortedPointIndices(usedPointIndices.begin(), usedPointIndices.end());

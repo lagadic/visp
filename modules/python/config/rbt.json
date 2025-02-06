@@ -402,6 +402,23 @@
           "returns_ref_ok": true
         }
       ]
+    },
+    "vpRBBundleAdjustment": {
+      "methods": [
+        {
+          "static": false,
+          "signature": "void jacobianSparsityPattern(std::vector<unsigned int>&, std::vector<unsigned int>&)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            false,
+            false
+          ],
+          "param_is_output": [
+            true,
+            true
+          ]
+        }
+      ]
     }
   },
   "enums": {},

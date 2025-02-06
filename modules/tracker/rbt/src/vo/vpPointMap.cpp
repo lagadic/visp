@@ -155,13 +155,26 @@ void vpPointMap::selectValidNewCandidates(const vpCameraParameters &cam, const v
     oX += t;
 
     bool isFarEnoughFromOtherPoints = true;
-    for (unsigned int j = 0; j < m_X.getRows(); ++j) {
-      double errSq = vpMath::sqr(oX[0] - m_X[j][0]) + vpMath::sqr(oX[1] - m_X[j][1]) + vpMath::sqr(oX[2] - m_X[j][2]);
-      if (errSq < farEnoughThresholdSq) {
-        isFarEnoughFromOtherPoints = false;
-        break;
+    if (farEnoughThresholdSq > 0.0) {
+      for (unsigned int j = 0; j < m_X.getRows(); ++j) {
+        double errSq = vpMath::sqr(oX[0] - m_X[j][0]) + vpMath::sqr(oX[1] - m_X[j][1]) + vpMath::sqr(oX[2] - m_X[j][2]);
+        if (errSq < farEnoughThresholdSq) {
+          isFarEnoughFromOtherPoints = false;
+          break;
+        }
       }
+      if (isFarEnoughFromOtherPoints) {
+        for (vpColVector &other: validoXList) {
+          double errSq = vpMath::sqr(oX[0] - other[0]) + vpMath::sqr(oX[1] - other[1]) + vpMath::sqr(oX[2] - other[2]);
+          if (errSq < farEnoughThresholdSq) {
+            isFarEnoughFromOtherPoints = false;
+            break;
+          }
+        }
+      }
+
     }
+
     if (isFarEnoughFromOtherPoints) {
       validoXList.push_back(oX);
       validCandidateIndices.push_back(originalIndices[i][0]);

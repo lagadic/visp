@@ -93,24 +93,35 @@ public:
    *
    * @param S The Jacobian sparsity matrix, that has the same size as the jacobian
    */
-  void jacobianSparsity(vpArray2D<int> &S);
+  void jacobianSparsityPattern(std::vector<unsigned int> &rowIndices, std::vector<unsigned int> &columnIndices);
 
   void computeJacobian(const vpColVector &params, vpMatrix &J)
   {
-    unsigned int numParams = numCameras() * 6 + numPoints3d() * 3;
-    J.resize(numResiduals(), numParams, true, false);
+    unsigned int numParams = numParameters();
+    J.resize(numResiduals(), numParams, false, false);
     unsigned int i = 0;
     unsigned int cameraIndex = 0;
+
+    std::vector<std::tuple<CameraData *, unsigned int, unsigned int>> parallelParams;
+
     for (CameraData &camera: m_cameras) {
-      camera.jacobian(m_mapView, params, J, cameraIndex, numCameras(), i);
+      parallelParams.push_back(std::make_tuple(&camera, cameraIndex, i));
       i += camera.numResiduals();
       ++cameraIndex;
+    }
+#pragma omp parallel for
+    for (unsigned int i = 0; i < parallelParams.size(); ++i) {
+      CameraData *camera = std::get<0>(parallelParams[i]);
+      unsigned int cameraIndex = std::get<1>(parallelParams[i]);
+      unsigned int residualIndex = std::get<2>(parallelParams[i]);
+      camera->jacobian(m_mapView, params, J, cameraIndex, numCameras(), residualIndex);
     }
   }
 
 
   unsigned int numCameras() const { return m_cameras.size(); }
   unsigned int numPoints3d() const { return m_mapView.numPoints(); }
+  unsigned int numParameters() const { return numCameras() * 6 + numPoints3d() * 3; }
   unsigned int numResiduals() const
   {
     unsigned int numResiduals = 0;
@@ -130,17 +141,17 @@ public:
 
     unsigned int numResiduals() const { return m_points2d.size() * 2; }
     const std::vector<unsigned int> &getPointsIndices() const { return m_indices3d; }
-    vpPoseVector pose() const { return vpPoseVector(m_cTw); }
-    void setPose(const vpPoseVector &r) { m_cTw = r; }
+    vpPoseVector pose() const { return vpPoseVector(m_r); }
+    void setPose(const vpPoseVector &r) { m_r = r; }
 
     void error(MapIndexView &mapView, const vpColVector &params, vpColVector &e, unsigned int cameraIndex, unsigned int numCameras, unsigned int startResidual) const;
     void jacobian(const MapIndexView &mapView, const vpColVector &params, vpMatrix &J, unsigned int cameraIndex, unsigned int numCameras, unsigned int startResidual) const;
-    void fillJacobianSparsity(const MapIndexView &mapView, vpArray2D<int> &S, unsigned int cameraIndex, unsigned int numCameras, unsigned int startResidual) const;
+    void jacobianSparsityPattern(const MapIndexView &mapView, std::vector<unsigned int> &rowIndices, std::vector<unsigned int> &columnIndices, unsigned int cameraIndex, unsigned int numCameras, unsigned int startResidual) const;
 
 
     void filter(const std::vector<unsigned int> &filteredIndices);
   private:
-    vpHomogeneousMatrix m_cTw;
+    vpPoseVector m_r;
     std::vector<unsigned int> m_indices3d;
     std::vector<std::array<double, 2>> m_points2d;
 
