@@ -152,6 +152,9 @@ int main(int argc, const char **argv)
   std::shared_ptr<vpDisplay> display[NB_DISPLAYS];
 #else
   vpDisplay *display[NB_DISPLAYS];
+  for (unsigned int i = 0; i < NB_DISPLAYS; ++i) {
+    display[i] = nullptr;
+  }
 #endif
   try {
     bool opt_display = true;
@@ -341,7 +344,9 @@ Create a display for each different cameras.
       << std::endl;
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
     for (unsigned int i = 0; i < NB_DISPLAYS; ++i) {
-      delete display[i];
+      if (display[i] != nullptr) {
+        delete display[i];
+      }
     }
 #endif
     return EXIT_SUCCESS;
