@@ -553,6 +553,8 @@ VP_OPTION(ENABLE_FULL_DOC      "" "" "Build doc with internal classes that are b
 VP_OPTION(ENABLE_VISP_NAMESPACE "" "" "Enable visp namespace" "" OFF)
 # Allow introduction of "explicit" keyword. By default disabled to keep compat with previous versions
 VP_OPTION(ENABLE_EXPLICIT_KEYWORD "" "" "Enable c++ explicit keyword" "" OFF)
+# Enable the vpImageTools::warp() methods
+VP_OPTION(ENABLE_IMAGE_TOOLS_WARP "" "" "Enable vpImageTools::warp() methods" "" ON)
 
 if(ENABLE_SOLUTION_FOLDERS)
   set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -1055,8 +1057,6 @@ if(BUILD_JAVA)
     find_package(JNI)
   endif()
 endif()
-
-
 
 if(ANDROID AND ANDROID_EXECUTABLE AND ANT_EXECUTABLE AND (ANT_VERSION VERSION_GREATER 1.7) AND (ANDROID_TOOLS_Pkg_Revision GREATER 13))
   SET(CAN_BUILD_ANDROID_PROJECTS TRUE)
