@@ -114,6 +114,7 @@ vp_copyfiles_append_dir(JAVA_SRC_COPY "${VISP_JAVA_BINDINGS_DIR}/gen/android-21/
 set(__base_dir "${CMAKE_CURRENT_SOURCE_DIR}/android_gradle_lib/")
 file(GLOB_RECURSE seed_project_files_rel RELATIVE "${__base_dir}/" "${__base_dir}/*")
 list(REMOVE_ITEM seed_project_files_rel "${ANDROID_MANIFEST_FILE}")
+string(REGEX REPLACE "-[a-zA-Z]*[0-9]*$" "" ANDROID_NDK_VERSION ${ANDROID_NDK_REVISION})
 foreach(file ${seed_project_files_rel})
   configure_file("${__base_dir}/${file}" "${VISP_JAVA_DIR}/${file}" @ONLY)
   list(APPEND depends "${__base_dir}/${file}")
