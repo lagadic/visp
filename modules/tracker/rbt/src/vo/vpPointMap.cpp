@@ -114,7 +114,9 @@ void vpPointMap::getOutliers(const vpArray2D<int> &originalIndices, const vpMatr
   if (uvs.getRows() != observations.getRows()) {
     throw vpException(vpException::dimensionError, "Uvs and observations should have same number of rows");
   }
+  indices.clear();
   double thresholdSqr = vpMath::sqr(m_outlierThreshold);
+  std::cout << "Outlier threshold = " << m_outlierThreshold << std::endl;
   for (unsigned int i = 0; i < uvs.getRows(); ++i) {
     const double error = vpMath::sqr(uvs[i][0] - observations[i][0]) + vpMath::sqr(uvs[i][1] - observations[i][1]);
     if (error >= thresholdSqr) {
@@ -194,6 +196,7 @@ void vpPointMap::selectValidNewCandidates(const vpCameraParameters &cam, const v
 
 void vpPointMap::updatePoints(const vpArray2D<int> &indicesToRemove, const vpMatrix &pointsToAdd, std::list<int> &removedIndices, unsigned int &numAddedPoints)
 {
+  removedIndices.clear();
   int newSize = m_X.getRows() - indicesToRemove.getRows() + pointsToAdd.getRows();
   for (unsigned int i = 0; i < indicesToRemove.getRows(); ++i) {
     removedIndices.push_back(indicesToRemove[i][0]);

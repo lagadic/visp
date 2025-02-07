@@ -50,7 +50,7 @@ BEGIN_VISP_NAMESPACE
 class VISP_EXPORT vpRBBundleAdjustment
 {
 public:
-  vpRBBundleAdjustment(unsigned int numCams, const vpCameraParameters &cam, vpPointMap &map);
+  vpRBBundleAdjustment(bool optimizeCameras, unsigned int numCams, const vpCameraParameters &cam, vpPointMap &map);
 
   void addNewCamera(const vpHomogeneousMatrix &cTw, const std::vector<unsigned int> &indices3d, const vpMatrix &uvs);
 
@@ -124,9 +124,11 @@ public:
   unsigned int numParameters() const { return numCameras() * 6 + numPoints3d() * 3; }
   unsigned int numResiduals() const
   {
+    unsigned int cameraIndex = 0;
     unsigned int numResiduals = 0;
     for (const CameraData &camera: m_cameras) {
       numResiduals += camera.numResiduals();
+      ++cameraIndex;
     }
     return numResiduals;
   }
@@ -139,14 +141,28 @@ public:
     CameraData(const vpCameraParameters &cam, const vpHomogeneousMatrix &cTw, const std::vector<unsigned int> &indices3d, const vpMatrix &uvs);
 
 
-    unsigned int numResiduals() const { return m_points2d.size() * 2; }
+    unsigned int numResiduals() const { return m_usedObservations.size() * 2; }
+    void setUsedObservationsFrom3DIndices(const std::vector<unsigned int> &points3d)
+    {
+      unsigned int obsIndex = 0;
+      m_usedObservations.clear();
+      m_usedObservations.reserve(points3d.size());
+      for (unsigned int i = 0; i < points3d.size(); ++i) {
+        while (obsIndex < m_indices3d.size() && m_indices3d[obsIndex] != points3d[i]) {
+          ++obsIndex;
+        }
+        if (obsIndex < m_indices3d.size()) {
+          m_usedObservations.push_back(obsIndex);
+        }
+      }
+    }
     const std::vector<unsigned int> &getPointsIndices() const { return m_indices3d; }
     vpPoseVector pose() const { return vpPoseVector(m_r); }
     void setPose(const vpPoseVector &r) { m_r = r; }
 
     void error(MapIndexView &mapView, const vpColVector &params, vpColVector &e, unsigned int cameraIndex, unsigned int numCameras, unsigned int startResidual) const;
     void jacobian(const MapIndexView &mapView, const vpColVector &params, vpMatrix &J, unsigned int cameraIndex, unsigned int numCameras, unsigned int startResidual) const;
-    void jacobianSparsityPattern(const MapIndexView &mapView, std::vector<unsigned int> &rowIndices, std::vector<unsigned int> &columnIndices, unsigned int cameraIndex, unsigned int numCameras, unsigned int startResidual) const;
+    void jacobianSparsityPattern(const MapIndexView &mapView, std::vector<unsigned int> &rowIndices, std::vector<unsigned int> &columnIndices, unsigned int cameraIndex, unsigned int numCameras, unsigned int startResidual, bool optimizeCameras) const;
 
 
     void filter(const std::vector<unsigned int> &filteredIndices);
@@ -154,6 +170,7 @@ public:
     vpPoseVector m_r;
     std::vector<unsigned int> m_indices3d;
     std::vector<std::array<double, 2>> m_points2d;
+    std::vector<unsigned int> m_usedObservations;
 
   };
 
@@ -171,11 +188,13 @@ public:
   public:
     MapIndexView() = default;
 
-    void update(const std::list<CameraData> &cameras);
+    void update(std::list<CameraData> &cameras);
 
     inline unsigned int numPoints() const { return m_pointToView.size(); }
     inline unsigned int getPointIndex(unsigned int viewIndex) const { return m_viewToPoint.find(viewIndex)->second; }
     inline unsigned int getViewIndex(unsigned int pointIndex) const { return m_pointToView.find(pointIndex)->second; }
+
+
 
   private:
     std::map<unsigned int, unsigned int> m_pointToView;
@@ -184,6 +203,7 @@ public:
   };
 
 private:
+  bool m_optimizeCameras; //! Whether to optimize camera poses along with the 3D Points
   vpCameraParameters m_cam; //! Camera intrinsics associated with the considered camera poses
   unsigned int m_numCams; // Max number of cameras that can be considered in the system
   vpPointMap *m_map; // Map containing the 3D points that can be associated to 2D observations

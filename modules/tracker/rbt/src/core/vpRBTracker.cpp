@@ -251,6 +251,7 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
     m_odometry->compute(input, m_previousFrame);
     vpHomogeneousMatrix cnTc = m_odometry->getCameraMotion();
     m_cMo = cnTc * m_cMo;
+    double beforeReRender = vpTime::measureTimeMs();
     updateRender(input);
     m_logger.setOdometryTime(m_logger.endTimer());
     if (requiresSilhouetteCandidates) {
@@ -262,6 +263,7 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
         throw vpException(vpException::badValue, "Could not extract silhouette from depth canny: Object may not be in image");
       }
     }
+    std::cout << "Odometry rerendering took: " << vpTime::measureTimeMs() - beforeReRender << "ms" << std::endl;
   }
 
 

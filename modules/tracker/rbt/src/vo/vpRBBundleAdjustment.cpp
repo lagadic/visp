@@ -5,8 +5,9 @@
 
 #include <set>
 
-vpRBBundleAdjustment::vpRBBundleAdjustment(unsigned int numCams, const vpCameraParameters &cam, vpPointMap &map)
+vpRBBundleAdjustment::vpRBBundleAdjustment(bool optimizeCameras, unsigned int numCams, const vpCameraParameters &cam, vpPointMap &map)
 {
+  m_optimizeCameras = optimizeCameras;
   m_numCams = numCams;
   m_cam = cam;
   m_map = &map;
@@ -136,7 +137,7 @@ void vpRBBundleAdjustment::jacobianSparsityPattern(std::vector<unsigned int> &ro
   unsigned int i = 0;
   unsigned int cameraIndex = 0;
   for (const CameraData &camera: m_cameras) {
-    camera.jacobianSparsityPattern(m_mapView, rowIndices, columnIndices, cameraIndex, m_cameras.size(), i);
+    camera.jacobianSparsityPattern(m_mapView, rowIndices, columnIndices, cameraIndex, m_cameras.size(), i, m_optimizeCameras);
     i += camera.numResiduals();
     ++cameraIndex;
   }
@@ -175,12 +176,14 @@ void vpRBBundleAdjustment::CameraData::error(MapIndexView &mapView, const vpColV
   const vpRotationMatrix cRw(cTw);
   const vpTranslationVector t(cTw);
 
-  unsigned int pointIndex = 0;
+  unsigned int usedObsIndex = 0;
   const double *pointsParams = params.data + 6 * numCameras;
   vpColVector wX(3);
   vpColVector cX(3);
-  for (unsigned int i = startResidual; i < startResidual + numResiduals(); i += 2) {
-    const unsigned int vpi = mapView.getViewIndex(m_indices3d[pointIndex]);
+  unsigned int numResidu = numResiduals();
+  for (unsigned int i = startResidual; i < startResidual + numResidu; i += 2) {
+    unsigned int obsIndex = m_usedObservations[usedObsIndex];
+    const unsigned int vpi = mapView.getViewIndex(m_indices3d[obsIndex]);
     const double *pp = pointsParams + 3 * vpi;
     wX[0] = pp[0];
     wX[1] = pp[1];
@@ -192,9 +195,9 @@ void vpRBBundleAdjustment::CameraData::error(MapIndexView &mapView, const vpColV
     double x = cX[0] / cX[2];
     double y = cX[1] / cX[2];
 
-    e[i] = x - m_points2d[pointIndex][0];
-    e[i + 1] = y - m_points2d[pointIndex][1];
-    ++pointIndex;
+    e[i] = x - m_points2d[obsIndex][0];
+    e[i + 1] = y - m_points2d[obsIndex][1];
+    ++usedObsIndex;
   }
 }
 
@@ -212,10 +215,11 @@ void vpRBBundleAdjustment::CameraData::jacobian(const MapIndexView &mapView, con
 
   vpMatrix dxydcX(2, 3, 0.0);
   vpMatrix dxydwX(2, 3, 0.0);
-  unsigned int pointIndex = 0;
-
-  for (unsigned int i = startResidual; i < startResidual + numResiduals(); i += 2) {
-    const unsigned int vpi = mapView.getViewIndex(m_indices3d[pointIndex]);
+  unsigned int usedObsIndex = 0;
+  unsigned int numResidu = numResiduals();
+  for (unsigned int i = startResidual; i < startResidual + numResidu; i += 2) {
+    const unsigned int obsIndex = m_usedObservations[usedObsIndex];
+    const unsigned int vpi = mapView.getViewIndex(m_indices3d[obsIndex]);
     const double *pp = pointsParams + 3 * vpi;
 
     wX[0] = pp[0];
@@ -251,34 +255,40 @@ void vpRBBundleAdjustment::CameraData::jacobian(const MapIndexView &mapView, con
     Jx[pi + 0] = dxydwX[0][0]; Jx[pi + 1] = dxydwX[0][1]; Jx[pi + 2] = dxydwX[0][2];
     Jy[pi + 0] = dxydwX[1][0]; Jy[pi + 1] = dxydwX[1][1]; Jy[pi + 2] = dxydwX[1][2];
 
-    ++pointIndex;
+    ++usedObsIndex;
   }
 }
 
-void vpRBBundleAdjustment::CameraData::jacobianSparsityPattern(const MapIndexView &mapView, std::vector<unsigned int> &rowIndices, std::vector<unsigned int> &columnIndices, unsigned int cameraIndex, unsigned int numCameras, unsigned int startResidual) const
+void vpRBBundleAdjustment::CameraData::jacobianSparsityPattern(const MapIndexView &mapView, std::vector<unsigned int> &rowIndices, std::vector<unsigned int> &columnIndices, unsigned int cameraIndex, unsigned int numCameras, unsigned int startResidual, bool optimizeCameras) const
 {
-  unsigned int pointIndex = 0;
-  for (unsigned int i = startResidual; i < startResidual + numResiduals(); i += 2) {
-    unsigned int pi = mapView.getViewIndex(m_indices3d[pointIndex]);
-    unsigned pIndex = numCameras * 6 + pi * 3;
-    for (unsigned int j = 0; j < 6; ++j) {
-      rowIndices.push_back(i);
-      columnIndices.push_back(cameraIndex * 6 + j);
+  unsigned int usedObsIndex = 0;
+  unsigned int numResidu = numResiduals();
+  for (unsigned int i = startResidual; i < startResidual + numResidu; i += 2) {
+    unsigned int obsIndex = m_usedObservations[usedObsIndex];
+    unsigned int vpi = mapView.getViewIndex(m_indices3d[obsIndex]);
+    unsigned pIndex = numCameras * 6 + vpi * 3;
+    if (optimizeCameras) {
+      for (unsigned int j = 0; j < 6; ++j) {
+        rowIndices.push_back(i);
+        columnIndices.push_back(cameraIndex * 6 + j);
+      }
     }
     for (unsigned int j = 0; j < 3; ++j) {
       rowIndices.push_back(i);
       columnIndices.push_back(pIndex + j);
     }
+    if (optimizeCameras) {
+      for (unsigned int j = 0; j < 6; ++j) {
+        rowIndices.push_back(i + 1);
+        columnIndices.push_back(cameraIndex * 6 + j);
+      }
 
-    for (unsigned int j = 0; j < 6; ++j) {
-      rowIndices.push_back(i + 1);
-      columnIndices.push_back(cameraIndex * 6 + j);
     }
     for (unsigned int j = 0; j < 3; ++j) {
       rowIndices.push_back(i + 1);
       columnIndices.push_back(pIndex + j);
     }
-    ++pointIndex;
+    ++usedObsIndex;
   }
 }
 
@@ -343,38 +353,63 @@ void vpRBBundleAdjustment::CameraData::filter(const std::vector<unsigned int> &f
 
 ////// MapIndexView
 
-void vpRBBundleAdjustment::MapIndexView::update(const std::list<CameraData> &cameras)
+void vpRBBundleAdjustment::MapIndexView::update(std::list<CameraData> &cameras)
 {
-  std::set<unsigned int> usedPointIndices;
+  std::vector<std::vector<unsigned int>> usedPointsPerCam(cameras.size());
 
-  for (const CameraData &camera: cameras) {
-    const std::vector<unsigned int> &cameraIndices = camera.getPointsIndices();
-    usedPointIndices.insert(cameraIndices.begin(), cameraIndices.end());
+
+  // Retrieve all points that are used by at least 2 cameras
+  std::vector<CameraData *> cams;
+  for (CameraData &c: cameras) {
+    cams.push_back(&c);
   }
 
-  unsigned int index1 = 0;
-  for (const CameraData &c1: cameras) {
-    unsigned int index2 = 0;
-    for (const CameraData &c2: cameras) {
-      if (&c1 != &c2) {
-        std::vector<unsigned int> sharedPoints;
-        const std::vector<unsigned int> &cameraIndices = c1.getPointsIndices();
-        const std::vector<unsigned int> &cameraIndices2 = c2.getPointsIndices();
-        std::set_intersection(cameraIndices.begin(), cameraIndices.end(), cameraIndices2.begin(), cameraIndices2.end(), std::back_inserter(sharedPoints));
-        std::cout << "Camera " << index1 << " and camera " << index2 << " share " << sharedPoints.size() << " points.";
-        std::cout << " Camera " << index1 << " has " << cameraIndices.size() << " observed points.";
-        std::cout << " Camera " << index2 << " has " << cameraIndices2.size() << " observed points." << std::endl;
+  for (unsigned int index1 = 0; index1 < cams.size(); ++index1) {
+    const CameraData *c1 = cams[index1];
+    for (unsigned int index2 = index1 + 1; index2 < cams.size(); ++index2) {
+      const CameraData *c2 = cams[index2];
+      std::vector<unsigned int> sharedPoints;
+      const std::vector<unsigned int> &cameraIndices = c1->getPointsIndices();
+      const std::vector<unsigned int> &cameraIndices2 = c2->getPointsIndices();
+
+      // Points that are used by both cameras
+      std::set_intersection(cameraIndices.begin(), cameraIndices.end(),
+                            cameraIndices2.begin(), cameraIndices2.end(), std::back_inserter(sharedPoints));
+
+      // Update set of points by each cam with the new points
+      std::vector<unsigned int> unionWithCam1, unionWithCam2;
+      std::set_union(usedPointsPerCam[index1].begin(), usedPointsPerCam[index1].end(),
+                    sharedPoints.begin(), sharedPoints.end(), std::back_inserter(unionWithCam1));
+      std::set_union(usedPointsPerCam[index2].begin(), usedPointsPerCam[index2].end(),
+                    sharedPoints.begin(), sharedPoints.end(), std::back_inserter(unionWithCam2));
+      usedPointsPerCam[index1] = std::move(unionWithCam1);
+      usedPointsPerCam[index2] = std::move(unionWithCam2);
 
 
-      }
-
-      ++index2;
+      std::cout << "Camera " << index1 << " and camera " << index2 << " share " << sharedPoints.size() << " points.";
+      std::cout << " Camera " << index1 << " has " << cameraIndices.size() << " observed points.";
+      std::cout << " Camera " << index2 << " has " << cameraIndices2.size() << " observed points." << std::endl;
     }
-    ++index1;
   }
+
+  unsigned int j = 0;
+  for (std::vector<unsigned int> &cameraPoints: usedPointsPerCam) {
+    cams[j]->setUsedObservationsFrom3DIndices(cameraPoints);
+    std::cout << "Using " << cameraPoints.size() << " points for camera " << j << std::endl;
+    ++j;
+  }
+
+  // Get all used 3D points
+  std::set<unsigned int> usedPointIndices;
+  for (std::vector<unsigned int> &pointsUsed: usedPointsPerCam) {
+    usedPointIndices.insert(pointsUsed.begin(), pointsUsed.end());
+  }
+
 
   std::vector<unsigned int> sortedPointIndices(usedPointIndices.begin(), usedPointIndices.end());
   std::sort(sortedPointIndices.begin(), sortedPointIndices.end());
+
+  // Fill map
 
   m_pointToView.clear();
   m_viewToPoint.clear();
