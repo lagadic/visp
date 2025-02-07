@@ -36,30 +36,10 @@
 #
 #############################################################################
 
-# Macro that returns the relative path to go from a child folder to the parent folder
-# input: path_to_child
-# output: path_to_parent, the relative path to go from path_to_child to parent
-# example: if input =lib/x86_64-linux-gnu, then output=../..
-macro(get_path_to_parent path_to_child path_to_parent)
-  if(IS_ABSOLUTE ${path_to_child})
-    file(RELATIVE_PATH _path_to_parent "${path_to_child}" "${CMAKE_INSTALL_PREFIX}")
-    string(REGEX REPLACE "/$" "" ${path_to_parent} "${_path_to_parent}")
-  else()
-    set(${path_to_parent} "")
-    set(input_ "${path_to_child}")
-    while(input_)
-      if(input_)
-        set(${path_to_parent} "${${path_to_parent}}../")
-      endif()
-      get_filename_component(input_ "${input_}" PATH)
-    endwhile(input_)
-  endif()
-endmacro()
-
 # Here we determine the relative path from ./${VISP_LIB_INSTALL_PATH} to its parent folder
 # if VISP_LIB_INSTALL_PATH=lib, then VISP_INSTALL_LIBDIR_TO_PARENT=../
 # if VISP_LIB_INSTALL_PATH=lib/x86_64-linux-gnu, then VISP_INSTALL_LIBDIR_TO_PARENT=../..
-get_path_to_parent(${VISP_LIB_INSTALL_PATH} VISP_INSTALL_LIBDIR_TO_PARENT)
+vp_get_path_to_parent(${VISP_LIB_INSTALL_PATH} VISP_INSTALL_LIBDIR_TO_PARENT)
 
 #build list of modules available for the ViSP user
 set(VISP_LIB_COMPONENTS "")

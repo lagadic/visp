@@ -184,20 +184,24 @@ function(vp_target_include_directories target)
   set(__params "")
   set(__system_params "")
   set(__var_name __params)
+  vp_get_apple_sdk_dir(apple_sdk_dir)
 
   foreach(dir ${ARGN})
     if("${dir}" STREQUAL "SYSTEM")
-        set(__var_name __system_params)
+      set(__var_name __system_params)
     else()
-      get_filename_component(__abs_dir "${dir}" ABSOLUTE)
-      string(REPLACE "+" "\\+" __VISP_BINARY_DIR_filtered ${VISP_BINARY_DIR})
-  #   if("${__abs_dir}" MATCHES "^${VISP_SOURCE_DIR}" OR "${__abs_dir}" MATCHES "^${__VISP_BINARY_DIR_filtered}")  # not compatible with cmake 2.8.12.2
-      if("${__abs_dir}" MATCHES "^${VISP_SOURCE_DIR}")
-        list(APPEND ${__var_name} "${__abs_dir}")
-      elseif("${__abs_dir}" MATCHES "^${__VISP_BINARY_DIR_filtered}")
-        list(APPEND ${__var_name} "${__abs_dir}")
-      else()
-        list(APPEND ${__var_name} "${dir}")
+      vp_string_starts_with(${dir} ${apple_sdk_dir} apple_sdk_dir_found)
+      if (NOT apple_sdk_dir_found)
+        get_filename_component(__abs_dir "${dir}" ABSOLUTE)
+        string(REPLACE "+" "\\+" __VISP_BINARY_DIR_filtered ${VISP_BINARY_DIR})
+    #   if("${__abs_dir}" MATCHES "^${VISP_SOURCE_DIR}" OR "${__abs_dir}" MATCHES "^${__VISP_BINARY_DIR_filtered}")  # not compatible with cmake 2.8.12.2
+        if("${__abs_dir}" MATCHES "^${VISP_SOURCE_DIR}")
+          list(APPEND ${__var_name} "${__abs_dir}")
+        elseif("${__abs_dir}" MATCHES "^${__VISP_BINARY_DIR_filtered}")
+          list(APPEND ${__var_name} "${__abs_dir}")
+        else()
+          list(APPEND ${__var_name} "${dir}")
+        endif()
       endif()
     endif()
   endforeach()
@@ -794,11 +798,13 @@ endfunction()
 function(_vp_append_target_includes target)
   # Only defined for visp_<module> targets
   if(DEFINED VP_TARGET_INCLUDE_DIRS_${target})
+    vp_list_unique(VP_TARGET_INCLUDE_DIRS_${target})
     target_include_directories(${target} PRIVATE ${VP_TARGET_INCLUDE_DIRS_${target}})
     unset(VP_TARGET_INCLUDE_DIRS_${target} CACHE)
   endif()
   # Only defined for visp_<module> targets
   if(DEFINED VP_TARGET_INCLUDE_SYSTEM_DIRS_${target})
+    vp_list_unique(VP_TARGET_INCLUDE_SYSTEM_DIRS_${target})
     target_include_directories(${target} SYSTEM PRIVATE ${VP_TARGET_INCLUDE_SYSTEM_DIRS_${target}})
     unset(VP_TARGET_INCLUDE_SYSTEM_DIRS_${target} CACHE)
   endif()
@@ -2054,5 +2060,70 @@ macro(vp_git_describe var_name path)
     endif()
   else()
     set(${var_name} "unknown")
+  endif()
+endmacro()
+
+# Macro that returns the relative path to go from a child folder to the parent folder
+# input: path_to_child
+# output: path_to_parent, the relative path to go from path_to_child to parent
+# example: if input =lib/x86_64-linux-gnu, then output=../..
+macro(vp_get_path_to_parent path_to_child path_to_parent)
+  if(IS_ABSOLUTE ${path_to_child})
+    file(RELATIVE_PATH _path_to_parent "${path_to_child}" "${CMAKE_INSTALL_PREFIX}")
+    string(REGEX REPLACE "/$" "" ${path_to_parent} "${_path_to_parent}")
+  else()
+    set(${path_to_parent} "")
+    set(input_ "${path_to_child}")
+    while(input_)
+      if(input_)
+        set(${path_to_parent} "${${path_to_parent}}../")
+      endif()
+      get_filename_component(input_ "${input_}" PATH)
+    endwhile(input_)
+  endif()
+endmacro()
+
+# Compares two strings.
+# Set "found" to TRUE when "str" string starts with "search" string.
+# - str [in]: Input string to analyze
+# - search [in]: Input string to search at the beginning or "str"
+# - found [output]: TRUE if "str" starts with "search" string
+function(vp_string_starts_with str search found)
+  set(_found FALSE)
+  string(FIND "${str}" "${search}" out)
+  if("${out}" EQUAL 0)
+    set(_found TRUE)
+  endif()
+  set(${found} "${_found}" CACHE INTERNAL "")
+endfunction()
+
+# Get the value of the command "xcrun --show-sdk-path".
+# Useful only on APPLE arch
+# - sdk_dir [out]: value of "xcrun --show-sdk-path"
+macro(vp_get_apple_sdk_dir sdk_dir)
+  if(APPLE)
+    execute_process(COMMAND xcrun --show-sdk-path
+                    OUTPUT_VARIABLE SDK_PLATFORM_PATH OUTPUT_STRIP_TRAILING_WHITESPACE)
+    get_filename_component(${sdk_dir} "${SDK_PLATFORM_PATH}" REALPATH)
+  else()
+    set(${sdk_dir} "NotApple")
+  endif()
+endmacro()
+
+# Remove BUILD_INTERFACE from __include_dirs
+# IN/OUT: __include_dirs
+#
+# If __include_dirs contains "$<BUILD_INTERFACE:/home/VTK/install/include/vtk-9.3>" as input,
+# it will be filtered as output to /home/VTK/install/include/vtk-9.3
+macro(vp_filter_build_interface __include_dirs)
+  if(${__include_dirs})
+    set(__include_dirs_filtered)
+    foreach(inc_ ${${__include_dirs}})
+      string(REGEX REPLACE "\\$<BUILD_INTERFACE:" "" inc_ ${inc_})
+      string(REGEX REPLACE ">" "" inc_ ${inc_})
+      list(APPEND __include_dirs_filtered ${inc_})
+    endforeach()
+
+    set(${__include_dirs} ${__include_dirs_filtered})
   endif()
 endmacro()
