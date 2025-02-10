@@ -361,12 +361,12 @@ int main(int argc, char **argv)
 int main()
 {
 #ifndef VISP_HAVE_MAVSDK
-  std::cout << "\nThis example requires mavsdk library. You should install it, configure and rebuid ViSP.\n"
+  std::cout << "\nThis example requires mavsdk library. You should install it, configure and rebuild ViSP.\n"
     << std::endl;
 #endif
 #if !(defined(VISP_HAVE_QUALISYS) || defined(VISP_HAVE_VICON))
   std::cout << "\nThis example requires data from a Qualisys or Vicon mocap system. You should install it, configure "
-    "and rebuid ViSP.\n"
+    "and rebuild ViSP.\n"
     << std::endl;
 #endif
 #if !((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
