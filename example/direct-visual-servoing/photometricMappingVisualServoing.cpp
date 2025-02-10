@@ -46,11 +46,7 @@
 #include <visp3/robot/vpImageSimulator.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
-#include <visp3/gui/vpDisplayD3D.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/visual_features/vpFeatureLuminanceMapping.h>
 
 #include <stdlib.h>
@@ -199,6 +195,11 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_all
 int main(int argc, const char **argv)
 {
 #if (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV)) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  vpDisplay *d = nullptr;
+  vpDisplay *d1 = nullptr;
+  vpDisplay *d2 = nullptr;
+#endif
   try {
     std::string env_ipath;
     std::string opt_ipath;
@@ -314,18 +315,14 @@ int main(int argc, const char **argv)
     if (opt_method == "pca") {
       vpUniRand random(17);
       std::cout << "Building image database for PCA computation with " << opt_numDbImages << " images" << std::endl;
-#if defined(VISP_HAVE_GUI)
-#if defined(VISP_HAVE_X11)
-      vpDisplayX d;
-#elif defined(VISP_HAVE_GDI)
-      vpDisplayGDI d;
-#elif defined(VISP_HAVE_GTK)
-      vpDisplayGTK d;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-      vpDisplayOpenCV d;
+#if defined(VISP_HAVE_MODULE_GUI)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+      std::shared_ptr<vpDisplay> d = vpDisplayFactory::createDisplay();
+#else
+      d = vpDisplayFactory::allocateDisplay();
 #endif
       if (opt_display) {
-        d.init(I, 0, 0, "Image database (subsample)");
+        d->init(I, 0, 0, "Image database (subsample)");
       }
 #endif
       std::vector<vpImage<unsigned char>> images(opt_numDbImages);
@@ -355,6 +352,12 @@ int main(int argc, const char **argv)
       std::cout << "Explained variance: " << pca.getExplainedVariance().sum() * 100.0 << "%" << std::endl;
       sMapping = std::shared_ptr<vpLuminanceMapping>(new vpLuminancePCA(pca));
       sdMapping = std::shared_ptr<vpLuminanceMapping>(new vpLuminancePCA(pca));
+
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+      if (d != nullptr) {
+        delete d;
+      }
+#endif
     }
     else if (opt_method == "dct") {
       sMapping = std::shared_ptr<vpLuminanceMapping>(new vpLuminanceDCT(opt_numComponents));
@@ -368,21 +371,17 @@ int main(int argc, const char **argv)
     sim.setCameraPosition(cdMo);
     sim.getImage(I, cam); // and aquire the image Id
     Id = I;
-#if defined(VISP_HAVE_GUI)
+#if defined(VISP_HAVE_MODULE_GUI)
     // display the image
-#if defined(VISP_HAVE_X11)
-    vpDisplayX d;
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI d;
-#elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK d;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV d;
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    std::shared_ptr<vpDisplay> d = vpDisplayFactory::createDisplay();
+#else
+    d = vpDisplayFactory::allocateDisplay();
 #endif
 
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_OPENCV)
+#if defined(VISP_HAVE_DISPLAY)
     if (opt_display) {
-      d.init(I, 20, 10, "Current image");
+      d->init(I, 20, 10, "Current image");
       vpDisplay::display(I);
       vpDisplay::flush(I);
     }
@@ -408,7 +407,7 @@ int main(int argc, const char **argv)
     I = 0u;
     sim.getImage(I, cam); // and aquire the image Id
 
-#if defined(VISP_HAVE_GUI) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK))
+#if defined(VISP_HAVE_MODULE_GUI) && defined(VISP_HAVE_DISPLAY)
     if (opt_display) {
       vpDisplay::display(I);
       vpDisplay::flush(I);
@@ -425,18 +424,17 @@ int main(int argc, const char **argv)
     vpImageTools::imageDifference(I, Id, Idiff);
 
     // Display image difference
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK)
-#if defined(VISP_HAVE_X11)
-    vpDisplayX d1, d2;
-
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI d1, d2;
-#elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK d1, d2;
+#if defined(VISP_HAVE_DISPLAY)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    std::shared_ptr<vpDisplay> d1 = vpDisplayFactory::createDisplay();
+    std::shared_ptr<vpDisplay> d2 = vpDisplayFactory::createDisplay();
+#else
+    d1 = vpDisplayFactory::allocateDisplay();
+    d2 = vpDisplayFactory::allocateDisplay();
 #endif
     if (opt_display) {
-      d1.init(Idiff, 40 + static_cast<int>(I.getWidth()), 10, "photometric visual servoing : s-s* ");
-      d2.init(Irec, 40 + static_cast<int>(I.getWidth()) * 2, 10, "Reconstructed image");
+      d1->init(Idiff, 40 + static_cast<int>(I.getWidth()), 10, "photometric visual servoing : s-s* ");
+      d2->init(Irec, 40 + static_cast<int>(I.getWidth()) * 2, 10, "Reconstructed image");
 
       vpDisplay::display(Idiff);
       vpDisplay::flush(Idiff);
@@ -542,6 +540,16 @@ int main(int argc, const char **argv)
     v = 0;
     robot.setVelocity(vpRobot::CAMERA_FRAME, v);
 
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (d1 != nullptr) {
+      delete d1;
+    }
+
+    if (d2 != nullptr) {
+      delete d2;
+    }
+#endif
+
     if (normError > 200) {
       return EXIT_FAILURE;
     }
@@ -549,6 +557,18 @@ int main(int argc, const char **argv)
   }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (d != nullptr) {
+      delete d;
+    }
+    if (d1 != nullptr) {
+      delete d1;
+    }
+
+    if (d2 != nullptr) {
+      delete d2;
+    }
+#endif
     return EXIT_FAILURE;
   }
 #else

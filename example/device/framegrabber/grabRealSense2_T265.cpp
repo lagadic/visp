@@ -46,12 +46,11 @@
 #include <iostream>
 
 #include <visp3/core/vpMeterPixelConversion.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/sensor/vpRealSense2.h>
 
 #if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)&& \
-    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
+    defined(VISP_HAVE_DISPLAY) && (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
 
 int main()
 {
@@ -68,6 +67,12 @@ int main()
   std::list<std::pair<unsigned int, vpImagePoint> >
     frame_origins; // Frame origin's history for trajectory visualization
   unsigned int display_scale = 2;
+
+#if defined(VISP_HAVE_DISPLAY) && (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  vpDisplay *display_left = nullptr;
+  vpDisplay *display_right = nullptr;
+  vpDisplay *display_pose = nullptr;
+#endif
 
   try {
     vpRealSense2 rs;
@@ -97,22 +102,22 @@ int main()
 
     rs.acquire(&I_left, &I_right, &cMw_0, &odo_vel, &odo_acc, &imu_vel, &imu_acc, &confidence, &ts);
 
-#if defined(VISP_HAVE_X11)
-    vpDisplayX display_left;  // Left image
-    vpDisplayX display_right; // Right image
-    vpDisplayX display_pose;  // Pose visualization
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI display_left;  // Left image
-    vpDisplayGDI display_right; // Right image
-    vpDisplayGDI display_pose;  // Pose visualization
+#if defined(VISP_HAVE_DISPLAY)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    std::shared_ptr<vpDisplay> display_left = vpDisplayFactory::createDisplay();
+    std::shared_ptr<vpDisplay> display_right = vpDisplayFactory::createDisplay();
+    std::shared_ptr<vpDisplay> display_pose = vpDisplayFactory::createDisplay();
+#else
+    vpDisplay *display_left = vpDisplayFactory::allocateDisplay();
+    vpDisplay *display_right = vpDisplayFactory::allocateDisplay();
+    vpDisplay *display_pose = vpDisplayFactory::allocateDisplay();
 #endif
 
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
-    display_left.setDownScalingFactor(display_scale);
-    display_right.setDownScalingFactor(display_scale);
-    display_left.init(I_left, 10, 10, "Left image");
-    display_right.init(I_right, static_cast<int>(I_left.getWidth() / display_scale) + 80, 10, "Right image"); // Right
-    display_pose.init(I_pose, 10, static_cast<int>(I_left.getHeight() / display_scale) + 80,
+    display_left->setDownScalingFactor(display_scale);
+    display_right->setDownScalingFactor(display_scale);
+    display_left->init(I_left, 10, 10, "Left image");
+    display_right->init(I_right, static_cast<int>(I_left.getWidth() / display_scale) + 80, 10, "Right image"); // Right
+    display_pose->init(I_pose, 10, static_cast<int>(I_left.getHeight() / display_scale) + 80,
                       "Pose visualizer"); // visualization
 #endif
 
@@ -177,6 +182,12 @@ int main()
   catch (const std::exception &e) {
     std::cerr << e.what() << std::endl;
   }
+
+#if defined(VISP_HAVE_DISPLAY) && (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  delete display_left;
+  delete display_right;
+  delete display_pose;
+#endif
 
   return EXIT_SUCCESS;
 }

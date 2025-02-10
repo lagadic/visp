@@ -65,9 +65,7 @@
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpPoint.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/gui/vpPlot.h>
 #include <visp3/robot/vpRobotViper850.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
@@ -80,6 +78,12 @@ int main()
 {
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
+#endif
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display;
+#else
+  vpDisplay *display = nullptr;
 #endif
 
   try {
@@ -119,12 +123,10 @@ int main()
     }
     std::cout << "Tloop: " << Tloop << std::endl;
 
-#ifdef VISP_HAVE_X11
-    vpDisplayX display(I, 800, 100, "Current image");
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV display(I, 800, 100, "Current image");
-#elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK display(I, 800, 100, "Current image");
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    display = vpDisplayFactory::createDisplay(I, 800, 100, "Current image");
+#else
+    display = vpDisplayFactory::allocateDisplay(I, 800, 100, "Current image");
 #endif
 
     vpDisplay::display(I);
@@ -399,10 +401,20 @@ int main()
 
     // Display task information
     task.print();
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+    }
+#endif
     return EXIT_SUCCESS;
   }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+  }
+#endif
     return EXIT_FAILURE;
   }
 }
