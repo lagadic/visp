@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">TestViSP</string>
+    <string name="app_created_by_akshay_sharma"><u>App Created by Akshay Sharma</u></string>
+    <string name="tag_description">AprilTag is a visual fiducial system, useful for a wide variety of tasks including augmented reality, robotics, and camera calibration. This app computes the precise 3D position, orientation, and identity of the tags relative to the camera. \n\n The original AprilTag library is implemented in C with no external dependencies. This example uses an Android SDK which I developed as a part of my GSoC Project with focus on real-time performance </string>
+    <string name="description2"><u>Link to my GSoC Project</u></string>
+</resources>
