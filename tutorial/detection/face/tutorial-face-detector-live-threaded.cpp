@@ -20,8 +20,7 @@
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpTime.h>
 #include <visp3/detection/vpDetectorFace.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/sensor/vpV4l2Grabber.h>
 
 #if (VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)
@@ -86,10 +85,10 @@ void displayFunction(std::mutex &mutex_capture, std::mutex &mutex_face, cv::Mat 
   bool display_initialized_ = false;
   bool face_available_ = false;
   vpRect face_bbox_;
-#if defined(VISP_HAVE_X11)
-  vpDisplayX *d_ = nullptr;
-#elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI *d_ = nullptr;
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display;
+#else
+  vpDisplay *display = nullptr;
 #endif
 
   do {
@@ -113,11 +112,12 @@ void displayFunction(std::mutex &mutex_capture, std::mutex &mutex_face, cv::Mat 
       // Check if we need to initialize the display with the first frame
       if (!display_initialized_) {
         // Initialize the display
-#if defined(VISP_HAVE_X11)
-        d_ = new vpDisplayX(I_);
-        display_initialized_ = true;
-#elif defined(VISP_HAVE_GDI)
-        d_ = new vpDisplayGDI(I_);
+#if defined(VISP_HAVE_DISPLAY)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+        display = vpDisplayFactory::createDisplay(I_);
+#else
+        display = vpDisplayFactory::allocateDisplay(I_);
+#endif
         display_initialized_ = true;
 #endif
       }
@@ -153,8 +153,10 @@ void displayFunction(std::mutex &mutex_capture, std::mutex &mutex_face, cv::Mat 
     }
   } while (capture_state_ != capture_stopped);
 
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
-  delete d_;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (display != nullptr) {
+    delete display;
+  }
 #endif
 
   std::cout << "End of display thread" << std::endl;
