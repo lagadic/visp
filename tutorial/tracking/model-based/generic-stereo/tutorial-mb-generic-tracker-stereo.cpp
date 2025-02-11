@@ -2,9 +2,7 @@
 #include <cstdlib>
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpIoTools.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
 //! [Include]
 #include <visp3/mbt/vpMbGenericTracker.h>
@@ -13,9 +11,17 @@
 
 int main(int argc, char **argv)
 {
-#if defined(VISP_HAVE_OPENCV) && defined(VISP_HAVE_PUGIXML)
+#if defined(VISP_HAVE_OPENCV) && defined(VISP_HAVE_PUGIXML) && defined(VISP_HAVE_DISPLAY)
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
+#endif
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display_left;
+  std::shared_ptr<vpDisplay> display_right;
+#else
+  vpDisplay *display_left = nullptr;
+  vpDisplay *display_right = nullptr;
 #endif
 
   try {
@@ -74,22 +80,19 @@ int main(int argc, char **argv)
     g_right.setFileName(opt_videoname_right);
     g_right.open(I_right);
 
-#if defined(VISP_HAVE_X11)
-    vpDisplayX display_left;
-    vpDisplayX display_right;
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI display_left;
-    vpDisplayGDI display_right;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV display_left;
-    vpDisplayOpenCV display_right;
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    display_left = vpDisplayFactory::createDisplay();
+    display_right = vpDisplayFactory::createDisplay();
+#else
+    display_left = vpDisplayFactory::allocateDisplay();
+    display_right = vpDisplayFactory::allocateDisplay();
 #endif
-    display_left.setDownScalingFactor(vpDisplay::SCALE_AUTO);
-    display_right.setDownScalingFactor(vpDisplay::SCALE_AUTO);
-    display_left.init(I_left, 100, 100, "Model-based tracker (Left)");
-    display_right.init(I_right, 110 + (int)I_left.getWidth(), 100, "Model-based tracker (Right)");
+    display_left->setDownScalingFactor(vpDisplay::SCALE_AUTO);
+    display_right->setDownScalingFactor(vpDisplay::SCALE_AUTO);
+    display_left->init(I_left, 100, 100, "Model-based tracker (Left)");
+    display_right->init(I_right, 110 + (int)I_left.getWidth(), 100, "Model-based tracker (Right)");
 
-    //! [Constructor]
+//! [Constructor]
     std::vector<int> trackerTypes(2);
     trackerTypes[0] = opt_tracker1;
     trackerTypes[1] = opt_tracker2;
@@ -173,6 +176,14 @@ int main(int argc, char **argv)
   catch (const vpException &e) {
     std::cerr << "Catch a ViSP exception: " << e.what() << std::endl;
   }
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (display_left != nullptr) {
+    delete display_left;
+  }
+  if (display_right != nullptr) {
+    delete display_right;
+  }
+#endif
 #else
   (void)argc;
   (void)argv;
