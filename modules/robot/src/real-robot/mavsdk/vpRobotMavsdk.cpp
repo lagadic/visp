@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -139,7 +139,9 @@ private:
                                           mavlink_msg_heartbeat_decode(&message, &heartbeat);
 
                                       // Unsubscribe again as we only want to find one system.
-#if (VISP_HAVE_MAVSDK_VERSION > 0x010412)
+#if (VISP_HAVE_MAVSDK_VERSION >= 0x020000)
+                                          passthrough.unsubscribe_message(MAVLINK_MSG_ID_HEARTBEAT, handle);
+#elif (VISP_HAVE_MAVSDK_VERSION > 0x010412)
                                           passthrough.unsubscribe_message(handle);
 #else
                                           passthrough.subscribe_message_async(MAVLINK_MSG_ID_HEARTBEAT, nullptr);
@@ -412,9 +414,26 @@ public:
   bool setGPSGlobalOrigin(double latitude, double longitude, double altitude)
   {
     auto passthrough = mavsdk::MavlinkPassthrough { m_system };
+#if (VISP_HAVE_MAVSDK_VERSION >= 0x020000)
+    passthrough.queue_message([&](MavlinkAddress mavlink_address, uint8_t channel) {
+      (void)channel;
+      mavlink_message_t message;
+      mavlink_set_gps_global_origin_t gps_global_origin;
+      gps_global_origin.latitude = latitude * 1E7;                 // [deg] Latitude (WGS84)
+      gps_global_origin.longitude = longitude * 1E7;               // [deg] Longitude (WGS84)
+      gps_global_origin.altitude = altitude * 1000;                // [mm] Altitude (MSL). Positive for up
+      gps_global_origin.target_system = m_system->get_system_id(); // System ID
+      mavlink_msg_set_gps_global_origin_encode(
+          mavlink_address.system_id,
+          mavlink_address.component_id,
+          &message,
+          &gps_global_origin);
+      return message;
+      });
+#else
     mavlink_set_gps_global_origin_t gps_global_origin;
-    gps_global_origin.latitude = latitude * 10000000;
-    gps_global_origin.longitude = longitude * 10000000;
+    gps_global_origin.latitude = latitude * 1E7;
+    gps_global_origin.longitude = longitude * 1E7;
     gps_global_origin.altitude = altitude * 1000; // in mm
     gps_global_origin.target_system = m_system->get_system_id();
     mavlink_message_t msg;
@@ -425,6 +444,7 @@ public:
       std::cerr << "Set GPS global position failed: " << resp << std::endl;
       return false;
     }
+#endif
     return true;
   }
 
@@ -504,7 +524,7 @@ public:
       return true;
     }
     else if (authorize_takeoff) {
-   // Arm vehicle
+      // Arm vehicle
       if (!arm()) {
         return false;
       }
@@ -558,7 +578,7 @@ public:
         // Possibility is to use set_position_velocity_ned(); to speed up takeoff
 
 #if (VISP_HAVE_MAVSDK_VERSION > 0x010412)
-        Telemetry::LandedStateHandle handle = m_telemetry.get()->subscribe_landed_state(
+        mavsdk::Telemetry::LandedStateHandle handle = m_telemetry.get()->subscribe_landed_state(
             [this, &in_air_promise, &handle](mavsdk::Telemetry::LandedState state) {
               if (state == mavsdk::Telemetry::LandedState::InAir) {
                 std::cout << "Drone is taking off\n.";
@@ -590,8 +610,8 @@ public:
         auto takeoff_finished_future = takeoff_finished_promise.get_future();
 
 #if (VISP_HAVE_MAVSDK_VERSION > 0x010412)
-        auto handle_odom = m_telemetry.get()->subscribe_odometry(
-            [this, &takeoff_finished_promise, &handle, &Z_init](mavsdk::Telemetry::Odometry odom) {
+        mavsdk::Telemetry::OdometryHandle handle_odom = m_telemetry.get()->subscribe_odometry(
+            [this, &takeoff_finished_promise, &handle, &Z_init, &handle_odom](mavsdk::Telemetry::Odometry odom) {
               if (odom.position_body.z_m < 0.90 * (Z_init - m_takeoffAlt) + m_position_incertitude) {
                 std::cout << "Takeoff altitude reached\n.";
                 m_telemetry.get()->unsubscribe_odometry(handle_odom);
@@ -611,7 +631,7 @@ public:
         if (takeoff_finished_future.wait_for(seconds(timeout_sec)) == std::future_status::timeout) {
           std::cerr << "Takeoff failed:  altitude not reached.\n";
 #if (VISP_HAVE_MAVSDK_VERSION > 0x010412)
-          m_telemetry.get()->unsubscribe_odometry(handle);
+          m_telemetry.get()->unsubscribe_odometry(handle_odom);
 #else
           m_telemetry.get()->subscribe_odometry(nullptr);
 #endif
@@ -619,9 +639,7 @@ public:
         }
       }
       else {
-     // GPS connected, we use Action::takeoff()
-        std::cout << "---- DEBUG: GPS detected: use action::takeoff()" << std::endl;
-
+        // GPS connected, we use Action::takeoff()
         mavsdk::Telemetry::Odometry odom = m_telemetry.get()->odometry();
         double Z_init = odom.position_body.z_m;
 
@@ -635,7 +653,7 @@ public:
         auto in_air_promise = std::promise<void> {};
         auto in_air_future = in_air_promise.get_future();
 #if (VISP_HAVE_MAVSDK_VERSION > 0x010412)
-        Telemetry::LandedStateHandle handle = m_telemetry.get()->subscribe_landed_state(
+        mavsdk::Telemetry::LandedStateHandle handle = m_telemetry.get()->subscribe_landed_state(
             [this, &in_air_promise, &handle](mavsdk::Telemetry::LandedState state) {
               if (state == mavsdk::Telemetry::LandedState::InAir) {
                 std::cout << "Taking off has finished\n.";
@@ -667,8 +685,8 @@ public:
         auto takeoff_finished_future = takeoff_finished_promise.get_future();
 
 #if (VISP_HAVE_MAVSDK_VERSION > 0x010412)
-        auto handle_odom = m_telemetry.get()->subscribe_odometry(
-            [this, &takeoff_finished_promise, &handle, &Z_init](mavsdk::Telemetry::Odometry odom) {
+        mavsdk::Telemetry::OdometryHandle handle_odom = m_telemetry.get()->subscribe_odometry(
+            [this, &takeoff_finished_promise, &handle, &Z_init, &handle_odom](mavsdk::Telemetry::Odometry odom) {
               if (odom.position_body.z_m < 0.90 * (Z_init - m_takeoffAlt) + m_position_incertitude) {
                 std::cout << "Takeoff altitude reached\n.";
                 m_telemetry.get()->unsubscribe_odometry(handle_odom);
@@ -688,7 +706,7 @@ public:
         if (takeoff_finished_future.wait_for(seconds(timeout_sec)) == std::future_status::timeout) {
           std::cerr << "Takeoff failed:  altitude not reached.\n";
 #if (VISP_HAVE_MAVSDK_VERSION > 0x010412)
-          m_telemetry.get()->unsubscribe_odometry(handle);
+          m_telemetry.get()->unsubscribe_odometry(handle_odom);
 #else
           m_telemetry.get()->subscribe_odometry(nullptr);
 #endif
@@ -742,8 +760,8 @@ public:
       auto landing_finished_future = landing_finished_promise.get_future();
 
 #if (VISP_HAVE_MAVSDK_VERSION > 0x010412)
-      auto handle_odom = m_telemetry.get()->subscribe_odometry(
-          [this, &landing_finished_promise, &success, &handle](mavsdk::Telemetry::Odometry odom) {
+      mavsdk::Telemetry::OdometryHandle handle_odom = m_telemetry.get()->subscribe_odometry(
+          [this, &landing_finished_promise, &success, &handle_odom](mavsdk::Telemetry::Odometry odom) {
             if (odom.position_body.z_m > -0.15) {
               std::cout << "Landing altitude reached \n.";
 
@@ -824,8 +842,8 @@ public:
       auto position_reached_future = position_reached_promise.get_future();
 
 #if (VISP_HAVE_MAVSDK_VERSION > 0x010412)
-      auto handle_odom = m_telemetry.get()->subscribe_odometry(
-          [this, &position_reached_promise, &handle, &position_target](mavsdk::Telemetry::Odometry odom) {
+      mavsdk::Telemetry::OdometryHandle handle_odom = m_telemetry.get()->subscribe_odometry(
+          [this, &position_reached_promise, &handle_odom, &position_target](mavsdk::Telemetry::Odometry odom) {
             vpQuaternionVector q { odom.q.x, odom.q.y, odom.q.z, odom.q.w };
             vpRotationMatrix R(q);
             vpRxyzVector rxyz(R);
@@ -1090,7 +1108,7 @@ public:
 private:
   //*** Attributes ***//
   std::string m_address {}; ///< Ip address of the robot to discover on the network
-  mavsdk::Mavsdk m_mavsdk {};
+  mavsdk::Mavsdk m_mavsdk { mavsdk::Mavsdk::Configuration{mavsdk::ComponentType::GroundStation} };
   std::shared_ptr<mavsdk::System> m_system;
   std::shared_ptr<mavsdk::Action> m_action;
   std::shared_ptr<mavsdk::Telemetry> m_telemetry;

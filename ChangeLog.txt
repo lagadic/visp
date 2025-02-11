@@ -47,6 +47,7 @@ ViSP 3.x.x (Version in development)
     . Add compatibility with Yolo v11 in vpDetectorDNNOpenCV a wrapper over the OpenCV DNN module that allows
       to detect objects
     . Introduce compat with Ogre 1.12.0 version
+    . Compat with mavsdk 3.0.0
   - Applications
     . Migrate eye-to-hand tutorials in apps
   - Tutorials
@@ -106,6 +107,7 @@ ViSP 3.x.x (Version in development)
     . [#1547] Build issue with Ogre 1.12.0 or more recent versions
     . [#1552] Unabled to use SIFT feature with opencv 4.5.4
     . [#1562] Fix segfault in vpFont
+    . [#1523] MAVSDK v2 and v3 compatibility
 ----------------------------------------------
 ViSP 3.6.0 (released September 22, 2023)
   - Contributors:
