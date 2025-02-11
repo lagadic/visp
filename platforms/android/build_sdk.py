@@ -152,8 +152,10 @@ class Builder:
         self.ninja_path = self.get_ninja()
         self.debug = True if config.debug else False
         self.debug_info = True if config.debug_info else False
+        self.abi_name = "undefined"
 
     def setABI(self, abi: ABI):
+      self.abi_name = abi.name
       self.libdest = check_dir(os.path.join(self.workdir, "o4a", abi.name), create=True, clean=True)
       self.resultdest = check_dir(os.path.join(self.workdir, 'ViSP-android-sdk', abi.name), create=True, clean=True)
       self.docdest = check_dir(os.path.join(self.workdir, 'ViSP-android-sdk', abi.name, 'sdk', 'java', 'javadoc'), create=True, clean=True)
@@ -284,7 +286,21 @@ class Builder:
         ]
         execute(cmd)
 
+    def copyLibsInSamplesDir(self):
+        root = os.path.join(self.libdest, "install", "sdk", "native")
+        targets = ["libs", "staticlibs"]
+        dest = os.path.join(self.libdest, "install", "samples", "app" ,"src", "main" , "jniLibs", self.abi_name)
+        check_dir(dest, create=True, clean=True)
+        for target in targets:
+          source_folder =  os.path.join(root, target, self.abi_name)
+          for item in os.listdir(source_folder):
+            src = os.path.join(source_folder, item)
+            dst = os.path.join(dest, item)
+            shutil.copy2(src, dst)
+
     def gather_results(self):
+        # Copy compiled libaries in the sample directory
+        self.copyLibsInSamplesDir()
         # Copy all files
         root = os.path.join(self.libdest, "install")
         for item in os.listdir(root):
