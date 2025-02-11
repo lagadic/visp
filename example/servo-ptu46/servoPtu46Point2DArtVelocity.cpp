@@ -65,7 +65,7 @@
 
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 
 #include <visp3/core/vpHomogeneousMatrix.h>
@@ -108,6 +108,11 @@ int main()
   std::cout << "-------------------------------------------------------" << std::endl;
   std::cout << std::endl;
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display;
+#else
+  vpDisplay *display = nullptr;
+#endif
   try {
     mutexEndLoop.lock();
     signal(SIGINT, &signalCtrC);
@@ -134,7 +139,11 @@ int main()
       return EXIT_FAILURE;
     }
 
-    vpDisplayX display(I, 100, 100, "testDisplayX.cpp ");
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    display = vpDisplayFactory::createDisplay(I, 100, 100, "Servo Ptu");
+#else
+    display = vpDisplayFactory::allocateDisplay(I, 100, 100, "Servo Ptu");
+#endif
     vpTRACE(" ");
 
     try {
@@ -143,6 +152,11 @@ int main()
     }
     catch (...) {
       vpERROR_TRACE(" Error caught");
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+      if (display != nullptr) {
+        delete display;
+      }
+#endif
       return EXIT_FAILURE;
     }
 
@@ -162,6 +176,11 @@ int main()
     }
     catch (...) {
       vpERROR_TRACE(" Error caught ");
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+      if (display != nullptr) {
+        delete display;
+      }
+#endif
       return EXIT_FAILURE;
     }
 
@@ -243,8 +262,18 @@ int main()
   }
   catch (const vpException &e) {
     std::cout << "Sorry PtU46 not available. Got exception: " << e << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+    }
+#endif
     return EXIT_FAILURE
   }
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (display != nullptr) {
+    delete display;
+  }
+#endif
   return EXIT_SUCCESS;
 }
 

@@ -53,7 +53,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 
-#if defined(VISP_HAVE_THREADS) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GDI)) \
+#if defined(VISP_HAVE_THREADS) && defined(VISP_HAVE_DISPLAY) \
   && (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
 
 // We need to use threading capabilities. Thus on Unix-like
@@ -70,9 +70,7 @@
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpMeterPixelConversion.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/robot/vpSimulatorAfma6.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
@@ -175,6 +173,11 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
 
 int main(int argc, const char **argv)
 {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> displayInt;
+#else
+  vpDisplay *displayInt = nullptr;
+#endif
   try {
     bool opt_click_allowed = true;
     bool opt_display = true;
@@ -186,19 +189,15 @@ int main(int argc, const char **argv)
 
     // We open two displays, one for the internal camera view, the other one for
     // the external view, using either X11, GTK or GDI.
-#if defined(VISP_HAVE_X11)
-    vpDisplayX displayInt;
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI displayInt;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV displayInt;
-#endif
-
     vpImage<unsigned char> Iint(480, 640, 255);
 
     if (opt_display) {
       // open a display for the visualization
-      displayInt.init(Iint, 700, 0, "Internal view");
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+      displayInt = vpDisplayFactory::createDisplay(Iint, 700, 0, "Internal view");
+#else
+      displayInt = vpDisplayFactory::allocateDisplay(Iint, 700, 0, "Internal view");
+#endif
     }
 
     vpServo task;
@@ -349,15 +348,31 @@ int main(int argc, const char **argv)
       std::cout << "Click in the internal view window to end..." << std::endl;
       vpDisplay::getClick(Iint);
     }
+
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+    }
+#endif
     return EXIT_SUCCESS;
   }
   catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+    }
+#endif
     return EXIT_FAILURE;
   }
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (display != nullptr) {
+    delete display;
+  }
+#endif
   return EXIT_SUCCESS;
 }
-#elif !(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI))
+#elif !(defined(VISP_HAVE_DISPLAY))
 int main()
 {
   std::cout << "You do not have X11, or GDI (Graphical Device Interface) of OpenCV functionalities to display images..."

@@ -144,10 +144,10 @@ set(VISP_REVISION "1")
 
 # Try to locate visp-images and, if it exists, its version
 vp_find_dataset(VISP_DATASET_FOUND VISP_DATASET_LOCATION
-                    VISP_DATASET_VERSION
-                    VISP_DATASET_VERSION_MAJOR
-                    VISP_DATASET_VERSION_MINOR
-                    VISP_DATASET_VERSION_PATCH)
+                VISP_DATASET_VERSION
+                VISP_DATASET_VERSION_MAJOR
+                VISP_DATASET_VERSION_MINOR
+                VISP_DATASET_VERSION_PATCH)
 
 #-----------------------------------------------------------------------------
 # TO BE CHECKED BEFORE NEXT RELEASE
@@ -1803,8 +1803,14 @@ status("    Use PTU46:"              USE_PTU46        THEN "yes" ELSE "no")
 status("    Use Biclops PTU:"        USE_BICLOPS      THEN "yes" ELSE "no")
 status("    Use Flir PTU SDK:"       USE_FLIRPTUSDK   THEN "yes (ver ${FLIRPTUSDK_VERSION})" ELSE "no")
 status("    Use MAVSDK:"             USE_MAVSDK       THEN "yes (ver ${MAVSDK_VERSION})" ELSE "no")
-status("    Use Parrot ARSDK:"       USE_ARSDK        THEN "yes" ELSE "no")
-status("    \\-Use ffmpeg:"          USE_FFMPEG       THEN "yes" ELSE "no")
+status("    Use Parrot ARSDK:"       USE_ARSDK        THEN "yes (ver ${ARSDK_VERSION})" ELSE "no")
+status("    \\- Use ffmpeg:"         USE_FFMPEG       THEN "yes" ELSE "no")
+if(USE_FFMPEG)
+status("       \\- Use libavcodec:"  USE_FFMPEG     THEN "yes (ver ${FFMPEG_LIBAVCODEC_VERSION})" ELSE "no")
+status("       \\- Use libavformat:" USE_FFMPEG     THEN "yes (ver ${FFMPEG_LIBAVFORMAT_VERSION})" ELSE "no")
+status("       \\- Use libavutil:"   USE_FFMPEG     THEN "yes (ver ${FFMPEG_LIBAVUTIL_VERSION})" ELSE "no")
+status("       \\- Use libswscale:"  USE_FFMPEG     THEN "yes (ver ${FFMPEG_LIBSWSCALE_VERSION})" ELSE "no")
+endif()
 status("    Use Virtuose:"           USE_VIRTUOSE     THEN "yes" ELSE "no")
 status("    Use qbdevice (built-in):" WITH_QBDEVICE   THEN "yes (ver ${QBDEVICE_VERSION})" ELSE "no")
 status("    Use takktile2 (built-in):" WITH_TAKKTILE2 THEN "yes (ver ${TAKKTILE2_VERSION})" ELSE "no")

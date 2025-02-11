@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +29,7 @@
  *
  * Description:
  * Example that shows how to do visual servoing with Parrot Bebop 2 drone in ViSP.
- *
- * Authors:
- * Gatien Gaumerais
- *
-*****************************************************************************/
+ */
 
 #include <iostream>
 
@@ -51,7 +46,7 @@
 #include <visp3/core/vpTime.h>
 #include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/detection/vpDetectorAprilTag.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/gui/vpPlot.h>
 #include <visp3/robot/vpRobotBebop2.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
@@ -92,7 +87,6 @@ bool compareImagePoint(std::pair<size_t, vpImagePoint> p1, std::pair<size_t, vpI
 };
 
 /*!
-
   \example servoBebop2.cpp example showing how to do visual servoing of
   Parrot Bebop 2 drone.
 
@@ -104,6 +98,11 @@ bool compareImagePoint(std::pair<size_t, vpImagePoint> p1, std::pair<size_t, vpI
 */
 int main(int argc, char **argv)
 {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display;
+#else
+  vpDisplay *display = nullptr;
+#endif
   try {
 
     std::string ip_address = "192.168.42.1";
@@ -119,7 +118,7 @@ int main(int argc, char **argv)
 
     bool verbose = false;
 
-    if (argc >= 3 && std::string(argv[1]) == "--tag_size") {
+    if (argc >= 3 && std::string(argv[1]) == "--tag-size") {
       tagSize = std::atof(argv[2]); // Tag size option is required
       if (tagSize <= 0) {
         std::cout << "Error : invalid tag size." << std::endl << "See " << argv[0] << " --help" << std::endl;
@@ -130,7 +129,7 @@ int main(int argc, char **argv)
           ip_address = std::string(argv[i + 1]);
           i++;
         }
-        else if (std::string(argv[i]) == "--distance_to_tag" && i + 1 < argc) {
+        else if (std::string(argv[i]) == "--distance-to-tag" && i + 1 < argc) {
           opt_distance_to_tag = std::atof(argv[i + 1]);
           if (opt_distance_to_tag <= 0) {
             std::cout << "Error : invalid distance to tag." << std::endl << "See " << argv[0] << " --help" << std::endl;
@@ -161,15 +160,15 @@ int main(int argc, char **argv)
     else if (argc >= 2 && (std::string(argv[1]) == "--help" || std::string(argv[1]) == "-h")) {
       std::cout << "\nUsage:\n"
         << "  " << argv[0]
-        << " [--tag-size <size>] [--ip <drone ip>] [--distance_to_tag <distance>] [--intrinsic <xml file>] "
+        << " [--tag-size <size>] [--ip <drone ip>] [--distance-to-tag <distance>] [--intrinsic <xml file>] "
         << "[--hd_stream] [--verbose] [-v] [--help] [-h]\n"
         << std::endl
         << "Description:\n"
-        << "  --tag_size <size>\n"
+        << "  --tag-size <size>\n"
         << "      The size of the tag to detect in meters, required.\n\n"
         << "  --ip <drone ip>\n"
         << "      Ip address of the drone to which you want to connect (default : 192.168.42.1).\n\n"
-        << "  --distance_to_tag <distance>\n"
+        << "  --distance-to-tag <distance>\n"
         << "      The desired distance to the tag in meters (default: 1 meter).\n\n"
         << "  --intrinsic <xml file>\n"
         << "      XML file containing computed intrinsic camera parameters (default: empty).\n\n"
@@ -228,18 +227,13 @@ int main(int argc, char **argv)
       vpImage<unsigned char> I;
       drone.getGrayscaleImage(I);
 
-#if defined(VISP_HAVE_X11)
-      vpDisplayX display;
-#elif defined(VISP_HAVE_GTK)
-      vpDisplayGTK display;
-#elif defined(VISP_HAVE_GDI)
-      vpDisplayGDI display;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-      vpDisplayOpenCV display;
-#endif
       int orig_displayX = 100;
       int orig_displayY = 100;
-      display.init(I, orig_displayX, orig_displayY, "DRONE VIEW");
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+      display = vpDisplayFactory::createDisplay(I, orig_displayX, orig_displayY, "DRONE VIEW");
+#else
+      display = vpDisplayFactory::allocateDisplay(I, orig_displayX, orig_displayY, "DRONE VIEW");
+#endif
       vpDisplay::display(I);
       vpDisplay::flush(I);
 
@@ -541,16 +535,31 @@ int main(int argc, char **argv)
         vpTime::wait(startTime, 40.0); // We wait a total of 40 milliseconds
       }
 
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+      if (display != nullptr) {
+        delete display;
+      }
+#endif
       return EXIT_SUCCESS;
 
     }
     else {
       std::cout << "ERROR : failed to setup drone control." << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+      if (display != nullptr) {
+        delete display;
+      }
+#endif
       return EXIT_FAILURE;
     }
   }
   catch (const vpException &e) {
     std::cout << "Caught an exception: " << e << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+  }
+#endif
     return EXIT_FAILURE;
   }
 }

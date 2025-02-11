@@ -62,15 +62,14 @@
 #include <visp3/io/vpImageIo.h>
 #include <visp3/sensor/vpSickLDMRS.h>
 #ifdef VISP_HAVE_MODULE_GUI
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #endif
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 
 #if (!defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))) && \
-    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK)) && defined(VISP_HAVE_THREADS)
+    defined(VISP_HAVE_DISPLAY) && defined(VISP_HAVE_THREADS)
 
 #include <thread>
 #include <mutex>
@@ -118,12 +117,11 @@ void laser_display_and_save_loop()
     }
   }
 
-  vpDisplay *display = nullptr;
 #ifdef VISP_HAVE_MODULE_GUI
-#if defined(VISP_HAVE_X11)
-  display = new vpDisplayX;
-#elif defined(VISP_HAVE_GTK)
-  display = new vpDisplayGTK;
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display = vpDisplayFactory::createDisplay();
+#else
+  vpDisplay *display = vpDisplayFactory::allocateDisplay();
 #endif
   display->init(map, 10, 10, "Laser scan");
 #endif
@@ -185,14 +183,19 @@ void laser_display_and_save_loop()
         fdscan.close();
       }
     }
-#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK))
+#if defined(VISP_HAVE_DISPLAY)
     vpDisplay::flush(map);
 #endif
     iter++;
     // std::cout << "display time: " << vpTime::measureTimeMs() - t1 <<
     // std::endl;
   }
-  delete display;
+
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11) && defined(VISP_HAVE_MODULE_GUI)
+  if (display != nullptr) {
+    delete display;
+  }
+#endif
 }
 
 void laser_acq_loop()
@@ -239,12 +242,11 @@ void camera_acq_and_display_loop()
     g.acquire(I);             // Acquire an image
     I.quarterSizeImage(Q);
 
-    vpDisplay *display = nullptr;
 #ifdef VISP_HAVE_MODULE_GUI
-#if defined(VISP_HAVE_X11)
-    display = new vpDisplayX;
-#elif defined(VISP_HAVE_GTK)
-    display = new vpDisplayGTK;
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    std::shared_ptr<vpDisplay> display = vpDisplayFactory::createDisplay();
+#else
+    vpDisplay *display = vpDisplayFactory::allocateDisplay();
 #endif
     display->init(Q, 320, 10, "Camera");
 #endif
@@ -271,7 +273,7 @@ void camera_acq_and_display_loop()
         vpImageIo::write(Q, filename);
         fdimage_ts << filename << " " << image_timestamp << std::endl;
       }
-#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK))
+#if defined(VISP_HAVE_DISPLAY)
       vpDisplay::display(Q);
       vpDisplay::flush(Q);
 #endif
@@ -279,13 +281,17 @@ void camera_acq_and_display_loop()
 
       iter++;
     }
-    delete display;
     if (save) {
       fdimage_ts.close();
     }
   }
   catch (...) {
   }
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11) && defined(VISP_HAVE_MODULE_GUI)
+  if (display != nullptr) {
+    delete display;
+  }
+#endif
 #endif
 }
 
@@ -360,6 +366,6 @@ int main()
   std::cout << "This example is only working on unix-like platforms \n"
     << "since the Sick LD-MRS driver was not ported to Windows." << std::endl;
   return EXIT_SUCCESS;
-  }
+}
 
 #endif // #ifdef UNIX

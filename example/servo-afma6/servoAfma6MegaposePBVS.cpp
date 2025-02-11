@@ -63,8 +63,7 @@
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpConfig.h>
 #include <visp3/detection/vpDetectorAprilTag.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/gui/vpPlot.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/robot/vpRobotAfma6.h>
@@ -78,7 +77,7 @@
 
 // Check if std:c++17 or higher
 #if defined(VISP_HAVE_REALSENSE2) && ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L))) && \
-    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_AFMA6) && defined(VISP_HAVE_MODULE_DNN_TRACKER)
+    defined(VISP_HAVE_DISPLAY) && defined(VISP_HAVE_AFMA6) && defined(VISP_HAVE_MODULE_DNN_TRACKER)
 
 #include <optional>
 #include <visp3/io/vpJsonArgumentParser.h>
@@ -151,6 +150,11 @@ int main(int argc, const char *argv[])
 
   vpRobotAfma6 robot;
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display;
+#else
+  vpDisplay *display = nullptr;
+#endif
   try {
     std::cout << "WARNING: This example will move the robot! "
       << "Please make sure to have the user stop button at hand!" << std::endl
@@ -202,10 +206,10 @@ int main(int argc, const char *argv[])
 
     vpImage<vpRGBa> I(height, width);
 
-#if defined(VISP_HAVE_X11)
-    vpDisplayX dc(I, 10, 10, "Color image");
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI dc(I, 10, 10, "Color image");
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    display = vpDisplayFactory::createDisplay(I, 10, 10, "Color image");
+#else
+    display = vpDisplayFactory::allocateDisplay(I, 10, 10, "Color image");
 #endif
 
     std::optional<vpRect> detection;
@@ -443,13 +447,28 @@ int main(int argc, const char *argv[])
     std::cout << "ViSP exception: " << e.what() << std::endl;
     std::cout << "Stop the robot " << std::endl;
     robot.setRobotState(vpRobot::STATE_STOP);
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+    }
+#endif
     return EXIT_FAILURE;
   }
   catch (const std::exception &e) {
     std::cout << "ur_rtde exception: " << e.what() << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+    }
+#endif
     return EXIT_FAILURE;
   }
 
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (display != nullptr) {
+    delete display;
+  }
+#endif
   return EXIT_SUCCESS;
 }
 #else

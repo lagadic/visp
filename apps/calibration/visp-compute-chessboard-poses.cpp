@@ -53,11 +53,7 @@
 #include <visp3/core/vpPoint.h>
 #include <visp3/core/vpXmlParserCamera.h>
 #if defined(VISP_HAVE_MODULE_GUI)
-#include <visp3/gui/vpDisplayD3D.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #endif
 #include <visp3/io/vpVideoReader.h>
 #include <visp3/vision/vpPose.h>
@@ -217,18 +213,16 @@ int main(int argc, const char **argv)
     std::cout << "  Interactive mode             : " << (opt_interactive ? "yes" : "no") << std::endl << std::endl;
 
 #if defined(VISP_HAVE_MODULE_GUI)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    std::shared_ptr<vpDisplay> display;
+#else
     vpDisplay *display = nullptr;
+#endif
     if (opt_interactive) {
-#if defined(VISP_HAVE_X11)
-      display = new vpDisplayX(I);
-#elif defined(VISP_HAVE_GDI)
-      display = new vpDisplayGDI(I);
-#elif defined(HAVE_OPENCV_HIGHGUI)
-      display = new vpDisplayOpenCV(I);
-#elif defined(VISP_HAVE_D3D9)
-      display = new vpDisplayD3D(I);
-#elif defined(VISP_HAVE_GTK)
-      display = new vpDisplayGTK(I);
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+      display = vpDisplayFactory::createDisplay(I);
+#else
+      display = vpDisplayFactory::allocateDisplay(I);
 #endif
     }
 #endif
@@ -336,18 +330,20 @@ int main(int argc, const char **argv)
 
 #if defined(VISP_HAVE_MODULE_GUI)
     if (opt_interactive) {
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
       if (display) {
         delete display;
       }
-    }
 #endif
-  }
+      }
+#endif
+    }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
   }
 
   return EXIT_SUCCESS;
-}
+  }
 #else
 int main()
 {

@@ -40,7 +40,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_THREADS) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
+#if defined(VISP_HAVE_THREADS) && defined(VISP_HAVE_DISPLAY)
 #include <condition_variable>
 #include <fstream>
 #include <mutex>
@@ -50,8 +50,7 @@
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpIoException.h>
 #include <visp3/core/vpIoTools.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/gui/vpDisplayPCL.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
@@ -382,11 +381,14 @@ int main(int argc, const char *argv[])
   vpImage<uint16_t> I_depth_raw(480, 640);
   vpImage<unsigned char> I_depth(480, 640);
 
-#ifdef VISP_HAVE_X11
-  vpDisplayX d1, d2;
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> d1 = vpDisplayFactory::createDisplay();
+  std::shared_ptr<vpDisplay> d2 = vpDisplayFactory::createDisplay();
 #else
-  vpDisplayGDI d1, d2;
+  vpDisplay *d1 = vpDisplayFactory::allocateDisplay();
+  vpDisplay *d2 = vpDisplayFactory::allocateDisplay();
 #endif
+
   bool init_display = false;
 
 #if defined(VISP_HAVE_PCL)
@@ -427,12 +429,12 @@ int main(int argc, const char *argv[])
 
     if (!init_display) {
       init_display = true;
-      d1.init(I_color, 0, 0, "Color image");
+      d1->init(I_color, 0, 0, "Color image");
       if (color_depth) {
-        d2.init(I_depth_color, I_color.getWidth() + 10, 0, "Depth image");
+        d2->init(I_depth_color, I_color.getWidth() + 10, 0, "Depth image");
       }
       else {
-        d2.init(I_depth, I_color.getWidth() + 10, 0, "Depth image");
+        d2->init(I_depth, I_color.getWidth() + 10, 0, "Depth image");
       }
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_VISUALIZATION)
       if (pointcloud->size() > 0) {
@@ -496,6 +498,15 @@ int main(int argc, const char *argv[])
     vpTime::wait(t, 30);
     cpt_frame++;
   }
+
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (d1 != nullptr) {
+    delete d1;
+  }
+  if (d2 != nullptr) {
+    delete d2;
+  }
+#endif
 
   return EXIT_SUCCESS;
 }

@@ -46,7 +46,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 
-#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)) &&       \
+#if defined(VISP_HAVE_DISPLAY) &&       \
     (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
 
 #include <stdio.h>
@@ -57,10 +57,7 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpMath.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/robot/vpSimulatorCamera.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
@@ -162,6 +159,11 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
 
 int main(int argc, const char **argv)
 {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display;
+#else
+  vpDisplay *display = nullptr;
+#endif
   try {
     bool opt_display = true;
     bool opt_click_allowed = true;
@@ -173,21 +175,14 @@ int main(int argc, const char **argv)
 
     vpImage<unsigned char> I(512, 512, 255);
 
-    // We open a window using either X11, GTK or GDI.
-#if defined(VISP_HAVE_X11)
-    vpDisplayX display;
-#elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK display;
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI display;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV display;
-#endif
-
     if (opt_display) {
       try {
         // Display size is automatically defined by the image (I) size
-        display.init(I, 100, 100, "Camera view...");
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+        display = vpDisplayFactory::createDisplay(I, 100, 100, "Camera view...");
+#else
+        display = vpDisplayFactory::allocateDisplay(I, 100, 100, "Camera view...");
+#endif
         // Display the image
         // The image class has a member that specify a pointer toward
         // the display that has been initialized in the display declaration
@@ -198,6 +193,11 @@ int main(int argc, const char **argv)
       }
       catch (...) {
         vpERROR_TRACE("Error while displaying the image");
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+        if (display != nullptr) {
+          delete display;
+        }
+#endif
         return EXIT_FAILURE;
       }
     }
@@ -325,10 +325,20 @@ int main(int argc, const char **argv)
 
     // Display task information
     task.print();
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+    }
+#endif
     return EXIT_SUCCESS;
   }
   catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+    }
+#endif
     return EXIT_FAILURE;
   }
 }

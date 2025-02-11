@@ -590,7 +590,9 @@ endfunction()
 macro(vp_target_include_modules target)
   set(is_system "")
   set(is_private "")
+  vp_get_apple_sdk_dir(apple_sdk_dir)
   foreach(d ${ARGN})
+
     if("${d}" STREQUAL "SYSTEM")
       set(is_system "SYSTEM")
     elseif("${d}" STREQUAL "PRIVATE")
@@ -600,13 +602,16 @@ macro(vp_target_include_modules target)
         vp_target_include_directories(${target} "${VISP_MODULE_${d}_LOCATION}/include")
       endif()
     elseif(EXISTS "${d}")
-      # FS keep external deps inc
-      if(is_system)
-        set(VISP_MODULE_${the_module}_SYSTEM_INC_DEPS "${VISP_MODULE_${the_module}_SYSTEM_INC_DEPS};${d}" CACHE INTERNAL "")
-      elseif(NOT is_private)
-        set(VISP_MODULE_${the_module}_INC_DEPS "${VISP_MODULE_${the_module}_INC_DEPS};${d}" CACHE INTERNAL "")
+      vp_string_starts_with(${d} ${apple_sdk_dir} apple_sdk_dir_found)
+      if (NOT apple_sdk_dir_found)
+        # FS keep external deps inc
+        if(is_system)
+          set(VISP_MODULE_${the_module}_SYSTEM_INC_DEPS "${VISP_MODULE_${the_module}_SYSTEM_INC_DEPS};${d}" CACHE INTERNAL "")
+        elseif(NOT is_private)
+          set(VISP_MODULE_${the_module}_INC_DEPS "${VISP_MODULE_${the_module}_INC_DEPS};${d}" CACHE INTERNAL "")
+        endif()
+        vp_target_include_directories(${target} "${is_system}" "${d}")
       endif()
-      vp_target_include_directories(${target} "${is_system}" "${d}")
     endif()
   endforeach()
   vp_list_unique(VISP_MODULE_${the_module}_INC_DEPS)
@@ -901,9 +906,7 @@ macro(_vp_create_module)
       endforeach()
     endif()
   endforeach()
-
 endmacro()
-
 
 # short command for adding simple ViSP module
 # see vp_add_module for argument details
