@@ -125,7 +125,7 @@ vpRobotBebop2::vpRobotBebop2(bool verbose, bool setDefaultSettings, std::string 
 
 #ifdef VISP_HAVE_FFMPEG
   m_codecContext = nullptr;
-  m_packet = AVPacket();
+  m_packet = nullptr;
   m_picture = nullptr;
   m_bgr_picture = nullptr;
   m_img_convert_ctx = nullptr;
@@ -1343,12 +1343,12 @@ void vpRobotBebop2::startController()
 */
 void vpRobotBebop2::initCodec()
 {
-  av_register_all();
-  avcodec_register_all();
+  // av_register_all();
+  // avcodec_register_all();
   avformat_network_init();
 
   // Finds the correct codec
-  AVCodec *codec = avcodec_find_decoder(AV_CODEC_ID_H264);
+  const AVCodec *codec = avcodec_find_decoder(AV_CODEC_ID_H264);
   if (!codec) {
     ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "Codec not found.");
     return;
@@ -1374,9 +1374,9 @@ void vpRobotBebop2::initCodec()
   m_codecContext->width = m_videoWidth;
   m_codecContext->height = m_videoHeight;
 
-  if (codec->capabilities & AV_CODEC_CAP_TRUNCATED) {
-    m_codecContext->flags |= AV_CODEC_FLAG_TRUNCATED;
-  }
+  // if (codec->capabilities & AV_CODEC_CAP_TRUNCATED) {
+  //   m_codecContext->flags |= AV_CODEC_FLAG_TRUNCATED;
+  // }
   m_codecContext->flags2 |= AV_CODEC_FLAG2_CHUNKS;
 
   // Opens the codec
@@ -1389,7 +1389,8 @@ void vpRobotBebop2::initCodec()
   int numBytes = av_image_get_buffer_size(pFormat, m_codecContext->width, m_codecContext->height, 1);
   m_buffer = static_cast<uint8_t *>(av_malloc(static_cast<unsigned long>(numBytes) * sizeof(uint8_t)));
 
-  av_init_packet(&m_packet);    // Packed used to send data to the decoder
+  //av_init_packet(&m_packet);    // Packed used to send data to the decoder
+  m_packet = av_packet_alloc();
   m_picture = av_frame_alloc(); // Frame used to receive data from the decoder
 
   m_bgr_picture_mutex.lock();
@@ -1409,7 +1410,7 @@ void vpRobotBebop2::initCodec()
 void vpRobotBebop2::cleanUpCodec()
 {
   m_videoDecodingStarted = false;
-  av_packet_unref(&m_packet);
+  av_packet_unref(m_packet);
 
   if (m_codecContext) {
     avcodec_flush_buffers(m_codecContext);
@@ -1418,6 +1419,9 @@ void vpRobotBebop2::cleanUpCodec()
 
   if (m_picture) {
     av_frame_free(&m_picture);
+  }
+  if (m_packet) {
+    av_packet_free(&m_packet);
   }
 
   if (m_bgr_picture) {
@@ -1480,10 +1484,10 @@ void vpRobotBebop2::computeFrame(ARCONTROLLER_Frame_t *frame)
     ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "Updating H264 codec parameters (Buffer Size: %lu) ...",
                 m_codec_params_data.size());
 
-    m_packet.data = &m_codec_params_data[0];
-    m_packet.size = static_cast<int>(m_codec_params_data.size());
+    m_packet->data = &m_codec_params_data[0];
+    m_packet->size = static_cast<int>(m_codec_params_data.size());
 
-    int ret = avcodec_send_packet(m_codecContext, &m_packet);
+    int ret = avcodec_send_packet(m_codecContext, m_packet);
 
     if (ret == 0) {
 
@@ -1500,15 +1504,15 @@ void vpRobotBebop2::computeFrame(ARCONTROLLER_Frame_t *frame)
       ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "Unexpected error while sending H264 parameters.");
     }
     m_update_codec_params = false;
-    av_packet_unref(&m_packet);
+    av_packet_unref(m_packet);
     av_frame_unref(m_picture);
   }
 
   // Decoding frame coming from the drone
-  m_packet.data = frame->data;
-  m_packet.size = static_cast<int>(frame->used);
+  m_packet->data = frame->data;
+  m_packet->size = static_cast<int>(frame->used);
 
-  int ret = avcodec_send_packet(m_codecContext, &m_packet);
+  int ret = avcodec_send_packet(m_codecContext, m_packet);
   if (ret < 0) {
 
     char *errbuff = new char[AV_ERROR_MAX_STRING_SIZE];
@@ -1552,7 +1556,7 @@ void vpRobotBebop2::computeFrame(ARCONTROLLER_Frame_t *frame)
     }
   }
 
-  av_packet_unref(&m_packet);
+  av_packet_unref(m_packet);
 
   av_frame_unref(m_picture);
 }
