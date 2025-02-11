@@ -22,7 +22,7 @@ Now enter in `example/servo-franka folder` and run `servoFrankaIBVS` binary usin
 
     $ cd example/servo-franka
     $ ./servoFrankaIBVS --help
-    ./servoFrankaIBVS [--ip <default 192.168.1.1>] [--tag-size <marker size in meter; default 0.12>] [--eMc <eMc extrinsic file>] [--quad-decimate <decimation; default 2>] [--adaptive_gain] [--plot] [--task_sequencing] [--no-convergence-threshold] [--verbose] [--help] [-h]
+    ./servoFrankaIBVS [--ip <default 192.168.1.1>] [--tag-size <marker size in meter; default 0.12>] [--eMc <eMc extrinsic file>] [--quad-decimate <decimation; default 2>] [--adpative-gain] [--plot] [--task-sequencing] [--no-convergence-threshold] [--verbose] [--help] [-h]
 
 Run the binary activating the plot and using a constant gain:
 
@@ -40,15 +40,15 @@ At this point the behaviour that you should observe is the following:
 
 You can also activate an adaptive gain that will make the convergence faster:
 
-    $ ./servoFrankaIBVS --eMc ../../apps/calibration/eMc.yaml --plot --adaptive_gain
+    $ ./servoFrankaIBVS --eMc ../../apps/calibration/eMc.yaml --plot --adpative-gain
 
 You can also start the robot with a zero velocity at the beginning introducing task sequencing option:
 
-    $ ./servoFrankaIBVS --eMc ../../apps/calibration/eMc.yaml --plot --task_sequencing
+    $ ./servoFrankaIBVS --eMc ../../apps/calibration/eMc.yaml --plot --task-sequencing
 
 And finally you can activate the adaptive gain and task sequencing:
 
-    $ ./servoFrankaIBVS --eMc ../../apps/calibration/eMc.yaml --plot --adaptive_gain --task_sequencing
+    $ ./servoFrankaIBVS --eMc ../../apps/calibration/eMc.yaml --plot --adpative-gain --task-sequencing
 
 To learn more about adaptive gain and task sequencing see \ref tutorial-boost-vs.
 
