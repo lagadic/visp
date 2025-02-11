@@ -2,7 +2,7 @@
 #include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpImageTools.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 
 int main()
 {
@@ -53,10 +53,16 @@ int main()
   vpImage<vpRGBa> I_segmented(height, width);
   vpImageTools::inMask(I, mask, I_segmented);
 
-#if defined(VISP_HAVE_X11)
-  vpDisplayX d_I(I, 0, 0, "Current frame");
-  vpDisplayX d_mask(mask, I.getWidth()+75, 0, "HSV mask");
-  vpDisplayX d_I_segmented(I_segmented, 2*mask.getWidth()+80, 0, "Segmented frame");
+#if defined(VISP_HAVE_DISPLAY)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> d_I = vpDisplayFactory::createDisplay();
+  std::shared_ptr<vpDisplay> d_mask = vpDisplayFactory::createDisplay(mask, I.getWidth()+75, 0, "HSV mask");
+  std::shared_ptr<vpDisplay> d_I_segmented = vpDisplayFactory::createDisplay(I_segmented, 2*mask.getWidth()+80, 0, "Segmented frame");
+#else
+  vpDisplay *d_I = vpDisplayFactory::allocateDisplay(I, 0, 0, "Current frame");
+  vpDisplay *d_mask = vpDisplayFactory::allocateDisplay(mask, I.getWidth()+75, 0, "HSV mask");
+  vpDisplay *d_I_segmented = vpDisplayFactory::allocateDisplay(I_segmented, 2*mask.getWidth()+80, 0, "Segmented frame");
+#endif
 
   vpDisplay::display(I);
   vpDisplay::display(mask);
@@ -65,5 +71,19 @@ int main()
   vpDisplay::flush(mask);
   vpDisplay::flush(I_segmented);
   vpDisplay::getClick(I);
+
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (d_I != nullptr) {
+    delete d_I;
+  }
+
+  if (d_mask != nullptr) {
+    delete d_mask;
+  }
+
+  if (d_I_segmented != nullptr) {
+    delete d_I_segmented;
+  }
+#endif
 #endif
 }
