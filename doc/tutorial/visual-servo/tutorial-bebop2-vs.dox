@@ -28,56 +28,69 @@ The following steps allow to build ARSDK3 on Ubuntu (tested on 18.04).
 <b>1. Get the SDK source code</b>
 
 Create a workspace.
-\verbatim
+\code{.sh}
 $ cd ${VISP_WS}
 $ mkdir -p 3rdparty/ARDroneSDK3 && cd 3rdparty/ARDroneSDK3
-\endverbatim
+\endcode
 
 Initialize the repo.
-\verbatim
+\code{.sh}
 $ sudo apt install repo
 $ repo init -u https://github.com/Parrot-Developers/arsdk_manifests.git -m release.xml
-\endverbatim
+\endcode
+
+\note Known issue with Ubuntu 20.04
+- The `repo` package is not available on Ubuntu 20.04. You need to install it manually running:
+  \code{.sh}
+  $ mkdir -p ~/.bin
+  $ PATH="${HOME}/.bin:${PATH}"
+  $ curl https://storage.googleapis.com/git-repo-downloads/repo > ~/.bin/repo
+  $ chmod a+rx ~/.bin/repo
+  \endcode
+  Now you should be able to initialize the repo using:
+  \code{.sh}
+  $ repo init -u https://github.com/Parrot-Developers/arsdk_manifests.git -m release.xml
+  \endcode
 
 You can then download all the repositories automatically, by executing the following command.
-\verbatim
+\code{.sh}
 $ repo sync
-\endverbatim
+\endcode
 
 <b>2. Build the SDK</b>
 
 Install required 3rd parties:
-\verbatim
+\code{.sh}
 $ sudo apt-get install git build-essential autoconf libtool libavahi-client-dev \
   libavcodec-dev libavformat-dev libswscale-dev libncurses5-dev mplayer
-\endverbatim
+\endcode
 Build the SDK:
-\verbatim
+\code{.sh}
 $ ./build.sh -p arsdk-native -t build-sdk -j
-\endverbatim
+\endcode
 The output will be located in `${VISP_WS}/3rdparty/ARDroneSDK3/out/arsdk-native/staging/usr`
 
-\note Known issues with Ubuntu 22.04 and python 3.10.4
+\note Known issues since Ubuntu 20.04 and with python 3
 - If you get the following error:
-\verbatim
+\code{.sh}
 /bin/bash: line 1: python: command not found
 make: *** [$VISP_WS/3rdparty/ARDroneSDK3/build/alchemy/main.mk:306: $VISP_WS/3rdparty/ARDroneSDK3/out/arsdk-native/build/libARMavlink/parrot.xml.done] Error 127
 
 MAKE ERROR DETECTED
 [E] Task 'build-sdk' failed (Command failed (returncode=254))
-\endverbatim
+\endcode
 you need to install the following package:
-\verbatim
+\code{.sh}
 $ sudo apt-get install python-is-python3
-\endverbatim
+\endcode
 
 \note
 - If you get the next error:
-\verbatim
+\code{.sh}
 File "$VISP_WS/3rdparty/ARDroneSDK3/out/arsdk-native/staging-host/usr/lib/mavgen/pymavlink/generator/mavcrc.py", line 28, in accumulate_str
     bytes.fromstring(buf)
 AttributeError: 'array.array' object has no attribute 'fromstring'
-\endverbatim
+\endcode
 you may edit $VISP_WS/3rdparty/ARDroneSDK3/out/arsdk-native/staging-host/usr/lib/mavgen/pymavlink/generator/mavcrc.py
 and modify `accumulate_str()` replacing
 \code
@@ -108,16 +121,16 @@ by
 <b>3. Set `ARSDK_DIR` environment variable</b>
 
 In order for ViSP to find ARDroneSDK3, set `ARSDK_DIR` environment variable:
-\verbatim
+\code{.sh}
 $ export ARSDK_DIR=${VISP_WS}/3rdparty/ARDroneSDK3
-\endverbatim
+\endcode
 
 <b>4. Modify `LD_LIBRARY_PATH` environment variable to detect ARDroneSDK3 libraries</b>
 
 In order that ViSP binaries are able to find ARDroneSDK3 libraries, set `LD_LIBRARY_PATH` with:
-\verbatim
+\code{.sh}
 $ export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${ARSDK_DIR}/out/arsdk-native/staging/usr/lib
-\endverbatim
+\endcode
 
 \subsection bebop2_arsdk3_osx On Mac OSX
 The following steps allow to build ARSDK3 on macOS Mojave 10.14.5.
@@ -125,74 +138,74 @@ The following steps allow to build ARSDK3 on macOS Mojave 10.14.5.
 <b>1. Get the SDK source code</b>
 
 Create a workspace.
-\verbatim
+\code{.sh}
 $ cd ${VISP_WS}
 $ mkdir -p 3rdparty/ARDroneSDK3 && cd 3rdparty/ARDroneSDK3
-\endverbatim
+\endcode
 
 Initialize the repo.
-\verbatim
+\code{.sh}
 $ brew install repo
 $ repo init -u https://github.com/Parrot-Developers/arsdk_manifests.git -m release.xml
-\endverbatim
+\endcode
 
 You can then download all the repositories automatically, by executing the following command.
-\verbatim
+\code{.sh}
 $ repo sync
-\endverbatim
+\endcode
 
 <b>2. Build the SDK</b>
 
 Install required 3rd parties:
-\verbatim
+\code{.sh}
 $ brew install ffmpeg
-\endverbatim
+\endcode
 Build the SDK:
-\verbatim
+\code{.sh}
 $ ./build.sh -p arsdk-native -t build-sdk -j
-\endverbatim
+\endcode
 The output will be located in `${VISP_WS}/3rdparty/ARDroneSDK3/out/arsdk-native/staging/usr`
 
 <b>3. Set `ARSDK_DIR` environment variable</b>
 
 In order for ViSP to find ARDroneSDK3, set `ARSDK_DIR` environment variable:
-\verbatim
+\code{.sh}
 $ export ARSDK_DIR=${VISP_WS}/3rdparty/ARDroneSDK3
-\endverbatim
+\endcode
 
 <b>4. Modify `DYLD_LIBRARY_PATH` environment variable to detect ARDroneSDK3 libraries</b>
 
 In order that ViSP binaries are able to find ARDroneSDK3 libraries, set `DYLD_LIBRARY_PATH` with:
-\verbatim
+\code{.sh}
 $ export DYLD_LIBRARY_PATH=${DYLD_LIBRARY_PATH}:${ARSDK_DIR}/out/arsdk-native/staging/usr/lib
-\endverbatim
+\endcode
 
 \section bebop2_visp_build Build ViSP to detect ARSDK3
 
 In order that ViSP takes into account ARSDK3 fresh installation you need to configure and build ViSP again.
 
 - Enter ViSP build folder:
-\verbatim
+\code{.sh}
 $ cd $VISP_WS/visp-build
-\endverbatim
+\endcode
 
 - Configure ViSP to detect ARSDK3 and ffmpeg used to decode images from Bebop2 camera stream:
-\verbatim
+\code{.sh}
 $ cmake ../visp
-\endverbatim
+\endcode
 At this point you should see in `Real robots` section that ARSDK and ffmpeg are enabled
-\verbatim
+\code{.sh}
   Real robots:
     ...
     Use Parrot ARSDK:            yes
     \-Use ffmpeg:                yes
     ...
-\endverbatim
+\endcode
 
 - Now build ViSP using:
-\verbatim
+\code{.sh}
 $ make -j4
-\endverbatim
+\endcode
 
 \section bebop2_ibvs Image-based visual-servoing
 
@@ -271,10 +284,10 @@ the drone is uniform, its movements will be inaccurate and dangerous.
 
 If you built ViSP with ffmpeg and Parrot ARSDK3 support, the corresponding binary is available in
 `${VISP_WS}/visp-build/example/servo-bebop2` folder.
-\verbatim
+\code{.sh}
 $ cd ${VISP_WS}/visp-build/example/servo-bebop2
-$ ./servoBebop2 --tag_size 0.14
-\endverbatim
+$ ./servoBebop2 --tag-size 0.14
+\endcode
 \note Passing the tag size (in meters) as a parameter is required.
 
 On Mac OSX, you may need to allow servoBebop2 to accept incoming network connections :
@@ -294,7 +307,7 @@ Run `./servoBebop2 --help` to see which are the command line options available.
 - Adding option `--ip` allows you to specify the ip of the drone on the network (default is 192.168.42.1). This is
   useful if you changed your drone ip (see \ref bebop2_change_ip), if you want to fly multiple drones at once, for
   instance.
-- Adding option `--distance_to_tag 1.5` allows to specify the desired distance (in meters) to the tag for the drone
+- Adding option `--distance-to-tag 1.5` allows to specify the desired distance (in meters) to the tag for the drone
   servoing. Values between 0.5 and 2 are recommended (default is 1 meter).
 - Adding option `--intrinsic ~/path-to-calibration-file/camera.xml` allows you to specify the intrinsic camera
   calibration parameters. This file can be obtained by completing \ref tutorial-calibration-intrinsic. Without this
@@ -341,24 +354,24 @@ If you need to change the drone IP address, for flying multiple drones for insta
 - Turn on your drone and connect to its WiFi network.
 - Press the drone on/off button 4 times.
 - Connect to the drone file system using telnet (if you haven't changed the drone IP yet, the default IP should be 192.168.42.1):
-\verbatim
+\code{.sh}
 $ telnet 192.168.42.1
-\endverbatim
+\endcode
 \note If you get the message "Connection refused", you haven't properly pressed the on/off button 4 times.\n
 If you get the message "Connection timed out", you haven't used the right IP. You can try with 192.168.43.1 .
 
 - Once you're connected to the drone file system, you need to get write access to the files. You can do so with :
-\verbatim
+\code{.sh}
 $ mount –o remount,rw /
-\endverbatim
+\endcode
 \warning You now have permissions to move, edit or delete any file. Proceed at your own discretion, as you could
 irreversibly make your drone unusable !
 
 - Edit `/sbin/broadcom_setup.sh` :
-\verbatim
+\code{.sh}
 $ cd sbin
 $ vi broadcom_setup.sh
-\endverbatim
+\endcode
 
 \note If you don't know how to use `VI` text editor :
   - move the cursor using arrow keys,
@@ -385,21 +398,21 @@ For two drones, it should look like this (on Ubuntu) :
 
 In ViSP programs that use the drone, you can then use option `--ip` to specify the IP of the drone to which you want
 to connect :
-\verbatim
+\code{.sh}
 $ cd ${VISP_WS}/visp-build/example/servo-bebop2
 $ ./keyboardControlBebop2.cpp --ip 192.168.42.1
-\endverbatim
+\endcode
 
 and in another terminal :
-\verbatim
+\code{.sh}
 $ cd ${VISP_WS}/visp-build/example/servo-bebop2
 $ ./keyboardControlBebop2.cpp --ip 192.168.43.1
-\endverbatim
+\endcode
 
 In your own programs, you can specify the IP in the constructor of vpRobotBebop2 class :
-\verbatim
+\code{.sh}
 vpRobotBebop2 drone(false, true, "192.168.43.1"); // This creates the drone with low verbose level, settings reset and corresponding IP
-\endverbatim
+\endcode
 
 \section bebop2_next Next tutorial
 
