@@ -145,9 +145,6 @@ class Builder:
         self.workdir = check_dir(workdir, create=True)
         self.vispdir = check_dir(vispdir)
         self.config = config
-        self.libdest = check_dir(os.path.join(self.workdir, "o4a"), create=True, clean=True)
-        self.resultdest = check_dir(os.path.join(self.workdir, 'ViSP-android-sdk'), create=True, clean=True)
-        self.docdest = check_dir(os.path.join(self.workdir, 'ViSP-android-sdk', 'sdk', 'java', 'javadoc'), create=True, clean=True)
         self.extra_packs = []
         self.visp_version = determine_visp_version(os.path.join(self.vispdir, "CMakeLists.txt"))
         self.use_ccache = False if config.no_ccache else True
@@ -155,6 +152,11 @@ class Builder:
         self.ninja_path = self.get_ninja()
         self.debug = True if config.debug else False
         self.debug_info = True if config.debug_info else False
+
+    def setABI(self, abi: ABI):
+      self.libdest = check_dir(os.path.join(self.workdir, "o4a", abi.name), create=True, clean=True)
+      self.resultdest = check_dir(os.path.join(self.workdir, 'ViSP-android-sdk', abi.name), create=True, clean=True)
+      self.docdest = check_dir(os.path.join(self.workdir, 'ViSP-android-sdk', abi.name, 'sdk', 'java', 'javadoc'), create=True, clean=True)
 
     def get_cmake(self):
         if not self.config.use_android_buildtools and check_executable(['cmake', '--version']):
@@ -209,7 +211,7 @@ class Builder:
         for d in ["CMakeCache.txt", "CMakeFiles/", "bin/", "libs/", "lib/", "package/", "install/samples/"]:
             rm_one(d)
 
-    def build_library(self, abi, do_install):
+    def build_library(self, abi):
         cmd = [self.cmake_path, "-GNinja"]
         cmake_vars = dict(
             CMAKE_TOOLCHAIN_FILE=self.get_toolchain_file(),
@@ -398,20 +400,16 @@ if __name__ == "__main__":
     log.info("Detected ViSP version: %s", builder.visp_version)
 
     for i, abi in enumerate(ABIs):
-        do_install = (i == 0)
-
         log.info("=====")
         log.info("===== Building library for %s", abi)
         log.info("=====")
-
+        builder.setABI(abi)
         os.chdir(builder.libdest)
         builder.clean_library_build_dir()
-        builder.build_library(abi, do_install)
-
-    builder.gather_results()
-
-    if args.build_doc:
-        builder.build_javadoc()
+        builder.build_library(abi)
+        builder.gather_results()
+        if args.build_doc:
+            builder.build_javadoc()
 
     log.info("=====")
     log.info("===== Build finished")
