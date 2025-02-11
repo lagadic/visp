@@ -32,12 +32,12 @@ That is allowed by including the grabber headers.
 
 \snippet tutorial-me-line-tracker.cpp camera headers
 
-To display these images we then include the headers of the viewers.
+To display these images we then include the header of the factory that permit to create a viewer.
 
 \snippet tutorial-me-line-tracker.cpp display headers
 
-The Graphical Display Interface (GDI) allows to display images under Windows, while X11 allows this feature under
-unix-like systems.
+A graphical library, such as Graphical Display Interface (GDI) on Windows, or X11 on
+unix-like systems, is required in order to have a functional display.
 
 Finally, to track a line with the moving edges, we include the header of the vpMeLine class.
 
