@@ -224,8 +224,8 @@ class Builder:
             BUILD_ANDROID_EXAMPLES="ON",
             BUILD_ANDROID_SERVICE="ON",
             INSTALL_ANDROID_EXAMPLES="ON",
-            CMAKE_C_FLAGS="-fopenmp",
-            CMAKE_CXX_FLAGS="-fopenmp",
+            CMAKE_C_FLAGS="-fopenmp  -static-openmp",
+            CMAKE_CXX_FLAGS="-fopenmp  -static-openmp",
         )
         if self.ninja_path != 'ninja':
             cmake_vars['CMAKE_MAKE_PROGRAM'] = self.ninja_path
