@@ -1,9 +1,7 @@
 //! \example tutorial-mb-generic-tracker-full.cpp
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpIoTools.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/gui/vpPlot.h>
 //! [Include]
 #include <visp3/mbt/vpMbGenericTracker.h>
@@ -31,7 +29,7 @@ std::vector<double> poseToVec(const vpHomogeneousMatrix &cMo)
 
 int main(int argc, char **argv)
 {
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_VIDEOIO) && defined(HAVE_OPENCV_HIGHGUI)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_VIDEOIO) && defined(HAVE_OPENCV_HIGHGUI) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) &&  defined(VISP_HAVE_DISPLAY)
   std::string opt_videoname = "model/teabox/teabox.mp4";
   std::string opt_modelname = "model/teabox/teabox.cao";
   int opt_tracker = 0;
@@ -243,13 +241,7 @@ int main(int argc, char **argv)
       writer->open(O);
     }
 
-#if defined(VISP_HAVE_X11)
-    display = std::make_shared<vpDisplayX>();
-#elif defined(VISP_HAVE_GDI)
-    display = std::make_shared<vpDisplayGDI>();
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    display = std::make_shared<vpDisplayOpenCV>();
-#endif
+    display = vpDisplayFactory::createDisplay();
     if (opt_display_scale_auto) {
       display->setDownScalingFactor(vpDisplay::SCALE_AUTO);
     }
