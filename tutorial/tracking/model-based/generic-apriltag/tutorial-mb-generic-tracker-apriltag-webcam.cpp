@@ -24,9 +24,7 @@
 #endif
 #include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/detection/vpDetectorAprilTag.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/mbt/vpMbGenericTracker.h>
 
 #if (VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)
@@ -150,7 +148,7 @@ int main(int argc, const char **argv)
 #endif
   double opt_projection_error_threshold = 40.;
 
-#if !(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+#if !(defined(VISP_HAVE_DISPLAY))
   bool display_off = true;
 #else
   bool display_off = false;
@@ -202,7 +200,7 @@ int main(int argc, const char **argv)
         << " [--intrinsic <xml intrinsic file>]"
         << " [--camera-name <camera name in xml file>]"
         << " [--tag-family <0: TAG_36h11, 1: TAG_36h10, 2: TAG_36ARTOOLKIT, 3: TAG_25h9, 4: TAG_25h7, 5: TAG_16h5>]";
-#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+#if (defined(VISP_HAVE_DISPLAY))
       std::cout << " [--display-off]";
 #endif
       std::cout << " [--texture]"
@@ -222,6 +220,12 @@ int main(int argc, const char **argv)
     parser.parse(cam, opt_intrinsic_file, opt_camera_name, vpCameraParameters::perspectiveProjWithoutDistortion);
     camIsInit = true;
   }
+#endif
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display;
+#else
+  vpDisplay *display = nullptr;
 #endif
 
   try {
@@ -270,14 +274,11 @@ int main(int argc, const char **argv)
     std::cout << "  Projection error: " << opt_projection_error_threshold << std::endl;
 
     // Construct display
-    vpDisplay *d = nullptr;
     if (!display_off) {
-#ifdef VISP_HAVE_X11
-      d = new vpDisplayX(I);
-#elif defined(VISP_HAVE_GDI)
-      d = new vpDisplayGDI(I);
-#elif defined(HAVE_OPENCV_HIGHGUI)
-      d = new vpDisplayOpenCV(I);
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+      display = vpDisplayFactory::createDisplay(I);
+#else
+      display = vpDisplayFactory::allocateDisplay(I);
 #endif
     }
 
@@ -366,14 +367,15 @@ int main(int argc, const char **argv)
 
       vpDisplay::flush(I);
     }
-
-    if (!display_off)
-      delete d;
   }
   catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e.getMessage() << std::endl;
   }
 
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (!display_off)
+    delete display;
+#endif
   return EXIT_SUCCESS;
 }
 

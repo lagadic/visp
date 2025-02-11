@@ -12,9 +12,7 @@
 #include <ios>
 
 #include <visp3/detection/vpDetectorAprilTag.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/mbt/vpMbGenericTracker.h>
 #include <visp3/sensor/vpRealSense2.h>
 
@@ -173,7 +171,7 @@ int main(int argc, const char **argv)
   bool opt_use_depth = false;
   double opt_projection_error_threshold = 40.;
 
-#if !(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+#if !(defined(VISP_HAVE_DISPLAY))
   bool display_off = true;
 #else
   bool display_off = false;
@@ -228,6 +226,14 @@ int main(int argc, const char **argv)
   }
 
   createCaoFile(opt_cube_size);
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> d_gray;
+  std::shared_ptr<vpDisplay> d_depth;
+#else
+  vpDisplay *d_gray = nullptr;
+  vpDisplay *d_depth = nullptr;
+#endif
 
   try {
     //! [Construct grabber]
@@ -286,22 +292,15 @@ int main(int argc, const char **argv)
     std::cout << "  Projection error: " << opt_projection_error_threshold << std::endl;
 
     // Construct display
-    vpDisplay *d_gray = nullptr;
-    vpDisplay *d_depth = nullptr;
-
     if (!display_off) {
-#ifdef VISP_HAVE_X11
-      d_gray = new vpDisplayX(I_gray, 50, 50, "Color stream");
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+      d_gray = vpDisplayFactory::createDisplay(I_gray, 50, 50, "Color stream");
       if (opt_use_depth)
-        d_depth = new vpDisplayX(I_depth, 80 + I_gray.getWidth(), 50, "Depth stream");
-#elif defined(VISP_HAVE_GDI)
-      d_gray = new vpDisplayGDI(I_gray);
+        d_depth = vpDisplayFactory::createDisplay(I_depth, 80 + I_gray.getWidth(), 50, "Depth stream");
+#else
+      d_gray = vpDisplayFactory::allocateDisplay(I_gray, 50, 50, "Color stream");
       if (opt_use_depth)
-        d_depth = new vpDisplayGDI(I_depth);
-#elif defined(HAVE_OPENCV_HIGHGUI)
-      d_gray = new vpDisplayOpenCV(I_gray);
-      if (opt_use_depth)
-        d_depth = new vpDisplayOpenCV(I_depth);
+        d_depth = vpDisplayFactory::allocateDisplay(I_depth, 80 + I_gray.getWidth(), 50, "Depth stream");
 #endif
     }
 
@@ -455,16 +454,18 @@ int main(int argc, const char **argv)
         vpDisplay::flush(I_depth);
       }
     }
-
-    if (!display_off) {
-      delete d_gray;
-      if (opt_use_depth)
-        delete d_depth;
-    }
   }
   catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e.getMessage() << std::endl;
   }
+
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (!display_off) {
+    delete d_gray;
+    if (opt_use_depth)
+      delete d_depth;
+  }
+#endif
 
   return EXIT_SUCCESS;
 }
