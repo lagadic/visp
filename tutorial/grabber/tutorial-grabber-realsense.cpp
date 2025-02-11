@@ -2,9 +2,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpXmlParserCamera.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageStorageWorker.h>
 #include <visp3/sensor/vpRealSense.h>
 #include <visp3/sensor/vpRealSense2.h>
@@ -80,6 +78,11 @@ int main(int argc, const char *argv[])
 #if defined(VISP_HAVE_REALSENSE) || defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_THREADS)
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
+#endif
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display;
+#else
+  vpDisplay *display = nullptr;
 #endif
   try {
     std::string opt_seqname;
@@ -177,20 +180,16 @@ int main(int argc, const char *argv[])
       std::cout << "Cannot save camera parameters in " << cam_filename << std::endl;
     }
 
-    vpDisplay *d = nullptr;
     if (opt_display) {
-#if !(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+#if !(defined(VISP_HAVE_DISPLAY))
       std::cout << "No image viewer is available..." << std::endl;
       opt_display = false;
+#else
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+      display = vpDisplayFactory::createDisplay(I);
+#else
+      display = vpDisplayFactory::allocateDisplay(I);
 #endif
-    }
-    if (opt_display) {
-#ifdef VISP_HAVE_X11
-      d = new vpDisplayX(I);
-#elif defined(VISP_HAVE_GDI)
-      d = new vpDisplayGDI(I);
-#elif defined(HAVE_OPENCV_HIGHGUI)
-      d = new vpDisplayOpenCV(I);
 #endif
     }
 
@@ -214,14 +213,15 @@ int main(int argc, const char *argv[])
     }
     image_queue.cancel();
     image_storage_thread.join();
-
-    if (d) {
-      delete d;
-    }
   }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (display != nullptr) {
+    delete display;
+  }
+#endif
 #else
   (void)argc;
   (void)argv;
