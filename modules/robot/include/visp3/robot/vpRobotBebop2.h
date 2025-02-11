@@ -163,7 +163,7 @@ private:
 
 #ifdef VISP_HAVE_FFMPEG
   AVCodecContext *m_codecContext; ///< Codec context for video stream decoding
-  AVPacket m_packet;              ///< Packed used to send data to the decoder
+  AVPacket *m_packet;             ///< Packed used to send data to the decoder
   AVFrame *m_picture;             ///< Frame used to receive data from the decoder
   std::mutex m_bgr_picture_mutex; ///< Mutex to protect m_bgr_picture
   AVFrame *m_bgr_picture;         ///< Frame used to store rescaled frame received from the decoder

@@ -35,6 +35,10 @@
 # FFMPEG_FOUND - system has FFMPEG
 # FFMPEG_INCLUDE_DIRS - the FFMPEG include directory
 # FFMPEG_LIBRARIES - Link these to use FFMPEG
+# FFMPEG_LIBAVCODEC_VERSION
+# FFMPEG_LIBAVFORMAT_VERSION
+# FFMPEG_LIBAVUTIL_VERSION
+# FFMPEG_LIBSWSCALE_VERSION
 #
 #############################################################################
 
@@ -229,27 +233,27 @@ else(MINGW)
   )
 endif(MINGW)
 
-  # FFMpeg depend son Zlib
-  find_package(ZLIB)
-  if(NOT ZLIB_FOUND)
-    find_package(MyZLIB)
-  endif()
+# FFMpeg depend son Zlib
+find_package(ZLIB)
+if(NOT ZLIB_FOUND)
+  find_package(MyZLIB)
+endif()
 
-  # FFMpeg depend son BZip2
-  # with CMake 2.6, the CMake bzip2 package material is named FindBZip2.cmake
-  # while with CMake 2.8, the name is FindBZIP2.cmake
-  # that is why we need to call FIND_PACKAGE(BZip2) and FIND_PACKAGE(BZIP2)
-  find_package(BZIP2 QUIET)
+# FFMpeg depend son BZip2
+# with CMake 2.6, the CMake bzip2 package material is named FindBZip2.cmake
+# while with CMake 2.8, the name is FindBZIP2.cmake
+# that is why we need to call FIND_PACKAGE(BZip2) and FIND_PACKAGE(BZIP2)
+find_package(BZIP2 QUIET)
+# MESSAGE("BZIP2_FOUND: ${BZIP2_FOUND}")
+if(NOT BZIP2_FOUND)
+  find_package(BZip2 QUIET)
   # MESSAGE("BZIP2_FOUND: ${BZIP2_FOUND}")
-  if(NOT BZIP2_FOUND)
-    find_package(BZip2 QUIET)
-    # MESSAGE("BZIP2_FOUND: ${BZIP2_FOUND}")
-  endif()
+endif()
 
-  # FFMpeg may depend also on iconv since probably version 1.1.3 where if detected,
-  # iconv usage is enabled by default
-  find_package(ICONV QUIET)
-  #message("ICONV_FOUND: ${ICONV_FOUND}")
+# FFMpeg may depend also on iconv since probably version 1.1.3 where if detected,
+# iconv usage is enabled by default
+find_package(ICONV QUIET)
+#message("ICONV_FOUND: ${ICONV_FOUND}")
 
 if(FFMPEG_INCLUDE_DIR_AVCODEC AND FFMPEG_INCLUDE_DIR_AVFORMAT AND FFMPEG_INCLUDE_DIR_AVUTIL AND FFMPEG_INCLUDE_DIR_SWSCALE AND FFMPEG_SWSCALE_LIBRARY AND FFMPEG_AVFORMAT_LIBRARY AND FFMPEG_AVCODEC_LIBRARY AND FFMPEG_AVUTIL_LIBRARY AND ZLIB_LIBRARIES AND BZIP2_LIBRARIES)
   set(FFMPEG_FOUND TRUE)
@@ -300,6 +304,40 @@ else()
   set(FFMPEG_FOUND FALSE)
 endif()
 
+if(FFMPEG_FOUND)
+  if(EXISTS "${FFMPEG_INCLUDE_DIR_AVCODEC}/libavcodec/version_major.h")
+    vp_parse_header("${FFMPEG_INCLUDE_DIR_AVCODEC}/libavcodec/version_major.h" LIBAVCODEC_VERSION_LINES LIBAVCODEC_VERSION_MAJOR)
+    vp_parse_header("${FFMPEG_INCLUDE_DIR_AVCODEC}/libavcodec/version.h" LIBAVCODEC_VERSION_LINES LIBAVCODEC_VERSION_MINOR LIBAVCODEC_VERSION_MICRO)
+  else()
+    vp_parse_header("${FFMPEG_INCLUDE_DIR_AVCODEC}/libavcodec/version.h" LIBAVCODEC_VERSION_LINES LIBAVCODEC_VERSION_MAJOR LIBAVCODEC_VERSION_MINOR LIBAVCODEC_VERSION_MICRO)
+  endif()
+  set(FFMPEG_LIBAVCODEC_VERSION "${LIBAVCODEC_VERSION_MAJOR}.${LIBAVCODEC_VERSION_MINOR}.${LIBAVCODEC_VERSION_MICRO}")
+
+  if(EXISTS "${FFMPEG_INCLUDE_DIR_AVCODEC}/libavformat/version_major.h")
+    vp_parse_header("${FFMPEG_INCLUDE_DIR_AVFORMAT}/libavformat/version_major.h" LIBAVFORMAT_VERSION_LINES LIBAVFORMAT_VERSION_MAJOR)
+    vp_parse_header("${FFMPEG_INCLUDE_DIR_AVFORMAT}/libavformat/version.h" LIBAVFORMAT_VERSION_LINES LIBAVFORMAT_VERSION_MINOR LIBAVFORMAT_VERSION_MICRO)
+  else()
+    vp_parse_header("${FFMPEG_INCLUDE_DIR_AVFORMAT}/libavformat/version.h" LIBAVFORMAT_VERSION_LINES LIBAVFORMAT_VERSION_MAJOR LIBAVFORMAT_VERSION_MINOR LIBAVFORMAT_VERSION_MICRO)
+  endif()
+  set(FFMPEG_LIBAVFORMAT_VERSION "${LIBAVFORMAT_VERSION_MAJOR}.${LIBAVFORMAT_VERSION_MINOR}.${LIBAVFORMAT_VERSION_MICRO}")
+
+  if(EXISTS "${FFMPEG_INCLUDE_DIR_AVCODEC}/libavutil/version_major.h")
+    vp_parse_header("${FFMPEG_INCLUDE_DIR_AVUTIL}/libavutil/version_major.h" LIBAVUTIL_VERSION_LINES LIBAVUTIL_VERSION_MAJOR)
+    vp_parse_header("${FFMPEG_INCLUDE_DIR_AVUTIL}/libavutil/version.h" LIBAVUTIL_VERSION_LINES LIBAVUTIL_VERSION_MAJOR LIBAVUTIL_VERSION_MINOR LIBAVUTIL_VERSION_MICRO)
+  else()
+    vp_parse_header("${FFMPEG_INCLUDE_DIR_AVUTIL}/libavutil/version.h" LIBAVUTIL_VERSION_LINES LIBAVUTIL_VERSION_MAJOR LIBAVUTIL_VERSION_MINOR LIBAVUTIL_VERSION_MICRO)
+  endif()
+  set(FFMPEG_LIBAVUTIL_VERSION "${LIBAVUTIL_VERSION_MAJOR}.${LIBAVUTIL_VERSION_MINOR}.${LIBAVUTIL_VERSION_MICRO}")
+
+  if(EXISTS "${FFMPEG_INCLUDE_DIR_AVCODEC}/libswscale/version_major.h")
+    vp_parse_header("${FFMPEG_INCLUDE_DIR_SWSCALE}/libswscale/version_major.h" LIBSWSCALE_VERSION_LINES LIBSWSCALE_VERSION_MAJOR)
+    vp_parse_header("${FFMPEG_INCLUDE_DIR_SWSCALE}/libswscale/version.h" LIBSWSCALE_VERSION_LINES LIBSWSCALE_VERSION_MINOR LIBSWSCALE_VERSION_MICRO)
+  else()
+    vp_parse_header("${FFMPEG_INCLUDE_DIR_SWSCALE}/libswscale/version.h" LIBSWSCALE_VERSION_LINES LIBSWSCALE_VERSION_MAJOR LIBSWSCALE_VERSION_MINOR LIBSWSCALE_VERSION_MICRO)
+  endif()
+  set(FFMPEG_LIBSWSCALE_VERSION "${LIBSWSCALE_VERSION_MAJOR}.${LIBSWSCALE_VERSION_MINOR}.${LIBSWSCALE_VERSION_MICRO}")
+endif()
+
 mark_as_advanced(
   BZIP2_DIR
   FFMPEG_INCLUDE_DIR_AVCODEC
@@ -313,5 +351,8 @@ mark_as_advanced(
   FFMPEG_AVCORE_LIBRARY
   FFMPEG_INCLUDE_DIRS
   FFMPEG_LIBRARIES
+  FFMPEG_LIBAVCODEC_VERSION
+  FFMPEG_LIBAVFORMAT_VERSION
+  FFMPEG_LIBAVUTIL_VERSION
+  FFMPEG_LIBSWSCALE_VERSION
 )
-
