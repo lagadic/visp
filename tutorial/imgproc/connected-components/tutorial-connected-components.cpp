@@ -4,9 +4,7 @@
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
 
 #if defined(VISP_HAVE_MODULE_IMGPROC)
@@ -49,14 +47,11 @@ int main(int argc, const char **argv)
   vpImageIo::read(I, input_filename);
   //! [Read]
 
-#ifdef VISP_HAVE_X11
-  vpDisplayX d, d2;
-#elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI d, d2;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-  vpDisplayOpenCV d, d2;
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display = vpDisplayFactory::createDisplay(I, 0, 0, "Input image");
+#else
+  vpDisplay *display = vpDisplayFactory::allocateDisplay(I, 0, 0, "Input image");
 #endif
-  d.init(I, 0, 0, "Input image");
 
   //! [Connected components]
   vpImage<int> labels;
@@ -77,7 +72,11 @@ int main(int argc, const char **argv)
     }
   }
   //! [Draw connected components]
-  d2.init(I_conn, I.getWidth(), 10, "Connected components");
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display2 = vpDisplayFactory::createDisplay(I_conn, I.getWidth(), 10, "Connected components");
+#else
+  vpDisplay *display2 = vpDisplayFactory::allocateDisplay(I_conn, I.getWidth(), 10, "Connected components");
+#endif
 
   vpDisplay::display(I);
   vpDisplay::display(I_conn);
@@ -85,6 +84,16 @@ int main(int argc, const char **argv)
   vpDisplay::flush(I);
   vpDisplay::flush(I_conn);
   vpDisplay::getClick(I_conn);
+
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (display != nullptr) {
+    delete display;
+  }
+
+  if (display2 != nullptr) {
+    delete display2;
+  }
+#endif
 #else
   (void)argc;
   (void)argv;
