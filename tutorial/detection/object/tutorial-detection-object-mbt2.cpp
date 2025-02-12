@@ -1,9 +1,7 @@
 //! \example tutorial-detection-object-mbt2.cpp
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpIoTools.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpVideoReader.h>
 #include <visp3/mbt/vpMbGenericTracker.h>
 #include <visp3/vision/vpKeyPoint.h>
@@ -12,7 +10,7 @@
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
-#if defined(HAVE_OPENCV_IMGPROC) && \
+#if defined(HAVE_OPENCV_IMGPROC) && defined(VISP_HAVE_DISPLAY) && \
   ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_FEATURES2D)) || \
   ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D) && defined(HAVE_OPENCV_FEATURES))
 
@@ -57,6 +55,12 @@ int main(int argc, char **argv)
   ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
 
   //! [MBT code]
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display, display2;
+#else
+  vpDisplay *display = nullptr;
+  vpDisplay *display2 = nullptr;
+#endif
   try {
     std::string videoname = "cube.mp4";
 
@@ -140,17 +144,6 @@ int main(int argc, char **argv)
 #endif
     //! [Keypoint declaration]
 
-#if defined(VISP_HAVE_X11)
-    vpDisplayX display;
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI display;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV display;
-#else
-    std::cout << "No image viewer is available..." << std::endl;
-    return EXIT_FAILURE;
-#endif
-
     /*
      * Start the part of the code dedicated to object learning from 3 images
      */
@@ -162,7 +155,11 @@ int main(int argc, char **argv)
     for (int i = 0; i < 3; i++) {
       vpImageIo::read(I, imageName[i]);
       if (i == 0) {
-        display.init(I, 10, 10);
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+        display = vpDisplayFactory::createDisplay(I, 10, 10);
+#else
+        display = vpDisplayFactory::allocateDisplay(I, 10, 10);
+#endif
       }
       std::stringstream title;
       title << "Learning cube on image: " << imageName[i];
@@ -234,16 +231,11 @@ int main(int argc, char **argv)
     g.setFileName(videoname);
     g.open(I);
 
-#if defined(VISP_HAVE_X11)
-    vpDisplayX display2;
-#elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK display2;
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI display2;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV display2;
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    display2 = vpDisplayFactory::createDisplay(IMatching, 50, 50, "Display matching between learned and current images");
+#else
+    display2 = vpDisplayFactory::allocateDisplay(IMatching, 50, 50, "Display matching between learned and current images");
 #endif
-    display2.init(IMatching, 50, 50, "Display matching between learned and current images");
     vpDisplay::setTitle(I, "Cube detection and localization");
 
     double error;
@@ -335,6 +327,15 @@ int main(int argc, char **argv)
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (display != nullptr) {
+    delete display;
+  }
+
+  if (display2 != nullptr) {
+    delete display2;
+  }
+#endif
 #else
   (void)argc;
   (void)argv;
@@ -342,4 +343,4 @@ int main(int argc, char **argv)
 #endif
 
   return EXIT_SUCCESS;
-}
+  }

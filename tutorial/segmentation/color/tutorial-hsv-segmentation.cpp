@@ -8,13 +8,13 @@
 #include <visp3/core/vpImageTools.h>
 #include <visp3/core/vpPixelMeterConversion.h>
 #include <visp3/core/vpColorDepthConversion.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpVideoReader.h>
 #include <visp3/sensor/vpRealSense2.h>
 
 int main(int argc, const char *argv[])
 {
-#if defined(VISP_HAVE_X11)
+#if defined(VISP_HAVE_DISPLAY)
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
 #endif
@@ -133,8 +133,13 @@ int main(int argc, const char *argv[])
   vpImage<unsigned char> mask(height, width);
   vpImage<vpRGBa> I_segmented(height, width);
 
-  vpDisplayX d_I(I, 0, 0, "Current frame");
-  vpDisplayX d_I_segmented(I_segmented, I.getWidth()+75, 0, "HSV segmented frame");
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> d_I = vpDisplayFactory::createDisplay(I, 0, 0, "Current frame");
+  std::shared_ptr<vpDisplay> d_I_segmented = vpDisplayFactory::createDisplay(I_segmented, I.getWidth()+75, 0, "HSV segmented frame");
+#else
+  vpDisplay *d_I = vpDisplayFactory::allocateDisplay(I, 0, 0, "Current frame");
+  vpDisplay *d_I_segmented = vpDisplayFactory::allocateDisplay(I_segmented, I.getWidth()+75, 0, "HSV segmented frame");
+#endif
 
   bool quit = false;
   double loop_time = 0., total_loop_time = 0.;
@@ -179,9 +184,19 @@ int main(int argc, const char *argv[])
     nb_iter++;
     loop_time = vpTime::measureTimeMs() - t;
     total_loop_time += loop_time;
-}
+  }
 
   std::cout << "Mean loop time: " << total_loop_time / nb_iter << std::endl;
+
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (d_I != nullptr) {
+    delete d_I;
+}
+
+  if (d_I_segmented != nullptr) {
+    delete d_I_segmented;
+  }
+#endif
 #else
   (void)argc;
   (void)argv;

@@ -4,8 +4,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpIoTools.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
 //! [Include]
 #include <visp3/mbt/vpMbGenericTracker.h>
@@ -218,16 +217,17 @@ int main(int argc, char *argv[])
   vpImageConvert::convert(I_color, I_gray);
   vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
 
-#if defined(VISP_HAVE_X11)
-  vpDisplayX d1, d2;
-#elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI d1, d2;
+#if defined(VISP_HAVE_DISPLAY)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display1 = vpDisplayFactory::createDisplay();
+  std::shared_ptr<vpDisplay> display2 = vpDisplayFactory::createDisplay();
+#else
+  vpDisplay *display1 = vpDisplayFactory::allocateDisplay();
+  vpDisplay *display2 = vpDisplayFactory::allocateDisplay();
 #endif
-
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
   unsigned int _posx = 100, _posy = 50, _posdx = 10;
-  d1.init(I_gray, _posx, _posy, "Color stream");
-  d2.init(I_depth, _posx + I_gray.getWidth() + _posdx, _posy, "Depth stream");
+  display1->init(I_gray, _posx, _posy, "Color stream");
+  display2->init(I_depth, _posx + I_gray.getWidth() + _posdx, _posy, "Depth stream");
 #endif
 
   vpDisplay::display(I_gray);
@@ -408,6 +408,15 @@ int main(int argc, char *argv[])
   catch (const vpException &e) {
     std::cout << "Catch exception: " << e.getStringMessage() << std::endl;
   }
+
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11) && defined(VISP_HAVE_DISPLAY)
+  if (display1 != nullptr) {
+    delete display1;
+  }
+  if (display2 != nullptr) {
+    delete display2;
+  }
+#endif
 
   std::cout << "\nProcessing time, Mean: " << vpMath::getMean(times_vec)
     << " ms ; Median: " << vpMath::getMedian(times_vec) << " ; Std: " << vpMath::getStdev(times_vec) << " ms"

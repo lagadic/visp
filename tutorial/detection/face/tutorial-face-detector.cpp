@@ -1,8 +1,6 @@
 //! \example tutorial-face-detector.cpp
 #include <visp3/core/vpConfig.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 //! [Include]
 #include <visp3/detection/vpDetectorFace.h>
 //! [Include]
@@ -17,6 +15,11 @@ int main(int argc, const char *argv[])
   using namespace VISP_NAMESPACE_NAME;
 #endif
   //! [Macro defined]
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display;
+#else
+  vpDisplay *display = nullptr;
+#endif
   try {
     //! [Default settings]
     std::string opt_face_cascade_name = "./haarcascade_frontalface_alt.xml";
@@ -45,12 +48,10 @@ int main(int argc, const char *argv[])
     g.setFileName(opt_video);
     g.open(I);
 
-#if defined(VISP_HAVE_X11)
-    vpDisplayX d(I);
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI d(I);
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV d(I);
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    display = vpDisplayFactory::createDisplay(I);
+#else
+    display = vpDisplayFactory::allocateDisplay(I);
 #endif
     vpDisplay::setTitle(I, "ViSP viewer");
 
@@ -96,6 +97,11 @@ int main(int argc, const char *argv[])
   catch (const vpException &e) {
     std::cout << e.getMessage() << std::endl;
   }
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (display != nullptr) {
+    delete display;
+  }
+#endif
 #else
 
 #if !defined(HAVE_OPENCV_HIGHGUI)

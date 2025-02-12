@@ -8,9 +8,7 @@
 //! [Include]
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpXmlParserCamera.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/vision/vpPose.h>
 
 int main(int argc, const char **argv)
@@ -32,7 +30,7 @@ int main(int argc, const char **argv)
   unsigned int thickness = 2;
   bool align_frame = false;
 
-#if !(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+#if !(defined(VISP_HAVE_DISPLAY))
   bool display_off = true;
   std::cout << "Warning: There is no 3rd party (X11, GDI or openCV) to display images..." << std::endl;
 #else
@@ -90,6 +88,14 @@ int main(int argc, const char **argv)
     }
   }
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> d1, d2, d3;
+#else
+  vpDisplay *d1 = nullptr;
+  vpDisplay *d2 = nullptr;
+  vpDisplay *d3 = nullptr;
+#endif
+
   try {
     //! [Construct grabber]
     std::cout << "Use Occipital Structure grabber" << std::endl;
@@ -127,22 +133,15 @@ int main(int argc, const char **argv)
     vpImage<float> depthMap;
     vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
 
-    vpDisplay *d1 = nullptr;
-    vpDisplay *d2 = nullptr;
-    vpDisplay *d3 = nullptr;
     if (!display_off) {
-#ifdef VISP_HAVE_X11
-      d1 = new vpDisplayX(I_color, 100, 30, "Pose from Homography");
-      d2 = new vpDisplayX(I_color2, I_color.getWidth() + 120, 30, "Pose from RGBD fusion");
-      d3 = new vpDisplayX(I_depth, 100, I_color.getHeight() + 70, "Depth");
-#elif defined(VISP_HAVE_GDI)
-      d1 = new vpDisplayGDI(I_color, 100, 30, "Pose from Homography");
-      d2 = new vpDisplayGDI(I_color2, I_color.getWidth() + 120, 30, "Pose from RGBD fusion");
-      d3 = new vpDisplayGDI(I_depth, 100, I_color.getHeight() + 70, "Depth");
-#elif defined(HAVE_OPENCV_HIGHGUI)
-      d1 = new vpDisplayOpenCV(I_color, 100, 30, "Pose from Homography");
-      d2 = new vpDisplayOpenCV(I_color2, I_color.getWidth() + 120, 30, "Pose from RGBD fusion");
-      d3 = new vpDisplayOpenCV(I_depth, 100, I_color.getHeight() + 70, "Depth");
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+      d1 = vpDisplayFactory::createDisplay(I_color, 100, 30, "Pose from Homography");
+      d2 = vpDisplayFactory::createDisplay(I_color2, I_color.getWidth() + 120, 30, "Pose from RGBD fusion");
+      d3 = vpDisplayFactory::createDisplay(I_depth, 100, I_color.getHeight() + 70, "Depth");
+#else
+      d1 = vpDisplayFactory::allocateDisplay(I_color, 100, 30, "Pose from Homography");
+      d2 = vpDisplayFactory::allocateDisplay(I_color2, I_color.getWidth() + 120, 30, "Pose from RGBD fusion");
+      d3 = vpDisplayFactory::allocateDisplay(I_depth, 100, I_color.getHeight() + 70, "Depth");
 #endif
     }
 
@@ -247,17 +246,23 @@ int main(int argc, const char **argv)
     std::cout << "Mean / Median / Std: " << vpMath::getMean(time_vec) << " ms"
       << " ; " << vpMath::getMedian(time_vec) << " ms"
       << " ; " << vpMath::getStdev(time_vec) << " ms" << std::endl;
-
-    if (!display_off) {
-      delete d1;
-      delete d2;
-      delete d3;
-    }
-
   }
   catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e.getMessage() << std::endl;
   }
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (!display_off) {
+    if (d1 != nullptr) {
+      delete d1;
+    }
+    if (d2 != nullptr) {
+      delete d2;
+    }
+    if (d3 != nullptr) {
+      delete d3;
+    }
+}
+#endif
 
   return EXIT_SUCCESS;
 #else

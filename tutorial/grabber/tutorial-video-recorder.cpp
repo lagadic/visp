@@ -16,7 +16,6 @@
 
 #include <visp3/core/vpTime.h>
 #include <visp3/gui/vpDisplayFactory.h>
-#include <visp3/gui/vpDisplayX.h>
 #include <visp3/io/vpVideoWriter.h>
 #include <visp3/sensor/vpV4l2Grabber.h>
 
@@ -97,8 +96,7 @@ int main(int argc, const char *argv[])
     std::cout << "Image size: " << I.getWidth() << " " << I.getHeight() << std::endl;
 
 #if defined(VISP_HAVE_DISPLAY)
-    vpDisplay *d = vpDisplayFactory::allocateDisplay();
-    d->init(I, 0, 0, "Camera view");
+    vpDisplay *d = vpDisplayFactory::allocateDisplay(I, 0, 0, "Camera view");
 #endif
     vpVideoWriter writer;
 

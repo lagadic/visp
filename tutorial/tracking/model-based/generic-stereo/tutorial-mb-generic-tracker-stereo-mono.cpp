@@ -2,9 +2,7 @@
 #include <cstdlib>
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpIoTools.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
 //! [Include]
 #include <visp3/mbt/vpMbGenericTracker.h>
@@ -16,6 +14,12 @@ int main(int argc, char **argv)
 #if defined(VISP_HAVE_OPENCV)
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
+#endif
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display;
+#else
+  vpDisplay *display = nullptr;
 #endif
 
   try {
@@ -64,15 +68,6 @@ int main(int argc, char **argv)
     vpVideoReader g;
     g.setFileName(opt_videoname);
     g.open(I);
-
-#if defined(VISP_HAVE_X11)
-    vpDisplayX display;
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI display;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV display;
-#endif
-    display.init(I, 100, 100, "Model-based tracker");
 
     //! [Constructor]
     vpMbGenericTracker tracker(1, opt_tracker);
@@ -132,6 +127,12 @@ int main(int argc, char **argv)
 #endif
     //! [Set parameters]
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    display = vpDisplayFactory::createDisplay(I, 100, 100, "Model-based tracker");
+#else
+    display = vpDisplayFactory::allocateDisplay(I, 100, 100, "Model-based tracker");
+#endif
+
     //! [Load cao]
     tracker.loadModel(objectname + ".cao");
     //! [Load cao]
@@ -171,6 +172,12 @@ int main(int argc, char **argv)
     std::cerr << "Catch a ViSP exception: " << e.what() << std::endl;
   }
 
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (display != nullptr) {
+    delete display;
+  }
+#endif
+
   return EXIT_SUCCESS;
 #else
   (void)argc;
@@ -178,4 +185,4 @@ int main(int argc, char **argv)
   std::cout << "Install OpenCV and rebuild ViSP to use this example." << std::endl;
   return EXIT_SUCCESS;
 #endif
-}
+  }

@@ -25,9 +25,7 @@
 #include <visp3/sensor/vpV4l2Grabber.h>
 #endif
 
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/me/vpMeEllipse.h>
 
 #if (VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)
@@ -41,6 +39,13 @@ int main()
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
 #endif
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display;
+#else
+  vpDisplay *display = nullptr;
+#endif
+
   try {
     vpImage<unsigned char> I;
     int opt_device = 0; // For OpenCV and V4l2 grabber to set the camera device
@@ -99,12 +104,12 @@ int main()
     vpImageConvert::convert(frame, I);
 #endif
 
-#if defined(VISP_HAVE_X11)
-    vpDisplayX d(I, 0, 0, "Camera view");
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI d(I, 0, 0, "Camera view");
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV d(I, 0, 0, "Camera view");
+#if defined(VISP_HAVE_DISPLAY)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    display = vpDisplayFactory::createDisplay(I, 0, 0, "Camera view");
+#else
+    display = vpDisplayFactory::allocateDisplay(I, 0, 0, "Camera view");
+#endif
 #else
     std::cout << "No image viewer is available..." << std::endl;
 #endif
@@ -146,6 +151,11 @@ int main()
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (display != nullptr) {
+    delete display;
+  }
+#endif
 }
 
 #else
@@ -160,5 +170,5 @@ int main()
   std::cout << "Install OpenCV 3rd party, configure and build ViSP again to use this tutorial." << std::endl;
 #endif
   return EXIT_SUCCESS;
-}
+  }
 #endif

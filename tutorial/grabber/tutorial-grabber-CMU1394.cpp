@@ -1,7 +1,7 @@
 /*! \example tutorial-grabber-CMU1394.cpp */
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/sensor/vp1394CMUGrabber.h>
 
 int main()
@@ -9,6 +9,11 @@ int main()
 #ifdef VISP_HAVE_CMU1394
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
+#endif
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display;
+#else
+  vpDisplay *display = nullptr;
 #endif
   try {
     vpImage<unsigned char> I;
@@ -22,8 +27,12 @@ int main()
 
     std::cout << "Image size: " << I.getWidth() << " " << I.getHeight() << std::endl;
 
-#ifdef VISP_HAVE_GDI
-    vpDisplayGDI d(I);
+#ifdef VISP_HAVE_DISPLAY
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    display = vpDisplayFactory::createDisplay(I);
+#else
+    display = vpDisplayFactory::allocateDisplay(I);
+#endif
 #else
     std::cout << "No image viewer is available..." << std::endl;
 #endif
@@ -39,6 +48,12 @@ int main()
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
+
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (display != nullptr) {
+    delete display;
+  }
+#endif
 #else
   std::cout << "Install CMU1394 SDK, configure and build ViSP again to use this example" << std::endl;
 #endif

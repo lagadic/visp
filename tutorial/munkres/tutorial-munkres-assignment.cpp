@@ -4,11 +4,7 @@
 
 #include <visp3/core/vpConfig.h>
 // Display
-#include <visp3/gui/vpDisplayD3D.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 
 #include <visp3/core/vpColor.h>
 
@@ -39,24 +35,15 @@ int main()
   }
   //! [Rand_Img_Pts]
 
-  try {
-    // Init display
-    const auto disp_scale_type = vpDisplay::SCALE_AUTO;
-#if defined(VISP_HAVE_X11)
-    vpDisplayX d(I, disp_scale_type);
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI d(I, disp_scale_type);
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV d(I, disp_scale_type);
-#elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK d(I, disp_scale_type);
-#elif defined(VISP_HAVE_D3D9)
-    vpDisplayD3D d(I, disp_scale_type);
+  // Init display
+  const auto disp_scale_type = vpDisplay::SCALE_AUTO;
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display = vpDisplayFactory::createDisplay(I, disp_scale_type);
 #else
-    std::cout << "No image viewer is available..." << std::endl;
+  vpDisplay *display = vpDisplayFactory::allocateDisplay(I, disp_scale_type);
 #endif
-    vpDisplay::setTitle(I, "Munkres Assignment Algorithm");
-
+  vpDisplay::setTitle(I, "Munkres Assignment Algorithm");
+  try {
     // Local helper to display a point in the image
     auto display_point = [&I](const vpImagePoint &ip, const vpColor &color) {
       I.display->displayCircle(ip, 5, color, true, 1);
@@ -83,6 +70,11 @@ int main()
         user_ips.push_back(ip);
       }
       else if (button == vpMouseButton::button3) {
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11) && defined(VISP_HAVE_DISPLAY)
+        if (display != nullptr) {
+          delete display;
+        }
+#endif
         return EXIT_SUCCESS;
       }
 
@@ -121,6 +113,12 @@ int main()
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
+
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11) && defined(VISP_HAVE_DISPLAY)
+  if (display != nullptr) {
+    delete display;
+  }
+#endif
 #endif // defined(VISP_HAVE_DISPLAY)
 #endif
   return EXIT_SUCCESS;

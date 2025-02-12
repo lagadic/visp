@@ -315,7 +315,7 @@ int main(int argc, const char **argv)
     if (opt_method == "pca") {
       vpUniRand random(17);
       std::cout << "Building image database for PCA computation with " << opt_numDbImages << " images" << std::endl;
-#if defined(VISP_HAVE_MODULE_GUI)
+#if defined(VISP_HAVE_DISPLAY)
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
       std::shared_ptr<vpDisplay> d = vpDisplayFactory::createDisplay();
 #else
@@ -371,25 +371,23 @@ int main(int argc, const char **argv)
     sim.setCameraPosition(cdMo);
     sim.getImage(I, cam); // and aquire the image Id
     Id = I;
-#if defined(VISP_HAVE_MODULE_GUI)
-    // display the image
+
+#if defined(VISP_HAVE_DISPLAY)
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     std::shared_ptr<vpDisplay> d = vpDisplayFactory::createDisplay();
 #else
     d = vpDisplayFactory::allocateDisplay();
 #endif
-
-#if defined(VISP_HAVE_DISPLAY)
     if (opt_display) {
+      // display the image
       d->init(I, 20, 10, "Current image");
       vpDisplay::display(I);
       vpDisplay::flush(I);
+      if (opt_click_allowed) {
+        std::cout << "Click in the image to continue..." << std::endl;
+        vpDisplay::getClick(I);
+      }
     }
-    if (opt_display && opt_click_allowed) {
-      std::cout << "Click in the image to continue..." << std::endl;
-      vpDisplay::getClick(I);
-    }
-#endif
 #endif
 
     // ----------------------------------------------------------
@@ -407,7 +405,7 @@ int main(int argc, const char **argv)
     I = 0u;
     sim.getImage(I, cam); // and aquire the image Id
 
-#if defined(VISP_HAVE_MODULE_GUI) && defined(VISP_HAVE_DISPLAY)
+#if defined(VISP_HAVE_DISPLAY)
     if (opt_display) {
       vpDisplay::display(I);
       vpDisplay::flush(I);
@@ -517,7 +515,7 @@ int main(int argc, const char **argv)
       std::cout << " |e| = " << normError << std::endl;
       std::cout << " |v| = " << sqrt(v.sumSquare()) << std::endl;
 
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK)
+#if defined(VISP_HAVE_DISPLAY)
       if (opt_display) {
         vpDisplay::display(I);
         vpDisplay::flush(I);

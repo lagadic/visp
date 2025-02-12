@@ -1,8 +1,6 @@
 /*! \example tutorial-ibvs-4pts-image-tracking.cpp */
 #include <visp3/core/vpConfig.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/robot/vpImageSimulator.h>
 #include <visp3/robot/vpSimulatorCamera.h>
@@ -13,8 +11,6 @@
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;
 #endif
-
-void display_trajectory(const vpImage<unsigned char> &I, const std::vector<vpDot2> &dot);
 
 /*!
   Given an image of a target, this class provided virtual
@@ -94,7 +90,12 @@ void display_trajectory(const vpImage<unsigned char> &I, const std::vector<vpDot
 
 int main()
 {
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
+#if defined(VISP_HAVE_DISPLAY)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display;
+#else
+  vpDisplay *display = nullptr;
+#endif
   try {
     vpHomogeneousMatrix cdMo(0, 0, 0.75, 0, 0, 0);
     vpHomogeneousMatrix cMo(0.15, -0.1, 1., vpMath::rad(10), vpMath::rad(-10), vpMath::rad(50));
@@ -116,14 +117,10 @@ int main()
     vpVirtualGrabber g("./target_square.pgm", cam);
     g.acquire(I, cMo);
 
-#if defined(VISP_HAVE_X11)
-    vpDisplayX d(I, 0, 0, "Current camera view");
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI d(I, 0, 0, "Current camera view");
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV d(I, 0, 0, "Current camera view");
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    display = vpDisplayFactory::createDisplay(I, 0, 0, "Current camera view");
 #else
-    std::cout << "No image viewer is available..." << std::endl;
+    display = vpDisplayFactory::allocateDisplay(I, 0, 0, "Current camera view");
 #endif
 
     vpDisplay::display(I);
@@ -185,5 +182,10 @@ int main()
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (display != nullptr) {
+    delete display;
+  }
+#endif
 #endif
 }

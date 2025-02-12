@@ -4,7 +4,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(HAVE_OPENCV_HIGHGUI) && defined(VISP_HAVE_X11)
+#if defined(HAVE_OPENCV_HIGHGUI) && defined(VISP_HAVE_DISPLAY)
 #include <vector>
 
 #include <opencv2/highgui/highgui.hpp>
@@ -13,7 +13,7 @@
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpImageTools.h>
 #include <visp3/core/vpIoTools.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/sensor/vpRealSense2.h>
 
@@ -212,8 +212,13 @@ int main(int argc, const char *argv[])
   vpImage<unsigned char> mask(height, width);
   vpImage<vpRGBa> I_segmented(height, width);
 
-  vpDisplayX d_I(I, 0, 0, "Current frame");
-  vpDisplayX d_I_segmented(I_segmented, I.getWidth()+75, 0, "Segmented frame");
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> d_I = vpDisplayFactory::createDisplay(I, 0, 0, "Current frame");
+  std::shared_ptr<vpDisplay> d_I_segmented = vpDisplayFactory::createDisplay(I_segmented, I.getWidth()+75, 0, "Segmented frame");
+#else
+  vpDisplay *d_I = vpDisplayFactory::allocateDisplay(I, 0, 0, "Current frame");
+  vpDisplay *d_I_segmented = vpDisplayFactory::allocateDisplay(I_segmented, I.getWidth()+75, 0, "Segmented frame");
+#endif
   bool quit = false;
 
   while (!quit) {
@@ -320,6 +325,15 @@ int main(int argc, const char *argv[])
     vpDisplay::flush(I_segmented);
     cv::waitKey(10); // To display trackbar
   }
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (d_I != nullptr) {
+    delete d_I;
+  }
+
+  if (d_I_segmented != nullptr) {
+    delete d_I_segmented;
+  }
+#endif
   return EXIT_SUCCESS;
 }
 

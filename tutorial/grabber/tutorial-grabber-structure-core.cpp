@@ -1,9 +1,7 @@
 /*! \example tutorial-grabber-structure-core.cpp */
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageStorageWorker.h>
 #include <visp3/sensor/vpOccipitalStructure.h>
 
@@ -76,6 +74,13 @@ int main(int argc, const char *argv[])
 #if defined(VISP_HAVE_OCCIPITAL_STRUCTURE) && defined(VISP_HAVE_THREADS)
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
+#endif
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display_visible;
+  std::shared_ptr<vpDisplay> display_depth;
+#else
+  vpDisplay *display_visible = nullptr;
+  vpDisplay *display_depth = nullptr;
 #endif
   try {
     std::string opt_seqname_visible = "visible-%04d.png", opt_seqname_depth = "depth-%04d.png";
@@ -159,23 +164,18 @@ int main(int argc, const char *argv[])
       I_depth = vpImage<vpRGBa>(g.getHeight(vpOccipitalStructure::depth), g.getWidth(vpOccipitalStructure::depth));
       I_depth_raw = vpImage<float>(g.getHeight(vpOccipitalStructure::depth), g.getWidth(vpOccipitalStructure::depth));
 
-      vpDisplay *display_visible = nullptr, *display_depth = nullptr;
       if (opt_display) {
-#if !(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+#if !(defined(VISP_HAVE_DISPLAY))
         std::cout << "No image viewer is available..." << std::endl;
         opt_display = false;
+#else
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+        display_visible = vpDisplayFactory::createDisplay(I_color, 10, 10, "Visible image");
+        display_depth = vpDisplayFactory::createDisplay(I_depth, 10 + I_color.getWidth(), 10, "Depth image");
+#else
+        display_visible = vpDisplayFactory::allocateDisplay(I_color, 10, 10, "Visible image");
+        display_depth = vpDisplayFactory::allocateDisplay(I_depth, 10 + I_color.getWidth(), 10, "Depth image");
 #endif
-      }
-      if (opt_display) {
-#ifdef VISP_HAVE_X11
-        display_visible = new vpDisplayX(I_color, 10, 10, "Visible image");
-        display_depth = new vpDisplayX(I_depth, 10 + I_color.getWidth(), 10, "Depth image");
-#elif defined(VISP_HAVE_GDI)
-        display_visible = new vpDisplayGDI(I_color, 10, 10, "Visible image");
-        display_depth = new vpDisplayGDI(I_depth, 10 + I_color.getWidth(), 10, "Depth image");
-#elif defined(HAVE_OPENCV_HIGHGUI)
-        display_visible = new vpDisplayOpenCV(I_color, 10, 10, "Visible image");
-        display_depth = new vpDisplayOpenCV(I_depth, 10 + I_color.getWidth(), 10, "Depth image");
 #endif
       }
 
@@ -213,18 +213,19 @@ int main(int argc, const char *argv[])
       image_queue_depth.cancel();
       image_visible_storage_thread.join();
       image_depth_storage_thread.join();
-
-      if (display_visible) {
-        delete display_visible;
-      }
-      if (display_depth) {
-        delete display_depth;
-      }
     }
   }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (display_visible != nullptr) {
+    delete display_visible;
+  }
+  if (display_depth != nullptr) {
+    delete display_depth;
+  }
+#endif
 #else
   (void)argc;
   (void)argv;

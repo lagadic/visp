@@ -4,12 +4,10 @@
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
 
-#if defined(VISP_HAVE_MODULE_IMGPROC) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+#if defined(VISP_HAVE_MODULE_IMGPROC) && defined(VISP_HAVE_DISPLAY)
 //! [Include]
 #include <visp3/imgproc/vpImgproc.h>
 //! [Include]
@@ -56,7 +54,7 @@ void drawContoursTree(vpImage<vpRGBa> &I, const VISP_NAMESPACE_NAME::vpContour &
 int main(int argc, const char **argv)
 {
 //! [Macro defined]
-#if defined(VISP_HAVE_MODULE_IMGPROC) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+#if defined(VISP_HAVE_MODULE_IMGPROC) && defined(VISP_HAVE_DISPLAY)
   //! [Macro defined]
   //!
   std::string input_filename = "grid36-03.pgm";
@@ -92,15 +90,13 @@ int main(int argc, const char **argv)
 
   vpImage<vpRGBa> I_draw_contours(I.getHeight(), I.getWidth());
 
-#ifdef VISP_HAVE_X11
-  vpDisplayX d, d2;
-#elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI d, d2;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-  vpDisplayOpenCV d, d2;
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display = vpDisplayFactory::createDisplay(I_bin, 0, 0, "After binarisation");
+  std::shared_ptr<vpDisplay> display2 = vpDisplayFactory::createDisplay(I_draw_contours, I_bin.getWidth(), 10, "Contours");
+#else
+  vpDisplay *display = vpDisplayFactory::allocateDisplay(I_bin, 0, 0, "After binarisation");
+  vpDisplay *display2 = vpDisplayFactory::allocateDisplay(I_draw_contours, I_bin.getWidth(), 10, "Contours");
 #endif
-  d.init(I_bin, 0, 0, "After binarisation");
-  d2.init(I_draw_contours, I_bin.getWidth(), 10, "Contours");
 
   //! [Otsu]
   VISP_NAMESPACE_NAME::autoThreshold(I, VISP_NAMESPACE_NAME::AUTO_THRESHOLD_OTSU, white_foreground ? 0 : 1, white_foreground ? 1 : 0);
@@ -140,6 +136,16 @@ int main(int argc, const char **argv)
   vpDisplay::flush(I_bin);
   vpDisplay::flush(I_draw_contours);
   vpDisplay::getClick(I_draw_contours);
+
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11) && defined(VISP_HAVE_DISPLAY)
+  if (display != nullptr) {
+    delete display;
+  }
+
+  if (display2 != nullptr) {
+    delete display2;
+  }
+#endif
 #else
   (void)argc;
   (void)argv;

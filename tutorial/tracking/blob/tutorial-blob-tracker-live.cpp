@@ -14,7 +14,7 @@
 // #undef HAVE_OPENCV_VIDEOIO
 //! [Undef grabber]
 
-#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)) && \
+#if defined(VISP_HAVE_DISPLAY) && \
     (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || \
      defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2) || \
      ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)))
@@ -27,9 +27,7 @@
 #include <visp3/sensor/vpV4l2Grabber.h>
 #endif
 #include <visp3/blob/vpDot2.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 
 #if (VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)
 #include <opencv2/highgui/highgui.hpp> // for cv::VideoCapture
@@ -91,12 +89,10 @@ int main()
   vpImageConvert::convert(frame, I);
 #endif
 
-#if defined(VISP_HAVE_X11)
-  vpDisplayX d(I, 0, 0, "Camera view");
-#elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI d(I, 0, 0, "Camera view");
-#elif defined(HAVE_OPENCV_HIGHGUI)
-  vpDisplayOpenCV d(I, 0, 0, "Camera view");
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display = vpDisplayFactory::createDisplay(I, 0, 0, "Camera view");
+#else
+  vpDisplay *display = vpDisplayFactory::allocateDisplay(I, 0, 0, "Camera view");
 #endif
 
   //! [Construction]
@@ -154,6 +150,12 @@ int main()
       init_done = false;
     }
   }
+
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (display != nullptr) {
+    delete display;
+  }
+#endif
 }
 
 #else

@@ -224,7 +224,7 @@ red lines with 2 as thickness, and finally to display the object frame at the es
 meters long. Using vpColor::none indicates that x-axis is displayed in red, y-axis in green, while z-axis in blue. The thickness of the axis is 3.
 \snippet tutorial-mb-generic-tracker.cpp Display
 
-The last lines are here to free the memory allocated for the display and tracker:
+The last line is here to free the memory allocated for the display if the C++ standard is C++98:
 \snippet tutorial-mb-generic-tracker.cpp Cleanup
 
 \section mb_generic_model Tracker CAD model
