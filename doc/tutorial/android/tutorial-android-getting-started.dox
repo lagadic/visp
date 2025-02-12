@@ -19,6 +19,9 @@ folder.
 
 For this section, Android Studio `Ladybug Feature Drop | 2024....` has been used.
 
+We highly recommend to follow the steps presented in \ref android-gs-build-recent-import if you want to have the example
+located in `samples/android` quickly built and running.
+
 \subsubsection android-gs-build-recent-import Importing samples project
 
 When you ran `build.py` script, a folder `ViSP-android-sdk` has been created in the root folder of the build folder
@@ -27,10 +30,83 @@ of ViSP.
 In this folder, you should find as many folders as ABI targets you have compiled ViSP for. To work with Android emulator,
 you will need to use the `x86_64` folder.
 
-\subsubsection android-gs-build-recent-scratch Importing samples project
+In the welcoming window of Android Studio, click on `Import project`.
+
+\image html 01-welcome-screen.png width=75%
+
+Then, in the explorator that opens, navigates until you find the `samples` folder in the ABI folder you want
+to use.
+
+\image html 02-import.png
+
+The project is now ready to build and run. It will be explained in the \ref android-gs-build-recent-running section
+
+\subsubsection android-gs-build-recent-scratch Creating a project from scratch
+
+When clicking on `New project`, select in the `Templates` section `Phone and Tablet`. Then, choose `Empty Views Activity`:
+
+\image html 01-applichoice.png
+
+Give a name to the application. We suggest to choose `ApriltagDetection` as the Java files of the sample application use it
+for the Java package naming.
+
+Be sure to select `Java` as the language and `Groovy DSL (build.gradle)` for the `Build configuration language`.
+Select the `Minimum SDK` as `API 24`:
+
+\image html 02-language-choice.png
+
+Edit the `build.gradle` file of the applicatio in order to add `implementation project("visp")` in the `dependencies`
+section.
+
+\image html 03-editing-build.png
+
+Copy the `sdk` folder located in `ViSP-android-sdk/${YOUR_ABI}` at the root of the project folder, at the same level
+than `app`.
+
+\image html 04-copy-location.png
+
+Edit the `settings.gradle` file at the root of the project in order to add the `:visp` project, indicating that its
+sources are located in the `sdk` folder:
+
+\image html 05-editing-global.png
+
+Copy the shared libraries located in the `sdk/native/libs/${YOUR_ABI}` folder in the folder `app/src/main/jniLibs/${YOUR_ABI}`.
+
+Copy also the static libraries located in the `sdk/native/staticlibs/${YOUR_ABI}` folder in the folder `app/src/main/jniLibs/${YOUR_ABI}`.
+
+Finally, copy the files located in the `ViSP-android-sdk/${YOUR_ABI}/samples/app/src/main/java/com/example/apriltagdetection/`
+in the `app/src/main/java/com/example/apriltagdetection/` of the project and the folders located in the
+`ViSP-android-sdk/${YOUR_ABI}/samples/app/src/main/res`
+in the `app/src/main/res` folder.
+
+\subsubsection android-gs-build-recent-running Building and running the app in a simulator
+
+First, click on the button to make appear the menus of Android Studio. On the version used for this tutorial, it
+is on the very top left of the Android Studio window.
+
+\image html 01-clicking-main.png
+
+Then, click on the `Run` section and then on `Run...`. Unfortunately, we cannot take a screenshot while selecting the
+menus, so you will have to find it on your own.
+
+Then, in the window that appears, click on the three vertically-aligned dots close to the `app` item:
+
+\image html 02-selecting-app.png
+
+Click on `Edit...` to open a new menu:
+
+\image html 03-selecting-edit.png
+
+In the `Launch Options` section of the new window, select `Specified Activity` in the `Launch` section.
+Then, in the `Activity` section, click on the three dots and then choose `Camera Preview Activity`.
+
+\image html 04-selecting-activity.png
+
+Finally, click on `Apply` and then `Run`. If you use a simulator, a pannel should appear on the right-hand side
+of Android Studio and display a simulated Android device.
 
 \subsection android-gs-build-deprecated On old Android Studio
-\subsection android-gs-build-deprecated-scratch Create an Android Project
+\subsubsection android-gs-build-deprecated-scratch Create an Android Project
 If you're new to app development using Android Studio, we'll recommend <a href="https://developer.android.com/training/basics/firstapp/">this tutorial</a> for getting acquainted to it.
 Following <a href="https://developer.android.com/training/basics/firstapp/creating-project">this tutorial</a> create an Android Project with an `Empty Activity`. Make sure to keep minSdkVersion >= 21, since the SDK is not compatible with older versions. You're app's `build.gradle` file should look like:
 \code
@@ -72,7 +148,7 @@ public class MainActivity{
 }
 \endcode
 
-\section android-gs-code-camera Begin Camera Preview
+\subsection android-gs-code-camera Begin Camera Preview
 Before you begin scanning, you need to ask user for Camera Permissions. Firstly in your manifest file, you need to include
 \code
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
@@ -132,7 +208,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 }
 \endcode
 
-\section android-gs-code-start-camera Starting Camera Preview
+\subsection android-gs-code-start-camera Starting Camera Preview
 Now create a new activity `CameraPreview.java`. This will call the camera API. The incident image is recieved as a byte array which can be easily manipulated for our purposes. We can render the resultant image as Java Bitmap in an `ImageView` element. In brief,
 \code
 public class CameraPreviewActivity extends AppCompatActivity {
@@ -275,7 +351,7 @@ public class CameraPreviewActivity extends AppCompatActivity {
 
 Note the inversion in `updateResult` method. Visp in C++ accepts image as sequence of `RGBA` values but Java Bitmap process them as `ARGB`.
 
-\section android-gs-further-development Further Image manipulation
+\subsection android-gs-further-development Further Image manipulation
 In this tutorial, we've developed a bare bones tag detection app. We can use <a href="https://developer.android.com/guide/topics/graphics/opengl">OpenGL for Android</a> to manipulate the image (for instance, drawing a 3D arrow on the tags) using the list of `VpHomogeneous` matrices.
 You can find the complete source code of above Android App <a href="https://github.com/AKS1996/GSOC-Prep/tree/master/visp-android-demos/AprilTagDetection">here</a>.
 
