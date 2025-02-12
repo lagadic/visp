@@ -155,7 +155,7 @@ int main(int argc, const char **argv)
 #endif
 
   for (int i = 1; i < argc; i++) {
-    if (std::string(argv[i]) == "--tag_size" && i + 1 < argc) {
+    if (std::string(argv[i]) == "--tag-size" && i + 1 < argc) {
       opt_tag_size = atof(argv[i + 1]);
     }
     else if (std::string(argv[i]) == "--input" && i + 1 < argc) {

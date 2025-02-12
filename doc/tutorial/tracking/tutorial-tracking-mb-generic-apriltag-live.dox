@@ -130,11 +130,11 @@ $ ./tutorial-mb-generic-tracker-apriltag-webcam --cube-size 0.20
 \endcode
 - The AprilTag size is 0.08 by 0.08 meters. To change the tag size to let say 0.10 meter square, use:
 \code
-$ ./tutorial-mb-generic-tracker-apriltag-webcam --tag_size 0.10
+$ ./tutorial-mb-generic-tracker-apriltag-webcam --tag-size 0.10
 \endcode
 - The AprilTag detection of quads is set to 1.0 by default. You can change it to 2 to speed up the detection using:
 \code
-$ ./tutorial-mb-generic-tracker-apriltag-webcam --quad_decimate 2
+$ ./tutorial-mb-generic-tracker-apriltag-webcam --quad-decimate 2
 \endcode
 - The AprilTag default number of threads used is 1. To increase the number of threads used during detection to 2, run:
 \code
@@ -143,7 +143,7 @@ $ ./tutorial-mb-generic-tracker-apriltag-webcam --nthreads 2
 - The AprilTag default tag family is 36h11. It is possible to use other tags specifying the tag id (0 to 5):
   0=TAG_36h11, 1=TAG_36h10, 2=TAG_36ARTOOLKIT, 3=TAG_25h9, 4=TAG_25h7, 5=TAG_16h5). To use tag family 36h10, run:
 \code
-$ ./tutorial-mb-generic-tracker-apriltag-webcam --tag_family 1
+$ ./tutorial-mb-generic-tracker-apriltag-webcam --tag-family 1
 \endcode
 - The default camera parameters used are: px=600, py=600, and principal point is set at image center. To specify
   your own parameters, you can provide for example a `camera.xml` parameters file with a camera named `myCam` in it,
@@ -154,7 +154,7 @@ $ ./tutorial-mb-generic-tracker-apriltag-webcam --intrinsic camera.xml --camera_
 See \ref tutorial-calibration-intrinsic to see how to generate `camera.xml` file by calibration your camera.
 - The display is turned on by default, but you can disable it with:
 \code
-$ ./tutorial-mb-generic-tracker-apriltag-webcam --display_off
+$ ./tutorial-mb-generic-tracker-apriltag-webcam --display-off
 \endcode
 - Tracking failure detection is achieved thresholding the projection error indicator provided by the tracker.
   The default value of this threshold is set to 40 degrees. To decrease this threshold to 30 degrees (meaning that we
@@ -228,11 +228,11 @@ $ ./tutorial-mb-generic-tracker-apriltag-rs2 --cube-size 0.20
 \endcode
 - The AprilTag size is 0.08 by 0.08 meters. To change the tag size to let say 0.10 meter square, use:
 \code
-$ ./tutorial-mb-generic-tracker-apriltag-rs2 --tag_size 0.10
+$ ./tutorial-mb-generic-tracker-apriltag-rs2 --tag-size 0.10
 \endcode
 - The AprilTag detection of quads is set to 1.0 by default. You can change it to 2 to speed up the detection using:
 \code
-$ ./tutorial-mb-generic-tracker-apriltag-rs2 --quad_decimate 2
+$ ./tutorial-mb-generic-tracker-apriltag-rs2 --quad-decimate 2
 \endcode
 - The AprilTag default number of threads used is 1. To increase the number of threads used during detection to 2, run:
 \code
@@ -241,11 +241,11 @@ $ ./tutorial-mb-generic-tracker-apriltag-rs2 --nthreads 2
 - The AprilTag default tag family is 36h11. It is possible to use other tags specifying the tag id (0 to 5):
   0=TAG_36h11, 1=TAG_36h10, 2=TAG_36ARTOOLKIT, 3=TAG_25h9, 4=TAG_25h7, 5=TAG_16h5). To use tag family 36h10, run:
 \code
-$ ./tutorial-mb-generic-tracker-apriltag-rs2 --tag_family 1
+$ ./tutorial-mb-generic-tracker-apriltag-rs2 --tag-family 1
 \endcode
 - The display is turned on by default, but you can disable it with:
 \code
-$ ./tutorial-mb-generic-tracker-apriltag-rs2 --display_off
+$ ./tutorial-mb-generic-tracker-apriltag-rs2 --display-off
 \endcode
 - Tracking failure detection is achieved thresholding the projection error indicator provided by the tracker.
   The default value of this threshold is set to 40 degrees. To decrease this threshold to 30 degrees (meaning that

@@ -46,7 +46,7 @@
 
   The target is an AprilTag that is by default 12cm large. To print your own tag, see
   https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-detection-apriltag.html
-  You can specify the size of your tag using --tag_size command line option.
+  You can specify the size of your tag using --tag-size command line option.
 */
 
 #include <iostream>

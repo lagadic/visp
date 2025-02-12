@@ -108,6 +108,7 @@ ViSP 3.x.x (Version in development)
     . [#1552] Unabled to use SIFT feature with opencv 4.5.4
     . [#1562] Fix segfault in vpFont
     . [#1523] MAVSDK v2 and v3 compatibility
+    . [#1579] Unable to build vpRobotBebop2.cpp with ffmpeg (libavcodec >= 60)
 ----------------------------------------------
 ViSP 3.6.0 (released September 22, 2023)
   - Contributors:
