@@ -153,6 +153,7 @@ class Builder:
         self.debug = True if config.debug else False
         self.debug_info = True if config.debug_info else False
         self.abi_name = "undefined"
+        self.additional_cmake_flags = config.additional_cmake_flags
 
     def setABI(self, abi: ABI):
       self.abi_name = abi.name
@@ -227,6 +228,9 @@ class Builder:
             CMAKE_C_FLAGS="-fopenmp  -static-openmp",
             CMAKE_CXX_FLAGS="-fopenmp  -static-openmp",
         )
+        if self.additional_cmake_flags is not None:
+            cmake_vars.update(self.additional_cmake_flags)
+
         if self.ninja_path != 'ninja':
             cmake_vars['CMAKE_MAKE_PROGRAM'] = self.ninja_path
 
@@ -338,7 +342,8 @@ def get_ndk_dir():
 #===================================================================================================
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Build ViSP for Android SDK')
+    parser = argparse.ArgumentParser(description='Build ViSP for Android SDK' ,
+                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("work_dir", nargs='?', default='.', help="Working directory (and output)")
     parser.add_argument("visp_dir", nargs='?', default=os.path.join(SCRIPT_DIR, '../..'), help="Path to ViSP source dir")
     parser.add_argument('--config', default='ndk-18-api-level-21.config.py', type=str, help="Package build configuration", )
@@ -353,6 +358,7 @@ if __name__ == "__main__":
     parser.add_argument('--force_visp_toolchain', action="store_true", help="Do not use toolchain from Android NDK")
     parser.add_argument('--debug', action="store_true", help="Build 'Debug' binaries (CMAKE_BUILD_TYPE=Debug)")
     parser.add_argument('--debug_info', action="store_true", help="Build with debug information (useful for Release mode: BUILD_WITH_DEBUG_INFO=ON)")
+    parser.add_argument('--additional_cmake_flags', nargs='?', type=lambda x: {k:v for k,v in (i.split(':') for i in x.split(','))}, help="Additional CMake flags to use, in comma-separated field:position pairs such as 'OPENCV_DIR:something,PCL_DIR=something'")
     args = parser.parse_args()
 
     log.basicConfig(format='%(message)s', level=log.DEBUG)
