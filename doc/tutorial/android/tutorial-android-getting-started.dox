@@ -3,14 +3,34 @@
 \page tutorial-android-getting-started Tutorial: Creating a simple Android App with ViSP
 \tableofcontents
 
-\section android-getting-started Getting Started 
+\section android-getting-started Getting Started
 In this tutorial, we'll create an Android app demonstrating AprilTag detection using the ViSP SDK. We assume that you've already created the SDK using this tutorial: \ref tutorial-create-android-sdk.
 
 This tutorial assumes you have the following software installed and configured:
-- <a href="https://developer.android.com/studio">Android Studio</a> 
-- <a href="https://developer.android.com/studio/run/emulator">Android Emulator</a> - If you want to test your apps on an emulator first 
+- <a href="https://developer.android.com/studio">Android Studio</a>
+- <a href="https://developer.android.com/studio/run/emulator">Android Emulator</a> - If you want to test your apps on an emulator first
 
-\section create-a-project Create an Android Project
+\section android-getting-started-build Building the project
+
+\subsection android-getting-started-build-recent On recent Android Studio
+
+This section presents how to either create from scratch or import the sample project that is located in `samples/android`
+folder.
+
+For this section, Android Studio `Ladybug Feature Drop | 2024....` has been used.
+
+\subsubsection android-gs-build-recent-import Importing samples project
+
+When you ran `build.py` script, a folder `ViSP-android-sdk` has been created in the root folder of the build folder
+of ViSP.
+
+In this folder, you should find as many folders as ABI targets you have compiled ViSP for. To work with Android emulator,
+you will need to use the `x86_64` folder.
+
+\subsubsection android-gs-build-recent-scratch Importing samples project
+
+\subsection android-gs-build-deprecated On old Android Studio
+\subsection android-gs-build-deprecated-scratch Create an Android Project
 If you're new to app development using Android Studio, we'll recommend <a href="https://developer.android.com/training/basics/firstapp/">this tutorial</a> for getting acquainted to it.
 Following <a href="https://developer.android.com/training/basics/firstapp/creating-project">this tutorial</a> create an Android Project with an `Empty Activity`. Make sure to keep minSdkVersion >= 21, since the SDK is not compatible with older versions. You're app's `build.gradle` file should look like:
 \code
@@ -25,7 +45,7 @@ android {
     }
 \endcode
 
-\section import-the-sdk Importing ViSP SDK 
+\subsubsection android-gs-build-deprecated-import Importing ViSP SDK
 In Android Studio, head to `File` -> `New` -> `Import Module` option.
 \image html tut-getting-started-import-module.png
 
@@ -35,7 +55,11 @@ Head over to the directory where you've installed the SDK. Select `sdk` -> `java
 This only imports the Java code. You need to copy the libraries too (`.so` files in linux, `.dll` in windows and `.dylib` in mac). Create a folder named jniLibs in `app/src/main` folder. Then depending upon your emulator/device architecture (mostly `x86` or `x86_64`), create a folder inside `jniLibs` and copy those libraries into your project.
 \image html tut-getting-started-copy-libs.png
 
-Then in your `MainActivity.java`, you need to load ViSP libraries
+\section android-gs-code Code analysis
+
+We will now study with more details the code available in the `samples/android` folder.
+
+First, in your `MainActivity.java`, you need to load ViSP libraries
 \code
 public class MainActivity{
 
@@ -43,17 +67,17 @@ public class MainActivity{
     static {
         System.loadLibrary("visp_java3");
     }
- 
+
     ...
 }
 \endcode
 
-\section begin-camera-preview Begin Camera Preview
+\section android-gs-code-camera Begin Camera Preview
 Before you begin scanning, you need to ask user for Camera Permissions. Firstly in your manifest file, you need to include
 \code
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
         package="...">
-	
+
     <uses-permission android:name="android.permission.CAMERA" />
 
     <uses-feature
@@ -103,12 +127,12 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             }
         }
     }
-    
+
     ...
 }
 \endcode
 
-\section start-camera-preview Starting Camera Preview
+\section android-gs-code-start-camera Starting Camera Preview
 Now create a new activity `CameraPreview.java`. This will call the camera API. The incident image is recieved as a byte array which can be easily manipulated for our purposes. We can render the resultant image as Java Bitmap in an `ImageView` element. In brief,
 \code
 public class CameraPreviewActivity extends AppCompatActivity {
@@ -136,7 +160,7 @@ public class CameraPreviewActivity extends AppCompatActivity {
 
             resultImageView = findViewById(R.id.resultImage);
 
-	    ... 
+	    ...
 
             // Get the rotation of the screen to adjust the preview image accordingly.
             final int displayRotation = getWindowManager().getDefaultDisplay()
@@ -203,7 +227,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 Note that the detector works on grayscale images. The camera API returns values for all pixels (R,G,B,A). Depending on the image format rendered in Android, we can convert those color values into grayscale. <a href="https://developer.android.com/reference/android/graphics/ImageFormat">Refer this</a> page, for a complete list of formats.
 Most commonly used format is `NV21`. In it, the first few bytes are grayscale values of the image and rest are used to compute the color image. So AprilTag detector process only first `width*height` bytes of the image as `VpImageUChar`.
 
-Also, we're detecting tags every 50 milli-seconds. This is simple but efficient since actual tag dectection time will vary according to the image and should be an asynchronous task. 
+Also, we're detecting tags every 50 milli-seconds. This is simple but efficient since actual tag dectection time will vary according to the image and should be an asynchronous task.
 
 We need to change CameraPreviewActivity accordingly,
 \code
@@ -251,8 +275,86 @@ public class CameraPreviewActivity extends AppCompatActivity {
 
 Note the inversion in `updateResult` method. Visp in C++ accepts image as sequence of `RGBA` values but Java Bitmap process them as `ARGB`.
 
-\section further-development Further Image manipulation
+\section android-gs-further-development Further Image manipulation
 In this tutorial, we've developed a bare bones tag detection app. We can use <a href="https://developer.android.com/guide/topics/graphics/opengl">OpenGL for Android</a> to manipulate the image (for instance, drawing a 3D arrow on the tags) using the list of `VpHomogeneous` matrices.
 You can find the complete source code of above Android App <a href="https://github.com/AKS1996/GSOC-Prep/tree/master/visp-android-demos/AprilTagDetection">here</a>.
+
+\section android-gs-troubleshoutings Potential troubleshoutings
+
+\subsection android-gs-troubleshoutings-permissions The application does not detect a camera
+
+When you try to launch the application, you may face the following error message:
+
+\image html 01-no-permissions.png
+
+It is because the permission to use the camera has not been granted.
+
+First, click holding your mouse on the application icon. The following menu should appear:
+
+\image html 02-opening-menu.png
+
+Then, click on the `Permissions - No permissions granted` item in the menu that will open:
+
+\image html 03-opening-permissions.png
+
+Then, click on the `Camera` item that appears in the `Not allowed` section:
+
+\image html 04-selecting-camera.png
+
+Finally, click on the `Allow only while using the app` item of the menu that appears.
+
+\image html 05-giving-permission.png
+
+\subsection android-gs-troubleshoutings-nothing The application displays nothing or not what is expected
+
+When using the app, you may not see the image acquired by your camera when the application is running.
+This is because you must parameterize the simulator in order to use your camera.
+
+First, click on the `Device manager` menu. It is either in the `Tools` section of the menu on top of Android Studio
+or on the right side of the window as follow:
+
+\image html 10-device-manager.png
+
+Click on the three vertically-aligned dots that are beside the simulator, and then on `Edit`:
+
+\image html 11-device-settings.png
+
+Click on the `Show Advanced Settings` that is located in the bottom of the window:
+
+\image html 12-opening-advanced.png
+
+In the `Camera` settings, select the camera you want to use. In this example, the integrated camera of the
+computer is used:
+
+\image html 13-camera-settings.png
+
+\subsection android-gs-troubleshoutings-ram The application freezes
+
+The application might lag in the simulator. It might be due to the amount of RAM that is allocated to the camera.
+To change that, open the `Device Manager` pannel as explained in \ref android-gs-troubleshoutings-nothing . Then,
+click on the three vertically-aligned dots that are beside the simulator, and then on `Show on Disk`.
+
+\image html 20-locating-image.png
+
+In the files explorator, open the `hardware-qemu.ini` file using a text editor software:
+
+\image html 21-opening-file.png
+
+Modify the value specified by the `hw.ramSize` item:
+
+\image html 22-modifying-ram.png
+
+\subsection android-gs-troubleshoutings-openmp The application immediately closes
+
+When you launch the application, it immediately closes without displaying anything. It might
+be due to an OpenMP problem.
+
+Open the `Logcat` terminal, that is located on the bottom left of the screen:
+
+\image html 30-logs
+
+Then, click on the icon of the application to try to launch it. If a message in red appears
+complaining about `libopenmp.so`, it is because ViSP has not been compiled with OpenMP as
+static library. Please open an issue on [github](https://github.com/lagadic/visp).
 
 */
