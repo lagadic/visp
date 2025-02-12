@@ -135,7 +135,7 @@ This only imports the Java code. You need to copy the libraries too (`.so` files
 
 We will now study with more details the code available in the `samples/android` folder.
 
-First, in your `MainActivity.java`, you need to load ViSP libraries
+First, in `MainActivity.java`, we need to load ViSP libraries:
 \code
 public class MainActivity{
 
@@ -149,7 +149,8 @@ public class MainActivity{
 \endcode
 
 \subsection android-gs-code-camera Begin Camera Preview
-Before you begin scanning, you need to ask user for Camera Permissions. Firstly in your manifest file, you need to include
+In order to be able to use the camera, we need to ask user for Camera Permissions. First, in the `app/src/main/AndroidManifest.xml`
+manifest file, we need to include:
 \code
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
         package="...">
@@ -166,7 +167,8 @@ Before you begin scanning, you need to ask user for Camera Permissions. Firstly 
 </manifest>
 \endcode
 
-Then, you need to add a <a href="https://developer.android.com/training/permissions/requesting">runtime permission</a> for accessing camera in `MainActivity.java`. Note that detection will execute only when user allows camera access
+Then, we need to add a <a href="https://developer.android.com/training/permissions/requesting">runtime permission</a>
+for accessing camera in `MainActivity.java`. Note that detection will execute only when user allows camera access:
 \code
         // Check if the Camera permission has been granted
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
@@ -182,7 +184,7 @@ Then, you need to add a <a href="https://developer.android.com/training/permissi
         }
 \endcode
 
-And finally implement a request callback listener
+And finally we implement a request callback listener:
 \code
 
 public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
@@ -209,9 +211,11 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 \endcode
 
 \subsection android-gs-code-start-camera Starting Camera Preview
-Now create a new activity `CameraPreview.java`. This will call the camera API. The incident image is recieved as a byte array which can be easily manipulated for our purposes. We can render the resultant image as Java Bitmap in an `ImageView` element. In brief,
+Now we will study the `CameraPreviewActivity.java`. This will call the camera API. The incident image is recieved as a
+byte array which can be easily manipulated for our purposes. We can render the resultant image as Java Bitmap in an
+`ImageView` element. In brief,
 \code
-public class CameraPreviewActivity extends AppCompatActivity {
+public class CameraPreviewActivity extends MainActivity {
 
     private Camera mCamera;
     public static ImageView resultImageView;
@@ -246,7 +250,8 @@ public class CameraPreviewActivity extends AppCompatActivity {
     }
 \endcode
 
-Now that we get access to Camera, we need to create a Camera Preview class that'll  process the image for AprilTag detection. In brief,
+Now that we get access to Camera, we need to create a Camera Preview class that'll  process the image for AprilTag
+detection. This class is implemented in the `CameraPreview.java` file. In brief,
 \code
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback, Camera.PreviewCallback {
 
@@ -292,7 +297,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             Log.d("CameraPreview.java",matrices.size() + " tags detected");
 
             // Turn `data` to bitmap and display
-            updateResult(data);
+            updateResult(data, matrices.size() + " 36h11 tags detected within " + (System.currentTimeMillis() - lastTime) +" ms");
 
             lastTime = System.currentTimeMillis();
         }
@@ -300,22 +305,43 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 }
 \endcode
 
-Note that the detector works on grayscale images. The camera API returns values for all pixels (R,G,B,A). Depending on the image format rendered in Android, we can convert those color values into grayscale. <a href="https://developer.android.com/reference/android/graphics/ImageFormat">Refer this</a> page, for a complete list of formats.
-Most commonly used format is `NV21`. In it, the first few bytes are grayscale values of the image and rest are used to compute the color image. So AprilTag detector process only first `width*height` bytes of the image as `VpImageUChar`.
+Note that the detector works on grayscale images. The camera API returns values for all pixels (R,G,B,A).
+Depending on the image format rendered in Android, we can convert those color values into grayscale.
+<a href="https://developer.android.com/reference/android/graphics/ImageFormat">Refer this</a> page, for a complete list of formats.
+Most commonly used format is `NV21`. In it, the first few bytes are grayscale values of the image and rest are used to
+compute the color image. So AprilTag detector process only first `width*height` bytes of the image as `VpImageUChar`.
 
-Also, we're detecting tags every 50 milli-seconds. This is simple but efficient since actual tag dectection time will vary according to the image and should be an asynchronous task.
+Also, we're detecting tags every 50 milli-seconds. This is simple but efficient since actual tag dectection time will
+vary according to the image and should be an asynchronous task.
 
-We need to change CameraPreviewActivity accordingly,
+If we wanted to display the result of the conversion, we would need to change CameraPreviewActivity accordingly,
 \code
 public class CameraPreviewActivity extends AppCompatActivity {
 
     ...
     public static ImageView resultImageView;
-    static int w,h;
+    ...
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Open an instance of the first camera and retrieve its info.
+        mCamera = getCameraInstance(CAMERA_ID);
+        Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
+        Camera.getCameraInfo(CAMERA_ID, cameraInfo);
+
+        if (mCamera == null) {
+            // Camera is not available, display error message
+            Toast.makeText(this, "Camera is not available.", Toast.LENGTH_SHORT).show();
+            setContentView(R.layout.camera_unavailable);
+        } else {
+            setContentView(R.layout.activity_camera_preview);
+
+            resultInfo = findViewById(R.id.resultTV);
+            resultImageView = findViewById(R.id.resultImage);
+
+            // init the byte array
             w = mCamera.getParameters().getPreviewSize().width;
             h = mCamera.getParameters().getPreviewSize().height;
 
@@ -351,9 +377,14 @@ public class CameraPreviewActivity extends AppCompatActivity {
 
 Note the inversion in `updateResult` method. Visp in C++ accepts image as sequence of `RGBA` values but Java Bitmap process them as `ARGB`.
 
+However, note that in the sample, the conversion and display of the conversion has been commented out and we instead just
+write how many tags have been detected.
+
 \subsection android-gs-further-development Further Image manipulation
-In this tutorial, we've developed a bare bones tag detection app. We can use <a href="https://developer.android.com/guide/topics/graphics/opengl">OpenGL for Android</a> to manipulate the image (for instance, drawing a 3D arrow on the tags) using the list of `VpHomogeneous` matrices.
-You can find the complete source code of above Android App <a href="https://github.com/AKS1996/GSOC-Prep/tree/master/visp-android-demos/AprilTagDetection">here</a>.
+In this tutorial, we've developed a bare bones tag detection app.
+We can use <a href="https://developer.android.com/guide/topics/graphics/opengl">OpenGL for Android</a> to manipulate the
+image (for instance, drawing a 3D arrow on the tags) using the list of `VpHomogeneous` matrices.
+You can find the complete source code of above Android App <a href="https://github.com/rolalaro/visp/tree/master/samples/android">here</a>.
 
 \section android-gs-troubleshoutings Potential troubleshoutings
 
