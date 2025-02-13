@@ -93,29 +93,28 @@ vpPanda3DBaseRenderer, which implements basic functions for a panda renderer.
 \subsection tutorial-panda3d-install-macos Installation on macOS
 
 - Installer are available for macOS browsing the [download](https://www.panda3d.org/download/) page.
-\note For the latest Panda3D 1.10.14 SDK there is an `Installer for macOS X 10.9+` that is only compatible with
+\note For the latest Panda3D 1.10.15 SDK there is an `Installer for macOS X 10.9+` that is only compatible with
   architecture `x86_64`. If you are using a Mac M1 or M2, there is no Panda3D SDK available yet for `arm64`
   architecture. The solution is to build Panda3D from source.
 
 - Hereafter you will find the instructions to build Panda3D from source on macOS.
 
   - It is recommended to install the assimp package before installing Panda3D. This will allow you to load .obj files, which are a common and easily exportable format.
-  Without it, you will be restricted to .bam files, which is a panda specific format. To convert to a .bam file, see \ref tutorial-panda3d-file-conversion.
-
-  To install assimp, run:
-  \code{.sh}
-  $ brew install assimp
-  \endcode
+    Without it, you will be restricted to .bam files, which is a panda specific format. To convert to a .bam file, see \ref tutorial-panda3d-file-conversion.
+    To install assimp, run:
+    \code{.sh}
+    $ brew install assimp
+    \endcode
 
   - On macOS, you will need to download a set of precompiled third-party packages in order to compile Panda3D.
-    Navigate to PandaED [download page](https://www.panda3d.org/download/), select the lastest SDK
-    (in our case SDK 1.10.14), and under `</> Source Code` section, download
-    [Thirdparty tools for macOS](https://www.panda3d.org/download/panda3d-1.10.14/panda3d-1.10.14-tools-mac.tar.gz)
-    (in our case `panda3d-1.10.14-tools-mac.tar.gz`).
+    Navigate to Panda3D [download page](https://www.panda3d.org/download/), select the lastest SDK
+    (in our case SDK 1.10.15), and under `</> Source Code` section, download
+    [Thirdparty tools for macOS](https://www.panda3d.org/download/panda3d-1.10.15/panda3d-1.10.15-tools-mac.tar.gz)
+    (in our case `panda3d-1.10.15-tools-mac.tar.gz`).
   - Extract third-party tools for macOS from downloaded archive
     \code{.sh}
     $ cd ~/Downloads
-    $ tar xvzf panda3d-1.10.14-tools-mac.tar.gz
+    $ tar xvzf panda3d-1.10.15-tools-mac.tar.gz
     \endcode
   - Once done clone Panda3D:
     \code{.sh}
@@ -126,15 +125,18 @@ vpPanda3DBaseRenderer, which implements basic functions for a panda renderer.
     \endcode
   - Move the downloaded third-party tools in Panda3D source code folder
     \code{.sh}
-    $ mv ~/Downloads/panda3d-1.10.14/thirdparty .
+    $ mv ~/Downloads/panda3d-1.10.15/thirdparty .
     \endcode
   - Build Panda3D from source
     \code{.sh}
     $ python3 makepanda/makepanda.py --everything --installer --no-opencv --no-python --threads $(sysctl -n hw.logicalcpu)
+    ...
+    created: $VISP_WS/3rdparty/panda3d/panda3d/Panda3D-1.11.0.dmg
     \endcode
+    If you encounter the following issue \ref tutorial-panda3d-issue-MacOSX-sdk-not-found, see the corresponding section.
 
 - At this point you can either
-  1. install the produced `Panda3D-1.11.0-py3.9.dmg` file (recommended) just by double clicking on it. In the
+  1. install the produced `Panda3D-1.11.0.dmg` file (recommended) just by double clicking on it. In the
     installer window, don't forget to enable the `C++ Header Files` check box before pressing the installation button.
     After that you have to set `DYLIB_LIBRARY_PATH` environment var:
     \code{.sh}
@@ -153,7 +155,7 @@ vpPanda3DBaseRenderer, which implements basic functions for a panda renderer.
     dyld[257]: Library not loaded: @loader_path/../lib/libpanda.1.11.dylib
     \endcode
 
-- Now to build ViSP with Panda3D support when `.dmg` file `Panda3D-1.11.0-py3.9.dmg` is installed, you can just
+- Now to build ViSP with Panda3D support when `.dmg` file `Panda3D-1.11.0.dmg` is installed, you can just
   run cmake as usual. Note that PCL is not compatible with Panda3D, that's why we disable here PCL usage
   (see \ref tutorial-panda3d-issue-segfault-macOS).
     \code{.sh}
@@ -201,7 +203,6 @@ If you have Python, you can easily convert your model to a .bam file by doing th
 
 An example that shows how to exploit Panda3D in ViSP to render a color image with support for textures and lighting, a
 depth image, normals in object space and in camera space is given in tutorial-panda3d-renderer.cpp.
-
 
 To start rendering, we first instanciate a vpPanda3DRendererSet. This object allows to render multiple modalities (color, depth, etc.) in a single pass.
 To add different rendering modalities, we will use subclasses that will be registered to the renderer set.
@@ -287,27 +288,27 @@ The full code of tutorial-panda3d-renderer.cpp is given below.
 
 This error occurs on macOS.
 
-```
+\code{.sh}
 % cd $VISP_WS/visp-build/tutorial/ar/
 % ./tutorial-panda3d-renderer
 dyld[1795]: Library not loaded: @loader_path/../lib/libpanda.1.11.dylib
   Referenced from: <0D61FFE0-73FA-3053-8D8D-8912BFF16E36> /Users/fspindle/soft/visp/visp_ws/test-pr/visp-SamFlt/visp-build/tutorial/ar/tutorial-panda3d-renderer
   Reason: tried: '/Users/fspindle/soft/visp/visp_ws/test-pr/visp-SamFlt/visp-build/tutorial/ar/../lib/libpanda.1.11.dylib' (no such file)
 zsh: abort      ./tutorial-panda3d-renderer
-```
+\endcode
 
 It occurs when you didn't follow carefully the instructions mentionned in \ref tutorial-panda3d-install-macos section.
 
 A quick fix is to add the path to the library in `DYLD_LIBRARY_PATH` env var:
-```
+\code{.sh}
 $ export DYLD_LIBRARY_PATH=/Library/Developer/Panda3D/lib:$DYLD_LIBRARY_PATH
-```
+\endcode
 
 \subsection tutorial-panda3d-issue-segfault-macOS Segfault: :framework(error): Unable to create window
 
 This error occurs on macOS.
 
-```
+\code{.sh}
 % cd $VISP_WS/visp-build/tutorial/ar/
 % ./tutorial-panda3d-renderer
 Initializing Panda3D rendering framework
@@ -316,9 +317,9 @@ Known pipe types:
 (all display modules loaded.)
 :framework(error): Unable to create window.
 zsh: segmentation fault  ./tutorial-panda3d-renderer
-```
+\endcode
 This issue is probably due to `EIGEN_MAX_ALIGN_BYTES` and `HAVE_PNG` macro redefinition that occurs when building ViSP with Panda3D support:
-```
+\code{.sh}
 $ cd visp-build
 $ make
 ...
@@ -361,12 +362,48 @@ $VISP_WS/3rdparty/panda3d/panda3d/built/include/dtoolbase.h:432:9: warning: 'EIG
 3 warnings generated.
 [100%] Linking CXX executable tutorial-panda3d-renderer
 [100%] Built target tutorial-panda3d-renderer
-```
+\endcode
 The work around consists in disabling `PCL` usage during ViSP configuration
-```
+\code{.sh}
 $ cd $VISP_WS/visp-build
 $ cmake ../visp -DUSE_PCL=OFF
 $ make -j$(sysctl -n hw.logicalcpu)
-```
+\endcode
 
+\subsection tutorial-panda3d-issue-MacOSX-sdk-not-found Couldn't find any suitable MacOSX SDK!
+
+The following error may occur when building Panda3D from source on macOS Sequoia 15.3.1.
+\code{.sh}
+% python3 makepanda/makepanda.py --everything --installer --no-opencv --no-python --threads $(sysctl -n hw.logicalcpu)
+Version: 1.11.0
+Platform: macosx-11.0-arm64
+Storing dependency cache.
+Elapsed Time: 0 sec
+Couldn't find any suitable MacOSX SDK!
+\endcode
+The installer calls `makepanda/makepandacore.py` and enters in `SdkLocateMacOSX()` function to try to find the latest MacOSX SDK
+in one of the following folders:
+- `/Library/Developer/CommandLineTools/SDKs/`
+- `/Developer/SDKs/`
+- `/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/`
+
+Inside `SdkLocateMacOSX()` you will find a list of expected SDK versions, like:
+\code{.sh}
+sdk_versions += ["14.0", "13.3", "13.1", "13.0", "12.3", "11.3", "11.1", "11.0"]
+\endcode
+while you may have the following SDK versions:
+\code{.sh}
+$ ls /Library/Developer/CommandLineTools/SDKs/
+MacOSX.sdk	MacOSX14.5.sdk	MacOSX14.sdk	MacOSX15.2.sdk	MacOSX15.sdk
+\endcode
+In our case the fix consists in adding 15.2 SDK version to the list of expected SDKs.
+\code{.sh}
+sdk_versions += ["15.2", "14.0", "13.3", "13.1", "13.0", "12.3", "11.3", "11.1", "11.0"]
+\endcode
+Now you should be able to build Panda3D with:
+\code{.sh}
+% python3 makepanda/makepanda.py --everything --installer --no-opencv --no-python --threads $(sysctl -n hw.logicalcpu)
+...
+created: $VISP_WS/3rdparty/panda3d/panda3d/Panda3D-1.11.0.dmg
+\endcode
 */
