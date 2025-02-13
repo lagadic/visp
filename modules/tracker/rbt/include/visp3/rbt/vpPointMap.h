@@ -50,6 +50,36 @@ public:
     m_X[index][2] = Z;
   }
 
+  void computeReprojectionErrorAndJacobian(const vpArray2D<int> &indices, const vpHomogeneousMatrix &cTw, const vpMatrix &observations, vpMatrix &J, vpColVector &e) const
+  {
+    J.resize(indices.getRows() * 2, 6, false, false);
+    e.resize(indices.getRows() * 2, 1, false);
+
+    vpColVector cX(3);
+    vpColVector wX(3);
+    const vpRotationMatrix cRw = cTw.getRotationMatrix();
+    const vpTranslationVector t = cTw.getTranslationVector();
+    for (unsigned int i = 0; i < indices.getRows(); ++i) {
+      const unsigned int pointIndex = indices[i][0];
+      const double *p = m_X[pointIndex];
+      wX[0] = p[0]; wX[1] = p[1]; wX[2] = p[2];
+      cX = cRw * wX;
+      cX += t;
+      const double Z = cX[2];
+      const double x = cX[0] / Z;
+      const double y = cX[1] / Z;
+
+      e[i * 2] = x - observations[i][0];
+      e[i * 2 + 1] = y - observations[i][1];
+
+      J[i * 2][0] = -1.0 / Z; J[i * 2][1] = 0.0; J[i * 2][2] = x / Z;
+      J[i * 2][3] = x * y; J[i * 2][4] = -(1.0 + x * x); J[i * 2][5] = y;
+
+      J[i * 2 + 1][0] = 0.0; J[i * 2 + 1][1] = -1.0 / Z; J[i * 2 + 1][2] = y / Z;
+      J[i * 2 + 1][3] = 1.0 + y * y; J[i * 2 + 1][4] = -(x * y); J[i * 2][5] = -x;
+    }
+  }
+
 private:
   vpMatrix m_X; // N x 3, points expressed in world frame
   unsigned m_maxPoints;

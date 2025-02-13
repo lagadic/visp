@@ -14,7 +14,7 @@ void vpPointMap::getPoints(const vpArray2D<int> &indices, vpMatrix &X)
 
 void vpPointMap::project(const vpArray2D<int> &indices, const vpHomogeneousMatrix &cTw, vpMatrix &cX)
 {
-  cX.resize(indices.getRows(), 3);
+  cX.resize(indices.getRows(), 3, false, false);
   vpColVector X(3);
   vpColVector rX(3);
 
@@ -37,7 +37,7 @@ void vpPointMap::project(const vpArray2D<int> &indices, const vpHomogeneousMatri
 void vpPointMap::project(const vpArray2D<int> &indices, const vpHomogeneousMatrix &cTw, vpMatrix &cX, vpMatrix &xs)
 {
   project(indices, cTw, cX);
-  xs.resize(cX.getRows(), 2);
+  xs.resize(cX.getRows(), 2, false, false);
   for (unsigned int i = 0; i < cX.getRows(); ++i) {
     xs[i][0] = cX[i][0] / cX[i][2];
     xs[i][1] = cX[i][1] / cX[i][2];
@@ -116,7 +116,6 @@ void vpPointMap::getOutliers(const vpArray2D<int> &originalIndices, const vpMatr
   }
   indices.clear();
   double thresholdSqr = vpMath::sqr(m_outlierThreshold);
-  std::cout << "Outlier threshold = " << m_outlierThreshold << std::endl;
   for (unsigned int i = 0; i < uvs.getRows(); ++i) {
     const double error = vpMath::sqr(uvs[i][0] - observations[i][0]) + vpMath::sqr(uvs[i][1] - observations[i][1]);
     if (error >= thresholdSqr) {
@@ -139,7 +138,8 @@ void vpPointMap::selectValidNewCandidates(const vpCameraParameters &cam, const v
   const vpTranslationVector t = wTc.getTranslationVector();
   double farEnoughThresholdSq = m_minDistNewPoint * m_minDistNewPoint;
 
-  std::list<vpColVector> validoXList;
+  std::vector<std::array<double, 3>> validoXList;
+  validoXList.reserve(uvs.getRows());
 
   for (unsigned int i = 0; i < uvs.getRows(); ++i) {
     double u = uvs[i][0], v = uvs[i][1];
@@ -156,8 +156,9 @@ void vpPointMap::selectValidNewCandidates(const vpCameraParameters &cam, const v
     oX = wRc * cX;
     oX += t;
 
+    // Filter candidates that are too close to already existing points in the map
     bool isFarEnoughFromOtherPoints = true;
-    if (farEnoughThresholdSq > 0.0) {
+    if (m_minDistNewPoint > 0.0) {
       for (unsigned int j = 0; j < m_X.getRows(); ++j) {
         double errSq = vpMath::sqr(oX[0] - m_X[j][0]) + vpMath::sqr(oX[1] - m_X[j][1]) + vpMath::sqr(oX[2] - m_X[j][2]);
         if (errSq < farEnoughThresholdSq) {
@@ -166,7 +167,7 @@ void vpPointMap::selectValidNewCandidates(const vpCameraParameters &cam, const v
         }
       }
       if (isFarEnoughFromOtherPoints) {
-        for (vpColVector &other: validoXList) {
+        for (const std::array<double, 3> &other: validoXList) {
           double errSq = vpMath::sqr(oX[0] - other[0]) + vpMath::sqr(oX[1] - other[1]) + vpMath::sqr(oX[2] - other[2]);
           if (errSq < farEnoughThresholdSq) {
             isFarEnoughFromOtherPoints = false;
@@ -174,18 +175,17 @@ void vpPointMap::selectValidNewCandidates(const vpCameraParameters &cam, const v
           }
         }
       }
-
     }
 
     if (isFarEnoughFromOtherPoints) {
-      validoXList.push_back(oX);
+      validoXList.push_back({ oX[0], oX[1], oX[2] });
       validCandidateIndices.push_back(originalIndices[i][0]);
     }
   }
 
-  oXs.resize(validoXList.size(), 3);
+  oXs.resize(validoXList.size(), 3, false, false);
   unsigned int i = 0;
-  for (const vpColVector &oX: validoXList) {
+  for (const std::array<double, 3> &oX: validoXList) {
     oXs[i][0] = oX[0];
     oXs[i][1] = oX[1];
     oXs[i][2] = oX[2];

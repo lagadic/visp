@@ -271,7 +271,7 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
   int id = 0;
   for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
     m_logger.startTimer();
-    tracker->onTrackingIterStart();
+    tracker->onTrackingIterStart(m_cMo);
     m_logger.setTrackerIterStartTime(id, m_logger.endTimer());
     id += 1;
   }
@@ -315,8 +315,10 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
 
   m_cMoPrev = m_cMo;
   double bestError = std::numeric_limits<double>::max();
+
   vpHomogeneousMatrix best_cMo = m_cMo;
   double mu = m_muInit;
+  vpColVector firstMotion(6, 0.0);
   for (unsigned int iter = 0; iter < m_vvsIterations; ++iter) {
     id = 0;
     for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
@@ -349,13 +351,14 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
     double error = 0.f;
     unsigned int numFeatures = 0;
 
+
     for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
       if (tracker->getNumFeatures() > 0) {
         numFeatures += tracker->getNumFeatures();
         const double weight = tracker->getVVSTrackerWeight();
         LTL += weight * tracker->getLTL();
         LTR += weight * tracker->getLTR();
-        error += (weight * tracker->getWeightedError()).sumSquare();
+        error += weight * (tracker->getWeightedError()).sumSquare();
         //std::cout << "Error = " << (weight * tracker->getWeightedError()).sumSquare() << std::endl;
       }
     }
@@ -369,6 +372,13 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
 
       vpMatrix H(6, 6);
       H.eye(6);
+
+      const bool scaleInvariant = true;
+      if (scaleInvariant) {
+        for (unsigned int i = 0; i < 6; ++i) {
+          H[i][i] = LTL[i][i];
+        }
+      }
       try {
         vpColVector v = -m_lambda * ((LTL + mu * H).pseudoInverse(LTL.getRows() * std::numeric_limits<double>::epsilon()) * LTR);
         m_cMo = vpExponentialMap::direct(v).inverse() * m_cMo;
@@ -386,7 +396,7 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
   //m_cMo = best_cMo;
 
   for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
-    tracker->onTrackingIterEnd();
+    tracker->onTrackingIterEnd(m_cMo);
   }
   //m_cMo = m_kalman.filter(m_cMo, 1.0 / 20.0);
   if (m_currentFrame.I.getSize() == 0) {
@@ -536,11 +546,11 @@ std::vector<vpRBSilhouettePoint> vpRBTracker::extractSilhouettePoints(
       // if (noNeighbor) {
       //   points.push_back(vpRBSilhouettePoint(n, m, norm, theta, Z));
       // }
+      }
     }
-  }
 
   return points;
-}
+  }
 
 void vpRBTracker::addTracker(std::shared_ptr<vpRBFeatureTracker> tracker)
 {

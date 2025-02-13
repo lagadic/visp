@@ -257,8 +257,8 @@ public:
    * @}
    */
 
-  void onTrackingIterStart() VP_OVERRIDE { }
-  void onTrackingIterEnd() VP_OVERRIDE { }
+  void onTrackingIterStart(const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE { }
+  void onTrackingIterEnd(const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE { }
 
   double getVVSTrackerWeight() const VP_OVERRIDE { return m_userVvsWeight / (10 * m_error.size()); }
 

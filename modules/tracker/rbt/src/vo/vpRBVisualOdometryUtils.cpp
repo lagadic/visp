@@ -67,7 +67,6 @@ void vpRBVisualOdometryUtils::levenbergMarquardtKeypoints2D(const vpMatrix &poin
   vpColVector weights(points3d.getRows() * 2);
   vpColVector weighted_error(points3d.getRows() * 2);
 
-
   vpMatrix Id(6, 6);
   Id.eye();
   vpRobust robust;

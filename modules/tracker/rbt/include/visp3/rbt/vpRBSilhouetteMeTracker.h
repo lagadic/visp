@@ -64,12 +64,12 @@ public:
 
   void setMovingEdge(const vpMe &me) { m_me = me; }
 
-  void onTrackingIterStart() VP_OVERRIDE
+  void onTrackingIterStart(const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE
   {
     m_controlPoints.clear();
   }
 
-  void onTrackingIterEnd() VP_OVERRIDE { }
+  void onTrackingIterEnd(const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE { }
 
   /**
    * @brief Extract the geometric features from the list of collected silhouette points
