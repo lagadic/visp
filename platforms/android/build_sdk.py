@@ -358,7 +358,7 @@ if __name__ == "__main__":
     parser.add_argument('--force_visp_toolchain', action="store_true", help="Do not use toolchain from Android NDK")
     parser.add_argument('--debug', action="store_true", help="Build 'Debug' binaries (CMAKE_BUILD_TYPE=Debug)")
     parser.add_argument('--debug_info', action="store_true", help="Build with debug information (useful for Release mode: BUILD_WITH_DEBUG_INFO=ON)")
-    parser.add_argument('--additional_cmake_flags', nargs='?', type=lambda x: {k:v for k,v in (i.split(':') for i in x.split(','))}, help="Additional CMake flags to use, in comma-separated field:position pairs such as 'OPENCV_DIR:something,PCL_DIR=something'")
+    parser.add_argument('--additional_cmake_flags', nargs='?', type=lambda x: {k:v for k,v in (i.split('=') for i in x.split(','))}, help="Additional CMake flags to use, in comma-separated field=position pairs such as 'OPENCV_DIR=something,PCL_DIR=something'")
     args = parser.parse_args()
 
     log.basicConfig(format='%(message)s', level=log.DEBUG)
