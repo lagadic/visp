@@ -24,6 +24,8 @@ This tutorial assumes you have the following software installed and configured: 
   start a new Native C++ Android project using the default configuration. From this new project enter
   `"File > Settings... > Appearence > System Settings > Android SDK"` menu. Select the `"SDK Tools"` tab
   and check the boxes next to `CMake`, and `NDK (Side by side)`.
+  \note On Android Studio `Ladybug Feature Drop | 2024....`, you have to open the main menu `Tools`, then `SDK Manager`,
+  then `SDK Tools` and finally both `NDK (Side by side)`, `Android SDK Command-line Tools (latest)` and `CMake`.
   Once all the tools are downloaded, you can exit Android Studio.
 - Now to install <a href="https://www.python.org/downloads/">Python Interpreter (prefer version 3.x)</a>,
   <a href="https://cmake.org/download/">CMake</a>, <a href="https://github.com/ninja-build/ninja/releases">Ninja</a>
@@ -179,7 +181,7 @@ In `$VISP_WS/visp/platforms/android` folder we provide different NDK config file
 \code
 $ ls ndk-*.config.py
 ndk-10.config.py  ndk-17.config.py               ndk-18.config.py  ndk-22.config.py
-ndk-16.config.py  ndk-18-api-level-21.config.py  ndk-20.config.py  ndk-23.config.py
+ndk-16.config.py  ndk-18-api-level-21.config.py  ndk-20.config.py  ndk-23.config.py ndk-28.config.py
 \endcode
 The file that should be used after `--config` option should match your NDK version (see \ref android_sdk_ndk_version).
 

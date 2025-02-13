@@ -1,0 +1,163 @@
+apply plugin: 'com.android.library'
+
+def vispVersionName = "@VISP_VERSION@"
+def vispVersionCode = ((@VISP_VERSION_MAJOR@ * 100 + @VISP_VERSION_MINOR@) * 100 + @VISP_VERSION_PATCH@) * 10 + 0
+
+android {
+    compileSdkVersion @ANDROID_COMPILE_SDK_VERSION@
+    namespace "org.visp"
+    ndkVersion "@ANDROID_NDK_VERSION@"
+
+    defaultConfig {
+        minSdkVersion @ANDROID_MIN_SDK_VERSION@
+        targetSdkVersion @ANDROID_TARGET_SDK_VERSION@
+
+        versionCode vispVersionCode
+        versionName vispVersionName
+
+        externalNativeBuild {
+            cmake {
+                arguments "-DANDROID_STL=@ANDROID_STL@"
+                targets "visp_jni_shared"
+            }
+        }
+    }
+
+    configurations {
+      javadocDeps
+      customConfig.extendsFrom implementation
+    }
+
+    buildFeatures {
+      aidl true
+    }
+
+    buildTypes {
+        debug {
+            packagingOptions {
+                doNotStrip '**/*.so'  // controlled by ViSP CMake scripts
+            }
+        }
+        release {
+            packagingOptions {
+                doNotStrip '**/*.so'  // controlled by ViSP CMake scripts
+            }
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['../../jni']
+            java.srcDirs = ['src']  // TODO Use original files instead of copied into build directory
+            aidl.srcDirs = ['src']
+            res.srcDirs = ['@VISP_SOURCE_DIR@/modules/java/android_sdk/android_gradle_lib/res']
+            manifest.srcFile 'AndroidManifest.xml'
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path (project.projectDir.toString() + '/libcxx_helper/CMakeLists.txt')
+        }
+    }
+}
+
+dependencies {
+  javadocDeps 'com.android.support:support-annotations'
+  javadocDeps 'com.nineoldandroids:library'
+  javadocDeps 'com.android.support:support-v4'
+}
+
+task sourcesJar(type: Jar) {
+  from android.sourceSets.main.java.srcDirs
+  archiveClassifier = 'sources'
+}
+
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.io.FileOutputStream
+import java.util.zip.ZipFile
+
+task javadoc(type: Javadoc) {
+  dependsOn ":visp:generateDebugRFile"
+  dependsOn ":visp:generateReleaseRFile"
+  dependsOn ":visp:compileReleaseAidl"
+  dependsOn ":visp:compileReleaseSources"
+
+  source = android.sourceSets.main.java.srcDirs
+
+  // To avoid error due to @hide tag not recognized by javadoc
+  options.tags = [ "hide" ]
+
+  classpath += configurations.customConfig
+
+   doFirst {
+      // Add the compiled aidl files
+      android.libraryVariants.all { variant ->
+       classpath += files(variant.javaCompile.classpath.files)
+       source += variant.javaCompile.source
+     }
+
+     // Remove the *.aidl from the source list because we use the compiled versions for the doc generation
+     def aidlDependencies = source.filter { it.name.endsWith('.aidl') }
+     source -= aidlDependencies
+   }
+
+   afterEvaluate {
+       // Wait after evaluation to add the com.android classpath
+       // to avoid "buildToolsVersion is not specified" error
+       classpath += files(android.getBootClasspath())
+       classpath += files(android.libraryVariants.collect { variant ->
+        variant.javaCompileProvider.get().classpath.files
+       })
+
+       // Process AAR dependencies
+       def aarDependencies = classpath.filter { it.name.endsWith('.aar') }
+       classpath -= aarDependencies
+       aarDependencies.each { aar ->
+           // Extract classes.jar from the AAR dependency, and add it to the javadoc classpath
+           def outputPath = "$buildDir/outputs/aar/${aar.name.replace('.aar', '.jar')}"
+           classpath += files(outputPath)
+
+          // Use a task so the actual extraction only happens before the javadoc task is run
+          dependsOn task(name: "extract ${aar.name}").doLast {
+              extractEntry(aar, 'classes.jar', outputPath)
+          }
+      }
+  }
+}
+
+// Utility method to extract only one entry in a zip file
+private def extractEntry(archive, entryPath, outputPath) {
+  if (!archive.exists()) {
+      throw new GradleException("archive $archive not found")
+  }
+
+  def zip = new ZipFile(archive)
+  zip.entries().each {
+      if (it.name == entryPath) {
+          def path = Paths.get(outputPath)
+          if (!Files.exists(path)) {
+               Files.createDirectories(path.getParent())
+               Files.copy(zip.getInputStream(it), path)
+           }
+       }
+   }
+  zip.close()
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+  archiveClassifier = 'javadoc'
+  from javadoc.destinationDir
+}
+
+artifacts {
+  archives javadocJar
+  archives sourcesJar
+}
