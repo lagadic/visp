@@ -235,6 +235,10 @@ void vpRBSilhouetteCCDTracker::initVVS(const vpRBFeatureTrackerInput &/*frame*/,
 
 void vpRBSilhouetteCCDTracker::computeVVSIter(const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cMo, unsigned int iteration)
 {
+  if (m_numFeatures == 0) {
+    m_vvsConverged = false;
+    return;
+  }
   vpColVector oldPoints(m_controlPoints.size() * 2);
   for (unsigned int i = 0; i < m_controlPoints.size(); ++i) {
     oldPoints[i * 2] = m_controlPoints[i].icpoint.get_u();
@@ -242,12 +246,16 @@ void vpRBSilhouetteCCDTracker::computeVVSIter(const vpRBFeatureTrackerInput &fra
   }
   updateCCDPoints(cMo);
 
+
   tol = 0.0;
   for (unsigned int i = 0; i < m_controlPoints.size(); ++i) {
     tol += abs(oldPoints[i * 2] - m_controlPoints[i].icpoint.get_u());
     tol += abs(oldPoints[i * 2 + 1] - m_controlPoints[i].icpoint.get_v());
   }
   tol /= m_controlPoints.size();
+
+
+
   computeLocalStatistics(frame.IRGB, m_stats);
   computeErrorAndInteractionMatrix(); // Update interaction matrix, and gauss newton left and right side terms
 
@@ -712,7 +720,7 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
 #endif
       localGradients.resize(threads, localGradient);
       localHessians.resize(threads, localHessian);
-    }
+  }
 #ifdef VISP_HAVE_OPENMP
 #pragma omp for schedule(static)
 #endif
@@ -729,7 +737,7 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
 #endif
     localGradients[currentThread] = localGradient;
     localHessians[currentThread] = localHessian;
-  }
+    }
   for (unsigned int i = 0; i < localGradients.size(); ++i) {
     m_gradient += localGradients[i];
     m_hessian += localHessians[i];

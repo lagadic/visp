@@ -111,7 +111,6 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
 
         float denom = (pObject * poPix + pBackground * pbPix);
         mask[i][j] = (denom > 0.f) * std::max(0.f, std::min(1.f, (poPix / denom)));
-        m_mask[i][j] = renderDepth[i][j] > 0.f && fabs(renderDepth[i][j] - depth[i][j]) <= m_depthErrorTolerance;
       }
     }
   }
