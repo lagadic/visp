@@ -60,13 +60,13 @@ void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame
   const vpHomogeneousMatrix &cMo = frame.renders.cMo;
   vpHomogeneousMatrix oMc = cMo.inverse();
   vpRotationMatrix cRo = cMo.getRotationMatrix();
+  vpTranslationVector co = oMc.getTranslationVector();
   bool useMask = m_useMask && frame.hasMask();
   m_depthPoints.clear();
   m_depthPoints.reserve(static_cast<size_t>(bb.getArea() / (m_step * m_step * 2)));
   vpDepthPoint point;
   for (unsigned int i = static_cast<unsigned int>(bb.getTop()); i < static_cast<unsigned int>(bb.getBottom()); i += m_step) {
     for (unsigned int j = static_cast<unsigned int>(bb.getLeft()); j < static_cast<unsigned int>(bb.getRight()); j += m_step) {
-      // if (renderDepth[i][j] > frame.renders.zNear && renderDepth[i][j] < frame.renders.zFar && depthMap[i][j] > frame.renders.zNear * 0.33 && depthMap[i][j] < frame.renders.zFar * 3.0) {
       double Z = renderDepth[i][j];
       double currZ = depthMap[i][j];
       if (Z > 0.f && currZ > 0.f) {
@@ -80,14 +80,16 @@ void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame
         point.objectNormal[1] = frame.renders.normals[i][j].G;
         point.objectNormal[2] = frame.renders.normals[i][j].B;
 
-        //fastRotationMatmul(cRo, frame.renders.normals[i][j], point.objectNormal);
-        //vpColVector cameraNormal = cRo * objectNormal;
-        // if (acos(cameraNormal * vpColVector({ 0.0, 0.0, -1.0 })) > vpMath::rad(70.0)) {
-        //   continue;
-        // }
+        fastProjection(oMc, x * Z, y * Z, Z, point.oP);
+
+        vpColVector cameraRay({ co[0] - point.oP.get_oX(), co[1] - point.oP.get_oY(), co[2] - point.oP.get_oZ() });
+        cameraRay.normalize();
+
+        if (acos(cameraRay * point.objectNormal) > vpMath::rad(85.0)) {
+          continue;
+        }
         // vpColVector cp({ x * Z, y * Z, Z, 1 });
         // vpColVector oP = oMc * cp;
-        fastProjection(oMc, x * Z, y * Z, Z, point.oP);
         // point.oP = vpPoint(oP);
         point.pixelPos.set_ij(i, j);
         point.currentPoint[0] = x * currZ;
@@ -136,7 +138,7 @@ void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &/*fram
   }
 
   //m_weights = 0.0;
-  //m_robust.setMinMedianAbsoluteDeviation(1e-3);
+  m_robust.setMinMedianAbsoluteDeviation(1e-3);
   m_robust.MEstimator(vpRobust::TUKEY, m_error, m_weights);
   for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
     m_weighted_error[i] = m_error[i] * m_weights[i];

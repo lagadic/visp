@@ -80,6 +80,43 @@ public:
     }
   }
 
+  void compute3DErrorAndJacobian(const vpArray2D<int> &indices, const vpHomogeneousMatrix &cTw, const vpMatrix &observations, vpMatrix &J, vpColVector &e) const
+  {
+    J.resize(indices.getRows() * 3, 6, true, false);
+    e.resize(indices.getRows() * 3, 1, false);
+
+    vpColVector cX(3);
+    vpColVector wX(3);
+    const vpRotationMatrix cRw = cTw.getRotationMatrix();
+    const vpTranslationVector t = cTw.getTranslationVector();
+    for (unsigned int i = 0; i < indices.getRows(); ++i) {
+      const unsigned int pointIndex = indices[i][0];
+      const double *p = m_X[pointIndex];
+      wX[0] = p[0]; wX[1] = p[1]; wX[2] = p[2];
+      cX = cRw * wX;
+      cX += t;
+
+      const double X = cX[0], Y = cX[1], Z = cX[2];
+
+      e[i * 3] = X - observations[i][0];
+      e[i * 3 + 1] = Y - observations[i][1];
+      e[i * 3 + 2] = Z - observations[i][2];
+
+      J[i * 3][0] = -1;
+      J[i * 3 + 1][1] = -1;
+      J[i * 3 + 2][2] = -1;
+
+      J[i * 3][4] = -Z;
+      J[i * 3][5] = Y;
+
+      J[i * 3 + 1][3] = Z;
+      J[i * 3 + 1][5] = -X;
+
+      J[i * 3 + 2][3] = -Y;
+      J[i * 3 + 2][4] = X;
+    }
+  }
+
 private:
   vpMatrix m_X; // N x 3, points expressed in world frame
   unsigned m_maxPoints;

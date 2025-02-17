@@ -154,7 +154,7 @@ public:
 
     inline void interaction(vpMatrix &L, unsigned i)
     {
-      const double X = currentPoint[0], Y = currentPoint[1], Z = currentPoint[2];
+      const double X = oP.get_X(), Y = oP.get_Y(), Z = oP.get_Z();
       const double nx = cameraNormal[0], ny = cameraNormal[1], nz = cameraNormal[2];
       L[i][0] = nx;
       L[i][1] = ny;
