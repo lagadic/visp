@@ -458,7 +458,7 @@ be due to an OpenMP problem.
 
 Open the `Logcat` terminal, that is located on the bottom left of the screen:
 
-\image html 30-logs
+\image html 30-logs.png
 
 Then, click on the icon of the application to try to launch it. If a message in red appears
 complaining about `libopenmp.so`, it is because ViSP has not been compiled with OpenMP as
