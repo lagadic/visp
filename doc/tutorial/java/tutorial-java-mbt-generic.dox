@@ -21,10 +21,6 @@ To create the project corresponding to this tutorial:
 
 \image html img-java-mbt-generic-project.jpg
 
-- In the "New module-info.java" dialog that may appear, press `"Don't Create"` button.
-
-\image html img-tutorial-java-eclipse-dont-create.jpeg
-
 \section java_mbt_gen_user_lib Add a user library
 
 If you followed \ref tutorial-install-java, you should already have ViSP library set in your workspace’s user libraries; if not please check out \ref tutorial-install-java. Now you should be ready to add ViSP library to your project.
@@ -80,7 +76,7 @@ We can now run this application entering`"Run > Run"` menu.
 </p>
 \endhtmlonly
 
-This application allows to select features (edges alone, keypoints alone, or edges and keypoints together in the same scheme) that are used by the tracker. Just try it... 
+This application allows to select features (edges alone, keypoints alone, or edges and keypoints together in the same scheme) that are used by the tracker. Just try it...
 
 \section java_mbt_issues Known issues
 
