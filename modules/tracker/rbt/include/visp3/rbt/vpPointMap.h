@@ -82,7 +82,7 @@ public:
 
   void compute3DErrorAndJacobian(const vpArray2D<int> &indices, const vpHomogeneousMatrix &cTw, const vpMatrix &observations, vpMatrix &J, vpColVector &e) const
   {
-    J.resize(indices.getRows() * 3, 6, true, false);
+    J.resize(indices.getRows() * 3, 6, false, false);
     e.resize(indices.getRows() * 3, 1, false);
 
     vpColVector cX(3);
