@@ -21,8 +21,13 @@ To create the project corresponding to this tutorial:
 
 - In the `"New Java Project"` dialog write the name of your project (let say `visp_java_apriltag`). In JRE section,
 select the appropriate execution environment (JavaSE-21 if you install JDK 21 LTS). Then press `"Finish"` button.
-
 \image html img-java-apriltag-project.jpg
+
+- In the left panel, open the "Package Explorer" and expand the "src" folder
+\image html img-java-apriltag-project-started-explorer.jpg
+
+- Remove `module-info.java` file from your project.
+\image html img-java-apriltag-project-started-empty.jpg
 
 \section java_tag_user_lib Add a user library
 
@@ -40,6 +45,9 @@ library; if not please check out \ref tutorial-install-java. Now you should be r
 - Check the checkbox of the ViSP library and press `"Finish"` button.
 
 \image html img-tutorial-java-eclipse-add-libraries3.jpeg
+
+- In the "Package Explorer" panel, you should see "visp" library
+\image html img-java-apriltag-eclipse-add-libraries4.jpg
 
 \section java_tag_app Import AprilTag application java code
 

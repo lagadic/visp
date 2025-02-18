@@ -1,3 +1,5 @@
+package visp_java_started;
+
 import org.visp.core.VpCameraParameters;
 import org.visp.core.VpColVector;
 import org.visp.core.VpImageRGBa;
