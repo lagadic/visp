@@ -84,7 +84,7 @@ and select `tag36_11_640x480.png` image.
 
 - Now press `"Detect"` button to run AprilTag detection and pose computation over the image.
 
-\image html img-java-apriltag-app-detect.png
+\image html img-java-apriltag-app-detect.jpg
 
 This application allows to modify some settings:
 - using `"Set tag size"` button you can specify for each tag Id its size. Default size is set to 0.053 meter. For
