@@ -824,8 +824,8 @@ class CppHeaderParser(object):
                     block_head += " " + l[:pos]
                     end_pos = l.find("*/", pos + 2)
 
-                    # INFO: open-cv follows Javadoc style (/**) for docstring, visp follows C Style(/*!)
-                    if len(l) > pos + 2 and l[pos + 2] == "!":
+                    # INFO: open-cv follows Javadoc style (/**) for docstring, visp follows C Style(/*!) or Javadoc style (/**)
+                    if len(l) > pos + 2 and ((l[pos + 2] == "!") or (l[pos + 2] == "*")):
                         # '/**', it's a docstring
                         if end_pos < 0:
                             state = DOCSTRING
@@ -869,6 +869,9 @@ class CppHeaderParser(object):
                 decl = None
                 if "BEGIN_VISP_NAMESPACE" in stmt:
                   stmt = stmt.replace("BEGIN_VISP_NAMESPACE", "")
+                  stmt = stmt.strip()
+                if "END_VISP_NAMESPACE" in stmt:
+                  stmt = stmt.replace("END_VISP_NAMESPACE", "")
                   stmt = stmt.strip()
                 if stack_top[self.PROCESS_FLAG]:
                     # even if stack_top[PUBLIC_SECTION] is False, we still try to process the statement,
