@@ -4,19 +4,25 @@
 \tableofcontents
 
 \section android_sdk_intro Introduction
-This tutorial is designed to help you build ViSP Android SDK which can be used to create Android Apps supporting ViSP Java functionalities.
+This tutorial is designed to help you build ViSP Android SDK which can be used to create Android Apps supporting ViSP
+Java functionalities.
 
 \section android_sdk_prereq Prerequisites
 
-This tutorial assumes you have the following software installed and configured: <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">Java Development Kit (JDK)</a>, <a href="https://developer.android.com/studio/">Android SDK and NDK</a>, <a href="https://www.python.org/downloads/">Python Interpreter</a>, <a href="https://ant.apache.org/bindownload.cgi">Apache Ant</a>, <a href="https://cmake.org/download/">CMake</a>, <a href="https://github.com/ninja-build/ninja/releases">Ninja</a> and <a href="https://ccache.samba.org/">ccache</a>.
+This tutorial assumes you have the following software installed and configured:
+<a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">Java Development Kit (JDK)</a>,
+<a href="https://developer.android.com/studio/">Android SDK and NDK</a>,
+<a href="https://www.python.org/downloads/">Python Interpreter</a>,
+<a href="https://ant.apache.org/bindownload.cgi">Apache Ant</a>,
+<a href="https://cmake.org/download/">CMake</a>,
+<a href="https://github.com/ninja-build/ninja/releases">Ninja</a> and
+<a href="https://ccache.samba.org/">ccache</a>.
 
 \subsection android_sdk_prereq_linux On Ubuntu or debian
 
 - Install <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">Java Development Kit (JDK)</a>
   following \ref java_install_jdk tutorial.
-  \note At the time this tutorial was written `Java SE Development Kit 17` was incompatible with `gradle`.
-  If you encounter build issues running `python3 build_sdk.py ...` as described in \ref android_sdk_build section,
-  you may install `Java SE Development Kit 16`.
+  \note At the time this tutorial was updated `Java SE Development Kit 23` was used.
 - To install <a href="https://developer.android.com/studio/">Android SDK and NDK</a> follow the link to
   <a href="https://developer.android.com/studio/">Android Studio</a>, download and install Android Studio.
   Once installed start Android Studio using default settings. This allows to download Android SDK that will be installed
