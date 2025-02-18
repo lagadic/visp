@@ -509,11 +509,11 @@ int vpIoTools::mkdir_p(const std::string &path, int mode)
         if (errno != EEXIST) {
           return -1;
         }
-    }
+      }
       cpy_path.erase(0, pos + 1);
-  }
+    }
     pos = cpy_path.find(vpIoTools::separator);
-}
+  }
 
   if (!cpy_path.empty()) {
     sub_path += cpy_path;
@@ -527,7 +527,7 @@ int vpIoTools::mkdir_p(const std::string &path, int mode)
       if (errno != EEXIST) {
         return -1;
       }
-  }
+    }
   }
 
   return 0;
@@ -579,7 +579,7 @@ void vpIoTools::makeDirectory(const std::string &dirname)
     if (vpIoTools::mkdir_p(v_dirname, 0755) != 0) {
       throw(vpIoException(vpIoException::cantCreateDirectory, "Unable to create directory '%s'", dirname.c_str()));
     }
-}
+  }
 
   if (checkDirectory(dirname) == false) {
     throw(vpIoException(vpIoException::cantCreateDirectory, "Unable to create directory '%s'", dirname.c_str()));
@@ -803,7 +803,7 @@ bool vpIoTools::checkFilename(const std::string &filename)
 #endif
   {
     return false;
-}
+  }
   if ((stbuf.st_mode & S_IFREG) == 0) {
     return false;
   }
@@ -906,18 +906,18 @@ bool vpIoTools::copy(const std::string &src, const std::string &dst)
     std::cout << "Cannot copy: " << src << " in " << dst << std::endl;
     return false;
   }
-  }
+}
 
-  /*!
+/*!
 
-    Remove a file or a directory.
+  Remove a file or a directory.
 
-    \param file_or_dir : File name or directory to remove.
+  \param file_or_dir : File name or directory to remove.
 
-    \return true if the file or the directory was removed, false otherwise.
+  \return true if the file or the directory was removed, false otherwise.
 
-    \sa makeDirectory(), makeTempDirectory()
-  */
+  \sa makeDirectory(), makeTempDirectory()
+*/
 bool vpIoTools::remove(const std::string &file_or_dir)
 {
   // Check if we have to consider a file or a directory
@@ -971,17 +971,17 @@ bool vpIoTools::remove(const std::string &file_or_dir)
     std::cout << "Cannot remove: " << file_or_dir << std::endl;
     return false;
   }
-  }
+}
 
-  /*!
+/*!
 
-    Rename an existing file \e oldfilename in \e newfilename.
+  Rename an existing file \e oldfilename in \e newfilename.
 
-    \param oldfilename : File to rename.
-    \param newfilename : New file name.
+  \param oldfilename : File to rename.
+  \param newfilename : New file name.
 
-    \return true if the file was renamed, false otherwise.
-  */
+  \return true if the file was renamed, false otherwise.
+*/
 bool vpIoTools::rename(const std::string &oldfilename, const std::string &newfilename)
 {
   if (::rename(oldfilename.c_str(), newfilename.c_str()) != 0) {
@@ -1056,20 +1056,32 @@ std::string vpIoTools::getViSPImagesDataPath()
   std::string file_to_test("mbt/cube.cao");
   std::string filename;
   // Test if VISP_INPUT_IMAGE_PATH env var is set
-  data_path = vpIoTools::getenv("VISP_INPUT_IMAGE_PATH");
-  filename = data_path + "/" + file_to_test;
-  if (vpIoTools::checkFilename(filename)) {
-    return data_path;
+  try {
+    data_path = vpIoTools::getenv("VISP_INPUT_IMAGE_PATH");
+    filename = data_path + "/" + file_to_test;
+    if (vpIoTools::checkFilename(filename)) {
+      return data_path;
+    }
   }
-  data_path = vpIoTools::getenv("VISP_INPUT_IMAGE_PATH") + "/ViSP-images";
-  filename = data_path + "/" + file_to_test;
-  if (vpIoTools::checkFilename(filename)) {
-    return data_path;
+  catch (...) {
   }
-  data_path = vpIoTools::getenv("VISP_INPUT_IMAGE_PATH") + "/visp-images";
-  filename = data_path + "/" + file_to_test;
-  if (vpIoTools::checkFilename(filename)) {
-    return data_path;
+  try {
+    data_path = vpIoTools::getenv("VISP_INPUT_IMAGE_PATH") + "/ViSP-images";
+    filename = data_path + "/" + file_to_test;
+    if (vpIoTools::checkFilename(filename)) {
+      return data_path;
+    }
+  }
+  catch (...) {
+  }
+  try {
+    data_path = vpIoTools::getenv("VISP_INPUT_IMAGE_PATH") + "/visp-images";
+    filename = data_path + "/" + file_to_test;
+    if (vpIoTools::checkFilename(filename)) {
+      return data_path;
+    }
+  }
+  catch (...) {
   }
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
@@ -1349,16 +1361,16 @@ std::string vpIoTools::toLowerCase(const std::string &input)
     out += std::tolower(*it);
   }
   return out;
-  }
+}
 
-  /**
-   * @brief Return a upper-case version of the string \b input .
-   * Numbers and special characters stay the same
-   *
-   * @param input The input string for which we want to ensure that all the characters are in upper case.
-   * @return std::string A upper-case version of the string \b input, where
-   * numbers and special characters stay the same
-   */
+/**
+ * @brief Return a upper-case version of the string \b input .
+ * Numbers and special characters stay the same
+ *
+ * @param input The input string for which we want to ensure that all the characters are in upper case.
+ * @return std::string A upper-case version of the string \b input, where
+ * numbers and special characters stay the same
+ */
 std::string vpIoTools::toUpperCase(const std::string &input)
 {
   std::string out;
@@ -1372,16 +1384,16 @@ std::string vpIoTools::toUpperCase(const std::string &input)
     out += std::toupper(*it);
   }
   return out;
-  }
+}
 
-  /*!
-    Returns the absolute path using realpath() on Unix systems or
-    GetFullPathName() on Windows systems. \return According to realpath()
-    manual, returns an absolute pathname that names the same file, whose
-    resolution does not involve '.', '..', or symbolic links for Unix systems.
-    According to GetFullPathName() documentation, retrieves the full path of the
-    specified file for Windows systems.
-   */
+/*!
+  Returns the absolute path using realpath() on Unix systems or
+  GetFullPathName() on Windows systems. \return According to realpath()
+  manual, returns an absolute pathname that names the same file, whose
+  resolution does not involve '.', '..', or symbolic links for Unix systems.
+  According to GetFullPathName() documentation, retrieves the full path of the
+  specified file for Windows systems.
+ */
 std::string vpIoTools::getAbsolutePathname(const std::string &pathname)
 {
 
