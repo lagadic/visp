@@ -1,0 +1,80 @@
+[project]
+authors = ["Olivier Roussel <olivier.roussel@inria.fr>"]
+channels = ["conda-forge"]
+name = "visp"
+platforms = ["linux-64", "osx-64", "osx-arm64", "win-64"]
+version = "3.6.0"
+license = "GPL-2.0-only"
+license-file = "LICENSE.txt"
+
+# TODO: add ccache support
+[build-dependencies]
+cxx-compiler = ">=1.7.0"
+cmake = ">=3.22"
+ninja = ">=1.11"
+pkg-config = ">=0.29.2"
+git = ">=2.47.0"
+
+[dependencies]
+libopencv = "*"
+eigen = "*"
+libjpeg-turbo = "*"
+libpng = "*"
+libblas = "*"
+libcblas = "*"
+liblapack = "*"
+liblapacke = "*"
+
+[target.unix.dependencies]
+xorg-libx11 = "*"
+xorg-libxfixes = "*"
+xorg-xorgproto = "*"
+# TODO: activate on windows as well
+libxml2 = "*"
+libdc1394 = ">=2.2.6"
+librealsense = "*"
+
+[target.linux.dependencies]
+icu = "*"
+
+[target.linux-64.dependencies]
+mesa-libegl-cos7-x86_64 = "*"
+
+[target.osx.dependencies]
+llvm-openmp = "*"
+
+[target.win-64.dependencies]
+pthreads-win32 = "*"
+
+# Use clang-cl on Windows
+# We must use scripts instead of env to setup CC and CXX
+# to avoid cxx-compiler to overwrite them.
+[feature.clang-cl]
+platforms = ["win-64"]
+dependencies = { clang = "*" }
+activation = { scripts = ["development/scripts/pixi/activation_clang_cl.bat"] }
+
+[tasks]
+configure = { cmd = [
+  "cmake",
+  "-G",
+  "Ninja",
+  "-B",
+  "build",
+  "-S",
+  ".",
+  "-DCMAKE_BUILD_TYPE=$VISP_BUILD_TYPE",
+  "-DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX",
+  "-DVISP_PYTHON_SKIP_DETECTION=ON",
+  "-DBUILD_TESTS=ON"
+] }
+build = { cmd = "cmake --build build --parallel $CPU_COUNT", depends-on = ["configure"] }
+install = { cmd = "cmake --build build --target install", depends-on = ["build"] }
+clean = { cmd = "rm -rf build" }
+test = { cmd = "ctest --test-dir build --output-on-failure", depends-on = [
+  "install",
+] }
+
+[environments]
+all = { solve-group = "base" }
+all-clang-cl = { features = ["clang-cl"], solve-group = "base" }

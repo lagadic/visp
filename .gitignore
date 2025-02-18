@@ -12,3 +12,7 @@ modules/java/\.idea/
 build
 *.blend1
 **/results/**
+
+# pixi environments
+.pixi
+*.egg-info
