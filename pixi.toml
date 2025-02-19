@@ -46,6 +46,12 @@ llvm-openmp = "*"
 [target.win-64.dependencies]
 pthreads-win32 = "*"
 
+[activation]
+scripts = ["development/scripts/pixi/activation.sh"]
+
+[target.win-64.activation]
+scripts = ["development/scripts/pixi/activation.bat"]
+
 # Use clang-cl on Windows
 # We must use scripts instead of env to setup CC and CXX
 # to avoid cxx-compiler to overwrite them.
@@ -66,7 +72,8 @@ configure = { cmd = [
   "-DCMAKE_BUILD_TYPE=$VISP_BUILD_TYPE",
   "-DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX",
   "-DVISP_PYTHON_SKIP_DETECTION=ON",
-  "-DBUILD_TESTS=ON"
+  "-DBUILD_TESTS=ON",
+  "$VISP_EXTRA_CMAKE_ARGS"
 ] }
 build = { cmd = "cmake --build build --parallel $CPU_COUNT", depends-on = ["configure"] }
 install = { cmd = "cmake --build build --target install", depends-on = ["build"] }
