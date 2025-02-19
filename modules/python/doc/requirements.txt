@@ -1,4 +1,4 @@
-sphinx
-sphinx-immaterial
-sphinxcontrib-jsmath
-sphinx-design
+Sphinx==8.1.3
+sphinx_design==0.6.1
+sphinx_immaterial==0.12.5
+sphinxcontrib-jsmath==1.0.1
