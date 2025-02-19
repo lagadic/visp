@@ -24,6 +24,7 @@ libblas = "*"
 libcblas = "*"
 liblapack = "*"
 liblapacke = "*"
+libiconv = "<=1.17"
 
 [target.unix.dependencies]
 xorg-libx11 = "*"
