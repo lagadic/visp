@@ -373,7 +373,7 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
       vpMatrix H(6, 6);
       H.eye(6);
 
-      const bool scaleInvariant = true;
+      const bool scaleInvariant = false;
       if (scaleInvariant) {
         for (unsigned int i = 0; i < 6; ++i) {
           H[i][i] = LTL[i][i];
@@ -546,11 +546,11 @@ std::vector<vpRBSilhouettePoint> vpRBTracker::extractSilhouettePoints(
       // if (noNeighbor) {
       //   points.push_back(vpRBSilhouettePoint(n, m, norm, theta, Z));
       // }
-      }
     }
+  }
 
   return points;
-  }
+}
 
 void vpRBTracker::addTracker(std::shared_ptr<vpRBFeatureTracker> tracker)
 {
