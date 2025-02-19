@@ -73,7 +73,7 @@ enum vpRBSilhouetteCCDDisplayType
 class VISP_EXPORT vpCCDParameters
 {
 public:
-  vpCCDParameters() : gamma_1(0.5), gamma_2(4), gamma_3(4), gamma_4(3), alpha(1.3), beta(0.06), kappa(0.5), covarianceIterDecreaseFactor(0.25), h(40), delta_h(1), phi_dim(6)
+  vpCCDParameters() : gamma_1(0.5), gamma_2(4), gamma_3(4), gamma_4(3), alpha(1.3), beta(0.06), kappa(0.5), covarianceIterDecreaseFactor(0.25), h(40), delta_h(1), phi_dim(6), start_h(40), min_h(4), start_delta_h(1)
   { }
 
 
@@ -126,11 +126,15 @@ public:
    * Recommended value: 4 or above (this is dependent on image resolution)
    */
   int h;
+  int start_h;
+  int start_delta_h;
   /**
    * \brief Sample step when computing statistics and errors.
    * Increase this value to decrease computation time, at the risk of obtaining inacurrate statistics.
    */
   int delta_h;
+
+  int min_h;
   /**
    * \brief Number of parameters estimated by CCD. Either 6 or 8.
    * Leave this fixed
@@ -147,7 +151,11 @@ inline void from_json(const nlohmann::json &j, vpCCDParameters &ccdParameters)
   ccdParameters.covarianceIterDecreaseFactor = j.value("covarianceIterDecreaseFactor",
                                                       ccdParameters.covarianceIterDecreaseFactor);
   ccdParameters.h = j.value("h", ccdParameters.h);
+  ccdParameters.start_h = ccdParameters.h;
   ccdParameters.delta_h = j.value("delta_h", ccdParameters.delta_h);
+  ccdParameters.start_delta_h = ccdParameters.delta_h;
+  ccdParameters.min_h = j.value("min_h", ccdParameters.min_h);
+
   ccdParameters.phi_dim = j.value("phi_dim", ccdParameters.phi_dim);
   if (j.contains("gamma")) {
     nlohmann::json gammaj = j["gamma"];
@@ -309,6 +317,9 @@ protected:
   double m_vvsConvergenceThreshold;
   double tol;
 
+  std::vector<double> m_gradientData;
+  std::vector<double> m_hessianData;
+
   std::vector<vpColVector> m_gradients;
   std::vector<vpMatrix> m_hessians;
   vpColVector m_gradient; //! Sum of local gradients
@@ -319,6 +330,7 @@ protected:
   double m_minMaskConfidence;
 
   vpRBSilhouetteCCDDisplayType m_displayType;
+  const vpRBFeatureTrackerInput *m_previousFrame;
 };
 
 END_VISP_NAMESPACE
