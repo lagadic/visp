@@ -1,9 +1,7 @@
 //! \example tutorial-blob-auto-tracker.cpp
 #include <visp3/core/vpConfig.h>
 #include <visp3/blob/vpDot2.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
 
 int main()
@@ -12,18 +10,24 @@ int main()
   using namespace VISP_NAMESPACE_NAME;
 #endif
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display;
+#else
+  vpDisplay *display = nullptr;
+#endif
+
   try {
     bool learn = false;
     vpImage<unsigned char> I; // Create a gray level image container
 
     vpImageIo::read(I, "./target.pgm");
 
-#if defined(VISP_HAVE_X11)
-    vpDisplayX d(I, 0, 0, "Camera view");
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI d(I, 0, 0, "Camera view");
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV d(I, 0, 0, "Camera view");
+#if defined(VISP_HAVE_DISPLAY)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    display = vpDisplayFactory::createDisplay(I, 0, 0, "Camera view");
+#else
+    display = vpDisplayFactory::allocateDisplay(I, 0, 0, "Camera view");
+#endif
 #else
     std::cout << "No image viewer is available..." << std::endl;
 #endif
@@ -106,4 +110,9 @@ int main()
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (display != nullptr) {
+    delete display;
+  }
+#endif
 }

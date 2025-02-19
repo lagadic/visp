@@ -6,16 +6,14 @@
 // Check if std:c++17 or higher
 #if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L))) && \
   defined(VISP_HAVE_NLOHMANN_JSON) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_VIDEOIO) && \
-  defined(HAVE_OPENCV_DNN) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(HAVE_OPENCV_HIGHGUI)) && \
+  defined(HAVE_OPENCV_DNN) && defined(VISP_HAVE_DISPLAY) && \
   defined(VISP_HAVE_THREADS)
 
 #include <optional>
 
 #include <visp3/core/vpIoTools.h>
 #include <visp3/detection/vpDetectorDNNOpenCV.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/dnn_tracker/vpMegaPose.h>
 #include <visp3/dnn_tracker/vpMegaPoseTracker.h>
 #include <visp3/io/vpJsonArgumentParser.h>
@@ -279,13 +277,8 @@ int main(int argc, const char *argv[])
   }
 
   vpImage<vpRGBa> I;
-#if defined(VISP_HAVE_X11)
-  vpDisplayX d;
-#elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI d;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-  vpDisplayOpenCV d;
-#endif
+  std::shared_ptr<vpDisplay> display = vpDisplayFactory::createDisplay();
+
   //d.setDownScalingFactor(vpDisplay::SCALE_AUTO);
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(HAVE_OPENCV_DNN) && \
     ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
@@ -344,7 +337,7 @@ int main(int argc, const char *argv[])
 
     if (I.getSize() == 0) {
       vpImageConvert::convert(frame, I);
-      d.init(I);
+      display->init(I);
       vpDisplay::setTitle(I, "Megapose object pose estimation");
     }
     else {

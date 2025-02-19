@@ -1,9 +1,7 @@
 /*! \example tutorial-grabber-realsense-T265.cpp */
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageStorageWorker.h>
 #include <visp3/sensor/vpRealSense2.h>
 
@@ -61,6 +59,13 @@ int main(int argc, const char *argv[])
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
 #endif
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display_left;
+  std::shared_ptr<vpDisplay> display_right;
+#else
+  vpDisplay *display_left = nullptr;
+  vpDisplay *display_right = nullptr;
+#endif
   try {
     std::string opt_seqname_left = "left-%04d.png", opt_seqname_right = "right-%04d.png";
     int opt_record_mode = 0;
@@ -113,23 +118,18 @@ int main(int argc, const char *argv[])
 
     std::cout << "Image size : " << I_left.getWidth() << " " << I_right.getHeight() << std::endl;
 
-    vpDisplay *display_left = nullptr, *display_right = nullptr;
     if (opt_display) {
-#if !(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+#if !(defined(VISP_HAVE_DISPLAY))
       std::cout << "No image viewer is available..." << std::endl;
       opt_display = false;
+#else
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+      display_left = vpDisplayFactory::createDisplay(I_left, 10, 10, "Left image");
+      display_right = vpDisplayFactory::createDisplay(I_right, I_left.getWidth(), 10, "Right image");
+#else
+      display_left = vpDisplayFactory::allocateDisplay(I_left, 10, 10, "Left image");
+      display_right = vpDisplayFactory::allocateDisplay(I_right, I_left.getWidth(), 10, "Right image");
 #endif
-    }
-    if (opt_display) {
-#ifdef VISP_HAVE_X11
-      display_left = new vpDisplayX(I_left, 10, 10, "Left image");
-      display_right = new vpDisplayX(I_right, I_left.getWidth(), 10, "Right image");
-#elif defined(VISP_HAVE_GDI)
-      display_left = new vpDisplayGDI(I_left, 10, 10, "Left image");
-      display_right = new vpDisplayGDI(I_right, I_left.getWidth(), 10, "Right image");
-#elif defined(HAVE_OPENCV_HIGHGUI)
-      display_left = new vpDisplayOpenCV(I_left, 10, 10, "Left image");
-      display_right = new vpDisplayOpenCV(I_right, I_left.getWidth(), 10, "Right image");
 #endif
     }
 
@@ -162,17 +162,19 @@ int main(int argc, const char *argv[])
     image_queue_right.cancel();
     image_left_storage_thread.join();
     image_right_storage_thread.join();
-
-    if (display_left) {
-      delete display_left;
-    }
-    if (display_right) {
-      delete display_right;
-    }
   }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
+
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (display_left != nullptr) {
+    delete display_left;
+  }
+  if (display_right != nullptr) {
+    delete display_right;
+  }
+#endif
 #else
   (void)argc;
   (void)argv;

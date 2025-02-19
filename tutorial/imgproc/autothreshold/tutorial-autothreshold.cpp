@@ -4,9 +4,7 @@
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
 
 #if defined(VISP_HAVE_MODULE_IMGPROC)
@@ -18,7 +16,7 @@
 int main(int argc, const char **argv)
 {
 //! [Macro defined]
-#if defined(VISP_HAVE_MODULE_IMGPROC) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+#if defined(VISP_HAVE_MODULE_IMGPROC) && defined(VISP_HAVE_DISPLAY)
   //! [Macro defined]
   //!
 
@@ -44,15 +42,13 @@ int main(int argc, const char **argv)
   vpImage<unsigned char> I_res(3 * I.getHeight(), 3 * I.getWidth());
   I_res.insert(I, vpImagePoint(I.getHeight(), I.getWidth()));
 
-#ifdef VISP_HAVE_X11
-  vpDisplayX d;
-#elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI d;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-  vpDisplayOpenCV d;
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display = vpDisplayFactory::createDisplay();
+#else
+  vpDisplay *display = vpDisplayFactory::allocateDisplay();
 #endif
-  d.setDownScalingFactor(vpDisplay::SCALE_2);
-  d.init(I_res);
+  display->setDownScalingFactor(vpDisplay::SCALE_2);
+  display->init(I_res);
 
   //! [Huang]
   vpImage<unsigned char> I_huang = I;
@@ -102,6 +98,12 @@ int main(int argc, const char **argv)
 
   vpDisplay::flush(I_res);
   vpDisplay::getClick(I_res);
+
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11) && defined(VISP_HAVE_DISPLAY)
+  if (display != nullptr) {
+    delete display;
+  }
+#endif
 #else
   (void)argc;
   (void)argv;

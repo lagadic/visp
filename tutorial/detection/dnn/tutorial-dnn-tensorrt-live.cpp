@@ -22,7 +22,7 @@
     defined(HAVE_OPENCV_DNN) && defined(HAVE_OPENCV_VIDEOIO)
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpIoTools.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 
 #include <opencv2/videoio.hpp>
 
@@ -439,7 +439,11 @@ int main(int argc, char **argv)
   std::vector<cv::Rect> boxesNMS;
   std::vector<int> classIds;
 
-  vpDisplayX d(I);
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display = vpDisplayFactory::createDisplay(I);
+#else
+  vpDisplay *display = vpDisplayFactory::allocateDisplay(I);
+#endif
 
   double start, stop;
   //! [Main loop]
@@ -476,6 +480,12 @@ int main(int argc, char **argv)
 
   for (void *buf : buffers)
     cudaFree(buf);
+
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (display != nullptr) {
+    delete display;
+  }
+#endif
 
   return EXIT_SUCCESS;
 }

@@ -1,9 +1,7 @@
 /*! \example tutorial-grabber-multiple-realsense.cpp */
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/sensor/vpRealSense.h>
 #include <visp3/sensor/vpRealSense2.h>
 
@@ -49,12 +47,8 @@ int main(int argc, char **argv)
   std::vector<vpRealSense2> g(type_serial_nb.size());
   std::vector<vpImage<unsigned char> > I(type_serial_nb.size());
 
-#ifdef VISP_HAVE_X11
-  std::vector<vpDisplayX> d(type_serial_nb.size());
-#elif defined(VISP_HAVE_GDI)
-  std::vector<vpDisplayGDI> d(type_serial_nb.size());
-#elif defined(HAVE_OPENCV_HIGHGUI)
-  std::vector<vpDisplayOpenCV> d(type_serial_nb.size());
+#if defined(VISP_HAVE_DISPLAY)
+  std::vector<std::shared_ptr<vpDisplay>> d(type_serial_nb.size());
 #else
   std::cout << "No image viewer is available..." << std::endl;
 #endif
@@ -90,9 +84,9 @@ int main(int argc, char **argv)
         if (type_serial_nb[i].first == "T265") { // T265.
           g[i].acquire(&I[i], nullptr, nullptr);
 
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
-          if (!d[i].isInitialised()) {
-            d[i].init(I[i], static_cast<int>(100 * i), static_cast<int>(100 * i), "T265 left image");
+#if defined(VISP_HAVE_DISPLAY)
+          if (!d[i]) {
+            d[i] = vpDisplayFactory::createDisplay(I[i], static_cast<int>(100 * i), static_cast<int>(100 * i), "T265 left image");
           }
 #endif
         }
@@ -100,9 +94,9 @@ int main(int argc, char **argv)
         else { // D435.
           g[i].acquire(I[i]);
 
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
-          if (!d[i].isInitialised()) {
-            d[i].init(I[i], static_cast<int>(100 * i), static_cast<int>(100 * i), type_serial_nb[i].first.c_str());
+#if defined(VISP_HAVE_DISPLAY)
+          if (!d[i]) {
+            d[i] = vpDisplayFactory::createDisplay(I[i], static_cast<int>(100 * i), static_cast<int>(100 * i), type_serial_nb[i].first.c_str());
           }
 #endif
         }

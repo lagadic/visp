@@ -50,7 +50,7 @@
 
   The target is an AprilTag that is by default 12cm large. To print your own tag, see
   https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-detection-apriltag.html
-  You can specify the size of your tag using --tag_size command line option.
+  You can specify the size of your tag using --tag-size command line option.
 */
 
 #include <iostream>
@@ -110,7 +110,7 @@ int main(int argc, char **argv)
   double convergence_threshold_tu = 0.5;   // Value in [deg]
 
   for (int i = 1; i < argc; i++) {
-    if (std::string(argv[i]) == "--tag_size" && i + 1 < argc) {
+    if (std::string(argv[i]) == "--tag-size" && i + 1 < argc) {
       opt_tagSize = std::stod(argv[i + 1]);
     }
     else if (std::string(argv[i]) == "--ip" && i + 1 < argc) {
@@ -125,10 +125,10 @@ int main(int argc, char **argv)
     else if (std::string(argv[i]) == "--plot") {
       opt_plot = true;
     }
-    else if (std::string(argv[i]) == "--adaptive_gain") {
+    else if (std::string(argv[i]) == "--adpative-gain") {
       opt_adaptive_gain = true;
     }
-    else if (std::string(argv[i]) == "--task_sequencing") {
+    else if (std::string(argv[i]) == "--task-sequencing") {
       opt_task_sequencing = true;
     }
     else if (std::string(argv[i]) == "--quad-decimate" && i + 1 < argc) {
@@ -143,7 +143,7 @@ int main(int argc, char **argv)
         << argv[0] << " [--ip <default " << opt_robot_ip << ">] [--tag-size <marker size in meter; default "
         << opt_tagSize << ">] [--eMc <eMc extrinsic file>] "
         << "[--quad-decimate <decimation; default " << opt_quad_decimate
-        << ">] [--adaptive_gain] [--plot] [--task_sequencing] [--no-convergence-threshold] [--verbose] [--help] [-h]"
+        << ">] [--adpative-gain] [--plot] [--task-sequencing] [--no-convergence-threshold] [--verbose] [--help] [-h]"
         << "\n";
       return EXIT_SUCCESS;
     }

@@ -307,6 +307,8 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
 
   mark_as_advanced(ENSENSO_INCLUDE_DIR ENSENSO_LIBRARY)
 
+  mark_as_advanced(freetype_DIR)
+
   mark_as_advanced(flann_DIR)
   mark_as_advanced(FLANN_INCLUDE_DIR)
   mark_as_advanced(FLANN_INCLUDE_DIRS)

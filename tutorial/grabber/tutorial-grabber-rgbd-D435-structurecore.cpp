@@ -3,8 +3,7 @@
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImageConvert.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/sensor/vpOccipitalStructure.h>
 #include <visp3/sensor/vpRealSense2.h>
 
@@ -30,10 +29,10 @@ int main(int argc, char **argv)
   vpImage<vpRGBa> I_depth_sc(height, width), I_depth_rs(height, width);
   vpImage<vpRGBa> I_color_sc(height, width), I_color_rs(height, width);
 
-  vpDisplayX d_rs_depth(I_depth_rs, 10, height + 10, "RealSense Depth"),
-    d_sc_depth(I_depth_sc, width + 10, height + 10, "Structure Core Depth");
-  vpDisplayX d_color_rs(I_color_rs, 10, 10, "RealSense Color"),
-    d_color_sc(I_color_sc, width + 10, 10, "Structure Core Color");
+  std::shared_ptr<vpDisplay> d_rs_depth = vpDisplayFactory::createDisplay(I_depth_rs, 10, height + 10, "RealSense Depth"),
+    d_sc_depth = = vpDisplayFactory::createDisplay(I_depth_sc, width + 10, height + 10, "Structure Core Depth");
+  std::shared_ptr<vpDisplay> d_color_rs = vpDisplayFactory::createDisplay(I_color_rs, 10, 10, "RealSense Color"),
+    d_color_sc = vpDisplayFactory::createDisplay(I_color_sc, width + 10, 10, "Structure Core Color");
 
   // Configuring and opening RealSense grabber.
   rs2::config cfg;
@@ -72,8 +71,8 @@ int main(int argc, char **argv)
     if (vpDisplay::getClick(I_color_rs, false) || vpDisplay::getClick(I_color_sc, false) ||
         vpDisplay::getClick(I_depth_rs, false) || vpDisplay::getClick(I_depth_sc, false)) {
       break;
-}
-}
+    }
+  }
 #else
   (void)argc;
   (void)argv;

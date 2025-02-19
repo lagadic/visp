@@ -35,14 +35,13 @@
 
 // Check if cxx14 or higher
 #if ((__cplusplus >= 201402L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201402L))) \
-    && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
+    && defined(VISP_HAVE_DISPLAY) && defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
 
 #include <memory>
 #include <complex>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpImageIo.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 
 int main()
 {
@@ -147,12 +146,7 @@ int main()
       vpImage<vpRGBa> img(arr_data_img.data<vpRGBa>(), static_cast<unsigned int>(arr_data_img.shape[0]), static_cast<unsigned int>(arr_data_img.shape[1]), copy_data);
       std::cout << "Img: " << img.getWidth() << "x" << img.getHeight() << std::endl;
 
-      std::unique_ptr<vpDisplay> ptr_display;
-#if defined(VISP_HAVE_X11)
-      ptr_display = std::make_unique<vpDisplayX>(img);
-#elif defined(VISP_HAVE_GDI)
-      ptr_display = std::make_unique<vpDisplayGDI>(img);
-#endif
+      std::shared_ptr<vpDisplay> ptr_display = vpDisplayFactory::createDisplay(img);
 
       vpDisplay::display(img);
       vpDisplay::displayText(img, 20, 20, "vpImage<vpRGBa>", vpColor::red);
@@ -192,12 +186,7 @@ int main()
       vpImageConvert::RGBToRGBa(arr_data_img.data<unsigned char>(), reinterpret_cast<unsigned char *>(img.bitmap),
         img.getSize());
 
-      std::unique_ptr<vpDisplay> ptr_display;
-#if defined(VISP_HAVE_X11)
-      ptr_display = std::make_unique<vpDisplayX>(img);
-#elif defined(VISP_HAVE_GDI)
-      ptr_display = std::make_unique<vpDisplayGDI>(img);
-#endif
+      std::shared_ptr<vpDisplay> ptr_display = vpDisplayFactory::createDisplay(img);
 
       vpDisplay::display(img);
       vpDisplay::displayText(img, 20, 20, "RGBToRGBa", vpColor::red);

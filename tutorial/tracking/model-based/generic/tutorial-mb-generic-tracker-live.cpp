@@ -16,7 +16,7 @@
 #if (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || \
    defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2) || \
    ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || \
-   ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))) && \
+   ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))) && defined(VISP_HAVE_DISPLAY) && \
   ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_FEATURES2D)) || \
   ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D) && defined(HAVE_OPENCV_FEATURES))
 
@@ -29,9 +29,7 @@
 #endif
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpXmlParserCamera.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/vision/vpKeyPoint.h>
 //! [Include]
@@ -48,6 +46,12 @@ int main(int argc, char **argv)
 {
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
+#endif
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display;
+#else
+  vpDisplay *display = nullptr;
 #endif
 
   try {
@@ -225,13 +229,10 @@ int main(int argc, char **argv)
 #endif
     //! [Grabber]
 
-    vpDisplay *display = nullptr;
-#if defined(VISP_HAVE_X11)
-    display = new vpDisplayX;
-#elif defined(VISP_HAVE_GDI)
-    display = new vpDisplayGDI;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    display = new vpDisplayOpenCV;
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    display = vpDisplayFactory::createDisplay();
+#else
+    display = vpDisplayFactory::allocateDisplay();
 #endif
     display->init(I, 100, 100, "Model-based tracker");
 
@@ -541,14 +542,18 @@ int main(int argc, char **argv)
       std::cout << "Save learning from " << learn_cpt << " images in file: " << opt_learning_data << std::endl;
       keypoint.saveLearningData(opt_learning_data, true, true);
     }
-
-    //! [Cleanup]
-    delete display;
-    //! [Cleanup]
   }
   catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
   }
+
+//! [Cleanup]
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (display != nullptr) {
+    delete display;
+  }
+#endif
+//! [Cleanup]
 }
 
 #else
@@ -563,6 +568,6 @@ int main()
   std::cout << "Install OpenCV 3rd party, configure and build ViSP again to use this tutorial." << std::endl;
 #endif
   return EXIT_SUCCESS;
-}
+  }
 
 #endif

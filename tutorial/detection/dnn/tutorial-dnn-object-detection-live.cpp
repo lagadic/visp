@@ -4,14 +4,12 @@
 #include <visp3/core/vpConfig.h>
 
   // Check if std:c++17 or higher
-#if defined(HAVE_OPENCV_DNN) && defined(HAVE_OPENCV_VIDEOIO) && \
+#if defined(HAVE_OPENCV_DNN) && defined(HAVE_OPENCV_VIDEOIO) && defined(VISP_HAVE_DISPLAY) && \
     ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
 
 #include <visp3/core/vpIoTools.h>
 #include <visp3/detection/vpDetectorDNNOpenCV.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 
 #include <opencv2/videoio.hpp>
 
@@ -75,6 +73,11 @@ std::string getAvailableDetectionContainer()
 
 int main(int argc, const char *argv[])
 {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display = vpDisplayFactory::createDisplay();
+#else
+  vpDisplay *display = vpDisplayFactory::allocateDisplay();
+#endif
   try {
     std::string opt_device("0");
     //! [OpenCV DNN face detector]
@@ -287,14 +290,7 @@ int main(int argc, const char *argv[])
     }
 
     vpImage<vpRGBa> I;
-#if defined(VISP_HAVE_X11)
-    vpDisplayX d;
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI d;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV d;
-#endif
-    d.setDownScalingFactor(vpDisplay::SCALE_AUTO);
+    display->setDownScalingFactor(vpDisplay::SCALE_AUTO);
 
     if (!opt_dnn_label_file.empty() && !vpIoTools::checkFilename(opt_dnn_label_file)) {
       throw(vpException(vpException::fatalError,
@@ -350,7 +346,7 @@ int main(int argc, const char *argv[])
 
       if (I.getSize() == 0) {
         vpImageConvert::convert(frame, I);
-        d.init(I);
+        display->init(I);
         vpDisplay::setTitle(I, "DNN object detection");
         if (opt_verbose) {
           std::cout << "Process image: " << I.getWidth() << " x " << I.getHeight() << std::endl;
@@ -457,6 +453,12 @@ int main(int argc, const char *argv[])
   catch (const vpException &e) {
     std::cout << e.what() << std::endl;
   }
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11) && defined(VISP_HAVE_DISPLAY)
+  if (display != nullptr) {
+    delete display;
+  }
+#endif
+  return EXIT_SUCCESS;
 }
 
 #else

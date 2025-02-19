@@ -3,13 +3,13 @@
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON) && defined(VISP_HAVE_X11)
+#if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON) && defined(VISP_HAVE_DISPLAY)
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpImageTools.h>
 #include <visp3/core/vpPixelMeterConversion.h>
 #include <visp3/core/vpColorDepthConversion.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/sensor/vpRealSense2.h>
 
 int main(int argc, const char *argv[])
@@ -88,8 +88,13 @@ int main(int argc, const char *argv[])
   vpImage<uint16_t> depth_raw(height, width);
   vpImage<vpRGBa> I_segmented(height, width);
 
-  vpDisplayX d_I(I, 0, 0, "Current frame");
-  vpDisplayX d_I_segmented(I_segmented, I.getWidth()+75, 0, "HSV segmented frame");
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> d_I = vpDisplayFactory::createDisplay(I, 0, 0, "Current frame");
+  std::shared_ptr<vpDisplay> d_I_segmented = vpDisplayFactory::createDisplay(I_segmented, I.getWidth()+75, 0, "HSV segmented frame");
+#else
+  vpDisplay *d_I = vpDisplayFactory::allocateDisplay(I, 0, 0, "Current frame");
+  vpDisplay *d_I_segmented = vpDisplayFactory::allocateDisplay(I_segmented, I.getWidth()+75, 0, "HSV segmented frame");
+#endif
 
   bool quit = false;
   double loop_time = 0., total_loop_time = 0.;
@@ -151,6 +156,16 @@ int main(int argc, const char *argv[])
   }
 
   std::cout << "Mean loop time: " << total_loop_time / nb_iter << std::endl;
+
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (d_I != nullptr) {
+    delete d_I;
+  }
+
+  if (d_I_segmented != nullptr) {
+    delete d_I_segmented;
+  }
+#endif
   return EXIT_SUCCESS;
 }
 #else
@@ -167,5 +182,5 @@ int main()
 #endif
   std::cout << "Install missing 3rd party, configure and rebuild ViSP." << std::endl;
   return EXIT_SUCCESS;
-}
+  }
 #endif
