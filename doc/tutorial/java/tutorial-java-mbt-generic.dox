@@ -17,9 +17,15 @@ To create the project corresponding to this tutorial:
 
 \image html img-tutorial-java-eclipse-create-new-project.jpeg
 
-- In the `"New Java Project"` dialog write the name of your project (let say `visp-java-mbt-generic`). In JRE section, select the appropriate execution environment (JavaSE-17 if you install JDK 17, or JavaSE-15 if you install JDK 15 or JavaSE-11 if you install JDK 11). Then press `"Finish"` button.
-
+- In the `"New Java Project"` dialog write the name of your project (let say `visp_java_mbt_generic`). In JRE section,
+  select the appropriate execution environment (JavaSE-21 if you install JDK 21). Then press `"Finish"` button.
 \image html img-java-mbt-generic-project.jpg
+
+- In the left panel, open the "Package Explorer" and expand the "src" folder
+\image html img-java-mbt-generic-project-started-explorer.jpg
+
+- Remove `module-info.java` file from your project.
+\image html img-java-mbt-generic-project-started-empty.jpg
 
 \section java_mbt_gen_user_lib Add a user library
 
@@ -36,6 +42,9 @@ If you followed \ref tutorial-install-java, you should already have ViSP library
 - Check the checkbox of the ViSP library and press `"Finish"` button.
 
 \image html img-tutorial-java-eclipse-add-libraries3.jpeg
+
+- In the "Package Explorer" panel, you should see "visp" library
+\image html img-java-mbt-generic-eclipse-add-libraries4.jpg
 
 \section java_mbt_gen_app Import generic tracker java code
 

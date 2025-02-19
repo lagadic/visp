@@ -11,15 +11,19 @@ This tutorial will guide you through the creation of a simple Java console appli
 
 \section java_started_create_project Create a new project
 
-Open Eclipse and create a new Java project entering `"File > New > Java Project"` menu.
-
+- Open Eclipse and create a new Java project entering `"File > New > Java Project"` menu.
 \image html img-tutorial-java-eclipse-create-new-project.jpeg
 
-In the `"New Java Project"` dialog write the name of your project (let say `visp_java_started`). In JRE section,
+- In the `"New Java Project"` dialog write the name of your project (let say `visp_java_started`). In JRE section,
 select the appropriate execution environment corresponding to the version of your JDK LTS version
 (ie. JavaSE-21 if you install JDK 21). Then press `"Finish"` button.
-
 \image html img-tutorial-java-eclipse-java-started.jpg
+
+- In the left panel, open the "Package Explorer" and expand the "src" folder
+\image html img-tutorial-java-eclipse-java-started-explorer.jpg
+
+- Remove `module-info.java` file from your project.
+\image html img-tutorial-java-eclipse-java-started-empty.jpg
 
 \section java_started_user_lib Add a user library
 
@@ -38,6 +42,9 @@ if not please check out \ref tutorial-install-java. Now you should be ready to a
 that you didn't follow the section \ref create_user_library.
 
 \image html img-tutorial-java-eclipse-add-libraries3.jpeg
+
+- In the "Package Explorer" panel, you should see "visp" library
+\image html img-tutorial-java-eclipse-add-libraries4.jpg
 
 \section java_started_simple_app Create a simple application
 
@@ -62,7 +69,7 @@ To create a simple application that uses ViSP:
 
 - Now you should copy/paste the code in your `visp_java_started` project in `Started.java` file to have something
   similar to:
-\image html img-tutorial-java-eclipse-started-code.jpeg
+\image html img-tutorial-java-eclipse-started-code.jpg
 
 - You can now try to build and run this application entering`"Run > Run"` menu. You should have the following output:
 

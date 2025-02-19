@@ -75,7 +75,7 @@ $ brew install openjdk
 - To know which version is installed:
 \code{.sh}
 $ brew info openjdk
-openjdk: stable 17.0.1 (bottled) [keg-only]
+openjdk: stable 23.0.2 (bottled) [keg-only]
 \endcode
 
 - Now for the system Java wrappers to find this JDK, symlink it with:
@@ -99,7 +99,7 @@ $ source ~/.zshrc
 - After installation check JDK version:
 \code{.sh}
 $ java --version
-openjdk 17.0.1 2021-10-19
+openjdk 23.0.2 2025-01-21
 \endcode
 
 \subsection java_install_jdk_win On Windows platform
@@ -281,40 +281,61 @@ General configuration information for ViSP 3.6.1
 \code{.sh}
 $ more ViSP-third-party.txt
 ==========================================================
-General configuration information for ViSP 3.4.1
+General configuration information for ViSP 3.6.1
 
-  Version control:               v3.4.0-328-g011e5bc43-dirty
+  Version control:               4471cea29-dirty
 
   Platform:
-    Timestamp:                   2022-01-28T07:18:34Z
-    Host:                        Darwin 20.6.0 x86_64
-    CMake:                       3.22.2
+    Timestamp:                   2025-02-18T16:42:59Z
+    Host:                        Darwin 24.3.0 arm64
+    CMake:                       3.31.5
     CMake generator:             Unix Makefiles
     CMake build tool:            /usr/bin/make
     Configuration:               Release
 
+  System information:
+    Number of CPU logical cores: 10
+    Number of CPU physical cores: 10
+    Total physical memory (in MiB): 32768
+    OS name:                     macOS
+    OS release:                  15.3.1
+    OS version:                  24D70
+    OS platform:                 arm64
+    CPU name:                    Apple M1 Pro
+    CPU description:             10 core Apple M1 Pro
+    Is the CPU 64-bit?           yes
+    Does the CPU have FPU?       yes
+    CPU optimization:            NEON
+    CPU endianness:              little-endian
+
   C/C++:
     Built as dynamic libs?:      yes
-    C++ Compiler:                /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  (ver 13.0.0.13000029)
-    C++ flags (Release):         -Wall -Wextra -Xclang -fopenmp -std=c++14 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -O3 -DNDEBUG
-    C++ flags (Debug):           -Wall -Wextra -Xclang -fopenmp -std=c++14 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -g
-    C Compiler:                  /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc
-    C flags (Release):           -Wall -Wextra -Xclang -fopenmp -std=c++14 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -O3 -DNDEBUG
-    C flags (Debug):             -Wall -Wextra -Xclang -fopenmp -std=c++14 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -g
+    C++ Compiler:                /Library/Developer/CommandLineTools/usr/bin/c++  (ver 16.0.0.16000026)
+    C++ flags (Release):         -Wall -Wextra -Xclang -fopenmp -std=c++17 -fvisibility=hidden -fPIC -O3 -DNDEBUG
+    C++ flags (Debug):           -Wall -Wextra -Xclang -fopenmp -std=c++17 -fvisibility=hidden -fPIC -g
+    C Compiler:                  /Library/Developer/CommandLineTools/usr/bin/cc
+    C flags (Release):           -Wall -Wextra -Xclang -fopenmp -std=c++17 -fvisibility=hidden -fPIC -O3 -DNDEBUG
+    C flags (Debug):             -Wall -Wextra -Xclang -fopenmp -std=c++17 -fvisibility=hidden -fPIC -g
     Linker flags (Release):
     Linker flags (Debug):
+    Use cxx standard:            17
 
   ViSP modules:
-    To be built:                 core gui imgproc io java_bindings_generator klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi java
+    To be built:                 core dnn_tracker gui imgproc io java_bindings_generator klt me sensor ar blob robot visual_features vs vision detection mbt rbt tt tt_mi java
     Disabled:                    -
     Disabled by dependency:      -
     Unavailable:                 -
+    Enable visp namespace:       no
+    Enable explicit keyword:     no
 
-  Python (for build):            /usr/bin/python
+  Python 3:
+    Interpreter:                 /Users/fspindle/miniforge3/bin/python3.10 (ver 3.10.13)
 
   Java:
-    ant:                         /usr/local/bin/ant (ver 1.10.12)
-    JNI:                         /usr/local/Cellar/openjdk/17.0.1_1/libexec/openjdk.jdk/Contents/Home/include /usr/local/Cellar/openjdk/17.0.1_1/libexec/openjdk.jdk/Contents/Home/include/darwin /usr/local/Cellar/openjdk/17.0.1_1/libexec/openjdk.jdk/Contents/Home/include
+    ant:                         /opt/homebrew/bin/ant (ver 1.10.15)
+    Java:                        no
+    JNI:                         /opt/homebrew/Cellar/openjdk/23.0.2/libexec/openjdk.jdk/Contents/Home/include /opt/homebrew/Cellar/openjdk/23.0.2/libexec/openjdk.jdk/Contents/Home/include/darwin /opt/homebrew/Cellar/openjdk/23.0.2/libexec/openjdk.jdk/Contents/Home/include
+    Java wrappers:               yes (ANT)
 \endcode
 
   - **On Windows**
