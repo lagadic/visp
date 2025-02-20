@@ -158,8 +158,8 @@ class Builder:
     def setABI(self, abi: ABI):
       self.abi_name = abi.name
       self.libdest = check_dir(os.path.join(self.workdir, "o4a", abi.name), create=True, clean=True)
-      self.resultdest = check_dir(os.path.join(self.workdir, 'ViSP-android-sdk', abi.name), create=True, clean=True)
-      self.docdest = check_dir(os.path.join(self.workdir, 'ViSP-android-sdk', abi.name, 'sdk', 'java', 'javadoc'), create=True, clean=True)
+      self.resultdest = check_dir(os.path.join(self.workdir, 'visp-android-sdk', abi.name), create=True, clean=True)
+      self.docdest = check_dir(os.path.join(self.workdir, 'visp-android-sdk', abi.name, 'sdk', 'java', 'javadoc'), create=True, clean=True)
 
     def get_cmake(self):
         if not self.config.use_android_buildtools and check_executable(['cmake', '--version']):
