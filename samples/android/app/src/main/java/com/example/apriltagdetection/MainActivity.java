@@ -89,8 +89,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
     private void showCameraPreview() {
         // Check if the Camera permission has been granted
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                == PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             // Permission is already available, start camera preview
             Snackbar.make(mLayout,
                     "Camera permission is available. Starting preview.",
