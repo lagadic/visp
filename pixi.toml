@@ -35,9 +35,6 @@ libxml2 = "*"
 libdc1394 = ">=2.2.6"
 librealsense = "*"
 
-[target.linux.dependencies]
-icu = "*"
-
 [target.linux-64.dependencies]
 mesa-libegl-cos7-x86_64 = "*"
 
@@ -61,6 +58,12 @@ platforms = ["win-64"]
 dependencies = { clang = "*", llvm-openmp = "*" }
 activation = { scripts = ["development/scripts/pixi/activation_clang_cl.bat"] }
 
+[feature.python-bindings]
+dependencies = { python = ">=3.8", pybind11 = "*", pip = "*" }
+[feature.python-bindings.tasks]
+build = { cmd = "cmake --build build --parallel $CPU_COUNT --target visp_python_bindings", depends-on = ["install"] }
+python-test = { cmd = "cmake --build build --config Release --target visp_python_bindings_test", depends-on = ["build"] }
+
 [tasks]
 configure = { cmd = [
   "cmake",
@@ -72,17 +75,16 @@ configure = { cmd = [
   ".",
   "-DCMAKE_BUILD_TYPE=$VISP_BUILD_TYPE",
   "-DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX",
-  "-DVISP_PYTHON_SKIP_DETECTION=ON",
   "-DBUILD_TESTS=ON",
   "$VISP_EXTRA_CMAKE_ARGS"
 ] }
-build = { cmd = "cmake --build build --parallel $CPU_COUNT", depends-on = ["configure"] }
-install = { cmd = "cmake --build build --target install", depends-on = ["build"] }
+build-base = { cmd = "cmake --build build --parallel $CPU_COUNT", depends-on = ["configure"] }
+build = { depends-on = ["build-base"]}
+install = { cmd = "cmake --build build --target install", depends-on = ["build-base"] }
 clean = { cmd = "rm -rf build" }
-test = { cmd = "ctest --test-dir build --output-on-failure", depends-on = [
-  "install",
-] }
+test = { cmd = "ctest --test-dir build --output-on-failure", depends-on = ["install"] }
 
 [environments]
-all = { solve-group = "base" }
-all-clang-cl = { features = ["clang-cl"], solve-group = "base" }
+default = { solve-group = "base" }
+default-clang-cl = { features = ["clang-cl"], solve-group = "base" }
+with-python = { features = ["python-bindings"], solve-group = "base"}
