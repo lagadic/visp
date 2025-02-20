@@ -5,7 +5,7 @@
 //
 // Notes about integration ViSP into existed Android Studio application project are below (application 'app' module should exist).
 //
-// This file is located in <ViSP-android-sdk>/sdk directory (near 'etc', 'java', 'native' subdirectories)
+// This file is located in <visp-android-sdk>/sdk directory (near 'etc', 'java', 'native' subdirectories)
 //
 // Add module into Android Studio application project:
 //
