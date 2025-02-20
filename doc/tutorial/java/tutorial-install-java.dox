@@ -110,27 +110,39 @@ openjdk 23.0.2 2025-01-21
 
 \subsection java_install_jdk_win 3.3. On Windows
 
-From the [Oracle](http://www.oracle.com/technetwork/java/javase/downloads/index.html) website, download
-`jdk-17_windows-x64_bin.exe` and run the binary. In order to make `java.exe` available, we had also to add its location
+From the [Oracle](http://www.oracle.com/technetwork/java/javase/downloads/index.html) website, download JDK 23 to get
+`jdk-23_windows-x64_bin.exe` and run the binary. In order to make `java.exe` available, we had also to add its location
 `C:\Program Files\Java\jdk-17.0.2\bin` to the `%%PATH%` environment variable.
 
 After installation check JDK version:
 \code{.sh}
 C:\> java -version
-java version 17.0.2 2022-01-18
+java version 23.0.2 2025-01-21
 \endcode
 
 \section java_eclipse 4. Install the latest Eclipse version
 
 Download the latest Eclipse version at the [Eclipse Download page](https://www.eclipse.org/downloads/eclipse-packages/)
-choosing the <b> Eclipse IDE for Java Developers </b> version. You don’t need to install anything. Extract the
-downloaded compressed file and put the resulting folder wherever you want to, for example in `$VISP_WS/3rdparty/eclipse`.
+choosing the <b> Eclipse IDE for Java Developers </b> version.
+
+\subsection java_eclipse_unix 4.1. On Ubuntu, Debian and Mac OSX
+
+On Ubuntu, Debian or Mac OSX you don’t need to install anything. Extract the downloaded compressed file and put the
+resulting folder wherever you want to, for example in `$VISP_WS/3rdparty/eclipse`.
 
 We suppose here that you have Eclipse installed `$VISP_WS/3rdparty/eclipse`:
 \code{.sh}
 $ ls $VISP_WS/3rdparty/eclipse
 artifacts.xml  configuration  dropins  eclipse  eclipse.ini  features  icon.xpm  p2  plugins  readme
 \endcode
+
+\subsection java_eclipse_win 4.2. On Windows
+
+After downloading Eclipse simply open the installer and follow default installation instructions.
+At the time this tutorial was updated we downloaded `"Eclipse IDE 2024-12 R"`, getting `eclipse-inst-jre-win64.exe`
+installer.
+
+Eclipse was installed by default in `C:\Users\%USERNAME%\eclipse\java-2024-12\eclipse` folder.
 
 \section java_prereq 5. Install Prerequisites
 
@@ -154,22 +166,20 @@ $ brew install cmake ant python3
 \endcode
 
 \subsection java_prereq_win 5.4. On Windows
-  - Download the latest CMake release for Windows win64-x64 platform from http://www.cmake.org. At the time this
-    tutorial was written it was the file cmake-3.22.1-windows-x86_64.msi. To install just double click on the msi file.
-  - Download the latest Python 3 release for Windows from https://www.python.org/downloads/. At the time this tutorial
-    was written, it was Python 3.10.2.
-  - There is also Apache Ant that is needed. It comes with Eclipse installation, thus here we need to set `ANT_DIR`
-    environment variable to help `ant.bat` file detection by ViSP. You can determine the location easely entering
-    Eclipse installation folder:
-  \code{.sh}
-  C:\> cd %VISP_WS%\3rdparty\eclipse
-  C:\> dir /s /b | findstr /i ant.bat
-  C:\visp-ws\3rdparty\eclipse\plugins\org.apache.ant_1.10.12.v20211102-1452\bin\ant.bat
-  \endcode
-  and then set `ANT_DIR` accordingly like:
-  \code{.sh}
-  C:\> setx ANT_DIR "%VISP_WS%\3rdparty\eclipse\plugins\org.apache.ant_1.10.12.v20211102-1452\bin"
-  \endcode
+- Download the latest CMake release for Windows win64-x64 platform from http://www.cmake.org. At the time this
+  tutorial was written it was the file cmake-4.0.0-rc1-windows-x86_64.msi. To install just double click on the msi file.
+- Download the latest Python 3 release for Windows from https://www.python.org/downloads/. At the time this tutorial
+  was written, it was Python 3.13.2.
+- There is also Apache Ant that is needed. Download Apache Ant binary distribution from
+  https://ant.apache.org/bindownload.cgi. At the time this tutorial was updated we downloaded
+  `apache-ant-1.10.15-bin.zip` file. Unzip the file for example in `C:\Users\%USERNAME%\apache-ant-1.10.15-bin`.
+  To help Ant detection, set `ANT_HOME` var to your installation folder. In our case it becomes
+\code{.sh}
+C:\> setx ANT_HOME C:\Users\%USERNAME%\apache-ant-1.10.15-bin
+\endcode
+  You need also to add `"%ANT_HOME%\bin"` to the `"path"` environment variable. To this end, open the environment
+  variables panel, and modify `"path"` accordingly. In our case we added
+  `"C:\Users\%USERNAME%\apache-ant-1.10.15-bin\bin"` folder.
 
 \section install_java_visp 6. Build ViSP from source code
 
@@ -274,12 +284,12 @@ General configuration information for ViSP 3.6.1
     Enable explicit keyword:     no
 
   Python 3:
-    Interpreter:                 /home/fspindle/miniforge3/bin/python3 (ver 3.12.7)
+    Interpreter:                 /home/user/miniforge3/bin/python3 (ver 3.12.7)
 
   Java:
     ant:                         /usr/bin/ant (ver 1.10.14)
     Java:                        no
-    JNI:                         /home/fspindle/soft/visp-ws/3rdparty/jdk-21.0.6/include /home/fspindle/soft/visp-ws/3rdparty/jdk-21.0.6/include/linux /home/fspindle/soft/visp-ws/3rdparty/jdk-21.0.6/include
+    JNI:                         /home/user/visp-ws/3rdparty/jdk-21.0.6/include /home/user/visp-ws/3rdparty/jdk-21.0.6/include/linux /home/user/visp-ws/3rdparty/jdk-21.0.6/include
     Java wrappers:               yes (ANT)
 \endcode
 
@@ -335,7 +345,7 @@ General configuration information for ViSP 3.6.1
     Enable explicit keyword:     no
 
   Python 3:
-    Interpreter:                 /Users/fspindle/miniforge3/bin/python3.10 (ver 3.10.13)
+    Interpreter:                 /Users/user/miniforge3/bin/python3.10 (ver 3.10.13)
 
   Java:
     ant:                         /opt/homebrew/bin/ant (ver 1.10.15)
@@ -348,42 +358,61 @@ General configuration information for ViSP 3.6.1
 \code{.sh}
 C:\> type ViSP-third-party.txt
 ==========================================================
-General configuration information for ViSP 3.4.1
+General configuration information for ViSP 3.6.1
 
-  Version control:               v3.4.0-334-g43ca93e97
+  Version control:               564643c39
 
   Platform:
-    Timestamp:                   2022-01-29T16:07:10Z
-    Host:                        Windows 10.0.17763 AMD64
-    CMake:                       3.22.1
+    Timestamp:                   2025-02-20T17:46:12Z
+    Host:                        Windows 10.0.19044 AMD64
+    CMake:                       4.0.0-rc1
     CMake generator:             Visual Studio 17 2022
     CMake build tool:            C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe
-    MSVC:                        1930
+    MSVC:                        1935
+
+  System information:
+    Number of CPU logical cores: 4
+    Number of CPU physical cores: 4
+    Total physical memory (in MiB): 16057
+    OS name:                     Windows
+    OS release:                  Professional
+    OS version:                  (Build 19044)
+    OS platform:                 AMD64
+    CPU name:                    Pentium II (0.25 micron)
+    CPU description:             4 core 3192 MHz GenuineIntel Pentium II (0.25 micron)
+    Is the CPU 64-bit?           yes
+    Does the CPU have FPU?       yes
+    CPU optimization:            SSE2 SSE3 SSSE3 SSE4_1 SSE4_2
+    CPU endianness:              little-endian
 
   C/C++:
     Built as dynamic libs?:      yes
-    C++ Compiler:                C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.30.30705/bin/Hostx64/x64/cl.exe  (ver 19.30.30706.0)
-    C++ flags (Release):         /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MP3   /EHa -openmp /Gy /bigobj /MD /O2 /Ob2 /DNDEBUG
-    C++ flags (Debug):           /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MP3   /EHa -openmp /Gy /bigobj /MDd /Zi /Ob0 /Od /RTC1
-    C Compiler:                  C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.30.30705/bin/Hostx64/x64/cl.exe
-    C flags (Release):           /DWIN32 /D_WINDOWS /W3   /MP3   /EHa -openmp /MD /O2 /Ob2 /DNDEBUG
-    C flags (Debug):             /DWIN32 /D_WINDOWS /W3   /MP3   /EHa -openmp /MDd /Zi /Ob0 /Od /RTC1
+    C++ Compiler:                C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.35.32215/bin/Hostx64/x64/cl.exe  (ver 19.35.32215.0)
+    C++ flags (Release):         /DWIN32 /D_WINDOWS /W3 /GR /EHsc   /EHa -openmp /Gy /bigobj /MD /O2 /Ob2 /DNDEBUG
+    C++ flags (Debug):           /DWIN32 /D_WINDOWS /W3 /GR /EHsc   /EHa -openmp /Gy /bigobj /MDd /Zi /Ob0 /Od /RTC1
+    C Compiler:                  C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.35.32215/bin/Hostx64/x64/cl.exe
+    C flags (Release):           /DWIN32 /D_WINDOWS /W3   /EHa -openmp /MD /O2 /Ob2 /DNDEBUG
+    C flags (Debug):             /DWIN32 /D_WINDOWS /W3   /EHa -openmp /MDd /Zi /Ob0 /Od /RTC1
     Linker flags (Release):      /machine:x64 /INCREMENTAL:NO
     Linker flags (Debug):        /machine:x64 /debug /INCREMENTAL /ignore:4099
+    Use cxx standard:            17
 
   ViSP modules:
-    To be built:                 core gui imgproc io java_bindings_generator klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi java
+    To be built:                 core dnn_tracker gui imgproc io java_bindings_generator klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi java
     Disabled:                    -
     Disabled by dependency:      -
     Unavailable:                 -
+    Enable visp namespace:       no
+    Enable explicit keyword:     no
 
   Windows RT support:            no
 
-  Python (for build):            C:/Users/chercheur/AppData/Local/Programs/Python/Python310/python.exe
+  Python 3:
+    Interpreter:                 C:/Users/user/AppData/Local/Programs/Python/Python313/python.exe (ver 3.13.2)
 
   Java:
-    ant:                         C:/visp-ws/eclipse/plugins/org.apache.ant_1.10.12.v20211102-1452/bin/ant.bat (ver 1.10.12)
-    JNI:                         C:/Program Files/Java/jdk-17.0.2/include C:/Program Files/Java/jdk-17.0.2/include/win32 C:/Program Files/Java/jdk-17.0.2/include
+    ant:                         C:/Users/user/apache-ant-1.10.15/bin/ant.bat (ver 1.10.15)
+    JNI:                         C:/Program Files/Java/jdk-23/include C:/Program Files/Java/jdk-23/include/win32 C:/Program Files/Java/jdk-23/include
 \endcode
 
   \note If JNI is not found (ie. the line starting with `JNI:` is empty), we recommend to do a fresh build removing all
