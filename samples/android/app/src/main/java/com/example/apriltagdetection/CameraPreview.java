@@ -41,7 +41,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
                          int displayOrientation) {
         super(context);
 
-        // Do not initialise if no camera has been set
+        // Do not initialize if no camera has been set
         if (camera == null || cameraInfo == null) {
             return;
         }
