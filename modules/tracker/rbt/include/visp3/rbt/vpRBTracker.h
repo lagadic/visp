@@ -258,6 +258,7 @@ protected:
   unsigned m_vvsIterations; //! Max number of VVS iterations
   double m_muInit; //! Initial mu value for Levenberg-Marquardt
   double m_muIterFactor; //! Factor with which to multiply mu at every iteration during VVS.
+  bool m_scaleInvariantOptim;
 
   vpSilhouettePointsExtractionSettings m_depthSilhouetteSettings;
   vpPanda3DRenderParameters m_rendererSettings;

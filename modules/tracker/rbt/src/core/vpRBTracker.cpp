@@ -50,7 +50,7 @@
 BEGIN_VISP_NAMESPACE
 
 vpRBTracker::vpRBTracker() :
-  m_firstIteration(true), m_trackers(0), m_lambda(1.0), m_vvsIterations(10), m_muInit(0.0), m_muIterFactor(0.5),
+  m_firstIteration(true), m_trackers(0), m_lambda(1.0), m_vvsIterations(10), m_muInit(0.0), m_muIterFactor(0.5), m_scaleInvariantOptim(false),
   m_renderer(m_rendererSettings), m_imageHeight(480), m_imageWidth(640), m_verbose(false)
 {
   m_rendererSettings.setClippingDistance(0.01, 1.0);
@@ -373,8 +373,7 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
       vpMatrix H(6, 6);
       H.eye(6);
 
-      const bool scaleInvariant = false;
-      if (scaleInvariant) {
+      if (m_scaleInvariantOptim) {
         for (unsigned int i = 0; i < 6; ++i) {
           H[i][i] = LTL[i][i];
         }
@@ -573,15 +572,10 @@ void vpRBTracker::display(const vpImage<unsigned char> &I, const vpImage<vpRGBa>
     return;
   }
 
-
   for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
     if (tracker->featuresShouldBeDisplayed()) {
       tracker->display(m_currentFrame.cam, I, IRGB, depth);
     }
-  }
-
-  if (m_driftDetector) {
-    m_driftDetector->display(IRGB);
   }
 }
 
@@ -633,6 +627,8 @@ void vpRBTracker::loadConfiguration(const nlohmann::json &j)
   setOptimizationGain(vvsSettings.value("gain", m_lambda));
   setOptimizationInitialMu(vvsSettings.value("mu", m_muInit));
   setOptimizationMuIterFactor(vvsSettings.value("muIterFactor", m_muIterFactor));
+  setOptimizationMuIterFactor(vvsSettings.value("scaleInvariant", m_scaleInvariantOptim));
+
 
   m_depthSilhouetteSettings = j.at("silhouetteExtractionSettings");
 
