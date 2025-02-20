@@ -86,5 +86,6 @@ test = { cmd = "ctest --test-dir build --output-on-failure", depends-on = ["inst
 
 [environments]
 default = { solve-group = "base" }
-default-clang-cl = { features = ["clang-cl"], solve-group = "base" }
 with-python = { features = ["python-bindings"], solve-group = "base"}
+all = { features = ["python-bindings"], solve-group = "base"}
+all-clang-cl = { features = ["python-bindings", "clang-cl"], solve-group = "base" }
