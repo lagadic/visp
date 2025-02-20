@@ -3,14 +3,14 @@
 \page tutorial-install-java Tutorial: Installing ViSP for Java
 \tableofcontents
 
-\section java_intro Introduction
+\section java_intro 1. Introduction
 
 At this point we suppose that you succeed to build ViSP from source following one \ref tutorial_install_src tutorials.
 
 This tutorial will help you to build ViSP from source for Java on your desktop. It shows how to proceed if your desktop
 is running Linux, OSX or Windows.
 
-\section java_ws Create a workspace
+\section java_ws 2. Create a workspace
 
 First create a workspace in `$HOME/visp-ws` that will contain ViSP sources, build and dataset.
 \code{.sh}
@@ -18,17 +18,19 @@ $ export VISP_WS=$HOME/visp-ws
 $ mkdir -p $VISP_WS/3rdparty
 \endcode
 
-\section java_install_jdk Install Java Development Kit (JDK)
+\section java_install_jdk 3. Install Java Development Kit (JDK)
 
 \note At the time this tutorial was updated, the lastest Long Term Support Java SE Development Kit (JDK) is version 21.
 Here we recall \ref java_install_tips_uninstall_jdk if you need to upgrade or downgrade JDK version.
 
-\subsection java_install_jdk_unix On Ubuntu or Debian platform
+\subsection java_install_jdk_unix 3.1. On Ubuntu or Debian
 
 From the [Oracle](http://www.oracle.com/technetwork/java/javase/downloads/index.html) website, download JDK 21 the
-latest Long-Term Support (LTS) release of the Java SE Platform. At the time this tutorial was updated, we downloaded
-`jdk-21_linux-x64_bin.tar.gz` file. After JDK download and extraction of the files from the archive, you may set
-`JAVA_HOME` environment var to help `cmake` to detect JDK.
+latest Long Term Support release of the Java SE Platform. There exists also JDK 23 the latest release, but we
+experienced issues when using it in an Eclipse project on Ubuntu. That's why at the time this tutorial was updated, we
+considered JDK 21 and downloaded `jdk-21_linux-x64_bin.tar.gz` file.
+After JDK download and extraction of the files from the archive, you may set `JAVA_HOME` environment var to help `cmake`
+to detect JDK.
 \code{.sh}
 $ tar xvzf ~/Downloads/jdk-21_linux-x64_bin.tar.gz -C $VISP_WS/3rdparty
 $ echo 'export JAVA_HOME=$VISP_WS/3rdparty/jdk-21.0.6' >> ~/.bashrc
@@ -39,24 +41,28 @@ $ source ~/.bashrc
 After installation check JDK version:
 \code{.sh}
 $ java --version
-java 23.0.2 2025-01-21
-Java(TM) SE Runtime Environment (build 23.0.2+7-58)
-Java HotSpot(TM) 64-Bit Server VM (build 23.0.2+7-58, mixed mode, sharing)
+java 21.0.6 2025-01-21 LTS
+Java(TM) SE Runtime Environment (build 21.0.6+8-LTS-188)
+Java HotSpot(TM) 64-Bit Server VM (build 21.0.6+8-LTS-188, mixed mode, sharing)
 \endcode
 
-\subsection java_install_jdk_osx On Mac OSX platform
+\subsection java_install_jdk_osx 3.2. On Mac OSX
 
-\warning On macOS Catalina 10.15.7 with Xcode 12.4, the installation of JDK 11 or 15 from the
-[Oracle](http://www.oracle.com/technetwork/java/javase/downloads/index.html) website by downloading and installing
-`jdk-11.0.10_osx-x64_bin.dmg` or `jdk-15.0.2_osx-x64_bin.dmg` doesn't allow the detection of JNI necessary to build
-`visp_java.jar`. That's why we recommend to install JDK using brew.
+There are two different ways to install JDK on Mac OSX. We recommend the way using DMG installer.
+
+<b>3.2.1. Install JDK with DMG installer</b>
+
+Navigate to [Oracle](http://www.oracle.com/technetwork/java/javase/downloads/index.html) website and download the
+DMG installer that match your OS. At the time this tutorial was updated, we downloaded `jdk-23_macos-aarch64_bin.dmg`
+that corresponds to the JDK 23 version for a Macbook Pro M1.
+
+After installation, check that JDK and java are well detected:
 \code{.sh}
-$ more ViSP-third-party.txt
-  ...
-  Java:
-    ant:                         /usr/local/bin/ant (ver 1.10.9)
-    JNI:                         no
+$ java -version
+java version "23.0.2" 2025-01-21
 \endcode
+
+<b>3.2.2. Install OpenJDK with brew</b>
 
 \note If you already have an old JDK version you may remove it before installing OpenJDK:
 \code{.sh}
@@ -96,13 +102,13 @@ $ echo 'export JAVA_HOME=$(/usr/libexec/java_home)' >> ~/.zshrc
 $ source ~/.zshrc
 \endcode
 
-- After installation check JDK version:
+- After installation check that OpenJDK and java are well detected:
 \code{.sh}
 $ java --version
 openjdk 23.0.2 2025-01-21
 \endcode
 
-\subsection java_install_jdk_win On Windows platform
+\subsection java_install_jdk_win 3.3. On Windows
 
 From the [Oracle](http://www.oracle.com/technetwork/java/javase/downloads/index.html) website, download
 `jdk-17_windows-x64_bin.exe` and run the binary. In order to make `java.exe` available, we had also to add its location
@@ -114,7 +120,7 @@ C:\> java -version
 java version 17.0.2 2022-01-18
 \endcode
 
-\section java_eclipse Install the latest Eclipse version
+\section java_eclipse 4. Install the latest Eclipse version
 
 Download the latest Eclipse version at the [Eclipse Download page](https://www.eclipse.org/downloads/eclipse-packages/)
 choosing the <b> Eclipse IDE for Java Developers </b> version. You don’t need to install anything. Extract the
@@ -126,28 +132,28 @@ $ ls $VISP_WS/3rdparty/eclipse
 artifacts.xml  configuration  dropins  eclipse  eclipse.ini  features  icon.xpm  p2  plugins  readme
 \endcode
 
-\section java_prereq Install Prerequisites
+\section java_prereq 5. Install Prerequisites
 
 To build ViSP for java you have also to install [CMake](http://www.cmake.org/download/),
 [Apache Ant](http://ant.apache.org/), and [Python 3](https://www.python.org/downloads/).
 If you don’t have any of these do the following:
 
-- On Ubuntu/Debian you may run:
+\subsection java_prereq_ubuntu 5.1. On Ubuntu/Debian
 \code{.sh}
 $ sudo apt-get install cmake-curses-gui ant python3
 \endcode
 
-- On Fedora/CentOS you may run:
+\subsection java_prereq_fedora 5.2. On Fedora/CentOS
 \code{.sh}
 $ sudo dnf install gcc-c++ cmake ant python3
 \endcode
 
-- On MacOS/OSX you may run:
+\subsection java_prereq_mac 5.3. On Mac OSX
 \code{.sh}
 $ brew install cmake ant python3
 \endcode
 
-- On Windows,
+\subsection java_prereq_win 5.4. On Windows
   - Download the latest CMake release for Windows win64-x64 platform from http://www.cmake.org. At the time this
     tutorial was written it was the file cmake-3.22.1-windows-x86_64.msi. To install just double click on the msi file.
   - Download the latest Python 3 release for Windows from https://www.python.org/downloads/. At the time this tutorial
@@ -165,9 +171,9 @@ $ brew install cmake ant python3
   C:\> setx ANT_DIR "%VISP_WS%\3rdparty\eclipse\plugins\org.apache.ant_1.10.12.v20211102-1452\bin"
   \endcode
 
-\section install_java_visp Build ViSP from source code
+\section install_java_visp 6. Build ViSP from source code
 
-\subsection install_java_visp_get_source Getting ViSP source code
+\subsection install_java_visp_get_source 6.1. Getting ViSP source code
 
 There are different ways to get ViSP source code:
 
@@ -197,7 +203,7 @@ $ git clone https://github.com/lagadic/visp.git
 We suppose now that ViSP source is in the directory `$VISP_WS/visp`. The following should be adapted if you downloaded
 ViSP from a zip or tarball. In that case, the source is rather in something like `$VISP_WS/visp-x.y.z`.
 
-\subsection install_java_visp_config Configuring ViSP from source
+\subsection install_java_visp_config 6.2. Configuring ViSP from source
 
 - In the workspace, create first a directory named `visp-build` that will contain all the build material; generated
   Makefiles or Visual Studio Solution files, object files, output libraries and binaries once build is done, and in a
@@ -383,7 +389,7 @@ General configuration information for ViSP 3.4.1
   \note If JNI is not found (ie. the line starting with `JNI:` is empty), we recommend to do a fresh build removing all
   the files in the build folder and configuring again from scratch with CMake.
 
-\subsection install_java_visp_build Building ViSP libraries
+\subsection install_java_visp_build 6.3. Building ViSP libraries
 
 Depending on you platform, you can now build `visp_java` module:
 
@@ -407,9 +413,7 @@ C:\> cmake --build . --config Release --target visp_java
 
 Note that ViSP Java ARchive is now available in `$VISP_WS/visp-build/bin/visp-340.jar`.
 
-\section set_up_visp_java_eclipse Setting Up ViSP Java in Eclipse
-
-\subsection create_user_library Creating a user library
+\section create_user_library 7. Creating a user library in Eclipse
 
 Open Eclipse and select a workspace location of your choice, for example in `$VISP_WS/eclipse-workspace` and
 press `Launch` button.
@@ -438,9 +442,9 @@ We recall that the libraries have the extension <b>.so</b> in linux, <b>.dylib</
 
 Once done, press `"Apply and Close"` button.
 
-\section java_install_tips Tips & Tricks
+\section java_install_tips 8. Tips & Tricks
 
-\subsection java_install_tips_uninstall_jdk How to uninstall JDK
+\subsection java_install_tips_uninstall_jdk 8.1. How to uninstall JDK
 
 Here we give here some tips to uninstall JDK to be able to downgrade or upgrade JDK version.
 
@@ -471,7 +475,7 @@ $ sudo mv /Library/Java/JavaVirtualMachines/jdk-12.0.2.jdk/ /tmp
   unsinstall like `Java(TM) SE Development Kit 13.0 (64-bit)`, then click its Uninstall button. Respond to the prompts
   to complete the uninstall.
 
-\subsection java_install_tips_rm_workspace How to delete an Eclipse workspace
+\subsection java_install_tips_rm_workspace 8.2. How to delete an Eclipse workspace
 
 To remove existing Eclipse workspaces, enter `"Preferences > General > Startup & Shudown > Workspaces"` menu, select
 the workspace to remove and press `Remove` button and then `Apply and Close` button.
@@ -481,7 +485,7 @@ the workspace to remove and press `Remove` button and then `Apply and Close` but
 Note that this does not actually delete the files from the system, it simply removes it from the list of suggested
 workspaces. You need to remove the workspace directory by hand.
 
-\section java_install_next Next tutorial
+\section java_install_next 9. Next tutorial
 
 You are now ready to follow \ref tutorial-java-started.
 

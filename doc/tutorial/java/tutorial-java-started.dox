@@ -3,21 +3,24 @@
 \page tutorial-java-started Tutorial: First java application with ViSP
 \tableofcontents
 
-\section java_started_intro Introduction
+\section java_started_intro 1. Introduction
 
 We assume that you have already followed the previous tutorial \ref tutorial-install-java.
 
 This tutorial will guide you through the creation of a simple Java console application using ViSP library in Eclipse.
 
-\section java_started_create_project Create a new project
+\section java_started_create_project 2. Create a new project
 
 - Open Eclipse and create a new Java project entering `"File > New > Java Project"` menu.
 \image html img-tutorial-java-eclipse-create-new-project.jpeg
 
 - In the `"New Java Project"` dialog write the name of your project (let say `visp_java_started`). In JRE section,
-select the appropriate execution environment corresponding to the version of your JDK LTS version
-(ie. JavaSE-21 if you install JDK 21). Then press `"Finish"` button.
+  select the appropriate execution environment corresponding to the version of your JDK
+  (ie. JavaSE-23 if you install JDK 23, JavaSE-21 if you install JDK 21 LTS, ...). Then press `"Finish"` button.
 \image html img-tutorial-java-eclipse-java-started.jpg
+\note We recall that on Ubuntu 24.04, we recommend to install JDK 21 LTS. Thus in JRE section you have to select
+JavaSE-21. At the time this tutorial was updated, installing JDK 23 on Ubuntu, and selecting JavaSE-23 doesn't allow
+to add `"JRE System Library [JavaSE-23]"` part of the project.
 
 - In the left panel, open the "Package Explorer" and expand the "src" folder
 \image html img-tutorial-java-eclipse-java-started-explorer.jpg
@@ -25,7 +28,7 @@ select the appropriate execution environment corresponding to the version of you
 - Remove `module-info.java` file from your project.
 \image html img-tutorial-java-eclipse-java-started-empty.jpg
 
-\section java_started_user_lib Add a user library
+\section java_started_user_lib 3. Add a user library
 
 If you followed \ref tutorial-install-java, you should already have ViSP library set in your workspace’s user libraries;
 if not please check out \ref tutorial-install-java. Now you should be ready to add ViSP library to your project.
@@ -46,7 +49,7 @@ that you didn't follow the section \ref create_user_library.
 - In the "Package Explorer" panel, you should see "visp" library
 \image html img-tutorial-java-eclipse-add-libraries4.jpg
 
-\section java_started_simple_app Create a simple application
+\section java_started_simple_app 4. Create a simple application
 
 To create a simple application that uses ViSP:
 
@@ -75,9 +78,9 @@ To create a simple application that uses ViSP:
 
 \image html img-tutorial-java-eclipse-started-console.jpeg
 
-\section java_started_issues Known issues
+\section java_started_issues 5. Known issues
 
-\subsection java_started_issue_jre Exception Unsupported Class Version Error
+\subsection java_started_issue_jre 5.1. Exception Unsupported Class Version Error
 
 As shown in the next image, if you get the following issue on Ubuntu 18.04:
 \code{.sh}
@@ -91,7 +94,7 @@ is build with a more recent java version obtained after downloading JDK 13 for e
 
 To fix this issue, as explained in \ref tutorial-install-java install JDK 11 and do a fresh ViSP build using java 11.
 
-\subsection java_started_issue_vsp_version Exception Unsatisfied Link Error
+\subsection java_started_issue_vsp_version 5.2 Exception Unsatisfied Link Error
 
 As shown in the next image, if you experience the following exception after entering `"Run > Run"` menu:
 \code{.sh}
@@ -111,7 +114,7 @@ CMake configuration or that you didn't build ViSP
     System.loadLibrary("visp_java331");
 \endcode
 
-\subsection java_started_issue_mkl Error running Java app with Intel MKL
+\subsection java_started_issue_mkl 5.3. Error running Java app with Intel MKL
 
 Running any Java app based on ViSP can lead to the following issue:
 \code{.sh}
@@ -128,7 +131,7 @@ is no other Blas/Lapack 3rd party available.
 
 A complete discussion about this issue is given here in [issue #806](https://github.com/lagadic/visp/issues/806).
 
-\section java_started_next Next tutorial
+\section java_started_next 6. Next tutorial
 
 You are now ready to continue with \ref tutorial-java-apriltag.
 

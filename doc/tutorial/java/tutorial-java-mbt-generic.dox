@@ -3,13 +3,13 @@
 \page tutorial-java-mbt-generic Tutorial: Generic model-based tracking in java with ViSP
 \tableofcontents
 
-\section java_mbt_gen_intro Introduction
+\section java_mbt_gen_intro 1. Introduction
 
 We assume that you have already followed the previous tutorial \ref tutorial-java-started. It could be also useful to follow \ref tutorial-tracking-mb-generic to get an overview on model-based tracking in ViSP.
 
 In this tutorial, you will see how to develop an application that allows to load a sequence of images and run model-based tracking in java using ViSP library in Eclipse.
 
-\section java_mbt_gen_create_project Create a new project
+\section java_mbt_gen_create_project 2. Create a new project
 
 To create the project corresponding to this tutorial:
 
@@ -27,7 +27,7 @@ To create the project corresponding to this tutorial:
 - Remove `module-info.java` file from your project.
 \image html img-java-mbt-generic-project-started-empty.jpg
 
-\section java_mbt_gen_user_lib Add a user library
+\section java_mbt_gen_user_lib 3. Add a user library
 
 If you followed \ref tutorial-install-java, you should already have ViSP library set in your workspace’s user libraries; if not please check out \ref tutorial-install-java. Now you should be ready to add ViSP library to your project.
 
@@ -46,7 +46,7 @@ If you followed \ref tutorial-install-java, you should already have ViSP library
 - In the "Package Explorer" panel, you should see "visp" library
 \image html img-java-mbt-generic-eclipse-add-libraries4.jpg
 
-\section java_mbt_gen_app Import generic tracker java code
+\section java_mbt_gen_app 4. Import generic tracker java code
 
 - Now import `GenericTracker.java` file in your project, pointing your mouse on `src` folder and with a right click entering `"Import"` menu.
 
@@ -64,7 +64,7 @@ If you followed \ref tutorial-install-java, you should already have ViSP library
 
 \image html img-java-mbt-generic-project-complete.jpg
 
-\section java_mbt_gen_run Run tracking application
+\section java_mbt_gen_run 5. Run tracking application
 
 We can now run this application entering`"Run > Run"` menu.
 
@@ -87,7 +87,7 @@ We can now run this application entering`"Run > Run"` menu.
 
 This application allows to select features (edges alone, keypoints alone, or edges and keypoints together in the same scheme) that are used by the tracker. Just try it...
 
-\section java_mbt_issues Known issues
+\section java_mbt_issues 6. Known issues
 
 - \ref java_started_issue_jre
 - \ref java_started_issue_vsp_version

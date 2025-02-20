@@ -3,7 +3,7 @@
 \page tutorial-java-apriltag Tutorial: AprilTag detection in java with ViSP
 \tableofcontents
 
-\section java_tag_intro Introduction
+\section java_tag_intro 1. Introduction
 
 We assume that you have already followed the previous tutorial \ref tutorial-java-started. It could be also useful to
 follow \ref tutorial-detection-apriltag to get an overview on AprilTag detection in ViSP.
@@ -11,7 +11,7 @@ follow \ref tutorial-detection-apriltag to get an overview on AprilTag detection
 In this tutorial, you will see how to develop an application that allows to load an image and run AprilTag detection
 in java using ViSP library in Eclipse.
 
-\section java_tag_create_project Create a new project
+\section java_tag_create_project 2. Create a new project
 
 To create the project corresponding to this tutorial:
 
@@ -29,7 +29,7 @@ select the appropriate execution environment (JavaSE-21 if you install JDK 21 LT
 - Remove `module-info.java` file from your project.
 \image html img-java-apriltag-project-started-empty.jpg
 
-\section java_tag_user_lib Add a user library
+\section java_tag_user_lib 3. Add a user library
 
 If you followed \ref tutorial-install-java, you should already have ViSP library set in your workspace as a user
 library; if not please check out \ref tutorial-install-java. Now you should be ready to add ViSP library to your project.
@@ -49,7 +49,7 @@ library; if not please check out \ref tutorial-install-java. Now you should be r
 - In the "Package Explorer" panel, you should see "visp" library
 \image html img-java-apriltag-eclipse-add-libraries4.jpg
 
-\section java_tag_app Import AprilTag application java code
+\section java_tag_app 4. Import AprilTag application java code
 
 - Now import `AprilTagDetection.java` file in your project, pointing your mouse on `src` folder and with a right click
   entering `"Import"` menu.
@@ -69,7 +69,7 @@ library; if not please check out \ref tutorial-install-java. Now you should be r
 
 \image html img-java-apriltag-project-complete.jpg
 
-\section java_tag_run Run AprilTag detection application
+\section java_tag_run 5. Run AprilTag detection application
 
 We can now run this application entering`"Run > Run"` menu.
 
@@ -100,13 +100,13 @@ To see estimated tag poses values press `"Show estimated poses"` button.
 
 Just try it...
 
-\section java_tag_issues Known issues
+\section java_tag_issues 6. Known issues
 
 - \ref java_started_issue_jre
 - \ref java_started_issue_vsp_version
 - \ref java_started_issue_mkl
 
-\section java_tag_next Next tutorial
+\section java_tag_next 7. Next tutorial
 
 You are now ready to continue with \ref tutorial-java-mbt-generic.
 

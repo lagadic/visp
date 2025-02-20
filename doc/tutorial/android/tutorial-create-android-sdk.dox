@@ -3,11 +3,11 @@
 \page tutorial-create-android-sdk Tutorial: Building ViSP SDK for Android
 \tableofcontents
 
-\section android_sdk_intro Introduction
+\section android_sdk_intro 1. Introduction
 This tutorial is designed to help you build ViSP Android SDK which can be used to create Android Apps supporting ViSP
 Java functionalities.
 
-\section android_sdk_prereq Prerequisites
+\section android_sdk_prereq 2. Prerequisites
 
 This tutorial assumes you have the following software installed and configured:
 <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">Java Development Kit (JDK)</a>,
@@ -18,105 +18,122 @@ This tutorial assumes you have the following software installed and configured:
 <a href="https://github.com/ninja-build/ninja/releases">Ninja</a> and
 <a href="https://ccache.samba.org/">ccache</a>.
 
-\subsection android_sdk_prereq_linux On Ubuntu or debian
+\subsection android_sdk_prereq_linux 2.1. On Ubuntu or debian
 
 - Install <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">Java Development Kit (JDK)</a>
   following \ref java_install_jdk tutorial.
-  \note At the time this tutorial was updated `Java SE Development Kit 23` was used.
+  \note At the time this tutorial was updated `"Java SE Development Kit 21"` was used.
 - To install <a href="https://developer.android.com/studio/">Android SDK and NDK</a> follow the link to
   <a href="https://developer.android.com/studio/">Android Studio</a>, download and install Android Studio.
   Once installed start Android Studio using default settings. This allows to download Android SDK that will be installed
-  in `$HOME/Android/Sdk` on Ubuntu. Now to install Android NDK, with Android Studio
-  start a new Native C++ Android project using the default configuration. From this new project enter
-  `"File > Settings... > Appearence > System Settings > Android SDK"` menu. Select the `"SDK Tools"` tab
-  and check the boxes next to `CMake`, and `NDK (Side by side)`.
-  \note On Android Studio `Ladybug Feature Drop | 2024....`, you have to open the main menu `Tools`, then `SDK Manager`,
-  then `SDK Tools` and finally both `NDK (Side by side)`, `Android SDK Command-line Tools (latest)` and `CMake`.
-  Once all the tools are downloaded, you can exit Android Studio.
+  in `$HOME/Android/Sdk` on Ubuntu.
+
+  Now to install Android NDK, open Android Studio and start a new Native C++ Android project using the default
+  configuration.
+  \image html img-android-mac-native-c++.jpg
+
+  From this new project enter `"Android Studio > Settings... > Languages & Frameworks > Android SDK"` menu.
+  Select the `"SDK Tools"` tab and check the boxes next to `"Android SDK Build-Tools"`, `"NDK (Side by side)"`
+  and `"CMake"`.
+  \image html img-android-mac-install-ndk.jpg
+
 - Now to install <a href="https://www.python.org/downloads/">Python Interpreter (prefer version 3.x)</a>,
   <a href="https://cmake.org/download/">CMake</a>, <a href="https://github.com/ninja-build/ninja/releases">Ninja</a>
   and <a href="https://ccache.samba.org/">ccache</a> (a compiler cache for a faster build) run the following:
-\code
+\code{.sh}
 $ sudo apt-get install python3 ant cmake-curses-gui ninja-build ccache
 \endcode
 
-- At the time this tutorial was written, on Ubuntu 20.04 LTS we got Android Studio BumbleBee 2021.1.1 Patch 1,
-  NDK 23.1 (see \ref android_sdk_ndk_version) and the following other tools versions:
-\code
+- At the time this tutorial was written, on Ubuntu 24.04 LTS we got Android Studio BumbleBee 2024.2.14,
+  NDK 28.0 (see \ref android_sdk_ndk_version) and the following other tools versions:
+\code{.sh}
 $ java --version
-java 16.0.2 2021-07-20
+java 21.0.6 2025-01-21 LTS
 $ python3 --version
-Python 3.8.10
+Python 3.12.7
 $ ant -version
-Apache Ant(TM) version 1.10.7 compiled on October 24 2019
+Apache Ant(TM) version 1.10.14 compiled on September 25 2023
 $ cmake -version
-cmake version 3.23.0-rc1
+cmake version 3.28.3
 $ ninja --version
-1.10.0
+1.11.1
 $ ccache --version
-ccache version 3.7.7
+ccache version 4.9.1
 \endcode
 
-\subsection android_sdk_prereq_osx On Mac OSX
+\subsection android_sdk_prereq_osx 2.2. On Mac OSX
 
 - Install <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">Java Development Kit (JDK)</a>
   following \ref java_install_jdk tutorial.
 - To install <a href="https://developer.android.com/studio/">Android SDK and NDK</a> follow the link to
   <a href="https://developer.android.com/studio/">Android Studio</a>, download and install Android Studio from dmg.
   Once installed start Android Studio using default settings. This allows to download Android SDK that will
-  be installed in `$HOME/Library/Android/sdk` folder on OSX. Now to install Android NDK, with Android Studio
-  start a new Native C++ Android project using the default configuration. From this new project enter
-  `"Android Studio > Preferences > Appearence > System Settings > Android SDK"` menu. Select the `"SDK Tools"` tab
-  and check the boxes next to `LLDB`, `CMake`, and `NDK (Side by side)`.
+  be installed in `$HOME/Library/Android/sdk` folder on OSX.
+
+  Now to install Android NDK, open Android Studio and start a new Native C++ Android project using the default
+  configuration.
+  \image html img-android-mac-native-c++.jpg
+
+  From this new project enter `"Android Studio > Settings... > Languages & Frameworks > Android SDK"` menu.
+  Select the `"SDK Tools"` tab and check the boxes next to `"Android SDK Build-Tools"`, `"NDK (Side by side)"`
+  and `"CMake"`.
+  \image html img-android-mac-install-ndk.jpg
+  As visible in the previous and next images, we will download and install NDK 28.
+  Confirm changes pressing "OK" button.
+  \image html img-android-mac-install-ndk-confirm.jpg
   Once all the tools are downloaded, you can exit Android Studio.
 - Now to install <a href="https://www.python.org/downloads/">Python Interpreter (prefer versions 3.x)</a>,
   <a href="https://cmake.org/download/">CMake</a>,
   <a href="https://github.com/ninja-build/ninja/releases">Ninja</a>
   and <a href="https://ccache.samba.org/">ccache</a> (a compiler cache for a faster build) run the following:
-\code
+\code{.sh}
 $ brew install python3 ant cmake ninja ccache
 \endcode
 
-- At the time this tutorial was written, on macOS Catalina 10.15.7 we got Android Studio 3.5.1, NDK 22.0 (see \ref android_sdk_ndk_version) and the following other tools versions:
-\code
+- At the time this tutorial was written, on macOS Sequoia 15.3.1 we got Android Studio Ladybug 2024.2.2.13, NDK 28.0
+  (see \ref android_sdk_ndk_version) and the following other tools versions:
+\code{.sh}
 $ java --version
-openjdk 15.0.1 2020-10-20
+java version "23.0.2" 2025-01-21
 $ python3 --version
-Python 3.9.1
+Python 3.10.13
 $ ant -version
-Apache Ant(TM) version 1.10.9 compiled on September 27 2020
+Apache Ant(TM) version 1.10.15 compiled on August 25 2024
 $ cmake -version
-cmake version 3.19.5
+cmake version 3.31.5
 $ ninja --version
-1.10.2
+1.12.1
 $ ccache --version
-ccache version 4.2
+ccache version 4.10.2
 \endcode
 
-\subsection android_sdk_prereq_win On Windows
+\subsection android_sdk_prereq_win 2.3. On Windows
 
 - Install <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">Java Development Kit (JDK)</a>
   following \ref java_install_jdk tutorial.
 - To install <a href="https://developer.android.com/studio/">Android SDK and NDK</a> follow the link to
   <a href="https://developer.android.com/studio/">Android Studio</a>,
   download and install Android Studio for Windows 64-bit. Once installed start Android Studio using default settings.
-  This allows to download Android SDK. Now to install Android NDK, with Android Studio create a new Android project.
+  This allows to download Android SDK. Now to install Android NDK, open Android Studio and create a new Android project.
   From this new project enter `"File > Settings... > Appearence & Behavior > System Settings > Android SDK"` menu.
-  Select the `"SDK Tools"` tab and check the boxes next to `LLDB`, `CMake`, and `NDK (Side by side)`.
+  Select the `"SDK Tools"` tab and check the boxes next to `"LLDB"`, `"CMake"`, and `"NDK (Side by side)"`.
   Once all the tools are downloaded, you can exit Android Studio.
-- Now install <a href="https://www.python.org/downloads/">Python Interpreter</a> without forgetting to add Python to environment variables.
-- Download and install latest <a href="https://cmake.org/download/">CMake release</a> using Windows win64-x64 installer without forgetting
-  to add CMake to the system PATH for all users.
-- Download <a href="https://github.com/ninja-build/ninja/releases">Ninja</a> for windows. Place `ninja.exe` in a suitable spot.
-  For example, in `%%VISP_WS%\Ninja`. Now make sure that CMake can find `ninja.exe` by adding `%%VISP_WS%\Ninja` to your `%%PATH%`.
+- Now install <a href="https://www.python.org/downloads/">Python Interpreter</a> without forgetting to add Python to
+  environment variables.
+- Download and install latest <a href="https://cmake.org/download/">CMake release</a> using Windows win64-x64 installer
+  without forgetting to add CMake to the system PATH for all users.
+- Download <a href="https://github.com/ninja-build/ninja/releases">Ninja</a> for windows. Place `ninja.exe` in a
+  suitable spot. For example, in `%%VISP_WS%\Ninja`. Now make sure that CMake can find `ninja.exe` by adding
+  `%%VISP_WS%\Ninja` to your `%%PATH%`.
 - Download `ccache` for Windows from github and add its location (`%%VISP_WS%\ccache-win64`) to your `%%PATH%`
-\code
+\code{.sh}
 C:\> cd %VISP_WS%
 C:\> git clone https://github.com/nagayasu-shinya/ccache-win64.git
 \endcode
 
-- At the time this tutorial was written, on macOS Mojave 10.14.2 we got Android Studio 3.2.1, NDK 20.0 (see \ref android_sdk_ndk_version) and the following other tools versions:
-\code
+- At the time this tutorial was written, on macOS Mojave 10.14.2 we got Android Studio 3.2.1, NDK 20.0
+  (see \ref android_sdk_ndk_version) and the following other tools versions:
+\code{.sh}
 C:\>java -version
 java version 11.0.4 2019-07-16 LTS
 C:\>python --version
@@ -129,79 +146,88 @@ C:\>ccache --version
 ccache version 3.7.2
 \endcode
 
-\section android_sdk_ws Create a workspace
+\section android_sdk_ws 3. Create a workspace
 
 Create a workspace in `$HOME/visp-ws` that will contain ViSP sources, build and dataset.
-\code
+\code{.sh}
 $ export VISP_WS=$HOME/visp-ws
 $ mkdir -p $VISP_WS
 \endcode
 
-\section android_sdk_get_source Get ViSP source code
+\section android_sdk_get_source 4. Get ViSP source code
 
 There are different ways to get ViSP source code:
 
-- You can download the <a href="https://visp.inria.fr/download">latest release</a> as a zip or a tarball. Once downloaded, uncompress the file using either
-\code
+- You can download the <a href="https://visp.inria.fr/download">latest release</a> as a zip or a tarball. Once
+  downloaded, uncompress the file using either
+\code{.sh}
 $ tar xvzf visp-x.y.z.tar.gz -C $VISP_WS
 \endcode
 or
-\code
+\code{.sh}
 $ unzip visp-x.y.z.zip -d $VISP_WS
 \endcode
 
-- You can also download a <a href="https://visp.inria.fr/download#snapshot">daily snapshot</a>. Once downloaded, uncompress the file using
-\code
+- You can also download a <a href="https://visp.inria.fr/download#snapshot">daily snapshot</a>. Once downloaded,
+  uncompress the file using
+\code{.sh}
 $ tar xvzf visp-snapshot-yyyy-mm-dd.tar.gz -C $VISP_WS
 \endcode
 
-- Or you get the cutting-edge ViSP from <a href="https://github.com/lagadic/visp">GitHub repository</a> using the following command
-\code
+- Or you get the cutting-edge ViSP from <a href="https://github.com/lagadic/visp">GitHub repository</a> using the
+  following command
+\code{.sh}
 $ cd $VISP_WS
 $ git clone https://github.com/lagadic/visp.git
 \endcode
 
-We suppose now that ViSP source is in the directory `$VISP_WS/visp`. The following should be adapted if you downloaded ViSP from a zip or tarball. In that case, the source is rather in something like `$VISP_WS/visp-x.y.z`.
+We suppose now that ViSP source is in the directory `$VISP_WS/visp`. The following should be adapted if you downloaded
+ViSP from a zip or tarball. In that case, the source is rather in something like `$VISP_WS/visp-x.y.z`.
 
-\section android_sdk_build Build ViSP Android SDK
+\section android_sdk_build 5. Build ViSP Android SDK
 
+\section android_sdk_build_overview 5.1. Overview
 Note that the scripts for building the SDK are included in the source code.
 
 In the workspace create a build folder
-\code
-$ mkdir $VISP_WS/visp-build-android-sdk
+\code{.sh}
+$ mkdir $VISP_WS/visp-build-android
 \endcode
 
-Enter the directory `$VISP_WS/platforms/android` having the python build script and check which are the command line options that are available.
-\code
+Enter the directory `$VISP_WS/platforms/android` having the python build script and check which are the command line
+options that are available.
+\code{.sh}
 $ cd $VISP_WS/visp/platforms/android
 $ python3 build_sdk.py --help
 \endcode
 
 Generally the script has to be used like:
-\code
+\code{.sh}
 $ python3 build_sdk.py --config <ndk-*.config.py> --sdk_path <path-to-Android-Sdk> --ndk_path <path-to-Android-Sdk>/ndk-bundle <installation-directory> <visp-source-code-directory>
 \endcode
 
 In `$VISP_WS/visp/platforms/android` folder we provide different NDK config files:
-\code
+\code{.sh}
 $ ls ndk-*.config.py
 ndk-10.config.py  ndk-17.config.py               ndk-18.config.py  ndk-22.config.py
 ndk-16.config.py  ndk-18-api-level-21.config.py  ndk-20.config.py  ndk-23.config.py ndk-28.config.py
 \endcode
 The file that should be used after `--config` option should match your NDK version (see \ref android_sdk_ndk_version).
 
-Above command will build SDK for multiple Android architectures. If you're aware on what Android architecture you'll be working on (refer <a href="https://android.gadgethacks.com/how-to/android-basics-see-what-kind-processor-you-have-arm-arm64-x86-0168051/">here</a>), say `x86_64`, you can do a minimal build by changing contents of `ndk-*.config.py` file
-\code
+Above command will build SDK for multiple Android architectures. If you're aware on what Android architecture you'll be
+working on (refer <a href="https://android.gadgethacks.com/how-to/android-basics-see-what-kind-processor-you-have-arm-arm64-x86-0168051/">here</a>),
+say `x86_64`, you can do a minimal build by changing contents of `ndk-*.config.py` file
+\code{.sh}
 ABIs = [
     ABI("5", "x86_64",      None)
 ]
 \endcode
 This will speed up the installation process.
 
-Once build ViSP Android SDK will be available in `$VISP_WS/visp-build-android-sdk/ViSP-android-sdk/sdk` folder. Its content should be similar to the following:
-\code
-$ cd $VISP_WS/visp-build-android-sdk/ViSP-android-sdk/sdk
+Once build ViSP Android SDK will be available in `$VISP_WS/visp-build-android/visp-android-sdk/sdk` folder. Its
+content should be similar to the following:
+\code{.sh}
+$ cd $VISP_WS/visp-build-android/visp-android-sdk/sdk
 $ find . -maxdepth 3 -type d
 ./native
 ./native/3rdparty
@@ -234,54 +260,58 @@ $ find . -maxdepth 3 -type d
 ./etc/data/wireframe-simulator
 \endcode
 
-\subsection android_sdk_build_linux On Linux or Debian
+\subsection android_sdk_build_linux 5.1. On Linux or Debian
 
 For example, on Ubuntu 20.04 the command might look like
-\code
-$ mkdir $VISP_WS/visp-build-android-sdk
+\code{.sh}
+$ mkdir $VISP_WS/visp-build-android
 $ cd $VISP_WS/visp/platforms/android
-$ python3 build_sdk.py --config ndk-23.config.py --sdk_path $HOME/Android/Sdk --ndk_path $HOME/Android/Sdk/ndk/23.1.7779620 $VISP_WS/visp-build-android-sdk $VISP_WS/visp
+$ python3 build_sdk.py --config ndk-28.config.py --sdk_path $HOME/Android/Sdk --ndk_path $HOME/Android/Sdk/ndk/28.0.13004108 $VISP_WS/visp-build-android $VISP_WS/visp
 \endcode
 
-\subsection android_sdk_build_osx On Mac OSX
+\subsection android_sdk_build_osx 5.2. On Mac OSX
 
-For example, on OSX the command might rather look like
-\code
-$ mkdir $VISP_WS/visp-build-android-sdk
+For example, on Mac OSX the command might rather look like
+\code{.sh}
+$ mkdir $VISP_WS/visp-build-android
 $ cd $VISP_WS/visp/platforms/android
-$ python3 build_sdk.py --config ndk-23.config.py --sdk_path $HOME/Library/Android/sdk --ndk_path $HOME/Library/Android/sdk/ndk-bundle $VISP_WS/visp-build-android-sdk $VISP_WS/visp
+$ python3 build_sdk.py --config ndk-28.config.py --sdk_path $HOME/Library/Android/sdk --ndk_path $HOME/Library/Android/sdk/ndk/28.0.13004108 $VISP_WS/visp-build-android $VISP_WS/visp
 \endcode
 
-\subsection android_sdk_build_win On Windows
+\subsection android_sdk_build_win 5.3. On Windows
 
 For example, on Windows the command might rather look like
-\code
-C:\> mkdir %VISP_WS%\visp-build-android-sdk
+\code{.sh}
+C:\> mkdir %VISP_WS%\visp-build-android
 C:\> cd %VISP_WS%\visp\platforms\android
-C:\> python3 build_sdk.py --config ndk-23.config.py --sdk_path %USERPROFILE%\AppData\Local\Android\Sdk --ndk_path %USERPROFILE%\AppData\Local\Android\Sdk\ndk\23.1.7779620 %VISP_WS%\visp-build-android-sdk %VISP_WS%\visp
+C:\> python3 build_sdk.py --config ndk-23.config.py --sdk_path %USERPROFILE%\AppData\Local\Android\Sdk --ndk_path %USERPROFILE%\AppData\Local\Android\Sdk\ndk\23.1.7779620 %VISP_WS%\visp-build-android %VISP_WS%\visp
 \endcode
 
-\subsection android_sdk_build_issue Known issue
+\subsection android_sdk_build_issue 5.4. Known issue
 
-If you're experiencing problems with `ccache` or if you don't install `ccache`, you can try a build without it adding `--no_ccache` command line option like the following on Ubuntu:
-\code
-$ python3 build_sdk.py --no_ccache --config ndk-18.config.py --sdk_path $HOME/Android/Sdk --ndk_path $HOME/Android/Sdk/ndk-bundle $VISP_WS/visp-build-android-sdk $VISP_WS/visp
+If you're experiencing problems with `ccache` or if you don't install `ccache`, you can try a build without it adding
+`--no_ccache` command line option like the following on Ubuntu:
+\code{.sh}
+$ python3 build_sdk.py --no_ccache --config ndk-18.config.py --sdk_path $HOME/Android/Sdk --ndk_path $HOME/Android/Sdk/ndk-bundle $VISP_WS/visp-build-android $VISP_WS/visp
 \endcode
 
-\section android_sdk_tips Tips & tricks
-\subsection android_sdk_ndk_version How to know Android NDK version
+\section android_sdk_tips 6. Tips & tricks
+\subsection android_sdk_ndk_version 6.1. How to know Android NDK version
 
 - Start Android Studio
-- on Ubuntu enter `"File > Settings... > Appearance > System Settings"` menu, while on Mac OSX enter `"Android Studio > Preferences... > Appearance & Behavior > System Settings"` menu, then select `Android SDK` in the left part and select `"SDK Tools"` tab to see which is the NDK version that you are using.
-The following swnapshot shows that NDK 18.1 is used:
-\image html img-android-ndk-version-18.1.png
-This other snapshot shows that NDK 20.0 is used:
-\image html img-android-ndk-version-20.0.png
-This other snapshot taken on Ubuntu 20.04 with Android Studio 4.1.2 shows that NDK 22.0 is used:
-\image html img-android-ndk-version-22.0.png
+- on Ubuntu enter `"File > Settings... > Appearance > System Settings"` menu, while on Mac OSX enter
+  `"Android Studio > Preferences... > Appearance & Behavior > System Settings"` menu, then select `Android SDK` in the
+  left part and select `"SDK Tools"` tab to see which is the NDK version that you are using.
+  The following swnapshot shows that NDK 18.1 is used:
+\image html img-android-ndk-version-18.1.jpg
+  This other snapshot shows that NDK 20.0 is used:
+\image html img-android-ndk-version-20.0.jpg
+  This other snapshot taken on Ubuntu 20.04 with Android Studio 4.1.2 shows that NDK 22.0 is used:
+\image html img-android-ndk-version-22.0.jpg
 
-\section android_sdk_next Next tutorial
+\section android_sdk_next 7. Next tutorial
 
-You are now ready to follow \ref tutorial-android-getting-started where you'll be creating a sample Android App using ViSP SDK.
+You are now ready to follow \ref tutorial-android-getting-started where you'll be creating a sample Android App using
+ViSP SDK.
 
 */
