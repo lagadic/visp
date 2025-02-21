@@ -216,7 +216,7 @@ ViSP from a zip or tarball. In that case, the source is rather in something like
 
 \section android_sdk_build 5. Build ViSP Android SDK
 
-\section android_sdk_build_overview 5.1. Overview
+\subsection android_sdk_build_overview 5.1. Overview
 Note that the scripts for building the SDK are included in the source code.
 
 In the workspace create a build folder
@@ -239,9 +239,7 @@ $ python3 build_sdk.py --config <ndk-*.config.py> --sdk_path <path-to-Android-Sd
 
 \note It is possible to directly pass some CMake arguments using the `--additional_cmake_flags` option. The values it
 accepts must respect the pattern `NAME_OPT_1=VALUE,NAME_OPT_2=VAL_2`, i.e. it must contain tuples `CMakeOptionName=CmakeOptionValue`
-separated by commas (without space). An example of such a command would be (NB: the underscore symbols are not visible
-in the snippet but they are present in the command):
-
+separated by commas (without space). An example of such a command would be:
 \code{.sh}
 $ mkdir $VISP_WS/visp-build-android
 $ cd $VISP_WS/visp/platforms/android
@@ -302,7 +300,7 @@ $ find . -maxdepth 3 -type d
 ./etc/data/wireframe-simulator
 \endcode
 
-\subsection android_sdk_build_linux 5.1. On Linux or Debian
+\subsection android_sdk_build_linux 5.2. On Linux or Debian
 
 For example, on Ubuntu 20.04 the command might look like
 \code{.sh}
@@ -311,7 +309,7 @@ $ cd $VISP_WS/visp/platforms/android
 $ python3 build_sdk.py --config ndk-28.config.py --sdk_path $HOME/Android/Sdk --ndk_path $HOME/Android/Sdk/ndk/28.0.13004108 $VISP_WS/visp-build-android $VISP_WS/visp
 \endcode
 
-\subsection android_sdk_build_osx 5.2. On Mac OSX
+\subsection android_sdk_build_osx 5.3. On Mac OSX
 
 For example, on Mac OSX the command might rather look like
 \code{.sh}
@@ -320,7 +318,7 @@ $ cd $VISP_WS/visp/platforms/android
 $ python3 build_sdk.py --config ndk-28.config.py --sdk_path $HOME/Library/Android/sdk --ndk_path $HOME/Library/Android/sdk/ndk/28.0.13004108 $VISP_WS/visp-build-android $VISP_WS/visp
 \endcode
 
-\subsection android_sdk_build_win 5.3. On Windows
+\subsection android_sdk_build_win 5.4. On Windows
 
 For example, on Windows the command might rather look like
 \code{.sh}
@@ -329,7 +327,7 @@ C:\> cd %VISP_WS%\visp\platforms\android
 C:\> python3 build_sdk.py --config ndk-23.config.py --sdk_path %USERPROFILE%\AppData\Local\Android\Sdk --ndk_path %USERPROFILE%\AppData\Local\Android\Sdk\ndk\23.1.7779620 %VISP_WS%\visp-build-android %VISP_WS%\visp
 \endcode
 
-\subsection android_sdk_build_issue 5.4. Known issue
+\subsection android_sdk_build_issue 5.5. Known issue
 
 If you're experiencing problems with `ccache` or if you don't install `ccache`, you can try a build without it adding
 `--no_ccache` command line option like the following on Ubuntu:
