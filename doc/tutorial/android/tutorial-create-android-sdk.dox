@@ -236,6 +236,18 @@ Generally the script has to be used like:
 $ python3 build_sdk.py --config <ndk-*.config.py> --sdk_path <path-to-Android-Sdk> --ndk_path <path-to-Android-Sdk>/ndk-bundle <installation-directory> <visp-source-code-directory>
 \endcode
 
+
+\note It is possible to directly pass some CMake arguments using the `--additional_cmake_flags` option. The values it
+accepts must respect the pattern `NAME_OPT_1=VALUE,NAME_OPT_2=VAL_2`, i.e. it must contain tuples `CMakeOptionName=CmakeOptionValue`
+separated by commas (without space). An example of such a command would be (NB: the underscore symbols are not visible
+in the snippet but they are present in the command):
+
+\code{.sh}
+$ mkdir $VISP_WS/visp-build-android
+$ cd $VISP_WS/visp/platforms/android
+$ python3 build_sdk.py --config ndk-28.config.py --sdk_path $HOME/Android/Sdk --ndk_path $HOME/Android/Sdk/ndk/28.0.13004108 $VISP_WS/visp-build-android $VISP_WS/visp --additional_cmake_flags USE_OPENCV=TRUE,OpenCV_FOUND=ON,OpenCV_VERSION=4.10.0
+\endcode
+
 In `$VISP_WS/visp/platforms/android` folder we provide different NDK config files:
 \code{.sh}
 $ ls ndk-*.config.py
