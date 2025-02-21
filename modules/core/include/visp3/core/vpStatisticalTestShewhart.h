@@ -86,7 +86,7 @@ public:
 
   static std::string vpWecoRulesAlarmToString(const vpWecoRulesAlarm &alarm);
 
-  static const bool CONST_ALL_WECO_ACTIVATED[COUNT_WECO - 1];
+  static inline const bool CONST_ALL_WECO_ACTIVATED[vpStatisticalTestShewhart::COUNT_WECO - 1] = {true, true, true, true};
   static const unsigned int NB_DATA_SIGNAL = 8;
 
 protected:
