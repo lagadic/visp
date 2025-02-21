@@ -189,6 +189,7 @@ double vpRBSilhouetteCCDTracker::computeMaskGradient(const vpImage<float> &mask,
   for (int n = -m_ccdParameters.h + 1; n < m_ccdParameters.h; ++n) {
     unsigned int ii = static_cast<unsigned int>(round(pccd.icpoint.get_i() + s * n));
     unsigned int jj = static_cast<unsigned int>(round(pccd.icpoint.get_j() + c * n));
+
     maskValues[index] = mask[ii][jj];
     ++index;
   }
@@ -232,12 +233,44 @@ void vpRBSilhouetteCCDTracker::initVVS(const vpRBFeatureTrackerInput &/*frame*/,
     m_gradients[i] = vpColVector::view(m_gradientData.data() + i * 6, 6);
     m_hessians[i] = vpMatrix::view(m_hessianData.data() + i * 6 * 6, 6, 6);
   }
-
   m_weights.resize(m_numFeatures, false);
-
-  computeLocalStatistics(previousFrame.IRGB, m_prevStats);
-  //computeLocalStatistics(image, m_stats);
+  if (m_temporalSmoothingFac > 0.0) {
+    computeLocalStatistics(previousFrame.IRGB, m_prevStats);
+  }
+  else {
+    m_prevStats = m_stats;
+  }
   m_previousFrame = &previousFrame;
+}
+
+void vpRBSilhouetteCCDTracker::changeScale()
+{
+  m_sigma = vpMatrix(m_ccdParameters.phi_dim, m_ccdParameters.phi_dim, 0.0);
+  m_cov.resize(6, 6);
+  unsigned int resolution = m_controlPoints.size();
+  int normal_points_number = floor(m_ccdParameters.h / m_ccdParameters.delta_h);
+  unsigned nerror_ccd = 2 * normal_points_number * 3 * resolution;
+  m_numFeatures = nerror_ccd;
+
+  m_stats.reinit(resolution, normal_points_number);
+  m_prevStats.reinit(resolution, normal_points_number);
+  m_gradientData.resize(m_controlPoints.size() * 2 * normal_points_number * 6);
+  m_hessianData.resize(m_controlPoints.size() * 2 * normal_points_number * 6 * 6);
+  m_gradients.resize(m_controlPoints.size() * 2 * normal_points_number);
+  m_hessians.resize(m_controlPoints.size() * 2 * normal_points_number);
+
+
+  for (unsigned int i = 0; i < m_gradients.size(); ++i) {
+    m_gradients[i] = vpColVector::view(m_gradientData.data() + i * 6, 6);
+    m_hessians[i] = vpMatrix::view(m_hessianData.data() + i * 6 * 6, 6, 6);
+  }
+  m_weights.resize(m_numFeatures, false);
+  if (m_temporalSmoothingFac > 0.0) {
+    computeLocalStatistics(m_previousFrame->IRGB, m_prevStats);
+  }
+  else {
+    m_prevStats = m_stats;
+  }
 }
 
 void vpRBSilhouetteCCDTracker::computeVVSIter(const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cMo, unsigned int iteration)
@@ -263,13 +296,10 @@ void vpRBSilhouetteCCDTracker::computeVVSIter(const vpRBFeatureTrackerInput &fra
     int previousH = m_ccdParameters.h;
     m_ccdParameters.h = std::max(m_ccdParameters.min_h, previousH / 2);
     if (m_ccdParameters.h != previousH) {
-
       m_ccdParameters.delta_h = static_cast<int>(std::max(1.0, round(m_ccdParameters.delta_h * (m_ccdParameters.h / previousH))));
-      initVVS(frame, *m_previousFrame, cMo);
+      changeScale();
     }
   }
-
-
 
   computeLocalStatistics(frame.IRGB, m_stats);
   computeErrorAndInteractionMatrix(); // Update interaction matrix, and gauss newton left and right side terms
@@ -485,7 +515,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
       vic_ptr[10 * negative_normal + 6] = wp2 * wp2 * wp2 * wp2;
       vic_ptr[10 * negative_normal + 7] = std::max((exp(-0.5 * dist2[0] * dist2[0] / (sigma_hat * sigma_hat)) - minus_exp_gamma2), 0.0);
       vic_ptr[10 * negative_normal + 8] = 0.5 * exp(-abs(dist2[0]) / alpha) / alpha;
-      vic_ptr[10 * negative_normal + 9] = exp(-dist2[0] * dist2[0] / (2 * sigma * sigma)) / (sqrt(2 * CV_PI) * sigma);
+      vic_ptr[10 * negative_normal + 9] = exp(-dist2[0] * dist2[0] / (2 * sigma * sigma)) / (sqrt(2 * M_PI) * sigma);
       normalized_param[kk][1] += vic_ptr[10 * negative_normal + 7];
     }
   }
@@ -612,6 +642,7 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
   const int nerror_ccd = 2 * normal_points_number * 3 * npointsccd;
   m_error.resize(nerror_ccd, false);
   m_weighted_error.resize(nerror_ccd, false);
+  vpColVector errorPerPoint(m_controlPoints.size(), 0.0);
   m_L.resize(nerror_ccd, 6, false, false);
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel
@@ -632,7 +663,7 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
     for (unsigned int kk = 0; kk < m_controlPoints.size(); kk++) {
       const int i = kk;
       const vpRBSilhouetteControlPoint &p = m_controlPoints[kk];
-
+      errorPerPoint[kk] = 0.0;
       if (!p.isValid()) {
         for (unsigned int j = 0; j < 2 * normal_points_number; ++j) {
           for (unsigned int m = 0; m < 3; ++m) {
@@ -682,6 +713,7 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
             //error_ccd[i*2*normal_points_number*3 + j*3 + m] = img(vic_ptr[10*j+0], vic_ptr[10*j+1])[m]- errf * mean_vic_ptr[m]- (1-errf)* mean_vic_ptr[m+3];
           tmp_pixel_diff[m] = err;
           error_ccd_j[m] = err;
+          errorPerPoint[kk] += err;
         }
 
         //compute jacobian matrix
@@ -707,8 +739,13 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
   m_gradient = 0.0;
   m_hessian = 0.0;
   //m_robust.setMinMedianAbsoluteDeviation(1.0);
+  vpColVector weightPerPoint(errorPerPoint.getRows());
   m_robust.MEstimator(vpRobust::vpRobustEstimatorType::TUKEY, m_error, m_weights);
-
+  // for (unsigned int i = 0; i < m_controlPoints.size(); ++i) {
+  //   for (unsigned int j = 0; j < 2 * normal_points_number * 3; ++j) {
+  //     m_weights[i * 2 * normal_points_number * 3 + j] = weightPerPoint[i];
+  //   }
+  // }
   for (unsigned int i = 0; i < m_L.getRows(); ++i) {
     m_weighted_error[i] = m_error[i] * m_weights[i];
     for (unsigned int j = 0; j < 6; ++j) {

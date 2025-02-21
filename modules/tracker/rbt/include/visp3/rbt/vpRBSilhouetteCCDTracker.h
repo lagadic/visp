@@ -73,7 +73,11 @@ enum vpRBSilhouetteCCDDisplayType
 class VISP_EXPORT vpCCDParameters
 {
 public:
-  vpCCDParameters() : gamma_1(0.5), gamma_2(4), gamma_3(4), gamma_4(3), alpha(1.3), beta(0.06), kappa(0.5), covarianceIterDecreaseFactor(0.25), h(40), delta_h(1), phi_dim(6), start_h(40), min_h(4), start_delta_h(1)
+  vpCCDParameters() :
+    gamma_1(0.5), gamma_2(4), gamma_3(4), gamma_4(3),
+    alpha(1.3), beta(0.06), kappa(0.5),
+    covarianceIterDecreaseFactor(0.25),
+    h(40), delta_h(1), min_h(4), start_h(40), start_delta_h(1), phi_dim(6)
   { }
 
 
@@ -126,15 +130,14 @@ public:
    * Recommended value: 4 or above (this is dependent on image resolution)
    */
   int h;
-  int start_h;
-  int start_delta_h;
   /**
    * \brief Sample step when computing statistics and errors.
-   * Increase this value to decrease computation time, at the risk of obtaining inacurrate statistics.
+   * Increase this value to decrease computation time, at the risk of obtaining inaccurate statistics.
    */
   int delta_h;
-
   int min_h;
+  int start_h;
+  int start_delta_h;
   /**
    * \brief Number of parameters estimated by CCD. Either 6 or 8.
    * Leave this fixed
@@ -279,6 +282,8 @@ public:
   {
     m_cov = m_sigma;
   }
+
+  void changeScale();
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth) const VP_OVERRIDE;
 
