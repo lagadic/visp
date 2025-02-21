@@ -12,11 +12,19 @@ is running Linux, OSX or Windows.
 
 \section java_ws 2. Create a workspace
 
+\subsection java_ws_unix 2.1. On Ubuntu, Debian or Mac OSX
+
 First create a workspace in `$HOME/visp-ws` that will contain ViSP sources, build and dataset.
 \code{.sh}
 $ export VISP_WS=$HOME/visp-ws
 $ mkdir -p $VISP_WS/3rdparty
 \endcode
+
+\subsection java_ws_win 2.2. On Windows
+
+Follow instructions to \ref install_win11_msvc17_ws on Windows.
+
+We suppose now that you have set `%%VISP_WS%` var.
 
 \section java_install_jdk 3. Install Java Development Kit (JDK)
 
@@ -177,9 +185,11 @@ $ brew install cmake ant python3
 \code{.sh}
 C:\> setx ANT_HOME C:\Users\%USERNAME%\apache-ant-1.10.15-bin
 \endcode
-  You need also to add `"%ANT_HOME%\bin"` to the `"path"` environment variable. To this end, open the environment
-  variables panel, and modify `"path"` accordingly. In our case we added
+  You need also to add `"%ANT_HOME%\bin"` to the `"Path"` environment variable. To this end, open the environment
+  variables panel, and modify `"Path"` accordingly. In our case we added
   `"C:\Users\%USERNAME%\apache-ant-1.10.15-bin\bin"` folder.
+  \note You can check that the `"%ANT_HOME%"` variable is correctly positioned by checking that the `ant.bat` file is
+  in the `"%ANT_HOME%\bin"` folder.
 
 \section install_java_visp 6. Build ViSP from source code
 
@@ -284,12 +294,12 @@ General configuration information for ViSP 3.6.1
     Enable explicit keyword:     no
 
   Python 3:
-    Interpreter:                 /home/user/miniforge3/bin/python3 (ver 3.12.7)
+    Interpreter:                 /home/username/miniforge3/bin/python3 (ver 3.12.7)
 
   Java:
     ant:                         /usr/bin/ant (ver 1.10.14)
     Java:                        no
-    JNI:                         /home/user/visp-ws/3rdparty/jdk-21.0.6/include /home/user/visp-ws/3rdparty/jdk-21.0.6/include/linux /home/user/visp-ws/3rdparty/jdk-21.0.6/include
+    JNI:                         /home/username/visp-ws/3rdparty/jdk-21.0.6/include /home/username/visp-ws/3rdparty/jdk-21.0.6/include/linux /home/username/visp-ws/3rdparty/jdk-21.0.6/include
     Java wrappers:               yes (ANT)
 \endcode
 
@@ -412,7 +422,9 @@ General configuration information for ViSP 3.6.1
 
   Java:
     ant:                         C:/Users/user/apache-ant-1.10.15/bin/ant.bat (ver 1.10.15)
+    Java:                        no
     JNI:                         C:/Program Files/Java/jdk-23/include C:/Program Files/Java/jdk-23/include/win32 C:/Program Files/Java/jdk-23/include
+    Java wrappers:               yes (ANT)
 \endcode
 
   \note If JNI is not found (ie. the line starting with `JNI:` is empty), we recommend to do a fresh build removing all

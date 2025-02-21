@@ -7,7 +7,23 @@
 This tutorial is designed to help you build ViSP Android SDK which can be used to create Android Apps supporting ViSP
 Java functionalities.
 
-\section android_sdk_prereq 2. Prerequisites
+\section android_sdk_ws 2. Create a workspace
+
+\subsection java_sdk_ws_unix 2.1. On Ubuntu, Debian or Mac OSX
+
+First create a workspace in `$HOME/visp-ws` that will contain ViSP sources, build and dataset.
+\code{.sh}
+$ export VISP_WS=$HOME/visp-ws
+$ mkdir -p $VISP_WS/3rdparty
+\endcode
+
+\subsection java_sdk_ws_win 2.2. On Windows
+
+Follow instructions to \ref install_win11_msvc17_ws on Windows.
+
+We suppose now that you have set `%%VISP_WS%` var.
+
+\section android_sdk_prereq 3. Prerequisites
 
 This tutorial assumes you have the following software installed and configured:
 <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">Java Development Kit (JDK)</a>,
@@ -18,7 +34,7 @@ This tutorial assumes you have the following software installed and configured:
 <a href="https://github.com/ninja-build/ninja/releases">Ninja</a> and
 <a href="https://ccache.samba.org/">ccache</a>.
 
-\subsection android_sdk_prereq_linux 2.1. On Ubuntu or debian
+\subsection android_sdk_prereq_linux 3.1. On Ubuntu or debian
 
 - Install <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">Java Development Kit (JDK)</a>
   following \ref java_install_jdk tutorial.
@@ -32,11 +48,16 @@ This tutorial assumes you have the following software installed and configured:
   configuration.
   \image html img-android-mac-native-c++.jpg
 
-  From this new project enter `"Android Studio > Settings... > Languages & Frameworks > Android SDK"` menu.
+  From this new project enter `"File > Settings... > Languages & Frameworks > Android SDK"` menu.
   Select the `"SDK Tools"` tab and check the boxes next to `"Android SDK Build-Tools"`, `"NDK (Side by side)"`
   and `"CMake"`.
   \image html img-android-mac-install-ndk.jpg
 
+  As visible in the previous and next images, we will download and install NDK 28.
+  Confirm changes pressing "OK" button.
+  \image html img-android-mac-install-ndk-confirm.jpg
+
+  Once all the tools are downloaded, you can exit Android Studio.
 - Now to install <a href="https://www.python.org/downloads/">Python Interpreter (prefer version 3.x)</a>,
   <a href="https://cmake.org/download/">CMake</a>, <a href="https://github.com/ninja-build/ninja/releases">Ninja</a>
   and <a href="https://ccache.samba.org/">ccache</a> (a compiler cache for a faster build) run the following:
@@ -61,7 +82,7 @@ $ ccache --version
 ccache version 4.9.1
 \endcode
 
-\subsection android_sdk_prereq_osx 2.2. On Mac OSX
+\subsection android_sdk_prereq_osx 3.2. On Mac OSX
 
 - Install <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">Java Development Kit (JDK)</a>
   following \ref java_install_jdk tutorial.
@@ -78,9 +99,11 @@ ccache version 4.9.1
   Select the `"SDK Tools"` tab and check the boxes next to `"Android SDK Build-Tools"`, `"NDK (Side by side)"`
   and `"CMake"`.
   \image html img-android-mac-install-ndk.jpg
+
   As visible in the previous and next images, we will download and install NDK 28.
   Confirm changes pressing "OK" button.
   \image html img-android-mac-install-ndk-confirm.jpg
+
   Once all the tools are downloaded, you can exit Android Studio.
 - Now to install <a href="https://www.python.org/downloads/">Python Interpreter (prefer versions 3.x)</a>,
   <a href="https://cmake.org/download/">CMake</a>,
@@ -107,51 +130,58 @@ $ ccache --version
 ccache version 4.10.2
 \endcode
 
-\subsection android_sdk_prereq_win 2.3. On Windows
+\subsection android_sdk_prereq_win 3.3. On Windows
 
 - Install <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">Java Development Kit (JDK)</a>
   following \ref java_install_jdk tutorial.
 - To install <a href="https://developer.android.com/studio/">Android SDK and NDK</a> follow the link to
   <a href="https://developer.android.com/studio/">Android Studio</a>,
-  download and install Android Studio for Windows 64-bit. Once installed start Android Studio using default settings.
-  This allows to download Android SDK. Now to install Android NDK, open Android Studio and create a new Android project.
-  From this new project enter `"File > Settings... > Appearence & Behavior > System Settings > Android SDK"` menu.
-  Select the `"SDK Tools"` tab and check the boxes next to `"LLDB"`, `"CMake"`, and `"NDK (Side by side)"`.
+  download and install Android Studio for Windows 64-bit.
+  Once installed start Android Studio using default settings. This allows to download Android SDK that will
+  be installed in `"C:\Users\username\AppData\Local\Android\Sdk"` folder on Windows.
+
+  Now to install Android NDK, open Android Studio and start a new Native C++ Android project using the default
+  configuration.
+  \image html img-android-mac-native-c++.jpg
+
+  From this new project enter `"File > Settings... > Languages & Frameworks > Android SDK"` menu.
+  Select the `"SDK Tools"` tab and check the boxes next to `"Android SDK Build-Tools"`, `"NDK (Side by side)"`
+  and `"CMake"`.
+  \image html img-android-mac-install-ndk.jpg
+
+  As visible in the previous and next images, we will download and install NDK 28.
+  Confirm changes pressing "OK" button.
+  \image html img-android-mac-install-ndk-confirm.jpg
+
   Once all the tools are downloaded, you can exit Android Studio.
 - Now install <a href="https://www.python.org/downloads/">Python Interpreter</a> without forgetting to add Python to
   environment variables.
+  \image html img-android-python-path.jpg
 - Download and install latest <a href="https://cmake.org/download/">CMake release</a> using Windows win64-x64 installer
   without forgetting to add CMake to the system PATH for all users.
 - Download <a href="https://github.com/ninja-build/ninja/releases">Ninja</a> for windows. Place `ninja.exe` in a
-  suitable spot. For example, in `%%VISP_WS%\Ninja`. Now make sure that CMake can find `ninja.exe` by adding
-  `%%VISP_WS%\Ninja` to your `%%PATH%`.
-- Download `ccache` for Windows from github and add its location (`%%VISP_WS%\ccache-win64`) to your `%%PATH%`
+  suitable spot. For example, in `%%VISP_WS%\3rdparty\ninja-win`. Now make sure that CMake can find `ninja.exe` by adding
+  `%%VISP_WS%\3rdparty\ninja-win` to your `%%Path%` environment var.
+- Download `ccache` for Windows from github and add its location (`%%VISP_WS%\3rdparty\ccache-win64`) to your `%%Path%`
+  environment variable
 \code{.sh}
-C:\> cd %VISP_WS%
+C:\> cd %VISP_WS%/3rdparty
 C:\> git clone https://github.com/nagayasu-shinya/ccache-win64.git
 \endcode
 
-- At the time this tutorial was written, on macOS Mojave 10.14.2 we got Android Studio 3.2.1, NDK 20.0
+- At the time this tutorial was written, on Windows 11 we got Android Studio Ladybug 2024.2.2.13, NDK 28.0
   (see \ref android_sdk_ndk_version) and the following other tools versions:
 \code{.sh}
 C:\>java -version
-java version 11.0.4 2019-07-16 LTS
+java version 23.0.2 2025-01-21
 C:\>python --version
-Python 3.7.4
+Python 3.13.2
 C:\>cmake -version
-cmake version 3.15.2
+cmake version 4.0.0-rc1
 C:\>ninja --version
-1.9.0
+1.12.1
 C:\>ccache --version
-ccache version 3.7.2
-\endcode
-
-\section android_sdk_ws 3. Create a workspace
-
-Create a workspace in `$HOME/visp-ws` that will contain ViSP sources, build and dataset.
-\code{.sh}
-$ export VISP_WS=$HOME/visp-ws
-$ mkdir -p $VISP_WS
+ccache version 3.7.4
 \endcode
 
 \section android_sdk_get_source 4. Get ViSP source code
