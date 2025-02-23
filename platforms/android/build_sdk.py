@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os, sys
+from distutils.dir_util import copy_tree
 import argparse
 import glob
 import re
@@ -144,9 +145,6 @@ class Builder:
         self.workdir = check_dir(workdir, create=True)
         self.vispdir = check_dir(vispdir)
         self.config = config
-        self.libdest = check_dir(os.path.join(self.workdir, "o4a"), create=True, clean=True)
-        self.resultdest = check_dir(os.path.join(self.workdir, 'ViSP-android-sdk'), create=True, clean=True)
-        self.docdest = check_dir(os.path.join(self.workdir, 'ViSP-android-sdk', 'sdk', 'java', 'javadoc'), create=True, clean=True)
         self.extra_packs = []
         self.visp_version = determine_visp_version(os.path.join(self.vispdir, "CMakeLists.txt"))
         self.use_ccache = False if config.no_ccache else True
@@ -154,6 +152,14 @@ class Builder:
         self.ninja_path = self.get_ninja()
         self.debug = True if config.debug else False
         self.debug_info = True if config.debug_info else False
+        self.abi_name = "undefined"
+        self.additional_cmake_flags = config.additional_cmake_flags
+
+    def setABI(self, abi: ABI):
+      self.abi_name = abi.name
+      self.libdest = check_dir(os.path.join(self.workdir, "o4a", abi.name), create=True, clean=True)
+      self.resultdest = check_dir(os.path.join(self.workdir, 'visp-android-sdk', abi.name), create=True, clean=True)
+      self.docdest = check_dir(os.path.join(self.workdir, 'visp-android-sdk', abi.name, 'sdk', 'java', 'javadoc'), create=True, clean=True)
 
     def get_cmake(self):
         if not self.config.use_android_buildtools and check_executable(['cmake', '--version']):
@@ -208,7 +214,7 @@ class Builder:
         for d in ["CMakeCache.txt", "CMakeFiles/", "bin/", "libs/", "lib/", "package/", "install/samples/"]:
             rm_one(d)
 
-    def build_library(self, abi, do_install):
+    def build_library(self, abi):
         cmd = [self.cmake_path, "-GNinja"]
         cmake_vars = dict(
             CMAKE_TOOLCHAIN_FILE=self.get_toolchain_file(),
@@ -217,8 +223,14 @@ class Builder:
             BUILD_TUTORIALS="OFF",
             BUILD_DEMOS="OFF",
             BUILD_ANDROID_EXAMPLES="ON",
+            BUILD_ANDROID_SERVICE="ON",
             INSTALL_ANDROID_EXAMPLES="ON",
+            CMAKE_C_FLAGS="-fopenmp  -static-openmp",
+            CMAKE_CXX_FLAGS="-fopenmp  -static-openmp",
         )
+        if self.additional_cmake_flags is not None:
+            cmake_vars.update(self.additional_cmake_flags)
+
         if self.ninja_path != 'ninja':
             cmake_vars['CMAKE_MAKE_PROGRAM'] = self.ninja_path
 
@@ -234,6 +246,8 @@ class Builder:
         if self.use_ccache == True:
             cmd.append("-DNDK_CCACHE=ccache")
 
+        cmake_vars['BUILD_JAVA'] = "ON"
+
         cmake_vars.update(abi.cmake_vars)
         cmd += [ "-D%s='%s'" % (k, v) for (k, v) in cmake_vars.items() if v is not None]
         cmd.append(self.vispdir)
@@ -243,6 +257,20 @@ class Builder:
         execute([self.ninja_path, "install" if (self.debug_info or self.debug) else "install/strip"])
 
     def build_javadoc(self):
+      confFilePath = os.path.join(self.libdest, "root_android.txt")
+      confFileExists = os.path.exists(confFilePath)
+      print("Looking for file \"" + str(confFilePath) + "\"")
+      if confFileExists:
+        print("\tIt exists !")
+        line = ""
+        with open(confFilePath, "r") as file:
+          line = file.readline()
+        print("-> Read \"" + line + "\"")
+        rootJavadoc = os.path.join(line, "visp", "build", "docs", "javadoc")
+        print("\t->Copying content of \"" + str(rootJavadoc) + "\"")
+        copy_tree(rootJavadoc, self.docdest)
+      else:
+        print("\tIt DOES NOT exist =(")
         classpaths = []
         for dir, _, files in os.walk(os.environ["ANDROID_SDK"]):
             for f in files:
@@ -262,7 +290,21 @@ class Builder:
         ]
         execute(cmd)
 
+    def copyLibsInSamplesDir(self):
+        root = os.path.join(self.libdest, "install", "sdk", "native")
+        targets = ["libs", "staticlibs"]
+        dest = os.path.join(self.libdest, "install", "samples", "app" ,"src", "main" , "jniLibs", self.abi_name)
+        check_dir(dest, create=True, clean=True)
+        for target in targets:
+          source_folder =  os.path.join(root, target, self.abi_name)
+          for item in os.listdir(source_folder):
+            src = os.path.join(source_folder, item)
+            dst = os.path.join(dest, item)
+            shutil.copy2(src, dst)
+
     def gather_results(self):
+        # Copy compiled libaries in the sample directory
+        self.copyLibsInSamplesDir()
         # Copy all files
         root = os.path.join(self.libdest, "install")
         for item in os.listdir(root):
@@ -300,7 +342,8 @@ def get_ndk_dir():
 #===================================================================================================
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Build ViSP for Android SDK')
+    parser = argparse.ArgumentParser(description='Build ViSP for Android SDK' ,
+                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("work_dir", nargs='?', default='.', help="Working directory (and output)")
     parser.add_argument("visp_dir", nargs='?', default=os.path.join(SCRIPT_DIR, '../..'), help="Path to ViSP source dir")
     parser.add_argument('--config', default='ndk-18-api-level-21.config.py', type=str, help="Package build configuration", )
@@ -315,6 +358,7 @@ if __name__ == "__main__":
     parser.add_argument('--force_visp_toolchain', action="store_true", help="Do not use toolchain from Android NDK")
     parser.add_argument('--debug', action="store_true", help="Build 'Debug' binaries (CMAKE_BUILD_TYPE=Debug)")
     parser.add_argument('--debug_info', action="store_true", help="Build with debug information (useful for Release mode: BUILD_WITH_DEBUG_INFO=ON)")
+    parser.add_argument('--additional_cmake_flags', nargs='?', type=lambda x: {k:v for k,v in (i.split('=') for i in x.split(','))}, help="Additional CMake flags to use, in comma-separated field=position pairs such as 'OPENCV_DIR=something,PCL_DIR=something'")
     args = parser.parse_args()
 
     log.basicConfig(format='%(message)s', level=log.DEBUG)
@@ -378,20 +422,16 @@ if __name__ == "__main__":
     log.info("Detected ViSP version: %s", builder.visp_version)
 
     for i, abi in enumerate(ABIs):
-        do_install = (i == 0)
-
         log.info("=====")
         log.info("===== Building library for %s", abi)
         log.info("=====")
-
+        builder.setABI(abi)
         os.chdir(builder.libdest)
         builder.clean_library_build_dir()
-        builder.build_library(abi, do_install)
-
-    builder.gather_results()
-
-    if args.build_doc:
-        builder.build_javadoc()
+        builder.build_library(abi)
+        builder.gather_results()
+        if args.build_doc:
+            builder.build_javadoc()
 
     log.info("=====")
     log.info("===== Build finished")
