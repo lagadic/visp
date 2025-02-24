@@ -86,7 +86,7 @@ public:
 
   static std::string vpWecoRulesAlarmToString(const vpWecoRulesAlarm &alarm);
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
   static inline const bool CONST_ALL_WECO_ACTIVATED[vpStatisticalTestShewhart::COUNT_WECO - 1] = { true, true, true, true };
 #else
   static const bool CONST_ALL_WECO_ACTIVATED[vpStatisticalTestShewhart::COUNT_WECO - 1];
