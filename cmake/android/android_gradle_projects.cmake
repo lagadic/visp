@@ -5,9 +5,9 @@ message(STATUS "Android Gradle Plugin version: ${ANDROID_GRADLE_PLUGIN_VERSION}"
 set(GRADLE_VERSION "5.6.4" CACHE STRING "Gradle version")
 message(STATUS "Gradle version: ${GRADLE_VERSION}")
 
-set(ANDROID_COMPILE_SDK_VERSION "26" CACHE STRING "Android compileSdkVersion")
+set(ANDROID_COMPILE_SDK_VERSION "33" CACHE STRING "Android compileSdkVersion")
 set(ANDROID_MIN_SDK_VERSION "21" CACHE STRING "Android minSdkVersion")
-set(ANDROID_TARGET_SDK_VERSION "26" CACHE STRING "Android minSdkVersion")
+set(ANDROID_TARGET_SDK_VERSION "33" CACHE STRING "Android target Sdk Version")
 
 set(ANDROID_BUILD_BASE_DIR "${VISP_BINARY_DIR}/visp_android" CACHE INTERNAL "")
 set(ANDROID_TMP_INSTALL_BASE_DIR "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/install/visp_android")
@@ -30,16 +30,14 @@ if(NOT INSTALL_CREATE_DISTRIB)
   set(ANDROID_INSTALL_ABI_FILTER "${ANDROID_BUILD_ABI_FILTER}")
 endif()
 
+file(WRITE "${VISP_BINARY_DIR}/root_android.txt" "${ANDROID_BUILD_BASE_DIR}")
+
 # BUG: Ninja generator generates broken targets with ANDROID_ABI_FILTER name (CMake 3.11.2)
 #set(__spaces "                        ")
 #string(REPLACE "\n" "\n${__spaces}" ANDROID_ABI_FILTER "${__spaces}${ANDROID_BUILD_ABI_FILTER}")
 #string(REPLACE REGEX "[ ]+$" "" ANDROID_ABI_FILTER "${ANDROID_ABI_FILTER}")
-set(ANDROID_ABI_FILTER "${ANDROID_BUILD_ABI_FILTER}")
-configure_file("${VISP_SOURCE_DIR}/samples/android/build.gradle.in" "${ANDROID_BUILD_BASE_DIR}/build.gradle" @ONLY)
 
 set(ANDROID_ABI_FILTER "${ANDROID_INSTALL_ABI_FILTER}")
-configure_file("${VISP_SOURCE_DIR}/samples/android/build.gradle.in" "${ANDROID_TMP_INSTALL_BASE_DIR}/${ANDROID_INSTALL_SAMPLES_DIR}/build.gradle" @ONLY)
-install(FILES "${ANDROID_TMP_INSTALL_BASE_DIR}/${ANDROID_INSTALL_SAMPLES_DIR}/build.gradle" DESTINATION "${ANDROID_INSTALL_SAMPLES_DIR}" COMPONENT samples)
 
 configure_file("${VISP_SOURCE_DIR}/platforms/android/gradle-wrapper/gradle/wrapper/gradle-wrapper.properties.in" "${ANDROID_BUILD_BASE_DIR}/gradle/wrapper/gradle-wrapper.properties" @ONLY)
 install(FILES "${ANDROID_BUILD_BASE_DIR}/gradle/wrapper/gradle-wrapper.properties" DESTINATION "${ANDROID_INSTALL_SAMPLES_DIR}/gradle/wrapper" COMPONENT samples)
@@ -65,20 +63,8 @@ foreach(fname ${GRADLE_WRAPPER_FILES})
   install(FILES "${VISP_SOURCE_DIR}/platforms/android/gradle-wrapper/${fname}" DESTINATION "${ANDROID_INSTALL_SAMPLES_DIR}/${__dir}" COMPONENT samples ${__permissions})
 endforeach()
 
-file(WRITE "${ANDROID_BUILD_BASE_DIR}/settings.gradle" "
-include ':visp'
-")
-
-file(WRITE "${ANDROID_TMP_INSTALL_BASE_DIR}/settings.gradle" "
-rootProject.name = 'visp_samples'
-
-def vispsdk='../'
-//def vispsdk='/<path to ViSP-android-sdk>'
-//println vispsdk
-include ':visp'
-project(':visp').projectDir = new File(vispsdk + '/sdk')
-")
-
+file(WRITE "${ANDROID_BUILD_BASE_DIR}/local.properties" "sdk.dir=${ANDROID_SDK}")
+file(WRITE "${ANDROID_TMP_INSTALL_BASE_DIR}/local.properties" "sdk.dir=${ANDROID_SDK}")
 
 macro(add_android_project target path)
   get_filename_component(__dir "${path}" NAME)
@@ -107,8 +93,29 @@ macro(add_android_project target path)
   configure_file("${path}/build.gradle.in" "${ANDROID_BUILD_BASE_DIR}/${__dir}/build.gradle" @ONLY)
 
   file(APPEND "${ANDROID_BUILD_BASE_DIR}/settings.gradle" "
-include ':${__dir}'
-")
+  pluginManagement {
+    repositories {
+        google {
+            content {
+                includeGroupByRegex(\"com\\\\.android.*\")
+                includeGroupByRegex(\"com\\\\.google.*\")
+                includeGroupByRegex(\"androidx.*\")
+            }
+        }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+  }
+  dependencyResolutionManagement {
+      repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+      repositories {
+          google()
+          mavenCentral()
+      }
+  }
+
+  include ':${__dir}'
+  ")
 
   if (BUILD_ANDROID_EXAMPLES)
     # build apk
@@ -160,9 +167,7 @@ include ':${__dir}'
   install(FILES "${ANDROID_TMP_INSTALL_BASE_DIR}/${__dir}/build.gradle" DESTINATION "${ANDROID_INSTALL_SAMPLES_DIR}/${__dir}" COMPONENT samples)
 
   file(APPEND "${ANDROID_TMP_INSTALL_BASE_DIR}/settings.gradle" "
-include ':${__dir}'
-")
+  include ':${__dir}'
+  ")
 
 endmacro()
-
-install(FILES "${ANDROID_TMP_INSTALL_BASE_DIR}/settings.gradle" DESTINATION "${ANDROID_INSTALL_SAMPLES_DIR}" COMPONENT samples)

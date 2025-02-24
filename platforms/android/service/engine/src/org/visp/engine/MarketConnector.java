@@ -7,7 +7,7 @@ import android.util.Log;
 
 public class MarketConnector {
     protected static final String ViSPPackageNamePreffix = "org.visp.lib";
-    private static final String TAG = "ViSPEngine/MarketConnector";
+    private static final String TAG = "ViSP/MarketConnector";
     protected Context mContext;
 
     public MarketConnector(Context context) {

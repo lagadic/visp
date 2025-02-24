@@ -13,7 +13,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 public class HardwareDetector {
-    private static String TAG = "ViSPEngine/HardwareDetector";
+    private static String TAG = "ViSP/HardwareDetector";
 
     public static final int ARCH_UNKNOWN = -1;
 
