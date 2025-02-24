@@ -114,7 +114,6 @@ void vpRBVisualOdometryUtils::levenbergMarquardtKeypoints2D(const vpMatrix &poin
     vpColVector v = -parameters.gain * ((H + Id * mu).pseudoInverse() * Lte);
     cTw = vpExponentialMap::direct(v).inverse() * cTw;
     double errorNormCurr = weighted_error.frobeniusNorm();
-    std::cout << "Error at iteration " << iter << " is " << errorNormCurr << std::endl;
     double improvementFactor = errorNormCurr / errorNormPrev;
     if (iter > 0) {
       if (improvementFactor < 1.0 && improvementFactor >(1.0 - parameters.minImprovementFactor)) {
