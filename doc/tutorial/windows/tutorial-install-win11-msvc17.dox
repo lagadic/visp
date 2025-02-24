@@ -8,9 +8,9 @@ These steps have been tested on Windows 11 (64 bit), with CMake 3.24.2 and Visua
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 
-\section install_win11_msvc17_required Install prerequisites
+\section install_win11_msvc17_required 1. Install prerequisites
 
-\subsection install_win11_msvc17_3rd_msvc Visual Studio
+\subsection install_win11_msvc17_3rd_msvc 1.1. Visual Studio
 
 Visual Studio Community 2022 could be downloaded from https://www.visualstudio.com/downloads/. During
 a fresh installation enable "Desktop development with C++" workload (see image below).
@@ -29,18 +29,18 @@ if "Windows 11 SDK" is enabled like in the following image
 4. Choose Modify again.
 5. After the new workloads and components are installed, choose Launch.
 
-\subsection install_win11_msvc17_3rd_cmake CMake
+\subsection install_win11_msvc17_3rd_cmake 1.2. CMake
 
 CMake could be download from http://www.cmake.org. Download the latest release for Windows win64-x64
 platform (at the time this tutorial was written it was the file `cmake-3.24.2-windows-arm64.msi`).
 To install just double click on the msi file.
 
-\subsection install_win11_msvc17_3rd_git Git
+\subsection install_win11_msvc17_3rd_git 1.3. Git
 
 Install Git for Windows from https://git-for-windows.github.io/. This installation allows then to use git
 in a `cmd` Command Prompt.
 
-\section install_win11_msvc17_ws Create a workspace
+\section install_win11_msvc17_ws 2. Create a workspace
 
 If not already done, create a workspace that will contain all ViSP source, build, data set and optional
 3rd parties. This workspace is here set to `C:\visp-ws` folder, but it could be set to any other location.
@@ -58,7 +58,7 @@ C:\> mkdir %VISP_WS%
 C:\> exit
 \endverbatim
 
-\section install_win11_msvc17_quick Quick ViSP installation
+\section install_win11_msvc17_quick 3. Quick ViSP installation
 
 In this section, we give minimal instructions to build ViSP from source just to try ViSP without entering
 in \ref install_win11_msvc17_advanced.
@@ -100,9 +100,9 @@ To have a trial, just jump to \ref install_win11_msvc17_dataset before running s
 just build or jump to \ref install_win11_msvc17_next. You can later come back to the
 \ref install_win11_msvc17_advanced.
 
-\section install_win11_msvc17_advanced Advanced ViSP installation
+\section install_win11_msvc17_advanced 4. Advanced ViSP installation
 
-\subsection install_win11_msvc17_3rdparty Install 3rd parties
+\subsection install_win11_msvc17_3rdparty 4.1. Install 3rd parties
 
 ViSP is interfaced with several 3rd party libraries.
 Follow the link to see the complete list of \ref supported-third-parties.
@@ -110,71 +110,47 @@ We recommend first to install \ref install_win11_msvc17_3rdparty_opencv in the w
 Then to use optimized matrix operations you may install \ref install_win11_msvc17_3rdparty_eigen.
 Other 3rd parties are optional and should be considered only by expert developers.
 
-\subsubsection install_win11_msvc17_3rdparty_opencv OpenCV 3rd party
+\subsubsection install_win11_msvc17_3rdparty_opencv 4.1.1. OpenCV
 
-<b>1. Get OpenCV</b>
+<b>4.1.1.1. Get OpenCV</b>
 
 First you have to get OpenCV:
 - From https://opencv.org/releases/ download the latest OpenCV for Windows. In our case we got
-`opencv-4.8.0-windows.exe` Win pack installer. The same procedure could be applied with all the
-previous OpenCV releases starting from 3.4.0 version.
+`opencv-4.11.0-windows.exe` Win pack installer.
 - Extract the content of the archive in your workspace `%%VISP_WS%/3rdparty`.
 \image html img-win-extract-opencv.jpg
 - The installer extract all the material in `%%VISP_WS%\3rdparty\opencv`.
-- We strongly recommend to rename this folder to a name that contain OpenCV version like `%%VISP_WS%\3rdparty\opencv-4.8.0`.
+- We strongly recommend to rename this folder to a name that contain OpenCV version like
+  `%%VISP_WS%\3rdparty\opencv-4.11.0`.
 
-\note OpenCV 4.8.0 win pack installer doesn't contain prebuild OpenCV libraries build with
-Visual Studio 17 2022. It contains only prebuild libraries build with Visual Studio 16 2019
-(vc16). That's why we need to build OpenCV from source.
-
-<b>2. Build OpenCV from source</b>
-
-- Create a build directory
-\verbatim
-C:\> cd %VISP_WS%\3rdparty\opencv-4.8.0
-C:\> mkdir build-vc17
-C:\> cd build-vc17
-\endverbatim
-- Run CMake in build directory (here the generator is chosen for Visual Studio 17 2022) and installation dir is set
-to the existing folder `%%VISP_WS%\3rdparty\opencv-4.8.0\build`:
-\verbatim
-C:\> cmake -G "Visual Studio 17 2022" -A "x64" ..\sources -DCMAKE_INSTALL_PREFIX=%VISP_WS%\3rdparty\opencv-4.8.0\build -DBUILD_TESTS=OFF -DBUILD_PERF_TESTS=OFF
-\endverbatim
-- Build and install OpenCV using release and debug configuration respectively (installation doesn't need
-administrator privileges)
-\verbatim
-C:\> cmake --build . --config Release --target install
-C:\> cmake --build . --config Debug --target install
-\endverbatim
-
-<b>2. Complete OpenCV installation</b>
+<b>4.1.1.2. Complete OpenCV installation</b>
 
 Now you have to complete OpenCV installation setting some environment vars:
 - In order that ViSP detects OpenCV you have to set `OpenCV_DIR` environment variable. Start up a `cmd`
 Command Prompt and enter:
 \verbatim
-C:\> setx OpenCV_DIR "%VISP_WS%\3rdparty\opencv-4.8.0\build"
+C:\> setx OpenCV_DIR "%VISP_WS%\3rdparty\opencv-4.11.0\build"
 C:\> exit
 \endverbatim
-where `%%VISP_WS%\3rdparty\opencv-4.8.0\build` is where you have installed OpenCV. Inside this folder you should
+where `%%VISP_WS%\3rdparty\opencv-4.11.0\build` is where you have installed OpenCV. Inside this folder you should
 have a file named `OpenCVConfig.cmake`.
 
-- You have also to add the location of OpenCV libraries corresponding to Visual Studio 17 2022 usage in
-the `Path` environment variable. Open the "Edit environment variable" UI, and modify `Path` to add a new
-line with `%%VISP_WS%\3rdparty\opencv-4.8.0\build\x64\vc17\bin`.
+- You have also to add the location of OpenCV libraries in the `Path` environment variable. Open the
+  "Edit environment variable" UI, and modify `Path` to add a new line with
+  `%%VISP_WS%\3rdparty\opencv-4.11.0\build\x64\vc16\bin`.
 
-\subsubsection install_win11_msvc17_3rdparty_eigen Eigen3 3rd party
+\subsubsection install_win11_msvc17_3rdparty_eigen 4.1.2. Eigen3
 
 Even if Eigen3 is designed as a template we recommend to install the library with Visual Studio.
 
-<b>1. Get Eigen3</b>
+<b>4.1.2.1. Get Eigen3</b>
 
 - Download the latest Eigen3 release from http://eigen.tuxfamily.org. At the time this tutorial was
 written we downloaded `eigen-3.4.0.zip` archive corresponding to Eigen 3.4.0.
 - Extract the content of the archive in `%%VISP_WS%\3rdparty`.
 - Once unzipped, you should have Eigen in `%%VISP_WS%\3rdparty\eigen-3.4.0`
 
-<b>2. Build and install Eigen3 from source</b>
+<b>4.1.2.2. Build and install Eigen3 from source</b>
 
 - Create a build directory
 \verbatim
@@ -193,7 +169,7 @@ C:\> cmake --build . --config Release --target install
 \endverbatim
 - Eigen3 is now installed in `%%VISP_WS%\3rdparty\eigen-3.4.0\build-vc17\install` folder
 
-<b>3. Complete Eigen3 installation</b>
+<b>4.1.2.3. Complete Eigen3 installation</b>
 
 Now you have to complete Eigen3 installation setting some environment vars:
 - In order that ViSP detects Eigen3 you have to set `EIGEN_DIR` environment variable. Start up a `cmd`
@@ -207,26 +183,26 @@ Inside the folder `%%VISP_WS%\3rdparty\eigen-3.4.0\build-vc17\install\share\eige
 named `Eigen3Config.cmake`.
 - There is no need to set `Path` environment var since Eigen3 is a template that has no library.
 
-\subsubsection install_win11_msvc17_3rdparty_realsense librealsense 3rd party
+\subsubsection install_win11_msvc17_3rdparty_realsense 4.1.3. librealsense
 
 I you have an Intel RealSense Depth camera (SR300 or D400 series), you may install librealsense 2.x in order to use
 vpRealSense2 class. Otherwise you can skip this section.
 
-<b>1. Install Intel Realsense SDK 2.0</b>
+<b>4.1.3.1. Install Intel Realsense SDK 2.0</b>
 
 Intel Realsense SDK 2.0 contains librealsense. To install this SDK:
 - Go to https://github.com/IntelRealSense/librealsense/releases
 - Download `Intel.RealSense.SDK-WIN10-<version>.exe` corresponding to the last Intel Realsense SDK 2.0 release.
-At the time this tutorial was written, we downloaded `Intel.RealSense.SDK-WIN10-2.54.1.5216.exe`.
+  At the time this tutorial was written, we downloaded `Intel.RealSense.SDK-WIN10-2.55.1.6486.exe`.
 - Execute `Intel.RealSense.SDK-WIN10-<version>.exe` and follow default installation steps.
 
-<b>2. Complete Intel Realsense SDK 2.0 installation</b>
+<b>4.1.3.2. Complete Intel Realsense SDK 2.0 installation</b>
 
 To finalize the installation, add the location of `realsense2.dll` library in the `Path` environment variable.
 Open the "Edit environment variable" UI, and modify `Path` to add a new line with
 `C:\Program Files (x86)\Intel RealSense SDK 2.0\bin\x64`.
 
-\subsubsection install_win11_msvc17_3rdparty_json JSON 3rd party
+\subsubsection install_win11_msvc17_3rdparty_json 4.1.4. Nlohmann JSON
 
 <a href="https://json.nlohmann.me/">JSON for modern C++</a> installation, can either be done from source
 or from a package manager
@@ -252,20 +228,20 @@ There is no need to set `Path` environment var since JSON has only a header and 
 
   - To install from a package manager, e.g., vcpkg, see: <a href="https://json.nlohmann.me/integration/package_managers/#embedded">https://json.nlohmann.me/integration/package_managers/#embedded</a>
 
-\subsection install_win11_msvc17_get_source Get ViSP source code
+\subsection install_win11_msvc17_get_source 4.2. Get ViSP source code
 
 There are different ways to get ViSP source code.
 
 - You can download the <a href="https://visp.inria.fr/download">latest release</a> as a zip or a tarball.
-Once `visp-x.y.z.tar.gz` or `visp-x.y.z.zip` is downloaded, uncompress the file in `%%VISP_WS%\visp\visp-x.y.z`
-using for example <a href="http://www.win-rar.com">WinRAR</a>.
+  Once `visp-x.y.z.tar.gz` or `visp-x.y.z.zip` is downloaded, uncompress the file in `%%VISP_WS%\visp\visp-x.y.z`
+  using for example <a href="http://www.win-rar.com">WinRAR</a>.
 
 - You can also download a <a href="https://visp.inria.fr/download#snapshot">daily snapshot</a>.
-Once `visp-snapshot-yyyy-mm-dd.tar.gz` is downloaded, uncompress the file in `%%VISP_WS%\visp\visp-x.y.z`
-using for example <a href="http://www.win-rar.com">WinRAR</a>.
+  Once `visp-snapshot-yyyy-mm-dd.tar.gz` is downloaded, uncompress the file in `%%VISP_WS%\visp\visp-x.y.z`
+  using for example <a href="http://www.win-rar.com">WinRAR</a>.
 
 - Or you get the cutting-edge ViSP from <a href="https://github.com/lagadic/visp">GitHub repository</a>
-using the `git` command line tool:
+  using the `git` command line tool:
 \verbatim
 C:\> cd %VISP_WS%
 C:\> git clone https://github.com/lagadic/visp.git
@@ -273,7 +249,7 @@ C:\> git clone https://github.com/lagadic/visp.git
 
 We suppose now that ViSP source is in `%%VISP_WS%\visp`.
 
-\subsection install_win11_msvc17_config Configure ViSP from source
+\subsection install_win11_msvc17_config 4.3. Configure ViSP from source
 
 The goal of the configuration step is now to use CMake to produce a Visual Studio C++ solution file that
 will be located in `%%VISP_WS%/visp-build-vc17`.
@@ -286,7 +262,7 @@ will be located in `%%VISP_WS%/visp-build-vc17`.
 - Select then your compiler "Visual Studio 17 2022" and click on "Finish" button.
 \image html img-cmake-win10-msvc17-msvc-version.jpg
 - This will start CMake configuration. As shown in the next image, Eigen3, GDI (Graphical
-Device Interface), OpenCV and OpenMP 3rd parties are automatically detected.
+  Device Interface), OpenCV and OpenMP 3rd parties are automatically detected.
 \image html img-cmake-win11-msvc17-visp-config.jpg
 \note Installation folder is set to `%%VISP_WS%/visp-build-vc17/install`. If you want to change the
 installation folder to `C:\Program Files (x86)\ViSP`, make sure that you have administrator privileges
@@ -299,14 +275,16 @@ CMake Warning at CMakeLists.txt:1156 (message):
   valid Eigen3 include dir: C://include/eigen3.  Modify Eigen3_DIR to point
   to Eigen3Config.cmake file located in Eigen3 installation folder or turn
   USE_EIGEN3 OFF.
-\endverbatim We strongly recommend to fix this warning. To this end:
-    - close `cmake-gui`
-    - set `Eigen3_DIR` environment var running `setx Eigen3_DIR "%VISP_WS%\3rdparty\eigen-3.4.0\build-vc17\install\share\eigen3\cmake"`
-    - open again `cmake-gui`
-    - delete the cache using menu `File > Delete Cache`
-    - and configure again ViSP.
-	.
-    At this point, you should no more see the warning.
+\endverbatim
+We strongly recommend to fix this warning. To this end:
+  - close `cmake-gui`
+  - set `Eigen3_DIR` environment var running
+    `setx Eigen3_DIR "%VISP_WS%\3rdparty\eigen-3.4.0\build-vc17\install\share\eigen3\cmake"`
+  - open again `cmake-gui`
+  - delete the cache using menu `File > Delete Cache`
+  - and configure again ViSP.
+  .
+At this point, you should no more see the warning.
 
 - Click then on "Configure" button. All the red lines should disappear.
 \note The default configuration lead to the creation of a shared library (with `.dll` extension). This is
@@ -318,7 +296,7 @@ the default configuration that is recommended. If you want to create rather a st
 - Once the generation is done, in `%%VISP_WS%/visp-build-vc17` folder you have the Visual Studio
 `VISP.sln` generated solution file.
 
-\subsection install_win11_msvc17_build Build and install ViSP libraries
+\subsection install_win11_msvc17_build 4.4. Build and install ViSP
 
 - To build ViSP just double click on `%%VISP_WS%/visp-build-vc17/VISP.sln` solution file. This action
 will open ViSP project in Visual Studio C++. By default, Visual Studio opens the solution in `Debug`
@@ -345,7 +323,7 @@ subfolders respectively.
 - Note that you can also build ViSP in `Debug` configuration. In that case, all the library names are suffixed
 by "d" character (`libvisp_core351d.dll`...).
 
-\subsection install_win11_msvc17_build_visp_doc Build ViSP documentation
+\subsection install_win11_msvc17_build_visp_doc 4.5. Build ViSP documentation
 
 To build ViSP documentation, you have first to install [Doxygen](http://www.doxygen.nl):
 - [Download](http://www.doxygen.nl/download.html) binary distribution for Windows. At the time this tutorial
@@ -383,12 +361,12 @@ C:\> cmake -G "Visual Studio 17 2022" -A "x64" %VISP_WS%\visp -DENABLE_FULL_DOC=
 C:\> cmake --build . --config Release --target visp_doc
 \endverbatim
 
-\subsection install_win11_msvc17_env_var Set Path environment var
+\subsection install_win11_msvc17_env_var 4.6. Set Path environment var
 
 Modify the `Path` var to add the path to ViSP dll libraries. To this end open the "Edit environment variable" UI,
 and modify `Path` to add a new line with `%%VISP_WS%\visp-build-vc17\install\x64\vc17\bin`.
 
-\subsection install_win11_msvc17_visp_dir Set VISP_DIR environment var
+\subsection install_win11_msvc17_visp_dir 4.7. Set VISP_DIR environment var
 
 In order to ease ViSP detection by CMake when ViSP is used as a 3rd party in an external project, like the one
 described in the \ref tutorial-getting-started, you may set `VISP_DIR` environment variable with the path
@@ -398,7 +376,7 @@ C:\> setx VISP_DIR "%VISP_WS%\visp-build-vc17\install"
 C:\> exit
 \endverbatim
 
-\section install_win11_msvc17_dataset Install ViSP data set
+\section install_win11_msvc17_dataset 5. Install ViSP data set
 
 Some ViSP examples and tests require a data set that contains images, video, models that is not part of
 ViSP source code. This data set is available in Github (https://github.com/lagadic/visp-images) or as a
@@ -407,7 +385,7 @@ https://visp.inria.fr/download page. Note that ViSP tutorials are not using ViSP
 
 We give hereafter the two ways to get this data set:
 
-<b>1. Get data set release</b>
+\subsection install_win11_msvc17_dataset_release 5.1. Get data set release
 
 - Download the latest `visp-images-3.x.y.zip` from https://visp.inria.fr/download and uncompress it in your workspace
 `%%VISP_WS%`.
@@ -420,7 +398,7 @@ C:\> setx VISP_INPUT_IMAGE_PATH %VISP_WS%\visp-images-3.6.0
 C:\> exit
 \endverbatim
 
-<b>2. Get data set from github</b>
+\subsection install_win11_msvc17_dataset_github 5.2. Get data set from github
 
 - Use git to get the data set latest version:
 \verbatim
@@ -436,7 +414,7 @@ C:\> setx VISP_INPUT_IMAGE_PATH %VISP_WS%\visp-images
 C:\> exit
 \endverbatim
 
-<b>Test data set usage</b>
+\subsection install_win11_msvc17_dataset_test 5.3. Test data set usage
 
 From now, you can try to run ViSP examples and tests. For example, if you want to run
 `%%VISP_WS%\visp-build-vc17\example\device\display\Release\displayGDI.exe`, open a `cmd` Command Prompt,
@@ -464,9 +442,9 @@ image it means either that you didn't add the location of OpenCV dll libraries i
 (see \ref install_win11_msvc17_3rdparty_opencv section), or that the path that you added is wrong.
 \image html img-win11-error-displayGDI-opencv-path.jpg
 
-\section install_win11_msvc17_tips Tips and tricks
+\section install_win11_msvc17_tips 6. Tips and tricks
 
-\subsection install_win11_msvc17_tips_new_3rdparty How to take into account a newly installed 3rd party
+\subsection install_win11_msvc17_tips_new_3rdparty 6.1. How to take into account a newly installed 3rd party
 
 Since all 3rd parties are optional you may have started to install only some of them. Imagine that you just
 installed a new third-party, or that you upgraded the version of this 3rd party. The next step is to go back
@@ -485,14 +463,14 @@ Finally, you need to rebuild and install ViSP with:
 C:\> cmake --build . --config Release --target install
 \endverbatim
 
-\subsection install_win11_msvc17_tips_uninstall How to uninstall ViSP
+\subsection install_win11_msvc17_tips_uninstall 6.2. How to uninstall ViSP
 After ViSP installation, you can remove installed material using:
 \verbatim
 C:\> cd $VISP_WS/visp-build-msvc17
 C:\> cmake --build . --config Release --target uninstall
 \endverbatim
 
-\subsection install_win11_msvc17_tips_modules How to build only ViSP libraries
+\subsection install_win11_msvc17_tips_modules 6.3. How to build only ViSP libraries
 
 If you want to build only ViSP modules libraries, nor the examples, tutorials and tests:
 \verbatim
@@ -500,7 +478,7 @@ C:\> cd $VISP_WS/visp-build-msvc17
 C:\> cmake --build . --config Release --target visp_modules
 \endverbatim
 
-\subsection install_win11_msvc17_tips_module_once How to build a ViSP specific module
+\subsection install_win11_msvc17_tips_module_once 6.4. How to build a ViSP specific module
 
 If you want to build a given module and all the dependencies:
 \verbatim
@@ -514,7 +492,7 @@ C:\> cd $VISP_WS/visp-build-msvc17
 C:\> cmake --build . --config Release --target visp_mbt
 \endverbatim
 
-\subsection install_win11_msvc17_tips_3rd_party Which are the 3rd party libraries that are used in ViSP ?
+\subsection install_win11_msvc17_tips_3rd_party 6.5. Which are the 3rd party libraries that are used in ViSP ?
 
 To see which are the optional 3rd parties that are found during the configuration stage and that will
 be used by ViSP during the build you can have a look to the text file named `ViSP-third-party.txt` and
@@ -702,7 +680,7 @@ General configuration information for ViSP 3.5.1
 ==========================================================
 \endverbatim
 
-\section install_win11_msvc17_next Next tutorial
+\section install_win11_msvc17_next 7. Next tutorial
 
 You are now ready to see the next \ref tutorial-getting-started that will show you how to use ViSP as a
 3rd party to build your own project.

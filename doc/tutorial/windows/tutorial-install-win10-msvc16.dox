@@ -8,9 +8,9 @@ These steps have been tested on Windows 10 (64 bit), with CMake 3.19.4 and Visua
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 
-\section install_win10_msvc16_required Install prerequisites
+\section install_win10_msvc16_required 1. Install prerequisites
 
-\subsection install_win10_msvc16_3rd_msvc Visual Studio
+\subsection install_win10_msvc16_3rd_msvc 1.1. Visual Studio
 
 Visual Studio Community 2019 could be downloaded from https://www.visualstudio.com/downloads/. During
 a fresh installation enable "Desktop development with C++" workload and check box "Windows 10 SDK" to
@@ -32,18 +32,18 @@ if "Windows 10 SDK" is enabled like in the following image
 4. Choose Modify again.
 5. After the new workloads and components are installed, choose Launch.
 
-\subsection install_win10_msvc16_3rd_cmake CMake
+\subsection install_win10_msvc16_3rd_cmake 1.2. CMake
 
 CMake could be download from http://www.cmake.org. Download the latest release for Windows win64-x64 platform
 (at the time this tutorial was written it was the file `cmake-3.19.4-win64-x64.msi`).
 To install just double click on the msi file.
 
-\subsection install_win10_msvc16_3rd_git Git
+\subsection install_win10_msvc16_3rd_git 1.3. Git
 
 Install Git for Windows from https://git-for-windows.github.io/. This installation allows then to use git
 in a `cmd` Command Prompt.
 
-\section install_win10_msvc16_ws Create a workspace
+\section install_win10_msvc16_ws 2. Create a workspace
 
 If not already done, create a workspace that will contain all ViSP source, build, data set and optional
 3rd parties. This workspace is here set to `C:\visp-ws` folder, but it could be set to any other location.
@@ -61,7 +61,7 @@ C:\> mkdir %VISP_WS%
 C:\> exit
 \endverbatim
 
-\section install_win10_msvc16_quick Quick ViSP installation
+\section install_win10_msvc16_quick 3. Quick ViSP installation
 
 In this section, we give minimal instructions to build ViSP from source just to try ViSP without entering
 in \ref install_win10_msvc16_advanced.
@@ -103,9 +103,9 @@ To have a trial, just jump to \ref install_win10_msvc16_dataset before running s
 just build or jump to \ref install_win10_msvc16_next. You can later come back to the
 \ref install_win10_msvc16_advanced.
 
-\section install_win10_msvc16_advanced Advanced ViSP installation
+\section install_win10_msvc16_advanced 4. Advanced ViSP installation
 
-\subsection install_win10_msvc16_3rdparty Install 3rd parties
+\subsection install_win10_msvc16_3rdparty 4.1. Install 3rd parties
 
 ViSP is interfaced with several 3rd party libraries.
 Follow the link to see the complete list of \ref supported-third-parties.
@@ -117,18 +117,46 @@ If your camera is a PointGrey you may install \ref install_win10_msvc16_3rdparty
 if your camera is a Basler, you may rather install \ref install_win10_msvc16_3rdparty_pylon. Other 3rd
 parties are optional and should be considered only by expert developers.
 
-\subsubsection install_win10_msvc16_3rdparty_eigen Eigen3 3rd party
+\subsubsection install_win10_msvc16_3rdparty_opencv 4.1.1. OpenCV
+<b>4.1.1.1. Get OpenCV</b>
+
+First you have to get OpenCV:
+- From https://opencv.org/releases/ download the latest OpenCV for Windows. In our case we got
+`opencv-4.11.0-windows.exe` Win pack installer.
+- Extract the content of the archive in your workspace `%%VISP_WS%/3rdparty`.
+\image html img-win-extract-opencv.jpg
+- The installer extract all the material in `%%VISP_WS%\3rdparty\opencv`.
+- We strongly recommend to rename this folder to a name that contain OpenCV version like
+  `%%VISP_WS%\3rdparty\opencv-4.11.0`.
+
+<b>4.1.1.2. Complete OpenCV installation</b>
+
+Now you have to complete OpenCV installation setting some environment vars:
+- In order that ViSP detects OpenCV you have to set `OpenCV_DIR` environment variable. Start up a `cmd`
+Command Prompt and enter:
+\verbatim
+C:\> setx OpenCV_DIR "%VISP_WS%\3rdparty\opencv-4.11.0\build"
+C:\> exit
+\endverbatim
+where `%%VISP_WS%\3rdparty\opencv-4.11.0\build` is where you have installed OpenCV. Inside this folder you should
+have a file named `OpenCVConfig.cmake`.
+
+- You have also to add the location of OpenCV libraries in the `Path` environment variable. Open the
+  "Edit environment variable" UI, and modify `Path` to add a new line with
+  `%%VISP_WS%\3rdparty\opencv-4.11.0\build\x64\vc16\bin`.
+
+\subsubsection install_win10_msvc16_3rdparty_eigen 4.1.2. Eigen3
 
 Even if Eigen3 is designed as a template we recommend to install the library with Visual Studio.
 
-<b>1. Get Eigen3</b>
+<b>4.1.2.1. Get Eigen3</b>
 
 - Download the latest Eigen3 release from http://eigen.tuxfamily.org. At the time this tutorial was
 written we downloaded `eigen-3.3.9.zip` archive corresponding to Eigen 3.3.9.
 - Extract the content of the archive in `%%VISP_WS%\3rdparty`.
 - Once unzipped, you should have Eigen in `%%VISP_WS%\3rdparty\eigen-3.3.9`
 
-<b>2. Build and install Eigen3 from source</b>
+<b>4.1.2.2. Build and install Eigen3 from source</b>
 
 - Create a build directory
 \verbatim
@@ -147,7 +175,7 @@ C:\> cmake --build . --config Release --target install
 \endverbatim
 - Eigen3 is now installed in `%%VISP_WS%\3rdparty\eigen-3.3.9\build-vc16\install` folder
 
-<b>3. Complete Eigen3 installation</b>
+<b>4.1.2.3. Complete Eigen3 installation</b>
 
 Now you have to complete Eigen3 installation setting some environment vars:
 - In order that ViSP detects Eigen3 you have to set `EIGEN_DIR` environment variable. Start up a `cmd`
@@ -161,64 +189,12 @@ Inside the folder `%%VISP_WS%\3rdparty\eigen-3.3.9\build-vc16\install\share\eige
 named `Eigen3Config.cmake`.
 - There is no need to set `Path` environment var since Eigen3 is a template that has no library.
 
-\subsubsection install_win10_msvc16_3rdparty_opencv OpenCV 3rd party
-
-<b>1. Get OpenCV</b>
-
-First you have to get OpenCV:
-- From https://opencv.org/releases download the latest OpenCV for Windows. In our case we got
-`opencv-4.5.1-vc14_vc15.exe` Win pack installer. The same procedure could be applied with all the
-previous OpenCV releases starting from 3.4.0 version.
-- Extract the content of the archive in your workspace `%%VISP_WS%`.
-\image html img-win-extract-opencv.jpg
-- The installer extract all the material in `%%VISP_WS%\opencv`.
-- We strongly recommend to rename this folder to a name that contain OpenCV version like `%%VISP_WS%\3rdparty\opencv-4.5.1`.
-
-\note OpenCV 4.5.1 win pack installer doesn't contain prebuild OpenCV libraries build with
-Visual Studio 16 2019. It contains only prebuild libraries build with previous Visual Studio version
-(vc14 and vc15). That's why we need to build OpenCV from source.
-
-<b>2. Build OpenCV from source</b>
-
-- Create a build directory
-\verbatim
-C:\> mkdir %VISP_WS%\3rdparty\opencv-4.5.1\build-vc16
-C:\> cd %VISP_WS%\3rdparty\opencv-4.5.1\build-vc16
-\endverbatim
-- Run CMake in build directory (here the generator is chosen for Visual Studio 16 2019) and installation dir is set
-to the existing folder `%%VISP_WS%\3rdparty\opencv-4.5.1\build`:
-\verbatim
-C:\> cmake -G "Visual Studio 16 2019" -A "x64" %VISP_WS%\3rdparty\opencv-4.5.1\sources -DCMAKE_INSTALL_PREFIX=%VISP_WS%\3rdparty\opencv-4.5.1\build
-\endverbatim
-- Build and install OpenCV using release and debug configuration respectively (installation doesn't need
-administrator privileges)
-\verbatim
-C:\> cmake --build . --config Release --target install
-C:\> cmake --build . --config Debug --target install
-\endverbatim
-
-<b>2. Complete OpenCV installation</b>
-
-Now you have to complete OpenCV installation setting some environment vars:
-- In order that ViSP detects OpenCV you have to set `OpenCV_DIR` environment variable. Start up a `cmd`
-Command Prompt and enter:
-\verbatim
-C:\> setx OpenCV_DIR "%VISP_WS%\opencv-4.5.1\build"
-C:\> exit
-\endverbatim
-where `%%VISP_WS%\opencv-4.5.1\build` is where you have installed OpenCV. Inside this folder you should
-have a file named `OpenCVConfig.cmake`.
-
-- You have also to add the location of OpenCV libraries corresponding to Visual Studio 16 2019 usage in
-the `Path` environment variable. Open the "Edit environment variable" UI, and modify `Path` to add a new
-line with `%%VISP_WS%\3rdparty\opencv-4.5.1\build\x64\vc16\bin`.
-
-\subsubsection install_win10_msvc16_3rdparty_realsense librealsense 3rd party
+\subsubsection install_win10_msvc16_3rdparty_realsense 4.1.3. librealsense
 
 I you have an Intel RealSense Depth camera (SR300 or D400 series), you may install librealsense 2.x in order to use
 vpRealSense2 class. Otherwise you can skip this section.
 
-<b>1. Install Intel Realsense SDK 2.0</b>
+<b>4.1.3.1. Install Intel Realsense SDK 2.0</b>
 
 Intel Realsense SDK 2.0 contains librealsense. To install this SDK:
 - Go to https://github.com/IntelRealSense/librealsense/releases
@@ -226,37 +202,68 @@ Intel Realsense SDK 2.0 contains librealsense. To install this SDK:
 At the time this tutorial was written, we downloaded `Intel.RealSense.SDK-WIN10-2.42.0.2845.exe`.
 - Execute `Intel.RealSense.SDK-WIN10-<version>.exe` and follow default installation steps.
 
-<b>2. Complete Intel Realsense SDK 2.0 installation</b>
+<b>4.1.3.2. Complete Intel Realsense SDK 2.0 installation</b>
 
 To finalize the installation, add the location of `realsense2.dll` library in the `Path` environment variable.
 Open the "Edit environment variable" UI, and modify `Path` to add a new line with
 `C:\Program Files (x86)\Intel RealSense SDK 2.0\bin\x64`.
 
-\subsubsection install_win10_msvc16_3rdparty_occ_structure libStructure 3rd party
+\subsubsection install_win10_msvc16_3rdparty_json 4.1.4. Nlohmann JSON
+
+<a href="https://json.nlohmann.me/">JSON for modern C++</a> installation, can either be done from source
+or from a package manager
+  - To install from source with Visual Studio
+\verbatim
+C:\> cd %VISP_WS%\3rdparty
+C:\> git clone https://github.com/nlohmann/json.git
+C:\> cd json && mkdir build-vc16 && cd build-vc16
+C:\> cmake -G "Visual Studio 16 2019" -A "x64" .. \
+           -DCMAKE_INSTALL_PREFIX=%VISP_WS%\3rdparty\json\build-vc16\install \
+           -DBUILD_TESTING=OFF \
+           -DJSON_BuildTests=OFF
+C:\> cmake --build . --config Release --target install
+\endverbatim
+  JSON is now installed in `%%VISP_WS%\3rdparty\json\build-vc16\install` folder.
+  Now in order that ViSP detects JSON you have to set `nlohmann_json_DIR` environment variable.
+  Start up a `cmd` Command Prompt and enter:
+\verbatim
+C:\> setx nlohmann_json_DIR "%VISP_WS%\3rdparty\json\build-vc16\install\share\cmake\nlohmann_json"
+C:\> exit
+\endverbatim
+where `%%VISP_WS%\3rdparty\json\build-vc16\install` is where you have installed JSON.
+Inside the folder `%%VISP_WS%\3rdparty\json\build-vc16\install\share\cmake\nlohmann_json` you should have a file
+named `nlohmann_jsonConfig.cmake`.
+There is no need to set `Path` environment var since JSON has only a header and no library.
+
+  - To install from a package manager, e.g., vcpkg, see:
+    <a href="https://json.nlohmann.me/integration/package_managers/#embedded">https://json.nlohmann.me/integration/package_managers/#embedded</a>
+
+\subsubsection install_win10_msvc16_3rdparty_occ_structure 4.1.5. libStructure
 
 If you have an Occipital Structure Core device (monochrome or color), you may install the SDK provided by Occipital in
 order to use vpOccipitalStructure class. Otherwise you can skip this section.
 
 Occipital Structure SDK contains `libStructure` pre-built library.
 
-<b>1. To install this SDK</b>
+<b>4.1.5.1. To install this SDK</b>
 
 - Go to https://developer.structure.io/sdk/
 - Join the Developper program to be able to download the SDK.
 - Retrieve your invitation from https://developer.structure.io/sdk/retrieve
 - You'll then receive an email containing the link to the download page,
 - Download `Structure SDK (Cross-Platform)`.
-- Extract the folder `StructureSDK-CrossPlatform-0.9` from the downloaded file to the already created directory in `VISP_WS`.
+- Extract the folder `StructureSDK-CrossPlatform-0.9` from the downloaded file to the already created directory in
+  `VISP_WS`.
 
 The SDK contains pre-built libraries for Linux, Windows and macOS.
-In order that ViSP detects Structure SDK header files and libraries, you have to set `OCCIPITAL_STRUCTURE_DIR` environment
-variable. Start up a `cmd` Command Prompt and enter:
+In order that ViSP detects Structure SDK header files and libraries, you have to set `OCCIPITAL_STRUCTURE_DIR`
+environment variable. Start up a `cmd` Command Prompt and enter:
 \verbatim
 C:\> setx OCCIPITAL_STRUCTURE_DIR "%VISP_WS%\StructureSDK-CrossPlatform-0.9"
 C:\> exit
 \endverbatim
 
-<b>2. Optionally build Occipital Structure SDK samples</b>
+<b>4.1.5.2. Optionally build Occipital Structure SDK samples</b>
 
 As explained in `$VISP_WS/StructureSDK-CrossPlatform-0.9/Documentation/windows.html` you can optionally
 follow these steps to build sample applications provided with the SDK:
@@ -272,20 +279,20 @@ follow these steps to build sample applications provided with the SDK:
 
 After completion, sample apps may be run from the Apps directory.
 
-<b>3. Complete Occipital Structure SDK installation</b>
+<b>4.1.5.3. Complete Occipital Structure SDK installation</b>
 
 To finalize the installation, add the location of `Structure.dll` library in the `Path` environment variable.
 Open the "Edit environment variable" UI, and modify `Path` to add a new line with
 `%%VISP_WS%\StructureSDK-CrossPlatform-0.9\Libraries\Structure\Windows\x86_64\`.
 
-\subsubsection install_win10_msvc16_3rdparty_pcl PCL 3rd party
+\subsubsection install_win10_msvc16_3rdparty_pcl 4.1.6. Point Cloud Library
 
-PCL library could be installed to extend vpRealSense2 capabilities to acquire a point cloud. It could be also used
-to consider a point cloud as depth feature in the generic model-based tracker when using vpMbGenericTracker class.
-If you don't have an Intel Realsense Depth camera (SR300 or D400 series) or if you are not interested in model-based
-tracking using depth as feature you can skip this section.
+Point Cloud Library (PCL) library could be installed to extend vpRealSense2 capabilities to acquire a point cloud. It
+could be also used to consider a point cloud as depth feature in the generic model-based tracker when using
+vpMbGenericTracker class. If you don't have an Intel Realsense Depth camera (SR300 or D400 series) or if you are not
+interested in model-based tracking using depth as feature you can skip this section.
 
-<b>1. Install PCL from all-in-one installer</b>
+<b>4.1.6.1. Install PCL from all-in-one installer</b>
 
 There exists in https://github.com/PointCloudLibrary/pcl/releases all-in-one installer that allows to install
 PCL and third-parties easily.
@@ -297,7 +304,7 @@ For Visual Studio 16 2019:
 installation steps.
 \image html img-pcl-1.11.1-path.png
 
-<b>2. Complete PCL installation</b>
+<b>4.1.6.2. Complete PCL installation</b>
 
 To complete PCL installation, you need to add the location of `pcl_common_<debug|release>.dll` and `OpenNI2.dll`
 libraries in the `Path` environment variable.
@@ -306,12 +313,12 @@ Open the "Edit environment variable" UI, and modify by hand `Path` to add respec
 - a new line with `C:\Program Files\OpenNI2\Redist`
 - a new line with `C:\Program Files\PCL 1.12.1\3rdParty\VTK\bin`
 
-\subsubsection install_win10_msvc16_3rdparty_flycapture FlyCapture 3rd party
+\subsubsection install_win10_msvc16_3rdparty_flycapture 4.1.7. FlyCapture
 
 I you have a PointGrey or FLIR USB 2.0, USB 3.0, GigE or FireWire camera (DragonFly2, Flea3...), you may
 install FlyCapture. Otherwise you can skip this section.
 
-<b>1. Install FlyCapture SDK</b>
+<b>4.1.7.1. Install FlyCapture SDK</b>
 Complete installation instructions are given [here](https://www.ptgrey.com/KB/10020). We recap hereafter the
 main instructions to install FlyCapture SDK under Windows:
 
@@ -323,13 +330,13 @@ to download `FlyCapture_2.13.3.61_x64.exe` file.
 - Select the correct driver for the camera when prompted by the installation instructions.
 - Reboot the system.
 
-<b>2. Complete FlyCapture SDK</b>
+<b>4.1.7.2. Complete FlyCapture SDK</b>
 
 In order to find `FlyCapture2_v100.dll` you need to add the location of the library to the `Path` environment var.
 Open the "Edit environment variable" UI, and modify by hand `Path` to add a new line with
 `C:\Program Files\Point Grey Research\FlyCapture2\bin64`.
 
-\subsubsection install_win10_msvc16_3rdparty_pylon Pylon 3rd party
+\subsubsection install_win10_msvc16_3rdparty_pylon 4.1.8. Pylon
 
 If you have a Basler FireWire, Camera Link, GigE or USB3.0 camera, you may install Pylon SDK. Otherwise you
 can skip this section.
@@ -357,15 +364,16 @@ on "Next" button.
 - In the "Ready to install" panel, click on the "Install" button
 - Reboot the system.
 
-\subsubsection install_win10_msvc16_3rdparty_ueye IDS uEye 3rd party
+\subsubsection install_win10_msvc16_3rdparty_ueye 4.1.9. IDS uEye
 
-If you have an [IDS](https://en.ids-imaging.com/) camera you may install IDS Software Suite for uEye cameras. To this end:
+If you have an [IDS](https://en.ids-imaging.com/) camera you may install IDS Software Suite for uEye cameras. To this
+end:
 - Enter the [download area](https://en.ids-imaging.com/downloads.html)
 - Select `"uEye industrial cameras"`
 - In the `"Firmware"` tab, select `"uEye (IDS Software Suite)"` and press `"SHOW"` button
 - In the `"Operating system"` tab select `"Windows"` and press the search button
-- In the `"Software package"` section you should see the last `"IDS Software Suite - Full installer"` version you may download.
-  At the time this tutorial was written, we downloaded `"ids-software-suite-full-64-49400.zip"` file.
+- In the `"Software package"` section you should see the last `"IDS Software Suite - Full installer"` version you may
+  download. At the time this tutorial was written, we downloaded `"ids-software-suite-full-64-49400.zip"` file.
 
 Once downloaded, you may extract the archive.
 
@@ -382,11 +390,12 @@ If the Software Suite is compatible with your OS, proceed to the installation:
   The uEye driver installation is menu-driven.
 - Keep default configuration and proceed to the installation.
 
-To test the Software Suite installation, plug a camera, enter `"Start"` menu and run `"IDS > uEyeDirectShow Demo"` binary.
+To test the Software Suite installation, plug a camera, enter `"Start"` menu and run `"IDS > uEyeDirectShow Demo"`
+binary.
 
 IDS uEye Camera Software Suite installation enables vpUeyeGrabber class usage.
 
-\subsubsection install_win10_msvc16_3rdparty_jaco Kinova Jaco 3rd party
+\subsubsection install_win10_msvc16_3rdparty_jaco 4.1.10. Kinova Jaco
 
 If you have a
 [Kinova Jaco](https://www.kinovarobotics.com/en/products/assistive-technologies/kinova-jaco-assistive-robotic-arm)
@@ -412,12 +421,12 @@ C:\> dir C:\temp\kinova-jaco\windows
 
 There is no need to complete installation process as for previous 3rd parties.
 
-\subsubsection install_win10_msvc16_3rdparty_qualisys Qualisys Mocap 3rd party
+\subsubsection install_win10_msvc16_3rdparty_qualisys 4.1.11. Qualisys Mocap
 
 If you have the [Qualisys](https://www.qualisys.com) Motion Capture System you can optionally install
 [qualisys_cpp_sdk](https://github.com/qualisys/qualisys_cpp_sdk) from source to enable vpMocapQualisys usage.
 
-<b>1. Get and build Qualisys Datastream SDK</b>
+<b>4.1.11.1. Get and build Qualisys Datastream SDK</b>
 
 \verbatim
 C:\> mkdir %VISP_DIR%\3rdparty\qualisys
@@ -433,7 +442,7 @@ C:\> cmake --build . --config Release --target install
 After installation the SDK is installed in `C:\Program Files\qualisys_cpp_sdk` and will be detected by ViSP if you run
 a new CMake configuration step over ViSP source code.
 
-<b>2. Complete installation</b>
+<b>4.1.11.2. Complete installation</b>
 
 Now you have to complete Qualisys Datastream SDK installation setting some environment vars:
 - In order that ViSP detects Qualisys you have to set `QUALISYS_DIR` environment variable. Start up a `cmd`
@@ -445,7 +454,7 @@ C:\> exit
 - You have also to add the location of Qualisys Datastream SDK libraries corresponding in the Path environment variable.
 Open the "Edit environment variable" UI, and modify Path to add a new line with `%%VISP_WS%\qualisys_cpp_sdk\lib`.
 
-<b>3. Known issue</b>
+<b>4.1.11.3. Known issue</b>
 
 If you encounter the following issue:
 \verbatim
@@ -471,14 +480,15 @@ Copyright (C) Microsoft Corporation. Tous droits réservés.
     Files/qualisys_cpp_sdk/lib/qualisys_cpp_sdk.  Maybe need administrative
     privileges.
 \endverbatim
-you need to start a `cmd` command prompt as administrator. To this end type `cmd`, right-click the command prompt and then click Run as administrator.
+you need to start a `cmd` command prompt as administrator. To this end type `cmd`, right-click the command prompt and
+then click Run as administrator.
 
-\subsubsection install_win10_msvc16_3rdparty_vicon Vicon Mocap 3rd party
+\subsubsection install_win10_msvc16_3rdparty_vicon 4.1.12. Vicon Mocap
 
 If you have the [Vicon](https://www.vicon.com) Motion Capture System you can optionally install
 [Vicon Datastream SDK](https://www.vicon.com/software/datastream-sdk/) to enable vpMocapVicon usage.
 
-<b>1. Get Vicon Datastream SDK</b>
+<b>4.1.12.1. Get Vicon Datastream SDK</b>
 
 - Download latest Vicon Datastream SDK from [here](https://www.vicon.com/software/datastream-sdk/?section=downloads).
 At the time this tutorial was written, we donwloaded `ViconDataStreamSDK_1.11.0_128037.zip`.
@@ -488,11 +498,12 @@ $ mkdir %VISP_WS%\3rdparty\vicon
 \endverbatim
 - Unzip downloaded file in `$VISP_WS\3rdparty\vicon`, in our case `ViconDataStreamSDK_1.11.0_128037.zip`
 - Unzip the Win64 SDK file, in our case `ViconDataStreamSDK_1.11.0_128037h__Win64.zip`
-- It brings `ViconDataStreamSDK_1.*_x64.msi` that you need now to execute to complete installation in `C:\Program Files\Vicon\DataStream SDK`
+- It brings `ViconDataStreamSDK_1.*_x64.msi` that you need now to execute to complete installation in
+  `C:\Program Files\Vicon\DataStream SDK`
 
 After installation the SDK is available in `C:\Program Files\Vicon\DataStream SDK`.
 
-<b>2. Complete installation</b>
+<b>4.1.12.2. Complete installation</b>
 
 Now you have to complete Vicon Datastream SDK installation setting some environment vars:
 - In order that ViSP detects Vicon you have to set `VICON_DIR` environment variable. Start up a `cmd`
@@ -502,38 +513,10 @@ C:\> setx VICON_DIR "%VISP_WS%\Program Files\Vicon\DataStream SDK\Win64\CPP"
 C:\> exit
 \endverbatim
 - You have also to add the location of Vicon Datastream SDK libraries corresponding in the Path environment variable.
-Open the "Edit environment variable" UI, and modify Path to add a new line with `%%VISP_WS%\Program Files\Vicon\DataStream SDK\Win64\CPP`.
+  Open the "Edit environment variable" UI, and modify Path to add a new line with
+  `%VISP_WS%\Program Files\Vicon\DataStream SDK\Win64\CPP`.
 
-\subsubsection install_win10_msvc16_3rdparty_json JSON 3rd party
-
-<a href="https://json.nlohmann.me/">JSON for modern C++</a> installation, can either be done from source
-or from a package manager
-  - To install from source with Visual Studio
-\verbatim
-C:\> cd %VISP_WS%\3rdparty
-C:\> git clone https://github.com/nlohmann/json.git
-C:\> cd json && mkdir build-vc16 && cd build-vc16
-C:\> cmake -G "Visual Studio 16 2019" -A "x64" .. \
-           -DCMAKE_INSTALL_PREFIX=%VISP_WS%\3rdparty\json\build-vc16\install \
-           -DBUILD_TESTING=OFF \
-           -DJSON_BuildTests=OFF
-C:\> cmake --build . --config Release --target install
-\endverbatim
-  JSON is now installed in `%%VISP_WS%\3rdparty\json\build-vc16\install` folder.
-  Now in order that ViSP detects JSON you have to set `nlohmann_json_DIR` environment variable.
-  Start up a `cmd` Command Prompt and enter:
-\verbatim
-C:\> setx nlohmann_json_DIR "%VISP_WS%\3rdparty\json\build-vc16\install\share\cmake\nlohmann_json"
-C:\> exit
-\endverbatim
-where `%%VISP_WS%\3rdparty\json\build-vc16\install` is where you have installed JSON.
-Inside the folder `%%VISP_WS%\3rdparty\json\build-vc16\install\share\cmake\nlohmann_json` you should have a file
-named `nlohmann_jsonConfig.cmake`.
-There is no need to set `Path` environment var since JSON has only a header and no library.
-
-  - To install from a package manager, e.g., vcpkg, see: <a href="https://json.nlohmann.me/integration/package_managers/#embedded">https://json.nlohmann.me/integration/package_managers/#embedded</a>
-
-\subsection install_win10_msvc16_get_source Get ViSP source code
+\subsection install_win10_msvc16_get_source 4.2. Get ViSP source code
 
 There are different ways to get ViSP source code.
 
@@ -554,7 +537,7 @@ C:\> git clone https://github.com/lagadic/visp.git
 
 We suppose now that ViSP source is in `%%VISP_WS%\visp`.
 
-\subsection install_win10_msvc16_config Configure ViSP from source
+\subsection install_win10_msvc16_config 4.3. Configure ViSP from source
 
 The goal of the configuration step is now to use CMake to produce a Visual Studio C++ solution file that
 will be located in `%%VISP_WS%/visp-build-vc16`.
@@ -580,14 +563,16 @@ CMake Warning at CMakeLists.txt:1156 (message):
   valid Eigen3 include dir: C://include/eigen3.  Modify Eigen3_DIR to point
   to Eigen3Config.cmake file located in Eigen3 installation folder or turn
   USE_EIGEN3 OFF.
-\endverbatim We strongly recommend to fix this warning. To this end:
-    - close `cmake-gui`
-    - set `Eigen3_DIR` environment var running `setx Eigen3_DIR "%VISP_WS%\3rdparty\eigen-3.3.9\build-vc16\install\share\eigen3\cmake"`
-    - open again `cmake-gui`
-    - delete the cache using menu `File > Delete Cache`
-    - and configure again ViSP.
-	.
-    At this point, you should no more see the warning.
+\endverbatim
+We strongly recommend to fix this warning. To this end:
+  - close `cmake-gui`
+  - set `Eigen3_DIR` environment var running
+    `setx Eigen3_DIR "%VISP_WS%\3rdparty\eigen-3.3.9\build-vc16\install\share\eigen3\cmake"`
+  - open again `cmake-gui`
+  - delete the cache using menu `File > Delete Cache`
+  - and configure again ViSP.
+  .
+At this point, you should no more see the warning.
 
 - Click then on "Configure" button. All the red lines should disappear.
 \image html img-cmake-win10-msvc16-visp-config2.png
@@ -601,7 +586,7 @@ the default configuration that is recommended. If you want to create rather a st
 - Once the generation is done, in `%%VISP_WS%/visp-build-vc16` folder you have the Visual Studio
 `VISP.sln` generated solution file.
 
-\subsection install_win10_msvc16_build Build and install ViSP libraries
+\subsection install_win10_msvc16_build 4.4. Build and install ViSP
 
 - To build ViSP just double click on `%%VISP_WS%/visp-build-vc16/VISP.sln` solution file. This action
 will open ViSP project in Visual Studio C++. By default, Visual Studio opens the solution in `Debug`
@@ -631,7 +616,7 @@ subfolders respectively.
 - Note that you can also build ViSP in `Debug` configuration. In that case, all the library names are suffixed
 by "d" character (`libvisp_core330d.dll`...).
 
-\subsection install_win10_msvc16_build_visp_doc Build ViSP documentation
+\subsection install_win10_msvc16_build_visp_doc 4.5. Build ViSP documentation
 
 To build ViSP documentation, you have first to install [Doxygen](http://www.doxygen.nl):
 - [Download](http://www.doxygen.nl/download.html) binary distribution for Windows. At the time this tutorial
@@ -669,12 +654,12 @@ C:\> cmake -G "Visual Studio 16 2019" -A "x64" %VISP_WS%\visp -DENABLE_FULL_DOC=
 C:\> cmake --build . --config Release --target visp_doc
 \endverbatim
 
-\subsection install_win10_msvc16_env_var Set Path environment var
+\subsection install_win10_msvc16_env_var 4.6. Set Path environment var
 
 Modify the `Path` var to add the path to ViSP dll libraries. To this end open the "Edit environment variable" UI,
 and modify `Path` to add a new line with `%%VISP_WS%\visp-build-vc16\install\x64\vc16\bin`.
 
-\subsection install_win10_msvc16_visp_dir Set VISP_DIR environment var
+\subsection install_win10_msvc16_visp_dir 4.7. Set VISP_DIR environment var
 
 In order to ease ViSP detection by CMake when ViSP is used as a 3rd party in an external project, like the one
 described in the \ref tutorial-getting-started, you may set `VISP_DIR` environment variable with the path
@@ -684,7 +669,7 @@ C:\> setx VISP_DIR "%VISP_WS%\visp-build-vc16\install"
 C:\> exit
 \endverbatim
 
-\section install_win10_msvc16_dataset Install ViSP data set
+\section install_win10_msvc16_dataset 5. Install ViSP data set
 
 Some ViSP examples and tests require a data set that contains images, video, models that is not part of
 ViSP source code. This data set is available in Github (https://github.com/lagadic/visp-images) or as a
@@ -693,7 +678,7 @@ https://visp.inria.fr/download page. Note that ViSP tutorials are not using ViSP
 
 We give hereafter the two ways to get this data set:
 
-<b>1. Get data set release</b>
+\subsection install_win10_msvc16_dataset_release 5.1. Get data set release
 
 - Download `visp-images-3.6.0.zip` from https://visp.inria.fr/download and uncompress it in your workspace
 `%%VISP_WS%`.
@@ -706,7 +691,7 @@ C:\> setx VISP_INPUT_IMAGE_PATH %VISP_WS%\visp-images-3.6.0
 C:\> exit
 \endverbatim
 
-<b>2. Get data set from github</b>
+\subsection install_win10_msvc16_dataset_github 5.2. Get data set from github
 
 - Use git to get the data set latest version:
 \verbatim
@@ -722,7 +707,7 @@ C:\> setx VISP_INPUT_IMAGE_PATH %VISP_WS%\visp-images
 C:\> exit
 \endverbatim
 
-<b>Test data set usage</b>
+\subsection install_win10_msvc16_dataset_test 5.3. Test data set usage
 
 From now, you can try to run ViSP examples and tests. For example, if you want to run
 `%%VISP_WS%\visp-build-vc15\example\device\display\Release\displayGDI.exe`, open a `cmd` Command Prompt,
@@ -740,9 +725,9 @@ A click to exit the program...
 Bye
 \endverbatim
 
-\section install_msvc16_tips Tips and tricks
+\section install_msvc16_tips 6. Tips and tricks
 
-\subsection install_msvc16_tips_new_3rdparty How to take into account a newly installed 3rd party
+\subsection install_msvc16_tips_new_3rdparty 6.1. How to take into account a newly installed 3rd party
 
 Since all 3rd parties are optional you may have started to install only some of them. Imagine that you just
 installed a new third-party, or that you upgraded the version of this 3rd party. The next step is to go back
@@ -768,7 +753,7 @@ C:\> cd $VISP_WS/visp-build-msvc16
 C:\> cmake --build . --config Release --target uninstall
 \endverbatim
 
-\subsection install_msvc16_tips_modules How to build only ViSP libraries
+\subsection install_msvc16_tips_modules 6.2. How to build only ViSP libraries
 
 If you want to build only ViSP modules libraries, nor the examples, tutorials and tests:
 \verbatim
@@ -776,7 +761,7 @@ C:\> cd $VISP_WS/visp-build-msvc16
 C:\> cmake --build . --config Release --target visp_modules
 \endverbatim
 
-\subsection install_msvc16_tips_module_once How to build a ViSP specific module
+\subsection install_msvc16_tips_module_once 6.3. How to build a ViSP specific module
 
 If you want to build a given module and all the dependencies:
 \verbatim
@@ -790,7 +775,7 @@ C:\> cd $VISP_WS/visp-build-msvc16
 C:\> cmake --build . --config Release --target visp_mbt
 \endverbatim
 
-\subsection install_msvc16_tips_3rd_party Which are the 3rd party libraries that are used in ViSP ?
+\subsection install_msvc16_tips_3rd_party 6.4. Which are the 3rd party libraries that are used in ViSP ?
 
 To see which are the optional 3rd parties that are found during the configuration stage and that will
 be used by ViSP during the build you can have a look to the text file named `ViSP-third-party.txt` and
@@ -952,7 +937,7 @@ General configuration information for ViSP 3.3.1
 ==========================================================
 \endverbatim
 
-\subsection install_msvc16_tips_eigen_3_3_8 Build fails with Eigen 3.3.8
+\subsection install_msvc16_tips_eigen_3_3_8 6.5. Build fails with Eigen 3.3.8
 
 With Eigen 3.3.8 installed following \ref install_win10_msvc16_3rdparty_eigen installation, during
 `visp_core` build you will get an issue:
@@ -970,7 +955,7 @@ A quick fix is to comment the corresponding line 162 in
 #endif
 \endverbatim
 
-\subsection install_win10_msvc16_issue_librealsense_cpu_too_old librealsense installer returns an unrecoverable SEH exception
+\subsection install_win10_msvc16_issue_librealsense_cpu_too_old 6.6. librealsense installer returns an unrecoverable SEH exception
 
 At the end of the `Intel Realsense SDK` installation process or when running `Intel Realsense Viewer`,
 if you get the following error message:
@@ -984,7 +969,7 @@ it means that your CPU is too old to support a recent version of the Intel Reals
 A workaround is to install an older version. In our case installing
 `Intel.RealSense.SDK-WIN10-2.32.1.1297.exe` does the trick.
 
-\section install_win10_msvc16_next Next tutorial
+\section install_win10_msvc16_next 7. Next tutorial
 
 You are now ready to see the next \ref tutorial-getting-started that will show you how to use ViSP as a
 3rd party to build your own project.
