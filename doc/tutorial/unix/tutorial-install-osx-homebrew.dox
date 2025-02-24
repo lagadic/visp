@@ -3,83 +3,94 @@
 \page tutorial-install-osx-homebrew Tutorial: Installation from source for macOS with Homebrew
 \tableofcontents
 
-In this tutorial you will learn how to install ViSP from source on macOS with Homebrew. These steps have been tested with macOS Big Sur 11.6.2 and cmake 3.22.1.
+In this tutorial you will learn how to install ViSP from source on macOS with Homebrew. These steps have been tested
+with macOS Big Sur 11.6.2 and cmake 3.22.1.
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 
-\section install_brew_required Install prerequisites
+\section install_brew_required 1. Install prerequisites
 
 - First, go to http://brew.sh to install Homebrew.
 
 - Next use Homebrew to install additional software.
-\verbatim
+\code{.sh}
 $ brew update
 $ brew upgrade
 $ brew install cmake git wget
-\endverbatim
+\endcode
 
-- You will need to add `/usr/local/bin` to the `PATH` environment var in your `~/.bashrc` or `~/.bash_profile` to have Homebrew be at the front of the PATH.
-\verbatim
+- You will need to add `/usr/local/bin` to the `PATH` environment var in your `~/.bashrc` or `~/.bash_profile` to
+  have Homebrew be at the front of the PATH.
+\code{.sh}
 $ echo "export PATH=/usr/local/bin:$PATH" >> ~/.bashrc
 $ source ~/.bashrc
-\endverbatim
+\endcode
 
-- Install XQuartz to get X11. Go to https://www.xquartz.org/, download and install the dmg file. At the time this tutorial was written, we installed `XQuartz-2.7.11.dmg` file.
+- Install XQuartz to get X11. Go to https://www.xquartz.org/, download and install the dmg file. At the time this
+  tutorial was written, we installed `XQuartz-2.7.11.dmg` file.
 
-\section install_brew_ws Create a workspace
+\section install_brew_ws 2. Create a workspace
 
-First create a workspace that will contain all ViSP source, build, data set and optional 3rd parties. This workspace is here set to `$HOME/visp-ws` folder, but it could be set to any other location.
+First create a workspace that will contain all ViSP source, build, data set and optional 3rd parties. This workspace
+is here set to `$HOME/visp-ws` folder, but it could be set to any other location.
 
 In a terminal, run:
-\verbatim
+\code{.sh}
 $ echo "export VISP_WS=$HOME/visp-ws" >> ~/.bashrc
 $ source ~/.bashrc
 $ mkdir -p $VISP_WS
-\endverbatim
+\endcode
 
-\section install_brew_quick Quick ViSP installation
+\section install_brew_quick 3. Quick ViSP installation
 
-In this section, we give minimal instructions to build ViSP from source just to try ViSP without entering in \ref install_brew_advanced.
+In this section, we give minimal instructions to build ViSP from source just to try ViSP without entering in
+\ref install_brew_advanced.
 
 - Install a small number of recommended 3rd parties
-\verbatim
+\code{.sh}
 $ brew install opencv glog eigen
-\endverbatim
+\endcode
 
 - Get ViSP source code
-\verbatim
+\code{.sh}
 $ cd $VISP_WS
 $ git clone https://github.com/lagadic/visp.git
-\endverbatim
+\endcode
 
 - Create a build folder and build ViSP
-\verbatim
+\code{.sh}
 $ mkdir -p $VISP_WS/visp-build
 $ cd $VISP_WS/visp-build
 $ cmake ../visp
 $ make -j$(sysctl -n hw.logicalcpu)
-\endverbatim
+\endcode
 
 - Set `VISP_DIR` environment variable
-\verbatim
+\code{.sh}
 $ echo "export VISP_DIR=$VISP_WS/visp-build" >> ~/.bashrc
 $ source ~/.bashrc
-\endverbatim
+\endcode
 
-To have a trial, just jump to \ref install_brew_dataset before running some binaries that you just build or jump to \ref install_brew_next. You can later come back to the \ref install_brew_advanced.
+To have a trial, just jump to \ref install_brew_dataset before running some binaries that you just build or jump to
+\ref install_brew_next. You can later come back to the \ref install_brew_advanced.
 
 \note If you encounter an error, check \ref install_brew_issues section.
 
-\section install_brew_advanced Advanced ViSP installation
+\section install_brew_advanced 4. Advanced ViSP installation
 
-\subsection install_brew_3rdparty Install 3rd parties
+\subsection install_brew_3rdparty 4.1. Install 3rd parties
 
 ViSP is interfaced with several 3rd party libraries.
 Follow the link to see the complete list of \ref supported-third-parties.
 
-\note ViSP can be used without any third-party since all of them are optional. But obviously in this case, as we do not want to reinvent the wheel, some features implemented in third-party libraries will not be exploitable through ViSP. It is therefore possible to skip in a first time this section and start directly to \ref install_brew_quick. Later, if you realize that a third-party library is missing, you can still install it, go back to the build folder, configure ViSP with CMake to detect the newly installed third-party library and build ViSP again as explained in \ref install_brew_tips_new_3rdparty.
+\note ViSP can be used without any third-party since all of them are optional. But obviously in this case, as we do not
+want to reinvent the wheel, some features implemented in third-party libraries will not be exploitable through ViSP.
+It is therefore possible to skip in a first time this section and start directly to \ref install_brew_quick. Later,
+if you realize that a third-party library is missing, you can still install it, go back to the build folder, configure
+ViSP with CMake to detect the newly installed third-party library and build ViSP again as explained in
+\ref install_brew_tips_new_3rdparty.
 
-\subsubsection install_brew_3rdparty_recommended Recommended 3rd parties
+\subsubsection install_brew_3rdparty_recommended 4.1.1. Recommended ones
 
 We recommend to install the following 3rd parties:
 
@@ -91,22 +102,23 @@ We recommend to install the following 3rd parties:
 - `nlohmann-json` to be able to parse json files
 
 Installation of recommended 3rd parties could be performed running:
-\verbatim
+\code{.sh}
 $ brew install opencv glog lapack eigen libdc1394 zbar nlohmann-json
-\endverbatim
+\endcode
 
-\subsubsection install_brew_3rdparty_realsense librealsense 3rd party
+\subsubsection install_brew_3rdparty_realsense 4.1.2. librealsense
 
-If you have an Intel Realsense RGB-D camera (R200, F200, SR300, LR200, RZ300, D435, T265...) you may install librealsense and PCL library using:
-\verbatim
+If you have an Intel Realsense RGB-D camera (R200, F200, SR300, LR200, RZ300, D435, T265...) you may install
+librealsense and PCL library using:
+\code{.sh}
 $ brew install librealsense pcl pkg-config
-\endverbatim
+\endcode
 
 \warning `pcl 1.12.1` has a dependency to `qt5` that is keg-only, which means it was not symlinked
 into `/usr/local`. As a consequence, ViSP will be not able to detect `pcl` as it should be, leading to
 a build issue (see \ref install_brew_issues_pcl_1_12_1).
-The solution is to set `Qt5_DIR` cmake or environment var with the path where `Qt5Config.cmake` or `qt5-config.cmake` is located.
-In our case, `Qt5_DIR` should be set to `$(brew --prefix qt5)/lib/cmake/Qt5`.
+The solution is to set `Qt5_DIR` cmake or environment var with the path where `Qt5Config.cmake` or `qt5-config.cmake`
+is located. In our case, `Qt5_DIR` should be set to `$(brew --prefix qt5)/lib/cmake/Qt5`.
 There are two options:
 1. Passing `Qt5_DIR` as a cmake var during ViSP configuration:
 ```
@@ -120,61 +132,64 @@ $ cmake ../visp
 $ make -j$(sysctl -n hw.logicalcpu)
 ```
 
-\subsubsection install_brew_3rdparty_pylon Pylon 3rd party
+\subsubsection install_brew_3rdparty_pylon 4.1.3. Pylon
 
-If you have a rather a Basler camera you may donwload and install Pylon SDK following these <a href="https://visp.inria.fr/3rd_pylon/">instructions</a>.
+If you have a rather a Basler camera you may donwload and install Pylon SDK following these
+<a href="https://visp.inria.fr/3rd_pylon/">instructions</a>.
 
-\subsubsection install_brew_3rdparty_gsl GSL 3rd party
+\subsubsection install_brew_3rdparty_gsl 4.1.4. GSL
 
-If lapack 3rd party is not detected during CMake configuration it may be useful to install the Gnu Scientific Library (GSL) to benefit from optimized mathematical capabilities. To this end run the following instruction:
-\verbatim
+If lapack 3rd party is not detected during CMake configuration it may be useful to install the Gnu Scientific Library
+(GSL) to benefit from optimized mathematical capabilities. To this end run the following instruction:
+\code{.sh}
 $ brew install gsl
-\endverbatim
+\endcode
 
-\subsubsection install_brew_3rdparty_occipital_structure libStructure 3rd party
+\subsubsection install_brew_3rdparty_occipital_structure 4.1.5. libStructure
 
-If you have an Occipital Structure Core sensor (monochrome or color), you may install Occipital Structure SDK in order to use vpOccipitalStructure class.
-Otherwise you can skip this section.
+If you have an Occipital Structure Core sensor (monochrome or color), you may install Occipital Structure SDK in order
+to use vpOccipitalStructure class. Otherwise you can skip this section.
 
 Occipital Structure SDK contains `libStructure` pre-built library.
 
-<b>1. To install this SDK</b>
+<b>4.1.4.1. To install this SDK</b>
 - Go to https://developer.structure.io/sdk/
 - Join the Developper program to be able to download the SDK.
 - Retrieve your invitation from https://developer.structure.io/sdk/retrieve
 - You'll then receive an email containing the link to the download page,
 - Download `Structure SDK (Cross-Platform)`.
-- Extract the folder `StructureSDK-CrossPlatform-0.9` from the downloaded file to the already created directory in `$VISP_WS`.
+- Extract the folder `StructureSDK-CrossPlatform-0.9` from the downloaded file to the already created directory in
+  `$VISP_WS`.
 
 The SDK contains pre-built libraries for Linux, Windows and macOS.
-In order that ViSP detects Structure SDK header files and libraries, you have to set `OCCIPITAL_STRUCTURE_DIR` environment
-variable. Proceed as follows:
-\verbatim
+In order that ViSP detects Structure SDK header files and libraries, you have to set `OCCIPITAL_STRUCTURE_DIR`
+environment variable. Proceed as follows:
+\code{.sh}
 $ echo "export OCCIPITAL_STRUCTURE_DIR=$VISP_WS/StructureSDK-CrossPlatform-0.9" >> ~/.bashrc
 $ source ~/.bashrc
-\endverbatim
+\endcode
 
-<b>2. Optionally build Occipital Structure SDK samples</b>
+<b>4.1.4.2. Optionally build Occipital Structure SDK samples</b>
 
 As explained in `$VISP_WS/StructureSDK-CrossPlatform-0.9/Documentation/macos.html` you can optionally
 follow these steps to build sample applications provided with the SDK:
-\verbatim
+\code{.sh}
 $ sudo $OCCIPITAL_STRUCTURE_DIR/DriverAndFirmware/Linux/Install-CoreDriver-Udev-Linux.sh
 $ cd $OCCIPITAL_STRUCTURE_DIR
 $ mkdir build
 $ cd build
 $ cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
 $ make -j$(sysctl -n hw.logicalcpu) Samples
-\endverbatim
+\endcode
 
 After completion, sample apps may be run from the Apps directory.
 
-\subsubsection install_brew_3rdparty_qualisys Qualisys Mocap 3rd party
+\subsubsection install_brew_3rdparty_qualisys 4.1.6. Qualisys Mocap
 
 If you have the [Qualisys](https://www.qualisys.com) Motion Capture System you can optionally install
 [qualisys_cpp_sdk](https://github.com/qualisys/qualisys_cpp_sdk) from source to enable vpMocapQualisys usage.
 
-\verbatim
+\code{.sh}
 $ mkdir -p $VISP_WS/3rdparty/qualisys
 $ cd $VISP_WS/3rdparty/qualisys
 $ git clone https://github.com/qualisys/qualisys_cpp_sdk.git
@@ -184,197 +199,210 @@ $ cd build
 $ cmake .. -DBUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=Release
 $ make -j$(sysctl -n hw.logicalcpu)
 $ make install
-\endverbatim
+\endcode
 
 After installation the SDK is available in `/usr/local` and will be detected by ViSP if you run
 a new CMake configuration step over ViSP source code.
 
-\subsubsection install_brew_3rdparty_vicon Vicon Mocap 3rd party
+\subsubsection install_brew_3rdparty_vicon 4.1.7. Vicon Mocap
 
 If you have the [Vicon](https://www.vicon.com) Motion Capture System you can optionally install
 [Vicon Datastream SDK](https://www.vicon.com/software/datastream-sdk/) to enable vpMocapVicon usage.
 
-<b>1. Get Vicon Datastream SDK</b>
+<b>4.1.7.1. Get Vicon Datastream SDK</b>
 
 - Download latest Vicon Datastream SDK from [here](https://www.vicon.com/software/datastream-sdk/?section=downloads).
 At the time this tutorial was written, we donwloaded `ViconDataStreamSDK_1.11.0_128037.zip`.
 - Unzip SDK for macOS:
-\verbatim
+\code{.sh}
 $ mkdir -p $VISP_WS/3rdparty/vicon
 $ cd $VISP_WS/3rdparty/vicon
 $ mv ~/Downloads/ViconDataStreamSDK_1.1*.zip .
 $ unzip ViconDataStreamSDK_1.*.zip
 $ unzip ViconDataStreamSDK_1.*_Mac64.zip
-\endverbatim
+\endcode
 
 After installation the SDK is available in `$VISP_WS/3rdparty/vicon/Mac64`.
 
-<b>2. Setup for usage</b>
+<b>4.1.7.2. Setup for usage</b>
 
 To help ViSP to detect the location of Vicon Datastream SDK you will need to setup the following environment var:
 
-\verbatim
+\code{.sh}
 $ export VICON_DIR=$VISP_WS/3rdparty/vicon/Mac64
-\endverbatim
+\endcode
 \note This can also be done during ViSP cmake configuration like:
-\verbatim
+\code{.sh}
 $ cd $VISP_WS/visp-build
 $ cmake ../visp -DVICON_DIR=$VISP_WS/3rdparty/vicon/Mac64
-\endverbatim
+\endcode
 
-<b>3. Known issue</b>
+<b>4.1.7.3. Known issue</b>
 
 To allow any binary linked to this Vicon SDK to find Vicon Datastream SDK library,
 you need also to set the following environment vars:
-\verbatim
+\code{.sh}
 $ export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$VISP_DIR/3rdparty/vicon/Mac64
 $ export LC_LOAD_DYLIB=$LC_LOAD_DYLIB:$VISP_DIR/3rdparty/vicon/Mac64
-\endverbatim
+\endcode
 
-The first line contains the path to the `libViconDataStreamSDK_CPP.dylib` library and help ViSP to detect the SDK at runtime.
-The second line is here to help loading boost libraries that are in the same folder.
+The first line contains the path to the `libViconDataStreamSDK_CPP.dylib` library and help ViSP to detect the SDK at
+runtime. The second line is here to help loading boost libraries that are in the same folder.
 
 Without setting these env vars you will get similar errors:
-\verbatim
+\code{.sh}
 $ ./testMocapVicon -h
 dyld[34474]: Library not loaded: @executable_path/libViconDataStreamSDK_CPP.dylib
   Referenced from: $VISP_DIR/visp-build/modules/sensor/testMocapVicon
-\endverbatim
+\endcode
 
 If you encounter the following error, it means that you have to install Python 2 required by Vicon Datastream SDK:
-\verbatim
+\code{.sh}
 $ ./testMocapVicon -h
 dyld[33644]: Library not loaded: /System/Library/Frameworks/Python.framework/Versions/2.7/Python
   Referenced from: /Users/fspindle/soft/third-party/vicon/Mac64/libViconDataStreamSDK_CPP.dylib
-\endverbatim
+\endcode
 To overcome this error, download and install the latest Python 2
 for macOS from [offical site](https://www.python.org/downloads/macos/).
 
-\subsubsection install_brew_3rdparty_other Other optional 3rd parties
+\subsubsection install_brew_3rdparty_other 4.1.8. Other optional 3rd parties
 
 We give also the way to install other 3rd party libraries to enable specific capabilities.
 
 - Gtk-2 for gui capabilities instead of X11
-\verbatim
+\code{.sh}
 $ brew install gtk
-\endverbatim
+\endcode
 After installing the gtk packages, you need to explicitly enable gtk usage during ViSP cmake configuration step by:
-\verbatim
+\code{.sh}
 $ cd $VISP_WS/visp-build
 $ cmake ../visp -DUSE_GTK=ON
-\endverbatim
+\endcode
 
-
-\subsection install_brew_get_source Get ViSP source code
+\subsection install_brew_get_source 4.2. Get ViSP source code
 
 There are different ways to get ViSP source code:
 
-- You can download the <a href="https://visp.inria.fr/download">latest release</a> as a zip or a tarball. Once downloaded, uncompress the file using either
-\verbatim
+- You can download the <a href="https://visp.inria.fr/download">latest release</a> as a zip or a tarball. Once
+  downloaded, uncompress the file using either
+\code{.sh}
 $ tar xvzf visp-x.y.z.tar.gz -C $VISP_WS
-\endverbatim
+\endcode
 or
-\verbatim
+\code{.sh}
 $ unzip visp-x.y.z.zip -d $VISP_WS
-\endverbatim
+\endcode
 
-- You can also download a <a href="https://visp.inria.fr/download#snapshot">daily snapshot</a>. Once downloaded, uncompress the file using
-\verbatim
+- You can also download a <a href="https://visp.inria.fr/download#snapshot">daily snapshot</a>. Once downloaded,
+  uncompress the file using
+\code{.sh}
 $ tar xvzf visp-snapshot-yyyy-mm-dd.tar.gz -C $VISP_WS
-\endverbatim
+\endcode
 
-- Or you get the cutting-edge ViSP from <a href="https://github.com/lagadic/visp">GitHub repository</a> using the following command
-\verbatim
+- Or you get the cutting-edge ViSP from <a href="https://github.com/lagadic/visp">GitHub repository</a> using the
+  following command:
+\code{.sh}
 $ cd $VISP_WS
 $ git clone https://github.com/lagadic/visp.git
-\endverbatim
+\endcode
 
-We suppose now that ViSP source is in the directory `$VISP_WS/visp`. The following should be adapted if you downloaded ViSP from a zip or tarball. In that case, the source is rather in something like `$VISP_WS/visp-x.y.z`.
+We suppose now that ViSP source is in the directory `$VISP_WS/visp`. The following should be adapted if you downloaded
+ViSP from a zip or tarball. In that case, the source is rather in something like `$VISP_WS/visp-x.y.z`.
 
-\subsection install_brew_config Configure ViSP from source
+\subsection install_brew_config 4.3. Configure ViSP from source
 
 These are the steps to configure ViSP from source with CMake:
 
-- In the workspace, create first a directory named `visp-build` that will contain all the build material; generated Makefiles, object files, output libraries and binaries.
-\verbatim
+- In the workspace, create first a directory named `visp-build` that will contain all the build material; generated
+  Makefiles, object files, output libraries and binaries.
+\code{.sh}
 $ mkdir $VISP_WS/visp-build
-\endverbatim
+\endcode
 
 - Enter the `visp-build` folder and configure the build:
-\verbatim
+\code{.sh}
 $ cd $VISP_WS/visp-build
 $ cmake ../visp
-\endverbatim
+\endcode
 A more versatile way to configure the build is to use `ccmake`, the CMake GUI:
-\verbatim
+\code{.sh}
 $ ccmake ../visp
-\endverbatim
-The following image shows that this command allows to configure (just by pressing [c] key) the build in a more advanced way where some options could be easily turned ON/OFF. It allows also to see which are the 3rd parties that will be used. To generate the makefiles, just press [g] key in the ccmake gui.
+\endcode
+The following image shows that this command allows to configure (just by pressing [c] key) the build in a more advanced
+way where some options could be easily turned ON/OFF. It allows also to see which are the 3rd parties that will be used.
+To generate the makefiles, just press [g] key in the ccmake gui.
 \image html img-ccmake-osx-all.jpg Snapshot of the `"ccmake ../visp"` command used to configure ViSP.
 
 \note If you encounter an error during CMake configuration, check \ref install_brew_issues section.
 
-\subsection install_brew_build Build ViSP libraries
+\subsection install_brew_build 4.4. Build ViSP libraries
 
 To build ViSP proceed with:
-\verbatim
+\code{.sh}
 $ cd $VISP_WS/visp-build
 $ make -j$(sysctl -n hw.logicalcpu)
-\endverbatim
+\endcode
 
-\subsection install_brew_visp_doc Build ViSP documentation
+\subsection install_brew_visp_doc 4.5. Build ViSP documentation
 
 To build ViSP documentation, you have first to install Doxygen package:
-\verbatim
+\code{.sh}
 $ brew install doxygen
-\endverbatim
+\endcode
 Then you can proceed with:
-\verbatim
+\code{.sh}
 $ cd $VISP_WS/visp-build
 $ cmake ../visp
 $ make -j$(sysctl -n hw.logicalcpu) visp_doc
-\endverbatim
+\endcode
 The generated documentation is then available in `$VISP_WS/visp-build/doc/html/index.html`
 
 \note
-- To speed up generating online doc, particularly around formula rendering, you can use [MatJax](https://www.mathjax.org). To this end, install MathJax and build doc using:
-\verbatim
+- To speed up generating online doc, particularly around formula rendering, you can use
+  [MatJax](https://www.mathjax.org). To this end, install MathJax and build doc using:
+\code{.sh}
 $ brew install node
 $ mkdir ~/node; cd ~/node
 $ npm install mathjax
 $ cd $VISP_WS/visp-build
 $ cmake ../visp -DUSE_MATHJAX=ON
 $ make -j$(sysctl -n hw.logicalcpu) visp_doc
-\endverbatim
+\endcode
 \note
-- It is also possible to generate a more complete documentation that includes also all the internal classes. This could be achieved setting CMake var `ENABLE_FULL_DOC` to `ON` like:
-\verbatim
+- It is also possible to generate a more complete documentation that includes also all the internal classes. This
+  could be achieved setting CMake var `ENABLE_FULL_DOC` to `ON` like:
+\code{.sh}
 $ cmake ../visp -DENABLE_FULL_DOC=ON
 $ make -j$(sysctl -n hw.logicalcpu) visp_doc
-\endverbatim
+\endcode
 
-\subsection install_brew_visp_dir Set VISP_DIR environment var
+\subsection install_brew_visp_dir 4.6. Set VISP_DIR environment var
 
-In order to ease ViSP detection by CMake when ViSP is used as a 3rd party in an external project, like the one described in the \ref tutorial-getting-started, you may set `VISP_DIR` environment variable with the path to the `VISPConfig.cmake` file:
-\verbatim
+In order to ease ViSP detection by CMake when ViSP is used as a 3rd party in an external project, like the one
+described in the \ref tutorial-getting-started, you may set `VISP_DIR` environment variable with the path to the
+`VISPConfig.cmake` file:
+\code{.sh}
 $ echo "export VISP_DIR=$VISP_WS/visp-build" >> ~/.bashrc
 $ source ~/.bashrc
-\endverbatim
+\endcode
 
-\section install_brew_dataset Install ViSP dataset
+\section install_brew_dataset 5. Install ViSP dataset
 
-Some ViSP examples and tests require a data set that contains images, video, models that is not part of ViSP source code. This data set is available in Github (https://github.com/lagadic/visp-images) or as a release in a separate archive named `visp-images-x.y.z.zip`. This archive could be downloaded from https://visp.inria.fr/download page. Note that ViSP tutorials are not using ViSP data set.
+Some ViSP examples and tests require a data set that contains images, video, models that is not part of ViSP source
+code. This data set is available in Github (https://github.com/lagadic/visp-images) or as a release in a separate
+archive named `visp-images-x.y.z.zip`. This archive could be downloaded from https://visp.inria.fr/download page.
+Note that ViSP tutorials are not using ViSP data set.
 
 We give hereafter the two ways to get this data set:
 
-<b>1. Get data set release</b>
+\subsection install_brew_dataset_release 5.1. Get data set release
 
 - Download `visp-images-3.x.y.zip` from https://visp.inria.fr/download and uncompress it in your workspace `%%VISP_WS%`:
-\verbatim
+\code{.sh}
 $ unzip ~/Downloads/visp-images-3.6.0.zip -d $VISP_WS
-\endverbatim
+\endcode
 - We suppose now that the data are located in `$VISP_WS/visp-images-3.6.0`.
-\verbatim
+\code{.sh}
 $ ls $VISP_WS/visp-images-3.6.0
 3dmodel          README.md    ellipse     mbt        video
 AprilTag         Solvay       ellipse-1   mbt-cao    warp
@@ -382,32 +410,36 @@ Bayer            calibration  endianness  mbt-depth  xml
 Gaussian-filter  circle       faces       memorial
 Klimt            cube         iv          mire
 LICENSE.txt      dnn          line        mire-2
-\endverbatim
-- Once downloaded, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples and tests to detect automatically the location of the requested data.
-  In our case, this variable should be set to `$VISP_WS/visp-images-3.6.0`. It is more convenient if this environment variables is automatically
-  added to your bash session every time a new shell is launched:
-\verbatim
+\endcode
+- Once downloaded, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples and tests to
+  detect automatically the location of the requested data.
+  In our case, this variable should be set to `$VISP_WS/visp-images-3.6.0`. It is more convenient if this environment
+  variables is automatically added to your bash session every time a new shell is launched:
+\code{.sh}
 $ echo "export VISP_INPUT_IMAGE_PATH=$VISP_WS/visp-images-3.6.0" >> ~/.bashrc
 $ source ~/.bashrc
-\endverbatim
+\endcode
 
-<b>2. Get data set from github</b>
+\subsection install_brew_dataset_github 5.2. Get data set from github
 
 - Use git to get the data set latest version:
-\verbatim
+\code{.sh}
 C:\> cd $VISP_WS
 C:\> git clone https://github.com/lagadic/visp-images.git
-\endverbatim
-- Once cloned, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples and tests to detect automatically the location of the requested data. In our case, this variable should be set to `$VISP_WS%/visp-images`. In a shell run:
-\verbatim
+\endcode
+- Once cloned, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples and tests to detect
+  automatically the location of the requested data. In our case, this variable should be set to `$VISP_WS%/visp-images`.
+  In a shell run:
+\code{.sh}
 $ echo "export VISP_INPUT_IMAGE_PATH=$VISP_WS/visp-images" >> ~/.bashrc
 $ source ~/.bashrc
-\endverbatim
+\endcode
 
-<b>Test data set usage</b>
+\subsection install_brew_dataset_test 5.3. Test data set usage
 
-- From now, you can try to run ViSP examples and tests. For example you can run `displayX` example that should open a windows with Klimt painting image and some overlay drawings:
-\verbatim
+- From now, you can try to run ViSP examples and tests. For example you can run `displayX` example that should open
+  a windows with Klimt painting image and some overlay drawings:
+\code{.sh}
 $ cd $VISP_WS/visp-build
 $ ./example/device/display/displayX
 
@@ -418,86 +450,96 @@ Cross position: 201, 441
 
 A click to exit the program...
 Bye
-\endverbatim
+\endcode
 
-\note Here if you encounter the following issue, \ref install_brew_known_issues_glog enter the corresponding section to see how to fix it.
+\note Here if you encounter the following issue, \ref install_brew_known_issues_glog enter the corresponding section
+to see how to fix it.
 
-\section install_brew_tips Tips and tricks
+\section install_brew_tips 6. Tips and tricks
 
-\subsection install_brew_tips_new_3rdparty How to take into account a newly installed 3rd party
+\subsection install_brew_tips_new_3rdparty 6.1. How to take into account a newly installed 3rd party
 
-Since all 3rd parties are optional you may have started to install only some of them. Imagine that you just installed a new third-party, or that you upgraded the version of this 3rd party. The next step is to go back to the build folder, configure ViSP with CMake to detect the newly installed third-party library and build again ViSP. This could be achieved with:
-\verbatim
+Since all 3rd parties are optional you may have started to install only some of them. Imagine that you just
+installed a new third-party, or that you upgraded the version of this 3rd party. The next step is to go back to the
+build folder, configure ViSP with CMake to detect the newly installed third-party library and build again ViSP.
+This could be achieved with:
+\code{.sh}
 $ cd $VISP_WS/visp-build
 $ cmake ../visp
-\endverbatim
+\endcode
 
-Here you can check the content of the `ViSP-third-party.txt` file and see if the newly installed 3rd party is well detected (see \ref install_brew_tips_3rd_party).
+Here you can check the content of the `ViSP-third-party.txt` file and see if the newly installed 3rd party is well
+detected (see \ref install_brew_tips_3rd_party).
 
 Finally, you need to rebuild ViSP with:
-\verbatim
+\code{.sh}
 $ make -j$(sysctl -n hw.logicalcpu)
-\endverbatim
+\endcode
 
-\subsection install_brew_tips_install How to install ViSP
+\subsection install_brew_tips_install 6.2. How to install ViSP
 
-Installing ViSP is optional and not recommended, since ViSP could be used as a 3rd party without installation. If you still want to proceed with the installation run:
-\verbatim
+Installing ViSP is optional and not recommended, since ViSP could be used as a 3rd party without installation.
+If you still want to proceed with the installation run:
+\code{.sh}
 $ cd $VISP_WS/visp-build
 $ sudo make install
-\endverbatim
-\note The default install location is set to `/usr/local`. This location could be changed modifying `CMAKE_INSTALL_PREFIX` var:
-\verbatim
+\endcode
+\note The default install location is set to `/usr/local`. This location could be changed modifying
+`CMAKE_INSTALL_PREFIX` var:
+\code{.sh}
 $ cd $VISP_WS/visp-build
 $ cmake ../visp -DCMAKE_INSTALL_PREFIX=/usr
 $ make -j$(sysctl -n hw.logicalcpu)
 $ sudo make install
-\endverbatim
+\endcode
 
-\note If you proceed to ViSP installation in a system folder like `/usr` or `/usr/local` there is no need to \ref install_brew_visp_dir that helps CMake to find ViSP libraries in an external project that uses ViSP as a 3rd party. If you rather install ViSP in a non "standard" folder, let say `/my/install/folder`, you have to set `VISP_DIR` to `/my/install/folder/lib/cmake/visp` that contains the `VISPConfig.cmake` file:
-\verbatim
+\note If you proceed to ViSP installation in a system folder like `/usr` or `/usr/local` there is no need to
+\ref install_brew_visp_dir that helps CMake to find ViSP libraries in an external project that uses ViSP as a 3rd party.
+If you rather install ViSP in a non "standard" folder, let say `/my/install/folder`, you have to set `VISP_DIR` to
+`/my/install/folder/lib/cmake/visp` that contains the `VISPConfig.cmake` file:
+\code{.sh}
 $ cd $VISP_WS/visp-build
 $ cmake ../visp -DCMAKE_INSTALL_PREFIX=/my/install/folder
 $ make -j$(sysctl -n hw.logicalcpu)
 $ sudo make install
 $ echo "export VISP_DIR=/my/install/folder/lib/cmake/visp" >> ~/.bashrc
 $ source ~/.bashrc
-\endverbatim
+\endcode
 
-\subsection install_brew_tips_uninstall How to uninstall ViSP
+\subsection install_brew_tips_uninstall 6.3. How to uninstall ViSP
 
 After ViSP installation, you can remove installed material using:
-\verbatim
+\code{.sh}
 $ cd $VISP_WS/visp-build
 $ sudo make uninstall
-\endverbatim
+\endcode
 
-\subsection install_brew_tips_modules How to build only ViSP libraries
+\subsection install_brew_tips_modules 6.4. How to build only ViSP libraries
 
 If you want to build only ViSP modules libraries, nor the examples, tutorials and tests:
-\verbatim
+\code{.sh}
 $ cd $VISP_WS/visp-build
 $ make -j$(sysctl -n hw.logicalcpu) visp_modules
-\endverbatim
+\endcode
 
-\subsection install_brew_tips_module_once How to build a ViSP specific module
+\subsection install_brew_tips_module_once 6.5. How to build a ViSP specific module
 
 If you want to build a given module and all the dependencies:
-\verbatim
+\code{.sh}
 $ cd $VISP_WS/visp-build
 $ make -j$(sysctl -n hw.logicalcpu) visp_<module_name>
-\endverbatim
+\endcode
 
 For example to build the model-based tracker module named mbt, run:
-\verbatim
+\code{.sh}
 $ cd $VISP_WS/visp-build
 $ make -j$(sysctl -n hw.logicalcpu) visp_mbt
-\endverbatim
+\endcode
 
-\subsection install_brew_tips_target Which are the targets that could be run with make ?
+\subsection install_brew_tips_target 6.6. Which are the targets that could be run with make ?
 
 To know which are the target available with `make`:
-\verbatim
+\code{.sh}
 $ make help | grep visp
 ... visp_doc
 ... visp_modules
@@ -530,12 +572,14 @@ $ make help | grep visp
 ... visp_java
 ... visp_java_jar
 ... visp_java_jar_source_copy
-\endverbatim
+\endcode
 
-\subsection install_brew_tips_3rd_party Which are the 3rd party libraries that are used in ViSP ?
+\subsection install_brew_tips_3rd_party 6.7. Which are the 3rd party libraries that are used in ViSP ?
 
-To see which are the optional 3rd parties that are found during the configuration stage and that will be used by ViSP during the build you can have a look to the text file named `ViSP-third-party.txt` and located in `$VISP_WS/visp-build`. We provide hereafter an example of a possible content of this file that contains also build info.
-\verbatim
+To see which are the optional 3rd parties that are found during the configuration stage and that will be used by ViSP
+during the build you can have a look to the text file named `ViSP-third-party.txt` and located in `$VISP_WS/visp-build`.
+We provide hereafter an example of a possible content of this file that contains also build info.
+\code{.sh}
 $ cat $VISP_WS/visp-build/ViSP-third-party.txt
 ==========================================================
 General configuration information for ViSP 3.4.1
@@ -692,14 +736,15 @@ General configuration information for ViSP 3.4.1
   Install path:                  /usr/local
 
 ==========================================================
-\endverbatim
+\endcode
 
-\section install_brew_issues Known issues
+\section install_brew_issues 7. Known issues
 
-\subsection install_brew_issues_pcl_1_12_1 Unable to build with pcl 1.12.1
+\subsection install_brew_issues_pcl_1_12_1 7.1. Unable to build with pcl 1.12.1
 
-The following issue is reproductible installing pcl with Homebrew that brings pcl 1.12.1 on macOS Big Sur 11.6.2 till macOS Monterey 12.6:
-\verbatim
+The following issue is reproductible installing pcl with Homebrew that brings pcl 1.12.1 on macOS Big Sur 11.6.2 till
+macOS Monterey 12.6:
+\code{.sh}
 $ brew install librealsense pcl pkg-config
 $ cd $VISP_WS/visp-build
 $ cmake ../visp
@@ -710,11 +755,11 @@ $VISP_WS/visp/modules/sensor/include/visp3/sensor/vpRealSense2.h:47:10: fatal er
 #include <pcl/common/common_headers.h>
          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 1 error generated.
-\endverbatim
+\endcode
 
-In fact `pcl 1.12.1` has a dependency to `VTK` that depends on `qt5` that is keg-only. In other terms, it means that if `qt5` is not detected,
-`VTK` will not be detected too leading to a uncomplete `pcl` detection. As a consequence, ViSP will be able to detect `pcl` but not `VTK` leading
-to the previous build issue.
+In fact `pcl 1.12.1` has a dependency to `VTK` that depends on `qt5` that is keg-only. In other terms, it means that
+if `qt5` is not detected, `VTK` will not be detected too leading to a uncomplete `pcl` detection. As a consequence,
+ViSP will be able to detect `pcl` but not `VTK` leading to the previous build issue.
 
 This could also be checked in `ViSP-third-party.txt` file, that contains:
 ```
@@ -723,7 +768,8 @@ $ cat ViSP-third-party.txt
     \- Use VTK:                  no
 ```
 
-The solution to build ViSP with `pcl 1.12.1` is to set `Qt5_DIR` cmake or environment var with the path where `Qt5Config.cmake` or `qt5-config.cmake` is located.
+The solution to build ViSP with `pcl 1.12.1` is to set `Qt5_DIR` cmake or environment var with the path where
+`Qt5Config.cmake` or `qt5-config.cmake` is located.
 In our case, `Qt5_DIR` should be set to `$(brew --prefix qt5)/lib/cmake/Qt5`.
 ```
 $ ls $(brew --prefix qt5)/lib/cmake/Qt5
@@ -744,10 +790,12 @@ $ make -j$(sysctl -n hw.logicalcpu)
 ```
 Note that this environment var could be added permanently in your `~/.bashrc` file.
 
-\subsection install_brew_issues_pcl CMake Error in /usr/local/share/pcl-1.9/PCLConfig.cmake
+\subsection install_brew_issues_pcl 7.2. CMake Error in /usr/local/share/pcl-1.9/PCLConfig.cmake
 
-During CMake configuration if you install pcl using `brew install pcl` as explained in \ref install_brew_3rdparty_realsense installation section, you may encounter the following issue with PCL 1.9.1 on OSX Mojave:
-\verbatim
+During CMake configuration if you install pcl using `brew install pcl` as explained in
+\ref install_brew_3rdparty_realsense installation section, you may encounter the following issue with PCL 1.9.1 on
+OSX Mojave:
+\code{.sh}
 CMake Error at /usr/local/share/pcl-1.9/PCLConfig.cmake:361 (pcl_report_not_found):
   cmake_policy POP without matching PUSH
 Call Stack (most recent call first):
@@ -760,26 +808,28 @@ CMake Error in /usr/local/share/pcl-1.9/PCLConfig.cmake:
 Call Stack (most recent call first):
   cmake/VISPUtils.cmake:533 (find_package)
   CMakeLists.txt:589 (VP_OPTION)
-\endverbatim
+\endcode
 
-This issue comes from PCL 3rd party. The fix consists in installing `pkg-config` and starting a fresh CMake configuration:
-\verbatim
+This issue comes from PCL 3rd party. The fix consists in installing `pkg-config` and starting a fresh CMake
+configuration:
+\code{.sh}
 $ brew install pkg-config
 $ cd $VISP_WS/visp-build
 $ rm -rf *
 $ cmake ../visp
-\endverbatim
+\endcode
 
-An other solution, but less elegant, would be modifying `/usr/local/share/pcl-1.9/PCLConfig.cmake` by commenting the following lines:
-\verbatim
+An other solution, but less elegant, would be modifying `/usr/local/share/pcl-1.9/PCLConfig.cmake` by commenting the
+following lines:
+\code{.sh}
 #cmake_policy(PUSH)
 #cmake_policy(POP)
-\endverbatim
+\endcode
 
-\subsection install_brew_issues_opencv3 /usr/local/lib/pkgconfig is not writable
+\subsection install_brew_issues_opencv3 7.3. /usr/local/lib/pkgconfig is not writable
 
 - During OpenCV installation, if you get the following errors:
-\verbatim
+\code{.sh}
 $ brew install opencv
 Could not symlink lib/pkgconfig/isl.pc
 /usr/local/lib/pkgconfig is not writable.
@@ -787,43 +837,45 @@ Could not symlink lib/pkgconfig/isl.pc
 You can try again using:
   brew link isl
 ...
-\endverbatim
+\endcode
 it means maybe that you install other softwares without brew in /usr/local.
 A work around is to change the owner of the corresponding folder like:
-\verbatim
+\code{.sh}
 $ sudo chown <your-user-name> /usr/local/lib/pkgconfig
-\endverbatim
+\endcode
 
 - If you enter into troubles with the packages you install with brew, a good stating is to run:
-\verbatim
+\code{.sh}
 $ brew doctor
-\endverbatim
+\endcode
 
-\subsection install_brew_issues_libpng Application built with libpng-1.5.18 but running with 1.6.17
+\subsection install_brew_issues_libpng 7.4. Application built with libpng-1.5.18 but running with 1.6.17
 - If you encounter the following issue
-\verbatim
+\code{.sh}
 $ ./modules/vision/testKeypoint-5
 libpng warning: Application built with libpng-1.5.18 but running with 1.6.17
 error: can't create a png read structure!
 error reading png file
-\endverbatim
-It means that apparently there is a conflict between libpng version installed by `brew install opencv3` (1.6.17), and the one used by `X11/XQuartz` (1.5.18).
+\endcode
+It means that apparently there is a conflict between libpng version installed by `brew install opencv3` (1.6.17),
+and the one used by `X11/XQuartz` (1.5.18).
 A work around is to turn off libpng usage in ViSP. To configure and build again ViSP without png support:
-\verbatim
+\code{.sh}
 $ ccmake -DUSE_PNG=OFF ../ViSP
 $ make -j$(sysctl -n hw.logicalcpu)
-\endverbatim
-An other work around option is to turn off X11 usage in ViSP. Display capabilities will be then the one from OpenCV. To this end, configure and build again ViSP without X11 support:
-\verbatim
+\endcode
+An other work around option is to turn off X11 usage in ViSP. Display capabilities will be then the one from OpenCV.
+To this end, configure and build again ViSP without X11 support:
+\code{.sh}
 $ ccmake -DUSE_X11=OFF ../ViSP
 $ make -j$(sysctl -n hw.logicalcpu)
-\endverbatim
+\endcode
 
-\subsection install_brew_issues_numpy Importing the multiarray numpy extension module failed
+\subsection install_brew_issues_numpy 7.5. Importing the multiarray numpy extension module failed
 
 When running `cmake` to configure ViSP you encounter the following issue:
 
-\verbatim
+\code{.sh}
 $ cmake ../visp
 ...
 -- Found PythonLibs: /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk/usr/lib/libpython2.7.tbd (found suitable exact version "2.7.16")
@@ -858,32 +910,34 @@ Here is how to proceed:
      an existing issue about this - open a new one instead.
 
 Original error was: No module named _multiarray_umath
-\endverbatim
+\endcode
 
 use the following command to solve this issue:
-\verbatim
+\code{.sh}
 $ pip install -U numpy
-\endverbatim
+\endcode
 
-\subsection install_brew_known_issues_glog dyld: Library not loaded: /usr/local/opt/glog/lib/libglog.0.3.5.dylib
+\subsection install_brew_known_issues_glog 7.6. dyld: Library not loaded: /usr/local/opt/glog/lib/libglog.0.3.5.dylib
 
-With OpenCV 4.0.0 installed using `brew install opencv` you may experience the following error trying to execute a binary linked with ViSP:
-\verbatim
+With OpenCV 4.0.0 installed using `brew install opencv` you may experience the following error trying to execute a
+binary linked with ViSP:
+\code{.sh}
 $ cd $VISP_WS/visp-build
 $ ./example/device/display/displayX
 dyld: Library not loaded: /usr/local/opt/glog/lib/libglog.0.3.5.dylib
   Referenced from: /usr/local/opt/opencv/lib/libopencv_sfm.3.4.dylib
   Reason: image not found
 Abort trap: 6
-\endverbatim
+\endcode
 
 A work around is to install glog library with:
-\verbatim
+\code{.sh}
 $ brew install glog
-\endverbatim
+\endcode
 
-\section install_brew_next Next tutorial
+\section install_brew_next 8. Next tutorial
 
-You are now ready to see the next \ref tutorial-getting-started that will show you how to use ViSP as a 3rd party to build your own project.
+You are now ready to see the next \ref tutorial-getting-started that will show you how to use ViSP as a 3rd party to
+build your own project.
 
 */

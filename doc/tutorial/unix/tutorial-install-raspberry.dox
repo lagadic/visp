@@ -3,33 +3,34 @@
 \page tutorial-install-raspberry Tutorial: Installation from source for Raspberry Pi
 \tableofcontents
 
-In this tutorial you will learn how to install ViSP from source on [Raspberry Pi](http://www.raspberrypi.org/help/what-is-a-raspberry-pi)
+In this tutorial you will learn how to install ViSP from source on
+[Raspberry Pi](http://www.raspberrypi.org/help/what-is-a-raspberry-pi)
 equipped with an optional HD camera module. This tutorial was tested with a RPi 1, RPi 2 model B and RPi 4 model B.
 
 \image html img-raspberry-pi.jpg
 
-In a first section we give some useful instructions to start with a Raspberry PI. Then in the second section, we focus on the installation
-of ViSP from source.
+In a first section we give some useful instructions to start with a Raspberry PI. Then in the second section, we focus
+on the installation of ViSP from source.
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 
-\section install_raspberry Raspberry Pi installation
+\section install_raspberry 1. Raspberry Pi installation
 
-\subsection install_raspberry_setup Setting up Raspberry Pi
+\subsection install_raspberry_setup 1.1. Setting up Raspberry Pi
 
-- There are a lot of documentation and tutorial that explain different ways to setup a Raspberry Pi. A good reference is the official
-page http://www.raspberrypi.org/.
+- There are a lot of documentation and tutorial that explain different ways to setup a Raspberry Pi. A good reference
+is the official page http://www.raspberrypi.org/.
 
 - To install Raspberry Pi OS on a SD card, go to http://www.raspberrypi.org/downloads/ and download and install
 Raspberry Pi Imager to a computer with an SD card reader. Put the SD card you'll use with your Raspberry Pi into
 the reader and run Raspberry Pi Imager. At the end of the process, plug your SD card in your Raspberry Pi and
 finish the installation by setting your login, password, region and language.
 
-\subsection install_raspberry_login Logging in
+\subsection install_raspberry_login 1.2. Logging in
 
 - The default login for Raspbian is username `pi` with the password `raspberry`.
 
-\subsection update Update your Raspbian distribution
+\subsection install_raspberry_update 1.3. Update your Raspbian distribution
 
 - If your Raspberry Pi is connected to Ethernet you can update your Raspbian distribution:
 \verbatim
@@ -37,9 +38,10 @@ $ sudo apt-get update
 $ sudo apt-get upgrade
 \endverbatim
 
-\subsection install_raspberry_camera Setting up a Raspberry Pi camera
+\subsection install_raspberry_camera 1.4. Setting up a Raspberry Pi camera
 
-- If you have a Raspberry Pi camera module see http://www.raspberrypi.org/help/camera-module-setup/. To resume, enable the camera using:
+- If you have a Raspberry Pi camera module see http://www.raspberrypi.org/help/camera-module-setup/. To resume, enable
+  the camera using:
 \verbatim
 $ sudo raspi-config
 \endverbatim
@@ -69,8 +71,8 @@ videodev 121362 3 bcm2835_v4l2,v4l2_common,videobuf2_core
 $ v4l2-ctl --list-formats
 \endverbatim
 
-- After each Raspberry Pi reboot you need to relaunch the previous modprobe command. To load bcm2835-v4l2 module during reboot,
-you can edit `/etc/modules` file
+- After each Raspberry Pi reboot you need to relaunch the previous modprobe command. To load bcm2835-v4l2 module during
+  reboot, you can edit `/etc/modules` file
 \verbatim
 $ sudo nano /etc/modules
 \endverbatim
@@ -88,19 +90,19 @@ Here you should see the live camera stream. To disable camera view run
 v4l2-ctl --overlay=0 # disable viewfinder
 \endverbatim
 
-\subsection install_raspberry_startx Start graphical user interface
+\subsection install_raspberry_startx 1.5. Start graphical user interface
 
-- To load the graphical user interface, type `startx` and press Enter on your keyboard. This will later allow to use ViSP
-vpDisplayX or vpDisplayOpenCV classes useful to display images in a X11 window.
+- To load the graphical user interface, type `startx` and press Enter on your keyboard. This will later allow to use
+  ViSP vpDisplayX or vpDisplayOpenCV classes useful to display images in a X11 window.
 
-\section install_raspberry_visp_prerequisites Install prerequisites
+\section install_raspberry_visp_prerequisites 2. Install prerequisites
 
 - First you need to install the following packages (g++, CMake, Git) that are requested to get and build ViSP:
 \verbatim
 $ sudo apt-get install build-essential cmake-curses-gui git wget
 \endverbatim
 
-\section install_raspberry_ws Create a workspace
+\section install_raspberry_ws 3. Create a workspace
 
 First create a workspace that will contain all ViSP source, build, data set and optional 3rd parties. This workspace is
 here set to `$HOME/visp-ws` folder, but it could be set to any other location.
@@ -112,9 +114,10 @@ $ source ~/.bashrc
 $ mkdir -p $VISP_WS
 \endverbatim
 
-\section install_raspberry_quick Quick ViSP installation
+\section install_raspberry_quick 4. Quick ViSP installation
 
-In this section, we give minimal instructions to build ViSP from source just to try ViSP without entering in \ref install_raspberry_advanced.
+In this section, we give minimal instructions to build ViSP from source just to try ViSP without entering in
+\ref install_raspberry_advanced.
 
 - Install a small number of recommended 3rd parties
 \verbatim
@@ -145,21 +148,21 @@ $ source ~/.bashrc
 To have a trial, just jump to \ref install_raspberry_dataset before running some binaries that you just build or
 jump to \ref install_raspberry_next. You can later come back to the \ref install_raspberry_advanced.
 
-\section install_raspberry_advanced Advanced ViSP installation
+\section install_raspberry_advanced 5. Advanced ViSP installation
 
-\subsection install_raspberry_3rdparty Install 3rd parties
+\subsection install_raspberry_3rdparty 5.1. Install 3rd parties
 
 ViSP is interfaced with several optional 3rd party libraries.
 Follow the link to see the complete list of \ref supported-third-parties.
 
-\note ViSP can be used without any third-party since all of them are optional. But obviously in this case, as we do not want
-to reinvent the wheel, some features implemented in third-party libraries will not be exploitable through ViSP.
+\note ViSP can be used without any third-party since all of them are optional. But obviously in this case, as we do not
+want to reinvent the wheel, some features implemented in third-party libraries will not be exploitable through ViSP.
 It is therefore possible to skip in a first time this section and start directly to \ref install_raspberry_quick.
 Later, if you realize that a third-party library is missing, you can still install it, go back to the build folder,
 configure ViSP with CMake to detect the newly installed third-party library and build ViSP again as explained
 in \ref install_raspberry_tips_new_3rdparty.
 
-\subsubsection install_raspberry_visp_3rd_party Install recommended 3rd parties
+\subsubsection install_raspberry_visp_3rd_party 5.1.1. Install recommended 3rd parties
 
 ViSP is interfaced with several optional 3rd party libraries.
 Follow the link to see the complete list of \ref supported-third-parties.
@@ -178,7 +181,7 @@ $ sudo apt-get install libopencv-dev libx11-dev liblapack-dev libeigen3-dev libv
   libzbar-dev libpthread-stubs0-dev
 \endverbatim
 
-\subsubsection install_raspberry_visp_3rd_party_other Other optional 3rd parties
+\subsubsection install_raspberry_visp_3rd_party_other 5.1.2. Other optional 3rd parties
 
 We give also the way to install other 3rd party libraries to enable specific capabilities.
 
@@ -187,7 +190,7 @@ We give also the way to install other 3rd party libraries to enable specific cap
 $ sudo apt-get install libjpeg-dev libpng-dev
 \endverbatim
 
-\subsection install_raspberry_visp_get_source Get ViSP source code
+\subsection install_raspberry_visp_get_source 5.2. Get ViSP source code
 
 There are different ways to get ViSP source code on Raspberry Pi:
 
@@ -217,7 +220,7 @@ $ git clone https://github.com/lagadic/visp.git
 We suppose now that ViSP source is in the directory `$VISP_WS/visp`. The following should be adapted if you
 downloaded ViSP from a zip or tarball. In that case, the source is rather in something like `$VISP_WS/visp-x.y.z`.
 
-\subsection install_raspberry_visp_config Configure ViSP from source
+\subsection install_raspberry_visp_config 5.3. Configure ViSP from source
 
 These are the steps to configure ViSP from source with CMake:
 
@@ -241,7 +244,7 @@ advanced way where some options could be easily turned ON/OFF. It allows also to
 will be used. To generate the makefiles, just press [g] key in the ccmake gui.
 \image html img-ccmake-raspberry-all.png Snapshot of the `"ccmake ../visp"` command used to configure ViSP.
 
-\subsection install_raspberry_visp_build Build ViSP libraries
+\subsection install_raspberry_visp_build 5.4. Build ViSP libraries
 
 To build ViSP libraries proceed with:
 \verbatim
@@ -249,7 +252,7 @@ $ cd $VISP_WS/visp-build
 $ make -j4
 \endverbatim
 
-\subsection install_raspberry_visp_doc Build ViSP documentation
+\subsection install_raspberry_visp_doc 5.5. Build ViSP documentation
 
 To build ViSP documentation, you have first to install Doxygen package:
 \verbatim
@@ -264,8 +267,8 @@ $ make -j4 visp_doc
 The generated documentation is then available in `$VISP_WS/visp-build/doc/html/index.html`
 
 \note
-- To speed up generating online doc, particularly around formula rendering, you can use [MatJax](https://www.mathjax.org).
-To this end, install MathJax and build doc using:
+- To speed up generating online doc, particularly around formula rendering, you can use
+  [MatJax](https://www.mathjax.org). To this end, install MathJax and build doc using:
 \verbatim
 $ npm install mathjax
 $ cmake ../visp -DUSE_MATHJAX=ON
@@ -279,7 +282,7 @@ $ cmake ../visp -DENABLE_FULL_DOC=ON
 $ make -j4 visp_doc
 \endverbatim
 
-\subsection install_raspberry_visp_dir Set VISP_DIR environment var
+\subsection install_raspberry_visp_dir 5.6. Set VISP_DIR environment var
 
 In order to ease ViSP detection by CMake when ViSP is used as a 3rd party in an external project, like the one
 described in the \ref tutorial-getting-started, you may set `VISP_DIR` environment variable with the path to the
@@ -289,16 +292,16 @@ $ echo "export VISP_DIR=$VISP_WS/visp-build" >> ~/.bashrc
 $ source ~/.bashrc
 \endverbatim
 
-\section install_raspberry_dataset Install ViSP data set
+\section install_raspberry_dataset 6. Install ViSP data set
 
 Some ViSP examples and tests require a data set that contains images, video, models that is not part of ViSP
 source code. This data set is available in Github (https://github.com/lagadic/visp-images) or as a release in a
-separate archive named `visp-images-x.y.z.zip`. This archive could be downloaded from https://visp.inria.fr/download page.
-Note that ViSP tutorials are not using ViSP data set.
+separate archive named `visp-images-x.y.z.zip`. This archive could be downloaded from https://visp.inria.fr/download
+page. Note that ViSP tutorials are not using ViSP data set.
 
 We give hereafter the two ways to get this data set:
 
-<b>1. Get data set release</b>
+\subsection install_raspberry_dataset_release 6.1. Get data set release
 
 - Download `visp-images-3.6.0.zip` from https://visp.inria.fr/download and uncompress it in your workspace `%%VISP_WS%`:
 \verbatim
@@ -314,16 +317,16 @@ Gaussian-filter  circle       faces       memorial
 Klimt            cube         iv          mire
 LICENSE.txt      dnn          line        mire-2
 \endverbatim
-- Once downloaded, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples and tests to detect
-automatically the location of the requested data. In our case, this variable should be set to `$VISP_WS/visp-images-3.6.0`.
-It is more convenient if this environment variables is automatically added to your bash session every time a new
-shell is launched:
+- Once downloaded, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples and tests to
+  detect automatically the location of the requested data. In our case, this variable should be set to
+  `$VISP_WS/visp-images-3.6.0`. It is more convenient if this environment variables is automatically added to your bash
+  session every time a new shell is launched:
 \verbatim
 $ echo "export VISP_INPUT_IMAGE_PATH=$VISP_WS/visp-images-3.6.0" >> ~/.bashrc
 $ source ~/.bashrc
 \endverbatim
 
-<b>2. Get data set from github</b>
+\subsection install_raspberry_dataset_github 6.2. Get data set from github
 
 - Use git to get the data set latest version:
 \verbatim
@@ -338,7 +341,7 @@ $ echo "export VISP_INPUT_IMAGE_PATH=$VISP_WS/visp-images" >> ~/.bashrc
 $ source ~/.bashrc
 \endverbatim
 
-<b>Test data set usage</b>
+\subsection install_raspberry_dataset_test 6.3. Test data set usage
 
 - From now, you can try to run ViSP examples and tests. For example you can run `displayX` example that should open
 a windows with Klimt painting image and some overlay drawings:
@@ -355,13 +358,14 @@ A click to exit the program...
 Bye
 \endverbatim
 
-\section install_raspberry_tips Tips and tricks
+\section install_raspberry_tips 7. Tips and tricks
 
-\subsection install_raspberry_tips_new_3rdparty How to take into account a newly installed 3rd party
+\subsection install_raspberry_tips_new_3rdparty 7.1. How to take into account a newly installed 3rd party
 
 Since all 3rd parties are optional you may have started to install only some of them. Imagine that you just installed
 a new third-party, or that you upgraded the version of this 3rd party. The next step is to go back to the build folder,
-configure ViSP with CMake to detect the newly installed third-party library and build again ViSP. This could be achieved with:
+configure ViSP with CMake to detect the newly installed third-party library and build again ViSP. This could be
+achieved with:
 \verbatim
 $ cd $VISP_WS/visp-build
 $ cmake ../visp
@@ -375,7 +379,7 @@ Finally, you need to rebuild ViSP with:
 $ make -j4
 \endverbatim
 
-\subsection install_raspberry_tips_install How to install ViSP
+\subsection install_raspberry_tips_install 7.2. How to install ViSP
 
 Installing ViSP is optional and not recommended, since ViSP could be used as a 3rd party without installation.
 If you still want to proceed with the installation run:
@@ -383,7 +387,8 @@ If you still want to proceed with the installation run:
 $ cd $VISP_WS/visp-build
 $ sudo make install
 \endverbatim
-\note The default install location is set to `/usr/local`. This location could be changed modifying `CMAKE_INSTALL_PREFIX` var:
+\note The default install location is set to `/usr/local`. This location could be changed modifying
+`CMAKE_INSTALL_PREFIX` var:
 \verbatim
 $ cd $VISP_WS/visp-build
 $ cmake ../visp -DCMAKE_INSTALL_PREFIX=/usr
@@ -392,9 +397,9 @@ $ sudo make install
 \endverbatim
 
 \note If you proceed to ViSP installation in a system folder like `/usr` or `/usr/local` there is no need to
-\ref install_raspberry_visp_dir that helps CMake to find ViSP libraries in an external project that uses ViSP as a 3rd party.
-If you rather install ViSP in a non "standard" folder, let say `/my/install/folder`, you have to set `VISP_DIR`
-to `/my/install/folder/lib/cmake/visp` that contains the `VISPConfig.cmake` file:
+\ref install_raspberry_visp_dir that helps CMake to find ViSP libraries in an external project that uses ViSP as a
+3rd party. If you rather install ViSP in a non "standard" folder, let say `/my/install/folder`, you have to set
+`VISP_DIR` to `/my/install/folder/lib/cmake/visp` that contains the `VISPConfig.cmake` file:
 \verbatim
 $ cd $VISP_WS/visp-build
 $ cmake ../visp -DCMAKE_INSTALL_PREFIX=/my/install/folder
@@ -404,7 +409,7 @@ $ echo "export VISP_DIR=/my/install/folder/lib/cmake/visp" >> ~/.bashrc
 $ source ~/.bashrc
 \endverbatim
 
-\subsection install_raspberry_tips_uninstall How to uninstall ViSP
+\subsection install_raspberry_tips_uninstall 7.3. How to uninstall ViSP
 
 After ViSP installation, you can remove installed material using:
 \verbatim
@@ -412,7 +417,7 @@ $ cd $VISP_WS/visp-build
 $ sudo make uninstall
 \endverbatim
 
-\subsection install_raspberry_tips_modules How to build only ViSP libraries
+\subsection install_raspberry_tips_modules 7.4. How to build only ViSP libraries
 
 If you want to build only ViSP modules libraries, nor the examples, tutorials and tests:
 \verbatim
@@ -420,7 +425,7 @@ $ cd $VISP_WS/visp-build
 $ make -j4 visp_modules
 \endverbatim
 
-\subsection install_raspberry_tips_module_once How to build a ViSP specific module
+\subsection install_raspberry_tips_module_once 7.5. How to build a ViSP specific module
 
 If you want to build a given module and all the dependencies:
 \verbatim
@@ -434,7 +439,7 @@ $ cd $VISP_WS/visp-build
 $ make -j4 visp_mbt
 \endverbatim
 
-\subsection install_raspberry_tips_target Which are the targets that could be run with make ?
+\subsection install_raspberry_tips_target 7.6. Which are the targets that could be run with make ?
 
 To know which are the target available with `make`:
 \verbatim
@@ -470,7 +475,7 @@ $ make help | grep visp
 ... visp_tt_mi
 \endverbatim
 
-\subsection install_raspberry_tips_3rd_party Which are the 3rd party libraries that are used in ViSP ?
+\subsection install_raspberry_tips_3rd_party 7.7. Which are the 3rd party libraries that are used in ViSP ?
 
 To see which are the optional 3rd parties that are found during the configuration stage and that will be used by ViSP
 during the build you can have a look to the text file named `ViSP-third-party.txt` and located in `$VISP_WS/visp-build`.
@@ -628,7 +633,7 @@ General configuration information for ViSP 3.3.1
 ==========================================================
 \endverbatim
 
-\section install_raspberry_next Next tutorial
+\section install_raspberry_next 8. Next tutorial
 
 You are now ready to see the next \ref tutorial-getting-started that will show you how to use ViSP as a 3rd party to
 build your own project on Raspberry Pi or on any other system. Then if you have a Raspberry Pi camera module, you can
