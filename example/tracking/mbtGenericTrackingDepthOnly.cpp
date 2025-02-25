@@ -260,10 +260,15 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<uns
                vpImage<uint16_t> &I_depth_raw, std::vector<vpColVector> &pointcloud, unsigned int &pointcloud_width,
                unsigned int &pointcloud_height)
 {
+#if defined(VISP_HAVE_DATASET)
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
   std::string ext("png");
 #else
   std::string ext("pgm");
+#endif
+#else
+  // We suppose that the user will download a recent dataset
+  std::string ext("png");
 #endif
   // Read image
   std::stringstream ss;
@@ -762,7 +767,7 @@ int main(int argc, const char **argv)
       }
 
       frame_index++;
-      }
+    }
 
     std::cout << "\nFinal poses, cMo:\n" << cMo << std::endl;
     std::cout << "\nComputation time, Mean: " << vpMath::getMean(time_vec)
@@ -777,12 +782,12 @@ int main(int argc, const char **argv)
     tracker = nullptr;
 
     return EXIT_SUCCESS;
-      }
+  }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
-    }
+}
 
 #elif !(defined(VISP_HAVE_MODULE_MBT) && defined(VISP_HAVE_DISPLAY))
 int main()

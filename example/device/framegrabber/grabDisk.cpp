@@ -227,10 +227,15 @@ int main(int argc, const char **argv)
     std::string opt_ipath;
     std::string ipath;
     std::string opt_basename = "cube/image.";
+#if defined(VISP_HAVE_DATASET)
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
     std::string opt_ext("png");
 #else
     std::string opt_ext("pgm");
+#endif
+#else
+    // We suppose that the user will download a recent dataset
+    std::string opt_ext("png");
 #endif
 
     bool opt_display = true;
