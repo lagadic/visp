@@ -44,7 +44,7 @@
 #include <visp3/rbt/vpPanda3DDepthFilters.h>
 #include <visp3/rbt/vpObjectCentricRenderer.h>
 #include <visp3/rbt/vpRBTrackerLogger.h>
-
+#include <visp3/rbt/vpRBADDSMetric.h>
 #include <visp3/core/vpDisplay.h>
 
 #include <ostream>
@@ -272,6 +272,9 @@ protected:
   std::shared_ptr<vpObjectMask> m_mask;
   std::shared_ptr<vpRBDriftDetector> m_driftDetector;
   std::shared_ptr<vpRBVisualOdometry> m_odometry;
+
+  vpRBADDSMetric m_convergenceMetric;
+  double m_convergedMetricThreshold;
 
 };
 

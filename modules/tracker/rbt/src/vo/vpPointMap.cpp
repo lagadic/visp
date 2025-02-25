@@ -12,6 +12,27 @@ void vpPointMap::getPoints(const vpArray2D<int> &indices, vpMatrix &X)
   }
 }
 
+
+void vpPointMap::project(const vpHomogeneousMatrix &cTw, vpMatrix &cX)
+{
+  cX.resize(m_X.getRows(), 3, false, false);
+  vpColVector X(3);
+  vpColVector rX(3);
+
+  const vpColVector t = cTw.getTranslationVector();
+  const vpRotationMatrix R = cTw.getRotationMatrix();
+  for (unsigned int i = 0; i < m_X.getRows(); ++i) {
+    X[0] = m_X[i][0];
+    X[1] = m_X[i][1];
+    X[2] = m_X[i][2];
+
+    rX = R * X;
+
+    cX[i][0] = rX[0] + t[0];
+    cX[i][1] = rX[1] + t[1];
+    cX[i][2] = rX[2] + t[2];
+  }
+}
 void vpPointMap::project(const vpArray2D<int> &indices, const vpHomogeneousMatrix &cTw, vpMatrix &cX)
 {
   cX.resize(indices.getRows(), 3, false, false);

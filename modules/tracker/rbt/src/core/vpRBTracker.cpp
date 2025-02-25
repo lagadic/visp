@@ -51,7 +51,7 @@ BEGIN_VISP_NAMESPACE
 
 vpRBTracker::vpRBTracker() :
   m_firstIteration(true), m_trackers(0), m_lambda(1.0), m_vvsIterations(10), m_muInit(0.0), m_muIterFactor(0.5), m_scaleInvariantOptim(false),
-  m_renderer(m_rendererSettings), m_imageHeight(480), m_imageWidth(640), m_verbose(false)
+  m_renderer(m_rendererSettings), m_imageHeight(480), m_imageWidth(640), m_verbose(false), m_convergenceMetric(1024, 41), m_convergedMetricThreshold(0.0)
 {
   m_rendererSettings.setClippingDistance(0.01, 1.0);
   m_renderer.setRenderParameters(m_rendererSettings);
@@ -193,6 +193,7 @@ void vpRBTracker::track(const vpImage<unsigned char> &I, const vpImage<vpRGBa> &
 void vpRBTracker::startTracking()
 {
   setupRenderer(m_modelPath);
+  m_convergenceMetric.sampleObject(m_renderer);
 }
 
 void vpRBTracker::track(const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<float> &depth)
@@ -245,25 +246,37 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
       throw vpException(vpException::badValue, "Could not extract silhouette from depth canny: Object may not be in image");
     }
   }
+  m_logger.setSilhouetteTime(m_logger.endTimer());
 
   if (m_odometry) {
     m_logger.startTimer();
     m_odometry->compute(input, m_previousFrame);
+    vpHomogeneousMatrix cMo_beforeOdo = m_cMo;
     vpHomogeneousMatrix cnTc = m_odometry->getCameraMotion();
     m_cMo = cnTc * m_cMo;
-    double beforeReRender = vpTime::measureTimeMs();
-    updateRender(input);
-    m_logger.setOdometryTime(m_logger.endTimer());
-    if (requiresSilhouetteCandidates) {
-      const vpHomogeneousMatrix cTcp = m_cMo * m_cMoPrev.inverse();
-
-      input.silhouettePoints = extractSilhouettePoints(input.renders.normals, input.renders.depth,
-                                                      input.renders.silhouetteCanny, input.renders.isSilhouette, input.cam, cTcp);
-      if (input.silhouettePoints.size() == 0) {
-        throw vpException(vpException::badValue, "Could not extract silhouette from depth canny: Object may not be in image");
-      }
+    bool shouldRerender = true;
+    if (m_convergedMetricThreshold > 0.0 && m_cMo != cMo_beforeOdo) {
+      double adds = m_convergenceMetric.ADDS(m_cMo, cMo_beforeOdo);
+      std::cout << "ADDS = " << adds << std::endl;
+      // Multiply by number of vvs iterations: convergence is tested between two optim iterations,
+      // while we consider that odometry performs a full optim pass wrt to the environment
+      shouldRerender = adds > (m_convergedMetricThreshold * m_vvsIterations);
     }
-    std::cout << "Odometry rerendering took: " << vpTime::measureTimeMs() - beforeReRender << "ms" << std::endl;
+    if (shouldRerender) {
+      std::cout << "Rerendering for odometry" << std::endl;
+      updateRender(input);
+
+      if (requiresSilhouetteCandidates) {
+        const vpHomogeneousMatrix cTcp = m_cMo * m_cMoPrev.inverse();
+        input.silhouettePoints = extractSilhouettePoints(input.renders.normals, input.renders.depth,
+                                                        input.renders.silhouetteCanny, input.renders.isSilhouette, input.cam, cTcp);
+        if (input.silhouettePoints.size() == 0) {
+          throw vpException(vpException::badValue, "Could not extract silhouette from depth canny: Object may not be in image");
+        }
+      }
+
+    }
+    m_logger.setOdometryTime(m_logger.endTimer());
   }
 
 
@@ -315,7 +328,7 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
 
   m_cMoPrev = m_cMo;
   double bestError = std::numeric_limits<double>::max();
-
+  vpHomogeneousMatrix m_cMoPrevIter = m_cMo;
   vpHomogeneousMatrix best_cMo = m_cMo;
   double mu = m_muInit;
   vpColVector firstMotion(6, 0.0);
@@ -386,9 +399,15 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
         std::cerr << "Could not compute pseudo inverse" << std::endl;
       }
       mu *= m_muIterFactor;
+
+      if (iter > 0 && m_convergedMetricThreshold > 0.0 && m_convergenceMetric.ADDS(m_cMoPrevIter, m_cMo) < m_convergedMetricThreshold) {
+        break;
+      }
+
+      m_cMoPrevIter = m_cMo;
     }
     else {
-      return;
+      break;
     }
   }
 
@@ -628,7 +647,7 @@ void vpRBTracker::loadConfiguration(const nlohmann::json &j)
   setOptimizationInitialMu(vvsSettings.value("mu", m_muInit));
   setOptimizationMuIterFactor(vvsSettings.value("muIterFactor", m_muIterFactor));
   setOptimizationMuIterFactor(vvsSettings.value("scaleInvariant", m_scaleInvariantOptim));
-
+  m_convergedMetricThreshold = (vvsSettings.value("convergenceMetricThreshold", m_convergedMetricThreshold));
 
   m_depthSilhouetteSettings = j.at("silhouetteExtractionSettings");
 
