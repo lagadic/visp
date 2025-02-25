@@ -74,10 +74,15 @@ using namespace VISP_NAMESPACE_NAME;
 void usage(const char *name, const char *badparam, std::string ipath, std::string ppath, unsigned first,
   unsigned last, unsigned step)
 {
+#if defined(VISP_HAVE_DATASET)
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
   std::string ext("png");
 #else
   std::string ext("pgm");
+#endif
+#else
+  // We suppose that the user will download a recent dataset
+  std::string ext("png");
 #endif
   fprintf(stdout, "\n\
 Tracking of a line.\n\
@@ -215,6 +220,16 @@ int main(int argc, const char **argv)
   vpImage<unsigned char> I;
   vpDisplay *display = nullptr;
   vpVideoReader g;
+#if defined(VISP_HAVE_DATASET)
+#if VISP_HAVE_DATASET_VERSION >= 0x030600
+  std::string ext("png");
+#else
+  std::string ext("pgm");
+#endif
+#else
+  // We suppose that the user will download a recent dataset
+  std::string ext("png");
+#endif
 
   try {
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
@@ -263,12 +278,8 @@ int main(int argc, const char **argv)
 
     vpVideoReader g;
     if (opt_ppath.empty()) {
-  // Set the path location of the image sequence
-#if VISP_HAVE_DATASET_VERSION >= 0x030600
-      videoname = vpIoTools::createFilePath(ipath, "line/image.%04d.png");
-#else
-      videoname = vpIoTools::createFilePath(ipath, "line/image.%04d.pgm");
-#endif
+      // Set the path location of the image sequence
+      videoname = vpIoTools::createFilePath(ipath, "line/image.%04d." + ext);
       g.setFileName(videoname);
     }
     else {

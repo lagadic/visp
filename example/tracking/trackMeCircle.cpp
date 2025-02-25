@@ -76,10 +76,15 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_all
 */
 void usage(const char *name, const char *badparam, std::string ipath)
 {
+#if defined(VISP_HAVE_DATASET)
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
   std::string ext("png");
 #else
   std::string ext("pgm");
+#endif
+#else
+  // We suppose that the user will download a recent dataset
+  std::string ext("png");
 #endif
   fprintf(stdout, "\n\
 Test auto detection of dots using vpDot2.\n\
@@ -176,10 +181,15 @@ int main(int argc, const char **argv)
     bool opt_click_allowed = true;
     bool opt_display = true;
 
+#if defined(VISP_HAVE_DATASET)
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
     std::string ext("png");
 #else
     std::string ext("pgm");
+#endif
+#else
+    // We suppose that the user will download a recent dataset
+    std::string ext("png");
 #endif
 
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH

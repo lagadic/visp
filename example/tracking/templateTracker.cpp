@@ -125,10 +125,15 @@ typedef enum
 void usage(const char *name, const char *badparam, const WarpType &warp_type, TrackerType &tracker_type,
            const long &last_frame, const double &residual_threhold)
 {
+#if defined(VISP_HAVE_DATASET)
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
   std::string ext("png");
 #else
   std::string ext("pgm");
+#endif
+#else
+  // We suppose that the user will download a recent dataset
+  std::string ext("png");
 #endif
 
   fprintf(stdout, "\n\
@@ -350,10 +355,15 @@ int main(int argc, const char **argv)
     std::string opath = "C:\\temp";
 #endif
 
+#if defined(VISP_HAVE_DATASET)
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
     std::string ext("png");
 #else
     std::string ext("pgm");
+#endif
+#else
+    // We suppose that the user will download a recent dataset
+    std::string ext("png");
 #endif
 
     // Get the user login name

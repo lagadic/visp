@@ -71,10 +71,15 @@ using namespace VISP_NAMESPACE_NAME;
 */
 void usage(const char *name, const char *badparam, std::string ipath, std::string ppath)
 {
+#if defined(VISP_HAVE_DATASET)
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
   std::string ext("png");
 #else
   std::string ext("pgm");
+#endif
+#else
+    // We suppose that the user will download a recent dataset
+  std::string ext("png");
 #endif
 
   fprintf(stdout, "\n\
@@ -496,11 +501,17 @@ void computeInitialPose(vpCameraParameters *mcam, vpImage<unsigned char> &I, vpP
 
 int main(int argc, const char **argv)
 {
+#if defined(VISP_HAVE_DATASET)
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
   std::string ext("png");
 #else
   std::string ext("pgm");
 #endif
+#else
+    // We suppose that the user will download a recent dataset
+  std::string ext("png");
+#endif
+
   try {
     std::string env_ipath;
     std::string opt_ipath;
@@ -711,5 +722,5 @@ int main()
   std::cout << "- Install Ogre3D, configure again ViSP using cmake and build again this example" << std::endl;
 #endif
   return EXIT_SUCCESS;
-}
+  }
 #endif

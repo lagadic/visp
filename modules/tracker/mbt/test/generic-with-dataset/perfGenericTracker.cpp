@@ -63,10 +63,15 @@ bool read_data(const std::string &input_directory, int cpt, const vpCameraParame
 {
   static_assert(std::is_same<Type, unsigned char>::value || std::is_same<Type, vpRGBa>::value,
                 "Template function supports only unsigned char and vpRGBa images!");
+#if defined(VISP_HAVE_DATASET)
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
   std::string ext("png");
 #else
   std::string ext("pgm");
+#endif
+#else
+  // We suppose that the user will download a recent dataset
+  std::string ext("png");
 #endif
   char buffer[FILENAME_MAX];
   snprintf(buffer, FILENAME_MAX, std::string(input_directory + "/Images/Image_%04d." + ext).c_str(), cpt);
@@ -410,9 +415,9 @@ TEST_CASE("Benchmark generic tracker", "[benchmark]")
         const double max_rotation_error = 0.03;
         CHECK(sqrt(t_err.sumSquare()) < max_translation_error);
         CHECK(sqrt(tu_err.sumSquare()) < max_rotation_error);
+      }
     }
-  }
-} // if (runBenchmark)
+  } // if (runBenchmark)
 }
 
 int main(int argc, char *argv[])

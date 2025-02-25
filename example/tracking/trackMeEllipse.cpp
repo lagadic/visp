@@ -76,10 +76,15 @@ using namespace VISP_NAMESPACE_NAME;
 void usage(const char *name, const char *badparam, const std::string &video_in_ipath, const std::string &video_in_ppath,
            unsigned video_in_first, int video_in_last, int video_in_step, int me_range, int me_sample_step, int me_threshold)
 {
+#if defined(VISP_HAVE_DATASET)
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
   std::string ext("png");
 #else
   std::string ext("pgm");
+#endif
+#else
+  // We suppose that the user will download a recent dataset
+  std::string ext("png");
 #endif
   fprintf(stdout, "\n\
 Example of ellipse/circle or arc of ellipse/circle tracking using vpMeEllipse.\n\
@@ -303,6 +308,17 @@ int main(int argc, const char **argv)
   vpDisplay *display = nullptr;
   vpVideoReader g;
 
+#if defined(VISP_HAVE_DATASET)
+#if VISP_HAVE_DATASET_VERSION >= 0x030600
+  std::string ext("png");
+#else
+  std::string ext("pgm");
+#endif
+#else
+  // We suppose that the user will download a recent dataset
+  std::string ext("png");
+#endif
+
   try {
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
     // environment variable value
@@ -361,11 +377,7 @@ int main(int argc, const char **argv)
 
     if (opt_ppath.empty()) {
       // Set the path location of the image sequence
-#if VISP_HAVE_DATASET_VERSION >= 0x030600
-      videoname = vpIoTools::createFilePath(ipath, "ellipse-1/image.%04d.png");
-#else
-      videoname = vpIoTools::createFilePath(ipath, "ellipse-1/image.%04d.pgm");
-#endif
+      videoname = vpIoTools::createFilePath(ipath, "ellipse-1/image.%04d." + ext);
       g.setFileName(videoname);
     }
     else {
