@@ -86,7 +86,7 @@ public:
 
   static std::string vpWecoRulesAlarmToString(const vpWecoRulesAlarm &alarm);
 
-  static const bool CONST_ALL_WECO_ACTIVATED[];
+  static const std::vector<bool> CONST_ALL_WECO_ACTIVATED;
   static const unsigned int NB_DATA_SIGNAL = 8;
 
 protected:
@@ -94,7 +94,7 @@ protected:
   float m_signal[NB_DATA_SIGNAL]; /*!< The last values of the signal.*/
   bool m_activateWECOrules; /*!< If true, activate the WECO's rules (NB: it increases the sensitivity of the Shewhart
                                  control chart but the false alarm frequency is also increased.)*/
-  bool m_activatedWECOrules[COUNT_WECO - 1]; /*!< The WECO's rules that are activated. The more are activated, the higher the
+  std::vector<bool> m_activatedWECOrules; /*!< The WECO's rules that are activated. The more are activated, the higher the
                                               sensitivity of the Shewhart control chart is but the higher the false
                                               alarm frequency is.*/
   unsigned int m_idCurrentData; /*!< The index of the current data in m_signal.*/
@@ -171,7 +171,7 @@ public:
    * that it is not.
    * \param[in] nbSamplesForStats The number of samples to compute the statistics of the signal.
    */
-  vpStatisticalTestShewhart(const bool &activateWECOrules = true, const bool activatedRules[COUNT_WECO - 1] = CONST_ALL_WECO_ACTIVATED, const unsigned int &nbSamplesForStats = 30);
+  vpStatisticalTestShewhart(const bool &activateWECOrules = true, const std::vector<bool> &activatedRules = CONST_ALL_WECO_ACTIVATED, const unsigned int &nbSamplesForStats = 30);
 
   /**
    * \brief Construct a new vpStatisticalTestShewhart object.
@@ -183,7 +183,7 @@ public:
    * \param[in] mean The expected mean of the signal.
    * \param[in] stdev The expected standard deviation of the signal.
    */
-  vpStatisticalTestShewhart(const bool &activateWECOrules, const bool activatedRules[COUNT_WECO - 1], const float &mean, const float &stdev);
+  vpStatisticalTestShewhart(const bool &activateWECOrules, const std::vector<bool> &activatedRules, const float &mean, const float &stdev);
 
   /**
    * \brief Get the alarm raised by the last test due to the WECO's rules.
@@ -225,7 +225,7 @@ public:
    * that it is not.
    * \param[in] nbSamplesForStats The number of samples to compute the statistics of the signal.
    */
-  void init(const bool &activateWECOrules, const bool activatedRules[COUNT_WECO - 1] = CONST_ALL_WECO_ACTIVATED, const unsigned int &nbSamplesForStats = 30);
+  void init(const bool &activateWECOrules, const std::vector<bool> &activatedRules = CONST_ALL_WECO_ACTIVATED, const unsigned int &nbSamplesForStats = 30);
 
   /**
    * \brief (Re)Initialize the test.
@@ -237,7 +237,7 @@ public:
    * \param[in] mean The expected mean of the signal.
    * \param[in] stdev The expected standard deviation of the signal.
    */
-  void init(const bool &activateWECOrules, const bool activatedRules[COUNT_WECO - 1], const float &mean, const float &stdev);
+  void init(const bool &activateWECOrules, const std::vector<bool> &activatedRules, const float &mean, const float &stdev);
 };
 END_VISP_NAMESPACE
 #endif
