@@ -58,6 +58,7 @@
 #endif
 
 BEGIN_VISP_NAMESPACE
+
 /**
  * @brief A tracker based on dense depth point-plane alignment.
  *
@@ -68,7 +69,16 @@ class VISP_EXPORT vpRBDenseDepthTracker : public vpRBFeatureTracker
 {
 public:
 
-  vpRBDenseDepthTracker() : vpRBFeatureTracker(), m_step(2), m_useMask(false), m_minMaskConfidence(0.f) { }
+  enum vpDisplayType
+  {
+    SIMPLE = 0,
+    WEIGHT = 1,
+    ERROR = 2,
+    WEIGHT_AND_ERROR = 3,
+    INVALID = 4
+  };
+
+  vpRBDenseDepthTracker() : vpRBFeatureTracker(), m_step(2), m_useMask(false), m_minMaskConfidence(0.f), m_displayType(vpDisplayType::SIMPLE) { }
 
   virtual ~vpRBDenseDepthTracker() = default;
 
@@ -108,6 +118,16 @@ public:
       throw vpException(vpException::badValue, "Mask confidence should be between 0 and 1");
     }
     m_minMaskConfidence = confidence;
+  }
+
+  vpDisplayType getDisplayType() const { return m_displayType; }
+
+  void setDisplayType(vpDisplayType type)
+  {
+    if (type == INVALID) {
+      throw vpException(vpException::badValue, "Depth tracker display type is invalid");
+    }
+    m_displayType = type;
   }
 
   /**
@@ -178,12 +198,22 @@ public:
   };
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
+
+  NLOHMANN_JSON_SERIALIZE_ENUM(vpRBDenseDepthTracker::vpDisplayType, {
+      {vpRBDenseDepthTracker::vpDisplayType::INVALID, nullptr},
+      {vpRBDenseDepthTracker::vpDisplayType::SIMPLE, "simple"},
+      {vpRBDenseDepthTracker::vpDisplayType::WEIGHT, "weight"},
+      {vpRBDenseDepthTracker::vpDisplayType::ERROR, "error"},
+      {vpRBDenseDepthTracker::vpDisplayType::WEIGHT_AND_ERROR, "weightAndError"}
+    });
+
   virtual void loadJsonConfiguration(const nlohmann::json &j) VP_OVERRIDE
   {
     vpRBFeatureTracker::loadJsonConfiguration(j);
     setStep(j.value("step", m_step));
     setShouldUseMask(j.value("useMask", m_useMask));
     setMinimumMaskConfidence(j.value("minMaskConfidence", m_minMaskConfidence));
+    setDisplayType(j.value("displayType", m_displayType));
   }
 
 #endif
@@ -195,6 +225,7 @@ protected:
   unsigned int m_step;
   bool m_useMask;
   float m_minMaskConfidence;
+  vpDisplayType m_displayType;
 };
 
 END_VISP_NAMESPACE

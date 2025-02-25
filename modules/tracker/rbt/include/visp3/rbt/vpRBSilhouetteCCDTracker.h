@@ -62,13 +62,7 @@
 BEGIN_VISP_NAMESPACE
 
 
-enum vpRBSilhouetteCCDDisplayType
-{
-  SIMPLE = 0,
-  WEIGHT = 1,
-  ERROR = 2,
-  INVALID = 3
-};
+
 
 class VISP_EXPORT vpCCDParameters
 {
@@ -203,6 +197,15 @@ class VISP_EXPORT vpRBSilhouetteCCDTracker : public vpRBFeatureTracker
 {
 public:
 
+  enum vpDisplayType
+  {
+    SIMPLE = 0,
+    WEIGHT = 1,
+    ERROR = 2,
+    WEIGHT_AND_ERROR = 3,
+    INVALID = 4
+  };
+
   vpRBSilhouetteCCDTracker();
   virtual ~vpRBSilhouetteCCDTracker() = default;
 
@@ -259,8 +262,11 @@ public:
     m_minMaskConfidence = confidence;
   }
 
-  void setDisplayType(vpRBSilhouetteCCDDisplayType type)
+  void setDisplayType(vpDisplayType type)
   {
+    if (type == INVALID) {
+      throw vpException(vpException::badValue, "CCD tracker display type is invalid");
+    }
     m_displayType = type;
   }
 
@@ -288,6 +294,13 @@ public:
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth) const VP_OVERRIDE;
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
+  NLOHMANN_JSON_SERIALIZE_ENUM(vpRBSilhouetteCCDTracker::vpDisplayType, {
+        {vpRBSilhouetteCCDTracker::vpDisplayType::INVALID, nullptr},
+        {vpRBSilhouetteCCDTracker::vpDisplayType::SIMPLE, "simple"},
+        {vpRBSilhouetteCCDTracker::vpDisplayType::WEIGHT, "weight"},
+        {vpRBSilhouetteCCDTracker::vpDisplayType::ERROR, "error"},
+        {vpRBSilhouetteCCDTracker::vpDisplayType::WEIGHT_AND_ERROR, "weightAndError"}
+      });
   virtual void loadJsonConfiguration(const nlohmann::json &j) VP_OVERRIDE
   {
     vpRBFeatureTracker::loadJsonConfiguration(j);
@@ -296,7 +309,7 @@ public:
     setTemporalSmoothingFactor(j.value("temporalSmoothing", m_temporalSmoothingFac));
     setShouldUseMask(j.value("useMask", m_useMask));
     setMinimumMaskConfidence(j.value("minMaskConfidence", m_minMaskConfidence));
-
+    setDisplayType(j.value("displayType", m_displayType));
     m_ccdParameters = j.value("ccd", m_ccdParameters);
   }
 
@@ -334,7 +347,7 @@ protected:
   bool m_useMask;
   double m_minMaskConfidence;
 
-  vpRBSilhouetteCCDDisplayType m_displayType;
+  vpDisplayType m_displayType;
   const vpRBFeatureTrackerInput *m_previousFrame;
 };
 

@@ -22,13 +22,29 @@ public:
     m_maxDepthError = maxDepthErrorVisibility;
     m_outlierThreshold = outlierThreshold;
   }
-
+  /**
+   * \name Settings
+   *
+   * @{
+  */
+  unsigned int getNumMaxPoints() const { return m_maxPoints; }
   void setNumMaxPoints(unsigned int maxNumPoints)
   {
     m_maxPoints = maxNumPoints;
   }
 
-  unsigned int getNumMaxPoints() const { return m_maxPoints; }
+  double getMinDistanceAddNewPoints() const { return m_minDistNewPoint; }
+  void setMinDistanceAddNewPoints(double distance) { m_minDistNewPoint = distance; }
+
+  double getMaxDepthErrorVisibilityCriterion() const { return m_maxDepthError; }
+  void setMaxDepthErrorVisibilityCriterion(double depthError) { m_maxDepthError = depthError; }
+
+  double getOutlierReprojectionErrorThreshold() const { return m_outlierThreshold; }
+  void setOutlierReprojectionErrorThreshold(double thresholdPx) { m_outlierThreshold = thresholdPx; }
+
+  /**
+   * @}
+  */
 
   const vpMatrix &getPoints() { return m_X; }
   void setPoints(const vpMatrix &X) { m_X = X; }

@@ -141,7 +141,8 @@ public:
 
 };
 
-vpRBSilhouetteCCDTracker::vpRBSilhouetteCCDTracker() : vpRBFeatureTracker(), m_vvsConvergenceThreshold(0.0), m_temporalSmoothingFac(0.1), m_useMask(false), m_minMaskConfidence(0.0), m_displayType(vpRBSilhouetteCCDDisplayType::SIMPLE)
+vpRBSilhouetteCCDTracker::vpRBSilhouetteCCDTracker() : vpRBFeatureTracker(), m_vvsConvergenceThreshold(0.0),
+m_temporalSmoothingFac(0.0), m_useMask(false), m_minMaskConfidence(0.0), m_displayType(SIMPLE)
 { }
 
 void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput & /*previousFrame*/, const vpHomogeneousMatrix &/*cMo*/)
@@ -157,7 +158,9 @@ void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &fr
     // std::cout << sp.j << ", " << sp.i << std::endl;
     int ii = sp.i, jj = sp.j;
 
-    if (ii <= m_ccdParameters.h || jj <= m_ccdParameters.h || static_cast<unsigned int>(ii) >= frame.I.getHeight() - m_ccdParameters.h || static_cast<unsigned int>(jj) >= frame.I.getWidth() - m_ccdParameters.h) {
+    if (ii <= m_ccdParameters.h || jj <= m_ccdParameters.h ||
+      static_cast<unsigned int>(ii) >= frame.I.getHeight() - m_ccdParameters.h ||
+      static_cast<unsigned int>(jj) >= frame.I.getWidth() - m_ccdParameters.h) {
       continue;
     }
     vpRBSilhouetteControlPoint pccd;
@@ -315,18 +318,14 @@ void vpRBSilhouetteCCDTracker::display(const vpCameraParameters &/*cam*/, const 
 {
   unsigned normal_points_number = floor(m_ccdParameters.h / m_ccdParameters.delta_h);
   unsigned nerror_per_point = 2 * normal_points_number * 3;
-  if (m_displayType == vpRBSilhouetteCCDDisplayType::SIMPLE) {
+  if (m_displayType == SIMPLE) {
 
     for (unsigned int i = 0; i < m_controlPoints.size(); ++i) {
       const vpRBSilhouetteControlPoint &p = m_controlPoints[i];
-      vpDisplay::displayCross(IRGB, p.icpoint.get_i(), p.icpoint.get_j(), 3, vpColor::green, 1);
-      vpImagePoint diff(m_stats.nv[i][1] * m_ccdParameters.h, m_stats.nv[i][0] * m_ccdParameters.h);
-
-      // vpImagePoint ip2 = p.icpoint + diff;
-      // vpDisplay::displayArrow(IRGB, p.icpoint, ip2, p.invnormal ? vpColor::red : vpColor::lightBlue);
+      vpDisplay::displayPoint(IRGB, p.icpoint.get_i(), p.icpoint.get_j(), vpColor::purple, 1);
     }
   }
-  else if (m_displayType == vpRBSilhouetteCCDDisplayType::ERROR) {
+  else if (m_displayType == ERROR) {
     vpColVector errorPerPoint(m_controlPoints.size());
     double maxPointError = 0.0;
     for (unsigned int i = 0; i < m_controlPoints.size(); ++i) {
@@ -357,7 +356,7 @@ void vpRBSilhouetteCCDTracker::display(const vpCameraParameters &/*cam*/, const 
       ++idx;
     }
   }
-  else if (m_displayType == vpRBSilhouetteCCDDisplayType::WEIGHT) {
+  else if (m_displayType == WEIGHT) {
     vpColVector weightPerPoint(m_controlPoints.size());
     for (unsigned int i = 0; i < m_controlPoints.size(); ++i) {
       double sum = 0.0;
@@ -377,6 +376,36 @@ void vpRBSilhouetteCCDTracker::display(const vpCameraParameters &/*cam*/, const 
       c.B = 0;
 
       vpDisplay::displayCross(IRGB, p.icpoint.get_i(), p.icpoint.get_j(), 3, c, 1);
+      idx++;
+    }
+  }
+  else if (m_displayType == WEIGHT_AND_ERROR) {
+    vpColVector weightPerPoint(m_controlPoints.size());
+    vpColVector errorPerPoint(m_controlPoints.size());
+    for (unsigned int i = 0; i < m_controlPoints.size(); ++i) {
+      double sum = 0.0;
+      double sumError = 0.0;
+      for (unsigned int j = 0; j < nerror_per_point; ++j) {
+        sum += m_weights[i * nerror_per_point + j];
+        sumError += m_error[i * nerror_per_point + j];
+      }
+      weightPerPoint[i] = sum / nerror_per_point;
+      errorPerPoint[i] = sumError / nerror_per_point;
+
+    }
+    double maxError = errorPerPoint.getMaxValue();
+    unsigned idx = 0;
+    for (const vpRBSilhouetteControlPoint &p : m_controlPoints) {
+      vpColor c;
+      c.R = static_cast<unsigned char>((errorPerPoint[idx] / maxError) * 255.0);
+      c.G = static_cast<unsigned char>(255.0 * weightPerPoint[idx]);
+      c.B = 0;
+      vpImagePoint diff(m_stats.nv[idx][1] * m_ccdParameters.h, m_stats.nv[idx][0] * m_ccdParameters.h);
+      vpImagePoint ip1 = p.icpoint - diff;
+      vpImagePoint ip2 = p.icpoint + diff;
+
+      vpDisplay::displayLine(IRGB, ip1, ip2, c, 1);
+        // vpDisplay::displayCross(IRGB, p.icpoint.get_i(), p.icpoint.get_j(), 3, c, 1);
       idx++;
     }
   }

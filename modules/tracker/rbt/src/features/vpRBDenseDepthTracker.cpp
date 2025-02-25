@@ -156,12 +156,43 @@ void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &/*fram
 void vpRBDenseDepthTracker::display(const vpCameraParameters &/*cam*/, const vpImage<unsigned char> &/*I*/,
                                     const vpImage<vpRGBa> &/*IRGB*/, const vpImage<unsigned char> &depth) const
 {
-  for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
-    const vpDepthPoint &p = m_depthPoints[i];
-    vpColor c(0, static_cast<unsigned char>(m_weights[i] * 255), 0);
-    vpDisplay::displayPoint(depth, p.pixelPos, c, 2);
+  switch (m_displayType) {
+  case SIMPLE:
+  {
+    for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
+      vpColor c(0, 255, 0);
+      vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos, c, 2);
+    }
+    break;
   }
-
+  case WEIGHT:
+  {
+    for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
+      vpColor c(0, static_cast<unsigned char>(m_weights[i] * 255), 0);
+      vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos, c, 2);
+    }
+    break;
+  }
+  case ERROR:
+  {
+    for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
+      vpColor c(m_error[i], 0, 0);
+      vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos, c, 2);
+    }
+    break;
+  }
+  case WEIGHT_AND_ERROR:
+  {
+    double maxError = m_error.getMaxValue();
+    for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
+      vpColor c(static_cast<unsigned int>((m_error[i] / maxError) * 255.0), static_cast<unsigned char>(m_weights[i] * 255), 0);
+      vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos, c, 2);
+    }
+    break;
+  }
+  default:
+    throw vpException(vpException::notImplementedError, "Depth tracker display type is invalid or not implemented");
+  }
 }
 
 END_VISP_NAMESPACE
