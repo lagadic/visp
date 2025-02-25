@@ -375,7 +375,7 @@ C:\> setx QUALISYS_DIR "%VISP_WS%\Program Files\qualisys_cpp_sdk"
 C:\> exit
 \endverbatim
 - You have also to add the location of Qualisys Datastream SDK libraries corresponding in the Path environment variable.
-Open the "Edit environment variable" UI, and modify Path to add a new line with `%VISP_WS%\qualisys_cpp_sdk\lib`.
+  Open the "Edit environment variable" UI, and modify Path to add a new line with `%%VISP_WS%\qualisys_cpp_sdk\lib`.
 
 <b>4.1.10.3. Known issue</b>
 
@@ -434,7 +434,7 @@ C:\> setx VICON_DIR "%VISP_WS%\Program Files\Vicon\DataStream SDK\Win64\CPP"
 C:\> exit
 \endverbatim
 - You have also to add the location of Vicon Datastream SDK libraries corresponding in the Path environment variable.
-Open the "Edit environment variable" UI, and modify Path to add a new line with `%VISP_WS%\Program Files\Vicon\DataStream SDK\Win64\CPP`.
+  Open the "Edit environment variable" UI, and modify Path to add a new line with `%%VISP_WS%\Program Files\Vicon\DataStream SDK\Win64\CPP`.
 
 \subsection install_win10_msvc17_get_source 4.2. Get ViSP source code
 

@@ -12,3 +12,6 @@ modules/java/\.idea/
 build
 *.blend1
 **/results/**
+samples/android/.gradle/
+samples/android/.idea/
+samples/android/local.properties

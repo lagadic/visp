@@ -698,18 +698,19 @@ class JavaWrapperGenerator(object):
 
             # Add 3rd party specific tags
             # If Lapack, Eigen3 or OpenCV are missing, don't include them to prevent compilation error
-            if fi.name in ['detByLULapack', 'svdLapack', 'inverseByLULapack', 'pseudoInverseLapack', 'inverseByLapack', 'inverseByCholeskyLapack', 'inverseByQRLapack']:
+            if re.search("Lapack", fi.name, re.IGNORECASE):
                 c_prologue.append('#if defined(VISP_HAVE_LAPACK)')
 
-            if fi.name in ['detByLUEigen3', 'svdEigen3', 'inverseByLUEigen3', 'pseudoInverseEigen3', 'inverseByEigen3']:
+            if re.search("Eigen3", fi.name, re.IGNORECASE):
                 c_prologue.append('#if defined(VISP_HAVE_EIGEN3)')
 
-            if fi.name in ['detByLUOpenCV', 'svdOpenCV', 'inverseByLUOpenCV', 'pseudoInverseOpenCV', 'inverseByOpenCV', 'inverseByCholeskyOpenCV']:
-                c_prologue.append('#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)')
+            if re.search("OpenCV", fi.name, re.IGNORECASE):
+                c_prologue.append('#if defined (VISP_HAVE_OPENCV)')
 
-            if fi.name in ['detByLUGsl', 'svdGsl', 'inverseByLUGsl', 'pseudoInverseGsl', 'inverseByGsl', 'inverseByCholeskyGsl', 'inverseByQRGsl']:
+            if re.search("Gsl", fi.name, re.IGNORECASE):
                 c_prologue.append('#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS) && defined(VISP_HAVE_LAPACK)')
-            if fi.name in ['from_json', 'to_json', 'loadConfigFileJSON', 'saveConfigFile']:
+
+            if re.search("json", fi.name, re.IGNORECASE) or fi.name in ['saveConfigFile']:
                 c_prologue.append('#if defined(VISP_HAVE_NLOHMANN_JSON)')
 
 
@@ -993,18 +994,19 @@ class JavaWrapperGenerator(object):
 
             # Add 3rd party specific tags
             # If Lapack, Eigen3 or OpenCV are missing, don't include them to prevent compilation error
-            if fi.name in ['detByLULapack', 'svdLapack', 'inverseByLULapack', 'pseudoInverseLapack', 'inverseByLapack', 'inverseByCholeskyLapack', 'inverseByQRLapack']:
+            if re.search("Lapack", fi.name, re.IGNORECASE):
                 ret += '\n    #endif'
 
-            if fi.name in ['detByLUEigen3', 'svdEigen3', 'inverseByLUEigen3', 'pseudoInverseEigen3', 'inverseByEigen3']:
+            if re.search("Eigen3", fi.name, re.IGNORECASE):
                 ret += '\n    #endif'
 
-            if fi.name in ['detByLUOpenCV', 'svdOpenCV', 'inverseByLUOpenCV', 'pseudoInverseOpenCV', 'inverseByOpenCV', 'inverseByCholeskyOpenCV']:
+            if re.search("OpenCV", fi.name, re.IGNORECASE):
                 ret += '\n    #endif'
 
-            if fi.name in ['detByLUGsl', 'svdGsl', 'inverseByLUGsl', 'pseudoInverseGsl', 'inverseByGsl', 'inverseByCholeskyGsl', 'inverseByQRGsl']:
+            if re.search("Gsl", fi.name, re.IGNORECASE):
                 ret += '\n    #endif'
-            if fi.name in ['from_json', 'to_json', 'loadConfigFileJSON', 'saveConfigFile']:
+
+            if re.search("json", fi.name, re.IGNORECASE) or fi.name in ['saveConfigFile']:
                 ret += '\n    #endif'
 
             rtype = type_dict[fi.ctype].get("jni_type", "jdoubleArray")

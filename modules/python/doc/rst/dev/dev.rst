@@ -94,8 +94,8 @@ If you have this error:
 
   error: invalid new-expression of abstract class type ‘vpTemplateTrackerMI’
   return new Class{std::forward<Args>(args)...};
-  In file included from /home/visp_ws/visp_build/modules/python/bindings/src/tt_mi.cpp:13:0:
-  /home/visp_ws/visp/modules/tracker/tt_mi/include/visp3/tt_mi/vpTemplateTrackerMI.h:46:19: note:   because the following virtual functions are pure within ‘vpTemplateTrackerMI’:
+  In file included from $VISP_WS/visp-build/modules/python/bindings/src/tt_mi.cpp:13:0:
+  $VISP_WS/visp/modules/tracker/tt_mi/include/visp3/tt_mi/vpTemplateTrackerMI.h:46:19: note:   because the following virtual functions are pure within ‘vpTemplateTrackerMI’:
   class VISP_EXPORT vpTemplateTrackerMI : public vpTemplateTracker
 
 You should define the class (here vpTemplaterMI) as pure virtual in the config file (via the flag is_virtual).

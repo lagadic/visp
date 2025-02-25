@@ -183,10 +183,10 @@ std::string boolToString(const bool &boolean)
  * \param[in] sep The separator character(s).
  * \return std::string The corresponding string.
  */
-std::string wecoRulesToString(const bool rules[vpStatisticalTestShewhart::COUNT_WECO - 1], const std::string &prefix = "[", const std::string &suffix = "]", const std::string &sep = " , ")
+std::string wecoRulesToString(const std::vector<bool> &rules, const std::string &prefix = "[", const std::string &suffix = "]", const std::string &sep = " , ")
 {
   std::string rulesAsString = prefix;
-  for (unsigned int i = 0; i < vpStatisticalTestShewhart::COUNT_WECO - 2; ++i) {
+  for (unsigned int i = 0; i < rules.size() - 1; ++i) {
     if (rules[i]) {
       rulesAsString += "ON";
     }
@@ -195,7 +195,7 @@ std::string wecoRulesToString(const bool rules[vpStatisticalTestShewhart::COUNT_
     }
     rulesAsString += sep;
   }
-  if (rules[vpStatisticalTestShewhart::COUNT_WECO - 2]) {
+  if (rules[rules.size() - 1]) {
     rulesAsString += "ON";
   }
   else {
@@ -325,7 +325,7 @@ typedef struct ParametersForAlgo
   float m_hinkley_h; /*!< Alarm factor permitting to compute alpha from the standard deviation of the signal.*/
   float m_hinkley_k; /*!< Detection factor permitting to compute delta from the standard deviation of the signal.*/
   bool m_shewhart_useWECO; /*!< If true, use the WECO rules for additional subtests for Shewhart's test.*/
-  bool m_shewhart_rules[vpStatisticalTestShewhart::COUNT_WECO - 1]; /*!< Rules for the Shewart's test. True activate a WECO rule, false deactivate it.*/
+  std::vector<bool> m_shewhart_rules; /*!< Rules for the Shewart's test. True activate a WECO rule, false deactivate it.*/
   float m_sigma_h; /*!< Alarm factor for the sigma test.*/
 
   ParametersForAlgo()
@@ -341,7 +341,7 @@ typedef struct ParametersForAlgo
     , m_shewhart_useWECO(false)
     , m_sigma_h(3.f)
   {
-    std::memcpy(m_shewhart_rules, vpStatisticalTestShewhart::CONST_ALL_WECO_ACTIVATED, (vpStatisticalTestShewhart::COUNT_WECO - 1) * sizeof(bool));
+    m_shewhart_rules = vpStatisticalTestShewhart::CONST_ALL_WECO_ACTIVATED;
     memcpy(m_test_activatedalarms, CONST_ALL_ALARM_ON, vpStatisticalTestAbstract::MEAN_DRIFT_COUNT * sizeof(bool));
     m_test_activatedalarms[vpStatisticalTestAbstract::MEAN_DRIFT_NONE] = false;
     m_test_nbactivatedalarms = meanDriftArrayToNbActivated(m_test_activatedalarms);

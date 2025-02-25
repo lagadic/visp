@@ -145,7 +145,9 @@ int main(int argc, const char **argv)
     std::cout << "Catch an exception: " << e << std::endl;
   }
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-  vpDisplay *display = nullptr;
+  if (display != nullptr) {
+    delete display;
+  }
 #endif
 }
 
