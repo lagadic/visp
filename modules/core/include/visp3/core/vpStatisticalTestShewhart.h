@@ -86,7 +86,11 @@ public:
 
   static std::string vpWecoRulesAlarmToString(const vpWecoRulesAlarm &alarm);
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
+  static inline const std::vector<bool> CONST_ALL_WECO_ACTIVATED = std::vector<bool>(COUNT_WECO -1, true);
+#else
   static const std::vector<bool> CONST_ALL_WECO_ACTIVATED;
+#endif
   static const unsigned int NB_DATA_SIGNAL = 8;
 
 protected:

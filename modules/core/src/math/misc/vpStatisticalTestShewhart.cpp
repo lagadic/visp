@@ -47,7 +47,9 @@
 BEGIN_VISP_NAMESPACE
 const unsigned int vpStatisticalTestShewhart::NB_DATA_SIGNAL;
 
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_17)
 const std::vector<bool> vpStatisticalTestShewhart::CONST_ALL_WECO_ACTIVATED = std::vector<bool>(vpStatisticalTestShewhart::COUNT_WECO -1, true);
+#endif
 
 std::string vpStatisticalTestShewhart::vpWecoRulesAlarmToString(const vpStatisticalTestShewhart::vpWecoRulesAlarm &alarm)
 {
