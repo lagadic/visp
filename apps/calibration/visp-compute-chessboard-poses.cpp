@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,50 +82,61 @@ void calcChessboardCorners(int width, int height, double squareSize, std::vector
 void usage(const char **argv, int error)
 {
   std::cout << "Synopsis" << std::endl
-    << "  " << argv[0] << " [-w <chessboard width>] [-h <chessboard height>]"
-    << " [--square-size <square size in meter>]"
-    << " [--input <input images path>]"
-    << " [--intrinsic <Camera intrinsic parameters xml file>]"
-    << " [--camera-name <Camera name in the xml intrinsic file>]"
-    << " [--output <camera pose files>]"
+    << "  " << argv[0] << " [-w <width>] [-h <height>]"
+    << " [--square-size <size>]"
+    << " [--input <images filename>]"
+    << " [--intrinsic <xml file>]"
+    << " [--camera-name <name>]"
+    << " [--output <poses filename>]"
     << " [--help, -h]" << std::endl
     << std::endl;
   std::cout << "Description" << std::endl
-    << "  -w <chessboard width>  Chessboard width." << std::endl
+    << "  Compute the pose of a a chessboard in a sequence of images." << std::endl
+    << std::endl
+    << "  -w <width>" << std::endl
+    << "    Chessboard width." << std::endl
     << "    Default: 9" << std::endl
     << std::endl
-    << "  -h <chessboard height>  Chessboard height." << std::endl
+    << "  -h <height>" << std::endl
+    << "    Chessboard height." << std::endl
     << "    Default: 6" << std::endl
     << std::endl
-    << "  --square-size <square size in meter>  Chessboard square size in [m]." << std::endl
+    << "  --square-size <size>" << std::endl
+    << "    Chessboard square size in [m]." << std::endl
     << "    Default: 0.03" << std::endl
     << std::endl
-    << "  --input <input images path>  Generic name of the images to process." << std::endl
+    << "  --input <images filename>" << std::endl
+    << "    Generic name of the images to process." << std::endl
     << "    Default: empty" << std::endl
     << "    Example: \"image-%d.jpg\"" << std::endl
     << std::endl
-    << "  --intrinsic <Camera intrinsic parameters xml file>  XML file that contains" << std::endl
-    << "    camera parameters. " << std::endl
+    << "  --intrinsic <xml file>" << std::endl
+    << "    XML file that contains camera intrinsic parameters. " << std::endl
     << "    Default: \"camera.xml\"" << std::endl
     << std::endl
-    << "  --camera-name <Camera name in the xml intrinsic file>  Camera name in the XML file." << std::endl
+    << "  --camera-name <name>" << std::endl
+    << "    Camera name in the XML file that contains camera intrinsic parameters." << std::endl
     << "    Default: \"Camera\"" << std::endl
     << std::endl
-    << "  --output <camera pose files>  Generic name of the yaml files that contains the camera poses."
-    << std::endl
+    << "  --output <poses filename>" << std::endl
+    << "    Generic name of the yaml files that contains the resulting tag poses." << std::endl
     << "    Default: \"pose_cPo_%d.yaml\"" << std::endl
     << std::endl
 #if defined(VISP_HAVE_MODULE_GUI)
-    << "  --no-interactive To compute the chessboard poses without interactive validation by the user." << std::endl
+    << "  --no-interactive" << std::endl
+    << "    To compute the tag poses without interactive validation by the user." << std::endl
     << std::endl
 #endif
-    << "  --help, -h  Print this helper message." << std::endl
+    << "  --help, -h" << std::endl
+    << "    Print this helper message." << std::endl
     << std::endl;
+
   std::cout << "Example" << std::endl
     << "  "
     << argv[0]
     << " --input image-%d.jpg" << std::endl
     << std::endl;
+
   if (error) {
     std::cout << "Error" << std::endl
       << "  "
@@ -201,16 +212,18 @@ int main(int argc, const char **argv)
     reader.open(I);
 
     std::cout << "Parameters:" << std::endl;
-    std::cout << "  Chessboard width             : " << opt_chessboard_width << std::endl;
-    std::cout << "  Chessboard height            : " << opt_chessboard_height << std::endl;
-    std::cout << "  Chessboard square size [m]   : " << opt_chessboard_square_size << std::endl;
-    std::cout << "  Input images location        : " << opt_input_img_files << std::endl;
-    std::cout << "    First frame                : " << reader.getFirstFrameIndex() << std::endl;
-    std::cout << "    Last  frame                : " << reader.getLastFrameIndex() << std::endl;
-    std::cout << "  Camera param file name [.xml]: " << opt_intrinsic_file << std::endl;
-    std::cout << "  Camera name                  : " << opt_camera_name << std::endl;
-    std::cout << "  Output camera poses          : " << opt_output_pose_files << std::endl;
-    std::cout << "  Interactive mode             : " << (opt_interactive ? "yes" : "no") << std::endl << std::endl;
+    std::cout << "  Chessboard" << std::endl;
+    std::cout << "    Width                 : " << opt_chessboard_width << std::endl;
+    std::cout << "    Height                : " << opt_chessboard_height << std::endl;
+    std::cout << "    Square size [m]       : " << opt_chessboard_square_size << std::endl;
+    std::cout << "  Input images location   : " << opt_input_img_files << std::endl;
+    std::cout << "    First frame           : " << reader.getFirstFrameIndex() << std::endl;
+    std::cout << "    Last  frame           : " << reader.getLastFrameIndex() << std::endl;
+    std::cout << "  Camera intrinsics         " << std::endl;
+    std::cout << "    Param file name [.xml]: " << opt_intrinsic_file << std::endl;
+    std::cout << "    Camera name           : " << opt_camera_name << std::endl;
+    std::cout << "  Output camera poses     : " << opt_output_pose_files << std::endl;
+    std::cout << "  Interactive mode        : " << (opt_interactive ? "yes" : "no") << std::endl << std::endl;
 
 #if defined(VISP_HAVE_MODULE_GUI)
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
@@ -226,6 +239,13 @@ int main(int argc, const char **argv)
 #endif
     }
 #endif
+
+    // Create output folder if necessary
+    std::string output_parent = vpIoTools::getParent(opt_output_pose_files);
+    if (!vpIoTools::checkDirectory(output_parent)) {
+      std::cout << "Create output directory: " << output_parent << std::endl;
+      vpIoTools::makeDirectory(output_parent);
+    }
 
     std::vector<vpPoint> corners_pts;
     calcChessboardCorners(opt_chessboard_width, opt_chessboard_height, opt_chessboard_square_size, corners_pts);
@@ -335,32 +355,32 @@ int main(int argc, const char **argv)
         delete display;
       }
 #endif
-      }
-#endif
     }
+#endif
+  }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
   }
 
   return EXIT_SUCCESS;
-  }
+}
 #else
 int main()
 {
 #if !defined(HAVE_OPENCV_IMGPROC)
-  std::cerr << "OpenCV imgproc module is requested to run the calibration." << std::endl;
+  std::cerr << "OpenCV imgproc module is requested to compute the pose of the chessboard." << std::endl;
 #endif
 #if !defined(HAVE_OPENCV_HIGHGUI)
-  std::cerr << "OpenCV highgui module is requested to run the calibration." << std::endl;
+  std::cerr << "OpenCV highgui module is requested to compute the pose of the chessboard." << std::endl;
 #endif
 #if (VISP_HAVE_OPENCV_VERSION < 0x050000) && !defined(HAVE_OPENCV_CALIB3D)
-  std::cerr << "OpenCV calib3d module is requested to run the calibration." << std::endl;
+  std::cerr << "OpenCV calib3d module is requested to compute the pose of the chessboard." << std::endl;
 #endif
 #if (VISP_HAVE_OPENCV_VERSION >= 0x050000) && !defined(HAVE_OPENCV_3D)
-  std::cerr << "OpenCV 3d module is requested to run the calibration." << std::endl;
+  std::cerr << "OpenCV 3d module is requested to compute the pose of the chessboard." << std::endl;
 #endif
 #if !defined(VISP_HAVE_PUGIXML)
-  std::cout << "pugixml built-in 3rdparty is requested to run the calibration." << std::endl;
+  std::cout << "pugixml built-in 3rdparty is requested to compute the pose of the chessboard." << std::endl;
 #endif
   return EXIT_SUCCESS;
 }
