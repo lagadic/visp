@@ -5,6 +5,7 @@ project(apps-calibration)
 find_package(VISP REQUIRED visp_vision visp_io OPTIONAL_COMPONENTS visp_gui visp_robot visp_sensor)
 
 set(apps_cpp
+  visp-compute-apriltag-poses.cpp
   visp-compute-chessboard-poses.cpp
   visp-compute-hand-eye-calibration.cpp
 )

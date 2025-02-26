@@ -16,11 +16,11 @@
       <!--Projection model type-->
       <type>perspectiveProjWithDistortion</type>
       <!--Pixel ratio-->
-      <px>605.146728515625</px>
-      <py>604.79150390625</py>
+      <px>607.5931396484375</px>
+      <py>607.574951171875</py>
       <!--Principal point-->
-      <u0>325.53253173828125</u0>
-      <v0>244.95083618164062</v0>
+      <u0>323.46282958984375</u0>
+      <v0>243.25529479980469</v0>
       <!--Undistorted to distorted distortion parameter-->
       <kud>-0</kud>
       <!--Distorted to undistorted distortion parameter-->

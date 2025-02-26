@@ -31,7 +31,7 @@
  * Compute hand-eye calibration from chessboard poses and robot end-effector poses.
  */
 
-//! \example visp-compute-hand-eye-calibration.cpp
+//! \example visp-compute-eye-in-hand-calibration.cpp
 #include <map>
 
 #include <visp3/core/vpConfig.h>
@@ -41,24 +41,31 @@
 void usage(const char *argv[], int error)
 {
   std::cout << "Synopsis" << std::endl
-    << "  " << argv[0] << " [--data-path <path>] [--help] [-h]" << std::endl
+    << "  " << argv[0]
+    << " [--data-path <path>]"
+    << " [--fPe <generic name>]"
+    << " [--cPo <generic name>]"
+    << " [--output <filename>]"
+    << " [--help, -h]" << std::endl
     << std::endl;
   std::cout << "Description" << std::endl
-    << "  --data-path <path>  Path to the folder containing" << std::endl
-    << "    pose_fPe_%d.yaml and pose_cPo_%d.yaml data files." << std::endl
+    << "  --data-path <path>" << std::endl
+    << "    Path to the folder containing pose_fPe_%d.yaml and pose_cPo_%d.yaml data files." << std::endl
     << "    Default: \"./\"" << std::endl
     << std::endl
-    << "  --fPe <generic name>  Generic name of the yaml files" << std::endl
-    << "    containing the pose of the end-effector expressed in the robot base" << std::endl
+    << "  --fPe <generic name>" << std::endl
+    << "    Generic name of the yaml files containing the pose of the end-effector expressed in the robot base" << std::endl
     << "    frame and located in the data path folder." << std::endl
     << "    Default: pose_fPe_%d.yaml" << std::endl
     << std::endl
-    << "  --cPo <generic name>  Generic name of the yaml files" << std::endl
+    << "  --cPo <generic name>" << std::endl
+    << "    Generic name of the yaml files" << std::endl
     << "    containing the pose of the calibration grid expressed in the camera" << std::endl
     << "    frame and located in the data path folder." << std::endl
     << "    Default: pose_cPo_%d.yaml" << std::endl
     << std::endl
-    << "  --output <filename>  File in yaml format containing the pose of the camera" << std::endl
+    << "  --output <filename>" << std::endl
+    << "    File in yaml format containing the pose of the camera" << std::endl
     << "    in the end-effector frame. Data are saved as a pose vector" << std::endl
     << "    with first the 3 translations along X,Y,Z in [m]" << std::endl
     << "    and then the 3 rotations in axis-angle representation (thetaU) in [rad]." << std::endl
@@ -109,6 +116,13 @@ int main(int argc, const char *argv[])
       usage(argv, i);
       return EXIT_FAILURE;
     }
+  }
+
+  // Create output folder if necessary
+  std::string output_parent = vpIoTools::getParent(opt_eMc_file);
+  if (!vpIoTools::checkDirectory(output_parent)) {
+    std::cout << "Create output directory: " << output_parent << std::endl;
+    vpIoTools::makeDirectory(output_parent);
   }
 
   std::vector<vpHomogeneousMatrix> cMo;
@@ -207,9 +221,9 @@ int main(int argc, const char *argv[])
     pose_vec.saveYAML(output_filename, pose_vec);
   }
   else {
-    std::cout << std::endl << "** Hand-eye calibration failed" << std::endl;
+    std::cout << std::endl << "** Eye-in-hand calibration failed" << std::endl;
     std::cout << std::endl << "Check your input data and ensure they are covering the half sphere over the chessboard." << std::endl;
-    std::cout << std::endl << "See https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-calibration-extrinsic.html" << std::endl;
+    std::cout << std::endl << "See https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-calibration-extrinsic-eye-in-hand.html" << std::endl;
   }
 
   return EXIT_SUCCESS;
