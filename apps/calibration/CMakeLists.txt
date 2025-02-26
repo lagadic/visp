@@ -7,7 +7,7 @@ find_package(VISP REQUIRED visp_vision visp_io OPTIONAL_COMPONENTS visp_gui visp
 set(apps_cpp
   visp-compute-apriltag-poses.cpp
   visp-compute-chessboard-poses.cpp
-  visp-compute-hand-eye-calibration.cpp
+  visp-compute-eye-in-hand-calibration.cpp
 )
 
 if(VISP_HAVE_FRANKA)
@@ -17,8 +17,6 @@ endif()
 if(VISP_HAVE_UR_RTDE)
   list(APPEND apps_cpp visp-acquire-universal-robots-calib-data.cpp)
 endif()
-
-file(GLOB apps_data "*.yaml" "*.py" "camera.xml" "*.jpg")
 
 foreach(cpp ${apps_cpp})
   visp_add_app(${cpp})
@@ -46,5 +44,9 @@ endif()
 
 # Copy the data files to the same location than the target
 foreach(data ${apps_data})
-  visp_copy_data(visp-compute-hand-eye-calibration.cpp ${data})
+  visp_copy_data(visp-compute-eye-in-hand-calibration.cpp ${data})
 endforeach()
+
+# Copy the data folder to the same location than the target
+visp_copy_dir(visp-compute-eye-in-hand-calibration "${CMAKE_CURRENT_SOURCE_DIR}" data-eye-in-hand)
+visp_copy_dir(visp-compute-eye-in-hand-calibration "${CMAKE_CURRENT_SOURCE_DIR}" data-eye-to-hand)

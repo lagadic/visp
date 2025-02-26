@@ -78,6 +78,8 @@ ViSP 3.x.x (Version in development)
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-pf-curve-fitting.html
     . New tutorial: Rendering a 3D scene with Ogre
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-ogre.html
+    . New tutorial: Camera eye-to-hand extrinsic calibration
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-calibration-extrinsic-eye-to-hand.html
   - Bug fixed
     . [#1251] Bug in vpDisplay::displayFrame()
     . [#1270] Build issue around std::clamp and optional header which are not found with cxx17

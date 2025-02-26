@@ -1,0 +1,435 @@
+/**
+
+\page tutorial-calibration-extrinsic-eye-to-hand Tutorial: Camera eye-to-hand extrinsic calibration
+\tableofcontents
+
+\section calib_eth_intro 1. Introduction
+
+This tutorial focuses estimation of the homogeneous transformation between the robot base frame and the camera frame
+in the case of a fixed camera observing the robot end-effector. This configuration is also called eye-to-hand.
+
+As a use case, we will consider in this tutorial the case of either:
+- a <a href="https://www.franka.de/cart/">Panda robot</a> in its research version from,
+  <a href="https://www.franka.de/">Franka Emika</a> and a
+  <a href="https://www.intelrealsense.com/depth-camera-d435/">D435</a> fixed camera mounted on a tripod observing
+  the robot end-effector
+- or a robot from Universal Robots and a
+  <a href="https://www.intelrealsense.com/depth-camera-d435/">D435</a> fixed camera mounted on a tripod observing
+  the robot end-effector.
+
+The principle of the extrinsic eye-to-hand calibration is easy to apply to any other robot equipped with any other
+camera attached to the robot end-effector.
+
+Let us consider:
+- \f$^f{\bf M}_e\f$ the homogeneous transformation between the robot base frame (also called fixed frame) and the
+  robot end-effector
+- \f$^c{\bf M}_o\f$ the homogeneous transformation between the camera frame and an Apriltag frame (also called
+  object frame) attached to the robot end-effector,
+- \f$^f{\bf M}_c\f$ the homogeneous transformation between the robot base frame and the camera frame. This is the
+  transformation corresponding to the extrinsic eye-to-hand transformation that we have to estimate.
+
+The calibration process described in this tutorial consists in 3 steps:
+1. acquiring data consisting in couples of \f$^f{\bf M}_e\f$ poses, images of the Apriltag and camera intrinsic
+   parameters
+2. computing the corresponding \f$^c{\bf M}_o\f$ pose of the Apriltag from the images
+3. from the basket of \f$\{^f{\bf M}_e, ^c{\bf M}_o\}_i\f$ corresponding to couple of poses \f$ i \f$ the last step is
+   to estimate the \f$^w{\bf M}_c\f$ extrinsic transformation.
+
+Note that all the material (source code) described in this tutorial is part of ViSP source code
+(in `apps/calibration` folder) and could be found in https://github.com/lagadic/visp/tree/master/apps/calibration.
+
+\section calib_eth_prereq 2. Prerequisites
+
+\subsection calib_eth_intrinsic 2.1. Get intrinsic parameters
+
+In order to compute the pose \f$^c{\bf M}_o\f$ from the Aprilta image, there is the need to get the camera intrinsic
+parameters. Depending on the device, these parameters are part of the device SDK or firmware. This is for example the
+case for our Intel Realsense D435 camera considered in this tutorial. These intrinsic parameters could be retrieved
+using vpRealSense2::getCameraParameters().
+
+If you have an other camera, or if you want to have a better estimation than the factory parameters you may follow
+\ref tutorial-calibration-intrinsic. Otherwise you can skip this section.
+
+\subsection calib_eth_tag 2.2. Print a 36h11 Apriltag
+
+We provide a ready to print `36h11` tag that is 9.5 by 9.5 cm square
+<a href="http://visp-doc.inria.fr/download/apriltag/tag36_11_00000-120x120.pdf">[download]</a>.
+
+If you prefer, you can also directly download on the
+<a href="https://april.eecs.umich.edu/software/apriltag.html">Apriltag</a> website some pre-generated
+<a href="https://april.eecs.umich.edu/media/apriltag/tag36h11.tgz">36h11</a> tags.
+
+In the archive you will find a PNG image of each tag, a mosaic in PNG containing every tag and a ready-to-print
+postscript file with one tag per page.
+If you want to print an individual tag, you can manually scale the corresponding PNG image using two methods:
+- on Unix with ImageMagick, e.g.:
+\code
+$ convert tag36_11_00000.png -scale 5000% tag36_11_00000_big.png
+\endcode
+- or open the image with <a href="https://www.gimp.org/">Gimp</a>:
+  - then from the pulldown menu, select **Image** > **Scale Image**
+  - set the unit and the size
+  - set the **Interpolation** mode to **None**
+  - click on the **Scale** button
+  - From the pulldown menu, select **File** > **Export As**
+  - Save the image as a new PNG image, e.g., `/tmp/tag36_11_00000-rescaled.png`
+  - Send the PNG file to your printer
+
+Glue the tag on the robot end-effector and mount your camera on a fixed tripod.
+
+\section calib_eth_calib 3. Extrinsic calibration overview
+
+\subsection calib_eth_acq_data 3.1. Acquire data
+
+The objective here is to complete step 1 by acquiring couples of \f$^f{\bf M}_e\f$ poses and the corresponding images
+of the tag. To this end move the robot end-effector to different positions. At least 8 to 10 positions are requested.
+To define a good position you have to imagine a half sphere over the camera X-Y plane and select positions
+that discretise as much as possible all the half sphere surface in front of the camera. For each position you should
+see all the tag as large as possible in the image.
+
+To acquire images of the tag, depending of your device you can follow \ref tutorial-grabber. Images could be
+saved in jpeg or png format, or any format supported by ViSP.
+
+To get the corresponding \f$^f{\bf M}_e\f$ poses, you need to use one of our robot interface like
+vpRobotFranka::get_fMe(), vpRobotUniversalRobots::get_fMe()... It returns the homogeneous transformation between the
+robot base frame and the robot end-effector. The following code snippet shows how to save the pose in yaml format:
+\code
+int cpt = 1;
+vpPoseVector fPe;
+robot.getPosition(vpRobot::END_EFFECTOR_FRAME, fPe);
+std::stringstream ss;
+ss << "pose_fPe_" << cpt << ".yaml";
+fPe.saveYAML(ss_pos.str(), fPe);
+\endcode
+
+To complete this step, you need also to get or calibrate your camera intrinsics in order to obtain its intrinsic
+parameters. Camera intrinsic parameters need to be saved in an xml file. If you have an Intel RealSense device you can
+directly get the parameters using vpRealSense2::getCameraParameters() and then save the parameters in an xml file using
+vpXmlParserCamera::save(). An example is given in visp-acquire-franka-calib-data.cpp or in
+visp-acquire-universal-robots-calib-data.cpp
+\note With vpRealSense2::getCameraParameters() you can only get the parameters without distortion coefficients.
+If you want the parameters with distortion, you need to achieve a calibration as described in
+\ref tutorial-calibration-intrinsic.
+
+As an example, in ViSP build folder you will find a dataset in `"data-eye-to-hand"` folder corresponding to data
+acquired with a real Panda robot that has a 36h11 Apriltag attached to its end-effector. These data were acquired with
+visp-acquire-franka-calib-data.cpp binary described in section \ref calib_eth_usecase_franka.
+\code{.sh}
+$ cd $VISP_WS/visp-build/apps/calibration
+$ ls data-eye-to-hand
+apriltag-data.txt   franka_image-2.png  franka_image-5.png  franka_image-8.png      franka_pose_fPe_3.yaml  franka_pose_fPe_6.yaml
+franka_camera.xml   franka_image-3.png  franka_image-6.png  franka_pose_fPe_1.yaml  franka_pose_fPe_4.yaml  franka_pose_fPe_7.yaml
+franka_image-1.png  franka_image-4.png  franka_image-7.png  franka_pose_fPe_2.yaml  franka_pose_fPe_5.yaml  franka_pose_fPe_8.yaml
+\endcode
+
+In this dataset, you will find:
+- 8 images of the 36h11 Apriltag in `franka_image-*.png` files
+- the corresponding pose of the end-effector in the robot base frame noted \f$^f{\bf M}_e\f$ and saved as a pose vector
+  in yaml format in `franka_pose_fPe_*.yaml` files
+- camera intrinsic parameters in `franka_camera.xml`
+- and the size of the tag in `apriltag-data.txt` which is 0.048 m large.
+
+\subsection calib_eth_camera_pose 3.2. Compute tag poses
+
+Here we will complete step 2 by computing for each image the corresponding \f$^c{\bf M}_o\f$ pose of the tag
+using the camera intrinsic parameters recorded in the xml file.
+
+To this end you can use `visp-compute-apriltag-poses` binary to compute the different poses of the tag with respect to
+the camera frame.
+
+Considering the dataset presented in previous section, and knowing that the size of the tag is 0.048
+(modify option `--tag-size` according to your printed tag), to proceed with the dataset you may run:
+
+\code{.sh}
+$ cd $VISP_WS/visp-build/apps/calibration
+$ ./visp-compute-apriltag-poses                       \
+    --tag-size 0.048                                  \
+    --input data-eye-to-hand/franka_image-%d.png      \
+    --intrinsic data-eye-to-hand/franka_camera.xml    \
+    --output data-eye-to-hand/franka_pose_cPo_%d.yaml
+\endcode
+
+It will produce the following results:
+\code{.sh}
+Parameters:
+  Apriltag
+    Size [m]              : 0.048
+    Z aligned             : false
+  Input images location   : data-eye-to-hand/franka_image-%d.png
+    First frame           : 1
+    Last  frame           : 8
+  Camera intrinsics
+    Param file name [.xml]: data-eye-to-hand/franka_camera.xml
+    Camera name           : Camera
+  Output camera poses     : data-eye-to-hand/franka_pose_cPo_%d.yaml
+  Interactive mode        : yes
+
+Found camera with name: "Camera"
+Camera parameters used to compute the pose:
+Camera parameters for perspective projection with distortion:
+  px = 607.5931396	 py = 607.5749512
+  u0 = 323.4628296	 v0 = 243.2552948
+  kud = -0
+  kdu = 0
+
+Process image: data-eye-to-hand/franka_image-1.png
+Save data-eye-to-hand/franka_pose_cPo_1.yaml
+Process image: data-eye-to-hand/franka_image-2.png
+Save data-eye-to-hand/franka_pose_cPo_2.yaml
+Process image: data-eye-to-hand/franka_image-3.png
+Save data-eye-to-hand/franka_pose_cPo_3.yaml
+Process image: data-eye-to-hand/franka_image-4.png
+Save data-eye-to-hand/franka_pose_cPo_4.yaml
+Process image: data-eye-to-hand/franka_image-5.png
+Save data-eye-to-hand/franka_pose_cPo_5.yaml
+Process image: data-eye-to-hand/franka_image-6.png
+Save data-eye-to-hand/franka_pose_cPo_6.yaml
+Process image: data-eye-to-hand/franka_image-7.png
+Save data-eye-to-hand/franka_pose_cPo_7.yaml
+Process image: data-eye-to-hand/franka_image-8.png
+Save data-eye-to-hand/franka_pose_cPo_8.yaml
+\endcode
+
+The source code corresponding to the binary is available in visp-compute-apriltag-poses.cpp.
+
+It produces as output the corresponding `franka_pose_cPo_8.yaml` files that are saved in `"data-eye-to-hand"`
+folder. They correspond to the camera to tag transformation:
+\code{.sh}
+$ ls data-eye-to-hand/franka_pose_cPo_*
+data-eye-to-hand/franka_pose_cPo_1.yaml  data-eye-to-hand/franka_pose_cPo_4.yaml  data-eye-to-hand/franka_pose_cPo_7.yaml
+data-eye-to-hand/franka_pose_cPo_2.yaml  data-eye-to-hand/franka_pose_cPo_5.yaml  data-eye-to-hand/franka_pose_cPo_8.yaml
+data-eye-to-hand/franka_pose_cPo_3.yaml  data-eye-to-hand/franka_pose_cPo_6.yaml
+\endcode
+
+\subsection calib_eth_tsai 3.3. Estimate extrinsic transformation
+
+The final step consists now to estimate the robot base frame to camera \f$^e{\bf M}_c\f$ transformation from the
+couples of \f$^f{\bf M}_e\f$ and \f$^c{\bf M}_o\f$ poses.
+
+Complete the calibration running `visp-compute-eye-to-hand-calibration` binary. It will get the data from the pair of
+files, `franka_pose_fPe_%%d.yaml` and `franka_pose_cPo_%%d.yaml` located in `"data-eye-to-hand"` folder.
+
+\code{.sh}
+$ cd $VISP_WS/visp-build/apps/calibration
+$ ./visp-compute-eye-to-hand-calibration      \
+    --data-path data-eye-to-hand/             \
+    --fPe franka_pose_fPe_%d.yaml             \
+    --cPo franka_pose_cPo_%d.yaml             \
+    --output data-eye-to-hand/franka_fMc.yaml
+\endcode
+
+The source code corresponding to the binary is available in visp-compute-eye-to-hand-calibration.cpp.
+
+It will produce the following results:
+\code{.sh}
+TO COMPLETE
+\endcode
+
+The extrinsic transformation is saved in `franka_fMc.yaml` file as a vpPoseVector, with translation in meter and
+rotation as a \f$\theta_{\bf u} \f$ axis-angle vector with values in radians.
+
+\code{.sh}
+$ more data-eye-to-hand/franka_fMc.yaml
+TO COMPLETE
+\endcode
+
+The extrinsic transformation is also saved in `franka_eMc.txt` file that contains the corresponding homogeneous matrix
+transformation:
+\code{.sh}
+$ more data-eye-to-hand/franka_fMc.txt
+TO COMPLETE
+\endcode
+
+We recall, that a good hand-eye calibration is obtained when the camera poses are covering the surface of a half
+sphere over the grid.
+
+\section calib_eth_usecase 4. Use cases
+
+\subsection calib_eth_usecase_franka 4.1. Panda robot + Realsense
+
+In this section we suppose that you have a Panda robot from Franka Emika with a Realsense camera attached to its
+end-effector.
+
+If not already done, follow \ref franka_configure_ethernet and \ref franka_connect_desk instructions to power on the
+Panda robot. Then if this is not already done, follow \ref franka_prereq_libfranka and \ref franka_prereq_visp_build.
+
+If not already done, you need also to install \ref install_ubuntu_3rdparty_realsense and build ViSP to enable
+vpRealSense2 class usage.
+
+\subsubsection calib_eth_usecase_franka_acq 4.1.1 Acquire data
+
+Connect the Realsense D435 camera to the computer, attach the tag to the robot end-effector, enter in
+`apps/calibration` folder and run `visp-acquire-franka-calib-data` binary to acquire images of the tag for different
+end-effector positions:
+\code{.sh}
+$ cd apps/calibration
+$ ./visp-acquire-franka-calib-data
+\endcode
+By default the robot controller IP is `192.168.1.1`. If your Franka has an other IP (let say 10.0.0.2) use
+`--ip` option like:
+\code{.sh}
+$ ./visp-acquire-franka-calib-data --ip 10.0.0.2
+\endcode
+Click with the left mouse button to acquire data.
+It records the following outputs:
+
+- `franka_camera.xml` : XML file that contains the intrinsic camera parameters extracted from camera firmware
+- couples of `franka_image-<number>.png` + `franka_pose_fMe-<number>.txt` with number starting from 1.
+  `franka_pose_fMe-<number>.yaml` is the pose of the end-effector expressed in the robot base frame \f$^f{\bf M}_e\f$,
+   while `franka_image-<number>.png` is the image captured at the corresponding robot position.
+
+Move the robot to an other position such as the tag remains in the image and repeat data acquisition by a left
+mouse click. We recommend to acquire data at 8 to 10 different robot positions.
+
+A right mouse click ends this step exiting the binary.
+
+This is the output when 8 different positions are considered:
+
+\code{.sh}
+$ ./visp-acquire-franka-calib-data
+Image size: 640 x 480
+Found camera with name: "Camera"
+Save: franka_image-1.png and franka_pose_fPe_1.yaml
+Save: franka_image-2.png and franka_pose_fPe_2.yaml
+Save: franka_image-3.png and franka_pose_fPe_3.yaml
+Save: franka_image-4.png and franka_pose_fPe_4.yaml
+Save: franka_image-5.png and franka_pose_fPe_5.yaml
+Save: franka_image-6.png and franka_pose_fPe_6.yaml
+Save: franka_image-7.png and franka_pose_fPe_7.yaml
+Save: franka_image-8.png and franka_pose_fPe_8.yaml
+\endcode
+
+The source code corresponding to the binary is available in visp-acquire-franka-calib-data.cpp. If your setup is
+different, it could be easily adapted to your robot or camera.
+
+\subsubsection calib_eth_usecase_franka_pose 4.1.2 Compute tag poses
+
+Given the camera intrinsic parameters and the set of images, you can compute the tag pose running (adapt the tag size
+parameter to your use case):
+\code{.sh}
+$ ./visp-compute-apriltag-poses      \
+    --tag-size 0.0248                \
+    --input franka_image-%d.png      \
+    --intrinsic franka_camera.xml    \
+    --output franka_pose_cPo_%d.yaml
+\endcode
+
+\subsubsection calib_eth_usecase_franka_emc 4.1.3 Estimate extrinsic transformation
+
+Finally you can estimate the extrinsic transformation between the robot base frame and your camera, running:
+
+\code{.sh}
+$ ./visp-compute-eye-to-hand-calibration \
+    --data-path .                        \
+    --fPe franka_pose_fPe_%d.yaml        \
+    --cPo franka_pose_cPo_%d.yaml        \
+    --output franka_fMc.yaml
+\endcode
+
+It will produce the `franka_fMc.yaml` that contains the pose as a vpPoseVector and `franka_fMc.txt` that contains the
+corresponding homogeneous matrix transformation:
+\code{.sh}
+$ more franka_fMc.yaml
+TO COMPLETE
+
+$ more franka_eMc.txt
+TO COMPLETE
+ 0                0               0                1
+\endcode
+
+\subsection calib_eth_usecase_ur 4.2. UR robot + Realsense
+
+In this section we suppose that you have an Universal Robots robot with a 36h11 Apriltag attached to its end-effector.
+
+If not already done, follow Universal Robots visual-sevoing \ref ur_prereq instructions to install `ur_rtde` 3rdparty
+and build ViSP to support UR that enables vpRobotUniversalRobots class usage.
+
+If not already done, you need also to install \ref install_ubuntu_3rdparty_realsense and build ViSP to enable
+vpRealSense2 class usage.
+
+\subsubsection calib_eth_usecase_ur_acq 4.2.1 Acquire data
+
+Connect the Realsense camera to the computer, put the tag in the camera field of view, enter in
+`apps/calibration` folder and run `visp-acquire-universal-robots-calib-data` binary to acquire the images and
+the corresponding robot end-effector positions:
+
+\code{.sh}
+$ cd apps/calibration
+$ ./visp-acquire-universal-robots-calib-data
+\endcode
+
+By default the robot controller IP is `192.168.0.100`. If your robot from Universal Robots has an other IP
+(let say 10.0.0.2) use `--ip` option like:
+
+\code{.sh}
+$ ./visp-acquire-universal-robots-calib-data --ip 10.0.0.2
+\endcode
+
+Click with the left mouse button to acquire data.
+It records the following outputs:
+
+- `ur_camera.xml` : XML file that contains the intrinsic camera parameters extracted from camera firmware
+- couples of `ur_image-<number>.png` + `ur_pose_fPe-<number>.txt` with number starting from 1.
+  `ur_pose_fPe-<number>.yaml` is the pose of the end-effector expressed in the robot base frame \f$^f{\bf M}_e\f$,
+   while `ur_image-<number>.png` is the image captured at the corresponding robot position.
+
+With the PolyScope, move the robot to an other position such as the tag remains in the image and repeat data
+acquisition by a left mouse click. We recommend to acquire data at 8 to 10 different robot positions.
+
+A right mouse click ends this step exiting the binary.
+
+This is the output when 8 different positions are considered:
+
+\code{.sh}
+$ ./visp-acquire-universal-robots-calib-data
+Image size: 640 x 480
+Found camera with name: "Camera"
+Save: ur_image-1.png and ur_pose_fPe_1.yaml
+Save: ur_image-2.png and ur_pose_fPe_2.yaml
+Save: ur_image-3.png and ur_pose_fPe_3.yaml
+Save: ur_image-4.png and ur_pose_fPe_4.yaml
+Save: ur_image-5.png and ur_pose_fPe_5.yaml
+Save: ur_image-6.png and ur_pose_fPe_6.yaml
+Save: ur_image-7.png and ur_pose_fPe_7.yaml
+Save: ur_image-8.png and ur_pose_fPe_8.yaml
+\endcode
+
+The source code corresponding to the binary is available in visp-acquire-universal-robots-calib-data.cpp. If your
+setup is different, it could be easily adapted to your robot or camera.
+
+\subsubsection calib_eth_usecase_ur_pose 4.2.2 Compute tag poses
+
+Given the camera intrinsic parameters and the set of images, you can compute the camera pose running (adapt the tag
+size parameter to your use case):
+\code{.sh}
+$ ./visp-compute-apriltag-poses \
+    --tag-size 0.0248          \
+    --input ur_image-%d.png       \
+    --intrinsic ur_camera.xml     \
+    --output ur_pose_cPo_%d.yaml
+\endcode
+
+\subsubsection calib_eth_usecase_ur_emc 4.2.3: Estimate extrinsic transformation
+
+Finally you can estimage the extrinsic transformation between end-effector and you camera, running:
+
+\code{.sh}
+$ ./visp-compute-eye-to-hand-calibration \
+    --data-path .                        \
+    --fPe ur_pose_fPe_%d.yaml            \
+    --cPo ur_pose_cPo_%d.yaml            \
+    --output ur_fMc.yaml
+\endcode
+
+It will produce the `ur_fMc.yaml` that contains the pose as a vpPoseVector and `ur_fMc.txt` that contains the
+corresponding homogeneous matrix transformation:
+\code{.sh}
+$ more ur_eMc.yaml
+TO COMPLETE
+
+$ more ur_eMc.txt
+TO COMPLETE
+ 0                0               0                1
+\endcode
+
+*/
