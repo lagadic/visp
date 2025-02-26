@@ -322,7 +322,7 @@ void vpRBSilhouetteCCDTracker::display(const vpCameraParameters &/*cam*/, const 
 
     for (unsigned int i = 0; i < m_controlPoints.size(); ++i) {
       const vpRBSilhouetteControlPoint &p = m_controlPoints[i];
-      vpDisplay::displayPoint(IRGB, p.icpoint.get_i(), p.icpoint.get_j(), vpColor::purple, 1);
+      vpDisplay::displayPoint(IRGB, p.icpoint.get_i(), p.icpoint.get_j(), vpColor::green, 2);
     }
   }
   else if (m_displayType == ERROR) {
