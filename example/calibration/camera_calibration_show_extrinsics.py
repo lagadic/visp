@@ -210,7 +210,8 @@ def draw_camera_boards(ax, camera_matrix, cam_width, cam_height, scale_focal,
         max_values = np.maximum(max_values, X[0:3,:].max(1))
 
     for idx in range(extrinsics.shape[0]):
-        R = Rotation.from_rotvec(extrinsics[idx,0:3]).as_dcm()
+        #R = Rotation.from_rotvec(extrinsics[idx,0:3]).as_dcm()
+        R = Rotation.from_rotvec(extrinsics[idx,0:3]).as_matrix()
         cMo = np.eye(4,4)
         cMo[0:3,0:3] = R
         cMo[0:3,3] = extrinsics[idx,3:6]
@@ -277,8 +278,9 @@ def main():
         from mpl_toolkits.mplot3d import Axes3D  # pylint: disable=unused-variable
 
         fig = plt.figure()
-        ax = fig.gca(projection='3d')
-        ax.set_aspect("equal")
+        #ax = fig.gca(projection='3d')
+        ax = fig.add_subplot(projection='3d')
+        #ax.set_aspect("equal")
 
         cMo_vec = camera_info.cMo_vec
         extrinsics = np.empty((len(cMo_vec), 6), np.float64)

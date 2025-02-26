@@ -49,7 +49,8 @@ def inverse_homogeneoux_matrix(M):
     return M_inv
 
 def pose_to_homogeneous_matrix(pose):
-    R = Rotation.from_rotvec(pose[3:]).as_dcm()
+    #R = Rotation.from_rotvec(pose[3:]).as_dcm()
+    R = Rotation.from_rotvec(pose[3:]).as_matrix()
     M = np.identity(4)
     M[0:3,0:3] = R
     M[0:3,3] = pose[:3]
@@ -230,27 +231,27 @@ def main():
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('--ndata', type=int, required=True,
                         help='Number of camera poses.')
-    parser.add_argument('--eMc_yaml', type=str, required=True,
+    parser.add_argument('--eMc-yaml', type=str, required=True,
                         help='Path to the estimated eMc yaml file.')
-    parser.add_argument('--start_index', type=int, default=1,
+    parser.add_argument('--start-index', type=int, default=1,
                         help='Start index.')
-    parser.add_argument('--cPo_file_pattern', type=str, default='pose_cPo_%d.yaml',
+    parser.add_argument('--cPo-file_pattern', type=str, default='pose_cPo_%d.yaml',
                         help='cPo filename pattern for camera poses.')
-    parser.add_argument('--cam_width', type=float, default=0.064/2,
+    parser.add_argument('--cam-width', type=float, default=0.064/2,
                         help='Width/2 of the displayed camera.')
-    parser.add_argument('--cam_height', type=float, default=0.048/2,
+    parser.add_argument('--cam-height', type=float, default=0.048/2,
                         help='Height/2 of the displayed camera.')
-    parser.add_argument('--focal_px', type=float, default=600,
+    parser.add_argument('--focal-px', type=float, default=600,
                         help='Camera focal length to draw the camera visualization.')
-    parser.add_argument('--scale_focal', type=float, default=40,
+    parser.add_argument('--scale-focal', type=float, default=40,
                         help='Value to scale the focal length.')
-    parser.add_argument('--board_width', type=int, default=9,
+    parser.add_argument('--board-width', type=int, default=9,
                         help='Calibration board width.')
-    parser.add_argument('--board_height', type=int, default=6,
+    parser.add_argument('--board-height', type=int, default=6,
                         help='Calibration board height.')
-    parser.add_argument('--square_size', type=float, default=0.025,
+    parser.add_argument('--square-size', type=float, default=0.025,
                         help='Calibration board square size.')
-    parser.add_argument('--frame_size', type=float, default=0.025,
+    parser.add_argument('--frame-size', type=float, default=0.025,
                         help='End-effector frame size for visualization.')
     args = parser.parse_args()
 
@@ -272,8 +273,9 @@ def main():
     from mpl_toolkits.mplot3d import Axes3D  # pylint: disable=unused-variable
 
     fig = plt.figure()
-    ax = fig.gca(projection='3d')
-    ax.set_aspect("equal")
+    #ax = fig.gca(projection='3d')
+    ax = fig.add_subplot(projection='3d')
+    #ax.set_aspect("equal")
 
     cam_width = args.cam_width
     cam_height = args.cam_height
