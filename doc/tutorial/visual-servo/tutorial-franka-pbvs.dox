@@ -212,7 +212,7 @@ If you are interested to get other tags, follow the steps described in \ref apri
 
 \subsection franka_prereq_calib_extrinsic Calibrate extrinsic camera parameters
 
-Follow the steps described in \ref tutorial-calibration-extrinsic in order to estimate the end-effector to camera transformation. This step is mandatory to control the robot in cartesian in the camera frame.
+Follow the steps described in \ref tutorial-calibration-extrinsic-eye-in-hand in order to estimate the end-effector to camera transformation. This step is mandatory to control the robot in cartesian in the camera frame.
 
 \subsection franka_prereq_visp_build Configure and build ViSP
 
@@ -258,7 +258,7 @@ An example of position-based visual servoing using Panda robot equipped with a R
 
 - Attach your Realsense camera to the robot end-effector
 - Put an Apriltag in the camera field of view
-- If not already done, follow \ref tutorial-calibration-extrinsic to estimate \f$^e{\bf M}_c\f$ the homogeneous transformation between robot end-effector and camera frame. We suppose here that the file is located in `apps/calibration/eMc.yaml`.
+- If not already done, follow \ref tutorial-calibration-extrinsic-eye-in-hand to estimate \f$^e{\bf M}_c\f$ the homogeneous transformation between robot end-effector and camera frame. We suppose here that the file is located in `apps/calibration/eMc.yaml`.
 
 Now enter in `example/servo-franka folder` and run `servoFrankaPBVS` binary using `--eMc` to locate the file containing the \f$^e{\bf M}_c\f$ transformation. Other options are available. Using `--help` show them:
 

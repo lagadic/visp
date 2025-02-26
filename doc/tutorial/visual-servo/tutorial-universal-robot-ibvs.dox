@@ -128,7 +128,7 @@ An example of image-based visual servoing using a robot from Universal Robots eq
 
 - Attach your Realsense camera to the robot end-effector. To this end, we provide a CAD model of a support that could be 3D printed. The FreeCAD model is available [here](https://github.com/lagadic/visp/tree/master/example/servo-universal-robots).
 - Put an Apriltag in the camera field of view
-- If not already done, follow \ref tutorial-calibration-extrinsic to estimate \f$^e{\bf M}_c\f$, the homogeneous transformation between robot end-effector and camera frame. We suppose here that the file is located in `apps/calibration/ur_eMc.yaml`.
+- If not already done, follow \ref tutorial-calibration-extrinsic-eye-in-hand to estimate \f$^e{\bf M}_c\f$, the homogeneous transformation between robot end-effector and camera frame. We suppose here that the file is located in `apps/calibration/ur_eMc.yaml`.
 
 Now enter in `example/servo-universal-robots folder` and run `servoUniversalRobotsIBVS` binary using `--eMc` to locate the file containing the \f$^e{\bf M}_c\f$ transformation. Other options are available. Using `--help` show them:
 

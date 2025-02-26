@@ -158,7 +158,7 @@ int main()
         << "Check your input data and ensure they are covering the half sphere over the chessboard."
         << std::endl;
       std::cout << std::endl
-        << "See https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-calibration-extrinsic.html" << std::endl;
+        << "See https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-calibration-extrinsic-eye-in-hand.html" << std::endl;
     }
 
     return EXIT_SUCCESS;

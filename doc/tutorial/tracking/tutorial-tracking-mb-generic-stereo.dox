@@ -32,7 +32,7 @@ and thus with more visual features.
 In order to achieve this, the following information are required:
 - the intrinsic parameters of each camera obtained after calibration (see \ref tutorial-calibration-intrinsic);
 - the transformation matrix between each camera and a reference camera: \f$ ^{c_{current}}{\bf M}_{c_{reference}} \f$
-  (see \ref tutorial-calibration-extrinsic).
+  (see \ref tutorial-calibration-extrinsic-eye-in-hand).
 
 In the following sections, we consider the tracking of a tea box modeled in cao format. A stereo camera sees this
 object. The following video shows the tracking performed with vpMbGenericTracker. In this example, the fixed cameras
