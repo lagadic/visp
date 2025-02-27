@@ -253,14 +253,14 @@ unsigned int vpPclViewer::addSurface(const pclPointCloudPointXYZRGB::Ptr &surfac
 
   // Storing the weights attached to the surface
   m_vweights.push_back(weights);
-  bool use_weigths = weights.size() > 0;
+  bool use_weights = weights.size() > 0;
 
   // Copying the coordinates of each point of the original pcl,
   // while affecting them the default color.
   // Points that have a weight below \b s_ignoreThresh are ignored
   for (unsigned int index = 0; index < nbPoints; index++) {
     bool shouldPointBeVisible = false;
-    if (use_weigths) {
+    if (use_weights) {
       // If weights are defined, the point should be visible only
       // if the weight is greater than the ignore threshold.
       shouldPointBeVisible = weights[index] > s_ignoreThresh;
