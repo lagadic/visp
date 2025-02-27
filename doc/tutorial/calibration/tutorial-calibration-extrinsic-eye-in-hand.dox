@@ -34,7 +34,8 @@ The calibration process described in this tutorial consists in 3 steps:
    to estimate the \f$^e{\bf M}_c\f$ extrinsic transformation.
 
 Note that all the material (source code) described in this tutorial is part of ViSP source code
-(in `apps/calibration` folder) and could be found in https://github.com/lagadic/visp/tree/master/apps/calibration.
+(in `apps/calibration/hand-eye` folder) and could be found in
+https://github.com/lagadic/visp/tree/master/apps/calibration/hand-eye.
 
 \note To get good calibration results follow these \ref calibration_recommendation.
 
@@ -101,7 +102,7 @@ As an example, in ViSP build folder you will find a dataset in `"data-eye-in-han
 acquired with a real Panda robot that has a camera attached to its end-effector. These data were acquired with
 visp-acquire-franka-calib-data.cpp binary described in section \ref calib_eih_usecase_franka.
 \code{.sh}
-$ cd $VISP_WS/visp-build/apps/calibration
+$ cd $VISP_WS/visp-build/apps/calibration/hand-eye
 $ ls data-eye-in-hand
 chessboard-data.txt  franka_image-2.png  franka_image-5.png  franka_image-8.png      franka_pose_fPe_3.yaml  franka_pose_fPe_6.yaml
 franka_camera.xml    franka_image-3.png  franka_image-6.png  franka_pose_fPe_1.yaml  franka_pose_fPe_4.yaml  franka_pose_fPe_7.yaml
@@ -128,7 +129,7 @@ Considering the dataset presented in previous section, and knowing that the size
 by 0.0236 meter (modify option `--square-size` according to your chessboard), to proceed with the dataset you may run:
 
 \code{.sh}
-$ cd $VISP_WS/visp-build/apps/calibration
+$ cd $VISP_WS/visp-build/apps/calibration/hand-eye
 $ ./visp-compute-chessboard-poses                     \
     --square-size 0.0236                              \
     --input data-eye-in-hand/franka_image-%d.png      \
@@ -198,7 +199,7 @@ Complete the calibration running `visp-compute-eye-in-hand-calibration` binary. 
 files, `franka_pose_fPe_%%d.yaml` and `franka_pose_cPo_%%d.yaml` located in `"data-eye-in-hand"` folder.
 
 \code{.sh}
-$ cd $VISP_WS/visp-build/apps/calibration
+$ cd $VISP_WS/visp-build/apps/calibration/hand-eye
 $ ./visp-compute-eye-in-hand-calibration      \
     --data-path data-eye-in-hand/             \
     --fPe franka_pose_fPe_%d.yaml             \
@@ -332,10 +333,10 @@ vpRealSense2 class usage.
 \subsubsection calib_eih_usecase_franka_acq 4.1.1 Acquire data
 
 Connect the Realsense D435 camera to the computer, put the chessboard in the camera field of view, enter in
-`apps/calibration` folder and run `visp-acquire-franka-calib-data` binary to acquire the images and the
+`apps/calibration/hand-eye` folder and run `visp-acquire-franka-calib-data` binary to acquire the images and the
 corresponding robot end-effector positions:
 \code{.sh}
-$ cd apps/calibration
+$ cd apps/calibration/hand-eye
 $ ./visp-acquire-franka-calib-data
 \endcode
 By default the robot controller IP is `192.168.1.1`. If your Franka has an other IP (let say 10.0.0.2) use
@@ -452,11 +453,11 @@ vpRealSense2 class usage.
 \subsubsection calib_eih_usecase_ur_acq 4.2.1 Acquire data
 
 Connect the Realsense camera to the computer, put the chessboard in the camera field of view, enter in
-`apps/calibration` folder and run `visp-acquire-universal-robots-calib-data` binary to acquire the images and
+`apps/calibration/hand-eye` folder and run `visp-acquire-universal-robots-calib-data` binary to acquire the images and
 the corresponding robot end-effector positions:
 
 \code{.sh}
-$ cd apps/calibration
+$ cd apps/calibration/hand-eye
 $ ./visp-acquire-universal-robots-calib-data
 \endcode
 

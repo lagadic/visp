@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,45 +35,27 @@
 
 cmake_minimum_required(VERSION 3.10)
 
-project(example-calibration)
+project(apps-calibration-intrinsic)
 
 find_package(VISP REQUIRED visp_core visp_vision visp_gui visp_io)
 
-set(example_cpp
-  calibrate-camera.cpp
+set(apps_cpp
+  visp-calibrate-camera.cpp
 )
 
-foreach(cpp ${example_cpp})
-  visp_add_target(${cpp})
-  if(COMMAND visp_add_dependency)
-    visp_add_dependency(${cpp} "examples")
-  endif()
+foreach(cpp ${apps_cpp})
+  visp_add_app(${cpp})
 endforeach()
 
 # copy the data
 list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/default-chessboard.cfg")
 list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/default-circles.cfg")
-list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-01.jpg")
-list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-02.jpg")
-list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-03.jpg")
-list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-04.jpg")
-list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-05.jpg")
-list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-06.jpg")
-list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-07.jpg")
-list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-08.jpg")
-list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-09.jpg")
-list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-10.jpg")
-list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-11.jpg")
-list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-12.jpg")
-list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-13.jpg")
-list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/circles-01.jpg")
-list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/circles-02.jpg")
-list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/circles-03.jpg")
-list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/circles-04.jpg")
-list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/circles-05.jpg")
 list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/camera_calibration_show_extrinsics.py")
 
 # Copy the data files to the same location than the target
 foreach(data ${data2copy})
-  visp_copy_data(calibrate-camera.cpp ${data})
+  visp_copy_data(visp-calibrate-camera.cpp ${data})
 endforeach()
+
+visp_copy_dir(visp-calibrate-camera.cpp "${CMAKE_CURRENT_SOURCE_DIR}" data-chessboard)
+visp_copy_dir(visp-calibrate-camera.cpp "${CMAKE_CURRENT_SOURCE_DIR}" data-circles)

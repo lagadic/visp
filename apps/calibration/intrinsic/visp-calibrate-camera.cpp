@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,29 +71,37 @@ using namespace calib_helper;
 void usage(const char *argv[], int error)
 {
   std::cout << "Synopsis" << std::endl
-    << "  " << argv[0] << " <configuration file>.cfg [--init-from-xml <camera-init.xml>]"
-    << " [--camera-name <name>] [--aspect-ratio <ratio>] [--output <file.xml>] [--help] [-h]" << std::endl
+    << "  " << argv[0]
+    << " <configuration file>.cfg"
+    << " [--init-from-xml <camera-init.xml>]"
+    << " [--camera-name <name>]"
+    << " [--aspect-ratio <ratio>]"
+    << " [--output <file.xml>]"
+    << " [--help, -h]" << std::endl
     << std::endl;
   std::cout << "Description" << std::endl
-    << "  <configuration file>.cfg  Configuration file. See example in" << std::endl
-    << "    \"default-chessboard.cfg\" or in \"default-circles.cfg\"." << std::endl
+    << "  <configuration file>.cfg" << std::endl
+    << "    Configuration file. See example in \"default-chessboard.cfg\" or in \"default-circles.cfg\"." << std::endl
     << "    Default: \"default.cfg\"." << std::endl
     << std::endl
-    << "  --init-from-xml <camera-init.xml>  XML file that contains camera parameters" << std::endl
-    << "    used to initialize the calibration process." << std::endl
+    << "  --init-from-xml <camera-init.xml>" << std::endl
+    << "    XML file that contains camera parameters used to initialize the calibration process." << std::endl
     << std::endl
-    << "  --camera-name <name>  Camera name in the XML file set using \"--init-from-xml\" option." << std::endl
+    << "  --camera-name <name>" << std::endl
+    << "    Camera name in the XML file set using \"--init-from-xml\" option." << std::endl
     << "    Default: \"Camera\"." << std::endl
     << std::endl
-    << "  --aspect-ratio <ratio>  Pixel aspect ratio. " << std::endl
-    << "    To estimate px = py, use \"--aspect-ratio 1\" option. Set to -1" << std::endl
+    << "  --aspect-ratio <ratio>" << std::endl
+    << "    Pixel aspect ratio. To estimate px = py, use \"--aspect-ratio 1\" option. Set to -1" << std::endl
     << "    to unset any constraint for px and py parameters. " << std::endl
     << "    Default: -1." << std::endl
     << std::endl
-    << "  --output <file.xml>  XML file containing estimated camera parameters." << std::endl
+    << "  --output <file.xml>" << std::endl
+    << "    XML file containing estimated camera parameters." << std::endl
     << "    Default: \"camera.xml\"." << std::endl
     << std::endl
-    << "  --help, -h  Print this helper message." << std::endl
+    << "  --help, -h" << std::endl
+    << "    Print this helper message." << std::endl
     << std::endl;
   if (error) {
     std::cout << "Error" << std::endl
@@ -126,20 +134,16 @@ int main(int argc, const char *argv[])
 
     for (int i = 2; i < argc; i++) {
       if (std::string(argv[i]) == "--init-from-xml" && i + 1 < argc) {
-        opt_init_camera_xml_file = std::string(argv[i + 1]);
-        i++;
+        opt_init_camera_xml_file = std::string(argv[++i]);
       }
       else if (std::string(argv[i]) == "--camera-name" && i + 1 < argc) {
-        opt_camera_name = std::string(argv[i + 1]);
-        i++;
+        opt_camera_name = std::string(argv[++i]);
       }
       else if (std::string(argv[i]) == "--output" && i + 1 < argc) {
-        opt_output_file_name = std::string(argv[i + 1]);
-        i++;
+        opt_output_file_name = std::string(argv[++i]);
       }
       else if (std::string(argv[i]) == "--aspect-ratio" && i + 1 < argc) {
-        opt_aspect_ratio = std::atof(argv[i + 1]);
-        i++;
+        opt_aspect_ratio = std::atof(argv[++i]);
       }
       else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
         usage(argv, 0);
@@ -396,7 +400,6 @@ int main(int argc, const char *argv[])
     }
 
     d->close(I_color);
-    d->init(I);
 
     std::stringstream ss_additional_info;
     ss_additional_info << "<date>" << vpTime::getDateTime() << "</date>";
@@ -428,6 +431,8 @@ int main(int argc, const char *argv[])
     if (vpCalibration::computeCalibrationMulti(vpCalibration::CALIB_VIRTUAL_VS, calibrator, cam, error, false) ==
         EXIT_SUCCESS) {
       std::cout << cam << std::endl;
+
+      d->init(I);
       vpDisplay::setTitle(I, "Without distortion results");
 
       for (size_t i = 0; i < calibrator.size(); i++) {
@@ -691,7 +696,7 @@ int main(int argc, const char *argv[])
       return EXIT_FAILURE;
     }
 
-    std::cout << "\nCamera calibration succeeded. Results are savec in " << "\"" << opt_output_file_name << "\"" << std::endl;
+    std::cout << "\nCamera calibration succeeded. Results are saved in " << "\"" << opt_output_file_name << "\"" << std::endl;
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
     if (display != nullptr) {
       delete display;
@@ -728,5 +733,5 @@ int main()
   std::cout << "pugixml built-in 3rdparty is requested to run the calibration." << std::endl;
 #endif
   return EXIT_SUCCESS;
-  }
+}
 #endif
