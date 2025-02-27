@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(apps-calibration)
+project(apps-calibration-hand-eye)
 
 find_package(VISP REQUIRED visp_vision visp_io OPTIONAL_COMPONENTS visp_gui visp_robot visp_sensor)
 
@@ -48,5 +48,5 @@ foreach(data ${apps_data})
 endforeach()
 
 # Copy the data folder to the same location than the target
-visp_copy_dir(visp-compute-eye-in-hand-calibration "${CMAKE_CURRENT_SOURCE_DIR}" data-eye-in-hand)
-visp_copy_dir(visp-compute-eye-in-hand-calibration "${CMAKE_CURRENT_SOURCE_DIR}" data-eye-to-hand)
+visp_copy_dir(visp-compute-eye-in-hand-calibration.cpp "${CMAKE_CURRENT_SOURCE_DIR}" data-eye-in-hand)
+visp_copy_dir(visp-compute-eye-in-hand-calibration.cpp "${CMAKE_CURRENT_SOURCE_DIR}" data-eye-to-hand)
