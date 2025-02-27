@@ -41,7 +41,6 @@ find_package(VISP REQUIRED visp_core visp_vision visp_gui visp_io)
 
 set(example_cpp
   calibrate-camera.cpp
-  calibrate-hand-eye.cpp
 )
 
 foreach(cpp ${example_cpp})
@@ -51,34 +50,28 @@ foreach(cpp ${example_cpp})
   endif()
 endforeach()
 
-# Add test
-# To run these tests automaticaly using the crontab under Unix or the task
-# manager under windows, we have to add the -d option to turn off the display
-# of acquired images
-add_test(calibrate-hand-eye calibrate-hand-eye)
-
 # copy the data
-list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/default-chessboard.cfg" )
-list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/default-circles.cfg" )
-list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-01.jpg" )
-list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-02.jpg" )
-list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-03.jpg" )
-list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-04.jpg" )
-list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-05.jpg" )
-list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-06.jpg" )
-list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-07.jpg" )
-list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-08.jpg" )
-list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-09.jpg" )
-list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-10.jpg" )
-list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-11.jpg" )
-list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-12.jpg" )
-list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-13.jpg" )
-list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/circles-01.jpg" )
-list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/circles-02.jpg" )
-list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/circles-03.jpg" )
-list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/circles-04.jpg" )
-list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/circles-05.jpg" )
-list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/camera_calibration_show_extrinsics.py" )
+list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/default-chessboard.cfg")
+list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/default-circles.cfg")
+list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-01.jpg")
+list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-02.jpg")
+list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-03.jpg")
+list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-04.jpg")
+list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-05.jpg")
+list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-06.jpg")
+list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-07.jpg")
+list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-08.jpg")
+list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-09.jpg")
+list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-10.jpg")
+list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-11.jpg")
+list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-12.jpg")
+list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-13.jpg")
+list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/circles-01.jpg")
+list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/circles-02.jpg")
+list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/circles-03.jpg")
+list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/circles-04.jpg")
+list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/circles-05.jpg")
+list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/camera_calibration_show_extrinsics.py")
 
 # Copy the data files to the same location than the target
 foreach(data ${data2copy})
