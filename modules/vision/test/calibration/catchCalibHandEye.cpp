@@ -32,7 +32,7 @@
  */
 
 /*!
-  \example testCalibHandEye.cpp
+  \example catchCalibHandEye.cpp.cpp
   \brief Test of eye-in-hand calibration to estimate extrinsic camera parameters,
   ie hand-eye homogeneous transformation corresponding to the transformation between
   the robot end-effector and the camera.
