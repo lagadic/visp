@@ -60,7 +60,6 @@ if(MSVC)
   endif()
 endif()
 
-visp_add_subdirectory(calibration              REQUIRED_DEPS visp_core visp_vision visp_io visp_gui)
 visp_add_subdirectory(coin-simulator           REQUIRED_DEPS visp_core visp_robot visp_vs visp_ar visp_io)
 visp_add_subdirectory(device/display           REQUIRED_DEPS visp_core visp_gui visp_io)
 visp_add_subdirectory(device/framegrabber      REQUIRED_DEPS visp_core visp_sensor visp_io visp_gui)

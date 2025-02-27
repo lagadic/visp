@@ -46,7 +46,7 @@
   Camera extrinsic (eMc) parameters are set by default to a value that will not match
   Your configuration. Use --eMc command line option to read the values from a file.
   This file could be obtained following extrinsic camera calibration tutorial:
-  https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-calibration-extrinsic.html
+  https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-calibration-extrinsic-eye-in-hand.html
 
   Camera intrinsic parameters are retrieved from the Realsense SDK.
 

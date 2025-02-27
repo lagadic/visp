@@ -25,13 +25,13 @@ int main(int argc, const char **argv)
   float quad_decimate = 1.0;
   int nThreads = 1;
   std::string intrinsic_file = "";
-  std::string camera_name = "";
+  std::string opt_camera_name = "";
   bool display_tag = false;
   int color_id = -1;
   unsigned int thickness = 2;
   bool z_aligned = false;
 
-  for (int i = 1; i < argc; i++) {
+  for (int i = 1; i < argc; ++i) {
     if (std::string(argv[i]) == "--pose-method" && i + 1 < argc) {
       poseEstimationMethod = static_cast<vpDetectorAprilTag::vpPoseEstimationMethod>(atoi(argv[++i]));
     }
@@ -52,7 +52,7 @@ int main(int argc, const char **argv)
       intrinsic_file = std::string(argv[++i]);
     }
     else if (std::string(argv[i]) == "--camera-name" && i + 1 < argc) {
-      camera_name = std::string(argv[++i]);
+      opt_camera_name = std::string(argv[++i]);
     }
 #endif
     else if (std::string(argv[i]) == "--display-tag") {
@@ -93,8 +93,8 @@ int main(int argc, const char **argv)
   cam.initPersProjWithoutDistortion(615.1674805, 615.1675415, 312.1889954, 243.4373779);
 #if defined(VISP_HAVE_PUGIXML)
   vpXmlParserCamera parser;
-  if (!intrinsic_file.empty() && !camera_name.empty()) {
-    parser.parse(cam, intrinsic_file, camera_name, vpCameraParameters::perspectiveProjWithoutDistortion);
+  if (!intrinsic_file.empty() && !opt_camera_name.empty()) {
+    parser.parse(cam, intrinsic_file, opt_camera_name, vpCameraParameters::perspectiveProjWithoutDistortion);
   }
 #endif
 

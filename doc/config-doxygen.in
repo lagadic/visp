@@ -1029,7 +1029,8 @@ EXCLUDE_SYMBOLS        =
 # that contain example code fragments that are included (see the \include
 # command).
 
-EXAMPLE_PATH           = "@VISP_SOURCE_DIR@/example" \
+EXAMPLE_PATH           = "@VISP_SOURCE_DIR@/apps" \
+                         "@VISP_SOURCE_DIR@/example" \
                          "@VISP_SOURCE_DIR@/tutorial" \
                          "@VISP_SOURCE_DIR@/demo" \
                          "@VISP_SOURCE_DIR@/modules" \

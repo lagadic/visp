@@ -1362,7 +1362,7 @@ void vpRobotBebop2::initCodec()
     return;
   }
 
-  // Sets codec parameters (TODO : should be done automaticaly by drone callback decoderConfigCallback)
+  // Sets codec parameters (TODO : should be done automatically by drone callback decoderConfigCallback)
   m_codecContext->pix_fmt = AV_PIX_FMT_YUV420P;
   m_codecContext->skip_frame = AVDISCARD_DEFAULT;
   m_codecContext->error_concealment = FF_EC_GUESS_MVS | FF_EC_DEBLOCK;
