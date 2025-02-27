@@ -398,14 +398,14 @@ void vpRBSilhouetteCCDTracker::display(const vpCameraParameters &/*cam*/, const 
     for (const vpRBSilhouetteControlPoint &p : m_controlPoints) {
       vpColor c;
       c.R = static_cast<unsigned char>((errorPerPoint[idx] / maxError) * 255.0);
-      c.G = static_cast<unsigned char>(255.0 * weightPerPoint[idx]);
-      c.B = 0;
-      vpImagePoint diff(m_stats.nv[idx][1] * m_ccdParameters.h, m_stats.nv[idx][0] * m_ccdParameters.h);
-      vpImagePoint ip1 = p.icpoint - diff;
-      vpImagePoint ip2 = p.icpoint + diff;
+      c.G = 0;
+      c.B = static_cast<unsigned char>(255.0 * weightPerPoint[idx]);
+      // vpImagePoint diff(m_stats.nv[idx][1] * m_ccdParameters.h, m_stats.nv[idx][0] * m_ccdParameters.h);
+      // vpImagePoint ip1 = p.icpoint - diff;
+      // vpImagePoint ip2 = p.icpoint + diff;
 
-      vpDisplay::displayLine(IRGB, ip1, ip2, c, 1);
-        // vpDisplay::displayCross(IRGB, p.icpoint.get_i(), p.icpoint.get_j(), 3, c, 1);
+      // vpDisplay::displayLine(IRGB, ip1, ip2, c, 1);
+      vpDisplay::displayCross(IRGB, p.icpoint.get_i(), p.icpoint.get_j(), 3, c, 1);
       idx++;
     }
   }

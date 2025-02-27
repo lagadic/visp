@@ -73,14 +73,17 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
     }
   }
   vpColorHistogram::computeSplitHistograms(rgb, m_mask, renderBB, m_histObjectFrame, m_histBackgroundFrame);
+  const float numPxTotal = static_cast<float>(m_histObjectFrame.getNumPixels() + m_histBackgroundFrame.getNumPixels());
 
-  const float pObject = static_cast<float>(m_histObjectFrame.getNumPixels()) / static_cast<float>(m_mask.getSize());
-  const float pBackground = 1.f - pObject;
+  const float pObject = static_cast<float>(m_histObjectFrame.getNumPixels()) / numPxTotal;
+  const float pBackground = static_cast<float>(m_histBackgroundFrame.getNumPixels()) / numPxTotal;
+
   {
     {
       if (pObject != 0.f) {
         m_histObject.merge(m_histObjectFrame, m_objectUpdateRate);
       }
+
       if (m_computeOnBBOnly) {
         m_histObject.computeProbas(frame.IRGB, m_probaObject, frame.renders.boundingBox);
       }
@@ -92,6 +95,7 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
       if (pBackground != 0.f) {
         m_histBackground.merge(m_histBackgroundFrame, m_backgroundUpdateRate);
       }
+
       if (m_computeOnBBOnly) {
         m_histBackground.computeProbas(frame.IRGB, m_probaBackground, frame.renders.boundingBox);
       }
@@ -102,6 +106,7 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
   }
 
   if (m_computeOnBBOnly) {
+    float maxValue = 0.0;
     mask.resize(height, width, 0.f);
 #pragma omp parallel for
     for (unsigned int i = top; i <= static_cast<unsigned int>(bottom); ++i) {
@@ -110,21 +115,43 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
         const float pbPix = m_probaBackground[i][j];
 
         float denom = (pObject * poPix + pBackground * pbPix);
-        mask[i][j] = (denom > 0.f) * std::max(0.f, std::min(1.f, (poPix / denom)));
+        if (denom == 0) {
+          mask[i][j] = 0;
+          continue;
+        }
+        mask[i][j] = ((poPix * pObject) / denom);
+        if (mask[i][j] > maxValue) {
+          maxValue = mask[i][j];
+        }
       }
     }
+    // if (maxValue > 0.0) {
+    //   for (unsigned int i = top; i <= static_cast<unsigned int>(bottom); ++i) {
+    //     for (unsigned int j = left; j <= static_cast<unsigned int>(right); ++j) {
+    //       mask[i][j] = mask[i][j] / maxValue;
+    //     }
+    //   }
+
+    // }
   }
   else {
     mask.resize(height, width);
+    float maxValue = 0.0;
     for (unsigned int i = 0; i < mask.getSize(); ++i) {
-      // float poPix = m_histObject.probability(frame.IRGB.bitmap[i]);
-      // float pbPix = m_histBackground.probability(frame.IRGB.bitmap[i]);
       const float poPix = m_probaObject.bitmap[i];
       const float pbPix = m_probaBackground.bitmap[i];
 
       float denom = (pObject * poPix + pBackground * pbPix);
-      mask.bitmap[i] = (denom > 0.f) * std::max(0.f, std::min(1.f, (poPix / denom)));
+      mask.bitmap[i] = (poPix * pObject) / denom;
+      if (mask.bitmap[i] > maxValue) {
+        maxValue = mask.bitmap[i];
+      }
     }
+    // if (maxValue > 0.0) {
+    //   for (unsigned int i = 0; i < mask.getSize(); ++i) {
+    //     mask.bitmap[i] /= maxValue;
+    //   }
+    // }
 
   }
 

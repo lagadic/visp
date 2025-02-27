@@ -180,7 +180,7 @@ void vpRBProbabilistic3DDriftDetector::update(const vpRBFeatureTrackerInput &pre
 
         scoresLocal.push_back(proba);
         m_score += proba;
-        p->updateColor(c, m_colorUpdateRate * proba);
+        p->updateColor(c, m_colorUpdateRate * probaDepth);
       }
 #ifdef VISP_HAVE_OPENMP
 #pragma omp critical
