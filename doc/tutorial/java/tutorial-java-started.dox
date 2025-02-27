@@ -131,48 +131,48 @@ is no other Blas/Lapack 3rd party available.
 
 A complete discussion about this issue is given here in [issue #806](https://github.com/lagadic/visp/issues/806).
 
-\subsection java_started_issue_windows Error running Java app with Intel MKL
+\subsection java_started_issue_windows 5.4. Error no visp_java361 in java.library.path
 
-If you face the follwoing error:
+If you face the following error:
 
-```
+\code{.sh}
 Exception in thread "main" java.lang.UnsatisfiedLinkError: no visp_java361 in java.library.path: C:\visp-ws\visp-java\x64\vc17\bin\Release
 	at java.base/java.lang.ClassLoader.loadLibrary(ClassLoader.java:2458)
 	at java.base/java.lang.Runtime.loadLibrary0(Runtime.java:916)
 	at java.base/java.lang.System.loadLibrary(System.java:2063)
 	at visp_started/visp_started.Started.<clinit>(Started.java:12)
-```
+\endcode
 
 Run the following command:
 
-```
-java -XshowSettings:properties -version
-```
+\code{.sh}
+C:\> java -XshowSettings:properties -version
+\endcode
 
 In the result of the command, check the value of `java.library.path`:
-```
+\code{.sh}
 Property settings:
     file.encoding = UTF-8
     file.separator = \
     java.class.path =
     java.class.version = 65.0
     java.home = C:\Program Files\Java\jdk-21
-    java.io.tmpdir = C:\Users\CHERCH~1\AppData\Local\Temp\
+    java.io.tmpdir = C:\Users\username\AppData\Local\Temp\
     java.library.path = $LIST_OF_FOLDERS
-```
+\endcode
 
-Ensure that the `.dll` and `.lib` of visp (`visp_core.dll`, `visp_java${VERSION_NUMBER}.dll)
+Ensure that the `.dll` and `.lib` of visp (`visp_core.dll`, `visp_java${VERSION_NUMBER}.dll`)
 and so on are located in one of these folders.
 
 \subsection java_started_issue_includes Issues with the includes
 
 If Oracle complains about the `import` statements, add in the `module-info.java` the following lines:
 
-```
+\code{.sh}
 module ${APPLICATION_PACKAGE_NAME} {
 	requires visp;
 }
-```
+\endcode
 
 where `${APPLICATION_PACKAGE_NAME}` must be replaced by the name that appears in the `package` statement
 in the `Started.java` file.
