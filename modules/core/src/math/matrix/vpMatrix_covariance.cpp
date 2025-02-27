@@ -83,7 +83,7 @@ vpMatrix vpMatrix::computeCovarianceMatrix(const vpMatrix &A, const vpColVector 
 
   \param b : Vector b from WAx = Wb.
 
-  \param W : Diagonal weigths matrix from WAx = Wb.
+  \param W : Diagonal weights matrix from WAx = Wb.
 */
 vpMatrix vpMatrix::computeCovarianceMatrix(const vpMatrix &A, const vpColVector &x, const vpColVector &b,
                                            const vpMatrix &W)
