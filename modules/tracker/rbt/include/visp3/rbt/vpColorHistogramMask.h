@@ -39,6 +39,7 @@
 #include <visp3/core/vpException.h>
 #include <visp3/rbt/vpColorHistogram.h>
 #include <visp3/rbt/vpObjectMask.h>
+#include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImage.h>
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
@@ -110,6 +111,31 @@ public:
   /**
    * @}
    */
+
+  void display(const vpImage<float> &mask, vpImage<unsigned char> &Imask) const VP_OVERRIDE
+  {
+    vpObjectMask::display(mask, Imask);
+    unsigned int numColor = 10;
+    unsigned int y = 50;
+    unsigned int pad = 5;
+    unsigned int radius = 5;
+
+    std::vector<vpRGBa> bestColors = m_histObject.mostLikelyColors(numColor);
+
+    for (unsigned int i = 0; i < bestColors.size(); ++i) {
+      vpColor c;
+      c.R = bestColors[i].R;
+      c.G = bestColors[i].G;
+      c.B = bestColors[i].B;
+      c.A = 255;
+      std::cout << "Displaying color histogram best" << std::endl;
+
+      vpDisplay::displayCircle(Imask, y, pad + (i * radius * 2 + (i - 1) * pad), radius, c, true);
+    }
+
+
+
+  }
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
   void loadJsonConfiguration(const nlohmann::json &json) VP_OVERRIDE;

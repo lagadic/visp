@@ -119,7 +119,10 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
           mask[i][j] = 0;
           continue;
         }
-        mask[i][j] = ((poPix * pObject) / denom);
+        float pmo = (poPix * pObject) / denom;
+        float pmb = (pbPix * pBackground) / denom;
+        float score = pmo - pmb;
+        mask[i][j] = pmo;
         if (mask[i][j] > maxValue) {
           maxValue = mask[i][j];
         }
@@ -133,6 +136,7 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
     //   }
 
     // }
+
   }
   else {
     mask.resize(height, width);
