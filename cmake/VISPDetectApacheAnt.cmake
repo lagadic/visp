@@ -13,7 +13,7 @@ else()
 endif()
 
 find_host_program(ANT_EXECUTABLE NAMES ${ANT_NAME}
-  PATHS "${ANT_DIR_ENV_PATH}/bin" "${ProgramFiles_ENV_PATH}/apache-ant/bin"
+  PATHS "${ANT_DIR_ENV_PATH}/bin" "${ANT_DIR_ENV_PATH}" "${ProgramFiles_ENV_PATH}/apache-ant/bin"
 #  NO_DEFAULT_PATH
   )
 
