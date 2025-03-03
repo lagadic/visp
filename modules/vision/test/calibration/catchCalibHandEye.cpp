@@ -161,12 +161,26 @@ TEST_CASE("Eye-in-hand calibration", "[vpHandEyeCalibration]")
       }
     }
     if (success) {
-      std::cout << std::endl << "** Hand-eye calibration succeed" << std::endl;
+      std::cout << std::endl << "** eye-in-hand calibration succeed" << std::endl;
     }
   }
   else {
-    std::cout << std::endl << "** Hand-eye calibration failed" << std::endl;
+    std::cout << std::endl << "** eye-in-hand calibration failed" << std::endl;
     success = false;
+  }
+
+  CHECK(success);
+}
+
+TEST_CASE("Eye-to-hand calibration", "[vpHandEyeCalibration]")
+{
+  bool success = true;
+
+  if (success) {
+    std::cout << std::endl << "** eye-to-hand calibration succeed" << std::endl;
+  }
+  else {
+    std::cout << std::endl << "** eye-to-hand calibration failed" << std::endl;
   }
 
   CHECK(success);

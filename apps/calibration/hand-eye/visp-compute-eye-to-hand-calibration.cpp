@@ -28,10 +28,10 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Compute eye-in-hand calibration from chessboard poses and robot end-effector poses.
+ * Compute eye-to-hand calibration from Apriltag poses and robot end-effector poses.
  */
 
-//! \example visp-compute-eye-in-hand-calibration.cpp
+//! \example visp-compute-eye-to-hand-calibration.cpp
 #include <map>
 
 #include <visp3/core/vpConfig.h>
@@ -49,7 +49,7 @@ void usage(const char *argv[], int error)
     << " [--help, -h]" << std::endl
     << std::endl;
   std::cout << "Description" << std::endl
-    << "  Compute eye-in-hand calibration." << std::endl
+    << "  Compute eye-to-hand calibration." << std::endl
     << std::endl
     << "  --data-path <path>" << std::endl
     << "    Path to the folder containing pose_fPe_%d.yaml and pose_cPo_%d.yaml data files." << std::endl
@@ -223,9 +223,9 @@ int main(int argc, const char *argv[])
     pose_vec.saveYAML(output_filename, pose_vec);
   }
   else {
-    std::cout << std::endl << "** Eye-in-hand calibration failed" << std::endl;
-    std::cout << std::endl << "Check your input data and ensure they are covering the half sphere over the chessboard." << std::endl;
-    std::cout << std::endl << "See https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-calibration-extrinsic-eye-in-hand.html" << std::endl;
+    std::cout << std::endl << "** Eye-to-hand calibration failed" << std::endl;
+    std::cout << std::endl << "Check your input data and ensure they are covering the half sphere over the Apriltag." << std::endl;
+    std::cout << std::endl << "See https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-calibration-extrinsic-eye-to-hand.html" << std::endl;
   }
 
   return EXIT_SUCCESS;

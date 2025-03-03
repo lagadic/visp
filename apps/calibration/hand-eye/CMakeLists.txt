@@ -8,6 +8,7 @@ set(apps_cpp
   visp-compute-apriltag-poses.cpp
   visp-compute-chessboard-poses.cpp
   visp-compute-eye-in-hand-calibration.cpp
+  visp-compute-eye-to-hand-calibration.cpp
 )
 
 if(VISP_HAVE_FRANKA)
@@ -42,11 +43,6 @@ if(VISP_HAVE_REALSENSE2)
   visp_set_source_file_compile_flag(visp-acquire-universal-robots-calib-data.cpp ${CXX_FLAGS_MUTE_WARNINGS})
 endif()
 
-# Copy the data files to the same location than the target
-foreach(data ${apps_data})
-  visp_copy_data(visp-compute-eye-in-hand-calibration.cpp ${data})
-endforeach()
-
 # Copy the data folder to the same location than the target
 visp_copy_dir(visp-compute-eye-in-hand-calibration.cpp "${CMAKE_CURRENT_SOURCE_DIR}" data-eye-in-hand)
-visp_copy_dir(visp-compute-eye-in-hand-calibration.cpp "${CMAKE_CURRENT_SOURCE_DIR}" data-eye-to-hand)
+visp_copy_dir(visp-compute-eye-to-hand-calibration.cpp "${CMAKE_CURRENT_SOURCE_DIR}" data-eye-to-hand)
