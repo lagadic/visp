@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,19 +132,19 @@ int main(int argc, const char **argv)
         if (button == vpMouseButton::button1) {
           cpt++;
 
-          vpPoseVector fPe;
+          vpPoseVector rPe;
           std::cout << "Connect to robot to get its position..." << std::endl;
           robot.connect(opt_robot_ip);
-          robot.getPosition(vpRobot::END_EFFECTOR_FRAME, fPe);
+          robot.getPosition(vpRobot::END_EFFECTOR_FRAME, rPe);
           robot.disconnect();
 
           std::stringstream ss_img, ss_pos;
 
           ss_img << "ur_image-" << cpt << ".png";
-          ss_pos << "ur_pose_fPe_" << cpt << ".yaml";
+          ss_pos << "ur_pose_rPe_" << cpt << ".yaml";
           std::cout << "Save: " << ss_img.str() << " and " << ss_pos.str() << std::endl;
           vpImageIo::write(I, ss_img.str());
-          fPe.saveYAML(ss_pos.str(), fPe);
+          rPe.saveYAML(ss_pos.str(), rPe);
         }
         else if (button == vpMouseButton::button3) {
           end = true;

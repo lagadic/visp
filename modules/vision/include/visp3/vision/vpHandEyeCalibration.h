@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,8 +37,8 @@
  *
  * \sa The example in calibrate-hand-eye.cpp
  */
-#ifndef _vpHandEyeCalibration_h_
-#define _vpHandEyeCalibration_h_
+#ifndef VP_HAND_EYE_CALIBRATION_H
+#define VP_HAND_EYE_CALIBRATION_H
 
 #include <vector>
 #include <visp3/core/vpExponentialMap.h>
@@ -53,21 +53,58 @@ BEGIN_VISP_NAMESPACE
  * \ingroup group_vision_calib
  *
  * \brief Tool for hand-eye calibration.
+ * This class is able to consider eye-in-hand and eye-to-hand configurations.
 */
 class VISP_EXPORT vpHandEyeCalibration
 {
 public:
   /*!
-   * Compute extrinsic camera parameters : the constant transformation from
-   * the effector to the camera frames (eMc).
+   * Perform hand-eye calibration:
+   * - For the eye-in hand configuration, compute the constant transformations
+   *   from the end effector to the camera frames (eMc), and from the robot
+   *   reference to the object frames (rMo).
+   * - For the eye-to hand configuration, compute the constant transformations
+   *   from the end effector to the object frames (eMo), and from the robot
+   *   reference to the camera frames (rMo).
    *
-   * \param[in] cMo : vector of homogeneous matrices representing the transformation
-   * between the camera and the scene.
-   * \param[in] rMe : vector of homogeneous matrices representing the transformation
-   * between the effector (where the camera is fixed) and the reference
-   * coordinates (base of the manipulator). Must be the same size as cMo.
-   * \param[out] eMc : homogeneous matrix representing the transformation
-   * between the effector and the camera (output)
+   * \param[in] cMo : Vector of homogeneous matrices representing the transformation
+   * between the camera and the object for the eye-in-hand configuration and
+   * the inverse transformation for the eye-to-hand configuration (oMc).
+   * \param[in] rMe : Vector of homogeneous matrices representing the
+   * corresponding transformation between the end effector and robot reference
+   * frame. Must be the same size as cMo.
+   *
+   * \param[out] eMc : Homogeneous matrix representing the transformation
+   * between the effector and the camera in the eye-in-hand configuration and
+   * between the effector and the object in the eye-to-hand configuration.
+   *
+   * \param[out] rMo : Homogeneous matrix representing the transformation
+   * between the robot reference and the object in the eye-in-hand configuration
+   * and between the robot reference and the camera in the eye-to-hand configuration.
+   *
+   * \return 0 if calibration succeed, -1 if the system is not full rank, 1 if the algorithm doesn't converge.
+   */
+  static int calibrate(const std::vector<vpHomogeneousMatrix> &cMo, const std::vector<vpHomogeneousMatrix> &rMe,
+                       vpHomogeneousMatrix &eMc, vpHomogeneousMatrix &rMo);
+  /*!
+   * Perform hand-eye calibration:
+   * - For the eye-in hand configuration, compute the constant transformations
+   *   from the end effector to the camera frames (eMc), and from the robot
+   *   reference to the object frames (rMo).
+   * - For the eye-to hand configuration, compute the constant transformations
+   *   from the end effector to the object frames (eMo), and from the robot
+   *   reference to the camera frames (rMo).
+   *
+   * \param[in] cMo : Vector of homogeneous matrices representing the transformation
+   * between the camera and the object for the eye-in-hand configuration and
+   * the inverse transformation for the eye-to-hand configuration (oMc).
+   * \param[in] rMe : Vector of homogeneous matrices representing the
+   * corresponding transformation between the end effector and robot reference
+   * frame. Must be the same size as cMo.
+   *
+   * \param[out] eMc : Homogeneous matrix representing the transformation
+   * between the effector and the camera in the eye-in-hand configuration and
+   * between the effector and the object in the eye-to-hand configuration.
    *
    * \return 0 if calibration succeed, -1 if the system is not full rank, 1 if the algorithm doesn't converge.
    */
@@ -75,6 +112,8 @@ public:
                        vpHomogeneousMatrix &eMc);
 
 private:
+  static void calibrationVerifrMo(const std::vector<vpHomogeneousMatrix> &cMo, const std::vector<vpHomogeneousMatrix> &rMe,
+                                  const vpHomogeneousMatrix &eMc, vpHomogeneousMatrix &rMo);
   static void calibrationVerifrMo(const std::vector<vpHomogeneousMatrix> &cMo,
                                   const std::vector<vpHomogeneousMatrix> &rMe, const vpHomogeneousMatrix &eMc);
   static int calibrationRotationTsai(const std::vector<vpHomogeneousMatrix> &cMo,
@@ -89,9 +128,8 @@ private:
   static int calibrationTranslationOld(const std::vector<vpHomogeneousMatrix> &cMo,
                                        const std::vector<vpHomogeneousMatrix> &rMe, vpRotationMatrix &eRc,
                                        vpTranslationVector &eTc);
-  static double calibrationErrVVS(const std::vector<vpHomogeneousMatrix> &cMo,
-                                  const std::vector<vpHomogeneousMatrix> &rMe, const vpHomogeneousMatrix &eMc,
-                                  vpColVector &errVVS);
+  static double calibrationErrVVS(const std::vector<vpHomogeneousMatrix> &cMo, const std::vector<vpHomogeneousMatrix> &rMe,
+                                  const vpHomogeneousMatrix &eMc, vpColVector &errVVS);
   static int calibrationVVS(const std::vector<vpHomogeneousMatrix> &cMo, const std::vector<vpHomogeneousMatrix> &rMe,
                             vpHomogeneousMatrix &eMc);
 };

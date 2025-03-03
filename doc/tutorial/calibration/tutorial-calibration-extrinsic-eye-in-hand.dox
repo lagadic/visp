@@ -19,18 +19,20 @@ The principle of the extrinsic eye-in-hand calibration is easy to apply to any o
 camera attached to the robot end-effector.
 
 Let us consider:
-- \f$^f{\bf M}_e\f$ the homogeneous transformation between the robot base frame (also called fixed frame) and the
+- \f$^r{\bf M}_e\f$ the homogeneous transformation between the robot reference frame and the
   robot end-effector
 - \f$^c{\bf M}_o\f$ the homogeneous transformation between the camera frame and a calibration grid frame (also called
   object frame), typically the OpenCV chessboard
 - \f$^e{\bf M}_c\f$ the homogeneous transformation between the end-effector and the camera frame. This is the
   transformation corresponding to the extrinsic eye-in-hand transformation that we have to estimate.
+- \f$^r{\bf M}_o\f$ the homogeneous transformation between the robot reference frame and the object frame. This
+  transformation is also estimated.
 
 The calibration process described in this tutorial consists in 3 steps:
-1. acquiring data consisting in couples of \f$^f{\bf M}_e\f$ poses, images of the chessboard and camera intrinsic
+1. acquiring data consisting in couples of \f$^r{\bf M}_e\f$ poses, images of the chessboard and camera intrinsic
    parameters
 2. computing the corresponding \f$^c{\bf M}_o\f$ pose of the chessboard from the images
-3. from the basket of \f$\{^f{\bf M}_e, ^c{\bf M}_o\}_i\f$ corresponding to couple of poses \f$ i \f$ the last step is
+3. from the basket of \f$\{^r{\bf M}_e, ^c{\bf M}_o\}_i\f$ corresponding to couple of poses \f$ i \f$ the last step is
    to estimate the \f$^e{\bf M}_c\f$ extrinsic transformation.
 
 Note that all the material (source code) described in this tutorial is part of ViSP source code
@@ -62,7 +64,7 @@ Glue the chessboard on a flat surface and put it under the camera monted on the 
 
 \subsection calib_eih_acq_data 3.1. Acquire data
 
-The objective here is to complete step 1 by acquiring couples of \f$^f{\bf M}_e\f$ poses and the corresponding images
+The objective here is to complete step 1 by acquiring couples of \f$^r{\bf M}_e\f$ poses and the corresponding images
 of the chessboard. To this end move the camera attached to the robot to different positions. At least 8 to 10 positions
 are requested. To define a good position you have to imagine a half sphere over the chessboard and select positions
 that discretise as much as possible all the half sphere surface. For each position you should see all the chessboard
@@ -77,16 +79,19 @@ the chessboard doesn't matter. The chessboard z-axis could be going upward or no
 To acquire images of the chessboard, depending of your device you can follow \ref tutorial-grabber. Images could be
 saved in jpeg or png format, or any format supported by ViSP.
 
-To get the corresponding \f$^f{\bf M}_e\f$ poses, you need to use one of our robot interface like
-vpRobotFranka::get_fMe(), vpRobotUniversalRobots::get_fMe()... It returns the homogeneous transformation between the
-robot base frame and the robot end-effector. The following code snippet shows how to save the pose in yaml format:
+To get the corresponding \f$^r{\bf M}_e\f$ poses, you need to use one of our robot interface like
+`vpRobotFranka::getPosition(vpRobot::END_EFFECTOR_FRAME)`,
+`vpRobotUniversalRobots::getPosition(vpRobot::END_EFFECTOR_FRAME)`...
+It returns the homogeneous transformation between the robot reference frame and the robot end-effector. The following
+code  snippet shows how to save the pose in yaml format:
 \code
+vpRobotFranka robot;
 int cpt = 1;
-vpPoseVector fPe;
-robot.getPosition(vpRobot::END_EFFECTOR_FRAME, fPe);
+vpPoseVector rPe;
+robot.getPosition(vpRobot::END_EFFECTOR_FRAME, rPe);
 std::stringstream ss;
-ss << "pose_fPe_" << cpt << ".yaml";
-fPe.saveYAML(ss_pos.str(), fPe);
+ss << "pose_rPe_" << cpt << ".yaml";
+rPe.saveYAML(ss_pos.str(), rPe);
 \endcode
 
 To complete this step, you need also to get or calibrate your camera intrinsics in order to obtain its intrinsic
@@ -104,15 +109,15 @@ visp-acquire-franka-calib-data.cpp binary described in section \ref calib_eih_us
 \code{.sh}
 $ cd $VISP_WS/visp-build/apps/calibration/hand-eye
 $ ls data-eye-in-hand
-chessboard-data.txt  franka_image-2.png  franka_image-5.png  franka_image-8.png      franka_pose_fPe_3.yaml  franka_pose_fPe_6.yaml
-franka_camera.xml    franka_image-3.png  franka_image-6.png  franka_pose_fPe_1.yaml  franka_pose_fPe_4.yaml  franka_pose_fPe_7.yaml
-franka_image-1.png   franka_image-4.png  franka_image-7.png  franka_pose_fPe_2.yaml  franka_pose_fPe_5.yaml  franka_pose_fPe_8.yaml
+chessboard-data.txt  franka_image-2.png  franka_image-5.png  franka_image-8.png      franka_pose_rPe_3.yaml  franka_pose_rPe_6.yaml
+franka_camera.xml    franka_image-3.png  franka_image-6.png  franka_pose_rPe_1.yaml  franka_pose_rPe_4.yaml  franka_pose_rPe_7.yaml
+franka_image-1.png   franka_image-4.png  franka_image-7.png  franka_pose_rPe_2.yaml  franka_pose_rPe_5.yaml  franka_pose_rPe_8.yaml
 \endcode
 
 In this dataset, you will find:
 - 8 images of the 9x6 chessboard in `franka_image-*.png` files
-- the corresponding pose of the end-effector in the robot base frame noted \f$^f{\bf M}_e\f$ and saved as a pose vector
-  in yaml format in `franka_pose_fPe_*.yaml` files
+- the corresponding pose of the end-effector in the robot reference frame noted \f$^r{\bf M}_e\f$ and saved as a pose vector
+  in yaml format in `franka_pose_rPe_*.yaml` files
 - camera intrinsic parameters in `franka_camera.xml`
 - and the size of the chessboard in `chessboard-data.txt` (9x6 chessboard where each square of the calibration grid is
   0.0236 m large).
@@ -193,32 +198,33 @@ data-eye-in-hand/franka_pose_cPo_3.yaml  data-eye-in-hand/franka_pose_cPo_6.yaml
 \subsection calib_eih_tsai 3.3. Estimate extrinsic transformation
 
 The final step consists now to estimate the end-effector to camera \f$^e{\bf M}_c\f$ transformation from the couples of
-\f$^f{\bf M}_e\f$ and \f$^c{\bf M}_o\f$ poses.
+\f$^r{\bf M}_e\f$ and \f$^c{\bf M}_o\f$ poses.
 
 Complete the calibration running `visp-compute-eye-in-hand-calibration` binary. It will get the data from the pair of
-files, `franka_pose_fPe_%%d.yaml` and `franka_pose_cPo_%%d.yaml` located in `"data-eye-in-hand"` folder.
+files, `franka_pose_rPe_%%d.yaml` and `franka_pose_cPo_%%d.yaml` located in `"data-eye-in-hand"` folder.
 
 \code{.sh}
 $ cd $VISP_WS/visp-build/apps/calibration/hand-eye
-$ ./visp-compute-eye-in-hand-calibration      \
-    --data-path data-eye-in-hand/             \
-    --fPe franka_pose_fPe_%d.yaml             \
-    --cPo franka_pose_cPo_%d.yaml             \
-    --output data-eye-in-hand/franka_eMc.yaml
+$ ./visp-compute-eye-in-hand-calibration          \
+    --data-path data-eye-in-hand/                 \
+    --rPe franka_pose_rPe_%d.yaml                 \
+    --cPo franka_pose_cPo_%d.yaml                 \
+    --output-ePc data-eye-in-hand/franka_ePc.yaml \
+    --output-rPo data-eye-in-hand/franka_rPo.yaml
 \endcode
 
 The source code corresponding to the binary is available in visp-compute-eye-in-hand-calibration.cpp.
 
 It will produce the following results:
 \code{.sh}
-Use data from data-eye-in-hand//data-eye-in-hand/franka_pose_fPe_1.yaml and from data-eye-in-hand/franka_pose_cPo_1.yaml
-Use data from data-eye-in-hand//data-eye-in-hand/franka_pose_fPe_2.yaml and from data-eye-in-hand/franka_pose_cPo_2.yaml
-Use data from data-eye-in-hand//data-eye-in-hand/franka_pose_fPe_3.yaml and from data-eye-in-hand/franka_pose_cPo_3.yaml
-Use data from data-eye-in-hand//data-eye-in-hand/franka_pose_fPe_4.yaml and from data-eye-in-hand/franka_pose_cPo_4.yaml
-Use data from data-eye-in-hand//data-eye-in-hand/franka_pose_fPe_5.yaml and from data-eye-in-hand/franka_pose_cPo_5.yaml
-Use data from data-eye-in-hand//data-eye-in-hand/franka_pose_fPe_6.yaml and from data-eye-in-hand/franka_pose_cPo_6.yaml
-Use data from data-eye-in-hand//data-eye-in-hand/franka_pose_fPe_7.yaml and from data-eye-in-hand/franka_pose_cPo_7.yaml
-Use data from data-eye-in-hand//data-eye-in-hand/franka_pose_fPe_8.yaml and from data-eye-in-hand/franka_pose_cPo_8.yaml
+Use data from data-eye-in-hand//data-eye-in-hand/franka_pose_rPe_1.yaml and from data-eye-in-hand/franka_pose_cPo_1.yaml
+Use data from data-eye-in-hand//data-eye-in-hand/franka_pose_rPe_2.yaml and from data-eye-in-hand/franka_pose_cPo_2.yaml
+Use data from data-eye-in-hand//data-eye-in-hand/franka_pose_rPe_3.yaml and from data-eye-in-hand/franka_pose_cPo_3.yaml
+Use data from data-eye-in-hand//data-eye-in-hand/franka_pose_rPe_4.yaml and from data-eye-in-hand/franka_pose_cPo_4.yaml
+Use data from data-eye-in-hand//data-eye-in-hand/franka_pose_rPe_5.yaml and from data-eye-in-hand/franka_pose_cPo_5.yaml
+Use data from data-eye-in-hand//data-eye-in-hand/franka_pose_rPe_6.yaml and from data-eye-in-hand/franka_pose_cPo_6.yaml
+Use data from data-eye-in-hand//data-eye-in-hand/franka_pose_rPe_7.yaml and from data-eye-in-hand/franka_pose_cPo_7.yaml
+Use data from data-eye-in-hand//data-eye-in-hand/franka_pose_rPe_8.yaml and from data-eye-in-hand/franka_pose_cPo_8.yaml
 
 Rotation and translation after VVS
 Distance theta between rMo(0) and mean (deg) = 0.525516
@@ -241,31 +247,55 @@ Distance d between rMo(7) and mean (m) = 0.00633341
 Mean residual rMo(8) - translation (m) = 0.00541225
 Mean residual rMo(8) - global = 0.00680578
 
-** Hand-eye calibration succeed
+Hand-eye calibration succeed
 
-** Hand-eye (eMc) transformation estimated:
--0.01100860563  -0.9999153181  0.006940255266  0.05771480338
-0.9999285371  -0.01097586361  0.004738265792  -0.03392606387
--0.004661689251  0.006991920994  0.9999646902  -0.04227445451
+Eye-in-hand calibration succeed
+
+Estimated eMc transformation:
+-----------------------------
+-0.01101243994  -0.9999152828  0.00693926107  0.05771516595
+0.9999285058  -0.01097971887  0.004735938981  -0.03392489398
+-0.00465934663  0.006990919196  0.9999647081  -0.0422769157
 0  0  0  1
-** Corresponding pose vector [tx ty tz tux tuy tuz] in [m] and [rad]: 0.05771480338  -0.03392606387  -0.04227445451  0.001782531196  0.009176571468  1.581778816
 
-** Translation [m]: 0.05771480338 -0.03392606387 -0.04227445451
-** Rotation (theta-u representation) [rad]: 0.001782531196  0.009176571468  1.581778816
-** Rotation (theta-u representation) [deg]: 0.1021315144 0.5257788155 90.62925028
-** Rotation (quaternion representation) [rad]: 0.0008012102638  0.004124675778  0.7109762935  0.7032034238
-** Rotation (r-x-y-z representation) [rad]: -0.004738397642  0.006940310982  1.58180542
-** Rotation (r-x-y-z representation) [deg]: -0.2714901865  0.3976505278  90.63077457
+- Corresponding pose vector [tx ty tz tux tuy tuz] in [m] and [rad]: 0.05771516595  -0.03392489398  -0.0422769157  0.001783583617  0.009173954844  1.581782666
 
-Save transformation matrix eMc as an homogeneous matrix in: data-eye-in-hand/franka_eMc.txt
-Save transformation matrix eMc as a vpPoseVector in       : data-eye-in-hand/franka_eMc.yaml
+** Translation [m]: 0.05771516595 -0.03392489398 -0.0422769157
+- Rotation (theta-u representation) [rad]: 0.001783583617  0.009173954844  1.581782666
+- Rotation (theta-u representation) [deg]: 0.1021918136 0.525628894 90.62947088
+- Rotation (quaternion representation) [rad]: 0.0008016828815  0.004123497483  0.7109776485  0.7032020601
+- Rotation (r-x-y-z representation) [rad]: -0.004736070716  0.006939316763  1.581809255
+- Rotation (r-x-y-z representation) [deg]: -0.2713568635  0.3975935632  90.63099428
+
+Estimated rMo transformation:
+-----------------------------
+0.005561834152  -0.9999516029  0.008115281737  0.5364858913
+-0.9999283534  -0.005647360913  -0.0105544003  0.123945699
+0.01059971943  -0.008055998481  -0.9999113695  0.09155743105
+0  0  0  1
+- Corresponding pose vector [tx ty tz tux tuy tuz] in [m] and [rad]: 0.5364858913  0.123945699  0.09155743105  2.226360491  -2.213916858  0.02071797182
+
+- Translation [m]: 0.5364858913 0.123945699 0.09155743105
+- Rotation (theta-u representation) [rad]: 2.226360491  -2.213916858  0.02071797182
+- Rotation (theta-u representation) [deg]: 127.5610598 -126.8480922 1.187052346
+- Rotation (quaternion representation) [rad]: 0.7090699127  -0.7051067604  0.006598432971  0.0008808728795
+- Rotation (r-x-y-z representation) [rad]: 3.13103771  0.008115370816  1.565234281
+- Rotation (r-x-y-z representation) [deg]: -0.2713568635  0.3975935632  90.63099428
+
+Save transformation matrix eMc as an homogeneous matrix in: data-eye-in-hand/franka_ePc.txt
+Save transformation matrix eMc as a vpPoseVector in       : data-eye-in-hand/franka_ePc.yaml
+
+Save transformation matrix rMo as an homogeneous matrix in: data-eye-in-hand/franka_rPo.txt
+Save transformation matrix rMo as a vpPoseVector in       : data-eye-in-hand/franka_rPo.yaml
 \endcode
 
-The extrinsic transformation is saved in `franka_eMc.yaml` file as a vpPoseVector, with translation in meter and
-rotation as a \f$\theta_{\bf u} \f$ axis-angle vector with values in radians.
+The extrinsic transformation \f$^e{\bf M}_c\f$ is saved in `franka_ePc.yaml` file as a vpPoseVector, with translation
+in meter and rotation as a \f$\theta_{\bf u} \f$ axis-angle vector with values in radians.
+
+Additionally we also save the estimated \f$^r{\bf M}_o\f$ transformation in `franka_rPo.yaml` file.
 
 \code{.sh}
-$ more data-eye-in-hand/franka_eMc.yaml
+$ more data-eye-in-hand/franka_ePc.yaml
 rows: 6
 cols: 1
 data:
@@ -277,10 +307,10 @@ data:
   - [1.58178]
 \endcode
 
-The extrinsic transformation is also saved in `franka_eMc.txt` file that contains the corresponding homogeneous matrix
+The extrinsic transformation is also saved in `franka_ePc.txt` file that contains the corresponding homogeneous matrix
 transformation:
 \code{.sh}
-$ more data-eye-in-hand/franka_eMc.txt
+$ more data-eye-in-hand/franka_ePc.txt
 -0.01100860563  -0.9999153181    0.006940255266   0.05771480338
  0.9999285371   -0.01097586361   0.004738265792  -0.03392606387
 -0.004661689251  0.006991920994  0.9999646902    -0.04227445451
@@ -304,7 +334,7 @@ $ grep px data-eye-in-hand/franka_camera.xml
 
 $ python hand_eye_calibration_show_extrinsics.py                \
     --ndata 8                                                   \
-    --eMc-yaml data-eye-in-hand/franka_eMc.yaml                 \
+    --eMc-yaml data-eye-in-hand/franka_ePc.yaml                 \
     --cPo-file_pattern data-eye-in-hand/franka_pose_cPo_%d.yaml \
     --square-size 0.0236                                        \
     --focal-px 607.59
@@ -348,8 +378,8 @@ Click with the left mouse button to acquire data.
 It records the following outputs:
 
 - `franka_camera.xml` : XML file that contains the intrinsic camera parameters extracted from camera firmware
-- couples of `franka_image-<number>.png` + `franka_pose_fMe-<number>.txt` with number starting from 1.
-  `franka_pose_fMe-<number>.yaml` is the pose of the end-effector expressed in the robot base frame \f$^f{\bf M}_e\f$,
+- couples of `franka_image-<number>.png` + `franka_pose_rPe-<number>.txt` with number starting from 1.
+  `franka_pose_rPe-<number>.yaml` is the pose of the end-effector expressed in the robot reference frame \f$^r{\bf M}_e\f$,
    while `franka_image-<number>.png` is the image captured at the corresponding robot position.
 
 Move the robot to an other position such as the chessboard remains in the image and repeat data acquisition by a left
@@ -363,14 +393,14 @@ This is the output when 8 different positions are considered:
 $ ./visp-acquire-franka-calib-data
 Image size: 640 x 480
 Found camera with name: "Camera"
-Save: franka_image-1.png and franka_pose_fPe_1.yaml
-Save: franka_image-2.png and franka_pose_fPe_2.yaml
-Save: franka_image-3.png and franka_pose_fPe_3.yaml
-Save: franka_image-4.png and franka_pose_fPe_4.yaml
-Save: franka_image-5.png and franka_pose_fPe_5.yaml
-Save: franka_image-6.png and franka_pose_fPe_6.yaml
-Save: franka_image-7.png and franka_pose_fPe_7.yaml
-Save: franka_image-8.png and franka_pose_fPe_8.yaml
+Save: franka_image-1.png and franka_pose_rPe_1.yaml
+Save: franka_image-2.png and franka_pose_rPe_2.yaml
+Save: franka_image-3.png and franka_pose_rPe_3.yaml
+Save: franka_image-4.png and franka_pose_rPe_4.yaml
+Save: franka_image-5.png and franka_pose_rPe_5.yaml
+Save: franka_image-6.png and franka_pose_rPe_6.yaml
+Save: franka_image-7.png and franka_pose_rPe_7.yaml
+Save: franka_image-8.png and franka_pose_rPe_8.yaml
 \endcode
 
 The source code corresponding to the binary is available in visp-acquire-franka-calib-data.cpp. If your setup is
@@ -395,15 +425,16 @@ Finally you can estimate the extrinsic transformation between end-effector and y
 \code{.sh}
 $ ./visp-compute-eye-in-hand-calibration \
     --data-path .                     \
-    --fPe franka_pose_fPe_%d.yaml     \
+    --rPe franka_pose_rPe_%d.yaml     \
     --cPo franka_pose_cPo_%d.yaml     \
-    --output franka_eMc.yaml
+    --output-ePc franka_ePc.yaml      \
+    --output-rPo franka_rPo.yaml
 \endcode
 
-It will produce the `franka_eMc.yaml` that contains the pose as a vpPoseVector and `franka_eMc.txt` that contains the
+It will produce the `franka_ePc.yaml` that contains the pose as a vpPoseVector and `franka_ePc.txt` that contains the
 corresponding homogeneous matrix transformation:
 \code{.sh}
-$ more franka_eMc.yaml
+$ more franka_ePc.yaml
 rows: 6
 cols: 1
 data:
@@ -414,7 +445,7 @@ data:
   - [0.00565946]
   - [0.0166116]
 
-$ more franka_eMc.txt
+$ more franka_ePc.txt
  0.9998460169    -0.01661822717   0.005637104144  -0.03517264821
  0.0166031939     0.9998585032    0.002703241732  -0.05911865752
 -0.005681229597  -0.002609231545  0.9999804576     0.0158759732
@@ -429,7 +460,7 @@ $ grep px franka_camera.xml
       <px>605.146728515625</px>
 $ python hand_eye_calibration_show_extrinsics.py \
     --ndata 8                                    \
-    --eMc_yaml franka_eMc.yaml                   \
+    --eMc_yaml franka_ePc.yaml                   \
     --cPo_file_pattern franka_pose_cPo_%d.yaml   \
     --square_size 0.0262                         \
     --focal_px 605.146728515625
@@ -472,8 +503,8 @@ Click with the left mouse button to acquire data.
 It records the following outputs:
 
 - `ur_camera.xml` : XML file that contains the intrinsic camera parameters extracted from camera firmware
-- couples of `ur_image-<number>.png` + `ur_pose_fPe-<number>.txt` with number starting from 1.
-  `ur_pose_fPe-<number>.yaml` is the pose of the end-effector expressed in the robot base frame \f$^f{\bf M}_e\f$,
+- couples of `ur_image-<number>.png` + `ur_pose_rPe-<number>.txt` with number starting from 1.
+  `ur_pose_rPe-<number>.yaml` is the pose of the end-effector expressed in the robot reference frame \f$^r{\bf M}_e\f$,
    while `ur_image-<number>.png` is the image captured at the corresponding robot position.
 
 With the PolyScope, move the robot to an other position such as the chessboard remains in the image and repeat data
@@ -487,14 +518,14 @@ This is the output when 8 different positions are considered:
 $ ./visp-acquire-universal-robots-calib-data
 Image size: 640 x 480
 Found camera with name: "Camera"
-Save: ur_image-1.png and ur_pose_fPe_1.yaml
-Save: ur_image-2.png and ur_pose_fPe_2.yaml
-Save: ur_image-3.png and ur_pose_fPe_3.yaml
-Save: ur_image-4.png and ur_pose_fPe_4.yaml
-Save: ur_image-5.png and ur_pose_fPe_5.yaml
-Save: ur_image-6.png and ur_pose_fPe_6.yaml
-Save: ur_image-7.png and ur_pose_fPe_7.yaml
-Save: ur_image-8.png and ur_pose_fPe_8.yaml
+Save: ur_image-1.png and ur_pose_rPe_1.yaml
+Save: ur_image-2.png and ur_pose_rPe_2.yaml
+Save: ur_image-3.png and ur_pose_rPe_3.yaml
+Save: ur_image-4.png and ur_pose_rPe_4.yaml
+Save: ur_image-5.png and ur_pose_rPe_5.yaml
+Save: ur_image-6.png and ur_pose_rPe_6.yaml
+Save: ur_image-7.png and ur_pose_rPe_7.yaml
+Save: ur_image-8.png and ur_pose_rPe_8.yaml
 \endcode
 
 The source code corresponding to the binary is available in visp-acquire-universal-robots-calib-data.cpp. If your
@@ -513,20 +544,21 @@ $ ./visp-compute-chessboard-poses \
 
 \subsubsection calib_eih_usecase_ur_emc 4.2.3: Estimate extrinsic transformation
 
-Finally you can estimage the extrinsic transformation between end-effector and you camera, running:
+Finally you can estimate the extrinsic transformation between end-effector and you camera, running:
 
 \code{.sh}
 $ ./visp-compute-eye-in-hand-calibration \
     --data-path .                        \
-    --fPe ur_pose_fPe_%d.yaml            \
+    --rPe ur_pose_rPe_%d.yaml            \
     --cPo ur_pose_cPo_%d.yaml            \
-    --output ur_eMc.yaml
+    --output-ePc ur_ePc.yaml             \
+    --output-rPo ur_rPo.yaml
 \endcode
 
-It will produce the `ur_eMc.yaml` that contains the pose as a vpPoseVector and `ur_eMc.txt` that contains the
+It will produce the `ur_ePc.yaml` that contains the pose as a vpPoseVector and `ur_ePc.txt` that contains the
 corresponding homogeneous matrix transformation:
 \code{.sh}
-$ more ur_eMc.yaml
+$ more ur_ePc.yaml
 rows: 6
 cols: 1
 data:
@@ -537,7 +569,7 @@ data:
   - [0.00565946]
   - [0.0166116]
 
-$ more ur_eMc.txt
+$ more ur_ePc.txt
  0.9998460169    -0.01661822717   0.005637104144  -0.03517264821
  0.0166031939     0.9998585032    0.002703241732  -0.05911865752
 -0.005681229597  -0.002609231545  0.9999804576     0.0158759732
@@ -552,7 +584,7 @@ $ grep px ur_camera.xml
       <px>605.146728515625</px>
 $ python hand_eye_calibration_show_extrinsics.py \
     --ndata 8                                    \
-    --eMc_yaml ur_eMc.yaml                       \
+    --eMc_yaml ur_ePc.yaml                       \
     --cPo_file_pattern ur_pose_cPo_%d.yaml       \
     --square_size 0.0262                         \
     --focal_px 605.146728515625

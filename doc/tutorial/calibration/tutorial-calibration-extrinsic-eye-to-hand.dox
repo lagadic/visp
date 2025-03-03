@@ -5,8 +5,8 @@
 
 \section calib_eth_intro 1. Introduction
 
-This tutorial focuses estimation of the homogeneous transformation between the robot base frame and the camera frame
-in the case of a fixed camera observing the robot end-effector. This configuration is also called eye-to-hand.
+This tutorial focuses estimation of the homogeneous transformation between the robot reference frame and the camera
+frame in the case of a fixed camera observing the robot end-effector. This configuration is also called eye-to-hand.
 
 As a use case, we will consider in this tutorial the case of either:
 - a <a href="https://www.franka.de/cart/">Panda robot</a> in its research version from,
@@ -21,18 +21,20 @@ The principle of the extrinsic eye-to-hand calibration is easy to apply to any o
 camera attached to the robot end-effector.
 
 Let us consider:
-- \f$^f{\bf M}_e\f$ the homogeneous transformation between the robot base frame (also called fixed frame) and the
+- \f$^r{\bf M}_e\f$ the homogeneous transformation between the robot reference frame and the
   robot end-effector
 - \f$^c{\bf M}_o\f$ the homogeneous transformation between the camera frame and an Apriltag frame (also called
   object frame) attached to the robot end-effector,
-- \f$^f{\bf M}_c\f$ the homogeneous transformation between the robot base frame and the camera frame. This is the
+- \f$^r{\bf M}_c\f$ the homogeneous transformation between the robot reference frame and the camera frame. This is the
   transformation corresponding to the extrinsic eye-to-hand transformation that we have to estimate.
+- \f$^e{\bf M}_o\f$ the homogeneous transformation between the robot end-effector frame and the object frame
+  attached to the end-effector. This transformation is also estimated.
 
 The calibration process described in this tutorial consists in 3 steps:
-1. acquiring data consisting in couples of \f$^f{\bf M}_e\f$ poses, images of the Apriltag and camera intrinsic
+1. acquiring data consisting in couples of \f$^r{\bf M}_e\f$ poses, images of the Apriltag and camera intrinsic
    parameters
 2. computing the corresponding \f$^c{\bf M}_o\f$ pose of the Apriltag from the images
-3. from the basket of \f$\{^f{\bf M}_e, ^c{\bf M}_o\}_i\f$ corresponding to couple of poses \f$ i \f$ the last step is
+3. from the basket of \f$\{^r{\bf M}_e, ^c{\bf M}_o\}_i\f$ corresponding to couple of poses \f$ i \f$ the last step is
    to estimate the \f$^w{\bf M}_c\f$ extrinsic transformation.
 
 Note that all the material (source code) described in this tutorial is part of ViSP source code
@@ -82,7 +84,7 @@ Glue the tag on the robot end-effector and mount your camera on a fixed tripod.
 
 \subsection calib_eth_acq_data 3.1. Acquire data
 
-The objective here is to complete step 1 by acquiring couples of \f$^f{\bf M}_e\f$ poses and the corresponding images
+The objective here is to complete step 1 by acquiring couples of \f$^r{\bf M}_e\f$ poses and the corresponding images
 of the tag. To this end move the robot end-effector to different positions. At least 8 to 10 positions are requested.
 To define a good position you have to imagine a half sphere over the camera X-Y plane and select positions
 that discretise as much as possible all the half sphere surface in front of the camera. For each position you should
@@ -91,16 +93,19 @@ see all the tag as large as possible in the image.
 To acquire images of the tag, depending of your device you can follow \ref tutorial-grabber. Images could be
 saved in jpeg or png format, or any format supported by ViSP.
 
-To get the corresponding \f$^f{\bf M}_e\f$ poses, you need to use one of our robot interface like
-vpRobotFranka::get_fMe(), vpRobotUniversalRobots::get_fMe()... It returns the homogeneous transformation between the
-robot base frame and the robot end-effector. The following code snippet shows how to save the pose in yaml format:
+To get the corresponding \f$^r{\bf M}_e\f$ poses, you need to use one of our robot interface like
+`vpRobotFranka::getPosition(vpRobot::END_EFFECTOR_FRAME)`,
+`vpRobotUniversalRobots::getPosition(vpRobot::END_EFFECTOR_FRAME)`...
+It returns the homogeneous transformation between the robot reference frame and the robot end-effector. The following
+code  snippet shows how to save the pose in yaml format:
 \code
+vpRobotFranka robot;
 int cpt = 1;
-vpPoseVector fPe;
-robot.getPosition(vpRobot::END_EFFECTOR_FRAME, fPe);
+vpPoseVector rPe;
+robot.getPosition(vpRobot::END_EFFECTOR_FRAME, rPe);
 std::stringstream ss;
-ss << "pose_fPe_" << cpt << ".yaml";
-fPe.saveYAML(ss_pos.str(), fPe);
+ss << "pose_rPe_" << cpt << ".yaml";
+rPe.saveYAML(ss_pos.str(), rPe);
 \endcode
 
 To complete this step, you need also to get or calibrate your camera intrinsics in order to obtain its intrinsic
@@ -118,15 +123,15 @@ visp-acquire-franka-calib-data.cpp binary described in section \ref calib_eth_us
 \code{.sh}
 $ cd $VISP_WS/visp-build/apps/calibration/hand-eye
 $ ls data-eye-to-hand
-apriltag-data.txt   franka_image-2.png  franka_image-5.png  franka_image-8.png      franka_pose_fPe_3.yaml  franka_pose_fPe_6.yaml
-franka_camera.xml   franka_image-3.png  franka_image-6.png  franka_pose_fPe_1.yaml  franka_pose_fPe_4.yaml  franka_pose_fPe_7.yaml
-franka_image-1.png  franka_image-4.png  franka_image-7.png  franka_pose_fPe_2.yaml  franka_pose_fPe_5.yaml  franka_pose_fPe_8.yaml
+apriltag-data.txt   franka_image-2.png  franka_image-5.png  franka_image-8.png      franka_pose_rPe_3.yaml  franka_pose_rPe_6.yaml
+franka_camera.xml   franka_image-3.png  franka_image-6.png  franka_pose_rPe_1.yaml  franka_pose_rPe_4.yaml  franka_pose_rPe_7.yaml
+franka_image-1.png  franka_image-4.png  franka_image-7.png  franka_pose_rPe_2.yaml  franka_pose_rPe_5.yaml  franka_pose_rPe_8.yaml
 \endcode
 
 In this dataset, you will find:
 - 8 images of the 36h11 Apriltag in `franka_image-*.png` files
-- the corresponding pose of the end-effector in the robot base frame noted \f$^f{\bf M}_e\f$ and saved as a pose vector
-  in yaml format in `franka_pose_fPe_*.yaml` files
+- the corresponding pose of the end-effector in the robot reference frame noted \f$^r{\bf M}_e\f$ and saved as a pose vector
+  in yaml format in `franka_pose_rPe_*.yaml` files
 - camera intrinsic parameters in `franka_camera.xml`
 - and the size of the tag in `apriltag-data.txt` which is 0.048 m large.
 
@@ -204,19 +209,20 @@ data-eye-to-hand/franka_pose_cPo_3.yaml  data-eye-to-hand/franka_pose_cPo_6.yaml
 
 \subsection calib_eth_tsai 3.3. Estimate extrinsic transformation
 
-The final step consists now to estimate the robot base frame to camera \f$^e{\bf M}_c\f$ transformation from the
-couples of \f$^f{\bf M}_e\f$ and \f$^c{\bf M}_o\f$ poses.
+The final step consists now to estimate the robot reference frame to camera \f$^e{\bf M}_c\f$ transformation from the
+couples of \f$^r{\bf M}_e\f$ and \f$^c{\bf M}_o\f$ poses.
 
 Complete the calibration running `visp-compute-eye-to-hand-calibration` binary. It will get the data from the pair of
-files, `franka_pose_fPe_%%d.yaml` and `franka_pose_cPo_%%d.yaml` located in `"data-eye-to-hand"` folder.
+files, `franka_pose_rPe_%%d.yaml` and `franka_pose_cPo_%%d.yaml` located in `"data-eye-to-hand"` folder.
 
 \code{.sh}
 $ cd $VISP_WS/visp-build/apps/calibration/hand-eye
-$ ./visp-compute-eye-to-hand-calibration      \
-    --data-path data-eye-to-hand/             \
-    --fPe franka_pose_fPe_%d.yaml             \
-    --cPo franka_pose_cPo_%d.yaml             \
-    --output data-eye-to-hand/franka_fMc.yaml
+$ ./visp-compute-eye-to-hand-calibration          \
+    --data-path data-eye-to-hand/                 \
+    --rPe franka_pose_rPe_%d.yaml                 \
+    --cPo franka_pose_cPo_%d.yaml                 \
+    --output-ePo data-eye-to-hand/franka_ePo.yaml \
+    --output-rPc data-eye-to-hand/franka_rPc.yaml
 \endcode
 
 The source code corresponding to the binary is available in visp-compute-eye-to-hand-calibration.cpp.
@@ -226,18 +232,18 @@ It will produce the following results:
 TO COMPLETE
 \endcode
 
-The extrinsic transformation is saved in `franka_fMc.yaml` file as a vpPoseVector, with translation in meter and
-rotation as a \f$\theta_{\bf u} \f$ axis-angle vector with values in radians.
+The extrinsic transformation \f$^r{\bf M}_c\f$ is saved in `franka_rMc.yaml` file as a vpPoseVector, with translation
+in meter and rotation as a \f$\theta_{\bf u} \f$ axis-angle vector with values in radians.
 
 \code{.sh}
-$ more data-eye-to-hand/franka_fMc.yaml
+$ more data-eye-to-hand/franka_rMc.yaml
 TO COMPLETE
 \endcode
 
-The extrinsic transformation is also saved in `franka_eMc.txt` file that contains the corresponding homogeneous matrix
+The extrinsic transformation is also saved in `franka_rPc.txt` file that contains the corresponding homogeneous matrix
 transformation:
 \code{.sh}
-$ more data-eye-to-hand/franka_fMc.txt
+$ more data-eye-to-hand/franka_rMc.txt
 TO COMPLETE
 \endcode
 
@@ -275,8 +281,8 @@ Click with the left mouse button to acquire data.
 It records the following outputs:
 
 - `franka_camera.xml` : XML file that contains the intrinsic camera parameters extracted from camera firmware
-- couples of `franka_image-<number>.png` + `franka_pose_fMe-<number>.txt` with number starting from 1.
-  `franka_pose_fMe-<number>.yaml` is the pose of the end-effector expressed in the robot base frame \f$^f{\bf M}_e\f$,
+- couples of `franka_image-<number>.png` + `franka_pose_rMe-<number>.txt` with number starting from 1.
+  `franka_pose_rMe-<number>.yaml` is the pose of the end-effector expressed in the robot reference frame \f$^r{\bf M}_e\f$,
    while `franka_image-<number>.png` is the image captured at the corresponding robot position.
 
 Move the robot to an other position such as the tag remains in the image and repeat data acquisition by a left
@@ -290,14 +296,14 @@ This is the output when 8 different positions are considered:
 $ ./visp-acquire-franka-calib-data
 Image size: 640 x 480
 Found camera with name: "Camera"
-Save: franka_image-1.png and franka_pose_fPe_1.yaml
-Save: franka_image-2.png and franka_pose_fPe_2.yaml
-Save: franka_image-3.png and franka_pose_fPe_3.yaml
-Save: franka_image-4.png and franka_pose_fPe_4.yaml
-Save: franka_image-5.png and franka_pose_fPe_5.yaml
-Save: franka_image-6.png and franka_pose_fPe_6.yaml
-Save: franka_image-7.png and franka_pose_fPe_7.yaml
-Save: franka_image-8.png and franka_pose_fPe_8.yaml
+Save: franka_image-1.png and franka_pose_rPe_1.yaml
+Save: franka_image-2.png and franka_pose_rPe_2.yaml
+Save: franka_image-3.png and franka_pose_rPe_3.yaml
+Save: franka_image-4.png and franka_pose_rPe_4.yaml
+Save: franka_image-5.png and franka_pose_rPe_5.yaml
+Save: franka_image-6.png and franka_pose_rPe_6.yaml
+Save: franka_image-7.png and franka_pose_rPe_7.yaml
+Save: franka_image-8.png and franka_pose_rPe_8.yaml
 \endcode
 
 The source code corresponding to the binary is available in visp-acquire-franka-calib-data.cpp. If your setup is
@@ -317,14 +323,15 @@ $ ./visp-compute-apriltag-poses      \
 
 \subsubsection calib_eth_usecase_franka_emc 4.1.3 Estimate extrinsic transformation
 
-Finally you can estimate the extrinsic transformation between the robot base frame and your camera, running:
+Finally you can estimate the extrinsic transformation between the robot reference frame and your camera, running:
 
 \code{.sh}
 $ ./visp-compute-eye-to-hand-calibration \
     --data-path .                        \
-    --fPe franka_pose_fPe_%d.yaml        \
+    --rPe franka_pose_rPe_%d.yaml        \
     --cPo franka_pose_cPo_%d.yaml        \
-    --output franka_fMc.yaml
+    --output-rPc franka_rPc.yaml         \
+    --output-ePo franka_ePo.yaml
 \endcode
 
 It will produce the `franka_fMc.yaml` that contains the pose as a vpPoseVector and `franka_fMc.txt` that contains the
@@ -333,7 +340,7 @@ corresponding homogeneous matrix transformation:
 $ more franka_fMc.yaml
 TO COMPLETE
 
-$ more franka_eMc.txt
+$ more franka_rPc.txt
 TO COMPLETE
  0                0               0                1
 \endcode
@@ -370,8 +377,8 @@ Click with the left mouse button to acquire data.
 It records the following outputs:
 
 - `ur_camera.xml` : XML file that contains the intrinsic camera parameters extracted from camera firmware
-- couples of `ur_image-<number>.png` + `ur_pose_fPe-<number>.txt` with number starting from 1.
-  `ur_pose_fPe-<number>.yaml` is the pose of the end-effector expressed in the robot base frame \f$^f{\bf M}_e\f$,
+- couples of `ur_image-<number>.png` + `ur_pose_rPe-<number>.txt` with number starting from 1.
+  `ur_pose_rPe-<number>.yaml` is the pose of the end-effector expressed in the robot reference frame \f$^r{\bf M}_e\f$,
    while `ur_image-<number>.png` is the image captured at the corresponding robot position.
 
 With the PolyScope, move the robot to an other position such as the tag remains in the image and repeat data
@@ -385,14 +392,14 @@ This is the output when 8 different positions are considered:
 $ ./visp-acquire-universal-robots-calib-data
 Image size: 640 x 480
 Found camera with name: "Camera"
-Save: ur_image-1.png and ur_pose_fPe_1.yaml
-Save: ur_image-2.png and ur_pose_fPe_2.yaml
-Save: ur_image-3.png and ur_pose_fPe_3.yaml
-Save: ur_image-4.png and ur_pose_fPe_4.yaml
-Save: ur_image-5.png and ur_pose_fPe_5.yaml
-Save: ur_image-6.png and ur_pose_fPe_6.yaml
-Save: ur_image-7.png and ur_pose_fPe_7.yaml
-Save: ur_image-8.png and ur_pose_fPe_8.yaml
+Save: ur_image-1.png and ur_pose_rPe_1.yaml
+Save: ur_image-2.png and ur_pose_rPe_2.yaml
+Save: ur_image-3.png and ur_pose_rPe_3.yaml
+Save: ur_image-4.png and ur_pose_rPe_4.yaml
+Save: ur_image-5.png and ur_pose_rPe_5.yaml
+Save: ur_image-6.png and ur_pose_rPe_6.yaml
+Save: ur_image-7.png and ur_pose_rPe_7.yaml
+Save: ur_image-8.png and ur_pose_rPe_8.yaml
 \endcode
 
 The source code corresponding to the binary is available in visp-acquire-universal-robots-calib-data.cpp. If your
@@ -412,23 +419,24 @@ $ ./visp-compute-apriltag-poses \
 
 \subsubsection calib_eth_usecase_ur_emc 4.2.3: Estimate extrinsic transformation
 
-Finally you can estimage the extrinsic transformation between end-effector and you camera, running:
+Finally you can estimate the extrinsic transformation between end-effector and you camera, running:
 
 \code{.sh}
 $ ./visp-compute-eye-to-hand-calibration \
     --data-path .                        \
-    --fPe ur_pose_fPe_%d.yaml            \
+    --rPe ur_pose_rPe_%d.yaml            \
     --cPo ur_pose_cPo_%d.yaml            \
-    --output ur_fMc.yaml
+    --output-rPc ur_rPc.yaml             \
+    --output-ePo ur_ePo.yaml
 \endcode
 
 It will produce the `ur_fMc.yaml` that contains the pose as a vpPoseVector and `ur_fMc.txt` that contains the
 corresponding homogeneous matrix transformation:
 \code{.sh}
-$ more ur_eMc.yaml
+$ more ur_ePc.yaml
 TO COMPLETE
 
-$ more ur_eMc.txt
+$ more ur_ePc.txt
 TO COMPLETE
  0                0               0                1
 \endcode

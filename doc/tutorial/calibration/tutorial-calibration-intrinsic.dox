@@ -636,7 +636,10 @@ The pseudo code is the following:
 
 \section calibration_next 6. Next tutorial
 
-You are now ready to see the \ref tutorial-calibration-extrinsic-eye-in-hand that will explain how to estimate the eye-in-hand
-transformation when the camera is mounted on a robot end-effector.
+You are now ready to see our tutorials dedicated to hand-eye calibration:
+- \ref tutorial-calibration-extrinsic-eye-in-hand that will explain how to estimate the
+  eye-in-hand transformation when the camera is mounted on a robot end-effector,
+- or \ref tutorial-calibration-extrinsic-eye-to-hand that will explain how to estimate the
+  hand-to-eye transformation when the camera is observing the robot end-effector.
 
 */
