@@ -45,13 +45,18 @@ in https://github.com/lagadic/visp/tree/master/apps/calibration/hand-eye.
 
 \subsection calib_eth_intrinsic 2.1. Get intrinsic parameters
 
-In order to compute the pose \f$^c{\bf M}_o\f$ from the Aprilta image, there is the need to get the camera intrinsic
+In order to compute the pose \f$^c{\bf M}_o\f$ from the Apriltag image, there is the need to get the camera intrinsic
 parameters. Depending on the device, these parameters are part of the device SDK or firmware. This is for example the
-case for our Intel Realsense D435 camera considered in this tutorial. These intrinsic parameters could be retrieved
-using vpRealSense2::getCameraParameters().
+case for our Intel Realsense D435 camera considered in this tutorial. These intrinsic factory parameters could be
+retrieved using vpRealSense2::getCameraParameters().
 
-If you have an other camera, or if you want to have a better estimation than the factory parameters you may follow
-\ref tutorial-calibration-intrinsic. Otherwise you can skip this section.
+If you have an other camera than a Realsense, or if you want to have a better estimation than the factory parameters
+you may follow \ref tutorial-calibration-intrinsic. Otherwise you can skip this section.
+
+\note In any case, calibrating your camera following \ref tutorial-calibration-intrinsic will allow you to estimate
+intrinsic parameters, including image distortion (see vpCameraParameters class).
+When using the intrinsic factory parameters, the model doesn't include image distortion.
+When a model with distortion is used, the results of hand-eye calibration are better.
 
 \subsection calib_eth_tag 2.2. Print a 36h11 Apriltag
 
@@ -110,10 +115,10 @@ rPe.saveYAML(ss_pos.str(), rPe);
 
 To complete this step, you need also to get or calibrate your camera intrinsics in order to obtain its intrinsic
 parameters. Camera intrinsic parameters need to be saved in an xml file. If you have an Intel RealSense device you can
-directly get the parameters using vpRealSense2::getCameraParameters() and then save the parameters in an xml file using
-vpXmlParserCamera::save(). An example is given in visp-acquire-franka-calib-data.cpp or in
+directly get the factory parameters using vpRealSense2::getCameraParameters() and then save the parameters in an xml
+file using vpXmlParserCamera::save(). An example is given in visp-acquire-franka-calib-data.cpp or in
 visp-acquire-universal-robots-calib-data.cpp
-\note With vpRealSense2::getCameraParameters() you can only get the parameters without distortion coefficients.
+\note With vpRealSense2::getCameraParameters() you can only get the factory parameters without distortion coefficients.
 If you want the parameters with distortion, you need to achieve a calibration as described in
 \ref tutorial-calibration-intrinsic.
 
@@ -123,16 +128,19 @@ visp-acquire-franka-calib-data.cpp binary described in section \ref calib_eth_us
 \code{.sh}
 $ cd $VISP_WS/visp-build/apps/calibration/hand-eye
 $ ls data-eye-to-hand
-apriltag-data.txt   franka_image-2.png  franka_image-5.png  franka_image-8.png      franka_pose_rPe_3.yaml  franka_pose_rPe_6.yaml
-franka_camera.xml   franka_image-3.png  franka_image-6.png  franka_pose_rPe_1.yaml  franka_pose_rPe_4.yaml  franka_pose_rPe_7.yaml
-franka_image-1.png  franka_image-4.png  franka_image-7.png  franka_pose_rPe_2.yaml  franka_pose_rPe_5.yaml  franka_pose_rPe_8.yaml
+apriltag-data.txt       franka_image-2.png  franka_image-6.png      franka_pose_rPe_2.yaml  franka_pose_rPe_6.yaml
+franka_camera_visp.xml  franka_image-3.png  franka_image-7.png      franka_pose_rPe_3.yaml  franka_pose_rPe_7.yaml
+franka_camera.xml       franka_image-4.png  franka_image-8.png      franka_pose_rPe_4.yaml  franka_pose_rPe_8.yaml
+franka_image-1.png      franka_image-5.png  franka_pose_rPe_1.yaml  franka_pose_rPe_5.yaml
 \endcode
 
 In this dataset, you will find:
 - 8 images of the 36h11 Apriltag in `franka_image-*.png` files
-- the corresponding pose of the end-effector in the robot reference frame noted \f$^r{\bf M}_e\f$ and saved as a pose vector
-  in yaml format in `franka_pose_rPe_*.yaml` files
-- camera intrinsic parameters in `franka_camera.xml`
+- the corresponding pose of the end-effector in the robot reference frame noted \f$^r{\bf M}_e\f$ and saved as a pose
+  vector in yaml format in `franka_pose_rPe_*.yaml` files
+- camera intrinsic factory parameters in `franka_camera.xml`
+- camera intrinsic parameters calibrated using visp in `franka_camera_visp.xml`. These parameters where obtained
+  following \ref tutorial-calibration-intrinsic
 - and the size of the tag in `apriltag-data.txt` which is 0.048 m large.
 
 \subsection calib_eth_camera_pose 3.2. Compute tag poses
@@ -148,10 +156,10 @@ Considering the dataset presented in previous section, and knowing that the size
 
 \code{.sh}
 $ cd $VISP_WS/visp-build/apps/calibration/hand-eye
-$ ./visp-compute-apriltag-poses                       \
-    --tag-size 0.048                                  \
-    --input data-eye-to-hand/franka_image-%d.png      \
-    --intrinsic data-eye-to-hand/franka_camera.xml    \
+$ ./visp-compute-apriltag-poses                         \
+    --tag-size 0.048                                    \
+    --input data-eye-to-hand/franka_image-%d.png        \
+    --intrinsic data-eye-to-hand/franka_camera_visp.xml \
     --output data-eye-to-hand/franka_pose_cPo_%d.yaml
 \endcode
 
@@ -165,7 +173,7 @@ Parameters:
     First frame           : 1
     Last  frame           : 8
   Camera intrinsics
-    Param file name [.xml]: data-eye-to-hand/franka_camera.xml
+    Param file name [.xml]: data-eye-to-hand/franka_camera_visp.xml
     Camera name           : Camera
   Output camera poses     : data-eye-to-hand/franka_pose_cPo_%d.yaml
   Interactive mode        : yes
@@ -173,10 +181,10 @@ Parameters:
 Found camera with name: "Camera"
 Camera parameters used to compute the pose:
 Camera parameters for perspective projection with distortion:
-  px = 607.5931396	 py = 607.5749512
-  u0 = 323.4628296	 v0 = 243.2552948
-  kud = -0
-  kdu = 0
+  px = 601.0670294	 py = 602.4186662
+  u0 = 321.3921431	 v0 = 236.8025954
+  kud = 0.05663697965
+  kdu = -0.05584121348
 
 Process image: data-eye-to-hand/franka_image-1.png
 Save data-eye-to-hand/franka_pose_cPo_1.yaml
@@ -195,6 +203,19 @@ Save data-eye-to-hand/franka_pose_cPo_7.yaml
 Process image: data-eye-to-hand/franka_image-8.png
 Save data-eye-to-hand/franka_pose_cPo_8.yaml
 \endcode
+
+\note At this point, you may notice that the camera parameters read from the `data-eye-in-hand/franka_camera_visp.xml`
+file take image distortion into account, since the kud and kdu parameters are set to non zero values.
+\code{.sh}
+Camera parameters used to compute the pose:
+Camera parameters for perspective projection with distortion:
+  px = 601.0670294	 py = 602.4186662
+  u0 = 321.3921431	 v0 = 236.8025954
+  kud = 0.05663697965
+  kdu = -0.05584121348
+\endcode
+\note As mentioned above, the results of eye-to-hand calibration can gain in accuracy when using intrinsics
+that consider also image distortion like here.
 
 The source code corresponding to the binary is available in visp-compute-apriltag-poses.cpp.
 
@@ -229,33 +250,149 @@ The source code corresponding to the binary is available in visp-compute-eye-to-
 
 It will produce the following results:
 \code{.sh}
-TO COMPLETE
+Use data from data-eye-to-hand//data-eye-to-hand/franka_pose_rPe_1.yaml and from data-eye-to-hand/franka_pose_cPo_1.yaml
+Use data from data-eye-to-hand//data-eye-to-hand/franka_pose_rPe_2.yaml and from data-eye-to-hand/franka_pose_cPo_2.yaml
+Use data from data-eye-to-hand//data-eye-to-hand/franka_pose_rPe_3.yaml and from data-eye-to-hand/franka_pose_cPo_3.yaml
+Use data from data-eye-to-hand//data-eye-to-hand/franka_pose_rPe_4.yaml and from data-eye-to-hand/franka_pose_cPo_4.yaml
+Use data from data-eye-to-hand//data-eye-to-hand/franka_pose_rPe_5.yaml and from data-eye-to-hand/franka_pose_cPo_5.yaml
+Use data from data-eye-to-hand//data-eye-to-hand/franka_pose_rPe_6.yaml and from data-eye-to-hand/franka_pose_cPo_6.yaml
+Use data from data-eye-to-hand//data-eye-to-hand/franka_pose_rPe_7.yaml and from data-eye-to-hand/franka_pose_cPo_7.yaml
+Use data from data-eye-to-hand//data-eye-to-hand/franka_pose_rPe_8.yaml and from data-eye-to-hand/franka_pose_cPo_8.yaml
+Distance theta between rMo/rMc(0) and mean (deg) = 0.373169
+Distance theta between rMo/rMc(1) and mean (deg) = 0.614997
+Distance theta between rMo/rMc(2) and mean (deg) = 0.357255
+Distance theta between rMo/rMc(3) and mean (deg) = 0.264302
+Distance theta between rMo/rMc(4) and mean (deg) = 0.52074
+Distance theta between rMo/rMc(5) and mean (deg) = 0.30428
+Distance theta between rMo/rMc(6) and mean (deg) = 0.776229
+Distance theta between rMo/rMc(7) and mean (deg) = 0.643039
+Mean residual rMo/rMc(8) - rotation (deg) = 0.511707
+Distance d between rMo/rMc(0) and mean (m) = 0.00138341
+Distance d between rMo/rMc(1) and mean (m) = 0.00147386
+Distance d between rMo/rMc(2) and mean (m) = 0.00190847
+Distance d between rMo/rMc(3) and mean (m) = 0.00247277
+Distance d between rMo/rMc(4) and mean (m) = 0.00188432
+Distance d between rMo/rMc(5) and mean (m) = 0.00157478
+Distance d between rMo/rMc(6) and mean (m) = 0.00224356
+Distance d between rMo/rMc(7) and mean (m) = 0.00439174
+Mean residual rMo/rMc(8) - translation (m) = 0.00235038
+Mean residual rMo/rMc(8) - global = 0.00653018
+
+Eye-to-hand calibration succeed
+
+Estimated hand-object (eMo) transformation:
+-------------------------------------------
+eMo[4,4]=
+   0.00622146  0.0219727   0.999739    0.0220351
+   0.999978    0.00193654 -0.00626551 -0.0051383
+  -0.0020737   0.999757   -0.0219602  -0.0556314
+   0.0         0.0         0.0         1.0
+- Corresponding pose vector [tx ty tz tux tuy tuz] in [m] and [rad]: 0.02203508116  -0.005138296199  -0.05563139449  1.226817252  1.221684136  1.19265196
+
+- Translation [m]: 0.02203508116 -0.005138296199 -0.05563139449
+- Rotation (theta-u representation) [rad]: 1.226817252  1.221684136  1.19265196
+- Rotation (theta-u representation) [deg]: 70.29145076 69.9973449 68.33392374
+- Rotation (quaternion representation) [rad]: 0.5065187868  0.5043994659  0.4924128862  0.4965374577
+- Rotation (r-x-y-z representation) [rad]: 2.863665054  1.547957809  -1.294874109
+- Rotation (r-x-y-z representation) [deg]: 164.0759216  88.69144934  -74.19082146
+
+Estimated robot reference to camera frames (rMc) transformation:
+----------------------------------------------------------------
+rMc[4,4]=
+  -0.0161049  -0.139226   -0.99013     0.954036
+   0.999844   -0.00939845 -0.0149414  -0.0512357
+  -0.00722546 -0.990216    0.139356    0.47622
+   0.0         0.0         0.0         1.0
+- Corresponding pose vector [tx ty tz tux tuy tuz] in [m] and [rad]: 0.9540358034  -0.05123574465  0.4762201018  -1.104108108  -1.112745553  1.289540899
+
+- Translation [m]: 0.9540358034 -0.05123574465 0.4762201018
+- Rotation (theta-u representation) [rad]: -1.104108108  -1.112745553  1.289540899
+- Rotation (theta-u representation) [deg]: -63.26073472 -63.75562386 73.88525101
+- Rotation (quaternion representation) [rad]: -0.4620438111  -0.4656583828  0.5396431627  0.527695977
+- Rotation (r-x-y-z representation) [rad]: 0.106809808  -1.430179098  1.685959411
+- Rotation (r-x-y-z representation) [deg]: 164.0759216  88.69144934  -74.19082146
+
+Save transformation matrix eMo as an homogeneous matrix in: data-eye-to-hand/franka_ePo.txt
+Save transformation matrix eMo as a vpPoseVector in       : data-eye-to-hand/franka_ePo.yaml
+
+Save transformation matrix rMc as an homogeneous matrix in: data-eye-to-hand/franka_rPc.txt
+Save transformation matrix rMc as a vpPoseVector in       : data-eye-to-hand/franka_rPc.yaml
 \endcode
 
-The extrinsic transformation \f$^r{\bf M}_c\f$ is saved in `franka_rMc.yaml` file as a vpPoseVector, with translation
-in meter and rotation as a \f$\theta_{\bf u} \f$ axis-angle vector with values in radians.
-
+Results are saved in `data-eye-to-hand/` folder in which we can find:
+- the extrinsic transformation \f$^r{\bf M}_c\f$ in `franka_rPc.yaml` file as a vpPoseVector, with translation
+  in meter and rotation as a \f$\theta_{\bf u} \f$ axis-angle vector with values in radians.
 \code{.sh}
-$ more data-eye-to-hand/franka_rMc.yaml
-TO COMPLETE
+$ more data-eye-to-hand/franka_rPc.yaml
+Robot reference to camera frames transformation (rMc)
+rows: 6
+cols: 1
+data:
+  - [0.954036]
+  - [-0.0512357]
+  - [0.47622]
+  - [-1.10411]
+  - [-1.11275]
+  - [1.28954]
 \endcode
 
-The extrinsic transformation is also saved in `franka_rPc.txt` file that contains the corresponding homogeneous matrix
-transformation:
+- the extrinsic transformation \f$^r{\bf M}_c\f$ in `franka_rPc.txt` file that contains the corresponding homogeneous
+  matrix transformation:
 \code{.sh}
-$ more data-eye-to-hand/franka_rMc.txt
-TO COMPLETE
+$ more data-eye-to-hand/franka_rPc.txt
+-0.01610494501   -0.1392259042    -0.9901296775    0.9540358034
+ 0.9998441996    -0.009398452743  -0.01494140425  -0.05123574465
+-0.007225456468  -0.9902160455     0.1393555743    0.4762201018
+ 0                0                0               1
 \endcode
 
-We recall, that a good hand-eye calibration is obtained when the camera poses are covering the surface of a half
-sphere over the grid.
+It will also save these two other files:
+- `franka_ePo.yaml` file that gives the transformation between the end-effector and the apriltag as a pose vector
+\code{.sh}
+$ more data-eye-to-hand/franka_ePo.yaml
+Robot end-effector to object frames transformation (eMo)
+rows: 6
+cols: 1
+data:
+  - [0.0220351]
+  - [-0.0051383]
+  - [-0.0556314]
+  - [1.22682]
+  - [1.22168]
+  - [1.19265]
+\endcode
+
+- `franka_ePo.txt` file that gives the transformation between the end-effector and the apriltag as an homogeneous
+   matrix.
+\code{.sh}
+$ more data-eye-to-hand/franka_ePo.txt
+ 0.006221456592  0.02197272564    0.9997392124     0.02203508116
+ 0.9999784964    0.001936536168  -0.006265507753  -0.005138296199
+-0.002073701426  0.999756695     -0.02196020507   -0.05563139449
+ 0               0                0                1
+\endcode
+
+\warning We recall, that a good hand-eye calibration is obtained when the camera poses are covering the surface of a half
+sphere over the grid and when the AprilTag is as large as possible in the images.
+
+\note Looking at the results, we can see the residual values:
+\code{.sh}
+Mean residual rMo/rMc(8) - rotation (deg) = 0.511707
+Mean residual rMo/rMc(8) - translation (m) = 0.00235038
+Mean residual rMo/rMc(8) - global = 0.00653018
+\endcode
+It shows that we have an error of 0.51 degrees for rotation and 2.25 millimeters for translation.
+If, instead of using the intrinsic parameters with distorsion, we had used the factory parameters without distorsion,
+the residual would have been larger and would have enabled us to obtain a less accurate eye-in-hand calibration.
 
 \section calib_eth_usecase 4. Use cases
 
 \subsection calib_eth_usecase_franka 4.1. Panda robot + Realsense
 
-In this section we suppose that you have a Panda robot from Franka Emika with a Realsense camera attached to its
-end-effector.
+In this section we suppose that you have a Panda robot from Franka Emika with an Apriltag glued to its end-effector
+and a Realsense camera mounted on a tripod observing the robot end-effector.
+
+\image html img-franka-calib-eye-to-hand-setup.jpg Panda robot in eye-to-hand configuration.
 
 If not already done, follow \ref franka_configure_ethernet and \ref franka_connect_desk instructions to power on the
 Panda robot. Then if this is not already done, follow \ref franka_prereq_libfranka and \ref franka_prereq_visp_build.
@@ -272,13 +409,13 @@ end-effector positions:
 $ cd apps/calibration/hand-eye
 $ ./visp-acquire-franka-calib-data
 \endcode
-By default the robot controller IP is `192.168.1.1`. If your Franka has an other IP (let say 10.0.0.2) use
+By default the robot controller IP is `192.168.1.1`. If your Franka has an other IP (let say 192.168.30.10) use
 `--ip` option like:
 \code{.sh}
-$ ./visp-acquire-franka-calib-data --ip 10.0.0.2
+$ ./visp-acquire-franka-calib-data --ip 192.168.30.10 --output-folder data-franka
 \endcode
 Click with the left mouse button to acquire data.
-It records the following outputs:
+It records the following outputs in `data-franka` folder:
 
 - `franka_camera.xml` : XML file that contains the intrinsic camera parameters extracted from camera firmware
 - couples of `franka_image-<number>.png` + `franka_pose_rMe-<number>.txt` with number starting from 1.
@@ -293,17 +430,16 @@ A right mouse click ends this step exiting the binary.
 This is the output when 8 different positions are considered:
 
 \code{.sh}
-$ ./visp-acquire-franka-calib-data
+$ ./visp-acquire-franka-calib-data --ip 192.168.30.10 --output-folder ./data-franka
 Image size: 640 x 480
-Found camera with name: "Camera"
-Save: franka_image-1.png and franka_pose_rPe_1.yaml
-Save: franka_image-2.png and franka_pose_rPe_2.yaml
-Save: franka_image-3.png and franka_pose_rPe_3.yaml
-Save: franka_image-4.png and franka_pose_rPe_4.yaml
-Save: franka_image-5.png and franka_pose_rPe_5.yaml
-Save: franka_image-6.png and franka_pose_rPe_6.yaml
-Save: franka_image-7.png and franka_pose_rPe_7.yaml
-Save: franka_image-8.png and franka_pose_rPe_8.yaml
+Save: ./data-franka/franka_image-1.png and ./data-franka/franka_pose_rPe_1.yaml
+Save: ./data-franka/franka_image-2.png and ./data-franka/franka_pose_rPe_2.yaml
+Save: ./data-franka/franka_image-3.png and ./data-franka/franka_pose_rPe_3.yaml
+Save: ./data-franka/franka_image-4.png and ./data-franka/franka_pose_rPe_4.yaml
+Save: ./data-franka/franka_image-5.png and ./data-franka/franka_pose_rPe_5.yaml
+Save: ./data-franka/franka_image-6.png and ./data-franka/franka_pose_rPe_6.yaml
+Save: ./data-franka/franka_image-7.png and ./data-franka/franka_pose_rPe_7.yaml
+Save: ./data-franka/franka_image-8.png and ./data-franka/franka_pose_rPe_8.yaml
 \endcode
 
 The source code corresponding to the binary is available in visp-acquire-franka-calib-data.cpp. If your setup is
@@ -314,11 +450,11 @@ different, it could be easily adapted to your robot or camera.
 Given the camera intrinsic parameters and the set of images, you can compute the tag pose running (adapt the tag size
 parameter to your use case):
 \code{.sh}
-$ ./visp-compute-apriltag-poses      \
-    --tag-size 0.0248                \
-    --input franka_image-%d.png      \
-    --intrinsic franka_camera.xml    \
-    --output franka_pose_cPo_%d.yaml
+$ ./visp-compute-apriltag-poses                    \
+    --tag-size 0.048                               \
+    --input ./data-franka/franka_image-%d.png      \
+    --intrinsic ./data-franka/franka_camera.xml    \
+    --output ./data-franka/franka_pose_cPo_%d.yaml
 \endcode
 
 \subsubsection calib_eth_usecase_franka_emc 4.1.3 Estimate extrinsic transformation
@@ -326,24 +462,43 @@ $ ./visp-compute-apriltag-poses      \
 Finally you can estimate the extrinsic transformation between the robot reference frame and your camera, running:
 
 \code{.sh}
-$ ./visp-compute-eye-to-hand-calibration \
-    --data-path .                        \
-    --rPe franka_pose_rPe_%d.yaml        \
-    --cPo franka_pose_cPo_%d.yaml        \
-    --output-rPc franka_rPc.yaml         \
-    --output-ePo franka_ePo.yaml
+$ ./visp-compute-eye-to-hand-calibration       \
+    --data-path ./data-franka                  \
+    --rPe franka_pose_rPe_%d.yaml              \
+    --cPo franka_pose_cPo_%d.yaml              \
+    --output-rPc ./data-franka/franka_rPc.yaml \
+    --output-ePo ./data-franka/franka_ePo.yaml
 \endcode
 
-It will produce the `franka_fMc.yaml` that contains the pose as a vpPoseVector and `franka_fMc.txt` that contains the
-corresponding homogeneous matrix transformation:
+In `data-franka/` folder it will save
+- `franka_rPc.yaml` file that contains the pose as a vpPoseVector
 \code{.sh}
-$ more franka_fMc.yaml
-TO COMPLETE
-
-$ more franka_rPc.txt
-TO COMPLETE
- 0                0               0                1
+$ more ./data-franka/franka_rPc.yaml
+Robot reference to camera frames transformation (rMc)
+rows: 6
+cols: 1
+data:
+  - [0.954036]
+  - [-0.0512357]
+  - [0.47622]
+  - [-1.10411]
+  - [-1.11275]
+  - [1.28954]
 \endcode
+
+- `franka_rPc.txt` that contains the corresponding homogeneous matrix transformation:
+\code{.sh}
+$ more ./data-franka/franka_rPc.txt
+-0.01610494501   -0.1392259042    -0.9901296775    0.9540358034
+ 0.9998441996    -0.009398452743  -0.01494140425  -0.05123574465
+-0.007225456468  -0.9902160455     0.1393555743    0.4762201018
+ 0                0                0               1
+\endcode
+
+It will also save these two other files:
+- `franka_ePo.yaml` file that gives the transformation between the end-effector and the apriltag as a pose vector
+- `franka_ePo.txt` file that gives the transformation between the end-effector and the apriltag as an homogeneous
+   matrix.
 
 \subsection calib_eth_usecase_ur 4.2. UR robot + Realsense
 
@@ -367,14 +522,14 @@ $ ./visp-acquire-universal-robots-calib-data
 \endcode
 
 By default the robot controller IP is `192.168.0.100`. If your robot from Universal Robots has an other IP
-(let say 10.0.0.2) use `--ip` option like:
+(let say 192.168.30.10) use `--ip` option like:
 
 \code{.sh}
-$ ./visp-acquire-universal-robots-calib-data --ip 10.0.0.2
+$ ./visp-acquire-universal-robots-calib-data --ip 192.168.30.10 --output-folder data-ur
 \endcode
 
 Click with the left mouse button to acquire data.
-It records the following outputs:
+It records the following outputs in `data-ur` folder:
 
 - `ur_camera.xml` : XML file that contains the intrinsic camera parameters extracted from camera firmware
 - couples of `ur_image-<number>.png` + `ur_pose_rPe-<number>.txt` with number starting from 1.
@@ -389,17 +544,17 @@ A right mouse click ends this step exiting the binary.
 This is the output when 8 different positions are considered:
 
 \code{.sh}
-$ ./visp-acquire-universal-robots-calib-data
+$ ./visp-acquire-universal-robots-calib-data --ip 192.168.30.10 --output-folder data-ur
 Image size: 640 x 480
 Found camera with name: "Camera"
-Save: ur_image-1.png and ur_pose_rPe_1.yaml
-Save: ur_image-2.png and ur_pose_rPe_2.yaml
-Save: ur_image-3.png and ur_pose_rPe_3.yaml
-Save: ur_image-4.png and ur_pose_rPe_4.yaml
-Save: ur_image-5.png and ur_pose_rPe_5.yaml
-Save: ur_image-6.png and ur_pose_rPe_6.yaml
-Save: ur_image-7.png and ur_pose_rPe_7.yaml
-Save: ur_image-8.png and ur_pose_rPe_8.yaml
+Save: data-ur/ur_image-1.png and data-ur/ur_pose_rPe_1.yaml
+Save: data-ur/ur_image-2.png and data-ur/ur_pose_rPe_2.yaml
+Save: data-ur/ur_image-3.png and data-ur/ur_pose_rPe_3.yaml
+Save: data-ur/ur_image-4.png and data-ur/ur_pose_rPe_4.yaml
+Save: data-ur/ur_image-5.png and data-ur/ur_pose_rPe_5.yaml
+Save: data-ur/ur_image-6.png and data-ur/ur_pose_rPe_6.yaml
+Save: data-ur/ur_image-7.png and data-ur/ur_pose_rPe_7.yaml
+Save: data-ur/ur_image-8.png and data-ur/ur_pose_rPe_8.yaml
 \endcode
 
 The source code corresponding to the binary is available in visp-acquire-universal-robots-calib-data.cpp. If your
@@ -410,11 +565,11 @@ setup is different, it could be easily adapted to your robot or camera.
 Given the camera intrinsic parameters and the set of images, you can compute the camera pose running (adapt the tag
 size parameter to your use case):
 \code{.sh}
-$ ./visp-compute-apriltag-poses \
-    --tag-size 0.0248          \
-    --input ur_image-%d.png       \
-    --intrinsic ur_camera.xml     \
-    --output ur_pose_cPo_%d.yaml
+$ ./visp-compute-apriltag-poses          \
+    --tag-size 0.0248                    \
+    --input data-ur/ur_image-%d.png      \
+    --intrinsic data-ur/ur_camera.xml    \
+    --output data-ur/ur_pose_cPo_%d.yaml
 \endcode
 
 \subsubsection calib_eth_usecase_ur_emc 4.2.3: Estimate extrinsic transformation
@@ -424,21 +579,18 @@ Finally you can estimate the extrinsic transformation between end-effector and y
 \code{.sh}
 $ ./visp-compute-eye-to-hand-calibration \
     --data-path .                        \
-    --rPe ur_pose_rPe_%d.yaml            \
-    --cPo ur_pose_cPo_%d.yaml            \
-    --output-rPc ur_rPc.yaml             \
-    --output-ePo ur_ePo.yaml
+    --rPe data-ur/ur_pose_rPe_%d.yaml    \
+    --cPo data-ur/ur_pose_cPo_%d.yaml    \
+    --output-rPc data-ur/ur_rPc.yaml     \
+    --output-ePo data-ur/ur_ePo.yaml
 \endcode
 
-It will produce the `ur_fMc.yaml` that contains the pose as a vpPoseVector and `ur_fMc.txt` that contains the
-corresponding homogeneous matrix transformation:
-\code{.sh}
-$ more ur_ePc.yaml
-TO COMPLETE
+In `data-ur` folder, it will save:
+- `ur_rMc.yaml` file that contains the pose as a vpPoseVector
+- `ur_rMc.txt` file that contains the corresponding homogeneous matrix transformation.
 
-$ more ur_ePc.txt
-TO COMPLETE
- 0                0               0                1
-\endcode
+It will also save these two other files:
+- `ur_ePo.yaml` file that gives the transformation between the end-effector and the apriltag as a pose vector
+- `ur_ePo.txt` file that gives the transformation between the end-effector and the apriltag as an homogeneous matrix.
 
 */

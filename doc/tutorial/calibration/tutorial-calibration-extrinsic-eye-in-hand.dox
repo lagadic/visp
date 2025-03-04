@@ -47,18 +47,23 @@ https://github.com/lagadic/visp/tree/master/apps/calibration/hand-eye.
 
 In order to compute the pose \f$^c{\bf M}_o\f$ from the chessboard image, there is the need to get the camera intrinsic
 parameters. Depending on the device, these parameters are part of the device SDK or firmware. This is for example the
-case for our Intel Realsense D435 camera considered in this tutorial. These intrinsic parameters could be retrieved
-using vpRealSense2::getCameraParameters().
+case for our Intel Realsense D435 camera considered in this tutorial. These intrinsic factory parameters could be
+retrieved using vpRealSense2::getCameraParameters().
 
-If you have an other camera, or if you want to have a better estimation than the factory parameters you may follow
-\ref tutorial-calibration-intrinsic. Otherwise you can skip this section.
+If you have an other camera than a Realsense, or if you want to have a better estimation than the factory parameters
+you may follow \ref tutorial-calibration-intrinsic. Otherwise you can skip this section.
+
+\note In any case, calibrating your camera following \ref tutorial-calibration-intrinsic will allow you to estimate
+intrinsic parameters, including image distortion (see vpCameraParameters class).
+When using the intrinsic factory parameters, the model doesn't include image distortion.
+When a model with distortion is used, the results of hand-eye calibration are better.
 
 \subsection calib_eih_chessboard 2.2. Print a chessboard
 
 Download and print a black and white chessboard
 [OpenCV_Chessboard.pdf](https://visp-doc.inria.fr/download/calib-grid/OpenCV_Chessboard.pdf).
 
-Glue the chessboard on a flat surface and put it under the camera monted on the robot end-effector.
+Glue the chessboard on a flat surface and put it under the camera mounted on the robot end-effector.
 
 \section calib_eih_calib 3. Extrinsic calibration overview
 
@@ -118,7 +123,7 @@ In this dataset, you will find:
 - 8 images of the 9x6 chessboard in `franka_image-*.png` files
 - the corresponding pose of the end-effector in the robot reference frame noted \f$^r{\bf M}_e\f$ and saved as a pose vector
   in yaml format in `franka_pose_rPe_*.yaml` files
-- camera intrinsic parameters in `franka_camera.xml`
+- camera intrinsic parameters in `franka_camera.xml` (this file contains factory intrincic parameters)
 - and the size of the chessboard in `chessboard-data.txt` (9x6 chessboard where each square of the calibration grid is
   0.0236 m large).
 
@@ -184,6 +189,19 @@ Process image: data-eye-in-hand/franka_image-8.png
 Save data-eye-in-hand/franka_pose_cPo_8.yaml
 \endcode
 
+\note At this point, you may notice that the camera parameters read from the `data-eye-in-hand/franka_camera.xml` file
+do not take image distortion into account, since the kud and kdu parameters are set to zero.
+\code{.sh}
+Camera parameters used to compute the pose:
+Camera parameters for perspective projection with distortion:
+  px = 607.5931396	 py = 607.5749512
+  u0 = 323.4628296	 v0 = 243.2552948
+  kud = -0
+  kdu = 0
+\endcode
+\note As mentioned above, the results of eye-in-hand calibration can gain in accuracy when using rather intrinsics
+that consider also image distortion.
+
 The source code corresponding to the binary is available in visp-compute-chessboard-poses.cpp.
 
 It produces as output the corresponding `franka_pose_cPo_8.yaml` files that are saved in `"data-eye-in-hand"`
@@ -225,62 +243,59 @@ Use data from data-eye-in-hand//data-eye-in-hand/franka_pose_rPe_5.yaml and from
 Use data from data-eye-in-hand//data-eye-in-hand/franka_pose_rPe_6.yaml and from data-eye-in-hand/franka_pose_cPo_6.yaml
 Use data from data-eye-in-hand//data-eye-in-hand/franka_pose_rPe_7.yaml and from data-eye-in-hand/franka_pose_cPo_7.yaml
 Use data from data-eye-in-hand//data-eye-in-hand/franka_pose_rPe_8.yaml and from data-eye-in-hand/franka_pose_cPo_8.yaml
-
-Rotation and translation after VVS
-Distance theta between rMo(0) and mean (deg) = 0.525516
-Distance theta between rMo(1) and mean (deg) = 0.285856
-Distance theta between rMo(2) and mean (deg) = 0.300957
-Distance theta between rMo(3) and mean (deg) = 0.285276
-Distance theta between rMo(4) and mean (deg) = 0.637626
-Distance theta between rMo(5) and mean (deg) = 0.467957
-Distance theta between rMo(6) and mean (deg) = 0.47527
-Distance theta between rMo(7) and mean (deg) = 0.531335
-Mean residual rMo(8) - rotation (deg) = 0.456014
-Distance d between rMo(0) and mean (m) = 0.00394362
-Distance d between rMo(1) and mean (m) = 0.00509784
-Distance d between rMo(2) and mean (m) = 0.00459995
-Distance d between rMo(3) and mean (m) = 0.00322702
-Distance d between rMo(4) and mean (m) = 0.00656819
-Distance d between rMo(5) and mean (m) = 0.00604617
-Distance d between rMo(6) and mean (m) = 0.0064356
-Distance d between rMo(7) and mean (m) = 0.00633341
-Mean residual rMo(8) - translation (m) = 0.00541225
-Mean residual rMo(8) - global = 0.00680578
-
-Hand-eye calibration succeed
+Distance theta between rMo/rMc(0) and mean (deg) = 0.525425
+Distance theta between rMo/rMc(1) and mean (deg) = 0.285817
+Distance theta between rMo/rMc(2) and mean (deg) = 0.300987
+Distance theta between rMo/rMc(3) and mean (deg) = 0.285246
+Distance theta between rMo/rMc(4) and mean (deg) = 0.637412
+Distance theta between rMo/rMc(5) and mean (deg) = 0.46788
+Distance theta between rMo/rMc(6) and mean (deg) = 0.475263
+Distance theta between rMo/rMc(7) and mean (deg) = 0.531161
+Mean residual rMo/rMc(8) - rotation (deg) = 0.455924
+Distance d between rMo/rMc(0) and mean (m) = 0.00394385
+Distance d between rMo/rMc(1) and mean (m) = 0.00509806
+Distance d between rMo/rMc(2) and mean (m) = 0.00459942
+Distance d between rMo/rMc(3) and mean (m) = 0.00322695
+Distance d between rMo/rMc(4) and mean (m) = 0.00656708
+Distance d between rMo/rMc(5) and mean (m) = 0.00604678
+Distance d between rMo/rMc(6) and mean (m) = 0.00643622
+Distance d between rMo/rMc(7) and mean (m) = 0.00633335
+Mean residual rMo/rMc(8) - translation (m) = 0.00541224
+Mean residual rMo/rMc(8) - global = 0.00680486
 
 Eye-in-hand calibration succeed
 
 Estimated eMc transformation:
 -----------------------------
--0.01101243994  -0.9999152828  0.00693926107  0.05771516595
-0.9999285058  -0.01097971887  0.004735938981  -0.03392489398
--0.00465934663  0.006990919196  0.9999647081  -0.0422769157
-0  0  0  1
+eMc[4,4]=
+  -0.0110121  -0.999915    0.0069391   0.0577152
+   0.999929   -0.0109794   0.00473584 -0.0339249
+  -0.00465925  0.00699075  0.999965   -0.0422769
+   0.0         0.0         0.0         1.0
+- Corresponding pose vector [tx ty tz tux tuy tuz] in [m] and [rad]: 0.05771519632  -0.03392488515  -0.04227690244  0.001783530191  0.009173747947  1.581782359
 
-- Corresponding pose vector [tx ty tz tux tuy tuz] in [m] and [rad]: 0.05771516595  -0.03392489398  -0.0422769157  0.001783583617  0.009173954844  1.581782666
-
-** Translation [m]: 0.05771516595 -0.03392489398 -0.0422769157
-- Rotation (theta-u representation) [rad]: 0.001783583617  0.009173954844  1.581782666
-- Rotation (theta-u representation) [deg]: 0.1021918136 0.525628894 90.62947088
-- Rotation (quaternion representation) [rad]: 0.0008016828815  0.004123497483  0.7109776485  0.7032020601
-- Rotation (r-x-y-z representation) [rad]: -0.004736070716  0.006939316763  1.581809255
-- Rotation (r-x-y-z representation) [deg]: -0.2713568635  0.3975935632  90.63099428
+- Translation [m]: 0.05771519632 -0.03392488515 -0.04227690244
+- Rotation (theta-u representation) [rad]: 0.001783530191  0.009173747947  1.581782359
+- Rotation (theta-u representation) [deg]: 0.1021887526 0.5256170397 90.62945329
+- Rotation (quaternion representation) [rad]: 0.0008016589017  0.004123404662  0.7109775407  0.7032021697
+- Rotation (r-x-y-z representation) [rad]: -0.004735971381  0.006939152848  1.581808946
+- Rotation (r-x-y-z representation) [deg]: -0.271351172  0.3975841716  90.63097662
 
 Estimated rMo transformation:
 -----------------------------
-0.005561834152  -0.9999516029  0.008115281737  0.5364858913
--0.9999283534  -0.005647360913  -0.0105544003  0.123945699
-0.01059971943  -0.008055998481  -0.9999113695  0.09155743105
-0  0  0  1
-- Corresponding pose vector [tx ty tz tux tuy tuz] in [m] and [rad]: 0.5364858913  0.123945699  0.09155743105  2.226360491  -2.213916858  0.02071797182
+rMo[4,4]=
+   0.00556214 -0.999952    0.00811517  0.536486
+  -0.999928   -0.00564766 -0.0105542   0.123946
+   0.0105996  -0.00805588 -0.999911    0.0915574
+   0.0         0.0         0.0         1.0
+- Corresponding pose vector [tx ty tz tux tuy tuz] in [m] and [rad]: 0.5364858483  0.123945742  0.09155742609  2.22636085  -2.213916548  0.02071766945
 
-- Translation [m]: 0.5364858913 0.123945699 0.09155743105
-- Rotation (theta-u representation) [rad]: 2.226360491  -2.213916858  0.02071797182
-- Rotation (theta-u representation) [deg]: 127.5610598 -126.8480922 1.187052346
-- Rotation (quaternion representation) [rad]: 0.7090699127  -0.7051067604  0.006598432971  0.0008808728795
-- Rotation (r-x-y-z representation) [rad]: 3.13103771  0.008115370816  1.565234281
-- Rotation (r-x-y-z representation) [deg]: -0.2713568635  0.3975935632  90.63099428
+- Translation [m]: 0.5364858483 0.123945742 0.09155742609
+- Rotation (theta-u representation) [rad]: 2.22636085  -2.213916548  0.02071766945
+- Rotation (theta-u representation) [deg]: 127.5610804 -126.8480744 1.187035021
+- Rotation (quaternion representation) [rad]: 0.7090700194  -0.705106654  0.006598336598  0.0008808561157
+- Rotation (r-x-y-z representation) [rad]: 3.131037871  0.008115259378  1.565233978
+- Rotation (r-x-y-z representation) [deg]: -0.271351172  0.3975841716  90.63097662
 
 Save transformation matrix eMc as an homogeneous matrix in: data-eye-in-hand/franka_ePc.txt
 Save transformation matrix eMc as a vpPoseVector in       : data-eye-in-hand/franka_ePc.yaml
@@ -317,6 +332,16 @@ $ more data-eye-in-hand/franka_ePc.txt
  0               0               0                1
 \endcode
 
+\note Looking at the results, we can see the residual values:
+\code{.sh}
+Mean residual rMo(8) - rotation (deg) = 0.456014
+Mean residual rMo(8) - translation (m) = 0.00541225
+Mean residual rMo(8) - global = 0.00680578
+\endcode{}
+It shows that we have an error of 0.45 degrees for rotation and 5.41 millimeters for translation.
+If, instead of using the factory intrinsic parameters, we had used the estimated parameters including distorsion,
+the residual would have been smaller and would have enabled us to obtain a more accurate eye-in-hand calibration.
+
 \subsection calib_eih_tool 3.4. Camera poses analysis tool
 
 Since ViSP 3.3.1 we provide `hand_eye_calibration_show_extrinsics.py` python script that allows to display camera
@@ -352,7 +377,7 @@ sphere over the grid.
 In this section we suppose that you have a Panda robot from Franka Emika with a Realsense camera attached to its
 end-effector.
 
-\image html img-franka-calib-setup.jpg Panda robot with a RealSense D435 camera attached to its end-effector.
+\image html img-franka-calib-setup.jpg Panda robot in eye-in hand configuration with a RealSense D435 camera attached to its end-effector.
 
 If not already done, follow \ref franka_configure_ethernet and \ref franka_connect_desk instructions to power on the
 Panda robot. Then if this is not already done, follow \ref franka_prereq_libfranka and \ref franka_prereq_visp_build.
@@ -369,18 +394,18 @@ corresponding robot end-effector positions:
 $ cd apps/calibration/hand-eye
 $ ./visp-acquire-franka-calib-data
 \endcode
-By default the robot controller IP is `192.168.1.1`. If your Franka has an other IP (let say 10.0.0.2) use
+By default the robot controller IP is `192.168.1.1`. If your Franka has an other IP (let say 192.168.30.10) use
 `--ip` option like:
 \code{.sh}
-$ ./visp-acquire-franka-calib-data --ip 10.0.0.2
+$ ./visp-acquire-franka-calib-data --ip 192.168.30.10 --output-folder data-franka
 \endcode
 Click with the left mouse button to acquire data.
-It records the following outputs:
+It records the following outputs in `data-franka` folder:
 
-- `franka_camera.xml` : XML file that contains the intrinsic camera parameters extracted from camera firmware
-- couples of `franka_image-<number>.png` + `franka_pose_rPe-<number>.txt` with number starting from 1.
-  `franka_pose_rPe-<number>.yaml` is the pose of the end-effector expressed in the robot reference frame \f$^r{\bf M}_e\f$,
-   while `franka_image-<number>.png` is the image captured at the corresponding robot position.
+- `franka_camera.xml`: XML file that contains the intrinsic camera parameters extracted from camera firmware
+- couples of `franka_image-<number>.png` + `franka_pose_rPe-<number>.txt` with number
+  starting from 1. `franka_pose_rPe-<number>.yaml` is the pose of the end-effector expressed in the robot reference
+  frame \f$^r{\bf M}_e\f$, while `franka_image-<number>.png` is the image captured at the corresponding robot position.
 
 Move the robot to an other position such as the chessboard remains in the image and repeat data acquisition by a left
 mouse click. We recommend to acquire data at 8 to 10 different robot positions.
@@ -390,17 +415,17 @@ A right mouse click ends this step exiting the binary.
 This is the output when 8 different positions are considered:
 
 \code{.sh}
-$ ./visp-acquire-franka-calib-data
+$ ./visp-acquire-franka-calib-data --ip 192.168.30.10 --output-folder data-franka
 Image size: 640 x 480
 Found camera with name: "Camera"
-Save: franka_image-1.png and franka_pose_rPe_1.yaml
-Save: franka_image-2.png and franka_pose_rPe_2.yaml
-Save: franka_image-3.png and franka_pose_rPe_3.yaml
-Save: franka_image-4.png and franka_pose_rPe_4.yaml
-Save: franka_image-5.png and franka_pose_rPe_5.yaml
-Save: franka_image-6.png and franka_pose_rPe_6.yaml
-Save: franka_image-7.png and franka_pose_rPe_7.yaml
-Save: franka_image-8.png and franka_pose_rPe_8.yaml
+Save: data-franka/franka_image-1.png and data-franka/franka_pose_rPe_1.yaml
+Save: data-franka/franka_image-2.png and data-franka/franka_pose_rPe_2.yaml
+Save: data-franka/franka_image-3.png and data-franka/franka_pose_rPe_3.yaml
+Save: data-franka/franka_image-4.png and data-franka/franka_pose_rPe_4.yaml
+Save: data-franka/franka_image-5.png and data-franka/franka_pose_rPe_5.yaml
+Save: data-franka/franka_image-6.png and data-franka/franka_pose_rPe_6.yaml
+Save: data-franka/franka_image-7.png and data-franka/franka_pose_rPe_7.yaml
+Save: data-franka/franka_image-8.png and data-franka/franka_pose_rPe_8.yaml
 \endcode
 
 The source code corresponding to the binary is available in visp-acquire-franka-calib-data.cpp. If your setup is
@@ -411,11 +436,11 @@ different, it could be easily adapted to your robot or camera.
 Given the camera intrinsic parameters and the set of images, you can compute the chessboard pose running
 (adapt the square size parameter to your use case):
 \code{.sh}
-$ ./visp-compute-chessboard-poses    \
-    --square-size 0.0262             \
-    --input franka_image-%d.png      \
-    --intrinsic franka_camera.xml    \
-    --output franka_pose_cPo_%d.yaml
+$ ./visp-compute-chessboard-poses                \
+    --square-size 0.0262                         \
+    --input data-franka/franka_image-%d.png      \
+    --intrinsic data-franka/franka_camera.xml    \
+    --output data-franka/franka_pose_cPo_%d.yaml
 \endcode
 
 \subsubsection calib_eih_usecase_franka_emc 4.1.3 Estimate extrinsic transformation
@@ -423,18 +448,18 @@ $ ./visp-compute-chessboard-poses    \
 Finally you can estimate the extrinsic transformation between end-effector and your camera, running:
 
 \code{.sh}
-$ ./visp-compute-eye-in-hand-calibration \
-    --data-path .                     \
-    --rPe franka_pose_rPe_%d.yaml     \
-    --cPo franka_pose_cPo_%d.yaml     \
-    --output-ePc franka_ePc.yaml      \
-    --output-rPo franka_rPo.yaml
+$ ./visp-compute-eye-in-hand-calibration     \
+    --data-path data-franka/                 \
+    --rPe franka_pose_rPe_%d.yaml            \
+    --cPo franka_pose_cPo_%d.yaml            \
+    --output-ePc data-franka/franka_ePc.yaml \
+    --output-rPo data-franka/franka_rPo.yaml
 \endcode
 
-It will produce the `franka_ePc.yaml` that contains the pose as a vpPoseVector and `franka_ePc.txt` that contains the
-corresponding homogeneous matrix transformation:
+It will produce the `franka_ePc.yaml` file that contains the pose as a vpPoseVector and `franka_ePc.txt` that contains
+the corresponding homogeneous matrix transformation:
 \code{.sh}
-$ more franka_ePc.yaml
+$ more data-franka/franka_ePc.yaml
 rows: 6
 cols: 1
 data:
@@ -445,25 +470,25 @@ data:
   - [0.00565946]
   - [0.0166116]
 
-$ more franka_ePc.txt
+$ more data-franka/franka_ePc.txt
  0.9998460169    -0.01661822717   0.005637104144  -0.03517264821
  0.0166031939     0.9998585032    0.002703241732  -0.05911865752
 -0.005681229597  -0.002609231545  0.9999804576     0.0158759732
  0                0               0                1
 \endcode
 
-<b>Camera poses visualization</b>
+\subsubsection calib_eih_usecase_franka_visu 4.1.4. Camera poses analysis tool
 
 To visualize camera poses:
 \code{.sh}
 $ grep px franka_camera.xml
       <px>605.146728515625</px>
-$ python hand_eye_calibration_show_extrinsics.py \
-    --ndata 8                                    \
-    --eMc_yaml franka_ePc.yaml                   \
-    --cPo_file_pattern franka_pose_cPo_%d.yaml   \
-    --square_size 0.0262                         \
-    --focal_px 605.146728515625
+$ python hand_eye_calibration_show_extrinsics.py           \
+    --ndata 8                                              \
+    --eMc-yaml data-franka/franka_ePc.yaml                 \
+    --cPo-file-pattern data-franka/franka_pose_cPo_%d.yaml \
+    --square-size 0.0262                                   \
+    --focal-px 605.146728515625
 \endcode
 
 \subsection calib_eih_usecase_ur 4.2. UR robot + Realsense
@@ -493,14 +518,14 @@ $ ./visp-acquire-universal-robots-calib-data
 \endcode
 
 By default the robot controller IP is `192.168.0.100`. If your robot from Universal Robots has an other IP
-(let say 10.0.0.2) use `--ip` option like:
+(let say 192.168.30.10) use `--ip` option like:
 
 \code{.sh}
-$ ./visp-acquire-universal-robots-calib-data --ip 10.0.0.2
+$ ./visp-acquire-universal-robots-calib-data --ip 192.168.30.10 --output-folder data-ur
 \endcode
 
 Click with the left mouse button to acquire data.
-It records the following outputs:
+It records the following outputs in `data-ur` folder:
 
 - `ur_camera.xml` : XML file that contains the intrinsic camera parameters extracted from camera firmware
 - couples of `ur_image-<number>.png` + `ur_pose_rPe-<number>.txt` with number starting from 1.
@@ -515,17 +540,17 @@ A right mouse click ends this step exiting the binary.
 This is the output when 8 different positions are considered:
 
 \code{.sh}
-$ ./visp-acquire-universal-robots-calib-data
+$ ./visp-acquire-universal-robots-calib-data --ip 192.168.30.10 --output-folder data-ur
 Image size: 640 x 480
 Found camera with name: "Camera"
-Save: ur_image-1.png and ur_pose_rPe_1.yaml
-Save: ur_image-2.png and ur_pose_rPe_2.yaml
-Save: ur_image-3.png and ur_pose_rPe_3.yaml
-Save: ur_image-4.png and ur_pose_rPe_4.yaml
-Save: ur_image-5.png and ur_pose_rPe_5.yaml
-Save: ur_image-6.png and ur_pose_rPe_6.yaml
-Save: ur_image-7.png and ur_pose_rPe_7.yaml
-Save: ur_image-8.png and ur_pose_rPe_8.yaml
+Save: data-ur/ur_image-1.png and data-ur/ur_pose_rPe_1.yaml
+Save: data-ur/ur_image-2.png and data-ur/ur_pose_rPe_2.yaml
+Save: data-ur/ur_image-3.png and data-ur/ur_pose_rPe_3.yaml
+Save: data-ur/ur_image-4.png and data-ur/ur_pose_rPe_4.yaml
+Save: data-ur/ur_image-5.png and data-ur/ur_pose_rPe_5.yaml
+Save: data-ur/ur_image-6.png and data-ur/ur_pose_rPe_6.yaml
+Save: data-ur/ur_image-7.png and data-ur/ur_pose_rPe_7.yaml
+Save: data-ur/ur_image-8.png and data-ur/ur_pose_rPe_8.yaml
 \endcode
 
 The source code corresponding to the binary is available in visp-acquire-universal-robots-calib-data.cpp. If your
@@ -535,11 +560,11 @@ setup is different, it could be easily adapted to your robot or camera.
 
 Given the camera intrinsic parameters and the set of images, you can compute the camera pose running:
 \code{.sh}
-$ ./visp-compute-chessboard-poses \
-    --square-size 0.0262          \
-    --input ur_image-%d.png       \
-    --intrinsic ur_camera.xml     \
-    --output ur_pose_cPo_%d.yaml
+$ ./visp-compute-chessboard-poses        \
+    --square-size 0.0262                 \
+    --input data-ur/ur_image-%d.png      \
+    --intrinsic data-ur/ur_camera.xml    \
+    --output data-ur/ur_pose_cPo_%d.yaml
 \endcode
 
 \subsubsection calib_eih_usecase_ur_emc 4.2.3: Estimate extrinsic transformation
@@ -548,17 +573,17 @@ Finally you can estimate the extrinsic transformation between end-effector and y
 
 \code{.sh}
 $ ./visp-compute-eye-in-hand-calibration \
-    --data-path .                        \
+    --data-path data-ur/                 \
     --rPe ur_pose_rPe_%d.yaml            \
     --cPo ur_pose_cPo_%d.yaml            \
-    --output-ePc ur_ePc.yaml             \
-    --output-rPo ur_rPo.yaml
+    --output-ePc data-ur/ur_ePc.yaml     \
+    --output-rPo data-ur/ur_rPo.yaml
 \endcode
 
 It will produce the `ur_ePc.yaml` that contains the pose as a vpPoseVector and `ur_ePc.txt` that contains the
 corresponding homogeneous matrix transformation:
 \code{.sh}
-$ more ur_ePc.yaml
+$ more data-ur/ur_ePc.yaml
 rows: 6
 cols: 1
 data:
@@ -569,30 +594,32 @@ data:
   - [0.00565946]
   - [0.0166116]
 
-$ more ur_ePc.txt
+$ more data-ur/ur_ePc.txt
  0.9998460169    -0.01661822717   0.005637104144  -0.03517264821
  0.0166031939     0.9998585032    0.002703241732  -0.05911865752
 -0.005681229597  -0.002609231545  0.9999804576     0.0158759732
  0                0               0                1
 \endcode
 
-<b>Cameta poses visualization</b>
+\subsubsection calib_eih_usecase_ur_visu 4.2.4. Cameta poses analysis tool
 
 To visualize camera poses:
 \code{.sh}
 $ grep px ur_camera.xml
       <px>605.146728515625</px>
-$ python hand_eye_calibration_show_extrinsics.py \
-    --ndata 8                                    \
-    --eMc_yaml ur_ePc.yaml                       \
-    --cPo_file_pattern ur_pose_cPo_%d.yaml       \
-    --square_size 0.0262                         \
-    --focal_px 605.146728515625
+$ python hand_eye_calibration_show_extrinsics.py   \
+    --ndata 8                                      \
+    --eMc-yaml data-ur/ur_ePc.yaml                 \
+    --cPo-file-pattern data-ur/ur_pose_cPo_%d.yaml \
+    --square-size 0.0262                           \
+    --focal-px 605.146728515625
 \endcode
 
 \section calib_eih_next 5. Next tutorial
 
-You are now ready to follow \ref tutorial-franka-pbvs.
+You are now ready to try a visual servoing control law:
+- If interested in position-based visual servoing follow \ref tutorial-franka-pbvs,
+- If rather interested in image-based visual servoing follow \ref tutorial-franka-ibvs,
 
 You may also be interested in this other \ref tutorial-calibration-extrinsic-eye-to-hand.
 
