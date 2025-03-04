@@ -20,10 +20,10 @@ if (ANDROID)
     endif ()
 
     # todo: i guess we can exclude 3rd party libraries here, so that i can show a quick demo
-    # initially was : ocv_get_all_libs(VISP_MODULES_BUILD OPENCV_EXTRA_COMPONENTS OPENCV_3RDPARTY_COMPONENTS)
+    # initially was : vp_get_all_libs(VISP_MODULES_BUILD OPENCV_EXTRA_COMPONENTS OPENCV_3RDPARTY_COMPONENTS)
     # initially wanted to build the list of visp libs and dependencies for all modules/
-    # todo : for now i'm including only core module. To add all libs, u've to define a fn like ocv_get_all_libs
-    # That function should have VISP_MODULES_PUBLIC, not *_BUILD. Refer ocv_get_all_libs in OpenCVUtils.cmake
+    # todo : for now i'm including only core module. To add all libs, u've to define a fn like vp_get_all_libs
+    # That function should have VISP_MODULES_PUBLIC, not *_BUILD. Refer vp_get_all_libs in OpenCVUtils.cmake
     list(APPEND VISP_MODULES_BUILD "visp_core")
 
     # list -> string

@@ -9,7 +9,7 @@ This tutorial explains how to do an image-based visual-servoing with a FLIR PTU-
 
 \image html img-flir-ptu-setup.jpg
 
-In this tutorial the considered target is an AprilTag. 
+In this tutorial the considered target is an AprilTag.
 
 \image html img-apriltag-tag36_11.png
 
@@ -70,13 +70,13 @@ $ source ~/.bashrc
 
 <b>On Windows platform</b>
 
-- Unzip the SDK `sdk-2.0.4.zip` in `%VISP_WS%`
-- Open `%VISP_WS%\sdk-2.0.4\build\visual_studio_2008\CPI2.sln` with Visual Studio C++
-- Modify `%VISP_WS%\sdk-2.0.4\build\visual_studio_2008\port\vc2008.h` file to comment line 44
+- Unzip the SDK `sdk-2.0.4.zip` in `%%VISP_WS%`
+- Open `%%VISP_WS%\sdk-2.0.4\build\visual_studio_2008\CPI2.sln` with Visual Studio C++
+- Modify `%%VISP_WS%\sdk-2.0.4\build\visual_studio_2008\port\vc2008.h` file to comment line 44
 \code
 //#define snprintf(s,n,fmt,...)   _snprintf(s,n,fmt,__VA_ARGS__)
 \endcode
-- Modify `%VISP_WS%\sdk-2.0.4\build\visual_studio_2008\port\stdbool.h` to comment line 34
+- Modify `%%VISP_WS%\sdk-2.0.4\build\visual_studio_2008\port\stdbool.h` to comment line 34
 \code
 //typedef int _Bool;
 \endcode
@@ -93,8 +93,9 @@ $ source ~/.bashrc
 \image html img-flir-ptu-config-new-x64-active.png
 - Generate solution
 \image html img-flir-ptu-generate.png
-- There will be warnings that could be ignored. At the end of the build process you should find `licpi.lib` and `libcpi.dll` files in `%VISP_WS%\sdk-2.0.4\build\visual_studio_2008\x64\Release` folder
-- Terminate installation setting `FLIRPTUSDK_HOME` enviromnent variable to help ViSP finding FLIR PTU SDK
+- There will be warnings that could be ignored. At the end of the build process you should find `licpi.lib` and
+  `libcpi.dll` files in `%%VISP_WS%\sdk-2.0.4\build\visual_studio_2008\x64\Release` folder
+- Terminate installation setting `FLIRPTUSDK_HOME` environment variable to help ViSP finding FLIR PTU SDK
 \code
 C:\> setx FLIRPTUSDK_HOME "%VISP_WS%\sdk-2.0.4"
 C:\> exit
@@ -113,10 +114,10 @@ This SDK is used to get images acquired by a FLIR Camera, in our case a [Grashop
 - If you are using Visual C++ 2015 (vc14) follow \ref install_win10_msvc14_3rdparty_flycapture installation tutorial
 - If you are using Visual C++ 2017 (vc15) follow \ref install_win10_msvc15_3rdparty_flycapture installation tutorial
 - If you are using Visual C++ 2019 (vc16) follow \ref install_win10_msvc16_3rdparty_flycapture installation tutorial
- 
+
 \subsection flir_ptu_prereq_target Print an Apriltag target
 
-We provide a ready to print `36h11` tag that is 12 by 12 cm square <a href="http://visp-doc.inria.fr/download/apriltag/tag36_11_00000-120x120.pdf">[download]</a> that you may print.  
+We provide a ready to print `36h11` tag that is 12 by 12 cm square <a href="http://visp-doc.inria.fr/download/apriltag/tag36_11_00000-120x120.pdf">[download]</a> that you may print.
 
 If you are interested to get other tags, follow the steps described in \ref apriltag_detection_print.
 
@@ -126,7 +127,7 @@ Since you have just installed FLIR PTU SDK and FLIR FlyCapture SDK 3rd parties, 
 
 <b>On Linux platform</b>
 
-- Follow \ref install_ubuntu_visp_config. At this step you should see new `USE_FLIRPTUSDK` and `USE_FLYCAPTURE` cmake vars appearing in the CMake GUI. 
+- Follow \ref install_ubuntu_visp_config. At this step you should see new `USE_FLIRPTUSDK` and `USE_FLYCAPTURE` cmake vars appearing in the CMake GUI.
 
 - Now follow the instructions for \ref install_ubuntu_visp_build.
 
@@ -160,7 +161,7 @@ To proceed with this extrinsic camera calibration:
 - use a ruler and measure the distances betweeen end-effector and camera frames. The precision will be enough to perform visual servoing
 - modify `tutorial/robot/flir-ptu/eMc.yaml` accordingly:
 \code
-$ cat eMc.yaml 
+$ cat eMc.yaml
 rows: 4
 cols: 4
 data:
@@ -234,6 +235,6 @@ On Unix-like OS, if you experienced the following error during ViSP build:
 
 \section flir_ptu_next Next tutorial
 
-You are now ready to see \ref tutorial-ibvs that will give some hints on image-based visual servoing in simulation with a free flying camera. 
+You are now ready to see \ref tutorial-ibvs that will give some hints on image-based visual servoing in simulation with a free flying camera.
 
 */

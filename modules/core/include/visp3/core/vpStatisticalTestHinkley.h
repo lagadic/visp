@@ -141,11 +141,7 @@ protected:
    *
    * \return \b vpMeanDriftType::MEAN_DRIFT_DOWNWARD if a downward mean drift occurred, \b vpMeanDriftType::MEAN_DRIFT_NONE otherwise.
    */
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  virtual vpMeanDriftType detectDownwardMeanDrift() override;
-#else
-  virtual vpMeanDriftType detectDownwardMeanDrift();
-#endif
+  virtual vpMeanDriftType detectDownwardMeanDrift() VP_OVERRIDE;
 
   /**
    * \brief Detects if an upward mean drift occurred on the mean.
@@ -154,11 +150,7 @@ protected:
    *
    * \sa detectDownwardMeanDrift()
    */
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  virtual vpMeanDriftType detectUpwardMeanDrift() override;
-#else
-  virtual vpMeanDriftType detectUpwardMeanDrift();
-#endif
+  virtual vpMeanDriftType detectUpwardMeanDrift() VP_OVERRIDE;
 
   /**
    * \brief Update m_s and if enough values are available, compute the mean, the standard
@@ -166,22 +158,15 @@ protected:
    *
    * \param[in] signal The new value of the signal to monitor.
    */
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  virtual bool updateStatistics(const float &signal) override;
-#else
-  virtual bool updateStatistics(const float &signal);
-#endif
+  virtual bool updateStatistics(const float &signal) VP_OVERRIDE;
 
-/**
- * \brief Update the test signals.
- *
- * \param[in] signal The new value of the signal to monitor.
- */
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  virtual void updateTestSignals(const float &signal) override;
-#else
-  virtual void updateTestSignals(const float &signal);
-#endif
+  /**
+   * \brief Update the test signals.
+   *
+   * \param[in] signal The new value of the signal to monitor.
+   */
+  virtual void updateTestSignals(const float &signal) VP_OVERRIDE;
+
 public:
   /**
    * @brief Construct a new vpStatisticalTestHinkley object.

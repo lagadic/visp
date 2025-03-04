@@ -202,6 +202,12 @@ int main(int argc, char **argv)
 
   vpRobotFranka robot;
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display;
+#else
+  vpDisplay *display = nullptr;
+#endif
+
   try {
     robot.connect(opt_robot_ip);
 

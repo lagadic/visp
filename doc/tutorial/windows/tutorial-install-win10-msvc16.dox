@@ -283,7 +283,7 @@ After completion, sample apps may be run from the Apps directory.
 
 To finalize the installation, add the location of `Structure.dll` library in the `Path` environment variable.
 Open the "Edit environment variable" UI, and modify `Path` to add a new line with
-`%VISP_WS%\StructureSDK-CrossPlatform-0.9\Libraries\Structure\Windows\x86_64\`.
+`%%VISP_WS%\StructureSDK-CrossPlatform-0.9\Libraries\Structure\Windows\x86_64\`.
 
 \subsubsection install_win10_msvc16_3rdparty_pcl 4.1.6. Point Cloud Library
 
@@ -452,7 +452,7 @@ C:\> setx QUALISYS_DIR "%VISP_WS%\Program Files\qualisys_cpp_sdk"
 C:\> exit
 \endverbatim
 - You have also to add the location of Qualisys Datastream SDK libraries corresponding in the Path environment variable.
-Open the "Edit environment variable" UI, and modify Path to add a new line with `%VISP_WS%\qualisys_cpp_sdk\lib`.
+Open the "Edit environment variable" UI, and modify Path to add a new line with `%%VISP_WS%\qualisys_cpp_sdk\lib`.
 
 <b>4.1.11.3. Known issue</b>
 

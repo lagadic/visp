@@ -1,153 +1,59 @@
-// This file is part of ViSP project.
-// It is subject to the license terms in the LICENSE file found in the top-level directory
-// of this distribution and at https://visp.inria.fr/visp-license/
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
 
-//
-// Notes about integration ViSP into existed Android Studio application project are below (application 'app' module should exist).
-//
-// This file is located in <ViSP-android-sdk>/sdk directory (near 'etc', 'java', 'native' subdirectories)
-//
-// Add module into Android Studio application project:
-//
-// - Android Studio way:
-//   (will copy almost all ViSP Android SDK into your project, ~200Mb)
-//
-//   Import module: Menu -> "File" -> "New" -> "Module" -> "Import Gradle project":
-//   Source directory: select this "sdk" directory
-//   Module name: ":visp"
-//
-// - or attach library module from ViSP Android SDK
-//   (without copying into application project directory, allow to share the same module between projects)
-//
-//   Edit "settings.gradle" and add these lines:
-//
-//   def vispsdk='<path_to_visp_android_sdk_rootdir>'
-//   // You can put declaration above into gradle.properties file instead (including file in HOME directory),
-//   // but without 'def' and apostrophe symbols ('): vispsdk=<path_to_visp_android_sdk_rootdir>
-//   include ':visp'
-//   project(':visp').projectDir = new File(vispsdk + '/sdk')
-//
-//
-//
-// Add dependency into application module:
-//
-// - Android Studio way:
-//   "Open Module Settings" (F4) -> "Dependencies" tab
-//
-// - or add "project(':visp')" dependency into app/build.gradle:
-//
-//   dependencies {
-//       implementation fileTree(dir: 'libs', include: ['*.jar'])
-//       ...
-//       implementation project(':visp')
-//   }
-//
-//
-//
-// Load ViSP native library before using:
-//
-// - avoid using of "ViSPLoader.initAsync()" approach - it is deprecated
-//   It may load library with different version (from ViSP Android Manager, which is installed separatelly on device)
-//
-// - use "System.loadLibrary("visp_java4")" or "ViSPLoader.initDebug()"
-//   TODO: Add accurate API to load ViSP native library
-//
-//
-//
-// Native C++ support (necessary to use ViSP in native code of application only):
-//
-// - Use find_package() in app/CMakeLists.txt:
-//
-//   find_package(ViSP 3.3 REQUIRED java)
-//   ...
-//   target_link_libraries(native-lib ${VISP_LIBRARIES})
-//
-// - Add "VISP_DIR" and enable C++ exceptions/RTTI support via app/build.gradle
-//   Documentation about CMake options: https://developer.android.com/ndk/guides/cmake.html
-//
-//   defaultConfig {
-//       ...
-//       externalNativeBuild {
-//           cmake {
-//               cppFlags "-std=c++11 -frtti -fexceptions"
-//               arguments "-DViSP_DIR=" + vispsdk + "/sdk/native/jni" // , "-DANDROID_ARM_NEON=TRUE"
-//           }
-//       }
-//   }
-//
-// - (optional) Limit/filter ABIs to build ('android' scope of 'app/build.gradle'):
-//   Useful information: https://developer.android.com/studio/build/gradle-tips.html (Configure separate APKs per ABI)
-//
-//   splits {
-//       abi {
-//           enable true
-//           universalApk false
-//           reset()
-//           include 'armeabi-v7a' // , 'x86', 'x86_64', 'arm64-v8a'
-//       }
-//   }
-//
+buildscript {
 
-apply plugin: 'com.android.library'
-
-def vispVersionName = "@ ViSP_VERSION@"
-def vispVersionCode = ((@ ViSP_VERSION_MAJOR@ * 100 + @ ViSP_VERSION_MINOR@) * 100 + @ ViSP_VERSION_PATCH@) * 10 + 0
-
-println "ViSP: " +vispVersionName + " " + project.buildscript.sourceFile
-
-android {
-    compileSdkVersion @ANDROID_COMPILE_SDK_VERSION@
-
-    defaultConfig {
-        minSdkVersion @ANDROID_MIN_SDK_VERSION@
-        targetSdkVersion @ANDROID_TARGET_SDK_VERSION@
-
-        versionCode vispVersionCode
-        versionName vispVersionName
-
-        externalNativeBuild {
-            cmake {
-                arguments "-DANDROID_STL=@ANDROID_STL@"
-                targets "visp_jni_shared"
-            }
-        }
+    repositories {
+        google()
+        jcenter()
     }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:@ANDROID_GRADLE_PLUGIN_VERSION@'
 
-    buildTypes {
-        debug {
-            packagingOptions {
-                doNotStrip '**/*.so'  // controlled by ViSP CMake scripts
-            }
-        }
-        release {
-            packagingOptions {
-                doNotStrip '**/*.so'  // controlled by ViSP CMake scripts
-            }
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-        }
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
-    sourceSets {
-        main {
-            jniLibs.srcDirs = ['native/libs']
-            java.srcDirs = ['java/src']
-            aidl.srcDirs = ['java/src']
-            res.srcDirs = ['java/res']
-            manifest.srcFile 'java/AndroidManifest.xml'
-        }
-    }
-
-    externalNativeBuild {
-        cmake {
-            path (project.projectDir.toString() + '/libcxx_helper/CMakeLists.txt')
-        }
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
     }
 }
 
-dependencies {
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+
+//allprojects {
+//    gradle.projectsEvaluated {
+//        tasks.withType(JavaCompile) {
+//            options.compilerArgs << "-Xlint:unchecked"
+//            options.compilerArgs << "-Xlint:deprecation"
+//        }
+//    }
+//}
+
+
+gradle.afterProject { project ->
+    if (project.pluginManager.hasPlugin('com.android.application')
+            || project.pluginManager.hasPlugin('com.android.library')
+            || project.pluginManager.hasPlugin('com.android.test')
+            || project.pluginManager.hasPlugin('com.android.feature') ) {
+        if (true) {
+            gradle.println("Override build ABIs for the project ${project.name}")
+            project.android {
+                splits {
+                    abi {
+                        enable true
+                        universalApk false
+                        @ANDROID_ABI_FILTER@
+                    }
+                }
+            }
+        }
+
+        if (true) {
+            gradle.println("Override lintOptions for the project ${project.name}")
+            project.android {
+                lintOptions {
+                    // checkReleaseBuilds false
+                    abortOnError false
+                }
+            }
+        }
+    }
 }

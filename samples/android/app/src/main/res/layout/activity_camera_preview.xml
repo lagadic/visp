@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="example.vispapriltag.CameraPreviewActivity">
+
+    <FrameLayout
+        android:id="@+id/camera_preview"
+        android:layout_width="match_parent"
+        android:layout_weight="0.1"
+        android:layout_height="fill_parent" />
+        
+   <TextView
+        android:id="@+id/resultTV"
+        android:layout_width="wrap_content"
+        android:layout_weight="0.9"
+        android:paddingTop="8dp"
+        android:fontFamily="@font/roboto"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:layout_height="fill_parent" />
+
+</LinearLayout>

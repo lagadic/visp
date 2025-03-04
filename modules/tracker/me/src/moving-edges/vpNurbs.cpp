@@ -686,7 +686,7 @@ void vpNurbs::globalCurveApprox(std::vector<vpImagePoint> &l_crossingPoints, uns
     Rj[i] = sum;
     sum = 0;
     for (unsigned int k = 0; k < m - 1; k++)
-      sum = sum + A[k][i]; // The crossing points weigths are equal to 1.
+      sum = sum + A[k][i]; // The crossing points weights are equal to 1.
     Rw[i] = sum;
   }
 
