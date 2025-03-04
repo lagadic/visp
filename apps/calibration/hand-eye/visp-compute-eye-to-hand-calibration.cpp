@@ -31,7 +31,10 @@
  * Compute eye-to-hand calibration from Apriltag poses and robot end-effector poses.
  */
 
-//! \example visp-compute-eye-to-hand-calibration.cpp
+/*!
+ * \example visp-compute-eye-to-hand-calibration.cpp
+ * App that allows to perform eye-to-hand calibration.
+ */
 #include <map>
 
 #include <visp3/core/vpConfig.h>
@@ -201,38 +204,40 @@ int main(int argc, const char *argv[])
   int ret = vpHandEyeCalibration::calibrate(oMc, rMe, eMo, rMc);
 
   if (ret == 0) {
-    std::cout << std::endl << "** Eye-to-hand calibration succeed" << std::endl;
-    std::cout << std::endl << "** Estimated hand-object (eMo) transformation:" << std::endl;
-    std::cout << "----------------------------------------------" << std::endl;
-    std::cout << eMo << std::endl;
-    std::cout << "  - Corresponding pose vector [tx ty tz tux tuy tuz] in [m] and [rad]: " << vpPoseVector(eMo).t() << std::endl;
+    std::cout << std::endl << "Eye-to-hand calibration succeed" << std::endl;
+    std::cout << std::endl << "Estimated hand-object (eMo) transformation:" << std::endl;
+    std::cout << "-------------------------------------------" << std::endl;
+    //std::cout << eMo << std::endl;
+    vpMatrix(eMo).print(std::cout, 15, "eMo");
+    std::cout << "- Corresponding pose vector [tx ty tz tux tuy tuz] in [m] and [rad]: " << vpPoseVector(eMo).t() << std::endl;
 
     vpThetaUVector ero(eMo.getRotationMatrix());
     std::cout << std::endl << "- Translation [m]: " << eMo[0][3] << " " << eMo[1][3] << " " << eMo[2][3] << std::endl;
-    std::cout << "  - Rotation (theta-u representation) [rad]: " << ero.t() << std::endl;
-    std::cout << "  - Rotation (theta-u representation) [deg]: " << vpMath::deg(ero[0]) << " " << vpMath::deg(ero[1])
+    std::cout << "- Rotation (theta-u representation) [rad]: " << ero.t() << std::endl;
+    std::cout << "- Rotation (theta-u representation) [deg]: " << vpMath::deg(ero[0]) << " " << vpMath::deg(ero[1])
       << " " << vpMath::deg(ero[2]) << std::endl;
     vpQuaternionVector quaternion(eMo.getRotationMatrix());
-    std::cout << "  - Rotation (quaternion representation) [rad]: " << quaternion.t() << std::endl;
+    std::cout << "- Rotation (quaternion representation) [rad]: " << quaternion.t() << std::endl;
     vpRxyzVector rxyz(eMo.getRotationMatrix());
-    std::cout << "  - Rotation (r-x-y-z representation) [rad]: " << rxyz.t() << std::endl;
-    std::cout << "  - Rotation (r-x-y-z representation) [deg]: " << vpMath::deg(rxyz).t() << std::endl;
+    std::cout << "- Rotation (r-x-y-z representation) [rad]: " << rxyz.t() << std::endl;
+    std::cout << "- Rotation (r-x-y-z representation) [deg]: " << vpMath::deg(rxyz).t() << std::endl;
 
-    std::cout << std::endl << "** Estimated robot reference to camera frames (rMc) transformation:" << std::endl;
-    std::cout << "-------------------------------------------------------------------" << std::endl;
-    std::cout << rMc << std::endl;
-    std::cout << "  - Corresponding pose vector [tx ty tz tux tuy tuz] in [m] and [rad]: " << vpPoseVector(rMc).t() << std::endl;
+    std::cout << std::endl << "Estimated robot reference to camera frames (rMc) transformation:" << std::endl;
+    std::cout << "----------------------------------------------------------------" << std::endl;
+    //std::cout << rMc << std::endl;
+    vpMatrix(rMc).print(std::cout, 15, "rMc");
+    std::cout << "- Corresponding pose vector [tx ty tz tux tuy tuz] in [m] and [rad]: " << vpPoseVector(rMc).t() << std::endl;
 
     vpThetaUVector wrc(rMc.getRotationMatrix());
-    std::cout << std::endl << "** Translation [m]: " << rMc[0][3] << " " << rMc[1][3] << " " << rMc[2][3] << std::endl;
-    std::cout << "  - Rotation (theta-u representation) [rad]: " << wrc.t() << std::endl;
-    std::cout << "  - Rotation (theta-u representation) [deg]: " << vpMath::deg(wrc[0]) << " " << vpMath::deg(wrc[1])
+    std::cout << std::endl << "- Translation [m]: " << rMc[0][3] << " " << rMc[1][3] << " " << rMc[2][3] << std::endl;
+    std::cout << "- Rotation (theta-u representation) [rad]: " << wrc.t() << std::endl;
+    std::cout << "- Rotation (theta-u representation) [deg]: " << vpMath::deg(wrc[0]) << " " << vpMath::deg(wrc[1])
       << " " << vpMath::deg(wrc[2]) << std::endl;
     vpQuaternionVector quaternion2(rMc.getRotationMatrix());
-    std::cout << "  - Rotation (quaternion representation) [rad]: " << quaternion2.t() << std::endl;
+    std::cout << "- Rotation (quaternion representation) [rad]: " << quaternion2.t() << std::endl;
     vpRxyzVector rxyz2(rMc.getRotationMatrix());
-    std::cout << "  - Rotation (r-x-y-z representation) [rad]: " << rxyz2.t() << std::endl;
-    std::cout << "  - Rotation (r-x-y-z representation) [deg]: " << vpMath::deg(rxyz).t() << std::endl;
+    std::cout << "- Rotation (r-x-y-z representation) [rad]: " << rxyz2.t() << std::endl;
+    std::cout << "- Rotation (r-x-y-z representation) [deg]: " << vpMath::deg(rxyz).t() << std::endl;
 
     {
       // save eMo

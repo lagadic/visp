@@ -31,7 +31,10 @@
  * Compute eye-in-hand calibration from chessboard poses and robot end-effector poses.
  */
 
-//! \example visp-compute-eye-in-hand-calibration.cpp
+/*!
+ * \example visp-compute-eye-in-hand-calibration.cpp
+ * App that allows to perform eye-in-hand calibration.
+ */
 #include <map>
 
 #include <visp3/core/vpConfig.h>
@@ -199,11 +202,12 @@ int main(int argc, const char *argv[])
     std::cout << std::endl << "Eye-in-hand calibration succeed" << std::endl;
     std::cout << std::endl << "Estimated eMc transformation:" << std::endl;
     std::cout << "-----------------------------" << std::endl;
-    std::cout << eMc << std::endl << std::endl;
+    //std::cout << eMc << std::endl << std::endl;
+    vpMatrix(eMc).print(std::cout, 15, "eMc");
     std::cout << "- Corresponding pose vector [tx ty tz tux tuy tuz] in [m] and [rad]: " << vpPoseVector(eMc).t() << std::endl;
 
     vpThetaUVector erc(eMc.getRotationMatrix());
-    std::cout << std::endl << "** Translation [m]: " << eMc[0][3] << " " << eMc[1][3] << " " << eMc[2][3] << std::endl;
+    std::cout << std::endl << "- Translation [m]: " << eMc[0][3] << " " << eMc[1][3] << " " << eMc[2][3] << std::endl;
     std::cout << "- Rotation (theta-u representation) [rad]: " << erc.t() << std::endl;
     std::cout << "- Rotation (theta-u representation) [deg]: " << vpMath::deg(erc[0]) << " " << vpMath::deg(erc[1])
       << " " << vpMath::deg(erc[2]) << std::endl;
@@ -215,7 +219,8 @@ int main(int argc, const char *argv[])
 
     std::cout << std::endl << "Estimated rMo transformation:" << std::endl;
     std::cout << "-----------------------------" << std::endl;
-    std::cout << rMo << std::endl;
+    //std::cout << rMo << std::endl;
+    vpMatrix(rMo).print(std::cout, 15, "rMo");
     std::cout << "- Corresponding pose vector [tx ty tz tux tuy tuz] in [m] and [rad]: " << vpPoseVector(rMo).t() << std::endl;
 
     vpThetaUVector wrc(rMo.getRotationMatrix());
