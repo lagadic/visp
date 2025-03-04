@@ -329,7 +329,7 @@ ViSP 3.4.0 (released February 26, 2021)
     . [#801] Build issue with visp_java
     . [#803] Segfault with MBT and when a circle disappears
     . [#806] Error running the Java sample with intel-mkl 2020.2.254-1
-    . [#808] vpVirtuose.cpp doen't build with Visual 2019 (vc16)
+    . [#808] vpVirtuose.cpp doesn't build with Visual 2019 (vc16)
     . [#812] Online doc formula rendering issue with Ghostscript on OSX
     . [#817] vpIoTools::getFileExtension prints "Debug sepIndex: 0" to std::cout
     . [#818] Model-based tracking issue using RGBD-data on Windows
