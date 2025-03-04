@@ -30,6 +30,11 @@
  * Description:
  * Camera calibration with chessboard or circle calibration grid.
  */
+
+/*!
+ * \example visp-calibrate-camera.cpp
+ * This app allows to calibrate camera intrinsic parameters.
+ */
 #include <iostream>
 
 #include <visp3/core/vpConfig.h>
