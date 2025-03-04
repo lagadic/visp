@@ -534,11 +534,11 @@ std::vector<vpRBSilhouettePoint> vpRBTracker::extractSilhouettePoints(
       // if (noNeighbor) {
       //   points.push_back(vpRBSilhouettePoint(n, m, norm, theta, Z));
       // }
+      }
     }
-  }
 
   return points;
-}
+  }
 
 void vpRBTracker::addTracker(std::shared_ptr<vpRBFeatureTracker> tracker)
 {
