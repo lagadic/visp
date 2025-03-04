@@ -1079,10 +1079,11 @@ EXCLUDE_SYMBOLS        =
 # that contain example code fragments that are included (see the \include
 # command).
 
-EXAMPLE_PATH           = "@VISP_SOURCE_DIR@/example" \
+EXAMPLE_PATH           = "@VISP_SOURCE_DIR@/modules" \
+                         "@VISP_SOURCE_DIR@/apps" \
+                         "@VISP_SOURCE_DIR@/example" \
                          "@VISP_SOURCE_DIR@/tutorial" \
                          "@VISP_SOURCE_DIR@/demo" \
-                         "@VISP_SOURCE_DIR@/modules" \
                          "@VISP_SOURCE_DIR@/script"
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the
@@ -2553,7 +2554,7 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_VIPER850 \
                          VISP_HAVE_VIPER850_DATA \
                          VISP_HAVE_VIRTUOSE \
-                         VISP_HAVE_WORKING_REGEX
+                         VISP_HAVE_WORKING_REGEX \
                          VISP_HAVE_X11 \
                          VISP_HAVE_XML2 \
                          VISP_HAVE_YARP \
