@@ -235,7 +235,7 @@ def main():
                         help='Path to the estimated eMc yaml file.')
     parser.add_argument('--start-index', type=int, default=1,
                         help='Start index.')
-    parser.add_argument('--cPo-file_pattern', type=str, default='pose_cPo_%d.yaml',
+    parser.add_argument('--cPo-file-pattern', type=str, default='pose_cPo_%d.yaml',
                         help='cPo filename pattern for camera poses.')
     parser.add_argument('--cam-width', type=float, default=0.064/2,
                         help='Width/2 of the displayed camera.')
