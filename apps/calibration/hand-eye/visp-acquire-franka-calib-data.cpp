@@ -34,8 +34,9 @@
 //! \example visp-acquire-franka-calib-data.cpp
 #include <iostream>
 
-#include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
@@ -49,11 +50,17 @@
 void usage(const char **argv, int error, const std::string &robot_ip)
 {
   std::cout << "Synopsis" << std::endl
-    << "  " << argv[0] << " [--ip <address>] [--help, -h]" << std::endl
+    << "  " << argv[0]
+    << " [--ip <address>] [--output-folder <name>] [--help, -h]" << std::endl
     << std::endl;
   std::cout << "Description" << std::endl
-    << "  --ip <address>  Ethernet address to dial with the Panda robot." << std::endl
+    << "  --ip <address>" << std::endl
+    << "    Ethernet address to dial with the Panda robot." << std::endl
     << "    Default: " << robot_ip << std::endl
+    << std::endl
+    << "  --output-folder <name>" << std::endl
+    << "    Acquired data output folder." << std::endl
+    << "    Default: ./" << std::endl
     << std::endl
     << "  --help, -h  Print this helper message." << std::endl
     << std::endl;
@@ -74,11 +81,14 @@ int main(int argc, const char **argv)
 #endif
   try {
     std::string opt_robot_ip = "192.168.1.1";
+    std::string opt_output_folder = "./";
 
     for (int i = 1; i < argc; i++) {
       if (std::string(argv[i]) == "--ip" && i + 1 < argc) {
-        opt_robot_ip = std::string(argv[i + 1]);
-        i++;
+        opt_robot_ip = std::string(argv[++i]);
+      }
+      else if (std::string(argv[i]) == "--output-folder" && i + 1 < argc) {
+        opt_output_folder = std::string(argv[++i]);
       }
       else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
         usage(argv, 0, opt_robot_ip);
@@ -88,6 +98,12 @@ int main(int argc, const char **argv)
         usage(argv, i, opt_robot_ip);
         return EXIT_FAILURE;
       }
+    }
+
+    // Create output folder if necessary
+    if (!vpIoTools::checkDirectory(opt_output_folder)) {
+      std::cout << "Create output directory: " << opt_output_folder << std::endl;
+      vpIoTools::makeDirectory(opt_output_folder);
     }
 
     vpImage<unsigned char> I;
@@ -110,9 +126,10 @@ int main(int argc, const char **argv)
     // Save intrinsics
     vpCameraParameters cam;
 
+
     cam = g.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithDistortion);
     vpXmlParserCamera xml_camera;
-    xml_camera.save(cam, "franka_camera.xml", "Camera", width, height);
+    xml_camera.save(cam, opt_output_folder + "/franka_camera.xml", "Camera", width, height);
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     std::shared_ptr<vpDisplay> pdisp = vpDisplayFactory::createDisplay(I, 10, 10, "Color image");
@@ -139,8 +156,8 @@ int main(int argc, const char **argv)
 
           std::stringstream ss_img, ss_pos;
 
-          ss_img << "franka_image-" << cpt << ".png";
-          ss_pos << "franka_pose_rPe_" << cpt << ".yaml";
+          ss_img << opt_output_folder + "/franka_image-" << cpt << ".png";
+          ss_pos << opt_output_folder + "/franka_pose_rPe_" << cpt << ".yaml";
           std::cout << "Save: " << ss_img.str() << " and " << ss_pos.str() << std::endl;
           vpImageIo::write(I, ss_img.str());
           rPe.saveYAML(ss_pos.str(), rPe);
