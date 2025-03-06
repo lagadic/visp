@@ -439,12 +439,14 @@ int main(int argc, const char *argv[])
 
       d->init(I);
       vpDisplay::setTitle(I, "Without distortion results");
-
+      ss_additional_info << "<reprojection_error><without_distortion>";
       for (size_t i = 0; i < calibrator.size(); i++) {
         double reproj_error = sqrt(calibrator[i].getResidual() / calibrator[i].get_npt());
 
         const CalibInfo &calib = calib_info[i];
         std::cout << "Image " << calib.m_frame_name << " reprojection error: " << reproj_error << std::endl;
+
+        ss_additional_info << "<image>" << reproj_error << "</image>";
         I = calib.m_img;
         vpDisplay::display(I);
 
@@ -482,8 +484,9 @@ int main(int argc, const char *argv[])
       }
 
       std::cout << "\nGlobal reprojection error: " << error << std::endl;
-      ss_additional_info << "<global_reprojection_error><without_distortion>" << error << "</without_distortion>";
+      ss_additional_info << "<global_reprojection_error>" << error << "</global_reprojection_error>";
 
+      ss_additional_info << "</without_distortion>";
       vpXmlParserCamera xml;
 
       if (xml.save(cam, opt_output_file_name.c_str(), opt_camera_name, I.getWidth(), I.getHeight()) ==
@@ -516,11 +519,13 @@ int main(int argc, const char *argv[])
       std::cout << cam << std::endl;
       vpDisplay::setTitle(I, "With distortion results");
 
+      ss_additional_info << "<with_distortion>";
       for (size_t i = 0; i < calibrator.size(); i++) {
         double reproj_error = sqrt(calibrator[i].getResidual_dist() / calibrator[i].get_npt());
 
         const CalibInfo &calib = calib_info[i];
         std::cout << "Image " << calib.m_frame_name << " reprojection error: " << reproj_error << std::endl;
+        ss_additional_info << "<image>" << reproj_error << "</image>";
         I = calib.m_img;
         vpDisplay::display(I);
 
@@ -556,9 +561,10 @@ int main(int argc, const char *argv[])
           vpTime::wait(s.tempo * 1000);
         }
       }
-
       std::cout << "\nGlobal reprojection error: " << error << std::endl;
-      ss_additional_info << "<with_distortion>" << error << "</with_distortion></global_reprojection_error>";
+      ss_additional_info << "<global_reprojection_error>" << error << "</global_reprojection_error>";
+
+      ss_additional_info << "</with_distortion></reprojection_error>";
 
       vpImage<unsigned char> I_undist;
       vpImage<unsigned char> I_dist_undist(I.getHeight(), 2 * I.getWidth());
