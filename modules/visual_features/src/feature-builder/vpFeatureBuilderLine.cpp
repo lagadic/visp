@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Conversion between tracker and visual feature line.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpFeatureBuilderLine.cpp
@@ -202,32 +200,21 @@ void vpFeatureBuilder::create(vpFeatureLine &s, const vpCameraParameters &cam, c
     double rho;
     double theta;
 
-    // Gives the rho and theta coordinates in the (u,v) coordinate system.
-    if (thetap >= 0 && thetap < M_PI / 2) {
-      thetap = M_PI / 2 - thetap;
+    // Move from (i,j) frame to (u,v) frame. rho unchanged but theta is changed
+    // since  j <-> u, i <-> v so that sin(theta) = cos(thetap) and cos(theta) = sin(thetap)
+    // which means theta = pi/2 - thetap
+
+    // It would be more simple to output theta and rho in (u,v) frame
+    // in vpMeLine.cpp by just inverting sin and cos in the atan2 of
+    // vpMeLine::computeRhoTheta() to avoid the "hack" below.
+    // Not done since I am not sure vpMeLine or this function are not used
+    // for other purposes.
+
+    thetap = M_PI / 2.0 - thetap;  // input in [-pi;pi] so output in [-pi/2;3pi/2]
+    if (thetap > M_PI) {   // thetap in [-pi;pi]
+      thetap -= 2.0 * M_PI;
     }
-
-    else if (thetap >= M_PI / 2 && thetap < 3 * M_PI / 2) {
-      thetap = 3 * M_PI / 2 + M_PI - thetap;
-    }
-
-    else if (thetap >= 3 * M_PI / 2 && thetap <= 2 * M_PI) {
-      thetap = M_PI / 2 + 2 * M_PI - thetap;
-    }
-
-    // while (thetap > M_PI/2)  { thetap -= M_PI ; rhop *= -1 ; }
-    // while (thetap < -M_PI/2) { thetap += M_PI ; rhop *= -1 ; }
-
-    //  vpTRACE("pixel %f %f",rhop, thetap) ;
     vpPixelMeterConversion::convertLine(cam, rhop, thetap, rho, theta);
-
-    while (theta > M_PI) {
-      theta -= 2 * M_PI;
-    }
-    while (theta < -M_PI) {
-      theta += 2 * M_PI;
-    }
-
     s.buildFrom(rho, theta);
   }
   catch (...) {

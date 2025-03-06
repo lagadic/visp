@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -143,6 +143,16 @@ public:
   double convolution(const vpImage<unsigned char> &ima, const vpMe *me);
 
   /*!
+   * Compute convolution for a given mask_index.
+   */
+  double convolution(const vpImage<unsigned char> &ima, const vpMe *me, const unsigned int mask_index);
+
+  /*!
+   * Compute the index mask in [0:179] for convolution.
+   */
+  unsigned int computeMaskIndex(const double alpha, const vpMe *me);
+
+  /*!
    * Display moving edges in image I.
    * @param I : Input image.
    */
@@ -201,6 +211,12 @@ public:
   inline double get_jfloat() const { return m_jfloat; }
 
   /*!
+   * Return the convolution index in [0:179].
+   * \sa computeMaskIndex()
+   */
+  inline unsigned int getIndex() const { return m_index_prev; }
+
+  /*!
    * Initialize moving-edge site with default parameters.
    */
   void init();
@@ -249,7 +265,7 @@ public:
    * \warning To display the moving edges graphics a call to vpDisplay::flush() is needed after this function.
    */
   void trackMultipleHypotheses(const vpImage<unsigned char> &I, const vpMe &me, const bool &test_contrast,
-                              std::vector<vpMeSite> &outputHypotheses, const unsigned numCandidates);
+                               std::vector<vpMeSite> &outputHypotheses, const unsigned numCandidates);
 
   /*!
    * Set the angle of tangent at site.
@@ -425,6 +441,7 @@ public:
 private:
   vpMeSiteDisplayType m_selectDisplay; //!< Display selector
   vpMeSiteState m_state; //!< Site state
+  unsigned int m_index_prev; //!< previous convolution index
 };
 
 END_VISP_NAMESPACE

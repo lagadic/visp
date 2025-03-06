@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,16 +88,18 @@ void vpMeSite::init()
   m_normGradient = 0;
 
   m_state = NO_SUPPRESSION;
+
+  m_index_prev = 90;  // Middle index to have no effect on first image
 }
 
 vpMeSite::vpMeSite()
   : m_i(0), m_j(0), m_ifloat(0), m_jfloat(0), m_mask_sign(1), m_alpha(0.), m_convlt(0.), m_normGradient(0),
-  m_weight(1), m_contrastThreshold(10000.0), m_selectDisplay(NONE), m_state(NO_SUPPRESSION)
+  m_weight(1), m_contrastThreshold(10000.0), m_selectDisplay(NONE), m_state(NO_SUPPRESSION), m_index_prev(90)
 { }
 
 vpMeSite::vpMeSite(const double &ip, const double &jp)
   : m_i(0), m_j(0), m_ifloat(0), m_jfloat(0), m_mask_sign(1), m_alpha(0.), m_convlt(0.), m_normGradient(0),
-  m_weight(1), m_contrastThreshold(10000.0), m_selectDisplay(NONE), m_state(NO_SUPPRESSION)
+  m_weight(1), m_contrastThreshold(10000.0), m_selectDisplay(NONE), m_state(NO_SUPPRESSION), m_index_prev(90)
 {
   m_i = vpMath::round(ip);
   m_j = vpMath::round(jp);
@@ -107,7 +109,7 @@ vpMeSite::vpMeSite(const double &ip, const double &jp)
 
 vpMeSite::vpMeSite(const vpMeSite &mesite)
   : m_i(0), m_j(0), m_ifloat(0), m_jfloat(0), m_mask_sign(1), m_alpha(0.), m_convlt(0.), m_normGradient(0),
-  m_weight(1), m_contrastThreshold(10000.0), m_selectDisplay(NONE), m_state(NO_SUPPRESSION)
+  m_weight(1), m_contrastThreshold(10000.0), m_selectDisplay(NONE), m_state(NO_SUPPRESSION), m_index_prev(90)
 {
   *this = mesite;
 }
@@ -125,6 +127,7 @@ void vpMeSite::init(const double &ip, const double &jp, const double &alphap)
   m_j = vpMath::round(jp);
   m_alpha = alphap;
   m_mask_sign = 1;
+  m_index_prev = 90;
 }
 
 // initialise with convolution()
@@ -138,6 +141,7 @@ void vpMeSite::init(const double &ip, const double &jp, const double &alphap, co
   m_alpha = alphap;
   m_convlt = convltp;
   m_mask_sign = 1;
+  m_index_prev = 90;
 }
 
 // initialise with convolution and sign
@@ -151,9 +155,10 @@ void vpMeSite::init(const double &ip, const double &jp, const double &alphap, co
   m_alpha = alphap;
   m_convlt = convltp;
   m_mask_sign = sign;
+  m_index_prev = 90;
 }
 
-// initialise with convolution and sign
+// Initialise with convolution and sign.
 void vpMeSite::init(const double &ip, const double &jp, const double &alphap, const double &convltp, const int &sign, const double &contrastThreshold)
 {
   m_selectDisplay = NONE;
@@ -165,6 +170,7 @@ void vpMeSite::init(const double &ip, const double &jp, const double &alphap, co
   m_convlt = convltp;
   m_mask_sign = sign;
   m_contrastThreshold = contrastThreshold;
+  m_index_prev = 90;
 }
 
 vpMeSite &vpMeSite::operator=(const vpMeSite &m)
@@ -181,7 +187,7 @@ vpMeSite &vpMeSite::operator=(const vpMeSite &m)
   m_contrastThreshold = m.m_contrastThreshold;
   m_selectDisplay = m.m_selectDisplay;
   m_state = m.m_state;
-
+  m_index_prev = m.m_index_prev;
   return *this;
 }
 
@@ -223,7 +229,33 @@ vpMeSite *vpMeSite::getQueryList(const vpImage<unsigned char> &I, const int &ran
   return list_query_pixels;
 }
 
-// Specific function for ME
+/*!
+ * Specific function for ME.
+ * Compute the mask index in [0:179] for convolution
+ */
+unsigned int vpMeSite::computeMaskIndex(const double alpha, const vpMe *me)
+{
+  // Calculate tangent angle from normal
+  double theta = alpha + (M_PI / 2);
+  // Move tangent angle to within 0->M_PI for a positive
+  // mask index
+  while (theta < 0) {
+    theta += M_PI;
+  }
+  while (theta > M_PI) {
+    theta -= M_PI;
+  }
+  // Convert radians to degrees
+  int theta_deg = vpMath::round(vpMath::deg(theta));
+
+  const int flatAngle = 180;
+  if (abs(theta_deg) == flatAngle) {
+    theta_deg = 0;
+  }
+  unsigned int mask_index = static_cast<unsigned int>(theta_deg / static_cast<double>(me->getAngleStep()));
+  return(mask_index);
+}
+
 double vpMeSite::convolution(const vpImage<unsigned char> &I, const vpMe *me)
 {
   int half;
@@ -240,26 +272,7 @@ double vpMeSite::convolution(const vpImage<unsigned char> &I, const vpMe *me)
     m_j = 0;
   }
   else {
-    // Calculate tangent angle from normal
-    double theta = m_alpha + (M_PI / 2);
-    // Move tangent angle to within 0->M_PI for a positive
-    // mask index
-    while (theta < 0) {
-      theta += M_PI;
-    }
-    while (theta > M_PI) {
-      theta -= M_PI;
-    }
-
-    // Convert radians to degrees
-    int thetadeg = vpMath::round((theta * 180) / M_PI);
-
-    const int flatAngle = 180;
-    if (abs(thetadeg) == flatAngle) {
-      thetadeg = 0;
-    }
-
-    unsigned int index_mask = static_cast<unsigned int>(thetadeg / static_cast<double>(me->getAngleStep()));
+    unsigned int mask_index = computeMaskIndex(m_alpha, me);
 
     unsigned int i_ = static_cast<unsigned int>(m_i);
     unsigned int j_ = static_cast<unsigned int>(m_j);
@@ -271,11 +284,46 @@ double vpMeSite::convolution(const vpImage<unsigned char> &I, const vpMe *me)
     for (unsigned int a = 0; a < msize; ++a) {
       unsigned int ihalfa = ihalf + a;
       for (unsigned int b = 0; b < msize; ++b) {
-        conv += m_mask_sign * me->getMask()[index_mask][a][b] * I(ihalfa, jhalf + b);
+        conv += m_mask_sign * me->getMask()[mask_index][a][b] * I(ihalfa, jhalf + b);
       }
     }
   }
+  return conv;
+}
 
+/*!
+ * Specific function for ME.
+ */
+double vpMeSite::convolution(const vpImage<unsigned char> &I, const vpMe *me, const unsigned int mask_index)
+{
+  int half;
+  int height = static_cast<int>(I.getHeight());
+  int width = static_cast<int>(I.getWidth());
+
+  double conv = 0.0;
+  unsigned int msize = me->getMaskSize();
+  half = static_cast<int>((msize - 1) >> 1);
+
+  if (horsImage(m_i, m_j, half + me->getStrip(), height, width)) {
+    conv = 0.0;
+    m_i = 0;
+    m_j = 0;
+  }
+  else {
+    unsigned int i_ = static_cast<unsigned int>(m_i);
+    unsigned int j_ = static_cast<unsigned int>(m_j);
+    unsigned int half_ = static_cast<unsigned int>(half);
+
+    unsigned int ihalf = i_ - half_;
+    unsigned int jhalf = j_ - half_;
+
+    for (unsigned int a = 0; a < msize; ++a) {
+      unsigned int ihalfa = ihalf + a;
+      for (unsigned int b = 0; b < msize; ++b) {
+        conv += m_mask_sign * me->getMask()[mask_index][a][b] * I(ihalfa, jhalf + b);
+      }
+    }
+  }
   return conv;
 }
 
@@ -291,7 +339,7 @@ void vpMeSite::track(const vpImage<unsigned char> &I, const vpMe *me, const bool
   unsigned int range = me->getRange();
   const unsigned int normalSides = 2;
   const unsigned int numQueries = range * normalSides + 1;
-
+  unsigned int mask_index = computeMaskIndex(m_alpha, me);
   vpMeSite *list_query_pixels = getQueryList(I, static_cast<int>(range));
 
   double contrast_max = 1 + me->getMu2();
@@ -299,16 +347,19 @@ void vpMeSite::track(const vpImage<unsigned char> &I, const vpMe *me, const bool
 
   double threshold = computeFinalThreshold(*me);
 
-  if (test_contrast) {
+  if (test_contrast) { // likelihood test
     double diff = 1e6;
+    // Change of mask sign to have a continuity at 0 and 180.
+    // Threshold at 120 to be more than the 90 initial value
+    if (vpMath::abs((int)(mask_index - m_index_prev)) > 120) {
+      m_mask_sign = -m_mask_sign;
+    }
     for (unsigned int n = 0; n < numQueries; ++n) {
-      // convolution results
-
-      double convolution_ = list_query_pixels[n].convolution(I, me);
-      // luminance ratio of reference pixel to potential correspondent pixel
-      // the luminance must be similar, hence the ratio value should
-      // lay between, for instance, 0.5 and 1.5 (parameter tolerance)
-      const double likelihood = fabs(convolution_ + m_convlt);
+      // Convolution results
+      list_query_pixels[n].m_mask_sign = m_mask_sign;
+      double convolution_ = list_query_pixels[n].convolution(I, me, mask_index);
+      // no fabs since m_convlt > 0 and we look for a similar one
+      const double likelihood = convolution_ + m_convlt;
 
       if (likelihood > threshold) {
         contrast = convolution_ / m_convlt;
@@ -333,6 +384,12 @@ void vpMeSite::track(const vpImage<unsigned char> &I, const vpMe *me, const bool
         max_rank = static_cast<int>(n);
       }
     }
+    // in case max_convolution < 0, change of mask sign so that m_convlt > 0
+    // for the future likelihood tests
+    if (max_convolution < 0) {
+      max_convolution = -max_convolution;
+      m_mask_sign = -m_mask_sign;
+    }
   }
 
   vpImagePoint ip;
@@ -344,11 +401,12 @@ void vpMeSite::track(const vpImage<unsigned char> &I, const vpMe *me, const bool
       vpDisplay::displayPoint(I, ip, vpColor::red);
     }
 
-    *this = list_query_pixels[max_rank]; // The vpMeSite2 is replaced by the
-    // vpMeSite2 of max likelihood
-    m_normGradient = vpMath::sqr(max_convolution);
+    list_query_pixels[max_rank].m_mask_sign = m_mask_sign;
+    list_query_pixels[max_rank].m_index_prev = mask_index;
+    list_query_pixels[max_rank].m_convlt = max_convolution;
+    list_query_pixels[max_rank].m_normGradient = vpMath::sqr(max_convolution);
 
-    m_convlt = max_convolution;
+    *this = list_query_pixels[max_rank]; // The vpMeSite2 is replaced by the vpMeSite2 of max likelihood
   }
   else // none of the query sites is better than the threshold
   {
@@ -369,10 +427,10 @@ void vpMeSite::track(const vpImage<unsigned char> &I, const vpMe *me, const bool
   delete[] list_query_pixels;
 }
 
+// FC pas de modifs faites dans cette fonction alors qu'il faudrait normalement...
 void vpMeSite::trackMultipleHypotheses(const vpImage<unsigned char> &I, const vpMe &me, const bool &test_contrast,
-std::vector<vpMeSite> &outputHypotheses, const unsigned numCandidates)
+                                       std::vector<vpMeSite> &outputHypotheses, const unsigned numCandidates)
 {
-
   // range = +/- range of pixels within which the correspondent
   // of the current pixel will be sought
   unsigned int range = me.getRange();
@@ -462,7 +520,6 @@ std::vector<vpMeSite> &outputHypotheses, const unsigned numCandidates)
 
   const vpMeSite &bestMatch = outputHypotheses[0];
 
-
   if (bestMatch.m_state != NO_SUPPRESSION) {
     if ((m_selectDisplay == RANGE_RESULT) || (m_selectDisplay == RESULT)) {
 
@@ -481,7 +538,6 @@ std::vector<vpMeSite> &outputHypotheses, const unsigned numCandidates)
 }
 
 int vpMeSite::operator!=(const vpMeSite &m) { return ((m.m_i != m_i) || (m.m_j != m_j)); }
-
 
 void vpMeSite::display(const vpImage<unsigned char> &I) const { vpMeSite::display(I, m_ifloat, m_jfloat, m_state); }
 
@@ -547,9 +603,9 @@ void vpMeSite::display(const vpImage<vpRGBa> &I, const double &i, const double &
   }
 }
 
-VISP_EXPORT std::ostream &operator<<(std::ostream &os, vpMeSite &vpMeS)
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, vpMeSite &me_site)
 {
-  return (os << "Alpha: " << vpMeS.m_alpha << "  Convolution: " << vpMeS.m_convlt << "  Weight: " << vpMeS.m_weight << "  Threshold: " << vpMeS.m_contrastThreshold);
+  return (os << "Alpha: " << me_site.m_alpha << "  Convolution: " << me_site.m_convlt << "  Weight: " << me_site.m_weight << "  Threshold: " << me_site.m_contrastThreshold);
 }
 
 END_VISP_NAMESPACE
