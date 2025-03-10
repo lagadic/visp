@@ -117,10 +117,13 @@ public:
     vpObjectMask::display(mask, Imask);
     unsigned int numColor = 10;
     unsigned int y = 50;
+    unsigned int pady = 20;
     unsigned int pad = 5;
     unsigned int radius = 5;
 
     std::vector<vpRGBa> bestColors = m_histObject.mostLikelyColors(numColor);
+    std::vector<vpRGBa> bestColorsBg = m_histBackground.mostLikelyColors(numColor);
+
 
     for (unsigned int i = 0; i < bestColors.size(); ++i) {
       vpColor c;
@@ -128,9 +131,19 @@ public:
       c.G = bestColors[i].G;
       c.B = bestColors[i].B;
       c.A = 255;
-      std::cout << "Displaying color histogram best" << std::endl;
 
-      vpDisplay::displayCircle(Imask, y, pad + (i * radius * 2 + (i - 1) * pad), radius, c, true);
+      vpDisplay::displayText(Imask, y, pad, "Most likely object colors: ", vpColor::red);
+      vpDisplay::displayCircle(Imask, y + pady, pad * 2 + (i * radius * 2 + (i - 1) * pad), radius, c, true);
+
+      c.R = bestColorsBg[i].R;
+      c.G = bestColorsBg[i].G;
+      c.B = bestColorsBg[i].B;
+      c.A = 255;
+
+      vpDisplay::displayText(Imask, y + pady * 2, pad, "Most likely background colors: ", vpColor::red);
+      vpDisplay::displayCircle(Imask, y + pady * 3, pad * 2 + (i * radius * 2 + (i - 1) * pad), radius, c, true);
+
+
     }
 
 
@@ -145,6 +158,7 @@ private:
   vpColorHistogram m_histObject, m_histBackground, m_histObjectFrame, m_histBackgroundFrame;
   float m_depthErrorTolerance;
   float m_objectUpdateRate, m_backgroundUpdateRate;
+  float m_threshold;
 
   vpImage<bool> m_mask;
   vpImage<float> m_probaObject, m_probaBackground;

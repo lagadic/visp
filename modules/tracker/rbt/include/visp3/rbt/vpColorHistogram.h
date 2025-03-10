@@ -100,9 +100,9 @@ public:
   inline vpRGBa indexToColor(unsigned int index) const
   {
     vpRGBa c;
-    c.R = index / (m_binSize * m_binSize);
-    c.G = ((index / m_binSize) % (m_binSize));
-    c.B = index % m_binSize;
+    c.R = (index / (m_N * m_N)) * m_binSize;
+    c.G = ((index / m_N) % (m_N)) * m_binSize;
+    c.B = (index % m_N) * m_binSize;
     c.A = 255;
     return c;
   }
@@ -123,15 +123,18 @@ public:
 
   std::vector<vpRGBa> mostLikelyColors(unsigned int N) const
   {
+    std::vector<size_t> bestIndices(N);
     std::vector<size_t> idx(m_probas.size());
     std::iota(idx.begin(), idx.end(), 0);
-
-    std::stable_sort(idx.begin(), idx.end(),
-       [*this](size_t i1, size_t i2) {return m_probas[i1] > m_probas[i2];});
+    std::partial_sort_copy(
+      idx.begin(), idx.end(),
+      bestIndices.begin(), bestIndices.end(),
+      [*this](size_t i1, size_t i2) {return m_probas[i1] > m_probas[i2];}
+    );
 
     std::vector<vpRGBa> colors(N);
     for (unsigned int i = 0; i < N; ++i) {
-      colors[i] = indexToColor(idx[i]);
+      colors[i] = indexToColor(bestIndices[i]);
     }
     return colors;
   }

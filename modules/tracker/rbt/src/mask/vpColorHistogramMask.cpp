@@ -38,7 +38,7 @@
 
 BEGIN_VISP_NAMESPACE
 
-vpColorHistogramMask::vpColorHistogramMask() : m_computeOnBBOnly(false) { }
+vpColorHistogramMask::vpColorHistogramMask() : m_depthErrorTolerance(0.01), m_objectUpdateRate(0.1), m_backgroundUpdateRate(0.1), m_threshold(2.f), m_computeOnBBOnly(false) { }
 
 void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
                                       const vpRBFeatureTrackerInput &previousFrame,
@@ -106,49 +106,35 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
   }
 
   if (m_computeOnBBOnly) {
-    float maxValue = 0.0;
     mask.resize(height, width, 0.f);
 #pragma omp parallel for
     for (unsigned int i = top; i <= static_cast<unsigned int>(bottom); ++i) {
       for (unsigned int j = left; j <= static_cast<unsigned int>(right); ++j) {
         const float poPix = m_probaObject[i][j];
         const float pbPix = m_probaBackground[i][j];
-
-        float denom = (pObject * poPix + pBackground * pbPix);
-        if (denom == 0) {
-          mask[i][j] = 0;
-          continue;
+        if (pbPix == 0.f) {
+          mask[i][j] = poPix;
         }
-        float pmo = (poPix * pObject) / denom;
-        float pmb = (pbPix * pBackground) / denom;
-        float score = pmo - pmb;
-        mask[i][j] = pmo;
-        if (mask[i][j] > maxValue) {
-          maxValue = mask[i][j];
+        else {
+          const float score = poPix / pbPix;
+          mask[i][j] = std::min(score, m_threshold) / m_threshold;
         }
       }
     }
-    // if (maxValue > 0.0) {
-    //   for (unsigned int i = top; i <= static_cast<unsigned int>(bottom); ++i) {
-    //     for (unsigned int j = left; j <= static_cast<unsigned int>(right); ++j) {
-    //       mask[i][j] = mask[i][j] / maxValue;
-    //     }
-    //   }
-
-    // }
 
   }
   else {
     mask.resize(height, width);
-    float maxValue = 0.0;
     for (unsigned int i = 0; i < mask.getSize(); ++i) {
       const float poPix = m_probaObject.bitmap[i];
       const float pbPix = m_probaBackground.bitmap[i];
 
-      float denom = (pObject * poPix + pBackground * pbPix);
-      mask.bitmap[i] = (poPix * pObject) / denom;
-      if (mask.bitmap[i] > maxValue) {
-        maxValue = mask.bitmap[i];
+      if (pbPix == 0.f) {
+        mask.bitmap[i] = poPix;
+      }
+      else {
+        const float score = poPix / pbPix;
+        mask.bitmap[i] = std::min(score, m_threshold) / m_threshold;
       }
     }
     // if (maxValue > 0.0) {
@@ -169,6 +155,7 @@ void vpColorHistogramMask::loadJsonConfiguration(const nlohmann::json &json)
   m_objectUpdateRate = json.at("objectUpdateRate");
   m_depthErrorTolerance = json.at("maxDepthError");
   m_computeOnBBOnly = json.value("computeOnlyOnBoundingBox", m_computeOnBBOnly);
+  m_threshold = json.value("likelihoodRatioThreshold", m_threshold);
 }
 #endif
 

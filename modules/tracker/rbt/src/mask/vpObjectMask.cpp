@@ -29,8 +29,8 @@
  */
 
 #include <visp3/rbt/vpObjectMask.h>
-
 #include <visp3/core/vpImage.h>
+#include <visp3/core/vpDisplay.h>
 
 BEGIN_VISP_NAMESPACE
 
@@ -44,6 +44,8 @@ void vpObjectMask::display(const vpImage<float> &mask, vpImage<unsigned char> &I
   for (unsigned int i = 0; i < mask.getSize(); ++i) {
     Imask.bitmap[i] = static_cast<unsigned char>(mask.bitmap[i] * 255.f);
   }
+
+  vpDisplay::display(Imask);
 
 }
 
