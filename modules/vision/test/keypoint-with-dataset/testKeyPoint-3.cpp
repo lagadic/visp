@@ -154,10 +154,15 @@ template <typename Type>
 void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_display, vpImage<Type> &Iref,
               vpImage<Type> &Icur, vpImage<Type> &Imatch)
 {
+#if defined(VISP_HAVE_DATASET)
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
   std::string ext("png");
 #else
   std::string ext("pgm");
+#endif
+#else
+  // We suppose that the user will download a recent dataset
+  std::string ext("png");
 #endif
   // Set the path location of the image sequence
   std::string dirname = vpIoTools::createFilePath(env_ipath, "mbt/cube");

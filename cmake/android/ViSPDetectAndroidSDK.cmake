@@ -148,30 +148,31 @@ macro(vp_detect_android_sdk_build_tools)
   endif()  # ANDROID_SDK_BUILD_TOOLS_VERSION
 endmacro()  # vp_detect_android_sdk_build_tools
 
-
 if(BUILD_ANDROID_PROJECTS)
   vp_detect_android_sdk()
-  vp_detect_android_sdk_tools()
   vp_detect_android_sdk_build_tools()
 
-  if(ANDROID_SDK_TOOLS_VERSION VERSION_LESS 14)
-    message(FATAL_ERROR "Android SDK Tools: ViSP requires Android SDK Tools revision 14 or newer.\n"
-                        "${__msg_BUILD_ANDROID_PROJECTS}")
-  endif()
-
-  if(NOT ANDROID_SDK_TOOLS_VERSION VERSION_LESS 25.3.0)
-    message(STATUS "Android SDK Tools: Ant (Eclipse) builds are NOT supported by Android SDK")
-    vp_update(ANDROID_PROJECTS_SUPPORT_ANT OFF)
-    if(NOT ANDROID_SDK_BUILD_TOOLS_VERSION VERSION_LESS 26.0.2)
-      # https://developer.android.com/studio/releases/gradle-plugin.html
-      message(STATUS "Android SDK Build Tools: Gradle 3.0.0+ builds support is available")
-      vp_update(ANDROID_PROJECTS_SUPPORT_GRADLE ON)
-    endif()
+  if(NOT ANDROID_SDK_BUILD_TOOLS_VERSION VERSION_LESS 26.0.2)
+    # https://developer.android.com/studio/releases/gradle-plugin.html
+    message(STATUS "Android SDK Build Tools: Gradle 3.0.0+ builds support is available")
+    vp_update(ANDROID_PROJECTS_SUPPORT_GRADLE ON)
   else()
-    include(${CMAKE_CURRENT_LIST_DIR}/../VISPDetectApacheAnt.cmake)
-    if(ANT_EXECUTABLE AND NOT ANT_VERSION VERSION_LESS 1.7)
-      message(STATUS "Android SDK Tools: Ant (Eclipse) builds are supported")
-      vp_update(ANDROID_PROJECTS_SUPPORT_ANT ON)
+    vp_detect_android_sdk_tools()
+
+    if(ANDROID_SDK_TOOLS_VERSION VERSION_LESS 14)
+      message(FATAL_ERROR "Android SDK Tools: ViSP requires Android SDK Tools revision 14 or newer.\n"
+                          "${__msg_BUILD_ANDROID_PROJECTS}")
+    endif()
+
+    if(NOT ANDROID_SDK_TOOLS_VERSION VERSION_LESS 25.3.0)
+      message(STATUS "Android SDK Tools: Ant (Eclipse) builds are NOT supported by Android SDK")
+      vp_update(ANDROID_PROJECTS_SUPPORT_ANT OFF)
+    else()
+      include(${CMAKE_CURRENT_LIST_DIR}/../VISPDetectApacheAnt.cmake)
+      if(ANT_EXECUTABLE AND NOT ANT_VERSION VERSION_LESS 1.7)
+        message(STATUS "Android SDK Tools: Ant (Eclipse) builds are supported")
+        vp_update(ANDROID_PROJECTS_SUPPORT_ANT ON)
+      endif()
     endif()
   endif()
 

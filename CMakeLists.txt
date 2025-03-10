@@ -939,11 +939,12 @@ if(DOXYGEN_FOUND)
   set(DOXYGEN_GENERATE_TEST_LIST "YES")
   set(DOXYGEN_QUIET "NO")
   set(DOXYGEN_INPUTS
-    "${VISP_SOURCE_DIR}/modules"
-    "${VISP_SOURCE_DIR}/example"
-    "${VISP_SOURCE_DIR}/tutorial"
+    "${VISP_SOURCE_DIR}/apps"
     "${VISP_SOURCE_DIR}/demo"
     "${VISP_SOURCE_DIR}/doc"
+    "${VISP_SOURCE_DIR}/example"
+    "${VISP_SOURCE_DIR}/modules"
+    "${VISP_SOURCE_DIR}/tutorial"
     "${VISP_BINARY_DIR}/doc"
     "${VISP_CONTRIB_MODULES_PATH}"
   )
@@ -1054,6 +1055,15 @@ if(BUILD_JAVA)
     include(cmake/android/ViSPDetectAndroidSDK.cmake)
   else()
     include(cmake/VISPDetectApacheAnt.cmake)
+    if(ANT_EXECUTABLE AND NOT OPENCV_JAVA_IGNORE_ANT)
+      vp_update(VISP_JAVA_SDK_BUILD_TYPE "ANT")
+    elseif(NOT ANDROID)
+      find_package(Java)
+      if(Java_FOUND)
+        include(UseJava)
+        vp_update(VISP_JAVA_SDK_BUILD_TYPE "JAVA")
+      endif()
+    endif()
     find_package(JNI)
   endif()
 endif()
@@ -1695,10 +1705,12 @@ status("    Interpreter:"     PYTHON3INTERP_FOUND  THEN "${PYTHON3_EXECUTABLE} (
 
 if(BUILD_JAVA OR BUILD_visp_java)
   status("")
-  status("  Java:"            BUILD_FAT_JAVA_LIB  THEN "export all functions"                                      ELSE "")
-  status("    ant:"           ANT_EXECUTABLE      THEN "${ANT_EXECUTABLE} (ver ${ANT_VERSION})"                    ELSE "no")
+  status("  Java:"            BUILD_FAT_JAVA_LIB  THEN "export all functions"                    ELSE "")
+  status("    ant:"           ANT_EXECUTABLE      THEN "${ANT_EXECUTABLE} (ver ${ANT_VERSION})"  ELSE "no")
   if(NOT ANDROID)
-    status("    JNI:"         JNI_INCLUDE_DIRS    THEN "${JNI_INCLUDE_DIRS}"                                       ELSE "no")
+  status("    Java:"          Java_FOUND          THEN "yes (ver ${Java_VERSION})"                 ELSE "no")
+  status("    JNI:"           JNI_INCLUDE_DIRS    THEN "${JNI_INCLUDE_DIRS}"                       ELSE "no")
+  status("    Java wrappers:" HAVE_visp_java      THEN "yes (${VISP_JAVA_SDK_BUILD_TYPE})"         ELSE "no")
   endif()
 endif()
 

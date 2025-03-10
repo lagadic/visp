@@ -90,10 +90,15 @@ using namespace VISP_NAMESPACE_NAME;
 void usage(const char *name, const char *badparam, std::string ipath, std::string ppath, unsigned first,
            unsigned last, unsigned step)
 {
+#if defined(VISP_HAVE_DATASET)
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
   std::string ext("png");
 #else
   std::string ext("pgm");
+#endif
+#else
+  // We suppose that the user will download a recent dataset
+  std::string ext("png");
 #endif
   fprintf(stdout, "\n\
 Read an image sequence from the disk and display it.\n\
@@ -241,10 +246,15 @@ int main(int argc, const char **argv)
     bool opt_display = true;
     bool opt_wait = false;
 
+#if defined(VISP_HAVE_DATASET)
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
     std::string ext("png");
 #else
     std::string ext("pgm");
+#endif
+#else
+    // We suppose that the user will download a recent dataset
+    std::string ext("png");
 #endif
 
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH

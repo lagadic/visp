@@ -1,0 +1,5 @@
+Specification-Title: ViSP
+Specification-Version: @VISP_VERSION@
+Implementation-Title: ViSP
+Implementation-Version: @VISP_VCSVERSION@
+Implementation-Date: @VISP_TIMESTAMP@

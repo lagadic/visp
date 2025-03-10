@@ -39,12 +39,17 @@
 #include <visp3/core/vpStatisticalTestShewhart.h>
 
 #include<cstring>
+#include<sstream>
 
+#include <visp3/core/vpException.h>
 #include <visp3/core/vpMath.h>
 
 BEGIN_VISP_NAMESPACE
 const unsigned int vpStatisticalTestShewhart::NB_DATA_SIGNAL;
-const bool vpStatisticalTestShewhart::CONST_ALL_WECO_ACTIVATED[vpStatisticalTestShewhart::COUNT_WECO - 1] = { true, true, true, true };
+
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_17)
+const std::vector<bool> vpStatisticalTestShewhart::CONST_ALL_WECO_ACTIVATED = std::vector<bool>(vpStatisticalTestShewhart::COUNT_WECO -1, true);
+#endif
 
 std::string vpStatisticalTestShewhart::vpWecoRulesAlarmToString(const vpStatisticalTestShewhart::vpWecoRulesAlarm &alarm)
 {
@@ -245,7 +250,7 @@ void vpStatisticalTestShewhart::updateTestSignals(const float &signal)
   }
 }
 
-vpStatisticalTestShewhart::vpStatisticalTestShewhart(const bool &activateWECOrules, const bool activatedRules[COUNT_WECO - 1], const unsigned int &nbSamplesForStats)
+vpStatisticalTestShewhart::vpStatisticalTestShewhart(const bool &activateWECOrules, const std::vector<bool> &activatedRules, const unsigned int &nbSamplesForStats)
   : vpStatisticalTestSigma(3, nbSamplesForStats)
   , m_nbDataInBuffer(0)
   , m_activateWECOrules(activateWECOrules)
@@ -259,7 +264,7 @@ vpStatisticalTestShewhart::vpStatisticalTestShewhart(const bool &activateWECOrul
   init(activateWECOrules, activatedRules, nbSamplesForStats);
 }
 
-vpStatisticalTestShewhart::vpStatisticalTestShewhart(const bool &activateWECOrules, const bool activatedRules[COUNT_WECO - 1], const float &mean, const float &stdev)
+vpStatisticalTestShewhart::vpStatisticalTestShewhart(const bool &activateWECOrules, const std::vector<bool> &activatedRules, const float &mean, const float &stdev)
   : vpStatisticalTestSigma(3)
   , m_nbDataInBuffer(0)
   , m_activateWECOrules(activateWECOrules)
@@ -283,13 +288,18 @@ std::vector<float> vpStatisticalTestShewhart::getSignals() const
   return signals;
 }
 
-void vpStatisticalTestShewhart::init(const bool &activateWECOrules, const bool activatedRules[COUNT_WECO - 1], const unsigned int &nbSamplesForStats)
+void vpStatisticalTestShewhart::init(const bool &activateWECOrules, const std::vector<bool> &activatedRules, const unsigned int &nbSamplesForStats)
 {
   vpStatisticalTestSigma::init(3.f, nbSamplesForStats);
   m_nbDataInBuffer = 0;
   memset(m_signal, 0, NB_DATA_SIGNAL * sizeof(float));
   m_activateWECOrules = activateWECOrules;
-  std::memcpy(m_activatedWECOrules, activatedRules, (COUNT_WECO - 1) * sizeof(bool));
+  if (activatedRules.size() != COUNT_WECO - 1) {
+    std::stringstream errMsg;
+    errMsg << "Error: the expected number of rules is " << COUNT_WECO -1 << ", the number given to the method is " << activatedRules.size() << std::endl;
+    throw(vpException(vpException::dimensionError, errMsg.str()));
+  }
+  m_activatedWECOrules = activatedRules;
   m_idCurrentData = 0;
   m_alarm = NONE_WECO;
   m_oneSigmaNegLim = 0.f;
@@ -298,7 +308,7 @@ void vpStatisticalTestShewhart::init(const bool &activateWECOrules, const bool a
   m_twoSigmaPosLim = 0.f;
 }
 
-void vpStatisticalTestShewhart::init(const bool &activateWECOrules, const bool activatedRules[COUNT_WECO - 1], const float &mean, const float &stdev)
+void vpStatisticalTestShewhart::init(const bool &activateWECOrules, const std::vector<bool> &activatedRules, const float &mean, const float &stdev)
 {
   vpStatisticalTestShewhart::init(activateWECOrules, activatedRules, 30);
   m_mean = mean;

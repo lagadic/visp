@@ -100,11 +100,17 @@ Print the program options.
 void usage(const char *name, const char *badparam, std::string ipath, std::string ppath, unsigned first,
            unsigned last, unsigned step)
 {
+#if defined(VISP_HAVE_DATASET)
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
   std::string ext("png");
 #else
   std::string ext("pgm");
 #endif
+#else
+    // We suppose that the user will download a recent dataset
+  std::string ext("png");
+#endif
+
   fprintf(stdout, "\n\
 Test dot tracking.\n\
 \n\
@@ -249,11 +255,17 @@ int main(int argc, const char **argv)
     bool opt_display = true;
     int i;
 
+#if defined(VISP_HAVE_DATASET)
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
     std::string ext("png");
 #else
     std::string ext("pgm");
 #endif
+#else
+    // We suppose that the user will download a recent dataset
+    std::string ext("png");
+#endif
+
 
     std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << "  poseVirtualVS.cpp" << std::endl << std::endl;
@@ -632,5 +644,5 @@ int main()
   std::cout << "Tip if you are on a windows-like system:" << std::endl;
   std::cout << "- Install GDI, configure again ViSP using cmake and build again this example" << std::endl;
   return EXIT_SUCCESS;
-}
+    }
 #endif

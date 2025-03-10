@@ -308,7 +308,7 @@ configuration. Modify the configuration to `"Release"`.
 - At the end of the build process you should have the following indicating that all the build succeeded.
 \image html img-win11-msvc17-visp-build-end.jpg
 
-- Now to install ViSP, in the right pannel, deploy `"CMakeTargets"` and build `"INSTALL"` project. To this end, apply a left click on `"INSTALL"` to select
+- Now to install ViSP, in the right panel, deploy `"CMakeTargets"` and build `"INSTALL"` project. To this end, apply a left click on `"INSTALL"` to select
 the `"INSTALL"` project, then a right click to enter in the "Build" menu. At the end of the installation, you should have the following.
 \image html img-win11-msvc17-visp-install-end.jpg
 

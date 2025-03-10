@@ -62,11 +62,17 @@ using namespace VISP_NAMESPACE_NAME;
 
 void usage(const char *name, const char *badparam)
 {
+#if defined(VISP_HAVE_DATASET)
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
   std::string ext("png");
 #else
   std::string ext("pgm");
 #endif
+#else
+    // We suppose that the user will download a recent dataset
+  std::string ext("png");
+#endif
+
   fprintf(stdout, "\n\
 Example of tracking based on the 3D model.\n\
 \n\
@@ -256,10 +262,15 @@ int main(int argc, const char **argv)
     bool projectionError = false;
     int trackerType = vpMbGenericTracker::EDGE_TRACKER;
 
+#if defined(VISP_HAVE_DATASET)
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
     std::string ext("png");
 #else
     std::string ext("pgm");
+#endif
+#else
+    // We suppose that the user will download a recent dataset
+    std::string ext("png");
 #endif
 
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH

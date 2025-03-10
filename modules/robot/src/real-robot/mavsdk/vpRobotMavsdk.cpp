@@ -1108,7 +1108,11 @@ public:
 private:
   //*** Attributes ***//
   std::string m_address {}; ///< Ip address of the robot to discover on the network
+#if (VISP_HAVE_MAVSDK_VERSION >= 0x020000)
   mavsdk::Mavsdk m_mavsdk { mavsdk::Mavsdk::Configuration{mavsdk::ComponentType::GroundStation} };
+#else
+  mavsdk::Mavsdk m_mavsdk { };
+#endif
   std::shared_ptr<mavsdk::System> m_system;
   std::shared_ptr<mavsdk::Action> m_action;
   std::shared_ptr<mavsdk::Telemetry> m_telemetry;

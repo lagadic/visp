@@ -207,14 +207,19 @@ try {
   bool click = false;
   bool doTemplateMatching = false;
 
+#if defined(VISP_HAVE_DATASET)
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
   std::string ext("png");
 #else
   std::string ext("pgm");
 #endif
+#else
+  // We suppose that the user will download a recent dataset
+  std::string ext("png");
+#endif
 
-    // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
-    // environment variable value
+  // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
+  // environment variable value
   env_ipath = vpIoTools::getViSPImagesDataPath();
 
   // Set the default input path
@@ -362,7 +367,7 @@ try {
         if (!vpMath::equal(I_score[i][j], I_score_gold[i][j], 1e-9)) {
           std::cerr << "Issue with template matching, gold: " << std::setprecision(17) << I_score_gold[i][j]
             << " ; compute: " << I_score[i][j] << std::endl;
-          return EXIT_FAILURE;
+            return EXIT_FAILURE;
         }
       }
     }

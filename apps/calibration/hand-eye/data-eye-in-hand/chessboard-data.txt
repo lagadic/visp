@@ -1,0 +1,3 @@
+Chessboard
+9 x 6
+square size: 0.0236 m

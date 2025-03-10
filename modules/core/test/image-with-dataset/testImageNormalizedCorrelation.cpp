@@ -146,10 +146,15 @@ int main(int argc, const char **argv)
     std::string ipath;
     std::string filename;
 
+#if defined(VISP_HAVE_DATASET)
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
     std::string ext("png");
 #else
     std::string ext("pgm");
+#endif
+#else
+    // We suppose that the user will download a recent dataset
+    std::string ext("png");
 #endif
 
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
@@ -222,7 +227,7 @@ int main(int argc, const char **argv)
         if (!vpMath::equal(I_score[i][j], I_score_gold[i][j], 1e-9)) {
           std::cerr << "Issue with normalizedCorrelation, gold: " << std::setprecision(17) << I_score_gold[i][j]
             << " ; compute: " << I_score[i][j] << std::endl;
-          return EXIT_FAILURE;
+            return EXIT_FAILURE;
         }
       }
     }

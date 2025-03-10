@@ -78,6 +78,8 @@ ViSP 3.x.x (Version in development)
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-pf-curve-fitting.html
     . New tutorial: Rendering a 3D scene with Ogre
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-ogre.html
+    . New tutorial: Camera eye-to-hand extrinsic calibration
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-calibration-extrinsic-eye-to-hand.html
   - Bug fixed
     . [#1251] Bug in vpDisplay::displayFrame()
     . [#1270] Build issue around std::clamp and optional header which are not found with cxx17
@@ -110,6 +112,7 @@ ViSP 3.x.x (Version in development)
     . [#1523] MAVSDK v2 and v3 compatibility
     . [#1579] Unable to build vpRobotBebop2.cpp with ffmpeg (libavcodec >= 60)
     . [#1585] ViSP images dataset is not found when installed from debian package
+    . [#1595] Unable to find dataset images when dataset is installed after ViSP is built
 ----------------------------------------------
 ViSP 3.6.0 (released September 22, 2023)
   - Contributors:
@@ -326,7 +329,7 @@ ViSP 3.4.0 (released February 26, 2021)
     . [#801] Build issue with visp_java
     . [#803] Segfault with MBT and when a circle disappears
     . [#806] Error running the Java sample with intel-mkl 2020.2.254-1
-    . [#808] vpVirtuose.cpp doen't build with Visual 2019 (vc16)
+    . [#808] vpVirtuose.cpp doesn't build with Visual 2019 (vc16)
     . [#812] Online doc formula rendering issue with Ghostscript on OSX
     . [#817] vpIoTools::getFileExtension prints "Debug sepIndex: 0" to std::cout
     . [#818] Model-based tracking issue using RGBD-data on Windows

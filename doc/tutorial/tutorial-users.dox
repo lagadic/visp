@@ -84,7 +84,8 @@ This page introduces some image processing methods.
 This page introduces the user to the way to calibrate a camera.
 
 - \subpage tutorial-calibration-intrinsic <br>This tutorial explains how to calibrate intrinsic camera parameters.
-- \subpage tutorial-calibration-extrinsic <br>This tutorial explains how to get the camera eye-in-hand extrinsic transformation when the camera is mounted on a robot end-effector.
+- \subpage tutorial-calibration-extrinsic-eye-in-hand <br>This tutorial explains how to get the camera eye-in-hand extrinsic transformation when the camera is mounted on a robot end-effector.
+- \subpage tutorial-calibration-extrinsic-eye-to-hand <br>This tutorial explains how to get the camera eye-to-hand extrinsic transformation when the camera is fixed and observing robot end-effector.
 */
 
 /*! \page tutorial_rendering 3D rendering and augmented reality
