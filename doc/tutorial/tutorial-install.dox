@@ -39,6 +39,7 @@ This page introduces the user to the way to install ViSP from source code.
 - \subpage tutorial-install-win11-msvc17 <br>In this tutorial you will learn how to install ViSP from source on Windows 11 with Visual C++ 2022 (vc17).
 - \subpage tutorial-install-win11-mingw-w64 <br>In this tutorial you will learn how to install ViSP from source on Windows 11 with Mingw-w64.
 - \subpage tutorial-install-osx-homebrew <br>In this tutorial you will learn how to install ViSP from source on OSX with Homebrew.
+- \subpage tutorial-install-pixi <br>In this tutorial you will learn how to install ViSP easily from source on any supported platform (OSX, Windows and Linux) with Pixi.
 
 */
 
