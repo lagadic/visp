@@ -24,7 +24,6 @@ libblas = "*"
 libcblas = "*"
 liblapack = "*"
 liblapacke = "*"
-libiconv = "<=1.17"
 
 [target.unix.dependencies]
 xorg-libx11 = "*"
@@ -87,5 +86,5 @@ test = { cmd = "ctest --test-dir build --output-on-failure", depends-on = ["inst
 [environments]
 default = { solve-group = "base" }
 with-python = { features = ["python-bindings"], solve-group = "base"}
-all = { features = ["python-bindings"], solve-group = "base"}
+all = { features = ["python-bindings"], solve-group = "base" }
 all-clang-cl = { features = ["python-bindings", "clang-cl"], solve-group = "base" }
