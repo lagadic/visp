@@ -331,7 +331,7 @@ vpRBSilhouetteControlPoint::updateSilhouettePoint(const vpHomogeneousMatrix &cMo
     catch (vpException &e) {
       m_valid = false;
     }
-    m_valid = !isLineDegenerate();
+    m_valid = !isLineDegenerate() && !std::isnan(line.getTheta());
     if (m_valid) {
       vpFeatureBuilder::create(featureline, line);
       theta = featureline.getTheta();
