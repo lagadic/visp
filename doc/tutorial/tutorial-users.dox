@@ -161,13 +161,26 @@ This page introduces the user to the way to estimate a pose or an homography.
 */
 
 /*! \page tutorial_vs Visual servoing
-This page introduces the user to the way to achieve a visual servoing.
+
+- \subpage tutorial_vs_eih <br>
+  Tutorials dedicated to eye-in-hand visual servoing, where the camera is mounted on the robot end-effector.
+
+- \subpage tutorial_vs_eth <br>
+  Tutorials dedicated to eye-to-hand visual servoing, where the camera is mounted on a tripod and observes an object
+  attached to the robot end-effector.
+
+*/
+
+/*! \page tutorial_vs_eih Eye-in-hand visual servoing
+
+This page introduces the user to the way to achieve eye-in-hand visual servoing.
 
 - \subpage tutorial-ibvs <br>This tutorial explains how to simulate an IBVS.
 - \subpage tutorial-simu-robot-pioneer <br>This tutorial focuses on visual servoing simulation on a unicycle robot. The study case is a Pioneer P3-DX mobile robot equipped with a camera.
 - \subpage tutorial-boost-vs <br>This tutorial explains how to speed up the time to convergence of a visual servo.
 - \subpage tutorial-franka-pbvs <br>This tutorial explains how to do a position-based visual-servoing with the Panda 7-dof robot from Franka Emika equipped with an Intel Realsense SR300 camera.
-- \subpage tutorial-franka-ibvs <br>This tutorial explains how to do an image-based visual-servoing with the Panda 7-dof robot from Franka Emika equipped with an Intel Realsense SR300 camera.
+- \subpage tutorial-franka-ibvs <br>This tutorial explains how to implement eye-in-hand image-based visual servoing with
+  Franka Emika's Panda 7-dof robot equipped with an Intel Realsense camera mounted on its end-effector.
 - \subpage tutorial-franka-sim <br>This tutorial explains how to simulate a Panda 7-dof robot from Franka Emika for visual servoing and impedance control applications.
 - \subpage tutorial-mbot-vs <br>This tutorial explains how to do a visual-servoing with the mBot Ranger educational robot kit equipped with a Raspberry Pi and a camera.
 - \subpage tutorial-bebop2-vs <br> Explains how to implement an image-based visual-servoing (IBVS) with Parrot Bebop 2 drone.
@@ -176,6 +189,17 @@ This page introduces the user to the way to achieve a visual servoing.
 - \subpage tutorial-universal-robot-pbvs <br> Explains how to implement a position-based visual-servoing with a robot from Universal Robots.
 - \subpage tutorial-pixhawk-vs <br> Explains how to implement an image-based visual-servoing (IBVS) with a drone equipped with a Pixhaw,
   a Jetson TX2 and an Intel Realsense camera.
+
+*/
+
+/*! \page tutorial_vs_eth Eye-to-hand visual servoing
+
+This page introduces the user to the way to achieve eye-in-hand visual servoing.
+
+- \subpage tutorial-franka-ibvs-eth <br>This tutorial explains how to achieve image-based visual servoing with Franka
+  Emika's Panda 7-dof robot, with a fixed Realsense camera observing the robot's end-effector, to which we've attached
+  an Apriltag.
+
 */
 
 /*! \page tutorial_bridge Bridges over other frameworks (OpenCV, MATLAB, ROS-1)
