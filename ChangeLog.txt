@@ -53,6 +53,7 @@ ViSP 3.x.x (Version in development)
       to detect objects
     . Introduce compat with Ogre 1.12.0 version
     . Compat with mavsdk 3.0.0
+    . Introduce material to build and install ViSP from source with Pixi
   - Applications
     . Migrate eye-to-hand tutorials in apps
   - Tutorials
@@ -87,6 +88,8 @@ ViSP 3.x.x (Version in development)
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-calibration-extrinsic-eye-to-hand.html
     . New tutorial: Eye-to-hand IBVS with Panda 7-dof robot from Franka Emika
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-franka-ibvs-eth.html
+    . New tutorial: Multi-platform (OSX, Windows or Linux) installation from source with Pixi
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-pixi.html
   - Bug fixed
     . [#1251] Bug in vpDisplay::displayFrame()
     . [#1270] Build issue around std::clamp and optional header which are not found with cxx17

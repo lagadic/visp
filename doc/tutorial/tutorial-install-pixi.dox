@@ -1,0 +1,72 @@
+/**
+
+\page tutorial-install-pixi Tutorial: Multi-platform (OSX, Windows or Linux) installation from source with Pixi
+\tableofcontents
+
+In this tutorial you will learn how to install ViSP easily from source with <a href="https://pixi.sh/">Pixi</a> on any
+supported platform.
+
+Pixi is a cross-platform package management tool for developers that will install all required
+dependencies in `.pixi` directory. It's used by our CI agent so you have the guarantee to
+get the right dependencies.
+
+All dependencies are pinned to a working version in the `pixi.lock` file, which is regulary updated.
+
+Current supported platforms:
+- linux-64
+- osx-64
+- osx-arm64
+- win-64 (both MSVC and Clang-cl compilers)
+
+\section install_pixi 1. Install Pixi
+
+Install Pixi if you do not have it yet. You'll find instructions on this
+<a href="https://pixi.sh/latest/#installation">page</a>.
+
+\section install_visp_with_pixi 2. Build & install ViSP using Pixi
+
+Run the following command to install default ViSP configuration dependencies, configure, build and test the project:
+
+\code{.sh}
+$ pixi run test
+\endcode
+
+Or, to install ViSP with all supported features (such as Python bindings):
+
+\code{.sh}
+$ pixi run -e all test
+\endcode
+
+The project will be built in the `build` directory.
+
+The Pixi environment option `"-e all"` tells to Pixi that it should use the `"all"` environment, defined in the
+`pixi.toml` Pixi manifest file, located in ViSP root source directory. This environment contains all optional features
+of ViSP.
+
+Theses commands will run the Pixi task `"test"`. In `pixi.toml` file, having a look at the `[tasks]` section,
+you can see the definitions of all Pixi tasks for ViSP. In this case, `"test"` task depends on other tasks.
+Here are the available Pixi tasks for the default environment:
+- `"configure"`: Run the CMake configuration of the project in the `build` directory
+- `"build"`: Build ViSP default configuration in the `build` directory. Will call the `configure` task automatically.
+- `"install"`: Install ViSP in its Pixi default environment (directory `.pixi/envs/default/`). Will call the `build`
+  task automatically.
+- `"test"`: Run ViSP tests for its default environment. Will call the `install` task automatically.
+
+Each Pixi environment inherits from these default tasks and can have additional tasks.
+
+You can also run `"pixi shell"` and build the project with `cmake` and `make / ninja` manually. This will activate
+a Pixi environment (which is behind the scene a Conda environment) where all dependencies are installed and available.
+You can similarly specify the Pixi environment you want to enter, such as:
+\code{.sh}
+$ pixi shell -e all
+\endcode
+
+\section pixi_notes 3. Tips & tricks
+\subsection pixi_notes_windows 3.1. Chosing between Clang-cl and MSVC compilers on Windows
+
+On Windows, the default installed compiler with Pixi is MSVC vs2019. This corresponds to the current pinned default C++
+compiler on Conda-Forge.
+If you want to use Clang-cl compiler instead, consider using the `"all-clang-cl"` environment for example (or
+create your own that uses the `"clang-cl"` Pixi feature defined in our `pixi.toml` file).
+
+*/
