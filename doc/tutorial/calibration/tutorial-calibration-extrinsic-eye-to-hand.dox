@@ -9,8 +9,8 @@ This tutorial focuses estimation of the homogeneous transformation between the r
 frame in the case of a fixed camera observing the robot end-effector. This configuration is also called eye-to-hand.
 
 As a use case, we will consider in this tutorial the case of either:
-- a <a href="https://www.franka.de/cart/">Panda robot</a> in its research version from,
-  <a href="https://www.franka.de/">Franka Emika</a> and a
+- a Panda robot in its research version from,
+  <a href="https://franka.de/">Franka Emika</a> and a
   <a href="https://www.intelrealsense.com/depth-camera-d435/">D435</a> fixed camera mounted on a tripod observing
   the robot end-effector
 - or a robot from Universal Robots and a
@@ -415,7 +415,7 @@ By default the robot controller IP is `192.168.1.1`. If your Franka has an other
 $ ./visp-acquire-franka-calib-data --ip 192.168.30.10 --output-folder data-franka
 \endcode
 Click with the left mouse button to acquire data.
-It records the following outputs in `data-franka` folder:
+It records the following outputs in `data-franka/` folder:
 
 - `franka_camera.xml` : XML file that contains the intrinsic camera parameters extracted from camera firmware
 - couples of `franka_image-<number>.png` + `franka_pose_rMe-<number>.txt` with number starting from 1.
@@ -447,7 +447,7 @@ different, it could be easily adapted to your robot or camera.
 
 \subsubsection calib_eth_usecase_franka_pose 4.1.2 Compute tag poses
 
-Given the camera intrinsic parameters and the set of images, you can compute the tag pose running (adapt the tag size
+Given the camera intrinsic parameters and the set of images, you can compute the tag poses running (adapt the tag size
 parameter to your use case):
 \code{.sh}
 $ ./visp-compute-apriltag-poses                    \

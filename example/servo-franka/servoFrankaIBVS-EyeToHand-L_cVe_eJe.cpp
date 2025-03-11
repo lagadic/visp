@@ -28,30 +28,37 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Data acquisition with RealSense RGB-D sensor and Franka robot.
+ *   tests the control law
+ *   eye-to-hand control
+ *   velocity computed in the camera frame
  */
 
 /*!
-  \example servoFrankaPBVS.cpp
-  Example of eye-in-hand image-based control law. We control here a real robot, the
-  Franka Emika Panda robot (arm with 7 degrees of freedom). The velocity is
-  computed in the camera frame. The inverse jacobian that converts cartesian
+  \example servoFrankaIBVS-EyeToHand-L_cVe_eJe.cpp
+
+  Example of eye-to-hand image-based control law. We control here a real robot, the
+  Franka Emika Panda robot (arm with 7 degrees of freedom).
+  An Apriltag is attached to the robot end-effector. A camera mounted on a fixed tripod is observing the Apriltag.
+  The velocity is computed in the camera frame. The inverse jacobian that converts cartesian
   velocities in joint velocities is implemented in the robot low level
-  controller. Visual features correspond to the 3D pose of the target (an AprilTag)
-  in the camera frame.
+  controller. Visual features are the image coordinates of 4 points corresponding
+  to the corners of an AprilTag.
 
   The device used to acquire images is a Realsense D435 device.
 
-  Camera extrinsic (eMc) parameters are set by default to a value that will not match
-  your configuration. Use --eMc command line option to read the values from a file.
+  Camera extrinsic (eMo) transformation is set by default to a value that will not match
+  Your configuration.
+  - Use `--eMo` command line option to read the robot end-effector to object (Apriltag) frames transformation from
+    a file,
   This file could be obtained following extrinsic camera calibration tutorial:
-  https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-calibration-extrinsic-eye-in-hand.html
+  https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-calibration-extrinsic-eye-to-hand.html
 
   Camera intrinsic parameters are retrieved from the Realsense SDK.
 
-  The target is an AprilTag that is by default 12cm large. To print your own tag, see
+  The target is an AprilTag that is by default 4.8cm large. To print your own tag, see
   https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-detection-apriltag.html
   You can specify the size of your tag using --tag-size command line option.
+
 */
 
 #include <iostream>
@@ -66,8 +73,8 @@
 #include <visp3/io/vpImageIo.h>
 #include <visp3/robot/vpRobotFranka.h>
 #include <visp3/sensor/vpRealSense2.h>
-#include <visp3/visual_features/vpFeatureThetaU.h>
-#include <visp3/visual_features/vpFeatureTranslation.h>
+#include <visp3/visual_features/vpFeatureBuilder.h>
+#include <visp3/visual_features/vpFeaturePoint.h>
 #include <visp3/vs/vpServo.h>
 #include <visp3/vs/vpServoDisplay.h>
 
@@ -76,6 +83,47 @@
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;
 #endif
+
+bool save_desired_features(const std::string &filename, const std::vector<vpFeaturePoint> &desired_features)
+{
+  std::ofstream file(filename);
+  if (file.is_open()) {
+    for (size_t i = 0; i < desired_features.size(); ++i) {
+      file << desired_features[i].get_x() << " " << desired_features[i].get_y() << " " << desired_features[i].get_Z() << std::endl;
+    }
+
+    file.close();
+    return true;
+  }
+  else {
+    return false;
+  }
+}
+
+bool read_desired_features(const std::string &filename, std::vector<vpFeaturePoint> &desired_features)
+{
+  desired_features.clear();
+  std::ifstream file(filename);
+  if (file.is_open()) {
+    std::string line;
+    while (std::getline(file, line)) {
+      std::istringstream iss(line);
+      double x, y, Z;
+      if (!(iss >> x >> y >> Z)) {
+        return false;
+      }
+      vpFeaturePoint s_d;
+      s_d.buildFrom(x, y, Z);
+      desired_features.push_back(s_d);
+    }
+    file.close();
+
+    return true;
+  }
+  else {
+    return false;
+  }
+}
 
 void display_point_trajectory(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &vip,
                               std::vector<vpImagePoint> *traj_vip)
@@ -103,7 +151,7 @@ int main(int argc, char **argv)
   double opt_tag_size = 0.120;
   bool opt_tag_z_aligned = false;
   std::string opt_robot_ip = "192.168.1.1";
-  std::string opt_eMc_filename = "";
+  std::string opt_eMo_filename = "";
   std::string opt_intrinsic_filename = "";
   std::string opt_camera_name = "Camera";
   bool display_tag = true;
@@ -112,8 +160,11 @@ int main(int argc, char **argv)
   bool opt_plot = false;
   bool opt_adaptive_gain = false;
   bool opt_task_sequencing = false;
-  double convergence_threshold_t = 0.0005; // Value in [m]
-  double convergence_threshold_tu = 0.5;   // Value in [deg]
+  bool opt_learn_desired_features = false;
+  std::string desired_features_filename = "learned_desired_features.txt";
+  double convergence_threshold = 0.00005;
+  // std::string desired_pose_filename = "learned_pose.yaml";
+  // bool opt_learn_desired_pose = false;
 
   for (int i = 1; i < argc; ++i) {
     if ((std::string(argv[i]) == "--tag-size") && (i + 1 < argc)) {
@@ -131,10 +182,10 @@ int main(int argc, char **argv)
     else if (std::string(argv[i]) == "--camera-name" && i + 1 < argc) {
       opt_camera_name = std::string(argv[++i]);
     }
-    else if ((std::string(argv[i]) == "--eMc") && (i + 1 < argc)) {
-      opt_eMc_filename = std::string(argv[++i]);
+    else if ((std::string(argv[i]) == "--eMo") && (i + 1 < argc)) {
+      opt_eMo_filename = std::string(argv[++i]);
     }
-    else if (std::string(argv[i]) == "--verbose") {
+    else if ((std::string(argv[i]) == "--verbose") || (std::string(argv[i]) == "-v")) {
       opt_verbose = true;
     }
     else if (std::string(argv[i]) == "--plot") {
@@ -150,8 +201,10 @@ int main(int argc, char **argv)
       opt_quad_decimate = std::stoi(argv[++i]);
     }
     else if (std::string(argv[i]) == "--no-convergence-threshold") {
-      convergence_threshold_t = 0.;
-      convergence_threshold_tu = 0.;
+      convergence_threshold = 0.;
+    }
+    else if (std::string(argv[i]) == "--learn-desired-features") {
+      opt_learn_desired_features = true;
     }
     else if ((std::string(argv[i]) == "--help") || (std::string(argv[i]) == "-h")) {
       std::cout << "SYNOPSYS" << std::endl
@@ -161,17 +214,18 @@ int main(int argc, char **argv)
         << " [--camera-name <name>]"
         << " [--tag-size <size>]"
         << " [--tag-z-aligned]"
-        << " [--eMc <extrinsic transformation file>]"
+        << " [--learn-desired-pose]"
+        << " [--eMo <file.yaml>]"
         << " [--quad-decimate <decimation factor>]"
         << " [--adaptive-gain]"
         << " [--plot]"
         << " [--task-sequencing]"
         << " [--no-convergence-threshold]"
-        << " [--verbose]"
-        << " [--help] [-h]\n"
+        << " [--verbose, -v]"
+        << " [--help, -h]\n"
         << std::endl;
       std::cout << "DESCRIPTION" << std::endl
-        << "  Use a position-based visual-servoing scheme to position the camera in front of an Apriltag." << std::endl
+        << "  Use an image-based visual-servoing scheme to position the camera in front of an Apriltag." << std::endl
         << std::endl
         << "  --ip <controller ip>" << std::endl
         << "    Franka controller ip address" << std::endl
@@ -193,9 +247,9 @@ int main(int argc, char **argv)
         << "    When enabled, tag z-axis and camera z-axis are aligned." << std::endl
         << "    Default: false" << std::endl
         << std::endl
-        << "  --eMc <extrinsic transformation file>" << std::endl
-        << "    File containing the homogeneous transformation matrix between" << std::endl
-        << "    robot end-effector and camera frame." << std::endl
+        << "  --eMo <file.yaml>" << std::endl
+        << "    Yaml file containing the extrinsic transformation between" << std::endl
+        << "    robot end-effector frame and object (Apriltag) frames." << std::endl
         << std::endl
         << "  --quad-decimate <decimation factor>" << std::endl
         << "    Decimation factor used during Apriltag detection." << std::endl
@@ -213,12 +267,17 @@ int main(int argc, char **argv)
         << "  --no-convergence-threshold" << std::endl
         << "    Flag to disable convergence threshold used to stop the visual servo." << std::endl
         << std::endl
-        << "  --verbose" << std::endl
+        << "  --learn-desired-pose" << std::endl
+        << "    Flag to enable desired pose learning." << std::endl
+        << "    Data are saved in learned-desired-pose.yaml file." << std::endl
+        << std::endl
+        << "  --verbose, -v" << std::endl
         << "    Flag to enable extra verbosity." << std::endl
         << std::endl
         << "  --help, -h" << std::endl
         << "    Print this helper message." << std::endl
         << std::endl;
+
       return EXIT_SUCCESS;
     }
     else {
@@ -299,47 +358,145 @@ int main(int argc, char **argv)
   detector.setAprilTagQuadDecimate(opt_quad_decimate);
   detector.setZAlignedWithCameraAxis(opt_tag_z_aligned);
 
-  // Setup camera extrinsics
-  vpPoseVector e_P_c;
-  // Set camera extrinsics default values
-  e_P_c[0] = 0.0337731;
-  e_P_c[1] = -0.00535012;
-  e_P_c[2] = -0.0523339;
-  e_P_c[3] = -0.247294;
-  e_P_c[4] = -0.306729;
-  e_P_c[5] = 1.53055;
+  if (opt_learn_desired_features) {
 
-  // If provided, read camera extrinsics from --eMc <file>
-  if (!opt_eMc_filename.empty()) {
-    e_P_c.loadYAML(opt_eMc_filename, e_P_c);
+    bool quit = false;
+    while (!quit) {
+      rs.acquire(I);
+
+      vpDisplay::display(I);
+
+      std::vector<vpHomogeneousMatrix> c_M_o_vec;
+      bool ret = detector.detect(I, opt_tag_size, cam, c_M_o_vec);
+
+      vpDisplay::displayText(I, 20, 20, "Move the robot to the desired tag pose...", vpColor::red);
+      vpDisplay::displayText(I, 40, 20, "Left click to learn desired features, right click to quit", vpColor::red);
+
+      std::vector< std::vector<vpImagePoint> > tags_corners;
+      if (ret) {
+        if (detector.getNbObjects() == 1) {
+          tags_corners = detector.getTagsCorners();
+          for (size_t i = 0; i < 4; ++i) {
+            std::stringstream ss;
+            ss << i;
+            vpDisplay::displayText(I, tags_corners[0][i]+vpImagePoint(15, -15), ss.str(), vpColor::red);
+            vpDisplay::displayCross(I, tags_corners[0][i], 15, vpColor::red, 2);
+          }
+        }
+      }
+
+      vpMouseButton::vpMouseButtonType button;
+      if (vpDisplay::getClick(I, button, false)) {
+        switch (button) {
+        case vpMouseButton::button1:
+          if (ret) {
+            if (detector.getNbObjects() == 1) {
+              tags_corners = detector.getTagsCorners();
+              vpHomogeneousMatrix cd_M_o = c_M_o_vec[0];
+              std::vector<vpFeaturePoint> p_d(4);
+
+              for (size_t i = 0; i < 4; ++i) {
+                double x = 0, y = 0;
+                vpPixelMeterConversion::convertPoint(cam, tags_corners[0][i], x, y);
+                p_d[i].set_x(x);
+                p_d[i].set_y(y);
+              }
+
+              // Define 4 3D points corresponding to the CAD model of the Apriltag
+              std::vector<vpPoint> point(4);
+              point[0].setWorldCoordinates(-opt_tag_size / 2., -opt_tag_size / 2., 0);
+              point[1].setWorldCoordinates(+opt_tag_size / 2., -opt_tag_size / 2., 0);
+              point[2].setWorldCoordinates(+opt_tag_size / 2., +opt_tag_size / 2., 0);
+              point[3].setWorldCoordinates(-opt_tag_size / 2., +opt_tag_size / 2., 0);
+
+              for (size_t i = 0; i < point.size(); ++i) {
+                vpColVector c_P, p;
+                point[i].changeFrame(cd_M_o, c_P);
+                p_d[i].set_Z(c_P[2]);
+              }
+              if (save_desired_features(desired_features_filename, p_d)) {
+                std::cout << "Desired visual features saved in: " << desired_features_filename << std::endl;
+              }
+              else {
+                std::cout << "Error: Unable to save desired features in " << desired_features_filename << std::endl;
+                return EXIT_FAILURE;
+              }
+            }
+            else {
+              std::cout << "Cannot save desired features. More than 1 tag is visible in the image..." << std::endl;
+            }
+          }
+          else {
+            std::cout << "Cannot save desired features. Tag is not visible in the image..." << std::endl;
+          }
+          break;
+        case vpMouseButton::button3:
+          quit = true;
+          break;
+        default:
+          break;
+        }
+      }
+
+      vpDisplay::flush(I);
+    }
+    return EXIT_SUCCESS;
+  }
+
+  // Load desired features to reach by visual servo
+
+  std::vector<vpFeaturePoint> p_d; // Desired visual features
+  // Sanity options check
+  if (desired_features_filename.empty() || (!vpIoTools::checkFilename(desired_features_filename))) {
+    std::cout << "Cannot start eye-to-hand visual-servoing. Desired features are not available." << std::endl;
+    std::cout << "use --learn-desired-features flag to learn the desired features." << std::endl;
+    return EXIT_FAILURE;
   }
   else {
-    std::cout << "Warning, opt_eMc_filename is empty! Use hard coded values." << std::endl;
+    if (!read_desired_features(desired_features_filename, p_d)) {
+      std::cout << "Error: Unable to read desired features from: " << desired_features_filename << std::endl;
+      return EXIT_FAILURE;
+    }
   }
-  vpHomogeneousMatrix e_M_c(e_P_c);
-  std::cout << "e_M_c:\n" << e_M_c << std::endl;
 
-  // Desired pose to reach
-  vpHomogeneousMatrix cd_M_o(vpTranslationVector(0, 0, opt_tag_size * 3), // 3 times tag with along camera z axis
-                             vpRotationMatrix({ 1, 0, 0, 0, -1, 0, 0, 0, -1 }));
+  // Get camera extrinsics
+  vpPoseVector e_P_o;
+
+  // Read camera extrinsics from --eMo <file>
+  if (!opt_eMo_filename.empty()) {
+    e_P_o.loadYAML(opt_eMo_filename, e_P_o);
+  }
+  else {
+    std::cout << "Warning, eMo transformation is not specified using --eMo parameter." << std::endl;
+    return EXIT_FAILURE;
+  }
+  vpHomogeneousMatrix e_M_o(e_P_o);
+  std::cout << "e_M_o:\n" << e_M_o << std::endl;
 
   vpRobotFranka robot;
 
   try {
     robot.connect(opt_robot_ip);
 
-    // Create visual features based on cd_M_c
-    vpFeatureTranslation t(vpFeatureTranslation::cdMc);
-    vpFeatureThetaU tu(vpFeatureThetaU::cdRc);
+    // Servo
+    vpHomogeneousMatrix cd_M_c, c_M_o, o_M_o;
 
-    vpFeatureTranslation td(vpFeatureTranslation::cdMc);
-    vpFeatureThetaU tud(vpFeatureThetaU::cdRc);
+    // Create current visual features
+    std::vector<vpFeaturePoint> p(4); // We use 4 points
 
-    // Setup PBVS
+    // Define 4 3D points corresponding to the CAD model of the Apriltag
+    std::vector<vpPoint> point(4);
+    point[0].setWorldCoordinates(-opt_tag_size / 2., -opt_tag_size / 2., 0);
+    point[1].setWorldCoordinates(+opt_tag_size / 2., -opt_tag_size / 2., 0);
+    point[2].setWorldCoordinates(+opt_tag_size / 2., +opt_tag_size / 2., 0);
+    point[3].setWorldCoordinates(-opt_tag_size / 2., +opt_tag_size / 2., 0);
+
     vpServo task;
-    task.addFeature(t, td);
-    task.addFeature(tu, tud);
-    task.setServo(vpServo::EYEINHAND_CAMERA);
+    // Add the 4 visual feature points
+    for (size_t i = 0; i < p.size(); ++i) {
+      task.addFeature(p[i], p_d[i]);
+    }
+    task.setServo(vpServo::EYETOHAND_L_cVe_eJe);
     task.setInteractionMatrixType(vpServo::CURRENT);
 
     if (opt_adaptive_gain) {
@@ -357,35 +514,36 @@ int main(int argc, char **argv)
       plotter = new vpPlot(2, static_cast<int>(250 * 2), 500, static_cast<int>(I.getWidth()) + 80, 10,
                            "Real time curves plotter");
       plotter->setTitle(0, "Visual features error");
-      plotter->setTitle(1, "Camera velocities");
-      plotter->initGraph(0, 6);
-      plotter->initGraph(1, 6);
-      plotter->setLegend(0, 0, "error_feat_tx");
-      plotter->setLegend(0, 1, "error_feat_ty");
-      plotter->setLegend(0, 2, "error_feat_tz");
-      plotter->setLegend(0, 3, "error_feat_theta_ux");
-      plotter->setLegend(0, 4, "error_feat_theta_uy");
-      plotter->setLegend(0, 5, "error_feat_theta_uz");
-      plotter->setLegend(1, 0, "vc_x");
-      plotter->setLegend(1, 1, "vc_y");
-      plotter->setLegend(1, 2, "vc_z");
-      plotter->setLegend(1, 3, "wc_x");
-      plotter->setLegend(1, 4, "wc_y");
-      plotter->setLegend(1, 5, "wc_z");
+      plotter->setTitle(1, "Joint velocities");
+      plotter->initGraph(0, 8);
+      plotter->initGraph(1, 7);
+      plotter->setLegend(0, 0, "error_feat_p1_x");
+      plotter->setLegend(0, 1, "error_feat_p1_y");
+      plotter->setLegend(0, 2, "error_feat_p2_x");
+      plotter->setLegend(0, 3, "error_feat_p2_y");
+      plotter->setLegend(0, 4, "error_feat_p3_x");
+      plotter->setLegend(0, 5, "error_feat_p3_y");
+      plotter->setLegend(0, 6, "error_feat_p4_x");
+      plotter->setLegend(0, 7, "error_feat_p4_y");
+      plotter->setLegend(1, 0, "q_1");
+      plotter->setLegend(1, 1, "q_2");
+      plotter->setLegend(1, 2, "q_3");
+      plotter->setLegend(1, 3, "q_4");
+      plotter->setLegend(1, 4, "q_5");
+      plotter->setLegend(1, 5, "q_6");
+      plotter->setLegend(1, 6, "q_7");
     }
 
     bool final_quit = false;
     bool has_converged = false;
     bool send_velocities = false;
     bool servo_started = false;
-    std::vector<vpImagePoint> *traj_vip = nullptr; // To memorize point trajectory
+    std::vector<vpImagePoint> *traj_corners = nullptr; // To memorize point trajectory
 
     static double t_init_servo = vpTime::measureTimeMs();
 
-    robot.set_eMc(e_M_c); // Set location of the camera wrt end-effector frame
+    //robot.set_eMc(eMc); // Set location of the camera wrt end-effector frame
     robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
-
-    vpHomogeneousMatrix cd_M_c, c_M_o, o_M_o;
 
     while (!has_converged && !final_quit) {
       double t_start = vpTime::measureTimeMs();
@@ -397,37 +555,44 @@ int main(int argc, char **argv)
       std::vector<vpHomogeneousMatrix> c_M_o_vec;
       bool ret = detector.detect(I, opt_tag_size, cam, c_M_o_vec);
 
-      std::stringstream ss;
-      ss << "Left click to " << (send_velocities ? "stop the robot" : "servo the robot") << ", right click to quit.";
-      vpDisplay::displayText(I, 20, 20, ss.str(), vpColor::red);
+      {
+        std::stringstream ss;
+        ss << "Left click to " << (send_velocities ? "stop the robot" : "servo the robot") << ", right click to quit.";
+        vpDisplay::displayText(I, 20, 20, ss.str(), vpColor::red);
+      }
 
-      vpColVector v_c(6);
+      vpColVector qdot(robot.getNDof());
 
       // Only one tag is detected
       if (ret && (c_M_o_vec.size() == 1)) {
         c_M_o = c_M_o_vec[0];
 
         static bool first_time = true;
-        if (first_time) {
-          // Introduce security wrt tag positioning in order to avoid PI rotation
-          std::vector<vpHomogeneousMatrix> secure_o_M_o(2), secure_cd_M_c(2);
-          secure_o_M_o[1].buildFrom(0, 0, 0, 0, 0, M_PI);
-          for (size_t i = 0; i < 2; ++i) {
-            secure_cd_M_c[i] = cd_M_o * secure_o_M_o[i] * c_M_o.inverse();
-          }
-          if (std::fabs(secure_cd_M_c[0].getThetaUVector().getTheta()) < std::fabs(secure_cd_M_c[1].getThetaUVector().getTheta())) {
-            o_M_o = secure_o_M_o[0];
-          }
-          else {
-            std::cout << "Desired frame modified to avoid PI rotation of the camera" << std::endl;
-            o_M_o = secure_o_M_o[1]; // Introduce PI rotation
-          }
-        }
+
+        // Get tag corners
+        std::vector<vpImagePoint> corners = detector.getPolygon(0);
 
         // Update visual features
-        cd_M_c = cd_M_o * o_M_o * c_M_o.inverse();
-        t.buildFrom(cd_M_c);
-        tu.buildFrom(cd_M_c);
+        for (size_t i = 0; i < corners.size(); ++i) {
+          // Update the point feature from the tag corners location
+          vpFeatureBuilder::create(p[i], cam, corners[i]);
+          // Set the feature Z coordinate from the pose
+          vpColVector c_P;
+          point[i].changeFrame(c_M_o, c_P);
+
+          p[i].set_Z(c_P[2]);
+        }
+
+        // Set the camera to end-effector velocity twist matrix transformation
+        vpHomogeneousMatrix c_M_e;
+        c_M_e = c_M_o * e_M_o.inverse();
+
+        task.set_cVe(c_M_e);
+
+        // Set the Jacobian (expressed in the end-effector frame)
+        vpMatrix e_J_e;
+        robot.get_eJe(e_J_e);
+        task.set_eJe(e_J_e);
 
         if (opt_task_sequencing) {
           if (!servo_started) {
@@ -436,75 +601,73 @@ int main(int argc, char **argv)
             }
             t_init_servo = vpTime::measureTimeMs();
           }
-          v_c = task.computeControlLaw((vpTime::measureTimeMs() - t_init_servo) / 1000.);
+          qdot = task.computeControlLaw((vpTime::measureTimeMs() - t_init_servo) / 1000.);
         }
         else {
-          v_c = task.computeControlLaw();
+          qdot = task.computeControlLaw();
         }
 
-        // Display desired and current pose features
-        vpDisplay::displayFrame(I, cd_M_o * o_M_o, cam, opt_tag_size / 1.5, vpColor::yellow, 2);
-        vpDisplay::displayFrame(I, c_M_o, cam, opt_tag_size / 2, vpColor::none, 3);
-        // Get tag corners
-        std::vector<vpImagePoint> vip = detector.getPolygon(0);
-        // Get the tag cog corresponding to the projection of the tag frame in the image
-        vip.push_back(detector.getCog(0));
-        // Display the trajectory of the points
-        if (first_time) {
-          traj_vip = new std::vector<vpImagePoint>[vip.size()];
+        // Display the current and desired feature points in the image display
+        vpServoDisplay::display(task, cam, I);
+        for (size_t i = 0; i < corners.size(); ++i) {
+          std::stringstream ss;
+          ss << i;
+          // Display current point indexes
+          vpDisplay::displayText(I, corners[i] + vpImagePoint(15, 15), ss.str(), vpColor::red);
+          // Display desired point indexes
+          vpImagePoint ip;
+          vpMeterPixelConversion::convertPoint(cam, p_d[i].get_x(), p_d[i].get_y(), ip);
+          vpDisplay::displayText(I, ip + vpImagePoint(15, 15), ss.str(), vpColor::red);
         }
-        display_point_trajectory(I, vip, traj_vip);
+        if (first_time) {
+          traj_corners = new std::vector<vpImagePoint>[corners.size()];
+        }
+        // Display the trajectory of the points used as features
+        display_point_trajectory(I, corners, traj_corners);
 
         if (opt_plot) {
           plotter->plot(0, iter_plot, task.getError());
-          plotter->plot(1, iter_plot, v_c);
+          plotter->plot(1, iter_plot, qdot);
           iter_plot++;
         }
 
         if (opt_verbose) {
-          std::cout << "v_c: " << v_c.t() << std::endl;
+          std::cout << "qdot: " << qdot.t() << std::endl;
         }
 
-        vpTranslationVector cd_t_c = cd_M_c.getTranslationVector();
-        vpThetaUVector cd_tu_c = cd_M_c.getThetaUVector();
-        double error_tr = sqrt(cd_t_c.sumSquare());
-        double error_tu = vpMath::deg(sqrt(cd_tu_c.sumSquare()));
-
-        ss.str("");
-        ss << "error_t: " << error_tr;
+        double error = task.getError().sumSquare();
+        std::stringstream ss;
+        ss << "error: " << error;
         vpDisplay::displayText(I, 20, static_cast<int>(I.getWidth()) - 150, ss.str(), vpColor::red);
-        ss.str("");
-        ss << "error_tu: " << error_tu;
-        vpDisplay::displayText(I, 40, static_cast<int>(I.getWidth()) - 150, ss.str(), vpColor::red);
 
         if (opt_verbose)
-          std::cout << "error translation: " << error_tr << " ; error rotation: " << error_tu << std::endl;
+          std::cout << "error: " << error << std::endl;
 
-        if (error_tr < convergence_threshold_t && error_tu < convergence_threshold_tu) {
+        if (error < convergence_threshold) {
           has_converged = true;
           std::cout << "Servo task has converged" << std::endl;
-          ;
           vpDisplay::displayText(I, 100, 20, "Servo task has converged", vpColor::red);
         }
-
         if (first_time) {
           first_time = false;
         }
       } // end if (c_M_o_vec.size() == 1)
       else {
-        v_c = 0;
+        qdot = 0;
       }
 
       if (!send_velocities) {
-        v_c = 0;
+        qdot = 0;
       }
 
       // Send to the robot
-      robot.setVelocity(vpRobot::CAMERA_FRAME, v_c);
+      robot.setVelocity(vpRobot::JOINT_STATE, qdot);
 
-      ss.str("");
-      ss << "Loop time: " << vpTime::measureTimeMs() - t_start << " ms";
-      vpDisplay::displayText(I, 40, 20, ss.str(), vpColor::red);
+      {
+        std::stringstream ss;
+        ss << "Loop time: " << vpTime::measureTimeMs() - t_start << " ms";
+        vpDisplay::displayText(I, 40, 20, ss.str(), vpColor::red);
+      }
       vpDisplay::flush(I);
 
       vpMouseButton::vpMouseButtonType button;
@@ -516,7 +679,7 @@ int main(int argc, char **argv)
 
         case vpMouseButton::button3:
           final_quit = true;
-          v_c = 0;
+          qdot = 0;
           break;
 
         default:
@@ -547,9 +710,8 @@ int main(int argc, char **argv)
         vpDisplay::flush(I);
       }
     }
-
-    if (traj_vip) {
-      delete[] traj_vip;
+    if (traj_corners) {
+      delete[] traj_corners;
     }
   }
   catch (const vpException &e) {
@@ -590,6 +752,7 @@ int main(int argc, char **argv)
     delete display;
   }
 #endif
+
   return EXIT_SUCCESS;
 }
 #else

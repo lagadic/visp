@@ -277,6 +277,10 @@ int main(int argc, const char **argv)
       cv::Mat matImg;
       vpImageConvert::convert(I, matImg);
 
+#if defined(VISP_HAVE_MODULE_GUI)
+      vpDisplay::display(I);
+#endif
+
       cv::Size chessboardSize(opt_chessboard_width, opt_chessboard_height);
       std::vector<cv::Point2f> corners2D;
       bool found = cv::findChessboardCorners(matImg, chessboardSize, corners2D,
@@ -330,8 +334,6 @@ int main(int argc, const char **argv)
 #if defined(VISP_HAVE_MODULE_GUI)
       if (opt_interactive) {
         vpDisplay::setTitle(I, reader.getFrameName());
-        vpDisplay::displayText(I, 20, 20, "Right click to quit.", vpColor::red);
-        vpDisplay::display(I);
         vpDisplay::displayText(I, 20, 20, "Left click for the next image, right click to quit.", vpColor::red);
         if (found) {
           vpDisplay::displayFrame(I, cMo, cam, 0.05, vpColor::none, 3);
