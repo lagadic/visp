@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Data acquisition with RealSense RGB-D sensor and Franka robot.
- *
-*****************************************************************************/
+ */
 
 /*!
   \example servoFrankaPBVS.cpp
@@ -45,9 +43,9 @@
   The device used to acquire images is a Realsense D435 device.
 
   Camera extrinsic (eMc) parameters are set by default to a value that will not match
-  Your configuration. Use --eMc command line option to read the values from a file.
+  your configuration. Use --eMc command line option to read the values from a file.
   This file could be obtained following extrinsic camera calibration tutorial:
-  https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-calibration-extrinsic.html
+  https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-calibration-extrinsic-eye-in-hand.html
 
   Camera intrinsic parameters are retrieved from the Realsense SDK.
 
@@ -58,8 +56,10 @@
 
 #include <iostream>
 
-#include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/detection/vpDetectorAprilTag.h>
 #include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/gui/vpPlot.h>
@@ -71,7 +71,7 @@
 #include <visp3/vs/vpServo.h>
 #include <visp3/vs/vpServoDisplay.h>
 
-#if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_DISPLAY) && defined(VISP_HAVE_FRANKA)
+#if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_DISPLAY) && defined(VISP_HAVE_FRANKA) && defined(VISP_HAVE_PUGIXML)
 
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;
@@ -80,7 +80,7 @@ using namespace VISP_NAMESPACE_NAME;
 void display_point_trajectory(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &vip,
                               std::vector<vpImagePoint> *traj_vip)
 {
-  for (size_t i = 0; i < vip.size(); i++) {
+  for (size_t i = 0; i < vip.size(); ++i) {
     if (traj_vip[i].size()) {
       // Add the point only if distance with the previous > 1 pixel
       if (vpImagePoint::distance(vip[i], traj_vip[i].back()) > 1.) {
@@ -91,7 +91,7 @@ void display_point_trajectory(const vpImage<unsigned char> &I, const std::vector
       traj_vip[i].push_back(vip[i]);
     }
   }
-  for (size_t i = 0; i < vip.size(); i++) {
+  for (size_t i = 0; i < vip.size(); ++i) {
     for (size_t j = 1; j < traj_vip[i].size(); j++) {
       vpDisplay::displayLine(I, traj_vip[i][j - 1], traj_vip[i][j], vpColor::green, 2);
     }
@@ -100,9 +100,12 @@ void display_point_trajectory(const vpImage<unsigned char> &I, const std::vector
 
 int main(int argc, char **argv)
 {
-  double opt_tagSize = 0.120;
+  double opt_tag_size = 0.120;
+  bool opt_tag_z_aligned = false;
   std::string opt_robot_ip = "192.168.1.1";
   std::string opt_eMc_filename = "";
+  std::string opt_intrinsic_filename = "";
+  std::string opt_camera_name = "Camera";
   bool display_tag = true;
   int opt_quad_decimate = 2;
   bool opt_verbose = false;
@@ -112,18 +115,24 @@ int main(int argc, char **argv)
   double convergence_threshold_t = 0.0005; // Value in [m]
   double convergence_threshold_tu = 0.5;   // Value in [deg]
 
-  for (int i = 1; i < argc; i++) {
+  for (int i = 1; i < argc; ++i) {
     if ((std::string(argv[i]) == "--tag-size") && (i + 1 < argc)) {
-      opt_tagSize = std::stod(argv[i + 1]);
-      ++i;
+      opt_tag_size = std::stod(argv[++i]);
+    }
+    else if (std::string(argv[i]) == "--tag-z-aligned") {
+      opt_tag_z_aligned = true;
     }
     else if ((std::string(argv[i]) == "--ip") && (i + 1 < argc)) {
-      opt_robot_ip = std::string(argv[i + 1]);
-      ++i;
+      opt_robot_ip = std::string(argv[++i]);
+    }
+    else if (std::string(argv[i]) == "--intrinsic" && i + 1 < argc) {
+      opt_intrinsic_filename = std::string(argv[++i]);
+    }
+    else if (std::string(argv[i]) == "--camera-name" && i + 1 < argc) {
+      opt_camera_name = std::string(argv[++i]);
     }
     else if ((std::string(argv[i]) == "--eMc") && (i + 1 < argc)) {
-      opt_eMc_filename = std::string(argv[i + 1]);
-      ++i;
+      opt_eMc_filename = std::string(argv[++i]);
     }
     else if (std::string(argv[i]) == "--verbose") {
       opt_verbose = true;
@@ -131,15 +140,14 @@ int main(int argc, char **argv)
     else if (std::string(argv[i]) == "--plot") {
       opt_plot = true;
     }
-    else if (std::string(argv[i]) == "--adpative-gain") {
+    else if (std::string(argv[i]) == "--adaptive-gain") {
       opt_adaptive_gain = true;
     }
     else if (std::string(argv[i]) == "--task-sequencing") {
       opt_task_sequencing = true;
     }
     else if ((std::string(argv[i]) == "--quad-decimate") && (i + 1 < argc)) {
-      opt_quad_decimate = std::stoi(argv[i + 1]);
-      ++i;
+      opt_quad_decimate = std::stoi(argv[++i]);
     }
     else if (std::string(argv[i]) == "--no-convergence-threshold") {
       convergence_threshold_t = 0.;
@@ -149,7 +157,10 @@ int main(int argc, char **argv)
       std::cout << "SYNOPSYS" << std::endl
         << "  " << argv[0]
         << " [--ip <controller ip>]"
+        << " [--intrinsic <xml file>]"
+        << " [--camera-name <name>]"
         << " [--tag-size <size>]"
+        << " [--tag-z-aligned]"
         << " [--eMc <extrinsic transformation file>]"
         << " [--quad-decimate <decimation factor>]"
         << " [--adaptive-gain]"
@@ -166,9 +177,21 @@ int main(int argc, char **argv)
         << "    Franka controller ip address" << std::endl
         << "    Default: " << opt_robot_ip << std::endl
         << std::endl
+        << "  --intrinsic <xml file>" << std::endl
+        << "    XML file that contains camera intrinsic parameters. " << std::endl
+        << "    If no file is specified, use Realsense camera factory intrinsic parameters." << std::endl
+        << std::endl
+        << "  --camera-name <name>" << std::endl
+        << "    Camera name in the XML file that contains camera intrinsic parameters." << std::endl
+        << "    Default: \"Camera\"" << std::endl
+        << std::endl
         << "  --tag-size <size>" << std::endl
         << "    Apriltag size in [m]." << std::endl
-        << "    Default: " << opt_tagSize << " [m]" << std::endl
+        << "    Default: " << opt_tag_size << " [m]" << std::endl
+        << std::endl
+        << "  --tag-z-aligned" << std::endl
+        << "    When enabled, tag z-axis and camera z-axis are aligned." << std::endl
+        << "    Default: false" << std::endl
         << std::endl
         << "  --eMc <extrinsic transformation file>" << std::endl
         << "    File containing the homogeneous transformation matrix between" << std::endl
@@ -198,83 +221,121 @@ int main(int argc, char **argv)
         << std::endl;
       return EXIT_SUCCESS;
     }
+    else {
+      std::cout << "\nERROR" << std::endl
+        << std::string(argv[i]) << " command line option is not supported." << std::endl
+        << "Use " << std::string(argv[0]) << " --help" << std::endl
+        << std::endl;
+      return EXIT_FAILURE;
+    }
   }
 
-  vpRobotFranka robot;
+  vpRealSense2 rs;
+  rs2::config config;
+  unsigned int width = 640, height = 480;
+  config.enable_stream(RS2_STREAM_COLOR, 640, 480, RS2_FORMAT_RGBA8, 30);
+  config.enable_stream(RS2_STREAM_DEPTH, 640, 480, RS2_FORMAT_Z16, 30);
+  config.enable_stream(RS2_STREAM_INFRARED, 640, 480, RS2_FORMAT_Y8, 30);
+  rs.open(config);
+
+  vpImage<unsigned char> I(height, width);
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  std::shared_ptr<vpDisplay> display;
+  std::shared_ptr<vpDisplay> display = vpDisplayFactory::createDisplay(I, 10, 10, "Current image");
 #else
-  vpDisplay *display = nullptr;
+  vpDisplay *display = vpDisplayFactory::allocateDisplay(I, 10, 10, "Current image");
 #endif
+
+  std::cout << "Parameters:" << std::endl;
+  std::cout << "  Apriltag                  " << std::endl;
+  std::cout << "    Size [m]              : " << opt_tag_size << std::endl;
+  std::cout << "    Z aligned             : " << (opt_tag_z_aligned ? "true" : "false") << std::endl;
+  std::cout << "  Camera intrinsics         " << std::endl;
+  std::cout << "    Factory parameters    : " << (opt_intrinsic_filename.empty() ? "yes" : "no") << std::endl;
+
+  // Get camera intrinsics
+  vpCameraParameters cam;
+  if (opt_intrinsic_filename.empty()) {
+    std::cout << "Use Realsense camera intrinsic factory parameters: " << std::endl;
+    cam = rs.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithDistortion);
+    std::cout << "cam:\n" << cam << std::endl;
+  }
+  else if (!vpIoTools::checkFilename(opt_intrinsic_filename)) {
+    std::cout << "Camera parameters file " << opt_intrinsic_filename << " doesn't exist." << std::endl;
+    return EXIT_FAILURE;
+  }
+  else {
+    vpXmlParserCamera parser;
+    if (!opt_camera_name.empty()) {
+
+      std::cout << "    Param file name [.xml]: " << opt_intrinsic_filename << std::endl;
+      std::cout << "    Camera name           : " << opt_camera_name << std::endl;
+
+      if (parser.parse(cam, opt_intrinsic_filename, opt_camera_name, vpCameraParameters::perspectiveProjWithDistortion) !=
+        vpXmlParserCamera::SEQUENCE_OK) {
+        std::cout << "Unable to parse parameters with distortion for camera \"" << opt_camera_name << "\" from "
+          << opt_intrinsic_filename << " file" << std::endl;
+        std::cout << "Attempt to find parameters without distortion" << std::endl;
+
+        if (parser.parse(cam, opt_intrinsic_filename, opt_camera_name,
+                         vpCameraParameters::perspectiveProjWithoutDistortion) != vpXmlParserCamera::SEQUENCE_OK) {
+          std::cout << "Unable to parse parameters without distortion for camera \"" << opt_camera_name << "\" from "
+            << opt_intrinsic_filename << " file" << std::endl;
+          return EXIT_FAILURE;
+        }
+      }
+    }
+  }
+
+  std::cout << "Camera parameters used to compute the pose:\n" << cam << std::endl;
+
+  // Setup Apriltag detector
+  vpDetectorAprilTag::vpAprilTagFamily tagFamily = vpDetectorAprilTag::TAG_36h11;
+  vpDetectorAprilTag::vpPoseEstimationMethod poseEstimationMethod = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
+  // vpDetectorAprilTag::vpPoseEstimationMethod poseEstimationMethod = vpDetectorAprilTag::BEST_RESIDUAL_VIRTUAL_VS;
+  vpDetectorAprilTag detector(tagFamily);
+  detector.setAprilTagPoseEstimationMethod(poseEstimationMethod);
+  detector.setDisplayTag(display_tag);
+  detector.setAprilTagQuadDecimate(opt_quad_decimate);
+  detector.setZAlignedWithCameraAxis(opt_tag_z_aligned);
+
+  // Setup camera extrinsics
+  vpPoseVector e_P_c;
+  // Set camera extrinsics default values
+  e_P_c[0] = 0.0337731;
+  e_P_c[1] = -0.00535012;
+  e_P_c[2] = -0.0523339;
+  e_P_c[3] = -0.247294;
+  e_P_c[4] = -0.306729;
+  e_P_c[5] = 1.53055;
+
+  // If provided, read camera extrinsics from --eMc <file>
+  if (!opt_eMc_filename.empty()) {
+    e_P_c.loadYAML(opt_eMc_filename, e_P_c);
+  }
+  else {
+    std::cout << "Warning, opt_eMc_filename is empty! Use hard coded values." << std::endl;
+  }
+  vpHomogeneousMatrix e_M_c(e_P_c);
+  std::cout << "e_M_c:\n" << e_M_c << std::endl;
+
+  // Desired pose to reach
+  vpHomogeneousMatrix cd_M_o(vpTranslationVector(0, 0, opt_tag_size * 3), // 3 times tag with along camera z axis
+                             vpRotationMatrix({ 1, 0, 0, 0, -1, 0, 0, 0, -1 }));
+
+  vpRobotFranka robot;
 
   try {
     robot.connect(opt_robot_ip);
 
-    vpRealSense2 rs;
-    rs2::config config;
-    unsigned int width = 640, height = 480;
-    config.enable_stream(RS2_STREAM_COLOR, 640, 480, RS2_FORMAT_RGBA8, 30);
-    config.enable_stream(RS2_STREAM_DEPTH, 640, 480, RS2_FORMAT_Z16, 30);
-    config.enable_stream(RS2_STREAM_INFRARED, 640, 480, RS2_FORMAT_Y8, 30);
-    rs.open(config);
-
-    // Get camera extrinsics
-    vpPoseVector ePc;
-    // Set camera extrinsics default values
-    ePc[0] = 0.0337731;
-    ePc[1] = -0.00535012;
-    ePc[2] = -0.0523339;
-    ePc[3] = -0.247294;
-    ePc[4] = -0.306729;
-    ePc[5] = 1.53055;
-
-    // If provided, read camera extrinsics from --eMc <file>
-    if (!opt_eMc_filename.empty()) {
-      ePc.loadYAML(opt_eMc_filename, ePc);
-    }
-    else {
-      std::cout << "Warning, opt_eMc_filename is empty! Use hard coded values." << std::endl;
-    }
-    vpHomogeneousMatrix eMc(ePc);
-    std::cout << "eMc:\n" << eMc << std::endl;
-
-    // Get camera intrinsics
-    vpCameraParameters cam = rs.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithDistortion);
-    std::cout << "cam:\n" << cam << std::endl;
-
-    vpImage<unsigned char> I(height, width);
-
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-    display = vpDisplayFactory::createDisplay(I, 10, 10, "Color image");
-#else
-    display = vpDisplayFactory::allocateDisplay(I, 10, 10, "Color image");
-#endif
-
-    vpDetectorAprilTag::vpAprilTagFamily tagFamily = vpDetectorAprilTag::TAG_36h11;
-    vpDetectorAprilTag::vpPoseEstimationMethod poseEstimationMethod = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
-    // vpDetectorAprilTag::vpPoseEstimationMethod poseEstimationMethod = vpDetectorAprilTag::BEST_RESIDUAL_VIRTUAL_VS;
-    vpDetectorAprilTag detector(tagFamily);
-    detector.setAprilTagPoseEstimationMethod(poseEstimationMethod);
-    detector.setDisplayTag(display_tag);
-    detector.setAprilTagQuadDecimate(opt_quad_decimate);
-
-    // Servo
-    vpHomogeneousMatrix cdMc, cMo, oMo;
-
-    // Desired pose to reach
-    vpHomogeneousMatrix cdMo(vpTranslationVector(0, 0, opt_tagSize * 3), // 3 times tag with along camera z axis
-                             vpRotationMatrix({ 1, 0, 0, 0, -1, 0, 0, 0, -1 }));
-
-    cdMc = cdMo * cMo.inverse();
+    // Create visual features based on cd_M_c
     vpFeatureTranslation t(vpFeatureTranslation::cdMc);
     vpFeatureThetaU tu(vpFeatureThetaU::cdRc);
-    t.buildFrom(cdMc);
-    tu.buildFrom(cdMc);
 
     vpFeatureTranslation td(vpFeatureTranslation::cdMc);
     vpFeatureThetaU tud(vpFeatureThetaU::cdRc);
 
+    // Setup PBVS
     vpServo task;
     task.addFeature(t, td);
     task.addFeature(tu, tud);
@@ -321,8 +382,10 @@ int main(int argc, char **argv)
 
     static double t_init_servo = vpTime::measureTimeMs();
 
-    robot.set_eMc(eMc); // Set location of the camera wrt end-effector frame
+    robot.set_eMc(e_M_c); // Set location of the camera wrt end-effector frame
     robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
+
+    vpHomogeneousMatrix cd_M_c, c_M_o, o_M_o;
 
     while (!has_converged && !final_quit) {
       double t_start = vpTime::measureTimeMs();
@@ -331,8 +394,8 @@ int main(int argc, char **argv)
 
       vpDisplay::display(I);
 
-      std::vector<vpHomogeneousMatrix> cMo_vec;
-      detector.detect(I, opt_tagSize, cam, cMo_vec);
+      std::vector<vpHomogeneousMatrix> c_M_o_vec;
+      bool ret = detector.detect(I, opt_tag_size, cam, c_M_o_vec);
 
       std::stringstream ss;
       ss << "Left click to " << (send_velocities ? "stop the robot" : "servo the robot") << ", right click to quit.";
@@ -341,30 +404,30 @@ int main(int argc, char **argv)
       vpColVector v_c(6);
 
       // Only one tag is detected
-      if (cMo_vec.size() == 1) {
-        cMo = cMo_vec[0];
+      if (ret && (c_M_o_vec.size() == 1)) {
+        c_M_o = c_M_o_vec[0];
 
         static bool first_time = true;
         if (first_time) {
           // Introduce security wrt tag positioning in order to avoid PI rotation
-          std::vector<vpHomogeneousMatrix> v_oMo(2), v_cdMc(2);
-          v_oMo[1].buildFrom(0, 0, 0, 0, 0, M_PI);
-          for (size_t i = 0; i < 2; i++) {
-            v_cdMc[i] = cdMo * v_oMo[i] * cMo.inverse();
+          std::vector<vpHomogeneousMatrix> secure_o_M_o(2), secure_cd_M_c(2);
+          secure_o_M_o[1].buildFrom(0, 0, 0, 0, 0, M_PI);
+          for (size_t i = 0; i < 2; ++i) {
+            secure_cd_M_c[i] = cd_M_o * secure_o_M_o[i] * c_M_o.inverse();
           }
-          if (std::fabs(v_cdMc[0].getThetaUVector().getTheta()) < std::fabs(v_cdMc[1].getThetaUVector().getTheta())) {
-            oMo = v_oMo[0];
+          if (std::fabs(secure_cd_M_c[0].getThetaUVector().getTheta()) < std::fabs(secure_cd_M_c[1].getThetaUVector().getTheta())) {
+            o_M_o = secure_o_M_o[0];
           }
           else {
             std::cout << "Desired frame modified to avoid PI rotation of the camera" << std::endl;
-            oMo = v_oMo[1]; // Introduce PI rotation
+            o_M_o = secure_o_M_o[1]; // Introduce PI rotation
           }
         }
 
         // Update visual features
-        cdMc = cdMo * oMo * cMo.inverse();
-        t.buildFrom(cdMc);
-        tu.buildFrom(cdMc);
+        cd_M_c = cd_M_o * o_M_o * c_M_o.inverse();
+        t.buildFrom(cd_M_c);
+        tu.buildFrom(cd_M_c);
 
         if (opt_task_sequencing) {
           if (!servo_started) {
@@ -380,8 +443,8 @@ int main(int argc, char **argv)
         }
 
         // Display desired and current pose features
-        vpDisplay::displayFrame(I, cdMo * oMo, cam, opt_tagSize / 1.5, vpColor::yellow, 2);
-        vpDisplay::displayFrame(I, cMo, cam, opt_tagSize / 2, vpColor::none, 3);
+        vpDisplay::displayFrame(I, cd_M_o * o_M_o, cam, opt_tag_size / 1.5, vpColor::yellow, 2);
+        vpDisplay::displayFrame(I, c_M_o, cam, opt_tag_size / 2, vpColor::none, 3);
         // Get tag corners
         std::vector<vpImagePoint> vip = detector.getPolygon(0);
         // Get the tag cog corresponding to the projection of the tag frame in the image
@@ -402,8 +465,8 @@ int main(int argc, char **argv)
           std::cout << "v_c: " << v_c.t() << std::endl;
         }
 
-        vpTranslationVector cd_t_c = cdMc.getTranslationVector();
-        vpThetaUVector cd_tu_c = cdMc.getThetaUVector();
+        vpTranslationVector cd_t_c = cd_M_c.getTranslationVector();
+        vpThetaUVector cd_tu_c = cd_M_c.getThetaUVector();
         double error_tr = sqrt(cd_t_c.sumSquare());
         double error_tu = vpMath::deg(sqrt(cd_tu_c.sumSquare()));
 
@@ -427,7 +490,7 @@ int main(int argc, char **argv)
         if (first_time) {
           first_time = false;
         }
-      } // end if (cMo_vec.size() == 1)
+      } // end if (c_M_o_vec.size() == 1)
       else {
         v_c = 0;
       }
@@ -533,10 +596,13 @@ int main(int argc, char **argv)
 int main()
 {
 #if !defined(VISP_HAVE_REALSENSE2)
-  std::cout << "Install librealsense-2.x" << std::endl;
+  std::cout << "Install librealsense-2.x and rebuild ViSP." << std::endl;
 #endif
 #if !defined(VISP_HAVE_FRANKA)
-  std::cout << "Install libfranka." << std::endl;
+  std::cout << "Install libfranka and rebuild ViSP." << std::endl;
+#endif
+#if !defined(VISP_HAVE_PUGIXML)
+  std::cout << "Build ViSP with pugixml support enabled." << std::endl;
 #endif
   return EXIT_SUCCESS;
 }
