@@ -154,34 +154,34 @@ public:
      */
     NONE,
     /*!
-     * Eye in hand visual servoing with the following control law
+     * Eye-in-hand visual servoing with the following control law
      * \f[{\bf v}_c = -\lambda {\widehat {\bf L}}^{+}_{e} {\bf e}\f]
      * where camera velocities are computed.
      */
     EYEINHAND_CAMERA,
     /*!
-     * Eye in hand visual servoing with the following control law
+     * Eye-in-hand visual servoing with the following control law
      * \f[{\dot {\bf q}} = -\lambda \left( {{\widehat {\bf L}}_{e} {^c}{\bf
      * V}_e {^e}{\bf J}_e} \right)^{+} {\bf e}\f] where joint velocities are
      * computed.
      */
     EYEINHAND_L_cVe_eJe,
     /*!
-     * Eye to hand visual servoing with the following control law
+     * Eye-to-hand visual servoing with the following control law
      * \f[{\dot {\bf q}} = \lambda \left( {{\widehat {\bf L}}_{e} {^c}{\bf V}_e
      * {^e}{\bf J}_e} \right)^{+} {\bf e}\f] where joint velocities are
      * computed.
      */
     EYETOHAND_L_cVe_eJe,
     /*!
-     * Eye to hand visual servoing with the following control law
+     * Eye-to-hand visual servoing with the following control law
      * \f[{\dot {\bf q}} = \lambda \left( {{\widehat {\bf L}}_{e} {^c}{\bf V}_f
      * {^f}{\bf V}_e {^e}{\bf J}_e} \right)^{+} {\bf e}\f] where joint
      * velocities are computed.
      */
     EYETOHAND_L_cVf_fVe_eJe,
     /*!
-     * Eye to hand visual servoing with the following control law
+     * Eye-to-hand visual servoing with the following control law
      * \f[{\dot {\bf q}} = \lambda \left( {{\widehat {\bf L}}_{e} {^c}{\bf V}_f
      * {^f}{\bf J}_e} \right)^{+} {\bf e}\f] where joint velocities are
      * computed.
@@ -394,7 +394,7 @@ public:
    * where :
    * - \f${\bf \dot q}\f$ is the resulting velocity command to apply to the
    *   robot.
-   * - the sign of the control law depends on the eye in hand or eye to hand
+   * - the sign of the control law depends on the eye-in-hand or eye-to-hand
    *   configuration.
    * - \f$\bf J\f$ is the Jacobian of the task. It is function of the interaction
    *   matrix and of the robot Jacobian.
@@ -425,7 +425,7 @@ public:
    * where :
    * - \f${\bf \dot q}\f$ is the resulting continuous velocity command to apply
    *   to the robot.
-   * - the sign of the control law depends on the eye in hand or eye to hand
+   * - the sign of the control law depends on the eye-in-hand or eye-to-hand
    *   configuration.
    * - \f$\bf J\f$ is the Jacobian of the task. It is function of the interaction
    *   matrix and of the robot Jacobian.
@@ -461,7 +461,7 @@ public:
    * where :
    * - \f${\bf \dot q}\f$ is the resulting continuous velocity command to apply
    *   to the robot.
-   * - the sign of the control law depends on the eye in hand or eye to hand
+   * - the sign of the control law depends on the eye-in-hand or eye-to-hand
    *   configuration.
    * - \f$\bf J\f$ is the Jacobian of the task. It is function of the interaction
    *   matrix and of the robot Jacobian.
