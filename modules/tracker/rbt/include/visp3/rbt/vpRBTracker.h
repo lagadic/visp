@@ -169,7 +169,7 @@ public:
    * Get verbosity mode.
    * \return true when verbosity is enabled, false otherwise.
    */
-  inline bool getVerbose()
+  inline bool getVerbose() const
   {
     return m_verbose;
   }
@@ -211,7 +211,7 @@ public:
    * @{
    */
   void displayMask(vpImage<unsigned char> &Imask) const;
-  void display(const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth);
+  void display(const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth, const bool &displaySilhouette = false);
   /**
    * @}
    */
