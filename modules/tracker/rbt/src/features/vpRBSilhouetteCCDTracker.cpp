@@ -833,6 +833,10 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
     m_sigma = m_ccdParameters.covarianceIterDecreaseFactor * m_sigma + 2.0 * (1.0 - m_ccdParameters.covarianceIterDecreaseFactor) * hessian_E_inv;
   }
   catch (vpException &e) {
+    m_numFeatures = 0;
+    m_weighted_error = 0;
+    m_LTL = 0;
+    m_LTR = 0;
     std::cerr << "Inversion issues in CCD tracker" << std::endl;
   }
 
