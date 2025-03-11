@@ -34,6 +34,7 @@
 #include <visp3/core/vpRobust.h>
 
 #define VISP_DEBUG_RB_CONTROL_POINT 1
+#define DEGENERATE_LINE_THRESHOLD 1e-5
 
 BEGIN_VISP_NAMESPACE
 
@@ -512,7 +513,7 @@ bool vpRBSilhouetteControlPoint::isLineDegenerate() const
   a = line.cP[4] * line.cP[3] - line.cP[0] * line.cP[7];
   b = line.cP[5] * line.cP[3] - line.cP[1] * line.cP[7];
   d = a*a + b*b;
-  return d <= 1e-7;
+  return d <= DEGENERATE_LINE_THRESHOLD;
 }
 
 END_VISP_NAMESPACE
