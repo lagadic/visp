@@ -113,7 +113,7 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
         const float poPix = m_probaObject[i][j];
         const float pbPix = m_probaBackground[i][j];
         if (pbPix == 0.f) {
-          mask[i][j] = poPix;
+          mask[i][j] = 1.f;
         }
         else {
           const float score = poPix / pbPix;
@@ -130,7 +130,7 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
       const float pbPix = m_probaBackground.bitmap[i];
 
       if (pbPix == 0.f) {
-        mask.bitmap[i] = poPix;
+        mask.bitmap[i] = 1.f;
       }
       else {
         const float score = poPix / pbPix;
