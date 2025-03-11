@@ -751,7 +751,7 @@ int main()
   std::cout << "Install librealsense-2.x and rebuild ViSP." << std::endl;
 #endif
 #if !defined(VISP_HAVE_FRANKA)
-  std::cout << "Install libfrankaand rebuild ViSP." << std::endl;
+  std::cout << "Install libfranka and rebuild ViSP." << std::endl;
 #endif
 #if !defined(VISP_HAVE_PUGIXML)
   std::cout << "Build ViSP with pugixml support enabled." << std::endl;
