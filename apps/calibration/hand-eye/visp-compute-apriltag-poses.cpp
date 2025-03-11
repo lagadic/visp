@@ -250,6 +250,10 @@ int main(int argc, const char **argv)
 
       vpImageConvert::convert(I, I_gray);
 
+#if defined(VISP_HAVE_MODULE_GUI)
+      vpDisplay::display(I);
+#endif
+
       std::vector<vpHomogeneousMatrix> cMo_vec;
       detector.detect(I_gray, opt_tag_size, cam, cMo_vec);
 
@@ -268,8 +272,6 @@ int main(int argc, const char **argv)
 #if defined(VISP_HAVE_MODULE_GUI)
       if (opt_interactive) {
         vpDisplay::setTitle(I, reader.getFrameName());
-        vpDisplay::displayText(I, 20, 20, "Right click to quit.", vpColor::red);
-        vpDisplay::display(I);
         vpDisplay::displayText(I, 20, 20, "Left click for the next image, right click to quit.", vpColor::red);
         if (found) {
           vpDisplay::displayFrame(I, cMo, cam, opt_tag_size / 2, vpColor::none, 3);
