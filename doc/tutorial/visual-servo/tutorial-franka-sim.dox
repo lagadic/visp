@@ -5,7 +5,7 @@
 \section franka_sim_intro Introduction
 
 FrankaSim is a new open-source simulator based on [ROS](https://wiki.ros.org) and
-[CoppeliaSim](https://www.coppeliarobotics.com/) for the popular [Franka Emika](https://www.franka.de/) Panda robot fully integrated
+[CoppeliaSim](https://www.coppeliarobotics.com/) for the popular [Franka Emika](https://franka.de/) Panda robot fully integrated
 in the ViSP ecosystem. The
 simulator features a dynamic model that has been accurately identified
 from a real Panda robot, leading to more realistic

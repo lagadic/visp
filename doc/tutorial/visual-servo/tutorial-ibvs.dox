@@ -1,6 +1,6 @@
 /**
 
-\page tutorial-ibvs Tutorial: Image-based visual servo
+\page tutorial-ibvs Tutorial: Image-based visual servo (IBVS)
 \tableofcontents
 
 \section ibvs_intro Introduction
@@ -102,7 +102,7 @@ Then we define four 3D points that represent the corners of a 20cm by 20cm squar
   point[3].setWorldCoordinates(-0.1, 0.1, 0);
 \endcode
 
-The instantiation of the visual servo task is done with the next lines. We initialize the task as an eye in hand
+The instantiation of the visual servo task is done with the next lines. We initialize the task as an eye-in-hand
 visual servo. Resulting velocities computed by the controller are those that should be applied in the camera frame:
 \f$ {\bf v}_c \f$. The interaction matrix will be computed from the current visual features. Thus they need to
 be updated at each iteration of the control loop. Finally, the constant gain  \f$ \lambda\f$ is set to 0.5.
