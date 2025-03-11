@@ -1,9 +1,7 @@
 //! \example tutorial-mb-edge-tracker.cpp
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpIoTools.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
 //! [Include]
 #include <visp3/mbt/vpMbEdgeTracker.h>
@@ -12,11 +10,16 @@
 
 int main(int argc, char **argv)
 {
-#if defined(VISP_HAVE_OPENCV)
+#if defined(VISP_HAVE_OPENCV) && defined(VISP_HAVE_DISPLAY)
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
 #endif
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display = vpDisplayFactory::createDisplay();
+#else
+  vpDisplay *display = vpDisplayFactory::allocateDisplay();
+#endif
   try {
     std::string videoname = "teabox.mp4";
 
@@ -28,6 +31,11 @@ int main(int argc, char **argv)
         std::cout << "\nUsage: " << argv[0]
           << " [--name <video name>]"
           << " [--help,-h]\n" << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+        if (display != nullptr) {
+          delete display;
+        }
+#endif
         return EXIT_SUCCESS;
       }
     }
@@ -55,18 +63,7 @@ int main(int argc, char **argv)
     g.setFileName(videoname);
     g.open(I);
 
-#if defined(VISP_HAVE_X11)
-    vpDisplayX display;
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI display;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV display;
-#else
-    std::cout << "No image viewer is available..." << std::endl;
-    return EXIT_FAILURE;
-#endif
-
-    display.init(I, 100, 100, "Model-based edge tracker");
+    display->init(I, 100, 100, "Model-based edge tracker");
 
     //! [Constructor]
     vpMbEdgeTracker tracker;
@@ -153,6 +150,11 @@ int main(int argc, char **argv)
 #ifdef VISP_HAVE_OGRE
   catch (Ogre::Exception &e) {
     std::cout << "Catch an Ogre exception: " << e.getDescription() << std::endl;
+  }
+#endif
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (display != nullptr) {
+    delete display;
   }
 #endif
 #else

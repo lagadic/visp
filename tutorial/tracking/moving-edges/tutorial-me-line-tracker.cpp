@@ -30,9 +30,7 @@
 //! [camera headers]
 #endif
 //! [display headers]
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 //! [display headers]
 //! [me line headers]
 #include <visp3/me/vpMeLine.h>
@@ -49,6 +47,13 @@ int main()
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
 #endif
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display;
+#else
+  vpDisplay *display = nullptr;
+#endif
+
   try {
     //! [image container]
     vpImage<unsigned char> I;
@@ -111,12 +116,12 @@ int main()
     //! [first image acquisition]
 
     //! [display container]
-#if defined(VISP_HAVE_X11)
-    vpDisplayX d(I, 0, 0, "Camera view");
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI d(I, 0, 0, "Camera view");
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV d(I, 0, 0, "Camera view");
+#if defined(VISP_HAVE_DISPLAY)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    display = vpDisplayFactory::createDisplay(I, 0, 0, "Camera view");
+#else
+    display = vpDisplayFactory::allocateDisplay(I, 0, 0, "Camera view");
+#endif
 #else
     std::cout << "No image viewer is available..." << std::endl;
 #endif
@@ -164,6 +169,11 @@ int main()
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (display != nullptr) {
+    delete display;
+  }
+#endif
 }
 
 #else
@@ -178,5 +188,5 @@ int main()
   std::cout << "Install OpenCV 3rd party, configure and build ViSP again to use this tutorial." << std::endl;
 #endif
   return EXIT_SUCCESS;
-}
+  }
 #endif

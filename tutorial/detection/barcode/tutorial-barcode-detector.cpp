@@ -3,30 +3,31 @@
 #include <visp3/detection/vpDetectorDataMatrixCode.h>
 #include <visp3/detection/vpDetectorQRCode.h>
 //! [Include]
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
 
 int main(int argc, const char **argv)
 {
 //! [Macro defined]
 #if (defined(VISP_HAVE_ZBAR) || defined(VISP_HAVE_DMTX)) && \
-    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+    defined(VISP_HAVE_DISPLAY)
   //! [Macro defined]
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
+#endif
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display;
+#else
+  vpDisplay *display = nullptr;
 #endif
   try {
     vpImage<unsigned char> I;
     vpImageIo::read(I, "bar-code.pgm");
 
-#ifdef VISP_HAVE_X11
-    vpDisplayX d(I);
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI d(I);
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV d(I);
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    display = vpDisplayFactory::createDisplay(I);
+#else
+    display = vpDisplayFactory::allocateDisplay(I);
 #endif
 
     //! [Create base detector]
@@ -101,8 +102,13 @@ int main(int argc, const char **argv)
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
   }
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (display != nullptr) {
+    delete display;
+}
+#endif
 #else
   (void)argc;
   (void)argv;
 #endif
-}
+    }

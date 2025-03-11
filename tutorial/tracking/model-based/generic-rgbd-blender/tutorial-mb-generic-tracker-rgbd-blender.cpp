@@ -5,9 +5,7 @@
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpXmlParserCamera.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/mbt/vpMbGenericTracker.h>
 
@@ -319,18 +317,22 @@ int main(int argc, const char **argv)
             I, I_depth_raw, depth_width, depth_height, pointcloud, cam_depth, cMo_ground_truth);
   vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
 
-#if defined(VISP_HAVE_X11)
-  vpDisplayX d1, d2;
-#elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI d1, d2;
-#elif defined (HAVE_OPENCV_HIGHGUI)
-  vpDisplayOpenCV d1, d2;
+#if defined(VISP_HAVE_DISPLAY)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display1 = vpDisplayFactory::createDisplay();
+  std::shared_ptr<vpDisplay> display2 = vpDisplayFactory::createDisplay();
+#else
+  vpDisplay *display1 = vpDisplayFactory::allocateDisplay();
+  vpDisplay *display2 = vpDisplayFactory::allocateDisplay();
 #endif
 
-  d1.init(I, 0, 0, "Color image");
+  display1->init(I, 0, 0, "Color image");
   if (!disable_depth) {
-    d2.init(I_depth, static_cast<int>(I.getWidth()), 0, "Depth image");
+    display2->init(I_depth, static_cast<int>(I.getWidth()), 0, "Depth image");
   }
+#endif
+
+
 
   vpHomogeneousMatrix depth_M_color;
   if (!disable_depth) {
@@ -448,8 +450,17 @@ int main(int argc, const char **argv)
     std::cerr << "Catch exception: " << e.what() << std::endl;
   }
 
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11) && defined(VISP_HAVE_DISPLAY)
+  if (display1 != nullptr) {
+    delete display1;
+  }
+  if (display2 != nullptr) {
+    delete display2;
+  }
+#endif
+
   return EXIT_SUCCESS;
-}
+  }
 #else
 int main()
 {

@@ -53,7 +53,7 @@ The following example also available in tutorial-apriltag-detector.cpp detects a
 
 \include tutorial-apriltag-detector.cpp
 
-The default behavior is to detect <a href="https://april.eecs.umich.edu/software/apriltag.html">36h11</a> marker in \c AprilTag.pgm image, but \c --tag_family \<family\> option allows considering other tags. To see which are the options, just run:
+The default behavior is to detect <a href="https://april.eecs.umich.edu/software/apriltag.html">36h11</a> marker in \c AprilTag.pgm image, but \c --tag-family \<family\> option allows considering other tags. To see which are the options, just run:
 \code
 $ ./tutorial-apriltag-detector --help
 \endcode
@@ -119,12 +119,12 @@ This other example also available in tutorial-apriltag-detector-live.cpp shows h
 \include tutorial-apriltag-detector-live.cpp
 
 The usage of this example is similar to the previous one:
-- with option \c --tag_family you select the kind of tag that you want to detect.
+- with option \c --tag-family you select the kind of tag that you want to detect.
 - if more than one camera is connected to you computer, with option \c --input you can select which camera to use. The first camera that is found has number 0.
 
 To detect 36h11 tags on images acquired by a second camera connected to your computer use:
 \code
-$ ./tutorial-apriltag-detector-live --tag_family 0 --input 1
+$ ./tutorial-apriltag-detector-live --tag-family 0 --input 1
 \endcode
 
 The source code of this example is very similar to the previous one except that here we use camera framegrabber devices (see \ref tutorial-grabber). Two different grabber may be used:

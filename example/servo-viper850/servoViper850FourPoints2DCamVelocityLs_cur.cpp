@@ -63,9 +63,7 @@
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpPoint.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/robot/vpRobotViper850.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 #include <visp3/vision/vpPose.h>
@@ -159,6 +157,12 @@ int main()
   // Open the log file name
   std::ofstream flog(logfilename.c_str());
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display;
+#else
+  vpDisplay *display = nullptr;
+#endif
+
   try {
     vpRobotViper850 robot;
     // Load the end-effector to camera frame transformation obtained
@@ -179,12 +183,10 @@ int main()
 
     g.acquire(I);
 
-#ifdef VISP_HAVE_X11
-    vpDisplayX display(I, 100, 100, "Current image");
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV display(I, 100, 100, "Current image");
-#elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK display(I, 100, 100, "Current image");
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    display = vpDisplayFactory::createDisplay(I, 100, 100, "Current image");
+#else
+    display = vpDisplayFactory::allocateDisplay(I, 100, 100, "Current image");
 #endif
 
     vpDisplay::display(I);
@@ -296,6 +298,11 @@ int main()
         flog.close(); // Close the log file
         vpTRACE("Error detected while tracking visual features");
         robot.stopMotion();
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+        if (display != nullptr) {
+          delete display;
+        }
+#endif
         return EXIT_FAILURE;
       }
 
@@ -367,11 +374,21 @@ int main()
     std::cout << "Display task information: " << std::endl;
     task.print();
     flog.close(); // Close the log file
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+    }
+#endif
     return EXIT_SUCCESS;
   }
   catch (const vpException &e) {
     flog.close(); // Close the log file
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+  }
+#endif
     return EXIT_FAILURE;
   }
 }

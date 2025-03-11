@@ -58,11 +58,7 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpMath.h>
-#include <visp3/gui/vpDisplayD3D.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/gui/vpProjectionDisplay.h>
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/robot/vpSimulatorCamera.h>
@@ -172,6 +168,16 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display,
 
 int main(int argc, const char **argv)
 {
+  // We declare the windows variables to be able to free the memory in the catch sections if needed
+#ifdef VISP_HAVE_DISPLAY
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> displayInt;
+  std::shared_ptr<vpDisplay> displayExt;
+#else
+  vpDisplay *displayInt = nullptr;
+  vpDisplay *displayExt = nullptr;
+#endif
+#endif
 #if (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
   try {
     bool opt_display = true;
@@ -186,32 +192,17 @@ int main(int argc, const char **argv)
     vpImage<unsigned char> Iint(512, 512, 0);
     vpImage<unsigned char> Iext(512, 512, 0);
 
-// We open a window if a display is available
-#ifdef VISP_HAVE_DISPLAY
-#if defined(VISP_HAVE_X11)
-    vpDisplayX displayInt;
-    vpDisplayX displayExt;
-#elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK displayInt;
-    vpDisplayGTK displayExt;
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI displayInt;
-    vpDisplayGDI displayExt;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV displayInt;
-    vpDisplayOpenCV displayExt;
-#elif defined(VISP_HAVE_D3D9)
-    vpDisplayD3D displayInt;
-    vpDisplayD3D displayExt;
-#endif
-#endif
-
     if (opt_display) {
 #ifdef VISP_HAVE_DISPLAY
       // Display size is automatically defined by the image (Iint) and
       // (Iext) size
-      displayInt.init(Iint, 100, 100, "Internal view");
-      displayExt.init(Iext, 130 + static_cast<int>(Iint.getWidth()), 100, "External view");
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+      displayInt = vpDisplayFactory::createDisplay(Iint, 100, 100, "Internal view");
+      displayExt = vpDisplayFactory::createDisplay(Iext, 130 + static_cast<int>(Iint.getWidth()), 100, "External view");
+#else
+      displayInt = vpDisplayFactory::allocateDisplay(Iint, 100, 100, "Internal view");
+      displayExt = vpDisplayFactory::allocateDisplay(Iext, 130 + static_cast<int>(Iint.getWidth()), 100, "External view");
+#endif
 #endif
       // Display the image
       // The image class has a member that specify a pointer toward
@@ -467,10 +458,26 @@ int main(int argc, const char **argv)
 
     // Display task information
     task.print();
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11) && defined(VISP_HAVE_DISPLAY)
+    if (displayInt != nullptr) {
+      delete displayInt;
+    }
+    if (displayExt != nullptr) {
+      delete displayExt;
+    }
+#endif
     return EXIT_SUCCESS;
   }
   catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11) && defined(VISP_HAVE_DISPLAY)
+    if (displayInt != nullptr) {
+      delete displayInt;
+    }
+    if (displayExt != nullptr) {
+      delete displayExt;
+    }
+#endif
     return EXIT_FAILURE;
   }
 #else
@@ -479,4 +486,4 @@ int main(int argc, const char **argv)
   std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
   return EXIT_SUCCESS;
 #endif
-  }
+}

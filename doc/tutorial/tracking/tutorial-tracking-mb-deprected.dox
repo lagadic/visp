@@ -555,7 +555,7 @@ the dashed blue lines, that are not visible, will also be used during the tracki
 detected inside the overlapping area won't be well associated and can disturb the algorithm.
 
 \note Since ViSP 3.0.0 we have introduced vpMbTracker::setOgreShowConfigDialog() method that allows to open the Ogre
-configuration pannel which can be used to select the renderer. To enable this feature, use:
+configuration panel which can be used to select the renderer. To enable this feature, use:
 
 \code
   tracker->setOgreShowConfigDialog(true);

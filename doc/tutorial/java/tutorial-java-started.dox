@@ -3,29 +3,35 @@
 \page tutorial-java-started Tutorial: First java application with ViSP
 \tableofcontents
 
-\section java_started_intro Introduction
+\section java_started_intro 1. Introduction
 
 We assume that you have already followed the previous tutorial \ref tutorial-install-java.
 
 This tutorial will guide you through the creation of a simple Java console application using ViSP library in Eclipse.
 
-\section java_started_create_project Create a new project
+\section java_started_create_project 2. Create a new project
 
-Open Eclipse and create a new Java project entering `"File > New > Java Project"` menu.
-
+- Open Eclipse and create a new Java project entering `"File > New > Java Project"` menu.
 \image html img-tutorial-java-eclipse-create-new-project.jpeg
 
-In the `"New Java Project"` dialog write the name of your project (let say `visp-java-started`). In JRE section, select the appropriate execution environment (JavaSE-17 if you install JDK 17, or JavaSE-15 if you install JDK 15 or JavaSE-11 if you install JDK 11). Then press `"Finish"` button.
+- In the `"New Java Project"` dialog write the name of your project (let say `visp_java_started`). In JRE section,
+  select the appropriate execution environment corresponding to the version of your JDK
+  (ie. JavaSE-23 if you install JDK 23, JavaSE-21 if you install JDK 21 LTS, ...). Then press `"Finish"` button.
+\image html img-tutorial-java-eclipse-java-started.jpg
+\note We recall that on Ubuntu 24.04, we recommend to install JDK 21 LTS. Thus in JRE section you have to select
+JavaSE-21. At the time this tutorial was updated, installing JDK 23 on Ubuntu, and selecting JavaSE-23 doesn't allow
+to add `"JRE System Library [JavaSE-23]"` part of the project.
 
-\image html img-tutorial-java-eclipse-java-started.jpeg
+- In the left panel, open the "Package Explorer" and expand the "src" folder
+\image html img-tutorial-java-eclipse-java-started-explorer.jpg
 
-In the "New module-info.java" dialog that may appear, press `"Don't Create"` button.
+- Remove `module-info.java` file from your project.
+\image html img-tutorial-java-eclipse-java-started-empty.jpg
 
-\image html img-tutorial-java-eclipse-dont-create.jpeg
+\section java_started_user_lib 3. Add a user library
 
-\section java_started_user_lib Add a user library
-
-If you followed \ref tutorial-install-java, you should already have ViSP library set in your workspace’s user libraries; if not please check out \ref tutorial-install-java. Now you should be ready to add ViSP library to your project.
+If you followed \ref tutorial-install-java, you should already have ViSP library set in your workspace’s user libraries;
+if not please check out \ref tutorial-install-java. Now you should be ready to add ViSP library to your project.
 
 - Inside Eclipse’s Package Explorer just right-click on your project’s folder and go to `"Build Path > Add Libraries..."`.
 
@@ -35,82 +41,143 @@ If you followed \ref tutorial-install-java, you should already have ViSP library
 
 \image html img-tutorial-java-eclipse-add-libraries2.jpeg
 
-- Check the checkbox of the ViSP library and press `"Finish"` button. At this point, if you don't see `visp`, it means that you didn't follow the section \ref create_user_library.
+- Check the checkbox of the ViSP library and press `"Finish"` button. At this point, if you don't see `visp`, it means
+that you didn't follow the section \ref create_user_library.
 
 \image html img-tutorial-java-eclipse-add-libraries3.jpeg
 
-\section java_started_simple_app Create a simple application
+- In the "Package Explorer" panel, you should see "visp" library
+\image html img-tutorial-java-eclipse-add-libraries4.jpg
+
+\section java_started_simple_app 4. Create a simple application
 
 To create a simple application that uses ViSP:
 
 - First add a new class to your project by right-clicking on your project’s folder and entering `"New > Class"` menu.
-
 \image html img-tutorial-java-eclipse-new-class.jpeg
 
 - Then choose a class name like `Started` and press `"Finish"` button.
+\image html img-tutorial-java-eclipse-new-class2.jpg
 
-\image html img-tutorial-java-eclipse-new-class2.jpeg
+- Once `"Finish"` button is pressed you should see something similar to the following:
+\image html img-tutorial-java-eclipse-new-class2-empty.jpg
 
-Now we are ready to add the code of our first application in `Started.java` file. The code of the `Started` class is the following:
+- Now we are ready to add the code of our first application in `Started.java` file. The code of the `Started` class is
+  the following:
 \include Started.java
 
-- As you can see, at the beginning we import the main classes part of `core` module (VpCameraParameters, VpColVector, VpImageRGBa, VpImageUChar, VpMatrix and VpRGBa). Then we load `visp_java` library. After we continue defining the `main()` method that shows how to manipulate ViSP classes in Java.
+- As you can see, at the beginning we import the main classes part of `core` module (VpCameraParameters, VpColVector,
+  VpImageRGBa, VpImageUChar, VpMatrix and VpRGBa). Then we load `visp_java` library. After we continue defining the
+  `main()` method that shows how to manipulate ViSP classes in Java.
 
-- Now you should copy/paste the code in your `visp-java-started` project in `Started.java` file to have something similar to:
-
-\image html img-tutorial-java-eclipse-started-code.jpeg
+- Now you should copy/paste the code in your `visp_java_started` project in `Started.java` file to have something
+  similar to:
+\image html img-tutorial-java-eclipse-started-code.jpg
 
 - You can now try to build and run this application entering`"Run > Run"` menu. You should have the following output:
 
 \image html img-tutorial-java-eclipse-started-console.jpeg
 
-\section java_started_issues Known issues
+\section java_started_issues 5. Known issues
 
-\subsection java_started_issue_jre Exception Unsupported Class Version Error
+\subsection java_started_issue_jre 5.1. Exception Unsupported Class Version Error
 
 As shown in the next image, if you get the following issue on Ubuntu 18.04:
-\verbatim
-Exception in thread "main" java.lang.UnsupportedClassVersionError: org/visp/core/VpMatrix has been compiled by a more recent version of the Java Runtime (class file version 57.0), this version of the Java Runtime only recognizes class file versions up to 55.0
-\endverbatim
+\code{.sh}
+Exception in thread "main" java.lang.UnsupportedClassVersionError: org/visp/core/VpMatrix has been compiled by a more
+recent version of the Java Runtime (class file version 57.0), this version of the Java Runtime only recognizes class
+file versions up to 55.0
+\endcode
 \image html img-tutorial-java-issue-jdk-version.jpg
-it means probably that you use JRE System Library 11 installed in `/usr/lib/jvm/java-1.11.0-openjdk-amd64` while ViSP is build with a more recent java version obtained after downloading JDK 13 for example.
+It means probably that you use JRE System Library 11 installed in `/usr/lib/jvm/java-1.11.0-openjdk-amd64` while ViSP
+is build with a more recent java version obtained after downloading JDK 13 for example.
 
 To fix this issue, as explained in \ref tutorial-install-java install JDK 11 and do a fresh ViSP build using java 11.
 
-\subsection java_started_issue_vsp_version Exception Unsatisfied Link Error
+\subsection java_started_issue_vsp_version 5.2 Exception Unsatisfied Link Error
 
 As shown in the next image, if you experience the following exception after entering `"Run > Run"` menu:
-\verbatim
-Exception in thread "main" java.lang.UnsatisfiedLinkError: no visp_java321 in java.library.path: [/home/fspindle/visp-ws/visp-build/lib]
-\endverbatim
+\code{.sh}
+Exception in thread "main" java.lang.UnsatisfiedLinkError: no visp_java321 in java.library.path: [/home/username/visp-ws/visp-build/lib]
+\endcode
 \image html img-tutorial-java-issue-visp-version.jpg
 
 - check that `visp-<version>.jar` is present in `$VISP_DIR/visp-build/bin`:
-\verbatim
+\code{.sh}
 $ ls $VISP_DIR/visp-build/bin
 visp-331.jar
-\endverbatim
-If this java archive is missing and if you follow \ref tutorial-install-java it means that JDK was not detected during CMake configuration or that you didn't build ViSP
+\endcode
+If this java archive is missing and if you follow \ref tutorial-install-java it means that JDK was not detected during
+CMake configuration or that you didn't build ViSP
 - modify the following line to match ViSP version present in `$VISP_DIR/visp-build/bin`
-\verbatim
+\code
     System.loadLibrary("visp_java331");
-\endverbatim
+\endcode
 
-\subsection java_started_issue_mkl Error running Java app with Intel MKL
+\subsection java_started_issue_mkl 5.3. Error running Java app with Intel MKL
 
 Running any Java app based on ViSP can lead to the following issue:
-\verbatim
+\code{.sh}
   INTEL MKL ERROR: /opt/intel/compilers_and_libraries_2020.0.166/linux/mkl/lib/intel64_lin/libmkl_avx2.so: undefined symbol: mkl_sparse_optimize_bsr_trsm_i8.
   Intel MKL FATAL ERROR: Cannot load libmkl_avx2.so or libmkl_def.so.
-\endverbatim
+\endcode
 
-There is no other satisfactory solution than to disable the use of Intel MKL 3rd party, configure and rebuilt ViSP libraries without MKL support.
+There is no other satisfactory solution than to disable the use of Intel MKL 3rd party, configure and rebuilt ViSP
+libraries without MKL support.
 
-To this end, in a terminal launch `ccmake ../visp` and set `USE_BLAS/LAPACK` option to an other value than `MKL`; it could be `OpenBLAS`, `Atlas`, `GSL`, `Netlib` or `OFF`. It is recommended to set this var to `OFF` only when there is no other Blas/Lapack 3rd party available.
+To this end, in a terminal launch `ccmake ../visp` and set `USE_BLAS/LAPACK` option to an other value than `MKL`;
+it could be `OpenBLAS`, `Atlas`, `GSL`, `Netlib` or `OFF`. It is recommended to set this var to `OFF` only when there
+is no other Blas/Lapack 3rd party available.
 
 A complete discussion about this issue is given here in [issue #806](https://github.com/lagadic/visp/issues/806).
 
-\section java_started_next Next tutorial
+\subsection java_started_issue_windows 5.4. Error no visp_java361 in java.library.path
+
+If you face the following error:
+
+\code{.sh}
+Exception in thread "main" java.lang.UnsatisfiedLinkError: no visp_java361 in java.library.path: C:\visp-ws\visp-java\x64\vc17\bin\Release
+	at java.base/java.lang.ClassLoader.loadLibrary(ClassLoader.java:2458)
+	at java.base/java.lang.Runtime.loadLibrary0(Runtime.java:916)
+	at java.base/java.lang.System.loadLibrary(System.java:2063)
+	at visp_started/visp_started.Started.<clinit>(Started.java:12)
+\endcode
+
+Run the following command:
+
+\code{.sh}
+C:\> java -XshowSettings:properties -version
+\endcode
+
+In the result of the command, check the value of `java.library.path`:
+\code{.sh}
+Property settings:
+    file.encoding = UTF-8
+    file.separator = \
+    java.class.path =
+    java.class.version = 65.0
+    java.home = C:\Program Files\Java\jdk-21
+    java.io.tmpdir = C:\Users\username\AppData\Local\Temp\
+    java.library.path = $LIST_OF_FOLDERS
+\endcode
+
+Ensure that the `.dll` and `.lib` of visp (`visp_core.dll`, `visp_java${VERSION_NUMBER}.dll`)
+and so on are located in one of these folders.
+
+\subsection java_started_issue_includes Issues with the includes
+
+If Oracle complains about the `import` statements, add in the `module-info.java` the following lines:
+
+\code{.sh}
+module ${APPLICATION_PACKAGE_NAME} {
+	requires visp;
+}
+\endcode
+
+where `${APPLICATION_PACKAGE_NAME}` must be replaced by the name that appears in the `package` statement
+in the `Started.java` file.
+
+\section java_started_next 6. Next tutorial
 
 You are now ready to continue with \ref tutorial-java-apriltag.
 

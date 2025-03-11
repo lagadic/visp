@@ -585,10 +585,22 @@ void vpRBTracker::displayMask(vpImage<unsigned char> &Imask) const
   }
 }
 
-void vpRBTracker::display(const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth)
+void vpRBTracker::display(const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth, const bool &displaySilhouette)
 {
   if (m_currentFrame.renders.normals.getSize() == 0) {
     return;
+  }
+
+  if (displaySilhouette) {
+    const vpImage<unsigned char> &Isilhouette = m_currentFrame.renders.isSilhouette;
+    const vpRect bb = m_renderer.getBoundingBox();
+    for (unsigned int r = std::max(bb.getTop(), 0.); (r < bb.getBottom()) &&(r < IRGB.getRows()); ++r) {
+      for (unsigned int c = std::max(bb.getLeft(), 0.); (c < bb.getRight()) && (c < IRGB.getCols()); ++c) {
+        if (Isilhouette[r][c] != 0) {
+          vpDisplay::displayPoint(IRGB, vpImagePoint(r, c), vpColor::green);
+        }
+      }
+    }
   }
 
   for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {

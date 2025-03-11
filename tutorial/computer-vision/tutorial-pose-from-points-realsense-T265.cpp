@@ -3,19 +3,23 @@
 #ifdef VISP_HAVE_MODULE_SENSOR
 #include <visp3/sensor/vpRealSense2.h>
 #endif
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 
 #include "pose_helper.h"
 
 int main(int argc, char **argv)
 {
-#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)) &&                                 \
+#if defined(VISP_HAVE_DISPLAY) &&                                 \
     defined(VISP_HAVE_REALSENSE2) && (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
 #endif
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display;
+#else
+  vpDisplay *display = nullptr;
+#endif
+
   try {
     double opt_square_width = 0.12;
     int opt_camera_index = 1; // camera index: 1. Left, 2.Right
@@ -76,12 +80,10 @@ int main(int argc, char **argv)
     point.push_back(vpPoint(L, L, 0));
     point.push_back(vpPoint(-L, L, 0));
 
-#if defined(VISP_HAVE_X11)
-    vpDisplayX d(I);
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI d(I);
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV d(I);
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    display = vpDisplayFactory::createDisplay(I);
+#else
+    display = vpDisplayFactory::allocateDisplay(I);
 #endif
 
     bool quit = false;
@@ -149,6 +151,12 @@ int main(int argc, char **argv)
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
   }
+
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (display != nullptr) {
+    delete display;
+  }
+#endif
 #elif !defined(VISP_HAVE_REALSENSE2)
   (void)argc;
   (void)argv;

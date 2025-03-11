@@ -30,10 +30,10 @@ public class VpContour {
       n_setParent(nativeObj,parent.nativeObj);
     }
 
-    @Override
-    protected void finalize() throws Throwable {
-        delete(nativeObj);
-    }
+    //@Override
+    //protected void finalize() throws Throwable {
+    //    delete(nativeObj);
+    //}
 
     // C++: vpContour()
     private static native long VpContour1();

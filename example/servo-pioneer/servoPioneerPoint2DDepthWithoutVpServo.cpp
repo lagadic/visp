@@ -51,9 +51,8 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpVelocityTwistMatrix.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayX.h>
 #include <visp3/robot/vpRobotPioneer.h> // Include first to avoid build issues with Status, None, isfinite
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/sensor/vp1394CMUGrabber.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 #include <visp3/sensor/vpV4l2Grabber.h>
@@ -70,7 +69,7 @@
 #if defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_CMU1394) || \
   ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || \
   ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
+#if defined(VISP_HAVE_DISPLAY)
 #if defined(VISP_HAVE_PIONEER)
 #define TEST_COULD_BE_ACHIEVED
 #endif
@@ -104,6 +103,11 @@ int main(int argc, char **argv)
 {
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
+#endif
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display;
+#else
+  vpDisplay *display = nullptr;
 #endif
 
   try {
@@ -198,10 +202,10 @@ int main(int argc, char **argv)
 #endif
 
     // Create an image viewer
-#if defined(VISP_HAVE_X11)
-    vpDisplayX d(I, 10, 10, "Current frame");
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI d(I, 10, 10, "Current frame");
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    display = vpDisplayFactory::createDisplay(I, 10, 10, "Current frame");
+#else
+    display = vpDisplayFactory::allocateDisplay(I, 10, 10, "Current frame");
 #endif
     vpDisplay::display(I);
     vpDisplay::flush(I);
@@ -316,10 +320,20 @@ int main(int argc, char **argv)
 
     // wait for the thread to stop
     robot.waitForRunExit();
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+    }
+#endif
     return EXIT_SUCCESS;
   }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+  }
+#endif
     return EXIT_FAILURE;
   }
 }

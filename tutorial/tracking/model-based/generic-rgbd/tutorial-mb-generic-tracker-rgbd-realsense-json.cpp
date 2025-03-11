@@ -6,9 +6,7 @@
 #if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_OPENCV) && defined(VISP_HAVE_NLOHMANN_JSON)
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpIoTools.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/mbt/vpMbGenericTracker.h>
 #include <visp3/sensor/vpRealSense2.h>
 
@@ -173,17 +171,19 @@ int main(int argc, char *argv[])
   //! [Update params]
   unsigned int _posx = 100, _posy = 50;
 
-#ifdef VISP_HAVE_X11
-  vpDisplayX d1, d2;
-#elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI d1, d2;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-  vpDisplayOpenCV d1, d2;
+#if defined(VISP_HAVE_DISPLAY)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display1 = vpDisplayFactory::createDisplay();
+  std::shared_ptr<vpDisplay> display2 = vpDisplayFactory::createDisplay();
+#else
+  vpDisplay *display1 = vpDisplayFactory::allocateDisplay();
+  vpDisplay *display2 = vpDisplayFactory::allocateDisplay();
 #endif
   if (use_color)
-    d1.init(I_gray, _posx, _posy, "Color stream");
+    display1->init(I_gray, _posx, _posy, "Color stream");
   if (use_depth)
-    d2.init(I_depth, _posx + I_gray.getWidth() + 10, _posy, "Depth stream");
+    display2->init(I_depth, _posx + I_gray.getWidth() + 10, _posy, "Depth stream");
+#endif
 
   while (true) {
     realsense.acquire((unsigned char *)I_color.bitmap, (unsigned char *)I_depth_raw.bitmap, nullptr, nullptr);
@@ -357,6 +357,12 @@ int main(int argc, char *argv[])
       << std::endl;
   }
   //! [Tracking]
+
+#if defined(VISP_HAVE_DISPLAY) && (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (display != nullptr) {
+    delete display;
+  }
+#endif
   return EXIT_SUCCESS;
 }
 #elif defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_OPENCV)

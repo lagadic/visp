@@ -78,7 +78,7 @@ BEGIN_VISP_NAMESPACE
     w_i = l(\textbf{x}_i, \textbf{z})
   \f]
 
-  After an update, a check is performed to see if the PF is not degenerated (i.e. if the weigths of most particles became very low).
+  After an update, a check is performed to see if the PF is not degenerated (i.e. if the weights of most particles became very low).
   If the PF became degenerated, the particles are resampled depending on a resampling scheme. Different kind of checks
   and of resampling algorithms exist in the litterature. In this class, we implemented the Simple Resampling algorithm
   in a dedicated method and let to the user the possibility of writing user-defined check and resampling methods.

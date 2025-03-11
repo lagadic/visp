@@ -314,7 +314,7 @@ To use virtualenv as a standard executable make sure that the bin folder of your
 
     When installing virtualenv, pip should have emitted a warning such as:
 
-        WARNING: The script virtualenv is installed in 'C:\Users\user\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\Scripts' which is not on PATH.
+        WARNING: The script virtualenv is installed in 'C:\Users\username\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\Scripts' which is not on PATH.
         Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
 
     You should add the specified path to your PATH variable in order to use virtualenv
@@ -722,8 +722,8 @@ If you have this error:
 \verbatim
   error: invalid new-expression of abstract class type ‘vpTemplateTrackerMI’
   return new Class{std::forward<Args>(args)...};
-  In file included from /home/visp_ws/visp_build/modules/python/bindings/src/tt_mi.cpp:13:0:
-  /home/visp_ws/visp/modules/tracker/tt_mi/include/visp3/tt_mi/vpTemplateTrackerMI.h:46:19: note:   because the following virtual functions are pure within ‘vpTemplateTrackerMI’:
+  In file included from $VISP_WS/visp-build/modules/python/bindings/src/tt_mi.cpp:13:0:
+  $VISP_WS/visp/modules/tracker/tt_mi/include/visp3/tt_mi/vpTemplateTrackerMI.h:46:19: note:   because the following virtual functions are pure within ‘vpTemplateTrackerMI’:
   class VISP_EXPORT vpTemplateTrackerMI : public vpTemplateTracker
 \endverbatim
 
@@ -939,7 +939,7 @@ Python 3.12.6 | packaged by conda-forge | (main, Sep 30 2024, 17:48:58) [MSC v.1
 Type "help", "copyright", "credits" or "license" for more information.
 >>> import visp
 Traceback (most recent call last):
-  File "C:\Users\user\.conda\envs\visp-conda-ws\Lib\site-packages\visp\__init__.py", line 44, in <module>
+  File "C:\Users\username\.conda\envs\visp-conda-ws\Lib\site-packages\visp\__init__.py", line 44, in <module>
     from ._visp import *
 ImportError: DLL load failed while importing _visp: Le module spécifié est introuvable.
 
@@ -947,7 +947,7 @@ During handling of the above exception, another exception occurred:
 
 Traceback (most recent call last):
   File "<stdin>", line 1, in <module>
-  File "C:\Users\user\.conda\envs\visp-conda-ws\Lib\site-packages\visp\__init__.py", line 54, in <module>
+  File "C:\Users\username\.conda\envs\visp-conda-ws\Lib\site-packages\visp\__init__.py", line 54, in <module>
     from ._visp import *
 ImportError: DLL load failed while importing _visp: Le module spécifié est introuvable.
 >>>

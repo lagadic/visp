@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/des0"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:padding="8dp"
+        android:fontFamily="@font/roboto"
+        android:textSize="@dimen/textsize_body"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tag_description" />
+
+    <TextView
+        android:id="@+id/des1"
+        app:layout_constraintTop_toBottomOf="@id/des0"
+        app:layout_constraintStart_toStartOf="parent"
+        android:padding="8dp"
+        android:textSize="@dimen/textsize_body"
+        android:fontFamily="@font/roboto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Press to start Tag Detection" />
+
+    <Button
+        android:id="@+id/ButtonSelectImage"
+        app:layout_constraintTop_toBottomOf="@id/des1"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="@font/roboto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Press to start Tag Detection" />
+
+    <TextView
+        android:id="@+id/des2"
+        app:layout_constraintTop_toBottomOf="@id/ButtonSelectImage"
+        app:layout_constraintStart_toStartOf="parent"
+        android:padding="8dp"
+        android:textSize="@dimen/textsize_body"
+        android:fontFamily="@font/roboto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Follow the link to get a list of 36h11 April Tags" />
+
+    <Button
+        app:layout_constraintTop_toBottomOf="@id/des2"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="@font/roboto"
+        android:id="@+id/getTags"
+        android:text="Get Tags"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/credits"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:padding="8dp"
+        android:textSize="@dimen/textsize_body"
+        android:text="@string/app_created_by_akshay_sharma"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/project"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/credits"
+        android:padding="8dp"
+        android:textSize="@dimen/textsize_body"
+        android:text="@string/description2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

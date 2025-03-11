@@ -68,10 +68,15 @@ using namespace VISP_NAMESPACE_NAME;
 void usage(const char *name, const char *badparam, const std::string &ipath, const std::string &opath,
            const std::string &user)
 {
+#if defined(VISP_HAVE_DATASET)
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
   std::string ext("png");
 #else
   std::string ext("pgm");
+#endif
+#else
+  // We suppose that the user will download a recent dataset
+  std::string ext("png");
 #endif
   fprintf(stdout, "\n\
 Read an image from the disk, undistort it \n\
@@ -184,10 +189,15 @@ int main(int argc, const char **argv)
     unsigned int nThreads = 2;
     unsigned int scale = 1;
 
+#if defined(VISP_HAVE_DATASET)
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
     std::string ext("png");
 #else
     std::string ext("pgm");
+#endif
+#else
+    // We suppose that the user will download a recent dataset
+    std::string ext("png");
 #endif
 
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH

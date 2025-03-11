@@ -15,3 +15,4 @@ dependencies:
   - libpng
   - mkl-devel
   - pybind11
+  - libiconv <=1.17

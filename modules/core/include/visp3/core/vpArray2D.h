@@ -351,7 +351,7 @@ public:
 
   /**
    * \brief Create an array view of a raw data pointer.
-   * After this function has been called, the array \ref data can be modified through the view \ref v.
+   * After this function has been called, the array `data` can be modified through the view `v`.
    * This data is not owned by the resulting array and should be freed after the array is destroyed (not before).
    *
    * \param v The resulting view array

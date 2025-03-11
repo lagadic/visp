@@ -4,9 +4,7 @@
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
 
 #if defined(VISP_HAVE_MODULE_IMGPROC)
@@ -18,7 +16,7 @@
 int main(int argc, const char **argv)
 {
 //! [Macro defined]
-#if defined(VISP_HAVE_MODULE_IMGPROC) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+#if defined(VISP_HAVE_MODULE_IMGPROC) && defined(VISP_HAVE_DISPLAY)
   //! [Macro defined]
   //!
 
@@ -69,44 +67,61 @@ int main(int argc, const char **argv)
   vpImageIo::read(I_color, input_filename);
   //! [Read]
 
-#ifdef VISP_HAVE_X11
-  vpDisplayX d, d2, d3, d4, d5, d6;
-#elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI d, d2, d3, d4, d5, d6;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-  vpDisplayOpenCV d, d2, d3, d4, d5, d6;
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display = vpDisplayFactory::createDisplay(I_color, 0, 0, "Input color image");
+#else
+  vpDisplay *display = vpDisplayFactory::allocateDisplay(I_color, 0, 0, "Input color image");
 #endif
-  d.init(I_color, 0, 0, "Input color image");
 
   //! [Stretch contrast]
   vpImage<vpRGBa> I_stretch;
   VISP_NAMESPACE_NAME::stretchContrast(I_color, I_stretch);
   //! [Stretch contrast]
-  d2.init(I_stretch, I_color.getWidth(), 10, "Stretch contrast");
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display2 = vpDisplayFactory::createDisplay(I_stretch, I_color.getWidth(), 10, "Stretch contrast");
+#else
+  vpDisplay *display2 = vpDisplayFactory::allocateDisplay(I_stretch, I_color.getWidth(), 10, "Stretch contrast");
+#endif
 
   //! [Stretch contrast HSV]
   vpImage<vpRGBa> I_stretch_hsv;
   VISP_NAMESPACE_NAME::stretchContrastHSV(I_color, I_stretch_hsv);
   //! [Stretch contrast HSV]
-  d3.init(I_stretch_hsv, 0, I_color.getHeight() + 80, "Stretch contrast HSV");
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display3 = vpDisplayFactory::createDisplay(I_stretch_hsv, 0, I_color.getHeight() + 80, "Stretch contrast HSV");
+#else
+  vpDisplay *display3 = vpDisplayFactory::allocateDisplay(I_stretch_hsv, 0, I_color.getHeight() + 80, "Stretch contrast HSV");
+#endif
 
   //! [Histogram equalization]
   vpImage<vpRGBa> I_hist_eq;
   VISP_NAMESPACE_NAME::equalizeHistogram(I_color, I_hist_eq);
   //! [Histogram equalization]
-  d4.init(I_hist_eq, I_color.getWidth(), I_color.getHeight() + 80, "Histogram equalization");
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display4 = vpDisplayFactory::createDisplay(I_hist_eq, I_color.getWidth(), I_color.getHeight() + 80, "Histogram equalization");
+#else
+  vpDisplay *display4 = vpDisplayFactory::allocateDisplay(I_hist_eq, I_color.getWidth(), I_color.getHeight() + 80, "Histogram equalization");
+#endif
 
   //! [CLAHE]
   vpImage<vpRGBa> I_clahe;
   VISP_NAMESPACE_NAME::clahe(I_color, I_clahe, blockRadius, bins, slope);
   //! [CLAHE]
-  d5.init(I_clahe, 0, 2 * I_color.getHeight() + 80, "CLAHE");
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display5 = vpDisplayFactory::createDisplay(I_clahe, 0, 2 * I_color.getHeight() + 80, "CLAHE");
+#else
+  vpDisplay *display5 = vpDisplayFactory::allocateDisplay(I_clahe, 0, 2 * I_color.getHeight() + 80, "CLAHE");
+#endif
 
   //! [Unsharp mask]
   vpImage<vpRGBa> I_unsharp;
   VISP_NAMESPACE_NAME::unsharpMask(I_clahe, I_unsharp, sigma, weight);
   //! [Unsharp mask]
-  d6.init(I_unsharp, I_color.getWidth(), 2 * I_color.getHeight() + 80, "Unsharp mask");
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display6 = vpDisplayFactory::createDisplay(I_unsharp, I_color.getWidth(), 2 * I_color.getHeight() + 80, "Unsharp mask");
+#else
+  vpDisplay *display6 = vpDisplayFactory::allocateDisplay(I_unsharp, I_color.getWidth(), 2 * I_color.getHeight() + 80, "Unsharp mask");
+#endif
 
   vpDisplay::display(I_color);
   vpDisplay::display(I_stretch);
@@ -122,6 +137,32 @@ int main(int argc, const char **argv)
   vpDisplay::flush(I_clahe);
   vpDisplay::flush(I_unsharp);
   vpDisplay::getClick(I_unsharp);
+
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11) && defined(VISP_HAVE_DISPLAY)
+  if (display != nullptr) {
+    delete display;
+  }
+
+  if (display2 != nullptr) {
+    delete display2;
+  }
+
+  if (display3 != nullptr) {
+    delete display3;
+  }
+
+  if (display4 != nullptr) {
+    delete display4;
+  }
+
+  if (display5 != nullptr) {
+    delete display5;
+  }
+
+  if (display6 != nullptr) {
+    delete display6;
+  }
+#endif
 #else
   (void)argc;
   (void)argv;

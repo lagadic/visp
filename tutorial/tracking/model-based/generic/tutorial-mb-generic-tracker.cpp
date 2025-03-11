@@ -1,9 +1,7 @@
 //! \example tutorial-mb-generic-tracker.cpp
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpIoTools.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
 //! [Include]
 #include <visp3/mbt/vpMbGenericTracker.h>
@@ -15,6 +13,12 @@ int main(int argc, char **argv)
 #if defined(VISP_HAVE_OPENCV)
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
+#endif
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display;
+#else
+  vpDisplay *display = nullptr;
 #endif
 
   try {
@@ -64,15 +68,14 @@ int main(int argc, char **argv)
     g.setFileName(opt_videoname);
     g.open(I);
 
-    vpDisplay *display = nullptr;
-#if defined(VISP_HAVE_X11)
-    display = new vpDisplayX;
-#elif defined(VISP_HAVE_GDI)
-    display = new vpDisplayGDI;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    display = new vpDisplayOpenCV;
+#if defined(VISP_HAVE_DISPLAY)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    display = vpDisplayFactory::createDisplay();
+#else
+    display = vpDisplayFactory::allocateDisplay();
 #endif
     display->init(I, 100, 100, "Model-based tracker");
+#endif
 
     //! [Constructor]
     vpMbGenericTracker tracker;
@@ -163,14 +166,23 @@ int main(int argc, char **argv)
       }
     }
     vpDisplay::getClick(I);
-    //! [Cleanup]
-    delete display;
-    //! [Cleanup]
   }
   catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
+    //! [Cleanup]
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+    }
+#endif
+    //! [Cleanup]
     return EXIT_FAILURE;
   }
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (display != nullptr) {
+    delete display;
+  }
+#endif
 #else
   (void)argc;
   (void)argv;

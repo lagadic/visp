@@ -50,13 +50,11 @@
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpParseArgv.h>
-#if (defined(VISP_HAVE_GTK) || defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
+#if defined(VISP_HAVE_DISPLAY)
 
 #include <visp3/core/vpImage.h>
 #include <visp3/io/vpImageIo.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/core/vpTime.h>
 
 /*!
@@ -92,10 +90,15 @@ using namespace VISP_NAMESPACE_NAME;
 void usage(const char *name, const char *badparam, std::string ipath, std::string ppath, unsigned first,
            unsigned last, unsigned step)
 {
+#if defined(VISP_HAVE_DATASET)
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
   std::string ext("png");
 #else
   std::string ext("pgm");
+#endif
+#else
+  // We suppose that the user will download a recent dataset
+  std::string ext("png");
 #endif
   fprintf(stdout, "\n\
 Read an image sequence from the disk and display it.\n\
@@ -227,6 +230,9 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
 
 int main(int argc, const char **argv)
 {
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  vpDisplay *display = nullptr;
+#endif
   try {
     std::string env_ipath;
     std::string opt_ipath;
@@ -240,10 +246,15 @@ int main(int argc, const char **argv)
     bool opt_display = true;
     bool opt_wait = false;
 
+#if defined(VISP_HAVE_DATASET)
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
     std::string ext("png");
 #else
     std::string ext("pgm");
+#endif
+#else
+    // We suppose that the user will download a recent dataset
+    std::string ext("png");
 #endif
 
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
@@ -328,18 +339,16 @@ int main(int argc, const char **argv)
       return EXIT_FAILURE;
     }
 
-#if defined(VISP_HAVE_GTK)
-    vpDisplayGTK display;
-#elif defined(VISP_HAVE_X11)
-    vpDisplayX display;
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI display;
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    std::shared_ptr<vpDisplay> display = vpDisplayFactory::createDisplay();
+#else
+    vpDisplay *display = vpDisplayFactory::allocateDisplay();
 #endif
     if (opt_display) {
 
       // We open a window using either X11 or GTK or GDI.
       // Its size is automatically defined by the image (I) size
-      display.init(I, 100, 100, "Display...");
+      display->init(I, 100, 100, "Display...");
 
       // Display the image
       // The image class has a member that specify a pointer toward
@@ -389,10 +398,20 @@ int main(int argc, const char **argv)
     //  double tms_2 = vpTime::measureTimeMs() ;
     //  double tms_total = tms_2 - tms_1 ;
     //  std::cout << "Total Time : "<< tms_total<<std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+    }
+#endif
     return EXIT_SUCCESS;
   }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+    }
+#endif
     return EXIT_FAILURE;
   }
 }
@@ -406,5 +425,5 @@ int main()
   std::cout << "Tip if you are on a windows-like system:" << std::endl;
   std::cout << "- Install GDI, configure again ViSP using cmake and build again this example" << std::endl;
   return EXIT_SUCCESS;
-  }
+}
 #endif

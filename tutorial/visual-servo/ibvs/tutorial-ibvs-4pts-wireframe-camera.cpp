@@ -1,8 +1,6 @@
 /*! \example tutorial-ibvs-4pts-wireframe-camera.cpp */
 #include <visp3/core/vpConfig.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/gui/vpProjectionDisplay.h>
 #include <visp3/robot/vpSimulatorCamera.h>
 #include <visp3/robot/vpWireFrameSimulator.h>
@@ -13,9 +11,6 @@
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;
 #endif
-
-void display_trajectory(const vpImage<unsigned char> &I, std::vector<vpPoint> &point, const vpHomogeneousMatrix &cMo,
-                        const vpCameraParameters &cam);
 
 void display_trajectory(const vpImage<unsigned char> &I, std::vector<vpPoint> &point, const vpHomogeneousMatrix &cMo,
                         const vpCameraParameters &cam)
@@ -37,6 +32,13 @@ void display_trajectory(const vpImage<unsigned char> &I, std::vector<vpPoint> &p
 
 int main()
 {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> displayInt;
+  std::shared_ptr<vpDisplay> displayExt;
+#else
+  vpDisplay *displayInt = nullptr;
+  vpDisplay *displayExt = nullptr;
+#endif
   try {
     vpHomogeneousMatrix cdMo(0, 0, 0.75, 0, 0, 0);
     vpHomogeneousMatrix cMo(0.15, -0.1, 1., vpMath::rad(10), vpMath::rad(-10), vpMath::rad(50));
@@ -69,15 +71,14 @@ int main()
 
     vpImage<unsigned char> Iint(480, 640, 0);
     vpImage<unsigned char> Iext(480, 640, 0);
-#if defined(VISP_HAVE_X11)
-    vpDisplayX displayInt(Iint, 0, 0, "Internal view");
-    vpDisplayX displayExt(Iext, 670, 0, "External view");
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI displayInt(Iint, 0, 0, "Internal view");
-    vpDisplayGDI displayExt(Iext, 670, 0, "External view");
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV displayInt(Iint, 0, 0, "Internal view");
-    vpDisplayOpenCV displayExt(Iext, 670, 0, "External view");
+#if defined(VISP_HAVE_DISPLAY)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    displayInt = vpDisplayFactory::createDisplay(Iint, 0, 0, "Internal view");
+    displayExt = vpDisplayFactory::createDisplay(Iext, 670, 0, "External view");
+#else
+    displayInt = vpDisplayFactory::allocateDisplay(Iint, 0, 0, "Internal view");
+    displayExt = vpDisplayFactory::allocateDisplay(Iext, 670, 0, "External view");
+#endif
 #else
     std::cout << "No image viewer is available..." << std::endl;
 #endif
@@ -124,4 +125,12 @@ int main()
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (displayInt != nullptr) {
+    delete displayInt;
+  }
+  if (displayExt != nullptr) {
+    delete displayExt;
+  }
+#endif
 }

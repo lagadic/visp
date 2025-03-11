@@ -1,9 +1,7 @@
 //! \example tutorial-mb-tracker-full.cpp
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpIoTools.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
 //! [Include]
 #include <visp3/mbt/vpMbEdgeKltTracker.h>
@@ -13,10 +11,18 @@
 
 int main(int argc, char **argv)
 {
-#if defined(VISP_HAVE_OPENCV)
+#if defined(VISP_HAVE_OPENCV) && defined(VISP_HAVE_DISPLAY)
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
 #endif
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display = vpDisplayFactory::createDisplay();
+#else
+  vpDisplay *display = vpDisplayFactory::allocateDisplay();
+#endif
+
+  vpMbTracker *tracker = nullptr;
 
   try {
     std::string opt_videoname = "teabox.mp4";
@@ -40,6 +46,11 @@ int main(int argc, char **argv)
           << " [--tracker <0=egde|1=keypoint|2=hybrid>]"
           << " [--help] [-h]\n"
           << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+        if (display != nullptr) {
+          delete display;
+        }
+#endif
         return EXIT_SUCCESS;
       }
     }
@@ -67,18 +78,9 @@ int main(int argc, char **argv)
     g.setFileName(opt_videoname);
     g.open(I);
 
-    vpDisplay *display = nullptr;
-#if defined(VISP_HAVE_X11)
-    display = new vpDisplayX;
-#elif defined(VISP_HAVE_GDI)
-    display = new vpDisplayGDI;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    display = new vpDisplayOpenCV;
-#endif
     display->init(I, 100, 100, "Model-based tracker");
 
     //! [Constructor]
-    vpMbTracker *tracker;
     if (opt_tracker == 0)
       tracker = new vpMbEdgeTracker;
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
@@ -91,6 +93,11 @@ int main(int argc, char **argv)
       std::cout << "klt and hybrid model-based tracker are not available "
         "since visp_klt module is missing"
         << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+      if (display != nullptr) {
+        delete display;
+      }
+#endif
       return EXIT_FAILURE;
     }
 #endif
@@ -204,10 +211,6 @@ int main(int argc, char **argv)
         break;
     }
     vpDisplay::getClick(I);
-    //! [Cleanup]
-    delete display;
-    delete tracker;
-    //! [Cleanup]
   }
   catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
@@ -217,6 +220,16 @@ int main(int argc, char **argv)
     std::cout << "Catch an Ogre exception: " << e.getDescription() << std::endl;
   }
 #endif
+//! [Cleanup]
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (display != nullptr) {
+    delete display;
+  }
+#endif
+  if (tracker != nullptr) {
+    delete tracker;
+  }
+  //! [Cleanup]
 #else
   (void)argc;
   (void)argv;

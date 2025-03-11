@@ -62,17 +62,14 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 
-#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)) &&       \
+#if defined(VISP_HAVE_DISPLAY) &&       \
     (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
 
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/io/vpImageIo.h>
 
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 
 #include <visp3/blob/vpDot.h>
 #include <visp3/core/vpIoTools.h>
@@ -103,11 +100,17 @@ Print the program options.
 void usage(const char *name, const char *badparam, std::string ipath, std::string ppath, unsigned first,
            unsigned last, unsigned step)
 {
+#if defined(VISP_HAVE_DATASET)
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
   std::string ext("png");
 #else
   std::string ext("pgm");
 #endif
+#else
+    // We suppose that the user will download a recent dataset
+  std::string ext("png");
+#endif
+
   fprintf(stdout, "\n\
 Test dot tracking.\n\
 \n\
@@ -231,6 +234,13 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
 
 int main(int argc, const char **argv)
 {
+  // We declare the display variable here to be able to free it in the catch section too
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display;
+#else
+  vpDisplay *display = nullptr;
+#endif
+
   try {
     std::string env_ipath;
     std::string opt_ipath;
@@ -245,11 +255,17 @@ int main(int argc, const char **argv)
     bool opt_display = true;
     int i;
 
+#if defined(VISP_HAVE_DATASET)
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
     std::string ext("png");
 #else
     std::string ext("pgm");
 #endif
+#else
+    // We suppose that the user will download a recent dataset
+    std::string ext("png");
+#endif
+
 
     std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << "  poseVirtualVS.cpp" << std::endl << std::endl;
@@ -363,21 +379,17 @@ int main(int argc, const char **argv)
       return EXIT_FAILURE;
     }
 
-// We open a window using either the X11 or GTK or GDI window manager
+// We open a window using either of the window manager
 // it will be located in 100,100 and titled "tracking using vpDot"
 // its size is automatically defined by the image (I) size
-#if defined(VISP_HAVE_X11)
-    vpDisplayX display;
-#elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK display;
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI display;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV display;
-#endif
     if (opt_display) {
       // Display size is automatically defined by the image (I) size
-      display.init(I, 100, 100, "tracking using vpDot");
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+      display = vpDisplayFactory::createDisplay(I, 100, 100, "tracking using vpDot");
+#else
+      display = vpDisplayFactory::allocateDisplay(I, 100, 100, "tracking using vpDot");
+#endif
+
       // display the image
       // The image class has a member that specify a pointer toward
       // the display that has been initialized in the display declaration
@@ -599,10 +611,20 @@ int main(int argc, const char **argv)
 
       iter += opt_step;
     }
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+    }
+#endif
     return EXIT_SUCCESS;
   }
   catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+    }
+#endif
     return EXIT_FAILURE;
   }
 }
@@ -622,5 +644,5 @@ int main()
   std::cout << "Tip if you are on a windows-like system:" << std::endl;
   std::cout << "- Install GDI, configure again ViSP using cmake and build again this example" << std::endl;
   return EXIT_SUCCESS;
-}
+    }
 #endif

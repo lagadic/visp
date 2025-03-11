@@ -10,9 +10,7 @@
 #include <visp3/core/vpImageTools.h>
 #include <visp3/core/vpMeterPixelConversion.h>
 #include <visp3/core/vpPixelMeterConversion.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/vision/vpPose.h>
 
 int main(int argc, const char **argv)
@@ -36,7 +34,7 @@ int main(int argc, const char **argv)
   unsigned int thickness = 2;
   bool align_frame = false;
 
-#if !(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+#if !(defined(VISP_HAVE_DISPLAY))
   bool display_off = true;
   std::cout << "Warning: There is no 3rd party (X11, GDI or openCV) to dislay images..." << std::endl;
 #else
@@ -94,6 +92,13 @@ int main(int argc, const char **argv)
     }
   }
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display_left, display_undistort;
+#else
+  vpDisplay *display_left = nullptr;
+  vpDisplay *display_undistort = nullptr;
+#endif
+
   try {
     //! [Construct grabber]
     std::cout << "Use Realsense 2 grabber" << std::endl;
@@ -124,16 +129,13 @@ int main(int argc, const char **argv)
     std::cout << "nThreads : " << nThreads << std::endl;
     std::cout << "Z aligned: " << align_frame << std::endl;
 
-    vpDisplay *display_left = nullptr;
-    vpDisplay *display_undistort = nullptr;
     if (!display_off) {
-#ifdef VISP_HAVE_X11
-      display_left = new vpDisplayX(I_left, 100, 30, "Left image");
-      display_undistort = new vpDisplayX(I_undist, I_left.getWidth(), 30, "Undistorted image");
-#elif defined(VISP_HAVE_GDI)
-      display_left = new vpDisplayGDI(I_left, 100, 30, "Left image");
-#elif defined(HAVE_OPENCV_HIGHGUI)
-      display_left = new vpDisplayOpenCV(I_left, 100, 30, "Left image");
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+      display_left = vpDisplayFactory::createDisplay(I_left, 100, 30, "Left image");
+      display_undistort = vpDisplayFactory::createDisplay(I_undist, I_left.getWidth(), 30, "Undistorted image");
+#else
+      display_left = vpDisplayFactory::allocateDisplay(I_left, 100, 30, "Left image");
+      display_undistort = vpDisplayFactory::allocateDisplay(I_undist, I_left.getWidth(), 30, "Undistorted image");
 #endif
     }
 
@@ -209,16 +211,22 @@ int main(int argc, const char **argv)
     std::cout << "Mean / Median / Std: " << vpMath::getMean(time_vec) << " ms"
       << " ; " << vpMath::getMedian(time_vec) << " ms"
       << " ; " << vpMath::getStdev(time_vec) << " ms" << std::endl;
-
-    if (!display_off) {
-      delete display_left;
-      delete display_undistort;
-    }
-
   }
   catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e.getMessage() << std::endl;
   }
+
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (!display_off) {
+    if (display_left != nullptr) {
+      delete display_left;
+    }
+
+    if (display_undistort != nullptr) {
+      delete display_undistort;
+    }
+}
+#endif
 
   return EXIT_SUCCESS;
 #else

@@ -111,7 +111,7 @@ Here we will show how to create with Blender a box with the following dimensions
 - Width: 0.068 meters
 
 Open Blender and do the following to transform the cube in a box with the expected dimensions:
-- In `"Object Mode"` (1) select the `"Cube"` the right pannel (2). Edges should appear in orange
+- In `"Object Mode"` (1) select the `"Cube"` the right panel (2). Edges should appear in orange
 - Deploy the `"Transform"` panel (3)
 \image html img-Blender-cube-select.jpg
 - Set `"Dimensions"` to X=0.165, Y=0.068 and Z=0.08 meters (4) and change the object name to `"teabox"` (5).

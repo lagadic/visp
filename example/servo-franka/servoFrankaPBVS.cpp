@@ -53,7 +53,7 @@
 
   The target is an AprilTag that is by default 12cm large. To print your own tag, see
   https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-detection-apriltag.html
-  You can specify the size of your tag using --tag_size command line option.
+  You can specify the size of your tag using --tag-size command line option.
 */
 
 #include <iostream>
@@ -61,8 +61,7 @@
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpConfig.h>
 #include <visp3/detection/vpDetectorAprilTag.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/gui/vpPlot.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/robot/vpRobotFranka.h>
@@ -72,7 +71,7 @@
 #include <visp3/vs/vpServo.h>
 #include <visp3/vs/vpServoDisplay.h>
 
-#if defined(VISP_HAVE_REALSENSE2) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_FRANKA)
+#if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_DISPLAY) && defined(VISP_HAVE_FRANKA)
 
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;
@@ -114,7 +113,7 @@ int main(int argc, char **argv)
   double convergence_threshold_tu = 0.5;   // Value in [deg]
 
   for (int i = 1; i < argc; i++) {
-    if ((std::string(argv[i]) == "--tag_size") && (i + 1 < argc)) {
+    if ((std::string(argv[i]) == "--tag-size") && (i + 1 < argc)) {
       opt_tagSize = std::stod(argv[i + 1]);
       ++i;
     }
@@ -132,13 +131,13 @@ int main(int argc, char **argv)
     else if (std::string(argv[i]) == "--plot") {
       opt_plot = true;
     }
-    else if (std::string(argv[i]) == "--adaptive_gain") {
+    else if (std::string(argv[i]) == "--adpative-gain") {
       opt_adaptive_gain = true;
     }
-    else if (std::string(argv[i]) == "--task_sequencing") {
+    else if (std::string(argv[i]) == "--task-sequencing") {
       opt_task_sequencing = true;
     }
-    else if ((std::string(argv[i]) == "--quad_decimate") && (i + 1 < argc)) {
+    else if ((std::string(argv[i]) == "--quad-decimate") && (i + 1 < argc)) {
       opt_quad_decimate = std::stoi(argv[i + 1]);
       ++i;
     }
@@ -203,6 +202,12 @@ int main(int argc, char **argv)
 
   vpRobotFranka robot;
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display;
+#else
+  vpDisplay *display = nullptr;
+#endif
+
   try {
     robot.connect(opt_robot_ip);
 
@@ -240,10 +245,10 @@ int main(int argc, char **argv)
 
     vpImage<unsigned char> I(height, width);
 
-#if defined(VISP_HAVE_X11)
-    vpDisplayX dc(I, 10, 10, "Color image");
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI dc(I, 10, 10, "Color image");
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    display = vpDisplayFactory::createDisplay(I, 10, 10, "Color image");
+#else
+    display = vpDisplayFactory::allocateDisplay(I, 10, 10, "Color image");
 #endif
 
     vpDetectorAprilTag::vpAprilTagFamily tagFamily = vpDetectorAprilTag::TAG_36h11;
@@ -488,6 +493,11 @@ int main(int argc, char **argv)
     std::cout << "ViSP exception: " << e.what() << std::endl;
     std::cout << "Stop the robot " << std::endl;
     robot.setRobotState(vpRobot::STATE_STOP);
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+    }
+#endif
     return EXIT_FAILURE;
   }
   catch (const franka::NetworkException &e) {
@@ -495,13 +505,28 @@ int main(int argc, char **argv)
     std::cout << "Check if you are connected to the Franka robot"
       << " or if you specified the right IP using --ip command line option set by default to 192.168.1.1. "
       << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+    }
+#endif
     return EXIT_FAILURE;
   }
   catch (const std::exception &e) {
     std::cout << "Franka exception: " << e.what() << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+    }
+#endif
     return EXIT_FAILURE;
   }
 
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (display != nullptr) {
+    delete display;
+  }
+#endif
   return EXIT_SUCCESS;
 }
 #else

@@ -53,7 +53,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)) &&       \
+#if defined(VISP_HAVE_DISPLAY) &&       \
     (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
 
 #include <stdio.h>
@@ -63,10 +63,7 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpMath.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/gui/vpProjectionDisplay.h>
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/robot/vpSimulatorCamera.h>
@@ -169,6 +166,15 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
 
 int main(int argc, const char **argv)
 {
+    // We declare the windows variables to be able to free the memory in the catch sections if needed
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> displayInt;
+  std::shared_ptr<vpDisplay> displayExt;
+#else
+  vpDisplay *displayInt = nullptr;
+  vpDisplay *displayExt = nullptr;
+#endif
+
   try {
     bool opt_click_allowed = true;
     bool opt_display = true;
@@ -177,31 +183,23 @@ int main(int argc, const char **argv)
     if (getOptions(argc, argv, opt_click_allowed, opt_display) == false) {
       return EXIT_FAILURE;
     }
-
-// We open two displays, one for the internal camera view, the other one for
-// the external view, using either X11, GTK or GDI.
-#if defined(VISP_HAVE_X11)
-    vpDisplayX displayInt;
-    vpDisplayX displayExt;
-#elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK displayInt;
-    vpDisplayGTK displayExt;
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI displayInt;
-    vpDisplayGDI displayExt;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV displayInt;
-    vpDisplayOpenCV displayExt;
-#endif
-
-    // open a display for the visualization
+      // open a display for the visualization
 
     vpImage<unsigned char> Iint(300, 300, 0);
     vpImage<unsigned char> Iext(300, 300, 0);
 
     if (opt_display) {
-      displayInt.init(Iint, 0, 0, "Internal view");
-      displayExt.init(Iext, 330, 000, "External view");
+      // We open two displays, one for the internal camera view, the other one for
+      // the external view
+      // Display size is automatically defined by the image (Iint) and
+      // (Iext) size
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+      displayInt = vpDisplayFactory::createDisplay(Iint, 0, 0, "Internal view");
+      displayExt = vpDisplayFactory::createDisplay(Iext, 330, 000, "External view");
+#else
+      displayInt = vpDisplayFactory::allocateDisplay(Iint, 0, 0, "Internal view");
+      displayExt = vpDisplayFactory::allocateDisplay(Iext, 330, 000, "External view");
+#endif
     }
     vpProjectionDisplay externalview;
 
@@ -344,10 +342,26 @@ int main(int argc, const char **argv)
       vpDisplay::flush(Iint);
       vpDisplay::getClick(Iint);
     }
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (displayInt != nullptr) {
+      delete displayInt;
+    }
+    if (displayExt != nullptr) {
+      delete displayExt;
+    }
+#endif
     return EXIT_SUCCESS;
   }
   catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (displayInt != nullptr) {
+      delete displayInt;
+    }
+    if (displayExt != nullptr) {
+      delete displayExt;
+    }
+#endif
     return EXIT_FAILURE;
   }
 }

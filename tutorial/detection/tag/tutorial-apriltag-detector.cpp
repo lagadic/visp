@@ -4,9 +4,7 @@
 #include <visp3/detection/vpDetectorAprilTag.h>
 //! [Include]
 #include <visp3/core/vpXmlParserCamera.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
 
 int main(int argc, const char **argv)
@@ -15,7 +13,7 @@ int main(int argc, const char **argv)
   using namespace VISP_NAMESPACE_NAME;
 #endif
 //! [Macro defined]
-#if defined(VISP_HAVE_APRILTAG) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+#if defined(VISP_HAVE_APRILTAG) && defined(VISP_HAVE_DISPLAY)
   //! [Macro defined]
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
@@ -106,18 +104,22 @@ int main(int argc, const char **argv)
   std::cout << "nThreads : " << nThreads << std::endl;
   std::cout << "Z aligned: " << z_aligned << std::endl;
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display, display2;
+#else
+  vpDisplay *display = nullptr;
+  vpDisplay *display2 = nullptr;
+#endif
   try {
     vpImage<vpRGBa> I_color;
     vpImageIo::read(I_color, input_filename);
     vpImage<unsigned char> I;
     vpImageConvert::convert(I_color, I);
 
-#ifdef VISP_HAVE_X11
-    vpDisplayX d(I);
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI d(I);
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV d(I);
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    display = vpDisplayFactory::createDisplay(I);
+#else
+    display = vpDisplayFactory::allocateDisplay(I);
 #endif
 
     //! [Create AprilTag detector]
@@ -189,12 +191,11 @@ int main(int argc, const char **argv)
     vpDisplay::flush(I);
     vpDisplay::getClick(I);
 
-#ifdef VISP_HAVE_X11
-    vpDisplayX d2(I_color, 50, 50);
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI d2(I_color, 50, 50);
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV d2(I_color, 50, 50);
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    display2 = vpDisplayFactory::createDisplay(I_color, 50, 50);
+#else
+    display2 = vpDisplayFactory::allocateDisplay(I_color, 50, 50);
 #endif
     // To test the displays on a vpRGBa image
     vpDisplay::display(I_color);
@@ -215,6 +216,14 @@ int main(int argc, const char **argv)
     std::cerr << "Catch an exception: " << e.getMessage() << std::endl;
   }
 
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (display != nullptr) {
+    delete display;
+  }
+  if (display2 != nullptr) {
+    delete display2;
+  }
+#endif
 #else
   (void)argc;
   (void)argv;

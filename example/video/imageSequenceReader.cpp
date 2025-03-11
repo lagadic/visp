@@ -47,15 +47,12 @@
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpIoTools.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/io/vpVideoReader.h>
 
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GTK)
+#if defined(VISP_HAVE_DISPLAY)
 
   // List of allowed command line options
 #define GETOPTARGS "cdi:p:f:h"
@@ -80,10 +77,15 @@ Print the program options.
  */
 void usage(const char *name, const char *badparam, std::string ipath, std::string ppath)
 {
+#if defined(VISP_HAVE_DATASET)
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
   std::string ext("png");
 #else
   std::string ext("pgm");
+#endif
+#else
+  // We suppose that the user will download a recent dataset
+  std::string ext("png");
 #endif
   fprintf(stdout, "\n\
 Read an image sequence on the disk.\n\
@@ -191,6 +193,11 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
 
 int main(int argc, const char **argv)
 {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display;
+#else
+  vpDisplay *display = nullptr;
+#endif
   try {
     std::string env_ipath;
     std::string opt_ipath;
@@ -201,10 +208,15 @@ int main(int argc, const char **argv)
     bool opt_click_allowed = true;
     bool opt_display = true;
 
+#if defined(VISP_HAVE_DATASET)
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
     std::string ext("png");
 #else
     std::string ext("pgm");
+#endif
+#else
+    // We suppose that the user will download a recent dataset
+    std::string ext("png");
 #endif
 
     std::cout << "-------------------------------------------------------" << std::endl;
@@ -279,20 +291,13 @@ int main(int argc, const char **argv)
       return EXIT_FAILURE;
     }
 
-    // We open a window using either X11, GTK, GDI or OpenCV.
-#if defined(VISP_HAVE_X11)
-    vpDisplayX display;
-#elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK display;
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI display;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV display;
-#endif
-
     if (opt_display) {
       // Display size is automatically defined by the image (I) size
-      display.init(I, 100, 100, "Display video frame");
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+      display = vpDisplayFactory::createDisplay(I, 100, 100, "Display video frame");
+#else
+      display = vpDisplayFactory::allocateDisplay(I, 100, 100, "Display video frame");
+#endif
       vpDisplay::display(I);
       vpDisplay::flush(I);
     }
@@ -306,6 +311,11 @@ int main(int argc, const char **argv)
     std::cout << "Current image number (should be " << opt_first + 1 << "): " << reader.getFrameIndex() << std::endl;
     if ((opt_first + 1) != reader.getFrameIndex()) {
       std::cout << "Unable to get requested image number: " << opt_first + 1 << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+      if (display != nullptr) {
+        delete display;
+      }
+#endif
       return EXIT_FAILURE;
     }
 
@@ -349,10 +359,20 @@ int main(int argc, const char **argv)
       vpDisplay::getClick(I);
     }
 
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+    }
+#endif
     return EXIT_SUCCESS;
   }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    if (display != nullptr) {
+      delete display;
+    }
+#endif
     return EXIT_FAILURE;
   }
 }

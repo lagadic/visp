@@ -34,9 +34,7 @@
 #include <visp3/detection/vpDetectorAprilTag.h>
 //! [Include]
 #include <visp3/core/vpXmlParserCamera.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 
 #if (VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)
 #include <opencv2/highgui/highgui.hpp> // for cv::VideoCapture
@@ -63,7 +61,7 @@ int main(int argc, const char **argv)
   unsigned int thickness = 2;
   bool align_frame = false;
 
-#if !(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(HAVE_OPENCV_HIGHGUI))
+#if !(defined(VISP_HAVE_DISPLAY))
   bool display_off = true;
   std::cout << "Warning: There is no 3rd party (X11, GDI or openCV) to dislay images..." << std::endl;
 #else
@@ -134,6 +132,12 @@ int main(int argc, const char **argv)
     }
   }
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display;
+#else
+  vpDisplay *display = nullptr;
+#endif
+
   try {
     vpCameraParameters cam;
     cam.initPersProjWithoutDistortion(615.1674805, 615.1675415, 312.1889954, 243.4373779);
@@ -199,14 +203,11 @@ int main(int argc, const char **argv)
     std::cout << "nThreads : " << nThreads << std::endl;
     std::cout << "Z aligned: " << align_frame << std::endl;
 
-    vpDisplay *d = nullptr;
     if (!display_off) {
-#ifdef VISP_HAVE_X11
-      d = new vpDisplayX(I);
-#elif defined(VISP_HAVE_GDI)
-      d = new vpDisplayGDI(I);
-#elif defined(HAVE_OPENCV_HIGHGUI)
-      d = new vpDisplayOpenCV(I);
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+      display = vpDisplayFactory::createDisplay(I);
+#else
+      display = vpDisplayFactory::allocateDisplay(I);
 #endif
     }
 
@@ -264,14 +265,16 @@ int main(int argc, const char **argv)
     std::cout << "Mean / Median / Std: " << vpMath::getMean(time_vec) << " ms"
       << " ; " << vpMath::getMedian(time_vec) << " ms"
       << " ; " << vpMath::getStdev(time_vec) << " ms" << std::endl;
-
-    if (!display_off)
-      delete d;
-
   }
   catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e.getMessage() << std::endl;
   }
+
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (display != nullptr) {
+    delete display;
+  }
+#endif
 
   return EXIT_SUCCESS;
 }

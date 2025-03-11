@@ -72,7 +72,7 @@ visp_add_subdirectory(homography               REQUIRED_DEPS visp_core visp_visi
 visp_add_subdirectory(image                    REQUIRED_DEPS visp_core visp_io)
 visp_add_subdirectory(kalman                   REQUIRED_DEPS visp_core visp_gui)
 visp_add_subdirectory(manual                   REQUIRED_DEPS visp_core visp_sensor visp_vs visp_robot visp_ar visp_vision visp_io visp_gui)
-visp_add_subdirectory(math                     REQUIRED_DEPS visp_core visp_io)
+visp_add_subdirectory(math                     REQUIRED_DEPS visp_core visp_gui visp_io)
 visp_add_subdirectory(moments/image            REQUIRED_DEPS visp_core visp_vs visp_robot visp_gui)
 visp_add_subdirectory(moments/points           REQUIRED_DEPS visp_core visp_vs visp_robot visp_gui)
 visp_add_subdirectory(moments/polygon          REQUIRED_DEPS visp_core visp_vs visp_robot visp_gui)

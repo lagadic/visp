@@ -373,7 +373,7 @@ public:
    *
    * \param line1 : The first line.
    * \param line2 : The second line.
-   * \param ip : The coordinates of the intersection point.
+   * \param iP : The coordinates of the intersection point.
    *
    * \return Returns a boolean value which depends on the computation
    * success. True means that the computation ends successfully.

@@ -144,10 +144,10 @@ set(VISP_REVISION "1")
 
 # Try to locate visp-images and, if it exists, its version
 vp_find_dataset(VISP_DATASET_FOUND VISP_DATASET_LOCATION
-                    VISP_DATASET_VERSION
-                    VISP_DATASET_VERSION_MAJOR
-                    VISP_DATASET_VERSION_MINOR
-                    VISP_DATASET_VERSION_PATCH)
+                VISP_DATASET_VERSION
+                VISP_DATASET_VERSION_MAJOR
+                VISP_DATASET_VERSION_MINOR
+                VISP_DATASET_VERSION_PATCH)
 
 #-----------------------------------------------------------------------------
 # TO BE CHECKED BEFORE NEXT RELEASE
@@ -553,6 +553,8 @@ VP_OPTION(ENABLE_FULL_DOC      "" "" "Build doc with internal classes that are b
 VP_OPTION(ENABLE_VISP_NAMESPACE "" "" "Enable visp namespace" "" OFF)
 # Allow introduction of "explicit" keyword. By default disabled to keep compat with previous versions
 VP_OPTION(ENABLE_EXPLICIT_KEYWORD "" "" "Enable c++ explicit keyword" "" OFF)
+# Enable the vpImageTools::warp() methods
+VP_OPTION(ENABLE_IMAGE_TOOLS_WARP "" "" "Enable vpImageTools::warp() methods" "" ON)
 
 if(ENABLE_SOLUTION_FOLDERS)
   set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -1052,11 +1054,18 @@ if(BUILD_JAVA)
     include(cmake/android/ViSPDetectAndroidSDK.cmake)
   else()
     include(cmake/VISPDetectApacheAnt.cmake)
+    if(ANT_EXECUTABLE AND NOT OPENCV_JAVA_IGNORE_ANT)
+      vp_update(VISP_JAVA_SDK_BUILD_TYPE "ANT")
+    elseif(NOT ANDROID)
+      find_package(Java)
+      if(Java_FOUND)
+        include(UseJava)
+        vp_update(VISP_JAVA_SDK_BUILD_TYPE "JAVA")
+      endif()
+    endif()
     find_package(JNI)
   endif()
 endif()
-
-
 
 if(ANDROID AND ANDROID_EXECUTABLE AND ANT_EXECUTABLE AND (ANT_VERSION VERSION_GREATER 1.7) AND (ANDROID_TOOLS_Pkg_Revision GREATER 13))
   SET(CAN_BUILD_ANDROID_PROJECTS TRUE)
@@ -1695,10 +1704,12 @@ status("    Interpreter:"     PYTHON3INTERP_FOUND  THEN "${PYTHON3_EXECUTABLE} (
 
 if(BUILD_JAVA OR BUILD_visp_java)
   status("")
-  status("  Java:"            BUILD_FAT_JAVA_LIB  THEN "export all functions"                                      ELSE "")
-  status("    ant:"           ANT_EXECUTABLE      THEN "${ANT_EXECUTABLE} (ver ${ANT_VERSION})"                    ELSE "no")
+  status("  Java:"            BUILD_FAT_JAVA_LIB  THEN "export all functions"                    ELSE "")
+  status("    ant:"           ANT_EXECUTABLE      THEN "${ANT_EXECUTABLE} (ver ${ANT_VERSION})"  ELSE "no")
   if(NOT ANDROID)
-    status("    JNI:"         JNI_INCLUDE_DIRS    THEN "${JNI_INCLUDE_DIRS}"                                       ELSE "no")
+  status("    Java:"          Java_FOUND          THEN "yes (ver ${Java_VERSION})"                 ELSE "no")
+  status("    JNI:"           JNI_INCLUDE_DIRS    THEN "${JNI_INCLUDE_DIRS}"                       ELSE "no")
+  status("    Java wrappers:" HAVE_visp_java      THEN "yes (${VISP_JAVA_SDK_BUILD_TYPE})"         ELSE "no")
   endif()
 endif()
 
@@ -1803,8 +1814,14 @@ status("    Use PTU46:"              USE_PTU46        THEN "yes" ELSE "no")
 status("    Use Biclops PTU:"        USE_BICLOPS      THEN "yes" ELSE "no")
 status("    Use Flir PTU SDK:"       USE_FLIRPTUSDK   THEN "yes (ver ${FLIRPTUSDK_VERSION})" ELSE "no")
 status("    Use MAVSDK:"             USE_MAVSDK       THEN "yes (ver ${MAVSDK_VERSION})" ELSE "no")
-status("    Use Parrot ARSDK:"       USE_ARSDK        THEN "yes" ELSE "no")
-status("    \\-Use ffmpeg:"          USE_FFMPEG       THEN "yes" ELSE "no")
+status("    Use Parrot ARSDK:"       USE_ARSDK        THEN "yes (ver ${ARSDK_VERSION})" ELSE "no")
+status("    \\- Use ffmpeg:"         USE_FFMPEG       THEN "yes" ELSE "no")
+if(USE_FFMPEG)
+status("       \\- Use libavcodec:"  USE_FFMPEG     THEN "yes (ver ${FFMPEG_LIBAVCODEC_VERSION})" ELSE "no")
+status("       \\- Use libavformat:" USE_FFMPEG     THEN "yes (ver ${FFMPEG_LIBAVFORMAT_VERSION})" ELSE "no")
+status("       \\- Use libavutil:"   USE_FFMPEG     THEN "yes (ver ${FFMPEG_LIBAVUTIL_VERSION})" ELSE "no")
+status("       \\- Use libswscale:"  USE_FFMPEG     THEN "yes (ver ${FFMPEG_LIBSWSCALE_VERSION})" ELSE "no")
+endif()
 status("    Use Virtuose:"           USE_VIRTUOSE     THEN "yes" ELSE "no")
 status("    Use qbdevice (built-in):" WITH_QBDEVICE   THEN "yes (ver ${QBDEVICE_VERSION})" ELSE "no")
 status("    Use takktile2 (built-in):" WITH_TAKKTILE2 THEN "yes (ver ${TAKKTILE2_VERSION})" ELSE "no")
@@ -1914,15 +1931,18 @@ endif()
 if(USE_PANDA3D)
   if(Panda3D_DIR)
     status("    Panda3D dir:" "${Panda3D_DIR}")
-  else()
+  elseif($ENV{Panda3D_DIR})
     status("    Panda3D dir:" "$ENV{Panda3D_DIR}")
+  else()
+    file(REAL_PATH "${Panda3D_INCLUDE_DIRS}/../.." Panda3D_DIR)
+    status("    Panda3D dir:" "${Panda3D_DIR}")
   endif()
 endif()
 if(USE_YARP)
   status("    Yarp dir:" "${YARP_DIR}")
 endif()
 if(USE_OGRE)
-  if(NOT ${OGRE_DIR} STREQUAL "")
+  if(NOT ${OGRE_DIR} MATCHES "NOTFOUND")
     status("    Ogre dir:" "${OGRE_DIR}")
   else()
     status("    Ogre inc dir:" "${OGRE_INCLUDE_DIR}")
