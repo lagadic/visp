@@ -166,24 +166,18 @@ int main()
      *  Learning or reading the desired position
      */
     std::cout << "Learning (0/1)? " << std::endl;
-    std::string name = "cd_M_o.dat";
+    std::string filename = "cd_M_o.dat";
     int learning;
     std::cin >> learning;
     if (learning == 1) {
       // save the object position
-      std::cout << "Save the location of the object in a file cd_M_o.dat" << std::endl;
-      std::ofstream f(name.c_str());
-      c_M_o.save(f);
-      f.close();
-      exit(1);
+      std::cout << "Save the location of the object cMo in " << filename << std::endl;
+      c_M_o.save(filename);
+      return EXIT_SUCCESS;
     }
 
-    {
-      std::cout << "Loading desired location from cd_M_o.dat" << std::endl;
-      std::ifstream f("cd_M_o.dat");
-      cd_M_o.load(f);
-      f.close();
-    }
+    std::cout << "Loading desired location of the object cMo from " << filename << std::endl;
+    cd_M_o.load(filename);
 
     vpFeaturePoint s[nbPoint], s_d[nbPoint];
 
@@ -268,7 +262,7 @@ int main()
       }
       pose.computePose(vpPose::LOWE, c_M_o);
 
-    // - set the camera to end-effector velocity twist matrix transformation
+      // - set the camera to end-effector velocity twist matrix transformation
       vpHomogeneousMatrix c_M_e, camrobot_M_e;
       robot.get_cMe(camrobot_M_e);
       c_M_e = c_M_o * o_M_camrobot * camrobot_M_e;

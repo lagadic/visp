@@ -170,7 +170,11 @@
     "stdfloat": "cpp",
     "text_encoding": "cpp",
     "print": "cpp",
-    "geometry": "cpp"
+    "geometry": "cpp",
+    "matrixd": "cpp",
+    "matrixf": "cpp",
+    "quat": "cpp",
+    "light": "cpp"
   },
   "C_Cpp.vcFormat.indent.namespaceContents": false,
   "editor.formatOnSave": true,

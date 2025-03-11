@@ -9,8 +9,8 @@ This tutorial focuses estimation of the homogeneous transformation between the r
 in the case of a camera attached to the robot end-effector. This configuration is also called eye-in-hand.
 
 As a use case, we will consider in this tutorial the case of either:
-- a <a href="https://www.franka.de/cart/">Panda robot</a> in its research version from,
-  <a href="https://www.franka.de/">Franka Emika</a> equipped with an Intel Realsense
+- a Panda robot in its research version from,
+  <a href="https://franka.de/">Franka Emika</a> equipped with an Intel Realsense
   <a href="https://www.intelrealsense.com/depth-camera-d435/">D435</a> camera mounted on its end-effector
 - or a robot from Universal Robots also equipped with an Intel Realsense
   <a href="https://www.intelrealsense.com/depth-camera-d435/">D435</a> camera mounted on its end-effector.
@@ -394,8 +394,8 @@ corresponding robot end-effector positions:
 $ cd apps/calibration/hand-eye
 $ ./visp-acquire-franka-calib-data
 \endcode
-By default the robot controller IP is `192.168.1.1`. If your Franka has an other IP (let say 192.168.30.10) use
-`--ip` option like:
+By default the robot controller IP is `192.168.1.1`. If your Franka has an other IP (let say `192.168.30.10`) use
+`"--ip"` option like:
 \code{.sh}
 $ ./visp-acquire-franka-calib-data --ip 192.168.30.10 --output-folder data-franka
 \endcode

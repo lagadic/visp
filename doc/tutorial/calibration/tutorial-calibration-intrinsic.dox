@@ -156,7 +156,7 @@ example of one of these images.
 
 \image html img-chessboard-01.jpg Snapshot example of the 9 by 6 chessboard used to calibrate the camera.
 
-Before starting the calibration we need to create a configuration file. We create `default-chessboard.cfg` with the
+Before starting the calibration we need to create a configuration file. We create default-chessboard.cfg with the
 following content:
 
 \include default-chessboard.cfg

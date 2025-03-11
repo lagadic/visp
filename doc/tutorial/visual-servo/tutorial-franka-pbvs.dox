@@ -1,13 +1,15 @@
 /**
 
-\page tutorial-franka-pbvs Tutorial: PBVS with Panda 7-dof robot from Franka Emika
+\page tutorial-franka-pbvs Tutorial: Eye-in-hand PBVS with Panda 7-dof robot from Franka Emika
 \tableofcontents
 
 \section franka_intro Introduction
 
-This tutorial explains how to do a position-based visual-servoing with the Panda 7-dof robot from Franka Emika equipped with an Intel Realsense D435 camera.
+This tutorial explains how to implement eye-in-hand position-based visual servoing (PBVS) with Franka Emika's Panda
+7-dof robot equipped with an Intel Realsense camera mounted on its end-effector.
 
-The following video shows the resulting robot trajectory when the robot is achieving a position-based visual servoing over an Apriltag target.
+The following video shows the resulting robot trajectory when the robot is achieving a position-based visual servoing
+over an Apriltag target.
 
 \htmlonly
 <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/7A5cqUEKXHg" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe></p>
@@ -18,8 +20,8 @@ The following video shows the resulting robot trajectory when the robot is achie
 \subsection franka_prereq_hardware Hardware
 
 We suppose here that you have:
-- a <a href="https://www.franka.de/cart/">Panda robot</a> in its research version from <a href="https://www.franka.de/">Franka Emika</a> that will be controlled throw vpRobotFranka class.
-- an Intel Realsense <a href="https://click.intel.com/intelr-realsensetm-depth-camera-d435.html">D345</a> camera attached to the robot end-effector.
+- a Panda robot in its research version from <a href="https://franka.de/">Franka Emika</a> that will be controlled throw vpRobotFranka class.
+- an Intel Realsense <a href="https://www.intelrealsense.com/depth-camera-d435/">D345</a> camera attached to the robot end-effector.
 Note that this tutorial should also work with any other Intel Realsense camera.
 
 \subsection franka_prereq_rt_linux Setting up a real-time kernel

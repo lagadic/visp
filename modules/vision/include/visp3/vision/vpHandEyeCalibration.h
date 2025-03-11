@@ -34,8 +34,6 @@
 /*!
  * \file vpHandEyeCalibration.h
  * \brief Tools for hand-eye calibration.
- *
- * \sa The example in calibrate-hand-eye.cpp
  */
 #ifndef VP_HAND_EYE_CALIBRATION_H
 #define VP_HAND_EYE_CALIBRATION_H
@@ -47,6 +45,7 @@
 #include <visp3/core/vpMatrix.h>
 
 BEGIN_VISP_NAMESPACE
+
 /*!
  * \class vpHandEyeCalibration
  *
@@ -54,8 +53,24 @@ BEGIN_VISP_NAMESPACE
  *
  * \brief Tool for hand-eye calibration.
  * This class is able to consider eye-in-hand and eye-to-hand configurations.
-*/
-class VISP_EXPORT vpHandEyeCalibration
+ *
+ * Let us consider:
+ * - \f$^r{\bf M}_e\f$ the homogeneous transformation between the robot reference frame and the
+ *   robot end-effector,
+ * - \f$^c{\bf M}_o\f$ the homogeneous transformation between the camera frame and an object frame attached to the
+ *   robot end-effector,
+ * - \f$^r{\bf M}_c\f$ the homogeneous transformation between the robot reference frame and the camera frame,
+ * - \f$^e{\bf M}_o\f$ the homogeneous transformation between the robot end-effector frame and the object frame
+ *   attached to the end-effector.
+ *
+ * The hand-eye calibration process implemented in this class allows from the basket of
+ * \f$\{^r{\bf M}_e, ^c{\bf M}_o\}_i\f$ corresponding to couple of poses \f$ i \f$ to estimate:
+ * - in an eye-in-hand configuration \f$ {^r}{\bf M}_o \f$ and \f$ {^e}{\bf M}_c \f$ constant homogeneous extrinsic
+ *   transformations,
+ * - in an eye-to-hand configuration \f$ {^r}{\bf M}_c \f$ and \f$ {^e}{\bf M}_o \f$ constant homogeneous extrinsic
+ *   transformations.
+ */
+  class VISP_EXPORT vpHandEyeCalibration
 {
 public:
   /*!
