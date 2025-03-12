@@ -145,12 +145,12 @@ public:
   /*!
    * Compute convolution for a given mask_index.
    */
-  double convolution(const vpImage<unsigned char> &ima, const vpMe *me, const unsigned int mask_index);
+  double convolution(const vpImage<unsigned char> &ima, const vpMe &me, const unsigned int mask_index);
 
   /*!
    * Compute the index mask in [0:179] for convolution.
    */
-  unsigned int computeMaskIndex(const double alpha, const vpMe *me);
+  unsigned int computeMaskIndex(const double alpha, const vpMe &me);
 
   /*!
    * Display moving edges in image I.

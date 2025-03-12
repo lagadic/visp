@@ -233,7 +233,7 @@ vpMeSite *vpMeSite::getQueryList(const vpImage<unsigned char> &I, const int &ran
  * Specific function for ME.
  * Compute the mask index in [0:179] for convolution
  */
-unsigned int vpMeSite::computeMaskIndex(const double alpha, const vpMe *me)
+unsigned int vpMeSite::computeMaskIndex(const double alpha, const vpMe &me)
 {
   // Calculate tangent angle from normal
   double theta = alpha + (M_PI / 2);
@@ -252,7 +252,7 @@ unsigned int vpMeSite::computeMaskIndex(const double alpha, const vpMe *me)
   if (abs(theta_deg) == flatAngle) {
     theta_deg = 0;
   }
-  unsigned int mask_index = static_cast<unsigned int>(theta_deg / static_cast<double>(me->getAngleStep()));
+  unsigned int mask_index = static_cast<unsigned int>(theta_deg / static_cast<double>(me.getAngleStep()));
   return(mask_index);
 }
 
@@ -272,7 +272,7 @@ double vpMeSite::convolution(const vpImage<unsigned char> &I, const vpMe *me)
     m_j = 0;
   }
   else {
-    unsigned int mask_index = computeMaskIndex(m_alpha, me);
+    unsigned int mask_index = computeMaskIndex(m_alpha, *me);
 
     unsigned int i_ = static_cast<unsigned int>(m_i);
     unsigned int j_ = static_cast<unsigned int>(m_j);
@@ -294,17 +294,17 @@ double vpMeSite::convolution(const vpImage<unsigned char> &I, const vpMe *me)
 /*!
  * Specific function for ME.
  */
-double vpMeSite::convolution(const vpImage<unsigned char> &I, const vpMe *me, const unsigned int mask_index)
+double vpMeSite::convolution(const vpImage<unsigned char> &I, const vpMe &me, const unsigned int mask_index)
 {
   int half;
   int height = static_cast<int>(I.getHeight());
   int width = static_cast<int>(I.getWidth());
 
   double conv = 0.0;
-  unsigned int msize = me->getMaskSize();
+  unsigned int msize = me.getMaskSize();
   half = static_cast<int>((msize - 1) >> 1);
 
-  if (horsImage(m_i, m_j, half + me->getStrip(), height, width)) {
+  if (horsImage(m_i, m_j, half + me.getStrip(), height, width)) {
     conv = 0.0;
     m_i = 0;
     m_j = 0;
@@ -320,7 +320,7 @@ double vpMeSite::convolution(const vpImage<unsigned char> &I, const vpMe *me, co
     for (unsigned int a = 0; a < msize; ++a) {
       unsigned int ihalfa = ihalf + a;
       for (unsigned int b = 0; b < msize; ++b) {
-        conv += m_mask_sign * me->getMask()[mask_index][a][b] * I(ihalfa, jhalf + b);
+        conv += m_mask_sign * me.getMask()[mask_index][a][b] * I(ihalfa, jhalf + b);
       }
     }
   }
@@ -339,7 +339,7 @@ void vpMeSite::track(const vpImage<unsigned char> &I, const vpMe *me, const bool
   unsigned int range = me->getRange();
   const unsigned int normalSides = 2;
   const unsigned int numQueries = range * normalSides + 1;
-  unsigned int mask_index = computeMaskIndex(m_alpha, me);
+  unsigned int mask_index = computeMaskIndex(m_alpha, *me);
   vpMeSite *list_query_pixels = getQueryList(I, static_cast<int>(range));
 
   double contrast_max = 1 + me->getMu2();
@@ -357,7 +357,7 @@ void vpMeSite::track(const vpImage<unsigned char> &I, const vpMe *me, const bool
     for (unsigned int n = 0; n < numQueries; ++n) {
       // Convolution results
       list_query_pixels[n].m_mask_sign = m_mask_sign;
-      double convolution_ = list_query_pixels[n].convolution(I, me, mask_index);
+      double convolution_ = list_query_pixels[n].convolution(I, *me, mask_index);
       // no fabs since m_convlt > 0 and we look for a similar one
       const double likelihood = convolution_ + m_convlt;
 
@@ -374,9 +374,8 @@ void vpMeSite::track(const vpImage<unsigned char> &I, const vpMe *me, const bool
   }
   else { // test on contrast only
     for (unsigned int n = 0; n < numQueries; ++n) {
-
-      // convolution results
-      double convolution_ = list_query_pixels[n].convolution(I, me);
+      // Convolution results
+      double convolution_ = list_query_pixels[n].convolution(I, me); // DEBUG FS pourquoi pas list_query_pixels[n].convolution(I, *me, mask_index);
       const double likelihood = fabs(2 * convolution_);
       if ((likelihood > max) && (likelihood > threshold)) {
         max_convolution = convolution_;
@@ -427,17 +426,18 @@ void vpMeSite::track(const vpImage<unsigned char> &I, const vpMe *me, const bool
   delete[] list_query_pixels;
 }
 
-// FC pas de modifs faites dans cette fonction alors qu'il faudrait normalement...
 void vpMeSite::trackMultipleHypotheses(const vpImage<unsigned char> &I, const vpMe &me, const bool &test_contrast,
                                        std::vector<vpMeSite> &outputHypotheses, const unsigned numCandidates)
 {
   // range = +/- range of pixels within which the correspondent
   // of the current pixel will be sought
   unsigned int range = me.getRange();
-  const unsigned int numQueries = range * 2 + 1;
+  const unsigned int normalSides = 2;
+  const unsigned int numQueries = range * normalSides + 1;
+  unsigned int mask_index = computeMaskIndex(m_alpha, me);
 
   if (numCandidates > numQueries) {
-    throw vpException(vpException::badValue, "Error in vpMeSite::track: the number of retained hypotheses cannot superior to the number of queried sites.");
+    throw vpException(vpException::badValue, "Error in vpMeSite::track(): the number of retained hypotheses cannot be greater to the number of queried sites.");
   }
 
   vpMeSite *list_query_pixels = getQueryList(I, static_cast<int>(range));
@@ -456,14 +456,19 @@ void vpMeSite::trackMultipleHypotheses(const vpImage<unsigned char> &I, const vp
 
   // First step: compute likelihoods and contrasts for all queries
   if (test_contrast) {
+    // Change of mask sign to have a continuity at 0 and 180.
+    // Threshold at 120 to be more than the 90 initial value
+    if (vpMath::abs((int)(mask_index - m_index_prev)) > 120) {
+      m_mask_sign = -m_mask_sign;
+    }
     for (unsigned int n = 0; n < numQueries; ++n) {
+      // Convolution results
+      list_query_pixels[n].m_mask_sign = m_mask_sign;
       vpMeSite &query = list_query_pixels[n];
-      //   convolution results
-      const double convolution_ = query.convolution(I, &me);
-      // luminance ratio of reference pixel to potential correspondent pixel
-      // the luminance must be similar, hence the ratio value should
-      // lay between, for instance, 0.5 and 1.5 (parameter tolerance)
-      const double likelihood = fabs(convolution_ + m_convlt);
+      // Convolution results
+      const double convolution_ = query.convolution(I, me, mask_index);
+      // no fabs since m_convlt > 0 and we look for a similar one
+      const double likelihood = convolution_ + m_convlt;
 
       query.m_convlt = convolution_;
       const double contrast = convolution_ / m_convlt;
