@@ -59,7 +59,7 @@ struct vpMeSiteHypothesis
   double contrast;
 };
 
-static bool horsImage(int i, int j, int half, int rows, int cols)
+static bool outsideImage(int i, int j, int half, int rows, int cols)
 {
   int half_1 = half + 1;
   int half_3 = half + 3;
@@ -266,7 +266,7 @@ double vpMeSite::convolution(const vpImage<unsigned char> &I, const vpMe *me)
   unsigned int msize = me->getMaskSize();
   half = static_cast<int>((msize - 1) >> 1);
 
-  if (horsImage(m_i, m_j, half + me->getStrip(), height_, width_)) {
+  if (outsideImage(m_i, m_j, half + me->getStrip(), height_, width_)) {
     conv = 0.0;
     m_i = 0;
     m_j = 0;
@@ -304,7 +304,7 @@ double vpMeSite::convolution(const vpImage<unsigned char> &I, const vpMe &me, co
   unsigned int msize = me.getMaskSize();
   half = static_cast<int>((msize - 1) >> 1);
 
-  if (horsImage(m_i, m_j, half + me.getStrip(), height, width)) {
+  if (outsideImage(m_i, m_j, half + me.getStrip(), height, width)) {
     conv = 0.0;
     m_i = 0;
     m_j = 0;
