@@ -1,23 +1,23 @@
 {
   "verbose": {
-    "enabled": true
+    "enabled": false
   },
   "camera": {
     "intrinsics": {
       "model": "perspectiveWithoutDistortion",
-      "px": 302.573,
-      "py": 302.396,
-      "u0": 162.776,
-      "v0": 122.475
+      "px": 607.178,
+      "py": 607.234,
+      "u0": 321.391,
+      "v0": 241.918
     },
-    "height": 240,
-    "width": 320
+    "height": 480,
+    "width": 640
   },
   "vvs": {
     "gain": 2.0,
     "maxIterations": 10
   },
-  "model": "data/sequence1/dragon.bam",
+  "model": "data/dragon/dragon.bam",
   "silhouetteExtractionSettings": {
     "threshold": {
       "type": "relative",
@@ -76,6 +76,32 @@
       "pyramidLevels": 3,
       "quality": 0.01,
       "windowSize": 5
+    },
+    {
+      "type": "silhouetteMe",
+      "weight": 0.1,
+      "numCandidates": 3,
+      "convergencePixelThreshold": 0.0,
+      "convergenceRatio": 1,
+      "movingEdge": {
+        "maskSign": 0,
+        "maskSize": 7,
+        "minSampleStep": 1.0,
+        "mu": [
+          0.5,
+          0.5
+        ],
+        "nMask": 180,
+        "ntotalSample": 0,
+        "pointsToTrack": 500,
+        "range": 16,
+        "sampleStep": 1.0,
+        "strip": 2,
+        "thresholdType": "new",
+        "threshold": 50
+      },
+      "useMask": false,
+      "minMaskConfidence": 0.8
     }
   ]
 }
