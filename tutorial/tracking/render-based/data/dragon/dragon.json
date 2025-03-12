@@ -14,8 +14,10 @@
     "width": 640
   },
   "vvs": {
-    "gain": 2.0,
-    "maxIterations": 10
+    "gain": 1.0,
+    "maxIterations": 10,
+    "mu": 0.1,
+    "muIterFactor": 0.1
   },
   "model": "data/dragon/dragon.bam",
   "silhouetteExtractionSettings": {
@@ -34,7 +36,8 @@
     "bins": 32,
     "objectUpdateRate": 0.1,
     "backgroundUpdateRate": 0.1,
-    "maxDepthError": 0.01
+    "maxDepthError": 0.01,
+    "computeOnlyOnBoundingBox": false
   },
   "drift": {
     "type": "probabilistic",
@@ -45,13 +48,6 @@
     "minDistanceNewPoints": 0.005
   },
   "features": [
-    {
-      "type": "depth",
-      "weight": 0.1,
-      "step": 8,
-      "useMask": true,
-      "minMaskConfidence": 0.7
-    },
     {
       "type": "silhouetteColor",
       "weight": 0.01,
@@ -84,7 +80,6 @@
       "convergencePixelThreshold": 0.0,
       "convergenceRatio": 1,
       "movingEdge": {
-        "maskSign": 0,
         "maskSize": 7,
         "minSampleStep": 1.0,
         "mu": [
@@ -92,13 +87,11 @@
           0.5
         ],
         "nMask": 180,
-        "ntotalSample": 0,
-        "pointsToTrack": 500,
         "range": 16,
         "sampleStep": 1.0,
         "strip": 2,
-        "thresholdType": "new",
-        "threshold": 50
+        "thresholdType": "normalized",
+        "threshold": 20
       },
       "useMask": false,
       "minMaskConfidence": 0.8
