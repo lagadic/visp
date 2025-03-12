@@ -44,40 +44,64 @@ void vpRBSilhouetteMeTracker::extractFeatures(const vpRBFeatureTrackerInput &fra
   const vpHomogeneousMatrix &cMo = frame.renders.cMo;
   const vpHomogeneousMatrix oMc = cMo.inverse();
   vpColVector oC = oMc.getRotationMatrix() * vpColVector({ 0.0, 0.0, -1.0 });
-  for (const vpRBSilhouettePoint &sp: frame.silhouettePoints) {
-    // float angle = vpMath::deg(acos(sp.normal * oC));
-    // if (angle > 89.0) {
-    //   continue;
-    // }
-    // std::cout <<  angle << std::endl;
-#if VISP_DEBUG_ME_TRACKER
-    if (sp.Z == 0) {
-      throw vpException(vpException::badValue, "Got a point with Z == 0");
-    }
-    if (std::isnan(sp.orientation)) {
-      throw vpException(vpException::badValue, "Got a point with theta nan");
-    }
+
+#ifdef VISP_HAVE_OPENMP
+#pragma omp parallel
+#endif
+  {
+    std::vector<vpRBSilhouetteControlPoint> localPoints;
+#ifdef VISP_HAVE_OPENMP
+#pragma omp for
 #endif
 
-    if (m_useMask && frame.hasMask()) {
-      float confidence = frame.mask[sp.i][sp.j];
-      if (confidence < m_minMaskConfidence) {
+    for (const vpRBSilhouettePoint &sp: frame.silhouettePoints) {
+      // float angle = vpMath::deg(acos(sp.normal * oC));
+      // if (angle > 89.0) {
+      //   continue;
+      // }
+      // std::cout <<  angle << std::endl;
+#if VISP_DEBUG_ME_TRACKER
+      if (sp.Z == 0) {
+        throw vpException(vpException::badValue, "Got a point with Z == 0");
+      }
+      if (std::isnan(sp.orientation)) {
+        throw vpException(vpException::badValue, "Got a point with theta nan");
+      }
+#endif
+
+
+      vpRBSilhouetteControlPoint p;
+      p.buildPoint((int)sp.i, (int)sp.j, sp.Z, sp.orientation, sp.normal, cMo, oMc, frame.cam, m_me);
+      if (p.tooCloseToBorder(frame.I.getHeight(), frame.I.getWidth(), m_me.getRange())) {
         continue;
       }
+      if (m_useMask && frame.hasMask()) {
+        double maxMaskGradient = p.getMaxMaskGradientAlongLine(frame.mask, m_me.getRange());
+        if (maxMaskGradient < m_minMaskConfidence) {
+          continue;
+        }
+      }
+
+      if (previousFrame.I.getSize() == frame.I.getSize()) {
+        p.initControlPoint(previousFrame.I, 0);
+      }
+      else {
+        p.initControlPoint(frame.I, 0);
+      }
+
+      p.setNumCandidates(m_numCandidates);
+      localPoints.push_back(std::move(p));
     }
 
-    vpRBSilhouetteControlPoint p;
-    p.buildPoint((int)sp.i, (int)sp.j, sp.Z, sp.orientation, sp.normal, cMo, oMc, frame.cam, m_me);
-    if (previousFrame.I.getSize() == frame.I.getSize()) {
-      p.initControlPoint(previousFrame.I, 0);
+#ifdef VISP_HAVE_OPENMP
+#pragma omp critical
+#endif
+    {
+      m_controlPoints.insert(m_controlPoints.end(), localPoints.begin(), localPoints.end());
     }
-    else {
-      p.initControlPoint(frame.I, 0);
-    }
-
-    p.setNumCandidates(m_numCandidates);
-    m_controlPoints.push_back(p);
   }
+
+
   m_numFeatures = m_controlPoints.size();
 
   m_robust.setMinMedianAbsoluteDeviation(m_robustMadMin / frame.cam.get_px());
@@ -86,11 +110,17 @@ void vpRBSilhouetteMeTracker::extractFeatures(const vpRBFeatureTrackerInput &fra
 void vpRBSilhouetteMeTracker::trackFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &/*previousFrame*/, const vpHomogeneousMatrix &/*cMo*/)
 {
   if (m_numCandidates <= 1) {
+#ifdef VISP_HAVE_OPENMP
+#pragma omp parallel for
+#endif
     for (vpRBSilhouetteControlPoint &p: m_controlPoints) {
       p.track(frame.I);
     }
   }
   else {
+#ifdef VISP_HAVE_OPENMP
+#pragma omp parallel for
+#endif
     for (vpRBSilhouetteControlPoint &p: m_controlPoints) {
       p.trackMultipleHypotheses(frame.I);
     }

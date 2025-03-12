@@ -319,8 +319,6 @@ protected:
   void updateCCDPoints(const vpHomogeneousMatrix &cMo);
   void computeLocalStatistics(const vpImage<vpRGBa> &I, vpCCDStatistics &stats);
   void computeErrorAndInteractionMatrix();
-  double computeMaskGradient(const vpImage<float> &mask, const vpRBSilhouetteControlPoint &pccd) const;
-
 
   vpCCDParameters m_ccdParameters;
 

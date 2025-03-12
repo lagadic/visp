@@ -172,7 +172,7 @@ void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &fr
     }
 
     if (frame.hasMask() && m_useMask) {
-      double maskGradValue = computeMaskGradient(frame.mask, pccd);
+      double maskGradValue = pccd.getMaxMaskGradientAlongLine(frame.mask, m_ccdParameters.h);
       if (maskGradValue < m_minMaskConfidence) {
         continue;
       }
@@ -182,31 +182,6 @@ void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &fr
   }
 }
 
-double vpRBSilhouetteCCDTracker::computeMaskGradient(const vpImage<float> &mask, const vpRBSilhouetteControlPoint &pccd) const
-{
-
-  std::vector<float> maskValues(m_ccdParameters.h * 2 + 1);
-  double c = cos(pccd.getTheta());
-  double s = sin(pccd.getTheta());
-  int index = 0;
-  for (int n = -m_ccdParameters.h + 1; n < m_ccdParameters.h; ++n) {
-    unsigned int ii = static_cast<unsigned int>(round(pccd.icpoint.get_i() + s * n));
-    unsigned int jj = static_cast<unsigned int>(round(pccd.icpoint.get_j() + c * n));
-
-    maskValues[index] = mask[ii][jj];
-    ++index;
-  }
-
-  double maxGrad = 0.0;
-
-  for (unsigned i = 1; i < maskValues.size() - 1; ++i) {
-    double grad = abs(maskValues[i + 1] - maskValues[i - 1]);
-    if (grad > maxGrad) {
-      maxGrad = grad;
-    }
-  }
-  return maxGrad;
-}
 
 void vpRBSilhouetteCCDTracker::initVVS(const vpRBFeatureTrackerInput &/*frame*/, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix & /*cMo*/)
 {
