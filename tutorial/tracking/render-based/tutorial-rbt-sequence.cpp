@@ -7,6 +7,8 @@
 #include <visp3/io/vpVideoReader.h>
 #include <visp3/io/vpVideoWriter.h>
 
+#include <visp3/ar/vpPanda3DFrameworkManager.h>
+
 #include <visp3/rbt/vpRBTracker.h>
 
 #ifdef ENABLE_VISP_NAMESPACE
@@ -105,9 +107,8 @@ int main(int argc, const char **argv)
   std::cout << "  Image size : " << width << " x " << height << std::endl;
 
   vpImage<unsigned char> Id(height, width);
-  vpImage<float> depth(height, width);
+  vpImage<float> depth(0, 0);
   vpImage<unsigned char> depthDisplay(height, width);
-  vpImage<float> IProba(height, width);
   vpImage<unsigned char> IProbaDisplay(height, width);
   vpImage<vpRGBa> IRender(height, width);
   vpImage<vpRGBa> InormDisplay(height, width);
@@ -210,15 +211,14 @@ int main(int argc, const char **argv)
         }
       }
 
-      vpDisplay::display(IProbaDisplay);
       vpDisplay::display(Id);
       vpDisplay::displayText(Id, 20, 20, "Click to quit", vpColor::red);
       vpDisplay::display(Icol);
 
-      tracker.displayMask(IProbaDisplay);
       tracker.display(Id, Icol, depthDisplay);
+      tracker.displayMask(IProbaDisplay);
+      vpDisplay::display(IProbaDisplay);
       vpDisplay::displayFrame(Icol, cMo, cam, 0.05, vpColor::none, 2);
-
       vpDisplay::flush(Icol);
       vpDisplay::flush(Id);
       vpDisplay::flush(IProbaDisplay);
@@ -255,6 +255,7 @@ int main(int argc, const char **argv)
   }
 
   logger.close();
+  vpPanda3DFrameworkManager::getInstance().exit();
 
   return EXIT_SUCCESS;
 }
