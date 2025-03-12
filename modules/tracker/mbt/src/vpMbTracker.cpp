@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Generic model based tracker
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpMbTracker.cpp
@@ -56,9 +54,7 @@
 #include <visp3/core/vpPoint.h>
 #include <visp3/vision/vpPose.h>
 #ifdef VISP_HAVE_MODULE_GUI
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #endif
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpColor.h>
@@ -390,17 +386,12 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
 
         if (foundHelpImg) {
           std::cout << "Load image to help initialization: " << dispF << std::endl;
-#if defined(VISP_HAVE_X11)
-          d_help = new vpDisplayX;
-#elif defined(VISP_HAVE_GDI)
-          d_help = new vpDisplayGDI;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-          d_help = new vpDisplayOpenCV;
-#endif
+
+          d_help = vpDisplayFactory::allocateDisplay();
 
           vpImage<vpRGBa> Iref;
           vpImageIo::read(Iref, dispF);
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
+#if defined(VISP_HAVE_DISPLAY)
           const int winXPos = I != nullptr ? I->display->getWindowXPosition() : I_color->display->getWindowXPosition();
           const int winYPos = I != nullptr ? I->display->getWindowYPosition() : I_color->display->getWindowYPosition();
           unsigned int width = I != nullptr ? I->getWidth() : I_color->getWidth();
