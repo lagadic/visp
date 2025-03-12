@@ -375,7 +375,7 @@ void vpMeSite::track(const vpImage<unsigned char> &I, const vpMe *me, const bool
   else { // test on contrast only
     for (unsigned int n = 0; n < numQueries; ++n) {
       // Convolution results
-      double convolution_ = list_query_pixels[n].convolution(I, me); // DEBUG FS pourquoi pas list_query_pixels[n].convolution(I, *me, mask_index);
+      double convolution_ = list_query_pixels[n].convolution(I, me);
       const double likelihood = fabs(2 * convolution_);
       if ((likelihood > max) && (likelihood > threshold)) {
         max_convolution = convolution_;
