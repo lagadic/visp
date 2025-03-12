@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,8 +35,8 @@
  * \file vpCalibration.h
  * \brief Tools for camera calibration.
  */
-#ifndef vpCalibration_h
-#define vpCalibration_h
+#ifndef VP_CALIBRATION_H
+#define VP_CALIBRATION_H
 
 #include <list>
 #include <vector>
@@ -52,11 +52,13 @@
 
 BEGIN_VISP_NAMESPACE
 /*!
- *  \class vpCalibration
+ * \class vpCalibration
  *
  * \ingroup group_vision_calib
  *
- * \brief Tools for perspective camera calibration.
+ * \brief Tools for perspective camera intrinsic parameters calibration.
+ *
+ * See \ref tutorial-calibration-intrinsic for more details.
 */
 class VISP_EXPORT vpCalibration
 {

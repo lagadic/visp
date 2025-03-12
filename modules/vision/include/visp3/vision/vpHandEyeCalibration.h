@@ -66,9 +66,9 @@ BEGIN_VISP_NAMESPACE
  * The hand-eye calibration process implemented in this class allows from the basket of
  * \f$\{^r{\bf M}_e, ^c{\bf M}_o\}_i\f$ corresponding to couple of poses \f$ i \f$ to estimate:
  * - in an eye-in-hand configuration \f$ {^r}{\bf M}_o \f$ and \f$ {^e}{\bf M}_c \f$ constant homogeneous extrinsic
- *   transformations,
+ *   transformations (see \ref tutorial-calibration-extrinsic-eye-in-hand),
  * - in an eye-to-hand configuration \f$ {^r}{\bf M}_c \f$ and \f$ {^e}{\bf M}_o \f$ constant homogeneous extrinsic
- *   transformations.
+ *   transformations (see \ref tutorial-calibration-extrinsic-eye-to-hand).
  */
   class VISP_EXPORT vpHandEyeCalibration
 {
