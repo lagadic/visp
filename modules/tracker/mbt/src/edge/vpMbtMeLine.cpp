@@ -107,8 +107,7 @@ void vpMbtMeLine::initTracking(const vpImage<unsigned char> &I, const vpImagePoi
   m_b = sin(m_theta);
   m_c = -m_rho;
 
-  computeDelta(m_delta, id1, jd1, id2, jd2);
-  m_delta_1 = m_delta;
+  m_delta = atan2((jd2 - jd1), (id1 - id2));
 
   sample(I, doNoTrack);
 
@@ -153,7 +152,7 @@ unsigned int vpMbtMeLine::seekExtremities(const vpImage<unsigned char> &I)
 
   vpMeSite P;
 
-  P.init((int)id1, (int)jd1, m_delta_1, 0, m_sign);
+  P.init((int)id1, (int)jd1, m_delta, 0, m_sign);
   P.setDisplay(m_selectDisplay);
   const double marginRatio = m_me->getThresholdMarginRatio();
 
