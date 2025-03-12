@@ -165,11 +165,11 @@ void vpRBInitializationHelper::initClick(const vpImage<T> &I, const std::string 
         if (foundHelpImg) {
           std::cout << "Load image to help initialization: " << dispF << std::endl;
 
-          std::shared_ptr<vpDisplay> d_help = vpDisplayFactory::createDisplay();
+          d_help = vpDisplayFactory::allocateDisplay();
 
           vpImage<vpRGBa> Iref;
           vpImageIo::read(Iref, dispF);
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
+#if defined(VISP_HAVE_DISPLAY)
           const int winXPos = I.display->getWindowXPosition();
           const int winYPos = I.display->getWindowYPosition();
           unsigned int width = I.getWidth();

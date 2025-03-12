@@ -323,7 +323,7 @@ std::vector<std::shared_ptr<vpDisplay>> createDisplays(
   return vpDisplayFactory::makeDisplayGrid(
       2, 2,
       0, 0,
-      20, 40,
+      80, 80,
       "Grayscale", Id,
       "Color", Icol,
       "Depth", depthDisplay,
@@ -337,7 +337,7 @@ std::vector<std::shared_ptr<vpDisplay>> createDisplays(
   return vpDisplayFactory::makeDisplayGrid(
       1, 3,
       0, 0,
-      20, 40,
+      80, 80,
       "Grayscale", Id,
       "Color", Icol,
       "Proba mask", probaDisplay
