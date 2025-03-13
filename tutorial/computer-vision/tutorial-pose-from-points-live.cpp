@@ -186,6 +186,7 @@ int main(int argc, const char **argv)
 #endif
     //! [Grabber]
 
+#if defined(VISP_HAVE_PUGIXML)
     // Parameters of our camera
     vpXmlParserCamera parser;
     if (!opt_intrinsic_file.empty() && !opt_camera_name.empty()) {
@@ -199,6 +200,7 @@ int main(int argc, const char **argv)
         std::cout << "Unable to read camera parameters from xml file" << std::endl;
       }
     }
+#endif
 
     std::cout << "Square width  : " << opt_square_width << std::endl;
     std::cout << cam << std::endl;
