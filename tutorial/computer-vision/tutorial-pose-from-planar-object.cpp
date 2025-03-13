@@ -297,7 +297,7 @@ std::map<Model::Id, vpImagePoint> getKeypointsFromUser(vpImage<vpRGBa> color_img
   disp_color.flush(color_img);
 
   vpImage<vpRGBa> I_help {};
-  vpImageIo::read(I_help, parent_data + "/data/d435_box_keypoints_user_helper.png");
+  vpImageIo::read(I_help, parent_data + "/data/d435_box_keypoints_user_helper.jpg");
   Display disp_help(I_help, disp_color.getWindowXPosition() + color_img.getWidth(), disp_color.getWindowYPosition(),
                     "Keypoints [help]", DispScaleType);
   disp_help.display(I_help);

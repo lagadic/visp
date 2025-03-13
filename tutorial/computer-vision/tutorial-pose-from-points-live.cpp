@@ -37,7 +37,59 @@
 
 #include "pose_helper.h"
 
-int main(int argc, char **argv)
+void usage(const char **argv, int error)
+{
+  std::cout << "Synopsis" << std::endl
+    << "  " << argv[0]
+    << " [--camera-device <id>]"
+#if defined(VISP_HAVE_PUGIXML)
+    << " [--intrinsic <xmlfile>]"
+    << " [--camera-name <name>]"
+#endif
+    << " [--square-width <width>]"
+    << " [--help, -h]" << std::endl
+    << std::endl;
+  std::cout << "Description" << std::endl
+    << "  Compute the pose of a square from its 4 corners." << std::endl
+    << std::endl
+    << "  --camera-device <id>" << std::endl
+    << "    Camera device id." << std::endl
+    << "    Default: 0" << std::endl
+    << std::endl
+#if defined(VISP_HAVE_PUGIXML)
+    << "  --intrinsic <xmlfile>" << std::endl
+    << "    Camera intrinsic parameters file in xml format." << std::endl
+    << "    Default: empty" << std::endl
+    << std::endl
+    << "  --camera-name <name>" << std::endl
+    << "    Camera name in the intrinsic parameters file in xml format." << std::endl
+    << "    Default: empty" << std::endl
+    << std::endl
+#endif
+    << "  --square-width <width>" << std::endl
+    << "    Square width in meter." << std::endl
+    << "    Default: 0.12" << std::endl
+    << std::endl
+    << "  --help, -h" << std::endl
+    << "    Print this helper message." << std::endl
+    << std::endl;
+  std::cout
+    << std::endl
+    << "Example using default camera parameters and square size:\n"
+    << "  " << argv[0] << "\n"
+    << std::endl
+    << "Example fully tuned for a 0.1m x 0.1m square:\n"
+    << "  " << argv[0] << " --intrinsic camera.xml --camera-name Camera --square-width 0.1\n"
+    << std::endl;
+
+  if (error) {
+    std::cout << "Error" << std::endl
+      << "  "
+      << "Unsupported parameter " << argv[error] << std::endl;
+  }
+}
+
+int main(int argc, const char **argv)
 {
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
@@ -54,33 +106,25 @@ int main(int argc, char **argv)
     int opt_device = 0; // For OpenCV and V4l2 grabber to set the camera device
 
     for (int i = 1; i < argc; i++) {
-      if (std::string(argv[i]) == "--intrinsic" && i + 1 < argc) {
+      if (std::string(argv[i]) == "--camera-device" && i + 1 < argc) {
+        opt_device = atoi(argv[++i]);
+      }
+      else if (std::string(argv[i]) == "--intrinsic" && i + 1 < argc) {
         opt_intrinsic_file = std::string(argv[++i]);
       }
       else if (std::string(argv[i]) == "--camera-name" && i + 1 < argc) {
         opt_camera_name = std::string(argv[++i]);
       }
-      else if (std::string(argv[i]) == "--camera-device" && i + 1 < argc) {
-        opt_device = atoi(argv[++i]);
-      }
       else if (std::string(argv[i]) == "--square-width" && i + 1 < argc) {
         opt_device = atoi(argv[++i]);
       }
       else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-        std::cout << "\nUsage: " << argv[0]
-          << " [--camera-device <camera device> (default: 0)]"
-          << " [--intrinsic <xml calibration file> (default: empty)]"
-          << " [--camera-name <camera name in xml calibration file> (default: empty)]"
-          << " [--square-width <square width in meter (default: 0.12)]"
-          << " [--help] [-h]\n"
-          << std::endl
-          << "Example using default camera parameters and square size:\n"
-          << "  " << argv[0] << "\n"
-          << std::endl
-          << "Example fully tuned for a 0.1m x 0.1m square:\n"
-          << "  " << argv[0] << " --intrinsic camera.xml --camera-name Camera --square-width 0.1\n"
-          << std::endl;
+        usage(argv, 0);
         return EXIT_SUCCESS;
+      }
+      else {
+        usage(argv, i);
+        return EXIT_FAILURE;
       }
     }
 

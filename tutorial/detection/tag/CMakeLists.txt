@@ -12,7 +12,7 @@ set(tutorial_cpp
   tutorial-apriltag-detector-live-T265-realsense.cpp
 )
 
-set(tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/AprilTag.pgm")
+set(tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/AprilTag.jpg")
 
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})

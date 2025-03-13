@@ -17,14 +17,14 @@ Note that all the material (source code and images) described in this tutorial i
 Given the image of a planar 20cm by 20cm square target as the one presented in the next image, we show here after how
 to project this image at a given camera position, and how to get the resulting image.
 
-\image html img-target-square.png Image of a planar 20cm by 20cm square target.
+\image html img-target-square.jpg Image of a planar 20cm by 20cm square target.
 
 This is done by the following code also available in tutorial-image-simulator.cpp:
 \include tutorial-image-simulator.cpp
 
 The result of this program is shown in the next image.
 
-\image html img-simu-image-target-square.png Resulting projection of the planar image at a given camera position.
+\image html img-simu-image-target-square.jpg Resulting projection of the planar image at a given camera position.
 
 The provide hereafter the explanation of the new lines that were introduced.
 

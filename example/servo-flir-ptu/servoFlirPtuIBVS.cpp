@@ -121,22 +121,22 @@ int main(int argc, char **argv)
 
   for (int i = 1; i < argc; i++) {
     if ((std::string(argv[i]) == "--portname" || std::string(argv[i]) == "-p") && (i + 1 < argc)) {
-      opt_portname = std::string(argv[i + 1]);
+      opt_portname = std::string(argv[++i]);
     }
     else if ((std::string(argv[i]) == "--baudrate" || std::string(argv[i]) == "-b") && (i + 1 < argc)) {
-      opt_baudrate = std::atoi(argv[i + 1]);
+      opt_baudrate = std::atoi(argv[++i]);
     }
     else if ((std::string(argv[i]) == "--network" || std::string(argv[i]) == "-n")) {
       opt_network = true;
     }
     else if (std::string(argv[i]) == "--extrinsic" && i + 1 < argc) {
-      opt_extrinsic = std::string(argv[i + 1]);
+      opt_extrinsic = std::string(argv[++i]);
     }
     else if (std::string(argv[i]) == "--intrinsic" && i + 1 < argc) {
-      opt_intrinsic = std::string(argv[i + 1]);
+      opt_intrinsic = std::string(argv[++i]);
     }
     else if (std::string(argv[i]) == "--camera-name" && i + 1 < argc) {
-      opt_camera_name = std::string(argv[i + 1]);
+      opt_camera_name = std::string(argv[++i]);
     }
     else if (std::string(argv[i]) == "--verbose" || std::string(argv[i]) == "-v") {
       opt_verbose = true;
@@ -156,11 +156,11 @@ int main(int argc, char **argv)
     else if (std::string(argv[i]) == "--task-sequencing") {
       opt_task_sequencing = true;
     }
-    else if (std::string(argv[i]) == "--quad-decimate" && i + 1 < argc) {
-      opt_quad_decimate = std::stoi(argv[i + 1]);
+    else if (std::string(argv[i]) == "--tag-size" && i + 1 < argc) {
+      opt_tag_size = std::stod(argv[++i]);
     }
-    if (std::string(argv[i]) == "--tag-size" && i + 1 < argc) {
-      opt_tag_size = std::stod(argv[i + 1]);
+    else if (std::string(argv[i]) == "--tag-quad-decimate" && i + 1 < argc) {
+      opt_quad_decimate = std::stoi(argv[++i]);
     }
     else if (std::string(argv[i]) == "--no-convergence-threshold") {
       convergence_threshold = 0.;
@@ -169,7 +169,7 @@ int main(int argc, char **argv)
       std::cout << "SYNOPSIS" << std::endl
         << "  " << argv[0] << " [--portname <portname>] [--baudrate <rate>] [--network] "
         << "[--extrinsic <extrinsic.yaml>] [--intrinsic <intrinsic.xml>] [--camera-name <name>] "
-        << "[--quad-decimate <decimation>] [--tag-size <size>] "
+        << "[--tag-size <size>] [--tag-quad-decimate <decimation>] "
         << "[--adaptive-gain] [--constant-gain] [--display-image-trajectory] [--plot] [--task-sequencing] "
         << "[--no-convergence-threshold] [--verbose] [--help] [-h]" << std::endl
         << std::endl;
@@ -197,13 +197,13 @@ int main(int argc, char **argv)
         << "  --camera-name <name>" << std::endl
         << "    Name of the camera to consider in the xml file provided for intrinsic camera parameters."
         << std::endl
-        << std::endl
-        << "  --quad-decimate <decimation>" << std::endl
-        << "    Decimation factor used to detect AprilTag. Default " << opt_quad_decimate << "." << std::endl
-        << std::endl
         << "  --tag-size <size>" << std::endl
-        << "    Width in meter or the black part of the AprilTag used as target. Default " << opt_tag_size
-        << "." << std::endl
+        << "    Width in meter or the black part of the AprilTag used as target." << std::endl
+        << "    Default " << opt_tag_size << std::endl
+        << std::endl
+        << "  --tag-quad-decimate <decimation>" << std::endl
+        << "    Decimation factor used to detect AprilTag." << std::endl
+        << "    Default " << opt_quad_decimate << std::endl
         << std::endl
         << "  --adaptive-gain, -a" << std::endl
         << "    Enable adaptive gain instead of constant gain to speed up convergence. " << std::endl

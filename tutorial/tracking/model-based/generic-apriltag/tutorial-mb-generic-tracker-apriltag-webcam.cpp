@@ -133,6 +133,107 @@ state_t track(const vpImage<unsigned char> &I, vpMbGenericTracker &tracker, doub
   return state_tracking;
 }
 
+void usage(const char **argv, int error)
+{
+  std::cout << "Synopsis" << std::endl
+    << "  " << argv[0]
+    << " [--device <id>]"
+    << " [--tag-size <size>]"
+    << " [--tag-family <family>]"
+    << " [--tag-quad-decimate <factor>]"
+    << " [--tag-n-threads <number>]"
+#if defined(VISP_HAVE_PUGIXML)
+    << " [--intrinsic <xmlfile>]"
+    << " [--camera-name <name>]"
+#endif
+#if defined(VISP_HAVE_DISPLAY)
+    << " [--display-off]"
+#endif
+    << " [--cube-size <size]"
+    << " [--use-texture]"
+    << " [--projection-error-threshold <threshold>]"
+    << " [--help, -h]" << std::endl
+    << std::endl;
+  std::cout << "Description" << std::endl
+    << "  Live execution on images acquired by a webcam of the generic model-based tracker" << std::endl
+    << "  The considered object is a cube to which an Apriltag is attached on one of its" << std::endl
+    << "  faces. Once detected, the pose of the Apriltag is used to initialise the tracker." << std::endl
+    << "  The Apriltag must be centred on a face of the cube. If the tracker fails, the " << std::endl
+    << "  tag is used to reset the tracker." << std::endl
+    << std::endl
+    << "  --device <id>" << std::endl
+    << "    Camera id." << std::endl
+    << "    Default: 0" << std::endl
+    << std::endl
+    << "  --tag-size <size>" << std::endl
+    << "    Apriltag size in [m]." << std::endl
+    << "    Default: 0.03" << std::endl
+    << std::endl
+    << "  --tag-family <family>" << std::endl
+    << "    Apriltag family. Supported values are:" << std::endl
+    << "       0: TAG_36h11" << std::endl
+    << "       1: TAG_36h10 (DEPRECATED)" << std::endl
+    << "       2: TAG_36ARTOOLKIT (DEPRECATED)" << std::endl
+    << "       3: TAG_25h9" << std::endl
+    << "       4: TAG_25h7 (DEPRECATED)" << std::endl
+    << "       5: TAG_16h5" << std::endl
+    << "       6: TAG_CIRCLE21h7" << std::endl
+    << "       7: TAG_CIRCLE49h12" << std::endl
+    << "       8: TAG_CUSTOM48h12" << std::endl
+    << "       9: TAG_STANDARD41h12" << std::endl
+    << "      10: TAG_STANDARD52h13" << std::endl
+    << "    Default: 0 (36h11)" << std::endl
+    << std::endl
+    << "  --tag-quad-decimate <factor>" << std::endl
+    << "    Decimation factor used to detect a tag. " << std::endl
+    << "    Default: 1" << std::endl
+    << std::endl
+    << "  --tag-n-threads <number>" << std::endl
+    << "    Number of threads used to detect a tag." << std::endl
+    << "    Default: 1" << std::endl
+    << std::endl
+#if defined(VISP_HAVE_PUGIXML)
+    << "  --intrinsic <xmlfile>" << std::endl
+    << "    Camera intrinsic parameters file in xml format." << std::endl
+    << "    Default: empty" << std::endl
+    << std::endl
+    << "  --camera-name <name>" << std::endl
+    << "    Camera name in the intrinsic parameters file in xml format." << std::endl
+    << "    Default: empty" << std::endl
+    << std::endl
+#endif
+#if defined(VISP_HAVE_DISPLAY)
+    << "  --display-off" << std::endl
+    << "    Flag used to turn display off." << std::endl
+    << "    Default: enabled" << std::endl
+    << std::endl
+#endif
+    << "  --cube-size <size>" << std::endl
+    << "    Cube size in meter." << std::endl
+    << "    Default: 0.125" << std::endl
+    << std::endl
+#if defined(VISP_HAVE_OPENCV)
+    << "  --use-texture" << std::endl
+    << "    Flag to enable usage of keypoint features." << std::endl
+    << "    Default: disabled" << std::endl
+    << std::endl
+#endif
+    << "  --projection-error-threshold <threshold>" << std::endl
+    << "    Threshold in the range [0:90] deg used to restart the tracker when the projection"
+    << "    error is below this threshold." << std::endl
+    << "    Default: 40" << std::endl
+    << std::endl
+    << "  --help, -h" << std::endl
+    << "    Print this helper message." << std::endl
+    << std::endl;
+
+  if (error) {
+    std::cout << "Error" << std::endl
+      << "  "
+      << "Unsupported parameter " << argv[error] << std::endl;
+  }
+}
+
 int main(int argc, const char **argv)
 {
   int opt_device = 0;
@@ -149,64 +250,58 @@ int main(int argc, const char **argv)
   double opt_projection_error_threshold = 40.;
 
 #if !(defined(VISP_HAVE_DISPLAY))
-  bool display_off = true;
+  bool opt_display_off = true;
 #else
-  bool display_off = false;
+  bool opt_display_off = false;
 #endif
 
   for (int i = 1; i < argc; i++) {
-    if (std::string(argv[i]) == "--tag-size" && i + 1 < argc) {
-      opt_tag_size = atof(argv[i + 1]);
+    if (std::string(argv[i]) == "--device" && i + 1 < argc) {
+      opt_device = atoi(argv[++i]);
     }
-    else if (std::string(argv[i]) == "--input" && i + 1 < argc) {
-      opt_device = atoi(argv[i + 1]);
-    }
-    else if (std::string(argv[i]) == "--quad-decimate" && i + 1 < argc) {
-      opt_quad_decimate = (float)atof(argv[i + 1]);
-    }
-    else if (std::string(argv[i]) == "--nthreads" && i + 1 < argc) {
-      opt_nthreads = atoi(argv[i + 1]);
-    }
-    else if (std::string(argv[i]) == "--intrinsic" && i + 1 < argc) {
-      opt_intrinsic_file = std::string(argv[i + 1]);
-    }
-    else if (std::string(argv[i]) == "--camera-name" && i + 1 < argc) {
-      opt_camera_name = std::string(argv[i + 1]);
-    }
-    else if (std::string(argv[i]) == "--display-off") {
-      display_off = true;
+    else if (std::string(argv[i]) == "--tag-size" && i + 1 < argc) {
+      opt_tag_size = atof(argv[++i]);
     }
     else if (std::string(argv[i]) == "--tag-family" && i + 1 < argc) {
       opt_tag_family = (vpDetectorAprilTag::vpAprilTagFamily)atoi(argv[i + 1]);
     }
-    else if (std::string(argv[i]) == "--cube-size" && i + 1 < argc) {
-      opt_cube_size = atof(argv[i + 1]);
-#ifdef VISP_HAVE_OPENCV
+    else if (std::string(argv[i]) == "--tag-quad-decimate" && i + 1 < argc) {
+      opt_quad_decimate = (float)atof(argv[++i]);
     }
-    else if (std::string(argv[i]) == "--texture") {
+    else if (std::string(argv[i]) == "--tag-n-threads" && i + 1 < argc) {
+      opt_nthreads = atoi(argv[++i]);
+    }
+#if defined(VISP_HAVE_PUGIXML)
+    else if (std::string(argv[i]) == "--intrinsic" && i + 1 < argc) {
+      opt_intrinsic_file = std::string(argv[++i]);
+    }
+    else if (std::string(argv[i]) == "--camera-name" && i + 1 < argc) {
+      opt_camera_name = std::string(argv[++i]);
+    }
+#endif
+#if defined(VISP_HAVE_DISPLAY)
+    else if (std::string(argv[i]) == "--display-off") {
+      opt_display_off = true;
+    }
+#endif
+    else if (std::string(argv[i]) == "--cube-size" && i + 1 < argc) {
+      opt_cube_size = atof(argv[++i]);
+    }
+#ifdef VISP_HAVE_OPENCV
+    else if (std::string(argv[i]) == "--use-texture") {
       opt_use_texture = true;
 #endif
     }
-    else if (std::string(argv[i]) == "--projection-error" && i + 1 < argc) {
-      opt_projection_error_threshold = atof(argv[i + 1]);
+    else if (std::string(argv[i]) == "--projection-error-threshold" && i + 1 < argc) {
+      opt_projection_error_threshold = atof(argv[++i]);
     }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-      std::cout << "Usage: " << argv[0]
-        << " [--input <camera id>]"
-        << " [--cube-size <size in m>]"
-        << " [--tag-size <size in m>]"
-        << " [--quad-decimate <decimation>]"
-        << " [--nthreads <nb>]"
-        << " [--intrinsic <xml intrinsic file>]"
-        << " [--camera-name <camera name in xml file>]"
-        << " [--tag-family <0: TAG_36h11, 1: TAG_36h10, 2: TAG_36ARTOOLKIT, 3: TAG_25h9, 4: TAG_25h7, 5: TAG_16h5>]";
-#if (defined(VISP_HAVE_DISPLAY))
-      std::cout << " [--display-off]";
-#endif
-      std::cout << " [--texture]"
-        << " [--projection-error <30 - 100>]"
-        << " [--help,-h]" << std::endl;
+      usage(argv, 0);
       return EXIT_SUCCESS;
+    }
+    else {
+      usage(argv, i);
+      return EXIT_FAILURE;
     }
   }
 
@@ -274,7 +369,7 @@ int main(int argc, const char **argv)
     std::cout << "  Projection error: " << opt_projection_error_threshold << std::endl;
 
     // Construct display
-    if (!display_off) {
+    if (!opt_display_off) {
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
       display = vpDisplayFactory::createDisplay(I);
 #else
@@ -373,7 +468,7 @@ int main(int argc, const char **argv)
   }
 
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-  if (!display_off)
+  if (!opt_display_off)
     delete display;
 #endif
   return EXIT_SUCCESS;

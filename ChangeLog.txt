@@ -104,7 +104,9 @@ ViSP 3.x.x (Version in development)
     . [#1337] The pose of the automatic data generation pipeline from blenderproc seems wrong
     . [#1341] SVD computation fails with Lapack when m < n
     . [#1370] encountered compilation errors while building the ViSP library
+    . [#1374] Aberrant pose estimated by tutorial-apriltag-detector-live-rgbd-realsense.cpp
     . [#1404] Compilation error when no GUI library is available
+    . [#1414] Build fails for visp_java
     . [#1424] Unable to detect Yarp 3.9.0
     . [#1485] Build issue around nlohmann_json usage with VTK 9.2.0 or more recent version used as an embedded
               3rdparty by PCL

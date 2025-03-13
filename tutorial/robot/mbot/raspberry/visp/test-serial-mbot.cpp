@@ -19,27 +19,31 @@ int main(int argc, char *argv[])
 
   for (int i = 1; i < argc; i++) {
     if ((std::string(argv[i]) == "--t" || std::string(argv[i]) == "-t") && i + 1 < argc) {
-      time = (double)atof(argv[i + 1]);
+      time = (double)atof(argv[++i]);
     }
     else if ((std::string(argv[i]) == "--vx" || std::string(argv[i]) == "-vx") && i + 1 < argc) {
-      v_x = (double)atof(argv[i + 1]);
+      v_x = (double)atof(argv[++i]);
     }
     else if ((std::string(argv[i]) == "--wz" || std::string(argv[i]) == "-wz") && i + 1 < argc) {
-      w_z = (double)atof(argv[i + 1]);
+      w_z = (double)atof(argv[++i]);
     }
-    else if ((std::string(argv[i]) == "--rpm_l" || std::string(argv[i]) == "-rpm_l") && i + 1 < argc) {
+    else if ((std::string(argv[i]) == "--rpm-l" || std::string(argv[i]) == "-rpm-l") && i + 1 < argc) {
       rpm_command = true;
-      rpm_l = (double)atoi(argv[i + 1]);
+      rpm_l = (double)atoi(argv[++i]);
     }
-    else if ((std::string(argv[i]) == "--rpm_r" || std::string(argv[i]) == "-rpm_r") && i + 1 < argc) {
+    else if ((std::string(argv[i]) == "--rpm-r" || std::string(argv[i]) == "-rpm-r") && i + 1 < argc) {
       rpm_command = true;
-      rpm_r = (double)atoi(argv[i + 1]);
+      rpm_r = (double)atoi(argv[++i]);
     }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "Usage: \n"
         << argv[0]
-        << " --vx <linear velocity in m/s> --wz <rotational velocity in deg/s> --rpm_l <motor left RPM> "
-        "--rpm_r <motor right RPM> --t <duration of the command in second> --help"
+        << " [--vx <linear velocity in m/s>]"
+        << " [--wz <rotational velocity in deg/s>]"
+        << " [--rpm-l <motor left RPM>]"
+        << " [--rpm-r <motor right RPM>]"
+        << " [--t <duration of the command in second>]"
+        << " [--help, h]"
         << std::endl;
       std::cout << "\nExample:\n" << argv[0] << " --vx 0.05 --wz 0 --t 4\n" << std::endl;
       return EXIT_SUCCESS;

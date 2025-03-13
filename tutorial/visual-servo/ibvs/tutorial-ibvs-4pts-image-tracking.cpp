@@ -114,7 +114,7 @@ int main()
     task.setInteractionMatrixType(vpServo::CURRENT);
     task.setLambda(0.5);
 
-    vpVirtualGrabber g("./target_square.pgm", cam);
+    vpVirtualGrabber g("./target_square.jpg", cam);
     g.acquire(I, cMo);
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
