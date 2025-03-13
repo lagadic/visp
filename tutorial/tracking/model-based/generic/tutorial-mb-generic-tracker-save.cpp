@@ -27,8 +27,9 @@ std::string toString(const std::string &name, int val)
 {
   auto fmt = name.c_str();
   int sz = std::snprintf(nullptr, 0, fmt, val);
+  sz += 1; // note +1 for null terminator
   std::vector<char> buf(sz);
-  std::snprintf(&buf[0], sz, fmt, val);
+  std::snprintf(buf.data(), sz, fmt, val);
   std::string str(buf.begin(), buf.end());
 
   return str;
@@ -183,6 +184,7 @@ int main(int argc, char **argv)
     std::vector<std::vector<double>> model = mapOfModels[camera_name];
     const std::string model_iter = toString("model_%06zu", static_cast<int>(iter));
     const std::string model_iter_sz = model_iter + "_sz";
+
     const size_t model_size = model.size();
     visp::cnpy::npz_save(npz_filename, model_iter_sz, &model_size, { 1 }, "a");
 
