@@ -56,7 +56,7 @@ Device Interface (GDI) under Windows, or OpenCV.
 
 \snippet tutorial-barcode-detector.cpp Macro defined
 
-After reading the input image \e bar-code.pgm and creation of a display device in order to visualize the image, we
+After reading the input image \e bar-code.jpg and creation of a display device in order to visualize the image, we
 create a NULL pointer to a detector base class.
 
 \snippet tutorial-barcode-detector.cpp Create base detector

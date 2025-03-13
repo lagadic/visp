@@ -19,7 +19,7 @@ int main()
   try {
     //! [Read image]
     vpImage<unsigned char> target;
-    vpImageIo::read(target, "./target_square.pgm");
+    vpImageIo::read(target, "./target_square.jpg");
     //! [Read image]
 
     //! [Set model]

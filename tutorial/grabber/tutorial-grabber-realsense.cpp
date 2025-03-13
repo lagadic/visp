@@ -161,6 +161,8 @@ int main(int argc, const char *argv[])
     std::cout << "Image size : " << I.getWidth() << " " << I.getHeight() << std::endl;
 
     vpCameraParameters cam = g.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithoutDistortion);
+
+#if defined(VISP_HAVE_PUGIXML)
     vpXmlParserCamera p;
     std::string output_folder = vpIoTools::getParent(opt_seqname);
     if (!vpIoTools::checkDirectory(output_folder)) {
@@ -179,6 +181,9 @@ int main(int argc, const char *argv[])
     if (p.save(cam, cam_filename, "camera")) {
       std::cout << "Cannot save camera parameters in " << cam_filename << std::endl;
     }
+#else
+    std::cout << "Warning: Unable to save camera parameters in xml since pugixml 3rdparty is not enabled" << std::endl;
+#endif
 
     if (opt_display) {
 #if !(defined(VISP_HAVE_DISPLAY))

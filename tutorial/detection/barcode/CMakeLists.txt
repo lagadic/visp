@@ -8,7 +8,7 @@ set(tutorial_cpp
   tutorial-barcode-detector.cpp
   tutorial-barcode-detector-live.cpp)
 
-set(tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/bar-code.pgm")
+set(tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/bar-code.jpg")
 
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})

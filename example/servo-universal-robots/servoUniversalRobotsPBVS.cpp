@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,9 +28,8 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Data acquisition with RealSense RGB-D sensor and Franka robot.
- *
-*****************************************************************************/
+ * Data acquisition with RealSense RGB-D sensor and Universal UR5 robot.
+ */
 
 /*!
   \example servoUniversalRobotsPBVS.cpp
@@ -55,8 +53,11 @@
 
 #include <iostream>
 
-#include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpConfig.h>
+
+#if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_DISPLAY) && defined(VISP_HAVE_UR_RTDE)
+
+#include <visp3/core/vpCameraParameters.h>
 #include <visp3/detection/vpDetectorAprilTag.h>
 #include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/gui/vpPlot.h>
@@ -67,8 +68,6 @@
 #include <visp3/visual_features/vpFeatureTranslation.h>
 #include <visp3/vs/vpServo.h>
 #include <visp3/vs/vpServoDisplay.h>
-
-#if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_DISPLAY) && defined(VISP_HAVE_UR_RTDE)
 
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;
@@ -111,13 +110,16 @@ int main(int argc, char **argv)
 
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--tag-size" && i + 1 < argc) {
-      opt_tagSize = std::stod(argv[i + 1]);
+      opt_tagSize = std::stod(argv[++i]);
+    }
+    else if (std::string(argv[i]) == "--tag-quad-decimate" && i + 1 < argc) {
+      opt_quad_decimate = std::stoi(argv[++i]);
     }
     else if (std::string(argv[i]) == "--ip" && i + 1 < argc) {
-      opt_robot_ip = std::string(argv[i + 1]);
+      opt_robot_ip = std::string(argv[++i]);
     }
     else if (std::string(argv[i]) == "--eMc" && i + 1 < argc) {
-      opt_eMc_filename = std::string(argv[i + 1]);
+      opt_eMc_filename = std::string(argv[++i]);
     }
     else if (std::string(argv[i]) == "--verbose") {
       opt_verbose = true;
@@ -131,9 +133,6 @@ int main(int argc, char **argv)
     else if (std::string(argv[i]) == "--task-sequencing") {
       opt_task_sequencing = true;
     }
-    else if (std::string(argv[i]) == "--quad-decimate" && i + 1 < argc) {
-      opt_quad_decimate = std::stoi(argv[i + 1]);
-    }
     else if (std::string(argv[i]) == "--no-convergence-threshold") {
       convergence_threshold_t = 0.;
       convergence_threshold_tu = 0.;
@@ -142,7 +141,7 @@ int main(int argc, char **argv)
       std::cout
         << argv[0] << " [--ip <default " << opt_robot_ip << ">] [--tag-size <marker size in meter; default "
         << opt_tagSize << ">] [--eMc <eMc extrinsic file>] "
-        << "[--quad-decimate <decimation; default " << opt_quad_decimate
+        << "[--tag-quad-decimate <decimation; default " << opt_quad_decimate
         << ">] [--adpative-gain] [--plot] [--task-sequencing] [--no-convergence-threshold] [--verbose] [--help] [-h]"
         << "\n";
       return EXIT_SUCCESS;

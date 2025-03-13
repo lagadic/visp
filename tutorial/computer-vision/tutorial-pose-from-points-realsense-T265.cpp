@@ -25,20 +25,20 @@ int main(int argc, char **argv)
     int opt_camera_index = 1; // camera index: 1. Left, 2.Right
 
     for (int i = 1; i < argc; i++) {
-      if (std::string(argv[i]) == "--camera_index" && i + 1 < argc) {
+      if (std::string(argv[i]) == "--camera-index" && i + 1 < argc) {
         opt_camera_index = atoi(argv[++i]);
       }
-      else if (std::string(argv[i]) == "--square_width" && i + 1 < argc) {
+      else if (std::string(argv[i]) == "--square-width" && i + 1 < argc) {
         opt_square_width = atoi(argv[++i]);
       }
       else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
         std::cout << "\nUsage: " << argv[0]
-          << " [--camera_index <1.Left | 2.Right> (default: 1)]"
-          << " [--square_width <square width in meter (default: 0.12)]"
+          << " [--camera-index <1.Left | 2.Right> (default: 1)]"
+          << " [--square-width <square width in meter (default: 0.12)]"
           << " [--help] [-h]\n"
           << std::endl
           << "\nExample using right camera and square size 0.1:\n"
-          << "  " << argv[0] << "--camera_index 2 --square_width 0.1\n"
+          << "  " << argv[0] << "--camera-index 2 --square-width 0.1\n"
           << std::endl;
         return EXIT_SUCCESS;
       }

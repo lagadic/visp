@@ -11,6 +11,107 @@
 #include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/vision/vpPose.h>
 
+void usage(const char **argv, int error)
+{
+  std::cout << "Synopsis" << std::endl
+    << "  " << argv[0]
+    << " [--tag-size <size>]"
+    << " [--tag-family <family>]"
+    << " [--tag-quad-decimate <factor>]"
+    << " [--tag-n-threads <number>]"
+    << " [--tag-z-aligned]"
+    << " [--tag-pose-method <method>]"
+#if defined(VISP_HAVE_DISPLAY)
+    << " [--display-tag]"
+    << " [--display-off]"
+    << " [--color <id>]"
+    << " [--thickness <thickness>"
+#endif
+    << " [--verbose, -v]"
+    << " [--help, -h]" << std::endl
+    << std::endl;
+  std::cout << "Description" << std::endl
+    << "  Compute the pose of an Apriltag in images acquired with a structure core camera." << std::endl
+    << std::endl
+    << "  --tag-size <size>" << std::endl
+    << "    Apriltag size in [m]." << std::endl
+    << "    Default: 0.03" << std::endl
+    << std::endl
+    << "  --tag-family <family>" << std::endl
+    << "    Apriltag family. Supported values are:" << std::endl
+    << "       0: TAG_36h11" << std::endl
+    << "       1: TAG_36h10 (DEPRECATED)" << std::endl
+    << "       2: TAG_36ARTOOLKIT (DEPRECATED)" << std::endl
+    << "       3: TAG_25h9" << std::endl
+    << "       4: TAG_25h7 (DEPRECATED)" << std::endl
+    << "       5: TAG_16h5" << std::endl
+    << "       6: TAG_CIRCLE21h7" << std::endl
+    << "       7: TAG_CIRCLE49h12" << std::endl
+    << "       8: TAG_CUSTOM48h12" << std::endl
+    << "       9: TAG_STANDARD41h12" << std::endl
+    << "      10: TAG_STANDARD52h13" << std::endl
+    << "    Default: 0 (36h11)" << std::endl
+    << std::endl
+    << "  --tag-quad-decimate <factor>" << std::endl
+    << "    Decimation factor used to detect a tag. " << std::endl
+    << "    Default: 1" << std::endl
+    << std::endl
+    << "  --tag-n-threads <number>" << std::endl
+    << "    Number of threads used to detect a tag." << std::endl
+    << "    Default: 1" << std::endl
+    << std::endl
+    << "  --tag-z-aligned" << std::endl
+    << "    When enabled, tag z-axis and camera z-axis are aligned." << std::endl
+    << "    Default: false" << std::endl
+    << std::endl
+    << "  --tag-pose-method <method>" << std::endl
+    << "    Algorithm used to compute the tag pose from its 4 corners." << std::endl
+    << "    Possible values are:" << std::endl
+    << "       0: HOMOGRAPHY" << std::endl
+    << "       1: HOMOGRAPHY_VIRTUAL_VS" << std::endl
+    << "       2: DEMENTHON_VIRTUAL_VS" << std::endl
+    << "       3: LAGRANGE_VIRTUAL_VS" << std::endl
+    << "       4: BEST_RESIDUAL_VIRTUAL_VS" << std::endl
+    << "       5: HOMOGRAPHY_ORTHOGONAL_ITERATION" << std::endl
+    << "    Default: 1 (HOMOGRAPHY_VIRTUAL_VS)" << std::endl
+    << std::endl
+#if defined(VISP_HAVE_DISPLAY)
+    << "  --display-tag" << std::endl
+    << "    Flag used to enable displaying the edges of a tag." << std::endl
+    << "    Default: disabled" << std::endl
+    << std::endl
+    << "  --display-off" << std::endl
+    << "    Flag used to turn display off." << std::endl
+    << "    Default: enabled" << std::endl
+    << std::endl
+    << "  --color <id>" << std::endl
+    << "    Color id used to display the frame over each tag." << std::endl
+    << "    Possible values are:" << std::endl
+    << "      -1: R-G-B colors for X, Y, Z axis respectively" << std::endl
+    << "       0: all axis in black" << std::endl
+    << "       1: all axis in white" << std::endl
+    << "       ..." << std::endl
+    << "    Default: -1" << std::endl
+    << std::endl
+    << "  --thickness <thickness>" << std::endl
+    << "    Thickness of the drawings in overlay." << std::endl
+    << "    Default: 2" << std::endl
+    << std::endl
+#endif
+    << "  --verbose, -v" << std::endl
+    << "    Enable extra verbosity." << std::endl
+    << std::endl
+    << "  --help, -h" << std::endl
+    << "    Print this helper message." << std::endl
+    << std::endl;
+
+  if (error) {
+    std::cout << "Error" << std::endl
+      << "  "
+      << "Unsupported parameter " << argv[error] << std::endl;
+  }
+}
+
 int main(int argc, const char **argv)
 {
 //! [Macro defined]
@@ -20,15 +121,15 @@ int main(int argc, const char **argv)
   using namespace VISP_NAMESPACE_NAME;
 #endif
 
-  vpDetectorAprilTag::vpAprilTagFamily tagFamily = vpDetectorAprilTag::TAG_36h11;
-  vpDetectorAprilTag::vpPoseEstimationMethod poseEstimationMethod = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
-  double tagSize = 0.053;
-  float quad_decimate = 1.0;
-  int nThreads = 1;
-  bool display_tag = false;
-  int color_id = -1;
+  vpDetectorAprilTag::vpAprilTagFamily opt_tag_family = vpDetectorAprilTag::TAG_36h11;
+  vpDetectorAprilTag::vpPoseEstimationMethod opt_pose_stimation_method = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
+  double opt_tag_size = 0.053;
+  float opt_quad_decimate = 1.0;
+  int opt_nThreads = 1;
+  bool opt_display_tag = false;
+  int opt_color_id = -1;
   unsigned int thickness = 2;
-  bool align_frame = false;
+  bool opt_align_frame = false;
 
 #if !(defined(VISP_HAVE_DISPLAY))
   bool display_off = true;
@@ -38,53 +139,45 @@ int main(int argc, const char **argv)
 #endif
 
   for (int i = 1; i < argc; i++) {
-    if (std::string(argv[i]) == "--pose-method" && i + 1 < argc) {
+    if (std::string(argv[i]) == "--tag-size" && i + 1 < argc) {
+      opt_tag_size = atof(argv[++i]);
+    }
+    else if (std::string(argv[i]) == "--tag-family" && i + 1 < argc) {
+      opt_tag_family = (vpDetectorAprilTag::vpAprilTagFamily)atoi(argv[++i]);
+    }
+    else if (std::string(argv[i]) == "--tag-quad-decimate" && i + 1 < argc) {
+      opt_quad_decimate = (float)atof(argv[++i]);
+    }
+    else if (std::string(argv[i]) == "--tag-n-threads" && i + 1 < argc) {
+      opt_nThreads = atoi(argv[++i]);
+    }
+    else if (std::string(argv[i]) == "--tag-z-aligned") {
+      opt_align_frame = true;
+    }
+    else if (std::string(argv[i]) == "--tag-pose-method" && i + 1 < argc) {
       poseEstimationMethod = (vpDetectorAprilTag::vpPoseEstimationMethod)atoi(argv[++i]);
     }
-    else if (std::string(argv[i]) == "--tag-size" && i + 1 < argc) {
-      tagSize = atof(argv[++i]);
-    }
-    else if (std::string(argv[i]) == "--quad-decimate" && i + 1 < argc) {
-      quad_decimate = (float)atof(argv[++i]);
-    }
-    else if (std::string(argv[i]) == "--nthreads" && i + 1 < argc) {
-      nThreads = atoi(argv[++i]);
-    }
+#if defined(VISP_HAVE_DISPLAY)
     else if (std::string(argv[i]) == "--display-tag") {
-      display_tag = true;
+      opt_display_tag = true;
     }
     else if (std::string(argv[i]) == "--display-off") {
       display_off = true;
     }
     else if (std::string(argv[i]) == "--color" && i + 1 < argc) {
-      color_id = atoi(argv[++i]);
+      opt_color_id = atoi(argv[++i]);
     }
     else if (std::string(argv[i]) == "--thickness" && i + 1 < argc) {
-      thickness = (unsigned int)atoi(argv[++i]);
+      opt_thickness = (unsigned int)atoi(argv[++i]);
     }
-    else if (std::string(argv[i]) == "--tag-family" && i + 1 < argc) {
-      tagFamily = (vpDetectorAprilTag::vpAprilTagFamily)atoi(argv[++i]);
-    }
-    else if (std::string(argv[i]) == "--z-aligned") {
-      align_frame = true;
-    }
-    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-      std::cout << "Usage: " << argv[0]
-        << " [--tag-size <tag_size in m> (default: 0.053)]"
-        << " [--quad-decimate <quad_decimate> (default: 1)]"
-        << " [--nthreads <nb> (default: 1)]"
-        << " [--pose-method <method> (0: HOMOGRAPHY, 1: HOMOGRAPHY_VIRTUAL_VS, "
-        << " 2: DEMENTHON_VIRTUAL_VS, 3: LAGRANGE_VIRTUAL_VS, "
-        << " 4: BEST_RESIDUAL_VIRTUAL_VS, 5: HOMOGRAPHY_ORTHOGONAL_ITERATION) (default: 0)]"
-        << " [--tag-family <family> (0: TAG_36h11, 1: TAG_36h10 (DEPRECATED), 2: TAG_36ARTOOLKIT (DEPRECATED),"
-        << " 3: TAG_25h9, 4: TAG_25h7 (DEPRECATED), 5: TAG_16h5, 6: TAG_CIRCLE21h7, 7: TAG_CIRCLE49h12,"
-        << " 8: TAG_CUSTOM48h12, 9: TAG_STANDARD41h12, 10: TAG_STANDARD52h13) (default: 0)]"
-        << " [--display-tag] [--z-aligned]";
-#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
-      std::cout << " [--display-off] [--color <color id>] [--thickness <line thickness>]";
 #endif
-      std::cout << " [--help,-h]" << std::endl;
+    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+      usage(argv, 0);
       return EXIT_SUCCESS;
+    }
+    else {
+      usage(argv, i);
+      return EXIT_FAILURE;
     }
   }
 
@@ -125,9 +218,9 @@ int main(int argc, const char **argv)
 
     std::cout << cam << std::endl;
     std::cout << "poseEstimationMethod: " << poseEstimationMethod << std::endl;
-    std::cout << "tagFamily: " << tagFamily << std::endl;
-    std::cout << "nThreads : " << nThreads << std::endl;
-    std::cout << "Z aligned: " << align_frame << std::endl;
+    std::cout << "opt_tag_family: " << opt_tag_family << std::endl;
+    std::cout << "opt_nThreads : " << opt_nThreads << std::endl;
+    std::cout << "Z aligned: " << opt_align_frame << std::endl;
 
     vpImage<vpRGBa> I_color2 = I_color;
     vpImage<float> depthMap;
@@ -146,15 +239,15 @@ int main(int argc, const char **argv)
     }
 
     //! [Create AprilTag detector]
-    vpDetectorAprilTag detector(tagFamily);
+    vpDetectorAprilTag detector(opt_tag_family);
     //! [Create AprilTag detector]
 
     //! [AprilTag detector settings]
-    detector.setAprilTagQuadDecimate(quad_decimate);
+    detector.setAprilTagQuadDecimate(opt_quad_decimate);
     detector.setAprilTagPoseEstimationMethod(poseEstimationMethod);
-    detector.setAprilTagNbThreads(nThreads);
-    detector.setDisplayTag(display_tag, color_id < 0 ? vpColor::none : vpColor::getColor(color_id), thickness);
-    detector.setZAlignedWithCameraAxis(align_frame);
+    detector.setAprilTagNbThreads(opt_nThreads);
+    detector.setDisplayTag(opt_display_tag, opt_color_id < 0 ? vpColor::none : vpColor::getColor(opt_color_id), opt_thickness);
+    detector.setZAlignedWithCameraAxis(opt_align_frame);
     //! [AprilTag detector settings]
     std::vector<double> time_vec;
     for (;;) {
@@ -190,18 +283,18 @@ int main(int argc, const char **argv)
       vpDisplay::display(I_depth);
 
       std::vector<vpHomogeneousMatrix> cMo_vec;
-      detector.detect(I, tagSize, cam, cMo_vec);
+      detector.detect(I, opt_tag_size, cam, cMo_vec);
 
       // Display camera pose for each tag
       for (size_t i = 0; i < cMo_vec.size(); i++) {
-        vpDisplay::displayFrame(I_color, cMo_vec[i], cam, tagSize / 2, vpColor::none, 3);
+        vpDisplay::displayFrame(I_color, cMo_vec[i], cam, opt_tag_size / 2, vpColor::none, 3);
       }
 
       //! [Pose from depth map]
       std::vector<std::vector<vpImagePoint> > tags_corners = detector.getPolygon();
       std::vector<int> tags_id = detector.getTagsId();
       std::map<int, double> tags_size;
-      tags_size[-1] = tagSize; // Default tag size
+      tags_size[-1] = opt_tag_size; // Default tag size
       std::vector<std::vector<vpPoint> > tags_points3d = detector.getTagsPoints3D(tags_id, tags_size);
       for (size_t i = 0; i < tags_corners.size(); i++) {
         vpHomogeneousMatrix cMo;
@@ -209,13 +302,13 @@ int main(int argc, const char **argv)
         if (vpPose::computePlanarObjectPoseFromRGBD(depthMap, tags_corners[i], cam, tags_points3d[i], cMo,
                                                     &confidence_index)) {
           if (confidence_index > 0.5) {
-            vpDisplay::displayFrame(I_color2, cMo, cam, tagSize / 2, vpColor::none, 3);
+            vpDisplay::displayFrame(I_color2, cMo, cam, opt_tag_size / 2, vpColor::none, 3);
           }
           else if (confidence_index > 0.25) {
-            vpDisplay::displayFrame(I_color2, cMo, cam, tagSize / 2, vpColor::orange, 3);
+            vpDisplay::displayFrame(I_color2, cMo, cam, opt_tag_size / 2, vpColor::orange, 3);
           }
           else {
-            vpDisplay::displayFrame(I_color2, cMo, cam, tagSize / 2, vpColor::red, 3);
+            vpDisplay::displayFrame(I_color2, cMo, cam, opt_tag_size / 2, vpColor::red, 3);
           }
           std::stringstream ss;
           ss << "Tag id " << tags_id[i] << " confidence: " << confidence_index;
@@ -261,7 +354,7 @@ int main(int argc, const char **argv)
     if (d3 != nullptr) {
       delete d3;
     }
-}
+  }
 #endif
 
   return EXIT_SUCCESS;

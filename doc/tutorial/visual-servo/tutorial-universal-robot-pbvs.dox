@@ -15,20 +15,16 @@ An example of position-based visual servoing using a robot from Universal Robots
 
 Now enter in `example/servo-universal-robots folder` and run `servoUniversalRobotsPBVS` binary using `--eMc` to locate the file containing the \f$^e{\bf M}_c\f$ transformation. Other options are available. Using `--help` show them:
 
-\verbatim
+\code{.sh}
 $ cd example/servo-universal-robots
 $ ./servoUniversalRobotsPBVS --help
-./servoUniversalRobotsPBVS [--ip <default 192.168.1.1>] [--tag-size <marker size in meter; default 0.12>] \
-                           [--eMc <eMc extrinsic file>] [--quad-decimate <decimation; default 2>]         \
-                           [--adpative-gain] [--plot] [--task-sequencing] [--no-convergence-threshold]    \
-                           [--verbose] [--help] [-h]
-\endverbatim
+\endcode
 
 Run the binary activating the plot and using a constant gain:
 
-\verbatim
+\code{.sh}
 $ ./servoUniversalRobotsPBVS --eMc ../../apps/calibration/intrinsic/ur_eMc.yaml --plot
-\endverbatim
+\endcode
 
 Use the left mouse click to enable the robot controller, and the right click to quit the binary.
 
@@ -42,21 +38,21 @@ At this point the behaviour that you should observe is the following:
 
 You can also activate an adaptive gain that will make the convergence faster:
 
-\verbatim
+\code{.sh}
 $ ./servoUniversalRobotsPBVS --eMc ../../apps/calibration/intrinsic/ur_eMc.yaml --plot --adpative-gain
-\endverbatim
+\endcode
 
 You can also start the robot with a zero velocity at the beginning introducing task sequencing option:
 
-\verbatim
+\code{.sh}
 $ ./servoUniversalRobotsPBVS --eMc ../../apps/calibration/intrinsic/ur_eMc.yaml --plot --task-sequencing
-\endverbatim
+\endcode
 
 And finally you can activate the adaptive gain and task sequencing:
 
-\verbatim
+\code{.sh}
 $ ./servoUniversalRobotsPBVS --eMc ../../apps/calibration/intrinsic/ur_eMc.yaml --plot --adpative-gain --task-sequencing
-\endverbatim
+\endcode
 
 \section ur_pbvs_next Next tutorial
 

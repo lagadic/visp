@@ -119,6 +119,9 @@ int main(int argc, char **argv)
     if ((std::string(argv[i]) == "--tag-size") && (i + 1 < argc)) {
       opt_tag_size = std::stod(argv[++i]);
     }
+    else if ((std::string(argv[i]) == "--tag-quad-decimate") && (i + 1 < argc)) {
+      opt_quad_decimate = std::stoi(argv[++i]);
+    }
     else if (std::string(argv[i]) == "--tag-z-aligned") {
       opt_tag_z_aligned = true;
     }
@@ -146,9 +149,6 @@ int main(int argc, char **argv)
     else if (std::string(argv[i]) == "--task-sequencing") {
       opt_task_sequencing = true;
     }
-    else if ((std::string(argv[i]) == "--quad-decimate") && (i + 1 < argc)) {
-      opt_quad_decimate = std::stoi(argv[++i]);
-    }
     else if (std::string(argv[i]) == "--no-convergence-threshold") {
       convergence_threshold_t = 0.;
       convergence_threshold_tu = 0.;
@@ -160,9 +160,9 @@ int main(int argc, char **argv)
         << " [--intrinsic <xml file>]"
         << " [--camera-name <name>]"
         << " [--tag-size <size>]"
+        << " [--tag-quad-decimate <decimation factor>]"
         << " [--tag-z-aligned]"
         << " [--eMc <extrinsic transformation file>]"
-        << " [--quad-decimate <decimation factor>]"
         << " [--adaptive-gain]"
         << " [--plot]"
         << " [--task-sequencing]"
@@ -189,6 +189,10 @@ int main(int argc, char **argv)
         << "    Apriltag size in [m]." << std::endl
         << "    Default: " << opt_tag_size << " [m]" << std::endl
         << std::endl
+        << "  --tag-quad-decimate <decimation factor>" << std::endl
+        << "    Decimation factor used during Apriltag detection." << std::endl
+        << "    Default: " << opt_quad_decimate << std::endl
+        << std::endl
         << "  --tag-z-aligned" << std::endl
         << "    When enabled, tag z-axis and camera z-axis are aligned." << std::endl
         << "    Default: false" << std::endl
@@ -196,10 +200,6 @@ int main(int argc, char **argv)
         << "  --eMc <extrinsic transformation file>" << std::endl
         << "    File containing the homogeneous transformation matrix between" << std::endl
         << "    robot end-effector and camera frame." << std::endl
-        << std::endl
-        << "  --quad-decimate <decimation factor>" << std::endl
-        << "    Decimation factor used during Apriltag detection." << std::endl
-        << "    Default: " << opt_quad_decimate << std::endl
         << std::endl
         << "  --adaptive-gain" << std::endl
         << "    Flag to enable adaptive gain to speed up visual servo near convergence." << std::endl

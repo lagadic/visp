@@ -411,11 +411,11 @@ camera parameters.
 \endcode
 
 To retrieve the simulated image that depends on the simulated camera position we create an instance of a virtual
-grabber. Its goal is to project the image of the target \c ./target_square.pgm to a given camera position \c cMo,
+grabber. Its goal is to project the image of the target \c ./target_square.jpg to a given camera position \c cMo,
 and then to retrieve the corresponding image \c I. Note here that the cog of the blobs in the .pgm file define a
 20cm by 20cm square.
 \code
-  vpVirtualGrabber g("./target_square.pgm", cam);
+  vpVirtualGrabber g("./target_square.jpg", cam);
 
   g.acquire(I, cMo);
 \endcode

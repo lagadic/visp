@@ -22,7 +22,7 @@ int main(int, char *argv[])
   try {
     //! [Read image]
     vpImage<unsigned char> I;
-    vpImageIo::read(I, vpIoTools::getParent(argv[0]) + "/data/square.pgm");
+    vpImageIo::read(I, vpIoTools::getParent(argv[0]) + "/data/square.jpg");
     //! [Read image]
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
@@ -57,7 +57,7 @@ int main(int, char *argv[])
 
     while (1) {
       //! [Tracking]
-      vpImageIo::read(I, vpIoTools::getParent(argv[0]) + "/data/square.pgm");
+      vpImageIo::read(I, vpIoTools::getParent(argv[0]) + "/data/square.jpg");
       vpDisplay::display(I);
       for (unsigned int i = 0; i < dot.size(); i++) {
         dot[i].setGraphics(true);
