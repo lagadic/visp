@@ -29,10 +29,10 @@ int main(int argc, char **argv)
   vpImage<vpRGBa> I_depth_sc(height, width), I_depth_rs(height, width);
   vpImage<vpRGBa> I_color_sc(height, width), I_color_rs(height, width);
 
-  std::shared_ptr<vpDisplay> d_rs_depth = vpDisplayFactory::createDisplay(I_depth_rs, 10, height + 10, "RealSense Depth"),
-    d_sc_depth = = vpDisplayFactory::createDisplay(I_depth_sc, width + 10, height + 10, "Structure Core Depth");
-  std::shared_ptr<vpDisplay> d_color_rs = vpDisplayFactory::createDisplay(I_color_rs, 10, 10, "RealSense Color"),
-    d_color_sc = vpDisplayFactory::createDisplay(I_color_sc, width + 10, 10, "Structure Core Color");
+  std::shared_ptr<vpDisplay> d_rs_depth = vpDisplayFactory::createDisplay(I_depth_rs, 10, height + 10, "RealSense Depth");
+  std::shared_ptr<vpDisplay> d_sc_depth = vpDisplayFactory::createDisplay(I_depth_sc, width + 10, height + 10, "Structure Core Depth");
+  std::shared_ptr<vpDisplay> d_color_rs = vpDisplayFactory::createDisplay(I_color_rs, 10, 10, "RealSense Color");
+  std::shared_ptr<vpDisplay> d_color_sc = vpDisplayFactory::createDisplay(I_color_sc, width + 10, 10, "Structure Core Color");
 
   // Configuring and opening RealSense grabber.
   rs2::config cfg;
