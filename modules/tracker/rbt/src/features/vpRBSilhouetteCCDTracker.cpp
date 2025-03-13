@@ -779,7 +779,7 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
       localHessians.resize(threads, localHessian);
     }
 #ifdef VISP_HAVE_OPENMP
-#pragma omp for schedule(static)
+#pragma omp for
 #endif
     for (unsigned int i = 0; i < m_gradients.size(); ++i) {
       m_gradients[i] *= m_weights[i];

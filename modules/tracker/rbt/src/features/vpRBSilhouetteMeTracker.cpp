@@ -51,7 +51,7 @@ void vpRBSilhouetteMeTracker::extractFeatures(const vpRBFeatureTrackerInput &fra
   {
     std::vector<vpRBSilhouetteControlPoint> localPoints;
 #ifdef VISP_HAVE_OPENMP
-#pragma omp for
+#pragma omp for nowait
 #endif
 
     for (const vpRBSilhouettePoint &sp: frame.silhouettePoints) {
@@ -68,8 +68,6 @@ void vpRBSilhouetteMeTracker::extractFeatures(const vpRBFeatureTrackerInput &fra
         throw vpException(vpException::badValue, "Got a point with theta nan");
       }
 #endif
-
-
       vpRBSilhouetteControlPoint p;
       p.buildPoint((int)sp.i, (int)sp.j, sp.Z, sp.orientation, sp.normal, cMo, oMc, frame.cam, m_me);
       if (p.tooCloseToBorder(frame.I.getHeight(), frame.I.getWidth(), m_me.getRange())) {
