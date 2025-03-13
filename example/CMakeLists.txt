@@ -64,7 +64,7 @@ visp_add_subdirectory(coin-simulator           REQUIRED_DEPS visp_core visp_robo
 visp_add_subdirectory(device/display           REQUIRED_DEPS visp_core visp_gui visp_io)
 visp_add_subdirectory(device/framegrabber      REQUIRED_DEPS visp_core visp_sensor visp_io visp_gui)
 visp_add_subdirectory(device/kinect            REQUIRED_DEPS visp_core visp_sensor visp_gui)
-visp_add_subdirectory(device/laserscanner      REQUIRED_DEPS visp_core visp_sensor visp_io)
+visp_add_subdirectory(device/laserscanner      REQUIRED_DEPS visp_core visp_sensor visp_gui visp_io)
 visp_add_subdirectory(device/light             REQUIRED_DEPS visp_core visp_robot visp_io)
 visp_add_subdirectory(direct-visual-servoing   REQUIRED_DEPS visp_core visp_robot visp_visual_features visp_io visp_gui)
 visp_add_subdirectory(homography               REQUIRED_DEPS visp_core visp_vision visp_io)

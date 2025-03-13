@@ -290,8 +290,8 @@ int main(int argc, const char **argv)
 #ifdef VISP_HAVE_OPENCV
     else if (std::string(argv[i]) == "--use-texture") {
       opt_use_texture = true;
-#endif
     }
+#endif
     else if (std::string(argv[i]) == "--projection-error-threshold" && i + 1 < argc) {
       opt_projection_error_threshold = atof(argv[++i]);
     }
