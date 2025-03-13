@@ -107,8 +107,10 @@ int main(int argc, char **argv)
 
   for (int i = 1; i < argc; ++i) {
     if ((std::string(argv[i]) == "--tag-size") && (i + 1 < argc)) {
-      opt_tagSize = std::stod(argv[i + 1]);
-      ++i;
+      opt_tagSize = std::stod(argv[++i]);
+    }
+    else if ((std::string(argv[i]) == "--tag-quad-decimate") && (i + 1 < argc)) {
+      opt_quad_decimate = std::stoi(argv[++i]);
     }
     else if (std::string(argv[i]) == "--verbose") {
       opt_verbose = true;
@@ -122,10 +124,6 @@ int main(int argc, char **argv)
     else if (std::string(argv[i]) == "--task-sequencing") {
       opt_task_sequencing = true;
     }
-    else if ((std::string(argv[i]) == "--quad-decimate") && (i + 1 < argc)) {
-      opt_quad_decimate = std::stoi(argv[i + 1]);
-      ++i;
-    }
     else if (std::string(argv[i]) == "--no-convergence-threshold") {
       opt_convergence_threshold = 0.;
     }
@@ -133,13 +131,13 @@ int main(int argc, char **argv)
       std::cout
         << argv[0]
         << " [--tag-size <marker size in meter; default " << opt_tagSize << ">]"
-        << " [--quad-decimate <decimation; default " << opt_quad_decimate << ">]"
+        << " [--tag-quad-decimate <decimation; default " << opt_quad_decimate << ">]"
         << " [--adaptive-gain]"
         << " [--plot]"
         << " [--task-sequencing]"
         << " [--no-convergence-threshold]"
         << " [--verbose]"
-        << " [--help] [-h]"
+        << " [--help, -h]"
         << std::endl;;
       return EXIT_SUCCESS;
     }

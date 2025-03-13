@@ -74,7 +74,7 @@ BEGIN_VISP_NAMESPACE
  * {
  * #ifdef VISP_HAVE_DMTX
  *   vpImage<unsigned char> I;
- *   vpImageIo::read(I, "bar-code.pgm");
+ *   vpImageIo::read(I, "bar-code.jpg");
  *
  *   vpDetectorDataMatrixCode detector;
  *

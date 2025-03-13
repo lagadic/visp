@@ -10,6 +10,101 @@
 #include <visp3/visual_features/vpFeaturePoint3D.h>
 #include <visp3/vs/vpServo.h>
 
+void usage(const char **argv, int error)
+{
+  std::cout << "Synopsis" << std::endl
+    << "  " << argv[0]
+    << " [--camera-device <id>]"
+    << " [--tag-size <size>]"
+    << " [--tag-family <family>]"
+    << " [--tag-quad-decimate <factor>]"
+    << " [--tag-n-threads <number>]"
+    << " [--tag-pose-method <method>]"
+#if defined(VISP_HAVE_PUGIXML)
+    << " [--intrinsic <xmlfile>]"
+    << " [--camera-name <name>]"
+#endif
+#if defined(VISP_HAVE_DISPLAY)
+    << " [--display-tag]"
+    << " [--display-on]"
+    << " [--save-image>]"
+#endif
+    << " [--serial-off]"
+    << " [--help, -h]" << std::endl
+    << std::endl;
+  std::cout << "Description" << std::endl
+    << "  Position-based visual servoing using an Apriltag." << std::endl
+    << std::endl
+    << "  --camera-device <id>" << std::endl
+    << "    Camera device id." << std::endl
+    << "    Default: 0" << std::endl
+    << std::endl
+    << "  --tag-size <size>" << std::endl
+    << "    Apriltag size in [m]." << std::endl
+    << "    Default: 0.03" << std::endl
+    << std::endl
+    << "  --tag-family <family>" << std::endl
+    << "    Apriltag family. Supported values are:" << std::endl
+    << "       0: TAG_36h11" << std::endl
+    << "       1: TAG_36h10 (DEPRECATED)" << std::endl
+    << "       2: TAG_36ARTOOLKIT (DEPRECATED)" << std::endl
+    << "       3: TAG_25h9" << std::endl
+    << "       4: TAG_25h7 (DEPRECATED)" << std::endl
+    << "       5: TAG_16h5" << std::endl
+    << "       6: TAG_CIRCLE21h7" << std::endl
+    << "       7: TAG_CIRCLE49h12" << std::endl
+    << "       8: TAG_CUSTOM48h12" << std::endl
+    << "       9: TAG_STANDARD41h12" << std::endl
+    << "      10: TAG_STANDARD52h13" << std::endl
+    << "    Default: 0 (36h11)" << std::endl
+    << std::endl
+    << "  --tag-quad-decimate <factor>" << std::endl
+    << "    Decimation factor used to detect a tag. " << std::endl
+    << "    Default: 1" << std::endl
+    << std::endl
+    << "  --tag-n-threads <number>" << std::endl
+    << "    Number of threads used to detect a tag." << std::endl
+    << "    Default: 1" << std::endl
+    << std::endl
+#if defined(VISP_HAVE_PUGIXML)
+    << "  --intrinsic <xmlfile>" << std::endl
+    << "    Camera intrinsic parameters file in xml format." << std::endl
+    << "    Default: empty" << std::endl
+    << std::endl
+    << "  --camera-name <name>" << std::endl
+    << "    Camera name in the intrinsic parameters file in xml format." << std::endl
+    << "    Default: empty" << std::endl
+    << std::endl
+#endif
+#if defined(VISP_HAVE_DISPLAY)
+    << "  --display-tag" << std::endl
+    << "    Flag used to enable displaying the edges of a tag." << std::endl
+    << "    Default: disabled" << std::endl
+    << std::endl
+    << "  --display-on" << std::endl
+    << "    Flag used to turn display on." << std::endl
+    << "    Default: disabled" << std::endl
+    << std::endl
+    << "  --save-image" << std::endl
+    << "    Flag used to save images with overlay drawings." << std::endl
+    << "    Default: disabled" << std::endl
+    << std::endl
+#endif
+    << "  --serial-off" << std::endl
+    << "    Flag used to disable serial link." << std::endl
+    << "    Default: enabled" << std::endl
+    << std::endl
+    << "  --help, -h" << std::endl
+    << "    Print this helper message." << std::endl
+    << std::endl;
+
+  if (error) {
+    std::cout << "Error" << std::endl
+      << "  "
+      << "Unsupported parameter " << argv[error] << std::endl;
+  }
+}
+
 int main(int argc, const char **argv)
 {
 #if defined(VISP_HAVE_APRILTAG) && defined(VISP_HAVE_V4L2)
@@ -31,27 +126,32 @@ int main(int argc, const char **argv)
   bool save_image = false; // Only possible if display_on = true
 
   for (int i = 1; i < argc; i++) {
-    if (std::string(argv[i]) == "--tag-size" && i + 1 < argc) {
-      tagSize = std::atof(argv[i + 1]);
+    if (std::string(argv[i]) == "--camera-device" && i + 1 < argc) {
+      device = std::atoi(argv[++i]);
     }
-    else if (std::string(argv[i]) == "--input" && i + 1 < argc) {
-      device = std::atoi(argv[i + 1]);
+    else if (std::string(argv[i]) == "--tag-size" && i + 1 < argc) {
+      tagSize = std::atof(argv[++i]);
     }
-    else if (std::string(argv[i]) == "--quad-decimate" && i + 1 < argc) {
-      quad_decimate = (float)atof(argv[i + 1]);
+    else if (std::string(argv[i]) == "--tag-family" && i + 1 < argc) {
+      tagFamily = (vpDetectorAprilTag::vpAprilTagFamily)atoi(argv[++i]);
     }
-    else if (std::string(argv[i]) == "--nthreads" && i + 1 < argc) {
-      nThreads = std::atoi(argv[i + 1]);
+    else if (std::string(argv[i]) == "--tag-quad-decimate" && i + 1 < argc) {
+      quad_decimate = (float)atof(argv[++i]);
     }
+    else if (std::string(argv[i]) == "--tag-n-threads" && i + 1 < argc) {
+      nThreads = std::atoi(argv[++i]);
+    }
+#if defined(VISP_HAVE_PUGIXML)
     else if (std::string(argv[i]) == "--intrinsic" && i + 1 < argc) {
-      intrinsic_file = std::string(argv[i + 1]);
+      intrinsic_file = std::string(argv[++i]);
     }
     else if (std::string(argv[i]) == "--camera-name" && i + 1 < argc) {
-      camera_name = std::string(argv[i + 1]);
+      camera_name = std::string(argv[++i]);
     }
+#endif
+#if defined(VISP_HAVE_DISPLAY)
     else if (std::string(argv[i]) == "--display-tag") {
       display_tag = true;
-#if defined(VISP_HAVE_DISPLAY)
     }
     else if (std::string(argv[i]) == "--display-on") {
       display_on = true;
@@ -63,21 +163,13 @@ int main(int argc, const char **argv)
     else if (std::string(argv[i]) == "--serial-off") {
       serial_off = true;
     }
-    else if (std::string(argv[i]) == "--tag-family" && i + 1 < argc) {
-      tagFamily = (vpDetectorAprilTag::vpAprilTagFamily)atoi(argv[i + 1]);
-    }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-      std::cout << "Usage: " << argv[0]
-        << " [--input <camera input>] [--tag-size <tag size in m>]"
-        " [--quad-decimate <quad decimate>] [--nthreads <nb>]"
-        " [--intrinsic <intrinsic file>] [--camera-name <camera name>]"
-        " [--tag-family <family> (0: TAG_36h11, 1: TAG_36h10, 2: TAG_36ARTOOLKIT, 3: TAG_25h9, 4: TAG_25h7, 5: TAG_16h5)]"
-        " [--display-tag]";
-#if defined(VISP_HAVE_DISPLAY)
-      std::cout << " [--display-on] [--save-image]";
-#endif
-      std::cout << " [--serial-off] [--help]" << std::endl;
+      usage(argv, 0);
       return EXIT_SUCCESS;
+    }
+    else {
+      usage(argv, i);
+      return EXIT_FAILURE;
     }
   }
 

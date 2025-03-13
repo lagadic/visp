@@ -75,9 +75,19 @@
 #endif
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x040101 || (VISP_HAVE_OPENCV_VERSION < 0x040000 && VISP_HAVE_OPENCV_VERSION >= 0x030407)) && USE_SIMD_CODE
+
+// See: https://github.com/lagadic/visp/issues/1606
+// 0x040B00 --> (4<<16 | 11<<8 | 0)
+// Only starting from OpenCV 4.11 cv::v_mul is available for all the platforms
+// So if OpenCV >= 4.11 || OpenCV < 4.9 --> use OpenCV HAL API
+// Otherwise, only if between >= 4.9 && < 4.11 and on regular platform (X86 && ARM64) --> use OpenCV HAL API
+#if (VISP_HAVE_OPENCV_VERSION >= 0x040B00) || (VISP_HAVE_OPENCV_VERSION < 0x040900) || \
+  ( (VISP_HAVE_OPENCV_VERSION >= 0x040900) && (VISP_HAVE_OPENCV_VERSION < 0x040B00) && (USE_SSE || USE_NEON) )
 #define USE_OPENCV_HAL 1
 #include <opencv2/core/simd_intrinsics.hpp>
 #include <opencv2/core/hal/intrin.hpp>
+#endif
+
 #endif
 
 #if !USE_OPENCV_HAL && (USE_SSE || USE_NEON)

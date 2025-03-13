@@ -69,7 +69,7 @@ When `init` is `false`, we consider that the previous pose `cMo` is near the sol
 initialization for the non linear visual servoing minimization.
 
 If we come back in tutorial-pose-from-points-image.cpp in the `main()` function, instead of using an image sequence
-of the object, we consider always the same image `square.pgm`. In this image we consider a 12cm by 12 cm square.
+of the object, we consider always the same image `square.jpg`. In this image we consider a 12cm by 12 cm square.
 The corners are represented by a blob. Their center of gravity correspond to a corner position. This gray level image
  is read thanks to:
 \snippet tutorial-pose-from-points-image.cpp Read image
@@ -142,7 +142,7 @@ Have a trial adapting the size of your square:
 If your camera is calibrated (see \ref tutorial-calibration-intrinsic), you may use your own camera parameters with
 something similar to:
 \code
-./tutorial-pose-from-points-live --square_width 0.1 --intrinsic camera.xml --camera_name Camera
+./tutorial-pose-from-points-live --square_width 0.1 --intrinsic camera.xml --camera-name Camera
 \endcode
 
 If you get the following error:

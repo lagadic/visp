@@ -1,0 +1,48 @@
+name: CI - MacOS/Linux/Windows via Pixi
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+  workflow_dispatch:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  visp-pixi:
+    name: ${{ matrix.os }} - Env ${{ matrix.environment }} ${{ matrix.build_type }} ${{ matrix.compiler }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, macos-13]
+        environment: [all]
+        build_type: [Release]
+        include:
+          - os: windows-latest
+            environment: all
+            build_type: Release
+          - os: windows-latest
+            environment: all-clang-cl
+            build_type: Release
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: prefix-dev/setup-pixi@v0.8.1
+        with:
+          cache: true
+          environments: ${{ matrix.environment }}
+
+      - name: Build Visp [MacOS/Linux/Windows]
+        shell: bash -el {0}
+        env:
+          VISP_BUILD_TYPE: ${{ matrix.build_type }}
+        run: |
+          pixi run -e ${{ matrix.environment }} build
+
+      - name: Run tests [MacOS/Linux/Windows]
+        shell: bash -el {0}
+        run: |
+          pixi run -e ${{ matrix.environment }} test

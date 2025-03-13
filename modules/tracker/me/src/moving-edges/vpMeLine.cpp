@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,35 +55,13 @@
 
 BEGIN_VISP_NAMESPACE
 
-void vpMeLine::normalizeAngle(double &delta)
-{
-  // angle in [- M_PI; M_PI]
-  while (delta > M_PI) {
-    delta -= M_PI;
-  }
-  while (delta < -M_PI) {
-    delta += M_PI;
-  }
-}
-
-void vpMeLine::computeDelta(double &delta, double i1, double j1, double i2, double j2)
-{
-
-  double B = (double)(i1 - i2);
-  double A = (double)(j1 - j2);
-
-  delta = atan2(B, A);
-  delta -= M_PI / 2.0;
-  normalizeAngle(delta);
-}
-
 /*!
  * Project a ME site on a straight line.
  * @param[in] a,b,c : Parameters of the line
  * @param[in] P : ME site.
  * @param[out] iP : Coordinates of the ME site projected on the line.
  */
-void vpMeLine::project(double a, double b, double c, const vpMeSite &P, vpImagePoint &iP)
+  void vpMeLine::project(double a, double b, double c, const vpMeSite &P, vpImagePoint &iP)
 {
   const double i = P.m_ifloat;
   const double j = P.m_jfloat;
@@ -99,26 +77,21 @@ void vpMeLine::project(double a, double b, double c, const vpMeSite &P, vpImageP
 }
 
 vpMeLine::vpMeLine()
-  : m_rho(0.), m_theta(0.), m_delta(0.), m_delta_1(0.), m_angle(0.), m_angle_1(90), m_sign(1),
-  m_useIntensityForRho(true), m_a(0.), m_b(0.), m_c(0.)
+  : m_rho(0.), m_theta(0.), m_delta(0.), m_sign(1), m_a(0.), m_b(0.), m_c(0.)
 { }
 
 vpMeLine::vpMeLine(const vpMeLine &meline)
-  : vpMeTracker(meline), m_rho(0.), m_theta(0.), m_delta(0.), m_delta_1(0.), m_angle(0.), m_angle_1(90), m_sign(1),
-  m_useIntensityForRho(true), m_a(0.), m_b(0.), m_c(0.)
+  : vpMeTracker(meline), m_rho(0.), m_theta(0.), m_delta(0.), m_sign(1), m_a(0.), m_b(0.), m_c(0.)
 {
   m_rho = meline.m_rho;
   m_theta = meline.m_theta;
   m_delta = meline.m_delta;
-  m_delta_1 = meline.m_delta_1;
-  m_angle = meline.m_angle;
-  m_angle_1 = meline.m_angle_1;
   m_sign = meline.m_sign;
 
   m_a = meline.m_a;
   m_b = meline.m_b;
   m_c = meline.m_c;
-  m_useIntensityForRho = meline.m_useIntensityForRho;
+
   m_PExt[0] = meline.m_PExt[0];
   m_PExt[1] = meline.m_PExt[1];
 }
@@ -182,7 +155,6 @@ void vpMeLine::sample(const vpImage<unsigned char> &I, bool doNotTrack)
         double convolution = pix.convolution(I, m_me);
         double contrastThreshold = fabs(convolution) * marginRatio;
         pix.setContrastThreshold(contrastThreshold, *m_me);
-
         if (vpDEBUG_ENABLE(3)) {
           vpDisplay::displayCross(I, iP, 2, vpColor::blue);
         }
@@ -347,11 +319,6 @@ void vpMeLine::leastSquare(const vpImage<unsigned char> &I)
       ++i;
     }
   }
-
-  // Update delta
-  m_delta = atan2(m_a, m_b);
-
-  normalizeAngle(m_delta);
 }
 
 void vpMeLine::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2)
@@ -369,8 +336,7 @@ void vpMeLine::initTracking(const vpImage<unsigned char> &I, const vpImagePoint 
   m_PExt[1].m_ifloat = id2;
   m_PExt[1].m_jfloat = jd2;
 
-  computeDelta(m_delta, id1, jd1, id2, jd2);
-  m_delta_1 = m_delta;
+  m_delta = atan2((jd2 - jd1), (id1 - id2));
 
   sample(I);
 
@@ -492,8 +458,7 @@ unsigned int vpMeLine::seekExtremities(const vpImage<unsigned char> &I)
   double dj = diffsj * sample_step / s;
 
   vpMeSite P;
-
-  P.init((int)id1, (int)jd1, m_delta_1, 0, m_sign);
+  P.init((int)id1, (int)jd1, m_delta, 0, m_sign);
   P.setDisplay(m_selectDisplay);
   const double marginRatio = m_me->getThresholdMarginRatio();
 
@@ -544,12 +509,6 @@ unsigned int vpMeLine::seekExtremities(const vpImage<unsigned char> &I)
     }
   }
 
-  // Try to add at max 3 points along second extremity
-  // (could be a little bit more or less)
-
-  // P.init((int)id2, (int)jd2, m_delta_1, 0, m_sign);
-  // P.setDisplay(m_selectDisplay);
-
   for (int i = 0; i < 3; i++) {
     id2 += di;
     jd2 += dj;
@@ -563,7 +522,6 @@ unsigned int vpMeLine::seekExtremities(const vpImage<unsigned char> &I)
       unsigned int is_uint = static_cast<unsigned int>(id2);
       unsigned int js_uint = static_cast<unsigned int>(jd2);
       if (inRoiMask(m_mask, is_uint, js_uint) && inMeMaskCandidates(m_maskCandidates, is_uint, js_uint)) {
-        // ajout
         P.m_ifloat = id2;
         P.m_i = static_cast<int>(id2);
         P.m_jfloat = jd2;
@@ -571,7 +529,6 @@ unsigned int vpMeLine::seekExtremities(const vpImage<unsigned char> &I)
         double convolution = P.convolution(I, m_me);
         double contrastThreshold = fabs(convolution) * marginRatio;
         P.setContrastThreshold(contrastThreshold, *m_me);
-        // fin ajout
         P.track(I, m_me, false);
         if (P.getState() == vpMeSite::NO_SUPPRESSION) {
           m_meList.push_back(P);
@@ -602,24 +559,16 @@ void vpMeLine::reSample(const vpImage<unsigned char> &I)
   // Good points are in m_meList
   const unsigned int minNbGoodPoints = 4;
   if (m_meList.size() <= minNbGoodPoints) {
-
-    double delta_new = m_delta;
-    m_delta = m_delta_1;
-
-    vpImagePoint ip;
-    const vpMeSite PExt0 = m_PExt[0];
-    project(m_a, m_b, m_c, PExt0, ip);
-    m_PExt[0].m_ifloat = ip.get_i();
-    m_PExt[0].m_jfloat = ip.get_j();
-
-    const vpMeSite PExt1 = m_PExt[1];
-    project(m_a, m_b, m_c, PExt1, ip);
-    m_PExt[1].m_ifloat = ip.get_i();
-    m_PExt[1].m_jfloat = ip.get_j();
+    // We are confident in the 2 good MEs at extremities
+    double id1, jd1, id2, jd2;
+    id1 = m_PExt[0].m_ifloat;
+    jd1 = m_PExt[0].m_jfloat;
+    id2 = m_PExt[1].m_ifloat;
+    jd2 = m_PExt[1].m_jfloat;
+    // m_delta is the angle of the line used for the ME
+    m_delta = atan2((jd2 - jd1), (id1 - id2));
 
     sample(I);
-    m_delta = delta_new;
-
     // We call what is not specific
     vpMeTracker::initTracking(I);
     // Tracking after resampling
@@ -628,19 +577,8 @@ void vpMeLine::reSample(const vpImage<unsigned char> &I)
     // Least square estimation of the straight line parameters
     leastSquare(I);
 
-    setExtremities(); // useful if a resampling a getExtremities are done
+    setExtremities(); // useful if a getExtremities is done
 
-    // Updates the delta angle for each point in the list
-    updateDelta();
-
-    // Remise a jour de delta dans la liste de site me
-    if (vpDEBUG_ENABLE(2)) {
-      display(I, vpColor::red);
-      vpMeTracker::display(I);
-      vpDisplay::flush(I);
-    }
-
-    computeRhoTheta(I);
   }
 }
 
@@ -648,36 +586,14 @@ void vpMeLine::updateDelta()
 {
   vpMeSite p_me;
 
-  double angle_ = m_delta + M_PI / 2;
-  double diff = 0;
-
-  // angle in [0;180]
-  while (angle_ < 0)
-    angle_ += M_PI;
-  while (angle_ > M_PI)
-    angle_ -= M_PI;
-
-  // angle in degree
-  angle_ = vpMath::round(angle_ * 180.0 / M_PI);
-  int angle_int = (int)angle_;
-  if (angle_int == 180) angle_ = 179.0;
-
-
-  diff = fabs(angle_ - m_angle_1);
-  if (diff > 90) { // To ensure continuity ?
-    m_sign *= -1;
-  }
-
-  m_angle_1 = angle_;
-
+  // Update delta
+  m_delta = atan2(m_a, m_b);
   std::list<vpMeSite>::const_iterator end = m_meList.end();
   for (std::list<vpMeSite>::iterator it = m_meList.begin(); it != end; ++it) {
     p_me = *it;
     p_me.setAlpha(m_delta);
-    p_me.m_mask_sign = m_sign;
     *it = p_me;
   }
-  m_delta_1 = m_delta;
 }
 
 void vpMeLine::track(const vpImage<unsigned char> &I)
@@ -698,7 +614,7 @@ void vpMeLine::track(const vpImage<unsigned char> &I)
   if (nb > 0) {
     leastSquare(I);
   }
-  setExtremities(); // useful if a resampling a getExtremities are done
+  setExtremities(); // useful for resample() or if a getExtremities() is called
 
   // Resampling if necessary
   reSample(I);
@@ -711,8 +627,7 @@ void vpMeLine::track(const vpImage<unsigned char> &I)
     vpMeTracker::display(I);
     vpDisplay::flush(I);
   }
-
-  computeRhoTheta(I);
+  computeRhoTheta();
 }
 
 void vpMeLine::update_indices(double theta, int i, int j, int incr, int &i1, int &i2, int &j1, int &j2)
@@ -724,107 +639,56 @@ void vpMeLine::update_indices(double theta, int i, int j, int incr, int &i1, int
   j2 = (int)(j - sin(theta) * incr);
 }
 
-void vpMeLine::computeRhoTheta(const vpImage<unsigned char> &I)
+/*!
+ * Select (rho,theta) from contrast between (rho,theta) and (-rho,theta +/- pi)
+ */
+void vpMeLine::computeRhoTheta()
 {
-  m_rho = fabs(m_c);
-  m_theta = atan2(m_b, m_a);
+  // Vote using all MEs in which direction is the contrast
+  unsigned int nb_pos = 0;
+  unsigned int nb_neg = 0;
 
-  // angle in [0;180[
-  while (m_theta >= M_PI)  // FC utile uniquement si teta = PI
-    m_theta -= M_PI;
-  while (m_theta < 0)
-    m_theta += M_PI;
+  std::list<vpMeSite>::const_iterator it = m_meList.begin();
+  std::list<vpMeSite>::const_iterator end = m_meList.end();
 
-  if (m_useIntensityForRho) {
-    // convention pour choisir le signe de rho
-    int i, j;
-    i = vpMath::round((m_PExt[0].m_ifloat + m_PExt[1].m_ifloat) / 2.0);
-    j = vpMath::round((m_PExt[0].m_jfloat + m_PExt[1].m_jfloat) / 2.0);
-
-    int end = false;
-    int incr = 10;
-
-    int i1 = 0, i2 = 0, j1 = 0, j2 = 0;
-    unsigned char v1 = 0, v2 = 0;
-
-    int width_ = (int)I.getWidth();
-    int height_ = (int)I.getHeight();
-    update_indices(m_theta, i, j, incr, i1, i2, j1, j2);
-
-    if (i1 < 0 || i1 >= height_ || i2 < 0 || i2 >= height_ || j1 < 0 || j1 >= width_ || j2 < 0 || j2 >= width_) {
-      double rho_lim1 = fabs((double)i / cos(m_theta));
-      double rho_lim2 = fabs((double)j / sin(m_theta));
-
-      double co_rho_lim1 = fabs(((double)(height_ - i)) / cos(m_theta));
-      double co_rho_lim2 = fabs(((double)(width_ - j)) / sin(m_theta));
-
-      double rho_lim = std::min<double>(rho_lim1, rho_lim2);
-      double co_rho_lim = std::min<double>(co_rho_lim1, co_rho_lim2);
-      incr = (int)std::floor(std::min<double>(rho_lim, co_rho_lim));
-      if (incr < INCR_MIN) {
-        vpERROR_TRACE("increment is too small");
-        throw(vpTrackingException(vpTrackingException::fatalError, "increment is too small"));
+  for (; it != end; ++it) {
+    vpMeSite p_me = *it;
+    if (p_me.getState() == vpMeSite::NO_SUPPRESSION) {
+      if (p_me.m_mask_sign > 0) {
+        nb_pos++;
       }
-      update_indices(m_theta, i, j, incr, i1, i2, j1, j2);
-    }
-
-    while (!end) {
-      end = true;
-      unsigned int i1_ = static_cast<unsigned int>(i1);
-      unsigned int j1_ = static_cast<unsigned int>(j1);
-      unsigned int i2_ = static_cast<unsigned int>(i2);
-      unsigned int j2_ = static_cast<unsigned int>(j2);
-      v1 = I[i1_][j1_];
-      v2 = I[i2_][j2_];
-      if (abs(v1 - v2) < 1) {
-        incr--;
-        end = false;
-        if (incr == 1) {
-          throw(vpException(vpException::fatalError, "In vpMeLine cannot determine rho sign, since "
-                            "there is no grey level difference between both "
-                            "sides of the line"));
-        }
-      }
-      update_indices(m_theta, i, j, incr, i1, i2, j1, j2);
-    }
-
-    if (m_theta >= 0 && m_theta <= M_PI / 2) {
-      if (v2 < v1) {
-        m_theta += M_PI;
-        m_rho *= -1;
-      }
-    }
-
-    else {
-      double jinter;
-      jinter = -m_c / m_b;
-      if (v2 < v1) {
-        m_theta += M_PI;
-        if (jinter > 0) {
-          m_rho *= -1;
-        }
-      }
-
       else {
-        if (jinter < 0) {
-          m_rho *= -1;
-        }
+        nb_neg++;
       }
     }
+  }
+  // select the index for the first good ME (should be the first one)
+  it = m_meList.begin();
+  vpMeSite p_me = *it;
+  while (p_me.getState() != vpMeSite::NO_SUPPRESSION) {
+    ++it;
+    p_me = *it;
+  }
+  double ang = vpMath().rad((double)p_me.getIndex());
+  if (nb_neg > nb_pos) {
+    ang += M_PI;
+  }
 
-    if (vpDEBUG_ENABLE(2)) {
-      vpImagePoint ip, ip1, ip2;
+  double Mx = -cos(ang);  // point from contrast expressed in (i,j) frame
+  double My = sin(ang);
 
-      ip.set_i(i);
-      ip.set_j(j);
-      ip1.set_i(i1);
-      ip1.set_j(j1);
-      ip2.set_i(i2);
-      ip2.set_j(j2);
+  double Px = m_a;  // first possibility for theta expressed as a point
+  double Py = m_b;
 
-      vpDisplay::displayArrow(I, ip, ip1, vpColor::green);
-      vpDisplay::displayArrow(I, ip, ip2, vpColor::red);
-    }
+  double d1 = (Px-Mx)*(Px-Mx) + (Py-My)*(Py-My);
+  double d2 = (-Px-Mx)*(-Px-Mx) + (-Py-My)*(-Py-My); //second possibility
+  if (d1 < d2) {
+    m_theta = atan2(m_b, m_a); // first possibility selected
+    m_rho = -m_c;
+  }
+  else {
+    m_theta = atan2(-m_b, -m_a); // second possibility selected
+    m_rho = m_c;
   }
 }
 

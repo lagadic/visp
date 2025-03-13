@@ -54,7 +54,7 @@
 #include <visp3/visual_features/vpFeatureLine.h>
 
 // List of allowed command line options
-#define GETOPTARGS "cdf:hi:l:p:s:"
+#define GETOPTARGS "cdf:hi:l:p:s:v"
 
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;
@@ -90,7 +90,7 @@ Tracking of a line.\n\
 SYNOPSIS\n\
   %s [-i <input image path>] [-p <personal image path>]\n\
      [-f <first image>] [-l <last image>] [-s <step>]\n\
-     [-c] [-d] [-h]\n", name);
+     [-c] [-d] [-v] [-h]\n", name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -122,6 +122,9 @@ OPTIONS:                                               Default\n\
      Disable the mouse click. Useful to automate the \n\
      execution of this program without human intervention.\n\
 \n\
+  -v \n\
+     Turn on verbose mode.\n\
+\n\
   -d \n\
      Turn off the display.\n\
 \n\
@@ -151,7 +154,7 @@ OPTIONS:                                               Default\n\
 
 */
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath, unsigned &first, unsigned &last,
-  unsigned &step, bool &click_allowed, bool &display)
+                unsigned &step, bool &click_allowed, bool &display, bool &verbose)
 {
   const char *optarg_;
   int c;
@@ -178,6 +181,9 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
       break;
     case 's':
       step = (unsigned)atoi(optarg_);
+      break;
+    case 'v':
+      verbose = true;
       break;
     case 'h':
       usage(argv[0], nullptr, ipath, ppath, first, last, step);
@@ -215,6 +221,7 @@ int main(int argc, const char **argv)
   unsigned int opt_step = 1;
   bool opt_click_allowed = true;
   bool opt_display = true;
+  bool opt_verbose = false;
   unsigned int thickness = 1;
 
   vpImage<unsigned char> I;
@@ -242,7 +249,7 @@ int main(int argc, const char **argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_ipath, opt_ppath, opt_first, opt_last, opt_step, opt_click_allowed,
-                   opt_display) == false) {
+                   opt_display, opt_verbose) == false) {
       return EXIT_FAILURE;
     }
 
@@ -320,17 +327,13 @@ int main(int argc, const char **argv)
 
     me_line.setMe(&me);
     me_line.setDisplay(vpMeSite::RANGE_RESULT);
-    // ajout FC
-    const bool useIntensity = true;
-    me_line.setRhoSignFromIntensity(useIntensity);
-    // fin ajout FC
 
     std::cout << "Video settings" << std::endl;
-    std::cout << "  Name       : " << g.getFrameName() << std::endl;
-    std::cout << "  First image: " << g.getFirstFrameIndex() << std::endl;
-    std::cout << "  Last image : " << g.getLastFrameIndex() << std::endl;
-    std::cout << "  Step       : " << g.getFrameStep() << std::endl;
-    std::cout << "  Image size : " << I.getWidth() << " x " << I.getHeight() << std::endl;
+    std::cout << "  Name          : " << g.getFrameName() << std::endl;
+    std::cout << "  First image   : " << g.getFirstFrameIndex() << std::endl;
+    std::cout << "  Last image    : " << g.getLastFrameIndex() << std::endl;
+    std::cout << "  Step          : " << g.getFrameStep() << std::endl;
+    std::cout << "  Image size    : " << I.getWidth() << " x " << I.getHeight() << std::endl;
 
     std::cout << "Moving-edges settings" << std::endl;
     std::cout << "  Sample step   : " << me_line.getMe()->getSampleStep() << std::endl;
@@ -360,7 +363,7 @@ int main(int argc, const char **argv)
     }
     std::cout << "----------------------------------------------------------" << std::endl;
 
-    vpFeatureLine l;
+    vpFeatureLine fe_line;
 
     vpCameraParameters cam;
 
@@ -378,14 +381,12 @@ int main(int argc, const char **argv)
 
       me_line.track(I);
 
-      vpTRACE("me_line: rho %lf theta (dg) %lf", me_line.getRho(), vpMath::deg(me_line.getTheta()));
-      vpFeatureBuilder::create(l, cam, me_line);
-      vpTRACE("fe_line: rho %lf theta (dg) %lf", l.getRho(), vpMath::deg(l.getTheta()));
+      vpFeatureBuilder::create(fe_line, cam, me_line);
 
-      // FC print
-      // printf("me_line: rho %lf theta (dg) %lf\n", me_line.getRho(), vpMath::deg(me_line.getTheta()));
-      // printf("fe_line: rho %lf theta (dg) %lf\n", l.getRho(), vpMath::deg(l.getTheta()));
-      // FC fin print
+      if (opt_verbose) {
+        std::cout << "me_line: rho " << me_line.getRho() << " theta (deg) " << vpMath::deg(me_line.getTheta()) << std::endl;
+        std::cout << "fe_line: rho " << fe_line.getRho() << " theta (deg) " << vpMath::deg(fe_line.getTheta()) << std::endl;
+      }
 
       if (opt_display) {
         me_line.display(I, vpColor::green, thickness);
@@ -395,10 +396,6 @@ int main(int argc, const char **argv)
             quit = true;
           }
         }
-        // ajout FC
-        // std::cout << "A click to continue..." << std::endl;
-        // vpDisplay::getClick(I);
-        // fin ajout FC
       }
     }
     if (opt_display && opt_click_allowed && !quit) {

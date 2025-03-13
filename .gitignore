@@ -15,3 +15,6 @@ build
 samples/android/.gradle/
 samples/android/.idea/
 samples/android/local.properties
+# pixi environments
+.pixi
+*.egg-info

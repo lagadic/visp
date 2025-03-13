@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,24 +42,26 @@
 BEGIN_VISP_NAMESPACE
 
 /*!
-  \brief Compute the distances of the data to the mean obtained.
-
-  \param[in] cMo : Vector of homogeneous matrices representing the transformation
-  between the camera and the scene.
-  \param[in] rMe : Vector of homogeneous matrices representing the transformation
-  between the effector (where the camera is fixed) and the reference
-  coordinates (base of the manipulator). Must be the same size as cMo.
-  \param[in] eMc : Homogeneous matrix between the effector and the camera.
-*/
-void vpHandEyeCalibration::calibrationVerifrMo(const std::vector<vpHomogeneousMatrix> &cMo,
-                                               const std::vector<vpHomogeneousMatrix> &rMe,
-                                               const vpHomogeneousMatrix &eMc)
+ * \brief Compute the distances of the data to the mean obtained.
+ *
+ * \param[in] cMo : Vector of homogeneous matrices representing the transformation
+ * between the camera and the scene.
+ * \param[in] rMe : Vector of homogeneous matrices representing the transformation
+ * between the effector (where the camera is fixed) and the reference
+ * coordinates (base of the manipulator). Must be the same size as cMo.
+ * \param[in] eMc : Homogeneous matrix between the effector and the camera.
+ * \param[in] mean_rMo : Homogeneous matrix between the robot reference and the object.
+ *
+ */
+  void vpHandEyeCalibration::calibrationVerifrMo(const std::vector<vpHomogeneousMatrix> &cMo,
+                                                 const std::vector<vpHomogeneousMatrix> &rMe,
+                                                 const vpHomogeneousMatrix &eMc, vpHomogeneousMatrix &mean_rMo)
 {
   unsigned int nbPose = (unsigned int)cMo.size();
   std::vector<vpTranslationVector> rTo(nbPose);
   std::vector<vpRotationMatrix> rRo(nbPose);
 
-  for (unsigned int i = 0; i < nbPose; i++) {
+  for (unsigned int i = 0; i < nbPose; ++i) {
     vpHomogeneousMatrix rMo = rMe[i] * eMc * cMo[i];
     rRo[i] = rMo.getRotationMatrix();
     rTo[i] = rMo.getTranslationVector();
@@ -67,12 +69,14 @@ void vpHandEyeCalibration::calibrationVerifrMo(const std::vector<vpHomogeneousMa
   vpRotationMatrix meanRot = vpRotationMatrix::mean(rRo);
   vpTranslationVector meanTrans = vpTranslationVector::mean(rTo);
 
+  mean_rMo.buildFrom(meanTrans, meanRot);
+
 #if DEBUG_LEVEL2
   {
-    std::cout << "Mean  " << std::endl;
+    std::cout << "Mean rMo " << std::endl;
     std::cout << "Translation: " << meanTrans.t() << std::endl;
     vpThetaUVector P(meanRot);
-    std::cout << "Rotation : theta (deg) = " << vpMath::deg(sqrt(P.sumSquare())) << " Matrice : " << std::endl
+    std::cout << "Rotation : theta (deg) = " << vpMath::deg(sqrt(P.sumSquare())) << " Matrix : " << std::endl
       << meanRot << std::endl;
     std::cout << "theta U (deg): " << vpMath::deg(P[0]) << " " << vpMath::deg(P[1]) << " " << vpMath::deg(P[2])
       << std::endl;
@@ -81,43 +85,61 @@ void vpHandEyeCalibration::calibrationVerifrMo(const std::vector<vpHomogeneousMa
 
   // standard deviation, rotational part
   double resRot = 0.0;
-  for (unsigned int i = 0; i < nbPose; i++) {
+  for (unsigned int i = 0; i < nbPose; ++i) {
     vpRotationMatrix R = meanRot.t() * rRo[i]; // Rm^T  Ri
     vpThetaUVector P(R);
     // theta = Riemannian distance d(Rm,Ri)
     double theta = sqrt(P.sumSquare());
-    std::cout << "Distance theta between rMo(" << i << ") and mean (deg) = " << vpMath::deg(theta) << std::endl;
+    std::cout << "Distance theta between rMo/rMc(" << i << ") and mean (deg) = " << vpMath::deg(theta) << std::endl;
     // Euclidean distance d(Rm,Ri) not used
     // theta = 2.0*sqrt(2.0)*sin(theta/2.0);
     resRot += theta * theta;
   }
   resRot = sqrt(resRot / nbPose);
-  std::cout << "Mean residual rMo(" << nbPose << ") - rotation (deg) = " << vpMath::deg(resRot) << std::endl;
+  std::cout << "Mean residual rMo/rMc(" << nbPose << ") - rotation (deg) = " << vpMath::deg(resRot) << std::endl;
   // standard deviation, translational part
   double resTrans = 0.0;
-  for (unsigned int i = 0; i < nbPose; i++) {
+  for (unsigned int i = 0; i < nbPose; ++i) {
     vpColVector errTrans = vpColVector(rTo[i] - meanTrans);
     resTrans += errTrans.sumSquare();
-    std::cout << "Distance d between rMo(" << i << ") and mean (m) = " << sqrt(errTrans.sumSquare()) << std::endl;
+    std::cout << "Distance d between rMo/rMc(" << i << ") and mean (m) = " << sqrt(errTrans.sumSquare()) << std::endl;
   }
   resTrans = sqrt(resTrans / nbPose);
-  std::cout << "Mean residual rMo(" << nbPose << ") - translation (m) = " << resTrans << std::endl;
+  std::cout << "Mean residual rMo/rMc(" << nbPose << ") - translation (m) = " << resTrans << std::endl;
   double resPos = (resRot * resRot + resTrans * resTrans) * nbPose;
   resPos = sqrt(resPos / (2 * nbPose));
-  std::cout << "Mean residual rMo(" << nbPose << ") - global = " << resPos << std::endl;
+  std::cout << "Mean residual rMo/rMc(" << nbPose << ") - global = " << resPos << std::endl;
 }
 
 /*!
-  \brief Compute the rotation part (eRc) of hand-eye pose by solving a
-  Procrustes problem [... (theta u)_e ...] = eRc [ ... (theta u)_c ...]
-
-  \param[in] cMo : Vector of homogeneous matrices representing the transformation
-  between the camera and the scene (input)
-  \param[in] rMe : Vector of homogeneous matrices representing the transformation
-  between the effector (where the camera is fixed) and the reference
-  coordinates (base of the manipulator) (input). Must be the same size as cMo.
-  \param[out] eRc : Rotation matrix  between the effector and the camera (output)
-*/
+ * Same as before without rMo as output.
+ *
+ * \param[in] cMo : Vector of homogeneous matrices representing the transformation
+ * between the camera and the scene.
+ * \param[in] rMe : Vector of homogeneous matrices representing the transformation
+ * between the effector (where the camera is fixed) and the reference
+ * coordinates (base of the manipulator). Must be the same size as cMo.
+ * \param[in] eMc : Homogeneous matrix between the effector and the camera.
+ */
+void vpHandEyeCalibration::calibrationVerifrMo(const std::vector<vpHomogeneousMatrix> &cMo,
+                                               const std::vector<vpHomogeneousMatrix> &rMe,
+                                               const vpHomogeneousMatrix &eMc)
+{
+  vpHomogeneousMatrix rMo;
+  rMo.eye();
+  vpHandEyeCalibration::calibrationVerifrMo(cMo, rMe, eMc, rMo);
+}
+/*!
+ * \brief Compute the rotation part (eRc) of hand-eye pose by solving a
+ * Procrustes problem [... (theta u)_e ...] = eRc [ ... (theta u)_c ...]
+ *
+ * \param[in] cMo : Vector of homogeneous matrices representing the transformation
+ * between the camera and the scene.
+ * \param[in] rMe : Vector of homogeneous matrices representing the transformation
+ * between the effector (where the camera is fixed) and the reference.
+ * coordinates (base of the manipulator). Must be the same size as cMo.
+ * \param[out] eRc : Rotation matrix  between the effector and the camera.
+ */
 int vpHandEyeCalibration::calibrationRotationProcrustes(const std::vector<vpHomogeneousMatrix> &cMo,
                                                         const std::vector<vpHomogeneousMatrix> &rMe,
                                                         vpRotationMatrix &eRc)
@@ -132,13 +154,13 @@ int vpHandEyeCalibration::calibrationRotationProcrustes(const std::vector<vpHomo
   unsigned int nbPose = (unsigned int)cMo.size();
 
   // for all couples ij
-  for (unsigned int i = 0; i < nbPose; i++) {
+  for (unsigned int i = 0; i < nbPose; ++i) {
     vpRotationMatrix rRei, ciRo;
     rMe[i].extract(rRei);
     cMo[i].extract(ciRo);
     // std::cout << "rMei: " << std::endl << rMe[i] << std::endl;
 
-    for (unsigned int j = 0; j < nbPose; j++) {
+    for (unsigned int j = 0; j < nbPose; ++j) {
       if (j > i) // we don't use two times same couples...
       {
         vpRotationMatrix rRej, cjRo;
@@ -206,7 +228,7 @@ int vpHandEyeCalibration::calibrationRotationProcrustes(const std::vector<vpHomo
   \param[in] rMe : Vector of homogeneous matrices representing the transformation
   between the effector (where the camera is fixed) and the reference
   coordinates (base of the manipulator) (input). Must be the same size as cMo.
-  \param[out] eRc : Rotation matrix  between the effector and the camera (output)
+  \param[out] eRc : Rotation matrix  between the effector and the camera.
 */
 int vpHandEyeCalibration::calibrationRotationTsai(const std::vector<vpHomogeneousMatrix> &cMo,
                                                   const std::vector<vpHomogeneousMatrix> &rMe, vpRotationMatrix &eRc)
@@ -216,15 +238,14 @@ int vpHandEyeCalibration::calibrationRotationTsai(const std::vector<vpHomogeneou
   unsigned int nbPose = (unsigned int)cMo.size();
   unsigned int k = 0;
   // for all couples ij
-  for (unsigned int i = 0; i < nbPose; i++) {
+  for (unsigned int i = 0; i < nbPose; ++i) {
     vpRotationMatrix rRei, ciRo;
     rMe[i].extract(rRei);
     cMo[i].extract(ciRo);
     // std::cout << "rMei: " << std::endl << rMe[i] << std::endl;
 
-    for (unsigned int j = 0; j < nbPose; j++) {
-      if (j > i) // we don't use two times same couples...
-      {
+    for (unsigned int j = 0; j < nbPose; ++j) {
+      if (j > i) { // we don't use two times same couples...
         vpRotationMatrix rRej, cjRo;
         rMe[j].extract(rRej);
         cMo[j].extract(cjRo);
@@ -280,8 +301,9 @@ int vpHandEyeCalibration::calibrationRotationTsai(const std::vector<vpHomogeneou
   double c = 1 / sqrt(1 + norm);        // cos(theta/2)
   double alpha = acos(c);               // theta/2
   norm = 2.0 * c / vpMath::sinc(alpha); // theta / tan(theta/2)
-  for (unsigned int i = 0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; ++i) {
     x[i] *= norm;
+  }
 
   // Building of the rotation matrix eRc
   vpThetaUVector xP(x[0], x[1], x[2]);
@@ -293,8 +315,9 @@ int vpHandEyeCalibration::calibrationRotationTsai(const std::vector<vpHomogeneou
     std::cout << "theta U (deg): " << vpMath::deg(x[0]) << " " << vpMath::deg(x[1]) << " " << vpMath::deg(x[2])
       << std::endl;
     // Residual
-    for (unsigned int i = 0; i < 3; i++)
+    for (unsigned int i = 0; i < 3; ++i) {
       x[i] /= norm; /* original x */
+    }
     vpColVector residual;
     residual = A * x - B;
     // std::cout << "Residual: " << std::endl << residual << std::endl;
@@ -306,17 +329,17 @@ int vpHandEyeCalibration::calibrationRotationTsai(const std::vector<vpHomogeneou
 }
 
 /*!
-  \brief Old ViSP implementation for computing the rotation part (eRc)
-  of hand-eye pose by solving a linear system using R. Tsai and R. Lorenz method
-  \cite Tsai89a.
-
-  \param[in] cMo : Vector of homogeneous matrices representing the transformation
-  between the camera and the scene (input)
-  \param[in] rMe : Vector of homogeneous matrices representing the transformation
-  between the effector (where the camera is fixed) and the reference
-  coordinates (base of the manipulator) (input). Must be the same size as cMo.
-  \param[ou] eRc : Rotation matrix  between the effector and the camera (output)
-*/
+ * \brief Old ViSP implementation for computing the rotation part (eRc)
+ * of hand-eye pose by solving a linear system using R. Tsai and R. Lorenz method
+ * \cite Tsai89a.
+ *
+ * \param[in] cMo : Vector of homogeneous matrices representing the transformation
+ * between the camera and the scene.
+ * \param[in] rMe : Vector of homogeneous matrices representing the transformation
+ * between the effector (where the camera is fixed) and the reference
+ * coordinates (base of the manipulator). Must be the same size as cMo.
+ * \param[out] eRc : Rotation matrix  between the effector and the camera.
+ */
 int vpHandEyeCalibration::calibrationRotationTsaiOld(const std::vector<vpHomogeneousMatrix> &cMo,
                                                      const std::vector<vpHomogeneousMatrix> &rMe, vpRotationMatrix &eRc)
 {
@@ -326,13 +349,13 @@ int vpHandEyeCalibration::calibrationRotationTsaiOld(const std::vector<vpHomogen
   vpColVector x;
   unsigned int k = 0;
   // for all couples ij
-  for (unsigned int i = 0; i < nbPose; i++) {
+  for (unsigned int i = 0; i < nbPose; ++i) {
     vpRotationMatrix rRei, ciRo;
     rMe[i].extract(rRei);
     cMo[i].extract(ciRo);
     // std::cout << "rMei: " << std::endl << rMe[i] << std::endl;
 
-    for (unsigned int j = 0; j < nbPose; j++) {
+    for (unsigned int j = 0; j < nbPose; ++j) {
       if (j > i) { // we don't use two times same couples...
         vpRotationMatrix rRej, cjRo;
         rMe[j].extract(rRej);
@@ -398,22 +421,25 @@ int vpHandEyeCalibration::calibrationRotationTsaiOld(const std::vector<vpHomogen
     return -1;
 
   x = Ap * A.t() * B;
-  vpColVector x2 = x; /* pour calcul residu */
+  vpColVector x2 = x; // For residual computation
 
   // extraction of theta and U
   double theta;
   double d = x.sumSquare();
-  for (unsigned int i = 0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; ++i) {
     x[i] = 2 * x[i] / sqrt(1 + d);
+  }
   theta = sqrt(x.sumSquare()) / 2;
   theta = 2 * asin(theta);
   // if (theta !=0)
   if (std::fabs(theta) > std::numeric_limits<double>::epsilon()) {
-    for (unsigned int i = 0; i < 3; i++)
+    for (unsigned int i = 0; i < 3; ++i) {
       x[i] *= theta / (2 * sin(theta / 2));
+    }
   }
-  else
+  else {
     x = 0;
+  }
 
   // Building of the rotation matrix eRc
   vpThetaUVector xP(x[0], x[1], x[2]);
@@ -436,18 +462,18 @@ int vpHandEyeCalibration::calibrationRotationTsaiOld(const std::vector<vpHomogen
 }
 
 /*!
-  \brief Compute the translation part (eTc) of hand-eye pose by solving a
-  linear system (see for instance R. Tsai and R. Lorenz method)
-  \cite Tsai89a.
-
-  \param[in] cMo : Vector of homogeneous matrices representing the transformation
-  between the camera and the scene (input)
-  \param[in] rMe : Vector of homogeneous matrices representing the transformation
-  between the effector (where the camera is fixed) and the reference
-  coordinates (base of the manipulator) (input). Must be the same size as cMo.
-  \param[out] eRc : Rotation matrix  between the effector and the camera (input)
-  \param[out] eTc : Translation  between the effector and the camera (output)
-*/
+ * \brief Compute the translation part (eTc) of hand-eye pose by solving a
+ * linear system (see for instance R. Tsai and R. Lorenz method)
+ * \cite Tsai89a.
+ *
+ * \param[in] cMo : Vector of homogeneous matrices representing the transformation
+ * between the camera and the scene.
+ * \param[in] rMe : Vector of homogeneous matrices representing the transformation
+ * between the effector (where the camera is fixed) and the reference
+ * coordinates (base of the manipulator). Must be the same size as cMo.
+ * \param[out] eRc : Rotation matrix  between the effector and the camera.
+ * \param[out] eTc : Translation  between the effector and the camera.
+ */
 int vpHandEyeCalibration::calibrationTranslation(const std::vector<vpHomogeneousMatrix> &cMo,
                                                  const std::vector<vpHomogeneousMatrix> &rMe, vpRotationMatrix &eRc,
                                                  vpTranslationVector &eTc)
@@ -460,8 +486,8 @@ int vpHandEyeCalibration::calibrationTranslation(const std::vector<vpHomogeneous
   vpColVector B(3 * nbPose);
   // Building of the system for the translation estimation
   // for all couples ij
-  for (unsigned int i = 0; i < nbPose; i++) {
-    for (unsigned int j = 0; j < nbPose; j++) {
+  for (unsigned int i = 0; i < nbPose; ++i) {
+    for (unsigned int j = 0; j < nbPose; ++j) {
       if (j > i) { // we don't use two times same couples...
         vpHomogeneousMatrix ejMei = rMe[j].inverse() * rMe[i];
         vpHomogeneousMatrix cjMci = cMo[j] * cMo[i].inverse();
@@ -517,18 +543,18 @@ int vpHandEyeCalibration::calibrationTranslation(const std::vector<vpHomogeneous
 }
 
 /*!
-  \brief Old method to compute the translation part (eTc) of hand-eye pose
-  by solving a linear system (see for instance R. Tsai and R. Lorenz method)
-  \cite Tsai89a.
-
-  \param[in] cMo : vector of homogeneous matrices representing the transformation
-  between the camera and the scene (input)
-  \param[in] rMe : vector of homogeneous matrices representing the transformation
-  between the effector (where the camera is fixed) and the reference
-  coordinates (base of the manipulator) (input). Must be the same size as cMo.
-  \param[out] eRc : rotation matrix  between the effector and the camera (input)
-  \param[out] eTc : translation  between the effector and the camera (output)
-*/
+ * \brief Old method to compute the translation part (eTc) of hand-eye pose
+ * by solving a linear system (see for instance R. Tsai and R. Lorenz method)
+ * \cite Tsai89a.
+ *
+ * \param[in] cMo : vector of homogeneous matrices representing the transformation
+ * between the camera and the scene.
+ * \param[in] rMe : vector of homogeneous matrices representing the transformation
+ * between the effector (where the camera is fixed) and the reference
+ * coordinates (base of the manipulator). Must be the same size as cMo.
+ * \param[out] eRc : rotation matrix  between the effector and the camera.
+ * \param[out] eTc : translation  between the effector and the camera.
+ */
 int vpHandEyeCalibration::calibrationTranslationOld(const std::vector<vpHomogeneousMatrix> &cMo,
                                                     const std::vector<vpHomogeneousMatrix> &rMe, vpRotationMatrix &eRc,
                                                     vpTranslationVector &eTc)
@@ -542,7 +568,7 @@ int vpHandEyeCalibration::calibrationTranslationOld(const std::vector<vpHomogene
   int k = 0;
   unsigned int nbPose = (unsigned int)cMo.size();
 
-  for (unsigned int i = 0; i < nbPose; i++) {
+  for (unsigned int i = 0; i < nbPose; ++i) {
     vpRotationMatrix rRei, ciRo;
     vpTranslationVector rTei, ciTo;
     rMe[i].extract(rRei);
@@ -550,10 +576,8 @@ int vpHandEyeCalibration::calibrationTranslationOld(const std::vector<vpHomogene
     rMe[i].extract(rTei);
     cMo[i].extract(ciTo);
 
-    for (unsigned int j = 0; j < nbPose; j++) {
-      if (j > i) // we don't use two times same couples...
-      {
-
+    for (unsigned int j = 0; j < nbPose; ++j) {
+      if (j > i) { // we don't use two times same couples...
         vpRotationMatrix rRej, cjRo;
         rMe[j].extract(rRej);
         cMo[j].extract(cjRo);
@@ -592,8 +616,9 @@ int vpHandEyeCalibration::calibrationTranslationOld(const std::vector<vpHomogene
   vpMatrix Ap;
   vpColVector AeTc;
   int rank = AtA.pseudoInverse(Ap, 1e-6);
-  if (rank != 3)
+  if (rank != 3) {
     return -1;
+  }
 
   AeTc = Ap * A.t() * B;
   eTc = (vpTranslationVector)AeTc;
@@ -608,8 +633,9 @@ int vpHandEyeCalibration::calibrationTranslationOld(const std::vector<vpHomogene
     residual = A * AeTc - B;
     // std::cout << "Residual: " << std::endl << residual << std::endl;
     double res = 0;
-    for (unsigned int i = 0; i < residual.getRows(); i++)
+    for (unsigned int i = 0; i < residual.getRows(); ++i) {
       res += residual[i] * residual[i];
+    }
     res = sqrt(res / residual.getRows());
     printf("Mean residual (translation) = %lf\n", res);
   }
@@ -618,17 +644,16 @@ int vpHandEyeCalibration::calibrationTranslationOld(const std::vector<vpHomogene
 }
 
 /*!
-  \brief Compute the set of errors minimised by VVS.
-
-  \param[in] cMo : vector of homogeneous matrices representing the transformation
-  between the camera and the scene.
-  \param[in] rMe : vector of homogeneous matrices representing the transformation
-  between the effector (where the camera is fixed) and the reference
-  coordinates (base of the manipulator). Must be the same size as cMo.
-  \param[in] eMc : homogeneous matrix between the effector and the camera (input)
-  \param[out] err: set of errors minimised by VVS (3 for rotation, 3 for translation, etc.) (output)
-*/
-
+ * \brief Compute the set of errors minimized by VVS.
+ *
+ * \param[in] cMo : vector of homogeneous matrices representing the transformation
+ * between the camera and the scene.
+ * \param[in] rMe : vector of homogeneous matrices representing the transformation
+ * between the effector (where the camera is fixed) and the reference
+ * coordinates (base of the manipulator). Must be the same size as cMo.
+ * \param[in] eMc : homogeneous matrix between the effector and the camera.
+ * \param[out] err: set of errors minimized by VVS (3 for rotation, 3 for translation, etc.).
+ */
 double vpHandEyeCalibration::calibrationErrVVS(const std::vector<vpHomogeneousMatrix> &cMo,
                                                const std::vector<vpHomogeneousMatrix> &rMe,
                                                const vpHomogeneousMatrix &eMc, vpColVector &errVVS)
@@ -642,10 +667,9 @@ double vpHandEyeCalibration::calibrationErrVVS(const std::vector<vpHomogeneousMa
   eMc.extract(eTc);
 
   unsigned int k = 0;
-  for (unsigned int i = 0; i < nbPose; i++) {
-    for (unsigned int j = 0; j < nbPose; j++) {
-      if (j > i) // we don't use two times same couples...
-      {
+  for (unsigned int i = 0; i < nbPose; ++i) {
+    for (unsigned int j = 0; j < nbPose; ++j) {
+      if (j > i) { // we don't use two times same couples...
         vpColVector s(3);
 
         vpHomogeneousMatrix ejMei = rMe[j].inverse() * rMe[i];
@@ -702,21 +726,20 @@ double vpHandEyeCalibration::calibrationErrVVS(const std::vector<vpHomogeneousMa
 }
 
 /*!
-  \brief Hand-Eye Calibration by VVS.
-
-  \param[in] cMo : vector of homogeneous matrices representing the transformation
-  between the camera and the scene.
-  \param[in] rMe : vector of homogeneous matrices representing the transformation
-  between the effector (where the camera is fixed) and the reference
-  coordinates (base of the manipulator). Must be the same size as cMo.
-  \param[in,out] eMc : homogeneous matrix between the effector and the camera.
-*/
-#define NB_ITER_MAX 30
-
+ * \brief Hand-Eye Calibration by VVS.
+ *
+ * \param[in] cMo : vector of homogeneous matrices representing the transformation
+ * between the camera and the scene.
+ * \param[in] rMe : vector of homogeneous matrices representing the transformation
+ * between the effector (where the camera is fixed) and the reference
+ * coordinates (base of the manipulator). Must be the same size as cMo.
+ * \param[in,out] eMc : homogeneous matrix between the effector and the camera.
+ */
 int vpHandEyeCalibration::calibrationVVS(const std::vector<vpHomogeneousMatrix> &cMo,
                                          const std::vector<vpHomogeneousMatrix> &rMe, vpHomogeneousMatrix &eMc)
 {
   unsigned int it = 0;
+  unsigned int nb_iter_max = 30;
   double res = 1.0;
   unsigned int nbPose = (unsigned int)cMo.size();
   vpColVector err;
@@ -733,13 +756,13 @@ int vpHandEyeCalibration::calibrationVVS(const std::vector<vpHomogeneousMatrix> 
     calculer une seule fois et de les stocker. Pourraient alors servir
     dans les autres fonctions HandEye. A voir si vraiment interessant vu la
     combinatoire. Idem pour les theta u */
-  while ((res > 1e-7) && (it < NB_ITER_MAX)) {
+  while ((res > 1e-7) && (it < nb_iter_max)) {
     /* compute s - s^* */
     vpHandEyeCalibration::calibrationErrVVS(cMo, rMe, eMc, err);
     /* compute L_s */
     unsigned int k = 0;
-    for (unsigned int i = 0; i < nbPose; i++) {
-      for (unsigned int j = 0; j < nbPose; j++) {
+    for (unsigned int i = 0; i < nbPose; ++i) {
+      for (unsigned int j = 0; j < nbPose; ++j) {
         if (j > i) // we don't use two times same couples...
         {
           vpMatrix Ls(3, 6), Lv(3, 3), Lw(3, 3);
@@ -811,13 +834,24 @@ int vpHandEyeCalibration::calibrationVVS(const std::vector<vpHomogeneousMatrix> 
     printf("Mean residual (rotation+translation) = %lf\n", res);
   }
 #endif
-  if (it == NB_ITER_MAX)
-    return 1; // VVS has not converged before NB_ITER_MAX
-  else
+  if (it == nb_iter_max) {
+    return 1; // VVS has not converged before nb_iter_max
+  }
+  else {
     return 0;
+  }
 }
 
-#undef NB_ITER_MAX
+
+int vpHandEyeCalibration::calibrate(const std::vector<vpHomogeneousMatrix> &cMo,
+                                    const std::vector<vpHomogeneousMatrix> &rMe, vpHomogeneousMatrix &eMc)
+{
+  int err;
+  vpHomogeneousMatrix rMo;
+  rMo.eye();
+  err = vpHandEyeCalibration::calibrate(cMo, rMe, eMc, rMo);
+  return err;
+}
 
 #define HE_I 0
 #define HE_TSAI_OROT 1
@@ -828,18 +862,21 @@ int vpHandEyeCalibration::calibrationVVS(const std::vector<vpHomogeneousMatrix> 
 #define HE_PROCRUSTES_NT 6
 
 int vpHandEyeCalibration::calibrate(const std::vector<vpHomogeneousMatrix> &cMo,
-                                    const std::vector<vpHomogeneousMatrix> &rMe, vpHomogeneousMatrix &eMc)
+                                    const std::vector<vpHomogeneousMatrix> &rMe,
+                                    vpHomogeneousMatrix &eMc, vpHomogeneousMatrix &rMo)
 {
-  if (cMo.size() != rMe.size())
+  if (cMo.size() != rMe.size()) {
     throw vpException(vpException::dimensionError, "cMo and rMe have different sizes");
+  }
 
   vpRotationMatrix eRc;
   vpTranslationVector eTc;
   vpColVector errVVS;
   double resPos;
 
-  /* initialisation of eMc to I in case all other methods fail */
+  /* initialisation of eMc and rMo to I in case all other methods fail */
   eMc.eye();
+  rMo.eye();
   resPos = vpHandEyeCalibration::calibrationErrVVS(cMo, rMe, eMc, errVVS);
   double vmin = resPos; // will serve to determine the best method
 #if DEBUG_LEVEL1
@@ -848,18 +885,20 @@ int vpHandEyeCalibration::calibrate(const std::vector<vpHomogeneousMatrix> &cMo,
   vpHomogeneousMatrix eMcMin = eMc; // best initial estimation for VSS
   // Method using Old Tsai implementation
   int err = vpHandEyeCalibration::calibrationRotationTsaiOld(cMo, rMe, eRc);
-  if (err != 0)
-    printf("\n Problem in solving Hand-Eye Rotation by Old Tsai method \n");
+  if (err != 0) {
+    std::cout << "\nProblem in solving Hand-Eye Rotation by Old Tsai method" << std::endl;
+  }
   else {
     eMc.insert(eRc);
     err = vpHandEyeCalibration::calibrationTranslationOld(cMo, rMe, eRc, eTc);
-    if (err != 0)
-      printf("\n Problem in solving Hand-Eye Translation by Old Tsai method after Old Tsai method for Rotation\n");
+    if (err != 0) {
+      std::cout << "\nProblem in solving Hand-Eye Translation by Old Tsai method after Old Tsai method for rotation" << std::endl;
+    }
     else {
       eMc.insert(eTc);
 #if DEBUG_LEVEL1
       {
-        printf("\nRotation by (old) Tsai, old implementation for translation\n");
+        std::cout << "\nRotation by (old) Tsai, old implementation for translation" << std::endl;
         vpHandEyeCalibration::calibrationVerifrMo(cMo, rMe, eMc);
       }
 #endif
@@ -873,13 +912,14 @@ int vpHandEyeCalibration::calibrate(const std::vector<vpHomogeneousMatrix> &cMo,
       }
     }
     err = vpHandEyeCalibration::calibrationTranslation(cMo, rMe, eRc, eTc);
-    if (err != 0)
-      printf("\n Problem in solving Hand-Eye Translation after Old Tsai method for Rotation\n");
+    if (err != 0) {
+      std::cout << "\n Problem in solving Hand-Eye Translation after Old Tsai method for rotation" << std::endl;
+    }
     else {
       eMc.insert(eTc);
 #if DEBUG_LEVEL1
       {
-        printf("\nRotation by (old) Tsai, new implementation for translation\n");
+        std::cout << "\nRotation by (old) Tsai, new implementation for translation" << std::endl;
         vpHandEyeCalibration::calibrationVerifrMo(cMo, rMe, eMc);
       }
 #endif
@@ -895,18 +935,20 @@ int vpHandEyeCalibration::calibrate(const std::vector<vpHomogeneousMatrix> &cMo,
   }
   // First method using Tsai formulation
   err = vpHandEyeCalibration::calibrationRotationTsai(cMo, rMe, eRc);
-  if (err != 0)
-    printf("\n Problem in solving Hand-Eye Rotation by Tsai method \n");
+  if (err != 0) {
+    std::cout << "\n Problem in solving Hand-Eye Rotation by Tsai method" << std::endl;
+  }
   else {
     eMc.insert(eRc);
     err = vpHandEyeCalibration::calibrationTranslationOld(cMo, rMe, eRc, eTc);
-    if (err != 0)
-      printf("\n Problem in solving Hand-Eye Translation by Old Tsai method after Tsai method for Rotation\n");
+    if (err != 0) {
+      std::cout << "\n Problem in solving Hand-Eye Translation by Old Tsai method after Tsai method for rotation" << std::endl;
+    }
     else {
       eMc.insert(eTc);
 #if DEBUG_LEVEL1
       {
-        printf("\nRotation by Tsai, old implementation for translation\n");
+        std::cout << "\nRotation by Tsai, old implementation for translation" << std::endl;
         vpHandEyeCalibration::calibrationVerifrMo(cMo, rMe, eMc);
       }
 #endif
@@ -920,13 +962,14 @@ int vpHandEyeCalibration::calibrate(const std::vector<vpHomogeneousMatrix> &cMo,
       }
     }
     err = vpHandEyeCalibration::calibrationTranslation(cMo, rMe, eRc, eTc);
-    if (err != 0)
-      printf("\n Problem in solving Hand-Eye Translation after Tsai method for Rotation \n");
+    if (err != 0) {
+      std::cout << "\n Problem in solving Hand-Eye Translation after Tsai method for rotation" << std::endl;
+    }
     else {
       eMc.insert(eTc);
 #if DEBUG_LEVEL1
       {
-        printf("\nRotation by Tsai, new implementation for translation\n");
+        std::cout << "\nRotation by Tsai, new implementation for translation" << std::endl;
         vpHandEyeCalibration::calibrationVerifrMo(cMo, rMe, eMc);
       }
 #endif
@@ -943,17 +986,18 @@ int vpHandEyeCalibration::calibrate(const std::vector<vpHomogeneousMatrix> &cMo,
   // Second method by solving the orthogonal Procrustes problem
   err = vpHandEyeCalibration::calibrationRotationProcrustes(cMo, rMe, eRc);
   if (err != 0)
-    printf("\n Problem in solving Hand-Eye Rotation by Procrustes method \n");
+    std::cout << "\n Problem in solving Hand-Eye Rotation by Procrustes method" << std::endl;
   else {
     eMc.insert(eRc);
     err = vpHandEyeCalibration::calibrationTranslationOld(cMo, rMe, eRc, eTc);
-    if (err != 0)
-      printf("\n Problem in solving Hand-Eye Translation by Old Tsai method after Procrustes method for Rotation\n");
+    if (err != 0) {
+      std::cout << "\n Problem in solving Hand-Eye Translation by Old Tsai method after Procrustes method for rotation" << std::endl;
+    }
     else {
       eMc.insert(eTc);
 #if DEBUG_LEVEL1
       {
-        printf("\nRotation by Procrustes, old implementation for translation\n");
+        std::cout << "\nRotation by Procrustes, old implementation for translation" << std::endl;
         vpHandEyeCalibration::calibrationVerifrMo(cMo, rMe, eMc);
       }
 #endif
@@ -967,13 +1011,14 @@ int vpHandEyeCalibration::calibrate(const std::vector<vpHomogeneousMatrix> &cMo,
       }
     }
     err = vpHandEyeCalibration::calibrationTranslation(cMo, rMe, eRc, eTc);
-    if (err != 0)
-      printf("\n Problem in solving Hand-Eye Translation after Procrustes method for Rotation\n");
+    if (err != 0) {
+      std::cout << "\n Problem in solving Hand-Eye Translation after Procrustes method for rotation" << std::endl;
+    }
     else {
       eMc.insert(eTc);
 #if DEBUG_LEVEL1
       {
-        printf("\nRotation by Procrustes, new implementation for translation\n");
+        std::cout << "\nRotation by Procrustes, new implementation for translation" << std::endl;
         vpHandEyeCalibration::calibrationVerifrMo(cMo, rMe, eMc);
       }
 #endif
@@ -992,20 +1037,27 @@ int vpHandEyeCalibration::calibrate(const std::vector<vpHomogeneousMatrix> &cMo,
   eMc = eMcMin;
 #if DEBUG_LEVEL1
   {
-    if (He_method == HE_I)
-      printf("Best method : I !!!, vmin = %lf\n", vmin);
-    if (He_method == HE_TSAI_OROT)
-      printf("Best method : TSAI_OROT, vmin = %lf\n", vmin);
-    if (He_method == HE_TSAI_ORNT)
-      printf("Best method : TSAI_ORNT, vmin = %lf\n", vmin);
-    if (He_method == HE_TSAI_NROT)
-      printf("Best method : TSAI_NROT, vmin = %lf\n", vmin);
-    if (He_method == HE_TSAI_NRNT)
-      printf("Best method : TSAI_NRNT, vmin = %lf\n", vmin);
-    if (He_method == HE_PROCRUSTES_OT)
-      printf("Best method : PROCRUSTES_OT, vmin = %lf\n", vmin);
-    if (He_method == HE_PROCRUSTES_NT)
-      printf("Best method : PROCRUSTES_NT, vmin = %lf\n", vmin);
+    if (He_method == HE_I) {
+      std::cout << "Best method : I !!!, vmin = " << vmin << std::endl;
+    }
+    if (He_method == HE_TSAI_OROT) {
+      std::cout << "Best method : TSAI_OROT, vmin = " << vmin << std::endl;
+    }
+    if (He_method == HE_TSAI_ORNT) {
+      std::cout << "Best method : TSAI_ORNT, vmin = " << vmin << std::endl;
+    }
+    if (He_method == HE_TSAI_NROT) {
+      std::cout << "Best method : TSAI_NROT, vmin = " << vmin << std::endl;
+    }
+    if (He_method == HE_TSAI_NRNT) {
+      std::cout << "Best method : TSAI_NRNT, vmin = " << vmin << std::endl;
+    }
+    if (He_method == HE_PROCRUSTES_OT) {
+      std::cout << "Best method : PROCRUSTES_OT, vmin = " << vmin << std::endl;
+    }
+    if (He_method == HE_PROCRUSTES_NT) {
+      std::cout << "Best method : PROCRUSTES_NT, vmin = " << vmin << std::endl;
+    }
     vpThetaUVector ePc(eMc);
     std::cout << "theta U (deg): " << vpMath::deg(ePc[0]) << " " << vpMath::deg(ePc[1]) << " " << vpMath::deg(ePc[2])
       << std::endl;
@@ -1015,17 +1067,16 @@ int vpHandEyeCalibration::calibrate(const std::vector<vpHomogeneousMatrix> &cMo,
 
   // Non linear iterative minimization to estimate simultaneouslty eRc and eTc
   err = vpHandEyeCalibration::calibrationVVS(cMo, rMe, eMc);
-  // FC : err : 0 si tout OK, -1 si pb de rang, 1 si pas convergence
-  if (err != 0)
-    printf("\n Problem in solving Hand-Eye Calibration by VVS \n");
+  // err : 0 si tout OK, -1 si pb de rang, 1 si pas convergence
+  if (err != 0) {
+    std::cout << "\n Problem in solving Hand-Eye Calibration by VVS" << std::endl;
+  }
   else {
-    printf("\nRotation and translation after VVS\n");
-    vpHandEyeCalibration::calibrationVerifrMo(cMo, rMe, eMc);
+    // printf("\nRotation and translation after VVS\n");
+    vpHandEyeCalibration::calibrationVerifrMo(cMo, rMe, eMc, rMo);
   }
   return err;
 }
-
-END_VISP_NAMESPACE
 
 #undef HE_I
 #undef HE_TSAI_OROT
@@ -1037,3 +1088,5 @@ END_VISP_NAMESPACE
 
 #undef DEBUG_LEVEL1
 #undef DEBUG_LEVEL2
+
+END_VISP_NAMESPACE

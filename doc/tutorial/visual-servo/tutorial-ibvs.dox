@@ -1,6 +1,6 @@
 /**
 
-\page tutorial-ibvs Tutorial: Image-based visual servo
+\page tutorial-ibvs Tutorial: Image-based visual servo (IBVS)
 \tableofcontents
 
 \section ibvs_intro Introduction
@@ -102,7 +102,7 @@ Then we define four 3D points that represent the corners of a 20cm by 20cm squar
   point[3].setWorldCoordinates(-0.1, 0.1, 0);
 \endcode
 
-The instantiation of the visual servo task is done with the next lines. We initialize the task as an eye in hand
+The instantiation of the visual servo task is done with the next lines. We initialize the task as an eye-in-hand
 visual servo. Resulting velocities computed by the controller are those that should be applied in the camera frame:
 \f$ {\bf v}_c \f$. The interaction matrix will be computed from the current visual features. Thus they need to
 be updated at each iteration of the control loop. Finally, the constant gain  \f$ \lambda\f$ is set to 0.5.
@@ -411,11 +411,11 @@ camera parameters.
 \endcode
 
 To retrieve the simulated image that depends on the simulated camera position we create an instance of a virtual
-grabber. Its goal is to project the image of the target \c ./target_square.pgm to a given camera position \c cMo,
+grabber. Its goal is to project the image of the target \c ./target_square.jpg to a given camera position \c cMo,
 and then to retrieve the corresponding image \c I. Note here that the cog of the blobs in the .pgm file define a
 20cm by 20cm square.
 \code
-  vpVirtualGrabber g("./target_square.pgm", cam);
+  vpVirtualGrabber g("./target_square.jpg", cam);
 
   g.acquire(I, cMo);
 \endcode

@@ -60,4 +60,4 @@ if(MSVC)
   endif()
 endif()
 
-visp_add_subdirectory(calibration REQUIRED_DEPS visp_core visp_gui visp_io visp_robot visp_sensor visp_vision )
+visp_add_subdirectory(calibration REQUIRED_DEPS visp_core visp_gui visp_io visp_robot visp_sensor visp_vision)

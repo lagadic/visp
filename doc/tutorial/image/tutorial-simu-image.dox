@@ -24,7 +24,7 @@ This is done by the following code also available in tutorial-image-simulator.cp
 
 The result of this program is shown in the next image.
 
-\image html img-simu-image-target-square.png Resulting projection of the planar image at a given camera position.
+\image html img-simu-image-target-square.jpg Resulting projection of the planar image at a given camera position.
 
 The provide hereafter the explanation of the new lines that were introduced.
 

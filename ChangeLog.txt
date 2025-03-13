@@ -1,9 +1,9 @@
-                               ViSP
-                     Visual Servoing Platform
-                     Resume of the change log
+                                                        ViSP
+                                              Visual Servoing Platform
+                                              Resume of the change log
 
-     Copyright (C) 2005 - 2023 by Inria. All rights reserved.
-                      https://visp.inria.fr
+                              Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+                                                https://visp.inria.fr
 
 ViSP 3.x.x (Version in development)
   - Contributors:
@@ -39,6 +39,11 @@ ViSP 3.x.x (Version in development)
       extract the corresponding point cloud
     . New scene renderer based on Panda3D. See inheritance diagram for vpPanda3DBaseRenderer class and corresponding
       tutorial
+    . vpHandEyeCalibration class dedicated to hand-eye calibration allows to consider eye-in-hand and eye-to-hand
+      configurations
+    . New module named visp_rbt for render-based tracker (RBT), which contains a new model-based tracker based on
+      object rendering using Panda3D 3rdparty. This tracker is a major evolution of our historic MBT. It can handle
+      complex cad models in .obj or .bam format
     . New docker image for Ubuntu 24.04 in docker folder
     . Update apriltag 3rdparty to 3.4.2 release
     . Update tinyexr 3rdparty to 1.0.9 release
@@ -48,6 +53,7 @@ ViSP 3.x.x (Version in development)
       to detect objects
     . Introduce compat with Ogre 1.12.0 version
     . Compat with mavsdk 3.0.0
+    . Introduce material to build and install ViSP from source with Pixi
   - Applications
     . Migrate eye-to-hand tutorials in apps
   - Tutorials
@@ -78,6 +84,12 @@ ViSP 3.x.x (Version in development)
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-pf-curve-fitting.html
     . New tutorial: Rendering a 3D scene with Ogre
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-ogre.html
+    . New tutorial: Camera eye-to-hand extrinsic calibration
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-calibration-extrinsic-eye-to-hand.html
+    . New tutorial: Eye-to-hand IBVS with Panda 7-dof robot from Franka Emika
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-franka-ibvs-eth.html
+    . New tutorial: Multi-platform (OSX, Windows or Linux) installation from source with Pixi
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-pixi.html
   - Bug fixed
     . [#1251] Bug in vpDisplay::displayFrame()
     . [#1270] Build issue around std::clamp and optional header which are not found with cxx17
@@ -92,7 +104,9 @@ ViSP 3.x.x (Version in development)
     . [#1337] The pose of the automatic data generation pipeline from blenderproc seems wrong
     . [#1341] SVD computation fails with Lapack when m < n
     . [#1370] encountered compilation errors while building the ViSP library
+    . [#1374] Aberrant pose estimated by tutorial-apriltag-detector-live-rgbd-realsense.cpp
     . [#1404] Compilation error when no GUI library is available
+    . [#1414] Build fails for visp_java
     . [#1424] Unable to detect Yarp 3.9.0
     . [#1485] Build issue around nlohmann_json usage with VTK 9.2.0 or more recent version used as an embedded
               3rdparty by PCL
@@ -327,7 +341,7 @@ ViSP 3.4.0 (released February 26, 2021)
     . [#801] Build issue with visp_java
     . [#803] Segfault with MBT and when a circle disappears
     . [#806] Error running the Java sample with intel-mkl 2020.2.254-1
-    . [#808] vpVirtuose.cpp doen't build with Visual 2019 (vc16)
+    . [#808] vpVirtuose.cpp doesn't build with Visual 2019 (vc16)
     . [#812] Online doc formula rendering issue with Ghostscript on OSX
     . [#817] vpIoTools::getFileExtension prints "Debug sepIndex: 0" to std::cout
     . [#818] Model-based tracking issue using RGBD-data on Windows
@@ -463,7 +477,7 @@ ViSP 3.2.0 (released January 23, 2019)
       small wrapper over the OpenCV DNN module as much as possible light and simple.
       vpDetectorDNN is specialized to handle object detection tasks and provide a
       "convenient" way to have the detection bounding boxes.
-    . Improve eye to hand calibration
+    . Improve eye-to-hand calibration
     . Improve PnP pose estimation
     . Compat with OpenCV 4
     . Compat with Fedora 29

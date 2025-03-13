@@ -338,7 +338,7 @@ Run first this test on the Raspberry Pi with `--help` option:
     $ cd /home/pi/visp-ws/visp/robot/mbot/raspberry/visp
     $ ./test-serial-mbot --help
     Usage:
-    ./test-serial-mbot --vx <linear velocity in m/s> --wz <rotational velocity in deg/s> --rpm_l <motor left RPM> --rpm_r <motor right RPM> --t <duration of the command in second> --help
+    ./test-serial-mbot --vx <linear velocity in m/s> --wz <rotational velocity in deg/s> --rpm-l <motor left RPM> --rpm-r <motor right RPM> --t <duration of the command in second> --help
 
     Example:
     ./test-serial-mbot --vx 0.05 --wz 0 --t 4
@@ -368,7 +368,7 @@ If you build ViSP from source as explained in \ref tutorial-install-raspberry th
     $ ./mbot-apriltag-ibvs
 
 Run `./mbot-apriltag-ibvs --help` to see which are the command line options available.
-Adding option `--display_on` allows to display images like the following that shows the result of the image processing
+Adding option `--display-on` allows to display images like the following that shows the result of the image processing
 and features that are used:
 \image html img-mbot-ibvs-features.png
 Since using this option could introduce a lag due to the network connection, we recommend to use it only for curiosity.
@@ -387,7 +387,7 @@ The corresponding binary is available in `/home/pi/visp-ws/visp-build/tutorial/r
     $ ./mbot-apriltag-2D-half-vs
 
 Run `./mbot-apriltag-2D-half-vs --help` to see which are the command line options available.
-Adding option `--display_on` allows to display images like the following that shows the result of the image processing
+Adding option `--display-on` allows to display images like the following that shows the result of the image processing
 and features that are used:
 \image html img-mbot-2D-half-vs-features.png
 Since using this option could introduce a lag due to the network connection, we recommend to use it only for curiosity.
@@ -402,7 +402,7 @@ The corresponding binary is available in `/home/pi/visp-ws/visp-build/tutorial/r
     $ cd /home/pi/visp-ws/visp-build/tutorial/robot/mbot/raspberry/visp
     $ ./mbot-apriltag-pbvs
 
-Run `./mbot-apriltag-pbvs --help` to see which are the command line options available. Adding option `--display_on`
+Run `./mbot-apriltag-pbvs --help` to see which are the command line options available. Adding option `--display-on`
 allows to display images like the following that shows the result of the image processing and features that are used:
 \image html img-mbot-pbvs-features.png
 Since using this option could introduce a lag due to the network connection, we recommend to use it only for curiosity.

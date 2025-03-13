@@ -1,0 +1,90 @@
+[project]
+authors = ["Olivier Roussel <olivier.roussel@inria.fr>"]
+channels = ["conda-forge"]
+name = "visp"
+platforms = ["linux-64", "osx-64", "osx-arm64", "win-64"]
+version = "3.6.0"
+license = "GPL-2.0-only"
+license-file = "LICENSE.txt"
+
+# TODO: add ccache support
+[build-dependencies]
+cxx-compiler = ">=1.7.0"
+cmake = ">=3.22"
+ninja = ">=1.11"
+pkg-config = ">=0.29.2"
+git = ">=2.47.0"
+
+[dependencies]
+libopencv = "*"
+eigen = "*"
+libjpeg-turbo = "*"
+libpng = "*"
+libblas = "*"
+libcblas = "*"
+liblapack = "*"
+liblapacke = "*"
+
+[target.unix.dependencies]
+xorg-libx11 = "*"
+xorg-libxfixes = "*"
+xorg-xorgproto = "*"
+# TODO: activate on windows as well
+libxml2 = "*"
+libdc1394 = ">=2.2.6"
+librealsense = "*"
+
+[target.linux-64.dependencies]
+mesa-libegl-cos7-x86_64 = "*"
+
+[target.osx.dependencies]
+llvm-openmp = "*"
+
+[target.win-64.dependencies]
+pthreads-win32 = "*"
+
+[activation]
+scripts = ["development/scripts/pixi/activation.sh"]
+
+[target.win-64.activation]
+scripts = ["development/scripts/pixi/activation.bat"]
+
+# Use clang-cl on Windows
+# We must use scripts instead of env to setup CC and CXX
+# to avoid cxx-compiler to overwrite them.
+[feature.clang-cl]
+platforms = ["win-64"]
+dependencies = { clang = "*", llvm-openmp = "*" }
+activation = { scripts = ["development/scripts/pixi/activation_clang_cl.bat"] }
+
+[feature.python-bindings]
+dependencies = { python = ">=3.8", pybind11 = "*", pip = "*" }
+[feature.python-bindings.tasks]
+build = { cmd = "cmake --build build --parallel $CPU_COUNT --target visp_python_bindings", depends-on = ["install"] }
+python-test = { cmd = "cmake --build build --config Release --target visp_python_bindings_test", depends-on = ["build"] }
+
+[tasks]
+configure = { cmd = [
+  "cmake",
+  "-G",
+  "Ninja",
+  "-B",
+  "build",
+  "-S",
+  ".",
+  "-DCMAKE_BUILD_TYPE=$VISP_BUILD_TYPE",
+  "-DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX",
+  "-DBUILD_TESTS=ON",
+  "$VISP_EXTRA_CMAKE_ARGS"
+] }
+build-base = { cmd = "cmake --build build --parallel $CPU_COUNT", depends-on = ["configure"] }
+build = { depends-on = ["build-base"]}
+install = { cmd = "cmake --build build --target install", depends-on = ["build-base"] }
+clean = { cmd = "rm -rf build" }
+test = { cmd = "ctest --test-dir build --output-on-failure", depends-on = ["install"] }
+
+[environments]
+default = { solve-group = "base" }
+with-python = { features = ["python-bindings"], solve-group = "base"}
+all = { features = ["python-bindings"], solve-group = "base" }
+all-clang-cl = { features = ["python-bindings", "clang-cl"], solve-group = "base" }

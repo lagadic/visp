@@ -38,7 +38,7 @@ More source code explanations could be found in \ref tutorial-detection-barcode 
 
 Note that adapting this tutorial to process images coming from a camera live stream consists in replacing the lines
 \code
-vpImageIo::read(I, "bar-code.pgm");
+vpImageIo::read(I, "bar-code.jpg");
 \endcode
 by
 \code

@@ -22,7 +22,7 @@ int main(int, char *argv[])
 #endif
   try {
     vpImage<unsigned char> I;
-    vpImageIo::read(I, vpIoTools::getParent(argv[0]) + "/data/bar-code.pgm");
+    vpImageIo::read(I, vpIoTools::getParent(argv[0]) + "/data/bar-code.jpg");
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     display = vpDisplayFactory::createDisplay(I);
@@ -46,7 +46,7 @@ int main(int, char *argv[])
     vpDetectorQRCode detector;
 
     while (1) {
-      vpImageIo::read(I, vpIoTools::getParent(argv[0]) + "/data/bar-code.pgm");
+      vpImageIo::read(I, vpIoTools::getParent(argv[0]) + "/data/bar-code.jpg");
       vpDisplay::display(I);
 
       bool status = detector.detect(I);
@@ -89,7 +89,7 @@ int main(int, char *argv[])
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
   if (display != nullptr) {
     delete display;
-}
+  }
 #endif
 #else
   (void)argv;

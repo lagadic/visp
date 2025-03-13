@@ -7,6 +7,8 @@
 #include <visp3/io/vpVideoReader.h>
 #include <visp3/io/vpVideoWriter.h>
 
+#include <visp3/ar/vpPanda3DFrameworkManager.h>
+
 #include <visp3/rbt/vpRBTracker.h>
 
 #ifdef ENABLE_VISP_NAMESPACE
@@ -17,7 +19,7 @@ using namespace VISP_NAMESPACE_NAME;
 
 struct CmdArguments
 {
-  CmdArguments() : startFrame(0), frameStep(1), stepByStep(false)
+  CmdArguments() : startFrame(-1), frameStep(1), stepByStep(false)
   {
 
   }
@@ -41,7 +43,7 @@ struct CmdArguments
 
   std::string colorSequence;
   std::string depthFolder;
-  unsigned int startFrame;
+  int startFrame;
   unsigned int frameStep;
   bool stepByStep;
 };
@@ -82,22 +84,31 @@ int main(int argc, const char **argv)
   tracker.startTracking();
   cam = tracker.getCameraParameters();
 
-  //VideoReader to read images from disk
-
+  // VideoReader to read images from disk
   vpImage<vpRGBa> Icol;
   vpVideoReader readerRGB;
+  std::cout << "Input video" << std::endl;
+  std::cout << "  Filename   : " << sequenceArgs.colorSequence << std::endl;
+  if (sequenceArgs.startFrame >= 0) {
+    readerRGB.setFirstFrameIndex(sequenceArgs.startFrame);
+    std::cout << "  First frame: " << sequenceArgs.startFrame << std::endl;
+  }
   readerRGB.setFileName(sequenceArgs.colorSequence);
-  readerRGB.setFirstFrameIndex(sequenceArgs.startFrame);
   readerRGB.open(Icol);
   readerRGB.acquire(Icol);
+
+  if (sequenceArgs.startFrame < 0) {
+    std::cout << "  First frame: " << readerRGB.getFirstFrameIndex() << std::endl;
+  }
 
   const int width = readerRGB.getWidth();
   const int height = readerRGB.getHeight();
 
+  std::cout << "  Image size : " << width << " x " << height << std::endl;
+
   vpImage<unsigned char> Id(height, width);
-  vpImage<float> depth(height, width);
+  vpImage<float> depth(0, 0);
   vpImage<unsigned char> depthDisplay(height, width);
-  vpImage<float> IProba(height, width);
   vpImage<unsigned char> IProbaDisplay(height, width);
   vpImage<vpRGBa> IRender(height, width);
   vpImage<vpRGBa> InormDisplay(height, width);
@@ -149,8 +160,8 @@ int main(int argc, const char **argv)
   unsigned int iter = 1;
   // Main tracking loop
   double expStart = vpTime::measureTimeMs();
-
-  while (true) {
+  bool quit = false;
+  while (!quit) {
     double frameStart = vpTime::measureTimeMs();
     // Acquire images
     for (unsigned int sp = 0; sp < sequenceArgs.frameStep; ++sp) {
@@ -200,16 +211,17 @@ int main(int argc, const char **argv)
         }
       }
 
+      vpDisplay::display(Id);
+      vpDisplay::displayText(Id, 20, 20, "Click to quit", vpColor::red);
+      vpDisplay::display(Icol);
+
+      tracker.display(Id, Icol, depthDisplay);
       tracker.displayMask(IProbaDisplay);
       vpDisplay::display(IProbaDisplay);
-      vpDisplay::flush(IProbaDisplay);
-      vpDisplay::display(Id);
-      vpDisplay::display(Icol);
-      tracker.display(Id, Icol, depthDisplay);
       vpDisplay::displayFrame(Icol, cMo, cam, 0.05, vpColor::none, 2);
-
       vpDisplay::flush(Icol);
       vpDisplay::flush(Id);
+      vpDisplay::flush(IProbaDisplay);
       if (depth.getSize() > 0) {
         vpDisplay::display(depthDisplay);
         vpDisplay::flush(depthDisplay);
@@ -229,16 +241,21 @@ int main(int argc, const char **argv)
     ++im;
     ++iter;
     if (im > readerRGB.getLastFrameIndex()) {
-      break;
+      quit = true;
+      std::cout << "End of video reached" << std::endl;
     }
 
     double frameEnd = vpTime::measureTimeMs();
     std::cout << "Frame took: " << frameEnd - frameStart << "ms" << std::endl;
     plotter.plot(tracker, (frameEnd - expStart) / 1000.0);
 
+    if (vpDisplay::getClick(Id, false)) {
+      quit = true;
+    }
   }
 
   logger.close();
+  vpPanda3DFrameworkManager::getInstance().exit();
 
   return EXIT_SUCCESS;
 }

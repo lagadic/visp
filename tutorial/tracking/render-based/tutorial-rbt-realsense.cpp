@@ -18,6 +18,8 @@ int main()
 #include <visp3/sensor/vpRealSense2.h>
 #include <visp3/io/vpParseArgv.h>
 
+#include <visp3/ar/vpPanda3DFrameworkManager.h>
+
 #include <visp3/rbt/vpRBTracker.h>
 
 #include "render-based-tutorial-utils.h"
@@ -237,6 +239,7 @@ int main(int argc, const char **argv)
   }
 
   logger.close();
+  vpPanda3DFrameworkManager::getInstance().exit();
   return EXIT_SUCCESS;
 }
 #endif

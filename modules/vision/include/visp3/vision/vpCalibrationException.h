@@ -31,8 +31,8 @@
  * Exceptions that can be emitted by the vpCalibration class and its derivatives.
  */
 
-#ifndef _vpCalibrationException_h_
-#define _vpCalibrationException_h_
+#ifndef VP_CALIBRATION_EXCEPTION_H
+#define VP_CALIBRATION_EXCEPTION_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>

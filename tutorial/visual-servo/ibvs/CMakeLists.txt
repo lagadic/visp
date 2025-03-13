@@ -53,7 +53,7 @@ endif()
 
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/sphere/Sphere.mesh" )
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/sphere/Sphere.material" )
-list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/target_square.pgm" )
+list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/target_square.jpg" )
 
 if(VISP_HAVE_OGRE)
   # Add specific build flag to turn off warnings coming from libogre and libois 3rd party

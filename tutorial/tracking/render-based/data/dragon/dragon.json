@@ -1,0 +1,100 @@
+{
+  "verbose": {
+    "enabled": false
+  },
+  "camera": {
+    "intrinsics": {
+      "model": "perspectiveWithoutDistortion",
+      "px": 607.178,
+      "py": 607.234,
+      "u0": 321.391,
+      "v0": 241.918
+    },
+    "height": 480,
+    "width": 640
+  },
+  "vvs": {
+    "gain": 1.0,
+    "maxIterations": 10,
+    "mu": 0.1,
+    "muIterFactor": 0.1
+  },
+  "model": "data/dragon/dragon.bam",
+  "silhouetteExtractionSettings": {
+    "threshold": {
+      "type": "relative",
+      "value": 0.1
+    },
+    "sampling": {
+      "samplingRate": 2,
+      "numPoints": 128,
+      "reusePreviousPoints": true
+    }
+  },
+  "mask": {
+    "type": "histogram",
+    "bins": 32,
+    "objectUpdateRate": 0.1,
+    "backgroundUpdateRate": 0.1,
+    "maxDepthError": 0.01,
+    "computeOnlyOnBoundingBox": false
+  },
+  "drift": {
+    "type": "probabilistic",
+    "colorUpdateRate": 0.1,
+    "initialColorSigma": 15.0,
+    "depthSigma": 0.01,
+    "filteringMaxDistance": 0.001,
+    "minDistanceNewPoints": 0.005
+  },
+  "features": [
+    {
+      "type": "silhouetteColor",
+      "weight": 0.01,
+      "ccd": {
+        "h": 8,
+        "delta_h": 1
+      }
+    },
+    {
+      "type": "klt",
+      "weight": 0.1,
+      "useMask": true,
+      "minMaskConfidence": 0.5,
+      "maxReprojectionErrorPixels": 5.0,
+      "newPointsMinPixelDistance": 4,
+      "minimumNumPoints": 20,
+      "blockSize": 5,
+      "useHarris": true,
+      "harris": 0.05,
+      "maxFeatures": 500,
+      "minDistance": 5.0,
+      "pyramidLevels": 3,
+      "quality": 0.01,
+      "windowSize": 5
+    },
+    {
+      "type": "silhouetteMe",
+      "weight": 0.1,
+      "numCandidates": 3,
+      "convergencePixelThreshold": 0.0,
+      "convergenceRatio": 1,
+      "movingEdge": {
+        "maskSize": 7,
+        "minSampleStep": 1.0,
+        "mu": [
+          0.5,
+          0.5
+        ],
+        "nMask": 180,
+        "range": 16,
+        "sampleStep": 1.0,
+        "strip": 2,
+        "thresholdType": "normalized",
+        "threshold": 20
+      },
+      "useMask": false,
+      "minMaskConfidence": 0.8
+    }
+  ]
+}

@@ -22,7 +22,7 @@ int main(int argc, const char **argv)
 #endif
   try {
     vpImage<unsigned char> I;
-    vpImageIo::read(I, "bar-code.pgm");
+    vpImageIo::read(I, "bar-code.jpg");
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     display = vpDisplayFactory::createDisplay(I);
@@ -105,10 +105,10 @@ int main(int argc, const char **argv)
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
   if (display != nullptr) {
     delete display;
-}
+  }
 #endif
 #else
   (void)argc;
   (void)argv;
 #endif
-    }
+}

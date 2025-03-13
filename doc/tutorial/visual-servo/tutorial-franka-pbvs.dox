@@ -1,13 +1,15 @@
 /**
 
-\page tutorial-franka-pbvs Tutorial: PBVS with Panda 7-dof robot from Franka Emika
+\page tutorial-franka-pbvs Tutorial: Eye-in-hand PBVS with Panda 7-dof robot from Franka Emika
 \tableofcontents
 
 \section franka_intro Introduction
 
-This tutorial explains how to do a position-based visual-servoing with the Panda 7-dof robot from Franka Emika equipped with an Intel Realsense D435 camera.
+This tutorial explains how to implement eye-in-hand position-based visual servoing (PBVS) with Franka Emika's Panda
+7-dof robot equipped with an Intel Realsense camera mounted on its end-effector.
 
-The following video shows the resulting robot trajectory when the robot is achieving a position-based visual servoing over an Apriltag target.
+The following video shows the resulting robot trajectory when the robot is achieving a position-based visual servoing
+over an Apriltag target.
 
 \htmlonly
 <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/7A5cqUEKXHg" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe></p>
@@ -18,8 +20,8 @@ The following video shows the resulting robot trajectory when the robot is achie
 \subsection franka_prereq_hardware Hardware
 
 We suppose here that you have:
-- a <a href="https://www.franka.de/cart/">Panda robot</a> in its research version from <a href="https://www.franka.de/">Franka Emika</a> that will be controlled throw vpRobotFranka class.
-- an Intel Realsense <a href="https://click.intel.com/intelr-realsensetm-depth-camera-d435.html">D345</a> camera attached to the robot end-effector.
+- a Panda robot in its research version from <a href="https://franka.de/">Franka Emika</a> that will be controlled throw vpRobotFranka class.
+- an Intel Realsense <a href="https://www.intelrealsense.com/depth-camera-d435/">D345</a> camera attached to the robot end-effector.
 Note that this tutorial should also work with any other Intel Realsense camera.
 
 \subsection franka_prereq_rt_linux Setting up a real-time kernel
@@ -212,7 +214,7 @@ If you are interested to get other tags, follow the steps described in \ref apri
 
 \subsection franka_prereq_calib_extrinsic Calibrate extrinsic camera parameters
 
-Follow the steps described in \ref tutorial-calibration-extrinsic in order to estimate the end-effector to camera transformation. This step is mandatory to control the robot in cartesian in the camera frame.
+Follow the steps described in \ref tutorial-calibration-extrinsic-eye-in-hand in order to estimate the end-effector to camera transformation. This step is mandatory to control the robot in cartesian in the camera frame.
 
 \subsection franka_prereq_visp_build Configure and build ViSP
 
@@ -258,26 +260,31 @@ An example of position-based visual servoing using Panda robot equipped with a R
 
 - Attach your Realsense camera to the robot end-effector
 - Put an Apriltag in the camera field of view
-- If not already done, follow \ref tutorial-calibration-extrinsic to estimate \f$^e{\bf M}_c\f$ the homogeneous transformation between robot end-effector and camera frame. We suppose here that the file is located in `apps/calibration/eMc.yaml`.
+- If not already done, follow \ref tutorial-calibration-extrinsic-eye-in-hand to estimate \f$^e{\bf M}_c\f$ the homogeneous transformation between robot end-effector and camera frame. We suppose here that the file is located in `apps/calibration/intrinsic/eMc.yaml`.
 
 Now enter in `example/servo-franka folder` and run `servoFrankaPBVS` binary using `--eMc` to locate the file containing the \f$^e{\bf M}_c\f$ transformation. Other options are available. Using `--help` show them:
 
-    $ cd example/servo-franka
-    $ ./servoFrankaPBVS --help
-    ./servoFrankaPBVS [--ip <default 192.168.1.1>] [--tag-size <marker size in meter; default 0.12>] [--eMc <eMc extrinsic file>] [--quad-decimate <decimation; default 2>] [--adpative-gain] [--plot] [--task-sequencing] [--no-convergence-threshold] [--verbose] [--help] [-h]
+\code{.sh}
+$ cd example/servo-franka
+$ ./servoFrankaPBVS --help
+\endcode
 
 Run the binary activating the plot and using a constant gain:
 
-    $ ./servoFrankaPBVS --eMc ../../apps/calibration/eMc.yaml --plot
+\code{.sh}
+$ ./servoFrankaPBVS --eMc ../../apps/calibration/intrinsic/eMc.yaml --plot
+\endcode
 
 \note If you encounter the following error message:
-\verbatim
+\code{.sh}
 $ ./servoFrankaPBVS
 Franka network exception: libfranka: Connection to FCI refused. Please install FCI feature or enable FCI mode in Desk.
-\endverbatim
-you need to use your navigator to activate FCI. This new security feature was introduced in Franka system between version 4.0.2 and 4.2.2. See known issue: \ref franka_pbvs_known_issue_activate_FCI.
+\endcode
+you need to use your navigator to activate FCI. This new security feature was introduced in Franka system between
+version 4.0.2 and 4.2.2. See known issue: \ref franka_pbvs_known_issue_activate_FCI.
 
-Now you should see new window that shows the image from the camera like in the next image. In this window, use the left mouse click to enable the robot controller, and the right click to quit the binary.
+Now you should see new window that shows the image from the camera like in the next image. In this window, use the left
+mouse click to enable the robot controller, and the right click to quit the binary.
 
 \image html img-franka-pbvs-start.png Legend: Example of initial position. The goal is here to bring the RGB frame attached to the tag over the yellow frame corresponding to the desired position of the tag in the camera frame.
 
@@ -286,28 +293,28 @@ Now you should see new window that shows the image from the camera like in the n
 \image html img-franka-pbvs-converge-curves.png  Legend: Corresponding visual-features (translation and orientation of the \e cdMc homogeneous matrix corresponding to the transformation between the desired camera pose and the current one) and velocities applied to the robot in the camera frame. You can observe an exponential decrease of the visual features.
 
 You can also activate an adaptive gain that will make the convergence faster:
-
-    $ ./servoFrankaPBVS --eMc ../../apps/calibration/eMc.yaml --plot --adpative-gain
-
+\code{.sh}
+$ ./servoFrankaPBVS --eMc ../../apps/calibration/intrinsic/eMc.yaml --plot --adpative-gain
+\endcode
 You can also start the robot with a zero velocity at the beginning introducing task sequencing option:
-
-    $ ./servoFrankaPBVS --eMc ../../apps/calibration/eMc.yaml --plot --task-sequencing
-
+\code{.sh}
+$ ./servoFrankaPBVS --eMc ../../apps/calibration/intrinsic/eMc.yaml --plot --task-sequencing
+\endcode
 And finally you can activate the adaptive gain and task sequencing:
-
-    $ ./servoFrankaPBVS --eMc ../../apps/calibration/eMc.yaml --plot --adpative-gain --task-sequencing
-
+\code{.sh}
+$ ./servoFrankaPBVS --eMc ../../apps/calibration/intrinsic/eMc.yaml --plot --adpative-gain --task-sequencing
+\endcode
 To learn more about adaptive gain and task sequencing see \ref tutorial-boost-vs.
 
 \section franka_pbvs_known_issue Known issues
 \subsection franka_pbvs_known_issue_activate_FCI libfranka: Connection to FCI refused
 
 When executing one of the binaries that use `libfranka` you may encounter the following error like:
-\verbatim
+\code{.sh}
 $ ./servoFrankaIBVS --ip 192.168.100.2
 Franka network exception: libfranka: Connection to FCI refused. Please install FCI feature or enable FCI mode in Desk.
 Check if you are connected to the Franka robot or if you specified the right IP using --ip command line option set by default to 192.168.1.1.
-\endverbatim
+\endcode
 
 This error occurred with our robot after upgrading the Franka system from 4.0.2 to 4.2.2 version.
 
@@ -318,16 +325,22 @@ To overcome this error, you need:
 - First check if FCI is installed:
 \image html img-franka-system-window.jpg When FCI is installed, in Desk you should see this image.
 
-- Secondly activate FCI. For that, as shown in the next image click on `"Activate FCI"` in the Desk right column (1). It will open the popup (2)
-that should remain present all the time you want to execute any binary that needs to communicate with the robot using `libfranka`.
+- Secondly activate FCI. For that, as shown in the next image click on `"Activate FCI"` in the Desk right column (1).
+  It will open the popup (2) that should remain present all the time you want to execute any binary that needs to
+  communicate with the robot using `libfranka`.
 \image html img-franka-fci-active.jpg Behavior when FCI (Franka Controller Interface) is activated.
 
 \section franka_pbvs_next Next tutorial
 
-You can continue with the \ref tutorial-franka-ibvs that shows how to implement an image-based visual servoing scheme with the Franka robot or follow \ref tutorial-ibvs that will give some hints on image-based visual servoing in simulation with a free flying camera.
+You can continue with the \ref tutorial-franka-ibvs that shows how to implement an image-based visual servoing scheme
+with the Franka robot or follow \ref tutorial-ibvs that will give some hints on image-based visual servoing in
+simulation with a free flying camera.
 
 If you want to achieve a physical simulation of a Franka robot, with a model that has been accurately identified
-from a real Franka robot, like in the next video, we recommend to make a tour on \ref tutorial-franka-sim that is available in [visp_ros](http://wiki.ros.org/visp_ros). Here you will find a ROS package that allows to implement position, velocity and impedance control of a simulated Franka robot using ROS and [CoppeliaSim](https://www.coppeliarobotics.com/).
+from a real Franka robot, like in the next video, we recommend to make a tour on \ref tutorial-franka-sim that is
+available in [visp_ros](http://wiki.ros.org/visp_ros). Here you will find a ROS package that allows to implement
+position, velocity and impedance control of a simulated Franka robot using ROS and
+[CoppeliaSim](https://www.coppeliarobotics.com/).
 
 \htmlonly
 <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/QQ89sbmufZE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>

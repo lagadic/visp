@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,7 +76,7 @@ BEGIN_VISP_NAMESPACE
  * \f[ \theta = arctan(b/a) \f]
  * \f[ \rho = -c/\sqrt{a^2+b^2} \f]
  *
- * The value of \f$ \theta \f$ is between \f$ 0 \f$ and \f$ 2\pi
+ * The value of \f$ \theta \f$ is between \f$ -\pi \f$ and \f$ \pi
  * \f$. And the value of \f$ \rho \f$ can be positive or negative. The
  * conventions to find the right values of the two features are
  * illustrated in the following pictures.
@@ -234,7 +234,7 @@ public:
    * - \f$\rho\f$ is the distance between the origin and the point on the line
    *   that belongs to the normal to the line passing through the origin.
    * - \f$\theta\f$ is the angle in radian between the vertical axis and the
-   *   normal to the line passing through the origin.
+   *   normal to the line.
    *
    * Depending on the convention described at the beginning of this
    * class, \f$\rho\f$ is signed.
@@ -250,7 +250,7 @@ public:
   }
 
   /*!
-   * Returns the value of the angle \f$\theta\f$.
+   * Returns the value of the angle \f$\theta\f$ between \f$-\pi\f$ and \f$\pi\f$.
    *
    * \sa getRho(), getRhoTheta()
    */
@@ -276,19 +276,6 @@ public:
    * \param ip2 : Coordinates of the second point.
    */
   void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2);
-
-  /*!
-   * This method allows to disable/enable the calculation of the sign of the rho attribute
-   * from the intensity of the central point of the line. When enabled, it allows to distinguish
-   * between a black/white edge and a white/black edge, but it can cause problems
-   * for example during a visual-servo, when this point can be occluded.
-   *
-   * \param useIntensityForRho : new value of the flag.
-   */
-  inline void setRhoSignFromIntensity(bool useIntensityForRho)
-  {
-    m_useIntensityForRho = useIntensityForRho;
-  }
 
   /*!
    * Track the line in the image I.
@@ -386,11 +373,10 @@ protected:
   void computeDelta(double &delta, double i1, double j1, double i2, double j2);
 
   /*!
-   * Compute the two parameters \f$(\rho, \theta)\f$ of the line.
-   *
-   * \param I : Image in which the line appears.
+   * Compute the two parameters \f$(\rho, \theta)\f$ of the line in the (i,j)
+   * frame using all the MEs for disambiguating.
    */
-  void computeRhoTheta(const vpImage<unsigned char> &I);
+  void computeRhoTheta();
 
   /*!
    * Least squares method used to make the tracking more robust. It
@@ -474,14 +460,7 @@ protected:
   double m_rho;     //!< rho parameter of the line
   double m_theta;   //!< theta parameter of the line
   double m_delta;   //!< Angle in rad between the extremities
-  double m_delta_1; //!< Angle in rad between the extremities
-  double m_angle;   //!< Angle in deg between the extremities
-  double m_angle_1; //!< Angle in deg between the extremities
   int m_sign;       //!< Sign
-
-  //! Flag to specify wether the intensity of the image at the middle point is
-  //! used to compute the sign of rho or not.
-  bool m_useIntensityForRho;
 
   double m_a; //!< Parameter a of the line equation a*i + b*j + c = 0
   double m_b; //!< Parameter b of the line equation a*i + b*j + c = 0
@@ -495,7 +474,26 @@ public:
   //@{
 
   /*!
-   * \deprecated This method is deprecated. You should rather use setRhoSignFromIntensity().
+   * \deprecated This method is deprecated and should no more be used. Instead of computing
+   * the sign of rho from the intensity of the middle point of the line, the algorithm was
+   * modified to consider all the points to be more robust to occlusion of the middle point.
+   *
+   * This method allows to disable/enable the calculation of the sign of the rho attribute
+   * from the intensity of the central point of the line. When enabled, it allows to distinguish
+   * between a black/white edge and a white/black edge, but it can cause problems
+   * for example during a visual-servo, when this point can be occluded.
+   *
+   * \param unused : This parameter is unused.
+   */
+  inline void setRhoSignFromIntensity(bool unused)
+  {
+    (void)unused;
+  }
+
+  /*!
+   * \deprecated This method is deprecated and should no more be used. Instead of computing
+   * the sign of rho from the intensity of the middle point of the line, the algorithm was
+   * modified to consider all the points to be more robust to occlusion of the middle point.
    *
    * This method allows to turn off the computation of the sign of the rho
    * attribute based on the intensity near the middle point of the line. This
@@ -503,11 +501,11 @@ public:
    * edge but it may be source of problem (ex. for a servoing example) when
    * this point can be occluded.
    *
-   * \param useIntensityForRho : new value of the flag.
+   * \param unused : This parameter is unused.
    */
-  VP_DEPRECATED inline void computeRhoSignFromIntensity(bool useIntensityForRho)
+  VP_DEPRECATED inline void computeRhoSignFromIntensity(bool unused)
   {
-    m_useIntensityForRho = useIntensityForRho;
+    (void)unused;
   }
 
   /*!

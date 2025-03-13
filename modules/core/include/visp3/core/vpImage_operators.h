@@ -207,9 +207,8 @@ template <class Type> vpImage<Type> &vpImage<Type>::operator=(const vpImage<Type
  * Moves the image pointers without deep copying image content.
  *
  * \param[in] other : Image to move.
- * \exception
- * - When the display is initialised and the images have different sizes.
- * - When the display attached to the `other` image is initialized.
+ * \exception vpException::dimensionError When the display is initialised and the images have different sizes.
+ * \exception vpException::fatalError When the display attached to the `other` image is initialized.
  */
 template <class Type> vpImage<Type> &vpImage<Type>::operator=(vpImage<Type> &&other)
 {

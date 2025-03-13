@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,6 +66,175 @@
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;
 #endif
+
+/**
+ * Match the desired lines to the initial measured lines.
+ * The rho and theta values of the desired lines are modified if needed.
+ */
+void match(vpFeatureLine const s_line1, vpFeatureLine const sline2, vpFeatureLine s_line_di, vpFeatureLine s_line_dj)
+{
+  double rho1 = s_line1.getRho();
+  double theta1 = s_line1.getTheta();
+  double rho2 = s_line2.getRho();
+  double theta2 = s_line2.getTheta();
+  double rhoi = s_line_di.getRho();
+  double thetai = s_line_di.getTheta();
+  double rhoj = s_line_dj.getRho();
+  double thetaj = s_line_dj.getTheta();
+
+  unsigned int config = 0;
+  double err = 0.0;
+  double err_min = 1.e6;
+  // Test 1: (1,2) with (i,j)
+  double er_theta1 = theta1-thetai;
+  if (er_theta1 > M_PI) er_theta1 -= 2.0*M_PI;
+  else if (er_theta1 < -M_PI) er_theta1 += 2.0*M_PI;
+  double er_theta2 = theta2-thetaj;
+  if (er_theta2 > M_PI) er_theta2 -= 2.0*M_PI;
+  else if (er_theta2 < -M_PI) er_theta2 += 2.0*M_PI;
+
+  err = (rho1-rhoi)*(rho1-rhoi) + er_theta1*er_theta1
+    + (rho2-rhoj)*(rho2-rhoj) + er_theta2*er_theta2;
+  if (err < err_min) {
+    config++;
+    err_min = err;
+  }
+  std::cout << "Test 1 (1,2) <-> (i,j), err = " << err << std::endl;
+  // Test 2: (1,2) with (i,-j)  thetaj += pi, rhoj *= -1
+  er_theta1 = theta1-thetai;
+  if (er_theta1 > M_PI) er_theta1 -= 2.0*M_PI;
+  else if (er_theta1 < -M_PI) er_theta1 += 2.0*M_PI;
+  er_theta2 = theta2-thetaj-M_PI;
+  if (er_theta2 > M_PI) er_theta2 -= 2.0*M_PI;
+  else if (er_theta2 < -M_PI) er_theta2 += 2.0*M_PI;
+
+  err = (rho1-rhoi)*(rho1-rhoi) + er_theta1*er_theta1
+    + (rho2+rhoj)*(rho2+rhoj) + er_theta2*er_theta2;
+  if (err < err_min) {
+    config++;
+    err_min = err;
+  }
+  std::cout << "Test 2 (1,2) <-> (i,-j), err = " << err << std::endl;
+  // Test 3: (1,2) with (-i,j)  thetai += pi, rhoi *= -1
+  er_theta1 = theta1-thetai-M_PI;
+  if (er_theta1 > M_PI) er_theta1 -= 2.0*M_PI;
+  else if (er_theta1 < -M_PI) er_theta1 += 2.0*M_PI;
+  er_theta2 = theta2-thetaj;
+  if (er_theta2 > M_PI) er_theta2 -= 2.0*M_PI;
+  else if (er_theta2 < -M_PI) er_theta2 += 2.0*M_PI;
+
+  err = (rho1+rhoi)*(rho1+rhoi) + er_theta1*er_theta1
+    + (rho2-rhoj)*(rho2-rhoj) + er_theta2*er_theta2;
+  if (err < err_min) {
+    config++;
+    err_min = err;
+  }
+  std::cout << "Test 3 (1,2) <-> (-i,j), err = " << err << std::endl;
+  // Test 4: (1,2) with (-i,-j)  thetai += pi, rhoi *= -1, thetaj += pi, rhoj *= -1
+  er_theta1 = theta1-thetai-M_PI;
+  if (er_theta1 > M_PI) er_theta1 -= 2.0*M_PI;
+  else if (er_theta1 < -M_PI) er_theta1 += 2.0*M_PI;
+  er_theta2 = theta2-thetaj-M_PI;
+  if (er_theta2 > M_PI) er_theta2 -= 2.0*M_PI;
+  else if (er_theta2 < -M_PI) er_theta2 += 2.0*M_PI;
+
+  err = (rho1+rhoi)*(rho1+rhoi) + er_theta1*er_theta1
+    + (rho2+rhoj)*(rho2+rhoj) + er_theta2*er_theta2;
+  if (err < err_min) {
+    config++;
+    err_min = err;
+  }
+  std::cout << "Test 4 (1,2) <-> (-i,-j), err = " << err << std::endl;
+  // Test 5: (1,2) with (j,i)
+  double er_theta1 = theta1-thetaj;
+  if (er_theta1 > M_PI) er_theta1 -= 2.0*M_PI;
+  else if (er_theta1 < -M_PI) er_theta1 += 2.0*M_PI;
+  double er_theta2 = theta2-thetai;
+  if (er_theta2 > M_PI) er_theta2 -= 2.0*M_PI;
+  else if (er_theta2 < -M_PI) er_theta2 += 2.0*M_PI;
+
+  err = (rho1-rhoj)*(rho1-rhoj) + er_theta1*er_theta1
+    + (rho2-rhoi)*(rho2-rhoi) + er_theta2*er_theta2;
+  if (err < err_min) {
+    config++;
+    err_min = err;
+  }
+  std::cout << "Test 5 (1,2) <-> (j,i), err = " << err << std::endl;
+  // Test 6: (1,2) with (-j,i)  thetaj += pi, rhoj *= -1
+  double er_theta1 = theta1-thetaj-M_PI;
+  if (er_theta1 > M_PI) er_theta1 -= 2.0*M_PI;
+  else if (er_theta1 < -M_PI) er_theta1 += 2.0*M_PI;
+  double er_theta2 = theta2-thetai;
+  if (er_theta2 > M_PI) er_theta2 -= 2.0*M_PI;
+  else if (er_theta2 < -M_PI) er_theta2 += 2.0*M_PI;
+
+  err = (rho1+rhoj)*(rho1+rhoj) + er_theta1*er_theta1
+    + (rho2-rhoi)*(rho2-rhoi) + er_theta2*er_theta2;
+  if (err < err_min) {
+    config++;
+    err_min = err;
+  }
+  std::cout << "Test 6 (1,2) <-> (-j,i), err = " << err << std::endl;
+  // Test 7: (1,2) with (j,-i)  thetai += pi, rhoi *= -1
+  double er_theta1 = theta1-thetaj;
+  if (er_theta1 > M_PI) er_theta1 -= 2.0*M_PI;
+  else if (er_theta1 < -M_PI) er_theta1 += 2.0*M_PI;
+  double er_theta2 = theta2-thetai-M_PI;
+  if (er_theta2 > M_PI) er_theta2 -= 2.0*M_PI;
+  else if (er_theta2 < -M_PI) er_theta2 += 2.0*M_PI;
+
+  err = (rho1-rhoj)*(rho1-rhoj) + er_theta1*er_theta1
+    + (rho2+rhoi)*(rho2+rhoi) + er_theta2*er_theta2;
+  if (err < err_min) {
+    config++;
+    err_min = err;
+  }
+  std::cout << "Test 7 (1,2) <-> (j,-i), err = " << err << std::endl;
+  // Test 8: (1,2) with (-j,-i)  thetaj += pi, rhoj *= -1, thetai += pi, rhoi *= -1
+  double er_theta1 = theta1-thetaj-M_PI;
+  if (er_theta1 > M_PI) er_theta1 -= 2.0*M_PI;
+  else if (er_theta1 < -M_PI) er_theta1 += 2.0*M_PI;
+  double er_theta2 = theta2-thetai-M_PI;
+  if (er_theta2 > M_PI) er_theta2 -= 2.0*M_PI;
+  else if (er_theta2 < -M_PI) er_theta2 += 2.0*M_PI;
+
+  err = (rho1+rhoj)*(rho1+rhoj) + er_theta1*er_theta1
+    + (rho2+rhoi)*(rho2+rhoi) + er_theta2*er_theta2;
+  if (err < err_min) {
+    config++;
+    err_min = err;
+  }
+  std::cout << "Test 8 (1,2) <-> (-j,-i), err = " << err << std::endl;
+  std::cout << "Test choisi = " << config << std::endl;
+
+  // If config == 1, no change: (1,2) <-> (i,j)
+  if (config == 2) {  // (1,2) <-> (-i,j)
+    s_line_di.setRhoTheta(-rhoi, (thetai + M_PI));
+  }
+  else if (config == 3) { // (1,2) <-> (i,-j)
+    s_line_dj.setRhoTheta(-rhoj, (thetaj + M_PI));
+  }
+  else if (config == 4) { // (1,2) <-> (-i,-j)
+    s_line_di.setRhoTheta(-rhoi, (thetai + M_PI));
+    s_line_dj.setRhoTheta(-rhoj, (thetaj + M_PI));
+  }
+  else if (config == 5) { // (1,2) <-> (j,i)
+    s_line_di.setRhoTheta(rhoj, thetaj);
+    s_line_dj.setRhoTheta(rhoi, thetai);
+  }
+  else if (config == 6) { // (1,2) <-> (-j,i)
+    s_line_di.setRhoTheta(-rhoj, (thetaj + M_PI));
+    s_line_dj.setRhoTheta(rhoi, thetai);
+  }
+  else if (config == 7) { // (1,2) <-> (j,-i)
+    s_line_di.setRhoTheta(rhoj, thetaj);
+    s_line_dj.setRhoTheta(-rhoi, (thetai + M_PI));
+  }
+  else if (config == 8) { // (1,2) <-> (-j,-i)
+    s_line_di.setRhoTheta(-rhoj, (thetaj + M_PI));
+    s_line_dj.setRhoTheta(-rhoi, (thetai + M_PI));
+  }
+}
 
 /**
  * To run this example:
@@ -181,21 +350,22 @@ int main(int argc, char **argv)
     vpFeatureBuilder::create(s_line_d[0], cylinder, vpCylinder::line1);
     vpFeatureBuilder::create(s_line_d[1], cylinder, vpCylinder::line2);
 
-    // {
-    //   std::cout << "Desired features: " << std::endl;
-    //   std::cout << " - line 1: rho: " << s_line_d[0].getRho() << " theta: " << vpMath::deg(s_line_d[0].getTheta()) << "deg" << std::endl;
-    //   std::cout << " - line 2: rho: " << s_line_d[1].getRho() << " theta: " << vpMath::deg(ss_line_d_d[1].getTheta()) << "deg" << std::endl;
-    // }
+    {
+      std::cout << "Measured features: " << std::endl;
+      std::cout << " - line 1: rho: " << s_line[0].getRho() << " theta: " << vpMath::deg(s_line[0].getTheta()) << "deg" << std::endl;
+      std::cout << " - line 2: rho: " << s_line[1].getRho() << " theta: " << vpMath::deg(s_line[1].getTheta()) << "deg" << std::endl;
+      std::cout << "Desired features: " << std::endl;
+      std::cout << " - line 1: rho: " << s_line_d[0].getRho() << " theta: " << vpMath::deg(s_line_d[0].getTheta()) << "deg" << std::endl;
+      std::cout << " - line 2: rho: " << s_line_d[1].getRho() << " theta: " << vpMath::deg(s_line_d[1].getTheta()) << "deg" << std::endl;
+    }
 
-    // Next 2 lines are needed to keep the conventions defined in vpMeLine
-    s_line_d[0].setRhoTheta(+fabs(s_line_d[0].getRho()), 0);
-    s_line_d[1].setRhoTheta(+fabs(s_line_d[1].getRho()), M_PI);
-    // {
-    //   std::cout << "Modified desired features: " << std::endl;
-    //   std::cout << " - line 1: rho: " << s_line_d[0].getRho() << " theta: " << vpMath::deg(s_line_d[0].getTheta()) << "deg" << std::endl;
-    //   std::cout << " - line 2: rho: " << s_s_line_dd[1].getRho() << " theta: " << vpMath::deg(s_line_d[1].getTheta()) << "deg" << std::endl;
-    // }
+    match(s_line[0], s_line[1], s_line_d[0], s_line_d[1]);
 
+    {
+      std::cout << "Modified desired features: " << std::endl;
+      std::cout << " - line 1: rho: " << s_line_d[0].getRho() << " theta: " << vpMath::deg(s_line_d[0].getTheta()) << "deg" << std::endl;
+      std::cout << " - line 2: rho: " << s_s_line_dd[1].getRho() << " theta: " << vpMath::deg(s_line_d[1].getTheta()) << "deg" << std::endl;
+    }
     // Define the task
     vpServo task;
     // - we want an eye-in-hand control law
