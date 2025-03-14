@@ -62,9 +62,9 @@ void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame
   const vpImage<float> &renderDepth = frame.renders.depth;
   const vpRect bb = frame.renders.boundingBox;
   const vpHomogeneousMatrix &cMo = frame.renders.cMo;
-  const vpHomogeneousMatrix oMc = cMo.inverse();
   const vpRotationMatrix cRo = cMo.getRotationMatrix();
-  const vpTranslationVector co = oMc.getTranslationVector();
+  const vpHomogeneousMatrix oMc = cMo.inverse();
+  const vpTranslationVector co = oMc.getTranslationVector(); // Position of the camera in object frame
   bool useMask = m_useMask && frame.hasMask();
   m_depthPoints.clear();
   m_depthPoints.reserve(static_cast<size_t>(bb.getArea() / (m_step * m_step * 2)));
@@ -74,6 +74,7 @@ void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame
 #endif
   {
     vpDepthPoint point;
+    vpColVector cameraRay(3);
 #ifdef VISP_HAVE_OPENMP
     std::vector<vpDepthPoint> localPoints;
     localPoints.reserve(m_depthPoints.capacity() / omp_get_num_threads());
@@ -87,27 +88,39 @@ void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame
 #endif
     for (unsigned int i = static_cast<unsigned int>(bb.getTop()); i < static_cast<unsigned int>(bb.getBottom()); i += m_step) {
       for (unsigned int j = static_cast<unsigned int>(bb.getLeft()); j < static_cast<unsigned int>(bb.getRight()); j += m_step) {
-        double Z = renderDepth[i][j];
-        double currZ = depthMap[i][j];
+        const double Z = renderDepth[i][j];
+        const double currZ = depthMap[i][j];
         if (Z > 0.f && currZ > 0.f) {
           if (useMask && frame.mask[i][j] < m_minMaskConfidence) {
             continue;
           }
           double x = 0.0, y = 0.0;
-          vpPixelMeterConversion::convertPoint(frame.cam, j, i, x, y);
+          vpPixelMeterConversion::convertPointWithoutDistortion(frame.cam, j, i, x, y);
           //vpColVector objectNormal({ frame.renders.normals[i][j].R, frame.renders.normals[i][j].G, frame.renders.normals[i][j].B });
           point.objectNormal[0] = frame.renders.normals[i][j].R;
           point.objectNormal[1] = frame.renders.normals[i][j].G;
           point.objectNormal[2] = frame.renders.normals[i][j].B;
 
+          bool invalidNormal = false;
+          for (unsigned int oi = 0; oi < 3; ++oi) {
+            if (std::isnan(point.objectNormal[oi])) {
+              invalidNormal = true;
+            }
+          }
+
+          if (invalidNormal) {
+            continue;
+          }
+
           fastProjection(oMc, x * Z, y * Z, Z, point.oP);
 
-          vpColVector cameraRay({ co[0] - point.oP.get_oX(), co[1] - point.oP.get_oY(), co[2] - point.oP.get_oZ() });
+          cameraRay = { co[0] - point.oP.get_oX(), co[1] - point.oP.get_oY(), co[2] - point.oP.get_oZ() };
           cameraRay.normalize();
 
           if (acos(cameraRay * point.objectNormal) > vpMath::rad(85.0)) {
             continue;
           }
+
           // vpColVector cp({ x * Z, y * Z, Z, 1 });
           // vpColVector oP = oMc * cp;
           // point.oP = vpPoint(oP);

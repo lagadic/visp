@@ -160,7 +160,6 @@ public:
       oP.changeFrame(cMo);
       oP.projection();
       cameraNormal = cRo * objectNormal;
-      // f.buildFrom(oP.get_x(), oP.get_y(), oP.get_Z(), log(oP.get_Z() / currentPoint.get_Z()));
     }
 
     inline void error(vpColVector &e, unsigned i) const
@@ -169,7 +168,6 @@ public:
       double projNormal = cameraNormal[0] * currentPoint[0] + cameraNormal[1] * currentPoint[1] + cameraNormal[2] * currentPoint[2];
 
       e[i] = D + projNormal;
-      //e[i] = f.get_LogZoverZstar();
     }
 
     inline void interaction(vpMatrix &L, unsigned i)
@@ -182,10 +180,6 @@ public:
       L[i][3] = nz * Y - ny * Z;
       L[i][4] = nx * Z - nz * X;
       L[i][5] = ny * X - nx * Y;
-      // vpMatrix LL = f.interaction();
-      // for (unsigned int j = 0; j < 6; ++j) {
-      //   L[i][j] = LL[0][j];
-      // }
     }
 
   public:
