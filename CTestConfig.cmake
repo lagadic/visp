@@ -69,10 +69,10 @@ endif()
 # Start with the short system name, e.g. "Linux", "FreeBSD" or "Windows"
 if(BUILDNAME)
   set(BUILDNAME "${BUILDNAME}-${CMAKE_SYSTEM_NAME}")
-else(BUILDNAME)
+else()
   # To suppress the first space if BUILDNAME is not set
   set(BUILDNAME "${CMAKE_SYSTEM_NAME}")
-endif(BUILDNAME)
+endif()
 
 # Add i386 or amd64
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
@@ -284,7 +284,6 @@ endif()
 if(VISP_HAVE_APRILTAG)
   set(BUILDNAME "${BUILDNAME}-apriltag")
 endif()
-
 
 #---- Special compiler flags ----
 if(ACTIVATE_WARNING_STRICT_OVERFLOW)

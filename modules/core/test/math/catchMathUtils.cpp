@@ -95,9 +95,7 @@ TEST_CASE("Lon-Lat generator", "[math_lonlat]")
     vpIoTools::makeDirectory(folder);
     int i = 0;
     for (const auto &ecef_M_ned : ecef_M_ned_vec) {
-      std::stringstream buffer;
-      buffer << folder << "ecef_M_cv_" << std::setw(4) << std::setfill('0') << i++ << ".txt";
-      std::string filename = buffer.str();
+      std::string filename = vpIoTools::formatString(folder + "ecef_M_cv_%04d.txt", ++i);
       std::ofstream file(filename);
       if (file.is_open()) {
         (ecef_M_ned * ned_M_cv).save(file);
@@ -126,9 +124,7 @@ TEST_CASE("Lon-Lat generator", "[math_lonlat]")
       vpIoTools::makeDirectory(folder);
       int i = 0;
       for (const auto &ecef_M_enu : ecef_M_enu_vec) {
-        std::stringstream buffer;
-        buffer << folder << "ecef_M_cv_" << std::setw(4) << std::setfill('0') << i++ << ".txt";
-        std::string filename = buffer.str();
+        std::string filename = vpIoTools::formatString(folder + "ecef_M_cv_%04d.txt", ++i);
         std::ofstream file(filename);
         if (file.is_open()) {
           (ecef_M_enu * enu_M_cv).save(file);
@@ -169,9 +165,7 @@ TEST_CASE("Equidistributed sphere point", "[math_equi_sphere_pts]")
     vpIoTools::makeDirectory(folder);
     int i = 0;
     for (const auto &ecef_M_ned : ecef_M_ned_vec) {
-      std::stringstream buffer;
-      buffer << folder << "ecef_M_cv_" << std::setw(4) << std::setfill('0') << i++ << ".txt";
-      std::string filename = buffer.str();
+      std::string filename = = vpIoTools::formatString(folder + "ecef_M_cv_%04d.txt", ++i);
       std::ofstream file(filename);
       if (file.is_open()) {
         (ecef_M_ned * ned_M_cv).save(file);
@@ -203,8 +197,7 @@ TEST_CASE("Equidistributed sphere point", "[math_equi_sphere_pts]")
     int i = 0;
     for (const auto &ecef_M_enu : ecef_M_enu_vec) {
       std::stringstream buffer;
-      buffer << folder << "ecef_M_cv_" << std::setw(4) << std::setfill('0') << i++ << ".txt";
-      std::string filename = buffer.str();
+      std::string filename = vpIoTools::formatString(folder + "ecef_M_cv_%04d.txt", ++i);
       std::ofstream file(filename);
       if (file.is_open()) {
         (ecef_M_enu * enu_M_cv).save(file);

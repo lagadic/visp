@@ -23,10 +23,8 @@ bool read_data(unsigned int cpt, const std::string &video_color_images, const st
                std::vector<vpColVector> &pointcloud, const vpCameraParameters &cam_depth,
                vpHomogeneousMatrix &cMo_ground_truth)
 {
-  char buffer[FILENAME_MAX];
   // Read color
-  snprintf(buffer, FILENAME_MAX, video_color_images.c_str(), cpt);
-  std::string filename_color = buffer;
+  std::string filename_color = vpIoTools::formatString(video_color_images, cpt);
 
   if (!vpIoTools::checkFilename(filename_color)) {
     std::cerr << "Cannot read: " << filename_color << std::endl;
@@ -36,8 +34,7 @@ bool read_data(unsigned int cpt, const std::string &video_color_images, const st
 
   if (!disable_depth) {
     // Read depth
-    snprintf(buffer, FILENAME_MAX, video_depth_images.c_str(), cpt);
-    std::string filename_depth = buffer;
+    std::string filename_depth = vpIoTools::formatString(video_depth_images, cpt);
 
     if (!vpIoTools::checkFilename(filename_depth)) {
       std::cerr << "Cannot read: " << filename_depth << std::endl;
@@ -71,8 +68,7 @@ bool read_data(unsigned int cpt, const std::string &video_color_images, const st
   }
 
   // Read ground truth
-  snprintf(buffer, FILENAME_MAX, video_ground_truth.c_str(), cpt);
-  std::string filename_pose = buffer;
+  std::string filename_pose = vpIoTools::formatString(video_ground_truth, cpt);
 
   cMo_ground_truth.load(filename_pose);
 
@@ -460,7 +456,7 @@ int main(int argc, const char **argv)
 #endif
 
   return EXIT_SUCCESS;
-  }
+}
 #else
 int main()
 {

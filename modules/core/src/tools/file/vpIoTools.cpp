@@ -1387,9 +1387,59 @@ std::string vpIoTools::toUpperCase(const std::string &input)
 }
 
 /*!
-  Returns the absolute path using realpath() on Unix systems or
-  GetFullPathName() on Windows systems. \return According to realpath()
-  manual, returns an absolute pathname that names the same file, whose
+ * Create a formated string as sprintf(). This function is inspired from
+ * https://en.cppreference.com/w/cpp/io/c/fprintf documentation.
+ *
+ * \param[in] name : String containing the value to insert.
+ * \param[in] val : Value to insert in the string.
+ * \return Formated string.
+ *
+ * Example:
+ * \code
+ * #include <visp3/core/vpIoTools.h>
+ *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
+ * int main()
+ * {
+ *   std::string str_1 = vpIoTools::formatString("/tmp/test-%d.txt", 1);
+ *   std::string str_2 = vpIoTools::formatString("/tmp/test-%04d.txt", 12);
+ *   std::string str_3 = vpIoTools::formatString("test-%05d.txt", 123);
+ *
+ *   std::cout << str_1 << std::endl;
+ *   std::cout << str_2 << std::endl;
+ *   std::cout << str_3 << std::endl;
+ * }
+ * \endcode
+ * Will produce the following:
+ * \code{.sh}
+ * /tmp/test-1.txt
+ * /tmp/test-0012.txt
+ * test-00123.txt
+ * \endcode
+ */
+std::string vpIoTools::formatString(const std::string &name, unsigned int val)
+{
+  const char *fmt = name.c_str();
+  int sz = std::snprintf(nullptr, 0, fmt, val);
+  sz += 1; // note +1 for null terminator
+  std::vector<char> buf(sz);
+  std::snprintf(buf.data(), sz, fmt, val);
+  std::string str(buf.begin(), buf.end());
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  str.pop_back(); // Only since cxx11
+#else
+  str.erase(str.end()-1, str.end());
+#endif
+  return str;
+}
+
+/*!
+  Returns the absolute path using realpath() on Unix systems or GetFullPathName() on Windows systems.
+
+  \return According to realpath() manual, returns an absolute pathname that names the same file, whose
   resolution does not involve '.', '..', or symbolic links for Unix systems.
   According to GetFullPathName() documentation, retrieves the full path of the
   specified file for Windows systems.
