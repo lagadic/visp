@@ -56,68 +56,68 @@ vpRBSilhouetteControlPoint::vpRBSilhouetteControlPoint()
   m_valid = true;
 }
 
-vpRBSilhouetteControlPoint::vpRBSilhouetteControlPoint(const vpRBSilhouetteControlPoint &meTracker)
+vpRBSilhouetteControlPoint::vpRBSilhouetteControlPoint(const vpRBSilhouetteControlPoint &other)
 {
   init();
-  *this = meTracker;
+  *this = other;
 }
 
-vpRBSilhouetteControlPoint &vpRBSilhouetteControlPoint::operator=(const vpRBSilhouetteControlPoint &meTracker)
+vpRBSilhouetteControlPoint &vpRBSilhouetteControlPoint::operator=(const vpRBSilhouetteControlPoint &other)
 {
-  m_me = meTracker.m_me;
-  m_site = meTracker.m_site;
-  m_numCandidates = meTracker.m_numCandidates;
-  m_cam = meTracker.m_cam;
-  icpoint = meTracker.icpoint;
-  cpoint = meTracker.cpoint;
-  cpointo = meTracker.cpointo;
-  m_normal = meTracker.m_normal;
-  m_normalO = meTracker.m_normalO;
-  xs = meTracker.xs;
-  ys = meTracker.ys;
-  nxs = meTracker.nxs;
-  nys = meTracker.nys;
-  Zs = meTracker.Zs;
-  m_isSilhouette = meTracker.m_isSilhouette;
-  rho = meTracker.rho;
-  theta = meTracker.theta;
-  thetaInit = meTracker.thetaInit;
-  m_meMaskSign = meTracker.m_meMaskSign;
-  m_lineFeature = meTracker.m_lineFeature;
-  m_line = meTracker.m_line;
-  m_valid = meTracker.m_valid;
+  m_me = other.m_me;
+  m_site = other.m_site;
+  m_numCandidates = other.m_numCandidates;
+  m_cam = other.m_cam;
+  icpoint = other.icpoint;
+  cpoint = other.cpoint;
+  cpointo = other.cpointo;
+  m_normal = other.m_normal;
+  m_normalO = other.m_normalO;
+  xs = other.xs;
+  ys = other.ys;
+  nxs = other.nxs;
+  nys = other.nys;
+  Zs = other.Zs;
+  m_isSilhouette = other.m_isSilhouette;
+  rho = other.rho;
+  theta = other.theta;
+  thetaInit = other.thetaInit;
+  m_meMaskSign = other.m_meMaskSign;
+  m_lineFeature = other.m_lineFeature;
+  m_line = other.m_line;
+  m_valid = other.m_valid;
   return *this;
 }
 
-vpRBSilhouetteControlPoint::vpRBSilhouetteControlPoint(const vpRBSilhouetteControlPoint &&meTracker)
+vpRBSilhouetteControlPoint::vpRBSilhouetteControlPoint(const vpRBSilhouetteControlPoint &&other)
 {
-  *this = meTracker;
+  *this = other;
 }
 
-vpRBSilhouetteControlPoint &vpRBSilhouetteControlPoint::operator=(const vpRBSilhouetteControlPoint &&meTracker)
+vpRBSilhouetteControlPoint &vpRBSilhouetteControlPoint::operator=(const vpRBSilhouetteControlPoint &&other)
 {
-  m_me = std::move(meTracker.m_me);
-  m_site = std::move(meTracker.m_site);
-  thetaInit = std::move(meTracker.thetaInit);
-  m_numCandidates = std::move(meTracker.m_numCandidates);
-  m_cam = std::move(meTracker.m_cam);
-  icpoint = std::move(meTracker.icpoint);
-  cpoint = std::move(meTracker.cpoint);
-  cpointo = std::move(meTracker.cpointo);
-  m_normal = std::move(meTracker.m_normal);
-  m_normalO = std::move(meTracker.m_normalO);
-  xs = std::move(meTracker.xs);
-  ys = std::move(meTracker.ys);
-  nxs = std::move(meTracker.nxs);
-  nys = std::move(meTracker.nys);
-  Zs = std::move(meTracker.Zs);
-  m_isSilhouette = std::move(meTracker.m_isSilhouette);
-  rho = std::move(meTracker.rho);
-  theta = std::move(meTracker.theta);
-  m_meMaskSign = std::move(meTracker.m_meMaskSign);
-  m_lineFeature = std::move(meTracker.m_lineFeature);
-  m_line = std::move(meTracker.m_line);
-  m_valid = std::move(meTracker.m_valid);
+  m_me = std::move(other.m_me);
+  m_site = std::move(other.m_site);
+  thetaInit = std::move(other.thetaInit);
+  m_numCandidates = std::move(other.m_numCandidates);
+  m_cam = std::move(other.m_cam);
+  icpoint = std::move(other.icpoint);
+  cpoint = std::move(other.cpoint);
+  cpointo = std::move(other.cpointo);
+  m_normal = std::move(other.m_normal);
+  m_normalO = std::move(other.m_normalO);
+  xs = std::move(other.xs);
+  ys = std::move(other.ys);
+  nxs = std::move(other.nxs);
+  nys = std::move(other.nys);
+  Zs = std::move(other.Zs);
+  m_isSilhouette = std::move(other.m_isSilhouette);
+  rho = std::move(other.rho);
+  theta = std::move(other.theta);
+  m_meMaskSign = std::move(other.m_meMaskSign);
+  m_lineFeature = std::move(other.m_lineFeature);
+  m_line = std::move(other.m_line);
+  m_valid = std::move(other.m_valid);
   return *this;
 }
 
@@ -223,11 +223,11 @@ vpRBSilhouetteControlPoint::buildPLine(const vpHomogeneousMatrix &oMc)
 
 void
 vpRBSilhouetteControlPoint::buildPoint(int n, int m, const double &Z, double orient, const vpColVector &normo,
-                                       const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &oMc, const vpCameraParameters &cam, const vpMe &me)
+                                       const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &oMc, const vpCameraParameters &cam, const vpMe &me, bool isSilhouette)
 {
   m_cam = &cam;
   m_me = &me;
-
+  m_isSilhouette = isSilhouette;
   vpRotationMatrix R;
   cMo.extract(R);
   theta = orient;
@@ -250,13 +250,14 @@ vpRBSilhouetteControlPoint::buildPoint(int n, int m, const double &Z, double ori
   nxs = cos(theta);
   nys = sin(theta);
   buildPLine(oMc);
-  m_valid = isLineDegenerate();
+  m_valid = !isLineDegenerate();
 }
 
 void
 vpRBSilhouetteControlPoint::buildSilhouettePoint(int n, int m, const double &Z, double orient, const vpColVector &normo,
                                               const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &oMc, const vpCameraParameters &cam)
 {
+  m_isSilhouette = true;
   m_cam = &cam;
   vpRotationMatrix R;
   cMo.extract(R);
@@ -364,20 +365,6 @@ void vpRBSilhouetteControlPoint::initControlPoint(const vpImage<unsigned char> &
   }
 }
 
-void vpRBSilhouetteControlPoint::detectSilhouette(const vpImage<float> &I)
-{
-  unsigned int k = 0;
-  int range = 4;
-  double c = cos(theta);
-  double s = sin(theta);
-  for (int n = -range; n <= range; n++) {
-    unsigned int ii = static_cast<unsigned int>(round(icpoint.get_i() + s * n));
-    unsigned int jj = static_cast<unsigned int>(round(icpoint.get_j() + c * n));
-    unsigned int isBg = static_cast<unsigned int>(I[ii][jj] == 0.f);
-    k += isBg;
-  }
-  m_isSilhouette = k > 2;
-}
 
 /*!
   Compute the interaction matrix and the error vector corresponding to the line.

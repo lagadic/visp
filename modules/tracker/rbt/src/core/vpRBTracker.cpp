@@ -532,41 +532,16 @@ std::vector<vpRBSilhouettePoint> vpRBTracker::extractSilhouettePoints(
 
     if (l > 1e-1) {
       const double Z = Idepth[n][m];
-      //bool noNeighbor = true;
-      // double nx = cos(theta);
-      // double ny = sin(theta);
-      // const double Zn = Idepth[static_cast<unsigned int>(round(n + ny * 1))][static_cast<unsigned int>(round(m + nx * 2))];
 #if defined(VISP_DEBUG_RB_TRACKER)
       if (fabs(theta) > M_PI + 1e-6) {
         throw vpException(vpException::badValue, "Theta expected to be in -Pi, Pi range but was not");
       }
 #endif
-      points.push_back(vpRBSilhouettePoint(n, m, norm, theta, Z));
-      // if (Zn > 0) {
-      //   theta = -theta;
-      // }
-      // Code to filter when two edges are too close and should not be used
-      // for (unsigned int normalOffset = 1; normalOffset <= 3; ++normalOffset) {
-      //   unsigned char offY = static_cast<unsigned char>(round(n + normalOffset * ny));
-      //   unsigned char offX = static_cast<unsigned char>(round(m + normalOffset * nx));
-      //   unsigned char negOffY = static_cast<unsigned char>(round(n - normalOffset * ny));
-      //   unsigned char negOffX = static_cast<unsigned char>(round(m - normalOffset * nx));
-      //   if (offY == n || offX == m || negOffY == n||negOffX == m) {
-      //     continue;
-      //   }
-
-      //   if (Ivalid(offY, offX) || Ivalid(negOffY, negOffX)) {
-      //     noNeighbor = false;
-      //     // std::cout << (unsigned int)(Ivalid(n + normalOffset * ny, m + normalOffset * nx)) << std::endl;
-      //     break;
-      //   }
-      // }
-      // if (noNeighbor) {
-      //   points.push_back(vpRBSilhouettePoint(n, m, norm, theta, Z));
-      // }
+      vpRBSilhouettePoint p(n, m, norm, theta, Z);
+      p.detectSilhouette(Idepth);
+      points.push_back(p);
     }
   }
-
   return points;
 }
 

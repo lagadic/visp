@@ -158,16 +158,20 @@ void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &fr
     // std::cout << sp.j << ", " << sp.i << std::endl;
     int ii = sp.i, jj = sp.j;
 
+    if (!sp.isSilhouette) {
+      continue;
+    }
+
     if (ii <= m_ccdParameters.h || jj <= m_ccdParameters.h ||
       static_cast<unsigned int>(ii) >= frame.I.getHeight() - m_ccdParameters.h ||
       static_cast<unsigned int>(jj) >= frame.I.getWidth() - m_ccdParameters.h) {
       continue;
     }
     vpRBSilhouetteControlPoint pccd;
+
     pccd.buildSilhouettePoint(ii, jj, sp.Z, sp.orientation, sp.normal, cMo, oMc, frame.cam);
 
-    pccd.detectSilhouette(frame.renders.depth);
-    if (!pccd.isSilhouette() || std::isnan(sp.orientation) || !pccd.isValid()) {
+    if (std::isnan(sp.orientation) || !pccd.isValid()) {
       continue;
     }
 

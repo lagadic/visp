@@ -22,10 +22,19 @@ vpRBVisualOdometryUtils::computeIndicesObjectAndEnvironment(
   const bool useMask = frame.hasMask() && minMaskConfidence > 0.0;
   const double thresholdObject = vpMath::sqr(minEdgeDistObject), thresholdEnv = vpMath::sqr(minEdgeDistEnv);
 
+  std::vector<std::pair<double, double>> actualSilhouettePoints;
+  actualSilhouettePoints.reserve(frame.silhouettePoints.size());
+  for (const vpRBSilhouettePoint &p: frame.silhouettePoints) {
+    if (p.isSilhouette) {
+      actualSilhouettePoints.push_back(std::make_pair(
+        static_cast<double>(p.i), static_cast<double>(p.j)
+      ));
+    }
+  }
 
-  const auto testDistanceEdge = [](double u, double v, const std::vector<vpRBSilhouettePoint> &silhouettePoints, double threshold) -> bool {
-    for (const vpRBSilhouettePoint &p: silhouettePoints) {
-      double dist2 = vpMath::sqr(static_cast<double>(p.i) - v) + vpMath::sqr(static_cast<double>(p.j) - u);
+  const auto testDistanceEdge = [&actualSilhouettePoints](double u, double v, double threshold) -> bool {
+    for (const std::pair<double, double> &p: actualSilhouettePoints) {
+      double dist2 = vpMath::sqr(p.first - v) + vpMath::sqr(p.second - u);
       if (dist2 < threshold) {
         return false;
       }
@@ -43,14 +52,14 @@ vpRBVisualOdometryUtils::computeIndicesObjectAndEnvironment(
 
     if (Z > 0.0) { // Potential object candidate
       if (!useMask || frame.mask[vi][ui] > minMaskConfidence) {
-        bool notTooCloseToEdge = testDistanceEdge(u, v, frame.silhouettePoints, thresholdObject);
+        bool notTooCloseToEdge = testDistanceEdge(u, v, thresholdObject);
         if (notTooCloseToEdge) {
           objIndices.push_back(i);
         }
       }
     }
     else { // Env candidate
-      bool notTooCloseToEdge = testDistanceEdge(u, v, frame.silhouettePoints, thresholdEnv);
+      bool notTooCloseToEdge = testDistanceEdge(u, v, thresholdEnv);
       if (notTooCloseToEdge) {
         envIndices.push_back(i);
       }

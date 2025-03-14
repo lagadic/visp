@@ -43,7 +43,8 @@ void vpRBSilhouetteMeTracker::extractFeatures(const vpRBFeatureTrackerInput &fra
   m_controlPoints.reserve(frame.silhouettePoints.size());
   const vpHomogeneousMatrix &cMo = frame.renders.cMo;
   const vpHomogeneousMatrix oMc = cMo.inverse();
-  vpColVector oC = oMc.getRotationMatrix() * vpColVector({ 0.0, 0.0, -1.0 });
+  const vpColVector oC = oMc.getRotationMatrix() * vpColVector({ 0.0, 0.0, -1.0 });
+  const vpImage<unsigned char> &initImage = previousFrame.I.getSize() == frame.I.getSize() ? previousFrame.I : frame.I;
 
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel
@@ -53,7 +54,6 @@ void vpRBSilhouetteMeTracker::extractFeatures(const vpRBFeatureTrackerInput &fra
 #ifdef VISP_HAVE_OPENMP
 #pragma omp for nowait
 #endif
-
     for (const vpRBSilhouettePoint &sp: frame.silhouettePoints) {
       // float angle = vpMath::deg(acos(sp.normal * oC));
       // if (angle > 89.0) {
@@ -69,24 +69,24 @@ void vpRBSilhouetteMeTracker::extractFeatures(const vpRBFeatureTrackerInput &fra
       }
 #endif
       vpRBSilhouetteControlPoint p;
-      p.buildPoint((int)sp.i, (int)sp.j, sp.Z, sp.orientation, sp.normal, cMo, oMc, frame.cam, m_me);
+      p.buildPoint((int)sp.i, (int)sp.j, sp.Z, sp.orientation, sp.normal, cMo, oMc, frame.cam, m_me, sp.isSilhouette);
       if (p.tooCloseToBorder(frame.I.getHeight(), frame.I.getWidth(), m_me.getRange())) {
         continue;
       }
       if (m_useMask && frame.hasMask()) {
-        double maxMaskGradient = p.getMaxMaskGradientAlongLine(frame.mask, m_me.getRange());
+        double maxMaskGradient;
+        if (p.isSilhouette()) { // If it is a silhouette point, we check that the mask actually considers it an object border
+          maxMaskGradient = p.getMaxMaskGradientAlongLine(frame.mask, m_me.getRange());
+        }
+        else { // Otherwise, we just check that the site is considered as belonging to the object
+          maxMaskGradient = frame.mask[sp.i][sp.j];
+        }
         if (maxMaskGradient < m_minMaskConfidence) {
           continue;
         }
       }
 
-      if (previousFrame.I.getSize() == frame.I.getSize()) {
-        p.initControlPoint(previousFrame.I, 0);
-      }
-      else {
-        p.initControlPoint(frame.I, 0);
-      }
-
+      p.initControlPoint(initImage, 0);
       p.setNumCandidates(m_numCandidates);
       localPoints.push_back(std::move(p));
     }

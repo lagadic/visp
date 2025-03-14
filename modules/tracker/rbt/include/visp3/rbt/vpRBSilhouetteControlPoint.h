@@ -119,8 +119,7 @@ public:
   bool isSilhouette() const { return m_isSilhouette; }
 
   void initControlPoint(const vpImage<unsigned char> &I, double cvlt);
-  void detectSilhouette(const vpImage<float> &I);
-  void buildPoint(int n, int m, const double &Z, double orient, const vpColVector &normo, const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &oMc, const vpCameraParameters &cam, const vpMe &me);
+  void buildPoint(int n, int m, const double &Z, double orient, const vpColVector &normo, const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &oMc, const vpCameraParameters &cam, const vpMe &me, bool isSilhouette);
   void buildSilhouettePoint(int n, int m, const double &Z, double orient, const vpColVector &normo, const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &oMc, const vpCameraParameters &cam);
 
   void update(const vpHomogeneousMatrix &_cMo);
