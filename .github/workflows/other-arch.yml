@@ -85,4 +85,5 @@ jobs:
           echo "NB_PROC_TO_USE = ${NB_PROC_TO_USE}"
           make -j${NB_PROC_TO_USE}
 
-          ctest -j${NB_PROC_TO_USE} --output-on-failure
+          # increase default 1500 timeout on QEMU based CI tests
+          ctest -j${NB_PROC_TO_USE} --output-on-failure --timeout 2000
