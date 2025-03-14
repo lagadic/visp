@@ -51,7 +51,7 @@ BEGIN_VISP_NAMESPACE
 
 vpRBTracker::vpRBTracker() :
   m_firstIteration(true), m_trackers(0), m_lambda(1.0), m_vvsIterations(10), m_muInit(0.0), m_muIterFactor(0.5), m_scaleInvariantOptim(false),
-  m_renderer(m_rendererSettings), m_imageHeight(480), m_imageWidth(640), m_verbose(false), m_convergenceMetric(1024, 41), m_convergedMetricThreshold(0.0)
+  m_renderer(m_rendererSettings), m_imageHeight(480), m_imageWidth(640), m_verbose(false), m_convergenceMetric(1024, 41), m_convergedMetricThreshold(0.0), m_displaySilhouette(false)
 {
   m_rendererSettings.setClippingDistance(0.01, 1.0);
   m_renderer.setRenderParameters(m_rendererSettings);
@@ -529,8 +529,8 @@ std::vector<vpRBSilhouettePoint> vpRBTracker::extractSilhouettePoints(
     norm[1] = Inorm[n][m].G;
     norm[2] = Inorm[n][m].B;
     const double l = std::sqrt(norm[0] * norm[0] + norm[1] * norm[1] + norm[2] * norm[2]);
-
     if (l > 1e-1) {
+      norm.normalize();
       const double Z = Idepth[n][m];
 #if defined(VISP_DEBUG_RB_TRACKER)
       if (fabs(theta) > M_PI + 1e-6) {
@@ -560,13 +560,13 @@ void vpRBTracker::displayMask(vpImage<unsigned char> &Imask) const
   }
 }
 
-void vpRBTracker::display(const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth, const bool &displaySilhouette)
+void vpRBTracker::display(const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth)
 {
   if (m_currentFrame.renders.normals.getSize() == 0) {
     return;
   }
 
-  if (displaySilhouette) {
+  if (m_displaySilhouette && m_currentFrame.silhouettePoints.size() > 0) {
     const vpImage<unsigned char> &Isilhouette = m_currentFrame.renders.isSilhouette;
     const vpRect bb = m_renderer.getBoundingBox();
     for (unsigned int r = std::max(bb.getTop(), 0.); (r < bb.getBottom()) &&(r < IRGB.getRows()); ++r) {
@@ -617,6 +617,8 @@ void vpRBTracker::loadConfiguration(const nlohmann::json &j)
   m_firstIteration = true;
   const nlohmann::json verboseSettings = j.at("verbose");
   m_verbose = verboseSettings.value("enabled", m_verbose);
+
+  m_displaySilhouette = j.value("displaySilhouette", m_displaySilhouette);
 
   const nlohmann::json cameraSettings = j.at("camera");
   m_cam = cameraSettings.at("intrinsics");

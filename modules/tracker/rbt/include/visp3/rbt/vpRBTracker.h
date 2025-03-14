@@ -211,7 +211,7 @@ public:
    * @{
    */
   void displayMask(vpImage<unsigned char> &Imask) const;
-  void display(const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth, const bool &displaySilhouette = false);
+  void display(const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth);
   /**
    * @}
    */
@@ -275,6 +275,8 @@ protected:
 
   vpRBADDSMetric m_convergenceMetric;
   double m_convergedMetricThreshold;
+
+  bool m_displaySilhouette; //! Whether a call to the display function should draw a silhouette outline
 
 };
 
