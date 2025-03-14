@@ -109,7 +109,7 @@ BEGIN_VISP_NAMESPACE
 
     for(int i=0; i< nframes; ++i) {
       g.acquire(I);
-      std::string filename = vpIoTools::toString("image%04d.png", i);
+      std::string filename = vpIoTools::formatString("image%04d.png", i);
       vpImageIo::write(I, filename);
     }
   #endif

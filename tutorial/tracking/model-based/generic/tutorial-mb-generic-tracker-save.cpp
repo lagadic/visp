@@ -169,7 +169,7 @@ int main(int argc, char **argv)
     tracker.getModelForDisplay(mapOfModels, mapOfW, mapOfH, mapOfcMos, mapOfCams);
 
     std::vector<std::vector<double>> model = mapOfModels[camera_name];
-    const std::string model_iter = vpIoTools::toString("model_%06zu", static_cast<int>(iter));
+    const std::string model_iter = vpIoTools::formatString("model_%06zu", static_cast<int>(iter));
     const std::string model_iter_sz = model_iter + "_sz";
 
     const size_t model_size = model.size();

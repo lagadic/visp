@@ -72,7 +72,7 @@ bool read_data(int cpt, vpImage<unsigned char> &I)
 #endif
   const std::string env_ipath = vpIoTools::getViSPImagesDataPath();
   const std::string ipath = vpIoTools::createFilePath(env_ipath, "mbt/cube/image%04d." + ext);
-  std::string image_filename = vpIoTools::toString(ipath, cpt);
+  std::string image_filename = vpIoTools::formatString(ipath, cpt);
 
   if (!vpIoTools::checkFilename(image_filename)) {
     return false;

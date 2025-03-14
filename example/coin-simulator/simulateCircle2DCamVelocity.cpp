@@ -273,10 +273,10 @@ static void *mainLoop(void *_simu)
 
       if (SAVE == 1) {
         std::string filename;
-        filename = vpIoTools::toString("/tmp/image.%04d.external.png", iter);
+        filename = vpIoTools::formatString("/tmp/image.%04d.external.png", iter);
         std::cout << "Save " << filename << std::endl;
         simu->write(filename);
-        filename = vpIoTools::toString("/tmp/image.%04u.internal.png", iter);
+        filename = vpIoTools::formatString("/tmp/image.%04u.internal.png", iter);
         std::cout << "Save " << filename << std::endl;
         simu->write(filename);
       }

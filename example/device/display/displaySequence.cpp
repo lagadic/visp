@@ -316,10 +316,10 @@ int main(int argc, const char **argv)
       dirname = vpIoTools::createFilePath(ipath, "cube");
 
       // Build the name of the image file
-      filename = vpIoTools::createFilePath(dirname, vpIoTools::toString(imagename, iter));
+      filename = vpIoTools::createFilePath(dirname, vpIoTools::formatString(imagename, iter));
     }
     else {
-      filename = vpIoTools::toString(opt_ppath, iter);
+      filename = vpIoTools::formatString(opt_ppath, iter);
     }
     // Read image named "filename" and put the bitmap in I
     try {
@@ -360,10 +360,10 @@ int main(int argc, const char **argv)
 
       // set the new image name
       if (opt_ppath.empty()) {
-        filename = vpIoTools::createFilePath(dirname, vpIoTools::toString(imagename, iter));
+        filename = vpIoTools::createFilePath(dirname, vpIoTools::formatString(imagename, iter));
       }
       else {
-        filename = vpIoTools::toString(opt_ppath, iter);
+        filename = vpIoTools::formatString(opt_ppath, iter);
       }
 
       std::cout << "read : " << filename << std::endl;

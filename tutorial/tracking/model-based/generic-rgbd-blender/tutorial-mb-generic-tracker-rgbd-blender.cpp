@@ -24,7 +24,7 @@ bool read_data(unsigned int cpt, const std::string &video_color_images, const st
                vpHomogeneousMatrix &cMo_ground_truth)
 {
   // Read color
-  std::string filename_color = vpIoTools::toString(video_color_images, cpt);
+  std::string filename_color = vpIoTools::formatString(video_color_images, cpt);
 
   if (!vpIoTools::checkFilename(filename_color)) {
     std::cerr << "Cannot read: " << filename_color << std::endl;
@@ -34,7 +34,7 @@ bool read_data(unsigned int cpt, const std::string &video_color_images, const st
 
   if (!disable_depth) {
     // Read depth
-    std::string filename_depth = vpIoTools::toString(video_depth_images, cpt);
+    std::string filename_depth = vpIoTools::formatString(video_depth_images, cpt);
 
     if (!vpIoTools::checkFilename(filename_depth)) {
       std::cerr << "Cannot read: " << filename_depth << std::endl;
@@ -68,7 +68,7 @@ bool read_data(unsigned int cpt, const std::string &video_color_images, const st
   }
 
   // Read ground truth
-  std::string filename_pose = vpIoTools::toString(video_ground_truth, cpt);
+  std::string filename_pose = vpIoTools::formatString(video_ground_truth, cpt);
 
   cMo_ground_truth.load(filename_pose);
 

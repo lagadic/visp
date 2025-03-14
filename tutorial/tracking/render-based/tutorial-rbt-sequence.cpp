@@ -170,7 +170,7 @@ int main(int argc, const char **argv)
       readerRGB.acquire(Icol);
       vpImageConvert::convert(Icol, Id);
       if (!sequenceArgs.depthFolder.empty()) {
-        std::string depthName = vpIoTools::toString(sequenceArgs.depthFolder + "/%06d.npy", im);
+        std::string depthName = vpIoTools::formatString(sequenceArgs.depthFolder + "/%06d.npy", im);
         visp::cnpy::NpyArray npz_data = visp::cnpy::npy_load(depthName);
         vpImage<uint16_t> dataArray(npz_data.data<uint16_t>(), npz_data.shape[0], npz_data.shape[1], false);
         float scale = 9.999999747378752e-05;

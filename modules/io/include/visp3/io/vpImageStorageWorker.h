@@ -78,7 +78,7 @@ public:
         m_queue.pop(I, data);
 
         // Save image
-        std::string filename = vpIoTools::toString(m_seqname, m_cpt);
+        std::string filename = vpIoTools::formatString(m_seqname, m_cpt);
 
         if (m_record_mode > 0) { // Single image
           std::cout << "Save image: " << filename << std::endl;

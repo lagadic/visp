@@ -55,7 +55,7 @@ std::string toString(const std::string &input, unsigned int val)
   return std::string(input_);
 }
 
-SCENARIO("Test vpIoTools::toString()", "[toString]")
+SCENARIO("Test vpIoTools::formatString()", "[toString]")
 {
   GIVEN("int values")
   {
@@ -63,12 +63,12 @@ SCENARIO("Test vpIoTools::toString()", "[toString]")
     THEN("1 digit")
     {
       unsigned int val = 1;
-      CHECK(vpIoTools::toString(input, val) == toString(input, val));
+      CHECK(vpIoTools::formatString(input, val) == toString(input, val));
     }
     THEN("2 digits")
     {
       unsigned int val = 23;
-      CHECK(vpIoTools::toString(input, val) == toString(input, val));
+      CHECK(vpIoTools::formatString(input, val) == toString(input, val));
     }
   }
 };

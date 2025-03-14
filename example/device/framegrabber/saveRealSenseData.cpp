@@ -448,13 +448,13 @@ public:
           std::string current_time = vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
 
           if (m_save_color && ptr_colorImg) {
-            std::string filename_color = vpIoTools::toString(m_directory + "/color_image_" + m_save_pattern + image_filename_ext, m_cpt);
+            std::string filename_color = vpIoTools::formatString(m_directory + "/color_image_" + m_save_pattern + image_filename_ext, m_cpt);
             vpImageIo::write(*ptr_colorImg, filename_color);
           }
 
           if (m_save_depth && ptr_depthImg) {
             if (m_save_force_binary_format) {
-              std::string filename_depth = vpIoTools::toString("/depth_image_" + m_save_pattern + ".bin", m_cpt);
+              std::string filename_depth = vpIoTools::formatString("/depth_image_" + m_save_pattern + ".bin", m_cpt);
 
               std::ofstream file_depth(filename_depth.c_str(), std::ios::out | std::ios::binary);
               if (file_depth.is_open()) {
@@ -473,7 +473,7 @@ public:
             }
 #if defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
             else {
-              std::string filename_depth = vpIoTools::toString("/depth_image_" + m_save_pattern + ".npz", m_cpt);
+              std::string filename_depth = vpIoTools::formatString("/depth_image_" + m_save_pattern + ".npz", m_cpt);
 
               // Write Npz headers
               std::vector<char> vec_filename(filename_depth.begin(), filename_depth.end());
@@ -506,7 +506,7 @@ public:
 
           if (m_save_pointcloud && ptr_pointCloud) {
             std::string pcl_extension = m_save_force_binary_format ? ".bin" : (m_save_pcl_npz_format ? ".npz" : ".pcd");
-            std::string filename_point_cloud = vpIoTools::toString("/point_cloud_" + m_save_pattern + pcl_extension, m_cpt);
+            std::string filename_point_cloud = vpIoTools::formatString("/point_cloud_" + m_save_pattern + pcl_extension, m_cpt);
 
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
             uint32_t width = ptr_pointCloud->width;
@@ -612,7 +612,7 @@ public:
           }
 
           if (m_save_infrared && ptr_infraredImg) {
-            std::string filename_infrared = vpIoTools::toString("/infrared_image_" + m_save_pattern + image_filename_ext, m_cpt);
+            std::string filename_infrared = vpIoTools::formatString("/infrared_image_" + m_save_pattern + image_filename_ext, m_cpt);
 
             vpImageIo::write(*ptr_infraredImg, filename_infrared);
           }

@@ -73,9 +73,9 @@ bool read_data(const std::string &input_directory, int cpt, const vpCameraParame
   // We suppose that the user will download a recent dataset
   std::string ext("png");
 #endif
-  std::string image_filename = vpIoTools::toString(input_directory + "/Images/Image_%04d." + ext, cpt);
-  std::string depth_filename = vpIoTools::toString(input_directory + "/Depth/Depth_%04d.bin", cpt);
-  std::string pose_filename = vpIoTools::toString(input_directory + "/CameraPose/Camera_%03d.txt", cpt);
+  std::string image_filename = vpIoTools::formatString(input_directory + "/Images/Image_%04d." + ext, cpt);
+  std::string depth_filename = vpIoTools::formatString(input_directory + "/Depth/Depth_%04d.bin", cpt);
+  std::string pose_filename = vpIoTools::formatString(input_directory + "/CameraPose/Camera_%03d.txt", cpt);
 
   if (!vpIoTools::checkFilename(image_filename) || !vpIoTools::checkFilename(depth_filename) ||
       !vpIoTools::checkFilename(pose_filename))

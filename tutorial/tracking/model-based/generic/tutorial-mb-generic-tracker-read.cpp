@@ -130,7 +130,7 @@ int main(int argc, char *argv[])
     times.push_back(end-start);
     img_data_offset += vec_img_data_size_ptr[iter];
 
-    const std::string str_model_iter_sz = vpIoTools::toString("model_%06d", iter) + "_sz";
+    const std::string str_model_iter_sz = vpIoTools::formatString("model_%06d", iter) + "_sz";
     visp::cnpy::NpyArray arr_model_iter_sz = npz_data[str_model_iter_sz];
     size_t model_sz = *arr_model_iter_sz.data<size_t>();
 

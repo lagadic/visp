@@ -199,7 +199,7 @@ void vpVideoWriter::saveFrame(vpImage<vpRGBa> &I)
 
   if (m_formatType == FORMAT_PGM || m_formatType == FORMAT_PPM || m_formatType == FORMAT_JPEG ||
       m_formatType == FORMAT_PNG) {
-    m_frameName = vpIoTools::toString(m_videoName, m_frameCount);
+    m_frameName = vpIoTools::formatString(m_videoName, m_frameCount);
     vpImageIo::write(I, m_frameName);
   }
   else {
@@ -230,7 +230,7 @@ void vpVideoWriter::saveFrame(vpImage<unsigned char> &I)
 
   if (m_formatType == FORMAT_PGM || m_formatType == FORMAT_PPM || m_formatType == FORMAT_JPEG ||
       m_formatType == FORMAT_PNG) {
-    m_frameName = vpIoTools::toString(m_videoName, m_frameCount);
+    m_frameName = vpIoTools::formatString(m_videoName, m_frameCount);
     vpImageIo::write(I, m_frameName);
   }
   else {

@@ -262,7 +262,7 @@ int main(int argc, const char **argv)
       if (found) {
         cMo = cMo_vec[0];
         vpPoseVector pose_vec(cMo);
-        std::string  filename = vpIoTools::toString(opt_output_pose_files, reader.getFrameIndex());
+        std::string  filename = vpIoTools::formatString(opt_output_pose_files, reader.getFrameIndex());
         pose_vec.saveYAML(filename, pose_vec);
       }
 

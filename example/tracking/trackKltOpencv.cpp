@@ -311,11 +311,11 @@ int main(int argc, const char **argv)
       dirname = vpIoTools::createFilePath(ipath, "mire-2");
 
       // Build the name of the image file
-      std::string name = vpIoTools::toString("image.%04d." + ext, iter);
+      std::string name = vpIoTools::formatString("image.%04d." + ext, iter);
       filename = vpIoTools::createFilePath(dirname, name);
     }
     else {
-      filename = vpIoTools::toString(opt_ppath, iter);
+      filename = vpIoTools::formatString(opt_ppath, iter);
     }
 
     // Read the image named "filename", and put the bitmap into the image structure I.
@@ -393,11 +393,11 @@ int main(int argc, const char **argv)
     while ((iter < opt_last) && (!quit)) {
       // set the new image name
       if (opt_ppath.empty()) {
-        std::string name = vpIoTools::toString("image.%04d." + ext, iter);
+        std::string name = vpIoTools::formatString("image.%04d." + ext, iter);
         filename = vpIoTools::createFilePath(dirname, name);
       }
       else {
-        filename = vpIoTools::toString(opt_ppath, iter);
+        filename = vpIoTools::formatString(opt_ppath, iter);
       }
       // read the image
       vpImageIo::read(vpI, filename);

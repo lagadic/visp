@@ -330,11 +330,11 @@ int main(int argc, const char **argv)
       dirname = vpIoTools::createFilePath(ipath, "cube");
 
       // Build the name of the image file
-      std::string name = vpIoTools::toString("image.%04d." + ext, iter);
+      std::string name = vpIoTools::formatString("image.%04d." + ext, iter);
       filename = vpIoTools::createFilePath(dirname, name);
     }
     else {
-      filename = vpIoTools::toString(opt_ppath, iter);
+      filename = vpIoTools::formatString(opt_ppath, iter);
     }
 
     // define the vpDot structure, here 4 dots will tracked
@@ -544,11 +544,11 @@ int main(int argc, const char **argv)
     while (iter < opt_last) {
       // set the new image name
       if (opt_ppath.empty()) {
-        std::string name = vpIoTools::toString("image.%04d." + ext, iter);
+        std::string name = vpIoTools::formatString("image.%04d." + ext, iter);
         filename = vpIoTools::createFilePath(dirname, name);
       }
       else {
-        filename = vpIoTools::toString(opt_ppath, iter);
+        filename = vpIoTools::formatString(opt_ppath, iter);
       }
 
       // read the image

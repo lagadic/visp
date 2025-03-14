@@ -516,6 +516,7 @@ public:
   static bool checkFifo(const std::string &filename);
   static bool checkFilename(const std::string &filename);
   static bool copy(const std::string &src, const std::string &dst);
+  static std::string formatString(const std::string &name, unsigned int val);
 
   static void makeDirectory(const std::string &dirname);
   static void makeFifo(const std::string &dirname);
@@ -534,7 +535,6 @@ public:
   static std::string toUpperCase(const std::string &input);
   static std::string toLowerCase(const std::string &input);
 
-  static std::string toString(const std::string &name, unsigned int val);
   static std::string getAbsolutePathname(const std::string &pathname);
   static std::string getFileExtension(const std::string &pathname, bool checkFile = false);
   static long getIndex(const std::string &filename, const std::string &format);

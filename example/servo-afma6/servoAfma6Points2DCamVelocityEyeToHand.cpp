@@ -304,7 +304,7 @@ int main()
       if ((SAVE == 1) && (iter % 3 == 0)) {
         vpImage<vpRGBa> Ic;
         vpDisplay::getImage(I, Ic);
-        std::string filename = vpIoTools::toString(logdirname + "/image.%04d.png", it++);
+        std::string filename = vpIoTools::formatString(logdirname + "/image.%04d.png", it++);
         vpImageIo::write(Ic, filename);
       }
 

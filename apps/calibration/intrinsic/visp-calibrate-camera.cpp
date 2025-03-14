@@ -268,7 +268,7 @@ int main(int argc, const char *argv[])
     do {
       reader.acquire(I);
       long frame_index = reader.getFrameIndex();
-      std::string filename = vpIoTools::toString(s.input, frame_index);
+      std::string filename = vpIoTools::formatString(s.input, frame_index);
       std::string frame_name = vpIoTools::getName(filename);
       vpDisplay::display(I);
       vpDisplay::flush(I);

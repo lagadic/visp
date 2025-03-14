@@ -1404,9 +1404,9 @@ std::string vpIoTools::toUpperCase(const std::string &input)
  *
  * int main()
  * {
- *   std::string str_1 = vpIoTools::toString("/tmp/test-%d.txt", 1);
- *   std::string str_2 = vpIoTools::toString("/tmp/test-%04d.txt", 12);
- *   std::string str_3 = vpIoTools::toString("test-%05d.txt", 123);
+ *   std::string str_1 = vpIoTools::formatString("/tmp/test-%d.txt", 1);
+ *   std::string str_2 = vpIoTools::formatString("/tmp/test-%04d.txt", 12);
+ *   std::string str_3 = vpIoTools::formatString("test-%05d.txt", 123);
  *
  *   std::cout << str_1 << std::endl;
  *   std::cout << str_2 << std::endl;
@@ -1420,7 +1420,7 @@ std::string vpIoTools::toUpperCase(const std::string &input)
  * test-00123.txt
  * \endcode
  */
-std::string vpIoTools::toString(const std::string &name, unsigned int val)
+std::string vpIoTools::formatString(const std::string &name, unsigned int val)
 {
   const char *fmt = name.c_str();
   int sz = std::snprintf(nullptr, 0, fmt, val);

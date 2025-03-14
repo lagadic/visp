@@ -58,7 +58,7 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<vpR
 //! [Read data function]
 {
   // Read color
-  std::string filename_color = vpIoTools::toString(input_directory + "/color_image_%04d.jpg", cpt);
+  std::string filename_color = vpIoTools::formatString(input_directory + "/color_image_%04d.jpg", cpt);
 
   if (!vpIoTools::checkFilename(filename_color)) {
     std::cerr << "Cannot read: " << filename_color << std::endl;
@@ -67,7 +67,7 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<vpR
   vpImageIo::read(I_color, filename_color);
 
   // Read raw depth
-  std::string filename_depth = vpIoTools::toString(input_directory + "/depth_image_%04d.jpg", cpt);
+  std::string filename_depth = vpIoTools::formatString(input_directory + "/depth_image_%04d.jpg", cpt);
 
   std::ifstream file_depth(filename_depth.c_str(), std::ios::in | std::ios::binary);
   if (!file_depth.is_open()) {

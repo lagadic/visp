@@ -206,10 +206,10 @@ bool readData(int cpt, const std::string &input_directory, const std::string &pa
 {
   std::string image_filename_ext = read_jpeg ? ".jpg" : ".png";
   std::string depth_filename_ext = force_binary_format ? ".bin" : ".npz";
-  std::string filename_color = vpIoTools::toString(input_directory + "/color_image_" + pattern + image_filename_ext, cpt);
-  std::string filename_depth = vpIoTools::toString(input_directory + "/depth_image_" + pattern + depth_filename_ext, cpt);
+  std::string filename_color = vpIoTools::formatString(input_directory + "/color_image_" + pattern + image_filename_ext, cpt);
+  std::string filename_depth = vpIoTools::formatString(input_directory + "/depth_image_" + pattern + depth_filename_ext, cpt);
   std::string pcl_filename_ext = (force_binary_format ? std::string(".bin") : (read_npz ? std::string(".npz") : std::string(".pcd")));
-  std::string filename_pointcloud = vpIoTools::toString(input_directory + "/point_cloud_" + pattern + pcl_filename_ext, cpt);;
+  std::string filename_pointcloud = vpIoTools::formatString(input_directory + "/point_cloud_" + pattern + pcl_filename_ext, cpt);;
 
   if (!vpIoTools::checkFilename(filename_color) && !vpIoTools::checkFilename(filename_depth) &&
       !vpIoTools::checkFilename(filename_pointcloud)) {
