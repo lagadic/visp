@@ -146,7 +146,7 @@ int main(int argc, const char **argv)
     if (std::string(argv[i]) == "--input" && i + 1 < argc) {
       opt_input_filename = std::string(argv[++i]);
     }
-    if (std::string(argv[i]) == "--tag-size" && i + 1 < argc) {
+    else if (std::string(argv[i]) == "--tag-size" && i + 1 < argc) {
       opt_tag_size = atof(argv[++i]);
     }
     else if (std::string(argv[i]) == "--tag-family" && i + 1 < argc) {
@@ -221,9 +221,9 @@ int main(int argc, const char **argv)
     vpImageConvert::convert(I_color, I);
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-    display = vpDisplayFactory::createDisplay(I);
+    display = vpDisplayFactory::createDisplay(I, -1, -1, "AprilTag detection (for loop display)");
 #else
-    display = vpDisplayFactory::allocateDisplay(I);
+    display = vpDisplayFactory::allocateDisplay(I, -1, -1, "AprilTag detection (for loop display)");
 #endif
 
     //! [Create AprilTag detector]
@@ -291,26 +291,23 @@ int main(int argc, const char **argv)
     }
     //! [Display camera pose for each tag]
 
-    vpDisplay::displayText(I, 20, 20, "Click to quit.", vpColor::red);
+    vpDisplay::displayText(I, 20, 20, "Click.", vpColor::red);
     vpDisplay::flush(I);
     vpDisplay::getClick(I);
     vpDisplay::close(I);
 
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-    display2 = vpDisplayFactory::createDisplay(I_color, 50, 50);
+    display2 = vpDisplayFactory::createDisplay(I_color, 50, 50, "AprilTag detection (class display)");
 #else
-    display2 = vpDisplayFactory::allocateDisplay(I_color, 50, 50);
+    display2 = vpDisplayFactory::allocateDisplay(I_color, 50, 50, "AprilTag detection (class display)");
 #endif
     // To test the displays on a vpRGBa image
     vpDisplay::display(I_color);
 
-    // Display frames and tags but remove the display of the last element
+    // Display frames and tags
     std::vector<std::vector<vpImagePoint> > tagsCorners = detector.getTagsCorners();
-    tagsCorners.pop_back();
     detector.displayTags(I_color, tagsCorners, vpColor::none, 3);
-
-    cMo_vec.pop_back();
     detector.displayFrames(I_color, cMo_vec, cam, opt_tag_size / 2, vpColor::none, 3);
 
     vpDisplay::displayText(I_color, 20, 20, "Click to quit.", vpColor::red);
