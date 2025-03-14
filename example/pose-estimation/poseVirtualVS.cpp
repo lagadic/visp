@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +33,8 @@
  *   Display image using either the X11 or GTK or GDI display
  *   track 4 dots (vpDots) in the image
  *   compute the pose
- *
-*****************************************************************************/
+ */
+
 /*!
   \file poseVirtualVS.cpp
 
@@ -67,6 +66,7 @@
 
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImagePoint.h>
+#include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpImageIo.h>
 
 #include <visp3/gui/vpDisplayFactory.h>
@@ -323,8 +323,6 @@ int main(int argc, const char **argv)
     vpImage<unsigned char> I;
 
     unsigned iter = opt_first;
-    std::ostringstream s;
-    char cfilename[FILENAME_MAX];
 
     if (opt_ppath.empty()) {
 
@@ -332,21 +330,17 @@ int main(int argc, const char **argv)
       dirname = vpIoTools::createFilePath(ipath, "cube");
 
       // Build the name of the image file
-
-      s.setf(std::ios::right, std::ios::adjustfield);
-      s << "image." << std::setw(4) << std::setfill('0') << iter << "." << ext;
-      filename = vpIoTools::createFilePath(dirname, s.str());
+      std::string name = vpIoTools::toString("image.%04d." + ext, iter);
+      filename = vpIoTools::createFilePath(dirname, name);
     }
     else {
-
-      snprintf(cfilename, FILENAME_MAX, opt_ppath.c_str(), iter);
-      filename = cfilename;
+      filename = vpIoTools::toString(opt_ppath, iter);
     }
 
     // define the vpDot structure, here 4 dots will tracked
     vpDot d[4];
 
-    for (i = 0; i < 4; i++) {
+    for (i = 0; i < 4; ++i) {
       // by using setGraphics, we request to see the all the pixel of the dot
       // in green on the screen.
       // It uses the overlay image plane.
@@ -379,9 +373,9 @@ int main(int argc, const char **argv)
       return EXIT_FAILURE;
     }
 
-// We open a window using either of the window manager
-// it will be located in 100,100 and titled "tracking using vpDot"
-// its size is automatically defined by the image (I) size
+    // We open a window using either of the window manager
+    // it will be located in 100,100 and titled "tracking using vpDot"
+    // its size is automatically defined by the image (I) size
     if (opt_display) {
       // Display size is automatically defined by the image (I) size
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
@@ -404,7 +398,7 @@ int main(int argc, const char **argv)
     if (opt_display && opt_click_allowed) {
       // dot coordinates (u,v) = (column,row)
       std::cout << "Click the four white dots on the object corner clockwise" << std::endl;
-      for (i = 0; i < 4; i++) {
+      for (i = 0; i < 4; ++i) {
         // tracking is initalized if no other parameters are given
         // to the iniTracking(..) method a right mouse click on the
         // dot is expected dot location can also be specified
@@ -454,7 +448,6 @@ int main(int argc, const char **argv)
     }
 
     if (opt_display) {
-
       // display a red cross (size 10) in the image at the dot center
       // of gravity location
       //
@@ -471,8 +464,9 @@ int main(int argc, const char **argv)
       //   vpDisplay::displayCross_uv(Image, column index, row index, size,
       //   color)
 
-      for (i = 0; i < 4; i++)
+      for (i = 0; i < 4; ++i) {
         vpDisplay::displayCross(I, cog[i], 10, vpColor::red);
+      }
 
       // flush the X11 buffer
       vpDisplay::flush(I);
@@ -512,7 +506,7 @@ int main(int argc, const char **argv)
     vpCameraParameters cam(px, py, u0, v0);
 
     // pixel-> meter conversion
-    for (i = 0; i < 4; i++) {
+    for (i = 0; i < 4; ++i) {
       // u[i]. v[i] are expressed in pixel
       // conversion in meter is achieved using
       // x = (u-u0)/px
@@ -526,7 +520,7 @@ int main(int argc, const char **argv)
 
     // The pose structure is build, we put in the point list the set of point
     // here both 2D and 3D world coordinates are known
-    for (i = 0; i < 4; i++) {
+    for (i = 0; i < 4; ++i) {
       pose.addPoint(P[i]); // and added to the pose computation point list
     }
 
@@ -549,15 +543,12 @@ int main(int argc, const char **argv)
     // this is the loop over the image sequence
     while (iter < opt_last) {
       // set the new image name
-
       if (opt_ppath.empty()) {
-        s.str("");
-        s << "image." << std::setw(4) << std::setfill('0') << iter << "." << ext;
-        filename = vpIoTools::createFilePath(dirname, s.str());
+        std::string name = vpIoTools::toString("image.%04d." + ext, iter);
+        filename = vpIoTools::createFilePath(dirname, name);
       }
       else {
-        snprintf(cfilename, FILENAME_MAX, opt_ppath.c_str(), iter);
-        filename = cfilename;
+        filename = vpIoTools::toString(opt_ppath, iter);
       }
 
       // read the image
@@ -572,7 +563,7 @@ int main(int argc, const char **argv)
       pose.clearPoint();
 
       // track the dot
-      for (i = 0; i < 4; i++) {
+      for (i = 0; i < 4; ++i) {
         // track the point
         d[i].track(I, cog[i]);
         if (opt_display) {
@@ -598,9 +589,10 @@ int main(int argc, const char **argv)
       pose.computePose(vpPose::VIRTUAL_VS, cMo);
       if (opt_display) {
         // display the compute pose
-        pose.display(I, cMo, cam, 0.05, vpColor::red);
+        pose.display(I, cMo, cam, 0.05, vpColor::none);
 
         vpDisplay::flush(I);
+        vpTime::wait(40);
       }
 
       // Covariance Matrix Display
@@ -610,6 +602,11 @@ int main(int argc, const char **argv)
       // std::endl << std::endl;
 
       iter += opt_step;
+    }
+    if (opt_display) {
+      vpDisplay::displayText(I, 20, 20, "Click to quit", vpColor::red);
+      vpDisplay::flush(I);
+      vpDisplay::getClick(I);
     }
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
     if (display != nullptr) {
@@ -644,5 +641,5 @@ int main()
   std::cout << "Tip if you are on a windows-like system:" << std::endl;
   std::cout << "- Install GDI, configure again ViSP using cmake and build again this example" << std::endl;
   return EXIT_SUCCESS;
-    }
+}
 #endif

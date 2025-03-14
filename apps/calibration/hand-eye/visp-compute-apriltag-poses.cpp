@@ -262,11 +262,8 @@ int main(int argc, const char **argv)
       if (found) {
         cMo = cMo_vec[0];
         vpPoseVector pose_vec(cMo);
-        char name[FILENAME_MAX];
-        snprintf(name, FILENAME_MAX, opt_output_pose_files.c_str(), reader.getFrameIndex());
-        std::string s = name;
-        std::cout << "Save " << s << std::endl;
-        pose_vec.saveYAML(s, pose_vec);
+        std::string  filename = vpIoTools::toString(opt_output_pose_files, reader.getFrameIndex());
+        pose_vec.saveYAML(filename, pose_vec);
       }
 
 #if defined(VISP_HAVE_MODULE_GUI)

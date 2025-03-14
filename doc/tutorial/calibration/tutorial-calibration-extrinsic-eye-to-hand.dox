@@ -159,7 +159,7 @@ $ cd $VISP_WS/visp-build/apps/calibration/hand-eye
 $ ./visp-compute-apriltag-poses                         \
     --tag-size 0.048                                    \
     --input data-eye-to-hand/franka_image-%d.png        \
-    --intrinsic data-eye-to-hand/franka_camera_visp.xml \
+    --intrinsic data-eye-to-hand/franka_camera.xml \
     --output data-eye-to-hand/franka_pose_cPo_%d.yaml
 \endcode
 
@@ -173,7 +173,7 @@ Parameters:
     First frame           : 1
     Last  frame           : 8
   Camera intrinsics
-    Param file name [.xml]: data-eye-to-hand/franka_camera_visp.xml
+    Param file name [.xml]: data-eye-to-hand/franka_camera.xml
     Camera name           : Camera
   Output camera poses     : data-eye-to-hand/franka_pose_cPo_%d.yaml
   Interactive mode        : yes

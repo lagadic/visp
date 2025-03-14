@@ -411,22 +411,17 @@ int main(int argc, const char **argv)
   vpImage<unsigned char> I;
 
   unsigned iter = opt_first;
-  std::ostringstream s;
-  char cfilename[FILENAME_MAX];
 
   if (opt_ppath.empty()) {
     // Warning : the datset is available on https://visp.inria.fr/download/
     dirname = vpIoTools::createFilePath(ipath, "cube");
 
     // Build the name of the image file
-    s.setf(std::ios::right, std::ios::adjustfield);
-    s << "image." << std::setw(4) << std::setfill('0') << iter << "." << ext;
-    filename = vpIoTools::createFilePath(dirname, s.str());
+    std::string name = vpIoTools::toString("image.%04d." + ext, iter);
+    filename = vpIoTools::createFilePath(dirname, name);
   }
   else {
-
-    snprintf(cfilename, FILENAME_MAX, opt_ppath.c_str(), iter);
-    filename = cfilename;
+    filename = vpIoTools::toString(opt_ppath, iter);
   }
   // Read image named "filename" and put the bitmap in I
   try {
@@ -515,13 +510,11 @@ int main(int argc, const char **argv)
 
       // set the new image name
       if (opt_ppath.empty()) {
-        s.str("");
-        s << "image." << std::setw(4) << std::setfill('0') << iter << "." << ext;
-        filename = vpIoTools::createFilePath(dirname, s.str());
+        std::string name = vpIoTools::toString("image.%04d." + ext, iter);
+        filename = vpIoTools::createFilePath(dirname, name);
       }
       else {
-        snprintf(cfilename, FILENAME_MAX, opt_ppath.c_str(), iter);
-        filename = cfilename;
+        filename = vpIoTools::toString(opt_ppath, iter);
       }
 
       std::cout << "read : " << filename << std::endl;

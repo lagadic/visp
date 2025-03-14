@@ -203,15 +203,9 @@ bool read_data(const std::string &input_directory, int cpt, const vpCameraParame
   // We suppose that the user will download a recent dataset
   std::string ext("png");
 #endif
-  char buffer[FILENAME_MAX];
-  snprintf(buffer, FILENAME_MAX, std::string(input_directory + "/Images/Image_%04d." + ext).c_str(), cpt);
-  std::string image_filename = buffer;
-
-  snprintf(buffer, FILENAME_MAX, std::string(input_directory + "/Depth/Depth_%04d.bin").c_str(), cpt);
-  std::string depth_filename = buffer;
-
-  snprintf(buffer, FILENAME_MAX, std::string(input_directory + "/CameraPose/Camera_%03d.txt").c_str(), cpt);
-  std::string pose_filename = buffer;
+  std::string image_filename = vpIoTools::toString(input_directory + "/Images/Image_%04d." + ext, cpt);
+  std::string depth_filename = vpIoTools::toString(input_directory + "/Depth/Depth_%04d.bin", cpt);
+  std::string pose_filename = vpIoTools::toString(input_directory + "/CameraPose/Camera_%03d.txt", cpt);
 
   if (!vpIoTools::checkFilename(image_filename) || !vpIoTools::checkFilename(depth_filename) ||
     !vpIoTools::checkFilename(pose_filename))
@@ -615,15 +609,10 @@ bool run(const std::string &input_directory, bool opt_click_allowed, bool opt_di
     }
     else if (save) {
       //! [Save drawings]
-      char buffer[FILENAME_MAX];
-      std::ostringstream oss;
-      oss << "results/image_%04d.png";
-      snprintf(buffer, FILENAME_MAX, oss.str().c_str(), cpt_frame);
-
       results.insert(resultsColor, vpImagePoint());
       results.insert(resultsDepth, vpImagePoint(0, resultsColor.getWidth()));
-
-      vpImageIo::write(results, buffer);
+      std::string filename = vpIoTools::toString("results/image_%04d.png", cpt_frame);
+      vpImageIo::write(results, filename);
       //! [Save drawings]
     }
 

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Simulation of a visual servoing with visualization.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file simulateCircle2DCamVelocity.cpp
@@ -63,16 +61,17 @@
 #include <visp3/visual_features/vpFeatureEllipse.h>
 #include <visp3/vs/vpServo.h>
 
-#define GETOPTARGS "cdi:h"
-#define SAVE 0
+#define GETOPTARGS "cdi:hs"
 
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
+bool opt_save = false;
+
 /*!
 
-Print the program options.
+  Print the program options.
 
   \param name : Program name.
   \param badparam : Bad parameter name.
@@ -85,7 +84,7 @@ void usage(const char *name, const char *badparam, std::string ipath)
 Simulation Servo Circle\n\
           \n\
 SYNOPSIS\n\
-  %s [-i <input image path>] [-d] [-h]\n",
+  %s [-i <input image path>] [-d] [-s] [-h]\n",
           name);
 
   fprintf(stdout, "\n\
@@ -103,6 +102,9 @@ OPTIONS:                                               Default\n\
      for automatic tests using crontab under Unix or \n\
      using the task manager under Windows.\n\
                   \n\
+  -s \n\
+     Save images\n\
+     \n\
   -h\n\
      Print the help.\n\n",
           ipath.c_str());
@@ -112,8 +114,7 @@ OPTIONS:                                               Default\n\
 }
 
 /*!
-
-Set the program options.
+  Set the program options.
 
   \param argc : Command line number of parameters.
   \param argv : Array of command line parameters.
@@ -122,11 +123,11 @@ Set the program options.
   the default configuration. When set to false, the display is
   disabled. This can be useful for automatic tests using crontab
   under Unix or using the task manager under Windows.
+  \param save : When true save images.
 
   \return false if the program has to be stopped, true otherwise.
-
 */
-bool getOptions(int argc, const char **argv, std::string &ipath, bool &display)
+bool getOptions(int argc, const char **argv, std::string &ipath, bool &display, bool &save)
 {
   const char *optarg;
   int c;
@@ -138,6 +139,9 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &display)
       break;
     case 'd':
       display = false;
+      break;
+    case 's':
+      opt_save = true;
       break;
     case 'h':
       usage(argv[0], nullptr, ipath);
@@ -268,14 +272,13 @@ static void *mainLoop(void *_simu)
       simu->setCameraPosition(cMo);
 
       if (SAVE == 1) {
-        char name[FILENAME_MAX];
-        snprintf(name, FILENAME_MAX, "/tmp/image.%04d.external.png", it);
-        std::cout << "Save " << name << std::endl;
-        simu->write(name);
-        snprintf(name, FILENAME_MAX, "/tmp/image.%04u.internal.png", iter);
-        std::cout << "Save " << name << std::endl;
-        simu->write(name);
-        it++;
+        std::string filename;
+        filename = vpIoTools::toString("/tmp/image.%04d.external.png", iter);
+        std::cout << "Save " << filename << std::endl;
+        simu->write(filename);
+        filename = vpIoTools::toString("/tmp/image.%04u.internal.png", iter);
+        std::cout << "Save " << filename << std::endl;
+        simu->write(filename);
       }
       //  std::cout << "\t\t || s - s* || "
       //  std::cout << ( task.getError() ).sumSquare() <<std::endl ; ;
@@ -308,7 +311,7 @@ int main(int argc, const char **argv)
       ipath = env_ipath;
 
     // Read the command line options
-    if (getOptions(argc, argv, opt_ipath, opt_display) == false) {
+    if (getOptions(argc, argv, opt_ipath, opt_display, opt_save) == false) {
       return EXIT_FAILURE;
     }
 

@@ -57,12 +57,8 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<vpR
                vpImage<uint16_t> &I_depth_raw, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud)
 //! [Read data function]
 {
-  char buffer[FILENAME_MAX];
   // Read color
-  std::stringstream ss;
-  ss << input_directory << "/color_image_%04d.jpg";
-  snprintf(buffer, FILENAME_MAX, ss.str().c_str(), cpt);
-  std::string filename_color = buffer;
+  std::string filename_color = vpIoTools::toString(input_directory + "/color_image_%04d.jpg", cpt);
 
   if (!vpIoTools::checkFilename(filename_color)) {
     std::cerr << "Cannot read: " << filename_color << std::endl;
@@ -71,10 +67,7 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<vpR
   vpImageIo::read(I_color, filename_color);
 
   // Read raw depth
-  ss.str("");
-  ss << input_directory << "/depth_image_%04d.bin";
-  snprintf(buffer, FILENAME_MAX, ss.str().c_str(), cpt);
-  std::string filename_depth = buffer;
+  std::string filename_depth = vpIoTools::toString(input_directory + "/depth_image_%04d.jpg", cpt);
 
   std::ifstream file_depth(filename_depth.c_str(), std::ios::in | std::ios::binary);
   if (!file_depth.is_open()) {

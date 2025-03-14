@@ -6,24 +6,6 @@
 #include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpImageDraw.h>
 
-#if defined(VISP_HAVE_DISPLAY) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-namespace
-{
-// https://en.cppreference.com/w/cpp/io/c/fprintf
-std::string toString(const std::string &name, int val)
-{
-  auto fmt = name.c_str();
-  int sz = std::snprintf(nullptr, 0, fmt, val);
-  sz += 1; // note +1 for null terminator
-  std::vector<char> buf(sz);
-  std::snprintf(buf.data(), sz, fmt, val);
-  std::string str(buf.begin(), buf.end());
-
-  return str;
-}
-}
-#endif
-
 int main(int argc, char *argv[])
 {
 #if defined(VISP_HAVE_DISPLAY) && defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
@@ -148,7 +130,7 @@ int main(int argc, char *argv[])
     times.push_back(end-start);
     img_data_offset += vec_img_data_size_ptr[iter];
 
-    const std::string str_model_iter_sz = toString("model_%06d", iter) + "_sz";
+    const std::string str_model_iter_sz = vpIoTools::toString("model_%06d", iter) + "_sz";
     visp::cnpy::NpyArray arr_model_iter_sz = npz_data[str_model_iter_sz];
     size_t model_sz = *arr_model_iter_sz.data<size_t>();
 
