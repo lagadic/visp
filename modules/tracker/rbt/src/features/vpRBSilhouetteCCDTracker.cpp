@@ -40,6 +40,23 @@
 
 BEGIN_VISP_NAMESPACE
 
+void sampleWithoutReplacement(unsigned int count, unsigned int vectorSize, std::vector<size_t> &indices, vpUniRand &random)
+{
+  count = std::min(count, vectorSize);
+  indices.resize(count);
+  unsigned int added = 0;
+  for (unsigned i = 0; i < vectorSize; ++i) {
+    double randomVal = random.uniform(0.0, 1.0);
+    if ((vectorSize - i) * randomVal < (count - added)) {
+      indices[added++] = i;
+    }
+    if (added == count) {
+      break;
+    }
+  }
+}
+
+
 template <class T> class FastMat33
 {
 public:
@@ -142,7 +159,7 @@ public:
 };
 
 vpRBSilhouetteCCDTracker::vpRBSilhouetteCCDTracker() : vpRBFeatureTracker(), m_vvsConvergenceThreshold(0.0),
-m_temporalSmoothingFac(0.0), m_useMask(false), m_minMaskConfidence(0.0), m_displayType(SIMPLE)
+m_temporalSmoothingFac(0.0), m_useMask(false), m_minMaskConfidence(0.0), m_maxPoints(0), m_random(421), m_displayType(SIMPLE)
 { }
 
 void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput & /*previousFrame*/, const vpHomogeneousMatrix &/*cMo*/)
@@ -153,6 +170,7 @@ void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &fr
   //m_controlPoints.reserve(frame.silhouettePoints.size());
   const vpHomogeneousMatrix cMo = frame.renders.cMo;
   const vpHomogeneousMatrix oMc = cMo.inverse();
+
   for (const vpRBSilhouettePoint &sp : frame.silhouettePoints) {
     // std::cout << m_ccdParameters.h << std::endl;
     // std::cout << sp.j << ", " << sp.i << std::endl;
@@ -182,7 +200,18 @@ void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &fr
       }
     }
     m_controlPoints.push_back(std::move(pccd));
+  }
 
+  if (m_maxPoints > 0 && m_controlPoints.size() > m_maxPoints) {
+    std::vector<size_t> keptIndices(m_maxPoints);
+    sampleWithoutReplacement(m_maxPoints, m_controlPoints.size(), keptIndices, m_random);
+
+    std::vector<vpRBSilhouetteControlPoint> finalPoints;
+    finalPoints.reserve(m_maxPoints);
+    for (unsigned int index : keptIndices) {
+      finalPoints.emplace_back(std::move(m_controlPoints[index]));
+    }
+    m_controlPoints = std::move(finalPoints);
   }
 }
 

@@ -58,8 +58,13 @@ public:
 
   void detectSilhouette(const vpImage<float> &I)
   {
-    unsigned int k = 0;
     int range = 4;
+    unsigned int urange = static_cast<unsigned int>(range);
+    unsigned int k = 0;
+    if (i < urange || j < urange || i >= (I.getHeight() - urange) || j >= (I.getWidth() - urange)) {
+      isSilhouette = false;
+      return;
+    }
     double c = cos(orientation);
     double s = sin(orientation);
     for (int n = -range; n <= range; n++) {

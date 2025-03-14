@@ -44,6 +44,7 @@
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpRobust.h>
+#include <visp3/core/vpUniRand.h>
 
 // #if defined(VISP_HAVE_SIMDLIB)
 // #include <Simd/SimdLib.h>
@@ -261,6 +262,13 @@ public:
 
     m_minMaskConfidence = confidence;
   }
+  /**
+   * \brief Get the maximum number of silhouette control points that will be used by the tracker at a given iteration
+   * If there are more control points on the silhouette than getMaxNumPoints(), they will be subsampled randomly.
+   * If maxNumPoints is zero, then all points are used.
+  */
+  unsigned int getMaxNumPoints() const { return m_maxPoints; }
+  void setMaxNumPoints(unsigned int maxPoints) { m_maxPoints = maxPoints; }
 
   void setDisplayType(vpDisplayType type)
   {
@@ -309,6 +317,8 @@ public:
     setTemporalSmoothingFactor(j.value("temporalSmoothing", m_temporalSmoothingFac));
     setShouldUseMask(j.value("useMask", m_useMask));
     setMinimumMaskConfidence(j.value("minMaskConfidence", m_minMaskConfidence));
+    setMaxNumPoints(j.value("maxNumPoints", m_maxPoints));
+
     setDisplayType(j.value("displayType", m_displayType));
     m_ccdParameters = j.value("ccd", m_ccdParameters);
   }
@@ -344,6 +354,10 @@ protected:
 
   bool m_useMask;
   double m_minMaskConfidence;
+
+  unsigned int m_maxPoints;
+
+  vpUniRand m_random;
 
   vpDisplayType m_displayType;
   const vpRBFeatureTrackerInput *m_previousFrame;
