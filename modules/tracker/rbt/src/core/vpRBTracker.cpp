@@ -608,12 +608,13 @@ void vpRBTracker::loadConfigurationFile(const std::string &filename)
     msg << "Byte position of error: " << e.byte;
     throw vpException(vpException::ioError, msg.str());
   }
-  loadConfiguration(settings);
+  loadJsonConfiguration(settings);
   jsonFile.close();
 }
 
-void vpRBTracker::loadConfiguration(const nlohmann::json &j)
+void vpRBTracker::loadJsonConfiguration(const nlohmann::json &j)
 {
+  verify(j);
   m_firstIteration = true;
   const nlohmann::json verboseSettings = j.at("verbose");
   m_verbose = verboseSettings.value("enabled", m_verbose);
@@ -678,6 +679,45 @@ void vpRBTracker::loadConfiguration(const nlohmann::json &j)
     }
   }
 }
+
+
+nlohmann::json vpRBTracker::explain() const
+{
+  std::vector<nlohmann::json> optimParameters = {
+    vpRBJsonParsable::parameter(
+      "gain", "The gain used during levenberg-marquardt minimization of the feature error", true, 1.0
+    ),
+    vpRBJsonParsable::parameter(
+      "maxIterations", "The maximum number of iterations for the minimization process.", true, 10
+    ),
+    vpRBJsonParsable::parameter(
+      "mu", "The initial value for the regularization parameter of the LM algorithm."
+      "This value is multiplied by muIterfactor at every iteration."
+      "A low value of mu leads to a Gauss Newton minimizer, while a higher value is closer to a gradient descent solution.", true, 0.1
+    ),
+    vpRBJsonParsable::parameter(
+      "muIterFactor", "The factor with which to multiply the current regularization parameter value.", true, 0.1
+    ),
+    vpRBJsonParsable::parameter(
+      "scaleInvariant", "Whether to use the identity matrix as a regularizer (value of false) or the diagonal of the Hessian approximation (true)", true, false
+    ),
+    vpRBJsonParsable::parameter(
+      "convergenceMetricThreshold", "Minimum value of the convergence metric  to not stop optimization. "
+      "If the metric is below this threshold, then optimization is stopped."
+      "A value of 0 leads to running optimization for the full number of iterations.", false, 0.0
+    ),
+  };
+
+
+
+
+
+  return {
+    {"vvs", flipToDict(optimParameters)}
+  };
+}
+
+
 #endif
 
 #ifdef VISP_HAVE_MODULE_GUI
