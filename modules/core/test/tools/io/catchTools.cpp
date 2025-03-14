@@ -44,6 +44,10 @@
 
 #include <visp3/core/vpIoTools.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 std::string toString(const std::string &input, unsigned int val)
 {
   char input_[FILENAME_MAX];
