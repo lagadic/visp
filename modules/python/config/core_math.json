@@ -9,6 +9,12 @@
           "arguments": [
             "double"
           ]
+        },
+        {
+          "python_name": "ArrayInt2D",
+          "arguments": [
+            "int"
+          ]
         }
       ],
       "acknowledge_pointer_or_ref_fields": [

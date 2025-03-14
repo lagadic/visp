@@ -97,6 +97,16 @@ public:
     return (p.R / m_binSize) * (m_N * m_N) + (p.G / m_binSize) * m_N + (p.B / m_binSize);
   }
 
+  inline vpRGBa indexToColor(unsigned int index) const
+  {
+    vpRGBa c;
+    c.R = (index / (m_N * m_N)) * m_binSize;
+    c.G = ((index / m_N) % (m_N)) * m_binSize;
+    c.B = (index % m_N) * m_binSize;
+    c.A = 255;
+    return c;
+  }
+
   inline double probability(const vpRGBa &color) const
   {
     return m_probas[colorToIndex(color)];
@@ -110,6 +120,25 @@ public:
 
   static void computeSplitHistograms(const vpImage<vpRGBa> &image, const vpImage<bool> &mask, vpColorHistogram &inMask, vpColorHistogram &outsideMask);
   static void computeSplitHistograms(const vpImage<vpRGBa> &image, const vpImage<bool> &mask, const vpRect &bbInside, vpColorHistogram &insideMask, vpColorHistogram &outsideMask);
+
+  std::vector<vpRGBa> mostLikelyColors(unsigned int N) const
+  {
+    std::vector<size_t> bestIndices(N);
+    std::vector<size_t> idx(m_probas.size());
+    std::iota(idx.begin(), idx.end(), 0);
+    std::partial_sort_copy(
+      idx.begin(), idx.end(),
+      bestIndices.begin(), bestIndices.end(),
+      [*this](size_t i1, size_t i2) {return m_probas[i1] > m_probas[i2];}
+    );
+
+    std::vector<vpRGBa> colors(N);
+    for (unsigned int i = 0; i < N; ++i) {
+      colors[i] = indexToColor(bestIndices[i]);
+    }
+    return colors;
+  }
+
 
 private:
   unsigned int m_N;

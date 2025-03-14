@@ -57,7 +57,7 @@ std::ostream &operator<<(std::ostream &s, const vpRBTrackerLogger &I);
 class VISP_EXPORT vpRBTrackerLogger
 {
 public:
-  void reset()
+  inline void reset()
   {
     m_renderTime = 0.0;
     m_silhouetteExtractionTime = 0.0;
@@ -74,7 +74,7 @@ public:
   friend std::ostream &operator<<(std::ostream &, const vpRBTrackerLogger &);
 
   void startTimer() { m_startTime = vpTime::measureTimeMs(); }
-  double endTimer()
+  inline double endTimer()
   {
     if (m_startTime < 0.f) throw vpException(vpException::notInitialized, "Tried to query timer without starting it.");
     double elapsed = vpTime::measureTimeMs() - m_startTime;
@@ -82,48 +82,48 @@ public:
     return elapsed;
   }
 
-  void setRenderTime(double elapsed) { m_renderTime = elapsed; }
-  void setSilhouetteTime(double elapsed) { m_silhouetteExtractionTime = elapsed; }
-  void setMaskTime(double elapsed) { m_maskTime = elapsed; }
+  inline void setRenderTime(double elapsed) { m_renderTime = elapsed; }
+  inline void setSilhouetteTime(double elapsed) { m_silhouetteExtractionTime = elapsed; }
+  inline void setMaskTime(double elapsed) { m_maskTime = elapsed; }
 
-  void insertTrackerTime(std::map<int, std::vector<double>> &map, int id, double elapsed)
+  inline void insertTrackerTime(std::map<int, std::vector<double>> &map, int id, double elapsed)
   {
     if (map.find(id) == map.end()) {
       map.insert(std::make_pair(id, std::vector<double>()));
     }
     map.find(id)->second.push_back(elapsed);
   }
-  void addTrackerVVSTime(int id, double elapsed)
+  inline void addTrackerVVSTime(int id, double elapsed)
   {
     insertTrackerTime(m_trackerVVSIterTimes, id, elapsed);
   }
 
-  void setTrackerIterStartTime(int id, double elapsed)
+  inline void setTrackerIterStartTime(int id, double elapsed)
   {
     m_trackerIterStartTime[id] = elapsed;
   }
 
-  void setTrackerFeatureExtractionTime(int id, double elapsed)
+  inline void setTrackerFeatureExtractionTime(int id, double elapsed)
   {
     m_trackerFeatureExtractionTime[id] = elapsed;
   }
 
-  void setTrackerFeatureTrackingTime(int id, double elapsed)
+  inline void setTrackerFeatureTrackingTime(int id, double elapsed)
   {
     m_trackerFeatureTrackingTime[id] = elapsed;
   }
 
-  void setInitVVSTime(int id, double elapsed)
+  inline void setInitVVSTime(int id, double elapsed)
   {
     m_trackerInitVVSTime[id] = elapsed;
   }
 
-  void setDriftDetectionTime(double elapsed)
+  inline void setDriftDetectionTime(double elapsed)
   {
     m_driftTime = elapsed;
   }
 
-  void setOdometryTime(double elapsed)
+  inline void setOdometryTime(double elapsed)
   {
     m_odometryTime = elapsed;
   }
@@ -147,7 +147,7 @@ private:
 
 };
 
-std::ostream &operator<<(std::ostream &out, const vpRBTrackerLogger &timer)
+inline std::ostream &operator<<(std::ostream &out, const vpRBTrackerLogger &timer)
 {
   const auto default_precision { out.precision() };
   auto flags = out.flags();

@@ -111,13 +111,13 @@ public:
   * \brief Method called when starting a tracking iteration
   *
   */
-  virtual void onTrackingIterStart() = 0;
+  virtual void onTrackingIterStart(const vpHomogeneousMatrix &cMo) = 0;
 
   /**
    * \brief Method called after the tracking iteration has finished
    *
    */
-  virtual void onTrackingIterEnd() = 0;
+  virtual void onTrackingIterEnd(const vpHomogeneousMatrix &cMo) = 0;
 
   /**
    * \brief Extract features from the frame data and the current pose estimate

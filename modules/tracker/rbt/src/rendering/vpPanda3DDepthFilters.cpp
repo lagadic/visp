@@ -36,6 +36,8 @@
 #include "graphicsEngine.h"
 #include "windowFramework.h"
 
+#include <visp3/gui/vpDisplayFactory.h>
+
 BEGIN_VISP_NAMESPACE
 
 const std::string vpPanda3DDepthGaussianBlur::FRAGMENT_SHADER =
@@ -227,7 +229,7 @@ void vpPanda3DDepthCannyFilter::getRender(vpImage<vpRGBf> &I, vpImage<unsigned c
   const unsigned top = static_cast<unsigned int>(std::max(0.0, bb.getTop()));
   const unsigned left = static_cast<unsigned int>(std::max(0.0, bb.getLeft()));
   const unsigned numComponents = m_texture->get_num_components();
-  const unsigned rowIncrement = m_renderParameters.getImageWidth() * numComponents; // we ask for only 8 bits image, but we may get an rgb image
+  const unsigned rowIncrement = m_renderParameters.getImageWidth() * numComponents;
 
   const float *data = (float *)(&(m_texture->get_ram_image().front()));
   data += rowIncrement * (m_renderParameters.getImageHeight() - 1);

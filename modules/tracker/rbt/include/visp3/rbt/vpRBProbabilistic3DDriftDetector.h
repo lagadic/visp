@@ -205,7 +205,7 @@ private:
 
 public:
 
-  vpRBProbabilistic3DDriftDetector() : m_colorUpdateRate(0.2), m_initialColorSigma(25.0), m_depthSigma(0.04), m_maxError3D(0.001), m_minDist3DNewPoint(0.003)
+  vpRBProbabilistic3DDriftDetector() : m_colorUpdateRate(0.2), m_initialColorSigma(25.0), m_depthSigma(0.04), m_maxError3D(0.001), m_minDist3DNewPoint(0.003), m_sampleStep(4)
   { }
 
   void update(const vpRBFeatureTrackerInput &previousFrame, const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cTo, const vpHomogeneousMatrix &cprevTo) VP_OVERRIDE;
@@ -312,6 +312,15 @@ public:
     m_colorUpdateRate = updateRate;
   }
 
+  unsigned int getSampleStep() const { return m_sampleStep; }
+  void setSampleStep(unsigned int sampleStep)
+  {
+    if (sampleStep == 0) {
+      throw vpException(vpException::badValue, "Image sample step should be greater than 0");
+    }
+    m_sampleStep = sampleStep;
+  }
+
 #if defined(VISP_HAVE_NLOHMANN_JSON)
   void loadJsonConfiguration(const nlohmann::json &) VP_OVERRIDE;
 #endif
@@ -327,6 +336,7 @@ private:
   double m_depthSigma;
   double m_maxError3D;
   double m_minDist3DNewPoint;
+  unsigned int m_sampleStep;
 
   double m_score;
 

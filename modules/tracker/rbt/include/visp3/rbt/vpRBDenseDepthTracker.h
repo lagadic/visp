@@ -58,6 +58,7 @@
 #endif
 
 BEGIN_VISP_NAMESPACE
+
 /**
  * @brief A tracker based on dense depth point-plane alignment.
  *
@@ -68,7 +69,16 @@ class VISP_EXPORT vpRBDenseDepthTracker : public vpRBFeatureTracker
 {
 public:
 
-  vpRBDenseDepthTracker() : vpRBFeatureTracker(), m_step(2), m_useMask(false), m_minMaskConfidence(0.f) { }
+  enum vpDisplayType
+  {
+    SIMPLE = 0,
+    WEIGHT = 1,
+    ERROR = 2,
+    WEIGHT_AND_ERROR = 3,
+    INVALID = 4
+  };
+
+  vpRBDenseDepthTracker() : vpRBFeatureTracker(), m_step(2), m_useMask(false), m_minMaskConfidence(0.f), m_displayType(vpDisplayType::SIMPLE) { }
 
   virtual ~vpRBDenseDepthTracker() = default;
 
@@ -110,6 +120,16 @@ public:
     m_minMaskConfidence = confidence;
   }
 
+  vpDisplayType getDisplayType() const { return m_displayType; }
+
+  void setDisplayType(vpDisplayType type)
+  {
+    if (type == INVALID) {
+      throw vpException(vpException::badValue, "Depth tracker display type is invalid");
+    }
+    m_displayType = type;
+  }
+
   /**
    * \name Settings
    * @}
@@ -118,8 +138,8 @@ public:
   /**
    * @brief Method called when starting a tracking iteration
    */
-  void onTrackingIterStart() VP_OVERRIDE { }
-  void onTrackingIterEnd() VP_OVERRIDE { }
+  void onTrackingIterStart(const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE { }
+  void onTrackingIterEnd(const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE { }
 
   double getVVSTrackerWeight() const VP_OVERRIDE { return m_userVvsWeight / (m_error.size()); }
 
@@ -140,7 +160,6 @@ public:
       oP.changeFrame(cMo);
       oP.projection();
       cameraNormal = cRo * objectNormal;
-      // f.buildFrom(oP.get_x(), oP.get_y(), oP.get_Z(), log(oP.get_Z() / currentPoint.get_Z()));
     }
 
     inline void error(vpColVector &e, unsigned i) const
@@ -149,12 +168,11 @@ public:
       double projNormal = cameraNormal[0] * currentPoint[0] + cameraNormal[1] * currentPoint[1] + cameraNormal[2] * currentPoint[2];
 
       e[i] = D + projNormal;
-      //e[i] = f.get_LogZoverZstar();
     }
 
     inline void interaction(vpMatrix &L, unsigned i)
     {
-      const double X = currentPoint[0], Y = currentPoint[1], Z = currentPoint[2];
+      const double X = oP.get_X(), Y = oP.get_Y(), Z = oP.get_Z();
       const double nx = cameraNormal[0], ny = cameraNormal[1], nz = cameraNormal[2];
       L[i][0] = nx;
       L[i][1] = ny;
@@ -162,10 +180,6 @@ public:
       L[i][3] = nz * Y - ny * Z;
       L[i][4] = nx * Z - nz * X;
       L[i][5] = ny * X - nx * Y;
-      // vpMatrix LL = f.interaction();
-      // for (unsigned int j = 0; j < 6; ++j) {
-      //   L[i][j] = LL[0][j];
-      // }
     }
 
   public:
@@ -178,12 +192,22 @@ public:
   };
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
+
+  NLOHMANN_JSON_SERIALIZE_ENUM(vpRBDenseDepthTracker::vpDisplayType, {
+      {vpRBDenseDepthTracker::vpDisplayType::INVALID, nullptr},
+      {vpRBDenseDepthTracker::vpDisplayType::SIMPLE, "simple"},
+      {vpRBDenseDepthTracker::vpDisplayType::WEIGHT, "weight"},
+      {vpRBDenseDepthTracker::vpDisplayType::ERROR, "error"},
+      {vpRBDenseDepthTracker::vpDisplayType::WEIGHT_AND_ERROR, "weightAndError"}
+    });
+
   virtual void loadJsonConfiguration(const nlohmann::json &j) VP_OVERRIDE
   {
     vpRBFeatureTracker::loadJsonConfiguration(j);
     setStep(j.value("step", m_step));
     setShouldUseMask(j.value("useMask", m_useMask));
     setMinimumMaskConfidence(j.value("minMaskConfidence", m_minMaskConfidence));
+    setDisplayType(j.value("displayType", m_displayType));
   }
 
 #endif
@@ -195,6 +219,7 @@ protected:
   unsigned int m_step;
   bool m_useMask;
   float m_minMaskConfidence;
+  vpDisplayType m_displayType;
 };
 
 END_VISP_NAMESPACE

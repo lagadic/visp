@@ -31,6 +31,10 @@
 #include <visp3/rbt/vpRBDenseDepthTracker.h>
 #include <visp3/core/vpMeterPixelConversion.h>
 #include <visp3/core/vpDisplay.h>
+
+#ifdef VISP_HAVE_OPENMP
+#include <omp.h>
+#endif
 BEGIN_VISP_NAMESPACE
 
 void fastRotationMatmul(const vpRotationMatrix &cRo, const vpRGBf &v, vpColVector &res)
@@ -56,48 +60,89 @@ void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame
 {
   const vpImage<float> &depthMap = frame.depth;
   const vpImage<float> &renderDepth = frame.renders.depth;
-  vpRect bb = frame.renders.boundingBox;
+  const vpRect bb = frame.renders.boundingBox;
   const vpHomogeneousMatrix &cMo = frame.renders.cMo;
-  vpHomogeneousMatrix oMc = cMo.inverse();
-  vpRotationMatrix cRo = cMo.getRotationMatrix();
+  const vpRotationMatrix cRo = cMo.getRotationMatrix();
+  const vpHomogeneousMatrix oMc = cMo.inverse();
+  const vpTranslationVector co = oMc.getTranslationVector(); // Position of the camera in object frame
   bool useMask = m_useMask && frame.hasMask();
   m_depthPoints.clear();
   m_depthPoints.reserve(static_cast<size_t>(bb.getArea() / (m_step * m_step * 2)));
-  vpDepthPoint point;
-  for (unsigned int i = static_cast<unsigned int>(bb.getTop()); i < static_cast<unsigned int>(bb.getBottom()); i += m_step) {
-    for (unsigned int j = static_cast<unsigned int>(bb.getLeft()); j < static_cast<unsigned int>(bb.getRight()); j += m_step) {
-      // if (renderDepth[i][j] > frame.renders.zNear && renderDepth[i][j] < frame.renders.zFar && depthMap[i][j] > frame.renders.zNear * 0.33 && depthMap[i][j] < frame.renders.zFar * 3.0) {
-      double Z = renderDepth[i][j];
-      double currZ = depthMap[i][j];
-      if (Z > 0.f && currZ > 0.f) {
-        if (useMask && frame.mask[i][j] < m_minMaskConfidence) {
-          continue;
+
+#ifdef VISP_HAVE_OPENMP
+#pragma omp parallel
+#endif
+  {
+    vpDepthPoint point;
+    vpColVector cameraRay(3);
+#ifdef VISP_HAVE_OPENMP
+    std::vector<vpDepthPoint> localPoints;
+    localPoints.reserve(m_depthPoints.capacity() / omp_get_num_threads());
+#else
+    // Just reference the global vector, no need to add to it later on
+    std::vector<vpDepthPoint> &localPoints = m_depthPoints;
+#endif
+
+#ifdef VISP_HAVE_OPENMP
+#pragma omp for nowait
+#endif
+    for (unsigned int i = static_cast<unsigned int>(bb.getTop()); i < static_cast<unsigned int>(bb.getBottom()); i += m_step) {
+      for (unsigned int j = static_cast<unsigned int>(bb.getLeft()); j < static_cast<unsigned int>(bb.getRight()); j += m_step) {
+        const double Z = renderDepth[i][j];
+        const double currZ = depthMap[i][j];
+        if (Z > 0.f && currZ > 0.f) {
+          if (useMask && frame.mask[i][j] < m_minMaskConfidence) {
+            continue;
+          }
+          double x = 0.0, y = 0.0;
+          vpPixelMeterConversion::convertPointWithoutDistortion(frame.cam, j, i, x, y);
+          //vpColVector objectNormal({ frame.renders.normals[i][j].R, frame.renders.normals[i][j].G, frame.renders.normals[i][j].B });
+          point.objectNormal[0] = frame.renders.normals[i][j].R;
+          point.objectNormal[1] = frame.renders.normals[i][j].G;
+          point.objectNormal[2] = frame.renders.normals[i][j].B;
+
+          bool invalidNormal = false;
+          for (unsigned int oi = 0; oi < 3; ++oi) {
+            if (std::isnan(point.objectNormal[oi])) {
+              invalidNormal = true;
+            }
+          }
+
+          if (invalidNormal) {
+            continue;
+          }
+
+          fastProjection(oMc, x * Z, y * Z, Z, point.oP);
+
+          cameraRay = { co[0] - point.oP.get_oX(), co[1] - point.oP.get_oY(), co[2] - point.oP.get_oZ() };
+          cameraRay.normalize();
+
+          if (acos(cameraRay * point.objectNormal) > vpMath::rad(85.0)) {
+            continue;
+          }
+
+          // vpColVector cp({ x * Z, y * Z, Z, 1 });
+          // vpColVector oP = oMc * cp;
+          // point.oP = vpPoint(oP);
+          point.pixelPos.set_ij(i, j);
+          point.currentPoint[0] = x * currZ;
+          point.currentPoint[1] = y * currZ;
+          point.currentPoint[2] = currZ;
+
+          localPoints.push_back(point);
         }
-        double x = 0.0, y = 0.0;
-        vpPixelMeterConversion::convertPoint(frame.cam, j, i, x, y);
-        //vpColVector objectNormal({ frame.renders.normals[i][j].R, frame.renders.normals[i][j].G, frame.renders.normals[i][j].B });
-        point.objectNormal[0] = frame.renders.normals[i][j].R;
-        point.objectNormal[1] = frame.renders.normals[i][j].G;
-        point.objectNormal[2] = frame.renders.normals[i][j].B;
-
-        //fastRotationMatmul(cRo, frame.renders.normals[i][j], point.objectNormal);
-        //vpColVector cameraNormal = cRo * objectNormal;
-        // if (acos(cameraNormal * vpColVector({ 0.0, 0.0, -1.0 })) > vpMath::rad(70.0)) {
-        //   continue;
-        // }
-        // vpColVector cp({ x * Z, y * Z, Z, 1 });
-        // vpColVector oP = oMc * cp;
-        fastProjection(oMc, x * Z, y * Z, Z, point.oP);
-        // point.oP = vpPoint(oP);
-        point.pixelPos.set_ij(i, j);
-        point.currentPoint[0] = x * currZ;
-        point.currentPoint[1] = y * currZ;
-        point.currentPoint[2] = currZ;
-
-        m_depthPoints.push_back(point);
       }
     }
+
+// If we use openmp, add to the global vector. If we're not using openmp, no need to do so
+#ifdef VISP_HAVE_OPENMP
+#pragma omp critical
+    {
+      m_depthPoints.insert(m_depthPoints.end(), localPoints.begin(), localPoints.end());
+    }
+#endif
   }
+
   if (m_depthPoints.size() > 0) {
     m_error.resize(m_depthPoints.size(), false);
     m_weights.resize(m_depthPoints.size(), false);
@@ -136,7 +181,7 @@ void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &/*fram
   }
 
   //m_weights = 0.0;
-  //m_robust.setMinMedianAbsoluteDeviation(1e-3);
+  m_robust.setMinMedianAbsoluteDeviation(1e-3);
   m_robust.MEstimator(vpRobust::TUKEY, m_error, m_weights);
   for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
     m_weighted_error[i] = m_error[i] * m_weights[i];
@@ -154,12 +199,43 @@ void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &/*fram
 void vpRBDenseDepthTracker::display(const vpCameraParameters &/*cam*/, const vpImage<unsigned char> &/*I*/,
                                     const vpImage<vpRGBa> &/*IRGB*/, const vpImage<unsigned char> &depth) const
 {
-  for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
-    const vpDepthPoint &p = m_depthPoints[i];
-    vpColor c(0, static_cast<unsigned char>(m_weights[i] * 255), 0);
-    vpDisplay::displayPoint(depth, p.pixelPos, c, 2);
+  switch (m_displayType) {
+  case SIMPLE:
+  {
+    for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
+      vpColor c(0, 255, 0);
+      vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos, c, 2);
+    }
+    break;
   }
-
+  case WEIGHT:
+  {
+    for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
+      vpColor c(0, static_cast<unsigned char>(m_weights[i] * 255), 0);
+      vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos, c, 2);
+    }
+    break;
+  }
+  case ERROR:
+  {
+    for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
+      vpColor c(m_error[i], 0, 0);
+      vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos, c, 2);
+    }
+    break;
+  }
+  case WEIGHT_AND_ERROR:
+  {
+    double maxError = m_error.getMaxValue();
+    for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
+      vpColor c(static_cast<unsigned int>((m_error[i] / maxError) * 255.0), static_cast<unsigned char>(m_weights[i] * 255), 0);
+      vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos, c, 2);
+    }
+    break;
+  }
+  default:
+    throw vpException(vpException::notImplementedError, "Depth tracker display type is invalid or not implemented");
+  }
 }
 
 END_VISP_NAMESPACE

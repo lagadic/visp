@@ -110,12 +110,17 @@ void vpColorHistogram::merge(const vpColorHistogram &other, float alpha)
   if (other.m_N != m_N) {
     throw vpException(vpException::badValue, "Histograms should have same dimensions");
   }
-  float malpha = 1.f - alpha;
-
-  for (unsigned int i = 0; i < m_probas.size(); ++i) {
-    m_probas[i] = malpha * m_probas[i] + alpha * other.m_probas[i];
+  if (m_numPixels == 0) {
+    m_probas = other.m_probas;
+    m_numPixels = other.m_numPixels;
   }
+  else {
+    float malpha = 1.f - alpha;
 
+    for (unsigned int i = 0; i < m_probas.size(); ++i) {
+      m_probas[i] = malpha * m_probas[i] + alpha * other.m_probas[i];
+    }
+  }
 }
 
 void vpColorHistogram::computeProbas(const vpImage<vpRGBa> &image, vpImage<float> &proba) const

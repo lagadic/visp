@@ -44,6 +44,7 @@
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpRobust.h>
+#include <visp3/core/vpUniRand.h>
 
 // #if defined(VISP_HAVE_SIMDLIB)
 // #include <Simd/SimdLib.h>
@@ -62,18 +63,16 @@
 BEGIN_VISP_NAMESPACE
 
 
-enum vpRBSilhouetteCCDDisplayType
-{
-  SIMPLE = 0,
-  WEIGHT = 1,
-  ERROR = 2,
-  INVALID = 3
-};
+
 
 class VISP_EXPORT vpCCDParameters
 {
 public:
-  vpCCDParameters() : gamma_1(0.5), gamma_2(4), gamma_3(4), gamma_4(3), alpha(1.3), beta(0.06), kappa(0.5), covarianceIterDecreaseFactor(0.25), h(40), delta_h(1), phi_dim(6)
+  vpCCDParameters() :
+    gamma_1(0.5), gamma_2(4), gamma_3(4), gamma_4(3),
+    alpha(1.3), beta(0.06), kappa(0.5),
+    covarianceIterDecreaseFactor(0.25),
+    h(40), delta_h(1), min_h(4), start_h(40), start_delta_h(1), phi_dim(6)
   { }
 
 
@@ -128,9 +127,12 @@ public:
   int h;
   /**
    * \brief Sample step when computing statistics and errors.
-   * Increase this value to decrease computation time, at the risk of obtaining inacurrate statistics.
+   * Increase this value to decrease computation time, at the risk of obtaining inaccurate statistics.
    */
   int delta_h;
+  int min_h;
+  int start_h;
+  int start_delta_h;
   /**
    * \brief Number of parameters estimated by CCD. Either 6 or 8.
    * Leave this fixed
@@ -147,7 +149,11 @@ inline void from_json(const nlohmann::json &j, vpCCDParameters &ccdParameters)
   ccdParameters.covarianceIterDecreaseFactor = j.value("covarianceIterDecreaseFactor",
                                                       ccdParameters.covarianceIterDecreaseFactor);
   ccdParameters.h = j.value("h", ccdParameters.h);
+  ccdParameters.start_h = ccdParameters.h;
   ccdParameters.delta_h = j.value("delta_h", ccdParameters.delta_h);
+  ccdParameters.start_delta_h = ccdParameters.delta_h;
+  ccdParameters.min_h = j.value("min_h", ccdParameters.min_h);
+
   ccdParameters.phi_dim = j.value("phi_dim", ccdParameters.phi_dim);
   if (j.contains("gamma")) {
     nlohmann::json gammaj = j["gamma"];
@@ -191,6 +197,15 @@ public:
 class VISP_EXPORT vpRBSilhouetteCCDTracker : public vpRBFeatureTracker
 {
 public:
+
+  enum vpDisplayType
+  {
+    SIMPLE = 0,
+    WEIGHT = 1,
+    ERROR = 2,
+    WEIGHT_AND_ERROR = 3,
+    INVALID = 4
+  };
 
   vpRBSilhouetteCCDTracker();
   virtual ~vpRBSilhouetteCCDTracker() = default;
@@ -247,18 +262,29 @@ public:
 
     m_minMaskConfidence = confidence;
   }
+  /**
+   * \brief Get the maximum number of silhouette control points that will be used by the tracker at a given iteration
+   * If there are more control points on the silhouette than getMaxNumPoints(), they will be subsampled randomly.
+   * If maxNumPoints is zero, then all points are used.
+  */
+  unsigned int getMaxNumPoints() const { return m_maxPoints; }
+  void setMaxNumPoints(unsigned int maxPoints) { m_maxPoints = maxPoints; }
 
-  void setDisplayType(vpRBSilhouetteCCDDisplayType type)
+  void setDisplayType(vpDisplayType type)
   {
+    if (type == INVALID) {
+      throw vpException(vpException::badValue, "CCD tracker display type is invalid");
+    }
     m_displayType = type;
   }
+
 
   /**
    * @}
    */
 
-  void onTrackingIterStart() VP_OVERRIDE { }
-  void onTrackingIterEnd() VP_OVERRIDE { }
+  void onTrackingIterStart(const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE { }
+  void onTrackingIterEnd(const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE { }
 
   double getVVSTrackerWeight() const VP_OVERRIDE { return m_userVvsWeight / (10 * m_error.size()); }
 
@@ -272,9 +298,18 @@ public:
     m_cov = m_sigma;
   }
 
+  void changeScale();
+
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth) const VP_OVERRIDE;
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
+  NLOHMANN_JSON_SERIALIZE_ENUM(vpRBSilhouetteCCDTracker::vpDisplayType, {
+        {vpRBSilhouetteCCDTracker::vpDisplayType::INVALID, nullptr},
+        {vpRBSilhouetteCCDTracker::vpDisplayType::SIMPLE, "simple"},
+        {vpRBSilhouetteCCDTracker::vpDisplayType::WEIGHT, "weight"},
+        {vpRBSilhouetteCCDTracker::vpDisplayType::ERROR, "error"},
+        {vpRBSilhouetteCCDTracker::vpDisplayType::WEIGHT_AND_ERROR, "weightAndError"}
+      });
   virtual void loadJsonConfiguration(const nlohmann::json &j) VP_OVERRIDE
   {
     vpRBFeatureTracker::loadJsonConfiguration(j);
@@ -283,7 +318,9 @@ public:
     setTemporalSmoothingFactor(j.value("temporalSmoothing", m_temporalSmoothingFac));
     setShouldUseMask(j.value("useMask", m_useMask));
     setMinimumMaskConfidence(j.value("minMaskConfidence", m_minMaskConfidence));
+    setMaxNumPoints(j.value("maxNumPoints", m_maxPoints));
 
+    setDisplayType(j.value("displayType", m_displayType));
     m_ccdParameters = j.value("ccd", m_ccdParameters);
   }
 
@@ -293,8 +330,6 @@ protected:
   void updateCCDPoints(const vpHomogeneousMatrix &cMo);
   void computeLocalStatistics(const vpImage<vpRGBa> &I, vpCCDStatistics &stats);
   void computeErrorAndInteractionMatrix();
-  double computeMaskGradient(const vpImage<float> &mask, const vpRBSilhouetteControlPoint &pccd) const;
-
 
   vpCCDParameters m_ccdParameters;
 
@@ -309,6 +344,9 @@ protected:
   double m_vvsConvergenceThreshold;
   double tol;
 
+  std::vector<double> m_gradientData;
+  std::vector<double> m_hessianData;
+
   std::vector<vpColVector> m_gradients;
   std::vector<vpMatrix> m_hessians;
   vpColVector m_gradient; //! Sum of local gradients
@@ -318,7 +356,12 @@ protected:
   bool m_useMask;
   double m_minMaskConfidence;
 
-  vpRBSilhouetteCCDDisplayType m_displayType;
+  unsigned int m_maxPoints;
+
+  vpUniRand m_random;
+
+  vpDisplayType m_displayType;
+  const vpRBFeatureTrackerInput *m_previousFrame;
 };
 
 END_VISP_NAMESPACE

@@ -81,6 +81,31 @@ public:
     return m_bb3DPoints;
   }
 
+  void get3DExtents(vpTranslationVector &minValues, vpTranslationVector &maxValues)
+  {
+    if (m_shouldComputeBBPoints) {
+      computeBoundingBox3DPoints();
+      m_shouldComputeBBPoints = false;
+    }
+    for (unsigned int i = 0; i < 3; ++i) {
+      minValues[i] = std::numeric_limits<double>::max();
+      maxValues[i] = std::numeric_limits<double>::min();
+    }
+
+    for (const vpColVector &point: m_bb3DPoints) {
+      for (unsigned int i = 0; i < 3; ++i) {
+        if (point[i] < minValues[i]) {
+          minValues[i] = point[i];
+        }
+        if (point[i] > maxValues[i]) {
+          maxValues[i] = point[i];
+        }
+      }
+    }
+  }
+
+
+
   vpRect computeBoundingBox();
 
   template <typename T>

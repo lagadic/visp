@@ -67,7 +67,7 @@ void vpObjectCentricRenderer::beforeFrameRendered()
     unsigned width = (unsigned)(m_bb.getWidth());
     unsigned height = (unsigned)(m_bb.getHeight());
     subParams.setImageResolution(height, width);
-    subParams.setClippingDistance(subParams.getNearClippingDistance() - 0.1, subParams.getFarClippingDistance());
+    subParams.setClippingDistance(subParams.getNearClippingDistance(), subParams.getFarClippingDistance());
     const vpCameraParameters cam = subParams.getCameraIntrinsics();
     subParams.setCameraIntrinsics(vpCameraParameters(cam.get_px(), cam.get_py(), cam.get_u0() - m_bb.getLeft(), cam.get_v0() - m_bb.getTop()));
     for (std::shared_ptr<vpPanda3DBaseRenderer> &subrenderer : m_subRenderers) {
@@ -126,7 +126,6 @@ void vpObjectCentricRenderer::computeClipping(float &nearV, float &farV)
       minZ = Z;
     }
   }
-
   nearV = minZ;
   farV = maxZ;
 }
