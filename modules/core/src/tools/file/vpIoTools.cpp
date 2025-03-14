@@ -1428,7 +1428,11 @@ std::string vpIoTools::toString(const std::string &name, unsigned int val)
   std::vector<char> buf(sz);
   std::snprintf(buf.data(), sz, fmt, val);
   std::string str(buf.begin(), buf.end());
-  str.pop_back();
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  str.pop_back(); // Only since cxx11
+#else
+  str.erase(str.end()-1, str.end());
+#endif
   return str;
 }
 
