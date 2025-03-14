@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -533,6 +533,8 @@ public:
 
   static std::string toUpperCase(const std::string &input);
   static std::string toLowerCase(const std::string &input);
+
+  static std::string toString(const std::string &name, unsigned int val);
   static std::string getAbsolutePathname(const std::string &pathname);
   static std::string getFileExtension(const std::string &pathname, bool checkFile = false);
   static long getIndex(const std::string &filename, const std::string &format);
