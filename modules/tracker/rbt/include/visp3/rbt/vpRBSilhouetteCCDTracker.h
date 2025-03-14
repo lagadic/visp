@@ -278,6 +278,7 @@ public:
     m_displayType = type;
   }
 
+
   /**
    * @}
    */
