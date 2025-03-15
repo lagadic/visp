@@ -115,7 +115,7 @@ void usage(const char **argv, int error)
 int main(int argc, const char **argv)
 {
 //! [Macro defined]
-#if defined(VISP_HAVE_APRILTAG) && defined(VISP_HAVE_OCCIPITAL_STRUCTURE)
+#if defined(VISP_HAVE_APRILTAG) && defined(VISP_HAVE_OCCIPITAL_STRUCTURE) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && defined(VISP_HAVE_THREADS)
   //! [Macro defined]
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
@@ -128,7 +128,7 @@ int main(int argc, const char **argv)
   int opt_nThreads = 1;
   bool opt_display_tag = false;
   int opt_color_id = -1;
-  unsigned int thickness = 2;
+  unsigned int opt_thickness = 2;
   bool opt_align_frame = false;
 
 #if !(defined(VISP_HAVE_DISPLAY))
@@ -155,7 +155,7 @@ int main(int argc, const char **argv)
       opt_align_frame = true;
     }
     else if (std::string(argv[i]) == "--tag-pose-method" && i + 1 < argc) {
-      poseEstimationMethod = (vpDetectorAprilTag::vpPoseEstimationMethod)atoi(argv[++i]);
+      opt_pose_stimation_method = (vpDetectorAprilTag::vpPoseEstimationMethod)atoi(argv[++i]);
     }
 #if defined(VISP_HAVE_DISPLAY)
     else if (std::string(argv[i]) == "--display-tag") {
@@ -217,7 +217,7 @@ int main(int argc, const char **argv)
     //! [Construct grabber]
 
     std::cout << cam << std::endl;
-    std::cout << "poseEstimationMethod: " << poseEstimationMethod << std::endl;
+    std::cout << "opt_pose_stimation_method: " << opt_pose_stimation_method << std::endl;
     std::cout << "opt_tag_family: " << opt_tag_family << std::endl;
     std::cout << "opt_nThreads : " << opt_nThreads << std::endl;
     std::cout << "Z aligned: " << opt_align_frame << std::endl;
@@ -244,7 +244,7 @@ int main(int argc, const char **argv)
 
     //! [AprilTag detector settings]
     detector.setAprilTagQuadDecimate(opt_quad_decimate);
-    detector.setAprilTagPoseEstimationMethod(poseEstimationMethod);
+    detector.setAprilTagPoseEstimationMethod(opt_pose_stimation_method);
     detector.setAprilTagNbThreads(opt_nThreads);
     detector.setDisplayTag(opt_display_tag, opt_color_id < 0 ? vpColor::none : vpColor::getColor(opt_color_id), opt_thickness);
     detector.setZAlignedWithCameraAxis(opt_align_frame);

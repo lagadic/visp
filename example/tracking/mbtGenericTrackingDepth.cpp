@@ -285,26 +285,14 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<uns
   std::string ext("png");
 #endif
   // Read image
-  std::stringstream ss;
-  ss << input_directory << "/image_";
-  ss << std::setfill('0') << std::setw(4);
-  ss << cpt;
-  ss << ".";
-  ss << ext;
-  std::string filename_image = ss.str();
+  std::string filename_image = vpIoTools::formatString(input_directory + "/image_%04d." + ext, cpt);
   if (!vpIoTools::checkFilename(filename_image)) {
     std::cerr << "Cannot read: " << filename_image << std::endl;
     return false;
   }
   vpImageIo::read(I, filename_image);
-
   // Read raw depth
-  ss.str("");
-  ss << input_directory << "/depth_image_";
-  ss << std::setfill('0') << std::setw(4);
-  ss << cpt;
-  ss << ".bin";
-  std::string filename_depth = ss.str();
+  std::string filename_depth = vpIoTools::formatString(input_directory + "/depth_image_%04d.bin", cpt);
 
   std::ifstream file_depth(filename_depth.c_str(), std::ios::in | std::ios::binary);
   if (!file_depth.is_open()) {
@@ -821,7 +809,7 @@ int main(int argc, const char **argv)
       }
 
       frame_index++;
-    }
+      }
 
     std::cout << "\nFinal poses, c1Mo:\n" << c1Mo << "\nc2Mo:\n" << c2Mo << std::endl;
     std::cout << "\nComputation time, Mean: " << vpMath::getMean(time_vec)
@@ -836,12 +824,12 @@ int main(int argc, const char **argv)
     tracker = nullptr;
 
     return EXIT_SUCCESS;
-  }
+      }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
-}
+    }
 
 #elif !(defined(VISP_HAVE_MODULE_MBT) && defined(VISP_HAVE_DISPLAY))
 int main()

@@ -2,6 +2,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpImageException.h>
+#include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpRGBa.h>
 
 #include <visp3/io/vpVideoReader.h>
@@ -169,9 +170,8 @@ int main(int argc, const char **argv)
       readerRGB.acquire(Icol);
       vpImageConvert::convert(Icol, Id);
       if (!sequenceArgs.depthFolder.empty()) {
-        std::stringstream depthName;
-        depthName << sequenceArgs.depthFolder << "/" << std::setfill('0') << std::setw(6) << im << ".npy";
-        visp::cnpy::NpyArray npz_data = visp::cnpy::npy_load(depthName.str());
+        std::string depthName = vpIoTools::formatString(sequenceArgs.depthFolder + "/%06d.npy", im);
+        visp::cnpy::NpyArray npz_data = visp::cnpy::npy_load(depthName);
         vpImage<uint16_t> dataArray(npz_data.data<uint16_t>(), npz_data.shape[0], npz_data.shape[1], false);
         float scale = 9.999999747378752e-05;
         depth.resize(dataArray.getHeight(), dataArray.getWidth());

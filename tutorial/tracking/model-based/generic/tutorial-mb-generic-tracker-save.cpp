@@ -21,19 +21,6 @@ std::vector<double> poseToVec(const vpHomogeneousMatrix &cMo)
 
   return vec;
 }
-
-// https://en.cppreference.com/w/cpp/io/c/fprintf
-std::string toString(const std::string &name, int val)
-{
-  auto fmt = name.c_str();
-  int sz = std::snprintf(nullptr, 0, fmt, val);
-  sz += 1; // note +1 for null terminator
-  std::vector<char> buf(sz);
-  std::snprintf(buf.data(), sz, fmt, val);
-  std::string str(buf.begin(), buf.end());
-
-  return str;
-}
 }
 
 int main(int argc, char **argv)
@@ -182,7 +169,7 @@ int main(int argc, char **argv)
     tracker.getModelForDisplay(mapOfModels, mapOfW, mapOfH, mapOfcMos, mapOfCams);
 
     std::vector<std::vector<double>> model = mapOfModels[camera_name];
-    const std::string model_iter = toString("model_%06zu", static_cast<int>(iter));
+    const std::string model_iter = vpIoTools::formatString("model_%06zu", static_cast<int>(iter));
     const std::string model_iter_sz = model_iter + "_sz";
 
     const size_t model_size = model.size();

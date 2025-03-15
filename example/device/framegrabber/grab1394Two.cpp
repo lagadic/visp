@@ -57,6 +57,7 @@
 
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImage.h>
+#include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpRGBa.h>
 #include <visp3/core/vpTime.h>
 #include <visp3/gui/vpDisplayX.h>
