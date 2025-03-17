@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,14 +29,10 @@
  *
  * Description:
  * libStructure interface.
- *
- * Authors:
- * Joudy Nader
- *
-*****************************************************************************/
+ */
 
-#ifndef _vpOccipitalStructure_h_
-#define _vpOccipitalStructure_h_
+#ifndef VP_OCCIPITAL_STRUCTURE_H
+#define VP_OCCIPITAL_STRUCTURE_H
 
 #include <visp3/core/vpConfig.h>
 

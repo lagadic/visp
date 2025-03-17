@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,13 +31,14 @@
  * Image storage helper.
  */
 
-#ifndef vpImageStorageWorker_h
-#define vpImageStorageWorker_h
+#ifndef VP_IMAGE_STORAGE_WORKER_H
+#define VP_IMAGE_STORAGE_WORKER_H
 
 #include <visp3/core/vpConfig.h>
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && defined(VISP_HAVE_THREADS)
 
+#include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpImageQueue.h>
 
@@ -72,13 +73,12 @@ public:
     try {
       vpImage<Type> I;
       std::string data;
-      char filename[FILENAME_MAX];
 
       for (;;) {
         m_queue.pop(I, data);
 
         // Save image
-        snprintf(filename, FILENAME_MAX, m_seqname.c_str(), m_cpt);
+        std::string filename = vpIoTools::formatString(m_seqname, m_cpt);
 
         if (m_record_mode > 0) { // Single image
           std::cout << "Save image: " << filename << std::endl;

@@ -226,7 +226,7 @@ The SDK contains pre-built libraries for Linux, Windows and macOS.
 In order that ViSP detects Structure SDK header files and libraries, you have to set `OCCIPITAL_STRUCTURE_DIR`
 environment variable. Proceed as follows:
 \verbatim
-$ echo "export OCCIPITAL_STRUCTURE_DIR=$VISP_WS/StructureSDK-CrossPlatform-0.9" >> ~/.bashrc
+$ echo "export OCCIPITAL_STRUCTURE_DIR=${VISP_WS}/3rdparty/StructureSDK-CrossPlatform-0.9" >> ~/.bashrc
 $ source ~/.bashrc
 \endverbatim
 

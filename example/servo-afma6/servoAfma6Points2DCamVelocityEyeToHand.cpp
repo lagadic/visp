@@ -304,13 +304,8 @@ int main()
       if ((SAVE == 1) && (iter % 3 == 0)) {
         vpImage<vpRGBa> Ic;
         vpDisplay::getImage(I, Ic);
-        std::stringstream ss;
-        ss << logdirname;
-        ss << "/image.";
-        ss << std::setfill('0') << std::setw(4);
-        ss << it++;
-        ss << ".png";
-        vpImageIo::write(Ic, ss.str());
+        std::string filename = vpIoTools::formatString(logdirname + "/image.%04d.png", it++);
+        vpImageIo::write(Ic, filename);
       }
 
       vpDisplay::displayText(I, 20, 20, "Click to quit...", vpColor::red);

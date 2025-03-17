@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * libStructure interface.
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpConfig.h>
 
@@ -563,7 +561,7 @@ void vpOccipitalStructure::getIMUData(vpColVector *imu_vel, vpColVector *imu_acc
 {
   std::unique_lock<std::mutex> u(m_delegate.m_sampleLock);
   m_delegate.cv_sampleLock.wait(u);
-  double imu_vel_timestamp, imu_acc_timestamp;
+  double imu_vel_timestamp = 0., imu_acc_timestamp = 0.;
 
   if (imu_vel != nullptr) {
     imu_vel->resize(3, false);
@@ -584,8 +582,9 @@ void vpOccipitalStructure::getIMUData(vpColVector *imu_vel, vpColVector *imu_acc
     imu_acc_timestamp = m_delegate.m_accelerometerEvent.arrivalTimestamp();
   }
 
-  if (ts != nullptr)
+  if (ts != nullptr) {
     *ts = std::max<double>(imu_vel_timestamp, imu_acc_timestamp);
+  }
 
   u.unlock();
 }

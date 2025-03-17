@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -199,10 +199,8 @@ void vpVideoWriter::saveFrame(vpImage<vpRGBa> &I)
 
   if (m_formatType == FORMAT_PGM || m_formatType == FORMAT_PPM || m_formatType == FORMAT_JPEG ||
       m_formatType == FORMAT_PNG) {
-    char name[FILENAME_MAX];
-    snprintf(name, FILENAME_MAX, m_videoName.c_str(), m_frameCount);
-    vpImageIo::write(I, name);
-    m_frameName = std::string(name);
+    m_frameName = vpIoTools::formatString(m_videoName, m_frameCount);
+    vpImageIo::write(I, m_frameName);
   }
   else {
 #if ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
@@ -232,10 +230,8 @@ void vpVideoWriter::saveFrame(vpImage<unsigned char> &I)
 
   if (m_formatType == FORMAT_PGM || m_formatType == FORMAT_PPM || m_formatType == FORMAT_JPEG ||
       m_formatType == FORMAT_PNG) {
-    char name[FILENAME_MAX];
-    snprintf(name, FILENAME_MAX, m_videoName.c_str(), m_frameCount);
-    vpImageIo::write(I, name);
-    m_frameName = std::string(name);
+    m_frameName = vpIoTools::formatString(m_videoName, m_frameCount);
+    vpImageIo::write(I, m_frameName);
   }
   else {
 #if ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))

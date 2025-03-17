@@ -165,16 +165,15 @@ The SDK contains pre-built libraries for Linux, Windows and macOS.
 In order that ViSP detects Structure SDK header files and libraries, you have to set `OCCIPITAL_STRUCTURE_DIR`
 environment variable. Proceed as follows:
 \code{.sh}
-$ echo "export OCCIPITAL_STRUCTURE_DIR=$VISP_WS/StructureSDK-CrossPlatform-0.9" >> ~/.bashrc
+$ echo "export OCCIPITAL_STRUCTURE_DIR=${VISP_WS}/3rdparty/StructureSDK-CrossPlatform-0.9" >> ~/.bashrc
 $ source ~/.bashrc
 \endcode
 
 <b>4.1.4.2. Optionally build Occipital Structure SDK samples</b>
 
-As explained in `$VISP_WS/StructureSDK-CrossPlatform-0.9/Documentation/macos.html` you can optionally
+As explained in `${VISP_WS}/3rdparty/StructureSDK-CrossPlatform-0.9/Documentation/macos.html` you can optionally
 follow these steps to build sample applications provided with the SDK:
 \code{.sh}
-$ sudo $OCCIPITAL_STRUCTURE_DIR/DriverAndFirmware/Linux/Install-CoreDriver-Udev-Linux.sh
 $ cd $OCCIPITAL_STRUCTURE_DIR
 $ mkdir build
 $ cd build
