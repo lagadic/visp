@@ -142,9 +142,7 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
     //     mask.bitmap[i] /= maxValue;
     //   }
     // }
-
   }
-
 }
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)

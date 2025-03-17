@@ -91,16 +91,19 @@ public:
    */
 
   /**
-   * \brief Get the minimum acceptable number of points that should be tracked. If KLT tracking has less than this number of points
+   * \brief Get the minimum acceptable number of points that should be tracked. If KLT tracking has less than this
+   * number of points.
    * The KLT tracking will be fully reinitialized.
    */
   unsigned int getMinimumNumberOfPoints() const { return m_numPointsReinit; }
   void setMinimumNumberOfPoints(unsigned int points) { m_numPointsReinit = points; }
 
   /**
-   * \brief Get the minimum distance that a candidate point should have to every other tracked point if it should be added.
+   * \brief Get the minimum distance that a candidate point should have to every other tracked point if it should be
+   * added.
    *
-   * During tracking, KLT points are frequently sampled. This settings used to ensure that multiple klt points do not track the same 3D points
+   * During tracking, KLT points are frequently sampled. This settings used to ensure that multiple klt points do not
+   * track the same 3D points.
    */
   double getMinimumDistanceNewPoints() const { return m_newPointsDistanceThreshold; }
   void setMinimumDistanceNewPoints(double distance) { m_newPointsDistanceThreshold = distance; }
@@ -114,8 +117,8 @@ public:
 
   /**
    * \brief Get the maximum reprojection error, in pixels, for a point to be considered as outlier.
-   * This reprojection error is computed between the tracked klt position in the image and the reprojection of the associated 3D point.
-   * If a point goes above this threshold, it is removed from tracking
+   * This reprojection error is computed between the tracked klt position in the image and the reprojection of the
+   * associated 3D point. If a point goes above this threshold, it is removed from tracking
    *
    * \return double
    */
@@ -123,7 +126,8 @@ public:
   void setFilteringMaxReprojectionError(double maxError) { m_maxErrorOutliersPixels = maxError; }
 
   /**
-   * \brief Returns whether the tracking algorithm should filter out points that are unlikely to be on the object according to the mask.
+   * \brief Returns whether the tracking algorithm should filter out points that are unlikely to be on the object
+   * according to the mask.
    * If the mask is not computed beforehand, then it has no effect
    */
   bool shouldUseMask() const { return m_useMask; }
@@ -257,7 +261,6 @@ private:
 
   bool m_useMask;
   float m_minMaskConfidence;
-
 };
 
 END_VISP_NAMESPACE

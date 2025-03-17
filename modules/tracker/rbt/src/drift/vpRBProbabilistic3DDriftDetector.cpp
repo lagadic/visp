@@ -81,8 +81,6 @@ void vpRBProbabilistic3DDriftDetector::update(const vpRBFeatureTrackerInput &pre
         continue;
       }
 
-
-
       float ZrenderMap = frame.renders.depth[p.projPrevPx[1]][p.projPrevPx[0]];
       // Version 2: compare previous projection with render, this does not filter occlusions
       if (ZrenderMap == 0.f || fabs(p.prevX[2] - ZrenderMap) > m_maxError3D) {
@@ -200,7 +198,6 @@ void vpRBProbabilistic3DDriftDetector::update(const vpRBFeatureTrackerInput &pre
   else {
     m_score = 0.0;
   }
-
 
   // Step 4: Sample bb to add new visible points
   const vpHomogeneousMatrix oMcprev = cprevTo.inverse();

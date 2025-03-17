@@ -279,8 +279,6 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
     m_logger.setOdometryTime(m_logger.endTimer());
   }
 
-
-
   int id = 0;
   for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
     m_logger.startTimer();
@@ -314,8 +312,6 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
     m_logger.setTrackerFeatureTrackingTime(id, m_logger.endTimer());
     id += 1;
   }
-
-
 
   id = 0;
   for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
@@ -363,7 +359,6 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
     vpColVector LTR(6, 0.0);
     double error = 0.f;
     unsigned int numFeatures = 0;
-
 
     for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
       if (tracker->getNumFeatures() > 0) {
@@ -507,10 +502,10 @@ void vpRBTracker::updateRender(vpRBFeatureTrackerInput &frame)
   }
 
 }
-std::vector<vpRBSilhouettePoint> vpRBTracker::extractSilhouettePoints(
-  const vpImage<vpRGBf> &Inorm, const vpImage<float> &Idepth,
-  const vpImage<vpRGBf> &silhouetteCanny, const vpImage<unsigned char> &Ivalid,
-  const vpCameraParameters &cam, const vpHomogeneousMatrix &cTcp)
+std::vector<vpRBSilhouettePoint>
+vpRBTracker::extractSilhouettePoints(const vpImage<vpRGBf> &Inorm, const vpImage<float> &Idepth,
+                                     const vpImage<vpRGBf> &silhouetteCanny, const vpImage<unsigned char> &Ivalid,
+                                     const vpCameraParameters &cam, const vpHomogeneousMatrix &cTcp)
 {
   std::vector<std::pair<unsigned int, unsigned int>> candidates =
     m_depthSilhouetteSettings.getSilhouetteCandidates(Ivalid, Idepth, cam, cTcp, m_previousFrame.silhouettePoints, 42);

@@ -79,6 +79,7 @@ private:
   bool m_isSilhouette;
 
   const vpCameraParameters *m_cam;
+
 public:
 
   vpImagePoint icpoint;
@@ -126,9 +127,9 @@ public:
   void updateSilhouettePoint(const vpHomogeneousMatrix &_cMo);
 
   /**
-   * @brief Track the moving edge at this point retaining only the hypothesis with the highest likelihood
+   * @brief Track the moving edge at this point retaining only the hypothesis with the highest likelihood.
    *
-   * @param I The image in which to track
+   * @param I The image in which to track.
    */
   void track(const vpImage<unsigned char> &I);
 
@@ -137,7 +138,7 @@ public:
    *
    * @param I The image in which to track
    *
-   * \see setNumCandidates
+   * \see setNumCandidates()
    */
   void trackMultipleHypotheses(const vpImage<unsigned char> &I);
 

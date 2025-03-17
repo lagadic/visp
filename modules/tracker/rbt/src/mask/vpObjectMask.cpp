@@ -46,7 +46,6 @@ void vpObjectMask::display(const vpImage<float> &mask, vpImage<unsigned char> &I
   }
 
   vpDisplay::display(Imask);
-
 }
 
 END_VISP_NAMESPACE

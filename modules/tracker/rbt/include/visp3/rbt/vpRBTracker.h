@@ -282,6 +282,5 @@ protected:
 
 END_VISP_NAMESPACE
 
-
 #endif
 #endif
