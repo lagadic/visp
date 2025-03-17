@@ -37,6 +37,8 @@
 #include <visp3/rbt/vpPointMap.h>
 #include <visp3/rbt/vpObjectCentricRenderer.h>
 
+BEGIN_VISP_NAMESPACE
+
 class VISP_EXPORT vpRBADDSMetric
 {
 public:
@@ -91,5 +93,6 @@ private:
   vpUniRand m_random;
 };
 
+END_VISP_NAMESPACE
 
 #endif

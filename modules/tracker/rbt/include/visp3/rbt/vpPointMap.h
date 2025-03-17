@@ -40,6 +40,8 @@
 
 #include <list>
 
+BEGIN_VISP_NAMESPACE
+
 class VISP_EXPORT vpPointMap
 {
 public:
@@ -177,5 +179,7 @@ private:
   double m_maxDepthError;
   double m_outlierThreshold;
 };
+
+END_VISP_NAMESPACE
 
 #endif
