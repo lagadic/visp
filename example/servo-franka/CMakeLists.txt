@@ -44,8 +44,9 @@ set(example_cpp
   frankaMoveToPosition.cpp
   frankaSavePosition.cpp
   servoFrankaIBVS.cpp
-  servoFrankaIBVS-EyeToHand-L_cVe_eJe.cpp
-  servoFrankaIBVS-EyeToHand-L_cVf_fVe_eJe.cpp
+  servoFrankaIBVS-EyeToHand-Lcur_cVe_eJe.cpp
+  servoFrankaIBVS-EyeToHand-Lcur_cVf_fVe_eJe.cpp
+  servoFrankaIBVS-EyeToHand-Ldes_cVf_fVe_eJe.cpp
   servoFrankaPBVS.cpp
 )
 

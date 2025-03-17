@@ -34,7 +34,7 @@
  */
 
 /*!
-  \example servoFrankaIBVS-EyeToHand-L_cVf_fVe_eJe.cpp
+  \example servoFrankaIBVS-EyeToHand-Lcur_cVf_fVe_eJe.cpp
 
   Example of eye-to-hand image-based control law. We control here a real robot, the
   Franka Emika Panda robot (arm with 7 degrees of freedom).
@@ -48,17 +48,22 @@
 
   Camera extrinsic (eMo) transformation is set by default to a value that will not match
   Your configuration.
-  - Use `--eMo` command line option to read the robot end-effector to object (Apriltag) frames transformation from
-    a file,
-  This file could be obtained following extrinsic camera calibration tutorial:
-  https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-calibration-extrinsic-eye-to-hand.html
+  - Use `--rMc` command line option to read the robot reference to camera frames constant transformation from
+    a file. This file could be obtained following extrinsic camera calibration tutorial:
+    https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-calibration-extrinsic-eye-to-hand.html
 
-  Camera intrinsic parameters are retrieved from the Realsense SDK.
+  - Camera intrinsic parameters are retrieved from the Realsense SDK.
 
-  The target is an AprilTag that is by default 4.8cm large. To print your own tag, see
+  The target is an AprilTag that is by default 12 cm large. To print your own tag, see
   https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-detection-apriltag.html
   You can specify the size of your tag using --tag-size command line option.
 
+  In this example we are estimating the pose of the tag:
+  - to compute the interaction matrix with the current visual features L_s = f(x, y, Z)
+  - cVf is the constant velocity twist matrix between the camera and the robot reference frames. This matrix is
+    obtained by extrinsic calibration
+  - fVe is the velocity twist transformation matrix between the robot reference and end-effector frames. This matrix
+    is obtained thanks to the robot odometry.
 */
 
 #include <iostream>
@@ -357,6 +362,13 @@ int main(int argc, char **argv)
   detector.setAprilTagQuadDecimate(opt_quad_decimate);
   detector.setZAlignedWithCameraAxis(opt_tag_z_aligned);
 
+  // Define 4 3D points corresponding to the CAD model of the Apriltag
+  std::vector<vpPoint> point(4);
+  point[0].setWorldCoordinates(-opt_tag_size / 2., -opt_tag_size / 2., 0);
+  point[1].setWorldCoordinates(+opt_tag_size / 2., -opt_tag_size / 2., 0);
+  point[2].setWorldCoordinates(+opt_tag_size / 2., +opt_tag_size / 2., 0);
+  point[3].setWorldCoordinates(-opt_tag_size / 2., +opt_tag_size / 2., 0);
+
   if (opt_learn_desired_features) {
 
     bool quit = false;
@@ -366,6 +378,7 @@ int main(int argc, char **argv)
       vpDisplay::display(I);
 
       std::vector<vpHomogeneousMatrix> c_M_o_vec;
+      // To learn the desired visual features (x*, y*, Z*) we will use the tag pose to estimate Z*
       bool ret = detector.detect(I, opt_tag_size, cam, c_M_o_vec);
 
       vpDisplay::displayText(I, 20, 20, "Move the robot to the desired tag pose...", vpColor::red);
@@ -393,6 +406,7 @@ int main(int argc, char **argv)
               vpHomogeneousMatrix cd_M_o = c_M_o_vec[0];
               std::vector<vpFeaturePoint> p_d(4);
 
+              // Update x*, y* for each desired visual feature
               for (size_t i = 0; i < 4; ++i) {
                 double x = 0, y = 0;
                 vpPixelMeterConversion::convertPoint(cam, tags_corners[0][i], x, y);
@@ -403,13 +417,7 @@ int main(int argc, char **argv)
                 p_d[i].set_y(y);
               }
 
-              // Define 4 3D points corresponding to the CAD model of the Apriltag
-              std::vector<vpPoint> point(4);
-              point[0].setWorldCoordinates(-opt_tag_size / 2., -opt_tag_size / 2., 0);
-              point[1].setWorldCoordinates(+opt_tag_size / 2., -opt_tag_size / 2., 0);
-              point[2].setWorldCoordinates(+opt_tag_size / 2., +opt_tag_size / 2., 0);
-              point[3].setWorldCoordinates(-opt_tag_size / 2., +opt_tag_size / 2., 0);
-
+              // Update Z* for each desired visual feature
               for (size_t i = 0; i < point.size(); ++i) {
                 vpColVector c_P, p;
                 point[i].changeFrame(cd_M_o, c_P);
@@ -479,9 +487,6 @@ int main(int argc, char **argv)
   try {
     robot.connect(opt_robot_ip);
 
-    // Servo
-    vpHomogeneousMatrix cd_M_c, c_M_o, o_M_o;
-
     // Create current visual features
     std::vector<vpFeaturePoint> p(4); // We use 4 points
 
@@ -491,7 +496,7 @@ int main(int argc, char **argv)
       task.addFeature(p[i], p_d[i]);
     }
     task.setServo(vpServo::EYETOHAND_L_cVf_fVe_eJe);
-    task.setInteractionMatrixType(vpServo::DESIRED);
+    task.setInteractionMatrixType(vpServo::CURRENT);
 
     if (opt_adaptive_gain) {
       vpAdaptiveGain lambda(1.5, 0.4, 30); // lambda(0)=4, lambda(oo)=0.4 and lambda'(0)=30
@@ -549,7 +554,9 @@ int main(int argc, char **argv)
 
       vpDisplay::display(I);
 
-      bool ret = detector.detect(I);
+      std::vector<vpHomogeneousMatrix> c_M_o_vec;
+      // To update the current visual feature (x,y,Z) parameters, we need the tag pose to estimate Z
+      bool ret = detector.detect(I, opt_tag_size, cam, c_M_o_vec);
 
       {
         std::stringstream ss;
@@ -562,6 +569,7 @@ int main(int argc, char **argv)
       // Only one tag is detected
       if (ret && detector.getNbObjects() == 1) {
         static bool first_time = true;
+        vpHomogeneousMatrix c_M_o = c_M_o_vec[0];
 
         // Get tag corners
         std::vector<vpImagePoint> corners = detector.getPolygon(0);
@@ -570,6 +578,11 @@ int main(int argc, char **argv)
         for (size_t i = 0; i < corners.size(); ++i) {
           // Update the point feature from the tag corners location
           vpFeatureBuilder::create(p[i], cam, corners[i]);
+          // Set the feature Z coordinate from the pose
+          vpColVector c_P;
+          point[i].changeFrame(c_M_o, c_P);
+
+          p[i].set_Z(c_P[2]); // Update Z value of each visual feature thanks to the tag pose
         }
 
         // Set the robot reference frame to end-effector frame velocity twist matrix transformation
