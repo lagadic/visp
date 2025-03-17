@@ -532,10 +532,12 @@ bool vpRBSilhouetteControlPoint::tooCloseToBorder(unsigned int h, unsigned int w
       std::make_pair(static_cast<int>(round(icpoint.get_i() - ss)), static_cast<int>(round(icpoint.get_j() - cs)))
   };
 
+  int width = static_cast<int>(w);
+  int height = static_cast<int>(h);
   for (unsigned int e = 0; e < 2; ++e) {
     int i = extremities[e].first;
     int j = extremities[e].second;
-    if (i < 0 || i >= h || j < 0 || j >= w) {
+    if (i < 0 || i >= height || j < 0 || j >= width) {
       return true;
     }
   }
