@@ -243,7 +243,8 @@ void vpPointMap::selectValidNewCandidates(const vpCameraParameters &cam, const v
   }
 }
 
-void vpPointMap::updatePoints(const vpArray2D<int> &indicesToRemove, const vpMatrix &pointsToAdd, std::list<int> &removedIndices, unsigned int &numAddedPoints)
+void vpPointMap::updatePoints(const vpArray2D<int> &indicesToRemove, const vpMatrix &pointsToAdd,
+                              std::list<int> &removedIndices, unsigned int &numAddedPoints)
 {
   removedIndices.clear();
   int newSize = m_X.getRows() - indicesToRemove.getRows() + pointsToAdd.getRows();
@@ -251,16 +252,18 @@ void vpPointMap::updatePoints(const vpArray2D<int> &indicesToRemove, const vpMat
     removedIndices.push_back(indicesToRemove[i][0]);
   }
 
+  int maxPoints = static_cast<int>(m_maxPoints);
   removedIndices.sort();
-  if (newSize > m_maxPoints) {
-    int shouldBeRemoved = newSize - m_maxPoints;
-    newSize = m_maxPoints;
+  if (newSize > maxPoints) {
+    int shouldBeRemoved = newSize - maxPoints;
+    newSize = maxPoints;
 
     // If the first values are filtered by indicesToRemove, we need to further increment the start index
     std::list<int> startingIndices;
     auto removedIt = removedIndices.begin();
     int i = 0;
-    while (startingIndices.size() < shouldBeRemoved && i < m_X.getRows()) {
+    int n_rows = static_cast<int>(m_X.getRows());
+    while ((startingIndices.size() < static_cast<size_t>(shouldBeRemoved)) && (i < n_rows)) {
 
       if (removedIt == removedIndices.end() || i < (*removedIt)) {
         startingIndices.push_back(i);
@@ -293,7 +296,7 @@ void vpPointMap::updatePoints(const vpArray2D<int> &indicesToRemove, const vpMat
     newXIndex += copiedRows;
   }
   numAddedPoints = 0;
-  for (unsigned int i = 0; i < pointsToAdd.getRows() && newXIndex < newSize; ++i) {
+  for (unsigned int i = 0; i < pointsToAdd.getRows() && newXIndex < static_cast<unsigned int>(newSize); ++i) {
     for (unsigned int j = 0; j < 3; ++j) {
       newX[newXIndex][j] = pointsToAdd[i][j];
     }
