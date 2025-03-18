@@ -1,4 +1,3 @@
-
 /*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
@@ -39,6 +38,22 @@
 #define VISP_DEBUG_CCD_TRACKER 0
 
 BEGIN_VISP_NAMESPACE
+
+void sampleWithoutReplacement(unsigned int count, unsigned int vectorSize, std::vector<size_t> &indices, vpUniRand &random)
+{
+  count = std::min(count, vectorSize);
+  indices.resize(count);
+  unsigned int added = 0;
+  for (unsigned i = 0; i < vectorSize; ++i) {
+    double randomVal = random.uniform(0.0, 1.0);
+    if ((vectorSize - i) * randomVal < (count - added)) {
+      indices[added++] = i;
+    }
+    if (added == count) {
+      break;
+    }
+  }
+}
 
 template <class T> class FastMat33
 {
@@ -93,7 +108,6 @@ public:
 
   static void multiply(const FastMat63<T> &A, const FastMat33<T> &B, FastMat63 &C)
   {
-
     for (unsigned int i = 0; i < 6; ++i) {
       const T *d = &A.data[i * 3];
       T *c = &C.data[i * 3];
@@ -138,68 +152,63 @@ public:
     C[4] = A[12] * B[0] + A[13] * B[1] + A[14] * B[2];
     C[5] = A[15] * B[0] + A[16] * B[1] + A[17] * B[2];
   }
-
 };
 
-vpRBSilhouetteCCDTracker::vpRBSilhouetteCCDTracker() : vpRBFeatureTracker(), m_vvsConvergenceThreshold(0.0), m_temporalSmoothingFac(0.1), m_useMask(false), m_minMaskConfidence(0.0), m_displayType(vpRBSilhouetteCCDDisplayType::SIMPLE)
+vpRBSilhouetteCCDTracker::vpRBSilhouetteCCDTracker() : vpRBFeatureTracker(), m_vvsConvergenceThreshold(0.0),
+m_temporalSmoothingFac(0.0), m_useMask(false), m_minMaskConfidence(0.0), m_maxPoints(0), m_random(421), m_displayType(SIMPLE)
 { }
 
 void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput & /*previousFrame*/, const vpHomogeneousMatrix &/*cMo*/)
 {
+  m_ccdParameters.h = m_ccdParameters.start_h;
+  m_ccdParameters.delta_h = m_ccdParameters.start_delta_h;
   m_controlPoints.clear();
   //m_controlPoints.reserve(frame.silhouettePoints.size());
   const vpHomogeneousMatrix cMo = frame.renders.cMo;
   const vpHomogeneousMatrix oMc = cMo.inverse();
+
   for (const vpRBSilhouettePoint &sp : frame.silhouettePoints) {
     // std::cout << m_ccdParameters.h << std::endl;
     // std::cout << sp.j << ", " << sp.i << std::endl;
     int ii = sp.i, jj = sp.j;
 
-    if (ii <= m_ccdParameters.h || jj <= m_ccdParameters.h || static_cast<unsigned int>(ii) >= frame.I.getHeight() - m_ccdParameters.h || static_cast<unsigned int>(jj) >= frame.I.getWidth() - m_ccdParameters.h) {
+    if (!sp.isSilhouette) {
+      continue;
+    }
+
+    if (ii <= m_ccdParameters.h || jj <= m_ccdParameters.h ||
+      static_cast<unsigned int>(ii) >= frame.I.getHeight() - m_ccdParameters.h ||
+      static_cast<unsigned int>(jj) >= frame.I.getWidth() - m_ccdParameters.h) {
       continue;
     }
     vpRBSilhouetteControlPoint pccd;
+
     pccd.buildSilhouettePoint(ii, jj, sp.Z, sp.orientation, sp.normal, cMo, oMc, frame.cam);
 
-    pccd.detectSilhouette(frame.renders.depth);
-    if (!pccd.isSilhouette() || std::isnan(sp.orientation) || !pccd.isValid()) {
+    if (std::isnan(sp.orientation) || !pccd.isValid()) {
       continue;
     }
 
     if (frame.hasMask() && m_useMask) {
-      double maskGradValue = computeMaskGradient(frame.mask, pccd);
+      double maskGradValue = pccd.getMaxMaskGradientAlongLine(frame.mask, m_ccdParameters.h);
       if (maskGradValue < m_minMaskConfidence) {
         continue;
       }
     }
     m_controlPoints.push_back(std::move(pccd));
-
-  }
-}
-
-double vpRBSilhouetteCCDTracker::computeMaskGradient(const vpImage<float> &mask, const vpRBSilhouetteControlPoint &pccd) const
-{
-
-  std::vector<float> maskValues(m_ccdParameters.h * 2 + 1);
-  double c = cos(pccd.getTheta());
-  double s = sin(pccd.getTheta());
-  int index = 0;
-  for (int n = -m_ccdParameters.h + 1; n < m_ccdParameters.h; ++n) {
-    unsigned int ii = static_cast<unsigned int>(round(pccd.icpoint.get_i() + s * n));
-    unsigned int jj = static_cast<unsigned int>(round(pccd.icpoint.get_j() + c * n));
-    maskValues[index] = mask[ii][jj];
-    ++index;
   }
 
-  double maxGrad = 0.0;
+  if (m_maxPoints > 0 && m_controlPoints.size() > m_maxPoints) {
+    std::vector<size_t> keptIndices(m_maxPoints);
+    sampleWithoutReplacement(m_maxPoints, m_controlPoints.size(), keptIndices, m_random);
 
-  for (unsigned i = 1; i < maskValues.size() - 1; ++i) {
-    double grad = abs(maskValues[i + 1] - maskValues[i - 1]);
-    if (grad > maxGrad) {
-      maxGrad = grad;
+    std::vector<vpRBSilhouetteControlPoint> finalPoints;
+    finalPoints.reserve(m_maxPoints);
+    for (unsigned int index : keptIndices) {
+      finalPoints.emplace_back(std::move(m_controlPoints[index]));
     }
+    m_controlPoints = std::move(finalPoints);
   }
-  return maxGrad;
 }
 
 void vpRBSilhouetteCCDTracker::initVVS(const vpRBFeatureTrackerInput &/*frame*/, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix & /*cMo*/)
@@ -207,7 +216,7 @@ void vpRBSilhouetteCCDTracker::initVVS(const vpRBFeatureTrackerInput &/*frame*/,
   // Reinit all variables
   m_sigma = vpMatrix(m_ccdParameters.phi_dim, m_ccdParameters.phi_dim, 0.0);
   m_cov.resize(6, 6);
-  tol = 0.0;
+
   m_vvsConverged = false;
 
   unsigned int resolution = m_controlPoints.size();
@@ -219,35 +228,83 @@ void vpRBSilhouetteCCDTracker::initVVS(const vpRBFeatureTrackerInput &/*frame*/,
   m_prevStats.reinit(resolution, normal_points_number);
   m_gradient = vpMatrix(m_ccdParameters.phi_dim, 1, 0.0);
   m_hessian = vpMatrix(m_ccdParameters.phi_dim, m_ccdParameters.phi_dim, 0.0);
-  m_gradients.resize(m_controlPoints.size() * 2 * normal_points_number, vpColVector(m_gradient.getRows()));
-  m_hessians.resize(m_controlPoints.size() * 2 * normal_points_number, vpMatrix(m_hessian.getRows(), m_hessian.getCols()));
 
-  //m_weights.resize(nerror_ccd);
+  m_gradientData.resize(m_controlPoints.size() * 2 * normal_points_number * 6);
+  m_hessianData.resize(m_controlPoints.size() * 2 * normal_points_number * 6 * 6);
+  m_gradients.resize(m_controlPoints.size() * 2 * normal_points_number);
+  m_hessians.resize(m_controlPoints.size() * 2 * normal_points_number);
+
+  for (unsigned int i = 0; i < m_gradients.size(); ++i) {
+    m_gradients[i] = vpColVector::view(m_gradientData.data() + i * 6, 6);
+    m_hessians[i] = vpMatrix::view(m_hessianData.data() + i * 6 * 6, 6, 6);
+  }
   m_weights.resize(m_numFeatures, false);
-  // m_weights = 1;
-  // computeMask(frame.renders.color, m_stats);
-  // computeMask(frame.renders.color, m_prevStats);
-  // m_stats.weight = 1.0;
-  // m_prevStats.weight = 1.0;
-  computeLocalStatistics(previousFrame.IRGB, m_prevStats);
-  //computeLocalStatistics(image, m_stats);
+  if (m_temporalSmoothingFac > 0.0) {
+    computeLocalStatistics(previousFrame.IRGB, m_prevStats);
+  }
+  else {
+    m_prevStats = m_stats;
+  }
+  m_previousFrame = &previousFrame;
+}
+
+void vpRBSilhouetteCCDTracker::changeScale()
+{
+  m_sigma = vpMatrix(m_ccdParameters.phi_dim, m_ccdParameters.phi_dim, 0.0);
+  m_cov.resize(6, 6);
+  unsigned int resolution = m_controlPoints.size();
+  int normal_points_number = floor(m_ccdParameters.h / m_ccdParameters.delta_h);
+  unsigned nerror_ccd = 2 * normal_points_number * 3 * resolution;
+  m_numFeatures = nerror_ccd;
+
+  m_stats.reinit(resolution, normal_points_number);
+  m_prevStats.reinit(resolution, normal_points_number);
+  m_gradientData.resize(m_controlPoints.size() * 2 * normal_points_number * 6);
+  m_hessianData.resize(m_controlPoints.size() * 2 * normal_points_number * 6 * 6);
+  m_gradients.resize(m_controlPoints.size() * 2 * normal_points_number);
+  m_hessians.resize(m_controlPoints.size() * 2 * normal_points_number);
+
+  for (unsigned int i = 0; i < m_gradients.size(); ++i) {
+    m_gradients[i] = vpColVector::view(m_gradientData.data() + i * 6, 6);
+    m_hessians[i] = vpMatrix::view(m_hessianData.data() + i * 6 * 6, 6, 6);
+  }
+  m_weights.resize(m_numFeatures, false);
+  if (m_temporalSmoothingFac > 0.0) {
+    computeLocalStatistics(m_previousFrame->IRGB, m_prevStats);
+  }
+  else {
+    m_prevStats = m_stats;
+  }
 }
 
 void vpRBSilhouetteCCDTracker::computeVVSIter(const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cMo, unsigned int iteration)
 {
+  if (m_numFeatures == 0) {
+    m_vvsConverged = false;
+    return;
+  }
+
   vpColVector oldPoints(m_controlPoints.size() * 2);
   for (unsigned int i = 0; i < m_controlPoints.size(); ++i) {
     oldPoints[i * 2] = m_controlPoints[i].icpoint.get_u();
     oldPoints[i * 2 + 1] = m_controlPoints[i].icpoint.get_v();
   }
   updateCCDPoints(cMo);
-
   tol = 0.0;
   for (unsigned int i = 0; i < m_controlPoints.size(); ++i) {
     tol += abs(oldPoints[i * 2] - m_controlPoints[i].icpoint.get_u());
     tol += abs(oldPoints[i * 2 + 1] - m_controlPoints[i].icpoint.get_v());
   }
   tol /= m_controlPoints.size();
+  if (tol < sqrt(static_cast<double>(m_ccdParameters.h) / 2.0) && iteration >= 1) {
+    int previousH = m_ccdParameters.h;
+    m_ccdParameters.h = std::max(m_ccdParameters.min_h, previousH / 2);
+    if (m_ccdParameters.h != previousH) {
+      m_ccdParameters.delta_h = static_cast<int>(std::max(1.0, round(m_ccdParameters.delta_h * (m_ccdParameters.h / previousH))));
+      changeScale();
+    }
+  }
+
   computeLocalStatistics(frame.IRGB, m_stats);
   computeErrorAndInteractionMatrix(); // Update interaction matrix, and gauss newton left and right side terms
 
@@ -262,18 +319,14 @@ void vpRBSilhouetteCCDTracker::display(const vpCameraParameters &/*cam*/, const 
 {
   unsigned normal_points_number = floor(m_ccdParameters.h / m_ccdParameters.delta_h);
   unsigned nerror_per_point = 2 * normal_points_number * 3;
-  if (m_displayType == vpRBSilhouetteCCDDisplayType::SIMPLE) {
+  if (m_displayType == SIMPLE) {
 
     for (unsigned int i = 0; i < m_controlPoints.size(); ++i) {
       const vpRBSilhouetteControlPoint &p = m_controlPoints[i];
-      vpDisplay::displayCross(IRGB, p.icpoint.get_i(), p.icpoint.get_j(), 3, vpColor::green, 1);
-      vpImagePoint diff(m_stats.nv[i][1] * m_ccdParameters.h, m_stats.nv[i][0] * m_ccdParameters.h);
-
-      // vpImagePoint ip2 = p.icpoint + diff;
-      // vpDisplay::displayArrow(IRGB, p.icpoint, ip2, p.invnormal ? vpColor::red : vpColor::lightBlue);
+      vpDisplay::displayPoint(IRGB, p.icpoint.get_i(), p.icpoint.get_j(), vpColor::green, 2);
     }
   }
-  else if (m_displayType == vpRBSilhouetteCCDDisplayType::ERROR) {
+  else if (m_displayType == ERROR) {
     vpColVector errorPerPoint(m_controlPoints.size());
     double maxPointError = 0.0;
     for (unsigned int i = 0; i < m_controlPoints.size(); ++i) {
@@ -304,7 +357,7 @@ void vpRBSilhouetteCCDTracker::display(const vpCameraParameters &/*cam*/, const 
       ++idx;
     }
   }
-  else if (m_displayType == vpRBSilhouetteCCDDisplayType::WEIGHT) {
+  else if (m_displayType == WEIGHT) {
     vpColVector weightPerPoint(m_controlPoints.size());
     for (unsigned int i = 0; i < m_controlPoints.size(); ++i) {
       double sum = 0.0;
@@ -323,6 +376,36 @@ void vpRBSilhouetteCCDTracker::display(const vpCameraParameters &/*cam*/, const 
       c.G = (unsigned char)(255.f * weight);
       c.B = 0;
 
+      vpDisplay::displayCross(IRGB, p.icpoint.get_i(), p.icpoint.get_j(), 3, c, 1);
+      idx++;
+    }
+  }
+  else if (m_displayType == WEIGHT_AND_ERROR) {
+    vpColVector weightPerPoint(m_controlPoints.size());
+    vpColVector errorPerPoint(m_controlPoints.size());
+    for (unsigned int i = 0; i < m_controlPoints.size(); ++i) {
+      double sum = 0.0;
+      double sumError = 0.0;
+      for (unsigned int j = 0; j < nerror_per_point; ++j) {
+        sum += m_weights[i * nerror_per_point + j];
+        sumError += m_error[i * nerror_per_point + j];
+      }
+      weightPerPoint[i] = sum / nerror_per_point;
+      errorPerPoint[i] = sumError / nerror_per_point;
+
+    }
+    double maxError = errorPerPoint.getMaxValue();
+    unsigned idx = 0;
+    for (const vpRBSilhouetteControlPoint &p : m_controlPoints) {
+      vpColor c;
+      c.R = static_cast<unsigned char>((errorPerPoint[idx] / maxError) * 255.0);
+      c.G = 0;
+      c.B = static_cast<unsigned char>(255.0 * weightPerPoint[idx]);
+      // vpImagePoint diff(m_stats.nv[idx][1] * m_ccdParameters.h, m_stats.nv[idx][0] * m_ccdParameters.h);
+      // vpImagePoint ip1 = p.icpoint - diff;
+      // vpImagePoint ip2 = p.icpoint + diff;
+
+      // vpDisplay::displayLine(IRGB, ip1, ip2, c, 1);
       vpDisplay::displayCross(IRGB, p.icpoint.get_i(), p.icpoint.get_j(), 3, c, 1);
       idx++;
     }
@@ -462,7 +545,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
       vic_ptr[10 * negative_normal + 6] = wp2 * wp2 * wp2 * wp2;
       vic_ptr[10 * negative_normal + 7] = std::max((exp(-0.5 * dist2[0] * dist2[0] / (sigma_hat * sigma_hat)) - minus_exp_gamma2), 0.0);
       vic_ptr[10 * negative_normal + 8] = 0.5 * exp(-abs(dist2[0]) / alpha) / alpha;
-      vic_ptr[10 * negative_normal + 9] = exp(-dist2[0] * dist2[0] / (2 * sigma * sigma)) / (sqrt(2 * CV_PI) * sigma);
+      vic_ptr[10 * negative_normal + 9] = exp(-dist2[0] * dist2[0] / (2 * sigma * sigma)) / (sqrt(2 * M_PI) * sigma);
       normalized_param[kk][1] += vic_ptr[10 * negative_normal + 7];
     }
   }
@@ -589,6 +672,7 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
   const int nerror_ccd = 2 * normal_points_number * 3 * npointsccd;
   m_error.resize(nerror_ccd, false);
   m_weighted_error.resize(nerror_ccd, false);
+  vpColVector errorPerPoint(m_controlPoints.size(), 0.0);
   m_L.resize(nerror_ccd, 6, false, false);
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel
@@ -609,7 +693,7 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
     for (unsigned int kk = 0; kk < m_controlPoints.size(); kk++) {
       const int i = kk;
       const vpRBSilhouetteControlPoint &p = m_controlPoints[kk];
-
+      errorPerPoint[kk] = 0.0;
       if (!p.isValid()) {
         for (unsigned int j = 0; j < 2 * normal_points_number; ++j) {
           for (unsigned int m = 0; m < 3; ++m) {
@@ -636,7 +720,6 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
       Lnvp[4] = (-nv_ptr[1] * p.xs * p.ys - nv_ptr[0] * (1.0 + p.xs * p.xs));
       Lnvp[5] = (nv_ptr[0] * p.ys - nv_ptr[1] * p.xs);
 
-
       for (unsigned int j = 0; j < 2 * normal_points_number; ++j) {
         const double *vic_j = vic_ptr + 10 * j;
         const double *pix_j = pix_ptr + j * 3;
@@ -659,6 +742,7 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
             //error_ccd[i*2*normal_points_number*3 + j*3 + m] = img(vic_ptr[10*j+0], vic_ptr[10*j+1])[m]- errf * mean_vic_ptr[m]- (1-errf)* mean_vic_ptr[m+3];
           tmp_pixel_diff[m] = err;
           error_ccd_j[m] = err;
+          errorPerPoint[kk] += err;
         }
 
         //compute jacobian matrix
@@ -673,6 +757,7 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
 
         FastMat63<double>::multiply(tmp_jacobian, tmp_cov_inv, tmp_jacobian_x_tmp_cov_inv);
         //vpMatrix::mult2Matrices(tmp_jacobian, tmp_cov_inv, tmp_jacobian_x_tmp_cov_inv);
+
         FastVec3<double>::multiply(tmp_jacobian_x_tmp_cov_inv, tmp_pixel_diff, m_gradients[i * 2 * normal_points_number + j]);
         FastMat63<double>::multiplyBTranspose(tmp_jacobian_x_tmp_cov_inv, tmp_jacobian, m_hessians[i * 2 * normal_points_number + j]);
         // vpMatrix::mult2Matrices(tmp_jacobian_x_tmp_cov_inv, tmp_jacobian.t(), m_hessians[i * 2 * normal_points_number + j]);
@@ -683,8 +768,13 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
   m_gradient = 0.0;
   m_hessian = 0.0;
   //m_robust.setMinMedianAbsoluteDeviation(1.0);
+  vpColVector weightPerPoint(errorPerPoint.getRows());
   m_robust.MEstimator(vpRobust::vpRobustEstimatorType::TUKEY, m_error, m_weights);
-
+  // for (unsigned int i = 0; i < m_controlPoints.size(); ++i) {
+  //   for (unsigned int j = 0; j < 2 * normal_points_number * 3; ++j) {
+  //     m_weights[i * 2 * normal_points_number * 3 + j] = weightPerPoint[i];
+  //   }
+  // }
   for (unsigned int i = 0; i < m_L.getRows(); ++i) {
     m_weighted_error[i] = m_error[i] * m_weights[i];
     for (unsigned int j = 0; j < 6; ++j) {
@@ -714,7 +804,7 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
       localHessians.resize(threads, localHessian);
     }
 #ifdef VISP_HAVE_OPENMP
-#pragma omp for schedule(static)
+#pragma omp for
 #endif
     for (unsigned int i = 0; i < m_gradients.size(); ++i) {
       m_gradients[i] *= m_weights[i];
@@ -743,9 +833,12 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
     m_sigma = m_ccdParameters.covarianceIterDecreaseFactor * m_sigma + 2.0 * (1.0 - m_ccdParameters.covarianceIterDecreaseFactor) * hessian_E_inv;
   }
   catch (vpException &e) {
+    m_numFeatures = 0;
+    m_weighted_error = 0;
+    m_LTL = 0;
+    m_LTR = 0;
     std::cerr << "Inversion issues in CCD tracker" << std::endl;
   }
-
 }
 
 END_VISP_NAMESPACE

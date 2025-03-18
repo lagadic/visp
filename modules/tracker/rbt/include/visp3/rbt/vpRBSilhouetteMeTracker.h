@@ -64,12 +64,12 @@ public:
 
   void setMovingEdge(const vpMe &me) { m_me = me; }
 
-  void onTrackingIterStart() VP_OVERRIDE
+  void onTrackingIterStart(const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE
   {
     m_controlPoints.clear();
   }
 
-  void onTrackingIterEnd() VP_OVERRIDE { }
+  void onTrackingIterEnd(const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE { }
 
   /**
    * @brief Extract the geometric features from the list of collected silhouette points
@@ -110,16 +110,18 @@ public:
   }
 
   /**
-   * \brief Returns whether the tracking algorithm should filter out points that are unlikely to be on the object according to the mask.
-   * If the mask is not computed beforehand, then it has no effect
+   * \brief Returns whether the tracking algorithm should filter out points that are unlikely to be on the object
+   * according to the mask.
+   * If the mask is not computed beforehand, then it has no effect.
    */
   bool shouldUseMask() const { return m_useMask; }
   void setShouldUseMask(bool useMask) { m_useMask = useMask; }
 
   /**
-   * \brief Returns the minimum mask confidence that a pixel linked to depth point should have if it should be kept during tracking.
+   * \brief Returns the minimum mask confidence that a pixel linked to depth point should have if it should be kept
+   * during tracking.
    *
-   * This value is between 0 and 1
+   * This value is between 0 and 1.
    */
   float getMinimumMaskConfidence() const { return m_minMaskConfidence; }
   void setMinimumMaskConfidence(float confidence)

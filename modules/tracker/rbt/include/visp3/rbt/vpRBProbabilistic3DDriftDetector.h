@@ -51,17 +51,19 @@ template <typename T> class vpImage;
 /**
  * \ingroup group_rbt_drift
  *
- * \brief Algorithm that uses tracks object surface points in order to estimate the probability that tracking is successful.
+ * \brief Algorithm that uses tracks object surface points in order to estimate the probability that tracking is
+ * successful.
  *
- * Given a set of surface points \f$ \mathbf{X}_0, ..., \mathbf{X}_N\f$, each point \f$\mathbf{X}_i\f$ being associated to:
+ * Given a set of surface points \f$ \mathbf{X}_0, ..., \mathbf{X}_N\f$, each point \f$\mathbf{X}_i\f$ being associated
+ * to:
  *
  * - a color distribution \f$\mathcal{N}(\mathbf{\bar c_i}, \mathbf{\Sigma_{c_i}^2})\f$,
  * - its distance to the camera being \f$Z_i\f$,
- * - its projection in the current color and depth images \f$\mathbf{I_c}, \mathbf{I_Z}\f$ having coordinates \f$u_i, v_i\f$.
+ * - its projection in the current color and depth images \f$\mathbf{I_c}, \mathbf{I_Z}\f$ having coordinates
+ *   \f$u_i, v_i\f$.
  * - its visibility \f$V(\mathbf{X_i})\f$, which is 1 if \f$u_i, v_i\f$ lie in the image,
- * \f$Z_i\f$ is close to the rendered depth value
- * and the normal at the surface marks the point as visible from the camera's point of view.
- *
+ *   \f$Z_i\f$ is close to the rendered depth value
+ *   and the normal at the surface marks the point as visible from the camera's point of view.
  *
  * We compute the probability that tracking is successful for a given pose \f$^{c}\mathbf{T}_o\f$ as:
  *
@@ -77,8 +79,10 @@ template <typename T> class vpImage;
  *
  * if the depth is unavailable, then we set \f$p(\mathbf{I_Z}(u_i, v_i) | \mathcal{N}(Z_i, \sigma_Z^2)) = 1\f$
  *
- * Here, the color distribution is estimated online for each point separately using exponential moving average/variance techniques.
- * For each point the update step is computed as \f$p(\mathbf{I_Z}(u_i, v_i) | \mathcal{N}(Z_i, \sigma_Z^2))\cdot \alpha\f$ where \f$\alpha\f$ is a fixed parameter. Larger values will lead to faster update rates and may be more beneficial for non lambertian materials.
+ * Here, the color distribution is estimated online for each point separately using exponential moving average/variance
+ * techniques. For each point the update step is computed as
+ * \f$p(\mathbf{I_Z}(u_i, v_i) | \mathcal{N}(Z_i, \sigma_Z^2))\cdot \alpha\f$ where \f$\alpha\f$ is a fixed parameter.
+ * Larger values will lead to faster update rates and may be more beneficial for non lambertian materials.
  *
  * For the depth, \f$\sigma_Z\f$ is a fixed parameter to be tweaked by the user.
  *
@@ -93,9 +97,12 @@ private:
   {
 
     /**
-     * \brief Online estimation of a Gaussian color distribution \f$\mathcal{N}(\mathbf{\bar c}, \mathbf{\Sigma_c^2})\f$, Where \f$\mathbf{\Sigma_c^2}\f$ is a diagonal variance matrix \f$diag(\sigma_r^2, \sigma_g^2, \sigma_b^2)\f$.
+     * \brief Online estimation of a Gaussian color distribution
+     * \f$\mathcal{N}(\mathbf{\bar c}, \mathbf{\Sigma_c^2})\f$, Where \f$\mathbf{\Sigma_c^2}\f$ is a diagonal variance
+     * matrix \f$diag(\sigma_r^2, \sigma_g^2, \sigma_b^2)\f$.
      *
-     * This class uses exponential moving average and variance estimation to approximage the distribution of the different RGB color components.
+     * This class uses exponential moving average and variance estimation to approximage the distribution of the
+     * different RGB color components.
      *
      * It does not estimate the full covariance matrix, but rather the variance of the individual RGB components.
      */
@@ -114,7 +121,8 @@ private:
        * \brief Update the color distribution with a new sample c.
        *
        * \param c
-       * \param weight The importance of c (between 0 and 1) in the distribution update (see Exponential moving average). A high value prioritizes the last seen values.
+       * \param weight The importance of c (between 0 and 1) in the distribution update (see Exponential moving
+       * average). A high value prioritizes the last seen values.
        */
       void update(const vpRGBf &c, float weight)
       {
@@ -205,7 +213,7 @@ private:
 
 public:
 
-  vpRBProbabilistic3DDriftDetector() : m_colorUpdateRate(0.2), m_initialColorSigma(25.0), m_depthSigma(0.04), m_maxError3D(0.001), m_minDist3DNewPoint(0.003)
+  vpRBProbabilistic3DDriftDetector() : m_colorUpdateRate(0.2), m_initialColorSigma(25.0), m_depthSigma(0.04), m_maxError3D(0.001), m_minDist3DNewPoint(0.003), m_sampleStep(4)
   { }
 
   void update(const vpRBFeatureTrackerInput &previousFrame, const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cTo, const vpHomogeneousMatrix &cprevTo) VP_OVERRIDE;
@@ -245,9 +253,11 @@ public:
   }
 
   /**
-   * \brief Returns the maximum 3D distance (in meters) above which a tracked surface point is rejected for the drift estimation step.
+   * \brief Returns the maximum 3D distance (in meters) above which a tracked surface point is rejected for the drift
+   * estimation step.
    *
-   * The surface point's distance to the camera is compared to rendered depth. If the difference between the two is too great, it is rejected.
+   * The surface point's distance to the camera is compared to rendered depth. If the difference between the two is
+   * too great, it is rejected.
    *
    * This is mainly used to handle self occlusions.
    */
@@ -292,10 +302,12 @@ public:
   /**
    * \brief Get the rate at which the colors of surface points are updated.
    *
-   * Note that if depth is available, this component is further multiplied by the probability of depth being correct for a given point.
+   * Note that if depth is available, this component is further multiplied by the probability of depth being correct
+   * for a given point.
    *
    * A high value will lead to a fast update rate (short term memory), while a lower one will update slower.
-   * A slower update may lead to a more stable tracking score. A higher value may be better suited to non isotropic materials.
+   * A slower update may lead to a more stable tracking score. A higher value may be better suited to non isotropic
+   * materials.
    */
   double getColorUpdateRate() const { return m_colorUpdateRate; }
 
@@ -310,6 +322,15 @@ public:
       throw vpException(vpException::badValue, "Color update rate should be between 0 and 1");
     }
     m_colorUpdateRate = updateRate;
+  }
+
+  unsigned int getSampleStep() const { return m_sampleStep; }
+  void setSampleStep(unsigned int sampleStep)
+  {
+    if (sampleStep == 0) {
+      throw vpException(vpException::badValue, "Image sample step should be greater than 0");
+    }
+    m_sampleStep = sampleStep;
   }
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
@@ -327,6 +348,7 @@ private:
   double m_depthSigma;
   double m_maxError3D;
   double m_minDist3DNewPoint;
+  unsigned int m_sampleStep;
 
   double m_score;
 
