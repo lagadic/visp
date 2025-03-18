@@ -116,7 +116,7 @@ void usage(const char **argv, int error)
 
 int main(int argc, const char **argv)
 {
-  float opt_tag_size = 0.048;
+  double opt_tag_size = 0.048;
   std::string opt_input_img_files = "";
   std::string opt_intrinsic_file = "camera.xml";
   std::string opt_camera_name = "Camera";
