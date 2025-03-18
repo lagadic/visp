@@ -592,9 +592,9 @@ public:
               vec_pcl.resize(height * width * channels);
               for (uint32_t i = 0; i < height; i++) {
                 for (uint32_t j = 0; j < width; j++) {
-                  vec_pcl[channels * (i*width + j) + 0] = (*ptr_pointCloud)[i*width + j][0];
-                  vec_pcl[channels * (i*width + j) + 1] = (*ptr_pointCloud)[i*width + j][1];
-                  vec_pcl[channels * (i*width + j) + 2] = (*ptr_pointCloud)[i*width + j][2];
+                  vec_pcl[channels * (i*width + j) + 0] = static_cast<float>((*ptr_pointCloud)[i*width + j][0]);
+                  vec_pcl[channels * (i*width + j) + 1] = static_cast<float>((*ptr_pointCloud)[i*width + j][1]);
+                  vec_pcl[channels * (i*width + j) + 2] = static_cast<float>((*ptr_pointCloud)[i*width + j][2]);
                 }
               }
 #endif

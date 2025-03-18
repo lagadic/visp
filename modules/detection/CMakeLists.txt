@@ -53,17 +53,6 @@ if(WITH_APRILTAG)
   # April Tag is private
   include_directories(${APRILTAG_INCLUDE_DIRS})
   set(opt_libs_private ${APRILTAG_LIBRARIES})
-
-  # Add specific build flag to turn off warnings coming from apriltag 3rd party
-  if(UNIX OR MINGW)
-    vp_set_source_file_compile_flag(src/tag/vpDetectorAprilTag.cpp -Wno-unused-parameter -Wno-strict-overflow)
-  else(WIN32)
-    if(BUILD_SHARED_LIBS)
-      vp_set_source_file_compile_flag(src/tag/vpDetectorAprilTag.cpp /wd4200)
-    else()
-      vp_warnings_disable(CMAKE_CXX_FLAGS /wd4200)
-    endif()
-  endif()
 endif()
 
 # TensorRT
@@ -203,7 +192,3 @@ if(WITH_CATCH2)
 endif()
 
 vp_add_tests(DEPENDS_ON visp_detection visp_gui visp_io PRIVATE_INCLUDE_DIRS ${opt_test_incs} PRIVATE_LIBRARIES ${opt_test_libs})
-
-if(WIN32)
-  vp_set_source_file_compile_flag(src/tag/vpDetectorAprilTag.cpp /wd4244)
-endif()

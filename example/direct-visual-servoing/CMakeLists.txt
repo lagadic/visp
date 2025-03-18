@@ -52,9 +52,6 @@ foreach(cpp ${example_cpp})
   endif()
 endforeach()
 
-visp_set_source_file_compile_flag(photometricVisualServoing.cpp -Wno-strict-overflow)
-visp_set_source_file_compile_flag(photometricVisualServoingWithoutVpServo.cpp -Wno-strict-overflow)
-visp_set_source_file_compile_flag(photometricMappingVisualServoing.cpp -Wno-strict-overflow)
 # Only if dataset found for isolated build
 visp_add_test(photometricVisualServoing photometricVisualServoing -c -n 20 ${OPTION_TO_DESACTIVE_DISPLAY})
 visp_add_test(photometricVisualServoingWithoutVpServo photometricVisualServoingWithoutVpServo -c -n 20 ${OPTION_TO_DESACTIVE_DISPLAY})
