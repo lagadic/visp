@@ -657,7 +657,7 @@ VP_OPTION(USE_SOXT        SOXT        ""    "Include Coin/SoXt support"    "" OF
 set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 VP_OPTION(USE_THREADS     Threads     ""    "Include std::thread support"  "" ON)
 
-VP_OPTION(USE_XML2        XML2        ""    "Include libxml2 support"      "" ON IF NOT WINRT)
+VP_OPTION(USE_XML2        LibXml2     ""    "Include libxml2 support"      "" ON IF NOT WINRT)
 if(CMAKE_TOOLCHAIN_FILE)
   # Find opencv2.framework for ios and naoqi
   VP_OPTION(USE_OPENCV      "MyOpenCV" QUIET "Include OpenCV support" "OpenCV_DIR;OpenCV_FOUND;OPENCV_FOUND" ON)
@@ -1877,7 +1877,7 @@ status("")
 status("  Misc: ")
 status("    Use Clipper (built-in):"  WITH_CLIPPER     THEN "yes (ver ${CLIPPER_VERSION})" ELSE "no")
 status("    Use pugixml (built-in):"  WITH_PUGIXML     THEN "yes (ver ${PUGIXML_VERSION})" ELSE "no")
-status("    Use libxml2:"             USE_XML2         THEN "yes (ver ${XML2_VERSION_STRING})" ELSE "no")
+status("    Use libxml2:"             USE_XML2         THEN "yes (ver ${LIBXML2_VERSION_STRING})" ELSE "no")
 if(VISP_HAVE_NLOHMANN_JSON_FROM_VTK)
 status("    Use json (nlohmann vtk):"     USE_NLOHMANN_JSON THEN "yes (ver ${VTK_NLOHMANN_JSON_VERSION})" ELSE "no")
 else()
