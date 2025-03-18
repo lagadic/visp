@@ -246,7 +246,19 @@ public:
     TAG_CIRCLE49h12,   ///< AprilTag Circle49h12 pattern
     TAG_CUSTOM48h12,   ///< AprilTag Custom48h12 pattern
     TAG_STANDARD41h12, ///< AprilTag Standard41h12 pattern
-    TAG_STANDARD52h13  ///< AprilTag Standard52h13 pattern
+    TAG_STANDARD52h13, ///< AprilTag Standard52h13 pattern
+    TAG_ARUCO4x4_50,   ///< ArUco 4x4 pattern: 4x4 bits, minimum hamming distance between any two codes = 4, 50 codes
+    TAG_ARUCO4x4_100,  ///< ArUco 4x4 pattern: 4x4 bits, minimum hamming distance between any two codes = 3, 100 codes
+    TAG_ARUCO4x4_250,  ///< ArUco 4x4 pattern: 4x4 bits, minimum hamming distance between any two codes = 3, 250 codes
+    TAG_ARUCO4x4_1000, ///< ArUco 4x4 pattern: 4x4 bits, minimum hamming distance between any two codes = 2, 1000 codes
+    TAG_ARUCO5x5_50,   ///< ArUco 5x5 pattern: 5x5 bits, minimum hamming distance between any two codes = 8, 50 codes
+    TAG_ARUCO5x5_100,  ///< ArUco 5x5 pattern: 5x5 bits, minimum hamming distance between any two codes = 7, 100 codes
+    TAG_ARUCO5x5_250,  ///< ArUco 5x5 pattern: 5x5 bits, minimum hamming distance between any two codes = 6, 250 codes
+    TAG_ARUCO5x5_1000, ///< ArUco 5x5 pattern: 5x5 bits, minimum hamming distance between any two codes = 5, 1000 codes
+    TAG_ARUCO6x6_50,   ///< ArUco 6x6 pattern: 6x6 bits, minimum hamming distance between any two codes = 13, 50 codes
+    TAG_ARUCO6x6_100,  ///< ArUco 6x6 pattern: 6x6 bits, minimum hamming distance between any two codes = 12, 100 codes
+    TAG_ARUCO6x6_250,  ///< ArUco 6x6 pattern: 6x6 bits, minimum hamming distance between any two codes = 11, 250 codes
+    TAG_ARUCO6x6_1000  ///< ArUco 6x6 pattern: 6x6 bits, minimum hamming distance between any two codes = 9, 1000 codes
   };
 
   enum vpPoseEstimationMethod
@@ -270,6 +282,9 @@ public:
   vpDetectorAprilTag &operator=(vpDetectorAprilTag o);
   virtual ~vpDetectorAprilTag() VP_OVERRIDE;
   bool detect(const vpImage<unsigned char> &I) VP_OVERRIDE;
+
+  // TODO:
+  void getTagImage(vpImage<unsigned char> &I, int idx);
 
 
   bool detect(const vpImage<unsigned char> &I, double tagSize, const vpCameraParameters &cam,
@@ -301,6 +316,7 @@ public:
 
   bool isZAlignedWithCameraAxis() const;
 
+  void setAprilTagDebugOption(bool flag);
   void setAprilTagDecodeSharpening(double decodeSharpening);
   void setAprilTagFamily(const vpAprilTagFamily &tagFamily);
   void setAprilTagNbThreads(int nThreads);
@@ -435,7 +451,56 @@ inline std::ostream &operator<<(std::ostream &os, const vpDetectorAprilTag::vpAp
     os << "STANDARD41h12";
     break;
 
+  case vpDetectorAprilTag::TAG_ARUCO4x4_50:
+    os << "TAG_ARUCO4x4_50";
+    break;
+
+  case vpDetectorAprilTag::TAG_ARUCO4x4_100:
+    os << "TAG_ARUCO4x4_100";
+    break;
+
+  case vpDetectorAprilTag::TAG_ARUCO4x4_250:
+    os << "TAG_ARUCO4x4_250";
+    break;
+
+  case vpDetectorAprilTag::TAG_ARUCO4x4_1000:
+    os << "TAG_ARUCO4x4_1000";
+    break;
+
+  case vpDetectorAprilTag::TAG_ARUCO5x5_50:
+    os << "TAG_ARUCO5x5_50";
+    break;
+
+  case vpDetectorAprilTag::TAG_ARUCO5x5_100:
+    os << "TAG_ARUCO5x5_100";
+    break;
+
+  case vpDetectorAprilTag::TAG_ARUCO5x5_250:
+    os << "TAG_ARUCO5x5_250";
+    break;
+
+  case vpDetectorAprilTag::TAG_ARUCO5x5_1000:
+    os << "TAG_ARUCO5x5_1000";
+    break;
+
+  case vpDetectorAprilTag::TAG_ARUCO6x6_50:
+    os << "TAG_ARUCO6x6_50";
+    break;
+
+  case vpDetectorAprilTag::TAG_ARUCO6x6_100:
+    os << "TAG_ARUCO6x6_100";
+    break;
+
+  case vpDetectorAprilTag::TAG_ARUCO6x6_250:
+    os << "TAG_ARUCO6x6_250";
+    break;
+
+  case vpDetectorAprilTag::TAG_ARUCO6x6_1000:
+    os << "TAG_ARUCO6x6_1000";
+    break;
+
   default:
+    os << "UNKNOWN";
     break;
   }
 

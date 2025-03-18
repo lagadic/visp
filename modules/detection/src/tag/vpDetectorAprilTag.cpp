@@ -54,6 +54,18 @@ extern "C" {
 #include <tagStandard41h12.h>
 #include <tagStandard52h13.h>
 #endif
+#include <tagAruco4x4_50.h>
+#include <tagAruco4x4_100.h>
+#include <tagAruco4x4_250.h>
+#include <tagAruco4x4_1000.h>
+#include <tagAruco5x5_50.h>
+#include <tagAruco5x5_100.h>
+#include <tagAruco5x5_250.h>
+#include <tagAruco5x5_1000.h>
+#include <tagAruco6x6_50.h>
+#include <tagAruco6x6_100.h>
+#include <tagAruco6x6_250.h>
+#include <tagAruco6x6_1000.h>
 #ifdef __cplusplus
 }
 #endif
@@ -126,6 +138,54 @@ public:
 #endif
       break;
 
+    case TAG_ARUCO4x4_50:
+      m_tf = tagAruco4x4_50_create();
+      break;
+
+    case TAG_ARUCO4x4_100:
+      m_tf = tagAruco4x4_100_create();
+      break;
+
+    case TAG_ARUCO4x4_250:
+      m_tf = tagAruco4x4_250_create();
+      break;
+
+    case TAG_ARUCO4x4_1000:
+      m_tf = tagAruco4x4_1000_create();
+      break;
+
+    case TAG_ARUCO5x5_50:
+      m_tf = tagAruco5x5_50_create();
+      break;
+
+    case TAG_ARUCO5x5_100:
+      m_tf = tagAruco5x5_100_create();
+      break;
+
+    case TAG_ARUCO5x5_250:
+      m_tf = tagAruco5x5_250_create();
+      break;
+
+    case TAG_ARUCO5x5_1000:
+      m_tf = tagAruco5x5_1000_create();
+      break;
+
+    case TAG_ARUCO6x6_50:
+      m_tf = tagAruco6x6_50_create();
+      break;
+
+    case TAG_ARUCO6x6_100:
+      m_tf = tagAruco6x6_100_create();
+      break;
+
+    case TAG_ARUCO6x6_250:
+      m_tf = tagAruco6x6_250_create();
+      break;
+
+    case TAG_ARUCO6x6_1000:
+      m_tf = tagAruco6x6_1000_create();
+      break;
+
     default:
       throw vpException(vpException::fatalError, "Unknown Tag family!");
     }
@@ -193,6 +253,54 @@ public:
 #if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
       m_tf = tagStandard41h12_create();
 #endif
+      break;
+
+    case TAG_ARUCO4x4_50:
+      m_tf = tagAruco4x4_50_create();
+      break;
+
+    case TAG_ARUCO4x4_100:
+      m_tf = tagAruco4x4_100_create();
+      break;
+
+    case TAG_ARUCO4x4_250:
+      m_tf = tagAruco4x4_250_create();
+      break;
+
+    case TAG_ARUCO4x4_1000:
+      m_tf = tagAruco4x4_1000_create();
+      break;
+
+    case TAG_ARUCO5x5_50:
+      m_tf = tagAruco5x5_50_create();
+      break;
+
+    case TAG_ARUCO5x5_100:
+      m_tf = tagAruco5x5_100_create();
+      break;
+
+    case TAG_ARUCO5x5_250:
+      m_tf = tagAruco5x5_250_create();
+      break;
+
+    case TAG_ARUCO5x5_1000:
+      m_tf = tagAruco5x5_1000_create();
+      break;
+
+    case TAG_ARUCO6x6_50:
+      m_tf = tagAruco6x6_50_create();
+      break;
+
+    case TAG_ARUCO6x6_100:
+      m_tf = tagAruco6x6_100_create();
+      break;
+
+    case TAG_ARUCO6x6_250:
+      m_tf = tagAruco6x6_250_create();
+      break;
+
+    case TAG_ARUCO6x6_1000:
+      m_tf = tagAruco6x6_1000_create();
       break;
 
     default:
@@ -269,6 +377,54 @@ public:
 #if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
         tagStandard41h12_destroy(m_tf);
 #endif
+        break;
+
+      case TAG_ARUCO4x4_50:
+        tagAruco4x4_50_destroy(m_tf);
+        break;
+
+      case TAG_ARUCO4x4_100:
+        tagAruco4x4_100_destroy(m_tf);
+        break;
+
+      case TAG_ARUCO4x4_250:
+        tagAruco4x4_250_destroy(m_tf);
+        break;
+
+      case TAG_ARUCO4x4_1000:
+        tagAruco4x4_1000_destroy(m_tf);
+        break;
+
+      case TAG_ARUCO5x5_50:
+        tagAruco5x5_50_destroy(m_tf);
+        break;
+
+      case TAG_ARUCO5x5_100:
+        tagAruco5x5_100_destroy(m_tf);
+        break;
+
+      case TAG_ARUCO5x5_250:
+        tagAruco5x5_250_destroy(m_tf);
+        break;
+
+      case TAG_ARUCO5x5_1000:
+        tagAruco5x5_1000_destroy(m_tf);
+        break;
+
+      case TAG_ARUCO6x6_50:
+        tagAruco6x6_50_destroy(m_tf);
+        break;
+
+      case TAG_ARUCO6x6_100:
+        tagAruco6x6_100_destroy(m_tf);
+        break;
+
+      case TAG_ARUCO6x6_250:
+        tagAruco6x6_250_destroy(m_tf);
+        break;
+
+      case TAG_ARUCO6x6_1000:
+        tagAruco6x6_1000_destroy(m_tf);
         break;
 
       default:
@@ -457,6 +613,22 @@ public:
       vpDisplay::displayLine(I, static_cast<int>(corners[cornerId2].get_i()), static_cast<int>(corners[cornerId2].get_j()), static_cast<int>(corners[cornerId3].get_i()), static_cast<int>(corners[cornerId3].get_j()),
                                                                                        Oy2, thickness);
     }
+  }
+
+  // TODO:
+  void getTagImage(vpImage<unsigned char> &I, int idx)
+  {
+    image_u8_t *img_8u = apriltag_to_image(m_tf, idx);
+
+    std::cout << "img_8u->height=" << img_8u->height << " ; img_8u->width=" << img_8u->width << " ; stride=" << img_8u->stride << std::endl;
+    I.init(img_8u->height, img_8u->width);
+    for (int i = 0; i < img_8u->height; i++) {
+      for (int j = 0; j < img_8u->width; j++) {
+        I[i][j] = img_8u->buf[i*img_8u->stride + j];
+      }
+    }
+
+    image_u8_destroy(img_8u);
   }
 
   bool getPose(size_t tagIndex, double tagSize, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
@@ -790,6 +962,14 @@ public:
     }
   }
 
+  // TODO:
+  void setDebugFlag(bool flag)
+  {
+    if (m_td) {
+      m_td->debug = flag;
+    }
+  }
+
   void setNbThreads(int nThreads)
   {
     if (m_td) {
@@ -1100,6 +1280,17 @@ std::vector<std::vector<vpPoint> > vpDetectorAprilTag::getTagsPoints3D(const std
   \sa getTagsId(), getTagsPoints3D()
 */
 std::vector<std::vector<vpImagePoint> > vpDetectorAprilTag::getTagsCorners() const { return m_polygon; }
+
+// TODO:
+void vpDetectorAprilTag::setAprilTagDebugOption(bool flag)
+{
+  m_impl->setDebugFlag(flag);
+}
+
+void vpDetectorAprilTag::getTagImage(vpImage<unsigned char> &I, int idx)
+{
+  m_impl->getTagImage(I, idx);
+}
 
 /*!
   Return the decoded Apriltag id for each detection.
