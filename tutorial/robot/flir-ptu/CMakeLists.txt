@@ -35,13 +35,7 @@ set(tutorial_cpp
   tutorial-flir-ptu-ibvs.cpp
 )
 
-set(example_data
-  ${CMAKE_CURRENT_SOURCE_DIR}/eMc.yaml)
-
-if(VISP_HAVE_FLYCAPTURE)
-  # Add specific build flag to turn off warnings coming from Flir Flycapture 3rd party
-  visp_set_source_file_compile_flag(tutorial-flir-ptu-ibvs.cpp -Wno-unknown-pragmas -Wno-ignored-qualifiers)
-endif()
+set(example_data ${CMAKE_CURRENT_SOURCE_DIR}/eMc.yaml)
 
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})

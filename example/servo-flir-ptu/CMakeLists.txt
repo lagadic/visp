@@ -54,11 +54,6 @@ foreach(cpp ${example_cpp})
   endif()
 endforeach()
 
-if(VISP_HAVE_FLYCAPTURE)
-  # Add specific build flag to turn off warnings coming from Flir Flycapture 3rd party
-  visp_set_source_file_compile_flag(servoFlirPtuIBVS.cpp -Wno-unknown-pragmas -Wno-ignored-qualifiers)
-endif()
-
 # Copy the data files to the same location than the target
 foreach(data ${example_data})
   visp_copy_data(servoFlirPtuIBVS.cpp ${data})

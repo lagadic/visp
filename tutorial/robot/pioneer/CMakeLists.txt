@@ -42,11 +42,6 @@ if(NOT DEFINED WINRT_8_1)
   list(APPEND tutorial_cpp tutorial-simu-pioneer-continuous-gain-adaptive.cpp)
 endif()
 
-if(VISP_HAVE_PIONEER)
-  # Add specific build flag to turn off warnings coming from libaria 3rd party
-  visp_set_source_file_compile_flag(tutorial-pioneer-robot.cpp -Wno-unused-parameter)
-endif()
-
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})
   if(COMMAND visp_add_dependency)

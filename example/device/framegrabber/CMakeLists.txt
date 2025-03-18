@@ -55,38 +55,6 @@ set(example_cpp
   saveRealSenseData.cpp
 )
 
-if(VISP_HAVE_FLYCAPTURE)
-  # Add specific build flag to turn off warnings coming from PointGrey flycapture 3rd party
-  visp_set_source_file_compile_flag(grabFlyCapture.cpp -Wno-unknown-pragmas -Wno-ignored-qualifiers)
-endif()
-
-if(VISP_HAVE_REALSENSE OR VISP_HAVE_REALSENSE2)
-  # Add specific build flag to turn off warnings coming from PCL 3rd party
-  list(APPEND CXX_FLAGS_MUTE_WARNINGS "/wd4244")
-  list(APPEND CXX_FLAGS_MUTE_WARNINGS "/wd4267")
-  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-comment")
-  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-deprecated-copy")
-  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-deprecated-declarations")
-  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-missing-field-initializers")
-  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-float-equal")
-  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-ignored-qualifiers")
-  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-overloaded-virtual")
-  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-pessimizing-move")
-  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-reorder")
-  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-shadow")
-  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-sign-compare")
-  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-sign-conversion")
-  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-unused-function")
-  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-unused-parameter")
-  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-missing-field-initializers")
-
-  visp_set_source_file_compile_flag(getRealSense2Info.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-  visp_set_source_file_compile_flag(grabRealSense2.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-  visp_set_source_file_compile_flag(grabRealSense2_T265.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-  visp_set_source_file_compile_flag(readRealSenseData.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-  visp_set_source_file_compile_flag(saveRealSenseData.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-endif()
-
 foreach(cpp ${example_cpp})
   visp_add_target(${cpp})
   if(COMMAND visp_add_dependency)

@@ -140,19 +140,6 @@ endif()
 
 vp_add_module(mbt visp_vision visp_core visp_me visp_visual_features OPTIONAL visp_ar visp_klt visp_gui PRIVATE_OPTIONAL ${opt_libs_private} WRAP java)
 vp_glob_module_sources()
-
-if(MSVC)
-  if(BUILD_SHARED_LIBS)
-    vp_set_source_file_compile_flag(src/depth/vpMbtTukeyEstimator.cpp /wd4244)
-  else()
-    if(BUILD_DEPRECATED_FUNCTIONS)
-      vp_warnings_disable(CMAKE_CXX_FLAGS /wd4244 /wd4996)
-    else()
-      vp_warnings_disable(CMAKE_CXX_FLAGS /wd4244)
-    endif()
-  endif()
-endif()
-
 vp_module_include_directories(${opt_incs} SYSTEM ${opt_system_incs})
 vp_create_module(${opt_libs})
 
