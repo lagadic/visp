@@ -919,6 +919,7 @@ set(VP_COMPILER_FAIL_REGEX
 # This FORCE argument is especially useful for chechs like nullptr that depend on the cxx standard
 macro(vp_check_compiler_flag LANG FLAG RESULT)
   set(_force_check FALSE)
+  set(_fname "")
   foreach(_param ${ARGN})
     if("${_param}" STREQUAL "FORCE")
       set(_force_check TRUE)
