@@ -56,6 +56,21 @@ protected:
     return j;
   }
 
+  static nlohmann::json parameter(const std::string &name, const std::string &explanation, bool required, int value)
+  {
+    nlohmann::json j = parameterBase(name, explanation, required, value);
+    j["type"] = "int";
+    return j;
+  }
+
+
+  static nlohmann::json parameter(const std::string &name, const std::string &explanation, bool required, bool value)
+  {
+    nlohmann::json j = parameterBase(name, explanation, required, value);
+    j["type"] = "bool";
+    return j;
+  }
+
 
   static nlohmann::json flipToDict(const std::vector<nlohmann::json> &values)
   {

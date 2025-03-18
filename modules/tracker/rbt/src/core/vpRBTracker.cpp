@@ -704,17 +704,28 @@ nlohmann::json vpRBTracker::explain() const
     vpRBJsonParsable::parameter(
       "convergenceMetricThreshold", "Minimum value of the convergence metric  to not stop optimization. "
       "If the metric is below this threshold, then optimization is stopped."
-      "A value of 0 leads to running optimization for the full number of iterations.", false, 0.0
+      "A value of 0 leads to running optimization for the full number of maxIterations.", false, 0.0
     ),
   };
 
-
-
-
-
-  return {
-    {"vvs", flipToDict(optimParameters)}
+  std::vector<nlohmann::json> baseParameters = {
+    vpRBJsonParsable::parameter("displaySilhouette",
+    "Whether to display the object silhouette on top of the color image."
+    "This will work only if silhouette is extracted,"
+    "and the displayed silhouette will be the one corresponding "
+    "to the object pose estimated at the previous timestep", false, false),
+    vpRBJsonParsable::parameter("model", "Path to the model of the object to track."
+    "This parameter is not required and the model can be specified using a setter."
+    "A model should be set before calling startTracking.", false, "path/to/object.obj")
   };
+
+
+  nlohmann::json baseDict = flipToDict(baseParameters);
+  baseDict["vvs"] = flipToDict(optimParameters);
+  baseDict["silhouetteExtractionSettings"] = m_depthSilhouetteSettings.explain();
+
+
+  return baseDict;
 }
 
 

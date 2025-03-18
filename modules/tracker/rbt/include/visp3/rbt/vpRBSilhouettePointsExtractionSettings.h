@@ -45,6 +45,9 @@
 #include <visp3/core/vpUniRand.h>
 
 
+
+#include <visp3/rbt/vpRBJsonParsable.h>
+
 #if defined(VISP_HAVE_NLOHMANN_JSON)
 #include VISP_NLOHMANN_JSON(json.hpp)
 #endif
@@ -57,7 +60,7 @@ class vpRBSilhouettePoint;
   \brief Silhouette point extraction settings
   \ingroup group_rbt_core
 */
-class VISP_EXPORT vpSilhouettePointsExtractionSettings
+class VISP_EXPORT vpSilhouettePointsExtractionSettings : public vpRBJsonParsable
 {
 
 private:
@@ -118,6 +121,51 @@ public:
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
   inline friend void from_json(const nlohmann::json &j, vpSilhouettePointsExtractionSettings &settings);
+  virtual void loadJsonConfiguration(const nlohmann::json &j) VP_OVERRIDE
+  {
+    verify(j);
+    from_json(j, *this);
+  }
+  virtual bool verify(const nlohmann::json &j) const
+  {
+    const nlohmann::json explanation = explain();
+    std::vector<std::string> expectedKeys;
+    for (const auto &it: explanation.items()) {
+      expectedKeys.push_back(it.key());
+    }
+    return true;
+
+  }
+
+  virtual nlohmann::json explain() const VP_OVERRIDE
+  {
+    std::vector<nlohmann::json> thresholdParams = {
+      vpRBJsonParsable::parameter(
+        "type", "Type of thresholding when extracting the silhouette from the rendered depth map."
+        "A pixel is considered as belonging to the silhouette when there is a strong depth disparity in its neighbourhood."
+        "This depends on a threshold. Type values can be either \"relative\" or \"absolute\". "
+        "If it absolute, then the specified threshold is in meters."
+        " If it is \"relative\", then it is specified as a fraction (between 0 and 1) of the distance between the near and far clipping planes, "
+        "e.g. the distance between the nearest and farthest object points to the camera.", true, "relative"
+      ),
+      vpRBJsonParsable::parameter(
+        "value", "Minimum threshold value for a pixel to be considered as belonging to the silhouette. See type for what value to use.", true, 0.1
+      )
+    };
+    std::vector<nlohmann::json> samplingParams = {
+      vpRBJsonParsable::parameter("samplingRate", "Step size when subsampling the silhouette map", true, 1),
+      vpRBJsonParsable::parameter("numPoints", "Maximum number of silhouette candidates to use in feature trackers and other downstream tasks."
+      "Set to 0 to consider all silhouette points. Not recommended when setting samplingRate to 1.", true, 512),
+      vpRBJsonParsable::parameter("reusePreviousPoints", "Whether to try and reuse silhouette points from the previous frame."
+      "This may help improve tracking stability.", true, true)
+    };
+
+
+    return {
+      {"threshold", flipToDict(thresholdParams)},
+      {"sampling", flipToDict(samplingParams)},
+    };
+  }
 #endif
 
 };
