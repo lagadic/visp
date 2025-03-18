@@ -667,9 +667,7 @@ endif()
 VP_OPTION(USE_ZLIB        ZLIB         ""    "Include zlib support"         "" ON IF NOT WINRT AND NOT IOS)
 set(X11_ADVANCED "X11_xcb_util_LIB;X11_xcb_util_INCLUDE_PATH;X11_xcb_xfixes_INCLUDE_PATH;X11_xcb_xfixes_LIB")
 VP_OPTION(USE_X11         X11          ""    "Include X11 support"          "${X11_ADVANCED}" ON IF NOT WINRT AND NOT IOS)
-# The native FindGTK2.cmake doesn't consider libgobject-2.0 that is
-# requested by ViSP. That's why we use our FindMyGTK2.cmake
-VP_OPTION(USE_GTK2        MyGTK2       ""    "Include gtk2 support"         "" OFF IF NOT WINRT AND NOT IOS)
+VP_OPTION(USE_GTK2        GTK2         ""    "Include gtk2 support"         "" OFF IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_JPEG        JPEG         ""    "Include jpeg support"         "" ON IF NOT IOS)
 VP_OPTION(USE_PNG         PNG          ""    "Include png support"          "" ON IF NOT IOS)
 # To control Pioneer mobile robots, under UNIX we need Aria and std::threads, rt and dl 3rd party libraries
@@ -1835,7 +1833,7 @@ status("    Use pololu (built-in):"  WITH_POLOLU      THEN "yes (ver ${POLOLU_VE
 status("")
 status("  GUI: ")
 status("    Use X11:"                USE_X11          THEN "yes" ELSE "no")
-status("    Use GTK:"                USE_GTK2         THEN "yes (ver ${GTK2_VERSION})" ELSE "no")
+status("    Use GTK2:"               USE_GTK2         THEN "yes (ver ${GTK2_VERSION})" ELSE "no")
 status("    Use OpenCV:"             USE_OPENCV       THEN "yes (ver ${OpenCV_VERSION})" ELSE "no")
 status("    Use GDI:"                USE_GDI          THEN "yes" ELSE "no")
 status("    Use Direct3D:"           USE_DIRECT3D     THEN "yes" ELSE "no")
