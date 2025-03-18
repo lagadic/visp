@@ -233,13 +233,10 @@ else(MINGW)
   )
 endif(MINGW)
 
-# FFMpeg depend son Zlib
+# FFMpeg depends on Zlib
 find_package(ZLIB)
-if(NOT ZLIB_FOUND)
-  find_package(MyZLIB)
-endif()
 
-# FFMpeg depend son BZip2
+# FFMpeg depends on BZip2
 # with CMake 2.6, the CMake bzip2 package material is named FindBZip2.cmake
 # while with CMake 2.8, the name is FindBZIP2.cmake
 # that is why we need to call FIND_PACKAGE(BZip2) and FIND_PACKAGE(BZIP2)

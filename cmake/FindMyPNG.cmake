@@ -124,9 +124,6 @@ endif(UNIX)
 set(PNG_FOUND FALSE)
 
 find_package(ZLIB)
-if(NOT ZLIB_FOUND)
-  find_package(MyZLIB)
-endif()
 
 if(UNIX)
   if(PNG_LIBRARY AND PNG_INCLUDE_DIR)
