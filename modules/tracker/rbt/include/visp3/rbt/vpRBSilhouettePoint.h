@@ -50,10 +50,31 @@ public:
   vpColVector normal; //! Normal to the silhouette at point i,j, in world frame
   double orientation; //! angle of the normal in the image.
   double Z; //! Point depth
+  bool isSilhouette;
 
   vpRBSilhouettePoint(unsigned int i, unsigned int j, const vpColVector &normal, double orientation, double Z) :
     i(i), j(j), normal(normal), orientation(orientation), Z(Z)
   { }
+
+  void detectSilhouette(const vpImage<float> &I)
+  {
+    int range = 4;
+    unsigned int urange = static_cast<unsigned int>(range);
+    unsigned int k = 0;
+    if (i < urange || j < urange || i >= (I.getHeight() - urange) || j >= (I.getWidth() - urange)) {
+      isSilhouette = false;
+      return;
+    }
+    double c = cos(orientation);
+    double s = sin(orientation);
+    for (int n = -range; n <= range; n++) {
+      unsigned int ii = static_cast<unsigned int>(round(i + s * n));
+      unsigned int jj = static_cast<unsigned int>(round(j + c * n));
+      unsigned int isBg = static_cast<unsigned int>(I[ii][jj] == 0.f);
+      k += isBg;
+    }
+    isSilhouette = k > 2;
+  }
 
 };
 

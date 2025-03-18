@@ -187,7 +187,7 @@ int main(int argc, const char *argv[])
 
   cv::namedWindow(window_detection_name);
 
-  vpArray2D<int> hsv_values(hsv_values_trackbar, hsv_values_trackbar.size(), 1);
+  vpArray2D<int> hsv_values(hsv_values_trackbar, static_cast<unsigned int>(hsv_values_trackbar.size()), 1);
   vpArray2D<int> hsv_values_prev;
   if (vpArray2D<int>::loadYAML(opt_hsv_filename, hsv_values)) {
     std::cout << "Load hsv values from " << opt_hsv_filename << " previous tuning " << std::endl;
@@ -256,8 +256,8 @@ int main(int argc, const char *argv[])
         quit = true;
       }
       else if (button == vpMouseButton::button2) {
-        unsigned int i = ip.get_i();
-        unsigned int j = ip.get_j();
+        unsigned int i = static_cast<unsigned int>(ip.get_i());
+        unsigned int j = static_cast<unsigned int>(ip.get_j());
         int h = static_cast<int>(H[i][j]);
         int s = static_cast<int>(S[i][j]);
         int v = static_cast<int>(V[i][j]);
@@ -265,8 +265,8 @@ int main(int argc, const char *argv[])
           << " " << static_cast<int>(I[i][j].B) << " -> HSV: " << h << " " << s << " " << v << std::endl;
       }
       else if (button == vpMouseButton::button1) {
-        unsigned int i = ip.get_i();
-        unsigned int j = ip.get_j();
+        unsigned int i = static_cast<unsigned int>(ip.get_i());
+        unsigned int j = static_cast<unsigned int>(ip.get_j());
         int h = static_cast<int>(H[i][j]);
         int s = static_cast<int>(S[i][j]);
         int v = static_cast<int>(V[i][j]);
@@ -293,7 +293,7 @@ int main(int argc, const char *argv[])
         vpIoTools::makeDirectory(parent);
       }
 
-      vpArray2D<int> hsv_values_new(hsv_values_trackbar, hsv_values_trackbar.size(), 1);
+      vpArray2D<int> hsv_values_new(hsv_values_trackbar, static_cast<unsigned int>(hsv_values_trackbar.size()), 1);
       if (hsv_values_new != hsv_values_prev) {
         if (vpIoTools::checkFilename(opt_hsv_filename)) {
           std::string hsv_filename_backup(opt_hsv_filename + std::string(".previous"));

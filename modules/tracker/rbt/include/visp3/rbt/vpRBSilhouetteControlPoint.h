@@ -61,26 +61,25 @@ private:
 
   double rho, theta;
   double thetaInit;
-  double delta;
-  int sign;
+  int m_meMaskSign;
   //double a,b,c;
-  vpFeatureLine featureline;
-  vpLine line;
+  vpFeatureLine m_lineFeature;
+  vpLine m_line;
 
   std::vector<vpMeSite> m_candidates;
   unsigned int m_numCandidates;
   const vpMe *m_me;
-  vpMeSite s;
+  vpMeSite m_site;
 
   //! Normal to surface where the control point lies
-  vpColVector norm;
-  vpColVector normw;
+  vpColVector m_normal;
+  vpColVector m_normalO;
 
   bool m_valid;
-
   bool m_isSilhouette;
 
   const vpCameraParameters *m_cam;
+
 public:
 
   vpImagePoint icpoint;
@@ -111,29 +110,26 @@ public:
   void setValid(bool valid) { m_valid = valid; }
   bool isValid() const { return m_valid; }
 
-
-
   const vpCameraParameters &getCameraParameters() const { return *m_cam; }
-  bool siteIsValid() const { return s.getState() == vpMeSite::NO_SUPPRESSION; }
-  const vpMeSite &getSite() const { return s; }
-  vpMeSite &getSite() { return s; }
-  const vpFeatureLine &getFeatureLine() const { return featureline; }
-  const vpLine &getLine() const { return line; }
+  bool siteIsValid() const { return m_site.getState() == vpMeSite::NO_SUPPRESSION; }
+  const vpMeSite &getSite() const { return m_site; }
+  vpMeSite &getSite() { return m_site; }
+  const vpFeatureLine &getFeatureLine() const { return m_lineFeature; }
+  const vpLine &getLine() const { return m_line; }
   double getTheta() const { return theta; }
   bool isSilhouette() const { return m_isSilhouette; }
 
   void initControlPoint(const vpImage<unsigned char> &I, double cvlt);
-  void detectSilhouette(const vpImage<float> &I);
-  void buildPoint(int n, int m, const double &Z, double orient, const vpColVector &normo, const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &oMc, const vpCameraParameters &cam, const vpMe &me);
+  void buildPoint(int n, int m, const double &Z, double orient, const vpColVector &normo, const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &oMc, const vpCameraParameters &cam, const vpMe &me, bool isSilhouette);
   void buildSilhouettePoint(int n, int m, const double &Z, double orient, const vpColVector &normo, const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &oMc, const vpCameraParameters &cam);
 
   void update(const vpHomogeneousMatrix &_cMo);
   void updateSilhouettePoint(const vpHomogeneousMatrix &_cMo);
 
   /**
-   * @brief Track the moving edge at this point retaining only the hypothesis with the highest likelihood
+   * @brief Track the moving edge at this point retaining only the hypothesis with the highest likelihood.
    *
-   * @param I The image in which to track
+   * @param I The image in which to track.
    */
   void track(const vpImage<unsigned char> &I);
 
@@ -142,12 +138,16 @@ public:
    *
    * @param I The image in which to track
    *
-   * \see setNumCandidates
+   * \see setNumCandidates()
    */
   void trackMultipleHypotheses(const vpImage<unsigned char> &I);
 
   void computeMeInteractionMatrixError(const vpHomogeneousMatrix &cMo, unsigned int i, vpMatrix &L, vpColVector &e);
   void computeMeInteractionMatrixErrorMH(const vpHomogeneousMatrix &cMo, unsigned int i, vpMatrix &L, vpColVector &e);
+
+  double getMaxMaskGradientAlongLine(const vpImage<float> &mask, int searchSize) const;
+
+  bool tooCloseToBorder(unsigned int h, unsigned int w, int searchSize) const;
 
 private:
   bool isLineDegenerate() const;

@@ -44,7 +44,7 @@
 #include <visp3/rbt/vpPanda3DDepthFilters.h>
 #include <visp3/rbt/vpObjectCentricRenderer.h>
 #include <visp3/rbt/vpRBTrackerLogger.h>
-
+#include <visp3/rbt/vpRBADDSMetric.h>
 #include <visp3/core/vpDisplay.h>
 
 #include <ostream>
@@ -94,18 +94,18 @@ public:
    */
   void addTracker(std::shared_ptr<vpRBFeatureTracker> tracker);
   void setupRenderer(const std::string &file);
-  std::string getModelPath() const { return m_modelPath; }
+  inline std::string getModelPath() const { return m_modelPath; }
   void setModelPath(const std::string &path);
 
-  std::vector<std::shared_ptr<vpRBFeatureTracker>> getFeatureTrackers() { return m_trackers; }
+  inline std::vector<std::shared_ptr<vpRBFeatureTracker>> getFeatureTrackers() const { return m_trackers; }
 
   vpCameraParameters getCameraParameters() const;
   void setCameraParameters(const vpCameraParameters &cam, unsigned h, unsigned w);
 
-  unsigned int getImageWidth() const { return m_imageWidth; }
-  unsigned int getImageHeight() const { return m_imageHeight; }
+  inline unsigned int getImageWidth() const { return m_imageWidth; }
+  inline unsigned int getImageHeight() const { return m_imageHeight; }
 
-  vpSilhouettePointsExtractionSettings getSilhouetteExtractionParameters() const
+  inline vpSilhouettePointsExtractionSettings getSilhouetteExtractionParameters() const
   {
     return m_depthSilhouetteSettings;
   }
@@ -113,7 +113,7 @@ public:
   void setSilhouetteExtractionParameters(const vpSilhouettePointsExtractionSettings &settings);
 
   double getOptimizationGain() const { return m_lambda; }
-  void setOptimizationGain(double lambda)
+  inline void setOptimizationGain(double lambda)
   {
     if (lambda < 0.0) {
       throw vpException(vpException::badValue, "Optimization gain should be greater to zero");
@@ -121,7 +121,7 @@ public:
     m_lambda = lambda;
   }
   unsigned int getMaxOptimizationIters() const { return m_vvsIterations; }
-  void setMaxOptimizationIters(unsigned int iters)
+  inline void setMaxOptimizationIters(unsigned int iters)
   {
     if (iters == 0) {
       throw vpException(vpException::badValue, "Max number of iterations must be greater than zero");
@@ -130,7 +130,7 @@ public:
   }
 
   double getOptimizationInitialMu() const { return m_muInit; }
-  void setOptimizationInitialMu(double mu)
+  inline void setOptimizationInitialMu(double mu)
   {
     if (mu < 0.0) {
       throw vpException(vpException::badValue, "Optimization gain should be greater or equal to zero");
@@ -139,7 +139,7 @@ public:
   }
 
   double getOptimizationMuIterFactor() const { return m_muIterFactor; }
-  void setOptimizationMuIterFactor(double factor)
+  inline void setOptimizationMuIterFactor(double factor)
   {
     if (factor < 0.0) {
       throw vpException(vpException::badValue, "Optimization gain should be greater or equal to zero");
@@ -148,19 +148,19 @@ public:
   }
 
   std::shared_ptr<vpRBDriftDetector> getDriftDetector() const { return m_driftDetector; }
-  void setDriftDetector(const std::shared_ptr<vpRBDriftDetector> &detector)
+  inline void setDriftDetector(const std::shared_ptr<vpRBDriftDetector> &detector)
   {
     m_driftDetector = detector;
   }
 
   std::shared_ptr<vpObjectMask> getObjectSegmentationMethod() const { return m_mask; }
-  void setObjectSegmentationMethod(const std::shared_ptr<vpObjectMask> &mask)
+  inline void setObjectSegmentationMethod(const std::shared_ptr<vpObjectMask> &mask)
   {
     m_mask = mask;
   }
 
   std::shared_ptr<vpRBVisualOdometry> getOdometryMethod() const { return m_odometry; }
-  void setOdometryMethod(const std::shared_ptr<vpRBVisualOdometry> &odometry)
+  inline void setOdometryMethod(const std::shared_ptr<vpRBVisualOdometry> &odometry)
   {
     m_odometry = odometry;
   }
@@ -169,7 +169,7 @@ public:
    * Get verbosity mode.
    * \return true when verbosity is enabled, false otherwise.
    */
-  bool getVerbose()
+  inline bool getVerbose() const
   {
     return m_verbose;
   }
@@ -178,7 +178,7 @@ public:
    * Enable/disable verbosity mode.
    * \param verbose : When true verbose mode is enabled. When false verbosity is disabled.
    */
-  void setVerbose(bool verbose)
+  inline void setVerbose(bool verbose)
   {
     m_verbose = verbose;
   }
@@ -258,6 +258,7 @@ protected:
   unsigned m_vvsIterations; //! Max number of VVS iterations
   double m_muInit; //! Initial mu value for Levenberg-Marquardt
   double m_muIterFactor; //! Factor with which to multiply mu at every iteration during VVS.
+  bool m_scaleInvariantOptim;
 
   vpSilhouettePointsExtractionSettings m_depthSilhouetteSettings;
   vpPanda3DRenderParameters m_rendererSettings;
@@ -272,10 +273,14 @@ protected:
   std::shared_ptr<vpRBDriftDetector> m_driftDetector;
   std::shared_ptr<vpRBVisualOdometry> m_odometry;
 
+  vpRBADDSMetric m_convergenceMetric;
+  double m_convergedMetricThreshold;
+
+  bool m_displaySilhouette; //! Whether a call to the display function should draw a silhouette outline
+
 };
 
 END_VISP_NAMESPACE
-
 
 #endif
 #endif

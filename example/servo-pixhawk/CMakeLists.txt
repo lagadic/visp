@@ -51,5 +51,3 @@ foreach(cpp ${example_cpp})
     visp_add_dependency(${cpp} "examples")
   endif()
 endforeach()
-
-visp_set_source_file_compile_flag(servoPixhawkDroneIBVS.cpp -Wno-sign-compare -Wno-ignored-qualifiers -Wno-deprecated-copy-with-user-provided-copy)

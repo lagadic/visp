@@ -50,8 +50,8 @@
 BEGIN_VISP_NAMESPACE
 
 vpRBTracker::vpRBTracker() :
-  m_firstIteration(true), m_trackers(0), m_lambda(1.0), m_vvsIterations(10), m_muInit(0.0), m_muIterFactor(0.5),
-  m_renderer(m_rendererSettings), m_imageHeight(480), m_imageWidth(640), m_verbose(false)
+  m_firstIteration(true), m_trackers(0), m_lambda(1.0), m_vvsIterations(10), m_muInit(0.0), m_muIterFactor(0.5), m_scaleInvariantOptim(false),
+  m_renderer(m_rendererSettings), m_imageHeight(480), m_imageWidth(640), m_verbose(false), m_convergenceMetric(1024, 41), m_convergedMetricThreshold(0.0), m_displaySilhouette(false)
 {
   m_rendererSettings.setClippingDistance(0.01, 1.0);
   m_renderer.setRenderParameters(m_rendererSettings);
@@ -193,6 +193,7 @@ void vpRBTracker::track(const vpImage<unsigned char> &I, const vpImage<vpRGBa> &
 void vpRBTracker::startTracking()
 {
   setupRenderer(m_modelPath);
+  m_convergenceMetric.sampleObject(m_renderer);
 }
 
 void vpRBTracker::track(const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<float> &depth)
@@ -245,31 +246,43 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
       throw vpException(vpException::badValue, "Could not extract silhouette from depth canny: Object may not be in image");
     }
   }
+  m_logger.setSilhouetteTime(m_logger.endTimer());
 
   if (m_odometry) {
     m_logger.startTimer();
     m_odometry->compute(input, m_previousFrame);
+    vpHomogeneousMatrix cMo_beforeOdo = m_cMo;
     vpHomogeneousMatrix cnTc = m_odometry->getCameraMotion();
     m_cMo = cnTc * m_cMo;
-    updateRender(input);
-    m_logger.setOdometryTime(m_logger.endTimer());
-    if (requiresSilhouetteCandidates) {
-      const vpHomogeneousMatrix cTcp = m_cMo * m_cMoPrev.inverse();
-
-      input.silhouettePoints = extractSilhouettePoints(input.renders.normals, input.renders.depth,
-                                                      input.renders.silhouetteCanny, input.renders.isSilhouette, input.cam, cTcp);
-      if (input.silhouettePoints.size() == 0) {
-        throw vpException(vpException::badValue, "Could not extract silhouette from depth canny: Object may not be in image");
-      }
+    bool shouldRerender = true;
+    if (m_convergedMetricThreshold > 0.0 && m_cMo != cMo_beforeOdo) {
+      double adds = m_convergenceMetric.ADDS(m_cMo, cMo_beforeOdo);
+      std::cout << "ADDS = " << adds << std::endl;
+      // Multiply by number of vvs iterations: convergence is tested between two optim iterations,
+      // while we consider that odometry performs a full optim pass wrt to the environment
+      shouldRerender = adds > (m_convergedMetricThreshold * m_vvsIterations);
     }
+    if (shouldRerender) {
+      std::cout << "Rerendering for odometry" << std::endl;
+      updateRender(input);
+
+      if (requiresSilhouetteCandidates) {
+        const vpHomogeneousMatrix cTcp = m_cMo * m_cMoPrev.inverse();
+        input.silhouettePoints = extractSilhouettePoints(input.renders.normals, input.renders.depth,
+                                                        input.renders.silhouetteCanny, input.renders.isSilhouette, input.cam, cTcp);
+        if (input.silhouettePoints.size() == 0) {
+          throw vpException(vpException::badValue, "Could not extract silhouette from depth canny: Object may not be in image");
+        }
+      }
+
+    }
+    m_logger.setOdometryTime(m_logger.endTimer());
   }
-
-
 
   int id = 0;
   for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
     m_logger.startTimer();
-    tracker->onTrackingIterStart();
+    tracker->onTrackingIterStart(m_cMo);
     m_logger.setTrackerIterStartTime(id, m_logger.endTimer());
     id += 1;
   }
@@ -300,8 +313,6 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
     id += 1;
   }
 
-
-
   id = 0;
   for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
     m_logger.startTimer();
@@ -313,8 +324,10 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
 
   m_cMoPrev = m_cMo;
   double bestError = std::numeric_limits<double>::max();
+  vpHomogeneousMatrix m_cMoPrevIter = m_cMo;
   vpHomogeneousMatrix best_cMo = m_cMo;
   double mu = m_muInit;
+  vpColVector firstMotion(6, 0.0);
   for (unsigned int iter = 0; iter < m_vvsIterations; ++iter) {
     id = 0;
     for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
@@ -353,7 +366,7 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
         const double weight = tracker->getVVSTrackerWeight();
         LTL += weight * tracker->getLTL();
         LTR += weight * tracker->getLTR();
-        error += (weight * tracker->getWeightedError()).sumSquare();
+        error += weight * (tracker->getWeightedError()).sumSquare();
         //std::cout << "Error = " << (weight * tracker->getWeightedError()).sumSquare() << std::endl;
       }
     }
@@ -367,6 +380,12 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
 
       vpMatrix H(6, 6);
       H.eye(6);
+
+      if (m_scaleInvariantOptim) {
+        for (unsigned int i = 0; i < 6; ++i) {
+          H[i][i] = LTL[i][i];
+        }
+      }
       try {
         vpColVector v = -m_lambda * ((LTL + mu * H).pseudoInverse(LTL.getRows() * std::numeric_limits<double>::epsilon()) * LTR);
         m_cMo = vpExponentialMap::direct(v).inverse() * m_cMo;
@@ -375,16 +394,22 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
         std::cerr << "Could not compute pseudo inverse" << std::endl;
       }
       mu *= m_muIterFactor;
+
+      if (iter > 0 && m_convergedMetricThreshold > 0.0 && m_convergenceMetric.ADDS(m_cMoPrevIter, m_cMo) < m_convergedMetricThreshold) {
+        break;
+      }
+
+      m_cMoPrevIter = m_cMo;
     }
     else {
-      return;
+      break;
     }
   }
 
   //m_cMo = best_cMo;
 
   for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
-    tracker->onTrackingIterEnd();
+    tracker->onTrackingIterEnd(m_cMo);
   }
   //m_cMo = m_kalman.filter(m_cMo, 1.0 / 20.0);
   if (m_currentFrame.I.getSize() == 0) {
@@ -477,10 +502,10 @@ void vpRBTracker::updateRender(vpRBFeatureTrackerInput &frame)
   }
 
 }
-std::vector<vpRBSilhouettePoint> vpRBTracker::extractSilhouettePoints(
-  const vpImage<vpRGBf> &Inorm, const vpImage<float> &Idepth,
-  const vpImage<vpRGBf> &silhouetteCanny, const vpImage<unsigned char> &Ivalid,
-  const vpCameraParameters &cam, const vpHomogeneousMatrix &cTcp)
+std::vector<vpRBSilhouettePoint>
+vpRBTracker::extractSilhouettePoints(const vpImage<vpRGBf> &Inorm, const vpImage<float> &Idepth,
+                                     const vpImage<vpRGBf> &silhouetteCanny, const vpImage<unsigned char> &Ivalid,
+                                     const vpCameraParameters &cam, const vpHomogeneousMatrix &cTcp)
 {
   std::vector<std::pair<unsigned int, unsigned int>> candidates =
     m_depthSilhouetteSettings.getSilhouetteCandidates(Ivalid, Idepth, cam, cTcp, m_previousFrame.silhouettePoints, 42);
@@ -499,44 +524,19 @@ std::vector<vpRBSilhouettePoint> vpRBTracker::extractSilhouettePoints(
     norm[1] = Inorm[n][m].G;
     norm[2] = Inorm[n][m].B;
     const double l = std::sqrt(norm[0] * norm[0] + norm[1] * norm[1] + norm[2] * norm[2]);
-
     if (l > 1e-1) {
+      norm.normalize();
       const double Z = Idepth[n][m];
-      //bool noNeighbor = true;
-      // double nx = cos(theta);
-      // double ny = sin(theta);
-      // const double Zn = Idepth[static_cast<unsigned int>(round(n + ny * 1))][static_cast<unsigned int>(round(m + nx * 2))];
 #if defined(VISP_DEBUG_RB_TRACKER)
       if (fabs(theta) > M_PI + 1e-6) {
         throw vpException(vpException::badValue, "Theta expected to be in -Pi, Pi range but was not");
       }
 #endif
-      points.push_back(vpRBSilhouettePoint(n, m, norm, theta, Z));
-      // if (Zn > 0) {
-      //   theta = -theta;
-      // }
-      // Code to filter when two edges are too close and should not be used
-      // for (unsigned int normalOffset = 1; normalOffset <= 3; ++normalOffset) {
-      //   unsigned char offY = static_cast<unsigned char>(round(n + normalOffset * ny));
-      //   unsigned char offX = static_cast<unsigned char>(round(m + normalOffset * nx));
-      //   unsigned char negOffY = static_cast<unsigned char>(round(n - normalOffset * ny));
-      //   unsigned char negOffX = static_cast<unsigned char>(round(m - normalOffset * nx));
-      //   if (offY == n || offX == m || negOffY == n||negOffX == m) {
-      //     continue;
-      //   }
-
-      //   if (Ivalid(offY, offX) || Ivalid(negOffY, negOffX)) {
-      //     noNeighbor = false;
-      //     // std::cout << (unsigned int)(Ivalid(n + normalOffset * ny, m + normalOffset * nx)) << std::endl;
-      //     break;
-      //   }
-      // }
-      // if (noNeighbor) {
-      //   points.push_back(vpRBSilhouettePoint(n, m, norm, theta, Z));
-      // }
+      vpRBSilhouettePoint p(n, m, norm, theta, Z);
+      p.detectSilhouette(Idepth);
+      points.push_back(p);
     }
   }
-
   return points;
 }
 
@@ -561,15 +561,22 @@ void vpRBTracker::display(const vpImage<unsigned char> &I, const vpImage<vpRGBa>
     return;
   }
 
+  if (m_displaySilhouette && m_currentFrame.silhouettePoints.size() > 0) {
+    const vpImage<unsigned char> &Isilhouette = m_currentFrame.renders.isSilhouette;
+    const vpRect bb = m_renderer.getBoundingBox();
+    for (unsigned int r = std::max(bb.getTop(), 0.); (r < bb.getBottom()) &&(r < IRGB.getRows()); ++r) {
+      for (unsigned int c = std::max(bb.getLeft(), 0.); (c < bb.getRight()) && (c < IRGB.getCols()); ++c) {
+        if (Isilhouette[r][c] != 0) {
+          vpDisplay::displayPoint(IRGB, vpImagePoint(r, c), vpColor::green);
+        }
+      }
+    }
+  }
 
   for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
     if (tracker->featuresShouldBeDisplayed()) {
       tracker->display(m_currentFrame.cam, I, IRGB, depth);
     }
-  }
-
-  if (m_driftDetector) {
-    m_driftDetector->display(IRGB);
   }
 }
 
@@ -606,6 +613,8 @@ void vpRBTracker::loadConfiguration(const nlohmann::json &j)
   const nlohmann::json verboseSettings = j.at("verbose");
   m_verbose = verboseSettings.value("enabled", m_verbose);
 
+  m_displaySilhouette = j.value("displaySilhouette", m_displaySilhouette);
+
   const nlohmann::json cameraSettings = j.at("camera");
   m_cam = cameraSettings.at("intrinsics");
   m_imageHeight = cameraSettings.value("height", m_imageHeight);
@@ -621,6 +630,8 @@ void vpRBTracker::loadConfiguration(const nlohmann::json &j)
   setOptimizationGain(vvsSettings.value("gain", m_lambda));
   setOptimizationInitialMu(vvsSettings.value("mu", m_muInit));
   setOptimizationMuIterFactor(vvsSettings.value("muIterFactor", m_muIterFactor));
+  setOptimizationMuIterFactor(vvsSettings.value("scaleInvariant", m_scaleInvariantOptim));
+  m_convergedMetricThreshold = (vvsSettings.value("convergenceMetricThreshold", m_convergedMetricThreshold));
 
   m_depthSilhouetteSettings = j.at("silhouetteExtractionSettings");
 

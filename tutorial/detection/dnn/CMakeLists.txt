@@ -34,7 +34,3 @@ endforeach()
 foreach(data ${tutorial_data})
   visp_copy_data(tutorial-dnn-object-detection-live.cpp ${data})
 endforeach()
-
-if(USE_TENSORT)
-  visp_set_source_file_compile_flag(tutorial-dnn-tensorrt-live.cpp -Wno-deprecated-declarations)
-endif()

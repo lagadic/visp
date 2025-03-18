@@ -38,21 +38,23 @@ public:
       requiresSilhouetteCandidates,      /* Name of function in C++ (must match Python name) */
       );
   }
-  virtual void onTrackingIterStart() VP_OVERRIDE
+  virtual void onTrackingIterStart(const vpHomogeneousMatrix &cMo) VP_OVERRIDE
   {
     PYBIND11_OVERRIDE_PURE(
       void,           /* Return type */
       vpRBFeatureTracker,     /* Parent class */
       onTrackingIterStart,        /* Name of function in C++ (must match Python name) */
-      );
+      cMo
+    );
   }
-  virtual void onTrackingIterEnd() VP_OVERRIDE
+  virtual void onTrackingIterEnd(const vpHomogeneousMatrix &cMo) VP_OVERRIDE
   {
     PYBIND11_OVERRIDE_PURE(
       void,           /* Return type */
       vpRBFeatureTracker,     /* Parent class */
       onTrackingIterEnd,      /* Name of function in C++ (must match Python name) */
-      );
+      cMo
+    );
   }
   virtual void extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix &cMo)
     VP_OVERRIDE

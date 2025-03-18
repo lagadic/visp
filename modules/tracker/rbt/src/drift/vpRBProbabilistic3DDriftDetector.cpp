@@ -48,18 +48,28 @@ void vpRBProbabilistic3DDriftDetector::update(const vpRBFeatureTrackerInput &pre
 {
   const vpHomogeneousMatrix &cprevTo = frame.renders.cMo;
   const vpTranslationVector t = cprevTo.inverse().getTranslationVector();
-
-  if (m_points.size() > 0) {
+  if (m_points.size() == 0) {
+    m_score = 1.0;
+  }
     // Step 0: project all points
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-    for (vpStored3DSurfaceColorPoint &p : m_points) {
-      p.update(cTo, cprevTo, frame.cam);
-    }
+  for (vpStored3DSurfaceColorPoint &p : m_points) {
+    p.update(cTo, cprevTo, frame.cam);
+  }
 
-    // Step 1: gather points visible in both images and in render
-    std::vector<vpStored3DSurfaceColorPoint *> visiblePoints;
+  // Step 1: gather points visible in both images and in render
+
+  std::vector<vpStored3DSurfaceColorPoint *> visiblePoints;
+#ifdef VISP_HAVE_OPENMP
+#pragma omp parallel
+#endif
+  {
+    std::vector<vpStored3DSurfaceColorPoint *> visiblePointsLocal;
+#ifdef VISP_HAVE_OPENMP
+#pragma omp for
+#endif
     for (vpStored3DSurfaceColorPoint &p : m_points) {
       p.visible = true;
       if (
@@ -71,15 +81,23 @@ void vpRBProbabilistic3DDriftDetector::update(const vpRBFeatureTrackerInput &pre
         continue;
       }
 
-      // if (fabs(p.currX[2] - ZcurrMap) > m_maxError3D || fabs(p.prevX[2] - ZprevMap) > m_maxError3D) {
-      //   continue; // Depth is wrong:  probable occlusion, ignore it
-      // }
-
       float ZrenderMap = frame.renders.depth[p.projPrevPx[1]][p.projPrevPx[0]];
       // Version 2: compare previous projection with render, this does not filter occlusions
       if (ZrenderMap == 0.f || fabs(p.prevX[2] - ZrenderMap) > m_maxError3D) {
         p.visible = false;
         continue;
+      }
+      // Filter occlusions if depth is available
+      bool validZMap = frame.hasDepth() && frame.depth[p.projPrevPx[1]][p.projPrevPx[0]] > 0.f;
+
+      if (validZMap) {
+        float actualZ = frame.depth[p.projPrevPx[1]][p.projPrevPx[0]];
+        // Filter against the specified Z distribution: depth that is too close to the camera wrt to the object render
+        // and is not in the Z distribution can be considered as an occlusion
+        if (ZrenderMap - actualZ > 3.f * m_depthSigma) {
+          p.visible = false;
+          continue;
+        }
       }
 
       vpRGBf normalObject = frame.renders.normals[p.projPrevPx[1]][p.projPrevPx[0]];
@@ -96,7 +114,7 @@ void vpRBProbabilistic3DDriftDetector::update(const vpRBFeatureTrackerInput &pre
       // Filter points that are too close to the silhouette edges
       if (frame.silhouettePoints.size() > 0) {
         for (const vpRBSilhouettePoint &sp: frame.silhouettePoints) {
-          if (std::pow(static_cast<double>(sp.i) - p.projPrevPx[1], 2) + std::pow(static_cast<double>(sp.j) - p.projPrevPx[0], 2) < vpMath::sqr(3)) {
+          if (std::pow(static_cast<double>(sp.i) - p.projPrevPx[1], 2) + std::pow(static_cast<double>(sp.j) - p.projPrevPx[0], 2) < vpMath::sqr(2)) {
             p.visible = false;
             break;
           }
@@ -107,46 +125,48 @@ void vpRBProbabilistic3DDriftDetector::update(const vpRBFeatureTrackerInput &pre
       // ...
 
       if (p.visible) {
-        visiblePoints.push_back(&p);
+        visiblePointsLocal.push_back(&p);
       }
     }
+#ifdef VISP_HAVE_OPENMP
+#pragma omp critical
+#endif
+    {
+      visiblePoints.insert(visiblePoints.end(), visiblePointsLocal.begin(), visiblePointsLocal.end());
+    }
+  }
 
-    if (visiblePoints.size() > 0) {
-      //   // Compute sample weight
-      //   double maxTrace = 0.0;
-
-      //   for (vpStored3DSurfaceColorPoint *p : visiblePoints) {
-      //     double trace = p->stats.trace();
-      //     if (trace > maxTrace) {
-      //       maxTrace = trace;
-      //     }
-      //   }
-      //   maxTrace = std::max(maxTrace, 80.0);
-      double weightSum = 0.0;
-      m_score = 0.0;
+  if (visiblePoints.size() > 0) {
+    bool useMedian = true;
+    std::vector<double> scores;
+    scores.reserve(visiblePoints.size());
+    m_score = 0.0;
+#ifdef VISP_HAVE_OPENMP
+#pragma omp parallel
+#endif
+    {
+      std::vector<double> scoresLocal;
+#ifdef VISP_HAVE_OPENMP
+#pragma omp for
+#endif
       for (vpStored3DSurfaceColorPoint *p : visiblePoints) {
-        double maxProba = 0.0;
-        vpRGBf minColor;
+
         const bool hasCorrectDepth = frame.hasDepth() && frame.depth[p->projPrevPx[1]][p->projPrevPx[0]] > 0.f;
         const double Z = hasCorrectDepth ? frame.depth[p->projPrevPx[1]][p->projPrevPx[0]] : 0.0;
         double depthError = Z > 0 ? fabs(p->prevX[2] - Z) : 0.0;
         double probaDepth = 1.0;
+
         if (hasCorrectDepth) {
           probaDepth = 1.0 - erf((depthError) / (m_depthSigma * sqrt(2.0)));
         }
-        // double weight = 1.0 - ((p->stats.trace() / maxTrace));
-        // if (weight < 0.0) {
-        //   throw vpException(vpException::badValue, "Got invalid weight");
-        // }
-        double weight = 1.0;
 
         vpRGBf averageColor(0.f, 0.f, 0.f);
         for (int i = -1; i < 2; ++i) {
           for (int j = -1; j < 2; ++j) {
             const vpRGBa currentColor = frame.IRGB[p->projCurrPx[1] + i][p->projCurrPx[0] + j];
-            averageColor.R += currentColor.R;
-            averageColor.G += currentColor.G;
-            averageColor.B += currentColor.B;
+            averageColor.R += static_cast<float>(currentColor.R);
+            averageColor.G += static_cast<float>(currentColor.G);
+            averageColor.B += static_cast<float>(currentColor.B);
           }
         }
         averageColor = averageColor * (1.0 / 9.0);
@@ -155,26 +175,28 @@ void vpRBProbabilistic3DDriftDetector::update(const vpRBFeatureTrackerInput &pre
 
         const double probaColor = p->stats.probability(c);
         const double proba = probaColor * probaDepth;
-        if (probaDepth > 1.f || probaDepth < 0.0) {
-          throw vpException(vpException::badValue, "Wrong depth probability");
-        }
-        if (proba > maxProba) {
-          maxProba = proba;
-          minColor = c;
-        }
 
-        m_score += maxProba * weight;
-        weightSum += weight;
-        p->updateColor(minColor, m_colorUpdateRate * probaDepth);
+        scoresLocal.push_back(proba);
+        m_score += proba;
+        p->updateColor(c, m_colorUpdateRate * probaDepth);
       }
-      m_score /= (weightSum);
+#ifdef VISP_HAVE_OPENMP
+#pragma omp critical
+#endif
+      {
+        scores.insert(scores.end(), scoresLocal.begin(), scoresLocal.end());
+      }
+    }
+    if (!useMedian) {
+      // Use average score, may be more sensitive to outliers
+      m_score /= scores.size();
     }
     else {
-      m_score = 1.0;
+      m_score = vpMath::getMedian(scores);
     }
   }
   else {
-    m_score = 1.0;
+    m_score = 0.0;
   }
 
   // Step 4: Sample bb to add new visible points
@@ -182,8 +204,8 @@ void vpRBProbabilistic3DDriftDetector::update(const vpRBFeatureTrackerInput &pre
   vpColVector cX(4, 1.0);
   vpColVector oX(4, 1.0);
 
-  for (unsigned int i = frame.renders.boundingBox.getTop(); i < frame.renders.boundingBox.getBottom(); i += 2) {
-    for (unsigned int j = frame.renders.boundingBox.getLeft(); j < frame.renders.boundingBox.getRight(); j += 2) {
+  for (unsigned int i = frame.renders.boundingBox.getTop(); i < frame.renders.boundingBox.getBottom(); i += m_sampleStep) {
+    for (unsigned int j = frame.renders.boundingBox.getLeft(); j < frame.renders.boundingBox.getRight(); j += m_sampleStep) {
       double u = static_cast<double>(j), v = static_cast<double>(i);
       double x = 0.0, y = 0.0;
       double Z = frame.renders.depth[i][j];
@@ -215,18 +237,14 @@ void vpRBProbabilistic3DDriftDetector::update(const vpRBFeatureTrackerInput &pre
   }
 }
 
-void vpRBProbabilistic3DDriftDetector::display(const vpImage<vpRGBa> &/*I*/)
+void vpRBProbabilistic3DDriftDetector::display(const vpImage<vpRGBa> &I)
 {
-  // for (const vpStored3DSurfaceColorPoint &p : m_points) {
-  //   if (p.visible) {
-  //     const vpRGBf color = p.stats.mean;
-  //     // vpDisplay::displayPoint(I, p.projCurrPx[1], p.projCurrPx[0], vpColor::blue);
-  //     vpDisplay::displayPoint(I, p.projCurrPx[1], p.projCurrPx[0], vpColor(color.R, color.G, color.B), 3);
-  //     // vpDisplay::displayPoint(I, p.projCurrPx[1], p.projCurrPx[0], vpColor::white, 3);
-
-  //     // vpDisplay::displayLine(I, p.projCurrPx[1], p.projCurrPx[0], p.projPrevPx[1], p.projPrevPx[0], vpColor::red);
-  //   }
-  // }
+  for (const vpStored3DSurfaceColorPoint &p : m_points) {
+    if (p.visible) {
+      const vpRGBf color = p.stats.mean;
+      vpDisplay::displayPoint(I, p.projCurrPx[1], p.projCurrPx[0], vpColor(color.R, color.G, color.B), 3);
+    }
+  }
 }
 
 double vpRBProbabilistic3DDriftDetector::getScore() const
@@ -247,6 +265,7 @@ void vpRBProbabilistic3DDriftDetector::loadJsonConfiguration(const nlohmann::jso
   setFilteringMax3DError(j.value("filteringMaxDistance", m_maxError3D));
   setInitialColorStandardDeviation(j.value("initialColorSigma", m_initialColorSigma));
   setMinDistForNew3DPoints(j.value("minDistanceNewPoints", m_minDist3DNewPoint));
+  setSampleStep(j.value("sampleStep", m_sampleStep));
 }
 #endif
 
