@@ -320,6 +320,7 @@ vp_create_module(${opt_libs})
 vp_create_compat_headers("include/visp3/core/vpConfig.h")
 
 vp_set_source_file_compile_flag(src/image/vpFont.cpp -Wno-misleading-indentation -Wno-float-equal)
+vp_set_source_file_compile_flag(src/tools/file/vpIoTools_npy.cpp -Wno-strict-aliasing)
 
 set(opt_test_incs "")
 set(opt_test_libs "")
