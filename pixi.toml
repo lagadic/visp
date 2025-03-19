@@ -40,9 +40,6 @@ mesa-libegl-cos7-x86_64 = "*"
 [target.osx.dependencies]
 llvm-openmp = "*"
 
-[target.win-64.dependencies]
-pthreads-win32 = "*"
-
 [activation]
 scripts = ["development/scripts/pixi/activation.sh"]
 
@@ -64,7 +61,6 @@ build = { cmd = "cmake --build $VISP_BUILD_DIR --parallel $CPU_COUNT --target vi
 python-test = { cmd = "cmake --build $VISP_BUILD_DIR --config Release --target visp_python_bindings_test", depends-on = ["build"] }
 
 [feature.rbt]
-platforms = ["linux-64", "osx-64", "osx-arm64"]
 dependencies = { nlohmann_json = "*", panda3d = { version = ">=1.10.15", channel = "panda3d-forge" } }
 
 [feature.tests]
@@ -95,4 +91,4 @@ test = { cmd = "ctest --test-dir $VISP_BUILD_DIR --output-on-failure", depends-o
 [environments]
 with-python = { features = ["python-bindings"] }
 all = { features = ["rbt", "python-bindings"] }
-all-clang-cl = { features = ["python-bindings", "clang-cl"] }
+all-clang-cl = { features = ["rbt", "python-bindings", "clang-cl"] }
