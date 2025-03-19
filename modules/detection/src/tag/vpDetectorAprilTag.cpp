@@ -620,7 +620,6 @@ public:
   {
     image_u8_t *img_8u = apriltag_to_image(m_tf, idx);
 
-    std::cout << "img_8u->height=" << img_8u->height << " ; img_8u->width=" << img_8u->width << " ; stride=" << img_8u->stride << std::endl;
     I.init(img_8u->height, img_8u->width);
     for (int i = 0; i < img_8u->height; i++) {
       for (int j = 0; j < img_8u->width; j++) {
