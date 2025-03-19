@@ -32,6 +32,17 @@ public:
     for (const auto &it: explanation.items()) {
       expectedKeys.push_back(it.key());
     }
+
+    // Check for extranuous keys that should not be present
+    for (const auto &it: j.items()) {
+      if (std::find(expectedKeys.begin(), expectedKeys.end(), it.key()) == expectedKeys.end()) {
+        throw vpException(vpException::badValue, "Got an unexpected key when parsing JSON: %s\nJSON is %s", it.key(), j.dump(4));
+      }
+    }
+
+    // Check that required keys are present
+
+
     return true;
 
   }
@@ -44,7 +55,7 @@ protected:
   {
     return {
       {"name", name},
-      {"comment", explanation},
+      {"description", explanation},
       {"required", required},
       {"exampleValue", value}
     };
@@ -81,7 +92,7 @@ protected:
       nlohmann::json vv = v;
 
       vv.erase("name");
-      j[v["name"]] = vv;
+      j[v.at("name").get<std::string>()] = vv;
     }
     return j;
   }
