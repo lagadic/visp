@@ -128,7 +128,7 @@ public:
   }
   virtual bool verify(const nlohmann::json &j) const
   {
-    const nlohmann::json explanation = explain();
+    const nlohmann::ordered_json explanation = explain();
     std::vector<std::string> expectedKeys;
     for (const auto &it: explanation.items()) {
       expectedKeys.push_back(it.key());
@@ -137,9 +137,9 @@ public:
 
   }
 
-  virtual nlohmann::json explain() const VP_OVERRIDE
+  virtual nlohmann::ordered_json explain() const VP_OVERRIDE
   {
-    std::vector<nlohmann::json> thresholdParams = {
+    std::vector<nlohmann::ordered_json> thresholdParams = {
       vpRBJsonParsable::parameter(
         "type", "Type of thresholding when extracting the silhouette from the rendered depth map."
         "A pixel is considered as belonging to the silhouette when there is a strong depth disparity in its neighbourhood."
@@ -152,7 +152,7 @@ public:
         "value", "Minimum threshold value for a pixel to be considered as belonging to the silhouette. See type for what value to use.", true, 0.1
       )
     };
-    std::vector<nlohmann::json> samplingParams = {
+    std::vector<nlohmann::ordered_json> samplingParams = {
       vpRBJsonParsable::parameter("samplingRate", "Step size when subsampling the silhouette map", true, 1),
       vpRBJsonParsable::parameter("numPoints", "Maximum number of silhouette candidates to use in feature trackers and other downstream tasks."
       "Set to 0 to consider all silhouette points. Not recommended when setting samplingRate to 1.", true, 512),

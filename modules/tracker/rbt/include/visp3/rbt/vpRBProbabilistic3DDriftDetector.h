@@ -323,6 +323,7 @@ public:
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
   void loadJsonConfiguration(const nlohmann::json &) VP_OVERRIDE;
+  nlohmann::ordered_json explain() const VP_OVERRIDE;
 #endif
 
 /**

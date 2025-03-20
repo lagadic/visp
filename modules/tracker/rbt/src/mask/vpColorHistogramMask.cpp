@@ -157,6 +157,19 @@ void vpColorHistogramMask::loadJsonConfiguration(const nlohmann::json &json)
   m_computeOnBBOnly = json.value("computeOnlyOnBoundingBox", m_computeOnBBOnly);
   m_threshold = json.value("likelihoodRatioThreshold", m_threshold);
 }
+
+nlohmann::ordered_json vpColorHistogramMask::explain() const
+{
+  return flipToDict({
+    vpRBJsonParsable::parameter("bins", "", true, 16),
+    vpRBJsonParsable::parameter("backgroundUpdateRate", "", true, m_backgroundUpdateRate),
+    vpRBJsonParsable::parameter("objectUpdateRate", "", true, m_objectUpdateRate),
+    vpRBJsonParsable::parameter("maxDepthError", "", true, m_depthErrorTolerance),
+    vpRBJsonParsable::parameter("likelihoodRatioThreshold", "", false, m_threshold),
+    vpRBJsonParsable::parameter("computeOnlyOnBoundingBox", "", false, m_computeOnBBOnly)
+  });
+}
+
 #endif
 
 END_VISP_NAMESPACE

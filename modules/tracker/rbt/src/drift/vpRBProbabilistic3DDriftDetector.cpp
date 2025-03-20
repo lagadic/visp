@@ -270,6 +270,36 @@ void vpRBProbabilistic3DDriftDetector::loadJsonConfiguration(const nlohmann::jso
   setMinDistForNew3DPoints(j.value("minDistanceNewPoints", m_minDist3DNewPoint));
   setSampleStep(j.value("sampleStep", m_sampleStep));
 }
+
+nlohmann::ordered_json vpRBProbabilistic3DDriftDetector::explain() const
+{
+  nlohmann::ordered_json j = flipToDict({
+    vpRBJsonParsable::parameter("colorUpdateRate",
+    "Color update rate: How fast the color distribution associated to a surface point evolves. "
+    "Between 0 and 1. A high value will lead to a confidence that converge to 1 faster. ", false, m_colorUpdateRate),
+    vpRBJsonParsable::parameter("initialColorSigma",
+    "Initial color standard deviation when examining a new surface point. between 0 and 255."
+    "A high value will to an initial confidence that is stronger,"
+    "but will slow convergence to the true distribution.", false, m_initialColorSigma),
+    vpRBJsonParsable::parameter("depthSigma",
+    "Depth standard deviation, in meters. When depth map is available, the point's distance and the actual depth "
+    "are compared and are scored according to a Gaussian distribution, whose standard deviation is this parameter. "
+    "A high value will to a higher depth error tolerance.", false, m_depthSigma),
+    vpRBJsonParsable::parameter("filteringMaxDistance",
+    "Filtering depth error threshold (in meters) when selecting which surface points to consider for the drift score computation. "
+    "The depth error that is compared to the threshold is the distance between "
+    "the stored surface point's distance to the camera and the rendered depth. "
+    "This does not use the depth from the input frame.", false, m_maxError3D),
+    vpRBJsonParsable::parameter("minDistanceNewPoints",
+    "Minimum distance (in meters) that a new examined point should have to all other points "
+    "for it to be considered for future drift score estimation. "
+    "This threshold is mainly relevant to adapt the accuracy vs computation time tradeoff.", false, m_minDist3DNewPoint),
+    vpRBJsonParsable::parameter("sampleStep",
+    "Sampling step (in pixels) when examining the input frame to select new surface point candidates", false, static_cast<int>(m_sampleStep))
+  });
+  return j;
+}
+
 #endif
 
 END_VISP_NAMESPACE

@@ -37,6 +37,8 @@
 
 #include <visp3/core/vpConfig.h>
 
+#include <visp3/rbt/vpRBJsonParsable.h>
+
 #if defined(VISP_HAVE_NLOHMANN_JSON)
 #include VISP_NLOHMANN_JSON(json_fwd.hpp)
 #endif
@@ -52,7 +54,7 @@ class vpRBFeatureTrackerInput;
  *
  * \ingroup group_rbt_mask
 */
-class VISP_EXPORT vpObjectMask
+class VISP_EXPORT vpObjectMask : public vpRBJsonParsable
 {
 public:
   virtual void updateMask(const vpRBFeatureTrackerInput &frame,
@@ -61,9 +63,6 @@ public:
 
   virtual void display(const vpImage<float> &mask, vpImage<unsigned char> &Imask) const;
 
-#if defined(VISP_HAVE_NLOHMANN_JSON)
-  virtual void loadJsonConfiguration(const nlohmann::json &j) = 0;
-#endif
 };
 
 END_VISP_NAMESPACE

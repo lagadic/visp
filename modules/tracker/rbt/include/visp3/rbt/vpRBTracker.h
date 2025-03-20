@@ -192,7 +192,7 @@ public:
 #if defined(VISP_HAVE_NLOHMANN_JSON)
   void loadConfigurationFile(const std::string &filename);
   void loadJsonConfiguration(const nlohmann::json &j) VP_OVERRIDE;
-  nlohmann::json explain() const VP_OVERRIDE;
+  nlohmann::ordered_json explain() const VP_OVERRIDE;
   const std::string explainAsString()
   {
     return explain().dump(2);

@@ -32,7 +32,7 @@ public:
   virtual void loadJsonConfiguration(const nlohmann::json &j) = 0;
   virtual bool verify(const nlohmann::json &j) const
   {
-    const nlohmann::json explanation = explain();
+    const nlohmann::ordered_json explanation = explain();
     std::vector<std::string> expectedKeys;
     for (const auto &it: explanation.items()) {
       expectedKeys.push_back(it.key());
@@ -51,7 +51,7 @@ public:
 
   }
 
-  virtual nlohmann::json explain() const = 0;
+  virtual nlohmann::ordered_json explain() const = 0;
 
 protected:
 
@@ -67,7 +67,7 @@ protected:
 
 
   template<typename T>
-  static nlohmann::json parameterBase(const std::string &name, const std::string &explanation, bool required, const T &value)
+  static nlohmann::ordered_json parameterBase(const std::string &name, const std::string &explanation, bool required, const T &value)
   {
     return {
       {"name", name},
@@ -76,34 +76,34 @@ protected:
       {"exampleValue", value}
     };
   }
-  static nlohmann::json parameter(const std::string &name, const std::string &explanation, bool required, double value)
+  static nlohmann::ordered_json parameter(const std::string &name, const std::string &explanation, bool required, double value)
   {
-    nlohmann::json j = parameterBase(name, explanation, required, value);
+    nlohmann::ordered_json j = parameterBase(name, explanation, required, value);
     j["type"] = "double";
     return j;
   }
 
-  static nlohmann::json parameter(const std::string &name, const std::string &explanation, bool required, int value)
+  static nlohmann::ordered_json parameter(const std::string &name, const std::string &explanation, bool required, int value)
   {
-    nlohmann::json j = parameterBase(name, explanation, required, value);
+    nlohmann::ordered_json j = parameterBase(name, explanation, required, value);
     j["type"] = "int";
     return j;
   }
 
 
-  static nlohmann::json parameter(const std::string &name, const std::string &explanation, bool required, bool value)
+  static nlohmann::ordered_json parameter(const std::string &name, const std::string &explanation, bool required, bool value)
   {
-    nlohmann::json j = parameterBase(name, explanation, required, value);
+    nlohmann::ordered_json j = parameterBase(name, explanation, required, value);
     j["type"] = "bool";
     return j;
   }
 
 
-  static nlohmann::json flipToDict(const std::vector<nlohmann::json> &values)
+  static nlohmann::ordered_json flipToDict(const std::vector<nlohmann::ordered_json> &values)
   {
 
-    nlohmann::json j;
-    for (const nlohmann::json &v: values) {
+    nlohmann::ordered_json j;
+    for (const nlohmann::ordered_json &v: values) {
 
       nlohmann::json vv = v;
 

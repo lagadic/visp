@@ -681,9 +681,27 @@ void vpRBTracker::loadJsonConfiguration(const nlohmann::json &j)
 }
 
 
-nlohmann::json vpRBTracker::explain() const
+nlohmann::ordered_json vpRBTracker::explain() const
 {
-  std::vector<nlohmann::json> optimParameters = {
+
+  std::vector<nlohmann::ordered_json> intrinsics = {
+    vpRBJsonParsable::parameter("px", "Ratio between pixel width and focal length", false, 800.0),
+    vpRBJsonParsable::parameter("py", "Ratio between pixel height and focal length", false, 800.0),
+    vpRBJsonParsable::parameter("u0", "Principal point position (horizontal axis, in pixels)", false, 320.0),
+    vpRBJsonParsable::parameter("v0", "Principal point position (vertical axis, in pixels)", false, 240.0),
+  };
+
+  nlohmann::ordered_json cameraParameters = {
+    {"intrinsics", flipToDict(intrinsics)},
+    {"description", "Camera intrinsics and input image dimensions. The tracker assumes that there is no distortion and that color and depth images are aligned."}
+  };
+
+  cameraParameters.update(flipToDict({
+      vpRBJsonParsable::parameter("height", "Image height", false, 480),
+      vpRBJsonParsable::parameter("width", "Image width", false, 640)
+                          }));
+
+  std::vector<nlohmann::ordered_json> optimParameters = {
     vpRBJsonParsable::parameter(
       "gain", "The gain used during levenberg-marquardt minimization of the feature error", true, 1.0
     ),
@@ -708,7 +726,7 @@ nlohmann::json vpRBTracker::explain() const
     ),
   };
 
-  std::vector<nlohmann::json> baseParameters = {
+  std::vector<nlohmann::ordered_json> baseParameters = {
     vpRBJsonParsable::parameter("displaySilhouette",
     "Whether to display the object silhouette on top of the color image."
     "This will work only if silhouette is extracted,"
@@ -720,9 +738,28 @@ nlohmann::json vpRBTracker::explain() const
   };
 
 
-  nlohmann::json baseDict = flipToDict(baseParameters);
+  nlohmann::ordered_json baseDict = flipToDict(baseParameters);
+  baseDict["camera"] = cameraParameters;
   baseDict["vvs"] = flipToDict(optimParameters);
   baseDict["silhouetteExtractionSettings"] = m_depthSilhouetteSettings.explain();
+
+  baseDict["features"] = {
+    {"description", "List of visual features to track. Multiple features can be combined. To disable a feature, add the ignored flag to it."},
+    {"options", vpRBFeatureTrackerFactory::getFactory().availableOptions()}
+  };
+
+  baseDict["mask"] = {
+    { "description", "Object segmentation algorithms. These are used to filter out potentially erronous data, such as occlusions or lighting artifacts."},
+    { "options", vpObjectMaskFactory::getFactory().availableOptions() }
+  };
+
+  baseDict["drift"] = {
+    { "description", "Drift and divergence detection methods. These are used to detect when object tracking is uncertain and a reinitialization is required."},
+    { "options", vpRBDriftDetectorFactory::getFactory().availableOptions() }
+  };
+
+
+
   return baseDict;
 }
 

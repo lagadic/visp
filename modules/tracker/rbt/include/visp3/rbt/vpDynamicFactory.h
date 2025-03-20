@@ -37,7 +37,6 @@
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
-
 #if defined(VISP_HAVE_NLOHMANN_JSON)
 #include VISP_NLOHMANN_JSON(json.hpp)
 #endif
@@ -88,10 +87,18 @@ public:
     }
   }
 
-
   void setJsonKeyFinder(const std::function<std::string(const nlohmann::json &)> &finderFn)
   {
     m_keyFinder = finderFn;
+  }
+
+  nlohmann::ordered_json availableOptions() const
+  {
+    nlohmann::ordered_json j;
+    for (const auto &pair: m_jsonBuildables) {
+      j[pair.first] = pair.second()->explain();
+    }
+    return j;
   }
 #endif
 

@@ -212,7 +212,7 @@ public:
     m_userVvsWeight = j.at("weight");
     m_enableDisplay = j.value("display", m_enableDisplay);
   }
-  virtual nlohmann::json explain() const VP_OVERRIDE
+  virtual nlohmann::ordered_json explain() const VP_OVERRIDE
   {
     return flipToDict(
       {

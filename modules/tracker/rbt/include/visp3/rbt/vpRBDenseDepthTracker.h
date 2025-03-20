@@ -210,9 +210,9 @@ public:
     setDisplayType(j.value("displayType", m_displayType));
   }
 
-  virtual nlohmann::json explain() const VP_OVERRIDE
+  virtual nlohmann::ordered_json explain() const VP_OVERRIDE
   {
-    nlohmann::json j = vpRBFeatureTracker::explain();
+    nlohmann::ordered_json j = vpRBFeatureTracker::explain();
     j.update(flipToDict(
       {
         vpRBJsonParsable::parameter("step", "Sampling step for the depth map. Should be greater than 0.", true, static_cast<int>(m_step)),
