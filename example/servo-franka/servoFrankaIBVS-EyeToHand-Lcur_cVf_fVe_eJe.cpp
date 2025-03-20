@@ -499,11 +499,11 @@ int main(int argc, char **argv)
     task.setInteractionMatrixType(vpServo::CURRENT);
 
     if (opt_adaptive_gain) {
-      vpAdaptiveGain lambda(1.5, 0.4, 30); // lambda(0)=4, lambda(oo)=0.4 and lambda'(0)=30
+      vpAdaptiveGain lambda(1, 0.4, 30); // lambda(0)=1, lambda(oo)=0.4 and lambda'(0)=30
       task.setLambda(lambda);
     }
     else {
-      task.setLambda(0.5);
+      task.setLambda(0.2);
     }
 
     // Set the camera to robot reference frame velocity twist matrix constant transformation

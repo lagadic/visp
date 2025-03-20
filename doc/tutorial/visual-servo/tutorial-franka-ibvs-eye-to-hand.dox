@@ -31,14 +31,14 @@ Let us note:
 - \f$ \lambda \f$ is the gain of the controller
 - \f$ {\dot {\bf q}} \f$ the joint velocities to apply tho the robot to achieve the eye-to-hand visual servoing.
 
-In this tutorial we will consider three different eye-to-hand control laws:
-- The first one called `"Lcur_cVe_eJe"` implemented in servoFrankaIBVS-EyeToHand-Lcur_cVe_eJe.cpp where joint velocities
-  are computed thanks to:
-  \f[{\dot {\bf q}} = \lambda \left( {{\widehat {\bf L}}_{s=s(t)} {^c}{\bf V}_e {^e}{\bf J}_e} \right)^{+} ({\bf s}(t) - {\bf s}^*)\f]
+In this tutorial we will consider two different eye-to-hand control laws:
+- The first one called `"L_cVe_eJe"` implemented in servoFrankaIBVS-EyeToHand-Lcur_cVe_eJe.cpp where joint velocities are
+  computed thanks to:
+  \f[{\dot {\bf q}} = \lambda \left( {{\widehat {\bf L}}_{e} {^c}{\bf V}_e {^e}{\bf J}_e} \right)^{+} {\bf e}\f]
   Here to build \f$ {^c}{\bf V}_e \f$ there is the need to compute \f$ {^c}{\bf M}_e = {^c}{\bf M}_o \; {^o}{\bf M}_e\f$
   where \f$ {^c}{\bf M}_o \f$ is the pose of the object in the camera frame and \f$ {^o}{\bf M}_e \f$ constant
   transformation is obtained by extrinsic calibration.
-- The second one called `"Lcur_cVf_fVe_eJe"` implemented in servoFrankaIBVS-EyeToHand-Lcur_cVf_fVe_eJe.cpp where joint
+- The second one called `"L_cVf_fVe_eJe"` implemented in servoFrankaIBVS-EyeToHand-Ldes_cVf_fVe_eJe.cpp where joint
   velocities are computed thanks to:
   \f[{\dot {\bf q}} = \lambda \left( {{\widehat {\bf L}}_{s=s(t)} {^c}{\bf V}_f {^f}{\bf V}_e {^e}{\bf J}_e} \right)^{+} ({\bf s}(t) - {\bf s}^*)\f]
   This control law is recommended since it doesn't need to compute the pose of the object \f$ {^c}{\bf M}_o \f$.
@@ -247,15 +247,7 @@ $ ./servoFrankaIBVS-EyeToHand-Lcur_cVe_eJe \
     --tag-size    0.048                             \
     --no-convergence-threshold
 \endcode
-- If you have a look to the source code, you will see that we use the current interaction matrix.
-\code
-    task.setInteractionMatrixType(vpServo::CURRENT);
-\endcode
-- Thus the interaction matrix will be computed at each iteration of the servo loop. To this end we need to update
-  \f$ (x, y, Z) \f$ for each of the 4 points. For updating \f$ Z \f$ coordinate of each point there is the
-  need to compute the pose \f$ {^c}{\bf M}_o \f$ of the object. This pose is here also used to compute
-  \f$ {^c}{\bf M}_e = {^c}{\bf M}_o \; {^e}{\bf M}{_o}{^{-1}} \f$ where \f$ {^e}{\bf M}_o \f$ constant homogeneous matrix
-  is given by extrinsic calibration and read thanks to `"--eMo"` command line option.
+
 - Visual servoing will start and converge to the desired features like in the following video:
 \htmlonly
 <p align="center">
@@ -269,6 +261,34 @@ $ ./servoFrankaIBVS-EyeToHand-Lcur_cVe_eJe \
 <iframe width="560" height="315" src="https://www.youtube.com/embed/hgIO3csJrvA?si=yeEL7x_wssyuABn0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 </p>
 \endhtmlonly
+
+<b>Code explanation</b>
+- If you take a look to the source code, you will see that we create a desired feature point vector `p_d` updated by
+  reading the values \f$ (x^*, y^*, Z^*) \f$ of the four points from `"learned_desired_features.txt"` file
+\snippet servoFrankaIBVS-EyeToHand-Lcur_cVe_eJe.cpp Read desired features
+- Then we create the servo task by adding the four current and desired visual feature points
+\snippet servoFrankaIBVS-EyeToHand-Lcur_cVe_eJe.cpp Create task
+- Next we set the servo task type
+\snippet servoFrankaIBVS-EyeToHand-Lcur_cVe_eJe.cpp Set servo task
+- Indicating that the current inteaction matrix will be used
+\snippet servoFrankaIBVS-EyeToHand-Lcur_cVe_eJe.cpp Set interaction type task
+- Thus in the servo while loop the interaction matrix will be computed at each iteration of the servo loop.
+  To this end we need to update \f$ (x, y, Z) \f$ for each of the 4 points. For updating \f$ Z \f$ coordinate of each
+  point there is the need to compute the pose \f$ {^c}{\bf M}_o \f$ of the object.
+\snippet servoFrankaIBVS-EyeToHand-Lcur_cVe_eJe.cpp Detect and estimate tag pose
+  Here the tag pose is available in `c_M_o_vec[0]` as an homogeneous matrix
+\snippet servoFrankaIBVS-EyeToHand-Lcur_cVe_eJe.cpp Get tag pose
+- Updating current visual features `p[i]` is done with
+\snippet servoFrankaIBVS-EyeToHand-Lcur_cVe_eJe.cpp Update current visual features
+- This pose is here also used to compute
+  \f$ {^c}{\bf M}_e = {^c}{\bf M}_o \; {^e}{\bf M}{_o}{^{-1}} \f$ where \f$ {^e}{\bf M}_o \f$ constant homogeneous
+  matrix is given by extrinsic calibration and read thanks to `"--eMo"` command line option.
+\snippet servoFrankaIBVS-EyeToHand-Lcur_cVe_eJe.cpp Set the camera to end-effector velocity twist matrix transformation
+- The Jacobian \f$ {^e}{\bf J}_e \f$ is updated with
+\snippet servoFrankaIBVS-EyeToHand-Lcur_cVe_eJe.cpp Set the Jacobian (expressed in the end-effector frame)
+- We can now compute the control law corresponding to the joint velocities `q_dot` that we have to apply to the robot
+\snippet servoFrankaIBVS-EyeToHand-Lcur_cVe_eJe.cpp Compute basic control law
+
 
 \subsection franka_eth_ibvs_Lcur_cVf_fVe_eJe 3.2 Using Lcur_cVf_fVe_eJe controller
 
@@ -293,8 +313,7 @@ $ ./servoFrankaIBVS-EyeToHand-Lcur_cVf_fVe_eJe \
 - Visual servoing will start and converge to the desired features like in the following video:
 \htmlonly
 <p align="center">
-<iframe width="560" height="315" src="https://www.youtube.com/embed/81HIbcsaW8A?si=lxVjoCJsh9EU8KBq" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-</p>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/CQpHW40h6h4?si=y63FRAFJWB_4epoC" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></p>
 \endhtmlonly
 - Here you can also notice the straight line trajectories of the image points.
 

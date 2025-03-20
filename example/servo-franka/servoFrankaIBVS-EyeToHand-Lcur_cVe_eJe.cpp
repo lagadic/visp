@@ -450,6 +450,7 @@ int main(int argc, char **argv)
 
   // Load desired features to reach by visual servo
 
+  //! [Read desired features]
   std::vector<vpFeaturePoint> p_d; // Desired visual features
   // Sanity options check
   if (desired_features_filename.empty() || (!vpIoTools::checkFilename(desired_features_filename))) {
@@ -463,6 +464,7 @@ int main(int argc, char **argv)
       return EXIT_FAILURE;
     }
   }
+  //! [Read desired features]
 
   // Get camera extrinsics
   vpPoseVector e_P_o;
@@ -483,23 +485,31 @@ int main(int argc, char **argv)
   try {
     robot.connect(opt_robot_ip);
 
+    //! [Create task]
+    vpServo task;
+
     // Create current visual features
     std::vector<vpFeaturePoint> p(4); // We use 4 points
 
-    vpServo task;
     // Add the 4 visual feature points
     for (size_t i = 0; i < p.size(); ++i) {
       task.addFeature(p[i], p_d[i]);
     }
+    //! [Create task]
+
+    //! [Set servo task]
     task.setServo(vpServo::EYETOHAND_L_cVe_eJe);
+    //! [Set servo task]
+    //! [Set interaction type task]
     task.setInteractionMatrixType(vpServo::CURRENT);
+    //! [Set interaction type task]
 
     if (opt_adaptive_gain) {
-      vpAdaptiveGain lambda(1.5, 0.4, 30); // lambda(0)=4, lambda(oo)=0.4 and lambda'(0)=30
+      vpAdaptiveGain lambda(1, 0.4, 30); // lambda(0)=1, lambda(oo)=0.4 and lambda'(0)=30
       task.setLambda(lambda);
     }
     else {
-      task.setLambda(0.5);
+      task.setLambda(0.2);
     }
 
     vpPlot *plotter = nullptr;
@@ -549,7 +559,9 @@ int main(int argc, char **argv)
 
       std::vector<vpHomogeneousMatrix> c_M_o_vec;
       // To update the current visual feature (x,y,Z) parameters, we need the tag pose to estimate Z
+      //! [Detect and estimate tag pose]
       bool ret = detector.detect(I, opt_tag_size, cam, c_M_o_vec);
+      //! [Detect and estimate tag pose]
 
       {
         std::stringstream ss;
@@ -561,10 +573,13 @@ int main(int argc, char **argv)
 
       // Only one tag is detected
       if (ret && (c_M_o_vec.size() == 1)) {
+        //! [Get tag pose]
         vpHomogeneousMatrix c_M_o = c_M_o_vec[0];
+        //! [Get tag pose]
 
         static bool first_time = true;
 
+        //! [Update current visual features]
         // Get tag corners
         std::vector<vpImagePoint> corners = detector.getPolygon(0);
 
@@ -578,17 +593,20 @@ int main(int argc, char **argv)
 
           p[i].set_Z(c_P[2]); // Update Z value of each visual feature thanks to the tag pose
         }
+        //! [Update current visual features]
 
-        // Set the camera to end-effector velocity twist matrix transformation
+        //! [Set the camera to end-effector velocity twist matrix transformation]
         vpHomogeneousMatrix c_M_e;
         c_M_e = c_M_o * e_M_o.inverse();
+        //! [Set the camera to end-effector velocity twist matrix transformation]
 
         task.set_cVe(c_M_e);
 
-        // Set the Jacobian (expressed in the end-effector frame)
+        //! [Set the Jacobian (expressed in the end-effector frame)]
         vpMatrix e_J_e;
         robot.get_eJe(e_J_e);
         task.set_eJe(e_J_e);
+        //! [Set the Jacobian (expressed in the end-effector frame)]
 
         if (opt_task_sequencing) {
           if (!servo_started) {
@@ -600,7 +618,9 @@ int main(int argc, char **argv)
           qdot = task.computeControlLaw((vpTime::measureTimeMs() - t_init_servo) / 1000.);
         }
         else {
+          //! [Compute basic control law]
           qdot = task.computeControlLaw();
+          //! [Compute basic control law]
         }
 
         // Display the current and desired feature points in the image display
