@@ -143,6 +143,23 @@ Panda3D installation instructions are provided in \ref tutorial-panda3d.
 
 - <b>\ref tutorial-panda3d-install-windows</b>
 
+\subsection soft_ar_Coin3D Coin3D
+
+[Coin3D](https://www.coin3d.org/) is one of the optional 3rd parties supported by ViSP \ref module_ar
+and by \ref module_mbt.
+
+In ViSP, Coin3D brings the following capabilities:
+- model-based tracker supports VRML CAD model as input. If you are only interested in this feature, you don’t need
+  to install SoQT, SoWin or SoXt libraries.
+- simulation or augmented reality capabilities (see vpSimulator and vpAR classes).
+\note Using Coin3D for simulation or augmented reality throw vpSimulator or vpAR is deprecated. You should rather
+use Panda3D to this end, see \ref tutorial-panda3d.
+
+- <b>Ubuntu or debian installation</b>
+\code{.sh}
+$ sudo apt-get install libcoin-dev
+\endcode
+
 \section soft_robot Robot Control
 
 The following optional third-parties are used in \ref module_robot to enable the robot arms usage supported by ViSP.

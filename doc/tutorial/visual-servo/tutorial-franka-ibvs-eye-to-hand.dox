@@ -10,6 +10,9 @@ attached an Apriltag.
 
 \image html img-franka-calib-eye-to-hand-setup.jpg Panda robot in eye-to-hand configuration.
 
+The proposed image-based visual servoing will consider the four 2D image point visual features corresponding to the
+corners of the Apritag.
+
 Let us note:
 - \f$ {^e}{\bf J}_e \f$ the robot Jacobian in the end-effector frame relative to the end-effector frame
 - \f$ {^c}{\bf V}_e \f$ the 6-by-6 velocity twist matrix corresponding to the \f$ {^c}{\bf M}_e \f$ camera to
@@ -21,24 +24,34 @@ Let us note:
 - \f$ {^f}{\bf V}_e \f$ the 6-by-6 velocity twist matrix corresponding to the \f$ {^f}{\bf M}_e \f$ robot reference to
   robot end-effector frames transformation that allows to transform the velocity from point e in robot end-effector
   frame to point f in robot reference frame
-- \f$ {\widehat {\bf L}}_{e} \f$ the interaction matrix based on image visual features
+- \f$ {\bf s}(t) \f$ current image point visual features vector
+- \f$ {\bf s}^{*} \f$ desired current image point visual features vector
+- \f$ {\widehat {\bf L}}_{s} \f$ the interaction matrix corresponding to image point visual features that can be the
+  current one updated at each iteration of the loop \f$ {\bf s}(t) \f$, or the desired one \f$ {\bf s}^{*} \f$
 - \f$ \lambda \f$ is the gain of the controller
 - \f$ {\dot {\bf q}} \f$ the joint velocities to apply tho the robot to achieve the eye-to-hand visual servoing.
 
 In this tutorial we will consider two different eye-to-hand control laws:
-- The first one called `"L_cVe_eJe"` implemented in servoFrankaIBVS-EyeToHand-L_cVe_eJe.cpp where joint velocities are
+- The first one called `"L_cVe_eJe"` implemented in servoFrankaIBVS-EyeToHand-Lcur_cVe_eJe.cpp where joint velocities are
   computed thanks to:
   \f[{\dot {\bf q}} = \lambda \left( {{\widehat {\bf L}}_{e} {^c}{\bf V}_e {^e}{\bf J}_e} \right)^{+} {\bf e}\f]
   Here to build \f$ {^c}{\bf V}_e \f$ there is the need to compute \f$ {^c}{\bf M}_e = {^c}{\bf M}_o \; {^o}{\bf M}_e\f$
   where \f$ {^c}{\bf M}_o \f$ is the pose of the object in the camera frame and \f$ {^o}{\bf M}_e \f$ constant
   transformation is obtained by extrinsic calibration.
-- The second one called `"L_cVf_fVe_eJe"` implemented in servoFrankaIBVS-EyeToHand-L_cVf_fVe_eJe.cpp where joint
+- The second one called `"L_cVf_fVe_eJe"` implemented in servoFrankaIBVS-EyeToHand-Ldes_cVf_fVe_eJe.cpp where joint
   velocities are computed thanks to:
-  \f[{\dot {\bf q}} = \lambda \left( {{\widehat {\bf L}}_{e} {^c}{\bf V}_f {^f}{\bf V}_e {^e}{\bf J}_e} \right)^{+} {\bf e}\f]
+  \f[{\dot {\bf q}} = \lambda \left( {{\widehat {\bf L}}_{s=s(t)} {^c}{\bf V}_f {^f}{\bf V}_e {^e}{\bf J}_e} \right)^{+} ({\bf s}(t) - {\bf s}^*)\f]
   This control law is recommended since it doesn't need to compute the pose of the object \f$ {^c}{\bf M}_o \f$.
   Here we will build \f$ {^c}{\bf V}_f \f$ thanks to constant \f$ {^c}{\bf M}_f \f$ transformation obtained by
   extrinsic calibration, while \f$ {^f}{\bf V}_e \f$ is here build thanks to \f$ {^f}{\bf M}_e \f$ given by the
   robot SDK.
+- The third one called `"Ldes_cVf_fVe_eJe"` implemented in servoFrankaIBVS-EyeToHand-Ldes_cVf_fVe_eJe.cpp where joint
+  velocities are computed thanks to:
+  \f[{\dot {\bf q}} = \lambda \left( {{\widehat {\bf L}}_{s=s^{*}} {^c}{\bf V}_f {^f}{\bf V}_e {^e}{\bf J}_e} \right)^{+} ({\bf s}(t) - {\bf s}^*)\f]
+  Unlike previous control laws, this control law doesn't need to compute the pose of the object \f$ {^c}{\bf M}_o \f$.
+  Here we will build \f$ {^c}{\bf V}_f \f$ thanks to constant \f$ {^c}{\bf M}_f \f$ transformation obtained by
+  extrinsic calibration, while \f$ {^f}{\bf V}_e \f$ is here build thanks to \f$ {^f}{\bf M}_e \f$ given by the
+  robot odometry.
 
 We suppose here that you have:
 - a Panda robot in its research version from <a href="https://franka.de/">Franka Emika</a> that will be controlled throw
@@ -52,7 +65,7 @@ We suppose here that you have:
 
 \subsection franka_eth_prereq_data_folder 2.1. Create a folder to host data
 
-The binaries corresponding to servoFrankaIBVS-EyeToHand-L_cVe_eJe.cpp and servoFrankaIBVS-EyeToHand-L_cVf_fVe_eJe.cpp
+The binaries corresponding to servoFrankaIBVS-EyeToHand-Lcur_cVe_eJe.cpp and servoFrankaIBVS-EyeToHand-Ldes_cVf_fVe_eJe.cpp
 are build and available in `"${VISP_WS}/visp-build/example/servo-franka/"` folder.
 Inside this folder we recommand to create a folder (let say `"data-calib"`) in which we will record data camera
 intrinsic and extrinsic calibration
@@ -153,15 +166,15 @@ $ ../../../apps/calibration/hand-eye/visp-compute-eye-to-hand-calibration \
 To ensure that the visual servo loop converges to a desired position within the robot's joint limits, the desired
 visual features are learned. More precisely, for each tag corner we will save \f$(x, y, Z)\f$.
 Since we are using a 0.048 m large Apriltag we will run
-`servoFrankaIBVS-EyeToHand-L_cVe_eJe` binary corresponding to servoFrankaIBVS-EyeToHand-L_cVe_eJe.cpp source code.
-\note You can also use the `servoFrankaIBVS-EyeToHand-L_cVf_fVe_eJe` binary corresponding to
-servoFrankaIBVS-EyeToHand-L_cVf_fVe_eJe source code with the same command line options.
+`servoFrankaIBVS-EyeToHand-Lcur_cVe_eJe` binary corresponding to servoFrankaIBVS-EyeToHand-Lcur_cVe_eJe.cpp source code.
+\note You can also use the `servoFrankaIBVS-EyeToHand-Ldes_cVf_fVe_eJe` binary corresponding to
+servoFrankaIBVS-EyeToHand-Ldes_cVf_fVe_eJe source code with the same command line options.
 
 \warning In our case, we are using an Apriltag 0.048 m wide. Adapt the value of parameter `”--tag-size”` to the
 dimensions of your tag.
 \code{.sh}
 $ cd ${VISP_WS}/visp-build/example/servo-franka/
-$ ./servoFrankaIBVS-EyeToHand-L_cVe_eJe \
+$ ./servoFrankaIBVS-EyeToHand-Lcur_cVe_eJe \
     --learn-desired-features                               \
     --intrinsic          data-calib/franka_camera_visp.xml \
     --camera-name        Camera                            \
@@ -220,13 +233,13 @@ franka_camera_visp.xml   franka_ePo.yaml   franka_rPc.yaml
 
 \section franka_eth_ibvs 3. Eye-to-hand IBVS
 
-\subsection franka_eth_ibvs_L_cVe_eJe 3.1 Using L_cVe_eJe controller
+\subsection franka_eth_ibvs_Lcur_cVe_eJe 3.1 Using Lcur_cVe_eJe controller
 
 - You are now ready to start the eye-in-hand image-based visual servoing using `"L_cVe_eJe"` controller implemented
-  in servoFrankaIBVS-EyeToHand-L_cVe_eJe.cpp
+  in servoFrankaIBVS-EyeToHand-Lcur_cVe_eJe.cpp
 \code{.sh}
 $ cd ${VISP_WS}/visp-build/example/servo-franka/
-$ ./servoFrankaIBVS-EyeToHand-L_cVe_eJe \
+$ ./servoFrankaIBVS-EyeToHand-Lcur_cVe_eJe \
     --ip          192.168.30.10                     \
     --intrinsic   data-calib/franka_camera_visp.xml \
     --eMo         data-calib/franka_ePo.yaml        \
@@ -234,15 +247,7 @@ $ ./servoFrankaIBVS-EyeToHand-L_cVe_eJe \
     --tag-size    0.048                             \
     --no-convergence-threshold
 \endcode
-- If you have a look to the source code, you will see that we use the current interaction matrix.
-\code
-    task.setInteractionMatrixType(vpServo::CURRENT);
-\endcode
-- Thus the interaction matrix will be computed at each iteration of the servo loop. To this end we need to update
-  \f$ (x, y, Z) \f$ for each of the 4 points. For updating \f$ Z \f$ coordinate of each point there is the
-  need to compute the pose \f$ {^c}{\bf M}_o \f$ of the object. This pose is here also used to compute
-  \f$ {^c}{\bf M}_e = {^c}{\bf M}_o \; {^e}{\bf M}{_o}{^{-1}} \f$ where \f$ {^e}{\bf M}_o \f$ constant homogeneous matrix
-  is given by extrinsic calibration and read thanks to `"--eMo"` command line option.
+
 - Visual servoing will start and converge to the desired features like in the following video:
 \htmlonly
 <p align="center">
@@ -257,12 +262,67 @@ $ ./servoFrankaIBVS-EyeToHand-L_cVe_eJe \
 </p>
 \endhtmlonly
 
-\subsection franka_eth_ibvs_L_cVf_fVe_eJe 3.2 Using L_cVf_fVe_eJe controller
+<b>Code explanation</b>
+- If you take a look to the source code, you will see that we create a desired feature point vector `p_d` updated by
+  reading the values \f$ (x^*, y^*, Z^*) \f$ of the four points from `"learned_desired_features.txt"` file
+\snippet servoFrankaIBVS-EyeToHand-Lcur_cVe_eJe.cpp Read desired features
+- Then we create the servo task by adding the four current and desired visual feature points
+\snippet servoFrankaIBVS-EyeToHand-Lcur_cVe_eJe.cpp Create task
+- Next we set the servo task type
+\snippet servoFrankaIBVS-EyeToHand-Lcur_cVe_eJe.cpp Set servo task
+- Indicating that the current inteaction matrix will be used
+\snippet servoFrankaIBVS-EyeToHand-Lcur_cVe_eJe.cpp Set interaction type task
+- Thus in the servo while loop the interaction matrix will be computed at each iteration of the servo loop.
+  To this end we need to update \f$ (x, y, Z) \f$ for each of the 4 points. For updating \f$ Z \f$ coordinate of each
+  point there is the need to compute the pose \f$ {^c}{\bf M}_o \f$ of the object.
+\snippet servoFrankaIBVS-EyeToHand-Lcur_cVe_eJe.cpp Detect and estimate tag pose
+  Here the tag pose is available in `c_M_o_vec[0]` as an homogeneous matrix
+\snippet servoFrankaIBVS-EyeToHand-Lcur_cVe_eJe.cpp Get tag pose
+- Updating current visual features `p[i]` is done with
+\snippet servoFrankaIBVS-EyeToHand-Lcur_cVe_eJe.cpp Update current visual features
+- This pose is here also used to compute
+  \f$ {^c}{\bf M}_e = {^c}{\bf M}_o \; {^e}{\bf M}{_o}{^{-1}} \f$ where \f$ {^e}{\bf M}_o \f$ constant homogeneous
+  matrix is given by extrinsic calibration and read thanks to `"--eMo"` command line option.
+\snippet servoFrankaIBVS-EyeToHand-Lcur_cVe_eJe.cpp Set the camera to end-effector velocity twist matrix transformation
+- The Jacobian \f$ {^e}{\bf J}_e \f$ is updated with
+\snippet servoFrankaIBVS-EyeToHand-Lcur_cVe_eJe.cpp Set the Jacobian (expressed in the end-effector frame)
+- We can now compute the control law corresponding to the joint velocities `q_dot` that we have to apply to the robot
+\snippet servoFrankaIBVS-EyeToHand-Lcur_cVe_eJe.cpp Compute basic control law
 
-- To use rather `"L_cVf_fVe_eJe"` controller implemented in servoFrankaIBVS-EyeToHand-L_cVf_fVe_eJe, you may run:
+
+\subsection franka_eth_ibvs_Lcur_cVf_fVe_eJe 3.2 Using Lcur_cVf_fVe_eJe controller
+
+- To use rather `"Lcur_cVf_fVe_eJe"` controller implemented in servoFrankaIBVS-EyeToHand-Lcur_cVf_fVe_eJe, you may run:
 \code{.sh}
 $ cd ${VISP_WS}/visp-build/example/servo-franka/
-$ ./servoFrankaIBVS-EyeToHand-L_cVf_fVe_eJe \
+$ ./servoFrankaIBVS-EyeToHand-Lcur_cVf_fVe_eJe \
+    --ip          192.168.30.10                     \
+    --intrinsic   data-calib/franka_camera_visp.xml \
+    --rMc         data-calib/franka_rPc.yaml        \
+    --camera-name Camera                            \
+    --tag-size    0.048                             \
+    --no-convergence-threshold
+\endcode
+
+- As in the previous section, we use the current interaction matrix computed at each iteration of the servo loop.
+\code
+    task.setInteractionMatrixType(vpServo::CURRENT);
+\endcode
+- That's why we need to update \f$ (x, y, Z) \f$ for each of the 4 feature points. For updating \f$ Z \f$ coordinate
+  there is the need to compute the pose \f$ {^c}{\bf M}_o \f$ of the object.
+- Visual servoing will start and converge to the desired features like in the following video:
+\htmlonly
+<p align="center">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/CQpHW40h6h4?si=y63FRAFJWB_4epoC" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></p>
+\endhtmlonly
+- Here you can also notice the straight line trajectories of the image points.
+
+\subsection franka_eth_ibvs_Ldes_cVf_fVe_eJe 3.3 Using Ldes_cVf_fVe_eJe controller
+
+- To use rather `"Ldes_cVf_fVe_eJe"` controller implemented in servoFrankaIBVS-EyeToHand-Ldes_cVf_fVe_eJe, you may run:
+\code{.sh}
+$ cd ${VISP_WS}/visp-build/example/servo-franka/
+$ ./servoFrankaIBVS-EyeToHand-Ldes_cVf_fVe_eJe \
     --ip          192.168.30.10                     \
     --intrinsic   data-calib/franka_camera_visp.xml \
     --rMc         data-calib/franka_rPc.yaml        \
