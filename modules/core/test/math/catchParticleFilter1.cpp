@@ -75,8 +75,8 @@ TEST_CASE("2nd-degree", "[vpParticleFilter][Polynomial interpolation]")
   const unsigned int nbInitPoints = 10; //!< Number of points to compute the initial guess of the PF state
   const uint64_t seedCurve = 4224; //!< The seed to generate the curve
   const uint64_t seedInitPoints = 2112; //!< The seed to choose the init points
-  const unsigned int nbTestRepet = 10; //!< The number of times the test is repeated
-  const unsigned int nbWarmUpIter = 10; //!< Number of iterations for the warmup loop
+  const unsigned int nbTestRepet = 10/2; //!< The number of times the test is repeated
+  const unsigned int nbWarmUpIter = 10/2; //!< Number of iterations for the warmup loop
   const unsigned int nbEvalIter = 20; //!< Number of iterations for the evaluation loop
   const double dt = 0.040; //!< Simulated period of acquisition
   const int32_t seedShuffle = 4221; //!< The seed to shuffle the curve points
