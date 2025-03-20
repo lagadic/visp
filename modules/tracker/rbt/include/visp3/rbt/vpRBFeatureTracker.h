@@ -45,6 +45,7 @@
 
 #include <visp3/rbt/vpRBFeatureTrackerInput.h>
 #include <visp3/rbt/vpRBSilhouettePoint.h>
+#include <visp3/rbt/vpRBJsonParsable.h>
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
 #include VISP_NLOHMANN_JSON(json.hpp)
@@ -57,7 +58,7 @@ BEGIN_VISP_NAMESPACE
  *
  * \ingroup group_rbt_trackers
 */
-class VISP_EXPORT vpRBFeatureTracker
+class VISP_EXPORT vpRBFeatureTracker : public vpRBJsonParsable
 {
 public:
 
@@ -206,10 +207,19 @@ public:
   const vpColVector &getWeightedError() const { return m_weighted_error; }
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
-  virtual void loadJsonConfiguration(const nlohmann::json &j)
+  virtual void loadJsonConfiguration(const nlohmann::json &j) VP_OVERRIDE
   {
     m_userVvsWeight = j.at("weight");
     m_enableDisplay = j.value("display", m_enableDisplay);
+  }
+  virtual nlohmann::json explain() const VP_OVERRIDE
+  {
+    return flipToDict(
+      {
+        vpRBJsonParsable::parameter("weight", "Feature weight in the optimization step", true, m_userVvsWeight),
+        vpRBJsonParsable::parameter("display", "Whether visual feature representations should be displayed when calling vpRBTracker::display()", true, m_enableDisplay),
+      }
+      );
   }
 #endif
 

@@ -210,6 +210,19 @@ public:
     setDisplayType(j.value("displayType", m_displayType));
   }
 
+  virtual nlohmann::json explain() const VP_OVERRIDE
+  {
+    nlohmann::json j = vpRBFeatureTracker::explain();
+    j.update(flipToDict(
+      {
+        vpRBJsonParsable::parameter("step", "Sampling step for the depth map. Should be greater than 0.", true, static_cast<int>(m_step)),
+        vpRBJsonParsable::parameter("useMask", "Whether the object membership mask (if available) should be used to filter out depth features", false, m_useMask),
+        vpRBJsonParsable::parameter("minMaskConfidence", "If using mask, minimum confidence value to consider a feature as relevant for the tracking", false, m_minMaskConfidence),
+        vpRBJsonParsable::parameter("displayType", "When display is enabled, what information about the feature to display", false, m_displayType),
+      }));
+    return j;
+  }
+
 #endif
 
 protected:

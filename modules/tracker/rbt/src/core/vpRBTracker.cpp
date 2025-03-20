@@ -723,8 +723,6 @@ nlohmann::json vpRBTracker::explain() const
   nlohmann::json baseDict = flipToDict(baseParameters);
   baseDict["vvs"] = flipToDict(optimParameters);
   baseDict["silhouetteExtractionSettings"] = m_depthSilhouetteSettings.explain();
-
-
   return baseDict;
 }
 

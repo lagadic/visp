@@ -80,6 +80,7 @@ int main(int argc, const char **argv)
   vpCameraParameters cam;
 
   vpRBTracker tracker;
+  std::cout << tracker.explain().dump(4) << std::endl;
   tracker.loadConfigurationFile(baseArgs.trackerConfiguration);
   tracker.startTracking();
   cam = tracker.getCameraParameters();

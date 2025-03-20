@@ -23,6 +23,11 @@ BEGIN_VISP_NAMESPACE
 class VISP_EXPORT vpRBJsonParsable
 {
 public:
+  vpRBJsonParsable()
+  {
+    addUncheckedKey("description");
+  }
+
 #if defined(VISP_HAVE_NLOHMANN_JSON)
   virtual void loadJsonConfiguration(const nlohmann::json &j) = 0;
   virtual bool verify(const nlohmann::json &j) const
@@ -35,14 +40,13 @@ public:
 
     // Check for extranuous keys that should not be present
     for (const auto &it: j.items()) {
+      if (isUncheckedKey(it.key())) {
+        continue;
+      }
       if (std::find(expectedKeys.begin(), expectedKeys.end(), it.key()) == expectedKeys.end()) {
-        throw vpException(vpException::badValue, "Got an unexpected key when parsing JSON: %s\nJSON is %s", it.key(), j.dump(4));
+        throw vpException(vpException::badValue, "Got an unexpected key when parsing JSON: %s\nJSON is %s", it.key().c_str(), j.dump(4).c_str());
       }
     }
-
-    // Check that required keys are present
-
-
     return true;
 
   }
@@ -50,6 +54,18 @@ public:
   virtual nlohmann::json explain() const = 0;
 
 protected:
+
+  void addUncheckedKey(const std::string &key)
+  {
+    m_uncheckedJsonKeys.push_back(key);
+  }
+
+  bool isUncheckedKey(const std::string &key) const
+  {
+    return std::find(m_uncheckedJsonKeys.begin(), m_uncheckedJsonKeys.end(), key) != m_uncheckedJsonKeys.end();
+  }
+
+
   template<typename T>
   static nlohmann::json parameterBase(const std::string &name, const std::string &explanation, bool required, const T &value)
   {
@@ -97,6 +113,8 @@ protected:
     return j;
   }
 
+private:
+  std::vector<std::string> m_uncheckedJsonKeys;
 
 
 #endif
