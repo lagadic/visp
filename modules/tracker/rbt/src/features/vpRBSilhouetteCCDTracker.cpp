@@ -1,4 +1,3 @@
-
 /*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
@@ -56,7 +55,6 @@ void sampleWithoutReplacement(unsigned int count, unsigned int vectorSize, std::
   }
 }
 
-
 template <class T> class FastMat33
 {
 public:
@@ -110,7 +108,6 @@ public:
 
   static void multiply(const FastMat63<T> &A, const FastMat33<T> &B, FastMat63 &C)
   {
-
     for (unsigned int i = 0; i < 6; ++i) {
       const T *d = &A.data[i * 3];
       T *c = &C.data[i * 3];
@@ -155,7 +152,6 @@ public:
     C[4] = A[12] * B[0] + A[13] * B[1] + A[14] * B[2];
     C[5] = A[15] * B[0] + A[16] * B[1] + A[17] * B[2];
   }
-
 };
 
 vpRBSilhouetteCCDTracker::vpRBSilhouetteCCDTracker() : vpRBFeatureTracker(), m_vvsConvergenceThreshold(0.0),
@@ -215,7 +211,6 @@ void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &fr
   }
 }
 
-
 void vpRBSilhouetteCCDTracker::initVVS(const vpRBFeatureTrackerInput &/*frame*/, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix & /*cMo*/)
 {
   // Reinit all variables
@@ -238,7 +233,6 @@ void vpRBSilhouetteCCDTracker::initVVS(const vpRBFeatureTrackerInput &/*frame*/,
   m_hessianData.resize(m_controlPoints.size() * 2 * normal_points_number * 6 * 6);
   m_gradients.resize(m_controlPoints.size() * 2 * normal_points_number);
   m_hessians.resize(m_controlPoints.size() * 2 * normal_points_number);
-
 
   for (unsigned int i = 0; i < m_gradients.size(); ++i) {
     m_gradients[i] = vpColVector::view(m_gradientData.data() + i * 6, 6);
@@ -269,7 +263,6 @@ void vpRBSilhouetteCCDTracker::changeScale()
   m_hessianData.resize(m_controlPoints.size() * 2 * normal_points_number * 6 * 6);
   m_gradients.resize(m_controlPoints.size() * 2 * normal_points_number);
   m_hessians.resize(m_controlPoints.size() * 2 * normal_points_number);
-
 
   for (unsigned int i = 0; i < m_gradients.size(); ++i) {
     m_gradients[i] = vpColVector::view(m_gradientData.data() + i * 6, 6);
@@ -727,7 +720,6 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
       Lnvp[4] = (-nv_ptr[1] * p.xs * p.ys - nv_ptr[0] * (1.0 + p.xs * p.xs));
       Lnvp[5] = (nv_ptr[0] * p.ys - nv_ptr[1] * p.xs);
 
-
       for (unsigned int j = 0; j < 2 * normal_points_number; ++j) {
         const double *vic_j = vic_ptr + 10 * j;
         const double *pix_j = pix_ptr + j * 3;
@@ -847,7 +839,6 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
     m_LTR = 0;
     std::cerr << "Inversion issues in CCD tracker" << std::endl;
   }
-
 }
 
 END_VISP_NAMESPACE

@@ -26,26 +26,61 @@
  *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Description:
+ * Test visp::cnpy::npz_load() / visp::cnpy::npy_save() functions.
  */
 
-#include <visp3/rbt/vpObjectMask.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpDisplay.h>
+/*!
+  \example catchTools.cpp
+ */
 
-BEGIN_VISP_NAMESPACE
+#include <iostream>
+#include <visp3/core/vpConfig.h>
 
-void vpObjectMask::display(const vpImage<float> &mask, vpImage<unsigned char> &Imask) const
+#if defined(VISP_HAVE_CATCH2)
+
+#include <catch_amalgamated.hpp>
+
+#include <visp3/core/vpIoTools.h>
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
+std::string toString(const std::string &input, unsigned int val)
 {
-  if (mask.getSize() != Imask.getSize()) {
-    throw vpException(vpException::dimensionError, "Cannot convert float mask to unsigned char mask as they do not have the same size");
-  }
-
-#pragma omp parallel for
-  for (unsigned int i = 0; i < mask.getSize(); ++i) {
-    Imask.bitmap[i] = static_cast<unsigned char>(mask.bitmap[i] * 255.f);
-  }
-
-  vpDisplay::display(Imask);
+  char input_[FILENAME_MAX];
+  snprintf(input_, FILENAME_MAX, input.c_str(), val);
+  return std::string(input_);
 }
 
-END_VISP_NAMESPACE
+SCENARIO("Test vpIoTools::formatString()", "[toString]")
+{
+  GIVEN("int values")
+  {
+    std::string input("test-%04d.png");
+    THEN("1 digit")
+    {
+      unsigned int val = 1;
+      CHECK(vpIoTools::formatString(input, val) == toString(input, val));
+    }
+    THEN("2 digits")
+    {
+      unsigned int val = 23;
+      CHECK(vpIoTools::formatString(input, val) == toString(input, val));
+    }
+  }
+};
+
+int main(int argc, char *argv[])
+{
+  Catch::Session session;
+  session.applyCommandLine(argc, argv);
+  int numFailed = session.run();
+  return numFailed;
+}
+
+#else
+int main() { return EXIT_SUCCESS; }
+#endif

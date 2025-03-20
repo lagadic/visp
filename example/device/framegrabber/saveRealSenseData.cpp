@@ -440,30 +440,21 @@ public:
 
       std::vector<float> vec_pcl;
 
-      char buffer[FILENAME_MAX];
       std::string image_filename_ext = m_save_jpeg ? ".jpg" : ".png";
       for (;;) {
         m_queue.pop(ptr_colorImg, ptr_depthImg, ptr_pointCloud, ptr_infraredImg);
 
         if (!m_directory.empty()) {
           std::string current_time = vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
-          std::stringstream ss;
 
           if (m_save_color && ptr_colorImg) {
-            ss << m_directory << "/color_image_" << m_save_pattern << image_filename_ext;
-            snprintf(buffer, FILENAME_MAX, ss.str().c_str(), m_cpt);
-
-            std::string filename_color = buffer;
+            std::string filename_color = vpIoTools::formatString(m_directory + "/color_image_" + m_save_pattern + image_filename_ext, m_cpt);
             vpImageIo::write(*ptr_colorImg, filename_color);
           }
 
           if (m_save_depth && ptr_depthImg) {
-            ss.str("");
-
             if (m_save_force_binary_format) {
-              ss << m_directory << "/depth_image_" << m_save_pattern << ".bin";
-              snprintf(buffer, FILENAME_MAX, ss.str().c_str(), m_cpt);
-              std::string filename_depth = buffer;
+              std::string filename_depth = vpIoTools::formatString("/depth_image_" + m_save_pattern + ".bin", m_cpt);
 
               std::ofstream file_depth(filename_depth.c_str(), std::ios::out | std::ios::binary);
               if (file_depth.is_open()) {
@@ -482,9 +473,7 @@ public:
             }
 #if defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
             else {
-              ss << m_directory << "/depth_image_" << m_save_pattern << ".npz";
-              snprintf(buffer, FILENAME_MAX, ss.str().c_str(), m_cpt);
-              std::string filename_depth = buffer;
+              std::string filename_depth = vpIoTools::formatString("/depth_image_" + m_save_pattern + ".npz", m_cpt);
 
               // Write Npz headers
               std::vector<char> vec_filename(filename_depth.begin(), filename_depth.end());
@@ -516,11 +505,8 @@ public:
           }
 
           if (m_save_pointcloud && ptr_pointCloud) {
-            ss.str("");
             std::string pcl_extension = m_save_force_binary_format ? ".bin" : (m_save_pcl_npz_format ? ".npz" : ".pcd");
-            ss << m_directory << "/point_cloud_" << m_save_pattern << pcl_extension;
-            snprintf(buffer, FILENAME_MAX, ss.str().c_str(), m_cpt);
-            std::string filename_point_cloud = buffer;
+            std::string filename_point_cloud = vpIoTools::formatString("/point_cloud_" + m_save_pattern + pcl_extension, m_cpt);
 
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
             uint32_t width = ptr_pointCloud->width;
@@ -606,9 +592,9 @@ public:
               vec_pcl.resize(height * width * channels);
               for (uint32_t i = 0; i < height; i++) {
                 for (uint32_t j = 0; j < width; j++) {
-                  vec_pcl[channels * (i*width + j) + 0] = (*ptr_pointCloud)[i*width + j][0];
-                  vec_pcl[channels * (i*width + j) + 1] = (*ptr_pointCloud)[i*width + j][1];
-                  vec_pcl[channels * (i*width + j) + 2] = (*ptr_pointCloud)[i*width + j][2];
+                  vec_pcl[channels * (i*width + j) + 0] = static_cast<float>((*ptr_pointCloud)[i*width + j][0]);
+                  vec_pcl[channels * (i*width + j) + 1] = static_cast<float>((*ptr_pointCloud)[i*width + j][1]);
+                  vec_pcl[channels * (i*width + j) + 2] = static_cast<float>((*ptr_pointCloud)[i*width + j][2]);
                 }
               }
 #endif
@@ -626,11 +612,8 @@ public:
           }
 
           if (m_save_infrared && ptr_infraredImg) {
-            ss.str("");
-            ss << m_directory << "/infrared_image_" << m_save_pattern << image_filename_ext;
-            snprintf(buffer, FILENAME_MAX, ss.str().c_str(), m_cpt);
+            std::string filename_infrared = vpIoTools::formatString("/infrared_image_" + m_save_pattern + image_filename_ext, m_cpt);
 
-            std::string filename_infrared = buffer;
             vpImageIo::write(*ptr_infraredImg, filename_infrared);
           }
 

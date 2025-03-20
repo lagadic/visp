@@ -116,7 +116,7 @@ void usage(const char **argv, int error)
 
 int main(int argc, const char **argv)
 {
-  float opt_tag_size = 0.048;
+  double opt_tag_size = 0.048;
   std::string opt_input_img_files = "";
   std::string opt_intrinsic_file = "camera.xml";
   std::string opt_camera_name = "Camera";
@@ -262,11 +262,8 @@ int main(int argc, const char **argv)
       if (found) {
         cMo = cMo_vec[0];
         vpPoseVector pose_vec(cMo);
-        char name[FILENAME_MAX];
-        snprintf(name, FILENAME_MAX, opt_output_pose_files.c_str(), reader.getFrameIndex());
-        std::string s = name;
-        std::cout << "Save " << s << std::endl;
-        pose_vec.saveYAML(s, pose_vec);
+        std::string  filename = vpIoTools::formatString(opt_output_pose_files, reader.getFrameIndex());
+        pose_vec.saveYAML(filename, pose_vec);
       }
 
 #if defined(VISP_HAVE_MODULE_GUI)

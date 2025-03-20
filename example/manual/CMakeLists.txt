@@ -55,12 +55,6 @@ set(example_cpp
   moments/manServoMomentsSimple.cpp
 )
 
-if(VISP_HAVE_OGRE)
-  # Add specific build flag to turn off warnings coming from libogre and libois 3rd party
-  visp_set_source_file_compile_flag(ogre/HelloWorldOgre.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy -Wno-register)
-  visp_set_source_file_compile_flag(ogre/HelloWorldOgreAdvanced.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy -Wno-register)
-endif()
-
 foreach(cpp ${example_cpp})
   visp_add_target(${cpp})
   if(COMMAND visp_add_dependency)

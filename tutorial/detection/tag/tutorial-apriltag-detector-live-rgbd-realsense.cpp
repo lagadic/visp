@@ -317,7 +317,7 @@ int main(int argc, const char **argv)
           }
           std::stringstream ss;
           ss << "Tag id " << tags_id[i] << " confidence: " << confidence_index;
-          vpDisplay::displayText(I_color2, 35 + i * 15, 20, ss.str(), vpColor::red);
+          vpDisplay::displayText(I_color2, 35 + static_cast<int>(i) * 15, 20, ss.str(), vpColor::red);
 
           if (opt_verbose) {
             std::cout << ss.str() << std::endl;

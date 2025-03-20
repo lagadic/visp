@@ -21,5 +21,3 @@ set(ENV{ZBAR_DIR} "${TOOLCHAIN_ROOT_DIR}/zbar")
 # OpenCV is detected thanks to cmake/FindMyOpenCV.cmake
 
 mark_as_advanced(CCACHE)
-
-

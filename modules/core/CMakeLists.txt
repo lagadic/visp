@@ -240,8 +240,8 @@ endif()
 
 # Misc: xml, pthread, zlib
 if(USE_XML2)
-  include_directories(${XML2_INCLUDE_DIRS})
-  list(APPEND opt_libs_private ${XML2_LIBRARIES})
+  include_directories(${LIBXML2_INCLUDE_DIRS})
+  list(APPEND opt_libs_private ${LIBXML2_LIBRARIES})
 endif()
 
 if(USE_THREADS)
@@ -319,6 +319,9 @@ vp_module_include_directories(${opt_incs} SYSTEM ${opt_system_incs})
 vp_create_module(${opt_libs})
 vp_create_compat_headers("include/visp3/core/vpConfig.h")
 
+vp_set_source_file_compile_flag(src/image/vpFont.cpp -Wno-misleading-indentation -Wno-float-equal)
+vp_set_source_file_compile_flag(src/tools/file/vpIoTools_npy.cpp -Wno-strict-aliasing)
+
 set(opt_test_incs "")
 set(opt_test_libs "")
 
@@ -334,10 +337,3 @@ vp_add_tests(CTEST_EXCLUDE_PATH network DEPENDS_ON visp_io visp_gui PRIVATE_INCL
 vp_glob_module_copy_data("test/math/data/*.pgm" "modules/core" NO_INSTALL)
 # copy font
 vp_glob_module_copy_data("src/image/private/Rubik-Regular.ttf" "data/font")
-
-if(UNIX)
-  vp_set_source_file_compile_flag(src/tools/file/vpIoTools_npy.cpp -Wno-misleading-indentation -Wno-strict-aliasing)
-  vp_set_source_file_compile_flag(src/image/vpFont.cpp -Wno-float-equal -Wno-strict-overflow)
-else()
-  vp_set_source_file_compile_flag(src/tools/file/vpIoTools_npy.cpp /wd4333)
-endif()

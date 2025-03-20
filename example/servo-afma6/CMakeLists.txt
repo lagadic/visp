@@ -96,17 +96,3 @@ foreach(cpp ${example_cpp})
     visp_add_dependency(${cpp} "examples")
   endif()
 endforeach()
-
-if(VISP_HAVE_REALSENSE2)
-  # Add specific build flag to turn off warnings coming from librealsense 3rd party
-  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-deprecated-copy-with-user-provided-copy")
-  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-deprecated-declarations")
-  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-ignored-qualifiers")
-  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-sign-compare")
-  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-unqualified-std-cast-call")
-  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-missing-field-initializers")
-
-  visp_set_source_file_compile_flag(servoAfma6AprilTagIBVS.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-  visp_set_source_file_compile_flag(servoAfma6AprilTagPBVS.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-  visp_set_source_file_compile_flag(servoAfma6MegaposePBVS.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-endif()

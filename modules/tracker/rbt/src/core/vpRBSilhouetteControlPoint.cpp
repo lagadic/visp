@@ -177,7 +177,7 @@ void vpRBSilhouetteControlPoint::trackMultipleHypotheses(const vpImage<unsigned 
 }
 
 /*!
-  Build a 3D plane thanks the 3D coordinate of the control point and the normal vector to the surface
+  Build a 3D plane thanks the 3D coordinate of the control point and the normal vector to the surface.
 
   \param[in] pointn : A point on the plane with coordinates in the object frame (oX, oY, oZ).
   \param[in] normal : Normal of the plane.
@@ -223,7 +223,8 @@ vpRBSilhouetteControlPoint::buildPLine(const vpHomogeneousMatrix &oMc)
 
 void
 vpRBSilhouetteControlPoint::buildPoint(int n, int m, const double &Z, double orient, const vpColVector &normo,
-                                       const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &oMc, const vpCameraParameters &cam, const vpMe &me, bool isSilhouette)
+                                       const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &oMc,
+                                       const vpCameraParameters &cam, const vpMe &me, bool isSilhouette)
 {
   m_cam = &cam;
   m_me = &me;
@@ -255,7 +256,8 @@ vpRBSilhouetteControlPoint::buildPoint(int n, int m, const double &Z, double ori
 
 void
 vpRBSilhouetteControlPoint::buildSilhouettePoint(int n, int m, const double &Z, double orient, const vpColVector &normo,
-                                              const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &oMc, const vpCameraParameters &cam)
+                                                 const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &oMc,
+                                                 const vpCameraParameters &cam)
 {
   m_isSilhouette = true;
   m_cam = &cam;
@@ -370,7 +372,8 @@ void vpRBSilhouetteControlPoint::initControlPoint(const vpImage<unsigned char> &
   Compute the interaction matrix and the error vector corresponding to the line.
 */
 void
-vpRBSilhouetteControlPoint::computeMeInteractionMatrixError(const vpHomogeneousMatrix &cMo, unsigned int i, vpMatrix &L, vpColVector &e)
+vpRBSilhouetteControlPoint::computeMeInteractionMatrixError(const vpHomogeneousMatrix &cMo, unsigned int i, vpMatrix &L,
+                                                            vpColVector &e)
 {
   m_line.changeFrame(cMo);
 
@@ -425,7 +428,8 @@ vpRBSilhouetteControlPoint::computeMeInteractionMatrixError(const vpHomogeneousM
 }
 
 void
-vpRBSilhouetteControlPoint::computeMeInteractionMatrixErrorMH(const vpHomogeneousMatrix &cMo, unsigned int i, vpMatrix &L, vpColVector &e)
+vpRBSilhouetteControlPoint::computeMeInteractionMatrixErrorMH(const vpHomogeneousMatrix &cMo, unsigned int i,
+                                                              vpMatrix &L, vpColVector &e)
 {
   m_line.changeFrame(cMo);
 
@@ -516,7 +520,6 @@ double vpRBSilhouetteControlPoint::getMaxMaskGradientAlongLine(const vpImage<flo
     }
   }
   return maxGrad;
-
 }
 
 bool vpRBSilhouetteControlPoint::tooCloseToBorder(unsigned int h, unsigned int w, int searchSize) const
@@ -529,19 +532,18 @@ bool vpRBSilhouetteControlPoint::tooCloseToBorder(unsigned int h, unsigned int w
       std::make_pair(static_cast<int>(round(icpoint.get_i() - ss)), static_cast<int>(round(icpoint.get_j() - cs)))
   };
 
+  int width = static_cast<int>(w);
+  int height = static_cast<int>(h);
   for (unsigned int e = 0; e < 2; ++e) {
     int i = extremities[e].first;
     int j = extremities[e].second;
-    if (i < 0 || i >= h || j < 0 || j >= w) {
+    if (i < 0 || i >= height || j < 0 || j >= width) {
       return true;
     }
   }
 
   return false;
-
 }
-
-
 
 bool vpRBSilhouetteControlPoint::isLineDegenerate() const
 {

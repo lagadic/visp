@@ -47,8 +47,6 @@ class vpImage;
 class vpRGBa;
 class vpRect;
 
-
-
 class VISP_EXPORT vpColorHistogram
 {
 public:
@@ -74,7 +72,8 @@ public:
   /**
    * \brief Change the number of bins per color component that the histogram has
    * After calling this method, the histogram will be reset and the values will not be kept.
-   * \param N the number of bins per RGB component: the histogram will have N^3 bins in total. N should be a power of 2 between 1 and 128
+   * \param N the number of bins per RGB component: the histogram will have N^3 bins in total. N should be a power of 2
+   * between 1 and 128
    */
   void setBinNumber(unsigned int N);
 
@@ -138,7 +137,6 @@ public:
     }
     return colors;
   }
-
 
 private:
   unsigned int m_N;

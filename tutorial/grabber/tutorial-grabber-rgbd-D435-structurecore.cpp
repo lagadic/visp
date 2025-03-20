@@ -10,7 +10,7 @@
 /*!
  * Grab color and depth images from Intel RealSense D435 and Occipital Structure Core sensors.
  */
-int main(int argc, char **argv)
+int main()
 {
 #if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_OCCIPITAL_STRUCTURE) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #ifdef ENABLE_VISP_NAMESPACE
@@ -29,10 +29,10 @@ int main(int argc, char **argv)
   vpImage<vpRGBa> I_depth_sc(height, width), I_depth_rs(height, width);
   vpImage<vpRGBa> I_color_sc(height, width), I_color_rs(height, width);
 
-  std::shared_ptr<vpDisplay> d_rs_depth = vpDisplayFactory::createDisplay(I_depth_rs, 10, height + 10, "RealSense Depth"),
-    d_sc_depth = = vpDisplayFactory::createDisplay(I_depth_sc, width + 10, height + 10, "Structure Core Depth");
-  std::shared_ptr<vpDisplay> d_color_rs = vpDisplayFactory::createDisplay(I_color_rs, 10, 10, "RealSense Color"),
-    d_color_sc = vpDisplayFactory::createDisplay(I_color_sc, width + 10, 10, "Structure Core Color");
+  std::shared_ptr<vpDisplay> d_rs_depth = vpDisplayFactory::createDisplay(I_depth_rs, 10, height + 10, "RealSense Depth");
+  std::shared_ptr<vpDisplay> d_sc_depth = vpDisplayFactory::createDisplay(I_depth_sc, width + 10, height + 10, "Structure Core Depth");
+  std::shared_ptr<vpDisplay> d_color_rs = vpDisplayFactory::createDisplay(I_color_rs, 10, 10, "RealSense Color");
+  std::shared_ptr<vpDisplay> d_color_sc = vpDisplayFactory::createDisplay(I_color_sc, width + 10, 10, "Structure Core Color");
 
   // Configuring and opening RealSense grabber.
   rs2::config cfg;
@@ -74,8 +74,6 @@ int main(int argc, char **argv)
     }
   }
 #else
-  (void)argc;
-  (void)argv;
 #if !(defined(VISP_HAVE_OCCIPITAL_STRUCTURE))
   std::cout << "Install libStructure, configure and build ViSP again to use this example" << std::endl;
 #endif

@@ -51,7 +51,6 @@
 #include VISP_NLOHMANN_JSON(json.hpp)
 #endif
 
-
 BEGIN_VISP_NAMESPACE
 /**
  * \brief A base class for all features that can be used and tracked in the vpRBTracker
@@ -228,7 +227,6 @@ public:
 
 protected:
 
-
   vpMatrix m_L; //! Error jacobian (In VS terms, the interaction matrix)
   vpMatrix m_LTL;  //! Left side of the Gauss newton minimization
   vpColVector m_LTR; //! Right side of the Gauss Newton minimization
@@ -246,7 +244,6 @@ protected:
   bool m_vvsConverged; //! Whether VVS has converged, should be updated every VVS iteration
 
   bool m_enableDisplay; //! Whether the tracked features should be displayed.
-
 };
 
 END_VISP_NAMESPACE

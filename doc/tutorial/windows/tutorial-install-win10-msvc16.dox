@@ -265,7 +265,7 @@ C:\> exit
 
 <b>4.1.5.2. Optionally build Occipital Structure SDK samples</b>
 
-As explained in `$VISP_WS/StructureSDK-CrossPlatform-0.9/Documentation/windows.html` you can optionally
+As explained in `${VISP_WS}/3rdparty/StructureSDK-CrossPlatform-0.9/Documentation/windows.html` you can optionally
 follow these steps to build sample applications provided with the SDK:
 - Run `DriverAndFirmware\Windows\OCDriverInstaller.exe` to install the Structure Core USB driver.
 - Generate the Visual Studio solution and build sample applications:

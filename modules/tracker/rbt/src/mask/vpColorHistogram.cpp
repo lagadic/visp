@@ -70,8 +70,6 @@ void vpColorHistogram::setBinNumber(unsigned int N)
   m_probas = std::vector<float>(N * N * N, 0.f);
 }
 
-
-
 void vpColorHistogram::build(const vpImage<vpRGBa> &image, const vpImage<bool> &mask)
 {
   std::vector<unsigned int> histo(m_N * m_N * m_N, 0);
@@ -150,8 +148,6 @@ void vpColorHistogram::computeProbas(const vpImage<vpRGBa> &image, vpImage<float
     }
   }
 }
-
-
 
 double vpColorHistogram::kl(const vpColorHistogram &other) const
 {

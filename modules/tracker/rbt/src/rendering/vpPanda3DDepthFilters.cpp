@@ -176,7 +176,6 @@ void vpPanda3DDepthCannyFilter::setEdgeThreshold(float edgeThreshold)
   m_renderRoot.set_shader_input("edgeThreshold", LVector2f(m_edgeThreshold));
 }
 
-
 FrameBufferProperties vpPanda3DDepthCannyFilter::getBufferProperties() const
 {
   FrameBufferProperties fbp;

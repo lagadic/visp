@@ -62,9 +62,6 @@
 
 BEGIN_VISP_NAMESPACE
 
-
-
-
 class VISP_EXPORT vpCCDParameters
 {
 public:
@@ -75,26 +72,25 @@ public:
     h(40), delta_h(1), min_h(4), start_h(40), start_delta_h(1), phi_dim(6)
   { }
 
-
   ~vpCCDParameters() = default;
   /**
-   * \brief Curve uncertainty computation hyperparameter
-   * Recommended to leave fixed
+   * \brief Curve uncertainty computation hyperparameter.
+   * Recommended to leave fixed.
    */
   double gamma_1;
   /**
-   * \brief Curve uncertainty computation hyperparameter
-   * Recommended to leave fixed
+   * \brief Curve uncertainty computation hyperparameter.
+   * Recommended to leave fixed.
    */
   double gamma_2;
   /**
-   * \brief Curve uncertainty computation hyperparameter
-   * Recommended to leave fixed
+   * \brief Curve uncertainty computation hyperparameter.
+   * Recommended to leave fixed.
    */
   double gamma_3;
   /**
-   * \brief Curve uncertainty computation hyperparameter
-   * Recommended to leave fixed
+   * \brief Curve uncertainty computation hyperparameter.
+   * Recommended to leave fixed.
    */
   double gamma_4;
   double alpha;
@@ -105,7 +101,6 @@ public:
    * Used to avoid singularities and degenerate cases
    *
    * The final pixel color covariance will be kappa * I(3) + covariance.
-   *
    */
   double kappa;
   /**
@@ -224,10 +219,12 @@ public:
 
   /**
    * \brief Returns the amount of temporal smoothing applied when computing the tracking error and its jacobian.
-   * This factor is used to interpolate with the error computed on the previous frame for the features selected at the current iteration
+   * This factor is used to interpolate with the error computed on the previous frame for the features selected at the
+   * current iteration.
    * Temporal smoothing may help smooth out the motion and reduce jitter.
    */
   double getTemporalSmoothingFactor() const { return m_temporalSmoothingFac; }
+
   /**
    * \brief Sets the temporal smoothing factor.
    *
@@ -241,20 +238,20 @@ public:
       throw vpException(vpException::badValue, "Temporal smoothing factor should be equal to or greater than 0");
     }
     m_temporalSmoothingFac = factor;
-
   }
 
   /**
-   * \brief Returns whether the tracking algorithm should filter out points that are unlikely to be on the object according to the mask.
-   * If the mask is not computed beforehand, then it has no effect
+   * \brief Returns whether the tracking algorithm should filter out points that are unlikely to be on the object
+   * according to the mask.
+   * If the mask is not computed beforehand, then it has no effect.
    */
   bool shouldUseMask() const { return m_useMask; }
   void setShouldUseMask(bool useMask) { m_useMask = useMask; }
 
   /**
-   * \brief Returns the minimum mask gradient required for a silhouette point to be considered
+   * \brief Returns the minimum mask gradient required for a silhouette point to be considered.
    *
-   * This value is between 0 and 1
+   * This value is between 0 and 1.
    */
   float getMinimumMaskConfidence() const { return m_minMaskConfidence; }
   void setMinimumMaskConfidence(float confidence)
@@ -263,7 +260,7 @@ public:
     m_minMaskConfidence = confidence;
   }
   /**
-   * \brief Get the maximum number of silhouette control points that will be used by the tracker at a given iteration
+   * \brief Get the maximum number of silhouette control points that will be used by the tracker at a given iteration.
    * If there are more control points on the silhouette than getMaxNumPoints(), they will be subsampled randomly.
    * If maxNumPoints is zero, then all points are used.
   */
@@ -277,7 +274,6 @@ public:
     }
     m_displayType = type;
   }
-
 
   /**
    * @}

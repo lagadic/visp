@@ -323,8 +323,6 @@ int main(int argc, const char **argv)
     // read on the disk
     vpImage<unsigned char> I;
     vpDisplay *display = nullptr;
-    std::ostringstream s;
-    char cfilename[FILENAME_MAX];
     unsigned iter = opt_first; // Image number
 
     if (opt_ppath.empty()) {
@@ -341,14 +339,11 @@ int main(int argc, const char **argv)
       dirname = vpIoTools::createFilePath(ipath, "mire-2");
 
       // Build the name of the image file
-
-      s.setf(std::ios::right, std::ios::adjustfield);
-      s << "image." << std::setw(4) << std::setfill('0') << iter << "." << ext;
-      filename = vpIoTools::createFilePath(dirname, s.str());
+      std::string name = vpIoTools::formatString("image.%04d." + ext, iter);
+      filename = vpIoTools::createFilePath(dirname, name);
     }
     else {
-      snprintf(cfilename, FILENAME_MAX, opt_ppath.c_str(), iter);
-      filename = cfilename;
+      filename = vpIoTools::formatString(opt_ppath, iter);
     }
     // Read the image named "filename", and put the bitmap into the image structure I.
     // I is initialized to the correct size
@@ -433,13 +428,11 @@ int main(int argc, const char **argv)
     while ((iter < opt_last) && (!quit)) {
       // set the new image name
       if (opt_ppath.empty()) {
-        s.str("");
-        s << "image." << std::setw(4) << std::setfill('0') << iter << "." << ext;
-        filename = vpIoTools::createFilePath(dirname, s.str());
+        std::string name = vpIoTools::formatString("image.%04d." + ext, iter);
+        filename = vpIoTools::createFilePath(dirname, name);
       }
       else {
-        snprintf(cfilename, FILENAME_MAX, opt_ppath.c_str(), iter);
-        filename = cfilename;
+        filename = vpIoTools::formatString(opt_ppath, iter);
       }
       // read the image
       vpImageIo::read(I, filename);
