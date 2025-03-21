@@ -609,7 +609,6 @@ void vpRBTracker::loadConfigurationFile(const std::string &filename)
 
 void vpRBTracker::loadJsonConfiguration(const nlohmann::json &j)
 {
-  verify(j);
   m_firstIteration = true;
   const nlohmann::json verboseSettings = j.at("verbose");
   m_verbose = verboseSettings.value("enabled", m_verbose);
@@ -694,7 +693,7 @@ nlohmann::ordered_json vpRBTracker::explain() const
   cameraParameters.update(flipToDict({
       vpRBJsonParsable::parameter("height", "Image height", false, 480),
       vpRBJsonParsable::parameter("width", "Image width", false, 640)
-                          }));
+                                     }));
 
   std::vector<nlohmann::ordered_json> optimParameters = {
     vpRBJsonParsable::parameter(
