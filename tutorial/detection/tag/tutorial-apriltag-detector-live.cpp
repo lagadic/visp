@@ -89,6 +89,18 @@ void usage(const char **argv, int error)
     << "       8: TAG_CUSTOM48h12" << std::endl
     << "       9: TAG_STANDARD41h12" << std::endl
     << "      10: TAG_STANDARD52h13" << std::endl
+    << "      11: TAG_ARUCO4x4_50" << std::endl
+    << "      12: TAG_ARUCO4x4_100" << std::endl
+    << "      13: TAG_ARUCO4x4_250" << std::endl
+    << "      14: TAG_ARUCO4x4_1000" << std::endl
+    << "      15: TAG_ARUCO5x5_50" << std::endl
+    << "      16: TAG_ARUCO5x5_100" << std::endl
+    << "      17: TAG_ARUCO5x5_250" << std::endl
+    << "      18: TAG_ARUCO5x5_1000" << std::endl
+    << "      19: TAG_ARUCO6x6_50" << std::endl
+    << "      20: TAG_ARUCO6x6_100" << std::endl
+    << "      21: TAG_ARUCO6x6_250" << std::endl
+    << "      22: TAG_ARUCO6x6_1000" << std::endl
     << "    Default: 0 (36h11)" << std::endl
     << std::endl
     << "  --tag-quad-decimate <factor>" << std::endl
@@ -363,6 +375,28 @@ int main(int argc, const char **argv)
       }
       //! [Display camera pose for each tag]
 
+      //! [Compute tags cog]
+      std::vector< std::vector<vpImagePoint> > tags_corners = detector.getTagsCorners();
+      std::vector<vpImagePoint> tags_cog;
+      for (size_t i = 0; i < tags_corners.size(); ++i) {
+        vpImagePoint cog(0, 0);
+        for (size_t j = 0; j < tags_corners[i].size(); ++j) {
+          cog += tags_corners[i][j];
+        }
+        tags_cog.push_back(cog / tags_corners[i].size());
+      }
+      //! [Compute tags cog]
+
+      detector.displayTags(I, tags_corners);
+
+      //! [Display id for each tag]
+      std::vector<int> tags_id = detector.getTagsId();
+      for (size_t i = 0; i < tags_id.size(); i++) {
+        std::stringstream ss;
+        ss << "id=" << tags_id[i];
+        vpDisplay::displayText(I, tags_cog[i] + vpImagePoint(-10, 10), ss.str(), vpColor::blue);
+      }
+      //! [Display id for each tag]
       vpDisplay::displayText(I, 20, 20, "Click to quit.", vpColor::red);
       vpDisplay::flush(I);
       if (vpDisplay::getClick(I, false))
