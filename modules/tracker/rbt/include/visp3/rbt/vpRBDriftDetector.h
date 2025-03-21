@@ -41,6 +41,8 @@
 #include VISP_NLOHMANN_JSON(json_fwd.hpp)
 #endif
 
+#include <visp3/rbt/vpRBJsonParsable.h>
+
 BEGIN_VISP_NAMESPACE
 
 class vpRBFeatureTrackerInput;
@@ -58,7 +60,7 @@ template <typename T> class vpImage;
  *
  * \ingroup group_rbt_drift
 */
-class VISP_EXPORT vpRBDriftDetector
+class VISP_EXPORT vpRBDriftDetector : public vpRBJsonParsable
 {
 public:
   vpRBDriftDetector() = default;
@@ -97,10 +99,6 @@ public:
    * \param I the image in which to display the information
    */
   virtual void display(const vpImage<vpRGBa> &I) = 0;
-
-#if defined(VISP_HAVE_NLOHMANN_JSON)
-  virtual void loadJsonConfiguration(const nlohmann::json &) = 0;
-#endif
 
 };
 

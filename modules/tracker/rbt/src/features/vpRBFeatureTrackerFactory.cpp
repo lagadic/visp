@@ -43,26 +43,19 @@ vpRBFeatureTrackerFactory::vpRBFeatureTrackerFactory()
     return j.at("type");
   });
 
-  registerType("silhouetteMe", [](const nlohmann::json &j) {
-    std::shared_ptr<vpRBSilhouetteMeTracker> p(new vpRBSilhouetteMeTracker());
-    p->loadJsonConfiguration(j);
-    return p;
+  registerType("silhouetteMe", []() {
+    return std::make_shared<vpRBSilhouetteMeTracker>();
   });
-  registerType("silhouetteColor", [](const nlohmann::json &j) {
-    std::shared_ptr<vpRBSilhouetteCCDTracker> p(new vpRBSilhouetteCCDTracker());
-    p->loadJsonConfiguration(j);
-    return p;
+  registerType("silhouetteColor", []() {
+    return std::make_shared<vpRBSilhouetteCCDTracker>();
+
   });
-  registerType("depth", [](const nlohmann::json &j) {
-    std::shared_ptr<vpRBDenseDepthTracker> p(new vpRBDenseDepthTracker());
-    p->loadJsonConfiguration(j);
-    return p;
+  registerType("depth", []() {
+    return std::make_shared<vpRBDenseDepthTracker>();
   });
 #if defined(VP_HAVE_RB_KLT_TRACKER)
-  registerType("klt", [](const nlohmann::json &j) {
-    std::shared_ptr<vpRBKltTracker> p(new vpRBKltTracker());
-    p->loadJsonConfiguration(j);
-    return p;
+  registerType("klt", []() {
+    return std::make_shared<vpRBKltTracker>();
   });
 #endif
 }
