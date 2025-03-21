@@ -438,7 +438,7 @@ class CppHeaderParser(object):
             return decl_str,"operator","","","",""
 
         # constructor/destructor case
-        if bool(re.match(r'^(\w+::)*(?P<x>\w+)::~?(?P=x)$', decl_start)):
+        if bool(re.match(r"^(\w+::)*(?P<x>\w+)::~?(?P=x)$", decl_start)):
             decl_start = "void " + decl_start
 
         rettype, funcname, modlist, argno = self.parse_arg(decl_start, -1)
@@ -454,15 +454,15 @@ class CppHeaderParser(object):
             if rettype == classname or rettype == "~" + classname:
                 rettype, funcname = "", rettype
             else:
-                if bool(re.match('\w+\s+\(\*\w+\)\s*\(.*\)', decl_str)):
+                if bool(re.match(r"\w+\s+\(\*\w+\)\s*\(.*\)", decl_str)):
                     return []  # function typedef
-                elif bool(re.match('\w+\s+\(\w+::\*\w+\)\s*\(.*\)', decl_str)):
+                elif bool(re.match(r"\w+\s+\(\w+::\*\w+\)\s*\(.*\)", decl_str)):
                     return []  # class method typedef
-                elif bool(re.match('[A-Z_]+', decl_start)):
+                elif bool(re.match("[A-Z_]+", decl_start)):
                     return []  # it seems to be a macro instantiation
                 elif "__declspec" == decl_start:
                     return []
-                elif bool(re.match(r'\w+\s+\(\*\w+\)\[\d+\]', decl_str)):
+                elif bool(re.match(r"\w+\s+\(\*\w+\)\[\d+\]", decl_str)):
                     return []  # exotic - dynamic 2d array
                 else:
                     # print rettype, funcname, modlist, argno
