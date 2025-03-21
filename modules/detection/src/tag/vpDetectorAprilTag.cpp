@@ -578,6 +578,7 @@ public:
       const std::vector<vpImagePoint> &corners = tagsCorners[i];
       assert(corners.size() == 4);
       const unsigned int cornerId0 = 0, cornerId1 = 1, cornerId2 = 2, cornerId3 = 3;
+      vpDisplay::displayRectangle(I, corners[cornerId0], 0, 10, 10, vpColor::red, thickness);
 
       vpDisplay::displayLine(I, static_cast<int>(corners[cornerId0].get_i()), static_cast<int>(corners[cornerId0].get_j()), static_cast<int>(corners[cornerId1].get_i()), static_cast<int>(corners[cornerId1].get_j()),
                                                                                        Ox, thickness);
@@ -603,6 +604,7 @@ public:
       const std::vector<vpImagePoint> &corners = tagsCorners[i];
       assert(corners.size() == 4);
       const unsigned int cornerId0 = 0, cornerId1 = 1, cornerId2 = 2, cornerId3 = 3;
+      vpDisplay::displayRectangle(I, corners[cornerId0], 0, 10, 10, vpColor::red, thickness);
 
       vpDisplay::displayLine(I, static_cast<int>(corners[cornerId0].get_i()), static_cast<int>(corners[cornerId0].get_j()), static_cast<int>(corners[cornerId1].get_i()), static_cast<int>(corners[cornerId1].get_j()),
                                                                                        Ox, thickness);
@@ -615,10 +617,20 @@ public:
     }
   }
 
-  // TODO:
-  void getTagImage(vpImage<unsigned char> &I, int idx)
+  /*!
+   * Create an image of a marker corresponding to the current tag family with a given id.
+   *
+   * @param[out] I : Image with the created marker.
+   * @param[in] id : Marker id.
+   * \return true when image created successfully, false otherwise.
+   */
+  bool getTagImage(vpImage<unsigned char> &I, int id)
   {
-    image_u8_t *img_8u = apriltag_to_image(m_tf, idx);
+    if (id >= static_cast<int>(m_tf->ncodes)) {
+      std::cout << "Cannot get tag image with id " << id << " for family " << m_tagFamily << std::endl;
+      return false;
+    }
+    image_u8_t *img_8u = apriltag_to_image(m_tf, id);
 
     I.init(img_8u->height, img_8u->width);
     for (int i = 0; i < img_8u->height; i++) {
@@ -628,6 +640,7 @@ public:
     }
 
     image_u8_destroy(img_8u);
+    return true;
   }
 
   bool getPose(size_t tagIndex, double tagSize, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
@@ -1286,9 +1299,16 @@ void vpDetectorAprilTag::setAprilTagDebugOption(bool flag)
   m_impl->setDebugFlag(flag);
 }
 
-void vpDetectorAprilTag::getTagImage(vpImage<unsigned char> &I, int idx)
+/*!
+ * Create an image of a marker corresponding to the current tag family with a given id.
+ *
+ * @param[out] I : Image with the created marker.
+ * @param[in] id : Marker id.
+ * \return true when image created successfully, false otherwise.
+ */
+bool vpDetectorAprilTag::getTagImage(vpImage<unsigned char> &I, int idx)
 {
-  m_impl->getTagImage(I, idx);
+  return m_impl->getTagImage(I, idx);
 }
 
 /*!
