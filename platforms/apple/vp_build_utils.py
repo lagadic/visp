@@ -26,7 +26,7 @@ def print_error(text):
 
 def get_xcode_major():
     ret = check_output(["xcodebuild", "-version"]).decode('utf-8')
-    m = re.match(r'Xcode\s+(\d+)\..*', ret, flags=re.IGNORECASE)
+    m = re.match(r"Xcode\s+(\d+)\..*", ret, flags=re.IGNORECASE)
     if m:
         return int(m.group(1))
     else:
@@ -38,7 +38,7 @@ def get_xcode_version():
     command line tools as a tuple of (major, minor)
     """
     ret = check_output(["xcodebuild", "-version"]).decode('utf-8')
-    m = re.match(r'Xcode\s+(\d+)\.(\d+)', ret, flags=re.IGNORECASE)
+    m = re.match(r"Xcode\s+(\d+)\.(\d+)", ret, flags=re.IGNORECASE)
     if m:
         return (int(m.group(1)), int(m.group(2)))
     else:
@@ -58,7 +58,7 @@ def get_cmake_version():
     command line tools as a tuple of (major, minor, revision)
     """
     ret = check_output(["cmake", "--version"]).decode('utf-8')
-    m = re.match(r'cmake\sversion\s+(\d+)\.(\d+).(\d+)', ret, flags=re.IGNORECASE)
+    m = re.match(r"cmake\sversion\s+(\d+)\.(\d+).(\d+)", ret, flags=re.IGNORECASE)
     if m:
         return (int(m.group(1)), int(m.group(2)), int(m.group(3)))
     else:
