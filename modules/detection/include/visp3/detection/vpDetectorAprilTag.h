@@ -283,8 +283,7 @@ public:
   virtual ~vpDetectorAprilTag() VP_OVERRIDE;
   bool detect(const vpImage<unsigned char> &I) VP_OVERRIDE;
 
-  // TODO:
-  void getTagImage(vpImage<unsigned char> &I, int idx);
+  bool getTagImage(vpImage<unsigned char> &I, int id);
 
 
   bool detect(const vpImage<unsigned char> &I, double tagSize, const vpCameraParameters &cam,
