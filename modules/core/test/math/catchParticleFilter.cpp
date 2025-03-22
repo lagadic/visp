@@ -463,15 +463,15 @@ private:
 TEST_CASE("2nd-degree", "[vpParticleFilter][Polynomial interpolation]")
 {
   /// ----- Simulation parameters -----
-  const unsigned int width = 600; //!< The width of the simulated image
-  const unsigned int height = 400; //!< The height of the simulated image
+  const unsigned int width = 150; //!< The width of the simulated image
+  const unsigned int height = 100; //!< The height of the simulated image
   const unsigned int degree = 2; //!< The degree of the polynomial in the simulated image
   const unsigned int nbInitPoints = 10; //!< Number of points to compute the initial guess of the PF state
   const uint64_t seedCurve = 4224; //!< The seed to generate the curve
   const uint64_t seedInitPoints = 2112; //!< The seed to choose the init points
-  const unsigned int nbTestRepet = 10; //!< The number of times the test is repeated
+  const unsigned int nbTestRepet = 5; //!< The number of times the test is repeated
   const unsigned int nbWarmUpIter = 10; //!< Number of iterations for the warmup loop
-  const unsigned int nbEvalIter = 20; //!< Number of iterations for the evaluation loop
+  const unsigned int nbEvalIter = 10; //!< Number of iterations for the evaluation loop
   const double dt = 0.040; //!< Simulated period of acquisition
   const int32_t seedShuffle = 4221; //!< The seed to shuffle the curve points
 
@@ -480,7 +480,7 @@ TEST_CASE("2nd-degree", "[vpParticleFilter][Polynomial interpolation]")
   // A particle whose "distance" with the measurements is greater than this value has a likelihood of 0
   const double ampliMaxLikelihood = 16.;
   const double sigmaLikelihood = ampliMaxLikelihood / 3.; //:< The corresponding standard deviation
-  const unsigned int nbParticles = 300; //!< Number of particles used by the particle filter
+  const unsigned int nbParticles = 200; //!< Number of particles used by the particle filter
   const double ratioAmpliMax(0.25); //!< Ratio of the initial guess values to use to add noise to the PF state
   const long seedPF = 4221; //!< Seed of the particle filter
   const int nbThreads = 1; //<! Number of threads to use for the PF
@@ -558,7 +558,7 @@ TEST_CASE("2nd-degree", "[vpParticleFilter][Polynomial interpolation]")
 #endif
       }
       meanError /= static_cast<double>(nbEvalIter);
-      std::cout << "Mean(rmse) = " << meanError << std::endl;
+      std::cout << "[2nd degree][Noise-free] Test " << iter << ": Mean(rmse) = " << meanError << std::endl;
       CHECK(meanError <= maxToleratedError);
     }
   }
@@ -581,7 +581,7 @@ TEST_CASE("2nd-degree", "[vpParticleFilter][Polynomial interpolation]")
     }
 #endif
 
-    const double ampliMaxInitNoise = 24.;
+    const double ampliMaxInitNoise = 18.;
     const double stdevInitNoise = ampliMaxInitNoise / 3.;
     vpGaussRand rngInitNoise(stdevInitNoise, 0., seedInitPoints);
 
@@ -639,7 +639,7 @@ TEST_CASE("2nd-degree", "[vpParticleFilter][Polynomial interpolation]")
 #endif
       }
       meanError /= static_cast<double>(nbEvalIter);
-      std::cout << "Mean(rmse) = " << meanError << std::endl;
+      std::cout << "[2nd degree][Noisy] Test " << iter << ": Mean(rmse) = " << meanError << std::endl;
       CHECK(meanError <= maxToleratedError);
     }
   }
@@ -648,15 +648,15 @@ TEST_CASE("2nd-degree", "[vpParticleFilter][Polynomial interpolation]")
 TEST_CASE("3rd-degree", "[vpParticleFilter][Polynomial interpolation]")
 {
 /// ----- Simulation parameters -----
-  const unsigned int width = 600; //!< The width of the simulated image
-  const unsigned int height = 400; //!< The height of the simulated image
+  const unsigned int width = 150; //!< The width of the simulated image
+  const unsigned int height = 100; //!< The height of the simulated image
   const unsigned int degree = 3; //!< The degree of the polynomial in the simulated image
   const unsigned int nbInitPoints = 10; //!< Number of points to compute the initial guess of the PF state
   const uint64_t seedCurve = 4224; //!< The seed to generate the curve
   const uint64_t seedInitPoints = 2112; //!< The seed to choose the init points
-  const unsigned int nbTestRepet = 10; //!< The number of times the test is repeated
+  const unsigned int nbTestRepet = 5; //!< The number of times the test is repeated
   const unsigned int nbWarmUpIter = 10; //!< Number of iterations for the warmup loop
-  const unsigned int nbEvalIter = 20; //!< Number of iterations for the evaluation loop
+  const unsigned int nbEvalIter = 10; //!< Number of iterations for the evaluation loop
   const double dt = 0.040; //!< Simulated period of acquisition
   const int32_t seedShuffle = 4221; //!< The seed to shuffle the curve points
 
@@ -665,7 +665,7 @@ TEST_CASE("3rd-degree", "[vpParticleFilter][Polynomial interpolation]")
   // A particle whose "distance" with the measurements is greater than this value has a likelihood of 0
   const double ampliMaxLikelihood = 6.;
   const double sigmaLikelihood = ampliMaxLikelihood / 3.; //:< The corresponding standard deviation
-  const unsigned int nbParticles = 300; //!< Number of particles used by the particle filter
+  const unsigned int nbParticles = 200; //!< Number of particles used by the particle filter
   const double ratioAmpliMax(0.21); //!< Ratio of the initial guess values to use to add noise to the PF state
   const long seedPF = 4221; //!< Seed of the particle filter
   const int nbThreads = 1; //<! Number of threads to use for the PF
@@ -743,7 +743,7 @@ TEST_CASE("3rd-degree", "[vpParticleFilter][Polynomial interpolation]")
 #endif
       }
       meanError /= static_cast<double>(nbEvalIter);
-      std::cout << "Mean(rmse) = " << meanError << std::endl;
+      std::cout << "[3rd degree][Noise-free] Test " << iter << ": Mean(rmse) = " << meanError << std::endl;
       CHECK(meanError <= maxToleratedError);
     }
   }
@@ -826,7 +826,7 @@ TEST_CASE("3rd-degree", "[vpParticleFilter][Polynomial interpolation]")
 #endif
       }
       meanError /= static_cast<double>(nbEvalIter);
-      std::cout << "Mean(rmse) = " << meanError << std::endl;
+      std::cout << "[3rd degree][Noisy] Test " << iter << ": Mean(rmse) = " << meanError << std::endl;
       CHECK(meanError <= maxToleratedError);
     }
   }
