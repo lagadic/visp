@@ -236,29 +236,30 @@ class VISP_EXPORT vpDetectorAprilTag : public vpDetectorBase
 public:
   enum vpAprilTagFamily
   {
-    TAG_36h11,         ///< AprilTag 36h11 pattern (recommended)
-    TAG_36h10,         ///< DEPRECATED
-    TAG_36ARTOOLKIT,   ///< DEPRECATED AND WILL NOT DETECT ARTOOLKIT TAGS
-    TAG_25h9,          ///< AprilTag 25h9 pattern
-    TAG_25h7,          ///< DEPRECATED AND POOR DETECTION PERFORMANCE
-    TAG_16h5,          ///< AprilTag 16h5 pattern
-    TAG_CIRCLE21h7,    ///< AprilTag Circle21h7 pattern
-    TAG_CIRCLE49h12,   ///< AprilTag Circle49h12 pattern
-    TAG_CUSTOM48h12,   ///< AprilTag Custom48h12 pattern
-    TAG_STANDARD41h12, ///< AprilTag Standard41h12 pattern
-    TAG_STANDARD52h13, ///< AprilTag Standard52h13 pattern
-    TAG_ARUCO4x4_50,   ///< ArUco 4x4 pattern: 4x4 bits, minimum hamming distance between any two codes = 4, 50 codes
-    TAG_ARUCO4x4_100,  ///< ArUco 4x4 pattern: 4x4 bits, minimum hamming distance between any two codes = 3, 100 codes
-    TAG_ARUCO4x4_250,  ///< ArUco 4x4 pattern: 4x4 bits, minimum hamming distance between any two codes = 3, 250 codes
-    TAG_ARUCO4x4_1000, ///< ArUco 4x4 pattern: 4x4 bits, minimum hamming distance between any two codes = 2, 1000 codes
-    TAG_ARUCO5x5_50,   ///< ArUco 5x5 pattern: 5x5 bits, minimum hamming distance between any two codes = 8, 50 codes
-    TAG_ARUCO5x5_100,  ///< ArUco 5x5 pattern: 5x5 bits, minimum hamming distance between any two codes = 7, 100 codes
-    TAG_ARUCO5x5_250,  ///< ArUco 5x5 pattern: 5x5 bits, minimum hamming distance between any two codes = 6, 250 codes
-    TAG_ARUCO5x5_1000, ///< ArUco 5x5 pattern: 5x5 bits, minimum hamming distance between any two codes = 5, 1000 codes
-    TAG_ARUCO6x6_50,   ///< ArUco 6x6 pattern: 6x6 bits, minimum hamming distance between any two codes = 13, 50 codes
-    TAG_ARUCO6x6_100,  ///< ArUco 6x6 pattern: 6x6 bits, minimum hamming distance between any two codes = 12, 100 codes
-    TAG_ARUCO6x6_250,  ///< ArUco 6x6 pattern: 6x6 bits, minimum hamming distance between any two codes = 11, 250 codes
-    TAG_ARUCO6x6_1000  ///< ArUco 6x6 pattern: 6x6 bits, minimum hamming distance between any two codes = 9, 1000 codes
+    TAG_36h11,           ///< AprilTag 36h11 pattern (recommended)
+    TAG_36h10,           ///< DEPRECATED
+    TAG_36ARTOOLKIT,     ///< DEPRECATED AND WILL NOT DETECT ARTOOLKIT TAGS
+    TAG_25h9,            ///< AprilTag 25h9 pattern
+    TAG_25h7,            ///< DEPRECATED AND POOR DETECTION PERFORMANCE
+    TAG_16h5,            ///< AprilTag 16h5 pattern
+    TAG_CIRCLE21h7,      ///< AprilTag Circle21h7 pattern
+    TAG_CIRCLE49h12,     ///< AprilTag Circle49h12 pattern
+    TAG_CUSTOM48h12,     ///< AprilTag Custom48h12 pattern
+    TAG_STANDARD41h12,   ///< AprilTag Standard41h12 pattern
+    TAG_STANDARD52h13,   ///< AprilTag Standard52h13 pattern
+    TAG_ARUCO_4x4_50,    ///< ArUco 4x4 pattern: 4x4 bits, minimum hamming distance between any two codes = 4, 50 codes
+    TAG_ARUCO_4x4_100,   ///< ArUco 4x4 pattern: 4x4 bits, minimum hamming distance between any two codes = 3, 100 codes
+    TAG_ARUCO_4x4_250,   ///< ArUco 4x4 pattern: 4x4 bits, minimum hamming distance between any two codes = 3, 250 codes
+    TAG_ARUCO_4x4_1000,  ///< ArUco 4x4 pattern: 4x4 bits, minimum hamming distance between any two codes = 2, 1000 codes
+    TAG_ARUCO_5x5_50,    ///< ArUco 5x5 pattern: 5x5 bits, minimum hamming distance between any two codes = 8, 50 codes
+    TAG_ARUCO_5x5_100,   ///< ArUco 5x5 pattern: 5x5 bits, minimum hamming distance between any two codes = 7, 100 codes
+    TAG_ARUCO_5x5_250,   ///< ArUco 5x5 pattern: 5x5 bits, minimum hamming distance between any two codes = 6, 250 codes
+    TAG_ARUCO_5x5_1000,  ///< ArUco 5x5 pattern: 5x5 bits, minimum hamming distance between any two codes = 5, 1000 codes
+    TAG_ARUCO_6x6_50,    ///< ArUco 6x6 pattern: 6x6 bits, minimum hamming distance between any two codes = 13, 50 codes
+    TAG_ARUCO_6x6_100,   ///< ArUco 6x6 pattern: 6x6 bits, minimum hamming distance between any two codes = 12, 100 codes
+    TAG_ARUCO_6x6_250,   ///< ArUco 6x6 pattern: 6x6 bits, minimum hamming distance between any two codes = 11, 250 codes
+    TAG_ARUCO_6x6_1000,  ///< ArUco 6x6 pattern: 6x6 bits, minimum hamming distance between any two codes = 9, 1000 codes
+    TAG_ARUCO_MIP_36h12  ///< ArUco 6x6 pattern: 6x6 bits, minimum hamming distance between any two codes = 12, 250 codes
   };
 
   enum vpPoseEstimationMethod
@@ -300,6 +301,7 @@ public:
   void displayTags(const vpImage<vpRGBa> &I, const std::vector<std::vector<vpImagePoint> > &tagsCorners,
                    const vpColor &color = vpColor::none, unsigned int thickness = 1) const;
 
+  float getAprilTagDecisionMargin() const;
   bool getPose(size_t tagIndex, double tagSize, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
                vpHomogeneousMatrix *cMo2 = nullptr, double *projError = nullptr, double *projError2 = nullptr);
 
@@ -316,6 +318,7 @@ public:
   bool isZAlignedWithCameraAxis() const;
 
   void setAprilTagDebugOption(bool flag);
+  void setAprilTagDecisionMargin(float margin);
   void setAprilTagDecodeSharpening(double decodeSharpening);
   void setAprilTagFamily(const vpAprilTagFamily &tagFamily);
   void setAprilTagNbThreads(int nThreads);
@@ -323,7 +326,6 @@ public:
   void setAprilTagQuadDecimate(float quadDecimate);
   void setAprilTagQuadSigma(float quadSigma);
   void setAprilTagRefineEdges(bool refineEdges);
-
 
 
   /*! Allow to enable the display of overlay tag information in the windows
@@ -450,52 +452,56 @@ inline std::ostream &operator<<(std::ostream &os, const vpDetectorAprilTag::vpAp
     os << "STANDARD41h12";
     break;
 
-  case vpDetectorAprilTag::TAG_ARUCO4x4_50:
-    os << "TAG_ARUCO4x4_50";
+  case vpDetectorAprilTag::TAG_ARUCO_4x4_50:
+    os << "TAG_ARUCO_4x4_50";
     break;
 
-  case vpDetectorAprilTag::TAG_ARUCO4x4_100:
-    os << "TAG_ARUCO4x4_100";
+  case vpDetectorAprilTag::TAG_ARUCO_4x4_100:
+    os << "TAG_ARUCO_4x4_100";
     break;
 
-  case vpDetectorAprilTag::TAG_ARUCO4x4_250:
-    os << "TAG_ARUCO4x4_250";
+  case vpDetectorAprilTag::TAG_ARUCO_4x4_250:
+    os << "TAG_ARUCO_4x4_250";
     break;
 
-  case vpDetectorAprilTag::TAG_ARUCO4x4_1000:
-    os << "TAG_ARUCO4x4_1000";
+  case vpDetectorAprilTag::TAG_ARUCO_4x4_1000:
+    os << "TAG_ARUCO_4x4_1000";
     break;
 
-  case vpDetectorAprilTag::TAG_ARUCO5x5_50:
-    os << "TAG_ARUCO5x5_50";
+  case vpDetectorAprilTag::TAG_ARUCO_5x5_50:
+    os << "TAG_ARUCO_5x5_50";
     break;
 
-  case vpDetectorAprilTag::TAG_ARUCO5x5_100:
-    os << "TAG_ARUCO5x5_100";
+  case vpDetectorAprilTag::TAG_ARUCO_5x5_100:
+    os << "TAG_ARUCO_5x5_100";
     break;
 
-  case vpDetectorAprilTag::TAG_ARUCO5x5_250:
-    os << "TAG_ARUCO5x5_250";
+  case vpDetectorAprilTag::TAG_ARUCO_5x5_250:
+    os << "TAG_ARUCO_5x5_250";
     break;
 
-  case vpDetectorAprilTag::TAG_ARUCO5x5_1000:
-    os << "TAG_ARUCO5x5_1000";
+  case vpDetectorAprilTag::TAG_ARUCO_5x5_1000:
+    os << "TAG_ARUCO_5x5_1000";
     break;
 
-  case vpDetectorAprilTag::TAG_ARUCO6x6_50:
-    os << "TAG_ARUCO6x6_50";
+  case vpDetectorAprilTag::TAG_ARUCO_6x6_50:
+    os << "TAG_ARUCO_6x6_50";
     break;
 
-  case vpDetectorAprilTag::TAG_ARUCO6x6_100:
-    os << "TAG_ARUCO6x6_100";
+  case vpDetectorAprilTag::TAG_ARUCO_6x6_100:
+    os << "TAG_ARUCO_6x6_100";
     break;
 
-  case vpDetectorAprilTag::TAG_ARUCO6x6_250:
-    os << "TAG_ARUCO6x6_250";
+  case vpDetectorAprilTag::TAG_ARUCO_6x6_250:
+    os << "TAG_ARUCO_6x6_250";
     break;
 
-  case vpDetectorAprilTag::TAG_ARUCO6x6_1000:
-    os << "TAG_ARUCO6x6_1000";
+  case vpDetectorAprilTag::TAG_ARUCO_6x6_1000:
+    os << "TAG_ARUCO_6x6_1000";
+    break;
+
+  case vpDetectorAprilTag::TAG_ARUCO_MIP_36h12:
+    os << "TAG_ARUCO_MIP_36h12";
     break;
 
   default:

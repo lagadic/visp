@@ -49,20 +49,23 @@ void usage(const char **argv, int error)
     << "       8: TAG_CUSTOM48h12" << std::endl
     << "       9: TAG_STANDARD41h12" << std::endl
     << "      10: TAG_STANDARD52h13" << std::endl
-    << "      11: TAG_ARUCO4x4_50" << std::endl
-    << "      12: TAG_ARUCO4x4_100" << std::endl
-    << "      13: TAG_ARUCO4x4_250" << std::endl
-    << "      14: TAG_ARUCO4x4_1000" << std::endl
-    << "      15: TAG_ARUCO5x5_50" << std::endl
-    << "      16: TAG_ARUCO5x5_100" << std::endl
-    << "      17: TAG_ARUCO5x5_250" << std::endl
-    << "      18: TAG_ARUCO5x5_1000" << std::endl
-    << "      19: TAG_ARUCO6x6_50" << std::endl
-    << "      20: TAG_ARUCO6x6_100" << std::endl
-    << "      21: TAG_ARUCO6x6_250" << std::endl
-    << "      22: TAG_ARUCO6x6_1000" << std::endl
+    << "      11: TAG_ARUCO_4x4_50" << std::endl
+    << "      12: TAG_ARUCO_4x4_100" << std::endl
+    << "      13: TAG_ARUCO_4x4_250" << std::endl
+    << "      14: TAG_ARUCO_4x4_1000" << std::endl
+    << "      15: TAG_ARUCO_5x5_50" << std::endl
+    << "      16: TAG_ARUCO_5x5_100" << std::endl
+    << "      17: TAG_ARUCO_5x5_250" << std::endl
+    << "      18: TAG_ARUCO_5x5_1000" << std::endl
+    << "      19: TAG_ARUCO_6x6_50" << std::endl
+    << "      20: TAG_ARUCO_6x6_100" << std::endl
+    << "      21: TAG_ARUCO_6x6_250" << std::endl
+    << "      22: TAG_ARUCO_6x6_1000" << std::endl
+    << "      23: TAG_ARUCO_MIP_36h12" << std::endl
     << "    Default: 0 (36h11)" << std::endl
     << std::endl
+    << "  --decision-margin <margin>" << std::endl
+    << "    High values will discard low-confident detections. " << std::endl
     << "  --tag-quad-decimate <factor>" << std::endl
     << "    Decimation factor used to detect a tag. " << std::endl
     << "    Default: 1" << std::endl
@@ -136,6 +139,7 @@ int main(int argc, const char **argv)
   vpDetectorAprilTag::vpPoseEstimationMethod opt_pose_estimation_method = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
   double opt_tag_size = 0.053;
   float opt_quad_decimate = 1.0;
+  float opt_decision_margin = 100;
   int opt_nThreads = 1;
   bool opt_display_tag = false;
   int opt_color_id = -1;
@@ -168,6 +172,9 @@ int main(int argc, const char **argv)
     }
     else if (std::string(argv[i]) == "--tag-pose-method" && i + 1 < argc) {
       opt_pose_estimation_method = (vpDetectorAprilTag::vpPoseEstimationMethod)atoi(argv[++i]);
+    }
+    else if (std::string(argv[i]) == "--decision-margin" && i + 1 < argc) {
+      opt_decision_margin = atof(argv[++i]);
     }
 #if defined(VISP_HAVE_DISPLAY)
     else if (std::string(argv[i]) == "--display-tag") {
@@ -262,6 +269,7 @@ int main(int argc, const char **argv)
     //! [AprilTag detector settings]
     detector.setAprilTagQuadDecimate(opt_quad_decimate);
     detector.setAprilTagPoseEstimationMethod(opt_pose_estimation_method);
+    detector.setAprilTagDecisionMargin(opt_decision_margin);
     detector.setAprilTagNbThreads(opt_nThreads);
     detector.setDisplayTag(opt_display_tag, opt_color_id < 0 ? vpColor::none : vpColor::getColor(opt_color_id), opt_thickness);
     detector.setZAlignedWithCameraAxis(opt_align_frame);
@@ -303,9 +311,11 @@ int main(int argc, const char **argv)
       detector.detect(I, opt_tag_size, cam, cMo_vec);
 
       // Display camera pose for each tag
-      for (size_t i = 0; i < cMo_vec.size(); i++) {
-        vpDisplay::displayFrame(I_color, cMo_vec[i], cam, opt_tag_size / 2, vpColor::none, 3);
-      }
+      std::vector<std::vector<vpImagePoint> > tagsCorners = detector.getTagsCorners();
+      detector.displayTags(I_color, tagsCorners, vpColor::none, 3);
+      detector.displayFrames(I_color, cMo_vec, cam, opt_tag_size / 2, vpColor::none, 3);
+      detector.displayTags(I_color2, tagsCorners, vpColor::none, 3);
+      detector.displayFrames(I_color2, cMo_vec, cam, opt_tag_size / 2, vpColor::none, 3);
 
       //! [Pose from depth map]
       std::vector<std::vector<vpImagePoint> > tags_corners = detector.getPolygon();
