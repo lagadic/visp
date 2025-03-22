@@ -85,7 +85,7 @@ class vpDetectorAprilTag::Impl
 public:
   Impl(const vpAprilTagFamily &tagFamily, const vpPoseEstimationMethod &method)
     : m_poseEstimationMethod(method), m_tagsId(), m_tagFamily(tagFamily), m_td(nullptr), m_tf(nullptr),
-    m_detections(nullptr), m_decisionMargin(100), m_zAlignedWithCameraFrame(false)
+    m_detections(nullptr), m_decisionMarginArUco(50), m_zAlignedWithCameraFrame(false)
   {
     switch (m_tagFamily) {
     case TAG_36h11:
@@ -498,6 +498,7 @@ public:
     int nb_detections = zarray_size(m_detections);
     bool detected = nb_detections > 0;
 
+    polygons.clear(); messages.clear(); m_tagsId.clear();
     polygons.reserve(static_cast<size_t>(nb_detections));
     messages.reserve(static_cast<size_t>(nb_detections));
     m_tagsId.reserve(static_cast<size_t>(nb_detections));
@@ -507,8 +508,14 @@ public:
       apriltag_detection_t *det;
       zarray_get(m_detections, i, &det);
 
-      if (det->decision_margin < m_decisionMargin) {
-        continue;
+      if (
+        m_tagFamily == TAG_ARUCO_4x4_50 || m_tagFamily == TAG_ARUCO_4x4_100 || m_tagFamily == TAG_ARUCO_4x4_250 || m_tagFamily == TAG_ARUCO_4x4_1000 ||
+        m_tagFamily == TAG_ARUCO_5x5_50 || m_tagFamily == TAG_ARUCO_5x5_100 || m_tagFamily == TAG_ARUCO_5x5_250 || m_tagFamily == TAG_ARUCO_5x5_1000 ||
+        m_tagFamily == TAG_ARUCO_6x6_50 || m_tagFamily == TAG_ARUCO_6x6_100 || m_tagFamily == TAG_ARUCO_6x6_250 || m_tagFamily == TAG_ARUCO_6x6_1000
+      ) {
+        if (det->decision_margin < m_decisionMarginArUco) {
+          continue;
+        }
       }
 
       std::vector<vpImagePoint> polygon;
@@ -529,14 +536,14 @@ public:
         vpColor Oy2 = (color == vpColor::none) ? vpColor::blue : color;
 
         const unsigned int polyId0 = 0, polyId1 = 1, polyId2 = 2, polyId3 = 3;
-        vpDisplay::displayLine(I, static_cast<int>(det->p[polyId0][1]), static_cast<int>(det->p[polyId0][0]), static_cast<int>(det->p[polyId1][1]), static_cast<int>(det->p[polyId1][0]), Ox,
-                               thickness);
-        vpDisplay::displayLine(I, static_cast<int>(det->p[polyId0][1]), static_cast<int>(det->p[polyId0][0]), static_cast<int>(det->p[polyId3][1]), static_cast<int>(det->p[polyId3][0]), Oy,
-                               thickness);
-        vpDisplay::displayLine(I, static_cast<int>(det->p[polyId1][1]), static_cast<int>(det->p[polyId1][0]), static_cast<int>(det->p[polyId2][1]), static_cast<int>(det->p[polyId2][0]), Ox2,
-                               thickness);
-        vpDisplay::displayLine(I, static_cast<int>(det->p[polyId2][1]), static_cast<int>(det->p[polyId2][0]), static_cast<int>(det->p[polyId3][1]), static_cast<int>(det->p[polyId3][0]), Oy2,
-                               thickness);
+        vpDisplay::displayLine(I, static_cast<int>(det->p[polyId0][1]), static_cast<int>(det->p[polyId0][0]),
+            static_cast<int>(det->p[polyId1][1]), static_cast<int>(det->p[polyId1][0]), Ox, thickness);
+        vpDisplay::displayLine(I, static_cast<int>(det->p[polyId0][1]), static_cast<int>(det->p[polyId0][0]),
+            static_cast<int>(det->p[polyId3][1]), static_cast<int>(det->p[polyId3][0]), Oy, thickness);
+        vpDisplay::displayLine(I, static_cast<int>(det->p[polyId1][1]), static_cast<int>(det->p[polyId1][0]),
+            static_cast<int>(det->p[polyId2][1]), static_cast<int>(det->p[polyId2][0]), Ox2, thickness);
+        vpDisplay::displayLine(I, static_cast<int>(det->p[polyId2][1]), static_cast<int>(det->p[polyId2][0]),
+            static_cast<int>(det->p[polyId3][1]), static_cast<int>(det->p[polyId3][0]), Oy2, thickness);
       }
 
       if (computePose) {
@@ -945,9 +952,9 @@ public:
 
   bool getZAlignedWithCameraAxis() { return m_zAlignedWithCameraFrame; }
 
-  float getAprilTagDecisionMargin() const
+  float getArUcoDecisionMargin() const
   {
-    return m_decisionMargin;
+    return m_decisionMarginArUco;
   }
 
   bool getAprilTagDecodeSharpening(double &decodeSharpening) const
@@ -999,9 +1006,9 @@ public:
 
   std::vector<int> getTagsId() const { return m_tagsId; }
 
-  void setAprilTagDecisionMargin(float margin)
+  void setArUcoDecisionMargin(float margin)
   {
-    m_decisionMargin = margin;
+    m_decisionMarginArUco = margin;
   }
 
   void setAprilTagDecodeSharpening(double decodeSharpening)
@@ -1073,7 +1080,7 @@ protected:
   apriltag_detector_t *m_td;
   apriltag_family_t *m_tf;
   zarray_t *m_detections;
-  float m_decisionMargin;
+  float m_decisionMarginArUco;
   bool m_zAlignedWithCameraFrame;
 };
 
@@ -1324,13 +1331,13 @@ std::vector<std::vector<vpPoint> > vpDetectorAprilTag::getTagsPoints3D(const std
 }
 
 /*!
-  Get the AprilTag decision margin to filter false detections.
+  Get the decision margin to filter false detections with 4x4, 5x5 and 6x6 ArUco dictionnaries.
 
-  \sa setAprilTagDecisionMargin()
+  \sa setArUcoDecisionMargin()
 */
-float vpDetectorAprilTag::getAprilTagDecisionMargin() const
+float vpDetectorAprilTag::getArUcoDecisionMargin() const
 {
-  return m_impl->getAprilTagDecisionMargin();
+  return m_impl->getArUcoDecisionMargin();
 }
 
 /*!
@@ -1394,11 +1401,18 @@ void vpDetectorAprilTag::setAprilTagDecodeSharpening(double decodeSharpening)
     > we could have sampled anywhere within a bit cell and still
     > gotten a good detection.)
 
-  \sa getAprilTagDecisionMargin()
+  It has been experimentally observed that using the AprilTag detection and decoding pipeline,
+  lots of false positives arise with 4x4, 5x5 and 6x6 ArUco dictionnaries.
+  A margin can be used to filter those detection.
+
+  \note This parameter only affects the 4x4, 5x5, 6x6 ArUco dictionnaries and not the AprilTag
+  version nor the ArUco MIP_36h12 version.
+
+  \sa getArUcoDecisionMargin()
 */
-void vpDetectorAprilTag::setAprilTagDecisionMargin(float margin)
+void vpDetectorAprilTag::setArUcoDecisionMargin(float margin)
 {
-  m_impl->setAprilTagDecisionMargin(margin);
+  m_impl->setArUcoDecisionMargin(margin);
 }
 
 void vpDetectorAprilTag::setAprilTagFamily(const vpAprilTagFamily &tagFamily)
