@@ -347,9 +347,10 @@
         },
         {
           "static": false,
-          "signature": "void selectValidNewCandidates(const vpCameraParameters&, const vpHomogeneousMatrix&, const vpArray2D<int>&, const vpMatrix&, const vpImage<float>&, vpMatrix&, std::list<int>&)",
+          "signature": "void selectValidNewCandidates(const vpCameraParameters&, const vpHomogeneousMatrix&, const vpArray2D<int>&, const vpMatrix&,  const vpImage<float>&, const vpImage<float>&, vpMatrix&, std::list<int>&)",
           "use_default_param_policy": false,
           "param_is_input": [
+            true,
             true,
             true,
             true,
@@ -359,6 +360,7 @@
             false
           ],
           "param_is_output": [
+            false,
             false,
             false,
             false,

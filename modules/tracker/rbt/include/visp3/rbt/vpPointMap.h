@@ -45,11 +45,12 @@ BEGIN_VISP_NAMESPACE
 class VISP_EXPORT vpPointMap
 {
 public:
-  vpPointMap(unsigned maxPoints, double minDistNewPoints, double maxDepthErrorVisibility, double outlierThreshold)
+  vpPointMap(unsigned maxPoints, double minDistNewPoints, double maxDepthErrorVisibility, double maxDepthErrorCandidate, double outlierThreshold)
   {
     m_maxPoints = maxPoints;
     m_minDistNewPoint = minDistNewPoints;
-    m_maxDepthError = maxDepthErrorVisibility;
+    m_maxDepthErrorVisible = maxDepthErrorVisibility;
+    m_maxDepthErrorCandidate = maxDepthErrorCandidate;
     m_outlierThreshold = outlierThreshold;
   }
   /**
@@ -66,8 +67,11 @@ public:
   double getMinDistanceAddNewPoints() const { return m_minDistNewPoint; }
   void setMinDistanceAddNewPoints(double distance) { m_minDistNewPoint = distance; }
 
-  double getMaxDepthErrorVisibilityCriterion() const { return m_maxDepthError; }
-  void setMaxDepthErrorVisibilityCriterion(double depthError) { m_maxDepthError = depthError; }
+  double getMaxDepthErrorVisibilityCriterion() const { return m_maxDepthErrorVisible; }
+  void setMaxDepthErrorVisibilityCriterion(double depthError) { m_maxDepthErrorVisible = depthError; }
+
+  double getMaxDepthErrorCandidate() const { return m_maxDepthErrorCandidate; }
+  void setMaxDepthErrorCandidate(double depthError) { m_maxDepthErrorCandidate = depthError; }
 
   double getOutlierReprojectionErrorThreshold() const { return m_outlierThreshold; }
   void setOutlierReprojectionErrorThreshold(double thresholdPx) { m_outlierThreshold = thresholdPx; }
@@ -95,7 +99,8 @@ public:
 
   void selectValidNewCandidates(const vpCameraParameters &cam, const vpHomogeneousMatrix &cTw,
    const vpArray2D<int> &originalIndices, const vpMatrix &uvs,
-   const vpImage<float> &depth, vpMatrix &oXs, std::list<int> &validCandidateIndices);
+   const vpImage<float> &modelDepth, const vpImage<float> &depth,
+   vpMatrix &oXs, std::list<int> &validCandidateIndices);
 
   void updatePoints(const vpArray2D<int> &indicesToRemove, const vpMatrix &pointsToAdd, std::list<int> &removedIndices, unsigned int &numAddedPoints);
   void updatePoint(unsigned int index, double X, double Y, double Z)
@@ -176,7 +181,8 @@ private:
   vpMatrix m_X; // N x 3, points expressed in world frame
   unsigned m_maxPoints;
   double m_minDistNewPoint;
-  double m_maxDepthError;
+  double m_maxDepthErrorVisible;
+  double m_maxDepthErrorCandidate;
   double m_outlierThreshold;
 };
 

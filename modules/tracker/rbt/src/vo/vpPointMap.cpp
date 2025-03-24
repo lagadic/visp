@@ -116,7 +116,7 @@ void vpPointMap::getVisiblePoints(const unsigned int h, const unsigned int w, co
     if (u < 0 || v < 0 || u >= w || v >= h) {
       continue;
     }
-    if (fabs(Z - expectedZ[i]) > m_maxDepthError) {
+    if (fabs(Z - expectedZ[i]) > m_maxDepthErrorVisible) {
       continue;
     }
     indices.push_back(i);
@@ -150,7 +150,7 @@ void vpPointMap::getVisiblePoints(const unsigned int h, const unsigned int w, co
       continue;
     }
     unsigned int uint = static_cast<unsigned int>(u), vint = static_cast<unsigned int>(v);
-    if (fabs(Z - depth[vint][uint]) > m_maxDepthError) {
+    if (fabs(Z - depth[vint][uint]) > m_maxDepthErrorVisible) {
       continue;
     }
 
@@ -173,7 +173,9 @@ void vpPointMap::getOutliers(const vpArray2D<int> &originalIndices, const vpMatr
   }
 }
 
-void vpPointMap::selectValidNewCandidates(const vpCameraParameters &cam, const vpHomogeneousMatrix &cTw, const vpArray2D<int> &originalIndices, const vpMatrix &uvs, const vpImage<float> &depth, vpMatrix &oXs, std::list<int> &validCandidateIndices)
+void vpPointMap::selectValidNewCandidates(const vpCameraParameters &cam, const vpHomogeneousMatrix &cTw, const vpArray2D<int> &originalIndices,
+const vpMatrix &uvs, const vpImage<float> &modelDepth, const vpImage<float> &depth,
+vpMatrix &oXs, std::list<int> &validCandidateIndices)
 {
   if (originalIndices.getRows() != uvs.getRows()) {
     throw vpException(vpException::dimensionError, "Indices and keypoint locations should have the same dimensions");
@@ -193,9 +195,26 @@ void vpPointMap::selectValidNewCandidates(const vpCameraParameters &cam, const v
   for (unsigned int i = 0; i < uvs.getRows(); ++i) {
     double u = uvs[i][0], v = uvs[i][1];
     unsigned int uint = static_cast<unsigned int>(u), vint = static_cast<unsigned int>(v);
-    double Z = static_cast<double>(depth[vint][uint]);
-    if (Z <= 0.0) {
-      continue;
+    double Z;
+    if (modelDepth.getSize() == 0) { // We are performing odometry or do not have a depth oracle
+      Z = static_cast<double>(depth[vint][uint]);
+      if (Z <= 0.0) {
+        continue;
+      }
+    }
+    else {
+      double renderZ = modelDepth[vint][uint];
+      if (renderZ <= 0.f) {
+        continue;
+      }
+      if (depth.getSize() > 0 && depth[vint][uint] > 0.f) { // Depth information from camera is available
+        Z = depth[vint][uint];
+        // Check if depth from model and camera match
+        if (m_maxDepthErrorCandidate > 0.0 && fabs(renderZ - Z) >=  m_maxDepthErrorCandidate) {
+          continue;
+        }
+      }
+      Z = renderZ; // For addition, use the rendered depth
     }
 
     vpPixelMeterConversion::convertPointWithoutDistortion(cam, u, v, x, y);

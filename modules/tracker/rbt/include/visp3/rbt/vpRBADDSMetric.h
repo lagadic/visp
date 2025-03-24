@@ -42,7 +42,7 @@ BEGIN_VISP_NAMESPACE
 class VISP_EXPORT vpRBADDSMetric
 {
 public:
-  vpRBADDSMetric(unsigned int numPoints, unsigned int seed) : m_seed(seed), m_map(numPoints, 0.0, 0.0, 0.0), m_random(seed)
+  vpRBADDSMetric(unsigned int numPoints, unsigned int seed) : m_seed(seed), m_map(numPoints, 0.0, 0.0, 0.0, 0.0), m_random(seed)
   {
 
   }
