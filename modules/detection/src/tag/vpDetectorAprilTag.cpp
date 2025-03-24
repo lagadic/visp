@@ -1374,9 +1374,9 @@ void vpDetectorAprilTag::setAprilTagDebugOption(bool flag)
  * @param[in] id : Marker id.
  * \return true when image created successfully, false otherwise.
  */
-bool vpDetectorAprilTag::getTagImage(vpImage<unsigned char> &I, int idx)
+bool vpDetectorAprilTag::getTagImage(vpImage<unsigned char> &I, int id)
 {
-  return m_impl->getTagImage(I, idx);
+  return m_impl->getTagImage(I, id);
 }
 
 /*!
