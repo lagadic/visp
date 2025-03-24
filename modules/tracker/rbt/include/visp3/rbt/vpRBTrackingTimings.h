@@ -29,11 +29,11 @@
  */
 
 /*!
-  \file vpRBTrackerLogger.h
+  \file vpRBTrackingTimings.h
   \brief Information storage for render based tracking process.
 */
-#ifndef VP_RB_TRACKER_LOGGER_H
-#define VP_RB_TRACKER_LOGGER_H
+#ifndef VP_RB_TRACKING_TIMINGS_H
+#define VP_RB_TRACKING_TIMINGS_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMath.h>
@@ -50,11 +50,11 @@ BEGIN_VISP_NAMESPACE
   \ingroup group_rbt_core
 */
 
-class vpRBTrackerLogger;
+class vpRBTrackingTimings;
 
-std::ostream &operator<<(std::ostream &s, const vpRBTrackerLogger &I);
+std::ostream &operator<<(std::ostream &s, const vpRBTrackingTimings &I);
 
-class VISP_EXPORT vpRBTrackerLogger
+class VISP_EXPORT vpRBTrackingTimings
 {
 public:
   inline void reset()
@@ -71,7 +71,7 @@ public:
     m_trackerVVSIterTimes.clear();
   }
 
-  friend std::ostream &operator<<(std::ostream &, const vpRBTrackerLogger &);
+  friend std::ostream &operator<<(std::ostream &, const vpRBTrackingTimings &);
 
   void startTimer() { m_startTime = vpTime::measureTimeMs(); }
   inline double endTimer()
@@ -147,7 +147,7 @@ private:
 
 };
 
-inline std::ostream &operator<<(std::ostream &out, const vpRBTrackerLogger &timer)
+inline std::ostream &operator<<(std::ostream &out, const vpRBTrackingTimings &timer)
 {
   const auto default_precision { out.precision() };
   auto flags = out.flags();

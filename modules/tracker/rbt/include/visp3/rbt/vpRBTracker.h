@@ -43,7 +43,7 @@
 #include <visp3/rbt/vpRBSilhouettePointsExtractionSettings.h>
 #include <visp3/rbt/vpPanda3DDepthFilters.h>
 #include <visp3/rbt/vpObjectCentricRenderer.h>
-#include <visp3/rbt/vpRBTrackerLogger.h>
+#include <visp3/rbt/vpRBTrackingTimings.h>
 #include <visp3/rbt/vpRBADDSMetric.h>
 #include <visp3/core/vpDisplay.h>
 
@@ -80,7 +80,7 @@ public:
   void setPose(const vpHomogeneousMatrix &cMo);
   vpObjectCentricRenderer &getRenderer();
   const vpRBFeatureTrackerInput &getMostRecentFrame() const { return m_currentFrame; }
-  const vpRBTrackerLogger &getLogger() const { return m_logger; }
+  const vpRBTrackingTimings &getLogger() const { return m_logger; }
 
   vpMatrix getCovariance() const;
 
@@ -266,7 +266,7 @@ protected:
 
   unsigned m_imageHeight, m_imageWidth; //! Color and render image dimensions
 
-  vpRBTrackerLogger m_logger;
+  vpRBTrackingTimings m_logger;
   bool m_verbose;
 
   std::shared_ptr<vpObjectMask> m_mask;
