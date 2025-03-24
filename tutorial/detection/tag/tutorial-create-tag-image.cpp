@@ -1,4 +1,4 @@
-//! \example tutorial-apriltag-detector.cpp
+//! \example tutorial-create-tag-image.cpp
 #include <visp3/core/vpConfig.h>
 //! [Include]
 #include <visp3/detection/vpDetectorAprilTag.h>
