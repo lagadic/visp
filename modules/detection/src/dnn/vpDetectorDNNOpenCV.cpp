@@ -377,7 +377,7 @@ bool vpDetectorDNNOpenCV::detect(const cv::Mat &I, std::vector<DetectedFeatures2
     output.emplace_back(box.x, box.x + box.width, box.y, box.y + box.height
       , proposals.m_classIds[idx], proposals.m_confidences[idx]
       , classname_opt
-    );
+        );
   }
 
   if (m_applySizeFilterAfterNMS) {
@@ -434,7 +434,7 @@ bool vpDetectorDNNOpenCV::detect(const cv::Mat &I, std::map< std::string, std::v
     output[classname].emplace_back(box.x, box.x + box.width, box.y, box.y + box.height
       , proposals.m_classIds[idx], proposals.m_confidences[idx]
       , classname_opt
-    );
+        );
   }
 
   if (m_applySizeFilterAfterNMS) {
@@ -487,7 +487,7 @@ std::vector<cv::String> vpDetectorDNNOpenCV::getOutputsNames()
   extract the data stored as a matrix.
   Then, perform Non-Maximum Suppression to remove overlapping detections.
 
-  \param[inout] proposals : Input/output that will contains all the detection candidates.
+  \param[in,out] proposals : Input/output that will contains all the detection candidates.
 */
 void vpDetectorDNNOpenCV::postProcess(DetectionCandidates &proposals)
 {
