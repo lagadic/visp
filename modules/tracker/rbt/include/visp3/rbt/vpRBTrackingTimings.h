@@ -39,6 +39,7 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpTime.h>
 
+
 #if defined(VISP_HAVE_NLOHMANN_JSON)
 #include VISP_NLOHMANN_JSON(json.hpp)
 #endif
@@ -128,22 +129,26 @@ public:
     m_odometryTime = elapsed;
   }
 
+#ifdef VISP_HAVE_NLOHMANN_JSON
+  inline friend void from_json(const nlohmann::json &j, vpRBTrackingTimings &result);
+  inline friend void to_json(nlohmann::json &j, const vpRBTrackingTimings &result);
+
+#endif
+
 private:
   double m_startTime;
+
   double m_renderTime;
   double m_silhouetteExtractionTime;
   double m_maskTime;
   double m_driftTime;
   double m_odometryTime;
+
   std::map<int, std::vector<double>> m_trackerVVSIterTimes;
-
   std::map<int, double> m_trackerIterStartTime;
-
   std::map<int, double> m_trackerFeatureExtractionTime;
-
   std::map<int, double> m_trackerFeatureTrackingTime;
   std::map<int, double> m_trackerInitVVSTime;
-  std::map<int, int> m_trackerNumFeatures;
 
 };
 
@@ -183,6 +188,40 @@ inline std::ostream &operator<<(std::ostream &out, const vpRBTrackingTimings &ti
   out << std::setprecision(default_precision); // restore defaults
   return out;
 }
+
+#ifdef VISP_HAVE_NLOHMANN_JSON
+inline void from_json(const nlohmann::json &j, vpRBTrackingTimings &result)
+{
+  result.m_renderTime = j.at("render");
+  result.m_silhouetteExtractionTime = j.at("silhouetteExtraction");
+  result.m_maskTime = j.at("mask");
+  result.m_driftTime = j.at("drift");
+  result.m_odometryTime = j.at("odometry");
+
+  nlohmann::json jf = j.at("features");
+  result.m_trackerVVSIterTimes = jf.at("vvs");
+  result.m_trackerIterStartTime = jf.at("start");
+  result.m_trackerFeatureExtractionTime = jf.at("extraction");
+  result.m_trackerFeatureTrackingTime = jf.at("tracking");
+  result.m_trackerInitVVSTime = jf.at("vvsInit");
+}
+inline void to_json(nlohmann::json &j, const vpRBTrackingTimings &result)
+{
+  j["render"] = result.m_renderTime;
+  j["silhouette"] = result.m_silhouetteExtractionTime;
+  j["mask"] = result.m_maskTime;
+  j["drift"] = result.m_driftTime;
+  j["odometry"] = result.m_odometryTime;
+  nlohmann::json jf;
+  jf["vvs"] = result.m_trackerVVSIterTimes;
+  jf["start"] = result.m_trackerIterStartTime;
+  jf["extraction"] = result.m_trackerFeatureExtractionTime;
+  jf["tracking"] = result.m_trackerFeatureTrackingTime;
+  jf["vvsInit"] = result.m_trackerInitVVSTime;
+  j["features"] = jf;
+}
+#endif
+
 
 END_VISP_NAMESPACE
 

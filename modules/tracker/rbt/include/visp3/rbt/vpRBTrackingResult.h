@@ -29,8 +29,8 @@
  */
 
 /*!
-  \file vpRBKltTracker.h
-  \brief KLT features in the context of render based tracking
+  \file vpRBTrackingResult.h
+  \brief Structure containing information about the tracking process for a given iteration
 */
 #ifndef VP_RB_TRACKING_RESULT_H
 #define VP_RB_TRACKING_RESULT_H
@@ -42,9 +42,12 @@
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 
-
 #include <visp3/rbt/vpRBTrackingTimings.h>
 #include <visp3/rbt/vpRBFeatureTracker.h>
+
+#if defined(VISP_HAVE_NLOHMANN_JSON)
+#include VISP_NLOHMANN_JSON(json.hpp)
+#endif
 
 BEGIN_VISP_NAMESPACE
 
@@ -63,11 +66,9 @@ public:
   }
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
-
+  inline friend void from_json(const nlohmann::json &j, vpRBFeatureResult &result);
+  inline friend void to_json(nlohmann::json &j, const vpRBFeatureResult &result);
 #endif
-
-
-
 
 private:
   std::vector<unsigned int> m_numFeatures;
@@ -81,19 +82,21 @@ private:
 
 enum vpRBTrackingStoppingReason
 {
-  MAX_ITERS = 0,
-  CONVERGENCE_CRITERION = 1,
-  OBJECT_NOT_IN_IMAGE = 2,
-  EXCEPTION = 3,
-  INVALID_REASON = 4
+  MAX_ITERS = 0, // Reached maximum number of iterations
+  CONVERGENCE_CRITERION = 1, //! Convergence criterion was met, early stopping
+  OBJECT_NOT_IN_IMAGE = 2, //! Object is not in image, thus tracking was not performed
+  NOT_ENOUGH_FEATURES = 3, //! Not enough features to correctly track the object
+  EXCEPTION = 4,
+  INVALID_REASON = 5 //! This should not happen
 };
+
 
 
 class VISP_EXPORT vpRBTrackingResult
 {
 public:
 
-  vpRBTrackingResult()
+  vpRBTrackingResult() : m_odometryMetric(0.0), m_odometryThreshold(0.0)
   {
     m_odometryMotion = vpHomogeneousMatrix();
   }
@@ -102,20 +105,134 @@ public:
   const std::vector<vpHomogeneousMatrix> &getPoses() const { return m_cMos; }
 
 
-  vpRBTrackingTimings &timings() { return m_timings; }
+  vpRBTrackingTimings &timer() { return m_timings; }
+
+  vpRBTrackingStoppingReason getStoppingReason() const { return m_stopReason; }
+  void setStoppingReason(vpRBTrackingStoppingReason reason) { m_stopReason = reason; }
 
   void setOdometryMotion(const vpHomogeneousMatrix &cMw)
   {
     m_odometryMotion = cMw;
   }
 
+  void setOdometryMetricAndThreshold(const double metricValue, const double metricThreshold)
+  {
+    m_odometryMetric = metricValue;
+    m_odometryThreshold = metricThreshold;
+  }
+
+  void onEndIter(const vpHomogeneousMatrix &cMo, const vpColVector &v, const double convergenceMetric, const vpMatrix &JTJ, const vpColVector &JTR, double mu)
+  {
+    m_cMos.push_back(cMo);
+    m_velocities.push_back(v);
+    m_convergenceMetric.push_back(convergenceMetric);
+    m_JTJ.push_back(JTJ);
+    m_JTR.push_back(JTR);
+    m_mus.push_back(mu);
+
+  }
+
+  void logFeatures(const std::vector<std::shared_ptr<vpRBFeatureTracker>> &features)
+  {
+    if (m_featureData.size() == 0) {
+      m_featureData.resize(features.size());
+    }
+    else if (m_featureData.size() != features.size()) {
+      throw vpException(vpException::dimensionError, "Wrong number of features were logged");
+    }
+
+    for (unsigned int i = 0; i < features.size(); ++i) {
+      m_featureData[i].onIter(*features[i]);
+    }
+  }
+
+#ifdef VISP_HAVE_NLOHMANN_JSON
+  void saveToFile(const std::string &path) const;
+  static vpRBTrackingResult readFromJsonFile(const std::string &path);
+  inline friend void from_json(const nlohmann::json &j, vpRBTrackingResult &result);
+  inline friend void to_json(nlohmann::json &j, const vpRBTrackingResult &result);
+#endif
+
 private:
   vpRBTrackingStoppingReason m_stopReason;
   vpRBTrackingTimings m_timings;
   std::vector<vpHomogeneousMatrix> m_cMos;
+  std::vector<vpColVector> m_velocities;
+  std::vector<double> m_convergenceMetric;
+  std::vector<double> m_mus;
+  std::vector<vpMatrix> m_JTJ;
+  std::vector<vpColVector> m_JTR;
+
   vpHomogeneousMatrix m_odometryMotion;
+  double m_odometryMetric, m_odometryThreshold;
   std::vector<vpRBFeatureResult> m_featureData;
 };
+
+
+#ifdef VISP_HAVE_NLOHMANN_JSON
+
+NLOHMANN_JSON_SERIALIZE_ENUM(vpRBTrackingStoppingReason, {
+        {vpRBTrackingStoppingReason::INVALID_REASON, nullptr},
+        {vpRBTrackingStoppingReason::MAX_ITERS, "maxIterations"},
+        {vpRBTrackingStoppingReason::CONVERGENCE_CRITERION, "converged"},
+        {vpRBTrackingStoppingReason::OBJECT_NOT_IN_IMAGE, "objectNotInImage"},
+        {vpRBTrackingStoppingReason::NOT_ENOUGH_FEATURES, "notEnoughFeatures"},
+        {vpRBTrackingStoppingReason::EXCEPTION, "exception"}
+});
+
+inline void from_json(const nlohmann::json &j, vpRBFeatureResult &result)
+{
+  result.m_numFeatures = j.at("numFeatures").get<std::vector<unsigned int>>();
+  result.m_overallWeight = j.at("weight").get<std::vector<double>>();
+  result.m_error = j.at("error");
+  result.m_JTJ = j.at("JTJ");
+  result.m_JTR = j.at("JTR");
+}
+inline void to_json(nlohmann::json &j, const vpRBFeatureResult &result)
+{
+  j["numFeatures"] = result.m_numFeatures;
+  j["weight"] = result.m_overallWeight;
+  j["error"] = result.m_error;
+  j["JTJ"] = result.m_JTJ;
+  j["JTR"] = result.m_JTR;
+}
+
+inline void from_json(const nlohmann::json &j, vpRBTrackingResult &result)
+{
+  result.m_stopReason = j.at("stopReason");
+  result.m_timings = j.at("timings");
+  result.m_cMos = j.at("cMos");
+  result.m_velocities = j.at("velocities");
+  result.m_mus = j.at("mus").get<std::vector<double>>();
+  result.m_JTJ = j.at("JTJ");
+  result.m_JTR = j.at("JTR");
+
+  result.m_convergenceMetric = j.at("convergenceMetric").get<std::vector<double>>();
+  result.m_odometryMotion = j.at("odometryDisplacement");
+  result.m_odometryMetric = j.at("odometryMetric");
+  result.m_odometryThreshold = j.at("odometryThreshold");
+  result.m_featureData = j.at("features");
+}
+inline void to_json(nlohmann::json &j, const vpRBTrackingResult &result)
+{
+  j["stopReason"] = result.m_stopReason;
+  j["timings"] = result.m_timings;
+  j["cMos"] = result.m_cMos;
+  j["velocities"] = result.m_velocities;
+  j["mus"] = result.m_mus;
+  j["JTJ"] = result.m_JTJ;
+  j["JTR"] = result.m_JTR;
+
+  j["convergenceMetric"] = result.m_convergenceMetric;
+  j["odometryDisplacement"] = result.m_odometryMotion;
+  j["odometryMetric"] = result.m_odometryMetric;
+  j["odometryThreshold"] = result.m_odometryThreshold;
+
+  j["features"] = result.m_featureData;
+}
+
+#endif
+
 
 END_VISP_NAMESPACE
 

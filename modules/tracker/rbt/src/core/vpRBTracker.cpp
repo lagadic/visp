@@ -160,7 +160,7 @@ void vpRBTracker::setupRenderer(const std::string &file)
   m_renderer.setFocusedObject("object");
 }
 
-void vpRBTracker::track(const vpImage<unsigned char> &I)
+vpRBTrackingResult vpRBTracker::track(const vpImage<unsigned char> &I)
 {
   for (std::shared_ptr<vpRBFeatureTracker> tracker : m_trackers) {
     if (tracker->requiresDepth() || tracker->requiresRGB()) {
@@ -171,10 +171,10 @@ void vpRBTracker::track(const vpImage<unsigned char> &I)
   vpRBFeatureTrackerInput frameInput;
   frameInput.I = I;
   frameInput.cam = m_cam;
-  track(frameInput);
+  return track(frameInput);
 }
 
-void vpRBTracker::track(const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB)
+vpRBTrackingResult vpRBTracker::track(const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB)
 {
   for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
     if (tracker->requiresDepth()) {
@@ -187,7 +187,7 @@ void vpRBTracker::track(const vpImage<unsigned char> &I, const vpImage<vpRGBa> &
   frameInput.I = I;
   frameInput.IRGB = IRGB;
   frameInput.cam = m_cam;
-  track(frameInput);
+  return track(frameInput);
 }
 
 void vpRBTracker::startTracking()
@@ -196,7 +196,7 @@ void vpRBTracker::startTracking()
   m_convergenceMetric.sampleObject(m_renderer);
 }
 
-void vpRBTracker::track(const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<float> &depth)
+vpRBTrackingResult vpRBTracker::track(const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<float> &depth)
 {
   checkDimensionsOrThrow(I, "grayscale");
   checkDimensionsOrThrow(IRGB, "color");
@@ -206,16 +206,19 @@ void vpRBTracker::track(const vpImage<unsigned char> &I, const vpImage<vpRGBa> &
   frameInput.IRGB = IRGB;
   frameInput.depth = depth;
   frameInput.cam = m_cam;
-  track(frameInput);
+  return track(frameInput);
 }
 
-void vpRBTracker::track(vpRBFeatureTrackerInput &input)
+vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
 {
-  m_logger.reset();
 
-  m_logger.startTimer();
+  vpRBTrackingResult result;
+  vpRBTrackingTimings &timer = result.timer();
+  timer.reset();
+
+  timer.startTimer();
   updateRender(input);
-  m_logger.setRenderTime(m_logger.endTimer());
+  timer.setRenderTime(timer.endTimer());
 
   if (m_firstIteration) {
     m_firstIteration = false;
@@ -223,11 +226,11 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
     m_previousFrame.IRGB = input.IRGB;
   }
 
-  m_logger.startTimer();
+  timer.startTimer();
   if (m_mask) {
     m_mask->updateMask(input, m_previousFrame, input.mask);
   }
-  m_logger.setMaskTime(m_logger.endTimer());
+  timer.setMaskTime(timer.endTimer());
 
   bool requiresSilhouetteCandidates = false;
   for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
@@ -237,58 +240,61 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
     }
   }
 
-  m_logger.startTimer();
+  timer.startTimer();
   if (requiresSilhouetteCandidates) {
     const vpHomogeneousMatrix cTcp = m_cMo * m_cMoPrev.inverse();
     input.silhouettePoints = extractSilhouettePoints(input.renders.normals, input.renders.depth,
                                                     input.renders.silhouetteCanny, input.renders.isSilhouette, input.cam, cTcp);
     if (input.silhouettePoints.size() == 0) {
-      throw vpException(vpException::badValue, "Could not extract silhouette from depth canny: Object may not be in image");
+      result.setStoppingReason(vpRBTrackingStoppingReason::OBJECT_NOT_IN_IMAGE);
+      return result;
     }
   }
-  m_logger.setSilhouetteTime(m_logger.endTimer());
+  timer.setSilhouetteTime(timer.endTimer());
 
   if (m_odometry) {
-    m_logger.startTimer();
+    timer.startTimer();
     m_odometry->compute(input, m_previousFrame);
     vpHomogeneousMatrix cMo_beforeOdo = m_cMo;
     vpHomogeneousMatrix cnTc = m_odometry->getCameraMotion();
     m_cMo = cnTc * m_cMo;
     bool shouldRerender = true;
     if (m_convergedMetricThreshold > 0.0 && m_cMo != cMo_beforeOdo) {
-      double adds = m_convergenceMetric.ADDS(m_cMo, cMo_beforeOdo);
-      std::cout << "ADDS = " << adds << std::endl;
+      const double adds = m_convergenceMetric.ADDS(m_cMo, cMo_beforeOdo);
       // Multiply by number of vvs iterations: convergence is tested between two optim iterations,
       // while we consider that odometry performs a full optim pass wrt to the environment
-      shouldRerender = adds > (m_convergedMetricThreshold * m_vvsIterations);
+      const double rerenderThreshold = m_convergedMetricThreshold * m_vvsIterations;
+      shouldRerender = adds > rerenderThreshold;
+      result.setOdometryMetricAndThreshold(adds, rerenderThreshold);
     }
+    result.setOdometryMotion(cnTc);
     if (shouldRerender) {
-      std::cout << "Rerendering for odometry" << std::endl;
       updateRender(input);
-
       if (requiresSilhouetteCandidates) {
         const vpHomogeneousMatrix cTcp = m_cMo * m_cMoPrev.inverse();
         input.silhouettePoints = extractSilhouettePoints(input.renders.normals, input.renders.depth,
                                                         input.renders.silhouetteCanny, input.renders.isSilhouette, input.cam, cTcp);
         if (input.silhouettePoints.size() == 0) {
-          throw vpException(vpException::badValue, "Could not extract silhouette from depth canny: Object may not be in image");
+          result.setStoppingReason(vpRBTrackingStoppingReason::OBJECT_NOT_IN_IMAGE);
+          return result;
         }
       }
 
     }
-    m_logger.setOdometryTime(m_logger.endTimer());
+    timer.setOdometryTime(timer.endTimer());
+
   }
 
   int id = 0;
   for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
-    m_logger.startTimer();
+    timer.startTimer();
     tracker->onTrackingIterStart(m_cMo);
-    m_logger.setTrackerIterStartTime(id, m_logger.endTimer());
+    timer.setTrackerIterStartTime(id, timer.endTimer());
     id += 1;
   }
   id = 0;
   for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
-    m_logger.startTimer();
+    timer.startTimer();
     try {
       tracker->extractFeatures(input, m_previousFrame, m_cMo);
     }
@@ -296,12 +302,12 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
       std::cerr << "Tracker " << id << " raised an exception in extractFeatures" << std::endl;
       throw e;
     }
-    m_logger.setTrackerFeatureExtractionTime(id, m_logger.endTimer());
+    timer.setTrackerFeatureExtractionTime(id, timer.endTimer());
     id += 1;
   }
   id = 0;
   for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
-    m_logger.startTimer();
+    timer.startTimer();
     try {
       tracker->trackFeatures(input, m_previousFrame, m_cMo);
     }
@@ -309,15 +315,15 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
       std::cerr << "Tracker " << id << " raised an exception in trackFeatures" << std::endl;
       throw e;
     }
-    m_logger.setTrackerFeatureTrackingTime(id, m_logger.endTimer());
+    timer.setTrackerFeatureTrackingTime(id, timer.endTimer());
     id += 1;
   }
 
   id = 0;
   for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
-    m_logger.startTimer();
+    timer.startTimer();
     tracker->initVVS(input, m_previousFrame, m_cMo);
-    m_logger.setInitVVSTime(id, m_logger.endTimer());
+    timer.setInitVVSTime(id, timer.endTimer());
     //std::cout << "Tracker " << id << " has " << tracker->getNumFeatures() << " features" << std::endl;
     id += 1;
   }
@@ -328,10 +334,11 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
   vpHomogeneousMatrix best_cMo = m_cMo;
   double mu = m_muInit;
   vpColVector firstMotion(6, 0.0);
-  for (unsigned int iter = 0; iter < m_vvsIterations; ++iter) {
+  unsigned int iter = 0;
+  for (iter = 0; iter < m_vvsIterations; ++iter) {
     id = 0;
     for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
-      m_logger.startTimer();
+      timer.startTimer();
       try {
         tracker->computeVVSIter(input, m_cMo, iter);
       }
@@ -339,7 +346,7 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
         std::cerr << "Tracker " << id << " raised an exception in computeVVSIter" << std::endl;
         throw;
       }
-      m_logger.addTrackerVVSTime(id, m_logger.endTimer());
+      timer.addTrackerVVSTime(id, timer.endTimer());
       id += 1;
     }
 
@@ -386,24 +393,41 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
           H[i][i] = LTL[i][i];
         }
       }
+      vpColVector v;
       try {
-        vpColVector v = -m_lambda * ((LTL + mu * H).pseudoInverse(LTL.getRows() * std::numeric_limits<double>::epsilon()) * LTR);
+        v = -m_lambda * ((LTL + mu * H).pseudoInverse(LTL.getRows() * std::numeric_limits<double>::epsilon()) * LTR);
         m_cMo = vpExponentialMap::direct(v).inverse() * m_cMo;
       }
       catch (vpException &) {
+        result.setStoppingReason(vpRBTrackingStoppingReason::EXCEPTION);
         std::cerr << "Could not compute pseudo inverse" << std::endl;
-      }
-      mu *= m_muIterFactor;
-
-      if (iter > 0 && m_convergedMetricThreshold > 0.0 && m_convergenceMetric.ADDS(m_cMoPrevIter, m_cMo) < m_convergedMetricThreshold) {
         break;
       }
 
+      result.logFeatures(m_trackers);
+
+      double convergenceMetric = 0.0;
+
+      if (iter > 0 && m_convergedMetricThreshold > 0.0 && m_convergenceMetric.ADDS(m_cMoPrevIter, m_cMo) < m_convergedMetricThreshold) {
+        convergenceMetric = m_convergenceMetric.ADDS(m_cMoPrevIter, m_cMo);
+        if (convergenceMetric < m_convergedMetricThreshold) {
+          result.setStoppingReason(vpRBTrackingStoppingReason::CONVERGENCE_CRITERION);
+          break;
+        }
+      }
+      result.onEndIter(m_cMo, v, convergenceMetric, LTL, LTR, mu);
+
+      mu *= m_muIterFactor;
       m_cMoPrevIter = m_cMo;
     }
     else {
+      result.setStoppingReason(vpRBTrackingStoppingReason::NOT_ENOUGH_FEATURES);
       break;
     }
+  }
+
+  if (iter == m_vvsIterations) {
+    result.setStoppingReason(vpRBTrackingStoppingReason::MAX_ITERS);
   }
 
   //m_cMo = best_cMo;
@@ -420,14 +444,13 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
     m_previousFrame = std::move(m_currentFrame);
     m_currentFrame = std::move(input);
   }
-  m_logger.startTimer();
+  timer.startTimer();
   if (m_driftDetector) {
     m_driftDetector->update(m_previousFrame, m_currentFrame, m_cMo, m_cMoPrev);
   }
-  m_logger.setDriftDetectionTime(m_logger.endTimer());
-  if (m_verbose) {
-    std::cout << m_logger << std::endl;
-  }
+  timer.setDriftDetectionTime(timer.endTimer());
+
+  return result;
 }
 
 void vpRBTracker::updateRender(vpRBFeatureTrackerInput &frame)
