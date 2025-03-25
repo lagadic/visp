@@ -567,7 +567,7 @@ template <> inline char vpMath::saturate<char>(unsigned int v)
 
 template <> inline char vpMath::saturate<char>(float v)
 {
-  int iv = vpMath::round(v);
+  int iv = vpMath::round(static_cast<double>(v));
   return saturate<char>(iv);
 }
 
