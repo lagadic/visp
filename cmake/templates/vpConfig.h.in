@@ -748,4 +748,13 @@ namespace vp = VISP_NAMESPACE_NAME;
 #  endif
 #endif
 
+// Macro to be able to add noreturn keyword
+#ifndef VP_NORETURN
+#  if (__cplusplus >= 201103L) || (defined(_MSC_VER) && _MSC_VER >= 1600)
+#    define VP_NORETURN [[noreturn]]
+#  else
+#    define VP_NORETURN
+#  endif
+#endif
+
 #endif
