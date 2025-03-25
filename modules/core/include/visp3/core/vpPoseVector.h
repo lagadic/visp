@@ -213,8 +213,6 @@ public:
   // constructor  convert a translation and a rotation matrix into a pose
   vpPoseVector(const vpTranslationVector &tv, const vpRotationMatrix &R);
 
-  virtual ~vpPoseVector() { }
-
   vpPoseVector &buildFrom(const double &tx, const double &ty, const double &tz, const double &tux, const double &tuy, const double &tuz);
   // convert an homogeneous matrix in a pose
   vpPoseVector &buildFrom(const vpHomogeneousMatrix &M);
