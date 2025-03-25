@@ -327,7 +327,7 @@ private:
      \deprecated Provided only for compat with previous releases.
      This function does nothing.
   */
-  VP_DEPRECATED void init() { };
+  VP_DEPRECATED void init() { }
   //@}
 #endif
 };
