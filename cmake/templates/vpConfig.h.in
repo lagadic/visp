@@ -739,4 +739,13 @@ namespace vp = VISP_NAMESPACE_NAME;
 #  endif
 #endif
 
+// Macro to be able to add noexcept keyword
+#ifndef VP_NOEXCEPT
+#  if (__cplusplus >= 201103L) || (defined(_MSC_VER) && _MSC_VER >= 1600)
+#    define VP_NOEXCEPT noexcept
+#  else
+#    define VP_NOEXCEPT
+#  endif
+#endif
+
 #endif

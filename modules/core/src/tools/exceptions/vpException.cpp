@@ -68,7 +68,7 @@ const std::string &vpException::getStringMessage() const { return this->message;
 
 int vpException::getCode() const { return this->code; }
 
-const char *vpException::what() const { return (this->message).c_str(); }
+const char *vpException::what() const VP_NOEXCEPT { return (this->message).c_str(); }
 
 VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpException &error)
 {

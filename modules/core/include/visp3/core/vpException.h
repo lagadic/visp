@@ -124,7 +124,7 @@ public:
    *
    * \return pointer on the array of  \e char related to the error string.
    */
-  const char *what() const VP_OVERRIDE;
+  const char *what() const VP_NOEXCEPT VP_OVERRIDE;
   //@}
 
   /*!
