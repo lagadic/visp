@@ -1047,7 +1047,7 @@ public:
    *
    * \sa std::ostream &operator<<(std::ostream &s, const vpArray2D<Type> &A)
    */
-  int print(std::ostream &s, unsigned int length, char const *intro = 0) const;
+  int print(std::ostream &s, unsigned int length, char const *intro = nullptr) const;
 
   /*!
    * Converts a column vector containing angles in radians into degrees and returns a reference
