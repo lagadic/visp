@@ -299,7 +299,7 @@ void vpMeEllipse::sample(const vpImage<unsigned char> &I, bool doNotTrack)
     m_expectedDensity = nb_pt;
   }
   else { // number of points for an arc of ellipse
-    m_expectedDensity *= static_cast<unsigned int>(floor((perim / m_me->getSampleStep()) * ((m_alpha2 - m_alpha1) / (2.0 * M_PI))));
+    m_expectedDensity = static_cast<unsigned int>(floor((perim / m_me->getSampleStep()) * ((m_alpha2 - m_alpha1) / (2.0 * M_PI))));
   }
 
   // Starting angle for sampling: new version to not start at 0
