@@ -3,11 +3,12 @@
 \page tutorial-detection-apriltag Tutorial: AprilTag marker detection
 \tableofcontents
 
-\section intro_apriltag Introduction
+\section intro_apriltag 1. Introduction
 
-This tutorial shows how to detect one or more AprilTag marker with ViSP. To this end, we provide vpDetectorAprilTag
-class that is a wrapper over <a href="https://april.eecs.umich.edu/software/apriltag.html">Apriltag</a> 3rd party
-library. Notice that there is no need to install this 3rd party, since AprilTag source code is embedded in ViSP.
+This tutorial shows how to detect one or more AprilTag or ArUco markers with ViSP. To this end, we provide
+vpDetectorAprilTag class that is a wrapper over
+<a href="https://april.eecs.umich.edu/software/apriltag.html">Apriltag</a> 3rd party library.
+Notice that there is no need to install this 3rd party, since AprilTag source code is embedded in ViSP.
 
 The vpDetectorAprilTag class inherits from vpDetectorBase class, a generic class dedicated to detection. For each
 detected tag, it allows retrieving some characteristics such as the tag id, and in the image, the polygon that contains
@@ -20,19 +21,25 @@ In the next sections you will find examples that show how to detect tags in a si
 camera connected to your computer.
 
 Note that all the material (source code and image) described in this tutorial is part of ViSP source code
-(in `tutorial/detection/tag` folder) and could be found in https://github.com/lagadic/visp/tree/master/tutorial/detection/tag.
+(in `tutorial/detection/tag` folder) and could be found in
+https://github.com/lagadic/visp/tree/master/tutorial/detection/tag.
 
-\section apriltag_detection_print Print an AprilTag marker
+\section apriltag_detection_print 2. Print an AprilTag marker
 
-We provide a ready to print `36h11` tag that is 9.5 by 9.5 cm square <a href="http://visp-doc.inria.fr/download/apriltag/tag36_11_00000-120x120.pdf">[download]</a>.
+To generate quickly an AprilTag or an ArUco marker you may use https://chev.me/arucogen/.
 
-If you prefer, you can also directly download on the <a href="https://april.eecs.umich.edu/software/apriltag.html">Apriltag</a> website some pre-generated tag families:
+We provide also a ready to print `36h11` tag that is 9.5 by 9.5 cm square
+<a href="http://visp-doc.inria.fr/download/apriltag/tag36_11_00000-120x120.pdf">[download]</a>.
+
+If you prefer, you can also directly download on the
+<a href="https://april.eecs.umich.edu/software/apriltag.html">Apriltag</a> website some pre-generated tag families:
 - <a href="https://april.eecs.umich.edu/media/apriltag/tag36h11.tgz">36h11 (recommended)</a>
 - <a href="https://april.eecs.umich.edu/media/apriltag/tag36h10.tgz">36h10</a>
 - <a href="https://april.eecs.umich.edu/media/apriltag/tag25h9.tgz">25h9</a>
 - <a href="https://april.eecs.umich.edu/media/apriltag/tag16h5.tgz">16h5</a>
 
-In each archive you will find a PNG image of each tag, a mosaic in PNG containing every tag and a ready-to-print postscript file with one tag per page.
+In each archive you will find a PNG image of each tag, a mosaic in PNG containing every tag and a ready-to-print
+postscript file with one tag per page.
 If you want to print an individual tag, you can manually scale the corresponding PNG image using two methods:
 - on Unix with ImageMagick, e.g.:
 \code
@@ -47,18 +54,26 @@ $ convert tag36_11_00000.png -scale 5000% tag36_11_00000_big.png
   - Save the image as a new PNG image, e.g., `/tmp/tag36_11_00000-rescaled.png`
   - Send the PNG file to your printer
 
-\section apriltag_detection_basic AprilTag detection and pose estimation (single image)
+\warning To be usable with ViSP, tags must be printed with a white border. The size of the tag then corresponds to
+the size of the black square containing the tag.
 
-The following example also available in tutorial-apriltag-detector.cpp detects a tag on a single image.
+\section apriltag_detection_basic 3. AprilTag detection and pose estimation (single image)
 
-\include tutorial-apriltag-detector.cpp
+\subsection apriltag_detection_basic_usage 3.1. Use case
 
-The default behavior is to detect <a href="https://april.eecs.umich.edu/software/apriltag.html">36h11</a> marker in \c AprilTag.pgm image, but \c --tag-family \<family\> option allows considering other tags. To see which are the options, just run:
-\code
+Once build, in `"${VISP_WS}/visp-build/tutorial/detection/tag/"` folder you will find `tutorial-apriltag-detector`
+binary corresponding to tutorial-apriltag-detector.cpp source code.
+
+This tutorial detects a given tag family on a single image.
+
+The default behavior is to detect <a href="https://april.eecs.umich.edu/software/apriltag.html">36h11</a> marker in
+`AprilTag.jpg` image, but `"--tag-family \<family\>"` option allows considering other tags and `"--input <filename>"`.
+To see which are the options, just run:
+\code{.sh}
 $ ./tutorial-apriltag-detector --help
 \endcode
 
-To detect multiple 36h11 tags in the \c AprilTag.pgm image that is provided just run:
+To detect multiple 36h11 tags in the `AprilTag.jpg` image that is provided just run:
 \code
 $ ./tutorial-apriltag-detector
 \endcode
@@ -69,7 +84,11 @@ You will get the following result:
 After a user click in the image, you will get the following image where the frames correspond to the 3D pose of each tag.
 \image html img-apriltag-pose.png
 
-Now we explain the main lines of the source.
+\subsection apriltag_detection_basic_code 3.2. Code explained
+
+Now we explain the main lines of the source code available in tutorial-apriltag-detector.cpp
+
+\include tutorial-apriltag-detector.cpp
 
 First we have to include the header corresponding to vpDetectorAprilTag class that allows detecting one or multiple tags.
 \snippet tutorial-apriltag-detector.cpp Include
@@ -98,11 +117,25 @@ For each tag, we can then get the location of the 4 points that define the polyg
 
 \snippet tutorial-apriltag-detector.cpp Get location
 
-And finally, we are also able to get the tag id by calling vpDetectorAprilTag::getMessage() and parsing the returned message.
-
+And finally, we are also able to get the tag family and id by calling vpDetectorAprilTag::getMessage() that will return
+a string with `"<tag_family> id: <tag_id>"` like `"36h11 id: 19"`
 \snippet tutorial-apriltag-detector.cpp Get message
+Parsing the message is then easy to retrive each tag id
+\code
+      std::size_t tag_id_pos = message.find("id: ");
+      if (tag_id_pos != std::string::npos) {
+        int tag_id = atoi(message.substr(tag_id_pos + 4).c_str());
+        ss.str("");
+        ss << "Tag id: " << tag_id;
+        vpDisplay::displayText(I, static_cast<int>(bbox.getTop() - 10), static_cast<int>(bbox.getLeft()), ss.str(), vpColor::red);
+      }
+\endcode
 
-\snippet tutorial-apriltag-detector.cpp Get tag id
+There is also a way to get tag ids directly with
+\snippet tutorial-apriltag-detector.cpp Get tag ids
+
+This id can then be displayed
+\snippet tutorial-apriltag-detector.cpp Display tag ids
 
 Next in the code we display the 3D pose of each tag as a RGB frame.
 
@@ -112,7 +145,7 @@ Next in the code we display the 3D pose of each tag as a RGB frame.
   - To get absolute pose (not relative to a scale factor), you have to provide the real size of the marker (length of a marker side).
   - To calibrate your camera, you can follow this tutorial: \ref tutorial-calibration-intrinsic
 
-\section apriltag_detection_live AprilTag detection and pose estimation (live camera)
+\section apriltag_detection_live 4. AprilTag detection and pose estimation (live camera)
 
 This other example also available in tutorial-apriltag-detector-live.cpp shows how to couple the AprilTag detector to an image grabber in order to detect tags on each new image acquired by a camera connected to your computer.
 
@@ -138,7 +171,7 @@ Then in the while loop, at each iteration we acquire a new image
 
 This new image is then given as input to the AprilTag detector.
 
-\section apriltag_detection_rgbd Improve pose estimation accuracy using a RGB-D camera
+\section apriltag_detection_rgbd 5. Improve pose estimation accuracy using a RGB-D camera
 
 When the tag is small in the image or when the tag corners location are extracted poorly, you may experience z-axis flipping if you analyse carefully the pose of the tag. The following images illustrate this behavior.
 
@@ -156,7 +189,7 @@ An example that shows how to use this function is given in tutorial-apriltag-det
 
 Another example using a Structure Core RGB-D sensor is given in tutorial-apriltag-detector-live-rgbd-structure-core.cpp.
 
-\section apriltag_detection_next Next tutorial
+\section apriltag_detection_next 6. Next tutorial
 
 You are now ready to see the \ref tutorial-detection-barcode, that illustrates how to detect QR codes in an image.
 

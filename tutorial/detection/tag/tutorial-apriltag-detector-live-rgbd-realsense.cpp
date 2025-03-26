@@ -49,8 +49,23 @@ void usage(const char **argv, int error)
     << "       8: TAG_CUSTOM48h12" << std::endl
     << "       9: TAG_STANDARD41h12" << std::endl
     << "      10: TAG_STANDARD52h13" << std::endl
+    << "      11: TAG_ARUCO_4x4_50" << std::endl
+    << "      12: TAG_ARUCO_4x4_100" << std::endl
+    << "      13: TAG_ARUCO_4x4_250" << std::endl
+    << "      14: TAG_ARUCO_4x4_1000" << std::endl
+    << "      15: TAG_ARUCO_5x5_50" << std::endl
+    << "      16: TAG_ARUCO_5x5_100" << std::endl
+    << "      17: TAG_ARUCO_5x5_250" << std::endl
+    << "      18: TAG_ARUCO_5x5_1000" << std::endl
+    << "      19: TAG_ARUCO_6x6_50" << std::endl
+    << "      20: TAG_ARUCO_6x6_100" << std::endl
+    << "      21: TAG_ARUCO_6x6_250" << std::endl
+    << "      22: TAG_ARUCO_6x6_1000" << std::endl
+    << "      23: TAG_ARUCO_MIP_36h12" << std::endl
     << "    Default: 0 (36h11)" << std::endl
     << std::endl
+    << "  --decision-margin <margin>" << std::endl
+    << "    High values will discard low-confident detections with ArUco 4x4, 5x5, 6x6 families. " << std::endl
     << "  --tag-quad-decimate <factor>" << std::endl
     << "    Decimation factor used to detect a tag. " << std::endl
     << "    Default: 1" << std::endl
@@ -124,6 +139,7 @@ int main(int argc, const char **argv)
   vpDetectorAprilTag::vpPoseEstimationMethod opt_pose_estimation_method = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
   double opt_tag_size = 0.053;
   float opt_quad_decimate = 1.0;
+  float opt_decision_margin = 50;
   int opt_nThreads = 1;
   bool opt_display_tag = false;
   int opt_color_id = -1;
@@ -138,7 +154,7 @@ int main(int argc, const char **argv)
   bool opt_display_off = false;
 #endif
 
-  for (int i = 1; i < argc; i++) {
+  for (int i = 1; i < argc; ++i) {
     if (std::string(argv[i]) == "--tag-size" && i + 1 < argc) {
       opt_tag_size = atof(argv[++i]);
     }
@@ -154,8 +170,11 @@ int main(int argc, const char **argv)
     else if (std::string(argv[i]) == "--tag-z-aligned") {
       opt_align_frame = true;
     }
-    if (std::string(argv[i]) == "--tag-pose-method" && i + 1 < argc) {
+    else if (std::string(argv[i]) == "--tag-pose-method" && i + 1 < argc) {
       opt_pose_estimation_method = (vpDetectorAprilTag::vpPoseEstimationMethod)atoi(argv[++i]);
+    }
+    else if (std::string(argv[i]) == "--decision-margin" && i + 1 < argc) {
+      opt_decision_margin = atof(argv[++i]);
     }
 #if defined(VISP_HAVE_DISPLAY)
     else if (std::string(argv[i]) == "--display-tag") {
@@ -253,8 +272,9 @@ int main(int argc, const char **argv)
     detector.setAprilTagNbThreads(opt_nThreads);
     detector.setDisplayTag(opt_display_tag, opt_color_id < 0 ? vpColor::none : vpColor::getColor(opt_color_id), opt_thickness);
     detector.setZAlignedWithCameraAxis(opt_align_frame);
+    detector.setArUcoDecisionMargin(opt_decision_margin); // only for ArUco 4x4, 5x5 and 6x6 families
     //! [AprilTag detector settings]
-    std::vector<double> time_vec;
+    std::vector<double> time_vec, time_vec_detection;
     for (;;) {
       double t = vpTime::measureTimeMs();
 
@@ -287,13 +307,18 @@ int main(int argc, const char **argv)
       vpDisplay::display(I_color2);
       vpDisplay::display(I_depth);
 
+      double t_detection = vpTime::measureTimeMs();
       std::vector<vpHomogeneousMatrix> cMo_vec;
       detector.detect(I, opt_tag_size, cam, cMo_vec);
+      t_detection = vpTime::measureTimeMs() - t_detection;
+      time_vec_detection.push_back(t_detection);
 
       // Display camera pose for each tag
-      for (size_t i = 0; i < cMo_vec.size(); i++) {
-        vpDisplay::displayFrame(I_color, cMo_vec[i], cam, opt_tag_size / 2, vpColor::none, 3);
-      }
+      std::vector<std::vector<vpImagePoint> > tagsCorners = detector.getTagsCorners();
+      detector.displayTags(I_color, tagsCorners, vpColor::none, opt_thickness);
+      detector.displayFrames(I_color, cMo_vec, cam, opt_tag_size / 2, vpColor::none, opt_thickness);
+      detector.displayTags(I_color2, tagsCorners, vpColor::none, opt_thickness);
+      detector.displayFrames(I_color2, cMo_vec, cam, opt_tag_size / 2, vpColor::none, opt_thickness);
 
       //! [Pose from depth map]
       std::vector<std::vector<vpImagePoint> > tags_corners = detector.getPolygon();
@@ -307,13 +332,13 @@ int main(int argc, const char **argv)
         if (vpPose::computePlanarObjectPoseFromRGBD(depthMap, tags_corners[i], cam, tags_points3d[i], cMo,
                                                     &confidence_index)) {
           if (confidence_index > 0.5) {
-            vpDisplay::displayFrame(I_color2, cMo, cam, opt_tag_size / 2, vpColor::none, 3);
+            vpDisplay::displayFrame(I_color2, cMo, cam, opt_tag_size / 2, vpColor::none, opt_thickness);
           }
           else if (confidence_index > 0.25) {
-            vpDisplay::displayFrame(I_color2, cMo, cam, opt_tag_size / 2, vpColor::orange, 3);
+            vpDisplay::displayFrame(I_color2, cMo, cam, opt_tag_size / 2, vpColor::orange, opt_thickness);
           }
           else {
-            vpDisplay::displayFrame(I_color2, cMo, cam, opt_tag_size / 2, vpColor::red, 3);
+            vpDisplay::displayFrame(I_color2, cMo, cam, opt_tag_size / 2, vpColor::red, opt_thickness);
           }
           std::stringstream ss;
           ss << "Tag id " << tags_id[i] << " confidence: " << confidence_index;
@@ -354,6 +379,11 @@ int main(int argc, const char **argv)
     std::cout << "Mean / Median / Std: " << vpMath::getMean(time_vec) << " ms"
       << " ; " << vpMath::getMedian(time_vec) << " ms"
       << " ; " << vpMath::getStdev(time_vec) << " ms" << std::endl;
+
+    std::cout << "Benchmark detection processing time" << std::endl;
+    std::cout << "Mean / Median / Std: " << vpMath::getMean(time_vec_detection) << " ms"
+      << " ; " << vpMath::getMedian(time_vec_detection) << " ms"
+      << " ; " << vpMath::getStdev(time_vec_detection) << " ms" << std::endl;
   }
   catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e.getMessage() << std::endl;
