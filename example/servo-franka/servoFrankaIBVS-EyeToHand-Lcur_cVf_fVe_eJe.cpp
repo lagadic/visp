@@ -34,7 +34,7 @@
  */
 
 /*!
-  \example servoFrankaIBVS-EyeToHand-L_cVe_eJe.cpp
+  \example servoFrankaIBVS-EyeToHand-Lcur_cVf_fVe_eJe.cpp
 
   Example of eye-to-hand image-based control law. We control here a real robot, the
   Franka Emika Panda robot (arm with 7 degrees of freedom).
@@ -48,20 +48,26 @@
 
   Camera extrinsic (eMo) transformation is set by default to a value that will not match
   Your configuration.
-  - Use `--eMo` command line option to read the robot end-effector to object (Apriltag) frames transformation from
-    a file,
-  This file could be obtained following extrinsic camera calibration tutorial:
-  https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-calibration-extrinsic-eye-to-hand.html
+  - Use `--rMc` command line option to read the robot reference to camera frames constant transformation from
+    a file. This file could be obtained following extrinsic camera calibration tutorial:
+    https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-calibration-extrinsic-eye-to-hand.html
 
-  Camera intrinsic parameters are retrieved from the Realsense SDK.
+  - Camera intrinsic parameters are retrieved from the Realsense SDK.
 
-  The target is an AprilTag that is by default 4.8cm large. To print your own tag, see
+  The target is an AprilTag that is by default 12 cm large. To print your own tag, see
   https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-detection-apriltag.html
   You can specify the size of your tag using --tag-size command line option.
 
+  In this example we are estimating the pose of the tag:
+  - to compute the interaction matrix with the current visual features L_s = f(x, y, Z)
+  - cVf is the constant velocity twist matrix between the camera and the robot reference frames. This matrix is
+    obtained by extrinsic calibration
+  - fVe is the velocity twist transformation matrix between the robot reference and end-effector frames. This matrix
+    is obtained thanks to the robot odometry.
 */
 
 #include <iostream>
+#include <fstream>
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpCameraParameters.h>
@@ -151,7 +157,7 @@ int main(int argc, char **argv)
   double opt_tag_size = 0.120;
   bool opt_tag_z_aligned = false;
   std::string opt_robot_ip = "192.168.1.1";
-  std::string opt_eMo_filename = "";
+  std::string opt_rMc_filename = "";
   std::string opt_intrinsic_filename = "";
   std::string opt_camera_name = "Camera";
   bool display_tag = true;
@@ -163,15 +169,10 @@ int main(int argc, char **argv)
   bool opt_learn_desired_features = false;
   std::string desired_features_filename = "learned_desired_features.txt";
   double convergence_threshold = 0.00005;
-  // std::string desired_pose_filename = "learned_pose.yaml";
-  // bool opt_learn_desired_pose = false;
 
   for (int i = 1; i < argc; ++i) {
     if ((std::string(argv[i]) == "--tag-size") && (i + 1 < argc)) {
       opt_tag_size = std::stod(argv[++i]);
-    }
-    else if ((std::string(argv[i]) == "--tag-quad-decimate") && (i + 1 < argc)) {
-      opt_quad_decimate = std::stoi(argv[++i]);
     }
     else if (std::string(argv[i]) == "--tag-z-aligned") {
       opt_tag_z_aligned = true;
@@ -185,8 +186,8 @@ int main(int argc, char **argv)
     else if (std::string(argv[i]) == "--camera-name" && i + 1 < argc) {
       opt_camera_name = std::string(argv[++i]);
     }
-    else if ((std::string(argv[i]) == "--eMo") && (i + 1 < argc)) {
-      opt_eMo_filename = std::string(argv[++i]);
+    else if ((std::string(argv[i]) == "--rMc") && (i + 1 < argc)) {
+      opt_rMc_filename = std::string(argv[++i]);
     }
     else if ((std::string(argv[i]) == "--verbose") || (std::string(argv[i]) == "-v")) {
       opt_verbose = true;
@@ -199,6 +200,9 @@ int main(int argc, char **argv)
     }
     else if (std::string(argv[i]) == "--task-sequencing") {
       opt_task_sequencing = true;
+    }
+    else if ((std::string(argv[i]) == "--tag-quad-decimate") && (i + 1 < argc)) {
+      opt_quad_decimate = std::stoi(argv[++i]);
     }
     else if (std::string(argv[i]) == "--no-convergence-threshold") {
       convergence_threshold = 0.;
@@ -215,8 +219,8 @@ int main(int argc, char **argv)
         << " [--tag-size <size>]"
         << " [--tag-quad-decimate <decimation factor>]"
         << " [--tag-z-aligned]"
-        << " [--learn-desired-pose]"
-        << " [--eMo <file.yaml>]"
+        << " [--learn-desired-features]"
+        << " [--rMc <file.yaml>]"
         << " [--adaptive-gain]"
         << " [--plot]"
         << " [--task-sequencing]"
@@ -251,9 +255,9 @@ int main(int argc, char **argv)
         << "    When enabled, tag z-axis and camera z-axis are aligned." << std::endl
         << "    Default: false" << std::endl
         << std::endl
-        << "  --eMo <file.yaml>" << std::endl
+        << "  --rMc <file.yaml>" << std::endl
         << "    Yaml file containing the extrinsic transformation between" << std::endl
-        << "    robot end-effector frame and object (Apriltag) frames." << std::endl
+        << "    robot reference frame and camera frames." << std::endl
         << std::endl
         << "  --adaptive-gain" << std::endl
         << "    Flag to enable adaptive gain to speed up visual servo near convergence." << std::endl
@@ -358,6 +362,13 @@ int main(int argc, char **argv)
   detector.setAprilTagQuadDecimate(opt_quad_decimate);
   detector.setZAlignedWithCameraAxis(opt_tag_z_aligned);
 
+  // Define 4 3D points corresponding to the CAD model of the Apriltag
+  std::vector<vpPoint> point(4);
+  point[0].setWorldCoordinates(-opt_tag_size / 2., -opt_tag_size / 2., 0);
+  point[1].setWorldCoordinates(+opt_tag_size / 2., -opt_tag_size / 2., 0);
+  point[2].setWorldCoordinates(+opt_tag_size / 2., +opt_tag_size / 2., 0);
+  point[3].setWorldCoordinates(-opt_tag_size / 2., +opt_tag_size / 2., 0);
+
   if (opt_learn_desired_features) {
 
     bool quit = false;
@@ -367,6 +378,7 @@ int main(int argc, char **argv)
       vpDisplay::display(I);
 
       std::vector<vpHomogeneousMatrix> c_M_o_vec;
+      // To learn the desired visual features (x*, y*, Z*) we will use the tag pose to estimate Z*
       bool ret = detector.detect(I, opt_tag_size, cam, c_M_o_vec);
 
       vpDisplay::displayText(I, 20, 20, "Move the robot to the desired tag pose...", vpColor::red);
@@ -391,24 +403,21 @@ int main(int argc, char **argv)
         case vpMouseButton::button1:
           if (ret) {
             if (detector.getNbObjects() == 1) {
-              tags_corners = detector.getTagsCorners();
               vpHomogeneousMatrix cd_M_o = c_M_o_vec[0];
               std::vector<vpFeaturePoint> p_d(4);
 
+              // Update x*, y* for each desired visual feature
               for (size_t i = 0; i < 4; ++i) {
                 double x = 0, y = 0;
                 vpPixelMeterConversion::convertPoint(cam, tags_corners[0][i], x, y);
+                std::stringstream ss;
+                ss << i;
+                vpDisplay::displayText(I, tags_corners[0][i]+vpImagePoint(10, 10), ss.str(), vpColor::red);
                 p_d[i].set_x(x);
                 p_d[i].set_y(y);
               }
 
-              // Define 4 3D points corresponding to the CAD model of the Apriltag
-              std::vector<vpPoint> point(4);
-              point[0].setWorldCoordinates(-opt_tag_size / 2., -opt_tag_size / 2., 0);
-              point[1].setWorldCoordinates(+opt_tag_size / 2., -opt_tag_size / 2., 0);
-              point[2].setWorldCoordinates(+opt_tag_size / 2., +opt_tag_size / 2., 0);
-              point[3].setWorldCoordinates(-opt_tag_size / 2., +opt_tag_size / 2., 0);
-
+              // Update Z* for each desired visual feature
               for (size_t i = 0; i < point.size(); ++i) {
                 vpColVector c_P, p;
                 point[i].changeFrame(cd_M_o, c_P);
@@ -460,52 +469,45 @@ int main(int argc, char **argv)
   }
 
   // Get camera extrinsics
-  vpPoseVector e_P_o;
+  vpPoseVector r_P_c;
 
   // Read camera extrinsics from --eMo <file>
-  if (!opt_eMo_filename.empty()) {
-    e_P_o.loadYAML(opt_eMo_filename, e_P_o);
+  if (!opt_rMc_filename.empty()) {
+    r_P_c.loadYAML(opt_rMc_filename, r_P_c);
   }
   else {
-    std::cout << "Warning, eMo transformation is not specified using --eMo parameter." << std::endl;
+    std::cout << "Warning, rMc transformation is not specified using --rMc parameter." << std::endl;
     return EXIT_FAILURE;
   }
-  vpHomogeneousMatrix e_M_o(e_P_o);
-  std::cout << "e_M_o:\n" << e_M_o << std::endl;
+  vpHomogeneousMatrix r_M_c(r_P_c);
+  std::cout << "r_M_c:\n" << r_M_c << std::endl;
 
   vpRobotFranka robot;
 
   try {
     robot.connect(opt_robot_ip);
 
-    // Servo
-    vpHomogeneousMatrix cd_M_c, c_M_o, o_M_o;
-
     // Create current visual features
     std::vector<vpFeaturePoint> p(4); // We use 4 points
-
-    // Define 4 3D points corresponding to the CAD model of the Apriltag
-    std::vector<vpPoint> point(4);
-    point[0].setWorldCoordinates(-opt_tag_size / 2., -opt_tag_size / 2., 0);
-    point[1].setWorldCoordinates(+opt_tag_size / 2., -opt_tag_size / 2., 0);
-    point[2].setWorldCoordinates(+opt_tag_size / 2., +opt_tag_size / 2., 0);
-    point[3].setWorldCoordinates(-opt_tag_size / 2., +opt_tag_size / 2., 0);
 
     vpServo task;
     // Add the 4 visual feature points
     for (size_t i = 0; i < p.size(); ++i) {
       task.addFeature(p[i], p_d[i]);
     }
-    task.setServo(vpServo::EYETOHAND_L_cVe_eJe);
+    task.setServo(vpServo::EYETOHAND_L_cVf_fVe_eJe);
     task.setInteractionMatrixType(vpServo::CURRENT);
 
     if (opt_adaptive_gain) {
-      vpAdaptiveGain lambda(1.5, 0.4, 30); // lambda(0)=4, lambda(oo)=0.4 and lambda'(0)=30
+      vpAdaptiveGain lambda(1, 0.4, 30); // lambda(0)=1, lambda(oo)=0.4 and lambda'(0)=30
       task.setLambda(lambda);
     }
     else {
-      task.setLambda(0.5);
+      task.setLambda(0.2);
     }
+
+    // Set the camera to robot reference frame velocity twist matrix constant transformation
+    task.set_cVf(r_M_c.inverse());
 
     vpPlot *plotter = nullptr;
     int iter_plot = 0;
@@ -553,6 +555,7 @@ int main(int argc, char **argv)
       vpDisplay::display(I);
 
       std::vector<vpHomogeneousMatrix> c_M_o_vec;
+      // To update the current visual feature (x,y,Z) parameters, we need the tag pose to estimate Z
       bool ret = detector.detect(I, opt_tag_size, cam, c_M_o_vec);
 
       {
@@ -564,10 +567,9 @@ int main(int argc, char **argv)
       vpColVector qdot(robot.getNDof());
 
       // Only one tag is detected
-      if (ret && (c_M_o_vec.size() == 1)) {
-        c_M_o = c_M_o_vec[0];
-
+      if (ret && detector.getNbObjects() == 1) {
         static bool first_time = true;
+        vpHomogeneousMatrix c_M_o = c_M_o_vec[0];
 
         // Get tag corners
         std::vector<vpImagePoint> corners = detector.getPolygon(0);
@@ -580,14 +582,14 @@ int main(int argc, char **argv)
           vpColVector c_P;
           point[i].changeFrame(c_M_o, c_P);
 
-          p[i].set_Z(c_P[2]);
+          p[i].set_Z(c_P[2]); // Update Z value of each visual feature thanks to the tag pose
         }
 
-        // Set the camera to end-effector velocity twist matrix transformation
-        vpHomogeneousMatrix c_M_e;
-        c_M_e = c_M_o * e_M_o.inverse();
-
-        task.set_cVe(c_M_e);
+        // Set the robot reference frame to end-effector frame velocity twist matrix transformation
+        vpPoseVector r_P_e;
+        robot.getPosition(vpRobot::END_EFFECTOR_FRAME, r_P_e);
+        vpHomogeneousMatrix r_M_e(r_P_e);
+        task.set_fVe(r_M_e);
 
         // Set the Jacobian (expressed in the end-effector frame)
         vpMatrix e_J_e;

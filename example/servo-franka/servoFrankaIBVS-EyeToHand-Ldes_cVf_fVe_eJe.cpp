@@ -34,7 +34,7 @@
  */
 
 /*!
-  \example servoFrankaIBVS-EyeToHand-L_cVf_fVe_eJe.cpp
+  \example servoFrankaIBVS-EyeToHand-Ldes_cVf_fVe_eJe.cpp
 
   Example of eye-to-hand image-based control law. We control here a real robot, the
   Franka Emika Panda robot (arm with 7 degrees of freedom).
@@ -48,17 +48,22 @@
 
   Camera extrinsic (eMo) transformation is set by default to a value that will not match
   Your configuration.
-  - Use `--eMo` command line option to read the robot end-effector to object (Apriltag) frames transformation from
-    a file,
-  This file could be obtained following extrinsic camera calibration tutorial:
-  https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-calibration-extrinsic-eye-to-hand.html
+  - Use `--rMc` command line option to read the robot reference to camera frames constant transformation from
+    a file. This file could be obtained following extrinsic camera calibration tutorial:
+    https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-calibration-extrinsic-eye-to-hand.html
 
-  Camera intrinsic parameters are retrieved from the Realsense SDK.
+  - Camera intrinsic parameters are retrieved from the Realsense SDK.
 
-  The target is an AprilTag that is by default 4.8cm large. To print your own tag, see
+  The target is an AprilTag that is by default 12 cm large. To print your own tag, see
   https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-detection-apriltag.html
   You can specify the size of your tag using --tag-size command line option.
 
+  In this example we show that it is possible to achieve the visual-servoing without pose estimation:
+  - the interaction matrix is the one computed with the desired features L_s* = f(x*, y*, Z*)
+  - cVf is the constant velocity twist matrix between the camera and the robot reference frames. This matrix is
+    obtained by extrinsic calibration
+  - fVe is the velocity twist transformation matrix between the robot reference and end-effector frames. This matrix
+    is obtained thanks to robot odometry.
 */
 
 #include <iostream>
@@ -366,6 +371,7 @@ int main(int argc, char **argv)
       vpDisplay::display(I);
 
       std::vector<vpHomogeneousMatrix> c_M_o_vec;
+      // To learn the desired visual features (x*, y*, Z*) we will use the tag pose to estimate Z*
       bool ret = detector.detect(I, opt_tag_size, cam, c_M_o_vec);
 
       vpDisplay::displayText(I, 20, 20, "Move the robot to the desired tag pose...", vpColor::red);
@@ -393,6 +399,7 @@ int main(int argc, char **argv)
               vpHomogeneousMatrix cd_M_o = c_M_o_vec[0];
               std::vector<vpFeaturePoint> p_d(4);
 
+              // Update x*, y* for each desired visual feature
               for (size_t i = 0; i < 4; ++i) {
                 double x = 0, y = 0;
                 vpPixelMeterConversion::convertPoint(cam, tags_corners[0][i], x, y);
@@ -410,6 +417,7 @@ int main(int argc, char **argv)
               point[2].setWorldCoordinates(+opt_tag_size / 2., +opt_tag_size / 2., 0);
               point[3].setWorldCoordinates(-opt_tag_size / 2., +opt_tag_size / 2., 0);
 
+              // Update Z* for each desired visual feature
               for (size_t i = 0; i < point.size(); ++i) {
                 vpColVector c_P, p;
                 point[i].changeFrame(cd_M_o, c_P);
@@ -479,9 +487,6 @@ int main(int argc, char **argv)
   try {
     robot.connect(opt_robot_ip);
 
-    // Servo
-    vpHomogeneousMatrix cd_M_c, c_M_o, o_M_o;
-
     // Create current visual features
     std::vector<vpFeaturePoint> p(4); // We use 4 points
 
@@ -494,11 +499,11 @@ int main(int argc, char **argv)
     task.setInteractionMatrixType(vpServo::DESIRED);
 
     if (opt_adaptive_gain) {
-      vpAdaptiveGain lambda(1.5, 0.4, 30); // lambda(0)=4, lambda(oo)=0.4 and lambda'(0)=30
+      vpAdaptiveGain lambda(1, 0.4, 30); // lambda(0)=1, lambda(oo)=0.4 and lambda'(0)=30
       task.setLambda(lambda);
     }
     else {
-      task.setLambda(0.5);
+      task.setLambda(0.2);
     }
 
     // Set the camera to robot reference frame velocity twist matrix constant transformation
@@ -549,7 +554,7 @@ int main(int argc, char **argv)
 
       vpDisplay::display(I);
 
-      bool ret = detector.detect(I);
+      bool ret = detector.detect(I); // There is no need to get the tag pose
 
       {
         std::stringstream ss;

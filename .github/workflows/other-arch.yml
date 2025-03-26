@@ -15,17 +15,14 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Deactivate the workflow until uraimo runners are fixed
-  if: false
   build-other-architectures:
     # The host should always be linux
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     name: Build on ${{ matrix.distro }} ${{ matrix.arch }} ${{ matrix.endianness }}
 
-    # Run steps on a matrix of 3 arch/distro combinations
+    # Run steps on a matrix of different arch/distro combinations
     strategy:
       fail-fast: false
-      compiler: [ {CC: /usr/bin/gcc-14, CXX: /usr/bin/g++-14}, {CC: /usr/bin/clang, CXX: /usr/bin/clang++} ]
       matrix:
         include:
           # - arch: armv6
@@ -35,14 +32,14 @@ jobs:
           #   distro: ubuntu20.04
           #   target: ARMV7
           - arch: aarch64
-            distro: ubuntu2204
+            distro: ubuntu:latest
             target: ARMV8
             endianness: (Little Endian)
           # - arch: ppc64le
           #   distro: ubuntu20.04
           #   target: POWER8
           - arch: s390x
-            distro: ubuntu2204
+            distro: ubuntu:latest
             target: Z13
             endianness: (Big Endian)
 
@@ -51,7 +48,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Run on arch
-      uses: uraimo/run-on-arch-action@v2
+      uses: uraimo/run-on-arch-action@v3
       # See issue https://github.com/uraimo/run-on-arch-action/issues/155 for the explanation on the weird use of the arch and distro
       # that resulted in error
       # ERROR: failed to solve: ${arch}/ubuntu:latest: failed to resolve source metadata for docker.io/${arch}/ubuntu:latest: no match for platform in manifest: not found
@@ -79,15 +76,14 @@ jobs:
           cmake .. -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TUTORIALS=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java=OFF -DBUILD_MODULE_visp_java_binding=OFF
           cat ViSP-third-party.txt
 
-          # if [[ $(nproc) -gt 2 ]]
-          # then
-          # NB_PROC_TO_USE=`expr  $(nproc) - 2`
-          # else
-          # NB_PROC_TO_USE=1
-          # fi
-          # echo "NB_PROC_TO_USE = ${NB_PROC_TO_USE}"
-          # make -j${NB_PROC_TO_USE}
-          make -j1
+          if [[ $(nproc) -gt 2 ]]
+          then
+            NB_PROC_TO_USE=`expr  $(nproc) - 1`
+          else
+            NB_PROC_TO_USE=1
+          fi
+          echo "NB_PROC_TO_USE = ${NB_PROC_TO_USE}"
+          make -j${NB_PROC_TO_USE}
 
-          # ctest -j${NB_PROC_TO_USE} --output-on-failure
-          ctest -j1 --output-on-failure
+          # increase default 1500 timeout on QEMU based CI tests
+          ctest -j${NB_PROC_TO_USE} --output-on-failure --timeout 2000

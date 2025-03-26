@@ -488,7 +488,7 @@ unsigned int vpMeEllipse::leastSquareRobust(const vpImage<unsigned char> &I)
     m_expectedDensity = nb_pt;
   }
   else { // number of points for an arc of ellipse
-    m_expectedDensity *= static_cast<unsigned int>(floor((perim / m_me->getSampleStep()) * ((m_alpha2 - m_alpha1) / (2.0 * M_PI))));
+    m_expectedDensity = static_cast<unsigned int>(floor((perim / m_me->getSampleStep()) * ((m_alpha2 - m_alpha1) / (2.0 * M_PI))));
   }
 
   // Keep only the points  in the interval [alpha1 ; alpha2]

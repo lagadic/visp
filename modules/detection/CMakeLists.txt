@@ -51,7 +51,7 @@ endif()
 
 if(WITH_APRILTAG)
   # April Tag is private
-  include_directories(${APRILTAG_INCLUDE_DIRS})
+  include_directories(SYSTEM ${APRILTAG_INCLUDE_DIRS})
   set(opt_libs_private ${APRILTAG_LIBRARIES})
 endif()
 
