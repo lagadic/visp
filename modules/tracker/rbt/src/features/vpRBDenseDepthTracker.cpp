@@ -86,8 +86,8 @@ void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame
 #ifdef VISP_HAVE_OPENMP
 #pragma omp for nowait
 #endif
-    for (unsigned int i = static_cast<unsigned int>(bb.getTop()); i < static_cast<unsigned int>(bb.getBottom()); i += m_step) {
-      for (unsigned int j = static_cast<unsigned int>(bb.getLeft()); j < static_cast<unsigned int>(bb.getRight()); j += m_step) {
+    for (auto i = static_cast<int>(bb.getTop()); i < static_cast<int>(bb.getBottom()); i += m_step) {
+      for (auto j = static_cast<int>(bb.getLeft()); j < static_cast<int>(bb.getRight()); j += m_step) {
         const double Z = renderDepth[i][j];
         const double currZ = depthMap[i][j];
         if (Z > 0.f && currZ > 0.f) {
@@ -173,7 +173,7 @@ void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &/*fram
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-  for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
+  for (int i = 0; i < static_cast<int>(m_depthPoints.size()); ++i) {
     vpDepthPoint &depthPoint = m_depthPoints[i];
     depthPoint.update(cMo, cRo);
     depthPoint.error(m_error, i);
