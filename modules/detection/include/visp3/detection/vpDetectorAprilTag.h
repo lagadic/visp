@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -284,9 +284,6 @@ public:
   virtual ~vpDetectorAprilTag() VP_OVERRIDE;
   bool detect(const vpImage<unsigned char> &I) VP_OVERRIDE;
 
-  bool getTagImage(vpImage<unsigned char> &I, int id);
-
-
   bool detect(const vpImage<unsigned char> &I, double tagSize, const vpCameraParameters &cam,
               std::vector<vpHomogeneousMatrix> &cMo_vec, std::vector<vpHomogeneousMatrix> *cMo_vec2 = nullptr,
               std::vector<double> *projErrors = nullptr, std::vector<double> *projErrors2 = nullptr);
@@ -310,6 +307,7 @@ public:
    */
   inline vpPoseEstimationMethod getPoseEstimationMethod() const { return m_poseEstimationMethod; }
 
+  bool getTagImage(vpImage<unsigned char> &I, int id);
   std::vector<std::vector<vpImagePoint> > getTagsCorners() const;
   std::vector<int> getTagsId() const;
   std::vector<std::vector<vpPoint> > getTagsPoints3D(const std::vector<int> &tagsId,
