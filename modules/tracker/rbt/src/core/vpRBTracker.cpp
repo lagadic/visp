@@ -267,13 +267,12 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
       shouldRerender = adds > rerenderThreshold;
       result.setOdometryMetricAndThreshold(adds, rerenderThreshold);
     }
-    result.setOdometryMotion(cnTc);
+    result.setOdometryMotion(cMo_beforeOdo, cnTc, m_cMo);
     if (shouldRerender) {
       updateRender(input);
       if (requiresSilhouetteCandidates) {
-        const vpHomogeneousMatrix cTcp = m_cMo * m_cMoPrev.inverse();
         input.silhouettePoints = extractSilhouettePoints(input.renders.normals, input.renders.depth,
-                                                        input.renders.silhouetteCanny, input.renders.isSilhouette, input.cam, cTcp);
+                                                        input.renders.silhouetteCanny, input.renders.isSilhouette, input.cam, cnTc);
         if (input.silhouettePoints.size() == 0) {
           result.setStoppingReason(vpRBTrackingStoppingReason::OBJECT_NOT_IN_IMAGE);
           return result;
@@ -335,6 +334,7 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
   double mu = m_muInit;
   vpColVector firstMotion(6, 0.0);
   unsigned int iter = 0;
+  result.beforeIter(m_cMo);
   for (iter = 0; iter < m_vvsIterations; ++iter) {
     id = 0;
     for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
@@ -425,6 +425,8 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
       break;
     }
   }
+
+
 
   if (iter == m_vvsIterations) {
     result.setStoppingReason(vpRBTrackingStoppingReason::MAX_ITERS);

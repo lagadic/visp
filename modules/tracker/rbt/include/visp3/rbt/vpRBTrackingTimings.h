@@ -208,7 +208,7 @@ inline void from_json(const nlohmann::json &j, vpRBTrackingTimings &result)
 inline void to_json(nlohmann::json &j, const vpRBTrackingTimings &result)
 {
   j["render"] = result.m_renderTime;
-  j["silhouette"] = result.m_silhouetteExtractionTime;
+  j["silhouetteExtraction"] = result.m_silhouetteExtractionTime;
   j["mask"] = result.m_maskTime;
   j["drift"] = result.m_driftTime;
   j["odometry"] = result.m_odometryTime;

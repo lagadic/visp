@@ -59,11 +59,23 @@ public:
   void onIter(vpRBFeatureTracker &tracker)
   {
     m_numFeatures.push_back(tracker.getNumFeatures());
-    m_overallWeight.push_back(tracker.getVVSTrackerWeight());
+    double w = tracker.getVVSTrackerWeight();
+    if (!vpMath::isFinite(w)) {
+      w = 0.0;
+    }
+    m_overallWeight.push_back(w);
     m_error.push_back(tracker.getWeightedError());
     m_JTJ.push_back(tracker.getLTL());
     m_JTR.push_back(tracker.getLTR());
   }
+
+  std::vector<unsigned int> getNumFeatures() const { return m_numFeatures; }
+  std::vector<double> getWeight() const { return m_overallWeight; }
+
+  std::vector<vpColVector> getErrors() const { return m_error; }
+  std::vector<vpMatrix> getJTJs() const { return m_JTJ; }
+  std::vector<vpColVector> getJTRs() const { return m_JTR; }
+
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
   inline friend void from_json(const nlohmann::json &j, vpRBFeatureResult &result);
@@ -103,6 +115,12 @@ public:
 
   unsigned int numIterations() const { return m_cMos.size(); }
   const std::vector<vpHomogeneousMatrix> &getPoses() const { return m_cMos; }
+  vpHomogeneousMatrix getPoseBeforeTracking() const { return m_cMoBeforeTracking; }
+
+  const std::vector<vpColVector> &getVelocities() const { return m_velocities; }
+  const std::vector<double> &getConvergenceMetricValues() const { return m_convergenceMetric; }
+
+
 
 
   vpRBTrackingTimings &timer() { return m_timings; }
@@ -110,9 +128,16 @@ public:
   vpRBTrackingStoppingReason getStoppingReason() const { return m_stopReason; }
   void setStoppingReason(vpRBTrackingStoppingReason reason) { m_stopReason = reason; }
 
-  void setOdometryMotion(const vpHomogeneousMatrix &cMw)
+  vpHomogeneousMatrix getOdometryMotion() { return m_odometryMotion; }
+
+  vpHomogeneousMatrix getPoseBeforeOdometry() { return m_cMoBeforeOdometry; }
+  vpHomogeneousMatrix getPoseAfterOdometry() { return m_cMoAfterOdometry; }
+
+  void setOdometryMotion(const vpHomogeneousMatrix &cMo_before, const vpHomogeneousMatrix &cMcp, const vpHomogeneousMatrix &cMo_after)
   {
-    m_odometryMotion = cMw;
+    m_odometryMotion = cMcp;
+    m_cMoBeforeOdometry = cMo_before;
+    m_cMoAfterOdometry = cMo_after;
   }
 
   void setOdometryMetricAndThreshold(const double metricValue, const double metricThreshold)
@@ -120,6 +145,14 @@ public:
     m_odometryMetric = metricValue;
     m_odometryThreshold = metricThreshold;
   }
+
+  void beforeIter(const vpHomogeneousMatrix &cMo)
+  {
+    m_cMoBeforeTracking = cMo;
+  }
+
+  std::vector<vpRBFeatureResult> getFeatureData() const { return m_featureData; }
+
 
   void onEndIter(const vpHomogeneousMatrix &cMo, const vpColVector &v, const double convergenceMetric, const vpMatrix &JTJ, const vpColVector &JTR, double mu)
   {
@@ -157,6 +190,8 @@ private:
   vpRBTrackingStoppingReason m_stopReason;
   vpRBTrackingTimings m_timings;
   std::vector<vpHomogeneousMatrix> m_cMos;
+  vpHomogeneousMatrix m_cMoBeforeTracking;
+
   std::vector<vpColVector> m_velocities;
   std::vector<double> m_convergenceMetric;
   std::vector<double> m_mus;
@@ -164,6 +199,8 @@ private:
   std::vector<vpColVector> m_JTR;
 
   vpHomogeneousMatrix m_odometryMotion;
+  vpHomogeneousMatrix m_cMoBeforeOdometry, m_cMoAfterOdometry;
+
   double m_odometryMetric, m_odometryThreshold;
   std::vector<vpRBFeatureResult> m_featureData;
 };
@@ -202,6 +239,8 @@ inline void from_json(const nlohmann::json &j, vpRBTrackingResult &result)
   result.m_stopReason = j.at("stopReason");
   result.m_timings = j.at("timings");
   result.m_cMos = j.at("cMos");
+  result.m_cMoBeforeTracking = j.at("cMoBeforeTracking");
+
   result.m_velocities = j.at("velocities");
   result.m_mus = j.at("mus").get<std::vector<double>>();
   result.m_JTJ = j.at("JTJ");
@@ -209,8 +248,13 @@ inline void from_json(const nlohmann::json &j, vpRBTrackingResult &result)
 
   result.m_convergenceMetric = j.at("convergenceMetric").get<std::vector<double>>();
   result.m_odometryMotion = j.at("odometryDisplacement");
+  result.m_cMoBeforeOdometry = j.at("cMoBeforeOdometry");
+  result.m_cMoAfterOdometry = j.at("cMoAfterOdometry");
+
+
   result.m_odometryMetric = j.at("odometryMetric");
   result.m_odometryThreshold = j.at("odometryThreshold");
+
   result.m_featureData = j.at("features");
 }
 inline void to_json(nlohmann::json &j, const vpRBTrackingResult &result)
@@ -218,6 +262,7 @@ inline void to_json(nlohmann::json &j, const vpRBTrackingResult &result)
   j["stopReason"] = result.m_stopReason;
   j["timings"] = result.m_timings;
   j["cMos"] = result.m_cMos;
+  j["cMoBeforeTracking"] = result.m_cMoBeforeTracking;
   j["velocities"] = result.m_velocities;
   j["mus"] = result.m_mus;
   j["JTJ"] = result.m_JTJ;
@@ -225,6 +270,8 @@ inline void to_json(nlohmann::json &j, const vpRBTrackingResult &result)
 
   j["convergenceMetric"] = result.m_convergenceMetric;
   j["odometryDisplacement"] = result.m_odometryMotion;
+  j["cMoBeforeOdometry"] = result.m_cMoBeforeOdometry;
+  j["cMoAfterOdometry"] = result.m_cMoAfterOdometry;
   j["odometryMetric"] = result.m_odometryMetric;
   j["odometryThreshold"] = result.m_odometryThreshold;
 
