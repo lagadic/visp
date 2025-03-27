@@ -126,25 +126,21 @@ void vpPointMap::getVisiblePoints(const unsigned int h, const unsigned int w, co
 void vpPointMap::getVisiblePoints(const unsigned int h, const unsigned int w, const vpCameraParameters &cam, const vpHomogeneousMatrix &cTw, const vpImage<float> &depth, std::list<int> &indices)
 {
   indices.clear();
-  vpColVector cX(3);
-  vpColVector oX(3);
   const vpRotationMatrix cRw = cTw.getRotationMatrix();
   const vpTranslationVector t = cTw.getTranslationVector();
+  const vpMatrix Xt = m_X.transpose();
+  vpMatrix cXt(Xt.getRows(), Xt.getCols());
+  vpMatrix::mult2Matrices(cRw, Xt, cXt);
 
   double u, v;
   for (unsigned int i = 0; i < m_X.getRows(); ++i) {
-    oX[0] = m_X[i][0];
-    oX[1] = m_X[i][1];
-    oX[2] = m_X[i][2];
+    const double Z = cXt[2][i] + t[2];
 
-    cX = cRw * oX;
-    cX += t;
-    const double Z = cX[2];
     if (Z <= 0.0) {
       continue;
     }
-
-    const double x = cX[0] / Z, y = cX[1] / Z;
+    const double X = cXt[0][i] + t[0], Y = cXt[1][i] + t[1];
+    const double x = X / Z, y = Y / Z;
     vpMeterPixelConversion::convertPointWithoutDistortion(cam, x, y, u, v);
     if (u < 0 || v < 0 || u >= w || v >= h) {
       continue;
