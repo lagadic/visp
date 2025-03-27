@@ -37,24 +37,20 @@
 #endif
 BEGIN_VISP_NAMESPACE
 
-void fastRotationMatmul(const vpRotationMatrix &cRo, const vpRGBf &v, vpColVector &res)
-{
-  res.resize(3, false);
-  const double r = static_cast<double>(v.R), g = static_cast<double>(v.G), b = static_cast<double>(v.B);
-  const double *R = cRo.data;
-  res[0] = R[0] * r + R[1] * g + R[2] * b;
-  res[1] = R[3] * r + R[4] * g + R[5] * b;
-  res[2] = R[6] * r + R[7] * g + R[8] * b;
-}
 
-void fastProjection(const vpHomogeneousMatrix &oTc, double X, double Y, double Z, vpPoint &p)
+void fastProjection(const vpHomogeneousMatrix &oTc, double X, double Y, double Z, std::array<double, 3> &p)
 {
   const double *T = oTc.data;
-  p.set_oX(T[0] * X + T[1] * Y + T[2] * Z + T[3]);
-  p.set_oY(T[4] * X + T[5] * Y + T[6] * Z + T[7]);
-  p.set_oZ(T[8] * X + T[9] * Y + T[10] * Z + T[11]);
-  p.set_oW(1.0);
+  p[0] = (T[0] * X + T[1] * Y + T[2] * Z + T[3]);
+  p[1] = (T[4] * X + T[5] * Y + T[6] * Z + T[7]);
+  p[2] = (T[8] * X + T[9] * Y + T[10] * Z + T[11]);
 }
+
+double dotProd3(const vpColVector &a, const std::array<double, 3> &b)
+{
+  return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+}
+
 
 void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &/*previousFrame*/, const vpHomogeneousMatrix &/*cMo*/)
 {
@@ -112,22 +108,23 @@ void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame
             continue;
           }
 
-          fastProjection(oMc, x * Z, y * Z, Z, point.oP);
+          fastProjection(oMc, x * Z, y * Z, Z, point.oX);
 
-          cameraRay = { co[0] - point.oP.get_oX(), co[1] - point.oP.get_oY(), co[2] - point.oP.get_oZ() };
+          cameraRay = { co[0] - point.oX[0], co[1] - point.oX[1], co[2] - point.oX[2] };
           cameraRay.normalize();
 
-          if (acos(cameraRay * point.objectNormal) > vpMath::rad(85.0)) {
+          if (acos(dotProd3(cameraRay, point.objectNormal)) > vpMath::rad(85.0)) {
             continue;
           }
 
           // vpColVector cp({ x * Z, y * Z, Z, 1 });
           // vpColVector oP = oMc * cp;
           // point.oP = vpPoint(oP);
-          point.pixelPos.set_ij(i, j);
-          point.currentPoint[0] = x * currZ;
-          point.currentPoint[1] = y * currZ;
-          point.currentPoint[2] = currZ;
+          point.pixelPos[0] = i;
+          point.pixelPos[1] = j;
+          point.observation[0] = x * currZ;
+          point.observation[1] = y * currZ;
+          point.observation[2] = currZ;
 
           localPoints.push_back(point);
         }
@@ -142,6 +139,7 @@ void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame
     }
 #endif
   }
+  m_depthPointSet.build(m_depthPoints);
 
   if (m_depthPoints.size() > 0) {
     m_error.resize(m_depthPoints.size(), false);
@@ -169,16 +167,8 @@ void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &/*fram
     m_covWeightDiag = 0.0;
     return;
   }
-  vpRotationMatrix cRo = cMo.getRotationMatrix();
-#ifdef VISP_HAVE_OPENMP
-#pragma omp parallel for
-#endif
-  for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
-    vpDepthPoint &depthPoint = m_depthPoints[i];
-    depthPoint.update(cMo, cRo);
-    depthPoint.error(m_error, i);
-    depthPoint.interaction(m_L, i);
-  }
+  m_depthPointSet.update(cMo);
+  m_depthPointSet.errorAndInteraction(m_error, m_L);
 
   //m_weights = 0.0;
   m_robust.setMinMedianAbsoluteDeviation(1e-3);
@@ -204,7 +194,7 @@ void vpRBDenseDepthTracker::display(const vpCameraParameters &/*cam*/, const vpI
   {
     for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
       vpColor c(0, 255, 0);
-      vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos, c, 2);
+      vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos[0], m_depthPoints[i].pixelPos[1], c, 2);
     }
     break;
   }
@@ -212,7 +202,7 @@ void vpRBDenseDepthTracker::display(const vpCameraParameters &/*cam*/, const vpI
   {
     for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
       vpColor c(0, static_cast<unsigned char>(m_weights[i] * 255), 0);
-      vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos, c, 2);
+      vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos[0], m_depthPoints[i].pixelPos[1], c, 2);
     }
     break;
   }
@@ -220,7 +210,7 @@ void vpRBDenseDepthTracker::display(const vpCameraParameters &/*cam*/, const vpI
   {
     for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
       vpColor c(m_error[i], 0, 0);
-      vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos, c, 2);
+      vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos[0], m_depthPoints[i].pixelPos[1], c, 2);
     }
     break;
   }
@@ -229,7 +219,7 @@ void vpRBDenseDepthTracker::display(const vpCameraParameters &/*cam*/, const vpI
     double maxError = m_error.getMaxValue();
     for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
       vpColor c(static_cast<unsigned int>((m_error[i] / maxError) * 255.0), static_cast<unsigned char>(m_weights[i] * 255), 0);
-      vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos, c, 2);
+      vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos[0], m_depthPoints[i].pixelPos[1], c, 2);
     }
     break;
   }
