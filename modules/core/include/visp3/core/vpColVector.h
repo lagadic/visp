@@ -629,7 +629,7 @@ public:
    * x_i = \frac{x_i}{\sqrt{\sum_{i=0}^{n-1} x^2_i}}
    * \f]
    *
-   * \param[inout] x : As input, the vector to normalize, as output the normalized vector.
+   * \param[in,out] x : As input, the vector to normalize, as output the normalized vector.
    * \return A reference to the normalized vector.
    */
   vpColVector &normalize(vpColVector &x) const;
@@ -1047,7 +1047,7 @@ public:
    *
    * \sa std::ostream &operator<<(std::ostream &s, const vpArray2D<Type> &A)
    */
-  int print(std::ostream &s, unsigned int length, char const *intro = 0) const;
+  int print(std::ostream &s, unsigned int length, char const *intro = nullptr) const;
 
   /*!
    * Converts a column vector containing angles in radians into degrees and returns a reference

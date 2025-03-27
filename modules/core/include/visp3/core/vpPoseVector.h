@@ -213,8 +213,6 @@ public:
   // constructor  convert a translation and a rotation matrix into a pose
   vpPoseVector(const vpTranslationVector &tv, const vpRotationMatrix &R);
 
-  virtual ~vpPoseVector() { }
-
   vpPoseVector &buildFrom(const double &tx, const double &ty, const double &tz, const double &tux, const double &tuy, const double &tuz);
   // convert an homogeneous matrix in a pose
   vpPoseVector &buildFrom(const vpHomogeneousMatrix &M);
@@ -289,7 +287,7 @@ public:
     6-by-1 column vector.
     \exception vpException::fatalError When this function is called.
   */
-  void resize(unsigned int nrows, unsigned int ncols, bool flagNullify = true)
+  VP_NORETURN void resize(unsigned int nrows, unsigned int ncols, bool flagNullify = true)
   {
     (void)nrows;
     (void)ncols;
@@ -327,7 +325,7 @@ private:
      \deprecated Provided only for compat with previous releases.
      This function does nothing.
   */
-  VP_DEPRECATED void init() { };
+  VP_DEPRECATED void init() { }
   //@}
 #endif
 };

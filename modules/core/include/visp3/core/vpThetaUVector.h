@@ -172,7 +172,6 @@ class VISP_EXPORT vpThetaUVector : public vpRotationVector
 {
 public:
   vpThetaUVector();
-  vpThetaUVector(const vpThetaUVector &tu);
 
   // constructor initialize a Theta U vector from a homogeneous matrix
   VP_EXPLICIT vpThetaUVector(const vpHomogeneousMatrix &M);

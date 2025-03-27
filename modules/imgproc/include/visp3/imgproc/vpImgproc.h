@@ -354,7 +354,7 @@ VISP_EXPORT void equalizeHistogram(const VISP_NAMESPACE_ADDRESSING vpImage<VISP_
  *
  * Perform a gamma correction on a grayscale image.
  *
- * \param[inout] I : The grayscale image to apply gamma correction.
+ * \param[in,out] I : The grayscale image to apply gamma correction.
  * \param[in] gamma : Gamma value. If equals to -1, use automatic Gamma correction based on a non-linear
  * technique. If equals to -2, use automatic Gamma correction based on a logarithmic technique.
  * If equals to -3, uses automatic Gamma correction based on classification. If equals to -4, uses automatic Gamma
@@ -391,7 +391,7 @@ VISP_EXPORT void gammaCorrection(const VISP_NAMESPACE_ADDRESSING vpImage<unsigne
  *
  * Perform a gamma correction on a color image.
  *
- * \param[inout] I : The color image to apply gamma correction.
+ * \param[in,out] I : The color image to apply gamma correction.
  * \param[in] gamma : Gamma value.
  * \param[in] colorHandling : How to handle the colors of the image.
  * \param[in] method : The method to use: either \b GAMMA_MANUAL if the user wants to use a positive constant \b gamma factor,

@@ -184,7 +184,6 @@ class VISP_EXPORT vpRzyxVector : public vpRotationVector
 {
 public:
   vpRzyxVector();
-  vpRzyxVector(const vpRzyxVector &rzyx);
   vpRzyxVector(double phi, double theta, double psi);
 
   // initialize a Rzyx vector from a rotation matrix

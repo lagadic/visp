@@ -665,9 +665,6 @@ void vpCameraParameters::printParameters()
     std::cout << std::endl;
     break;
   }
-  default: {
-    std::cout << "projection model not identified" << std::endl;
-  }
   }
   // Restore ostream format
   std::cout.flags(original_flags);
@@ -711,9 +708,6 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpCameraParameters 
     }
     os << std::endl;
     break;
-  }
-  default: {
-    std::cout << "Unidentified camera parameters model" << std::endl;
   }
   }
   return os;

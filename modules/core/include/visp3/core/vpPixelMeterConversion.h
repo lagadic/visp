@@ -110,8 +110,6 @@ public:
     case vpCameraParameters::ProjWithKannalaBrandtDistortion:
       convertPointWithKannalaBrandtDistortion(cam, u, v, x, y);
       break;
-    default:
-      std::cerr << "projection model not identified" << std::endl;
     }
   }
 
@@ -154,8 +152,6 @@ public:
     case vpCameraParameters::ProjWithKannalaBrandtDistortion:
       convertPointWithKannalaBrandtDistortion(cam, iP, x, y);
       break;
-    default:
-      std::cerr << "projection model not identified" << std::endl;
     }
   }
 

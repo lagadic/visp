@@ -60,7 +60,7 @@ BEGIN_VISP_NAMESPACE
  * When the depth mask is set to nullptr, we reconstruct all 3D points from the complete depth raw image and
  * retain only those whose Z value lies between ]Z_min, Z_max[ range.
  * You must also ensure that the size of the depth mask and the size of the depth raw image are the same.
- * \param[inout] pointcloud_mutex : Optional mutex to protect from concurrent access to `pointcloud`. When set to
+ * \param[in,out] pointcloud_mutex : Optional mutex to protect from concurrent access to `pointcloud`. When set to
  * nullptr, you should ensure that there is no thread that wants to access to `pointcloud`, like for example
  * the one used in vpDisplayPCL.
  * \param[in] depth_mask : Optional depth_mask. When set to nullptr, all the pixels in `depth_raw` are considered. Otherwise,
@@ -171,7 +171,7 @@ BEGIN_VISP_NAMESPACE
  * that have their corresponding 2D projection in the depth mask and have a Z value within ]Z_min, Z_max[ range.
  * When the depth mask is set to nullptr, we reconstruct all 3D points from the complete depth raw image and
  * retain only those whose Z value lies between ]Z_min, Z_max[ range.
- * \param[inout] pointcloud_mutex : Optional mutex to protect from concurrent access to `pointcloud`. When set to
+ * \param[in,out] pointcloud_mutex : Optional mutex to protect from concurrent access to `pointcloud`. When set to
  * nullptr, you should ensure that there is no thread that wants to access to `pointcloud`, like for example
  * the one used in vpDisplayPCL.
  * \param[in] depth_mask : Optional depth_mask. When set to nullptr, all the pixels in `depth_raw` are considered. Otherwise,
