@@ -202,6 +202,7 @@ public:
     {
       const unsigned int numPoints = m_oXt.getCols();
       e.resize(numPoints, false);
+      L.resize(numPoints, 6, false, false);
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
