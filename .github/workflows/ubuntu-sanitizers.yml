@@ -1,13 +1,14 @@
 name: Ubuntu-sanitizers
 
 on:
-  pull_request:
-    types: [opened, reopened, synchronize]
-  schedule:
-    # https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows#scheduled-events
-    # * is a special character in YAML so you have to quote this string
-    # every Sunday at 2 am
-    - cron:  '0 2 * * SUN'
+  # pull_request:
+  #   types: [opened, reopened, synchronize]
+  # schedule:
+  #   # https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows#scheduled-events
+  #   # * is a special character in YAML so you have to quote this string
+  #   # every Sunday at 2 am
+  #   - cron:  '0 2 * * SUN'
+  workflow_dispatch:
 
 # https://stackoverflow.com/questions/66335225/how-to-cancel-previous-runs-in-the-pr-when-you-push-new-commitsupdate-the-curre#comment133398800_72408109
 # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#concurrency
