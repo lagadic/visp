@@ -60,8 +60,10 @@ dependencies = { python = ">=3.8", pybind11 = "*", pip = "*" }
 build = { cmd = "cmake --build $VISP_BUILD_DIR --parallel $CPU_COUNT --target visp_python_bindings", depends-on = ["install"] }
 python-test = { cmd = "cmake --build $VISP_BUILD_DIR --config Release --target visp_python_bindings_test", depends-on = ["build"] }
 
-[feature.rbt]
+[feature.rbt.target.unix]
 dependencies = { nlohmann_json = "*", panda3d = { version = ">=1.10.15", channel = "panda3d-forge" } }
+[feature.rbt.target.win]
+dependencies = { nlohmann_json = "*", panda3d = { version = ">=1.10.15", build = "*fix_clang_cl*", channel = "panda3d-forge" } }
 
 [feature.tests]
 activation = { env = { VISP_BUILD_TESTS = "ON" } }
