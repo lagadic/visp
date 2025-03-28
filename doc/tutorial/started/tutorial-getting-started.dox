@@ -178,7 +178,7 @@ C:\> cd %VISP_WS%
 C:\> mkdir started
 \endcode
 
-\subsection image_code 2.2. Get tutorial-viewer.cpp file
+\subsection tutorial_viewer_code 2.2. Get tutorial-viewer.cpp file
 
 Let's start to write our first C++ example to see how to read an image and open a window to display the image with ViSP.
 This example is provided in tutorial-viewer.cpp example and given below.

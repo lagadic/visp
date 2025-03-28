@@ -3,7 +3,6 @@
 #include <visp3/core/vpFont.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpTime.h>
-
 //! [Include display]
 #include <visp3/gui/vpDisplayFactory.h>
 //! [Include display]
@@ -85,7 +84,6 @@ int main(int argc, char **argv)
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
     delete pdisp;
 #endif
-
   }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
