@@ -35,6 +35,15 @@ jobs:
           cache: true
           environments: ${{ matrix.environment }}
 
+      - name: Show debugging includes
+        if: contains(matrix.os, 'windows-latest')
+        shell: cmd /C CALL {0}
+        run: |
+          pixi shell -e ${{ matrix.environment }}
+          cd $CONDA_PREFIX/include/panda3d
+          cat configFlags.h
+          cat configFlags.I
+
       - name: Build Visp [MacOS/Linux/Windows]
         shell: bash -el {0}
         env:
