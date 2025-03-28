@@ -288,8 +288,8 @@ int main(int argc, const char **argv)
 #ifdef VISP_HAVE_OPENCV
     else if (std::string(argv[i]) == "--use-texture") {
       opt_use_texture = true;
-#endif
     }
+#endif
     else if (std::string(argv[i]) == "--use-depth") {
       opt_use_depth = true;
     }
