@@ -639,12 +639,13 @@ void vpRBTracker::loadConfiguration(const nlohmann::json &j)
   m_verbose = verboseSettings.value("enabled", m_verbose);
 
   m_displaySilhouette = j.value("displaySilhouette", m_displaySilhouette);
-
-  const nlohmann::json cameraSettings = j.at("camera");
-  m_cam = cameraSettings.at("intrinsics");
-  m_imageHeight = cameraSettings.value("height", m_imageHeight);
-  m_imageWidth = cameraSettings.value("width", m_imageWidth);
-  setCameraParameters(m_cam, m_imageHeight, m_imageWidth);
+  if (j.contains("camera")) {
+    const nlohmann::json cameraSettings = j.at("camera");
+    m_cam = cameraSettings.at("intrinsics");
+    m_imageHeight = cameraSettings.value("height", m_imageHeight);
+    m_imageWidth = cameraSettings.value("width", m_imageWidth);
+    setCameraParameters(m_cam, m_imageHeight, m_imageWidth);
+  }
 
   if (j.contains("model")) {
     setModelPath(j.at("model"));
