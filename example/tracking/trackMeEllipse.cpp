@@ -97,20 +97,18 @@ SYNOPSIS\n\
      [-f <video first image>] [-l <video last image>] [-s <video step>]\n\
      [-r <moving-edge range] [-t <moving-edge threshold] [-S <moving-edge sample step>]\n\
      [-w <output images sequence name>] [-T <sleep ms>]\n\
-     [-c] [-d] [-a] [-A] [-b] [-y] [-v] [-h]\n",
-    name);
+     [-c] [-d] [-a] [-A] [-b] [-y] [-v] [-h]\n", name);
 
   fprintf(stdout, "\n\
-OPTIONS:                                               Default\n\
+OPTIONS:                                                  Default\n\
   -i <visp dataset directory>                                %s\n\
      Set visp dataset directory location.\n\
-     From this directory read images \n\
-     \"ellipse-1/image.%%04d.%s\"\n\
-     Setting the VISP_INPUT_IMAGE_PATH environment\n\
-     variable produces the same behaviour than using\n\
-     this option.\n\
+     From this directory read images \"ellipse-1/image.%%04d.%s\"\n\
+     images.\n\
+     Setting the VISP_INPUT_IMAGE_PATH environment variable\n\
+     produces the same behaviour than using this option.\n\
   \n\
-  -p <personal image path>                             %s\n\
+  -p <personal image path>                                   %s\n\
      Specify a personal sequence containing images \n\
      to process.\n\
      The format is selected by analyzing \n\
@@ -124,8 +122,8 @@ OPTIONS:                                               Default\n\
   \n\
   -l <video last image>                                      %d\n\
      Last image number to process. \n\
-     Set -1 to process images until the last image\n\
-     of the sequence.\n\
+     Set -1 to process images until the last image of the \n\
+     sequence.\n\
   \n\
   -s <video step>                                            %d\n\
      Step between two images.\n\
@@ -153,7 +151,8 @@ OPTIONS:                                               Default\n\
      Turn off the display.\n\
   \n\
   -y \n\
-     Enable step-by-step mode waiting for a mouse click to process next image.\n\
+     Enable step-by-step mode waiting for a mouse click to\n\
+     process next image.\n\
   \n\
   -a \n\
      Enable arc of ellipse tracking.\n\
@@ -181,22 +180,22 @@ OPTIONS:                                               Default\n\
     video_in_ipath.c_str(), ext.c_str(), video_in_ppath.c_str(), ext.c_str(), video_in_first, video_in_last,
     video_in_step, me_range, me_sample_step, me_threshold, sleep_ms);
 
-  if (badparam)
+  if (badparam) {
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
+  }
 }
 
 /*!
-
   Set the program options.
 
   \param argc : Command line number of parameters.
   \param argv : Array of command line parameters.
   \param video_in_ipath : Input image path.
-  \param click_allowed : Mouse click activation.
   \param video_in_ppath : Personal image path.
   \param video_in_first : First image to process.
   \param video_in_last : Last image to process.
   \param video_in_step : Step between two images.
+  \param click_allowed : Mouse click activation.
   \param display : Display activation.
   \param display_scale_auto : When display is activated, enable windows auto scaling.
   \param track_circle : Enable circle tracking.
@@ -210,7 +209,6 @@ OPTIONS:                                               Default\n\
   \param verbose : Enable verbosity.
 
   \return false if the program has to be stopped, true otherwise.
-
 */
 bool getOptions(int argc, const char **argv, std::string &video_in_ipath, std::string &video_in_ppath,
   int &video_in_first, int &video_in_last, int &video_in_step,
@@ -476,6 +474,11 @@ int main(int argc, const char **argv)
     std::cout << "  Threshold type: " << (me_ellipse.getMe()->getLikelihoodThresholdType() == vpMe::NORMALIZED_THRESHOLD ? "normalized" : "old threshold (to be avoided)") << std::endl;
     std::cout << "  Threshold     : " << me_ellipse.getMe()->getThreshold() << std::endl;
 
+    if (!opt_save.empty()) {
+      std::cout << "Create video with tracking results" << std::endl;
+      std::cout << "  Name          : " << opt_save << std::endl;
+    }
+
     if (opt_click_allowed) {
       me_ellipse.initTracking(I, opt_track_circle, opt_track_arc);
     }
@@ -492,6 +495,7 @@ int main(int argc, const char **argv)
     }
     if (opt_display) {
       me_ellipse.display(I, vpColor::green, thickness);
+      vpDisplay::flush(I);
     }
 
     if (opt_display && opt_click_allowed) {
@@ -579,7 +583,7 @@ int main(int argc, const char **argv)
       vpDisplay::getClick(I);
     }
     return EXIT_FAILURE;
-  }
+    }
 #else
   (void)argc;
   (void)argv;
@@ -595,6 +599,6 @@ int main()
     "functionalities are required..."
     << std::endl;
   return EXIT_SUCCESS;
-}
+  }
 
 #endif
