@@ -62,7 +62,9 @@ python-test = { cmd = "cmake --build $VISP_BUILD_DIR --config Release --target v
 
 [feature.rbt.target.unix]
 dependencies = { nlohmann_json = "*", panda3d = { version = ">=1.10.15", channel = "panda3d-forge" } }
-[feature.rbt.target.win]
+
+[feature.rbt-clang-cl]
+platforms = ["win-64"]
 dependencies = { nlohmann_json = "*", panda3d = { version = ">=1.10.15", build = "*fix_clang_cl*", channel = "panda3d-forge" } }
 
 [feature.tests]
@@ -93,4 +95,4 @@ test = { cmd = "ctest --test-dir $VISP_BUILD_DIR --output-on-failure", depends-o
 [environments]
 with-python = { features = ["python-bindings"] }
 all = { features = ["rbt", "python-bindings"] }
-all-clang-cl = { features = ["rbt", "python-bindings", "clang-cl"] }
+all-clang-cl = { features = ["rbt-clang-cl", "python-bindings", "clang-cl"] }
