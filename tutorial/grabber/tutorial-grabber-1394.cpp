@@ -126,8 +126,7 @@ int main(int argc, const char *argv[])
         g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
         g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_60);
       }
-      catch (...) { // If settings are not available just catch execption to
-     // continue with default settings
+      catch (...) { // If settings are not available just catch exception to continue with default settings
         std::cout << "Warning: cannot modify camera settings" << std::endl;
       }
     }
