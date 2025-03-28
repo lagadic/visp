@@ -20,22 +20,20 @@ The following example also available in tutorial-viewer.cpp shows how to read an
 
 \include tutorial-viewer.cpp
 
-Once build, if you run the corresponding binary loading `monkey.png` image:
+Once build, if you run the corresponding binary loading `monkey.jpeg` image:
 \code
 $ cd $VISP_WS/visp-build/tutorial/image
-$ ./tutorial-viewer monkey.png
+$ ./tutorial-viewer monkey.jpeg
 \endcode
 
-It will open a window containing `monkey.png` image:
-\image html img-monkey.png
+It will open a window containing `monkey.jpeg` image:
+\image html img-monkey.jpg
 
 Here is the detailed explanation of the source, line by line :
 \snippet tutorial-viewer.cpp Include display
 
-Include all the headers for image viewers. The two first one are for Windows systems. They require that Direct 3D or
-the \e Graphical \e Device \e Interface (\e GDI) coming with the installation of Visual Studio are available. The
-third one needs GTK that is cross-platform. The fourth is for unix-like systems and requires that \e libX11 is
-available. The last one is also cross-platform and requires that OpenCV is available.
+Includes header for image viewers. Depending on the third party detected by ViSP, we will use one of the following:
+X11, Direct3D, GTK-2, OpenCV or the Graphical Device Interface (GDI) provided when Visual Studio was installed.
 
 \snippet tutorial-viewer.cpp Include io
 Include the header that allows to read/write PGM, PPM, PNG and JPEG images from the disk using vpImageIo class.
