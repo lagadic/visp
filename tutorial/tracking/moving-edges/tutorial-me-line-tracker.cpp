@@ -4,21 +4,37 @@
 #include <visp3/core/vpConfig.h>
 
 //! [Undef grabber]
+// If openCV available, priority to OpenCV capture, otherwise the user has to modify the code uncommenting/commenting
+// one of the following lines
+#if ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || \
+    ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
+#undef VISP_HAVE_V4L2
+#undef VISP_HAVE_DC1394
+#undef VISP_HAVE_CMU1394
+#undef VISP_HAVE_FLYCAPTURE
+#undef VISP_HAVE_REALSENSE2
+// #undef HAVE_OPENCV_HIGHGUI
+// #undef HAVE_OPENCV_VIDEOIO
+#else
+// Use the first grabber that is available. Uncomment/comment the following lines to disable usage of a grabber
 // #undef VISP_HAVE_V4L2
 // #undef VISP_HAVE_DC1394
 // #undef VISP_HAVE_CMU1394
 // #undef VISP_HAVE_FLYCAPTURE
 // #undef VISP_HAVE_REALSENSE2
-// #undef HAVE_OPENCV_HIGHGUI
-// #undef HAVE_OPENCV_VIDEOIO
+#undef HAVE_OPENCV_HIGHGUI
+#undef HAVE_OPENCV_VIDEOIO
+#endif
 //! [Undef grabber]
 
+//! [Ensure that a grabber is available]
 #if (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || \
    defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2) || \
    ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || \
    ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))) && \
   ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_FEATURES2D)) || \
   ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D) && defined(HAVE_OPENCV_FEATURES))
+//! [Ensure that a grabber is available]
 
 #ifdef VISP_HAVE_MODULE_SENSOR
 //! [camera headers]
@@ -27,6 +43,11 @@
 #include <visp3/sensor/vpFlyCaptureGrabber.h>
 #include <visp3/sensor/vpRealSense2.h>
 #include <visp3/sensor/vpV4l2Grabber.h>
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)
+#include <opencv2/highgui/highgui.hpp> // for cv::VideoCapture
+#elif (VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)
+#include <opencv2/videoio/videoio.hpp> // for cv::VideoCapture
+#endif
 //! [camera headers]
 #endif
 //! [display headers]
@@ -36,13 +57,7 @@
 #include <visp3/me/vpMeLine.h>
 //! [me line headers]
 
-#if (VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)
-#include <opencv2/highgui/highgui.hpp> // for cv::VideoCapture
-#elif (VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)
-#include <opencv2/videoio/videoio.hpp> // for cv::VideoCapture
-#endif
-
-int main()
+int main(int argc, char **argv)
 {
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
@@ -53,6 +68,36 @@ int main()
 #else
   vpDisplay *display = nullptr;
 #endif
+  //! [me default options]
+  int opt_me_range = 10;
+  int opt_me_sample_step = 5;
+  int opt_me_threshold = 20; // Value in [0 ; 255]
+  //! [me default options]
+
+  for (int i = 1; i < argc; i++) {
+    if (std::string(argv[i]) == "--me-range" && i + 1 < argc) {
+      opt_me_range = std::atoi(argv[++i]);
+    }
+    else if (std::string(argv[i]) == "--me-sample-step" && i + 1 < argc) {
+      opt_me_sample_step = std::atoi(argv[++i]);
+    }
+    else if (std::string(argv[i]) == "--me-threshold" && i + 1 < argc) {
+      opt_me_threshold = std::atoi(argv[++i]);
+    }
+    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+      std::cout << "\nUsage: " << argv[0]
+        << " [--me-range <range>]"
+        << " [--me-sample-step <sample step>]"
+        << " [--me-threshold <threshold>]"
+        << " [--help] [-h]\n"
+        << std::endl;
+      return EXIT_SUCCESS;
+    }
+    else {
+      std::cout << "\nError: wrong parameter " << argv[i] << std::endl;
+      return EXIT_FAILURE;
+    }
+  }
 
   try {
     //! [image container]
@@ -102,6 +147,9 @@ int main()
       return EXIT_FAILURE;
     }
     cv::Mat frame;
+    int i = 0;
+    while ((i++ < 20) && !g.read(frame)) {
+    }; // warm up camera by skiping unread frames
     g >> frame; // get a new frame from camera
     vpImageConvert::convert(frame, I);
 #endif
@@ -118,9 +166,9 @@ int main()
     //! [display container]
 #if defined(VISP_HAVE_DISPLAY)
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-    display = vpDisplayFactory::createDisplay(I, 0, 0, "Camera view");
+    display = vpDisplayFactory::createDisplay(I, -1, -1, "Camera view");
 #else
-    display = vpDisplayFactory::allocateDisplay(I, 0, 0, "Camera view");
+    display = vpDisplayFactory::allocateDisplay(I, -1, -1, "Camera view");
 #endif
 #else
     std::cout << "No image viewer is available..." << std::endl;
@@ -133,11 +181,14 @@ int main()
 
     //! [me container]
     vpMe me;
-    me.setRange(25);
+    me.setRange(opt_me_range);
     me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
-    me.setThreshold(20);
-    me.setSampleStep(10);
+    me.setThreshold(opt_me_threshold);
+    me.setSampleStep(opt_me_sample_step);
     //! [me container]
+
+    std::cout << "Moving-edges settings" << std::endl;
+    me.print();
 
     //! [me line container]
     vpMeLine line;
@@ -188,5 +239,5 @@ int main()
   std::cout << "Install OpenCV 3rd party, configure and build ViSP again to use this tutorial." << std::endl;
 #endif
   return EXIT_SUCCESS;
-  }
+}
 #endif

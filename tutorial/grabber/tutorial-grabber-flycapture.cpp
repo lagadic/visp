@@ -127,8 +127,7 @@ int main(int argc, const char *argv[])
         g.setGain(true);    // Turn auto gain on
         g.setVideoModeAndFrameRate(FlyCapture2::VIDEOMODE_640x480Y8, FlyCapture2::FRAMERATE_60);
       }
-      catch (...) { // If settings are not available just catch execption to
-     // continue with default settings
+      catch (...) { // If settings are not available just catch exception to continue with default settings
         std::cout << "Warning: cannot modify camera settings" << std::endl;
       }
     }

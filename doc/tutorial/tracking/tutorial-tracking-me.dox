@@ -3,32 +3,89 @@
 \page tutorial-tracking-me Tutorial: Moving-edges tracking
 \tableofcontents
 
-\section tracking_me_intro Introduction
+\section tracking_me_intro 1. Introduction
 
 ViSP moving-edges tracker provide real-time tracking capabilities of points normal to the object contours.
-Such a tracker allow to track a line, an ellipse or more complex objects using model-based approaches.
+Such a tracker allows to track a line, an ellipse, a circle or more complex objects using model-based approaches.
 
-Note that all the material (source code and video) described in this tutorial is
-part of ViSP source code (in `tracking/moving-edges` folder) and could be found in
-https://github.com/lagadic/visp/tree/master/tracking/moving-edges.
+Note that all the source code mentioned in this tutorial is part of ViSP source code:
+- in [tutorial/tracking/moving-edges/](https://github.com/lagadic/visp/tree/master/tutorial/tracking/moving-edges/)
+  folder if you want to try live tracking with a camera
+- or in [example/tracking/](https://github.com/lagadic/visp/tree/master/example/tracking/) folder if you want to try
+  the tracking on a video or a sequence of successive images.
 
-\section tracking_me_line Line tracking
+
+Moving edges (ME) are points sampled along a visible contour. They are tracked along the contour normal.
+The following image shows an example where the contour is a line, but could be generalized to any other shape.
+\image html img-me-settings.jpg In black the previous contour position with sampled MEs. In blue tracked MEs.
+
+The main parameters for moving-edges implemented in vpMe class are as follows:
+- the range, which is the maximum distance in pixels to be searched along both sides of the contour normal that
+  could be set with vpMe::setRange()
+- the step, which is the distance in pixels between two successive MEs set with could be set with
+  vpMe::setSampleStep()
+- the Likelihood normalized threshold, which is the minimum grey level threshold used to differentiate the inner part
+  of the object from the outer part. Values are in range 0-255. To use this normalized threshold use first
+  vpMe::setLikelihoodThresholdType() to set vpMe::NORMALIZED_THRESHOLD type, and then vpMe::setThreshold().
+
+The following sample code shows how to set these parameters:
+\code
+#include <visp3/me/vpMe.h>
+...
+int me_range = 10;
+int me_sample_step = 5;
+int me_threshold = 20; // Value in [0 ; 255]
+...
+vpMe me;
+me.setRange(me_range);
+me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
+me.setThreshold(me_threshold);
+me.setSampleStep(me_sample_step);
+\endcode
+
+Moving-edges could be used in ViSP:
+- to track a line thanks to vpMeLine class
+- to track an ellipse, a circle, or an arc of ellipse or circle thanks to vpMeEllipse class.
+
+Note that both classes are also extended to track more complex object with our model-based tracker implemented
+in vpMbGenericTracker. See the dedicated \ref tutorial-tracking-mb-generic.
+
+To know more about other MEs parameters, follow this \ref mb_generic_settings_ecm section.
+
+\section tracking_me 2. Moving-edges tracking
+\subsection tracking_me_line 2.1. Line tracking
+\subsubsection tracking_me_line_code 2.1.1. Source code
 
 With ViSP you can track a line using moving edges. The following example code available in tutorial-me-line-tracker.cpp
-shows how to use ViSP vpMeLine class to this end.
+shows how to use ViSP vpMeLine class to track a line in a live stream acquired by a camera.
+
+\note There is also this other similar example in trackMeLine.cpp that allows to test the line tracker on a
+recorded video or sequence of successive images.
 
 \include tutorial-me-line-tracker.cpp
 
-The video shows the result of the tracking:
-
-\htmlonly
-<iframe width="560" height="315" src="https://www.youtube.com/embed/uQspOFH-W6Y" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-\endhtmlonly
-
 Here after we explain line by line the program.
 
-Images that are processed could be acquired from a firewire camera on Unix or Windows, of from an usb camera under Unix.
-That is allowed by including the grabber headers.
+The source code is build only if one of the grabbers is available. To this end we are checking
+preprocessor macros defined in `visp3/core/vpConfig.h` header.
+
+\snippet tutorial-me-line-tracker.cpp Ensure that a grabber is available
+
+\note By default, if ViSP is build with OpenCV 3rdparty enabled, we are using OpenCV to grab the live stream from a
+camera. If you rather want to use a Realsense camera and grab images with vpRealsense2 class, you may edit the code to
+undef all the grabbers except the one that you want to use.
+\code
+#undef VISP_HAVE_V4L2
+#undef VISP_HAVE_DC1394
+#undef VISP_HAVE_CMU1394
+#undef VISP_HAVE_FLYCAPTURE
+//#undef VISP_HAVE_REALSENSE2 <- If available this is the grabber that will be used
+#undef HAVE_OPENCV_HIGHGUI
+#undef HAVE_OPENCV_VIDEOIO
+\endcode
+
+Images that are processed could be acquired from various framegrabbing devices. This is allowed by including the
+frame grabber headers.
 
 \snippet tutorial-me-line-tracker.cpp camera headers
 
@@ -43,17 +100,14 @@ Finally, to track a line with the moving edges, we include the header of the vpM
 
 \snippet tutorial-me-line-tracker.cpp me line headers
 
-In the main() function, The source code is build only if one of the grabbers is available.
-
-\snippet tutorial-me-line-tracker.cpp me line headers
-
 Here we create a gray level image container \c I that will contain the images acquired by our camera.
 
 \snippet tutorial-me-line-tracker.cpp image container
 
-Then, we create a grabber instance, first for a firewire camera under Unix if libdc1394 3rd party is installed,
-secondly for a firewire camera under Windows if CMU1394 3rd party is installed, next for an usb camera
-under Unix if none of the previous 3rd party are installed and if libv4l is installed, and finally with OpenCV.
+Then, we create a grabber instance, first for an usb camera under Unix if libv4l (Video 4 Linux) is available,
+secondly for a firewire camera under Unix if libdc1394 3rd party is available,
+then for a firewire camera under Windows if CMU1394 3rd party is available, next for an camera working with Flycapture
+SDK, then for a Realsense camera, and finally with OpenCV if none of the previous 3rd party are available.
 The \ref tutorial-grabber gives more details concerning the framegrabbing.
 
 \snippet tutorial-me-line-tracker.cpp grabber container
@@ -67,11 +121,13 @@ To be able to display image \c I and the tracking results in overlay in a window
 Then we display the image in the window created previously.
 \snippet tutorial-me-line-tracker.cpp display image
 
-We then initialize the moving edges parameters used later by the tracker. From the previous position of a moving
-edge, we are tracking its new position along the normal of the contour with a range of 25 pixels. For each pixel
-along the normal we will compute the oriented convolution. The pixel that will be selected by the moving edges
-algorithm will be the one that has a convolution higher than 15000. Between two consecutive moving edges on the
-contour we keep a space of 10 pixels.
+We then initialize the moving edges parameters used later by the tracker with some parameters:
+\snippet tutorial-me-line-tracker.cpp me default options
+From the previous position of a moving edge, we are tracking its new position along the normal of the contour with a
+range of 10 pixels on each side of the contour. For each pixel, along the normal we will compute the oriented
+convolution. The pixel that will be selected by the moving edges
+algorithm will be the one that has a contrast higher than 20 gray levels. Between two consecutive moving edges on the
+contour we keep a space of 5 pixels.
 \snippet tutorial-me-line-tracker.cpp me container
 
 We then, create an instance of the vpMeTracker class that will track our line.
@@ -84,28 +140,133 @@ Once the tracker is initialized, we enter in a while loop where we successively 
 the line, display the tracking results and finally flush the overlay drawings in the viewer.
 \snippet tutorial-me-line-tracker.cpp loop
 
-\section tracking_me_ellipse Ellipse tracking
+\subsubsection tracking_me_line_usecase 2.1.2. Use case
+
+- Once build, enter `tutorial/tracking/moving-edges/` folder and run `tutorial-me-line-tracker` binary with `-h`
+  option to see which are the command line options.
+\code{.sh}
+$ cd ${VISP_WS}/visp-build/tutorial/tracking/moving-edges
+$ ./tutorial-me-line-tracker -h
+\endcode
+
+- You can run the tutorial with default options
+\code{.sh}
+$ ./tutorial-me-line-tracker
+\endcode
+
+- Or tune the parameters of the tracker
+\code{.sh}
+$ ./tutorial-me-line-tracker --me-range 12 --me-sample-step 8 --me-threshold 40
+\endcode
+
+- The following video shows an example of results obtained when tracking a line:<br>
+\htmlonly
+<iframe width="560" height="315" src="https://www.youtube.com/embed/uQspOFH-W6Y" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+\endhtmlonly
+
+- This other example shows the tracking of 2 lines:<br>
+\htmlonly
+<iframe width="560" height="315" src="https://www.youtube.com/embed/JKzbh-wCHy0?si=O3DuFDiekkAwBjuG" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+\endhtmlonly
+
+\subsection tracking_me_ellipse 2.2. Ellipse or arc of ellipse tracking
+\subsubsection tracking_me_ellipse_code 2.2.1. Source code
 
 With ViSP you can also track an ellipse using moving edges. The following example code available in
 tutorial-me-ellipse-tracker.cpp shows how to use ViSP vpMeEllipse class to this end.
 
+\note There is also this other similar example in trackMeEllipse.cpp that allows to test the ellipse tracker on a
+recorded video or sequence of successive images.
+
 \include tutorial-me-ellipse-tracker.cpp
 
-The video shows the result of the tracking:
+This example is very similar to the one presented in \ref tracking_me_line. It differs only:
+- in the header that needs to be used
+\snippet tutorial-me-ellipse-tracker.cpp Header for vpMeEllipse
+- in the name of the class that is used to allow ellipse tracking
+\snippet tutorial-me-ellipse-tracker.cpp me ellipse container
+- and in the parameters that are given to vpMeEllipse::initTracking(). The parameter `opt_track_circle` allows
+  to specialize the tracker with the model of a circle. The parameter `opt_track_arc` allows to consider
+  arc of ellipses or arc of circles.
 
+\subsubsection tracking_me_ellipse_usecase 2.2.2. Use case
+
+- Once build, enter `tutorial/tracking/moving-edges/` folder and run `tutorial-me-ellipse-tracker` binary with `-h`
+  option to see which are the command line options.
+\code{.sh}
+$ cd ${VISP_WS}/visp-build/tutorial/tracking/moving-edges
+$ ./tutorial-me-ellipse-tracker -h
+\endcode
+
+- You can run the tutorial with default options to track an ellipse
+\code{.sh}
+$ ./tutorial-me-ellipse-tracker
+\endcode
+\note Here that the user has to initialize the tracker on image `I` by clicking on five points located on the ellipse
+to track.
+
+- Or tune the parameters of the tracker
+\code{.sh}
+$ ./tutorial-me-ellipse-tracker --me-range 12 --me-sample-step 8 --me-threshold 40
+\endcode
+
+- The following video shows an example of results obtained when tracking an ellipse:<br>
 \htmlonly
 <iframe width="560" height="315" src="https://www.youtube.com/embed/IK-VgFyK_Tc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 \endhtmlonly
 
-This example is very similar to the one presented in \ref tracking_me_line. It differs only in the name of the class
-and its header that is used to allow ellipse tracking:
+- If you want rather to track an arc of an ellipse you may use `"--track-arc"` command line option like:
+\code{.sh}
+$ ./tutorial-me-ellipse-tracker --track-arc
+\endcode
 
-\snippet tutorial-me-ellipse-tracker.cpp me ellipse container
+- The following video shows an example of results obtained when tracking an ellipse arc:<br>
+\htmlonly
+<iframe width="560" height="315" src="https://www.youtube.com/embed/GwEA5TiHFYo?si=mKNp-dNy9DMqR4B6" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+\endhtmlonly
 
-Note here that the user has to initialize the tracker on image \c I by clicking on five points located on the ellipse
+- There is also this other video that shows the tracking of an ellipse:<br>
+\htmlonly
+<iframe width="560" height="315" src="https://www.youtube.com/embed/0oYZytKLEW4?si=eQe-JVcF-uRwTxuQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+\endhtmlonly
+
+\subsection tracking_me_circle 2.3. Circle or arc of circle tracking
+\subsubsection tracking_me_circle_code 2.3.1. Source code
+
+The source code tutorial-me-ellipse-tracker.cpp presented in previous section allows also to track a circle or
+an arc of a circle.
+\warning Even if your object is a circle, its projection in the image becomes an ellipse. It is only a circle when
+perspective effects are removed or when the camera plane is parallel to the object plane. That's why in the next videos
+the object is more or less in a plane parallel to the camera plane and we are mainly moving the object in translation.
+
+\note There is also this other similar example in trackMeEllipse.cpp that allows to test the circle tracker on a
+recorded video or sequence of successive images.
+
+\subsubsection tracking_me_circle_usecase 2.3.2. Use case
+
+- To track a circle, you may use `"--track-circle"` command line option like:
+\code{.sh}
+$ ./tutorial-me-ellipse-tracker --track-circle
+\endcode
+\note Here that the user has to initialize the tracker on image `I` by clicking on only 3 points located on the circle
 to track.
+- The following video shows an example of results obtained when tracking a circle:<br>
+\htmlonly
+<iframe width="560" height="315" src="https://www.youtube.com/embed/LH-vFkF5yz0?si=7lWjVEMSYZVnzwLS" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+\endhtmlonly
 
-\section tracking_me_next Next tutorial
+- If you want to track an arc of a circle you may also use `"--track-arc"` command line option like:
+\code{.sh}
+$ ./tutorial-me-ellipse-tracker --track-circle --track-arc
+\endcode
+
+- The following video shows an example of results obtained when tracking a circle arc:<br>
+\htmlonly
+<iframe width="560" height="315" src="https://www.youtube.com/embed/-RasOlYuass?si=-0yxdu-F-KEVHL8B" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+\endhtmlonly
+
+\section tracking_me_next 3. Next tutorial
+
 You are now ready to see the next \ref tutorial-tracking-mb-generic.
 
 */

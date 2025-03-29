@@ -440,7 +440,7 @@ int main(int argc, const char **argv)
           break;
         }
         vpDisplay::getPointerPosition(I, ip);
-        std::cout << "  Pointer poisition : " << ip << std::endl;
+        std::cout << "  Pointer position: " << ip << std::endl;
         std::cout << "A click to exit...\n";
         vpDisplay::getClick(I);
       }

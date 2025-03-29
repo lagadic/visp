@@ -3,7 +3,7 @@
   \page tutorial-image-display Tutorial: How to display an image in a window
   \tableofcontents
 
-\section image_display_intro Introduction
+\section image_display_intro 1. Introduction
 
 \note We assume in this tutorial that you have successfully build your first project using ViSP as 3rd party as
 explained in one of the \ref tutorial_started tutorials.
@@ -14,7 +14,7 @@ OSX, Fedora, Ubuntu, Debian, ...) or on Windows.
 Note that all the material (source code and images) described in this tutorial is part of ViSP source code
 (in `tutorial/image` folder) and could be found in https://github.com/lagadic/visp/tree/master/tutorial/image.
 
-\section image_display_default Create and display an image in a window
+\section image_display_default 2. Create and display an image
 
 ViSP <a href="https://visp.inria.fr/gui/">gui module</a> provides Graphical User Interfaces capabilities that allows to
 display a vpImage in a window. To this end you may use several optional third-party libraries which are:
@@ -32,11 +32,12 @@ image shows an example of this behavior when screen resolution is less than imag
 \image html img-tutorial-display.png
 
 \note A vpImage can only be associated to one display window. In the previous example, image `I` is associated to
-display `d`. Depending on your platform, object `d` is either a vpDisplayX or a vpDisplayGDI.
+display `d`. Depending on your platform, object `d` is either a vpDisplayX, a vpDisplayGDI, a vpDisplayOpenCV, a
+vpDisplayGTK or a vpDisplayD3D.
 
-\section image_display_scaled Display an image that is larger than the screen resolution
+\section image_display_scaled 3. Display an image larger than screen resolution
 
-\subsection image_display_scaled_manu Setting a manual down scaling factor
+\subsection image_display_scaled_manu 3.1. Manual down scaling factor
 
 This other example available in tutorial-image-display-scaled-manu.cpp shows how to modify the previous example in
 order to introduce a down scaling factor to reduce the size of the display by 5 along the lines and the columns. This
@@ -47,7 +48,7 @@ constructor.
 
 \snippet tutorial-image-display-scaled-manu.cpp vpDisplay scale manu
 
-It is also possible to do the same using the default constructor:
+It is also possible to do the same using the dedicated constructor:
 \code
 #if defined(VISP_HAVE_X11)
   vpDisplayX d;
@@ -59,7 +60,7 @@ It is also possible to do the same using the default constructor:
 }
 \endcode
 
-\subsection image_display_scaled_auto Setting an auto down scaling factor
+\subsection image_display_scaled_auto 3.2. Auto down scaling factor
 
 This other example available in tutorial-image-display-scaled-auto.cpp shows now how to modify the previous example in
 order to introduce an auto down scaling factor that is automatically computed from the screen resolution in order that
@@ -70,7 +71,7 @@ constructor.
 
 \snippet tutorial-image-display-scaled-auto.cpp vpDisplay scale auto
 
-It is also possible to do the same using the default constructor:
+It is also possible to do the same using the dedicated constructors:
 \code
 #if defined(VISP_HAVE_X11)
   vpDisplayX d;
@@ -85,7 +86,7 @@ It is also possible to do the same using the default constructor:
 Next image shows the content of the display window:
 \image html img-tutorial-display-scaled-auto.png
 
-\section image_display_next Next tutorial
+\section image_display_next 4. Next tutorial
 
 You are now ready to see the \ref tutorial-grabber or \ref tutorial-image-filtering.
 */

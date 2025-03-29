@@ -59,7 +59,7 @@ BEGIN_VISP_NAMESPACE
  * \class vpMeEllipse
  * \ingroup module_me
  *
- * \brief Class that tracks an ellipse using moving edges.
+ * \brief Class that tracks an ellipse or a circle using moving edges.
  *
  * In this class, an ellipse is defined as the set of image points \f$ (u,v) \f$
  * (for more information about the image frame see the vpImagePoint
@@ -86,7 +86,7 @@ BEGIN_VISP_NAMESPACE
  * \image html vpMeEllipse.gif
  *
  * The example below available in tutorial-me-ellipse-tracker.cpp and described
- * in \ref tutorial-tracking-me, section \ref tracking_me_ellipse shows how to
+ * in \ref tutorial-tracking-me, section \ref tracking_me_ellipse and section \ref tracking_me_circle shows how to
  * use this class.
  *
  * \include tutorial-me-ellipse-tracker.cpp
