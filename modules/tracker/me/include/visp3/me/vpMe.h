@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,8 +53,10 @@ BEGIN_VISP_NAMESPACE
  * \class vpMe
  * \ingroup module_me
  *
- * This class defines predetermined masks for sites and holds moving edges
+ * This class defines predetermined masks for moving-edges (ME) sites and holds moving edges
  * tracking parameters.
+ *
+ * To know more about moving-edges and their usage for object tracking, follow \ref tutorial-tracking-me.
  *
  * <b>JSON serialization</b>
  *

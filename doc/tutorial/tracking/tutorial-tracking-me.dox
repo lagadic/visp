@@ -8,9 +8,49 @@
 ViSP moving-edges tracker provide real-time tracking capabilities of points normal to the object contours.
 Such a tracker allows to track a line, an ellipse, a circle or more complex objects using model-based approaches.
 
-Note that all the material (source code and video) described in this tutorial is
-part of ViSP source code (in `tutorial/tracking/moving-edges` folder) and could be found in
-https://github.com/lagadic/visp/tree/master/tutorial/tracking/moving-edges
+Note that all the source code mentioned in this tutorial is part of ViSP source code:
+- in [tutorial/tracking/moving-edges/](https://github.com/lagadic/visp/tree/master/tutorial/tracking/moving-edges/)
+  folder if you want to try live tracking with a camera
+- or in [example/tracking/](https://github.com/lagadic/visp/tree/master/example/tracking/) folder if you want to try
+  the tracking on a video or a sequence of successive images.
+
+
+Moving edges (ME) are points sampled along a visible contour. They are tracked along the contour normal.
+The following image shows an example where the contour is a line, but could be generalized to any other shape.
+\image html img-me-settings.jpg In black the previous contour position with sampled MEs. In blue tracked MEs.
+
+The main parameters for moving-edges implemented in vpMe class are as follows:
+- the range, which is the maximum distance in pixels to be searched along both sides of the contour normal that
+  could be set with vpMe::setRange()
+- the step, which is the distance in pixels between two successive MEs set with could be set with
+  vpMe::setSampleStep()
+- the Likelihood normalized threshold, which is the minimum grey level threshold used to differentiate the inner part
+  of the object from the outer part. Values are in range 0-255. To use this normalized threshold use first
+  vpMe::setLikelihoodThresholdType() to set vpMe::NORMALIZED_THRESHOLD type, and then vpMe::setThreshold().
+
+The following sample code shows how to set these parameters:
+\code
+#include <visp3/me/vpMe.h>
+...
+int me_range = 10;
+int me_sample_step = 5;
+int me_threshold = 20; // Value in [0 ; 255]
+...
+vpMe me;
+me.setRange(me_range);
+me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
+me.setThreshold(me_threshold);
+me.setSampleStep(me_sample_step);
+\endcode
+
+Moving-edges could be used in ViSP:
+- to track a line thanks to vpMeLine class
+- to track an ellipse, a circle, or an arc of ellipse or circle thanks to vpMeEllipse class.
+
+Note that both classes are also extended to track more complex object with our model-based tracker implemented
+in vpMbGenericTracker. See the dedicated \ref tutorial-tracking-mb-generic.
+
+To know more about other MEs parameters, follow this \ref mb_generic_settings_ecm section.
 
 \section tracking_me 2. Moving-edges tracking
 \subsection tracking_me_line 2.1. Line tracking
@@ -124,6 +164,11 @@ $ ./tutorial-me-line-tracker --me-range 12 --me-sample-step 8 --me-threshold 40
 <iframe width="560" height="315" src="https://www.youtube.com/embed/uQspOFH-W6Y" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 \endhtmlonly
 
+- This other example shows the tracking of 2 lines:<br>
+\htmlonly
+<iframe width="560" height="315" src="https://www.youtube.com/embed/JKzbh-wCHy0?si=O3DuFDiekkAwBjuG" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+\endhtmlonly
+
 \subsection tracking_me_ellipse 2.2. Ellipse or arc of ellipse tracking
 \subsubsection tracking_me_ellipse_code 2.2.1. Source code
 
@@ -180,11 +225,22 @@ $ ./tutorial-me-ellipse-tracker --track-arc
 <iframe width="560" height="315" src="https://www.youtube.com/embed/GwEA5TiHFYo?si=mKNp-dNy9DMqR4B6" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 \endhtmlonly
 
+- There is also this other video that shows the tracking of an ellipse:<br>
+\htmlonly
+<iframe width="560" height="315" src="https://www.youtube.com/embed/0oYZytKLEW4?si=eQe-JVcF-uRwTxuQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+\endhtmlonly
+
 \subsection tracking_me_circle 2.3. Circle or arc of circle tracking
 \subsubsection tracking_me_circle_code 2.3.1. Source code
 
 The source code tutorial-me-ellipse-tracker.cpp presented in previous section allows also to track a circle or
 an arc of a circle.
+\warning Even if your object is a circle, its projection in the image becomes an ellipse. It is only a circle when
+perspective effects are removed or when the camera plane is parallel to the object plane. That's why in the next videos
+the object is more or less in a plane parallel to the camera plane and we are mainly moving the object in translation.
+
+\note There is also this other similar example in trackMeEllipse.cpp that allows to test the circle tracker on a
+recorded video or sequence of successive images.
 
 \subsubsection tracking_me_circle_usecase 2.3.2. Use case
 
