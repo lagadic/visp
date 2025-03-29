@@ -17,7 +17,7 @@ int main()
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   std::shared_ptr<vpDisplay> d = vpDisplayFactory::createDisplay(I, -1, -1, "Save overlayed image", vpDisplay::SCALE_AUTO);
 #else
-  vpDisplay *d = vpDisplayFactory::allocateDisplay(I, "Save overlayed image", , vpDisplay::SCALE_AUTO);
+  vpDisplay *d = vpDisplayFactory::allocateDisplay(I, -1, -1, "Save overlayed image", vpDisplay::SCALE_AUTO);
 #endif
   // Set the display background with image I content
   vpDisplay::display(I);
