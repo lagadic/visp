@@ -280,7 +280,7 @@ public:
 
   // Print  a vector [T thetaU] thetaU in degree
   void print() const;
-  int print(std::ostream &s, unsigned int length, char const *intro = 0) const;
+  int print(std::ostream &s, unsigned int length, char const *intro = nullptr) const;
 
   /*!
     This function is not applicable to a pose vector that is always a
