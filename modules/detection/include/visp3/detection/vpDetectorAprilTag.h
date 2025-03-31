@@ -50,12 +50,25 @@ BEGIN_VISP_NAMESPACE
  * \ingroup group_detection_tag
  * Base class for AprilTag detector. This class is a wrapper over <a
  * href="https://april.eecs.umich.edu/software/apriltag.html">AprilTag</a>. There
- * is no need to download and install AprilTag from source code or existing
+ * is no need to download and install AprilTag from source code or from existing
  * pre-built packages since the source code is embedded in ViSP. Reference papers
  * are <I> AprilTag: A robust and flexible visual fiducial system </I>
  * (\cite olson2011tags), <I> AprilTag 2: Efficient and robust fiducial
  * detection </I> (\cite wang2016iros) and <I> Flexible Layouts for Fiducial Tags
  * (Under Review) </I> (\cite krogius2019iros).
+ *
+ * Supported tag families are the following:
+ * - AprilTag 16h5
+ * - AprilTag 25h9
+ * - AprilTag 36h10
+ * - AprilTag 36h11
+ * - ArUco 4x4
+ * - ArUco 5x5
+ * - ArUco 6x6
+ * - MIP 36h12
+ * \image html img-apriltag-supported-tags.jpg Supported tags with id 0.
+ *
+ * To use this class you can follow \ref tutorial-detection-apriltag.
  *
  * The detect() function allows to detect multiple tags in an image. Once
  * detected, for each tag it is possible to retrieve the location of the corners
@@ -64,9 +77,13 @@ BEGIN_VISP_NAMESPACE
  *
  * If camera parameters and the size of the tag are provided, you can also estimate
  * the 3D pose of the tag in terms of position and orientation wrt the camera considering 2 cases:
- * - 1. If all the tags have the same size use
- * detect(const vpImage<unsigned char> &, double, const vpCameraParameters &, std::vector<vpHomogeneousMatrix> &, std::vector<vpHomogeneousMatrix> *, std::vector<double> *, std::vector<double> *)
- * - 2. If tag sizes differ, use rather getPose()
+ * 1. If all the tags have the same size use
+ *    detect(const vpImage<unsigned char> &, double, const vpCameraParameters &, std::vector<vpHomogeneousMatrix> &, std::vector<vpHomogeneousMatrix> *, std::vector<double> *, std::vector<double> *)
+ * 2. If tag sizes differ, use rather getPose()
+ *
+ * \note With ViSP, the size of the tag corresponds to the black part of the tag. Note also that to be detected,
+ * the black part of the tag must be surrounded by a white border as wide as the black border as in the next image:
+ * \image html img-apriltag-size.jpg
  *
  * The following sample code shows how to use this class to detect the location
  * of 36h11 AprilTag patterns in an image.

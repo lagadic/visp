@@ -54,8 +54,10 @@ $ convert tag36_11_00000.png -scale 5000% tag36_11_00000_big.png
   - Save the image as a new PNG image, e.g., `/tmp/tag36_11_00000-rescaled.png`
   - Send the PNG file to your printer
 
-\warning To be usable with ViSP, tags must be printed with a white border. The size of the tag then corresponds to
-the size of the black square containing the tag.
+\warning The size of the tag corresponds to the size of the black square containing the tag. To be usable with ViSP,
+tags must be printed with a white border. This white border should be as wide as the black border like in the next
+image:
+\image html img-apriltag-size.jpg
 
 \section apriltag_detection_basic 3. AprilTag detection and pose estimation (single image)
 
@@ -67,7 +69,7 @@ binary corresponding to tutorial-apriltag-detector.cpp source code.
 This tutorial detects a given tag family on a single image.
 
 The default behavior is to detect <a href="https://april.eecs.umich.edu/software/apriltag.html">36h11</a> marker in
-`AprilTag.jpg` image, but `"--tag-family \<family\>"` option allows considering other tags and `"--input <filename>"`.
+`AprilTag.jpg` image, but `"--tag-family <family>"` option allows considering other tags and `"--input <filename>"`.
 To see which are the options, just run:
 \code{.sh}
 $ ./tutorial-apriltag-detector --help
