@@ -486,8 +486,6 @@ NLOHMANN_JSON_SERIALIZE_ENUM(vpCameraParameters::vpCameraParametersProjType, {
   }
   case vpCameraParameters::perspectiveProjWithoutDistortion:
     break;
-  default:
-    break;
   }
 }
 
@@ -544,8 +542,6 @@ inline void from_json(const nlohmann::json &j, vpCameraParameters &cam)
     cam.initProjWithKannalaBrandtDistortion(px, py, u0, v0, coeffs);
     break;
   }
-  default:
-    break;
   }
 }
 #endif
