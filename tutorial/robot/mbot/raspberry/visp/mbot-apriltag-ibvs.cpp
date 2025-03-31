@@ -377,7 +377,7 @@ int main(int argc, const char **argv)
 
       double t = vpTime::measureTimeMs();
       std::vector<vpHomogeneousMatrix> cMo_vec;
-      detector.detect(I, tagSize, cam, cMo_vec);
+      detector.detect(I, opt_tag_size, cam, cMo_vec);
       t = vpTime::measureTimeMs() - t;
       time_vec.push_back(t);
 

@@ -132,7 +132,7 @@ int main(int argc, const char **argv)
 
   int device = 0;
   vpDetectorAprilTag::vpAprilTagFamily opt_tag_family = vpDetectorAprilTag::TAG_36h11;
-  vpDetectorAprilTag::vpopt_tag_pose_estimation_method opt_tag_pose_estimation_method = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
+  vpDetectorAprilTag::vpPoseEstimationMethod opt_tag_pose_estimation_method = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
   double opt_tag_size = 0.065;
   float opt_quad_decimate = 4.0;
   float opt_aruco_decision_margin = 50;
