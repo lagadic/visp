@@ -191,10 +191,10 @@ NLOHMANN_JSON_SERIALIZE_ENUM(DetectionMethod, {
   {UNKNOWN, nullptr}, // Default value if the json string is not in "current", "desired" or "mean"
   {CLICK, "click"},
   {DNN, "dnn"} }
-  );
+  )
 
 
-int main(int argc, const char *argv[])
+  int main(int argc, const char *argv[])
 {
   unsigned width = 640, height = 480;
   vpCameraParameters cam;

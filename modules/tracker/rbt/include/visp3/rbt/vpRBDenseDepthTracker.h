@@ -194,14 +194,14 @@ public:
 #if defined(VISP_HAVE_NLOHMANN_JSON)
 
   NLOHMANN_JSON_SERIALIZE_ENUM(vpRBDenseDepthTracker::vpDisplayType, {
-      {vpRBDenseDepthTracker::vpDisplayType::INVALID, nullptr},
-      {vpRBDenseDepthTracker::vpDisplayType::SIMPLE, "simple"},
-      {vpRBDenseDepthTracker::vpDisplayType::WEIGHT, "weight"},
-      {vpRBDenseDepthTracker::vpDisplayType::ERROR, "error"},
-      {vpRBDenseDepthTracker::vpDisplayType::WEIGHT_AND_ERROR, "weightAndError"}
-    });
+        {vpRBDenseDepthTracker::vpDisplayType::INVALID, nullptr},
+        {vpRBDenseDepthTracker::vpDisplayType::SIMPLE, "simple"},
+        {vpRBDenseDepthTracker::vpDisplayType::WEIGHT, "weight"},
+        {vpRBDenseDepthTracker::vpDisplayType::ERROR, "error"},
+        {vpRBDenseDepthTracker::vpDisplayType::WEIGHT_AND_ERROR, "weightAndError"}
+      })
 
-  virtual void loadJsonConfiguration(const nlohmann::json &j) VP_OVERRIDE
+    virtual void loadJsonConfiguration(const nlohmann::json &j) VP_OVERRIDE
   {
     vpRBFeatureTracker::loadJsonConfiguration(j);
     setStep(j.value("step", m_step));
