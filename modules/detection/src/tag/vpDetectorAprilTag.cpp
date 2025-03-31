@@ -125,9 +125,6 @@ public:
       m_tf = tagStandard41h12_create();
 #endif
       break;
-
-    default:
-      throw vpException(vpException::fatalError, "Unknown Tag family!");
     }
 
     if ((m_tagFamily != TAG_36ARTOOLKIT) && m_tf) {
@@ -194,9 +191,6 @@ public:
       m_tf = tagStandard41h12_create();
 #endif
       break;
-
-    default:
-      throw vpException(vpException::fatalError, "Unknown Tag family!");
     }
 
     if ((m_tagFamily != TAG_36ARTOOLKIT) && m_tf) {
@@ -269,9 +263,6 @@ public:
 #if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
         tagStandard41h12_destroy(m_tf);
 #endif
-        break;
-
-      default:
         break;
       }
     }
