@@ -149,7 +149,7 @@ int main(int argc, const char **argv)
 
 #if !(defined(VISP_HAVE_DISPLAY))
   bool opt_display_off = true;
-  std::cout << "Warning: There is no 3rd party to dislay images..." << std::endl;
+  std::cout << "Warning: There is no 3rd party to display images..." << std::endl;
 #else
   bool opt_display_off = false;
 #endif

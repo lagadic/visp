@@ -192,7 +192,7 @@ int main(int argc, const char **argv)
 
 #if !(defined(VISP_HAVE_DISPLAY))
   bool display_off = true;
-  std::cout << "Warning: There is no 3rd party (X11, GDI or openCV) to dislay images..." << std::endl;
+  std::cout << "Warning: There is no 3rd party (X11, GDI or openCV) to display images..." << std::endl;
 #else
   bool display_off = false;
 #endif
