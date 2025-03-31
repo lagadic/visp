@@ -140,6 +140,7 @@ void usage(const char **argv, int error)
     << " [--device <id>]"
     << " [--tag-size <size>]"
     << " [--tag-family <family>]"
+    << " [--aruco-decision-margin <margin>]"
     << " [--tag-quad-decimate <factor>]"
     << " [--tag-n-threads <number>]"
 #if defined(VISP_HAVE_PUGIXML)
@@ -197,6 +198,10 @@ void usage(const char **argv, int error)
     << "      23: TAG_ARUCO_MIP_36h12" << std::endl
     << "    Default: 0 (36h11)" << std::endl
     << std::endl
+    << "  --aruco-decision-margin <margin>" << std::endl
+    << "    High values will discard low-confident detections with ArUco 4x4, 5x5, 6x6 families. " << std::endl
+    << "    Default: 50" << std::endl
+    << std::endl
     << "  --tag-quad-decimate <factor>" << std::endl
     << "    Decimation factor used to detect a tag. " << std::endl
     << "    Default: 1" << std::endl
@@ -252,8 +257,9 @@ int main(int argc, const char **argv)
   int opt_device = 0;
   vpDetectorAprilTag::vpAprilTagFamily opt_tag_family = vpDetectorAprilTag::TAG_36h11;
   double opt_tag_size = 0.08;
-  float opt_quad_decimate = 1.0;
-  int opt_nthreads = 1;
+  float opt_tag_quad_decimate = 1.0;
+  float opt_aruco_decision_margin = 50;
+  int opt_tag_nthreads = 1;
   std::string opt_intrinsic_file = "";
   std::string opt_camera_name = "";
   double opt_cube_size = 0.125; // 12.5cm by default
@@ -278,11 +284,14 @@ int main(int argc, const char **argv)
     else if (std::string(argv[i]) == "--tag-family" && i + 1 < argc) {
       opt_tag_family = (vpDetectorAprilTag::vpAprilTagFamily)atoi(argv[i + 1]);
     }
+    else if (std::string(argv[i]) == "--aruco-decision-margin" && i + 1 < argc) {
+      opt_aruco_decision_margin = atof(argv[++i]);
+    }
     else if (std::string(argv[i]) == "--tag-quad-decimate" && i + 1 < argc) {
-      opt_quad_decimate = (float)atof(argv[++i]);
+      opt_tag_quad_decimate = (float)atof(argv[++i]);
     }
     else if (std::string(argv[i]) == "--tag-n-threads" && i + 1 < argc) {
-      opt_nthreads = atoi(argv[++i]);
+      opt_tag_nthreads = atoi(argv[++i]);
     }
 #if defined(VISP_HAVE_PUGIXML)
     else if (std::string(argv[i]) == "--intrinsic" && i + 1 < argc) {
@@ -369,8 +378,8 @@ int main(int argc, const char **argv)
     std::cout << "AprilTag family: " << opt_tag_family << std::endl;
     std::cout << "Camera parameters:\n" << cam << std::endl;
     std::cout << "Detection: " << std::endl;
-    std::cout << "  Quad decimate: " << opt_quad_decimate << std::endl;
-    std::cout << "  Threads number: " << opt_nthreads << std::endl;
+    std::cout << "  Quad decimate: " << opt_tag_quad_decimate << std::endl;
+    std::cout << "  Threads number: " << opt_tag_nthreads << std::endl;
     std::cout << "Tracker: " << std::endl;
     std::cout << "  Use edges  : 1" << std::endl;
     std::cout << "  Use texture: "
@@ -392,8 +401,9 @@ int main(int argc, const char **argv)
 
     // Initialize AprilTag detector
     vpDetectorAprilTag detector(opt_tag_family);
-    detector.setAprilTagQuadDecimate(opt_quad_decimate);
-    detector.setAprilTagNbThreads(opt_nthreads);
+    detector.setAprilTagQuadDecimate(opt_tag_quad_decimate);
+    detector.setAprilTagNbThreads(opt_tag_nthreads);
+    detector.setArUcoDecisionMargin(opt_aruco_decision_margin); // only for ArUco 4x4, 5x5 and 6x6 families
 
     // Prepare MBT
     vpMbGenericTracker tracker;

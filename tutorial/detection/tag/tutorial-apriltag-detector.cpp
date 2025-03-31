@@ -14,6 +14,7 @@ void usage(const char **argv, int error)
     << " [--input <filename>]"
     << " [--tag-size <size>]"
     << " [--tag-family <family>]"
+    << " [--aruco-decision-margin <margin>]"
     << " [--tag-quad-decimate <factor>]"
     << " [--tag-n-threads <number>]"
     << " [--tag-z-aligned]"
@@ -67,6 +68,10 @@ void usage(const char **argv, int error)
     << "      22: TAG_ARUCO_6x6_1000" << std::endl
     << "      23: TAG_ARUCO_MIP_36h12" << std::endl
     << "    Default: 0 (36h11)" << std::endl
+    << std::endl
+    << "  --aruco-decision-margin <margin>" << std::endl
+    << "    High values will discard low-confident detections with ArUco 4x4, 5x5, 6x6 families. " << std::endl
+    << "    Default: 50" << std::endl
     << std::endl
     << "  --tag-quad-decimate <factor>" << std::endl
     << "    Decimation factor used to detect a tag. " << std::endl
@@ -145,13 +150,14 @@ int main(int argc, const char **argv)
   vpDetectorAprilTag::vpPoseEstimationMethod opt_tag_pose_estimation_method = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
   double opt_tag_size = 0.053;
   float opt_tag_quad_decimate = 1.0;
+  float opt_aruco_decision_margin = 50;
   int opt_tag_nThreads = 1;
   std::string opt_intrinsic_file = "";
   std::string opt_camera_name = "";
   bool opt_display_tag = false;
   int opt_color_id = -1;
   unsigned int opt_thickness = 2;
-  bool opt_tag_z_aligned = false;
+  bool opt_tag_z_align_frame = false;
 
   for (int i = 1; i < argc; ++i) {
     if (std::string(argv[i]) == "--input" && i + 1 < argc) {
@@ -170,10 +176,13 @@ int main(int argc, const char **argv)
       opt_tag_nThreads = atoi(argv[++i]);
     }
     else if (std::string(argv[i]) == "--tag-z-aligned") {
-      opt_tag_z_aligned = true;
+      opt_tag_z_align_frame = true;
     }
     else if (std::string(argv[i]) == "--tag-pose-method" && i + 1 < argc) {
       opt_tag_pose_estimation_method = static_cast<vpDetectorAprilTag::vpPoseEstimationMethod>(atoi(argv[++i]));
+    }
+    else if (std::string(argv[i]) == "--aruco-decision-margin" && i + 1 < argc) {
+      opt_aruco_decision_margin = atof(argv[++i]);
     }
 #if defined(VISP_HAVE_PUGIXML)
     else if (std::string(argv[i]) == "--intrinsic" && i + 1 < argc) {
@@ -227,8 +236,9 @@ int main(int argc, const char **argv)
   std::cout << "  Tag size [m]   : " << opt_tag_size << std::endl;
   std::cout << "  Tag family     : " << opt_tag_family << std::endl;
   std::cout << "  Quad decimate  : " << opt_tag_quad_decimate << std::endl;
-  std::cout << "  Thread numbers : " << opt_tag_nThreads << std::endl;
-  std::cout << "  Z aligned      : " << opt_tag_z_aligned << std::endl;
+  std::cout << "  Decision margin: " << opt_aruco_decision_margin << " (applied to ArUco tags only)" << std::endl;
+  std::cout << "  Num threads    : " << opt_tag_nThreads << std::endl;
+  std::cout << "  Z aligned      : " << opt_tag_z_align_frame << std::endl;
   std::cout << "  Pose estimation: " << opt_tag_pose_estimation_method << std::endl;
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
@@ -258,7 +268,8 @@ int main(int argc, const char **argv)
     detector.setAprilTagPoseEstimationMethod(opt_tag_pose_estimation_method);
     detector.setAprilTagNbThreads(opt_tag_nThreads);
     detector.setDisplayTag(opt_display_tag, opt_color_id < 0 ? vpColor::none : vpColor::getColor(opt_color_id), opt_thickness);
-    detector.setZAlignedWithCameraAxis(opt_tag_z_aligned);
+    detector.setZAlignedWithCameraAxis(opt_tag_z_align_frame);
+    detector.setArUcoDecisionMargin(opt_aruco_decision_margin); // only for ArUco 4x4, 5x5 and 6x6 families
     //! [AprilTag detector settings]
     // TODO:
     detector.setAprilTagDebugOption(true);

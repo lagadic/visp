@@ -164,6 +164,7 @@ void usage(const char **argv, int error)
     << "  " << argv[0]
     << " [--tag-size <size>]"
     << " [--tag-family <family>]"
+    << " [--aruco-decision-margin <margin>]"
     << " [--tag-quad-decimate <factor>]"
     << " [--tag-n-threads <number>]"
 #if defined(VISP_HAVE_DISPLAY)
@@ -214,6 +215,10 @@ void usage(const char **argv, int error)
     << "      23: TAG_ARUCO_MIP_36h12" << std::endl
     << "    Default: 0 (36h11)" << std::endl
     << std::endl
+    << "  --aruco-decision-margin <margin>" << std::endl
+    << "    High values will discard low-confident detections with ArUco 4x4, 5x5, 6x6 families. " << std::endl
+    << "    Default: 50" << std::endl
+    << std::endl
     << "  --tag-quad-decimate <factor>" << std::endl
     << "    Decimation factor used to detect a tag. " << std::endl
     << "    Default: 1" << std::endl
@@ -262,8 +267,9 @@ int main(int argc, const char **argv)
 {
   vpDetectorAprilTag::vpAprilTagFamily opt_tag_family = vpDetectorAprilTag::TAG_36h11;
   double opt_tag_size = 0.08;
-  float opt_quad_decimate = 1.0;
-  int opt_nthreads = 1;
+  float opt_tag_quad_decimate = 1.0;
+  float opt_aruco_decision_margin = 50;
+  int opt_tag_nthreads = 1;
   double opt_cube_size = 0.125; // 12.5cm by default
 #ifdef VISP_HAVE_OPENCV
   bool opt_use_texture = false;
@@ -284,11 +290,14 @@ int main(int argc, const char **argv)
     else if (std::string(argv[i]) == "--tag-family" && i + 1 < argc) {
       opt_tag_family = (vpDetectorAprilTag::vpAprilTagFamily)atoi(argv[++i]);
     }
+    else if (std::string(argv[i]) == "--aruco-decision-margin" && i + 1 < argc) {
+      opt_aruco_decision_margin = atof(argv[++i]);
+    }
     else if (std::string(argv[i]) == "--tag-quad-decimate" && i + 1 < argc) {
-      opt_quad_decimate = (float)atof(argv[++i]);
+      opt_tag_quad_decimate = (float)atof(argv[++i]);
     }
     else if (std::string(argv[i]) == "--tag-n-threads" && i + 1 < argc) {
-      opt_nthreads = atoi(argv[++i]);
+      opt_tag_nthreads = atoi(argv[++i]);
     }
 #if defined(VISP_HAVE_DISPLAY)
     else if (std::string(argv[i]) == "--display-off") {
@@ -365,25 +374,27 @@ int main(int argc, const char **argv)
 
     std::map<std::string, vpHomogeneousMatrix> mapOfCameraPoses;
 
-    std::cout << "Cube size: " << opt_cube_size << std::endl;
-    std::cout << "AprilTag size: " << opt_tag_size << std::endl;
-    std::cout << "AprilTag family: " << opt_tag_family << std::endl;
-    std::cout << "Camera parameters:" << std::endl;
-    std::cout << "  Color:\n" << cam_color << std::endl;
-    if (opt_use_depth)
-      std::cout << "  Depth:\n" << cam_depth << std::endl;
-    std::cout << "Detection: " << std::endl;
-    std::cout << "  Quad decimate: " << opt_quad_decimate << std::endl;
-    std::cout << "  Threads number: " << opt_nthreads << std::endl;
-    std::cout << "Tracker: " << std::endl;
-    std::cout << "  Use edges  : 1" << std::endl;
-    std::cout << "  Use texture: "
+    std::cout << "Cube size         : " << opt_cube_size << std::endl;
+    std::cout << "AprilTag size     : " << opt_tag_size << std::endl;
+    std::cout << "AprilTag family   : " << opt_tag_family << std::endl;
+    std::cout << "Camera parameters" << std::endl;
+    std::cout << "  Color           :\n" << cam_color << std::endl;
+    if (opt_use_depth) {
+      std::cout << "  Depth           :\n" << cam_depth << std::endl;
+    }
+    std::cout << "Detection " << std::endl;
+    std::cout << "  Quad decimate   : " << opt_tag_quad_decimate << std::endl;
+    std::cout << "  Threads number  : " << opt_tag_nthreads << std::endl;
+    std::cout << "  Decision margin : " << opt_aruco_decision_margin << " (applied to ArUco tags only)" << std::endl;
+    std::cout << "Tracker " << std::endl;
+    std::cout << "  Use edges       : 1" << std::endl;
+    std::cout << "  Use texture     : "
 #ifdef VISP_HAVE_OPENCV
       << opt_use_texture << std::endl;
 #else
       << " na" << std::endl;
 #endif
-    std::cout << "  Use depth  : " << opt_use_depth << std::endl;
+    std::cout << "  Use depth       : " << opt_use_depth << std::endl;
     std::cout << "  Projection error: " << opt_projection_error_threshold << std::endl;
 
     // Construct display
@@ -401,8 +412,9 @@ int main(int argc, const char **argv)
 
     // Initialize AprilTag detector
     vpDetectorAprilTag detector(opt_tag_family);
-    detector.setAprilTagQuadDecimate(opt_quad_decimate);
-    detector.setAprilTagNbThreads(opt_nthreads);
+    detector.setAprilTagQuadDecimate(opt_tag_quad_decimate);
+    detector.setAprilTagNbThreads(opt_tag_nthreads);
+    detector.setArUcoDecisionMargin(opt_aruco_decision_margin); // only for ArUco 4x4, 5x5 and 6x6 families
 
     // Prepare MBT
     std::vector<int> trackerTypes;

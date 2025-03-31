@@ -20,6 +20,7 @@ void usage(const char **argv, int error)
     << " [--camera-device <id>]"
     << " [--tag-size <size>]"
     << " [--tag-family <family>]"
+    << " [--aruco-decision-margin <margin>]"
     << " [--tag-quad-decimate <factor>]"
     << " [--tag-n-threads <number>]"
     << " [--tag-pose-method <method>]"
@@ -73,6 +74,10 @@ void usage(const char **argv, int error)
     << "      22: TAG_ARUCO_6x6_1000" << std::endl
     << "      23: TAG_ARUCO_MIP_36h12" << std::endl
     << "    Default: 0 (36h11)" << std::endl
+    << std::endl
+    << "  --aruco-decision-margin <margin>" << std::endl
+    << "    High values will discard low-confident detections with ArUco 4x4, 5x5, 6x6 families. " << std::endl
+    << "    Default: 50" << std::endl
     << std::endl
     << "  --tag-quad-decimate <factor>" << std::endl
     << "    Decimation factor used to detect a tag. " << std::endl
@@ -133,11 +138,12 @@ int main(int argc, const char **argv)
 #endif
 
   int device = 0;
-  vpDetectorAprilTag::vpAprilTagFamily tagFamily = vpDetectorAprilTag::TAG_36h11;
-  vpDetectorAprilTag::vpPoseEstimationMethod poseEstimationMethod = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
-  double tagSize = 0.065;
-  float quad_decimate = 4.0;
-  int nThreads = 2;
+  vpDetectorAprilTag::vpAprilTagFamily opt_tag_family = vpDetectorAprilTag::TAG_36h11;
+  vpDetectorAprilTag::vpPoseEstimationMethod opt_tag_pose_estimation_method = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
+  double opt_tag_size = 0.065;
+  float opt_tag_quad_decimate = 4.0;
+  float opt_aruco_decision_margin = 50;
+  int opt_tag_nThreads = 2;
   std::string intrinsic_file = "";
   std::string camera_name = "";
   bool display_tag = false;
@@ -151,16 +157,19 @@ int main(int argc, const char **argv)
       device = std::atoi(argv[++i]);
     }
     else if (std::string(argv[i]) == "--tag-size" && i + 1 < argc) {
-      tagSize = std::atof(argv[++i]);
+      opt_tag_size = std::atof(argv[++i]);
     }
     else if (std::string(argv[i]) == "--tag-family" && i + 1 < argc) {
-      tagFamily = (vpDetectorAprilTag::vpAprilTagFamily)atoi(argv[++i]);
+      opt_tag_family = (vpDetectorAprilTag::vpAprilTagFamily)atoi(argv[++i]);
+    }
+    else if (std::string(argv[i]) == "--aruco-decision-margin" && i + 1 < argc) {
+      opt_aruco_decision_margin = atof(argv[++i]);
     }
     else if (std::string(argv[i]) == "--tag-quad-decimate" && i + 1 < argc) {
-      quad_decimate = (float)atof(argv[++i]);
+      opt_tag_quad_decimate = (float)atof(argv[++i]);
     }
     else if (std::string(argv[i]) == "--tag-n-threads" && i + 1 < argc) {
-      nThreads = std::atoi(argv[++i]);
+      opt_tag_nThreads = std::atoi(argv[++i]);
     }
 #if defined(VISP_HAVE_PUGIXML)
     else if (std::string(argv[i]) == "--intrinsic" && i + 1 < argc) {
@@ -236,17 +245,24 @@ int main(int argc, const char **argv)
     if (!intrinsic_file.empty() && !camera_name.empty())
       parser.parse(cam, intrinsic_file, camera_name, vpCameraParameters::perspectiveProjWithoutDistortion);
 
-    std::cout << "cam:\n" << cam << std::endl;
-    std::cout << "use pose: " << use_pose << std::endl;
-    std::cout << "tagFamily: " << tagFamily << std::endl;
+    std::cout << cam << std::endl;
+    std::cout << "Tag detector settings" << std::endl;
+    std::cout << "  Tag size [m]   : " << opt_tag_size << std::endl;
+    std::cout << "  Tag family     : " << opt_tag_family << std::endl;
+    std::cout << "  Quad decimate  : " << opt_tag_quad_decimate << std::endl;
+    std::cout << "  Decision margin: " << opt_aruco_decision_margin << " (applied to ArUco tags only)" << std::endl;
+    std::cout << "  Num threads    : " << opt_tag_nThreads << std::endl;
+    std::cout << "  Pose estimation: " << opt_tag_pose_estimation_method << std::endl;
 
     vpDetectorAprilTag detector(tagFamily);
 
-    detector.setAprilTagQuadDecimate(quad_decimate);
-    if (use_pose)
-      detector.setAprilTagPoseEstimationMethod(poseEstimationMethod);
-    detector.setAprilTagNbThreads(nThreads);
+    detector.setAprilTagQuadDecimate(opt_tag_quad_decimate);
+    if (use_pose) {
+      detector.setAprilTagPoseEstimationMethod(opt_tag_pose_estimation_method);
+    }
+    detector.setAprilTagNbThreads(opt_tag_nThreads);
     detector.setDisplayTag(display_tag);
+    detector.setArUcoDecisionMargin(opt_aruco_decision_margin); // only for ArUco 4x4, 5x5 and 6x6 families
 
     vpServo task;
     vpAdaptiveGain lambda;
@@ -313,7 +329,7 @@ int main(int argc, const char **argv)
       double t = vpTime::measureTimeMs();
       std::vector<vpHomogeneousMatrix> cMo_vec;
       if (use_pose)
-        detector.detect(I, tagSize, cam, cMo_vec);
+        detector.detect(I, opt_tag_size, cam, cMo_vec);
       else
         detector.detect(I);
 
@@ -329,14 +345,14 @@ int main(int argc, const char **argv)
       if (detector.getNbObjects() == 1) {
         // Display visual features
         vpHomogeneousMatrix cdMo(0, 0, Z_d, 0, 0, 0);
-        vpDisplay::displayFrame(I, cdMo, cam, tagSize / 3, vpColor::red, 3);
+        vpDisplay::displayFrame(I, cdMo, cam, opt_tag_size / 3, vpColor::red, 3);
         vpDisplay::displayCross(I, detector.getCog(0), 15, vpColor::green,
                                 3); // Current polygon used to compure an moment
         vpDisplay::displayLine(I, 0, cam.get_u0(), I.getHeight() - 1, cam.get_u0(), vpColor::red,
                                3); // Vertical line as desired x position
         if (use_pose) {
           // Display visual features
-          vpDisplay::displayFrame(I, cMo_vec[0], cam, tagSize / 2, vpColor::none, 3);
+          vpDisplay::displayFrame(I, cMo_vec[0], cam, opt_tag_size / 2, vpColor::none, 3);
         }
 
         if (!serial_off) {
@@ -352,7 +368,7 @@ int main(int argc, const char **argv)
           std::cout << "Surface: " << surface << std::endl;
 
           // Compute the distance from target surface and 3D size
-          Z = tagSize * cam.get_px() / sqrt(surface);
+          Z = opt_tag_size * cam.get_px() / sqrt(surface);
         }
 
         vpFeatureBuilder::create(s_x, cam, detector.getCog(0));
