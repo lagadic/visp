@@ -3,13 +3,27 @@
 
 #include <visp3/core/vpConfig.h>
 //! [Undef grabber]
+// If openCV available, priority to OpenCV capture, otherwise the user has to modify the code uncommenting/commenting
+// one of the following lines
+#if ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || \
+    ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
+#undef VISP_HAVE_V4L2
+#undef VISP_HAVE_DC1394
+#undef VISP_HAVE_CMU1394
+#undef VISP_HAVE_FLYCAPTURE
+#undef VISP_HAVE_REALSENSE2
+// #undef HAVE_OPENCV_HIGHGUI
+// #undef HAVE_OPENCV_VIDEOIO
+#else
+// Use the first grabber that is available. Uncomment/comment the following lines to disable usage of a grabber
 // #undef VISP_HAVE_V4L2
 // #undef VISP_HAVE_DC1394
 // #undef VISP_HAVE_CMU1394
 // #undef VISP_HAVE_FLYCAPTURE
 // #undef VISP_HAVE_REALSENSE2
-// #undef HAVE_OPENCV_HIGHGUI
-// #undef HAVE_OPENCV_VIDEOIO
+#undef HAVE_OPENCV_HIGHGUI
+#undef HAVE_OPENCV_VIDEOIO
+#endif
 //! [Undef grabber]
 
 #if (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || \
@@ -25,8 +39,12 @@
 #include <visp3/sensor/vpV4l2Grabber.h>
 #endif
 
+#include <visp3/core/vpIoTools.h>
 #include <visp3/gui/vpDisplayFactory.h>
+#include <visp3/io/vpVideoWriter.h>
+//! [Header for vpMeEllipse]
 #include <visp3/me/vpMeEllipse.h>
+//! [Header for vpMeEllipse]
 
 #if (VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)
 #include <opencv2/highgui/highgui.hpp> // for cv::VideoCapture
@@ -34,7 +52,7 @@
 #include <opencv2/videoio/videoio.hpp> // for cv::VideoCapture
 #endif
 
-int main()
+int main(int argc, char **argv)
 {
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
@@ -45,6 +63,50 @@ int main()
 #else
   vpDisplay *display = nullptr;
 #endif
+
+  int opt_me_range = 10;
+  int opt_me_sample_step = 5;
+  int opt_me_threshold = 20;     // Value in [0 ; 255]
+  int opt_track_circle = false;  // By default we will track an ellipse
+  int opt_track_arc = false;     // By default we will track a full circle or ellipse
+  std::string opt_save_filename; // Saved images filename
+
+  for (int i = 1; i < argc; i++) {
+    if (std::string(argv[i]) == "--me-range" && i + 1 < argc) {
+      opt_me_range = std::atoi(argv[++i]);
+    }
+    else if (std::string(argv[i]) == "--me-sample-step" && i + 1 < argc) {
+      opt_me_sample_step = std::atoi(argv[++i]);
+    }
+    else if (std::string(argv[i]) == "--me-threshold" && i + 1 < argc) {
+      opt_me_threshold = std::atoi(argv[++i]);
+    }
+    else if (std::string(argv[i]) == "--track-circle") {
+      opt_track_circle = true;
+    }
+    else if (std::string(argv[i]) == "--track-arc") {
+      opt_track_arc = true;
+    }
+    else if (std::string(argv[i]) == "--save" && i + 1 < argc) {
+      opt_save_filename = std::string(argv[++i]);
+    }
+    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+      std::cout << "\nUsage: " << argv[0]
+        << " [--me-range <range>]"
+        << " [--me-sample-step <sample step>]"
+        << " [--me-threshold <threshold>]"
+        << " [--track-arc]"
+        << " [--track-circle]"
+        << " [--save <filename>]"
+        << " [--help] [-h]\n"
+        << std::endl;
+      return EXIT_SUCCESS;
+    }
+    else {
+      std::cout << "\nError: wrong parameter " << argv[i] << std::endl;
+      return EXIT_FAILURE;
+    }
+  }
 
   try {
     vpImage<unsigned char> I;
@@ -91,7 +153,10 @@ int main()
       std::cout << "Failed to open the camera" << std::endl;
       return EXIT_FAILURE;
     }
+    int i = 0;
     cv::Mat frame;
+    while ((i++ < 20) && !g.read(frame)) {
+    }; // warm up camera by skiping unread frames
     g >> frame; // get a new frame from camera
     vpImageConvert::convert(frame, I);
 #endif
@@ -117,17 +182,39 @@ int main()
     vpDisplay::display(I);
     vpDisplay::flush(I);
 
-    vpMe me;
-    me.setRange(25);
-    me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
-    me.setThreshold(20);
-    me.setSampleStep(10);
+    vpVideoWriter *writer = nullptr;
+    vpImage<vpRGBa> O;
+    if (!opt_save_filename.empty()) {
+      std::string parent = vpIoTools::getParent(opt_save_filename);
+      if (!parent.empty()) {
+        std::cout << "Create output directory: " << parent << std::endl;
+        vpIoTools::makeDirectory(parent);
+      }
 
+      writer = new vpVideoWriter();
+      writer->setFileName(opt_save_filename);
+      writer->open(O);
+    }
+
+    vpMe me;
+    me.setRange(opt_me_range);
+    me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
+    me.setThreshold(opt_me_threshold);
+    me.setSampleStep(opt_me_sample_step);
+
+    std::cout << "Moving-edges settings" << std::endl;
+    me.print();
+
+    std::cout << "\nTracker settings" << std::endl;
+    std::cout << " Tracker type....................."
+      << (opt_track_arc ? std::string("arc of ") : std::string())
+      << (opt_track_circle ? std::string("circle") : std::string("ellipse")) << std::endl;
+    std::cout << " Save results....................." << (opt_save_filename.empty() ? std::string("n/a") : opt_save_filename) << std::endl << std::endl;
     //! [me ellipse container]
     vpMeEllipse ellipse;
     ellipse.setMe(&me);
     ellipse.setDisplay(vpMeSite::RANGE_RESULT);
-    ellipse.initTracking(I);
+    ellipse.initTracking(I, opt_track_circle, opt_track_arc);
     //! [me ellipse container]
 
     bool quit = false;
@@ -146,6 +233,11 @@ int main()
         quit = true;
       }
       vpDisplay::flush(I);
+
+      if (!opt_save_filename.empty()) {
+        vpDisplay::getImage(I, O);
+        writer->saveFrame(O);
+      }
     }
   }
   catch (const vpException &e) {
@@ -170,5 +262,5 @@ int main()
   std::cout << "Install OpenCV 3rd party, configure and build ViSP again to use this tutorial." << std::endl;
 #endif
   return EXIT_SUCCESS;
-  }
+}
 #endif

@@ -2,7 +2,7 @@
   \page tutorial-image-display-overlay Tutorial: How to display an image and basic drawings in a window
   \tableofcontents
 
-\section display_overlay_intro Introduction
+\section display_overlay_intro 1. Introduction
 
 In this tutorial you will learn how to display basic drawings with ViSP either on Unix-like systems (including OSX,
 Fedora, Ubuntu, Debian, ...) or on Windows.
@@ -10,7 +10,7 @@ Fedora, Ubuntu, Debian, ...) or on Windows.
 Note that all the material (source code and images) described in this tutorial is part of ViSP source code
 (in `tutorial/image` folder) and could be found in https://github.com/lagadic/visp/tree/master/tutorial/image.
 
-\section display_overlay_default Load and display an image
+\section display_overlay_default 2. Load and display an image
 
 ViSP <a href="https://visp.inria.fr/gui/">gui module</a> provides Graphical User Interfaces capabilities. To this end
 you may use several optional third-party libraries which are: <a href="https://visp.inria.fr/3rdparty_gui/">X11, GDI,
@@ -20,47 +20,18 @@ The following example also available in tutorial-viewer.cpp shows how to read an
 
 \include tutorial-viewer.cpp
 
-Once build, if you run the corresponding binary loading `monkey.png` image:
+Once build, if you run the corresponding binary loading `monkey.jpeg` image:
 \code
 $ cd $VISP_WS/visp-build/tutorial/image
-$ ./tutorial-viewer monkey.png
+$ ./tutorial-viewer monkey.jpeg
 \endcode
 
-It will open a window containing `monkey.png` image:
-\image html img-monkey.png
+It will open a window containing `monkey.jpeg` image:
+\image html img-monkey.jpg
 
-Here is the detailed explanation of the source, line by line :
-\snippet tutorial-viewer.cpp Include display
+A detailed explanation of the source is available following \ref tutorial_viewer_code section.
 
-Include all the headers for image viewers. The two first one are for Windows systems. They require that Direct 3D or
-the \e Graphical \e Device \e Interface (\e GDI) coming with the installation of Visual Studio are available. The
-third one needs GTK that is cross-platform. The fourth is for unix-like systems and requires that \e libX11 is
-available. The last one is also cross-platform and requires that OpenCV is available.
-
-\snippet tutorial-viewer.cpp Include io
-Include the header that allows to read/write PGM, PPM, PNG and JPEG images from the disk using vpImageIo class.
-
-\snippet tutorial-viewer.cpp vpImage construction
-Create an instance of a color image where each pixel is coded in RGBa.
-
-\snippet tutorial-viewer.cpp vpImage reading
-The image \c I is initialized by reading an image file from the disk. If the image format is not supported we throw an
-exception.
-
-\snippet tutorial-viewer.cpp vpDisplay construction
-Create an instance of an image display window for image \c I. The first viewer that is available is used. Here we
-create the link between the image \c I and the display \c d. Note that an image can only have one display.
-
-\snippet tutorial-viewer.cpp vpDisplay set title
-The title of the display is then set to \c "My image".
-
-\snippet tutorial-viewer.cpp vpDisplay display
-First we display the content of the image \c I, then we flush the display to render the image.
-
-\snippet tutorial-viewer.cpp vpDisplay get click
-Here we handle mouse events. We are waiting for a blocking mouse click to end the program.
-
-\section display_overlay_draw Display basic drawings in window overlay
+\section display_overlay_draw 3. Display basic drawings in window overlay
 
 There are a lot of examples in ViSP that show how to display drawings in window overlay. There is testDisplays.cpp
 that gives an overview.
@@ -73,7 +44,7 @@ $ ./testDisplays
 it will open a window like the following:
 \image html img-tutorial-display-drawings.png
 
-\subsection display_overlay_point Display a point in overlay
+\subsection display_overlay_point 3.1. Display a point in overlay
 
 As shown in tutorial-draw-point.cpp which source code is given below we use vpDisplay::displayPoint() function to draw
 a point in the overlay of a windows that displays a 3840 by 2160 grey image that has all the pixels set to 128 gray
@@ -83,7 +54,7 @@ level.
 
 Here we draw a point at the center of a grey image with red color and thickness 2.
 
-\subsection display_overlay_line Display a line between 2 points in overlay
+\subsection display_overlay_line 3.2. Display a line between 2 points in overlay
 
 As given in tutorial-draw-line.cpp we use vpDisplay::displayLine() function to draw a line segment on the screen.
 
@@ -91,7 +62,7 @@ As given in tutorial-draw-line.cpp we use vpDisplay::displayLine() function to d
 
 Here we draw a red coloured line segment with the specified initial and final coordinates and thickness 10.
 
-\subsection display_overlay_circle Display a circle in overlay
+\subsection display_overlay_circle 3.3. Display a circle in overlay
 
 As given in tutorial-image-display-scaled-auto.cpp we use vpDisplay::displayCircle() function to draw a circle on the
 screen.
@@ -100,14 +71,14 @@ screen.
 
 Here we draw a red coloured filled circle at the center with radius of 200.
 
-\subsection display_overlay_rectangle Display a rectangle in overlay
+\subsection display_overlay_rectangle 3.4. Display a rectangle in overlay
 
 As given in tutorial-draw-rectangle.cpp we use vpDisplay::displayRectangle() function to draw a rectangle on the screen.
 
 \snippet tutorial-draw-rectangle.cpp Rectangle
 
 Here we draw a red coloured filled rectangle with specified top-left coordinates and width and height.
-\subsection display_overlay_cross Display a cross in overlay
+\subsection display_overlay_cross 3.5. Display a cross in overlay
 
 As given in tutorial-draw-cross.cpp we use vpDisplay::displayCross() function to draw a rectangle on the screen.
 
@@ -115,7 +86,7 @@ As given in tutorial-draw-cross.cpp we use vpDisplay::displayCross() function to
 
 Here we draw a red coloured cross on the center with speicfied size and thickness 2.
 
-\subsection display_overlay_text Display text in window overlay
+\subsection display_overlay_text 3.6. Display text in window overlay
 
 As given in tutorial-draw-text.cpp we use vpDisplay::displayText() function to add text in the window overlay.
 
@@ -123,21 +94,21 @@ As given in tutorial-draw-text.cpp we use vpDisplay::displayText() function to a
 
 Here `Hello world` is displayed in the middle of the image.
 
-\section display_overlay_export Export and save the content of a window as an image
+\section display_overlay_export 4. Export and save the content of a window as an image
 
 As given in tutorial-export-image.cpp which source code is given below, we use vpDisplay::getImage() function to export
 the image with the whole drawings in overlay. Then we use vpImageIo::write() to save the image in png format.
 
 \include tutorial-export-image.cpp
 
-\section display_overlay_event_keyboard Handle keyboard events in a window
+\section display_overlay_event_keyboard 5. Handle keyboard events in a window
 
 As given in tutorial-event-keyboard.cpp which code is given below, we use vpDisplay::getKeyboardEvent() function to get
 the value of the key pressed.
 
 \include tutorial-event-keyboard.cpp
 
-\section display_overlay_next Next tutorial
+\section display_overlay_next 6. Next tutorial
 
 You are now ready to see how to continue with \ref tutorial-basic-drawings.
 
