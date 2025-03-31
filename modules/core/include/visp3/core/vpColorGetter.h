@@ -1,5 +1,5 @@
-#ifndef _vpColorGetter_h_
-#define _vpColorGetter_h_
+#ifndef VP_COLOR_GETTER_H
+#define VP_COLOR_GETTER_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHSV.h>

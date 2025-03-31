@@ -1,5 +1,5 @@
-#ifndef _vpHSV_h_
-#define _vpHSV_h_
+#ifndef VP_HSV_H
+#define VP_HSV_H
 
 #include <exception>
 #include <iostream>
