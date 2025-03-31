@@ -37,7 +37,8 @@
 BEGIN_VISP_NAMESPACE
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-double vpImageFilter::filterXR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  double vpImageFilter::filterXR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
 {
   const unsigned int stop = (size - 1) / 2;
   double result = 0.;
@@ -315,6 +316,11 @@ double vpImageFilter::filterYBottomBorderB(const vpImage<vpRGBa> &I, unsigned in
   return result + (filter[0] * static_cast<double>(I[r][c].B));
 }
 
-#endif
+#else
+  void dummy_vpImageFilter_xy()
+{
 
+}
+#endif
+#endif
 END_VISP_NAMESPACE

@@ -45,6 +45,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 // color
+#include <visp3/core/vpHSV.h>
 #include <visp3/core/vpRGBa.h>
 
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
@@ -132,6 +133,27 @@ public:
   static void convert(const vpImage<float> &src, cv::Mat &dest, bool copyData = true);
   static void convert(const vpImage<double> &src, cv::Mat &dest, bool copyData = true);
   static void convert(const vpImage<vpRGBf> &src, cv::Mat &dest);
+#endif
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  template <typename T, bool useFullScale>
+  static void convert(const vpImage<vpRGBa> &src, vpImage<vpHSV<T, useFullScale>> &dest);
+
+  template <typename T, bool useFullScale>
+  static void convert(const vpImage<vpHSV<T, useFullScale>> &src, vpImage<vpRGBa> &dest);
+
+  template <typename T, typename U, bool useFullScale1, bool useFullScale2>
+  static typename std::enable_if<!std::is_same<T, U>::value, void>::type convert(const vpImage<vpHSV<T, useFullScale1>> &src, vpImage<vpHSV<U, useFullScale2>> &dest)
+  {
+    const unsigned int height = src.getHeight(), width = src.getWidth();
+    const unsigned int size = height * width;
+    dest.resize(height, width);
+#ifdef VISP_HAVE_OPENMP
+#pragma omp parallel for
+#endif
+    for (unsigned int i = 0; i < size; ++i) {
+      dest.bitmap[i].buildFrom(src.bitmap[i]);
+    }
+  }
 #endif
 
 #ifdef VISP_HAVE_YARP
@@ -333,5 +355,51 @@ private:
   static int vpCgr[256];
   static int vpCbb[256];
 };
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+/**
+ * \brief Convert a RGBa image into a HSV image.
+ *
+ * \tparam T The type of the channels of the vpHSV pixels.
+ * \tparam useFullScale True if vpHSV uses unsigned char and the full range [0; 255], false if vpHSV uses unsigned char and the limited range [0; 180].
+ * \param[in] src The RGBa image.
+ * \param[in] dest The HSV image.
+ */
+template <typename T, bool useFullScale>
+void vpImageConvert::convert(const vpImage<vpRGBa> &src, vpImage<vpHSV<T, useFullScale>> &dest)
+{
+  const unsigned int height = src.getHeight(), width = src.getWidth();
+  const unsigned int size = height * width;
+  dest.resize(height, width);
+#ifdef VISP_HAVE_OPENMP
+#pragma omp parallel for
+#endif
+  for (unsigned int i = 0; i < size; ++i) {
+    dest.bitmap[i].buildFrom(src.bitmap[i]);
+  }
+}
+
+/**
+ * \brief Convert an HSV image into a RGBa image.
+ *
+ * \tparam T The type of the channels of the vpHSV pixels.
+ * \tparam useFullScale True if vpHSV uses unsigned char and the full range [0; 255], false if vpHSV uses unsigned char and the limited range [0; 180].
+ * \param[in] src The HSV image.
+ * \param[in] dest The RGBa image.
+ */
+template <typename T, bool useFullScale>
+void vpImageConvert::convert(const vpImage<vpHSV<T, useFullScale>> &src, vpImage<vpRGBa> &dest)
+{
+  const unsigned int height = src.getHeight(), width = src.getWidth();
+  const unsigned int size = height * width;
+  dest.resize(height, width);
+#ifdef VISP_HAVE_OPENMP
+#pragma omp parallel for
+#endif
+  for (unsigned int i = 0; i < size; ++i) {
+    dest.bitmap[i].buildFrom(src.bitmap[i]);
+  }
+}
+#endif
 END_VISP_NAMESPACE
 #endif

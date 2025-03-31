@@ -179,6 +179,7 @@ void vpImageFilter::filterX<double, double>(const vpImage<double> &I, vpImage<do
  * \endcond
  */
 
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
 void vpImageFilter::filterX(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size,
                             const vpImage<bool> *p_mask)
 {
@@ -220,6 +221,7 @@ void vpImageFilter::filterX(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, cons
     }
   }
 }
+#endif
 
 /**
  * \cond DO_NOT_DOCUMENT
@@ -241,6 +243,7 @@ void vpImageFilter::filterY<double, double>(const vpImage<double> &I, vpImage<do
  * \endcond
  */
 
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
 void vpImageFilter::filterY(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIy, const double *filter, unsigned int size,
                             const vpImage<bool> *p_mask)
 {
@@ -286,6 +289,7 @@ void vpImageFilter::filterY(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIy, cons
     }
   }
 }
+#endif
 
 /**
  * \cond DO_NOT_DOCUMENT
@@ -305,18 +309,19 @@ void vpImageFilter::gaussianBlur<double, double>(const vpImage<double> &I, vpIma
  * \endcond
  */
 
- /*!
-   Apply a Gaussian blur to RGB color image.
-   \param[in] I : Input image.
-   \param[out] GI : Filtered image.
-   \param[in] size : Filter size. This value should be odd.
-   \param[in] sigma : Gaussian standard deviation. If it is equal to zero or
-   negative, it is computed from filter size as sigma = (size-1)/6.
-   \param[in] normalize : Flag indicating whether to normalize the filter coefficients or not.
-   \param[in] p_mask : If different from nullptr, mask indicating which points to consider (true) or to ignore(false).
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+/*!
+  Apply a Gaussian blur to RGB color image.
+  \param[in] I : Input image.
+  \param[out] GI : Filtered image.
+  \param[in] size : Filter size. This value should be odd.
+  \param[in] sigma : Gaussian standard deviation. If it is equal to zero or
+  negative, it is computed from filter size as sigma = (size-1)/6.
+  \param[in] normalize : Flag indicating whether to normalize the filter coefficients or not.
+  \param[in] p_mask : If different from nullptr, mask indicating which points to consider (true) or to ignore(false).
 
-   \sa getGaussianKernel() to know which kernel is used.
-  */
+  \sa getGaussianKernel() to know which kernel is used.
+ */
 void vpImageFilter::gaussianBlur(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &GI, unsigned int size, double sigma, bool normalize,
                                  const vpImage<bool> *p_mask)
 {
@@ -335,6 +340,7 @@ void vpImageFilter::gaussianBlur(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &GI, 
   GIx.destroy();
   delete[] fg;
 }
+#endif
 
 /**
  * \cond DO_NOT_DOCUMENT

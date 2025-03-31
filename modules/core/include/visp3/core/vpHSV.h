@@ -1,0 +1,550 @@
+#ifndef _vpHSV_h_
+#define _vpHSV_h_
+
+#include <exception>
+#include <iostream>
+#include <limits>
+#include <sstream>
+#include <string>
+#include <type_traits>
+#include <vector>
+
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpMath.h>
+#include <visp3/core/vpRGBa.h>
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+BEGIN_VISP_NAMESPACE
+template<typename T, bool = true>
+class vpHSV;
+
+template <typename T, bool useFullScale>
+std::ostream &operator<<(std::ostream &os, const vpHSV<T, useFullScale> &hsv);
+
+namespace
+{
+/**
+ * \brief Structure that gives the variance of the different channels of a HSV pixel assuming that
+ * each channel follows a continuous uniform law defined on the intervall [0.; 1.].
+ *
+ * \tparam U The type used to encode the channels.
+ * \tparam otherUseFullScale Unused
+ * \tparam std::enable_if<std::is_floating_point<U>::value, true>::type Enable this structure only for floating point types.
+ */
+template <typename T, bool otherUseFullScale, typename EnableIf = void>
+struct UniformLawVariance;
+
+/**
+   * \brief Structure that gives the variance of the different channels of a HSV pixel assuming that
+   * each channel follows a continuous uniform law defined on the intervall [0.; 1.].
+   *
+   * \tparam U The type used to encode the channels.
+   * \tparam otherUseFullScale Unused
+   * \tparam std::enable_if<std::is_floating_point<U>::value, true>::type Enable this structure only for floating point types.
+   */
+template <typename T, bool useFullScale>
+struct UniformLawVariance<T, useFullScale, typename std::enable_if<std::is_floating_point<T>::value>::type>
+{
+  // Variance of a continuous uniform law defined on the intervall [a; b] = (b - a)^2 / 12
+  // Here, a = 0, b = 1
+  static constexpr float hueVariance = 1.f/12.f;
+  static constexpr float otherChannelsVariance = 1.f/12.f;
+};
+
+/**
+ * \brief Structure that gives the variance of the different channels of a HSV pixel assuming that
+ * each channel follows a discrete uniform law defined on the intervall {0; 1; ...; 255}.
+ *
+ * \tparam U Unsigned char.
+ * \tparam otherUseFullScale true to make the Hue channel encoded on the intervall {0; 1; ... ; 255}.
+ * \tparam std::enable_if<std::is_same<U, unsigned char>::value &&otherUseFullScale, U>::type Enable this structure
+ * only for unsigned char and Hue encoded on the full range.
+ */
+template <>
+struct UniformLawVariance<unsigned char, true>
+{
+  // Variance of a discrete uniform law defined on the intervall {a; a + 1; ... b} = ((b - a + 1)^2 - 1)/ 12
+  // Here, a = 0, b = 255
+  static constexpr float hueVariance = (256.f * 256.f - 1.f)/12.f;
+  static constexpr float otherChannelsVariance = (256.f * 256.f - 1.f)/12.f;
+};
+
+/**
+ * \brief Structure that gives the variance of the different channels of a HSV pixel assuming that
+ * each channel follows a discrete uniform law defined on the intervall {0; 1; ...; 255} for the Saturation and
+ * Value channels and {0; 1; ...; maxHueUsingLimitedRange} for the Hue channel.
+ *
+ * \tparam U Unsigned char.
+ * \tparam otherUseFullScale false to make the Hue channel encoded on the intervall {0; 1; ... ; maxHueUsingLimitedRange}.
+ * \tparam std::enable_if<std::is_same<U, unsigned char>::value && !otherUseFullScale, U>::type Enable this structure
+ * only for unsigned char and Hue encoded on the limited range.
+ */
+template <>
+struct UniformLawVariance<unsigned char, false>
+{
+  // Variance of a discrete uniform law defined on the intervall {a; a + 1; ... b} = ((b - a + 1)^2 - 1)/ 12
+  // Here, a = 0, b = 255 for the Saturation and Value channels
+  // and {0; 1; ...; maxHueUsingLimitedRange} for the Hue channel.
+  static constexpr float hueVariance = (180.f * 180.f - 1.f)/12.f;
+  static constexpr float otherChannelsVariance = (256.f * 256.f - 1.f)/12.f;
+};
+}
+
+/**
+ * \brief Class implementing the HSV pixel format.
+ *
+ * \tparam T The type of the channels. Either a floating point type (float, double) or unsigned char.
+ * \tparam useFullScale True if vpHSV uses unsigned char and the full range [0; 255], false if vpHSV uses unsigned char and the limited range [0; maxHueUsingLimitedRange].
+ */
+template<typename T, bool useFullScale>
+class vpHSV
+{
+public:
+  /**
+   * \brief Construct a new vpHSV object using unsigned char channels.
+   *
+   * \tparam U The type of the channels of the vpHSV pixels.
+   * \tparam std::enable_if<std::is_same<T, unsigned char>::value, U>::type Enable the constructor only when the channel
+   * type is unsigned char.
+   * \param[in] H_ The value of the Hue channel.
+   * \param[in] S_ The value of the Saturation channel.
+   * \param[in] V_ The value of the Value channel.
+   */
+  template<typename U = T, typename std::enable_if<std::is_same<T, unsigned char>::value, U>::type = 0>
+  explicit vpHSV(const T &H_ = 0, const T &S_ = 0, const T &V_ = 0)
+    : H(H_)
+    , S(S_)
+    , V(V_)
+  { }
+
+  /**
+   * \brief Construct a new vpHSV object using floating point channels.
+   *
+   * \tparam U The type of the channels of the vpHSV pixels.
+   * \tparam  std::enable_if<std::is_floating_point<U>::value>::type Enable the constructor only when U is a floating
+   * point format.
+   * \param[in] H_ The value of the Hue channel.
+   * \param[in] S_ The value of the Saturation channel.
+   * \param[in] V_ The value of the Value channel.
+   */
+  template<typename U = T, typename std::enable_if<std::is_floating_point<U>::value>::type...>
+  explicit vpHSV(const double &H_ = 0., const double &S_ = 0., const double &V_ = 0.)
+    : H(H_)
+    , S(S_)
+    , V(V_)
+  { }
+
+  /**
+   * \brief Construct a new vpHSV object from a vector of double.
+   *
+   * \tparam U The type of the channels of the vpHSV pixels.
+   * \tparam std::enable_if<std::is_same<T, unsigned char>::value, U>::type Enable the constructor only when the channel
+   * type is unsigned char.
+   * \param[in] v Vector of double. The values must be in the range [0; maxHueUsingLimitedRange] if useFullScale is false, or
+   * in the range [0; 255] if useFullScale is true.
+   */
+  template<typename U = T, typename std::enable_if<std::is_same<T, unsigned char>::value, U>::type = 0>
+  vpHSV(const std::vector<double> &v)
+  {
+    if (v.size() != nbChannels) {
+      throw std::exception();
+    }
+    U hmax;
+    if (useFullScale) {
+      hmax = std::numeric_limits<U>::max();
+    }
+    else {
+      hmax = maxHueUsingLimitedRange;
+    }
+    this->set(v, static_cast<U>(0), hmax);
+  }
+
+  /**
+   * \brief Construct a new vpHSV object from a vector of double.
+   *
+   * \tparam U The type of the channels of the vpHSV pixels.
+   * \tparam std::enable_if<std::is_floating_point<U>::value>::type Enable the method only when U is a floating point format.
+   * \param[in] v Vector of size 3 whose values must be in the range [0; 1.].
+   */
+  template<typename U = T, typename std::enable_if<std::is_floating_point<U>::value>::type...>
+  vpHSV(const std::vector<double> &v)
+  {
+    if (v.size() != nbChannels) {
+      throw std::exception();
+    }
+    this->set(v, 0., 1.);
+  }
+
+  /**
+   * \brief Construct a new vpHSV object using unsigned char channels and the full range [0; 255] from a vpHSV object whose channels
+   * are in floating point format.
+   *
+   * \tparam U The format of the constructed object.
+   * \tparam V The format of the base object.
+   * \tparam std::enable_if<std::is_same<T, unsigned char>::value &&std::is_floating_point<V>::value && useFullScale, U>::type
+   * Enable the method only if the constructed object uses unsigned char format and uses the full range [0; 255] and the object that is used as reference
+   * uses floating point format.
+   * \param[in] other A floating point format vpHSV.
+   */
+  template<typename U = T, typename V, typename std::enable_if<std::is_same<T, unsigned char>::value &&std::is_floating_point<V>::value &&useFullScale, U>::type = 0 >
+  vpHSV(const vpHSV<V> &other)
+  {
+    buildFrom(other);
+  }
+
+  /**
+   * \brief Construct a new vpHSV object using unsigned char channels and the limited range [0; maxHueUsingLimitedRange] from a vpHSV object whose channels
+   * are in floating point format.
+   *
+   * \tparam U The format of the constructed object.
+   * \tparam V The format of the base object.
+   * \tparam std::enable_if<std::is_same<T, unsigned char>::value &&std::is_floating_point<V>::value && !useFullScale, U>::type
+   * Enable the method only if the constructed object uses unsigned char format and uses the limited range [0; maxHueUsingLimitedRange] and the object that is used as reference
+   * uses floating point format.
+   * \param[in] other A floating point format vpHSV.
+   */
+  template<typename U = T, typename V, typename std::enable_if<std::is_same<T, unsigned char>::value &&std::is_floating_point<V>::value && !useFullScale, U>::type = 0 >
+  vpHSV(const vpHSV<V> &other)
+  {
+    buildFrom(other);
+  }
+
+  /**
+   * \brief Construct a new floating point vpHSV object from an unsigned char vpHSV object.
+   *
+   * \tparam U The type of the channels of the constructed vpHSV pixels.
+   * \tparam otherUseFullScale True if the reference object uses unsigned char and the full range [0; 255], false if it uses unsigned char and the limited range [0; maxHueUsingLimitedRange].
+   * \tparam std::enable_if<std::is_floating_point<U>::value>::type Enable the method only if the constructed object
+   * uses the floating point format for its channels.
+   * \param[in] other The reference object.
+   */
+  template<typename U = T, bool otherUseFullScale, typename std::enable_if<std::is_floating_point<U>::value>::type...>
+  vpHSV(const vpHSV<unsigned char, otherUseFullScale> &other)
+  {
+    buildFrom(other);
+  }
+
+  /**
+   * \brief Construct a new vpHSV object from a vpRGBa object.
+   *
+   * \param[in] rgba The reference vpRGBa object.
+   */
+  vpHSV(const vpRGBa &rgba)
+  {
+    buildFrom(rgba);
+  }
+
+  /**
+   * \brief Cast a vpHSV into a string, for display purpose.
+   *
+   * \return std::string
+   */
+  virtual std::string toString() const;
+
+  friend std::ostream &operator<< <>(std::ostream &os, const vpHSV<T, useFullScale> &hsv);
+
+  /**
+   * \brief Modify the object to be the result of the conversion of the vpRGBa object into HSV format.
+   *
+   * \param[in] rgba The vpRGBa object that serves as model/
+   * \return vpHSV<T, useFullScale>& Reference to the modified object.
+   */
+  vpHSV<T, useFullScale> &buildFrom(const vpRGBa &rgba);
+
+  /**
+   * \brief Convert a floating point HSV into a unsigned char HSV using the full range [0; 255].
+   *
+   * \tparam U The type of the channels of the vpHSV pixels that is modified.
+   * \tparam V The type of the channels of the vpHSV pixels that serves as reference.
+   * \tparam std::enable_if<std::is_same<T, unsigned char>::value &&std::is_floating_point<V>::value &&useFullScale, U>::type
+   * Enable the method only if the modified object uses unsigned char and full range [0; 255] AND the base object uses a
+   * floating point format.
+   * \param[in] other The floating point HSV.
+   * \return vpHSV<T, useFullScale>& Reference to the modified object.
+   */
+  template<typename U = T, typename V, bool otherUseFullScale, typename std::enable_if<std::is_same<T, unsigned char>::value &&std::is_floating_point<V>::value &&useFullScale, U>::type = 0 >
+  vpHSV<T, useFullScale> &buildFrom(const vpHSV<V, otherUseFullScale> &other)
+  {
+    H = static_cast<T>(other.H * 255.);
+    S = static_cast<T>(other.S * 255.);
+    this->V = static_cast<T>(other.V * 255.);
+    return *this;
+  }
+
+  /**
+   * \brief Convert a floating point HSV into a unsigned char HSV using the limited range [0; maxHueUsingLimitedRange].
+   *
+   * \tparam U The type of the channels of the vpHSV pixels that is modified.
+   * \tparam V The type of the channels of the vpHSV pixels that serves as reference.
+   * \tparam std::enable_if<std::is_same<T, unsigned char>::value &&std::is_floating_point<V>::value && !useFullScale, U>::type
+   * Enable the method only if the modified object uses unsigned char and limited range [0; maxHueUsingLimitedRange] AND the base object uses a
+   * floating point format.
+   * \param[in] other The floating point HSV.
+   * \return vpHSV<T, useFullScale>& Reference to the modified object.
+   */
+  template<typename U = T, typename V, bool otherUseFullScale, typename std::enable_if<std::is_same<T, unsigned char>::value &&std::is_floating_point<V>::value && !useFullScale, U>::type = 0 >
+  vpHSV<T, useFullScale> &buildFrom(const vpHSV<V, otherUseFullScale> &other)
+  {
+    H = static_cast<T>(other.H * static_cast<double>(maxHueUsingLimitedRange));
+    S = static_cast<T>(other.S * 255.);
+    this->V = static_cast<T>(other.V * 255.);
+    return *this;
+  }
+
+  /**
+   * \brief Convert a vpHSV that uses unsigned char for its channels into a vpHSV that uses floating point for its channels.
+   *
+   * \tparam U The type of the channels of the vpHSV pixels.
+   * \tparam otherUseFullScale
+   * \tparam  std::enable_if<std::is_floating_point<U>::value>::type Enable the method only if the modified object uses
+   * floating point format.
+   * \param[in] other The unsigned char vpHSV.
+   * \return vpHSV<T, useFullScale>& Reference to the modified object.
+   */
+  template<typename U = T, bool otherUseFullScale, typename std::enable_if<std::is_floating_point<U>::value>::type...>
+  vpHSV<T, useFullScale> &buildFrom(const vpHSV<unsigned char, otherUseFullScale> &other)
+  {
+    if (otherUseFullScale) {
+      H = static_cast<T>(other.H) / 255.;
+    }
+    else {
+      H = static_cast<T>(other.H) / static_cast<double>(maxHueUsingLimitedRange);
+    }
+    S = static_cast<T>(other.S) / 255.;
+    V = static_cast<T>(other.V) / 255.;
+    return *this;
+  }
+
+  /**
+   * \brief Convert a floating point HSV into another floating point type HSV.
+   *
+   * \tparam U The type of the channels of the vpHSV pixels that is modified.
+   * \tparam V The type of the channels of the vpHSV pixels that serves as reference.
+   * \tparam otherUseFullScale To avoid problem if one was created with true and the other false (even it is not used for
+   * floating point types).
+   * \tparam std::enable_if<std::is_floating_point<T>::value &&std::is_floating_point<V>::value && !std::is_same<T, V>::value, int>::type
+   * Enable the method only if the modified object uses is a floating point format, the base object too BUT the formats
+   * are different. The type "int" is not used, it is here only because float and doubles are "not [a] valid type for a
+   * template non-type parameter"
+   * \param[in] other The floating point HSV.
+   * \return vpHSV<T, useFullScale>& Reference to the modified object.
+   */
+  template<typename U = T, typename V, bool otherUseFullScale, typename std::enable_if<std::is_floating_point<T>::value &&std::is_floating_point<V>::value && !std::is_same<T, V>::value, int>::type = 0 >
+  vpHSV<T, useFullScale> &buildFrom(const vpHSV<V, otherUseFullScale> &other)
+  {
+    H = static_cast<T>(other.H);
+    S = static_cast<T>(other.S);
+    this->V = static_cast<T>(other.V);
+    return *this;
+  }
+
+  /**
+   * \brief Compute the normalized HSV values (i.e. in the range [0; 1]) that correspond to a vpRGBa object.
+   *
+   * \param[in] rgba The RGB pixel.
+   * \return std::vector<double> Vector of normalized HSV values.
+   */
+  static std::vector<double> computeNormalizedHSV(const vpRGBa &rgba)
+  {
+    double red, green, blue;
+    double h, s, v;
+    double min, max;
+
+    red = rgba.R / 255.0;
+    green = rgba.G / 255.0;
+    blue = rgba.B / 255.0;
+
+    if (red > green) {
+      max = std::max<double>(red, blue);
+      min = std::min<double>(green, blue);
+    }
+    else {
+      max = std::max<double>(green, blue);
+      min = std::min<double>(red, blue);
+    }
+
+    v = max;
+
+    if (!vpMath::equal(max, 0.0, std::numeric_limits<double>::epsilon())) {
+      s = (max - min) / max;
+    }
+    else {
+      s = 0.0;
+    }
+
+    if (vpMath::equal(s, 0.0, std::numeric_limits<double>::epsilon())) {
+      h = 0.0;
+    }
+    else {
+      double delta = max - min;
+
+      if (vpMath::equal(red, max, std::numeric_limits<double>::epsilon())) {
+        h = (green - blue) / delta;
+      }
+      else if (vpMath::equal(green, max, std::numeric_limits<double>::epsilon())) {
+        h = 2.0 + ((blue - red) / delta);
+      }
+      else {
+        h = 4.0 + ((red - green) / delta);
+      }
+
+      h /= 6.0;
+      if (h < 0.0) {
+        h += 1.0;
+      }
+      else if (h > 1.0) {
+        h -= 1.0;
+      }
+    }
+
+    std::vector<double> hsv(3);
+    hsv[0] = h;
+    hsv[1] = s;
+    hsv[2] = v;
+    return hsv;
+  }
+
+  /**
+   * \brief Compute the square of the Mahalanobis distance between two HSV pixels.
+   * It is assumed that the channels are independent and follow a uniform distribution law.
+   *
+   * \param[in] a The first pixel to compare.
+   * \param[in] b The second pixel to compare.
+   * \return float The squared Mahalanobis distance between a and b.
+   */
+  template <typename ArithmeticType>
+  inline static ArithmeticType squaredMahalanobisDistance(const vpHSV<T, useFullScale> &a, const vpHSV<T, useFullScale> &b)
+  {
+    static const ArithmeticType invHueVariance = 1.f / UniformLawVariance<T, useFullScale>::hueVariance;
+    static const ArithmeticType invOtherChannelsVariance = 1.f / UniformLawVariance<T, useFullScale>::otherChannelsVariance;
+    ArithmeticType dHue = a.H - b.H;
+    ArithmeticType dSat = a.S - b.S;
+    ArithmeticType dVal = a.V - b.V;
+    ArithmeticType distance = dHue * dHue * invHueVariance + invOtherChannelsVariance * (dSat * dSat + dVal * dVal);
+    return distance;
+  }
+
+  /**
+   * \brief Compute the Mahalanobis distance between two HSV pixels.
+   * It is assumed that the channels are independent and follow a uniform distribution law.
+   *
+   * \param[in] a The first pixel to compare.
+   * \param[in] b The second pixel to compare.
+   * \return float The Mahalanobis distance between a and b.
+   */
+  template <typename ArithmeticType>
+  inline static ArithmeticType mahalanobisDistance(const vpHSV<T, useFullScale> &a, const vpHSV<T, useFullScale> &b)
+  {
+    return std::sqrt(squaredMahalanobisDistance<ArithmeticType>(a, b));
+  }
+public:
+  T H; /*!< The Hue channel.*/
+  T S; /*!< The Saturation channel.*/
+  T V; /*!< The Value channel.*/
+
+  /**
+   * \brief Number of channels a HSV pixel is made of.
+   */
+  static constexpr unsigned char nbChannels = 3;
+
+  /**
+   * \brief Maximum value of the Hue channel when using unsigned char and the limited range.
+   */
+  static constexpr unsigned char maxHueUsingLimitedRange = 179;
+
+private:
+  /**
+   * \brief Permit to initialize a vpHSV object using a vector.
+   *
+   * \tparam Tp The type of the channels of the vpHSV pixels.
+   * \tparam VectorType The type of the vector.
+   * \param[in] v A vector whose size must be equal to 3.
+   * \param[in] limMin The lower limit of the acceptable range of values.
+   * \param[in] limMax The upper limit of the acceptable range of values.
+   */
+  template<typename Tp, typename VectorType>
+  inline void
+    set(const std::vector<VectorType> &v, const Tp &limMin, const Tp &limMax)
+  {
+    // if ((v[0] < limMin) || (v[0] > limMax)) {
+    //   // throw exception
+    // }
+    H = v[0];
+    // if ((v[1] < limMin) || (v[1] > limMax)) {
+    //   // throw exception
+    // }
+    S = v[1];
+    // if ((v[2] < limMin) || (v[2] > limMax)) {
+    //   // throw exception
+    // }
+    V = v[2];
+  }
+};
+
+template<>
+inline vpHSV<double> &vpHSV<double>::buildFrom(const vpRGBa &rgba)
+{
+  std::vector<double> hsv = computeNormalizedHSV(rgba);
+  set(hsv, 0., 1.);
+  return *this;
+}
+
+template<>
+inline vpHSV<unsigned char, true> &vpHSV<unsigned char, true>::buildFrom(const vpRGBa &rgba)
+{
+  std::vector<double> hsv = computeNormalizedHSV(rgba);
+  hsv[0] *= 255.;
+  hsv[1] *= 255.;
+  hsv[2] *= 255.;
+
+  set(hsv, static_cast<unsigned char>(0), static_cast<unsigned char>(255.));
+  return *this;
+}
+
+template<>
+inline vpHSV<unsigned char, false> &vpHSV<unsigned char, false>::buildFrom(const vpRGBa &rgba)
+{
+  std::vector<double> hsv = computeNormalizedHSV(rgba);
+  hsv[0] *= static_cast<double>(maxHueUsingLimitedRange);
+  hsv[1] *= 255.;
+  hsv[2] *= 255.;
+
+  set(hsv, static_cast<unsigned char>(0), static_cast<unsigned char>(255.));
+  return *this;
+}
+
+template <typename T, bool useFullScale>
+std::string vpHSV<T, useFullScale>::toString() const
+{
+  std::stringstream ss;
+  ss << "vpHSV<";
+  using CastType = typename std::conditional<std::is_integral<T>::value, int, T>::type;
+  if (std::is_same<T, unsigned char>::value) {
+    ss << "uchar";
+  }
+  else if (std::is_same<T, double>::value) {
+    ss << "double";
+  }
+  else {
+    ss << "other";
+  }
+
+  if (useFullScale) {
+    std::cout << ", full";
+  }
+  else {
+    std::cout << ", partial";
+  }
+  ss << " scale> (H, S, V): (" << (CastType)H << " , " << (CastType)S << " , " << (CastType)V << ")";
+  return ss.str();
+}
+
+template <typename T, bool useFullScale>
+std::ostream &operator<<(std::ostream &os, const vpHSV<T, useFullScale> &hsv)
+{
+  os << hsv.toString();
+  return os;
+}
+END_VISP_NAMESPACE
+#endif
+#endif
