@@ -134,7 +134,7 @@ int main(int argc, const char **argv)
   vpDetectorAprilTag::vpAprilTagFamily opt_tag_family = vpDetectorAprilTag::TAG_36h11;
   vpDetectorAprilTag::vpPoseEstimationMethod opt_tag_pose_estimation_method = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
   double opt_tag_size = 0.065;
-  float opt_quad_decimate = 4.0;
+  float opt_tag_quad_decimate = 4.0;
   float opt_aruco_decision_margin = 50;
   int opt_tag_nThreads = 2;
   std::string intrinsic_file = "";
@@ -158,7 +158,7 @@ int main(int argc, const char **argv)
       opt_aruco_decision_margin = atof(argv[++i]);
     }
     else if (std::string(argv[i]) == "--tag-quad-decimate" && i + 1 < argc) {
-      opt_quad_decimate = (float)atof(argv[++i]);
+      opt_tag_quad_decimate = (float)atof(argv[++i]);
     }
     else if (std::string(argv[i]) == "--tag-n-threads" && i + 1 < argc) {
       opt_tag_nThreads = std::atoi(argv[++i]);
@@ -249,8 +249,8 @@ int main(int argc, const char **argv)
 
     vpDetectorAprilTag detector(opt_tag_family);
 
-    detector.setAprilTagQuadDecimate(opt_quad_decimate);
-    detector.setAprilTagopt_tag_pose_estimation_method(opt_tag_pose_estimation_method);
+    detector.setAprilTagQuadDecimate(opt_tag_quad_decimate);
+    detector.setAprilTagPoseEstimationMethod(opt_tag_pose_estimation_method);
     detector.setAprilTagNbThreads(opt_tag_nThreads);
     detector.setDisplayTag(display_tag);
     detector.setArUcoDecisionMargin(opt_aruco_decision_margin); // only for ArUco 4x4, 5x5 and 6x6 families
