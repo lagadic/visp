@@ -242,9 +242,9 @@ int main(int argc, const char **argv)
     std::cout << "Tag detector settings" << std::endl;
     std::cout << "  Tag size [m]   : " << opt_tag_size << std::endl;
     std::cout << "  Tag family     : " << opt_tag_family << std::endl;
-    std::cout << "  Quad decimate  : " << opt_tag_opt_quad_decimate << std::endl;
+    std::cout << "  Quad decimate  : " << opt_tag_quad_decimate << std::endl;
     std::cout << "  Decision margin: " << opt_aruco_decision_margin << " (applied to ArUco tags only)" << std::endl;
-    std::cout << "  Num threads    : " << opt_tag_opt_tag_nThreads << std::endl;
+    std::cout << "  Num threads    : " << opt_tag_nThreads << std::endl;
     std::cout << "  Pose estimation: " << opt_tag_pose_estimation_method << std::endl;
 
     vpDetectorAprilTag detector(opt_tag_family);

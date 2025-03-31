@@ -254,7 +254,7 @@ int main(int argc, const char **argv)
     std::cout << "  Num threads    : " << opt_tag_nThreads << std::endl;
     std::cout << "  Pose estimation: " << opt_tag_pose_estimation_method << std::endl;
 
-    vpDetectorAprilTag detector(tagFamily);
+    vpDetectorAprilTag detector(opt_tag_family);
 
     detector.setAprilTagQuadDecimate(opt_tag_quad_decimate);
     if (use_pose) {
