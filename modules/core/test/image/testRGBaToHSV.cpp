@@ -137,19 +137,19 @@ int main()
   vpImageConvert::convert(Irgb, Ihsvuct);
   vpImageConvert::convert(Irgb, Ihsvd);
 
-  bool localSuccess = areAlmostEqual(Ihsvucf, Ihsvucf_truth);
+  bool localSuccess = vpHSVTests::areAlmostEqual(Ihsvucf, Ihsvucf_truth);
   if (!localSuccess) {
     std::cerr << "vpImageConvert(rgba, hsv<uchar, false>) failed!" << std::endl;
   }
   isSuccess = isSuccess && localSuccess;
 
-  localSuccess = areAlmostEqual(Ihsvuct, Ihsvuct_truth);
+  localSuccess = vpHSVTests::areAlmostEqual(Ihsvuct, Ihsvuct_truth);
   if (!localSuccess) {
     std::cerr << "vpImageConvert(rgba, hsv<uchar, true>) failed!" << std::endl;
   }
   isSuccess = isSuccess && localSuccess;
 
-  localSuccess = areAlmostEqual(Ihsvd, Ihsvd_truth);
+  localSuccess = vpHSVTests::areAlmostEqual(Ihsvd, Ihsvd_truth);
   if (!localSuccess) {
     std::cerr << "vpImageConvert(rgba, hsv<double>) failed!" << std::endl;
   }

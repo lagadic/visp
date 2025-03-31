@@ -144,21 +144,21 @@ int main()
   vpImage<vpHSV<double>> Ihsvd_truth(480, 640, vpHSV<double>(0., 0., 0.5));
 
   vpImageConvert::convert(Ihsvucf_truth, Irgb);
-  bool localSuccess = areAlmostEqual(Irgb, Irgb_truth);
+  bool localSuccess = vpHSVTests::areAlmostEqual(Irgb, Irgb_truth);
   if (!localSuccess) {
     std::cerr << "vpImageConvert(hsv<uchar, false>, rgba) failed!" << std::endl;
   }
   isSuccess = isSuccess && localSuccess;
 
   vpImageConvert::convert(Ihsvuct_truth, Irgb);
-  localSuccess = areAlmostEqual(Irgb, Irgb_truth);
+  localSuccess = vpHSVTests::areAlmostEqual(Irgb, Irgb_truth);
   if (!localSuccess) {
     std::cerr << "vpImageConvert(hsv<uchar, true>, rgba) failed!" << std::endl;
   }
   isSuccess = isSuccess && localSuccess;
 
   vpImageConvert::convert(Ihsvd_truth, Irgb);
-  localSuccess = areAlmostEqual(Irgb, Irgb_truth);
+  localSuccess = vpHSVTests::areAlmostEqual(Irgb, Irgb_truth);
   if (!localSuccess) {
     std::cerr << "vpImageConvert(hsv<double>, rgba) failed!" << std::endl;
   }

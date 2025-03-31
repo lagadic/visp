@@ -28,7 +28,7 @@ static void resizeAndInitializeIfNeeded(const vpImage<bool> *p_mask, const unsig
 {
   if (p_mask == nullptr) {
     // Just need to resize the output image, values will be computed and overwrite what is inside the image
-    I.resize(height, width);
+    I.resize;
   }
   else {
     // Need to reset the image because some points will not be computed
@@ -964,6 +964,68 @@ static void gaussianBlur(const vpImage<ImageType> &I, vpImage<FilterType> &GI, u
   delete[] fg;
 }
 }
+
+template<typename ArithmeticType, bool useFullScale>
+void print(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, const std::string &name)
+{
+  std::cout << name << " = " << std::endl;
+  const unsigned int nbRows = I.getRows(), nbCols = I.getCols();
+  for (unsigned int r = 0; r < nbRows; ++r) {
+    for (unsigned int c = 0; c < nbCols; ++c) {
+      std::string character;
+      if (vpMath::nul(I[r][c].H, 1e-3)) {
+        character = '0';
+      }
+      else {
+        double val = static_cast<double>(I[r][c].H);
+        if (val > 0 && val < 1.) {
+          val *= 10.;
+        }
+        character = std::to_string(static_cast<unsigned int>(val));
+      }
+      std::cout << character << " ";
+    }
+    std::cout << std::endl;
+  }
+  std::cout << std::endl;
+}
+
+template<typename ArithmeticType>
+void print(const vpImage<ArithmeticType> &I, const std::string &name)
+{
+  std::cout << name << " = " << std::endl;
+  const unsigned int nbRows = I.getRows(), nbCols = I.getCols();
+  for (unsigned int r = 0; r < nbRows; ++r) {
+    for (unsigned int c = 0; c < nbCols; ++c) {
+      char character;
+      if (vpMath::nul(I[r][c], 1e-3)) {
+        character = '0';
+      }
+      else if (I[r][c] > 0) {
+        character = '+';
+      }
+      else {
+        character = '-';
+      }
+      std::cout << character << " ";
+    }
+    std::cout << std::endl;
+  }
+  std::cout << std::endl << std::flush;
+}
+
+void print(const vpImage<unsigned char> &I, const std::string &name)
+{
+  std::cout << name << " = " << std::endl;
+  const unsigned int nbRows = I.getRows(), nbCols = I.getCols();
+  for (unsigned int r = 0; r < nbRows; ++r) {
+    for (unsigned int c = 0; c < nbCols; ++c) {
+      std::cout << std::to_string(I[r][c]) << " ";
+    }
+    std::cout << std::endl;
+  }
+  std::cout << std::endl << std::flush;
+}
 #endif
 
 int main()
@@ -974,52 +1036,67 @@ int main()
   vpHSV<unsigned char> hsv_uc;
   vpHSV<double> hsv_double;
 
-  const unsigned int width = 1280, height = 720;
-  vpImage<unsigned char> Iuc(height, width, 125);
-  vpImage<double> Iuc_filtered_old(height, width, 125), Iuc_filtered_new(height, width);
-  vpImage<vpRGBa> Irgba(height, width, vpRGBa(75, 150, 225)), Irgba_filtered_old(height, width), Irgba_filtered_new(height, width);
-  vpImage<vpHSV<unsigned char, true>> Ihsv_uc_true(height, width, vpHSV<unsigned char, true>(125, 125, 125)), Ihsv_uc_filtered_old_true(height, width), Ihsv_uc_filtered_new_true(height, width);
-  vpImage<vpHSV<unsigned char, false>> Ihsv_uc_false(height, width, vpHSV<unsigned char, false>(125, 125, 125)), Ihsv_uc_filtered_old_false(height, width), Ihsv_uc_filtered_new_false(height, width);
-  vpImage<vpHSV<double>> Ihsv_double(height, width, vpHSV<double>(0.5, 0.5, 0.5)), Ihsv_double_filtered_old(height, width), Ihsv_double_filtered_new(height, width);
+  // Inputs
+  vpHSVTests::vpInputDataset dataset;
+
+  // Outputs
+  vpImage<double> Iuc_filtered_old, Iuc_filtered_new;
+  vpImage<vpRGBa> Irgba(11, 11, vpRGBa(125U, 125U, 125U)), Irgba_filtered_old, Irgba_filtered_new;
+  vpImage<vpHSV<unsigned char, true>> Ihsv_uc_filtered_old_true, Ihsv_uc_filtered_new_true;
+  vpImage<vpHSV<unsigned char, false>> Ihsv_uc_filtered_old_false, Ihsv_uc_filtered_new_false;
+  vpImage<vpHSV<double>> Ihsv_double_filtered_old, Ihsv_double_filtered_new;
 
   for (unsigned int size = 3; (size < 7) && isSuccess; size += 2) {
-    vpOldImageFilter::gaussianBlur(Iuc, Iuc_filtered_old, size);
-    vpImageFilter::gaussianBlur(Iuc, Iuc_filtered_new, size, 0.);
-    isSuccess = areAlmostEqual(Iuc_filtered_old, Iuc_filtered_new);
-    if (!isSuccess) {
-      std::cerr << "ERROR: filter on uchar failed ! " << std::endl;
+    for (auto input: dataset.m_ucImages) {
+      print(input.second.m_I, input.first);
+      vpOldImageFilter::gaussianBlur(input.second.m_I, Iuc_filtered_old, size);
+      vpImageFilter::gaussianBlur(input.second.m_I, Iuc_filtered_new, size, 0.);
+      bool ucSuccess = vpHSVTests::areAlmostEqual(Iuc_filtered_old, Iuc_filtered_new);
+      isSuccess = isSuccess && ucSuccess;
+      if (!isSuccess) {
+        std::cerr << "ERROR: filter on uchar failed ! " << std::endl;
+      }
     }
 
     vpOldImageFilter::gaussianBlur(Irgba, Irgba_filtered_old, size);
     vpImageFilter::gaussianBlur(Irgba, Irgba_filtered_new, size, 0.);
-    bool rgbaSuccess = areAlmostEqual(Irgba_filtered_old, Irgba_filtered_new);
+    bool rgbaSuccess = vpHSVTests::areAlmostEqual(Irgba_filtered_old, Irgba_filtered_new);
     isSuccess = isSuccess && rgbaSuccess;
     if (!rgbaSuccess) {
       std::cerr << "ERROR: filter on RGBa failed ! " << std::endl;
     }
 
-    vpOldImageFilter::gaussianBlur(Ihsv_uc_true, Ihsv_uc_filtered_old_true, size);
-    vpImageFilter::gaussianBlur(Ihsv_uc_true, Ihsv_uc_filtered_new_true, size, 0.);
-    bool hsvucSuccessTrue = areAlmostEqual(Ihsv_uc_filtered_old_true, Ihsv_uc_filtered_new_true);
-    isSuccess = isSuccess && hsvucSuccessTrue;
-    if (!hsvucSuccessTrue) {
-      std::cerr << "ERROR: filter on HSV<uchar, true> failed ! " << std::endl;
+    for (auto input: dataset.m_hsvUCtrue) {
+      print(input.second.m_I, input.first);
+      vpOldImageFilter::gaussianBlur(input.second.m_I, Ihsv_uc_filtered_old_true, size);
+      vpImageFilter::gaussianBlur(input.second.m_I, Ihsv_uc_filtered_new_true, size, 0.);
+      bool hsvucSuccessTrue = vpHSVTests::areAlmostEqual(Ihsv_uc_filtered_old_true, Ihsv_uc_filtered_new_true);
+      isSuccess = isSuccess && hsvucSuccessTrue;
+      if (!hsvucSuccessTrue) {
+        std::cerr << "ERROR: filter on HSV<uchar, true> failed ! " << std::endl;
+      }
     }
 
-    vpOldImageFilter::gaussianBlur(Ihsv_uc_false, Ihsv_uc_filtered_old_false, size);
-    vpImageFilter::gaussianBlur(Ihsv_uc_false, Ihsv_uc_filtered_new_false, size, 0.);
-    bool hsvucSuccessFalse = areAlmostEqual(Ihsv_uc_filtered_old_false, Ihsv_uc_filtered_new_false);
-    isSuccess = isSuccess && hsvucSuccessFalse;
-    if (!hsvucSuccessFalse) {
-      std::cerr << "ERROR: filter on HSV<uchar, false> failed ! " << std::endl;
+    for (auto input: dataset.m_hsvUCfalse) {
+      print(input.second.m_I, input.first);
+      vpOldImageFilter::gaussianBlur(input.second.m_I, Ihsv_uc_filtered_old_false, size);
+      vpImageFilter::gaussianBlur(input.second.m_I, Ihsv_uc_filtered_new_false, size, 0.);
+      bool hsvucSuccessTrue = vpHSVTests::areAlmostEqual(Ihsv_uc_filtered_old_false, Ihsv_uc_filtered_new_false);
+      isSuccess = isSuccess && hsvucSuccessTrue;
+      if (!hsvucSuccessTrue) {
+        std::cerr << "ERROR: filter on HSV<uchar, false> failed ! " << std::endl;
+      }
     }
 
-    vpOldImageFilter::gaussianBlur(Ihsv_double, Ihsv_double_filtered_old, size);
-    vpImageFilter::gaussianBlur(Ihsv_double, Ihsv_double_filtered_new, size, 0.);
-    bool hsvdSuccess = areAlmostEqual(Ihsv_double_filtered_old, Ihsv_double_filtered_new);
-    isSuccess = isSuccess && hsvdSuccess;
-    if (!hsvdSuccess) {
-      std::cerr << "ERROR: filter on HSV<double> failed ! " << std::endl;
+    for (auto input: dataset.m_hsvDouble) {
+      print(input.second.m_I, input.first);
+      vpOldImageFilter::gaussianBlur(input.second.m_I, Ihsv_double_filtered_old, size);
+      vpImageFilter::gaussianBlur(input.second.m_I, Ihsv_double_filtered_new, size, 0.);
+      bool hsvucSuccessTrue = vpHSVTests::areAlmostEqual(Ihsv_double_filtered_old, Ihsv_double_filtered_new);
+      isSuccess = isSuccess && hsvucSuccessTrue;
+      if (!hsvucSuccessTrue) {
+        std::cerr << "ERROR: filter on HSV<double> failed ! " << std::endl;
+      }
     }
   }
 

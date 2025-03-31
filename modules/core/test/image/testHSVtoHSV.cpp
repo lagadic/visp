@@ -78,7 +78,7 @@ int main()
     vpImage<vpHSV<unsigned char, false>> Iucf(480, 640, vpHSV<unsigned char, false>(vpHSV<unsigned char, false>::maxHueUsingLimitedRange, 255, 255));
     vpImage<vpHSV<float>> Ihff, Ihff_truth(480, 640, vpHSV<float>(1., 1., 1.));
     vpImageConvert::convert(Iucf, Ihff);
-    bool localSuccess = areAlmostEqual(Ihff, Ihff_truth);
+    bool localSuccess = vpHSVTests::areAlmostEqual(Ihff, Ihff_truth);
     if (!localSuccess) {
       std::cerr << "vpImageConvert(HSV<uchar, false>, HSV<float>) failed!" << std::endl;
     }
@@ -87,7 +87,7 @@ int main()
     vpImage<vpHSV<unsigned char, true>> Iuct(480, 640, vpHSV<unsigned char, true>(255, 255, 255));
     vpImage<vpHSV<float>> Ihft, Ihft_truth(480, 640, vpHSV<float>(1., 1., 1.));
     vpImageConvert::convert(Iuct, Ihft);
-    localSuccess = areAlmostEqual(Ihft, Ihft_truth);
+    localSuccess = vpHSVTests::areAlmostEqual(Ihft, Ihft_truth);
     if (!localSuccess) {
       std::cerr << "vpImageConvert(HSV<uchar, true>, HSV<float>) failed!" << std::endl;
     }
@@ -95,7 +95,7 @@ int main()
 
     vpImage<vpHSV<double>> Ihdf, Ihdf_truth(480, 640, vpHSV<double>(1., 1., 1.));
     vpImageConvert::convert(Iucf, Ihdf);
-    localSuccess = areAlmostEqual(Ihdf, Ihdf_truth);
+    localSuccess = vpHSVTests::areAlmostEqual(Ihdf, Ihdf_truth);
     if (!localSuccess) {
       std::cerr << "vpImageConvert(HSV<uchar, false>, HSV<double>) failed!" << std::endl;
     }
@@ -103,7 +103,7 @@ int main()
 
     vpImage<vpHSV<double>> Ihdt, Ihdt_truth(480, 640, vpHSV<double>(1., 1., 1.));
     vpImageConvert::convert(Iuct, Ihdt);
-    localSuccess = areAlmostEqual(Ihdt, Ihdt_truth);
+    localSuccess = vpHSVTests::areAlmostEqual(Ihdt, Ihdt_truth);
     if (!localSuccess) {
       std::cerr << "vpImageConvert(HSV<uchar, true>, HSV<double>) failed!" << std::endl;
     }
@@ -115,7 +115,7 @@ int main()
     vpImage<vpHSV<float>> Ihff(480, 640, vpHSV<float>(1., 1., 1.));
     vpImage<vpHSV<unsigned char, false>> Iucf, Iucf_truth(480, 640, vpHSV<unsigned char, false>(vpHSV<unsigned char, false>::maxHueUsingLimitedRange, 255, 255));
     vpImageConvert::convert(Ihff, Iucf);
-    bool localSuccess = areAlmostEqual(Iucf, Iucf_truth);
+    bool localSuccess = vpHSVTests::areAlmostEqual(Iucf, Iucf_truth);
     if (!localSuccess) {
       std::cerr << "vpImageConvert(HSV<float>, HSV<uchar, false>) failed!" << std::endl;
     }
@@ -124,7 +124,7 @@ int main()
     vpImage<vpHSV<float>> Ihft(480, 640, vpHSV<float>(1., 1., 1.));
     vpImage<vpHSV<unsigned char, true>> Iuct, Iuct_truth(480, 640, vpHSV<unsigned char, true>(255, 255, 255));
     vpImageConvert::convert(Ihft, Iuct);
-    localSuccess = areAlmostEqual(Iuct, Iuct_truth);
+    localSuccess = vpHSVTests::areAlmostEqual(Iuct, Iuct_truth);
     if (!localSuccess) {
       std::cerr << "vpImageConvert(HSV<float>, HSV<uchar, true>) failed!" << std::endl;
     }
@@ -132,7 +132,7 @@ int main()
 
     vpImage<vpHSV<double>> Ihdf(480, 640, vpHSV<double>(1., 1., 1.));
     vpImageConvert::convert(Ihdf, Iucf);
-    localSuccess = areAlmostEqual(Iucf, Iucf_truth);
+    localSuccess = vpHSVTests::areAlmostEqual(Iucf, Iucf_truth);
     if (!localSuccess) {
       std::cerr << "vpImageConvert(HSV<double>, HSV<uchar, false>) failed!" << std::endl;
     }
@@ -140,7 +140,7 @@ int main()
 
     vpImage<vpHSV<double>> Ihdt(480, 640, vpHSV<double>(1., 1., 1.));
     vpImageConvert::convert(Ihdt, Iuct);
-    localSuccess = areAlmostEqual(Iuct, Iuct_truth);
+    localSuccess = vpHSVTests::areAlmostEqual(Iuct, Iuct_truth);
     if (!localSuccess) {
       std::cerr << "vpImageConvert(HSV<double>, HSV<uchar, true>) failed!" << std::endl;
     }
@@ -152,7 +152,7 @@ int main()
     vpImage<vpHSV<float>> Ifloat_truth(480, 640, vpHSV<float>(1., 1., 1.));
     vpImage<vpHSV<double>> Idouble, Idouble_truth(480, 640, vpHSV<double>(1., 1., 1.));
     vpImageConvert::convert(Ifloat_truth, Idouble);
-    bool localSuccess = areAlmostEqual(Idouble, Idouble_truth);
+    bool localSuccess = vpHSVTests::areAlmostEqual(Idouble, Idouble_truth);
     if (!localSuccess) {
       std::cerr << "vpImageConvert(HSV<float>, HSV<double>) failed!" << std::endl;
     }
@@ -160,7 +160,7 @@ int main()
 
     vpImage<vpHSV<float>> Ifloat;
     vpImageConvert::convert(Idouble_truth, Ifloat);
-    localSuccess = areAlmostEqual(Ifloat, Ifloat_truth);
+    localSuccess = vpHSVTests::areAlmostEqual(Ifloat, Ifloat_truth);
     if (!localSuccess) {
       std::cerr << "vpImageConvert(HSV<double>, HSV<float>) failed!" << std::endl;
     }
