@@ -31,11 +31,11 @@ NLOHMANN_JSON_SERIALIZE_ENUM(vpInteractionMatrixTypeSubset, {
   {CURRENT, "current"},
   {DESIRED, "desired"},
   {MEAN, "mean"} }
-  )
+  );
   //! [Enum conversion]
 
   //! [Arguments]
-  class Arguments
+class Arguments
 {
 public:
   // Default values

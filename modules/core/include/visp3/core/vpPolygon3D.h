@@ -231,7 +231,7 @@ NLOHMANN_JSON_SERIALIZE_ENUM(VISP_NAMESPACE_ADDRESSING vpPolygon3D::vpPolygon3DC
     {VISP_NAMESPACE_ADDRESSING vpPolygon3D::DOWN_CLIPPING, "down"},
     {VISP_NAMESPACE_ADDRESSING vpPolygon3D::FOV_CLIPPING, "fov"},
     {VISP_NAMESPACE_ADDRESSING vpPolygon3D::ALL_CLIPPING, "all"}
-})
+});
 
 inline nlohmann::json clippingFlagsToJSON(const int flags)
 {

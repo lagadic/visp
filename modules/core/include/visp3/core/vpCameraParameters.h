@@ -456,7 +456,7 @@ NLOHMANN_JSON_SERIALIZE_ENUM(vpCameraParameters::vpCameraParametersProjType, {
     {vpCameraParameters::perspectiveProjWithoutDistortion, "perspectiveWithoutDistortion"},
     {vpCameraParameters::perspectiveProjWithDistortion, "perspectiveWithDistortion"},
     {vpCameraParameters::ProjWithKannalaBrandtDistortion, "kannalaBrandtDistortion"}
-  })
+  });
 
 /**
  * \brief Converts camera parameters into a JSON representation.
@@ -464,7 +464,7 @@ NLOHMANN_JSON_SERIALIZE_ENUM(vpCameraParameters::vpCameraParametersProjType, {
  * \param j The resulting JSON object.
  * \param cam The camera to serialize.
  */
-  inline void to_json(nlohmann::json &j, const vpCameraParameters &cam)
+inline void to_json(nlohmann::json &j, const vpCameraParameters &cam)
 {
   j["px"] = cam.m_px;
   j["py"] = cam.m_py;

@@ -593,7 +593,7 @@ private:
 NLOHMANN_JSON_SERIALIZE_ENUM(vpMe::vpLikelihoodThresholdType, {
   {vpMe::vpLikelihoodThresholdType::OLD_THRESHOLD, "old"},
   {vpMe::vpLikelihoodThresholdType::NORMALIZED_THRESHOLD, "normalized"}
-})
+});
 
 inline void to_json(nlohmann::json &j, const vpMe &me)
 {

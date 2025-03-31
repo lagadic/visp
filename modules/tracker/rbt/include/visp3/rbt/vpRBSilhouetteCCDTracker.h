@@ -305,8 +305,8 @@ public:
         {vpRBSilhouetteCCDTracker::vpDisplayType::WEIGHT, "weight"},
         {vpRBSilhouetteCCDTracker::vpDisplayType::ERROR, "error"},
         {vpRBSilhouetteCCDTracker::vpDisplayType::WEIGHT_AND_ERROR, "weightAndError"}
-      })
-    virtual void loadJsonConfiguration(const nlohmann::json &j) VP_OVERRIDE
+      });
+  virtual void loadJsonConfiguration(const nlohmann::json &j) VP_OVERRIDE
   {
     vpRBFeatureTracker::loadJsonConfiguration(j);
 
