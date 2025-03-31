@@ -40,7 +40,7 @@ jobs:
         shell: cmd /C CALL {0}
         run: |
           pixi shell -e ${{ matrix.environment }}
-          cd $CONDA_PREFIX/include/panda3d
+          cd %CONDA_PREFIX%/Library/include/panda3d
           cat configFlags.h
           cat configFlags.I
 
