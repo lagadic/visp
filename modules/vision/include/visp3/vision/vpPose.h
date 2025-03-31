@@ -665,13 +665,13 @@ public:
    * \param[out] p2 : The image of the second corner ot the rectangle with coordinates (lx,0).
    * \param[out] p3 : The image of the third corner ot the rectangle with coordinates (lx,lx/s).
    * \param[out] p4 : The image of the fourth corner ot the rectangle with coordinates (0,lx/s).
-   * \param cam: the camera used (input)
-   * \param lx: the rectangle size on the x axis (input)
-   * \param cMo: the camera pose (output)
-   * \return int : OK if no pb occurs
+   * \param[in] cam : The camera used.
+   * \param[in] lx : The rectangle size on the x axis.
+   * \param[out] cMo : The camera pose.
+   * \return lx/s if no pb occurs
    */
   static double poseFromRectangle(vpPoint &p1, vpPoint &p2, vpPoint &p3, vpPoint &p4, double lx,
-                                  vpCameraParameters &cam, vpHomogeneousMatrix &cMo);
+                                  const vpCameraParameters &cam, vpHomogeneousMatrix &cMo);
 #endif
 
   // Check if std:c++17 or higher.
