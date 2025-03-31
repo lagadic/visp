@@ -68,7 +68,11 @@ const std::string &vpException::getStringMessage() const { return this->message;
 
 int vpException::getCode() const { return this->code; }
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 const char *vpException::what() const VP_NOEXCEPT { return (this->message).c_str(); }
+#else
+const char *vpException::what() const throw() { return (this->message).c_str(); }
+#endif
 
 VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpException &error)
 {
