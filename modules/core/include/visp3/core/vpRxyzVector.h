@@ -207,7 +207,6 @@ public:
   vpRxyzVector &operator=(const vpColVector &rxyz);
   vpRxyzVector &operator=(double x);
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  vpRxyzVector &operator=(const vpRxyzVector &) = default;
   vpRxyzVector &operator=(const std::initializer_list<double> &list);
 #endif
 private:
