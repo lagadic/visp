@@ -34,7 +34,7 @@
 #include <visp3/core/vpConfig.h>
 
 // Check if std:c++17 or higher
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(HAVE_OPENCV_DNN) && \
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(HAVE_OPENCV_DNN) && \
     ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
 
 #include <visp3/core/vpImageConvert.h>
@@ -377,7 +377,7 @@ bool vpDetectorDNNOpenCV::detect(const cv::Mat &I, std::vector<DetectedFeatures2
     output.emplace_back(box.x, box.x + box.width, box.y, box.y + box.height
       , proposals.m_classIds[idx], proposals.m_confidences[idx]
       , classname_opt
-        );
+    );
   }
 
   if (m_applySizeFilterAfterNMS) {
@@ -434,7 +434,7 @@ bool vpDetectorDNNOpenCV::detect(const cv::Mat &I, std::map< std::string, std::v
     output[classname].emplace_back(box.x, box.x + box.width, box.y, box.y + box.height
       , proposals.m_classIds[idx], proposals.m_confidences[idx]
       , classname_opt
-        );
+    );
   }
 
   if (m_applySizeFilterAfterNMS) {
