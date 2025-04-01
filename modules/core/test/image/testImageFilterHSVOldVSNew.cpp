@@ -1,3 +1,41 @@
+/*
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ *
+ * This software is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * See the file LICENSE.txt at the root directory of this source
+ * distribution for additional information about the GNU GPL.
+ *
+ * For using ViSP with software that can not be combined with the GNU
+ * GPL, please contact Inria about acquiring a ViSP Professional
+ * Edition License.
+ *
+ * See https://visp.inria.fr for more information.
+ *
+ * This software was developed at:
+ * Inria Rennes - Bretagne Atlantique
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * France
+ *
+ * If you have questions regarding the use of this file, please contact
+ * Inria at visp@inria.fr
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Description:
+ * Test vpImageFilter::gaussianBlur() new implementation and compare it to the old one.
+ */
+/*!
+  \example testImageFilterHSVOldVSNew.cpp
+
+  \brief Test vpImageFilter::gaussianBlur() new implementation and compare it to the old one.
+*/
+
 #include <iostream>
 #include <limits>
 #include <type_traits>
@@ -964,77 +1002,11 @@ static void gaussianBlur(const vpImage<ImageType> &I, vpImage<FilterType> &GI, u
   delete[] fg;
 }
 }
-
-template<typename ArithmeticType, bool useFullScale>
-void print(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, const std::string &name)
-{
-  std::cout << name << " = " << std::endl;
-  const unsigned int nbRows = I.getRows(), nbCols = I.getCols();
-  for (unsigned int r = 0; r < nbRows; ++r) {
-    for (unsigned int c = 0; c < nbCols; ++c) {
-      std::string character;
-      if (vpMath::nul(I[r][c].H, 1e-3)) {
-        character = '0';
-      }
-      else {
-        double val = static_cast<double>(I[r][c].H);
-        if (val > 0 && val < 1.) {
-          val *= 10.;
-        }
-        character = std::to_string(static_cast<unsigned int>(val));
-      }
-      std::cout << character << " ";
-    }
-    std::cout << std::endl;
-  }
-  std::cout << std::endl;
-}
-
-template<typename ArithmeticType>
-void print(const vpImage<ArithmeticType> &I, const std::string &name)
-{
-  std::cout << name << " = " << std::endl;
-  const unsigned int nbRows = I.getRows(), nbCols = I.getCols();
-  for (unsigned int r = 0; r < nbRows; ++r) {
-    for (unsigned int c = 0; c < nbCols; ++c) {
-      char character;
-      if (vpMath::nul(I[r][c], 1e-3)) {
-        character = '0';
-      }
-      else if (I[r][c] > 0) {
-        character = '+';
-      }
-      else {
-        character = '-';
-      }
-      std::cout << character << " ";
-    }
-    std::cout << std::endl;
-  }
-  std::cout << std::endl << std::flush;
-}
-
-void print(const vpImage<unsigned char> &I, const std::string &name)
-{
-  std::cout << name << " = " << std::endl;
-  const unsigned int nbRows = I.getRows(), nbCols = I.getCols();
-  for (unsigned int r = 0; r < nbRows; ++r) {
-    for (unsigned int c = 0; c < nbCols; ++c) {
-      std::cout << std::to_string(I[r][c]) << " ";
-    }
-    std::cout << std::endl;
-  }
-  std::cout << std::endl << std::flush;
-}
 #endif
 
 int main()
 {
   bool isSuccess = true;
-
-  vpRGBa rgba;
-  vpHSV<unsigned char> hsv_uc;
-  vpHSV<double> hsv_double;
 
   // Inputs
   vpHSVTests::vpInputDataset dataset;
@@ -1048,7 +1020,7 @@ int main()
 
   for (unsigned int size = 3; (size < 7) && isSuccess; size += 2) {
     for (auto input: dataset.m_ucImages) {
-      print(input.second.m_I, input.first);
+      vpHSVTests::print(input.second.m_I, input.first);
       vpOldImageFilter::gaussianBlur(input.second.m_I, Iuc_filtered_old, size);
       vpImageFilter::gaussianBlur(input.second.m_I, Iuc_filtered_new, size, 0.);
       bool ucSuccess = vpHSVTests::areAlmostEqual(Iuc_filtered_old, Iuc_filtered_new);
@@ -1067,7 +1039,7 @@ int main()
     }
 
     for (auto input: dataset.m_hsvUCtrue) {
-      print(input.second.m_I, input.first);
+      vpHSVTests::print(input.second.m_I, input.first);
       vpOldImageFilter::gaussianBlur(input.second.m_I, Ihsv_uc_filtered_old_true, size);
       vpImageFilter::gaussianBlur(input.second.m_I, Ihsv_uc_filtered_new_true, size, 0.);
       bool hsvucSuccessTrue = vpHSVTests::areAlmostEqual(Ihsv_uc_filtered_old_true, Ihsv_uc_filtered_new_true);
@@ -1078,7 +1050,7 @@ int main()
     }
 
     for (auto input: dataset.m_hsvUCfalse) {
-      print(input.second.m_I, input.first);
+      vpHSVTests::print(input.second.m_I, input.first);
       vpOldImageFilter::gaussianBlur(input.second.m_I, Ihsv_uc_filtered_old_false, size);
       vpImageFilter::gaussianBlur(input.second.m_I, Ihsv_uc_filtered_new_false, size, 0.);
       bool hsvucSuccessTrue = vpHSVTests::areAlmostEqual(Ihsv_uc_filtered_old_false, Ihsv_uc_filtered_new_false);
@@ -1089,7 +1061,7 @@ int main()
     }
 
     for (auto input: dataset.m_hsvDouble) {
-      print(input.second.m_I, input.first);
+      vpHSVTests::print(input.second.m_I, input.first);
       vpOldImageFilter::gaussianBlur(input.second.m_I, Ihsv_double_filtered_old, size);
       vpImageFilter::gaussianBlur(input.second.m_I, Ihsv_double_filtered_new, size, 0.);
       bool hsvucSuccessTrue = vpHSVTests::areAlmostEqual(Ihsv_double_filtered_old, Ihsv_double_filtered_new);

@@ -97,6 +97,68 @@ bool areAlmostEqual(const vpImage<T> &I1, const vpImage<T> &I2, const double &th
   return areEqual;
 }
 
+template<typename ArithmeticType, bool useFullScale>
+void print(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, const std::string &name)
+{
+  std::cout << name << " = " << std::endl;
+  const unsigned int nbRows = I.getRows(), nbCols = I.getCols();
+  for (unsigned int r = 0; r < nbRows; ++r) {
+    for (unsigned int c = 0; c < nbCols; ++c) {
+      std::string character;
+      if (vpMath::nul(I[r][c].H, 1e-3)) {
+        character = '0';
+      }
+      else {
+        double val = static_cast<double>(I[r][c].H);
+        if (val > 0 && val < 1.) {
+          val *= 10.;
+        }
+        character = std::to_string(static_cast<unsigned int>(val));
+      }
+      std::cout << character << " ";
+    }
+    std::cout << std::endl;
+  }
+  std::cout << std::endl;
+}
+
+template<typename ArithmeticType>
+void print(const vpImage<ArithmeticType> &I, const std::string &name)
+{
+  std::cout << name << " = " << std::endl;
+  const unsigned int nbRows = I.getRows(), nbCols = I.getCols();
+  for (unsigned int r = 0; r < nbRows; ++r) {
+    for (unsigned int c = 0; c < nbCols; ++c) {
+      char character;
+      if (vpMath::nul(I[r][c], 1e-3)) {
+        character = '0';
+      }
+      else if (I[r][c] > 0) {
+        character = '+';
+      }
+      else {
+        character = '-';
+      }
+      std::cout << character << " ";
+    }
+    std::cout << std::endl;
+  }
+  std::cout << std::endl << std::flush;
+}
+
+void print(const vpImage<unsigned char> &I, const std::string &name)
+{
+  std::cout << name << " = " << std::endl;
+  const unsigned int nbRows = I.getRows(), nbCols = I.getCols();
+  for (unsigned int r = 0; r < nbRows; ++r) {
+    for (unsigned int c = 0; c < nbCols; ++c) {
+      std::cout << std::to_string(I[r][c]) << " ";
+    }
+    std::cout << std::endl;
+  }
+  std::cout << std::endl << std::flush;
+}
+
 template <typename ImageType>
 struct vpInputImage
 {
