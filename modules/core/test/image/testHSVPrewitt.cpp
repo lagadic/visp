@@ -71,6 +71,117 @@ void prewittFilter(const vpImage<unsigned char> &I, const vpImage<double> &filte
   prewittFilter(I, filterY, GIy);
 }
 
+template <typename ArithmeticType, bool useFullScale>
+void prewittFilterX(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpImage<double> &GIx)
+{
+  const unsigned int nbRows = I.getRows(), nbCols = I.getCols();
+  const unsigned int rStop = nbRows - 1, cStop = nbCols - 1;
+  vpImage<double> Isign(nbRows, nbCols), IabsDiff(nbRows, nbCols);
+  // Computation for I[0][0]
+  if (vpColVector::dotProd((I[0][1] - I[0][0]), I[0][0].toColVector()) < 0.) {
+    Isign[0][0] = -1.;
+  }
+  else {
+    Isign[0][0] = 1.;
+  }
+  // Computation for the rest of the first row
+  for (unsigned int c = 1; c < cStop; ++c) {
+    if (vpColVector::dotProd((I[0][c + 1] - I[0][c]), (I[0][c] - I[0][c - 1])) < 0.) {
+      // Inverting sign when cosine distance is negative
+      Isign[0][c] = -1. * Isign[0][c - 1];
+    }
+    else {
+      Isign[0][c] = Isign[0][c - 1];
+    }
+  }
+  for (unsigned int r = 1; r < rStop; ++r) {
+    // Computation for I[r][0]
+    if (vpColVector::dotProd((I[r][1] - I[r][0]), I[r][0].toColVector()) < 0.) {
+      Isign[r][0] = -1.;
+    }
+    else {
+      Isign[r][0] = 1.;
+    }
+    IabsDiff[r][0] = vpHSV<ArithmeticType, useFullScale>::template squaredMahalanobisDistance<double>(I[r][0], I[r][1]);
+
+    // Computation for all the other columns
+    for (unsigned int c = 1; c < cStop; ++c) {
+      // Of the absolute value of the distance
+      IabsDiff[r][c] = vpHSV<ArithmeticType, useFullScale>::template squaredMahalanobisDistance<double>(I[r][c], I[r][c + 1]);
+      // Of the sign
+      if (vpColVector::dotProd((I[r][c + 1] - I[r][c]), (I[r][c] - I[r][c - 1])) < 0.) {
+        // Inverting sign when cosine distance is negative
+        Isign[r][c] = -1. * Isign[r][c - 1];
+      }
+      else {
+        Isign[r][c] = Isign[r][c - 1];
+      }
+    }
+  }
+
+  for (unsigned int r = 1; r < rStop; ++r) {
+    for (unsigned int c = 1; c < cStop; ++c) {
+      GIx[r][c] = 0.;
+      for (int dr = -1; dr <= 1; ++dr) {
+        GIx[r][c] += Isign[r + dr][c - 1] * IabsDiff[r + dr][c - 1] + Isign[r + dr][c] * IabsDiff[r + dr][c];
+      }
+    }
+  }
+}
+
+template <typename ArithmeticType, bool useFullScale>
+void prewittFilterY(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpImage<double> &GIy)
+{
+  const unsigned int nbRows = I.getRows(), nbCols = I.getCols();
+  const unsigned int rStop = nbRows - 1, cStop = nbCols - 1;
+  vpImage<double> Isign(nbRows, nbCols), IabsDiff(nbRows, nbCols);
+  // Computation for the first row
+  for (unsigned int c = 0; c < nbCols; ++c) {
+    IabsDiff[0][c] = vpHSV<ArithmeticType, useFullScale>::template squaredMahalanobisDistance<double>(I[0][c], I[1][c]);
+    if (vpColVector::dotProd((I[1][c] - I[0][c]), I[0][c].toColVector()) < 0.) {
+      // Inverting sign when cosine distance is negative
+      Isign[0][c] = -1.;
+    }
+    else {
+      Isign[0][c] = 1.;
+    }
+  }
+  for (unsigned int r = 1; r < rStop; ++r) {
+    // Computation for all the other columns
+    for (unsigned int c = 0; c < nbCols; ++c) {
+      // Of the absolute value of the distance
+      IabsDiff[r][c] = vpHSV<ArithmeticType, useFullScale>::template squaredMahalanobisDistance<double>(I[r][c], I[r + 1][c]);
+      // Of the sign
+      if (vpColVector::dotProd((I[r +1][c] - I[r][c]), (I[r][c] - I[r - 1][c])) < 0.) {
+        // Inverting sign when cosine distance is negative
+        Isign[r][c] = -1. * Isign[r - 1][c];
+      }
+      else {
+        Isign[r][c] = Isign[r - 1][c];
+      }
+    }
+  }
+
+  for (unsigned int r = 1; r < rStop; ++r) {
+    for (unsigned int c = 1; c < cStop; ++c) {
+      GIy[r][c] = 0.;
+      for (int dc = -1; dc <= 1; ++dc) {
+        GIy[r][c] += Isign[r - 1][c + dc] * IabsDiff[r - 1][c + dc] + Isign[r][c + dc] * IabsDiff[r][c + dc];
+      }
+    }
+  }
+}
+
+template <typename ArithmeticType, bool useFullScale>
+void prewittFilter(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpImage<double> &GIx, vpImage<double> &GIy)
+{
+  const unsigned int nbRows = I.getRows(), nbCols = I.getCols();
+  GIx.resize(nbRows, nbCols, 0.);
+  GIy.resize(nbRows, nbCols, 0.);
+  prewittFilterX(I, GIx);
+  prewittFilterY(I, GIy);
+}
+
 int main()
 {
   bool isSuccess = true;
@@ -89,30 +200,25 @@ int main()
   filterY[2][0] = 1.; filterY[2][1] = (useSobel ? 2. : 1.); filterY[2][2] = 1.;
 
   // Outputs
-  vpImage<double> GIx, GIy;
+  vpImage<double> GIx, GIx_ref, GIy, GIy_ref;
 
   for (unsigned int size = 3; (size < 7) && isSuccess; size += 2) {
-    for (auto input: dataset.m_ucImages) {
-      vpHSVTests::print(input.second.m_I, input.first);
-      prewittFilter(input.second.m_I, filterX, filterY, GIx, GIy);
-      vpHSVTests::print(GIx, "GIx_uc");
-      vpHSVTests::print(GIy, "GIy_uc");
-      bool ucSuccess = true; // vpHSVTests::areAlmostEqual(Iuc_filtered_old, Iuc_filtered_new);
-      isSuccess = isSuccess && ucSuccess;
-      if (!isSuccess) {
-        std::cerr << "ERROR: filter on uchar failed ! " << std::endl;
-      }
-    }
-
     for (auto input: dataset.m_hsvUCtrue) {
       vpHSVTests::print(input.second.m_I, input.first);
       vpImageFilter::prewittFilter(input.second.m_I, GIx, GIy);
       vpHSVTests::print(GIx, "GIx");
       vpHSVTests::print(GIy, "GIy");
-      bool hsvucSuccessTrue = true; //vpHSVTests::areAlmostEqual(Ihsv_uc_filtered_old_true, Ihsv_uc_filtered_new_true);
-      isSuccess = isSuccess && hsvucSuccessTrue;
-      if (!hsvucSuccessTrue) {
-        std::cerr << "ERROR: filter on HSV<uchar, true> failed ! " << std::endl;
+      prewittFilter(input.second.m_I, GIx_ref, GIy_ref);
+      // vpHSVTests::print(GIx_ref, "GIx_ref");
+      // vpHSVTests::print(GIy_ref, "GIy_ref");
+      bool hsvucSuccessGIx = vpHSVTests::areAlmostEqual(GIx, GIx_ref);
+      bool hsvucSuccessGIy = vpHSVTests::areAlmostEqual(GIy, GIy_ref);
+      isSuccess = isSuccess && hsvucSuccessGIx && hsvucSuccessGIy;
+      if (!hsvucSuccessGIx) {
+        std::cerr << "ERROR: Prewitt along X on HSV<uchar, true> failed ! " << std::endl;
+      }
+      if (!hsvucSuccessGIy) {
+        std::cerr << "ERROR: Prewitt along Y on HSV<uchar, true> failed ! " << std::endl;
       }
     }
 
@@ -121,10 +227,17 @@ int main()
       vpImageFilter::prewittFilter(input.second.m_I, GIx, GIy);
       vpHSVTests::print(GIx, "GIx");
       vpHSVTests::print(GIy, "GIy");
-      bool hsvucSuccessTrue = true; // vpHSVTests::areAlmostEqual(Ihsv_uc_filtered_old_false, Ihsv_uc_filtered_new_false);
-      isSuccess = isSuccess && hsvucSuccessTrue;
-      if (!hsvucSuccessTrue) {
-        std::cerr << "ERROR: filter on HSV<uchar, false> failed ! " << std::endl;
+      prewittFilter(input.second.m_I, GIx_ref, GIy_ref);
+      // vpHSVTests::print(GIx_ref, "GIx_ref");
+      // vpHSVTests::print(GIy_ref, "GIy_ref");
+      bool hsvucSuccessGIx = vpHSVTests::areAlmostEqual(GIx, GIx_ref);
+      bool hsvucSuccessGIy = vpHSVTests::areAlmostEqual(GIy, GIy_ref);
+      isSuccess = isSuccess && hsvucSuccessGIx && hsvucSuccessGIy;
+      if (!hsvucSuccessGIx) {
+        std::cerr << "ERROR: Prewitt along X on HSV<uchar, false> failed ! " << std::endl;
+      }
+      if (!hsvucSuccessGIy) {
+        std::cerr << "ERROR: Prewitt along Y on HSV<uchar, false> failed ! " << std::endl;
       }
     }
 
@@ -133,9 +246,17 @@ int main()
       vpImageFilter::prewittFilter(input.second.m_I, GIx, GIy);
       vpHSVTests::print(GIx, "GIx");
       vpHSVTests::print(GIy, "GIy");
-      bool hsvucSuccessTrue = true; // && hsvucSuccessTrue;
-      if (!hsvucSuccessTrue) {
-        std::cerr << "ERROR: filter on HSV<double> failed ! " << std::endl;
+      prewittFilter(input.second.m_I, GIx_ref, GIy_ref);
+      // vpHSVTests::print(GIx_ref, "GIx_ref");
+      // vpHSVTests::print(GIy_ref, "GIy_ref");
+      bool hsvucSuccessGIx = vpHSVTests::areAlmostEqual(GIx, GIx_ref);
+      bool hsvucSuccessGIy = vpHSVTests::areAlmostEqual(GIy, GIy_ref);
+      isSuccess = isSuccess && hsvucSuccessGIx && hsvucSuccessGIy;
+      if (!hsvucSuccessGIx) {
+        std::cerr << "ERROR: Prewitt along X on HSV<double> failed ! " << std::endl;
+      }
+      if (!hsvucSuccessGIy) {
+        std::cerr << "ERROR: Prewitt along Y on HSV<double> failed ! " << std::endl;
       }
     }
   }
