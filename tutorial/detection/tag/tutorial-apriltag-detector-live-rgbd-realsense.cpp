@@ -177,7 +177,7 @@ int main(int argc, const char **argv)
       opt_tag_pose_estimation_method = (vpDetectorAprilTag::vpPoseEstimationMethod)atoi(argv[++i]);
     }
     else if (std::string(argv[i]) == "--aruco-decision-margin" && i + 1 < argc) {
-      opt_aruco_decision_margin = atof(argv[++i]);
+      opt_aruco_decision_margin = static_cast<float>(atof(argv[++i]));
     }
 #if defined(VISP_HAVE_DISPLAY)
     else if (std::string(argv[i]) == "--display-tag") {

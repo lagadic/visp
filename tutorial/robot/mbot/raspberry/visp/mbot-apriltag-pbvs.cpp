@@ -155,7 +155,7 @@ int main(int argc, const char **argv)
       opt_tag_family = (vpDetectorAprilTag::vpAprilTagFamily)atoi(argv[++i]);
     }
     else if (std::string(argv[i]) == "--aruco-decision-margin" && i + 1 < argc) {
-      opt_aruco_decision_margin = atof(argv[++i]);
+      opt_aruco_decision_margin = static_cast<float>(atof(argv[++i]));
     }
     else if (std::string(argv[i]) == "--tag-quad-decimate" && i + 1 < argc) {
       opt_tag_quad_decimate = (float)atof(argv[++i]);
