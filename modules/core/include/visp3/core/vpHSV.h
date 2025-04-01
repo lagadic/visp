@@ -7,9 +7,9 @@
 #include <sstream>
 #include <string>
 #include <type_traits>
-#include <vector>
 
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpColVector.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpRGBa.h>
 
@@ -144,7 +144,7 @@ public:
    * in the range [0; 255] if useFullScale is true.
    */
   template<typename U = T, typename std::enable_if<std::is_same<T, unsigned char>::value, U>::type = 0>
-  vpHSV(const std::vector<double> &v)
+  vpHSV(const vpColVector &v)
   {
     if (v.size() != nbChannels) {
       throw std::exception();
@@ -167,7 +167,7 @@ public:
    * \param[in] v Vector of size 3 whose values must be in the range [0; 1.].
    */
   template<typename U = T, typename std::enable_if<std::is_floating_point<U>::value>::type...>
-  vpHSV(const std::vector<double> &v)
+  vpHSV(const vpColVector &v)
   {
     if (v.size() != nbChannels) {
       throw std::exception();
@@ -339,12 +339,26 @@ public:
   }
 
   /**
+   * \brief Cast a vpHSV into a vpColVector.
+   *
+   * \return vpColVector
+   */
+  vpColVector asColVector() const
+  {
+    vpColVector color(3);
+    color[0] = H;
+    color[1] = S;
+    color[2] = V;
+    return color;
+  }
+
+  /**
    * \brief Compute the normalized HSV values (i.e. in the range [0; 1]) that correspond to a vpRGBa object.
    *
    * \param[in] rgba The RGB pixel.
-   * \return std::vector<double> Vector of normalized HSV values.
+   * \return vpColVector Vector of normalized HSV values.
    */
-  static std::vector<double> computeNormalizedHSV(const vpRGBa &rgba)
+  static vpColVector computeNormalizedHSV(const vpRGBa &rgba)
   {
     double red, green, blue;
     double h, s, v;
@@ -397,11 +411,33 @@ public:
       }
     }
 
-    std::vector<double> hsv(3);
+    vpColVector hsv(3);
     hsv[0] = h;
     hsv[1] = s;
     hsv[2] = v;
     return hsv;
+  }
+
+  /**
+   * \brief Compute the square of the Mahalanobis distance between two HSV pixels.
+   * It is assumed that the channels are independent and follow a uniform distribution law.
+   *
+   * \param[in] a The first pixel to compare.
+   * \param[in] b The second pixel to compare.
+   * \param[in] diff The vector (b - a).
+   * \return float The squared Mahalanobis distance between a and b.
+   */
+  template <typename ArithmeticType>
+  inline static ArithmeticType squaredMahalanobisDistance(const vpHSV<T, useFullScale> &a, const vpHSV<T, useFullScale> &b, vpColVector &diff)
+  {
+    static const ArithmeticType invHueVariance = 1.f / UniformLawVariance<T, useFullScale>::hueVariance;
+    static const ArithmeticType invOtherChannelsVariance = 1.f / UniformLawVariance<T, useFullScale>::otherChannelsVariance;
+    diff.resize(3);
+    diff[0] = b.H - a.H;
+    diff[1] = b.S - a.S;
+    diff[2] = b.V - a.V;
+    ArithmeticType distance = diff[0] * diff[0] * invHueVariance + invOtherChannelsVariance * (diff[1] * diff[1] + diff[2] * diff[2]);
+    return distance;
   }
 
   /**
@@ -415,13 +451,8 @@ public:
   template <typename ArithmeticType>
   inline static ArithmeticType squaredMahalanobisDistance(const vpHSV<T, useFullScale> &a, const vpHSV<T, useFullScale> &b)
   {
-    static const ArithmeticType invHueVariance = 1.f / UniformLawVariance<T, useFullScale>::hueVariance;
-    static const ArithmeticType invOtherChannelsVariance = 1.f / UniformLawVariance<T, useFullScale>::otherChannelsVariance;
-    ArithmeticType dHue = a.H - b.H;
-    ArithmeticType dSat = a.S - b.S;
-    ArithmeticType dVal = a.V - b.V;
-    ArithmeticType distance = dHue * dHue * invHueVariance + invOtherChannelsVariance * (dSat * dSat + dVal * dVal);
-    return distance;
+    vpColVector diff;
+    return squaredMahalanobisDistance(a, b, diff);
   }
 
   /**
@@ -462,9 +493,9 @@ private:
    * \param[in] limMin The lower limit of the acceptable range of values.
    * \param[in] limMax The upper limit of the acceptable range of values.
    */
-  template<typename Tp, typename VectorType>
+  template<typename Tp>
   inline void
-    set(const std::vector<VectorType> &v, const Tp &limMin, const Tp &limMax)
+    set(const vpColVector &v, const Tp &limMin, const Tp &limMax)
   {
     // if ((v[0] < limMin) || (v[0] > limMax)) {
     //   // throw exception
@@ -484,7 +515,7 @@ private:
 template<>
 inline vpHSV<double> &vpHSV<double>::buildFrom(const vpRGBa &rgba)
 {
-  std::vector<double> hsv = computeNormalizedHSV(rgba);
+  vpColVector hsv = computeNormalizedHSV(rgba);
   set(hsv, 0., 1.);
   return *this;
 }
@@ -492,7 +523,7 @@ inline vpHSV<double> &vpHSV<double>::buildFrom(const vpRGBa &rgba)
 template<>
 inline vpHSV<unsigned char, true> &vpHSV<unsigned char, true>::buildFrom(const vpRGBa &rgba)
 {
-  std::vector<double> hsv = computeNormalizedHSV(rgba);
+  vpColVector hsv = computeNormalizedHSV(rgba);
   hsv[0] *= 255.;
   hsv[1] *= 255.;
   hsv[2] *= 255.;
@@ -504,7 +535,7 @@ inline vpHSV<unsigned char, true> &vpHSV<unsigned char, true>::buildFrom(const v
 template<>
 inline vpHSV<unsigned char, false> &vpHSV<unsigned char, false>::buildFrom(const vpRGBa &rgba)
 {
-  std::vector<double> hsv = computeNormalizedHSV(rgba);
+  vpColVector hsv = computeNormalizedHSV(rgba);
   hsv[0] *= static_cast<double>(maxHueUsingLimitedRange);
   hsv[1] *= 255.;
   hsv[2] *= 255.;

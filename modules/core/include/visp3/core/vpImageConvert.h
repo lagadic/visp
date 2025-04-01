@@ -66,6 +66,10 @@
 #include <windows.h>
 #endif
 
+#ifdef VISP_HAVE_OPENMP
+#include <omp.h>
+#endif
+
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON) && defined(VISP_HAVE_THREADS)
 #include <mutex>
 #include <visp3/core/vpColVector.h>
@@ -354,7 +358,7 @@ private:
   static int vpCgb[256];
   static int vpCgr[256];
   static int vpCbb[256];
-};
+  };
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 /**

@@ -62,6 +62,10 @@
 #endif
 #endif
 
+#ifdef VISP_HAVE_OPENMP
+#include <omp.h>
+#endif
+
 BEGIN_VISP_NAMESPACE
 /*!
  * \class vpImageFilter
@@ -861,7 +865,7 @@ public:
    */
   template<class Color, typename FilterType>
   static inline typename std::enable_if<!std::is_same<Color, vpRGBa>::value, void>::type
-    filterChannel(const Color &in, std::vector<double> &out, const FilterType &coeff)
+    filterChannel(const Color &in, vpColVector &out, const FilterType &coeff)
   {
     out[0] = coeff * vpColorGetter<0>::get(in);
     out[1] = coeff * vpColorGetter<1>::get(in);
@@ -878,7 +882,7 @@ public:
  */
   template<class Color, typename FilterType>
   static inline typename std::enable_if<std::is_same<Color, vpRGBa>::value, void>::type
-    filterChannel(const Color &in, std::vector<double> &out, const FilterType &coeff)
+    filterChannel(const Color &in, vpColVector &out, const FilterType &coeff)
   {
     out[0] = coeff * vpColorGetter<0>::get(in);
     out[1] = coeff * vpColorGetter<1>::get(in);
@@ -898,7 +902,7 @@ public:
    */
   template<class Color, typename FilterType>
   inline static void
-    filterChannel(const Color &in1, const Color &in2, std::vector<double> &out, const FilterType &coeff)
+    filterChannel(const Color &in1, const Color &in2, vpColVector &out, const FilterType &coeff)
   {
     out[0] += coeff * (vpColorGetter<0>::get(in1) + vpColorGetter<0>::get(in2));
     out[1] += coeff * (vpColorGetter<1>::get(in1) + vpColorGetter<1>::get(in2));
@@ -1024,9 +1028,9 @@ static inline typename std::enable_if<!std::is_arithmetic<ImageType>::value, voi
 {
   const unsigned int stop = (size - 1) / 2;
 #ifdef VISP_HAVE_OPENMP
-  std::vector<double> res(ImageType::nbChannels);
+  vpColVector res(ImageType::nbChannels);
 #else
-  static std::vector<double> res(ImageType::nbChannels);
+  static vpColVector res(ImageType::nbChannels);
 #endif
   filterChannel(I[r][c], res, filter[0]);
 
@@ -1090,9 +1094,9 @@ static inline typename std::enable_if<!std::is_arithmetic<ImageType>::value, voi
 {
   const unsigned int stop = (size - 1) / 2;
 #ifdef VISP_HAVE_OPENMP
-  std::vector<double> res(ImageType::nbChannels);
+  vpColVector res(ImageType::nbChannels);
 #else
-  static std::vector<double> res(ImageType::nbChannels);
+  static vpColVector res(ImageType::nbChannels);
 #endif
   filterChannel(I[r][c], res, filter[0]);
 
@@ -1164,9 +1168,9 @@ static inline typename std::enable_if<!std::is_arithmetic<ImageType>::value, voi
   const unsigned int width = I.getWidth();
   const unsigned int twice = 2;
 #ifdef VISP_HAVE_OPENMP
-  std::vector<double> res(ImageType::nbChannels);
+  vpColVector res(ImageType::nbChannels);
 #else
-  static std::vector<double> res(ImageType::nbChannels);
+  static vpColVector res(ImageType::nbChannels);
 #endif
   filterChannel(I[r][c], res, filter[0]);
 
@@ -1414,9 +1418,9 @@ static inline typename std::enable_if<!std::is_arithmetic<ImageType>::value, voi
 {
   const unsigned int stop = (size - 1) / 2;
 #ifdef VISP_HAVE_OPENMP
-  std::vector<double> res(ImageType::nbChannels);
+  vpColVector res(ImageType::nbChannels);
 #else
-  static std::vector<double> res(ImageType::nbChannels);
+  static vpColVector res(ImageType::nbChannels);
 #endif
   filterChannel(I[r][c], res, filter[0]);
 
@@ -1480,9 +1484,9 @@ static inline typename std::enable_if<!std::is_arithmetic<ImageType>::value, voi
 {
   const unsigned int stop = (size - 1) / 2;
 #ifdef VISP_HAVE_OPENMP
-  std::vector<double> res(ImageType::nbChannels);
+  vpColVector res(ImageType::nbChannels);
 #else
-  static std::vector<double> res(ImageType::nbChannels);
+  static vpColVector res(ImageType::nbChannels);
 #endif
   filterChannel(I[r][c], res, filter[0]);
 
@@ -1553,9 +1557,9 @@ static inline typename std::enable_if<!std::is_arithmetic<ImageType>::value, voi
   const unsigned int height = I.getHeight();
   const unsigned int twiceHeight = 2 * height;
 #ifdef VISP_HAVE_OPENMP
-  std::vector<double> res(ImageType::nbChannels);
+  vpColVector res(ImageType::nbChannels);
 #else
-  static std::vector<double> res(ImageType::nbChannels);
+  static vpColVector res(ImageType::nbChannels);
 #endif
   filterChannel(I[r][c], res, filter[0]);
 
@@ -1574,6 +1578,8 @@ static inline typename std::enable_if<!std::is_arithmetic<ImageType>::value, voi
 
 /*!
    * Apply a Gaussian blur to an image.
+   * \tparam ImageType : Either an arithmetic type or a color image.
+   * \tparam OutputType : Either the same type than the ImageType, for color images, or an arithmetic type.
    * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
    * \param I : Input image.
    * \param GI : Filtered image.
@@ -1586,33 +1592,8 @@ static inline typename std::enable_if<!std::is_arithmetic<ImageType>::value, voi
    * \sa getGaussianKernel() to know which kernel is used.
    */
 template <typename ImageType, typename OutputType, typename FilterType>
-static typename std::enable_if<std::is_arithmetic<OutputType>::value, void>::type gaussianBlur(const vpImage<ImageType> &I, vpImage<OutputType> &GI, unsigned int size = 7, FilterType sigma = 0., bool normalize = true,
-                         const vpImage<bool> *p_mask = nullptr)
-{
-  FilterType *fg = new FilterType[(size + 1) / 2];
-  vpImageFilter::getGaussianKernel<FilterType>(fg, size, sigma, normalize);
-  vpImage<FilterType> GIx;
-  vpImageFilter::filterX<ImageType, FilterType>(I, GIx, fg, size, p_mask);
-  vpImageFilter::filterY<FilterType, FilterType>(GIx, GI, fg, size, p_mask);
-  GIx.destroy();
-  delete[] fg;
-}
-
-/*!
-   * Apply a Gaussian blur to an image.
-   * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
-   * \param I : Input image.
-   * \param GI : Filtered image.
-   * \param size : Filter size. This value should be odd.
-   * \param sigma : Gaussian standard deviation. If it is equal to zero or
-   * negative, it is computed from filter size as sigma = (size-1)/6.
-   * \param normalize : Flag indicating whether to normalize the filter coefficients or not.
-   * \param p_mask : If different from nullptr, mask indicating which points to consider (true) or to ignore(false).
-   *
-   * \sa getGaussianKernel() to know which kernel is used.
-   */
-template <typename ImageType, typename OutputType, typename FilterType>
-static typename std::enable_if<!std::is_arithmetic<OutputType>::value, void>::type gaussianBlur(const vpImage<ImageType> &I, vpImage<OutputType> &GI, unsigned int size = 7, FilterType sigma = 0., bool normalize = true,
+static inline void
+gaussianBlur(const vpImage<ImageType> &I, vpImage<OutputType> &GI, unsigned int size = 7, FilterType sigma = 0., bool normalize = true,
                          const vpImage<bool> *p_mask = nullptr)
 {
   FilterType *fg = new FilterType[(size + 1) / 2];
@@ -1842,6 +1823,26 @@ static void getGradXGauss2D(const vpImage<ImageType> &I, vpImage<FilterType> &dI
   vpImageFilter::getGradX<FilterType, FilterType>(GIy, dIx, gaussianDerivativeKernel, size, p_mask);
 }
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+template <typename HSVType, bool useFullScale, typename OutputType>
+static typename std::enable_if<std::is_arithmetic<OutputType>::value, void>::type prewittFilterX(
+  const vpImage<vpHSV<HSVType, useFullScale>> &I, vpImage<OutputType> &GIx,
+  const unsigned int nbThread = 1, const vpImage<bool> *p_mask = nullptr
+)
+{
+#ifdef VISP_HAVE_OPENMP
+  if (nbThread == 1) {
+    prewittFilterXMonothread(I, GIx, p_mask);
+  }
+  else {
+    prewittFilterXMultithread(I, GIx, p_mask);
+  }
+#else
+  prewittFilterXMonothread(I, GIx, p_mask);
+#endif
+}
+#endif
+
 // Gradient along Y
 template <typename FilterType>
 static void getGradY(const vpImage<unsigned char> &I, vpImage<FilterType> &dIy, const vpImage<bool> *p_mask = nullptr)
@@ -1942,6 +1943,35 @@ static void getGradYGauss2D(const vpImage<ImageType> &I, vpImage<FilterType> &dI
   vpImageFilter::getGradY<FilterType, FilterType>(GIx, dIy, gaussianDerivativeKernel, size, p_mask);
 }
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+template <typename HSVType, bool useFullScale, typename OutputType>
+static typename std::enable_if<std::is_arithmetic<OutputType>::value, void>::type prewittFilterY(
+  const vpImage<vpHSV<HSVType, useFullScale>> &I, vpImage<OutputType> &GIy,
+  const unsigned int nbThread = 1, const vpImage<bool> *p_mask = nullptr
+)
+{
+#ifdef VISP_HAVE_OPENMP
+  if (nbThread == 1) {
+    prewittFilterYMonothread(I, GIy, p_mask);
+  }
+  else {
+    prewittFilterYMultithread(I, GIy, p_mask);
+  }
+#else
+  prewittFilterYMonothread(I, GIy, p_mask);
+#endif
+}
+
+template <typename HSVType, bool useFullScale, typename OutputType>
+static typename std::enable_if<std::is_arithmetic<OutputType>::value, void>::type prewittFilter(
+  const vpImage<vpHSV<HSVType, useFullScale>> &I, vpImage<OutputType> &GIx, vpImage<OutputType> &GIy,
+  const unsigned int nbThread = 1, const vpImage<bool> *p_mask = nullptr
+)
+{
+  prewittFilterX(I, GIx, nbThread, p_mask);
+  prewittFilterY(I, GIy, nbThread, p_mask);
+}
+#endif
 /*!
   Get Scharr kernel for X-direction.
   \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.
@@ -2161,6 +2191,256 @@ private:
   }
 #endif
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  template <typename HSVType, bool useFullScale, typename OutputType>
+  static typename std::enable_if<std::is_arithmetic<OutputType>::value, void>::type initPrewittFilterDifferenceImage(
+    const vpImage<vpHSV<HSVType, useFullScale>> &I, vpImage<OutputType> &Idiff,
+    const vpImage<bool> *p_mask = nullptr
+  )
+  {
+    const unsigned int nbCols = I.getCols();
+    vpColVector diff(3);
+
+    // Computing the difference and sign for row 0 column 0
+    vpColVector diffPrevRow0, diffPrevRow1;
+    bool isPositivePrevRow0, isPositivePrevRow1;
+    Idiff.bitmap[0] = vpHSV<HSVType, useFullScale>::template squaredMahalanobisDistance<OutputType>(I.bitmap[0], I.bitmap[1], diff);
+    vpColVector current = I.bitmap[0].asColVector();
+    isPositivePrevRow0 = (vpColVector::dotProd(diff, current) >= 0.);
+    diffPrevRow0 = diff;
+
+    // Computing the difference and sign for row 1 column 0
+    Idiff.bitmap[nbCols] = vpHSV<HSVType, useFullScale>::template squaredMahalanobisDistance<OutputType>(I.bitmap[nbCols], I.bitmap[nbCols + 1], diff);
+    current = I.bitmap[nbCols].asColVector();
+    isPositivePrevRow1 = (vpColVector::dotProd(diff, current) >= 0.);
+    diffPrevRow1 = diff;
+
+    for (unsigned int iter = 1; iter < nbCols - 1; ++iter) {
+      // Computing the difference and sign for row 0
+      OutputType distanceRow0 = vpHSV<HSVType, useFullScale>::template squaredMahalanobisDistance<OutputType>(I.bitmap[iter], I.bitmap[iter + 1], diff);
+      if (vpColVector::dotProd(diff, diffPrevRow0) < 0.) {
+        // We change the sign of the difference only if the cosine distance is negative
+        isPositivePrevRow0 = isPositivePrevRow0 ^ true;
+      }
+      diffPrevRow0 = diff;
+
+      // Assigning the signed distance for the row 0
+      if (isPositivePrevRow0) {
+        Idiff.bitmap[iter] = distanceRow0;
+      }
+      else {
+        Idiff.bitmap[iter] = -distanceRow0;
+      }
+
+      // Computing the difference and sign for row 1
+      OutputType distanceRow1 = vpHSV<HSVType, useFullScale>::template squaredMahalanobisDistance<OutputType>(I.bitmap[nbCols + iter], I.bitmap[nbCols + iter + 1], diff);
+      if (vpColVector::dotProd(diff, diffPrevRow1) < 0.) {
+        // We change the sign of the difference only if the cosine distance is negative
+        isPositivePrevRow1 = isPositivePrevRow1 ^ true;
+      }
+      diffPrevRow1 = diff;
+
+      // Assigning the signed distance for the row 1
+      if (isPositivePrevRow1) {
+        Idiff.bitmap[nbCols + iter] = distanceRow1;
+      }
+      else {
+        Idiff.bitmap[nbCols + iter] = -distanceRow1;
+      }
+    }
+  }
+
+  template <typename HSVType, bool useFullScale, typename OutputType>
+  static typename std::enable_if<std::is_arithmetic<OutputType>::value, void>::type prewittFilterXMonothread(
+    const vpImage<vpHSV<HSVType, useFullScale>> &I, vpImage<OutputType> &GI,
+    const vpImage<bool> *p_mask = nullptr
+  )
+  {
+    const unsigned int nbRows = I.getRows(), nbCols = I.getCols();
+    const unsigned int size = I.getSize();
+    const unsigned int offsetIdiff = nbCols;
+    vpImage<OutputType> Idiff(nbRows, nbCols);
+    GI.resize(nbRows, nbCols, 0.);
+    initPrewittFilterDifferenceImage(I, Idiff, p_mask);
+    const unsigned int resetCounter = nbCols - 1;
+    const unsigned int stopIter = size - (nbCols + 1);
+    unsigned int counter = resetCounter, idCol = 0;
+    vpColVector diff(3), diffPrev(3);
+    bool isPrevPositive;
+    for (unsigned int iter = nbCols; iter < stopIter; ++iter) {
+      if (counter) {
+        // Computing the amplitude of the difference
+        OutputType futureDiff = vpHSV<HSVType, useFullScale>::template squaredMahalanobisDistance<OutputType>(I.bitmap[iter + offsetIdiff], I.bitmap[iter + nbCols +1], diff);
+        if (idCol) {
+          if (vpColVector::dotProd(diff, diffPrev) < 0.) {
+            // We change the sign of the difference only if the cosine distance is negative
+            isPrevPositive = isPrevPositive ^ true;
+          }
+        }
+        else {
+          vpColVector colFirstCol = I.bitmap[iter + offsetIdiff].asColVector();
+          // The first sign depends on the positiveness of the cosine distance between the difference and first pixel of a row
+          isPrevPositive = (vpColVector::dotProd(diff, colFirstCol) >= 0.);
+        }
+        diffPrev = diff;
+
+        // The sign of the difference is deduced by the sign of the cosine distance between the successive difference vectors
+        if (isPrevPositive) {
+          Idiff.bitmap[iter + offsetIdiff] = futureDiff;
+        }
+        else {
+          Idiff.bitmap[iter + offsetIdiff] = -futureDiff;
+        }
+      }
+      if (counter) {
+        if ((counter != resetCounter)) {
+          OutputType gradient = 0.;
+          int offset = iter - nbCols; // Looking in the row above first
+          for (int i = -1; i <= 1; ++i) {
+            // Kind of  +/- (I[r + i][c + 1] - I[r + i][c]) +/- (I[r + i][c] - I[r + i][c - 1])
+            gradient += Idiff.bitmap[offset] + Idiff.bitmap[offset - 1];;
+            offset += nbCols; // Preparing to look in the next row
+          }
+          GI.bitmap[iter] = gradient;
+        }
+        --counter;
+      }
+      else {
+        counter = resetCounter;
+      }
+
+      if (idCol < resetCounter) {
+        ++idCol;
+      }
+      else {
+        idCol = 0;
+      }
+    }
+  }
+
+  template <typename HSVType, bool useFullScale, typename OutputType>
+  static typename std::enable_if<std::is_arithmetic<OutputType>::value, void>::type initPrewittFilterDifferenceImageY(
+    const vpImage<vpHSV<HSVType, useFullScale>> &I, vpImage<OutputType> &Idiff, std::vector<bool> &isPrevRowPositive,
+    std::vector<vpColVector> &diffPrevRow,
+    const vpImage<bool> *p_mask = nullptr
+  )
+  {
+    const unsigned int nbCols = I.getCols();
+    vpColVector diff(3), diff0(3); // Difference vector for I[0][0]
+    // Computing the sign and distance for the first row
+    for (unsigned int iter = 0; iter < nbCols; ++iter) {
+      OutputType distance = vpHSV<HSVType, useFullScale>::template squaredMahalanobisDistance<OutputType>(I.bitmap[iter], I.bitmap[iter + nbCols], diff);
+      diffPrevRow[iter] = diff;
+      vpColVector current = I.bitmap[iter].asColVector();
+      // Checking the signeness of the distance using the sign of the cosine distance
+      isPrevRowPositive[iter] = (vpColVector::dotProd(diff, current) >= 0.);
+      // We set the signed distance in the difference map
+      if (isPrevRowPositive[iter]) {
+        Idiff.bitmap[iter] = distance;
+      }
+      else {
+        Idiff.bitmap[iter] = -distance;
+      }
+      if (iter == 0) {
+        diff0 = diff;
+      }
+    }
+    // Computing the distance and sign for I[1][0]
+    OutputType distance = vpHSV<HSVType, useFullScale>::template squaredMahalanobisDistance<OutputType>(I.bitmap[nbCols], I.bitmap[nbCols + nbCols], diff);
+    diffPrevRow[0] = diff;
+    if (vpColVector::dotProd(diff, diff0) < 0.) {
+      // If the cosine distance changes sign, we invert the sign of the difference map
+      isPrevRowPositive[0] = isPrevRowPositive[0] ^ true;
+    }
+    // We set the signed distance in the difference map
+    if (isPrevRowPositive[0]) {
+      Idiff.bitmap[nbCols] = distance;
+    }
+    else {
+      Idiff.bitmap[nbCols] = -distance;
+    }
+  }
+
+  template <typename HSVType, bool useFullScale, typename OutputType>
+  static typename std::enable_if<std::is_arithmetic<OutputType>::value, void>::type prewittFilterYMonothread(
+    const vpImage<vpHSV<HSVType, useFullScale>> &I, vpImage<OutputType> &GI,
+    const vpImage<bool> *p_mask = nullptr
+  )
+  {
+    const unsigned int nbRows = I.getRows(), nbCols = I.getCols();
+    const unsigned int size = I.getSize();
+    unsigned int offsetIdiff = 1;
+
+    vpImage<OutputType> Idiff(nbRows, nbCols);
+    std::vector<bool> isPrevRowPositive(nbCols);
+    std::vector<vpColVector> diffRowPrev(nbCols);
+    GI.resize(nbRows, nbCols, 0.);
+    initPrewittFilterDifferenceImageY(I, Idiff, isPrevRowPositive, diffRowPrev, p_mask);
+    const unsigned int resetCounter = nbCols - 1;
+    const unsigned int stopIter = size - (nbCols + 1);
+    unsigned int counter = resetCounter, iterSign = offsetIdiff;
+    vpColVector diff(3);
+    for (unsigned int iter = nbCols; iter < stopIter; ++iter) {
+      // Computing the amplitude of the difference
+      OutputType futureDiff = vpHSV<HSVType, useFullScale>::template squaredMahalanobisDistance<OutputType>(I.bitmap[iter + offsetIdiff], I.bitmap[iter + nbCols +1], diff);
+
+      // Computing the sign of the difference from the sign of the cosine distance
+      if (vpColVector::dotProd(diff, diffRowPrev[iterSign]) < 0.) {
+        isPrevRowPositive[iterSign] = isPrevRowPositive[iterSign] ^ true; // Changing sign only if the cosine distance is negative
+      }
+
+      // Saving the difference vector
+      diffRowPrev[iterSign] = diff;
+
+      // The sign of the difference is deduced by the sign of the cosine distance between the successive difference vectors
+      if (isPrevRowPositive[iterSign]) {
+        Idiff.bitmap[iter + offsetIdiff] = futureDiff;
+      }
+      else {
+        Idiff.bitmap[iter + offsetIdiff] = -futureDiff;
+      }
+
+      if (counter) {
+        if ((counter != resetCounter)) {
+          OutputType gradient = 0.;
+          for (int i = -1; i <= 1; ++i) {
+            // Kind of +/- (I[r + 1][c + i] - I[r][c + 1]) +/- (I[r][c + i] - I[r - 1][c + 1])
+            gradient += Idiff.bitmap[iter + i] + Idiff.bitmap[iter - nbCols + i];;
+          }
+          GI.bitmap[iter] = gradient;
+        }
+        --counter;
+      }
+      else {
+        counter = resetCounter;
+      }
+      if (iterSign < resetCounter) {
+        ++iterSign;
+      }
+      else {
+        iterSign = 0;
+      }
+    }
+  }
+
+#ifdef VISP_HAVE_OPENMP
+  template <typename HSVType, bool useFullScale, typename OutputType>
+  static typename std::enable_if<std::is_arithmetic<OutputType>::value, void>::type prewittFilterXMultithread(
+    const vpImage<vpHSV<HSVType, useFullScale>> &I, vpImage<OutputType> &GI,
+    const vpImage<bool> *p_mask = nullptr)
+  {
+
+  }
+
+  template <typename HSVType, bool useFullScale, typename OutputType>
+  static typename std::enable_if<std::is_arithmetic<OutputType>::value, void>::type prewittFilterYMultithread(
+    const vpImage<vpHSV<HSVType, useFullScale>> &I, vpImage<OutputType> &GI,
+    const vpImage<bool> *p_mask = nullptr)
+  {
+
+  }
+#endif
+#endif
 };
 END_VISP_NAMESPACE
 #endif
