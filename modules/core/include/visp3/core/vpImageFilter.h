@@ -2205,13 +2205,13 @@ private:
     vpColVector diffPrevRow0, diffPrevRow1;
     bool isPositivePrevRow0, isPositivePrevRow1;
     Idiff.bitmap[0] = vpHSV<HSVType, useFullScale>::template squaredMahalanobisDistance<OutputType>(I.bitmap[0], I.bitmap[1], diff);
-    vpColVector current = I.bitmap[0].asColVector();
+    vpColVector current = I.bitmap[0].toColVector();
     isPositivePrevRow0 = (vpColVector::dotProd(diff, current) >= 0.);
     diffPrevRow0 = diff;
 
     // Computing the difference and sign for row 1 column 0
     Idiff.bitmap[nbCols] = vpHSV<HSVType, useFullScale>::template squaredMahalanobisDistance<OutputType>(I.bitmap[nbCols], I.bitmap[nbCols + 1], diff);
-    current = I.bitmap[nbCols].asColVector();
+    current = I.bitmap[nbCols].toColVector();
     isPositivePrevRow1 = (vpColVector::dotProd(diff, current) >= 0.);
     diffPrevRow1 = diff;
 
@@ -2220,7 +2220,7 @@ private:
       OutputType distanceRow0 = vpHSV<HSVType, useFullScale>::template squaredMahalanobisDistance<OutputType>(I.bitmap[iter], I.bitmap[iter + 1], diff);
       if (vpColVector::dotProd(diff, diffPrevRow0) < 0.) {
         // We change the sign of the difference only if the cosine distance is negative
-        isPositivePrevRow0 = isPositivePrevRow0 ^ true;
+        isPositivePrevRow0 = !isPositivePrevRow0;
       }
       diffPrevRow0 = diff;
 
@@ -2236,7 +2236,7 @@ private:
       OutputType distanceRow1 = vpHSV<HSVType, useFullScale>::template squaredMahalanobisDistance<OutputType>(I.bitmap[nbCols + iter], I.bitmap[nbCols + iter + 1], diff);
       if (vpColVector::dotProd(diff, diffPrevRow1) < 0.) {
         // We change the sign of the difference only if the cosine distance is negative
-        isPositivePrevRow1 = isPositivePrevRow1 ^ true;
+        isPositivePrevRow1 = !isPositivePrevRow1;
       }
       diffPrevRow1 = diff;
 
@@ -2266,7 +2266,7 @@ private:
     const unsigned int stopIter = size - (nbCols + 1);
     unsigned int counter = resetCounter, idCol = 0;
     vpColVector diff(3), diffPrev(3);
-    bool isPrevPositive;
+    bool isPrevPositive = true;
     for (unsigned int iter = nbCols; iter < stopIter; ++iter) {
       if (counter) {
         // Computing the amplitude of the difference
@@ -2274,11 +2274,11 @@ private:
         if (idCol) {
           if (vpColVector::dotProd(diff, diffPrev) < 0.) {
             // We change the sign of the difference only if the cosine distance is negative
-            isPrevPositive = isPrevPositive ^ true;
+            isPrevPositive = !isPrevPositive;
           }
         }
         else {
-          vpColVector colFirstCol = I.bitmap[iter + offsetIdiff].asColVector();
+          vpColVector colFirstCol = I.bitmap[iter + offsetIdiff].toColVector();
           // The first sign depends on the positiveness of the cosine distance between the difference and first pixel of a row
           isPrevPositive = (vpColVector::dotProd(diff, colFirstCol) >= 0.);
         }
@@ -2331,7 +2331,7 @@ private:
     for (unsigned int iter = 0; iter < nbCols; ++iter) {
       OutputType distance = vpHSV<HSVType, useFullScale>::template squaredMahalanobisDistance<OutputType>(I.bitmap[iter], I.bitmap[iter + nbCols], diff);
       diffPrevRow[iter] = diff;
-      vpColVector current = I.bitmap[iter].asColVector();
+      vpColVector current = I.bitmap[iter].toColVector();
       // Checking the signeness of the distance using the sign of the cosine distance
       isPrevRowPositive[iter] = (vpColVector::dotProd(diff, current) >= 0.);
       // We set the signed distance in the difference map
@@ -2350,7 +2350,7 @@ private:
     diffPrevRow[0] = diff;
     if (vpColVector::dotProd(diff, diff0) < 0.) {
       // If the cosine distance changes sign, we invert the sign of the difference map
-      isPrevRowPositive[0] = isPrevRowPositive[0] ^ true;
+      isPrevRowPositive[0] = !isPrevRowPositive[0];
     }
     // We set the signed distance in the difference map
     if (isPrevRowPositive[0]) {
@@ -2372,7 +2372,7 @@ private:
     unsigned int offsetIdiff = 1;
 
     vpImage<OutputType> Idiff(nbRows, nbCols);
-    std::vector<bool> isPrevRowPositive(nbCols);
+    std::vector<bool> isPrevRowPositive(nbCols, true);
     std::vector<vpColVector> diffRowPrev(nbCols);
     GI.resize(nbRows, nbCols, 0.);
     initPrewittFilterDifferenceImageY(I, Idiff, isPrevRowPositive, diffRowPrev, p_mask);
@@ -2386,7 +2386,7 @@ private:
 
       // Computing the sign of the difference from the sign of the cosine distance
       if (vpColVector::dotProd(diff, diffRowPrev[iterSign]) < 0.) {
-        isPrevRowPositive[iterSign] = isPrevRowPositive[iterSign] ^ true; // Changing sign only if the cosine distance is negative
+        isPrevRowPositive[iterSign] = !isPrevRowPositive[iterSign]; // Changing sign only if the cosine distance is negative
       }
 
       // Saving the difference vector
