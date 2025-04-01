@@ -196,7 +196,6 @@ public:
           m_cXt[j][i] += t[j];
         }
       }
-
     }
     void errorAndInteraction(vpColVector &e, vpMatrix &L) const
     {
@@ -223,6 +222,12 @@ public:
 
       }
     }
+
+    const vpMatrix &getPointsObject() const { return m_oXt; }
+    const vpMatrix &getNormalsObject() const { return m_oNt; }
+    const vpMatrix &getPointsCamera() const { return m_cXt; }
+    const vpMatrix &getNormalsCamera() const { return m_cNt; }
+
   private:
     vpMatrix m_observations; // A 3xN matrix containing the observed 3D points from the camera
     vpMatrix m_oXt; // a 3xN matrix containing the 3D points in object frame
