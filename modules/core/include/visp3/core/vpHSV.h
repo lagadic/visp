@@ -176,6 +176,13 @@ public:
   }
 
   /**
+   * \brief Default copy constructor.
+   *
+   * \param[in] other
+   */
+  vpHSV(const vpHSV<T, useFullScale> &other) = default;
+
+  /**
    * \brief Construct a new vpHSV object using unsigned char channels and the full range [0; 255] from a vpHSV object whose channels
    * are in floating point format.
    *
@@ -233,15 +240,6 @@ public:
   {
     buildFrom(rgba);
   }
-
-  /**
-   * \brief Cast a vpHSV into a string, for display purpose.
-   *
-   * \return std::string
-   */
-  virtual std::string toString() const;
-
-  friend std::ostream &operator<< <>(std::ostream &os, const vpHSV<T, useFullScale> &hsv);
 
   /**
    * \brief Modify the object to be the result of the conversion of the vpRGBa object into HSV format.
@@ -336,20 +334,6 @@ public:
     S = static_cast<T>(other.S);
     this->V = static_cast<T>(other.V);
     return *this;
-  }
-
-  /**
-   * \brief Cast a vpHSV into a vpColVector.
-   *
-   * \return vpColVector
-   */
-  vpColVector asColVector() const
-  {
-    vpColVector color(3);
-    color[0] = H;
-    color[1] = S;
-    color[2] = V;
-    return color;
   }
 
   /**
@@ -452,7 +436,7 @@ public:
   inline static ArithmeticType squaredMahalanobisDistance(const vpHSV<T, useFullScale> &a, const vpHSV<T, useFullScale> &b)
   {
     vpColVector diff;
-    return squaredMahalanobisDistance(a, b, diff);
+    return squaredMahalanobisDistance<ArithmeticType>(a, b, diff);
   }
 
   /**
@@ -468,6 +452,80 @@ public:
   {
     return std::sqrt(squaredMahalanobisDistance<ArithmeticType>(a, b));
   }
+
+  // Operators
+  vpHSV<T, useFullScale> &operator=(vpHSV<T, useFullScale> &&v) = default;
+  vpHSV<T, useFullScale> &operator=(const vpHSV<T, useFullScale> &v) = default;
+
+  vpHSV<T, useFullScale> &operator=(const vpColVector &v)
+  {
+    vpHSV<T, useFullScale> vAsHSV(v);
+    *this = vAsHSV;
+    return *this;
+  }
+
+
+  bool operator==(const vpHSV<T, useFullScale> &v) const
+  {
+    return(vpMath::equal(v.H, H, 1e-6) && vpMath::equal(v.S, S, 1e-6) && vpMath::equal(v.V, V, 1e-6));
+  }
+
+  bool operator!=(const vpHSV<T, useFullScale> &v) const
+  {
+    return !(*this == v);
+  }
+
+  vpColVector operator-(const vpHSV<T, useFullScale> &v) const
+  {
+    return this->toColVector() - v.toColVector();
+  }
+
+  vpHSV<T, useFullScale> operator+(const vpHSV<T, useFullScale> &v) const
+  {
+    vpHSV<T, useFullScale> result;
+    result.H = H + v.H;
+    result.S = S + v.S;
+    result.V = V + v.V;
+    return result;
+  }
+
+  vpColVector operator-(const vpColVector &v) const
+  {
+    return this->toColVector() - v;
+  }
+
+  vpColVector operator+(const vpColVector &v) const
+  {
+    vpColVector result(3);
+    result[0] = H + v[0];
+    result[1] = S + v[1];
+    result[2] = V + v[2];
+    return result;
+  }
+
+  /**
+   * \brief Cast a vpHSV into a vpColVector.
+   *
+   * \return vpColVector
+   */
+  vpColVector toColVector() const
+  {
+    vpColVector color(3);
+    color[0] = H;
+    color[1] = S;
+    color[2] = V;
+    return color;
+  }
+
+  /**
+   * \brief Cast a vpHSV into a string, for display purpose.
+   *
+   * \return std::string
+   */
+  virtual std::string toString() const;
+
+  friend std::ostream &operator<< <>(std::ostream &os, const vpHSV<T, useFullScale> &hsv);
+
 public:
   T H; /*!< The Hue channel.*/
   T S; /*!< The Saturation channel.*/
