@@ -630,7 +630,7 @@ void vpRBTracker::loadConfiguration(const nlohmann::json &j)
   setOptimizationGain(vvsSettings.value("gain", m_lambda));
   setOptimizationInitialMu(vvsSettings.value("mu", m_muInit));
   setOptimizationMuIterFactor(vvsSettings.value("muIterFactor", m_muIterFactor));
-  setOptimizationMuIterFactor(vvsSettings.value("scaleInvariant", m_scaleInvariantOptim));
+  setScaleInvariantRegularization(vvsSettings.value("scaleInvariant", m_scaleInvariantOptim));
   m_convergedMetricThreshold = (vvsSettings.value("convergenceMetricThreshold", m_convergedMetricThreshold));
 
   m_depthSilhouetteSettings = j.at("silhouetteExtractionSettings");

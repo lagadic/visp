@@ -701,10 +701,10 @@ SCENARIO("Running tracker on static synthetic sequences", "[rbt]")
   silhouetteSettings.setThresholdIsRelative(true);
   silhouetteSettings.setThreshold(0.1);
   silhouetteSettings.setPreferPreviousPoints(false);
-  silhouetteSettings.setMaxCandidates(1024);
+  silhouetteSettings.setMaxCandidates(512);
   tracker.setSilhouetteExtractionParameters(silhouetteSettings);
   tracker.setOptimizationGain(0.25);
-  tracker.setMaxOptimizationIters(25);
+  tracker.setMaxOptimizationIters(10);
   tracker.setOptimizationInitialMu(0.01);
   tracker.setModelPath(objFile);
   tracker.startTracking();
