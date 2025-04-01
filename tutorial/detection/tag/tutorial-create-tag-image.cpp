@@ -101,7 +101,7 @@ int main(int argc, const char **argv)
       opt_filename = std::string(argv[++i]);
     }
     else if (std::string(argv[i]) == "--tag-size" && i + 1 < argc) {
-      opt_pix_size = atof(argv[++i]);
+      opt_pix_size = static_cast<unsigned int>(atoi(argv[++i]));
     }
     else if (std::string(argv[i]) == "--tag-family" && i + 1 < argc) {
       opt_tag_family = static_cast<vpDetectorAprilTag::vpAprilTagFamily>(atoi(argv[++i]));
