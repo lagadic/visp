@@ -316,6 +316,7 @@ public:
                    const vpColor &color = vpColor::none, unsigned int thickness = 1) const;
 
   float getAprilTagDecisionMarginThreshold() const;
+  int getAprilTagHammingDistanceThreshold() const;
   bool getPose(size_t tagIndex, double tagSize, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
                vpHomogeneousMatrix *cMo2 = nullptr, double *projError = nullptr, double *projError2 = nullptr);
 
@@ -335,14 +336,15 @@ public:
   bool isZAlignedWithCameraAxis() const;
 
   void setAprilTagDebugOption(bool flag);
+  void setAprilTagDecisionMarginThreshold(float decisionMarginThreshold);
   void setAprilTagDecodeSharpening(double decodeSharpening);
   void setAprilTagFamily(const vpAprilTagFamily &tagFamily);
+  void setAprilTagHammingDistanceThreshold(int hammingDistanceThreshold);
   void setAprilTagNbThreads(int nThreads);
   void setAprilTagPoseEstimationMethod(const vpPoseEstimationMethod &poseEstimationMethod);
   void setAprilTagQuadDecimate(float quadDecimate);
   void setAprilTagQuadSigma(float quadSigma);
   void setAprilTagRefineEdges(bool refineEdges);
-  void setAprilTagDecisionMarginThreshold(float decisionMarginThreshold);
 
 
   /*! Allow to enable the display of overlay tag information in the windows

@@ -86,7 +86,7 @@ public:
   Impl(const vpAprilTagFamily &tagFamily, const vpPoseEstimationMethod &method)
     : m_poseEstimationMethod(method), m_tagsId(), m_tagFamily(tagFamily), m_tagsDecisionMargin(),
     m_tagsHammingDistance(), m_td(nullptr), m_tf(nullptr),
-    m_detections(nullptr), m_decisionMarginThreshold(-1), m_zAlignedWithCameraFrame(false)
+    m_detections(nullptr), m_decisionMarginThreshold(-1), m_hammingDistanceThreshold(0), m_zAlignedWithCameraFrame(false)
   {
     switch (m_tagFamily) {
     case TAG_36h11:
@@ -516,6 +516,9 @@ public:
         if (det->decision_margin < m_decisionMarginThreshold) {
           continue;
         }
+      }
+      if (det->hamming > m_hammingDistanceThreshold) {
+        continue;
       }
 
       std::vector<vpImagePoint> polygon;
@@ -959,6 +962,11 @@ public:
     return m_decisionMarginThreshold;
   }
 
+  int getAprilTagHammingDistanceThreshold() const
+  {
+    return m_hammingDistanceThreshold;
+  }
+
   bool getAprilTagDecodeSharpening(double &decodeSharpening) const
   {
     if (m_td) {
@@ -1015,6 +1023,11 @@ public:
   void setAprilTagDecisionMarginThreshold(float decisionMarginThreshold)
   {
     m_decisionMarginThreshold = decisionMarginThreshold;
+  }
+
+  void setAprilTagHammingDistanceThreshold(int hammingDistanceThreshold)
+  {
+    m_hammingDistanceThreshold = hammingDistanceThreshold;
   }
 
   void setAprilTagDecodeSharpening(double decodeSharpening)
@@ -1089,6 +1102,7 @@ protected:
   apriltag_family_t *m_tf;
   zarray_t *m_detections;
   float m_decisionMarginThreshold;
+  int m_hammingDistanceThreshold;
   bool m_zAlignedWithCameraFrame;
 };
 
@@ -1339,16 +1353,33 @@ std::vector<std::vector<vpPoint> > vpDetectorAprilTag::getTagsPoints3D(const std
 }
 
 /*!
-  Get the decision margin threshold to filter false detections.
+  Get the decision margin threshold to filter out false detections.
   Higher is the decision margin for each detected tag, better is the detection.
   When the decision margin threshold is equal to -1, tags decision margin values are not used to
   filter potential false positive detection.
 
-  \sa setAprilTagDecisionMarginThreshold()
+  \sa setAprilTagDecisionMarginThreshold(), setAprilTagHammingDistanceThreshold()
 */
 float vpDetectorAprilTag::getAprilTagDecisionMarginThreshold() const
 {
   return m_impl->getAprilTagDecisionMarginThreshold();
+}
+
+/*!
+  Get the hamming distance threshold to filter out false detections.
+  For each tag detected, the hamming distance is between 0 and 255 and indicates the number of bits corrected.
+  A value of 0 indicates that no correction was applied when the tag was detected, while a value of 2 indicates that
+  2 bits were corrected to achieve detection. The lower the Hamming distance, the more reliable the detection.
+
+  Default value is 0, meaning that we filter out all the detections with corrected bits.
+
+  This threshold could be used to filter out detections where the hamming distance is greater than this threshold.
+
+  \sa setAprilTagHammingDistanceThreshold(), setAprilTagDecisionMarginThreshold()
+*/
+int vpDetectorAprilTag::getAprilTagHammingDistanceThreshold() const
+{
+  return m_impl->getAprilTagHammingDistanceThreshold();
 }
 
 /*!
@@ -1437,7 +1468,7 @@ void vpDetectorAprilTag::setAprilTagDecodeSharpening(double decodeSharpening)
 
   It has been experimentally observed that using the AprilTag detection and decoding pipeline,
   lots of false positives arise with 16h5, 4x4, 5x5 and 6x6 ArUco dictionnaries.
-  A margin can be used to filter those detection.
+  A decision margin threshold can be used to filter these detections.
 
   \param[in] decisionMarginThreshold : Decision margin threshold used to filter false positive detections.
   - When this threshold is set to -1, the decision margin threshold is not used to eliminate detections whose detection
@@ -1451,6 +1482,33 @@ void vpDetectorAprilTag::setAprilTagDecodeSharpening(double decodeSharpening)
 void vpDetectorAprilTag::setAprilTagDecisionMarginThreshold(float decisionMarginThreshold)
 {
   m_impl->setAprilTagDecisionMarginThreshold(decisionMarginThreshold);
+}
+
+/*!
+  See the AprilTag documentation:
+    > How many error bits were corrected? Note: accepting large numbers of
+    > corrected errors leads to greatly increased false positive rates.
+    > NOTE: As of this implementation, the detector cannot detect tags with
+    > a hamming distance greater than 2.
+
+  It has been experimentally observed that using the AprilTag detection and decoding pipeline,
+  lots of false positives arise with 16h5, 4x4, 5x5 and 6x6 ArUco dictionnaries. Their hamming distance is than
+  usually set to 2.
+  A hamming distance threshold can be used to filter these detections.
+
+  \param[in] hammingDistanceThreshold : Threshold between 0 and 255 used to filter tags whose hamming
+  distance is greater than this threshold.
+  - When this threshold is set to 0, only tags for which no bits are corrected are detected.
+  - When set to 2, it means that we keep all the tags that have up to 2 corrected bits. It will lead to false positive
+    detections.
+  - Default value is set to 0.
+
+  \sa getAprilTagDecisionMarginThreshold(), getTagsDecisionMargin()
+*/
+void vpDetectorAprilTag::setAprilTagHammingDistanceThreshold(int hammingDistanceThreshold)
+{
+  assert((hammingDistanceThreshold > -1) && (hammingDistanceThreshold < 256));
+  m_impl->setAprilTagHammingDistanceThreshold(hammingDistanceThreshold);
 }
 
 void vpDetectorAprilTag::setAprilTagFamily(const vpAprilTagFamily &tagFamily)

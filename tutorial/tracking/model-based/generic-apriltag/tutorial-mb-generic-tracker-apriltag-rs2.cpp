@@ -165,6 +165,7 @@ void usage(const char **argv, int error)
     << " [--tag-size <size>]"
     << " [--tag-family <family>]"
     << " [--tag-decision-margin-threshold <threshold>]"
+    << " [--tag-hamming-distance-threshold <threshold>]"
     << " [--tag-quad-decimate <factor>]"
     << " [--tag-n-threads <number>]"
 #if defined(VISP_HAVE_DISPLAY)
@@ -221,6 +222,12 @@ void usage(const char **argv, int error)
     << "    out. When this value is set to -1, false positives are not filtered out." << std::endl
     << "    Default: -1" << std::endl
     << std::endl
+    << "  --tag-hamming-distance-threshold <threshold>" << std::endl
+    << "    Threshold used to discard low-confident detections with corrected bits." << std::endl
+    << "    A typical value is between 0 and 3. The lower this value, the more false" << std::endl
+    << "    positives will be filtered out." << std::endl
+    << "    Default: 0" << std::endl
+    << std::endl
     << "  --tag-quad-decimate <factor>" << std::endl
     << "    Decimation factor used to detect a tag. " << std::endl
     << "    Default: 1" << std::endl
@@ -271,6 +278,7 @@ int main(int argc, const char **argv)
   double opt_tag_size = 0.08;
   float opt_tag_quad_decimate = 1.0;
   float opt_tag_decision_margin_threshold = -1;
+  float opt_tag_hamming_distance_threshold = 0;
   int opt_tag_nthreads = 1;
   double opt_cube_size = 0.125; // 12.5cm by default
 #ifdef VISP_HAVE_OPENCV
@@ -294,6 +302,9 @@ int main(int argc, const char **argv)
     }
     else if (std::string(argv[i]) == "--tag-decision-margin-threshold" && i + 1 < argc) {
       opt_tag_decision_margin_threshold = static_cast<float>(atof(argv[++i]));
+    }
+    else if (std::string(argv[i]) == "--tag-hamming-distance-threshold" && i + 1 < argc) {
+      opt_tag_hamming_distance_threshold = atoi(argv[++i]);
     }
     else if (std::string(argv[i]) == "--tag-quad-decimate" && i + 1 < argc) {
       opt_tag_quad_decimate = (float)atof(argv[++i]);
@@ -416,7 +427,8 @@ int main(int argc, const char **argv)
     vpDetectorAprilTag detector(opt_tag_family);
     detector.setAprilTagQuadDecimate(opt_tag_quad_decimate);
     detector.setAprilTagNbThreads(opt_tag_nthreads);
-    detector.setAprilTagDecisionMarginThreshold(opt_tag_decision_margin_threshold); // only for ArUco 4x4, 5x5 and 6x6 families
+    detector.setAprilTagDecisionMarginThreshold(opt_tag_decision_margin_threshold);
+    detector.setAprilTagHammingDistanceThreshold(opt_tag_hamming_distance_threshold);
 
     // Prepare MBT
     std::vector<int> trackerTypes;

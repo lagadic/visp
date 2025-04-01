@@ -44,7 +44,6 @@
   double tag_size = 0.053;
   float tag_quad_decimate = 3.0;
   int tag_nThreads = 1;
-  float aruco_decision_margin = 50;
   std::vector<vpHomogeneousMatrix> cMo_vec;
 
   // Set camera parameters
@@ -56,7 +55,6 @@
   detector.setAprilTagQuadDecimate(tag_quad_decimate);
   detector.setAprilTagPoseEstimationMethod(tag_pose_estimation_method);
   detector.setAprilTagNbThreads(tag_nThreads);
-  detector.(aruco_decision_margin); // only for ArUco 4x4, 5x5 and 6x6 families
 
   // Detect all the tags in the image
   detector.detect(I, tag_size, cam, cMo_vec);

@@ -30,10 +30,8 @@ vpDetectorAprilTag detector(vpDetectorAprilTag::TAG_36h11, vpDetectorAprilTag::H
     float tag_quad_decimate = 3.0;
     int tag_nThreads = 1;
     double tag_size = 0.043; // meter
-    float aruco_decision_margin = 50;
     detector.setAprilTagQuadDecimate(tag_quad_decimate);
     detector.setAprilTagNbThreads(tag_nThreads);
-    detector.(aruco_decision_margin); // only for ArUco 4x4, 5x5 and 6x6 families
 
     // Detection.
     vpCameraParameters cam;

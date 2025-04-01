@@ -18,6 +18,7 @@ void usage(const char **argv, int error)
     << " [--tag-size <size>]"
     << " [--tag-family <family>]"
     << " [--tag-decision-margin-threshold <threshold>]"
+    << " [--tag-hamming-distance-threshold <threshold>]"
     << " [--tag-quad-decimate <factor>]"
     << " [--tag-n-threads <number>]"
     << " [--tag-pose-method <method>]"
@@ -77,6 +78,12 @@ void usage(const char **argv, int error)
     << "    around 100. The higher this value, the more false positives will be filtered" << std::endl
     << "    out. When this value is set to -1, false positives are not filtered out." << std::endl
     << "    Default: -1" << std::endl
+    << std::endl
+    << "  --tag-hamming-distance-threshold <threshold>" << std::endl
+    << "    Threshold used to discard low-confident detections with corrected bits." << std::endl
+    << "    A typical value is between 0 and 3. The lower this value, the more false" << std::endl
+    << "    positives will be filtered out." << std::endl
+    << "    Default: 0" << std::endl
     << std::endl
     << "  --tag-quad-decimate <factor>" << std::endl
     << "    Decimation factor used to detect a tag. " << std::endl
@@ -138,6 +145,7 @@ int main(int argc, const char **argv)
   double opt_tag_size = 0.065;
   float opt_tag_quad_decimate = 4.0;
   float opt_tag_decision_margin_threshold = -1;
+  float opt_tag_hamming_distance_threshold = 0;
   int opt_tag_nThreads = 2;
   std::string intrinsic_file = "";
   std::string camera_name = "";
@@ -158,6 +166,9 @@ int main(int argc, const char **argv)
     }
     else if (std::string(argv[i]) == "--tag-decision-margin-threshold" && i + 1 < argc) {
       opt_tag_decision_margin_threshold = static_cast<float>(atof(argv[++i]));
+    }
+    else if (std::string(argv[i]) == "--tag-hamming-distance-threshold" && i + 1 < argc) {
+      opt_tag_hamming_distance_threshold = atoi(argv[++i]);
     }
     else if (std::string(argv[i]) == "--tag-quad-decimate" && i + 1 < argc) {
       opt_tag_quad_decimate = (float)atof(argv[++i]);
@@ -242,12 +253,13 @@ int main(int argc, const char **argv)
 
     std::cout << cam << std::endl;
     std::cout << "Tag detector settings" << std::endl;
-    std::cout << "  Tag size [m]   : " << opt_tag_size << std::endl;
-    std::cout << "  Tag family     : " << opt_tag_family << std::endl;
-    std::cout << "  Quad decimate  : " << opt_tag_quad_decimate << std::endl;
-    std::cout << "  Decision margin: " << opt_tag_decision_margin_threshold << " (applied to ArUco tags only)" << std::endl;
-    std::cout << "  Num threads    : " << opt_tag_nThreads << std::endl;
-    std::cout << "  Pose estimation: " << opt_tag_pose_estimation_method << std::endl;
+    std::cout << "  Tag size [m]              : " << opt_tag_size << std::endl;
+    std::cout << "  Tag family                : " << opt_tag_family << std::endl;
+    std::cout << "  Quad decimate             : " << opt_tag_quad_decimate << std::endl;
+    std::cout << "  Decision margin threshold : " << opt_tag_decision_margin_threshold << std::endl;
+    std::cout << "  Hamming distance threshold: " << opt_tag_hamming_distance_threshold << std::endl;
+    std::cout << "  Num threads               : " << opt_tag_nThreads << std::endl;
+    std::cout << "  Pose estimation           : " << opt_tag_pose_estimation_method << std::endl;
 
     vpDetectorAprilTag detector(opt_tag_family);
 
@@ -255,7 +267,7 @@ int main(int argc, const char **argv)
     detector.setAprilTagPoseEstimationMethod(opt_tag_pose_estimation_method);
     detector.setAprilTagNbThreads(opt_tag_nThreads);
     detector.setDisplayTag(display_tag);
-    detector.setAprilTagDecisionMarginThreshold(opt_tag_decision_margin_threshold); // only for ArUco 4x4, 5x5 and 6x6 families
+    detector.setAprilTagDecisionMarginThreshold(opt_tag_decision_margin_threshold);
 
     vpServo task;
     vpAdaptiveGain lambda;
