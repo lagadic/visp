@@ -85,7 +85,7 @@ class vpDetectorAprilTag::Impl
 public:
   Impl(const vpAprilTagFamily &tagFamily, const vpPoseEstimationMethod &method)
     : m_poseEstimationMethod(method), m_tagsId(), m_tagFamily(tagFamily), m_tagsDecisionMargin(),
-    m_td(nullptr), m_tf(nullptr),
+    m_tagsHammingDistance(), m_td(nullptr), m_tf(nullptr),
     m_detections(nullptr), m_decisionMarginThresholdArUco(50), m_zAlignedWithCameraFrame(false)
   {
     switch (m_tagFamily) {
@@ -207,7 +207,7 @@ public:
 
   Impl(const Impl &o)
     : m_poseEstimationMethod(o.m_poseEstimationMethod), m_tagsId(o.m_tagsId), m_tagFamily(o.m_tagFamily),
-    m_tagsDecisionMargin(o.m_tagsDecisionMargin), m_td(nullptr),
+    m_tagsDecisionMargin(o.m_tagsDecisionMargin), m_tagsHammingDistance(o.m_tagsHammingDistance), m_td(nullptr),
     m_tf(nullptr), m_detections(nullptr), m_zAlignedWithCameraFrame(o.m_zAlignedWithCameraFrame)
   {
     switch (m_tagFamily) {
@@ -500,11 +500,12 @@ public:
     int nb_detections = zarray_size(m_detections);
     bool detected = nb_detections > 0;
 
-    polygons.clear(); messages.clear(); m_tagsId.clear(); m_tagsDecisionMargin.clear();
+    polygons.clear(); messages.clear(); m_tagsId.clear(); m_tagsDecisionMargin.clear(); m_tagsHammingDistance.clear();
     polygons.reserve(static_cast<size_t>(nb_detections));
     messages.reserve(static_cast<size_t>(nb_detections));
     m_tagsId.reserve(static_cast<size_t>(nb_detections));
     m_tagsDecisionMargin.reserve(static_cast<size_t>(nb_detections));
+    m_tagsHammingDistance.reserve(static_cast<size_t>(nb_detections));
 
     int zarray_size_m_detections = zarray_size(m_detections);
     for (int i = 0; i < zarray_size_m_detections; ++i) {
@@ -532,6 +533,7 @@ public:
       messages.push_back(ss.str());
       m_tagsId.push_back(det->id);
       m_tagsDecisionMargin.push_back(det->decision_margin);
+      m_tagsHammingDistance.push_back(det->hamming);
 
       if (displayTag) {
         vpColor Ox = (color == vpColor::none) ? vpColor::red : color;
@@ -1010,6 +1012,8 @@ public:
 
   std::vector<float> getTagsDecisionMargin() const { return m_tagsDecisionMargin; }
 
+  std::vector<int> getTagsHammingDistance() const { return m_tagsHammingDistance; }
+
   std::vector<int> getTagsId() const { return m_tagsId; }
 
   void setArUcoDecisionMarginThreshold(float marginThreshold)
@@ -1084,6 +1088,7 @@ protected:
   std::vector<int> m_tagsId;
   vpAprilTagFamily m_tagFamily;
   std::vector<float> m_tagsDecisionMargin;
+  std::vector<int> m_tagsHammingDistance;
   apriltag_detector_t *m_td;
   apriltag_family_t *m_tf;
   zarray_t *m_detections;
@@ -1393,14 +1398,26 @@ bool vpDetectorAprilTag::getTagImage(vpImage<unsigned char> &I, int id)
   \note This decision margin is used to filter out 4x4, 5x5 and 6x6 ArUco false detections
   using the threshold set with setArUcoDecisionMarginThreshold().
 
-  \sa getTagsCorners(), getTagsPoints3D(), getTagsId().
+  \sa getTagsCorners(), getTagsPoints3D(), getTagsId(), getTagsHammingDistance()
 */
 std::vector<float> vpDetectorAprilTag::getTagsDecisionMargin() const { return m_impl->getTagsDecisionMargin(); }
 
 /*!
+  Return the hamming distance for each detection in range 0 - 255.
+  This hamming distance corresponds to the number of bits that were corrected.
+  Having values greater than 0 leads to greatly increased false positive rates.
+  Thus it could be seen as a quality detection indicator.
+
+  \note As of this implementation, the detector cannot detect tags with a hamming distance greater than 2.
+
+  \sa getTagsCorners(), getTagsPoints3D(), getTagsId(), getTagsDecisionMargin()
+*/
+std::vector<int> vpDetectorAprilTag::getTagsHammingDistance() const { return m_impl->getTagsHammingDistance(); }
+
+/*!
   Return the decoded Apriltag id for each detection.
 
-  \sa getTagsCorners(), getTagsPoints3D(), getTagsDecisionMargin()
+  \sa getTagsCorners(), getTagsPoints3D(), getTagsDecisionMargin(), getTagsHammingDistance()
 */
 std::vector<int> vpDetectorAprilTag::getTagsId() const { return m_impl->getTagsId(); }
 

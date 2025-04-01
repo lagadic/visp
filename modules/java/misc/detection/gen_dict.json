@@ -283,6 +283,53 @@
           "}"
         ]
       },
+      "getTagsHammingDistance": {
+        "j_code": [
+          "//",
+          "// manual port",
+          "// C++: std::vector<int> getTagsHammingDistance()",
+          "//",
+          "//javadoc: VpDetectorAprilTag::getTagsHammingDistance()\n",
+          "public int[] getTagsHammingDistance()",
+          "{",
+          "   return getTagsHammingDistance(nativeObj);",
+          "}"
+        ],
+        "jn_code": [
+          "// C++: std::vector<int> getTagsHammingDistance()",
+          "private static native int[] getTagsHammingDistance(long address);"
+        ],
+        "cpp_code": [
+          "//",
+          "// manual port",
+          "// std::vector<int> getTagsHammingDistance()",
+          "//\n",
+          "JNIEXPORT jintArray JNICALL Java_org_visp_detection_VpDetectorAprilTag_getTagsHammingDistance (JNIEnv*, jclass, jlong);\n",
+          "JNIEXPORT jintArray JNICALL Java_org_visp_detection_VpDetectorAprilTag_getTagsHammingDistance",
+          "  (JNIEnv* env, jclass, jlong self)",
+          "{",
+          "  static const char method_name[] = \"detection::getTagsHammingDistance()\";",
+          "  try {",
+          "   LOGD(\"%s\", method_name);",
+          "   vpDetectorAprilTag *tag = (vpDetectorAprilTag*) self;",
+          "   std::vector<int> tag_HDs = tag->getTagsHammingDistance();",
+          "   jintArray jHDs = env->NewIntArray(tag_HDs.size());",
+          "   jint *ptr_HDs = nullptr;",
+          "   ptr_HDs = env->GetIntArrayElements(jHDs, 0);",
+          "   for (size_t i = 0; i < tag_HDs.size(); i++) {",
+          "     ptr_HDs[i] = tag_HDs[i];",
+          "   }",
+          "   env->ReleaseIntArrayElements(jHDs, ptr_HDs, 0);",
+          "   return jHDs;",
+          "  } catch(const std::exception &e) {",
+          "   throwJavaException(env, &e, method_name);",
+          "  } catch (...) {",
+          "   throwJavaException(env, 0, method_name);",
+          "  }",
+          "  return 0;",
+          "}"
+        ]
+      },
       "getTagsId": {
         "j_code": [
           "//",
