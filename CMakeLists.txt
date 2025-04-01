@@ -1270,6 +1270,9 @@ VP_SET(VISP_HAVE_FUNC_ISINF TRUE IF HAVE_FUNC_ISINF) # for header vpConfig.h
 # Find std::isinf function (cmath): https://en.cppreference.com/w/cpp/numeric/math/isinf
 VP_SET(VISP_HAVE_FUNC_STD_ISINF TRUE IF HAVE_FUNC_STD_ISINF) # for header vpConfig.h
 
+VP_SET(VISP_HAVE_FAST_MATH TRUE IF ENABLE_FAST_MATH) # for header vpConfig.h
+
+
 # round
 # Find round function (math.h): https://www.cplusplus.com/reference/cmath/round/
 VP_SET(VISP_HAVE_FUNC_ROUND TRUE IF HAVE_FUNC_ROUND) # for header vpConfig.h
