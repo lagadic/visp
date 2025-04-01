@@ -326,6 +326,7 @@ public:
 
   bool getTagImage(vpImage<unsigned char> &I, int id);
   std::vector<std::vector<vpImagePoint> > getTagsCorners() const;
+  std::vector<float> getTagsDecisionMargin() const;
   std::vector<int> getTagsId() const;
   std::vector<std::vector<vpPoint> > getTagsPoints3D(const std::vector<int> &tagsId,
                                                      const std::map<int, double> &tagsSize) const;

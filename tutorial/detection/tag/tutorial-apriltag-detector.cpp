@@ -291,6 +291,10 @@ int main(int argc, const char **argv)
     std::vector<int> tag_ids = detector.getTagsId();
     //! [Get tag ids]
 
+    //! [Get decision margin]
+    std::vector<float> tag_decision_margins = detector.getTagsDecisionMargin();
+    //! [Get decision margin]
+
     //! [Parse detected codes]
     std::cout << "\nDetected tags" << std::endl;
     for (size_t i = 0; i < detector.getNbObjects(); i++) {
@@ -302,11 +306,13 @@ int main(int argc, const char **argv)
       vpDisplay::displayRectangle(I, bbox, vpColor::green);
       //! [Get message]
       std::string message = detector.getMessage(i);
-      std::cout << "  " << message << std::endl;
       //! [Get message]
+      ss.str("");
+      ss << message << " with decision margin: " << tag_decision_margins[i];
+      std::cout << "  " << ss.str() << std::endl;
       //! [Display tag ids]
       ss.str("");
-      ss << "Tag id: " << tag_ids[i];
+      ss << "Tag id: " << tag_ids[i] << " - " << tag_decision_margins[i];
       vpDisplay::displayText(I, static_cast<int>(bbox.getTop()), static_cast<int>(bbox.getLeft()), ss.str(), vpColor::red);
       //! [Display tag ids]
       //! [Display corner indexes]

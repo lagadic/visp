@@ -84,7 +84,8 @@ class vpDetectorAprilTag::Impl
 {
 public:
   Impl(const vpAprilTagFamily &tagFamily, const vpPoseEstimationMethod &method)
-    : m_poseEstimationMethod(method), m_tagsId(), m_tagFamily(tagFamily), m_td(nullptr), m_tf(nullptr),
+    : m_poseEstimationMethod(method), m_tagsId(), m_tagFamily(tagFamily), m_tagsDecisionMargin(),
+    m_td(nullptr), m_tf(nullptr),
     m_detections(nullptr), m_decisionMarginThresholdArUco(50), m_zAlignedWithCameraFrame(false)
   {
     switch (m_tagFamily) {
@@ -205,7 +206,8 @@ public:
   }
 
   Impl(const Impl &o)
-    : m_poseEstimationMethod(o.m_poseEstimationMethod), m_tagsId(o.m_tagsId), m_tagFamily(o.m_tagFamily), m_td(nullptr),
+    : m_poseEstimationMethod(o.m_poseEstimationMethod), m_tagsId(o.m_tagsId), m_tagFamily(o.m_tagFamily),
+    m_tagsDecisionMargin(o.m_tagsDecisionMargin), m_td(nullptr),
     m_tf(nullptr), m_detections(nullptr), m_zAlignedWithCameraFrame(o.m_zAlignedWithCameraFrame)
   {
     switch (m_tagFamily) {
@@ -498,10 +500,11 @@ public:
     int nb_detections = zarray_size(m_detections);
     bool detected = nb_detections > 0;
 
-    polygons.clear(); messages.clear(); m_tagsId.clear();
+    polygons.clear(); messages.clear(); m_tagsId.clear(); m_tagsDecisionMargin.clear();
     polygons.reserve(static_cast<size_t>(nb_detections));
     messages.reserve(static_cast<size_t>(nb_detections));
     m_tagsId.reserve(static_cast<size_t>(nb_detections));
+    m_tagsDecisionMargin.reserve(static_cast<size_t>(nb_detections));
 
     int zarray_size_m_detections = zarray_size(m_detections);
     for (int i = 0; i < zarray_size_m_detections; ++i) {
@@ -528,6 +531,7 @@ public:
       ss << m_tagFamily << " id: " << det->id;
       messages.push_back(ss.str());
       m_tagsId.push_back(det->id);
+      m_tagsDecisionMargin.push_back(det->decision_margin);
 
       if (displayTag) {
         vpColor Ox = (color == vpColor::none) ? vpColor::red : color;
@@ -1004,6 +1008,8 @@ public:
 
   bool getZAlignedWithCameraAxis() const { return m_zAlignedWithCameraFrame; }
 
+  std::vector<float> getTagsDecisionMargin() const { return m_tagsDecisionMargin; }
+
   std::vector<int> getTagsId() const { return m_tagsId; }
 
   void setArUcoDecisionMarginThreshold(float marginThreshold)
@@ -1077,6 +1083,7 @@ protected:
   vpPoseEstimationMethod m_poseEstimationMethod;
   std::vector<int> m_tagsId;
   vpAprilTagFamily m_tagFamily;
+  std::vector<float> m_tagsDecisionMargin;
   apriltag_detector_t *m_td;
   apriltag_family_t *m_tf;
   zarray_t *m_detections;
@@ -1380,9 +1387,20 @@ bool vpDetectorAprilTag::getTagImage(vpImage<unsigned char> &I, int id)
 }
 
 /*!
+  Return the decision marging for each detection. It could be seen as a quality detection indicator.
+  The higher the value, the greater the confidence in detection.
+
+  \note This decision margin is used to filter out 4x4, 5x5 and 6x6 ArUco false detections
+  using the threshold set with setArUcoDecisionMarginThreshold().
+
+  \sa getTagsCorners(), getTagsPoints3D(), getTagsId().
+*/
+std::vector<float> vpDetectorAprilTag::getTagsDecisionMargin() const { return m_impl->getTagsDecisionMargin(); }
+
+/*!
   Return the decoded Apriltag id for each detection.
 
-  \sa getTagsCorners(), getTagsPoints3D()
+  \sa getTagsCorners(), getTagsPoints3D(), getTagsDecisionMargin()
 */
 std::vector<int> vpDetectorAprilTag::getTagsId() const { return m_impl->getTagsId(); }
 
@@ -1411,7 +1429,7 @@ void vpDetectorAprilTag::setAprilTagDecodeSharpening(double decodeSharpening)
   \note This parameter only affects the 4x4, 5x5, 6x6 ArUco dictionnaries and not the AprilTag
   version nor the ArUco MIP_36h12 version.
 
-  \sa getArUcoDecisionMarginThreshold()
+  \sa getArUcoDecisionMarginThreshold(), getTagsDecisionMargin()
 */
 void vpDetectorAprilTag::setArUcoDecisionMarginThreshold(float marginThreshold)
 {

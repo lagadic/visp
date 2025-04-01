@@ -390,26 +390,17 @@ int main(int argc, const char **argv)
       }
       //! [Display camera pose for each tag]
 
-      //! [Compute tags cog]
+      //! [Display tags]
       std::vector< std::vector<vpImagePoint> > tags_corners = detector.getTagsCorners();
-      std::vector<vpImagePoint> tags_cog;
-      for (size_t i = 0; i < tags_corners.size(); ++i) {
-        vpImagePoint cog(0, 0);
-        for (size_t j = 0; j < tags_corners[i].size(); ++j) {
-          cog += tags_corners[i][j];
-        }
-        tags_cog.push_back(cog / tags_corners[i].size());
-      }
-      //! [Compute tags cog]
-
       detector.displayTags(I, tags_corners);
+      //! [Display tags]
 
       //! [Display id for each tag]
       std::vector<int> tags_id = detector.getTagsId();
       for (size_t i = 0; i < tags_id.size(); i++) {
         std::stringstream ss;
         ss << "id=" << tags_id[i];
-        vpDisplay::displayText(I, tags_cog[i] + vpImagePoint(-10, 10), ss.str(), vpColor::blue);
+        vpDisplay::displayText(I, detector.getCog(i) + vpImagePoint(-10, 10), ss.str(), vpColor::blue);
       }
       //! [Display id for each tag]
       vpDisplay::displayText(I, 20, 20, "Click to quit.", vpColor::red);

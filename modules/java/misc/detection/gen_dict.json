@@ -1,8 +1,8 @@
 {
-  "ManualFuncs" : {
-    "VpDetectorAprilTag" : {
-      "detect" : {
-        "j_code" : [
+  "ManualFuncs": {
+    "VpDetectorAprilTag": {
+      "detect": {
+        "j_code": [
           "//",
           "// manual port",
           "// C++:  bool detect(vpImage_char I, double tagSize, vpCameraParameters cam, vector_vpHomogeneousMatrix cMo_vec)",
@@ -24,7 +24,7 @@
           "    return retVal;",
           "}"
         ],
-        "cpp_code" : [
+        "cpp_code": [
           "//",
           "//  bool detect(vpImage_char I, double tagSize, vpCameraParameters cam, vector_vpHomogeneousMatrix cMo_vec)",
           "//\n\n",
@@ -71,15 +71,15 @@
           "  return 0;",
           "}"
         ],
-        "jn_code" : [
+        "jn_code": [
           "// C++:  bool detect(vpImage_char I, double tagSize, vpCameraParameters cam, vector_vpHomogeneousMatrix cMo_vec)",
           "private static native long[] detect_0(long nativeObj, long I_nativeObj, double tagSize, long cam_nativeObj);\n",
           "// C++:  bool detect(vpImage_char I)",
           "private static native boolean detect_1(long nativeObj, long I_nativeObj);"
         ]
       },
-      "getPoseEstimationMethod" : {
-        "j_code" : [
+      "getPoseEstimationMethod": {
+        "j_code": [
           "//",
           "// manual port",
           "// C++: vpPoseEstimationMethod getPoseEstimationMethod()",
@@ -90,11 +90,11 @@
           "   return getPoseEstimationMethod(nativeObj);",
           "}"
         ],
-        "jn_code" : [
+        "jn_code": [
           "// C++: vpPoseEstimationMethod getPoseEstimationMethod()",
           "private static native int getPoseEstimationMethod(long address);"
         ],
-        "cpp_code" : [
+        "cpp_code": [
           "//",
           "// manual port",
           "// int getPoseEstimationMethod()",
@@ -117,8 +117,8 @@
           "}"
         ]
       },
-      "setAprilTagPoseEstimationMethod" : {
-        "j_code" : [
+      "setAprilTagPoseEstimationMethod": {
+        "j_code": [
           "//",
           "// manual port",
           "// C++: void setAprilTagPoseEstimationMethod(const vpPoseEstimationMethod &poseEstimationMethod)",
@@ -129,11 +129,11 @@
           "   setAprilTagPoseEstimationMethod(nativeObj,vpPoseEstimationMethod);",
           "}"
         ],
-        "jn_code" : [
+        "jn_code": [
           "// C++: void setAprilTagPoseEstimationMethod(const vpPoseEstimationMethod &poseEstimationMethod)",
           "private static native void setAprilTagPoseEstimationMethod(long address, int value);"
         ],
-        "cpp_code" : [
+        "cpp_code": [
           "//",
           "// manual port",
           "// void setAprilTagPoseEstimationMethod(int vpPoseEstimationMethod)",
@@ -156,8 +156,8 @@
           "}"
         ]
       },
-      "setAprilTagFamily" : {
-        "j_code" : [
+      "setAprilTagFamily": {
+        "j_code": [
           "//",
           "// manual port",
           "// C++: void setAprilTagFamily(const vpAprilTagFamily &tagFamily)",
@@ -168,11 +168,11 @@
           "   setAprilTagFamily(nativeObj,tagFamily);",
           "}"
         ],
-        "jn_code" : [
+        "jn_code": [
           "// C++: void setAprilTagFamily(const vpAprilTagFamily &tagFamily)",
           "private static native void setAprilTagFamily(long address, int value);"
         ],
-        "cpp_code" : [
+        "cpp_code": [
           "//",
           "// manual port",
           "// void setAprilTagFamily(int tagFamily)",
@@ -195,8 +195,8 @@
           "}"
         ]
       },
-      "getTagsCorners" : {
-        "j_code" : [
+      "getTagsCorners": {
+        "j_code": [
           "//",
           "// manual port",
           "// C++: std::vector<std::vector<vpImagePoint> > getTagsCorners()",
@@ -208,11 +208,11 @@
           "   return org.visp.utils.Converters.Array_Array_to_vector_vector_vpImagePoint(matrix);",
           "}"
         ],
-        "jn_code" : [
+        "jn_code": [
           "// C++: std::vector<std::vector<vpImagePoint> > getTagsCorners()",
           "private static native long[][] getTagsCorners(long address);"
         ],
-        "cpp_code" : [
+        "cpp_code": [
           "//",
           "// manual port",
           "// std::vector<std::vector<vpImagePoint> > getTagsCorners()",
@@ -236,8 +236,55 @@
           "}"
         ]
       },
-      "getTagsId" : {
-        "j_code" : [
+      "getTagsDecisionMargin": {
+        "j_code": [
+          "//",
+          "// manual port",
+          "// C++: std::vector<float> getTagsDecisionMargin()",
+          "//",
+          "//javadoc: VpDetectorAprilTag::getTagsDecisionMargin()\n",
+          "public float[] getTagsDecisionMargin()",
+          "{",
+          "   return getTagsDecisionMargin(nativeObj);",
+          "}"
+        ],
+        "jn_code": [
+          "// C++: std::vector<float> getTagsDecisionMargin()",
+          "private static native float[] getTagsDecisionMargin(long address);"
+        ],
+        "cpp_code": [
+          "//",
+          "// manual port",
+          "// std::vector<float> getTagsDecisionMargin()",
+          "//\n",
+          "JNIEXPORT jfloatArray JNICALL Java_org_visp_detection_VpDetectorAprilTag_getTagsDecisionMargin (JNIEnv*, jclass, jlong);\n",
+          "JNIEXPORT jfloatArray JNICALL Java_org_visp_detection_VpDetectorAprilTag_getTagsDecisionMargin",
+          "  (JNIEnv* env, jclass, jlong self)",
+          "{",
+          "  static const char method_name[] = \"detection::getTagsDecisionMargin()\";",
+          "  try {",
+          "   LOGD(\"%s\", method_name);",
+          "   vpDetectorAprilTag *tag = (vpDetectorAprilTag*) self;",
+          "   std::vector<float> tag_DMs = tag->getTagsDecisionMargin();",
+          "   jfloatArray jDMs = env->NewFloatArray(tag_DMs.size());",
+          "   jfloat *ptr_DMs = nullptr;",
+          "   ptr_DMs = env->GetFloatArrayElements(jDMs, 0);",
+          "   for (size_t i = 0; i < tag_DMs.size(); i++) {",
+          "     ptr_DMs[i] = tag_DMs[i];",
+          "   }",
+          "   env->ReleaseFloatArrayElements(jDMs, ptr_DMs, 0);",
+          "   return jDMs;",
+          "  } catch(const std::exception &e) {",
+          "   throwJavaException(env, &e, method_name);",
+          "  } catch (...) {",
+          "   throwJavaException(env, 0, method_name);",
+          "  }",
+          "  return 0;",
+          "}"
+        ]
+      },
+      "getTagsId": {
+        "j_code": [
           "//",
           "// manual port",
           "// C++: std::vector<int> getTagsId()",
@@ -248,11 +295,11 @@
           "   return getTagsId(nativeObj);",
           "}"
         ],
-        "jn_code" : [
+        "jn_code": [
           "// C++: std::vector<int> getTagsId()",
           "private static native int[] getTagsId(long address);"
         ],
-        "cpp_code" : [
+        "cpp_code": [
           "//",
           "// manual port",
           "// std::vector<int> getTagsId()",
@@ -283,8 +330,8 @@
           "}"
         ]
       },
-      "VpDetectorAprilTag" : {
-        "j_code" : [
+      "VpDetectorAprilTag": {
+        "j_code": [
           "//",
           "// C++:   vpDetectorAprilTag(vpAprilTagFamily tagFamily = TAG_36h11, vpPoseEstimationMethod poseEstimationMethod = HOMOGRAPHY_VIRTUAL_VS)",
           "//\n",
@@ -295,11 +342,11 @@
           "    return;",
           "}"
         ],
-        "jn_code" : [
+        "jn_code": [
           "// C++:   vpDetectorAprilTag(vpAprilTagFamily tagFamily = TAG_36h11, vpPoseEstimationMethod poseEstimationMethod = HOMOGRAPHY_VIRTUAL_VS)",
           "private static native long VpDetectorAprilTag_0();"
         ],
-        "cpp_code" : [
+        "cpp_code": [
           "//",
           "//   vpDetectorAprilTag(vpAprilTagFamily tagFamily = TAG_36h11, vpPoseEstimationMethod poseEstimationMethod = HOMOGRAPHY_VIRTUAL_VS)",
           "//\n\n",
@@ -325,6 +372,15 @@
           "}"
         ]
       }
+    }
+  },
+  "type_dict": {
+    "vector_float": {
+      "j_type": "float[]",
+      "jn_type": "float[]",
+      "jni_type": "jfloatArray",
+      "jni_var": "std::vector<float> %(n)s",
+      "suffix": "[F"
     }
   }
 }

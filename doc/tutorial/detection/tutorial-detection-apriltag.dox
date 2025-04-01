@@ -139,6 +139,10 @@ There is also a way to get tag ids directly with
 This id can then be displayed
 \snippet tutorial-apriltag-detector.cpp Display tag ids
 
+To get a detection quality indicator you can use the decision margin value. The higher the value, the greater the
+confidence in detection.
+\snippet tutorial-apriltag-detector.cpp Get tag decision margin
+
 Next in the code we display the 3D pose of each tag as a RGB frame.
 
 \snippet tutorial-apriltag-detector.cpp Display camera pose for each tag
