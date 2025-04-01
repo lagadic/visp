@@ -56,7 +56,7 @@
   detector.setAprilTagQuadDecimate(tag_quad_decimate);
   detector.setAprilTagPoseEstimationMethod(tag_pose_estimation_method);
   detector.setAprilTagNbThreads(tag_nThreads);
-  detector.setArUcoDecisionMargin(aruco_decision_margin); // only for ArUco 4x4, 5x5 and 6x6 families
+  detector.setArUcoDecisionMarginThreshold(aruco_decision_margin); // only for ArUco 4x4, 5x5 and 6x6 families
 
   // Detect all the tags in the image
   detector.detect(I, tag_size, cam, cMo_vec);

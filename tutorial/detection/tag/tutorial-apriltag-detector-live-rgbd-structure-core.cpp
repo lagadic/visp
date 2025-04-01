@@ -17,7 +17,7 @@ void usage(const char **argv, int error)
     << "  " << argv[0]
     << " [--tag-size <size>]"
     << " [--tag-family <family>]"
-    << " [--aruco-decision-margin <margin>]"
+    << " [--aruco-decision-margin-threshold <threshold>]"
     << " [--tag-quad-decimate <factor>]"
     << " [--tag-n-threads <number>]"
     << " [--tag-z-aligned]"
@@ -66,8 +66,8 @@ void usage(const char **argv, int error)
     << "      23: TAG_ARUCO_MIP_36h12" << std::endl
     << "    Default: 0 (36h11)" << std::endl
     << std::endl
-    << "  --aruco-decision-margin <margin>" << std::endl
-    << "    High values will discard low-confident detections with ArUco 4x4, 5x5, 6x6 families. " << std::endl
+    << "  --aruco-decision-margin-threshold <threshold>" << std::endl
+    << "    Threshold used to discard low-confident detections with ArUco 4x4, 5x5, 6x6 families. " << std::endl
     << "    Default: 50" << std::endl
     << std::endl
     << "  --tag-quad-decimate <factor>" << std::endl
@@ -143,7 +143,7 @@ int main(int argc, const char **argv)
   vpDetectorAprilTag::vpPoseEstimationMethod opt_pose_estimation_method = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
   double opt_tag_size = 0.053;
   float opt_tag_quad_decimate = 1.0;
-  float opt_aruco_decision_margin = 50;
+  float opt_aruco_decision_margin_threshold = 50;
   int opt_tag_nThreads = 1;
   bool opt_display_tag = false;
   int opt_color_id = -1;
@@ -176,8 +176,8 @@ int main(int argc, const char **argv)
     else if (std::string(argv[i]) == "--tag-pose-method" && i + 1 < argc) {
       opt_pose_estimation_method = (vpDetectorAprilTag::vpPoseEstimationMethod)atoi(argv[++i]);
     }
-    else if (std::string(argv[i]) == "--aruco-decision-margin" && i + 1 < argc) {
-      opt_aruco_decision_margin = static_cast<float>(atof(argv[++i]));
+    else if (std::string(argv[i]) == "--aruco-decision-margin-threshold" && i + 1 < argc) {
+      opt_aruco_decision_margin_threshold = static_cast<float>(atof(argv[++i]));
     }
 #if defined(VISP_HAVE_DISPLAY)
     else if (std::string(argv[i]) == "--display-tag") {
@@ -243,7 +243,7 @@ int main(int argc, const char **argv)
     std::cout << "  Tag size [m]   : " << opt_tag_size << std::endl;
     std::cout << "  Tag family     : " << opt_tag_family << std::endl;
     std::cout << "  Quad decimate  : " << opt_tag_quad_decimate << std::endl;
-    std::cout << "  Decision margin: " << opt_aruco_decision_margin << " (applied to ArUco tags only)" << std::endl;
+    std::cout << "  Decision margin: " << opt_aruco_decision_margin_threshold << " (applied to ArUco tags only)" << std::endl;
     std::cout << "  Num threads    : " << opt_tag_nThreads << std::endl;
     std::cout << "  Z aligned      : " << opt_tag_z_align_frame << std::endl;
     std::cout << "  Pose estimation: " << opt_tag_pose_estimation_method << std::endl;
@@ -274,7 +274,7 @@ int main(int argc, const char **argv)
     detector.setAprilTagNbThreads(opt_tag_nThreads);
     detector.setDisplayTag(opt_display_tag, opt_color_id < 0 ? vpColor::none : vpColor::getColor(opt_color_id), opt_thickness);
     detector.setZAlignedWithCameraAxis(opt_tag_z_align_frame);
-    detector.setArUcoDecisionMargin(opt_aruco_decision_margin); // only for ArUco 4x4, 5x5 and 6x6 families
+    detector.setArUcoDecisionMarginThreshold(opt_aruco_decision_margin_threshold); // only for ArUco 4x4, 5x5 and 6x6 families
     //! [AprilTag detector settings]
     std::vector<double> time_vec;
     for (;;) {

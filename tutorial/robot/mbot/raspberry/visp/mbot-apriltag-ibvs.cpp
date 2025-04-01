@@ -27,7 +27,7 @@ void usage(const char **argv, int error)
     << " [--camera-device <id>]"
     << " [--tag-size <size>]"
     << " [--tag-family <family>]"
-    << " [--aruco-decision-margin <margin>]"
+    << " [--aruco-decision-margin-threshold <threshold>]"
     << " [--tag-quad-decimate <factor>]"
     << " [--tag-n-threads <number>]"
     << " [--tag-pose-method <method>]"
@@ -82,8 +82,8 @@ void usage(const char **argv, int error)
     << "      23: TAG_ARUCO_MIP_36h12" << std::endl
     << "    Default: 0 (36h11)" << std::endl
     << std::endl
-    << "  --aruco-decision-margin <margin>" << std::endl
-    << "    High values will discard low-confident detections with ArUco 4x4, 5x5, 6x6 families. " << std::endl
+    << "  --aruco-decision-margin-threshold <threshold>" << std::endl
+    << "    Threshold used to discard low-confident detections with ArUco 4x4, 5x5, 6x6 families. " << std::endl
     << "    Default: 50" << std::endl
     << std::endl
     << "  --tag-quad-decimate <factor>" << std::endl
@@ -144,7 +144,7 @@ int main(int argc, const char **argv)
   vpDetectorAprilTag::vpAprilTagFamily opt_tag_family = vpDetectorAprilTag::TAG_36h11;
   double opt_tag_size = 0.065;
   float opt_tag_quad_decimate = 4.0;
-  float opt_aruco_decision_margin = 50;
+  float opt_aruco_decision_margin_threshold = 50;
   int opt_tag_nThreads = 2;
   std::string intrinsic_file = "";
   std::string camera_name = "";
@@ -165,8 +165,8 @@ int main(int argc, const char **argv)
     else if (std::string(argv[i]) == "--tag-family" && i + 1 < argc) {
       opt_tag_family = (vpDetectorAprilTag::vpAprilTagFamily)std::atoi(argv[++i]);
     }
-    else if (std::string(argv[i]) == "--aruco-decision-margin" && i + 1 < argc) {
-      opt_aruco_decision_margin = static_cast<float>(atof(argv[++i]));
+    else if (std::string(argv[i]) == "--aruco-decision-margin-threshold" && i + 1 < argc) {
+      opt_aruco_decision_margin_threshold = static_cast<float>(atof(argv[++i]));
     }
     else if (std::string(argv[i]) == "--tag-quad-decimate" && i + 1 < argc) {
       opt_tag_quad_decimate = (float)atof(argv[++i]);
@@ -254,14 +254,14 @@ int main(int argc, const char **argv)
     std::cout << "  Tag size [m]   : " << opt_tag_size << std::endl;
     std::cout << "  Tag family     : " << opt_tag_family << std::endl;
     std::cout << "  Quad decimate  : " << opt_tag_quad_decimate << std::endl;
-    std::cout << "  Decision margin: " << opt_aruco_decision_margin << " (applied to ArUco tags only)" << std::endl;
+    std::cout << "  Decision margin: " << opt_aruco_decision_margin_threshold << " (applied to ArUco tags only)" << std::endl;
     std::cout << "  Num threads    : " << opt_tag_nThreads << std::endl;
 
     vpDetectorAprilTag detector(opt_tag_family);
 
     detector.setAprilTagQuadDecimate(opt_tag_quad_decimate);
     detector.setAprilTagNbThreads(opt_tag_nThreads);
-    detector.setArUcoDecisionMargin(opt_aruco_decision_margin); // only for ArUco 4x4, 5x5 and 6x6 families
+    detector.setArUcoDecisionMarginThreshold(opt_aruco_decision_margin_threshold); // only for ArUco 4x4, 5x5 and 6x6 families
 #ifdef VISP_HAVE_DISPLAY
     detector.setDisplayTag(display_tag);
 #endif

@@ -315,7 +315,7 @@ public:
   void displayTags(const vpImage<vpRGBa> &I, const std::vector<std::vector<vpImagePoint> > &tagsCorners,
                    const vpColor &color = vpColor::none, unsigned int thickness = 1) const;
 
-  float getArUcoDecisionMargin() const;
+  float getArUcoDecisionMarginThreshold() const;
   bool getPose(size_t tagIndex, double tagSize, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
                vpHomogeneousMatrix *cMo2 = nullptr, double *projError = nullptr, double *projError2 = nullptr);
 
@@ -340,7 +340,7 @@ public:
   void setAprilTagQuadDecimate(float quadDecimate);
   void setAprilTagQuadSigma(float quadSigma);
   void setAprilTagRefineEdges(bool refineEdges);
-  void setArUcoDecisionMargin(float margin);
+  void setArUcoDecisionMarginThreshold(float marginThreshold);
 
 
   /*! Allow to enable the display of overlay tag information in the windows
