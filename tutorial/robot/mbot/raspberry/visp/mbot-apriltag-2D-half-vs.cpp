@@ -266,7 +266,6 @@ int main(int argc, const char **argv)
     std::cout << "  Decision margin threshold : " << opt_tag_decision_margin_threshold << std::endl;
     std::cout << "  Hamming distance threshold: " << opt_tag_hamming_distance_threshold << std::endl;
     std::cout << "  Num threads               : " << opt_tag_nThreads << std::endl;
-    std::cout << "  Z aligned                 : " << opt_tag_z_align_frame << std::endl;
     std::cout << "  Pose estimation           : " << opt_tag_pose_estimation_method << std::endl;
 
     vpDetectorAprilTag detector(opt_tag_family);
