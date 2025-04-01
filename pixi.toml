@@ -1,6 +1,6 @@
 [project]
 authors = ["Olivier Roussel <olivier.roussel@inria.fr>"]
-channels = ["conda-forge", "panda3d-forge"]
+channels = ["conda-forge", "panda3d-forge", "olivier.roussel"]
 name = "visp"
 platforms = ["linux-64", "osx-64", "win-64", "osx-arm64"]
 version = "3.6.0"
@@ -65,7 +65,7 @@ dependencies = { nlohmann_json = "*", panda3d = { version = ">=1.10.15", channel
 
 [feature.rbt-clang-cl]
 platforms = ["win-64"]
-dependencies = { nlohmann_json = "*", panda3d = { version = ">=1.10.15", build = "*fix_clang_cl*", channel = "panda3d-forge" } }
+dependencies = { nlohmann_json = "*", panda3d = { version = ">=1.10.15", build = "*fix_clang_cl*", channel = "olivier.roussel" } }
 
 [feature.tests]
 activation = { env = { VISP_BUILD_TESTS = "ON" } }
