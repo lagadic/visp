@@ -86,7 +86,7 @@ public:
   Impl(const vpAprilTagFamily &tagFamily, const vpPoseEstimationMethod &method)
     : m_poseEstimationMethod(method), m_tagsId(), m_tagFamily(tagFamily), m_tagsDecisionMargin(),
     m_tagsHammingDistance(), m_td(nullptr), m_tf(nullptr),
-    m_detections(nullptr), m_decisionMarginThresholdArUco(50), m_zAlignedWithCameraFrame(false)
+    m_detections(nullptr), m_decisionMarginThreshold(-1), m_zAlignedWithCameraFrame(false)
   {
     switch (m_tagFamily) {
     case TAG_36h11:
@@ -512,12 +512,8 @@ public:
       apriltag_detection_t *det;
       zarray_get(m_detections, i, &det);
 
-      if (
-        m_tagFamily == TAG_ARUCO_4x4_50 || m_tagFamily == TAG_ARUCO_4x4_100 || m_tagFamily == TAG_ARUCO_4x4_250 || m_tagFamily == TAG_ARUCO_4x4_1000 ||
-        m_tagFamily == TAG_ARUCO_5x5_50 || m_tagFamily == TAG_ARUCO_5x5_100 || m_tagFamily == TAG_ARUCO_5x5_250 || m_tagFamily == TAG_ARUCO_5x5_1000 ||
-        m_tagFamily == TAG_ARUCO_6x6_50 || m_tagFamily == TAG_ARUCO_6x6_100 || m_tagFamily == TAG_ARUCO_6x6_250 || m_tagFamily == TAG_ARUCO_6x6_1000
-      ) {
-        if (det->decision_margin < m_decisionMarginThresholdArUco) {
+      if (m_decisionMarginThreshold > 0) {
+        if (det->decision_margin < m_decisionMarginThreshold) {
           continue;
         }
       }
@@ -958,9 +954,9 @@ public:
 
   bool getZAlignedWithCameraAxis() { return m_zAlignedWithCameraFrame; }
 
-  float getArUcoDecisionMarginThreshold() const
+  float getAprilTagDecisionMarginThreshold() const
   {
-    return m_decisionMarginThresholdArUco;
+    return m_decisionMarginThreshold;
   }
 
   bool getAprilTagDecodeSharpening(double &decodeSharpening) const
@@ -1016,9 +1012,9 @@ public:
 
   std::vector<int> getTagsId() const { return m_tagsId; }
 
-  void setArUcoDecisionMarginThreshold(float marginThreshold)
+  void setAprilTagDecisionMarginThreshold(float decisionMarginThreshold)
   {
-    m_decisionMarginThresholdArUco = marginThreshold;
+    m_decisionMarginThreshold = decisionMarginThreshold;
   }
 
   void setAprilTagDecodeSharpening(double decodeSharpening)
@@ -1092,7 +1088,7 @@ protected:
   apriltag_detector_t *m_td;
   apriltag_family_t *m_tf;
   zarray_t *m_detections;
-  float m_decisionMarginThresholdArUco;
+  float m_decisionMarginThreshold;
   bool m_zAlignedWithCameraFrame;
 };
 
@@ -1343,13 +1339,16 @@ std::vector<std::vector<vpPoint> > vpDetectorAprilTag::getTagsPoints3D(const std
 }
 
 /*!
-  Get the decision margin threshold to filter false detections with 4x4, 5x5 and 6x6 ArUco dictionnaries.
+  Get the decision margin threshold to filter false detections.
+  Higher is the decision margin for each detected tag, better is the detection.
+  When the decision margin threshold is equal to -1, tags decision margin values are not used to
+  filter potential false positive detection.
 
-  \sa setArUcoDecisionMarginThreshold()
+  \sa setAprilTagDecisionMarginThreshold()
 */
-float vpDetectorAprilTag::getArUcoDecisionMarginThreshold() const
+float vpDetectorAprilTag::getAprilTagDecisionMarginThreshold() const
 {
-  return m_impl->getArUcoDecisionMarginThreshold();
+  return m_impl->getAprilTagDecisionMarginThreshold();
 }
 
 /*!
@@ -1395,10 +1394,10 @@ bool vpDetectorAprilTag::getTagImage(vpImage<unsigned char> &I, int id)
   Return the decision marging for each detection. It could be seen as a quality detection indicator.
   The higher the value, the greater the confidence in detection.
 
-  \note This decision margin is used to filter out 4x4, 5x5 and 6x6 ArUco false detections
-  using the threshold set with setArUcoDecisionMarginThreshold().
+  \note When the decision margin threshold set using setAprilTagDecisionMargin() differs from -1,
+  this decision margin is used internally to filter out false detections.
 
-  \sa getTagsCorners(), getTagsPoints3D(), getTagsId(), getTagsHammingDistance()
+  \sa getTagsCorners(), getTagsPoints3D(), getTagsId(), getTagsHammingDistance(), setAprilTagDecisionMargin()
 */
 std::vector<float> vpDetectorAprilTag::getTagsDecisionMargin() const { return m_impl->getTagsDecisionMargin(); }
 
@@ -1437,20 +1436,21 @@ void vpDetectorAprilTag::setAprilTagDecodeSharpening(double decodeSharpening)
     > gotten a good detection.)
 
   It has been experimentally observed that using the AprilTag detection and decoding pipeline,
-  lots of false positives arise with 4x4, 5x5 and 6x6 ArUco dictionnaries.
+  lots of false positives arise with 16h5, 4x4, 5x5 and 6x6 ArUco dictionnaries.
   A margin can be used to filter those detection.
 
-  \param[in] marginThreshold : Decision margin threshold used to filter false positive 4x4, 5x5 and 6x6 ArUco.
-  Default value is set to 50.
+  \param[in] decisionMarginThreshold : Decision margin threshold used to filter false positive detections.
+  - When this threshold is set to -1, the decision margin threshold is not used to eliminate detections whose detection
+    margin is lower than this threshold.
+  - When set, we recommand a value of 100 that makes especially 16h5, 4x4, 5x5 and 6x6 ArUco families detection more
+    reliable.
+  - Default value is set to -1.
 
-  \note This parameter only affects the 4x4, 5x5, 6x6 ArUco dictionnaries and not the AprilTag
-  version nor the ArUco MIP_36h12 version.
-
-  \sa getArUcoDecisionMarginThreshold(), getTagsDecisionMargin()
+  \sa getAprilTagDecisionMarginThreshold(), getTagsDecisionMargin()
 */
-void vpDetectorAprilTag::setArUcoDecisionMarginThreshold(float marginThreshold)
+void vpDetectorAprilTag::setAprilTagDecisionMarginThreshold(float decisionMarginThreshold)
 {
-  m_impl->setArUcoDecisionMarginThreshold(marginThreshold);
+  m_impl->setAprilTagDecisionMarginThreshold(decisionMarginThreshold);
 }
 
 void vpDetectorAprilTag::setAprilTagFamily(const vpAprilTagFamily &tagFamily)

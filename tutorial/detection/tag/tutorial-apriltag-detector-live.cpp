@@ -4,22 +4,35 @@
 #include <visp3/core/vpConfig.h>
 
 //! [Undef grabber]
-// Comment / uncomment following lines to use the specific 3rd party compatible with your camera
-//#undef VISP_HAVE_V4L2
-//#undef VISP_HAVE_DC1394
-//#undef VISP_HAVE_CMU1394
-//#undef VISP_HAVE_FLYCAPTURE
-//#undef VISP_HAVE_REALSENSE2
-//#undef HAVE_OPENCV_HIGHGUI
-//#undef HAVE_OPENCV_VIDEOIO
+// If openCV available, priority to OpenCV capture, otherwise the user has to modify the code uncommenting/commenting
+// one of the following lines
+#if defined(VISP_HAVE_OPENCV) && (((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || \
+    ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)))
+#undef VISP_HAVE_V4L2
+#undef VISP_HAVE_DC1394
+#undef VISP_HAVE_CMU1394
+#undef VISP_HAVE_FLYCAPTURE
+#undef VISP_HAVE_REALSENSE2
+// #undef HAVE_OPENCV_HIGHGUI
+// #undef HAVE_OPENCV_VIDEOIO
+#else
+// Use the first grabber that is available. Uncomment/comment the following lines to disable usage of a grabber
+// #undef VISP_HAVE_V4L2
+// #undef VISP_HAVE_DC1394
+// #undef VISP_HAVE_CMU1394
+// #undef VISP_HAVE_FLYCAPTURE
+// #undef VISP_HAVE_REALSENSE2
+#undef HAVE_OPENCV_HIGHGUI
+#undef HAVE_OPENCV_VIDEOIO
+#endif
 //! [Undef grabber]
 
 //! [Macro defined]
 #if defined(VISP_HAVE_APRILTAG) && \
   (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || \
     defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2) || \
-    ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || \
-    ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)))
+    defined(VISP_HAVE_OPENCV) && (((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || \
+    ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))))
 
 //! [Macro defined]
 
@@ -49,7 +62,7 @@ void usage(const char **argv, int error)
     << " [--camera-device <id>]"
     << " [--tag-size <size>]"
     << " [--tag-family <family>]"
-    << " [--aruco-decision-margin-threshold <threshold>]"
+    << " [--tag-decision-margin-threshold <threshold>]"
     << " [--tag-z-aligned]"
     << " [--tag-quad-decimate <factor>]"
     << " [--tag-n-threads <number>]"
@@ -105,9 +118,11 @@ void usage(const char **argv, int error)
     << "      23: TAG_ARUCO_MIP_36h12" << std::endl
     << "    Default: 0 (36h11)" << std::endl
     << std::endl
-    << "  --aruco-decision-margin-threshold <threshold>" << std::endl
-    << "    Threshold used to discard low-confident detections with ArUco 4x4, 5x5, 6x6 families. " << std::endl
-    << "    Default: 50" << std::endl
+    << "  --tag-decision-margin-threshold <threshold>" << std::endl
+    << "    Threshold used to discard low-confident detections. A typical value is " << std::endl
+    << "    around 100. The higher this value, the more false positives will be filtered" << std::endl
+    << "    out. When this value is set to -1, false positives are not filtered out." << std::endl
+    << "    Default: -1" << std::endl
     << std::endl
     << "  --tag-quad-decimate <factor>" << std::endl
     << "    Decimation factor used to detect a tag. " << std::endl
@@ -165,6 +180,9 @@ void usage(const char **argv, int error)
     << "    Default: 2" << std::endl
     << std::endl
 #endif
+    << "  --verbose, -v" << std::endl
+    << "    Enable verbosity." << std::endl
+    << std::endl
     << "  --help, -h" << std::endl
     << "    Print this helper message." << std::endl
     << std::endl;
@@ -187,7 +205,7 @@ int main(int argc, const char **argv)
   vpDetectorAprilTag::vpPoseEstimationMethod opt_tag_pose_estimation_method = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
   double opt_tag_size = 0.053;
   float opt_tag_quad_decimate = 1.0;
-  float opt_aruco_decision_margin_threshold = 50;
+  float opt_tag_decision_margin_threshold = -1;
   int opt_tag_nThreads = 1;
   std::string intrinsic_file = "";
   std::string camera_name = "";
@@ -195,6 +213,7 @@ int main(int argc, const char **argv)
   int opt_color_id = -1;
   unsigned int thickness = 2;
   bool opt_tag_z_align_frame = false;
+  bool opt_verbose = false;
 
 #if !(defined(VISP_HAVE_DISPLAY))
   bool display_off = true;
@@ -205,7 +224,7 @@ int main(int argc, const char **argv)
 
   vpImage<unsigned char> I;
 
-  for (int i = 1; i < argc; i++) {
+  for (int i = 1; i < argc; ++i) {
     if (std::string(argv[i]) == "--camera-device" && i + 1 < argc) {
       opt_device = atoi(argv[++i]);
     }
@@ -227,8 +246,8 @@ int main(int argc, const char **argv)
     else if (std::string(argv[i]) == "--tag-pose-method" && i + 1 < argc) {
       opt_tag_pose_estimation_method = (vpDetectorAprilTag::vpPoseEstimationMethod)atoi(argv[++i]);
     }
-    else if (std::string(argv[i]) == "--aruco-decision-margin-threshold" && i + 1 < argc) {
-      opt_aruco_decision_margin_threshold = static_cast<float>(atof(argv[++i]));
+    else if (std::string(argv[i]) == "--tag-decision-margin-threshold" && i + 1 < argc) {
+      opt_tag_decision_margin_threshold = static_cast<float>(atof(argv[++i]));
     }
 #if defined(VISP_HAVE_PUGIXML)
     else if (std::string(argv[i]) == "--intrinsic" && i + 1 < argc) {
@@ -252,6 +271,9 @@ int main(int argc, const char **argv)
       thickness = (unsigned int)atoi(argv[++i]);
     }
 #endif
+    else if (std::string(argv[i]) == "--verbose" || std::string(argv[i]) == "-v") {
+      opt_verbose = true;
+    }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       usage(argv, 0);
       return EXIT_SUCCESS;
@@ -332,7 +354,7 @@ int main(int argc, const char **argv)
     std::cout << "  Tag size [m]   : " << opt_tag_size << std::endl;
     std::cout << "  Tag family     : " << opt_tag_family << std::endl;
     std::cout << "  Quad decimate  : " << opt_tag_quad_decimate << std::endl;
-    std::cout << "  Decision margin: " << opt_aruco_decision_margin_threshold << " (applied to ArUco tags only)" << std::endl;
+    std::cout << "  Decision margin: " << opt_tag_decision_margin_threshold << " (applied to ArUco tags only)" << std::endl;
     std::cout << "  Num threads    : " << opt_tag_nThreads << std::endl;
     std::cout << "  Z aligned      : " << opt_tag_z_align_frame << std::endl;
     std::cout << "  Pose estimation: " << opt_tag_pose_estimation_method << std::endl;
@@ -355,11 +377,12 @@ int main(int argc, const char **argv)
     detector.setAprilTagNbThreads(opt_tag_nThreads);
     detector.setDisplayTag(opt_display_tag, opt_color_id < 0 ? vpColor::none : vpColor::getColor(opt_color_id), thickness);
     detector.setZAlignedWithCameraAxis(opt_tag_z_align_frame);
-    detector.setArUcoDecisionMarginThreshold(opt_aruco_decision_margin_threshold); // only for ArUco 4x4, 5x5 and 6x6 families
+    detector.setAprilTagDecisionMarginThreshold(opt_tag_decision_margin_threshold); // only for ArUco 4x4, 5x5 and 6x6 families
     //! [AprilTag detector settings]
 
     std::vector<double> time_vec;
-    for (;;) {
+    bool quit = false;
+    while (!quit) {
       //! [Acquisition]
 #if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) ||                              \
     defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2)
@@ -369,6 +392,9 @@ int main(int argc, const char **argv)
       vpImageConvert::convert(frame, I);
 #endif
       //! [Acquisition]
+      if (opt_verbose) {
+        std::cout << "-- Process new image --" << std::endl;
+      }
 
       vpDisplay::display(I);
 
@@ -385,7 +411,7 @@ int main(int argc, const char **argv)
       vpDisplay::displayText(I, 40, 20, ss.str(), vpColor::red);
 
       //! [Display camera pose for each tag]
-      for (size_t i = 0; i < cMo_vec.size(); i++) {
+      for (size_t i = 0; i < cMo_vec.size(); ++i) {
         vpDisplay::displayFrame(I, cMo_vec[i], cam, opt_tag_size / 2, vpColor::none, 3);
       }
       //! [Display camera pose for each tag]
@@ -397,7 +423,7 @@ int main(int argc, const char **argv)
 
       //! [Display id for each tag]
       std::vector<int> tags_id = detector.getTagsId();
-      for (size_t i = 0; i < tags_id.size(); i++) {
+      for (size_t i = 0; i < tags_id.size(); ++i) {
         std::stringstream ss;
         ss << "id=" << tags_id[i];
         vpDisplay::displayText(I, detector.getCog(i) + vpImagePoint(-10, 10), ss.str(), vpColor::blue);
@@ -405,8 +431,22 @@ int main(int argc, const char **argv)
       //! [Display id for each tag]
       vpDisplay::displayText(I, 20, 20, "Click to quit.", vpColor::red);
       vpDisplay::flush(I);
-      if (vpDisplay::getClick(I, false))
-        break;
+      if (vpDisplay::getClick(I, false)) {
+        quit = true;
+      }
+
+      if (opt_verbose) {
+        std::vector<float> tag_decision_margins = detector.getTagsDecisionMargin();
+        std::vector<int> tag_hamming_distances = detector.getTagsHammingDistance();
+        for (size_t i = 0; i < tags_id.size(); ++i) {
+          std::string message = detector.getMessage(i);
+          std::stringstream ss;
+          ss << "  Found " << message
+            << " with decision margin: " << tag_decision_margins[i]
+            << " and hamming distance: " << tag_hamming_distances[i];;
+            std::cout << ss.str() << std::endl;
+        }
+      }
     }
 
     std::cout << "Benchmark computation time" << std::endl;

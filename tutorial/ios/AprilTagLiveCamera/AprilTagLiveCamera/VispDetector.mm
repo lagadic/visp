@@ -33,7 +33,7 @@ vpDetectorAprilTag detector(vpDetectorAprilTag::TAG_36h11, vpDetectorAprilTag::H
     float aruco_decision_margin = 50;
     detector.setAprilTagQuadDecimate(tag_quad_decimate);
     detector.setAprilTagNbThreads(tag_nThreads);
-    detector.setArUcoDecisionMarginThreshold(aruco_decision_margin); // only for ArUco 4x4, 5x5 and 6x6 families
+    detector.(aruco_decision_margin); // only for ArUco 4x4, 5x5 and 6x6 families
 
     // Detection.
     vpCameraParameters cam;
