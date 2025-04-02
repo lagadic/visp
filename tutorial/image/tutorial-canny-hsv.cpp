@@ -54,6 +54,7 @@ typedef struct SoftwareArguments
   float m_upperThresh;
   float m_lowerThreshRatio;
   float m_upperThreshRatio;
+  vpImageFilter::vpCannyFilteringAndGradientType m_filteringType;
 
   SoftwareArguments()
     : m_img("")
@@ -63,6 +64,7 @@ typedef struct SoftwareArguments
     , m_upperThresh(-1.)
     , m_lowerThreshRatio(0.6f)
     , m_upperThreshRatio(0.8f)
+    , m_filteringType(vpImageFilter::CANNY_COUNT_FILTERING)
   { }
 }SoftwareArguments;
 
@@ -102,6 +104,11 @@ void usage(const std::string &softName, const SoftwareArguments &options)
     << "\t\tSecond parameter is the upper threshold ratio." << std::endl
     << "\t\tDefault: " << options.m_lowerThreshRatio << " " << options.m_upperThreshRatio << std::endl
     << std::endl;
+  std::cout << "\t-f, --filter <filterName>" << std::endl
+    << "\t\tPermits to choose the type of filter to apply to compute the gradient." << std::endl
+    << "\t\tAvailable values: " << vpImageFilter::vpGetCannyFiltAndGradTypes("<", " | ", ">") << std::endl
+    << "\t\tDefault: " << vpImageFilter::vpCannyFiltAndGradTypeToStr(options.m_filteringType) << std::endl
+    << std::endl;
   std::cout << "\t-h, --help" << std::endl
     << "\t\tPermits to display the different arguments this software handles." << std::endl
     << std::endl;
@@ -131,6 +138,10 @@ int main(int argc, const char *argv[])
       options.m_upperThreshRatio = static_cast<float>(std::atof(argv[i + 2]));
       i += 2;
     }
+    else if ((argv_str == "-f" || argv_str == "--filter") && i + 1 < argc) {
+      options.m_filteringType = vpImageFilter::vpCannyFiltAndGradTypeFromStr(std::string(argv[i + 1]));
+      i++;
+    }
     else if (argv_str == "-h" || argv_str == "--help") {
       usage(std::string(argv[0]), options);
       return EXIT_SUCCESS;
@@ -142,6 +153,7 @@ int main(int argc, const char *argv[])
   }
 
   std::string configAsTxt("Canny Configuration:\n");
+  configAsTxt += "\tFiltering + gradient operators = " + vpImageFilter::vpCannyFiltAndGradTypeToStr(options.m_filteringType) + "\n";
   configAsTxt += "\tGaussian filter kernel size = " + std::to_string(options.m_gaussianKernelSize) + "\n";
   configAsTxt += "\tGaussian filter standard deviation = " + std::to_string(options.m_gaussianStdev) + "\n";
   configAsTxt += "\tCanny edge filter thresholds = [" + std::to_string(options.m_lowerThresh) + " ; " + std::to_string(options.m_upperThresh) + "]\n";
@@ -150,7 +162,7 @@ int main(int argc, const char *argv[])
 
   unsigned int uselessAperture = 3;
   vpCannyEdgeDetection cannyDetector(options.m_gaussianKernelSize, options.m_gaussianStdev, uselessAperture,
-                                     options.m_lowerThresh, options.m_upperThresh, options.m_lowerThreshRatio, options.m_upperThreshRatio);
+                                     options.m_lowerThresh, options.m_upperThresh, options.m_lowerThreshRatio, options.m_upperThreshRatio, options.m_filteringType);
   vpImage<vpRGBa> Iload;
   vpImage<vpHSV<double>> I_canny_input;
   if (!options.m_img.empty()) {

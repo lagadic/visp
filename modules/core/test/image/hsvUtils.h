@@ -72,7 +72,7 @@ inline typename std::enable_if<I < Tp::nbChannels, double>::type
  * \return false Otherwise.
  */
 template<typename T>
-bool areAlmostEqual(const vpImage<T> &I1, const vpImage<T> &I2, const double &thresh = 1e-3)
+bool areAlmostEqual(const vpImage<T> &I1, const std::string &nameI1, const vpImage<T> &I2, const std::string &nameI2, const double &thresh = 1e-3)
 {
   bool areEqual = true;
   if (I1.getWidth() != I2.getWidth()) {
@@ -89,7 +89,7 @@ bool areAlmostEqual(const vpImage<T> &I1, const vpImage<T> &I2, const double &th
       double err = error(I1[r][c], I2[r][c]);
       if (err > thresh) {
         std::cerr << "ERROR: Error (" << err << ") > thresh (" << thresh << ")" << std::endl;
-        std::cerr << "\tIold[" << r << "][" << c << "] = (" << I1[r][c] << ") , Inew[" << r << "][" << c << "] = (" << I2[r][c] << ")" << std::endl;
+        std::cerr << "\t" << nameI1 << "[" << r << "][" << c << "] = (" << I1[r][c] << ") , " << nameI2 << "[" << r << "][" << c << "] = (" << I2[r][c] << ")" << std::endl;
         areEqual = false;
       }
     }
@@ -177,6 +177,7 @@ typedef struct vpInputDataset
   std::vector<std::pair<std::string, vpInputImage<vpHSV<unsigned char, true>>>> m_hsvUCtrue;
   std::vector<std::pair<std::string, vpInputImage<vpHSV<unsigned char, false>>>> m_hsvUCfalse;
   std::vector<std::pair<std::string, vpInputImage<vpHSV<double>>>> m_hsvDouble;
+  vpImage<bool> m_Imask;
 
   vpInputDataset()
   {
@@ -204,8 +205,16 @@ typedef struct vpInputDataset
     vpImage<unsigned char> Iuc_square_vertical = Iuc_square;
     vpImage<unsigned char> Iuc_pyramid = Iuc_square;
 
+    m_Imask.resize(11, 11, false);
+
     for (unsigned int r = 2; r <=8; ++r) {
       for (unsigned int c = 2; c <= 8; ++c) {
+        if ((r == 2) || (r == 3) || (r==7) || (r == 8)) {
+          m_Imask[r][c] = true;
+        }
+        if ((c == 2) || (c == 3) || (c==7) || (c == 8)) {
+          m_Imask[r][c] = true;
+        }
         double val = 0., val_inversed = 0., val_pyramid = 0.;
         unsigned char val_c = 0, val_c_inversed = 0, val_c_pyramid = 0;
         if (c <= 5) {

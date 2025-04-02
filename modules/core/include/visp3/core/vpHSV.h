@@ -408,7 +408,7 @@ public:
    *
    * \param[in] a The first pixel to compare.
    * \param[in] b The second pixel to compare.
-   * \param[in] diff The vector (b - a).
+   * \param[out] diff The vector (b - a).
    * \return float The squared Mahalanobis distance between a and b.
    */
   template <typename ArithmeticType>
@@ -451,6 +451,21 @@ public:
   inline static ArithmeticType mahalanobisDistance(const vpHSV<T, useFullScale> &a, const vpHSV<T, useFullScale> &b)
   {
     return std::sqrt(squaredMahalanobisDistance<ArithmeticType>(a, b));
+  }
+
+  /**
+   * \brief Compute the Mahalanobis distance between two HSV pixels.
+   * It is assumed that the channels are independent and follow a uniform distribution law.
+   *
+   * \param[in] a The first pixel to compare.
+   * \param[in] b The second pixel to compare.
+   * \param[out] diff The vector (b - a).
+   * \return float The Mahalanobis distance between a and b.
+   */
+  template <typename ArithmeticType>
+  inline static ArithmeticType mahalanobisDistance(const vpHSV<T, useFullScale> &a, const vpHSV<T, useFullScale> &b, vpColVector &diff)
+  {
+    return std::sqrt(squaredMahalanobisDistance<ArithmeticType>(a, b, diff));
   }
 
   // Operators

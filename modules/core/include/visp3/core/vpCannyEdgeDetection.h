@@ -171,7 +171,7 @@ public:
     if (!m_areGradientAvailable) {
       vpImage<vpHSV<ArithmeticType, useFullScale>> Iblur;
       vpImageFilter::gaussianBlur(Ihsv, Iblur, m_gaussianKernelSize, m_gaussianStdev, true, mp_mask);
-      vpImageFilter::prewittFilter(Iblur, m_dIx, m_dIy, m_nbThread, mp_mask);
+      vpImageFilter::gradientFilter(Iblur, m_dIx, m_dIy, m_nbThread, mp_mask, m_filteringAndGradientType);
     }
     m_areGradientAvailable = false; // Reset for next call
 

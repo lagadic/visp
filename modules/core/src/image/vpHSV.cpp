@@ -3,13 +3,13 @@
 BEGIN_VISP_NAMESPACE
 
 template<>
-const float vpHSV<double>::maxGradValue = vpHSV<double>::squaredMahalanobisDistance<float>(vpHSV<double>(0., 0., 0.), vpHSV<double>(1., 1., 1.));
+const float vpHSV<double>::maxGradValue = vpHSV<double>::mahalanobisDistance<float>(vpHSV<double>(0., 0., 0.), vpHSV<double>(1., 1., 1.));
 
 template<>
-const float vpHSV<unsigned char, true>::maxGradValue = vpHSV<unsigned char, true>::squaredMahalanobisDistance<float>(vpHSV<unsigned char, true>(0U, 0U, 0U), vpHSV<unsigned char, true>(255U, 255U, 255U));
+const float vpHSV<unsigned char, true>::maxGradValue = vpHSV<unsigned char, true>::mahalanobisDistance<float>(vpHSV<unsigned char, true>(0U, 0U, 0U), vpHSV<unsigned char, true>(255U, 255U, 255U));
 
 template<>
-const float vpHSV<unsigned char, false>::maxGradValue = vpHSV<unsigned char, false>::squaredMahalanobisDistance<float>(vpHSV<unsigned char, false>(0U, 0U, 0U), vpHSV<unsigned char, false>(180U, 255U, 255U));
+const float vpHSV<unsigned char, false>::maxGradValue = vpHSV<unsigned char, false>::mahalanobisDistance<float>(vpHSV<unsigned char, false>(0U, 0U, 0U), vpHSV<unsigned char, false>(180U, 255U, 255U));
 
 template<>
 vpHSV<double> &vpHSV<double>::buildFrom(const vpRGBa &rgba)

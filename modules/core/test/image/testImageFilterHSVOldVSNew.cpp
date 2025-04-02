@@ -1023,7 +1023,7 @@ int main()
       vpHSVTests::print(input.second.m_I, input.first);
       vpOldImageFilter::gaussianBlur(input.second.m_I, Iuc_filtered_old, size);
       vpImageFilter::gaussianBlur(input.second.m_I, Iuc_filtered_new, size, 0.);
-      bool ucSuccess = vpHSVTests::areAlmostEqual(Iuc_filtered_old, Iuc_filtered_new);
+      bool ucSuccess = vpHSVTests::areAlmostEqual(Iuc_filtered_old, "Iuc_filtered_old", Iuc_filtered_new, "Iuc_filtered_new");
       isSuccess = isSuccess && ucSuccess;
       if (!isSuccess) {
         std::cerr << "ERROR: filter on uchar failed ! " << std::endl;
@@ -1032,7 +1032,7 @@ int main()
 
     vpOldImageFilter::gaussianBlur(Irgba, Irgba_filtered_old, size);
     vpImageFilter::gaussianBlur(Irgba, Irgba_filtered_new, size, 0.);
-    bool rgbaSuccess = vpHSVTests::areAlmostEqual(Irgba_filtered_old, Irgba_filtered_new);
+    bool rgbaSuccess = vpHSVTests::areAlmostEqual(Irgba_filtered_old, "Irgba_filtered_old", Irgba_filtered_new, "Irgba_filtered_new");
     isSuccess = isSuccess && rgbaSuccess;
     if (!rgbaSuccess) {
       std::cerr << "ERROR: filter on RGBa failed ! " << std::endl;
@@ -1042,7 +1042,7 @@ int main()
       vpHSVTests::print(input.second.m_I, input.first);
       vpOldImageFilter::gaussianBlur(input.second.m_I, Ihsv_uc_filtered_old_true, size);
       vpImageFilter::gaussianBlur(input.second.m_I, Ihsv_uc_filtered_new_true, size, 0.);
-      bool hsvucSuccessTrue = vpHSVTests::areAlmostEqual(Ihsv_uc_filtered_old_true, Ihsv_uc_filtered_new_true);
+      bool hsvucSuccessTrue = vpHSVTests::areAlmostEqual(Ihsv_uc_filtered_old_true, "Ihsv_uc_filtered_old_true", Ihsv_uc_filtered_new_true, "Ihsv_uc_filtered_new_true");
       isSuccess = isSuccess && hsvucSuccessTrue;
       if (!hsvucSuccessTrue) {
         std::cerr << "ERROR: filter on HSV<uchar, true> failed ! " << std::endl;
@@ -1053,7 +1053,7 @@ int main()
       vpHSVTests::print(input.second.m_I, input.first);
       vpOldImageFilter::gaussianBlur(input.second.m_I, Ihsv_uc_filtered_old_false, size);
       vpImageFilter::gaussianBlur(input.second.m_I, Ihsv_uc_filtered_new_false, size, 0.);
-      bool hsvucSuccessTrue = vpHSVTests::areAlmostEqual(Ihsv_uc_filtered_old_false, Ihsv_uc_filtered_new_false);
+      bool hsvucSuccessTrue = vpHSVTests::areAlmostEqual(Ihsv_uc_filtered_old_false, "Ihsv_uc_filtered_old_false", Ihsv_uc_filtered_new_false, "Ihsv_uc_filtered_new_false");
       isSuccess = isSuccess && hsvucSuccessTrue;
       if (!hsvucSuccessTrue) {
         std::cerr << "ERROR: filter on HSV<uchar, false> failed ! " << std::endl;
@@ -1064,7 +1064,7 @@ int main()
       vpHSVTests::print(input.second.m_I, input.first);
       vpOldImageFilter::gaussianBlur(input.second.m_I, Ihsv_double_filtered_old, size);
       vpImageFilter::gaussianBlur(input.second.m_I, Ihsv_double_filtered_new, size, 0.);
-      bool hsvucSuccessTrue = vpHSVTests::areAlmostEqual(Ihsv_double_filtered_old, Ihsv_double_filtered_new);
+      bool hsvucSuccessTrue = vpHSVTests::areAlmostEqual(Ihsv_double_filtered_old, "Ihsv_double_filtered_old", Ihsv_double_filtered_new, "Ihsv_double_filtered_new");
       isSuccess = isSuccess && hsvucSuccessTrue;
       if (!hsvucSuccessTrue) {
         std::cerr << "ERROR: filter on HSV<double> failed ! " << std::endl;

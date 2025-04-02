@@ -48,7 +48,7 @@
 #include "hsvUtils.h"
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-void prewittFilter(const vpImage<unsigned char> &I, const vpImage<double> &filter, vpImage<double> &GIy)
+void gradientFilter(const vpImage<unsigned char> &I, const vpImage<double> &filter, vpImage<double> &GIy)
 {
   const unsigned int nbRows = I.getRows(), nbCols = I.getCols();
   for (unsigned int r = 1; r < nbRows - 1; ++r) {
@@ -62,19 +62,84 @@ void prewittFilter(const vpImage<unsigned char> &I, const vpImage<double> &filte
   }
 }
 
-void prewittFilter(const vpImage<unsigned char> &I, const vpImage<double> &filterX, const vpImage<double> &filterY, vpImage<double> &GIx, vpImage<double> &GIy)
+void gradientFilter(const vpImage<unsigned char> &I, const vpImage<double> &filterX, const vpImage<double> &filterY, vpImage<double> &GIx, vpImage<double> &GIy)
 {
   const unsigned int nbRows = I.getRows(), nbCols = I.getCols();
   GIx.resize(nbRows, nbCols, 0.);
   GIy.resize(nbRows, nbCols, 0.);
-  prewittFilter(I, filterX, GIx);
-  prewittFilter(I, filterY, GIy);
+  gradientFilter(I, filterX, GIx);
+  gradientFilter(I, filterY, GIy);
+}
+
+static bool checkBooleanMask(const vpImage<bool> *p_mask, const unsigned int &r, const unsigned int &c)
+{
+  bool computeVal = true;
+  if (p_mask != nullptr) {
+    computeVal = (*p_mask)[r][c];
+  }
+  return computeVal;
 }
 
 template <typename ArithmeticType, bool useFullScale>
-void prewittFilterX(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpImage<double> &GIx)
+void gradientFilterX(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpImage<double> &GIx, const vpImage<bool> *p_mask, const vpImageFilter::vpCannyFilteringAndGradientType &type)
 {
   const unsigned int nbRows = I.getRows(), nbCols = I.getCols();
+  GIx.resize(nbRows, nbCols, 0.);
+  std::vector<double> filter(3);
+  double scale;
+  std::string name;
+  switch (type) {
+  case vpImageFilter::CANNY_COUNT_FILTERING:
+    // Prewitt case
+    filter = { 1., 1., 1. };
+    scale = 6.;
+    name = "Prewitt";
+    break;
+  case vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING:
+    filter = { 1., 2., 1. };
+    scale = 8.;
+    name = "Sobel";
+    break;
+  case vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING:
+    filter = { 3., 10., 3. };
+    scale = 32.;
+    name = "Scharr";
+    break;
+  default:
+    throw(vpException(vpException::badValue, "Wrong type of filtering"));
+  }
+  // std::cout << "Using " << name << " filter" << std::endl;
+  for (unsigned char i = 0; i < 3; ++i) {
+    filter[i] = filter[i] / scale;
+  }
+
+  auto checkBooleanPatch = [](const vpImage<bool> *p_mask, const unsigned int &r, const unsigned int &c, const unsigned int &h, const unsigned int &w)
+    {
+      if (!p_mask) {
+        return true;
+      }
+      bool hasToCompute = (*p_mask)[r][c];
+
+      if (c < w - 1) { // We do not compute gradient on the last column
+        hasToCompute |= (*p_mask)[r][c + 1];
+        if (r < h - 1) { // We do not compute gradient on the last row
+          hasToCompute |= (*p_mask)[r + 1][c + 1];
+        }
+      }
+
+      if (r < h - 1) { // We do not compute gradient on the last row
+        hasToCompute |= (*p_mask)[r + 1][c];
+      }
+
+      if (r > 1) { // We do not compute gradient on the first row
+        hasToCompute |= (*p_mask)[r - 1][c];
+        if (c < w - 1) { // We do not compute gradient on the last column
+          hasToCompute |= (*p_mask)[r - 1][c + 1];
+        }
+      }
+      return hasToCompute;
+    };
+
   const unsigned int rStop = nbRows - 1, cStop = nbCols - 1;
   vpImage<double> Isign(nbRows, nbCols), IabsDiff(nbRows, nbCols);
   // Computation for I[0][0]
@@ -84,6 +149,7 @@ void prewittFilterX(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpIma
   else {
     Isign[0][0] = 1.;
   }
+
   // Computation for the rest of the first row
   for (unsigned int c = 1; c < cStop; ++c) {
     if (vpColVector::dotProd((I[0][c + 1] - I[0][c]), (I[0][c] - I[0][c - 1])) < 0.) {
@@ -94,6 +160,8 @@ void prewittFilterX(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpIma
       Isign[0][c] = Isign[0][c - 1];
     }
   }
+
+  // Computation of the rest of the image
   for (unsigned int r = 1; r < rStop; ++r) {
     // Computation for I[r][0]
     if (vpColVector::dotProd((I[r][1] - I[r][0]), I[r][0].toColVector()) < 0.) {
@@ -102,12 +170,16 @@ void prewittFilterX(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpIma
     else {
       Isign[r][0] = 1.;
     }
-    IabsDiff[r][0] = vpHSV<ArithmeticType, useFullScale>::template squaredMahalanobisDistance<double>(I[r][0], I[r][1]);
+    if (checkBooleanPatch(p_mask, r, 0, nbRows, nbCols)) {
+      IabsDiff[r][0] = vpHSV<ArithmeticType, useFullScale>::template mahalanobisDistance<double>(I[r][0], I[r][1]);
+    }
 
-    // Computation for all the other columns
+      // Computation for all the other columns
     for (unsigned int c = 1; c < cStop; ++c) {
-      // Of the absolute value of the distance
-      IabsDiff[r][c] = vpHSV<ArithmeticType, useFullScale>::template squaredMahalanobisDistance<double>(I[r][c], I[r][c + 1]);
+      if (checkBooleanPatch(p_mask, r, c, nbRows, nbCols)) {
+        // Of the absolute value of the distance
+        IabsDiff[r][c] = vpHSV<ArithmeticType, useFullScale>::template mahalanobisDistance<double>(I[r][c], I[r][c + 1]);
+      }
       // Of the sign
       if (vpColVector::dotProd((I[r][c + 1] - I[r][c]), (I[r][c] - I[r][c - 1])) < 0.) {
         // Inverting sign when cosine distance is negative
@@ -119,25 +191,81 @@ void prewittFilterX(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpIma
     }
   }
 
+  bool once = true;
   for (unsigned int r = 1; r < rStop; ++r) {
     for (unsigned int c = 1; c < cStop; ++c) {
-      GIx[r][c] = 0.;
-      for (int dr = -1; dr <= 1; ++dr) {
-        GIx[r][c] += Isign[r + dr][c - 1] * IabsDiff[r + dr][c - 1] + Isign[r + dr][c] * IabsDiff[r + dr][c];
+      if (checkBooleanMask(p_mask, r, c)) {
+        GIx[r][c] = 0.;
+        for (int dr = -1; dr <= 1; ++dr) {
+          GIx[r][c] += filter[dr + 1] * (Isign[r + dr][c - 1] * IabsDiff[r + dr][c - 1] + Isign[r + dr][c] * IabsDiff[r + dr][c]);
+        }
       }
     }
   }
 }
 
 template <typename ArithmeticType, bool useFullScale>
-void prewittFilterY(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpImage<double> &GIy)
+void gradientFilterY(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpImage<double> &GIy, const vpImage<bool> *p_mask, const vpImageFilter::vpCannyFilteringAndGradientType &type)
 {
   const unsigned int nbRows = I.getRows(), nbCols = I.getCols();
+  std::vector<double> filter(3);
+  double scale;
+  switch (type) {
+  case vpImageFilter::CANNY_COUNT_FILTERING:
+    // Prewitt case
+    filter = { 1., 1., 1. };
+    scale = 6.;
+    break;
+  case vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING:
+    filter = { 1., 2., 1. };
+    scale = 8.;
+    break;
+  case vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING:
+    filter = { 3., 10., 3. };
+    scale = 32.;
+    break;
+  default:
+    throw(vpException(vpException::badValue, "Wrong type of filtering"));
+  }
+  for (unsigned char i = 0; i < 3; ++i) {
+    filter[i] = filter[i] / scale;
+  }
+
   const unsigned int rStop = nbRows - 1, cStop = nbCols - 1;
   vpImage<double> Isign(nbRows, nbCols), IabsDiff(nbRows, nbCols);
+
+  auto checkBooleanPatch = [](const vpImage<bool> *p_mask, const unsigned int &r, const unsigned int &c, const unsigned int &h, const unsigned int &w)
+    {
+      if (!p_mask) {
+        return true;
+      }
+
+      bool hasToCompute = (*p_mask)[r][c];
+      if (c < w - 1) { // We do not compute gradient on the last column
+        hasToCompute |= (*p_mask)[r][c + 1];
+        if (r < h - 1) { // We do not compute gradient on the last row
+          hasToCompute |= (*p_mask)[r + 1][c + 1];
+        }
+      }
+
+      if (r < h - 1) { // We do not compute gradient on the last row
+        hasToCompute |= (*p_mask)[r + 1][c];
+      }
+
+      if (c > 1) { // We do not compute gradient on the first column
+        hasToCompute |= (*p_mask)[r][c - 1];
+        if (r < h - 1) { // We do not compute gradient on the last row
+          hasToCompute |= (*p_mask)[r + 1][c - 1];
+        }
+      }
+      return hasToCompute;
+    };
+
   // Computation for the first row
   for (unsigned int c = 0; c < nbCols; ++c) {
-    IabsDiff[0][c] = vpHSV<ArithmeticType, useFullScale>::template squaredMahalanobisDistance<double>(I[0][c], I[1][c]);
+    if (checkBooleanPatch(p_mask, 0, c, nbRows, nbCols)) {
+      IabsDiff[0][c] = vpHSV<ArithmeticType, useFullScale>::template mahalanobisDistance<double>(I[0][c], I[1][c]);
+    }
     if (vpColVector::dotProd((I[1][c] - I[0][c]), I[0][c].toColVector()) < 0.) {
       // Inverting sign when cosine distance is negative
       Isign[0][c] = -1.;
@@ -146,11 +274,14 @@ void prewittFilterY(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpIma
       Isign[0][c] = 1.;
     }
   }
+
+  // Computation for the rest of the image of d and sign
   for (unsigned int r = 1; r < rStop; ++r) {
-    // Computation for all the other columns
     for (unsigned int c = 0; c < nbCols; ++c) {
       // Of the absolute value of the distance
-      IabsDiff[r][c] = vpHSV<ArithmeticType, useFullScale>::template squaredMahalanobisDistance<double>(I[r][c], I[r + 1][c]);
+      if (checkBooleanPatch(p_mask, r, c, nbRows, nbCols)) {
+        IabsDiff[r][c] = vpHSV<ArithmeticType, useFullScale>::template mahalanobisDistance<double>(I[r][c], I[r + 1][c]);
+      }
       // Of the sign
       if (vpColVector::dotProd((I[r +1][c] - I[r][c]), (I[r][c] - I[r - 1][c])) < 0.) {
         // Inverting sign when cosine distance is negative
@@ -162,24 +293,27 @@ void prewittFilterY(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpIma
     }
   }
 
+  // Computation of the gradient
   for (unsigned int r = 1; r < rStop; ++r) {
     for (unsigned int c = 1; c < cStop; ++c) {
-      GIy[r][c] = 0.;
-      for (int dc = -1; dc <= 1; ++dc) {
-        GIy[r][c] += Isign[r - 1][c + dc] * IabsDiff[r - 1][c + dc] + Isign[r][c + dc] * IabsDiff[r][c + dc];
+      if (checkBooleanMask(p_mask, r, c)) {
+        GIy[r][c] = 0.;
+        for (int dc = -1; dc <= 1; ++dc) {
+          GIy[r][c] += filter[dc + 1] * (Isign[r - 1][c + dc] * IabsDiff[r - 1][c + dc] + Isign[r][c + dc] * IabsDiff[r][c + dc]);
+        }
       }
     }
   }
 }
 
 template <typename ArithmeticType, bool useFullScale>
-void prewittFilter(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpImage<double> &GIx, vpImage<double> &GIy)
+void gradientFilter(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpImage<double> &GIx, vpImage<double> &GIy, const vpImage<bool> *p_mask, const vpImageFilter::vpCannyFilteringAndGradientType &type)
 {
   const unsigned int nbRows = I.getRows(), nbCols = I.getCols();
   GIx.resize(nbRows, nbCols, 0.);
   GIy.resize(nbRows, nbCols, 0.);
-  prewittFilterX(I, GIx);
-  prewittFilterY(I, GIy);
+  gradientFilterX(I, GIx, p_mask, type);
+  gradientFilterY(I, GIy, p_mask, type);
 }
 
 int main()
@@ -202,61 +336,81 @@ int main()
   // Outputs
   vpImage<double> GIx, GIx_ref, GIy, GIy_ref;
 
+  std::vector<vpImageFilter::vpCannyFilteringAndGradientType> types = {
+    vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING,
+    vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING,
+    vpImageFilter::CANNY_COUNT_FILTERING
+  };
+
   for (unsigned int size = 3; (size < 7) && isSuccess; size += 2) {
-    for (auto input: dataset.m_hsvUCtrue) {
-      vpHSVTests::print(input.second.m_I, input.first);
-      vpImageFilter::prewittFilter(input.second.m_I, GIx, GIy);
-      vpHSVTests::print(GIx, "GIx");
-      vpHSVTests::print(GIy, "GIy");
-      prewittFilter(input.second.m_I, GIx_ref, GIy_ref);
-      // vpHSVTests::print(GIx_ref, "GIx_ref");
-      // vpHSVTests::print(GIy_ref, "GIy_ref");
-      bool hsvucSuccessGIx = vpHSVTests::areAlmostEqual(GIx, GIx_ref);
-      bool hsvucSuccessGIy = vpHSVTests::areAlmostEqual(GIy, GIy_ref);
-      isSuccess = isSuccess && hsvucSuccessGIx && hsvucSuccessGIy;
-      if (!hsvucSuccessGIx) {
-        std::cerr << "ERROR: Prewitt along X on HSV<uchar, true> failed ! " << std::endl;
+    vpImage<bool> *p_mask = nullptr;
+    for (unsigned int i = 1; i < 2; ++i) {
+      if (i == 1) {
+        p_mask = &dataset.m_Imask;
       }
-      if (!hsvucSuccessGIy) {
-        std::cerr << "ERROR: Prewitt along Y on HSV<uchar, true> failed ! " << std::endl;
-      }
-    }
+      for (auto type: types) {
+        for (auto input: dataset.m_hsvUCtrue) {
+          vpImageFilter::gradientFilter(input.second.m_I, GIx, GIy, 1, p_mask, type);
+          gradientFilter(input.second.m_I, GIx_ref, GIy_ref, p_mask, type);
+          bool isSuccessGIx = vpHSVTests::areAlmostEqual(GIx, "GIx", GIx_ref, "GIx_ref");
+          bool isSuccessGIy = vpHSVTests::areAlmostEqual(GIy, "GIy", GIy_ref, "GIy_ref");
+          isSuccess = isSuccess && isSuccessGIx && isSuccessGIy;
+          if (!isSuccessGIx) {
+            std::cerr << "ERROR: " << vpImageFilter::vpCannyFiltAndGradTypeToStr(type) << " along X on HSV<uchar, true> failed ! " << std::endl;
+          }
+          if (!isSuccessGIy) {
+            std::cerr << "ERROR: " << vpImageFilter::vpCannyFiltAndGradTypeToStr(type) << " along Y on HSV<uchar, true> failed ! " << std::endl;
+          }
+          if (!(isSuccessGIx && isSuccessGIy)) {
+            vpHSVTests::print(input.second.m_I, input.first);
+            vpHSVTests::print(GIx, "GIx");
+            vpHSVTests::print(GIy, "GIy");
+            vpHSVTests::print(GIx_ref, "GIx_ref");
+            vpHSVTests::print(GIy_ref, "GIy_ref");
+          }
+        }
 
-    for (auto input: dataset.m_hsvUCfalse) {
-      vpHSVTests::print(input.second.m_I, input.first);
-      vpImageFilter::prewittFilter(input.second.m_I, GIx, GIy);
-      vpHSVTests::print(GIx, "GIx");
-      vpHSVTests::print(GIy, "GIy");
-      prewittFilter(input.second.m_I, GIx_ref, GIy_ref);
-      // vpHSVTests::print(GIx_ref, "GIx_ref");
-      // vpHSVTests::print(GIy_ref, "GIy_ref");
-      bool hsvucSuccessGIx = vpHSVTests::areAlmostEqual(GIx, GIx_ref);
-      bool hsvucSuccessGIy = vpHSVTests::areAlmostEqual(GIy, GIy_ref);
-      isSuccess = isSuccess && hsvucSuccessGIx && hsvucSuccessGIy;
-      if (!hsvucSuccessGIx) {
-        std::cerr << "ERROR: Prewitt along X on HSV<uchar, false> failed ! " << std::endl;
-      }
-      if (!hsvucSuccessGIy) {
-        std::cerr << "ERROR: Prewitt along Y on HSV<uchar, false> failed ! " << std::endl;
-      }
-    }
+        for (auto input: dataset.m_hsvUCfalse) {
+          vpImageFilter::gradientFilter(input.second.m_I, GIx, GIy, 1, p_mask, type);
+          gradientFilter(input.second.m_I, GIx_ref, GIy_ref, p_mask, type);
+          bool isSuccessGIx = vpHSVTests::areAlmostEqual(GIx, "GIx", GIx_ref, "GIx_ref");
+          bool isSuccessGIy = vpHSVTests::areAlmostEqual(GIy, "GIy", GIy_ref, "GIy_ref");
+          isSuccess = isSuccess && isSuccessGIx && isSuccessGIy;
+          if (!isSuccessGIx) {
+            std::cerr << "ERROR: " << vpImageFilter::vpCannyFiltAndGradTypeToStr(type) << " along X on HSV<uchar, false> failed ! " << std::endl;
+          }
+          if (!isSuccessGIy) {
+            std::cerr << "ERROR: " << vpImageFilter::vpCannyFiltAndGradTypeToStr(type) << " along Y on HSV<uchar, false> failed ! " << std::endl;
+          }
+          if (!(isSuccessGIx && isSuccessGIy)) {
+            vpHSVTests::print(input.second.m_I, input.first);
+            vpHSVTests::print(GIx, "GIx");
+            vpHSVTests::print(GIy, "GIy");
+            vpHSVTests::print(GIx_ref, "GIx_ref");
+            vpHSVTests::print(GIy_ref, "GIy_ref");
+          }
+        }
 
-    for (auto input: dataset.m_hsvDouble) {
-      vpHSVTests::print(input.second.m_I, input.first);
-      vpImageFilter::prewittFilter(input.second.m_I, GIx, GIy);
-      vpHSVTests::print(GIx, "GIx");
-      vpHSVTests::print(GIy, "GIy");
-      prewittFilter(input.second.m_I, GIx_ref, GIy_ref);
-      // vpHSVTests::print(GIx_ref, "GIx_ref");
-      // vpHSVTests::print(GIy_ref, "GIy_ref");
-      bool hsvucSuccessGIx = vpHSVTests::areAlmostEqual(GIx, GIx_ref);
-      bool hsvucSuccessGIy = vpHSVTests::areAlmostEqual(GIy, GIy_ref);
-      isSuccess = isSuccess && hsvucSuccessGIx && hsvucSuccessGIy;
-      if (!hsvucSuccessGIx) {
-        std::cerr << "ERROR: Prewitt along X on HSV<double> failed ! " << std::endl;
-      }
-      if (!hsvucSuccessGIy) {
-        std::cerr << "ERROR: Prewitt along Y on HSV<double> failed ! " << std::endl;
+        for (auto input: dataset.m_hsvDouble) {
+          vpImageFilter::gradientFilter(input.second.m_I, GIx, GIy, 1, p_mask, type);
+          gradientFilter(input.second.m_I, GIx_ref, GIy_ref, p_mask, type);
+          bool isSuccessGIx = vpHSVTests::areAlmostEqual(GIx, "GIx", GIx_ref, "GIx_ref");
+          bool isSuccessGIy = vpHSVTests::areAlmostEqual(GIy, "GIy", GIy_ref, "GIy_ref");
+          isSuccess = isSuccess && isSuccessGIx && isSuccessGIy;
+          if (!isSuccessGIx) {
+            std::cerr << "ERROR: " << vpImageFilter::vpCannyFiltAndGradTypeToStr(type) << " along X on HSV<double> failed ! " << std::endl;
+          }
+          if (!isSuccessGIy) {
+            std::cerr << "ERROR: " << vpImageFilter::vpCannyFiltAndGradTypeToStr(type) << " along Y on HSV<double> failed ! " << std::endl;
+          }
+          if (!(isSuccessGIx && isSuccessGIy)) {
+            vpHSVTests::print(input.second.m_I, input.first);
+            vpHSVTests::print(GIx, "GIx");
+            vpHSVTests::print(GIy, "GIy");
+            vpHSVTests::print(GIx_ref, "GIx_ref");
+            vpHSVTests::print(GIy_ref, "GIy_ref");
+          }
+        }
       }
     }
   }
