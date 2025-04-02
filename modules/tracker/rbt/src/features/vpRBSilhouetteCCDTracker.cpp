@@ -155,7 +155,7 @@ public:
 };
 
 vpRBSilhouetteCCDTracker::vpRBSilhouetteCCDTracker() : vpRBFeatureTracker(), m_vvsConvergenceThreshold(0.0),
-m_temporalSmoothingFac(0.0), m_useMask(false), m_minMaskConfidence(0.0), m_maxPoints(0), m_random(421), m_displayType(SIMPLE)
+m_temporalSmoothingFac(0.0), m_useMask(false), m_minMaskConfidence(0.0), m_maxPoints(0), m_random(421), m_displayType(DT_SIMPLE)
 { }
 
 void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput & /*previousFrame*/, const vpHomogeneousMatrix &/*cMo*/)
@@ -319,14 +319,14 @@ void vpRBSilhouetteCCDTracker::display(const vpCameraParameters &/*cam*/, const 
 {
   unsigned normal_points_number = floor(m_ccdParameters.h / m_ccdParameters.delta_h);
   unsigned nerror_per_point = 2 * normal_points_number * 3;
-  if (m_displayType == SIMPLE) {
+  if (m_displayType == DT_SIMPLE) {
 
     for (unsigned int i = 0; i < m_controlPoints.size(); ++i) {
       const vpRBSilhouetteControlPoint &p = m_controlPoints[i];
       vpDisplay::displayPoint(IRGB, p.icpoint.get_i(), p.icpoint.get_j(), vpColor::green, 2);
     }
   }
-  else if (m_displayType == ERROR) {
+  else if (m_displayType == DT_ERROR) {
     vpColVector errorPerPoint(m_controlPoints.size());
     double maxPointError = 0.0;
     for (unsigned int i = 0; i < m_controlPoints.size(); ++i) {
@@ -357,7 +357,7 @@ void vpRBSilhouetteCCDTracker::display(const vpCameraParameters &/*cam*/, const 
       ++idx;
     }
   }
-  else if (m_displayType == WEIGHT) {
+  else if (m_displayType == DT_WEIGHT) {
     vpColVector weightPerPoint(m_controlPoints.size());
     for (unsigned int i = 0; i < m_controlPoints.size(); ++i) {
       double sum = 0.0;
@@ -380,7 +380,7 @@ void vpRBSilhouetteCCDTracker::display(const vpCameraParameters &/*cam*/, const 
       idx++;
     }
   }
-  else if (m_displayType == WEIGHT_AND_ERROR) {
+  else if (m_displayType == DT_WEIGHT_AND_ERROR) {
     vpColVector weightPerPoint(m_controlPoints.size());
     vpColVector errorPerPoint(m_controlPoints.size());
     for (unsigned int i = 0; i < m_controlPoints.size(); ++i) {

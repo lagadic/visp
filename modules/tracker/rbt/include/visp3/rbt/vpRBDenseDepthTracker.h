@@ -71,14 +71,14 @@ public:
 
   enum vpDisplayType
   {
-    SIMPLE = 0,
-    WEIGHT = 1,
-    ERROR = 2,
-    WEIGHT_AND_ERROR = 3,
-    INVALID = 4
+    DT_SIMPLE = 0,
+    DT_WEIGHT = 1,
+    DT_ERROR = 2,
+    DT_WEIGHT_AND_ERROR = 3,
+    DT_INVALID = 4
   };
 
-  vpRBDenseDepthTracker() : vpRBFeatureTracker(), m_step(2), m_useMask(false), m_minMaskConfidence(0.f), m_displayType(vpDisplayType::SIMPLE) { }
+  vpRBDenseDepthTracker() : vpRBFeatureTracker(), m_step(2), m_useMask(false), m_minMaskConfidence(0.f), m_displayType(vpDisplayType::DT_SIMPLE) { }
 
   virtual ~vpRBDenseDepthTracker() = default;
 
@@ -194,11 +194,11 @@ public:
 #if defined(VISP_HAVE_NLOHMANN_JSON)
 
   NLOHMANN_JSON_SERIALIZE_ENUM(vpRBDenseDepthTracker::vpDisplayType, {
-      {vpRBDenseDepthTracker::vpDisplayType::INVALID, nullptr},
-      {vpRBDenseDepthTracker::vpDisplayType::SIMPLE, "simple"},
-      {vpRBDenseDepthTracker::vpDisplayType::WEIGHT, "weight"},
-      {vpRBDenseDepthTracker::vpDisplayType::ERROR, "error"},
-      {vpRBDenseDepthTracker::vpDisplayType::WEIGHT_AND_ERROR, "weightAndError"}
+      {vpRBDenseDepthTracker::vpDisplayType::DT_INVALID, nullptr},
+      {vpRBDenseDepthTracker::vpDisplayType::DT_SIMPLE, "simple"},
+      {vpRBDenseDepthTracker::vpDisplayType::DT_WEIGHT, "weight"},
+      {vpRBDenseDepthTracker::vpDisplayType::DT_ERROR, "error"},
+      {vpRBDenseDepthTracker::vpDisplayType::DT_WEIGHT_AND_ERROR, "weightAndError"}
     });
 
   virtual void loadJsonConfiguration(const nlohmann::json &j) VP_OVERRIDE

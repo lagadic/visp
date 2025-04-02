@@ -200,7 +200,7 @@ void vpRBDenseDepthTracker::display(const vpCameraParameters &/*cam*/, const vpI
                                     const vpImage<vpRGBa> &/*IRGB*/, const vpImage<unsigned char> &depth) const
 {
   switch (m_displayType) {
-  case SIMPLE:
+  case DT_SIMPLE:
   {
     for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
       vpColor c(0, 255, 0);
@@ -208,7 +208,7 @@ void vpRBDenseDepthTracker::display(const vpCameraParameters &/*cam*/, const vpI
     }
     break;
   }
-  case WEIGHT:
+  case DT_WEIGHT:
   {
     for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
       vpColor c(0, static_cast<unsigned char>(m_weights[i] * 255), 0);
@@ -216,7 +216,7 @@ void vpRBDenseDepthTracker::display(const vpCameraParameters &/*cam*/, const vpI
     }
     break;
   }
-  case ERROR:
+  case DT_ERROR:
   {
     for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
       vpColor c(m_error[i], 0, 0);
@@ -224,7 +224,7 @@ void vpRBDenseDepthTracker::display(const vpCameraParameters &/*cam*/, const vpI
     }
     break;
   }
-  case WEIGHT_AND_ERROR:
+  case DT_WEIGHT_AND_ERROR:
   {
     double maxError = m_error.getMaxValue();
     for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {

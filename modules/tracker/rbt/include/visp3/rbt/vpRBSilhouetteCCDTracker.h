@@ -195,11 +195,11 @@ public:
 
   enum vpDisplayType
   {
-    SIMPLE = 0,
-    WEIGHT = 1,
-    ERROR = 2,
-    WEIGHT_AND_ERROR = 3,
-    INVALID = 4
+    DT_SIMPLE = 0,
+    DT_WEIGHT = 1,
+    DT_ERROR = 2,
+    DT_WEIGHT_AND_ERROR = 3,
+    DT_INVALID = 4
   };
 
   vpRBSilhouetteCCDTracker();
@@ -300,11 +300,11 @@ public:
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
   NLOHMANN_JSON_SERIALIZE_ENUM(vpRBSilhouetteCCDTracker::vpDisplayType, {
-        {vpRBSilhouetteCCDTracker::vpDisplayType::INVALID, nullptr},
-        {vpRBSilhouetteCCDTracker::vpDisplayType::SIMPLE, "simple"},
-        {vpRBSilhouetteCCDTracker::vpDisplayType::WEIGHT, "weight"},
-        {vpRBSilhouetteCCDTracker::vpDisplayType::ERROR, "error"},
-        {vpRBSilhouetteCCDTracker::vpDisplayType::WEIGHT_AND_ERROR, "weightAndError"}
+        {vpRBSilhouetteCCDTracker::vpDisplayType::DT_INVALID, nullptr},
+        {vpRBSilhouetteCCDTracker::vpDisplayType::DT_SIMPLE, "simple"},
+        {vpRBSilhouetteCCDTracker::vpDisplayType::DT_WEIGHT, "weight"},
+        {vpRBSilhouetteCCDTracker::vpDisplayType::DT_ERROR, "error"},
+        {vpRBSilhouetteCCDTracker::vpDisplayType::DT_WEIGHT_AND_ERROR, "weightAndError"}
       });
   virtual void loadJsonConfiguration(const nlohmann::json &j) VP_OVERRIDE
   {
