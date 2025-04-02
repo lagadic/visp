@@ -520,7 +520,10 @@ int main()
     }
 
     { // Test that a matrix view is copied through copy operator
-      double data[4], data2[4];
+      double data[4];
+      for (size_t i = 0; i < 4; ++i) {
+        data[i] = i;
+      }
       vpMatrix m = vpMatrix::view(data, 2, 2);
       std::cout << "M = " << m << std::endl;
       vpMatrix m1;
