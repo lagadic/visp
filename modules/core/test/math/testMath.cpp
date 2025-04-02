@@ -67,6 +67,8 @@ int main()
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
 #endif
+
+#if !defined(VISP_HAVE_FAST_MATH)
   // Test isNaN
   if (vpMath::isNaN(0.0)) {
     std::cerr << "Fail: IsNaN(0.0)=" << vpMath::isNaN(0.0) << " / should be false" << std::endl;
@@ -185,13 +187,14 @@ int main()
     return EXIT_FAILURE;
   }
 
-  if (!vpMath::isFinite(0.0)) {
-    std::cerr << "Fail: vpMath::isFinite(0.0)=" << vpMath::isFinite(0.0) << " / should be true" << std::endl;
-    return EXIT_FAILURE;
-  }
-
   if (vpMath::isFinite(exp(800.))) {
     std::cerr << "Fail: vpMath::isFinite(exp(800.))=" << vpMath::isFinite(exp(800.)) << " / should be false" << std::endl;
+    return EXIT_FAILURE;
+  }
+#endif
+
+  if (!vpMath::isFinite(0.0)) {
+    std::cerr << "Fail: vpMath::isFinite(0.0)=" << vpMath::isFinite(0.0) << " / should be true" << std::endl;
     return EXIT_FAILURE;
   }
 

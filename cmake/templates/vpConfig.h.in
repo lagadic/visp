@@ -575,6 +575,9 @@ namespace vp = VISP_NAMESPACE_NAME;
 // Defined if _finite (Microsoft version) function is available
 #cmakedefine VISP_HAVE_FUNC__FINITE
 
+// Defined if the fast math compiler options are enabled
+#cmakedefine VISP_HAVE_FAST_MATH
+
 // Defined if round function is available
 #cmakedefine VISP_HAVE_FUNC_ROUND
 
