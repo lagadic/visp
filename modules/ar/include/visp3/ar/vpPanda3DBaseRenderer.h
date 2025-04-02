@@ -184,12 +184,12 @@ public:
    *  rendering parameters of the camera, this may result in an invalid projection matrix.
    *
    * @param name name of the node that should be used to compute near and far values.
-   * @param near resulting near clipping plane distance
-   * @param far resulting far clipping plane distance
+   * @param nearV resulting near clipping plane distance
+   * @param farV resulting far clipping plane distance
    * @param fast Whether to use the axis align bounding box to compute the clipping planes.
    * This is faster than reprojecting the full geometry in the camera frame
    */
-  void computeNearAndFarPlanesFromNode(const std::string &name, float &near, float &far, bool fast);
+  void computeNearAndFarPlanesFromNode(const std::string &name, float &nearV, float &farV, bool fast);
 
   /**
    * @brief Load a 3D object. To load an .obj file, Panda3D must be compiled with assimp support.
