@@ -256,8 +256,8 @@ protected:
    */
   virtual void setupRenderTarget() { }
 
-  const static vpHomogeneousMatrix VISP_T_PANDA; //! Homogeneous transformation matrix to convert from the Panda coordinate system (right-handed Z-up) to the ViSP coordinate system (right-handed Y-Down)
-  const static vpHomogeneousMatrix PANDA_T_VISP; //! Inverse of VISP_T_PANDA
+  // const static vpHomogeneousMatrix VISP_T_PANDA; //! Homogeneous transformation matrix to convert from the Panda coordinate system (right-handed Z-up) to the ViSP coordinate system (right-handed Y-Down)
+  // const static vpHomogeneousMatrix PANDA_T_VISP; //! Inverse of VISP_T_PANDA
 
 protected:
   std::string m_name; //! name of the renderer
