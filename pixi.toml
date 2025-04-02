@@ -95,5 +95,6 @@ test = { cmd = "ctest --test-dir $VISP_BUILD_DIR --output-on-failure", depends-o
 
 [environments]
 with-python = { features = ["python-bindings"] }
+with-python-clang-cl = { features = ["python-bindings", "clang-cl"] }
 all = { features = ["rbt", "python-bindings"] }
 all-clang-cl = { features = ["rbt-clang-cl", "python-bindings", "clang-cl"] }

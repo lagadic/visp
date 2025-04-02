@@ -16,8 +16,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, macos-13]
-        environment: [all]
+        os: [windows-latest]
+        environment: [all, with-python]
         build_type: [Release]
         include:
           - os: windows-latest
@@ -25,6 +25,12 @@ jobs:
             build_type: Release
           - os: windows-latest
             environment: all-clang-cl
+            build_type: Release
+          - os: windows-latest
+            environment: with-python
+            build_type: Release
+          - os: windows-latest
+            environment: with-python-clang-cl
             build_type: Release
 
     steps:
