@@ -373,7 +373,10 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
         const double weight = tracker->getVVSTrackerWeight();
         LTL += weight * tracker->getLTL();
         LTR += weight * tracker->getLTR();
+
+
         error += weight * (tracker->getWeightedError()).sumSquare();
+
         //std::cout << "Error = " << (weight * tracker->getWeightedError()).sumSquare() << std::endl;
       }
     }

@@ -91,18 +91,18 @@ public:
   void project(const vpCameraParameters &cam, const vpArray2D<int> &indices, const vpHomogeneousMatrix &cTw, vpMatrix &cX, vpMatrix &xs, vpMatrix &uvs);
 
 
-  void getVisiblePoints(const unsigned int h, const unsigned int w, const vpMatrix &cX, const vpMatrix &uvs, const vpColVector &expectedZ, std::list<int> &indices);
-  void getVisiblePoints(const unsigned int h, const unsigned int w, const vpCameraParameters &cam, const vpHomogeneousMatrix &cTw, const vpImage<float> &depth, std::list<int> &indices);
+  void getVisiblePoints(const unsigned int h, const unsigned int w, const vpMatrix &cX, const vpMatrix &uvs, const vpColVector &expectedZ, std::vector<int> &indices);
+  void getVisiblePoints(const unsigned int h, const unsigned int w, const vpCameraParameters &cam, const vpHomogeneousMatrix &cTw, const vpImage<float> &depth, std::vector<int> &indices);
 
   void getOutliers(const vpArray2D<int> &originalIndices, const vpMatrix &uvs,
-  const vpMatrix &observations, std::list<int> &indices);
+  const vpMatrix &observations, std::vector<int> &indices);
 
   void selectValidNewCandidates(const vpCameraParameters &cam, const vpHomogeneousMatrix &cTw,
    const vpArray2D<int> &originalIndices, const vpMatrix &uvs,
    const vpImage<float> &modelDepth, const vpImage<float> &depth,
-   vpMatrix &oXs, std::list<int> &validCandidateIndices);
+   vpMatrix &oXs, std::vector<int> &validCandidateIndices);
 
-  void updatePoints(const vpArray2D<int> &indicesToRemove, const vpMatrix &pointsToAdd, std::list<int> &removedIndices, unsigned int &numAddedPoints);
+  void updatePoints(const vpArray2D<int> &indicesToRemove, const vpMatrix &pointsToAdd, std::vector<int> &removedIndices, unsigned int &numAddedPoints);
   void updatePoint(unsigned int index, double X, double Y, double Z)
   {
     m_X[index][0] = X;
@@ -179,6 +179,7 @@ public:
 
 private:
   vpMatrix m_X; // N x 3, points expressed in world frame
+  vpMatrix m_Xt; // 3 x N points, in world frame (same as m_X)
   unsigned m_maxPoints;
   double m_minDistNewPoint;
   double m_maxDepthErrorVisible;

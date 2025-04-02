@@ -60,7 +60,7 @@ public:
       }
     }
     vpArray2D<int> empty;
-    std::list<int> removed;
+    std::vector<int> removed;
     unsigned int added;
     m_map.updatePoints(empty, oX, removed, added);
     if (added != m_map.getNumMaxPoints()) {

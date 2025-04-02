@@ -37,7 +37,7 @@
 #endif
 BEGIN_VISP_NAMESPACE
 
-#define VISP_DEBUG_RB_DEPTH_DENSE_TRACKER 1
+// #define VISP_DEBUG_RB_DEPTH_DENSE_TRACKER 1
 
 
 void fastProjection(const vpHomogeneousMatrix &oTc, double X, double Y, double Z, std::array<double, 3> &p)
