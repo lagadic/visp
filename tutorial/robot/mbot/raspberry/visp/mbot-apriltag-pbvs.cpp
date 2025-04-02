@@ -77,7 +77,7 @@ void usage(const char **argv, int error)
     << "    Threshold used to discard low-confident detections. A typical value is " << std::endl
     << "    around 100. The higher this value, the more false positives will be filtered" << std::endl
     << "    out. When this value is set to -1, false positives are not filtered out." << std::endl
-    << "    Default: -1" << std::endl
+    << "    Default: 50" << std::endl
     << std::endl
     << "  --tag-hamming-distance-threshold <threshold>" << std::endl
     << "    Threshold used to discard low-confident detections with corrected bits." << std::endl
@@ -144,7 +144,7 @@ int main(int argc, const char **argv)
   vpDetectorAprilTag::vpPoseEstimationMethod opt_tag_pose_estimation_method = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
   double opt_tag_size = 0.065;
   float opt_tag_quad_decimate = 4.0;
-  float opt_tag_decision_margin_threshold = -1;
+  float opt_tag_decision_margin_threshold = 50;
   float opt_tag_hamming_distance_threshold = 2;
   int opt_tag_nThreads = 2;
   std::string intrinsic_file = "";
