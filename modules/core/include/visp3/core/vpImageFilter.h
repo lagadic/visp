@@ -423,6 +423,121 @@ public:
     return upperThresh;
   }
 
+
+  /**
+   * \brief Compute the upper Canny edge filter threshold for a HSV image.
+   *
+   * \tparam ArithmeticType : The type of encoding of the channels of the HSV image.
+   * \tparam useFullScale : When using unsigned char, true means that Hue is encoded on the range [0; 255], otherwise it
+   * uses the limited range as defined in the vpHSV class.
+   * \tparam OutType : Either float, to accelerate the computation time, or double, to have greater precision.
+   * \param[in] I : The HSV image.
+   * \param[in] p_dIx : If different from nullptr, must contain the gradient of the image with regard to the horizontal axis.
+   * \param[in] p_dIy : If different from nullptr, must contain the gradient of the image with regard to the vertical axis.
+   * \param[in] lowerThresh : Canny lower threshold.
+   * \param[in] gaussianKernelSize : The size of the mask of the Gaussian filter to apply (an odd number).
+   * \param[in] gaussianStdev : The standard deviation of the Gaussian filter to apply.
+   * \param[in] lowerThresholdRatio : The ratio of the upper threshold the lower threshold must be equal to.
+   * \param[in] upperThresholdRatio : The ratio of pixels whose absolute gradient Gabs is lower or equal to define
+   * the upper threshold.
+   * \param[in] p_mask : If different from  \b nullptr , only the pixels for which \b p_mask is true will be considered.
+   * \return The upper Canny edge filter threshold.
+   */
+  template<typename ArithmeticType, bool useFullScale, typename OutType>
+  inline static float computeCannyThreshold(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, float &lowerThresh,
+                                            const vpImage<OutType> *p_dIx = nullptr, const vpImage<OutType> *p_dIy = nullptr,
+                                            const unsigned int &gaussianKernelSize = 5,
+                                            const OutType &gaussianStdev = 2.f,
+                                            const float &lowerThresholdRatio = 0.6f, const float &upperThresholdRatio = 0.8f,
+                                            const vpImage<bool> *p_mask = nullptr)
+  {
+    const unsigned int w = I.getWidth();
+    const unsigned int h = I.getHeight();
+
+    if ((lowerThresholdRatio <= 0.f) || (lowerThresholdRatio >= 1.f)) {
+      std::stringstream errMsg;
+      errMsg << "Lower ratio (" << lowerThresholdRatio << ") " << (lowerThresholdRatio < 0.f ? "should be greater than 0 !" : "should be lower than 1 !");
+      throw(vpException(vpException::fatalError, errMsg.str()));
+    }
+
+    if ((upperThresholdRatio <= 0.f) || (upperThresholdRatio >= 1.f)) {
+      std::stringstream errMsg;
+      errMsg << "Upper ratio (" << upperThresholdRatio << ") " << (upperThresholdRatio < 0.f ? "should be greater than 0 !" : "should be lower than 1 !");
+      throw(vpException(vpException::fatalError, errMsg.str()));
+    }
+
+    if (lowerThresholdRatio  >= upperThresholdRatio) {
+      std::stringstream errMsg;
+      errMsg << "Lower ratio (" << lowerThresholdRatio << ") should be lower than the upper ratio (" << upperThresholdRatio << ")";
+      throw(vpException(vpException::fatalError, errMsg.str()));
+    }
+
+    vpImage<unsigned char> dI(h, w);
+    vpImage<OutType> dIx(h, w), dIy(h, w);
+    if ((p_dIx != nullptr) && (p_dIy != nullptr)) {
+      dIx = *p_dIx;
+      dIy = *p_dIy;
+    }
+    else {
+      vpImage<vpHSV<ArithmeticType, useFullScale>> Iblur;
+      gaussianBlur(I, Iblur, gaussianKernelSize, gaussianStdev, true, p_mask);
+      int nbThread = 1;
+#ifdef VISP_HAVE_OPENMP
+      nbThread = omp_get_max_threads();
+#endif
+      prewittFilter(Iblur, dIx, dIy, nbThread, p_mask);
+    }
+
+    // Computing the absolute gradient of the image G = |dIx| + |dIy|
+    const float dIMax = 2.f * vpHSV<ArithmeticType, useFullScale>::maxGradValue;
+    const float step = dIMax / 256.;
+    for (unsigned int r = 0; r < h; ++r) {
+      for (unsigned int c = 0; c < w; ++c) {
+        // We have to compute the value for each pixel if we don't have a mask or for
+        // pixels for which the mask is true otherwise
+        bool computeVal = checkBooleanMask(p_mask, r, c);
+
+        if (computeVal) {
+          float dx = static_cast<float>(dIx[r][c]);
+          float dy = static_cast<float>(dIy[r][c]);
+          float gradient = std::abs(dx) + std::abs(dy);
+          float encodedGradient = gradient / step;
+          dI[r][c] = static_cast<unsigned char>(encodedGradient);
+        }
+      }
+    }
+
+    // Compute the histogram
+    vpHistogram hist;
+    hist.setMask(p_mask);
+    const unsigned int nbBins = 256;
+    hist.calculate(dI, nbBins);
+    float totalNbPixels = static_cast<float>(hist.getTotal());
+    float accu = 0;
+    float t = upperThresholdRatio * totalNbPixels;
+    float bon = 0;
+    unsigned int i = 0;
+    bool notFound = true;
+    while ((i < nbBins) && notFound) {
+      float tf = static_cast<float>(hist[i]);
+      accu = accu + tf;
+      if (accu > t) {
+        bon = static_cast<float>(i);
+        notFound = false;
+      }
+      ++i;
+    }
+    if (notFound) {
+      std::stringstream errMsg;
+      errMsg << "Could not find a bin for which " << upperThresholdRatio * 100.f << " percents of the pixels had a gradient lower than the upper threshold.";
+      throw(vpException(vpException::fatalError, errMsg.str()));
+    }
+    float upperThresh = bon * step;
+    lowerThresh = lowerThresholdRatio * upperThresh;
+    lowerThresh = std::max<float>(lowerThresh, std::numeric_limits<float>::epsilon());
+    return upperThresh;
+  }
+
   /*!
    * Apply a 1x3 derivative filter to an image pixel.
    *
@@ -1827,7 +1942,7 @@ static void getGradXGauss2D(const vpImage<ImageType> &I, vpImage<FilterType> &dI
 template <typename HSVType, bool useFullScale, typename OutputType>
 static typename std::enable_if<std::is_arithmetic<OutputType>::value, void>::type prewittFilterX(
   const vpImage<vpHSV<HSVType, useFullScale>> &I, vpImage<OutputType> &GIx,
-  const unsigned int nbThread = 1, const vpImage<bool> *p_mask = nullptr
+  const int nbThread = 1, const vpImage<bool> *p_mask = nullptr
 )
 {
 #ifdef VISP_HAVE_OPENMP
@@ -1835,7 +1950,7 @@ static typename std::enable_if<std::is_arithmetic<OutputType>::value, void>::typ
     prewittFilterXMonothread(I, GIx, p_mask);
   }
   else {
-    prewittFilterXMultithread(I, GIx, p_mask);
+    prewittFilterXMultithread(I, GIx, nbThread, p_mask);
   }
 #else
   prewittFilterXMonothread(I, GIx, p_mask);
@@ -1947,7 +2062,7 @@ static void getGradYGauss2D(const vpImage<ImageType> &I, vpImage<FilterType> &dI
 template <typename HSVType, bool useFullScale, typename OutputType>
 static typename std::enable_if<std::is_arithmetic<OutputType>::value, void>::type prewittFilterY(
   const vpImage<vpHSV<HSVType, useFullScale>> &I, vpImage<OutputType> &GIy,
-  const unsigned int nbThread = 1, const vpImage<bool> *p_mask = nullptr
+  const int nbThread = 1, const vpImage<bool> *p_mask = nullptr
 )
 {
 #ifdef VISP_HAVE_OPENMP
@@ -1955,7 +2070,7 @@ static typename std::enable_if<std::is_arithmetic<OutputType>::value, void>::typ
     prewittFilterYMonothread(I, GIy, p_mask);
   }
   else {
-    prewittFilterYMultithread(I, GIy, p_mask);
+    prewittFilterYMultithread(I, GIy, nbThread, p_mask);
   }
 #else
   prewittFilterYMonothread(I, GIy, p_mask);
@@ -1965,7 +2080,7 @@ static typename std::enable_if<std::is_arithmetic<OutputType>::value, void>::typ
 template <typename HSVType, bool useFullScale, typename OutputType>
 static typename std::enable_if<std::is_arithmetic<OutputType>::value, void>::type prewittFilter(
   const vpImage<vpHSV<HSVType, useFullScale>> &I, vpImage<OutputType> &GIx, vpImage<OutputType> &GIy,
-  const unsigned int nbThread = 1, const vpImage<bool> *p_mask = nullptr
+  const int nbThread = 1, const vpImage<bool> *p_mask = nullptr
 )
 {
   prewittFilterX(I, GIx, nbThread, p_mask);
@@ -2427,7 +2542,7 @@ private:
   template <typename HSVType, bool useFullScale, typename OutputType>
   static typename std::enable_if<std::is_arithmetic<OutputType>::value, void>::type prewittFilterXMultithread(
     const vpImage<vpHSV<HSVType, useFullScale>> &I, vpImage<OutputType> &GI,
-    const vpImage<bool> *p_mask = nullptr)
+    const int &nbThread, const vpImage<bool> *p_mask = nullptr)
   {
 
   }
@@ -2435,7 +2550,7 @@ private:
   template <typename HSVType, bool useFullScale, typename OutputType>
   static typename std::enable_if<std::is_arithmetic<OutputType>::value, void>::type prewittFilterYMultithread(
     const vpImage<vpHSV<HSVType, useFullScale>> &I, vpImage<OutputType> &GI,
-    const vpImage<bool> *p_mask = nullptr)
+    const int &nbThread, const vpImage<bool> *p_mask = nullptr)
   {
 
   }

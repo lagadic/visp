@@ -72,6 +72,8 @@ void from_json(const nlohmann::json &j, vpCannyEdgeDetection &detector)
   detector.m_gradientFilterKernelSize = j.value("gradientFilterKernelSize", detector.m_gradientFilterKernelSize);
   detector.m_upperThreshold = j.value("upperThreshold", detector.m_upperThreshold);
   detector.m_upperThresholdRatio = j.value("upperThresholdRatio", detector.m_upperThresholdRatio);
+  int nbThread = j.value("nbThread", detector.m_nbThread);
+  detector.setNbThread(nbThread);
 }
 
 void to_json(nlohmann::json &j, const vpCannyEdgeDetection &detector)
@@ -85,7 +87,8 @@ void to_json(nlohmann::json &j, const vpCannyEdgeDetection &detector)
           {"lowerThresholdRatio", detector.m_lowerThresholdRatio},
           {"gradientFilterKernelSize", detector.m_gradientFilterKernelSize},
           {"upperThreshold", detector.m_upperThreshold},
-          {"upperThresholdRatio", detector.m_upperThresholdRatio}
+          {"upperThresholdRatio", detector.m_upperThresholdRatio},
+          {"nbThread", detector.m_nbThread}
   };
 }
 #endif
@@ -94,6 +97,7 @@ void to_json(nlohmann::json &j, const vpCannyEdgeDetection &detector)
 
 vpCannyEdgeDetection::vpCannyEdgeDetection()
   : m_filteringAndGradientType(vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING)
+  , m_nbThread(-1)
   , m_gaussianKernelSize(3)
   , m_gaussianStdev(1.f)
   , m_areGradientAvailable(false)
@@ -116,7 +120,7 @@ vpCannyEdgeDetection::vpCannyEdgeDetection(const int &gaussianKernelSize, const 
                                            const float &upperThreshold, const float &lowerThresholdRatio,
                                            const float &upperThresholdRatio,
                                            const vpImageFilter::vpCannyFilteringAndGradientType &filteringType,
-                                           const bool &storeEdgePoints
+                                           const bool &storeEdgePoints, const int &nbThread
 )
   : m_filteringAndGradientType(filteringType)
   , m_gaussianKernelSize(gaussianKernelSize)
@@ -133,6 +137,7 @@ vpCannyEdgeDetection::vpCannyEdgeDetection(const int &gaussianKernelSize, const 
   , m_storeListEdgePoints(storeEdgePoints)
   , mp_mask(nullptr)
 {
+  setNbThread(nbThread);
   initGaussianFilters();
   initGradientFilters();
 }
@@ -251,8 +256,113 @@ vpCannyEdgeDetection::detect(const vpImage<vpRGBa> &I_color)
   return detect(I_gray);
 }
 
+// vpImage<unsigned char>
+// vpCannyEdgeDetection::detect(const vpImage<unsigned char> &I)
+// {
+// #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+//   rlim_t initialStackSize = 0;
+//   struct rlimit rl;
+//   int result;
+//   if (m_minStackSize > 0) {
+//     // Check the current stack size
+//     result = getrlimit(RLIMIT_STACK, &rl);
+//     if (result == 0) {
+//       initialStackSize = rl.rlim_cur;
+//       if (rl.rlim_cur < m_minStackSize) {
+//         // Increase stack size due to the recursive algorithm
+//         rl.rlim_cur = m_minStackSize;
+//         result = setrlimit(RLIMIT_STACK, &rl);
+//         if (result != 0) {
+//           throw(vpException(vpException::fatalError, "setrlimit returned result = %d\n", result));
+//         }
+//       }
+//     }
+//     else {
+//       throw(vpException(vpException::fatalError, "getrlimit returned result = %d\n", result));
+//     }
+//   }
+// #endif
+//   // // Clearing the previous results
+//   m_edgeMap.resize(I.getHeight(), I.getWidth(), 0);
+//   m_edgeCandidateAndGradient.clear();
+//   m_edgePointsCandidates.clear();
+//   m_edgePointsList.clear();
+
+//   // // Step 1 and 2: filter the image and compute the gradient, if not given by the user
+//   if (!m_areGradientAvailable) {
+//     computeFilteringAndGradient(I);
+//   }
+//   m_areGradientAvailable = false; // Reset for next call
+
+//   // // Step 3: edge thining
+//   float upperThreshold = m_upperThreshold;
+//   float lowerThreshold = m_lowerThreshold;
+//   if (upperThreshold < 0) {
+//     upperThreshold = vpImageFilter::computeCannyThreshold(I, lowerThreshold, &m_dIx, &m_dIy, m_gaussianKernelSize,
+//                                                           m_gaussianStdev, m_gradientFilterKernelSize, m_lowerThresholdRatio,
+//                                                           m_upperThresholdRatio, m_filteringAndGradientType, mp_mask);
+//   }
+//   else if (m_lowerThreshold < 0) {
+//     // Applying Canny recommendation to have the upper threshold 3 times greater than the lower threshold.
+//     lowerThreshold = m_upperThreshold / 3.f;
+//   }
+//   // To ensure that if lowerThreshold = 0, we reject null gradient points
+//   lowerThreshold = std::max<float>(lowerThreshold, std::numeric_limits<float>::epsilon());
+//   performEdgeThinning(lowerThreshold);
+
+//   // // Step 4: hysteresis thresholding
+//   performHysteresisThresholding(lowerThreshold, upperThreshold);
+
+//   // // Step 5: edge tracking
+//   performEdgeTracking();
+
+// #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+//   if (m_minStackSize > 0) {
+//     if (rl.rlim_cur > initialStackSize) {
+//       // Reset stack size to its original value
+//       rl.rlim_cur = initialStackSize;
+//       result = setrlimit(RLIMIT_STACK, &rl);
+//       if (result != 0) {
+//         throw(vpException(vpException::fatalError, "setrlimit returned result = %d\n", result));
+
+//       }
+//     }
+//   }
+// #endif
+//   return m_edgeMap;
+// }
+
 vpImage<unsigned char>
 vpCannyEdgeDetection::detect(const vpImage<unsigned char> &I)
+{
+  // // Step 1 and 2: filter the image and compute the gradient, if not given by the user
+  if (!m_areGradientAvailable) {
+    computeFilteringAndGradient(I);
+  }
+  m_areGradientAvailable = false; // Reset for next call
+
+  // // Step 3: edge thining
+  float upperThreshold = m_upperThreshold;
+  float lowerThreshold = m_lowerThreshold;
+  if (upperThreshold < 0) {
+    upperThreshold = vpImageFilter::computeCannyThreshold(I, lowerThreshold, &m_dIx, &m_dIy, m_gaussianKernelSize,
+                                                          m_gaussianStdev, m_gradientFilterKernelSize, m_lowerThresholdRatio,
+                                                          m_upperThresholdRatio, m_filteringAndGradientType, mp_mask);
+  }
+  else if (m_lowerThreshold < 0) {
+    // Applying Canny recommendation to have the upper threshold 3 times greater than the lower threshold.
+    lowerThreshold = m_upperThreshold / 3.f;
+  }
+  // To ensure that if lowerThreshold = 0, we reject null gradient points
+  lowerThreshold = std::max<float>(lowerThreshold, std::numeric_limits<float>::epsilon());
+
+  step3to5(I.getHeight(), I.getWidth(), lowerThreshold, upperThreshold);
+
+  return m_edgeMap;
+}
+
+void
+vpCannyEdgeDetection::step3to5(const unsigned int &height, const unsigned int &width, const float &lowerThreshold, const float &upperThreshold)
 {
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   rlim_t initialStackSize = 0;
@@ -278,31 +388,11 @@ vpCannyEdgeDetection::detect(const vpImage<unsigned char> &I)
   }
 #endif
   // // Clearing the previous results
-  m_edgeMap.resize(I.getHeight(), I.getWidth(), 0);
+  m_edgeMap.resize(height, width, 0);
   m_edgeCandidateAndGradient.clear();
   m_edgePointsCandidates.clear();
   m_edgePointsList.clear();
 
-  // // Step 1 and 2: filter the image and compute the gradient, if not given by the user
-  if (!m_areGradientAvailable) {
-    computeFilteringAndGradient(I);
-  }
-  m_areGradientAvailable = false; // Reset for next call
-
-  // // Step 3: edge thining
-  float upperThreshold = m_upperThreshold;
-  float lowerThreshold = m_lowerThreshold;
-  if (upperThreshold < 0) {
-    upperThreshold = vpImageFilter::computeCannyThreshold(I, lowerThreshold, &m_dIx, &m_dIy, m_gaussianKernelSize,
-                                                          m_gaussianStdev, m_gradientFilterKernelSize, m_lowerThresholdRatio,
-                                                          m_upperThresholdRatio, m_filteringAndGradientType, mp_mask);
-  }
-  else if (m_lowerThreshold < 0) {
-    // Applying Canny recommendation to have the upper threshold 3 times greater than the lower threshold.
-    lowerThreshold = m_upperThreshold / 3.f;
-  }
-  // To ensure that if lowerThreshold = 0, we reject null gradient points
-  lowerThreshold = std::max<float>(lowerThreshold, std::numeric_limits<float>::epsilon());
   performEdgeThinning(lowerThreshold);
 
   // // Step 4: hysteresis thresholding
@@ -324,7 +414,6 @@ vpCannyEdgeDetection::detect(const vpImage<unsigned char> &I)
     }
   }
 #endif
-  return m_edgeMap;
 }
 
 void

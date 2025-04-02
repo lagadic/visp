@@ -41,6 +41,7 @@
 
 // ViSP include
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpHSV.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageFilter.h>
 #include <visp3/core/vpRGBa.h>
@@ -91,13 +92,14 @@ public:
    * \param[in] filteringType : The filtering and gradient operators to apply to the image before the edge detection
    * operation.
    * \param[in] storeEdgePoints : If true, the list of edge-points will be available using
+   * \param[in] nbThread : Number of thread to use. -1 to let the program choose.
    * \b vpCannyEdgeDetection::getEdgePointsList().
    */
   vpCannyEdgeDetection(const int &gaussianKernelSize, const float &gaussianStdev, const unsigned int &sobelAperture,
                        const float &lowerThreshold = -1.f, const float &upperThreshold = -1.f,
                        const float &lowerThresholdRatio = 0.6f, const float &upperThresholdRatio = 0.8f,
                        const vpImageFilter::vpCannyFilteringAndGradientType &filteringType = vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING,
-                       const bool &storeEdgePoints = false);
+                       const bool &storeEdgePoints = false, const int &nbThread = -1);
 
   // // Configuration from files
 #ifdef VISP_HAVE_NLOHMANN_JSON
@@ -161,6 +163,36 @@ public:
    * \return vpImage<unsigned char> 255 means an edge, 0 means not an edge.
    */
   vpImage<unsigned char> detect(const vpImage<vpRGBa> &I_color);
+
+  template <typename ArithmeticType, bool useFullScale>
+  vpImage<unsigned char> detect(const vpImage<vpHSV<ArithmeticType, useFullScale>> &Ihsv)
+  {
+    // // Step 1 and 2: filter the image and compute the gradient, if not given by the user
+    if (!m_areGradientAvailable) {
+      vpImage<vpHSV<ArithmeticType, useFullScale>> Iblur;
+      vpImageFilter::gaussianBlur(Ihsv, Iblur, m_gaussianKernelSize, m_gaussianStdev, true, mp_mask);
+      vpImageFilter::prewittFilter(Iblur, m_dIx, m_dIy, m_nbThread, mp_mask);
+    }
+    m_areGradientAvailable = false; // Reset for next call
+
+    // // Step 3: edge thining
+    float upperThreshold = m_upperThreshold;
+    float lowerThreshold = m_lowerThreshold;
+    if (upperThreshold < 0) {
+      upperThreshold = vpImageFilter::computeCannyThreshold(Ihsv, lowerThreshold, &m_dIx, &m_dIy, m_gaussianKernelSize,
+                                                            m_gaussianStdev, m_lowerThresholdRatio,
+                                                            m_upperThresholdRatio, mp_mask);
+    }
+    else if (m_lowerThreshold < 0) {
+      // Applying Canny recommendation to have the upper threshold 3 times greater than the lower threshold.
+      lowerThreshold = m_upperThreshold / 3.f;
+    }
+    // To ensure that if lowerThreshold = 0, we reject null gradient points
+    lowerThreshold = std::max<float>(lowerThreshold, std::numeric_limits<float>::epsilon());
+
+    step3to5(Ihsv.getHeight(), Ihsv.getWidth(), lowerThreshold, upperThreshold);
+    return m_edgeMap;
+  }
 
   /**
    * \brief Detect the edges in a gray-scale image.
@@ -307,12 +339,22 @@ public:
   }
 #endif
 
-/**
- * \brief If set to true, the list of the detected edge-points will be available
- * calling the method \b vpCannyEdgeDetection::getEdgePointsList().
- *
- * \param[in] storeEdgePoints The new desired status.
- */
+  inline void setNbThread(const int &nbThread)
+  {
+#ifdef VISP_HAVE_OPENMP
+    // m_nbThread = nbThread;
+    m_nbThread = 1;
+#else
+    m_nbThread = 1;
+    std::cout << "[WARNING] OpenMP is not available, setting the number of threads is ignored." << std::endl;
+#endif
+  }
+  /**
+   * \brief If set to true, the list of the detected edge-points will be available
+   * calling the method \b vpCannyEdgeDetection::getEdgePointsList().
+   *
+   * \param[in] storeEdgePoints The new desired status.
+   */
   inline void setStoreEdgePoints(const bool &storeEdgePoints)
   {
     m_storeListEdgePoints = storeEdgePoints;
@@ -368,6 +410,8 @@ private:
   // Filtering + gradient methods choice
   vpImageFilter::vpCannyFilteringAndGradientType m_filteringAndGradientType; /*!< Choice of the filter and
       gradient operator to apply before the edge detection step*/
+
+  int m_nbThread; /*!< Number of threads to use.*/
 
   // // Gaussian smoothing attributes
   int m_gaussianKernelSize; /*!< Size of the Gaussian filter kernel used to smooth the input image. Must be an odd number.*/
@@ -426,6 +470,17 @@ private:
    * \param[in] I : The image we want to compute the gradients.
    */
   void computeFilteringAndGradient(const vpImage<unsigned char> &I);
+
+  /**
+   * \brief Perform the steps:
+   * * 3 := edge-thining
+   * * 4 := hysteresis thresholding
+   * * 5 := edge tracking
+   *
+   * \param[in] lowerThreshold The lower threshold for the hysteresis thresholding.
+   * \param[in] upperThreshold The upper threshold for the hysteresis thresholding.
+   */
+  void step3to5(const unsigned int &height, const unsigned int &width, const float &lowerThreshold, const float &upperThreshold);
 
   /**
    * \brief Step 3: Edge thining.

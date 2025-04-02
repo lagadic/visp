@@ -541,6 +541,8 @@ public:
    */
   static constexpr unsigned char maxHueUsingLimitedRange = 179;
 
+  static const float maxGradValue;
+
 private:
   /**
    * \brief Permit to initialize a vpHSV object using a vector.
@@ -555,6 +557,8 @@ private:
   inline void
     set(const vpColVector &v, const Tp &limMin, const Tp &limMax)
   {
+    (void)limMin;
+    (void)limMax;
     // if ((v[0] < limMin) || (v[0] > limMax)) {
     //   // throw exception
     // }
@@ -569,38 +573,6 @@ private:
     V = v[2];
   }
 };
-
-template<>
-inline vpHSV<double> &vpHSV<double>::buildFrom(const vpRGBa &rgba)
-{
-  vpColVector hsv = computeNormalizedHSV(rgba);
-  set(hsv, 0., 1.);
-  return *this;
-}
-
-template<>
-inline vpHSV<unsigned char, true> &vpHSV<unsigned char, true>::buildFrom(const vpRGBa &rgba)
-{
-  vpColVector hsv = computeNormalizedHSV(rgba);
-  hsv[0] *= 255.;
-  hsv[1] *= 255.;
-  hsv[2] *= 255.;
-
-  set(hsv, static_cast<unsigned char>(0), static_cast<unsigned char>(255.));
-  return *this;
-}
-
-template<>
-inline vpHSV<unsigned char, false> &vpHSV<unsigned char, false>::buildFrom(const vpRGBa &rgba)
-{
-  vpColVector hsv = computeNormalizedHSV(rgba);
-  hsv[0] *= static_cast<double>(maxHueUsingLimitedRange);
-  hsv[1] *= 255.;
-  hsv[2] *= 255.;
-
-  set(hsv, static_cast<unsigned char>(0), static_cast<unsigned char>(255.));
-  return *this;
-}
 
 template <typename T, bool useFullScale>
 std::string vpHSV<T, useFullScale>::toString() const
@@ -634,6 +606,25 @@ std::ostream &operator<<(std::ostream &os, const vpHSV<T, useFullScale> &hsv)
   os << hsv.toString();
   return os;
 }
+
+template<>
+VISP_EXPORT vpHSV<unsigned char, false> &vpHSV<unsigned char, false>::buildFrom(const vpRGBa &rgba);
+
+template<>
+VISP_EXPORT vpHSV<unsigned char, true> &vpHSV<unsigned char, true>::buildFrom(const vpRGBa &rgba);
+
+template<>
+VISP_EXPORT vpHSV<double> &vpHSV<double>::buildFrom(const vpRGBa &rgba);
+
+template<>
+VISP_EXPORT const float vpHSV<double>::maxGradValue;
+
+template<>
+VISP_EXPORT const float vpHSV<unsigned char, false>::maxGradValue;
+
+template<>
+VISP_EXPORT const float vpHSV<unsigned char, true>::maxGradValue;
+
 END_VISP_NAMESPACE
 #endif
 #endif
