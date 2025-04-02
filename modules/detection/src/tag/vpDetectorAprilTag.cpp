@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,7 +86,7 @@ public:
   Impl(const vpAprilTagFamily &tagFamily, const vpPoseEstimationMethod &method)
     : m_poseEstimationMethod(method), m_tagsId(), m_tagFamily(tagFamily), m_tagsDecisionMargin(),
     m_tagsHammingDistance(), m_td(nullptr), m_tf(nullptr),
-    m_detections(nullptr), m_decisionMarginThreshold(-1), m_hammingDistanceThreshold(0), m_zAlignedWithCameraFrame(false)
+    m_detections(nullptr), m_decisionMarginThreshold(-1), m_hammingDistanceThreshold(2), m_zAlignedWithCameraFrame(false)
   {
     switch (m_tagFamily) {
     case TAG_36h11:
@@ -1367,11 +1367,12 @@ float vpDetectorAprilTag::getAprilTagDecisionMarginThreshold() const
 
 /*!
   Get the hamming distance threshold to filter out false detections.
-  For each tag detected, the hamming distance is between 0 and 255 and indicates the number of bits corrected.
-  A value of 0 indicates that no correction was applied when the tag was detected, while a value of 2 indicates that
-  2 bits were corrected to achieve detection. The lower the Hamming distance, the more reliable the detection.
+  For each tag detected, the hamming distance is between 0 and 255 and indicates the number of bit-error that are
+  corrected. A value of 0 indicates that no correction was applied when the tag was detected, while a value of 2
+  indicates that 2 bits were corrected to achieve detection. The lower the Hamming distance, the more reliable the
+  detection.
 
-  Default value is 0, meaning that we filter out all the detections with corrected bits.
+  Default value is 2, meaning that we don't filter out detections with corrected bits.
 
   This threshold could be used to filter out detections where the hamming distance is greater than this threshold.
 
@@ -1494,14 +1495,14 @@ void vpDetectorAprilTag::setAprilTagDecisionMarginThreshold(float decisionMargin
   It has been experimentally observed that using the AprilTag detection and decoding pipeline,
   lots of false positives arise with 16h5, 4x4, 5x5 and 6x6 ArUco dictionnaries. Their hamming distance is than
   usually set to 2.
-  A hamming distance threshold can be used to filter these detections.
+  A hamming distance threshold can be used to filter these detections using setAprilTagHammingDistanceThreshold().
 
   \param[in] hammingDistanceThreshold : Threshold between 0 and 255 used to filter tags whose hamming
   distance is greater than this threshold.
   - When this threshold is set to 0, only tags for which no bits are corrected are detected.
   - When set to 2, it means that we keep all the tags that have up to 2 corrected bits. It will lead to false positive
     detections.
-  - Default value is set to 0.
+  - Default value is set to 2.
 
   \sa getAprilTagDecisionMarginThreshold(), getTagsDecisionMargin()
 */

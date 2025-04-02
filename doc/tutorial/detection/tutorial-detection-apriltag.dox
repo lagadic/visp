@@ -232,13 +232,15 @@ The algorithm behind the tag detection is able to compute a hamming distance and
   in the detection. To get the hamming distance for all the detected tags, you may use
   vpDetectorAprilTag::getTagsHammingDistance(). To specify the hamming distance threshold used to filter out tags for
   which the hamming distance is higher than the threshold use vpDetectorAprilTag::setAprilTagHammingDistanceThreshold().
-  By default the hamming distance threshold is set to 0, meaning that we retain only the most reliable tags detected
-  without bits corrections.
+  By default the hamming distance threshold is set to 2, meaning that we accept tags with 2 bit-errors which is very
+  conservative.
 - The decision margin factor is a measure of the quality of the detection. Each detected tag has its own decision
   margin factor. To get this value for each detected tags, use vpDetectorAprilTag::getTagsDecisionMargin(). You can
   filter out tags that have a decision margin factor lower than a decision margin threshold using
   vpDetectorAprilTag::setAprilTagDecisionMarginThreshold().
   Higher is the decision margin threshold, more you will filter out false positive detections.
+  By default the decision margin threshold is set to -1, meaning that the decision margin is not used to filter out
+  false positives.
 
 When running `tutorial-apriltag-detector` binary corresponding to tutorial-apriltag-detector.cpp you will get by
 default:
@@ -278,7 +280,8 @@ Detected tags
   36h11 id: 19 with decision margin: 81.0268 and hamming distance: 0
 \endcode
 
-Now if you set the decision margin threshold to 100, you can see that less tags will be detected:
+Now if you set the decision margin threshold to 100, you can see that less tags will be detected. Will remain those
+with a decision margin greater then 100:
 \code{.sh}
 $ ./tutorial-apriltag-detector --tag-decision-margin-threshold 100
 Input data

@@ -213,7 +213,7 @@ int main(int argc, const char **argv)
   double opt_tag_size = 0.053;
   float opt_tag_quad_decimate = 1.0;
   float opt_tag_decision_margin_threshold = -1;
-  float opt_tag_hamming_distance_threshold = 0;
+  float opt_tag_hamming_distance_threshold = 2;
   int opt_tag_nThreads = 1;
   std::string intrinsic_file = "";
   std::string camera_name = "";
@@ -256,9 +256,6 @@ int main(int argc, const char **argv)
     }
     else if (std::string(argv[i]) == "--tag-decision-margin-threshold" && i + 1 < argc) {
       opt_tag_decision_margin_threshold = static_cast<float>(atof(argv[++i]));
-    }
-    else if (std::string(argv[i]) == "--tag-hamming-distance-threshold" && i + 1 < argc) {
-      opt_tag_hamming_distance_threshold = atoi(argv[++i]);
     }
     else if (std::string(argv[i]) == "--tag-hamming-distance-threshold" && i + 1 < argc) {
       opt_tag_hamming_distance_threshold = atoi(argv[++i]);

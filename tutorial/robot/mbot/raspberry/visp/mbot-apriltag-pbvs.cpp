@@ -145,7 +145,7 @@ int main(int argc, const char **argv)
   double opt_tag_size = 0.065;
   float opt_tag_quad_decimate = 4.0;
   float opt_tag_decision_margin_threshold = -1;
-  float opt_tag_hamming_distance_threshold = 0;
+  float opt_tag_hamming_distance_threshold = 2;
   int opt_tag_nThreads = 2;
   std::string intrinsic_file = "";
   std::string camera_name = "";
