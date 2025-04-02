@@ -240,7 +240,6 @@ void vpRBSilhouetteCCDTracker::initVVS(const vpRBFeatureTrackerInput &/*frame*/,
     m_gradients[i] = std::move(vpColVector::view(m_gradientData.data() + i * 6, 6));
     m_hessians[i] = std::move(vpMatrix::view(m_hessianData.data() + i * 6 * 6, 6, 6));
   }
-  std::cout << "End insert" << std::endl;
   m_weights.resize(m_numFeatures, false);
   if (m_temporalSmoothingFac > 0.0) {
     computeLocalStatistics(previousFrame.IRGB, m_prevStats);
