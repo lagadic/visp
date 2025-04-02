@@ -45,13 +45,13 @@
 #include "graphicsOutput.h"
 
 BEGIN_VISP_NAMESPACE
-// const vpHomogeneousMatrix vpPanda3DBaseRenderer::VISP_T_PANDA({
-//   1.0, 0.0, 0.0, 0.0,
-//   0.0, 0.0, -1., 0.0,
-//   0.0, 1.0, 0.0, 0.0,
-//   0.0, 0.0, 0.0, 1.0
-// });
-// const vpHomogeneousMatrix vpPanda3DBaseRenderer::PANDA_T_VISP(vpPanda3DBaseRenderer::VISP_T_PANDA.inverse());
+const vpHomogeneousMatrix vpPanda3DBaseRenderer::VISP_T_PANDA({
+  1.0, 0.0, 0.0, 0.0,
+  0.0, 0.0, -1., 0.0,
+  0.0, 1.0, 0.0, 0.0,
+  0.0, 0.0, 0.0, 1.0
+});
+const vpHomogeneousMatrix vpPanda3DBaseRenderer::PANDA_T_VISP(vpPanda3DBaseRenderer::VISP_T_PANDA.inverse());
 
 
 
@@ -209,8 +209,7 @@ void vpPanda3DBaseRenderer::setNodePose(const std::string &name, const vpHomogen
 
 void vpPanda3DBaseRenderer::setNodePose(NodePath &object, const vpHomogeneousMatrix &wTo)
 {
-  // const vpHomogeneousMatrix wpTo = wTo * VISP_T_PANDA;
-  const vpHomogeneousMatrix wpTo = wTo;
+  const vpHomogeneousMatrix wpTo = wTo * VISP_T_PANDA;
   vpTranslationVector t = wpTo.getTranslationVector();
   vpQuaternionVector q(wpTo.getRotationMatrix());
   object.set_pos(t[0], t[1], t[2]);
@@ -232,8 +231,7 @@ vpHomogeneousMatrix vpPanda3DBaseRenderer::getNodePose(NodePath &object)
   const LQuaternion quat = object.get_quat();
   const vpTranslationVector t(pos[0], pos[1], pos[2]);
   const vpQuaternionVector q(quat.get_i(), quat.get_j(), quat.get_k(), quat.get_r());
-  return vpHomogeneousMatrix(t, q);
-  // return vpHomogeneousMatrix(t, q) * PANDA_T_VISP;
+  return vpHomogeneousMatrix(t, q) * PANDA_T_VISP;
 }
 
 void vpPanda3DBaseRenderer::computeNearAndFarPlanesFromNode(const std::string &name, float &nearV, float &farV, bool fast)
@@ -251,8 +249,7 @@ void vpPanda3DBaseRenderer::computeNearAndFarPlanesFromNode(const std::string &n
     const BoundingBox box(minP, maxP);
     float minZ = std::numeric_limits<float>::max(), maxZ = 0.f;
     const vpHomogeneousMatrix wTcam = getCameraPose();
-    // const vpHomogeneousMatrix wTobj = getNodePose(name) * vpPanda3DBaseRenderer::PANDA_T_VISP;
-    const vpHomogeneousMatrix wTobj = getNodePose(name);
+    const vpHomogeneousMatrix wTobj = getNodePose(name) * vpPanda3DBaseRenderer::PANDA_T_VISP;
     const vpHomogeneousMatrix camTobj = wTcam.inverse() * wTobj;
     for (unsigned int i = 0; i < 8; ++i) {
       const LPoint3 p = box.get_point(i);
@@ -282,8 +279,7 @@ void vpPanda3DBaseRenderer::computeNearAndFarPlanesFromNode(const std::string &n
     }
     else if (volume->get_type() == BoundingBox::get_class_type()) {
       const vpHomogeneousMatrix wTcam = getCameraPose();
-      // const vpHomogeneousMatrix wTobj = getNodePose(object) * vpPanda3DBaseRenderer::PANDA_T_VISP;
-      const vpHomogeneousMatrix wTobj = getNodePose(object);
+      const vpHomogeneousMatrix wTobj = getNodePose(object) * vpPanda3DBaseRenderer::PANDA_T_VISP;
       const vpHomogeneousMatrix camTobj = wTcam.inverse() * wTobj;
       const BoundingBox *box = (const BoundingBox *)volume;
       double minZ = std::numeric_limits<double>::max(), maxZ = 0.0;
@@ -380,15 +376,13 @@ void vpPanda3DBaseRenderer::enableDebugLog()
 
 vpColVector vpPanda3DBaseRenderer::vispPointToPanda(const vpColVector &point)
 {
-  // vpColVector pandaPos = PANDA_T_VISP * point;
-  vpColVector pandaPos = point;
+  vpColVector pandaPos = PANDA_T_VISP * point;
   pandaPos /= pandaPos[3];
   return pandaPos;
 }
 vpColVector vpPanda3DBaseRenderer::vispVectorToPanda(const vpColVector &point)
 {
-  // vpColVector pandaPos = PANDA_T_VISP.getRotationMatrix() * point;
-  vpColVector pandaPos = point;
+  vpColVector pandaPos = PANDA_T_VISP.getRotationMatrix() * point;
   return pandaPos;
 }
 

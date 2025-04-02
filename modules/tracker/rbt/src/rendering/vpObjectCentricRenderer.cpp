@@ -112,8 +112,7 @@ void vpObjectCentricRenderer::computeClipping(float &nearV, float &farV)
     m_shouldComputeBBPoints = false;
   }
   const vpHomogeneousMatrix wTcam = getCameraPose();
-  // const vpHomogeneousMatrix wTobj = getNodePose(m_focusedObject) * vpPanda3DBaseRenderer::PANDA_T_VISP;
-  const vpHomogeneousMatrix wTobj = getNodePose(m_focusedObject);
+  const vpHomogeneousMatrix wTobj = getNodePose(m_focusedObject) * vpPanda3DBaseRenderer::PANDA_T_VISP;
   const vpHomogeneousMatrix camTobj = wTcam.inverse() * wTobj;
   float minZ = std::numeric_limits<float>::max(), maxZ = 0.f;
   for (unsigned int i = 0; i < m_bb3DPoints.size(); ++i) {
@@ -158,8 +157,7 @@ vpRect vpObjectCentricRenderer::computeBoundingBox()
     };
 
   const vpHomogeneousMatrix wTcam = getCameraPose();
-  // const vpHomogeneousMatrix wTobj = getNodePose(m_focusedObject) * vpPanda3DBaseRenderer::PANDA_T_VISP;
-  const vpHomogeneousMatrix wTobj = getNodePose(m_focusedObject);
+  const vpHomogeneousMatrix wTobj = getNodePose(m_focusedObject) * vpPanda3DBaseRenderer::PANDA_T_VISP;
   const vpHomogeneousMatrix camTobj = wTcam.inverse() * wTobj;
 
   double minu = m_renderParameters.getImageWidth(), maxu = 0.0, minv = m_renderParameters.getImageHeight(), maxv = 0.0;
