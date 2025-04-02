@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +29,7 @@
  *
  * Description:
  * XML parser to load and save camera intrinsic parameters.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpXmlParserCamera.cpp
@@ -285,9 +284,7 @@ public:  /* --- XML Code--------------------------------------------------------
         case CODE_XML_K3:
         case CODE_XML_K4:
         case CODE_XML_K5:
-        default:
           back = SEQUENCE_ERROR;
-
           break;
         }
       }
@@ -459,7 +456,6 @@ public:  /* --- XML Code--------------------------------------------------------
         case CODE_XML_FULL_WIDTH:
         case CODE_XML_MODEL:
         case CODE_XML_ADDITIONAL_INFO:
-        default:
           back = SEQUENCE_ERROR;
           break;
         }
@@ -876,8 +872,6 @@ public:  /* --- XML Code--------------------------------------------------------
 
     case vpCameraParameters::ProjWithKannalaBrandtDistortion:
       writeCameraWithKannalaBrandt(node_camera);
-      break;
-    default:
       break;
     }
     return back;

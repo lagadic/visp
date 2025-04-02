@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -196,8 +196,6 @@ public:
         case CODE_XML_TUX:
         case CODE_XML_TUY:
         case CODE_XML_TUZ:
-
-        default:
           back = SEQUENCE_ERROR;
           break;
         }
@@ -278,8 +276,6 @@ public:
         case CODE_XML_M:
         case CODE_XML_M_NAME:
         case CODE_XML_VALUE:
-
-        default:
           back = SEQUENCE_ERROR;
           break;
         }

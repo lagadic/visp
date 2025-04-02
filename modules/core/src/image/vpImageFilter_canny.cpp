@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,7 +78,6 @@ std::string vpImageFilter::vpCannyBackendTypeToString(const vpImageFilter::vpCan
     name = "visp-backend";
     break;
   case CANNY_COUNT_BACKEND:
-  default:
     return "unknown-backend";
   }
   return name;
@@ -148,7 +147,6 @@ std::string vpImageFilter::vpCannyFiltAndGradTypeToStr(const vpImageFilter::vpCa
     name = "gaussianblur+scharr-filtering";
     break;
   case CANNY_COUNT_FILTERING:
-  default:
     return "unknown-filtering";
   }
   return name;
