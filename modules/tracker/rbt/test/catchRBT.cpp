@@ -597,7 +597,7 @@ SCENARIO("Instantiating a render-based tracker", "[rbt]")
       REQUIRE((silset.preferPreviousPoints()));
 
       REQUIRE((tracker.getOptimizationGain() == 1.0 && tracker.getMaxOptimizationIters() == 10));
-      REQUIRE((tracker.getOptimizationInitialMu() == 0.5 && tracker.getOptimizationMuIterFactor() == 0));
+      REQUIRE((tracker.getOptimizationInitialMu() == 0.5 && tracker.getOptimizationMuIterFactor() == 0.1));
       };
     nlohmann::json j = nlohmann::json::parse(jsonLiteral);
     THEN("Loading configuration with trackers")
