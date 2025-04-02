@@ -149,7 +149,7 @@ int main(int argc, const char **argv)
 #endif
 
   vpDetectorAprilTag::vpAprilTagFamily opt_tag_family = vpDetectorAprilTag::TAG_36h11;
-  vpDetectorAprilTag::vpPoseEstimationMethod opt_pose_estimation_method = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
+  vpDetectorAprilTag::vpPoseEstimationMethod opt_tag_pose_estimation_method = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
   double opt_tag_size = 0.053;
   float opt_tag_quad_decimate = 1.0;
   float opt_tag_decision_margin_threshold = 50;
@@ -184,7 +184,7 @@ int main(int argc, const char **argv)
       opt_tag_z_align_frame = true;
     }
     else if (std::string(argv[i]) == "--tag-pose-method" && i + 1 < argc) {
-      opt_pose_estimation_method = (vpDetectorAprilTag::vpPoseEstimationMethod)atoi(argv[++i]);
+      opt_tag_pose_estimation_method = (vpDetectorAprilTag::vpPoseEstimationMethod)atoi(argv[++i]);
     }
     else if (std::string(argv[i]) == "--tag-decision-margin-threshold" && i + 1 < argc) {
       opt_tag_decision_margin_threshold = static_cast<float>(atof(argv[++i]));
@@ -284,7 +284,7 @@ int main(int argc, const char **argv)
 
     //! [AprilTag detector settings]
     detector.setAprilTagQuadDecimate(opt_tag_quad_decimate);
-    detector.setAprilTagPoseEstimationMethod(opt_pose_estimation_method);
+    detector.setAprilTagPoseEstimationMethod(opt_tag_pose_estimation_method);
     detector.setAprilTagNbThreads(opt_tag_nThreads);
     detector.setDisplayTag(opt_display_tag, opt_color_id < 0 ? vpColor::none : vpColor::getColor(opt_color_id), opt_thickness);
     detector.setZAlignedWithCameraAxis(opt_tag_z_align_frame);
