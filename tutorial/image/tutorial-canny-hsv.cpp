@@ -36,6 +36,7 @@
 #include <visp3/core/vpHSV.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpImageFilter.h>
+#include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpRGBa.h>
 #include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
@@ -45,6 +46,36 @@ using namespace VISP_NAMESPACE_NAME;
 #endif
 
 #if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_11)
+
+void computeAbsoluteGradient(const vpImage<double> &GIx, const vpImage<double> &GIy, vpImage<double> &GI, double &min, double &max)
+{
+  const unsigned int h = GIx.getHeight(), w = GIx.getWidth();
+  GI.resize(h, w);
+  max = -1.;
+  min = std::numeric_limits<double>::max();
+  for (unsigned int r = 0; r < h; ++r) {
+    for (unsigned int c = 0; c < w; ++c) {
+      GI[r][c] = std::abs(GIx[r][c]) + std::abs(GIy[r][c]);
+      max = std::max(max, GI[r][c]);
+      min = std::min(min, GI[r][c]);
+    }
+  }
+}
+
+vpImage<unsigned char> convertToDisplay(const vpImage<double> &GI, const double &min, const double &max)
+{
+  const unsigned int h = GI.getHeight(), w = GI.getWidth();
+  const double range = max - min;
+  const double step = range / 256.;
+  vpImage<unsigned char> Idisp(h, w);
+  for (unsigned int r = 0; r < h; ++r) {
+    for (unsigned int c = 0; c < w; ++c) {
+      Idisp[r][c] = std::floor((GI[r][c] - min) / step);
+    }
+  }
+  return Idisp;
+}
+
 typedef struct SoftwareArguments
 {
   std::string m_img;
@@ -55,6 +86,8 @@ typedef struct SoftwareArguments
   float m_lowerThreshRatio;
   float m_upperThreshRatio;
   vpImageFilter::vpCannyFilteringAndGradientType m_filteringType;
+  bool m_saveImages;
+  bool m_useDisplay; //!< If true, activate the plot and the renderer if VISP_HAVE_DISPLAY is defined.
 
   SoftwareArguments()
     : m_img("")
@@ -65,6 +98,12 @@ typedef struct SoftwareArguments
     , m_lowerThreshRatio(0.6f)
     , m_upperThreshRatio(0.8f)
     , m_filteringType(vpImageFilter::CANNY_COUNT_FILTERING)
+    , m_saveImages(false)
+#ifdef VISP_HAVE_DISPLAY
+    , m_useDisplay(true)
+#else
+    , m_useDisplay(false)
+#endif
   { }
 }SoftwareArguments;
 
@@ -77,7 +116,10 @@ void usage(const std::string &softName, const SoftwareArguments &options)
     << " [-i, --image <pathToImg>]"
     << " [-g, --gradient <kernelSize stdev>]"
     << " [-t, --thresh <lowerThresh upperThresh>]"
+    << " [-f, --filter " << vpImageFilter::vpGetCannyFiltAndGradTypes("<", " | ", ">") << "]"
     << " [-r, --ratio <lowerThreshRatio upperThreshRatio>]"
+    << " [-s, --save]" << std::endl
+    << " [-d, --no-display]" << std::endl
     << " [-h, --help]" << std::endl
     << std::endl;
   std::cout << "DESCRIPTION" << std::endl;
@@ -108,6 +150,18 @@ void usage(const std::string &softName, const SoftwareArguments &options)
     << "\t\tPermits to choose the type of filter to apply to compute the gradient." << std::endl
     << "\t\tAvailable values: " << vpImageFilter::vpGetCannyFiltAndGradTypes("<", " | ", ">") << std::endl
     << "\t\tDefault: " << vpImageFilter::vpCannyFiltAndGradTypeToStr(options.m_filteringType) << std::endl
+    << std::endl;
+  std::cout << "\t-s, --save" << std::endl
+    << "\t\tPermits to save the different images." << std::endl
+    << std::endl;
+  std::cout << "  -d, --no-display" << std::endl
+    << "    Deactivate display." << std::endl
+    << "    Default: display is "
+#ifdef VISP_HAVE_DISPLAY
+    << "ON" << std::endl
+#else
+    << "OFF" << std::endl
+#endif
     << std::endl;
   std::cout << "\t-h, --help" << std::endl
     << "\t\tPermits to display the different arguments this software handles." << std::endl
@@ -142,6 +196,12 @@ int main(int argc, const char *argv[])
       options.m_filteringType = vpImageFilter::vpCannyFiltAndGradTypeFromStr(std::string(argv[i + 1]));
       i++;
     }
+    else if (argv_str == "-s" || argv_str == "--save") {
+      options.m_saveImages = true;
+    }
+    else if (argv_str == "-d" || argv_str == "--no-display") {
+      options.m_useDisplay = false;
+    }
     else if (argv_str == "-h" || argv_str == "--help") {
       usage(std::string(argv[0]), options);
       return EXIT_SUCCESS;
@@ -173,6 +233,10 @@ int main(int argc, const char *argv[])
     std::cout << "This example only works on a real image. Please use the -i option." << std::endl;
     return EXIT_SUCCESS;
   }
+
+  vpImage<bool> *p_mask = nullptr;
+  cannyDetector.setMask(p_mask);
+
   vpImageConvert::convert(Iload, I_canny_input);
   vpImage<unsigned char> I_canny_visp = cannyDetector.detect(I_canny_input);
 
@@ -184,25 +248,55 @@ int main(int argc, const char *argv[])
 
   // Initialization of the displays
 #ifdef VISP_HAVE_DISPLAY
-  std::shared_ptr<vpDisplay> disp_input = vpDisplayFactory::createDisplay(Iload, -1, -1, "Input color image", vpDisplay::SCALE_AUTO);
-  int posX = disp_input->getWidth() + 20;
-  int posY = disp_input->getHeight() + 20;
-  std::shared_ptr<vpDisplay> disp_canny = vpDisplayFactory::createDisplay(I_canny_visp, posX, -1, "HSV Canny", vpDisplay::SCALE_AUTO);
-  std::shared_ptr<vpDisplay> disp_input_uc = vpDisplayFactory::createDisplay(Iin_convert, -1, posY, "Input converted image", vpDisplay::SCALE_AUTO);
-  std::shared_ptr<vpDisplay> disp_canny_uc = vpDisplayFactory::createDisplay(I_canny_uc, posX, posY, "UC Canny", vpDisplay::SCALE_AUTO);
-  vpDisplay::display(Iload);
-  vpDisplay::flush(Iload);
-  vpDisplay::display(Iin_convert);
-  vpDisplay::flush(Iin_convert);
-  vpDisplay::display(I_canny_uc);
-  vpDisplay::flush(I_canny_uc);
-  vpDisplay::display(I_canny_visp);
-  vpDisplay::displayText(I_canny_visp, vpImagePoint(20, 20), "Click to leave.", vpColor::red);
-  vpDisplay::flush(I_canny_visp);
-  vpDisplay::getClick(I_canny_visp);
+  vpImage<double> GIx, GIy, GI;
+  vpImageFilter::gradientFilter(I_canny_input, GIx, GIy, 1, p_mask, options.m_filteringType);
+  double min = 0., max = 0.;
+  computeAbsoluteGradient(GIx, GIy, GI, min, max);
+  vpImage<unsigned char> GIdisp = convertToDisplay(GI, min, max);
+
+  vpImage<double> GIx_uc, GIy_uc, GI_uc;
+  vpImageFilter::computePartialDerivatives(Iin_convert, GIx_uc, GIy_uc, true, true, true,
+    options.m_gaussianKernelSize, (double)options.m_gaussianStdev, uselessAperture, options.m_filteringType, vpImageFilter::CANNY_VISP_BACKEND, p_mask);
+  computeAbsoluteGradient(GIx_uc, GIy_uc, GI_uc, min, max);
+  vpImage<unsigned char> GIdisp_uc = convertToDisplay(GI_uc, min, max);
+
+  if (options.m_useDisplay) {
+    std::shared_ptr<vpDisplay> disp_input = vpDisplayFactory::createDisplay(Iload, -1, -1, "Input color image", vpDisplay::SCALE_AUTO);
+    int posX = disp_input->getWidth() + 20;
+    int posY = disp_input->getHeight() + 20;
+    std::shared_ptr<vpDisplay> disp_canny = vpDisplayFactory::createDisplay(I_canny_visp, posX, -1, "HSV Canny", vpDisplay::SCALE_AUTO);
+    std::shared_ptr<vpDisplay> disp_input_uc = vpDisplayFactory::createDisplay(Iin_convert, -1, posY, "Input converted image", vpDisplay::SCALE_AUTO);
+    std::shared_ptr<vpDisplay> disp_canny_uc = vpDisplayFactory::createDisplay(I_canny_uc, posX, posY, "UC Canny", vpDisplay::SCALE_AUTO);
+
+    std::shared_ptr<vpDisplay> disp_GI = vpDisplayFactory::createDisplay(GIdisp, 2 * posX, -1, "Gradient");
+    vpDisplay::display(GIdisp);
+    vpDisplay::flush(GIdisp);
+
+    std::shared_ptr<vpDisplay> disp_GI_uc = vpDisplayFactory::createDisplay(GIdisp_uc, 2 * posX, posY, "Gradient (unsigned char)");
+    vpDisplay::display(GIdisp_uc);
+    vpDisplay::flush(GIdisp_uc);
+
+    vpDisplay::display(Iload);
+    vpDisplay::flush(Iload);
+    vpDisplay::display(Iin_convert);
+    vpDisplay::flush(Iin_convert);
+    vpDisplay::display(I_canny_uc);
+    vpDisplay::flush(I_canny_uc);
+    vpDisplay::display(I_canny_visp);
+    vpDisplay::displayText(I_canny_visp, vpImagePoint(20, 20), "Click to leave.", vpColor::red);
+    vpDisplay::flush(I_canny_visp);
+    vpDisplay::getClick(I_canny_visp);
+  }
 #else
-  vpImageIo::write(I_canny_visp, "HSVCanny.jpg");
+  options.m_saveImages = true;
 #endif
+  if (options.m_saveImages) {
+    std::string basename = vpIoTools::getNameWE(options.m_img);
+    vpImageIo::write(I_canny_visp, "Canny_HSV_" + basename + ".jpg");
+    vpImageIo::write(I_canny_uc, "Canny_UC_" + basename + ".jpg");
+    vpImageIo::write(GIdisp, "Gradient_HSV_" + basename + ".jpg");
+    vpImageIo::write(GIdisp_uc, "Gradient_UC_" + basename + ".jpg");
+  }
   return EXIT_SUCCESS;
 }
 #else
