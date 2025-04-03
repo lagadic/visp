@@ -61,6 +61,7 @@ int main(int argc, const char **argv)
   vpRBTrackerTutorial::vpRBExperimentLogger logger;
   vpRBTrackerTutorial::vpRBExperimentPlotter plotter;
 
+
   vpJsonArgumentParser parser(
     "Tutorial showing the usage of the Render-Based tracker with a RealSense camera",
     "--config", "/"
@@ -193,9 +194,42 @@ int main(int argc, const char **argv)
 
     // Pose tracking
     double trackingStart = vpTime::measureTimeMs();
-    tracker.track(Id, Icol, depth);
+    vpRBTrackingResult result = tracker.track(Id, Icol, depth);
     double trackingEnd = vpTime::measureTimeMs();
     tracker.getPose(cMo);
+
+    switch (result.getStoppingReason()) {
+    case vpRBTrackingStoppingReason::EXCEPTION:
+    {
+      std::cout << "Encountered an exception during tracking, pose was not updated" << std::endl;
+      break;
+    }
+    case vpRBTrackingStoppingReason::NOT_ENOUGH_FEATURES:
+    {
+      std::cout << "There were not enough feature to perform tracking" << std::endl;
+      break;
+    }
+    case vpRBTrackingStoppingReason::OBJECT_NOT_IN_IMAGE:
+    {
+      std::cout << "Object is not in image" << std::endl;
+      break;
+    }
+    case vpRBTrackingStoppingReason::CONVERGENCE_CRITERION:
+    {
+      std::cout << "Convergence criterion reached:" << std::endl;
+      std::cout << "- Num iterations: " << result.numIterations() << std::endl;
+      std::cout << "- Convergence criterion2: " << *(result.getConvergenceMetricValues().end() - 1) << std::endl;
+      break;
+    }
+    case vpRBTrackingStoppingReason::MAX_ITERS:
+    {
+      break;
+    }
+    default:
+    {
+    }
+    }
+
     double displayStart = vpTime::measureTimeMs();
     if (baseArgs.display) {
       if (baseArgs.debugDisplay) {
@@ -208,6 +242,7 @@ int main(int argc, const char **argv)
       vpDisplay::display(Id);
       vpDisplay::display(Icol);
       tracker.display(Id, Icol, IdepthDisplay);
+
       vpDisplay::displayFrame(Icol, cMo, cam, 0.05, vpColor::none, 2);
       vpDisplay::displayText(Id, 20, 5, "Right click to exit", vpColor::red);
       vpMouseButton::vpMouseButtonType button;
