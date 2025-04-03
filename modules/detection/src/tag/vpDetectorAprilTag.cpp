@@ -208,7 +208,8 @@ public:
   Impl(const Impl &o)
     : m_poseEstimationMethod(o.m_poseEstimationMethod), m_tagsId(o.m_tagsId), m_tagFamily(o.m_tagFamily),
     m_tagsDecisionMargin(o.m_tagsDecisionMargin), m_tagsHammingDistance(o.m_tagsHammingDistance), m_td(nullptr),
-    m_tf(nullptr), m_detections(nullptr), m_zAlignedWithCameraFrame(o.m_zAlignedWithCameraFrame)
+    m_tf(nullptr), m_detections(nullptr), m_decisionMarginThreshold(o.m_decisionMarginThreshold),
+    m_hammingDistanceThreshold(o.m_hammingDistanceThreshold), m_zAlignedWithCameraFrame(o.m_zAlignedWithCameraFrame)
   {
     switch (m_tagFamily) {
     case TAG_36h11:
