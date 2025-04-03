@@ -128,7 +128,7 @@ public:
   /*! Destructor that does noting. */
 #if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
   vpKalmanFilter(const vpKalmanFilter &) = default;
-  virtual ~vpKalmanFilter() VP_OVERRIDE = default;
+  virtual ~vpKalmanFilter() = default;
 #else
   virtual ~vpKalmanFilter() { }
 #endif
