@@ -228,15 +228,17 @@ void vpRBSilhouetteCCDTracker::initVVS(const vpRBFeatureTrackerInput &/*frame*/,
   m_prevStats.reinit(resolution, normal_points_number);
   m_gradient = vpMatrix(m_ccdParameters.phi_dim, 1, 0.0);
   m_hessian = vpMatrix(m_ccdParameters.phi_dim, m_ccdParameters.phi_dim, 0.0);
-
+  m_gradientData.clear();
+  m_hessianData.clear();
+  m_gradients.clear();
+  m_hessians.clear();
   m_gradientData.resize(m_controlPoints.size() * 2 * normal_points_number * 6);
   m_hessianData.resize(m_controlPoints.size() * 2 * normal_points_number * 6 * 6);
   m_gradients.resize(m_controlPoints.size() * 2 * normal_points_number);
   m_hessians.resize(m_controlPoints.size() * 2 * normal_points_number);
-
   for (unsigned int i = 0; i < m_gradients.size(); ++i) {
-    m_gradients[i] = vpColVector::view(m_gradientData.data() + i * 6, 6);
-    m_hessians[i] = vpMatrix::view(m_hessianData.data() + i * 6 * 6, 6, 6);
+    m_gradients[i] = std::move(vpColVector::view(m_gradientData.data() + i * 6, 6));
+    m_hessians[i] = std::move(vpMatrix::view(m_hessianData.data() + i * 6 * 6, 6, 6));
   }
   m_weights.resize(m_numFeatures, false);
   if (m_temporalSmoothingFac > 0.0) {
