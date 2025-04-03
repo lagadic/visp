@@ -11,9 +11,9 @@
 
 //! [Macro defined]
 #if defined(VISP_HAVE_APRILTAG) && defined(VISP_HAVE_MODULE_MBT) && \
-  (defined(VISP_HAVE_V4L2) || \
-   ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || \
-   ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)))
+  (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_OPENCV) && \
+   (((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || \
+    ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))))
 //! [Macro defined]
 
 #include <fstream>

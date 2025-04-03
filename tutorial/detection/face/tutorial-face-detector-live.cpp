@@ -10,9 +10,12 @@
 // #undef HAVE_OPENCV_VIDEOIO
 //! [Undef grabber]
 
-#if defined(HAVE_OPENCV_IMGPROC) \
-  && (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_OBJDETECT)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_XOBJDETECT))) \
-  && (defined(VISP_HAVE_V4L2) || (((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))))
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && \
+    (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_OBJDETECT)) || \
+     ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_XOBJDETECT))) && \
+    (defined(VISP_HAVE_V4L2) || \
+    (((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || \
+     ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))))
 
 #include <visp3/detection/vpDetectorFace.h>
 #include <visp3/gui/vpDisplayFactory.h>
@@ -158,10 +161,10 @@ int main()
 #if !defined(HAVE_OPENCV_IMGPROC)
   std::cout << "This tutorial needs OpenCV imgproc module that is missing." << std::endl;
 #endif
-#if (VISP_HAVE_OPENCV_VERSION < 0x050000) && !defined(HAVE_OPENCV_OBJDETECT)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION < 0x050000) && !defined(HAVE_OPENCV_OBJDETECT)
   std::cout << "This tutorial needs OpenCV objdetect module that is missing." << std::endl;
 #endif
-#if ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && !defined(HAVE_OPENCV_XOBJDETECT))
+#if defined(VISP_HAVE_OPENCV) && ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && !defined(HAVE_OPENCV_XOBJDETECT))
   std::cout << "This tutorial needs OpenCV xobjdetect module that is missing." << std::endl;
 #endif
   }

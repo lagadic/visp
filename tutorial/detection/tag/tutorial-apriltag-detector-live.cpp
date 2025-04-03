@@ -17,9 +17,9 @@
 //! [Macro defined]
 #if defined(VISP_HAVE_APRILTAG) && \
   (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || \
-    defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2) || \
-    ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || \
-    ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)))
+    defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2) || defined(VISP_HAVE_OPENCV) && \
+    (((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || \
+     ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))))
 
 //! [Macro defined]
 
@@ -36,9 +36,9 @@
 #include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/gui/vpDisplayFactory.h>
 
-#if (VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)
 #include <opencv2/highgui/highgui.hpp> // for cv::VideoCapture
-#elif (VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)
+#elif defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)
 #include <opencv2/videoio/videoio.hpp>
 #endif
 
@@ -292,7 +292,9 @@ int main(int argc, const char **argv)
 
     std::cout << "Read camera parameters from Realsense device" << std::endl;
     cam = g.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithoutDistortion);
-#elif ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
+#elif defined(VISP_HAVE_OPENCV) && \
+    (((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || \
+     ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)))
     std::cout << "Use OpenCV grabber on device " << opt_device << std::endl;
     cv::VideoCapture g(opt_device); // Open the default camera
     if (!g.isOpened()) {            // Check if we succeeded
@@ -337,7 +339,9 @@ int main(int argc, const char **argv)
 #if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) ||                              \
     defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2)
       g.acquire(I);
-#elif ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
+#elif defined(VISP_HAVE_OPENCV) && \
+    (((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || \
+     ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)))
       g >> frame;
       vpImageConvert::convert(frame, I);
 #endif

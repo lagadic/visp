@@ -32,7 +32,9 @@
  */
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_OPENCV) && ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_OBJDETECT)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_XOBJDETECT))
+#if defined(VISP_HAVE_OPENCV) && \
+    (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_OBJDETECT)) || \
+     ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_XOBJDETECT)))
 
 #include <algorithm>
 

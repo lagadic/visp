@@ -10,7 +10,7 @@
 // #undef HAVE_OPENCV_VIDEOIO
 //! [Undef grabber]
 
-#if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO) && \
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO) && \
   (defined(VISP_HAVE_V4L2) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || \
                               ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)))
 
@@ -154,8 +154,9 @@ int main()
 #if !defined(HAVE_OPENCV_VIDEO)
   std::cout << "This tutorial needs OpenCV video module that is missing." << std::endl;
 #endif
-#if !(defined(VISP_HAVE_V4L2) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || \
-                                 ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)))
+#if !(defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_OPENCV) && \
+  (((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || \
+   ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))))
   std::cout << "This tutorial needs V4l2 or OpenCV grabber capabilities." << std::endl;
 #endif
 }
