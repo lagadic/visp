@@ -2,16 +2,16 @@
   \page tutorial-basic-drawings Tutorial: How to modify an image to insert basic drawings
   \tableofcontents
 
-\section basic_drawings_intro Introduction
+\section basic_drawings_intro 1. Introduction
 
 In this tutorial you will learn how to modify the content of an image adding basic drawings without the need of an image display window. This functionality could be useful if none of the following 3rd parties are available: <a href="https://visp.inria.fr/3rdparty_gui/">X11, GDI, OpenCV, GTK, Direct3D</a>.
 
-\section basic_drawings_draw Modify an image with basic drawings
+\section basic_drawings_draw 2. Modify an image with basic drawings
 
 There is the vpImageDraw class that allows to modify an image by inserting basic drawings like point, circle, line, rectangle, polygon, frame. There is also vpFont class that allows to modify an image to insert text. These classes are used in testImageDraw.cpp.
 
 If you run the corresponding binary:
-\code
+\code{.sh}
 $ cd $VISP_WS/visp-build/modules/core
 $ ./testImageDraw
 \endcode
@@ -22,7 +22,7 @@ it will create `canvas_color.png` and `canvas_gray.png` images that give a good 
 - Content of `canvas_gray.png` image that shows basic drawings inserted in a gray level image implemented as a `vpImage<unsigned char>` is the following:
 \image html img-tutorial-drawings-gray.png
 
-\subsection basic_drawings_point Draw a point in an image
+\subsection basic_drawings_point 2.1. Draw a point in an image
 
 The following snippet shows how to modify color image I drawing a red point at pixel location (100, 200).
 
@@ -41,7 +41,7 @@ unsigned char color = 255; // white
 vpImageDraw::drawPoint(I, ip, color);
 \endcode
 
-\subsection line Draw a line between 2 points
+\subsection line 2.2. Draw a line
 
 The following snippet shows how to modify color image I drawing an orange line with thickness 3 between pixels with coordinates (100, 200) and (300, 400).
 
@@ -62,7 +62,7 @@ unsigned char color = 0; // black
 vpImageDraw::drawLine(I, ip1, ip2, color, 3);
 \endcode
 
-\subsection circle Draw a circle
+\subsection circle 2.3. Draw a circle
 
 The following snippet shows how to modify color image I drawing a green cercle with thickness 3, centered at pixel location (100, 200) and with radius 80 pixels.
 
@@ -81,7 +81,7 @@ unsigned char color = 128; // gray
 vpImageDraw::drawCircle(I, ip, 80, color, 3);
 \endcode
 
-\subsection rectangle Draw a rectangle
+\subsection rectangle 2.4. Draw a rectangle
 
 The following snippet shows how to modify color image I drawing a yellow rectangle with thickness 3, with top left corner location (100, 200), and rectangle width and height set to 150, 80 respectively.
 
@@ -104,7 +104,7 @@ unsigned char color = 200; // light gray
 vpImageDraw::drawRectangle(I, vpRect(ip, w, h), color, false, 3);
 \endcode
 
-\subsection cross Draw a cross
+\subsection cross 2.5. Draw a cross
 
 The following snippet shows how to modify color image I drawing a blue cross with thickness 3, location (100, 200), and size 15 pixels.
 
@@ -127,7 +127,7 @@ unsigned char color = 50; // dark gray
 vpImageDraw::drawCross(I, ip, 15, color, 1);
 \endcode
 
-\subsection basic_drawings_adding_text Insert text in an image
+\subsection basic_drawings_adding_text 2.6. Insert text in an image
 
 The following snippet shows how to modify color image I drawing "Hello world" in white over a black background at location (100, 200).
 
@@ -147,7 +147,7 @@ unsigned char background = 0; // black
 font.drawText(I, "Test...", ip, color, background);
 \endcode
 
-\section basic_drawings_next Next tutorial
+\section basic_drawings_next 3. Next tutorial
 
 You are now ready to see how to continue with \ref tutorial-grabber.
 

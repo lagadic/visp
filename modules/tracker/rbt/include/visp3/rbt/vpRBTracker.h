@@ -147,6 +147,13 @@ public:
     m_muIterFactor = factor;
   }
 
+  bool scaleInvariantRegularization() const { return m_scaleInvariantOptim; }
+  inline void setScaleInvariantRegularization(bool invariant)
+  {
+
+    m_scaleInvariantOptim = invariant;
+  }
+
   std::shared_ptr<vpRBDriftDetector> getDriftDetector() const { return m_driftDetector; }
   inline void setDriftDetector(const std::shared_ptr<vpRBDriftDetector> &detector)
   {

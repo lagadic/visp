@@ -202,10 +202,10 @@ $ docker build -t vispci/vispci:ubuntu-18.04 .
 - You are now ready to run binaries that open GUI
 
       vispci@6c8d67579659:~$ cd $HOME/visp-ws/visp-build/tutorial/image
-      vispci@6c8d67579659:~$ ./tutorial-viewer monkey.png
+      vispci@6c8d67579659:~$ ./tutorial-viewer monkey.jpeg
       A click to quit...
 
-  \image html img-monkey.png
+  \image html img-monkey.jpg
 
 - If you are on an Ubuntu host, you are now ready to run binaries that require access to your camera.
 

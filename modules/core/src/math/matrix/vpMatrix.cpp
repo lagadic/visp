@@ -1862,7 +1862,11 @@ double vpMatrix::cond(double svThreshold) const
     return maxsv / minsv;
   }
   else {
+#if defined(VISP_HAVE_FAST_MATH)
+    return std::numeric_limits<double>::max();
+#else
     return std::numeric_limits<double>::infinity();
+#endif
   }
 }
 

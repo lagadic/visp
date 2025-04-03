@@ -1,38 +1,23 @@
 //! \example tutorial-export-image.cpp
 #include <visp3/core/vpConfig.h>
-#include <visp3/gui/vpDisplayD3D.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 int main()
 {
-#ifdef ENABLE_VISP_NAMESPACE
-  using namespace VISP_NAMESPACE_NAME;
-#endif
-
+#if defined(VISP_HAVE_DISPLAY)
   vpImage<unsigned char> I(240, 320, 255); // Create a black grey level image
   vpImage<vpRGBa> Ioverlay;
 
-  // Depending on the detected third party libraries, we instantiate here the
-  // first video device which is available
-#if defined(VISP_HAVE_X11)
-  vpDisplay *d = new vpDisplayX;
-#elif defined(VISP_HAVE_GTK)
-  vpDisplay *d = new vpDisplayGTK;
-#elif defined(VISP_HAVE_GDI)
-  vpDisplay *d = new vpDisplayGDI;
-#elif defined(VISP_HAVE_D3D9)
-  vpDisplay *d = new vpDisplayD3D;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-  vpDisplay *d = new vpDisplayOpenCV;
-#endif
-  // Initialize the display with the image I. Display and image are
-  // now link together.
-#ifdef VISP_HAVE_DISPLAY
-  d->init(I);
+  // Initialize the display with the image I. Display and image are now linked together
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> d = vpDisplayFactory::createDisplay(I, -1, -1, "Save overlayed image", vpDisplay::SCALE_AUTO);
+#else
+  vpDisplay *d = vpDisplayFactory::allocateDisplay(I, -1, -1, "Save overlayed image", vpDisplay::SCALE_AUTO);
 #endif
   // Set the display background with image I content
   vpDisplay::display(I);
@@ -43,13 +28,17 @@ int main()
   // Updates the color image with the original loaded image and the overlay
   vpDisplay::getImage(I, Ioverlay);
   // Write the color image on the disk
-  std::cout << "Save image in overlay.ppm" << std::endl;
   std::string ofilename("overlay.png");
+  std::cout << "Save overlayed image in: " << ofilename << std::endl;
   vpImageIo::write(Ioverlay, ofilename);
   // Wait for a click in the display window
   std::cout << "A click to quit..." << std::endl;
   vpDisplay::getClick(I);
-#ifdef VISP_HAVE_DISPLAY
+
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
   delete d;
+#endif
+#else
+  std::cout << "No gui available to display an image..." << std::endl;
 #endif
 }

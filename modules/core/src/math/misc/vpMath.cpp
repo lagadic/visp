@@ -81,6 +81,13 @@ typedef union Vp32suf
 #endif
 #endif
 
+void emitWarning(const std::string &message)
+{
+  std::cerr << "\033[0;31m";
+  std::cerr << message << std::endl;
+  std::cerr << "\033[0m";
+}
+
 const double vpMath::ang_min_sinc = 1.0e-8;
 const double vpMath::ang_min_mc = 2.5e-4;
 
@@ -91,6 +98,9 @@ const double vpMath::ang_min_mc = 2.5e-4;
  */
 bool vpMath::isNaN(double value)
 {
+#if defined(VISP_HAVE_FAST_MATH)
+  emitWarning("isNaN: You are testing whether a double value is a number, but are compiling with fast math options enabled. This function may return an incorrect result.");
+#endif
 #if defined(VISP_HAVE_FUNC_STD_ISNAN)
   return std::isnan(value);
 #elif defined(VISP_HAVE_FUNC_ISNAN)
@@ -112,6 +122,9 @@ bool vpMath::isNaN(double value)
  */
 bool vpMath::isNaN(float value)
 {
+#if defined(VISP_HAVE_FAST_MATH)
+  emitWarning("isNaN: You are testing whether a float value is a number, but are compiling with fast math options enabled. This function may return an incorrect result.");
+#endif
 #if defined(VISP_HAVE_FUNC_STD_ISNAN)
   return std::isnan(value);
 #elif defined(VISP_HAVE_FUNC_ISNAN)
@@ -135,6 +148,9 @@ bool vpMath::isNaN(float value)
  */
 bool vpMath::isInf(double value)
 {
+#if defined(VISP_HAVE_FAST_MATH)
+  emitWarning("isInf: You are testing whether a double value is infinite, but are compiling with fast math options enabled. This function may return an incorrect result.");
+#endif
 #if defined(VISP_HAVE_FUNC_STD_ISINF)
   return std::isinf(value);
 #elif defined(VISP_HAVE_FUNC_ISINF)
@@ -156,6 +172,9 @@ bool vpMath::isInf(double value)
  */
 bool vpMath::isInf(float value)
 {
+#if defined(VISP_HAVE_FAST_MATH)
+  emitWarning("isInf: You are testing whether a float value is infinite, but are compiling with fast math options enabled. This function may return an incorrect result.");
+#endif
 #if defined(VISP_HAVE_FUNC_STD_ISINF)
   return std::isinf(value);
 #elif defined(VISP_HAVE_FUNC_ISINF)

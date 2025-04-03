@@ -98,24 +98,11 @@ BEGIN_VISP_NAMESPACE
  *
  *   vpDisplay *d;
  *
- *   // Depending on the detected third party libraries, we instantiate here the
- *   // first video device which is available
- * #if defined(VISP_HAVE_X11)
- *   d = new vpDisplayX;
- * #elif defined(VISP_HAVE_GTK)
- *   d = new vpDisplayGTK;
- * #elif defined(VISP_HAVE_GDI)
- *   d = new vpDisplayGDI;
- * #elif defined(VISP_HAVE_D3D9)
- *   d = new vpDisplayD3D;
- * #elif defined(HAVE_OPENCV_HIGHGUI)
- *   d = new vpDisplayOpenCV;
- * #endif
- *
- *   // Initialize the display with the image I. Display and image are
- *   // now link together.
- * #ifdef VISP_HAVE_DISPLAY
- *   d->init(I);
+ *   // Initialize the display with the image I. Display and image are now linked together
+ * #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+ *   std::shared_ptr<vpDisplay> d = vpDisplayFactory::createDisplay(I);
+ * #else
+ *   vpDisplay *d = vpDisplayFactory::allocateDisplay(I);
  * #endif
  *
  *   // Specify the window location
@@ -124,9 +111,13 @@ BEGIN_VISP_NAMESPACE
  *   // Set the display window title
  *   vpDisplay::setTitle(I, "My image");
  *
- *   // To initialize the video device, it is also possible to replace
- *   // the 3 previous lines by:
+ *   // To initialize the video device, it is also possible to replace the 3 previous lines by:
  *   // d->init(I, 400, 100, "My image");
+ *   //#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+ *   //  std::shared_ptr<vpDisplay> d = vpDisplayFactory::createDisplay(I, 400, 100, "My image");
+ *   //#else
+ *   //  vpDisplay *d = vpDisplayFactory::allocateDisplay(I, 400, 100, "My image");
+ *   //#endif
  *
  *   // Set the display background with image I content
  *   vpDisplay::display(I);
@@ -138,8 +129,7 @@ BEGIN_VISP_NAMESPACE
  *   vpImagePoint topLeftCorner;
  *   topLeftCorner.set_i(50);
  *   topLeftCorner.set_j(10);
- *   vpDisplay::displayRectangle(I, topLeftCorner, 100, 20, vpColor::green,
- *                               true);
+ *   vpDisplay::displayRectangle(I, topLeftCorner, 100, 20, vpColor::green, true);
  *
  *   // Flush the foreground and background display
  *   vpDisplay::flush(I);
@@ -160,14 +150,17 @@ BEGIN_VISP_NAMESPACE
  *   std::cout << "Wait for a keyboard event..." << std::endl;
  *   ret = vpDisplay::getKeyboardEvent(I, key, true);
  *   std::cout << "keyboard event: " << ret << std::endl;
- *   if (ret)
+ *   if (ret) {
  *     std::cout << "key: " << "\"" << key << "\"" << std::endl;
+ *   }
  *
  *   // Wait for a click in the display window
  *   std::cout << "Wait for a button click..." << std::endl;
  *   vpDisplay::getClick(I);
  *
+ * #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
  *   delete d;
+ * #endif
  * }
  * \endcode
  *

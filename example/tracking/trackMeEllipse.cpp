@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,6 +46,7 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpTime.h>
 #include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/io/vpVideoReader.h>
@@ -53,7 +54,7 @@
 #include <visp3/me/vpMeEllipse.h>
 
 // List of allowed command line options
-#define GETOPTARGS "Aabcdf:hi:l:p:r:s:S:t:vw:"
+#define GETOPTARGS "Aabcdf:hi:l:p:r:s:S:t:T:vw:y"
 
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;
@@ -72,9 +73,11 @@ using namespace VISP_NAMESPACE_NAME;
   \param me_range : Moving-edges range.
   \param me_sample_step : Moving-edges sample step.
   \param me_threshold : Moving-edges threshold.
+  \param sleep_ms : Sleep time in ms.
 */
 void usage(const char *name, const char *badparam, const std::string &video_in_ipath, const std::string &video_in_ppath,
-           unsigned video_in_first, int video_in_last, int video_in_step, int me_range, int me_sample_step, int me_threshold)
+           unsigned video_in_first, int video_in_last, int video_in_step, int me_range, int me_sample_step,
+           int me_threshold, unsigned int &sleep_ms)
 {
 #if defined(VISP_HAVE_DATASET)
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
@@ -93,21 +96,19 @@ SYNOPSIS\n\
   %s [-i <visp dataset directory>] [-p <personal image path>]\n\
      [-f <video first image>] [-l <video last image>] [-s <video step>]\n\
      [-r <moving-edge range] [-t <moving-edge threshold] [-S <moving-edge sample step>]\n\
-     [-w <output images sequence name>] \n\
-     [-c] [-d] [-a] [-A] [-b] [-v] [-h]\n",
-    name);
+     [-w <output images sequence name>] [-T <sleep ms>]\n\
+     [-c] [-d] [-a] [-A] [-b] [-y] [-v] [-h]\n", name);
 
   fprintf(stdout, "\n\
-OPTIONS:                                               Default\n\
+OPTIONS:                                                  Default\n\
   -i <visp dataset directory>                                %s\n\
      Set visp dataset directory location.\n\
-     From this directory read images \n\
-     \"ellipse-1/image.%%04d.%s\"\n\
-     Setting the VISP_INPUT_IMAGE_PATH environment\n\
-     variable produces the same behaviour than using\n\
-     this option.\n\
+     From this directory read images \"ellipse-1/image.%%04d.%s\"\n\
+     images.\n\
+     Setting the VISP_INPUT_IMAGE_PATH environment variable\n\
+     produces the same behaviour than using this option.\n\
   \n\
-  -p <personal image path>                             %s\n\
+  -p <personal image path>                                   %s\n\
      Specify a personal sequence containing images \n\
      to process.\n\
      The format is selected by analyzing \n\
@@ -121,8 +122,8 @@ OPTIONS:                                               Default\n\
   \n\
   -l <video last image>                                      %d\n\
      Last image number to process. \n\
-     Set -1 to process images until the last image\n\
-     of the sequence.\n\
+     Set -1 to process images until the last image of the \n\
+     sequence.\n\
   \n\
   -s <video step>                                            %d\n\
      Step between two images.\n\
@@ -149,11 +150,19 @@ OPTIONS:                                               Default\n\
   -d \n\
      Turn off the display.\n\
   \n\
+  -y \n\
+     Enable step-by-step mode waiting for a mouse click to\n\
+     process next image.\n\
+  \n\
   -a \n\
      Enable arc of ellipse tracking.\n\
   \n\
   -b \n\
      Enable circle tracking.\n\
+  \n\
+  -T                                                         %d \n\
+     Sleep time in ms before processing next image.\n\
+     Allows to slow down the image processing. \n\
   \n\
   -w <output images sequence name>                        \n\
      Save images with tracking results in overlay.\n\
@@ -169,24 +178,24 @@ OPTIONS:                                               Default\n\
   -h\n\
      Print the help.\n",
     video_in_ipath.c_str(), ext.c_str(), video_in_ppath.c_str(), ext.c_str(), video_in_first, video_in_last,
-    video_in_step, me_range, me_sample_step, me_threshold);
+    video_in_step, me_range, me_sample_step, me_threshold, sleep_ms);
 
-  if (badparam)
+  if (badparam) {
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
+  }
 }
 
 /*!
-
   Set the program options.
 
   \param argc : Command line number of parameters.
   \param argv : Array of command line parameters.
   \param video_in_ipath : Input image path.
-  \param click_allowed : Mouse click activation.
   \param video_in_ppath : Personal image path.
   \param video_in_first : First image to process.
   \param video_in_last : Last image to process.
   \param video_in_step : Step between two images.
+  \param click_allowed : Mouse click activation.
   \param display : Display activation.
   \param display_scale_auto : When display is activated, enable windows auto scaling.
   \param track_circle : Enable circle tracking.
@@ -195,15 +204,17 @@ OPTIONS:                                               Default\n\
   \param me_range : Moving-edges range.
   \param me_sample_step : Moving-edges sample step.
   \param me_threshold : Moving-edges threshold.
+  \param step_by_step : Enable step by step mode.
+  \param sleep_ms : Sleep time in ms.
   \param verbose : Enable verbosity.
 
   \return false if the program has to be stopped, true otherwise.
-
 */
 bool getOptions(int argc, const char **argv, std::string &video_in_ipath, std::string &video_in_ppath,
   int &video_in_first, int &video_in_last, int &video_in_step,
   bool &click_allowed, bool &display, bool &display_scale_auto, bool &track_circle, bool &track_arc,
-  std::string &video_out_save, int &me_range, int &me_sample_step, int &me_threshold, bool &verbose)
+  std::string &video_out_save, int &me_range, int &me_sample_step, int &me_threshold, bool &step_by_step,
+  unsigned int &sleep_ms, bool &verbose)
 {
   const char *optarg_;
   int c;
@@ -249,19 +260,25 @@ bool getOptions(int argc, const char **argv, std::string &video_in_ipath, std::s
     case 't':
       me_threshold = atoi(optarg_);
       break;
+    case 'T':
+      sleep_ms = atoi(optarg_);
+      break;
     case 'w':
       video_out_save = std::string(optarg_);
       break;
     case 'v':
       verbose = true;
       break;
+    case 'y':
+      step_by_step = true;
+      break;
     case 'h':
-      usage(argv[0], nullptr, video_in_ipath, video_in_ppath, video_in_first, video_in_last, video_in_step, me_range, me_sample_step, me_threshold);
+      usage(argv[0], nullptr, video_in_ipath, video_in_ppath, video_in_first, video_in_last, video_in_step, me_range, me_sample_step, me_threshold, sleep_ms);
       return false;
       break;
 
     default:
-      usage(argv[0], optarg_, video_in_ipath, video_in_ppath, video_in_first, video_in_last, video_in_step, me_range, me_sample_step, me_threshold);
+      usage(argv[0], optarg_, video_in_ipath, video_in_ppath, video_in_first, video_in_last, video_in_step, me_range, me_sample_step, me_threshold, sleep_ms);
       return false;
       break;
     }
@@ -269,7 +286,7 @@ bool getOptions(int argc, const char **argv, std::string &video_in_ipath, std::s
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], nullptr, video_in_ipath, video_in_ppath, video_in_first, video_in_last, video_in_step, me_range, me_sample_step, me_threshold);
+    usage(argv[0], nullptr, video_in_ipath, video_in_ppath, video_in_first, video_in_last, video_in_step, me_range, me_sample_step, me_threshold, sleep_ms);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -299,6 +316,8 @@ int main(int argc, const char **argv)
   bool opt_track_arc = false;
   bool opt_verbose = false;
   std::string opt_save;
+  bool opt_step_by_step = false;
+  unsigned int opt_sleep_ms = 0;
   unsigned int thickness = 1;
 
   // Declare an image, this is a gray level image (unsigned char)
@@ -331,7 +350,7 @@ int main(int argc, const char **argv)
     // Read the command line options
     if (getOptions(argc, argv, opt_ipath, opt_ppath, opt_first, opt_last, opt_step, opt_click_allowed,
                    opt_display, opt_display_scale_auto, opt_track_circle, opt_track_arc, opt_save,
-                   opt_me_range, opt_me_sample_step, opt_me_threshold, opt_verbose) == false) {
+                   opt_me_range, opt_me_sample_step, opt_me_threshold, opt_step_by_step, opt_sleep_ms, opt_verbose) == false) {
       return EXIT_FAILURE;
     }
 
@@ -353,7 +372,7 @@ int main(int argc, const char **argv)
 
     // Test if an input path is set
     if (opt_ipath.empty() && env_ipath.empty() && opt_ppath.empty()) {
-      usage(argv[0], nullptr, ipath, opt_ppath, opt_first, opt_last, opt_step, opt_me_range, opt_me_sample_step, opt_me_threshold);
+      usage(argv[0], nullptr, ipath, opt_ppath, opt_first, opt_last, opt_step, opt_me_range, opt_me_sample_step, opt_me_threshold, opt_sleep_ms);
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
         << "  environment variable to specify the location of the " << std::endl
@@ -399,8 +418,16 @@ int main(int argc, const char **argv)
       if (opt_display_scale_auto) {
         display->setDownScalingFactor(vpDisplay::SCALE_AUTO);
       }
+      std::stringstream ss;
+      if (g.isVideoFormat()) {
+        ss << "Init tracker image " << g.getFrameIndex();
+      }
+      else {
+        std::string image_name = vpIoTools::getName(vpIoTools::formatString(g.getFrameName(), g.getFrameIndex()));
+        ss << "Init tracker image " << image_name;
+      }
       // Display size is automatically defined by the image (I) size
-      display->init(I, 10, 10, "Current image");
+      display->init(I, 10, 10, ss.str());
       // Display the image
       // The image class has a member that specify a pointer toward
       // the display that has been initialized in the display declaration
@@ -447,6 +474,11 @@ int main(int argc, const char **argv)
     std::cout << "  Threshold type: " << (me_ellipse.getMe()->getLikelihoodThresholdType() == vpMe::NORMALIZED_THRESHOLD ? "normalized" : "old threshold (to be avoided)") << std::endl;
     std::cout << "  Threshold     : " << me_ellipse.getMe()->getThreshold() << std::endl;
 
+    if (!opt_save.empty()) {
+      std::cout << "Create video with tracking results" << std::endl;
+      std::cout << "  Name          : " << opt_save << std::endl;
+    }
+
     if (opt_click_allowed) {
       me_ellipse.initTracking(I, opt_track_circle, opt_track_arc);
     }
@@ -463,6 +495,7 @@ int main(int argc, const char **argv)
     }
     if (opt_display) {
       me_ellipse.display(I, vpColor::green, thickness);
+      vpDisplay::flush(I);
     }
 
     if (opt_display && opt_click_allowed) {
@@ -475,18 +508,28 @@ int main(int argc, const char **argv)
       // Read the image
       g.acquire(I);
       std::stringstream ss;
-      ss << "Process image " << g.getFrameIndex();
+      if (g.isVideoFormat()) {
+        ss << "Image " << g.getFrameIndex();
+      }
+      else {
+        std::string image_name = vpIoTools::getName(g.getFrameName());
+        ss << "Image " << image_name;
+      }
+
       if (opt_verbose) {
         std::cout << "-- " << ss.str() << std::endl;
       }
       if (opt_display) {
         // Display the image
         vpDisplay::display(I);
-        vpDisplay::displayText(I, 20, 10, ss.str(), vpColor::red);
+        vpDisplay::setTitle(I, ss.str());
         if (opt_click_allowed) {
-          vpDisplay::displayText(I, 40, 10, "Click to exit...", vpColor::red);
-          if (vpDisplay::getClick(I, false)) {
-            quit = true;
+          vpDisplay::displayText(I, 20, I.getWidth() - 150, std::string("Mode: ") + (opt_step_by_step ? std::string("step-by-step") : std::string("continuous")), vpColor::red);
+          vpDisplay::displayText(I, 40, I.getWidth() - 150, ss.str(), vpColor::red);
+          vpDisplay::displayText(I, 20, 10, "Right click to exit", vpColor::red);
+          vpDisplay::displayText(I, 40, 10, "Middle click to change mode", vpColor::red);
+          if (opt_step_by_step) {
+            vpDisplay::displayText(I, 60, 10, "Left click to process next image", vpColor::red);
           }
         }
       }
@@ -495,10 +538,30 @@ int main(int argc, const char **argv)
       if (opt_display) {
         me_ellipse.display(I, vpColor::green, thickness);
         vpDisplay::flush(I);
+        if (opt_click_allowed) {
+          vpMouseButton::vpMouseButtonType button;
+          if (vpDisplay::getClick(I, button, opt_step_by_step)) {
+            if (button == vpMouseButton::button3) {
+              quit = true;
+            }
+            else if (button == vpMouseButton::button2) {
+              if (opt_step_by_step) {
+                opt_step_by_step = false;
+              }
+              else {
+                opt_step_by_step = true;
+              }
+            }
+          }
+        }
       }
       if (!opt_save.empty()) {
         vpDisplay::getImage(I, O);
         writer->saveFrame(O);
+      }
+
+      if (opt_sleep_ms) {
+        vpTime::sleepMs(opt_sleep_ms);
       }
     }
 
@@ -520,7 +583,7 @@ int main(int argc, const char **argv)
       vpDisplay::getClick(I);
     }
     return EXIT_FAILURE;
-  }
+    }
 #else
   (void)argc;
   (void)argv;
@@ -536,6 +599,6 @@ int main()
     "functionalities are required..."
     << std::endl;
   return EXIT_SUCCESS;
-}
+  }
 
 #endif
