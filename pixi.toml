@@ -87,7 +87,7 @@ configure = { cmd = [
   "-DBUILD_EXAMPLES=OFF",
   "$VISP_EXTRA_CMAKE_ARGS"
 ] }
-build-base = { cmd = "cmake --build $VISP_BUILD_DIR --parallel 1", depends-on = ["configure"] }
+build-base = { cmd = "cmake --build $VISP_BUILD_DIR --parallel $CPU_COUNT", depends-on = ["configure"] }
 build = { depends-on = ["build-base"]}
 install = { cmd = "cmake --build $VISP_BUILD_DIR --target install", depends-on = ["build-base"] }
 clean = { cmd = "rm -rf $VISP_BUILD_DIR" }
