@@ -47,9 +47,6 @@ const unsigned int vpRxyzVector::constr_val_3 = 3;
 /*! Default constructor that initialize all the 3 angles to zero. */
 vpRxyzVector::vpRxyzVector() : vpRotationVector(constr_val_3) { }
 
-/*! Copy constructor. */
-vpRxyzVector::vpRxyzVector(const vpRxyzVector &rxyz) : vpRotationVector(rxyz) { }
-
 /*!
   Constructor from 3 angles (in radian).
   \param phi : \f$\varphi\f$ angle around the \f$x\f$ axis.

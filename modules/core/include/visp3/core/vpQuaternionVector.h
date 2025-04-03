@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,7 +106,12 @@ class VISP_EXPORT vpQuaternionVector : public vpRotationVector
 {
 public:
   vpQuaternionVector();
-  vpQuaternionVector(const vpQuaternionVector &q);
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+  vpQuaternionVector(const vpQuaternionVector &) = default;
+  virtual ~vpQuaternionVector() VP_OVERRIDE = default;
+#else
+  virtual ~vpQuaternionVector() { }
+#endif
   vpQuaternionVector(const double qx, const double qy, const double qz, const double qw);
   VP_EXPLICIT vpQuaternionVector(const vpRotationMatrix &R);
   VP_EXPLICIT vpQuaternionVector(const vpThetaUVector &tu);

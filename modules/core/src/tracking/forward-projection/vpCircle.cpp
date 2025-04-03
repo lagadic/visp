@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +29,7 @@
  *
  * Description:
  * Visual feature circle.
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpCircle.h>
 
@@ -126,11 +125,6 @@ vpCircle::vpCircle(double oA, double oB, double oC, double oX, double oY, double
   init();
   setWorldCoordinates(oA, oB, oC, oX, oY, oZ, R);
 }
-
-/*!
- * Default destructor that does nothing.
- */
-vpCircle::~vpCircle() { }
 
 /*!
   Perspective projection of the circle.

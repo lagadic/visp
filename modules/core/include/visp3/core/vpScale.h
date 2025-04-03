@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,8 +45,8 @@
  */
 // ==========================================================
 
-#ifndef VPSCALE_HH
-#define VPSCALE_HH
+#ifndef VP_SCALE_H
+#define VP_SCALE_H
 
 #include <math.h>
 #include <visp3/core/vpColVector.h>
@@ -76,8 +76,12 @@ public:
   //! Constructor
   vpScale();
   vpScale(double kernel_bandwidth, unsigned int dim = 1);
-  //! Destructor
-  virtual ~vpScale(void);
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+  vpScale(const vpScale &) = default;
+  virtual ~vpScale() = default;
+#else
+  virtual ~vpScale() { }
+#endif
 
   double MeanShift(vpColVector &error);
   double KernelDensity(vpColVector &error, unsigned int position);
@@ -85,6 +89,10 @@ public:
 
   double KernelDensity_EPANECHNIKOV(vpColVector &X);
   double KernelDensityGradient_EPANECHNIKOV(double X, unsigned int n);
+
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+  vpScale &operator=(const vpScale &) = default;
+#endif
 };
 END_VISP_NAMESPACE
 #endif

@@ -45,8 +45,6 @@ BEGIN_VISP_NAMESPACE
 const unsigned int vpRzyzVector::constr_val_3 = 3;
 /*! Default constructor that initialize all the 3 angles to zero. */
 vpRzyzVector::vpRzyzVector() : vpRotationVector(constr_val_3) { }
-/*! Copy constructor. */
-vpRzyzVector::vpRzyzVector(const vpRzyzVector &rzyz) : vpRotationVector(rzyz) { }
 
 /*!
   Constructor from 3 angles (in radian).

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@
   \brief Generic kalman filtering implementation
 */
 
-#ifndef vpKalmanFilter_h
-#define vpKalmanFilter_h
+#ifndef VP_KALMAN_FILTER_H
+#define VP_KALMAN_FILTER_H
 
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpMatrix.h>
@@ -126,7 +126,12 @@ public:
   VP_EXPLICIT vpKalmanFilter(unsigned int n_signal);
   vpKalmanFilter(unsigned int size_state, unsigned int size_measure, unsigned int n_signal);
   /*! Destructor that does noting. */
-  virtual ~vpKalmanFilter() { };
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+  vpKalmanFilter(const vpKalmanFilter &) = default;
+  virtual ~vpKalmanFilter() VP_OVERRIDE = default;
+#else
+  virtual ~vpKalmanFilter() { }
+#endif
   /*!
     Set the number of signal to filter.
   */
@@ -152,6 +157,10 @@ public:
     Return the iteration number.
   */
   long getIteration() { return iter; }
+
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+  vpKalmanFilter &operator=(const vpKalmanFilter &) = default;
+#endif
   /*!
     Sets the verbose mode.
     \param on : If true, activates the verbose mode which consists in printing

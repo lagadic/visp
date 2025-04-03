@@ -114,6 +114,7 @@ public:
   vpFrameGrabber() : init(false), height(0), width(0) { };
 
 #if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+  vpFrameGrabber(const vpFrameGrabber &) = default;
   virtual ~vpFrameGrabber() = default;
 #else
   virtual ~vpFrameGrabber() { }
@@ -129,6 +130,10 @@ public:
    * the memory used by a specific frame grabber
    */
   virtual void close() = 0;
+
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+  vpFrameGrabber &operator=(const vpFrameGrabber &) = default;
+#endif
 
 protected:
   unsigned int height; //!< Number of rows in the image.
