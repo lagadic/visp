@@ -897,7 +897,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/win-64/openh264-2.6.0-hb17fa0b_0.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/openjpeg-2.5.3-h4d64b90_0.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/openssl-3.4.1-ha4e3fda_0.conda
-      - conda: https://conda.anaconda.org/olivier.roussel/win-64/panda3d-1.10.15-fix_clang_cl_py313_h0b52702_101.conda
+      - conda: https://conda.anaconda.org/olivier.roussel/win-64/panda3d-1.10.15-fix_clang_cl_py313_h0b52702_102.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/pango-1.56.3-h286b592_0.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/pcre2-10.44-h3d7b363_2.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pip-25.0.1-pyh145f28c_0.conda
@@ -11379,9 +11379,9 @@ packages:
   license_family: BSD
   size: 80128
   timestamp: 1670387790769
-- conda: https://conda.anaconda.org/olivier.roussel/win-64/panda3d-1.10.15-fix_clang_cl_py313_h0b52702_101.conda
-  sha256: f482cc40d6195346f340b1e444c72db007d7483f808930f52bc6dad081b846ec
-  md5: c703fb990ec01572be8360a6b301cb10
+- conda: https://conda.anaconda.org/olivier.roussel/win-64/panda3d-1.10.15-fix_clang_cl_py313_h0b52702_102.conda
+  sha256: 8d05e7c41a3673e14e1502ed98d5c7f3aea5bd7f3db3454b4332a03d54bbd07d
+  md5: f4fe14671ae546fbc4c76191511936c7
   depends:
   - python
   - numpy >=2.2.4,<3.0a0
@@ -11400,27 +11400,27 @@ packages:
   - vc >=14.2,<15
   - vc14_runtime >=14.29.30139
   - ucrt >=10.0.20348.0
+  - openssl >=3.4.1,<4.0a0
+  - libvorbis >=1.3.7,<1.4.0a0
+  - ffmpeg >=7.1.1,<8.0a0
+  - openal-soft >=1.24.3,<1.25.0a0
+  - libode >=0.16.5,<0.16.6.0a0
+  - assimp >=5.4.3,<5.4.4.0a0
+  - mimalloc >=3.0.1,<3.0.2.0a0
   - numpy >=1.21,<3
   - libzlib >=1.3.1,<2.0a0
-  - harfbuzz >=10.4.0,<11.0a0
-  - openal-soft >=1.24.3,<1.25.0a0
-  - bullet-cpp >=3.25,<3.26.0a0
   - fftw >=3.3.10,<4.0a0
-  - libode >=0.16.5,<0.16.6.0a0
-  - openssl >=3.4.1,<4.0a0
   - libjpeg-turbo >=3.0.0,<4.0a0
   - libogg >=1.3.5,<1.4.0a0
-  - mimalloc >=3.0.1,<3.0.2.0a0
-  - libvorbis >=1.3.7,<1.4.0a0
-  - freetype >=2.13.3,<3.0a0
   - libpng >=1.6.47,<1.7.0a0
   - fltk >=1.3.10,<1.4.0a0
-  - assimp >=5.4.3,<5.4.4.0a0
+  - bullet-cpp >=3.25,<3.26.0a0
+  - freetype >=2.13.3,<3.0a0
+  - harfbuzz >=10.4.0,<11.0a0
   - python_abi 3.13.* *_cp313
-  - ffmpeg >=7.1.1,<8.0a0
   license: BSD-3-Clause
-  size: 83229078
-  timestamp: 1743606185312
+  size: 83250077
+  timestamp: 1743692366506
 - conda: https://conda.anaconda.org/panda3d-forge/linux-64/panda3d-1.10.15-np2py313h584d56d_1.conda
   sha256: a5eb559e937c85e28632075f4da57a0b9625675f881cab60cfff5127df3c0c7c
   md5: eeeb9bc29cfe4afa316c7a005f637bfd
