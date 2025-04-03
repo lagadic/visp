@@ -189,12 +189,46 @@ int main(int argc, const char **argv)
 
     // Pose tracking
     double trackingStart = vpTime::measureTimeMs();
+    vpRBTrackingResult trackingResult;
     if (depth.getSize() == 0) {
-      tracker.track(Id, Icol);
+      trackingResult = tracker.track(Id, Icol);
     }
     else {
-      tracker.track(Id, Icol, depth);
+      trackingResult = tracker.track(Id, Icol, depth);
     }
+
+    switch (trackingResult.getStoppingReason()) {
+    case vpRBTrackingStoppingReason::EXCEPTION:
+    {
+      std::cout << "Encountered an exception during tracking, pose was not updated" << std::endl;
+      break;
+    }
+    case vpRBTrackingStoppingReason::NOT_ENOUGH_FEATURES:
+    {
+      std::cout << "There were not enough feature to perform tracking" << std::endl;
+      break;
+    }
+    case vpRBTrackingStoppingReason::OBJECT_NOT_IN_IMAGE:
+    {
+      std::cout << "Object is not in image" << std::endl;
+      break;
+    }
+    case vpRBTrackingStoppingReason::CONVERGENCE_CRITERION:
+    {
+      std::cout << "Convergence criterion reached:" << std::endl;
+      std::cout << "- Num iterations: " << trackingResult.numIterations() << std::endl;
+      std::cout << "- Convergence criterion: " << *(trackingResult.getConvergenceMetricValues().end() - 1) << std::endl;
+      break;
+    }
+    case vpRBTrackingStoppingReason::MAX_ITERS:
+    {
+      break;
+    }
+    default:
+    {
+    }
+    }
+
     std::cout << "Tracking took " << vpTime::measureTimeMs() - trackingStart << "ms" << std::endl;
 
     if (baseArgs.display) {

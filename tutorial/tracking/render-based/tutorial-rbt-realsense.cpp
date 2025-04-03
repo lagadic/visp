@@ -218,7 +218,7 @@ int main(int argc, const char **argv)
     {
       std::cout << "Convergence criterion reached:" << std::endl;
       std::cout << "- Num iterations: " << result.numIterations() << std::endl;
-      std::cout << "- Convergence criterion2: " << *(result.getConvergenceMetricValues().end() - 1) << std::endl;
+      std::cout << "- Convergence criterion: " << *(result.getConvergenceMetricValues().end() - 1) << std::endl;
       break;
     }
     case vpRBTrackingStoppingReason::MAX_ITERS:
