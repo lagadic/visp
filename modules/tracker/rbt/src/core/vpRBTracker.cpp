@@ -211,7 +211,6 @@ vpRBTrackingResult vpRBTracker::track(const vpImage<unsigned char> &I, const vpI
 
 vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
 {
-
   vpRBTrackingResult result;
   vpRBTrackingTimings &timer = result.timer();
   timer.reset();
@@ -350,18 +349,6 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
       id += 1;
     }
 
-    //! Check if all trackers have converged
-    bool converged = true;
-    for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
-      if (!tracker->vvsHasConverged()) {
-        converged = false;
-        break;
-      }
-    }
-    if (converged) {
-      break;
-    }
-
     vpMatrix LTL(6, 6, 0.0);
     vpColVector LTR(6, 0.0);
     double error = 0.f;
@@ -373,8 +360,6 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
         const double weight = tracker->getVVSTrackerWeight();
         LTL += weight * tracker->getLTL();
         LTR += weight * tracker->getLTR();
-
-
         error += weight * (tracker->getWeightedError()).sumSquare();
 
         //std::cout << "Error = " << (weight * tracker->getWeightedError()).sumSquare() << std::endl;
@@ -410,15 +395,18 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
       result.logFeatures(m_trackers);
 
       double convergenceMetric = 0.0;
-
-      if (iter > 0 && m_convergedMetricThreshold > 0.0 && m_convergenceMetric.ADDS(m_cMoPrevIter, m_cMo) < m_convergedMetricThreshold) {
+      bool converged = false;
+      if (m_convergedMetricThreshold > 0) {
         convergenceMetric = m_convergenceMetric.ADDS(m_cMoPrevIter, m_cMo);
-        if (convergenceMetric < m_convergedMetricThreshold) {
-          result.setStoppingReason(vpRBTrackingStoppingReason::CONVERGENCE_CRITERION);
-          break;
+        if (iter > 0 && convergenceMetric < m_convergedMetricThreshold) {
+          converged = true;
         }
       }
       result.onEndIter(m_cMo, v, convergenceMetric, LTL, LTR, mu);
+      if (converged) {
+        result.setStoppingReason(vpRBTrackingStoppingReason::CONVERGENCE_CRITERION);
+        break;
+      }
 
       mu *= m_muIterFactor;
       m_cMoPrevIter = m_cMo;
@@ -563,10 +551,10 @@ vpRBTracker::extractSilhouettePoints(const vpImage<vpRGBf> &Inorm, const vpImage
       vpRBSilhouettePoint p(n, m, norm, theta, Z);
       p.detectSilhouette(Idepth);
       points.push_back(p);
+      }
     }
-  }
   return points;
-}
+  }
 
 void vpRBTracker::addTracker(std::shared_ptr<vpRBFeatureTracker> tracker)
 {
