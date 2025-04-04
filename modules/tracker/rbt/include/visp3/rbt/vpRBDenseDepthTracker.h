@@ -124,7 +124,7 @@ public:
 
   void setDisplayType(vpDisplayType type)
   {
-    if (type == INVALID) {
+    if (type == DT_INVALID) {
       throw vpException(vpException::badValue, "Depth tracker display type is invalid");
     }
     m_displayType = type;
