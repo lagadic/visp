@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -991,7 +991,7 @@ public:
       while (header[headerSize] != '\0') {
         ++headerSize;
       }
-      file.write(header, static_cast<size_t>(headerSize)+static_cast<size_t>(1));
+      file.write(header, static_cast<std::streamsize>(headerSize)+static_cast<std::streamsize>(1));
       unsigned int matrixSize;
       matrixSize = A.getRows();
       file.write(reinterpret_cast<char *>(&matrixSize), sizeof(unsigned int));
