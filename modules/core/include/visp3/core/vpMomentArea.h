@@ -64,8 +64,8 @@ public:
   //@{
   void compute();
   //! Moment name.
-  const std::string name() const { return "vpMomentArea"; }
-  void printDependencies(std::ostream &os) const;
+  const std::string name() const VP_OVERRIDE { return "vpMomentArea"; }
+  void printDependencies(std::ostream &os) const VP_OVERRIDE;
   //@}
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentArea &m);
 };

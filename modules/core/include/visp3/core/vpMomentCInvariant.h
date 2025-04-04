@@ -228,7 +228,7 @@ public:
   /*!
     Moment name.
     */
-  const std::string name() const { return "vpMomentCInvariant"; }
+  const std::string name() const VP_OVERRIDE { return "vpMomentCInvariant"; }
 
   /*!
     Print partial invariant.

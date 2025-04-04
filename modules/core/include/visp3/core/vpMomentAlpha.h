@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -217,7 +217,7 @@ public:
   vpMomentAlpha();
   vpMomentAlpha(const std::vector<double> &mu3_ref, double alpha_ref, double threshold = 1e-6);
 
-  void compute();
+  void compute() VP_OVERRIDE;
   /*!
    * Retrieve the orientation of the object as a single double value.
    */
@@ -225,7 +225,7 @@ public:
   /*!
    * Moment name.
    */
-  const std::string name() const { return "vpMomentAlpha"; }
+  const std::string name() const VP_OVERRIDE { return "vpMomentAlpha"; }
 
   /*!
    * Returns true if the alpha moment was constructed as a reference with values in \f$ [-\pi/2 ; \pi/2] \f$, false
@@ -252,7 +252,7 @@ public:
   }
 
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentAlpha &v);
-  void printDependencies(std::ostream &os) const;
+  void printDependencies(std::ostream &os) const VP_OVERRIDE;
 };
 END_VISP_NAMESPACE
 #endif

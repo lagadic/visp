@@ -85,11 +85,11 @@ public:
   /*!
      Moment name.
   */
-  inline const std::string name() const { return "vpMomentCentered"; }
+  inline const std::string name() const VP_OVERRIDE { return "vpMomentCentered"; }
 
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentCentered &v);
   void printWithIndices(std::ostream &os) const;
-  void printDependencies(std::ostream &os) const;
+  void printDependencies(std::ostream &os) const VP_OVERRIDE;
 
 protected:
   void set(unsigned int i, unsigned int j, double value);

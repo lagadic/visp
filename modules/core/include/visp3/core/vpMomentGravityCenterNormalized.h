@@ -65,8 +65,8 @@ public:
   vpMomentGravityCenterNormalized();
   void compute();
   //! Moment name.
-  const std::string name() const { return "vpMomentGravityCenterNormalized"; }
-  void printDependencies(std::ostream &os) const;
+  const std::string name() const VP_OVERRIDE { return "vpMomentGravityCenterNormalized"; }
+  void printDependencies(std::ostream &os) cons VP_OVERRIDE t;
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentGravityCenterNormalized &v);
 };
 END_VISP_NAMESPACE

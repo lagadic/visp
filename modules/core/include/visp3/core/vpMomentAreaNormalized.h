@@ -183,9 +183,9 @@ public:
   /*!
    * Moment name.
    */
-  const std::string name() const { return "vpMomentAreaNormalized"; }
+  const std::string name() const VP_OVERRIDE { return "vpMomentAreaNormalized"; }
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentAreaNormalized &v);
-  void printDependencies(std::ostream &os) const;
+  void printDependencies(std::ostream &os) const VP_OVERRIDE;
 };
 END_VISP_NAMESPACE
 #endif

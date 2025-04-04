@@ -134,8 +134,8 @@ public:
   /*!
    * The class's string name.
    */
-  const std::string name() const { return "vpMomentGravityCenter"; }
-  void printDependencies(std::ostream &os) const;
+  const std::string name() const VP_OVERRIDE { return "vpMomentGravityCenter"; }
+  void printDependencies(std::ostream &os) const VP_OVERRIDE;
   //@}
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentGravityCenter &v);
 };
