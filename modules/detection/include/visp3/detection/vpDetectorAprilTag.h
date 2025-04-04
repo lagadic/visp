@@ -266,52 +266,52 @@ public:
     TAG_STANDARD52h13,   ///< AprilTag Standard52h13 pattern
     TAG_ARUCO_4x4_50,    /*!< ArUco 4x4 pattern: 4x4 bits, minimum hamming distance between any two codes = 4, 50 codes.\n
                             This tag family can produce lots of false detections which can be filtered by setting an
-                            appropriate decision margin
-                            (e.g. using \ref setAprilTagDecisionMarginThreshold or \ref getTagsDecisionMargin) */
+                            appropriate decision margin, using setAprilTagDecisionMarginThreshold() or
+                            getTagsDecisionMargin(). See \ref apriltag_detection_tips_filter section for more details. */
     TAG_ARUCO_4x4_100,   /*!< ArUco 4x4 pattern: 4x4 bits, minimum hamming distance between any two codes = 3, 100 codes.\n
                             This tag family can produce lots of false detections which can be filtered by setting an
-                            appropriate decision margin
-                            (e.g. using \ref setAprilTagDecisionMarginThreshold or \ref getTagsDecisionMargin) */
+                            appropriate decision margin, using setAprilTagDecisionMarginThreshold() or
+                            getTagsDecisionMargin(). See \ref apriltag_detection_tips_filter section for more details. */
     TAG_ARUCO_4x4_250,   /*!< ArUco 4x4 pattern: 4x4 bits, minimum hamming distance between any two codes = 3, 250 codes.\n
                             This tag family can produce lots of false detections which can be filtered by setting an
-                            appropriate decision margin
-                            (e.g. using \ref setAprilTagDecisionMarginThreshold or \ref getTagsDecisionMargin) */
+                            appropriate decision margin, using setAprilTagDecisionMarginThreshold() or
+                            getTagsDecisionMargin(). See \ref apriltag_detection_tips_filter section for more details. */
     TAG_ARUCO_4x4_1000,  /*!< ArUco 4x4 pattern: 4x4 bits, minimum hamming distance between any two codes = 2, 1000 codes.\n
                             This tag family can produce lots of false detections which can be filtered by setting an
-                            appropriate decision margin
-                            (e.g. using \ref setAprilTagDecisionMarginThreshold or \ref getTagsDecisionMargin) */
+                            appropriate decision margin, using setAprilTagDecisionMarginThreshold() or
+                            getTagsDecisionMargin(). See \ref apriltag_detection_tips_filter section for more details. */
     TAG_ARUCO_5x5_50,    /*!< ArUco 5x5 pattern: 5x5 bits, minimum hamming distance between any two codes = 8, 50 codes.\n
                             This tag family can produce lots of false detections which can be filtered by setting an
-                            appropriate decision margin
-                            (e.g. using \ref setAprilTagDecisionMarginThreshold or \ref getTagsDecisionMargin) */
+                            appropriate decision margin, using setAprilTagDecisionMarginThreshold() or
+                            getTagsDecisionMargin(). See \ref apriltag_detection_tips_filter section for more details. */
     TAG_ARUCO_5x5_100,   /*!< ArUco 5x5 pattern: 5x5 bits, minimum hamming distance between any two codes = 7, 100 codes.\n
                             This tag family can produce lots of false detections which can be filtered by setting an
-                            appropriate decision margin
-                            (e.g. using \ref setAprilTagDecisionMarginThreshold or \ref getTagsDecisionMargin) */
+                            appropriate decision margin, using setAprilTagDecisionMarginThreshold() or
+                            getTagsDecisionMargin(). See \ref apriltag_detection_tips_filter section for more details. */
     TAG_ARUCO_5x5_250,   /*!< ArUco 5x5 pattern: 5x5 bits, minimum hamming distance between any two codes = 6, 250 codes.\n
                             This tag family can produce lots of false detections which can be filtered by setting an
-                            appropriate decision margin
-                            (e.g. using \ref setAprilTagDecisionMarginThreshold or \ref getTagsDecisionMargin) */
+                            appropriate decision margin, using setAprilTagDecisionMarginThreshold() or
+                            getTagsDecisionMargin(). See \ref apriltag_detection_tips_filter section for more details. */
     TAG_ARUCO_5x5_1000,  /*!< ArUco 5x5 pattern: 5x5 bits, minimum hamming distance between any two codes = 5, 1000 codes.\n
                             This tag family can produce lots of false detections which can be filtered by setting an
-                            appropriate decision margin
-                            (e.g. using \ref setAprilTagDecisionMarginThreshold or \ref getTagsDecisionMargin) */
+                            appropriate decision margin, using setAprilTagDecisionMarginThreshold() or
+                            getTagsDecisionMargin(). See \ref apriltag_detection_tips_filter section for more details. */
     TAG_ARUCO_6x6_50,    /*!< ArUco 6x6 pattern: 6x6 bits, minimum hamming distance between any two codes = 13, 50 codes.\n
                             This tag family can produce lots of false detections which can be filtered by setting an
-                            appropriate decision margin
-                            (e.g. using \ref setAprilTagDecisionMarginThreshold or \ref getTagsDecisionMargin) */
+                            appropriate decision margin, using setAprilTagDecisionMarginThreshold() or
+                            getTagsDecisionMargin(). See \ref apriltag_detection_tips_filter section for more details. */
     TAG_ARUCO_6x6_100,   /*!< ArUco 6x6 pattern: 6x6 bits, minimum hamming distance between any two codes = 12, 100 codes.\n
                             This tag family can produce lots of false detections which can be filtered by setting an
-                            appropriate decision margin
-                            (e.g. using \ref setAprilTagDecisionMarginThreshold or \ref getTagsDecisionMargin) */
+                            appropriate decision margin, using setAprilTagDecisionMarginThreshold() or
+                            getTagsDecisionMargin(). See \ref apriltag_detection_tips_filter section for more details. */
     TAG_ARUCO_6x6_250,   /*!< ArUco 6x6 pattern: 6x6 bits, minimum hamming distance between any two codes = 11, 250 codes.\n
                             This tag family can produce lots of false detections which can be filtered by setting an
-                            appropriate decision margin
-                            (e.g. using \ref setAprilTagDecisionMarginThreshold or \ref getTagsDecisionMargin) */
+                            appropriate decision margin, using setAprilTagDecisionMarginThreshold() or
+                            getTagsDecisionMargin(). See \ref apriltag_detection_tips_filter section for more details. */
     TAG_ARUCO_6x6_1000,  /*!< ArUco 6x6 pattern: 6x6 bits, minimum hamming distance between any two codes = 9, 1000 codes.\n
                             This tag family can produce lots of false detections which can be filtered by setting an
-                            appropriate decision margin
-                            (e.g. using \ref setAprilTagDecisionMarginThreshold or \ref getTagsDecisionMargin) */
+                            appropriate decision margin, using setAprilTagDecisionMarginThreshold() or
+                            getTagsDecisionMargin(). See \ref apriltag_detection_tips_filter section for more details. */
     TAG_ARUCO_MIP_36h12  /*!< ArUco 6x6 pattern: 6x6 bits, minimum hamming distance between any two codes = 12, 250 codes.\n
                             This is the recommended ArUco tag family by the main ArUco developer,
                             <a href="https://stackoverflow.com/a/51511558">see this link</a> */
