@@ -114,6 +114,9 @@ public:
     case vpCameraParameters::ProjWithKannalaBrandtDistortion:
       convertPointWithKannalaBrandtDistortion(cam, x, y, u, v);
       break;
+    default: {
+      throw(vpException(vpException::fatalError, "Unsupported camera projection model in vpMeterPixelConversion::convertPoint()"));
+    }
     }
   }
 
@@ -156,6 +159,9 @@ public:
     case vpCameraParameters::ProjWithKannalaBrandtDistortion:
       convertPointWithKannalaBrandtDistortion(cam, x, y, iP);
       break;
+    default: {
+      throw(vpException(vpException::fatalError, "Unsupported camera projection model in vpMeterPixelConversion::convertPoint()"));
+    }
     }
   }
 

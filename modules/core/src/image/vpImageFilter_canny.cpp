@@ -79,6 +79,9 @@ std::string vpImageFilter::vpCannyBackendTypeToString(const vpImageFilter::vpCan
     break;
   case CANNY_COUNT_BACKEND:
     return "unknown-backend";
+  default: {
+    throw(vpException(vpException::fatalError, "Unsupported canny backend type in vpImageFilter::vpCannyBackendTypeToString()"));
+  }
   }
   return name;
 }
@@ -148,6 +151,9 @@ std::string vpImageFilter::vpCannyFiltAndGradTypeToStr(const vpImageFilter::vpCa
     break;
   case CANNY_COUNT_FILTERING:
     return "unknown-filtering";
+  default: {
+    throw(vpException(vpException::fatalError, "Unsupported canny backend type in vpImageFilter::vpCannyFiltAndGradTypeToStr()"));
+  }
   }
   return name;
 }
@@ -517,6 +523,5 @@ void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned c
     Ires = edgeDetector.detect(Isrc);
   }
 }
-
 
 END_VISP_NAMESPACE

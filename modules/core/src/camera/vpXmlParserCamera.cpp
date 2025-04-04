@@ -284,6 +284,7 @@ public:  /* --- XML Code--------------------------------------------------------
         case CODE_XML_K3:
         case CODE_XML_K4:
         case CODE_XML_K5:
+        default:
           back = SEQUENCE_ERROR;
           break;
         }
@@ -456,6 +457,7 @@ public:  /* --- XML Code--------------------------------------------------------
         case CODE_XML_FULL_WIDTH:
         case CODE_XML_MODEL:
         case CODE_XML_ADDITIONAL_INFO:
+        default:
           back = SEQUENCE_ERROR;
           break;
         }
@@ -873,6 +875,9 @@ public:  /* --- XML Code--------------------------------------------------------
     case vpCameraParameters::ProjWithKannalaBrandtDistortion:
       writeCameraWithKannalaBrandt(node_camera);
       break;
+    default: {
+      throw(vpException(vpException::fatalError, "Unsupported camera projection model in vpXmlParserCamera::write_camera()"));
+    }
     }
     return back;
   }

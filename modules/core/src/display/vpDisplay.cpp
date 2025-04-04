@@ -294,6 +294,9 @@ void vpDisplay::setScale(vpScaleType scaleType, unsigned int width, unsigned int
   case vpDisplay::SCALE_10:
     setDownScalingFactor(10);
     break;
+  default: {
+    throw(vpException(vpException::fatalError, "Unsupported scale type in vpDisplay::setScale()"));
+  }
   }
 }
 

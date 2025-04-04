@@ -175,6 +175,9 @@ void vpRobust::MEstimator(const vpRobustEstimatorType method, const vpColVector 
     psiHuber(m_mad, m_normres, weights);
     break;
   }
+  default: {
+    throw(vpException(vpException::fatalError, "Unsupported robust estimator type in vpRobust::MEstimator()"));
+  }
   }
 }
 
@@ -357,7 +360,10 @@ void vpRobust::MEstimator(const vpRobustEstimatorType method, const vpColVector 
     psiHuber(m_mad, all_normres, weights);
     break;
   }
-  };
+  default: {
+    throw(vpException(vpException::fatalError, "Unsupported robust estimator type in vpRobust::MEstimator()"));
+  }
+  }
 }
 
 double vpRobust::computeNormalizedMedian(vpColVector &all_normres, const vpColVector &residues,
@@ -528,7 +534,10 @@ double vpRobust::constrainedChi(vpRobustEstimatorType method, double x)
     return constrainedChiCauchy(x);
   case HUBER:
     return constrainedChiHuber(x);
-  };
+  default: {
+    throw(vpException(vpException::fatalError, "Unsupported robust estimator type in vpRobust::constrainedChi()"));
+  }
+  }
 
   return -1;
 }

@@ -1088,6 +1088,9 @@ vpColormap::vpColormap(const vpColormapType &colormapType) : m_colormapType(colo
       case COLORMAP_WINTER:
         m_colormapSrgbBytes[i][j] = m_winterSrgbBytes[i][j];
         break;
+      default: {
+        throw(vpException(vpException::fatalError, "Unsupported colormap in vpColormap constructor"));
+      }
       }
     }
   }

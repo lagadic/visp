@@ -426,6 +426,9 @@ void vpHinkley::print(vpHinkley::vpHinkleyJumpType jump)
   case upwardJump:
     std::cout << " Jump upward detected " << std::endl;
     break;
+  default: {
+    throw(vpException(vpException::fatalError, "Unsupported jump type in vpHinkley::print()"));
+  }
   }
 }
 END_VISP_NAMESPACE

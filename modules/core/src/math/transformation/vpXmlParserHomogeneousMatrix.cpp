@@ -196,6 +196,7 @@ public:
         case CODE_XML_TUX:
         case CODE_XML_TUY:
         case CODE_XML_TUZ:
+        default:
           back = SEQUENCE_ERROR;
           break;
         }
@@ -276,6 +277,7 @@ public:
         case CODE_XML_M:
         case CODE_XML_M_NAME:
         case CODE_XML_VALUE:
+        default:
           back = SEQUENCE_ERROR;
           break;
         }

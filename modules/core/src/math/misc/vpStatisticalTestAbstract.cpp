@@ -36,6 +36,7 @@
 */
 
 #include <visp3/core/vpStatisticalTestAbstract.h>
+#include <visp3/core/vpException.h>
 
 BEGIN_VISP_NAMESPACE
 std::string vpStatisticalTestAbstract::vpMeanDriftTypeToString(const vpStatisticalTestAbstract::vpMeanDriftType &type)
@@ -57,6 +58,9 @@ std::string vpStatisticalTestAbstract::vpMeanDriftTypeToString(const vpStatistic
   case MEAN_DRIFT_UNKNOWN:
     name = "undefined_drift";
     break;
+  default: {
+    throw(vpException(vpException::fatalError, "Unsupported mean drift type in vpStatisticalTestAbstract::vpMeanDriftTypeToString()"));
+  }
   }
   return name;
 }
