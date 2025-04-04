@@ -16,8 +16,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest]
-        environment: [all, with-python]
+        os: [windows-latest, ubuntu-latest]
+        environment: [all-with-tests, with-python-with-tests]
         build_type: [Release]
         include:
           - os: windows-latest
