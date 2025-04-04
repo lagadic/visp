@@ -242,8 +242,10 @@ void vpDisplay::setDownScalingFactor(unsigned int scale)
 
 /*!
  * Computes the down scaling factor that should be applied to the window size
- * to display the image given the resolution of the screen. \param width,
- * height : Image size. \return
+ * to display the image given the resolution of the screen.
+ * \param[in] width : Image width.
+ * \param[in] height : Image height.
+ * \return Down scale factor.
  */
 unsigned int vpDisplay::computeAutoScale(unsigned int width, unsigned int height)
 {

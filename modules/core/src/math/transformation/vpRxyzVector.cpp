@@ -77,11 +77,10 @@ vpRxyzVector::vpRxyzVector(const vpColVector &rxyz) : vpRotationVector(constr_va
 vpRxyzVector::vpRxyzVector(const std::vector<double> &rxyz) : vpRotationVector(constr_val_3) { buildFrom(rxyz); }
 
 /*!
-  Convert a rotation matrix into a \f$R_{xyz}=(\varphi,\theta,\psi)\f$ Euler
-  angles vector.
+  Convert a rotation matrix into a \f$ R_{xyz}=(\varphi,\theta,\psi) \f$ Euler angles vector.
 
   \param R : Rotation matrix used as input.
-  \return \f$R_{xyz}=(\varphi,\theta,\psi)\f$ Euler angles vector.
+  \return Euler angles vector \f$ R_{xyz}=(\varphi,\theta,\psi) \f$.
 */
 vpRxyzVector &vpRxyzVector::buildFrom(const vpRotationMatrix &R)
 {
@@ -109,10 +108,9 @@ vpRxyzVector &vpRxyzVector::buildFrom(const vpRotationMatrix &R)
 }
 
 /*!
-  Convert a \f$\theta {\bf u}\f$ vector into a
-  \f$R_{xyz}=(\varphi,\theta,\psi)\f$ Euler angles vector.
+  Convert a \f$\theta {\bf u}\f$ vector into a \f$ R_{xyz}=(\varphi,\theta,\psi) \f$ Euler angles vector.
   \param tu : \f$\theta {\bf u}\f$ representation of a rotation used here as input.
-  \return \f$R_{xyz}=(\varphi,\theta,\psi)\f$ Euler angles vector.
+  \return Euler angles vector \f$R_{xyz}=(\varphi,\theta,\psi)\f$.
 */
 vpRxyzVector &vpRxyzVector::buildFrom(const vpThetaUVector &tu)
 {

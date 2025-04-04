@@ -124,7 +124,8 @@ VP_ATTRIBUTE_NO_DESTROY vpColor colors[6] = { vpColor::blue, vpColor::green, vpC
 
   Return true if the R,G,B components are the same.
 
-  \param c1,c2 : Color to compare.
+  \param c1 : First color to compare.
+  \param c2 : Second color to compare.
 */
 VISP_EXPORT bool operator==(const vpColor &c1, const vpColor &c2)
 {
@@ -137,7 +138,8 @@ VISP_EXPORT bool operator==(const vpColor &c1, const vpColor &c2)
 
   Return true if the R,G,B components are different.
 
-  \param c1,c2 : Color to compare.
+  \param c1 : First color to compare.
+  \param c2 : Second color to compare.
 */
 VISP_EXPORT bool operator!=(const vpColor &c1, const vpColor &c2)
 {

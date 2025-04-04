@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -318,7 +318,8 @@ void vpImageConvert::RGBToRGBa(unsigned char *rgb, unsigned char *rgba, unsigned
 
   \param[in] rgb : Pointer to the bitmap containing the 24-bits RGB data.
   \param[out] rgba : Pointer to the 32-bits RGBA bitmap that should be allocated with a size of width * height * 4.
-  \param[in] width, height : Image size.
+  \param[in] width : Image width.
+  \param[in] height : Image height.
   \param[in] flip : When true, image is flipped vertically.
 
 */
@@ -414,7 +415,8 @@ void vpImageConvert::RGBToGrey(unsigned char *rgb, unsigned char *grey, unsigned
   \param[in] rgb : Pointer to the 24-bits RGB bitmap.
   \param[out] grey : Pointer to the bitmap containing the 8-bits grey data that should
   be allocated with a size of width * height.
-  \param[in] width, height : Image size.
+  \param[in] width : Image width.
+  \param[in] height : Image height.
   \param[in] flip : When true, image is flipped vertically.
 */
 void vpImageConvert::RGBToGrey(unsigned char *rgb, unsigned char *grey, unsigned int width, unsigned int height,
@@ -455,6 +457,7 @@ void vpImageConvert::RGBToGrey(unsigned char *rgb, unsigned char *grey, unsigned
 #endif
 }
 
+#if defined(_OPENMP)
 /*!
   Convert a RGBa image to a grey scale one.
 
@@ -466,10 +469,26 @@ void vpImageConvert::RGBToGrey(unsigned char *rgb, unsigned char *grey, unsigned
   \param[in] rgba : Pointer to the 32-bits RGBA bitmap.
   \param[out] grey : Pointer to the bitmap containing the 8-bits grey data that should
   be allocated with a size of width * height.
-  \param[in] width, height : Image size.
+  \param[in] width : Image width.
+  \param[in] height : Image height.
   \param[in] nThreads : When > 0, the value is used to set the number of OpenMP threads used for the conversion.
-
 */
+#else
+/*!
+  Convert a RGBa image to a grey scale one.
+
+  See Charles Pontyon's Colour FAQ
+  http://www.poynton.com/notes/colour_and_gamma/ColorFAQ.html
+
+  \note The SIMD lib is used to accelerate processing on x86 and ARM architecture.
+
+  \param[in] rgba : Pointer to the 32-bits RGBA bitmap.
+  \param[out] grey : Pointer to the bitmap containing the 8-bits grey data that should
+  be allocated with a size of width * height.
+  \param[in] width : Image width.
+  \param[in] height : Image height.
+*/
+#endif
 void vpImageConvert::RGBaToGrey(unsigned char *rgba, unsigned char *grey, unsigned int width, unsigned int height,
                                 unsigned int
 #if defined(_OPENMP)
@@ -538,7 +557,8 @@ void vpImageConvert::RGBaToGrey(unsigned char *rgba, unsigned char *grey, unsign
   \param[in] grey : Pointer to the bitmap containing the 8-bits grey data.
   \param[out] rgba : Pointer to the 32-bits RGBA bitmap that should
   be allocated with a size of width * height * 4.
-  \param[in] width, height : Image size.
+  \param[in] width : Image width.
+  \param[in] height : Image height.
 */
 void vpImageConvert::GreyToRGBa(unsigned char *grey, unsigned char *rgba, unsigned int width, unsigned int height)
 {
@@ -631,7 +651,8 @@ void vpImageConvert::GreyToRGB(unsigned char *grey, unsigned char *rgb, unsigned
   \param[in] bgr : Pointer to the bitmap containing the 24-bits BGR data.
   \param[out] rgba : Pointer to the 32-bits RGBA bitmap that should
   be allocated with a size of width * height * 4.
-  \param[in] width, height : Image size.
+  \param[in] width : Image width.
+  \param[in] height : Image height.
   \param[in] flip : When true, image is flipped vertically.
 */
 void vpImageConvert::BGRToRGBa(unsigned char *bgr, unsigned char *rgba, unsigned int width, unsigned int height,
@@ -681,7 +702,8 @@ void vpImageConvert::BGRToRGBa(unsigned char *bgr, unsigned char *rgba, unsigned
   \param[in] bgra : Pointer to the bitmap containing the 32-bits BGRa data.
   \param[out] rgba : Pointer to the 32-bits RGBA bitmap that should
   be allocated with a size of width * height * 4.
-  \param[in] width, height : Image size.
+  \param[in] width : Image width.
+  \param[in] height : Image height.
   \param[in] flip : When true, image is flipped vertically.
 */
 void vpImageConvert::BGRaToRGBa(unsigned char *bgra, unsigned char *rgba, unsigned int width, unsigned int height,
@@ -721,6 +743,7 @@ void vpImageConvert::BGRaToRGBa(unsigned char *bgra, unsigned char *rgba, unsign
 #endif
 }
 
+#if defined(_OPENMP)
 /*!
   Converts a BGR image to greyscale.
   Flips the image vertically if needed.
@@ -731,10 +754,27 @@ void vpImageConvert::BGRaToRGBa(unsigned char *bgra, unsigned char *rgba, unsign
   \param[in] bgr : Pointer to the bitmap containing the 24-bits BGR data.
   \param[out] grey : Pointer to the 8-bits grey bitmap that should
   be allocated with a size of width * height.
-  \param[in] width, height : Image size.
+  \param[in] width : Image width.
+  \param[in] height : Image height.
   \param[in] flip : When true, image is flipped vertically.
   \param[in] nThreads : When > 0, the value is used to set the number of OpenMP threads used for the conversion.
 */
+#else
+/*!
+  Converts a BGR image to greyscale.
+  Flips the image vertically if needed.
+  Assumes that grey is already resized.
+
+  \note If flip is false, the SIMD lib is used to accelerate processing on x86 and ARM architecture.
+
+  \param[in] bgr : Pointer to the bitmap containing the 24-bits BGR data.
+  \param[out] grey : Pointer to the 8-bits grey bitmap that should
+  be allocated with a size of width * height.
+  \param[in] width : Image width.
+  \param[in] height : Image height.
+  \param[in] flip : When true, image is flipped vertically.
+*/
+#endif
 void vpImageConvert::BGRToGrey(unsigned char *bgr, unsigned char *grey, unsigned int width, unsigned int height,
                                bool flip,
                                unsigned int
@@ -785,6 +825,7 @@ void vpImageConvert::BGRToGrey(unsigned char *bgr, unsigned char *grey, unsigned
 #endif
 }
 
+#if defined(_OPENMP)
 /*!
   Converts a BGRa image to greyscale.
   Flips the image vertically if needed.
@@ -795,10 +836,27 @@ void vpImageConvert::BGRToGrey(unsigned char *bgr, unsigned char *grey, unsigned
   \param[in] bgra : Pointer to the bitmap containing the 32-bits BGRa data.
   \param[out] grey : Pointer to the 8-bits grey bitmap that should
   be allocated with a size of width * height.
-  \param[in] width, height : Image size.
+  \param[in] width : Image width.
+  \param[in] height : Image height.
   \param[in] flip : When true, image is flipped vertically.
   \param[in] nThreads : When > 0, the value is used to set the number of OpenMP threads used for the conversion.
 */
+#else
+/*!
+  Converts a BGRa image to greyscale.
+  Flips the image vertically if needed.
+  Assumes that grey is already resized.
+
+  \note If flip is false, the SIMD lib is used to accelerate processing on x86 and ARM architecture.
+
+  \param[in] bgra : Pointer to the bitmap containing the 32-bits BGRa data.
+  \param[out] grey : Pointer to the 8-bits grey bitmap that should
+  be allocated with a size of width * height.
+  \param[in] width : Image width.
+  \param[in] height : Image height.
+  \param[in] flip : When true, image is flipped vertically.
+*/
+#endif
 void vpImageConvert::BGRaToGrey(unsigned char *bgra, unsigned char *grey, unsigned int width, unsigned int height,
                                 bool flip,
                                 unsigned int

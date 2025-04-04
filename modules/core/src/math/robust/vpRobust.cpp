@@ -184,17 +184,17 @@ void vpRobust::MEstimator(const vpRobustEstimatorType method, const vpColVector 
 /*!
   Calculation of Tukey's influence function.
 
-  \param sigma : sigma parameters.
-  \param x : normalized residue vector.
-  \param weights : weight vector.
+  \param[in] sigma : Sigma parameter.
+  \param[in] x : Normalized residue vector.
+  \param[out] weights : Weight vector.
 */
 
-void vpRobust::psiTukey(double sig, const vpColVector &x, vpColVector &weights)
+void vpRobust::psiTukey(double sigma, const vpColVector &x, vpColVector &weights)
 {
   unsigned int n_data = x.getRows();
-  double C = sig * 4.6851;
+  double C = sigma * 4.6851;
 
-  // Here we consider that sig cannot be equal to 0
+  // Here we consider that sigma cannot be equal to 0
   for (unsigned int i = 0; i < n_data; ++i) {
     double xi = x[i] / C;
     xi *= xi;
@@ -213,13 +213,13 @@ void vpRobust::psiTukey(double sig, const vpColVector &x, vpColVector &weights)
 /*!
   Calculation of Tukey's influence function.
 
-  \param sigma : sigma parameters.
-  \param x : normalized residue vector.
-  \param weights : weight vector.
+  \param[in] sigma : Sigma parameter.
+  \param[in] x : Normalized residue vector.
+  \param[out] weights : Weight vector.
 */
-void vpRobust::psiHuber(double sig, const vpColVector &x, vpColVector &weights)
+void vpRobust::psiHuber(double sigma, const vpColVector &x, vpColVector &weights)
 {
-  double C = sig * 1.2107;
+  double C = sigma * 1.2107;
   unsigned int n_data = x.getRows();
 
   for (unsigned int i = 0; i < n_data; ++i) {
@@ -236,15 +236,15 @@ void vpRobust::psiHuber(double sig, const vpColVector &x, vpColVector &weights)
 /*!
   Calculation of Cauchy's influence function.
 
-  \param sigma : sigma parameter.
-  \param x : normalized residue vector.
-  \param weights : weight vector.
+  \param[in] sigma : Sigma parameter.
+  \param[in] x : Normalized residue vector.
+  \param[out] weights : Weight vector.
 */
 
-void vpRobust::psiCauchy(double sig, const vpColVector &x, vpColVector &weights)
+void vpRobust::psiCauchy(double sigma, const vpColVector &x, vpColVector &weights)
 {
   unsigned int n_data = x.getRows();
-  double C = sig * 2.3849;
+  double C = sigma * 2.3849;
 
   // Calculate Cauchy's equation
   for (unsigned int i = 0; i < n_data; ++i) {

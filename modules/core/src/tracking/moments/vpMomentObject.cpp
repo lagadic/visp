@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,11 +29,7 @@
  *
  * Description:
  * Object input structure used by moments.
- *
- * Authors:
- * Filip Novotny
- *
-*****************************************************************************/
+ */
 
 #include <stdexcept>
 #include <visp3/core/vpCameraParameters.h>
@@ -101,13 +96,14 @@ double vpMomentObject::calc_mom_polygon(unsigned int p, unsigned int q, const st
 
   \param cache : Lookup table that contains the order by order values. For
   example, if the order is 3, cache will contain:
-\code
-  1   x     x^2
-  y   x*y   x^2*y
-  y^2 x*y^2 x^2*y^2
-\endcode
+  \code
+    1   x     x^2
+    y   x*y   x^2*y
+    y^2 x*y^2 x^2*y^2
+  \endcode
 
-  \param x, y : Coordinates of a point.
+  \param x : Coordinate of a point along x-axis.
+  \param y : Coordinate of a point along y-axis.
 */
 void vpMomentObject::cacheValues(std::vector<double> &cache, double x, double y)
 {

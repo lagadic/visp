@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,8 +40,8 @@ BEGIN_VISP_NAMESPACE
 /*!
  * Find a starred zero in a specific mask matrix row.
  *
- * \param[in] mask: Mask matrix.
- * \param[in] row: Row index.
+ * \param[in] mask : Mask matrix.
+ * \param[in] row : Row index.
  * \return Index of the starred zero [col] or std::nullopt if the mask matrix row does not contain a starred zero.
  */
   std::optional<unsigned int> vpMunkres::findStarInRow(const std::vector<std::vector<vpMunkres::ZERO_T> > &mask,
@@ -55,7 +55,7 @@ BEGIN_VISP_NAMESPACE
 /*!
  * Find a starred zero in a specific mask matrix col.
  *
- * \param[in] mask: Mask matrix.
+ * \param[in] mask : Mask matrix.
  * \param[in] col : Col index.
  * \return Index of the starred zero [row] or std::nullopt if the mask matrix col does not contain a starred zero.
  */
@@ -65,13 +65,13 @@ std::optional<unsigned int> vpMunkres::findStarInCol(const std::vector<std::vect
   const auto it = std::find_if(begin(mask), end(mask),
                                [&col](const auto &row) { return row.at(col) == vpMunkres::ZERO_T::STARRED; });
   return it != end(mask) ? std::make_optional<unsigned int>(static_cast<unsigned int>(std::distance(begin(mask), it)))
-                                                            : std::nullopt;
+    : std::nullopt;
 }
 
 /*!
  * Find a primed zero in a specific mask matrix row.
  *
- * \param[in] mask: Mask matrix.
+ * \param[in] mask : Mask matrix.
  * \param[in] row : Row index.
  * \return Index of the primed zero [col] or std::nullopt if the mask matrix row does not contain a primed zero.
  */
@@ -80,15 +80,15 @@ std::optional<unsigned int> vpMunkres::findPrimeInRow(const std::vector<std::vec
 {
   const auto it = std::find(begin(mask.at(row)), end(mask.at(row)), vpMunkres::ZERO_T::PRIMED);
   return it != end(mask.at(row))
-      ? std::make_optional<unsigned int>(static_cast<unsigned int>(std::distance(begin(mask.at(row)), it)))
+    ? std::make_optional<unsigned int>(static_cast<unsigned int>(std::distance(begin(mask.at(row)), it)))
     : std::nullopt;
 }
 
 /*!
  * Unstar each starred zero of the series, star each primed zero of the series.
  *
- * \param[in,out] mask: Mask matrix.
- * \param[in] path: Series.
+ * \param[in,out] mask : Mask matrix.
+ * \param[in] path : Series.
  */
 void vpMunkres::augmentPath(std::vector<std::vector<vpMunkres::ZERO_T> > &mask,
                             const std::vector<std::pair<unsigned int, unsigned int> > &path)
@@ -102,8 +102,8 @@ void vpMunkres::augmentPath(std::vector<std::vector<vpMunkres::ZERO_T> > &mask,
 /*!
  * Clear coverage matrices (uncover every line in the matrix).
  *
- * \param[in,out] row_cover: Row coverage array.
- * \param[in,out] col_cover: Col coverage array.
+ * \param[in,out] row_cover : Row coverage array.
+ * \param[in,out] col_cover : Col coverage array.
  */
 void vpMunkres::clearCovers(std::vector<bool> &row_cover, std::vector<bool> &col_cover)
 {
@@ -114,7 +114,7 @@ void vpMunkres::clearCovers(std::vector<bool> &row_cover, std::vector<bool> &col
 /*!
  * Erase primed zeros in the mask matrix.
  *
- * \param[in,out] mask: Mask matrix.
+ * \param[in,out] mask : Mask matrix.
  */
 void vpMunkres::erasePrimes(std::vector<std::vector<vpMunkres::ZERO_T> > &mask)
 {
@@ -131,8 +131,8 @@ void vpMunkres::erasePrimes(std::vector<std::vector<vpMunkres::ZERO_T> > &mask)
  * If all columns are covered, the starred zeros describe a complete set of unique assignments.
  * In this case, Go to DONE, otherwise, Go to Step 4.
  *
- * \param[in] mask: Mask matrix.
- * \param[in,out] col_cover: Col coverage array.
+ * \param[in] mask : Mask matrix.
+ * \param[in,out] col_cover : Col coverage array.
  * \return Next step.
  */
 vpMunkres::STEP_T vpMunkres::stepThree(const std::vector<std::vector<vpMunkres::ZERO_T> > &mask,
@@ -159,10 +159,10 @@ vpMunkres::STEP_T vpMunkres::stepThree(const std::vector<std::vector<vpMunkres::
  * Unstar each starred zero of the series, star each primed zero of the series, erase all primes and uncover every
  * line in the cost matrix. Return to Step 3.
  *
- * \param[in,out] mask: Mask matrix.
- * \param[in] path_0: Initial path index [<row,col>].
- * \param[in,out] row_cover: Row coverage array.
- * \param[in,out] col_cover: Col coverage array.
+ * \param[in,out] mask : Mask matrix.
+ * \param[in] path_0 : Initial path index [<row,col>].
+ * \param[in,out] row_cover : Row coverage array.
+ * \param[in,out] col_cover : Col coverage array.
  * \return Next step.
  */
 vpMunkres::STEP_T vpMunkres::stepFive(std::vector<std::vector<vpMunkres::ZERO_T> > &mask,

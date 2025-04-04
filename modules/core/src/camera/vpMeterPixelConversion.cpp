@@ -56,8 +56,10 @@ BEGIN_VISP_NAMESPACE
   coefficients.
 
   \param[in] cam : camera parameters.
-  \param[in] rho_p, theta_p : Line parameters expressed in pixels.
-  \param[out] rho_m, theta_m : Line parameters expressed in meters in the image plane.
+  \param[out] rho_p : Line \f$ \rho_p \f$ parameter expressed in pixels.
+  \param[out] theta_p : Line \f$ \theta_p \f$ parameter expressed in pixels.
+  \param[in] rho_m : Line \f$ \rho_m \f$ parameter expressed in meters in the image plane.
+  \param[in] theta_m : Line \f$ \theta_m \f$ parameter expressed in meters in the image plane.
 */
 void vpMeterPixelConversion::convertLine(const vpCameraParameters &cam, const double &rho_m, const double &theta_m,
                                          double &rho_p, double &theta_p)
@@ -88,8 +90,12 @@ void vpMeterPixelConversion::convertLine(const vpCameraParameters &cam, const do
   in the image plane. These parameters are internally updated after perspective projection of the sphere.
   \param[out] center_p : Center \f$(u_c, v_c)\f$ of the corresponding ellipse in the image with coordinates expressed in
   pixels.
-  \param[out] n20_p, n11_p, n02_p : Second order centered moments of the ellipse normalized by its area (i.e.,
-  such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a the area) expressed in pixels.
+  \param[out] n20_p : Second order \f$ n_{20} \f$ centered moment of the ellipse normalized by its area (i.e., such
+  that \f$ n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij} \f$ are the centered moments and a the area) expressed in pixels.
+  \param[out] n11_p : Second order \f$ n_{11} \f$ centered moment of the ellipse normalized by its area (i.e., such
+  that \f$ n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij} \f$ are the centered moments and a the area) expressed in pixels.
+  \param[out] n02_p : Second order \f$ n_{02} \f$ centered moment of the ellipse normalized by its area (i.e., such
+  that \f$ n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij} \f$ are the centered moments and a the area) expressed in pixels.
 
   The following code shows how to use this function:
   \code
@@ -136,8 +142,12 @@ void vpMeterPixelConversion::convertEllipse(const vpCameraParameters &cam, const
   in the image plane. These parameters are internally updated after perspective projection of the sphere.
   \param[out] center_p : Center \f$(u_c, v_c)\f$ of the corresponding ellipse in the image with coordinates expressed in
   pixels.
-  \param[out] n20_p, n11_p, n02_p : Second order centered moments of the ellipse normalized by its area (i.e.,
-  such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a the area) expressed in pixels.
+  \param[out] n20_p : Second order \f$ n_{20} \f$ centered moment of the ellipse normalized by its area (i.e., such
+  that \f$ n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij} \f$ are the centered moments and a the area) expressed in pixels.
+  \param[out] n11_p : Second order \f$ n_{11} \f$ centered moment of the ellipse normalized by its area (i.e., such
+  that \f$ n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij} \f$ are the centered moments and a the area) expressed in pixels.
+  \param[out] n02_p : Second order \f$ n_{02} \f$ centered moment of the ellipse normalized by its area (i.e., such
+  that \f$ n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij} \f$ are the centered moments and a the area) expressed in pixels.
 
   The following code shows how to use this function:
   \code
@@ -179,15 +189,28 @@ void vpMeterPixelConversion::convertEllipse(const vpCameraParameters &cam, const
   n_{11}, n_{02}\f$ corresponding to its center coordinates in pixel and the centered moments normalized by its area.
 
   \param[in] cam : Intrinsic camera parameters.
-  \param[in] xc_m, yc_m : Center of the ellipse in the image plane with normalized coordinates expressed in meters.
-  \param[in] n20_m, n11_m, n02_m : Second order centered moments of the ellipse normalized by its area
+  \param[in] xc_m : Coordinate along x-axis of the center of the ellipse in the image plane with normalized
+  coordinates expressed in meters.
+  \param[in] yc_m : Coordinate along y-axis of the center of the ellipse in the image plane with normalized
+  coordinates expressed in meters.
+  \param[in] n20_m : Second order \f$ n_{20} \f$ centered moment of the ellipse normalized by its area
+  (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a the area) expressed in
+  meter.
+  \param[in] n11_m : Second order \f$ n_{11} \f$ centered moment of the ellipse normalized by its area
+  (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a the area) expressed in
+  meter.
+  \param[in] n02_m : Second order \f$ n_{02} \f$ centered moment of the ellipse normalized by its area
   (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a the area) expressed in
   meter.
   \param[out] center_p : Center \f$(u_c, v_c)\f$ of the corresponding ellipse in the image with coordinates
   expressed in pixels.
-  \param[out] n20_p, n11_p, n02_p : Second order centered moments of the ellipse normalized by its
-  area (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a the area)
-  expressed in pixels.
+  \param[out] n20_p : Second order \f$ n_{20} \f$ centered moment of the ellipse normalized by its area (i.e., such
+  that \f$ n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij} \f$ are the centered moments and a the area) expressed in pixels.
+  \param[out] n11_p : Second order \f$ n_{11} \f$ centered moment of the ellipse normalized by its area (i.e., such
+  that \f$ n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij} \f$ are the centered moments and a the area) expressed in pixels.
+  \param[out] n02_p : Second order \f$ n_{02} \f$ centered moment of the ellipse normalized by its area (i.e., such
+  that \f$ n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij} \f$ are the centered moments and a the area) expressed in pixels.
+
 
  */
 void vpMeterPixelConversion::convertEllipse(const vpCameraParameters &cam, double xc_m, double yc_m, double n20_m,
@@ -209,10 +232,11 @@ void vpMeterPixelConversion::convertEllipse(const vpCameraParameters &cam, doubl
   to pixel coordinates \f$(\rho_p,\theta_p)\f$ using OpenCV camera parameters. This function doesn't use distortion
   coefficients.
 
-  \param[in] cameraMatrix : Camera Matrix \f$\begin{bmatrix} f_x & 0 & c_x \\ 0 & f_y & c_y \\ 0 & 0 &
-  1\end{bmatrix}\f$ \param[in] rho_p, theta_p : Line parameters expressed in pixels.
-  \param[out] rho_m, theta_m : Line parameters expressed in meters in the image plane.
-
+  \param[in] cameraMatrix : Camera Matrix \f$\begin{bmatrix} f_x & 0 & c_x \\ 0 & f_y & c_y \\ 0 & 0 & 1\end{bmatrix}\f$
+  \param[in] rho_p : Line \f$ \rho \f$ parameter expressed in pixels.
+  \param[in] theta_p : Line \f$ \theta \f$ parameter expressed in pixels.
+  \param[out] rho_m : Line \f$ \rho \f$ parameter expressed in meters in the image plane.
+  \param[out] theta_m : Line \f$ \theta \f$ parameter expressed in meters in the image plane.
 */
 void vpMeterPixelConversion::convertLine(const cv::Mat &cameraMatrix, const double &rho_m, const double &theta_m,
                                          double &rho_p, double &theta_p)
@@ -246,9 +270,12 @@ void vpMeterPixelConversion::convertLine(const cv::Mat &cameraMatrix, const doub
   \param[in] circle : 3D circle with internal vector `circle.p[]` that contains the ellipse parameters expressed
   in the image plane. These parameters are internally updated after perspective projection of the sphere.
   \param[out] center : Center of the corresponding ellipse in the image with coordinates expressed in pixels.
-  \param[out] n20_p, n11_p, n02_p : Second order centered moments of the ellipse normalized by its area
-  (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a the area) expressed in
-  pixels.
+  \param[out] n20_p : Second order \f$ n_{20} \f$ centered moment of the ellipse normalized by its area (i.e., such
+  that \f$ n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij} \f$ are the centered moments and a the area) expressed in pixels.
+  \param[out] n11_p : Second order \f$ n_{11} \f$ centered moment of the ellipse normalized by its area (i.e., such
+  that \f$ n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij} \f$ are the centered moments and a the area) expressed in pixels.
+  \param[out] n02_p : Second order \f$ n_{02} \f$ centered moment of the ellipse normalized by its area (i.e., such
+  that \f$ n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij} \f$ are the centered moments and a the area) expressed in pixels.
 
   The following code shows how to use this function:
   \code
@@ -301,9 +328,12 @@ void vpMeterPixelConversion::convertEllipse(const cv::Mat &cameraMatrix, const v
   \param[in] sphere : 3D sphere with internal vector `circle.p[]` that contains the ellipse parameters expressed
   in the image plane. These parameters are internally updated after perspective projection of the sphere.
   \param[out] center : Center of the corresponding ellipse in the image with coordinates expressed in pixels.
-  \param[out] n20_p, n11_p, n02_p : Second order centered moments of the ellipse normalized by its area
-  (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a the area) expressed in
-  pixels.
+  \param[out] n20_p : Second order \f$ n_{20} \f$ centered moment of the ellipse normalized by its area (i.e., such
+  that \f$ n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij} \f$ are the centered moments and a the area) expressed in pixels.
+  \param[out] n11_p : Second order \f$ n_{11} \f$ centered moment of the ellipse normalized by its area (i.e., such
+  that \f$ n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij} \f$ are the centered moments and a the area) expressed in pixels.
+  \param[out] n02_p : Second order \f$ n_{02} \f$ centered moment of the ellipse normalized by its area (i.e., such
+  that \f$ n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij} \f$ are the centered moments and a the area) expressed in pixels.
 
   The following code shows how to use this function:
   \code
@@ -352,15 +382,27 @@ void vpMeterPixelConversion::convertEllipse(const cv::Mat &cameraMatrix, const v
   n_{11}, n_{02}\f$ corresponding to its center coordinates in pixel and the centered moments normalized by its area.
 
   \param[in] cameraMatrix : Camera Matrix \f$\begin{bmatrix} f_x & 0 & c_x \\ 0 & f_y & c_y \\ 0 & 0 & 1\end{bmatrix}\f$
-  \param[in] xc_m, yc_m : Center of the ellipse in the image plane with normalized coordinates expressed in meters.
-  \param[in] n20_m, n11_m, n02_m : Second order centered moments of the ellipse normalized by its area
+  \param[in] xc_m : Coordinate along x-axis of the center of the ellipse in the image plane with normalized
+  coordinates expressed in meters.
+  \param[in] yc_m : Coordinate along y-axis of the center of the ellipse in the image plane with normalized
+  coordinates expressed in meters.
+  \param[in] n20_m : Second order \f$ n_{20} \f$ centered moment of the ellipse normalized by its area
+  (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a the area) expressed in
+  meter.
+  \param[in] n11_m : Second order \f$ n_{11} \f$ centered moment of the ellipse normalized by its area
+  (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a the area) expressed in
+  meter.
+  \param[in] n02_m : Second order \f$ n_{02} \f$ centered moment of the ellipse normalized by its area
   (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a the area) expressed in
   meter.
   \param[out] center_p : Center \f$(u_c, v_c)\f$ of the corresponding ellipse in the image with coordinates
   expressed in pixels.
-  \param[out] n20_p, n11_p, n02_p : Second order centered moments of the ellipse normalized by its
-  area (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a the area)
-  expressed in pixels.
+  \param[out] n20_p : Second order \f$ n_{20} \f$ centered moment of the ellipse normalized by its area (i.e., such
+  that \f$ n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij} \f$ are the centered moments and a the area) expressed in pixels.
+  \param[out] n11_p : Second order \f$ n_{11} \f$ centered moment of the ellipse normalized by its area (i.e., such
+  that \f$ n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij} \f$ are the centered moments and a the area) expressed in pixels.
+  \param[out] n02_p : Second order \f$ n_{02} \f$ centered moment of the ellipse normalized by its area (i.e., such
+  that \f$ n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij} \f$ are the centered moments and a the area) expressed in pixels.
  */
 void vpMeterPixelConversion::convertEllipse(const cv::Mat &cameraMatrix, double xc_m, double yc_m, double n20_m,
                                             double n11_m, double n02_m, vpImagePoint &center_p, double &n20_p,
