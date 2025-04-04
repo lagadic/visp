@@ -856,7 +856,7 @@ bool vpIoTools::copy(const std::string &src, const std::string &dst)
     cmd << vpIoTools::path(dst);
     int ret = system(cmd.str().c_str());
     if (ret) {
-    }; // to avoid a warning
+    } // to avoid a warning
     // std::cout << cmd << " return value: " << ret << std::endl;
     return true;
 #else
@@ -893,7 +893,7 @@ bool vpIoTools::copy(const std::string &src, const std::string &dst)
     cmd << vpIoTools::path(dst);
     int ret = system(cmd.str().c_str());
     if (ret) {
-    }; // to avoid a warning
+    } // to avoid a warning
     // std::cout << cmd << " return value: " << ret << std::endl;
     return true;
 #else
@@ -958,7 +958,7 @@ bool vpIoTools::remove(const std::string &file_or_dir)
     cmd << "\"";
     int ret = system(cmd.str().c_str());
     if (ret) {
-    }; // to avoid a warning
+    } // to avoid a warning
     // std::cout << cmd << " return value: " << ret << std::endl;
     return true;
 #else

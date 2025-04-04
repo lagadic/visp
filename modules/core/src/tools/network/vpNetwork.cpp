@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -609,7 +609,7 @@ int vpNetwork::privHandleFirstRequest()
 void vpNetwork::privReceiveRequest()
 {
   while (privReceiveRequestOnce() > 0) {
-  };
+  }
 }
 
 /*!
@@ -632,7 +632,7 @@ void vpNetwork::privReceiveRequest()
 void vpNetwork::privReceiveRequestFrom(const unsigned int &receptorEmitting)
 {
   while (privReceiveRequestOnceFrom(receptorEmitting) > 0) {
-  };
+  }
 }
 
 /*!
