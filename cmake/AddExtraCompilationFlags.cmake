@@ -106,11 +106,13 @@ endif()
 # - pugixml.hpp(416,22): warning : 'long long' is incompatible with C++98 [-Wc++98-compat-pedantic]
 # - vpArray2D.h(307,49): warning : unsafe pointer arithmetic [-Wunsafe-buffer-usage]
 # - vpConfig.h(561,9): warning : macro name is a reserved identifier [-Wreserved-macro-identifier]
+# - vpCameraParameters.cpp(668,3): warning : default label in switch which covers all enumeration values [-Wcovered-switch-default]
 if(MSVC AND CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_extra_compiler_option("-Wno-c++98-compat")
   add_extra_compiler_option("-Wno-c++98-compat-pedantic")
   add_extra_compiler_option("-Wno-unsafe-buffer-usage")
   add_extra_compiler_option("-Wno-reserved-macro-identifier")
+  add_extra_compiler_option("-Wno-covered-switch-default")
 endif()
 
 # Note here ViSPDetectPlatform.cmake should be called before this file to set ARM var
