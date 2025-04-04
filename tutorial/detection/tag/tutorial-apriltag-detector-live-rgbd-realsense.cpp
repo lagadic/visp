@@ -16,6 +16,8 @@ void usage(const char **argv, int error)
     << "  " << argv[0]
     << " [--tag-size <size>]"
     << " [--tag-family <family>]"
+    << " [--tag-decision-margin-threshold <threshold>]"
+    << " [--tag-hamming-distance-threshold <threshold>]"
     << " [--tag-quad-decimate <factor>]"
     << " [--tag-n-threads <number>]"
     << " [--tag-z-aligned]"
@@ -49,7 +51,32 @@ void usage(const char **argv, int error)
     << "       8: TAG_CUSTOM48h12" << std::endl
     << "       9: TAG_STANDARD41h12" << std::endl
     << "      10: TAG_STANDARD52h13" << std::endl
+    << "      11: TAG_ARUCO_4x4_50" << std::endl
+    << "      12: TAG_ARUCO_4x4_100" << std::endl
+    << "      13: TAG_ARUCO_4x4_250" << std::endl
+    << "      14: TAG_ARUCO_4x4_1000" << std::endl
+    << "      15: TAG_ARUCO_5x5_50" << std::endl
+    << "      16: TAG_ARUCO_5x5_100" << std::endl
+    << "      17: TAG_ARUCO_5x5_250" << std::endl
+    << "      18: TAG_ARUCO_5x5_1000" << std::endl
+    << "      19: TAG_ARUCO_6x6_50" << std::endl
+    << "      20: TAG_ARUCO_6x6_100" << std::endl
+    << "      21: TAG_ARUCO_6x6_250" << std::endl
+    << "      22: TAG_ARUCO_6x6_1000" << std::endl
+    << "      23: TAG_ARUCO_MIP_36h12" << std::endl
     << "    Default: 0 (36h11)" << std::endl
+    << std::endl
+    << "  --tag-decision-margin-threshold <threshold>" << std::endl
+    << "    Threshold used to discard low-confident detections. A typical value is " << std::endl
+    << "    around 100. The higher this value, the more false positives will be filtered" << std::endl
+    << "    out. When this value is set to -1, false positives are not filtered out." << std::endl
+    << "    Default: 50" << std::endl
+    << std::endl
+    << "  --tag-hamming-distance-threshold <threshold>" << std::endl
+    << "    Threshold used to discard low-confident detections with corrected bits." << std::endl
+    << "    A typical value is between 0 and 3. The lower this value, the more false" << std::endl
+    << "    positives will be filtered out." << std::endl
+    << "    Default: 0" << std::endl
     << std::endl
     << "  --tag-quad-decimate <factor>" << std::endl
     << "    Decimation factor used to detect a tag. " << std::endl
@@ -121,24 +148,26 @@ int main(int argc, const char **argv)
 #endif
 
   vpDetectorAprilTag::vpAprilTagFamily opt_tag_family = vpDetectorAprilTag::TAG_36h11;
-  vpDetectorAprilTag::vpPoseEstimationMethod opt_pose_estimation_method = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
+  vpDetectorAprilTag::vpPoseEstimationMethod opt_tag_pose_estimation_method = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
   double opt_tag_size = 0.053;
-  float opt_quad_decimate = 1.0;
-  int opt_nThreads = 1;
+  float opt_tag_quad_decimate = 1.0;
+  float opt_tag_decision_margin_threshold = 50;
+  float opt_tag_hamming_distance_threshold = 2;
+  int opt_tag_nThreads = 1;
   bool opt_display_tag = false;
   int opt_color_id = -1;
   unsigned int opt_thickness = 2;
-  bool opt_align_frame = false;
+  bool opt_tag_z_align_frame = false;
   bool opt_verbose = false;
 
 #if !(defined(VISP_HAVE_DISPLAY))
   bool opt_display_off = true;
-  std::cout << "Warning: There is no 3rd party to dislay images..." << std::endl;
+  std::cout << "Warning: There is no 3rd party to display images..." << std::endl;
 #else
   bool opt_display_off = false;
 #endif
 
-  for (int i = 1; i < argc; i++) {
+  for (int i = 1; i < argc; ++i) {
     if (std::string(argv[i]) == "--tag-size" && i + 1 < argc) {
       opt_tag_size = atof(argv[++i]);
     }
@@ -146,16 +175,22 @@ int main(int argc, const char **argv)
       opt_tag_family = (vpDetectorAprilTag::vpAprilTagFamily)atoi(argv[++i]);
     }
     else if (std::string(argv[i]) == "--tag-quad-decimate" && i + 1 < argc) {
-      opt_quad_decimate = (float)atof(argv[++i]);
+      opt_tag_quad_decimate = (float)atof(argv[++i]);
     }
     else if (std::string(argv[i]) == "--tag-n-threads" && i + 1 < argc) {
-      opt_nThreads = atoi(argv[++i]);
+      opt_tag_nThreads = atoi(argv[++i]);
     }
     else if (std::string(argv[i]) == "--tag-z-aligned") {
-      opt_align_frame = true;
+      opt_tag_z_align_frame = true;
     }
-    if (std::string(argv[i]) == "--tag-pose-method" && i + 1 < argc) {
-      opt_pose_estimation_method = (vpDetectorAprilTag::vpPoseEstimationMethod)atoi(argv[++i]);
+    else if (std::string(argv[i]) == "--tag-pose-method" && i + 1 < argc) {
+      opt_tag_pose_estimation_method = (vpDetectorAprilTag::vpPoseEstimationMethod)atoi(argv[++i]);
+    }
+    else if (std::string(argv[i]) == "--tag-decision-margin-threshold" && i + 1 < argc) {
+      opt_tag_decision_margin_threshold = static_cast<float>(atof(argv[++i]));
+    }
+    else if (std::string(argv[i]) == "--tag-hamming-distance-threshold" && i + 1 < argc) {
+      opt_tag_hamming_distance_threshold = atoi(argv[++i]);
     }
 #if defined(VISP_HAVE_DISPLAY)
     else if (std::string(argv[i]) == "--display-tag") {
@@ -222,10 +257,15 @@ int main(int argc, const char **argv)
     //! [Construct grabber]
 
     std::cout << cam << std::endl;
-    std::cout << "opt_pose_estimation_method: " << opt_pose_estimation_method << std::endl;
-    std::cout << "opt_tag_family: " << opt_tag_family << std::endl;
-    std::cout << "opt_nThreads : " << opt_nThreads << std::endl;
-    std::cout << "Z aligned: " << opt_align_frame << std::endl;
+    std::cout << "Tag detector settings" << std::endl;
+    std::cout << "  Tag size [m]              : " << opt_tag_size << std::endl;
+    std::cout << "  Tag family                : " << opt_tag_family << std::endl;
+    std::cout << "  Quad decimate             : " << opt_tag_quad_decimate << std::endl;
+    std::cout << "  Decision margin threshold : " << opt_tag_decision_margin_threshold << std::endl;
+    std::cout << "  Hamming distance threshold: " << opt_tag_hamming_distance_threshold << std::endl;
+    std::cout << "  Num threads               : " << opt_tag_nThreads << std::endl;
+    std::cout << "  Z aligned                 : " << opt_tag_z_align_frame << std::endl;
+    std::cout << "  Pose estimation           : " << opt_tag_pose_estimation_method << std::endl;
 
     vpImage<vpRGBa> I_color2 = I_color;
     vpImage<float> depthMap;
@@ -248,13 +288,14 @@ int main(int argc, const char **argv)
     //! [Create AprilTag detector]
 
     //! [AprilTag detector settings]
-    detector.setAprilTagQuadDecimate(opt_quad_decimate);
-    detector.setAprilTagPoseEstimationMethod(opt_pose_estimation_method);
-    detector.setAprilTagNbThreads(opt_nThreads);
+    detector.setAprilTagQuadDecimate(opt_tag_quad_decimate);
+    detector.setAprilTagPoseEstimationMethod(opt_tag_pose_estimation_method);
+    detector.setAprilTagNbThreads(opt_tag_nThreads);
     detector.setDisplayTag(opt_display_tag, opt_color_id < 0 ? vpColor::none : vpColor::getColor(opt_color_id), opt_thickness);
-    detector.setZAlignedWithCameraAxis(opt_align_frame);
+    detector.setZAlignedWithCameraAxis(opt_tag_z_align_frame);
+    detector.setAprilTagDecisionMarginThreshold(opt_tag_decision_margin_threshold);
     //! [AprilTag detector settings]
-    std::vector<double> time_vec;
+    std::vector<double> time_vec, time_vec_detection;
     for (;;) {
       double t = vpTime::measureTimeMs();
 
@@ -287,13 +328,18 @@ int main(int argc, const char **argv)
       vpDisplay::display(I_color2);
       vpDisplay::display(I_depth);
 
+      double t_detection = vpTime::measureTimeMs();
       std::vector<vpHomogeneousMatrix> cMo_vec;
       detector.detect(I, opt_tag_size, cam, cMo_vec);
+      t_detection = vpTime::measureTimeMs() - t_detection;
+      time_vec_detection.push_back(t_detection);
 
       // Display camera pose for each tag
-      for (size_t i = 0; i < cMo_vec.size(); i++) {
-        vpDisplay::displayFrame(I_color, cMo_vec[i], cam, opt_tag_size / 2, vpColor::none, 3);
-      }
+      std::vector<std::vector<vpImagePoint> > tagsCorners = detector.getTagsCorners();
+      detector.displayTags(I_color, tagsCorners, vpColor::none, opt_thickness);
+      detector.displayFrames(I_color, cMo_vec, cam, opt_tag_size / 2, vpColor::none, opt_thickness);
+      detector.displayTags(I_color2, tagsCorners, vpColor::none, opt_thickness);
+      detector.displayFrames(I_color2, cMo_vec, cam, opt_tag_size / 2, vpColor::none, opt_thickness);
 
       //! [Pose from depth map]
       std::vector<std::vector<vpImagePoint> > tags_corners = detector.getPolygon();
@@ -307,13 +353,13 @@ int main(int argc, const char **argv)
         if (vpPose::computePlanarObjectPoseFromRGBD(depthMap, tags_corners[i], cam, tags_points3d[i], cMo,
                                                     &confidence_index)) {
           if (confidence_index > 0.5) {
-            vpDisplay::displayFrame(I_color2, cMo, cam, opt_tag_size / 2, vpColor::none, 3);
+            vpDisplay::displayFrame(I_color2, cMo, cam, opt_tag_size / 2, vpColor::none, opt_thickness);
           }
           else if (confidence_index > 0.25) {
-            vpDisplay::displayFrame(I_color2, cMo, cam, opt_tag_size / 2, vpColor::orange, 3);
+            vpDisplay::displayFrame(I_color2, cMo, cam, opt_tag_size / 2, vpColor::orange, opt_thickness);
           }
           else {
-            vpDisplay::displayFrame(I_color2, cMo, cam, opt_tag_size / 2, vpColor::red, 3);
+            vpDisplay::displayFrame(I_color2, cMo, cam, opt_tag_size / 2, vpColor::red, opt_thickness);
           }
           std::stringstream ss;
           ss << "Tag id " << tags_id[i] << " confidence: " << confidence_index;
@@ -354,6 +400,11 @@ int main(int argc, const char **argv)
     std::cout << "Mean / Median / Std: " << vpMath::getMean(time_vec) << " ms"
       << " ; " << vpMath::getMedian(time_vec) << " ms"
       << " ; " << vpMath::getStdev(time_vec) << " ms" << std::endl;
+
+    std::cout << "Benchmark detection processing time" << std::endl;
+    std::cout << "Mean / Median / Std: " << vpMath::getMean(time_vec_detection) << " ms"
+      << " ; " << vpMath::getMedian(time_vec_detection) << " ms"
+      << " ; " << vpMath::getStdev(time_vec_detection) << " ms" << std::endl;
   }
   catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e.getMessage() << std::endl;
