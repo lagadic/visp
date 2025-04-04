@@ -99,4 +99,4 @@ with-python-clang-cl = { features = ["python-bindings", "clang-cl"] }
 all = { features = ["rbt", "python-bindings"] }
 all-clang-cl = { features = ["rbt-clang-cl", "python-bindings", "clang-cl"] }
 all-with-tests = { features = ["rbt", "python-bindings", "tests"] }
-all-clang-cl-with-tests = { features = ["rbt", "python-bindings", "clang-cl", "tests"] }
+all-clang-cl-with-tests = { features = ["rbt-clang-cl", "python-bindings", "clang-cl", "tests"] }
