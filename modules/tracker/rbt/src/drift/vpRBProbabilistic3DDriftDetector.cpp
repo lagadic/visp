@@ -55,8 +55,8 @@ void vpRBProbabilistic3DDriftDetector::update(const vpRBFeatureTrackerInput &pre
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-  for (vpStored3DSurfaceColorPoint &p : m_points) {
-    p.update(cTo, cprevTo, frame.cam);
+  for (int i = 0; i < static_cast<int>(m_points.size()); ++i) {
+    m_points[i].update(cTo, cprevTo, frame.cam);
   }
 
   // Step 1: gather points visible in both images and in render
@@ -70,7 +70,8 @@ void vpRBProbabilistic3DDriftDetector::update(const vpRBFeatureTrackerInput &pre
 #ifdef VISP_HAVE_OPENMP
 #pragma omp for
 #endif
-    for (vpStored3DSurfaceColorPoint &p : m_points) {
+    for (int i = 0; i < static_cast<int>(m_points.size()); ++i) {
+      vpStored3DSurfaceColorPoint &p = m_points[i];
       p.visible = true;
       if (
         p.projPrevPx[0] < 2 || static_cast<unsigned int>(p.projPrevPx[0]) >= frame.IRGB.getWidth() - 2
@@ -149,8 +150,8 @@ void vpRBProbabilistic3DDriftDetector::update(const vpRBFeatureTrackerInput &pre
 #ifdef VISP_HAVE_OPENMP
 #pragma omp for
 #endif
-      for (vpStored3DSurfaceColorPoint *p : visiblePoints) {
-
+      for (int i = 0; i < static_cast<int>(visiblePoints.size()); ++i) {
+        vpStored3DSurfaceColorPoint *p = visiblePoints[i];
         const bool hasCorrectDepth = frame.hasDepth() && frame.depth[p->projPrevPx[1]][p->projPrevPx[0]] > 0.f;
         const double Z = hasCorrectDepth ? frame.depth[p->projPrevPx[1]][p->projPrevPx[0]] : 0.0;
         double depthError = Z > 0 ? fabs(p->prevX[2] - Z) : 0.0;
