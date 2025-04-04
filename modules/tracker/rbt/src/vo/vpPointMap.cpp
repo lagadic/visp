@@ -49,43 +49,40 @@ void vpPointMap::getPoints(const vpArray2D<int> &indices, vpMatrix &X)
 
 void vpPointMap::project(const vpHomogeneousMatrix &cTw, vpMatrix &cX)
 {
-  cX.resize(3, m_X.getRows(), false, false);
+  cX.resize(m_X.getRows(), 3, false, false);
 
   const vpColVector t = cTw.getTranslationVector();
   const vpRotationMatrix R = cTw.getRotationMatrix();
 
-  vpMatrix::mult2Matrices(R, m_Xt, cX);
+  vpMatrix::mult2Matrices(m_X, R.t(), cX);
   for (unsigned int i = 0; i < m_X.getRows(); ++i) {
-
-    cX[0][i] += t[0];
-    cX[1][i] += t[1];
-    cX[2][i] += t[2];
+    cX[i][0] += t[0];
+    cX[i][1] += t[1];
+    cX[i][2] += t[2];
   }
-  cX = cX.transpose();
 }
 
 void vpPointMap::project(const vpArray2D<int> &indices, const vpHomogeneousMatrix &cTw, vpMatrix &cX)
 {
-  vpMatrix X(3, indices.getRows());
+  vpMatrix X(indices.getRows(), 3);
   for (unsigned int i = 0; i < indices.getRows(); ++i) {
     unsigned idx = indices[i][0];
-    X[0][i] = m_Xt[0][idx];
-    X[1][i] = m_Xt[1][idx];
-    X[2][i] = m_Xt[2][idx];
+    X[i][0] = m_X[idx][0];
+    X[i][1] = m_X[idx][1];
+    X[i][2] = m_X[idx][2];
   }
-  cX.resize(3, indices.getRows(), false, false);
+  cX.resize(indices.getRows(), 3, false, false);
 
   const vpColVector t = cTw.getTranslationVector();
   const vpRotationMatrix R = cTw.getRotationMatrix();
 
-  vpMatrix::mult2Matrices(R, X, cX);
+  vpMatrix::mult2Matrices(X, R.t(), cX);
 
   for (unsigned int i = 0; i < indices.getRows(); ++i) {
-    cX[0][i] += t[0];
-    cX[1][i] += t[1];
-    cX[2][i] += t[2];
+    cX[i][0] += t[0];
+    cX[i][1] += t[1];
+    cX[i][2] += t[2];
   }
-  cX = cX.transpose();
 }
 
 void vpPointMap::project(const vpArray2D<int> &indices, const vpHomogeneousMatrix &cTw, vpMatrix &cX, vpMatrix &xs)
@@ -130,27 +127,28 @@ void vpPointMap::getVisiblePoints(const unsigned int h, const unsigned int w, co
   indices.clear();
   const vpRotationMatrix cRw = cTw.getRotationMatrix();
   const vpTranslationVector t = cTw.getTranslationVector();
-  vpMatrix cXt(m_Xt.getRows(), m_Xt.getCols());
-  vpMatrix::mult2Matrices(cRw, m_Xt, cXt);
+  vpMatrix cX(m_X.getRows(), m_X.getCols());
+  vpMatrix::mult2Matrices(m_X, cRw.t(), cX);
 
-  double u, v;
+
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel
 #endif
   {
     std::vector<int> localIndices;
+    double u, v;
 
 #ifdef VISP_HAVE_OPENMP
     localIndices.reserve(m_X.getRows() / omp_get_num_threads());
 #pragma omp for nowait
 #endif
     for (unsigned int i = 0; i < m_X.getRows(); ++i) {
-      const double Z = cXt[2][i] + t[2];
+      const double Z = cX[i][2] + t[2];
 
       if (Z <= 0.0) {
         continue;
       }
-      const double X = cXt[0][i] + t[0], Y = cXt[1][i] + t[1];
+      const double X = cX[i][0] + t[0], Y = cX[i][1] + t[1];
       const double x = X / Z, y = Y / Z;
       vpMeterPixelConversion::convertPointWithoutDistortion(cam, x, y, u, v);
       if (u < 0 || v < 0 || u >= w || v >= h) {
@@ -334,8 +332,6 @@ void vpPointMap::updatePoints(const vpArray2D<int> &indicesToRemove, const vpMat
   memcpy(newX[newXIndex], pointsToAdd[0], numAddedPoints * 3 * sizeof(double));
 
   m_X = std::move(newX);
-  m_Xt = m_X.t();
-
 }
 
 END_VISP_NAMESPACE

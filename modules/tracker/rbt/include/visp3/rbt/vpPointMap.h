@@ -179,7 +179,6 @@ public:
 
 private:
   vpMatrix m_X; // N x 3, points expressed in world frame
-  vpMatrix m_Xt; // 3 x N points, in world frame (same as m_X)
   unsigned m_maxPoints;
   double m_minDistNewPoint;
   double m_maxDepthErrorVisible;
