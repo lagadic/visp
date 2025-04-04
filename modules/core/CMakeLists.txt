@@ -324,6 +324,7 @@ if (UNIX)
   vp_set_source_file_compile_flag(src/tools/file/vpIoTools_npy.cpp -Wno-strict-aliasing)
 elseif(MSVC AND CMAKE_CXX_COMPILER_ID MATCHES "Clang") # clang-cl usage
   vp_set_source_file_compile_flag(src/image/vpFont.cpp -Wno-reserved-identifier -Wno-sign-conversion -Wno-zero-as-null-pointer-constant -Wno-old-style-cast -Wnosign-conversion -Wno-float-equal -Wno-cast-qual -Wno-switch-default -Wno-c++23-extensions -Wno-implicit-fallthrough -Wno-implicit-int-float-conversion -Wno-cast-qual -Wno-comma -Wno-double-promotion)
+  vp_set_source_file_compile_flag(src/tools/file/vpIoTools_npy.cpp -Wno-old-style-cast -Wno-sign-conversion -Wno-switch-default -Wno-sign-conversion -Wno-comma -Wno-zero-as-null-pointer-constant -Wno-tautological-type-limit-compare -Wno-cast-align -Wno-extra-semi-stmt -Wno-missing-prototypes)
 else()
   vp_set_source_file_compile_flag(src/tools/file/vpIoTools_npy.cpp /wd4333)
 endif()
