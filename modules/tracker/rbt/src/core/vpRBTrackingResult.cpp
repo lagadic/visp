@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,13 +28,14 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#if defined(VISP_HAVE_NLOHMANN_JSON)
-#include VISP_NLOHMANN_JSON(json.hpp)
-#endif
+#include <visp3/core/vpConfig.h>
+#include <visp3/rbt/vpRBTrackingResult.h>
 
 #include <iostream>
 
-#include <visp3/rbt/vpRBTrackingResult.h>
+#if defined(VISP_HAVE_NLOHMANN_JSON)
+#include VISP_NLOHMANN_JSON(json.hpp)
+#endif
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
 

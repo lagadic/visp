@@ -1186,7 +1186,7 @@ public:
   {
     const unsigned int s = A.size();
     for (unsigned int i = 0; i < s; ++i) {
-      if (vpMath::isNaN(A.data[i]) || vpMath::isInf(A.data[i])) {
+      if (!vpMath::isFinite(A.data[i])) {
         return false;
       }
     }

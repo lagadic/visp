@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -113,15 +113,12 @@ public:
     m_odometryMotion = vpHomogeneousMatrix();
   }
 
-  unsigned int numIterations() const { return m_cMos.size(); }
+  unsigned int getNumIterations() const { return m_cMos.size(); }
   const std::vector<vpHomogeneousMatrix> &getPoses() const { return m_cMos; }
   vpHomogeneousMatrix getPoseBeforeTracking() const { return m_cMoBeforeTracking; }
 
   const std::vector<vpColVector> &getVelocities() const { return m_velocities; }
   const std::vector<double> &getConvergenceMetricValues() const { return m_convergenceMetric; }
-
-
-
 
   vpRBTrackingTimings &timer() { return m_timings; }
 
@@ -154,7 +151,7 @@ public:
   std::vector<vpRBFeatureResult> getFeatureData() const { return m_featureData; }
 
 
-  void onEndIter(const vpHomogeneousMatrix &cMo, const vpColVector &v, const double convergenceMetric, const vpMatrix &JTJ, const vpColVector &JTR, double mu)
+  inline void onEndIter(const vpHomogeneousMatrix &cMo, const vpColVector &v, const double convergenceMetric, const vpMatrix &JTJ, const vpColVector &JTR, double mu)
   {
     m_cMos.push_back(cMo);
     m_velocities.push_back(v);
@@ -165,7 +162,7 @@ public:
 
   }
 
-  void logFeatures(const std::vector<std::shared_ptr<vpRBFeatureTracker>> &features)
+  inline void logFeatures(const std::vector<std::shared_ptr<vpRBFeatureTracker>> &features)
   {
     if (m_featureData.size() == 0) {
       m_featureData.resize(features.size());
