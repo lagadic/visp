@@ -21,10 +21,10 @@ jobs:
         build_type: [Release]
         include:
           - os: windows-latest
-            environment: all
+            environment: all-with-tests
             build_type: Release
           - os: windows-latest
-            environment: all-clang-cl
+            environment: all-clang-cl-with-tests
             build_type: Release
           - os: windows-latest
             environment: with-python
