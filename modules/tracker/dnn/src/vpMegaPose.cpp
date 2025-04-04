@@ -394,7 +394,7 @@ vpMegaPose::vpMegaPose(const std::string &host, int port, const vpCameraParamete
     throw vpException(vpException::ioError, "Could not connect to server at " + host + ":" + std::to_string(port));
   }
   setIntrinsics(cam, height, width);
-}
+  }
 
 vpMegaPose::~vpMegaPose()
 {
@@ -624,12 +624,12 @@ END_VISP_NAMESPACE
 class VISP_EXPORT dummy_vpMegaPose
 {
 public:
-  dummy_vpMegaPose() { };
+  dummy_vpMegaPose() { }
 };
 
 #if !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_dnn_tracker.a(vpMegaPose.cpp.o) has no symbols
-void dummy_vpMegaPose_fct() { };
+void dummy_vpMegaPose_fct() { }
 #endif
 
 #endif

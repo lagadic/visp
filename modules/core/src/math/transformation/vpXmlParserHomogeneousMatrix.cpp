@@ -547,6 +547,6 @@ void vpXmlParserHomogeneousMatrix::setHomogeneousMatrixName(const std::string &n
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpXmlParserHomogeneousMatrix.cpp.o) has no symbols
-void dummy_vpXmlParserHomogeneousMatrix() { };
+void dummy_vpXmlParserHomogeneousMatrix() { }
 
 #endif

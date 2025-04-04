@@ -54,6 +54,6 @@ vpSimulatorException::vpSimulatorException(int id) : vpException(id) { ; }
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_ar.a(vpSimulatorException.cpp.o) has no symbols
-void dummy_vpSimulatorException() { };
+void dummy_vpSimulatorException() { }
 
 #endif

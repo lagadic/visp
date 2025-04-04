@@ -118,7 +118,7 @@ END_VISP_NAMESPACE
 {
 // Check if std:c++14 or higher
 #if ((__cplusplus >= 201402L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201402L)))
-auto AbsDiff = [](const auto &a, const auto &b) { return std::fabs(a - b); };
+auto AbsDiff = [](const auto &a, const auto &b) { return std::fabs(a - b); }
 #else
 template <typename T> struct AbsDiff : public std::binary_function<T, T, T>
 {

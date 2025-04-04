@@ -83,7 +83,7 @@ public:
     By default the state model is unknown and set to
     vpLinearKalmanFilterInstantiation::unknown.
   */
-  vpLinearKalmanFilterInstantiation() : model(unknown) { };
+  vpLinearKalmanFilterInstantiation() : model(unknown) { }
 
   /*!
     Return the current state model.

@@ -65,7 +65,7 @@ template <class Type> class vpImageQueue
 {
 public:
   struct vpCancelled_t
-  { };
+  { }
 
   /*!
    * Queue (FIFO) constructor. By default the max queue size is set to 1024*8.

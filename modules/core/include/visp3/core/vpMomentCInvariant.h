@@ -274,7 +274,7 @@ public:
   /*!
    * To know if Sx and Sy were calculated from normalized moments or not
    */
-  bool isSxSyfromNormalizedMoments() const { return flg_sxsynormalization_; };
+  bool isSxSyfromNormalizedMoments() const { return flg_sxsynormalization_; }
 
   /*!
    *  To get all the invariant values as a whole.

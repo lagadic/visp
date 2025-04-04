@@ -144,15 +144,15 @@ public:
   /*!
     Return the size of the state vector \f${\bf x}_{(k)}\f$ for one signal.
   */
-  unsigned int getStateSize() { return size_state; };
+  unsigned int getStateSize() { return size_state; }
   /*!
     Return the size of the measure vector \f${\bf z}_{(k)}\f$ for one signal.
   */
-  unsigned int getMeasureSize() { return size_measure; };
+  unsigned int getMeasureSize() { return size_measure; }
   /*!
     Return the number of signal to filter.
   */
-  unsigned int getNumberOfSignal() { return nsignal; };
+  unsigned int getNumberOfSignal() { return nsignal; }
   /*!
     Return the iteration number.
   */
@@ -166,7 +166,7 @@ public:
     \param on : If true, activates the verbose mode which consists in printing
     the Kalman filter internal values.
   */
-  void verbose(bool on) { verbose_mode = on; };
+  void verbose(bool on) { verbose_mode = on; }
 
 public:
   /*!

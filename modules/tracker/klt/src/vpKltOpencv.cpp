@@ -328,12 +328,12 @@ END_VISP_NAMESPACE
 class VISP_EXPORT dummy_vpKltOpencv
 {
 public:
-  dummy_vpKltOpencv() { };
+  dummy_vpKltOpencv() { }
 };
 
 #if !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_klt.a(vpKltOpenCV.cpp.o) has no symbols
-void dummy_vpKltOpenCV_fct() { };
+void dummy_vpKltOpenCV_fct() { }
 #endif
 
 #endif

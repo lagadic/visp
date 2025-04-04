@@ -1030,5 +1030,5 @@ END_VISP_NAMESPACE
 #endif
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_gui.a(vpGDIRenderer.cpp.o) has no symbols
-void dummy_vpGDIRenderer() { };
+void dummy_vpGDIRenderer() { }
 #endif
