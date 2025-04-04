@@ -97,7 +97,7 @@ typedef struct SoftwareArguments
     , m_upperThresh(-1.)
     , m_lowerThreshRatio(0.6f)
     , m_upperThreshRatio(0.8f)
-    , m_filteringType(vpImageFilter::CANNY_COUNT_FILTERING)
+    , m_filteringType(vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING)
     , m_saveImages(false)
 #ifdef VISP_HAVE_DISPLAY
     , m_useDisplay(true)
@@ -224,7 +224,8 @@ int main(int argc, const char *argv[])
   vpCannyEdgeDetection cannyDetector(options.m_gaussianKernelSize, options.m_gaussianStdev, uselessAperture,
                                      options.m_lowerThresh, options.m_upperThresh, options.m_lowerThreshRatio, options.m_upperThreshRatio, options.m_filteringType);
   vpImage<vpRGBa> Iload;
-  vpImage<vpHSV<double>> I_canny_input;
+  vpImage<vpHSV<unsigned char, true>> Iin_hsvuc;
+  vpImage<vpHSV<double>> Iin_hsvd;
   if (!options.m_img.empty()) {
     // Detection on the user image
     vpImageIo::read(Iload, options.m_img);
@@ -237,8 +238,11 @@ int main(int argc, const char *argv[])
   vpImage<bool> *p_mask = nullptr;
   cannyDetector.setMask(p_mask);
 
-  vpImageConvert::convert(Iload, I_canny_input);
-  vpImage<unsigned char> I_canny_visp = cannyDetector.detect(I_canny_input);
+  vpImageConvert::convert(Iload, Iin_hsvuc);
+  vpImage<unsigned char> I_canny_hsvuc = cannyDetector.detect(Iin_hsvuc);
+
+  vpImageConvert::convert(Iload, Iin_hsvd);
+  vpImage<unsigned char> I_canny_hsvd = cannyDetector.detect(Iin_hsvd);
 
   vpCannyEdgeDetection cannyDetectorUC(options.m_gaussianKernelSize, options.m_gaussianStdev, uselessAperture,
     options.m_lowerThresh, options.m_upperThresh, options.m_lowerThreshRatio, options.m_upperThreshRatio);
@@ -249,10 +253,18 @@ int main(int argc, const char *argv[])
   // Initialization of the displays
 #ifdef VISP_HAVE_DISPLAY
   vpImage<double> GIx, GIy, GI;
-  vpImageFilter::gradientFilter(I_canny_input, GIx, GIy, 1, p_mask, options.m_filteringType);
+  vpImage<vpHSV<unsigned char, true>> Iblur_hsvuc;
+  vpImageFilter::gaussianBlur(Iin_hsvuc, Iblur_hsvuc, options.m_gaussianKernelSize, options.m_gaussianStdev, true, p_mask);
+  vpImageFilter::gradientFilter(Iblur_hsvuc, GIx, GIy, 1, p_mask, options.m_filteringType);
   double min = 0., max = 0.;
   computeAbsoluteGradient(GIx, GIy, GI, min, max);
-  vpImage<unsigned char> GIdisp = convertToDisplay(GI, min, max);
+  vpImage<unsigned char> GIdisp_hsvuc = convertToDisplay(GI, min, max);
+
+  vpImage<vpHSV<unsigned char, true>> Iblur_hsvd;
+  vpImageFilter::gaussianBlur(Iin_hsvd, Iblur_hsvd, options.m_gaussianKernelSize, options.m_gaussianStdev, true, p_mask);
+  vpImageFilter::gradientFilter(Iblur_hsvd, GIx, GIy, 1, p_mask, options.m_filteringType);
+  computeAbsoluteGradient(GIx, GIy, GI, min, max);
+  vpImage<unsigned char> GIdisp_hsvd = convertToDisplay(GI, min, max);
 
   vpImage<double> GIx_uc, GIy_uc, GI_uc;
   vpImageFilter::computePartialDerivatives(Iin_convert, GIx_uc, GIy_uc, true, true, true,
@@ -264,13 +276,17 @@ int main(int argc, const char *argv[])
     std::shared_ptr<vpDisplay> disp_input = vpDisplayFactory::createDisplay(Iload, -1, -1, "Input color image", vpDisplay::SCALE_AUTO);
     int posX = disp_input->getWidth() + 20;
     int posY = disp_input->getHeight() + 20;
-    std::shared_ptr<vpDisplay> disp_canny = vpDisplayFactory::createDisplay(I_canny_visp, posX, -1, "HSV Canny", vpDisplay::SCALE_AUTO);
+    std::shared_ptr<vpDisplay> disp_canny = vpDisplayFactory::createDisplay(I_canny_hsvuc, posX, -1, "HSV Canny", vpDisplay::SCALE_AUTO);
     std::shared_ptr<vpDisplay> disp_input_uc = vpDisplayFactory::createDisplay(Iin_convert, -1, posY, "Input converted image", vpDisplay::SCALE_AUTO);
     std::shared_ptr<vpDisplay> disp_canny_uc = vpDisplayFactory::createDisplay(I_canny_uc, posX, posY, "UC Canny", vpDisplay::SCALE_AUTO);
 
-    std::shared_ptr<vpDisplay> disp_GI = vpDisplayFactory::createDisplay(GIdisp, 2 * posX, -1, "Gradient");
-    vpDisplay::display(GIdisp);
-    vpDisplay::flush(GIdisp);
+    std::shared_ptr<vpDisplay> disp_GI_hsvuc = vpDisplayFactory::createDisplay(GIdisp_hsvuc, 2 * posX, -1, "Gradient");
+    vpDisplay::display(GIdisp_hsvuc);
+    vpDisplay::flush(GIdisp_hsvuc);
+
+    std::shared_ptr<vpDisplay> disp_GI_hsvd = vpDisplayFactory::createDisplay(GIdisp_hsvd, 3 * posX, -1, "Gradient");
+    vpDisplay::display(GIdisp_hsvd);
+    vpDisplay::flush(GIdisp_hsvd);
 
     std::shared_ptr<vpDisplay> disp_GI_uc = vpDisplayFactory::createDisplay(GIdisp_uc, 2 * posX, posY, "Gradient (unsigned char)");
     vpDisplay::display(GIdisp_uc);
@@ -282,19 +298,21 @@ int main(int argc, const char *argv[])
     vpDisplay::flush(Iin_convert);
     vpDisplay::display(I_canny_uc);
     vpDisplay::flush(I_canny_uc);
-    vpDisplay::display(I_canny_visp);
-    vpDisplay::displayText(I_canny_visp, vpImagePoint(20, 20), "Click to leave.", vpColor::red);
-    vpDisplay::flush(I_canny_visp);
-    vpDisplay::getClick(I_canny_visp);
+    vpDisplay::display(I_canny_hsvuc);
+    vpDisplay::displayText(I_canny_hsvuc, vpImagePoint(20, 20), "Click to leave.", vpColor::red);
+    vpDisplay::flush(I_canny_hsvuc);
+    vpDisplay::getClick(I_canny_hsvuc);
   }
 #else
   options.m_saveImages = true;
 #endif
   if (options.m_saveImages) {
     std::string basename = vpIoTools::getNameWE(options.m_img);
-    vpImageIo::write(I_canny_visp, "Canny_HSV_" + basename + ".jpg");
+    vpImageIo::write(I_canny_hsvuc, "Canny_HSVUC_" + basename + ".jpg");
+    vpImageIo::write(I_canny_hsvd, "Canny_HSVD_" + basename + ".jpg");
     vpImageIo::write(I_canny_uc, "Canny_UC_" + basename + ".jpg");
-    vpImageIo::write(GIdisp, "Gradient_HSV_" + basename + ".jpg");
+    vpImageIo::write(GIdisp_hsvuc, "Gradient_HSVUC_" + basename + ".jpg");
+    vpImageIo::write(GIdisp_hsvd, "Gradient_HSVD_" + basename + ".jpg");
     vpImageIo::write(GIdisp_uc, "Gradient_UC_" + basename + ".jpg");
   }
   return EXIT_SUCCESS;
