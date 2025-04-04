@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -125,7 +125,7 @@ BEGIN_VISP_NAMESPACE
  */
   const std::string &vpIoTools::getBuildInformation()
 {
-  static std::string build_info =
+  VP_ATTRIBUTE_NO_DESTROY static std::string build_info =
 #include "version_string.inc"
     ;
   return build_info;

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +29,7 @@
  *
  * Description:
  * Color definition.
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpColor.h>
 
@@ -118,7 +117,7 @@ vpColor const vpColor::allColors[vpColor::nbColors] = { vpColor::blue,       // 
                                                        vpColor::white };     // 17
 #endif
 
-vpColor colors[6] = { vpColor::blue, vpColor::green, vpColor::red, vpColor::cyan, vpColor::orange, vpColor::purple };
+VP_ATTRIBUTE_NO_DESTROY vpColor colors[6] = { vpColor::blue, vpColor::green, vpColor::red, vpColor::cyan, vpColor::orange, vpColor::purple };
 
 /*!
   Compare two colors.
