@@ -303,5 +303,5 @@ void vpServer::print() { vpNetwork::print("Client"); }
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpServer.cpp.o) has no symbols
-void dummy_vpServer() { };
+void dummy_vpServer() { }
 #endif

@@ -142,7 +142,7 @@ public:
     std::stringstream ss;
     ss << "Level is > to size (" << m_size << ") !";
     throw vpException(vpException::dimensionError, ss.str().c_str());
-  };
+  }
   /*!
 
     Return the number of pixels having the gray \e level.
@@ -172,7 +172,7 @@ public:
     std::stringstream ss;
     ss << "Level is > to size (" << m_size << ") !";
     throw vpException(vpException::dimensionError, ss.str().c_str());
-  };
+  }
   /*!
 
     Return the number of pixels having the gray \e level.
@@ -202,7 +202,7 @@ public:
     std::stringstream ss;
     ss << "Level is > to size (" << m_size << ") !";
     throw vpException(vpException::dimensionError, ss.str().c_str());
-  };
+  }
 
   /*!
 
@@ -231,7 +231,7 @@ public:
       ss << "Level is > to size (" << m_size << ") !";
       throw vpException(vpException::dimensionError, ss.str().c_str());
     }
-  };
+  }
 
   /**
    * \brief Set a mask to ignore pixels for which the mask is false.
@@ -275,7 +275,7 @@ public:
 
     \sa getValues()
   */
-  inline unsigned getSize() const { return m_size; };
+  inline unsigned getSize() const { return m_size; }
 
   /*!
 
@@ -298,14 +298,14 @@ public:
 
     \sa getSize()
   */
-  inline unsigned *getValues() { return m_histogram; };
+  inline unsigned *getValues() { return m_histogram; }
 
   /**
    * \brief Get the total number of pixels in the input image.
    *
    * \return unsigned int Cumulated number of pixels in the input image.
    */
-  inline unsigned int getTotal() { return m_total; };
+  inline unsigned int getTotal() { return m_total; }
 
 private:
   void init(unsigned size = 256);

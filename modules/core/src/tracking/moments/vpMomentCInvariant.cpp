@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,12 +29,8 @@
  *
  * Description:
  * Descriptor for various invariants used to drive space rotations around X and
- *Y axis.
- *
- * Authors:
- * Filip Novotny
- *
-*****************************************************************************/
+ * Y axis.
+ */
 
 #include <visp3/core/vpMomentCInvariant.h>
 #include <visp3/core/vpMomentCentered.h>
@@ -54,8 +49,9 @@ vpMomentCInvariant::vpMomentCInvariant(bool flg_sxsynormalization)
 
 /*!
   Computes some temporary invariants which are used internally to compute the
-  final invariants. \param momentCentered : centered moments \param I :
-  invariant output values
+  final invariants.
+  \param momentCentered : Centered moments.
+  \param I_val : Invariant output values.
 */
 void vpMomentCInvariant::computeI(const vpMomentCentered &momentCentered, std::vector<double> &I_val)
 {

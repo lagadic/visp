@@ -39,7 +39,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(HAVE_OPENCV_HIGHGUI) &&  defined(HAVE_OPENCV_IMGPROC) && defined(VISP_HAVE_PUGIXML) \
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_HIGHGUI) &&  defined(HAVE_OPENCV_IMGPROC) && defined(VISP_HAVE_PUGIXML) \
   && (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D)))
 
 #include <map>
@@ -733,10 +733,10 @@ int main()
 #if !defined(HAVE_OPENCV_HIGHGUI)
   std::cout << "This example requires OpenCV highgui module." << std::endl;
 #endif
-#if (VISP_HAVE_OPENCV_VERSION < 0x050000) && !defined(HAVE_OPENCV_CALIB3D)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION < 0x050000) && !defined(HAVE_OPENCV_CALIB3D)
   std::cout << "This example requires OpenCV calib3d module." << std::endl;
 #endif
-#if (VISP_HAVE_OPENCV_VERSION >= 0x050000) && !defined(HAVE_OPENCV_3D)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x050000) && !defined(HAVE_OPENCV_3D)
   std::cout << "This example requires OpenCV 3d module." << std::endl;
 #endif
 #if !defined(VISP_HAVE_PUGIXML)

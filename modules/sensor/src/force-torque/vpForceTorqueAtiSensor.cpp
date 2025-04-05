@@ -285,5 +285,5 @@ END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning:
 // libvisp_sensor.a(vpForceTorqueAtiSensor.cpp.o) has no symbols
-void dummy_vpForceTorqueAtiSensor() { };
+void dummy_vpForceTorqueAtiSensor() { }
 #endif

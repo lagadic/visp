@@ -135,7 +135,7 @@ public:
   /*!
    * Destructor.
    */
-  virtual ~vpMeSite() { };
+  virtual ~vpMeSite() { }
 
   /*!
    * Compute convolution.

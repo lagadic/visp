@@ -1111,7 +1111,7 @@ private:
 #if (VISP_HAVE_MAVSDK_VERSION >= 0x020000)
   mavsdk::Mavsdk m_mavsdk { mavsdk::Mavsdk::Configuration{mavsdk::ComponentType::GroundStation} };
 #else
-  mavsdk::Mavsdk m_mavsdk { };
+  mavsdk::Mavsdk m_mavsdk { }
 #endif
   std::shared_ptr<mavsdk::System> m_system;
   std::shared_ptr<mavsdk::Action> m_action;
@@ -1358,14 +1358,14 @@ bool vpRobotMavsdk::takeOff(bool interactive, double takeoff_altitude, int timeo
  *
  * \return true when success, false otherwise.
  */
-bool vpRobotMavsdk::holdPosition() { return m_impl->holdPosition(); };
+bool vpRobotMavsdk::holdPosition() { return m_impl->holdPosition(); }
 
 /*!
  * Stops any vehicle movement.
  * \warning Depending on the speed of the vehicle when the function is called, it may still move a bit until it
  * stabilizes.
  */
-bool vpRobotMavsdk::stopMoving() { return m_impl->stopMoving(); };
+bool vpRobotMavsdk::stopMoving() { return m_impl->stopMoving(); }
 
 /*!
  * Sends landing command if the vehicle has flying capabilities.
@@ -1604,5 +1604,5 @@ bool vpRobotMavsdk::hasFlyingCapability() { return m_impl->getFlyingCapability()
 #endif
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpRobotMavsdk.cpp.o) has no symbols
-void dummy_vpRobotMavsdk() { };
+void dummy_vpRobotMavsdk() { }
 #endif

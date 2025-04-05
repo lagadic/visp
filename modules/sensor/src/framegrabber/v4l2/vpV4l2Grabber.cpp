@@ -1476,5 +1476,5 @@ vpV4l2Grabber &vpV4l2Grabber::operator>>(vpImage<vpRGBa> &I)
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_sensor.a(vpV4l2Grabber.cpp.o) has no symbols
-void dummy_vpV4l2Grabber() { };
+void dummy_vpV4l2Grabber() { }
 #endif

@@ -114,8 +114,9 @@ public:
     case vpCameraParameters::ProjWithKannalaBrandtDistortion:
       convertPointWithKannalaBrandtDistortion(cam, x, y, u, v);
       break;
-    default:
-      std::cerr << "projection model not identified" << std::endl;
+    default: {
+      throw(vpException(vpException::fatalError, "Unsupported camera projection model in vpMeterPixelConversion::convertPoint()"));
+    }
     }
   }
 
@@ -158,8 +159,9 @@ public:
     case vpCameraParameters::ProjWithKannalaBrandtDistortion:
       convertPointWithKannalaBrandtDistortion(cam, x, y, iP);
       break;
-    default:
-      std::cerr << "projection model not identified" << std::endl;
+    default: {
+      throw(vpException(vpException::fatalError, "Unsupported camera projection model in vpMeterPixelConversion::convertPoint()"));
+    }
     }
   }
 
@@ -343,7 +345,9 @@ public:
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
   //@}
 
-#if (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_CALIB) && defined(HAVE_OPENCV_3D)))
+#if defined(VISP_HAVE_OPENCV) && \
+    (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D)) || \
+    ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_CALIB) && defined(HAVE_OPENCV_3D)))
   /** @name Using OpenCV camera parameters  */
   //@{
   static void convertEllipse(const cv::Mat &cameraMatrix, const vpCircle &circle, vpImagePoint &center, double &n20_p,

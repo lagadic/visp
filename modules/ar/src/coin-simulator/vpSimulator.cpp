@@ -1002,5 +1002,5 @@ void vpSimulator::getInternalImage(vpImage<unsigned char> &I)
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_ar.a(vpSimulator.cpp.o) has no symbols
-void dummy_vpSimulator() { };
+void dummy_vpSimulator() { }
 #endif

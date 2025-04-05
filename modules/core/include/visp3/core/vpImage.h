@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -537,7 +537,7 @@ vpImage<Type>::vpImage() : bitmap(nullptr), display(nullptr), npixels(0), width(
   only if the new image size is different, else we re-use the same
   memory space.
 
-  \exception vpException::memoryAllocationError
+  \exception vpException::memoryAllocationError Memory allocation error.
 
   \sa init(unsigned int, unsigned int)
 */
@@ -558,7 +558,7 @@ template <class Type> void vpImage<Type>::resize(unsigned int h, unsigned int w)
   only if the new image size is different, else we re-use the same
   memory space.
 
-  \exception vpException::memoryAllocationError
+  \exception vpException::memoryAllocationError Memory allocation error.
 
   \sa init(unsigned int, unsigned int)
 */

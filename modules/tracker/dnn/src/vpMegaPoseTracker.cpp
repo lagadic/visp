@@ -79,6 +79,6 @@ void vpMegaPoseTracker::updatePose(const vpHomogeneousMatrix &cTo)
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_dnn_tracker.a(vpMegaPoseTracker.cpp.o) has no symbols
-void dummy_vpMegaPoseTracker() { };
+void dummy_vpMegaPoseTracker() { }
 
 #endif

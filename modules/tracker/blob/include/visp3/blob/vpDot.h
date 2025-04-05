@@ -252,7 +252,7 @@ public:
    * \warning Doesn't return the image points inside the dot anymore. To get
    * those points see getConnexities().
    */
-  inline std::list<vpImagePoint> getEdges() const { return m_ip_edges_list; };
+  inline std::list<vpImagePoint> getEdges() const { return m_ip_edges_list; }
 
   /*!
    * Return the list of all the image points inside the dot.
@@ -260,9 +260,9 @@ public:
    * \return The list of all the images points in the dot.
    * This list is updated after a call to track().
    */
-  inline std::list<vpImagePoint> getConnexities() const { return m_ip_connexities_list; };
+  inline std::list<vpImagePoint> getConnexities() const { return m_ip_connexities_list; }
 
-  inline double getGamma() const { return m_gamma; };
+  inline double getGamma() const { return m_gamma; }
 
   /*!
    * Return the precision of the gray level of the dot. It is a double
@@ -275,26 +275,26 @@ public:
   /*!
    * Return the mean gray level value of the dot.
    */
-  double getMeanGrayLevel() const { return m_mean_gray_level; };
+  double getMeanGrayLevel() const { return m_mean_gray_level; }
 
   /*!
    * \return a vpPolygon made from the edges of the dot.
    */
-  vpPolygon getPolygon() const { return (vpPolygon(m_ip_edges_list)); };
+  vpPolygon getPolygon() const { return (vpPolygon(m_ip_edges_list)); }
 
   /*!
    * Return the width of the dot.
    *
    * \sa getHeight()
    */
-  inline unsigned int getWidth() const { return ((m_u_max - m_u_min) + 1); };
+  inline unsigned int getWidth() const { return ((m_u_max - m_u_min) + 1); }
 
   /*!
    * Return the width of the dot.
    *
    * \sa getHeight()
    */
-  inline unsigned int getHeight() const { return ((m_v_max - m_v_min) + 1); };
+  inline unsigned int getHeight() const { return ((m_v_max - m_v_min) + 1); }
 
   void initTracking(const vpImage<unsigned char> &I);
   void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip);
@@ -331,10 +331,10 @@ public:
   /*!
    * Set the type of connexity: 4 or 8.
    */
-  void setConnexity(const vpConnexityType &connexityType) { m_connexityType = connexityType; };
+  void setConnexity(const vpConnexityType &connexityType) { m_connexityType = connexityType; }
   void setMaxDotSize(double percentage);
-  void setGrayLevelMin(const unsigned int &level_min) { m_gray_level_min = level_min; };
-  void setGrayLevelMax(const unsigned int &level_max) { m_gray_level_max = level_max; };
+  void setGrayLevelMin(const unsigned int &level_min) { m_gray_level_min = level_min; }
+  void setGrayLevelMax(const unsigned int &level_max) { m_gray_level_max = level_max; }
   void setGrayLevelPrecision(const double &grayLevelPrecision);
 
   /*!
@@ -358,7 +358,7 @@ public:
    *
    * \sa setGraphics()
    */
-  void setGraphicsThickness(unsigned int thickness) { m_thickness = thickness; };
+  void setGraphicsThickness(unsigned int thickness) { m_thickness = thickness; }
 
   void track(const vpImage<unsigned char> &I);
   void track(const vpImage<unsigned char> &I, vpImagePoint &ip);

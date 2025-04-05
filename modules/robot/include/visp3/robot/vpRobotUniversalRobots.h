@@ -119,9 +119,9 @@ public:
 
 private:
   // Not implemented yet
-  void get_eJe(vpMatrix &_eJe) VP_OVERRIDE { };
-  void get_fJe(vpMatrix &_fJe) VP_OVERRIDE { };
-  void getDisplacement(const vpRobot::vpControlFrameType frame, vpColVector &q) VP_OVERRIDE { };
+  void get_eJe(vpMatrix &_eJe) VP_OVERRIDE { }
+  void get_fJe(vpMatrix &_fJe) VP_OVERRIDE { }
+  void getDisplacement(const vpRobot::vpControlFrameType frame, vpColVector &q) VP_OVERRIDE { }
 
 protected:
   void init();

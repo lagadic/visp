@@ -233,5 +233,5 @@ SbBool vpViewer::processSoEvent(const SoEvent *const event)
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_ar.a(vpViewer.cpp.o) has no symbols
-void dummy_vpViewer() { };
+void dummy_vpViewer() { }
 #endif

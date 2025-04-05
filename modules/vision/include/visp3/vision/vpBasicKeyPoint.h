@@ -213,14 +213,14 @@ public:
    *
    * \return the number of reference points.
    */
-  inline unsigned int getReferencePointNumber() const { return (unsigned int)m_referenceImagePointsList.size(); };
+  inline unsigned int getReferencePointNumber() const { return (unsigned int)m_referenceImagePointsList.size(); }
 
   /*!
    * Get the number of matched points.
    *
    * \return the number of matched points.
    */
-  inline unsigned int getMatchedPointNumber() const { return (unsigned int)m_matchedReferencePoints.size(); };
+  inline unsigned int getMatchedPointNumber() const { return (unsigned int)m_matchedReferencePoints.size(); }
 
   /*!
    * Return the vector of reference image point.

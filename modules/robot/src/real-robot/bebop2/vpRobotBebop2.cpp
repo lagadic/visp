@@ -2011,5 +2011,5 @@ END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpRobotBebop2.cpp.o) has
 // no symbols
-void dummy_vpRobotBebop2() { };
+void dummy_vpRobotBebop2() { }
 #endif // VISP_HAVE_ARSDK

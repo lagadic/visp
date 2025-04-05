@@ -100,7 +100,7 @@ public:
   /*!
      Default destructor.
    */
-  virtual ~vpPylonGrabber() { };
+  virtual ~vpPylonGrabber() { }
 
   /*! Valid values for user set names.
    */

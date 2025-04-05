@@ -657,5 +657,5 @@ END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_mbt.a(vpMbtDistanceKltPoints.cpp.o)
 // has no symbols
-void dummy_vpMbtDistanceKltPoints() { };
+void dummy_vpMbtDistanceKltPoints() { }
 #endif

@@ -89,7 +89,13 @@ public:
   vpCircle();
   VP_EXPLICIT vpCircle(const vpColVector &oP);
   vpCircle(double oA, double oB, double oC, double oX, double oY, double oZ, double R);
-  virtual ~vpCircle() VP_OVERRIDE;
+
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+  vpCircle(const vpCircle &) = default;
+  virtual ~vpCircle() VP_OVERRIDE = default;
+#else
+  virtual ~vpCircle() { }
+#endif
   void changeFrame(const vpHomogeneousMatrix &noMo, vpColVector &noP) const VP_OVERRIDE;
   void changeFrame(const vpHomogeneousMatrix &cMo) VP_OVERRIDE;
 
@@ -122,6 +128,9 @@ public:
 
   double getR() const { const unsigned int index_6 = 6; return cP[index_6]; }
 
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+  vpCircle &operator=(const vpCircle &) = default;
+#endif
   void projection() VP_OVERRIDE;
   void projection(const vpColVector &cP, vpColVector &p) const VP_OVERRIDE;
   void setWorldCoordinates(const vpColVector &oP) VP_OVERRIDE;

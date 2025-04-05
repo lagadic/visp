@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Cylinder feature.
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpCylinder.h>
 #include <visp3/core/vpFeatureDisplay.h>
@@ -63,11 +61,18 @@ void vpCylinder::init()
 void vpCylinder::setWorldCoordinates(const vpColVector &o_P) { this->oP = o_P; }
 
 /*!
-  Set the cylinder parameters oP = (oA, oB, oC, oX, oY, oZ, R) expressed in the object
-  frame.
+  Set the cylinder parameters oP = (oA, oB, oC, oX, oY, oZ, R) expressed in the object frame.
 
-  \param oA, oB, oC, oX, oY, oZ, R : Cylinder parameters in the object frame.
-
+  \param[in] oA : Coordinates along the X axis of the cylinder axis vector.
+  \param[in] oB : Coordinates along the Y axis of the cylinder axis vector.
+  \param[in] oC : Coordinates along the Z axis of the cylinder axis vector.
+  \param[in] oX : Coordinate along the X axis of the nearest point belonging to the cylinder axis from the projection
+  center.
+  \param[in] oY : Coordinate along the Y axis of the nearest point belonging to the cylinder axis from the projection
+  center.
+  \param[in] oZ : Coordinate along the Z axis of the nearest point belonging to the cylinder axis from the projection
+  center.
+  \param[in] R : Cylinder radius in meter.
 */
 void vpCylinder::setWorldCoordinates(double oA, double oB, double oC, double oX, double oY, double oZ, double R)
 {
@@ -86,8 +91,7 @@ void vpCylinder::setWorldCoordinates(double oA, double oB, double oC, double oX,
 vpCylinder::vpCylinder() { init(); }
 
 /*!
-  Create and initialize a cylinder with parameters oP = (oA, oB, oC, oX, oY, oZ, R) expressed in the object
-  frame.
+  Create and initialize a cylinder with parameters oP = (oA, oB, oC, oX, oY, oZ, R) expressed in the object frame.
 
   \param o_P : 7-dim vector of parameters.
 
@@ -107,13 +111,20 @@ vpCylinder::vpCylinder(const vpColVector &o_P)
 }
 
 /*!
-  Create and initialize a cylinder with parameters oP = (oA, oB, oC, oX, oY, oZ, R) expressed in the object
-  frame.
+  Create and initialize a cylinder with parameters oP = (oA, oB, oC, oX, oY, oZ, R) expressed in the object frame.
 
-  \param oA, oB, oC, oX, oY, oZ, R : Cylinder parameters expressed in the object frame.
+  \param[in] oA : Coordinates along the X axis of the cylinder axis vector.
+  \param[in] oB : Coordinates along the Y axis of the cylinder axis vector.
+  \param[in] oC : Coordinates along the Z axis of the cylinder axis vector.
+  \param[in] oX : Coordinate along the X axis of the nearest point belonging to the cylinder axis from the projection
+  center.
+  \param[in] oY : Coordinate along the Y axis of the nearest point belonging to the cylinder axis from the projection
+  center.
+  \param[in] oZ : Coordinate along the Z axis of the nearest point belonging to the cylinder axis from the projection
+  center.
+  \param[in] R : Cylinder radius in meter.
 
-  \sa setWorldCoordinates(const double,const double,const double,const
-  double,const double,const double,const double)
+  \sa setWorldCoordinates(const double, const double, const double, const double, const double, const double, const double)
 */
 vpCylinder::vpCylinder(double oA, double oB, double oC, double oX, double oY, double oZ, double R)
 {

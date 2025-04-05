@@ -34,7 +34,7 @@
 #include <visp3/core/vpConfig.h>
 
 // Check if std:c++17 or higher
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(HAVE_OPENCV_DNN) && \
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(HAVE_OPENCV_DNN) && \
     ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
 
 #include <visp3/core/vpImageConvert.h>
@@ -487,7 +487,7 @@ std::vector<cv::String> vpDetectorDNNOpenCV::getOutputsNames()
   extract the data stored as a matrix.
   Then, perform Non-Maximum Suppression to remove overlapping detections.
 
-  \param[inout] proposals : Input/output that will contains all the detection candidates.
+  \param[in,out] proposals : Input/output that will contains all the detection candidates.
 */
 void vpDetectorDNNOpenCV::postProcess(DetectionCandidates &proposals)
 {
@@ -1189,5 +1189,5 @@ void vpDetectorDNNOpenCV::setParsingMethod(const DNNResultsParsingType &typePars
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpDetectorDNNOpenCV.cpp.o) has no symbols
-void dummy_vpDetectorDNN() { };
+void dummy_vpDetectorDNN() { }
 #endif

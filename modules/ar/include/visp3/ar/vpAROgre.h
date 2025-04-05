@@ -314,7 +314,7 @@ protected:
    * Build the 3D scene
    * Override this to show what you want
    */
-  virtual void createScene(void) { };
+  virtual void createScene(void) { }
 
   virtual void closeOIS(void);
 
@@ -323,14 +323,14 @@ protected:
 
     \return Always true.
    */
-  virtual bool updateScene(const Ogre::FrameEvent & /*evt*/) { return true; };
+  virtual bool updateScene(const Ogre::FrameEvent & /*evt*/) { return true; }
 
   /*!
     Check for keyboard, mouse and joystick inputs.
 
     \return Always true.
   */
-  virtual bool processInputEvent(const Ogre::FrameEvent & /*evt*/) { return true; };
+  virtual bool processInputEvent(const Ogre::FrameEvent & /*evt*/) { return true; }
 
   /*!
     Clean up the 3D scene.

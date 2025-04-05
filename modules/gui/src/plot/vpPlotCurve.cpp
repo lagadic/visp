@@ -120,6 +120,6 @@ END_VISP_NAMESPACE
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_gui.a(vpPlotCurve.cpp.o) has no symbols
-void dummy_vpPlotCurve() { };
+void dummy_vpPlotCurve() { }
 #endif
 #endif

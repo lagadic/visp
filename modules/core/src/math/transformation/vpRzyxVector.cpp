@@ -47,9 +47,6 @@ const unsigned int vpRzyxVector::constr_val_3 = 3;
 /*! Default constructor that initialize all the 3 angles to zero. */
 vpRzyxVector::vpRzyxVector() : vpRotationVector(constr_val_3) { }
 
-/*! Copy constructor. */
-vpRzyxVector::vpRzyxVector(const vpRzyxVector &rzyx) : vpRotationVector(rzyx) { }
-
 /*!
   Constructor from 3 angles (in radian).
   \param phi : \f$\varphi\f$ angle around the \f$z\f$ axis.
@@ -80,14 +77,13 @@ vpRzyxVector::vpRzyxVector(const vpColVector &rzyx) : vpRotationVector(constr_va
 vpRzyxVector::vpRzyxVector(const std::vector<double> &rzyx) : vpRotationVector(constr_val_3) { buildFrom(rzyx); }
 
 /*!
-  Convert a rotation matrix into a \f$R_{zyx}=(\varphi,\theta,\psi)\f$ Euler
-  angles vector.
+  Convert a rotation matrix into a \f$ R_{zyx}=(\varphi,\theta,\psi) \f$ Euler angles vector.
 
   Source: R. Paul, Robot Manipulators: Mathematics, Programming, and Control.
   MIT Press, 1981, p. 71
 
   \param R : Rotation matrix used as input.
-  \return \f$R_{zyx}=(\varphi,\theta,\psi)\f$ Euler angles vector.
+  \return Euler angles vector \f$ R_{zyx}=(\varphi,\theta,\psi) \f$.
 */
 vpRzyxVector &vpRzyxVector::buildFrom(const vpRotationMatrix &R)
 {
@@ -125,10 +121,9 @@ vpRzyxVector &vpRzyxVector::buildFrom(const vpRotationMatrix &R)
 }
 
 /*!
-  Convert a \f$\theta {\bf u}\f$ vector into a
-  \f$R_{zyx}=(\varphi,\theta,\psi)\f$ Euler angles vector.
+  Convert a \f$\theta {\bf u}\f$ vector into a \f$ R_{zyx}=(\varphi,\theta,\psi) \f$ Euler angles vector.
   \param tu : \f$\theta {\bf u}\f$ representation of a rotation used here as input.
-  \return \f$R_{zyx}=(\varphi,\theta,\psi)\f$ Euler angles vector.
+  \return Euler angles vector \f$ R_{zyx}=(\varphi,\theta,\psi) \f$.
 */
 vpRzyxVector &vpRzyxVector::buildFrom(const vpThetaUVector &tu)
 {

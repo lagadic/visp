@@ -124,7 +124,11 @@ public:
    *
    * \return pointer on the array of  \e char related to the error string.
    */
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  const char *what() const VP_NOEXCEPT VP_OVERRIDE;
+#else
   const char *what() const throw();
+#endif
   //@}
 
   /*!

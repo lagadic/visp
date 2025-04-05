@@ -138,7 +138,7 @@ public:
 public:
   vpAfma6();
   /*! Destructor that does nothing. */
-  virtual ~vpAfma6() { };
+  virtual ~vpAfma6() { }
 
   /** @name Inherited functionalities from vpAfma6 */
   //@{
@@ -166,9 +166,9 @@ public:
   void get_fJe(const vpColVector &q, vpMatrix &fJe) const;
 
   //! Get the current tool type
-  vpAfma6ToolType getToolType() const { return tool_current; };
+  vpAfma6ToolType getToolType() const { return tool_current; }
   //! Get the current camera model projection type
-  vpCameraParameters::vpCameraParametersProjType getCameraParametersProjType() const { return projModel; };
+  vpCameraParameters::vpCameraParametersProjType getCameraParametersProjType() const { return projModel; }
 
   void getCameraParameters(vpCameraParameters &cam, const unsigned int &image_width,
                            const unsigned int &image_height) const;
@@ -191,7 +191,7 @@ protected:
   /** @name Protected Member Functions Inherited from vpAfma6 */
   //@{
   //! Set the current tool type
-  void setToolType(vpAfma6::vpAfma6ToolType tool) { tool_current = tool; };
+  void setToolType(vpAfma6::vpAfma6ToolType tool) { tool_current = tool; }
   //@}
 
 public:

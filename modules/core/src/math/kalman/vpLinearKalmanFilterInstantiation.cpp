@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Kalman filtering.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpLinearKalmanFilterInstantiation.cpp
@@ -190,8 +188,8 @@ BEGIN_VISP_NAMESPACE
     initStateConstAccWithColoredNoise_MeasureVel(n_signal, sigma_state, sigma_measure, rho, delta_t);
     break;
   case unknown:
-    vpERROR_TRACE("Kalman state model is not set");
-    throw(vpException(vpException::notInitialized, "Kalman state model is not set"));
+  default:
+    throw(vpException(vpException::notInitialized, "Unsupported Kalman state model in vpLinearKalmanFilterInstantiation::initFilter()"));
   }
 }
 
@@ -821,8 +819,8 @@ void vpLinearKalmanFilterInstantiation::filter(vpColVector &z)
       //      init_done = true;
       break;
     case unknown:
-      vpERROR_TRACE("Kalman state model is not set");
-      throw(vpException(vpException::notInitialized, "Kalman state model is not set"));
+    default:
+      throw(vpException(vpException::notInitialized, "Unsupported Kalman state model in vpLinearKalmanFilterInstantiation::filter()"));
     }
     iter++;
 

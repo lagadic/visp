@@ -119,7 +119,7 @@ public:
   /*!
    * Destructor that does nothing.
    */
-  virtual ~vpBiclops() { };
+  virtual ~vpBiclops() { }
 
   /** @name Inherited functionalities from vpBiclops */
   //@{

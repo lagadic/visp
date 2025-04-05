@@ -37,11 +37,11 @@
 
 BEGIN_VISP_NAMESPACE
 
-std::string vpIoTools::baseName = "";
-std::string vpIoTools::baseDir = "";
-std::string vpIoTools::configFile = "";
-std::vector<std::string> vpIoTools::configVars = std::vector<std::string>();
-std::vector<std::string> vpIoTools::configValues = std::vector<std::string>();
+VP_ATTRIBUTE_NO_DESTROY std::string vpIoTools::baseName = "";
+VP_ATTRIBUTE_NO_DESTROY std::string vpIoTools::baseDir = "";
+VP_ATTRIBUTE_NO_DESTROY std::string vpIoTools::configFile = "";
+VP_ATTRIBUTE_NO_DESTROY std::vector<std::string> vpIoTools::configVars = std::vector<std::string>();
+VP_ATTRIBUTE_NO_DESTROY std::vector<std::string> vpIoTools::configValues = std::vector<std::string>();
 
 const char vpIoTools::separator =
 #if defined(_WIN32)

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Draw text in an image.
- *
-*****************************************************************************/
+ */
 // Contains code from:
 /*
  * Simd Library (http://ermig1979.github.io/Simd).
@@ -125,6 +123,9 @@ public:
 
       break;
     }
+    default: {
+      throw(vpException(vpException::fatalError, "Unsupported font family in vpFont::Impl constructor"));
+    }
     }
   }
 
@@ -171,6 +172,10 @@ public:
 
     case TRUETYPE_FILE:
       break;
+
+    default: {
+      throw(vpException(vpException::fatalError, "Unsupported font family in vpFont::Impl::Resize()"));
+    }
     }
 
     return true;
@@ -270,6 +275,9 @@ public:
 
       return bb;
     }
+    default: {
+      throw(vpException(vpException::fatalError, "Unsupported font family in vpFont::Impl::Measure()"));
+    }
     }
 
     return Point();
@@ -363,6 +371,9 @@ public:
       }
 
       break;
+    }
+    default: {
+      throw(vpException(vpException::fatalError, "Unsupported font family in vpFont::Impl::Draw()"));
     }
     }
 
@@ -476,6 +487,9 @@ public:
       }
 
       break;
+    }
+    default: {
+      throw(vpException(vpException::fatalError, "Unsupported font family in vpFont::Impl::Draw()"));
     }
     }
 

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -247,7 +247,7 @@ bool vpMath::isNumber(const std::string &str)
   \param cosx : Value of cos(x).
   \param x : Value of x.
 
-  \return \f$ (1-cos(x))/x^2 \f$
+  \return The value of \f$ (1-cos(x))/x^2 \f$.
 */
 double vpMath::mcosc(double cosx, double x)
 {
@@ -265,7 +265,7 @@ double vpMath::mcosc(double cosx, double x)
   \param sinx : value of sin(x).
   \param x  : Value of x.
 
-  \return \f$ (1-sinc(x))/x^2 \f$
+  \return The value of \f$ (1-sinc(x))/x^2 \f$.
 */
 double vpMath::msinc(double sinx, double x)
 {

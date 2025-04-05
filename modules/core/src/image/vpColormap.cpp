@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1088,8 +1088,9 @@ vpColormap::vpColormap(const vpColormapType &colormapType) : m_colormapType(colo
       case COLORMAP_WINTER:
         m_colormapSrgbBytes[i][j] = m_winterSrgbBytes[i][j];
         break;
-      default:
-        break;
+      default: {
+        throw(vpException(vpException::fatalError, "Unsupported colormap in vpColormap constructor"));
+      }
       }
     }
   }

@@ -63,18 +63,18 @@ vpPoseVector::vpPoseVector() : vpArray2D<double>(constr_value_6, 1) { }
 
 /*!
 
-  Construct a 6 dimension pose vector \f$ [\bf{t}, \theta
-  \bf{u}]^\top\f$ from 3 translations and 3 \f$ \theta \bf{u}\f$
-  angles.
+  Construct a 6 dimension pose vector \f$ [\bf{t}, \theta \bf{u}]^\top \f$ from 3 translations and 3
+  \f$ \theta \bf{u} \f$ angles.
 
   Translations are expressed in meters, while rotations in radians.
 
-  \param tx,ty,tz : Translations \f$[t_x, t_y, t_z]^\top\f$
-  respectively along the x, y and z axis (in meters).
+  \param[in] tx : Value along X-axis of the translation vector in meters.
+  \param[in] ty : Value along Y-axis of the translation vector in meters.
+  \param[in] tz : Value along Z-axis of the translation vector in meters.
 
-  \param tux,tuy,tuz : Rotations \f$[\theta u_x, \theta u_y, \theta
-  u_z]^\top\f$ respectively around the x, y and z axis (in radians).
-
+  \param tux : Value along X-axis of the \f$ \theta {\bf u}\f$ rotation vector expressed in radians.
+  \param tuy : Value along Y-axis of the \f$ \theta {\bf u}\f$ rotation vector expressed in radians.
+  \param tuz : Value along Z-axis of the \f$ \theta {\bf u}\f$ rotation vector expressed in radians.
 */
 vpPoseVector::vpPoseVector(double tx, double ty, double tz, double tux, double tuy, double tuz)
   : vpArray2D<double>(constr_value_6, 1)
@@ -146,11 +146,13 @@ vpPoseVector::vpPoseVector(const vpHomogeneousMatrix &M) : vpArray2D<double>(con
 
   Translations are expressed in meters, while rotations in radians.
 
-  \param tx,ty,tz : Translations \f$[t_x, t_y, t_z]^\top\f$
-  respectively along the x, y and z axis (in meters).
+  \param[in] tx : Value along X-axis of the translation vector in meters.
+  \param[in] ty : Value along Y-axis of the translation vector in meters.
+  \param[in] tz : Value along Z-axis of the translation vector in meters.
 
-  \param tux,tuy,tuz : Rotations \f$[\theta u_x, \theta u_y, \theta
-  u_z]^\top\f$ respectively around the x, y and z axis (in radians).
+  \param tux : Value along X-axis of the \f$ \theta {\bf u}\f$ rotation vector expressed in radians.
+  \param tuy : Value along Y-axis of the \f$ \theta {\bf u}\f$ rotation vector expressed in radians.
+  \param tuz : Value along Z-axis of the \f$ \theta {\bf u}\f$ rotation vector expressed in radians.
 
 */
 void vpPoseVector::set(double tx, double ty, double tz, double tux, double tuy, double tuz)
@@ -171,16 +173,18 @@ void vpPoseVector::set(double tx, double ty, double tz, double tux, double tuy, 
 }
 
 /*!
-  Build a 6 dimension pose vector \f$ [\bf t, \theta \bf u]^\top\f$
+  Build a 6 dimension pose vector \f$ [\bf t, \theta \bf u]^\top \f$
   from 3 translations and 3 \f$ \theta \bf{u}\f$ angles.
 
   Translations are expressed in meters, while rotations in radians.
 
-  \param tx,ty,tz : Translations \f$[t_x, t_y, t_z]^\top\f$
-  respectively along the x, y and z axis (in meters).
+  \param[in] tx : Value along X-axis of the translation vector in meters.
+  \param[in] ty : Value along Y-axis of the translation vector in meters.
+  \param[in] tz : Value along Z-axis of the translation vector in meters.
 
-  \param tux,tuy,tuz : Rotations \f$[\theta u_x, \theta u_y, \theta
-  u_z]^\top\f$ respectively around the x, y and z axis (in radians).
+  \param tux : Value along X-axis of the \f$ \theta {\bf u}\f$ rotation vector expressed in radians.
+  \param tuy : Value along Y-axis of the \f$ \theta {\bf u}\f$ rotation vector expressed in radians.
+  \param tuz : Value along Z-axis of the \f$ \theta {\bf u}\f$ rotation vector expressed in radians.
 
   \return The build pose vector.
 

@@ -120,7 +120,7 @@ public:
   //! Initialize the window
   void initWindow(const char *title, int posx, int posy, unsigned int w, unsigned int h);
 
-  void setScale(unsigned int scale) { renderer->setScale(scale); };
+  void setScale(unsigned int scale) { renderer->setScale(scale); }
 
   // Friend classes
   friend class vpDisplayWin32;

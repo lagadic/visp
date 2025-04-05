@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
  * Description:
  * Twist transformation matrix that allows to transform forces from one
  * frame to an other.
- **/
+ */
 
 /*!
   \file vpForceTwistMatrix.cpp
@@ -241,10 +241,16 @@ vpForceTwistMatrix::vpForceTwistMatrix(const vpRotationMatrix &R) : vpArray2D<do
   \right]
   \f]
 
-  \param tx,ty,tz : Translation vector in meters.
+  \param[in] tx : Value along X-axis of the translation vector in meters.
+  \param[in] ty : Value along Y-axis of the translation vector in meters.
+  \param[in] tz : Value along Z-axis of the translation vector in meters.
 
-  \param tux,tuy,tuz : \f$\theta {\bf u}\f$ rotation vector expressed in
-  radians used to initialize \f$R\f$.
+  \param tux : Value along X-axis of the \f$ \theta {\bf u}\f$ rotation vector expressed in
+  radians and used to initialize the ratational matrix \f$R\f$.
+  \param tuy : Value along Y-axis of the \f$ \theta {\bf u}\f$ rotation vector expressed in
+  radians and used to initialize the ratational matrix \f$R\f$.
+  \param tuz : Value along Z-axis of the \f$ \theta {\bf u}\f$ rotation vector expressed in
+  radians and used to initialize the ratational matrix \f$R\f$.
 */
 vpForceTwistMatrix::vpForceTwistMatrix(double tx, double ty, double tz, double tux, double tuy, double tuz)
   : vpArray2D<double>(constr_value_6, constr_value_6)

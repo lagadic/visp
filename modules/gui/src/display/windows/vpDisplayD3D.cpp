@@ -188,5 +188,5 @@ END_VISP_NAMESPACE
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_gui.a(vpDisplayD3D.cpp.o) has no symbols
-void dummy_vpDisplayD3D() { };
+void dummy_vpDisplayD3D() { }
 #endif

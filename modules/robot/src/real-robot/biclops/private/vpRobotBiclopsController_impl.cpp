@@ -355,7 +355,7 @@ END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning:
 // libvisp_robot.a(vpRobotBiclopsController.cpp.o) has no symbols
-void dummy_vpRobotBiclopsController() { };
+void dummy_vpRobotBiclopsController() { }
 #endif
 
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS

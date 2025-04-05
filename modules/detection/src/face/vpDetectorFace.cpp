@@ -32,7 +32,9 @@
  */
 #include <visp3/core/vpConfig.h>
 
-#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_OBJDETECT)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_XOBJDETECT))
+#if defined(VISP_HAVE_OPENCV) && \
+    (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_OBJDETECT)) || \
+     ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_XOBJDETECT)))
 
 #include <algorithm>
 
@@ -141,5 +143,5 @@ bool vpDetectorFace::detect(const cv::Mat &frame_gray)
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpDetectorFace.cpp.o) has no symbols
-void dummy_vpDetectorFace() { };
+void dummy_vpDetectorFace() { }
 #endif

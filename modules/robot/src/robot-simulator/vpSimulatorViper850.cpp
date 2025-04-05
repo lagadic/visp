@@ -2394,5 +2394,5 @@ END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpSimulatorViper850.cpp.o)
 // has no symbols
-void dummy_vpSimulatorViper850() { };
+void dummy_vpSimulatorViper850() { }
 #endif

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +29,7 @@
  *
  * Description:
  * Image display.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpDisplay.cpp
@@ -243,8 +242,10 @@ void vpDisplay::setDownScalingFactor(unsigned int scale)
 
 /*!
  * Computes the down scaling factor that should be applied to the window size
- * to display the image given the resolution of the screen. \param width,
- * height : Image size. \return
+ * to display the image given the resolution of the screen.
+ * \param[in] width : Image width.
+ * \param[in] height : Image height.
+ * \return Down scale factor.
  */
 unsigned int vpDisplay::computeAutoScale(unsigned int width, unsigned int height)
 {
@@ -295,9 +296,8 @@ void vpDisplay::setScale(vpScaleType scaleType, unsigned int width, unsigned int
   case vpDisplay::SCALE_10:
     setDownScalingFactor(10);
     break;
-  default:
-  {
-    std::cout << "undefined scaleType" << std::endl;
+  default: {
+    throw(vpException(vpException::fatalError, "Unsupported scale type in vpDisplay::setScale()"));
   }
   }
 }

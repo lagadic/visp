@@ -113,7 +113,7 @@ class VISP_EXPORT vpViper
 {
 public:
   vpViper();
-  virtual ~vpViper() { };
+  virtual ~vpViper() { }
 
   /** @name Inherited functionalities from vpViper */
   //@{

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Hinkley's cumulative sum test implementation.
- *
-*****************************************************************************/
+ */
 
 /*!
 
@@ -428,13 +426,13 @@ void vpHinkley::print(vpHinkley::vpHinkleyJumpType jump)
   case upwardJump:
     std::cout << " Jump upward detected " << std::endl;
     break;
-  default:
-    std::cout << " Jump  detected " << std::endl;
-    break;
+  default: {
+    throw(vpException(vpException::fatalError, "Unsupported jump type in vpHinkley::print()"));
+  }
   }
 }
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
  // Work around to avoid warning: libvisp_core.a(vpHinkley.cpp.o) has no symbols
-void dummy_vpRHinkley() { };
+void dummy_vpRHinkley() { }
 #endif

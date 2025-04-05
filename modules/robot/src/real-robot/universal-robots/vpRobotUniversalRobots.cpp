@@ -880,5 +880,5 @@ vpRobot::vpRobotStateType vpRobotUniversalRobots::setRobotState(vpRobot::vpRobot
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpRobotUniversalRobots.cpp.o) has no symbols
-void dummy_vpRobotUniversalRobots() { };
+void dummy_vpRobotUniversalRobots() { }
 #endif

@@ -36,7 +36,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_PUGIXML) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_HIGHGUI) && \
+#if defined(VISP_HAVE_PUGIXML) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_HIGHGUI) && \
   (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_CALIB)))
 
 #if defined(HAVE_OPENCV_CALIB3D)
@@ -372,10 +372,10 @@ int main()
 #if !defined(HAVE_OPENCV_HIGHGUI)
   std::cerr << "OpenCV highgui module is requested to compute the pose of the chessboard." << std::endl;
 #endif
-#if (VISP_HAVE_OPENCV_VERSION < 0x050000) && !defined(HAVE_OPENCV_CALIB3D)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION < 0x050000) && !defined(HAVE_OPENCV_CALIB3D)
   std::cerr << "OpenCV calib3d module is requested to compute the pose of the chessboard." << std::endl;
 #endif
-#if (VISP_HAVE_OPENCV_VERSION >= 0x050000) && !defined(HAVE_OPENCV_3D)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x050000) && !defined(HAVE_OPENCV_3D)
   std::cerr << "OpenCV 3d module is requested to compute the pose of the chessboard." << std::endl;
 #endif
 #if !defined(VISP_HAVE_PUGIXML)

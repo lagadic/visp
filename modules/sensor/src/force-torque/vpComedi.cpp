@@ -46,7 +46,7 @@ BEGIN_VISP_NAMESPACE
 /*!
   Default constructor.
  */
-vpComedi::vpComedi()
+  vpComedi::vpComedi()
   : m_device("/dev/comedi0"), m_handler(nullptr), m_subdevice(0), m_range(0), m_aref(AREF_DIFF), m_nchannel(6),
   m_range_info(6), m_maxdata(6), m_chanlist(6)
 { }
@@ -174,5 +174,5 @@ std::string vpComedi::getPhyDataUnits() const
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_sensor.a(vpComedi.cpp.o) has  symbols
-void dummy_vpComedi() { };
+void dummy_vpComedi() { }
 #endif

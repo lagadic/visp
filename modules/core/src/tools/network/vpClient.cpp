@@ -224,5 +224,5 @@ bool vpClient::connectServer(vpNetwork::vpReceptor &serv)
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpClient.cpp.o) has no symbols
-void dummy_vpClient() { };
+void dummy_vpClient() { }
 #endif

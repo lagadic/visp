@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +29,7 @@
  *
  * Description:
  * Display implementation.
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpDisplay.h>
 
@@ -49,9 +48,11 @@ void vpDisplay::close(vpImage<vpRGBa> &I) { vp_display_close(I); }
 /*!
   Display an arrow from image point \e ip1 to image point \e ip2.
   \param I : The image associated to the display.
-  \param ip1,ip2 : Initial and final image points.
+  \param ip1 : Initial image point.
+  \param ip2 : Final image point with the arrow.
   \param color : Arrow color.
-  \param w,h : Width and height of the arrow.
+  \param w : Arrow width.
+  \param h : Arrow height.
   \param thickness : Thickness of the lines used to display the arrow.
 */
 void vpDisplay::displayArrow(const vpImage<vpRGBa> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
@@ -64,10 +65,13 @@ void vpDisplay::displayArrow(const vpImage<vpRGBa> &I, const vpImagePoint &ip1, 
   Display an arrow from image point (i1,j1) to  image point (i2,j2).
 
   \param I : The image associated to the display.
-  \param i1,j1 : Initial image point.
-  \param i2,j2 : Final image point.
+  \param i1 : Initial image point coordinate along line i in the image.
+  \param j1 : Initial image point coordinate along row j in the image.
+  \param i2 : Final image point coordinate along line i in the image.
+  \param j2 : Final image point coordinate along row j in the image.
   \param color : Arrow color.
-  \param w,h : Width and height of the arrow.
+  \param w : Arrow width.
+  \param h : Arrow height.
   \param thickness : Thickness of the lines used to display the arrow.
 */
 void vpDisplay::displayArrow(const vpImage<vpRGBa> &I, int i1, int j1, int i2, int j2, const vpColor &color,
@@ -122,7 +126,8 @@ void vpDisplay::displayCharString(const vpImage<vpRGBa> &I, const vpImagePoint &
   To select the font used to display the string, use setFont().
 
   \param I : Image associated to the display.
-  \param i,j : Upper left image point location of the string in the display.
+  \param i : Upper left image point location of the string along line i in the image.
+  \param j : Upper left image point location of the string along row j in the image.
   \param string : String to display in overlay.
   \param color : String color.
 
@@ -137,7 +142,7 @@ void vpDisplay::displayCharString(const vpImage<vpRGBa> &I, int i, int j, const 
 /*!
   Display a circle.
   \param I : The image associated to the display.
-  \param circle: Circle to display.
+  \param circle : Circle to display.
   \param color : Circle color.
   \param fill : When set to true fill the circle. When vpDisplayOpenCV is used,
   and color alpha channel is set, filling feature can handle transparency. See vpColor
@@ -172,7 +177,8 @@ void vpDisplay::displayCircle(const vpImage<vpRGBa> &I, const vpImagePoint &cent
 /*!
   Display a circle.
   \param I : The image associated to the display.
-  \param i,j : Circle center position.
+  \param i : Circle center location along line i in the image.
+  \param j : Circle center location along row j in the image.
   \param radius : Circle radius.
   \param color : Circle color.
   \param fill : When set to true fill the circle. When vpDisplayOpenCV is used,
@@ -204,7 +210,8 @@ void vpDisplay::displayCross(const vpImage<vpRGBa> &I, const vpImagePoint &ip, u
 /*!
   Display a cross at the image point (i,j) location.
   \param I : The image associated to the display.
-  \param i,j : Cross location.
+  \param i : Cross location along line i in the image.
+  \param j : Cross location along row j in the image.
   \param size : Size (width and height) of the cross.
   \param color : Cross color.
   \param thickness : Thickness of the lines used to display the cross.
@@ -218,7 +225,8 @@ void vpDisplay::displayCross(const vpImage<vpRGBa> &I, int i, int j, unsigned in
 /*!
   Display a dashed line from image point \e ip1 to image point \e ip2.
   \param I : The image associated to the display.
-  \param ip1,ip2 : Initial and final image points.
+  \param ip1 : Initial image point.
+  \param ip2 : Final image point.
   \param color : Line color.
   \param thickness : Dashed line thickness.
 */
@@ -231,8 +239,10 @@ void vpDisplay::displayDotLine(const vpImage<vpRGBa> &I, const vpImagePoint &ip1
 /*!
   Display a dashed line from image point (i1,j1) to image point (i2,j2).
   \param I : The image associated to the display.
-  \param i1,j1: Initial image point.
-  \param i2,j2: Final image point.
+  \param i1 : Initial image point coordinate along line i in the image.
+  \param j1 : Initial image point coordinate along row j in the image.
+  \param i2 : Final image point coordinate along line i in the image.
+  \param j2 : Final image point coordinate along row j in the image.
   \param color : Line color.
   \param thickness : Dashed line thickness.
 */
@@ -301,24 +311,33 @@ void vpDisplay::displayDotLine(const vpImage<vpRGBa> &I, const std::list<vpImage
 
 /*!
   Display an ellipse from its parameters expressed in pixels.
-  \param I : Image to consider.
-  \param center : Center \f$(u_c, v_c)\f$ of the ellipse.
-  \param coef1, coef2, coef3 : Depending on the parameter \e
-  use_normalized_centered_moments these parameters are:
-  - second order centered moments of the ellipse normalized by its area
-    (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the
-    centered moments and a the area) expressed in pixels.
-  - the major and minor axis length in pixels and the eccentricity of the
-  ellipse in radians: \f$a, b, e\f$.
-  \param use_normalized_centered_moments : When false,
+  Depending on `use_normalized_centered_moments` flag, we consired two ellipse representations:
+  - the one using second order normalized centered moments \f$ (n_{20}, n_{11}, n_{02}) \f$ expressed in pixels,
+    such that \f$ n_{ij} = \mu_{ij}/a \f$ where \f$ \mu_{ij} \f$ are the
+    centered moments and a the area,
+  - the other one with the major and minor axis length and the eccentricity of the
+    ellipse in radians \f$ (a, b, e) \f$.
+
+  \param[in] I : Image to consider.
+  \param[in] center : Center \f$(u_c, v_c)\f$ of the ellipse.
+  \param[in] coef1 : Depending on the parameter `use_normalized_centered_moments` this parameter is either
+  - the second order centered moment \f$ n_{20} \f$ of the ellipse normalized by its area and expressed in pixels,
+  - the major axis length \f$ a \f$ in pixels.
+  \param[in] coef2 : Depending on the parameter `use_normalized_centered_moments` this parameter is either
+  - the second order centered moment \f$ n_{11} \f$ of the ellipse normalized by its area and expressed in pixels,
+  - the minor axis length \f$ b \f$ in pixels.
+  \param[in] coef3 : Depending on the parameter `use_normalized_centered_moments` this parameter is either
+  - the second order centered moment \f$ n_{02} \f$ of the ellipse normalized by its area and expressed in pixels,
+  - the eccentricity \f$ e \f$ of the ellipse in radians.
+  \param[in] use_normalized_centered_moments : When false,
   the parameters coef1, coef2, coef3 are the parameters \f$a, b, e\f$. When
   true, the parameters coef1, coef2, coef3 are rather the normalized centered moments
   \f$n_{20}, n_{11}, n_{02}\f$ expressed in pixels. In that case, we
   compute the parameters \e a, \e b and \e e from the centered moments.
-  \param color : Ellipse color.
-  \param thickness : Ellipse thickness.
-  \param display_center : Display a cross at the center of the ellipse.
-  \param display_arc : Display a line between the center and the first arc extremity
+  \param[in] color : Ellipse color.
+  \param[in] thickness : Ellipse thickness.
+  \param[in] display_center : Display a cross at the center of the ellipse.
+  \param[in] display_arc : Display a line between the center and the first arc extremity
   and a line between the center and the second arc extremity.
 
   The following example shows how to use for example this function to display
@@ -345,26 +364,35 @@ void vpDisplay::displayEllipse(const vpImage<vpRGBa> &I, const vpImagePoint &cen
 
 /*!
   Display an ellipse from its parameters expressed in pixels.
-  \param I : Image to consider.
-  \param center : Center \f$(u_c, v_c)\f$ of the ellipse.
-  \param coef1, coef2, coef3 : Depending on the parameter \e
-  use_normalized_centered_moments these parameters are:
-  - second order centered moments of the ellipse normalized by its area
-    (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the
-    centered moments and a the area) expressed in pixels.
-  - the major and minor axis length in pixels and the eccentricity of the
-  ellipse in radians: \f$a, b, e\f$.
-  \param smallalpha : Smallest \f$ alpha \f$ angle in rad (0 for a complete ellipse).
-  \param highalpha : Highest \f$ alpha \f$ angle in rad (2 \f$ \Pi \f$ for a complete ellipse).
-  \param use_normalized_centered_moments : When false, the parameters coef1,
+  Depending on `use_normalized_centered_moments` flag, we consired two ellipse representations:
+  - the one using second order normalized centered moments \f$ (n_{20}, n_{11}, n_{02}) \f$ expressed in pixels,
+    such that \f$ n_{ij} = \mu_{ij}/a \f$ where \f$ \mu_{ij} \f$ are the
+    centered moments and a the area,
+  - the other one with the major and minor axis length and the eccentricity of the
+    ellipse in radians \f$ (a, b, e) \f$.
+
+  \param[in] I : Image to consider.
+  \param[in] center : Center \f$ (u_c, v_c) \f$ of the ellipse.
+  \param[in] coef1 : Depending on the parameter `use_normalized_centered_moments` this parameter is either
+  - the second order centered moment \f$ n_{20} \f$ of the ellipse normalized by its area and expressed in pixels,
+  - the major axis length \f$ a \f$ in pixels.
+  \param[in] coef2 : Depending on the parameter `use_normalized_centered_moments` this parameter is either
+  - the second order centered moment \f$ n_{11} \f$ of the ellipse normalized by its area and expressed in pixels,
+  - the minor axis length \f$ b \f$ in pixels.
+  \param[in] coef3 : Depending on the parameter `use_normalized_centered_moments` this parameter is either
+  - the second order centered moment \f$ n_{02} \f$ of the ellipse normalized by its area and expressed in pixels,
+  - the eccentricity \f$ e \f$ of the ellipse in radians.
+  \param[in] smallalpha : Smallest \f$ alpha \f$ angle in rad (0 for a complete ellipse).
+  \param[in] highalpha : Highest \f$ alpha \f$ angle in rad (2 \f$ \Pi \f$ for a complete ellipse).
+  \param[in] use_normalized_centered_moments : When false, the parameters coef1,
   coef2, coef3 are the parameters \f$a, b, e\f$. When true, the parameters
   coef1, coef2, coef3 are rather the normalized centered moments \f$n_{20}, n_{11},
   n_{02}\f$ expressed in pixels. In that case, we compute the parameters \e
   a, \e b and \e e from the centered moments.
-  \param color : Ellipse color.
-  \param thickness : Ellipse thickness.
-  \param display_center : Display a cross at the center of the ellipse.
-  \param display_arc : Display a line between the center and the first arc extremity
+  \param[in] color : Ellipse color.
+  \param[in] thickness : Ellipse thickness.
+  \param[in] display_center : Display a cross at the center of the ellipse.
+  \param[in] display_arc : Display a line between the center and the first arc extremity
   and a line between the center and the second arc extremity.
 
   The following example shows how to use for example this function to display
@@ -397,8 +425,7 @@ void vpDisplay::displayEllipse(const vpImage<vpRGBa> &I, const vpImagePoint &cen
 
   \param I : The image associated to the display.
   \param cMo : Homogeneous matrix that gives the transformation
-  between the camera frame and the object frame to project in the
-  image.
+  between the camera frame and the object frame to project in the image.
   \param cam : Camera intrinsic parameters.
   \param size : Size of the object frame.
   \param color : Color used to display the frame in the image.
@@ -418,10 +445,11 @@ void vpDisplay::displayFrame(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix
 /*!
   Display a line from image point \e ip1 to image point \e ip2.
   \param I : The image associated to the display.
-  \param ip1,ip2 : Initial and final image points.
+  \param ip1 : Line initial image point.
+  \param ip2 : Line final image point.
   \param color : Line color.
   \param thickness : Line thickness.
-  \param segment: If true (default) display the segment between the two image points.
+  \param segment : If true (default) display the segment between the two image points.
   If false, display the line passing through the two image points.
 */
 void vpDisplay::displayLine(const vpImage<vpRGBa> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
@@ -434,11 +462,13 @@ void vpDisplay::displayLine(const vpImage<vpRGBa> &I, const vpImagePoint &ip1, c
 /*!
   Display a line from image point (i1,j1) to image point (i2,j2).
   \param I : The image associated to the display.
-  \param i1,j1: Initial image point.
-  \param i2,j2: Final image point.
+  \param i1 : Initial image point coordinate along line i in the image.
+  \param j1 : Initial image point coordinate along row j in the image.
+  \param i2 : Final image point coordinate along line i in the image.
+  \param j2 : Final image point coordinate along row j in the image.
   \param color : Line color.
   \param thickness : Line thickness.
-  \param segment: If true (default) display the segment between the two image points.
+  \param segment : If true (default) display the segment between the two image points.
   If false, display the line passing through the two image points.
 */
 void vpDisplay::displayLine(const vpImage<vpRGBa> &I, int i1, int j1, int i2, int j2, const vpColor &color,
@@ -573,7 +603,8 @@ void vpDisplay::displayPoint(const vpImage<vpRGBa> &I, const vpImagePoint &ip, c
 /*!
   Display a point at the image point (i,j) location.
   \param I : The image associated to the display.
-  \param i,j : Point location.
+  \param i : Point location along line i in the image.
+  \param j : Point location along row j in the image.
   \param color : Point color.
   \param thickness : Thickness of the point
 */
@@ -616,7 +647,8 @@ void vpDisplay::displayPolygon(const vpImage<vpRGBa> &I, const vpPolygon &polygo
 
   \param I : The image associated to the display.
   \param topLeft : Top-left corner of the rectangle.
-  \param width,height : Rectangle size.
+  \param width : Rectangle width.
+  \param height : Rectangle height.
   \param color : Rectangle color.
   \param fill : When set to true fill the rectangle. When vpDisplayOpenCV is used,
   and color alpha channel is set, filling feature can handle transparency. See vpColor
@@ -637,8 +669,10 @@ void vpDisplay::displayRectangle(const vpImage<vpRGBa> &I, const vpImagePoint &t
   width and \e height the rectangle size.
 
   \param I : The image associated to the display.
-  \param i,j : Top-left corner of the rectangle.
-  \param width,height : Rectangle size.
+  \param i : Top-left rectangle corner location along line i in the image.
+  \param j : Top-left rectangle corner location along row j in the image.
+  \param width : Rectangle width.
+  \param height : Rectangle height.
   \param color : Rectangle color.
   \param fill : When set to true fill the rectangle.
 
@@ -679,9 +713,9 @@ void vpDisplay::displayRectangle(const vpImage<vpRGBa> &I, const vpRect &rectang
 
   \param I : Image associated to the display.
   \param center : Rectangle center point.
-  \param angle : Angle in radians width an horizontal axis oriented from left
-  to right.
-  \param width,height : Rectangle size.
+  \param angle : Angle in radians width an horizontal axis oriented from left to right.
+  \param width : Rectangle width.
+  \param height : Rectangle height.
   \param color : Rectangle color.
   \param thickness : Thickness of the four lines used to display the
   rectangle.
@@ -719,10 +753,11 @@ void vpDisplay::displayRectangle(const vpImage<vpRGBa> &I, const vpImagePoint &t
   and its size.
 
   \param I : Image associated to the display.
-  \param i,j : Rectangle center point.
-  \param angle : Angle in radians width an horizontal axis oriented from left
-  to right.
-  \param width,height : Rectangle size.
+  \param i : Rectangle center location along line i in the image.
+  \param j : Rectangle center location along row j in the image.
+  \param angle : Angle in radians width an horizontal axis oriented from left to right.
+  \param width : Rectangle width.
+  \param height : Rectangle height.
   \param color : Rectangle color.
   \param thickness : Thickness of the four lines used to display the
   rectangle.
@@ -757,7 +792,8 @@ void vpDisplay::displayText(const vpImage<vpRGBa> &I, const vpImagePoint &ip, co
   To select the font used to display the string, use setFont().
 
   \param I : Image associated to the display.
-  \param i,j : Upper left image point location of the string in the display.
+  \param i : Upper left image point location of the string along line i in the image.
+  \param j : Upper left image point location of the string along row j in the image.
   \param s : String to display in overlay.
   \param color : String color.
 
@@ -1284,7 +1320,7 @@ bool vpDisplay::getPointerPosition(const vpImage<vpRGBa> &I, vpImagePoint &ip)
   Set the window background.
 
   \param I : Image associated to the display window.
-  \param color: Background color.
+  \param color : Background color.
 
   \exception vpDisplayException::notInitializedError : If the video
   device is not initialized.
@@ -1322,11 +1358,12 @@ void vpDisplay::setTitle(const vpImage<vpRGBa> &I, const std::string &windowtitl
   Set the window position in the screen.
 
   \param I : Image associated to the display window.
-  \param winx, winy : Position of the upper-left window's border in the
+  \param winx : Coordinates along the horizontal screen x-axis of the position of the upper-left window's border in the
+  screen.
+  \param winy : Coordinates along the vertical screen y-axis of the position of the upper-left window's border in the
   screen.
 
-  \exception vpDisplayException::notInitializedError : If the video
-  device is not initialized.
+  \exception vpDisplayException::notInitializedError : If the video device is not initialized.
 */
 void vpDisplay::setWindowPosition(const vpImage<vpRGBa> &I, int winx, int winy)
 {

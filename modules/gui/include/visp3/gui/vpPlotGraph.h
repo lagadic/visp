@@ -210,7 +210,7 @@ public:
 
   void setCurveColor(unsigned int curveNum, const vpColor &color);
   void setCurveThickness(unsigned int curveNum, unsigned int thickness);
-  void setGridThickness(unsigned int thickness) { this->gridThickness = thickness; };
+  void setGridThickness(unsigned int thickness) { this->gridThickness = thickness; }
   void setLegend(unsigned int curveNum, const std::string &legend);
   void setTitle(const std::string &title);
   void setUnitX(const std::string &unitx);

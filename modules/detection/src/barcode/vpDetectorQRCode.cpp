@@ -43,7 +43,7 @@ BEGIN_VISP_NAMESPACE
 /*!
    Default constructor.
  */
-vpDetectorQRCode::vpDetectorQRCode() : m_scanner()
+  vpDetectorQRCode::vpDetectorQRCode() : m_scanner()
 {
   // configure the reader
   m_scanner.set_config(zbar::ZBAR_NONE, zbar::ZBAR_CFG_ENABLE, 1);
@@ -93,5 +93,5 @@ END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpDetectorQRCode.cpp.o) has
 // no symbols
-void dummy_vpDetectorQRCode() { };
+void dummy_vpDetectorQRCode() { }
 #endif

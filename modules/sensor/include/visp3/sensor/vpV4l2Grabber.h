@@ -252,7 +252,7 @@ public:
     Activates the verbose mode to print additional information on stdout.
     \param verbose : If true activates the verbose mode.
   */
-  void setVerboseMode(bool verbose) { this->m_verbose = verbose; };
+  void setVerboseMode(bool verbose) { this->m_verbose = verbose; }
   void setFramerate(vpV4l2FramerateType framerate);
 
   void setInput(unsigned input = vpV4l2Grabber::DEFAULT_INPUT);

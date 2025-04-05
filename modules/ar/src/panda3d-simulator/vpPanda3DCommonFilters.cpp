@@ -193,6 +193,6 @@ END_VISP_NAMESPACE
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_ar.a(vpPanda3DCanny.cpp.o) has no symbols
-void dummy_vpPanda3DCanny() { };
+void dummy_vpPanda3DCanny() { }
 
 #endif

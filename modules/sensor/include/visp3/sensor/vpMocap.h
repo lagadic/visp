@@ -53,11 +53,11 @@ public:
   /*!
    * Default constructor that turns off the verbose mode.
    */
-  vpMocap() : m_verbose(false), m_serverAddr() { };
+  vpMocap() : m_verbose(false), m_serverAddr() { }
   /*!
    * Destructor.
    */
-  virtual ~vpMocap() { };
+  virtual ~vpMocap() { }
 
   /*!
    * Close connexion with the motion capture device.

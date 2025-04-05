@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +34,8 @@
  * \file vpMomentAreaNormalized.h
  * \brief 2D normalized surface moment descriptor (usually described as An).
  */
-#ifndef _vpMomentAreaNormalized_h_
-#define _vpMomentAreaNormalized_h_
+#ifndef VP_MOMENT_AREA_NORMALIZED_H
+#define VP_MOMENT_AREA_NORMALIZED_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMoment.h>
@@ -143,7 +143,7 @@ private:
 
 public:
   vpMomentAreaNormalized(double a_star, double Z_star);
-  void compute();
+  void compute() VP_OVERRIDE;
 
   /*!
    * Retrieves the desired surface \e a* as specified in the constructor.
@@ -183,9 +183,9 @@ public:
   /*!
    * Moment name.
    */
-  const std::string name() const { return "vpMomentAreaNormalized"; }
+  const std::string name() const VP_OVERRIDE { return "vpMomentAreaNormalized"; }
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentAreaNormalized &v);
-  void printDependencies(std::ostream &os) const;
+  void printDependencies(std::ostream &os) const VP_OVERRIDE;
 };
 END_VISP_NAMESPACE
 #endif

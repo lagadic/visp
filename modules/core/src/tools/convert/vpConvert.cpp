@@ -468,5 +468,5 @@ void vpConvert::convertToOpenCV(const std::vector<vpPoint> &from, std::vector<cv
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpConvert.cpp.o) has no symbols
-void dummy_vpConvert() { };
+void dummy_vpConvert() { }
 #endif

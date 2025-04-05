@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +29,7 @@
  *
  * Description:
  * Basic moment descriptor
- *
- * Authors:
- * Filip Novotny
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpMomentBasic.h>
 #include <visp3/core/vpMomentObject.h>
@@ -57,7 +52,7 @@ const std::vector<double> &vpMomentBasic::get() const { return getObject().get()
   Gets the desired moment using indexes.
   \param i : first index of the 2D moment.
   \param j : second index of the 2D moment.
-  \return \f$m_{ij}\f$ moment.
+  \return Moment \f$m_{ij}\f$.
 
   Same behaviour as vpMomentObject.
 */

@@ -82,7 +82,7 @@ public: /* Constants */
 public: /* Methodes publiques */
   vpPtu46(void);
   /*! Destructor that does nothing. */
-  virtual ~vpPtu46() { };
+  virtual ~vpPtu46() { }
 
   /** @name Inherited functionalities from vpPtu46 */
   //@{

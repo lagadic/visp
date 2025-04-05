@@ -203,10 +203,16 @@ vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpRotationMatrix &R) : vpArra
   \\
   {\bf 0}_{3\times 3} & {\bf R} \end{array} \right] \f]
 
-  \param tx,ty,tz : Translation vector in meters.
+  \param[in] tx : Value along X-axis of the translation vector in meters.
+  \param[in] ty : Value along Y-axis of the translation vector in meters.
+  \param[in] tz : Value along Z-axis of the translation vector in meters.
 
-  \param tux,tuy,tuz : \f$\theta {\bf u}\f$ rotation vector expressed in
-  radians used to initialize \f$R\f$.
+  \param tux : Value along X-axis of the \f$ \theta {\bf u}\f$ rotation vector expressed in
+  radians and used to initialize the ratational matrix \f$R\f$.
+  \param tuy : Value along Y-axis of the \f$ \theta {\bf u}\f$ rotation vector expressed in
+  radians and used to initialize the ratational matrix \f$R\f$.
+  \param tuz : Value along Z-axis of the \f$ \theta {\bf u}\f$ rotation vector expressed in
+  radians and used to initialize the ratational matrix \f$R\f$.
 */
 vpVelocityTwistMatrix::vpVelocityTwistMatrix(double tx, double ty, double tz, double tux, double tuy, double tuz)
   : vpArray2D<double>(constr_val_6, constr_val_6)

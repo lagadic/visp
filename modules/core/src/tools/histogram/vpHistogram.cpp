@@ -29,8 +29,7 @@
  *
  * Description:
  * Gray level histogram manipulation.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpHistogram.cpp
@@ -222,7 +221,7 @@ vpHistogram::vpHistogram(const vpImage<unsigned char> &I) : m_histogram(nullptr)
   Calculates the histogram from a gray level image using a binary mask.
 
   \param I : Gray level image.
-  \param p_mask: A pointer towards a binary mask where true indicates that the pixel should considered
+  \param p_mask : A pointer towards a binary mask where true indicates that the pixel should considered
   and false that it should be ignored.
   \sa calculate() setMask()
 */

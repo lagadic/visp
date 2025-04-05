@@ -179,7 +179,7 @@ unsigned int vpMatrix::pseudoInverseLapack(vpMatrix &Ap, double svThreshold) con
 
   \param Ap : The Moore-Penros pseudo inverse \f$ A^+ \f$.
 
-  \param sv: Vector corresponding to matrix \f$A\f$ singular values. The size
+  \param sv : Vector corresponding to matrix \f$A\f$ singular values. The size
   of this vector is equal to min(m, n).
 
   \param svThreshold : Threshold used to test the singular values. If
@@ -279,20 +279,20 @@ unsigned int vpMatrix::pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, double
   The null space of a matrix \f$\bf A\f$ is defined as \f$\mbox{Ker}({\bf A})
   = { {\bf X} : {\bf A}*{\bf X} = {\bf 0}}\f$.
 
-  \param Ap: The Moore-Penros pseudo inverse \f$ {\bf A}^+ \f$.
+  \param Ap : The Moore-Penros pseudo inverse \f$ {\bf A}^+ \f$.
 
-  \param sv: Vector corresponding to matrix \f$A\f$ singular values. The size
+  \param sv : Vector corresponding to matrix \f$A\f$ singular values. The size
   of this vector is equal to min(m, n).
 
-  \param svThreshold: Threshold used to test the singular values. If
+  \param svThreshold : Threshold used to test the singular values. If
   a singular value is lower than this threshold we consider that the
   matrix is not full rank.
 
-  \param imA: \f$\mbox{Im}({\bf A})\f$ that is a m-by-r matrix.
+  \param imA : \f$\mbox{Im}({\bf A})\f$ that is a m-by-r matrix.
 
-  \param imAt: \f$\mbox{Im}({\bf A}^T)\f$ that is n-by-r matrix.
+  \param imAt : \f$\mbox{Im}({\bf A}^T)\f$ that is n-by-r matrix.
 
-  \param kerAt: The matrix that contains the null space (kernel) of \f$\bf
+  \param kerAt : The matrix that contains the null space (kernel) of \f$\bf
   A\f$ defined by the matrix \f${\bf X}^T\f$. If matrix \f$\bf A\f$ is full
   rank, the dimension of \c kerAt is (0, n), otherwise the dimension is (n-r,
   n). This matrix is thus the transpose of \f$\mbox{Ker}({\bf A})\f$.
@@ -507,7 +507,7 @@ int vpMatrix::pseudoInverseLapack(vpMatrix &Ap, int rank_in) const
 
   \param Ap : The Moore-Penros pseudo inverse \f$ A^+ \f$.
 
-  \param sv: Vector corresponding to matrix \f$A\f$ singular values. The size
+  \param sv : Vector corresponding to matrix \f$A\f$ singular values. The size
   of this vector is equal to min(m, n).
 
   \param[in] rank_in : Known rank of the matrix.
@@ -613,18 +613,18 @@ int vpMatrix::pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, int rank_in) co
   The null space of a matrix \f$\bf A\f$ is defined as \f$\mbox{Ker}({\bf A})
   = { {\bf X} : {\bf A}*{\bf X} = {\bf 0}}\f$.
 
-  \param Ap: The Moore-Penros pseudo inverse \f$ {\bf A}^+ \f$.
+  \param Ap : The Moore-Penros pseudo inverse \f$ {\bf A}^+ \f$.
 
-  \param sv: Vector corresponding to matrix \f$A\f$ singular values. The size
+  \param sv : Vector corresponding to matrix \f$A\f$ singular values. The size
   of this vector is equal to min(m, n).
 
   \param[in] rank_in : Known rank of the matrix.
 
-  \param imA: \f$\mbox{Im}({\bf A})\f$ that is a m-by-r matrix.
+  \param imA : \f$\mbox{Im}({\bf A})\f$ that is a m-by-r matrix.
 
-  \param imAt: \f$\mbox{Im}({\bf A}^T)\f$ that is n-by-r matrix.
+  \param imAt : \f$\mbox{Im}({\bf A}^T)\f$ that is n-by-r matrix.
 
-  \param kerAt: The matrix that contains the null space (kernel) of \f$\bf
+  \param kerAt : The matrix that contains the null space (kernel) of \f$\bf
   A\f$ defined by the matrix \f${\bf X}^T\f$. If matrix \f$\bf A\f$ is full
   rank, the dimension of \c kerAt is (0, n), otherwise the dimension is (n-r,
   n). This matrix is thus the transpose of \f$\mbox{Ker}({\bf A})\f$.

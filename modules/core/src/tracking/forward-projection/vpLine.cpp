@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +29,7 @@
  *
  * Description:
  * Line feature.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpLine.cpp
@@ -45,7 +44,6 @@
 
 BEGIN_VISP_NAMESPACE
 /*!
-
   Initialize the memory space requested for the 2D line parameters (\e
   p) in the image plane and for 3D line parameters (\e oP and \e cP)
   respectively in the object frame and the camera frame.
@@ -65,7 +63,6 @@ void vpLine::init()
 vpLine::vpLine() { init(); }
 
 /*!
-
   Sets the parameters \e oP which define the line in the object
   frame. As said in the class description, the line is defined as the
   intersection of two planes. The different parameters here define the
@@ -76,8 +73,15 @@ vpLine::vpLine() { init(); }
   \f[ oA2 X + oB2 Y + oC2 Z + oD2 = 0 \f]
   Here \f$ (X, Y, Z) \f$ are the 3D coordinates of a point in the object frame.
 
-  \param oA1, oB1, oC1, oD1 : The parameters used to define the first plane in the object frame.
-  \param oA2, oB2, oC2, oD2 : The parameters used to define the second plane in the object frame.
+  \param oA1 : First plane coordinate along X-axis of the normal vector expressed in the object frame.
+  \param oB1 : First plane coordinate along Y-axis of the normal vector expressed in the object frame.
+  \param oC1 : First plane coordinate along Z-axis of the normal vector expressed in the object frame.
+  \param oD1 : First plane D parameter in the object frame.
+
+  \param oA2 : Second plane coordinate along X-axis of the normal vector expressed in the object frame.
+  \param oB2 : Second plane coordinate along Y-axis of the normal vector expressed in the object frame.
+  \param oC2 : Second plane coordinate along Z-axis of the normal vector expressed in the object frame.
+  \param oD2 : Second plane D parameter in the object frame.
 
 */
 void vpLine::setWorldCoordinates(const double &oA1, const double &oB1, const double &oC1, const double &oD1,

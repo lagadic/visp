@@ -1429,6 +1429,6 @@ void vpUeyeGrabber::setVerbose(bool verbose) { m_impl->setVerbose(verbose); }
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_sensor.a(vpUeyeGrabber.cpp.o) has no symbols
-void dummy_vpUeyeGrabber() { };
+void dummy_vpUeyeGrabber() { }
 
 #endif

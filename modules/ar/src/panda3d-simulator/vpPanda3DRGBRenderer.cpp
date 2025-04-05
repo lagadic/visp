@@ -335,6 +335,6 @@ END_VISP_NAMESPACE
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_ar.a(vpPanda3DRGBRenderer.cpp.o) has no symbols
-void dummy_vpPanda3DRGBRenderer() { };
+void dummy_vpPanda3DRGBRenderer() { }
 
 #endif

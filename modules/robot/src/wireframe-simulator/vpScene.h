@@ -67,7 +67,7 @@
 BEGIN_VISP_NAMESPACE
 typedef struct indexFaceSet
 {
-  indexFaceSet() : nbPt(0), pt(), nbIndex(0), index() { };
+  indexFaceSet() : nbPt(0), pt(), nbIndex(0), index() { }
   int nbPt;
   std::vector<vpPoint> pt;
   int nbIndex;

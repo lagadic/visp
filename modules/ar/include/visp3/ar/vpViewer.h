@@ -140,17 +140,17 @@ private:
   vpSimulator *simu;
   SbBool processSoEvent(const SoEvent *const event);
 #if defined(VISP_HAVE_SOWIN)
-  static HWND init(const char *appname) { return SoWin::init(appname); };
-  static void mainLoop() { SoWin::mainLoop(); };
-  static void exitMainLoop() { SoWin::exitMainLoop(); };
+  static HWND init(const char *appname) { return SoWin::init(appname); }
+  static void mainLoop() { SoWin::mainLoop(); }
+  static void exitMainLoop() { SoWin::exitMainLoop(); }
 #elif defined(VISP_HAVE_SOQT)
-  static QWidget *init(const char *appname) { return SoQt::init(appname); };
-  static void mainLoop() { SoQt::mainLoop(); };
-  static void exitMainLoop() { SoQt::exitMainLoop(); };
+  static QWidget *init(const char *appname) { return SoQt::init(appname); }
+  static void mainLoop() { SoQt::mainLoop(); }
+  static void exitMainLoop() { SoQt::exitMainLoop(); }
 #elif defined(VISP_HAVE_SOXT)
-  static Widget init(const char *appname) { return SoXt::init(appname); };
-  static void mainLoop() { SoXt::mainLoop(); };
-  static void exitMainLoop() { SoXt::exitMainLoop(); };
+  static Widget init(const char *appname) { return SoXt::init(appname); }
+  static void mainLoop() { SoXt::mainLoop(); }
+  static void exitMainLoop() { SoXt::exitMainLoop(); }
 #endif
 };
 END_VISP_NAMESPACE

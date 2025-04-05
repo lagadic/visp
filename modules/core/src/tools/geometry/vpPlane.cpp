@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,12 +63,14 @@ vpPlane::vpPlane() : A(0), B(0), C(0), D(0) { }
 /*!
   Plane constructor from A, B, C, D parameters.
 
-  A plane is given by the equation \f$A*X + B*Y + C*Z + D = 0\f$ where
+  A plane is given by the equation \f$ A*X + B*Y + C*Z + D = 0 \f$ where
   (X,Y,Z) are the coordinates of a point and \f$[A,B,C]^T\f$ is the normal
   vector of the plane.
 
-  \param a, b, c, d : Parameters of the plane.
-
+  \param[in] a : Plane \f$ A \f$ parameter.
+  \param[in] b : Plane \f$ B \f$ parameter.
+  \param[in] c : Plane \f$ C \f$ parameter.
+  \param[in] d : Plane \f$ D \f$ parameter.
 */
 vpPlane::vpPlane(double a, double b, double c, double d) : A(a), B(b), C(c), D(d) { }
 
@@ -96,14 +98,14 @@ vpPlane::vpPlane(const vpPlane &P) : A(0), B(0), C(0), D(0)
 
   \param normal : The normal to the plane.
 
-  \param frame: Indicates if the plane should be initialized from the point P
+  \param frame : Indicates if the plane should be initialized from the point P
   coordinates expressed in the camera or object frame.
   - When expressed in the camera frame we get the coordinates of the point using
     (`P.get_X()`, `P.get_Y()`, `P.get_Z()`).
   - When expressed in the object frame we get the coordinates of the point using
     (`P.get_oX()`, `P.get_oY()`, `P.get_oZ()`).
 */
-vpPlane::vpPlane(const vpPoint &P, const vpColVector &normal, vpPlaneFrame frame) : A(0), B(0), C(0), D(0)
+vpPlane::vpPlane(const vpPoint &P, const vpColVector &normal, const vpPlaneFrame &frame) : A(0), B(0), C(0), D(0)
 {
   const unsigned int index_0 = 0;
   const unsigned int index_1 = 1;
@@ -145,7 +147,7 @@ vpPlane &vpPlane::init(const vpPlane &P)
 
   \param normal : The normal to the plane.
 
-  \param frame: Indicates if the plane should be initialized from the point P
+  \param frame : Indicates if the plane should be initialized from the point P
   coordinates expressed in the camera (X, Y, Z) or object frame (oX, oY, oZ).
   - When expressed in the camera frame we get the coordinates of the point using
     (`P.get_X()`, `P.get_Y()`, `P.get_Z()`).
@@ -154,7 +156,7 @@ vpPlane &vpPlane::init(const vpPlane &P)
 
   \sa vpPlane(const vpPoint&, const vpColVector &)
 */
-vpPlane &vpPlane::init(const vpPoint &P, const vpColVector &normal, vpPlaneFrame frame)
+vpPlane &vpPlane::init(const vpPoint &P, const vpColVector &normal, const vpPlaneFrame &frame)
 {
   const unsigned int index_0 = 0;
   const unsigned int index_1 = 1;
@@ -206,12 +208,14 @@ vpPlane &vpPlane::init(const vpColVector &P, const vpColVector &normal)
   The normal to the plane is given by:
   n = PQ x PR
 
-  \param P,Q,R: Three points on the plane.
-  \param frame: Indicates if the plane should be initialized from the points
+  \param[in] P : First points on the plane.
+  \param[in] Q : Second points on the plane.
+  \param[in] R : Third points on the plane.
+  \param[in] frame : Indicates if the plane should be initialized from the points
   coordinates expressed in the camera or object frame.
 
 */
-vpPlane &vpPlane::init(const vpPoint &P, const vpPoint &Q, const vpPoint &R, vpPlaneFrame frame)
+vpPlane &vpPlane::init(const vpPoint &P, const vpPoint &Q, const vpPoint &R, const vpPlaneFrame &frame)
 {
   vpColVector a(3);
   vpColVector b(3);
@@ -270,20 +274,25 @@ vpPlane &vpPlane::init(const vpPoint &P, const vpPoint &Q, const vpPoint &R, vpP
   The normal to the plane is given by:
   n = PQ x PR
 
-  \param P,Q,R: Three points on the plane.
-  \param frame: Indicates if the plane should be initialized from the points
+  \param[in] P : First points on the plane.
+  \param[in] Q : Second points on the plane.
+  \param[in] R : Third points on the plane.
+  \param[in] frame : Indicates if the plane should be initialized from the points
   coordinates expressed in the camera or object frame.
 
   \sa init(const vpPoint &, const vpPoint &, const vpPoint &)
 */
-vpPlane::vpPlane(const vpPoint &P, const vpPoint &Q, const vpPoint &R, vpPlaneFrame frame) : A(0), B(0), C(0), D(0)
+vpPlane::vpPlane(const vpPoint &P, const vpPoint &Q, const vpPoint &R, const vpPlaneFrame &frame) : A(0), B(0), C(0), D(0)
 {
   init(P, Q, R, frame);
 }
 
 /*!
  * Compute Z value of a 3D point located on the plane from its perspective projection coordinates.
- * \param[in] x, y : Coordinates of a point in the image plane. These coordinates are the one obtained by perspective projection of a 3D point.
+ * \param[in] x : Coordinate of a point in the image plane along x-axis. This coordinate is the one obtained by
+ * perspective projection of a 3D point.
+ * \param[in] y : Coordinate of a point in the image plane along y-axis. This coordinate is the one obtained by
+ * perspective projection of a 3D point.
  * \return Z coordinate in [m] of the corresponding 3D point.
  */
 double vpPlane::computeZ(double x, double y) const
@@ -346,7 +355,7 @@ void vpPlane::getNormal(vpColVector &n) const
   - When expressed in the object frame we get the coordinates of the point using
     (`P.get_oX()`, `P.get_oY()`, `P.get_oZ()`).
 */
-void vpPlane::projectionPointOnPlan(const vpPoint &P, vpPoint &Pproj, vpPlaneFrame frame) const
+void vpPlane::projectionPointOnPlan(const vpPoint &P, vpPoint &Pproj, const vpPlaneFrame &frame) const
 {
   double x0, y0, z0;
   double rho;

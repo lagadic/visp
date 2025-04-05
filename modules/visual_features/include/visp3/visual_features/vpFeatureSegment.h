@@ -143,7 +143,7 @@ public:
   /*!
    * Indicates if the normalized features are considered.
    */
-  bool isNormalized() { return normalized_; };
+  bool isNormalized() { return normalized_; }
 
   static unsigned int selectXc();
   static unsigned int selectYc();
@@ -156,7 +156,7 @@ public:
    * y_n, l_n, \alpha)\f$. If false, use non normalized features \f${\bf s} =
    * (x_c, y_c, l_c, \alpha)\f$.
    */
-  void setNormalized(bool normalized) { normalized_ = normalized; };
+  void setNormalized(bool normalized) { normalized_ = normalized; }
 
   /*!
    * Set the value of the x coordinate of the segment center

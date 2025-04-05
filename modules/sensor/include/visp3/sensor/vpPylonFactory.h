@@ -83,7 +83,7 @@ public:
 
 private:
   //! Default constructor.
-  vpPylonFactory() { };
+  vpPylonFactory() { }
   vpPylonFactory(vpPylonFactory const &);
   void operator=(vpPylonFactory const &);
 

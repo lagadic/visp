@@ -96,7 +96,7 @@ public:
   vpRobust(const vpRobust &other);
 
   //! Destructor
-  virtual ~vpRobust() { };
+  virtual ~vpRobust() { }
 
   /*!
    * Return residual vector Median Absolute Deviation (MAD).
@@ -107,7 +107,7 @@ public:
    *
    * \sa setMinMedianAbsoluteDeviation()
    */
-  double getMedianAbsoluteDeviation() { return m_mad; };
+  double getMedianAbsoluteDeviation() { return m_mad; }
 
   /*!
    * Return the min value used to threshold residual vector Median Absolute Deviation (MAD).
@@ -115,7 +115,7 @@ public:
    *
    * \sa setMinMedianAbsoluteDeviation()
    */
-  double getMinMedianAbsoluteDeviation() { return m_mad_min; };
+  double getMinMedianAbsoluteDeviation() { return m_mad_min; }
 
   void MEstimator(const vpRobustEstimatorType method, const vpColVector &residues, vpColVector &weights);
 

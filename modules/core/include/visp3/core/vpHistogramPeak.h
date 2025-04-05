@@ -80,7 +80,7 @@ public:
     \sa setValue(), set()
 
   */
-  inline void setLevel(unsigned char lvl) { this->level = lvl; };
+  inline void setLevel(unsigned char lvl) { this->level = lvl; }
   /*!
 
     Set the peak number of pixels having a same gray level. To set the
@@ -91,7 +91,7 @@ public:
     \sa setLevel(), set()
 
   */
-  inline void setValue(unsigned val) { this->value = val; };
+  inline void setValue(unsigned val) { this->value = val; }
   /*!
 
     Set the peak gray \e level and number of pixels at this gray level.
@@ -106,7 +106,7 @@ public:
   {
     this->level = lvl;
     this->value = val;
-  };
+  }
 
   /*!
 
@@ -118,7 +118,7 @@ public:
     \sa getValue()
 
   */
-  inline unsigned char getLevel() const { return level; };
+  inline unsigned char getLevel() const { return level; }
   /*!
 
     Get the peak number of pixels having a same gray level. The
@@ -129,7 +129,7 @@ public:
     \sa getLevel()
 
   */
-  inline unsigned getValue() const { return value; };
+  inline unsigned getValue() const { return value; }
 
   //---------------------------------
   // Printing
