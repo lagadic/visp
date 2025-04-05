@@ -45,6 +45,7 @@
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
+#include <visp3/core/vpMath.h>
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include VISP_NLOHMANN_JSON(json.hpp)
@@ -1180,6 +1181,17 @@ public:
   */
   static void insert(const vpArray2D<Type> &A, const vpArray2D<Type> &B, vpArray2D<Type> &C, unsigned int r, unsigned int c);
   //@}
+
+  static bool isFinite(const vpArray2D<double> &A)
+  {
+    const unsigned int s = A.size();
+    for (unsigned int i = 0; i < s; ++i) {
+      if (!vpMath::isFinite(A.data[i])) {
+        return false;
+      }
+    }
+    return true;
+  }
 
 protected:
   //! Number of rows in the array

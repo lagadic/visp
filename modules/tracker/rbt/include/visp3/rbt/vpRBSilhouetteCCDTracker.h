@@ -147,7 +147,12 @@ inline void from_json(const nlohmann::json &j, vpCCDParameters &ccdParameters)
   ccdParameters.start_h = ccdParameters.h;
   ccdParameters.delta_h = j.value("delta_h", ccdParameters.delta_h);
   ccdParameters.start_delta_h = ccdParameters.delta_h;
-  ccdParameters.min_h = j.value("min_h", ccdParameters.min_h);
+  if (j.contains("min_h")) {
+    ccdParameters.min_h = j.value("min_h", ccdParameters.min_h);
+  }
+  else {
+    ccdParameters.min_h = ccdParameters.h;
+  }
 
   ccdParameters.phi_dim = j.value("phi_dim", ccdParameters.phi_dim);
   if (j.contains("gamma")) {
