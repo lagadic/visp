@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +31,8 @@
  * Image queue for storage helper.
  */
 
-#ifndef vpImageQueue_h
-#define vpImageQueue_h
+#ifndef VP_IMAGE_QUEUE_H
+#define VP_IMAGE_QUEUE_H
 
 #include <visp3/core/vpConfig.h>
 
@@ -65,7 +65,7 @@ template <class Type> class vpImageQueue
 {
 public:
   struct vpCancelled_t
-  { }
+  { };
 
   /*!
    * Queue (FIFO) constructor. By default the max queue size is set to 1024*8.

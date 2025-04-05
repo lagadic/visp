@@ -211,7 +211,7 @@ vpPlaneEstimation::estimatePlane(const vpImage<uint16_t> &I_depth_raw, double de
 
   // Local helper: Reduce computation (roi.isInside)
   // Default: the img is totally included in the ROI
-  std::function<bool(const vpImagePoint &)> isInside = [](const vpImagePoint &) { return true; }
+  std::function<bool(const vpImagePoint &)> isInside = [](const vpImagePoint &) { return true; };
 
   // If the img is crossed by the ROI, vpPolygon::isInside has to be used
   {
@@ -220,7 +220,7 @@ vpPlaneEstimation::estimatePlane(const vpImage<uint16_t> &I_depth_raw, double de
                            static_cast<double>(I_depth_raw.getHeight()) };
     for (const auto &roi_corner : roi.getCorners()) {
       if (img_bound.isInside(roi_corner)) {
-        isInside = [&roi](const vpImagePoint &ip) { return roi.isInside(ip); }
+        isInside = [&roi](const vpImagePoint &ip) { return roi.isInside(ip); };
         break;
       }
     }
@@ -233,7 +233,7 @@ vpPlaneEstimation::estimatePlane(const vpImage<uint16_t> &I_depth_raw, double de
          !roi.isInside(img_bound.getBottomRight()))
     // clang-format on
     {
-      isInside = [&roi](const vpImagePoint &ip) { return roi.isInside(ip); }
+      isInside = [&roi](const vpImagePoint &ip) { return roi.isInside(ip); };
     }
   }
 

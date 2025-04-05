@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,13 +31,14 @@
  * Descriptor for various invariants used to drive space rotations around X and
  * Y axis.
  */
+
 /*!
   \file vpMomentCInvariant.h
   \brief Descriptor for various invariants used to drive space rotations around
   X and Y axis.
 */
-#ifndef _vpMomentCInvariant_h_
-#define _vpMomentCInvariant_h_
+#ifndef VP_MOMENT_CINVARIANT_H
+#define VP_MOMENT_CINVARIANT_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMoment.h>
@@ -187,7 +188,7 @@ public:
     */
   double C10() const { return values[9]; }
 
-  void compute();
+  void compute() VP_OVERRIDE;
 
   /*!
     Gets the desired invariant.

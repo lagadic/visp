@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,13 +31,14 @@
  * 2D normalized gravity center moment descriptor (usually described by the
  * pair Xn,Yn)
  */
+
 /*!
   \file vpMomentGravityCenterNormalized.h
   \brief 2D normalized gravity center moment descriptor (usually described by
   the pair Xn,Yn)
 */
-#ifndef _vpMomentGravityCenterNormalized_h_
-#define _vpMomentGravityCenterNormalized_h_
+#ifndef VP_MOMENT_GRAVITY_CENTER_NORMALIZED_H
+#define VP_MOMENT_GRAVITY_CENTER_NORMALIZED_H
 
 #include <visp3/core/vpMomentDatabase.h>
 #include <visp3/core/vpMomentGravityCenter.h>
@@ -63,7 +64,7 @@ class VISP_EXPORT vpMomentGravityCenterNormalized : public vpMomentGravityCenter
 {
 public:
   vpMomentGravityCenterNormalized();
-  void compute();
+  void compute() VP_OVERRIDE;
   //! Moment name.
   const std::string name() const VP_OVERRIDE { return "vpMomentGravityCenterNormalized"; }
   void printDependencies(std::ostream &os) const VP_OVERRIDE;
