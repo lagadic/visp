@@ -43,7 +43,7 @@
 #include <visp3/rbt/vpRBSilhouettePointsExtractionSettings.h>
 #include <visp3/rbt/vpPanda3DDepthFilters.h>
 #include <visp3/rbt/vpObjectCentricRenderer.h>
-#include <visp3/rbt/vpRBTrackerLogger.h>
+#include <visp3/rbt/vpRBTrackingResult.h>
 #include <visp3/rbt/vpRBADDSMetric.h>
 #include <visp3/core/vpDisplay.h>
 
@@ -80,7 +80,6 @@ public:
   void setPose(const vpHomogeneousMatrix &cMo);
   vpObjectCentricRenderer &getRenderer();
   const vpRBFeatureTrackerInput &getMostRecentFrame() const { return m_currentFrame; }
-  const vpRBTrackerLogger &getLogger() const { return m_logger; }
 
   vpMatrix getCovariance() const;
 
@@ -206,9 +205,9 @@ public:
    * @{
    */
   void startTracking();
-  void track(const vpImage<unsigned char> &I);
-  void track(const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB);
-  void track(const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<float> &depth);
+  vpRBTrackingResult track(const vpImage<unsigned char> &I);
+  vpRBTrackingResult track(const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB);
+  vpRBTrackingResult track(const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<float> &depth);
   /**
    * @}
    */
@@ -229,7 +228,7 @@ public:
 
 protected:
 
-  void track(vpRBFeatureTrackerInput &input);
+  vpRBTrackingResult track(vpRBFeatureTrackerInput &input);
   void updateRender(vpRBFeatureTrackerInput &frame);
 
   std::vector<vpRBSilhouettePoint> extractSilhouettePoints(
@@ -273,7 +272,6 @@ protected:
 
   unsigned m_imageHeight, m_imageWidth; //! Color and render image dimensions
 
-  vpRBTrackerLogger m_logger;
   bool m_verbose;
 
   std::shared_ptr<vpObjectMask> m_mask;

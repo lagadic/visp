@@ -42,7 +42,7 @@ BEGIN_VISP_NAMESPACE
 class VISP_EXPORT vpRBADDSMetric
 {
 public:
-  vpRBADDSMetric(unsigned int numPoints, unsigned int seed) : m_seed(seed), m_map(numPoints, 0.0, 0.0, 0.0), m_random(seed)
+  vpRBADDSMetric(unsigned int numPoints, unsigned int seed) : m_seed(seed), m_map(numPoints, 0.0, 0.0, 0.0, 0.0), m_random(seed)
   {
 
   }
@@ -60,7 +60,7 @@ public:
       }
     }
     vpArray2D<int> empty;
-    std::list<int> removed;
+    std::vector<int> removed;
     unsigned int added;
     m_map.updatePoints(empty, oX, removed, added);
     if (added != m_map.getNumMaxPoints()) {

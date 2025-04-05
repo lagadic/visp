@@ -419,9 +419,6 @@ void vpRBSilhouetteCCDTracker::display(const vpCameraParameters &/*cam*/, const 
 
 void vpRBSilhouetteCCDTracker::updateCCDPoints(const vpHomogeneousMatrix &cMo)
 {
-#ifdef VISP_HAVE_OPENMP
-#pragma omp parallel for
-#endif
   for (vpRBSilhouetteControlPoint &p : m_controlPoints) {
     p.updateSilhouettePoint(cMo);
   }
@@ -690,7 +687,7 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
     unsigned int normal_points_number = static_cast<unsigned int>(floor(m_ccdParameters.h / m_ccdParameters.delta_h));
 
 #ifdef VISP_HAVE_OPENMP
-#pragma omp for
+#pragma omp for nowait
 #endif
     for (unsigned int kk = 0; kk < m_controlPoints.size(); kk++) {
       const int i = kk;
@@ -840,6 +837,7 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
     m_LTL = 0;
     m_LTR = 0;
     std::cerr << "Inversion issues in CCD tracker" << std::endl;
+    std::cerr << e.what() << std::endl;
   }
 }
 

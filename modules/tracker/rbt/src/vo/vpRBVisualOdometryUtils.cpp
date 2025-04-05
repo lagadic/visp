@@ -112,7 +112,8 @@ void vpRBVisualOdometryUtils::levenbergMarquardtKeypoints2D(const vpMatrix &poin
   if (points3d.getRows() != observations.getRows()) {
     throw vpException(vpException::dimensionError, "Expected number of 3D points and 2D observations to be the same");
   }
-
+  vpMatrix points3dTranspose = points3d.t();
+  vpMatrix cXt(points3d.getRows(), points3d.getCols());
   vpMatrix Id(6, 6);
   Id.eye();
   vpRobust robust;
@@ -122,16 +123,14 @@ void vpRBVisualOdometryUtils::levenbergMarquardtKeypoints2D(const vpMatrix &poin
   for (unsigned int iter = 0; iter < parameters.maxNumIters; ++iter) {
     const vpTranslationVector t = cTw.getTranslationVector();
     const vpRotationMatrix cRw = cTw.getRotationMatrix();
+    vpMatrix::mult2Matrices(cRw, points3dTranspose, cXt);
     // Project 3D points and compute interaction matrix
+#ifdef VISP_HAVE_OPENMP
+#pragma omp parallel for
+#endif
     for (unsigned int i = 0; i < points3d.getRows(); ++i) {
-      vpColVector cX(3), wX(3);
-      wX[0] = points3d[i][0]; wX[1] = points3d[i][1]; wX[2] = points3d[i][2];
-
-      cX = cRw * wX;
-      cX += t;
-
-      const double x = cX[0] / cX[2], y = cX[1] / cX[2];
-      const double Z = cX[2];
+      const double X = cXt[0][i] + t[0], Y = cXt[1][i] + t[1], Z = cXt[2][i] + t[2];;
+      const double x = X / Z, y = Y / Z;
       e[i * 2] = x - observations[i][0];
       e[i * 2 + 1] = y - observations[i][1];
 
