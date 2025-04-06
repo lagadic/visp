@@ -46,6 +46,7 @@
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColVector.h>
+#include <visp3/core/vpException.h>
 #include <visp3/core/vpMatrix.h>
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
@@ -486,6 +487,9 @@ inline void to_json(nlohmann::json &j, const vpCameraParameters &cam)
   }
   case vpCameraParameters::perspectiveProjWithoutDistortion:
     break;
+  default: {
+    throw(vpException(vpException::fatalError, "Case not handled in to_json(nlohmann::json &, const vpCameraParameters &)"));
+  }
   }
 }
 
@@ -541,6 +545,9 @@ inline void from_json(const nlohmann::json &j, vpCameraParameters &cam)
     const std::vector<double> coeffs = j.at("dist_coeffs").get<std::vector<double>>();
     cam.initProjWithKannalaBrandtDistortion(px, py, u0, v0, coeffs);
     break;
+  }
+  default: {
+    throw(vpException(vpException::fatalError, "Case not handled in from_json(nlohmann::json &, const vpCameraParameters &)"));
   }
   }
 }
