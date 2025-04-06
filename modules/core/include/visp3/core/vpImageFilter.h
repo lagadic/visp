@@ -61,6 +61,11 @@
 #endif
 #endif
 
+#if defined(__clang__)
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wdocumentation"
+#endif
+
 BEGIN_VISP_NAMESPACE
 /*!
  * \class vpImageFilter
@@ -1515,6 +1520,10 @@ private:
       }
     }
   }
+#endif
+
+#if defined(__clang__)
+#  pragma clang diagnostic pop
 #endif
 
 };

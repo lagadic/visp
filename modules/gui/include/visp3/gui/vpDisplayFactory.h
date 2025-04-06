@@ -47,6 +47,12 @@
 #include <memory>
 #endif
 
+#if defined(__clang__)
+// Mute warning : '\tparam' command used in a comment that is not attached to a template declaration [-Wdocumentation]
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wexit-time-destructors"
+#endif
+
 BEGIN_VISP_NAMESPACE
 /**
  * \ingroup group_gui_display
@@ -296,4 +302,9 @@ std::vector<std::shared_ptr<vpDisplay>> makeDisplayGrid(unsigned int rows, unsig
 }
 
 END_VISP_NAMESPACE
+
+#if defined(__clang__)
+#  pragma clang diagnostic pop
+#endif
+
 #endif

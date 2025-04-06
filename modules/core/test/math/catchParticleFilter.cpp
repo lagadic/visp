@@ -184,6 +184,13 @@ public:
   }
 
 #ifdef VISP_HAVE_DISPLAY
+
+#if defined(__clang__)
+// Mute warning : '\tparam' command used in a comment that is not attached to a template declaration [-Wdocumentation]
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wexit-time-destructors"
+#endif
+
   /**
    * \brief Display the fitted parabola on the image.
    *
@@ -202,6 +209,11 @@ public:
       vpDisplay::displayText(I, vertPosLegend, horPosLegend, legend, color);
     }
   }
+
+
+#if defined(__clang__)
+#  pragma clang diagnostic pop
+#endif
 #endif
 
 private:
