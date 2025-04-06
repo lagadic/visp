@@ -1563,14 +1563,14 @@ vpColVector operator*(const double &x, const vpColVector &v);
 #ifdef VISP_HAVE_NLOHMANN_JSON
 inline void to_json(nlohmann::json &j, const vpColVector &v)
 {
-  const vpArray2D<double> *asArray = static_cast<vpArray2D<double>*>(&v);
+  const vpArray2D<double> *asArray = &v;
   to_json(j, *asArray);
   j["type"] = "vpColVector";
 }
 
 inline void from_json(const nlohmann::json &j, vpColVector &v)
 {
-  vpArray2D<double> *asArray = static_cast<vpArray2D<double>*>(&v);
+  vpArray2D<double> *asArray = &v;
   from_json(j, *asArray);
   if (v.getCols() != 1) {
     throw vpException(vpException::badValue, "From JSON, tried to read a 2D array into a vpColVector");
