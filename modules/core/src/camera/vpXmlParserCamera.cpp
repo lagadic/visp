@@ -505,7 +505,7 @@ public:  /* --- XML Code--------------------------------------------------------
         const int nbRemainingBits = 5;
         const int moduloForOddity = 2;
         const int dividerForRightShift = 2;
-        for (int i = 0; i < nbRemainingBits; ++i) {
+        for (size_t i = 0; i < nbRemainingBits; ++i) {
           int bit = check % moduloForOddity; // if bit == 1 => the corresponding distortion coefficient is present.
           if (!bit) {
             fixed_distortion_coeffs.push_back(0.);
@@ -736,17 +736,13 @@ public:  /* --- XML Code--------------------------------------------------------
           subsampling_height_tmp = node.text().as_uint();
           break;
 
-        case CODE_XML_MODEL:
-          break;
-
         case CODE_XML_ADDITIONAL_INFO:
-          break;
-
         case CODE_XML_BAD:
         case CODE_XML_OTHER:
         case CODE_XML_CAMERA:
         case CODE_XML_FULL_HEIGHT:
         case CODE_XML_FULL_WIDTH:
+        case CODE_XML_MODEL:
         case CODE_XML_MODEL_TYPE:
         case CODE_XML_U0:
         case CODE_XML_V0:
@@ -754,6 +750,11 @@ public:  /* --- XML Code--------------------------------------------------------
         case CODE_XML_PY:
         case CODE_XML_KUD:
         case CODE_XML_KDU:
+        case CODE_XML_K1:
+        case CODE_XML_K2:
+        case CODE_XML_K3:
+        case CODE_XML_K4:
+        case CODE_XML_K5:
         default:
           back = SEQUENCE_ERROR;
           break;
