@@ -201,7 +201,7 @@ public:
           const unsigned int nbCols = filter.getCols();
           for (unsigned int r = 0; r < nbRows; ++r) {
             for (unsigned int c = 0; c < nbCols; ++c) {
-              filter[r][c] = filter[r][c] * scale;
+              filter[r][c] = static_cast<FilterType>(filter[r][c] * scale);
             }
           }
           };
@@ -1042,11 +1042,11 @@ public:
     }
 
     int middle = (static_cast<int>(size) - 1) / 2;
-    FilterType sigma2 = static_cast<FilterType>(vpMath::sqr(sigma));
-    FilterType coef1 = static_cast<FilterType>(1. / (sigma * sqrt(2. * M_PI)));
-    FilterType v_2_sigma2 = static_cast<FilterType>(2. * sigma2);
+    FilterType sigma2 = static_cast<FilterType>(vpMath::sqr(static_cast<double>(sigma)));
+    FilterType coef1 = static_cast<FilterType>(1. / (static_cast<double>(sigma) * sqrt(2. * M_PI)));
+    FilterType v_2_sigma2 = static_cast<FilterType>(2. * static_cast<double>(sigma2));
     for (int i = 0; i <= middle; ++i) {
-      filter[i] = coef1 * static_cast<FilterType>(exp(-(i * i) / v_2_sigma2));
+      filter[i] = coef1 * static_cast<FilterType>(exp(static_cast<double>(-(i * i) / v_2_sigma2)));
     }
     if (normalize) {
       // renormalization
