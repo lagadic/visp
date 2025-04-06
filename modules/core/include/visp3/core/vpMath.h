@@ -210,8 +210,9 @@ public:
 
   /*!
     Clamp a value to boundaries.
-    \param v : The value to clamp.
-    \param lower, upper : The boundaries to clamp `v` to.
+    \param[in] v : The value to clamp.
+    \param[in] lower : The lower boundary to clamp `v` to.
+    \param[in] upper : The upper boundary to clamp `v` to.
 
     Throw a vpException if the value of `lower` is greater than `upper`.
   */
@@ -567,7 +568,7 @@ template <> inline char vpMath::saturate<char>(unsigned int v)
 
 template <> inline char vpMath::saturate<char>(float v)
 {
-  int iv = vpMath::round(v);
+  int iv = vpMath::round(static_cast<double>(v));
   return saturate<char>(iv);
 }
 

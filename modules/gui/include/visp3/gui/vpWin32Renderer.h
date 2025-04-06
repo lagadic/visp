@@ -59,9 +59,9 @@ protected:
   unsigned int m_rscale;
 
 public:
-  vpWin32Renderer() : m_rwidth(0), m_rheight(0), m_rscale(1) { };
+  vpWin32Renderer() : m_rwidth(0), m_rheight(0), m_rscale(1) { }
   //! Destructor.
-  virtual ~vpWin32Renderer() { };
+  virtual ~vpWin32Renderer() { }
 
   //! Inits the display .
   virtual bool init(HWND hWnd, unsigned int w, unsigned int h) = 0;

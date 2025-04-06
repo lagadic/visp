@@ -1468,5 +1468,5 @@ void vpMbKltTracker::setUseKltTracking(const std::string &name, const bool &useK
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_mbt.a(vpMbKltTracker.cpp.o) has no symbols
-void dummy_vpMbKltTracker() { };
+void dummy_vpMbKltTracker() { }
 #endif // VISP_HAVE_OPENCV

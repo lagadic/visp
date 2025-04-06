@@ -42,7 +42,7 @@ BEGIN_VISP_NAMESPACE
  * Default constructor.
  * By default, viewer size is set to 640 x 480.
  */
-vpDisplayPCL::vpDisplayPCL(int posx, int posy, const std::string &window_name)
+  vpDisplayPCL::vpDisplayPCL(int posx, int posy, const std::string &window_name)
   : m_stop(false), m_verbose(false), m_width(640), m_height(480), m_posx(posx), m_posy(posy),
   m_window_name(window_name), m_viewer(nullptr)
 { }
@@ -230,6 +230,6 @@ void vpDisplayPCL::setVerbose(bool verbose)
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_gui.a(vpDisplayPCL.cpp.o) has no symbols
-void dummy_vpDisplayPCL() { };
+void dummy_vpDisplayPCL() { }
 
 #endif

@@ -8,7 +8,7 @@
 
 int main(int argc, char **argv)
 {
-#if defined(HAVE_OPENCV_IMGPROC) && defined(VISP_HAVE_DISPLAY) && \
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(VISP_HAVE_DISPLAY) && \
   (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D) && (defined(HAVE_OPENCV_FEATURES2D) || defined(HAVE_OPENCV_XFEATURES2D))) || \
   ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D) && defined(HAVE_OPENCV_FEATURES)))
 

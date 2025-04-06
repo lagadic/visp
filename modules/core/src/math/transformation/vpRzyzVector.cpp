@@ -45,8 +45,6 @@ BEGIN_VISP_NAMESPACE
 const unsigned int vpRzyzVector::constr_val_3 = 3;
 /*! Default constructor that initialize all the 3 angles to zero. */
 vpRzyzVector::vpRzyzVector() : vpRotationVector(constr_val_3) { }
-/*! Copy constructor. */
-vpRzyzVector::vpRzyzVector(const vpRzyzVector &rzyz) : vpRotationVector(rzyz) { }
 
 /*!
   Constructor from 3 angles (in radian).
@@ -78,11 +76,10 @@ vpRzyzVector::vpRzyzVector(const vpColVector &rzyz) : vpRotationVector(constr_va
 vpRzyzVector::vpRzyzVector(const std::vector<double> &rzyz) : vpRotationVector(constr_val_3) { buildFrom(rzyz); }
 
 /*!
-  Convert a rotation matrix into a \f$R_{zyz}=(\varphi,\theta,\psi)\f$ Euler
-  angles vector.
+  Convert a rotation matrix into a \f$ R_{zyz}=(\varphi,\theta,\psi) \f$ Euler angles vector.
 
   \param R : Rotation matrix used as input.
-  \return \f$R_{zyz}=(\varphi,\theta,\psi)\f$ Euler angles vector.
+  \return Euler angles vector \f$ R_{zyz}=(\varphi,\theta,\psi) \f$.
 */
 vpRzyzVector &vpRzyzVector::buildFrom(const vpRotationMatrix &R)
 {
@@ -109,10 +106,9 @@ vpRzyzVector &vpRzyzVector::buildFrom(const vpRotationMatrix &R)
 }
 
 /*!
-  Convert a \f$\theta {\bf u}\f$ vector into a
-  \f$R_{zyz}=(\varphi,\theta,\psi)\f$ Euler angles vector. \param tu :
-  \f$\theta {\bf u}\f$ representation of a rotation used here as input.
-  \return \f$R_{zyz}=(\varphi,\theta,\psi)\f$ Euler angles vector.
+  Convert a \f$\theta {\bf u}\f$ vector into a \f$ R_{zyz}=(\varphi,\theta,\psi) \f$ Euler angles vector.
+  \param tu : \f$\theta {\bf u}\f$ representation of a rotation used here as input.
+  \return Euler angles vector \f$ R_{zyz}=(\varphi,\theta,\psi) \f$.
 */
 vpRzyzVector &vpRzyzVector::buildFrom(const vpThetaUVector &tu)
 {

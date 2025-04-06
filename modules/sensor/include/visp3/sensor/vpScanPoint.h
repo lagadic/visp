@@ -97,7 +97,7 @@ public:
     this->vAngle = v_angle;
   }
   /*! Destructor that does nothing. */
-  inline virtual ~vpScanPoint() { };
+  inline virtual ~vpScanPoint() { }
   /*!
     Set the polar point coordinates.
     \param r_dist : Radial distance in meter.

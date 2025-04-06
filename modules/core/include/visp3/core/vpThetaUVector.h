@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -172,8 +172,12 @@ class VISP_EXPORT vpThetaUVector : public vpRotationVector
 {
 public:
   vpThetaUVector();
-  vpThetaUVector(const vpThetaUVector &tu);
-
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+vpThetaUVector(const vpThetaUVector &) = default;
+  virtual ~vpThetaUVector() VP_OVERRIDE = default;
+#else
+  virtual ~vpThetaUVector() { }
+#endif
   // constructor initialize a Theta U vector from a homogeneous matrix
   VP_EXPLICIT vpThetaUVector(const vpHomogeneousMatrix &M);
   // constructor initialize a Theta U vector from a pose vector
@@ -218,6 +222,10 @@ public:
   vpThetaUVector &operator=(const vpColVector &tu);
   vpThetaUVector &operator=(double x);
   vpThetaUVector operator*(const vpThetaUVector &tu_b) const;
+
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+  vpThetaUVector &operator=(const vpThetaUVector &) = default;
+#endif
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpThetaUVector &operator=(const std::initializer_list<double> &list);

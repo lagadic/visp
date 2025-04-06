@@ -177,7 +177,7 @@ public:
 
   /*!
    * Check sample step wrt min value.
-   * \param[inout] sample_step : When this value is lower than the min sample step value,
+   * \param[in,out] sample_step : When this value is lower than the min sample step value,
    * it is modified to the min sample step value.
    */
   void checkSamplestep(double &sample_step)

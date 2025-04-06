@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +29,7 @@
  *
  * Description:
  * Interface with the image for feature display.
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpFeatureDisplay.h>
 
@@ -50,7 +49,8 @@ BEGIN_VISP_NAMESPACE
   Display a 2D point with coordinates (x, y) expressed in the image plane.
   These coordinates are obtained after perspective projection of the point.
 
-  \param x, y : Point coordinates in the image plane.
+  \param x : Point coordinate along x-axis in the image plane.
+  \param y : Point coordinate along y-axis in the image plane.
   \param cam : Camera intrinsic parameters.
   \param I : Image.
 
@@ -69,7 +69,8 @@ void vpFeatureDisplay::displayPoint(double x, double y, const vpCameraParameters
   Display a 2D line with coordinates \f$(\rho, \theta)\f$ expressed in the image plane.
   These coordinates are obtained after perspective projection of the line.
 
-  \param rho, theta : Line parameters \f$(\rho, \theta)\f$ expressed in the image plane.
+  \param rho : Line parameters \f$ \rho \f$ expressed in the image plane.
+  \param theta : Line parameters \f$ \theta \f$ expressed in the image plane.
   \param cam : Camera intrinsic parameters.
   \param I : Image.
   \param color : Color to use to display the feature.
@@ -109,8 +110,10 @@ void vpFeatureDisplay::displayLine(double rho, double theta, const vpCameraParam
   Display cylinder limbs as two 2D lines with coordinates \f$(\rho, \theta)\f$ expressed in the image plane.
   These coordinates are obtained after perspective projection of the cylinder.
 
-  \param rho1, theta1 : Cylinder first limb parameters \f$(\rho, \theta)\f$ expressed in the image plane.
-  \param rho2, theta2 : Cylinder second limb parameters \f$(\rho, \theta)\f$ expressed in the image plane.
+  \param rho1 : Cylinder first limp with parameter \f$ \rho_1 \f$ expressed in the image plane.
+  \param theta1 : Cylinder first limp with parameter \f$ \theta_1 \f$ expressed in the image plane.
+  \param rho2 : Cylinder second limp with parameter \f$ \rho_2 \f$ expressed in the image plane.
+  \param theta2 : Cylinder second limp with parameter \f$ \theta_2 \f$ expressed in the image plane.
   \param cam : Camera intrinsic parameters.
   \param I : Image.
   \param color : Color to use to display the feature.
@@ -128,12 +131,17 @@ void vpFeatureDisplay::displayCylinder(double rho1, double theta1, double rho2, 
   Display an ellipse with parameters \f$(x, y, n_{20}, n_{11}, n_{02})\f$ expressed in the image plane.
   These parameters are obtained after perspective projection of a 3D circle (see vpCircle) or a sphere (see vpSphere).
 
-  \param x, y, n20, n11, n02 : Ellipse parameters where:
-  - \f$(x,y)\f$ are the normalized coordinates of the ellipse center,
-  respectively along the horizontal and vertical axis in the image plane.
-  - \f$n_{20}, n_{11}, n_{02}\f$ are the second order centered moments of the ellipse normalized
-  by its area (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where
-  \f$\mu_{ij}\f$ are the centered moments and a the area) expressed in the image plane.
+  \param x : Normalized coordinate of the ellipse center, along the horizontal x-axis in the image plane.
+  \param y : Normalized coordinate of the ellipse center, along the vertical y-axis in the image plane.
+  \param n20 : Second order centered moment \f$ n_{20} \f$ of the ellipse normalized by its area (i.e., such that
+  \f$ n_{ij} = \mu_{ij}/a \f$ where \f$ \mu_{ij} \f$ are the centered moments and a the area) expressed in the image
+  plane.
+  \param n11 : Second order centered moment \f$ n_{11} \f$ of the ellipse normalized by its area (i.e., such that
+  \f$ n_{ij} = \mu_{ij}/a \f$ where \f$ \mu_{ij} \f$ are the centered moments and a the area) expressed in the image
+  plane.
+  \param n02 : Second order centered moment \f$ n_{02} \f$ of the ellipse normalized by its area (i.e., such that
+  \f$ n_{ij} = \mu_{ij}/a \f$ where \f$ \mu_{ij} \f$ are the centered moments and a the area) expressed in the image
+  plane.
   \param cam : Camera intrinsic parameters.
   \param I : Image.
   \param color : Color to use to display the feature.
@@ -167,7 +175,8 @@ void vpFeatureDisplay::displayEllipse(double x, double y, double n20, double n11
   Display a 2D point with coordinates (x, y) expressed in the image plane.
   These coordinates are obtained after perspective projection of the point.
 
-  \param x, y : Point coordinates in the image plane.
+  \param x : Point coordinate along x-axis in the image plane.
+  \param y : Point coordinate along y-axis in the image plane.
   \param cam : Camera intrinsic parameters.
   \param I : Image.
 
@@ -187,7 +196,8 @@ void vpFeatureDisplay::displayPoint(double x, double y, const vpCameraParameters
   Display a 2D line with coordinates \f$(\rho, \theta)\f$ expressed in the image plane.
   These coordinates are obtained after perspective projection of the line.
 
-  \param rho, theta : Line parameters \f$(\rho, \theta)\f$ expressed in the image plane.
+  \param rho : Line parameters \f$ \rho \f$ expressed in the image plane.
+  \param theta : Line parameters \f$ \theta \f$ expressed in the image plane.
   \param cam : Camera intrinsic parameters.
   \param I : Image.
   \param color : Color to use to display the feature.
@@ -227,8 +237,10 @@ void vpFeatureDisplay::displayLine(double rho, double theta, const vpCameraParam
   Display cylinder limbs as two 2D lines with coordinates \f$(\rho, \theta)\f$ expressed in the image plane.
   These coordinates are obtained after perspective projection of the cylinder.
 
-  \param rho1, theta1 : Cylinder first limb parameters \f$(\rho, \theta)\f$ expressed in the image plane.
-  \param rho2, theta2 : Cylinder second limb parameters \f$(\rho, \theta)\f$ expressed in the image plane.
+  \param rho1 : Cylinder first limp with parameter \f$ \rho_1 \f$ expressed in the image plane.
+  \param theta1 : Cylinder first limp with parameter \f$ \theta_1 \f$ expressed in the image plane.
+  \param rho2 : Cylinder second limp with parameter \f$ \rho_2 \f$ expressed in the image plane.
+  \param theta2 : Cylinder second limp with parameter \f$ \theta_2 \f$ expressed in the image plane.
   \param cam : Camera intrinsic parameters.
   \param I : Image.
   \param color : Color to use to display the feature.
@@ -246,12 +258,17 @@ void vpFeatureDisplay::displayCylinder(double rho1, double theta1, double rho2, 
   Display an ellipse with parameters \f$(x, y, n_{20}, n_{11}, n_{02})\f$ expressed in the image plane.
   These parameters are obtained after perspective projection of a 3D circle (see vpCircle) or a sphere (see vpSphere).
 
-  \param x, y, n20, n11, n02 : Ellipse parameters where:
-  - \f$(x,y)\f$ are the normalized coordinates of the ellipse center,
-  respectively along the horizontal and vertical axis in the image plane.
-  - \f$n_{20}, n_{11}, n_{02}\f$ are the second order centered moments of the ellipse normalized
-  by its area (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where
-  \f$\mu_{ij}\f$ are the centered moments and a the area) expressed in the image plane.
+  \param x : Normalized coordinate of the ellipse center, along the horizontal x-axis in the image plane.
+  \param y : Normalized coordinate of the ellipse center, along the vertical y-axis in the image plane.
+  \param n20 : Second order centered moment \f$ n_{20} \f$ of the ellipse normalized by its area (i.e., such that
+  \f$ n_{ij} = \mu_{ij}/a \f$ where \f$ \mu_{ij} \f$ are the centered moments and a the area) expressed in the image
+  plane.
+  \param n11 : Second order centered moment \f$ n_{11} \f$ of the ellipse normalized by its area (i.e., such that
+  \f$ n_{ij} = \mu_{ij}/a \f$ where \f$ \mu_{ij} \f$ are the centered moments and a the area) expressed in the image
+  plane.
+  \param n02 : Second order centered moment \f$ n_{02} \f$ of the ellipse normalized by its area (i.e., such that
+  \f$ n_{ij} = \mu_{ij}/a \f$ where \f$ \mu_{ij} \f$ are the centered moments and a the area) expressed in the image
+  plane.
   \param cam : Camera intrinsic parameters.
   \param I : Image.
   \param color : Color to use to display the feature.

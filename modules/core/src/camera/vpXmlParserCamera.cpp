@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +29,7 @@
  *
  * Description:
  * XML parser to load and save camera intrinsic parameters.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpXmlParserCamera.cpp
@@ -287,7 +286,6 @@ public:  /* --- XML Code--------------------------------------------------------
         case CODE_XML_K5:
         default:
           back = SEQUENCE_ERROR;
-
           break;
         }
       }
@@ -799,7 +797,7 @@ public:  /* --- XML Code--------------------------------------------------------
 
     pugi::xml_node node_tmp;
     {
-      //<name>
+      // <name>
       if (!cam_name.empty()) {
         node_tmp = node_camera.append_child(pugi::node_comment);
         node_tmp.set_value("Name of the camera");
@@ -812,11 +810,11 @@ public:  /* --- XML Code--------------------------------------------------------
         node_tmp.set_value("Size of the image on which camera "
                            "calibration was performed");
 
-        //<image_width>
+        // <image_width>
         node_tmp = node_camera.append_child(LABEL_XML_WIDTH);
         node_tmp.append_child(pugi::node_pcdata).text() = im_width;
 
-        //<image_height>
+        // <image_height>
         node_tmp = node_camera.append_child(LABEL_XML_HEIGHT);
         node_tmp.append_child(pugi::node_pcdata).text() = im_height;
         if ((subsampling_width != 0) || (subsampling_height != 0)) {
@@ -824,10 +822,10 @@ public:  /* --- XML Code--------------------------------------------------------
           node_tmp.set_value("Subsampling used to obtain the "
                              "current size of the image.");
 
-          //<subsampling_width>
+          // <subsampling_width>
           node_tmp = node_camera.append_child(LABEL_XML_SUBSAMPLING_WIDTH);
           node_tmp.append_child(pugi::node_pcdata).text() = subsampl_width;
-          //<subsampling_height>
+          // <subsampling_height>
           node_tmp = node_camera.append_child(LABEL_XML_SUBSAMPLING_HEIGHT);
           node_tmp.append_child(pugi::node_pcdata).text() = subsampl_height;
           node_tmp = node_camera.append_child(pugi::node_comment);
@@ -835,10 +833,10 @@ public:  /* --- XML Code--------------------------------------------------------
                              "grab the image. full_width = subsampling_width * "
                              "image_width");
 
-          //<full_width>
+          // <full_width>
           node_tmp = node_camera.append_child(LABEL_XML_FULL_WIDTH);
           node_tmp.append_child(pugi::node_pcdata).text() = im_width * subsampl_width;
-          //<full_height>
+          // <full_height>
           node_tmp = node_camera.append_child(LABEL_XML_FULL_HEIGHT);
           node_tmp.append_child(pugi::node_pcdata).text() = im_height * subsampl_height;
         }
@@ -877,8 +875,9 @@ public:  /* --- XML Code--------------------------------------------------------
     case vpCameraParameters::ProjWithKannalaBrandtDistortion:
       writeCameraWithKannalaBrandt(node_camera);
       break;
-    default:
-      break;
+    default: {
+      throw(vpException(vpException::fatalError, "Unsupported camera projection model in vpXmlParserCamera::write_camera()"));
+    }
     }
     return back;
   }
@@ -1022,31 +1021,31 @@ private:
   {
     pugi::xml_node node_model;
     pugi::xml_node node_tmp;
-    //<model>
+    // <model>
     node_model = node_camera.append_child(LABEL_XML_MODEL);
     node_tmp = node_model.append_child(pugi::node_comment);
     node_tmp.set_value("Projection model type");
 
-    //<type>without_distortion</type>
+    // <type>without_distortion</type>
     node_tmp = node_model.append_child(LABEL_XML_MODEL_TYPE);
     node_tmp.append_child(pugi::node_pcdata).set_value(LABEL_XML_MODEL_WITHOUT_DISTORTION);
 
     node_tmp = node_model.append_child(pugi::node_comment);
     node_tmp.set_value("Pixel ratio");
-    //<px>
+    // <px>
     node_tmp = node_model.append_child(LABEL_XML_PX);
     node_tmp.append_child(pugi::node_pcdata).text() = camera.get_px();
-    //<py>
+    // <py>
     node_tmp = node_model.append_child(LABEL_XML_PY);
     node_tmp.append_child(pugi::node_pcdata).text() = camera.get_py();
 
     node_tmp = node_model.append_child(pugi::node_comment);
     node_tmp.set_value("Principal point");
 
-    //<u0>
+    // <u0>
     node_tmp = node_model.append_child(LABEL_XML_U0);
     node_tmp.append_child(pugi::node_pcdata).text() = camera.get_u0();
-    //<v0>
+    // <v0>
     node_tmp = node_model.append_child(LABEL_XML_V0);
     node_tmp.append_child(pugi::node_pcdata).text() = camera.get_v0();
   }
@@ -1059,39 +1058,39 @@ private:
   {
     pugi::xml_node node_model;
     pugi::xml_node node_tmp;
-    //<model>
+    // <model>
     node_model = node_camera.append_child(LABEL_XML_MODEL);
     node_tmp = node_model.append_child(pugi::node_comment);
     node_tmp.set_value("Projection model type");
-    //<type>with_distortion</type>
+    // <type>with_distortion</type>
     node_tmp = node_model.append_child(LABEL_XML_MODEL_TYPE);
     node_tmp.append_child(pugi::node_pcdata).set_value(LABEL_XML_MODEL_WITH_DISTORTION);
 
     node_tmp = node_model.append_child(pugi::node_comment);
     node_tmp.set_value("Pixel ratio");
-    //<px>
+    // <px>
     node_tmp = node_model.append_child(LABEL_XML_PX);
     node_tmp.append_child(pugi::node_pcdata).text() = camera.get_px();
-    //<py>
+    // <py>
     node_tmp = node_model.append_child(LABEL_XML_PY);
     node_tmp.append_child(pugi::node_pcdata).text() = camera.get_py();
 
     node_tmp = node_model.append_child(pugi::node_comment);
     node_tmp.set_value("Principal point");
-    //<u0>
+    // <u0>
     node_tmp = node_model.append_child(LABEL_XML_U0);
     node_tmp.append_child(pugi::node_pcdata).text() = camera.get_u0();
-    //<v0>
+    // <v0>
     node_tmp = node_model.append_child(LABEL_XML_V0);
     node_tmp.append_child(pugi::node_pcdata).text() = camera.get_v0();
 
-    //<kud>
+    // <kud>
     node_tmp = node_model.append_child(pugi::node_comment);
     node_tmp.set_value("Undistorted to distorted distortion parameter");
     node_tmp = node_model.append_child(LABEL_XML_KUD);
     node_tmp.append_child(pugi::node_pcdata).text() = camera.get_kud();
 
-    //<kud>
+    // <kud>
     node_tmp = node_model.append_child(pugi::node_comment);
     node_tmp.set_value("Distorted to undistorted distortion parameter");
     node_tmp = node_model.append_child(LABEL_XML_KDU);
@@ -1112,29 +1111,29 @@ private:
     const unsigned int requiredNbCoeff = 5;
     pugi::xml_node node_model;
     pugi::xml_node node_tmp;
-    //<model>
+    // <model>
     node_model = node_camera.append_child(LABEL_XML_MODEL);
     node_tmp = node_model.append_child(pugi::node_comment);
     node_tmp.set_value("Projection model type");
-    //<type>with_KannalaBrandt_distortion</type>
+    // <type>with_KannalaBrandt_distortion</type>
     node_tmp = node_model.append_child(LABEL_XML_MODEL_TYPE);
     node_tmp.append_child(pugi::node_pcdata).set_value(LABEL_XML_MODEL_WITH_KANNALA_BRANDT_DISTORTION);
 
     node_tmp = node_model.append_child(pugi::node_comment);
     node_tmp.set_value("Pixel ratio");
-    //<px>
+    // <px>
     node_tmp = node_model.append_child(LABEL_XML_PX);
     node_tmp.append_child(pugi::node_pcdata).text() = camera.get_px();
-    //<py>
+    // <py>
     node_tmp = node_model.append_child(LABEL_XML_PY);
     node_tmp.append_child(pugi::node_pcdata).text() = camera.get_py();
 
     node_tmp = node_model.append_child(pugi::node_comment);
     node_tmp.set_value("Principal point");
-    //<u0>
+    // <u0>
     node_tmp = node_model.append_child(LABEL_XML_U0);
     node_tmp.append_child(pugi::node_pcdata).text() = camera.get_u0();
-    //<v0>
+    // <v0>
     node_tmp = node_model.append_child(LABEL_XML_V0);
     node_tmp.append_child(pugi::node_pcdata).text() = camera.get_v0();
 
@@ -1282,6 +1281,6 @@ void vpXmlParserCamera::setWidth(unsigned int width) { m_impl->setWidth(width); 
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpXmlParserCamera.cpp.o) has no symbols
-void dummy_vpXmlParserCamera() { };
+void dummy_vpXmlParserCamera() { }
 
 #endif

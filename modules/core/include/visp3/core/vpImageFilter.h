@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -714,11 +714,11 @@ public:
   /*!
    * Apply a separable filter.
    * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
-   * \param I: The original image.
-   * \param GI: The filtered image.
-   * \param filter: The separable filter.
-   * \param size: The size of the filter.
-   * \param p_mask: If different from nullptr, mask indicating which points to consider (true) or to ignore(false).
+   * \param I : The original image.
+   * \param GI : The filtered image.
+   * \param filter : The separable filter.
+   * \param size : The size of the filter.
+   * \param p_mask : If different from nullptr, mask indicating which points to consider (true) or to ignore(false).
    */
   template <typename ImageType, typename FilterType>
   static void filter(const vpImage<ImageType> &I, vpImage<FilterType> &GI, const FilterType *filter, unsigned int size, const vpImage<bool> *p_mask = nullptr)
@@ -1300,7 +1300,7 @@ public:
 
   /*!
     Get Scharr kernel for X-direction.
-    \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.
+    \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
     \param filter : Pointer to a double array already allocated.
     \param size : Kernel size computed as: kernel_size = size*2 + 1 (max size is 20).
     \return Scaling factor to normalize the Scharr kernel.
@@ -1354,7 +1354,7 @@ public:
 
   /*!
    * Get Sobel kernel for X-direction.
-   * \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.
+   * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
    * \param filter : Pointer to a double array already allocated.
    * \param size : Kernel size computed as: kernel_size = size*2 + 1 (max size is 20).
    * \return Scaling factor to normalize the Sobel kernel.

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/sensor/vpRealSense2.h>
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x030000
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x030000)
 #include <opencv2/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #endif
@@ -209,7 +209,7 @@ void getNativeFrame(const rs2::frame &frame, unsigned char *const data)
   }
 }
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x030000
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x030000)
 void frame_to_mat(const rs2::frame &f, cv::Mat &img)
 {
   auto vf = f.as<rs2::video_frame>();
@@ -498,7 +498,7 @@ int main(int argc, char *argv[])
   std::cout << "Acquisition2 - Mean time: " << vpMath::getMean(time_vector)
     << " ms ; Median time: " << vpMath::getMedian(time_vector) << " ms" << std::endl;
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x030000
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x030000)
   rs.close();
   config.disable_all_streams();
   config.enable_stream(RS2_STREAM_COLOR, 640, 480, RS2_FORMAT_BGR8, 60);

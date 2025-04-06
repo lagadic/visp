@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Drawing functions.
- *
-*****************************************************************************/
+ */
 // Contains code from:
 /*
  * Simd Library (http://ermig1979.github.io/Simd).
@@ -241,9 +239,11 @@ BEGIN_VISP_NAMESPACE
 /*!
   Draw an arrow from image point \e ip1 to image point \e ip2.
   \param[in,out] I : Image where to draw the arrow.
-  \param[in] ip1,ip2 : Initial and final image points.
+  \param[in] ip1 : Initial image point.
+  \param[in] ip2 : Final image point with the arrow.
   \param[in] color : Arrow color.
-  \param[in] w,h : Width and height of the arrow.
+  \param[in] w : Arrow width.
+  \param[in] h : Arrow height.
   \param[in] thickness : Thickness of the lines used to display the arrow.
 */
 void vpImageDraw::drawArrow(vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
@@ -287,9 +287,11 @@ void vpImageDraw::drawArrow(vpImage<unsigned char> &I, const vpImagePoint &ip1, 
 /*!
   Draw an arrow from image point \e ip1 to image point \e ip2.
   \param[in,out] I : Image where to draw the arrow.
-  \param[in] ip1,ip2 : Initial and final image points.
+  \param[in] ip1 : Initial image point.
+  \param[in] ip2 : Final image point with the arrow.
   \param[in] color : Arrow color.
-  \param[in] w,h : Width and height of the arrow.
+  \param[in] w : Arrow width.
+  \param[in] h : Arrow height.
   \param[in] thickness : Thickness of the lines used to display the arrow.
 */
 void vpImageDraw::drawArrow(vpImage<vpRGBa> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color,
@@ -435,7 +437,8 @@ void vpImageDraw::drawCross(vpImage<vpRGBa> &I, const vpImagePoint &ip, unsigned
 /*!
   Draw a dashed line in an image between two image points.
   \param[in,out] I : Image where to draw the dashed line.
-  \param[in] ip1,ip2 : Initial and final image points.
+  \param[in] ip1 : Initial line image point.
+  \param[in] ip2 : Final line image point.
   \param[in] color : Line color.
   \param[in] thickness : Dashed line thickness.
 */
@@ -482,7 +485,8 @@ void vpImageDraw::drawDottedLine(vpImage<unsigned char> &I, const vpImagePoint &
 /*!
   Draw a dashed line in an image between two image points.
   \param[in,out] I : Image where to draw the dashed line.
-  \param[in] ip1,ip2 : Initial and final image points.
+  \param[in] ip1 : Initial line image point.
+  \param[in] ip2 : Final line image point.
   \param[in] color : Line color.
   \param[in] thickness : Dashed line thickness.
 */
@@ -528,15 +532,24 @@ void vpImageDraw::drawDottedLine(vpImage<vpRGBa> &I, const vpImagePoint &ip1, co
 
 /*!
   Draw an ellipse in an image from its parameters expressed in pixels.
+  Depending on `use_normalized_centered_moments` flag, we consired two ellipse representations:
+  - the one using second order normalized centered moments \f$ (n_{20}, n_{11}, n_{02}) \f$ expressed in pixels,
+    such that \f$ n_{ij} = \mu_{ij}/a \f$ where \f$ \mu_{ij} \f$ are the
+    centered moments and a the area,
+  - the other one with the major and minor axis length and the eccentricity of the
+    ellipse in radians \f$ (a, b, e) \f$.
+
   \param[in,out] I : Image where to draw the ellipse.
   \param[in] center : Center \f$(u_c, v_c)\f$ of the ellipse.
-  \param coef1, coef2, coef3 : Depending on the parameter \e
-  use_normalized_centered_moments these parameters are:
-  - second order centered moments of the ellipse normalized by its area
-    (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the
-    centered moments and a the area) expressed in pixels.
-  - the major and minor axis length in pixels and the eccentricity of the
-  ellipse in radians: \f$a, b, e\f$.
+  \param[in] coef1 : Depending on the parameter `use_normalized_centered_moments` this parameter is either
+  - the second order centered moment \f$ n_{20} \f$ of the ellipse normalized by its area and expressed in pixels,
+  - the major axis length \f$ a \f$ in pixels.
+  \param[in] coef2 : Depending on the parameter `use_normalized_centered_moments` this parameter is either
+  - the second order centered moment \f$ n_{11} \f$ of the ellipse normalized by its area and expressed in pixels,
+  - the minor axis length \f$ b \f$ in pixels.
+  \param[in] coef3 : Depending on the parameter `use_normalized_centered_moments` this parameter is either
+  - the second order centered moment \f$ n_{02} \f$ of the ellipse normalized by its area and expressed in pixels,
+  - the eccentricity \f$ e \f$ of the ellipse in radians.
   \param smallalpha : Smallest \f$ alpha \f$ angle in rad (0 for a complete ellipse).
   \param highalpha : Highest \f$ alpha \f$ angle in rad (2 \f$ \Pi \f$ for a complete ellipse).
   \param use_normalized_centered_moments : When false, the parameters coef1,
@@ -643,15 +656,24 @@ void vpImageDraw::drawEllipse(vpImage<unsigned char> &I, const vpImagePoint &cen
 
 /*!
   Draw an ellipse in an image from its parameters expressed in pixels.
+  Depending on `use_normalized_centered_moments` flag, we consired two ellipse representations:
+  - the one using second order normalized centered moments \f$ (n_{20}, n_{11}, n_{02}) \f$ expressed in pixels,
+    such that \f$ n_{ij} = \mu_{ij}/a \f$ where \f$ \mu_{ij} \f$ are the
+    centered moments and a the area,
+  - the other one with the major and minor axis length and the eccentricity of the
+    ellipse in radians \f$ (a, b, e) \f$.
+
   \param[in,out] I : Image where to draw the ellipse.
   \param[in] center : Center \f$(u_c, v_c)\f$ of the ellipse.
-  \param coef1, coef2, coef3 : Depending on the parameter \e
-  use_normalized_centered_moments these parameters are:
-  - second order centered moments of the ellipse normalized by its area
-    (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the
-    centered moments and a the area) expressed in pixels.
-  - the major and minor axis length in pixels and the eccentricity of the
-  ellipse in radians: \f$a, b, e\f$.
+  \param[in] coef1 : Depending on the parameter `use_normalized_centered_moments` this parameter is either
+  - the second order centered moment \f$ n_{20} \f$ of the ellipse normalized by its area and expressed in pixels,
+  - the major axis length \f$ a \f$ in pixels.
+  \param[in] coef2 : Depending on the parameter `use_normalized_centered_moments` this parameter is either
+  - the second order centered moment \f$ n_{11} \f$ of the ellipse normalized by its area and expressed in pixels,
+  - the minor axis length \f$ b \f$ in pixels.
+  \param[in] coef3 : Depending on the parameter `use_normalized_centered_moments` this parameter is either
+  - the second order centered moment \f$ n_{02} \f$ of the ellipse normalized by its area and expressed in pixels,
+  - the eccentricity \f$ e \f$ of the ellipse in radians.
   \param smallalpha : Smallest \f$ alpha \f$ angle in rad (0 for a complete ellipse).
   \param highalpha : Highest \f$ alpha \f$ angle in rad (2 \f$ \Pi \f$ for a complete ellipse).
   \param use_normalized_centered_moments : When false, the parameters coef1,
@@ -857,7 +879,8 @@ void vpImageDraw::drawFrame(vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, 
 /*!
   Draw a line in an image between two image points.
   \param[in,out] I : Image where to draw the line.
-  \param[in] ip1,ip2 : Initial and final image points.
+  \param[in] ip1 : Initial line image point.
+  \param[in] ip2 : Final line image point.
   \param[in] color : Line color.
   \param[in] thickness : Dashed line thickness.
 */
@@ -871,7 +894,8 @@ void vpImageDraw::drawLine(vpImage<unsigned char> &I, const vpImagePoint &ip1, c
 /*!
   Draw a line in an image between two image points.
   \param[in,out] I : Image where to draw the line.
-  \param[in] ip1,ip2 : Initial and final image points.
+  \param[in] ip1 : Initial line image point.
+  \param[in] ip2 : Final line image point.
   \param[in] color : Line color.
   \param[in] thickness : Dashed line thickness.
 */

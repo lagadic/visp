@@ -216,9 +216,9 @@ template <typename Type> inline vpMunkres::STEP_T vpMunkres::stepOne(std::vector
  * When finished, Go to Step 3.
  *
  * \param[in,out] costs: Cost matrix.
- * \param[in] mask: Mask matrix.
- * \param[in,out] row_cover: Row coverage array.
- * \param[in,out] col_cover: Col coverage array.
+ * \param[in] mask : Mask matrix.
+ * \param[in,out] row_cover : Row coverage array.
+ * \param[in,out] col_cover : Col coverage array.
  * \return Next step.
  */
 template <typename Type>
@@ -249,9 +249,9 @@ inline vpMunkres::STEP_T vpMunkres::stepTwo(std::vector<std::vector<Type> > &cos
  * are no uncovered zeros left. Go to Step 6.
  *
  * \param[in] costs: Cost matrix.
- * \param[in,out] mask: Mask matrix.
- * \param[in,out] row_cover: Row coverage array.
- * \param[in,out] col_cover: Col coverage array.
+ * \param[in,out] mask : Mask matrix.
+ * \param[in,out] row_cover : Row coverage array.
+ * \param[in,out] col_cover : Col coverage array.
  * \return Tuple(Next step, pair(path_row_0 path_col_0)).
  */
 template <typename Type>

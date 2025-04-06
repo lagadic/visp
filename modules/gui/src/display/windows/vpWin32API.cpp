@@ -137,5 +137,5 @@ END_VISP_NAMESPACE
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_gui.a(vpWin32API.cpp.o) has no symbols
-void dummy_vpWin32API() { };
+void dummy_vpWin32API() { }
 #endif

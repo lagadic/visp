@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -507,7 +507,7 @@ void vpMatrix::negateMatrix(const vpMatrix &A, vpMatrix &C)
 
 /*!
   Computes the \f$AA^T\f$ operation \f$B = A*A^T\f$
-  \return  \f$A*A^T\f$
+  \return The product \f$ A*A^T \f$.
   \sa AAt(vpMatrix &) const
 */
 vpMatrix vpMatrix::AAt() const
@@ -636,8 +636,8 @@ void vpMatrix::AtA(vpMatrix &B) const
 }
 
 /*!
-  Compute the AtA operation such as \f$B = A^T*A\f$
-  \return  \f$A^T*A\f$
+  Compute the AtA operation such as \f$ B = A^T*A \f$.
+  \return The product \f$ A^T*A \f$.
   \sa AtA(vpMatrix &) const
 */
 vpMatrix vpMatrix::AtA() const

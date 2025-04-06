@@ -231,7 +231,7 @@ public:
    *
    * \param cMo : Input pose. The matrix that defines the pose to be tested.
    * \param cam : Camera parameters used to observe the points.
-   * \param squaredResidual: Input/output vector that will be resized and will contain the squared residuals
+   * \param squaredResidual : Input/output vector that will be resized and will contain the squared residuals
    * expressed in pixel^2 of each point.
    *
    * \return The value of the sum of squared residuals in pixel^2.
@@ -244,16 +244,16 @@ public:
   /*!
    * Test the coplanarity of the set of points
    *
-   * \param coplanar_plane_type:
+   * \param coplanar_plane_type :
    * 1: if plane x=cst
    * 2: if plane y=cst
    * 3: if plane z=cst
    * 4: if the points are collinear.
    * 0: any other plane
-   * \param p_a: if different from null, it will be set to equal the a coefficient of the potential plan.
-   * \param p_b: if different from null, it will be set to equal the b coefficient of the potential plan.
-   * \param p_c: if different from null, it will be set to equal the c coefficient of the potential plan.
-   * \param p_d: if different from null, it will be set to equal the d coefficient of the potential plan.
+   * \param p_a : if different from null, it will be set to equal the a coefficient of the potential plan.
+   * \param p_b : if different from null, it will be set to equal the b coefficient of the potential plan.
+   * \param p_c : if different from null, it will be set to equal the c coefficient of the potential plan.
+   * \param p_d : if different from null, it will be set to equal the d coefficient of the potential plan.
    * \return true if points are coplanar false otherwise.
    */
   bool coplanar(int &coplanar_plane_type, double *p_a = nullptr, double *p_b = nullptr, double *p_c = nullptr, double *p_d = nullptr);
@@ -589,11 +589,11 @@ public:
   /*!
    * Display in the image \e I the pose represented by its homogenous
    * transformation \e cMo as a 3 axis frame.
-   * \param I: Image where the pose is displayed in overlay.
-   * \param cMo: Considered pose to display.
-   * \param cam: Camera parameters associated to image \e I.
-   * \param size: length in meter of the axis that will be displayed.
-   * \param col: Color used to display the 3 axis. If vpColor::none, red, green and blue will represent x-axis, y-axis
+   * \param I : Image where the pose is displayed in overlay.
+   * \param cMo : Considered pose to display.
+   * \param cam : Camera parameters associated to image \e I.
+   * \param size : length in meter of the axis that will be displayed.
+   * \param col : Color used to display the 3 axis. If vpColor::none, red, green and blue will represent x-axis, y-axis
    * and z-axis respectively.
    */
   static void display(vpImage<unsigned char> &I, vpHomogeneousMatrix &cMo, vpCameraParameters &cam, double size,
@@ -602,11 +602,11 @@ public:
   /*!
    * Display in the image \e I the pose represented by its homogenous
    * transformation \e cMo as a 3 axis frame.
-   * \param I: Image where the pose is displayed in overlay.
-   * \param cMo: Considered pose to display.
-   * \param cam: Camera parameters associated to image \e I.
-   * \param size: length in meter of the axis that will be displayed.
-   * \param col: Color used to display the 3 axis. If vpColor::none, red, green and blue will represent x-axis, y-axis
+   * \param I : Image where the pose is displayed in overlay.
+   * \param cMo : Considered pose to display.
+   * \param cam : Camera parameters associated to image \e I.
+   * \param size : length in meter of the axis that will be displayed.
+   * \param col : Color used to display the 3 axis. If vpColor::none, red, green and blue will represent x-axis, y-axis
    * and z-axis respectively.
    */
   static void display(vpImage<vpRGBa> &I, vpHomogeneousMatrix &cMo, vpCameraParameters &cam, double size,
@@ -650,8 +650,8 @@ public:
 
 #ifdef VISP_HAVE_HOMOGRAPHY
   /*!
-   * Carries out the camera pose the image of a rectangle and
-   * the intrinsic parameters, the length on x axis is known but the
+   * Carries out the camera pose of the image of a rectangle and
+   * the intrinsic parameters. The length on x axis is known but the
    * proportion of the rectangle are unknown.
    *
    * This method is taken from "Markerless Tracking using Planar Structures
@@ -661,15 +661,17 @@ public:
    * If K is the intrinsic parameters matrix, we have  s = ||Kh1||/ ||Kh2||. s
    * gives us the proportion of the rectangle
    *
-   * \param p1,p2,p3,p4: the image of the corners of the rectangle
-   * (respectively the image of  (0,0),(lx,0),(lx,lx/s) and (0,lx/s)) (input)
-   * \param cam: the camera used (input)
-   * \param lx: the rectangle size on the x axis (input)
-   * \param cMo: the camera pose (output)
-   * \return int : OK if no pb occurs
+   * \param[out] p1 : The image of the first corner ot the rectangle with coordinates (0,0).
+   * \param[out] p2 : The image of the second corner ot the rectangle with coordinates (lx,0).
+   * \param[out] p3 : The image of the third corner ot the rectangle with coordinates (lx,lx/s).
+   * \param[out] p4 : The image of the fourth corner ot the rectangle with coordinates (0,lx/s).
+   * \param[in] cam : The camera used.
+   * \param[in] lx : The rectangle size on the x axis.
+   * \param[out] cMo : The camera pose.
+   * \return lx/s if no pb occurs
    */
   static double poseFromRectangle(vpPoint &p1, vpPoint &p2, vpPoint &p3, vpPoint &p4, double lx,
-                                  vpCameraParameters &cam, vpHomogeneousMatrix &cMo);
+                                  const vpCameraParameters &cam, vpHomogeneousMatrix &cMo);
 #endif
 
   // Check if std:c++17 or higher.

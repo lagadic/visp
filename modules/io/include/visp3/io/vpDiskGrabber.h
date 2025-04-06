@@ -137,7 +137,7 @@ public:
    * Destructor.
    * In fact nothing to destroy...
    */
-  virtual ~vpDiskGrabber() { };
+  virtual ~vpDiskGrabber() { }
 
   /*!
    * Constructor.
@@ -208,7 +208,7 @@ public:
    *
    * Does nothing. Here for compatibility issue with the vpFrameGrabber class.
    */
-  void close() { };
+  void close() { }
 
   /*!
    * Return the current image number.

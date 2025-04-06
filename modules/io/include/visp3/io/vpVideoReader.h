@@ -44,9 +44,9 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/io/vpDiskGrabber.h>
 
-#if (VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)
 #include <opencv2/highgui/highgui.hpp>
-#elif (VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)
+#elif defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)
 #include <opencv2/videoio/videoio.hpp>
 #endif
 
@@ -182,7 +182,9 @@ class VISP_EXPORT vpVideoReader : public vpFrameGrabber
 private:
   //! To read sequences of images
   vpDiskGrabber *m_imSequence;
-#if ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI))|| ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
+#if defined(VISP_HAVE_OPENCV) && \
+    (((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || \
+     ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)))
   //! To read video files with OpenCV
   cv::VideoCapture m_capture;
   cv::Mat m_frame;

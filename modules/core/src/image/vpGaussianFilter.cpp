@@ -152,6 +152,6 @@ void vpGaussianFilter::apply(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &I_blur) 
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
  // Work around to avoid warning: libvisp_core.a(vpGaussianFilter.cpp.o) has no symbols
-void dummy_vpGaussianFilter() { };
+void dummy_vpGaussianFilter() { }
 
 #endif

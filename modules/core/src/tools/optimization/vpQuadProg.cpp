@@ -692,5 +692,5 @@ vpColVector vpQuadProg::solveSVDorQR(const vpMatrix &A, const vpColVector &b)
 }
 END_VISP_NAMESPACE
 #else
-void dummy_vpQuadProg() { };
+void dummy_vpQuadProg() { }
 #endif

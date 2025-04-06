@@ -287,7 +287,8 @@ public:
     cv::Scalar cv_color;
     if ((color.id < vpColor::id_black) || (color.id >= vpColor::id_unknown)) {
       cv_color = CV_RGB(color.R, color.G, color.B);
-    } else {
+    }
+    else {
       cv_color = col[color.id];
     }
 
@@ -1840,5 +1841,5 @@ END_VISP_NAMESPACE
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_gui.a(vpDisplayOpenCV.cpp.o) has no symbols
-void dummy_vpDisplayOpenCV() { };
+void dummy_vpDisplayOpenCV() { }
 #endif

@@ -666,7 +666,7 @@ void vpCameraParameters::printParameters()
     break;
   }
   default: {
-    std::cout << "projection model not identified" << std::endl;
+    throw(vpException(vpException::fatalError, "Unsupported camera projection model in vpCameraParameters::printParameters()"));
   }
   }
   // Restore ostream format
@@ -713,7 +713,7 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpCameraParameters 
     break;
   }
   default: {
-    std::cout << "Unidentified camera parameters model" << std::endl;
+    throw(vpException(vpException::fatalError, "Unsupported camera projection model in vpCameraParameters::operator<<"));
   }
   }
   return os;

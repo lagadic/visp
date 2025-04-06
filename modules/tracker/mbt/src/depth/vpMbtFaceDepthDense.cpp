@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Manage depth dense features for a particular face.
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpCPUFeatures.h>
 #include <visp3/mbt/vpMbtFaceDepthDense.h>
@@ -74,7 +72,8 @@
 #define USE_NEON 0
 #endif
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x040101 || (VISP_HAVE_OPENCV_VERSION < 0x040000 && VISP_HAVE_OPENCV_VERSION >= 0x030407)) && USE_SIMD_CODE
+#if defined(VISP_HAVE_OPENCV) && \
+    (VISP_HAVE_OPENCV_VERSION >= 0x040101 || (VISP_HAVE_OPENCV_VERSION < 0x040000 && VISP_HAVE_OPENCV_VERSION >= 0x030407)) && USE_SIMD_CODE
 
 // See: https://github.com/lagadic/visp/issues/1606
 // 0x040B00 --> (4<<16 | 11<<8 | 0)
@@ -619,11 +618,11 @@ void vpMbtFaceDepthDense::computeInteractionMatrixAndResidu(const vpHomogeneousM
         cv::v_float64x2 vx, vy, vz;
         cv::v_load_deinterleave(ptr_point_cloud, vx, vy, vz);
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x040900)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x040900)
         cv::v_float64x2 va1 = cv::v_sub(cv::v_mul(vnz, vy), cv::v_mul(vny, vz)); // vnz*vy - vny*vz
         cv::v_float64x2 va2 = cv::v_sub(cv::v_mul(vnx, vz), cv::v_mul(vnz, vx)); // vnx*vz - vnz*vx
         cv::v_float64x2 va3 = cv::v_sub(cv::v_mul(vny, vx), cv::v_mul(vnx, vy)); // vny*vx - vnx*vy
-#else
+#elif defined(VISP_HAVE_OPENCV)
         cv::v_float64x2 va1 = vnz*vy - vny*vz;
         cv::v_float64x2 va2 = vnx*vz - vnz*vx;
         cv::v_float64x2 va3 = vny*vx - vnx*vy;

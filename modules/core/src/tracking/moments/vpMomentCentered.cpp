@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,11 +29,7 @@
  *
  * Description:
  * Centered moment descriptor
- *
- * Authors:
- * Filip Novotny
- *
-*****************************************************************************/
+ */
 
 #include <cassert>
 #include <exception>
@@ -97,9 +92,9 @@ vpMomentCentered::vpMomentCentered() : vpMoment() { }
 
 /*!
   Gets the desired moment using indexes.
-  \param i : first index of the centered moment.
-  \param j : second index of the centered moment.
-  \return \f$\mu_{ij}\f$ moment.
+  \param i : First index of the centered moment.
+  \param j : Second index of the centered moment.
+  \return Moment \f$\mu_{ij}\f$.
 */
 double vpMomentCentered::get(unsigned int i, unsigned int j) const
 {
@@ -114,7 +109,7 @@ double vpMomentCentered::get(unsigned int i, unsigned int j) const
 }
 
 /*!
-Print in a readable form which looks better than output from << operator
+  Print in a readable form which looks better than output from << operator
 */
 void vpMomentCentered::printWithIndices(std::ostream &os) const
 {

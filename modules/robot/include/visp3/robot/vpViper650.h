@@ -141,7 +141,7 @@ public:
   void init(vpViper650::vpToolType tool, const vpHomogeneousMatrix &eMc_);
 
   //! Get the current camera model projection type
-  vpCameraParameters::vpCameraParametersProjType getCameraParametersProjType() const { return projModel; };
+  vpCameraParameters::vpCameraParametersProjType getCameraParametersProjType() const { return projModel; }
 
   void getCameraParameters(vpCameraParameters &cam, const unsigned int &image_width,
                            const unsigned int &image_height) const;
@@ -149,7 +149,7 @@ public:
   void getCameraParameters(vpCameraParameters &cam, const vpImage<vpRGBa> &I) const;
 
   //! Get the current tool type
-  vpToolType getToolType() const { return tool_current; };
+  vpToolType getToolType() const { return tool_current; }
 
   void parseConfigFile(const std::string &filename);
   //@}
@@ -158,7 +158,7 @@ protected:
   /** @name Protected Member Functions Inherited from vpViper650 */
   //@{
   //! Set the current tool type
-  void setToolType(vpViper650::vpToolType tool) { tool_current = tool; };
+  void setToolType(vpViper650::vpToolType tool) { tool_current = tool; }
   //@}
 
 protected:

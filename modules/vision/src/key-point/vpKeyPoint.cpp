@@ -34,8 +34,9 @@
 #include <visp3/core/vpConfig.h>
 
 // opencv_xfeatures2d and opencv_nonfree are optional
-#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_FEATURES2D)) || \
-  ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D) && defined(HAVE_OPENCV_FEATURES))
+#if defined(VISP_HAVE_OPENCV) && \
+    (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_FEATURES2D)) || \
+     ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D) && defined(HAVE_OPENCV_FEATURES)))
 
 #include <iomanip>
 #include <limits>
@@ -4314,5 +4315,5 @@ END_VISP_NAMESPACE
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_vision.a(vpKeyPoint.cpp.o) has no symbols
-void dummy_vpKeyPoint() { };
+void dummy_vpKeyPoint() { }
 #endif

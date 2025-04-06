@@ -54,7 +54,7 @@ public:
   /*!
    * Default constructor that does nothing.
    */
-  vpUnicycle() : cMe_(), eJe_() { };
+  vpUnicycle() : cMe_(), eJe_() { }
 
   /** @name Inherited functionalities from vpUnicycle */
   //@{
