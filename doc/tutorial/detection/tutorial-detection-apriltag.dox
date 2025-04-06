@@ -1,6 +1,6 @@
 /**
 
-\page tutorial-detection-apriltag Tutorial: AprilTag marker detection
+\page tutorial-detection-apriltag Tutorial: AprilTag/ArUco marker detection
 \tableofcontents
 
 \section intro_apriltag 1. Introduction
@@ -16,6 +16,19 @@ the tag and corresponds to its 4 corner coordinates, the bounding box and the ce
 
 Moreover, vpDetectorAprilTag class allows estimating the 3D pose of the tag. To this end, the camera parameters as well
 as the size of the tag are required.
+
+\note The vpDetectorAprilTag class can also decode tags from the following ArUco families (similar to OpenCV):
+  - ArUco 4x4
+  - ArUco 5x5
+  - ArUco 6x6
+  - ArUco MIP 36h12 (this is the recommended family for ArUco, see: https://stackoverflow.com/a/51511558)
+
+\note The internal fiducial markers detection method is still based on the AprilTag \cite krogius2019iros method.
+It means that detecting ArUco markers will benefit from the corners location extraction precision, at a more expensive
+computation time cost and narrower detection range compared to ArUco method.
+
+\note You can use the vpAprilTagFamily::TAG_CUSTOM48h12 (you will need to enable the WITH_APRILTAG_BIG_FAMILY CMake variable) for recursive tags, that is a tag inside another one.
+This would allow you for instance to detect a marker at a great distance and be able to servo your robot until a close range.
 
 \warning The size of the tag corresponds to the size of the black square containing the tag. To be usable with ViSP,
 tags must be printed with a white border. This white border should be as wide as the black border like in the next
@@ -42,10 +55,11 @@ We provide also a ready to print `36h11` tag that is 9.5 by 9.5 cm square
 
 \subsection apriltag_detection_print_download 2.3. Download pre-generated tag families
 
-If you prefer, you can also directly download on the
-<a href="https://april.eecs.umich.edu/software/apriltag.html">Apriltag</a> website some pre-generated tag families:
-- <a href="https://april.eecs.umich.edu/media/apriltag/tag36h11.tgz">36h11 (recommended)</a>
-- <a href="https://april.eecs.umich.edu/media/apriltag/tag36h10.tgz">36h10</a>
+If you prefer, you can also directly download on the <a href="https://github.com/AprilRobotics/apriltag-imgs">apriltag-imgs GitHub repository</a>
+some pre-generated tag families. You will then need to scale the images as described below.
+
+Another resources link is the <a href="https://april.eecs.umich.edu/software/apriltag.html">Apriltag</a> website for:
+- <a href="https://april.eecs.umich.edu/media/apriltag/tag36h11.tgz">36h11 (recommended for AprilTag 2 family)</a> or for AprilTag 3: <a href="https://github.com/AprilRobotics/apriltag?tab=readme-ov-file#choosing-a-tag-family">tagStandard41h12, see</a>
 - <a href="https://april.eecs.umich.edu/media/apriltag/tag25h9.tgz">25h9</a>
 - <a href="https://april.eecs.umich.edu/media/apriltag/tag16h5.tgz">16h5</a>
 
@@ -311,7 +325,24 @@ Detected tags
   36h11 id: 18 with decision margin: 115.397 and hamming distance: 0
 \endcode
 
-\subsection apriltag_detection_tips_rgbd 4.2. Improve pose accuracy using a RGB-D camera
+\note Some threads about the detection margin:
+- <a href="https://github.com/AprilRobotics/apriltag/issues/361">"Ghost tag detection #361"</a>
+- <a href="https://github.com/AprilRobotics/apriltag/issues/375">"Tag still detected when slightly occluded #375"</a>
+
+\subsection apriltag_detection_tips_debug 4.2. Marker detection debugging
+
+You can use the vpDetectorAprilTag::setAprilTagDebugOption() method to enable the writing of some debugging images in the same folder than
+the executable. Some overviews of the generated debugging images:
+
+\image html img-apriltag-debug.png Top left: adaptive thresholding, Top middle: segmentation process, Top right: contours clustering, Bottom left: quadrectangles extraction, Bottom center: Tag code decoding, Bottom right: output detections. width=75%
+
+This would allow you to understand the AprilTag detection process and why a marker is not detected or why a false detection occurs.
+
+Some example threads:
+- <a href="https://github.com/AprilRobotics/apriltag/issues/263">"apriltag3 vs apriltag2 -- detect quad #263"</a>
+- <a href="https://github.com/AprilRobotics/apriltag/issues/292">"Help with thresholding parameters #292"</a>
+
+\subsection apriltag_detection_tips_rgbd 4.3. Improve pose accuracy using a RGB-D camera
 
 When the tag is small in the image or when the tag corners location are extracted poorly, you may experience z-axis
 flipping if you analyze carefully the pose of the tag. The following images illustrate this behavior.

@@ -57,7 +57,8 @@ using namespace cv;
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
-#define DEBUG_PRINT 0
+
+static bool g_debug_print = false;
 
 TEST_CASE("ArUco detection test", "[aruco_detection_test]")
 {
@@ -65,7 +66,7 @@ TEST_CASE("ArUco detection test", "[aruco_detection_test]")
     {vpDetectorAprilTag::TAG_ARUCO_4x4_50, 50},
     {vpDetectorAprilTag::TAG_ARUCO_4x4_100, 100},
     {vpDetectorAprilTag::TAG_ARUCO_4x4_250, 250},
-    // {vpDetectorAprilTag::TAG_ARUCO_4x4_1000, 1000}, // there are some deconding issues, probably due to too few bits
+    {vpDetectorAprilTag::TAG_ARUCO_4x4_1000, 1000},
 
     {vpDetectorAprilTag::TAG_ARUCO_5x5_50, 50},
     {vpDetectorAprilTag::TAG_ARUCO_5x5_100, 100},
@@ -97,28 +98,42 @@ TEST_CASE("ArUco detection test", "[aruco_detection_test]")
         CHECK(detect == true);
         if (detect) {
           bool found_id = false;
+          // Parse the message
           for (size_t i = 0; i < detector.getNbObjects(); i++) {
             std::string message = detector.getMessage(i);
             std::size_t tag_id_pos = message.find("id: ");
 
             if (tag_id_pos != std::string::npos) {
               int tag_id = atoi(message.substr(tag_id_pos + 4).c_str());
-#if DEBUG_PRINT
-              WARN("tag_dict=" << kv.first << " ; tag_id=" << tag_id << " ; tag_ref=" << id); // for printing
-#endif
+              if (g_debug_print) {
+                WARN("tag_dict=" << kv.first << " ; tag_id=" << tag_id << " ; tag_ref=" << id);
+              }
               if (tag_id == id) {
                 found_id = true;
               }
             }
           }
+          CHECK(found_id == true);
 
+          found_id = false;
+          // Use directly the getter
+          std::vector<int> tagsId = detector.getTagsId();
+          for (auto tag_id : tagsId) {
+            if (g_debug_print) {
+              WARN("tag_dict=" << kv.first << " ; tag_id=" << tag_id << " ; tag_ref=" << id);
+            }
+            if (tag_id == id) {
+              found_id = true;
+              break;
+            }
+          }
           CHECK(found_id == true);
         }
       }
     }
   }
 
-  SECTION("Copy constructor") // for codecov
+  SECTION("Copy constructor")
   {
     for (const auto &kv : apriltagMap) {
       vpDetectorAprilTag detector(kv.first);
@@ -133,22 +148,68 @@ TEST_CASE("ArUco detection test", "[aruco_detection_test]")
         bool detect = detector.detect(tag_img_big);
         CHECK(detect == true);
         if (detect) {
-          bool found_id = false;
-          for (size_t i = 0; i < detector.getNbObjects(); i++) {
-            std::string message = detector.getMessage(i);
-            std::size_t tag_id_pos = message.find("id: ");
+          std::vector<int> tagsId = detector.getTagsId();
+          std::vector<float> tagsDecisionMargin = detector.getTagsDecisionMargin();
+          std::vector<int> tagsHammingDistance = detector.getTagsHammingDistance();
+          CHECK(tagsId.size() == tagsDecisionMargin.size());
+          CHECK(tagsId.size() == tagsHammingDistance.size());
+          CHECK(tagsId.size() == detector.getNbObjects());
 
-            if (tag_id_pos != std::string::npos) {
-              int tag_id = atoi(message.substr(tag_id_pos + 4).c_str());
-#if DEBUG_PRINT
-              WARN("tag_dict=" << kv.first << " ; tag_id=" << tag_id << " ; tag_ref=" << id); // for printing
-#endif
-              if (tag_id == id) {
-                found_id = true;
-              }
+          // Use directly the getter
+          bool found_id = false;
+          for (auto tag_id : tagsId) {
+            if (g_debug_print) {
+              WARN("tag_dict=" << kv.first << " ; tag_id=" << tag_id << " ; tag_ref=" << id);
+            }
+            if (tag_id == id) {
+              found_id = true;
+              break;
             }
           }
+          CHECK(found_id == true);
+        }
+      }
+    }
+  }
 
+  SECTION("Getter/Setter")
+  {
+    for (const auto &kv : apriltagMap) {
+      vpDetectorAprilTag detector(kv.first);
+      double hamming_dist_ref = 0, decision_margin = 50;
+      detector.setAprilTagHammingDistanceThreshold(hamming_dist_ref);
+      detector.setAprilTagDecisionMarginThreshold(decision_margin);
+      CHECK(detector.getAprilTagHammingDistanceThreshold() == hamming_dist_ref);
+      CHECK(detector.getAprilTagDecisionMarginThreshold() == decision_margin);
+
+      for (int id = 0; id < kv.second; id += kv.second/nb_tests) {
+        vpImage<unsigned char> tag_img;
+        detector.getTagImage(tag_img, id);
+
+        vpImage<unsigned char> tag_img_big(tag_img.getHeight()*20, tag_img.getWidth()*20);
+        vpImageTools::resize(tag_img, tag_img_big, vpImageTools::INTERPOLATION_NEAREST);
+
+        bool detect = detector.detect(tag_img_big);
+        CHECK(detect == true);
+        if (detect) {
+          std::vector<int> tagsId = detector.getTagsId();
+          std::vector<float> tagsDecisionMargin = detector.getTagsDecisionMargin();
+          std::vector<int> tagsHammingDistance = detector.getTagsHammingDistance();
+          CHECK(tagsId.size() == tagsDecisionMargin.size());
+          CHECK(tagsId.size() == tagsHammingDistance.size());
+          CHECK(tagsId.size() == detector.getNbObjects());
+
+          // Use directly the getter
+          bool found_id = false;
+          for (auto tag_id : tagsId) {
+            if (g_debug_print) {
+              WARN("tag_dict=" << kv.first << " ; tag_id=" << tag_id << " ; tag_ref=" << id);
+            }
+            if (tag_id == id) {
+              found_id = true;
+              break;
+            }
+          }
           CHECK(found_id == true);
         }
       }
@@ -206,19 +267,26 @@ TEST_CASE("ArUco pose computation test", "[aruco_detection_test]")
     bool detect = detector.detect(tag_img_big, markerLength, cam, cMo_vec);
     CHECK(detect == true);
     if (detect) {
-      bool found_id = false;
+      std::vector<int> tagsId = detector.getTagsId();
+      std::vector<float> tagsDecisionMargin = detector.getTagsDecisionMargin();
+      std::vector<int> tagsHammingDistance = detector.getTagsHammingDistance();
+      CHECK(tagsId.size() == tagsDecisionMargin.size());
+      CHECK(tagsId.size() == tagsHammingDistance.size());
+      CHECK(tagsId.size() == detector.getNbObjects());
+      CHECK(tagsId.size() == cMo_vec.size());
+
       vpHomogeneousMatrix cMo;
-
-      for (size_t i = 0; i < detector.getNbObjects(); i++) {
-        std::string message = detector.getMessage(i);
-        std::size_t tag_id_pos = message.find("id: ");
-
-        if (tag_id_pos != std::string::npos) {
-          int tag_id = atoi(message.substr(tag_id_pos + 4).c_str());
-          if (tag_id == tag_id_ref) {
-            cMo = cMo_vec[i];
-            found_id = true;
-          }
+      // Use directly the getter
+      bool found_id = false;
+      for (size_t idx = 0; idx < tagsId.size(); idx++) {
+        int tag_id = tagsId[idx];
+        if (g_debug_print) {
+          WARN("tag_dict=" << kv.first << " ; tag_id=" << tag_id << " ; tag_ref=" << tag_id_ref);
+        }
+        if (tag_id == tag_id_ref) {
+          cMo = cMo_vec[idx];
+          found_id = true;
+          break;
         }
       }
 
@@ -242,13 +310,13 @@ TEST_CASE("ArUco pose computation test", "[aruco_detection_test]")
           Matx31d rvec, tvec;
           solvePnP(objPoints, corners.at(idx_tag_id_ref), camMatrix, distCoeffs, rvec, tvec);
           vpThetaUVector cro = cMo.getThetaUVector();
-#if DEBUG_PRINT
-          WARN("rvec: " << rvec(0) << " " << rvec(1) << " " << rvec(2)); // Use WARN to print
-          WARN("tvec: " << tvec(0) << " " << tvec(1) << " " << tvec(2));
+          if (g_debug_print) {
+            WARN("rvec: " << rvec(0) << " " << rvec(1) << " " << rvec(2));
+            WARN("tvec: " << tvec(0) << " " << tvec(1) << " " << tvec(2));
 
-          WARN("cro: " << cro[0] << " " << cro[1] << " " << cro[2]); // Use WARN to print
-          WARN("cto: " << cMo[0][3] << " " << cMo[1][3] << " " << cMo[2][3]);
-#endif
+            WARN("cro: " << cro[0] << " " << cro[1] << " " << cro[2]);
+            WARN("cto: " << cMo[0][3] << " " << cMo[1][3] << " " << cMo[2][3]);
+          }
 
           CHECK_THAT(tvec(0), Catch::Matchers::WithinAbs(cMo[0][3], 1e-2));
           CHECK_THAT(tvec(1), Catch::Matchers::WithinAbs(cMo[1][3], 1e-2));
@@ -268,9 +336,17 @@ int main(int argc, const char *argv[])
 {
   Catch::Session session;
 
-  session.applyCommandLine(argc, argv);
-  int numFailed = session.run();
+  using namespace Catch::Clara;
+  auto cli = session.cli()
+    | Catch::Clara::Opt(g_debug_print)["--debug-print"]("Force the printing of some debug information.");
 
+  session.cli(cli);
+  int returnCode = session.applyCommandLine(argc, argv);
+  if (returnCode != 0) { // Indicates a command line error
+    return returnCode;
+  }
+
+  int numFailed = session.run();
   return numFailed;
 }
 

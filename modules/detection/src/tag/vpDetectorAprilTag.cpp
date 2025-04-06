@@ -47,7 +47,6 @@ extern "C" {
 #include <tag36h10.h>
 #include <tag36h11.h>
 #include <tagCircle21h7.h>
-#include <tagStandard41h12.h>
 #if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
 #include <tagCircle49h12.h>
 #include <tagCustom48h12.h>
@@ -198,7 +197,8 @@ public:
 
     if ((m_tagFamily != TAG_36ARTOOLKIT) && m_tf) {
       m_td = apriltag_detector_create();
-      apriltag_detector_add_family(m_td, m_tf);
+      int bits_corrected = (m_tagFamily == TAG_ARUCO_4x4_1000) ? 1 : 2;
+      apriltag_detector_add_family(m_td, m_tf, bits_corrected);
     }
 
     m_mapOfCorrespondingPoseMethods[DEMENTHON_VIRTUAL_VS] = vpPose::DEMENTHON;
@@ -321,7 +321,8 @@ public:
 
     if ((m_tagFamily != TAG_36ARTOOLKIT) && m_tf) {
       m_td = apriltag_detector_copy(o.m_td);
-      apriltag_detector_add_family(m_td, m_tf);
+      int bits_corrected = (m_tagFamily == TAG_ARUCO_4x4_1000) ? 1 : 2;
+      apriltag_detector_add_family(m_td, m_tf, bits_corrected);
     }
 
     m_mapOfCorrespondingPoseMethods[DEMENTHON_VIRTUAL_VS] = vpPose::DEMENTHON;

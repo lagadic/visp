@@ -55,17 +55,22 @@ BEGIN_VISP_NAMESPACE
  * are <I> AprilTag: A robust and flexible visual fiducial system </I>
  * (\cite olson2011tags), <I> AprilTag 2: Efficient and robust fiducial
  * detection </I> (\cite wang2016iros) and <I> Flexible Layouts for Fiducial Tags
- * (Under Review) </I> (\cite krogius2019iros).
+ * </I> (\cite krogius2019iros).
  *
  * Supported tag families are the following:
  * - AprilTag 16h5
  * - AprilTag 25h9
- * - AprilTag 36h10
+ * - AprilTag 36h10 (deprecated)
  * - AprilTag 36h11
+ * - AprilTag Circle_21h7 (AprilTag 3)
+ * - AprilTag Circle_49h12 (AprilTag 3, CMake WITH_APRILTAG_BIG_FAMILY var must be set to true)
+ * - AprilTag Custom_48h12 (AprilTag 3, CMake WITH_APRILTAG_BIG_FAMILY var must be set to true)
+ * - AprilTag Standard_41h12 (AprilTag 3, CMake WITH_APRILTAG_BIG_FAMILY var must be set to true)
+ * - AprilTag Standard_52h13 (AprilTag 3, CMake WITH_APRILTAG_BIG_FAMILY var must be set to true)
  * - ArUco 4x4
  * - ArUco 5x5
  * - ArUco 6x6
- * - MIP 36h12
+ * - ArUco MIP_36h12
  * \image html img-apriltag-supported-tags.jpg Supported tags with id 0.
  *
  * To use this class you can follow \ref tutorial-detection-apriltag.
