@@ -500,7 +500,7 @@ public:  /* --- XML Code--------------------------------------------------------
         // If we divide by 32 (>> 2^5 : 5 remaining least significant bits), we will have to check 5 bits only
         const int dividerForBitCheck = 32;
         int check = validation / dividerForBitCheck;
-        int j = 0;
+        unsigned int j = 0;
 
         const int nbRemainingBits = 5;
         const int moduloForOddity = 2;
