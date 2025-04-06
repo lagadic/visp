@@ -317,7 +317,7 @@ template <> inline void vpImage<vpRGBa>::performLut(const vpRGBa(&lut)[256], uns
         end_index = start_index + last_step;
       }
 
-      vpImageLutRGBa_Param_t *imageLut_param = new vpImageLutRGBa_Param_t(start_index, end_index, static_cast<unsigned char *>(bitmap));
+      vpImageLutRGBa_Param_t *imageLut_param = new vpImageLutRGBa_Param_t(start_index, end_index, reinterpret_cast<unsigned char *>(bitmap));
       memcpy(static_cast<void *>(imageLut_param->m_lut), lut, 256 * sizeof(vpRGBa));
 
       imageLutParams.push_back(imageLut_param);
