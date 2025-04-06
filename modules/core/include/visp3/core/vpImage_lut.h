@@ -47,8 +47,6 @@ struct vpImageLut_Param_t
   unsigned char m_lut[256];
   unsigned char *m_bitmap;
 
-  vpImageLut_Param_t() : m_start_index(0), m_end_index(0), m_lut(), m_bitmap(nullptr) { }
-
   vpImageLut_Param_t(unsigned int start_index, unsigned int end_index, unsigned char *bitmap)
     : m_start_index(start_index), m_end_index(end_index), m_lut(), m_bitmap(bitmap)
   { }
