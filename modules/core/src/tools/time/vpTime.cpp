@@ -55,8 +55,19 @@
 #include <sys/time.h>
 #include <unistd.h>
 #elif defined(_WIN32)
-//#include <winbase.h>
+//#include <winbase.h>// Mute warning with clang-cl
+// warning : non-portable path to file '<Windows.h>'; specified path differs in case from file name on disk [-Wnonportable-system-include-path]
+#if defined(__clang__)
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wnonportable-system-include-path"
+#endif
+
 #include <windows.h>
+
+#if defined(__clang__)
+#  pragma clang diagnostic pop
+#endif
+
 #endif
 
 BEGIN_VISP_NAMESPACE

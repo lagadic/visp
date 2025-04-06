@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,20 +29,15 @@
  *
  * Description:
  * Firewire cameras video capture based on CMU 1394 Digital Camera SDK.
- *
- * Authors:
- * Lucas Lopes Lemos FEMTO-ST, AS2M departement, Besancon
- * Guillaume Laurent FEMTO-ST, AS2M departement, Besancon
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vp1394CMUGrabber.h
   \brief Firewire cameras video capture based on CMU 1394 Digital Camera SDK.
 */
 
-#ifndef vp1394CMUGrabber_h
-#define vp1394CMUGrabber_h
+#ifndef VP_1394_CMU_GRABBER_H
+#define VP_1394_CMU_GRABBER_H
 
 #include <visp3/core/vpConfig.h>
 
@@ -53,7 +47,19 @@
 // included by windows.h since winsock.h and winsock2.h are incompatible
 #include <1394Camera.h> // CMU library
 #include <WinSock2.h>
+
+// Mute warning with clang-cl
+// warning : non-portable path to file '<Windows.h>'; specified path differs in case from file name on disk [-Wnonportable-system-include-path]
+#if defined(__clang__)
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wnonportable-system-include-path"
+#endif
+
 #include <windows.h>
+
+#if defined(__clang__)
+#  pragma clang diagnostic pop
+#endif
 
 #include <visp3/core/vpFrameGrabber.h>
 #include <visp3/core/vpFrameGrabberException.h>

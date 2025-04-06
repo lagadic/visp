@@ -42,7 +42,19 @@
 // included by windows.h since winsock.h and winsock2.h are incompatible
 #include <WinSock2.h>
 #include <string>
+
+// Mute warning with clang-cl
+// warning : non-portable path to file '<Windows.h>'; specified path differs in case from file name on disk [-Wnonportable-system-include-path]
+#if defined(__clang__)
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wnonportable-system-include-path"
+#endif
+
 #include <windows.h>
+
+#if defined(__clang__)
+#  pragma clang diagnostic pop
+#endif
 
 BEGIN_VISP_NAMESPACE
 
