@@ -452,12 +452,24 @@ private:
 };
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
+
+#if defined(__clang__)
+// Mute warning : declaration requires an exit-time destructor [-Wexit-time-destructors]
+// message : expanded from macro 'NLOHMANN_JSON_SERIALIZE_ENUM'
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wexit-time-destructors"
+#endif
+
 #include VISP_NLOHMANN_JSON(json.hpp)
 NLOHMANN_JSON_SERIALIZE_ENUM(vpCameraParameters::vpCameraParametersProjType, {
     {vpCameraParameters::perspectiveProjWithoutDistortion, "perspectiveWithoutDistortion"},
     {vpCameraParameters::perspectiveProjWithDistortion, "perspectiveWithDistortion"},
     {vpCameraParameters::ProjWithKannalaBrandtDistortion, "kannalaBrandtDistortion"}
   });
+
+#if defined(__clang__)
+#  pragma clang diagnostic pop
+#endif
 
 /**
  * \brief Converts camera parameters into a JSON representation.
