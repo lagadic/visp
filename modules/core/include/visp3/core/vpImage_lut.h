@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -317,7 +317,7 @@ template <> inline void vpImage<vpRGBa>::performLut(const vpRGBa(&lut)[256], uns
         end_index = start_index + last_step;
       }
 
-      vpImageLutRGBa_Param_t *imageLut_param = new vpImageLutRGBa_Param_t(start_index, end_index, (unsigned char *)bitmap);
+      vpImageLutRGBa_Param_t *imageLut_param = new vpImageLutRGBa_Param_t(start_index, end_index, static_cast<unsigned char *>(bitmap));
       memcpy(static_cast<void *>(imageLut_param->m_lut), lut, 256 * sizeof(vpRGBa));
 
       imageLutParams.push_back(imageLut_param);
