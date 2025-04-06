@@ -120,7 +120,7 @@ public:
   static float computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p_cv_dIx, const cv::Mat *p_cv_dIy,
                                      float &lowerThresh, const unsigned int &gaussianKernelSize = 5,
                                      const float &gaussianStdev = 2.f, const unsigned int &apertureGradient = 3,
-                                     const float &lowerThresholdRatio = 0.6, const float &upperThresholdRatio = 0.8,
+                                     const float &lowerThresholdRatio = 0.6f, const float &upperThresholdRatio = 0.8f,
                                      const vpCannyFilteringAndGradientType &filteringType = CANNY_GBLUR_SOBEL_FILTERING);
 
   static void computePartialDerivatives(const cv::Mat &cv_I,
