@@ -105,8 +105,6 @@ struct vpImageLutRGBa_Param_t
   VISP_NAMESPACE_ADDRESSING vpRGBa m_lut[256];
   unsigned char *m_bitmap;
 
-  vpImageLutRGBa_Param_t() : m_start_index(0), m_end_index(0), m_lut(), m_bitmap(nullptr) { }
-
   vpImageLutRGBa_Param_t(unsigned int start_index, unsigned int end_index, unsigned char *bitmap)
     : m_start_index(start_index), m_end_index(end_index), m_lut(), m_bitmap(bitmap)
   { }
@@ -253,18 +251,18 @@ template <> inline void vpImage<unsigned char>::performLut(const unsigned char(&
     }
 #endif
   }
-}
+  }
 
-/*!
-  \relates vpImage
+  /*!
+    \relates vpImage
 
-  Modify the intensities of a color image using the look-up table passed in
-  parameter.
+    Modify the intensities of a color image using the look-up table passed in
+    parameter.
 
-  \param lut : Look-up table (vpRGBa array of size=256) which maps each
-  intensity to his new value.
-  \param nbThreads : Number of threads to use for the computation.
-*/
+    \param lut : Look-up table (vpRGBa array of size=256) which maps each
+    intensity to his new value.
+    \param nbThreads : Number of threads to use for the computation.
+  */
 template <> inline void vpImage<vpRGBa>::performLut(const vpRGBa(&lut)[256], unsigned int nbThreads)
 {
   unsigned int size = getWidth() * getHeight();
@@ -340,6 +338,6 @@ template <> inline void vpImage<vpRGBa>::performLut(const vpRGBa(&lut)[256], uns
     }
 #endif
   }
-}
+  }
 
 #endif
