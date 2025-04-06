@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -501,8 +501,8 @@ bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r, const vpMatri
   }
 
   // warm start from previous active set
-  A.resize((unsigned int)active.size(), n);
-  b.resize((unsigned int)active.size());
+  A.resize(static_cast<unsigned int>(active.size()), n);
+  b.resize(static_cast<unsigned int>(active.size()));
   for (unsigned int i = 0; i < active.size(); ++i) {
     for (unsigned int j = 0; j < n; ++j)
       A[i][j] = C[active[i]][j];
@@ -594,8 +594,8 @@ bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r, const vpMatri
 
   // solve at one iteration
   while (true) {
-    A.resize((unsigned int)active.size(), n);
-    b.resize((unsigned int)active.size());
+    A.resize(static_cast<unsigned int>(active.size()), n);
+    b.resize(static_cast<unsigned int>(active.size()));
     for (unsigned int i = 0; i < active.size(); ++i) {
       for (unsigned int j = 0; j < n; ++j)
         A[i][j] = C[active[i]][j];
@@ -612,7 +612,7 @@ bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r, const vpMatri
     // 0-update = optimal or useless activated constraints
     if (vpLinProg::allZero(u, tol)) {
       // compute multipliers if any
-      unsigned int ineqInd = (unsigned int)active.size();
+      unsigned int ineqInd = static_cast<unsigned int>(active.size());
       if (active.size()) {
         mu = -Ap.transpose() * Q.transpose() * (Q * u - g);
         // find most negative one if any - except last activated in case of degeneracy
