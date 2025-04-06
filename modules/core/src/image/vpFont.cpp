@@ -279,8 +279,6 @@ public:
       throw(vpException(vpException::fatalError, "Unsupported font family in vpFont::Impl::Measure()"));
     }
     }
-
-    return Point();
   }
 
   /*!
