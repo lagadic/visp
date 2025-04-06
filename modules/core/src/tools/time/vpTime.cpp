@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +29,7 @@
  *
  * Description:
  * Time management and measurement.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpTime.cpp
@@ -205,7 +204,7 @@ int wait(double t0, double t)
 #elif defined(_WIN32)
 #if !defined(WINRT_8_0)
     if (timeToWait > vpTime::minTimeForUsleepCall) {
-      Sleep((DWORD)(timeToWait - vpTime::minTimeForUsleepCall));
+      Sleep(static_cast<DWORD>(timeToWait - vpTime::minTimeForUsleepCall));
     }
     // Blocking loop to have an accurate waiting
     do {
@@ -256,7 +255,7 @@ void wait(double t)
 #if !defined(WINRT_8_0)
     double t0 = measureTimeMs();
     if (timeToWait > vpTime::minTimeForUsleepCall) {
-      Sleep((DWORD)(timeToWait - vpTime::minTimeForUsleepCall));
+      Sleep(static_cast<DWORD>(timeToWait - vpTime::minTimeForUsleepCall));
     }
     // Blocking loop to have an accurate waiting
     do {
@@ -285,7 +284,7 @@ void sleepMs(double t)
   usleep(static_cast<useconds_t>(t * 1000));
 #elif defined(_WIN32)
 #if !defined(WINRT_8_0)
-  Sleep((DWORD)(t));
+  Sleep(static_cast<DWORD>(t));
 #else
   throw(vpException(vpException::functionNotImplementedError,
                     "vpTime::sleepMs() is not implemented on Windows Phone 8.0"));
