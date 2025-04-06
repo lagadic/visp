@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -888,8 +888,8 @@ template <class Type> void vpImageTools::flip(vpImage<Type> &I)
 
 template <class Type> Type vpImageTools::getPixelClamped(const vpImage<Type> &I, float u, float v)
 {
-  int x = vpMath::round(u);
-  int y = vpMath::round(v);
+  int x = vpMath::round(static_cast<double>(u));
+  int y = vpMath::round(static_cast<double>(v));
   x = std::max<int>(0, std::min<int>(x, static_cast<int>(I.getWidth()) - 1));
   y = std::max<int>(0, std::min<int>(y, static_cast<int>(I.getHeight()) - 1));
 
@@ -1165,8 +1165,8 @@ inline void vpImageTools::resize(const vpImage<unsigned char> &I, vpImage<unsign
     resizeSimdlib(I, Ires.getWidth(), Ires.getHeight(), Ires, INTERPOLATION_LINEAR);
   }
   else {
-    const float scaleY = I.getHeight() / static_cast<float>(Ires.getHeight());
-    const float scaleX = I.getWidth() / static_cast<float>(Ires.getWidth());
+    const float scaleY = static_cast<float>(I.getHeight()) / static_cast<float>(Ires.getHeight());
+    const float scaleX = static_cast<float>(I.getWidth()) / static_cast<float>(Ires.getWidth());
     const float half = 0.5f;
     const int ires_height = static_cast<int>(Ires.getHeight());
 #if defined(_OPENMP)
@@ -1176,13 +1176,13 @@ inline void vpImageTools::resize(const vpImage<unsigned char> &I, vpImage<unsign
 #pragma omp parallel for schedule(dynamic)
 #endif
     for (int i = 0; i < ires_height; ++i) {
-      float v = ((i + half) * scaleY) - half;
-      float yFrac = v - static_cast<int>(v);
+      float v = ((static_cast<float>(i) + half) * scaleY) - half;
+      float yFrac = static_cast<float>(v - static_cast<int>(v));
 
       unsigned int ires_width = static_cast<unsigned int>(Ires.getWidth());
       for (unsigned int j = 0; j < ires_width; ++j) {
-        float u = ((j + half) * scaleX) - half;
-        float xFrac = u - static_cast<int>(u);
+        float u = ((static_cast<float>(j) + half) * scaleX) - half;
+        float xFrac = static_cast<float>(u - static_cast<int>(u));
 
         if (method == INTERPOLATION_NEAREST) {
           resizeNearest(I, Ires, static_cast<unsigned int>(i), j, u, v);
@@ -1218,8 +1218,8 @@ inline void vpImageTools::resize(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires
     resizeSimdlib(I, Ires.getWidth(), Ires.getHeight(), Ires, INTERPOLATION_LINEAR);
   }
   else {
-    const float scaleY = I.getHeight() / static_cast<float>(Ires.getHeight());
-    const float scaleX = I.getWidth() / static_cast<float>(Ires.getWidth());
+    const float scaleY = static_cast<float>(I.getHeight()) / static_cast<float>(Ires.getHeight());
+    const float scaleX = static_cast<float>(I.getWidth()) / static_cast<float>(Ires.getWidth());
     const float half = 0.5f;
     const int ires_height = static_cast<int>(Ires.getHeight());
 #if defined(_OPENMP)
@@ -1229,13 +1229,13 @@ inline void vpImageTools::resize(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires
 #pragma omp parallel for schedule(dynamic)
 #endif
     for (int i = 0; i < ires_height; ++i) {
-      float v = ((i + half) * scaleY) - half;
-      float yFrac = v - static_cast<int>(v);
+      float v = ((static_cast<float>(i) + half) * scaleY) - half;
+      float yFrac = static_cast<float>(v - static_cast<int>(v));
 
       unsigned int ires_width = static_cast<unsigned int>(Ires.getWidth());
       for (unsigned int j = 0; j < ires_width; ++j) {
-        float u = ((j + half) * scaleX) - half;
-        float xFrac = u - static_cast<int>(u);
+        float u = ((static_cast<float>(j) + half) * scaleX) - half;
+        float xFrac = static_cast<float>(u - static_cast<int>(u));
 
         if (method == INTERPOLATION_NEAREST) {
           resizeNearest(I, Ires, static_cast<unsigned int>(i), j, u, v);
