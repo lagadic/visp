@@ -404,7 +404,7 @@ public:
     unsigned int i = 0;
     bool notFound = true;
     while ((i < nbBins) && notFound) {
-      float tf = static_cast<float>(hist[i]);
+      float tf = static_cast<float>(hist[static_cast<unsigned char>(i)]);
       accu = accu + tf;
       if (accu > t) {
         bon = static_cast<float>(i);
@@ -1046,7 +1046,7 @@ public:
     FilterType coef1 = static_cast<FilterType>(1. / (static_cast<double>(sigma) * sqrt(2. * M_PI)));
     FilterType v_2_sigma2 = static_cast<FilterType>(2. * static_cast<double>(sigma2));
     for (int i = 0; i <= middle; ++i) {
-      filter[i] = coef1 * static_cast<FilterType>(exp(static_cast<double>(-(i * i) / v_2_sigma2)));
+      filter[i] = coef1 * static_cast<FilterType>(exp(static_cast<double>(-static_cast<FilterType>(i * i)) / v_2_sigma2));
     }
     if (normalize) {
       // renormalization
@@ -1092,19 +1092,19 @@ public:
     const int half = 2;
     int middle = (static_cast<int>(size) - 1) / half;
     FilterType sigma2 = static_cast<FilterType>(vpMath::sqr(sigma));
-    FilterType coef_1 = static_cast<FilterType>(1. / (sigma * sqrt(2. * M_PI)));
+    FilterType coef_1 = static_cast<FilterType>(1. / (static_cast<double>(sigma) * sqrt(2. * M_PI)));
     FilterType coef_1_over_2 = coef_1 / static_cast<FilterType>(2.);
     FilterType v_2_coef_1 = static_cast<FilterType>(2.) * coef_1;
-    FilterType v_2_sigma2 = static_cast<FilterType>(2. * sigma2);
+    FilterType v_2_sigma2 = static_cast<FilterType>(2.) * sigma2;
     filter[0] = 0.;
     for (int i = 1; i <= middle; ++i) {
-      filter[i] = -coef_1_over_2 * (static_cast<FilterType>(exp(-((i + 1) * (i + 1)) / v_2_sigma2)) - static_cast<FilterType>(exp(-((i - 1) * (i - 1)) / v_2_sigma2)));
+      filter[i] = -coef_1_over_2 * (static_cast<FilterType>(exp(-static_cast<double>((i + 1) * (i + 1)) / v_2_sigma2)) - static_cast<FilterType>(exp(-static_cast<double>((i - 1) * (i - 1)) / v_2_sigma2)));
     }
 
     if (normalize) {
       FilterType sum = 0;
       for (int i = 1; i <= middle; ++i) {
-        sum += v_2_coef_1 * static_cast<FilterType>(exp(-(i * i) / v_2_sigma2));
+        sum += v_2_coef_1 * static_cast<FilterType>(exp(-static_cast<double>(i * i) / v_2_sigma2));
       }
       sum += coef_1;
 
