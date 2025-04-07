@@ -193,9 +193,9 @@ vpDetectorDNNOpenCV::vpDetectorDNNOpenCV(const std::string &jsonPath, void (*par
 }
 
 /**
- * \brief
+ * \brief Initialize detector from a json config file.
  *
- * \param jsonPath
+ * \param[in] jsonPath : Json config file path.
  */
 void vpDetectorDNNOpenCV::initFromJSON(const std::string &jsonPath)
 {
