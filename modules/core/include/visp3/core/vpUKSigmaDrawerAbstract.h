@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,11 +57,12 @@ public:
   {
     std::vector<double> m_wm; /*!< The weights for the computation of the mean.*/
     std::vector<double> m_wc; /*!< The weights for the computation of the covariance.*/
-  }vpSigmaPointsWeights;
+  } vpSigmaPointsWeights;
 
   inline vpUKSigmaDrawerAbstract(const unsigned int &n) : m_n(n) { }
-
+  vpUKSigmaDrawerAbstract(const vpUKSigmaDrawerAbstract &) = default;
   virtual ~vpUKSigmaDrawerAbstract() = default;
+  vpUKSigmaDrawerAbstract &operator=(const vpUKSigmaDrawerAbstract &) = default;
 
   /**
    * \brief Draw the sigma points according to the current mean and covariance of the state
