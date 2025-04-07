@@ -246,8 +246,8 @@ vpDetectorDNNOpenCV::~vpDetectorDNNOpenCV() { }
  * \warning Classical object detection network uses as input 3-channels.
  * Grayscale image is converted to color image.
  *
- * \param I Input image.
- * \param output Vector of detections, whichever class they belong to.
+ * \param[in] I : Input image.
+ * \param[out] output : Vector of detections, whichever class they belong to.
  * \return false if there is no detection, true otherwise.
  */
 bool vpDetectorDNNOpenCV::detect(const vpImage<unsigned char> &I, std::vector<DetectedFeatures2D> &output)
@@ -262,8 +262,9 @@ bool vpDetectorDNNOpenCV::detect(const vpImage<unsigned char> &I, std::vector<De
   \warning Classical object detection network uses as input 3-channels.
   Grayscale image is converted to color image.
 
-  \param I : Input image.
-  \param output: map where the name of the class is used as key and whose value is a vector of detected 2D features that belong to the class.
+  \param[in] I : Input image.
+  \param[out] output : Map where the name of the class is used as key and whose value is a vector of detected 2D
+  features that belong to the class.
   \return false if there is no detection.
 */
 bool vpDetectorDNNOpenCV::detect(const vpImage<unsigned char> &I, std::map< std::string, std::vector<DetectedFeatures2D>> &output)
@@ -278,8 +279,8 @@ bool vpDetectorDNNOpenCV::detect(const vpImage<unsigned char> &I, std::map< std:
   \warning Classical object detection network uses as input 3-channels.
   Grayscale image is converted to color image.
 
-  \param I : Input image.
-  \param output: vector of pairs <name_of_the_class, vector_of_detections>
+  \param[in] I : Input image.
+  \param[out] output : Vector of pairs <name_of_the_class, vector_of_detections>.
   \return false if there is no detection.
 */
 bool vpDetectorDNNOpenCV::detect(const vpImage<unsigned char> &I, std::vector< std::pair<std::string, std::vector<DetectedFeatures2D>>> &output)
@@ -294,8 +295,8 @@ bool vpDetectorDNNOpenCV::detect(const vpImage<unsigned char> &I, std::vector< s
  * \warning OpenCV DNN module uses \b cv::Mat as input.
  * \b vpImage<vpRGBa> is converted to \b cv::Mat.
  *
- * \param I : Input image.
- * \param output Vector of detections, whichever class they belong to.
+ * \param[in] I : Input image.
+ * \param[out] output : Vector of detections, whichever class they belong to.
  * \return false if there is no detection, true otherwise.
  */
 bool vpDetectorDNNOpenCV::detect(const vpImage<vpRGBa> &I, std::vector<DetectedFeatures2D> &output)
@@ -310,8 +311,8 @@ bool vpDetectorDNNOpenCV::detect(const vpImage<vpRGBa> &I, std::vector<DetectedF
 * \warning OpenCV DNN module uses \b cv::Mat as input.
 * Grayscale image is converted to color image.
 *
-* \param I : Input image.
-* \param output: map where the name of the class is used as key and whose value is a vector of detected 2D features that belong to the class.
+* \param[in] I : Input image.
+* \param[out] output : Map where the name of the class is used as key and whose value is a vector of detected 2D features that belong to the class.
 * \return false if there is no detection.
 */
 bool vpDetectorDNNOpenCV::detect(const vpImage<vpRGBa> &I, std::map< std::string, std::vector<DetectedFeatures2D>> &output)
@@ -324,8 +325,8 @@ bool vpDetectorDNNOpenCV::detect(const vpImage<vpRGBa> &I, std::map< std::string
 /*!
   Object detection using OpenCV DNN module.
 
-  \param I : Input image.
-  \param output: vector of pairs <name_of_the_class, vector_of_detections>
+  \param[in] I : Input image.
+  \param[out] output : vector of pairs <name_of_the_class, vector_of_detections>
   \return false if there is no detection, true otherwise.
 */
 bool vpDetectorDNNOpenCV::detect(const vpImage<vpRGBa> &I, std::vector< std::pair<std::string, std::vector<DetectedFeatures2D>>> &output)
@@ -338,8 +339,8 @@ bool vpDetectorDNNOpenCV::detect(const vpImage<vpRGBa> &I, std::vector< std::pai
 /*!
   Object detection using OpenCV DNN module.
 
-  \param I : Input image.
-  \param output : Vector of detections, whichever class they belong to.
+  \param[in] I : Input image.
+  \param[out] output : Vector of detections, whichever class they belong to.
   \return false if there is no detection.
 */
 bool vpDetectorDNNOpenCV::detect(const cv::Mat &I, std::vector<DetectedFeatures2D> &output)
@@ -391,8 +392,8 @@ bool vpDetectorDNNOpenCV::detect(const cv::Mat &I, std::vector<DetectedFeatures2
 /*!
   Object detection using OpenCV DNN module.
 
-  \param I : Input image.
-  \param output : map where the name of the class is used as key and whose value is a vector of detected 2D features that belong to the class.
+  \param[in] I : Input image.
+  \param[out] output : Map where the name of the class is used as key and whose value is a vector of detected 2D features that belong to the class.
   \return false if there is no detection.
 */
 bool vpDetectorDNNOpenCV::detect(const cv::Mat &I, std::map< std::string, std::vector<DetectedFeatures2D>> &output)
@@ -447,8 +448,8 @@ bool vpDetectorDNNOpenCV::detect(const cv::Mat &I, std::map< std::string, std::v
 /*!
   Object detection using OpenCV DNN module.
 
-  \param I : Input image.
-  \param output : vector of pairs <name_of_the_class, vector_of_detections>
+  \param[in] I : Input image.
+  \param[out] output : Vector of pairs <name_of_the_class, vector_of_detections>.
   \return false if there is no detection.
 */
 bool vpDetectorDNNOpenCV::detect(const cv::Mat &I, std::vector< std::pair<std::string, std::vector<DetectedFeatures2D>>> &output)
@@ -535,8 +536,8 @@ void vpDetectorDNNOpenCV::postProcess(DetectionCandidates &proposals)
  *  or equal to the average area x \b minRatioOfAreaOk. This method assumes that
  * \b detected_features contains detections of a single class.
  *
- * \param detected_features The original list of detected features, belonging to the same class.
- * \param minRatioOfAreaOk The minimum ratio of area a feature bounding box must reach to be kept
+ * \param[in] detected_features : The original list of detected features, belonging to the same class.
+ * \param[in] minRatioOfAreaOk : The minimum ratio of area a feature bounding box must reach to be kept
  * in the resulting list of features. Value between 0 and 1.0.
  * \return std::vector<vpDetectorDNNOpenCV::DetectedFeatures2D> The resulting list of features, that only contains the features
  * whose area is in the range [average area x \b minRatioOfAreaOk ; average area / \b minRatioOfAreaOk ].
@@ -570,9 +571,11 @@ vpDetectorDNNOpenCV::filterDetectionSingleClassInput(const std::vector<DetectedF
  * where the area of each detection belonging to one class is in the range
  * [average_area(class) x \b minRatioOfAreaOk ; average_area(class) / \b minRatioOfAreaOk ] .
  *
- * \param detected_features The original list of detected features, that can contains several classes.
- * \param minRatioOfAreaOk The minimum ratio of area a feature bounding box must reach to be kept in the resulting list of features. Value between 0 and 1.0.
- * \return std::vector<vpDetectorDNNOpenCV::DetectedFeatures2> The filtered list of features, ordered by \b vpDetectorDNNOpenCV::DetectedFeatures2D::m_cls in ascending order, where
+ * \param[in] detected_features : The original list of detected features, that can contains several classes.
+ * \param[in] minRatioOfAreaOk : The minimum ratio of area a feature bounding box must reach to be kept in the
+ * resulting list of features. Value between 0 and 1.0.
+ * \return std::vector<vpDetectorDNNOpenCV::DetectedFeatures2> The filtered list of features, ordered by
+ * \b vpDetectorDNNOpenCV::DetectedFeatures2D::m_cls in ascending order, where
  * only the features respecting the area criterion are kept.
  */
 std::vector<vpDetectorDNNOpenCV::DetectedFeatures2D>
