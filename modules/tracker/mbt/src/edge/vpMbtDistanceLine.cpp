@@ -398,7 +398,7 @@ bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vp
         try {
           melinePt->initTracking(I, ip1, ip2, rho, theta, doNotTrack);
           meline.push_back(melinePt);
-          nbFeature.push_back((unsigned int)melinePt->getMeList().size());
+          nbFeature.push_back(static_cast<unsigned int>(melinePt->getMeList().size()));
           nbFeatureTotal += nbFeature.back();
         }
         catch (...) {
@@ -429,8 +429,8 @@ void vpMbtDistanceLine::trackMovingEdge(const vpImage<unsigned char> &I)
       nbFeatureTotal = 0;
       for (size_t i = 0; i < meline.size(); i++) {
         meline[i]->track(I);
-        nbFeature.push_back((unsigned int)meline[i]->getMeList().size());
-        nbFeatureTotal += (unsigned int)meline[i]->getMeList().size();
+        nbFeature.push_back(static_cast<unsigned int>(meline[i]->getMeList().size()));
+        nbFeatureTotal += static_cast<unsigned int>(meline[i]->getMeList().size());
       }
     }
     catch (...) {
@@ -551,7 +551,7 @@ void vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const 
             }
 
             meline[i]->updateParameters(I, ip1, ip2, rho, theta);
-            nbFeature[i] = (unsigned int)meline[i]->getMeList().size();
+            nbFeature[i] = static_cast<unsigned int>(meline[i]->getMeList().size());
             nbFeatureTotal += nbFeature[i];
           }
         }
@@ -919,8 +919,8 @@ bool vpMbtDistanceLine::closeToImageBorder(const vpImage<unsigned char> &I, cons
           return true;
         }
 
-        if (((unsigned int)i_ >(I.getHeight() - threshold)) || (unsigned int)i_ < threshold ||
-            ((unsigned int)j_ >(I.getWidth() - threshold)) || (unsigned int)j_ < threshold) {
+        if ((static_cast<unsigned int>(i_) >(I.getHeight() - threshold)) || static_cast<unsigned int>(i_) < threshold ||
+            (static_cast<unsigned int>(j_) >(I.getWidth() - threshold)) || static_cast<unsigned int>(j_) < threshold) {
           return true;
         }
       }

@@ -195,7 +195,7 @@ public:
 
     \return Number of parameters.
   */
-  unsigned int size() const { return (unsigned int)listOfParams.size(); }
+  unsigned int size() const { return static_cast<unsigned int>(listOfParams.size()); }
 };
 
 //######## Definition of Template Functions ########

@@ -707,7 +707,7 @@ void vpTemplateTrackerMIBSpline::PutTotPVBspline3PrtTout(double *PrtTout, int &c
   int NbParam_ = static_cast<int>(NbParam);
   int NbParam_val = NbParam_ + NbParam_ * NbParam_;
 
-  double *pt = &PrtTout[(unsigned int)(((cr + sr) * Nc + (ct + st)) * 9 * (1 + NbParam_val))];
+  double *pt = &PrtTout[static_cast<unsigned int>(((cr + sr) * Nc + (ct + st)) * 9 * (1 + NbParam_val))];
   for (int ir = -1; ir <= 1; ir++) {
     double Br = Bspline3(-ir + er);
     for (int it = 0; it <= 2; it++) {
@@ -727,7 +727,7 @@ void vpTemplateTrackerMIBSpline::PutTotPVBspline4PrtTout(double *PrtTout, int &c
 
   int NbParam_ = static_cast<int>(NbParam);
   int NbParam_val = NbParam_ + NbParam_ * NbParam_;
-  double *pt = &PrtTout[(unsigned int)((cr * Nc + ct) * 16 * (1 + NbParam_val))];
+  double *pt = &PrtTout[static_cast<unsigned int>((cr * Nc + ct) * 16 * (1 + NbParam_val))];
   for (int ir = -1; ir <= 2; ir++) {
     double Br = vpTemplateTrackerBSpline::Bspline4(-ir + er);
     for (int it = 0; it <= 3; it++) {

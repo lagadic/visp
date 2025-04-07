@@ -112,7 +112,7 @@ void vpMbScanLine::drawLineY(const vpColVector &a, const vpColVector &b, const v
   if (y0 >= h - 1 || y1 < 0 || std::fabs(y1 - y0) <= std::numeric_limits<double>::epsilon())
     return;
 
-  const unsigned int _y0 = std::max<unsigned int>((unsigned int)0, (unsigned int)(std::ceil(y0)));
+  const unsigned int _y0 = std::max<unsigned int>(static_cast<unsigned int>(0), static_cast<unsigned int>(std::ceil(y0)));
   const double _y1 = std::min<double>((double)h, (double)y1);
 
   const bool b_sample_Y = (std::fabs(y0 - y1) > std::fabs(x0 - x1));
@@ -161,7 +161,7 @@ void vpMbScanLine::drawLineX(const vpColVector &a, const vpColVector &b, const v
   if (x0 >= w - 1 || x1 < 0 || std::fabs(x1 - x0) <= std::numeric_limits<double>::epsilon())
     return;
 
-  const unsigned int _x0 = std::max<unsigned int>((unsigned int)0, (unsigned int)(std::ceil(x0)));
+  const unsigned int _x0 = std::max<unsigned int>(static_cast<unsigned int>(0), static_cast<unsigned int>(std::ceil(x0)));
   const double _x1 = std::min<double>((double)w, (double)x1);
 
   const bool b_sample_Y = (std::fabs(y0 - y1) > std::fabs(x0 - x1));
@@ -387,15 +387,15 @@ void vpMbScanLine::drawScene(const std::vector<std::vector<std::pair<vpPoint, un
 
         // This part will only be used for MbKltTracking
         if (last_ID != -1) {
-          const unsigned int x0 = std::max<unsigned int>((unsigned int)0, (unsigned int)(std::ceil(last_visible.p)));
+          const unsigned int x0 = std::max<unsigned int>(static_cast<unsigned int>(0), static_cast<unsigned int>(std::ceil(last_visible.p)));
           double x1 = std::min<double>((double)w, (double)s.p);
           for (unsigned int x = x0 + maskBorder; x < x1 - maskBorder; ++x) {
-            primitive_ids[(unsigned int)y][(unsigned int)x] = last_visible.ID;
+            primitive_ids[static_cast<unsigned int>(y)][static_cast<unsigned int>(x)] = last_visible.ID;
 
             if (maskBorder != 0)
-              maskY[(unsigned int)y][(unsigned int)x] = 255;
+              maskY[static_cast<unsigned int>(y)][static_cast<unsigned int>(x)] = 255;
             else
-              mask[(unsigned int)y][(unsigned int)x] = 255;
+              mask[static_cast<unsigned int>(y)][static_cast<unsigned int>(x)] = 255;
           }
         }
 
@@ -462,12 +462,12 @@ void vpMbScanLine::drawScene(const std::vector<std::vector<std::pair<vpPoint, un
 
         // This part will only be used for MbKltTracking
         if (maskBorder != 0 && last_ID != -1) {
-          const unsigned int y0 = std::max<unsigned int>((unsigned int)0, (unsigned int)(std::ceil(last_visible.p)));
+          const unsigned int y0 = std::max<unsigned int>(static_cast<unsigned int>(0), static_cast<unsigned int>(std::ceil(last_visible.p)));
           double y1 = std::min<double>((double)h, (double)s.p);
           for (unsigned int y = y0 + maskBorder; y < y1 - maskBorder; ++y) {
-            // primitive_ids[(unsigned int)y][(unsigned int)x] =
+            // primitive_ids[static_cast<unsigned int>(y)][static_cast<unsigned int>(x)] =
             // last_visible.ID;
-            maskX[(unsigned int)y][(unsigned int)x] = 255;
+            maskX[static_cast<unsigned int>(y)][static_cast<unsigned int>(x)] = 255;
           }
         }
 

@@ -87,7 +87,7 @@ int allocate_work(double **work);
 
 int allocate_work(double **work)
 {
-  unsigned int dimWork = (unsigned int)((*work)[0]);
+  unsigned int dimWork = static_cast<unsigned int>((*work)[0]);
   delete[] * work;
   *work = new double[dimWork];
   return (int)dimWork;
@@ -654,7 +654,7 @@ unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, dou
   delete[] qrdata;
   delete[] work;
   delete[] tau;
-  return (unsigned int)r;
+  return static_cast<unsigned int>(r);
 #endif // defined(VISP_HAVE_GSL)
 #else
   (void)Q;

@@ -50,10 +50,10 @@ int main(int argc, const char *argv[])
         opt_face_cascade_name = std::string(argv[++i]);
       }
       else if (std::string(argv[i]) == "--device" && i + 1 < argc) {
-        opt_device = (unsigned int)atoi(argv[++i]);
+        opt_device = static_cast<unsigned int>(atoi(argv[++i]));
       }
       else if (std::string(argv[i]) == "--scale" && i + 1 < argc) {
-        opt_scale = (unsigned int)atoi(argv[++i]);
+        opt_scale = static_cast<unsigned int>(atoi(argv[++i]));
       }
       else if ((std::string(argv[i]) == "--help") || (std::string(argv[i]) == "-h")) {
         std::cout << "Usage: " << argv[0]
@@ -167,6 +167,6 @@ int main()
 #if defined(VISP_HAVE_OPENCV) && ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && !defined(HAVE_OPENCV_XOBJDETECT))
   std::cout << "This tutorial needs OpenCV xobjdetect module that is missing." << std::endl;
 #endif
-  }
+}
 
 #endif

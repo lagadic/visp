@@ -248,7 +248,7 @@ bool vpServer::checkForConnections()
     return false;
   }
   else {
-    if (FD_ISSET((unsigned int)emitter.socketFileDescriptorEmitter, &readFileDescriptor)) {
+    if (FD_ISSET(static_cast<unsigned int>(emitter.socketFileDescriptorEmitter), &readFileDescriptor)) {
       vpNetwork::vpReceptor client;
       client.receptorAddressSize = sizeof(client.receptorAddress);
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
@@ -256,7 +256,7 @@ bool vpServer::checkForConnections()
           emitter.socketFileDescriptorEmitter, (struct sockaddr *)&client.receptorAddress, &client.receptorAddressSize);
 #else // Win32
       client.socketFileDescriptorReceptor =
-        accept((unsigned int)emitter.socketFileDescriptorEmitter, (struct sockaddr *)&client.receptorAddress,
+        accept(static_cast<unsigned int>(emitter.socketFileDescriptorEmitter), (struct sockaddr *)&client.receptorAddress,
                &client.receptorAddressSize);
 #endif
 
@@ -275,12 +275,12 @@ bool vpServer::checkForConnections()
     }
     else {
       for (unsigned int i = 0; i < receptor_list.size(); i++) {
-        if (FD_ISSET((unsigned int)receptor_list[i].socketFileDescriptorReceptor, &readFileDescriptor)) {
+        if (FD_ISSET(static_cast<unsigned int>(receptor_list[i].socketFileDescriptorReceptor), &readFileDescriptor)) {
           char deco;
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
           ssize_t numbytes = recv(receptor_list[i].socketFileDescriptorReceptor, &deco, 1, MSG_PEEK);
 #else // Win32
-          int numbytes = recv((unsigned int)receptor_list[i].socketFileDescriptorReceptor, &deco, 1, MSG_PEEK);
+          int numbytes = recv(static_cast<unsigned int>(receptor_list[i].socketFileDescriptorReceptor), &deco, 1, MSG_PEEK);
 #endif
 
           if (numbytes == 0) {

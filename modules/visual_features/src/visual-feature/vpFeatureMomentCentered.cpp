@@ -174,9 +174,9 @@ void vpFeatureMomentCentered::compute_interaction()
     throw vpException(vpException::notInitialized, "vpFeatureMomentBasic not found");
 
   // Calls the main compute_Lmu_pq function for moments upto order-1
-  for (int i = 0; i < (int)order - 1; i++) {
-    for (int j = 0; j < (int)order - 1 - i; j++) {
-      interaction_matrices[(unsigned int)j * order + (unsigned int)i] =
+  for (int i = 0; i < static_cast<int>(order) - 1; i++) {
+    for (int j = 0; j < static_cast<int>(order) - 1 - i; j++) {
+      interaction_matrices[static_cast<unsigned int>(j) * order + static_cast<unsigned int>(i)] =
         compute_Lmu_pq(i, j, xg, yg, Lxg, Lyg, momentbasic, featureMomentBasic);
     }
   }
@@ -237,7 +237,7 @@ void vpFeatureMomentCentered::compute_interaction()
   interaction_matrices[0][0][WZ] = 0.;
 
   for (int i = 1; i < (int)order - 1; i++) {
-    unsigned int i_ = (unsigned int)i;
+    unsigned int i_ = static_cast<unsigned int>(i);
     unsigned int im1_ = i_ - 1;
     unsigned int ip1_ = i_ + 1;
 
@@ -260,7 +260,7 @@ void vpFeatureMomentCentered::compute_interaction()
   }
 
   for (int j = 1; j < (int)order - 1; j++) {
-    unsigned int j_ = (unsigned int)j;
+    unsigned int j_ = static_cast<unsigned int>(j);
     unsigned int jm1_ = j_ - 1;
     unsigned int jp1_ = j_ + 1;
 
@@ -283,11 +283,11 @@ void vpFeatureMomentCentered::compute_interaction()
   }
 
   for (int j = 1; j < (int)order - 1; j++) {
-    unsigned int j_ = (unsigned int)j;
+    unsigned int j_ = static_cast<unsigned int>(j);
     unsigned int jm1_ = j_ - 1;
     unsigned int jp1_ = j_ + 1;
     for (int i = 1; i < (int)order - j - 1; i++) {
-      unsigned int i_ = (unsigned int)i;
+      unsigned int i_ = static_cast<unsigned int>(i);
       unsigned int im1_ = i_ - 1;
       unsigned int ip1_ = i_ + 1;
 
@@ -324,7 +324,7 @@ void vpFeatureMomentCentered::compute_interaction()
 std::ostream &operator<<(std::ostream &os, const vpFeatureMomentCentered &mu)
 {
   vpTRACE(" << Ls - CENTRED MOMENTS >>");
-  unsigned int order_m_1 = (unsigned int)(mu.order - 1);
+  unsigned int order_m_1 = static_cast<unsigned int>(mu.order - 1);
   for (unsigned int i = 0; i < order_m_1; i++) {
     for (unsigned int j = 0; j < order_m_1 - i; j++) {
       os << "L_mu[" << i << "," << j << "] = ";

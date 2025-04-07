@@ -202,7 +202,7 @@ public:
 
     \return Number of clients connected.
   */
-  unsigned int getNumberOfClients() const { return (unsigned int)receptor_list.size(); }
+  unsigned int getNumberOfClients() const { return static_cast<unsigned int>(receptor_list.size()); }
 
   void print();
 

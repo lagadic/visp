@@ -66,8 +66,8 @@ int main(int argc, const char **argv)
     for (unsigned int j = 0; j < I_conn.getWidth(); j++) {
       if (labels[i][j] != 0) {
         I_conn[i][j] =
-          vpRGBa(vpColor::getColor((unsigned int)labels[i][j]).R, vpColor::getColor((unsigned int)labels[i][j]).G,
-                 vpColor::getColor((unsigned int)labels[i][j]).B);
+          vpRGBa(vpColor::getColor(static_cast<unsigned int>(labels[i][j].R)), vpColor::getColor(static_cast<unsigned int>(labels[i][j].G)),
+                 vpColor::getColor(static_cast<unsigned int>(labels[i][j].B)));
       }
     }
   }

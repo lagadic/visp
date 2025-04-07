@@ -315,10 +315,10 @@ bool run(vpImage<Type> &I, const std::string &input_directory, bool opt_click_al
   const double roi_step2 = 6.0;
   if (use_mask) {
     mask = false;
-    for (unsigned int i = (unsigned int)(I.getRows() / roi_step);
-         i < (unsigned int)(I.getRows() * roi_step2 / roi_step); i++) {
-      for (unsigned int j = (unsigned int)(I.getCols() / roi_step);
-           j < (unsigned int)(I.getCols() * roi_step2 / roi_step); j++) {
+    for (unsigned int i = static_cast<unsigned int>(I.getRows() / roi_step);
+         i < static_cast<unsigned int>(I.getRows() * roi_step2 / roi_step); i++) {
+      for (unsigned int j = static_cast<unsigned int>(I.getCols() / roi_step);
+           j < static_cast<unsigned int>(I.getCols() * roi_step2 / roi_step); j++) {
         mask[i][j] = true;
       }
     }

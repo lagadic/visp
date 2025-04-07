@@ -154,32 +154,32 @@ void vpPlot::initNbGraph(unsigned int nbGraph)
 
   switch (nbGraph) {
   case 1:
-    graphList[0].initSize(vpImagePoint(0, 0), (unsigned int)(700 * factorj), (unsigned int)(700 * factori), margei,
+    graphList[0].initSize(vpImagePoint(0, 0), static_cast<unsigned int>(700 * factorj), static_cast<unsigned int>(700 * factori), margei,
                           margej);
     break;
   case 2:
-    graphList[0].initSize(vpImagePoint(0, 0), (unsigned int)(700 * factorj), (unsigned int)(350 * factori), margei,
+    graphList[0].initSize(vpImagePoint(0, 0), static_cast<unsigned int>(700 * factorj), static_cast<unsigned int>(350 * factori), margei,
                           margej);
-    graphList[1].initSize(vpImagePoint((unsigned int)(350 * factori), 0), (unsigned int)(700 * factorj),
-                          (unsigned int)(350 * factori), margei, margej);
+    graphList[1].initSize(vpImagePoint(static_cast<unsigned int>(350 * factori), 0), static_cast<unsigned int>(700 * factorj),
+                          static_cast<unsigned int>(350 * factori), margei, margej);
     break;
   case 3:
-    graphList[0].initSize(vpImagePoint(0, 0), (unsigned int)(350 * factorj), (unsigned int)(350 * factori), margei,
+    graphList[0].initSize(vpImagePoint(0, 0), static_cast<unsigned int>(350 * factorj), static_cast<unsigned int>(350 * factori), margei,
                           margej);
-    graphList[1].initSize(vpImagePoint(0, (unsigned int)(350 * factorj)), (unsigned int)(350 * factorj),
-                          (unsigned int)(350 * factori), margei, margej);
-    graphList[2].initSize(vpImagePoint((unsigned int)(350 * factori), 0), (unsigned int)(700 * factorj),
-                          (unsigned int)(350 * factori), margei, margej);
+    graphList[1].initSize(vpImagePoint(0, static_cast<unsigned int>(350 * factorj)), static_cast<unsigned int>(350 * factorj),
+                          static_cast<unsigned int>(350 * factori), margei, margej);
+    graphList[2].initSize(vpImagePoint(static_cast<unsigned int>(350 * factori), 0), static_cast<unsigned int>(700 * factorj),
+                          static_cast<unsigned int>(350 * factori), margei, margej);
     break;
   case 4:
-    graphList[0].initSize(vpImagePoint(0, 0), (unsigned int)(350 * factorj), (unsigned int)(350 * factori), margei,
+    graphList[0].initSize(vpImagePoint(0, 0), static_cast<unsigned int>(350 * factorj), static_cast<unsigned int>(350 * factori), margei,
                           margej);
-    graphList[1].initSize(vpImagePoint(0, (unsigned int)(350 * factorj)), (unsigned int)(350 * factorj),
-                          (unsigned int)(350 * factori), margei, margej);
-    graphList[2].initSize(vpImagePoint((unsigned int)(350 * factori), 0), (unsigned int)(350 * factorj),
-                          (unsigned int)(350 * factori), margei, margej);
-    graphList[3].initSize(vpImagePoint((unsigned int)(350 * factori), (unsigned int)(350 * factorj)),
-                          (unsigned int)(350 * factorj), (unsigned int)(350 * factori), margei, margej);
+    graphList[1].initSize(vpImagePoint(0, static_cast<unsigned int>(350 * factorj)), static_cast<unsigned int>(350 * factorj),
+                          static_cast<unsigned int>(350 * factori), margei, margej);
+    graphList[2].initSize(vpImagePoint(static_cast<unsigned int>(350 * factori), 0), static_cast<unsigned int>(350 * factorj),
+                          static_cast<unsigned int>(350 * factori), margei, margej);
+    graphList[3].initSize(vpImagePoint(static_cast<unsigned int>(350 * factori), static_cast<unsigned int>(350 * factorj)),
+                          static_cast<unsigned int>(350 * factorj), static_cast<unsigned int>(350 * factori), margei, margej);
     break;
   }
 

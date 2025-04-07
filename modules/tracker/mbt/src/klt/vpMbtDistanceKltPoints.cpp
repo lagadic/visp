@@ -93,11 +93,11 @@ void vpMbtDistanceKltPoints::init(const vpKltOpencv &_tracker, const vpImage<boo
     bool add = false;
 
     // Add points inside visibility mask only
-    if (vpMeTracker::inRoiMask(mask, (unsigned int)y_tmp, (unsigned int)x_tmp)) {
+    if (vpMeTracker::inRoiMask(mask, static_cast<unsigned int>(y_tmp), static_cast<unsigned int>(x_tmp))) {
       if (useScanLine) {
-        if ((unsigned int)y_tmp < hiddenface->getMbScanLineRenderer().getPrimitiveIDs().getHeight() &&
-            (unsigned int)x_tmp < hiddenface->getMbScanLineRenderer().getPrimitiveIDs().getWidth() &&
-            hiddenface->getMbScanLineRenderer().getPrimitiveIDs()[(unsigned int)y_tmp][(unsigned int)x_tmp] ==
+        if (static_cast<unsigned int>(y_tmp) < hiddenface->getMbScanLineRenderer().getPrimitiveIDs().getHeight() &&
+            static_cast<unsigned int>(x_tmp) < hiddenface->getMbScanLineRenderer().getPrimitiveIDs().getWidth() &&
+            hiddenface->getMbScanLineRenderer().getPrimitiveIDs()[static_cast<unsigned int>(y_tmp)][static_cast<unsigned int>(x_tmp)] ==
                 polygon->getIndex())
           add = true;
       }
@@ -119,8 +119,8 @@ void vpMbtDistanceKltPoints::init(const vpKltOpencv &_tracker, const vpImage<boo
     }
   }
 
-  nbPointsInit = (unsigned int)initPoints.size();
-  nbPointsCur = (unsigned int)curPoints.size();
+  nbPointsInit = static_cast<unsigned int>(initPoints.size());
+  nbPointsCur = static_cast<unsigned int>(curPoints.size());
 
   if (nbPointsCur >= minNbPoint)
     enoughPoints = true;
@@ -158,7 +158,7 @@ unsigned int vpMbtDistanceKltPoints::computeNbDetectedCurrent(const vpKltOpencv 
 
   for (unsigned int i = 0; i < static_cast<unsigned int>(_tracker.getNbFeatures()); i++) {
     _tracker.getFeature((int)i, id, x, y);
-    if (isTrackedFeature((int)id) && vpMeTracker::inRoiMask(mask, (unsigned int)y, (unsigned int)x)) {
+    if (isTrackedFeature((int)id) && vpMeTracker::inRoiMask(mask, static_cast<unsigned int>(y), static_cast<unsigned int>(x))) {
 #ifdef TARGET_OS_IPHONE
       curPoints[(int)id] = vpImagePoint(static_cast<double>(y), static_cast<double>(x));
       curPointsInd[(int)id] = (int)i;
@@ -169,7 +169,7 @@ unsigned int vpMbtDistanceKltPoints::computeNbDetectedCurrent(const vpKltOpencv 
     }
   }
 
-  nbPointsCur = (unsigned int)curPoints.size();
+  nbPointsCur = static_cast<unsigned int>(curPoints.size());
 
   if (nbPointsCur >= minNbPoint)
     enoughPoints = true;

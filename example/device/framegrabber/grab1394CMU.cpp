@@ -133,7 +133,7 @@ bool getOptions(int argc, const char **argv, bool &display, unsigned int &nframe
       display = false;
       break;
     case 'n':
-      nframes = (unsigned int)atoi(optarg_);
+      nframes = static_cast<unsigned int>(atoi(optarg_));
       break;
     case 'o':
       save = true;

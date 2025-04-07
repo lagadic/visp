@@ -121,10 +121,10 @@ void vpMbtDistanceKltCylinder::init(const vpKltOpencv &_tracker, const vpHomogen
     bool add = false;
 
     if (useScanLine) {
-      if ((unsigned int)y_tmp < hiddenface->getMbScanLineRenderer().getPrimitiveIDs().getHeight() &&
-          (unsigned int)x_tmp < hiddenface->getMbScanLineRenderer().getPrimitiveIDs().getWidth()) {
+      if (static_cast<unsigned int>(y_tmp) < hiddenface->getMbScanLineRenderer().getPrimitiveIDs().getHeight() &&
+          static_cast<unsigned int>(x_tmp) < hiddenface->getMbScanLineRenderer().getPrimitiveIDs().getWidth()) {
         for (unsigned int kc = 0; kc < listIndicesCylinderBBox.size(); kc++)
-          if (hiddenface->getMbScanLineRenderer().getPrimitiveIDs()[(unsigned int)y_tmp][(unsigned int)x_tmp] ==
+          if (hiddenface->getMbScanLineRenderer().getPrimitiveIDs()[static_cast<unsigned int>(y_tmp)][static_cast<unsigned int>(x_tmp)] ==
               listIndicesCylinderBBox[kc]) {
             add = true;
             break;
@@ -381,11 +381,11 @@ void vpMbtDistanceKltCylinder::updateMask(
   int height = mask.rows;
 
   for (unsigned int kc = 0; kc < listIndicesCylinderBBox.size(); kc++) {
-    if ((*hiddenface)[(unsigned int)listIndicesCylinderBBox[kc]]->isVisible() &&
-        (*hiddenface)[(unsigned int)listIndicesCylinderBBox[kc]]->getNbPoint() > 2) {
+    if ((*hiddenface)[static_cast<unsigned int>(listIndicesCylinderBBox[kc])]->isVisible() &&
+        (*hiddenface)[static_cast<unsigned int>(listIndicesCylinderBBox[kc])]->getNbPoint() > 2) {
       int i_min, i_max, j_min, j_max;
       std::vector<vpImagePoint> roi;
-      (*hiddenface)[(unsigned int)listIndicesCylinderBBox[kc]]->getRoiClipped(cam, roi);
+      (*hiddenface)[static_cast<unsigned int>(listIndicesCylinderBBox[kc])]->getRoiClipped(cam, roi);
 
       double shiftBorder_d = (double)shiftBorder;
 #if defined(VISP_HAVE_CLIPPER)

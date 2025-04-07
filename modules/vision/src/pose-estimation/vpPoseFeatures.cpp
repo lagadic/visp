@@ -50,43 +50,43 @@ vpPoseFeatures::~vpPoseFeatures() { clear(); }
 void vpPoseFeatures::clear()
 {
   for (int i = (int)m_featurePoint_Point_list.size() - 1; i >= 0; i--)
-    delete m_featurePoint_Point_list[(unsigned int)i].desiredFeature;
+    delete m_featurePoint_Point_list[static_cast<unsigned int>(i)].desiredFeature;
   m_featurePoint_Point_list.clear();
 
   for (int i = (int)m_featurePoint3D_Point_list.size() - 1; i >= 0; i--)
-    delete m_featurePoint3D_Point_list[(unsigned int)i].desiredFeature;
+    delete m_featurePoint3D_Point_list[static_cast<unsigned int>(i)].desiredFeature;
   m_featurePoint3D_Point_list.clear();
 
   for (int i = (int)m_featureVanishingPoint_Point_list.size() - 1; i >= 0; i--)
-    delete m_featureVanishingPoint_Point_list[(unsigned int)i].desiredFeature;
+    delete m_featureVanishingPoint_Point_list[static_cast<unsigned int>(i)].desiredFeature;
   m_featureVanishingPoint_Point_list.clear();
 
   for (int i = (int)m_featureVanishingPoint_DuoLine_list.size() - 1; i >= 0; i--)
-    delete m_featureVanishingPoint_DuoLine_list[(unsigned int)i].desiredFeature;
+    delete m_featureVanishingPoint_DuoLine_list[static_cast<unsigned int>(i)].desiredFeature;
   m_featureVanishingPoint_DuoLine_list.clear();
 
   for (int i = (int)m_featureEllipse_Sphere_list.size() - 1; i >= 0; i--)
-    delete m_featureEllipse_Sphere_list[(unsigned int)i].desiredFeature;
+    delete m_featureEllipse_Sphere_list[static_cast<unsigned int>(i)].desiredFeature;
   m_featureEllipse_Sphere_list.clear();
 
   for (int i = (int)m_featureEllipse_Circle_list.size() - 1; i >= 0; i--)
-    delete m_featureEllipse_Circle_list[(unsigned int)i].desiredFeature;
+    delete m_featureEllipse_Circle_list[static_cast<unsigned int>(i)].desiredFeature;
   m_featureEllipse_Circle_list.clear();
 
   for (int i = (int)m_featureLine_Line_list.size() - 1; i >= 0; i--)
-    delete m_featureLine_Line_list[(unsigned int)i].desiredFeature;
+    delete m_featureLine_Line_list[static_cast<unsigned int>(i)].desiredFeature;
   m_featureLine_Line_list.clear();
 
   for (int i = (int)m_featureLine_DuoLineInt_List.size() - 1; i >= 0; i--)
-    delete m_featureLine_DuoLineInt_List[(unsigned int)i].desiredFeature;
+    delete m_featureLine_DuoLineInt_List[static_cast<unsigned int>(i)].desiredFeature;
   m_featureLine_DuoLineInt_List.clear();
 
   for (int i = (int)m_featureSegment_DuoPoints_list.size() - 1; i >= 0; i--)
-    delete m_featureSegment_DuoPoints_list[(unsigned int)i].desiredFeature;
+    delete m_featureSegment_DuoPoints_list[static_cast<unsigned int>(i)].desiredFeature;
   m_featureSegment_DuoPoints_list.clear();
 
   for (int i = (int)m_featureSpecific_list.size() - 1; i >= 0; i--)
-    delete m_featureSpecific_list[(unsigned int)i];
+    delete m_featureSpecific_list[static_cast<unsigned int>(i)];
   m_featureSpecific_list.clear();
 
   m_maxSize = 0;
@@ -102,7 +102,7 @@ void vpPoseFeatures::addFeaturePoint(const vpPoint &p)
 
   m_totalSize++;
   if (m_featurePoint_Point_list.size() > m_maxSize)
-    m_maxSize = (unsigned int)m_featurePoint_Point_list.size();
+    m_maxSize = static_cast<unsigned int>(m_featurePoint_Point_list.size());
 }
 
 void vpPoseFeatures::addFeaturePoint3D(const vpPoint &p)
@@ -114,7 +114,7 @@ void vpPoseFeatures::addFeaturePoint3D(const vpPoint &p)
 
   m_totalSize++;
   if (m_featurePoint3D_Point_list.size() > m_maxSize)
-    m_maxSize = (unsigned int)m_featurePoint3D_Point_list.size();
+    m_maxSize = static_cast<unsigned int>(m_featurePoint3D_Point_list.size());
 }
 
 void vpPoseFeatures::addFeatureVanishingPoint(const vpPoint &p)
@@ -126,7 +126,7 @@ void vpPoseFeatures::addFeatureVanishingPoint(const vpPoint &p)
 
   m_totalSize++;
   if (m_featureVanishingPoint_Point_list.size() > m_maxSize)
-    m_maxSize = (unsigned int)m_featureVanishingPoint_Point_list.size();
+    m_maxSize = static_cast<unsigned int>(m_featureVanishingPoint_Point_list.size());
 }
 
 void vpPoseFeatures::addFeatureVanishingPoint(const vpLine &l1, const vpLine &l2)
@@ -139,7 +139,7 @@ void vpPoseFeatures::addFeatureVanishingPoint(const vpLine &l1, const vpLine &l2
 
   m_totalSize++;
   if (m_featureVanishingPoint_DuoLine_list.size() > m_maxSize)
-    m_maxSize = (unsigned int)m_featureVanishingPoint_DuoLine_list.size();
+    m_maxSize = static_cast<unsigned int>(m_featureVanishingPoint_DuoLine_list.size());
 }
 
 void vpPoseFeatures::addFeatureEllipse(const vpSphere &s)
@@ -151,7 +151,7 @@ void vpPoseFeatures::addFeatureEllipse(const vpSphere &s)
 
   m_totalSize++;
   if (m_featureEllipse_Sphere_list.size() > m_maxSize)
-    m_maxSize = (unsigned int)m_featureEllipse_Sphere_list.size();
+    m_maxSize = static_cast<unsigned int>(m_featureEllipse_Sphere_list.size());
 }
 
 void vpPoseFeatures::addFeatureEllipse(const vpCircle &c)
@@ -163,7 +163,7 @@ void vpPoseFeatures::addFeatureEllipse(const vpCircle &c)
 
   m_totalSize++;
   if (m_featureEllipse_Circle_list.size() > m_maxSize)
-    m_maxSize = (unsigned int)m_featureEllipse_Circle_list.size();
+    m_maxSize = static_cast<unsigned int>(m_featureEllipse_Circle_list.size());
 }
 
 void vpPoseFeatures::addFeatureLine(const vpLine &l)
@@ -175,7 +175,7 @@ void vpPoseFeatures::addFeatureLine(const vpLine &l)
 
   m_totalSize++;
   if (m_featureLine_Line_list.size() > m_maxSize)
-    m_maxSize = (unsigned int)m_featureLine_Line_list.size();
+    m_maxSize = static_cast<unsigned int>(m_featureLine_Line_list.size());
 }
 
 void vpPoseFeatures::addFeatureLine(const vpCylinder &c, const int &line)
@@ -188,7 +188,7 @@ void vpPoseFeatures::addFeatureLine(const vpCylinder &c, const int &line)
 
   m_totalSize++;
   if (m_featureLine_DuoLineInt_List.size() > m_maxSize)
-    m_maxSize = (unsigned int)m_featureLine_DuoLineInt_List.size();
+    m_maxSize = static_cast<unsigned int>(m_featureLine_DuoLineInt_List.size());
 }
 
 void vpPoseFeatures::addFeatureSegment(vpPoint &P1, vpPoint &P2)
@@ -201,7 +201,7 @@ void vpPoseFeatures::addFeatureSegment(vpPoint &P1, vpPoint &P2)
 
   m_totalSize++;
   if (m_featureSegment_DuoPoints_list.size() > m_maxSize)
-    m_maxSize = (unsigned int)m_featureSegment_DuoPoints_list.size();
+    m_maxSize = static_cast<unsigned int>(m_featureSegment_DuoPoints_list.size());
 }
 
 void vpPoseFeatures::error_and_interaction(vpHomogeneousMatrix &cMo, vpColVector &err, vpMatrix &L)

@@ -361,7 +361,7 @@ template <typename T> void vpMbtTukeyEstimator<T>::psiTukey(const T sig, std::ve
   double C = sig * 4.6851;
 
   // Here we consider that sig cannot be equal to 0
-  for (unsigned int i = 0; i < (unsigned int)x.size(); i++) {
+  for (unsigned int i = 0; i < static_cast<unsigned int>(x.size()); i++) {
     double xi = x[i] / C;
     xi *= xi;
 
@@ -395,7 +395,7 @@ inline void vpMbtTukeyEstimator<double>::MEstimator(const vpColVector &residues,
 
   m_normres.resize(residues.size());
   for (size_t i = 0; i < m_residues.size(); i++) {
-    m_normres[i] = std::fabs(residues[(unsigned int)i] - med);
+    m_normres[i] = std::fabs(residues[static_cast<unsigned int>(i)] - med);
   }
 
   m_residues = m_normres;
@@ -434,7 +434,7 @@ inline void vpMbtTukeyEstimator<float>::MEstimator(const vpColVector &residues, 
 
   m_normres.resize(residues.size());
   for (size_t i = 0; i < m_residues.size(); i++) {
-    m_normres[i] = (float)std::fabs(residues[(unsigned int)i] - med);
+    m_normres[i] = (float)std::fabs(residues[static_cast<unsigned int>(i)] - med);
   }
 
   m_residues = m_normres;

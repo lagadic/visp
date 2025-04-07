@@ -1140,42 +1140,42 @@ void vpOccipitalStructure::getColoredPointcloud(pcl::PointCloud<pcl::PointXYZRGB
 #endif
         }
         else {
-          unsigned int i_ = (unsigned int)color_pixel.x;
-          unsigned int j_ = (unsigned int)color_pixel.y;
+          unsigned int i_ = static_cast<unsigned int>(color_pixel.x);
+          unsigned int j_ = static_cast<unsigned int>(color_pixel.y);
 
 #if PCL_VERSION_COMPARE(<, 1, 1, 0)
           uint32_t rgb = 0;
           if (swap_rb) {
             rgb =
-              (static_cast<uint32_t>(p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel]) |
-               static_cast<uint32_t>(p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel + 1]) << 8 |
-               static_cast<uint32_t>(p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel + 2])
+              (static_cast<uint32_t>(p_color_frame[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel]) |
+               static_cast<uint32_t>(p_color_frame[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel + 1]) << 8 |
+               static_cast<uint32_t>(p_color_frame[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel + 2])
                    << 16);
           }
           else {
             rgb =
-              (static_cast<uint32_t>(p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel]) << 16 |
-               static_cast<uint32_t>(p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel + 1]) << 8 |
-               static_cast<uint32_t>(p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel + 2]));
+              (static_cast<uint32_t>(p_color_frame[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel]) << 16 |
+               static_cast<uint32_t>(p_color_frame[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel + 1]) << 8 |
+               static_cast<uint32_t>(p_color_frame[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel + 2]));
           }
 
           pointcloud->points[(size_t)(i * depth_width + j)].rgb = *reinterpret_cast<float *>(&rgb);
 #else
           if (swap_rb) {
             pointcloud->points[(size_t)depth_pixel_index].b =
-              p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel];
+              p_color_frame[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel];
             pointcloud->points[(size_t)depth_pixel_index].g =
-              p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel + 1];
+              p_color_frame[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel + 1];
             pointcloud->points[(size_t)depth_pixel_index].r =
-              p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel + 2];
+              p_color_frame[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel + 2];
           }
           else {
             pointcloud->points[(size_t)depth_pixel_index].r =
-              p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel];
+              p_color_frame[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel];
             pointcloud->points[(size_t)depth_pixel_index].g =
-              p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel + 1];
+              p_color_frame[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel + 1];
             pointcloud->points[(size_t)depth_pixel_index].b =
-              p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel + 2];
+              p_color_frame[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel + 2];
           }
 #endif
         }
@@ -1184,33 +1184,33 @@ void vpOccipitalStructure::getColoredPointcloud(pcl::PointCloud<pcl::PointXYZRGB
 #if PCL_VERSION_COMPARE(<, 1, 1, 0)
         uint32_t rgb = 0;
         if (swap_rb) {
-          rgb = (static_cast<uint32_t>(p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel]) |
-                 static_cast<uint32_t>(p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel + 1]) << 8 |
-                 static_cast<uint32_t>(p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel + 2]) << 16);
+          rgb = (static_cast<uint32_t>(p_color_frame[(i * static_cast<unsigned int>(color_width) + j) * nb_color_pixel]) |
+                 static_cast<uint32_t>(p_color_frame[(i * static_cast<unsigned int>(color_width) + j) * nb_color_pixel + 1]) << 8 |
+                 static_cast<uint32_t>(p_color_frame[(i * static_cast<unsigned int>(color_width) + j) * nb_color_pixel + 2]) << 16);
         }
         else {
-          rgb = (static_cast<uint32_t>(p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel]) << 16 |
-                 static_cast<uint32_t>(p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel + 1]) << 8 |
-                 static_cast<uint32_t>(p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel + 2]));
+          rgb = (static_cast<uint32_t>(p_color_frame[(i * static_cast<unsigned int>(color_width) + j) * nb_color_pixel]) << 16 |
+                 static_cast<uint32_t>(p_color_frame[(i * static_cast<unsigned int>(color_width) + j) * nb_color_pixel + 1]) << 8 |
+                 static_cast<uint32_t>(p_color_frame[(i * static_cast<unsigned int>(color_width) + j) * nb_color_pixel + 2]));
         }
 
         pointcloud->points[(size_t)(i * depth_width + j)].rgb = *reinterpret_cast<float *>(&rgb);
 #else
         if (swap_rb) {
           pointcloud->points[(size_t)depth_pixel_index].b =
-            p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel];
+            p_color_frame[(i * static_cast<unsigned int>(color_width) + j) * nb_color_pixel];
           pointcloud->points[(size_t)depth_pixel_index].g =
-            p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel + 1];
+            p_color_frame[(i * static_cast<unsigned int>(color_width) + j) * nb_color_pixel + 1];
           pointcloud->points[(size_t)depth_pixel_index].r =
-            p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel + 2];
+            p_color_frame[(i * static_cast<unsigned int>(color_width) + j) * nb_color_pixel + 2];
         }
         else {
           pointcloud->points[(size_t)depth_pixel_index].r =
-            p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel];
+            p_color_frame[(i * static_cast<unsigned int>(color_width) + j) * nb_color_pixel];
           pointcloud->points[(size_t)depth_pixel_index].g =
-            p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel + 1];
+            p_color_frame[(i * static_cast<unsigned int>(color_width) + j) * nb_color_pixel + 1];
           pointcloud->points[(size_t)depth_pixel_index].b =
-            p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel + 2];
+            p_color_frame[(i * static_cast<unsigned int>(color_width) + j) * nb_color_pixel + 2];
         }
 #endif
       }

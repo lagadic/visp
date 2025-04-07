@@ -150,9 +150,9 @@ double vpTemplateTrackerMI::getCost(const vpImage<unsigned char> &I, const vpCol
   int Nbpoint = 0;
   double IW;
 
-  unsigned int Ncb_ = (unsigned int)Ncb;
-  unsigned int Nc_ = (unsigned int)Nc;
-  unsigned int influBspline_ = (unsigned int)influBspline;
+  unsigned int Ncb_ = static_cast<unsigned int>(Ncb);
+  unsigned int Nc_ = static_cast<unsigned int>(Nc);
+  unsigned int influBspline_ = static_cast<unsigned int>(influBspline);
 
   memset(Prt, 0, Ncb_ * Ncb_ * sizeof(double));
   memset(PrtD, 0, Nc_ * Nc_ * influBspline_ * sizeof(double));
@@ -382,7 +382,7 @@ void vpTemplateTrackerMI::computeProba(int &nbpoint)
 
 void vpTemplateTrackerMI::computeMI(double &MI)
 {
-  unsigned int Ncb_ = (unsigned int)Ncb;
+  unsigned int Ncb_ = static_cast<unsigned int>(Ncb);
 
   // Compute Pr and Pt
   memset(Pr, 0, Ncb_ * sizeof(double));

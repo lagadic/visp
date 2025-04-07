@@ -398,7 +398,7 @@ double vpRobust::computeNormalizedMedian(vpColVector &all_normres, const vpColVe
   // Be careful to not use the rejected residues for the
   // calculation.
 
-  unsigned int ind_med = (unsigned int)(ceil(n_data / 2.0)) - 1;
+  unsigned int ind_med = static_cast<unsigned int>(ceil(n_data / 2.0)) - 1;
   med = select(m_sorted_residues, 0, n_data - 1, ind_med);
 
   // Normalize residues
@@ -430,7 +430,7 @@ vpColVector vpRobust::simultMEstimator(vpColVector &residues)
   vpColVector w(n_data);
 
   // Calculate Median
-  unsigned int ind_med = (unsigned int)(ceil(n_data / 2.0)) - 1;
+  unsigned int ind_med = static_cast<unsigned int>(ceil(n_data / 2.0)) - 1;
   med = select(residues, 0, n_data - 1, ind_med /*(int)n_data/2*/);
 
   // Normalize residues

@@ -115,10 +115,10 @@ int main(int argc, const char *argv[])
   // Command line options
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--camera-device" && i + 1 < argc) {
-      opt_device = (unsigned int)atoi(argv[++i]);
+      opt_device = static_cast<unsigned int>(atoi(argv[++i]));
     }
     else if (std::string(argv[i]) == "--scale" && i + 1 < argc) {
-      opt_scale = (unsigned int)atoi(argv[++i]);
+      opt_scale = static_cast<unsigned int>(atoi(argv[++i]));
     }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "--h") {
       std::cout << "Usage: " << argv[0]

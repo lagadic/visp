@@ -618,7 +618,7 @@ void vpImageDraw::drawEllipse(vpImage<unsigned char> &I, const vpImagePoint &cen
   double t = (a - b) / (a + b);
   t *= t; // t^2
   double circumference = (angle / 2.0) * (a + b) * (1.0 + 3.0 * t / (10.0 + sqrt(4.0 - 3.0 * t)));
-  unsigned int nbpoints = (unsigned int)(floor(circumference / 20));
+  unsigned int nbpoints = static_cast<unsigned int>(floor(circumference / 20));
   if (nbpoints < 10) {
     nbpoints = 10;
   }
@@ -742,7 +742,7 @@ void vpImageDraw::drawEllipse(vpImage<vpRGBa> &I, const vpImagePoint &center, do
   double t = (a - b) / (a + b);
   t *= t; // t^2
   double circumference = (angle / 2.0) * (a + b) * (1.0 + 3.0 * t / (10.0 + sqrt(4.0 - 3.0 * t)));
-  unsigned int nbpoints = (unsigned int)(floor(circumference / 20));
+  unsigned int nbpoints = static_cast<unsigned int>(floor(circumference / 20));
   if (nbpoints < 10) {
     nbpoints = 10;
   }

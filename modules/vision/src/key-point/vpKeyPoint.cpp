@@ -801,10 +801,10 @@ bool vpKeyPoint::computePose(const std::vector<vpPoint> &objectVpPoints, vpHomog
     pose.addPoint(*it);
   }
 
-  unsigned int nbInlierToReachConsensus = (unsigned int)m_nbRansacMinInlierCount;
+  unsigned int nbInlierToReachConsensus = static_cast<unsigned int>(m_nbRansacMinInlierCount);
   if (m_useConsensusPercentage) {
     nbInlierToReachConsensus =
-      (unsigned int)(m_ransacConsensusPercentage / 100.0 * (double)m_queryFilteredKeyPoints.size());
+      static_cast<unsigned int>(m_ransacConsensusPercentage / 100.0 * (double)m_queryFilteredKeyPoints.size());
   }
 
   pose.setRansacFilterFlag(m_ransacFilterFlag);
@@ -897,7 +897,7 @@ void vpKeyPoint::createImageMatching(vpImage<unsigned char> &ICurrent, vpImage<u
 {
   // Nb images in the training database + the current image we want to detect
   // the object
-  unsigned int nbImg = (unsigned int)(m_mapOfImages.size() + 1);
+  unsigned int nbImg = static_cast<unsigned int>(m_mapOfImages.size() + 1);
 
   if (m_mapOfImages.empty()) {
     std::cerr << "There is no training image loaded !" << std::endl;
@@ -911,7 +911,7 @@ void vpKeyPoint::createImageMatching(vpImage<unsigned char> &ICurrent, vpImage<u
   else {
     // Multiple training images, display them as a mosaic image
     // (unsigned int) std::floor(std::sqrt((double) nbImg) + 0.5);
-    unsigned int nbImgSqrt = (unsigned int)vpMath::round(std::sqrt((double)nbImg));
+    unsigned int nbImgSqrt = static_cast<unsigned int>(vpMath::round(std::sqrt((double)nbImg)));
 
     // Number of columns in the mosaic grid
     unsigned int nbWidth = nbImgSqrt;
@@ -944,7 +944,7 @@ void vpKeyPoint::createImageMatching(vpImage<vpRGBa> &ICurrent, vpImage<vpRGBa> 
 {
   // Nb images in the training database + the current image we want to detect
   // the object
-  unsigned int nbImg = (unsigned int)(m_mapOfImages.size() + 1);
+  unsigned int nbImg = static_cast<unsigned int>(m_mapOfImages.size() + 1);
 
   if (m_mapOfImages.empty()) {
     std::cerr << "There is no training image loaded !" << std::endl;
@@ -958,7 +958,7 @@ void vpKeyPoint::createImageMatching(vpImage<vpRGBa> &ICurrent, vpImage<vpRGBa> 
   else {
     // Multiple training images, display them as a mosaic image
     //(unsigned int) std::floor(std::sqrt((double) nbImg) + 0.5);
-    unsigned int nbImgSqrt = (unsigned int)vpMath::round(std::sqrt((double)nbImg));
+    unsigned int nbImgSqrt = static_cast<unsigned int>(vpMath::round(std::sqrt((double)nbImg)));
 
     // Number of columns in the mosaic grid
     unsigned int nbWidth = nbImgSqrt;
@@ -1120,7 +1120,7 @@ void vpKeyPoint::displayMatching(const vpImage<unsigned char> &IRef, vpImage<uns
                                  unsigned int crossSize, unsigned int lineThickness, const vpColor &color)
 {
   bool randomColor = (color == vpColor::none);
-  srand((unsigned int)time(nullptr));
+  srand(static_cast<unsigned int>(time(nullptr)));
   vpColor currentColor = color;
 
   std::vector<vpImagePoint> queryImageKeyPoints;
@@ -1147,7 +1147,7 @@ void vpKeyPoint::displayMatching(const vpImage<unsigned char> &IRef, vpImage<vpR
                                  unsigned int lineThickness, const vpColor &color)
 {
   bool randomColor = (color == vpColor::none);
-  srand((unsigned int)time(nullptr));
+  srandstatic_cast<unsigned int>(time(nullptr)));
   vpColor currentColor = color;
 
   std::vector<vpImagePoint> queryImageKeyPoints;
@@ -1174,7 +1174,7 @@ void vpKeyPoint::displayMatching(const vpImage<vpRGBa> &IRef, vpImage<vpRGBa> &I
                                  unsigned int lineThickness, const vpColor &color)
 {
   bool randomColor = (color == vpColor::none);
-  srand((unsigned int)time(nullptr));
+  srand(static_cast<unsigned int>(time(nullptr)));
   vpColor currentColor = color;
 
   std::vector<vpImagePoint> queryImageKeyPoints;
@@ -3309,7 +3309,7 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParam
     }
 
     for (size_t i = 0; i < m_queryFilteredKeyPoints.size(); i++) {
-      if (mapOfInlierIndex.find((unsigned int)i) == mapOfInlierIndex.end()) {
+      if (mapOfInlierIndex.find(static_cast<unsigned int>(i)) == mapOfInlierIndex.end()) {
         m_ransacOutliers.push_back(vpImagePoint(m_queryFilteredKeyPoints[i].pt.y, m_queryFilteredKeyPoints[i].pt.x));
       }
     }
@@ -3833,7 +3833,7 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
     vpIoTools::writeBinaryValueLE(file, descriptorType);
 
     for (int i = 0; i < nRows; i++) {
-      unsigned int i_ = (unsigned int)i;
+      unsigned int i_ = static_cast<unsigned int>(i);
       // Write u
       float u = m_trainKeyPoints[i_].pt.x;
       vpIoTools::writeBinaryValueLE(file, u);
@@ -3968,7 +3968,7 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
     descriptors_info_node.append_child("type").append_child(pugi::node_pcdata).text() = descriptorType;
 
     for (int i = 0; i < nRows; i++) {
-      unsigned int i_ = (unsigned int)i;
+      unsigned int i_ = static_cast<unsigned int>(i);
       pugi::xml_node descriptor_node = root_node.append_child("DescriptorInfo");
 
       descriptor_node.append_child("u").append_child(pugi::node_pcdata).text() = m_trainKeyPoints[i_].pt.x;

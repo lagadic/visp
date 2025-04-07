@@ -585,7 +585,7 @@ void vpV4l2Grabber::acquire(vpImage<unsigned char> &I, struct timeval &timestamp
   if (roi == vpRect())
     I.resize(height, width);
   else
-    I.resize((unsigned int)roi.getHeight(), (unsigned int)roi.getWidth());
+    I.resize(static_cast<unsigned int>(roi.getHeight()), static_cast<unsigned int>(roi.getWidth()));
   switch (m_pixelformat) {
   case V4L2_GREY_FORMAT:
     if (roi == vpRect())
@@ -711,7 +711,7 @@ void vpV4l2Grabber::acquire(vpImage<vpRGBa> &I, struct timeval &timestamp, const
   if (roi == vpRect())
     I.resize(height, width);
   else
-    I.resize((unsigned int)roi.getHeight(), (unsigned int)roi.getWidth());
+    I.resize(static_cast<unsigned int>(roi.getHeight()), static_cast<unsigned int>(roi.getWidth()));
 
   // The framegrabber acquire aRGB format. We just shift the data from 1 byte
   // all the data and initialize the last byte
@@ -743,7 +743,7 @@ void vpV4l2Grabber::acquire(vpImage<vpRGBa> &I, struct timeval &timestamp, const
     else {
       for (unsigned int i = 0; i < I.getHeight(); i++) {
         memcpy(static_cast<void *>(I.bitmap),
-          static_cast<void *>(bitmap + 1 + (unsigned int)(roi.getTop() * width + roi.getLeft())),
+          static_cast<void *>(bitmap + 1 + static_cast<unsigned int>(roi.getTop() * width + roi.getLeft())),
           I.getWidth() * sizeof(vpRGBa) - 1);
         I[i][I.getWidth() - 1].A = 0;
       }

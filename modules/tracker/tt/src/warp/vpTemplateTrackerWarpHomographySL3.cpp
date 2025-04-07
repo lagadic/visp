@@ -52,8 +52,8 @@ BEGIN_VISP_NAMESPACE
  * \param nb_pt : Number of points.
  * \param p : Resulting warping function parameters.
  */
-void vpTemplateTrackerWarpHomographySL3::findWarp(const double *ut0, const double *vt0, const double *u,
-                                                  const double *v, int nb_pt, vpColVector &p)
+  void vpTemplateTrackerWarpHomographySL3::findWarp(const double *ut0, const double *vt0, const double *u,
+                                                    const double *v, int nb_pt, vpColVector &p)
 {
   vpColVector dp(nbParam);
   vpMatrix dW_(2, nbParam);
@@ -62,7 +62,7 @@ void vpTemplateTrackerWarpHomographySL3::findWarp(const double *ut0, const doubl
   vpMatrix G_(nbParam, 1);
 
   // vpMatrix *dW_ddp0=new vpMatrix[nb_pt];
-  double **dW_ddp0 = new double *[(unsigned int)nb_pt];
+  double **dW_ddp0 = new double static_cast<unsigned int>(nb_pt)];
   for (int i = 0; i < nb_pt; i++) {
     // dW_ddp0[i].resize(2,nbParam);
     dW_ddp0[i] = new double[2 * nbParam];

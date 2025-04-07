@@ -318,9 +318,9 @@ void vp1394TwoGrabber::setCamera(uint64_t cam_id)
     }
   }
   else {
-    this->camera_id = (unsigned int)cam_id; // The input cam_id is not a
-                                            // uint64_t guid, but the index of
-                                            // the camera
+    this->camera_id = static_cast<unsigned int>(cam_id);  // The input cam_id is not a
+                                                          // uint64_t guid, but the index of
+                                                          // the camera
   }
 
   // create a pointer to the working camera
@@ -3227,7 +3227,7 @@ unsigned int vp1394TwoGrabber::getParameterValue(vp1394TwoParametersType param)
     close();
     throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Unable to get the information"));
   }
-  return (unsigned int)value;
+  returnstatic_cast<unsigned int>(value);
 }
 
 /*!

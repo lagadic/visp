@@ -114,8 +114,8 @@ void findAngle(const vpImage<unsigned char> &I, const vpImagePoint &iP, vpMe *me
       else
         throw(vpException(vpException::divideByZeroError, "angle step = 0"));
 
-      unsigned int ihalf = (unsigned int)(iP.get_i() - half);
-      unsigned int jhalf = (unsigned int)(iP.get_j() - half);
+      unsigned int ihalf = static_cast<unsigned int>(iP.get_i() - half);
+      unsigned int jhalf = static_cast<unsigned int>(iP.get_j() - half);
       unsigned int a;
       unsigned int b;
       for (a = 0; a < me->getMaskSize(); a++) {
@@ -974,7 +974,7 @@ bool vpMeNurbs::hasGoodLevel(const vpImage<unsigned char> &I, const vpImagePoint
   if (!isInImage(I, iP))
     return false;
 
-  if (I((unsigned int)vpMath::round(iP.get_i()), (unsigned int)vpMath::round(iP.get_j())) > 0) {
+  if (I(static_cast<unsigned int>(vpMath::round(iP.get_i())), static_cast<unsigned int>(vpMath::round(iP.get_j()))) > 0) {
     return true;
   }
   else {

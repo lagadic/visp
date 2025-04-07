@@ -475,7 +475,7 @@ void vpFlyCaptureGrabber::setProperty(const FlyCapture2::PropertyType &prop_type
     }
     case VALUE_A: {
       unsigned int value_ =
-        std::max<unsigned int>(std::min<unsigned int>((unsigned int)value, (unsigned int)propInfo.max), (unsigned int)propInfo.min);
+        std::max<unsigned int>(std::min<unsigned int>(static_cast<unsigned int>(value), static_cast<unsigned int>(propInfo.max)), static_cast<unsigned int>(propInfo.min));
       prop.valueA = value_;
       break;
     }

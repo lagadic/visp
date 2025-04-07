@@ -362,7 +362,7 @@ void vpMbtMeLine::computeProjectionError(const vpImage<unsigned char> &I, double
             jImg = I.getWidth() - 1;
           }
 
-          gradientX += SobelX[i][j] * I((unsigned int)iImg, (unsigned int)jImg);
+          gradientX += SobelX[i][j] * I(static_cast<unsigned int>(iImg), static_cast<unsigned int>jImg));
         }
       }
 
@@ -381,7 +381,7 @@ void vpMbtMeLine::computeProjectionError(const vpImage<unsigned char> &I, double
           if (jImg > I.getWidth() - 1)
             jImg = I.getWidth() - 1;
 
-          gradientY += SobelY[i][j] * I((unsigned int)iImg, (unsigned int)jImg);
+          gradientY += SobelY[i][j] * I(static_cast<unsigned int>(iImg), static_cast<unsigned int>jImg));
         }
       }
 

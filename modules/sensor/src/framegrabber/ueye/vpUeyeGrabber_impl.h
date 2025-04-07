@@ -176,7 +176,7 @@ public:
   unsigned int size()
   {
     if (m_pCamList) {
-      return (unsigned int)m_pCamList->dwCount;
+      return static_cast<unsigned int>(m_pCamList->dwCount);
     }
     else {
       return 0;
@@ -193,7 +193,7 @@ END_VISP_NAMESPACE
  **********************************************************************************************
  */
 
-namespace helper
+  namespace helper
 {
 class LockUnlockSeqBuffer
 {

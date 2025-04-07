@@ -361,13 +361,13 @@ public:
     double orig = ip1_.get_i() - slope * ip1_.get_j();
 
     if (vertical_line) {
-      for (unsigned int i = (unsigned int)ip1_.get_i(); i < ip2_.get_i(); i += (unsigned int)(2 * deltai)) {
+      for (unsigned int i = static_cast<unsigned int>(ip1_.get_i()); i < ip2_.get_i(); i += static_cast<unsigned int>(2 * deltai)) {
         double j = ip1_.get_j();
         displayLine(vpImagePoint(i, j), vpImagePoint(i + deltai, j), color, thickness, scale);
       }
     }
     else {
-      for (unsigned int j = (unsigned int)ip1_.get_j(); j < ip2_.get_j(); j += (unsigned int)(2 * deltaj)) {
+      for (unsigned int j = static_cast<unsigned int>(p1_.get_j()); j < ip2_.get_j(); j += static_cast<unsigned int>(2 * deltaj)) {
         double i = slope * j + orig;
         displayLine(vpImagePoint(i, j), vpImagePoint(i + deltai, j + deltaj), color, thickness, scale);
       }
@@ -454,8 +454,8 @@ public:
     }
 
     if (scale == 1) {
-      unsigned int i_min = (unsigned int)iP.get_i();
-      unsigned int j_min = (unsigned int)iP.get_j();
+      unsigned int i_min = static_cast<unsigned int>(iP.get_i());
+      unsigned int j_min = static_cast<unsigned int>(iP.get_j());
       unsigned int i_max = std::min<unsigned int>(i_min + h, imgHeight);
       unsigned int j_max = std::min<unsigned int>(j_min + w, imgWidth);
       for (unsigned int i = i_min; i < i_max; i++) {
@@ -496,8 +496,8 @@ public:
     }
 
     if (scale == 1) {
-      unsigned int i_min = (unsigned int)iP.get_i();
-      unsigned int j_min = (unsigned int)iP.get_j();
+      unsigned int i_min = static_cast<unsigned int>(iP.get_i());
+      unsigned int j_min = static_cast<unsigned int>(iP.get_j());
       unsigned int i_max = std::min<unsigned int>(i_min + h, imgHeight);
       unsigned int j_max = std::min<unsigned int>(j_min + w, imgWidth);
       for (unsigned int i = i_min; i < i_max; i++) {
@@ -632,8 +632,8 @@ public:
     do {
       if (lbuttondown) {
         ret = true;
-        u = (unsigned int)x_lbuttondown * scale;
-        v = (unsigned int)y_lbuttondown * scale;
+        u = static_cast<unsigned int>(x_lbuttondown) * scale;
+        v = static_cast<unsigned int>(y_lbuttondown) * scale;
         ip.set_u(u);
         ip.set_v(v);
         button = vpMouseButton::button1;
@@ -641,8 +641,8 @@ public:
       }
       if (mbuttondown) {
         ret = true;
-        u = (unsigned int)x_mbuttondown * scale;
-        v = (unsigned int)y_mbuttondown * scale;
+        u = static_cast<unsigned int>(x_mbuttondown) * scale;
+        v = static_cast<unsigned int>(y_mbuttondown) * scale;
         ip.set_u(u);
         ip.set_v(v);
         button = vpMouseButton::button2;
@@ -650,8 +650,8 @@ public:
       }
       if (rbuttondown) {
         ret = true;
-        u = (unsigned int)x_rbuttondown * scale;
-        v = (unsigned int)y_rbuttondown * scale;
+        u = static_cast<unsigned int>(x_rbuttondown) * scale;
+        v = static_cast<unsigned int>(y_rbuttondown) * scale;
         ip.set_u(u);
         ip.set_v(v);
         button = vpMouseButton::button3;
@@ -676,8 +676,8 @@ public:
     do {
       if (lbuttonup) {
         ret = true;
-        u = (unsigned int)x_lbuttonup * scale;
-        v = (unsigned int)y_lbuttonup * scale;
+        u = static_cast<unsigned int>(x_lbuttonup) * scale;
+        v = static_cast<unsigned int>(y_lbuttonup) * scale;
         ip.set_u(u);
         ip.set_v(v);
         button = vpMouseButton::button1;
@@ -685,8 +685,8 @@ public:
       }
       if (mbuttonup) {
         ret = true;
-        u = (unsigned int)x_mbuttonup * scale;
-        v = (unsigned int)y_mbuttonup * scale;
+        u = static_cast<unsigned int>(x_mbuttonup) * scale;
+        v = static_cast<unsigned int>(y_mbuttonup) * scale;
         ip.set_u(u);
         ip.set_v(v);
         button = vpMouseButton::button2;
@@ -694,8 +694,8 @@ public:
       }
       if (rbuttonup) {
         ret = true;
-        u = (unsigned int)x_rbuttonup * scale;
-        v = (unsigned int)y_rbuttonup * scale;
+        u = static_cast<unsigned int>(x_rbuttonup) * scale;
+        v = static_cast<unsigned int>(y_rbuttonup) * scale;
         ip.set_u(u);
         ip.set_v(v);
         button = vpMouseButton::button3;
@@ -713,8 +713,8 @@ public:
     bool ret = false;
     if (move) {
       ret = true;
-      double u = (unsigned int)x_move / scale;
-      double v = (unsigned int)y_move / scale;
+      double u = static_cast<unsigned int>(x_move) / scale;
+      double v = static_cast<unsigned int>(y_move) / scale;
       ip.set_u(u);
       ip.set_v(v);
       move = false;
@@ -727,8 +727,8 @@ public:
     bool moved = getPointerMotionEvent(ip, scale);
     if (!moved) {
       double u, v;
-      u = (unsigned int)x_move / scale;
-      v = (unsigned int)y_move / scale;
+      u = static_cast<unsigned int>(x_move) / scale;
+      v = static_cast<unsigned int>(y_move) / scale;
       ip.set_u(u);
       ip.set_v(v);
     }

@@ -164,8 +164,8 @@ void drawLine(vpImage<unsigned char> &I, const unsigned char value, const vpImag
     vpImagePoint currentPt(y, x);
     currentPt = switchFromOctantZeroTo(octant, currentPt);
 
-    unsigned int i = std::min<unsigned int>(I.getHeight() - 1, (unsigned int)std::max<double>(0.0, currentPt.get_i()));
-    unsigned int j = std::min<unsigned int>(I.getWidth() - 1, (unsigned int)std::max<double>(0.0, currentPt.get_j()));
+    unsigned int i = std::min<unsigned int>(I.getHeight() - 1, static_cast<unsigned int>(std::max<double>(0.0, currentPt.get_i())));
+    unsigned int j = std::min<unsigned int>(I.getWidth() - 1, static_cast<unsigned int>(std::max<double>(0.0, currentPt.get_j())));
     I[i][j] = value;
 
     if (D >= 0) {

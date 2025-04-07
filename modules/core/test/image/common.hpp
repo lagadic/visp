@@ -536,7 +536,7 @@ void imageDilatationRef(vpImage<unsigned char> &I,
 
 void magicSquare(vpImage<unsigned char> &magic_square, int N)
 {
-  magic_square.resize((unsigned int)N, (unsigned int)N, 0);
+  magic_square.resize(static_cast<unsigned int>(N), static_cast<unsigned int>(N), 0);
 
   int n = 1;
   int i = 0, j = N / 2;

@@ -101,7 +101,7 @@ template <typename Type> bool test(const std::string &display, vpImage<Type> &I,
   vpDisplay::flush(I);
 
   vpImage<Type> crop;
-  vpImageTools::crop(I, vpImagePoint(0, 245), (unsigned int)roi.getHeight(), (unsigned int)roi.getWidth(), crop);
+  vpImageTools::crop(I, vpImagePoint(0, 245), static_cast<unsigned int>(roi.getHeight()), static_cast<unsigned int>(roi.getWidth()), crop);
   I.insert(crop, roi.getTopLeft());
   vpDisplay::displayROI(I, roi);
   vpDisplay::flush(I);

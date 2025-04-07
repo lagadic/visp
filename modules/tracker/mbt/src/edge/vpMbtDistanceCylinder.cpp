@@ -345,8 +345,8 @@ void vpMbtDistanceCylinder::trackMovingEdge(const vpImage<unsigned char> &I, con
     }
 
     // Update the number of features
-    nbFeaturel1 = (unsigned int)meline1->getMeList().size();
-    nbFeaturel2 = (unsigned int)meline2->getMeList().size();
+    nbFeaturel1 = static_cast<unsigned int>(meline1->getMeList().size());
+    nbFeaturel2 = static_cast<unsigned int>(meline2->getMeList().size());
     nbFeature = nbFeaturel1 + nbFeaturel2;
   }
 }
@@ -484,8 +484,8 @@ void vpMbtDistanceCylinder::updateMovingEdge(const vpImage<unsigned char> &I, co
     }
 
     // Update the numbers of features
-    nbFeaturel1 = (unsigned int)meline1->getMeList().size();
-    nbFeaturel2 = (unsigned int)meline2->getMeList().size();
+    nbFeaturel1 = static_cast<unsigned int>(meline1->getMeList().size());
+    nbFeaturel2 = static_cast<unsigned int>(meline2->getMeList().size());
     nbFeature = nbFeaturel1 + nbFeaturel2;
   }
 }
@@ -762,8 +762,8 @@ void vpMbtDistanceCylinder::displayMovingEdges(const vpImage<vpRGBa> &I)
 void vpMbtDistanceCylinder::initInteractionMatrixError()
 {
   if (isvisible) {
-    nbFeaturel1 = (unsigned int)meline1->getMeList().size();
-    nbFeaturel2 = (unsigned int)meline2->getMeList().size();
+    nbFeaturel1 = static_cast<unsigned int>(meline1->getMeList().size());
+    nbFeaturel2 = static_cast<unsigned int>(meline2->getMeList().size());
     nbFeature = nbFeaturel1 + nbFeaturel2;
     L.resize(nbFeature, 6);
     error.resize(nbFeature);
@@ -851,7 +851,7 @@ void vpMbtDistanceCylinder::computeInteractionMatrixError(const vpHomogeneousMat
       error[j] = rho1 - (x * co1 + y * si1);
 
       if (disp)
-        vpDisplay::displayCross(I, it->m_i, it->m_j, (unsigned int)(error[j] * 100), vpColor::orange, 1);
+        vpDisplay::displayCross(I, it->m_i, it->m_j, static_cast<unsigned int>(error[j] * 100), vpColor::orange, 1);
 
       j++;
     }
@@ -875,7 +875,7 @@ void vpMbtDistanceCylinder::computeInteractionMatrixError(const vpHomogeneousMat
       error[j] = rho2 - (x * co2 + y * si2);
 
       if (disp)
-        vpDisplay::displayCross(I, it->m_i, it->m_j, (unsigned int)(error[j] * 100), vpColor::red, 1);
+        vpDisplay::displayCross(I, it->m_i, it->m_j, static_cast<unsigned int>(error[j] * 100), vpColor::red, 1);
 
       j++;
     }

@@ -564,7 +564,7 @@ void vpPolygon3D::getClippedPolygon(const std::vector<vpPoint> &ptIn, std::vecto
 {
   ptOut.clear();
   vpPolygon3D poly;
-  poly.setNbPoint((unsigned int)ptIn.size());
+  poly.setNbPoint(static_cast<unsigned int>(ptIn.size()));
   poly.setClipping(clippingFlags);
 
   if ((clippingFlags & vpPolygon3D::NEAR_CLIPPING) == vpPolygon3D::NEAR_CLIPPING)

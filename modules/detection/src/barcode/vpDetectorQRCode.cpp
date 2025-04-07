@@ -78,7 +78,7 @@ bool vpDetectorQRCode::detect(const vpImage<unsigned char> &I)
     detected = true;
 
     std::vector<vpImagePoint> polygon;
-    for (unsigned int i = 0; i < (unsigned int)symbol->get_location_size(); i++) {
+    for (unsigned int i = 0; i < static_cast<unsigned int>(symbol->get_location_size()); i++) {
       polygon.push_back(vpImagePoint(symbol->get_location_y(i), symbol->get_location_x(i)));
     }
     m_polygon.push_back(polygon);

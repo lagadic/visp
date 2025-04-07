@@ -244,7 +244,7 @@ void vpMbKltTracker::reinit(const vpImage<unsigned char> &I)
 
       if (kltPolyCylinder->isTracked()) {
         for (unsigned int k = 0; k < kltPolyCylinder->listIndicesCylinderBBox.size(); k++) {
-          unsigned int indCylBBox = (unsigned int)kltPolyCylinder->listIndicesCylinderBBox[k];
+          unsigned int indCylBBox = static_cast<unsigned int>(kltPolyCylinder->listIndicesCylinderBBox[k]);
           if (faces[indCylBBox]->isVisible() && faces[indCylBBox]->getNbPoint() > 2u) {
             faces[indCylBBox]->computePolygonClipped(m_cam); // Might not be necessary when scanline is activated
           }

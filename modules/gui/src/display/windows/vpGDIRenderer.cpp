@@ -620,7 +620,7 @@ void vpGDIRenderer::drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2, c
     double orig = ip1_.get_i() - slope * ip1_.get_j();
 
     if (vertical_line) {
-      for (unsigned int i = (unsigned int)ip1_.get_i(); i < ip2_.get_i(); i += (unsigned int)(2 * deltai)) {
+      for (unsigned int i = static_cast<unsigned int>(ip1_.get_i()); i < ip2_.get_i(); i += static_cast<unsigned int>(2 * deltai)) {
         double j = ip1_.get_j();
 
         // Move to the starting point
@@ -630,7 +630,7 @@ void vpGDIRenderer::drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2, c
       }
     }
     else {
-      for (unsigned int j = (unsigned int)ip1_.get_j(); j < ip2_.get_j(); j += (unsigned int)(2 * deltaj)) {
+      for (unsigned int j = static_cast<unsigned int>(ip1_.get_j()); j < ip2_.get_j(); j += static_cast<unsigned int>(2 * deltaj)) {
         double i = slope * j + orig;
         // Move to the starting point
         MoveToEx(hDCMem, vpMath::round(j / m_rscale), vpMath::round(i / m_rscale), nullptr);

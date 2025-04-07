@@ -49,7 +49,7 @@ BEGIN_VISP_NAMESPACE
   class harbouring an alpha value computed for a \f$[-\pi/2 ; \pi/2]\f$ portion
   of the circle.
  */
-vpMomentAlpha::vpMomentAlpha()
+  vpMomentAlpha::vpMomentAlpha()
   : m_isRef(true), m_symmetric(false), m_mu3Ref(), m_alphaRef(0.), m_symmetricThreshold(1e-6)
 {
   values.resize(1);
@@ -122,7 +122,7 @@ void vpMomentAlpha::compute()
             for (unsigned int l = 0; l <= j; l++) {
               rotMu[idx] += static_cast<double>(comb_i_k * vpMath::comb(j, l) * r11_k * pow(r21, (int)l) * r12_i_k *
                                                 pow(r22, (int)(j - l)) *
-                                                momentCentered.get(k + l, (unsigned int)(int)(i + j - k - l)));
+                                                momentCentered.get(k + l, static_cast<unsigned int>((int)(i + j - k - l))));
             }
             r11_k *= r11;
           }

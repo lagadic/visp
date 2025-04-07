@@ -265,7 +265,7 @@ bool read_options(int argc, const char **argv, bool &multi, unsigned int &camera
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
     switch (c) {
     case 'c':
-      camera = (unsigned int)atoi(optarg_);
+      camera = static_cast<unsigned int>(atoi(optarg_));
       break;
     case 'd':
       display = false;
@@ -279,19 +279,19 @@ bool read_options(int argc, const char **argv, bool &multi, unsigned int &camera
       colorcoding = (vp1394TwoGrabber::vp1394TwoColorCodingType)atoi(optarg_);
       break;
     case 'H':
-      roi_height = (unsigned int)atoi(optarg_);
+      roi_height = static_cast<unsigned int>(atoi(optarg_));
       break;
     case 'i':
       verbose_info = true;
       break;
     case 'L':
-      roi_left = (unsigned int)atoi(optarg_);
+      roi_left = static_cast<unsigned int>(atoi(optarg_));
       break;
     case 'm':
       multi = true;
       break;
     case 'n':
-      nframes = (unsigned int)atoi(optarg_);
+      nframes = static_cast<unsigned int>(atoi(optarg_));
       break;
     case 'o':
       save = true;
@@ -299,10 +299,10 @@ bool read_options(int argc, const char **argv, bool &multi, unsigned int &camera
       break;
     case 'b':
       ringbuffersize_is_set = true;
-      ringbuffersize = (unsigned int)atoi(optarg_);
+      ringbuffersize = static_cast<unsigned int>(atoi(optarg_));
       break;
     case 'p':
-      panControl = (unsigned int)atoi(optarg_);
+      panControl = static_cast<unsigned int>(atoi(optarg_));
       panControl_is_set = true;
       break;
     case 'r':
@@ -312,14 +312,14 @@ bool read_options(int argc, const char **argv, bool &multi, unsigned int &camera
       verbose_settings = true;
       break;
     case 'T':
-      roi_top = (unsigned int)atoi(optarg_);
+      roi_top = static_cast<unsigned int>(atoi(optarg_));
       break;
     case 'v':
       videomode_is_set = true;
       videomode = (vp1394TwoGrabber::vp1394TwoVideoModeType)atoi(optarg_);
       break;
     case 'W':
-      roi_width = (unsigned int)atoi(optarg_);
+      roi_width = static_cast<unsigned int>(atoi(optarg_));
       break;
     case 'h':
     case '?':

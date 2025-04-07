@@ -242,8 +242,8 @@ int main(int argc, const char **argv)
         vpDisplay::getClick(I);
 
         vpRect bbox = p4.getBoundingBox();
-        for (unsigned int i = (unsigned int)floor(bbox.getTop()); i < (unsigned int)ceil(bbox.getBottom()); ++i) {
-          for (unsigned int j = (unsigned int)floor(bbox.getLeft()); j < (unsigned int)ceil(bbox.getRight()); ++j) {
+        for (unsigned int i = static_cast<unsigned int>(floor(bbox.getTop())); i < static_cast<unsigned int>(ceil(bbox.getBottom())); ++i) {
+          for (unsigned int j = static_cast<unsigned int>(floor(bbox.getLeft())); j < static_cast<unsigned int>(ceil(bbox.getRight())); ++j) {
             if (p4.isInside(vpImagePoint(i, j), (vpPolygon::PointInPolygonMethod)method)) {
               vpDisplay::displayPoint(I, vpImagePoint(i, j), vpColor::orange);
             }

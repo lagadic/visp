@@ -1247,7 +1247,7 @@ void vpMbTracker::addPolygon(const std::vector<vpPoint> &corners, int idFace, co
   }
 
   vpMbtPolygon polygon;
-  polygon.setNbPoint((unsigned int)corners_without_duplicates.size());
+  polygon.setNbPoint(static_cast<unsigned int>(corners_without_duplicates.size()));
   polygon.setIndex((int)idFace);
   polygon.setName(polygonName);
   polygon.setLod(useLod);
@@ -1409,7 +1409,7 @@ void vpMbTracker::addPolygon(const std::vector<std::vector<vpPoint> > &listFaces
   int id = idFace;
   for (unsigned int i = 0; i < listFaces.size(); i++) {
     vpMbtPolygon polygon;
-    polygon.setNbPoint((unsigned int)listFaces[i].size());
+    polygon.setNbPoint(static_cast<unsigned int>(listFaces[i].size()));
     for (unsigned int j = 0; j < listFaces[i].size(); j++)
       polygon.addPoint(j, listFaces[i][j]);
 
@@ -2465,7 +2465,7 @@ void vpMbTracker::extractCylinders(SoVRMLIndexedFaceSet *face_set, vpHomogeneous
                                                // second one.
   SoVRMLCoordinate *coords = (SoVRMLCoordinate *)face_set->coord.getValue();
 
-  unsigned int indexListSize = (unsigned int)coords->point.getNum();
+  unsigned int indexListSize = static_cast<unsigned int>(coords->point.getNum());
 
   if (indexListSize % 2 == 1) {
     std::cout << "Not an even number of points when extracting a cylinder." << std::endl;
@@ -2489,10 +2489,10 @@ void vpMbTracker::extractCylinders(SoVRMLIndexedFaceSet *face_set, vpHomogeneous
     pt.setWorldCoordinates(pointTransformed[0], pointTransformed[1], pointTransformed[2]);
 
     if (i < (int)corners_c1.size()) {
-      corners_c1[(unsigned int)i] = pt;
+      corners_c1[static_cast<unsigned int>(i)] = pt;
     }
     else {
-      corners_c2[(unsigned int)i - corners_c1.size()] = pt;
+      corners_c2[static_cast<unsigned int>(i) - corners_c1.size()] = pt;
     }
   }
 
@@ -3173,7 +3173,7 @@ void vpMbTracker::addProjectionErrorPolygon(const std::vector<vpPoint> &corners,
   }
 
   vpMbtPolygon polygon;
-  polygon.setNbPoint((unsigned int)corners_without_duplicates.size());
+  polygon.setNbPoint(static_cast<unsigned int>(corners_without_duplicates.size()));
   polygon.setIndex((int)idFace);
   polygon.setName(polygonName);
   polygon.setLod(useLod);
@@ -3310,7 +3310,7 @@ void vpMbTracker::addProjectionErrorPolygon(const std::vector<std::vector<vpPoin
   int id = idFace;
   for (unsigned int i = 0; i < listFaces.size(); i++) {
     vpMbtPolygon polygon;
-    polygon.setNbPoint((unsigned int)listFaces[i].size());
+    polygon.setNbPoint(static_cast<unsigned int>(listFaces[i].size()));
     for (unsigned int j = 0; j < listFaces[i].size(); j++)
       polygon.addPoint(j, listFaces[i][j]);
 
@@ -3362,7 +3362,7 @@ void vpMbTracker::addProjectionErrorLine(vpPoint &P1, vpPoint &P2, int polygon, 
     l->hiddenface = &m_projectionErrorFaces;
     l->useScanLine = useScanLine;
 
-    l->setIndex((unsigned int)m_projectionErrorLines.size());
+    l->setIndexstatic_cast<unsigned int>(m_projectionErrorLines.size()));
     l->setName(name);
 
     if (clippingFlag != vpPolygon3D::NO_CLIPPING)
@@ -3400,7 +3400,7 @@ void vpMbTracker::addProjectionErrorCircle(const vpPoint &P1, const vpPoint &P2,
     ci->setCameraParameters(m_cam);
     ci->buildFrom(P1, P2, P3, r);
     ci->setMovingEdge(&m_projectionErrorMe);
-    ci->setIndex((unsigned int)m_projectionErrorCircles.size());
+    ci->setIndex(static_cast<unsigned int>(m_projectionErrorCircles.size()));
     ci->setName(name);
     ci->index_polygon = idFace;
     ci->hiddenface = &m_projectionErrorFaces;
@@ -3431,7 +3431,7 @@ void vpMbTracker::addProjectionErrorCylinder(const vpPoint &P1, const vpPoint &P
     cy->setCameraParameters(m_cam);
     cy->buildFrom(P1, P2, r);
     cy->setMovingEdge(&m_projectionErrorMe);
-    cy->setIndex((unsigned int)m_projectionErrorCylinders.size());
+    cy->setIndex(static_cast<unsigned int>(m_projectionErrorCylinders.size()));
     cy->setName(name);
     cy->index_polygon = idFace;
     cy->hiddenface = &m_projectionErrorFaces;
@@ -3699,7 +3699,7 @@ void vpMbTracker::projectionErrorInitMovingEdge(const vpImage<unsigned char> &I,
       if (index == -1)
         isvisible = true;
       else {
-        if (l->hiddenface->isVisible((unsigned int)index))
+        if (l->hiddenface->isVisible(static_cast<unsigned int>(index)))
           isvisible = true;
       }
     }
@@ -3738,8 +3738,8 @@ void vpMbTracker::projectionErrorInitMovingEdge(const vpImage<unsigned char> &I,
     if (index == -1)
       isvisible = true;
     else {
-      if (cy->hiddenface->isVisible((unsigned int)index + 1) || cy->hiddenface->isVisible((unsigned int)index + 2) ||
-          cy->hiddenface->isVisible((unsigned int)index + 3) || cy->hiddenface->isVisible((unsigned int)index + 4))
+      if (cy->hiddenface->isVisible(static_cast<unsigned int>(index) + 1) || cy->hiddenface->isVisible(static_cast<unsigned int>(index) + 2) ||
+          cy->hiddenface->isVisible(static_cast<unsigned int>(index) + 3) || cy->hiddenface->isVisible(static_cast<unsigned int>(index) + 4))
         isvisible = true;
     }
 
@@ -3773,7 +3773,7 @@ void vpMbTracker::projectionErrorInitMovingEdge(const vpImage<unsigned char> &I,
     if (index == -1)
       isvisible = true;
     else {
-      if (ci->hiddenface->isVisible((unsigned int)index))
+      if (ci->hiddenface->isVisible(static_cast<unsigned int>(index)))
         isvisible = true;
     }
 

@@ -7278,7 +7278,7 @@ void vpMbGenericTracker::TrackerWrapper::setPose(const vpImage<unsigned char> *c
   if (m_trackerType & EDGE_TRACKER) {
     initPyramid(I, Ipyramid);
 
-    unsigned int i = (unsigned int)scales.size();
+    unsigned int i = static_cast<unsigned int>(scales.size());
     do {
       i--;
       if (scales[i]) {

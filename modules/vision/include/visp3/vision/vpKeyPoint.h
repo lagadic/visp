@@ -237,8 +237,8 @@ BEGIN_VISP_NAMESPACE
  *   //Build the reference ORB points.
  *   int nbrRef;
  *   unsigned int height, width;
- *   height = (unsigned int)(corners[1].get_i() - corners[0].get_i());
- *   width = (unsigned int)(corners[1].get_j() - corners[0].get_j());
+ *   height = static_cast<unsigned int>(corners[1].get_i() - corners[0].get_i());
+ *   width = static_cast<unsigned int>(corners[1].get_j() - corners[0].get_j());
  *   nbrRef = keypoint.buildReference(Ireference, corners[0], height, width);
  *
  *   //Then grab another image which represents the current image Icurrent
@@ -250,8 +250,8 @@ BEGIN_VISP_NAMESPACE
  *
  *   //Match points between the reference points and the ORB points computed in the current image.
  *   int nbrMatched;
- *   height = (unsigned int)(corners[1].get_i() - corners[0].get_i());
- *   width = (unsigned int)(corners[1].get_j() - corners[0].get_j());
+ *   height = static_cast<unsigned int>(corners[1].get_i() - corners[0].get_i());
+ *   width = static_cast<unsigned int>(corners[1].get_j() - corners[0].get_j());
  *   nbrMatched = keypoint.matchPoint(Icurrent, corners[0], height, width);
  *
  *   //Display the matched points

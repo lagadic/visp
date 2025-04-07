@@ -309,7 +309,7 @@ void vpMbEdgeTracker::computeVVSFirstPhase(const vpImage<unsigned char> &_I, uns
         for (std::list<int>::const_iterator itindex = l->Lindex_polygon.begin(); itindex != l->Lindex_polygon.end();
              ++itindex) {
           int index = *itindex;
-          if (l->hiddenface->isAppearing((unsigned int)index)) {
+          if (l->hiddenface->isAppearing(static_cast<unsigned int>(index))) {
             fac = 0.2;
             break;
           }
@@ -571,7 +571,7 @@ void vpMbEdgeTracker::computeVVSFirstPhaseFactor(const vpImage<unsigned char> &I
       for (std::list<int>::const_iterator itindex = l->Lindex_polygon.begin(); itindex != l->Lindex_polygon.end();
            ++itindex) {
         int index = *itindex;
-        if (l->hiddenface->isAppearing((unsigned int)index)) {
+        if (l->hiddenface->isAppearing(static_cast<unsigned int>(index))) {
           fac = 0.2;
           break;
         }
@@ -1030,7 +1030,7 @@ void vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
 {
   initPyramid(I, Ipyramid);
 
-  unsigned int lvl = (unsigned int)scales.size();
+  unsigned int lvl = static_cast<unsigned int>(scales.size());
   do {
     lvl--;
 
@@ -1173,7 +1173,7 @@ void vpMbEdgeTracker::init(const vpImage<unsigned char> &I)
   }
 
   initPyramid(I, Ipyramid);
-  unsigned int i = (unsigned int)scales.size();
+  unsigned int i = static_cast<unsigned int>(scales.size());
   do {
     i--;
     if (scales[i]) {
@@ -1551,7 +1551,7 @@ void vpMbEdgeTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHo
       if (index == -1)
         isvisible = true;
       else {
-        if (l->hiddenface->isVisible((unsigned int)index))
+        if (l->hiddenface->isVisible(static_cast<unsigned int>(index)))
           isvisible = true;
       }
     }
@@ -1590,8 +1590,8 @@ void vpMbEdgeTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHo
     if (index == -1)
       isvisible = true;
     else {
-      if (cy->hiddenface->isVisible((unsigned int)index + 1) || cy->hiddenface->isVisible((unsigned int)index + 2) ||
-          cy->hiddenface->isVisible((unsigned int)index + 3) || cy->hiddenface->isVisible((unsigned int)index + 4))
+      if (cy->hiddenface->isVisible(static_cast<unsigned int>(index) + 1) || cy->hiddenface->isVisible(static_cast<unsigned int>(index) + 2) ||
+          cy->hiddenface->isVisible(static_cast<unsigned int>(index) + 3) || cy->hiddenface->isVisible(static_cast<unsigned int>(index) + 4))
         isvisible = true;
     }
     //    vpTRACE("cyl with index %d is visible: %d", index, isvisible);
@@ -1626,7 +1626,7 @@ void vpMbEdgeTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHo
     if (index == -1)
       isvisible = true;
     else {
-      if (ci->hiddenface->isVisible((unsigned int)index))
+      if (ci->hiddenface->isVisible(static_cast<unsigned int>(index)))
         isvisible = true;
     }
 

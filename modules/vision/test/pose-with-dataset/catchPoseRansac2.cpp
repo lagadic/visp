@@ -267,7 +267,7 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original,
     << std::endl
     << std::endl;
 
-  unsigned int nbInlierToReachConsensus = (unsigned int)(60.0 * (double)(bunnyModelPoints_noisy.size()) / 100.0);
+  unsigned int nbInlierToReachConsensus = static_cast<unsigned int>(60.0 * (double)(bunnyModelPoints_noisy.size()) / 100.0);
   double threshold = 0.001;
 
   // RANSAC with 1000 iterations
