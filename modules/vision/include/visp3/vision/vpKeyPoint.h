@@ -2225,7 +2225,7 @@ private:
   /*!
    * Initialize a keypoint detector based on its name.
    *
-   * \param detectorName : Name of the detector (e.g FAST, SIFT, SURF, etc.).
+   * \param[in] detectorNames : Name of the detector (e.g FAST, SIFT, SURF, etc.).
    */
   void initDetector(const std::string &detectorNames);
 
@@ -2233,14 +2233,14 @@ private:
    * Initialize a list of keypoints detectors if we want to concatenate multiple
    * detectors.
    *
-   * \param detectorNames : List of detector names.
+   * \param[in] detectorNames : List of detector names.
    */
   void initDetectors(const std::vector<std::string> &detectorNames);
 
   /*!
    * Initialize a descriptor extractor based on its name.
    *
-   * \param extractorName : Name of the extractor (e.g SIFT, SURF, ORB, etc.).
+   * \param[in] extractorName : Name of the extractor (e.g SIFT, SURF, ORB, etc.).
    */
   void initExtractor(const std::string &extractorName);
 
@@ -2248,7 +2248,7 @@ private:
    * Initialize a list of descriptor extractors if we want to concatenate
    * multiple extractors.
    *
-   * \param extractorNames : List of extractor names.
+   * \param[in] extractorNames : List of extractor names.
    */
   void initExtractors(const std::vector<std::string> &extractorNames);
 
