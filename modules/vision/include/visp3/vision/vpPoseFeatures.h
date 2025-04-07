@@ -417,6 +417,11 @@ public:
    */
   virtual ~vpPoseFeatures();
 
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+  vpPoseFeatures(const vpPoseFeatures &) = default;
+  vpPoseFeatures &operator=(const vpPoseFeatures &) = default;
+#endif
+
   /*!
    * Add a point feature to the list of features to be considered in the pose
    * computation.
