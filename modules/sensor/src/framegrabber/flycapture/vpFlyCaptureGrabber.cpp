@@ -912,7 +912,8 @@ std::pair<unsigned int, unsigned int> vpFlyCaptureGrabber::centerRoi(unsigned in
   Set format7 video mode.
   \param format7_mode : Format 7 mode.
   \param pixel_format : Pixel format.
-  \param w,h : Width and height of the centered roi. If set to 0, use the max allowed size.
+  \param w : Width of the centered roi. If set to 0, use the max allowed size.
+  \param h : Height of the centered roi. If set to 0, use the max allowed size.
 
   If the format7 video mode and pixel format are not supported, return an exception.
 

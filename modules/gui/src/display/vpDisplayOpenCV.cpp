@@ -1321,9 +1321,11 @@ void vpDisplayOpenCV::clearDisplay(const vpColor & /* color */)
 
 /*!
   Display an arrow from image point \e ip1 to image point \e ip2.
-  \param ip1,ip2 : Initial and final image point.
+  \param ip1 : Initial image point.
+  \param ip2 : Final image point.
   \param color : Arrow color.
-  \param w,h : Width and height of the arrow.
+  \param w : Arrow width.
+  \param h : Arrow height.
   \param thickness : Thickness of the lines used to display the arrow.
 */
 void vpDisplayOpenCV::displayArrow(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color,
@@ -1436,9 +1438,9 @@ void vpDisplayOpenCV::displayLine(const vpImagePoint &ip1, const vpImagePoint &i
 
 /*!
   Display a point at the image point \e ip location.
-  \param ip : Point location.
-  \param color : Point color.
-  \param thickness : point thickness.
+  \param[in] ip : Point location.
+  \param[in] color : Point color.
+  \param[in] thickness : point thickness.
 */
 void vpDisplayOpenCV::displayPoint(const vpImagePoint &ip, const vpColor &color, unsigned int thickness)
 {
@@ -1454,14 +1456,15 @@ void vpDisplayOpenCV::displayPoint(const vpImagePoint &ip, const vpColor &color,
   Display a rectangle with \e topLeft as the top-left corner and \e
   width and \e height the rectangle size.
 
-  \param topLeft : Top-left corner of the rectangle.
-  \param w,h : Rectangle size in terms of width and height.
-  \param color : RGB color used to display the rectangle.
+  \param[in] topLeft : Top-left corner of the rectangle.
+  \param[in] w : Rectangle width.
+  \param[in] h : Rectangle height.
+  \param[in] color : RGB color used to display the rectangle.
   Alpha channel in color.A is here taken into account when cxx standard is set to cxx11 or higher.
   When alpha value is set to 255 (default) the rectangle is displayed without
   transparency. Closer is the alpha value to zero, more the rectangle is transparent.
-  \param fill : When set to true fill the rectangle.
-  \param thickness : Thickness of the four lines used to display the
+  \param[in] fill : When set to true fill the rectangle.
+  \param[in] thickness : Thickness of the four lines used to display the
   rectangle. This parameter is only useful when \e fill is set to
   false.
 */
@@ -1478,14 +1481,14 @@ void vpDisplayOpenCV::displayRectangle(const vpImagePoint &topLeft, unsigned int
 /*!
   Display a rectangle.
 
-  \param topLeft : Top-left corner of the rectangle.
-  \param bottomRight : Bottom-right corner of the rectangle.
-  \param color : RGB color used to display the rectangle.
+  \param[in] topLeft : Top-left corner of the rectangle.
+  \param[in] bottomRight : Bottom-right corner of the rectangle.
+  \param[in] color : RGB color used to display the rectangle.
   Alpha channel in color.A is here taken into account when cxx standard is set to cxx11 or higher.
   When alpha value is set to 255 (default) the rectangle is displayed without
   transparency. Closer is the alpha value to zero, more the rectangle is transparent.
-  \param fill : When set to true fill the rectangle.
-  \param thickness : Thickness of the four lines used to display the
+  \param[in] fill : When set to true fill the rectangle.
+  \param[in] thickness : Thickness of the four lines used to display the
   rectangle. This parameter is only useful when \e fill is set to
   false.
 */

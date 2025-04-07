@@ -908,10 +908,12 @@ void vpGDIRenderer::drawCross(const vpImagePoint &ip, unsigned int size, const v
 
 /*!
   Draws an arrow.
-  \param ip1,ip2 : Initial and final image point.
-  \param color The arrow's color
-  \param w,h : Width and height of the arrow.
-  \param thickness : Thickness of the lines used to display the arrow.
+  \param[in] ip1 It's starting point coordinates.
+  \param[in] ip2 It's ending point coordinates.
+  \param[in] color The line's color.
+  \param[in] w Arrow width.
+  \param[in] h Arrow height.
+  \param[in] thickness Thickness of the drawing
 */
 void vpGDIRenderer::drawArrow(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int w,
                               unsigned int h, unsigned int thickness)

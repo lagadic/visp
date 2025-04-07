@@ -2082,8 +2082,9 @@ void vpDisplayX::flushDisplay()
   Flushes a part of the X buffer.
   It's necessary to use this function to see the results of any drawing.
 
-  \param iP : Top left corner of the region of interest
-  \param w,h  : Width and height of the region of interest
+  \param iP : Top left corner of the region of interest.
+  \param w : Region of interest width.
+  \param h : Region of interest height.
 */
 void vpDisplayX::flushDisplayROI(const vpImagePoint &iP, unsigned int w, unsigned int h)
 {
@@ -2111,9 +2112,11 @@ void vpDisplayX::clearDisplay(const vpColor &color)
 
 /*!
   Display an arrow from image point \e ip1 to image point \e ip2.
-  \param ip1,ip2 : Initial and final image point.
+  \param ip1 : Initial image point.
+  \param ip2 : Final image point.
   \param color : Arrow color.
-  \param w,h : Width and height of the arrow.
+  \param w : Arrow width.
+  \param h : Arrow height.
   \param thickness : Thickness of the lines used to display the arrow.
 */
 void vpDisplayX::displayArrow(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int w,
@@ -2293,7 +2296,8 @@ void vpDisplayX::displayPoint(const vpImagePoint &ip, const vpColor &color, unsi
   width and \e height the rectangle size.
 
   \param topLeft : Top-left corner of the rectangle.
-  \param w,h : Rectangle size in terms of width and height.
+  \param w : Rectangle width.
+  \param h : Rectangle height.
   \param color : Rectangle color.
   \param fill : When set to true fill the rectangle.
 

@@ -1045,9 +1045,11 @@ void vpDisplayGTK::clearDisplay(const vpColor & /* color */)
 
 /*!
   Display an arrow from image point \e ip1 to image point \e ip2.
-  \param ip1,ip2 : Initial and final image point.
+  \param ip1 : Initial image point.
+  \param ip2 : Final image point.
   \param color : Arrow color.
-  \param w,h : Width and height of the arrow.
+  \param w : Arrow width.
+  \param h : Arrow height.
   \param thickness : Thickness of the lines used to display the arrow.
 */
 void vpDisplayGTK::displayArrow(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int w,
@@ -1225,7 +1227,8 @@ void vpDisplayGTK::displayPoint(const vpImagePoint &ip, const vpColor &color, un
   width and \e height the rectangle size.
 
   \param topLeft : Top-left corner of the rectangle.
-  \param w,h : Rectangle size.
+  \param w : Rectangle width.
+  \param h : Rectangle height.
   \param color : Rectangle color.
   \param fill : When set to true fill the rectangle.
 

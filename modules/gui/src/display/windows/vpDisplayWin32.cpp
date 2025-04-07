@@ -831,9 +831,11 @@ void vpDisplayWin32::displayCross(const vpImagePoint &ip, unsigned int size, con
 
 /*!
   Display an arrow from image point \e ip1 to image point \e ip2.
-  \param ip1,ip2 : Initial and final image point.
+  \param ip1 : Initial image point.
+  \param ip2 : Final image point.
   \param color : Arrow color.
-  \param w,h : Width and height of the arrow.
+  \param w : Arrow width.
+  \param h : Arrow height.
   \param thickness : Thickness of the lines used to display the arrow.
 */
 void vpDisplayWin32::displayArrow(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color,
