@@ -3227,7 +3227,7 @@ unsigned int vp1394TwoGrabber::getParameterValue(vp1394TwoParametersType param)
     close();
     throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Unable to get the information"));
   }
-  returnstatic_cast<unsigned int>(value);
+  return (static_cast<unsigned int>(value));
 }
 
 /*!

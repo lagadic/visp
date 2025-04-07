@@ -485,10 +485,10 @@ public:
       else {
         // Correction de l'image de facon a liberer les niveaux de gris
         // ROUGE, VERT, BLEU, JAUNE
-        int i_min = std::max<int>(static_cast<int>(ceil(iP.get_i() / scale), 0));
-        int j_min = std::max<int>(static_cast<int>(ceil(iP.get_j() / scale), 0));
-        int i_max = std::min<int>(static_cast<int>(ceil((iP.get_i() + h) / scale), static_cast<int>(height)));
-        int j_max = std::min<int>(static_cast<int>(ceil((iP.get_j() + w) / scale), static_cast<int>(width)));
+        int i_min = std::max<int>(static_cast<int>(ceil(iP.get_i() / scale)), 0);
+        int j_min = std::max<int>(static_cast<int>(ceil(iP.get_j() / scale)), 0);
+        int i_max = std::min<int>(static_cast<int>(ceil((iP.get_i() + h) / scale)), static_cast<int>(height));
+        int j_max = std::min<int>(static_cast<int>(ceil((iP.get_j() + w) / scale)), static_cast<int>(width));
 
         unsigned int i_min_ = static_cast<unsigned int>(i_min);
         unsigned int i_max_ = static_cast<unsigned int>(i_max);
@@ -527,10 +527,10 @@ public:
                   w, h);
       }
       else {
-        int i_min = std::max<int>(static_cast<int>(ceil(iP.get_i() / scale), 0));
-        int j_min = std::max<int>(static_cast<int>(ceil(iP.get_j() / scale), 0));
-        int i_max = std::min<int>(static_cast<int>(ceil((iP.get_i() + h) / scale), static_cast<int>(height)));
-        int j_max = std::min<int>(static_cast<int>(ceil((iP.get_j() + w) / scale), static_cast<int>(width)));
+        int i_min = std::max<int>(static_cast<int>(ceil(iP.get_i() / scale)), 0);
+        int j_min = std::max<int>(static_cast<int>(ceil(iP.get_j() / scale)), 0);
+        int i_max = std::min<int>(static_cast<int>(ceil((iP.get_i() + h) / scale)), static_cast<int>(height));
+        int j_max = std::min<int>(static_cast<int>(ceil((iP.get_j() + w) / scale)), static_cast<int>(width));
 
         unsigned int i_min_ = static_cast<unsigned int>(i_min);
         unsigned int i_max_ = static_cast<unsigned int>(i_max);
@@ -600,10 +600,10 @@ public:
                   w, h);
       }
       else {
-        int i_min = std::max<int>(static_cast<int>(ceil(iP.get_i() / scale), 0));
-        int j_min = std::max<int>(static_cast<int>(ceil(iP.get_j() / scale), 0));
-        int i_max = std::min<int>(static_cast<int>(ceil((iP.get_i() + h) / scale), static_cast<int>(height)));
-        int j_max = std::min<int>(static_cast<int>(ceil((iP.get_j() + w) / scale), static_cast<int>(width)));
+        int i_min = std::max<int>(static_cast<int>(ceil(iP.get_i() / scale)), 0);
+        int j_min = std::max<int>(static_cast<int>(ceil(iP.get_j() / scale)), 0);
+        int i_max = std::min<int>(static_cast<int>(ceil((iP.get_i() + h) / scale)), static_cast<int>(height));
+        int j_max = std::min<int>(static_cast<int>(ceil((iP.get_j() + w) / scale)), static_cast<int>(width));
 
         unsigned int i_min_ = static_cast<unsigned int>(i_min);
         unsigned int i_max_ = static_cast<unsigned int>(i_max);
@@ -759,7 +759,7 @@ public:
         int i_min = std::max<int>(static_cast<int>(ceil(iP.get_i() / scale)), 0);
         int j_min = std::max<int>(static_cast<int>(ceil(iP.get_j() / scale)), 0);
         int i_max = std::min<int>(static_cast<int>(ceil((iP.get_i() + h) / scale)), static_cast<int>(height));
-        int j_max = std::min<int>(static_cast<int>(ceil((iP.get_j() + w) / scale)), static_cast<int>(width;
+        int j_max = std::min<int>(static_cast<int>(ceil((iP.get_j() + w) / scale)), static_cast<int>(width));
 
         unsigned int i_min_ = static_cast<unsigned int>(i_min);
         unsigned int i_max_ = static_cast<unsigned int>(i_max);
