@@ -57,7 +57,9 @@ BEGIN_VISP_NAMESPACE
 
 /*!
  * Project a ME site on a straight line.
- * @param[in] a,b,c : Parameters of the line
+ * @param[in] a : Parameters `a` of the line.
+ * @param[in] b : Parameters `b` of the line.
+ * @param[in] c : Parameters `c` of the line.
  * @param[in] P : ME site.
  * @param[out] iP : Coordinates of the ME site projected on the line.
  */
