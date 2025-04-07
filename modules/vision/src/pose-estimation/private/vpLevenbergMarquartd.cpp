@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@
     (a) = (b);                                                                                                         \
     (b) = (c);                                                                                                         \
   }
-#define MIJ(m, i, j, s) ((m) + ((long)(i) * (long)(s)) + (long)(j))
+#define MIJ(m, i, j, s) ((m) + (static_cast<long>(i) * static_cast<long>(s)) + static_cast<long>(j))
 #define TRUE 1
 #define FALSE 0
 
