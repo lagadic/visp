@@ -512,13 +512,13 @@ int main(int argc, char **argv)
     I_disp.resize(I_src.getHeight(), I_src.getWidth());
     I_dispCanny.resize(I_src.getHeight(), I_src.getWidth());
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-    std::shared_ptr<vpDisplay> dColor = vpDisplayFactory::createDisplay(I_disp, -1, -1, "Input image");;
+    std::shared_ptr<vpDisplay> dColor = vpDisplayFactory::createDisplay(I_disp, -1, -1, "Input image");
     std::shared_ptr<vpDisplay> dCanny(nullptr);
     if (opt_displayCanny) {
       dCanny = vpDisplayFactory::createDisplay(I_dispCanny, I_src.getWidth() + 40, -1, "Edge-map");
     }
 #else
-    vpDisplay *dColor = vpDisplayFactory::allocateDisplay(I_disp, -1, -1, "Input image");;
+    vpDisplay *dColor = vpDisplayFactory::allocateDisplay(I_disp, -1, -1, "Input image");
     vpDisplay *dCanny(nullptr);
     if (opt_displayCanny) {
       dCanny = vpDisplayFactory::allocateDisplay(I_dispCanny, I_src.getWidth() + 40, -1, "Edge-map");
@@ -553,13 +553,13 @@ int main(int argc, char **argv)
     I_disp.resize(I_src.getHeight(), I_src.getWidth());
     I_dispCanny.resize(I_src.getHeight(), I_src.getWidth());
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-    std::shared_ptr<vpDisplay> dColor = vpDisplayFactory::createDisplay(I_disp, -1, -1, "Input image");;
+    std::shared_ptr<vpDisplay> dColor = vpDisplayFactory::createDisplay(I_disp, -1, -1, "Input image");
     std::shared_ptr<vpDisplay> dCanny(nullptr);
     if (opt_displayCanny) {
       dCanny = vpDisplayFactory::createDisplay(I_dispCanny, I_src.getWidth() + 40, -1, "Edge-map");
     }
 #else
-    vpDisplay *dColor = vpDisplayFactory::allocateDisplay(I_disp, -1, -1, "Input image");;
+    vpDisplay *dColor = vpDisplayFactory::allocateDisplay(I_disp, -1, -1, "Input image");
     vpDisplay *dCanny(nullptr);
     if (opt_displayCanny) {
       dCanny = vpDisplayFactory::allocateDisplay(I_dispCanny, I_src.getWidth() + 40, -1, "Edge-map");

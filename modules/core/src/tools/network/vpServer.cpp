@@ -95,7 +95,7 @@ vpServer::vpServer(const int &port_serv) : adress(), port(0), started(false), ma
     vpERROR_TRACE("vpServer::vpServer(const int &port_serv), cannot open socket.");
   }
   emitter.emitterAddress.sin_family = AF_INET;
-  emitter.emitterAddress.sin_addr.s_addr = INADDR_ANY; // inet_addr("127.0.0.1");;
+  emitter.emitterAddress.sin_addr.s_addr = INADDR_ANY; // inet_addr("127.0.0.1");
   emitter.emitterAddress.sin_port = htons((unsigned short)port_serv);
 
   adress = inet_ntoa(emitter.emitterAddress.sin_addr);

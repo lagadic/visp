@@ -123,7 +123,7 @@ int main(int argc, const char **argv)
   vpCameraParameters cam = realsense.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithoutDistortion);
   tracker.setCameraParameters(cam, height, width);
 
-  std::cout << "Creating displays" << std::endl;;
+  std::cout << "Creating displays" << std::endl;
   std::vector<std::shared_ptr<vpDisplay>> displays, displaysDebug;
 
   if (baseArgs.display) {

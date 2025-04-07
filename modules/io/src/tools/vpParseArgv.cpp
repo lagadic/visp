@@ -126,7 +126,7 @@ bool vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable, i
         if (infoPtr->key != nullptr) {
           bool stop_for_loop = false;
           if ((infoPtr->key[1] != c) || (strncmp(infoPtr->key, curArg, length) != 0)) {
-            stop_for_loop = true;;
+            stop_for_loop = true;
           }
           if (!stop_for_loop) {
             if (infoPtr->key[length] == 0) {

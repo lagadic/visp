@@ -1465,7 +1465,7 @@ std::string vpRealSense2::getSensorInfo()
 {
   std::ostringstream oss;
   oss << *this;
-  return oss.str();;
+  return oss.str();
 }
 
 namespace
