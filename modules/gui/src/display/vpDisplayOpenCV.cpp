@@ -1140,8 +1140,8 @@ void vpDisplayOpenCV::setTitle(const std::string & /* title */)
 /*!
   Set the window position in the screen.
 
-  \param winx, winy : Position of the upper-left window's border in the
-  screen.
+  \param[in] winx : Horizontal position of the upper-left window's corner in the screen.
+  \param[in] winy : Vertical position of the upper-left window's corner in the screen.
 
   \exception vpDisplayException::notInitializedError : If the video
   device is not initialized.
@@ -1163,7 +1163,7 @@ void vpDisplayOpenCV::setWindowPosition(int winx, int winy)
 
   \warning Display has to be initialized.
 
-  \warning suppres the overlay drawing
+  \warning Suppress the overlay drawing.
 
   \param I : Image to display.
 
