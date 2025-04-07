@@ -51,8 +51,6 @@ BEGIN_VISP_NAMESPACE
   \ingroup group_core_math_tools
   \brief This class implements the Hinkley's cumulative sum test.
 
-  \author Fabien Spindler (Fabien.Spindler@irisa.fr), Irisa / Inria Rennes
-
   The Hinkley's cumulative sum test is designed to detect jump in mean
   of an observed signal \f$ s(t) \f$. It is known to be robust (by
   taking into account all the past of the observed quantity),
@@ -93,7 +91,7 @@ BEGIN_VISP_NAMESPACE
   N_{k^{'}} = 0 \f$.
 
 */
-class VISP_EXPORT vpHinkley
+class VP_DEPRECATED VISP_EXPORT vpHinkley
 {
 public:
   /*! \enum vpHinkleyJumpType
