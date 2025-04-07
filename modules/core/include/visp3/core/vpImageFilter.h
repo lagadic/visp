@@ -1938,50 +1938,129 @@ static void getGradXGauss2D(const vpImage<ImageType> &I, vpImage<FilterType> &dI
   vpImageFilter::getGradX<FilterType, FilterType>(GIy, dIx, gaussianDerivativeKernel, size, p_mask);
 }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-template <typename HSVType, bool useFullScale, typename OutputType>
-static typename std::enable_if<std::is_arithmetic<OutputType>::value, void>::type gradientFilterX(
-  const vpImage<vpHSV<HSVType, useFullScale>> &I, vpImage<OutputType> &GIx,
-  const int nbThread = 1, const vpImage<bool> *p_mask = nullptr, const vpCannyFilteringAndGradientType &type = CANNY_COUNT_FILTERING
-)
+template <typename ArithmeticType, typename FilterType, bool useFullScale>
+static void gradientFilterX(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpImage<FilterType> &GIx, const int &nbThread, const vpImage<bool> *p_mask, const vpImageFilter::vpCannyFilteringAndGradientType &type)
 {
   const unsigned int nbRows = I.getRows(), nbCols = I.getCols();
   GIx.resize(nbRows, nbCols, 0.);
-  std::vector<OutputType> filter(3);
-  OutputType scale;
+  std::vector<double> filter(3);
+  double scale;
+  std::string name;
   switch (type) {
-  case CANNY_COUNT_FILTERING:
+  case vpImageFilter::CANNY_COUNT_FILTERING:
     // Prewitt case
     filter = { 1., 1., 1. };
     scale = 6.;
+    name = "Prewitt";
     break;
-  case CANNY_GBLUR_SOBEL_FILTERING:
+  case vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING:
     filter = { 1., 2., 1. };
     scale = 8.;
+    name = "Sobel";
     break;
-  case CANNY_GBLUR_SCHARR_FILTERING:
+  case vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING:
     filter = { 3., 10., 3. };
     scale = 32.;
+    name = "Scharr";
     break;
   default:
     throw(vpException(vpException::badValue, "Wrong type of filtering"));
   }
-
+  // std::cout << "Using " << name << " filter" << std::endl;
   for (unsigned char i = 0; i < 3; ++i) {
     filter[i] = filter[i] / scale;
   }
-#ifdef VISP_HAVE_OPENMP
-  if (nbThread == 1) {
-    gradientFilterXMonothread(I, GIx, filter, p_mask);
+
+  auto checkBooleanPatch = [](const vpImage<bool> *p_mask, const unsigned int &r, const unsigned int &c, const unsigned int &h, const unsigned int &w)
+    {
+      if (!p_mask) {
+        return true;
+      }
+      bool hasToCompute = (*p_mask)[r][c];
+
+      if (c < w - 1) { // We do not compute gradient on the last column
+        hasToCompute |= (*p_mask)[r][c + 1];
+        if (r < h - 1) { // We do not compute gradient on the last row
+          hasToCompute |= (*p_mask)[r + 1][c + 1];
+        }
+      }
+
+      if (r < h - 1) { // We do not compute gradient on the last row
+        hasToCompute |= (*p_mask)[r + 1][c];
+      }
+
+      if (r > 1) { // We do not compute gradient on the first row
+        hasToCompute |= (*p_mask)[r - 1][c];
+        if (c < w - 1) { // We do not compute gradient on the last column
+          hasToCompute |= (*p_mask)[r - 1][c + 1];
+        }
+      }
+      return hasToCompute;
+    };
+
+  const unsigned int rStop = nbRows - 1, cStop = nbCols - 1;
+  vpImage<double> Isign(nbRows, nbCols), IabsDiff(nbRows, nbCols);
+  // Computation for I[0][0]
+  if (vpColVector::dotProd((I[0][1] - I[0][0]), I[0][0].toColVector()) < 0.) {
+    Isign[0][0] = -1.;
   }
   else {
-    gradientFilterXMultithread(I, GIx, filter, nbThread, p_mask);
+    Isign[0][0] = 1.;
   }
-#else
-  gradientFilterXMonothread(I, GIx, filter, p_mask);
-#endif
+
+  // Computation for the rest of the first row
+  for (unsigned int c = 1; c < cStop; ++c) {
+    if (vpColVector::dotProd((I[0][c + 1] - I[0][c]), (I[0][c] - I[0][c - 1])) < 0.) {
+      // Inverting sign when cosine distance is negative
+      Isign[0][c] = -1. * Isign[0][c - 1];
+    }
+    else {
+      Isign[0][c] = Isign[0][c - 1];
+    }
+  }
+
+  // Computation of the rest of the image
+  for (unsigned int r = 1; r < rStop; ++r) {
+    // Computation for I[r][0]
+    if (vpColVector::dotProd((I[r][1] - I[r][0]), I[r][0].toColVector()) < 0.) {
+      Isign[r][0] = -1.;
+    }
+    else {
+      Isign[r][0] = 1.;
+    }
+    if (checkBooleanPatch(p_mask, r, 0, nbRows, nbCols)) {
+      IabsDiff[r][0] = vpHSV<ArithmeticType, useFullScale>::template mahalanobisDistance<double>(I[r][0], I[r][1]);
+    }
+
+      // Computation for all the other columns
+    for (unsigned int c = 1; c < cStop; ++c) {
+      if (checkBooleanPatch(p_mask, r, c, nbRows, nbCols)) {
+        // Of the absolute value of the distance
+        IabsDiff[r][c] = vpHSV<ArithmeticType, useFullScale>::template mahalanobisDistance<double>(I[r][c], I[r][c + 1]);
+      }
+      // Of the sign
+      if (vpColVector::dotProd((I[r][c + 1] - I[r][c]), (I[r][c] - I[r][c - 1])) < 0.) {
+        // Inverting sign when cosine distance is negative
+        Isign[r][c] = -1. * Isign[r][c - 1];
+      }
+      else {
+        Isign[r][c] = Isign[r][c - 1];
+      }
+    }
+  }
+
+  bool once = true;
+  for (unsigned int r = 1; r < rStop; ++r) {
+    for (unsigned int c = 1; c < cStop; ++c) {
+      if (checkBooleanMask(p_mask, r, c)) {
+        GIx[r][c] = 0.;
+        for (int dr = -1; dr <= 1; ++dr) {
+          GIx[r][c] += filter[dr + 1] * (Isign[r + dr][c - 1] * IabsDiff[r + dr][c - 1] + Isign[r + dr][c] * IabsDiff[r + dr][c]);
+        }
+      }
+    }
+  }
 }
-#endif
 
 // Gradient along Y
 template <typename FilterType>
@@ -2084,27 +2163,23 @@ static void getGradYGauss2D(const vpImage<ImageType> &I, vpImage<FilterType> &dI
 }
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-template <typename HSVType, bool useFullScale, typename OutputType>
-static typename std::enable_if<std::is_arithmetic<OutputType>::value, void>::type gradientFilterY(
-  const vpImage<vpHSV<HSVType, useFullScale>> &I, vpImage<OutputType> &GIy,
-  const int nbThread = 1, const vpImage<bool> *p_mask = nullptr, const vpCannyFilteringAndGradientType &type = CANNY_COUNT_FILTERING
-)
+template <typename ArithmeticType, typename FilterType, bool useFullScale>
+static void gradientFilterY(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpImage<FilterType> &GIy, const int &nbThread, const vpImage<bool> *p_mask, const vpImageFilter::vpCannyFilteringAndGradientType &type)
 {
   const unsigned int nbRows = I.getRows(), nbCols = I.getCols();
-  GIy.resize(nbRows, nbCols, 0.);
-  std::vector<OutputType> filter(3);
-  OutputType scale;
+  std::vector<double> filter(3);
+  double scale;
   switch (type) {
-  case CANNY_COUNT_FILTERING:
+  case vpImageFilter::CANNY_COUNT_FILTERING:
     // Prewitt case
     filter = { 1., 1., 1. };
     scale = 6.;
     break;
-  case CANNY_GBLUR_SOBEL_FILTERING:
+  case vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING:
     filter = { 1., 2., 1. };
     scale = 8.;
     break;
-  case CANNY_GBLUR_SCHARR_FILTERING:
+  case vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING:
     filter = { 3., 10., 3. };
     scale = 32.;
     break;
@@ -2114,16 +2189,80 @@ static typename std::enable_if<std::is_arithmetic<OutputType>::value, void>::typ
   for (unsigned char i = 0; i < 3; ++i) {
     filter[i] = filter[i] / scale;
   }
-#ifdef VISP_HAVE_OPENMP
-  if (nbThread == 1) {
-    gradientFilterYMonothread(I, GIy, filter, p_mask);
+
+  const unsigned int rStop = nbRows - 1, cStop = nbCols - 1;
+  vpImage<double> Isign(nbRows, nbCols), IabsDiff(nbRows, nbCols);
+
+  auto checkBooleanPatch = [](const vpImage<bool> *p_mask, const unsigned int &r, const unsigned int &c, const unsigned int &h, const unsigned int &w)
+    {
+      if (!p_mask) {
+        return true;
+      }
+
+      bool hasToCompute = (*p_mask)[r][c];
+      if (c < w - 1) { // We do not compute gradient on the last column
+        hasToCompute |= (*p_mask)[r][c + 1];
+        if (r < h - 1) { // We do not compute gradient on the last row
+          hasToCompute |= (*p_mask)[r + 1][c + 1];
+        }
+      }
+
+      if (r < h - 1) { // We do not compute gradient on the last row
+        hasToCompute |= (*p_mask)[r + 1][c];
+      }
+
+      if (c > 1) { // We do not compute gradient on the first column
+        hasToCompute |= (*p_mask)[r][c - 1];
+        if (r < h - 1) { // We do not compute gradient on the last row
+          hasToCompute |= (*p_mask)[r + 1][c - 1];
+        }
+      }
+      return hasToCompute;
+    };
+
+  // Computation for the first row
+  for (unsigned int c = 0; c < nbCols; ++c) {
+    if (checkBooleanPatch(p_mask, 0, c, nbRows, nbCols)) {
+      IabsDiff[0][c] = vpHSV<ArithmeticType, useFullScale>::template mahalanobisDistance<double>(I[0][c], I[1][c]);
+    }
+    if (vpColVector::dotProd((I[1][c] - I[0][c]), I[0][c].toColVector()) < 0.) {
+      // Inverting sign when cosine distance is negative
+      Isign[0][c] = -1.;
+    }
+    else {
+      Isign[0][c] = 1.;
+    }
   }
-  else {
-    gradientFilterYMultithread(I, GIy, filter, nbThread, p_mask);
+
+  // Computation for the rest of the image of d and sign
+  for (unsigned int r = 1; r < rStop; ++r) {
+    for (unsigned int c = 0; c < nbCols; ++c) {
+      // Of the absolute value of the distance
+      if (checkBooleanPatch(p_mask, r, c, nbRows, nbCols)) {
+        IabsDiff[r][c] = vpHSV<ArithmeticType, useFullScale>::template mahalanobisDistance<double>(I[r][c], I[r + 1][c]);
+      }
+      // Of the sign
+      if (vpColVector::dotProd((I[r +1][c] - I[r][c]), (I[r][c] - I[r - 1][c])) < 0.) {
+        // Inverting sign when cosine distance is negative
+        Isign[r][c] = -1. * Isign[r - 1][c];
+      }
+      else {
+        Isign[r][c] = Isign[r - 1][c];
+      }
+    }
   }
-#else
-  gradientFilterYMonothread(I, GIy, filter, p_mask);
-#endif
+
+  // Computation of the gradient
+  for (unsigned int r = 1; r < rStop; ++r) {
+    for (unsigned int c = 1; c < cStop; ++c) {
+      if (checkBooleanMask(p_mask, r, c)) {
+        GIy[r][c] = 0.;
+        for (int dc = -1; dc <= 1; ++dc) {
+          GIy[r][c] += filter[dc + 1] * (Isign[r - 1][c + dc] * IabsDiff[r - 1][c + dc] + Isign[r][c + dc] * IabsDiff[r][c + dc]);
+        }
+      }
+    }
+  }
 }
 
 template <typename HSVType, bool useFullScale, typename OutputType>
@@ -2468,7 +2607,7 @@ private:
           }
         }
         return hasToCompute;
-};
+      };
 
     vpImage<OutputType> Idiff(nbRows, nbCols);
     initGradientFilterDifferenceImage(I, Idiff);
