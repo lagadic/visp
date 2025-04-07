@@ -626,16 +626,19 @@ std::vector<std::vector<double> > vpMbtDistanceCylinder::getFeaturesForDisplay()
   - Parameters are: `<primitive id (here 0 for line)>`, `<pt_start.i()>`, `<pt_start.j()>`,
   `<pt_end.i()>`, `<pt_end.j()>`
 
-  \param width, height Image size (unused parameters).
+  \param width : Image width (unused parameter).
+  \param height : Image height (unused parameter).
   \param cMo : Pose used to project the 3D model into the image.
   \param camera : The camera parameters.
   \param displayFullModel : If true, the line is displayed even if it is not
 */
-std::vector<std::vector<double> > vpMbtDistanceCylinder::getModelForDisplay(unsigned int, unsigned int,
+std::vector<std::vector<double> > vpMbtDistanceCylinder::getModelForDisplay(unsigned int width, unsigned int height,
                                                                             const vpHomogeneousMatrix &cMo,
                                                                             const vpCameraParameters &camera,
                                                                             bool displayFullModel)
 {
+  (void)width;
+  (void)height;
   std::vector<std::vector<double> > models;
 
   if ((isvisible && isTrackedCylinder) || displayFullModel) {

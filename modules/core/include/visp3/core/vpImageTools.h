@@ -406,15 +406,15 @@ void vpImageTools::crop(const vpImage<Type> &I, const vpRect &roi, vpImage<Type>
   Setting \e v_scale and \e h_scale to values different from 1 allows also to
   subsample the cropped image.
 
-  \param bitmap : Pointer to the input image from which a sub image will be
-  extracted. \param width, height : Size of the input image.
+  \param[in] bitmap : Pointer to the input image from which a sub image will be extracted.
+  \param[in] width : Width of the input image.
+  \param[in] height : Height of the input image.
 
-  \param roi : Region of interest corresponding to the cropped part of the
-  image.
+  \param[in] roi : Region of interest corresponding to the cropped part of the image.
 
-  \param crop : Cropped image.
-  \param v_scale [in] : Vertical subsampling factor applied to the ROI.
-  \param h_scale [in] : Horizontal subsampling factor applied to the ROI.
+  \param[out] crop : Cropped image.
+  \param[in] v_scale [in] : Vertical subsampling factor applied to the ROI.
+  \param[in] h_scale [in] : Horizontal subsampling factor applied to the ROI.
 */
 template <class Type>
 void vpImageTools::crop(const unsigned char *bitmap, unsigned int width, unsigned int height, const vpRect &roi,

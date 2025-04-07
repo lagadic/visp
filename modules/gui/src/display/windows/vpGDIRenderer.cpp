@@ -145,7 +145,8 @@ void vpGDIRenderer::setImg(const vpImage<vpRGBa> &I)
   Sets the image to display.
   \param I : The rgba image to display.
   \param iP : Top left coordinates of the ROI.
-  \param width, height : ROI width and height.
+  \param width : ROI width.
+  \param height : ROI height.
 */
 void vpGDIRenderer::setImgROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, unsigned int width, unsigned int height)
 {
@@ -167,7 +168,8 @@ void vpGDIRenderer::setImg(const vpImage<unsigned char> &I)
   Sets the image to display.
   \param I : The rgba image to display.
   \param iP : Top left coordinates of the ROI.
-  \param width, height : ROI width and height.
+  \param width : ROI width.
+  \param height : ROI height.
 */
 void vpGDIRenderer::setImgROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int width,
                               unsigned int height)
@@ -248,7 +250,8 @@ void vpGDIRenderer::convert(const vpImage<vpRGBa> &I, HBITMAP &hBmp)
   Converts the image form ViSP in GDI's image format (bgra with padding).
   \param I : The image to convert.
   \param iP : Top left coordinates of the ROI.
-  \param width, height : ROI width and height.
+  \param width : ROI width.
+  \param height : ROI height.
 */
 void vpGDIRenderer::convertROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, unsigned int width,
                                unsigned int height)
@@ -349,7 +352,8 @@ void vpGDIRenderer::convert(const vpImage<unsigned char> &I, HBITMAP &hBmp)
   Converts the image form ViSP in GDI's image format (bgra with padding).
   \param I The image to convert.
   \param iP : Top left coordinates of the ROI.
-  \param width, height : ROI width and height.
+  \param width : ROI width.
+  \param height : ROI height.
 */
 void vpGDIRenderer::convertROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int width,
                                unsigned int height)
