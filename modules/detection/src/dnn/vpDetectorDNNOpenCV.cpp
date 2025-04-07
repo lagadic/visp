@@ -624,9 +624,9 @@ vpDetectorDNNOpenCV::filterDetectionMultiClassInput(const std::vector<DetectedFe
     }
 
     /**
-     * \brief Increment the number of occurrences and the
+     * \brief Increment the number of occurrences.
      *
-     * \param feature
+     * \param feature : Detected feature.
      */
     void operator()(const DetectedFeatures2D &feature)
     {
