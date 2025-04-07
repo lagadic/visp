@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -238,7 +238,8 @@ public:
     bbox.setRect(m_u_min, m_v_min, (m_u_max - m_u_min) + 1, (m_v_max - m_v_min) + 1);
 
     return bbox;
-  };
+  }
+
   /*!
    * Return the location of the dot center of gravity.
    *
