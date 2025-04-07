@@ -1,4 +1,5 @@
 #include <visp3/rbt/vpRBInitializationHelper.h>
+#include <visp3/rbt/vpRBTracker.h>
 
 #include <visp3/vision/vpPose.h>
 #include <visp3/core/vpDisplay.h>
@@ -41,7 +42,7 @@ void vpRBInitializationHelper::savePose(const std::string &filename) const
 #ifdef VISP_HAVE_MODULE_GUI
 
 template <typename T>
-void vpRBInitializationHelper::initClick(const vpImage<T> &I, const std::string &initFile, bool displayHelp)
+void vpRBInitializationHelper::initClick(const vpImage<T> &I, const std::string &initFile, bool displayHelp, vpRBTracker &tracker)
 {
   std::cout << "Starting init click!" << std::endl;
   vpHomogeneousMatrix last_cMo;
@@ -262,7 +263,10 @@ void vpRBInitializationHelper::initClick(const vpImage<T> &I, const std::string 
           std::cout << "2D: " << pose.getPoints()[i].get_x() << ", " << pose.getPoints()[i].get_y() << std::endl;
         }
       }
-      std::cout << "POSE after optim: " << m_cMo << std::endl;
+
+      vpRBFeatureTrackerInput frame;
+      tracker.updateRender(frame, m_cMo);
+      tracker.displaySilhouette(I, frame);
 
       vpDisplay::displayText(I, 15, 10, "left click to validate, right click to re initialize object", vpColor::red);
 
@@ -297,8 +301,8 @@ void vpRBInitializationHelper::initClick(const vpImage<T> &I, const std::string 
   }
 
 }
-template void vpRBInitializationHelper::initClick<unsigned char>(const vpImage<unsigned char> &I, const std::string &initFile, bool displayHelp);
-template void vpRBInitializationHelper::initClick<vpRGBa>(const vpImage<vpRGBa> &I, const std::string &initFile, bool displayHelp);
+template void vpRBInitializationHelper::initClick<unsigned char>(const vpImage<unsigned char> &I, const std::string &initFile, bool displayHelp, vpRBTracker &tracker);
+template void vpRBInitializationHelper::initClick<vpRGBa>(const vpImage<vpRGBa> &I, const std::string &initFile, bool displayHelp, vpRBTracker &tracker);
 #endif
 
 END_VISP_NAMESPACE

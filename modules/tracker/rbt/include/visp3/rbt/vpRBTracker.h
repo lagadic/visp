@@ -57,6 +57,7 @@ BEGIN_VISP_NAMESPACE
 
 class vpObjectMask;
 class vpRBDriftDetector;
+class vpRBInitializationHelper;
 class vpRBVisualOdometry;
 
 /**
@@ -226,10 +227,28 @@ public:
   void initClick(const vpImage<unsigned char> &I, const std::string &initFile, bool displayHelp);
 #endif
 
+  friend vpRBInitializationHelper;
 protected:
 
   vpRBTrackingResult track(vpRBFeatureTrackerInput &input);
   void updateRender(vpRBFeatureTrackerInput &frame);
+  void updateRender(vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cMo);
+
+  template <typename T>
+  void displaySilhouette(const vpImage<T> &I, const vpRBFeatureTrackerInput &frame)
+  {
+    if (shouldRenderSilhouette()) {
+      const vpImage<unsigned char> &Isilhouette = frame.renders.isSilhouette;
+      const vpRect bb = m_renderer.getBoundingBox();
+      for (unsigned int r = std::max(bb.getTop(), 0.); (r < bb.getBottom()) &&(r < I.getRows()); ++r) {
+        for (unsigned int c = std::max(bb.getLeft(), 0.); (c < bb.getRight()) && (c < I.getCols()); ++c) {
+          if (Isilhouette[r][c] != 0) {
+            vpDisplay::displayPoint(I, vpImagePoint(r, c), vpColor::green);
+          }
+        }
+      }
+    }
+  }
 
   std::vector<vpRBSilhouettePoint> extractSilhouettePoints(
     const vpImage<vpRGBf> &Inorm, const vpImage<float> &Idepth,
@@ -246,6 +265,11 @@ protected:
       ss << ", but got " << I.getCols() << " x " << I.getRows();
       throw vpException(vpException::dimensionError, ss.str());
     }
+  }
+
+  bool shouldRenderSilhouette()
+  {
+    return m_renderer.getRenderer<vpPanda3DDepthCannyFilter>() != nullptr;
   }
 
   bool m_firstIteration; //! Whether this is the first iteration

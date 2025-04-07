@@ -448,9 +448,14 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
 
 void vpRBTracker::updateRender(vpRBFeatureTrackerInput &frame)
 {
-  m_renderer.setCameraPose(m_cMo.inverse());
+  updateRender(frame, m_cMo);
+}
 
-  frame.renders.cMo = m_cMo;
+void vpRBTracker::updateRender(vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cMo)
+{
+  m_renderer.setCameraPose(cMo.inverse());
+
+  frame.renders.cMo = cMo;
 
   // Update clipping distances
   frame.renders.normals.resize(m_imageHeight, m_imageWidth);
@@ -464,8 +469,8 @@ void vpRBTracker::updateRender(vpRBFeatureTrackerInput &frame)
   m_rendererSettings.setClippingDistance(frame.renders.zNear, frame.renders.zFar);
   m_renderer.setRenderParameters(m_rendererSettings);
 
-  bool shouldRenderSilhouette = m_renderer.getRenderer<vpPanda3DDepthCannyFilter>() != nullptr;
-  if (shouldRenderSilhouette) {
+  bool renderSilhouette = shouldRenderSilhouette();
+  if (renderSilhouette) {
     // For silhouette extraction, update depth difference threshold
     double thresholdValue = m_depthSilhouetteSettings.getThreshold();
     if (m_depthSilhouetteSettings.thresholdIsRelative()) {
@@ -501,7 +506,7 @@ void vpRBTracker::updateRender(vpRBFeatureTrackerInput &frame)
 #pragma omp section
 #endif
     {
-      if (shouldRenderSilhouette) {
+      if (renderSilhouette) {
         m_renderer.getRenderer<vpPanda3DDepthCannyFilter>()->getRender(
           frame.renders.silhouetteCanny,
           frame.renders.isSilhouette,
@@ -551,10 +556,10 @@ vpRBTracker::extractSilhouettePoints(const vpImage<vpRGBf> &Inorm, const vpImage
       vpRBSilhouettePoint p(n, m, norm, theta, Z);
       p.detectSilhouette(Idepth);
       points.push_back(p);
-      }
     }
-  return points;
   }
+  return points;
+}
 
 void vpRBTracker::addTracker(std::shared_ptr<vpRBFeatureTracker> tracker)
 {
@@ -577,16 +582,8 @@ void vpRBTracker::display(const vpImage<unsigned char> &I, const vpImage<vpRGBa>
     return;
   }
 
-  if (m_displaySilhouette && m_currentFrame.silhouettePoints.size() > 0) {
-    const vpImage<unsigned char> &Isilhouette = m_currentFrame.renders.isSilhouette;
-    const vpRect bb = m_renderer.getBoundingBox();
-    for (unsigned int r = std::max(bb.getTop(), 0.); (r < bb.getBottom()) &&(r < IRGB.getRows()); ++r) {
-      for (unsigned int c = std::max(bb.getLeft(), 0.); (c < bb.getRight()) && (c < IRGB.getCols()); ++c) {
-        if (Isilhouette[r][c] != 0) {
-          vpDisplay::displayPoint(IRGB, vpImagePoint(r, c), vpColor::green);
-        }
-      }
-    }
+  if (m_displaySilhouette) {
+    displaySilhouette(IRGB, m_currentFrame);
   }
 
   for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
@@ -697,7 +694,7 @@ void vpRBTracker::initClick(const vpImage<unsigned char> &I, const std::string &
 {
   vpRBInitializationHelper initializer;
   initializer.setCameraParameters(m_cam);
-  initializer.initClick(I, initFile, displayHelp);
+  initializer.initClick(I, initFile, displayHelp, *this);
   m_cMo = initializer.getPose();
 }
 #endif

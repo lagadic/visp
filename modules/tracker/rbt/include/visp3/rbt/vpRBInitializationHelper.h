@@ -13,6 +13,7 @@ BEGIN_VISP_NAMESPACE
 template <typename T>
 class vpImage;
 
+class vpRBTracker;
 /**
  * \brief A set of utilities to perform initialization.
  *
@@ -30,7 +31,7 @@ public:
 
 #ifdef VISP_HAVE_MODULE_GUI
   template <typename T>
-  void initClick(const vpImage<T> &I, const std::string &initFile, bool displayHelp);
+  void initClick(const vpImage<T> &I, const std::string &initFile, bool displayHelp, vpRBTracker &tracker);
 
 #endif
 
