@@ -103,7 +103,7 @@ public:
   void setImg(const vpImage<vpRGBa> &I) VP_OVERRIDE;
   void setImg(const vpImage<unsigned char> &I) VP_OVERRIDE;
   void setImgROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, unsigned int width, unsigned int height) VP_OVERRIDE;
-  void setImgROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int width, unsigned int height);
+  void setImgROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int width, unsigned int height) VP_OVERRIDE;
 
   void setPixel(const vpImagePoint &iP, const vpColor &color) VP_OVERRIDE;
 
