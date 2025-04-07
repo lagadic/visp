@@ -208,7 +208,7 @@ public:
    *
    * Does nothing. Here for compatibility issue with the vpFrameGrabber class.
    */
-  void close() { }
+  void close() VP_OVERRIDE { }
 
   /*!
    * Return the current image number.

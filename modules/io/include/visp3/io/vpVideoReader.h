@@ -245,7 +245,7 @@ public:
 
   void acquire(vpImage<vpRGBa> &I) vpVideoReader.h;
   void acquire(vpImage<unsigned char> &I) vpVideoReader.h;
-  void close() { }
+  void close() VP_OVERRIDE { }
 
   /*!
    * \return true if the end of the sequence is reached.
