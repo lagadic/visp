@@ -163,7 +163,7 @@ public:
     window.setScale(scale);
     m_scale = scale;
   }
-  void setDownScalingFactor(vpScaleType scaleType) { m_scaleType = scaleType; }
+  void setDownScalingFactor(vpScaleType scaleType) VP_OVERRIDE { m_scaleType = scaleType; }
   void setTitle(const std::string &windowtitle) VP_OVERRIDE;
   void setWindowPosition(int winx, int winy) VP_OVERRIDE;
 
