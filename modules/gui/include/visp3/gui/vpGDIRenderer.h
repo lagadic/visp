@@ -91,6 +91,11 @@ public:
   vpGDIRenderer();
   virtual ~vpGDIRenderer();
 
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+  vpGDIRenderer(const vpGDIRenderer &) = default;
+  vpGDIRenderer &operator=(const vpGDIRenderer &) = default;
+#endif
+
   bool init(HWND hWnd, unsigned int width, unsigned int height) VP_OVERRIDE;
 
   bool render() VP_OVERRIDE;
