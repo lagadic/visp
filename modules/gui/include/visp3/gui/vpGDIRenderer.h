@@ -93,7 +93,7 @@ public:
 
   bool init(HWND hWnd, unsigned int width, unsigned int height) VP_OVERRIDE;
 
-  bool render();
+  bool render() VP_OVERRIDE;
 
   void setImg(const vpImage<vpRGBa> &I);
   void setImg(const vpImage<unsigned char> &I);
