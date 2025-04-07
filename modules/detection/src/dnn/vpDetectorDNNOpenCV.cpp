@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +65,7 @@ BEGIN_VISP_NAMESPACE
  * - only lowercases
  * - the underscores '_' are replaced by hyphens '-'.
  *
- * \param type: the type of parsing method to apply to interpret the DNN inference raw results.
+ * \param[in] type : The type of parsing method to apply to interpret the DNN inference raw results.
  * \return std::string: the name of the type of parsing method to apply.
  */
 std::string vpDetectorDNNOpenCV::dnnResultsParsingTypeToString(const DNNResultsParsingType &type)
