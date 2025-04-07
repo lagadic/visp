@@ -344,8 +344,8 @@ void vpMatrix::svd(vpColVector &w, vpMatrix &V)
 */
 void vpMatrix::svdOpenCV(vpColVector &w, vpMatrix &V)
 {
-  int rows = (int)this->getRows();
-  int cols = (int)this->getCols();
+  int rows = static_cast<int>(this->getRows());
+  int cols = static_cast<int>(this->getCols());
   cv::Mat m(rows, cols, CV_64F, this->data);
   cv::SVD opencvSVD(m);
   cv::Mat opencvV = opencvSVD.vt;
@@ -545,7 +545,7 @@ void vpMatrix::svdLapack(vpColVector &w, vpMatrix &V)
 
     lwork = -1;
     dgesdd_((char *)"S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, &wkopt, &lwork, iwork, &info);
-    lwork = (int)wkopt;
+    lwork = static_cast<int>(wkopt);
     work = new double[static_cast<unsigned int>(lwork)];
 
     dgesdd_((char *)"S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, work, &lwork, iwork, &info);

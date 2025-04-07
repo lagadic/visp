@@ -487,9 +487,9 @@ void vpRobotFlirPtu::setPosition(const vpRobot::vpControlFrameType frame, const 
   }
 
   // Set desired speed wrt max pan/tilt speed
-  if (cpi_ptcmd(m_cer, &m_status, OP_PAN_DESIRED_SPEED_SET, (int)(m_vel_max_tics[0] * m_positioning_velocity / 100.)) ||
+  if (cpi_ptcmd(m_cer, &m_status, OP_PAN_DESIRED_SPEED_SET, static_cast<int>(m_vel_max_tics[0] * m_positioning_velocity / 100.)) ||
       cpi_ptcmd(m_cer, &m_status, OP_TILT_DESIRED_SPEED_SET,
-                (int)(m_vel_max_tics[1] * m_positioning_velocity / 100.))) {
+                static_cast<int>(m_vel_max_tics[1] * m_positioning_velocity / 100.))) {
     disconnect();
     throw(vpException(vpException::fatalError, "Setting FLIR pan/tilt positioning velocity failed"));
   }
@@ -871,7 +871,7 @@ std::string vpRobotFlirPtu::getNetworkIP()
   }
 
   char str[64];
-  if (cpi_ptcmd(m_cer, &m_status, OP_NET_IP_GET, (int)sizeof(str), nullptr, &str)) {
+  if (cpi_ptcmd(m_cer, &m_status, OP_NET_IP_GET, static_cast<int>(sizeof(str)), nullptr, &str)) {
     throw(vpException(vpException::fatalError, "Unable to get Network IP."));
   }
 
@@ -891,7 +891,7 @@ std::string vpRobotFlirPtu::getNetworkGateway()
   }
 
   char str[64];
-  if (cpi_ptcmd(m_cer, &m_status, OP_NET_GATEWAY_GET, (int)sizeof(str), nullptr, &str)) {
+  if (cpi_ptcmd(m_cer, &m_status, OP_NET_GATEWAY_GET, static_cast<int>(sizeof(str)), nullptr, &str)) {
     throw(vpException(vpException::fatalError, "Unable to get Network Gateway."));
   }
 
@@ -911,7 +911,7 @@ std::string vpRobotFlirPtu::getNetworkHostName()
   }
 
   char str[64];
-  if (cpi_ptcmd(m_cer, &m_status, OP_NET_HOSTNAME_GET, (int)sizeof(str), nullptr, &str)) {
+  if (cpi_ptcmd(m_cer, &m_status, OP_NET_HOSTNAME_GET, static_cast<int>(sizeof(str)), nullptr, &str)) {
     throw(vpException(vpException::fatalError, "Unable to get Network hostname."));
   }
 

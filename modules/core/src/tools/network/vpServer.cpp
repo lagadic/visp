@@ -192,9 +192,9 @@ bool vpServer::start()
 #endif // SO_NOSIGPIPE
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  listen(emitter.socketFileDescriptorEmitter, (int)max_clients);
+  listen(emitter.socketFileDescriptorEmitter, static_cast<int>(max_clients));
 #else // Win32
-  listen((unsigned)emitter.socketFileDescriptorEmitter, (int)max_clients);
+  listen((unsigned)emitter.socketFileDescriptorEmitter, static_cast<int>(max_clients));
 #endif
 
   std::cout << "Server ready" << std::endl;
@@ -219,7 +219,7 @@ bool vpServer::checkForConnections()
 
   tv.tv_sec = tv_sec;
 #ifdef TARGET_OS_IPHONE
-  tv.tv_usec = (int)tv_usec;
+  tv.tv_usec = static_cast<int>(tv_usec);
 #else
   tv.tv_usec = tv_usec;
 #endif
@@ -239,7 +239,7 @@ bool vpServer::checkForConnections()
       socketMax = receptor_list[i].socketFileDescriptorReceptor;
   }
 
-  int value = select((int)socketMax + 1, &readFileDescriptor, nullptr, nullptr, &tv);
+  int value = select(static_cast<int>(socketMax) + 1, &readFileDescriptor, nullptr, nullptr, &tv);
   if (value == -1) {
     // vpERROR_TRACE( "vpServer::run(), select()" );
     return false;
@@ -285,7 +285,7 @@ bool vpServer::checkForConnections()
 
           if (numbytes == 0) {
             std::cout << "Disconnected : " << inet_ntoa(receptor_list[i].receptorAddress.sin_addr) << std::endl;
-            receptor_list.erase(receptor_list.begin() + (int)i);
+            receptor_list.erase(receptor_list.begin() + static_cast<int>(i));
             return 0;
           }
         }

@@ -711,14 +711,14 @@ void vpImageSimulator::getImage(vpImage<unsigned char> &I, std::list<vpImageSimu
   unsigned char *bitmap = I.bitmap;
   vpImagePoint ip;
 
-  for (unsigned int i = static_cast<unsigned int>(top)Final; i < static_cast<unsigned int>(bottom)Final; i++) {
-    for (unsigned int j = static_cast<unsigned int>(left)Final; j < static_cast<unsigned int>(right)Final; j++) {
+  for (unsigned int i = static_cast<unsigned int>(topFinal); i < static_cast<unsigned int>(bottomFinal); i++) {
+    for (unsigned int j = static_cast<unsigned int>(leftFinal); j < static_cast<unsigned int>(rightFinal); j++) {
       zmin = -1;
       double x = 0, y = 0;
       ip.set_ij(i, j);
       vpPixelMeterConversion::convertPoint(cam, ip, x, y);
       ip.set_ij(y, x);
-      for (int k = 0; k < (int)nbsimList; k++) {
+      for (int k = 0; k < static_cast<int>(nbsimList); k++) {
         double z = 0;
         if (simList[k]->getPixelDepth(ip, z)) {
           if (z < zmin || zmin < 0) {
@@ -913,14 +913,14 @@ void vpImageSimulator::getImage(vpImage<vpRGBa> &I, std::list<vpImageSimulator> 
   vpRGBa *bitmap = I.bitmap;
   vpImagePoint ip;
 
-  for (unsigned int i = static_cast<unsigned int>(top)Final; i < static_cast<unsigned int>(bottom)Final; i++) {
-    for (unsigned int j = static_cast<unsigned int>(left)Final; j < static_cast<unsigned int>(right)Final; j++) {
+  for (unsigned int i = static_cast<unsigned int>(topFinal); i < static_cast<unsigned int>(bottomFinal); i++) {
+    for (unsigned int j = static_cast<unsigned int>(leftFinal); j < static_cast<unsigned int>(rightFinal); j++) {
       zmin = -1;
       double x = 0, y = 0;
       ip.set_ij(i, j);
       vpPixelMeterConversion::convertPoint(cam, ip, x, y);
       ip.set_ij(y, x);
-      for (int k = 0; k < (int)nbsimList; k++) {
+      for (int k = 0; k < static_cast<int>(nbsimList); k++) {
         double z = 0;
         if (simList[k]->getPixelDepth(ip, z)) {
           if (z < zmin || zmin < 0) {

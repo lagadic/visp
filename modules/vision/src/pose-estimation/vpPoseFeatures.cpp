@@ -49,43 +49,43 @@ vpPoseFeatures::~vpPoseFeatures() { clear(); }
 
 void vpPoseFeatures::clear()
 {
-  for (int i = (int)m_featurePoint_Point_list.size() - 1; i >= 0; i--)
+  for (int i = static_cast<int>(m_featurePoint_Point_list.size()) - 1; i >= 0; i--)
     delete m_featurePoint_Point_list[static_cast<unsigned int>(i)].desiredFeature;
   m_featurePoint_Point_list.clear();
 
-  for (int i = (int)m_featurePoint3D_Point_list.size() - 1; i >= 0; i--)
+  for (int i = static_cast<int>(m_featurePoint3D_Point_list.size()) - 1; i >= 0; i--)
     delete m_featurePoint3D_Point_list[static_cast<unsigned int>(i)].desiredFeature;
   m_featurePoint3D_Point_list.clear();
 
-  for (int i = (int)m_featureVanishingPoint_Point_list.size() - 1; i >= 0; i--)
+  for (int i = static_cast<int>(m_featureVanishingPoint_Point_list.size()) - 1; i >= 0; i--)
     delete m_featureVanishingPoint_Point_list[static_cast<unsigned int>(i)].desiredFeature;
   m_featureVanishingPoint_Point_list.clear();
 
-  for (int i = (int)m_featureVanishingPoint_DuoLine_list.size() - 1; i >= 0; i--)
+  for (int i = static_cast<int>(m_featureVanishingPoint_DuoLine_list.size()) - 1; i >= 0; i--)
     delete m_featureVanishingPoint_DuoLine_list[static_cast<unsigned int>(i)].desiredFeature;
   m_featureVanishingPoint_DuoLine_list.clear();
 
-  for (int i = (int)m_featureEllipse_Sphere_list.size() - 1; i >= 0; i--)
+  for (int i = static_cast<int>(m_featureEllipse_Sphere_list.size()) - 1; i >= 0; i--)
     delete m_featureEllipse_Sphere_list[static_cast<unsigned int>(i)].desiredFeature;
   m_featureEllipse_Sphere_list.clear();
 
-  for (int i = (int)m_featureEllipse_Circle_list.size() - 1; i >= 0; i--)
+  for (int i = static_cast<int>(m_featureEllipse_Circle_list.size()) - 1; i >= 0; i--)
     delete m_featureEllipse_Circle_list[static_cast<unsigned int>(i)].desiredFeature;
   m_featureEllipse_Circle_list.clear();
 
-  for (int i = (int)m_featureLine_Line_list.size() - 1; i >= 0; i--)
+  for (int i = static_cast<int>(m_featureLine_Line_list.size()) - 1; i >= 0; i--)
     delete m_featureLine_Line_list[static_cast<unsigned int>(i)].desiredFeature;
   m_featureLine_Line_list.clear();
 
-  for (int i = (int)m_featureLine_DuoLineInt_List.size() - 1; i >= 0; i--)
+  for (int i = static_cast<int>(m_featureLine_DuoLineInt_List.size()) - 1; i >= 0; i--)
     delete m_featureLine_DuoLineInt_List[static_cast<unsigned int>(i)].desiredFeature;
   m_featureLine_DuoLineInt_List.clear();
 
-  for (int i = (int)m_featureSegment_DuoPoints_list.size() - 1; i >= 0; i--)
+  for (int i = static_cast<int>(m_featureSegment_DuoPoints_list.size()) - 1; i >= 0; i--)
     delete m_featureSegment_DuoPoints_list[static_cast<unsigned int>(i)].desiredFeature;
   m_featureSegment_DuoPoints_list.clear();
 
-  for (int i = (int)m_featureSpecific_list.size() - 1; i >= 0; i--)
+  for (int i = static_cast<int>(m_featureSpecific_list.size()) - 1; i >= 0; i--)
     delete m_featureSpecific_list[static_cast<unsigned int>(i)];
   m_featureSpecific_list.clear();
 
@@ -343,7 +343,7 @@ void vpPoseFeatures::computePoseVVS(vpHomogeneousMatrix &cMo)
     unsigned int rank_max = 0;
     unsigned int iter = 0;
 
-    // while((int)((residu_1 - r)*1e12) != 0 )
+    // while(static_cast<int>((residu_1 - r)*1e12) != 0 )
     while (std::fabs((residu_1 - r) * 1e12) > std::numeric_limits<double>::epsilon()) {
       residu_1 = r;
 
@@ -403,7 +403,7 @@ void vpPoseFeatures::computePoseRobustVVS(vpHomogeneousMatrix &cMo)
     unsigned int rank_max = 0;
     unsigned int iter = 0;
 
-    // while((int)((residu_1 - r)*1e12) !=0)
+    // while(static_cast<int>((residu_1 - r)*1e12) !=0)
     while (std::fabs((residu_1 - r) * 1e12) > std::numeric_limits<double>::epsilon()) {
       residu_1 = r;
 

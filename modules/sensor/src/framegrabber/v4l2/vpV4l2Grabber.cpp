@@ -424,7 +424,7 @@ void vpV4l2Grabber::open(vpImage<unsigned char> &I)
     }
 
     // try to fing a compatible format
-    for (int format = 0; format < (int)V4L2_MAX_FORMAT; format++) {
+    for (int format = 0; format < static_cast<int>(V4L2_MAX_FORMAT); format++) {
       if (format == req_pixelformat) {
         continue;
       }
@@ -440,7 +440,7 @@ void vpV4l2Grabber::open(vpImage<unsigned char> &I)
       catch (...) {
         if (m_verbose)
           std::cout << "This format [" << m_pixelformat << "] is not compatible with camera" << std::endl;
-        if (format == (int)V4L2_MAX_FORMAT) {
+        if (format == static_cast<int>(V4L2_MAX_FORMAT)) {
           std::cout << "No pixel format compatible with the camera was found" << std::endl;
           close();
 
@@ -487,7 +487,7 @@ void vpV4l2Grabber::open(vpImage<vpRGBa> &I)
     }
 
     // try to fing a compatible format
-    for (int format = 0; format < (int)V4L2_MAX_FORMAT; format++) {
+    for (int format = 0; format < static_cast<int>(V4L2_MAX_FORMAT); format++) {
       if (format == req_pixelformat) {
         continue;
       }

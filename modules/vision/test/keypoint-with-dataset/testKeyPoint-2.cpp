@@ -327,7 +327,7 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
 
   if (opt_display) {
 #ifdef VISP_HAVE_DISPLAY
-    display2 = vpDisplayFactory::allocateDisplay(IMatching, 0, (int)I.getHeight() / vpDisplay::getDownScalingFactor(I) + 30, "IMatching");
+    display2 = vpDisplayFactory::allocateDisplay(IMatching, 0, static_cast<int>(I.getHeight()) / vpDisplay::getDownScalingFactor(I) + 30, "IMatching");
     display2->setDownScalingFactor(vpDisplay::SCALE_AUTO);
 #endif
   }

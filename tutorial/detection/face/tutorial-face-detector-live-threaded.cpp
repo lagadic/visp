@@ -252,8 +252,8 @@ int main(int argc, const char *argv[])
   cv::VideoCapture cap;
   cap.open(opt_device);
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-  int width = (int)cap.get(cv::CAP_PROP_FRAME_WIDTH);
-  int height = (int)cap.get(cv::CAP_PROP_FRAME_HEIGHT);
+  int width = static_cast<int>(cap.get(cv::CAP_PROP_FRAME_WIDTH));
+  int height = static_cast<int>(cap.get(cv::CAP_PROP_FRAME_HEIGHT));
   cap.set(cv::CAP_PROP_FRAME_WIDTH, width / opt_scale);
   cap.set(cv::CAP_PROP_FRAME_HEIGHT, height / opt_scale);
 #else

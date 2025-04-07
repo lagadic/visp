@@ -351,7 +351,7 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original,
   std::vector<unsigned int> vectorOfFoundInlierIndex = pose_ransac.getRansacInlierIndex();
   int nbInlierIndexOk = checkInlierIndex(vectorOfFoundInlierIndex, vectorOfOutlierFlags);
 
-  int nbTrueInlierIndex = (int)std::count(vectorOfOutlierFlags.begin(), vectorOfOutlierFlags.end(), false);
+  int nbTrueInlierIndex = static_cast<int>(std::count(vectorOfOutlierFlags.begin(), vectorOfOutlierFlags.end(), false));
   std::cout << "\nThere are " << nbInlierIndexOk << " true inliers found, " << vectorOfFoundInlierIndex.size()
     << " inliers returned and " << nbTrueInlierIndex << " true inliers." << std::endl;
 

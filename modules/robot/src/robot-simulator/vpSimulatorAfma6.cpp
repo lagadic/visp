@@ -1818,7 +1818,7 @@ int vpSimulatorAfma6::isInJointLimit()
       difft = _joint_min[i] - articularCoordinates[i];
       if (difft > diff) {
         diff = difft;
-        artNumb = -(int)i - 1;
+        artNumb = -static_cast<int>(i) - 1;
       }
     }
   }
@@ -1828,7 +1828,7 @@ int vpSimulatorAfma6::isInJointLimit()
       difft = articularCoordinates[i] - _joint_max[i];
       if (difft > diff) {
         diff = difft;
-        artNumb = (int)(i + 1);
+        artNumb = static_cast<int>(i + 1);
       }
     }
   }

@@ -178,7 +178,7 @@ private:
       c = D3DCOLOR_ARGB(0xFF, color.R, color.G, color.B);
     }
 
-    if (x >= 0 && y >= 0 && x <= (int)maxX && y <= (int)maxY)
+    if (x >= 0 && y >= 0 && x <= static_cast<int>(maxX) && y <= static_cast<int>(maxY))
       *(unsigned long *)(buf + (y * pitch) + (x << 2)) = c; // colors[color];
   }
   /*!

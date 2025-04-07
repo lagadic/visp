@@ -431,7 +431,7 @@ vpColVector vpRobust::simultMEstimator(vpColVector &residues)
 
   // Calculate Median
   unsigned int ind_med = static_cast<unsigned int>(ceil(n_data / 2.0)) - 1;
-  med = select(residues, 0, n_data - 1, ind_med /*(int)n_data/2*/);
+  med = select(residues, 0, n_data - 1, ind_med);
 
   // Normalize residues
   for (unsigned int i = 0; i < n_data; ++i)

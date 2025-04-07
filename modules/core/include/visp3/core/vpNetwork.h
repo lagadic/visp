@@ -185,7 +185,7 @@ public:
   */
   std::string getRequestIdFromIndex(const int &ind)
   {
-    if (ind >= (int)request_list.size() || ind < 0)
+    if (ind >= static_cast<int>(request_list.size()) || ind < 0)
       return "";
     return request_list[(unsigned)ind]->getId();
   }
@@ -297,7 +297,7 @@ template <typename T> int vpNetwork::receive(T *object, const unsigned int &size
 
   tv.tv_sec = tv_sec;
 #ifdef TARGET_OS_IPHONE
-  tv.tv_usec = (int)tv_usec;
+  tv.tv_usec = static_cast<int>(tv_usec);
 #else
   tv.tv_usec = tv_usec;
 #endif
@@ -314,7 +314,7 @@ template <typename T> int vpNetwork::receive(T *object, const unsigned int &size
       socketMax = receptor_list[i].socketFileDescriptorReceptor;
   }
 
-  int value = select((int)socketMax + 1, &readFileDescriptor, nullptr, nullptr, &tv);
+  int value = select(static_cast<int>(socketMax) + 1, &readFileDescriptor, nullptr, nullptr, &tv);
   int numbytes = 0;
 
   if (value == -1) {
@@ -333,11 +333,11 @@ template <typename T> int vpNetwork::receive(T *object, const unsigned int &size
         numbytes = recv(receptor_list[i].socketFileDescriptorReceptor, (char *)(void *)object, sizeOfObject, 0);
 #else
         numbytes = recv(static_cast<unsigned int>(receptor_list[i].socketFileDescriptorReceptor), (char *)(void *)object,
-          (int)sizeOfObject, 0);
+        static_cast<int>(sizeOfObject), 0);
 #endif
         if (numbytes <= 0) {
           std::cout << "Disconnected : " << inet_ntoa(receptor_list[i].receptorAddress.sin_addr) << std::endl;
-          receptor_list.erase(receptor_list.begin() + (int)i);
+          receptor_list.erase(receptor_list.begin() + static_cast<int>(i));
           return numbytes;
         }
 
@@ -381,7 +381,7 @@ int vpNetwork::receiveFrom(T *object, const unsigned int &receptorEmitting, cons
 
   tv.tv_sec = tv_sec;
 #ifdef TARGET_OS_IPHONE
-  tv.tv_usec = (int)tv_usec;
+  tv.tv_usec = static_cast<int>(tv_usec);
 #else
   tv.tv_usec = tv_usec;
 #endif
@@ -391,7 +391,7 @@ int vpNetwork::receiveFrom(T *object, const unsigned int &receptorEmitting, cons
   socketMax = receptor_list[receptorEmitting].socketFileDescriptorReceptor;
   FD_SET(static_cast<unsigned int>(receptor_list[receptorEmitting].socketFileDescriptorReceptor), &readFileDescriptor);
 
-  int value = select((int)socketMax + 1, &readFileDescriptor, nullptr, nullptr, &tv);
+  int value = select(static_cast<int>(socketMax) + 1, &readFileDescriptor, nullptr, nullptr, &tv);
   int numbytes = 0;
 
   if (value == -1) {
@@ -410,12 +410,12 @@ int vpNetwork::receiveFrom(T *object, const unsigned int &receptorEmitting, cons
         recv(receptor_list[receptorEmitting].socketFileDescriptorReceptor, (char *)(void *)object, sizeOfObject, 0);
 #else
       numbytes = recv(static_cast<unsigned int>(receptor_list[receptorEmitting].socketFileDescriptorReceptor),
-        (char *)(void *)object, (int)sizeOfObject, 0);
+        (char *)(void *)object, static_cast<int>(sizeOfObject), 0);
 #endif
       if (numbytes <= 0) {
         std::cout << "Disconnected : " << inet_ntoa(receptor_list[receptorEmitting].receptorAddress.sin_addr)
           << std::endl;
-        receptor_list.erase(receptor_list.begin() + (int)receptorEmitting);
+        receptor_list.erase(receptor_list.begin() + static_cast<int>(receptorEmitting));
         return numbytes;
       }
     }
@@ -463,7 +463,7 @@ template <typename T> int vpNetwork::send(T *object, const unsigned int &sizeOfO
   return sendto(receptor_list[0].socketFileDescriptorReceptor, (const char *)(void *)object, sizeOfObject, flags,
     (sockaddr *)&receptor_list[0].receptorAddress, receptor_list[0].receptorAddressSize);
 #else
-  return sendto(receptor_list[0].socketFileDescriptorReceptor, (const char *)(void *)object, (int)sizeOfObject, flags,
+  return sendto(receptor_list[0].socketFileDescriptorReceptor, (const char *)(void *)object, static_cast<int>(sizeOfObject), flags,
     (sockaddr *)&receptor_list[0].receptorAddress, receptor_list[0].receptorAddressSize);
 #endif
 }
@@ -507,7 +507,7 @@ template <typename T> int vpNetwork::sendTo(T *object, const unsigned int &dest,
   return sendto(receptor_list[dest].socketFileDescriptorReceptor, (const char *)(void *)object, sizeOfObject, flags,
     (sockaddr *)&receptor_list[dest].receptorAddress, receptor_list[dest].receptorAddressSize);
 #else
-  return sendto(receptor_list[dest].socketFileDescriptorReceptor, (const char *)(void *)object, (int)sizeOfObject,
+  return sendto(receptor_list[dest].socketFileDescriptorReceptor, (const char *)(void *)object, static_cast<int>(sizeOfObject),
     flags, (sockaddr *)&receptor_list[dest].receptorAddress, receptor_list[dest].receptorAddressSize);
 #endif
 }

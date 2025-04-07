@@ -395,7 +395,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
           const int winXPos = I != nullptr ? I->display->getWindowXPosition() : I_color->display->getWindowXPosition();
           const int winYPos = I != nullptr ? I->display->getWindowYPosition() : I_color->display->getWindowYPosition();
           unsigned int width = I != nullptr ? I->getWidth() : I_color->getWidth();
-          d_help->init(Iref, winXPos + (int)width + 80, winYPos, "Where to initialize...");
+          d_help->init(Iref, winXPos + static_cast<int>(width) + 80, winYPos, "Where to initialize...");
           vpDisplay::display(Iref);
           vpDisplay::flush(Iref);
 #endif
@@ -674,11 +674,11 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
       vpImageIo::read(Iref, displayFile);
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
       if (I) {
-        d_help->init(Iref, I->display->getWindowXPosition() + (int)I->getWidth() + 80, I->display->getWindowYPosition(),
+        d_help->init(Iref, I->display->getWindowXPosition() + static_cast<int>(I->getWidth()) + 80, I->display->getWindowYPosition(),
                      "Where to initialize...");
       }
       else {
-        d_help->init(Iref, I_color->display->getWindowXPosition() + (int)I_color->getWidth() + 80,
+        d_help->init(Iref, I_color->display->getWindowXPosition() + static_cast<int>(I_color->getWidth()) + 80,
                      I_color->display->getWindowYPosition(), "Where to initialize...");
       }
       vpDisplay::display(Iref);
@@ -1248,7 +1248,7 @@ void vpMbTracker::addPolygon(const std::vector<vpPoint> &corners, int idFace, co
 
   vpMbtPolygon polygon;
   polygon.setNbPoint(static_cast<unsigned int>(corners_without_duplicates.size()));
-  polygon.setIndex((int)idFace);
+  polygon.setIndex(static_cast<int>(idFace));
   polygon.setName(polygonName);
   polygon.setLod(useLod);
 
@@ -1459,7 +1459,7 @@ void vpMbTracker::loadModel(const std::string &modelFile, bool verbose, const vp
     if ((*(it - 1) == 'o' && *(it - 2) == 'a' && *(it - 3) == 'c' && *(it - 4) == '.') ||
         (*(it - 1) == 'O' && *(it - 2) == 'A' && *(it - 3) == 'C' && *(it - 4) == '.')) {
       std::vector<std::string> vectorOfModelFilename;
-      int startIdFace = (int)faces.size();
+      int startIdFace = static_cast<int>(faces.size());
       nbPoints = 0;
       nbLines = 0;
       nbPolygonLines = 0;
@@ -1540,7 +1540,7 @@ void vpMbTracker::loadVRMLModel(const std::string &modelFile)
   in.closeFile();
 
   vpHomogeneousMatrix transform;
-  int indexFace = (int)faces.size();
+  int indexFace = static_cast<int>(faces.size());
   extractGroup(sceneGraphVRML2, transform, indexFace);
 
   sceneGraphVRML2->unref();
@@ -2488,7 +2488,7 @@ void vpMbTracker::extractCylinders(SoVRMLIndexedFaceSet *face_set, vpHomogeneous
 
     pt.setWorldCoordinates(pointTransformed[0], pointTransformed[1], pointTransformed[2]);
 
-    if (i < (int)corners_c1.size()) {
+    if (i < static_cast<int>(corners_c1.size())) {
       corners_c1[static_cast<unsigned int>(i)] = pt;
     }
     else {
@@ -3174,7 +3174,7 @@ void vpMbTracker::addProjectionErrorPolygon(const std::vector<vpPoint> &corners,
 
   vpMbtPolygon polygon;
   polygon.setNbPoint(static_cast<unsigned int>(corners_without_duplicates.size()));
-  polygon.setIndex((int)idFace);
+  polygon.setIndex(static_cast<int>(idFace));
   polygon.setName(polygonName);
   polygon.setLod(useLod);
 
@@ -3362,7 +3362,7 @@ void vpMbTracker::addProjectionErrorLine(vpPoint &P1, vpPoint &P2, int polygon, 
     l->hiddenface = &m_projectionErrorFaces;
     l->useScanLine = useScanLine;
 
-    l->setIndexstatic_cast<unsigned int>(m_projectionErrorLines.size()));
+    l->setIndex(static_cast<unsigned int>(m_projectionErrorLines.size()));
     l->setName(name);
 
     if (clippingFlag != vpPolygon3D::NO_CLIPPING)

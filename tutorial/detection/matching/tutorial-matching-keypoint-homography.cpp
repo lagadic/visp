@@ -100,11 +100,13 @@ int main(int argc, const char **argv)
     //! [Homography estimation]
     try {
       double residual;
-      if (method == 0)
+      if (method == 0) {
         vpHomography::ransac(mPref_x, mPref_y, mPcur_x, mPcur_y, curHref, inliers, residual,
-          static_cast<unsigned int>((mPref_x.size() * 0.25), 2.0 / cam.get_px(), true);
-      else
+                             static_cast<unsigned int>(mPref_x.size() * 0.25), 2.0 / cam.get_px(), true);
+      }
+      else {
         vpHomography::robust(mPref_x, mPref_y, mPcur_x, mPcur_y, curHref, inliers, residual, 0.4, 4, true);
+      }
     }
     catch (...) {
       std::cout << "Cannot compute homography from matches..." << std::endl;

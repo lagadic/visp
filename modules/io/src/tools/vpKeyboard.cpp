@@ -146,8 +146,8 @@ void vpKeyboard::setRawMode(bool active)
     new_settings.c_lflag &= static_cast<unsigned int>(~ECHO);
     new_settings.c_lflag &= static_cast<unsigned int>(~ISIG);
     // new_settings.c_oflag &= static_cast<unsigned int>(~NL0);
-    // new_settings.c_oflag &= static_cast<unsigned int>(~CR0));
-    new_settings.c_oflag &= static_cast<unsigned int>(~TAB0;
+    // new_settings.c_oflag &= static_cast<unsigned int>(~CR0);
+    new_settings.c_oflag &= static_cast<unsigned int>(~TAB0);
     // new_settings.c_oflag &= static_cast<unsigned int>(~BS0);
     new_settings.c_cc[VMIN] = 1;
     new_settings.c_cc[VTIME] = 0;

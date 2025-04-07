@@ -344,7 +344,7 @@ public:
 
     double size = 10. * scale;
     double length = sqrt(vpMath::sqr(ip2_.get_i() - ip1_.get_i()) + vpMath::sqr(ip2_.get_j() - ip1_.get_j()));
-    bool vertical_line = (int)ip2_.get_j() == (int)ip1_.get_j();
+    bool vertical_line = static_cast<int>(ip2_.get_j()) == static_cast<int>(ip1_.get_j());
     if (vertical_line) {
       if (ip2_.get_i() < ip1_.get_i()) {
         std::swap(ip1_, ip2_);
@@ -367,7 +367,7 @@ public:
       }
     }
     else {
-      for (unsigned int j = static_cast<unsigned int>(p1_.get_j()); j < ip2_.get_j(); j += static_cast<unsigned int>(2 * deltaj)) {
+      for (unsigned int j = static_cast<unsigned int>(ip1_.get_j()); j < ip2_.get_j(); j += static_cast<unsigned int>(2 * deltaj)) {
         double i = slope * j + orig;
         displayLine(vpImagePoint(i, j), vpImagePoint(i + deltai, j + deltaj), color, thickness, scale);
       }
@@ -378,15 +378,15 @@ public:
   {
     int depth = CV_8U;
     int channels = 3;
-    cv::Size size((int)width, (int)height);
-    if (m_background.channels() != channels || m_background.depth() != depth || m_background.rows != (int)height ||
-        m_background.cols != (int)width) {
+    cv::Size size(static_cast<int>(width), static_cast<int>(height));
+    if (m_background.channels() != channels || m_background.depth() != depth || m_background.rows != static_cast<int>(height) ||
+        m_background.cols != static_cast<int>(width)) {
       m_background = cv::Mat(size, CV_MAKETYPE(depth, channels));
     }
 
     if (scale == 1) {
       for (unsigned int i = 0; i < height; i++) {
-        unsigned char *dst_24 = (unsigned char *)m_background.data + (int)(i * 3 * width);
+        unsigned char *dst_24 = (unsigned char *)m_background.data + static_cast<int>(i * 3 * width);
         for (unsigned int j = 0; j < width; j++) {
           unsigned char val = I[i][j];
           *(dst_24++) = val;
@@ -397,7 +397,7 @@ public:
     }
     else {
       for (unsigned int i = 0; i < height; i++) {
-        unsigned char *dst_24 = (unsigned char *)m_background.data + (int)(i * 3 * width);
+        unsigned char *dst_24 = (unsigned char *)m_background.data + static_cast<int>(i * 3 * width);
         for (unsigned int j = 0; j < width; j++) {
           unsigned char val = I[i * scale][j * scale];
           *(dst_24++) = val;
@@ -412,15 +412,15 @@ public:
   {
     int depth = CV_8U;
     int channels = 3;
-    cv::Size size((int)width, (int)height);
-    if (m_background.channels() != channels || m_background.depth() != depth || m_background.rows != (int)height ||
-        m_background.cols != (int)width) {
+    cv::Size size(static_cast<int>(width), static_cast<int>(height));
+    if (m_background.channels() != channels || m_background.depth() != depth || m_background.rows != static_cast<int>(height) ||
+        m_background.cols != static_cast<int>(width)) {
       m_background = cv::Mat(size, CV_MAKETYPE(depth, channels));
     }
 
     if (scale == 1) {
       for (unsigned int i = 0; i < height; i++) {
-        unsigned char *dst_24 = (unsigned char *)m_background.data + (int)(i * 3 * width);
+        unsigned char *dst_24 = (unsigned char *)m_background.data + static_cast<int>(i * 3 * width);
         for (unsigned int j = 0; j < width; j++) {
           vpRGBa val = I[i][j];
           *(dst_24++) = val.B;
@@ -431,7 +431,7 @@ public:
     }
     else {
       for (unsigned int i = 0; i < height; i++) {
-        unsigned char *dst_24 = (unsigned char *)m_background.data + (int)(i * 3 * width);
+        unsigned char *dst_24 = (unsigned char *)m_background.data + static_cast<int>(i * 3 * width);
         for (unsigned int j = 0; j < width; j++) {
           vpRGBa val = I[i * scale][j * scale];
           *(dst_24++) = val.B;
@@ -447,9 +447,9 @@ public:
   {
     int depth = CV_8U;
     int channels = 3;
-    cv::Size size((int)imgWidth, (int)imgHeight);
-    if (m_background.channels() != channels || m_background.depth() != depth || m_background.rows != (int)imgHeight ||
-        m_background.cols != (int)imgWidth) {
+    cv::Size size(static_cast<int>(imgWidth), static_cast<int>(imgHeight));
+    if (m_background.channels() != channels || m_background.depth() != depth || m_background.rows != static_cast<int>(imgHeight) ||
+        m_background.cols != static_cast<int>(imgWidth)) {
       m_background = cv::Mat(size, CV_MAKETYPE(depth, channels));
     }
 
@@ -459,7 +459,7 @@ public:
       unsigned int i_max = std::min<unsigned int>(i_min + h, imgHeight);
       unsigned int j_max = std::min<unsigned int>(j_min + w, imgWidth);
       for (unsigned int i = i_min; i < i_max; i++) {
-        unsigned char *dst_24 = (unsigned char *)m_background.data + (int)(i * 3 * imgWidth + j_min * 3);
+        unsigned char *dst_24 = (unsigned char *)m_background.data + static_cast<int>(i * 3 * imgWidth + j_min * 3);
         for (unsigned int j = j_min; j < j_max; j++) {
           unsigned char val = I[i][j];
           *(dst_24++) = val;
@@ -469,12 +469,12 @@ public:
       }
     }
     else {
-      int i_min = std::max<int>((int)ceil(iP.get_i() / scale), 0);
-      int j_min = std::max<int>((int)ceil(iP.get_j() / scale), 0);
-      int i_max = std::min<int>((int)ceil((iP.get_i() + h) / scale), (int)imgHeight);
-      int j_max = std::min<int>((int)ceil((iP.get_j() + w) / scale), (int)imgWidth);
+      int i_min = std::max<int>(static_cast<int>(ceil(iP.get_i() / scale)), 0);
+      int j_min = std::max<int>(static_cast<int>(ceil(iP.get_j() / scale)), 0);
+      int i_max = std::min<int>(static_cast<int>(ceil((iP.get_i() + h) / scale)), static_cast<int>(imgHeight));
+      int j_max = std::min<int>(static_cast<int>(ceil((iP.get_j() + w) / scale)), static_cast<int>(imgWidth));
       for (int i = i_min; i < i_max; i++) {
-        unsigned char *dst_24 = (unsigned char *)m_background.data + (int)(i * 3 * imgWidth + j_min * 3);
+        unsigned char *dst_24 = (unsigned char *)m_background.data + static_cast<int>(i * 3 * imgWidth + j_min * 3);
         for (int j = j_min; j < j_max; j++) {
           unsigned char val = I[i * scale][j * scale];
           *(dst_24++) = val;
@@ -489,9 +489,9 @@ public:
   {
     int depth = CV_8U;
     int channels = 3;
-    cv::Size size((int)imgWidth, (int)imgHeight);
-    if (m_background.channels() != channels || m_background.depth() != depth || m_background.rows != (int)imgHeight ||
-        m_background.cols != (int)imgWidth) {
+    cv::Size size(static_cast<int>(imgWidth), static_cast<int>(imgHeight));
+    if (m_background.channels() != channels || m_background.depth() != depth || m_background.rows != static_cast<int>(imgHeight) ||
+        m_background.cols != static_cast<int>(imgWidth)) {
       m_background = cv::Mat(size, CV_MAKETYPE(depth, channels));
     }
 
@@ -501,7 +501,7 @@ public:
       unsigned int i_max = std::min<unsigned int>(i_min + h, imgHeight);
       unsigned int j_max = std::min<unsigned int>(j_min + w, imgWidth);
       for (unsigned int i = i_min; i < i_max; i++) {
-        unsigned char *dst_24 = (unsigned char *)m_background.data + (int)(i * 3 * imgWidth + j_min * 3);
+        unsigned char *dst_24 = (unsigned char *)m_background.data + static_cast<int>(i * 3 * imgWidth + j_min * 3);
         for (unsigned int j = j_min; j < j_max; j++) {
           vpRGBa val = I[i][j];
           *(dst_24++) = val.B;
@@ -511,12 +511,12 @@ public:
       }
     }
     else {
-      int i_min = std::max<int>((int)ceil(iP.get_i() / scale), 0);
-      int j_min = std::max<int>((int)ceil(iP.get_j() / scale), 0);
-      int i_max = std::min<int>((int)ceil((iP.get_i() + h) / scale), (int)imgHeight);
-      int j_max = std::min<int>((int)ceil((iP.get_j() + w) / scale), (int)imgWidth);
+      int i_min = std::max<int>(static_cast<int>(ceil(iP.get_i() / scale)), 0);
+      int j_min = std::max<int>(static_cast<int>(ceil(iP.get_j() / scale)), 0);
+      int i_max = std::min<int>(static_cast<int>(ceil((iP.get_i() + h) / scale)), static_cast<int>(imgHeight));
+      int j_max = std::min<int>(static_cast<int>(ceil((iP.get_j() + w) / scale)), static_cast<int>(imgWidth));
       for (int i = i_min; i < i_max; i++) {
-        unsigned char *dst_24 = (unsigned char *)m_background.data + (int)(i * 3 * imgWidth + j_min * 3);
+        unsigned char *dst_24 = (unsigned char *)m_background.data + static_cast<int>(i * 3 * imgWidth + j_min * 3);
         for (int j = j_min; j < j_max; j++) {
           vpRGBa val = I[i * scale][j * scale];
           *(dst_24++) = val.B;
@@ -533,12 +533,12 @@ public:
       cvcolor = CV_RGB(color.R, color.G, color.B);
       cv::line(m_background, cv::Point(vpMath::round(ip1.get_u() / scale), vpMath::round(ip1.get_v() / scale)),
                cv::Point(vpMath::round(ip2.get_u() / scale), vpMath::round(ip2.get_v() / scale)), cvcolor,
-               (int)thickness);
+               static_cast<int>(thickness));
     }
     else {
       cv::line(m_background, cv::Point(vpMath::round(ip1.get_u() / scale), vpMath::round(ip1.get_v() / scale)),
                cv::Point(vpMath::round(ip2.get_u() / scale), vpMath::round(ip2.get_v() / scale)), col[color.id],
-               (int)thickness);
+               static_cast<int>(thickness));
     }
   }
 
@@ -549,12 +549,12 @@ public:
         cvcolor = CV_RGB(color.R, color.G, color.B);
         cv::line(m_background, cv::Point(vpMath::round(ip.get_u() / scale), vpMath::round(ip.get_v() / scale)),
                  cv::Point(vpMath::round(ip.get_u() / scale + thickness - 1), vpMath::round(ip.get_v() / scale)),
-                 cvcolor, (int)thickness);
+                 cvcolor, static_cast<int>(thickness));
       }
       else {
         cv::line(m_background, cv::Point(vpMath::round(ip.get_u() / scale), vpMath::round(ip.get_v() / scale)),
                  cv::Point(vpMath::round(ip.get_u() / scale + thickness - 1), vpMath::round(ip.get_v() / scale)),
-                 col[color.id], (int)thickness);
+                 col[color.id], static_cast<int>(thickness));
       }
     }
   }

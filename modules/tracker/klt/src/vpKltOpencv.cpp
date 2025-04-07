@@ -145,7 +145,7 @@ void vpKltOpencv::track(const cv::Mat &I)
                            m_pyrMaxLevel, m_termcrit, flags, m_minEigThreshold);
 
   // Remove points that are lost
-  for (int i = (int)status.size() - 1; i >= 0; i--) {
+  for (int i = static_cast<int>(status.size()) - 1; i >= 0; i--) {
     if (status[(size_t)i] == 0) { // point is lost
       m_points[0].erase(m_points[0].begin() + i);
       m_points[1].erase(m_points[1].begin() + i);

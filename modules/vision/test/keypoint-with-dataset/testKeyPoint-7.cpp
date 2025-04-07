@@ -317,7 +317,7 @@ template <typename Type> void run_test(const std::string &env_ipath, const std::
     std::vector<cv::KeyPoint> trainKeyPoints;
     keyPoints.getTrainKeyPoints(trainKeyPoints);
     cv::Mat trainDescriptors = keyPoints.getTrainDescriptors();
-    if (trainKeyPoints.empty() || trainDescriptors.empty() || (int)trainKeyPoints.size() != trainDescriptors.rows) {
+    if (trainKeyPoints.empty() || trainDescriptors.empty() || static_cast<int>(trainKeyPoints.size()) != trainDescriptors.rows) {
       throw vpException(vpException::fatalError, "Problem when detecting "
                                                  "keypoints or when "
                                                  "computing descriptors !");
@@ -492,7 +492,7 @@ template <typename Type> void run_test(const std::string &env_ipath, const std::
     keyPoints.getTrainKeyPoints(trainKeyPoints);
     std::cout << "Get descriptors" << std::endl;
     cv::Mat trainDescriptors = keyPoints.getTrainDescriptors();
-    if (trainKeyPoints.empty() || trainDescriptors.empty() || (int)trainKeyPoints.size() != trainDescriptors.rows) {
+    if (trainKeyPoints.empty() || trainDescriptors.empty() ||static_cast<int>(trainKeyPoints.size()) != trainDescriptors.rows) {
       throw vpException(vpException::fatalError, "Problem when detecting keypoints or when "
                                                  "computing descriptors (SIFT) !");
     }

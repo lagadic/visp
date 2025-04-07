@@ -100,10 +100,10 @@ vpMatrix vpFeatureMomentCentered::compute_Lmu_pq(const unsigned int &p, const un
   double pintom = 0.;
 
   for (unsigned int k = 0; k <= p; ++k) {
-    int pmk = (int)p - (int)k;
+    int pmk = static_cast<int>(p) - static_cast<int>(k);
     double pcombk = static_cast<double>(vpMath::comb(p, k));
     for (unsigned int l = 0; l <= q; ++l) {
-      qml = (int)q - (int)l;
+      qml = static_cast<int>(q) - static_cast<int>(l);
       qcombl = static_cast<double>(vpMath::comb(q, l));
       minus1pow = pow((double)-1, (double)(pmk + qml));
       pcombkqcombl = pcombk * qcombl;
@@ -236,7 +236,7 @@ void vpFeatureMomentCentered::compute_interaction()
     -A * interaction_matrices[0][0][WY] + B * interaction_matrices[0][0][WX] + (2 * delta) * C * mu00;
   interaction_matrices[0][0][WZ] = 0.;
 
-  for (int i = 1; i < (int)order - 1; i++) {
+  for (int i = 1; i < static_cast<int>(order) - 1; i++) {
     unsigned int i_ = static_cast<unsigned int>(i);
     unsigned int im1_ = i_ - 1;
     unsigned int ip1_ = i_ + 1;
@@ -259,7 +259,7 @@ void vpFeatureMomentCentered::compute_interaction()
     interaction_matrices[i_][0][WZ] = i * mu_im11;
   }
 
-  for (int j = 1; j < (int)order - 1; j++) {
+  for (int j = 1; j < static_cast<int>(order) - 1; j++) {
     unsigned int j_ = static_cast<unsigned int>(j);
     unsigned int jm1_ = j_ - 1;
     unsigned int jp1_ = j_ + 1;
@@ -282,11 +282,11 @@ void vpFeatureMomentCentered::compute_interaction()
     interaction_matrices[j_ * order][0][WZ] = -j * mu_1jm1;
   }
 
-  for (int j = 1; j < (int)order - 1; j++) {
+  for (int j = 1; j < static_cast<int>(order) - 1; j++) {
     unsigned int j_ = static_cast<unsigned int>(j);
     unsigned int jm1_ = j_ - 1;
     unsigned int jp1_ = j_ + 1;
-    for (int i = 1; i < (int)order - j - 1; i++) {
+    for (int i = 1; i < static_cast<int>(order) - j - 1; i++) {
       unsigned int i_ = static_cast<unsigned int>(i);
       unsigned int im1_ = i_ - 1;
       unsigned int ip1_ = i_ + 1;

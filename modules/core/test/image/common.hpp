@@ -327,7 +327,7 @@ void RGBToGrayRef(unsigned char *rgb, unsigned char *grey, unsigned int width, u
 {
   // if we have to flip the image, we start from the end last scanline so
   // the  step is negative
-  int lineStep = (flip) ? -(int)(width * 3) : (int)(width * 3);
+  int lineStep = (flip) ? -static_cast<int>(width * 3) : static_cast<int>(width * 3);
 
   // starting source address = last line if we need to flip the image
   unsigned char *src = (flip) ? rgb + (width * height * 3) + lineStep : rgb;
@@ -561,7 +561,7 @@ void BGRToGrayRef(unsigned char *bgr, unsigned char *grey, unsigned int width, u
 {
   // if we have to flip the image, we start from the end last scanline so
   // the  step is negative
-  int lineStep = (flip) ? -(int)(width * 3) : (int)(width * 3);
+  int lineStep = (flip) ? -static_cast<int>(width * 3) : static_cast<int>(width * 3);
 
   // starting source address = last line if we need to flip the image
   unsigned char *src = (flip) ? bgr + (width * height * 3) + lineStep : bgr;
@@ -582,7 +582,7 @@ void BGRToRGBaRef(unsigned char *bgr, unsigned char *rgba, unsigned int width, u
 {
   // if we have to flip the image, we start from the end last scanline so the
   // step is negative
-  int lineStep = (flip) ? -(int)(width * 3) : (int)(width * 3);
+  int lineStep = (flip) ? -static_cast<int>(width * 3) : static_cast<int>(width * 3);
 
   // starting source address = last line if we need to flip the image
   unsigned char *src = (flip) ? (bgr + (width * height * 3) + lineStep) : bgr;
@@ -606,7 +606,7 @@ void BGRaToRGBaRef(unsigned char *bgra, unsigned char *rgba, unsigned int width,
 {
   // if we have to flip the image, we start from the end last scanline so the
   // step is negative
-  int lineStep = (flip) ? -(int)(width * 4) : (int)(width * 4);
+  int lineStep = (flip) ? -static_cast<int>(width * 4) : static_cast<int>(width * 4);
 
   // starting source address = last line if we need to flip the image
   unsigned char *src = (flip) ? (bgra + (width * height * 4) + lineStep) : bgra;

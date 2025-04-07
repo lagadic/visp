@@ -173,7 +173,7 @@ void vpRBInitializationHelper::initClick(const vpImage<T> &I, const std::string 
           const int winXPos = I.display->getWindowXPosition();
           const int winYPos = I.display->getWindowYPosition();
           unsigned int width = I.getWidth();
-          d_help->init(Iref, winXPos + (int)width + 80, winYPos, "Where to initialize...");
+          d_help->init(Iref, winXPos +static_cast<int>(width) + 80, winYPos, "Where to initialize...");
           vpDisplay::display(Iref);
           vpDisplay::flush(Iref);
 #endif

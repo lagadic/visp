@@ -1793,7 +1793,7 @@ int vpSimulatorViper850::isInJointLimit()
       difft = joint_min[i] - articularCoordinates[i];
       if (difft > diff) {
         diff = difft;
-        artNumb = -(int)i - 1;
+        artNumb = -static_cast<int>(i) - 1;
       }
     }
   }
@@ -1803,7 +1803,7 @@ int vpSimulatorViper850::isInJointLimit()
       difft = articularCoordinates[i] - joint_max[i];
       if (difft > diff) {
         diff = difft;
-        artNumb = (int)(i + 1);
+        artNumb = static_cast<int>(i + 1);
       }
     }
   }

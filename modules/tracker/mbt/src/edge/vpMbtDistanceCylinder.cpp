@@ -242,37 +242,37 @@ bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, cons
     // update limits of the melines.
     int marge = /*10*/ 5; // ou 5 normalement
     if (ip11.get_j() < ip12.get_j()) {
-      meline1->jmin = (int)ip11.get_j() - marge;
-      meline1->jmax = (int)ip12.get_j() + marge;
+      meline1->jmin = static_cast<int>(ip11.get_j()) - marge;
+      meline1->jmax = static_cast<int>(ip12.get_j()) + marge;
     }
     else {
-      meline1->jmin = (int)ip12.get_j() - marge;
-      meline1->jmax = (int)ip11.get_j() + marge;
+      meline1->jmin = static_cast<int>(ip12.get_j()) - marge;
+      meline1->jmax = static_cast<int>(ip11.get_j()) + marge;
     }
     if (ip11.get_i() < ip12.get_i()) {
-      meline1->imin = (int)ip11.get_i() - marge;
-      meline1->imax = (int)ip12.get_i() + marge;
+      meline1->imin = static_cast<int>(ip11.get_i()) - marge;
+      meline1->imax = static_cast<int>(ip12.get_i()) + marge;
     }
     else {
-      meline1->imin = (int)ip12.get_i() - marge;
-      meline1->imax = (int)ip11.get_i() + marge;
+      meline1->imin = static_cast<int>(ip12.get_i()) - marge;
+      meline1->imax = static_cast<int>(ip11.get_i()) + marge;
     }
 
     if (ip21.get_j() < ip22.get_j()) {
-      meline2->jmin = (int)ip21.get_j() - marge;
-      meline2->jmax = (int)ip22.get_j() + marge;
+      meline2->jmin = static_cast<int>(ip21.get_j()) - marge;
+      meline2->jmax = static_cast<int>(ip22.get_j()) + marge;
     }
     else {
-      meline2->jmin = (int)ip22.get_j() - marge;
-      meline2->jmax = (int)ip21.get_j() + marge;
+      meline2->jmin = static_cast<int>(ip22.get_j()) - marge;
+      meline2->jmax = static_cast<int>(ip21.get_j()) + marge;
     }
     if (ip21.get_i() < ip22.get_i()) {
-      meline2->imin = (int)ip21.get_i() - marge;
-      meline2->imax = (int)ip22.get_i() + marge;
+      meline2->imin = static_cast<int>(ip21.get_i()) - marge;
+      meline2->imax = static_cast<int>(ip22.get_i()) + marge;
     }
     else {
-      meline2->imin = (int)ip22.get_i() - marge;
-      meline2->imax = (int)ip21.get_i() + marge;
+      meline2->imin = static_cast<int>(ip22.get_i()) - marge;
+      meline2->imax = static_cast<int>(ip21.get_i()) + marge;
     }
 
     // Initialize the tracking
@@ -410,37 +410,37 @@ void vpMbtDistanceCylinder::updateMovingEdge(const vpImage<unsigned char> &I, co
     // update limits of the meline.
     int marge = /*10*/ 5; // ou 5 normalement
     if (ip11.get_j() < ip12.get_j()) {
-      meline1->jmin = (int)ip11.get_j() - marge;
-      meline1->jmax = (int)ip12.get_j() + marge;
+      meline1->jmin = static_cast<int>(ip11.get_j()) - marge;
+      meline1->jmax = static_cast<int>(ip12.get_j()) + marge;
     }
     else {
-      meline1->jmin = (int)ip12.get_j() - marge;
-      meline1->jmax = (int)ip11.get_j() + marge;
+      meline1->jmin = static_cast<int>(ip12.get_j()) - marge;
+      meline1->jmax = static_cast<int>(ip11.get_j()) + marge;
     }
     if (ip11.get_i() < ip12.get_i()) {
-      meline1->imin = (int)ip11.get_i() - marge;
-      meline1->imax = (int)ip12.get_i() + marge;
+      meline1->imin = static_cast<int>(ip11.get_i()) - marge;
+      meline1->imax = static_cast<int>(ip12.get_i()) + marge;
     }
     else {
-      meline1->imin = (int)ip12.get_i() - marge;
-      meline1->imax = (int)ip11.get_i() + marge;
+      meline1->imin = static_cast<int>(ip12.get_i()) - marge;
+      meline1->imax = static_cast<int>(ip11.get_i()) + marge;
     }
 
     if (ip21.get_j() < ip22.get_j()) {
-      meline2->jmin = (int)ip21.get_j() - marge;
-      meline2->jmax = (int)ip22.get_j() + marge;
+      meline2->jmin = static_cast<int>(ip21.get_j()) - marge;
+      meline2->jmax = static_cast<int>(ip22.get_j()) + marge;
     }
     else {
-      meline2->jmin = (int)ip22.get_j() - marge;
-      meline2->jmax = (int)ip21.get_j() + marge;
+      meline2->jmin = static_cast<int>(ip22.get_j()) - marge;
+      meline2->jmax = static_cast<int>(ip21.get_j()) + marge;
     }
     if (ip21.get_i() < ip22.get_i()) {
-      meline2->imin = (int)ip21.get_i() - marge;
-      meline2->imax = (int)ip22.get_i() + marge;
+      meline2->imin = static_cast<int>(ip21.get_i()) - marge;
+      meline2->imax = static_cast<int>(ip22.get_i()) + marge;
     }
     else {
-      meline2->imin = (int)ip22.get_i() - marge;
-      meline2->imax = (int)ip21.get_i() + marge;
+      meline2->imin = static_cast<int>(ip22.get_i()) - marge;
+      meline2->imax = static_cast<int>(ip21.get_i()) + marge;
     }
 
     // Initialize the tracking

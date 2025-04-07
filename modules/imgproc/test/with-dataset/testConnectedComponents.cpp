@@ -314,9 +314,9 @@ int main(int argc, const char **argv)
     for (unsigned int i = 0; i < labels_connex4.getHeight(); i++) {
       for (unsigned int j = 0; j < labels_connex4.getWidth(); j++) {
         if (labels_connex4[i][j] != 0) {
-          labels_connex4_color[i][j] = vpRGBa(vpColor::getColor(static_cast<unsigned int>(labels_connex4[i][j]).R),
-                                              vpColor::getColor(static_cast<unsigned int>(labels_connex4[i][j]).G),
-                                              vpColor::getColor(static_cast<unsigned int>(labels_connex4[i][j]).B));
+          labels_connex4_color[i][j] = vpRGBa(vpColor::getColor(static_cast<unsigned int>(labels_connex4[i][j])).R,
+                                              vpColor::getColor(static_cast<unsigned int>(labels_connex4[i][j])).G,
+                                              vpColor::getColor(static_cast<unsigned int>(labels_connex4[i][j])).B);
         }
       }
     }
@@ -328,9 +328,9 @@ int main(int argc, const char **argv)
     for (unsigned int i = 0; i < labels_connex8.getHeight(); i++) {
       for (unsigned int j = 0; j < labels_connex8.getWidth(); j++) {
         if (labels_connex8[i][j] != 0) {
-          labels_connex8_color[i][j] = vpRGBa(vpColor::getColor(static_cast<unsigned int>(labels_connex4[i][j]).R),
-          vpColor::getColor(static_cast<unsigned int>(labels_connex4[i][j]).G),
-          vpColor::getColor(static_cast<unsigned int>(labels_connex4[i][j]).B));
+          labels_connex8_color[i][j] = vpRGBa(vpColor::getColor(static_cast<unsigned int>(labels_connex4[i][j])).R,
+                                              vpColor::getColor(static_cast<unsigned int>(labels_connex4[i][j])).G,
+                                              vpColor::getColor(static_cast<unsigned int>(labels_connex4[i][j])).B);
         }
       }
     }

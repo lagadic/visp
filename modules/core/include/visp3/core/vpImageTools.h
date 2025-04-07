@@ -318,7 +318,7 @@ void vpImageTools::crop(const vpImage<Type> &I, double roi_top, double roi_left,
   int i_min = std::max<int>(static_cast<int>(ceil(roi_top / v_scale)), 0);
   int j_min = std::max<int>(static_cast<int>(ceil(roi_left / h_scale)), 0);
   int i_max = std::min<int>(static_cast<int>(ceil(roi_top + roi_height) / v_scale), static_cast<int>(I.getHeight() / v_scale));
-  int j_max = std::min<int>(static_cast<int>(ceil((roi_left + roi_width) / h_scale)), static_cast<int>(I.getWidth() / h_scale));
+  int j_max = std::min<int>(static_cast<int>(ceil(roi_left + roi_width) / h_scale), static_cast<int>(I.getWidth() / h_scale));
 
   unsigned int i_min_u = static_cast<unsigned int>(i_min);
   unsigned int j_min_u = static_cast<unsigned int>(j_min);
@@ -572,10 +572,10 @@ public:
 
 template <class Type> void vpUndistortInternalType<Type>::vpUndistort_threaded(vpUndistortInternalType<Type> &undistortSharedData)
 {
-  int offset = (int)undistortSharedData.threadid;
-  int width = (int)undistortSharedData.width;
-  int height = (int)undistortSharedData.height;
-  int nthreads = (int)undistortSharedData.nthreads;
+  int offset = static_cast<int>(undistortSharedData.threadid);
+  int width = static_cast<int>(undistortSharedData.width);
+  int height = static_cast<int>(undistortSharedData.height);
+  int nthreads = static_cast<int>(undistortSharedData.nthreads);
 
   double u0 = undistortSharedData.cam.get_u0();
   double v0 = undistortSharedData.cam.get_v0();
@@ -609,8 +609,8 @@ template <class Type> void vpUndistortInternalType<Type>::vpUndistort_threaded(v
       // computation of the bilinear interpolation
 
       // declarations
-      int u_round = (int)(u_double);
-      int v_round = (int)(v_double);
+      int u_round = static_cast<int>(u_double);
+      int v_round = static_cast<int>(v_double);
       if (u_round < 0.f)
         u_round = -1;
       if (v_round < 0.f)

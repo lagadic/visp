@@ -373,15 +373,15 @@ void vpMbScanLine::drawScene(const std::vector<std::vector<std::pair<vpPoint, un
           switch (s.type) {
           case POINT:
             if (new_ID == -1 || s.Z1 - depthTreshold <= stack.front().first)
-              visibility_samples[s.edge].insert((int)y);
+              visibility_samples[s.edge].insert(static_cast<int>(y));
             break;
           case START:
             if (new_ID == s.ID)
-              visibility_samples[s.edge].insert((int)y);
+              visibility_samples[s.edge].insert(static_cast<int>(y));
             break;
           case END:
             if (last_ID == s.ID)
-              visibility_samples[s.edge].insert((int)y);
+              visibility_samples[s.edge].insert(static_cast<int>(y));
             break;
           }
 
@@ -448,15 +448,15 @@ void vpMbScanLine::drawScene(const std::vector<std::vector<std::pair<vpPoint, un
           switch (s.type) {
           case POINT:
             if (new_ID == -1 || s.Z1 - depthTreshold <= stack.front().first)
-              visibility_samples[s.edge].insert((int)x);
+              visibility_samples[s.edge].insert(static_cast<int>(x));
             break;
           case START:
             if (new_ID == s.ID)
-              visibility_samples[s.edge].insert((int)x);
+              visibility_samples[s.edge].insert(static_cast<int>(x));
             break;
           case END:
             if (last_ID == s.ID)
-              visibility_samples[s.edge].insert((int)x);
+              visibility_samples[s.edge].insert(static_cast<int>(x));
             break;
           }
 
@@ -597,7 +597,7 @@ void vpMbScanLine::queryLineVisibility(const vpPoint &a, const vpPoint &b,
     return;
 
   const int _v0 = std::max<int>(0, int(std::ceil(*v0)));
-  const int _v1 = std::min<int>((int)(size - 1), (int)(std::ceil(*v1) - 1));
+  const int _v1 = std::min<int>(static_cast<int>(size - 1), static_cast<int>(std::ceil(*v1) - 1));
 
   const std::set<int> &visible_samples = visibility_samples[edge];
   int last = _v0;

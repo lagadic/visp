@@ -470,7 +470,7 @@ int main(int argc, const char **argv)
             // Parse the list of supported modes
             vp1394TwoGrabber::vp1394TwoVideoModeType supmode = *it_lmode;
             std::stringstream ss;
-            ss << (int)supmode;
+            ss << static_cast<int>(supmode);
             if (curmode == supmode)
               std::cout << " * " << vp1394TwoGrabber::videoMode2string(supmode) << " (-v " << ss.str() << ")"
               << std::endl;
@@ -486,7 +486,7 @@ int main(int argc, const char **argv)
                 vp1394TwoGrabber::vp1394TwoColorCodingType supcoding;
                 supcoding = *it_lcoding;
                 std::stringstream ss;
-                ss << (int)supcoding;
+                ss << static_cast<int>(supcoding);
                 if ((curmode == supmode) && (supcoding == curcoding))
                   std::cout << "    * " << vp1394TwoGrabber::colorCoding2string(supcoding) << " (-g " << ss.str()
                   << ")" << std::endl;
@@ -502,7 +502,7 @@ int main(int argc, const char **argv)
               for (it_lfps = lfps.begin(); it_lfps != lfps.end(); ++it_lfps) {
                 vp1394TwoGrabber::vp1394TwoFramerateType supfps = *it_lfps;
                 std::stringstream ss;
-                ss << (int)supfps;
+                ss << static_cast<int>(supfps);
                 if ((curmode == supmode) && (supfps == curfps))
                   std::cout << "    * " << vp1394TwoGrabber::framerate2string(supfps) << " (-f " << ss.str() << ")"
                   << std::endl;
@@ -583,7 +583,7 @@ int main(int argc, const char **argv)
           std::stringstream title;
           title << "Images captured by camera ";
           title << i + offset;
-          d[i].init(Ic[i], (int)(100 + i * 50), (int)(100 + i * 50), title.str());
+          d[i].init(Ic[i], static_cast<int>(100 + i * 50), static_cast<int>(100 + i * 50), title.str());
           vpDisplay::display(Ic[i]);
           vpDisplay::flush(Ic[i]);
         }
@@ -600,7 +600,7 @@ int main(int argc, const char **argv)
           std::stringstream title;
           title << "Images captured by camera ";
           title << i + offset;
-          d[i].init(Ig[i], (int)(100 + i * 50), (int)(100 + i * 50), title.str());
+          d[i].init(Ig[i], static_cast<int>(100 + i * 50), static_cast<int>(100 + i * 50), title.str());
           vpDisplay::display(Ig[i]);
           vpDisplay::flush(Ig[i]);
         }

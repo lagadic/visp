@@ -334,7 +334,7 @@ int main(int argc, const char **argv)
       int winx1 = 100, winy1 = 200;
       d1->init(I1, winx1, winy1, "Display 1");
 
-      int winx2 = winx1 + 10 + (int)I1.getWidth(), winy2 = winy1;
+      int winx2 = winx1 + 10 + static_cast<int>(I1.getWidth()), winy2 = winy1;
       d2->init(I2, winx2, winy2, "Display 2");
 
       vpDisplay::display(I1);

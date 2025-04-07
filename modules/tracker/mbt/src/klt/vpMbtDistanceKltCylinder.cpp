@@ -116,7 +116,7 @@ void vpMbtDistanceKltCylinder::init(const vpKltOpencv &_tracker, const vpHomogen
   for (unsigned int i = 0; i < static_cast<unsigned int>(_tracker.getNbFeatures()); i++) {
     long id;
     float x_tmp, y_tmp;
-    _tracker.getFeature((int)i, id, x_tmp, y_tmp);
+    _tracker.getFeature(static_cast<int>(i), id, x_tmp, y_tmp);
 
     bool add = false;
 
@@ -150,13 +150,13 @@ void vpMbtDistanceKltCylinder::init(const vpKltOpencv &_tracker, const vpHomogen
       double Z = computeZ(xm, ym);
       if (!vpMath::isNaN(Z)) {
 #ifdef TARGET_OS_IPHONE
-        initPoints[(int)id] = vpImagePoint(y_tmp, x_tmp);
-        curPoints[(int)id] = vpImagePoint(y_tmp, x_tmp);
-        curPointsInd[(int)id] = (int)i;
+        initPoints[static_cast<int>(id)] = vpImagePoint(y_tmp, x_tmp);
+        curPoints[static_cast<int>(id)] = vpImagePoint(y_tmp, x_tmp);
+        curPointsInd[static_cast<int>(id)] = static_cast<int>(i);
 #else
         initPoints[id] = vpImagePoint(y_tmp, x_tmp);
         curPoints[id] = vpImagePoint(y_tmp, x_tmp);
-        curPointsInd[id] = (int)i;
+        curPointsInd[id] = static_cast<int>(i);
 #endif
         nbPointsInit++;
         nbPointsCur++;
@@ -164,7 +164,7 @@ void vpMbtDistanceKltCylinder::init(const vpKltOpencv &_tracker, const vpHomogen
         vpPoint p;
         p.setWorldCoordinates(xm * Z, ym * Z, Z);
 #ifdef TARGET_OS_IPHONE
-        initPoints3D[(int)id] = p;
+        initPoints3D[static_cast<int>(id)] = p;
 #else
         initPoints3D[id] = p;
 #endif
@@ -200,14 +200,14 @@ unsigned int vpMbtDistanceKltCylinder::computeNbDetectedCurrent(const vpKltOpenc
   curPointsInd = std::map<int, int>();
 
   for (unsigned int i = 0; i < static_cast<unsigned int>(_tracker.getNbFeatures()); i++) {
-    _tracker.getFeature((int)i, id, x, y);
-    if (isTrackedFeature((int)id)) {
+    _tracker.getFeature(static_cast<int>(i), id, x, y);
+    if (isTrackedFeature(static_cast<int>(id))) {
 #ifdef TARGET_OS_IPHONE
-      curPoints[(int)id] = vpImagePoint(static_cast<double>(y), static_cast<double>(x));
-      curPointsInd[(int)id] = (int)i;
+      curPoints[static_cast<int>(id)] = vpImagePoint(static_cast<double>(y), static_cast<double>(x));
+      curPointsInd[static_cast<int>(id)] = static_cast<int>(i);
 #else
       curPoints[id] = vpImagePoint(static_cast<double>(y), static_cast<double>(x));
-      curPointsInd[id] = (int)i;
+      curPointsInd[id] = static_cast<int>(i);
 #endif
       nbPointsCur++;
     }

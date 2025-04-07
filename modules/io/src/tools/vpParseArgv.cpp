@@ -186,7 +186,7 @@ bool vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable, i
         else {
           char *endPtr = nullptr;
 
-          *(((int *)infoPtr->dst) + i) = (int)strtol(argv[srcIndex], &endPtr, 0);
+          *(((int *)infoPtr->dst) + i) = static_cast<int>(strtol(argv[srcIndex], &endPtr, 0));
           if ((endPtr == argv[srcIndex]) || (*endPtr != 0)) {
             FPRINTF(stderr, "expected integer argument for \"%s\" but got \"%s\"\n", infoPtr->key, argv[srcIndex]);
             return true;
@@ -372,7 +372,7 @@ void vpParseArgv::printUsage(vpArgvInfo *argTable, int flags)
       if (infoPtr->key == nullptr) {
         continue;
       }
-      length = (int)strlen(infoPtr->key);
+      length = static_cast<int>(strlen(infoPtr->key));
       if (length > width) {
         width = length;
       }
@@ -387,7 +387,7 @@ void vpParseArgv::printUsage(vpArgvInfo *argTable, int flags)
         continue;
       }
       FPRINTF(stderr, "\n %s:", infoPtr->key);
-      numSpaces = width + 1 - (int)strlen(infoPtr->key);
+      numSpaces = width + 1 - static_cast<int>(strlen(infoPtr->key));
       while (numSpaces > 0) {
         if (numSpaces >= NUM_SPACES) {
           FPRINTF(stderr, "%s", spaces);

@@ -437,7 +437,7 @@ bool run(const std::string &input_directory, bool opt_click_allowed, bool opt_di
   if (opt_display) {
 #ifdef VISP_HAVE_DISPLAY
     display1.init(I, 0, 0, "Image");
-    display2.init(I_depth, (int)I.getWidth(), 0, "Depth");
+    display2.init(I_depth, static_cast<int>(I.getWidth()), 0, "Depth");
 #endif
   }
 
@@ -451,7 +451,7 @@ bool run(const std::string &input_directory, bool opt_click_allowed, bool opt_di
   std::vector<double> vec_err_t, vec_err_tu;
   std::vector<double> time_vec;
   while (read_data(input_directory, cpt_frame, cam_depth, I, I_depth_raw, pointcloud, cMo_truth) && !quit &&
-    (opt_lastFrame > 0 ? (int)cpt_frame <= opt_lastFrame : true)) {
+    (opt_lastFrame > 0 ? static_cast<int>(cpt_frame) <= opt_lastFrame : true)) {
     vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
 
     if (opt_display) {

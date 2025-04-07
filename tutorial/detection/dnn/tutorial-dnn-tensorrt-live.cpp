@@ -135,10 +135,10 @@ std::vector<cv::Rect> postprocessResults(std::vector<void *> buffers, const std:
     }
 
     if (maxScore > confThresh) {
-      int left = (int)(cpu_outputs[1][4 * i] * image_width);
-      int top = (int)(cpu_outputs[1][4 * i + 1] * image_height);
-      int right = (int)(cpu_outputs[1][4 * i + 2] * image_width);
-      int bottom = (int)(cpu_outputs[1][4 * i + 3] * image_height);
+      int left = static_cast<int>(cpu_outputs[1][4 * i] * image_width);
+      int top = static_cast<int>(cpu_outputs[1][4 * i + 1] * image_height);
+      int right = static_cast<int>(cpu_outputs[1][4 * i + 2] * image_width);
+      int bottom = static_cast<int>(cpu_outputs[1][4 * i + 3] * image_height);
       int width = right - left + 1;
       int height = bottom - top + 1;
 
@@ -415,8 +415,8 @@ int main(int argc, char **argv)
     return EXIT_FAILURE;
   }
 
-  int cap_width = (int)capture.get(cv::CAP_PROP_FRAME_WIDTH);
-  int cap_height = (int)capture.get(cv::CAP_PROP_FRAME_HEIGHT);
+  int cap_width = static_cast<int>(capture.get(cv::CAP_PROP_FRAME_WIDTH));
+  int cap_height = static_cast<int>(capture.get(cv::CAP_PROP_FRAME_HEIGHT));
   capture.set(cv::CAP_PROP_FRAME_WIDTH, cap_width / opt_scale);
   capture.set(cv::CAP_PROP_FRAME_HEIGHT, cap_height / opt_scale);
   //! [OpenCV VideoCapture]

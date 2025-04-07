@@ -735,7 +735,7 @@ void vpDetectorDNNOpenCV::postProcess_YoloV3_V4(DetectionCandidates &proposals, 
           int top = int(cy - 0.5 * h);
 
           proposals.m_confidences.push_back((float)max_class_score);
-          proposals.m_boxes.push_back(cv::Rect(left, top, (int)(w), (int)(h)));
+          proposals.m_boxes.push_back(cv::Rect(left, top, static_cast<int>(w), static_cast<int>(h)));
           proposals.m_classIds.push_back(class_idx);
         }
       }
@@ -800,7 +800,7 @@ void vpDetectorDNNOpenCV::postProcess_YoloV5_V7(DetectionCandidates &proposals, 
           int top = int(cy - 0.5 * h);
 
           proposals.m_confidences.push_back((float)max_class_score);
-          proposals.m_boxes.push_back(cv::Rect(left, top, (int)(w), (int)(h)));
+          proposals.m_boxes.push_back(cv::Rect(left, top, static_cast<int>(w), static_cast<int>(h)));
           proposals.m_classIds.push_back(class_idx);
         }
       }
@@ -863,7 +863,7 @@ void vpDetectorDNNOpenCV::postProcess_YoloV8_V11(DetectionCandidates &proposals,
         int top = int(cy - 0.5 * h);
 
         proposals.m_confidences.push_back((float)max_class_score);
-        proposals.m_boxes.push_back(cv::Rect(left, top, (int)(w), (int)(h)));
+        proposals.m_boxes.push_back(cv::Rect(left, top, static_cast<int>(w), static_cast<int>(h)));
         proposals.m_classIds.push_back(class_idx);
       }
 
@@ -898,11 +898,11 @@ void vpDetectorDNNOpenCV::postProcess_FasterRCNN(DetectionCandidates &proposals,
     for (size_t i = 0; i < dnnRes[j].total(); i += 7) {
       float confidence = data[i + 2];
       if (confidence > netConfig.m_confThreshold) {
-        int left = (int)(data[i + 3] * m_img.cols);
-        int top = (int)(data[i + 4] * m_img.rows);
-        int right = (int)(data[i + 5] * m_img.cols);
-        int bottom = (int)(data[i + 6] * m_img.rows);
-        int classId = (int)(data[i + 1]);
+        int left = static_cast<int>(data[i + 3] * m_img.cols);
+        int top = static_cast<int>(data[i + 4] * m_img.rows);
+        int right = static_cast<int>(data[i + 5] * m_img.cols);
+        int bottom = static_cast<int>(data[i + 6] * m_img.rows);
+        int classId = static_cast<int>(data[i + 1]);
 
         proposals.m_confidences.push_back((float)confidence);
         proposals.m_boxes.push_back(cv::Rect(left, top, right - left + 1, bottom - top + 1));
@@ -960,10 +960,10 @@ void vpDetectorDNNOpenCV::postProcess_SSD_MobileNet(DetectionCandidates &proposa
     }
 
     if (maxScore > netConfig.m_confThreshold) {
-      int left = (int)(bbox[4 * i] * m_img.cols);
-      int top = (int)(bbox[4 * i + 1] * m_img.rows);
-      int right = (int)(bbox[4 * i + 2] * m_img.cols);
-      int bottom = (int)(bbox[4 * i + 3] * m_img.rows);
+      int left = static_cast<int>(bbox[4 * i] * m_img.cols);
+      int top = static_cast<int>(bbox[4 * i + 1] * m_img.rows);
+      int right = static_cast<int>(bbox[4 * i + 2] * m_img.cols);
+      int bottom = static_cast<int>(bbox[4 * i + 3] * m_img.rows);
       int width = right - left + 1;
       int height = bottom - top + 1;
 
@@ -999,11 +999,11 @@ void vpDetectorDNNOpenCV::postProcess_ResNet_10(DetectionCandidates &proposals, 
   for (size_t i = 0; i < dnnRes[0].total(); i += 7) {
     float confidence = data[i + 2];
     if (confidence > netConfig.m_confThreshold) {
-      int left = (int)(data[i + 3] * m_img.cols);
-      int top = (int)(data[i + 4] * m_img.rows);
-      int right = (int)(data[i + 5] * m_img.cols);
-      int bottom = (int)(data[i + 6] * m_img.rows);
-      int classId = (int)(data[i + 1]) - 1;
+      int left = static_cast<int>(data[i + 3] * m_img.cols);
+      int top = static_cast<int>(data[i + 4] * m_img.rows);
+      int right = static_cast<int>(data[i + 5] * m_img.cols);
+      int bottom = static_cast<int>(data[i + 6] * m_img.rows);
+      int classId = static_cast<int>(data[i + 1]) - 1;
 
       proposals.m_confidences.push_back((float)confidence);
       proposals.m_boxes.push_back(cv::Rect(left, top, right - left + 1, bottom - top + 1));

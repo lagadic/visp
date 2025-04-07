@@ -289,8 +289,8 @@ int main(int argc, const char **argv)
 
     // Convert a YUV pixel value to a RGB value
     vpImageConvert::YUVToRGB(y, u, v, r, g, b);
-    std::cout << "   y(" << (int)y << ") u(" << (int)u << ") v(" << (int)v << ") = r(" << (int)r << ") g(" << (int)g
-      << ") b(" << (int)b << ")" << std::endl;
+    std::cout << "   y(" << static_cast<int>(y) << ") u(" << static_cast<int>(u) << ") v(" << static_cast<int>(v) << ") = r(" << static_cast<int>(r) << ") g(" << static_cast<int>(g)
+      << ") b(" << static_cast<int>(b) << ")" << std::endl;
 
     vpChrono chrono;
 
@@ -623,7 +623,7 @@ int main(int argc, const char **argv)
                                    static_cast<unsigned int>(rect_roi.width - rect_roi.x));
       for (unsigned int i = static_cast<unsigned int>(rect_roi.y); i < static_cast<unsigned int>(rect_roi.height); i++) {
         for (unsigned int j = static_cast<unsigned int>(rect_roi.x); j < static_cast<unsigned int>(rect_roi.width); j++) {
-          I_color_crop[static_cast<unsigned int>(((int)i - rect_roi.y)][static_cast<unsigned int>(((int)j - rect_roi.x)] = I_color[i][j];
+          I_color_crop[static_cast<unsigned int>(static_cast<int>(i) - rect_roi.y)][static_cast<unsigned int>(static_cast<int>(j) - rect_roi.x)] = I_color[i][j];
         }
       }
       filename = vpIoTools::createFilePath(opath, "I_color_crop.ppm");

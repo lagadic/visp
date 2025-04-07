@@ -87,7 +87,7 @@ void vpFeatureMomentBasic::compute_interaction()
   interaction_matrices[0][0][WZ] = 0;
 
   // int i=0;
-  for (int j = 1; j < (int)order - 1; j++) {
+  for (int j = 1; j < static_cast<int>(order) - 1; j++) {
     unsigned int j_ = static_cast<unsigned int>(j);
     unsigned int jm1_ = j_ - 1;
     unsigned int jp1_ = j_ + 1;
@@ -104,7 +104,7 @@ void vpFeatureMomentBasic::compute_interaction()
   }
 
   // int j=0;
-  for (int i = 1; i < (int)order - 1; i++) {
+  for (int i = 1; i < static_cast<int>(order) - 1; i++) {
     unsigned int i_ = static_cast<unsigned int>(i);
     unsigned int im1_ = i_ - 1;
     unsigned int ip1_ = i_ + 1;

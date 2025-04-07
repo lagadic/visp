@@ -490,7 +490,7 @@ void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned c
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030200)
     cv::Canny(cv_dx, cv_dy, edges_cvmat, lowerCannyThresh, upperCannyThresh, false);
 #else
-    cv::GaussianBlur(img_cvmat, img_cvmat, cv::Size((int)gaussianFilterSize, (int)gaussianFilterSize),
+    cv::GaussianBlur(img_cvmat, img_cvmat, cv::Size(static_cast<int>(gaussianFilterSize), static_cast<int>(gaussianFilterSize)),
                      gaussianStdev, gaussianStdev);
     cv::Canny(img_cvmat, edges_cvmat, lowerCannyThresh, upperCannyThresh);
 #endif

@@ -379,20 +379,20 @@ bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vp
 
         int marge = /*10*/ 5; // ou 5 normalement
         if (ip1.get_j() < ip2.get_j()) {
-          melinePt->jmin = (int)ip1.get_j() - marge;
-          melinePt->jmax = (int)ip2.get_j() + marge;
+          melinePt->jmin = static_cast<int>(ip1.get_j()) - marge;
+          melinePt->jmax = static_cast<int>(ip2.get_j()) + marge;
         }
         else {
-          melinePt->jmin = (int)ip2.get_j() - marge;
-          melinePt->jmax = (int)ip1.get_j() + marge;
+          melinePt->jmin = static_cast<int>(ip2.get_j()) - marge;
+          melinePt->jmax = static_cast<int>(ip1.get_j()) + marge;
         }
         if (ip1.get_i() < ip2.get_i()) {
-          melinePt->imin = (int)ip1.get_i() - marge;
-          melinePt->imax = (int)ip2.get_i() + marge;
+          melinePt->imin = static_cast<int>(ip1.get_i()) - marge;
+          melinePt->imax = static_cast<int>(ip2.get_i()) + marge;
         }
         else {
-          melinePt->imin = (int)ip2.get_i() - marge;
-          melinePt->imax = (int)ip1.get_i() + marge;
+          melinePt->imin = static_cast<int>(ip2.get_i()) - marge;
+          melinePt->imax = static_cast<int>(ip1.get_i()) + marge;
         }
 
         try {
@@ -534,20 +534,20 @@ void vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const 
 
             int marge = /*10*/ 5; // ou 5 normalement
             if (ip1.get_j() < ip2.get_j()) {
-              meline[i]->jmin = (int)ip1.get_j() - marge;
-              meline[i]->jmax = (int)ip2.get_j() + marge;
+              meline[i]->jmin = static_cast<int>(ip1.get_j()) - marge;
+              meline[i]->jmax = static_cast<int>(ip2.get_j()) + marge;
             }
             else {
-              meline[i]->jmin = (int)ip2.get_j() - marge;
-              meline[i]->jmax = (int)ip1.get_j() + marge;
+              meline[i]->jmin = static_cast<int>(ip2.get_j()) - marge;
+              meline[i]->jmax = static_cast<int>(ip1.get_j()) + marge;
             }
             if (ip1.get_i() < ip2.get_i()) {
-              meline[i]->imin = (int)ip1.get_i() - marge;
-              meline[i]->imax = (int)ip2.get_i() + marge;
+              meline[i]->imin = static_cast<int>(ip1.get_i()) - marge;
+              meline[i]->imax = static_cast<int>(ip2.get_i()) + marge;
             }
             else {
-              meline[i]->imin = (int)ip2.get_i() - marge;
-              meline[i]->imax = (int)ip1.get_i() + marge;
+              meline[i]->imin = static_cast<int>(ip2.get_i()) - marge;
+              meline[i]->imax = static_cast<int>(ip1.get_i()) + marge;
             }
 
             meline[i]->updateParameters(I, ip1, ip2, rho, theta);

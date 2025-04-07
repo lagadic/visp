@@ -621,7 +621,7 @@ int main(int argc, const char **argv)
     unsigned int frame_index = 0;
     std::vector<double> time_vec;
     while (read_data(frame_index, ipath, I, I_depth_raw, pointcloud, pointcloud_width, pointcloud_height) && !quit &&
-           (opt_lastFrame > 0 ? (int)frame_index <= opt_lastFrame : true)) {
+           (opt_lastFrame > 0 ? static_cast<int>(frame_index) <= opt_lastFrame : true)) {
       vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
 
       if (opt_display) {

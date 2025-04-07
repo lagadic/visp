@@ -256,10 +256,10 @@ void vpGDIRenderer::convert(const vpImage<vpRGBa> &I, HBITMAP &hBmp)
 void vpGDIRenderer::convertROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, unsigned int width,
                                unsigned int height)
 {
-  int i_min = std::max<int>((int)ceil(iP.get_i() / m_rscale), 0);
-  int j_min = std::max<int>((int)ceil(iP.get_j() / m_rscale), 0);
-  int i_max = std::min<int>((int)ceil((iP.get_i() + height) / m_rscale), (int)m_rheight);
-  int j_max = std::min<int>((int)ceil((iP.get_j() + width) / m_rscale), (int)m_rwidth);
+  int i_min = std::max<int>(static_cast<int>(ceil(iP.get_i() / m_rscale)), 0);
+  int j_min = std::max<int>(static_cast<int>(ceil(iP.get_j() / m_rscale)), 0);
+  int i_max = std::min<int>(static_cast<int>(ceil((iP.get_i() + height) / m_rscale)), static_cast<int>(m_rheight));
+  int j_max = std::min<int>(static_cast<int>(ceil((iP.get_j() + width) / m_rscale)), static_cast<int>(m_rwidth));
 
   int h = i_max - i_min;
   int w = j_max - j_min;
@@ -270,7 +270,7 @@ void vpGDIRenderer::convertROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP,
   if (m_rscale == 1) {
     vpRGBa *bitmap = I.bitmap;
     unsigned int iwidth = I.getWidth();
-    bitmap = bitmap + (int)(i_min * iwidth + j_min);
+    bitmap = bitmap + static_cast<int>(i_min * iwidth + j_min);
 
     int k = 0;
     for (int i = 0; i < w * h * 4; i += 4) {
@@ -358,10 +358,10 @@ void vpGDIRenderer::convert(const vpImage<unsigned char> &I, HBITMAP &hBmp)
 void vpGDIRenderer::convertROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int width,
                                unsigned int height)
 {
-  int i_min = std::max<int>((int)ceil(iP.get_i() / m_rscale), 0);
-  int j_min = std::max<int>((int)ceil(iP.get_j() / m_rscale), 0);
-  int i_max = std::min<int>((int)ceil((iP.get_i() + height) / m_rscale), (int)m_rheight);
-  int j_max = std::min<int>((int)ceil((iP.get_j() + width) / m_rscale), (int)m_rwidth);
+  int i_min = std::max<int>(static_cast<int>(ceil(iP.get_i() / m_rscale)), 0);
+  int j_min = std::max<int>(static_cast<int>(ceil(iP.get_j() / m_rscale)), 0);
+  int i_max = std::min<int>(static_cast<int>(ceil((iP.get_i() + height) / m_rscale)), static_cast<int>(m_rheight));
+  int j_max = std::min<int>(static_cast<int>(ceil((iP.get_j() + width) / m_rscale)), static_cast<int>(m_rwidth));
 
   int h = i_max - i_min;
   int w = j_max - j_min;
@@ -603,7 +603,7 @@ void vpGDIRenderer::drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2, c
 
     double size = 10. * m_rscale;
     double length = sqrt(vpMath::sqr(ip2_.get_i() - ip1_.get_i()) + vpMath::sqr(ip2_.get_j() - ip1_.get_j()));
-    bool vertical_line = (int)ip2_.get_j() == (int)ip1_.get_j();
+    bool vertical_line = static_cast<int>(ip2_.get_j()) == static_cast<int>(ip1_.get_j());
     if (vertical_line) {
       if (ip2_.get_i() < ip1_.get_i()) {
         std::swap(ip1_, ip2_);
@@ -834,7 +834,7 @@ void vpGDIRenderer::drawText(const vpImagePoint &ip, const char *text, const vpC
   SetBkMode(hDCMem, TRANSPARENT);
 
   SIZE size;
-  int length = (int)strlen(text);
+  int length = static_cast<int>(strlen(text));
 
   // get the displayed string dimensions
   GetTextExtentPoint32(hDCMem, text, length, &size);

@@ -2582,7 +2582,7 @@ private:
       }
       else if (ch <= 247 && i + 3 < str.size() && (str[i + 1] & 0xc0) == 0x80 && (str[i + 2] & 0xc0) == 0x80 &&
               (str[i + 3] & 0xc0) == 0x80) {
-        int val = (int)(((ch & 15) << 18) | ((str[i + 1] & 63) << 12) | ((str[i + 2] & 63) << 6) | (str[i + 3] & 63));
+        int val = static_cast<int>(((ch & 15) << 18) | ((str[i + 1] & 63) << 12) | ((str[i + 2] & 63) << 6) | (str[i + 3] & 63));
         if (val > 1114111) {
           val = 65533;
         }

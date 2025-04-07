@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,12 +29,8 @@
  *
  * Description:
  * Template tracker.
- *
- * Authors:
- * Amaury Dame
- * Aurelien Yol
- *
-*****************************************************************************/
+ */
+
 #include <visp3/tt/vpTemplateTrackerWarpHomographySL3.h>
 
 BEGIN_VISP_NAMESPACE
@@ -62,7 +57,7 @@ BEGIN_VISP_NAMESPACE
   vpMatrix G_(nbParam, 1);
 
   // vpMatrix *dW_ddp0=new vpMatrix[nb_pt];
-  double **dW_ddp0 = new double static_cast<unsigned int>(nb_pt)];
+  double **dW_ddp0 = new double *[static_cast<unsigned int>(nb_pt)];
   for (int i = 0; i < nb_pt; i++) {
     // dW_ddp0[i].resize(2,nbParam);
     dW_ddp0[i] = new double[2 * nbParam];

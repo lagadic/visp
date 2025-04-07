@@ -339,13 +339,13 @@ void vpMbEdgeKltTracker::loadConfigFile(const std::string &configFile, bool verb
   xmlp.getEdgeMe(meParser);
   vpMbEdgeTracker::setMovingEdge(meParser);
 
-  tracker.setMaxFeatures((int)xmlp.getKltMaxFeatures());
-  tracker.setWindowSize((int)xmlp.getKltWindowSize());
+  tracker.setMaxFeatures(static_cast<int>(xmlp.getKltMaxFeatures()));
+  tracker.setWindowSize(static_cast<int>(xmlp.getKltWindowSize()));
   tracker.setQuality(xmlp.getKltQuality());
   tracker.setMinDistance(xmlp.getKltMinDistance());
   tracker.setHarrisFreeParameter(xmlp.getKltHarrisParam());
-  tracker.setBlockSize((int)xmlp.getKltBlockSize());
-  tracker.setPyramidLevels((int)xmlp.getKltPyramidLevels());
+  tracker.setBlockSize(static_cast<int>(xmlp.getKltBlockSize()));
+  tracker.setPyramidLevels(static_cast<int>(xmlp.getKltPyramidLevels()));
   maskBorder = xmlp.getKltMaskBorder();
 
   // if(useScanLine)
@@ -727,7 +727,7 @@ void vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char> &I, const unsig
 
   double mu = m_initialMu;
 
-  while (((int)((residu - residu_1) * 1e8) != 0) && (iter < m_maxIter)) {
+  while ((static_cast<int>((residu - residu_1) * 1e8) != 0) && (iter < m_maxIter)) {
     if (nbrow >= 4)
       trackSecondLoop(I, L_mbt, R_mbt, m_cMo, lvl);
 

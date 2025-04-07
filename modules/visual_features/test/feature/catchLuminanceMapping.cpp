@@ -243,7 +243,7 @@ SCENARIO("Using PCA features", "[visual_features]")
         {
           const vpColVector var = pca.getExplainedVariance();
           REQUIRE(var.sum() < 1.0);
-          for (int i = 1; i < (int)var.getRows() - 1; ++i) {
+          for (int i = 1; i < static_cast<int>(var.getRows()) - 1; ++i) {
             REQUIRE(var[i] >= var[i + 1]);
           }
         }

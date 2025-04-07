@@ -75,7 +75,7 @@ bool vpDetectorDataMatrixCode::detect(const vpImage<unsigned char> &I)
     dmtx_timeout->usec += m_timeout_ms * 1000;
   }
 
-  img = dmtxImageCreate(I.bitmap, (int)I.getWidth(), (int)I.getHeight(), DmtxPack8bppK);
+  img = dmtxImageCreate(I.bitmap, static_cast<int>(I.getWidth()), static_cast<int>(I.getHeight()), DmtxPack8bppK);
   assert(img != nullptr);
 
   dec = dmtxDecodeCreate(img, 1);

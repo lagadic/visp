@@ -275,7 +275,7 @@ vpBasisFunction **vpBSpline::computeDersBasisFuns(double l_u, unsigned int l_i, 
     a[0][0] = 1.0;
     for (unsigned int k = 1; k <= l_der; k++) {
       d = 0.0;
-      rk = (int)(r - k);
+      rk = static_cast<int>(r - k);
       pk = l_p - k;
       if (r >= k) {
         a[s2][0] = a[s1][0] / ndu[pk + 1][rk];

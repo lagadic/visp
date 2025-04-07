@@ -208,9 +208,9 @@ void vpNurbs::curveKnotIns(double l_u, unsigned int l_k, unsigned int l_s, unsig
   }
 
   it1 = l_controlPoints.begin();
-  l_controlPoints.insert(it1 + (int)l_k - (int)l_s, l_r, pt);
+  l_controlPoints.insert(it1 + static_cast<int>(l_k) - static_cast<int>(l_s), l_r, pt);
   it2 = l_weights.begin();
-  l_weights.insert(it2 + (int)l_k - (int)l_s, l_r, w);
+  l_weights.insert(it2 + static_cast<int>(l_k) - static_cast<int>(l_s), l_r, w);
 
   unsigned int L = 0;
   double alpha;
@@ -240,7 +240,7 @@ void vpNurbs::curveKnotIns(double l_u, unsigned int l_k, unsigned int l_s, unsig
   }
 
   it2 = l_knots.begin();
-  l_knots.insert(it2 + (int)l_k, l_r, l_u);
+  l_knots.insert(it2 + static_cast<int>(l_k), l_r, l_u);
 }
 
 void vpNurbs::curveKnotIns(double u, unsigned int s, unsigned int r)
