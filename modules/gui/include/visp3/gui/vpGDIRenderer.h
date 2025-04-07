@@ -89,7 +89,7 @@ class VISP_EXPORT vpGDIRenderer : public vpWin32Renderer
 public:
   double timelost;
   vpGDIRenderer();
-  virtual ~vpGDIRenderer();
+  virtual ~vpGDIRenderer() VP_OVERRIDE;
 
 #if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
   vpGDIRenderer(const vpGDIRenderer &) = default;
