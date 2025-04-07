@@ -299,7 +299,7 @@ public:
   /*!
    * Invert the homography.
    *
-   * \param[inout] bHa : \f$\bf H^{-1}\f$ with H = *this.
+   * \param[in,out] bHa : \f$\bf H^{-1}\f$ with H = *this.
    */
   void inverse(vpHomography &bHa) const;
 
