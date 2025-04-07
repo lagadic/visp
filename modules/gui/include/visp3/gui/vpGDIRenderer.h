@@ -95,7 +95,7 @@ public:
 
   bool render() VP_OVERRIDE;
 
-  void setImg(const vpImage<vpRGBa> &I);
+  void setImg(const vpImage<vpRGBa> &I) VP_OVERRIDE;
   void setImg(const vpImage<unsigned char> &I);
   void setImgROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, unsigned int width, unsigned int height);
   void setImgROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int width, unsigned int height);
