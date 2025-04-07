@@ -690,8 +690,8 @@ vpDetectorDNNOpenCV::filterDetectionMultiClassInput(const std::map< std::string,
   of the center of the bbox with regard to the total width/height of the image.
 
   \param proposals : input/output that will contains all the detection candidates.
-  \param dnnRes: raw results of the \b vpDetectorDNNOpenCV::detect step.
-  \param netConfig: the configuration of the network, to know for instance the DNN input size.
+  \param dnnRes : raw results of the \b vpDetectorDNNOpenCV::detect step.
+  \param netConfig : the configuration of the network, to know for instance the DNN input size.
 */
 void vpDetectorDNNOpenCV::postProcess_YoloV3_V4(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig)
 {
@@ -753,8 +753,8 @@ void vpDetectorDNNOpenCV::postProcess_YoloV3_V4(DetectionCandidates &proposals, 
   [center_x; center_y; width; height; objectness; score_class_0; ...; score_last_class]
 
   \param proposals : input/output that will contains all the detection candidates.
-  \param dnnRes: raw results of the \b vpDetectorDNNOpenCV::detect step.
-  \param netConfig: the configuration of the network, to know for instance the DNN input size.
+  \param dnnRes : raw results of the \b vpDetectorDNNOpenCV::detect step.
+  \param netConfig : the configuration of the network, to know for instance the DNN input size.
 */
 void vpDetectorDNNOpenCV::postProcess_YoloV5_V7(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig)
 {
@@ -818,8 +818,8 @@ void vpDetectorDNNOpenCV::postProcess_YoloV5_V7(DetectionCandidates &proposals, 
   [center_x; center_y; width; height; score_class_0; ...; score_last_class]^T
 
   \param proposals : input/output that will contains all the detection candidates.
-  \param dnnRes: raw results of the \b vpDetectorDNNOpenCV::detect step.
-  \param netConfig: the configuration of the network, to know for instance the DNN input size.
+  \param dnnRes : raw results of the \b vpDetectorDNNOpenCV::detect step.
+  \param netConfig : the configuration of the network, to know for instance the DNN input size.
 */
 void vpDetectorDNNOpenCV::postProcess_YoloV8_V11(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig)
 {
@@ -881,8 +881,8 @@ void vpDetectorDNNOpenCV::postProcess_YoloV8_V11(DetectionCandidates &proposals,
   [batchId, classId, confidence, left, top, right, bottom]
 
   \param proposals : input/output that will contains all the detection candidates.
-  \param dnnRes: raw results of the \b vpDetectorDNNOpenCV::detect step.
-  \param netConfig: the configuration of the network, to know for instance the DNN input size.
+  \param dnnRes : raw results of the \b vpDetectorDNNOpenCV::detect step.
+  \param netConfig : the configuration of the network, to know for instance the DNN input size.
 */
 void vpDetectorDNNOpenCV::postProcess_FasterRCNN(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig)
 {
@@ -923,8 +923,8 @@ void vpDetectorDNNOpenCV::postProcess_FasterRCNN(DetectionCandidates &proposals,
   where `N` is a number of detections and `C` is the number of classes (with `BACKGROUND` as classId = 0).
 
   \param proposals : input/output that will contains all the detection candidates.
-  \param dnnRes: raw results of the \b vpDetectorDNNOpenCV::detect step.
-  \param netConfig: the configuration of the network, to know for instance the DNN input size.
+  \param dnnRes : raw results of the \b vpDetectorDNNOpenCV::detect step.
+  \param netConfig : the configuration of the network, to know for instance the DNN input size.
 */
 void vpDetectorDNNOpenCV::postProcess_SSD_MobileNet(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig)
 {
@@ -984,8 +984,8 @@ void vpDetectorDNNOpenCV::postProcess_SSD_MobileNet(DetectionCandidates &proposa
   [batchId, classId, confidence, left, top, right, bottom]
 
   \param proposals : input/output that will contains all the detection candidates.
-  \param dnnRes: raw results of the \b vpDetectorDNNOpenCV::detect step.
-  \param netConfig: the configuration of the network, to know for instance the DNN input size.
+  \param dnnRes : raw results of the \b vpDetectorDNNOpenCV::detect step.
+  \param netConfig : the configuration of the network, to know for instance the DNN input size.
 */
 void vpDetectorDNNOpenCV::postProcess_ResNet_10(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig)
 {
@@ -1017,8 +1017,8 @@ void vpDetectorDNNOpenCV::postProcess_ResNet_10(DetectionCandidates &proposals, 
   \b vpDetectorDNNOpenCV::NetConfig::m_parsingMethodType to \b USER_DEFINED but didn't set the parsing method.
 
   \param proposals : input/output that will contains all the detection candidates.
-  \param dnnRes: raw results of the \b vpDetectorDNNOpenCV::detect step.
-  \param netConfig: the configuration of the network, to know for instance the DNN input size.
+  \param dnnRes : raw results of the \b vpDetectorDNNOpenCV::detect step.
+  \param netConfig : the configuration of the network, to know for instance the DNN input size.
 */
 void vpDetectorDNNOpenCV::postProcess_unimplemented(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig)
 {
