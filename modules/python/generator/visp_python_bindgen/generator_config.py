@@ -116,8 +116,11 @@ FORBIDDEN_FUNCTION_NAMES_REGEXS = [
 class GeneratorConfig(object):
   pcpp_config: Final[PreprocessorConfig] = PreprocessorConfig(
     defines={
+      'VISP_PYTHON_PREPROCESSOR_RUNNING': '', # Mark that this is the python preprocessor that is running
       'VISP_EXPORT': '', # remove symbol as it messes up the cxxheaderparsing
       'VP_DEPRECATED': '', # remove symbol as it messes up the cxxheaderparsing
+      'VP_NORETURN': '', # remove symbol as it messes up the cxxheaderparsing
+      'VP_NOEXCEPT': '', # remove symbol as it messes up the cxxheaderparsing
       'DOXYGEN_SHOULD_SKIP_THIS': None, # Do not generate methods that do not appear in public api doc
       'NLOHMANN_JSON_SERIALIZE_ENUM(a,...)': 'void ignored() {}', # Remove json enum serialization as it cnanot correctly be parsed
       'CV_OUT': '', # In vpKeyPoint, this appears and breaks parsing
@@ -161,7 +164,6 @@ class GeneratorConfig(object):
     assert path.exists(), f'Main config file {path} was not found'
     with open(path, 'r') as main_config_file:
       main_config = json.load(main_config_file)
-      print(json.dumps(main_config, indent=2))
       logging.info('Updating the generator config from dict: ', main_config)
       GeneratorConfig.pcpp_config.include_directories = main_config['include_dirs']
 
