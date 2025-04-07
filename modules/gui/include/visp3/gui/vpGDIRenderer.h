@@ -116,7 +116,7 @@ public:
   void clear(const vpColor &color) VP_OVERRIDE;
 
   void drawCircle(const vpImagePoint &center, unsigned int radius, const vpColor &color, bool fill = false,
-                  unsigned int thickness = 1 VP_OVERRIDE);
+                  unsigned int thickness = 1) VP_OVERRIDE;
 
   void drawText(const vpImagePoint &ip, const char *text, const vpColor &color) VP_OVERRIDE;
 
