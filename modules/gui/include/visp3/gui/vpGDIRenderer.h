@@ -96,26 +96,26 @@ public:
   bool render() VP_OVERRIDE;
 
   void setImg(const vpImage<vpRGBa> &I) VP_OVERRIDE;
-  void setImg(const vpImage<unsigned char> &I);
-  void setImgROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, unsigned int width, unsigned int height);
+  void setImg(const vpImage<unsigned char> &I) VP_OVERRIDE;
+  void setImgROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, unsigned int width, unsigned int height) VP_OVERRIDE;
   void setImgROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int width, unsigned int height);
 
-  void setPixel(const vpImagePoint &iP, const vpColor &color);
+  void setPixel(const vpImagePoint &iP, const vpColor &color) VP_OVERRIDE;
 
   void drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness,
-                int style = PS_SOLID);
+                int style = PS_SOLID) VP_OVERRIDE;
 
   void drawRect(const vpImagePoint &topLeft, unsigned int width, unsigned int height, const vpColor &color,
-                bool fill = false, unsigned int thickness = 1);
+                bool fill = false, unsigned int thickness = 1) VP_OVERRIDE;
 
-  void clear(const vpColor &color);
+  void clear(const vpColor &color) VP_OVERRIDE;
 
   void drawCircle(const vpImagePoint &center, unsigned int radius, const vpColor &color, bool fill = false,
-                  unsigned int thickness = 1);
+                  unsigned int thickness = 1 VP_OVERRIDE);
 
-  void drawText(const vpImagePoint &ip, const char *text, const vpColor &color);
+  void drawText(const vpImagePoint &ip, const char *text, const vpColor &color) VP_OVERRIDE;
 
-  void drawCross(const vpImagePoint &ip, unsigned int size, const vpColor &color, unsigned int thickness = 1);
+  void drawCross(const vpImagePoint &ip, unsigned int size, const vpColor &color, unsigned int thickness = 1) VP_OVERRIDE;
 
   void drawArrow(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int w, unsigned int h,
                  unsigned int thickness = 1) VP_OVERRIDE;
