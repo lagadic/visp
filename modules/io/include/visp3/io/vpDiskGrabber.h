@@ -224,13 +224,13 @@ public:
    * Read the first image of the sequence.
    * The image number is not incremented.
    */
-  void open(vpImage<unsigned char> &I);
+  void open(vpImage<unsigned char> &I) VP_OVERRIDE;
 
   /*!
    * Read the first image of the sequence.
    * The image number is not incremented.
    */
-  void open(vpImage<vpRGBa> &I);
+  void open(vpImage<vpRGBa> &I) VP_OVERRIDE;
 
   /*!
    * Read the first image of the sequence.

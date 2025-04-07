@@ -328,8 +328,8 @@ public:
   inline long getFrameStep() const { return m_frameStep; }
 
   bool isVideoFormat() const;
-  void open(vpImage<vpRGBa> &I);
-  void open(vpImage<unsigned char> &I);
+  void open(vpImage<vpRGBa> &I) VP_OVERRIDE;
+  void open(vpImage<unsigned char> &I) VP_OVERRIDE;
 
   vpVideoReader &operator>>(vpImage<unsigned char> &I);
   vpVideoReader &operator>>(vpImage<vpRGBa> &I);
