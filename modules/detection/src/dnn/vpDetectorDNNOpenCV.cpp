@@ -114,7 +114,7 @@ std::string vpDetectorDNNOpenCV::dnnResultsParsingTypeToString(const DNNResultsP
  * The naming convention is the following:
  * - only lowercases
  * - the underscores '_' are replaced by hyphens '-'.
- * \param name: the name of the type of parsing method to apply.
+ * \param[in] name : the name of the type of parsing method to apply.
  * \return vpDetectorDNNOpenCV::DNNResultsParsingType: the corresponding \b vpDetectorDNNOpenCV::DNNResultsParsingType.
  */
 vpDetectorDNNOpenCV::DNNResultsParsingType vpDetectorDNNOpenCV::dnnResultsParsingTypeFromString(const std::string &name)
