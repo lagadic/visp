@@ -243,8 +243,8 @@ public:
   vpVideoReader();
   virtual ~vpVideoReader();
 
-  void acquire(vpImage<vpRGBa> &I);
-  void acquire(vpImage<unsigned char> &I);
+  void acquire(vpImage<vpRGBa> &I) vpVideoReader.h;
+  void acquire(vpImage<unsigned char> &I) vpVideoReader.h;
   void close() { }
 
   /*!
