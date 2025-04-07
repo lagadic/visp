@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,9 +48,9 @@ vpSimulatorException::vpSimulatorException(int id, const char *format, ...)
   va_end(args);
 }
 
-vpSimulatorException::vpSimulatorException(int id, const std::string &msg) : vpException(id, msg) { ; }
+vpSimulatorException::vpSimulatorException(int id, const std::string &msg) : vpException(id, msg) { }
 
-vpSimulatorException::vpSimulatorException(int id) : vpException(id) { ; }
+vpSimulatorException::vpSimulatorException(int id) : vpException(id) { }
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_ar.a(vpSimulatorException.cpp.o) has no symbols

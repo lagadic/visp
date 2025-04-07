@@ -245,7 +245,7 @@ public:
 
   void acquire(vpImage<vpRGBa> &I);
   void acquire(vpImage<unsigned char> &I);
-  void close() { ; }
+  void close() { }
 
   /*!
    * \return true if the end of the sequence is reached.
