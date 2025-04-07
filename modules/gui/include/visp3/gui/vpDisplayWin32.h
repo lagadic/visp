@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,6 @@
  * Description:
  * Windows 32 display base class
  */
-
 
 #ifndef VP_DISPLAY_WIN32_H
 #define VP_DISPLAY_WIN32_H
@@ -159,7 +158,7 @@ public:
   void init(unsigned int width, unsigned int height, int winx = -1, int winy = -1, const std::string &title = "") VP_OVERRIDE;
 
   void setFont(const std::string &fontname) VP_OVERRIDE;
-  void setDownScalingFactor(unsigned int scale)
+  void setDownScalingFactor(unsigned int scale) VP_OVERRIDE
   {
     window.setScale(scale);
     m_scale = scale;
