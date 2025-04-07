@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -273,7 +273,7 @@ public:
    *
    * \return Size of the list.
    */
-  inline unsigned int size() const { return (unsigned int)Lpol.size(); }
+  inline unsigned int size() const { return static_cast<unsigned int>(Lpol.size()); }
 };
 
 /*!
