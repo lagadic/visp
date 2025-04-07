@@ -91,7 +91,7 @@ public:
   vpGDIRenderer();
   virtual ~vpGDIRenderer();
 
-  bool init(HWND hWnd, unsigned int width, unsigned int height);
+  bool init(HWND hWnd, unsigned int width, unsigned int height) VP_OVERRIDE;
 
   bool render();
 
