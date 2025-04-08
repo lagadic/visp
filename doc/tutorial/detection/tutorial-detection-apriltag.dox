@@ -27,8 +27,10 @@ as the size of the tag are required.
 It means that detecting ArUco markers will benefit from the corners location extraction precision, at a more expensive
 computation time cost and narrower detection range compared to ArUco method.
 
-\note You can use the vpAprilTagFamily::TAG_CUSTOM48h12 (you will need to enable the WITH_APRILTAG_BIG_FAMILY CMake variable) for recursive tags, that is a tag inside another one.
-This would allow you for instance to detect a marker at a great distance and be able to servo your robot until a close range.
+\note You can use the vpDetectorAprilTag::vpAprilTagFamily::TAG_CUSTOM48h12 (you will need to enable the
+`WITH_APRILTAG_BIG_FAMILY` CMake variable) for recursive tags, that is a tag inside another one.
+This would allow you for instance to detect a marker at a great distance and be able to servo your robot until a
+close range.
 
 \warning The size of the tag corresponds to the size of the black square containing the tag. To be usable with ViSP,
 tags must be printed with a white border. This white border should be as wide as the black border like in the next
@@ -55,11 +57,13 @@ We provide also a ready to print `36h11` tag that is 9.5 by 9.5 cm square
 
 \subsection apriltag_detection_print_download 2.3. Download pre-generated tag families
 
-If you prefer, you can also directly download on the <a href="https://github.com/AprilRobotics/apriltag-imgs">apriltag-imgs GitHub repository</a>
+If you prefer, you can also directly download on the
+<a href="https://github.com/AprilRobotics/apriltag-imgs">apriltag-imgs GitHub repository</a>
 some pre-generated tag families. You will then need to scale the images as described below.
 
 Another resources link is the <a href="https://april.eecs.umich.edu/software/apriltag.html">Apriltag</a> website for:
-- <a href="https://april.eecs.umich.edu/media/apriltag/tag36h11.tgz">36h11 (recommended for AprilTag 2 family)</a> or for AprilTag 3: <a href="https://github.com/AprilRobotics/apriltag?tab=readme-ov-file#choosing-a-tag-family">tagStandard41h12, see</a>
+- <a href="https://april.eecs.umich.edu/media/apriltag/tag36h11.tgz">36h11 (recommended for AprilTag 2 family)</a> or
+  for AprilTag 3: <a href="https://github.com/AprilRobotics/apriltag?tab=readme-ov-file#choosing-a-tag-family">tagStandard41h12</a>
 - <a href="https://april.eecs.umich.edu/media/apriltag/tag25h9.tgz">25h9</a>
 - <a href="https://april.eecs.umich.edu/media/apriltag/tag16h5.tgz">16h5</a>
 
@@ -202,7 +206,7 @@ Next in the code we display the 3D pose of each tag as a RGB frame.
 \note
 - To get absolute pose (not relative to a scale factor), you have to provide the real size of the marker (length of
   a marker side).
-- To calibrate your camera, you can follow this tutorial: \ref tutorial-calibration-intrinsic
+- To calibrate your camera, you can follow this tutorial: \ref tutorial-calibration-intrinsic.
 
 \subsection apriltag_detection_live 3.2. Process live camera images
 
