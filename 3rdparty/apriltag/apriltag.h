@@ -240,9 +240,9 @@ void apriltag_detector_add_family_bits(apriltag_detector_t *td, apriltag_family_
 // Tunable, but really, 2 is a good choice. Values of >=3
 // consume prohibitively large amounts of memory, and otherwise
 // you want the largest value possible.
-static inline void apriltag_detector_add_family(apriltag_detector_t *td, apriltag_family_t *fam)
+static inline void apriltag_detector_add_family(apriltag_detector_t *td, apriltag_family_t *fam, int bits_corrected)
 {
-    apriltag_detector_add_family_bits(td, fam, 2);
+    apriltag_detector_add_family_bits(td, fam, bits_corrected);
 }
 
 // does not deallocate the family.

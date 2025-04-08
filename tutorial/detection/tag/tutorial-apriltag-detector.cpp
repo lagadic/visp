@@ -285,8 +285,6 @@ int main(int argc, const char **argv)
     detector.setZAlignedWithCameraAxis(opt_tag_z_align_frame);
     detector.setAprilTagDecisionMarginThreshold(opt_tag_decision_margin_threshold);
     //! [AprilTag detector settings]
-    // TODO:
-    detector.setAprilTagDebugOption(true);
 
     vpDisplay::display(I);
 
