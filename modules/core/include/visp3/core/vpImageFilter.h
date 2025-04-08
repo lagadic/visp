@@ -2034,17 +2034,25 @@ static void gradientFilterX(const vpImage<vpHSV<ArithmeticType, useFullScale>> &
 
       // Computation for all the other columns
     for (unsigned int c = 1; c < cStop; ++c) {
-      if (checkBooleanPatch(p_mask, r, c, nbRows, nbCols)) {
-        // Of the absolute value of the distance
-        IabsDiff[r][c] = vpHSV<ArithmeticType, useFullScale>::template mahalanobisDistance<double>(I[r][c], I[r][c + 1]);
-      }
+      // if (checkBooleanPatch(p_mask, r, c, nbRows, nbCols)) {
+      //   // Of the absolute value of the distance
+      //   IabsDiff[r][c] = vpHSV<ArithmeticType, useFullScale>::template mahalanobisDistance<double>(I[r][c], I[r][c + 1]);
+      // }
       // Of the sign
       if (vpColVector::dotProd((I[r][c + 1] - I[r][c]), (I[r][c] - I[r][c - 1])) < 0.) {
         // Inverting sign when cosine distance is negative
         Isign[r][c] = -1. * Isign[r][c - 1];
+        if (checkBooleanPatch(p_mask, r, c, nbRows, nbCols)) {
+          // Of the absolute value of the distance
+          IabsDiff[r][c] = vpHSV<ArithmeticType, useFullScale>::template mahalanobisDistance<double>(I[r][c], I[r][c + 1]) - vpHSV<ArithmeticType, useFullScale>::template mahalanobisDistance<double>(I[r][c - 1], I[r][c]);
+        }
       }
       else {
         Isign[r][c] = Isign[r][c - 1];
+        if (checkBooleanPatch(p_mask, r, c, nbRows, nbCols)) {
+          // Of the absolute value of the distance
+          IabsDiff[r][c] = vpHSV<ArithmeticType, useFullScale>::template mahalanobisDistance<double>(I[r][c - 1], I[r][c + 1]);
+        }
       }
     }
   }
@@ -2055,7 +2063,8 @@ static void gradientFilterX(const vpImage<vpHSV<ArithmeticType, useFullScale>> &
       if (checkBooleanMask(p_mask, r, c)) {
         GIx[r][c] = 0.;
         for (int dr = -1; dr <= 1; ++dr) {
-          GIx[r][c] += filter[dr + 1] * (Isign[r + dr][c - 1] * IabsDiff[r + dr][c - 1] + Isign[r + dr][c] * IabsDiff[r + dr][c]);
+          // GIx[r][c] += filter[dr + 1] * (Isign[r + dr][c - 1] * IabsDiff[r + dr][c - 1] + Isign[r + dr][c] * IabsDiff[r + dr][c]);
+          GIx[r][c] += filter[dr + 1] * Isign[r + dr][c] * IabsDiff[r + dr][c];
         }
       }
     }
@@ -2238,16 +2247,23 @@ static void gradientFilterY(const vpImage<vpHSV<ArithmeticType, useFullScale>> &
   for (unsigned int r = 1; r < rStop; ++r) {
     for (unsigned int c = 0; c < nbCols; ++c) {
       // Of the absolute value of the distance
-      if (checkBooleanPatch(p_mask, r, c, nbRows, nbCols)) {
-        IabsDiff[r][c] = vpHSV<ArithmeticType, useFullScale>::template mahalanobisDistance<double>(I[r][c], I[r + 1][c]);
-      }
+      // if (checkBooleanPatch(p_mask, r, c, nbRows, nbCols)) {
+      //   IabsDiff[r][c] = vpHSV<ArithmeticType, useFullScale>::template mahalanobisDistance<double>(I[r][c], I[r + 1][c]);
+      // }
       // Of the sign
       if (vpColVector::dotProd((I[r +1][c] - I[r][c]), (I[r][c] - I[r - 1][c])) < 0.) {
         // Inverting sign when cosine distance is negative
         Isign[r][c] = -1. * Isign[r - 1][c];
+        // Of the absolute value of the distance
+        if (checkBooleanPatch(p_mask, r, c, nbRows, nbCols)) {
+          IabsDiff[r][c] = vpHSV<ArithmeticType, useFullScale>::template mahalanobisDistance<double>(I[r][c], I[r + 1][c]) - vpHSV<ArithmeticType, useFullScale>::template mahalanobisDistance<double>(I[r - 1][c], I[r][c]);
+        }
       }
       else {
         Isign[r][c] = Isign[r - 1][c];
+        if (checkBooleanPatch(p_mask, r, c, nbRows, nbCols)) {
+          IabsDiff[r][c] = vpHSV<ArithmeticType, useFullScale>::template mahalanobisDistance<double>(I[r - 1][c], I[r + 1][c]);
+        }
       }
     }
   }
@@ -2258,7 +2274,8 @@ static void gradientFilterY(const vpImage<vpHSV<ArithmeticType, useFullScale>> &
       if (checkBooleanMask(p_mask, r, c)) {
         GIy[r][c] = 0.;
         for (int dc = -1; dc <= 1; ++dc) {
-          GIy[r][c] += filter[dc + 1] * (Isign[r - 1][c + dc] * IabsDiff[r - 1][c + dc] + Isign[r][c + dc] * IabsDiff[r][c + dc]);
+          // GIy[r][c] += filter[dc + 1] * (Isign[r - 1][c + dc] * IabsDiff[r - 1][c + dc] + Isign[r][c + dc] * IabsDiff[r][c + dc]);
+          GIy[r][c] += filter[dc + 1] * Isign[r][c + dc] * IabsDiff[r][c + dc];
         }
       }
     }
