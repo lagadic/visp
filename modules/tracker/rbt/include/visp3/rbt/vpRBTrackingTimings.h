@@ -35,6 +35,8 @@
 #ifndef VP_RB_TRACKING_TIMINGS_H
 #define VP_RB_TRACKING_TIMINGS_H
 
+#include <iomanip>
+
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpTime.h>
