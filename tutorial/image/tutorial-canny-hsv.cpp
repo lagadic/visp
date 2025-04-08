@@ -52,12 +52,13 @@ using namespace VISP_NAMESPACE_NAME;
 vpImage<unsigned char> IdebugX;
 vpImage<unsigned char> IdebugY;
 
-void computeAbsoluteGradient(const vpImage<double> &GIx, const vpImage<double> &GIy, vpImage<double> &GI, double &min, double &max)
+template <typename FilterType>
+void computeAbsoluteGradient(const vpImage<FilterType> &GIx, const vpImage<FilterType> &GIy, vpImage<FilterType> &GI, FilterType &min, FilterType &max)
 {
   const unsigned int h = GIx.getHeight(), w = GIx.getWidth();
   GI.resize(h, w);
   max = -1.;
-  min = std::numeric_limits<double>::max();
+  min = std::numeric_limits<FilterType>::max();
   for (unsigned int r = 0; r < h; ++r) {
     for (unsigned int c = 0; c < w; ++c) {
       GI[r][c] = std::abs(GIx[r][c]) + std::abs(GIy[r][c]);
@@ -67,11 +68,12 @@ void computeAbsoluteGradient(const vpImage<double> &GIx, const vpImage<double> &
   }
 }
 
-vpImage<unsigned char> convertToDisplay(const vpImage<double> &GI, const double &min, const double &max)
+template<typename FilterType>
+vpImage<unsigned char> convertToDisplay(const vpImage<FilterType> &GI, const FilterType &min, const FilterType &max)
 {
   const unsigned int h = GI.getHeight(), w = GI.getWidth();
-  const double range = max - min;
-  const double step = range / 256.;
+  const FilterType range = max - min;
+  const FilterType step = range / 256.;
   vpImage<unsigned char> Idisp(h, w);
   for (unsigned int r = 0; r < h; ++r) {
     for (unsigned int c = 0; c < w; ++c) {
@@ -90,13 +92,13 @@ bool checkBooleanMask(const vpImage<bool> *p_mask, const unsigned int &r, const 
   return computeVal;
 }
 
-template <typename ArithmeticType, bool useFullScale>
-void gradientFilterX(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpImage<double> &GIx, const vpImage<bool> *p_mask, const vpImageFilter::vpCannyFilteringAndGradientType &type)
+template <typename ArithmeticType, typename FilterType, bool useFullScale>
+void gradientFilterX(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpImage<FilterType> &GIx, const vpImage<bool> *p_mask, const vpImageFilter::vpCannyFilteringAndGradientType &type)
 {
   const unsigned int nbRows = I.getRows(), nbCols = I.getCols();
   GIx.resize(nbRows, nbCols, 0.);
-  std::vector<double> filter(3);
-  double scale;
+  std::vector<FilterType> filter(3);
+  FilterType scale;
   std::string name;
   switch (type) {
   case vpImageFilter::CANNY_COUNT_FILTERING:
@@ -163,11 +165,19 @@ void gradientFilterX(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpIm
   // Computation for the rest of the first row
   for (unsigned int c = 1; c < cStop; ++c) {
     if (vpColVector::dotProd((I[0][c + 1] - I[0][c]), (I[0][c] - I[0][c - 1])) < 0.) {
-      // Inverting sign when cosine distance is negative
+#ifdef BUILD_REFERENCE_METHOD
+// Inverting sign when cosine distance is negative
       Isign[0][c] = -1. * Isign[0][c - 1];
+#else
+      Isign[0][c] = -1.;
+#endif
     }
     else {
+#ifdef BUILD_REFERENCE_METHOD
       Isign[0][c] = Isign[0][c - 1];
+#else
+      Isign[0][c] = 1.;
+#endif
     }
   }
 
@@ -185,7 +195,7 @@ void gradientFilterX(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpIm
       IabsDiff[r][0] = vpHSV<ArithmeticType, useFullScale>::template mahalanobisDistance<double>(I[r][0], I[r][1]);
 #else
       // IabsDiff[r][0] = I[r][1].V - I[r][0].V;
-      IabsDiff[r][0] = vpColVector::dotProd((I[r][1] - I[r][0]), I[r][0].toColVector()) / ((I[r][1] - I[r][0]).frobeniusNorm() * I[r][0].toColVector().frobeniusNorm());
+      IabsDiff[r][0] = vpHSV<ArithmeticType, useFullScale>::template mahalanobisDistance<double>(I[r][0], I[r][1]);
 #endif
     }
 
@@ -197,17 +207,25 @@ void gradientFilterX(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpIm
         IabsDiff[r][c] = vpHSV<ArithmeticType, useFullScale>::template mahalanobisDistance<double>(I[r][c], I[r][c + 1]);
 #else
         // IabsDiff[r][c] = I[r][c + 1].V - I[r][c].V;
-        IabsDiff[r][c] = vpColVector::dotProd((I[r][c + 1] - I[r][c]), (I[r][c] - I[r][c - 1])) / ((I[r][c + 1] - I[r][c]).frobeniusNorm() * (I[r][c] - I[r][c - 1]).frobeniusNorm());
+        IabsDiff[r][c] = vpHSV<ArithmeticType, useFullScale>::template mahalanobisDistance<double>(I[r][c], I[r][c + 1]);
 #endif
 
       }
       // Of the sign
       if (vpColVector::dotProd((I[r][c + 1] - I[r][c]), (I[r][c] - I[r][c - 1])) < 0.) {
         // Inverting sign when cosine distance is negative
+#ifdef BUILD_REFERENCE_METHOD
         Isign[r][c] = -1. * Isign[r][c - 1];
+#else
+        Isign[r][c] = -1.;
+#endif
       }
       else {
+#ifdef BUILD_REFERENCE_METHOD
         Isign[r][c] = Isign[r][c - 1];
+#else
+        Isign[r][c] = 1.;
+#endif
       }
     }
   }
@@ -221,7 +239,7 @@ void gradientFilterX(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpIm
 #ifdef BUILD_REFERENCE_METHOD
           GIx[r][c] += filter[dr + 1] * (Isign[r + dr][c - 1] *  IabsDiff[r + dr][c - 1] +  Isign[r + dr][c] *  IabsDiff[r + dr][c]);
 #else
-          GIx[r][c] += filter[dr + 1] * (IabsDiff[r + dr][c - 1] +  IabsDiff[r + dr][c]);
+          GIx[r][c] += filter[dr + 1] * (Isign[r + dr][c - 1] *  IabsDiff[r + dr][c - 1] +  Isign[r + dr][c] *  IabsDiff[r + dr][c]);
 #endif
         }
       }
@@ -238,12 +256,12 @@ void gradientFilterX(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpIm
   }
 }
 
-template <typename ArithmeticType, bool useFullScale>
-void gradientFilterY(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpImage<double> &GIy, const vpImage<bool> *p_mask, const vpImageFilter::vpCannyFilteringAndGradientType &type)
+template <typename ArithmeticType, typename FilterType, bool useFullScale>
+void gradientFilterY(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpImage<FilterType> &GIy, const vpImage<bool> *p_mask, const vpImageFilter::vpCannyFilteringAndGradientType &type)
 {
   const unsigned int nbRows = I.getRows(), nbCols = I.getCols();
-  std::vector<double> filter(3);
-  double scale;
+  std::vector<FilterType> filter(3);
+  FilterType scale;
   switch (type) {
   case vpImageFilter::CANNY_COUNT_FILTERING:
     // Prewitt case
@@ -302,7 +320,7 @@ void gradientFilterY(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpIm
       IabsDiff[0][c] = vpHSV<ArithmeticType, useFullScale>::template mahalanobisDistance<double>(I[0][c], I[1][c]);
 #else
       // IabsDiff[0][c] = I[1][c].V - I[0][c].V;
-      IabsDiff[0][c] = vpColVector::dotProd((I[1][c] - I[0][c]), I[0][c].toColVector()) / ((I[1][c] - I[0][c]).frobeniusNorm() * I[0][c].toColVector().frobeniusNorm());
+      IabsDiff[0][c] = vpHSV<ArithmeticType, useFullScale>::template mahalanobisDistance<double>(I[0][c], I[1][c]);
 #endif
     }
     if (vpColVector::dotProd((I[1][c] - I[0][c]), I[0][c].toColVector()) < 0.) {
@@ -323,16 +341,24 @@ void gradientFilterY(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpIm
         IabsDiff[r][c] = vpHSV<ArithmeticType, useFullScale>::template mahalanobisDistance<double>(I[r][c], I[r + 1][c]);
 #else
         // IabsDiff[r][c] = I[r + 1][c].V - I[r][c].V;
-        IabsDiff[r][c] = vpColVector::dotProd((I[r +1][c] - I[r][c]), (I[r][c] - I[r - 1][c])) / ((I[r +1][c] - I[r][c]).frobeniusNorm() * (I[r][c] - I[r - 1][c]).frobeniusNorm());
+        IabsDiff[r][c] = vpHSV<ArithmeticType, useFullScale>::template mahalanobisDistance<double>(I[r][c], I[r + 1][c]);
 #endif
       }
       // Of the sign
       if (vpColVector::dotProd((I[r +1][c] - I[r][c]), (I[r][c] - I[r - 1][c])) < 0.) {
         // Inverting sign when cosine distance is negative
+#ifdef BUILD_REFERENCE_METHOD
         Isign[r][c] = -1. * Isign[r - 1][c];
+#else
+        Isign[r][c] = -1.;
+#endif
       }
       else {
+#ifdef BUILD_REFERENCE_METHOD
         Isign[r][c] = Isign[r - 1][c];
+#else
+        Isign[r][c] = 1.;
+#endif
       }
     }
   }
@@ -346,7 +372,7 @@ void gradientFilterY(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpIm
 #ifdef BUILD_REFERENCE_METHOD
           GIy[r][c] += filter[dc + 1] * (Isign[r - 1][c + dc] * IabsDiff[r - 1][c + dc] + Isign[r][c + dc] * IabsDiff[r][c + dc]);
 #else
-          GIy[r][c] += filter[dc + 1] * (IabsDiff[r - 1][c + dc] +  IabsDiff[r][c + dc]);
+          GIy[r][c] += filter[dc + 1] * (Isign[r - 1][c + dc] * IabsDiff[r - 1][c + dc] + Isign[r][c + dc] * IabsDiff[r][c + dc]);
 #endif
         }
       }
@@ -363,8 +389,8 @@ void gradientFilterY(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpIm
   }
 }
 
-template <typename ArithmeticType, bool useFullScale>
-void gradientFilter(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpImage<double> &GIx, vpImage<double> &GIy, const int &nbThread, const vpImage<bool> *p_mask, const vpImageFilter::vpCannyFilteringAndGradientType &type)
+template <typename ArithmeticType, typename FilterType, bool useFullScale>
+void gradientFilter(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpImage<FilterType> &GIx, vpImage<FilterType> &GIy, const int &nbThread, const vpImage<bool> *p_mask, const vpImageFilter::vpCannyFilteringAndGradientType &type)
 {
   const unsigned int nbRows = I.getRows(), nbCols = I.getCols();
   GIx.resize(nbRows, nbCols, 0.);
@@ -549,18 +575,22 @@ int main(int argc, const char *argv[])
 
   // Initialization of the displays
 #ifdef VISP_HAVE_DISPLAY
-  vpImage<double> GIx, GIy, GI;
+  using FilterType = float;
+  vpImage<FilterType> GIx, GIy, GI;
   vpImage<vpHSV<unsigned char, true>> Iblur_hsvuc;
   vpImageFilter::gaussianBlur(Iin_hsvuc, Iblur_hsvuc, options.m_gaussianKernelSize, options.m_gaussianStdev, true, p_mask);
 
   vpImageFilter::gradientFilter(Iblur_hsvuc, GIx, GIy, 1, p_mask, options.m_filteringType);
-  double min = 0., max = 0.;
+  FilterType min = 0., max = 0.;
   computeAbsoluteGradient(GIx, GIy, GI, min, max);
   vpImage<unsigned char> GIdisp_hsvuc_imgfilter = convertToDisplay(GI, min, max);
 
   gradientFilter(Iblur_hsvuc, GIx, GIy, 1, p_mask, options.m_filteringType);
   computeAbsoluteGradient(GIx, GIy, GI, min, max);
   vpImage<unsigned char> GIdisp_hsvuc_vonly = convertToDisplay(GI, min, max);
+  cannyDetector.setGradients(GIx, GIy);
+  I_canny_hsvuc = cannyDetector.detect(Iin_hsvuc);
+
 
   vpImage<vpHSV<unsigned char, true>> Iblur_hsvd;
   vpImageFilter::gaussianBlur(Iin_hsvd, Iblur_hsvd, options.m_gaussianKernelSize, options.m_gaussianStdev, true, p_mask);
@@ -572,9 +602,9 @@ int main(int argc, const char *argv[])
   // computeAbsoluteGradient(GIx, GIy, GI, min, max);
   // vpImage<unsigned char> GIdisp_hsvd_vonly = convertToDisplay(GI, min, max);
 
-  vpImage<double> GIx_uc, GIy_uc, GI_uc;
+  vpImage<FilterType> GIx_uc, GIy_uc, GI_uc;
   vpImageFilter::computePartialDerivatives(Iin_convert, GIx_uc, GIy_uc, true, true, true,
-    options.m_gaussianKernelSize, (double)options.m_gaussianStdev, uselessAperture, options.m_filteringType, vpImageFilter::CANNY_VISP_BACKEND, p_mask);
+    options.m_gaussianKernelSize, (FilterType)options.m_gaussianStdev, uselessAperture, options.m_filteringType, vpImageFilter::CANNY_VISP_BACKEND, p_mask);
   computeAbsoluteGradient(GIx_uc, GIy_uc, GI_uc, min, max);
   vpImage<unsigned char> GIdisp_uc = convertToDisplay(GI_uc, min, max);
 
@@ -582,19 +612,19 @@ int main(int argc, const char *argv[])
     std::shared_ptr<vpDisplay> disp_input = vpDisplayFactory::createDisplay(Iload, -1, -1, "Input color image", vpDisplay::SCALE_AUTO);
     int posX = disp_input->getWidth() + 20;
     int posY = disp_input->getHeight() + 20;
-    // std::shared_ptr<vpDisplay> disp_canny = vpDisplayFactory::createDisplay(I_canny_hsvuc, posX, -1, "HSV Canny", vpDisplay::SCALE_AUTO);
+    std::shared_ptr<vpDisplay> disp_canny = vpDisplayFactory::createDisplay(I_canny_hsvuc, posX, -1, "HSV UC Canny", vpDisplay::SCALE_AUTO);
     std::shared_ptr<vpDisplay> disp_input_uc = vpDisplayFactory::createDisplay(Iin_convert, -1, posY, "Input converted image", vpDisplay::SCALE_AUTO);
     std::shared_ptr<vpDisplay> disp_canny_uc = vpDisplayFactory::createDisplay(I_canny_uc, posX, posY, "UC Canny", vpDisplay::SCALE_AUTO);
 
 #ifdef BUILD_REFERENCE_METHOD
     std::shared_ptr<vpDisplay> disp_GI_hsvuc_vonly = vpDisplayFactory::createDisplay(GIdisp_hsvuc_vonly, posX, -1, "Gradient reference method", vpDisplay::SCALE_AUTO);
 #else
-    std::shared_ptr<vpDisplay> disp_GI_hsvuc_vonly = vpDisplayFactory::createDisplay(GIdisp_hsvuc_vonly, posX, -1, "Gradient V only", vpDisplay::SCALE_AUTO);
+    std::shared_ptr<vpDisplay> disp_GI_hsvuc_vonly = vpDisplayFactory::createDisplay(GIdisp_hsvuc_vonly, 2 * posX, -1, "Gradient V only", vpDisplay::SCALE_AUTO);
 #endif
     vpDisplay::display(GIdisp_hsvuc_vonly);
     vpDisplay::flush(GIdisp_hsvuc_vonly);
 
-    std::shared_ptr<vpDisplay> disp_GI_hsvuc_imgfilter = vpDisplayFactory::createDisplay(GIdisp_hsvuc_imgfilter, 2 * posX, -1, "Gradient vpImgFilter");
+    std::shared_ptr<vpDisplay> disp_GI_hsvuc_imgfilter = vpDisplayFactory::createDisplay(GIdisp_hsvuc_imgfilter, 3 * posX, -1, "Gradient vpImgFilter");
     vpDisplay::display(GIdisp_hsvuc_imgfilter);
     vpDisplay::flush(GIdisp_hsvuc_imgfilter);
 
@@ -612,9 +642,9 @@ int main(int argc, const char *argv[])
     vpDisplay::flush(Iin_convert);
     vpDisplay::display(I_canny_uc);
     vpDisplay::flush(I_canny_uc);
-    // vpDisplay::display(I_canny_hsvuc);
+    vpDisplay::display(I_canny_hsvuc);
     // vpDisplay::displayText(I_canny_hsvuc, vpImagePoint(20, 20), "Click to leave.", vpColor::red);
-    // vpDisplay::flush(I_canny_hsvuc);
+    vpDisplay::flush(I_canny_hsvuc);
     // vpDisplay::getClick(I_canny_hsvuc);
 
     auto dispSignX = vpDisplayFactory::createDisplay(IdebugX, -1, -1, "Sign for GIx");
