@@ -54,8 +54,8 @@ template <typename Type> bool test(const std::string &display, vpImage<Type> &I,
 {
   bool success = true;
   unsigned int radius(I.getHeight() / 4);
-  int scale_ = (int)scale;
-  int radius_ = (int)radius;
+  int scale_ = static_cast<int>(scale);
+  int radius_ = static_cast<int>(radius);
   unsigned int thickness = 2;
   vpImagePoint center(I.getHeight() / 2, I.getWidth() / 2);
   vpImagePoint offset(30, 160);
@@ -101,7 +101,7 @@ template <typename Type> bool test(const std::string &display, vpImage<Type> &I,
   vpDisplay::flush(I);
 
   vpImage<Type> crop;
-  vpImageTools::crop(I, vpImagePoint(0, 245), (unsigned int)roi.getHeight(), (unsigned int)roi.getWidth(), crop);
+  vpImageTools::crop(I, vpImagePoint(0, 245), static_cast<unsigned int>(roi.getHeight()), static_cast<unsigned int>(roi.getWidth()), crop);
   I.insert(crop, roi.getTopLeft());
   vpDisplay::displayROI(I, roi);
   vpDisplay::flush(I);
@@ -225,7 +225,7 @@ template <typename Type> bool test(const std::string &display, vpImage<Type> &I,
   vpDisplay::displayCross(I, center - radius / 2., radius, vpColor::green, thickness);
   vpDisplay::displayDotLine(I, center - v_offset - h_offset, center, vpColor::cyan, thickness);
   vpDisplay::displayLine(I, center + v_offset - h_offset, center - v_offset + h_offset, vpColor::cyan, thickness);
-  int nbpoints = (int)(radius * sqrt(2.) / 8 / scale);
+  int nbpoints = static_cast<int>(radius * sqrt(2.) / 8 / scale);
   for (int i = 0; i < nbpoints; i++) {
     vpDisplay::displayPoint(
         I, center - h_offset / 2. + vpImagePoint(-i * radius_ / (nbpoints * 2), i * radius_ / (nbpoints * 2)),

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,12 +52,11 @@ BEGIN_VISP_NAMESPACE
 vpDisplayGDI::vpDisplayGDI() : vpDisplayWin32(new vpGDIRenderer()) { }
 
 /*!
-
   \brief Constructor : Initialize a display.
 
-  \param winx, winy The window is set at position x,y (column index, row
-  index). \param title  Window's title.
-
+  \param[in] winx : Horizontal position of the upper-left window's corner in the screen.
+  \param[in] winy : Vertical position of the upper-left window's corner in the screen.
+  \param[in] title  Window's title.
 */
 vpDisplayGDI::vpDisplayGDI(int winx, int winy, const std::string &title) : vpDisplayWin32(new vpGDIRenderer())
 {
@@ -71,25 +70,17 @@ vpDisplayGDI::vpDisplayGDI(int winx, int winy, const std::string &title) : vpDis
 }
 
 /*!
-
   \brief Constructor : Initialize a display to visualize a RGBa image
   (32 bits).
 
-  \param I : image to be displayed (note that image has to be initialized).
-  \param scaleType : If this parameter is set to:
-  - vpDisplay::SCALE_AUTO, the display size is adapted to ensure the image
-    is fully displayed in the screen;
-  - vpDisplay::SCALE_DEFAULT or vpDisplay::SCALE_1, the display size is the
-  same than the image size.
-  - vpDisplay::SCALE_2, the display size is down scaled by 2 along the lines
-  and the columns.
-  - vpDisplay::SCALE_3, the display size is down scaled by 3 along the lines
-  and the columns.
-  - vpDisplay::SCALE_4, the display size is down scaled by 4 along the lines
-  and the columns.
-  - vpDisplay::SCALE_5, the display size is down scaled by 5 along the lines
-  and the columns.
-
+  \param[in] I : image to be displayed (note that image has to be initialized).
+  \param[in] scaleType : If this parameter is set to:
+  - vpDisplay::SCALE_AUTO, the display size is adapted to ensure the image is fully displayed in the screen;
+  - vpDisplay::SCALE_DEFAULT or vpDisplay::SCALE_1, the display size is the same than the image size.
+  - vpDisplay::SCALE_2, the display size is down scaled by 2 along the lines and the columns.
+  - vpDisplay::SCALE_3, the display size is down scaled by 3 along the lines and the columns.
+  - vpDisplay::SCALE_4, the display size is down scaled by 4 along the lines and the columns.
+  - vpDisplay::SCALE_5, the display size is down scaled by 5 along the lines and the columns.
 */
 vpDisplayGDI::vpDisplayGDI(vpImage<vpRGBa> &I, vpScaleType scaleType) : vpDisplayWin32(new vpGDIRenderer())
 {
@@ -102,23 +93,17 @@ vpDisplayGDI::vpDisplayGDI(vpImage<vpRGBa> &I, vpScaleType scaleType) : vpDispla
   \brief Constructor : Initialize a display to visualize a RGBa image
   (32 bits).
 
-  \param I : image to be displayed (note that image has to be initialized).
-  \param winx, winy The window is set at position x,y (column index, row
-  index). \param title  Window's title. \param scaleType : If this parameter
-  is set to:
-  - vpDisplay::SCALE_AUTO, the display size is adapted to ensure the image
-    is fully displayed in the screen;
-  - vpDisplay::SCALE_DEFAULT or vpDisplay::SCALE_1, the display size is the
-  same than the image size.
-  - vpDisplay::SCALE_2, the display size is down scaled by 2 along the lines
-  and the columns.
-  - vpDisplay::SCALE_3, the display size is down scaled by 3 along the lines
-  and the columns.
-  - vpDisplay::SCALE_4, the display size is down scaled by 4 along the lines
-  and the columns.
-  - vpDisplay::SCALE_5, the display size is down scaled by 5 along the lines
-  and the columns.
-
+  \param[in] I : image to be displayed (note that image has to be initialized).
+  \param[in] winx : Horizontal position of the upper-left window's corner in the screen.
+  \param[in] winy : Vertical position of the upper-left window's corner in the screen.
+  \param[in] title  Window's title.
+  \param[in] scaleType : If this parameter is set to:
+  - vpDisplay::SCALE_AUTO, the display size is adapted to ensure the image is fully displayed in the screen;
+  - vpDisplay::SCALE_DEFAULT or vpDisplay::SCALE_1, the display size is the same than the image size.
+  - vpDisplay::SCALE_2, the display size is down scaled by 2 along the lines and the columns.
+  - vpDisplay::SCALE_3, the display size is down scaled by 3 along the lines and the columns.
+  - vpDisplay::SCALE_4, the display size is down scaled by 4 along the lines and the columns.
+  - vpDisplay::SCALE_5, the display size is down scaled by 5 along the lines and the columns.
 */
 vpDisplayGDI::vpDisplayGDI(vpImage<vpRGBa> &I, int winx, int winy, const std::string &title, vpScaleType scaleType)
   : vpDisplayWin32(new vpGDIRenderer())
@@ -128,25 +113,16 @@ vpDisplayGDI::vpDisplayGDI(vpImage<vpRGBa> &I, int winx, int winy, const std::st
 }
 
 /*!
+  \brief Constructor : Initialize a display to visualize a grayscale image (8 bits).
 
-  \brief Constructor : Initialize a display to visualize a grayscale image
-  (8 bits).
-
-  \param I Image to be displayed (note that image has to be initialized).
-  \param scaleType : If this parameter is set to:
-  - vpDisplay::SCALE_AUTO, the display size is adapted to ensure the image
-    is fully displayed in the screen;
-  - vpDisplay::SCALE_DEFAULT or vpDisplay::SCALE_1, the display size is the
-  same than the image size.
-  - vpDisplay::SCALE_2, the display size is down scaled by 2 along the lines
-  and the columns.
-  - vpDisplay::SCALE_3, the display size is down scaled by 3 along the lines
-  and the columns.
-  - vpDisplay::SCALE_4, the display size is down scaled by 4 along the lines
-  and the columns.
-  - vpDisplay::SCALE_5, the display size is down scaled by 5 along the lines
-  and the columns.
-
+  \param[in] I : image to be displayed (note that image has to be initialized).
+  \param[in] scaleType : If this parameter is set to:
+  - vpDisplay::SCALE_AUTO, the display size is adapted to ensure the image is fully displayed in the screen;
+  - vpDisplay::SCALE_DEFAULT or vpDisplay::SCALE_1, the display size is the same than the image size.
+  - vpDisplay::SCALE_2, the display size is down scaled by 2 along the lines and the columns.
+  - vpDisplay::SCALE_3, the display size is down scaled by 3 along the lines and the columns.
+  - vpDisplay::SCALE_4, the display size is down scaled by 4 along the lines and the columns.
+  - vpDisplay::SCALE_5, the display size is down scaled by 5 along the lines and the columns.
 */
 vpDisplayGDI::vpDisplayGDI(vpImage<unsigned char> &I, vpScaleType scaleType) : vpDisplayWin32(new vpGDIRenderer())
 {
@@ -155,27 +131,19 @@ vpDisplayGDI::vpDisplayGDI(vpImage<unsigned char> &I, vpScaleType scaleType) : v
 }
 
 /*!
+  \brief Constructor : Initialize a display to visualize a grayscale image (8 bits).
 
-  \brief Constructor : Initialize a display to visualize a grayscale image
-  (8 bits).
-
-  \param I Image to be displayed (note that image has to be initialized).
-  \param winx, winy The window is set at position x,y (column index, row
-  index). \param title  Window's title. \param scaleType : If this parameter
-  is set to:
-  - vpDisplay::SCALE_AUTO, the display size is adapted to ensure the image
-    is fully displayed in the screen;
-  - vpDisplay::SCALE_DEFAULT or vpDisplay::SCALE_1, the display size is the
-  same than the image size.
-  - vpDisplay::SCALE_2, the display size is down scaled by 2 along the lines
-  and the columns.
-  - vpDisplay::SCALE_3, the display size is down scaled by 3 along the lines
-  and the columns.
-  - vpDisplay::SCALE_4, the display size is down scaled by 4 along the lines
-  and the columns.
-  - vpDisplay::SCALE_5, the display size is down scaled by 5 along the lines
-  and the columns.
-
+  \param[in] I : image to be displayed (note that image has to be initialized).
+  \param[in] winx : Horizontal position of the upper-left window's corner in the screen.
+  \param[in] winy : Vertical position of the upper-left window's corner in the screen.
+  \param[in] title  Window's title.
+  \param[in] scaleType : If this parameter is set to:
+  - vpDisplay::SCALE_AUTO, the display size is adapted to ensure the image is fully displayed in the screen;
+  - vpDisplay::SCALE_DEFAULT or vpDisplay::SCALE_1, the display size is the same than the image size.
+  - vpDisplay::SCALE_2, the display size is down scaled by 2 along the lines and the columns.
+  - vpDisplay::SCALE_3, the display size is down scaled by 3 along the lines and the columns.
+  - vpDisplay::SCALE_4, the display size is down scaled by 4 along the lines and the columns.
+  - vpDisplay::SCALE_5, the display size is down scaled by 5 along the lines and the columns.
 */
 vpDisplayGDI::vpDisplayGDI(vpImage<unsigned char> &I, int winx, int winy, const std::string &title,
                            vpScaleType scaleType)

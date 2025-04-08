@@ -318,9 +318,9 @@ void vp1394TwoGrabber::setCamera(uint64_t cam_id)
     }
   }
   else {
-    this->camera_id = (unsigned int)cam_id; // The input cam_id is not a
-                                            // uint64_t guid, but the index of
-                                            // the camera
+    this->camera_id = static_cast<unsigned int>(cam_id);  // The input cam_id is not a
+                                                          // uint64_t guid, but the index of
+                                                          // the camera
   }
 
   // create a pointer to the working camera
@@ -2858,7 +2858,7 @@ std::string vp1394TwoGrabber::videoMode2string(vp1394TwoVideoModeType videomode)
     _str = strVideoMode[_videomode - DC1394_VIDEO_MODE_MIN];
   }
   else {
-    vpCERROR << "The video mode " << (int)videomode << " is not supported by the camera" << std::endl;
+    vpCERROR << "The video mode " << static_cast<int>(videomode) << " is not supported by the camera" << std::endl;
   }
 
   return _str;
@@ -2885,7 +2885,7 @@ std::string vp1394TwoGrabber::framerate2string(vp1394TwoFramerateType fps)
     _str = strFramerate[_fps - DC1394_FRAMERATE_MIN];
   }
   else {
-    vpCERROR << "The framerate " << (int)fps << " is not supported by the camera" << std::endl;
+    vpCERROR << "The framerate " << static_cast<int>(fps) << " is not supported by the camera" << std::endl;
   }
 
   return _str;
@@ -2913,7 +2913,7 @@ std::string vp1394TwoGrabber::colorCoding2string(vp1394TwoColorCodingType colorc
 
   }
   else {
-    vpCERROR << "The color coding " << (int)colorcoding << " is not supported by the camera" << std::endl;
+    vpCERROR << "The color coding " << static_cast<int>(colorcoding) << " is not supported by the camera" << std::endl;
   }
 
   return _str;
@@ -3227,7 +3227,7 @@ unsigned int vp1394TwoGrabber::getParameterValue(vp1394TwoParametersType param)
     close();
     throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Unable to get the information"));
   }
-  return (unsigned int)value;
+  return (static_cast<unsigned int>(value));
 }
 
 /*!

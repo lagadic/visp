@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,6 +123,11 @@ public:
    * Default constructor.
    */
   vpPose();
+
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+  vpPose(const vpPose &) = default;
+  vpPose &operator=(const vpPose &) = default;
+#endif
 
   /*!
    * Constructor from a vector of points.

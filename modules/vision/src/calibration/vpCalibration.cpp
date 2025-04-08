@@ -363,7 +363,7 @@ int vpCalibration::computeCalibrationMulti(vpCalibrationMethodType method, std::
                                            vpCameraParameters &cam_est, double &globalReprojectionError, bool verbose)
 {
   try {
-    unsigned int nbPose = (unsigned int)table_cal.size();
+    unsigned int nbPose = static_cast<unsigned int>(table_cal.size());
     for (unsigned int i = 0; i < nbPose; i++) {
       if (table_cal[i].get_npt() > 3)
         table_cal[i].computePose(cam_est, table_cal[i].cMo);

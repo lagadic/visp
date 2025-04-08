@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -171,7 +171,7 @@ public:
                  (m_bbox_v_max - m_bbox_v_min) + 1);
 
     return bbox;
-  };
+  }
 
   /*!
    * Return the location of the dot center of gravity.
@@ -344,7 +344,7 @@ public:
     else {
       m_gray_level_min = min;
     }
-  };
+  }
 
   /*!
    * Set the color level of pixels surrounding the dot. This is meant to be used
@@ -363,7 +363,7 @@ public:
     else {
       m_gray_level_max = max;
     }
-  };
+  }
 
   void setGrayLevelPrecision(const double &grayLevelPrecision);
   void setHeight(const double &height);

@@ -475,7 +475,7 @@ void vpFlyCaptureGrabber::setProperty(const FlyCapture2::PropertyType &prop_type
     }
     case VALUE_A: {
       unsigned int value_ =
-        std::max<unsigned int>(std::min<unsigned int>((unsigned int)value, (unsigned int)propInfo.max), (unsigned int)propInfo.min);
+        std::max<unsigned int>(std::min<unsigned int>(static_cast<unsigned int>(value), static_cast<unsigned int>(propInfo.max)), static_cast<unsigned int>(propInfo.min));
       prop.valueA = value_;
       break;
     }
@@ -485,7 +485,7 @@ void vpFlyCaptureGrabber::setProperty(const FlyCapture2::PropertyType &prop_type
     error = m_camera.SetProperty(&prop);
     if (error != FlyCapture2::PGRERROR_OK) {
       error.PrintErrorTrace();
-      throw(vpException(vpException::fatalError, "Cannot set property %d.", (int)prop_type));
+      throw(vpException(vpException::fatalError, "Cannot set property %d.", static_cast<int>(prop_type)));
     }
   }
 }
@@ -801,7 +801,7 @@ FlyCapture2::Property vpFlyCaptureGrabber::getProperty(FlyCapture2::PropertyType
   error = m_camera.GetProperty(&prop);
   if (error != FlyCapture2::PGRERROR_OK) {
     error.PrintErrorTrace();
-    throw(vpException(vpException::fatalError, "Cannot get property %d value.", (int)prop_type));
+    throw(vpException(vpException::fatalError, "Cannot get property %d value.", static_cast<int>prop_type)));
   }
   return prop;
 }
@@ -822,7 +822,7 @@ FlyCapture2::PropertyInfo vpFlyCaptureGrabber::getPropertyInfo(FlyCapture2::Prop
   error = m_camera.GetPropertyInfo(&propInfo);
   if (error != FlyCapture2::PGRERROR_OK) {
     error.PrintErrorTrace();
-    throw(vpException(vpException::fatalError, "Cannot get property %d info.", (int)prop_type));
+    throw(vpException(vpException::fatalError, "Cannot get property %d info.", static_cast<int>prop_type)));
   }
   return propInfo;
 }
@@ -912,7 +912,8 @@ std::pair<unsigned int, unsigned int> vpFlyCaptureGrabber::centerRoi(unsigned in
   Set format7 video mode.
   \param format7_mode : Format 7 mode.
   \param pixel_format : Pixel format.
-  \param w,h : Width and height of the centered roi. If set to 0, use the max allowed size.
+  \param w : Width of the centered roi. If set to 0, use the max allowed size.
+  \param h : Height of the centered roi. If set to 0, use the max allowed size.
 
   If the format7 video mode and pixel format are not supported, return an exception.
 
@@ -958,7 +959,7 @@ void vpFlyCaptureGrabber::setFormat7VideoMode(FlyCapture2::Mode format7_mode, Fl
     throw(vpException(vpException::fatalError, "Cannot get format7 info."));
   }
   if (!fmt7_supported) {
-    throw(vpException(vpException::fatalError, "Format7 mode %d not supported.", (int)format7_mode));
+    throw(vpException(vpException::fatalError, "Format7 mode %d not supported.", static_cast<int>format7_mode)));
   }
 
   FlyCapture2::Format7ImageSettings fmt7_settings;

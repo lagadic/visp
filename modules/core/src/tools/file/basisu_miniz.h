@@ -1310,7 +1310,7 @@ tinfl_status tinfl_decompress(tinfl_decompressor *r, const mz_uint8 *pIn_buf_nex
           pOut_buf_cur[1] = pSrc[1];
           pOut_buf_cur[2] = pSrc[2];
           pOut_buf_cur += 3; pSrc += 3;
-        } while ((int)(counter -= 3) > 2);
+        } while (static_cast<int>(counter -= 3) > 2);
         if ((int)counter > 0) {
           pOut_buf_cur[0] = pSrc[0];
           if ((int)counter > 1)
@@ -1852,7 +1852,7 @@ static int tdefl_flush_block(tdefl_compressor *d, int flush)
 
   d->m_pLZ_code_buf = d->m_lz_code_buf + 1; d->m_pLZ_flags = d->m_lz_code_buf; d->m_num_flags_left = 8; d->m_lz_code_buf_dict_pos += d->m_total_lz_bytes; d->m_total_lz_bytes = 0; d->m_block_index++;
 
-  if ((n = (int)(d->m_pOutput_buf - pOutput_buf_start)) != 0) {
+  if ((n = static_cast<int>(d->m_pOutput_buf - pOutput_buf_start)) != 0) {
     if (d->m_pPut_buf_func) {
       *d->m_pIn_buf_size = d->m_pSrc - (const mz_uint8 *)d->m_pIn_buf;
       if (!(*d->m_pPut_buf_func)(d->m_output_buf, n, d->m_pPut_buf_user))

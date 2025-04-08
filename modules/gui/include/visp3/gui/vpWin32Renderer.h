@@ -42,10 +42,23 @@
 
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpImage.h>
+
+// Mute warning with clang-cl
+// warning : non-portable path to file '<WinSock2.h>'; specified path differs in case from file name on disk [-Wnonportable-system-include-path]
+// warning : non-portable path to file '<Windows.h>'; specified path differs in case from file name on disk [-Wnonportable-system-include-path]
+#if defined(__clang__)
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wnonportable-system-include-path"
+#endif
+
 // Include WinSock2.h before windows.h to ensure that winsock.h is not
 // included by windows.h since winsock.h and winsock2.h are incompatible
 #include <WinSock2.h>
 #include <windows.h>
+
+#if defined(__clang__)
+#  pragma clang diagnostic pop
+#endif
 
 BEGIN_VISP_NAMESPACE
 
@@ -151,11 +164,12 @@ public:
 
   /*!
     Draws an arrow.
-    \param ip1 it's starting point coordinates
-    \param ip2 it's ending point coordinates
-    \param color The line's color
-    \param w,h Width and height of the arrow
-    \param thickness Thickness of the drawing
+    \param[in] ip1 It's starting point coordinates.
+    \param[in] ip2 It's ending point coordinates.
+    \param[in] color The line's color.
+    \param[in] w Arrow width.
+    \param[in] h Arrow height.
+    \param[in] thickness Thickness of the drawing
   */
   virtual void drawArrow(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int w,
                          unsigned int h, unsigned int thickness) = 0;

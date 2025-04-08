@@ -254,14 +254,18 @@ public:
   VP_EXPLICIT vpMomentObject(unsigned int order);
   vpMomentObject(const vpMomentObject &srcobj);
   /*!
-  Virtual destructor to allow polymorphic usage.
-  For instance,
-  \code
-  vpMomentObject* obj = new vpWeightedMomentObject(weightfunc,ORDER);
-  \endcode
-  where vpWeightedMomentObject is child class of vpMomentObject
+    Virtual destructor to allow polymorphic usage.
+    For instance,
+    \code
+    vpMomentObject* obj = new vpWeightedMomentObject(weightfunc,ORDER);
+    \endcode
+    where vpWeightedMomentObject is child class of vpMomentObject
   */
   virtual ~vpMomentObject();
+
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+  vpMomentObject &operator=(const vpMomentObject &) = default;
+#endif
 
   void fromImage(const vpImage<unsigned char> &image, unsigned char threshold,
                  const vpCameraParameters &cam); // Binary version

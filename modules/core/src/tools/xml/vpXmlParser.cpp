@@ -151,7 +151,7 @@ int vpXmlParser::xmlReadIntChild(xmlDocPtr doc, xmlNodePtr node)
   int val_int;
 
   val_char = (char *)xmlNodeListGetString(doc, node->xmlChildrenNode, 1);
-  val_int = (int)strtol((char *)val_char, &control_convert, 10);
+  val_int = static_cast<int>(strtol((char *)val_char, &control_convert, 10));
 
   if (val_char == control_convert) {
     xmlFree((xmlChar *)val_char);
@@ -185,7 +185,7 @@ unsigned int vpXmlParser::xmlReadUnsignedIntChild(xmlDocPtr doc, xmlNodePtr node
   unsigned int val_uint;
 
   val_char = (char *)xmlNodeListGetString(doc, node->xmlChildrenNode, 1);
-  val_uint = (unsigned int)strtoul((char *)val_char, &control_convert, 10);
+  val_uint = static_cast<unsigned int>(strtoul((char *)val_char, &control_convert, 10));
 
   if (val_char == control_convert) {
     xmlFree((xmlChar *)val_char);
@@ -396,7 +396,7 @@ void vpXmlParser::xmlWriteFloatChild(xmlNodePtr node, const char *label, float v
 void vpXmlParser::xmlWriteBoolChild(xmlNodePtr node, const char *label, bool value)
 {
   char str[2];
-  snprintf(str, 2, "%d", (int)value);
+  snprintf(str, 2, "%d", static_cast<int>(value));
   xmlNodePtr tmp;
   tmp = xmlNewChild(node, nullptr, (xmlChar *)label, (xmlChar *)str);
   xmlAddChild(node, tmp);

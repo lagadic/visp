@@ -760,16 +760,20 @@ namespace vp = VISP_NAMESPACE_NAME;
 #  endif
 #endif
 
-// Allows to fix warning with clang-cl : declaration requires an exit-time destructor [-Wexit-time-destructors]
-
+// Macro to fix warning with clang-cl : declaration requires an exit-time destructor [-Wexit-time-destructors]
 #ifndef VISP_PYTHON_PREPROCESSOR_RUNNING
-#if __has_cpp_attribute(clang::no_destroy)
-#  define VP_ATTRIBUTE_NO_DESTROY [[clang::no_destroy]]
-#else
-#  define VP_ATTRIBUTE_NO_DESTROY
+#  ifndef VP_ATTRIBUTE_NO_DESTROY
+#    if defined(__clang__)
+#      if __has_cpp_attribute(clang::no_destroy)
+#        define VP_ATTRIBUTE_NO_DESTROY [[clang::no_destroy]]
+#      else
+#        define VP_ATTRIBUTE_NO_DESTROY
+#      endif
+#    else
+#      define VP_ATTRIBUTE_NO_DESTROY
+#    endif
+#  endif
 #endif
-#else
-#  define VP_ATTRIBUTE_NO_DESTROY
-#endif
+
 
 #endif

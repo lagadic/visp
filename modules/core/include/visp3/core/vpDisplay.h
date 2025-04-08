@@ -204,6 +204,10 @@ public:
   vpDisplay(const vpDisplay &d);
   virtual ~vpDisplay();
 
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+  vpDisplay &operator=(const vpDisplay &) = default;
+#endif
+
   /** @name Inherited functionalities from vpDisplay */
   //@{
   unsigned int computeAutoScale(unsigned int width, unsigned int height);

@@ -43,7 +43,7 @@ void learnCube(const vpImage<unsigned char> &I, vpMbGenericTracker &tracker, vpK
 
   //! [Display reference keypoints]
   for (std::vector<cv::KeyPoint>::const_iterator it = trainKeyPoints.begin(); it != trainKeyPoints.end(); ++it) {
-    vpDisplay::displayCross(I, (int)it->pt.y, (int)it->pt.x, 4, vpColor::red);
+    vpDisplay::displayCross(I, static_cast<int>(it->pt.y), static_cast<int>(it->pt.x), 4, vpColor::red);
   }
   //! [Display reference keypoints]
 }
@@ -344,4 +344,4 @@ int main(int argc, char **argv)
 #endif
 
   return EXIT_SUCCESS;
-  }
+}

@@ -180,7 +180,7 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
 #ifdef VISP_HAVE_DISPLAY
     display = vpDisplayFactory::allocateDisplay(I, 0, 0, "ORB keypoints matching");
     display->setDownScalingFactor(vpDisplay::SCALE_AUTO);
-    display2 = vpDisplayFactory::allocateDisplay(Imatch, 0, (int)I.getHeight() / vpDisplay::getDownScalingFactor(I) + 40, "ORB keypoints matching");
+    display2 = vpDisplayFactory::allocateDisplay(Imatch, 0, static_cast<int>(I.getHeight()) / vpDisplay::getDownScalingFactor(I) + 40, "ORB keypoints matching");
     display2->setDownScalingFactor(vpDisplay::SCALE_AUTO);
 #else
     std::cout << "No image viewer is available..." << std::endl;

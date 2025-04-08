@@ -117,8 +117,6 @@ vpColor const vpColor::allColors[vpColor::nbColors] = { vpColor::blue,       // 
                                                        vpColor::white };     // 17
 #endif
 
-VP_ATTRIBUTE_NO_DESTROY vpColor colors[6] = { vpColor::blue, vpColor::green, vpColor::red, vpColor::cyan, vpColor::orange, vpColor::purple };
-
 /*!
   Compare two colors.
 

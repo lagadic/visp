@@ -529,7 +529,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
       // start compute the size in the direction of -(n_x, n_y)
       dist2[0] = (pt2[0] - p.icpoint.get_u()) * nv_ptr[0] + (pt2[1] - p.icpoint.get_v()) * nv_ptr[1];
       dist2[1] = (pt2[0] - p.icpoint.get_u()) * nv_ptr[1] - (pt2[1] - p.icpoint.get_v()) * nv_ptr[0];
-      int negative_normal = k + (int)floor(m_ccdParameters.h / m_ccdParameters.delta_h);
+      int negative_normal = k + static_cast<int>(floor(m_ccdParameters.h / m_ccdParameters.delta_h));
       vic_ptr[10 * negative_normal + 0] = pt2[1];
       vic_ptr[10 * negative_normal + 1] = pt2[0];
       vic_ptr[10 * negative_normal + 2] = dist2[0];
@@ -580,7 +580,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
 
     for (int j = m_ccdParameters.delta_h; j <= m_ccdParameters.h; j += m_ccdParameters.delta_h, k++) {
       wp1 = 0.0, wp2 = 0.0;
-      int negative_normal = k + (int)floor(m_ccdParameters.h / m_ccdParameters.delta_h);
+      int negative_normal = k + static_cast<int>(floor(m_ccdParameters.h / m_ccdParameters.delta_h));
       const double *vic_k = vic_ptr + 10 * k;
 
       // wp1 = w(a_{k,l})*w(d_{k,l})*w(d)

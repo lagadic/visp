@@ -72,9 +72,9 @@ double vpMomentObject::calc_mom_polygon(unsigned int p, unsigned int q, const st
     double x_k = 1;
     for (k = 0; k <= p; k++) {
       y_l = 1;
-      x_p_k = pow(points[i - 1].get_x(), (int)(p - k));
+      x_p_k = pow(points[i - 1].get_x(), static_cast<int>(p - k));
       for (l = 0; l <= q; l++) {
-        y_q_l = pow(points[i - 1].get_y(), (int)(q - l));
+        y_q_l = pow(points[i - 1].get_y(), static_cast<int>(q - l));
 
         s += static_cast<double>(vpMath::comb(k + l, l) * vpMath::comb(p + q - k - l, q - l) * x_k * x_p_k * y_l *
                                  y_q_l);
@@ -303,8 +303,8 @@ void vpMomentObject::fromImage(const vpImage<unsigned char> &image, unsigned cha
     curvals.assign(order * order, 0.);
 
 #pragma omp for nowait // automatically organize loop counter between threads
-    for (int i = 0; i < (int)image.getCols(); i++) {
-      for (int j = 0; j < (int)image.getRows(); j++) {
+    for (int i = 0; i < static_cast<int>(image.getCols()); i++) {
+      for (int j = 0; j < static_cast<int>(image.getRows()); j++) {
         unsigned int i_ = static_cast<unsigned int>(i);
         unsigned int j_ = static_cast<unsigned int>(j);
         if (image[j_][i_] > threshold) {

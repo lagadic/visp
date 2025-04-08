@@ -198,7 +198,7 @@ void vpMbtDistanceCircle::trackMovingEdge(const vpImage<unsigned char> &I, const
     }
 
     // Update the number of features
-    nbFeature = (unsigned int)meEllipse->getMeList().size();
+    nbFeature = static_cast<unsigned int>(meEllipse->getMeList().size());
   }
 }
 
@@ -232,7 +232,7 @@ void vpMbtDistanceCircle::updateMovingEdge(const vpImage<unsigned char> &I, cons
     catch (...) {
       Reinit = true;
     }
-    nbFeature = (unsigned int)meEllipse->getMeList().size();
+    nbFeature = static_cast<unsigned int>(meEllipse->getMeList().size());
   }
 }
 
@@ -417,7 +417,7 @@ void vpMbtDistanceCircle::displayMovingEdges(const vpImage<vpRGBa> &I)
 void vpMbtDistanceCircle::initInteractionMatrixError()
 {
   if (isvisible) {
-    nbFeature = (unsigned int)meEllipse->getMeList().size();
+    nbFeature = static_cast<unsigned int>(meEllipse->getMeList().size());
     L.resize(nbFeature, 6);
     error.resize(nbFeature);
   }

@@ -82,11 +82,14 @@
 // Otherwise, only if between >= 4.9 && < 4.11 and on regular platform (X86 && ARM64) --> use OpenCV HAL API
 #if (VISP_HAVE_OPENCV_VERSION >= 0x040B00) || (VISP_HAVE_OPENCV_VERSION < 0x040900) || \
   ( (VISP_HAVE_OPENCV_VERSION >= 0x040900) && (VISP_HAVE_OPENCV_VERSION < 0x040B00) && (USE_SSE || USE_NEON) )
-#define USE_OPENCV_HAL 1
-#include <opencv2/core/simd_intrinsics.hpp>
-#include <opencv2/core/hal/intrin.hpp>
-#endif
-
+#    define USE_OPENCV_HAL 1
+#    include <opencv2/core/simd_intrinsics.hpp>
+#    include <opencv2/core/hal/intrin.hpp>
+#  else
+#    define USE_OPENCV_HAL 0
+#  endif
+#else
+#  define USE_OPENCV_HAL 0
 #endif
 
 #if !USE_OPENCV_HAL && (USE_SSE || USE_NEON)
@@ -240,7 +243,7 @@ void vpMbtFaceDepthDense::addLine(vpPoint &P1, vpPoint &P2, vpMbHiddenFaces<vpMb
     l->hiddenface = faces;
     l->useScanLine = m_useScanLine;
 
-    l->setIndex((unsigned int)m_listOfFaceLines.size());
+    l->setIndex(static_cast<unsigned int>(m_listOfFaceLines.size()));
     l->setName(name);
 
     if (m_clippingFlag != vpPolygon3D::NO_CLIPPING)
@@ -299,10 +302,10 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
   vpPolygon polygon_2d(roiPts);
   vpRect bb = polygon_2d.getBoundingBox();
 
-  unsigned int top = (unsigned int)std::max<double>(0.0, bb.getTop());
-  unsigned int bottom = (unsigned int)std::min<double>((double)height, std::max<double>(0.0, bb.getBottom()));
-  unsigned int left = (unsigned int)std::max<double>(0.0, bb.getLeft());
-  unsigned int right = (unsigned int)std::min<double>((double)width, std::max<double>(0.0, bb.getRight()));
+  unsigned int top = static_cast<unsigned int>(std::max<double>(0.0, bb.getTop()));
+  unsigned int bottom = static_cast<unsigned int>(std::min<double>((double)height, std::max<double>(0.0, bb.getBottom())));
+  unsigned int left = static_cast<unsigned int>(std::max<double>(0.0, bb.getLeft()));
+  unsigned int right = static_cast<unsigned int>(std::min<double>((double)width, std::max<double>(0.0, bb.getRight())));
 
   bb.setTop(top);
   bb.setBottom(bottom);
@@ -389,10 +392,10 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
   vpPolygon polygon_2d(roiPts);
   vpRect bb = polygon_2d.getBoundingBox();
 
-  unsigned int top = (unsigned int)std::max<double>(0.0, bb.getTop());
-  unsigned int bottom = (unsigned int)std::min<double>((double)height, std::max<double>(0.0, bb.getBottom()));
-  unsigned int left = (unsigned int)std::max<double>(0.0, bb.getLeft());
-  unsigned int right = (unsigned int)std::min<double>((double)width, std::max<double>(0.0, bb.getRight()));
+  unsigned int top = static_cast<unsigned int>(std::max<double>(0.0, bb.getTop()));
+  unsigned int bottom = static_cast<unsigned int>(std::min<double>((double)height, std::max<double>(0.0, bb.getBottom())));
+  unsigned int left = static_cast<unsigned int>(std::max<double>(0.0, bb.getLeft()));
+  unsigned int right = static_cast<unsigned int>(std::min<double>((double)width, std::max<double>(0.0, bb.getRight())));
 
   bb.setTop(top);
   bb.setBottom(bottom);
@@ -474,10 +477,10 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
   vpPolygon polygon_2d(roiPts);
   vpRect bb = polygon_2d.getBoundingBox();
 
-  unsigned int top = (unsigned int)std::max<double>(0.0, bb.getTop());
-  unsigned int bottom = (unsigned int)std::min<double>((double)height, std::max<double>(0.0, bb.getBottom()));
-  unsigned int left = (unsigned int)std::max<double>(0.0, bb.getLeft());
-  unsigned int right = (unsigned int)std::min<double>((double)width, std::max<double>(0.0, bb.getRight()));
+  unsigned int top = static_cast<unsigned int>(std::max<double>(0.0, bb.getTop()));
+  unsigned int bottom = static_cast<unsigned int>(std::min<double>((double)height, std::max<double>(0.0, bb.getBottom())));
+  unsigned int left = static_cast<unsigned int>(std::max<double>(0.0, bb.getLeft()));
+  unsigned int right = static_cast<unsigned int>(std::min<double>((double)width, std::max<double>(0.0, bb.getRight())));
 
   bb.setTop(top);
   bb.setBottom(bottom);
@@ -536,7 +539,7 @@ void vpMbtFaceDepthDense::computeVisibilityDisplay()
         isvisible = true;
       }
       else {
-        if (line->hiddenface->isVisible((unsigned int)index)) {
+        if (line->hiddenface->isVisible(static_cast<unsigned int>(index))) {
           isvisible = true;
         }
       }
@@ -732,12 +735,12 @@ void vpMbtFaceDepthDense::computeInteractionMatrixAndResidu(const vpHomogeneousM
       double _a3 = (ny * x) - (nx * y);
 
       // L
-      L[(unsigned int)(cpt / 3)][0] = nx;
-      L[(unsigned int)(cpt / 3)][1] = ny;
-      L[(unsigned int)(cpt / 3)][2] = nz;
-      L[(unsigned int)(cpt / 3)][3] = _a1;
-      L[(unsigned int)(cpt / 3)][4] = _a2;
-      L[(unsigned int)(cpt / 3)][5] = _a3;
+      L[static_cast<unsigned int>(cpt / 3)][0] = nx;
+      L[static_cast<unsigned int>(cpt / 3)][1] = ny;
+      L[static_cast<unsigned int>(cpt / 3)][2] = nz;
+      L[static_cast<unsigned int>(cpt / 3)][3] = _a1;
+      L[static_cast<unsigned int>(cpt / 3)][4] = _a2;
+      L[static_cast<unsigned int>(cpt / 3)][5] = _a3;
 
       vpColVector normal(3);
       normal[0] = nx;
@@ -750,7 +753,7 @@ void vpMbtFaceDepthDense::computeInteractionMatrixAndResidu(const vpHomogeneousM
       pt[2] = z;
 
       // Error
-      error[(unsigned int)(cpt / 3)] = D + (normal.t() * pt);
+      error[static_cast<unsigned int>(cpt / 3)] = D + (normal.t() * pt);
     }
 #endif
   }

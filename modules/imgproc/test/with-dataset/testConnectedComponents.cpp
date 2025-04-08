@@ -182,13 +182,13 @@ bool checkLabels(const vpImage<int> &label1, const vpImage<int> &label2)
   for (std::map<int, std::vector<vpImagePoint> >::const_iterator it1 = map_label1.begin(); it1 != map_label1.end();
        ++it1) {
     // Get corresponding label in the other method
-    unsigned int i = (unsigned int)it1->second.front().get_i(), j = (unsigned int)it1->second.front().get_j();
+    unsigned int i = static_cast<unsigned int>(it1->second.front().get_i()), j = static_cast<unsigned int>(it1->second.front().get_j());
     int lab2 = label2[i][j];
 
     std::vector<vpImagePoint>::const_iterator it_pt1 = it1->second.begin();
     for (; it_pt1 != it1->second.end(); ++it_pt1) {
-      i = (unsigned int)it_pt1->get_i();
-      j = (unsigned int)it_pt1->get_j();
+      i = static_cast<unsigned int>(it_pt1->get_i());
+      j = static_cast<unsigned int>(it_pt1->get_j());
       if (label2[i][j] != lab2) {
         std::cerr << "label2[i][j] != lab2" << std::endl;
         return false;
@@ -314,9 +314,9 @@ int main(int argc, const char **argv)
     for (unsigned int i = 0; i < labels_connex4.getHeight(); i++) {
       for (unsigned int j = 0; j < labels_connex4.getWidth(); j++) {
         if (labels_connex4[i][j] != 0) {
-          labels_connex4_color[i][j] = vpRGBa(vpColor::getColor((unsigned int)labels_connex4[i][j]).R,
-                                              vpColor::getColor((unsigned int)labels_connex4[i][j]).G,
-                                              vpColor::getColor((unsigned int)labels_connex4[i][j]).B);
+          labels_connex4_color[i][j] = vpRGBa(vpColor::getColor(static_cast<unsigned int>(labels_connex4[i][j])).R,
+                                              vpColor::getColor(static_cast<unsigned int>(labels_connex4[i][j])).G,
+                                              vpColor::getColor(static_cast<unsigned int>(labels_connex4[i][j])).B);
         }
       }
     }
@@ -328,9 +328,9 @@ int main(int argc, const char **argv)
     for (unsigned int i = 0; i < labels_connex8.getHeight(); i++) {
       for (unsigned int j = 0; j < labels_connex8.getWidth(); j++) {
         if (labels_connex8[i][j] != 0) {
-          labels_connex8_color[i][j] = vpRGBa(vpColor::getColor((unsigned int)labels_connex8[i][j]).R,
-                                              vpColor::getColor((unsigned int)labels_connex8[i][j]).G,
-                                              vpColor::getColor((unsigned int)labels_connex8[i][j]).B);
+          labels_connex8_color[i][j] = vpRGBa(vpColor::getColor(static_cast<unsigned int>(labels_connex4[i][j])).R,
+                                              vpColor::getColor(static_cast<unsigned int>(labels_connex4[i][j])).G,
+                                              vpColor::getColor(static_cast<unsigned int>(labels_connex4[i][j])).B);
         }
       }
     }
@@ -348,7 +348,7 @@ int main(int argc, const char **argv)
     t_opencv = vpTime::measureTimeMs() - t_opencv;
 
     std::set<int> set_labels_connex4_opencv;
-    vpImage<int> labels_connex4_opencv((unsigned int)matLabels_4.rows, (unsigned int)matLabels_4.cols);
+    vpImage<int> labels_connex4_opencv(static_cast<unsigned int>(matLabels_4.rows), static_cast<unsigned int>(matLabels_4.cols));
     for (int i = 0; i < matLabels_4.rows; i++) {
       for (int j = 0; j < matLabels_4.cols; j++) {
         labels_connex4_opencv[i][j] = matLabels_4.at<int>(i, j);
@@ -375,7 +375,7 @@ int main(int argc, const char **argv)
     t_opencv = vpTime::measureTimeMs() - t_opencv;
 
     std::set<int> set_labels_connex8_opencv;
-    vpImage<int> labels_connex8_opencv((unsigned int)matLabels_8.rows, (unsigned int)matLabels_8.cols);
+    vpImage<int> labels_connex8_opencv(static_cast<unsigned int>(matLabels_8.rows), static_cast<unsigned int>(matLabels_8.cols));
     for (int i = 0; i < matLabels_8.rows; i++) {
       for (int j = 0; j < matLabels_8.cols; j++) {
         labels_connex8_opencv[i][j] = matLabels_8.at<int>(i, j);

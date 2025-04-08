@@ -279,7 +279,7 @@ int main(int argc, const char **argv)
       opt_color_id = atoi(argv[++i]);
     }
     else if (std::string(argv[i]) == "--thickness" && i + 1 < argc) {
-      thickness = (unsigned int)atoi(argv[++i]);
+      thickness = static_cast<unsigned int>(atoi(argv[++i]));
     }
 #endif
     else if (std::string(argv[i]) == "--verbose" || std::string(argv[i]) == "-v") {

@@ -99,7 +99,7 @@ BEGIN_VISP_NAMESPACE
  *       std::cout << "Enter the message to send:" << std::endl;
  *       std::string msg = "";
  *       std::getline(std::cin, msg);
- *       if (client.send(msg) != (int) msg.size())
+ *       if (client.send(msg) != static_cast<int>(msg.size()))
  *         std::cerr << "Error client.send()!" << std::endl;
  *       if (client.receive(msg))
  *         std::cout << "Receive from the server: " << msg << std::endl;
@@ -151,7 +151,7 @@ BEGIN_VISP_NAMESPACE
  *     memcpy(data+sizeof(data_type.double_val), &data_type.int_val, sizeof(data_type.int_val));
  *
  *     std::string msg(data, sizeof(data_type.double_val)+sizeof(data_type.int_val));
- *     if (client.send(msg) != (int) sizeof(data_type.double_val)+sizeof(data_type.int_val))
+ *     if (client.send(msg) != static_cast<int>(sizeof(data_type.double_val)+sizeof(data_type.int_val)))
  *       std::cerr << "Error client.send()!" << std::endl;
  *     if (client.receive(msg)) {
  *       data_type.double_val = *reinterpret_cast<const double *>(msg.c_str());

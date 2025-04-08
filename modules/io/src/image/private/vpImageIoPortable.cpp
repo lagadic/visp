@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,12 +46,12 @@ BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 /*!
  * Decode the PNM image header.
- * \param filename[in] : File name.
- * \param fd[in] : File desdcriptor.
- * \param magic[in] : Magic number for identifying the file type.
- * \param w[out] : Image width.
- * \param h[out] : Image height.
- * \param maxval[out] : Maximum pixel value.
+ * \param[in] filename : File name.
+ * \param[in] fd : File desdcriptor.
+ * \param[in] magic : Magic number for identifying the file type.
+ * \param[out] w : Image width.
+ * \param[out] h : Image height.
+ * \param[out] maxval : Maximum pixel value.
  */
   void vp_decodeHeaderPNM(const std::string &filename, std::ifstream &fd, const std::string &magic, unsigned int &w,
                           unsigned int &h, unsigned int &maxval)

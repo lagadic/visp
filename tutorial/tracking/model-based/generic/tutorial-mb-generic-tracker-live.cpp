@@ -520,7 +520,7 @@ int main(int argc, char **argv)
 
         // Display learned data
         for (std::vector<cv::KeyPoint>::const_iterator it = trainKeyPoints.begin(); it != trainKeyPoints.end(); ++it) {
-          vpDisplay::displayCross(I, (int)it->pt.y, (int)it->pt.x, 10, vpColor::yellow, 3);
+          vpDisplay::displayCross(I, static_cast<int>(it->pt.y), static_cast<int>(it->pt.x), 10, vpColor::yellow, 3);
         }
         learn_position = false;
         std::cout << "Data learned" << std::endl;
@@ -581,6 +581,6 @@ int main()
   std::cout << "Install OpenCV 3rd party, configure and build ViSP again to use this tutorial." << std::endl;
 #endif
   return EXIT_SUCCESS;
-  }
+}
 
 #endif

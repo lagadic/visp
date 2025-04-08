@@ -118,7 +118,7 @@ OPTIONS:                                               Default\n\
                   \n\
   -h\n\
      Print the help.\n",
-          (int)kalman);
+       static_cast<int>(kalman));
 
   if (badparam) {
     fprintf(stderr, "ERROR: \n");
@@ -533,7 +533,7 @@ int main(int argc, const char **argv)
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
     if (display != nullptr) {
       delete display;
-  }
+    }
 #endif
     return EXIT_FAILURE;
   }

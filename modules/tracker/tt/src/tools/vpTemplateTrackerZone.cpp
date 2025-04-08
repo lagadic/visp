@@ -180,7 +180,7 @@ void vpTemplateTrackerZone::initFromPoints(const vpImage<unsigned char> &I, cons
     else {
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
       // Init Delaunay
-      cv::Subdiv2D subdiv(cv::Rect(0, 0, (int)I.getWidth(), (int)I.getHeight()));
+      cv::Subdiv2D subdiv(cv::Rect(0, 0, static_cast<int>(I.getWidth()), static_cast<int>(I.getHeight())));
       for (size_t i = 0; i < vip.size(); i++) {
         cv::Point2f fp((float)vip[i].get_u(), (float)vip[i].get_v());
         // std::cout << "Click point: " << vip[i] << std::endl;
@@ -229,13 +229,13 @@ void vpTemplateTrackerZone::initFromPoints(const vpImage<unsigned char> &I, cons
 
       // Update the bounding box
       if ((triangle.getMinx() < min_x) || (min_x == -1))
-        min_x = (int)triangle.getMinx();
+        min_x = static_cast<int>(triangle.getMinx());
       if ((triangle.getMaxx() > max_x) || (max_x == -1))
-        max_x = (int)triangle.getMaxx();
+        max_x = static_cast<int>(triangle.getMaxx());
       if ((triangle.getMiny() < min_y) || (min_y == -1))
-        min_y = (int)triangle.getMiny();
+        min_y = static_cast<int>(triangle.getMiny());
       if ((triangle.getMaxy() > max_y) || (max_y == -1))
-        max_y = (int)triangle.getMaxy();
+        max_y = static_cast<int>(triangle.getMaxy());
     }
   }
 }
@@ -250,13 +250,13 @@ void vpTemplateTrackerZone::add(const vpTemplateTrackerTriangle &t)
 
   // Update the bounding box
   if ((t.getMinx() < min_x) || (min_x == -1))
-    min_x = (int)t.getMinx();
+    min_x = static_cast<int>(t.getMinx());
   if ((t.getMaxx() > max_x) || (max_x == -1))
-    max_x = (int)t.getMaxx();
+    max_x = static_cast<int>(t.getMaxx());
   if ((t.getMiny() < min_y) || (min_y == -1))
-    min_y = (int)t.getMiny();
+    min_y = static_cast<int>(t.getMiny());
   if ((t.getMaxy() > max_y) || (max_y == -1))
-    max_y = (int)t.getMaxy();
+    max_y = static_cast<int>(t.getMaxy());
 }
 
 /*!
@@ -489,8 +489,8 @@ void vpTemplateTrackerZone::fillTriangle(vpImage<unsigned char> &I, unsigned int
   assert(id < getNbTriangle());
   vpTemplateTrackerTriangle triangle;
   getTriangle(id, triangle);
-  for (int i = 0; i < (int)I.getHeight(); i++) {
-    for (int j = 0; j < (int)I.getWidth(); j++) {
+  for (int i = 0; i < static_cast<int>(I.getHeight()); i++) {
+    for (int j = 0; j < static_cast<int>(I.getWidth()); j++) {
       if (triangle.inTriangle(i, j)) {
         I[i][j] = gray_level;
       }
@@ -527,13 +527,13 @@ void vpTemplateTrackerZone::copy(const vpTemplateTrackerZone &z)
     add(triangle);
     // Update the bounding box
     if ((triangle.getMinx() < min_x) || (min_x == -1))
-      min_x = (int)triangle.getMinx();
+      min_x = static_cast<int>(triangle.getMinx());
     if ((triangle.getMaxx() > max_x) || (max_x == -1))
-      max_x = (int)triangle.getMaxx();
+      max_x = static_cast<int>(triangle.getMaxx());
     if ((triangle.getMiny() < min_y) || (min_y == -1))
-      min_y = (int)triangle.getMiny();
+      min_y = static_cast<int>(triangle.getMiny());
     if ((triangle.getMaxy() > max_y) || (max_y == -1))
-      max_y = (int)triangle.getMaxy();
+      max_y = static_cast<int>(triangle.getMaxy());
   }
 }
 

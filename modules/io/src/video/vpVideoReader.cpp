@@ -143,12 +143,12 @@ void vpVideoReader::getProperties()
       throw(vpException(vpException::ioError, "Could not open the video %s with OpenCV", m_videoName.c_str()));
     }
 #if VISP_HAVE_OPENCV_VERSION >= 0x030000
-    width = (unsigned int)m_capture.get(cv::CAP_PROP_FRAME_WIDTH);
-    height = (unsigned int)m_capture.get(cv::CAP_PROP_FRAME_HEIGHT);
+    width = static_cast<unsigned int>(m_capture.get(cv::CAP_PROP_FRAME_WIDTH));
+    height = static_cast<unsigned int>(m_capture.get(cv::CAP_PROP_FRAME_HEIGHT));
     m_frameRate = (double)m_capture.get(cv::CAP_PROP_FPS);
 #else
-    width = (unsigned int)m_capture.get(CV_CAP_PROP_FRAME_WIDTH);
-    height = (unsigned int)m_capture.get(CV_CAP_PROP_FRAME_HEIGHT);
+    width = static_cast<unsigned int>(m_capture.get(CV_CAP_PROP_FRAME_WIDTH));
+    height = static_cast<unsigned int>(m_capture.get(CV_CAP_PROP_FRAME_HEIGHT));
     m_frameRate = m_capture.get(CV_CAP_PROP_FPS);
 #endif
 

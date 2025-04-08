@@ -69,7 +69,7 @@ void vpRBSilhouetteMeTracker::extractFeatures(const vpRBFeatureTrackerInput &fra
       }
 #endif
       vpRBSilhouetteControlPoint p;
-      p.buildPoint((int)sp.i, (int)sp.j, sp.Z, sp.orientation, sp.normal, cMo, oMc, frame.cam, m_me, sp.isSilhouette);
+      p.buildPoint(static_cast<int>(sp.i), static_cast<int>(sp.j), sp.Z, sp.orientation, sp.normal, cMo, oMc, frame.cam, m_me, sp.isSilhouette);
       if (p.tooCloseToBorder(frame.I.getHeight(), frame.I.getWidth(), m_me.getRange())) {
         continue;
       }

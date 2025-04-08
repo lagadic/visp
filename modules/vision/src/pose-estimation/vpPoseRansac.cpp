@@ -430,7 +430,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, FuncCheckValidityPose func)
 
     int splitTrials = ransacMaxTrials / nbThreads;
     for (size_t i = 0; i < static_cast<size_t>(nbThreads); ++i) {
-      unsigned int initial_seed = static_cast<unsigned int>(i); //((unsigned int) time(nullptr) ^ i);
+      unsigned int initial_seed = static_cast<unsigned int>(i);
       if (i < static_cast<size_t>(nbThreads) - 1) {
         ransacWorkers.emplace_back(cMo, ransacNbInlierConsensus, splitTrials, ransacThreshold, initial_seed,
                                    checkDegeneratePoints, listOfUniquePoints, func);

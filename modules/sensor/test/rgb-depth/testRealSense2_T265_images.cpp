@@ -70,11 +70,11 @@ int main()
     rs.open(config);
 
     // Creating left and right vpImages
-    vpImage<unsigned char> I_left((unsigned int)rs.getIntrinsics(RS2_STREAM_FISHEYE).height,
-                                  (unsigned int)rs.getIntrinsics(RS2_STREAM_FISHEYE).width);
+    vpImage<unsigned char> I_left(static_cast<unsigned int>(rs.getIntrinsics(RS2_STREAM_FISHEYE).height),
+                                  static_cast<unsigned int>(rs.getIntrinsics(RS2_STREAM_FISHEYE).width));
 
-    vpImage<unsigned char> I_right((unsigned int)rs.getIntrinsics(RS2_STREAM_FISHEYE).height,
-                                   (unsigned int)rs.getIntrinsics(RS2_STREAM_FISHEYE).width);
+    vpImage<unsigned char> I_right(static_cast<unsigned int>(rs.getIntrinsics(RS2_STREAM_FISHEYE).height),
+                                   static_cast<unsigned int>(rs.getIntrinsics(RS2_STREAM_FISHEYE).width));
 
 #if defined(VISP_HAVE_X11)
     vpDisplayX display_left;  // Left image

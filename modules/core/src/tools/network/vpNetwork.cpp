@@ -54,7 +54,7 @@ vpNetwork::vpNetwork()
 {
   tv.tv_sec = tv_sec;
 #ifdef TARGET_OS_IPHONE
-  tv.tv_usec = (int)tv_usec;
+  tv.tv_usec = static_cast<int>(tv_usec);
 #else
   tv.tv_usec = tv_usec;
 #endif
@@ -115,7 +115,7 @@ void vpNetwork::removeDecodingRequest(const char *id)
 {
   for (unsigned int i = 0; i < request_list.size(); i++) {
     if (request_list[i]->getId() == id) {
-      request_list.erase(request_list.begin() + (int)i);
+      request_list.erase(request_list.begin() + static_cast<int>(i));
       break;
     }
   }
@@ -155,7 +155,7 @@ int vpNetwork::getReceptorIndex(const char *name)
 
   std::string ip = inet_ntoa(*(in_addr *)server->h_addr);
 
-  for (int i = 0; i < (int)receptor_list.size(); i++) {
+  for (int i = 0; i < static_cast<int>(receptor_list.size()); i++) {
     if (receptor_list[(unsigned)i].receptorIP == ip)
       return i;
   }
@@ -194,8 +194,8 @@ int vpNetwork::sendRequest(vpRequest &req) { return sendRequestTo(req, 0); }
 */
 int vpNetwork::sendRequestTo(vpRequest &req, const unsigned int &dest)
 {
-  int size = (int)receptor_list.size();
-  int sizeMinusOne = (int)receptor_list.size() - 1;
+  int size = static_cast<int>(receptor_list.size());
+  int sizeMinusOne = static_cast<int>(receptor_list.size() - 1);
   if (size == 0 || dest > (unsigned)sizeMinusOne) {
     if (verboseMode)
       vpTRACE("Cannot Send Request! Bad Index");
@@ -221,10 +221,10 @@ int vpNetwork::sendRequestTo(vpRequest &req, const unsigned int &dest)
 #endif
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  int value = (int)sendto(receptor_list[dest].socketFileDescriptorReceptor, message.c_str(), message.size(), flags,
-                          (sockaddr *)&receptor_list[dest].receptorAddress, receptor_list[dest].receptorAddressSize);
+  int value = static_cast<int>(sendto(receptor_list[dest].socketFileDescriptorReceptor, message.c_str(), message.size(), flags,
+                                      (sockaddr *)&receptor_list[dest].receptorAddress, receptor_list[dest].receptorAddressSize));
 #else
-  int value = sendto((unsigned)receptor_list[dest].socketFileDescriptorReceptor, message.c_str(), (int)message.size(),
+  int value = sendto(static_cast<unsigned int>(receptor_list[dest].socketFileDescriptorReceptor), message.c_str(), static_cast<int>(message.size()),
                      flags, (sockaddr *)&receptor_list[dest].receptorAddress, receptor_list[dest].receptorAddressSize);
 #endif
 
@@ -562,7 +562,7 @@ int vpNetwork::privHandleFirstRequest()
     if (id == request_list[i]->getId()) {
       hasBeenFound = true;
       request_list[i]->clear();
-      indRequest = (int)i;
+      indRequest = static_cast<int>(i);
       break;
     }
   }
@@ -663,7 +663,7 @@ int vpNetwork::privReceiveRequestOnce()
 
   tv.tv_sec = tv_sec;
 #ifdef TARGET_OS_IPHONE
-  tv.tv_usec = (int)tv_usec;
+  tv.tv_usec = static_cast<int>(tv_usec);
 #else
   tv.tv_usec = tv_usec;
 #endif
@@ -679,7 +679,7 @@ int vpNetwork::privReceiveRequestOnce()
       socketMax = receptor_list[i].socketFileDescriptorReceptor;
   }
 
-  int value = select((int)socketMax + 1, &readFileDescriptor, nullptr, nullptr, &tv);
+  int value = select(static_cast<int>(socketMax) + 1, &readFileDescriptor, nullptr, nullptr, &tv);
   int numbytes = 0;
 
   if (value == -1) {
@@ -693,22 +693,22 @@ int vpNetwork::privReceiveRequestOnce()
   }
   else {
     for (unsigned int i = 0; i < receptor_list.size(); i++) {
-      if (FD_ISSET((unsigned int)receptor_list[i].socketFileDescriptorReceptor, &readFileDescriptor)) {
+      if (FD_ISSET(static_cast<unsigned int>(receptor_list[i].socketFileDescriptorReceptor), &readFileDescriptor)) {
         char *buf = new char[max_size_message];
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-        numbytes = (int)recv(receptor_list[i].socketFileDescriptorReceptor, buf, max_size_message, 0);
+        numbytes = static_cast<int>(recv(receptor_list[i].socketFileDescriptorReceptor, buf, max_size_message, 0));
 #else
-        numbytes = recv((unsigned int)receptor_list[i].socketFileDescriptorReceptor, buf, (int)max_size_message, 0);
+        numbytes = recv(static_cast<unsigned int>(receptor_list[i].socketFileDescriptorReceptor), buf, static_cast<int>(max_size_message), 0);
 #endif
 
         if (numbytes <= 0) {
           std::cout << "Disconnected : " << inet_ntoa(receptor_list[i].receptorAddress.sin_addr) << std::endl;
-          receptor_list.erase(receptor_list.begin() + (int)i);
+          receptor_list.erase(receptor_list.begin() + static_cast<int>(i));
           delete[] buf;
           return numbytes;
         }
         else {
-          std::string returnVal(buf, (unsigned int)numbytes);
+          std::string returnVal(buf, static_cast<unsigned int>(numbytes));
           currentMessageReceived.append(returnVal);
         }
         delete[] buf;
@@ -743,8 +743,8 @@ int vpNetwork::privReceiveRequestOnce()
 */
 int vpNetwork::privReceiveRequestOnceFrom(const unsigned int &receptorEmitting)
 {
-  int size = (int)receptor_list.size();
-  int sizeMinusOne = (int)receptor_list.size() - 1;
+  int size = static_cast<int>(receptor_list.size());
+  int sizeMinusOne = static_cast<int>(receptor_list.size()) - 1;
   if (size == 0 || receptorEmitting > (unsigned)sizeMinusOne) {
     if (verboseMode)
       vpTRACE("No receptor at the specified index!");
@@ -753,7 +753,7 @@ int vpNetwork::privReceiveRequestOnceFrom(const unsigned int &receptorEmitting)
 
   tv.tv_sec = tv_sec;
 #ifdef TARGET_OS_IPHONE
-  tv.tv_usec = (int)tv_usec;
+  tv.tv_usec = static_cast<int>(tv_usec);
 #else
   tv.tv_usec = tv_usec;
 #endif
@@ -761,9 +761,9 @@ int vpNetwork::privReceiveRequestOnceFrom(const unsigned int &receptorEmitting)
   FD_ZERO(&readFileDescriptor);
 
   socketMax = receptor_list[receptorEmitting].socketFileDescriptorReceptor;
-  FD_SET((unsigned int)receptor_list[receptorEmitting].socketFileDescriptorReceptor, &readFileDescriptor);
+  FD_SET(static_cast<unsigned int>(receptor_list[receptorEmitting].socketFileDescriptorReceptor), &readFileDescriptor);
 
-  int value = select((int)socketMax + 1, &readFileDescriptor, nullptr, nullptr, &tv);
+  int value = select(static_cast<int>(socketMax) + 1, &readFileDescriptor, nullptr, nullptr, &tv);
   int numbytes = 0;
   if (value == -1) {
     if (verboseMode)
@@ -775,23 +775,23 @@ int vpNetwork::privReceiveRequestOnceFrom(const unsigned int &receptorEmitting)
     return 0;
   }
   else {
-    if (FD_ISSET((unsigned int)receptor_list[receptorEmitting].socketFileDescriptorReceptor, &readFileDescriptor)) {
+    if (FD_ISSET(static_cast<unsigned int>(receptor_list[receptorEmitting].socketFileDescriptorReceptor), &readFileDescriptor)) {
       char *buf = new char[max_size_message];
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-      numbytes = (int)recv(receptor_list[receptorEmitting].socketFileDescriptorReceptor, buf, max_size_message, 0);
+      numbytes = static_cast<int>(recv(receptor_list[receptorEmitting].socketFileDescriptorReceptor, buf, max_size_message, 0));
 #else
-      numbytes = recv((unsigned int)receptor_list[receptorEmitting].socketFileDescriptorReceptor, buf,
-                      (int)max_size_message, 0);
+      numbytes = recv(static_cast<unsigned int>(receptor_list[receptorEmitting].socketFileDescriptorReceptor), buf,
+                      static_cast<int>(max_size_message), 0);
 #endif
       if (numbytes <= 0) {
         std::cout << "Disconnected : " << inet_ntoa(receptor_list[receptorEmitting].receptorAddress.sin_addr)
           << std::endl;
-        receptor_list.erase(receptor_list.begin() + (int)receptorEmitting);
+        receptor_list.erase(receptor_list.begin() + static_cast<int>(receptorEmitting));
         delete[] buf;
         return numbytes;
       }
       else {
-        std::string returnVal(buf, (unsigned int)numbytes);
+        std::string returnVal(buf, static_cast<unsigned int>(numbytes));
         currentMessageReceived.append(returnVal);
       }
       delete[] buf;

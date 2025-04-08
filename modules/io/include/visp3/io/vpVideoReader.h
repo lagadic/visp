@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -243,9 +243,9 @@ public:
   vpVideoReader();
   virtual ~vpVideoReader();
 
-  void acquire(vpImage<vpRGBa> &I);
-  void acquire(vpImage<unsigned char> &I);
-  void close() { ; }
+  void acquire(vpImage<vpRGBa> &I) VP_OVERRIDE;
+  void acquire(vpImage<unsigned char> &I) VP_OVERRIDE;
+  void close() VP_OVERRIDE { }
 
   /*!
    * \return true if the end of the sequence is reached.
@@ -328,8 +328,8 @@ public:
   inline long getFrameStep() const { return m_frameStep; }
 
   bool isVideoFormat() const;
-  void open(vpImage<vpRGBa> &I);
-  void open(vpImage<unsigned char> &I);
+  void open(vpImage<vpRGBa> &I) VP_OVERRIDE;
+  void open(vpImage<unsigned char> &I) VP_OVERRIDE;
 
   vpVideoReader &operator>>(vpImage<unsigned char> &I);
   vpVideoReader &operator>>(vpImage<vpRGBa> &I);

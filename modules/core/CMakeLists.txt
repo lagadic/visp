@@ -240,7 +240,7 @@ endif()
 
 # Misc: xml, pthread, zlib
 if(USE_XML2)
-  include_directories(${LIBXML2_INCLUDE_DIRS})
+  include_directories(SYSTEM ${LIBXML2_INCLUDE_DIRS})
   list(APPEND opt_libs_private ${LIBXML2_LIBRARIES})
 endif()
 
@@ -287,13 +287,13 @@ endif()
 
 if(WITH_PUGIXML)
   # pugixml is private and provides default XML I/O capabilities
-  include_directories(${PUGIXML_INCLUDE_DIRS})
+  include_directories(SYSTEM ${PUGIXML_INCLUDE_DIRS})
   list(APPEND opt_libs_private ${PUGIXML_LIBRARIES})
 endif()
 
 if(WITH_SIMDLIB)
   # Simd lib is private
-  include_directories(${SIMDLIB_INCLUDE_DIRS})
+  include_directories(SYSTEM ${SIMDLIB_INCLUDE_DIRS})
   list(APPEND opt_libs_private ${SIMDLIB_LIBRARIES})
 endif()
 

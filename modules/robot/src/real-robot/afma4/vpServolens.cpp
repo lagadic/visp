@@ -536,7 +536,7 @@ bool vpServolens::getPosition(vpServoType servo, unsigned int &position) const
   this->clean(posit, posit);
 
   //    printf("\nChaine toilettee: posit: %s", posit);
-  position = (unsigned int)atoi(posit);
+  position = static_cast<unsigned int>(atoi(posit));
 
   return (true);
 }

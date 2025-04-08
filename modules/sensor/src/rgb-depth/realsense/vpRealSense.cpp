@@ -343,13 +343,13 @@ rs::extrinsics vpRealSense::getExtrinsics(const rs::stream &from, const rs::stre
     throw vpException(vpException::fatalError,
                       "RealSense Camera - stream (%d) is not enabled to "
                       "retrieve extrinsics. Exiting!",
-                      (int)from);
+                      static_cast<int>(from));
   }
   if (!m_device->is_stream_enabled(to)) {
     throw vpException(vpException::fatalError,
                       "RealSense Camera - stream (%d) is not enabled to "
                       "retrieve extrinsics. Exiting!",
-                      (int)to);
+                      static_cast<int>(to));
   }
   return m_device->get_extrinsics(from, to);
 }

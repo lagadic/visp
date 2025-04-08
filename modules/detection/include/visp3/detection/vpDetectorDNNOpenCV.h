@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -151,7 +151,7 @@ public:
       else {
         m_classname = std::nullopt;
       }
-    };
+    }
 
     /*!
     * Return the bounding box of the detected object.
@@ -191,10 +191,10 @@ public:
                                                 If <= 0., the \b vpDetectorDNNOpenCV::filterDetectionSingleClassInput and \b vpDetectorDNNOpenCV::filterDetectionMultiClassInput methods are not used.*/
     cv::Scalar m_mean; /*!< Values for mean subtraction.*/
     double m_scaleFactor; /*!< Scale factor to normalize pixel values.*/
-    bool m_swapRB; /*<! If true, swap R and B for mean subtraction, e.g. when a model has been trained on BGR image format.*/
+    bool m_swapRB; /*!< If true, swap R and B for mean subtraction, e.g. when a model has been trained on BGR image format.*/
     DNNResultsParsingType m_parsingMethodType; /*!< Parsing method that should be used to parse the cv::Mat returned by the cv::dnn::Net::forward method.*/
     std::string m_modelFilename; /*!< Path towards the model file.*/
-    std::string m_modelConfigFilename; /*<! Path towards the model additional configuration file, e.g. pbtxt file.*/
+    std::string m_modelConfigFilename; /*!< Path towards the model additional configuration file, e.g. pbtxt file.*/
     std::string m_framework; /*!< Model framework.*/
 
 #ifdef VISP_HAVE_NLOHMANN_JSON

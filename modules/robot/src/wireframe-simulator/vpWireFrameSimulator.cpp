@@ -95,7 +95,7 @@ void vpWireFrameSimulator::display_scene(Matrix mat, Bound_scene &sc, const vpIm
 
       set_Bound_face_display(clip, b); // regarde si is_visible
 
-      point_3D_2D(clip->point.ptr, clip->point.nbr, (int)I.getWidth(), (int)I.getHeight(), point2i);
+      point_3D_2D(clip->point.ptr, clip->point.nbr, static_cast<int>(I.getWidth()), static_cast<int>(I.getHeight()), point2i);
       for (; fp < fend; fp++) {
         if (fp->is_visible) {
           wireframe_Face(fp, point2i);
@@ -141,7 +141,7 @@ void vpWireFrameSimulator::display_scene(Matrix mat, Bound_scene &sc, const vpIm
 
       set_Bound_face_display(clip, b); // regarde si is_visible
 
-      point_3D_2D(clip->point.ptr, clip->point.nbr, (int)I.getWidth(), (int)I.getHeight(), point2i);
+      point_3D_2D(clip->point.ptr, clip->point.nbr, static_cast<int>(I.getWidth()), static_cast<int>(I.getHeight()), point2i);
       for (; fp < fend; fp++) {
         if (fp->is_visible) {
           wireframe_Face(fp, point2i);

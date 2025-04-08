@@ -220,7 +220,7 @@ void readJPEGLibjpeg(vpImage<unsigned char> &I, const std::string &filename)
 
   jpeg_start_decompress(&cinfo);
 
-  unsigned int rowbytes = cinfo.output_width * (unsigned int)(cinfo.output_components);
+  unsigned int rowbytes = cinfo.output_width * static_cast<unsigned int>(cinfo.output_components);
   JSAMPARRAY buffer = (*cinfo.mem->alloc_sarray)((j_common_ptr)&cinfo, JPOOL_IMAGE, rowbytes, 1);
 
   if (cinfo.out_color_space == JCS_RGB) {
@@ -301,7 +301,7 @@ void readJPEGLibjpeg(vpImage<vpRGBa> &I, const std::string &filename)
 
   jpeg_start_decompress(&cinfo);
 
-  unsigned int rowbytes = cinfo.output_width * (unsigned int)(cinfo.output_components);
+  unsigned int rowbytes = cinfo.output_width * static_cast<unsigned int>(cinfo.output_components);
   JSAMPARRAY buffer = (*cinfo.mem->alloc_sarray)((j_common_ptr)&cinfo, JPOOL_IMAGE, rowbytes, 1);
 
   if (cinfo.out_color_space == JCS_RGB) {

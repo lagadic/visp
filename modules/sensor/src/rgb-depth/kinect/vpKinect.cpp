@@ -280,8 +280,8 @@ void vpKinect::warpRGBFrame(const vpImage<vpRGBa> &Irgb, const vpImage<float> &I
           //! depth image
           vpMeterPixelConversion::convertPoint(RGBcam, x2, y2, u, v);
 
-          unsigned int u_ = (unsigned int)u;
-          unsigned int v_ = (unsigned int)v;
+          unsigned int u_ = static_cast<unsigned int>(u);
+          unsigned int v_ = static_cast<unsigned int>(v);
           //! Fill warped image value
           if ((u_ < width) && (v_ < height)) {
             IrgbWarped[i][j] = Irgb[v_][u_];

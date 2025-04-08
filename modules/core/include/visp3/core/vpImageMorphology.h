@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +49,12 @@
 #include <iostream>
 #include <math.h>
 #include <string.h>
+
+#if defined(__clang__)
+// Mute warning : '\tparam' command used in a comment that is not attached to a template declaration [-Wdocumentation]
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wexit-time-destructors"
+#endif
 
 BEGIN_VISP_NAMESPACE
 /*!
@@ -571,10 +577,9 @@ void vpImageMorphology::dilatation(vpImage<T> &I, const int &size)
   vpImageMorphology::imageOperation(I, &operation, size);
 }
 END_VISP_NAMESPACE
+
+#if defined(__clang__)
+#  pragma clang diagnostic pop
 #endif
 
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
+#endif

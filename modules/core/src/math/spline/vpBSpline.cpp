@@ -75,32 +75,32 @@ vpBSpline::~vpBSpline() { }
 */
 unsigned int vpBSpline::findSpan(double l_u, unsigned int l_p, const std::vector<double> &l_knots)
 {
-  unsigned int m = (unsigned int)l_knots.size() - 1;
+  unsigned int m = static_cast<unsigned int>(l_knots.size()) - 1;
 
   if (l_u > l_knots.back()) {
     // vpTRACE("l_u higher than the maximum value in the knot vector  :
     // %lf",l_u);
-    return ((unsigned int)(m - l_p - 1));
+    return (static_cast<unsigned int>(m - l_p - 1));
   }
 
   // if (l_u == l_knots.back())
   if (std::fabs(l_u - l_knots.back()) <=
       std::fabs(vpMath::maximum(l_u, l_knots.back())) * std::numeric_limits<double>::epsilon())
-    return ((unsigned int)(m - l_p - 1));
+    return (static_cast<unsigned int>(m - l_p - 1));
 
   double low = l_p;
   double high = m - l_p;
   double middle = (low + high) / 2.0;
 
-  while (l_u < l_knots[(unsigned int)middle] || l_u >= l_knots[(unsigned int)middle + 1]) {
-    if (l_u < l_knots[(unsigned int)vpMath::round(middle)])
+  while (l_u < l_knots[static_cast<unsigned int>(middle)] || l_u >= l_knots[static_cast<unsigned int>(middle) + 1]) {
+    if (l_u < l_knots[static_cast<unsigned int>(vpMath::round(middle))])
       high = middle;
     else
       low = middle;
     middle = (low + high) / 2.0;
   }
 
-  return (unsigned int)middle;
+  return static_cast<unsigned int>(middle);
 }
 
 /*!
@@ -275,17 +275,17 @@ vpBasisFunction **vpBSpline::computeDersBasisFuns(double l_u, unsigned int l_i, 
     a[0][0] = 1.0;
     for (unsigned int k = 1; k <= l_der; k++) {
       d = 0.0;
-      rk = (int)(r - k);
+      rk = static_cast<int>(r - k);
       pk = l_p - k;
       if (r >= k) {
         a[s2][0] = a[s1][0] / ndu[pk + 1][rk];
-        d = a[s2][0] * ndu[(unsigned int)rk][pk];
+        d = a[s2][0] * ndu[static_cast<unsigned int>(rk)][pk];
       }
 
       if (rk >= -1)
         j1 = 1;
       else
-        j1 = (unsigned int)(-rk);
+        j1 = static_cast<unsigned int>(-rk);
 
       if (r - 1 <= pk)
         j2 = k - 1;
@@ -293,8 +293,8 @@ vpBasisFunction **vpBSpline::computeDersBasisFuns(double l_u, unsigned int l_i, 
         j2 = l_p - r;
 
       for (unsigned int j = j1; j <= j2; j++) {
-        a[s2][j] = (a[s1][j] - a[s1][j - 1]) / ndu[pk + 1][(unsigned int)rk + j];
-        d += a[s2][j] * ndu[(unsigned int)rk + j][pk];
+        a[s2][j] = (a[s1][j] - a[s1][j - 1]) / ndu[pk + 1][static_cast<unsigned int>(rk) + j];
+        d += a[s2][j] * ndu[static_cast<unsigned int>(rk) + j][pk];
       }
 
       if (r <= pk) {

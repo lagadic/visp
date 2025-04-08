@@ -362,7 +362,7 @@ void vpPlotGraph::displayUnit(vpImage<unsigned char> &
 #endif
 )
 {
-  unsigned int offsetx = vpMath::minimum<unsigned int>((unsigned int)unitx.size(), dWidth);
+  unsigned int offsetx = vpMath::minimum<unsigned int>(static_cast<unsigned int>(unitx.size()), dWidth);
 
 #if defined(VISP_HAVE_X11)
   vpDisplay::displayText(I, vpImagePoint(yorg - 2 * epsi, dTopLeft.get_j() + dWidth - offsetx * epsj), unitx.c_str(),

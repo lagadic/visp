@@ -299,15 +299,15 @@ vpMatrix::vpMatrix(const std::initializer_list<std::initializer_list<double> > &
  * but may not resize it and does not own it: the memory is not released by the matrix
  * and it should be freed by the user after the matrix view is released.
  *
- * @param data the raw data
- * @param rows Number of rows
- * @param cols Number of columns
+ * @param[in] raw_data : The raw data.
+ * @param[in] rows : Raw data number of rows.
+ * @param[in] cols : Raw data number of columns.
  * @return vpMatrix
  */
-vpMatrix vpMatrix::view(double *data, unsigned int rows, unsigned int cols)
+vpMatrix vpMatrix::view(double *raw_data, unsigned int rows, unsigned int cols)
 {
   vpMatrix M;
-  vpArray2D<double>::view(M, data, rows, cols);
+  vpArray2D<double>::view(M, raw_data, rows, cols);
   return M;
 }
 
@@ -1225,7 +1225,7 @@ vpColVector vpMatrix::eigenValues() const
     gsl_eigen_symmv_workspace *w = gsl_eigen_symmv_alloc(rowNum);
     gsl_matrix *m = gsl_matrix_alloc(rowNum, colNum);
 
-    unsigned int Atda = (unsigned int)m->tda;
+    unsigned int Atda = static_cast<unsigned int>(m->tda);
     for (unsigned int i = 0; i < rowNum; i++) {
       unsigned int k = i * Atda;
       for (unsigned int j = 0; j < colNum; j++)
@@ -1350,7 +1350,7 @@ void vpMatrix::eigenValues(vpColVector &evalue, vpMatrix &evector) const
     gsl_eigen_symmv_workspace *w = gsl_eigen_symmv_alloc(rowNum);
     gsl_matrix *m = gsl_matrix_alloc(rowNum, colNum);
 
-    unsigned int Atda = (unsigned int)m->tda;
+    unsigned int Atda = static_cast<unsigned int>(m->tda);
     for (unsigned int i = 0; i < rowNum; i++) {
       unsigned int k = i * Atda;
       for (unsigned int j = 0; j < colNum; j++)
@@ -1363,7 +1363,7 @@ void vpMatrix::eigenValues(vpColVector &evalue, vpMatrix &evector) const
     for (unsigned int i = 0; i < rowNum; i++) {
       evalue[i] = gsl_vector_get(eval, i);
     }
-    Atda = (unsigned int)evec->tda;
+    Atda = static_cast<unsigned int>(evec->tda);
     for (unsigned int i = 0; i < rowNum; i++) {
       unsigned int k = i * Atda;
       for (unsigned int j = 0; j < rowNum; j++) {

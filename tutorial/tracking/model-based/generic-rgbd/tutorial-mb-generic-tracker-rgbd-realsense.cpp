@@ -528,7 +528,7 @@ int main(int argc, char *argv[])
 
         // Display learned data
         for (std::vector<cv::KeyPoint>::const_iterator it = trainKeyPoints.begin(); it != trainKeyPoints.end(); ++it) {
-          vpDisplay::displayCross(I_gray, (int)it->pt.y, (int)it->pt.x, 10, vpColor::yellow, 3);
+          vpDisplay::displayCross(I_gray, static_cast<int>(it->pt.y), static_cast<int>(it->pt.x), 10, vpColor::yellow, 3);
         }
         learn_position = false;
         std::cout << "Data learned" << std::endl;

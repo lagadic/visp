@@ -497,9 +497,9 @@ template <> inline unsigned char vpMath::saturate<unsigned char>(char v)
 {
   // On big endian arch like powerpc, char implementation is unsigned
   // with CHAR_MIN=0, CHAR_MAX=255 and SCHAR_MIN=-128, SCHAR_MAX=127
-  // leading to (int)(char -127) = 129.
+  // leading to static_cast<int>(char -127) = 129.
   // On little endian arch, CHAR_MIN=-127 and CHAR_MAX=128 leading to
-  // (int)(char -127) = -127.
+  // static_cast<int>(char -127) = -127.
   if (std::numeric_limits<char>::is_signed) {
     return static_cast<unsigned char>(std::max<int>(static_cast<int>(v), 0));
   }
@@ -583,9 +583,9 @@ template <> inline unsigned short vpMath::saturate<unsigned short>(char v)
 {
   // On big endian arch like powerpc, char implementation is unsigned
   // with CHAR_MIN=0, CHAR_MAX=255 and SCHAR_MIN=-128, SCHAR_MAX=127
-  // leading to (int)(char -127) = 129.
+  // leading to static_cast<int>(char -127) = 129.
   // On little endian arch, CHAR_MIN=-127 and CHAR_MAX=128 leading to
-  // (int)(char -127) = -127.
+  // static_cast<int>(char -127) = -127.
   if (std::numeric_limits<char>::is_signed) {
     return static_cast<unsigned short>(std::max<int>(static_cast<int>(v), 0));
   }

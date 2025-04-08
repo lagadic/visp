@@ -48,8 +48,8 @@ BEGIN_VISP_NAMESPACE
 /*!
  * \class vpDetectorAprilTag
  * \ingroup group_detection_tag
- * Base class for AprilTag detector. This class is a wrapper over <a
- * href="https://april.eecs.umich.edu/software/apriltag.html">AprilTag</a>. There
+ * Base class for AprilTag detector. This class is a wrapper over
+ * <a href="https://april.eecs.umich.edu/software/apriltag.html">AprilTag</a>. There
  * is no need to download and install AprilTag from source code or from existing
  * pre-built packages since the source code is embedded in ViSP. Reference papers
  * are <I> AprilTag: A robust and flexible visual fiducial system </I>
