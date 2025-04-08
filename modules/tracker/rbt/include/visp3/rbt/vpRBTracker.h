@@ -45,9 +45,11 @@
 #include <visp3/rbt/vpObjectCentricRenderer.h>
 #include <visp3/rbt/vpRBTrackingResult.h>
 #include <visp3/rbt/vpRBADDSMetric.h>
+#include <visp3/rbt/vpRBInitializationHelper.h>
 #include <visp3/core/vpDisplay.h>
 
 #include <ostream>
+#include <type_traits>
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
 #include VISP_NLOHMANN_JSON(json_fwd.hpp)
@@ -223,13 +225,38 @@ public:
    */
 
 #ifdef VISP_HAVE_MODULE_GUI
-  void initClick(const vpImage<unsigned char> &I, const std::string &initFile, bool displayHelp);
+  template <typename ImageType>
+  typename std::enable_if<std::is_same<ImageType, unsigned char>::value || std::is_same<ImageType, vpRGBa>::value, void >::type initClick(const vpImage<ImageType> &I, const std::string &initFile, bool displayHelp)
+  {
+    vpRBInitializationHelper initializer;
+    initializer.setCameraParameters(m_cam);
+    initializer.initClick(I, initFile, displayHelp, *this);
+    m_cMo = initializer.getPose();
+  }
 #endif
 
+  friend vpRBInitializationHelper;
 protected:
 
   vpRBTrackingResult track(vpRBFeatureTrackerInput &input);
   void updateRender(vpRBFeatureTrackerInput &frame);
+  void updateRender(vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cMo);
+
+  template <typename T>
+  void displaySilhouette(const vpImage<T> &I, const vpRBFeatureTrackerInput &frame)
+  {
+    if (shouldRenderSilhouette()) {
+      const vpImage<unsigned char> &Isilhouette = frame.renders.isSilhouette;
+      const vpRect bb = m_renderer.getBoundingBox();
+      for (unsigned int r = std::max(bb.getTop(), 0.); (r < bb.getBottom()) &&(r < I.getRows()); ++r) {
+        for (unsigned int c = std::max(bb.getLeft(), 0.); (c < bb.getRight()) && (c < I.getCols()); ++c) {
+          if (Isilhouette[r][c] != 0) {
+            vpDisplay::displayPoint(I, vpImagePoint(r, c), vpColor::green);
+          }
+        }
+      }
+    }
+  }
 
   std::vector<vpRBSilhouettePoint> extractSilhouettePoints(
     const vpImage<vpRGBf> &Inorm, const vpImage<float> &Idepth,
@@ -246,6 +273,11 @@ protected:
       ss << ", but got " << I.getCols() << " x " << I.getRows();
       throw vpException(vpException::dimensionError, ss.str());
     }
+  }
+
+  bool shouldRenderSilhouette()
+  {
+    return m_renderer.getRenderer<vpPanda3DDepthCannyFilter>() != nullptr;
   }
 
   bool m_firstIteration; //! Whether this is the first iteration
