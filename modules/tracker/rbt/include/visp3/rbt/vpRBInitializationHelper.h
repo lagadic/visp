@@ -29,13 +29,13 @@ public:
 
   void setCameraParameters(const vpCameraParameters &cam) { m_cam = cam; }
 
+  friend vpRBTracker;
+private:
 #ifdef VISP_HAVE_MODULE_GUI
   template <typename T>
   void initClick(const vpImage<T> &I, const std::string &initFile, bool displayHelp, vpRBTracker &tracker);
-
 #endif
 
-private:
   std::string m_poseSavingFileName;
 
   vpHomogeneousMatrix m_cMo;

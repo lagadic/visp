@@ -689,14 +689,4 @@ void vpRBTracker::loadConfiguration(const nlohmann::json &j)
 }
 #endif
 
-#ifdef VISP_HAVE_MODULE_GUI
-void vpRBTracker::initClick(const vpImage<unsigned char> &I, const std::string &initFile, bool displayHelp)
-{
-  vpRBInitializationHelper initializer;
-  initializer.setCameraParameters(m_cam);
-  initializer.initClick(I, initFile, displayHelp, *this);
-  m_cMo = initializer.getPose();
-}
-#endif
-
 END_VISP_NAMESPACE

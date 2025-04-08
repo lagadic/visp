@@ -45,9 +45,11 @@
 #include <visp3/rbt/vpObjectCentricRenderer.h>
 #include <visp3/rbt/vpRBTrackingResult.h>
 #include <visp3/rbt/vpRBADDSMetric.h>
+#include <visp3/rbt/vpRBInitializationHelper.h>
 #include <visp3/core/vpDisplay.h>
 
 #include <ostream>
+#include <type_traits>
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
 #include VISP_NLOHMANN_JSON(json_fwd.hpp)
@@ -57,7 +59,6 @@ BEGIN_VISP_NAMESPACE
 
 class vpObjectMask;
 class vpRBDriftDetector;
-class vpRBInitializationHelper;
 class vpRBVisualOdometry;
 
 /**
@@ -224,7 +225,14 @@ public:
    */
 
 #ifdef VISP_HAVE_MODULE_GUI
-  void initClick(const vpImage<unsigned char> &I, const std::string &initFile, bool displayHelp);
+  template <typename ImageType>
+  typename std::enable_if<std::is_same<ImageType, unsigned char>::value || std::is_same<ImageType, vpRGBa>::value, void >::type initClick(const vpImage<ImageType> &I, const std::string &initFile, bool displayHelp)
+  {
+    vpRBInitializationHelper initializer;
+    initializer.setCameraParameters(m_cam);
+    initializer.initClick(I, initFile, displayHelp, *this);
+    m_cMo = initializer.getPose();
+  }
 #endif
 
   friend vpRBInitializationHelper;
