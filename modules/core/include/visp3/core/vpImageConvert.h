@@ -371,7 +371,7 @@ private:
   static int vpCgb[256];
   static int vpCgr[256];
   static int vpCbb[256];
-  };
+};
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 /**
