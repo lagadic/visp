@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * 2D line visual feature.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpFeatureLine.cpp
@@ -361,7 +359,6 @@ void vpFeatureLine::print(unsigned int select) const
 {
 
   std::cout << "Line:\t  " << A << "X+" << B << "Y+" << C << "Z +" << D << "=0" << std::endl;
-  ;
   if (vpFeatureLine::selectRho() & select)
     std::cout << "     \trho=" << s[0];
   if (vpFeatureLine::selectTheta() & select)

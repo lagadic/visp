@@ -4,7 +4,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_THREADS) && \
+#if defined(VISP_HAVE_OPENCV) && defined(VISP_HAVE_THREADS) && \
   (((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)))
 
 #include <thread>
@@ -174,10 +174,10 @@ int main(int argc, const char *argv[])
 #else
 int main()
 {
-#if (VISP_HAVE_OPENCV_VERSION < 0x030000) && !defined(HAVE_OPENCV_HIGHGUI)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION < 0x030000) && !defined(HAVE_OPENCV_HIGHGUI)
   std::cout << "Install OpenCV highgui module, configure and build ViSP again to use this tutorial." << std::endl;
 #endif
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000) && !defined(HAVE_OPENCV_VIDEOIO)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x030000) && !defined(HAVE_OPENCV_VIDEOIO)
   std::cout << "Install OpenCV videoio module, configure and build ViSP again to use this tutorial." << std::endl;
 #endif
 #if !defined(HAVE_OPENCV_HIGHGUI)

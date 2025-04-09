@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,12 +30,13 @@
  * Description:
  * Object input structure used by moments.
  */
+
 /*!
   \file vpMomentObject.h
   \brief Object input structure used by moments.
 */
-#ifndef _vpMomentObject_h_
-#define _vpMomentObject_h_
+#ifndef VP_MOMENT_OBJECT_H
+#define VP_MOMENT_OBJECT_H
 
 #include <cstdlib>
 #include <utility>
@@ -253,14 +254,18 @@ public:
   VP_EXPLICIT vpMomentObject(unsigned int order);
   vpMomentObject(const vpMomentObject &srcobj);
   /*!
-  Virtual destructor to allow polymorphic usage.
-  For instance,
-  \code
-  vpMomentObject* obj = new vpWeightedMomentObject(weightfunc,ORDER);
-  \endcode
-  where vpWeightedMomentObject is child class of vpMomentObject
+    Virtual destructor to allow polymorphic usage.
+    For instance,
+    \code
+    vpMomentObject* obj = new vpWeightedMomentObject(weightfunc,ORDER);
+    \endcode
+    where vpWeightedMomentObject is child class of vpMomentObject
   */
   virtual ~vpMomentObject();
+
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+  vpMomentObject &operator=(const vpMomentObject &) = default;
+#endif
 
   void fromImage(const vpImage<unsigned char> &image, unsigned char threshold,
                  const vpCameraParameters &cam); // Binary version

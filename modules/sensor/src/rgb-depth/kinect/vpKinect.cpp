@@ -280,8 +280,8 @@ void vpKinect::warpRGBFrame(const vpImage<vpRGBa> &Irgb, const vpImage<float> &I
           //! depth image
           vpMeterPixelConversion::convertPoint(RGBcam, x2, y2, u, v);
 
-          unsigned int u_ = (unsigned int)u;
-          unsigned int v_ = (unsigned int)v;
+          unsigned int u_ = static_cast<unsigned int>(u);
+          unsigned int v_ = static_cast<unsigned int>(v);
           //! Fill warped image value
           if ((u_ < width) && (v_ < height)) {
             IrgbWarped[i][j] = Irgb[v_][u_];
@@ -295,5 +295,5 @@ void vpKinect::warpRGBFrame(const vpImage<vpRGBa> &Irgb, const vpImage<float> &I
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_sensor.a(vpKinect.cpp.o) has no symbols
-void dummy_vpKinect() { };
+void dummy_vpKinect() { }
 #endif // VISP_HAVE_LIBFREENECT

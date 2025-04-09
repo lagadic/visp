@@ -269,7 +269,7 @@ public:
   vpRowVector &operator<<(double val);
   vpRowVector &operator,(double val);
 
-  int print(std::ostream &s, unsigned int length, char const *intro = 0) const;
+  int print(std::ostream &s, unsigned int length, char const *intro = nullptr) const;
   /*!
     Convert a column vector containing angles in radians into degrees.
     \sa deg2rad()

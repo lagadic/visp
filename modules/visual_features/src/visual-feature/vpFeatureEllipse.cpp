@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * 2D ellipse visual feature.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpFeatureEllipse.cpp
@@ -268,7 +266,6 @@ void vpFeatureEllipse::print(unsigned int select) const
   std::cout << "Ellipse:  " << std::endl;
   if (vpFeatureEllipse::selectX() & select)
     std::cout << " x=" << s[0] << std::endl;
-  ;
   if (vpFeatureEllipse::selectY() & select)
     std::cout << " y=" << s[1] << std::endl;
   if (vpFeatureEllipse::select_n20() & select)

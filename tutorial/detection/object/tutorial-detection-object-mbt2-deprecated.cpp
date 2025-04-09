@@ -10,9 +10,9 @@
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
-#if defined(HAVE_OPENCV_IMGPROC) && defined(VISP_HAVE_DISPLAY) && \
-  ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_FEATURES2D)) || \
-  ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D) && defined(HAVE_OPENCV_FEATURES))
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(VISP_HAVE_DISPLAY) && \
+  (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_FEATURES2D)) || \
+   ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D) && defined(HAVE_OPENCV_FEATURES)))
 
 void learnCube(const vpImage<unsigned char> &I, vpMbEdgeTracker &tracker, vpKeyPoint &keypoint_learning, int id)
 {
@@ -43,7 +43,7 @@ void learnCube(const vpImage<unsigned char> &I, vpMbEdgeTracker &tracker, vpKeyP
 
   //! [Display reference keypoints]
   for (std::vector<cv::KeyPoint>::const_iterator it = trainKeyPoints.begin(); it != trainKeyPoints.end(); ++it) {
-    vpDisplay::displayCross(I, (int)it->pt.y, (int)it->pt.x, 4, vpColor::red);
+    vpDisplay::displayCross(I, static_cast<int>(it->pt.y), static_cast<int>(it->pt.x), 4, vpColor::red);
   }
   //! [Display reference keypoints]
 }
@@ -51,8 +51,9 @@ void learnCube(const vpImage<unsigned char> &I, vpMbEdgeTracker &tracker, vpKeyP
 
 int main(int argc, char **argv)
 {
-#if defined(HAVE_OPENCV_IMGPROC) && \
-  ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
+#if defined(HAVE_OPENCV_IMGPROC) && defined(VISP_HAVE_OPENCV) && \
+  (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || \
+   ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES)))
 
   //! [MBT code]
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)

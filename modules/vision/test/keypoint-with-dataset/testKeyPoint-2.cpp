@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,9 +41,9 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO) && \
-  ((VISP_HAVE_OPENCV_VERSION < 0x050000)  && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_FEATURES2D)) || \
-  ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D) && defined(HAVE_OPENCV_FEATURES))
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO) && \
+  (((VISP_HAVE_OPENCV_VERSION < 0x050000)  && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_FEATURES2D)) || \
+   ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D) && defined(HAVE_OPENCV_FEATURES)))
 
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpIoTools.h>
@@ -236,7 +236,7 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
   // Init keypoints
   vpKeyPoint keypoints("ORB", "ORB", "BruteForce-Hamming");
   keypoints.setRansacParallel(use_parallel_ransac);
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020400)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020400)
   // Bug when using LSH index with FLANN and OpenCV 2.3.1.
   // see http://code.opencv.org/issues/1741 (Bug #1741)
   keypoints.setMatcher("FlannBased");
@@ -327,7 +327,7 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
 
   if (opt_display) {
 #ifdef VISP_HAVE_DISPLAY
-    display2 = vpDisplayFactory::allocateDisplay(IMatching, 0, (int)I.getHeight() / vpDisplay::getDownScalingFactor(I) + 30, "IMatching");
+    display2 = vpDisplayFactory::allocateDisplay(IMatching, 0, static_cast<int>(I.getHeight()) / vpDisplay::getDownScalingFactor(I) + 30, "IMatching");
     display2->setDownScalingFactor(vpDisplay::SCALE_AUTO);
 #endif
   }

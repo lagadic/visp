@@ -345,7 +345,7 @@ protected:
   virtual void computeArticularVelocity() = 0;
 
   /* Display functions */
-  void initDisplay() { ; }
+  void initDisplay() { }
   virtual void initArms() = 0;
 
   vpColVector get_artCoord()

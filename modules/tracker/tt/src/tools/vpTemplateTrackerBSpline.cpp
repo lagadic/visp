@@ -44,12 +44,12 @@ BEGIN_VISP_NAMESPACE
 double vpTemplateTrackerBSpline::getSubPixBspline4(const vpImage<double> &I, double r, double t)
 {
   double res = 0;
-  int cr = (int)(r);
-  int ct = (int)(t);
+  int cr = static_cast<int>(r);
+  int ct = static_cast<int>(t);
   double er = (double)r - cr;
   double et = (double)t - ct;
-  int height = (int)I.getHeight(); // r
-  int width = (int)I.getWidth();   // t
+  int height = static_cast<int>(I.getHeight()); // r
+  int width = static_cast<int>(I.getWidth());   // t
   for (int ir = -1; ir <= 2; ir++) {
     int tr = ir + cr;
     if (tr >= 0 && tr < height) {

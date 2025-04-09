@@ -88,16 +88,16 @@ void vpMbtDistanceKltPoints::init(const vpKltOpencv &_tracker, const vpImage<boo
   for (unsigned int i = 0; i < static_cast<unsigned int>(_tracker.getNbFeatures()); i++) {
     long id;
     float x_tmp, y_tmp;
-    _tracker.getFeature((int)i, id, x_tmp, y_tmp);
+    _tracker.getFeature(static_cast<int>(i), id, x_tmp, y_tmp);
 
     bool add = false;
 
     // Add points inside visibility mask only
-    if (vpMeTracker::inRoiMask(mask, (unsigned int)y_tmp, (unsigned int)x_tmp)) {
+    if (vpMeTracker::inRoiMask(mask, static_cast<unsigned int>(y_tmp), static_cast<unsigned int>(x_tmp))) {
       if (useScanLine) {
-        if ((unsigned int)y_tmp < hiddenface->getMbScanLineRenderer().getPrimitiveIDs().getHeight() &&
-            (unsigned int)x_tmp < hiddenface->getMbScanLineRenderer().getPrimitiveIDs().getWidth() &&
-            hiddenface->getMbScanLineRenderer().getPrimitiveIDs()[(unsigned int)y_tmp][(unsigned int)x_tmp] ==
+        if (static_cast<unsigned int>(y_tmp) < hiddenface->getMbScanLineRenderer().getPrimitiveIDs().getHeight() &&
+            static_cast<unsigned int>(x_tmp) < hiddenface->getMbScanLineRenderer().getPrimitiveIDs().getWidth() &&
+            hiddenface->getMbScanLineRenderer().getPrimitiveIDs()[static_cast<unsigned int>(y_tmp)][static_cast<unsigned int>(x_tmp)] ==
                 polygon->getIndex())
           add = true;
       }
@@ -108,19 +108,19 @@ void vpMbtDistanceKltPoints::init(const vpKltOpencv &_tracker, const vpImage<boo
 
     if (add) {
 #ifdef TARGET_OS_IPHONE
-      initPoints[(int)id] = vpImagePoint(y_tmp, x_tmp);
-      curPoints[(int)id] = vpImagePoint(y_tmp, x_tmp);
-      curPointsInd[(int)id] = (int)i;
+      initPoints[static_cast<int>(id)] = vpImagePoint(y_tmp, x_tmp);
+      curPoints[static_cast<int>(id)] = vpImagePoint(y_tmp, x_tmp);
+      curPointsInd[static_cast<int>(id)] = static_cast<int>(i);
 #else
       initPoints[id] = vpImagePoint(y_tmp, x_tmp);
       curPoints[id] = vpImagePoint(y_tmp, x_tmp);
-      curPointsInd[id] = (int)i;
+      curPointsInd[id] = static_cast<int>(i);
 #endif
     }
   }
 
-  nbPointsInit = (unsigned int)initPoints.size();
-  nbPointsCur = (unsigned int)curPoints.size();
+  nbPointsInit = static_cast<unsigned int>(initPoints.size());
+  nbPointsCur = static_cast<unsigned int>(curPoints.size());
 
   if (nbPointsCur >= minNbPoint)
     enoughPoints = true;
@@ -157,19 +157,19 @@ unsigned int vpMbtDistanceKltPoints::computeNbDetectedCurrent(const vpKltOpencv 
   curPointsInd = std::map<int, int>();
 
   for (unsigned int i = 0; i < static_cast<unsigned int>(_tracker.getNbFeatures()); i++) {
-    _tracker.getFeature((int)i, id, x, y);
-    if (isTrackedFeature((int)id) && vpMeTracker::inRoiMask(mask, (unsigned int)y, (unsigned int)x)) {
+    _tracker.getFeature(static_cast<int>(i), id, x, y);
+    if (isTrackedFeature(static_cast<int>(id)) && vpMeTracker::inRoiMask(mask, static_cast<unsigned int>(y), static_cast<unsigned int>(x))) {
 #ifdef TARGET_OS_IPHONE
-      curPoints[(int)id] = vpImagePoint(static_cast<double>(y), static_cast<double>(x));
-      curPointsInd[(int)id] = (int)i;
+      curPoints[static_cast<int>(id)] = vpImagePoint(static_cast<double>(y), static_cast<double>(x));
+      curPointsInd[static_cast<int>(id)] = static_cast<int>(i);
 #else
       curPoints[id] = vpImagePoint(static_cast<double>(y), static_cast<double>(x));
-      curPointsInd[id] = (int)i;
+      curPointsInd[id] = static_cast<int>(i);
 #endif
     }
   }
 
-  nbPointsCur = (unsigned int)curPoints.size();
+  nbPointsCur = static_cast<unsigned int>(curPoints.size());
 
   if (nbPointsCur >= minNbPoint)
     enoughPoints = true;
@@ -657,5 +657,5 @@ END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_mbt.a(vpMbtDistanceKltPoints.cpp.o)
 // has no symbols
-void dummy_vpMbtDistanceKltPoints() { };
+void dummy_vpMbtDistanceKltPoints() { }
 #endif

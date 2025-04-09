@@ -131,7 +131,7 @@ void vpMbtFaceDepthNormal::addLine(vpPoint &P1, vpPoint &P2, vpMbHiddenFaces<vpM
     l->hiddenface = faces;
     l->useScanLine = m_useScanLine;
 
-    l->setIndex((unsigned int)m_listOfFaceLines.size());
+    l->setIndex(static_cast<unsigned int>(m_listOfFaceLines.size()));
     l->setName(name);
 
     if (m_clippingFlag != vpPolygon3D::NO_CLIPPING)
@@ -185,10 +185,10 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
   vpPolygon polygon_2d(roiPts);
   vpRect bb = polygon_2d.getBoundingBox();
 
-  unsigned int top = (unsigned int)std::max<double>(0.0, bb.getTop());
-  unsigned int bottom = (unsigned int)std::min<double>((double)height, std::max<double>(0.0, bb.getBottom()));
-  unsigned int left = (unsigned int)std::max<double>(0.0, bb.getLeft());
-  unsigned int right = (unsigned int)std::min<double>((double)width, std::max<double>(0.0, bb.getRight()));
+  unsigned int top = static_cast<unsigned int>(std::max<double>(0.0, bb.getTop()));
+  unsigned int bottom = static_cast<unsigned int>(std::min<double>((double)height, std::max<double>(0.0, bb.getBottom())));
+  unsigned int left = static_cast<unsigned int>(std::max<double>(0.0, bb.getLeft()));
+  unsigned int right = static_cast<unsigned int>(std::min<double>((double)width, std::max<double>(0.0, bb.getRight())));
 
   bb.setTop(top);
   bb.setBottom(bottom);
@@ -351,10 +351,10 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
   vpPolygon polygon_2d(roiPts);
   vpRect bb = polygon_2d.getBoundingBox();
 
-  unsigned int top = (unsigned int)std::max<double>(0.0, bb.getTop());
-  unsigned int bottom = (unsigned int)std::min<double>((double)height, std::max<double>(0.0, bb.getBottom()));
-  unsigned int left = (unsigned int)std::max<double>(0.0, bb.getLeft());
-  unsigned int right = (unsigned int)std::min<double>((double)width, std::max<double>(0.0, bb.getRight()));
+  unsigned int top = static_cast<unsigned int>(std::max<double>(0.0, bb.getTop()));
+  unsigned int bottom = static_cast<unsigned int>(std::min<double>((double)height, std::max<double>(0.0, bb.getBottom())));
+  unsigned int left = static_cast<unsigned int>(std::max<double>(0.0, bb.getLeft()));
+  unsigned int right = static_cast<unsigned int>(std::min<double>((double)width, std::max<double>(0.0, bb.getRight())));
 
   bb.setTop(top);
   bb.setBottom(bottom);
@@ -512,10 +512,10 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
   vpPolygon polygon_2d(roiPts);
   vpRect bb = polygon_2d.getBoundingBox();
 
-  unsigned int top = (unsigned int)std::max<double>(0.0, bb.getTop());
-  unsigned int bottom = (unsigned int)std::min<double>((double)height, std::max<double>(0.0, bb.getBottom()));
-  unsigned int left = (unsigned int)std::max<double>(0.0, bb.getLeft());
-  unsigned int right = (unsigned int)std::min<double>((double)width, std::max<double>(0.0, bb.getRight()));
+  unsigned int top = static_cast<unsigned int>(std::max<double>(0.0, bb.getTop()));
+  unsigned int bottom = static_cast<unsigned int>(std::min<double>((double)height, std::max<double>(0.0, bb.getBottom())));
+  unsigned int left = static_cast<unsigned int>(std::max<double>(0.0, bb.getLeft()));
+  unsigned int right = static_cast<unsigned int>(std::min<double>((double)width, std::max<double>(0.0, bb.getRight())));
 
   bb.setTop(top);
   bb.setBottom(bottom);
@@ -909,7 +909,7 @@ void vpMbtFaceDepthNormal::computeVisibilityDisplay()
         isvisible = true;
       }
       else {
-        if (line->hiddenface->isVisible((unsigned int)index)) {
+        if (line->hiddenface->isVisible(static_cast<unsigned int>(index))) {
           isvisible = true;
         }
       }
@@ -1574,7 +1574,7 @@ void vpMbtFaceDepthNormal::estimatePlaneEquationSVD(const std::vector<double> &p
 
   std::vector<double> weights(point_cloud_face.size() / 3, 1.0);
   std::vector<double> residues(point_cloud_face.size() / 3);
-  vpMatrix M((unsigned int)(point_cloud_face.size() / 3), 3);
+  vpMatrix M(static_cast<unsigned int>(point_cloud_face.size() / 3), 3);
   vpMbtTukeyEstimator<double> tukey;
   vpColVector normal;
 
@@ -1620,9 +1620,9 @@ void vpMbtFaceDepthNormal::estimatePlaneEquationSVD(const std::vector<double> &p
 
     // Minimization
     for (size_t i = 0; i < point_cloud_face.size() / 3; i++) {
-      M[(unsigned int)i][0] = weights[i] * (point_cloud_face[3 * i] - centroid_x);
-      M[(unsigned int)i][1] = weights[i] * (point_cloud_face[3 * i + 1] - centroid_y);
-      M[(unsigned int)i][2] = weights[i] * (point_cloud_face[3 * i + 2] - centroid_z);
+      M[static_cast<unsigned int>(i)][0] = weights[i] * (point_cloud_face[3 * i] - centroid_x);
+      M[static_cast<unsigned int>(i)][1] = weights[i] * (point_cloud_face[3 * i + 1] - centroid_y);
+      M[static_cast<unsigned int>(i)][2] = weights[i] * (point_cloud_face[3 * i + 2] - centroid_z);
     }
 
     vpMatrix J = M.t() * M;

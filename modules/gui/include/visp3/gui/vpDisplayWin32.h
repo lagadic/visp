@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,6 @@
  * Windows 32 display base class
  */
 
-
 #ifndef VP_DISPLAY_WIN32_H
 #define VP_DISPLAY_WIN32_H
 
@@ -43,6 +42,15 @@
 #include <string>
 
 #include <visp3/core/vpImage.h>
+
+// Mute warning with clang-cl
+// warning : non-portable path to file '<WinSock2.h>'; specified path differs in case from file name on disk [-Wnonportable-system-include-path]
+// warning : non-portable path to file '<Windows.h>'; specified path differs in case from file name on disk [-Wnonportable-system-include-path]
+#if defined(__clang__)
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wnonportable-system-include-path"
+#endif
+
 // Include WinSock2.h before windows.h to ensure that winsock.h is not
 // included by windows.h since winsock.h and winsock2.h are incompatible
 #include <WinSock2.h>
@@ -50,7 +58,12 @@
 #include <visp3/core/vpRect.h>
 #include <visp3/gui/vpWin32Renderer.h>
 #include <visp3/gui/vpWin32Window.h>
+
 #include <windows.h>
+
+#if defined(__clang__)
+#  pragma clang diagnostic pop
+#endif
 
 BEGIN_VISP_NAMESPACE
 
@@ -145,12 +158,12 @@ public:
   void init(unsigned int width, unsigned int height, int winx = -1, int winy = -1, const std::string &title = "") VP_OVERRIDE;
 
   void setFont(const std::string &fontname) VP_OVERRIDE;
-  void setDownScalingFactor(unsigned int scale)
+  void setDownScalingFactor(unsigned int scale) VP_OVERRIDE
   {
     window.setScale(scale);
     m_scale = scale;
   }
-  void setDownScalingFactor(vpScaleType scaleType) { m_scaleType = scaleType; }
+  void setDownScalingFactor(vpScaleType scaleType) VP_OVERRIDE { m_scaleType = scaleType; }
   void setTitle(const std::string &windowtitle) VP_OVERRIDE;
   void setWindowPosition(int winx, int winy) VP_OVERRIDE;
 

@@ -484,7 +484,7 @@ void vpJointVelTrajGenerator::applyVel(const std::array<double, 7> &dq_des, std:
         }
 
         // Update distance to accelerate or decelerate
-        int n = (int)(m_delta_q_max[i] / m_delta_q_acc[i]);
+        int n = static_cast<int>(m_delta_q_max[i] / m_delta_q_acc[i]);
         m_dist_AD[i] = n * (m_delta_q_max[i] - (n + 1) * m_delta_q_acc[i] / 2);
       }
       m_dq_des_prev[i] = m_dq_des[i];
@@ -536,7 +536,7 @@ void vpJointVelTrajGenerator::applyVel(const std::array<double, 7> &dq_des, std:
             m_status[i] = FLAGACC;
             m_flagSpeed[i] = false;
 
-            int n = (int)(m_delta_q_max[i] / m_delta_q_acc[i]);
+            int n = static_cast<int>(m_delta_q_max[i] / m_delta_q_acc[i]);
             m_dist_AD[i] = n * (m_delta_q_max[i] - (n + 1) * m_delta_q_acc[i] / 2);
           }
         }
@@ -627,5 +627,5 @@ std::array<double, 7> vpJointVelTrajGenerator::limitRate(const std::array<double
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpJointVelTrajGenerator.cpp.o) has no symbols
-void dummy_vpJointVelTrajGenerator() { };
+void dummy_vpJointVelTrajGenerator() { }
 #endif // VISP_HAVE_FRANKA

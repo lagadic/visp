@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@
   \brief Implementation of some specific linear Kalman filters.
 */
 
-#ifndef vpLinearKalmanFilterInstantiation_h
-#define vpLinearKalmanFilterInstantiation_h
+#ifndef VP_LINEAR_KALMAN_FILTER_INSTANCIATION_H
+#define VP_LINEAR_KALMAN_FILTER_INSTANCIATION_H
 
 #include <visp3/core/vpKalmanFilter.h>
 
@@ -83,7 +83,7 @@ public:
     By default the state model is unknown and set to
     vpLinearKalmanFilterInstantiation::unknown.
   */
-  vpLinearKalmanFilterInstantiation() : model(unknown) { };
+  vpLinearKalmanFilterInstantiation() : model(unknown) { }
 
   /*!
     Return the current state model.
@@ -156,8 +156,10 @@ void vpLinearKalmanFilterInstantiation::setStateModel(vpStateModel mdl)
     size_measure = 1;
     break;
   case unknown:
+  default:
     size_state = 0;
     size_measure = 0;
+    throw(vpException(vpException::notInitialized, "Unsupported Kalman state model in vpLinearKalmanFilterInstantiation::setStateModel()"));
     break;
   }
 }

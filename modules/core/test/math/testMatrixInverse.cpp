@@ -132,10 +132,10 @@ bool getOptions(int argc, const char **argv, unsigned int &nb_matrices, unsigned
       return false;
       break;
     case 'n':
-      nb_matrices = (unsigned int)atoi(optarg_);
+      nb_matrices = static_cast<unsigned int>(atoi(optarg_));
       break;
     case 'i':
-      nb_iterations = (unsigned int)atoi(optarg_);
+      nb_iterations = static_cast<unsigned int>(atoi(optarg_));
       break;
     case 'f':
       plotfile = optarg_;
@@ -145,10 +145,10 @@ bool getOptions(int argc, const char **argv, unsigned int &nb_matrices, unsigned
       use_plot_file = true;
       break;
     case 'R':
-      nbrows = (unsigned int)atoi(optarg_);
+      nbrows = static_cast<unsigned int>(atoi(optarg_));
       break;
     case 'C':
-      nbcols = (unsigned int)atoi(optarg_);
+      nbcols = static_cast<unsigned int>(atoi(optarg_));
       break;
     case 'v':
       verbose = true;

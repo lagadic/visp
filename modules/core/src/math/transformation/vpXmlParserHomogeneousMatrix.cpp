@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,11 +48,9 @@
 #define LABEL_XML_M "homogeneous_transformation"
 #define LABEL_XML_M_NAME "name"
 #define LABEL_XML_VALUE "values"
-#define LABEL_XML_TRANSLATION "translation"
 #define LABEL_XML_TX "tx"
 #define LABEL_XML_TY "ty"
 #define LABEL_XML_TZ "tz"
-#define LABEL_XML_ROTATION "rotation"
 #define LABEL_XML_TUX "theta_ux"
 #define LABEL_XML_TUY "theta_uy"
 #define LABEL_XML_TUZ "theta_uz"
@@ -196,7 +194,6 @@ public:
         case CODE_XML_TUX:
         case CODE_XML_TUY:
         case CODE_XML_TUZ:
-
         default:
           back = SEQUENCE_ERROR;
           break;
@@ -278,7 +275,6 @@ public:
         case CODE_XML_M:
         case CODE_XML_M_NAME:
         case CODE_XML_VALUE:
-
         default:
           back = SEQUENCE_ERROR;
           break;
@@ -405,39 +401,39 @@ public:
     node_tmp.set_value("Homogeneous Matrix");
     node_matrix = node.append_child(LABEL_XML_M);
     {
-      //<name>
+      // <name>
       if (!name.empty()) {
         node_tmp = node_matrix.append_child(pugi::node_comment);
         node_tmp.set_value("Name of the homogeneous matrix");
         node_matrix.append_child(LABEL_XML_M_NAME).append_child(pugi::node_pcdata).set_value(name.c_str());
       }
 
-      //<values>
+      // <values>
       node_values = node_matrix.append_child(LABEL_XML_VALUE);
       {
         node_tmp = node_values.append_child(pugi::node_comment);
         node_tmp.set_value("Translation vector with values in meters");
 
-        //<tx>
+        // <tx>
         node_values.append_child(LABEL_XML_TX).append_child(pugi::node_pcdata).text() = m_M[0][3];
 
-        //<ty>
+        // <ty>
         node_values.append_child(LABEL_XML_TY).append_child(pugi::node_pcdata).text() = m_M[1][3];
 
-        //<tz>
+        // <tz>
         node_values.append_child(LABEL_XML_TZ).append_child(pugi::node_pcdata).text() = m_M[2][3];
 
         node_tmp = node_values.append_child(pugi::node_comment);
         node_tmp.set_value("Rotational vector expressed in angle axis "
                            "representation with values in radians");
 
-        //<tux>
+        // <tux>
         node_values.append_child(LABEL_XML_TUX).append_child(pugi::node_pcdata).text() = tu[0];
 
-        //<tuy>
+        // <tuy>
         node_values.append_child(LABEL_XML_TUY).append_child(pugi::node_pcdata).text() = tu[1];
 
-        //<tuz>
+        // <tuz>
         node_values.append_child(LABEL_XML_TUZ).append_child(pugi::node_pcdata).text() = tu[2];
       }
     }
@@ -551,6 +547,6 @@ void vpXmlParserHomogeneousMatrix::setHomogeneousMatrixName(const std::string &n
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpXmlParserHomogeneousMatrix.cpp.o) has no symbols
-void dummy_vpXmlParserHomogeneousMatrix() { };
+void dummy_vpXmlParserHomogeneousMatrix() { }
 
 #endif

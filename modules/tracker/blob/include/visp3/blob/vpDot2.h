@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -171,7 +171,7 @@ public:
                  (m_bbox_v_max - m_bbox_v_min) + 1);
 
     return bbox;
-  };
+  }
 
   /*!
    * Return the location of the dot center of gravity.
@@ -188,7 +188,7 @@ public:
    * \param edges_list : The list of all the images points on the dot
    * border. This list is update after a call to track().
    */
-  void getEdges(std::list<vpImagePoint> &edges_list) const { edges_list = m_ip_edges_list; };
+  void getEdges(std::list<vpImagePoint> &edges_list) const { edges_list = m_ip_edges_list; }
 
   /*!
    * Return the list of all the image points on the dot
@@ -197,7 +197,7 @@ public:
    * \return The list of all the images points on the dot
    * border. This list is update after a call to track().
    */
-  std::list<vpImagePoint> getEdges() const { return m_ip_edges_list; };
+  std::list<vpImagePoint> getEdges() const { return m_ip_edges_list; }
 
   /*!
    * Get the percentage of sampled points that are considered non conform
@@ -210,19 +210,19 @@ public:
   double getEllipsoidShapePrecision() const;
   void getFreemanChain(std::list<unsigned int> &freeman_chain) const;
 
-  inline double getGamma() const { return m_gamma; };
+  inline double getGamma() const { return m_gamma; }
   /*!
    * Return the color level of pixels inside the dot.
    *
    * \sa getGrayLevelMax()
    */
-  inline unsigned int getGrayLevelMin() const { return m_gray_level_min; };
+  inline unsigned int getGrayLevelMin() const { return m_gray_level_min; }
   /*!
    * Return the color level of pixels inside the dot.
    *
    * \sa getGrayLevelMin()
    */
-  inline unsigned int getGrayLevelMax() const { return m_gray_level_max; };
+  inline unsigned int getGrayLevelMax() const { return m_gray_level_max; }
   double getGrayLevelPrecision() const;
 
   double getHeight() const;
@@ -231,12 +231,12 @@ public:
   /*!
    * \return The mean gray level value of the dot.
    */
-  double getMeanGrayLevel() const { return m_mean_gray_level; };
+  double getMeanGrayLevel() const { return m_mean_gray_level; }
 
   /*!
    * \return a vpPolygon made from the edges of the dot.
    */
-  vpPolygon getPolygon() const { return (vpPolygon(m_ip_edges_list)); };
+  vpPolygon getPolygon() const { return (vpPolygon(m_ip_edges_list)); }
   double getSizePrecision() const;
   double getWidth() const;
 
@@ -323,7 +323,7 @@ public:
    *
    * \sa setGraphics()
    */
-  void setGraphicsThickness(unsigned int thickness) { m_thickness = thickness; };
+  void setGraphicsThickness(unsigned int thickness) { m_thickness = thickness; }
 
   /*!
    * Set the color level of the dot to search a dot in a region of interest. This
@@ -344,7 +344,7 @@ public:
     else {
       m_gray_level_min = min;
     }
-  };
+  }
 
   /*!
    * Set the color level of pixels surrounding the dot. This is meant to be used
@@ -363,7 +363,7 @@ public:
     else {
       m_gray_level_max = max;
     }
-  };
+  }
 
   void setGrayLevelPrecision(const double &grayLevelPrecision);
   void setHeight(const double &height);

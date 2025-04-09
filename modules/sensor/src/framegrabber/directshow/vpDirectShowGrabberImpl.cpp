@@ -227,7 +227,7 @@ bool vpDirectShowGrabberImpl::createDeviceList(CComPtr<IEnumMoniker> &ppVideoInp
 
   deviceList = new vpDirectShowDevice[nbMoniker];
 
-  nbDevices = (unsigned int)nbMoniker;
+  nbDevices = static_cast<unsigned int>(nbMoniker);
 
   // we try to get the properties of each moniker, if it fails, we skip to the
   // next one and  decrement the number of valid devices
@@ -799,7 +799,7 @@ bool vpDirectShowGrabberImpl::setFormat(unsigned int width, unsigned int height,
           LONG lWidth = pVih->bmiHeader.biWidth;
           LONG lHeight = pVih->bmiHeader.biHeight;
           if (framerate != nullptr) {
-            if ((unsigned int)lWidth == width && (unsigned int)lHeight == height) {
+            if (static_cast<unsigned int>(lWidth) == width && static_cast<unsigned int>(lHeight) == height) {
 
               pVih->AvgTimePerFrame = (LONGLONG)(10000000 / framerate);
               // set the capture media type and the grabber media type
@@ -827,7 +827,7 @@ bool vpDirectShowGrabberImpl::setFormat(unsigned int width, unsigned int height,
             }
           }
           else {
-            if ((unsigned int)lWidth == width && (unsigned int)lHeight == height) {
+            if (static_cast<unsigned int>(lWidth) == width && static_cast<unsigned int>(lHeight) == height) {
               pVih->AvgTimePerFrame = scc.MinFrameInterval;
               // set the capture media type and the grabber media type
               if (FAILED(hr = pConfig->SetFormat(pmtConfig)) || FAILED(hr = pGrabberI->SetMediaType(pmtConfig)))
@@ -872,8 +872,8 @@ void vpDirectShowGrabberImpl::getFormat(unsigned int &width, unsigned int &heigh
     throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "Initialization not done"));
   }
   VIDEOINFOHEADER *pVih = (VIDEOINFOHEADER *)sgCB.connectedMediaType.pbFormat;
-  width = (unsigned int)pVih->bmiHeader.biWidth;
-  height = (unsigned int)pVih->bmiHeader.biHeight;
+  width = static_cast<unsigned int>(pVih->bmiHeader.biWidth);
+  height = static_cast<unsigned int>(pVih->bmiHeader.biHeight);
   framerate = (double)(10000000 / pVih->AvgTimePerFrame);
 }
 /*!
@@ -1105,6 +1105,6 @@ END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning:
 // libvisp_sensor.a(vpDirectShowGrabberImpl.cpp.o) has no symbols
-void dummy_vpDirectShowGrabberImpl() { };
+void dummy_vpDirectShowGrabberImpl() { }
 #endif
 #endif

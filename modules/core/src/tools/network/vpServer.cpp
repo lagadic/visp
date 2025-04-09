@@ -95,7 +95,7 @@ vpServer::vpServer(const int &port_serv) : adress(), port(0), started(false), ma
     vpERROR_TRACE("vpServer::vpServer(const int &port_serv), cannot open socket.");
   }
   emitter.emitterAddress.sin_family = AF_INET;
-  emitter.emitterAddress.sin_addr.s_addr = INADDR_ANY; // inet_addr("127.0.0.1");;
+  emitter.emitterAddress.sin_addr.s_addr = INADDR_ANY; // inet_addr("127.0.0.1");
   emitter.emitterAddress.sin_port = htons((unsigned short)port_serv);
 
   adress = inet_ntoa(emitter.emitterAddress.sin_addr);
@@ -192,9 +192,9 @@ bool vpServer::start()
 #endif // SO_NOSIGPIPE
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  listen(emitter.socketFileDescriptorEmitter, (int)max_clients);
+  listen(emitter.socketFileDescriptorEmitter, static_cast<int>(max_clients));
 #else // Win32
-  listen((unsigned)emitter.socketFileDescriptorEmitter, (int)max_clients);
+  listen((unsigned)emitter.socketFileDescriptorEmitter, static_cast<int>(max_clients));
 #endif
 
   std::cout << "Server ready" << std::endl;
@@ -219,7 +219,7 @@ bool vpServer::checkForConnections()
 
   tv.tv_sec = tv_sec;
 #ifdef TARGET_OS_IPHONE
-  tv.tv_usec = (int)tv_usec;
+  tv.tv_usec = static_cast<int>(tv_usec);
 #else
   tv.tv_usec = tv_usec;
 #endif
@@ -239,7 +239,7 @@ bool vpServer::checkForConnections()
       socketMax = receptor_list[i].socketFileDescriptorReceptor;
   }
 
-  int value = select((int)socketMax + 1, &readFileDescriptor, nullptr, nullptr, &tv);
+  int value = select(static_cast<int>(socketMax) + 1, &readFileDescriptor, nullptr, nullptr, &tv);
   if (value == -1) {
     // vpERROR_TRACE( "vpServer::run(), select()" );
     return false;
@@ -248,7 +248,7 @@ bool vpServer::checkForConnections()
     return false;
   }
   else {
-    if (FD_ISSET((unsigned int)emitter.socketFileDescriptorEmitter, &readFileDescriptor)) {
+    if (FD_ISSET(static_cast<unsigned int>(emitter.socketFileDescriptorEmitter), &readFileDescriptor)) {
       vpNetwork::vpReceptor client;
       client.receptorAddressSize = sizeof(client.receptorAddress);
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
@@ -256,7 +256,7 @@ bool vpServer::checkForConnections()
           emitter.socketFileDescriptorEmitter, (struct sockaddr *)&client.receptorAddress, &client.receptorAddressSize);
 #else // Win32
       client.socketFileDescriptorReceptor =
-        accept((unsigned int)emitter.socketFileDescriptorEmitter, (struct sockaddr *)&client.receptorAddress,
+        accept(static_cast<unsigned int>(emitter.socketFileDescriptorEmitter), (struct sockaddr *)&client.receptorAddress,
                &client.receptorAddressSize);
 #endif
 
@@ -275,17 +275,17 @@ bool vpServer::checkForConnections()
     }
     else {
       for (unsigned int i = 0; i < receptor_list.size(); i++) {
-        if (FD_ISSET((unsigned int)receptor_list[i].socketFileDescriptorReceptor, &readFileDescriptor)) {
+        if (FD_ISSET(static_cast<unsigned int>(receptor_list[i].socketFileDescriptorReceptor), &readFileDescriptor)) {
           char deco;
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
           ssize_t numbytes = recv(receptor_list[i].socketFileDescriptorReceptor, &deco, 1, MSG_PEEK);
 #else // Win32
-          int numbytes = recv((unsigned int)receptor_list[i].socketFileDescriptorReceptor, &deco, 1, MSG_PEEK);
+          int numbytes = recv(static_cast<unsigned int>(receptor_list[i].socketFileDescriptorReceptor), &deco, 1, MSG_PEEK);
 #endif
 
           if (numbytes == 0) {
             std::cout << "Disconnected : " << inet_ntoa(receptor_list[i].receptorAddress.sin_addr) << std::endl;
-            receptor_list.erase(receptor_list.begin() + (int)i);
+            receptor_list.erase(receptor_list.begin() + static_cast<int>(i));
             return 0;
           }
         }
@@ -303,5 +303,5 @@ void vpServer::print() { vpNetwork::print("Client"); }
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpServer.cpp.o) has no symbols
-void dummy_vpServer() { };
+void dummy_vpServer() { }
 #endif

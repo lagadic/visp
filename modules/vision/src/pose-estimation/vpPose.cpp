@@ -603,8 +603,8 @@ void vpPose::displayModel(vpImage<vpRGBa> &I, vpCameraParameters &cam, vpColor c
 }
 
 #ifdef VISP_HAVE_HOMOGRAPHY
-double vpPose::poseFromRectangle(vpPoint &p1, vpPoint &p2, vpPoint &p3, vpPoint &p4, double lx, vpCameraParameters &cam,
-                                 vpHomogeneousMatrix &cMo)
+double vpPose::poseFromRectangle(vpPoint &p1, vpPoint &p2, vpPoint &p3, vpPoint &p4, double lx,
+                                 const vpCameraParameters &cam, vpHomogeneousMatrix &cMo)
 {
   const unsigned int id0 = 0, id1 = 1, id2 = 2, id3 = 3;
   std::vector<double> rectx(4);

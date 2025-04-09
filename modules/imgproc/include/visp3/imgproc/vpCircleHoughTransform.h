@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -701,7 +701,7 @@ public:
   /**
    * \brief Perform Circle Hough Transform to detect the circles in an OpenCV image.
    *
-   * \param[in] I The input gray scale image.
+   * \param[in] cv_I : The input gray scale image.
    * \return std::vector<vpImageCircle> The list of 2D circles detected in the image.
    */
   virtual std::vector<vpImageCircle> detect(const cv::Mat &cv_I);

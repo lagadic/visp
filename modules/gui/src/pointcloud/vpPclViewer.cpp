@@ -489,6 +489,6 @@ void vpPclViewer::threadUpdateSurfaceOriginalColor(const pclPointCloudPointXYZRG
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpD3DRenderer.cpp.o) has no symbols
-void dummy_vpPCLPointCLoudVisualization() { };
+void dummy_vpPCLPointCLoudVisualization() { }
 #endif
 #endif

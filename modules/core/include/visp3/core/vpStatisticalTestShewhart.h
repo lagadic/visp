@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +33,8 @@
  * \brief Statistical Process Control Shewhart's test implementation.
  */
 
-#ifndef _vpStatisticalTestShewhartTest_h_
-#define _vpStatisticalTestShewhartTest_h_
+#ifndef VP_STATISTICAL_TEST_SHEWHART_H
+#define VP_STATISTICAL_TEST_SHEWHART_H
 
 #include <vector>
 
@@ -87,9 +86,9 @@ public:
   static std::string vpWecoRulesAlarmToString(const vpWecoRulesAlarm &alarm);
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
-  static inline const std::vector<bool> CONST_ALL_WECO_ACTIVATED = std::vector<bool>(COUNT_WECO -1, true);
+  VP_ATTRIBUTE_NO_DESTROY static inline const std::vector<bool> CONST_ALL_WECO_ACTIVATED = std::vector<bool>(COUNT_WECO -1, true);
 #else
-  static const std::vector<bool> CONST_ALL_WECO_ACTIVATED;
+  VP_ATTRIBUTE_NO_DESTROY static const std::vector<bool> CONST_ALL_WECO_ACTIVATED;
 #endif
   static const unsigned int NB_DATA_SIGNAL = 8;
 

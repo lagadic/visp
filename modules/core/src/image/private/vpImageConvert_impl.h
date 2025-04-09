@@ -49,13 +49,19 @@
 #include <visp3/core/vpMath.h>
 
 BEGIN_VISP_NAMESPACE
+
+void vp_createDepthHistogram(const vpImage<float> &src_depth, vpImage<unsigned char> &dest_depth);
+void vp_createDepthHistogram(const vpImage<uint16_t> &src_depth, vpImage<unsigned char> &dest_depth);
+void vp_createDepthHistogram(const vpImage<float> &src_depth, vpImage<vpRGBa> &dest_depth);
+void vp_createDepthHistogram(const vpImage<uint16_t> &src_depth, vpImage<vpRGBa> &dest_depth);
+
 /*!
   Convert the input float depth image to a 8-bits depth image. The input
   depth value is assigned a value proportional to its frequency.
   \param[in] src_depth : Input float depth image.
   \param[out] dest_depth : Output grayscale depth image.
  */
-  void vp_createDepthHistogram(const vpImage<float> &src_depth, vpImage<unsigned char> &dest_depth)
+void vp_createDepthHistogram(const vpImage<float> &src_depth, vpImage<unsigned char> &dest_depth)
 {
   uint32_t histogram[0x10000];
   memset(histogram, 0, sizeof(histogram));

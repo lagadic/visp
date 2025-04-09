@@ -137,9 +137,9 @@ int main()
     g.open(I);
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-    display = vpDisplayFactory::createDisplay(I, (int)(100 + I.getWidth() + 30), 200, "Current image");
+    display = vpDisplayFactory::createDisplay(I, static_cast<int>(100 + I.getWidth() + 30), 200, "Current image");
 #else
-    display = vpDisplayFactory::allocateDisplay(I, (int)(100 + I.getWidth() + 30), 200, "Current image");
+    display = vpDisplayFactory::allocateDisplay(I, static_cast<int>(100 + I.getWidth() + 30), 200, "Current image");
 #endif
 
     vpDisplay::display(I);
@@ -288,7 +288,7 @@ int main()
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
     if (display != nullptr) {
       delete display;
-  }
+    }
 #endif
     return EXIT_FAILURE;
   }

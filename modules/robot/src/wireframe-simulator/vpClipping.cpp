@@ -254,8 +254,8 @@ Bound *clipping_Bound(Bound *bp, Matrix m)
   /* recopie de "bp" dans les tableaux intermediaires  */
 
   point4f_nbr = bp->point.nbr;
-  point_3D_4D(bp->point.ptr, (int)point4f_nbr, m, point4f);
-  set_Point4f_code(point4f, (int)point4f_nbr, code);
+  point_3D_4D(bp->point.ptr, static_cast<int>(point4f_nbr), m, point4f);
+  set_Point4f_code(point4f, static_cast<int>(point4f_nbr), code);
 #ifdef face_normal
   if (!(clip.is_polygonal = bp->is_polygonal))
     // bcopy (bp->normal.ptr, clip.normal.ptr,
@@ -279,7 +279,7 @@ Bound *clipping_Bound(Bound *bp, Matrix m)
 
   /* recopie des tableaux intermediaires dans "clip"  */
 
-  point_4D_3D(point4f, (int)point4f_nbr, code, clip.point.ptr);
+  point_4D_3D(point4f, static_cast<int>(point4f_nbr), code, clip.point.ptr);
   clip.type = bp->type;
   clip.face.nbr = (Index)(fo - clip.face.ptr);
   clip.point.nbr = point4f_nbr;

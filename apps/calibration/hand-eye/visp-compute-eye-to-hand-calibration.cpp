@@ -191,7 +191,7 @@ int main(int argc, const char *argv[])
       vpHomogeneousMatrix cMo, cMo_inv;
       cMo.buildFrom(cPo);
       cMo_inv = cMo.inverse();
-      vpPoseVector oPc(cMo_inv);;
+      vpPoseVector oPc(cMo_inv);
       oMc.push_back(vpHomogeneousMatrix(oPc));
     }
   }

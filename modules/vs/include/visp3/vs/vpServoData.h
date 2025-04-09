@@ -81,7 +81,7 @@ public:
   /*!
    * Default constructor.
    */
-  vpServoData() : velocityFile(), errorFile(), errorNormFile(), sFile(), sStarFile(), vNormFile(), cmDeg(false) { ; }
+  vpServoData() : velocityFile(), errorFile(), errorNormFile(), sFile(), sStarFile(), vNormFile(), cmDeg(false) { }
 
   /*!
    * Destructor that closes all data files if needed.

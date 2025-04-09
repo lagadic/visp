@@ -43,7 +43,7 @@
 BEGIN_VISP_NAMESPACE
 void vpTemplateTrackerMI::setBspline(const vpBsplineType &newbs)
 {
-  bspline = (int)newbs;
+  bspline = static_cast<int>(newbs);
   influBspline = bspline * bspline;
   Ncb = Nc + bspline;
   if (Pt)
@@ -67,12 +67,12 @@ void vpTemplateTrackerMI::setBspline(const vpBsplineType &newbs)
   Pr = new double[Ncb];
 
   Prt = new double[Ncb * Ncb];
-  dPrt = new double[Ncb * Ncb * (int)(nbParam)];
-  d2Prt = new double[Ncb * Ncb * (int)(nbParam * nbParam)];
+  dPrt = new double[Ncb * Ncb * static_cast<int>(nbParam)];
+  d2Prt = new double[Ncb * Ncb * static_cast<int>(nbParam * nbParam)];
 
   PrtD = new double[Nc * Nc * influBspline];
-  dPrtD = new double[Nc * Nc * (int)(nbParam)*influBspline];
-  PrtTout = new double[Nc * Nc * influBspline * (1 + (int)(nbParam + nbParam * nbParam))];
+  dPrtD = new double[Nc * Nc * static_cast<int>(nbParam)*influBspline];
+  PrtTout = new double[Nc * Nc * influBspline * (1 + static_cast<int>(nbParam + nbParam * nbParam))];
 
   hessianComputation = USE_HESSIEN_DESIRE;
 }
@@ -99,15 +99,15 @@ vpTemplateTrackerMI::vpTemplateTrackerMI(vpTemplateTrackerWarp *_warp)
   X2.resize(2);
 
   PrtD = new double[Nc * Nc * influBspline]; //(r,t)
-  dPrtD = new double[Nc * Nc * (int)(nbParam)*influBspline];
+  dPrtD = new double[Nc * Nc * static_cast<int>(nbParam)*influBspline];
 
   Prt = new double[Ncb * Ncb]; //(r,t)
   Pt = new double[Ncb];
   Pr = new double[Ncb];
-  dPrt = new double[Ncb * Ncb * (int)(nbParam)];
-  d2Prt = new double[Ncb * Ncb * (int)(nbParam * nbParam)];
+  dPrt = new double[Ncb * Ncb * static_cast<int>(nbParam)];
+  d2Prt = new double[Ncb * Ncb * static_cast<int>(nbParam * nbParam)];
 
-  PrtTout = new double[Nc * Nc * influBspline * (1 + (int)(nbParam + nbParam * nbParam))];
+  PrtTout = new double[Nc * Nc * influBspline * (1 + static_cast<int>(nbParam + nbParam * nbParam))];
 
   lambda = lambdaDep;
 }
@@ -135,13 +135,13 @@ void vpTemplateTrackerMI::setNc(int nc)
     delete[] PrtTout;
 
   PrtD = new double[Nc * Nc * influBspline]; //(r,t)
-  dPrtD = new double[Nc * Nc * (int)(nbParam)*influBspline];
+  dPrtD = new double[Nc * Nc * static_cast<int>(nbParam)*influBspline];
   Prt = new double[Ncb * Ncb]; //(r,t)
-  dPrt = new double[Ncb * Ncb * (int)(nbParam)];
+  dPrt = new double[Ncb * Ncb * static_cast<int>(nbParam)];
   Pt = new double[Ncb];
   Pr = new double[Ncb];
-  d2Prt = new double[Ncb * Ncb * (int)(nbParam * nbParam)]; //(r,t)
-  PrtTout = new double[Nc * Nc * influBspline * (1 + (int)(nbParam + nbParam * nbParam))];
+  d2Prt = new double[Ncb * Ncb * static_cast<int>(nbParam * nbParam)]; //(r,t)
+  PrtTout = new double[Nc * Nc * influBspline * (1 + static_cast<int>(nbParam + nbParam * nbParam))];
 }
 
 double vpTemplateTrackerMI::getCost(const vpImage<unsigned char> &I, const vpColVector &tp)
@@ -150,9 +150,9 @@ double vpTemplateTrackerMI::getCost(const vpImage<unsigned char> &I, const vpCol
   int Nbpoint = 0;
   double IW;
 
-  unsigned int Ncb_ = (unsigned int)Ncb;
-  unsigned int Nc_ = (unsigned int)Nc;
-  unsigned int influBspline_ = (unsigned int)influBspline;
+  unsigned int Ncb_ = static_cast<unsigned int>(Ncb);
+  unsigned int Nc_ = static_cast<unsigned int>(Nc);
+  unsigned int influBspline_ = static_cast<unsigned int>(influBspline);
 
   memset(Prt, 0, Ncb_ * Ncb_ * sizeof(double));
   memset(PrtD, 0, Nc_ * Nc_ * influBspline_ * sizeof(double));
@@ -272,7 +272,7 @@ double vpTemplateTrackerMI::getNormalizedCost(const vpImage<unsigned char> &I, c
       double Tij = ptTemplate[point].val;
       int Tij_ = static_cast<int>(Tij);
       if (!blur) {
-        IW = I[(int)i2][(int)j2];
+        IW = I[static_cast<int>(i2)][static_cast<int>(j2)];
       }
       else {
         IW = BI.getValue(i2, j2);
@@ -382,7 +382,7 @@ void vpTemplateTrackerMI::computeProba(int &nbpoint)
 
 void vpTemplateTrackerMI::computeMI(double &MI)
 {
-  unsigned int Ncb_ = (unsigned int)Ncb;
+  unsigned int Ncb_ = static_cast<unsigned int>(Ncb);
 
   // Compute Pr and Pt
   memset(Pr, 0, Ncb_ * sizeof(double));
@@ -637,8 +637,8 @@ double vpTemplateTrackerMI::getMI(const vpImage<unsigned char> &I, int &nc, cons
     }
   }
   double *pt = tPrtD;
-  int tNcb_ = (int)tNcb;
-  int tinfluBspline_ = (int)tinfluBspline;
+  int tNcb_ = static_cast<int>(tNcb);
+  int tinfluBspline_ = static_cast<int>(tinfluBspline);
   for (int r = 0; r < nc; r++)
     for (int t = 0; t < nc; t++) {
       for (volatile int i = 0; i < tinfluBspline_; i++) {

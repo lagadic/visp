@@ -8,7 +8,7 @@
 
 int main(int argc, char **argv)
 {
-#if defined(HAVE_OPENCV_IMGPROC) && defined(VISP_HAVE_DISPLAY) && \
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(VISP_HAVE_DISPLAY) && \
   (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D) && (defined(HAVE_OPENCV_FEATURES2D) || defined(HAVE_OPENCV_XFEATURES2D))) || \
   ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D) && defined(HAVE_OPENCV_FEATURES)))
 
@@ -160,7 +160,7 @@ int main(int argc, char **argv)
     //! [Display reference keypoints]
     vpDisplay::display(I);
     for (std::vector<cv::KeyPoint>::const_iterator it = trainKeyPoints.begin(); it != trainKeyPoints.end(); ++it) {
-      vpDisplay::displayCross(I, (int)it->pt.y, (int)it->pt.x, 4, vpColor::red);
+      vpDisplay::displayCross(I, static_cast<int>(it->pt.y), static_cast<int>(it->pt.x), 4, vpColor::red);
     }
     vpDisplay::displayText(I, 10, 10, "Learning step: keypoints are detected on visible teabox faces", vpColor::red);
     vpDisplay::displayText(I, 30, 10, "Click to continue with detection...", vpColor::red);
@@ -230,7 +230,7 @@ int main(int argc, char **argv)
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
   if (display != nullptr) {
     delete display;
-}
+  }
 #endif
 #else
   (void)argc;

@@ -80,7 +80,7 @@ public:
   std::ostream &getCameraInfo(std::ostream &os);
   Pylon::CInstantCamera *getCameraHandler();
   /*! Return the index of the active camera. */
-  unsigned int getCameraIndex() const { return m_index; };
+  unsigned int getCameraIndex() const { return m_index; }
   std::string getCameraSerial(unsigned int index);
   float getExposure();
   float getFrameRate();

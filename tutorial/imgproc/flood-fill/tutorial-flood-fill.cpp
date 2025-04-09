@@ -148,8 +148,8 @@ int getOctant(const vpImagePoint &imPt1, const vpImagePoint &imPt2)
 void drawLine(vpImage<unsigned char> &I, const unsigned char value, const vpImagePoint &imPt1_,
               const vpImagePoint &imPt2_)
 {
-  vpImagePoint imPt1((int)imPt1_.get_v(), (int)imPt1_.get_u());
-  vpImagePoint imPt2((int)imPt2_.get_v(), (int)imPt2_.get_u());
+  vpImagePoint imPt1(static_cast<int>(imPt1_.get_v()), static_cast<int>(imPt1_.get_u()));
+  vpImagePoint imPt2(static_cast<int>(imPt2_.get_v()), static_cast<int>(imPt2_.get_u()));
 
   int octant = getOctant(imPt1, imPt2);
   imPt1 = switchToOctantZeroFrom(octant, imPt1);
@@ -160,12 +160,12 @@ void drawLine(vpImage<unsigned char> &I, const unsigned char value, const vpImag
   double D = 2 * dy - dx;
   double y = imPt1.get_v();
 
-  for (int x = (int)imPt1.get_u(); x <= (int)imPt2.get_u(); x++) {
+  for (int x = static_cast<int>(imPt1.get_u()); x <= static_cast<int>(imPt2.get_u()); x++) {
     vpImagePoint currentPt(y, x);
     currentPt = switchFromOctantZeroTo(octant, currentPt);
 
-    unsigned int i = std::min<unsigned int>(I.getHeight() - 1, (unsigned int)std::max<double>(0.0, currentPt.get_i()));
-    unsigned int j = std::min<unsigned int>(I.getWidth() - 1, (unsigned int)std::max<double>(0.0, currentPt.get_j()));
+    unsigned int i = std::min<unsigned int>(I.getHeight() - 1, static_cast<unsigned int>(std::max<double>(0.0, currentPt.get_i())));
+    unsigned int j = std::min<unsigned int>(I.getWidth() - 1, static_cast<unsigned int>(std::max<double>(0.0, currentPt.get_j())));
     I[i][j] = value;
 
     if (D >= 0) {

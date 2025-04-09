@@ -424,7 +424,7 @@ void vpV4l2Grabber::open(vpImage<unsigned char> &I)
     }
 
     // try to fing a compatible format
-    for (int format = 0; format < (int)V4L2_MAX_FORMAT; format++) {
+    for (int format = 0; format < static_cast<int>(V4L2_MAX_FORMAT); format++) {
       if (format == req_pixelformat) {
         continue;
       }
@@ -440,7 +440,7 @@ void vpV4l2Grabber::open(vpImage<unsigned char> &I)
       catch (...) {
         if (m_verbose)
           std::cout << "This format [" << m_pixelformat << "] is not compatible with camera" << std::endl;
-        if (format == (int)V4L2_MAX_FORMAT) {
+        if (format == static_cast<int>(V4L2_MAX_FORMAT)) {
           std::cout << "No pixel format compatible with the camera was found" << std::endl;
           close();
 
@@ -487,7 +487,7 @@ void vpV4l2Grabber::open(vpImage<vpRGBa> &I)
     }
 
     // try to fing a compatible format
-    for (int format = 0; format < (int)V4L2_MAX_FORMAT; format++) {
+    for (int format = 0; format < static_cast<int>(V4L2_MAX_FORMAT); format++) {
       if (format == req_pixelformat) {
         continue;
       }
@@ -585,7 +585,7 @@ void vpV4l2Grabber::acquire(vpImage<unsigned char> &I, struct timeval &timestamp
   if (roi == vpRect())
     I.resize(height, width);
   else
-    I.resize((unsigned int)roi.getHeight(), (unsigned int)roi.getWidth());
+    I.resize(static_cast<unsigned int>(roi.getHeight()), static_cast<unsigned int>(roi.getWidth()));
   switch (m_pixelformat) {
   case V4L2_GREY_FORMAT:
     if (roi == vpRect())
@@ -711,7 +711,7 @@ void vpV4l2Grabber::acquire(vpImage<vpRGBa> &I, struct timeval &timestamp, const
   if (roi == vpRect())
     I.resize(height, width);
   else
-    I.resize((unsigned int)roi.getHeight(), (unsigned int)roi.getWidth());
+    I.resize(static_cast<unsigned int>(roi.getHeight()), static_cast<unsigned int>(roi.getWidth()));
 
   // The framegrabber acquire aRGB format. We just shift the data from 1 byte
   // all the data and initialize the last byte
@@ -743,7 +743,7 @@ void vpV4l2Grabber::acquire(vpImage<vpRGBa> &I, struct timeval &timestamp, const
     else {
       for (unsigned int i = 0; i < I.getHeight(); i++) {
         memcpy(static_cast<void *>(I.bitmap),
-          static_cast<void *>(bitmap + 1 + (unsigned int)(roi.getTop() * width + roi.getLeft())),
+          static_cast<void *>(bitmap + 1 + static_cast<unsigned int>(roi.getTop() * width + roi.getLeft())),
           I.getWidth() * sizeof(vpRGBa) - 1);
         I[i][I.getWidth() - 1].A = 0;
       }
@@ -1476,5 +1476,5 @@ vpV4l2Grabber &vpV4l2Grabber::operator>>(vpImage<vpRGBa> &I)
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_sensor.a(vpV4l2Grabber.cpp.o) has no symbols
-void dummy_vpV4l2Grabber() { };
+void dummy_vpV4l2Grabber() { }
 #endif

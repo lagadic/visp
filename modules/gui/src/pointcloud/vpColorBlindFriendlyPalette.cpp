@@ -135,7 +135,7 @@ std::string vpColorBlindFriendlyPalette::to_string() const
 std::string vpColorBlindFriendlyPalette::getAvailableColorsNames(const std::string &prefix, const std::string &separator, const std::string &suffix)
 {
   std::string list(prefix);
-  const unsigned int nbAvailableColors = (unsigned int)Palette::COUNT;
+  const unsigned int nbAvailableColors = static_cast<unsigned int>(Palette::COUNT);
   for (unsigned int i = 0; i < nbAvailableColors - 1; i++) {
     std::string nameCandidateID = s_paletteNames[i];
     list += nameCandidateID + separator;
@@ -146,7 +146,7 @@ std::string vpColorBlindFriendlyPalette::getAvailableColorsNames(const std::stri
 
 unsigned int vpColorBlindFriendlyPalette::to_uint(const Palette &colorID)
 {
-  const unsigned int nbAvailableColors = (unsigned int)Palette::COUNT;
+  const unsigned int nbAvailableColors = static_cast<unsigned int>(Palette::COUNT);
   unsigned int ID = nbAvailableColors;
   std::string nameSearchedColor = to_string(colorID);
   bool wasFound = false;

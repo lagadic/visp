@@ -470,7 +470,7 @@ void vpSimulator::initInternalViewer(unsigned int width, unsigned int height)
   // Turn the viewer decorations
   internalView->setDecoration(false);
 
-  internalView->resize((int)width, (int)height, true);
+  internalView->resize(static_cast<int>(width), static_cast<int>(height), true);
 
   // open the window
   internalView->show();
@@ -496,7 +496,7 @@ void vpSimulator::initExternalViewer(unsigned int width, unsigned int height)
 
   // set the title
   externalView->setTitle("External View");
-  externalView->resize((int)width, (int)height, false);
+  externalView->resize(static_cast<int>(width), static_cast<int>(height), false);
   // the goal here is to see all the scene and not to determine
   // a manual viewpoint
   externalView->viewAll();
@@ -564,9 +564,11 @@ void vpSimulator::getExternalCameraPosition(vpHomogeneousMatrix &cMf)
   SbMatrix rotX;
   rotX.setRotate(SbRotation(SbVec3f(1.0f, 0.0f, 0.0f), (float)M_PI));
   matrix.multLeft(rotX);
-  for (unsigned int i = 0; i < 4; i++)
-    for (unsigned int j = 0; j < 4; j++)
-      fMc[j][i] = matrix[(int)i][(int)j];
+  for (unsigned int i = 0; i < 4; i++) {
+    for (unsigned int j = 0; j < 4; j++) {
+      fMc[j][i] = matrix[static_cast<int>(i)][static_cast<int>(j)];
+    }
+  }
   fMc[0][3] = t[0];
   fMc[1][3] = t[1];
   fMc[2][3] = t[2];
@@ -588,7 +590,7 @@ void vpSimulator::moveInternalCamera(vpHomogeneousMatrix &cMf)
   rotX.setRotate(SbRotation(SbVec3f(1.0f, 0.0f, 0.0f), (float)M_PI));
   for (unsigned int i = 0; i < 4; i++)
     for (unsigned int j = 0; j < 4; j++)
-      matrix[(int)j][(int)i] = (float)cMf[i][j];
+      matrix[static_cast<int>(j)][static_cast<int>(i)] = (float)cMf[i][j];
 
   matrix = matrix.inverse();
   matrix.multLeft(rotX);
@@ -803,7 +805,7 @@ void vpSimulator::addObject(SoSeparator *object, const vpHomogeneousMatrix &fMo,
     SbRotation rotation;
     for (unsigned int i = 0; i < 4; i++)
       for (unsigned int j = 0; j < 4; j++)
-        matrix[(int)j][(int)i] = (float)fMo[i][j];
+        matrix[static_cast<int>(j)][static_cast<int>(i)] = (float)fMo[i][j];
 
     //  matrix= matrix.inverse();
     rotation.setValue(matrix);
@@ -1002,5 +1004,5 @@ void vpSimulator::getInternalImage(vpImage<unsigned char> &I)
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_ar.a(vpSimulator.cpp.o) has no symbols
-void dummy_vpSimulator() { };
+void dummy_vpSimulator() { }
 #endif

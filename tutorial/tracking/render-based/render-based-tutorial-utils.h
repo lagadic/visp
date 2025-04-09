@@ -123,9 +123,11 @@ public:
       }
       vpIoTools::makeDirectory(folder);
       if (videoEnabled) {
+#ifdef VISP_HAVE_OPENCV
         videoWriter.setFramerate(framerate);
         videoWriter.setCodec(cv::VideoWriter::fourcc('P', 'I', 'M', '1'));
         videoWriter.setFileName(folder + vpIoTools::separator + "video.mp4");
+#endif
       }
     }
   }

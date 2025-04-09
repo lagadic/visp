@@ -755,6 +755,8 @@ class JavaWrapperGenerator(object):
                             c_epilogue.append("%(t)s_to_Mat( %(n)s, %(n)s_mat );" % {"n": a.name, "t": a.ctype})
                     elif type_dict[a.ctype]["v_type"] in ("std::vector<double>"):
                         c_prologue.append("std::vector<double> v_ = List_to_vector_double(env, v);")
+                    elif type_dict[a.ctype]["v_type"] in ("std::vector<float>"):
+                        c_prologue.append("std::vector<float> v_ = List_to_vector_float(env, v);")
                     else:  # pass as list
                         jn_args.append(ArgInfo([a.ctype, a.name, "", [], ""]))
                         jni_args.append(ArgInfo([a.ctype, "%s_list" % a.name, "", [], ""]))

@@ -67,7 +67,7 @@ template <class type> class vpListElement
   //  }
   */
 public:
-  vpListElement() : prev(nullptr), next(nullptr), val() { };
+  vpListElement() : prev(nullptr), next(nullptr), val() { }
   vpListElement<type> *prev; ///! pointer to the previous element in the list
   vpListElement<type> *next; ///! pointer to the next element in the list
   type val;                  ///! value of the element

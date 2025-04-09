@@ -70,7 +70,7 @@ int main(int argc, const char **argv)
     //! [Detection]
     std::ostringstream legend;
     legend << detector->getNbObjects() << " bar code detected";
-    vpDisplay::displayText(I, (int)I.getHeight() - 30, 10, legend.str(), vpColor::red);
+    vpDisplay::displayText(I, static_cast<int>(I.getHeight()) - 30, 10, legend.str(), vpColor::red);
 
     //! [Parse detected codes]
     if (status) {
@@ -82,7 +82,7 @@ int main(int argc, const char **argv)
         //! [Get location]
         vpDisplay::displayRectangle(I, bbox, vpColor::green);
         //! [Get message]
-        vpDisplay::displayText(I, (int)(bbox.getTop() - 10), (int)bbox.getLeft(),
+        vpDisplay::displayText(I, static_cast<int>(bbox.getTop() - 10), static_cast<int>(bbox.getLeft()),
                                "Message: \"" + detector->getMessage(i) + "\"", vpColor::red);
         //! [Get message]
         for (size_t j = 0; j < p.size(); j++) {
@@ -93,7 +93,7 @@ int main(int argc, const char **argv)
         }
       }
 
-      vpDisplay::displayText(I, (int)I.getHeight() - 15, 10, "A click to quit...", vpColor::red);
+      vpDisplay::displayText(I, static_cast<int>(I.getHeight()) - 15, 10, "A click to quit...", vpColor::red);
       vpDisplay::flush(I);
       vpDisplay::getClick(I);
     }

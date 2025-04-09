@@ -98,7 +98,7 @@ int main(int argc, const char *argv[])
         opt_device = std::atoi(argv[++i]);
       }
       else if (std::string(argv[i]) == "--scale" && i + 1 < argc) {
-        opt_scale = (unsigned int)atoi(argv[++i]);
+        opt_scale = static_cast<unsigned int>(atoi(argv[++i]));
       }
       else if (std::string(argv[i]) == "--seqname" && i + 1 < argc) {
         opt_seqname = std::string(argv[++i]);

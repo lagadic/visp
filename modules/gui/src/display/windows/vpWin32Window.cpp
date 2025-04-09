@@ -47,11 +47,11 @@ BEGIN_VISP_NAMESPACE
 
 // Should be already defined ...
 #ifndef GET_X_LPARAM
-#define GET_X_LPARAM(lp) ((int)(short)LOWORD(lp))
+#define GET_X_LPARAM(lp) (static_cast<int>(static_cast<short>(LOWORD(lp))))
 #endif
 
 #ifndef GET_Y_LPARAM
-#define GET_Y_LPARAM(lp) ((int)(short)HIWORD(lp))
+#define GET_Y_LPARAM(lp) (static_cast<int>(static_cast<short>(HIWORD(lp))))
 #endif
 
 // declares the window as thread local
@@ -313,5 +313,5 @@ END_VISP_NAMESPACE
 #endif
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_gui.a(vpWin32Window.cpp.o) has no symbols
-void dummy_vpWin32Window() { };
+void dummy_vpWin32Window() { }
 #endif

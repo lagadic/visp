@@ -23,7 +23,7 @@ import org.visp.core.VpHomogeneousMatrix;
 import org.visp.core.VpCameraParameters;
 
 public class VpDisplay {
- 
+
   // Java developers will find it easy to handle frames directly
   public JFrame frame;
   public BufferedImage I;
@@ -106,19 +106,19 @@ public class VpDisplay {
     g.drawLine(i1, j1, i2, j2);
     double m = (j2-j1)*1.0/(i2-i1), x1 = i2 - h/Math.sqrt(1+m*m), y1 = j2 - h*m/Math.sqrt(1+m*m);
 
-    int x11 = (int) (x1 + m*w/(2*Math.sqrt(1+m*m)));
+    int x11 = static_cast<int>(x1 + m*w/(2*Math.sqrt(1+m*m)));
     if ((x11-i1)*(x11-i2) > 0)
       x11 = 2*i2 - x11;
 
-    int y11 = (int) (y1 - w/(2*Math.sqrt(1+m*m)));
+    int y11 = static_cast<int>(y1 - w/(2*Math.sqrt(1+m*m)));
     if ((y11-j1)*(y11-j2) > 0)
       y11 = 2*j2 - y11;
     g.drawLine(x11, y11, i2, j2);
 
-    x11 = (int) (x1 - m*w/(2*Math.sqrt(1+m*m)));
+    x11 = static_cast<int>(x1 - m*w/(2*Math.sqrt(1+m*m)));
     if ((x11-i1)*(x11-i2) > 0)
       x11 = 2*i2 - x11;
-    y11 = (int) (y1 + w/(2*Math.sqrt(1+m*m)));
+    y11 = static_cast<int>(y1 + w/(2*Math.sqrt(1+m*m)));
     if ((y11-j1)*(y11-j2) > 0)
       y11 = 2*j2 - y11;
     g.drawLine(x11, y11, i2, j2);

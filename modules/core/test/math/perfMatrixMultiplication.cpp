@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@
 
 #include <visp3/core/vpMatrix.h>
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x030000)
 #include <opencv2/core.hpp>
 #endif
 
@@ -245,7 +245,7 @@ TEST_CASE("Benchmark matrix-matrix multiplication", "[benchmark]")
       REQUIRE(equalMatrix(C, C_true));
 
       if (runBenchmarkAll) {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x030000)
         cv::Mat matA(sz.first, sz.second, CV_64FC1);
         cv::Mat matB(sz.second, sz.first, CV_64FC1);
 
@@ -329,7 +329,7 @@ TEST_CASE("Benchmark matrix-rotation matrix multiplication", "[benchmark]")
       REQUIRE(equalMatrix(AB, AB_true));
 
       if (runBenchmarkAll) {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x030000)
         cv::Mat matA(sz.first, sz.second, CV_64FC1);
         cv::Mat matB(3, 3, CV_64FC1);
 
@@ -423,7 +423,7 @@ TEST_CASE("Benchmark matrix-homogeneous matrix multiplication", "[benchmark]")
       REQUIRE(equalMatrix(AB, AB_true));
 
       if (runBenchmarkAll) {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x030000)
         cv::Mat matA(sz.first, sz.second, CV_64FC1);
         cv::Mat matB(4, 4, CV_64FC1);
 
@@ -518,7 +518,7 @@ TEST_CASE("Benchmark matrix-vector multiplication", "[benchmark]")
       REQUIRE(equalMatrix(static_cast<vpMatrix>(C), static_cast<vpMatrix>(C_true)));
 
       if (runBenchmarkAll) {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x030000)
         cv::Mat matA(sz.first, sz.second, CV_64FC1);
         cv::Mat matB(sz.second, 1, CV_64FC1);
 
@@ -605,7 +605,7 @@ TEST_CASE("Benchmark AtA", "[benchmark]")
       REQUIRE(equalMatrix(AtA, AtA_true));
 
       if (runBenchmarkAll) {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x030000)
         cv::Mat matA(sz.first, sz.second, CV_64FC1);
 
         for (unsigned int i = 0; i < A.getRows(); i++) {
@@ -683,7 +683,7 @@ TEST_CASE("Benchmark AAt", "[benchmark]")
       REQUIRE(equalMatrix(AAt, AAt_true));
 
       if (runBenchmarkAll) {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x030000)
         cv::Mat matA(sz.first, sz.second, CV_64FC1);
 
         for (unsigned int i = 0; i < A.getRows(); i++) {
@@ -760,7 +760,7 @@ TEST_CASE("Benchmark matrix-velocity twist multiplication", "[benchmark]")
       REQUIRE(equalMatrix(AV, AV_true));
 
       if (runBenchmarkAll) {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x030000)
         cv::Mat matA(sz.first, sz.second, CV_64FC1);
         cv::Mat matV(6, 6, CV_64FC1);
 
@@ -850,7 +850,7 @@ TEST_CASE("Benchmark matrix-force twist multiplication", "[benchmark]")
       REQUIRE(equalMatrix(AV, AV_true));
 
       if (runBenchmarkAll) {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x030000)
         cv::Mat matA(sz.first, sz.second, CV_64FC1);
         cv::Mat matV(6, 6, CV_64FC1);
 

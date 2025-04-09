@@ -294,7 +294,7 @@ END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning:
 // libvisp_sensor.a(vpDirectShowSampleGrabberI.cpp.o) has no symbols
-void dummy_vpDirectShowSampleGrabberI() { };
+void dummy_vpDirectShowSampleGrabberI() { }
 #endif
 
 #endif

@@ -228,7 +228,7 @@ void vpSimulatorAfma6::init(vpAfma6::vpAfma6ToolType tool, vpCameraParameters::v
   unsigned int name_length = 30; // the size of this kind of string "/afma6_tool_vacuum.bnd"
   if (arm_dir.size() > FILENAME_MAX)
     throw vpException(vpException::dimensionError, "Cannot initialize Afma6 simulator");
-  unsigned int full_length = (unsigned int)arm_dir.size() + name_length;
+  unsigned int full_length = static_cast<unsigned int>(arm_dir.size()) + name_length;
   if (full_length > FILENAME_MAX)
     throw vpException(vpException::dimensionError, "Cannot initialize Afma6 simulator");
 
@@ -496,17 +496,17 @@ void vpSimulatorAfma6::updateArticularPosition()
 
       if (jl != 0 && jointLimit == false) {
         if (jl < 0)
-          ellapsedTime = (_joint_min[(unsigned int)(-jl - 1)] - articularCoordinates[(unsigned int)(-jl - 1)]) /
-          (articularVelocities[(unsigned int)(-jl - 1)]);
+          ellapsedTime = (_joint_min[static_cast<unsigned int>(-jl - 1)] - articularCoordinates[static_cast<unsigned int>(-jl - 1)]) /
+          (articularVelocities[static_cast<unsigned int>(-jl - 1)]);
         else
-          ellapsedTime = (_joint_max[(unsigned int)(jl - 1)] - articularCoordinates[(unsigned int)(jl - 1)]) /
-          (articularVelocities[(unsigned int)(jl - 1)]);
+          ellapsedTime = (_joint_max[static_cast<unsigned int>(jl - 1)] - articularCoordinates[static_cast<unsigned int>(jl - 1)]) /
+          (articularVelocities[static_cast<unsigned int>(jl - 1)]);
 
         for (unsigned int i = 0; i < 6; i++)
           articularCoordinates[i] = articularCoordinates[i] + ellapsedTime * articularVelocities[i];
 
         jointLimit = true;
-        jointLimitArt = (unsigned int)fabs((double)jl);
+        jointLimitArt = static_cast<unsigned int>(fabs((double)jl));
       }
 
       set_artCoord(articularCoordinates);
@@ -1818,7 +1818,7 @@ int vpSimulatorAfma6::isInJointLimit()
       difft = _joint_min[i] - articularCoordinates[i];
       if (difft > diff) {
         diff = difft;
-        artNumb = -(int)i - 1;
+        artNumb = -static_cast<int>(i) - 1;
       }
     }
   }
@@ -1828,7 +1828,7 @@ int vpSimulatorAfma6::isInJointLimit()
       difft = articularCoordinates[i] - _joint_max[i];
       if (difft > diff) {
         diff = difft;
-        artNumb = (int)(i + 1);
+        artNumb = static_cast<int>(i + 1);
       }
     }
   }
@@ -2193,7 +2193,7 @@ void vpSimulatorAfma6::initArms()
   unsigned int name_length = 30; // the size of this kind of string "/afma6_arm2.bnd"
   if (scene_dir_.size() > FILENAME_MAX)
     throw vpException(vpException::dimensionError, "Cannot initialize Afma6 simulator");
-  unsigned int full_length = (unsigned int)scene_dir_.size() + name_length;
+  unsigned int full_length = static_cast<unsigned int>(scene_dir_.size()) + name_length;
   if (full_length > FILENAME_MAX)
     throw vpException(vpException::dimensionError, "Cannot initialize Afma6 simulator");
 
@@ -2205,7 +2205,7 @@ void vpSimulatorAfma6::initArms()
 
   if (arm_dir.size() > FILENAME_MAX)
     throw vpException(vpException::dimensionError, "Cannot initialize Afma6 simulator");
-  full_length = (unsigned int)arm_dir.size() + name_length;
+  full_length = static_cast<unsigned int>(arm_dir.size()) + name_length;
   if (full_length > FILENAME_MAX)
     throw vpException(vpException::dimensionError, "Cannot initialize Afma6 simulator");
 
@@ -2499,5 +2499,5 @@ END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpSimulatorAfma6.cpp.o) has
 // no symbols
-void dummy_vpSimulatorAfma6() { };
+void dummy_vpSimulatorAfma6() { }
 #endif

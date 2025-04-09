@@ -218,7 +218,7 @@ void vpMbKltTracker::reinit(const vpImage<unsigned char> &I)
   }
 
   // mask
-  cv::Mat mask((int)I.getRows(), (int)I.getCols(), CV_8UC1, cv::Scalar(0));
+  cv::Mat mask(static_cast<int>(I.getRows()), static_cast<int>(I.getCols()), CV_8UC1, cv::Scalar(0));
 
   vpMbtDistanceKltPoints *kltpoly;
   vpMbtDistanceKltCylinder *kltPolyCylinder;
@@ -244,7 +244,7 @@ void vpMbKltTracker::reinit(const vpImage<unsigned char> &I)
 
       if (kltPolyCylinder->isTracked()) {
         for (unsigned int k = 0; k < kltPolyCylinder->listIndicesCylinderBBox.size(); k++) {
-          unsigned int indCylBBox = (unsigned int)kltPolyCylinder->listIndicesCylinderBBox[k];
+          unsigned int indCylBBox = static_cast<unsigned int>(kltPolyCylinder->listIndicesCylinderBBox[k]);
           if (faces[indCylBBox]->isVisible() && faces[indCylBBox]->getNbPoint() > 2u) {
             faces[indCylBBox]->computePolygonClipped(m_cam); // Might not be necessary when scanline is activated
           }
@@ -368,7 +368,7 @@ std::vector<vpImagePoint> vpMbKltTracker::getKltImagePoints() const
   for (unsigned int i = 0; i < static_cast<unsigned int>(tracker.getNbFeatures()); i++) {
     long id;
     float x_tmp, y_tmp;
-    tracker.getFeature((int)i, id, x_tmp, y_tmp);
+    tracker.getFeature(static_cast<int>(i), id, x_tmp, y_tmp);
     kltPoints.push_back(vpImagePoint(y_tmp, x_tmp));
   }
 
@@ -389,9 +389,9 @@ std::map<int, vpImagePoint> vpMbKltTracker::getKltImagePointsWithId() const
   for (unsigned int i = 0; i < static_cast<unsigned int>(tracker.getNbFeatures()); i++) {
     long id;
     float x_tmp, y_tmp;
-    tracker.getFeature((int)i, id, x_tmp, y_tmp);
+    tracker.getFeature(static_cast<int>(i), id, x_tmp, y_tmp);
 #ifdef TARGET_OS_IPHONE
-    kltPoints[(int)id] = vpImagePoint(y_tmp, x_tmp);
+    kltPoints[static_cast<int>(id)] = vpImagePoint(y_tmp, x_tmp);
 #else
     kltPoints[id] = vpImagePoint(y_tmp, x_tmp);
 #endif
@@ -507,7 +507,7 @@ void vpMbKltTracker::setPose(const vpImage<unsigned char> *const I, const vpImag
         // nbCur+= (unsigned int)kltpoly->getCurrentPoints().size();
         for (; iter != kltpoly->getCurrentPoints().end(); ++iter) {
 #ifdef TARGET_OS_IPHONE
-          if (std::find(init_ids.begin(), init_ids.end(), (long)(kltpoly->getCurrentPointsInd())[(int)iter->first]) !=
+          if (std::find(init_ids.begin(), init_ids.end(), (long)(kltpoly->getCurrentPointsInd())[static_cast<int>(iter->first)]) !=
               init_ids.end())
 #else
           if (std::find(init_ids.begin(), init_ids.end(),
@@ -527,7 +527,7 @@ void vpMbKltTracker::setPose(const vpImage<unsigned char> *const I, const vpImag
           cv::Point2f p((float)cdp[0], (float)cdp[1]);
           init_pts.push_back(p);
 #ifdef TARGET_OS_IPHONE
-          init_ids.push_back((size_t)(kltpoly->getCurrentPointsInd())[(int)iter->first]);
+          init_ids.push_back((size_t)(kltpoly->getCurrentPointsInd())[static_cast<int>(iter->first)]);
 #else
           init_ids.push_back((size_t)(kltpoly->getCurrentPointsInd())[(size_t)iter->first]);
 #endif
@@ -808,7 +808,7 @@ void vpMbKltTracker::computeVVS()
 
   vpMbKltTracker::computeVVSInit();
 
-  while (((int)((normRes - normRes_1) * 1e8) != 0) && (iter < m_maxIter)) {
+  while ((static_cast<int>((normRes - normRes_1) * 1e8) != 0) && (iter < m_maxIter)) {
     vpMbKltTracker::computeVVSInteractionMatrixAndResidu();
 
     bool reStartFromLastIncrement = false;
@@ -1041,13 +1041,13 @@ void vpMbKltTracker::loadConfigFile(const std::string &configFile, bool verbose)
   xmlp.getCameraParameters(camera);
   setCameraParameters(camera);
 
-  tracker.setMaxFeatures((int)xmlp.getKltMaxFeatures());
-  tracker.setWindowSize((int)xmlp.getKltWindowSize());
+  tracker.setMaxFeatures(static_cast<int>(xmlp.getKltMaxFeatures()));
+  tracker.setWindowSize(static_cast<int>(xmlp.getKltWindowSize()));
   tracker.setQuality(xmlp.getKltQuality());
   tracker.setMinDistance(xmlp.getKltMinDistance());
   tracker.setHarrisFreeParameter(xmlp.getKltHarrisParam());
-  tracker.setBlockSize((int)xmlp.getKltBlockSize());
-  tracker.setPyramidLevels((int)xmlp.getKltPyramidLevels());
+  tracker.setBlockSize(static_cast<int>(xmlp.getKltBlockSize()));
+  tracker.setPyramidLevels(static_cast<int>(xmlp.getKltPyramidLevels()));
   maskBorder = xmlp.getKltMaskBorder();
   angleAppears = vpMath::rad(xmlp.getAngleAppear());
   angleDisappears = vpMath::rad(xmlp.getAngleDisappear());
@@ -1468,5 +1468,5 @@ void vpMbKltTracker::setUseKltTracking(const std::string &name, const bool &useK
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_mbt.a(vpMbKltTracker.cpp.o) has no symbols
-void dummy_vpMbKltTracker() { };
+void dummy_vpMbKltTracker() { }
 #endif // VISP_HAVE_OPENCV

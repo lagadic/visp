@@ -152,7 +152,7 @@ static int hashpjw(const char *str)
       h ^= g;
     }
   }
-  return ((int)(h % PRIME));
+  return (static_cast<int>(h % PRIME));
 }
 
 /*

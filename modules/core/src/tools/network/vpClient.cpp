@@ -149,7 +149,7 @@ void vpClient::deconnect(const unsigned int &index)
 #else // _WIN32
     shutdown(receptor_list[index].socketFileDescriptorReceptor, SD_BOTH);
 #endif
-    receptor_list.erase(receptor_list.begin() + (int)index);
+    receptor_list.erase(receptor_list.begin() + static_cast<int>(index));
   }
 }
 
@@ -164,7 +164,7 @@ void vpClient::stop()
 #else // _WIN32
     shutdown(receptor_list[i].socketFileDescriptorReceptor, SD_BOTH);
 #endif
-    receptor_list.erase(receptor_list.begin() + (int)i);
+    receptor_list.erase(receptor_list.begin() + static_cast<int>(i));
     i--;
   }
 }
@@ -224,5 +224,5 @@ bool vpClient::connectServer(vpNetwork::vpReceptor &serv)
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpClient.cpp.o) has no symbols
-void dummy_vpClient() { };
+void dummy_vpClient() { }
 #endif

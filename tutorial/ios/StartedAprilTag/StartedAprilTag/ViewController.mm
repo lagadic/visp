@@ -39,11 +39,11 @@
   vpImage<unsigned char> I = [ImageConversion vpImageGrayFromUIImage:img];
 
   // Detect AprilTag
-  vpDetectorAprilTag::vpAprilTagFamily tagFamily = vpDetectorAprilTag::TAG_36h11;
-  vpDetectorAprilTag::vpPoseEstimationMethod poseEstimationMethod = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
-  double tagSize = 0.053;
-  float quad_decimate = 3.0;
-  int nThreads = 1;
+  vpDetectorAprilTag::vpAprilTagFamily tag_family = vpDetectorAprilTag::TAG_36h11;
+  vpDetectorAprilTag::vpPoseEstimationMethod tag_pose_estimation_method = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
+  double tag_size = 0.053;
+  float tag_quad_decimate = 3.0;
+  int tag_nThreads = 1;
   std::vector<vpHomogeneousMatrix> cMo_vec;
 
   // Set camera parameters
@@ -51,13 +51,13 @@
   cam.initPersProjWithoutDistortion(615.1674805, 615.1675415, 312.1889954, 243.4373779);
 
   // Initialize apriltag detector
-  vpDetectorAprilTag detector(tagFamily);
-  detector.setAprilTagQuadDecimate(quad_decimate);
-  detector.setAprilTagPoseEstimationMethod(poseEstimationMethod);
-  detector.setAprilTagNbThreads(nThreads);
+  vpDetectorAprilTag detector(tag_family);
+  detector.setAprilTagQuadDecimate(tag_quad_decimate);
+  detector.setAprilTagPoseEstimationMethod(tag_pose_estimation_method);
+  detector.setAprilTagNbThreads(tag_nThreads);
 
   // Detect all the tags in the image
-  detector.detect(I, tagSize, cam, cMo_vec);
+  detector.detect(I, tag_size, cam, cMo_vec);
 
   // Parse detected tags for printings
   std::cout << "Number of tags in the image: " << detector.getNbObjects() << std::endl;
