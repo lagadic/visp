@@ -1,5 +1,9 @@
 //! \example tutorial-rbt-sequence.cpp
+#include <iostream>
 #include <visp3/core/vpConfig.h>
+
+#if defined(VISP_HAVE_NLOHMANN_JSON)
+
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpImageException.h>
 #include <visp3/core/vpIoTools.h>
@@ -293,3 +297,10 @@ int main(int argc, const char **argv)
 
   return EXIT_SUCCESS;
 }
+
+#else
+int main()
+{
+  std::cout << "This tutorial requires nlohmann_json 3rdparty." << std::endl;
+}
+#endif

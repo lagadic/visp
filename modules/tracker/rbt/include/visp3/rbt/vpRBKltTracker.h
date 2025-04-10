@@ -42,6 +42,9 @@
 #endif
 
 #if defined(VP_HAVE_RB_KLT_TRACKER)
+
+#include <map>
+
 #include <visp3/rbt/vpRBFeatureTracker.h>
 #include <visp3/core/vpPoint.h>
 #include <visp3/core/vpTrackingException.h>
