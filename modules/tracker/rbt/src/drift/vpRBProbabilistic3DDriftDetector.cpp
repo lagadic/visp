@@ -101,13 +101,13 @@ void vpRBProbabilistic3DDriftDetector::update(const vpRBFeatureTrackerInput &pre
         }
       }
 
-      vpRGBf normalObject = frame.renders.normals[p.projRenderPx[1]][p.projRenderPx[0]];
+      // vpRGBf normalObject = frame.renders.normals[p.projRenderPx[1]][p.projRenderPx[0]];
 
-      vpColVector cameraRay({ t[0] - p.X[0], t[1] - p.X[1], t[2] - p.X[2] });
+      // vpColVector cameraRay({ t[0] - p.X[0], t[1] - p.X[1], t[2] - p.X[2] });
 
-      cameraRay.normalize();
+      // cameraRay.normalize();
       // double angle = acos(vpColVector::dotProd(vpColVector({ normalObject.R, normalObject.G, normalObject.B }).normalize(), cameraRay));
-      // if (angle > vpMath::rad(75)) {
+      // if (angle > vpMath::rad(85)) {
       //   p.visible = false;
       //   continue;
       // }
@@ -221,8 +221,10 @@ void vpRBProbabilistic3DDriftDetector::update(const vpRBFeatureTrackerInput &pre
         cX = cprevTrender * renderX;
         x = cX[0] / cX[2], y = cX[1] / cX[2];
         vpMeterPixelConversion::convertPoint(frame.cam, x, y, u, v);
-        unsigned int prevI = static_cast<unsigned int>(v), prevJ = static_cast<unsigned int>(u);
-
+        int prevI = static_cast<int>(v), prevJ = static_cast<int>(u);
+        if (prevI < 0 || prevI >= previousFrame.IRGB.getHeight() || prevJ < 0 || prevJ >= previousFrame.IRGB.getWidth()) {
+          continue;
+        }
         oX = oMcprev * cX;
         vpStored3DSurfaceColorPoint newPoint;
         newPoint.X[0] = oX[0] / oX[3];
