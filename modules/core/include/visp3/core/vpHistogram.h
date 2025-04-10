@@ -50,6 +50,9 @@
 #include <visp3/core/vpImage.h>
 
 #include <list>
+#if defined(VISP_HAVE_THREADS)
+#include <thread>
+#endif
 
 BEGIN_VISP_NAMESPACE
 /*!
@@ -105,7 +108,7 @@ BEGIN_VISP_NAMESPACE
 class VISP_EXPORT vpHistogram
 {
 public:
-  vpHistogram();
+  vpHistogram(const unsigned int &size = constr_val_256);
   vpHistogram(const vpHistogram &h);
   VP_EXPLICIT vpHistogram(const vpImage<unsigned char> &I);
   VP_EXPLICIT vpHistogram(const vpImage<unsigned char> &I, const vpImage<bool> *p_mask);
@@ -249,6 +252,113 @@ public:
   }
 
   void calculate(const vpImage<unsigned char> &I, unsigned int nbins = 256, unsigned int nbThreads = 1);
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  template <typename ArithmeticType>
+  typename std::enable_if<std::is_floating_point<ArithmeticType>::value, void>::type calculate(const vpImage<ArithmeticType> &I, const ArithmeticType &minVal, const ArithmeticType &maxVal, ArithmeticType &widthBin, unsigned int nbins = 256, unsigned int nbThreads = 1)
+  {
+    widthBin = (maxVal - minVal)/static_cast<ArithmeticType>(nbins);
+    if (m_size < nbins) {
+      init(nbins);
+    }
+
+    memset(m_histogram, 0, m_size * sizeof(unsigned int));
+
+    bool use_single_thread;
+#if !defined(VISP_HAVE_THREADS)
+    use_single_thread = true;
+#else
+    use_single_thread = (nbThreads == 0 || nbThreads == 1);
+#endif
+
+    if ((!use_single_thread) && (I.getSize() <= nbThreads)) {
+      use_single_thread = true;
+    }
+
+    if (use_single_thread) {
+      // Single thread
+      const bool alwaysTrue = true;
+      const bool *ptrMaskCurrent = &alwaysTrue;
+      if (mp_mask) {
+        ptrMaskCurrent = static_cast<const bool *>(mp_mask->bitmap);
+      }
+
+      unsigned int size_ = I.getWidth() * I.getHeight();
+      unsigned int idCurrent = 0;
+
+      m_total = 0;
+      while (idCurrent < size_) {
+        if (*ptrMaskCurrent) {
+          unsigned int id = std::floor((I.bitmap[idCurrent] - minVal)/widthBin);
+          ++m_histogram[id];
+          ++m_total;
+        }
+        ++idCurrent;
+        if (mp_mask) {
+          ++ptrMaskCurrent;
+        }
+      }
+    }
+    else {
+#if defined(VISP_HAVE_THREADS)
+      // Multi-threads
+      std::vector<std::thread *> threadpool;
+      std::vector<vpHistogramFloatingPoints_Param_t<ArithmeticType> *> histogramParams;
+
+      unsigned int image_size = I.getSize();
+      unsigned int step = image_size / nbThreads;
+      unsigned int last_step = image_size - step * (nbThreads - 1);
+
+      for (unsigned int index = 0; index < nbThreads; ++index) {
+        unsigned int start_index = index * step;
+        unsigned int end_index = (index + 1) * step;
+
+        if (index == nbThreads - 1) {
+          end_index = start_index + last_step;
+        }
+
+        vpHistogramFloatingPoints_Param_t<ArithmeticType> *histogram_param = new vpHistogramFloatingPoints_Param_t<ArithmeticType>(start_index, end_index, minVal, widthBin, &I, mp_mask);
+        histogram_param->m_histogram = new unsigned int[m_size];
+        histogram_param->m_mask = mp_mask;
+        memset(histogram_param->m_histogram, 0, m_size * sizeof(unsigned int));
+
+        histogramParams.push_back(histogram_param);
+
+        // Start the threads
+        std::thread *histogram_thread = new std::thread(&computeHistogramFloatingPointThread<ArithmeticType>, histogram_param);
+        threadpool.push_back(histogram_thread);
+      }
+
+      for (size_t cpt = 0; cpt < threadpool.size(); ++cpt) {
+        // Wait until thread ends up
+        threadpool[cpt]->join();
+      }
+
+      m_total = 0;
+      for (unsigned int cpt1 = 0; cpt1 < m_size; ++cpt1) {
+        unsigned int sum = 0;
+
+        for (size_t cpt2 = 0; cpt2 < histogramParams.size(); ++cpt2) {
+          sum += histogramParams[cpt2]->m_histogram[cpt1];
+        }
+
+        m_histogram[cpt1] = sum;
+        m_total += sum;
+      }
+
+      // Delete
+      for (size_t cpt = 0; cpt < threadpool.size(); ++cpt) {
+        delete threadpool[cpt];
+      }
+
+      for (size_t cpt = 0; cpt < histogramParams.size(); ++cpt) {
+        delete histogramParams[cpt];
+      }
+#endif
+    }
+  }
+#endif
+
   void equalize(const vpImage<unsigned char> &I, vpImage<unsigned char> &Iout);
 
   void display(const vpImage<unsigned char> &I, const vpColor &color = vpColor::white, unsigned int thickness = 2,
@@ -308,6 +418,150 @@ public:
   inline unsigned int getTotal() { return m_total; }
 
 private:
+#if defined(VISP_HAVE_THREADS) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+  template <typename ArithmeticType>
+  struct vpHistogramFloatingPoints_Param_t
+  {
+    unsigned int m_start_index;
+    unsigned int m_end_index;
+
+    unsigned int *m_histogram;
+    const ArithmeticType m_minVal;
+    const ArithmeticType m_step;
+    const vpImage<ArithmeticType> *m_I;
+    const vpImage<bool> *m_mask;
+
+    vpHistogramFloatingPoints_Param_t() : m_start_index(0), m_end_index(0), m_histogram(nullptr), m_minVal(0.), m_step(1.), m_I(nullptr), m_mask(nullptr) { }
+
+    vpHistogramFloatingPoints_Param_t(unsigned int start_index, unsigned int end_index, const ArithmeticType &minVal, const ArithmeticType &step, const vpImage<ArithmeticType> *const I, const vpImage<bool> *const mask)
+      : m_start_index(start_index), m_end_index(end_index), m_histogram(nullptr), m_minVal(minVal), m_step(step), m_I(I), m_mask(mask)
+    { }
+
+    ~vpHistogramFloatingPoints_Param_t()
+    {
+      if (m_histogram != nullptr) {
+        delete[] m_histogram;
+      }
+    }
+  };
+
+  template <typename ArithmeticType>
+  static typename std::enable_if<std::is_floating_point<ArithmeticType>::value, void>::type computeHistogramFloatingPointThread(vpHistogramFloatingPoints_Param_t<ArithmeticType> *histogram_param)
+  {
+    unsigned int start_index = histogram_param->m_start_index;
+    unsigned int end_index = histogram_param->m_end_index;
+    unsigned int stopUnroll = end_index - 8;
+    unsigned int current_index = start_index;
+
+    const vpImage<ArithmeticType> *I = histogram_param->m_I;
+
+    // Compute the index of a floating point value according to the min and step
+    const ArithmeticType &minVal = histogram_param->m_minVal;
+    const ArithmeticType &step = histogram_param->m_step;
+
+    auto computeIndex = [&minVal, &step](const ArithmeticType &val) {
+      return static_cast<unsigned int> (std::floor((val - minVal)/step));
+      };
+
+    const bool alwaysTrue = true;
+    const bool *ptrMaskCurrent = &alwaysTrue;
+    if (histogram_param->m_mask) {
+      ptrMaskCurrent = (const bool *)histogram_param->m_mask->bitmap + start_index;
+    }
+
+    if (end_index >= 8 + start_index) {
+      // Unroll loop version
+      while (current_index <= stopUnroll) {
+        if (*ptrMaskCurrent) {
+          unsigned int id = computeIndex(I->bitmap[current_index]);
+          histogram_param->m_histogram[id]++;
+        }
+        ++current_index;
+        if (histogram_param->m_mask != nullptr) {
+          ++ptrMaskCurrent;
+        }
+
+        if (*ptrMaskCurrent) {
+          unsigned int id = computeIndex(I->bitmap[current_index]);
+          histogram_param->m_histogram[id]++;
+        }
+        ++current_index;
+        if (histogram_param->m_mask != nullptr) {
+          ++ptrMaskCurrent;
+        }
+
+        if (*ptrMaskCurrent) {
+          unsigned int id = computeIndex(I->bitmap[current_index]);
+          histogram_param->m_histogram[id]++;
+        }
+        ++current_index;
+        if (histogram_param->m_mask != nullptr) {
+          ++ptrMaskCurrent;
+        }
+
+        if (*ptrMaskCurrent) {
+          unsigned int id = computeIndex(I->bitmap[current_index]);
+          histogram_param->m_histogram[id]++;
+        }
+        ++current_index;
+        if (histogram_param->m_mask != nullptr) {
+          ++ptrMaskCurrent;
+        }
+
+        if (*ptrMaskCurrent) {
+          unsigned int id = computeIndex(I->bitmap[current_index]);
+          histogram_param->m_histogram[id]++;
+        }
+        ++current_index;
+        if (histogram_param->m_mask != nullptr) {
+          ++ptrMaskCurrent;
+        }
+
+        if (*ptrMaskCurrent) {
+          unsigned int id = computeIndex(I->bitmap[current_index]);
+          histogram_param->m_histogram[id]++;
+        }
+        ++current_index;
+        if (histogram_param->m_mask != nullptr) {
+          ++ptrMaskCurrent;
+        }
+
+        if (*ptrMaskCurrent) {
+          unsigned int id = computeIndex(I->bitmap[current_index]);
+          histogram_param->m_histogram[id]++;
+        }
+        ++current_index;
+        if (histogram_param->m_mask != nullptr) {
+          ++ptrMaskCurrent;
+        }
+
+        if (*ptrMaskCurrent) {
+          unsigned int id = computeIndex(I->bitmap[current_index]);
+          histogram_param->m_histogram[id]++;
+        }
+        ++current_index;
+        if (histogram_param->m_mask != nullptr) {
+          ++ptrMaskCurrent;
+        }
+      }
+    }
+
+    while (current_index < end_index) {
+      if (*ptrMaskCurrent) {
+        unsigned int id = computeIndex(I->bitmap[current_index]);
+        histogram_param->m_histogram[id]++;
+      }
+      if (histogram_param->m_mask != nullptr) {
+        ++ptrMaskCurrent;
+      }
+      ++current_index;
+    }
+  }
+#endif // DOXYGEN_SHOULD_SKIP_THIS
+#endif
+
   void init(unsigned size = 256);
 
   unsigned int *m_histogram; /*!< The storage for the histogram.*/

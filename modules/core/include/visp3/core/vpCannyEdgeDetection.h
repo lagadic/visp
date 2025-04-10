@@ -181,7 +181,7 @@ public:
     if (upperThreshold < 0) {
       upperThreshold = vpImageFilter::computeCannyThreshold(Ihsv, lowerThreshold, &m_dIx, &m_dIy, m_gaussianKernelSize,
                                                             m_gaussianStdev, m_lowerThresholdRatio,
-                                                            m_upperThresholdRatio, mp_mask);
+                                                            m_upperThresholdRatio, m_filteringAndGradientType, mp_mask);
     }
     else if (m_lowerThreshold < 0) {
       // Applying Canny recommendation to have the upper threshold 3 times greater than the lower threshold.
