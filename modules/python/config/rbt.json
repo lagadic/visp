@@ -74,6 +74,18 @@
             ]
           ],
           "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "std::enable_if<std::is_same<ImageType, unsigned char>::value||std::is_same<ImageType, vpRGBa>::value, void>::type initClick(const vpImage<ImageType>&, const std::string&, bool)",
+          "specializations": [
+            [
+              "vpRGBa"
+            ],
+            [
+              "unsigned char"
+            ]
+          ]
         }
       ]
     },
