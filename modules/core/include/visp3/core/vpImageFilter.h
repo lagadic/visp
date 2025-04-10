@@ -1070,8 +1070,10 @@ public:
     const unsigned int stop2J = width - ((size - 1) / 2);
     resizeAndInitializeIfNeeded(p_mask, height, width, dIx);
 
+    unsigned int istart = 0;
+    unsigned int istop = height;
 #ifdef VISP_HAVE_OPENMP
-    unsigned int iam, nt, ipoints, istart, istop, npoints(height);
+    unsigned int iam, nt, ipoints, npoints(height);
 #pragma omp parallel default(shared) private(iam, nt, ipoints, istart, istop)
     {
       iam = omp_get_thread_num();
@@ -1084,37 +1086,34 @@ public:
         ipoints = npoints - istart;
       }
       istop = istart + ipoints;
-#else
-    unsigned int istart = 0;
-    unsigned int istop = height;
 #endif
-    for (unsigned int i = istart; i < istop; ++i) {
-      for (unsigned int j = 0; j < stop1J; ++j) {
-        // We have to compute the value for each pixel if we don't have a mask or for
-        // pixels for which the mask is true otherwise
-        bool computeVal = checkBooleanMask(p_mask, i, j);
-        if (computeVal) {
-          vpImageFilter::filterXLeftBorder(I, dIx[i][j], i, j, filter, size);
+      for (unsigned int i = istart; i < istop; ++i) {
+        for (unsigned int j = 0; j < stop1J; ++j) {
+          // We have to compute the value for each pixel if we don't have a mask or for
+          // pixels for which the mask is true otherwise
+          bool computeVal = checkBooleanMask(p_mask, i, j);
+          if (computeVal) {
+            vpImageFilter::filterXLeftBorder(I, dIx[i][j], i, j, filter, size);
+          }
         }
-      }
 
-      for (unsigned int j = stop1J; j < stop2J; ++j) {
-        // We have to compute the value for each pixel if we don't have a mask or for
-        // pixels for which the mask is true otherwise
-        bool computeVal = checkBooleanMask(p_mask, i, j);
-        if (computeVal) {
-          vpImageFilter::filterX(I, dIx[i][j], i, j, filter, size);
+        for (unsigned int j = stop1J; j < stop2J; ++j) {
+          // We have to compute the value for each pixel if we don't have a mask or for
+          // pixels for which the mask is true otherwise
+          bool computeVal = checkBooleanMask(p_mask, i, j);
+          if (computeVal) {
+            vpImageFilter::filterX(I, dIx[i][j], i, j, filter, size);
+          }
+        }
+        for (unsigned int j = stop2J; j < width; ++j) {
+          // We have to compute the value for each pixel if we don't have a mask or for
+          // pixels for which the mask is true otherwise
+          bool computeVal = checkBooleanMask(p_mask, i, j);
+          if (computeVal) {
+            vpImageFilter::filterXRightBorder(I, dIx[i][j], i, j, filter, size);
+          }
         }
       }
-      for (unsigned int j = stop2J; j < width; ++j) {
-        // We have to compute the value for each pixel if we don't have a mask or for
-        // pixels for which the mask is true otherwise
-        bool computeVal = checkBooleanMask(p_mask, i, j);
-        if (computeVal) {
-          vpImageFilter::filterXRightBorder(I, dIx[i][j], i, j, filter, size);
-        }
-      }
-    }
 #ifdef VISP_HAVE_OPENMP
     }
 #endif
@@ -1164,11 +1163,11 @@ public:
   static inline typename std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type  filterX(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
   {
     const unsigned int stop = (size - 1) / 2;
-  #ifdef VISP_HAVE_OPENMP
+#ifdef VISP_HAVE_OPENMP
     vpColVector res(ImageType::nbChannels);
-  #else
+#else
     static vpColVector res(ImageType::nbChannels);
-  #endif
+#endif
     filterChannel(I[r][c], res, filter[0]);
 
     for (unsigned int i = 1; i <= stop; ++i) {
@@ -1230,11 +1229,11 @@ public:
   static inline typename std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type  filterXLeftBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
   {
     const unsigned int stop = (size - 1) / 2;
-  #ifdef VISP_HAVE_OPENMP
+#ifdef VISP_HAVE_OPENMP
     vpColVector res(ImageType::nbChannels);
-  #else
+#else
     static vpColVector res(ImageType::nbChannels);
-  #endif
+#endif
     filterChannel(I[r][c], res, filter[0]);
 
     for (unsigned int i = 1; i <= stop; ++i) {
@@ -1304,11 +1303,11 @@ public:
     const unsigned int stop = (size - 1) / 2;
     const unsigned int width = I.getWidth();
     const unsigned int twice = 2;
-  #ifdef VISP_HAVE_OPENMP
+#ifdef VISP_HAVE_OPENMP
     vpColVector res(ImageType::nbChannels);
-  #else
+#else
     static vpColVector res(ImageType::nbChannels);
-  #endif
+#endif
     filterChannel(I[r][c], res, filter[0]);
 
     for (unsigned int i = 1; i <= stop; ++i) {
@@ -1457,9 +1456,11 @@ public:
     const unsigned int stop2I = height - ((size - 1) / 2);
     resizeAndInitializeIfNeeded(p_mask, height, width, dIy);
 
-  #ifdef VISP_HAVE_OPENMP
-    unsigned int iam, nt, jpoints, jstart, jstop, npoints(width);
-  #pragma omp parallel default(shared) private(iam, nt, jpoints, jstart, jstop)
+    unsigned int jstart = 0;
+    unsigned int jstop = width;
+#ifdef VISP_HAVE_OPENMP
+    unsigned int iam, nt, jpoints, npoints(width);
+#pragma omp parallel default(shared) private(iam, nt, jpoints, jstart, jstop)
     {
       iam = omp_get_thread_num();
       nt = omp_get_num_threads();
@@ -1471,42 +1472,39 @@ public:
         jpoints = npoints - jstart;
       }
       jstop = jstart + jpoints;
-  #else
-    unsigned int jstart = 0;
-    unsigned int jstop = width;
-  #endif
-    for (unsigned int i = 0; i < stop1I; ++i) {
-      for (unsigned int j = jstart; j < jstop; ++j) {
+#endif
+      for (unsigned int i = 0; i < stop1I; ++i) {
+        for (unsigned int j = jstart; j < jstop; ++j) {
+          // We have to compute the value for each pixel if we don't have a mask or for
+          // pixels for which the mask is true otherwise
+          bool computeVal = checkBooleanMask(p_mask, i, j);
+          if (computeVal) {
+            vpImageFilter::filterYTopBorder(I, dIy[i][j], i, j, filter, size);
+          }
+        }
+      }
+      for (unsigned int i = stop1I; i < stop2I; ++i) {
+        for (unsigned int j = jstart; j < jstop; ++j) {
         // We have to compute the value for each pixel if we don't have a mask or for
         // pixels for which the mask is true otherwise
-        bool computeVal = checkBooleanMask(p_mask, i, j);
-        if (computeVal) {
-          vpImageFilter::filterYTopBorder(I, dIy[i][j], i, j, filter, size);
+          bool computeVal = checkBooleanMask(p_mask, i, j);
+          if (computeVal) {
+            vpImageFilter::filterY(I, dIy[i][j], i, j, filter, size);
+          }
         }
       }
-    }
-    for (unsigned int i = stop1I; i < stop2I; ++i) {
-      for (unsigned int j = jstart; j < jstop; ++j) {
-      // We have to compute the value for each pixel if we don't have a mask or for
-      // pixels for which the mask is true otherwise
-        bool computeVal = checkBooleanMask(p_mask, i, j);
-        if (computeVal) {
-          vpImageFilter::filterY(I, dIy[i][j], i, j, filter, size);
+      for (unsigned int i = stop2I; i < height; ++i) {
+        for (unsigned int j = jstart; j < jstop; ++j) {
+        // We have to compute the value for each pixel if we don't have a mask or for
+        // pixels for which the mask is true otherwise
+          bool computeVal = checkBooleanMask(p_mask, i, j);
+          if (computeVal) {
+            vpImageFilter::filterYBottomBorder(I, dIy[i][j], i, j, filter, size);
+          }
         }
+#ifdef VISP_HAVE_OPENMP
       }
-    }
-    for (unsigned int i = stop2I; i < height; ++i) {
-      for (unsigned int j = jstart; j < jstop; ++j) {
-      // We have to compute the value for each pixel if we don't have a mask or for
-      // pixels for which the mask is true otherwise
-        bool computeVal = checkBooleanMask(p_mask, i, j);
-        if (computeVal) {
-          vpImageFilter::filterYBottomBorder(I, dIy[i][j], i, j, filter, size);
-        }
-      }
-  #ifdef VISP_HAVE_OPENMP
-    }
-  #endif
+#endif
     }
   }
 
@@ -1554,11 +1552,11 @@ public:
   static inline typename std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type  filterY(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
   {
     const unsigned int stop = (size - 1) / 2;
-  #ifdef VISP_HAVE_OPENMP
+#ifdef VISP_HAVE_OPENMP
     vpColVector res(ImageType::nbChannels);
-  #else
+#else
     static vpColVector res(ImageType::nbChannels);
-  #endif
+#endif
     filterChannel(I[r][c], res, filter[0]);
 
     for (unsigned int i = 1; i <= stop; ++i) {
@@ -1620,11 +1618,11 @@ public:
   static inline typename std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type  filterYTopBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
   {
     const unsigned int stop = (size - 1) / 2;
-  #ifdef VISP_HAVE_OPENMP
+#ifdef VISP_HAVE_OPENMP
     vpColVector res(ImageType::nbChannels);
-  #else
+#else
     static vpColVector res(ImageType::nbChannels);
-  #endif
+#endif
     filterChannel(I[r][c], res, filter[0]);
 
     for (unsigned int i = 1; i <= stop; ++i) {
@@ -1693,11 +1691,11 @@ public:
     const unsigned int stop = (size - 1) / 2;
     const unsigned int height = I.getHeight();
     const unsigned int twiceHeight = 2 * height;
-  #ifdef VISP_HAVE_OPENMP
+#ifdef VISP_HAVE_OPENMP
     vpColVector res(ImageType::nbChannels);
-  #else
+#else
     static vpColVector res(ImageType::nbChannels);
-  #endif
+#endif
     filterChannel(I[r][c], res, filter[0]);
 
     for (unsigned int i = 1; i <= stop; ++i) {
@@ -1730,8 +1728,8 @@ public:
    */
   template <typename ImageType, typename OutputType, typename FilterType>
   static inline void
-  gaussianBlur(const vpImage<ImageType> &I, vpImage<OutputType> &GI, unsigned int size = 7, FilterType sigma = 0., bool normalize = true,
-                          const vpImage<bool> *p_mask = nullptr)
+    gaussianBlur(const vpImage<ImageType> &I, vpImage<OutputType> &GI, unsigned int size = 7, FilterType sigma = 0., bool normalize = true,
+                            const vpImage<bool> *p_mask = nullptr)
   {
     FilterType *fg = new FilterType[(size + 1) / 2];
     vpImageFilter::getGaussianKernel<FilterType>(fg, size, sigma, normalize);
@@ -2887,4 +2885,3 @@ private:
 #endif
 END_VISP_NAMESPACE
 #endif
-
