@@ -2108,6 +2108,7 @@ public:
   static void gradientFilterY(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpImage<FilterType> &GIy, const int &nbThread, const vpImage<bool> *p_mask, const vpImageFilter::vpCannyFilteringAndGradientType &type)
   {
     const unsigned int nbRows = I.getRows(), nbCols = I.getCols();
+    GIy.resize(nbRows, nbCols);
     std::vector<FilterType> filter(3);
     FilterType scale;
     switch (type) {
