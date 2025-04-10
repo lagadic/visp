@@ -405,12 +405,17 @@ public:
     float totalNbPixels = static_cast<float>(hist.getTotal());
     float accu = 0;
     float t = upperThresholdRatio * totalNbPixels;
+    float tLow = lowerThresholdRatio * totalNbPixels;
     float bon = 0;
     unsigned int i = 0;
-    bool notFound = true;
+    bool notFound = true, notFoundLower = true;
     while ((i < nbBins) && notFound) {
       float tf = static_cast<float>(hist[static_cast<unsigned char>(i)]);
       accu = accu + tf;
+      if ((accu > tLow) && notFoundLower) {
+        lowerThresh = static_cast<float>(i);
+        notFoundLower = false;
+      }
       if (accu > t) {
         bon = static_cast<float>(i);
         notFound = false;
@@ -424,7 +429,6 @@ public:
     }
 
     float upperThresh = std::max<float>(bon, 1.f);
-    lowerThresh = lowerThresholdRatio * bon;
     lowerThresh = std::max<float>(lowerThresh, std::numeric_limits<float>::epsilon());
     return upperThresh;
   }
@@ -528,12 +532,17 @@ public:
     float totalNbPixels = static_cast<float>(hist.getTotal());
     float accu = 0;
     float t = upperThresholdRatio * totalNbPixels;
+    float tLow = lowerThresholdRatio * totalNbPixels;
     float bon = 0;
     unsigned int i = 0;
-    bool notFound = true;
+    bool notFound = true, notFoundLower = true;
     while ((i < nbBins) && notFound) {
       float tf = static_cast<float>(hist[i]);
       accu = accu + tf;
+      if ((accu > tLow) && notFoundLower) {
+        lowerThresh = static_cast<float>(i) *  static_cast<float>(step) + dIMin;
+        notFoundLower = false;
+      }
       if (accu > t) {
         bon = static_cast<float>(i);
         notFound = false;
@@ -546,7 +555,6 @@ public:
       throw(vpException(vpException::fatalError, errMsg.str()));
     }
     float upperThresh = bon *  static_cast<float>(step) + dIMin;
-    lowerThresh = lowerThresholdRatio * upperThresh;
     lowerThresh = std::max<float>(lowerThresh, std::numeric_limits<float>::epsilon());
     return upperThresh;
   }
@@ -1560,21 +1568,21 @@ public:
   }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-    /**
-     * \brief Filter along the vertical direction "on the top border" of the image (the height of the border depends on
-     * the filter length).
-     *
-     * \tparam ImageType The type of pixels. In this case, it must be an arithmetic type.
-     * \tparam OutputType The type of pixels in the resulting image. In this case, it must be an arithmetic type.
-     * \tparam FilterType An arithmetic type.
-     * \param[in] I The image that must be filtered.
-     * \param[in] result The pixel resulting from the filtering operation.
-     * \param[in] r The row index.
-     * \param[in] c The column index.
-     * \param[in] filter The coefficients of the filter.
-     * \param[in] size The size of the filter.
-     * \return std::enable_if<std::is_arithmetic<ImageType>::value, void>::type The method is enabled only for arithmetic input type.
-     */
+  /**
+   * \brief Filter along the vertical direction "on the top border" of the image (the height of the border depends on
+   * the filter length).
+   *
+   * \tparam ImageType The type of pixels. In this case, it must be an arithmetic type.
+   * \tparam OutputType The type of pixels in the resulting image. In this case, it must be an arithmetic type.
+   * \tparam FilterType An arithmetic type.
+   * \param[in] I The image that must be filtered.
+   * \param[in] result The pixel resulting from the filtering operation.
+   * \param[in] r The row index.
+   * \param[in] c The column index.
+   * \param[in] filter The coefficients of the filter.
+   * \param[in] size The size of the filter.
+   * \return std::enable_if<std::is_arithmetic<ImageType>::value, void>::type The method is enabled only for arithmetic input type.
+   */
   template<typename ImageType, typename OutputType, typename FilterType>
   static inline typename std::enable_if<std::is_arithmetic<ImageType>::value, void>::type filterYTopBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c,
                                               const FilterType *filter, unsigned int size)
@@ -1736,7 +1744,7 @@ public:
 
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
   static void gaussianBlur(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &GI, unsigned int size = 7, double sigma = 0., bool normalize = true,
-                          const vpImage<bool> *p_mask = nullptr);
+                      const vpImage<bool> *p_mask = nullptr);
 #endif
 
   /*!
