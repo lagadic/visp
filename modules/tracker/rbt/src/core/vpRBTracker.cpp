@@ -616,11 +616,11 @@ void vpRBTracker::loadConfigurationFile(const std::string &filename)
     msg << "Byte position of error: " << e.byte;
     throw vpException(vpException::ioError, msg.str());
   }
-  loadConfiguration(settings);
+  loadJsonConfiguration(settings);
   jsonFile.close();
 }
 
-void vpRBTracker::loadConfiguration(const nlohmann::json &j)
+void vpRBTracker::loadJsonConfiguration(const nlohmann::json &j)
 {
   m_firstIteration = true;
   const nlohmann::json verboseSettings = j.at("verbose");
@@ -687,6 +687,91 @@ void vpRBTracker::loadConfiguration(const nlohmann::json &j)
     }
   }
 }
+
+
+nlohmann::ordered_json vpRBTracker::explain() const
+{
+
+  std::vector<nlohmann::ordered_json> intrinsics = {
+    vpRBJsonParsable::parameter("px", "Ratio between pixel width and focal length", false, 800.0),
+    vpRBJsonParsable::parameter("py", "Ratio between pixel height and focal length", false, 800.0),
+    vpRBJsonParsable::parameter("u0", "Principal point position (horizontal axis, in pixels)", false, 320.0),
+    vpRBJsonParsable::parameter("v0", "Principal point position (vertical axis, in pixels)", false, 240.0),
+  };
+
+  nlohmann::ordered_json cameraParameters = {
+    {"intrinsics", flipToDict(intrinsics)},
+    {"description", "Camera intrinsics and input image dimensions. The tracker assumes that there is no distortion and that color and depth images are aligned."}
+  };
+
+  cameraParameters.update(flipToDict({
+      vpRBJsonParsable::parameter("height", "Image height", false, 480),
+      vpRBJsonParsable::parameter("width", "Image width", false, 640)
+                                     }));
+
+  std::vector<nlohmann::ordered_json> optimParameters = {
+    vpRBJsonParsable::parameter(
+      "gain", "The gain used during levenberg-marquardt minimization of the feature error", true, 1.0
+    ),
+    vpRBJsonParsable::parameter(
+      "maxIterations", "The maximum number of iterations for the minimization process.", true, 10
+    ),
+    vpRBJsonParsable::parameter(
+      "mu", "The initial value for the regularization parameter of the LM algorithm."
+      "This value is multiplied by muIterfactor at every iteration."
+      "A low value of mu leads to a Gauss Newton minimizer, while a higher value is closer to a gradient descent solution.", true, 0.1
+    ),
+    vpRBJsonParsable::parameter(
+      "muIterFactor", "The factor with which to multiply the current regularization parameter value.", true, 0.1
+    ),
+    vpRBJsonParsable::parameter(
+      "scaleInvariant", "Whether to use the identity matrix as a regularizer (value of false) or the diagonal of the Hessian approximation (true)", true, false
+    ),
+    vpRBJsonParsable::parameter(
+      "convergenceMetricThreshold", "Minimum value of the convergence metric  to not stop optimization. "
+      "If the metric is below this threshold, then optimization is stopped."
+      "A value of 0 leads to running optimization for the full number of maxIterations.", false, 0.0
+    ),
+  };
+
+  std::vector<nlohmann::ordered_json> baseParameters = {
+    vpRBJsonParsable::parameter("displaySilhouette",
+    "Whether to display the object silhouette on top of the color image."
+    "This will work only if silhouette is extracted,"
+    "and the displayed silhouette will be the one corresponding "
+    "to the object pose estimated at the previous timestep", false, false),
+    vpRBJsonParsable::parameter("model", "Path to the model of the object to track."
+    "This parameter is not required and the model can be specified using a setter."
+    "A model should be set before calling startTracking.", false, "path/to/object.obj")
+  };
+
+
+  nlohmann::ordered_json baseDict = flipToDict(baseParameters);
+  baseDict["camera"] = cameraParameters;
+  baseDict["vvs"] = flipToDict(optimParameters);
+  baseDict["silhouetteExtractionSettings"] = m_depthSilhouetteSettings.explain();
+
+  baseDict["features"] = {
+    {"description", "List of visual features to track. Multiple features can be combined. To disable a feature, add the ignored flag to it."},
+    {"options", vpRBFeatureTrackerFactory::getFactory().availableOptions()}
+  };
+
+  baseDict["mask"] = {
+    { "description", "Object segmentation algorithms. These are used to filter out potentially erronous data, such as occlusions or lighting artifacts."},
+    { "options", vpObjectMaskFactory::getFactory().availableOptions() }
+  };
+
+  baseDict["drift"] = {
+    { "description", "Drift and divergence detection methods. These are used to detect when object tracking is uncertain and a reinitialization is required."},
+    { "options", vpRBDriftDetectorFactory::getFactory().availableOptions() }
+  };
+
+
+
+  return baseDict;
+}
+
+
 #endif
 
 END_VISP_NAMESPACE

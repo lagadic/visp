@@ -48,6 +48,8 @@
 #include <visp3/rbt/vpRBInitializationHelper.h>
 #include <visp3/core/vpDisplay.h>
 
+#include <visp3/rbt/vpRBJsonParsable.h>
+
 #include <ostream>
 #include <type_traits>
 
@@ -66,7 +68,7 @@ class vpRBVisualOdometry;
  *
  * \ingroup group_rbt_core
 */
-class VISP_EXPORT vpRBTracker
+class VISP_EXPORT vpRBTracker : public vpRBJsonParsable
 {
 public:
 
@@ -173,6 +175,10 @@ public:
     m_odometry = odometry;
   }
 
+
+  bool isDisplayingSilhouette() const { return m_displaySilhouette; }
+  void setDisplaySilhouette(bool displaySilhouette) { m_displaySilhouette = displaySilhouette; }
+
   /*!
    * Get verbosity mode.
    * \return true when verbosity is enabled, false otherwise.
@@ -193,7 +199,12 @@ public:
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
   void loadConfigurationFile(const std::string &filename);
-  void loadConfiguration(const nlohmann::json &j);
+  void loadJsonConfiguration(const nlohmann::json &j) VP_OVERRIDE;
+  nlohmann::ordered_json explain() const VP_OVERRIDE;
+  const std::string explainAsString()
+  {
+    return explain().dump(2);
+  }
 #endif
 
   /**

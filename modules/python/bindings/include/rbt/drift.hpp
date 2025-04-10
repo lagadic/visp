@@ -6,12 +6,21 @@
 #include <pybind11/pybind11.h>
 
 
-class TrampolineRBDriftDetector : public vpRBDriftDetector
+
+class PyDriftDetector : public vpRBDriftDetector
 {
-public:
   using vpRBDriftDetector::vpRBDriftDetector;
 
-  TrampolineRBDriftDetector() : vpRBDriftDetector() { }
+  virtual std::string explainAsString() const = 0;
+
+};
+
+class TrampolineRBDriftDetector : public PyDriftDetector
+{
+public:
+  using PyDriftDetector::PyDriftDetector;
+
+  TrampolineRBDriftDetector() : PyDriftDetector() { }
 
   virtual void update(const vpRBFeatureTrackerInput &previousFrame, const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cTo, const vpHomogeneousMatrix &cprevTo)
   {
@@ -54,10 +63,31 @@ public:
 
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
-  virtual void loadJsonConfiguration(const nlohmann::json &) VP_OVERRIDE
+  void loadJsonConfiguration(const nlohmann::json &) VP_OVERRIDE
   {
 
   }
+
+  nlohmann::ordered_json explain() const VP_OVERRIDE
+  {
+    std::string s = explainAsString();
+    nlohmann::ordered_json j = nlohmann::json::parse(s);
+    return j;
+
+  }
+
+  std::string explainAsString() const VP_OVERRIDE
+  {
+    PYBIND11_OVERRIDE_PURE(
+      std::string,                   /* Return type */
+      PyDriftDetector,      /* Parent class */
+      explainAsString,                /* Name of function in C++ (must match Python name) */
+      );
+  }
+
+
+
+
 #endif
 
 };

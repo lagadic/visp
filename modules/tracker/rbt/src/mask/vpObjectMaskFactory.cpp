@@ -41,10 +41,8 @@ vpObjectMaskFactory::vpObjectMaskFactory()
     return j.at("type");
   });
 
-  registerType("histogram", [](const nlohmann::json &j) {
-    std::shared_ptr<vpColorHistogramMask> p(new vpColorHistogramMask());
-    p->loadJsonConfiguration(j);
-    return p;
+  registerType("histogram", []() {
+    return std::make_shared<vpColorHistogramMask>();
   });
 #endif
 }
