@@ -80,13 +80,13 @@ static bool checkBooleanMask(const vpImage<bool> *p_mask, const unsigned int &r,
   return computeVal;
 }
 
-template <typename ArithmeticType, bool useFullScale>
-void gradientFilterX(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpImage<double> &GIx, const vpImage<bool> *p_mask, const vpImageFilter::vpCannyFilteringAndGradientType &type)
+template <typename ArithmeticType, typename FilterType, bool useFullScale>
+void gradientFilterX(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpImage<FilterType> &GIx, const vpImage<bool> *p_mask, const vpImageFilter::vpCannyFilteringAndGradientType &type)
 {
   const unsigned int nbRows = I.getRows(), nbCols = I.getCols();
   GIx.resize(nbRows, nbCols, 0.);
-  std::vector<double> filter(3);
-  double scale;
+  std::vector<FilterType> filter(3);
+  FilterType scale;
   std::string name;
   switch (type) {
   case vpImageFilter::CANNY_COUNT_FILTERING:
@@ -153,11 +153,10 @@ void gradientFilterX(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpIm
   // Computation for the rest of the first row
   for (unsigned int c = 1; c < cStop; ++c) {
     if (vpColVector::dotProd((I[0][c + 1] - I[0][c]), (I[0][c] - I[0][c - 1])) < 0.) {
-      // Inverting sign when cosine distance is negative
-      Isign[0][c] = -1. * Isign[0][c - 1];
+      Isign[0][c] = -1.;
     }
     else {
-      Isign[0][c] = Isign[0][c - 1];
+      Isign[0][c] = 1.;
     }
   }
 
@@ -182,11 +181,10 @@ void gradientFilterX(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpIm
       }
       // Of the sign
       if (vpColVector::dotProd((I[r][c + 1] - I[r][c]), (I[r][c] - I[r][c - 1])) < 0.) {
-        // Inverting sign when cosine distance is negative
-        Isign[r][c] = -1. * Isign[r][c - 1];
+        Isign[r][c] = -1.;
       }
       else {
-        Isign[r][c] = Isign[r][c - 1];
+        Isign[r][c] = 1.;
       }
     }
   }
@@ -197,19 +195,19 @@ void gradientFilterX(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpIm
       if (checkBooleanMask(p_mask, r, c)) {
         GIx[r][c] = 0.;
         for (int dr = -1; dr <= 1; ++dr) {
-          GIx[r][c] += filter[dr + 1] * (Isign[r + dr][c - 1] * IabsDiff[r + dr][c - 1] + Isign[r + dr][c] * IabsDiff[r + dr][c]);
+          GIx[r][c] += filter[dr + 1] * (Isign[r + dr][c - 1] *  IabsDiff[r + dr][c - 1] +  Isign[r + dr][c] *  IabsDiff[r + dr][c]);
         }
       }
     }
   }
 }
 
-template <typename ArithmeticType, bool useFullScale>
-void gradientFilterY(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpImage<double> &GIy, const vpImage<bool> *p_mask, const vpImageFilter::vpCannyFilteringAndGradientType &type)
+template <typename ArithmeticType, typename FilterType, bool useFullScale>
+void gradientFilterY(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpImage<FilterType> &GIy, const vpImage<bool> *p_mask, const vpImageFilter::vpCannyFilteringAndGradientType &type)
 {
   const unsigned int nbRows = I.getRows(), nbCols = I.getCols();
-  std::vector<double> filter(3);
-  double scale;
+  std::vector<FilterType> filter(3);
+  FilterType scale;
   switch (type) {
   case vpImageFilter::CANNY_COUNT_FILTERING:
     // Prewitt case
@@ -284,11 +282,10 @@ void gradientFilterY(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpIm
       }
       // Of the sign
       if (vpColVector::dotProd((I[r +1][c] - I[r][c]), (I[r][c] - I[r - 1][c])) < 0.) {
-        // Inverting sign when cosine distance is negative
-        Isign[r][c] = -1. * Isign[r - 1][c];
+        Isign[r][c] = -1.;
       }
       else {
-        Isign[r][c] = Isign[r - 1][c];
+        Isign[r][c] = 1.;
       }
     }
   }

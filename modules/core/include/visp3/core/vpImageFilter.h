@@ -1963,8 +1963,8 @@ public:
   {
     const unsigned int nbRows = I.getRows(), nbCols = I.getCols();
     GIx.resize(nbRows, nbCols, 0.);
-    std::vector<double> filter(3);
-    double scale;
+    std::vector<FilterType> filter(3);
+    FilterType scale;
     std::string name;
     switch (type) {
     case vpImageFilter::CANNY_COUNT_FILTERING:
@@ -1991,103 +1991,16 @@ public:
       filter[i] = filter[i] / scale;
     }
 
-    auto checkBooleanPatch = [](const vpImage<bool> *p_mask, const unsigned int &r, const unsigned int &c, const unsigned int &h, const unsigned int &w)
-      {
-        if (!p_mask) {
-          return true;
-        }
-        bool hasToCompute = (*p_mask)[r][c];
-
-        if (c < w - 1) { // We do not compute gradient on the last column
-          hasToCompute |= (*p_mask)[r][c + 1];
-          if (r < h - 1) { // We do not compute gradient on the last row
-            hasToCompute |= (*p_mask)[r + 1][c + 1];
-          }
-        }
-
-        if (r < h - 1) { // We do not compute gradient on the last row
-          hasToCompute |= (*p_mask)[r + 1][c];
-        }
-
-        if (r > 1) { // We do not compute gradient on the first row
-          hasToCompute |= (*p_mask)[r - 1][c];
-          if (c < w - 1) { // We do not compute gradient on the last column
-            hasToCompute |= (*p_mask)[r - 1][c + 1];
-          }
-        }
-        return hasToCompute;
-      };
-
-    const unsigned int rStop = nbRows - 1, cStop = nbCols - 1;
-    vpImage<double> Isign(nbRows, nbCols), IabsDiff(nbRows, nbCols);
-    // Computation for I[0][0]
-    if (vpColVector::dotProd((I[0][1] - I[0][0]), I[0][0].toColVector()) < 0.) {
-      Isign[0][0] = -1.;
+#ifdef VISP_HAVE_OPENMP
+    if (nbThread == 1) {
+      gradientFilterXMonothread(I, GIx, filter, p_mask);
     }
     else {
-      Isign[0][0] = 1.;
+      gradientFilterXMultithread(I, GIx, filter, nbThread, p_mask);
     }
-
-    // Computation for the rest of the first row
-    for (unsigned int c = 1; c < cStop; ++c) {
-      if (vpColVector::dotProd((I[0][c + 1] - I[0][c]), (I[0][c] - I[0][c - 1])) < 0.) {
-        // Inverting sign when cosine distance is negative
-        Isign[0][c] = -1. * Isign[0][c - 1];
-      }
-      else {
-        Isign[0][c] = Isign[0][c - 1];
-      }
-    }
-
-    // Computation of the rest of the image
-    for (unsigned int r = 1; r < rStop; ++r) {
-      // Computation for I[r][0]
-      if (vpColVector::dotProd((I[r][1] - I[r][0]), I[r][0].toColVector()) < 0.) {
-        Isign[r][0] = -1.;
-      }
-      else {
-        Isign[r][0] = 1.;
-      }
-      if (checkBooleanPatch(p_mask, r, 0, nbRows, nbCols)) {
-        IabsDiff[r][0] = vpHSV<ArithmeticType, useFullScale>::template mahalanobisDistance<double>(I[r][0], I[r][1]);
-      }
-
-        // Computation for all the other columns
-      for (unsigned int c = 1; c < cStop; ++c) {
-        // if (checkBooleanPatch(p_mask, r, c, nbRows, nbCols)) {
-        //   // Of the absolute value of the distance
-        //   IabsDiff[r][c] = vpHSV<ArithmeticType, useFullScale>::template mahalanobisDistance<double>(I[r][c], I[r][c + 1]);
-        // }
-        // Of the sign
-        if (vpColVector::dotProd((I[r][c + 1] - I[r][c]), (I[r][c] - I[r][c - 1])) < 0.) {
-          // Inverting sign when cosine distance is negative
-          Isign[r][c] = -1. * Isign[r][c - 1];
-          if (checkBooleanPatch(p_mask, r, c, nbRows, nbCols)) {
-            // Of the absolute value of the distance
-            IabsDiff[r][c] = vpHSV<ArithmeticType, useFullScale>::template mahalanobisDistance<double>(I[r][c], I[r][c + 1]) - vpHSV<ArithmeticType, useFullScale>::template mahalanobisDistance<double>(I[r][c - 1], I[r][c]);
-          }
-        }
-        else {
-          Isign[r][c] = Isign[r][c - 1];
-          if (checkBooleanPatch(p_mask, r, c, nbRows, nbCols)) {
-            // Of the absolute value of the distance
-            IabsDiff[r][c] = vpHSV<ArithmeticType, useFullScale>::template mahalanobisDistance<double>(I[r][c - 1], I[r][c + 1]);
-          }
-        }
-      }
-    }
-
-    for (unsigned int r = 1; r < rStop; ++r) {
-      for (unsigned int c = 1; c < cStop; ++c) {
-        if (checkBooleanMask(p_mask, r, c)) {
-          GIx[r][c] = 0.;
-          for (int dr = -1; dr <= 1; ++dr) {
-            // GIx[r][c] += filter[dr + 1] * (Isign[r + dr][c - 1] * IabsDiff[r + dr][c - 1] + Isign[r + dr][c] * IabsDiff[r + dr][c]);
-            GIx[r][c] += filter[dr + 1] * Isign[r + dr][c] * IabsDiff[r + dr][c];
-          }
-        }
-      }
-    }
+#else
+    gradientFilterXMonothread(I, GIx, filter, p_mask);
+#endif
   }
 
   // Gradient along Y
@@ -2195,8 +2108,8 @@ public:
   static void gradientFilterY(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpImage<FilterType> &GIy, const int &nbThread, const vpImage<bool> *p_mask, const vpImageFilter::vpCannyFilteringAndGradientType &type)
   {
     const unsigned int nbRows = I.getRows(), nbCols = I.getCols();
-    std::vector<double> filter(3);
-    double scale;
+    std::vector<FilterType> filter(3);
+    FilterType scale;
     switch (type) {
     case vpImageFilter::CANNY_COUNT_FILTERING:
       // Prewitt case
@@ -2218,87 +2131,16 @@ public:
       filter[i] = filter[i] / scale;
     }
 
-    const unsigned int rStop = nbRows - 1, cStop = nbCols - 1;
-    vpImage<double> Isign(nbRows, nbCols), IabsDiff(nbRows, nbCols);
-
-    auto checkBooleanPatch = [](const vpImage<bool> *p_mask, const unsigned int &r, const unsigned int &c, const unsigned int &h, const unsigned int &w)
-      {
-        if (!p_mask) {
-          return true;
-        }
-
-        bool hasToCompute = (*p_mask)[r][c];
-        if (c < w - 1) { // We do not compute gradient on the last column
-          hasToCompute |= (*p_mask)[r][c + 1];
-          if (r < h - 1) { // We do not compute gradient on the last row
-            hasToCompute |= (*p_mask)[r + 1][c + 1];
-          }
-        }
-
-        if (r < h - 1) { // We do not compute gradient on the last row
-          hasToCompute |= (*p_mask)[r + 1][c];
-        }
-
-        if (c > 1) { // We do not compute gradient on the first column
-          hasToCompute |= (*p_mask)[r][c - 1];
-          if (r < h - 1) { // We do not compute gradient on the last row
-            hasToCompute |= (*p_mask)[r + 1][c - 1];
-          }
-        }
-        return hasToCompute;
-      };
-
-    // Computation for the first row
-    for (unsigned int c = 0; c < nbCols; ++c) {
-      if (checkBooleanPatch(p_mask, 0, c, nbRows, nbCols)) {
-        IabsDiff[0][c] = vpHSV<ArithmeticType, useFullScale>::template mahalanobisDistance<double>(I[0][c], I[1][c]);
-      }
-      if (vpColVector::dotProd((I[1][c] - I[0][c]), I[0][c].toColVector()) < 0.) {
-        // Inverting sign when cosine distance is negative
-        Isign[0][c] = -1.;
-      }
-      else {
-        Isign[0][c] = 1.;
-      }
+#ifdef VISP_HAVE_OPENMP
+    if (nbThread == 1) {
+      gradientFilterYMonothread(I, GIy, filter, p_mask);
     }
-
-    // Computation for the rest of the image of d and sign
-    for (unsigned int r = 1; r < rStop; ++r) {
-      for (unsigned int c = 0; c < nbCols; ++c) {
-        // Of the absolute value of the distance
-        // if (checkBooleanPatch(p_mask, r, c, nbRows, nbCols)) {
-        //   IabsDiff[r][c] = vpHSV<ArithmeticType, useFullScale>::template mahalanobisDistance<double>(I[r][c], I[r + 1][c]);
-        // }
-        // Of the sign
-        if (vpColVector::dotProd((I[r +1][c] - I[r][c]), (I[r][c] - I[r - 1][c])) < 0.) {
-          // Inverting sign when cosine distance is negative
-          Isign[r][c] = -1. * Isign[r - 1][c];
-          // Of the absolute value of the distance
-          if (checkBooleanPatch(p_mask, r, c, nbRows, nbCols)) {
-            IabsDiff[r][c] = vpHSV<ArithmeticType, useFullScale>::template mahalanobisDistance<double>(I[r][c], I[r + 1][c]) - vpHSV<ArithmeticType, useFullScale>::template mahalanobisDistance<double>(I[r - 1][c], I[r][c]);
-          }
-        }
-        else {
-          Isign[r][c] = Isign[r - 1][c];
-          if (checkBooleanPatch(p_mask, r, c, nbRows, nbCols)) {
-            IabsDiff[r][c] = vpHSV<ArithmeticType, useFullScale>::template mahalanobisDistance<double>(I[r - 1][c], I[r + 1][c]);
-          }
-        }
-      }
+    else {
+      gradientFilterYMultithread(I, GIy, filter, nbThread, p_mask);
     }
-
-    // Computation of the gradient
-    for (unsigned int r = 1; r < rStop; ++r) {
-      for (unsigned int c = 1; c < cStop; ++c) {
-        if (checkBooleanMask(p_mask, r, c)) {
-          GIy[r][c] = 0.;
-          for (int dc = -1; dc <= 1; ++dc) {
-            // GIy[r][c] += filter[dc + 1] * (Isign[r - 1][c + dc] * IabsDiff[r - 1][c + dc] + Isign[r][c + dc] * IabsDiff[r][c + dc]);
-            GIy[r][c] += filter[dc + 1] * Isign[r][c + dc] * IabsDiff[r][c + dc];
-          }
-        }
-      }
-    }
+#else
+    gradientFilterYMonothread(I, GIy, filter, p_mask);
+#endif
   }
 #endif
 
@@ -2554,33 +2396,30 @@ private:
   )
   {
     const unsigned int nbCols = I.getCols();
-    vpColVector diff(3);
+    vpColVector diffVector(3);
 
     // Computing the difference and sign for row 0 column 0
     vpColVector diffPrevRow0, diffPrevRow1;
-    bool isPositivePrevRow0, isPositivePrevRow1;
-    Idiff.bitmap[0] = vpHSV<HSVType, useFullScale>::template mahalanobisDistance<OutputType>(I.bitmap[0], I.bitmap[1], diff);
+    bool isPositiveRow0, isPositiveRow1;
+    Idiff.bitmap[0] = vpHSV<HSVType, useFullScale>::template mahalanobisDistance<OutputType>(I.bitmap[0], I.bitmap[1], diffVector);
     vpColVector current = I.bitmap[0].toColVector();
-    isPositivePrevRow0 = (vpColVector::dotProd(diff, current) >= 0.);
-    diffPrevRow0 = diff;
+    isPositiveRow0 = (vpColVector::dotProd(diffVector, current) >= 0.);
+    diffPrevRow0 = diffVector;
 
     // Computing the difference and sign for row 1 column 0
-    Idiff.bitmap[nbCols] = vpHSV<HSVType, useFullScale>::template mahalanobisDistance<OutputType>(I.bitmap[nbCols], I.bitmap[nbCols + 1], diff);
+    Idiff.bitmap[nbCols] = vpHSV<HSVType, useFullScale>::template mahalanobisDistance<OutputType>(I.bitmap[nbCols], I.bitmap[nbCols + 1], diffVector);
     current = I.bitmap[nbCols].toColVector();
-    isPositivePrevRow1 = (vpColVector::dotProd(diff, current) >= 0.);
-    diffPrevRow1 = diff;
+    isPositiveRow1 = (vpColVector::dotProd(diffVector, current) >= 0.);
+    diffPrevRow1 = diffVector;
 
     for (unsigned int iter = 1; iter < nbCols - 1; ++iter) {
       // Computing the difference and sign for row 0
-      OutputType distanceRow0 = vpHSV<HSVType, useFullScale>::template mahalanobisDistance<OutputType>(I.bitmap[iter], I.bitmap[iter + 1], diff);
-      if (vpColVector::dotProd(diff, diffPrevRow0) < 0.) {
-        // We change the sign of the difference only if the cosine distance is negative
-        isPositivePrevRow0 = !isPositivePrevRow0;
-      }
-      diffPrevRow0 = diff;
+      OutputType distanceRow0 = vpHSV<HSVType, useFullScale>::template mahalanobisDistance<OutputType>(I.bitmap[iter], I.bitmap[iter + 1], diffVector);
+      isPositiveRow0 = (vpColVector::dotProd(diffVector, diffPrevRow0) >= 0.);
+      diffPrevRow0 = diffVector;
 
       // Assigning the signed distance for the row 0
-      if (isPositivePrevRow0) {
+      if (isPositiveRow0) {
         Idiff.bitmap[iter] = distanceRow0;
       }
       else {
@@ -2588,15 +2427,12 @@ private:
       }
 
       // Computing the difference and sign for row 1
-      OutputType distanceRow1 = vpHSV<HSVType, useFullScale>::template mahalanobisDistance<OutputType>(I.bitmap[nbCols + iter], I.bitmap[nbCols + iter + 1], diff);
-      if (vpColVector::dotProd(diff, diffPrevRow1) < 0.) {
-        // We change the sign of the difference only if the cosine distance is negative
-        isPositivePrevRow1 = !isPositivePrevRow1;
-      }
-      diffPrevRow1 = diff;
+      OutputType distanceRow1 = vpHSV<HSVType, useFullScale>::template mahalanobisDistance<OutputType>(I.bitmap[nbCols + iter], I.bitmap[nbCols + iter + 1], diffVector);
+      isPositiveRow1 = (vpColVector::dotProd(diffVector, diffPrevRow1) >= 0.);
+      diffPrevRow1 = diffVector;
 
       // Assigning the signed distance for the row 1
-      if (isPositivePrevRow1) {
+      if (isPositiveRow1) {
         Idiff.bitmap[nbCols + iter] = distanceRow1;
       }
       else {
@@ -2648,33 +2484,34 @@ private:
     const unsigned int resetCounter = nbCols - 1;
     const unsigned int stopIter = size - (nbCols + 1);
     unsigned int counter = resetCounter, idCol = 0;
-    vpColVector diff(3), diffPrev(3);
-    bool isPrevPositive = true;
+    vpColVector diffVector(3), diffVectorPrev(3);
+    bool isProdScalPositive = true;
     for (unsigned int iter = nbCols; iter < stopIter; ++iter) {
+      isProdScalPositive = true;
       if (counter) {
         // Computing the amplitude of the difference
         OutputType futureDiff = 0.;
         if (checkBooleanPatch(p_mask, iter + offsetIdiff, idCol, nbRows, nbCols)) {
-          futureDiff = vpHSV<HSVType, useFullScale>::template mahalanobisDistance<OutputType>(I.bitmap[iter + offsetIdiff], I.bitmap[iter + nbCols +1], diff);
+          futureDiff = vpHSV<HSVType, useFullScale>::template mahalanobisDistance<OutputType>(I.bitmap[iter + offsetIdiff], I.bitmap[iter + nbCols +1], diffVector);
         }
         else {
-          diff = I.bitmap[iter + nbCols +1] - I.bitmap[iter + offsetIdiff];
+          diffVector = I.bitmap[iter + nbCols +1] - I.bitmap[iter + offsetIdiff];
         }
         if (idCol) {
-          if (vpColVector::dotProd(diff, diffPrev) < 0.) {
+          if (vpColVector::dotProd(diffVector, diffVectorPrev) < 0.) {
             // We change the sign of the difference only if the cosine distance is negative
-            isPrevPositive = !isPrevPositive;
+            isProdScalPositive = false;
           }
         }
         else {
           vpColVector colFirstCol = I.bitmap[iter + offsetIdiff].toColVector();
           // The first sign depends on the positiveness of the cosine distance between the difference and first pixel of a row
-          isPrevPositive = (vpColVector::dotProd(diff, colFirstCol) >= 0.);
+          isProdScalPositive = (vpColVector::dotProd(diffVector, colFirstCol) >= 0.);
         }
-        diffPrev = diff;
+        diffVectorPrev = diffVector;
 
         // The sign of the difference is deduced by the sign of the cosine distance between the successive difference vectors
-        if (isPrevPositive) {
+        if (isProdScalPositive) {
           Idiff.bitmap[iter + offsetIdiff] = futureDiff;
         }
         else {
@@ -2711,43 +2548,37 @@ private:
 
   template <typename HSVType, bool useFullScale, typename OutputType>
   static typename std::enable_if<std::is_arithmetic<OutputType>::value, void>::type initGradientFilterDifferenceImageY(
-    const vpImage<vpHSV<HSVType, useFullScale>> &I, vpImage<OutputType> &Idiff, std::vector<bool> &isPrevRowPositive,
+    const vpImage<vpHSV<HSVType, useFullScale>> &I, vpImage<OutputType> &Idiff,
     std::vector<vpColVector> &diffPrevRow
   )
   {
     const unsigned int nbCols = I.getCols();
-    vpColVector diff(3), diff0(3); // Difference vector for I[0][0]
+    vpColVector diffVector(3), diffVectorI00(3); // Difference vector for I[0][0]
     // Computing the sign and distance for the first row
     for (unsigned int iter = 0; iter < nbCols; ++iter) {
-      OutputType distance = vpHSV<HSVType, useFullScale>::template mahalanobisDistance<OutputType>(I.bitmap[iter], I.bitmap[iter + nbCols], diff);
-      diffPrevRow[iter] = diff;
+      OutputType distance = vpHSV<HSVType, useFullScale>::template mahalanobisDistance<OutputType>(I.bitmap[iter], I.bitmap[iter + nbCols], diffVector);
+      diffPrevRow[iter] = diffVector;
       vpColVector current = I.bitmap[iter].toColVector();
       // Checking the signeness of the distance using the sign of the cosine distance
-      isPrevRowPositive[iter] = (vpColVector::dotProd(diff, current) >= 0.);
       // We set the signed distance in the difference map
-      if (isPrevRowPositive[iter]) {
+      if (vpColVector::dotProd(diffVector, current) >= 0.) {
         Idiff.bitmap[iter] = distance;
       }
       else {
         Idiff.bitmap[iter] = -distance;
       }
       if (iter == 0) {
-        diff0 = diff;
+        diffVectorI00 = diffVector;
       }
     }
     // Computing the distance and sign for I[1][0]
-    OutputType distance = vpHSV<HSVType, useFullScale>::template mahalanobisDistance<OutputType>(I.bitmap[nbCols], I.bitmap[nbCols + nbCols], diff);
-    diffPrevRow[0] = diff;
-    if (vpColVector::dotProd(diff, diff0) < 0.) {
-      // If the cosine distance changes sign, we invert the sign of the difference map
-      isPrevRowPositive[0] = !isPrevRowPositive[0];
-    }
-    // We set the signed distance in the difference map
-    if (isPrevRowPositive[0]) {
-      Idiff.bitmap[nbCols] = distance;
+    OutputType distance = vpHSV<HSVType, useFullScale>::template mahalanobisDistance<OutputType>(I.bitmap[nbCols], I.bitmap[nbCols + nbCols], diffVector);
+    diffPrevRow[0] = diffVector;
+    if (vpColVector::dotProd(diffVector, diffVectorI00) < 0.) {
+      Idiff.bitmap[nbCols] = -distance;
     }
     else {
-      Idiff.bitmap[nbCols] = -distance;
+      Idiff.bitmap[nbCols] = distance;
     }
   }
 
@@ -2802,34 +2633,32 @@ private:
       };
 
     vpImage<OutputType> Idiff(nbRows, nbCols);
-    std::vector<bool> isPrevRowPositive(nbCols, true);
+    bool isProdScalPositive = true;
     std::vector<vpColVector> diffRowPrev(nbCols);
-    initGradientFilterDifferenceImageY(I, Idiff, isPrevRowPositive, diffRowPrev);
+    initGradientFilterDifferenceImageY(I, Idiff, diffRowPrev);
     const unsigned int resetCounter = nbCols - 1;
     const unsigned int stopIter = size - (nbCols + 1);
     unsigned int counter = resetCounter, iterSign = offsetIdiff;
-    vpColVector diff(3);
+    vpColVector diffVector(3);
     for (unsigned int iter = nbCols; iter < stopIter; ++iter) {
       // Computing the amplitude of the difference
       OutputType futureDiff = 0.;
 
       if (checkBooleanPatch(p_mask, iter + offsetIdiff, iterSign, resetCounter, nbRows, nbCols)) {
-        futureDiff = vpHSV<HSVType, useFullScale>::template mahalanobisDistance<OutputType>(I.bitmap[iter + offsetIdiff], I.bitmap[iter + nbCols +1], diff);
+        futureDiff = vpHSV<HSVType, useFullScale>::template mahalanobisDistance<OutputType>(I.bitmap[iter + offsetIdiff], I.bitmap[iter + nbCols +1], diffVector);
       }
       else {
-        diff = I.bitmap[iter + nbCols +1] - I.bitmap[iter + offsetIdiff];
+        diffVector = I.bitmap[iter + nbCols +1] - I.bitmap[iter + offsetIdiff];
       }
 
       // Computing the sign of the difference from the sign of the cosine distance
-      if (vpColVector::dotProd(diff, diffRowPrev[iterSign]) < 0.) {
-        isPrevRowPositive[iterSign] = !isPrevRowPositive[iterSign]; // Changing sign only if the cosine distance is negative
-      }
+      isProdScalPositive = (vpColVector::dotProd(diffVector, diffRowPrev[iterSign]) >= 0.);
 
       // Saving the difference vector
-      diffRowPrev[iterSign] = diff;
+      diffRowPrev[iterSign] = diffVector;
 
       // The sign of the difference is deduced by the sign of the cosine distance between the successive difference vectors
-      if (isPrevRowPositive[iterSign]) {
+      if (isProdScalPositive) {
         Idiff.bitmap[iter + offsetIdiff] = futureDiff;
       }
       else {
