@@ -169,10 +169,11 @@ private:
       vpRGBf standardDev;
     };
 
-    inline void update(const vpHomogeneousMatrix &cTo, const vpHomogeneousMatrix &cprevTo, const vpCameraParameters &cam)
+    inline void update(const vpHomogeneousMatrix &cTo, const vpHomogeneousMatrix &cprevTo, const vpHomogeneousMatrix &renderTo, const vpCameraParameters &cam)
     {
       fastProjection(cTo, cam, currX, projCurr, projCurrPx);
       fastProjection(cprevTo, cam, prevX, projPrev, projPrevPx);
+      fastProjection(renderTo, cam, renderX, projRender, projRenderPx);
     }
 
     inline double squaredDist(const std::array<double, 3> &p) const
@@ -205,9 +206,9 @@ private:
 
     std::array<double, 3> X; // Point position in object frame
     ColorStatistics stats; //! Color statistics associated to this point
-    std::array<double, 3> currX, prevX; //! Point position in the current and previous camera frames
-    std::array<double, 2> projCurr, projPrev; // Projection in camera normalized coordinates of the point for the current and previous camera poses.
-    std::array<int, 2> projCurrPx, projPrevPx; // Projection in pixels of the point for the current and previous camera poses.
+    std::array<double, 3> currX, prevX, renderX; //! Point position in the current and previous camera frames
+    std::array<double, 2> projCurr, projPrev, projRender; // Projection in camera normalized coordinates of the point for the current and previous camera poses.
+    std::array<int, 2> projCurrPx, projPrevPx, projRenderPx; // Projection in pixels of the point for the current and previous camera poses.
     bool visible; // Whether the point is visible
   };
 

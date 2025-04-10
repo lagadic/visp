@@ -225,6 +225,7 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
     m_previousFrame.IRGB = input.IRGB;
   }
 
+  m_cMoPrev = m_cMo;
   timer.startTimer();
   if (m_mask) {
     m_mask->updateMask(input, m_previousFrame, input.mask);
@@ -326,7 +327,7 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
     id += 1;
   }
 
-  m_cMoPrev = m_cMo;
+
   double bestError = std::numeric_limits<double>::max();
   vpHomogeneousMatrix m_cMoPrevIter = m_cMo;
   vpHomogeneousMatrix best_cMo = m_cMo;
