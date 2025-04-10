@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -175,26 +175,26 @@ void vpRobust::MEstimator(const vpRobustEstimatorType method, const vpColVector 
     psiHuber(m_mad, m_normres, weights);
     break;
   }
-  default:
-    // TODO
-    std::cout << "MEstimator: method not recognised - id = " << method << std::endl;
+  default: {
+    throw(vpException(vpException::fatalError, "Unsupported robust estimator type in vpRobust::MEstimator()"));
+  }
   }
 }
 
 /*!
   Calculation of Tukey's influence function.
 
-  \param sigma : sigma parameters.
-  \param x : normalized residue vector.
-  \param weights : weight vector.
+  \param[in] sigma : Sigma parameter.
+  \param[in] x : Normalized residue vector.
+  \param[out] weights : Weight vector.
 */
 
-void vpRobust::psiTukey(double sig, const vpColVector &x, vpColVector &weights)
+void vpRobust::psiTukey(double sigma, const vpColVector &x, vpColVector &weights)
 {
   unsigned int n_data = x.getRows();
-  double C = sig * 4.6851;
+  double C = sigma * 4.6851;
 
-  // Here we consider that sig cannot be equal to 0
+  // Here we consider that sigma cannot be equal to 0
   for (unsigned int i = 0; i < n_data; ++i) {
     double xi = x[i] / C;
     xi *= xi;
@@ -213,13 +213,13 @@ void vpRobust::psiTukey(double sig, const vpColVector &x, vpColVector &weights)
 /*!
   Calculation of Tukey's influence function.
 
-  \param sigma : sigma parameters.
-  \param x : normalized residue vector.
-  \param weights : weight vector.
+  \param[in] sigma : Sigma parameter.
+  \param[in] x : Normalized residue vector.
+  \param[out] weights : Weight vector.
 */
-void vpRobust::psiHuber(double sig, const vpColVector &x, vpColVector &weights)
+void vpRobust::psiHuber(double sigma, const vpColVector &x, vpColVector &weights)
 {
-  double C = sig * 1.2107;
+  double C = sigma * 1.2107;
   unsigned int n_data = x.getRows();
 
   for (unsigned int i = 0; i < n_data; ++i) {
@@ -236,15 +236,15 @@ void vpRobust::psiHuber(double sig, const vpColVector &x, vpColVector &weights)
 /*!
   Calculation of Cauchy's influence function.
 
-  \param sigma : sigma parameter.
-  \param x : normalized residue vector.
-  \param weights : weight vector.
+  \param[in] sigma : Sigma parameter.
+  \param[in] x : Normalized residue vector.
+  \param[out] weights : Weight vector.
 */
 
-void vpRobust::psiCauchy(double sig, const vpColVector &x, vpColVector &weights)
+void vpRobust::psiCauchy(double sigma, const vpColVector &x, vpColVector &weights)
 {
   unsigned int n_data = x.getRows();
-  double C = sig * 2.3849;
+  double C = sigma * 2.3849;
 
   // Calculate Cauchy's equation
   for (unsigned int i = 0; i < n_data; ++i) {
@@ -360,7 +360,10 @@ void vpRobust::MEstimator(const vpRobustEstimatorType method, const vpColVector 
     psiHuber(m_mad, all_normres, weights);
     break;
   }
-  };
+  default: {
+    throw(vpException(vpException::fatalError, "Unsupported robust estimator type in vpRobust::MEstimator()"));
+  }
+  }
 }
 
 double vpRobust::computeNormalizedMedian(vpColVector &all_normres, const vpColVector &residues,
@@ -395,7 +398,7 @@ double vpRobust::computeNormalizedMedian(vpColVector &all_normres, const vpColVe
   // Be careful to not use the rejected residues for the
   // calculation.
 
-  unsigned int ind_med = (unsigned int)(ceil(n_data / 2.0)) - 1;
+  unsigned int ind_med = static_cast<unsigned int>(ceil(n_data / 2.0)) - 1;
   med = select(m_sorted_residues, 0, n_data - 1, ind_med);
 
   // Normalize residues
@@ -427,8 +430,8 @@ vpColVector vpRobust::simultMEstimator(vpColVector &residues)
   vpColVector w(n_data);
 
   // Calculate Median
-  unsigned int ind_med = (unsigned int)(ceil(n_data / 2.0)) - 1;
-  med = select(residues, 0, n_data - 1, ind_med /*(int)n_data/2*/);
+  unsigned int ind_med = static_cast<unsigned int>(ceil(n_data / 2.0)) - 1;
+  med = select(residues, 0, n_data - 1, ind_med);
 
   // Normalize residues
   for (unsigned int i = 0; i < n_data; ++i)
@@ -531,7 +534,10 @@ double vpRobust::constrainedChi(vpRobustEstimatorType method, double x)
     return constrainedChiCauchy(x);
   case HUBER:
     return constrainedChiHuber(x);
-  };
+  default: {
+    throw(vpException(vpException::fatalError, "Unsupported robust estimator type in vpRobust::constrainedChi()"));
+  }
+  }
 
   return -1;
 }

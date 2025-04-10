@@ -44,7 +44,7 @@ BEGIN_VISP_NAMESPACE
  * \param name : the feature's name, usually the string naming it's class. Each
  * name must be unique
  */
-void vpFeatureMomentDatabase::add(vpFeatureMoment &featureMoment, const std::string &name)
+  void vpFeatureMomentDatabase::add(vpFeatureMoment &featureMoment, const std::string &name)
 {
   featureMomentsDataBase.insert(std::pair<const std::string, vpFeatureMoment *>(name, &featureMoment));
 }
@@ -82,7 +82,7 @@ void vpFeatureMomentDatabase::updateAll(double A, double B, double C)
     values.push_back((*itr).second);
   }
 #pragma omp parallel for shared(A, B, C)
-  for (int i = 0; i < (int)values.size(); i++) {
+  for (int i = 0; i < static_cast<int>(values.size()); i++) {
     unsigned int i_ = static_cast<unsigned int>(i);
     values[i_]->update(A, B, C);
   }

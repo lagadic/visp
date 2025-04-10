@@ -116,7 +116,7 @@ inline Model::Model(const std::string &model_filename)
 
     if (data_curr_line == 0) {
       // Get indentation level which is common to all lines
-      data_line_start_pos = (unsigned int)line.find("[") + 1;
+      data_line_start_pos = static_cast<unsigned int>(line.find("[")) + 1;
     }
 
     try {

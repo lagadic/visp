@@ -77,7 +77,7 @@ void vpMbEdgeKltTracker::init(const vpImage<unsigned char> &I)
 
   vpMbEdgeTracker::resetMovingEdge();
 
-  unsigned int i = (unsigned int)scales.size();
+  unsigned int i = static_cast<unsigned int>(scales.size());
   do {
     i--;
     if (scales[i]) {
@@ -113,7 +113,7 @@ void vpMbEdgeKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomoge
 
   initPyramid(I, Ipyramid);
 
-  unsigned int i = (unsigned int)scales.size();
+  unsigned int i = static_cast<unsigned int>(scales.size());
   do {
     i--;
     if (scales[i]) {
@@ -150,7 +150,7 @@ void vpMbEdgeKltTracker::setPose(const vpImage<vpRGBa> &I_color, const vpHomogen
 
   initPyramid(m_I, Ipyramid);
 
-  unsigned int i = (unsigned int)scales.size();
+  unsigned int i = static_cast<unsigned int>(scales.size());
   do {
     i--;
     if (scales[i]) {
@@ -339,13 +339,13 @@ void vpMbEdgeKltTracker::loadConfigFile(const std::string &configFile, bool verb
   xmlp.getEdgeMe(meParser);
   vpMbEdgeTracker::setMovingEdge(meParser);
 
-  tracker.setMaxFeatures((int)xmlp.getKltMaxFeatures());
-  tracker.setWindowSize((int)xmlp.getKltWindowSize());
+  tracker.setMaxFeatures(static_cast<int>(xmlp.getKltMaxFeatures()));
+  tracker.setWindowSize(static_cast<int>(xmlp.getKltWindowSize()));
   tracker.setQuality(xmlp.getKltQuality());
   tracker.setMinDistance(xmlp.getKltMinDistance());
   tracker.setHarrisFreeParameter(xmlp.getKltHarrisParam());
-  tracker.setBlockSize((int)xmlp.getKltBlockSize());
-  tracker.setPyramidLevels((int)xmlp.getKltPyramidLevels());
+  tracker.setBlockSize(static_cast<int>(xmlp.getKltBlockSize()));
+  tracker.setPyramidLevels(static_cast<int>(xmlp.getKltPyramidLevels()));
   maskBorder = xmlp.getKltMaskBorder();
 
   // if(useScanLine)
@@ -727,7 +727,7 @@ void vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char> &I, const unsig
 
   double mu = m_initialMu;
 
-  while (((int)((residu - residu_1) * 1e8) != 0) && (iter < m_maxIter)) {
+  while ((static_cast<int>((residu - residu_1) * 1e8) != 0) && (iter < m_maxIter)) {
     if (nbrow >= 4)
       trackSecondLoop(I, L_mbt, R_mbt, m_cMo, lvl);
 
@@ -1034,7 +1034,7 @@ unsigned int vpMbEdgeKltTracker::trackFirstLoop(const vpImage<unsigned char> &I,
       for (std::list<int>::const_iterator itindex = l->Lindex_polygon.begin(); itindex != l->Lindex_polygon.end();
         ++itindex) {
         int index = *itindex;
-        if (l->hiddenface->isAppearing((unsigned int)index)) {
+        if (l->hiddenface->isAppearing(static_cast<unsigned int>(index))) {
           fac = 0.2;
           break;
         }
@@ -1495,5 +1495,5 @@ END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_mbt.a(vpMbEdgeKltTracker.cpp.o) has
 // no symbols
-void dummy_vpMbEdgeKltTracker() { };
+void dummy_vpMbEdgeKltTracker() { }
 #endif // VISP_HAVE_OPENCV

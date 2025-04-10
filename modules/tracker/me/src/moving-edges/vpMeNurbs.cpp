@@ -94,8 +94,8 @@ static bool outOfImage(const vpImagePoint &iP, int half, int rows, int cols)
 // alpha angle)  and the corresponding convolution result.
 void findAngle(const vpImage<unsigned char> &I, const vpImagePoint &iP, vpMe *me, double &angle, double &convlt)
 {
-  int Iheight = (int)I.getHeight();
-  int Iwidth = (int)I.getWidth();
+  int Iheight = static_cast<int>(I.getHeight());
+  int Iwidth = static_cast<int>(I.getWidth());
   angle = 0.0;
   convlt = 0.0;
   for (int i = 0; i < 180; i++) {
@@ -103,19 +103,19 @@ void findAngle(const vpImage<unsigned char> &I, const vpImagePoint &iP, vpMe *me
     unsigned int half;
     half = (me->getMaskSize() - 1) >> 1;
 
-    if (outOfImage(iP, (int)half + me->getStrip(), Iheight, Iwidth)) {
+    if (outOfImage(iP, static_cast<int>(half) + me->getStrip(), Iheight, Iwidth)) {
       conv = 0.0;
     }
     else {
       int index_mask;
 
       if (me->getAngleStep() != 0)
-        index_mask = (int)(i / (double)me->getAngleStep());
+        index_mask = static_cast<int>(i / (double)me->getAngleStep());
       else
         throw(vpException(vpException::divideByZeroError, "angle step = 0"));
 
-      unsigned int ihalf = (unsigned int)(iP.get_i() - half);
-      unsigned int jhalf = (unsigned int)(iP.get_j() - half);
+      unsigned int ihalf = static_cast<unsigned int>(iP.get_i() - half);
+      unsigned int jhalf = static_cast<unsigned int>(iP.get_j() - half);
       unsigned int a;
       unsigned int b;
       for (a = 0; a < me->getMaskSize(); a++) {
@@ -236,8 +236,8 @@ void vpMeNurbs::initTracking(const vpImage<unsigned char> &I, const std::list<vp
 void vpMeNurbs::sample(const vpImage<unsigned char> &I, bool doNotTrack)
 {
   (void)doNotTrack;
-  int rows = (int)I.getHeight();
-  int cols = (int)I.getWidth();
+  int rows = static_cast<int>(I.getHeight());
+  int cols = static_cast<int>(I.getWidth());
   double step = 1.0 / (double)m_me->getPointsToTrack();
 
   // Delete old list
@@ -320,8 +320,8 @@ void vpMeNurbs::updateDelta()
 
 void vpMeNurbs::seekExtremities(const vpImage<unsigned char> &I)
 {
-  int rows = (int)I.getHeight();
-  int cols = (int)I.getWidth();
+  int rows = static_cast<int>(I.getHeight());
+  int cols = static_cast<int>(I.getWidth());
 
   vpImagePoint *begin = nullptr;
   vpImagePoint *end = nullptr;
@@ -355,9 +355,9 @@ void vpMeNurbs::seekExtremities(const vpImage<unsigned char> &I)
     si = si * vpMath::sign(begin[1].get_i());
     for (int i = 0; i < 3; i++) {
       P.m_ifloat = P.m_ifloat - si * sample_step;
-      P.m_i = (int)P.m_ifloat;
+      P.m_i = static_cast<int>(P.m_ifloat);
       P.m_jfloat = P.m_jfloat - co * sample_step;
-      P.m_j = (int)P.m_jfloat;
+      P.m_j = static_cast<int>(P.m_jfloat);
       pt.set_ij(P.m_ifloat, P.m_jfloat);
       if (vpImagePoint::distance(end[0], pt) < threshold)
         break;
@@ -394,9 +394,9 @@ void vpMeNurbs::seekExtremities(const vpImage<unsigned char> &I)
     si = si * vpMath::sign(end[1].get_i());
     for (int i = 0; i < 3; i++) {
       P.m_ifloat = P.m_ifloat + si * sample_step;
-      P.m_i = (int)P.m_ifloat;
+      P.m_i = static_cast<int>(P.m_ifloat);
       P.m_jfloat = P.m_jfloat + co * sample_step;
-      P.m_j = (int)P.m_jfloat;
+      P.m_j = static_cast<int>(P.m_jfloat);
       pt.set_ij(P.m_ifloat, P.m_jfloat);
       if (vpImagePoint::distance(begin[0], pt) < threshold)
         break;
@@ -702,11 +702,11 @@ void vpMeNurbs::reSample(const vpImage<unsigned char> &I)
 
 void vpMeNurbs::localReSample(const vpImage<unsigned char> &I)
 {
-  int rows = (int)I.getHeight();
-  int cols = (int)I.getWidth();
+  int rows = static_cast<int>(I.getHeight());
+  int cols = static_cast<int>(I.getWidth());
   vpImagePoint *iP = nullptr;
 
-  int n = (int)numberOfSignal();
+  int n = static_cast<int>(numberOfSignal());
 
   std::list<vpMeSite>::iterator it = m_meList.begin();
   std::list<vpMeSite>::iterator itNext = m_meList.begin();
@@ -974,7 +974,7 @@ bool vpMeNurbs::hasGoodLevel(const vpImage<unsigned char> &I, const vpImagePoint
   if (!isInImage(I, iP))
     return false;
 
-  if (I((unsigned int)vpMath::round(iP.get_i()), (unsigned int)vpMath::round(iP.get_j())) > 0) {
+  if (I(static_cast<unsigned int>(vpMath::round(iP.get_i())), static_cast<unsigned int>(vpMath::round(iP.get_j()))) > 0) {
     return true;
   }
   else {

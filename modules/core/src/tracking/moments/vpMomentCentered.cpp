@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,11 +29,7 @@
  *
  * Description:
  * Centered moment descriptor
- *
- * Authors:
- * Filip Novotny
- *
-*****************************************************************************/
+ */
 
 #include <cassert>
 #include <exception>
@@ -79,11 +74,11 @@ void vpMomentCentered::compute()
       unsigned int c = order * j + i;
       values[c] = 0;
       for (unsigned int k = 0; k <= i; k++) {
-        double Xg_i_k = pow(-momentGravity.get()[0], (int)(i - k));
+        double Xg_i_k = pow(-momentGravity.get()[0], static_cast<int>(i - k));
         double comb_i_k = static_cast<double>(vpMath::comb(i, k));
         for (unsigned int l = 0; l <= j; l++) {
           values[c] += static_cast<double>(comb_i_k * vpMath::comb(j, l) * Xg_i_k *
-                                           pow(-momentGravity.get()[1], (int)(j - l)) * getObject().get(k, l));
+                                           pow(-momentGravity.get()[1], static_cast<int>(j - l)) * getObject().get(k, l));
         }
       }
     }
@@ -97,9 +92,9 @@ vpMomentCentered::vpMomentCentered() : vpMoment() { }
 
 /*!
   Gets the desired moment using indexes.
-  \param i : first index of the centered moment.
-  \param j : second index of the centered moment.
-  \return \f$\mu_{ij}\f$ moment.
+  \param i : First index of the centered moment.
+  \param j : Second index of the centered moment.
+  \return Moment \f$\mu_{ij}\f$.
 */
 double vpMomentCentered::get(unsigned int i, unsigned int j) const
 {
@@ -114,7 +109,7 @@ double vpMomentCentered::get(unsigned int i, unsigned int j) const
 }
 
 /*!
-Print in a readable form which looks better than output from << operator
+  Print in a readable form which looks better than output from << operator
 */
 void vpMomentCentered::printWithIndices(std::ostream &os) const
 {

@@ -84,7 +84,7 @@ void vpPose::poseVirtualVS(vpHomogeneousMatrix &cMo)
 
     vpHomogeneousMatrix cMoPrev = cMo;
     /*
-    // --comment: while((int)((residu_1 - r)*1e12) !=0)
+    // --comment: while(static_cast<int>((residu_1 - r)*1e12) !=0)
     // --comment: while(std::fabs((residu_1 - r)*1e12) >
     // --comment: std::numeric_limits < double > :: epsilon())
     */

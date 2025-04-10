@@ -57,7 +57,9 @@ BEGIN_VISP_NAMESPACE
 
 /*!
  * Project a ME site on a straight line.
- * @param[in] a,b,c : Parameters of the line
+ * @param[in] a : Parameters `a` of the line.
+ * @param[in] b : Parameters `b` of the line.
+ * @param[in] c : Parameters `c` of the line.
  * @param[in] P : ME site.
  * @param[out] iP : Coordinates of the ME site projected on the line.
  */
@@ -458,7 +460,7 @@ unsigned int vpMeLine::seekExtremities(const vpImage<unsigned char> &I)
   double dj = diffsj * sample_step / s;
 
   vpMeSite P;
-  P.init((int)id1, (int)jd1, m_delta, 0, m_sign);
+  P.init(static_cast<int>(id1), static_cast<int>(jd1), m_delta, 0, m_sign);
   P.setDisplay(m_selectDisplay);
   const double marginRatio = m_me->getThresholdMarginRatio();
 
@@ -632,11 +634,11 @@ void vpMeLine::track(const vpImage<unsigned char> &I)
 
 void vpMeLine::update_indices(double theta, int i, int j, int incr, int &i1, int &i2, int &j1, int &j2)
 {
-  i1 = (int)(i + cos(theta) * incr);
-  j1 = (int)(j + sin(theta) * incr);
+  i1 = static_cast<int>(i + cos(theta) * incr);
+  j1 = static_cast<int>(j + sin(theta) * incr);
 
-  i2 = (int)(i - cos(theta) * incr);
-  j2 = (int)(j - sin(theta) * incr);
+  i2 = static_cast<int>(i - cos(theta) * incr);
+  j2 = static_cast<int>(j - sin(theta) * incr);
 }
 
 /*!

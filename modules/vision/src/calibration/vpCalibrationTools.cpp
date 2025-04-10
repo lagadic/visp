@@ -382,7 +382,7 @@ void vpCalibration::calibVVSMulti(std::vector<vpCalibration> &table_cal, vpCamer
   std::cout.precision(10);
   unsigned int nbPoint[256];     // number of points by image
   unsigned int nbPointTotal = 0; // total number of points
-  unsigned int nbPose = (unsigned int)table_cal.size();
+  unsigned int nbPose = static_cast<unsigned int>(table_cal.size());
   unsigned int nbPose6 = 6 * nbPose;
 
   for (unsigned int i = 0; i < nbPose; i++) {
@@ -876,7 +876,7 @@ void vpCalibration::calibVVSWithDistortionMulti(std::vector<vpCalibration> &tabl
   std::cout.precision(10);
   unsigned int nbPoint[1024];    // number of points by image
   unsigned int nbPointTotal = 0; // total number of points
-  unsigned int nbPose = (unsigned int)table_cal.size();
+  unsigned int nbPose = static_cast<unsigned int>(table_cal.size());
   unsigned int nbPose6 = 6 * nbPose;
   for (unsigned int i = 0; i < nbPose; i++) {
     nbPoint[i] = table_cal[i].m_npt;
@@ -1175,7 +1175,7 @@ void vpCalibration::calibVVSWithDistortionMulti(std::vector<vpCalibration> &tabl
     // perViewError =
     table_cal[p].computeStdDeviation_dist(table_cal[p].cMo_dist, cam_est);
     // totalError += perViewError*perViewError * table_cal[p].npt;
-    // totalPoints += (int)table_cal[p].npt;
+    // totalPoints += static_cast<int>(table_cal[p].npt);
   }
   globalReprojectionError = sqrt(r / (nbPointTotal));
 

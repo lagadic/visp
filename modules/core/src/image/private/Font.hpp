@@ -103,7 +103,7 @@ template <typename T> struct Point
   Point operator<<(int shift) const;
 };
 
-inline int Round(double value) { return (int)(value + (value >= 0 ? 0.5 : -0.5)); }
+inline int Round(double value) { return static_cast<int>(value + (value >= 0 ? 0.5 : -0.5)); }
 
 template <class TD, class TS> inline TD Convert(TS src) { return (TD)src; }
 

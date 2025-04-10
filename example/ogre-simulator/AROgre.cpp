@@ -628,7 +628,7 @@ int main(int argc, const char **argv)
 
     //![Ogre initialization]
     // Create a vpAROgre object with color background
-    vpAROgreExample ogre(mcam, (unsigned int)grabber.getWidth(), (unsigned int)grabber.getHeight());
+    vpAROgreExample ogre(mcam, static_cast<unsigned int>(grabber.getWidth()), static_cast<unsigned int>(grabber.getHeight()));
     // Initialize it
     bool bufferedKeys = false, hidden = false;
     ogre.init(IC, bufferedKeys, hidden);
@@ -722,5 +722,5 @@ int main()
   std::cout << "- Install Ogre3D, configure again ViSP using cmake and build again this example" << std::endl;
 #endif
   return EXIT_SUCCESS;
-  }
+}
 #endif

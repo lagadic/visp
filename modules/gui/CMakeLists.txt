@@ -42,7 +42,7 @@ set(opt_libs_private "")
 # Display X11, GTK, GDI, D3D9. OpenCV already handled by core module
 if(USE_X11)
   # X11 is private
-  include_directories(${X11_INCLUDE_DIR})
+  include_directories(SYSTEM ${X11_INCLUDE_DIR})
   list(APPEND opt_libs_private ${X11_LIBRARIES})
   mark_as_advanced(X11_xcb_icccm_INCLUDE_PATH)
   mark_as_advanced(X11_xcb_icccm_LIB)
@@ -51,7 +51,7 @@ endif()
 
 if(USE_GTK2)
   # gtk2 is private
-  include_directories(${GTK2_INCLUDE_DIRS})
+  include_directories(SYSTEM ${GTK2_INCLUDE_DIRS})
   list(APPEND opt_libs_private ${GTK2_LIBRARIES})
 endif()
 

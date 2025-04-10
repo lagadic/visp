@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,8 +68,19 @@
 #include <dirent.h>
 #include <unistd.h>
 #elif defined(_WIN32)
-#include <direct.h>
+#include <direct.h>// Mute warning with clang-cl
+// warning : non-portable path to file '<Windows.h>'; specified path differs in case from file name on disk [-Wnonportable-system-include-path]
+#if defined(__clang__)
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wnonportable-system-include-path"
+#endif
+
 #include <windows.h>
+
+#if defined(__clang__)
+#  pragma clang diagnostic pop
+#endif
+
 #endif
 #if !defined(_WIN32)
 #ifdef __ANDROID__
@@ -125,7 +136,7 @@ BEGIN_VISP_NAMESPACE
  */
   const std::string &vpIoTools::getBuildInformation()
 {
-  static std::string build_info =
+  VP_ATTRIBUTE_NO_DESTROY static std::string build_info =
 #include "version_string.inc"
     ;
   return build_info;
@@ -856,7 +867,7 @@ bool vpIoTools::copy(const std::string &src, const std::string &dst)
     cmd << vpIoTools::path(dst);
     int ret = system(cmd.str().c_str());
     if (ret) {
-    }; // to avoid a warning
+    } // to avoid a warning
     // std::cout << cmd << " return value: " << ret << std::endl;
     return true;
 #else
@@ -893,7 +904,7 @@ bool vpIoTools::copy(const std::string &src, const std::string &dst)
     cmd << vpIoTools::path(dst);
     int ret = system(cmd.str().c_str());
     if (ret) {
-    }; // to avoid a warning
+    } // to avoid a warning
     // std::cout << cmd << " return value: " << ret << std::endl;
     return true;
 #else
@@ -958,7 +969,7 @@ bool vpIoTools::remove(const std::string &file_or_dir)
     cmd << "\"";
     int ret = system(cmd.str().c_str());
     if (ret) {
-    }; // to avoid a warning
+    } // to avoid a warning
     // std::cout << cmd << " return value: " << ret << std::endl;
     return true;
 #else

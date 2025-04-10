@@ -158,7 +158,7 @@ void vpMbDepthNormalTracker::computeVVS()
   unsigned int iter = 0;
 
   computeVVSInit();
-  unsigned int nb_features = (unsigned int)(3 * m_depthNormalListOfDesiredFeatures.size());
+  unsigned int nb_features = static_cast<unsigned int>(3 * m_depthNormalListOfDesiredFeatures.size());
 
   vpColVector error_prev(nb_features);
   vpMatrix LTL;
@@ -248,7 +248,7 @@ void vpMbDepthNormalTracker::computeVVS()
 
 void vpMbDepthNormalTracker::computeVVSInit()
 {
-  unsigned int nb_features = (unsigned int)(3 * m_depthNormalListOfDesiredFeatures.size());
+  unsigned int nb_features = static_cast<unsigned int>(3 * m_depthNormalListOfDesiredFeatures.size());
 
   m_L_depthNormal.resize(nb_features, 6, false, false);
   m_error_depthNormal.resize(nb_features, false);

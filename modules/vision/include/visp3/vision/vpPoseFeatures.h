@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -417,11 +417,16 @@ public:
    */
   virtual ~vpPoseFeatures();
 
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+  vpPoseFeatures(const vpPoseFeatures &) = default;
+  vpPoseFeatures &operator=(const vpPoseFeatures &) = default;
+#endif
+
   /*!
    * Add a point feature to the list of features to be considered in the pose
    * computation.
    *
-   * \param p : Point projection expressed as a vpPoint.
+   * \param[in] p : Point projection expressed as a vpPoint.
    */
   void addFeaturePoint(const vpPoint &p);
 
@@ -429,7 +434,7 @@ public:
    * Add a point 3D feature to the list of features to be considered in the pose
    * computation.
    *
-   * \param p : Projection expressed as a vpPoint.
+   * \param[in] p : Projection expressed as a vpPoint.
    */
   void addFeaturePoint3D(const vpPoint &p);
 
@@ -437,7 +442,7 @@ public:
    * Add a vanishing point feature to the list of features to be considered in
    * the pose computation.
    *
-   * \param p : Projection expressed as a vpPoint.
+   * \param[in] p : Projection expressed as a vpPoint.
    */
   void addFeatureVanishingPoint(const vpPoint &p);
 
@@ -454,32 +459,32 @@ public:
    * Add an ellipse feature to the list of features to be considered in the pose
    * computation.
    *
-   * \param c : Ellipse projection expressed as a vpCircle.
+   * \param[in] c : Ellipse projection expressed as a vpCircle.
    */
-  void addFeatureEllipse(const vpCircle &);
+  void addFeatureEllipse(const vpCircle &c);
 
   /*!
    * Add an ellipse feature to the list of features to be considered in the pose
    * computation.
    *
-   * \param s : Ellipse projection expressed as a vpSphere.
+   * \param[in] s : Ellipse projection expressed as a vpSphere.
    */
-  void addFeatureEllipse(const vpSphere &);
+  void addFeatureEllipse(const vpSphere &s);
 
   /*!
    * Add a line feature to the list of features to be considered in the pose
    * computation.
    *
-   * \param l : Line projection expressed as a vpLine.
+   * \param[in] l : Line projection expressed as a vpLine.
    */
-  void addFeatureLine(const vpLine &);
+  void addFeatureLine(const vpLine &l);
 
   /*!
    * Add a line feature to the list of features to be considered in the pose
    * computation.
    *
-   * \param c : Line projection expressed as a vpCylinder.
-   * \param line : Integer id that indicates which limb of the cylinder is to
+   * \param[in] c : Line projection expressed as a vpCylinder.
+   * \param[in] line : Integer id that indicates which limb of the cylinder is to
    * consider. It can be vpCylinder::line1 or vpCylinder::line2.
    */
   void addFeatureLine(const vpCylinder &, const int &line);
@@ -491,7 +496,7 @@ public:
    * \param P1 : First extremity projection.
    * \param P2 : Second extremity projection.
    */
-  void addFeatureSegment(vpPoint &, vpPoint &);
+  void addFeatureSegment(vpPoint &P1, vpPoint &P2);
 
   /*!
    * Add a specific feature for the pose computation.

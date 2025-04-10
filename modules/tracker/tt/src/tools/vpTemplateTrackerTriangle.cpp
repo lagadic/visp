@@ -42,7 +42,7 @@ BEGIN_VISP_NAMESPACE
 /*!
   Default constructor.
  */
-vpTemplateTrackerTriangle::vpTemplateTrackerTriangle()
+  vpTemplateTrackerTriangle::vpTemplateTrackerTriangle()
   : minx_temp(0), miny_temp(0), C1(), C2(), C3(), l_t(0), h_t(0), not_good(false), uvinv00(0.), uvinv01(0.),
   uvinv10(0.), uvinv11(0.), marge_triangle(0.00001), area(0)
 { }
@@ -400,8 +400,8 @@ void vpTemplateTrackerTriangle::getSize(double &w, double &h) const
  */
 void vpTemplateTrackerTriangle::getSize(int &w, int &h) const
 {
-  w = (int)l_t + 1;
-  h = (int)h_t + 1;
+  w = static_cast<int>(l_t) + 1;
+  h = static_cast<int>(h_t) + 1;
 }
 
 /*!

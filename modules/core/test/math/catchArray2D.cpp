@@ -280,6 +280,7 @@ TEST_CASE("Building array views", "[view]")
       delete[] array;
     }
   }
+
   SECTION("A view can be moved and then used")
   {
     {

@@ -433,12 +433,12 @@ void vpImageFilter::getGaussPyramidal(const vpImage<unsigned char> &I, vpImage<u
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
   cv::Mat imgsrc, imgdest;
   vpImageConvert::convert(I, imgsrc);
-  cv::pyrDown(imgsrc, imgdest, cv::Size((int)I.getWidth() / 2, (int)I.getHeight() / 2));
+  cv::pyrDown(imgsrc, imgdest, cv::Size(static_cast<int>(I.getWidth()) / 2, static_cast<int>(I.getHeight()) / 2));
   vpImageConvert::convert(imgdest, GI);
 #else
   cv::Mat imgsrc, imgdest;
   vpImageConvert::convert(I, imgsrc);
-  cv::pyrDown(imgsrc, imgdest, cvSize((int)I.getWidth() / 2, (int)I.getHeight() / 2));
+  cv::pyrDown(imgsrc, imgdest, cvSize(static_cast<int>(I.getWidth()) / 2, static_cast<int>(I.getHeight()) / 2));
   vpImageConvert::convert(imgdest, GI);
 #endif
 #else

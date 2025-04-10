@@ -27,6 +27,8 @@ void usage(const char **argv, int error)
     << " [--camera-device <id>]"
     << " [--tag-size <size>]"
     << " [--tag-family <family>]"
+    << " [--tag-decision-margin-threshold <threshold>]"
+    << " [--tag-hamming-distance-threshold <threshold>]"
     << " [--tag-quad-decimate <factor>]"
     << " [--tag-n-threads <number>]"
     << " [--tag-pose-method <method>]"
@@ -66,7 +68,32 @@ void usage(const char **argv, int error)
     << "       8: TAG_CUSTOM48h12" << std::endl
     << "       9: TAG_STANDARD41h12" << std::endl
     << "      10: TAG_STANDARD52h13" << std::endl
+    << "      11: TAG_ARUCO_4x4_50" << std::endl
+    << "      12: TAG_ARUCO_4x4_100" << std::endl
+    << "      13: TAG_ARUCO_4x4_250" << std::endl
+    << "      14: TAG_ARUCO_4x4_1000" << std::endl
+    << "      15: TAG_ARUCO_5x5_50" << std::endl
+    << "      16: TAG_ARUCO_5x5_100" << std::endl
+    << "      17: TAG_ARUCO_5x5_250" << std::endl
+    << "      18: TAG_ARUCO_5x5_1000" << std::endl
+    << "      19: TAG_ARUCO_6x6_50" << std::endl
+    << "      20: TAG_ARUCO_6x6_100" << std::endl
+    << "      21: TAG_ARUCO_6x6_250" << std::endl
+    << "      22: TAG_ARUCO_6x6_1000" << std::endl
+    << "      23: TAG_ARUCO_MIP_36h12" << std::endl
     << "    Default: 0 (36h11)" << std::endl
+    << std::endl
+    << "  --tag-decision-margin-threshold <threshold>" << std::endl
+    << "    Threshold used to discard low-confident detections. A typical value is " << std::endl
+    << "    around 100. The higher this value, the more false positives will be filtered" << std::endl
+    << "    out. When this value is set to -1, false positives are not filtered out." << std::endl
+    << "    Default: 50" << std::endl
+    << std::endl
+    << "  --tag-hamming-distance-threshold <threshold>" << std::endl
+    << "    Threshold used to discard low-confident detections with corrected bits." << std::endl
+    << "    A typical value is between 0 and 3. The lower this value, the more false" << std::endl
+    << "    positives will be filtered out." << std::endl
+    << "    Default: 0" << std::endl
     << std::endl
     << "  --tag-quad-decimate <factor>" << std::endl
     << "    Decimation factor used to detect a tag. " << std::endl
@@ -123,10 +150,12 @@ int main(int argc, const char **argv)
 #endif
 
   int device = 0;
-  vpDetectorAprilTag::vpAprilTagFamily tagFamily = vpDetectorAprilTag::TAG_36h11;
-  double tagSize = 0.065;
-  float quad_decimate = 4.0;
-  int nThreads = 2;
+  vpDetectorAprilTag::vpAprilTagFamily opt_tag_family = vpDetectorAprilTag::TAG_36h11;
+  double opt_tag_size = 0.065;
+  float opt_tag_quad_decimate = 4.0;
+  float opt_tag_decision_margin_threshold = 50;
+  float opt_tag_hamming_distance_threshold = 2;
+  int opt_tag_nThreads = 2;
   std::string intrinsic_file = "";
   std::string camera_name = "";
   bool display_on = false;
@@ -141,16 +170,22 @@ int main(int argc, const char **argv)
       device = std::atoi(argv[++i]);
     }
     else if (std::string(argv[i]) == "--tag-size" && i + 1 < argc) {
-      tagSize = std::atof(argv[++i]);
+      opt_tag_size = std::atof(argv[++i]);
     }
     else if (std::string(argv[i]) == "--tag-family" && i + 1 < argc) {
-      tagFamily = (vpDetectorAprilTag::vpAprilTagFamily)std::atoi(argv[++i]);
+      opt_tag_family = (vpDetectorAprilTag::vpAprilTagFamily)std::atoi(argv[++i]);
+    }
+    else if (std::string(argv[i]) == "--tag-decision-margin-threshold" && i + 1 < argc) {
+      opt_tag_decision_margin_threshold = static_cast<float>(atof(argv[++i]));
+    }
+    else if (std::string(argv[i]) == "--tag-hamming-distance-threshold" && i + 1 < argc) {
+      opt_tag_hamming_distance_threshold = atoi(argv[++i]);
     }
     else if (std::string(argv[i]) == "--tag-quad-decimate" && i + 1 < argc) {
-      quad_decimate = (float)atof(argv[++i]);
+      opt_tag_quad_decimate = (float)atof(argv[++i]);
     }
     else if (std::string(argv[i]) == "--tag-n-threads" && i + 1 < argc) {
-      nThreads = std::atoi(argv[++i]);
+      opt_tag_nThreads = std::atoi(argv[++i]);
     }
 #if defined(VISP_HAVE_PUGIXML)
     else if (std::string(argv[i]) == "--intrinsic" && i + 1 < argc) {
@@ -227,14 +262,20 @@ int main(int argc, const char **argv)
     }
 #endif
 
-    std::cout << "cam:\n" << cam << std::endl;
-    std::cout << "tagFamily: " << tagFamily << std::endl;
-    std::cout << "tagSize: " << tagSize << std::endl;
+    std::cout << cam << std::endl;
+    std::cout << "Tag detector settings" << std::endl;
+    std::cout << "  Tag size [m]              : " << opt_tag_size << std::endl;
+    std::cout << "  Tag family                : " << opt_tag_family << std::endl;
+    std::cout << "  Quad decimate             : " << opt_tag_quad_decimate << std::endl;
+    std::cout << "  Decision margin threshold : " << opt_tag_decision_margin_threshold << std::endl;
+    std::cout << "  Hamming distance threshold: " << opt_tag_hamming_distance_threshold << std::endl;
+    std::cout << "  Num threads               : " << opt_tag_nThreads << std::endl;
 
-    vpDetectorAprilTag detector(tagFamily);
+    vpDetectorAprilTag detector(opt_tag_family);
 
-    detector.setAprilTagQuadDecimate(quad_decimate);
-    detector.setAprilTagNbThreads(nThreads);
+    detector.setAprilTagQuadDecimate(opt_tag_quad_decimate);
+    detector.setAprilTagNbThreads(opt_tag_nThreads);
+    detector.setAprilTagDecisionMarginThreshold(opt_tag_decision_margin_threshold);
 #ifdef VISP_HAVE_DISPLAY
     detector.setDisplayTag(display_tag);
 #endif
@@ -276,8 +317,8 @@ int main(int argc, const char **argv)
     double Z_d = 0.4;
 
     // Define the desired polygon corresponding the the AprilTag CLOCKWISE
-    double X[4] = { tagSize / 2., tagSize / 2., -tagSize / 2., -tagSize / 2. };
-    double Y[4] = { tagSize / 2., -tagSize / 2., -tagSize / 2., tagSize / 2. };
+    double X[4] = { opt_tag_size / 2., +opt_tag_size / 2., -opt_tag_size / 2., -opt_tag_size / 2. };
+    double Y[4] = { opt_tag_size / 2., -opt_tag_size / 2., -opt_tag_size / 2., +opt_tag_size / 2. };
     std::vector<vpPoint> vec_P, vec_P_d;
 
     for (int i = 0; i < 4; i++) {
@@ -350,7 +391,7 @@ int main(int argc, const char **argv)
 
       double t = vpTime::measureTimeMs();
       std::vector<vpHomogeneousMatrix> cMo_vec;
-      detector.detect(I, tagSize, cam, cMo_vec);
+      detector.detect(I, opt_tag_size, cam, cMo_vec);
       t = vpTime::measureTimeMs() - t;
       time_vec.push_back(t);
 

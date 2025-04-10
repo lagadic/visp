@@ -89,7 +89,7 @@ int main(int argc, char **argv)
         << " [--adaptive-gain]"
         << " [--verbose]"
         << " [--help] [-h]"
-        << std::endl;;
+        << std::endl;
       return EXIT_SUCCESS;
     }
   }
@@ -255,7 +255,7 @@ int main(int argc, char **argv)
 
       if (opt_verbose) {
         std::cout << "v: " << v_c.t() << std::endl;
-        std::cout << "\t\t || s - s* || = " << task_error << std::endl;;
+        std::cout << "\t\t || s - s* || = " << task_error << std::endl;
       }
 
       if (!send_velocities) {

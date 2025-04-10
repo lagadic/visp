@@ -88,12 +88,12 @@ int main()
     std::cout << "Extrinsics cMi: \n" << rs.getTransformation(RS2_STREAM_COLOR, RS2_STREAM_INFRARED) << std::endl;
     std::cout << "Extrinsics dMi: \n" << rs.getTransformation(RS2_STREAM_DEPTH, RS2_STREAM_INFRARED) << std::endl;
 
-    vpImage<vpRGBa> color((unsigned int)rs.getIntrinsics(RS2_STREAM_COLOR).height,
-                          (unsigned int)rs.getIntrinsics(RS2_STREAM_COLOR).width);
-    vpImage<unsigned char> infrared((unsigned int)rs.getIntrinsics(RS2_STREAM_INFRARED).height,
-                                    (unsigned int)rs.getIntrinsics(RS2_STREAM_INFRARED).width);
-    vpImage<vpRGBa> depth_display((unsigned int)rs.getIntrinsics(RS2_STREAM_DEPTH).height,
-                                  (unsigned int)rs.getIntrinsics(RS2_STREAM_DEPTH).width);
+    vpImage<vpRGBa> color(static_cast<unsigned int>(rs.getIntrinsics(RS2_STREAM_COLOR).height),
+                          static_cast<unsigned int>(rs.getIntrinsics(RS2_STREAM_COLOR).width));
+    vpImage<unsigned char> infrared(static_cast<unsigned int>(rs.getIntrinsics(RS2_STREAM_INFRARED).height),
+                                    static_cast<unsigned int>(rs.getIntrinsics(RS2_STREAM_INFRARED).width));
+    vpImage<vpRGBa> depth_display(static_cast<unsigned int>(rs.getIntrinsics(RS2_STREAM_DEPTH).height),
+                                  static_cast<unsigned int>(rs.getIntrinsics(RS2_STREAM_DEPTH).width));
     vpImage<uint16_t> depth(depth_display.getHeight(), depth_display.getWidth());
 
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON) && defined(VISP_HAVE_THREADS)

@@ -53,7 +53,7 @@ int main(int, char *argv[])
 
       std::ostringstream legend;
       legend << detector.getNbObjects() << " bar code detected";
-      vpDisplay::displayText(I, (int)I.getHeight() - 30, 10, legend.str(), vpColor::red);
+      vpDisplay::displayText(I, static_cast<int>(I.getHeight()) - 30, 10, legend.str(), vpColor::red);
 
       if (status) { // true if at least one QRcode is detected
         for (size_t i = 0; i < detector.getNbObjects(); i++) {
@@ -73,7 +73,7 @@ int main(int, char *argv[])
           vpDisplay::displayFrame(I, cMo, cam, 0.05, vpColor::none, 3);
         }
       }
-      vpDisplay::displayText(I, (int)I.getHeight() - 15, 10, "A click to quit...", vpColor::red);
+      vpDisplay::displayText(I, static_cast<int>(I.getHeight()) - 15, 10, "A click to quit...", vpColor::red);
       vpDisplay::flush(I);
 
       if (vpDisplay::getClick(I, false))

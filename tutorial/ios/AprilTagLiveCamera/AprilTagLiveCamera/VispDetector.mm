@@ -27,17 +27,17 @@ vpDetectorAprilTag detector(vpDetectorAprilTag::TAG_36h11, vpDetectorAprilTag::H
     }
 
     // AprilTag detections setting
-    float quadDecimate = 3.0;
-    int nThreads = 1;
-    double tagSize = 0.043; // meter
-    detector.setAprilTagQuadDecimate(quadDecimate);
-    detector.setAprilTagNbThreads(nThreads);
+    float tag_quad_decimate = 3.0;
+    int tag_nThreads = 1;
+    double tag_size = 0.043; // meter
+    detector.setAprilTagQuadDecimate(tag_quad_decimate);
+    detector.setAprilTagNbThreads(tag_nThreads);
 
     // Detection.
     vpCameraParameters cam;
     cam.initPersProjWithoutDistortion(px,py,u0,v0);
     std::vector<vpHomogeneousMatrix> cMo_vec;
-    detector.detect(I, tagSize, cam, cMo_vec);
+    detector.detect(I, tag_size, cam, cMo_vec);
 
     // starts drawing
     UIGraphicsBeginImageContext(image.size);
@@ -70,7 +70,7 @@ vpDetectorAprilTag detector(vpDetectorAprilTag::TAG_36h11, vpDetectorAprilTag::H
         [ImageDisplay displayLineWithContext:context :polygon :mainColor :tagLineWidth];
 
         // draw xyz cordinate.
-        [ImageDisplay displayFrameWithContext:context :cMo_vec[i] :cam :tagSize :6];
+        [ImageDisplay displayFrameWithContext:context :cMo_vec[i] :cam :tag_size :6];
 
         // draw distance from camera.
         NSString *meter = [NSString stringWithFormat:@"(%.2f,%.2f,%.2f)",trans[0],trans[1],trans[2]];

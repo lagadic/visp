@@ -51,9 +51,6 @@ const unsigned int vpQuaternionVector::constr_val_4 = 4;
 /*! Default constructor that initialize all the 4 angles to zero. */
 vpQuaternionVector::vpQuaternionVector() : vpRotationVector(constr_val_4) { }
 
-/*! Copy constructor. */
-vpQuaternionVector::vpQuaternionVector(const vpQuaternionVector &q) : vpRotationVector(q) { }
-
 //! Constructor from doubles.
 vpQuaternionVector::vpQuaternionVector(double x_, double y_, double z_, double w_) : vpRotationVector(constr_val_4)
 {

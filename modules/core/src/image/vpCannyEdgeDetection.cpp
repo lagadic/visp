@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -188,8 +188,8 @@ vpCannyEdgeDetection::initGaussianFilters()
   if ((m_gaussianKernelSize % val_2) == 0) {
     throw(vpException(vpException::badValue, "The Gaussian kernel size should be odd"));
   }
-  m_fg.resize(1, (m_gaussianKernelSize + 1) / 2);
-  vpImageFilter::getGaussianKernel(m_fg.data, m_gaussianKernelSize, m_gaussianStdev, true);
+  m_fg.resize(1, static_cast<unsigned int>((m_gaussianKernelSize + 1) / val_2));
+  vpImageFilter::getGaussianKernel(m_fg.data, static_cast<unsigned int>(m_gaussianKernelSize), m_gaussianStdev, true);
 }
 
 void
@@ -424,8 +424,8 @@ vpCannyEdgeDetection::computeFilteringAndGradient(const vpImage<unsigned char> &
     // Computing the Gaussian blur
     vpImage<float> Iblur;
     vpImage<float> GIx;
-    vpImageFilter::filterX<unsigned char, float>(I, GIx, m_fg.data, m_gaussianKernelSize, mp_mask);
-    vpImageFilter::filterY<float, float>(GIx, Iblur, m_fg.data, m_gaussianKernelSize, mp_mask);
+    vpImageFilter::filterX<unsigned char, float>(I, GIx, m_fg.data, static_cast<unsigned int>(m_gaussianKernelSize), mp_mask);
+    vpImageFilter::filterY<float, float>(GIx, Iblur, m_fg.data, static_cast<unsigned int>(m_gaussianKernelSize), mp_mask);
 
     // Computing the gradients
     vpImageFilter::filter(Iblur, m_dIx, m_gradientFilterX, true, mp_mask);
@@ -452,10 +452,10 @@ vpCannyEdgeDetection::computeFilteringAndGradient(const vpImage<unsigned char> &
  * \param[out] dColGradBeta : The offset along the column attached to the beta weight.
  */
 void
-getInterpolWeightsAndOffsets(const float &gradientOrientation,
-                                  float &alpha, float &beta,
-                                  int &dRowGradAlpha, int &dRowGradBeta,
-                                  int &dColGradAlpha, int &dColGradBeta
+vpCannyEdgeDetection::getInterpolWeightsAndOffsets(const float &gradientOrientation,
+                                                   float &alpha, float &beta,
+                                                   int &dRowGradAlpha, int &dRowGradBeta,
+                                                   int &dColGradAlpha, int &dColGradBeta
 )
 {
   float thetaMin = 0.f;
@@ -504,11 +504,11 @@ getInterpolWeightsAndOffsets(const float &gradientOrientation,
  * @return float grad = abs(dIx) + abs(dIy) if row and col are valid, 0 otherwise.
  */
 float
-getManhattanGradient(const vpImage<float> &dIx, const vpImage<float> &dIy, const int &row, const int &col)
+vpCannyEdgeDetection::getManhattanGradient(const vpImage<float> &dIx, const vpImage<float> &dIy, const int &row, const int &col)
 {
   float grad = 0.;
-  int nbRows = dIx.getRows();
-  int nbCols = dIx.getCols();
+  int nbRows = static_cast<int>(dIx.getRows());
+  int nbCols = static_cast<int>(dIx.getCols());
   if ((row >= 0)
       && (row < nbRows)
       && (col >= 0)
@@ -533,7 +533,7 @@ getManhattanGradient(const vpImage<float> &dIx, const vpImage<float> &dIy, const
  * @return float The positive value of the gradient orientation, expressed in radians.
  */
 float
-getGradientOrientation(const vpImage<float> &dIx, const vpImage<float> &dIy, const int &row, const int &col)
+vpCannyEdgeDetection::getGradientOrientation(const vpImage<float> &dIx, const vpImage<float> &dIy, const int &row, const int &col)
 {
   float gradientOrientation = 0.f;
   float dx = dIx[row][col];
@@ -556,8 +556,8 @@ getGradientOrientation(const vpImage<float> &dIx, const vpImage<float> &dIy, con
 void
 vpCannyEdgeDetection::performEdgeThinning(const float &lowerThreshold)
 {
-  int nbRows = m_dIx.getRows();
-  int nbCols = m_dIx.getCols();
+  int nbRows = static_cast<int>(m_dIx.getRows());
+  int nbCols = static_cast<int>(m_dIx.getCols());
 
   bool ignore_current_pixel = false;
   bool grad_lower_threshold = false;
@@ -652,8 +652,8 @@ bool
 vpCannyEdgeDetection::recursiveSearchForStrongEdge(const std::pair<unsigned int, unsigned int> &coordinates)
 {
   bool hasFoundStrongEdge = false;
-  int nbRows = m_dIx.getRows();
-  int nbCols = m_dIx.getCols();
+  int nbRows = static_cast<int>(m_dIx.getRows());
+  int nbCols = static_cast<int>(m_dIx.getCols());
   m_edgePointsCandidates[coordinates] = ON_CHECK;
   bool test_row = false;
   bool test_col = false;

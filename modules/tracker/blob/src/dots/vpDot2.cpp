@@ -1141,7 +1141,7 @@ bool vpDot2::isValid(const vpImage<unsigned char> &I, const vpDot2 &wantedDot)
       v = static_cast<unsigned int>(cog_v + (outCoef * ((a1 * sin(alpha) * cos(theta)) + (a2 * cos(alpha) * sin(theta)))));
 #ifdef DEBUG
       // vpDisplay::displayRectangle(I, area, vpColor::yellow);
-      vpDisplay::displayCross(I, (int)v, (int)u, 7, vpColor::purple);
+      vpDisplay::displayCross(I, static_cast<int>(v), static_cast<int>(u), 7, vpColor::purple);
       vpDisplay::flush(I);
 #endif
       // If outside the area, continue

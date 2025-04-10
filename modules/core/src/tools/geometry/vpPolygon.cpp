@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -190,7 +190,7 @@ vpPolygon &vpPolygon::operator=(const vpPolygon &poly)
   clockwise).
 
   \param corners : The corners of the polygon.
-  \param create_convex_hull: Create a convex hull from the given corners.
+  \param create_convex_hull : Create a convex hull from the given corners.
 */
 vpPolygon &vpPolygon::buildFrom(const std::vector<vpImagePoint> &corners, const bool &create_convex_hull)
 {
@@ -214,7 +214,7 @@ vpPolygon &vpPolygon::buildFrom(const std::vector<vpImagePoint> &corners, const 
   clockwise).
 
   \param corners : The corners of the polygon.
-  \param create_convex_hull: Create a convex hull from the given corners.
+  \param create_convex_hull : Create a convex hull from the given corners.
 */
 vpPolygon &vpPolygon::buildFrom(const std::list<vpImagePoint> &corners, const bool &create_convex_hull)
 {
@@ -241,7 +241,7 @@ vpPolygon &vpPolygon::buildFrom(const std::list<vpImagePoint> &corners, const bo
 
   \param corners : The corners of the polygon.
   \param cam : The camera parameters used to convert the coordinates from meter to pixel.
-  \param create_convex_hull: Create a convex hull from the given corners.
+  \param create_convex_hull : Create a convex hull from the given corners.
 */
 vpPolygon &vpPolygon::buildFrom(const std::vector<vpPoint> &corners, const vpCameraParameters &cam,
                                 const bool &create_convex_hull)
@@ -456,7 +456,7 @@ bool vpPolygon::isInside(const vpImagePoint &ip, const PointInPolygonMethod &met
     for (size_t i = 0; i < v_corners_size; ++i) {
       if (((_corners[i].get_v() < ip.get_v()) && (_corners[j].get_v() >= ip.get_v())) ||
           ((_corners[j].get_v() < ip.get_v()) && (_corners[i].get_v() >= ip.get_v()))) {
-        oddNodes ^= ( ((ip.get_v() * m_PnPolyMultiples[i]) + m_PnPolyConstants[i]) < ip.get_u());
+        oddNodes ^= (((ip.get_v() * m_PnPolyMultiples[i]) + m_PnPolyConstants[i]) < ip.get_u());
       }
 
       j = i;

@@ -29,8 +29,7 @@
  *
  * Description:
  * Point feature.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpPoint.cpp
@@ -65,7 +64,9 @@ vpPoint::vpPoint() { init(); }
 
 /*!
   Construction from a 3D point with coordinates in object frame.
-  \param oX, oY, oZ: Coordinates of a 3D point in object frame.
+  \param oX : Coordinates along X-axis of a 3D point in object frame.
+  \param oY : Coordinates along Y-axis of a 3D point in object frame.
+  \param oZ : Coordinates along Z-axis of a 3D point in object frame.
 */
 vpPoint::vpPoint(double oX, double oY, double oZ)
 {
@@ -76,7 +77,7 @@ vpPoint::vpPoint(double oX, double oY, double oZ)
 /*!
   Construction from a 3D point with coordinates in object frame.
 
-  \param oP_: Vector containing the coordinates of the 3D point in the object frame.
+  \param oP_ : Vector containing the coordinates of the 3D point in the object frame.
   This vector could be of dimension 3 or 4.
   - If dimension is 3, oP corresponds to the normalized coordinates oP = (oX,
   oY, oZ, 1) where oP[0]=oX, oP[1]=oY, oP[2]=oZ.
@@ -92,7 +93,7 @@ vpPoint::vpPoint(const vpColVector &oP_)
 /*!
   Construction from a 3D point with coordinates in object frame.
 
-  \param oP_: Vector containing the coordinates of the 3D point in the object frame.
+  \param oP_ : Vector containing the coordinates of the 3D point in the object frame.
   This vector could be of dimension 3 or 4.
   - If dimension is 3, oP corresponds to the normalized coordinates oP = (oX,
   oY, oZ, 1) where oP[0]=oX, oP[1]=oY, oP[2]=oZ.
@@ -108,7 +109,9 @@ vpPoint::vpPoint(const std::vector<double> &oP_)
 /*!
   Set the 3D point object frame coordinates oP = (oX, oY, oZ, 1).
 
-  \param oX, oY, oZ: Coordinates of a 3D point in the object frame.
+  \param oX : Coordinates along X-axis of a 3D point in object frame.
+  \param oY : Coordinates along Y-axis of a 3D point in object frame.
+  \param oZ : Coordinates along Z-axis of a 3D point in object frame.
 */
 void vpPoint::setWorldCoordinates(double oX, double oY, double oZ)
 {
@@ -125,12 +128,12 @@ void vpPoint::setWorldCoordinates(double oX, double oY, double oZ)
 /*!
   Set the 3D point object frame coordinates.
 
-  \param oP_: Vector containing the coordinates of the 3D point in the object frame.
+  \param oP_ : Vector containing the coordinates of the 3D point in the object frame.
   This vector could be of dimension 3 or 4.
   - If dimension is 3, oP corresponds to the normalized coordinates oP = (oX,
-  oY, oZ, 1) where oP[0]=oX, oP[1]=oY, oP[2]=oZ.
+    oY, oZ, 1) where oP[0]=oX, oP[1]=oY, oP[2]=oZ.
   - If dimension is 4, \e oP corresponds to the normalized coordinates oP = (oX,
-  oY, oZ, oW) where oP[0]=oX, oP[1]=oY, oP[2]=oZ and oP[3]=oW.
+    oY, oZ, oW) where oP[0]=oX, oP[1]=oY, oP[2]=oZ and oP[3]=oW.
 */
 void vpPoint::setWorldCoordinates(const vpColVector &oP_)
 {
@@ -162,12 +165,12 @@ void vpPoint::setWorldCoordinates(const vpColVector &oP_)
 /*!
   Set the 3D point object frame coordinates.
 
-  \param oP_: Vector containing the coordinates of the 3D point in the object frame.
+  \param oP_ : Vector containing the coordinates of the 3D point in the object frame.
   This vector could be of dimension 3 or 4.
   - If dimension is 3, oP corresponds to the normalized coordinates oP = (oX,
-  oY, oZ, 1) where oP[0]=oX, oP[1]=oY, oP[2]=oZ.
+    oY, oZ, 1) where oP[0]=oX, oP[1]=oY, oP[2]=oZ.
   - If dimension is 4, \e oP corresponds to the normalized coordinates oP = (oX,
-  oY, oZ, oW) where oP[0]=oX, oP[1]=oY, oP[2]=oZ and oP[3]=oW.
+    oY, oZ, oW) where oP[0]=oX, oP[1]=oY, oP[2]=oZ and oP[3]=oW.
 */
 void vpPoint::setWorldCoordinates(const std::vector<double> &oP_)
 {
@@ -210,7 +213,7 @@ void vpPoint::getWorldCoordinates(double &oX, double &oY, double &oZ)
 /*!
   Get the point object frame normalized coordinates.
 
-  \param oP_: Normalized coordinates of the point in the
+  \param oP_ : Normalized coordinates of the point in the
   object frame oP = (oX, oY, oZ, oW) as a 4-dim vector.
   */
 void vpPoint::getWorldCoordinates(vpColVector &oP_) { oP_ = oP; }
@@ -218,7 +221,7 @@ void vpPoint::getWorldCoordinates(vpColVector &oP_) { oP_ = oP; }
 /*!
   Get the point object frame normalized coordinates.
 
-  \param oP_: Normalized coordinates of the point in the
+  \param oP_ : Normalized coordinates of the point in the
   object frame oP = (oX, oY, oZ, oW) as a 4-dim vector.
   */
 void vpPoint::getWorldCoordinates(std::vector<double> &oP_)

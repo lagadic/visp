@@ -34,8 +34,9 @@
 #include <visp3/core/vpConfig.h>
 
 // opencv_xfeatures2d and opencv_nonfree are optional
-#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_FEATURES2D)) || \
-  ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D) && defined(HAVE_OPENCV_FEATURES))
+#if defined(VISP_HAVE_OPENCV) && \
+    (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_FEATURES2D)) || \
+     ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D) && defined(HAVE_OPENCV_FEATURES)))
 
 #include <iomanip>
 #include <limits>
@@ -509,7 +510,7 @@ void vpKeyPoint::compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, co
         points.push_back(pt);
 
         if (descriptors != nullptr) {
-          desc.push_back(descriptors->row((int)it2->second));
+          desc.push_back(descriptors->row(static_cast<int>(it2->second)));
         }
 
         // Remove candidate keypoint which is located on the current polygon
@@ -555,7 +556,7 @@ void vpKeyPoint::compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, co
         points.push_back(pt);
 
         if (descriptors != nullptr) {
-          desc.push_back(descriptors->row((int)it2->second));
+          desc.push_back(descriptors->row(static_cast<int>(it2->second)));
         }
 
         // Remove candidate keypoint which is located on the current polygon
@@ -613,7 +614,7 @@ void vpKeyPoint::compute3DForPointsOnCylinders(const vpHomogeneousMatrix &cMo, c
             points.push_back(cv::Point3f((float)pt.get_oX(), (float)pt.get_oY(), (float)pt.get_oZ()));
 
             if (descriptors != nullptr) {
-              desc.push_back(descriptors->row((int)cpt_keypoint));
+              desc.push_back(descriptors->row(static_cast<int>(cpt_keypoint)));
             }
 
             break;
@@ -672,7 +673,7 @@ void vpKeyPoint::compute3DForPointsOnCylinders(const vpHomogeneousMatrix &cMo, c
             points.push_back(pt);
 
             if (descriptors != nullptr) {
-              desc.push_back(descriptors->row((int)cpt_keypoint));
+              desc.push_back(descriptors->row(static_cast<int>(cpt_keypoint)));
             }
 
             break;
@@ -743,7 +744,7 @@ bool vpKeyPoint::computePose(const std::vector<cv::Point2f> &imagePoints, const 
 #else
     int nbInlierToReachConsensus = m_nbRansacMinInlierCount;
     if (m_useConsensusPercentage) {
-      nbInlierToReachConsensus = (int)(m_ransacConsensusPercentage / 100.0 * (double)m_queryFilteredKeyPoints.size());
+      nbInlierToReachConsensus = static_cast<int>(m_ransacConsensusPercentage / 100.0 * (double)m_queryFilteredKeyPoints.size());
     }
 
     cv::solvePnPRansac(objectPoints, imagePoints, cameraMatrix, distCoeffs, rvec, tvec, false, m_nbRansacIterations,
@@ -800,10 +801,10 @@ bool vpKeyPoint::computePose(const std::vector<vpPoint> &objectVpPoints, vpHomog
     pose.addPoint(*it);
   }
 
-  unsigned int nbInlierToReachConsensus = (unsigned int)m_nbRansacMinInlierCount;
+  unsigned int nbInlierToReachConsensus = static_cast<unsigned int>(m_nbRansacMinInlierCount);
   if (m_useConsensusPercentage) {
     nbInlierToReachConsensus =
-      (unsigned int)(m_ransacConsensusPercentage / 100.0 * (double)m_queryFilteredKeyPoints.size());
+      static_cast<unsigned int>(m_ransacConsensusPercentage / 100.0 * (double)m_queryFilteredKeyPoints.size());
   }
 
   pose.setRansacFilterFlag(m_ransacFilterFlag);
@@ -896,7 +897,7 @@ void vpKeyPoint::createImageMatching(vpImage<unsigned char> &ICurrent, vpImage<u
 {
   // Nb images in the training database + the current image we want to detect
   // the object
-  unsigned int nbImg = (unsigned int)(m_mapOfImages.size() + 1);
+  unsigned int nbImg = static_cast<unsigned int>(m_mapOfImages.size() + 1);
 
   if (m_mapOfImages.empty()) {
     std::cerr << "There is no training image loaded !" << std::endl;
@@ -910,7 +911,7 @@ void vpKeyPoint::createImageMatching(vpImage<unsigned char> &ICurrent, vpImage<u
   else {
     // Multiple training images, display them as a mosaic image
     // (unsigned int) std::floor(std::sqrt((double) nbImg) + 0.5);
-    unsigned int nbImgSqrt = (unsigned int)vpMath::round(std::sqrt((double)nbImg));
+    unsigned int nbImgSqrt = static_cast<unsigned int>(vpMath::round(std::sqrt((double)nbImg)));
 
     // Number of columns in the mosaic grid
     unsigned int nbWidth = nbImgSqrt;
@@ -943,7 +944,7 @@ void vpKeyPoint::createImageMatching(vpImage<vpRGBa> &ICurrent, vpImage<vpRGBa> 
 {
   // Nb images in the training database + the current image we want to detect
   // the object
-  unsigned int nbImg = (unsigned int)(m_mapOfImages.size() + 1);
+  unsigned int nbImg = static_cast<unsigned int>(m_mapOfImages.size() + 1);
 
   if (m_mapOfImages.empty()) {
     std::cerr << "There is no training image loaded !" << std::endl;
@@ -957,7 +958,7 @@ void vpKeyPoint::createImageMatching(vpImage<vpRGBa> &ICurrent, vpImage<vpRGBa> 
   else {
     // Multiple training images, display them as a mosaic image
     //(unsigned int) std::floor(std::sqrt((double) nbImg) + 0.5);
-    unsigned int nbImgSqrt = (unsigned int)vpMath::round(std::sqrt((double)nbImg));
+    unsigned int nbImgSqrt = static_cast<unsigned int>(vpMath::round(std::sqrt((double)nbImg)));
 
     // Number of columns in the mosaic grid
     unsigned int nbWidth = nbImgSqrt;
@@ -1017,8 +1018,8 @@ void vpKeyPoint::detect(const vpImage<unsigned char> &I, std::vector<cv::KeyPoin
 #else
     int filled = CV_FILLED;
 #endif
-    cv::Point leftTop((int)rectangle.getLeft(), (int)rectangle.getTop()),
-      rightBottom((int)rectangle.getRight(), (int)rectangle.getBottom());
+    cv::Point leftTop(static_cast<int>(rectangle.getLeft()), static_cast<int>(rectangle.getTop())),
+      rightBottom(static_cast<int>(rectangle.getRight()), static_cast<int>(rectangle.getBottom()));
     cv::rectangle(mask, leftTop, rightBottom, cv::Scalar(255), filled);
   }
   else {
@@ -1041,8 +1042,8 @@ void vpKeyPoint::detect(const vpImage<vpRGBa> &I_color, std::vector<cv::KeyPoint
 #else
     int filled = CV_FILLED;
 #endif
-    cv::Point leftTop((int)rectangle.getLeft(), (int)rectangle.getTop()),
-      rightBottom((int)rectangle.getRight(), (int)rectangle.getBottom());
+    cv::Point leftTop(static_cast<int>(rectangle.getLeft()), static_cast<int>(rectangle.getTop()));
+    cv::Point rightBottom(static_cast<int>(rectangle.getRight()), static_cast<int>(rectangle.getBottom()));
     cv::rectangle(mask, leftTop, rightBottom, cv::Scalar(255), filled);
   }
   else {
@@ -1119,7 +1120,7 @@ void vpKeyPoint::displayMatching(const vpImage<unsigned char> &IRef, vpImage<uns
                                  unsigned int crossSize, unsigned int lineThickness, const vpColor &color)
 {
   bool randomColor = (color == vpColor::none);
-  srand((unsigned int)time(nullptr));
+  srand(static_cast<unsigned int>(time(nullptr)));
   vpColor currentColor = color;
 
   std::vector<vpImagePoint> queryImageKeyPoints;
@@ -1146,7 +1147,7 @@ void vpKeyPoint::displayMatching(const vpImage<unsigned char> &IRef, vpImage<vpR
                                  unsigned int lineThickness, const vpColor &color)
 {
   bool randomColor = (color == vpColor::none);
-  srand((unsigned int)time(nullptr));
+  srand(static_cast<unsigned int>(time(nullptr)));
   vpColor currentColor = color;
 
   std::vector<vpImagePoint> queryImageKeyPoints;
@@ -1173,7 +1174,7 @@ void vpKeyPoint::displayMatching(const vpImage<vpRGBa> &IRef, vpImage<vpRGBa> &I
                                  unsigned int lineThickness, const vpColor &color)
 {
   bool randomColor = (color == vpColor::none);
-  srand((unsigned int)time(nullptr));
+  srand(static_cast<unsigned int>(time(nullptr)));
   vpColor currentColor = color;
 
   std::vector<vpImagePoint> queryImageKeyPoints;
@@ -1209,7 +1210,7 @@ void vpKeyPoint::displayMatching(const vpImage<unsigned char> &ICurrent, vpImage
 
   // Nb images in the training database + the current image we want to detect
   // the object
-  int nbImg = (int)(m_mapOfImages.size() + 1);
+  int nbImg = static_cast<int>(m_mapOfImages.size() + 1);
 
   if (nbImg == 2) {
     // Only one training image, so we display the matching result side-by-side
@@ -1260,28 +1261,28 @@ void vpKeyPoint::displayMatching(const vpImage<unsigned char> &ICurrent, vpImage
 
       int indexI = current_class_id_index / nbWidth;
       int indexJ = current_class_id_index - (indexI * nbWidth);
-      topLeftCorner.set_ij((int)maxH * indexI, (int)maxW * indexJ);
+      topLeftCorner.set_ij(static_cast<int>(maxH) * indexI, static_cast<int>(maxW) * indexJ);
 
       // Display cross for keypoints in the learning database
-      vpDisplay::displayCross(IMatching, (int)(it->pt.y + topLeftCorner.get_i()),
-                              (int)(it->pt.x + topLeftCorner.get_j()), crossSize, vpColor::red);
+      vpDisplay::displayCross(IMatching, static_cast<int>(it->pt.y + topLeftCorner.get_i()),
+                              static_cast<int>(it->pt.x + topLeftCorner.get_j()), crossSize, vpColor::red);
     }
 
-    vpImagePoint topLeftCorner((int)maxH * medianI, (int)maxW * medianJ);
+    vpImagePoint topLeftCorner(static_cast<int>(maxH) * medianI, static_cast<int>(maxW) * medianJ);
     for (std::vector<cv::KeyPoint>::const_iterator it = m_queryKeyPoints.begin(); it != m_queryKeyPoints.end(); ++it) {
       // Display cross for keypoints detected in the current image
-      vpDisplay::displayCross(IMatching, (int)(it->pt.y + topLeftCorner.get_i()),
-                              (int)(it->pt.x + topLeftCorner.get_j()), crossSize, vpColor::red);
+      vpDisplay::displayCross(IMatching, static_cast<int>(it->pt.y + topLeftCorner.get_i()),
+                              static_cast<int>(it->pt.x + topLeftCorner.get_j()), crossSize, vpColor::red);
     }
     for (std::vector<vpImagePoint>::const_iterator it = ransacInliers.begin(); it != ransacInliers.end(); ++it) {
       // Display green circle for RANSAC inliers
-      vpDisplay::displayCircle(IMatching, (int)(it->get_v() + topLeftCorner.get_i()),
-                               (int)(it->get_u() + topLeftCorner.get_j()), 4, vpColor::green);
+      vpDisplay::displayCircle(IMatching, static_cast<int>(it->get_v() + topLeftCorner.get_i()),
+                               static_cast<int>(it->get_u() + topLeftCorner.get_j()), 4, vpColor::green);
     }
     for (std::vector<vpImagePoint>::const_iterator it = m_ransacOutliers.begin(); it != m_ransacOutliers.end(); ++it) {
       // Display red circle for RANSAC outliers
-      vpDisplay::displayCircle(IMatching, (int)(it->get_i() + topLeftCorner.get_i()),
-                               (int)(it->get_j() + topLeftCorner.get_j()), 4, vpColor::red);
+      vpDisplay::displayCircle(IMatching, static_cast<int>(it->get_i() + topLeftCorner.get_i()),
+                               static_cast<int>(it->get_j() + topLeftCorner.get_j()), 4, vpColor::red);
     }
 
     for (std::vector<cv::DMatch>::const_iterator it = m_filteredMatches.begin(); it != m_filteredMatches.end(); ++it) {
@@ -1298,10 +1299,10 @@ void vpKeyPoint::displayMatching(const vpImage<unsigned char> &ICurrent, vpImage
       int indexI = current_class_id / nbWidth;
       int indexJ = current_class_id - (indexI * nbWidth);
 
-      vpImagePoint end((int)maxH * indexI + m_trainKeyPoints[(size_t)it->trainIdx].pt.y,
-                       (int)maxW * indexJ + m_trainKeyPoints[(size_t)it->trainIdx].pt.x);
-      vpImagePoint start((int)maxH * medianI + m_queryFilteredKeyPoints[(size_t)it->queryIdx].pt.y,
-                         (int)maxW * medianJ + m_queryFilteredKeyPoints[(size_t)it->queryIdx].pt.x);
+      vpImagePoint end(static_cast<int>(maxH) * indexI + m_trainKeyPoints[(size_t)it->trainIdx].pt.y,
+                       static_cast<int>(maxW) * indexJ + m_trainKeyPoints[(size_t)it->trainIdx].pt.x);
+      vpImagePoint start(static_cast<int>(maxH) * medianI + m_queryFilteredKeyPoints[(size_t)it->queryIdx].pt.y,
+                         static_cast<int>(maxW) * medianJ + m_queryFilteredKeyPoints[(size_t)it->queryIdx].pt.x);
 
       // Draw line for matching keypoints detected in the current image and
       // those detected  in the training images
@@ -1322,7 +1323,7 @@ void vpKeyPoint::displayMatching(const vpImage<vpRGBa> &ICurrent, vpImage<vpRGBa
 
   // Nb images in the training database + the current image we want to detect
   // the object
-  int nbImg = (int)(m_mapOfImages.size() + 1);
+  int nbImg = static_cast<int>(m_mapOfImages.size() + 1);
 
   if (nbImg == 2) {
     // Only one training image, so we display the matching result side-by-side
@@ -1373,28 +1374,28 @@ void vpKeyPoint::displayMatching(const vpImage<vpRGBa> &ICurrent, vpImage<vpRGBa
 
       int indexI = current_class_id_index / nbWidth;
       int indexJ = current_class_id_index - (indexI * nbWidth);
-      topLeftCorner.set_ij((int)maxH * indexI, (int)maxW * indexJ);
+      topLeftCorner.set_ij(static_cast<int>(maxH) * indexI, static_cast<int>(maxW) * indexJ);
 
       // Display cross for keypoints in the learning database
-      vpDisplay::displayCross(IMatching, (int)(it->pt.y + topLeftCorner.get_i()),
-                              (int)(it->pt.x + topLeftCorner.get_j()), crossSize, vpColor::red);
+      vpDisplay::displayCross(IMatching, static_cast<int>(it->pt.y + topLeftCorner.get_i()),
+                              static_cast<int>(it->pt.x + topLeftCorner.get_j()), crossSize, vpColor::red);
     }
 
-    vpImagePoint topLeftCorner((int)maxH * medianI, (int)maxW * medianJ);
+    vpImagePoint topLeftCorner(static_cast<int>(maxH) * medianI, static_cast<int>(maxW) * medianJ);
     for (std::vector<cv::KeyPoint>::const_iterator it = m_queryKeyPoints.begin(); it != m_queryKeyPoints.end(); ++it) {
       // Display cross for keypoints detected in the current image
-      vpDisplay::displayCross(IMatching, (int)(it->pt.y + topLeftCorner.get_i()),
-                              (int)(it->pt.x + topLeftCorner.get_j()), crossSize, vpColor::red);
+      vpDisplay::displayCross(IMatching, static_cast<int>(it->pt.y + topLeftCorner.get_i()),
+                              static_cast<int>(it->pt.x + topLeftCorner.get_j()), crossSize, vpColor::red);
     }
     for (std::vector<vpImagePoint>::const_iterator it = ransacInliers.begin(); it != ransacInliers.end(); ++it) {
       // Display green circle for RANSAC inliers
-      vpDisplay::displayCircle(IMatching, (int)(it->get_v() + topLeftCorner.get_i()),
-                               (int)(it->get_u() + topLeftCorner.get_j()), 4, vpColor::green);
+      vpDisplay::displayCircle(IMatching, static_cast<int>(it->get_v() + topLeftCorner.get_i()),
+                               static_cast<int>(it->get_u() + topLeftCorner.get_j()), 4, vpColor::green);
     }
     for (std::vector<vpImagePoint>::const_iterator it = m_ransacOutliers.begin(); it != m_ransacOutliers.end(); ++it) {
       // Display red circle for RANSAC outliers
-      vpDisplay::displayCircle(IMatching, (int)(it->get_i() + topLeftCorner.get_i()),
-                               (int)(it->get_j() + topLeftCorner.get_j()), 4, vpColor::red);
+      vpDisplay::displayCircle(IMatching, static_cast<int>(it->get_i() + topLeftCorner.get_i()),
+                               static_cast<int>(it->get_j() + topLeftCorner.get_j()), 4, vpColor::red);
     }
 
     for (std::vector<cv::DMatch>::const_iterator it = m_filteredMatches.begin(); it != m_filteredMatches.end(); ++it) {
@@ -1411,10 +1412,10 @@ void vpKeyPoint::displayMatching(const vpImage<vpRGBa> &ICurrent, vpImage<vpRGBa
       int indexI = current_class_id / nbWidth;
       int indexJ = current_class_id - (indexI * nbWidth);
 
-      vpImagePoint end((int)maxH * indexI + m_trainKeyPoints[(size_t)it->trainIdx].pt.y,
-                       (int)maxW * indexJ + m_trainKeyPoints[(size_t)it->trainIdx].pt.x);
-      vpImagePoint start((int)maxH * medianI + m_queryFilteredKeyPoints[(size_t)it->queryIdx].pt.y,
-                         (int)maxW * medianJ + m_queryFilteredKeyPoints[(size_t)it->queryIdx].pt.x);
+      vpImagePoint end(static_cast<int>(maxH) * indexI + m_trainKeyPoints[(size_t)it->trainIdx].pt.y,
+                       static_cast<int>(maxW) * indexJ + m_trainKeyPoints[(size_t)it->trainIdx].pt.x);
+      vpImagePoint start(static_cast<int>(maxH) * medianI + m_queryFilteredKeyPoints[(size_t)it->queryIdx].pt.y,
+                         static_cast<int>(maxW) * medianJ + m_queryFilteredKeyPoints[(size_t)it->queryIdx].pt.x);
 
       // Draw line for matching keypoints detected in the current image and
       // those detected  in the training images
@@ -1535,7 +1536,7 @@ void vpKeyPoint::extract(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPo
             }
 
             if (!descriptors.empty()) {
-              descriptors_tmp.push_back(descriptors.row((int)mapOfKeypointHashes[myKeypointHash(*it)]));
+              descriptors_tmp.push_back(descriptors.row(static_cast<int>(mapOfKeypointHashes[myKeypointHash(*it)])));
             }
           }
         }
@@ -1610,7 +1611,7 @@ void vpKeyPoint::filterMatches()
         double dist = m_knnMatches[i][0].distance;
 
         if (ratio < m_matchingRatioThreshold || (m_filterType == stdAndRatioDistanceThreshold && dist < threshold)) {
-          m.push_back(cv::DMatch((int)queryKpts.size(), m_knnMatches[i][0].trainIdx, m_knnMatches[i][0].distance));
+          m.push_back(cv::DMatch(static_cast<int>(queryKpts.size()), m_knnMatches[i][0].trainIdx, m_knnMatches[i][0].distance));
 
           if (!m_trainPoints.empty()) {
             trainPts.push_back(m_trainPoints[(size_t)m_knnMatches[i][0].trainIdx]);
@@ -1654,7 +1655,7 @@ void vpKeyPoint::filterMatches()
 
     for (size_t i = 0; i < m_matches.size(); i++) {
       if (m_matches[i].distance <= threshold) {
-        m.push_back(cv::DMatch((int)queryKpts.size(), m_matches[i].trainIdx, m_matches[i].distance));
+        m.push_back(cv::DMatch(static_cast<int>(queryKpts.size()), m_matches[i].trainIdx, m_matches[i].distance));
 
         if (!m_trainPoints.empty()) {
           trainPts.push_back(m_trainPoints[(size_t)m_matches[i].trainIdx]);
@@ -1680,7 +1681,7 @@ void vpKeyPoint::filterMatches()
     // Keep matches with only one correspondence
     for (std::vector<cv::DMatch>::const_iterator it = m.begin(); it != m.end(); ++it) {
       if (mapOfTrainIdx[it->trainIdx] == 1) {
-        mTmp.push_back(cv::DMatch((int)queryKptsTmp.size(), it->trainIdx, it->distance));
+        mTmp.push_back(cv::DMatch(static_cast<int>(queryKptsTmp.size()), it->trainIdx, it->distance));
 
         if (!m_trainPoints.empty()) {
           trainPtsTmp.push_back(m_trainPoints[(size_t)it->trainIdx]);
@@ -2376,7 +2377,7 @@ void vpKeyPoint::insertImageMatching(const vpImage<unsigned char> &ICurrent, vpI
 {
   // Nb images in the training database + the current image we want to detect
   // the object
-  int nbImg = (int)(m_mapOfImages.size() + 1);
+  int nbImg = static_cast<int>(m_mapOfImages.size() + 1);
 
   if (m_mapOfImages.empty()) {
     std::cerr << "There is no training image loaded !" << std::endl;
@@ -2426,12 +2427,12 @@ void vpKeyPoint::insertImageMatching(const vpImage<unsigned char> &ICurrent, vpI
       }
       int indexI = local_cpt / nbWidth;
       int indexJ = local_cpt - (indexI * nbWidth);
-      vpImagePoint topLeftCorner((int)maxH * indexI, (int)maxW * indexJ);
+      vpImagePoint topLeftCorner(static_cast<int>(maxH) * indexI, static_cast<int>(maxW) * indexJ);
 
       IMatching.insert(it->second, topLeftCorner);
     }
 
-    vpImagePoint topLeftCorner((int)maxH * medianI, (int)maxW * medianJ);
+    vpImagePoint topLeftCorner(static_cast<int>(maxH) * medianI, static_cast<int>(maxW) * medianJ);
     IMatching.insert(ICurrent, topLeftCorner);
   }
 }
@@ -2440,7 +2441,7 @@ void vpKeyPoint::insertImageMatching(const vpImage<vpRGBa> &ICurrent, vpImage<vp
 {
   // Nb images in the training database + the current image we want to detect
   // the object
-  int nbImg = (int)(m_mapOfImages.size() + 1);
+  int nbImg = static_cast<int>(m_mapOfImages.size() + 1);
 
   if (m_mapOfImages.empty()) {
     std::cerr << "There is no training image loaded !" << std::endl;
@@ -2492,14 +2493,14 @@ void vpKeyPoint::insertImageMatching(const vpImage<vpRGBa> &ICurrent, vpImage<vp
       }
       int indexI = local_cpt / nbWidth;
       int indexJ = local_cpt - (indexI * nbWidth);
-      vpImagePoint topLeftCorner((int)maxH * indexI, (int)maxW * indexJ);
+      vpImagePoint topLeftCorner(static_cast<int>(maxH) * indexI, static_cast<int>(maxW) * indexJ);
 
       vpImage<vpRGBa> IRef;
       vpImageConvert::convert(it->second, IRef);
       IMatching.insert(IRef, topLeftCorner);
     }
 
-    vpImagePoint topLeftCorner((int)maxH * medianI, (int)maxW * medianJ);
+    vpImagePoint topLeftCorner(static_cast<int>(maxH) * medianI, static_cast<int>(maxW) * medianJ);
     IMatching.insert(ICurrent, topLeftCorner);
   }
 }
@@ -2991,7 +2992,7 @@ void vpKeyPoint::loadLearningData(const std::string &filename, bool binaryMode, 
   m_reference_computed = true;
 
   // Set m_currentImageId
-  m_currentImageId = (int)m_mapOfImages.size();
+  m_currentImageId = static_cast<int>(m_mapOfImages.size());
 }
 
 void vpKeyPoint::match(const cv::Mat &trainDescriptors, const cv::Mat &queryDescriptors,
@@ -3131,7 +3132,7 @@ unsigned int vpKeyPoint::matchPoint(const std::vector<cv::KeyPoint> &queryKeyPoi
       m_queryFilteredKeyPoints.clear();
       m_filteredMatches.clear();
       for (std::vector<cv::DMatch>::const_iterator it = m_matches.begin(); it != m_matches.end(); ++it) {
-        m_filteredMatches.push_back(cv::DMatch((int)m_queryFilteredKeyPoints.size(), it->trainIdx, it->distance));
+        m_filteredMatches.push_back(cv::DMatch(static_cast<int>(m_queryFilteredKeyPoints.size()), it->trainIdx, it->distance));
         m_queryFilteredKeyPoints.push_back(m_queryKeyPoints[(size_t)it->queryIdx]);
       }
     }
@@ -3242,7 +3243,7 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParam
       m_queryFilteredKeyPoints.clear();
       m_filteredMatches.clear();
       for (std::vector<cv::DMatch>::const_iterator it = m_matches.begin(); it != m_matches.end(); ++it) {
-        m_filteredMatches.push_back(cv::DMatch((int)m_queryFilteredKeyPoints.size(), it->trainIdx, it->distance));
+        m_filteredMatches.push_back(cv::DMatch(static_cast<int>(m_queryFilteredKeyPoints.size()), it->trainIdx, it->distance));
         m_queryFilteredKeyPoints.push_back(m_queryKeyPoints[(size_t)it->queryIdx]);
       }
     }
@@ -3308,7 +3309,7 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParam
     }
 
     for (size_t i = 0; i < m_queryFilteredKeyPoints.size(); i++) {
-      if (mapOfInlierIndex.find((unsigned int)i) == mapOfInlierIndex.end()) {
+      if (mapOfInlierIndex.find(static_cast<unsigned int>(i)) == mapOfInlierIndex.end()) {
         m_ransacOutliers.push_back(vpImagePoint(m_queryFilteredKeyPoints[i].pt.y, m_queryFilteredKeyPoints[i].pt.x));
       }
     }
@@ -3339,7 +3340,7 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParam
     }
 
     for (size_t i = 0; i < m_queryFilteredKeyPoints.size(); i++) {
-      if (mapOfInlierIndex.find((int)i) == mapOfInlierIndex.end()) {
+      if (mapOfInlierIndex.find(static_cast<int>(i)) == mapOfInlierIndex.end()) {
         m_ransacOutliers.push_back(vpImagePoint(m_queryFilteredKeyPoints[i].pt.y, m_queryFilteredKeyPoints[i].pt.x));
       }
     }
@@ -3439,7 +3440,7 @@ bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &bo
       cv::Mat fundamentalMatrix = cv::findFundamentalMat(points1, points2, cv::FM_RANSAC, 3, 0.99, fundamentalInliers);
 
       for (size_t i = 0; i < (size_t)fundamentalInliers.rows; i++) {
-        if (fundamentalInliers.at<uchar>((int)i, 0)) {
+        if (fundamentalInliers.at<uchar>(static_cast<int>(i), 0)) {
           inliers.push_back(vpImagePoint((double)points2[i].y, (double)points2[i].x));
 
           if (imPts1 != nullptr) {
@@ -3540,7 +3541,7 @@ void vpKeyPoint::detectExtractAffine(const vpImage<unsigned char> &I,
 
   for (int tl = 1; tl < 6; tl++) {
     double t = pow(2, 0.5 * tl);
-    for (int phi = 0; phi < 180; phi += (int)(72.0 / t)) {
+    for (int phi = 0; phi < 180; phi += static_cast<int>(72.0 / t)) {
       std::vector<cv::KeyPoint> keypoints;
       cv::Mat descriptors;
 
@@ -3595,7 +3596,7 @@ void vpKeyPoint::detectExtractAffine(const vpImage<unsigned char> &I,
   std::vector<std::pair<double, int> > listOfAffineParams;
   for (int tl = 1; tl < 6; tl++) {
     double t = pow(2, 0.5 * tl);
-    for (int phi = 0; phi < 180; phi += (int)(72.0 / t)) {
+    for (int phi = 0; phi < 180; phi += static_cast<int>(72.0 / t)) {
       listOfAffineParams.push_back(std::pair<double, int>(t, phi));
     }
   }
@@ -3795,7 +3796,7 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
     }
 
     // Write info about training images
-    int nbImgs = (int)mapOfImgPath.size();
+    int nbImgs = static_cast<int>(mapOfImgPath.size());
     vpIoTools::writeBinaryValueLE(file, nbImgs);
 
 #ifdef VISP_HAVE_MODULE_IO
@@ -3806,7 +3807,7 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
 
       // Write image path
       std::string path = it->second;
-      int length = (int)path.length();
+      int length = static_cast<int>(path.length());
       vpIoTools::writeBinaryValueLE(file, length);
 
       for (int cpt = 0; cpt < length; cpt++) {
@@ -3832,7 +3833,7 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
     vpIoTools::writeBinaryValueLE(file, descriptorType);
 
     for (int i = 0; i < nRows; i++) {
-      unsigned int i_ = (unsigned int)i;
+      unsigned int i_ = static_cast<unsigned int>(i);
       // Write u
       float u = m_trainKeyPoints[i_].pt.x;
       vpIoTools::writeBinaryValueLE(file, u);
@@ -3967,7 +3968,7 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
     descriptors_info_node.append_child("type").append_child(pugi::node_pcdata).text() = descriptorType;
 
     for (int i = 0; i < nRows; i++) {
-      unsigned int i_ = (unsigned int)i;
+      unsigned int i_ = static_cast<unsigned int>(i);
       pugi::xml_node descriptor_node = root_node.append_child("DescriptorInfo");
 
       descriptor_node.append_child("u").append_child(pugi::node_pcdata).text() = m_trainKeyPoints[i_].pt.x;
@@ -4141,7 +4142,7 @@ public:
   MaskPredicate(const cv::Mat &_mask) : mask(_mask) { }
   bool operator()(const cv::KeyPoint &key_pt) const
   {
-    return mask.at<uchar>((int)(key_pt.pt.y + 0.5f), (int)(key_pt.pt.x + 0.5f)) == 0;
+    return mask.at<uchar>(static_cast<int>(key_pt.pt.y + 0.5f), static_cast<int>(key_pt.pt.x + 0.5f)) == 0;
   }
 
 private:
@@ -4314,5 +4315,5 @@ END_VISP_NAMESPACE
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_vision.a(vpKeyPoint.cpp.o) has no symbols
-void dummy_vpKeyPoint() { };
+void dummy_vpKeyPoint() { }
 #endif

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,10 +40,22 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+// Mute warning with clang-cl
+// warning : non-portable path to file '<WinSock2.h>'; specified path differs in case from file name on disk [-Wnonportable-system-include-path]
+// warning : non-portable path to file '<Windows.h>'; specified path differs in case from file name on disk [-Wnonportable-system-include-path]
+#if defined(__clang__)
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wnonportable-system-include-path"
+#endif
+
 // Include WinSock2.h before windows.h to ensure that winsock.h is not
 // included by windows.h since winsock.h and winsock2.h are incompatible
 #include <WinSock2.h>
 #include <windows.h>
+
+#if defined(__clang__)
+#  pragma clang diagnostic pop
+#endif
 
 #include <visp3/core/vpDisplayException.h>
 #include <visp3/core/vpImage.h>
@@ -77,36 +89,41 @@ class VISP_EXPORT vpGDIRenderer : public vpWin32Renderer
 public:
   double timelost;
   vpGDIRenderer();
-  virtual ~vpGDIRenderer();
+  virtual ~vpGDIRenderer() VP_OVERRIDE;
 
-  bool init(HWND hWnd, unsigned int width, unsigned int height);
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+  vpGDIRenderer(const vpGDIRenderer &) = default;
+  vpGDIRenderer &operator=(const vpGDIRenderer &) = default;
+#endif
 
-  bool render();
+  bool init(HWND hWnd, unsigned int width, unsigned int height) VP_OVERRIDE;
 
-  void setImg(const vpImage<vpRGBa> &I);
-  void setImg(const vpImage<unsigned char> &I);
-  void setImgROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, unsigned int width, unsigned int height);
-  void setImgROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int width, unsigned int height);
+  bool render() VP_OVERRIDE;
 
-  void setPixel(const vpImagePoint &iP, const vpColor &color);
+  void setImg(const vpImage<vpRGBa> &I) VP_OVERRIDE;
+  void setImg(const vpImage<unsigned char> &I) VP_OVERRIDE;
+  void setImgROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, unsigned int width, unsigned int height) VP_OVERRIDE;
+  void setImgROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int width, unsigned int height) VP_OVERRIDE;
+
+  void setPixel(const vpImagePoint &iP, const vpColor &color) VP_OVERRIDE;
 
   void drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness,
-                int style = PS_SOLID);
+                int style = PS_SOLID) VP_OVERRIDE;
 
   void drawRect(const vpImagePoint &topLeft, unsigned int width, unsigned int height, const vpColor &color,
-                bool fill = false, unsigned int thickness = 1);
+                bool fill = false, unsigned int thickness = 1) VP_OVERRIDE;
 
-  void clear(const vpColor &color);
+  void clear(const vpColor &color) VP_OVERRIDE;
 
   void drawCircle(const vpImagePoint &center, unsigned int radius, const vpColor &color, bool fill = false,
-                  unsigned int thickness = 1);
+                  unsigned int thickness = 1) VP_OVERRIDE;
 
-  void drawText(const vpImagePoint &ip, const char *text, const vpColor &color);
+  void drawText(const vpImagePoint &ip, const char *text, const vpColor &color) VP_OVERRIDE;
 
-  void drawCross(const vpImagePoint &ip, unsigned int size, const vpColor &color, unsigned int thickness = 1);
+  void drawCross(const vpImagePoint &ip, unsigned int size, const vpColor &color, unsigned int thickness = 1) VP_OVERRIDE;
 
   void drawArrow(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int w, unsigned int h,
-                 unsigned int thickness = 1);
+                 unsigned int thickness = 1) VP_OVERRIDE;
 
   void getImage(vpImage<vpRGBa> &I) VP_OVERRIDE;
 

@@ -84,7 +84,7 @@ int main(int argc, char **argv)
     memcpy(data, &data_type.double_val, sizeof(data_type.double_val));
     memcpy(data + sizeof(data_type.double_val), &data_type.int_val, sizeof(data_type.int_val));
     std::string msg(data, sizeof(data_type.double_val) + sizeof(data_type.int_val));
-    if (client.send(msg) != (int)sizeof(data_type.double_val) + sizeof(data_type.int_val))
+    if (client.send(msg) != static_cast<int>(sizeof(data_type.double_val) + sizeof(data_type.int_val)))
       std::cerr << "Error client.send()!" << std::endl;
 
     if (client.receive(msg)) {
@@ -100,7 +100,7 @@ int main(int argc, char **argv)
       std::cout << "Enter the message to send:" << std::endl;
       msg.clear();
       std::getline(std::cin, msg);
-      if (client.send(msg) != (int)msg.size())
+      if (client.send(msg) != static_cast<int>(msg.size()))
         std::cerr << "Error client.send()!" << std::endl;
       if (client.receive(msg))
         std::cout << "Receive from the server: " << msg << std::endl;

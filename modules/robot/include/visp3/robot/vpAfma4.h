@@ -111,7 +111,7 @@ class VISP_EXPORT vpAfma4
 public:
   vpAfma4();
   /*! Destructor that does nothing. */
-  virtual ~vpAfma4() { };
+  virtual ~vpAfma4() { }
 
   /** @name Inherited functionalities from vpAfma4 */
   //@{

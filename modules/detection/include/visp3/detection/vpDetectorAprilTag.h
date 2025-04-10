@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,14 +48,32 @@ BEGIN_VISP_NAMESPACE
 /*!
  * \class vpDetectorAprilTag
  * \ingroup group_detection_tag
- * Base class for AprilTag detector. This class is a wrapper over <a
- * href="https://april.eecs.umich.edu/software/apriltag.html">AprilTag</a>. There
- * is no need to download and install AprilTag from source code or existing
+ * Base class for AprilTag detector. This class is a wrapper over
+ * <a href="https://april.eecs.umich.edu/software/apriltag.html">AprilTag</a>. There
+ * is no need to download and install AprilTag from source code or from existing
  * pre-built packages since the source code is embedded in ViSP. Reference papers
  * are <I> AprilTag: A robust and flexible visual fiducial system </I>
  * (\cite olson2011tags), <I> AprilTag 2: Efficient and robust fiducial
  * detection </I> (\cite wang2016iros) and <I> Flexible Layouts for Fiducial Tags
- * (Under Review) </I> (\cite krogius2019iros).
+ * </I> (\cite krogius2019iros).
+ *
+ * Supported tag families are the following:
+ * - AprilTag 16h5
+ * - AprilTag 25h9
+ * - AprilTag 36h10 (deprecated)
+ * - AprilTag 36h11
+ * - AprilTag Circle_21h7 (AprilTag 3)
+ * - AprilTag Circle_49h12 (AprilTag 3, CMake WITH_APRILTAG_BIG_FAMILY var must be set to true)
+ * - AprilTag Custom_48h12 (AprilTag 3, CMake WITH_APRILTAG_BIG_FAMILY var must be set to true)
+ * - AprilTag Standard_41h12 (AprilTag 3, CMake WITH_APRILTAG_BIG_FAMILY var must be set to true)
+ * - AprilTag Standard_52h13 (AprilTag 3, CMake WITH_APRILTAG_BIG_FAMILY var must be set to true)
+ * - ArUco 4x4
+ * - ArUco 5x5
+ * - ArUco 6x6
+ * - ArUco MIP_36h12
+ * \image html img-apriltag-supported-tags.jpg Supported tags with id 0.
+ *
+ * To use this class you can follow \ref tutorial-detection-apriltag.
  *
  * The detect() function allows to detect multiple tags in an image. Once
  * detected, for each tag it is possible to retrieve the location of the corners
@@ -64,9 +82,13 @@ BEGIN_VISP_NAMESPACE
  *
  * If camera parameters and the size of the tag are provided, you can also estimate
  * the 3D pose of the tag in terms of position and orientation wrt the camera considering 2 cases:
- * - 1. If all the tags have the same size use
- * detect(const vpImage<unsigned char> &, double, const vpCameraParameters &, std::vector<vpHomogeneousMatrix> &, std::vector<vpHomogeneousMatrix> *, std::vector<double> *, std::vector<double> *)
- * - 2. If tag sizes differ, use rather getPose()
+ * 1. If all the tags have the same size use
+ *    detect(const vpImage<unsigned char> &, double, const vpCameraParameters &, std::vector<vpHomogeneousMatrix> &, std::vector<vpHomogeneousMatrix> *, std::vector<double> *, std::vector<double> *)
+ * 2. If tag sizes differ, use rather getPose()
+ *
+ * \note With ViSP, the size of the tag corresponds to the black part of the tag. Note also that to be detected,
+ * the black part of the tag must be surrounded by a white border as wide as the black border as in the next image:
+ * \image html img-apriltag-size.jpg
  *
  * The following sample code shows how to use this class to detect the location
  * of 36h11 AprilTag patterns in an image.
@@ -236,17 +258,68 @@ class VISP_EXPORT vpDetectorAprilTag : public vpDetectorBase
 public:
   enum vpAprilTagFamily
   {
-    TAG_36h11,         ///< AprilTag 36h11 pattern (recommended)
-    TAG_36h10,         ///< DEPRECATED
-    TAG_36ARTOOLKIT,   ///< DEPRECATED AND WILL NOT DETECT ARTOOLKIT TAGS
-    TAG_25h9,          ///< AprilTag 25h9 pattern
-    TAG_25h7,          ///< DEPRECATED AND POOR DETECTION PERFORMANCE
-    TAG_16h5,          ///< AprilTag 16h5 pattern
-    TAG_CIRCLE21h7,    ///< AprilTag Circle21h7 pattern
-    TAG_CIRCLE49h12,   ///< AprilTag Circle49h12 pattern
-    TAG_CUSTOM48h12,   ///< AprilTag Custom48h12 pattern
-    TAG_STANDARD41h12, ///< AprilTag Standard41h12 pattern
-    TAG_STANDARD52h13  ///< AprilTag Standard52h13 pattern
+    TAG_36h11,           ///< AprilTag 36h11 pattern (recommended)
+    TAG_36h10,           ///< DEPRECATED
+    TAG_36ARTOOLKIT,     ///< DEPRECATED AND WILL NOT DETECT ARTOOLKIT TAGS
+    TAG_25h9,            ///< AprilTag 25h9 pattern
+    TAG_25h7,            ///< DEPRECATED AND POOR DETECTION PERFORMANCE
+    TAG_16h5,            ///< AprilTag 16h5 pattern
+    TAG_CIRCLE21h7,      ///< AprilTag Circle21h7 pattern
+    TAG_CIRCLE49h12,     ///< AprilTag Circle49h12 pattern
+    TAG_CUSTOM48h12,     ///< AprilTag Custom48h12 pattern
+    TAG_STANDARD41h12,   ///< AprilTag Standard41h12 pattern
+    TAG_STANDARD52h13,   ///< AprilTag Standard52h13 pattern
+    TAG_ARUCO_4x4_50,    /*!< ArUco 4x4 pattern: 4x4 bits, minimum hamming distance between any two codes = 4, 50 codes.\n
+                            This tag family can produce lots of false detections which can be filtered by setting an
+                            appropriate decision margin, using setAprilTagDecisionMarginThreshold() or
+                            getTagsDecisionMargin(). See \ref apriltag_detection_tips_filter section for more details. */
+    TAG_ARUCO_4x4_100,   /*!< ArUco 4x4 pattern: 4x4 bits, minimum hamming distance between any two codes = 3, 100 codes.\n
+                            This tag family can produce lots of false detections which can be filtered by setting an
+                            appropriate decision margin, using setAprilTagDecisionMarginThreshold() or
+                            getTagsDecisionMargin(). See \ref apriltag_detection_tips_filter section for more details. */
+    TAG_ARUCO_4x4_250,   /*!< ArUco 4x4 pattern: 4x4 bits, minimum hamming distance between any two codes = 3, 250 codes.\n
+                            This tag family can produce lots of false detections which can be filtered by setting an
+                            appropriate decision margin, using setAprilTagDecisionMarginThreshold() or
+                            getTagsDecisionMargin(). See \ref apriltag_detection_tips_filter section for more details. */
+    TAG_ARUCO_4x4_1000,  /*!< ArUco 4x4 pattern: 4x4 bits, minimum hamming distance between any two codes = 2, 1000 codes.\n
+                            This tag family can produce lots of false detections which can be filtered by setting an
+                            appropriate decision margin, using setAprilTagDecisionMarginThreshold() or
+                            getTagsDecisionMargin(). See \ref apriltag_detection_tips_filter section for more details. */
+    TAG_ARUCO_5x5_50,    /*!< ArUco 5x5 pattern: 5x5 bits, minimum hamming distance between any two codes = 8, 50 codes.\n
+                            This tag family can produce lots of false detections which can be filtered by setting an
+                            appropriate decision margin, using setAprilTagDecisionMarginThreshold() or
+                            getTagsDecisionMargin(). See \ref apriltag_detection_tips_filter section for more details. */
+    TAG_ARUCO_5x5_100,   /*!< ArUco 5x5 pattern: 5x5 bits, minimum hamming distance between any two codes = 7, 100 codes.\n
+                            This tag family can produce lots of false detections which can be filtered by setting an
+                            appropriate decision margin, using setAprilTagDecisionMarginThreshold() or
+                            getTagsDecisionMargin(). See \ref apriltag_detection_tips_filter section for more details. */
+    TAG_ARUCO_5x5_250,   /*!< ArUco 5x5 pattern: 5x5 bits, minimum hamming distance between any two codes = 6, 250 codes.\n
+                            This tag family can produce lots of false detections which can be filtered by setting an
+                            appropriate decision margin, using setAprilTagDecisionMarginThreshold() or
+                            getTagsDecisionMargin(). See \ref apriltag_detection_tips_filter section for more details. */
+    TAG_ARUCO_5x5_1000,  /*!< ArUco 5x5 pattern: 5x5 bits, minimum hamming distance between any two codes = 5, 1000 codes.\n
+                            This tag family can produce lots of false detections which can be filtered by setting an
+                            appropriate decision margin, using setAprilTagDecisionMarginThreshold() or
+                            getTagsDecisionMargin(). See \ref apriltag_detection_tips_filter section for more details. */
+    TAG_ARUCO_6x6_50,    /*!< ArUco 6x6 pattern: 6x6 bits, minimum hamming distance between any two codes = 13, 50 codes.\n
+                            This tag family can produce lots of false detections which can be filtered by setting an
+                            appropriate decision margin, using setAprilTagDecisionMarginThreshold() or
+                            getTagsDecisionMargin(). See \ref apriltag_detection_tips_filter section for more details. */
+    TAG_ARUCO_6x6_100,   /*!< ArUco 6x6 pattern: 6x6 bits, minimum hamming distance between any two codes = 12, 100 codes.\n
+                            This tag family can produce lots of false detections which can be filtered by setting an
+                            appropriate decision margin, using setAprilTagDecisionMarginThreshold() or
+                            getTagsDecisionMargin(). See \ref apriltag_detection_tips_filter section for more details. */
+    TAG_ARUCO_6x6_250,   /*!< ArUco 6x6 pattern: 6x6 bits, minimum hamming distance between any two codes = 11, 250 codes.\n
+                            This tag family can produce lots of false detections which can be filtered by setting an
+                            appropriate decision margin, using setAprilTagDecisionMarginThreshold() or
+                            getTagsDecisionMargin(). See \ref apriltag_detection_tips_filter section for more details. */
+    TAG_ARUCO_6x6_1000,  /*!< ArUco 6x6 pattern: 6x6 bits, minimum hamming distance between any two codes = 9, 1000 codes.\n
+                            This tag family can produce lots of false detections which can be filtered by setting an
+                            appropriate decision margin, using setAprilTagDecisionMarginThreshold() or
+                            getTagsDecisionMargin(). See \ref apriltag_detection_tips_filter section for more details. */
+    TAG_ARUCO_MIP_36h12  /*!< ArUco 6x6 pattern: 6x6 bits, minimum hamming distance between any two codes = 12, 250 codes.\n
+                            This is the recommended ArUco tag family by the main ArUco developer,
+                            <a href="https://stackoverflow.com/a/51511558">see this link</a> */
   };
 
   enum vpPoseEstimationMethod
@@ -271,7 +344,6 @@ public:
   virtual ~vpDetectorAprilTag() VP_OVERRIDE;
   bool detect(const vpImage<unsigned char> &I) VP_OVERRIDE;
 
-
   bool detect(const vpImage<unsigned char> &I, double tagSize, const vpCameraParameters &cam,
               std::vector<vpHomogeneousMatrix> &cMo_vec, std::vector<vpHomogeneousMatrix> *cMo_vec2 = nullptr,
               std::vector<double> *projErrors = nullptr, std::vector<double> *projErrors2 = nullptr);
@@ -286,6 +358,8 @@ public:
   void displayTags(const vpImage<vpRGBa> &I, const std::vector<std::vector<vpImagePoint> > &tagsCorners,
                    const vpColor &color = vpColor::none, unsigned int thickness = 1) const;
 
+  float getAprilTagDecisionMarginThreshold() const;
+  int getAprilTagHammingDistanceThreshold() const;
   bool getPose(size_t tagIndex, double tagSize, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
                vpHomogeneousMatrix *cMo2 = nullptr, double *projError = nullptr, double *projError2 = nullptr);
 
@@ -294,21 +368,26 @@ public:
    */
   inline vpPoseEstimationMethod getPoseEstimationMethod() const { return m_poseEstimationMethod; }
 
+  bool getTagImage(vpImage<unsigned char> &I, int id);
   std::vector<std::vector<vpImagePoint> > getTagsCorners() const;
+  std::vector<float> getTagsDecisionMargin() const;
+  std::vector<int> getTagsHammingDistance() const;
   std::vector<int> getTagsId() const;
   std::vector<std::vector<vpPoint> > getTagsPoints3D(const std::vector<int> &tagsId,
                                                      const std::map<int, double> &tagsSize) const;
 
   bool isZAlignedWithCameraAxis() const;
 
+  void setAprilTagDebugOption(bool flag);
+  void setAprilTagDecisionMarginThreshold(float decisionMarginThreshold);
   void setAprilTagDecodeSharpening(double decodeSharpening);
   void setAprilTagFamily(const vpAprilTagFamily &tagFamily);
+  void setAprilTagHammingDistanceThreshold(int hammingDistanceThreshold);
   void setAprilTagNbThreads(int nThreads);
   void setAprilTagPoseEstimationMethod(const vpPoseEstimationMethod &poseEstimationMethod);
   void setAprilTagQuadDecimate(float quadDecimate);
   void setAprilTagQuadSigma(float quadSigma);
   void setAprilTagRefineEdges(bool refineEdges);
-
 
 
   /*! Allow to enable the display of overlay tag information in the windows
@@ -435,7 +514,60 @@ inline std::ostream &operator<<(std::ostream &os, const vpDetectorAprilTag::vpAp
     os << "STANDARD41h12";
     break;
 
+  case vpDetectorAprilTag::TAG_ARUCO_4x4_50:
+    os << "TAG_ARUCO_4x4_50";
+    break;
+
+  case vpDetectorAprilTag::TAG_ARUCO_4x4_100:
+    os << "TAG_ARUCO_4x4_100";
+    break;
+
+  case vpDetectorAprilTag::TAG_ARUCO_4x4_250:
+    os << "TAG_ARUCO_4x4_250";
+    break;
+
+  case vpDetectorAprilTag::TAG_ARUCO_4x4_1000:
+    os << "TAG_ARUCO_4x4_1000";
+    break;
+
+  case vpDetectorAprilTag::TAG_ARUCO_5x5_50:
+    os << "TAG_ARUCO_5x5_50";
+    break;
+
+  case vpDetectorAprilTag::TAG_ARUCO_5x5_100:
+    os << "TAG_ARUCO_5x5_100";
+    break;
+
+  case vpDetectorAprilTag::TAG_ARUCO_5x5_250:
+    os << "TAG_ARUCO_5x5_250";
+    break;
+
+  case vpDetectorAprilTag::TAG_ARUCO_5x5_1000:
+    os << "TAG_ARUCO_5x5_1000";
+    break;
+
+  case vpDetectorAprilTag::TAG_ARUCO_6x6_50:
+    os << "TAG_ARUCO_6x6_50";
+    break;
+
+  case vpDetectorAprilTag::TAG_ARUCO_6x6_100:
+    os << "TAG_ARUCO_6x6_100";
+    break;
+
+  case vpDetectorAprilTag::TAG_ARUCO_6x6_250:
+    os << "TAG_ARUCO_6x6_250";
+    break;
+
+  case vpDetectorAprilTag::TAG_ARUCO_6x6_1000:
+    os << "TAG_ARUCO_6x6_1000";
+    break;
+
+  case vpDetectorAprilTag::TAG_ARUCO_MIP_36h12:
+    os << "TAG_ARUCO_MIP_36h12";
+    break;
+
   default:
+    os << "UNKNOWN";
     break;
   }
 

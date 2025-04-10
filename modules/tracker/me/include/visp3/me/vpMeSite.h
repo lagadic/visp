@@ -135,7 +135,7 @@ public:
   /*!
    * Destructor.
    */
-  virtual ~vpMeSite() { };
+  virtual ~vpMeSite() { }
 
   /*!
    * Compute convolution.
@@ -313,8 +313,8 @@ public:
    * between \b thresh and the minimum value set by vpMe::setMinThreshold() that could be retrieved using
    * vpMe::getMinThreshold().
    *
-   * \param thresh : new value of contrast threshold
-   * \param me: moving-edge parameters
+   * \param[in] thresh : new value of contrast threshold
+   * \param[in] me : moving-edge parameters
    */
   void setContrastThreshold(const double &thresh, const vpMe &me)
   {

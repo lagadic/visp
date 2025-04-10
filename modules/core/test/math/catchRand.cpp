@@ -115,7 +115,7 @@ public:
   { }
 
   //! Default destructor.
-  virtual ~vpUniRandOld() { };
+  virtual ~vpUniRandOld() { }
 
   //! Operator that allows to get a random value.
   double operator()() { return draw1(); }

@@ -182,7 +182,12 @@ class VISP_EXPORT vpRzyzVector : public vpRotationVector
 {
 public:
   vpRzyzVector();
-  vpRzyzVector(const vpRzyzVector &rzyz);
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+  vpRzyzVector(const vpRzyzVector &) = default;
+  virtual ~vpRzyzVector() VP_OVERRIDE = default;
+#else
+  virtual ~vpRzyzVector() { }
+#endif
 
   // initialize a Rzyz vector from a rotation matrix
   VP_EXPLICIT vpRzyzVector(const vpRotationMatrix &R);

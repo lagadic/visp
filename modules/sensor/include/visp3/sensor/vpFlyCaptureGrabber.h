@@ -182,7 +182,7 @@ public:
                                                  // isn't
   FlyCapture2::Camera *getCameraHandler();
   /*! Return the index of the active camera. */
-  unsigned int getCameraIndex() const { return m_index; };
+  unsigned int getCameraIndex() const { return m_index; }
   bool getCameraPower();
   static unsigned int getCameraSerial(unsigned int index);
   float getExposure();

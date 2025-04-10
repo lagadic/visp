@@ -171,7 +171,7 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
     omp_set_num_threads(nthreads);
 #pragma omp parallel for default(shared)
 #endif
-    for (int point = 0; point < (int)templateSize; point++) {
+    for (int point = 0; point < static_cast<int>(templateSize); point++) {
       int i = ptTemplate[point].y;
       int j = ptTemplate[point].x;
       X1[0] = j;
@@ -195,8 +195,8 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
         double dx = dIx.getValue(i2, j2) * (Nc - 1) / 255.;
         double dy = dIy.getValue(i2, j2) * (Nc - 1) / 255.;
 
-        int ct = (int)((IW * (Nc - 1)) / 255.);
-        int cr = (int)((Tij * (Nc - 1)) / 255.);
+        int ct = static_cast<int>((IW * (Nc - 1)) / 255.);
+        int cr = static_cast<int>((Tij * (Nc - 1)) / 255.);
         double et = (IW * (Nc - 1)) / 255. - ct;
         double er = ((double)Tij * (Nc - 1)) / 255. - cr;
 

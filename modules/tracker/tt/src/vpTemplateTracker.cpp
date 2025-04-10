@@ -81,8 +81,8 @@ void vpTemplateTracker::initTracking(const vpImage<unsigned char> &I, vpTemplate
 {
   zoneTracked = &zone;
 
-  int largeur_im = (int)I.getWidth();
-  int hauteur_im = (int)I.getHeight();
+  int largeur_im = static_cast<int>(I.getWidth());
+  int hauteur_im = static_cast<int>(I.getHeight());
 
   unsigned int NbPointDsZone = 0;
   int mod_fi, mod_fj;
@@ -737,8 +737,8 @@ void vpTemplateTracker::trackPyr(const vpImage<unsigned char> &I)
         zoneTracked = &zoneTrackedPyr[i];
       }
 
-      for (int i = (int)nbLvlPyr - 1; i >= 0; i--) {
-        if (i >= (int)l0Pyr) {
+      for (int i = static_cast<int>(nbLvlPyr) - 1; i >= 0; i--) {
+        if (i >= static_cast<int>(l0Pyr)) {
           templateSize = templateSizePyr[i];
           ptTemplate = ptTemplatePyr[i];
           ptTemplateSelect = ptTemplateSelectPyr[i];

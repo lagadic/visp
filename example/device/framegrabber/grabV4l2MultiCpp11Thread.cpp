@@ -106,7 +106,7 @@ bool getOptions(int argc, char **argv, unsigned int &deviceCount, bool &saveVide
 
     switch (c) {
     case 'd':
-      deviceCount = (unsigned int)atoi(optarg);
+      deviceCount = static_cast<unsigned int>(atoi(optarg));
       break;
     case 'o':
       saveVideo = true;

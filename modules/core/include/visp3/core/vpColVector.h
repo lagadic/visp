@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -629,7 +629,7 @@ public:
    * x_i = \frac{x_i}{\sqrt{\sum_{i=0}^{n-1} x^2_i}}
    * \f]
    *
-   * \param[inout] x : As input, the vector to normalize, as output the normalized vector.
+   * \param[in,out] x : As input, the vector to normalize, as output the normalized vector.
    * \return A reference to the normalized vector.
    */
   vpColVector &normalize(vpColVector &x) const;
@@ -1047,7 +1047,7 @@ public:
    *
    * \sa std::ostream &operator<<(std::ostream &s, const vpArray2D<Type> &A)
    */
-  int print(std::ostream &s, unsigned int length, char const *intro = 0) const;
+  int print(std::ostream &s, unsigned int length, char const *intro = nullptr) const;
 
   /*!
    * Converts a column vector containing angles in radians into degrees and returns a reference
@@ -1563,14 +1563,14 @@ vpColVector operator*(const double &x, const vpColVector &v);
 #ifdef VISP_HAVE_NLOHMANN_JSON
 inline void to_json(nlohmann::json &j, const vpColVector &v)
 {
-  const vpArray2D<double> *asArray = (vpArray2D<double>*) & v;
+  const vpArray2D<double> *asArray = &v;
   to_json(j, *asArray);
   j["type"] = "vpColVector";
 }
 
 inline void from_json(const nlohmann::json &j, vpColVector &v)
 {
-  vpArray2D<double> *asArray = (vpArray2D<double>*) & v;
+  vpArray2D<double> *asArray = &v;
   from_json(j, *asArray);
   if (v.getCols() != 1) {
     throw vpException(vpException::badValue, "From JSON, tried to read a 2D array into a vpColVector");

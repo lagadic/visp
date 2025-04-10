@@ -72,7 +72,20 @@
 #ifdef VISP_HAVE_X11
 #include <visp3/gui/vpDisplayX.h> // to get screen resolution
 #elif defined(_WIN32)
+
+// Mute warning with clang-cl
+// warning : non-portable path to file '<Windows.h>'; specified path differs in case from file name on disk [-Wnonportable-system-include-path]
+#if defined(__clang__)
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wnonportable-system-include-path"
+#endif
+
 #include <windows.h>
+
+#if defined(__clang__)
+#  pragma clang diagnostic pop
+#endif
+
 #endif
 
 BEGIN_VISP_NAMESPACE
@@ -287,7 +300,8 @@ public:
     cv::Scalar cv_color;
     if ((color.id < vpColor::id_black) || (color.id >= vpColor::id_unknown)) {
       cv_color = CV_RGB(color.R, color.G, color.B);
-    } else {
+    }
+    else {
       cv_color = col[color.id];
     }
 
@@ -330,7 +344,7 @@ public:
 
     double size = 10. * scale;
     double length = sqrt(vpMath::sqr(ip2_.get_i() - ip1_.get_i()) + vpMath::sqr(ip2_.get_j() - ip1_.get_j()));
-    bool vertical_line = (int)ip2_.get_j() == (int)ip1_.get_j();
+    bool vertical_line = static_cast<int>(ip2_.get_j()) == static_cast<int>(ip1_.get_j());
     if (vertical_line) {
       if (ip2_.get_i() < ip1_.get_i()) {
         std::swap(ip1_, ip2_);
@@ -347,13 +361,13 @@ public:
     double orig = ip1_.get_i() - slope * ip1_.get_j();
 
     if (vertical_line) {
-      for (unsigned int i = (unsigned int)ip1_.get_i(); i < ip2_.get_i(); i += (unsigned int)(2 * deltai)) {
+      for (unsigned int i = static_cast<unsigned int>(ip1_.get_i()); i < ip2_.get_i(); i += static_cast<unsigned int>(2 * deltai)) {
         double j = ip1_.get_j();
         displayLine(vpImagePoint(i, j), vpImagePoint(i + deltai, j), color, thickness, scale);
       }
     }
     else {
-      for (unsigned int j = (unsigned int)ip1_.get_j(); j < ip2_.get_j(); j += (unsigned int)(2 * deltaj)) {
+      for (unsigned int j = static_cast<unsigned int>(ip1_.get_j()); j < ip2_.get_j(); j += static_cast<unsigned int>(2 * deltaj)) {
         double i = slope * j + orig;
         displayLine(vpImagePoint(i, j), vpImagePoint(i + deltai, j + deltaj), color, thickness, scale);
       }
@@ -364,15 +378,15 @@ public:
   {
     int depth = CV_8U;
     int channels = 3;
-    cv::Size size((int)width, (int)height);
-    if (m_background.channels() != channels || m_background.depth() != depth || m_background.rows != (int)height ||
-        m_background.cols != (int)width) {
+    cv::Size size(static_cast<int>(width), static_cast<int>(height));
+    if (m_background.channels() != channels || m_background.depth() != depth || m_background.rows != static_cast<int>(height) ||
+        m_background.cols != static_cast<int>(width)) {
       m_background = cv::Mat(size, CV_MAKETYPE(depth, channels));
     }
 
     if (scale == 1) {
       for (unsigned int i = 0; i < height; i++) {
-        unsigned char *dst_24 = (unsigned char *)m_background.data + (int)(i * 3 * width);
+        unsigned char *dst_24 = (unsigned char *)m_background.data + static_cast<int>(i * 3 * width);
         for (unsigned int j = 0; j < width; j++) {
           unsigned char val = I[i][j];
           *(dst_24++) = val;
@@ -383,7 +397,7 @@ public:
     }
     else {
       for (unsigned int i = 0; i < height; i++) {
-        unsigned char *dst_24 = (unsigned char *)m_background.data + (int)(i * 3 * width);
+        unsigned char *dst_24 = (unsigned char *)m_background.data + static_cast<int>(i * 3 * width);
         for (unsigned int j = 0; j < width; j++) {
           unsigned char val = I[i * scale][j * scale];
           *(dst_24++) = val;
@@ -398,15 +412,15 @@ public:
   {
     int depth = CV_8U;
     int channels = 3;
-    cv::Size size((int)width, (int)height);
-    if (m_background.channels() != channels || m_background.depth() != depth || m_background.rows != (int)height ||
-        m_background.cols != (int)width) {
+    cv::Size size(static_cast<int>(width), static_cast<int>(height));
+    if (m_background.channels() != channels || m_background.depth() != depth || m_background.rows != static_cast<int>(height) ||
+        m_background.cols != static_cast<int>(width)) {
       m_background = cv::Mat(size, CV_MAKETYPE(depth, channels));
     }
 
     if (scale == 1) {
       for (unsigned int i = 0; i < height; i++) {
-        unsigned char *dst_24 = (unsigned char *)m_background.data + (int)(i * 3 * width);
+        unsigned char *dst_24 = (unsigned char *)m_background.data + static_cast<int>(i * 3 * width);
         for (unsigned int j = 0; j < width; j++) {
           vpRGBa val = I[i][j];
           *(dst_24++) = val.B;
@@ -417,7 +431,7 @@ public:
     }
     else {
       for (unsigned int i = 0; i < height; i++) {
-        unsigned char *dst_24 = (unsigned char *)m_background.data + (int)(i * 3 * width);
+        unsigned char *dst_24 = (unsigned char *)m_background.data + static_cast<int>(i * 3 * width);
         for (unsigned int j = 0; j < width; j++) {
           vpRGBa val = I[i * scale][j * scale];
           *(dst_24++) = val.B;
@@ -433,19 +447,19 @@ public:
   {
     int depth = CV_8U;
     int channels = 3;
-    cv::Size size((int)imgWidth, (int)imgHeight);
-    if (m_background.channels() != channels || m_background.depth() != depth || m_background.rows != (int)imgHeight ||
-        m_background.cols != (int)imgWidth) {
+    cv::Size size(static_cast<int>(imgWidth), static_cast<int>(imgHeight));
+    if (m_background.channels() != channels || m_background.depth() != depth || m_background.rows != static_cast<int>(imgHeight) ||
+        m_background.cols != static_cast<int>(imgWidth)) {
       m_background = cv::Mat(size, CV_MAKETYPE(depth, channels));
     }
 
     if (scale == 1) {
-      unsigned int i_min = (unsigned int)iP.get_i();
-      unsigned int j_min = (unsigned int)iP.get_j();
+      unsigned int i_min = static_cast<unsigned int>(iP.get_i());
+      unsigned int j_min = static_cast<unsigned int>(iP.get_j());
       unsigned int i_max = std::min<unsigned int>(i_min + h, imgHeight);
       unsigned int j_max = std::min<unsigned int>(j_min + w, imgWidth);
       for (unsigned int i = i_min; i < i_max; i++) {
-        unsigned char *dst_24 = (unsigned char *)m_background.data + (int)(i * 3 * imgWidth + j_min * 3);
+        unsigned char *dst_24 = (unsigned char *)m_background.data + static_cast<int>(i * 3 * imgWidth + j_min * 3);
         for (unsigned int j = j_min; j < j_max; j++) {
           unsigned char val = I[i][j];
           *(dst_24++) = val;
@@ -455,12 +469,12 @@ public:
       }
     }
     else {
-      int i_min = std::max<int>((int)ceil(iP.get_i() / scale), 0);
-      int j_min = std::max<int>((int)ceil(iP.get_j() / scale), 0);
-      int i_max = std::min<int>((int)ceil((iP.get_i() + h) / scale), (int)imgHeight);
-      int j_max = std::min<int>((int)ceil((iP.get_j() + w) / scale), (int)imgWidth);
+      int i_min = std::max<int>(static_cast<int>(ceil(iP.get_i() / scale)), 0);
+      int j_min = std::max<int>(static_cast<int>(ceil(iP.get_j() / scale)), 0);
+      int i_max = std::min<int>(static_cast<int>(ceil((iP.get_i() + h) / scale)), static_cast<int>(imgHeight));
+      int j_max = std::min<int>(static_cast<int>(ceil((iP.get_j() + w) / scale)), static_cast<int>(imgWidth));
       for (int i = i_min; i < i_max; i++) {
-        unsigned char *dst_24 = (unsigned char *)m_background.data + (int)(i * 3 * imgWidth + j_min * 3);
+        unsigned char *dst_24 = (unsigned char *)m_background.data + static_cast<int>(i * 3 * imgWidth + j_min * 3);
         for (int j = j_min; j < j_max; j++) {
           unsigned char val = I[i * scale][j * scale];
           *(dst_24++) = val;
@@ -475,19 +489,19 @@ public:
   {
     int depth = CV_8U;
     int channels = 3;
-    cv::Size size((int)imgWidth, (int)imgHeight);
-    if (m_background.channels() != channels || m_background.depth() != depth || m_background.rows != (int)imgHeight ||
-        m_background.cols != (int)imgWidth) {
+    cv::Size size(static_cast<int>(imgWidth), static_cast<int>(imgHeight));
+    if (m_background.channels() != channels || m_background.depth() != depth || m_background.rows != static_cast<int>(imgHeight) ||
+        m_background.cols != static_cast<int>(imgWidth)) {
       m_background = cv::Mat(size, CV_MAKETYPE(depth, channels));
     }
 
     if (scale == 1) {
-      unsigned int i_min = (unsigned int)iP.get_i();
-      unsigned int j_min = (unsigned int)iP.get_j();
+      unsigned int i_min = static_cast<unsigned int>(iP.get_i());
+      unsigned int j_min = static_cast<unsigned int>(iP.get_j());
       unsigned int i_max = std::min<unsigned int>(i_min + h, imgHeight);
       unsigned int j_max = std::min<unsigned int>(j_min + w, imgWidth);
       for (unsigned int i = i_min; i < i_max; i++) {
-        unsigned char *dst_24 = (unsigned char *)m_background.data + (int)(i * 3 * imgWidth + j_min * 3);
+        unsigned char *dst_24 = (unsigned char *)m_background.data + static_cast<int>(i * 3 * imgWidth + j_min * 3);
         for (unsigned int j = j_min; j < j_max; j++) {
           vpRGBa val = I[i][j];
           *(dst_24++) = val.B;
@@ -497,12 +511,12 @@ public:
       }
     }
     else {
-      int i_min = std::max<int>((int)ceil(iP.get_i() / scale), 0);
-      int j_min = std::max<int>((int)ceil(iP.get_j() / scale), 0);
-      int i_max = std::min<int>((int)ceil((iP.get_i() + h) / scale), (int)imgHeight);
-      int j_max = std::min<int>((int)ceil((iP.get_j() + w) / scale), (int)imgWidth);
+      int i_min = std::max<int>(static_cast<int>(ceil(iP.get_i() / scale)), 0);
+      int j_min = std::max<int>(static_cast<int>(ceil(iP.get_j() / scale)), 0);
+      int i_max = std::min<int>(static_cast<int>(ceil((iP.get_i() + h) / scale)), static_cast<int>(imgHeight));
+      int j_max = std::min<int>(static_cast<int>(ceil((iP.get_j() + w) / scale)), static_cast<int>(imgWidth));
       for (int i = i_min; i < i_max; i++) {
-        unsigned char *dst_24 = (unsigned char *)m_background.data + (int)(i * 3 * imgWidth + j_min * 3);
+        unsigned char *dst_24 = (unsigned char *)m_background.data + static_cast<int>(i * 3 * imgWidth + j_min * 3);
         for (int j = j_min; j < j_max; j++) {
           vpRGBa val = I[i * scale][j * scale];
           *(dst_24++) = val.B;
@@ -519,12 +533,12 @@ public:
       cvcolor = CV_RGB(color.R, color.G, color.B);
       cv::line(m_background, cv::Point(vpMath::round(ip1.get_u() / scale), vpMath::round(ip1.get_v() / scale)),
                cv::Point(vpMath::round(ip2.get_u() / scale), vpMath::round(ip2.get_v() / scale)), cvcolor,
-               (int)thickness);
+               static_cast<int>(thickness));
     }
     else {
       cv::line(m_background, cv::Point(vpMath::round(ip1.get_u() / scale), vpMath::round(ip1.get_v() / scale)),
                cv::Point(vpMath::round(ip2.get_u() / scale), vpMath::round(ip2.get_v() / scale)), col[color.id],
-               (int)thickness);
+               static_cast<int>(thickness));
     }
   }
 
@@ -535,12 +549,12 @@ public:
         cvcolor = CV_RGB(color.R, color.G, color.B);
         cv::line(m_background, cv::Point(vpMath::round(ip.get_u() / scale), vpMath::round(ip.get_v() / scale)),
                  cv::Point(vpMath::round(ip.get_u() / scale + thickness - 1), vpMath::round(ip.get_v() / scale)),
-                 cvcolor, (int)thickness);
+                 cvcolor, static_cast<int>(thickness));
       }
       else {
         cv::line(m_background, cv::Point(vpMath::round(ip.get_u() / scale), vpMath::round(ip.get_v() / scale)),
                  cv::Point(vpMath::round(ip.get_u() / scale + thickness - 1), vpMath::round(ip.get_v() / scale)),
-                 col[color.id], (int)thickness);
+                 col[color.id], static_cast<int>(thickness));
       }
     }
   }
@@ -618,8 +632,8 @@ public:
     do {
       if (lbuttondown) {
         ret = true;
-        u = (unsigned int)x_lbuttondown * scale;
-        v = (unsigned int)y_lbuttondown * scale;
+        u = static_cast<unsigned int>(x_lbuttondown) * scale;
+        v = static_cast<unsigned int>(y_lbuttondown) * scale;
         ip.set_u(u);
         ip.set_v(v);
         button = vpMouseButton::button1;
@@ -627,8 +641,8 @@ public:
       }
       if (mbuttondown) {
         ret = true;
-        u = (unsigned int)x_mbuttondown * scale;
-        v = (unsigned int)y_mbuttondown * scale;
+        u = static_cast<unsigned int>(x_mbuttondown) * scale;
+        v = static_cast<unsigned int>(y_mbuttondown) * scale;
         ip.set_u(u);
         ip.set_v(v);
         button = vpMouseButton::button2;
@@ -636,8 +650,8 @@ public:
       }
       if (rbuttondown) {
         ret = true;
-        u = (unsigned int)x_rbuttondown * scale;
-        v = (unsigned int)y_rbuttondown * scale;
+        u = static_cast<unsigned int>(x_rbuttondown) * scale;
+        v = static_cast<unsigned int>(y_rbuttondown) * scale;
         ip.set_u(u);
         ip.set_v(v);
         button = vpMouseButton::button3;
@@ -662,8 +676,8 @@ public:
     do {
       if (lbuttonup) {
         ret = true;
-        u = (unsigned int)x_lbuttonup * scale;
-        v = (unsigned int)y_lbuttonup * scale;
+        u = static_cast<unsigned int>(x_lbuttonup) * scale;
+        v = static_cast<unsigned int>(y_lbuttonup) * scale;
         ip.set_u(u);
         ip.set_v(v);
         button = vpMouseButton::button1;
@@ -671,8 +685,8 @@ public:
       }
       if (mbuttonup) {
         ret = true;
-        u = (unsigned int)x_mbuttonup * scale;
-        v = (unsigned int)y_mbuttonup * scale;
+        u = static_cast<unsigned int>(x_mbuttonup) * scale;
+        v = static_cast<unsigned int>(y_mbuttonup) * scale;
         ip.set_u(u);
         ip.set_v(v);
         button = vpMouseButton::button2;
@@ -680,8 +694,8 @@ public:
       }
       if (rbuttonup) {
         ret = true;
-        u = (unsigned int)x_rbuttonup * scale;
-        v = (unsigned int)y_rbuttonup * scale;
+        u = static_cast<unsigned int>(x_rbuttonup) * scale;
+        v = static_cast<unsigned int>(y_rbuttonup) * scale;
         ip.set_u(u);
         ip.set_v(v);
         button = vpMouseButton::button3;
@@ -699,8 +713,8 @@ public:
     bool ret = false;
     if (move) {
       ret = true;
-      double u = (unsigned int)x_move / scale;
-      double v = (unsigned int)y_move / scale;
+      double u = static_cast<unsigned int>(x_move) / scale;
+      double v = static_cast<unsigned int>(y_move) / scale;
       ip.set_u(u);
       ip.set_v(v);
       move = false;
@@ -713,8 +727,8 @@ public:
     bool moved = getPointerMotionEvent(ip, scale);
     if (!moved) {
       double u, v;
-      u = (unsigned int)x_move / scale;
-      v = (unsigned int)y_move / scale;
+      u = static_cast<unsigned int>(x_move) / scale;
+      v = static_cast<unsigned int>(y_move) / scale;
       ip.set_u(u);
       ip.set_v(v);
     }
@@ -1126,8 +1140,8 @@ void vpDisplayOpenCV::setTitle(const std::string & /* title */)
 /*!
   Set the window position in the screen.
 
-  \param winx, winy : Position of the upper-left window's border in the
-  screen.
+  \param[in] winx : Horizontal position of the upper-left window's corner in the screen.
+  \param[in] winy : Vertical position of the upper-left window's corner in the screen.
 
   \exception vpDisplayException::notInitializedError : If the video
   device is not initialized.
@@ -1149,7 +1163,7 @@ void vpDisplayOpenCV::setWindowPosition(int winx, int winy)
 
   \warning Display has to be initialized.
 
-  \warning suppres the overlay drawing
+  \warning Suppress the overlay drawing.
 
   \param I : Image to display.
 
@@ -1307,9 +1321,11 @@ void vpDisplayOpenCV::clearDisplay(const vpColor & /* color */)
 
 /*!
   Display an arrow from image point \e ip1 to image point \e ip2.
-  \param ip1,ip2 : Initial and final image point.
+  \param ip1 : Initial image point.
+  \param ip2 : Final image point.
   \param color : Arrow color.
-  \param w,h : Width and height of the arrow.
+  \param w : Arrow width.
+  \param h : Arrow height.
   \param thickness : Thickness of the lines used to display the arrow.
 */
 void vpDisplayOpenCV::displayArrow(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color,
@@ -1422,9 +1438,9 @@ void vpDisplayOpenCV::displayLine(const vpImagePoint &ip1, const vpImagePoint &i
 
 /*!
   Display a point at the image point \e ip location.
-  \param ip : Point location.
-  \param color : Point color.
-  \param thickness : point thickness.
+  \param[in] ip : Point location.
+  \param[in] color : Point color.
+  \param[in] thickness : point thickness.
 */
 void vpDisplayOpenCV::displayPoint(const vpImagePoint &ip, const vpColor &color, unsigned int thickness)
 {
@@ -1440,14 +1456,15 @@ void vpDisplayOpenCV::displayPoint(const vpImagePoint &ip, const vpColor &color,
   Display a rectangle with \e topLeft as the top-left corner and \e
   width and \e height the rectangle size.
 
-  \param topLeft : Top-left corner of the rectangle.
-  \param w,h : Rectangle size in terms of width and height.
-  \param color : RGB color used to display the rectangle.
+  \param[in] topLeft : Top-left corner of the rectangle.
+  \param[in] w : Rectangle width.
+  \param[in] h : Rectangle height.
+  \param[in] color : RGB color used to display the rectangle.
   Alpha channel in color.A is here taken into account when cxx standard is set to cxx11 or higher.
   When alpha value is set to 255 (default) the rectangle is displayed without
   transparency. Closer is the alpha value to zero, more the rectangle is transparent.
-  \param fill : When set to true fill the rectangle.
-  \param thickness : Thickness of the four lines used to display the
+  \param[in] fill : When set to true fill the rectangle.
+  \param[in] thickness : Thickness of the four lines used to display the
   rectangle. This parameter is only useful when \e fill is set to
   false.
 */
@@ -1464,14 +1481,14 @@ void vpDisplayOpenCV::displayRectangle(const vpImagePoint &topLeft, unsigned int
 /*!
   Display a rectangle.
 
-  \param topLeft : Top-left corner of the rectangle.
-  \param bottomRight : Bottom-right corner of the rectangle.
-  \param color : RGB color used to display the rectangle.
+  \param[in] topLeft : Top-left corner of the rectangle.
+  \param[in] bottomRight : Bottom-right corner of the rectangle.
+  \param[in] color : RGB color used to display the rectangle.
   Alpha channel in color.A is here taken into account when cxx standard is set to cxx11 or higher.
   When alpha value is set to 255 (default) the rectangle is displayed without
   transparency. Closer is the alpha value to zero, more the rectangle is transparent.
-  \param fill : When set to true fill the rectangle.
-  \param thickness : Thickness of the four lines used to display the
+  \param[in] fill : When set to true fill the rectangle.
+  \param[in] thickness : Thickness of the four lines used to display the
   rectangle. This parameter is only useful when \e fill is set to
   false.
 */
@@ -1840,5 +1857,5 @@ END_VISP_NAMESPACE
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_gui.a(vpDisplayOpenCV.cpp.o) has no symbols
-void dummy_vpDisplayOpenCV() { };
+void dummy_vpDisplayOpenCV() { }
 #endif

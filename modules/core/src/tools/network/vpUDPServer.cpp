@@ -222,7 +222,7 @@ int vpUDPServer::receive(std::string &msg, std::string &hostInfo, int timeoutMs)
     timeout.tv_sec = timeoutMs / 1000;
     timeout.tv_usec = (timeoutMs % 1000) * 1000;
   }
-  int retval = select((int)m_socketFileDescriptor + 1, &s, nullptr, nullptr, timeoutMs > 0 ? &timeout : nullptr);
+  int retval = select(static_cast<int>(m_socketFileDescriptor) + 1, &s, nullptr, nullptr, timeoutMs > 0 ? &timeout : nullptr);
 
   if (retval == -1) {
     std::cerr << "Error select!" << std::endl;
@@ -330,12 +330,12 @@ int vpUDPServer::send(const std::string &msg, const std::string &hostname, int p
   return static_cast<int>(
       sendto(m_socketFileDescriptor, msg.c_str(), msg.size(), 0, (struct sockaddr *)&m_clientAddress, m_clientLength));
 #else
-  return sendto(m_socketFileDescriptor, msg.c_str(), (int)msg.size(), 0, (struct sockaddr *)&m_clientAddress,
+  return sendto(m_socketFileDescriptor, msg.c_str(), static_cast<int>(msg.size()), 0, (struct sockaddr *)&m_clientAddress,
                 m_clientLength);
 #endif
 }
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpUDPServer.cpp.o) has no symbols
-void dummy_vpUDPServer() { };
+void dummy_vpUDPServer() { }
 #endif

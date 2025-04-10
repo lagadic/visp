@@ -234,7 +234,7 @@ private:
    * \exception vpRobotException::constructionError If the config file cannot be
    * opened.
    */
-  void init() VP_OVERRIDE { };
+  void init() VP_OVERRIDE { }
 
   /*!
    * Get the robot displacement since the last call of this method.

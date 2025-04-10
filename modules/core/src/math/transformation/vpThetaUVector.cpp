@@ -48,8 +48,6 @@ const unsigned int vpThetaUVector::constr_val_3 = 3;
 
 /*! Default constructor that initialize all the 3 angles to zero. */
 vpThetaUVector::vpThetaUVector() : vpRotationVector(constr_val_3) { }
-/*! Copy constructor. */
-vpThetaUVector::vpThetaUVector(const vpThetaUVector &tu) : vpRotationVector(tu) { }
 /*! Copy constructor from a 3-dimension vector. */
 vpThetaUVector::vpThetaUVector(const vpColVector &tu) : vpRotationVector(constr_val_3) { buildFrom(tu); }
 /*!

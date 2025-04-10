@@ -208,9 +208,9 @@ void vpNurbs::curveKnotIns(double l_u, unsigned int l_k, unsigned int l_s, unsig
   }
 
   it1 = l_controlPoints.begin();
-  l_controlPoints.insert(it1 + (int)l_k - (int)l_s, l_r, pt);
+  l_controlPoints.insert(it1 + static_cast<int>(l_k) - static_cast<int>(l_s), l_r, pt);
   it2 = l_weights.begin();
-  l_weights.insert(it2 + (int)l_k - (int)l_s, l_r, w);
+  l_weights.insert(it2 + static_cast<int>(l_k) - static_cast<int>(l_s), l_r, w);
 
   unsigned int L = 0;
   double alpha;
@@ -240,7 +240,7 @@ void vpNurbs::curveKnotIns(double l_u, unsigned int l_k, unsigned int l_s, unsig
   }
 
   it2 = l_knots.begin();
-  l_knots.insert(it2 + (int)l_k, l_r, l_u);
+  l_knots.insert(it2 + static_cast<int>(l_k), l_r, l_u);
 }
 
 void vpNurbs::curveKnotIns(double u, unsigned int s, unsigned int r)
@@ -257,8 +257,8 @@ void vpNurbs::refineKnotVectCurve(double *l_x, unsigned int l_r, unsigned int l_
   unsigned int b = findSpan(l_x[l_r], l_p, l_knots);
   b++;
 
-  unsigned int n = (unsigned int)l_controlPoints.size();
-  unsigned int m = (unsigned int)l_knots.size();
+  unsigned int n = static_cast<unsigned int>(l_controlPoints.size());
+  unsigned int m = static_cast<unsigned int>(l_knots.size());
 
   for (unsigned int j = 0; j < n; j++) {
     l_controlPoints[j].set_ij(l_controlPoints[j].get_i() * l_weights[j], l_controlPoints[j].get_j() * l_weights[j]);
@@ -339,7 +339,7 @@ unsigned int vpNurbs::removeCurveKnot(double l_u, unsigned int l_r, unsigned int
                                       unsigned int l_p, std::vector<double> &l_knots,
                                       std::vector<vpImagePoint> &l_controlPoints, std::vector<double> &l_weights)
 {
-  unsigned int n = (unsigned int)l_controlPoints.size();
+  unsigned int n = static_cast<unsigned int>(l_controlPoints.size());
   unsigned int m = n + l_p + 1;
 
   for (unsigned int j = 0; j < n; j++) {
@@ -431,7 +431,7 @@ unsigned int vpNurbs::removeCurveKnot(double l_u, unsigned int l_r, unsigned int
   }
   for (unsigned int k = l_r + 1; k <= m; k++)
     l_knots[k - t] = l_knots[k];
-  j = (unsigned int)fout;
+  j = static_cast<unsigned int>(fout);
   i = j;
   for (unsigned int k = 1; k < t; k++) {
     if (k % 2)
@@ -475,7 +475,7 @@ void vpNurbs::globalCurveInterp(std::vector<vpImagePoint> &l_crossingPoints, uns
   l_knots.clear();
   l_controlPoints.clear();
   l_weights.clear();
-  unsigned int n = (unsigned int)l_crossingPoints.size() - 1;
+  unsigned int n = static_cast<unsigned int>(l_crossingPoints.size()) - 1;
   unsigned int m = n + l_p + 1;
 
   double d = 0;
@@ -599,7 +599,7 @@ void vpNurbs::globalCurveApprox(std::vector<vpImagePoint> &l_crossingPoints, uns
   l_knots.clear();
   l_controlPoints.clear();
   l_weights.clear();
-  unsigned int m = (unsigned int)l_crossingPoints.size() - 1;
+  unsigned int m = static_cast<unsigned int>(l_crossingPoints.size()) - 1;
 
   double d = 0;
   for (unsigned int k = 1; k <= m; k++)
@@ -621,7 +621,7 @@ void vpNurbs::globalCurveApprox(std::vector<vpImagePoint> &l_crossingPoints, uns
   for (unsigned int j = 1; j <= l_n - l_p; j++) {
     double i = floor(j * d);
     double alpha = j * d - i;
-    l_knots.push_back((1.0 - alpha) * ubar[(unsigned int)i - 1] + alpha * ubar[(unsigned int)i]);
+    l_knots.push_back((1.0 - alpha) * ubar[static_cast<unsigned int>(i) - 1] + alpha * ubar[static_cast<unsigned int>(i)]);
   }
 
   for (unsigned int k = 0; k <= l_p; k++)

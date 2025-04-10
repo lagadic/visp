@@ -62,7 +62,7 @@ int test_moment_alpha(const std::string &name, bool symmetry, const std::vector<
   // ***************
   std::vector<double> mu_ref;
   double alpha_ref = 0.;
-  for (unsigned int i = (unsigned int)vec_angle.size(); i >= 1; --i) {
+  for (unsigned int i = static_cast<unsigned int>(vec_angle.size()); i >= 1; --i) {
     // Compute reference alpha image <name>-<vec_angle>[i]deg.pgm
     std::stringstream ss;
     ss << name << "-" << vec_angle[i - 1] << "deg.pgm";

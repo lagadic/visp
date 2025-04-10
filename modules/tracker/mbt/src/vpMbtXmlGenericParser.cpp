@@ -1920,6 +1920,6 @@ void vpMbtXmlGenericParser::setVerbose(bool verbose) { m_impl->setVerbose(verbos
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpMbtXmlGenericParser.cpp.o) has no symbols
-void dummy_vpMbtXmlGenericParser() { };
+void dummy_vpMbtXmlGenericParser() { }
 
 #endif

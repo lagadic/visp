@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -292,14 +292,14 @@ public:
    *
    * \param[out] rank : Rank of the homography that should be 3.
    *
-   * \return  \f$\bf H^{-1}\f$
+   * \return Inverted homography \f$\bf H^{-1}\f$.
    */
   vpHomography inverse(double sv_threshold = 1e-16, unsigned int *rank = nullptr) const;
 
   /*!
    * Invert the homography.
    *
-   * \param bHa : \f$\bf H^{-1}\f$ with H = *this.
+   * \param[in,out] bHa : \f$\bf H^{-1}\f$ with H = *this.
    */
   void inverse(vpHomography &bHa) const;
 
@@ -307,7 +307,7 @@ public:
    * Read an homography in a file, verify if it is really an homogeneous
    * matrix.
    *
-   * \param f : the file. This file has to be written using save().
+   * \param[in] f : the file. This file has to be written using save().
    *
    * \sa save()
    */
@@ -406,13 +406,13 @@ public:
    * 3-by-3 matrix.
    * \exception vpException::fatalError When this function is called.
    */
-  void resize(unsigned int nrows, unsigned int ncols, bool flagNullify = true)
+  VP_NORETURN void resize(unsigned int nrows, unsigned int ncols, bool flagNullify = true)
   {
     (void)nrows;
     (void)ncols;
     (void)flagNullify;
     throw(vpException(vpException::fatalError, "Cannot resize an homography matrix"));
-  };
+  }
 
   /*!
    * Save an homography in a file.
@@ -476,16 +476,17 @@ public:
    * value of <b>A
    * </b>
    *
-   * \param xb, yb : Coordinates vector of matched points in image b. These
-   * coordinates are expressed in meters.
-   * \param xa, ya : Coordinates vector of
-   * matched points in image a. These coordinates are expressed in meters.
-   * \param
-   * aHb : Estimated homography that relies the transformation from image a to
-   * image b.
-   * \param normalization : When set to true, the coordinates of the
-   * points are normalized. The normalization carried out is the one preconized
-   * by Hartley.
+   * \param[in] xb : Vector that contains the coordinates along x-axis (horizontal) of matched points in image b.
+   * These coordinates are expressed in meters.
+   * \param[in] yb : Vector that contains the coordinates along y-axis (vertical) of matched points in image b.
+   * These coordinates are expressed in meters.
+   * \param[in] xa : Vector that contains the coordinates along x-axis (horizontal) of matched points in image a.
+   * These coordinates are expressed in meters.
+   * \param[in] ya : Vector that contains the coordinates along y-axis (vertical) of matched points in image a.
+   * These coordinates are expressed in meters.
+   * \param[out] aHb : Estimated homography that relies the transformation from image a to image b.
+   * \param[in] normalization : When set to true, the coordinates of the
+   * points are normalized. The normalization carried out is the one preconized by Hartley.
    *
    * \exception vpMatrixException::rankDeficient : When the rank of the matrix
    * that should be 8 is deficient.
@@ -503,14 +504,17 @@ public:
    * for planar scene implemented in this file is described in Ezio Malis PhD
    * thesis \cite TheseMalis.
    *
-   * \param xb, yb : Coordinates vector of matched points in image b. These
-   * coordinates are expressed in meters.
-   * \param xa, ya : Coordinates vector of
-   * matched points in image a. These coordinates are expressed in meters.
-   * \param isplanar : If true the points are assumed to be in a plane, otherwise there
+   * \param[in] xb : Vector that contains the coordinates along x-axis (horizontal) of matched points in image b.
+   * These coordinates are expressed in meters.
+   * \param[in] yb : Vector that contains the coordinates along y-axis (vertical) of matched points in image b.
+   * These coordinates are expressed in meters.
+   * \param[in] xa : Vector that contains the coordinates along x-axis (horizontal) of matched points in image a.
+   * These coordinates are expressed in meters.
+   * \param[in] ya : Vector that contains the coordinates along y-axis (vertical) of matched points in image a.
+   * These coordinates are expressed in meters.
+   * \param[in] isplanar : If true the points are assumed to be in a plane, otherwise there
    * are assumed to be non planar.
-   * \param aHb : Estimated homography that relies
-   * the transformation from image a to image b.
+   * \param[out] aHb : Estimated homography that relies the transformation from image a to image b.
    *
    * If the boolean isplanar is true the points are assumed to be in a plane
    * otherwise there are assumed to be non planar.
@@ -526,23 +530,26 @@ public:
    * computes the homography matrix by resolving \f$^a{\bf p} = ^a{\bf H}_b\;
    * ^b{\bf p}\f$ using Ransac algorithm.
    *
-   * \param xb, yb : Coordinates vector of matched points in image b. These
-   * coordinates are expressed in meters.
-   * \param xa, ya : Coordinates vector of
-   * matched points in image a. These coordinates are expressed in meters.
-   * \param aHb : Estimated homography that relies the transformation from image a to
-   * image b.
-   * \param inliers : Vector that indicates if a matched point is an
+   * \param[in] xb : Vector that contains the coordinates along x-axis (horizontal) of matched points in image b.
+   * These coordinates are expressed in meters.
+   * \param[in] yb : Vector that contains the coordinates along y-axis (vertical) of matched points in image b.
+   * These coordinates are expressed in meters.
+   * \param[in] xa : Vector that contains the coordinates along x-axis (horizontal) of matched points in image a.
+   * These coordinates are expressed in meters.
+   * \param[in] ya : Vector that contains the coordinates along y-axis (vertical) of matched points in image a.
+   * These coordinates are expressed in meters.
+   * \param[out] aHb : Estimated homography that relies the transformation from image a to image b.
+   * \param[out] inliers : Vector that indicates if a matched point is an
    * inlier (true) or an outlier (false).
-   * \param residual : Global residual
+   * \param[out] residual : Global residual
    * computed as \f$r = \sqrt{1/n \sum_{inliers} {\| {^a{\bf p} - {\hat{^a{\bf
    * H}_b}} {^b{\bf p}}} \|}^{2}}\f$ with \f$n\f$ the number of inliers.
-   * \param nbInliersConsensus : Minimal number of points requested to fit the
+   * \param[in] nbInliersConsensus : Minimal number of points requested to fit the
    * estimated homography.
-   * \param threshold : Threshold for outlier removing. A point is considered as
+   * \param[in] threshold : Threshold for outlier removing. A point is considered as
    * an outlier if the reprojection error \f$\| {^a{\bf p} - {\hat{^a{\bf H}_b}}
    * {^b{\bf p}}} \|\f$ is greater than this threshold.
-   * \param normalization : When set to true, the coordinates of the points are
+   * \param[in] normalization : When set to true, the coordinates of the points are
    * normalized. The normalization carried out is the one preconized by Hartley.
    *
    * \return true if the homography could be computed, false otherwise.
@@ -590,24 +597,27 @@ public:
    *
    * At least 4 couples of points are needed.
    *
-   * \param xb, yb : Coordinates vector of matched points in image b. These
-   * coordinates are expressed in meters.
-   * \param xa, ya : Coordinates vector of
-   * matched points in image a. These coordinates are expressed in meters.
-   * \param aHb : Estimated homography that relies the transformation from image a to
-   * image b.
-   * \param inliers : Vector that indicates if a matched point is an
+   * \param[in] xb : Vector that contains the coordinates along x-axis (horizontal) of matched points in image b.
+   * These coordinates are expressed in meters.
+   * \param[in] yb : Vector that contains the coordinates along y-axis (vertical) of matched points in image b.
+   * These coordinates are expressed in meters.
+   * \param[in] xa : Vector that contains the coordinates along x-axis (horizontal) of matched points in image a.
+   * These coordinates are expressed in meters.
+   * \param[in] ya : Vector that contains the coordinates along y-axis (vertical) of matched points in image a.
+   * These coordinates are expressed in meters.
+   * \param[out] aHb : Estimated homography that relies the transformation from image a to image b.
+   * \param[out] inliers : Vector that indicates if a matched point is an
    * inlier (true) or an outlier (false).
-   * \param residual : Global residual computed as
+   * \param[out] residual : Global residual computed as
    * \f$r = \sqrt{1/n \sum_{inliers} {\| {^a{\bf p} - {\hat{^a{\bf H}_b}} {^b{\bf p}}} \|}^{2}}\f$
    * with \f$n\f$ the number of inliers.
-   * \param weights_threshold : Threshold applied on the weights updated during the
+   * \param[in] weights_threshold : Threshold applied on the weights updated during the
    * robust estimation and used to consider if a point is an outlier or an
    * inlier. Values should be in [0:1]. A couple of matched points that have a
    * weight lower than this threshold is considered as an outlier. A value equal
    * to zero indicates that all the points are inliers.
-   * \param niter : Number of iterations of the estimation process.
-   * \param normalization : When set to true, the coordinates of the points are normalized.
+   * \param[in] niter : Number of iterations of the estimation process.
+   * \param[in] normalization : When set to true, the coordinates of the points are normalized.
    * The normalization carried out is the one preconized by Hartley.
    *
    * \sa DLT(), ransac()

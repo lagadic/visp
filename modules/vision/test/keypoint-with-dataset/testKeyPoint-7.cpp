@@ -42,9 +42,9 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO) && \
-  ((VISP_HAVE_OPENCV_VERSION < 0x050000)  && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_FEATURES2D)) || \
-  ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D) && defined(HAVE_OPENCV_FEATURES))
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO) && \
+  (((VISP_HAVE_OPENCV_VERSION < 0x050000)  && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_FEATURES2D)) || \
+   ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D) && defined(HAVE_OPENCV_FEATURES)))
 
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpImage.h>
@@ -317,7 +317,7 @@ template <typename Type> void run_test(const std::string &env_ipath, const std::
     std::vector<cv::KeyPoint> trainKeyPoints;
     keyPoints.getTrainKeyPoints(trainKeyPoints);
     cv::Mat trainDescriptors = keyPoints.getTrainDescriptors();
-    if (trainKeyPoints.empty() || trainDescriptors.empty() || (int)trainKeyPoints.size() != trainDescriptors.rows) {
+    if (trainKeyPoints.empty() || trainDescriptors.empty() || static_cast<int>(trainKeyPoints.size()) != trainDescriptors.rows) {
       throw vpException(vpException::fatalError, "Problem when detecting "
                                                  "keypoints or when "
                                                  "computing descriptors !");
@@ -469,7 +469,9 @@ template <typename Type> void run_test(const std::string &env_ipath, const std::
   }
 
   // Test with floating point descriptor
-#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_XFEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
+#if defined(VISP_HAVE_OPENCV) && \
+    (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_XFEATURES2D)) || \
+     ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES)))
   {
 #if (VISP_HAVE_OPENCV_VERSION != 0x040504) && (VISP_HAVE_OPENCV_VERSION != 0x040505) && \
     (VISP_HAVE_OPENCV_VERSION != 0x040600) && (VISP_HAVE_OPENCV_VERSION != 0x040700) && \
@@ -490,7 +492,7 @@ template <typename Type> void run_test(const std::string &env_ipath, const std::
     keyPoints.getTrainKeyPoints(trainKeyPoints);
     std::cout << "Get descriptors" << std::endl;
     cv::Mat trainDescriptors = keyPoints.getTrainDescriptors();
-    if (trainKeyPoints.empty() || trainDescriptors.empty() || (int)trainKeyPoints.size() != trainDescriptors.rows) {
+    if (trainKeyPoints.empty() || trainDescriptors.empty() ||static_cast<int>(trainKeyPoints.size()) != trainDescriptors.rows) {
       throw vpException(vpException::fatalError, "Problem when detecting keypoints or when "
                                                  "computing descriptors (SIFT) !");
     }

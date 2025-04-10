@@ -49,10 +49,10 @@ BEGIN_VISP_NAMESPACE
 /* ------------------------------------------------------------------------ */
 /* --- COMPUTE ------------------------------------------------------------ */
 /* ------------------------------------------------------------------------ */
-const unsigned int vpPtu46::ndof = 2; /*<! Pan and tilt are considered. */
+const unsigned int vpPtu46::ndof = 2; /*!< Pan and tilt are considered. */
 const float vpPtu46::L = 0.0765f;     /*! Horizontal offset along the last joint,
                                        from last joint to camera frame. */
-const float vpPtu46::h = 0.068f;      /*<! Vertical offset from last joint to
+const float vpPtu46::h = 0.068f;      /*!< Vertical offset from last joint to
                                        camera frame. */
 
 /*!

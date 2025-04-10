@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +29,7 @@
  *
  * Description:
  * Make the complete tracking of an object by using its CAD model
- *
- * Authors:
- * Aurelien Yol
- *
-*****************************************************************************/
+ */
 
 /*!
  \file vpPolygon3D.cpp
@@ -253,18 +248,14 @@ void vpPolygon3D::computePolygonClipped(const vpCameraParameters &cam)
 /*!
   Get the clipped points according to a plane equation.
 
-  \param cam : camera parameters
   \param p1 : First extremity of the line.
   \param p2 : Second extremity of the line.
   \param p1Clipped : Resulting p1.
   \param p2Clipped : Resulting p2.
   \param p1ClippedInfo : Resulting clipping flag for p1.
   \param p2ClippedInfo : Resulting clipping flag for p2.
-  \param A : Param A from plane equation.
-  \param B : Param B from plane equation.
-  \param C : Param C from plane equation.
-  \param D : Param D from plane equation.
-  \param flag : flag specifying the clipping used when calling this function.
+  \param normal : Vector normal to the plane.
+  \param flag : Flag specifying the clipping used when calling this function.
 
   \return True if the points have been clipped, False otherwise
 */
@@ -562,12 +553,10 @@ unsigned int vpPolygon3D::getNbCornerInsideImage(const vpImage<unsigned char> &I
   \param ptIn : Input points
   \param ptOut : Output points (result of the clipping).
   \param cMo : Pose considered for the clipping.
-  \param clippingFlags: Clipping flag (see
-  vpPolygon3D::vpPolygon3DClippingType). \param cam : Camera parameters (Only
-  used if clipping flags contain FOV clipping). \param znear : Near clipping
-  distance value (Only used if clipping flags contain Near clipping). \param
-  zfar : Far clipping distance value (Only used if clipping flags contain Far
-  clipping).
+  \param clippingFlags : Clipping flag, see vpPolygon3D::vpPolygon3DClippingType()).
+  \param cam : Camera parameters (Only used if clipping flags contain FOV clipping).
+  \param znear : Near clipping distance value. Only used if clipping flags contain Near clipping.
+  \param zfar : Far clipping distance value. Only used if clipping flags contain Far clipping.
 */
 void vpPolygon3D::getClippedPolygon(const std::vector<vpPoint> &ptIn, std::vector<vpPoint> &ptOut,
                                     const vpHomogeneousMatrix &cMo, const unsigned int &clippingFlags,
@@ -575,7 +564,7 @@ void vpPolygon3D::getClippedPolygon(const std::vector<vpPoint> &ptIn, std::vecto
 {
   ptOut.clear();
   vpPolygon3D poly;
-  poly.setNbPoint((unsigned int)ptIn.size());
+  poly.setNbPoint(static_cast<unsigned int>(ptIn.size()));
   poly.setClipping(clippingFlags);
 
   if ((clippingFlags & vpPolygon3D::NEAR_CLIPPING) == vpPolygon3D::NEAR_CLIPPING)

@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
       double rpm_left = motor_left * 30. / M_PI;
       double rpm_right = motor_right * 30. / M_PI;
 
-      ss << "MOTOR_RPM=" << (int)rpm_left << "," << (int)rpm_right << "\n";
+      ss << "MOTOR_RPM=" << static_cast<int>(rpm_left) << "," << static_cast<int>(rpm_right) << "\n";
     }
     std::cout << "Send: " << ss.str() << std::endl;
     double t0 = vpTime::measureTimeSecond();

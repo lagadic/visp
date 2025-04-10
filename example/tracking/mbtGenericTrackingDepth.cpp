@@ -580,7 +580,7 @@ int main(int argc, const char **argv)
       display1.setDownScalingFactor(vpDisplay::SCALE_AUTO);
       display2.setDownScalingFactor(vpDisplay::SCALE_AUTO);
       display1.init(I, 100, 100, "Test tracking (Left)");
-      display2.init(I_depth, (int)(I.getWidth() / vpDisplay::getDownScalingFactor(I)) + 110, 100,
+      display2.init(I_depth, static_cast<int>(I.getWidth() / vpDisplay::getDownScalingFactor(I)) + 110, 100,
         "Test tracking (Right)");
 #endif
       vpDisplay::display(I);
@@ -684,7 +684,7 @@ int main(int argc, const char **argv)
     unsigned int frame_index = 0;
     std::vector<double> time_vec;
     while (read_data(frame_index, ipath, I, I_depth_raw, pointcloud, pointcloud_width, pointcloud_height) && !quit &&
-      (opt_lastFrame > 0 ? (int)frame_index <= opt_lastFrame : true)) {
+      (opt_lastFrame > 0 ? static_cast<int>(frame_index) <= opt_lastFrame : true)) {
       vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
 
       if (opt_display) {

@@ -69,9 +69,9 @@ BEGIN_VISP_NAMESPACE
   re-initialized at zero after each drift detection. \f$\delta\f$
   denotes the drift minimal magnitude that we want to detect and
   \f$\alpha\f$ is a predefined threshold. These values are set by
-  default to 0.2 in the default constructor vpHinkley(). To modify the
+  default to 0.2 in the default constructor vpStatisticalTestHinkley(). To modify the
   default values use setAlpha() and setDelta() or the
-  vpHinkley(double alpha, double delta) constructor.
+  vpStatisticalTestHinkley(double alpha, double delta) constructor.
 
   A downward drift is detected if \f$ M_k - S_k > \alpha \f$.
   A upward drift is detected if \f$ T_k - N_k > \alpha \f$.
