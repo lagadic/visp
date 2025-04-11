@@ -135,6 +135,7 @@ void vpRBTracker::setModelPath(const std::string &path)
 
 void vpRBTracker::setupRenderer(const std::string &file)
 {
+  m_renderer = vpObjectCentricRenderer(m_rendererSettings);
   if (!vpIoTools::checkFilename(file)) {
     throw vpException(vpException::badValue, "3D model file %s could not be found", file.c_str());
   }
@@ -150,10 +151,12 @@ void vpRBTracker::setupRenderer(const std::string &file)
       break;
     }
   }
+  static int cannyId = 0;
   if (requiresSilhouetteShader) {
     m_renderer.addSubRenderer(std::make_shared<vpPanda3DDepthCannyFilter>(
-      "depthCanny", geometryRenderer, true, 0.0));
+      "depthCanny" + std::to_string(cannyId), geometryRenderer, true, 0.0));
   }
+  ++cannyId;
   m_renderer.initFramework();
   m_renderer.addLight(vpPanda3DAmbientLight("ambient", vpRGBf(0.4f)));
   m_renderer.addNodeToScene(m_renderer.loadObject("object", file));
@@ -552,13 +555,13 @@ vpRBTracker::extractSilhouettePoints(const vpImage<vpRGBf> &Inorm, const vpImage
 #if defined(VISP_DEBUG_RB_TRACKER)
       if (fabs(theta) > M_PI + 1e-6) {
         throw vpException(vpException::badValue, "Theta expected to be in -Pi, Pi range but was not");
-      }
+    }
 #endif
       vpRBSilhouettePoint p(n, m, norm, theta, Z);
       p.detectSilhouette(Idepth);
       points.push_back(p);
-    }
   }
+}
   return points;
 }
 

@@ -136,7 +136,6 @@ void vpRBProbabilistic3DDriftDetector::update(const vpRBFeatureTrackerInput &pre
       visiblePoints.insert(visiblePoints.end(), visiblePointsLocal.begin(), visiblePointsLocal.end());
     }
   }
-  std::cout << "Using " << visiblePoints.size() << " points out of " << m_points.size() << "points" << std::endl;
   if (visiblePoints.size() > 0) {
     bool useMedian = true;
     std::vector<double> scores;
