@@ -260,6 +260,61 @@ public:
     const unsigned char inRangeVal = 255;
     return inRange(Iin, hsv_range, out, inRangeVal, static_cast<unsigned char>(0));
   }
+
+  /**
+   * \brief Create binary mask by checking if HSV (hue, saturation, value) channels lie between low and high HSV thresholds.
+   *
+   * \tparam ArithmeticType The arithmetic type used to encode the Hue, Saturation and Value channels.
+   * \tparam useFullScale If ArithmeticType is unsigned char, true means that Hue is encoded on the full
+   * range [0;255] and false means it is encoded in a limited range as defined in the vpHSV documentation.
+   * \param[in] Iin The input image.
+   * \param[in] hsv_range 6-dim vector that contains the low/high range values for each HSV channel respectively.
+   * Each element of this vector should be in the range defined by the ArithmeticType and useFullRange template parameters.
+   * Note that there is also tutorial-hsv-tuner.cpp that may help to determine low/high HSV values.
+   * \warning The range values will be converted in ArithmeticType without checking the validity of the values.
+   * \param[in] out The output mask encoded as booleans. True means that the pixel is in range and false that it
+   * is not in range.
+   * \return int The number of pixels that are in the HSV range.
+   */
+  template <typename ArithmeticType, bool useFullScale>
+  static int inRange(const vpImage<vpHSV<ArithmeticType, useFullScale>> &Iin,
+                      const vpColVector &hsv_range, vpImage<bool> &out)
+  {
+    const unsigned int nbItems = hsv_range.getRows();
+    std::vector<ArithmeticType> range(nbItems);
+    for (unsigned int r = 0; r < nbItems; ++r) {
+      range[r] = static_cast<ArithmeticType>(hsv_range[r]);
+    }
+    return inRange(Iin, range, out, true, false);
+  }
+
+  /**
+   * \brief Create binary mask by checking if HSV (hue, saturation, value) channels lie between low and high HSV thresholds.
+   *
+   * \tparam ArithmeticType The arithmetic type used to encode the Hue, Saturation and Value channels.
+   * \tparam useFullScale If ArithmeticType is unsigned char, true means that Hue is encoded on the full
+   * range [0;255] and false means it is encoded in a limited range as defined in the vpHSV documentation.
+   * \param[in] Iin The input image.
+   * \param[in] hsv_range 6-dim vector that contains the low/high range values for each HSV channel respectively.
+   * Each element of this vector should be in the range defined by the ArithmeticType and useFullRange template parameters.
+   * Note that there is also tutorial-hsv-tuner.cpp that may help to determine low/high HSV values.
+   * \warning The range values will be converted in ArithmeticType without checking the validity of the values.
+   * \param[in] out The output mask encoded as unsigned char. 255 means that the pixel is in range and 0 that it
+   * is not in range.
+   * \return int The number of pixels that are in the HSV range.
+   */
+  template <typename ArithmeticType, bool useFullScale>
+  static int inRange(const vpImage<vpHSV<ArithmeticType, useFullScale>> &Iin,
+                      const vpColVector &hsv_range, vpImage<unsigned char> &out)
+  {
+    const unsigned char inRangeVal = 255;
+    const unsigned int nbItems = hsv_range.getRows();
+    std::vector<ArithmeticType> range(nbItems);
+    for (unsigned int r = 0; r < nbItems; ++r) {
+      range[r] = static_cast<ArithmeticType>(hsv_range[r]);
+    }
+    return inRange(Iin, range, out, inRangeVal, static_cast<unsigned char>(0));
+  }
 #endif
 
 
