@@ -8,7 +8,14 @@ The HSV scale, which stands for Hue Saturation and Value, provides a numerical r
 corresponds to the color names contained therein. Hue is measured in degrees from 0 to 360, while Saturation and Value
 of a color are both analyzed on a scale of 0 to 100 percent.
 
-Hue, Saturation, and Value are the main color properties that allow us to distinguish between different colors.
+Hue, Saturation, and Value are the main color properties that allow us to distinguish between different colors. This
+format is implemented in the vpHSV class as long as you use C++11 or higher. It is a templated class that permits to
+choose the arithmetic representation of the channels. You can either choose:
+- double or float: the range of value will be in the intervall [0; 1]
+- unsigned char: the second template parameter `useFullScale` will determine the range for the Hue channel, while the
+Saturation and Value channel will be encoded in the range [0; 255]. Please refer to the vpHSV documentation for more
+information.
+
 In this tutorial, you will learn how to use HSV color scale to segment a specific color in an image.
 
 Note that all the material (source code and images) described in this tutorial is part of ViSP source code
@@ -31,8 +38,30 @@ int main()
 }
 \endcode
 
-The color conversion from RGB to HSV or from RGBa to HSV color scale is performed in ViSP using one of the following
-functions:
+The color conversion between RGBa and HSV images scale is performed in ViSP using
+vpImageConvert::convert() if you use C++11 or higher and the vpHSV class.
+
+The following snippet shows how you can use vpImageConvert::convert() method to convert vpHSV images from and to vpRGBa
+images:
+
+\code
+#include <visp3/io/vpImageIo.h>
+#include <visp3/core/vpImageConvert.h>
+
+int main()
+{
+  vpImage<vpRGBa> I, Iother;
+  vpImageIo::read(I, "ballons.jpg");
+
+  vpImage<vpHSV<double>> Ihsv;
+
+  vpImageConvert::convert(I, Ihsv);
+  vpImageConvert::convert(Ihsv, Iother);
+}
+\endcode
+
+If you cannot use the vpHSV class, you can perform the color conversion from RGB to HSV or from RGBa to HSV color scale
+using one of the following functions:
 - vpImageConvert::RGBToHSV()
 - vpImageConvert::RGBaToHSV()
 
@@ -72,48 +101,33 @@ In the image `ballons.jpg`, the pixel at coordinates [93][164] has an RGB value 
 an HSV value (14, 255, 209). We can use these HSV values and an additional offset to determine the low and high
 values of the HSV ranges used to create a mask corresponding to the segmented color.
 
-\code
-#include <visp3/io/vpImageIo.h>
-#include <visp3/core/vpImageConvert.h>
-#include <visp3/core/vpImageTools.h>
+First, let's load the image:
 
-int main()
-{
-  vpImage<vpRGBa> I;
-  vpImageIo::read(I, "ballons.jpg");
+\snippet tutorial-hsv-segmentation-basic.cpp Load image
 
-  unsigned int width = I.getWidth();
-  unsigned int height = I.getHeight();
+Then, let's convert the vpRGBa image into a vpHSV image. Here, we encode the HSV channels using unsigned char because we
+will compute the thresholds using this range, but we could have used double instead by just converting the ranges in the
+range [0; 1] :
 
-  vpImage<unsigned char> H(height, width);
-  vpImage<unsigned char> S(height, width);
-  vpImage<unsigned char> V(height, width);
+\snippet tutorial-hsv-segmentation-basic.cpp Converting image
 
-  vpImageConvert::RGBaToHSV(reinterpret_cast<unsigned char *>(I.bitmap),
-                            reinterpret_cast<unsigned char *>(H.bitmap),
-                            reinterpret_cast<unsigned char *>(S.bitmap),
-                            reinterpret_cast<unsigned char *>(V.bitmap), I.getSize());
+Then, let's define the HSV ranges we want to use:
 
-  int h = 14, s = 255, v = 209;
-  int offset = 30;
-  int h_low = std::max<int>(0, h - offset), h_high = std::min<int>(h + offset, 255);
-  int s_low = std::max<int>(0, s - offset), s_high = std::min<int>(s + offset, 255);
-  int v_low = std::max<int>(0, v - offset), v_high = std::min<int>(v + offset, 255);
-  std::vector<int> hsv_range({ h_low, h_high, s_low, s_high, v_low, v_high });
+\snippet tutorial-hsv-segmentation-basic.cpp Set HSV range
 
-  vpImage<unsigned char> mask(height, width);
-  vpImageTools::inRange(reinterpret_cast<unsigned char *>(H.bitmap),
-                        reinterpret_cast<unsigned char *>(S.bitmap),
-                        reinterpret_cast<unsigned char *>(V.bitmap),
-                        hsv_range,
-                        reinterpret_cast<unsigned char *>(mask.bitmap),
-                        mask.getSize());
-}
-\endcode
+Now, we can compute the mask that indicates if a pixel is in the desired HSV range:
 
-Using the mask we can create a segmented color image. The following snippet shows how to combine the mask and the
-color image using vpImageTools::inMask() to create the segmented image as given in the next snippet also available in
-tutorial-hsv-segmentation-basic.cpp
+\snippet tutorial-hsv-segmentation-basic.cpp Create HSV mask
+
+Finally, we can apply the mask to the original image:
+
+\snippet tutorial-hsv-segmentation-basic.cpp Filter image
+
+Note that all these steps are equivalent to the following lines if you cannot use the vpHSV class:
+
+\snippet tutorial-hsv-segmentation-basic.cpp Without vpHSV
+
+Combining all together, we get the following program:
 
 \include tutorial-hsv-segmentation-basic.cpp
 
