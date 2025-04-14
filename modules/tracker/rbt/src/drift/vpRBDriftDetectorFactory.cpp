@@ -41,10 +41,8 @@ vpRBDriftDetectorFactory::vpRBDriftDetectorFactory()
     return j.at("type");
   });
 
-  registerType("probabilistic", [](const nlohmann::json &j) {
-    std::shared_ptr<vpRBProbabilistic3DDriftDetector> p(new vpRBProbabilistic3DDriftDetector());
-    p->loadJsonConfiguration(j);
-    return p;
+  registerType("probabilistic", []() {
+    return std::make_shared<vpRBProbabilistic3DDriftDetector>();
   });
 #endif
 }

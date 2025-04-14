@@ -37,7 +37,6 @@
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
-
 #if defined(VISP_HAVE_NLOHMANN_JSON)
 #include VISP_NLOHMANN_JSON(json.hpp)
 #endif
@@ -51,17 +50,17 @@ class VISP_EXPORT vpDynamicFactory
 {
 public:
 #if defined(VISP_HAVE_NLOHMANN_JSON)
-  void registerType(const std::string &key, const std::function<std::shared_ptr<T>(const nlohmann::json &)> &function)
+  void registerType(const std::string &key, const std::function<std::shared_ptr<T>()> &function)
   {
-    if (m_jsonBuilders.find(key) != m_jsonBuilders.end() || m_jsonRawBuilders.find(key) != m_jsonRawBuilders.end()) {
+    if (m_jsonBuildables.find(key) != m_jsonBuildables.end() || m_jsonRawBuilders.find(key) != m_jsonRawBuilders.end()) {
       throw vpException(vpException::badValue, "Type %s was already registered in the factory", key.c_str());
     }
-    m_jsonBuilders[key] = function;
+    m_jsonBuildables[key] = function;
   }
 
   void registerTypeRaw(const std::string &key, const std::function<std::shared_ptr<T>(const std::string &)> function)
   {
-    if (m_jsonBuilders.find(key) != m_jsonBuilders.end() || m_jsonRawBuilders.find(key) != m_jsonRawBuilders.end()) {
+    if (m_jsonBuildables.find(key) != m_jsonBuildables.end() || m_jsonRawBuilders.find(key) != m_jsonRawBuilders.end()) {
       throw vpException(vpException::badValue, "Type %s was already registered in the factory", key.c_str());
     }
 
@@ -74,8 +73,10 @@ public:
   {
     const std::string key = m_keyFinder(j);
 
-    if (m_jsonBuilders.find(key) != m_jsonBuilders.end()) {
-      return m_jsonBuilders[key](j);
+    if (m_jsonBuildables.find(key) != m_jsonBuildables.end()) {
+      std::shared_ptr<T> res = m_jsonBuildables[key]();
+      res->loadJsonConfiguration(j);
+      return res;
     }
 
     else if (m_jsonRawBuilders.find(key) != m_jsonRawBuilders.end()) {
@@ -86,10 +87,18 @@ public:
     }
   }
 
-
   void setJsonKeyFinder(const std::function<std::string(const nlohmann::json &)> &finderFn)
   {
     m_keyFinder = finderFn;
+  }
+
+  nlohmann::ordered_json availableOptions() const
+  {
+    nlohmann::ordered_json j;
+    for (const auto &pair: m_jsonBuildables) {
+      j[pair.first] = pair.second()->explain();
+    }
+    return j;
   }
 #endif
 
@@ -99,7 +108,7 @@ protected:
 
   vpDynamicFactory() = default;
 #if defined(VISP_HAVE_NLOHMANN_JSON)
-  std::map<std::string, std::function<std::shared_ptr<T>(const nlohmann::json &)>> m_jsonBuilders;
+  std::map<std::string, std::function<std::shared_ptr<T>()>> m_jsonBuildables;
   std::map<std::string, std::function<std::shared_ptr<T>(const std::string &)>> m_jsonRawBuilders;
 
   std::function<std::string(const nlohmann::json &)> m_keyFinder; //! Function to retrieve the key from a json object

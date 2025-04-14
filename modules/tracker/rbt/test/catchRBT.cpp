@@ -604,7 +604,7 @@ SCENARIO("Instantiating a render-based tracker", "[rbt]")
     nlohmann::json j = nlohmann::json::parse(jsonLiteral);
     THEN("Loading configuration with trackers")
     {
-      tracker.loadConfiguration(j);
+      tracker.loadJsonConfiguration(j);
       verifyBase();
       REQUIRE(tracker.getModelPath() == "path/to/model.obj");
       AND_THEN("Initializing tracking fails since object does not exist")
@@ -615,7 +615,7 @@ SCENARIO("Instantiating a render-based tracker", "[rbt]")
     THEN("Loading configuration without model also works")
     {
       j.erase("model");
-      tracker.loadConfiguration(j);
+      tracker.loadJsonConfiguration(j);
       verifyBase();
       REQUIRE(tracker.getModelPath() == "");
       AND_THEN("Initializing tracking fails since path is not specified")
@@ -631,7 +631,7 @@ SCENARIO("Instantiating a render-based tracker", "[rbt]")
       f << objCube;
       f.close();
       j["model"] = objFile;
-      tracker.loadConfiguration(j);
+      tracker.loadJsonConfiguration(j);
       verifyBase();
       REQUIRE(tracker.getModelPath() == objFile);
       AND_THEN("Initializing tracker works")
