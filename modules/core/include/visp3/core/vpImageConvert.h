@@ -85,6 +85,7 @@
 
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON) && defined(VISP_HAVE_THREADS)
 #include <mutex>
+#include <type_traits>
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpImageException.h>
 #include <visp3/core/vpPixelMeterConversion.h>
@@ -187,16 +188,215 @@ public:
 #endif
 
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON) && defined(VISP_HAVE_THREADS)
-  static int depthToPointCloud(const vpImage<uint16_t> &depth_raw,
-                               float depth_scale, const vpCameraParameters &cam_depth,
-                               pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud,
-                               std::mutex *pointcloud_mutex = nullptr,
-                               const vpImage<unsigned char> *mask = nullptr, float Z_min = 0.2, float Z_max = 2.5);
-  static int depthToPointCloud(const vpImage<vpRGBa> &color, const vpImage<uint16_t> &depth_raw,
-                               float depth_scale, const vpCameraParameters &cam_depth,
-                               pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud,
-                               std::mutex *pointcloud_mutex = nullptr,
-                               const vpImage<unsigned char> *mask = nullptr, float Z_min = 0.2, float Z_max = 2.5);
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  template <typename MaskType>
+  static typename std::enable_if< std::is_same<MaskType, unsigned char>::value || std::is_same<MaskType, bool>::value, int>::type
+#else
+  template <typename MaskType>
+  static int
+#endif
+    depthToPointCloud(const vpImage<uint16_t> &depth_raw,
+                                 float depth_scale, const vpCameraParameters &cam_depth,
+                                 pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud,
+                                 std::mutex *pointcloud_mutex = nullptr,
+                                 const vpImage<MaskType> *depth_mask = nullptr, float Z_min = 0.2, float Z_max = 2.5)
+  {
+    int size = static_cast<int>(depth_raw.getSize());
+    unsigned int width = depth_raw.getWidth();
+    unsigned int height = depth_raw.getHeight();
+    int pcl_size = 0;
+    const unsigned int index_0 = 0;
+    const unsigned int index_1 = 1;
+    const unsigned int index_2 = 2;
+
+    if (depth_mask) {
+      if ((width != depth_mask->getWidth()) || (height != depth_mask->getHeight())) {
+        throw(vpImageException(vpImageException::notInitializedError, "Depth image and mask size differ"));
+      }
+      if (pointcloud_mutex) {
+        pointcloud_mutex->lock();
+      }
+      pointcloud->clear();
+#if defined(VISP_HAVE_OPENMP)
+      std::mutex mutex;
+#pragma omp parallel for
+#endif
+      for (int p = 0; p < size; ++p) {
+        if (depth_mask->bitmap[p]) {
+          if (static_cast<int>(depth_raw.bitmap[p])) {
+            float Z = static_cast<float>(depth_raw.bitmap[p]) * depth_scale;
+            if (Z < Z_max) {
+              double x = 0;
+              double y = 0;
+              unsigned int j = p % width;
+              unsigned int i = (p - j) / width;
+              vpPixelMeterConversion::convertPoint(cam_depth, j, i, x, y);
+              vpColVector point_3D({ x * Z, y * Z, Z });
+              if (point_3D[index_2] > Z_min) {
+#if defined(VISP_HAVE_OPENMP)
+                std::lock_guard<std::mutex> lock(mutex);
+#endif
+                pointcloud->push_back(pcl::PointXYZ(point_3D[index_0], point_3D[index_1], point_3D[index_2]));
+              }
+            }
+          }
+        }
+      }
+      pcl_size = pointcloud->size();
+      if (pointcloud_mutex) {
+        pointcloud_mutex->unlock();
+      }
+    }
+    else {
+      if (pointcloud_mutex) {
+        pointcloud_mutex->lock();
+      }
+      pointcloud->clear();
+#if defined(VISP_HAVE_OPENMP)
+      std::mutex mutex;
+#pragma omp parallel for
+#endif
+      for (int p = 0; p < size; ++p) {
+        if (static_cast<int>(depth_raw.bitmap[p])) {
+          float Z = static_cast<float>(depth_raw.bitmap[p]) * depth_scale;
+          if (Z < 2.5) {
+            double x = 0;
+            double y = 0;
+            unsigned int j = p % width;
+            unsigned int i = (p - j) / width;
+            vpPixelMeterConversion::convertPoint(cam_depth, j, i, x, y);
+            vpColVector point_3D({ x * Z, y * Z, Z, 1 });
+            if (point_3D[index_2] >= 0.1) {
+#if defined(VISP_HAVE_OPENMP)
+              std::lock_guard<std::mutex> lock(mutex);
+#endif
+              pointcloud->push_back(pcl::PointXYZ(point_3D[index_0], point_3D[index_1], point_3D[index_2]));
+            }
+          }
+        }
+      }
+      pcl_size = pointcloud->size();
+      if (pointcloud_mutex) {
+        pointcloud_mutex->unlock();
+      }
+    }
+
+    return pcl_size;
+  }
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  template <typename MaskType>
+  static typename std::enable_if< std::is_same<MaskType, unsigned char>::value || std::is_same<MaskType, bool>::value, int>::type
+#else
+  template <typename MaskType>
+  static int
+#endif
+    depthToPointCloud(const vpImage<vpRGBa> &color, const vpImage<uint16_t> &depth_raw,
+                                 float depth_scale, const vpCameraParameters &cam_depth,
+                                 pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud,
+                                 std::mutex *pointcloud_mutex = nullptr,
+                                 const vpImage<MaskType> *depth_mask = nullptr, float Z_min = 0.2, float Z_max = 2.5)
+  {
+    int size = static_cast<int>(depth_raw.getSize());
+    unsigned int width = depth_raw.getWidth();
+    unsigned int height = depth_raw.getHeight();
+    int pcl_size = 0;
+    const unsigned int index_0 = 0;
+    const unsigned int index_1 = 1;
+    const unsigned int index_2 = 2;
+
+    if (depth_mask) {
+      if ((width != depth_mask->getWidth()) || (height != depth_mask->getHeight())) {
+        throw(vpImageException(vpImageException::notInitializedError, "Depth image and mask size differ"));
+      }
+      if (pointcloud_mutex) {
+        pointcloud_mutex->lock();
+      }
+      pointcloud->clear();
+#if defined(VISP_HAVE_OPENMP)
+      std::mutex mutex;
+#pragma omp parallel for
+#endif
+      for (int p = 0; p < size; ++p) {
+        if (depth_mask->bitmap[p]) {
+          if (static_cast<int>(depth_raw.bitmap[p])) {
+            float Z = static_cast<float>(depth_raw.bitmap[p]) * depth_scale;
+            if (Z < Z_max) {
+              double x = 0;
+              double y = 0;
+              unsigned int j = p % width;
+              unsigned int i = (p - j) / width;
+              vpPixelMeterConversion::convertPoint(cam_depth, j, i, x, y);
+              vpColVector point_3D({ x * Z, y * Z, Z });
+              if (point_3D[index_2] > Z_min) {
+#if defined(VISP_HAVE_OPENMP)
+                std::lock_guard<std::mutex> lock(mutex);
+#endif
+#if PCL_VERSION_COMPARE(>=,1,14,1)
+                pointcloud->push_back(pcl::PointXYZRGB(point_3D[index_0], point_3D[index_1], point_3D[index_2],
+                                                       color.bitmap[p].R, color.bitmap[p].G, color.bitmap[p].B));
+#else
+                pcl::PointXYZRGB pt(color.bitmap[p].R, color.bitmap[p].G, color.bitmap[p].B);
+                pt.x = point_3D[index_0];
+                pt.y = point_3D[index_1];
+                pt.z = point_3D[index_2];
+                pointcloud->push_back(pcl::PointXYZRGB(pt));
+#endif
+              }
+            }
+          }
+        }
+      }
+      pcl_size = pointcloud->size();
+      if (pointcloud_mutex) {
+        pointcloud_mutex->unlock();
+      }
+    }
+    else {
+      if (pointcloud_mutex) {
+        pointcloud_mutex->lock();
+      }
+      pointcloud->clear();
+#if defined(VISP_HAVE_OPENMP)
+      std::mutex mutex;
+#pragma omp parallel for
+#endif
+      for (int p = 0; p < size; ++p) {
+        if (static_cast<int>(depth_raw.bitmap[p])) {
+          float Z = static_cast<float>(depth_raw.bitmap[p]) * depth_scale;
+          if (Z < 2.5) {
+            double x = 0;
+            double y = 0;
+            unsigned int j = p % width;
+            unsigned int i = (p - j) / width;
+            vpPixelMeterConversion::convertPoint(cam_depth, j, i, x, y);
+            vpColVector point_3D({ x * Z, y * Z, Z, 1 });
+            if (point_3D[index_2] >= 0.1) {
+#if defined(VISP_HAVE_OPENMP)
+              std::lock_guard<std::mutex> lock(mutex);
+#endif
+#if PCL_VERSION_COMPARE(>=,1,14,1)
+              pointcloud->push_back(pcl::PointXYZRGB(point_3D[index_0], point_3D[index_1], point_3D[index_2],
+                                                     color.bitmap[p].R, color.bitmap[p].G, color.bitmap[p].B));
+#else
+              pcl::PointXYZRGB pt(color.bitmap[p].R, color.bitmap[p].G, color.bitmap[p].B);
+              pt.x = point_3D[index_0];
+              pt.y = point_3D[index_1];
+              pt.z = point_3D[index_2];
+              pointcloud->push_back(pcl::PointXYZRGB(pt));
+#endif
+            }
+          }
+        }
+      }
+      pcl_size = pointcloud->size();
+      if (pointcloud_mutex) {
+        pointcloud_mutex->unlock();
+      }
+    }
+
+    return pcl_size;
+  }
 #endif
 
   static void split(const vpImage<vpRGBa> &src, vpImage<unsigned char> *pR, vpImage<unsigned char> *pG,
