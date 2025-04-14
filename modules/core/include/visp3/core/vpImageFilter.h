@@ -350,6 +350,7 @@ public:
   {
     const unsigned int w = I.getWidth();
     const unsigned int h = I.getHeight();
+    const unsigned int size = I.getSize();
 
     if ((lowerThresholdRatio <= 0.f) || (lowerThresholdRatio >= 1.f)) {
       std::stringstream errMsg;
@@ -381,19 +382,20 @@ public:
     }
 
     // Computing the absolute gradient of the image G = |dIx| + |dIy|
-    for (unsigned int r = 0; r < h; ++r) {
-      for (unsigned int c = 0; c < w; ++c) {
+#ifdef VISP_HAVE_OPENMP
+#pragma omp parallel for
+#endif
+    for (unsigned int iter = 0; iter < size; ++iter) {
         // We have to compute the value for each pixel if we don't have a mask or for
         // pixels for which the mask is true otherwise
-        bool computeVal = checkBooleanMask(p_mask, r, c);
+      bool computeVal = checkBooleanMask(p_mask, iter);
 
-        if (computeVal) {
-          float dx = static_cast<float>(dIx[r][c]);
-          float dy = static_cast<float>(dIy[r][c]);
-          float gradient = std::abs(dx) + std::abs(dy);
-          float gradientClamped = std::min<float>(gradient, static_cast<float>(std::numeric_limits<unsigned char>::max()));
-          dI[r][c] = static_cast<unsigned char>(gradientClamped);
-        }
+      if (computeVal) {
+        float dx = static_cast<float>(dIx.bitmap[iter]);
+        float dy = static_cast<float>(dIy.bitmap[iter]);
+        float gradient = std::abs(dx) + std::abs(dy);
+        float gradientClamped = std::min<float>(gradient, static_cast<float>(std::numeric_limits<unsigned char>::max()));
+        dI.bitmap[iter] = static_cast<unsigned char>(gradientClamped);
       }
     }
 
@@ -464,6 +466,7 @@ public:
   {
     const unsigned int w = I.getWidth();
     const unsigned int h = I.getHeight();
+    const unsigned int size = I.getSize();
 
     if ((lowerThresholdRatio <= 0.f) || (lowerThresholdRatio >= 1.f)) {
       std::stringstream errMsg;
@@ -503,20 +506,22 @@ public:
     // Computing the absolute gradient of the image G = |dIx| + |dIy|
     float dIMax = -1.; // dI is the absolute gradient => positive
     float dIMin = std::numeric_limits<OutType>::max();
-    for (unsigned int r = 0; r < h; ++r) {
-      for (unsigned int c = 0; c < w; ++c) {
+    unsigned int iter;
+#ifdef VISP_HAVE_OPENMP
+#pragma omp parallel for default(shared) private(iter) reduction(min: dIMin) reduction(max: dIMax)
+#endif
+    for (iter = 0; iter < size; ++iter) {
         // We have to compute the value for each pixel if we don't have a mask or for
         // pixels for which the mask is true otherwise
-        bool computeVal = checkBooleanMask(p_mask, r, c);
+      bool computeVal = checkBooleanMask(p_mask, iter);
 
-        if (computeVal) {
-          float dx = static_cast<float>(dIx[r][c]);
-          float dy = static_cast<float>(dIy[r][c]);
-          float gradient = std::abs(dx) + std::abs(dy);
-          dIMax = std::max(dIMax, gradient);
-          dIMin = std::min(dIMin, gradient);
-          dI[r][c] = gradient;
-        }
+      if (computeVal) {
+        float dx = static_cast<float>(dIx.bitmap[iter]);
+        float dy = static_cast<float>(dIy.bitmap[iter]);
+        float gradient = std::abs(dx) + std::abs(dy);
+        dIMax = std::max(dIMax, gradient);
+        dIMin = std::min(dIMin, gradient);
+        dI.bitmap[iter] = gradient;
       }
     }
 
@@ -2358,20 +2363,26 @@ private:
   }
 
   /**
-   * \brief Indicates if the boolean mask is true at the desired index.
+   * \brief Indicates if the boolean mask is true at the desired coordinates.
    *
    * \param[in] p_mask Pointer towards the boolean mask if any or nullptr.
-   * \param[in] iter The index in the boolean mask bitmap.
-   * \return true If the boolean mask is true at the desired index or if \b p_mask is equal to \b nullptr.
+   * \param[in] id The index in the boolean mask bitmap.
+   * \return true If the boolean mask is true at the desired coordinates or if \b p_mask is equal to \b nullptr.
    * \return false False otherwise.
    */
-  static inline bool checkBooleanMask(const vpImage<bool> *p_mask, const unsigned int &iter)
+  static bool checkBooleanMask(const vpImage<bool> *p_mask, const unsigned int &id)
   {
-    if (!p_mask) {
-      return true;
+    bool computeVal = true;
+#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
+    if (p_mask != nullptr)
+#else
+    if (p_mask != NULL)
+#endif
+    {
+      computeVal = p_mask->bitmap[id];
     }
-    return p_mask->bitmap[iter];
-  };
+    return computeVal;
+  }
 
   // Note that on ubuntu 12.04 __cplusplus is equal to 1 that's why in the next line we consider __cplusplus <= 199711L
   // and not __cplusplus == 199711L
