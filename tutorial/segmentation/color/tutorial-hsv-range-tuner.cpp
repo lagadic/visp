@@ -207,7 +207,7 @@ int main(int argc, const char *argv[])
   cv::createTrackbar("Low V", window_detection_name, &hsv_values_trackbar[4], max_value, on_low_V_thresh_trackbar);
   cv::createTrackbar("High V", window_detection_name, &hsv_values_trackbar[5], max_value, on_high_V_thresh_trackbar);
 
-  vpImage<bool> mask(height, width);
+  vpImage<unsigned char> mask(height, width);
   vpImage<vpRGBa> I_segmented(height, width);
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
@@ -354,7 +354,7 @@ int main(int argc, const char *argv[])
 
   if (d_I_segmented != nullptr) {
     delete d_I_segmented;
-}
+  }
 #endif
   return EXIT_SUCCESS;
 }
@@ -370,5 +370,5 @@ int main()
 #endif
   std::cout << "Install missing 3rd parties, configure and rebuild ViSP." << std::endl;
   return EXIT_SUCCESS;
-  }
+}
 #endif
