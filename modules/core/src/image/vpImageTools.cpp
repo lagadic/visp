@@ -1049,71 +1049,6 @@ bool vpImageTools::checkFixedPoint(unsigned int x, unsigned int y, const vpMatri
 }
 
 /*!
- * Keep the part of an image that is in the mask.
- * @param[in] I : Input image.
- * @param[in] mask : Mask where pixels to consider have values that differ from 0.
- * @param[out] I_mask : Resulting image where pixels that are in the mask are kept.
- * @return The number of pixels that are in the mask.
- */
-int vpImageTools::inMask(const vpImage<vpRGBa> &I, const vpImage<unsigned char> &mask, vpImage<vpRGBa> &I_mask)
-{
-  if ((I.getHeight() != mask.getHeight()) || (I.getWidth() != mask.getWidth())) {
-    throw(vpImageException(vpImageException::incorrectInitializationError,
-                           "Error in vpImageTools::inMask(): image (%dx%d) and mask (%dx%d) size doesn't match",
-                           I.getWidth(), I.getHeight(), mask.getWidth(), mask.getHeight()));
-  }
-  vpRGBa black(0, 0, 0);
-  I_mask.resize(I.getHeight(), I.getWidth());
-  int cpt_in_mask = 0;
-  int size_ = static_cast<int>(I.getSize());
-#if defined(_OPENMP)
-#pragma omp parallel for reduction(+:cpt_in_mask)
-#endif
-  for (int i = 0; i < size_; ++i) {
-    if (mask.bitmap[i] == 0) {
-      I_mask.bitmap[i] = black;
-    }
-    else {
-      I_mask.bitmap[i] = I.bitmap[i];
-      ++cpt_in_mask;
-    }
-  }
-  return cpt_in_mask;
-}
-
-/*!
- * Keep the part of an image that is in the mask.
- * @param[in] I : Input image.
- * @param[in] mask : Mask where pixels to consider have values that differ from 0.
- * @param[out] I_mask : Resulting image where pixels that are in the mask are kept.
- * @return The number of pixels that are in the mask.
- */
-int vpImageTools::inMask(const vpImage<unsigned char> &I, const vpImage<unsigned char> &mask, vpImage<unsigned char> &I_mask)
-{
-  if ((I.getHeight() != mask.getHeight()) || (I.getWidth() != mask.getWidth())) {
-    throw(vpImageException(vpImageException::incorrectInitializationError,
-                           "Error in vpImageTools::inMask(): image (%dx%d) and mask (%dx%d) size doesn't match",
-                           I.getWidth(), I.getHeight(), mask.getWidth(), mask.getHeight()));
-  }
-  I_mask.resize(I.getHeight(), I.getWidth());
-  int cpt_in_mask = 0;
-  int size_ = static_cast<int>(I.getSize());
-#if defined(_OPENMP)
-#pragma omp parallel for reduction(+:cpt_in_mask)
-#endif
-  for (int i = 0; i < size_; ++i) {
-    if (mask.bitmap[i] == 0) {
-      I_mask.bitmap[i] = 0;
-    }
-    else {
-      I_mask.bitmap[i] = I.bitmap[i];
-      ++cpt_in_mask;
-    }
-  }
-  return cpt_in_mask;
-}
-
-/*!
  * Create binary mask by checking if HSV (hue, saturation, value) channels lie between low and high HSV thresholds.
  * \param[in] hue : Pointer to an array of hue values. Its dimension is equal to the `size` parameter.
  * \param[in] saturation : Pointer to an array of saturation values. Its dimension is equal to the `size` parameter.
@@ -1233,7 +1168,7 @@ int vpImageTools::inRange(const unsigned char *hue, const unsigned char *saturat
     else {
       mask[i] = 0;
     }
-  }
+}
   return cpt_in_range;
 }
 END_VISP_NAMESPACE
