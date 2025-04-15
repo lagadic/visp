@@ -230,7 +230,6 @@ void gradientFilterX(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpIm
     }
   }
 
-  bool once = true;
   for (unsigned int r = 1; r < rStop; ++r) {
     for (unsigned int c = 1; c < cStop; ++c) {
       if (checkBooleanMask(p_mask, r, c)) {
@@ -411,6 +410,7 @@ typedef struct SoftwareArguments
   vpImageFilter::vpCannyFilteringAndGradientType m_filteringType;
   bool m_saveImages;
   bool m_useDisplay; //!< If true, activate the plot and the renderer if VISP_HAVE_DISPLAY is defined.
+  int m_nbThread;
 
   SoftwareArguments()
     : m_img("")
@@ -427,6 +427,7 @@ typedef struct SoftwareArguments
 #else
     , m_useDisplay(false)
 #endif
+    , m_nbThread(-1)
   { }
 }SoftwareArguments;
 
@@ -441,6 +442,7 @@ void usage(const std::string &softName, const SoftwareArguments &options)
     << " [-t, --thresh <lowerThresh upperThresh>]"
     << " [-f, --filter " << vpImageFilter::vpGetCannyFiltAndGradTypes("<", " | ", ">") << "]"
     << " [-r, --ratio <lowerThreshRatio upperThreshRatio>]"
+    << " [-n, --nb-threads <number of threads>]"
     << " [-s, --save]" << std::endl
     << " [-d, --no-display]" << std::endl
     << " [-h, --help]" << std::endl
@@ -473,6 +475,11 @@ void usage(const std::string &softName, const SoftwareArguments &options)
     << "\t\tPermits to choose the type of filter to apply to compute the gradient." << std::endl
     << "\t\tAvailable values: " << vpImageFilter::vpGetCannyFiltAndGradTypes("<", " | ", ">") << std::endl
     << "\t\tDefault: " << vpImageFilter::vpCannyFiltAndGradTypeToStr(options.m_filteringType) << std::endl
+    << std::endl;
+  std::cout << "\t-n, --nb-threads <number of threads>" << std::endl
+    << "\t\tPermits to choose the number of threads to use for the Canny." << std::endl
+    << "\t\tUse -1 to automatically choose the highest possible number of threads." << std::endl
+    << "\t\tDefault: " << options.m_nbThread << std::endl
     << std::endl;
   std::cout << "\t-s, --save" << std::endl
     << "\t\tPermits to save the different images." << std::endl
@@ -519,6 +526,10 @@ int main(int argc, const char *argv[])
       options.m_filteringType = vpImageFilter::vpCannyFiltAndGradTypeFromStr(std::string(argv[i + 1]));
       i++;
     }
+    else if ((argv_str == "-n" || argv_str == "--nb-threads") && i + 1 < argc) {
+      options.m_nbThread = std::atoi(argv[i + 1]);
+      i++;
+    }
     else if (argv_str == "-s" || argv_str == "--save") {
       options.m_saveImages = true;
     }
@@ -558,20 +569,42 @@ int main(int argc, const char *argv[])
     return EXIT_SUCCESS;
   }
 
+  // vpImage<bool> mask(Iload.getRows(), Iload.getCols(), false);
+  // for (int r = 0; r < Iload.getRows()/4; ++r) {
+  //   for (int c = 0; c < Iload.getCols()/4; ++c) {
+  //     mask[Iload.getRows()/2 - r][Iload.getCols()/2 - c] = true;
+  //     mask[Iload.getRows()/2 + r][Iload.getCols()/2 - c] = true;
+  //     mask[Iload.getRows()/2 - r][Iload.getCols()/2 + c] = true;
+  //     mask[Iload.getRows()/2 + r][Iload.getCols()/2 + c] = true;
+  //   }
+  // }
+
   vpImage<bool> *p_mask = nullptr;
   cannyDetector.setMask(p_mask);
+  cannyDetector.setNbThread(-1);
 
+  double tStartHSVuc = vpTime::measureTimeMicros();
   vpImageConvert::convert(Iload, Iin_hsvuc);
   vpImage<unsigned char> I_canny_hsvuc = cannyDetector.detect(Iin_hsvuc);
+  double tEndHSVuc = vpTime::measureTimeMicros();
+  std::cout << "Time to convert RGBa into HSV uchar + compute the edge-map: " << (tEndHSVuc - tStartHSVuc) / 1000. << " ms" << std::endl;
 
+  double tStartHSVd = vpTime::measureTimeMicros();
   vpImageConvert::convert(Iload, Iin_hsvd);
   vpImage<unsigned char> I_canny_hsvd = cannyDetector.detect(Iin_hsvd);
+  double tEndHSVd = vpTime::measureTimeMicros();
+  std::cout << "Time to convert RGBa into HSV double + compute the edge-map: " << (tEndHSVd - tStartHSVd) / 1000. << " ms" << std::endl;
 
   vpCannyEdgeDetection cannyDetectorUC(options.m_gaussianKernelSize, options.m_gaussianStdev, uselessAperture,
     options.m_lowerThresh, options.m_upperThresh, options.m_lowerThreshRatio, options.m_upperThreshRatio);
+  cannyDetectorUC.setMask(p_mask);
+  cannyDetectorUC.setNbThread(-1);
   vpImage<unsigned char> Iin_convert;
+  double tStartChar = vpTime::measureTimeMicros();
   vpImageConvert::convert(Iload, Iin_convert);
   vpImage<unsigned char> I_canny_uc = cannyDetectorUC.detect(Iin_convert);
+  double tEndChar = vpTime::measureTimeMicros();
+  std::cout << "Time to convert RGBa into uchar + compute the edge-map for RGBa: " << (tEndChar - tStartChar) / 1000. << " ms" << std::endl;
 
   // Initialization of the displays
 #ifdef VISP_HAVE_DISPLAY
