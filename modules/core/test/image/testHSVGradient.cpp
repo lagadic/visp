@@ -189,7 +189,6 @@ void gradientFilterX(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpIm
     }
   }
 
-  bool once = true;
   for (unsigned int r = 1; r < rStop; ++r) {
     for (unsigned int c = 1; c < cStop; ++c) {
       if (checkBooleanMask(p_mask, r, c)) {
