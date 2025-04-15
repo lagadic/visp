@@ -214,6 +214,8 @@ public:
    * @}
    */
 
+  double score(const vpHomogeneousMatrix &cMo, const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<float> &depth);
+
   /**
    * \name Display
    * @{

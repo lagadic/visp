@@ -450,6 +450,24 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
   return result;
 }
 
+
+
+double vpRBTracker::score(const vpHomogeneousMatrix &cMo, const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<float> &depth)
+{
+  vpRBFeatureTrackerInput frame;
+  frame.I = I;
+  frame.IRGB = IRGB;
+  frame.depth = depth;
+
+  updateRender(frame, cMo);
+
+  if (m_driftDetector == nullptr) {
+    throw vpException(vpException::functionNotImplementedError, "Scoring relies on drift detector");
+  }
+  return m_driftDetector->score(frame, cMo);
+}
+
+
 void vpRBTracker::updateRender(vpRBFeatureTrackerInput &frame)
 {
   updateRender(frame, m_cMo);
@@ -525,8 +543,8 @@ void vpRBTracker::updateRender(vpRBFeatureTrackerInput &frame, const vpHomogeneo
     //       m_renderer.placeRendernto(renders.color, frame.renders.color, vpRGBa(0));
     //     }
   }
-
 }
+
 std::vector<vpRBSilhouettePoint>
 vpRBTracker::extractSilhouettePoints(const vpImage<vpRGBf> &Inorm, const vpImage<float> &Idepth,
                                      const vpImage<vpRGBf> &silhouetteCanny, const vpImage<unsigned char> &Ivalid,
@@ -555,15 +573,16 @@ vpRBTracker::extractSilhouettePoints(const vpImage<vpRGBf> &Inorm, const vpImage
 #if defined(VISP_DEBUG_RB_TRACKER)
       if (fabs(theta) > M_PI + 1e-6) {
         throw vpException(vpException::badValue, "Theta expected to be in -Pi, Pi range but was not");
-    }
+      }
 #endif
       vpRBSilhouettePoint p(n, m, norm, theta, Z);
       p.detectSilhouette(Idepth);
       points.push_back(p);
+    }
   }
-}
   return points;
 }
+
 
 void vpRBTracker::addTracker(std::shared_ptr<vpRBFeatureTracker> tracker)
 {

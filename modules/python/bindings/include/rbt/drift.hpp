@@ -13,7 +13,7 @@ public:
 
   TrampolineRBDriftDetector() : vpRBDriftDetector() { }
 
-  virtual void update(const vpRBFeatureTrackerInput &previousFrame, const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cTo, const vpHomogeneousMatrix &cprevTo)
+  virtual void update(const vpRBFeatureTrackerInput &previousFrame, const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cTo, const vpHomogeneousMatrix &cprevTo) VP_OVERRIDE
   {
     pybind11::gil_scoped_acquire gil;  // Acquire the GIL while in this scope.
     // Try to look up the overridden method on the Python side.
@@ -22,6 +22,18 @@ public:
       // Pybind seems to copy the frames, so we pass the pointers
       override(&previousFrame, &frame, &cTo, &cprevTo);
     }
+  }
+
+  virtual double score(const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cTo) VP_OVERRIDE
+  {
+    pybind11::gil_scoped_acquire gil;  // Acquire the GIL while in this scope.
+    // Try to look up the overridden method on the Python side.
+    pybind11::function override = pybind11::get_override(this, "score");
+    if (override) {  // method is found
+      // Pybind seems to copy the frames, so we pass the pointers
+      return override(&frame, &cTo).cast<double>();
+    }
+    return 0.0;
   }
 
   virtual double getScore() const VP_OVERRIDE

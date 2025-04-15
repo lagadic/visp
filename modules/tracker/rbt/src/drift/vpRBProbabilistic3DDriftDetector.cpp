@@ -43,21 +43,19 @@
 
 BEGIN_VISP_NAMESPACE
 
-void vpRBProbabilistic3DDriftDetector::update(const vpRBFeatureTrackerInput &previousFrame,
-                                              const vpRBFeatureTrackerInput &frame,
-                                              const vpHomogeneousMatrix &cTo, const vpHomogeneousMatrix &cprevTo)
+double vpRBProbabilistic3DDriftDetector::score(const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cTo)
 {
-  // const vpHomogeneousMatrix &cprevTo = frame.renders.cMo;
+  double score = 0.0;
   const vpTranslationVector t = frame.renders.cMo.getTranslationVector();
   if (m_points.size() == 0) {
-    m_score = 1.0;
+    return 1.0;
   }
     // Step 0: project all points
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
   for (vpStored3DSurfaceColorPoint &p : m_points) {
-    p.update(cTo, cprevTo, frame.renders.cMo, frame.cam);
+    p.update(cTo, frame.renders.cMo, frame.cam);
   }
 
   // Step 1: gather points visible in both images and in render
@@ -140,7 +138,7 @@ void vpRBProbabilistic3DDriftDetector::update(const vpRBFeatureTrackerInput &pre
     bool useMedian = true;
     std::vector<double> scores;
     scores.reserve(visiblePoints.size());
-    m_score = 0.0;
+
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel
 #endif
@@ -161,24 +159,25 @@ void vpRBProbabilistic3DDriftDetector::update(const vpRBFeatureTrackerInput &pre
         }
 
         vpRGBf averageColor(0.f, 0.f, 0.f);
+        double bestColorProba = 0.0;
+        vpRGBf bestColor;
         for (int i = -1; i < 2; ++i) {
           for (int j = -1; j < 2; ++j) {
             const vpRGBa currentColor = frame.IRGB[p->projCurrPx[1] + i][p->projCurrPx[0] + j];
-            averageColor.R += static_cast<float>(currentColor.R);
-            averageColor.G += static_cast<float>(currentColor.G);
-            averageColor.B += static_cast<float>(currentColor.B);
+            const vpRGBf c(static_cast<float>(currentColor.R), static_cast<float>(currentColor.G), static_cast<float>(currentColor.B));
+            double probaColor = p->stats.probability(c);
+            if (probaColor > bestColorProba) {
+              bestColorProba = probaColor;
+              bestColor = c;
+            }
           }
         }
-        averageColor = averageColor * (1.0 / 9.0);
-        // const vpRGBf c(currentColor.R, currentColor.G, currentColor.B);
-        const vpRGBf c(averageColor);
 
-        const double probaColor = p->stats.probability(c);
-        const double proba = probaColor * probaDepth;
+        const double proba = bestColorProba * probaDepth;
 
         scoresLocal.push_back(proba);
-        m_score += proba;
-        p->updateColor(c, m_colorUpdateRate * probaDepth);
+        score += proba;
+        p->updateColor(bestColor, m_colorUpdateRate * probaDepth);
       }
 #ifdef VISP_HAVE_OPENMP
 #pragma omp critical
@@ -189,15 +188,25 @@ void vpRBProbabilistic3DDriftDetector::update(const vpRBFeatureTrackerInput &pre
     }
     if (!useMedian) {
       // Use average score, may be more sensitive to outliers
-      m_score /= scores.size();
+      score /= scores.size();
+      return score;
     }
     else {
-      m_score = vpMath::getMedian(scores);
+      return vpMath::getMedian(scores);
     }
   }
   else {
-    m_score = 0.0;
+    return 0.0;
   }
+}
+
+
+void vpRBProbabilistic3DDriftDetector::update(const vpRBFeatureTrackerInput &previousFrame,
+                                              const vpRBFeatureTrackerInput &frame,
+                                              const vpHomogeneousMatrix &cTo, const vpHomogeneousMatrix &cprevTo)
+{
+  // const vpHomogeneousMatrix &cprevTo = frame.renders.cMo;
+  m_score = score(frame, cTo);
 
   // Step 4: Sample bb to add new visible points
   const vpHomogeneousMatrix oMcprev = cprevTo.inverse();
@@ -221,7 +230,7 @@ void vpRBProbabilistic3DDriftDetector::update(const vpRBFeatureTrackerInput &pre
         x = cX[0] / cX[2], y = cX[1] / cX[2];
         vpMeterPixelConversion::convertPoint(frame.cam, x, y, u, v);
         int prevI = static_cast<int>(v), prevJ = static_cast<int>(u);
-        if (prevI < 0 || prevI >= previousFrame.IRGB.getHeight() || prevJ < 0 || prevJ >= previousFrame.IRGB.getWidth()) {
+        if (prevI < 0 || prevI >= static_cast<int>(previousFrame.IRGB.getHeight()) || prevJ < 0 || prevJ >= static_cast<int>(previousFrame.IRGB.getWidth())) {
           continue;
         }
         oX = oMcprev * cX;
@@ -278,6 +287,29 @@ void vpRBProbabilistic3DDriftDetector::loadJsonConfiguration(const nlohmann::jso
   setMinDistForNew3DPoints(j.value("minDistanceNewPoints", m_minDist3DNewPoint));
   setSampleStep(j.value("sampleStep", m_sampleStep));
 }
+
+void vpRBProbabilistic3DDriftDetector::loadRepresentation(const std::string &filename)
+{
+  std::ifstream f(filename);
+  if (!f.good()) {
+    throw vpException(vpException::ioError, "Could not open file %s", filename.c_str());
+  }
+
+  nlohmann::json j = nlohmann::json::parse(f);
+  f.close();
+  m_points = j;
+}
+void vpRBProbabilistic3DDriftDetector::saveRepresentation(const std::string &filename) const
+{
+  nlohmann::json j = m_points;
+  std::ofstream f(filename);
+  if (!f.good()) {
+    throw vpException(vpException::ioError, "Could not open file %s", filename.c_str());
+  }
+  f << j.dump(2);
+  f.close();
+}
+
 #endif
 
 END_VISP_NAMESPACE
