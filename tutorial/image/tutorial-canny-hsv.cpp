@@ -537,7 +537,7 @@ int main(int argc, const char *argv[])
       options.m_useDisplay = false;
     }
     else if (argv_str == "-h" || argv_str == "--help") {
-      usage(std::string(argv[0]), options);
+      usage(std::string(argv[0]), SoftwareArguments());
       return EXIT_SUCCESS;
     }
     else {
@@ -581,7 +581,7 @@ int main(int argc, const char *argv[])
 
   vpImage<bool> *p_mask = nullptr;
   cannyDetector.setMask(p_mask);
-  cannyDetector.setNbThread(-1);
+  cannyDetector.setNbThread(options.m_nbThread);
 
   double tStartHSVuc = vpTime::measureTimeMicros();
   vpImageConvert::convert(Iload, Iin_hsvuc);
@@ -598,7 +598,7 @@ int main(int argc, const char *argv[])
   vpCannyEdgeDetection cannyDetectorUC(options.m_gaussianKernelSize, options.m_gaussianStdev, uselessAperture,
     options.m_lowerThresh, options.m_upperThresh, options.m_lowerThreshRatio, options.m_upperThreshRatio);
   cannyDetectorUC.setMask(p_mask);
-  cannyDetectorUC.setNbThread(-1);
+  cannyDetectorUC.setNbThread(options.m_nbThread);
   vpImage<unsigned char> Iin_convert;
   double tStartChar = vpTime::measureTimeMicros();
   vpImageConvert::convert(Iload, Iin_convert);
