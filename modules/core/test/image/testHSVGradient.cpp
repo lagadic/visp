@@ -338,15 +338,17 @@ int main()
     vpImageFilter::CANNY_COUNT_FILTERING
   };
 
-  for (unsigned int size = 3; (size < 7) && isSuccess; size += 2) {
-    vpImage<bool> *p_mask = nullptr;
-    for (unsigned int i = 1; i < 2; ++i) {
-      if (i == 1) {
-        p_mask = &dataset.m_Imask;
-      }
-      for (auto type: types) {
+  std::vector<int> nbThreads = { 1, 2 };
+
+  vpImage<bool> *p_mask = nullptr;
+  for (unsigned int i = 0; i < 2; ++i) {
+    if (i == 1) {
+      p_mask = &dataset.m_Imask;
+    }
+    for (auto type: types) {
+      for (auto nbThread: nbThreads) {
         for (auto input: dataset.m_hsvUCtrue) {
-          vpImageFilter::gradientFilter(input.second.m_I, GIx, GIy, 1, p_mask, type);
+          vpImageFilter::gradientFilter(input.second.m_I, GIx, GIy, nbThread, p_mask, type);
           gradientFilter(input.second.m_I, GIx_ref, GIy_ref, p_mask, type);
           bool isSuccessGIx = vpHSVTests::areAlmostEqual(GIx, "GIx", GIx_ref, "GIx_ref");
           bool isSuccessGIy = vpHSVTests::areAlmostEqual(GIy, "GIy", GIy_ref, "GIy_ref");
@@ -358,6 +360,9 @@ int main()
             std::cerr << "ERROR: " << vpImageFilter::vpCannyFiltAndGradTypeToStr(type) << " along Y on HSV<uchar, true> failed ! " << std::endl;
           }
           if (!(isSuccessGIx && isSuccessGIy)) {
+            std::cout << "Type:  " << vpImageFilter::vpCannyFiltAndGradTypeToStr(type) << std::endl;
+            std::cout << "nbThread:  " << nbThread << std::endl;
+            std::cout << "mask ? :  " << (p_mask ? std::string("true") : std::string("false")) << std::endl;
             vpHSVTests::print(input.second.m_I, input.first);
             vpHSVTests::print(GIx, "GIx");
             vpHSVTests::print(GIy, "GIy");
@@ -367,7 +372,7 @@ int main()
         }
 
         for (auto input: dataset.m_hsvUCfalse) {
-          vpImageFilter::gradientFilter(input.second.m_I, GIx, GIy, 1, p_mask, type);
+          vpImageFilter::gradientFilter(input.second.m_I, GIx, GIy, nbThread, p_mask, type);
           gradientFilter(input.second.m_I, GIx_ref, GIy_ref, p_mask, type);
           bool isSuccessGIx = vpHSVTests::areAlmostEqual(GIx, "GIx", GIx_ref, "GIx_ref");
           bool isSuccessGIy = vpHSVTests::areAlmostEqual(GIy, "GIy", GIy_ref, "GIy_ref");
@@ -379,6 +384,9 @@ int main()
             std::cerr << "ERROR: " << vpImageFilter::vpCannyFiltAndGradTypeToStr(type) << " along Y on HSV<uchar, false> failed ! " << std::endl;
           }
           if (!(isSuccessGIx && isSuccessGIy)) {
+            std::cout << "Type:  " << vpImageFilter::vpCannyFiltAndGradTypeToStr(type) << std::endl;
+            std::cout << "nbThread:  " << nbThread << std::endl;
+            std::cout << "mask ? :  " << (p_mask ? std::string("true") : std::string("false")) << std::endl;
             vpHSVTests::print(input.second.m_I, input.first);
             vpHSVTests::print(GIx, "GIx");
             vpHSVTests::print(GIy, "GIy");
@@ -388,7 +396,7 @@ int main()
         }
 
         for (auto input: dataset.m_hsvDouble) {
-          vpImageFilter::gradientFilter(input.second.m_I, GIx, GIy, 1, p_mask, type);
+          vpImageFilter::gradientFilter(input.second.m_I, GIx, GIy, nbThread, p_mask, type);
           gradientFilter(input.second.m_I, GIx_ref, GIy_ref, p_mask, type);
           bool isSuccessGIx = vpHSVTests::areAlmostEqual(GIx, "GIx", GIx_ref, "GIx_ref");
           bool isSuccessGIy = vpHSVTests::areAlmostEqual(GIy, "GIy", GIy_ref, "GIy_ref");
@@ -400,6 +408,9 @@ int main()
             std::cerr << "ERROR: " << vpImageFilter::vpCannyFiltAndGradTypeToStr(type) << " along Y on HSV<double> failed ! " << std::endl;
           }
           if (!(isSuccessGIx && isSuccessGIy)) {
+            std::cout << "Type:  " << vpImageFilter::vpCannyFiltAndGradTypeToStr(type) << std::endl;
+            std::cout << "nbThread:  " << nbThread << std::endl;
+            std::cout << "mask ? :  " << (p_mask ? std::string("true") : std::string("false")) << std::endl;
             vpHSVTests::print(input.second.m_I, input.first);
             vpHSVTests::print(GIx, "GIx");
             vpHSVTests::print(GIy, "GIy");
