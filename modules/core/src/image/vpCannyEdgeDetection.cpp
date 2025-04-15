@@ -487,7 +487,7 @@ vpCannyEdgeDetection::performEdgeThinning(const float &lowerThreshold)
   bool ignore_current_pixel = false;
   bool grad_lower_threshold = false;
 #ifdef VISP_HAVE_OPENMP
-#pragma omp parallel for default(shared) private(ignore_current_pixel, grad_lower_threshold)
+#pragma omp parallel for default(shared) private(ignore_current_pixel, grad_lower_threshold) num_threads(m_nbThread)
 #endif
   for (int iter = 0; iter < size; ++iter) {
 
@@ -535,8 +535,12 @@ vpCannyEdgeDetection::performEdgeThinning(const float &lowerThreshold)
           // Keeping the edge point that has the highest gradient
 #ifdef VISP_HAVE_OPENMP
 #pragma omp critical
+          {
 #endif
-          m_edgeCandidateAndGradient.push_back(std::pair<unsigned int, float>(iter, grad));
+            m_edgeCandidateAndGradient.push_back(std::pair<unsigned int, float>(iter, grad));
+#ifdef VISP_HAVE_OPENMP
+          }
+#endif
         }
       }
     }
@@ -553,7 +557,7 @@ vpCannyEdgeDetection::performHysteresisThresholding(const float &lowerThreshold,
 
 #ifdef VISP_HAVE_OPENMP
   unsigned int iam, nt, ipoints, npoints(size);
-#pragma omp parallel default(shared) private(iam, nt, ipoints, istart, istop)
+#pragma omp parallel default(shared) private(iam, nt, ipoints, istart, istop) num_threads(m_nbThread)
   {
     iam = omp_get_thread_num();
     nt = omp_get_num_threads();

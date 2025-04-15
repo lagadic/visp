@@ -339,11 +339,14 @@ public:
   }
 #endif
 
-  inline void setNbThread(const int &nbThread)
+  inline void setNbThread(const int &maxNbThread)
   {
 #ifdef VISP_HAVE_OPENMP
-    // m_nbThread = nbThread;
-    m_nbThread = 1;
+    int nbThread = maxNbThread;
+    if (nbThread < 0) {
+      nbThread = omp_get_max_threads();
+    }
+    m_nbThread = nbThread;
 #else
     m_nbThread = 1;
     std::cout << "[WARNING] OpenMP is not available, setting the number of threads is ignored." << std::endl;
