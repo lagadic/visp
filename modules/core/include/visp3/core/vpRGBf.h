@@ -43,6 +43,10 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColVector.h>
 
+#ifdef VISP_HAVE_NLOHMANN_JSON
+#include VISP_NLOHMANN_JSON(json.hpp)
+#endif
+
 #if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
 #include <type_traits>
 #endif
@@ -164,6 +168,19 @@ public:
 static_assert(std::is_trivially_assignable_v<vpRGBf, vpRGBf>);
 static_assert(std::is_trivially_copyable_v<vpRGBf>);
 #endif
+
+inline void from_json(const nlohmann::json &j, vpRGBf &c)
+{
+  c.R = j.at(0);
+  c.G = j.at(1);
+  c.B = j.at(2);
+
+}
+
+inline void to_json(nlohmann::json &j, const vpRGBf &c)
+{
+  j = { c.R, c.G, c.B };
+}
 
 END_VISP_NAMESPACE
 
