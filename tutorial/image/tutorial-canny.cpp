@@ -34,6 +34,7 @@
 
 #include <visp3/core/vpCannyEdgeDetection.h>
 #include <visp3/core/vpImageFilter.h>
+#include <visp3/core/vpTime.h>
 #include <visp3/io/vpImageIo.h>
 
 #ifdef HAVE_OPENCV_IMGPROC
@@ -348,7 +349,7 @@ int main(int argc, const char *argv[])
   }
   else {
     // Detection on a fake image of a square
-    I_canny_input.resize(500, 500, 0);
+    I_canny_input.resize(720, 1280, 0);
     for (unsigned int r = 150; r < 350; r++) {
       for (unsigned int c = 150; c < 350; c++) {
         I_canny_input[r][c] = 125;
@@ -375,7 +376,11 @@ int main(int argc, const char *argv[])
     setGradientOutsideClass(I_canny_input, options.m_gaussianKernelSize, options.m_gaussianStdev, cannyDetector, options.m_apertureSize,
                             options.m_filteringType, dIx_uchar, dIy_uchar);
   }
+  double tStart = vpTime::measureTimeMicros();
   I_canny_visp = cannyDetector.detect(I_canny_input);
+  double tEnd = vpTime::measureTimeMicros();
+  std::cout << "Time to compute the edge-map: " << (tEnd - tStart) / 1000. << " ms" << std::endl;
+
   float mean, max, stdev;
   computeMeanMaxStdev(I_canny_input, mean, max, stdev);
   if (options.m_saveEdgeList) {

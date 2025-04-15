@@ -404,7 +404,8 @@ private:
   {
     STRONG_EDGE, /*!< This pixel exceeds the upper threshold of the double hysteresis phase, it is thus for sure an edge point.*/
     WEAK_EDGE,/*!< This pixel is between the lower and upper threshold of the double hysteresis phase, it is an edge point only if it is linked at some point to an edge point.*/
-    ON_CHECK /*!< This pixel is currently tested to know if it is linked to a strong edge point.*/
+    ON_CHECK, /*!< This pixel is currently tested to know if it is linked to a strong edge point.*/
+    NOT_EDGE /*!< This pixel is surely not an edge.*/
   } EdgeType;
 
   // Filtering + gradient methods choice
@@ -427,7 +428,7 @@ private:
   vpImage<float> m_dIy; /*!< Y-axis gradient.*/
 
   // // Edge thining attributes
-  std::map<std::pair<unsigned int, unsigned int>, float> m_edgeCandidateAndGradient; /*!< Map that contains point image coordinates and corresponding gradient value.*/
+  std::vector<std::pair<unsigned int, float>> m_edgeCandidateAndGradient; /*!< Map that contains point image coordinates and corresponding gradient value.*/
 
   // // Hysteresis thresholding attributes
   float m_lowerThreshold; /*!< Lower threshold for the hysteresis step. If negative, it will be deduced
@@ -443,18 +444,19 @@ private:
   rlim_t m_minStackSize; /*!< Minimum stack size, due to the recursivity used in this step of the algorithm.*/
 #endif
   bool m_storeListEdgePoints; /*!< If true, the vector \b m_edgePointsList will contain the list of the edge points resulting from the whole algorithm.*/
-  std::map<std::pair<unsigned int, unsigned int>, EdgeType> m_edgePointsCandidates; /*!< Map that contains the strong edge points, i.e. the points for which we know for sure they are edge points,
+  std::vector<unsigned int> m_activeEdgeCandidates; /*!< Vector that contains only the IDs of the edge candidates.*/
+  static vpImage<EdgeType> m_edgePointsCandidates; /*!< Map that contains the strong edge points, i.e. the points for which we know for sure they are edge points,
                                                 and the weak edge points, i.e. the points for which we still must determine if they are actual edge points.*/
   vpImage<unsigned char> m_edgeMap; /*!< Final edge map that results from the whole Canny algorithm.*/
   std::vector<vpImagePoint> m_edgePointsList; /*!< List of the edge points that belong to the final edge map.*/
   const vpImage<bool> *mp_mask; /*!< Mask that permits to consider only the pixels for which the mask is true.*/
 
-  float getGradientOrientation(const vpImage<float> &dIx, const vpImage<float> &dIy, const int &row, const int &col);
+  float getGradientOrientation(const vpImage<float> &dIx, const vpImage<float> &dIy, const int &iter);
 
-  void getInterpolWeightsAndOffsets(const float &gradientOrientation, float &alpha, float &beta,
+  void getInterpolWeightsAndOffsets(const float &gradientOrientation, float &alpha, float &beta, const int &nbCols,
                                     int &dRowGradAlpha, int &dRowGradBeta, int &dColGradAlpha, int &dColGradBeta);
 
-  float getManhattanGradient(const vpImage<float> &dIx, const vpImage<float> &dIy, const int &row, const int &col);
+  float getManhattanGradient(const vpImage<float> &dIx, const vpImage<float> &dIy, const int &iter);
 
   /** @name Constructors and initialization */
   //@{
@@ -520,7 +522,7 @@ private:
    * \return true We found a strong edge point in its 8-connected neighborhood.
    * \return false We did not found a strong edge point in its 8-connected neighborhood.
    */
-  bool recursiveSearchForStrongEdge(const std::pair<unsigned int, unsigned int> &coordinates);
+  bool recursiveSearchForStrongEdge(const unsigned int &coordinates);
 
   /**
    * \brief Perform edge tracking.
