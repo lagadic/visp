@@ -2402,6 +2402,61 @@ private:
 #endif
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  /**
+   * \brief Return true if the distance must be computed because at least one point in its neighborhood
+   * needs to compute a gradient.
+   *
+   * \param[in] p_mask The boolean mask that indicates for which pixels we must compute the gradient.
+   * \param[in] iter The iterator that indicates which pixel of the image is currently considered.
+   * \param[in] c The column counter.
+   * \param[in] h The height of the image.
+   * \param[in] w The width of the image.
+   * \param[in] isGradientX If true, it means that we are investigating an horizontal gradient. If false, it is a
+   * vertical gradient.
+   * \return true
+   * \return false
+   */
+  static bool checkBooleanPatch(const vpImage<bool> *p_mask, const unsigned int &iter, const unsigned int &c,
+                         const unsigned int &h, const unsigned int &w,
+                         const bool &isGradientX)
+  {
+    if (!p_mask) {
+      return true;
+    }
+    static const unsigned int maxIter = (h - 1) * w;
+    static const unsigned int minIter = w;
+    bool hasToCompute = p_mask->bitmap[iter];
+    if (c < w - 1) { // We do not compute gradient on the last column
+      hasToCompute |= p_mask->bitmap[iter + 1]; // I[r][c + 1];
+      if (iter < maxIter) { // We do not compute gradient on the last row
+        hasToCompute |= p_mask->bitmap[iter + w + 1]; // I[r + 1][c + 1];
+      }
+    }
+
+    if (iter < maxIter) { // We do not compute gradient on the last row
+      hasToCompute |= p_mask->bitmap[iter + w]; // I[r + 1][c];
+    }
+
+    if (isGradientX) {
+      if (iter > minIter) { // We do not compute gradient on the first row
+        hasToCompute |= p_mask->bitmap[iter - w]; // I[r - 1][c];
+        if (c < w - 1) { // We do not compute gradient on the last column
+          hasToCompute |= p_mask->bitmap[iter - w + 1]; // I[r - 1][c + 1];
+        }
+      }
+    }
+    else {
+      if (c > 1) { // We do not compute gradient on the first column
+        hasToCompute |= p_mask->bitmap[iter - 1]; // Checking mask[r][c - 1]
+        if (iter < maxIter) { // We do not compute gradient on the last row
+          hasToCompute |= p_mask->bitmap[iter + w - 1]; // Checking mask[r + 1][c - 1]
+        }
+      }
+    }
+    return hasToCompute;
+  }
+
+
   template <typename HSVType, bool useFullScale, typename OutputType>
   static typename std::enable_if<std::is_arithmetic<OutputType>::value, void>::type initGradientFilterDifferenceImage(
     const vpImage<vpHSV<HSVType, useFullScale>> &I, vpImage<OutputType> &Idiff
@@ -2463,34 +2518,6 @@ private:
     const unsigned int size = I.getSize();
     const unsigned int offsetIdiff = nbCols;
 
-    auto checkBooleanPatch = [](const vpImage<bool> *p_mask, const unsigned int &iter, const unsigned int &c, const unsigned int &h, const unsigned int &w)
-      {
-        if (!p_mask) {
-          return true;
-        }
-        static const unsigned int maxIter = (h - 1) * w;
-        static const unsigned int minIter = w;
-        bool hasToCompute = p_mask->bitmap[iter];
-        if (c < w - 1) { // We do not compute gradient on the last column
-          hasToCompute |= p_mask->bitmap[iter + 1]; // I[r][c + 1];
-          if (iter < maxIter) { // We do not compute gradient on the last row
-            hasToCompute |= p_mask->bitmap[iter + w + 1]; // I[r + 1][c + 1];
-          }
-        }
-
-        if (iter < maxIter) { // We do not compute gradient on the last row
-          hasToCompute |= p_mask->bitmap[iter + w]; // I[r + 1][c];
-        }
-
-        if (iter > minIter) { // We do not compute gradient on the first row
-          hasToCompute |= p_mask->bitmap[iter - w]; // I[r - 1][c];
-          if (c < w - 1) { // We do not compute gradient on the last column
-            hasToCompute |= p_mask->bitmap[iter - w + 1]; // I[r - 1][c + 1];
-          }
-        }
-        return hasToCompute;
-      };
-
     vpImage<OutputType> Idiff(nbRows, nbCols);
     initGradientFilterDifferenceImage(I, Idiff);
     const unsigned int resetCounter = nbCols - 1;
@@ -2503,32 +2530,34 @@ private:
       if (counter) {
         // Computing the amplitude of the difference
         OutputType futureDiff = 0.;
-        if (checkBooleanPatch(p_mask, iter + offsetIdiff, idCol, nbRows, nbCols)) {
+        if (checkBooleanPatch(p_mask, iter + offsetIdiff, idCol, nbRows, nbCols, true)) {
           futureDiff = vpHSV<HSVType, useFullScale>::template mahalanobisDistance<OutputType>(I.bitmap[iter + offsetIdiff], I.bitmap[iter + nbCols +1], diffVector);
+
+          if (idCol) {
+            if (vpColVector::dotProd(diffVector, diffVectorPrev) < 0.) {
+              // We change the sign of the difference only if the cosine distance is negative
+              isProdScalPositive = false;
+            }
+          }
+          else {
+            vpColVector colFirstCol = I.bitmap[iter + offsetIdiff].toColVector();
+            // The first sign depends on the positiveness of the cosine distance between the difference and first pixel of a row
+            isProdScalPositive = (vpColVector::dotProd(diffVector, colFirstCol) >= 0.);
+          }
+
+          // The sign of the difference is deduced by the sign of the cosine distance between the successive difference vectors
+          if (isProdScalPositive) {
+            Idiff.bitmap[iter + offsetIdiff] = futureDiff;
+          }
+          else {
+            Idiff.bitmap[iter + offsetIdiff] = -futureDiff;
+          }
         }
         else {
           diffVector = I.bitmap[iter + nbCols +1] - I.bitmap[iter + offsetIdiff];
         }
-        if (idCol) {
-          if (vpColVector::dotProd(diffVector, diffVectorPrev) < 0.) {
-            // We change the sign of the difference only if the cosine distance is negative
-            isProdScalPositive = false;
-          }
-        }
-        else {
-          vpColVector colFirstCol = I.bitmap[iter + offsetIdiff].toColVector();
-          // The first sign depends on the positiveness of the cosine distance between the difference and first pixel of a row
-          isProdScalPositive = (vpColVector::dotProd(diffVector, colFirstCol) >= 0.);
-        }
-        diffVectorPrev = diffVector;
 
-        // The sign of the difference is deduced by the sign of the cosine distance between the successive difference vectors
-        if (isProdScalPositive) {
-          Idiff.bitmap[iter + offsetIdiff] = futureDiff;
-        }
-        else {
-          Idiff.bitmap[iter + offsetIdiff] = -futureDiff;
-        }
+        diffVectorPrev = diffVector;
       }
       if (counter) {
         if ((counter != resetCounter)) {
@@ -2604,46 +2633,6 @@ private:
     const unsigned int size = I.getSize();
     const unsigned int offsetIdiff = 1;
 
-    auto checkBooleanPatch = [](const vpImage<bool> *p_mask, const unsigned int &iter,
-      const unsigned int &c /*iterSign*/,
-      const unsigned int &resetCounter, const unsigned int &h, const unsigned int &w)
-      {
-        if (!p_mask) {
-          return true;
-        }
-
-        static const unsigned int maxIter = (h - 1) * w;
-
-        bool hasToCompute = p_mask->bitmap[iter];
-
-        // unsigned int c;
-        // if (iterSign) {
-        //   c = iterSign - 1;
-        // }
-        // else {
-        //   c = resetCounter;
-        // }
-
-        if (c < w - 1) { // We do not compute gradient on the last column
-          hasToCompute |= p_mask->bitmap[iter + 1]; // Checking mask[r][c + 1]
-          if (iter < maxIter) { // We do not compute gradient on the last row
-            hasToCompute |= p_mask->bitmap[iter + w + 1]; // Checking mask[r + 1][c + 1]
-          }
-        }
-
-        if (iter < maxIter) { // We do not compute gradient on the last row
-          hasToCompute |= p_mask->bitmap[iter + w]; // Checking mask[r + 1][c]
-        }
-
-        if (c > 1) { // We do not compute gradient on the first column
-          hasToCompute |= p_mask->bitmap[iter - 1]; // Checking mask[r][c - 1]
-          if (iter < maxIter) { // We do not compute gradient on the last row
-            hasToCompute |= p_mask->bitmap[iter + w - 1]; // Checking mask[r + 1][c - 1]
-          }
-        }
-        return hasToCompute;
-      };
-
     vpImage<OutputType> Idiff(nbRows, nbCols);
     bool isProdScalPositive = true;
     std::vector<vpColVector> diffRowPrev(nbCols);
@@ -2656,26 +2645,26 @@ private:
       // Computing the amplitude of the difference
       OutputType futureDiff = 0.;
 
-      if (checkBooleanPatch(p_mask, iter + offsetIdiff, iterSign, resetCounter, nbRows, nbCols)) {
+      if (checkBooleanPatch(p_mask, iter + offsetIdiff, iterSign, nbRows, nbCols, false)) {
         futureDiff = vpHSV<HSVType, useFullScale>::template mahalanobisDistance<OutputType>(I.bitmap[iter + offsetIdiff], I.bitmap[iter + nbCols +1], diffVector);
+
+        // Computing the sign of the difference from the sign of the cosine distance
+        isProdScalPositive = (vpColVector::dotProd(diffVector, diffRowPrev[iterSign]) >= 0.);
+
+        // The sign of the difference is deduced by the sign of the cosine distance between the successive difference vectors
+        if (isProdScalPositive) {
+          Idiff.bitmap[iter + offsetIdiff] = futureDiff;
+        }
+        else {
+          Idiff.bitmap[iter + offsetIdiff] = -futureDiff;
+        }
       }
       else {
         diffVector = I.bitmap[iter + nbCols +1] - I.bitmap[iter + offsetIdiff];
       }
 
-      // Computing the sign of the difference from the sign of the cosine distance
-      isProdScalPositive = (vpColVector::dotProd(diffVector, diffRowPrev[iterSign]) >= 0.);
-
       // Saving the difference vector
       diffRowPrev[iterSign] = diffVector;
-
-      // The sign of the difference is deduced by the sign of the cosine distance between the successive difference vectors
-      if (isProdScalPositive) {
-        Idiff.bitmap[iter + offsetIdiff] = futureDiff;
-      }
-      else {
-        Idiff.bitmap[iter + offsetIdiff] = -futureDiff;
-      }
 
       if (counter) {
         if ((counter != resetCounter)) {
