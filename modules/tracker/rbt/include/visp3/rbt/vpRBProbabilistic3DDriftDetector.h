@@ -114,6 +114,7 @@ public:
       {
         mean = c;
         variance = var;
+        initVariance = var;
         computeStddev();
       }
 
@@ -129,7 +130,7 @@ public:
         const vpRGBf diff(c.R - mean.R, c.G - mean.G, c.B - mean.B);
         vpRGBf diffSqr(std::pow(diff.R, 2), std::pow(diff.G, 2), std::pow(diff.B, 2));
         mean = mean + weight * diff;
-        // variance = (1 - weight) * (variance + weight * diffSqr);
+        variance = (1 - weight) * (variance + weight * diffSqr);
         computeStddev();
       }
 
@@ -141,11 +142,10 @@ public:
        */
       double probability(const vpRGBf &c)
       {
-
         vpRGBf diff(c.R - mean.R, c.G - mean.G, c.B - mean.B);
-        diff.R = (diff.R * diff.R * (1.0 / variance.R));
-        diff.G = (diff.G * diff.G * (1.0 / variance.G));
-        diff.B = (diff.B * diff.B * (1.0 / variance.B));
+        diff.R = (diff.R * diff.R * (1.0 / initVariance.R));
+        diff.G = (diff.G * diff.G * (1.0 / initVariance.G));
+        diff.B = (diff.B * diff.B * (1.0 / initVariance.B));
 
         const double dist = sqrt(diff.R + diff.G + diff.B);
 
@@ -155,7 +155,15 @@ public:
         //   std::pow((c.B - mean.B) / (standardDev.B), 2));
 
         // const double proba = 1.0 - erf(dist / sqrt(2));
-        const double proba = 1.0 - erf(dist / sqrt(2));
+
+        const double proba = 1.0 - std::max(
+          std::max(
+            abs(diff.R / (standardDev.R * sqrt(2))),
+            abs(diff.G / (standardDev.G * sqrt(2)))
+          ),
+          abs(diff.B / (standardDev.B * sqrt(2)))
+        );
+        // const double proba = 1.0 - erf(dist / sqrt(2));
 
 
         return proba;
@@ -173,8 +181,17 @@ public:
         standardDev.B = sqrt(variance.B);
       }
 
+      double covarianceScaleFactor() const
+      {
+        // Compute the scale factor as the first eigenvalue of the covariance matrix
+        // Since our matrix is diagonal, it is the heighest variance value
+
+        return std::max(variance.R, std::max(variance.G, variance.B));
+      }
+
       vpRGBf mean;
       vpRGBf variance;
+      vpRGBf initVariance;
       vpRGBf standardDev;
     };
 

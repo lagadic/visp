@@ -58,6 +58,9 @@ double vpRBProbabilistic3DDriftDetector::score(const vpRBFeatureTrackerInput &fr
     p.update(cTo, frame.renders.cMo, frame.cam);
   }
 
+
+
+
   // Step 1: gather points visible in both images and in render
 
   std::vector<vpStored3DSurfaceColorPoint *> visiblePoints;
@@ -135,15 +138,18 @@ double vpRBProbabilistic3DDriftDetector::score(const vpRBFeatureTrackerInput &fr
     }
   }
   if (visiblePoints.size() > 0) {
-    bool useMedian = true;
+    bool useMedian = false;
     std::vector<double> scores;
     scores.reserve(visiblePoints.size());
+
+    double weightSum = 0.0;
 
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel
 #endif
     {
       std::vector<double> scoresLocal;
+      double weightSumLocal = 0.0;
 #ifdef VISP_HAVE_OPENMP
 #pragma omp for
 #endif
@@ -153,6 +159,10 @@ double vpRBProbabilistic3DDriftDetector::score(const vpRBFeatureTrackerInput &fr
         const double Z = hasCorrectDepth ? frame.depth[p->projCurrPx[1]][p->projCurrPx[0]] : 0.0;
         double depthError = Z > 0 ? fabs(p->currX[2] - Z) : 0.0;
         double probaDepth = 1.0;
+        double scaleFactor = p->stats.covarianceScaleFactor();
+        double weight = 1.0 - std::min(1.0, scaleFactor / std::pow((m_initialColorSigma), 2));
+        weightSumLocal += weight;
+
 
         if (hasCorrectDepth) {
           probaDepth = 1.0 - erf((depthError) / (m_depthSigma * sqrt(2.0)));
@@ -164,31 +174,37 @@ double vpRBProbabilistic3DDriftDetector::score(const vpRBFeatureTrackerInput &fr
         for (int i = -1; i < 2; ++i) {
           for (int j = -1; j < 2; ++j) {
             const vpRGBa currentColor = frame.IRGB[p->projCurrPx[1] + i][p->projCurrPx[0] + j];
-            const vpRGBf c(static_cast<float>(currentColor.R), static_cast<float>(currentColor.G), static_cast<float>(currentColor.B));
-            double probaColor = p->stats.probability(c);
-            if (probaColor > bestColorProba) {
-              bestColorProba = probaColor;
-              bestColor = c;
-            }
+            averageColor.R += static_cast<float>(currentColor.R);
+            averageColor.G += static_cast<float>(currentColor.G);
+            averageColor.B += static_cast<float>(currentColor.B);
+
+            // const vpRGBf c(static_cast<float>(currentColor.R), static_cast<float>(currentColor.G), static_cast<float>(currentColor.B));
+            // double probaColor = p->stats.probability(c);
+            // if (probaColor > bestColorProba) {
+            //   bestColorProba = probaColor;
+            //   bestColor = c;
+            // }
           }
         }
+        averageColor = averageColor * (1.0 / 9.0);
 
-        const double proba = bestColorProba * probaDepth;
+        const double proba = p->stats.probability(averageColor) * probaDepth;
 
-        scoresLocal.push_back(proba);
-        score += proba;
-        p->updateColor(bestColor, m_colorUpdateRate * probaDepth);
+        scoresLocal.push_back(weight * proba);
+        score += proba * weight;
+        p->updateColor(averageColor, m_colorUpdateRate * probaDepth);
       }
 #ifdef VISP_HAVE_OPENMP
 #pragma omp critical
 #endif
       {
         scores.insert(scores.end(), scoresLocal.begin(), scoresLocal.end());
+        weightSum += weightSumLocal;
       }
     }
     if (!useMedian) {
       // Use average score, may be more sensitive to outliers
-      score /= scores.size();
+      score /= weightSum;
       return score;
     }
     else {
