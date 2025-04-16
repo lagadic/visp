@@ -484,68 +484,98 @@ vpCannyEdgeDetection::performEdgeThinning(const float &lowerThreshold)
   const int nbCols = static_cast<int>(m_dIx.getCols());
   const int size = static_cast<int>(m_dIx.getSize());
 
-  bool ignore_current_pixel = false;
-  bool grad_lower_threshold = false;
+  int istart = 0, istop = size;
 #ifdef VISP_HAVE_OPENMP
-#pragma omp parallel for default(shared) private(ignore_current_pixel, grad_lower_threshold) num_threads(m_nbThread)
-#endif
-  for (int iter = 0; iter < size; ++iter) {
-
-      // reset the checks
-    ignore_current_pixel = false;
-    grad_lower_threshold = false;
-
-    if (mp_mask != nullptr) {
-      if (!mp_mask->bitmap[iter]) {
-        // The mask tells us to ignore the current pixel
-        ignore_current_pixel = true;
-        // continue
-      }
+  int iam, nt, ipoints, npoints(size);
+#pragma omp parallel default(shared) private(iam, nt, ipoints, istart, istop) num_threads(m_nbThread)
+  {
+    iam = omp_get_thread_num();
+    nt = omp_get_num_threads();
+    ipoints = npoints / nt;
+    // size of partition
+    istart = iam * ipoints; // starting array index
+    if (iam == nt-1) {
+      // last thread may do more
+      ipoints = npoints - istart;
     }
-    // continue if the mask does not tell us to ignore the current pixel
-    if (ignore_current_pixel == false) {
+    istop = istart + ipoints;
+    std::vector<std::pair<unsigned int, float>> localMemoryEdgeCandidates;
+    bool ignore_current_pixel = false;
+    bool grad_lower_threshold = false;
+#endif
+    for (int iter = istart; iter < istop; ++iter) {
+      // reset the checks
+      ignore_current_pixel = false;
+      grad_lower_threshold = false;
 
-      // Computing the gradient orientation and magnitude
-      float grad = getManhattanGradient(m_dIx, m_dIy, iter);
-
-      if (grad < lowerThreshold) {
-        // The gradient is lower than minimum threshold => ignoring the point
-        grad_lower_threshold = true;
-        // continue
+      if (mp_mask != nullptr) {
+        if (!mp_mask->bitmap[iter]) {
+          // The mask tells us to ignore the current pixel
+          ignore_current_pixel = true;
+          // continue
+        }
       }
-      if (grad_lower_threshold == false) {
-        //
-        // Getting the offset along the horizontal and vertical axes
-        // depending on the gradient orientation
-        int dRowAlphaPlus = 0, dRowBetaPlus = 0;
-        int dColAphaPlus = 0, dColBetaPlus = 0;
-        float gradientOrientation = getGradientOrientation(m_dIx, m_dIy, iter);
-        float alpha = 0.f, beta = 0.f;
-        getInterpolWeightsAndOffsets(gradientOrientation, alpha, beta, nbCols, dRowAlphaPlus, dRowBetaPlus, dColAphaPlus, dColBetaPlus);
-        int dRowAlphaMinus = -dRowAlphaPlus, dRowBetaMinus = -dRowBetaPlus;
-        int dColAphaMinus = -dColAphaPlus, dColBetaMinus = -dColBetaPlus;
-        float gradAlphaPlus = getManhattanGradient(m_dIx, m_dIy, iter + dRowAlphaPlus + dColAphaPlus);
-        float gradBetaPlus = getManhattanGradient(m_dIx, m_dIy, iter + dRowBetaPlus + dColBetaPlus);
-        float gradAlphaMinus = getManhattanGradient(m_dIx, m_dIy, iter + dRowAlphaMinus + dColAphaMinus);
-        float gradBetaMinus = getManhattanGradient(m_dIx, m_dIy, iter + dRowBetaMinus + dColBetaMinus);
-        float gradPlus = (alpha * gradAlphaPlus) + (beta * gradBetaPlus);
-        float gradMinus = (alpha * gradAlphaMinus) + (beta * gradBetaMinus);
+      // continue if the mask does not tell us to ignore the current pixel
+      if (ignore_current_pixel == false) {
 
-        if ((grad >= gradPlus) && (grad >= gradMinus)) {
-          // Keeping the edge point that has the highest gradient
+        // Computing the gradient orientation and magnitude
+        float grad = getManhattanGradient(m_dIx, m_dIy, iter);
+
+        if (grad < lowerThreshold) {
+          // The gradient is lower than minimum threshold => ignoring the point
+          grad_lower_threshold = true;
+          // continue
+        }
+        if (grad_lower_threshold == false) {
+          //
+          // Getting the offset along the horizontal and vertical axes
+          // depending on the gradient orientation
+          int dRowAlphaPlus = 0, dRowBetaPlus = 0;
+          int dColAphaPlus = 0, dColBetaPlus = 0;
+          float gradientOrientation = getGradientOrientation(m_dIx, m_dIy, iter);
+          float alpha = 0.f, beta = 0.f;
+          getInterpolWeightsAndOffsets(gradientOrientation, alpha, beta, nbCols, dRowAlphaPlus, dRowBetaPlus, dColAphaPlus, dColBetaPlus);
+          int dRowAlphaMinus = -dRowAlphaPlus, dRowBetaMinus = -dRowBetaPlus;
+          int dColAphaMinus = -dColAphaPlus, dColBetaMinus = -dColBetaPlus;
+          float gradAlphaPlus = getManhattanGradient(m_dIx, m_dIy, iter + dRowAlphaPlus + dColAphaPlus);
+          float gradBetaPlus = getManhattanGradient(m_dIx, m_dIy, iter + dRowBetaPlus + dColBetaPlus);
+          float gradAlphaMinus = getManhattanGradient(m_dIx, m_dIy, iter + dRowAlphaMinus + dColAphaMinus);
+          float gradBetaMinus = getManhattanGradient(m_dIx, m_dIy, iter + dRowBetaMinus + dColBetaMinus);
+          float gradPlus = (alpha * gradAlphaPlus) + (beta * gradBetaPlus);
+          float gradMinus = (alpha * gradAlphaMinus) + (beta * gradBetaMinus);
+
+          if ((grad >= gradPlus) && (grad >= gradMinus)) {
+            // Keeping the edge point that has the highest gradient
 #ifdef VISP_HAVE_OPENMP
-#pragma omp critical
-          {
-#endif
+            localMemoryEdgeCandidates.push_back(std::pair<unsigned int, float>(iter, grad));
+#else
             m_edgeCandidateAndGradient.push_back(std::pair<unsigned int, float>(iter, grad));
-#ifdef VISP_HAVE_OPENMP
-          }
 #endif
+          }
         }
       }
     }
-
+#ifdef VISP_HAVE_OPENMP
+#pragma omp critical
+    {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+      m_edgeCandidateAndGradient.insert(
+        m_edgeCandidateAndGradient.end(),
+        std::make_move_iterator(localMemoryEdgeCandidates.begin()),
+        std::make_move_iterator(localMemoryEdgeCandidates.end())
+      );
+#else
+      m_edgeCandidateAndGradient.insert(
+        m_activeEdgeCandidates.end(),
+        localMemoryEdgeCandidates.begin(),
+        localMemoryEdgeCandidates.end()
+      );
+#endif
+    }
+#endif
+#ifdef VISP_HAVE_OPENMP
   }
+#endif
 }
 
 void
