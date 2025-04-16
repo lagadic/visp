@@ -2784,6 +2784,7 @@ private:
       istop = istart + irows * nbCols;
 
       std::vector<OutputType> Idiff((irows + 2) * nbCols);
+      std::vector<OutputType> GItemp(irows * nbCols);
       initGradientFilterDifferenceImageX(I, Idiff, istart, iam);
 
       unsigned int counter = resetCounter, idCol = 0;
@@ -2834,7 +2835,7 @@ private:
                 gradient += filter[i + 1] * (Idiff[offset] + Idiff[offset - 1]);
                 offset += nbCols; // Preparing to look in the next row
               }
-              GI.bitmap[iter] = gradient;
+              GItemp[iter - istart] = gradient;
             }
           }
           --counter;
@@ -2849,6 +2850,10 @@ private:
         else {
           idCol = 0;
         }
+      }
+#pragma omp critical
+      {
+        std::memcpy(GI.bitmap + istart, GItemp.data(), GItemp.size() * sizeof(OutputType));
       }
     }
   }
@@ -2923,7 +2928,9 @@ private:
         irows = nrows - rstart;
       }
       istop = istart + irows * nbCols;
+
       std::vector<OutputType> Idiff((irows + 2) * nbCols);
+      std::vector<OutputType> GItemp(irows * nbCols);
       bool isProdScalPositive = true;
       std::vector<vpColVector> diffRowPrev(nbCols);
       if (iam == 0) {
@@ -2969,7 +2976,7 @@ private:
                 // Kind of +/- (I[r + 1][c + i] - I[r][c + 1]) +/- (I[r][c + i] - I[r - 1][c + 1])
                 gradient += filter[i + 1] * (Idiff[iter - istart + nbCols + i] + Idiff[iter - istart + i]);
               }
-              GI.bitmap[iter] = gradient;
+              GItemp[iter - istart] = gradient;
             }
           }
           --counter;
@@ -2983,6 +2990,10 @@ private:
         else {
           iterSign = 0;
         }
+      }
+#pragma omp critical
+      {
+        std::memcpy(GI.bitmap + istart, GItemp.data(), GItemp.size() * sizeof(OutputType));
       }
     }
   }
