@@ -62,6 +62,7 @@ typedef struct SoftwareArguments
   float m_lowerThreshRatio;
   float m_upperThreshRatio;
   vpImageFilter::vpCannyBackendType m_backend;
+  int m_nbThread;
 
   SoftwareArguments()
     : m_img("")
@@ -81,6 +82,7 @@ typedef struct SoftwareArguments
 #else
     , m_backend(vpImageFilter::CANNY_VISP_BACKEND)
 #endif
+    , m_nbThread(-1)
   { }
 }SoftwareArguments;
 
@@ -216,6 +218,7 @@ void usage(const std::string &softName, const SoftwareArguments &options)
     << " [-f, --filter <filterName>]"
     << " [-r, --ratio <lowerThreshRatio upperThreshRatio>]"
     << " [-b, --backend <backendName>]"
+    << " [-n, --nb-threads <number of threads>]"
     << " [-e, --edge-list]" << std::endl
     << " [-h, --help]" << std::endl
     << std::endl;
@@ -257,6 +260,11 @@ void usage(const std::string &softName, const SoftwareArguments &options)
     << "\t\tPermits to use the vpImageFilter::canny method for comparison." << std::endl
     << "\t\tAvailable values: " << vpImageFilter::vpCannyBackendTypeList("<", " | ", ">") << std::endl
     << "\t\tDefault: " << vpImageFilter::vpCannyBackendTypeToString(options.m_backend) << std::endl
+    << std::endl;
+  std::cout << "\t-n, --nb-threads <number of threads>" << std::endl
+    << "\t\tPermits to choose the number of threads to use for the Canny." << std::endl
+    << "\t\tUse -1 to automatically choose the highest possible number of threads." << std::endl
+    << "\t\tDefault: " << options.m_nbThread << std::endl
     << std::endl;
   std::cout << "\t-e, --edge-list" << std::endl
     << "\t\tPermits to save the edge list." << std::endl
@@ -305,6 +313,10 @@ int main(int argc, const char *argv[])
       options.m_backend = vpImageFilter::vpCannyBackendTypeFromString(std::string(argv[i+1]));
       i++;
     }
+    else if ((argv_str == "-n" || argv_str == "--nb-threads") && i + 1 < argc) {
+      options.m_nbThread = std::atoi(argv[i + 1]);
+      i++;
+    }
     else if ((argv_str == "-e") || (argv_str == "--edge-list")) {
       options.m_saveEdgeList = true;
     }
@@ -326,6 +338,7 @@ int main(int argc, const char *argv[])
   configAsTxt += "\tGradient filter kernel size = " + std::to_string(options.m_apertureSize) + "\n";
   configAsTxt += "\tCanny edge filter thresholds = [" + std::to_string(options.m_lowerThresh) + " ; " + std::to_string(options.m_upperThresh) + "]\n";
   configAsTxt += "\tCanny edge filter thresholds ratio (for auto-thresholding) = [" + std::to_string(options.m_lowerThreshRatio) + " ; " + std::to_string(options.m_upperThreshRatio) + "]\n";
+  configAsTxt += "\tCanny edge filter nb threads = " + (options.m_nbThread > 0 ? std::to_string(options.m_nbThread) : std::string("auto")) + "\n";
 #else
   {
     std::stringstream ss;
@@ -334,6 +347,7 @@ int main(int argc, const char *argv[])
     ss << "\tGradient filter kernel size = " << options.m_apertureSize << "\n";
     ss << "\tCanny edge filter thresholds = [" << options.m_lowerThresh << " ; " << options.m_upperThresh << "]\n";
     ss << "\tCanny edge filter thresholds ratio (for auto-thresholding) = [" << options.m_lowerThreshRatio << " ; " << options.m_upperThreshRatio << "]\n";
+    ss <<  "\tCanny edge filter nb threads = " << (options.m_nbThread > 0 ? std::to_string(options.m_nbThread) : std::string("auto")) << "\n";
     configAsTxt += ss.str();
   }
 #endif
@@ -342,6 +356,7 @@ int main(int argc, const char *argv[])
   vpCannyEdgeDetection cannyDetector(options.m_gaussianKernelSize, options.m_gaussianStdev, options.m_apertureSize,
                                      options.m_lowerThresh, options.m_upperThresh, options.m_lowerThreshRatio, options.m_upperThreshRatio,
                                      options.m_filteringType, options.m_saveEdgeList);
+  cannyDetector.setNbThread(options.m_nbThread);
   vpImage<unsigned char> I_canny_input, I_canny_visp, dIx_uchar, dIy_uchar, I_canny_imgFilter;
   if (!options.m_img.empty()) {
     // Detection on the user image

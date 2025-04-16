@@ -391,6 +391,7 @@ void gradientFilterY(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpIm
 template <typename ArithmeticType, typename FilterType, bool useFullScale>
 void gradientFilter(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpImage<FilterType> &GIx, vpImage<FilterType> &GIy, const int &nbThread, const vpImage<bool> *p_mask, const vpImageFilter::vpCannyFilteringAndGradientType &type)
 {
+  (void)nbThread;
   const unsigned int nbRows = I.getRows(), nbCols = I.getCols();
   GIx.resize(nbRows, nbCols, 0.);
   GIy.resize(nbRows, nbCols, 0.);
@@ -552,6 +553,7 @@ int main(int argc, const char *argv[])
   configAsTxt += "\tGaussian filter standard deviation = " + std::to_string(options.m_gaussianStdev) + "\n";
   configAsTxt += "\tCanny edge filter thresholds = [" + std::to_string(options.m_lowerThresh) + " ; " + std::to_string(options.m_upperThresh) + "]\n";
   configAsTxt += "\tCanny edge filter thresholds ratio (for auto-thresholding) = [" + std::to_string(options.m_lowerThreshRatio) + " ; " + std::to_string(options.m_upperThreshRatio) + "]\n";
+  configAsTxt += "\tCanny edge filter nb threads = " + (options.m_nbThread > 0 ? std::to_string(options.m_nbThread) : std::string("auto")) + "\n";
   std::cout << configAsTxt << std::endl;
 
   unsigned int uselessAperture = 3;
@@ -611,14 +613,20 @@ int main(int argc, const char *argv[])
   using FilterType = float;
   vpImage<FilterType> GIx, GIy, GI;
   vpImage<vpHSV<unsigned char, true>> Iblur_hsvuc;
+  double tStartBlurHSVUC = vpTime::measureTimeMicros();
   vpImageFilter::gaussianBlur(Iin_hsvuc, Iblur_hsvuc, options.m_gaussianKernelSize, options.m_gaussianStdev, true, p_mask);
+  double tEndBlurHSVUC = vpTime::measureTimeMicros();
 
-  vpImageFilter::gradientFilter(Iblur_hsvuc, GIx, GIy, 1, p_mask, options.m_filteringType);
+  double tStartGradientHSVUC = vpTime::measureTimeMicros();
+  vpImageFilter::gradientFilter(Iblur_hsvuc, GIx, GIy, options.m_nbThread, p_mask, options.m_filteringType);
+  double tEndGradientHSVUC = vpTime::measureTimeMicros();
   FilterType min = 0., max = 0.;
   computeAbsoluteGradient(GIx, GIy, GI, min, max);
   vpImage<unsigned char> GIdisp_hsvuc_imgfilter = convertToDisplay(GI, min, max);
 
-  gradientFilter(Iblur_hsvuc, GIx, GIy, 1, p_mask, options.m_filteringType);
+  double tStartGradientHSVUCRef = vpTime::measureTimeMicros();
+  gradientFilter(Iblur_hsvuc, GIx, GIy, options.m_nbThread, p_mask, options.m_filteringType);
+  double tEndGradientHSVUCRef = vpTime::measureTimeMicros();
   computeAbsoluteGradient(GIx, GIy, GI, min, max);
   vpImage<unsigned char> GIdisp_hsvuc_vonly = convertToDisplay(GI, min, max);
   cannyDetector.setGradients(GIx, GIy);
@@ -626,8 +634,12 @@ int main(int argc, const char *argv[])
 
 
   vpImage<vpHSV<unsigned char, true>> Iblur_hsvd;
+  double tStartBlurHSVd = vpTime::measureTimeMicros();
   vpImageFilter::gaussianBlur(Iin_hsvd, Iblur_hsvd, options.m_gaussianKernelSize, options.m_gaussianStdev, true, p_mask);
-  vpImageFilter::gradientFilter(Iblur_hsvd, GIx, GIy, 1, p_mask, options.m_filteringType);
+  double tEndBlurHSVd = vpTime::measureTimeMicros();
+  double tStartGradientHSVd = vpTime::measureTimeMicros();
+  vpImageFilter::gradientFilter(Iblur_hsvd, GIx, GIy, options.m_nbThread, p_mask, options.m_filteringType);
+  double tEndGradientHSVd = vpTime::measureTimeMicros();
   computeAbsoluteGradient(GIx, GIy, GI, min, max);
   vpImage<unsigned char> GIdisp_hsvd_imgfilter = convertToDisplay(GI, min, max);
 
@@ -635,11 +647,60 @@ int main(int argc, const char *argv[])
   // computeAbsoluteGradient(GIx, GIy, GI, min, max);
   // vpImage<unsigned char> GIdisp_hsvd_vonly = convertToDisplay(GI, min, max);
 
-  vpImage<FilterType> GIx_uc, GIy_uc, GI_uc;
-  vpImageFilter::computePartialDerivatives(Iin_convert, GIx_uc, GIy_uc, true, true, true,
-    options.m_gaussianKernelSize, (FilterType)options.m_gaussianStdev, uselessAperture, options.m_filteringType, vpImageFilter::CANNY_VISP_BACKEND, p_mask);
+  vpImage<FilterType> IblurUC, GIx_uc, GIy_uc, GI_uc;
+  double tStartBlurUC = vpTime::measureTimeMicros();
+  vpImageFilter::gaussianBlur(Iin_convert, IblurUC, options.m_gaussianKernelSize, (FilterType)options.m_gaussianStdev, true, p_mask);
+  double tEndBlurUC = vpTime::measureTimeMicros();
+  vpArray2D<FilterType> derFilterX(3, 3), derFilterY(3, 3);
+  FilterType scaleX, scaleY;
+  switch (options.m_filteringType) {
+  case vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING:
+    scaleX = vpImageFilter::getScharrKernelX(derFilterX.data, 1);
+    scaleY = vpImageFilter::getScharrKernelY(derFilterY.data, 1);
+    break;
+  case vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING:
+    scaleX = vpImageFilter::getSobelKernelX(derFilterX.data, 1);
+    scaleY = vpImageFilter::getSobelKernelY(derFilterY.data, 1);
+    break;
+  default:
+    throw vpException(vpException::notImplementedError, "Other type of filter not handled for uchar");
+  }
+  auto scaleFilter = [](vpArray2D<FilterType> &array, const FilterType &scale) {
+    for (unsigned int r = 0; r < array.getRows(); ++r) {
+      for (unsigned int c = 0; c < array.getCols(); ++c) {
+        array[r][c] = array[r][c] / scale;
+      }
+    }
+    };
+  scaleFilter(derFilterX, scaleX);
+  scaleFilter(derFilterY, scaleY);
+  // Computing the gradients
+  double tStartGradientUC = vpTime::measureTimeMicros();
+  vpImageFilter::filter(IblurUC, GIx_uc, derFilterX, true, p_mask);
+  vpImageFilter::filter(IblurUC, GIy_uc, derFilterY, true, p_mask);
+  double tEndGradientUC = vpTime::measureTimeMicros();
   computeAbsoluteGradient(GIx_uc, GIy_uc, GI_uc, min, max);
   vpImage<unsigned char> GIdisp_uc = convertToDisplay(GI_uc, min, max);
+
+  std::cout << "[vpHSV<uchar>]" << std::endl;
+  std::cout <<"\tgblur = " << (tEndBlurHSVUC - tStartBlurHSVUC) / 1000. << std::endl;
+  std::cout <<"\tgrad = " << (tEndGradientHSVUC - tStartGradientHSVUC) / 1000. << std::endl;
+  std::cout << std::endl;
+
+  std::cout << "[vpHSV<uchar> ref]" << std::endl;
+  std::cout <<"\tgblur = " << "N/A" << std::endl;
+  std::cout <<"\tgrad = " << (tEndGradientHSVUCRef - tStartGradientHSVUCRef) / 1000. << std::endl;
+  std::cout << std::endl;
+
+  std::cout << "[vpHSV<double>]" << std::endl;
+  std::cout <<"\tgblur = " << (tEndBlurHSVd - tStartBlurHSVd) / 1000. << std::endl;
+  std::cout <<"\tgrad = " << (tEndGradientHSVd - tStartGradientHSVd) / 1000. << std::endl;
+  std::cout << std::endl;
+
+  std::cout << "[uchar]" << std::endl;
+  std::cout <<"\tgblur = " << (tEndBlurUC - tStartBlurUC) / 1000. << std::endl;
+  std::cout <<"\tgrad = " << (tEndGradientUC - tStartGradientUC) / 1000. << std::endl;
+  std::cout << std::endl;
 
   if (options.m_useDisplay) {
     std::shared_ptr<vpDisplay> disp_input = vpDisplayFactory::createDisplay(Iload, -1, -1, "Input color image", vpDisplay::SCALE_AUTO);
