@@ -500,15 +500,15 @@ inline void vpImageTools::warpLinearFixedPointNotCenter(const vpImage<vpRGBa> &s
             const vpRGBa val11 = src[y_ + 1][x_ + 1];
             const int64_t interpR_i64 =
               static_cast<int64_t>((s_1 * t_1 * val00.R) + (s * t_1 * val01.R) + (s_1 * t * val10.R) + (s * t * val11.R));
-            const float interpR = (interpR_i64 >> (nbits * 2)) + ((interpR_i64 & 0xFFFFFFFFU) * precision_2);
+            const float interpR = static_cast<float>(interpR_i64 >> (nbits * 2)) + (static_cast<float>(interpR_i64 & 0xFFFFFFFFU) * precision_2);
 
             const int64_t interpG_i64 =
               static_cast<int64_t>((s_1 * t_1 * val00.G) + (s * t_1 * val01.G) + (s_1 * t * val10.G) + (s * t * val11.G));
-            const float interpG = (interpG_i64 >> (nbits * 2)) + ((interpG_i64 & 0xFFFFFFFFU) * precision_2);
+            const float interpG = static_cast<float>(interpG_i64 >> (nbits * 2)) + (static_cast<float>(interpG_i64 & 0xFFFFFFFFU) * precision_2);
 
             const int64_t interpB_i64 =
               static_cast<int64_t>((s_1 * t_1 * val00.B) + (s * t_1 * val01.B) + (s_1 * t * val10.B) + (s * t * val11.B));
-            const float interpB = (interpB_i64 >> (nbits * 2)) + ((interpB_i64 & 0xFFFFFFFFU) * precision_2);
+            const float interpB = static_cast<float>(interpB_i64 >> (nbits * 2)) + (static_cast<float>(interpB_i64 & 0xFFFFFFFFU) * precision_2);
 
             dst[i][j] = vpRGBa(vpMath::saturate<unsigned char>(interpR), vpMath::saturate<unsigned char>(interpG),
                                vpMath::saturate<unsigned char>(interpB), aChannelVal);
@@ -517,13 +517,13 @@ inline void vpImageTools::warpLinearFixedPointNotCenter(const vpImage<vpRGBa> &s
             const vpRGBa val00 = src[y_][x_];
             const vpRGBa val10 = src[y_ + 1][x_];
             const int64_t interpR_i64 = static_cast<int64_t>((t_1 * val00.R) + (t * val10.R));
-            const float interpR = (interpR_i64 >> nbits) + ((interpR_i64 & 0xFFFF) * precision_1);
+            const float interpR = static_cast<float>(interpR_i64 >> nbits) + (static_cast<float>(interpR_i64 & 0xFFFF) * precision_1);
 
             const int64_t interpG_i64 = static_cast<int64_t>((t_1 * val00.G) + (t * val10.G));
-            const float interpG = (interpG_i64 >> nbits) + ((interpG_i64 & 0xFFFF) * precision_1);
+            const float interpG = static_cast<float>(interpG_i64 >> nbits) + (static_cast<float>(interpG_i64 & 0xFFFF) * precision_1);
 
             const int64_t interpB_i64 = static_cast<int64_t>((t_1 * val00.B) + (t * val10.B));
-            const float interpB = (interpB_i64 >> nbits) + ((interpB_i64 & 0xFFFF) * precision_1);
+            const float interpB = static_cast<float>(interpB_i64 >> nbits) + (static_cast<float>(interpB_i64 & 0xFFFF) * precision_1);
 
             dst[i][j] = vpRGBa(vpMath::saturate<unsigned char>(interpR), vpMath::saturate<unsigned char>(interpG),
                                vpMath::saturate<unsigned char>(interpB), aChannelVal);
@@ -532,13 +532,13 @@ inline void vpImageTools::warpLinearFixedPointNotCenter(const vpImage<vpRGBa> &s
             const vpRGBa val00 = src[y_][x_];
             const vpRGBa val01 = src[y_][x_ + 1];
             const int64_t interpR_i64 = static_cast<int64_t>((s_1 * val00.R) + (s * val01.R));
-            const float interpR = (interpR_i64 >> nbits) + ((interpR_i64 & 0xFFFF) * precision_1);
+            const float interpR = static_cast<float>(interpR_i64 >> nbits) + (static_cast<float>(interpR_i64 & 0xFFFF) * precision_1);
 
             const int64_t interpG_i64 = static_cast<int64_t>((s_1 * val00.G) + (s * val01.G));
-            const float interpG = (interpG_i64 >> nbits) + ((interpG_i64 & 0xFFFF) * precision_1);
+            const float interpG = static_cast<float>(interpG_i64 >> nbits) + (static_cast<float>(interpG_i64 & 0xFFFF) * precision_1);
 
             const int64_t interpB_i64 = static_cast<int64_t>((s_1 * val00.B) + (s * val01.B));
-            const float interpB = (interpB_i64 >> nbits) + ((interpB_i64 & 0xFFFF) * precision_1);
+            const float interpB = static_cast<float>(interpB_i64 >> nbits) + (static_cast<float>(interpB_i64 & 0xFFFF) * precision_1);
 
             dst[i][j] = vpRGBa(vpMath::saturate<unsigned char>(interpR), vpMath::saturate<unsigned char>(interpG),
                                vpMath::saturate<unsigned char>(interpB), aChannelVal);
@@ -570,15 +570,15 @@ inline void vpImageTools::warpLinearFixedPointNotCenter(const vpImage<vpRGBa> &s
       for (unsigned int j = 0; j < dst_width; ++j) {
         if ((yi >= 0) && (yi <= ((src_height - 1) * wi)) && (xi >= 0) &&
             (xi <= ((src_width - 1) * wi))) {
-          const float wi_ = (wi >> nbits) + ((wi & 0xFFFF) * precision_1);
-          const float xi_ = ((xi >> nbits) + ((xi & 0xFFFF) * precision_1)) / wi_;
-          const float yi_ = ((yi >> nbits) + ((yi & 0xFFFF) * precision_1)) / wi_;
+          const float wi_ = static_cast<float>(wi >> nbits) + (static_cast<float>(wi & 0xFFFF) * precision_1);
+          const float xi_ = (static_cast<float>(xi >> nbits) + (static_cast<float>(xi & 0xFFFF) * precision_1)) / wi_;
+          const float yi_ = (static_cast<float>(yi >> nbits) + (static_cast<float>(yi & 0xFFFF) * precision_1)) / wi_;
 
           const int x_ = static_cast<int>(xi_);
           const int y_ = static_cast<int>(yi_);
 
-          const float t = yi_ - y_;
-          const float s = xi_ - x_;
+          const float t = yi_ - static_cast<float>(y_);
+          const float s = xi_ - static_cast<float>(x_);
 
           if ((y_ < (src_height - 1)) && (x_ < (src_width - 1))) {
             const vpRGBa val00 = src[y_][x_];
