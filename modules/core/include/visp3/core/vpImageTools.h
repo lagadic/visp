@@ -296,18 +296,18 @@ template <class Type> void vpImageTools::createSubImage(const vpImage<Type> &I, 
   Setting \e v_scale and \e h_scale to values different from 1 allows also to
   subsample the cropped image.
 
-  \param I : Input image from which a sub image will be extracted.
-  \param roi_top : ROI vertical position of the upper/left corner in the input
+  \param[in] I : Input image from which a sub image will be extracted.
+  \param[in] roi_top : ROI vertical position of the upper/left corner in the input
   image.
-  \param roi_left : ROI  horizontal position of the upper/left corner
+  \param[in] roi_left : ROI  horizontal position of the upper/left corner
   in the input image.
-  \param roi_height : Cropped image height corresponding
+  \param[in] roi_height : Cropped image height corresponding
   to the ROI height.
-  \param roi_width : Cropped image width corresponding to
+  \param[in] roi_width : Cropped image width corresponding to
   the ROI height.
-  \param crop : Cropped image.
-  \param v_scale [in] : Vertical subsampling factor applied to the ROI.
-  \param h_scale [in] : Horizontal subsampling factor applied to the ROI.
+  \param[out] crop : Cropped image.
+  \param[in] v_scale : Vertical subsampling factor applied to the ROI.
+  \param[in] h_scale : Horizontal subsampling factor applied to the ROI.
 
   \sa crop(const vpImage<Type> &, const vpRect &, vpImage<Type> &)
 */
@@ -331,14 +331,14 @@ void vpImageTools::crop(const vpImage<Type> &I, double roi_top, double roi_left,
   if ((v_scale == 1) && (h_scale == 1)) {
     for (unsigned int i = 0; i < r_height; ++i) {
       void *src = (void *)(I[i + i_min_u] + j_min_u);
-      void *dst = (void *)(crop[i]);
+      void *dst = static_cast<void *>(crop[i]);
       memcpy(dst, src, r_width * sizeof(Type));
     }
   }
   else if (h_scale == 1) {
     for (unsigned int i = 0; i < r_height; ++i) {
       void *src = (void *)(I[(i + i_min_u) * v_scale] + j_min_u);
-      void *dst = (void *)(crop[i]);
+      void *dst = static_cast<void *>(crop[i]);
       memcpy(dst, src, r_width * sizeof(Type));
     }
   }
