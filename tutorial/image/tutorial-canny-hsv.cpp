@@ -593,6 +593,8 @@ int main(int argc, const char *argv[])
 
   double tStartHSVd = vpTime::measureTimeMicros();
   vpImageConvert::convert(Iload, Iin_hsvd);
+  cannyDetector.reinit();
+  cannyDetector.setMask(p_mask);
   vpImage<unsigned char> I_canny_hsvd = cannyDetector.detect(Iin_hsvd);
   double tEndHSVd = vpTime::measureTimeMicros();
   std::cout << "Time to convert RGBa into HSV double + compute the edge-map: " << (tEndHSVd - tStartHSVd) / 1000. << " ms" << std::endl;
@@ -629,6 +631,8 @@ int main(int argc, const char *argv[])
   double tEndGradientHSVUCRef = vpTime::measureTimeMicros();
   computeAbsoluteGradient(GIx, GIy, GI, min, max);
   vpImage<unsigned char> GIdisp_hsvuc_vonly = convertToDisplay(GI, min, max);
+  cannyDetector.reinit();
+  cannyDetector.setMask(p_mask);
   cannyDetector.setGradients(GIx, GIy);
   I_canny_hsvuc = cannyDetector.detect(Iin_hsvuc);
 
@@ -771,5 +775,5 @@ int main(int argc, const char *argv[])
 void main()
 {
   std::cout << "C++11 is needed to work with vpHSV." << std::endl;
-}
+  }
 #endif

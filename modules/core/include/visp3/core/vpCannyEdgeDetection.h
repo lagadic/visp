@@ -101,6 +101,19 @@ public:
                        const vpImageFilter::vpCannyFilteringAndGradientType &filteringType = vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING,
                        const bool &storeEdgePoints = false, const int &nbThread = -1);
 
+  /**
+   * \brief Reinitialize the detector:
+   * - compute the number of threads to use if applicable
+   * - initialize the Gaussian filters
+   * - initialize the derivative filters
+   * - forget the mask (but do not alter the memory)
+   * - forget GIx and GIy (but do not alter the memory)
+   * - delete previous results
+   *
+   * \return * void
+   */
+  void reinit();
+
   // // Configuration from files
 #ifdef VISP_HAVE_NLOHMANN_JSON
   /**
@@ -579,10 +592,8 @@ inline void from_json(const nlohmann::json &j, vpCannyEdgeDetection &detector)
   detector.m_gradientFilterKernelSize = j.value("gradientFilterKernelSize", detector.m_gradientFilterKernelSize);
   detector.m_upperThreshold = j.value("upperThreshold", detector.m_upperThreshold);
   detector.m_upperThresholdRatio = j.value("upperThresholdRatio", detector.m_upperThresholdRatio);
-  int nbThread = j.value("nbThread", detector.m_nbThread);
-  detector.setNbThread(nbThread);
-  detector.initGaussianFilters();
-  detector.initGradientFilters();
+  detector.m_nbThread = j.value("nbThread", detector.m_nbThread);
+  detector.reinit();
 }
 
 inline void to_json(nlohmann::json &j, const vpCannyEdgeDetection &detector)

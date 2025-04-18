@@ -84,8 +84,7 @@ vpCannyEdgeDetection::vpCannyEdgeDetection()
 #endif
   , mp_mask(nullptr)
 {
-  initGaussianFilters();
-  initGradientFilters();
+  reinit();
 }
 
 vpCannyEdgeDetection::vpCannyEdgeDetection(const int &gaussianKernelSize, const float &gaussianStdev,
@@ -96,6 +95,7 @@ vpCannyEdgeDetection::vpCannyEdgeDetection(const int &gaussianKernelSize, const 
                                            const bool &storeEdgePoints, const int &nbThread
 )
   : m_filteringAndGradientType(filteringType)
+  , m_nbThread(nbThread)
   , m_gaussianKernelSize(gaussianKernelSize)
   , m_gaussianStdev(gaussianStdev)
   , m_areGradientAvailable(false)
@@ -110,9 +110,26 @@ vpCannyEdgeDetection::vpCannyEdgeDetection(const int &gaussianKernelSize, const 
   , m_storeListEdgePoints(storeEdgePoints)
   , mp_mask(nullptr)
 {
-  setNbThread(nbThread);
+  reinit();
+}
+
+void
+vpCannyEdgeDetection::reinit()
+{
+  setNbThread(m_nbThread);
   initGaussianFilters();
   initGradientFilters();
+  mp_mask = nullptr;
+  m_areGradientAvailable = false;
+
+  // // Clearing the previous results
+  m_edgeCandidateAndGradient.clear();
+  m_activeEdgeCandidates.clear();
+  m_edgePointsList.clear();
+  if (m_edgeMap.getSize() != 0) {
+    m_edgeMap.resize(m_edgeMap.getRows(), m_edgeMap.getCols(), 0);
+    m_edgePointsCandidates.resize(m_edgeMap.getRows(), m_edgeMap.getCols(), NOT_EDGE);
+  }
 }
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
@@ -149,8 +166,7 @@ vpCannyEdgeDetection::initFromJSON(const std::string &jsonPath)
   }
   from_json(j, *this);
   file.close();
-  initGaussianFilters();
-  initGradientFilters();
+  reinit();
 }
 #endif
 
