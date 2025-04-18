@@ -64,40 +64,6 @@ static void scaleFilter(
 #endif
 
 BEGIN_VISP_NAMESPACE
-#ifdef VISP_HAVE_NLOHMANN_JSON
-void from_json(const nlohmann::json &j, vpCannyEdgeDetection &detector)
-{
-  std::string filteringAndGradientName = vpImageFilter::vpCannyFiltAndGradTypeToStr(detector.m_filteringAndGradientType);
-  filteringAndGradientName = j.value("filteringAndGradientType", filteringAndGradientName);
-  detector.m_filteringAndGradientType = vpImageFilter::vpCannyFiltAndGradTypeFromStr(filteringAndGradientName);
-  detector.m_gaussianKernelSize = j.value("gaussianSize", detector.m_gaussianKernelSize);
-  detector.m_gaussianStdev = j.value("gaussianStdev", detector.m_gaussianStdev);
-  detector.m_lowerThreshold = j.value("lowerThreshold", detector.m_lowerThreshold);
-  detector.m_lowerThresholdRatio = j.value("lowerThresholdRatio", detector.m_lowerThresholdRatio);
-  detector.m_gradientFilterKernelSize = j.value("gradientFilterKernelSize", detector.m_gradientFilterKernelSize);
-  detector.m_upperThreshold = j.value("upperThreshold", detector.m_upperThreshold);
-  detector.m_upperThresholdRatio = j.value("upperThresholdRatio", detector.m_upperThresholdRatio);
-  int nbThread = j.value("nbThread", detector.m_nbThread);
-  detector.setNbThread(nbThread);
-}
-
-void to_json(nlohmann::json &j, const vpCannyEdgeDetection &detector)
-{
-  std::string filteringAndGradientName = vpImageFilter::vpCannyFiltAndGradTypeToStr(detector.m_filteringAndGradientType);
-  j = nlohmann::json {
-          {"filteringAndGradientType", filteringAndGradientName},
-          {"gaussianSize", detector.m_gaussianKernelSize},
-          {"gaussianStdev", detector.m_gaussianStdev},
-          {"lowerThreshold", detector.m_lowerThreshold},
-          {"lowerThresholdRatio", detector.m_lowerThresholdRatio},
-          {"gradientFilterKernelSize", detector.m_gradientFilterKernelSize},
-          {"upperThreshold", detector.m_upperThreshold},
-          {"upperThresholdRatio", detector.m_upperThresholdRatio},
-          {"nbThread", detector.m_nbThread}
-  };
-}
-#endif
-
 // // Initialization methods
 
 vpImage<vpCannyEdgeDetection::EdgeType> vpCannyEdgeDetection::m_edgePointsCandidates;
@@ -652,12 +618,15 @@ vpCannyEdgeDetection::performEdgeTracking()
   std::vector<unsigned int>::iterator m_edgePointsCandidates_end = m_activeEdgeCandidates.end();
   for (it = m_activeEdgeCandidates.begin(); it != m_edgePointsCandidates_end; ++it) {
     if (m_edgePointsCandidates.bitmap[*it] == STRONG_EDGE) {
-      m_edgeMap.bitmap[*it] = var_uc_255;
       if (m_storeListEdgePoints) {
-        unsigned int row = *it / nbCols;
-        unsigned int col = *it % nbCols;
-        m_edgePointsList.push_back(vpImagePoint(row, col));
+        if (m_edgeMap.bitmap[*it] != var_uc_255) {
+          // Edge point not added yet to the edge list
+          unsigned int row = *it / nbCols;
+          unsigned int col = *it % nbCols;
+          m_edgePointsList.push_back(vpImagePoint(row, col));
+        }
       }
+      m_edgeMap.bitmap[*it] = var_uc_255;
     }
     else if (m_edgePointsCandidates.bitmap[*it] == WEAK_EDGE) {
       recursiveSearchForStrongEdge(*it);
@@ -718,13 +687,16 @@ vpCannyEdgeDetection::recursiveSearchForStrongEdge(const unsigned int &coordinat
   }
   const unsigned char var_uc_255 = 255;
   if (hasFoundStrongEdge) {
+    if (m_storeListEdgePoints) {
+      if (m_edgeMap.bitmap[coordinates] != var_uc_255) {
+        // Edge point not added yet to the edge list
+        unsigned int row = coordinates / nbCols;
+        unsigned int col = coordinates % nbCols;
+        m_edgePointsList.push_back(vpImagePoint(row, col));
+      }
+    }
     m_edgePointsCandidates.bitmap[coordinates] = STRONG_EDGE;
     m_edgeMap.bitmap[coordinates] = var_uc_255;
-    if (m_storeListEdgePoints) {
-      unsigned int row = coordinates / nbCols;
-      unsigned int col = coordinates % nbCols;
-      m_edgePointsList.push_back(vpImagePoint(row, col));
-    }
   }
   return hasFoundStrongEdge;
 }

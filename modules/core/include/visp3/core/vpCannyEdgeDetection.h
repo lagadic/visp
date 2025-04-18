@@ -400,6 +400,35 @@ public:
   }
 #endif
 
+  /**
+   * \brief Get the horizontal gradient.
+   *
+   * \return const vpImage<float>& GIx
+   */
+  const vpImage<float> &getGIx() const
+  {
+    return m_dIx;
+  }
+
+  /**
+   * \brief Get the vertical gradient.
+   *
+   * \return const vpImage<float>& GIy
+   */
+  const vpImage<float> &getGIy() const
+  {
+    return m_dIy;
+  }
+
+  /**
+   * \brief Get the final edge-map.
+   *
+   * \return const vpImage<float>& The edge-map
+   */
+  const vpImage<unsigned char> &getEdgeMap() const
+  {
+    return m_edgeMap;
+  }
 
   //@}
 private:
@@ -536,5 +565,42 @@ private:
   void performEdgeTracking();
   //@}
 };
+
+#ifdef VISP_HAVE_NLOHMANN_JSON
+inline void from_json(const nlohmann::json &j, vpCannyEdgeDetection &detector)
+{
+  std::string filteringAndGradientName = vpImageFilter::vpCannyFiltAndGradTypeToStr(detector.m_filteringAndGradientType);
+  filteringAndGradientName = j.value("filteringAndGradientType", filteringAndGradientName);
+  detector.m_filteringAndGradientType = vpImageFilter::vpCannyFiltAndGradTypeFromStr(filteringAndGradientName);
+  detector.m_gaussianKernelSize = j.value("gaussianSize", detector.m_gaussianKernelSize);
+  detector.m_gaussianStdev = j.value("gaussianStdev", detector.m_gaussianStdev);
+  detector.m_lowerThreshold = j.value("lowerThreshold", detector.m_lowerThreshold);
+  detector.m_lowerThresholdRatio = j.value("lowerThresholdRatio", detector.m_lowerThresholdRatio);
+  detector.m_gradientFilterKernelSize = j.value("gradientFilterKernelSize", detector.m_gradientFilterKernelSize);
+  detector.m_upperThreshold = j.value("upperThreshold", detector.m_upperThreshold);
+  detector.m_upperThresholdRatio = j.value("upperThresholdRatio", detector.m_upperThresholdRatio);
+  int nbThread = j.value("nbThread", detector.m_nbThread);
+  detector.setNbThread(nbThread);
+  detector.initGaussianFilters();
+  detector.initGradientFilters();
+}
+
+inline void to_json(nlohmann::json &j, const vpCannyEdgeDetection &detector)
+{
+  std::string filteringAndGradientName = vpImageFilter::vpCannyFiltAndGradTypeToStr(detector.m_filteringAndGradientType);
+  j = nlohmann::json {
+          {"filteringAndGradientType", filteringAndGradientName},
+          {"gaussianSize", detector.m_gaussianKernelSize},
+          {"gaussianStdev", detector.m_gaussianStdev},
+          {"lowerThreshold", detector.m_lowerThreshold},
+          {"lowerThresholdRatio", detector.m_lowerThresholdRatio},
+          {"gradientFilterKernelSize", detector.m_gradientFilterKernelSize},
+          {"upperThreshold", detector.m_upperThreshold},
+          {"upperThresholdRatio", detector.m_upperThresholdRatio},
+          {"nbThread", detector.m_nbThread}
+  };
+}
+#endif
+
 END_VISP_NAMESPACE
 #endif
