@@ -187,6 +187,15 @@ public:
     imgPoints.resize(resolution, 2 * 3 * normalPointsNumber, false, false);
     weight.resize(resolution, 2 * normalPointsNumber, false, false);
   }
+  void zero()
+  {
+    nv = 0.0;
+    mean_vic = 0.0;
+    cov_vic = 0.0;
+    vic = 0.0;
+    imgPoints = 0.0;
+    weight = 0.0;
+  }
 };
 
 /**

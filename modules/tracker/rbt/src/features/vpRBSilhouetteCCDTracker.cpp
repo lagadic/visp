@@ -245,7 +245,7 @@ void vpRBSilhouetteCCDTracker::initVVS(const vpRBFeatureTrackerInput &/*frame*/,
     computeLocalStatistics(previousFrame.IRGB, m_prevStats);
   }
   else {
-    m_prevStats = m_stats;
+    m_prevStats.zero();
   }
   m_previousFrame = &previousFrame;
 }
@@ -710,6 +710,7 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
 
       const double *mean_vic_ptr_prev = m_prevStats.mean_vic[i];
       const double *cov_vic_ptr_prev = m_prevStats.cov_vic[i];
+
       const vpCameraParameters &cam = p.getCameraParameters();
 
       Lnvp[0] = (-nv_ptr[0] / p.Zs);
@@ -768,6 +769,7 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
   m_hessian = 0.0;
   //m_robust.setMinMedianAbsoluteDeviation(1.0);
   vpColVector weightPerPoint(errorPerPoint.getRows());
+
   m_robust.MEstimator(vpRobust::vpRobustEstimatorType::TUKEY, m_error, m_weights);
   // for (unsigned int i = 0; i < m_controlPoints.size(); ++i) {
   //   for (unsigned int j = 0; j < 2 * normal_points_number * 3; ++j) {
@@ -832,11 +834,27 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
     m_sigma = m_ccdParameters.covarianceIterDecreaseFactor * m_sigma + 2.0 * (1.0 - m_ccdParameters.covarianceIterDecreaseFactor) * hessian_E_inv;
   }
   catch (vpException &e) {
+    std::cerr << "Inversion issues in CCD tracker" << std::endl;
+    unsigned int nanGradients = 0, nanHessians = 0;
+    for (unsigned int i = 0; i < m_gradients.size(); ++i) {
+      nanGradients += static_cast<unsigned int>(!vpArray2D<double>::isFinite(m_gradients[i]));
+      nanHessians += static_cast<unsigned int>(!vpArray2D<double>::isFinite(m_hessians[i]));
+
+    }
+    std::cerr << "Nan gradients: " << nanGradients << std::endl;
+    std::cerr << "Nan hessians: " << nanHessians << std::endl;
+    std::cerr << vpArray2D<double>::isFinite(m_hessian) << std::endl;
+    std::cerr << vpArray2D<double>::isFinite(m_gradient) << std::endl;
+    std::cerr << vpArray2D<double>::isFinite(m_error) << std::endl;
+    std::cerr << vpArray2D<double>::isFinite(m_weights) << std::endl;
+
+
     m_numFeatures = 0;
     m_weighted_error = 0;
     m_LTL = 0;
     m_LTR = 0;
-    std::cerr << "Inversion issues in CCD tracker" << std::endl;
+
+
     std::cerr << e.what() << std::endl;
   }
 }
