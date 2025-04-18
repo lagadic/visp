@@ -115,7 +115,7 @@ public:
         mean = c;
         variance = var;
         initVariance = var;
-        computeStddev();
+        // computeStddev();
       }
 
       /**
@@ -131,7 +131,7 @@ public:
         vpRGBf diffSqr(std::pow(diff.R, 2), std::pow(diff.G, 2), std::pow(diff.B, 2));
         mean = mean + weight * diff;
         variance = (1 - weight) * (variance + weight * diffSqr);
-        computeStddev();
+        // computeStddev();
       }
 
       /**
@@ -143,11 +143,12 @@ public:
       double probability(const vpRGBf &c)
       {
         vpRGBf diff(c.R - mean.R, c.G - mean.G, c.B - mean.B);
-        diff.R = (diff.R * diff.R * (1.0 / initVariance.R));
-        diff.G = (diff.G * diff.G * (1.0 / initVariance.G));
-        diff.B = (diff.B * diff.B * (1.0 / initVariance.B));
+        diff.R = (diff.R * (1.0 / sqrt(initVariance.R)));
+        diff.G = (diff.G * (1.0 / sqrt(initVariance.G)));
+        diff.B = (diff.B * (1.0 / sqrt(initVariance.B)));
 
-        const double dist = sqrt(diff.R + diff.G + diff.B);
+
+        // const double dist = sqrt(diff.R + diff.G + diff.B);
 
         // const double dist = sqrt(
         //   std::pow((c.R - mean.R) / (standardDev.R), 2) +
@@ -156,13 +157,7 @@ public:
 
         // const double proba = 1.0 - erf(dist / sqrt(2));
 
-        const double proba = 1.0 - std::max(
-          std::max(
-            abs(diff.R / (standardDev.R * sqrt(2))),
-            abs(diff.G / (standardDev.G * sqrt(2)))
-          ),
-          abs(diff.B / (standardDev.B * sqrt(2)))
-        );
+        const double proba = 1.0 - erf(std::max(std::max(abs(diff.R), abs(diff.G)), abs(diff.B)) / sqrt(2));
         // const double proba = 1.0 - erf(dist / sqrt(2));
 
 
@@ -174,12 +169,12 @@ public:
         return static_cast<double>(variance.R + variance.G + variance.B);
       }
 
-      void computeStddev()
-      {
-        standardDev.R = sqrt(variance.R);
-        standardDev.G = sqrt(variance.G);
-        standardDev.B = sqrt(variance.B);
-      }
+      // void computeStddev()
+      // {
+      //   standardDev.R = sqrt(variance.R);
+      //   standardDev.G = sqrt(variance.G);
+      //   standardDev.B = sqrt(variance.B);
+      // }
 
       double covarianceScaleFactor() const
       {
@@ -192,7 +187,6 @@ public:
       vpRGBf mean;
       vpRGBf variance;
       vpRGBf initVariance;
-      vpRGBf standardDev;
     };
 
     inline void update(const vpHomogeneousMatrix &cTo, const vpHomogeneousMatrix &renderTo, const vpCameraParameters &cam)
@@ -393,7 +387,7 @@ inline void from_json(const nlohmann::json &j, vpRBProbabilistic3DDriftDetector:
 {
   c.mean = j.at("mean").get<vpRGBf>();
   c.variance = j.at("variance").get<vpRGBf>();
-  c.computeStddev();
+  // c.computeStddev();
 }
 
 inline void to_json(nlohmann::json &j, const vpRBProbabilistic3DDriftDetector::vpStored3DSurfaceColorPoint::ColorStatistics &c)

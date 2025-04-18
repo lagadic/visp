@@ -160,7 +160,7 @@ double vpRBProbabilistic3DDriftDetector::score(const vpRBFeatureTrackerInput &fr
         double depthError = Z > 0 ? fabs(p->currX[2] - Z) : 0.0;
         double probaDepth = 1.0;
         double scaleFactor = p->stats.covarianceScaleFactor();
-        double weight = 1.0 - std::min(1.0, scaleFactor / std::pow((m_initialColorSigma), 2));
+        double weight = 1.0 - std::min(1.0, scaleFactor / std::pow((m_initialColorSigma + 20.0), 2));
         weightSumLocal += weight;
 
 
@@ -190,7 +190,7 @@ double vpRBProbabilistic3DDriftDetector::score(const vpRBFeatureTrackerInput &fr
 
         const double proba = p->stats.probability(averageColor) * probaDepth;
 
-        scoresLocal.push_back(weight * proba);
+        scoresLocal.push_back(proba); // Keep only the weight
         score += proba * weight;
         p->updateColor(averageColor, m_colorUpdateRate * probaDepth);
       }
@@ -204,7 +204,12 @@ double vpRBProbabilistic3DDriftDetector::score(const vpRBFeatureTrackerInput &fr
     }
     if (!useMedian) {
       // Use average score, may be more sensitive to outliers
-      score /= weightSum;
+      if (weightSum > 0.0) {
+        score /= weightSum;
+      }
+      else {
+        score = vpMath::getMean(scores);
+      }
       return score;
     }
     else {
