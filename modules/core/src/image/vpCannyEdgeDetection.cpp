@@ -482,9 +482,9 @@ vpCannyEdgeDetection::performEdgeThinning(const float &lowerThreshold)
     }
     istop = istart + ipoints;
     std::vector<std::pair<unsigned int, float>> localMemoryEdgeCandidates;
+#endif
     bool ignore_current_pixel = false;
     bool grad_lower_threshold = false;
-#endif
     for (int iter = istart; iter < istop; ++iter) {
       // reset the checks
       ignore_current_pixel = false;
