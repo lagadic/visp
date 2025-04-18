@@ -1177,12 +1177,12 @@ inline void vpImageTools::resize(const vpImage<unsigned char> &I, vpImage<unsign
 #endif
     for (int i = 0; i < ires_height; ++i) {
       float v = ((static_cast<float>(i) + half) * scaleY) - half;
-      float yFrac = static_cast<float>(v - static_cast<int>(v));
+      float yFrac = static_cast<float>(v - static_cast<float>(static_cast<int>(v)));
 
       unsigned int ires_width = static_cast<unsigned int>(Ires.getWidth());
       for (unsigned int j = 0; j < ires_width; ++j) {
         float u = ((static_cast<float>(j) + half) * scaleX) - half;
-        float xFrac = static_cast<float>(u - static_cast<int>(u));
+        float xFrac = static_cast<float>(u - static_cast<float>(static_cast<int>(u)));
 
         if (method == INTERPOLATION_NEAREST) {
           resizeNearest(I, Ires, static_cast<unsigned int>(i), j, u, v);
@@ -1230,12 +1230,12 @@ inline void vpImageTools::resize(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires
 #endif
     for (int i = 0; i < ires_height; ++i) {
       float v = ((static_cast<float>(i) + half) * scaleY) - half;
-      float yFrac = static_cast<float>(v - static_cast<int>(v));
+      float yFrac = static_cast<float>(v - static_cast<float>(static_cast<int>(v)));
 
       unsigned int ires_width = static_cast<unsigned int>(Ires.getWidth());
       for (unsigned int j = 0; j < ires_width; ++j) {
         float u = ((static_cast<float>(j) + half) * scaleX) - half;
-        float xFrac = static_cast<float>(u - static_cast<int>(u));
+        float xFrac = static_cast<float>(u - static_cast<float>(static_cast<int>(u)));
 
         if (method == INTERPOLATION_NEAREST) {
           resizeNearest(I, Ires, static_cast<unsigned int>(i), j, u, v);
