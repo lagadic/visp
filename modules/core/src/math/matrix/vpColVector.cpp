@@ -359,7 +359,7 @@ vpColVector &vpColVector::operator=(const std::vector<float> &v)
   unsigned int v_size = static_cast<unsigned int>(v.size());
   resize(v_size, false);
   for (unsigned int i = 0; i < v_size; ++i) {
-    (*this)[i] = static_cast<float>(v[i]);
+    (*this)[i] = static_cast<double>(v[i]);
   }
   return *this;
 }
