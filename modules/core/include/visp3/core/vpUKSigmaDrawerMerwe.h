@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 202% by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -109,14 +109,9 @@ public:
    * \param[in] resFunc Residual function expressed in the state space.
    * \param[in] addFunc Addition function expressed in the state space.
    */
-  vpUKSigmaDrawerMerwe(const int &n, const double &alpha, const double &beta, const double &kappa,
+  vpUKSigmaDrawerMerwe(const unsigned int &n, const double &alpha, const double &beta, const double &kappa,
                        const vpAddSubFunction &resFunc = vpUnscentedKalman::simpleResidual,
                        const vpAddSubFunction &addFunc = vpUnscentedKalman::simpleAdd);
-
-  /**
-   * Destructor that does nothing.
-   */
-  virtual ~vpUKSigmaDrawerMerwe() { }
 
   /**
    * \brief Draw the sigma points according to the current mean and covariance of the state
