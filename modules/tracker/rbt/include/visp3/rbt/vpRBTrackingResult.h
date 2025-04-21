@@ -205,6 +205,13 @@ private:
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
 
+#if defined(__clang__)
+// Mute warning : declaration requires an exit-time destructor [-Wexit-time-destructors]
+// message : expanded from macro 'NLOHMANN_JSON_SERIALIZE_ENUM'
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wexit-time-destructors"
+#endif
+
 NLOHMANN_JSON_SERIALIZE_ENUM(vpRBTrackingStoppingReason, {
         {vpRBTrackingStoppingReason::INVALID_REASON, nullptr},
         {vpRBTrackingStoppingReason::MAX_ITERS, "maxIterations"},
@@ -213,6 +220,10 @@ NLOHMANN_JSON_SERIALIZE_ENUM(vpRBTrackingStoppingReason, {
         {vpRBTrackingStoppingReason::NOT_ENOUGH_FEATURES, "notEnoughFeatures"},
         {vpRBTrackingStoppingReason::EXCEPTION, "exception"}
 });
+
+#if defined(__clang__)
+#  pragma clang diagnostic pop
+#endif
 
 inline void from_json(const nlohmann::json &j, vpRBFeatureResult &result)
 {

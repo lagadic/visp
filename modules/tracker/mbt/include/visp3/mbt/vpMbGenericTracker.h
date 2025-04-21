@@ -854,6 +854,13 @@ protected:
 
 #define MBT_JSON_SETTINGS_VERSION "1.0"
 
+#if defined(__clang__)
+// Mute warning : declaration requires an exit-time destructor [-Wexit-time-destructors]
+// message : expanded from macro 'NLOHMANN_JSON_SERIALIZE_ENUM'
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wexit-time-destructors"
+#endif
+
 // Serialize tracker type enumeration
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
 NLOHMANN_JSON_SERIALIZE_ENUM(vpMbGenericTracker::vpTrackerType, {
@@ -868,6 +875,10 @@ NLOHMANN_JSON_SERIALIZE_ENUM(vpMbGenericTracker::vpTrackerType, {
     {vpMbGenericTracker::DEPTH_DENSE_TRACKER, "depthDense"},
     {vpMbGenericTracker::DEPTH_NORMAL_TRACKER, "depthNormal"}
 });
+#endif
+
+#if defined(__clang__)
+#  pragma clang diagnostic pop
 #endif
 
 /**

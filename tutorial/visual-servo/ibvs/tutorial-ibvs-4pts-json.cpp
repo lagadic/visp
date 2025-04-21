@@ -25,6 +25,14 @@ enum vpInteractionMatrixTypeSubset
   MEAN
 };
 //! [Enum]
+
+#if defined(__clang__)
+// Mute warning : declaration requires an exit-time destructor [-Wexit-time-destructors]
+// message : expanded from macro 'NLOHMANN_JSON_SERIALIZE_ENUM'
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wexit-time-destructors"
+#endif
+
 //! [Enum conversion]
 NLOHMANN_JSON_SERIALIZE_ENUM(vpInteractionMatrixTypeSubset, {
   {UNKNOWN, nullptr}, // Default value if the json string is not in "current", "desired" or "mean"
@@ -32,9 +40,13 @@ NLOHMANN_JSON_SERIALIZE_ENUM(vpInteractionMatrixTypeSubset, {
   {DESIRED, "desired"},
   {MEAN, "mean"} }
   );
-  //! [Enum conversion]
+//! [Enum conversion]
 
-  //! [Arguments]
+#if defined(__clang__)
+#  pragma clang diagnostic pop
+#endif
+
+//! [Arguments]
 class Arguments
 {
 public:

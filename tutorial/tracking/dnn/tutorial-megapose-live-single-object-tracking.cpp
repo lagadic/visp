@@ -187,12 +187,22 @@ enum DetectionMethod
   DNN
 };
 
+#if defined(__clang__)
+// Mute warning : declaration requires an exit-time destructor [-Wexit-time-destructors]
+// message : expanded from macro 'NLOHMANN_JSON_SERIALIZE_ENUM'
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wexit-time-destructors"
+#endif
+
 NLOHMANN_JSON_SERIALIZE_ENUM(DetectionMethod, {
   {UNKNOWN, nullptr}, // Default value if the json string is not in "current", "desired" or "mean"
   {CLICK, "click"},
   {DNN, "dnn"} }
   );
 
+#if defined(__clang__)
+#  pragma clang diagnostic pop
+#endif
 
 int main(int argc, const char *argv[])
 {
