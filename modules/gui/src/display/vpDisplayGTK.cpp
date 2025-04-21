@@ -1572,7 +1572,8 @@ bool vpDisplayGTK::getPointerPosition(vpImagePoint &ip)
 
 /*!
   Gets screen resolution.
-  \param w, h : Horizontal and vertical screen resolution.
+  \param[out] w : Horizontal screen resolution.
+  \param[out] h : Vertical screen resolution.
  */
 void vpDisplayGTK::getScreenSize(unsigned int &w, unsigned int &h)
 {

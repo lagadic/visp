@@ -2004,10 +2004,9 @@ void vpDisplayX::displayImage(const unsigned char *bitmap)
   \warning Suppress the overlay drawing in the region of interest.
 
   \param I : Image to display.
-
   \param iP : Top left corner of the region of interest
-
-  \param w, h : Width and height of the region of interest
+  \param w : Region of interest width.
+  \param h : Region of interest height.
 
   \sa init(), closeDisplay()
 */
@@ -2030,10 +2029,9 @@ void vpDisplayX::displayImageROI(const vpImage<unsigned char> &I, const vpImageP
   \warning Suppress the overlay drawing in the region of interest.
 
   \param I : Image to display.
-
-  \param iP : Top left corner of the region of interest
-
-  \param w, h : Width and height of the region of interest
+  \param iP : Top left corner of the region of interest.
+  \param w : Region of interest width.
+  \param h : Region of interest height.
 
   \sa init(), closeDisplay()
 */
@@ -2526,7 +2524,8 @@ unsigned int vpDisplayX::getScreenDepth() { return m_impl->getScreenDepth(); }
 
 /*!
   Gets screen resolution in pixels.
-  \param w, h : Horizontal and vertical screen resolution.
+  \param[out] w : Horizontal screen resolution.
+  \param[out] h : Vertical screen resolution.
  */
 void vpDisplayX::getScreenSize(unsigned int &w, unsigned int &h) { m_impl->getScreenSize(w, h); }
 

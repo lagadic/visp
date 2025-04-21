@@ -71,7 +71,7 @@ vpMbtDistanceKltPoints::~vpMbtDistanceKltPoints() { }
   points that are indeed in the face.
 
   \param _tracker : ViSP OpenCV KLT Tracker.
-  \param mask: Mask image or nullptr if not wanted. Mask values that are set to true are considered in the tracking. To
+  \param mask : Mask image or nullptr if not wanted. Mask values that are set to true are considered in the tracking. To
   disable a pixel, set false.
 */
 void vpMbtDistanceKltPoints::init(const vpKltOpencv &_tracker, const vpImage<bool> *mask)
@@ -143,10 +143,11 @@ void vpMbtDistanceKltPoints::init(const vpKltOpencv &_tracker, const vpImage<boo
   corresponds to the points of the face
 
   \param _tracker : the KLT tracker
-  \return the number of points that are tracked in this face and in this
-  instanciation of the tracker
-  \param mask: Mask image or nullptr if not wanted. Mask values that are set to true are considered in the tracking. To
+  \param mask : Mask image or nullptr if not wanted. Mask values that are set to true are considered in the tracking. To
   disable a pixel, set false.
+
+  \return the number of points that are tracked in this face and in this
+  instanciation of the tracker.
 */
 unsigned int vpMbtDistanceKltPoints::computeNbDetectedCurrent(const vpKltOpencv &_tracker, const vpImage<bool> *mask)
 {

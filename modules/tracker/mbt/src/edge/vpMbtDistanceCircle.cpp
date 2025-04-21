@@ -139,8 +139,9 @@ void vpMbtDistanceCircle::setMovingEdge(vpMe *_me)
   \param I : The image.
   \param cMo : The pose of the camera used to initialize the moving edges.
   \param doNotTrack : If true, ME are not tracked.
-  \param mask: Mask image or nullptr if not wanted. Mask values that are set to true are considered in the tracking. To
-  disable a pixel, set false. \return false if an error occur, true otherwise.
+  \param mask : Mask image or nullptr if not wanted. Mask values that are set to true are considered in the tracking. To
+  disable a pixel, set false.
+  \return false if an error occur, true otherwise.
 */
 bool vpMbtDistanceCircle::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
                                          bool doNotTrack, const vpImage<bool> *mask)
@@ -244,7 +245,7 @@ void vpMbtDistanceCircle::updateMovingEdge(const vpImage<unsigned char> &I, cons
 
   \param I : the image.
   \param cMo : The pose of the camera.
-  \param mask: Mask image or nullptr if not wanted. Mask values that are set to true are considered in the tracking. To
+  \param mask : Mask image or nullptr if not wanted. Mask values that are set to true are considered in the tracking. To
   disable a pixel, set false.
 */
 void vpMbtDistanceCircle::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
