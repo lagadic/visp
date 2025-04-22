@@ -71,7 +71,7 @@ using namespace VISP_NAMESPACE_NAME;
  * Match the desired lines to the initial measured lines.
  * The rho and theta values of the desired lines are modified if needed.
  */
-void match(vpFeatureLine const s_line1, vpFeatureLine const sline2, vpFeatureLine s_line_di, vpFeatureLine s_line_dj)
+void match(vpFeatureLine const s_line1, vpFeatureLine const s_line2, vpFeatureLine s_line_di, vpFeatureLine s_line_dj)
 {
   double rho1 = s_line1.getRho();
   double theta1 = s_line1.getTheta();
@@ -146,10 +146,10 @@ void match(vpFeatureLine const s_line1, vpFeatureLine const sline2, vpFeatureLin
   }
   std::cout << "Test 4 (1,2) <-> (-i,-j), err = " << err << std::endl;
   // Test 5: (1,2) with (j,i)
-  double er_theta1 = theta1-thetaj;
+  er_theta1 = theta1-thetaj;
   if (er_theta1 > M_PI) er_theta1 -= 2.0*M_PI;
   else if (er_theta1 < -M_PI) er_theta1 += 2.0*M_PI;
-  double er_theta2 = theta2-thetai;
+  er_theta2 = theta2-thetai;
   if (er_theta2 > M_PI) er_theta2 -= 2.0*M_PI;
   else if (er_theta2 < -M_PI) er_theta2 += 2.0*M_PI;
 
@@ -161,10 +161,10 @@ void match(vpFeatureLine const s_line1, vpFeatureLine const sline2, vpFeatureLin
   }
   std::cout << "Test 5 (1,2) <-> (j,i), err = " << err << std::endl;
   // Test 6: (1,2) with (-j,i)  thetaj += pi, rhoj *= -1
-  double er_theta1 = theta1-thetaj-M_PI;
+  er_theta1 = theta1-thetaj-M_PI;
   if (er_theta1 > M_PI) er_theta1 -= 2.0*M_PI;
   else if (er_theta1 < -M_PI) er_theta1 += 2.0*M_PI;
-  double er_theta2 = theta2-thetai;
+  er_theta2 = theta2-thetai;
   if (er_theta2 > M_PI) er_theta2 -= 2.0*M_PI;
   else if (er_theta2 < -M_PI) er_theta2 += 2.0*M_PI;
 
@@ -176,10 +176,10 @@ void match(vpFeatureLine const s_line1, vpFeatureLine const sline2, vpFeatureLin
   }
   std::cout << "Test 6 (1,2) <-> (-j,i), err = " << err << std::endl;
   // Test 7: (1,2) with (j,-i)  thetai += pi, rhoi *= -1
-  double er_theta1 = theta1-thetaj;
+  er_theta1 = theta1-thetaj;
   if (er_theta1 > M_PI) er_theta1 -= 2.0*M_PI;
   else if (er_theta1 < -M_PI) er_theta1 += 2.0*M_PI;
-  double er_theta2 = theta2-thetai-M_PI;
+  er_theta2 = theta2-thetai-M_PI;
   if (er_theta2 > M_PI) er_theta2 -= 2.0*M_PI;
   else if (er_theta2 < -M_PI) er_theta2 += 2.0*M_PI;
 
@@ -191,10 +191,10 @@ void match(vpFeatureLine const s_line1, vpFeatureLine const sline2, vpFeatureLin
   }
   std::cout << "Test 7 (1,2) <-> (j,-i), err = " << err << std::endl;
   // Test 8: (1,2) with (-j,-i)  thetaj += pi, rhoj *= -1, thetai += pi, rhoi *= -1
-  double er_theta1 = theta1-thetaj-M_PI;
+  er_theta1 = theta1-thetaj-M_PI;
   if (er_theta1 > M_PI) er_theta1 -= 2.0*M_PI;
   else if (er_theta1 < -M_PI) er_theta1 += 2.0*M_PI;
-  double er_theta2 = theta2-thetai-M_PI;
+  er_theta2 = theta2-thetai-M_PI;
   if (er_theta2 > M_PI) er_theta2 -= 2.0*M_PI;
   else if (er_theta2 < -M_PI) er_theta2 += 2.0*M_PI;
 
@@ -364,7 +364,7 @@ int main(int argc, char **argv)
     {
       std::cout << "Modified desired features: " << std::endl;
       std::cout << " - line 1: rho: " << s_line_d[0].getRho() << " theta: " << vpMath::deg(s_line_d[0].getTheta()) << "deg" << std::endl;
-      std::cout << " - line 2: rho: " << s_s_line_dd[1].getRho() << " theta: " << vpMath::deg(s_line_d[1].getTheta()) << "deg" << std::endl;
+      std::cout << " - line 2: rho: " << s_line_d[1].getRho() << " theta: " << vpMath::deg(s_line_d[1].getTheta()) << "deg" << std::endl;
     }
     // Define the task
     vpServo task;
