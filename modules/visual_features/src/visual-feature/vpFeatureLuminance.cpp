@@ -71,12 +71,12 @@ void vpFeatureLuminance::init()
   nbr = nbc = 0;
 }
 
-void vpFeatureLuminance::init(unsigned int _nbr, unsigned int _nbc, double _Z)
+void vpFeatureLuminance::init(unsigned int nbr_, unsigned int nbc_, double Z_)
 {
   init();
 
-  nbr = _nbr;
-  nbc = _nbc;
+  nbr = nbr_;
+  nbc = nbc_;
 
   if ((nbr < 2 * bord) || (nbc < 2 * bord)) {
     throw vpException(vpException::dimensionError, "border is too important compared to number of row or column.");
@@ -92,7 +92,7 @@ void vpFeatureLuminance::init(unsigned int _nbr, unsigned int _nbc, double _Z)
 
   pixInfo = new vpLuminance[dim_s];
 
-  Z = _Z;
+  Z = Z_;
 }
 
 /*!
