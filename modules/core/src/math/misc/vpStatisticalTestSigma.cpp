@@ -48,7 +48,7 @@ void vpStatisticalTestSigma::computeLimits()
 
 vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestSigma::detectDownwardMeanDrift()
 {
-  if (m_s <= m_limitDown) {
+  if (m_signal <= m_limitDown) {
     return vpStatisticalTestAbstract::MEAN_DRIFT_DOWNWARD;
   }
   else {
@@ -58,7 +58,7 @@ vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestSigma::detectDownwar
 
 vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestSigma::detectUpwardMeanDrift()
 {
-  if (m_s >= m_limitUp) {
+  if (m_signal >= m_limitUp) {
     return vpStatisticalTestAbstract::MEAN_DRIFT_UPWARD;
   }
   else {
@@ -77,7 +77,7 @@ bool vpStatisticalTestSigma::updateStatistics(const float &signal)
 
 void vpStatisticalTestSigma::updateTestSignals(const float &signal)
 {
-  m_s = signal;
+  m_signal = signal;
 }
 
 vpStatisticalTestSigma::vpStatisticalTestSigma(const float &h, const unsigned int &nbSamplesForStats)
@@ -99,7 +99,7 @@ void vpStatisticalTestSigma::init(const float &h, const unsigned int &nbSamplesF
   vpStatisticalTestAbstract::init();
   m_h = h;
   setNbSamplesForStat(nbSamplesForStats);
-  m_s = 0;
+  m_signal = 0;
 }
 
 void vpStatisticalTestSigma::init(const float &h, const float &mean, const float &stdev)
@@ -107,7 +107,7 @@ void vpStatisticalTestSigma::init(const float &h, const float &mean, const float
   vpStatisticalTestAbstract::init();
   m_h = h;
   m_mean = mean;
-  m_s = 0;
+  m_signal = 0;
   m_stdev = stdev;
   computeLimits();
   m_areStatisticsComputed = true;
