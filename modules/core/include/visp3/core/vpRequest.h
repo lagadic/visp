@@ -58,66 +58,66 @@ BEGIN_VISP_NAMESPACE
   Here is the header of the vpRequestImage class.
 
   \code
-#ifndef vpRequestImage_H
-#define vpRequestImage_H
+  #ifndef vpRequestImage_H
+  #define vpRequestImage_H
 
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpRequest.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/core/vpRequest.h>
 
-class vpRequestImage : public vpRequest
-{
-private:
-  vpImage<unsigned char> *I;
+  class vpRequestImage : public vpRequest
+  {
+  private:
+    vpImage<unsigned char> *I;
 
-public:
-  vpRequestImage();
-  vpRequestImage(vpImage<unsigned char> *);
-  virtual ~vpRequestImage();
+  public:
+    vpRequestImage();
+    vpRequestImage(vpImage<unsigned char> *);
+    virtual ~vpRequestImage();
 
-  virtual void encode();
-  virtual void decode();
-};
+    virtual void encode();
+    virtual void decode();
+  };
 
-#endif
+  #endif
   \endcode
 
   Here is the definition of the vpRequestImage class.
 
   \code
-#include <vpRequestImage.h>
+  #include <vpRequestImage.h>
 
-vpRequestImage::vpRequestImage(){
-  request_id = "image";
-}
-
-vpRequestImage::vpRequestImage(vpImage<unsigned char> *Im){
-  request_id = "image";
-  I = Im;
-}
-
-vpRequestImage::~vpRequestImage(){}
-
-void vpRequestImage::encode(){
-  clear();
-
-  unsigned int h = I->getHeight();
-  unsigned int w = I->getWidth();
-
-  addParameterObject(&h);
-  addParameterObject(&w);
-  addParameterObject(I->bitmap,h*w*sizeof(unsigned char));
-}
-
-void vpRequestImage::decode(){
-  if(listOfParams.size() == 3){
-    unsigned int w, h;
-    memcpy((void*)&h, (void*)listOfParams[0].c_str(), sizeof(unsigned int));
-    memcpy((void*)&w, (void*)listOfParams[1].c_str(), sizeof(unsigned int));
-
-    I->resize(h,w);
-    memcpy((void*)I->bitmap,(void*)listOfParams[2].c_str(),w*h*sizeof(unsigned char));
+  vpRequestImage::vpRequestImage(){
+    request_id = "image";
   }
-}
+
+  vpRequestImage::vpRequestImage(vpImage<unsigned char> *Im){
+    request_id = "image";
+    I = Im;
+  }
+
+  vpRequestImage::~vpRequestImage(){}
+
+  void vpRequestImage::encode(){
+    clear();
+
+    unsigned int h = I->getHeight();
+    unsigned int w = I->getWidth();
+
+    addParameterObject(&h);
+    addParameterObject(&w);
+    addParameterObject(I->bitmap,h*w*sizeof(unsigned char));
+  }
+
+  void vpRequestImage::decode(){
+    if(listOfParams.size() == 3){
+      unsigned int w, h;
+      memcpy((void*)&h, (void*)listOfParams[0].c_str(), sizeof(unsigned int));
+      memcpy((void*)&w, (void*)listOfParams[1].c_str(), sizeof(unsigned int));
+
+      I->resize(h,w);
+      memcpy((void*)I->bitmap,(void*)listOfParams[2].c_str(),w*h*sizeof(unsigned char));
+    }
+  }
   \endcode
 
   \sa vpClient
@@ -132,7 +132,6 @@ protected:
 
 public:
   vpRequest();
-  virtual ~vpRequest();
 
   void addParameter(const char *params);
   void addParameter(const std::string &params);
