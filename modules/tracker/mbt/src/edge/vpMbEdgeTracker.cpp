@@ -313,7 +313,7 @@ void vpMbEdgeTracker::computeVVSFirstPhase(const vpImage<unsigned char> &I_, uns
             fac = 0.2;
             break;
           }
-          if (l->closeToImageBorder(_I, 10)) {
+          if (l->closeToImageBorder(I_, 10)) {
             fac = 0.1;
             break;
           }
@@ -2740,16 +2740,16 @@ void vpMbEdgeTracker::setClipping(const unsigned int &flags)
   image) must be freed. A proper cleaning is implemented in the cleanPyramid()
   method.
 
-  \param _I : The input image.
+  \param I_ : The input image.
   \param _pyramid : The pyramid of image to build from the input image.
 */
-void vpMbEdgeTracker::initPyramid(const vpImage<unsigned char> &_I,
+void vpMbEdgeTracker::initPyramid(const vpImage<unsigned char> &I_,
                                   std::vector<const vpImage<unsigned char> *> &_pyramid)
 {
   _pyramid.resize(scales.size());
 
   if (scales[0]) {
-    _pyramid[0] = &_I;
+    _pyramid[0] = &I_;
   }
   else {
     _pyramid[0] = nullptr;
@@ -2758,10 +2758,10 @@ void vpMbEdgeTracker::initPyramid(const vpImage<unsigned char> &_I,
   for (unsigned int i = 1; i < _pyramid.size(); i += 1) {
     if (scales[i]) {
       unsigned int cScale = static_cast<unsigned int>(pow(2., static_cast<int>(i)));
-      vpImage<unsigned char> *I = new vpImage<unsigned char>(_I.getHeight() / cScale, _I.getWidth() / cScale);
+      vpImage<unsigned char> *I = new vpImage<unsigned char>(I_.getHeight() / cScale, I_.getWidth() / cScale);
       for (unsigned int k = 0, ii = 0; k < I->getHeight(); k += 1, ii += cScale) {
         for (unsigned int l = 0, jj = 0; l < I->getWidth(); l += 1, jj += cScale) {
-          (*I)[k][l] = _I[ii][jj];
+          (*I)[k][l] = I_[ii][jj];
         }
       }
       _pyramid[i] = I;
