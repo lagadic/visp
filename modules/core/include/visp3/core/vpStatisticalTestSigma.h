@@ -33,8 +33,8 @@
  * \brief Statistical Process Control sigma test implementation.
  */
 
-#ifndef _vpStatisticalTestSigma_h_
-#define _vpStatisticalTestSigma_h_
+#ifndef VP_STATISTICAL_TEST_SIGMA_H
+#define VP_STATISTICAL_TEST_SIGMA_H
 
 #include <visp3/core/vpConfig.h>
 

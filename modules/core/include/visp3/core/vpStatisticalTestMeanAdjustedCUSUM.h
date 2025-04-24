@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +33,8 @@
  * \brief Statistical Process Control mean adjusted CUSUM implementation.
  */
 
-#ifndef _vpStatisticalTestMeanAdjustedCUSUM_h_
-#define _vpStatisticalTestMeanAdjustedCUSUM_h_
+#ifndef VP_STATISTICAL_TEST_MEAN_ADJUSTED_CUSUM_H
+#define VP_STATISTICAL_TEST_MEAN_ADJUSTED_CUSUM_H
 
 #include <visp3/core/vpConfig.h>
 
