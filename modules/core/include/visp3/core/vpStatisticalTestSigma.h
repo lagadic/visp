@@ -134,7 +134,7 @@ public:
    */
   inline virtual float getSignal() const
   {
-    return m_s;
+    return m_signal;
   }
 
   /**
