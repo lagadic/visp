@@ -680,10 +680,11 @@ void vpD3DRenderer::setPixel(const vpImagePoint &iP, const vpColor &color)
 
 /*!
   Draws a line.
-  \param ip1,ip2 : Initial and final image point.
-  \param color the line's color
+  \param ip1 : Initial image point.
+  \param ip2 : Final image point.
+  \param color : The line's color.
   \param thickness : Thickness of the line.
-  \param style style of the line
+  \param style Style of the line.
 */
 void vpD3DRenderer::drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color,
                              unsigned int thickness, int style)

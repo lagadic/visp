@@ -76,7 +76,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, vpDisplayType &
 
   \param name : Program name.
   \param badparam : Bad parameter name.
-  \param ipath: Input image path.
+  \param ipath : Input image path.
   \param dtype : Type of video device.
 
  */
@@ -153,7 +153,7 @@ OPTIONS:                                               Default\n\
 
   \param argc : Command line number of parameters.
   \param argv : Array of command line parameters.
-  \param ipath: Input image path.
+  \param ipath : Input image path.
   \param dtype : Type of display.
   \param list : To get the list of available display.
   \param click_allowed : Mouse click activation.

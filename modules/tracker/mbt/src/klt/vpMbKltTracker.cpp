@@ -1344,15 +1344,14 @@ void vpMbKltTracker::initCylinder(const vpPoint &p1, const vpPoint &p2, double r
 }
 
 /*!
-  Add a circle to track.
-  The plane containing the circle is defined using the center of the circle p1 and two other points p2 and p3.
+  Add a circle to track. With the center of the circle we have 3 points defining the plane that  contains the circle.
   To be visible, the plane defined by the 3 points p1, p2, p3 should have its normal going toward the camera.
 
-  \param p1 : Center of the circle corresponding to the first point belonging to the circle plane.
+  \param p1 : Center of the circle, considered as the first point on the plane containing the circle.
   \param p2 : Second point on the plane containing the circle.
   \param p3 : Third point on the plane containing the circle.
-  \param radius : Circle radius.
-  \param idFace : Id of the face associated to the circle (unused).
+  \param radius : Radius of the circle.
+  \param idFace : Index of the face associated to the circle to handle visibility test.
   \param name : The optional name of the circle.
 */
 void vpMbKltTracker::initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, double radius, int idFace,
@@ -1363,14 +1362,13 @@ void vpMbKltTracker::initCircle(const vpPoint &p1, const vpPoint &p2, const vpPo
 }
 
 /*!
-  Add a circle to the list of circles.
-  The plane containing the circle is defined using the center of the circle p1 and two other points p2 and p3.
+  Add a circle to track. With the center of the circle we have 3 points defining the plane that  contains the circle.
   To be visible, the plane defined by the 3 points p1, p2, p3 should have its normal going toward the camera.
 
-  \param p1 : Center of the circle corresponding to the first point belonging to the circle plane.
+  \param p1 : Center of the circle, considered as the first point on the plane containing the circle.
   \param p2 : Second point on the plane containing the circle.
   \param p3 : Third point on the plane containing the circle.
-  \param radius : Circle radius.
+  \param radius : Radius of the circle.
   \param name : The optional name of the circle.
 */
 void vpMbKltTracker::addCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, double radius,

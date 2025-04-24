@@ -446,10 +446,11 @@ bool vpGDIRenderer::updateBitmap(HBITMAP &hBmp, unsigned char *imBuffer, unsigne
 /*!
   Updates the bitmap to display.
   Contains a critical section.
-  \param imBuffer The new pixel data
-  \param iP The topleft corner of the roi
-  \param w The roi's width
-  \param h The roi's height
+  \param imBuffer The new pixel data.
+  \param i_min The topleft corner i coordinate (along the rows) of the roi.
+  \param j_min The topleft corner j coordinate (along the columns) of the roi.
+  \param w The roi's width.
+  \param h The roi's height.
 
   \return the operation succefulness
 */
@@ -510,10 +511,11 @@ void vpGDIRenderer::setPixel(const vpImagePoint &iP, const vpColor &color)
 
 /*!
   Draws a line.
-  \param ip1,ip2 : Initial and final image point.
-  \param color the line's color
+  \param ip1 : Initial image point.
+  \param ip2 : Final image point.
+  \param color : The line's color.
   \param thickness : Thickness of the line.
-  \param style style of the line
+  \param style Style of the line.
 */
 void vpGDIRenderer::drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color,
                              unsigned int thickness, int style)

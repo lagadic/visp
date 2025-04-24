@@ -1380,7 +1380,8 @@ void vpDisplayOpenCV::displayCross(const vpImagePoint &ip, unsigned int size, co
 /*!
   Display a dashed line from image point \e ip1 to image point \e ip2.
 
-  \param ip1,ip2 : Initial and final image points.
+  \param ip1 : Initial image point.
+  \param ip2 : Final image point.
   \param color : Line color.
   \param thickness : Line thickness.
 */

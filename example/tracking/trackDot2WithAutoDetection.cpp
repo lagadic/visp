@@ -64,7 +64,7 @@ using namespace VISP_NAMESPACE_NAME;
 
   \param name : Program name.
   \param badparam : Bad parameter name.
-  \param ipath: Input image path.
+  \param ipath : Input image path.
   \param ppath : Personal image path.
   \param first : First image.
   \param last : Last image.

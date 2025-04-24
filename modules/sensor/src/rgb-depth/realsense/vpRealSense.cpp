@@ -312,9 +312,10 @@ vpCameraParameters vpRealSense::getCameraParameters(const rs::stream &stream,
 
 /*!
    Get intrinsic parameters corresponding to the stream. This function has to
-   be called after open(). \param stream : color, depth, infrared or infrared2
-   stream for which camera intrinsic parameters are returned. \sa
-   getCameraParameters()
+   be called after open().
+
+   \param stream : Color, depth, infrared or infrared2 stream for which camera intrinsic parameters are returned.
+   \sa getCameraParameters()
   */
 rs::intrinsics vpRealSense::getIntrinsics(const rs::stream &stream) const
 {
@@ -328,8 +329,10 @@ rs::intrinsics vpRealSense::getIntrinsics(const rs::stream &stream) const
 
 /*!
    Get extrinsic transformation from one stream to an other. This function has
-   to be called after open(). \param from, to : color, depth, infrared or
-   infrared2 stream between which camera extrinsic parameters are returned.
+   to be called after open().
+
+   \param from : From color, depth, infrared or infrared2 stream between which camera extrinsic parameters are returned.
+   \param to : To color, depth, infrared or infrared2 stream between which camera extrinsic parameters are returned.
 
    \sa getTransformation()
   */
@@ -356,8 +359,10 @@ rs::extrinsics vpRealSense::getExtrinsics(const rs::stream &from, const rs::stre
 
 /*!
    Get extrinsic transformation from one stream to an other. This function has
-   to be called after open(). \param from, to : color, depth, infrared or
-   infrared2 stream between which camera extrinsic parameters are returned.
+   to be called after open().
+
+   \param from : From color, depth, infrared or infrared2 stream between which camera extrinsic parameters are returned.
+   \param to : To color, depth, infrared or infrared2 stream between which camera extrinsic parameters are returned.
 
    \sa getExtrinsics()
   */

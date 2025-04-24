@@ -2236,7 +2236,8 @@ void vpDisplayX::displayCross(const vpImagePoint &ip, unsigned int cross_size, c
 }
 /*!
   Display a dashed line from image point \e ip1 to image point \e ip2.
-  \param ip1,ip2 : Initial and final image points.
+  \param ip1 : Initial image point.
+  \param ip2 : Final image point.
   \param color : Line color.
   \param thickness : Line thickness.
 */
@@ -2256,7 +2257,8 @@ void vpDisplayX::displayDotLine(const vpImagePoint &ip1, const vpImagePoint &ip2
 
 /*!
   Display a line from image point \e ip1 to image point \e ip2.
-  \param ip1,ip2 : Initial and final image points.
+  \param ip1 : Initial image point.
+  \param ip2 : Final image point.
   \param color : Line color.
   \param thickness : Line thickness.
 */

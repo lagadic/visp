@@ -1064,7 +1064,7 @@ void vpDetectorDNNOpenCV::readNet(const std::string &model, const std::string &c
  * Configure the DNN (thresholds, input size, ...).
  * If the DNN weights file is known, initialize the \b m_net by reading the weights.
  *
- * \param config: the desired configuration of the network
+ * \param config : The desired configuration of the network.
  */
 void vpDetectorDNNOpenCV::setNetConfig(const NetConfig &config)
 {
@@ -1167,9 +1167,9 @@ void vpDetectorDNNOpenCV::setSwapRB(const bool &swapRB) { m_netConfig.m_swapRB =
 /*!
   Set the type of parsing method that must be used to interpret the raw results of the DNN detection.
 
-  \param typeParsingMethod: the type of parsing method that must be used to interpret the raw results of the DNN detection.
-  \param parsingMethod: if \b typeParsingMethod is equal to \b vpDetectorDNNOpenCV::USER_DEFINED , a function permitting to interpret the \b cv::Mat
-  resulting from the DNN inference.
+  \param typeParsingMethod : The type of parsing method that must be used to interpret the raw results of the DNN detection.
+  \param parsingMethod : If \b typeParsingMethod is equal to \b vpDetectorDNNOpenCV::USER_DEFINED , a function
+  permitting to interpret the \b cv::Mat resulting from the DNN inference.
 */
 void vpDetectorDNNOpenCV::setParsingMethod(const DNNResultsParsingType &typeParsingMethod, void (*parsingMethod)(DetectionCandidates &, std::vector<cv::Mat> &, const NetConfig &))
 {

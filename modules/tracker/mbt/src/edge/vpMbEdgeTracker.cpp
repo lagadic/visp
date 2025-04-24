@@ -2061,14 +2061,15 @@ void vpMbEdgeTracker::removeLine(const std::string &name)
 }
 
 /*!
-  Add a circle to the list of circles.
+  Add a circle to the list of circles. With the center of the circle we have 3 points defining the plane that contains
+  the circle.
 
   \param P1 : Center of the circle.
-  \param P2,P3 : Two points on the plane containing the circle. With the
-  center of the circle we have 3 points defining the plane that contains the
-  circle. \param r : Radius of the circle. \param idFace : Id of the face that
-  is associated to the circle to handle visibility test. \param name : the
-  optional name of the circle.
+  \param P2 : Second point on the plane containing the circle.
+  \param P3 : Third point on the plane containing the circle.
+  \param r : Radius of the circle.
+  \param idFace : Id of the face that is associated to the circle to handle visibility test.
+  \param name : The optional name of the circle.
 */
 void vpMbEdgeTracker::addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, double r, int idFace,
                                 const std::string &name)
@@ -2359,15 +2360,15 @@ unsigned int vpMbEdgeTracker::initMbtTracking(unsigned int &nberrors_lines, unsi
 }
 
 /*!
-  Add a circle to track from its center, 3 points (including the center)
-  defining the plane that contain the circle and its radius.
+  Add a circle to track. With the center of the circle we have 3 points defining the plane that  contains the circle.
+  To be visible, the plane defined by the 3 points p1, p2, p3 should have its normal going toward the camera.
 
-  \param p1 : Center of the circle.
-  \param p2,p3 : Two points on the plane containing the circle. With the
-  center of the circle we have 3 points defining the plane that contains the
-  circle. \param radius : Radius of the circle. \param idFace : Index of the
-  face associated to the circle to handle visibility test. \param name : The
-  optional name of the circle.
+  \param p1 : Center of the circle, considered as the first point on the plane containing the circle.
+  \param p2 : Second point on the plane containing the circle.
+  \param p3 : Third point on the plane containing the circle.
+  \param radius : Radius of the circle.
+  \param idFace : Index of the face associated to the circle to handle visibility test.
+  \param name : The optional name of the circle.
 */
 void vpMbEdgeTracker::initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, double radius, int idFace,
                                  const std::string &name)

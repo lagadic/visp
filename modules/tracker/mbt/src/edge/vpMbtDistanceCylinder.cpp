@@ -323,10 +323,11 @@ bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, cons
   Track the moving edges in the image.
 
   \param I : the image.
-  \param cMo : The pose of the camera.
+  \param cMo : The pose of the camera (unused).
 */
-void vpMbtDistanceCylinder::trackMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix & /*cMo*/)
+void vpMbtDistanceCylinder::trackMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
 {
+  (void)cMo;
   if (isvisible) {
     try {
       meline1->track(I);

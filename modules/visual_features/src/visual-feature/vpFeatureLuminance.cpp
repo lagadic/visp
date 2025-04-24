@@ -283,10 +283,10 @@ void vpFeatureLuminance::error(const vpBasicFeature &s_star, vpColVector &e)
 
   \param s_star : Desired visual feature.
   \param select : Not used.
-
 */
-vpColVector vpFeatureLuminance::error(const vpBasicFeature &s_star, const unsigned int /* select */)
+vpColVector vpFeatureLuminance::error(const vpBasicFeature &s_star, const unsigned int select)
 {
+  (void)select;
   /* static */ vpColVector e; // warning C4640: 'e' : construction of local
                               // static object is not thread-safe
 

@@ -1080,7 +1080,7 @@ void vpImageTools::resize(const vpImage<Type> &I, vpImage<Type> &Ires, unsigned 
   the desired size).
   \param method : Interpolation method.
   \param nThreads : Number of threads to use if OpenMP is available
-  (zero will let OpenMP uses the optimal number of threads).
+  (zero will let OpenMP uses the optimal number of threads). Unused if OpenMP is not enabled.
 
   \warning The input \e I and output \e Ires images must be different objects.
 
@@ -1090,12 +1090,11 @@ void vpImageTools::resize(const vpImage<Type> &I, vpImage<Type> &Ires, unsigned 
 */
 template <class Type>
 void vpImageTools::resize(const vpImage<Type> &I, vpImage<Type> &Ires, const vpImageInterpolationType &method,
-                          unsigned int
-#if defined(_OPENMP)
-                          nThreads
-#endif
-)
+                          unsigned int nThreads)
 {
+#if !defined(_OPENMP)
+  (void)nThreads;
+#endif
   const unsigned int minWidth = 2, minHeight = 2;
   if ((I.getWidth() < minWidth) || (I.getHeight() < minHeight) || (Ires.getWidth() < minWidth) || (Ires.getHeight() < minHeight)) {
     std::cerr << "Input or output image is too small!" << std::endl;

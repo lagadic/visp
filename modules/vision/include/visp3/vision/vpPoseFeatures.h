@@ -487,7 +487,7 @@ public:
    * \param[in] line : Integer id that indicates which limb of the cylinder is to
    * consider. It can be vpCylinder::line1 or vpCylinder::line2.
    */
-  void addFeatureLine(const vpCylinder &, const int &line);
+  void addFeatureLine(const vpCylinder &c, const int &line);
 
   /*!
    * Add a segment feature to the list of features to be considered in the pose

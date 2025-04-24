@@ -55,13 +55,13 @@ int (*handlerProc2)(const char *dst, const char *key, int valargc, const char **
   (they didn't match the option table, or followed an
   vpParseArgv::ARGV_REST argument).
 
-  \param argcPtr: Pointer to the count of command line arguments.
+  \param argcPtr : Pointer to the count of command line arguments.
 
-  \param argv: Array of command line argument strings.
+  \param argv : Array of command line argument strings.
 
-  \param argTable: Array of command-specific argument descriptions.
+  \param argTable : Array of command-specific argument descriptions.
 
-  \param flags: This parameter is to set with vpParseArgv::vpArgvFlags
+  \param flags : This parameter is to set with vpParseArgv::vpArgvFlags
   values or combinations of these values using the OR operator
   (vpParseArgv::ARGV_NO_LEFTOVERS | vpParseArgv::ARGV_NO_DEFAULTS). If
   the vpParseArgv::ARGV_NO_DEFAULTS bit is set, then
@@ -339,9 +339,9 @@ missingArg:
   all those in the default table unless vpParseArgv::ARGV_NO_DEFAULTS
   is specified in flags.
 
-  \param argTable: Array of command-specific argument.descriptions.
+  \param argTable : Array of command-specific argument.descriptions.
 
-  \param flags: If the vpParseArgv::ARGV_NO_DEFAULTS bit is set in
+  \param flags : If the vpParseArgv::ARGV_NO_DEFAULTS bit is set in
   this word, then don't generate information for default options.
 
 */
@@ -485,14 +485,14 @@ void vpParseArgv::printUsage(vpArgvInfo *argTable, int flags)
 
   Get next command line option and parameter.
 
-  \param argc: Count of command line arguments.
+  \param argc : Count of command line arguments.
 
-  \param argv: Array of command line argument strings.
+  \param argv : Array of command line argument strings.
 
-  \param validOpts: String of valid case-sensitive option characters, a
+  \param validOpts : String of valid case-sensitive option characters, a
   ':' following a given character means that option can take a parameter.
 
-  \param param: Pointer to a pointer to a string for output.
+  \param param : Pointer to a pointer to a string for output.
 
   \return If valid option is found, the character value of that option is
   returned, and *param points to the parameter if given, or is nullptr if no

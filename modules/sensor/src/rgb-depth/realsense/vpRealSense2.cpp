@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * librealSense2 interface.
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpConfig.h>
 
@@ -1145,7 +1143,8 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, const rs2:
 /*!
    Get the extrinsic transformation from one stream to another. This function
    has to be called after open().
-   \param from, to   : Streams for which the camera extrinsic parameters are returned.
+   \param from : From stream for which the camera extrinsic parameters are returned.
+   \param to : To stream for which the camera extrinsic parameters are returned.
    \param from_index : Index of the stream from which we will calculate the transformation, 1: From left to right, 2:
    From right to left. Otherwise: -1(default)
   */

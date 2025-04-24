@@ -611,9 +611,10 @@ void vpDisplayWin32::setTitle(const std::string &windowtitle)
   \param[in] fontname : Name of the font.
  */
 
-void vpDisplayWin32::setFont(const std::string & /* fontname */)
+void vpDisplayWin32::setFont(const std::string &fontname)
 {
   // Not yet implemented
+  (void)fontname;
 }
 
 /*!
