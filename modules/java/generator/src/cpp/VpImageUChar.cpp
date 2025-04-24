@@ -16,7 +16,13 @@ extern "C" {
   using namespace VISP_NAMESPACE_NAME;
 #endif
 
-// Java Method:    VpImageUChar()
+#if defined(__clang__)
+// Mute warning : identifier 'Java_org_visp_core_VpImageUChar_n_1VpImageUChar__II' is reserved because it contains '__' [-Wreserved-identifier]
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wreserved-identifier"
+#endif
+
+  // Java Method:    VpImageUChar()
   JNIEXPORT jlong JNICALL Java_org_visp_core_VpImageUChar_n_1VpImageUChar__(JNIEnv *env, jclass, jstring type)
   {
     (void)env;
@@ -92,5 +98,9 @@ extern "C" {
     ss << *me;
     return env->NewStringUTF(ss.str().c_str());
   }
+
+#if defined(__clang__)
+#  pragma clang diagnostic pop
+#endif
 
 } // extern "C"
