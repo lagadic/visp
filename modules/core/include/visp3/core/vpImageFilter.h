@@ -1106,7 +1106,8 @@ public:
     if (normalize) {
       FilterType sum = static_cast<FilterType>(0);
       for (int i = 1; i <= middle; ++i) {
-        sum += v_2_coef_1 * static_cast<FilterType>(exp(-static_cast<double>(i * i) / v_2_sigma2));
+        FilterType i_ = static_cast<FilterType>(i);
+        sum += v_2_coef_1 * static_cast<FilterType>(exp(-static_cast<double>(i_ * i_ / v_2_sigma2));
       }
       sum += coef_1;
 
