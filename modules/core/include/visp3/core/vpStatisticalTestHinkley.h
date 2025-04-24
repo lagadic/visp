@@ -213,11 +213,6 @@ public:
   vpStatisticalTestHinkley(const float &h, const float &k, const float &mean, const float &stdev);
 
   /**
-   * \brief Destroy the vpStatisticalTestHinkley object.
-   */
-  virtual ~vpStatisticalTestHinkley();
-
-  /**
    * \brief Get the \f$\alpha\f$ threshold indicating that a mean drift occurs.
    *
    * \return The \f$\alpha\f$ threshold.

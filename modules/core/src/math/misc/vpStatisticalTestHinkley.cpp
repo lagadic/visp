@@ -146,8 +146,6 @@ void vpStatisticalTestHinkley::init(const float &h, const float &k, const float 
   m_areStatisticsComputed = true;
 }
 
-vpStatisticalTestHinkley::~vpStatisticalTestHinkley() { }
-
 void vpStatisticalTestHinkley::setDelta(const float &delta) { m_dmin2 = delta / 2.f; }
 
 void vpStatisticalTestHinkley::setAlpha(const float &alpha)
