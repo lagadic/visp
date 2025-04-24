@@ -119,16 +119,11 @@ public /*protected*/:
 public:
   vpBSpline();
 
-#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
-  vpBSpline(const vpBSpline &bspline) = default;
-  virtual ~vpBSpline() = default;
-#endif
+  /*!
+    Gets the degree of the B-Spline.
 
-/*!
-  Gets the degree of the B-Spline.
-
-  \return the degree of the B-Spline.
-*/
+    \return the degree of the B-Spline.
+  */
   inline unsigned int get_p() const { return p; }
 
   /*!
