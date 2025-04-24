@@ -1107,7 +1107,7 @@ public:
       FilterType sum = static_cast<FilterType>(0);
       for (int i = 1; i <= middle; ++i) {
         FilterType i_ = static_cast<FilterType>(i);
-        sum += v_2_coef_1 * static_cast<FilterType>(exp(-static_cast<double>(i_ * i_ / v_2_sigma2));
+        sum += v_2_coef_1 * static_cast<FilterType>(exp(-static_cast<double>(i_ * i_ / v_2_sigma2)));
       }
       sum += coef_1;
 
