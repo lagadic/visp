@@ -31,8 +31,8 @@
  * Network Request.
  */
 
-#ifndef vpRequest_H
-#define vpRequest_H
+#ifndef VP_REQUEST_H
+#define VP_REQUEST_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>

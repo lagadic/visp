@@ -44,7 +44,19 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #else
+
+#if defined(__clang__)
+// Mute warning : non-portable path to file '<WinSock2.h>'; specified path differs in case from file name on disk [-Wnonportable-system-include-path]
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wnonportable-system-include-path"
+#endif
+
 #include <winsock2.h>
+
+#if defined(__clang__)
+#  pragma clang diagnostic pop
+#endif
+
 #endif
 
 #include <visp3/core/vpException.h>
