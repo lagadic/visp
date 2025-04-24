@@ -112,13 +112,13 @@ protected:
    */
   virtual void computeLimits() VP_OVERRIDE;
 
-/**
- * \brief Detects if a downward mean drift occurred.
- *
- * \return \b vpMeanDriftType::MEAN_DRIFT_DOWNWARD if a downward mean drift occurred, \b vpMeanDriftType::MEAN_DRIFT_NONE otherwise.
- *
- * \sa detectUpwardMeanDrift()
- */
+  /**
+   * \brief Detects if a downward mean drift occurred.
+   *
+   * \return \b vpMeanDriftType::MEAN_DRIFT_DOWNWARD if a downward mean drift occurred, \b vpMeanDriftType::MEAN_DRIFT_NONE otherwise.
+   *
+   * \sa detectUpwardMeanDrift()
+   */
   virtual vpMeanDriftType detectDownwardMeanDrift() VP_OVERRIDE;
   /**
    * \brief Detects if an upward mean drift occurred on the mean.
