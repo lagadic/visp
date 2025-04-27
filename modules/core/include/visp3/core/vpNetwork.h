@@ -195,9 +195,10 @@ public:
   */
   std::string getRequestIdFromIndex(const int &ind)
   {
-    if (ind >= static_cast<int>(request_list.size()) || ind < 0)
+    if (ind >= static_cast<int>(request_list.size()) || ind < 0) {
       return "";
-    return request_list[(unsigned)ind]->getId();
+    }
+    return request_list[static_cast<unsigned int>(ind)]->getId();
   }
 
   /*!
