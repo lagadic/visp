@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,7 +92,7 @@ vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestShewhart::detectDown
   if (m_nbDataInBuffer < NB_DATA_SIGNAL) {
     return vpStatisticalTestAbstract::MEAN_DRIFT_NONE;
   }
-  if ((m_signal[m_idCurrentData] <= m_limitDown) && m_activatedWECOrules[THREE_SIGMA_WECO]) {
+  if ((m_signal_vec[m_idCurrentData] <= m_limitDown) && m_activatedWECOrules[THREE_SIGMA_WECO]) {
     m_alarm = THREE_SIGMA_WECO;
     return vpStatisticalTestAbstract::MEAN_DRIFT_DOWNWARD;
   }
@@ -109,18 +109,18 @@ vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestShewhart::detectDown
     // Reinit for next iteration
     nbAbove2SigmaLimit = 0;
     nbAbove1SigmaLimit = 0;
-    if (m_signal[id] < m_mean  && m_activatedWECOrules[SAME_SIDE_WECO]) {
+    if (m_signal_vec[id] < m_mean  && m_activatedWECOrules[SAME_SIDE_WECO]) {
       // Single-side test
       ++nbAboveMean;
     }
     if (i > 3  && m_activatedWECOrules[TWO_SIGMA_WECO]) {
       // Two sigma test
       for (unsigned int idPrev = vpMath::modulo(id - 2, NB_DATA_SIGNAL); idPrev != id; idPrev = vpMath::modulo(idPrev + 1, NB_DATA_SIGNAL)) {
-        if (m_signal[idPrev] <= m_twoSigmaNegLim) {
+        if (m_signal_vec[idPrev] <= m_twoSigmaNegLim) {
           ++nbAbove2SigmaLimit;
         }
       }
-      if (m_signal[id] <= m_twoSigmaNegLim) {
+      if (m_signal_vec[id] <= m_twoSigmaNegLim) {
         ++nbAbove2SigmaLimit;
       }
       if (nbAbove2SigmaLimit >= 2) {
@@ -130,11 +130,11 @@ vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestShewhart::detectDown
     if (i > 5 && m_activatedWECOrules[ONE_SIGMA_WECO]) {
       // One sigma test
       for (unsigned int idPrev = vpMath::modulo(id - 4, NB_DATA_SIGNAL); idPrev != id; idPrev = vpMath::modulo(idPrev + 1, NB_DATA_SIGNAL)) {
-        if (m_signal[idPrev] <= m_oneSigmaNegLim) {
+        if (m_signal_vec[idPrev] <= m_oneSigmaNegLim) {
           ++nbAbove1SigmaLimit;
         }
       }
-      if (m_signal[id] <= m_oneSigmaNegLim) {
+      if (m_signal_vec[id] <= m_oneSigmaNegLim) {
         ++nbAbove1SigmaLimit;
       }
       if (nbAbove1SigmaLimit >= 4) {
@@ -164,7 +164,7 @@ vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestShewhart::detectUpwa
   if (m_nbDataInBuffer < NB_DATA_SIGNAL) {
     return vpStatisticalTestAbstract::MEAN_DRIFT_NONE;
   }
-  if ((m_signal[m_idCurrentData] >= m_limitUp) && m_activatedWECOrules[THREE_SIGMA_WECO]) {
+  if ((m_signal_vec[m_idCurrentData] >= m_limitUp) && m_activatedWECOrules[THREE_SIGMA_WECO]) {
     m_alarm = THREE_SIGMA_WECO;
     return vpStatisticalTestAbstract::MEAN_DRIFT_UPWARD;
   }
@@ -181,18 +181,18 @@ vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestShewhart::detectUpwa
     // Reinit for next iteration
     nbAbove2SigmaLimit = 0;
     nbAbove1SigmaLimit = 0;
-    if (m_signal[id] > m_mean && m_activatedWECOrules[SAME_SIDE_WECO]) {
+    if (m_signal_vec[id] > m_mean && m_activatedWECOrules[SAME_SIDE_WECO]) {
       // Single-side test
       ++nbAboveMean;
     }
     if (i > 3 && m_activatedWECOrules[TWO_SIGMA_WECO]) {
       // Two sigma test
       for (unsigned int idPrev = vpMath::modulo(id - 2, NB_DATA_SIGNAL); idPrev != id; idPrev = vpMath::modulo(idPrev + 1, NB_DATA_SIGNAL)) {
-        if (m_signal[idPrev] >= m_twoSigmaPosLim) {
+        if (m_signal_vec[idPrev] >= m_twoSigmaPosLim) {
           ++nbAbove2SigmaLimit;
         }
       }
-      if (m_signal[id] >= m_twoSigmaPosLim) {
+      if (m_signal_vec[id] >= m_twoSigmaPosLim) {
         ++nbAbove2SigmaLimit;
       }
       if (nbAbove2SigmaLimit >= 2) {
@@ -202,11 +202,11 @@ vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestShewhart::detectUpwa
     if (i > 5 && m_activatedWECOrules[ONE_SIGMA_WECO]) {
       // One sigma test
       for (unsigned int idPrev = vpMath::modulo(id - 4, NB_DATA_SIGNAL); idPrev != id; idPrev = vpMath::modulo(idPrev + 1, NB_DATA_SIGNAL)) {
-        if (m_signal[idPrev] >= m_oneSigmaPosLim) {
+        if (m_signal_vec[idPrev] >= m_oneSigmaPosLim) {
           ++nbAbove1SigmaLimit;
         }
       }
-      if (m_signal[id] >= m_oneSigmaPosLim) {
+      if (m_signal_vec[id] >= m_oneSigmaPosLim) {
         ++nbAbove1SigmaLimit;
       }
       if (nbAbove1SigmaLimit >= 4) {
@@ -244,7 +244,7 @@ bool vpStatisticalTestShewhart::updateStatistics(const float &signal)
 void vpStatisticalTestShewhart::updateTestSignals(const float &signal)
 {
   m_idCurrentData = (m_idCurrentData + 1) % NB_DATA_SIGNAL;
-  m_signal[m_idCurrentData] = signal;
+  m_signal_vec[m_idCurrentData] = signal;
   if (m_nbDataInBuffer < NB_DATA_SIGNAL) {
     ++m_nbDataInBuffer;
   }
@@ -283,7 +283,7 @@ std::vector<float> vpStatisticalTestShewhart::getSignals() const
   std::vector<float> signals;
   for (unsigned int i = 0; i < NB_DATA_SIGNAL; ++i) {
     unsigned int id = vpMath::modulo(m_idCurrentData - (NB_DATA_SIGNAL - i - 1), NB_DATA_SIGNAL);
-    signals.push_back(m_signal[id]);
+    signals.push_back(m_signal_vec[id]);
   }
   return signals;
 }
@@ -292,7 +292,7 @@ void vpStatisticalTestShewhart::init(const bool &activateWECOrules, const std::v
 {
   vpStatisticalTestSigma::init(3.f, nbSamplesForStats);
   m_nbDataInBuffer = 0;
-  memset(m_signal, 0, NB_DATA_SIGNAL * sizeof(float));
+  memset(m_signal_vec, 0, NB_DATA_SIGNAL * sizeof(float));
   m_activateWECOrules = activateWECOrules;
   if (activatedRules.size() != COUNT_WECO - 1) {
     std::stringstream errMsg;
