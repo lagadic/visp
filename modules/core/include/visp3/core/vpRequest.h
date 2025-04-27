@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,6 +132,15 @@ protected:
 
 public:
   vpRequest();
+  vpRequest(const vpRequest &req) : request_id(req.request_id), listOfParams(req.listOfParams) { }
+  virtual ~vpRequest() { }
+
+  vpRequest &operator=(const vpRequest &req)
+  {
+    request_id = req.request_id;
+    listOfParams = req.listOfParams;
+    return *this;
+  }
 
   void addParameter(const char *params);
   void addParameter(const std::string &params);
