@@ -63,10 +63,6 @@ BEGIN_VISP_NAMESPACE
   \ingroup group_core_image
 
   \brief  Various mathematical morphology tools, erosion, dilatation...
-
-  \author Fabien Spindler  (Fabien.Spindler@irisa.fr) Irisa / Inria Rennes
-
-
 */
 class VISP_EXPORT vpImageMorphology
 {
@@ -368,24 +364,24 @@ void vpImageMorphology::dilatation(vpImage<Type> &I, Type value, Type value_out,
 template<typename T>
 void vpImageMorphology::imageOperation(vpImage<T> &I, const T &null_value, vpPixelOperation<T> *operation, const vpConnexityType &connexity)
 {
-  const unsigned int width_in = I.getWidth();
-  const unsigned int height_in = I.getHeight();
-  const unsigned int width_dilat = width_in + 2;
-  const unsigned int height_dilat = height_in + 2;
+  const int width_in = static_cast<int>(I.getWidth());
+  const int height_in = static_cast<int>(I.getHeight());
+  const int width_dilat = width_in + 2;
+  const int height_dilat = height_in + 2;
   vpImage<T> J(height_dilat, width_dilat, null_value);
 
   // Copy I to J and add border
   J.insert(I, vpImagePoint(1, 1));
 
   if (connexity == vpImageMorphology::CONNEXITY_4) {
-    const unsigned int nbOffset = 5;
+    const int nbOffset = 5;
     int offset_x[nbOffset] = { 0, -1, 0, 1, 0 };
     int offset_y[nbOffset] = { -1,  0, 0, 0, 1 };
 
-    for (unsigned int i = 0; i < height_in; ++i) {
-      for (unsigned int j = 0; j < width_in; ++j) {
+    for (int i = 0; i < height_in; ++i) {
+      for (int j = 0; j < width_in; ++j) {
         T value = null_value;
-        for (unsigned int k = 0; k < nbOffset; ++k) {
+        for (int k = 0; k < nbOffset; ++k) {
           value = (*operation)(value, J[i + 1 + offset_y[k]][j + 1 + offset_x[k]]);
         }
 
@@ -394,14 +390,14 @@ void vpImageMorphology::imageOperation(vpImage<T> &I, const T &null_value, vpPix
     }
   }
   else {
-    const unsigned int nbOffset = 9;
+    const int nbOffset = 9;
     int offset_x[nbOffset] = { -1, 0, 1,-1, 0, 1,-1, 0, 1 };
     int offset_y[nbOffset] = { -1,-1,-1, 0, 0, 0, 1, 1, 1 };
 
-    for (unsigned int i = 0; i < height_in; ++i) {
-      for (unsigned int j = 0; j < width_in; ++j) {
+    for (int i = 0; i < height_in; ++i) {
+      for (int j = 0; j < width_in; ++j) {
         T value = null_value;
-        for (unsigned int k = 0; k < nbOffset; ++k) {
+        for (int k = 0; k < nbOffset; ++k) {
           value = (*operation)(value, J[i + 1 + offset_y[k]][j + 1 + offset_x[k]]);
         }
 
