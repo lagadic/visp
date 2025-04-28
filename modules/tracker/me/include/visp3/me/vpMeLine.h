@@ -168,6 +168,11 @@ public:
   virtual ~vpMeLine() VP_OVERRIDE;
 
   /*!
+   * Copy operator.
+   */
+  vpMeLine operator=(const vpMeLine &meline);
+
+  /*!
    * Display me line.
    *
    * \warning To effectively display the line a call to vpDisplay::flush() is needed.
