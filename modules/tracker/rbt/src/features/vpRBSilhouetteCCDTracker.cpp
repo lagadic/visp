@@ -764,42 +764,29 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
     }
   }
 
-  m_gradient = 0.0;
-  m_hessian = 0.0;
   //m_robust.setMinMedianAbsoluteDeviation(1.0);
   vpColVector weightPerPoint(errorPerPoint.getRows());
 
-  m_robust.MEstimator(vpRobust::vpRobustEstimatorType::TUKEY, m_error, m_weights);
-  // for (unsigned int i = 0; i < m_controlPoints.size(); ++i) {
-  //   for (unsigned int j = 0; j < 2 * normal_points_number * 3; ++j) {
-  //     m_weights[i * 2 * normal_points_number * 3 + j] = weightPerPoint[i];
-  //   }
-  // }
+  m_robust.MEstimator(vpRobust::vpRobustEstimatorType::TUKEY, errorPerPoint, weightPerPoint);
+  for (unsigned int i = 0; i < m_controlPoints.size(); ++i) {
+    for (unsigned int j = 0; j < 2 * normal_points_number * 3; ++j) {
+      m_weights[i * 2 * normal_points_number * 3 + j] = weightPerPoint[i];
+    }
+  }
 
 
-  // Store all the gradients and hessians and then sum them up after the parallel region. This ensures that computation is determinist
-  std::vector<vpColVector> localGradients;
-  std::vector<vpMatrix> localHessians;
+
+  m_gradient = 0.0;
+  m_hessian = 0.0;
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel
 #endif
   {
     vpColVector localGradient(m_gradient.getRows(), 0.0);
     vpMatrix localHessian(m_hessian.getRows(), m_hessian.getCols(), 0.0);
+
 #ifdef VISP_HAVE_OPENMP
-#pragma omp single
-#endif
-    {
-#ifdef VISP_HAVE_OPENMP
-      unsigned int threads = omp_get_num_threads();
-#else
-      unsigned int threads = 1;
-#endif
-      localGradients.resize(threads, localGradient);
-      localHessians.resize(threads, localHessian);
-    }
-#ifdef VISP_HAVE_OPENMP
-#pragma omp for
+#pragma omp for nowait
 #endif
     for (unsigned int i = 0; i < m_gradients.size(); ++i) {
       vpColVector &g = m_gradients[i];
@@ -816,17 +803,14 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
       }
     }
 #ifdef VISP_HAVE_OPENMP
-    unsigned int currentThread = omp_get_thread_num();
-#else
-    unsigned int currentThread = 0;
+#pragma omp critical
 #endif
-    localGradients[currentThread] = localGradient;
-    localHessians[currentThread] = localHessian;
+    {
+      m_gradient += localGradient;
+      m_hessian += localHessian;;
+    }
   }
-  for (unsigned int i = 0; i < localGradients.size(); ++i) {
-    m_gradient += localGradients[i];
-    m_hessian += localHessians[i];
-  }
+
 
   m_LTL = m_hessian;
   m_LTR = -m_gradient;
