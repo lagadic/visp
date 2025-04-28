@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +31,8 @@
  * UDP Client
  */
 
-#ifndef _vpUDPClient_h_
-#define _vpUDPClient_h_
+#ifndef VP_UDP_CLIENT_H
+#define VP_UDP_CLIENT_H
 
 #include <visp3/core/vpConfig.h>
 
@@ -186,8 +186,11 @@ class VISP_EXPORT vpUDPClient
 {
 public:
   vpUDPClient();
+  vpUDPClient(const vpUDPClient &client);
   vpUDPClient(const std::string &hostname, int port);
   virtual ~vpUDPClient();
+
+  vpUDPClient operator=(const vpUDPClient &client);
 
   /** @name Inherited functionalities from vpUDPClient */
   //@{
