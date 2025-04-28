@@ -306,9 +306,6 @@ double vpRobust::select(vpColVector &a, int l, int r, int k)
  * Below are deprecated functions
  */
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-#define vpITMAX 100
-#define vpEPS 3.0e-7
-
 /*!
   \deprecated You should rather use the default constructor.
   \param n_data : Size of the data vector.
@@ -607,6 +604,10 @@ double vpRobust::simult_chi_huber(double x)
 }
 
 #if !defined(VISP_HAVE_FUNC_ERFC) && !defined(VISP_HAVE_FUNC_STD_ERFC)
+
+#define vpITMAX 100
+#define vpEPS 3.0e-7
+
 double vpRobust::erf(double x) { return x < 0.0 ? -gammp(0.5, x * x) : gammp(0.5, x * x); }
 
 double vpRobust::gammp(double a, double x)
