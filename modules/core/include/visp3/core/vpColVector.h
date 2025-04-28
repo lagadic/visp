@@ -284,6 +284,7 @@ public:
 #endif
 
   static vpColVector view(double *data, unsigned int rows);
+  static void view(vpColVector &v, double *data, unsigned int rows);
 
   /*!
    * Removes all elements from the vector (which are destroyed),

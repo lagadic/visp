@@ -171,8 +171,7 @@ double vpRBProbabilistic3DDriftDetector::score(const vpRBFeatureTrackerInput &fr
         }
 
         vpRGBf averageColor(0.f, 0.f, 0.f);
-        double bestColorProba = 0.0;
-        vpRGBf bestColor;
+
         for (int i = -1; i < 2; ++i) {
           for (int j = -1; j < 2; ++j) {
             const vpRGBa currentColor = frame.IRGB[p->projCurrPx[1] + i][p->projCurrPx[0] + j];
