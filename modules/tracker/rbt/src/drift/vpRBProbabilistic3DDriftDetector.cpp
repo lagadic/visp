@@ -139,9 +139,10 @@ double vpRBProbabilistic3DDriftDetector::score(const vpRBFeatureTrackerInput &fr
   }
   if (visiblePoints.size() > 0) {
     bool useMedian = false;
+
     std::vector<double> scores;
     scores.reserve(visiblePoints.size());
-
+    score = 0.0;
     double weightSum = 0.0;
 
 #ifdef VISP_HAVE_OPENMP
@@ -150,6 +151,7 @@ double vpRBProbabilistic3DDriftDetector::score(const vpRBFeatureTrackerInput &fr
     {
       std::vector<double> scoresLocal;
       double weightSumLocal = 0.0;
+      double scoreLocal = 0.0;
 #ifdef VISP_HAVE_OPENMP
 #pragma omp for
 #endif
@@ -191,7 +193,7 @@ double vpRBProbabilistic3DDriftDetector::score(const vpRBFeatureTrackerInput &fr
         const double proba = p->stats.probability(averageColor) * probaDepth;
 
         scoresLocal.push_back(proba); // Keep only the weight
-        score += proba * weight;
+        scoreLocal += proba * weight;
         p->updateColor(averageColor, m_colorUpdateRate * probaDepth);
       }
 #ifdef VISP_HAVE_OPENMP
@@ -199,6 +201,7 @@ double vpRBProbabilistic3DDriftDetector::score(const vpRBFeatureTrackerInput &fr
 #endif
       {
         scores.insert(scores.end(), scoresLocal.begin(), scoresLocal.end());
+        score += scoreLocal;
         weightSum += weightSumLocal;
       }
     }
