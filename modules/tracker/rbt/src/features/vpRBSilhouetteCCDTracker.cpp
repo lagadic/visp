@@ -119,7 +119,6 @@ public:
 
   static void multiplyBTranspose(const FastMat63<double> &A, const FastMat63<double> &B, vpMatrix &C)
   {
-    C.resize(6, 6, false, false);
     for (unsigned int i = 0; i < 6; ++i) {
       const double *a = &A.data[i * 3];
       double *c = C[i];
@@ -776,12 +775,7 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
   //     m_weights[i * 2 * normal_points_number * 3 + j] = weightPerPoint[i];
   //   }
   // }
-  for (unsigned int i = 0; i < m_L.getRows(); ++i) {
-    m_weighted_error[i] = m_error[i] * m_weights[i];
-    for (unsigned int j = 0; j < 6; ++j) {
-      m_L[i][j] *= m_weights[i];
-    }
-  }
+
 
   // Store all the gradients and hessians and then sum them up after the parallel region. This ensures that computation is determinist
   std::vector<vpColVector> localGradients;
@@ -808,10 +802,18 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
 #pragma omp for
 #endif
     for (unsigned int i = 0; i < m_gradients.size(); ++i) {
-      m_gradients[i] *= m_weights[i];
-      m_hessians[i] *= m_weights[i];
-      localHessian += m_hessians[i];
-      localGradient += m_gradients[i];
+      vpColVector &g = m_gradients[i];
+      vpMatrix &h = m_hessians[i];
+      double w = m_weights[i];
+      for (unsigned int j = 0; j < 6; ++j) {
+        g[j] *= w;
+        m_L[i][j] *= w;
+        localGradient[j] += g[j];
+        for (unsigned int k = 0; k < 6; ++k) {
+          h[j][k] *= w;
+          localHessian[j][k] += h[j][k];
+        }
+      }
     }
 #ifdef VISP_HAVE_OPENMP
     unsigned int currentThread = omp_get_thread_num();
