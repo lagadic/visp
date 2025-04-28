@@ -143,7 +143,7 @@ public:
   vpMbScanLine();
   vpMbScanLine(const vpMbScanLine &scanline);
   virtual ~vpMbScanLine();
-  vpMbScanLine operator=(const vpMbScanLine &scanline);
+  vpMbScanLine &operator=(const vpMbScanLine &scanline);
 
   void drawScene(const std::vector<std::vector<std::pair<vpPoint, unsigned int> > *> &polygons,
                  std::vector<int> listPolyIndices, const vpCameraParameters &K, unsigned int w, unsigned int h);

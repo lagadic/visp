@@ -492,8 +492,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, FuncCheckValidityPose func)
     // best_consensus and return this pose.  This is an approach used for
     // example in p118 in Multiple View Geometry in Computer Vision, Hartley,
     // R.~I. and Zisserman, A.
-    if (nbInliers >= nbMinRandom) // if(nbInliers >= (unsigned)ransacNbInlierConsensus)
-    {
+    if (nbInliers >= nbMinRandom) {
       // Refine the solution using all the points in the consensus set and
       // with VVS pose estimation
       vpPose pose;

@@ -178,15 +178,15 @@ SoSeparator *createFrame(float longueurFleche = LONGUEUR_FLECHE, float proportio
 
   SoRotationXYZ *rotationY_X = new SoRotationXYZ;
   rotationY_X->axis = SoRotationXYZ::Z;
-  rotationY_X->angle.setValue((float)(-M_PI / 2));
+  rotationY_X->angle.setValue(static_cast<float>(-M_PI / 2));
 
   SoRotationXYZ *rotationX_Y = new SoRotationXYZ;
   rotationX_Y->axis = SoRotationXYZ::Z;
-  rotationX_Y->angle.setValue((float)(M_PI / 2));
+  rotationX_Y->angle.setValue(static_cast<float>(M_PI / 2));
 
   SoRotationXYZ *rotationY_Z = new SoRotationXYZ;
   rotationY_Z->axis = SoRotationXYZ::X;
-  rotationY_Z->angle.setValue((float)(M_PI / 2));
+  rotationY_Z->angle.setValue(static_cast<float>(M_PI / 2));
 
   SoMaterial *rouge = new SoMaterial;
   rouge->diffuseColor.setValue(1.0, 0.0, 0.0);
@@ -509,8 +509,8 @@ void vpSimulator::setInternalCameraParameters(vpCameraParameters &_cam)
 {
   internalCameraParameters = _cam;
 
-  float px = (float)_cam.get_px();
-  float py = (float)_cam.get_py();
+  float px = static_cast<float>(_cam.get_px());
+  float py = static_cast<float>(_cam.get_py());
   float v = internal_height / (2.f * py);
 
   internalCamera->ref();
@@ -528,8 +528,8 @@ void vpSimulator::setExternalCameraParameters(vpCameraParameters &_cam)
   //   camera  = (SoPerspectiveCamera *)this->externalView->getCamera() ;
   externalCameraParameters = _cam;
 
-  float px = (float)_cam.get_px();
-  float py = (float)_cam.get_py();
+  float px = static_cast<float>(_cam.get_px());
+  float py = static_cast<float>(_cam.get_py());
   float v = external_height / (2 * py);
 
   externalCamera->ref();
@@ -562,7 +562,7 @@ void vpSimulator::getExternalCameraPosition(vpHomogeneousMatrix &cMf)
 
   vpHomogeneousMatrix fMc;
   SbMatrix rotX;
-  rotX.setRotate(SbRotation(SbVec3f(1.0f, 0.0f, 0.0f), (float)M_PI));
+  rotX.setRotate(SbRotation(SbVec3f(1.0f, 0.0f, 0.0f), static_cast<float>(M_PI)));
   matrix.multLeft(rotX);
   for (unsigned int i = 0; i < 4; i++) {
     for (unsigned int j = 0; j < 4; j++) {
@@ -587,10 +587,10 @@ void vpSimulator::moveInternalCamera(vpHomogeneousMatrix &cMf)
   SbMatrix matrix;
   SbRotation rotCam;
   SbMatrix rotX;
-  rotX.setRotate(SbRotation(SbVec3f(1.0f, 0.0f, 0.0f), (float)M_PI));
+  rotX.setRotate(SbRotation(SbVec3f(1.0f, 0.0f, 0.0f), static_cast<float>(M_PI)));
   for (unsigned int i = 0; i < 4; i++)
     for (unsigned int j = 0; j < 4; j++)
-      matrix[static_cast<int>(j)][static_cast<int>(i)] = (float)cMf[i][j];
+      matrix[static_cast<int>(j)][static_cast<int>(i)] = static_cast<float>(cMf[i][j]);
 
   matrix = matrix.inverse();
   matrix.multLeft(rotX);
@@ -601,7 +601,7 @@ void vpSimulator::moveInternalCamera(vpHomogeneousMatrix &cMf)
   internalCamera->position.setValue(matrix[3][0], matrix[3][1], matrix[3][2]);
   internalCamera->unref();
 
-  rotX.setRotate(SbRotation(SbVec3f(-1.0f, 0.0f, 0.0f), (float)M_PI));
+  rotX.setRotate(SbRotation(SbVec3f(-1.0f, 0.0f, 0.0f), static_cast<float>(M_PI)));
   matrix.multLeft(rotX);
   rotCam.setValue(matrix);
   internalCameraPosition->ref();
@@ -805,7 +805,7 @@ void vpSimulator::addObject(SoSeparator *object, const vpHomogeneousMatrix &fMo,
     SbRotation rotation;
     for (unsigned int i = 0; i < 4; i++)
       for (unsigned int j = 0; j < 4; j++)
-        matrix[static_cast<int>(j)][static_cast<int>(i)] = (float)fMo[i][j];
+        matrix[static_cast<int>(j)][static_cast<int>(i)] = static_cast<float>(fMo[i][j]);
 
     //  matrix= matrix.inverse();
     rotation.setValue(matrix);

@@ -180,7 +180,10 @@ private:
 
 public:
   vpNetwork();
+  vpNetwork(const vpNetwork &network);
   virtual ~vpNetwork();
+
+  vpNetwork &operator=(const vpNetwork &network);
 
   void addDecodingRequest(vpRequest *);
 

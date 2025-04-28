@@ -87,7 +87,7 @@ vpUDPClient::vpUDPClient(const vpUDPClient &client)
   *this = client;
 }
 
-vpUDPClient vpUDPClient::operator=(const vpUDPClient &client)
+vpUDPClient &vpUDPClient::operator=(const vpUDPClient &client)
 {
   m_is_init = client.m_is_init;
   m_serverAddress = client.m_serverAddress;

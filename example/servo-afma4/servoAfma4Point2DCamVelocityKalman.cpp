@@ -393,7 +393,7 @@ int main(int argc, const char **argv)
     for (;;) {
       double t_0 = vpTime::measureTimeMs(); // t_0: current time
       // Temps de la boucle d'asservissement
-      double Tv = (double)(t_0 - t_1) / 1000.0; // temps d'une iteration en s
+      double Tv = static_cast<double>(t_0 - t_1) / 1000.0; // temps d'une iteration en s
                                                 // !
       //     std::cout << "time iter : " << Tv << std::endl;
 

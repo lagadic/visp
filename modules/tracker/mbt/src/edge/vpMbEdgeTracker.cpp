@@ -2971,13 +2971,13 @@ void vpMbEdgeTracker::setUseEdgeTracking(const std::string &name, const bool &us
 
       for (std::list<vpMbtDistanceCylinder *>::const_iterator it = cylinders[i].begin(); it != cylinders[i].end();
            ++it) {
-        if (faces[(unsigned)(*it)->index_polygon]->getName() == name) {
+        if (faces[static_cast<unsigned int>((*it)->index_polygon)]->getName() == name) {
           (*it)->setTracked(useEdgeTracking);
         }
       }
 
       for (std::list<vpMbtDistanceCircle *>::const_iterator it = circles[i].begin(); it != circles[i].end(); ++it) {
-        if (faces[(unsigned)(*it)->index_polygon]->getName() == name) {
+        if (faces[static_cast<unsigned int>((*it)->index_polygon)]->getName() == name) {
           (*it)->setTracked(useEdgeTracking);
         }
       }

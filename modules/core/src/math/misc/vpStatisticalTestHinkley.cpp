@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -170,8 +170,8 @@ void vpStatisticalTestHinkley::computeMean(double signal)
   // it is updated with the current value of the signal only if
   // a beginning of a mean drift is not detected,
   // i.e.  if ( ((m_Mk-m_Sk) == 0) && ((m_Tk-m_Nk) == 0) )
-  if ((std::fabs(m_Mk - m_Sk) <= std::fabs(vpMath::maximum(m_Mk, m_Sk)) * std::numeric_limits<double>::epsilon()) &&
-      (std::fabs(m_Tk - m_Nk) <= std::fabs(vpMath::maximum(m_Tk, m_Nk)) * std::numeric_limits<double>::epsilon())) {
+  if ((std::fabs(m_Mk - m_Sk) <= std::fabs(vpMath::maximum(m_Mk, m_Sk)) * std::numeric_limits<float>::epsilon()) &&
+      (std::fabs(m_Tk - m_Nk) <= std::fabs(vpMath::maximum(m_Tk, m_Nk)) * std::numeric_limits<float>::epsilon())) {
     m_mean = (m_mean * (m_count - 1) + static_cast<float>(signal)) / (m_count);
   }
 }
@@ -237,13 +237,14 @@ bool vpStatisticalTestHinkley::updateStatistics(const float &signal)
 
 void vpStatisticalTestHinkley::updateTestSignals(const float &signal)
 {
-  computeSk(signal);
-  computeTk(signal);
+  double signal_ = static_cast<float>(signal);
+  computeSk(signal_);
+  computeTk(signal_);
 
   computeMk();
   computeNk();
 
   ++m_count;
-  computeMean(signal);
+  computeMean(signal_);
 }
 END_VISP_NAMESPACE

@@ -204,50 +204,50 @@ BEGIN_VISP_NAMESPACE
     featureMomentCentered.interaction(0, 3) +
     6 * momentCentered.get(2, 1) * momentCentered.get(1, 2) * momentCentered.get(0, 3) *
     featureMomentCentered.interaction(1, 2) -
-    pow((double)momentCentered.get(3, 0), (double)3) * featureMomentCentered.interaction(1, 2) +
-    3 * featureMomentCentered.interaction(3, 0) * pow((double)momentCentered.get(1, 2), (double)3) +
-    6 * pow((double)momentCentered.get(2, 1), (double)3) * featureMomentCentered.interaction(0, 3) -
-    featureMomentCentered.interaction(2, 1) * pow((double)momentCentered.get(0, 3), (double)3) +
-    3 * featureMomentCentered.interaction(2, 1) * pow((double)momentCentered.get(1, 2), (double)2) *
+    pow((double)momentCentered.get(3, 0), 3.0) * featureMomentCentered.interaction(1, 2) +
+    3 * featureMomentCentered.interaction(3, 0) * pow((double)momentCentered.get(1, 2), 3.0) +
+    6 * pow((double)momentCentered.get(2, 1), 3.0) * featureMomentCentered.interaction(0, 3) -
+    featureMomentCentered.interaction(2, 1) * pow((double)momentCentered.get(0, 3), 3.0) +
+    3 * featureMomentCentered.interaction(2, 1) * pow((double)momentCentered.get(1, 2), 2.0) *
     momentCentered.get(0, 3) +
-    18 * pow((double)momentCentered.get(2, 1), (double)2) * momentCentered.get(0, 3) *
+    18 * pow((double)momentCentered.get(2, 1), 2.0) * momentCentered.get(0, 3) *
     featureMomentCentered.interaction(2, 1) -
-    pow((double)momentCentered.get(3, 0), (double)2) * featureMomentCentered.interaction(2, 1) *
+    pow((double)momentCentered.get(3, 0), 2.0) * featureMomentCentered.interaction(2, 1) *
     momentCentered.get(0, 3) +
-    9 * momentCentered.get(3, 0) * pow((double)momentCentered.get(1, 2), (double)2) *
+    9 * momentCentered.get(3, 0) * pow((double)momentCentered.get(1, 2), 2.0) *
     featureMomentCentered.interaction(1, 2) -
-    4 * pow((double)momentCentered.get(3, 0), (double)2) * momentCentered.get(1, 2) *
+    4 * pow((double)momentCentered.get(3, 0), 2.0) * momentCentered.get(1, 2) *
     featureMomentCentered.interaction(1, 2) +
-    2 * pow((double)momentCentered.get(1, 2), (double)2) * momentCentered.get(0, 3) *
+    2 * pow((double)momentCentered.get(1, 2), 2.0) * momentCentered.get(0, 3) *
     featureMomentCentered.interaction(0, 3) -
-    4 * momentCentered.get(3, 0) * pow((double)momentCentered.get(1, 2), (double)2) *
+    4 * momentCentered.get(3, 0) * pow((double)momentCentered.get(1, 2), 2.0) *
     featureMomentCentered.interaction(3, 0) +
-    2 * momentCentered.get(1, 2) * pow((double)momentCentered.get(0, 3), (double)2) *
+    2 * momentCentered.get(1, 2) * pow((double)momentCentered.get(0, 3), 2.0) *
     featureMomentCentered.interaction(1, 2) -
-    4 * momentCentered.get(2, 1) * pow((double)momentCentered.get(0, 3), (double)2) *
+    4 * momentCentered.get(2, 1) * pow((double)momentCentered.get(0, 3), 2.0) *
     featureMomentCentered.interaction(2, 1) +
-    3 * momentCentered.get(3, 0) * pow((double)momentCentered.get(2, 1), (double)2) *
+    3 * momentCentered.get(3, 0) * pow((double)momentCentered.get(2, 1), 2.0) *
     featureMomentCentered.interaction(1, 2) -
-    3 * pow((double)momentCentered.get(3, 0), (double)2) * momentCentered.get(1, 2) *
+    3 * pow((double)momentCentered.get(3, 0), 2.0) * momentCentered.get(1, 2) *
     featureMomentCentered.interaction(3, 0) -
     momentCentered.get(3, 0) * featureMomentCentered.interaction(1, 2) *
-    pow((double)momentCentered.get(0, 3), (double)2) -
-    4 * pow((double)momentCentered.get(2, 1), (double)2) * momentCentered.get(0, 3) *
+    pow((double)momentCentered.get(0, 3), 2.0) -
+    4 * pow((double)momentCentered.get(2, 1), 2.0) * momentCentered.get(0, 3) *
     featureMomentCentered.interaction(0, 3) -
-    3 * momentCentered.get(2, 1) * pow((double)momentCentered.get(0, 3), (double)2) *
+    3 * momentCentered.get(2, 1) * pow((double)momentCentered.get(0, 3), 2.0) *
     featureMomentCentered.interaction(0, 3) +
-    2 * momentCentered.get(3, 0) * pow((double)momentCentered.get(2, 1), (double)2) *
+    2 * momentCentered.get(3, 0) * pow((double)momentCentered.get(2, 1), 2.0) *
     featureMomentCentered.interaction(3, 0) +
-    2 * pow((double)momentCentered.get(3, 0), (double)2) * momentCentered.get(2, 1) *
+    2 * pow((double)momentCentered.get(3, 0), 2.0) * momentCentered.get(2, 1) *
     featureMomentCentered.interaction(2, 1) +
-    3 * featureMomentCentered.interaction(3, 0) * pow((double)momentCentered.get(2, 1), (double)2) *
+    3 * featureMomentCentered.interaction(3, 0) * pow((double)momentCentered.get(2, 1), 2.0) *
     momentCentered.get(1, 2) -
-    pow((double)momentCentered.get(3, 0), (double)2) * momentCentered.get(2, 1) *
+    pow((double)momentCentered.get(3, 0), 2.0) * momentCentered.get(2, 1) *
     featureMomentCentered.interaction(0, 3) +
-    3 * momentCentered.get(2, 1) * pow((double)momentCentered.get(1, 2), (double)2) *
+    3 * momentCentered.get(2, 1) * pow((double)momentCentered.get(1, 2), 2.0) *
     featureMomentCentered.interaction(0, 3) -
     featureMomentCentered.interaction(3, 0) * momentCentered.get(1, 2) *
-    pow((double)momentCentered.get(0, 3), (double)2);
+    pow((double)momentCentered.get(0, 3), 2.0);
 
   LI[9] = 4 * pow(momentCentered.get(3, 0), 3) * featureMomentCentered.interaction(3, 0) +
     18 * momentCentered.get(1, 2) * pow(momentCentered.get(3, 0), 2) * featureMomentCentered.interaction(3, 0) +

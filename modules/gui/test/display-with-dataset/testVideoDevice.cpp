@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,7 +64,14 @@
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
-typedef enum { vpX11, vpGTK, vpGDI, vpD3D, vpCV } vpDisplayType;
+typedef enum
+{
+  vpX11,
+  vpGTK,
+  vpGDI,
+  vpD3D,
+  vpCV
+} vpDisplayType;
 
 void usage(const char *name, const char *badparam, std::string ipath, vpDisplayType &dtype);
 bool getOptions(int argc, const char **argv, std::string &ipath, vpDisplayType &dtype, bool &list, bool &click_allowed,
@@ -237,7 +244,7 @@ int main(int argc, const char **argv)
     bool opt_click_allowed = true;
     bool opt_display = true;
 
-// Default display is one available
+    // Default display is one available
 #if defined(VISP_HAVE_GTK)
     opt_dtype = vpGTK;
 #elif defined(VISP_HAVE_X11)

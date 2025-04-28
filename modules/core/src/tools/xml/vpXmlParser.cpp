@@ -255,7 +255,7 @@ float vpXmlParser::xmlReadFloatChild(xmlDocPtr doc, xmlNodePtr node)
 #if defined(VISP_HAVE_FUNC_STRTOF)
   val_float = strtof((char *)val_char, &control_convert);
 #else
-  val_float = (float)strtod((char *)val_char, &control_convert);
+  val_float = static_cast<float>(strtod((char *)val_char, &control_convert));
 #endif
 
   if (val_char == control_convert) {

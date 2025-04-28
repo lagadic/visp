@@ -588,10 +588,10 @@ void vpImageConvert::YUV420ToRGBa(unsigned char *yuv, unsigned char *rgba, unsig
 {
   int U, V, R, G, B, V2, U5, UV;
   int Y0, Y1, Y2, Y3;
-  const unsigned int val_2 = 2;
-  const unsigned int val_4 = 4;
-  const unsigned int val_5 = 5;
-  const unsigned int val_7 = 7;
+  const int val_2 = 2;
+  const int val_4 = 4;
+  const int val_5 = 5;
+  const int val_7 = 7;
   unsigned int size = width * height;
   unsigned char *iU = yuv + size;
   unsigned char *iV = yuv + ((val_5 * size) / val_4);

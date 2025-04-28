@@ -190,7 +190,7 @@ public:
   vpUDPClient(const std::string &hostname, int port);
   virtual ~vpUDPClient();
 
-  vpUDPClient operator=(const vpUDPClient &client);
+  vpUDPClient &operator=(const vpUDPClient &client);
 
   /** @name Inherited functionalities from vpUDPClient */
   //@{

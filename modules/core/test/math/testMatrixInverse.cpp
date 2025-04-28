@@ -183,7 +183,7 @@ vpMatrix make_random_matrix(unsigned int nbrows, unsigned int nbcols)
 
   for (unsigned int i = 0; i < A.getRows(); i++)
     for (unsigned int j = 0; j < A.getCols(); j++)
-      A[i][j] = (double)rand() / (double)RAND_MAX;
+      A[i][j] = static_cast<double>(rand()) / static_cast<double>(RAND_MAX);
   return A;
 }
 
@@ -196,7 +196,7 @@ vpMatrix make_random_symmetric_positive_matrix(unsigned int n)
 
   for (unsigned int i = 0; i < A.getRows(); i++)
     for (unsigned int j = 0; j < A.getCols(); j++)
-      A[i][j] = (double)rand() / (double)RAND_MAX;
+      A[i][j] = static_cast<double>(rand()) / static_cast<double>(RAND_MAX);
 
   A = 0.5 * (A + A.t());
   A = A + n * I;

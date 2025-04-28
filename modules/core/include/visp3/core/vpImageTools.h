@@ -611,15 +611,17 @@ template <class Type> void vpUndistortInternalType<Type>::vpUndistort_threaded(v
       // declarations
       int u_round = static_cast<int>(u_double);
       int v_round = static_cast<int>(v_double);
-      if (u_round < 0.f)
+      if (u_round < 0) {
         u_round = -1;
-      if (v_round < 0.f)
+      }
+      if (v_round < 0) {
         v_round = -1;
-      double du_double = (u_double)-(double)u_round;
-      double dv_double = (v_double)-(double)v_round;
+      }
+      double du_double = (u_double)-static_cast<double>(u_round);
+      double dv_double = (v_double)-static_cast<double>(v_round);
       Type v01;
       Type v23;
-      if ((0 <= u_round) && (0 <= v_round) && (u_round < ((width)-1)) && (v_round < ((height)-1))) {
+      if ((0 <= u_round) && (0 <= v_round) && (u_round < (width-1)) && (v_round < (height-1))) {
         // process interpolation
         const Type *_mp = &src[v_round * width + u_round];
         v01 = (Type)(_mp[0] + ((_mp[1] - _mp[0]) * du_double));

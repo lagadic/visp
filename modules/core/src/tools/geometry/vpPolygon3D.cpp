@@ -585,9 +585,9 @@ void vpPolygon3D::getMinMaxRoi(const std::vector<vpImagePoint> &iroi, int &i_min
 {
   // i_min_d = std::numeric_limits<double>::max(); // create an error under
   // Windows. To fix it we have to add #undef max
-  double i_min_d = (double)INT_MAX;
+  double i_min_d = static_cast<double>(INT_MAX);
   double i_max_d = 0;
-  double j_min_d = (double)INT_MAX;
+  double j_min_d = static_cast<double>(INT_MAX);
   double j_max_d = 0;
 
   for (unsigned int i = 0; i < iroi.size(); i += 1) {

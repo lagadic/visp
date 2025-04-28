@@ -70,6 +70,7 @@ std::string vpStatisticalTestShewhart::vpWecoRulesAlarmToString(const vpStatisti
   case NONE_WECO:
     name = "No alarm";
     break;
+  case COUNT_WECO:
   default:
     name = "Unknown WECO alarm";
   }

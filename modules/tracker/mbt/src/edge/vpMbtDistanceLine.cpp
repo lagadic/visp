@@ -229,7 +229,7 @@ void vpMbtDistanceLine::setTracked(const std::string &polyname, const bool &trac
 {
   unsigned int ind = 0;
   for (std::list<int>::const_iterator itpoly = Lindex_polygon.begin(); itpoly != Lindex_polygon.end(); ++itpoly) {
-    if ((*hiddenface)[(unsigned)(*itpoly)]->getName() == polyname) {
+    if ((*hiddenface)[static_cast<unsigned int>(*itpoly)]->getName() == polyname) {
       Lindex_polygon_tracked[ind] = track;
     }
     ind++;
@@ -264,7 +264,7 @@ void vpMbtDistanceLine::updateTracked()
   unsigned int ind = 0;
   isTrackedLineWithVisibility = false;
   for (std::list<int>::const_iterator itpoly = Lindex_polygon.begin(); itpoly != Lindex_polygon.end(); ++itpoly) {
-    if ((*hiddenface)[(unsigned)(*itpoly)]->isVisible() && Lindex_polygon_tracked[ind]) {
+    if ((*hiddenface)[static_cast<unsigned int>(*itpoly)]->isVisible() && Lindex_polygon_tracked[ind]) {
       isTrackedLineWithVisibility = true;
       break;
     }
@@ -920,8 +920,8 @@ bool vpMbtDistanceLine::closeToImageBorder(const vpImage<unsigned char> &I, cons
           return true;
         }
 
-        if ((static_cast<unsigned int>(i_) >(I.getHeight() - threshold)) || static_cast<unsigned int>(i_) < threshold ||
-            (static_cast<unsigned int>(j_) >(I.getWidth() - threshold)) || static_cast<unsigned int>(j_) < threshold) {
+        if ((static_cast<unsigned int>(i_) > (I.getHeight() - threshold)) || static_cast<unsigned int>(i_) < threshold ||
+            (static_cast<unsigned int>(j_) > (I.getWidth() - threshold)) || static_cast<unsigned int>(j_) < threshold) {
           return true;
         }
       }

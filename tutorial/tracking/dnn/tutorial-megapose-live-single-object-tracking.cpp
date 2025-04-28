@@ -39,9 +39,9 @@ using namespace VISP_NAMESPACE_NAME;
  */
 vpColor interpolate(const vpColor &low, const vpColor &high, const float f)
 {
-  const float r = ((float)high.R - (float)low.R) * f;
-  const float g = ((float)high.G - (float)low.G) * f;
-  const float b = ((float)high.B - (float)low.B) * f;
+  const float r = (static_cast<float>(high.R) - static_cast<float>(low.R)) * f;
+  const float g = (static_cast<float>(high.G) - static_cast<float>(low.G)) * f;
+  const float b = (static_cast<float>(high.B) - static_cast<float>(low.B)) * f;
   return vpColor((unsigned char)r, (unsigned char)g, (unsigned char)b);
 }
 

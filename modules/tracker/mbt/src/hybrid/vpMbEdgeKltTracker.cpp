@@ -776,7 +776,7 @@ void vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char> &I, const unsig
 
     unsigned int cpt = 0;
     while (cpt < (nbrow + 2 * nbInfos)) {
-      if (cpt < (unsigned)nbrow) {
+      if (cpt < static_cast<unsigned int>(nbrow)) {
         m_w_hybrid[cpt] = ((m_w_mbt[cpt] * factor[cpt]) * factorMBT);
       }
       else {
@@ -824,7 +824,7 @@ void vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char> &I, const unsig
 
       cpt = 0;
       while (cpt < (nbrow + 2 * nbInfos)) {
-        if (cpt < (unsigned)nbrow) {
+        if (cpt < static_cast<unsigned int>(nbrow)) {
           m_w_hybrid[cpt] = ((m_w_mbt[cpt] * factor[cpt]) * factorMBT);
         }
         else {

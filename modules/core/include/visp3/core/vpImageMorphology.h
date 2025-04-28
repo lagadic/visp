@@ -366,8 +366,8 @@ void vpImageMorphology::imageOperation(vpImage<T> &I, const T &null_value, vpPix
 {
   const int width_in = static_cast<int>(I.getWidth());
   const int height_in = static_cast<int>(I.getHeight());
-  const int width_dilat = width_in + 2;
-  const int height_dilat = height_in + 2;
+  const unsigned int width_dilat = I.getWidth() + 2;
+  const unsigned int height_dilat = I.getHeight() + 2;
   vpImage<T> J(height_dilat, width_dilat, null_value);
 
   // Copy I to J and add border

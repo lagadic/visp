@@ -234,7 +234,7 @@ public:
           unsigned char *dst_8 = (unsigned char *)Ximage->data + i * bytes_per_line;
           unsigned short *dst_16 = (unsigned short *)dst_8;
           for (unsigned int j = 0; j < width; j++) {
-            *(dst_16 + j) = (unsigned short)colortable[I[i][j]];
+            *(dst_16 + j) = static_cast<unsigned short>()colortable[I[i][j]];
           }
         }
       }
@@ -243,7 +243,7 @@ public:
           unsigned char *dst_8 = (unsigned char *)Ximage->data + i * bytes_per_line;
           unsigned short *dst_16 = (unsigned short *)dst_8;
           for (unsigned int j = 0; j < width; j++) {
-            *(dst_16 + j) = (unsigned short)colortable[I[i * scale][j * scale]];
+            *(dst_16 + j) = static_cast<unsigned short>(colortable[I[i * scale][j * scale]]);
           }
         }
       }
@@ -519,7 +519,7 @@ public:
           unsigned char *dst_8 = (unsigned char *)Ximage->data + i * bytes_per_line;
           unsigned short *dst_16 = (unsigned short *)dst_8;
           for (unsigned int j = static_cast<unsigned int>(iP.get_j()); j < static_cast<unsigned int>(iP.get_j() + w); j++) {
-            *(dst_16 + j) = (unsigned short)colortable[I[i][j]];
+            *(dst_16 + j) = static_cast<unsigned short>(colortable[I[i][j]]);
           }
         }
 
@@ -541,7 +541,7 @@ public:
           unsigned char *dst_8 = (unsigned char *)Ximage->data + i * bytes_per_line;
           unsigned short *dst_16 = (unsigned short *)dst_8;
           for (unsigned int j = j_min_; j < j_max_; j++) {
-            *(dst_16 + j) = (unsigned short)colortable[I[i * scale][j * scale]];
+            *(dst_16 + j) = static_cast<unsigned short>(colortable[I[i * scale][j * scale]]);
           }
         }
 

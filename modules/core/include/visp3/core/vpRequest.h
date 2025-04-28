@@ -132,7 +132,10 @@ protected:
 
 public:
   vpRequest();
-  vpRequest(const vpRequest &req) : request_id(req.request_id), listOfParams(req.listOfParams) { }
+  vpRequest(const vpRequest &req)
+  {
+    *this = req;
+  }
   virtual ~vpRequest() { }
 
   vpRequest &operator=(const vpRequest &req)

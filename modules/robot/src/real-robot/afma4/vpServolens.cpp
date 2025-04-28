@@ -600,8 +600,8 @@ vpCameraParameters vpServolens::getCameraParameters(vpImage<unsigned char> &I) c
   // constructeur) pour des tailles d'images CCIR (768x576), donc avec scale
   // = 1.
   double focale = zoom * 1.0e-5;                       // Transformation en metres
-  px = focale / (double)(subsample_factor * pix_size); // Taille des pixels en metres.
-  py = focale / (double)(subsample_factor * pix_size); // Taille des pixels en metres.
+  px = focale / static_cast<double>(subsample_factor * pix_size); // Taille des pixels en metres.
+  py = focale / static_cast<double>(subsample_factor * pix_size); // Taille des pixels en metres.
   u0 = I.getWidth() / 2.;
   v0 = I.getHeight() / 2.;
   cam.initPersProjWithoutDistortion(px, py, u0, v0);

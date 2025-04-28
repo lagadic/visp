@@ -1831,7 +1831,7 @@ int vpSimulatorAfma6::isInJointLimit()
   }
 
   if (artNumb != 0)
-    std::cout << "\nWarning: Velocity control stopped: axis " << fabs((float)artNumb) << " on joint limit!"
+    std::cout << "\nWarning: Velocity control stopped: axis " << fabs(static_cast<float>(artNumb)) << " on joint limit!"
     << std::endl;
 
   return artNumb;

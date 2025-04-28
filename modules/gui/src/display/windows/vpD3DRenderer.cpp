@@ -231,7 +231,7 @@ bool vpD3DRenderer::init(HWND hwnd, unsigned int width, unsigned int height)
   pd3dDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
 
   // inits the direct3D view (for 2D rendering)
-  initView((float)m_rwidth, (float)m_rheight);
+  initView(static_cast<float>(m_rwidth), static_cast<float>(m_rheight));
 
   // computes texture size (needs to be a power-of-2 large square)
   textWidth = supPowerOf2((m_rwidth > m_rheight) ? m_rwidth : m_rheight);

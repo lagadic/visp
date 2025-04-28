@@ -873,7 +873,7 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, std::vecto
       auto pixels_distance = m_depthScale * p_depth_frame[depth_pixel_index];
 
       float points[3];
-      const float pixel[] = { (float)j, (float)i };
+      const float pixel[] = { static_cast<float>(j), static_cast<float>(i) };
       rs2_deproject_pixel_to_point(points, &depth_intrinsics, pixel, pixels_distance);
 
       if (pixels_distance > m_max_Z)
@@ -926,7 +926,7 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, pcl::Point
       auto pixels_distance = m_depthScale * p_depth_frame[depth_pixel_index];
 
       float points[3];
-      const float pixel[] = { (float)j, (float)i };
+      const float pixel[] = { static_cast<float>(j), static_cast<float>(i) };
       rs2_deproject_pixel_to_point(points, &depth_intrinsics, pixel, pixels_distance);
 
       if (pixels_distance > m_max_Z)
@@ -1026,7 +1026,7 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, const rs2:
       auto pixels_distance = m_depthScale * p_depth_frame[depth_pixel_index];
 
       float depth_point[3];
-      const float pixel[] = { (float)j, (float)i };
+      const float pixel[] = { static_cast<float>(j), static_cast<float>(i) };
       rs2_deproject_pixel_to_point(depth_point, &depth_intrinsics, pixel, pixels_distance);
 
       if (pixels_distance > m_max_Z) {

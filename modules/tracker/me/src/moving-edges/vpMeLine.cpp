@@ -82,9 +82,9 @@ vpMeLine::vpMeLine()
   : m_rho(0.), m_theta(0.), m_delta(0.), m_sign(1), m_a(0.), m_b(0.), m_c(0.)
 { }
 
-vpMeLine::vpMeLine(const vpMeLine &meline)
+vpMeLine::vpMeLine(const vpMeLine &meline) : vpMeTracker(meline)
 {
-  *this = meline
+  *this = meline;
 }
 
 vpMeLine::~vpMeLine()
@@ -92,7 +92,7 @@ vpMeLine::~vpMeLine()
   m_meList.clear();
 }
 
-vpMeLine operator=(const vpMeLine &meline)
+vpMeLine &vpMeLine::operator=(const vpMeLine &meline)
 {
   m_rho = meline.m_rho;
   m_theta = meline.m_theta;

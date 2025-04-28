@@ -171,8 +171,10 @@ private:
 
 public:
   vpServer();
+  vpServer(const vpServer &server);
   VP_EXPLICIT vpServer(const int &port);
   vpServer(const std::string &adress_serv, const int &port_serv);
+  vpServer &operator=(const vpServer &server);
 
   virtual ~vpServer() VP_OVERRIDE;
 

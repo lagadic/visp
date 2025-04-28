@@ -166,8 +166,8 @@ void encode(std::vector<uint8_t> &buffer, const vpImage<uint16_t> &object)
 template<>
 void encode(std::vector<uint8_t> &buffer, const vpCameraParameters &object)
 {
-  encode(buffer, (float)object.get_px(), (float)object.get_py(),
-    (float)object.get_u0(), (float)object.get_v0());
+  encode(buffer, static_cast<float>(object.get_px()), static_cast<float>(object.get_py()),
+        static_cast<float>(object.get_u0()), static_cast<float>(object.get_v0()));
 }
 
 template<>
@@ -177,7 +177,7 @@ void encode(std::vector<uint8_t> &buffer, const vpHomogeneousMatrix &object)
   array.reserve(16);
   const double *const data = object.data;
   for (unsigned i = 0; i < 16; ++i) {
-    array.push_back((float)data[i]);
+    array.push_back(static_cast<float>(data[i]));
   }
   encode(buffer, array);
 }

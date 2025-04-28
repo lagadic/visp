@@ -54,8 +54,6 @@ BEGIN_VISP_NAMESPACE
 */
 vpMatrix vpMatrix::computeCovarianceMatrix(const vpMatrix &A, const vpColVector &x, const vpColVector &b)
 {
-  //  double denom = ((double)(A.getRows()) - (double)(A.getCols())); // To
-  //  consider OLS Estimate for sigma
   double denom = (static_cast<double>(A.getRows())); // To consider MLE Estimate for sigma
 
   if (denom <= std::numeric_limits<double>::epsilon()) {
@@ -63,8 +61,6 @@ vpMatrix vpMatrix::computeCovarianceMatrix(const vpMatrix &A, const vpColVector 
                             "Impossible to compute covariance matrix: not enough data");
   }
 
-  //  double sigma2 = ( ((b.t())*b) - ( (b.t())*A*x ) ); // Should be
-  //  equivalent to line bellow.
   double sigma2 = (b - (A * x)).t() * (b - (A * x));
 
   sigma2 /= denom;

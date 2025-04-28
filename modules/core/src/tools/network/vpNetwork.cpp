@@ -68,6 +68,40 @@ vpNetwork::vpNetwork()
 #endif
 }
 
+vpNetwork::vpNetwork(const vpNetwork &network)
+{
+  *this = network;
+}
+
+vpNetwork &vpNetwork::operator=(const vpNetwork &network)
+{
+  emitter = network.emitter;
+  receptor_list = network.receptor_list;
+  readFileDescriptor = network.readFileDescriptor;
+  socketMax = network.socketMax;
+  request_list = network.request_list;
+  max_size_message = network.max_size_message;
+  separator = network.separator;
+  beginning = network.beginning;
+  end = network.end;
+  param_sep = network.param_sep;
+  currentMessageReceived = network.currentMessageReceived;
+  tv = network.tv;
+  tv_sec = network.tv_sec;
+  tv_usec = network.tv_usec;
+  verboseMode = network.verboseMode;
+
+#if defined(_WIN32)
+// Enable the sockets to be used
+// Note that: if we were using "winsock.h" instead of "winsock2.h" we would
+// had to use:  WSAStartup(MAKEWORD(1,0), &WSAData);
+  WSADATA WSAData;
+  WSAStartup(MAKEWORD(2, 0), &WSAData);
+#endif
+
+  return *this;
+}
+
 vpNetwork::~vpNetwork()
 {
 #if defined(_WIN32)
@@ -156,7 +190,7 @@ int vpNetwork::getReceptorIndex(const char *name)
   std::string ip = inet_ntoa(*(in_addr *)server->h_addr);
 
   for (int i = 0; i < static_cast<int>(receptor_list.size()); i++) {
-    if (receptor_list[(unsigned)i].receptorIP == ip)
+    if (receptor_list[static_cast<unsigned int>(i)].receptorIP == ip)
       return i;
   }
 
@@ -196,7 +230,7 @@ int vpNetwork::sendRequestTo(vpRequest &req, const unsigned int &dest)
 {
   int size = static_cast<int>(receptor_list.size());
   int sizeMinusOne = static_cast<int>(receptor_list.size() - 1);
-  if (size == 0 || dest > (unsigned)sizeMinusOne) {
+  if (size == 0 || dest > static_cast<unsigned int>(sizeMinusOne)) {
     if (verboseMode)
       vpTRACE("Cannot Send Request! Bad Index");
     return 0;
@@ -383,7 +417,7 @@ std::vector<int> vpNetwork::receiveAndDecodeRequest()
   std::vector<int> res = receiveRequest();
   for (unsigned int i = 0; i < res.size(); i++)
     if (res[i] != -1)
-      request_list[(unsigned)res[i]]->decode();
+      request_list[static_cast<unsigned int>(res[i])]->decode();
 
   return res;
 }
@@ -410,7 +444,7 @@ std::vector<int> vpNetwork::receiveAndDecodeRequestFrom(const unsigned int &rece
   std::vector<int> res = receiveRequestFrom(receptorEmitting);
   for (unsigned int i = 0; i < res.size(); i++) {
     if (res[i] != -1)
-      request_list[(unsigned)res[i]]->decode();
+      request_list[static_cast<unsigned int>(res[i])]->decode();
   }
 
   return res;
@@ -439,7 +473,7 @@ int vpNetwork::receiveAndDecodeRequestOnce()
 {
   int res = receiveRequestOnce();
   if (res != -1)
-    request_list[(unsigned)res]->decode();
+    request_list[static_cast<unsigned int>(res)]->decode();
 
   return res;
 }
@@ -469,7 +503,7 @@ int vpNetwork::receiveAndDecodeRequestOnceFrom(const unsigned int &receptorEmitt
 {
   int res = receiveRequestOnceFrom(receptorEmitting);
   if (res != -1)
-    request_list[(unsigned)res]->decode();
+    request_list[static_cast<unsigned int>(res)]->decode();
 
   return res;
 }
@@ -534,7 +568,7 @@ int vpNetwork::privHandleFirstRequest()
   if (indEnd < indStart) {
     if (verboseMode)
       vpTRACE("Incorrect message");
-    currentMessageReceived.erase((unsigned)indStart, indEnd + end.size());
+    currentMessageReceived.erase(static_cast<unsigned int>(indStart), indEnd + end.size());
     return -1;
   }
 
@@ -542,19 +576,12 @@ int vpNetwork::privHandleFirstRequest()
   if (indStart2 != std::string::npos && indStart2 < indEnd) {
     if (verboseMode)
       vpTRACE("Incorrect message");
-    currentMessageReceived.erase((unsigned)indStart, (unsigned)indStart2);
+    currentMessageReceived.erase(static_cast<unsigned int>(indStart), static_cast<unsigned int>(indStart2));
     return -1;
   }
 
   size_t deb = indStart + beginning.size();
-  std::string id = currentMessageReceived.substr((unsigned)deb, indSep - deb);
-
-  // deb = indSep+separator.size();
-  // std::string params = currentMessageReceived.substr((unsigned)deb,
-  // (unsigned)(indEnd - deb));
-
-  //   std::cout << "Handling : " << currentMessageReceived.substr(indStart,
-  //   indEnd+end.size() - indStart) << std::endl;
+  std::string id = currentMessageReceived.substr(static_cast<unsigned int>(deb), indSep - deb);
 
   int indRequest = 0;
   bool hasBeenFound = false;
@@ -579,14 +606,14 @@ int vpNetwork::privHandleFirstRequest()
 
   std::string param;
   while (indEndParam != std::string::npos || indEndParam < indEnd) {
-    param = currentMessageReceived.substr((unsigned)indDebParam, (unsigned)(indEndParam - indDebParam));
-    request_list[(unsigned)indRequest]->addParameter(param);
+    param = currentMessageReceived.substr(static_cast<unsigned int>(indDebParam), static_cast<unsigned int>(indEndParam - indDebParam));
+    request_list[static_cast<unsigned int>(indRequest)]->addParameter(param);
     indDebParam = indEndParam + param_sep.size();
     indEndParam = currentMessageReceived.find(param_sep, indDebParam);
   }
 
-  param = currentMessageReceived.substr((unsigned)indDebParam, indEnd - indDebParam);
-  request_list[(unsigned)indRequest]->addParameter(param);
+  param = currentMessageReceived.substr(static_cast<unsigned int>(indDebParam), indEnd - indDebParam);
+  request_list[static_cast<unsigned int>(indRequest)]->addParameter(param);
   currentMessageReceived.erase(indStart, indEnd + end.size());
 
   return indRequest;
@@ -674,7 +701,7 @@ int vpNetwork::privReceiveRequestOnce()
     if (i == 0)
       socketMax = receptor_list[i].socketFileDescriptorReceptor;
 
-    FD_SET((unsigned)receptor_list[i].socketFileDescriptorReceptor, &readFileDescriptor);
+    FD_SET(static_cast<unsigned int>(receptor_list[i].socketFileDescriptorReceptor), &readFileDescriptor);
     if (socketMax < receptor_list[i].socketFileDescriptorReceptor)
       socketMax = receptor_list[i].socketFileDescriptorReceptor;
   }
@@ -745,7 +772,7 @@ int vpNetwork::privReceiveRequestOnceFrom(const unsigned int &receptorEmitting)
 {
   int size = static_cast<int>(receptor_list.size());
   int sizeMinusOne = static_cast<int>(receptor_list.size()) - 1;
-  if (size == 0 || receptorEmitting > (unsigned)sizeMinusOne) {
+  if (size == 0 || receptorEmitting > static_cast<unsigned int>(sizeMinusOne)) {
     if (verboseMode)
       vpTRACE("No receptor at the specified index!");
     return -1;

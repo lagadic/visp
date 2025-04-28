@@ -246,7 +246,7 @@ bool vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable, i
         else {
           char *endPtr;
 
-          *(((float *)infoPtr->dst) + i) = (float)strtod(argv[srcIndex], &endPtr); // Here we use strtod
+          *(((float *)infoPtr->dst) + i) = static_cast<float>(strtod(argv[srcIndex], &endPtr)); // Here we use strtod
           if ((endPtr == argv[srcIndex]) || (*endPtr != 0)) {
             FPRINTF(stderr, "expected floating-point argument for \"%s\" but got\"%s\"\n", infoPtr->key,
                     argv[srcIndex]);

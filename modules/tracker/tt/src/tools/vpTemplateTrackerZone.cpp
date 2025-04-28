@@ -180,7 +180,7 @@ void vpTemplateTrackerZone::initFromPoints(const vpImage<unsigned char> &I, cons
       // Init Delaunay
       cv::Subdiv2D subdiv(cv::Rect(0, 0, static_cast<int>(I.getWidth()), static_cast<int>(I.getHeight())));
       for (size_t i = 0; i < vip.size(); i++) {
-        cv::Point2f fp((float)vip[i].get_u(), (float)vip[i].get_v());
+        cv::Point2f fp(static_cast<float>(vip[i].get_u()), static_cast<float>(vip[i].get_v()));
         // std::cout << "Click point: " << vip[i] << std::endl;
         subdiv.insert(fp);
       }

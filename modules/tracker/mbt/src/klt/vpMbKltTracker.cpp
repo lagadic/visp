@@ -524,7 +524,7 @@ void vpMbKltTracker::setPose(const vpImage<unsigned char> *const I, const vpImag
           cdp[1] = iter->second.get_i();
           cdp[2] = 1.0;
 
-          cv::Point2f p((float)cdp[0], (float)cdp[1]);
+          cv::Point2f p(static_cast<float>(cdp[0]), static_cast<float>(cdp[1]));
           init_pts.push_back(p);
 #ifdef TARGET_OS_IPHONE
           init_ids.push_back((size_t)(kltpoly->getCurrentPointsInd())[static_cast<int>(iter->first)]);
@@ -544,7 +544,7 @@ void vpMbKltTracker::setPose(const vpImage<unsigned char> *const I, const vpImag
           cdp[1] = (cdp[0] * cdGc[1][0] + cdp[1] * cdGc[1][1] + cdGc[1][2]) / p_mu_t_2;
 
           // Set value to the KLT tracker
-          cv::Point2f p_guess((float)cdp[0], (float)cdp[1]);
+          cv::Point2f p_guess(static_cast<float>(cdp[0]), static_cast<float>(cdp[1]));
           guess_pts.push_back(p_guess);
         }
       }

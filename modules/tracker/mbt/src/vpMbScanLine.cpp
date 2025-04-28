@@ -69,7 +69,7 @@ vpMbScanLine::vpMbScanLine()
 #endif
 }
 
-vpMbScanLine(const vpMbScanLine &scanline)
+vpMbScanLine::vpMbScanLine(const vpMbScanLine &scanline)
 {
   *this = scanline;
 }
@@ -85,7 +85,7 @@ vpMbScanLine::~vpMbScanLine()
 }
 
 
-vpMbScanLine operator=(const vpMbScanLine &scanline)
+vpMbScanLine &vpMbScanLine::operator=(const vpMbScanLine &scanline)
 {
   w = scanline.w;
   h = scanline.h;

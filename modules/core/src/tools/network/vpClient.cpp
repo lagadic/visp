@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,8 +96,8 @@ bool vpClient::connectToHostname(const std::string &hostname, const unsigned int
 
   memset((char *)&serv.receptorAddress, '\0', sizeof(serv.receptorAddress));
   serv.receptorAddress.sin_family = AF_INET;
-  memmove((char *)&serv.receptorAddress.sin_addr.s_addr, (char *)server->h_addr, (unsigned)server->h_length);
-  serv.receptorAddress.sin_port = htons((unsigned short)port_serv);
+  memmove((char *)&serv.receptorAddress.sin_addr.s_addr, (char *)server->h_addr, static_cast<unsigned int>(server->h_length));
+  serv.receptorAddress.sin_port = htons(static_cast<unsigned short>(port_serv));
   serv.receptorIP = inet_ntoa(*(in_addr *)server->h_addr);
 
   return connectServer(serv);
@@ -131,7 +131,7 @@ bool vpClient::connectToIP(const std::string &ip, const unsigned int &port_serv)
   memset((char *)&serv.receptorAddress, '\0', sizeof(serv.receptorAddress));
   serv.receptorAddress.sin_family = AF_INET;
   serv.receptorAddress.sin_addr.s_addr = inet_addr(ip.c_str());
-  serv.receptorAddress.sin_port = htons((unsigned short)port_serv);
+  serv.receptorAddress.sin_port = htons(static_cast<unsigned short>(port_serv));
 
   return connectServer(serv);
   }

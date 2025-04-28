@@ -170,7 +170,7 @@ public:
   /*!
    * Copy operator.
    */
-  vpMeLine operator=(const vpMeLine &meline);
+  vpMeLine &operator=(const vpMeLine &meline);
 
   /*!
    * Display me line.

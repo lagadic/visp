@@ -874,7 +874,7 @@ void vpDirectShowGrabberImpl::getFormat(unsigned int &width, unsigned int &heigh
   VIDEOINFOHEADER *pVih = (VIDEOINFOHEADER *)sgCB.connectedMediaType.pbFormat;
   width = static_cast<unsigned int>(pVih->bmiHeader.biWidth);
   height = static_cast<unsigned int>(pVih->bmiHeader.biHeight);
-  framerate = (double)(10000000 / pVih->AvgTimePerFrame);
+  framerate = static_cast<double>(10000000 / pVih->AvgTimePerFrame);
 }
 /*!
         Get the available capture formats
@@ -959,21 +959,6 @@ bool vpDirectShowGrabberImpl::getStreamCapabilities()
         std::cout << "framerate range: [" << 10000000 / scc.MaxFrameInterval << "," << 10000000 / scc.MinFrameInterval
           << "]" << std::endl
           << std::endl;
-
-/*
-                                long frameRateNum;
-                                LONGLONG *frameRateList;
-                                if(FAILED(hr =
-   pVideoControl->GetFrameRateList(pCapSourcePin,iFormat,dimensions,
-   //inputs &frameRateNum, &frameRateList))) //outputs return false;
-                                for(int i=0; i<(int)frameRateNum ;
-   i++)
-                                {
-                                        std::cout<<(float)(10000000/frameRateList[i])<<"
-   fps"<<std::endl;
-                                }
-                                std::cout<<std::endl;
-*/
       }
       // Delete the media type when you are done.
       MyDeleteMediaType(pmtConfig);

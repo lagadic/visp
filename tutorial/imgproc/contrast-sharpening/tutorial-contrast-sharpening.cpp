@@ -33,22 +33,22 @@ int main(int argc, const char **argv)
 
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--input" && i + 1 < argc) {
-      input_filename = std::string(argv[i + 1]);
+      input_filename = std::string(argv[++i]);
     }
     else if (std::string(argv[i]) == "--blockRadius" && i + 1 < argc) {
-      blockRadius = atoi(argv[i + 1]);
+      blockRadius = atoi(argv[++i]);
     }
     else if (std::string(argv[i]) == "--bins" && i + 1 < argc) {
-      bins = atoi(argv[i + 1]);
+      bins = atoi(argv[++i]);
     }
     else if (std::string(argv[i]) == "--slope" && i + 1 < argc) {
-      slope = (float)atof(argv[i + 1]);
+      slope = static_cast<float>(atof(argv[++i]));
     }
     else if (std::string(argv[i]) == "--sigma" && i + 1 < argc) {
-      sigma = (float)atof(argv[i + 1]);
+      sigma = static_cast<float>(atof(argv[++i]));
     }
     else if (std::string(argv[i]) == "--weight" && i + 1 < argc) {
-      weight = atof(argv[i + 1]);
+      weight = atof(argv[++i]);
     }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "Usage: " << argv[0]

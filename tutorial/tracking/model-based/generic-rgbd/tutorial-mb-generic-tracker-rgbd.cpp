@@ -109,7 +109,7 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<vpR
     for (unsigned int j = 0; j < width; j++) {
       float scaled_depth = I_depth_raw[i][j] * depth_scale;
       float point[3];
-      float pixel[2] = { (float)j, (float)i };
+      float pixel[2] = { static_cast<float>(j), static_cast<float>(i) };
       rs_deproject_pixel_to_point(point, depth_intrinsic, pixel, scaled_depth);
       pointcloud->points[(size_t)(i * width + j)].x = point[0];
       pointcloud->points[(size_t)(i * width + j)].y = point[1];

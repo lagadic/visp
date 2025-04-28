@@ -192,7 +192,7 @@ void vpPanda3DRGBRenderer::addNodeToScene(const NodePath &object)
   NodePath objectInScene = object.copy_to(m_renderRoot);
   objectInScene.set_name(object.get_name());
   TextureCollection txs = objectInScene.find_all_textures();
-  bool hasTexture = (static_cast<unsigned int>(txs.size()) > 0);
+  bool hasTexture = static_cast<unsigned int>(txs.size()) > 0);
   // gltf2bam and other tools may store some fallback textures. We shouldnt use them as they whiten the result
   if (hasTexture) {
     std::vector<std::string> fallbackNames { "pbr-fallback", "normal-fallback", "emission-fallback" };
@@ -200,7 +200,7 @@ void vpPanda3DRGBRenderer::addNodeToScene(const NodePath &object)
     for (const std::string &fallbackName: fallbackNames) {
       numMatches += static_cast<int>(txs.find_texture(fallbackName) != nullptr);
     }
-    hasTexture = (static_cast<unsigned int>(txs.size()) > numMatches); // Some textures are not fallback textures
+    hasTexture = static_cast<unsigned int>(txs.size()) > numMatches); // Some textures are not fallback textures
   }
 
   PT(Shader) shader = Shader::make(Shader::ShaderLanguage::SL_GLSL,
