@@ -51,7 +51,19 @@
 #define _WIN32_WINNT _WIN32_WINNT_VISTA // 0x0600
 #endif
 #endif
+
+#if defined(__clang__)
+// Mute warning : non-portable path to file '<WS2tcpip.h>'; specified path differs in case from file name on disk [-Wnonportable-system-include-path]
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wnonportable-system-include-path"
+#endif
+
 #include <Ws2tcpip.h>
+
+#if defined(__clang__)
+#  pragma clang diagnostic pop
+#endif
+
 #endif
 
 #include <visp3/core/vpUDPClient.h>
