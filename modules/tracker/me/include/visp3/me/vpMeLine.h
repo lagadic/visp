@@ -485,7 +485,7 @@ public:
    *
    * \param unused : This parameter is unused.
    */
-  inline void setRhoSignFromIntensity(bool unused)
+  vp_deprecated inline void setRhoSignFromIntensity(bool unused)
   {
     (void)unused;
   }
