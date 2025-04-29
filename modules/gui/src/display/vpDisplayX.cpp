@@ -234,7 +234,7 @@ public:
           unsigned char *dst_8 = (unsigned char *)Ximage->data + i * bytes_per_line;
           unsigned short *dst_16 = (unsigned short *)dst_8;
           for (unsigned int j = 0; j < width; j++) {
-            *(dst_16 + j) = static_cast<unsigned short>()colortable[I[i][j]];
+            *(dst_16 + j) = static_cast<unsigned short>(colortable[I[i][j]]);
           }
         }
       }
