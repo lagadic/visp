@@ -72,7 +72,8 @@ vpPlot::vpPlot() : I(), display(nullptr), graphNbr(1), graphList(nullptr), marge
   \param graph_nbr : The number of graph in the window.
   \param height : Height of the window.
   \param width : Width of the window.
-  \param x,y : The window is set at position x,y (column index, row index).
+  \param x : The window top left corner x position (column index).
+  \param y : The window top left corner y position (row index).
   \param title : Window title.
 */
 vpPlot::vpPlot(unsigned int graph_nbr, unsigned int height, unsigned int width, int x, int y, const std::string &title)
@@ -90,7 +91,8 @@ vpPlot::vpPlot(unsigned int graph_nbr, unsigned int height, unsigned int width, 
   \param graph_nbr : The number of graph in the window.
   \param height : Height of the window.
   \param width : Width of the window.
-  \param x,y : The window is set at position x,y (column index, row index).
+  \param x : The window top left corner x position (column index).
+  \param y : The window top left corner y position (row index).
   \param title : Window title.
 */
 void vpPlot::init(unsigned int graph_nbr, unsigned int height, unsigned int width, int x, int y,
@@ -142,7 +144,7 @@ vpPlot::~vpPlot()
   \exception vpException::dimensionError if the parameter exceed the possible
   number of graph (4).
 
-  \param graphNbr : The number of graph in the window.
+  \param nbGraph : The number of graph in the window.
 */
 void vpPlot::initNbGraph(unsigned int nbGraph)
 {

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * 3D point visual feature.
- *
-*****************************************************************************/
+ */
 
 #include <visp3/visual_features/vpBasicFeature.h>
 #include <visp3/visual_features/vpFeaturePoint3D.h>
@@ -133,8 +131,9 @@ void vpFeaturePoint3D::set_Z(double Z)
 /*!
   Initialize the 3D point coordinates.
 
-  \param X,Y,Z : \f$(X,Y,Z)\f$ coordinates in the camera frame of the
-  3D point visual feature.
+  \param X : \f$ X \f$ coordinate in the camera frame of the 3D point visual feature.
+  \param Y : \f$ Y \f$ coordinate in the camera frame of the 3D point visual feature.
+  \param Z : \f$ Z \f$ coordinate in the camera frame of the 3D point visual feature.
 
   \sa set_X(), set_Y(), set_Z()
 */
@@ -431,9 +430,11 @@ vpFeaturePoint3D &vpFeaturePoint3D::buildFrom(const vpPoint &p)
 /*!
 
   Build a 3D point visual feature from the camera frame coordinates
-  \f$(X,Y,Z)\f$ of a point.
+  \f$ (X,Y,Z) \f$ of a point.
 
-  \param X,Y,Z : Camera frame coordinates \f$(X,Y,Z)\f$ of a 3D point.
+  \param X : \f$ X \f$ coordinate of a 3D point in the camera frame.
+  \param Y : \f$ Y \f$ coordinate of a 3D point in the camera frame.
+  \param Z : \f$ Z \f$ coordinate of a 3D point in the camera frame.
 
   \exception vpFeatureException::badInitializationError: If the depth
   (\f$Z\f$ coordinate) is negative. That means that the 3D point is

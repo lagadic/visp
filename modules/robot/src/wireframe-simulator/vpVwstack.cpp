@@ -198,12 +198,12 @@ void add_vwstack(const char *path, ...)
   argv = va_arg(ap, char *);
   if (strcmp(argv, "cop") == 0) {
     /* initialise le centre de projection  */
-    SET_COORD3(sp->cop, (float)va_arg(ap, double), (float)va_arg(ap, double), (float)va_arg(ap, double));
+    SET_COORD3(sp->cop, static_cast<float>(va_arg(ap, double)), static_cast<float>(va_arg(ap, double)), static_cast<float>(va_arg(ap, double)));
   }
   else if (strcmp(argv, "depth") == 0) {
  /* initialise les distances des plans de decoupage  */
-    sp->depth.front = (float)va_arg(ap, double);
-    sp->depth.back = (float)va_arg(ap, double);
+    sp->depth.front = static_cast<float>(va_arg(ap, double));
+    sp->depth.back = static_cast<float>(va_arg(ap, double));
   }
   else if (strcmp(argv, "type") == 0) {
  /* initialise le type de projection  */
@@ -211,9 +211,9 @@ void add_vwstack(const char *path, ...)
   }
   else if (strcmp(argv, "vpn") == 0) {
  /* initialise le vecteur normal au plan  */
-    float x = (float)va_arg(ap, double);
-    float y = (float)va_arg(ap, double);
-    float z = (float)va_arg(ap, double);
+    float x = static_cast<float>(va_arg(ap, double));
+    float y = static_cast<float>(va_arg(ap, double));
+    float z = static_cast<float>(va_arg(ap, double));
 
     // if (x == 0 && y == 0 && z == 0)
     if (std::fabs(x) <= std::numeric_limits<double>::epsilon() &&
@@ -228,13 +228,13 @@ void add_vwstack(const char *path, ...)
   }
   else if (strcmp(argv, "vrp") == 0) {
  /* initialise le vecteur de reference  */
-    SET_COORD3(sp->vrp, (float)va_arg(ap, double), (float)va_arg(ap, double), (float)va_arg(ap, double));
+    SET_COORD3(sp->vrp, static_cast<float>(va_arg(ap, double)), static_cast<float>(va_arg(ap, double)), static_cast<float>(va_arg(ap, double)));
   }
   else if (strcmp(argv, "vup") == 0) {
  /* initialise le vecteur haut du plan  */
-    float x = (float)va_arg(ap, double);
-    float y = (float)va_arg(ap, double);
-    float z = (float)va_arg(ap, double);
+    float x = static_cast<float>(va_arg(ap, double));
+    float y = static_cast<float>(va_arg(ap, double));
+    float z = static_cast<float>(va_arg(ap, double));
 
     // if (x == 0 && y == 0 && z == 0)
     if (std::fabs(x) <= std::numeric_limits<double>::epsilon() &&
@@ -249,10 +249,10 @@ void add_vwstack(const char *path, ...)
   }
   else if (strcmp(argv, "window") == 0) {
  /* initialise la fenetre de projection  */
-    sp->vwd.umin = (float)va_arg(ap, double);
-    sp->vwd.umax = (float)va_arg(ap, double);
-    sp->vwd.vmin = (float)va_arg(ap, double);
-    sp->vwd.vmax = (float)va_arg(ap, double);
+    sp->vwd.umin = static_cast<float>(va_arg(ap, double));
+    sp->vwd.umax = static_cast<float>(va_arg(ap, double));
+    sp->vwd.vmin = static_cast<float>(va_arg(ap, double));
+    sp->vwd.vmax = static_cast<float>(va_arg(ap, double));
   }
   else {
     static char proc_name[] = "add_vwstack";

@@ -2259,23 +2259,23 @@ private:
 
   inline size_t myKeypointHash(const cv::KeyPoint &kp)
   {
-    size_t _Val = 2166136261U, scale = 16777619U;
+    size_t _val = 2166136261U, scale = 16777619U;
     Cv32suf u;
     u.f = kp.pt.x;
-    _Val = (scale * _Val) ^ u.u;
+    _val = (scale * _val) ^ u.u;
     u.f = kp.pt.y;
-    _Val = (scale * _Val) ^ u.u;
+    _val = (scale * _val) ^ u.u;
     u.f = kp.size;
-    _Val = (scale * _Val) ^ u.u;
+    _val = (scale * _val) ^ u.u;
     // As the keypoint angle can be computed for certain type of keypoint only
     // when extracting  the corresponding descriptor, the angle field is not
     // taking into account for the hash
-    //    u.f = kp.angle; _Val = (scale * _Val) ^ u.u;
+    //    u.f = kp.angle; _val = (scale * _val) ^ u.u;
     u.f = kp.response;
-    _Val = (scale * _Val) ^ u.u;
-    _Val = (scale * _Val) ^ ((size_t)kp.octave);
-    _Val = (scale * _Val) ^ ((size_t)kp.class_id);
-    return _Val;
+    _val = (scale * _val) ^ u.u;
+    _val = (scale * _val) ^ ((size_t)kp.octave);
+    _val = (scale * _val) ^ ((size_t)kp.class_id);
+    return _val;
   }
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)

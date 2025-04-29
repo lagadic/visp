@@ -909,12 +909,13 @@ static void col2im(const std::vector<uint16_t> &buffer, vpImage<uint16_t> &I_Bay
 
 static void convertTo(const vpImage<uint16_t> &I_RGBA_16U, vpImage<vpRGBa> &I_RGBA_8U, int divisor = 1 << (12 - 8))
 {
+  float divisor_ = static_cast<float>(divisor);
   for (unsigned int i = 0; i < I_RGBA_8U.getHeight(); i++) {
     for (unsigned int j = 0; j < I_RGBA_8U.getWidth(); j++) {
       I_RGBA_8U[i][j] = vpRGBa(
-          vpMath::saturate<unsigned char>(I_RGBA_16U[0][(i * I_RGBA_8U.getWidth() + j) * 4 + 0] / (float)divisor),
-          vpMath::saturate<unsigned char>(I_RGBA_16U[0][(i * I_RGBA_8U.getWidth() + j) * 4 + 1] / (float)divisor),
-          vpMath::saturate<unsigned char>(I_RGBA_16U[0][(i * I_RGBA_8U.getWidth() + j) * 4 + 2] / (float)divisor));
+          vpMath::saturate<unsigned char>(I_RGBA_16U[0][(i * I_RGBA_8U.getWidth() + j) * 4 + 0] / divisor_),
+          vpMath::saturate<unsigned char>(I_RGBA_16U[0][(i * I_RGBA_8U.getWidth() + j) * 4 + 1] / divisor_),
+          vpMath::saturate<unsigned char>(I_RGBA_16U[0][(i * I_RGBA_8U.getWidth() + j) * 4 + 2] / divisor_));
     }
   }
 }

@@ -93,8 +93,10 @@ public:
 
   /*!
    * Add a keypoint at the end of the feature list. The id of the feature is set
-   * to ensure that it is unique. \param x,y : Coordinates of the feature in the
-   * image.
+   * to ensure that it is unique.
+   *
+   * \param x : Coordinates along x-axis of the feature in the image.
+   * \param y : Coordinates along y-axis of the feature in the image.
    */
   void addFeature(const float &x, const float &y);
 
@@ -106,7 +108,8 @@ public:
    * addFeature(const cv::Point2f &).
    *
    * \param id : Feature id. Should be unique
-   * \param x,y : Coordinates of the feature in the image.
+   * \param x : Coordinates along x-axis of the feature in the image.
+   * \param y : Coordinates along y-axis of the feature in the image.
    */
   void addFeature(const long &id, const float &x, const float &y);
 

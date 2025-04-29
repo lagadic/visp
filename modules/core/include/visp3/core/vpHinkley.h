@@ -106,7 +106,6 @@ public:
 
 public:
   VP_DEPRECATED vpHinkley();
-  virtual ~vpHinkley();
   VP_DEPRECATED vpHinkley(double alpha, double delta);
 
   void init();

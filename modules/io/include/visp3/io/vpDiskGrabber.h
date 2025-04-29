@@ -137,7 +137,7 @@ public:
    * Destructor.
    * In fact nothing to destroy...
    */
-  virtual ~vpDiskGrabber() { }
+  virtual ~vpDiskGrabber() VP_OVERRIDE { }
 
   /*!
    * Constructor.

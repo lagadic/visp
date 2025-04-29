@@ -449,7 +449,7 @@ void vpKeyPoint::compute3D(const cv::KeyPoint &candidate, const std::vector<vpPo
   point_cam[3] = 1;
   vpColVector point_obj(4);
   point_obj = cMo.inverse() * point_cam;
-  point = cv::Point3f((float)point_obj[0], (float)point_obj[1], (float)point_obj[2]);
+  point = cv::Point3f(static_cast<float>(point_obj[0]), static_cast<float>(point_obj[1]), static_cast<float>(point_obj[2]));
 }
 
 void vpKeyPoint::compute3D(const vpImagePoint &candidate, const std::vector<vpPoint> &roi,
@@ -611,7 +611,7 @@ void vpKeyPoint::compute3DForPointsOnCylinders(const vpHomogeneousMatrix &cMo, c
             point_obj = cMo.inverse() * point_cam;
             vpPoint pt;
             pt.setWorldCoordinates(point_obj);
-            points.push_back(cv::Point3f((float)pt.get_oX(), (float)pt.get_oY(), (float)pt.get_oZ()));
+            points.push_back(cv::Point3f(static_cast<float>(pt.get_oX()), static_cast<float>(pt.get_oY()), static_cast<float>(pt.get_oZ())));
 
             if (descriptors != nullptr) {
               desc.push_back(descriptors->row(static_cast<int>(cpt_keypoint)));
@@ -719,7 +719,7 @@ bool vpKeyPoint::computePose(const std::vector<cv::Point2f> &imagePoints, const 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
     // OpenCV 3.0.0 (2014/12/12)
     cv::solvePnPRansac(objectPoints, imagePoints, cameraMatrix, distCoeffs, rvec, tvec, false, m_nbRansacIterations,
-                       (float)m_ransacReprojectionError,
+                       static_cast<float>(m_ransacReprojectionError),
                        0.99, // confidence=0.99 (default) – The probability
                              // that the algorithm produces a useful result.
                        inlierIndex, cv::SOLVEPNP_ITERATIVE);
@@ -748,7 +748,7 @@ bool vpKeyPoint::computePose(const std::vector<cv::Point2f> &imagePoints, const 
     }
 
     cv::solvePnPRansac(objectPoints, imagePoints, cameraMatrix, distCoeffs, rvec, tvec, false, m_nbRansacIterations,
-                       (float)m_ransacReprojectionError, nbInlierToReachConsensus, inlierIndex);
+                       static_cast<float>(m_ransacReprojectionError), nbInlierToReachConsensus, inlierIndex);
 #endif
   }
   catch (cv::Exception &e) {
@@ -2879,8 +2879,8 @@ void vpKeyPoint::loadLearningData(const std::string &filename, bool binaryMode, 
             }
             else if (name == "class_id") {
               class_id = point_node.text().as_int();
-              cv::KeyPoint keyPoint(cv::Point2f((float)u, (float)v), (float)size, (float)angle, (float)response, octave,
-                                    (class_id + startClassId));
+              cv::KeyPoint keyPoint(cv::Point2f(static_cast<float>(u), static_cast<float>(v)), static_cast<float>(size),
+                                    static_cast<float>(angle), static_cast<float>(response), octave, (class_id + startClassId));
               m_trainKeyPoints.push_back(keyPoint);
             }
             else if (name == "image_id") {
@@ -2900,7 +2900,7 @@ void vpKeyPoint::loadLearningData(const std::string &filename, bool binaryMode, 
             }
             else if (name == "oZ") {
               oZ = point_node.text().as_double();
-              m_trainPoints.push_back(cv::Point3f((float)oX, (float)oY, (float)oZ));
+              m_trainPoints.push_back(cv::Point3f(static_cast<float>(oX), static_cast<float>(oY), static_cast<float>(oZ)));
             }
             else if (name == "desc") {
               j = 0;

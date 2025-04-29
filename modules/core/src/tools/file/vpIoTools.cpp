@@ -261,7 +261,7 @@ void vpIoTools::getUserName(std::string &username)
 #if (!defined(WINRT))
   unsigned int info_buffer_size = 1024;
   TCHAR *infoBuf = new TCHAR[info_buffer_size];
-  DWORD bufCharCount = (DWORD)info_buffer_size;
+  DWORD bufCharCount = static_cast<DWORD>(info_buffer_size);
   // Get the user name.
   if (!GetUserName(infoBuf, &bufCharCount)) {
     username = "unknown";
@@ -640,6 +640,8 @@ void vpIoTools::makeFifo(const std::string &fifoname)
 }
 
 #if defined(_WIN32) && !defined(WINRT)
+std::string getUuid();
+
 std::string getUuid()
 {
   UUID uuid;

@@ -311,33 +311,33 @@ int main(int argc, char **argv)
 
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--device" && i + 1 < argc) {
-      opt_device = atoi(argv[i + 1]);
+      opt_device = atoi(argv[++i]);
     }
     else if (std::string(argv[i]) == "--input" && i + 1 < argc) {
-      input = std::string(argv[i + 1]);
+      input = std::string(argv[++i]);
     }
     else if (std::string(argv[i]) == "--model" && i + 1 < argc) {
-      modelFile = std::string(argv[i + 1]);
+      modelFile = std::string(argv[++i]);
     }
     else if (std::string(argv[i]) == "--config" && i + 1 < argc) {
-      config = std::string(argv[i + 1]);
+      config = std::string(argv[++i]);
     }
     else if (std::string(argv[i]) == "--input-scale" && i + 1 < argc) {
-      opt_scale = atoi(argv[i + 1]);
+      opt_scale = atoi(argv[++i]);
     }
     else if (std::string(argv[i]) == "--mean" && i + 3 < argc) {
-      meanR = atof(argv[i + 1]);
-      meanG = atof(argv[i + 2]);
-      meanB = atof(argv[i + 3]);
+      meanR = atof(argv[++i]);
+      meanG = atof(argv[++i]);
+      meanB = atof(argv[++i]);
     }
     else if (std::string(argv[i]) == "--confThresh" && i + 1 < argc) {
-      confThresh = (float)atof(argv[i + 1]);
+      confThresh = static_cast<float>(atof(argv[++i]));
     }
     else if (std::string(argv[i]) == "--nmsThresh" && i + 1 < argc) {
-      nmsThresh = (float)atof(argv[i + 1]);
+      nmsThresh = static_cast<float>(atof(argv[++i]));
     }
     else if (std::string(argv[i]) == "--labels" && i + 1 < argc) {
-      labelFile = std::string(argv[i + 1]);
+      labelFile = std::string(argv[++i]);
     }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << argv[0]

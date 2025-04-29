@@ -61,7 +61,7 @@ namespace
 bool runBenchmark = false;
 bool runBenchmarkAll = false;
 
-double getRandomValues(double min, double max) { return (max - min) * ((double)rand() / (double)RAND_MAX) + min; }
+double getRandomValues(double min, double max) { return (max - min) * (static_cast<double>(rand()) / static_cast<double>(RAND_MAX)) + min; }
 
 vpMatrix generateRandomMatrix(unsigned int rows, unsigned int cols, double min = -1, double max = 1)
 {

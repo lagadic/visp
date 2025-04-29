@@ -128,7 +128,7 @@ bool getOptions(int argc, const char **argv, int &i_val, float &f_val, double &d
       d_val = atof(optarg_);
       break;
     case 'f':
-      f_val = (float)atof(optarg_);
+      f_val = static_cast<float>(atof(optarg_));
       break;
     case 'i':
       i_val = atoi(optarg_);

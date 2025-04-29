@@ -90,12 +90,14 @@ void vpMbtDistanceCircle::project(const vpHomogeneousMatrix &cMo) { circle->proj
 /*!
   Build a vpMbtDistanceCircle thanks to its center, 3 points (including the
   center) with coordinates expressed in the object frame and defining the
-  plane that contain the circle and its radius.
+  plane that contain the circle and its radius. With the
+  center of the circle we have 3 points defining the plane that contains the
+  circle.
 
   \param _p1 : Center of the circle.
-  \param _p2,_p3 : Two points on the plane containing the circle. With the
-  center of the circle we have 3 points defining the plane that contains the
-  circle. \param r : Radius of the circle.
+  \param _p2 : Second point on the plane containing the circle.
+  \param _p3 : Third point on the plane containing the circle.
+  \param r : Radius of the circle.
 */
 void vpMbtDistanceCircle::buildFrom(const vpPoint &_p1, const vpPoint &_p2, const vpPoint &_p3, double r)
 {
@@ -139,8 +141,9 @@ void vpMbtDistanceCircle::setMovingEdge(vpMe *_me)
   \param I : The image.
   \param cMo : The pose of the camera used to initialize the moving edges.
   \param doNotTrack : If true, ME are not tracked.
-  \param mask: Mask image or nullptr if not wanted. Mask values that are set to true are considered in the tracking. To
-  disable a pixel, set false. \return false if an error occur, true otherwise.
+  \param mask : Mask image or nullptr if not wanted. Mask values that are set to true are considered in the tracking. To
+  disable a pixel, set false.
+  \return false if an error occur, true otherwise.
 */
 bool vpMbtDistanceCircle::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
                                          bool doNotTrack, const vpImage<bool> *mask)
@@ -183,10 +186,11 @@ bool vpMbtDistanceCircle::initMovingEdge(const vpImage<unsigned char> &I, const 
   Track the moving edges in the image.
 
   \param I : the image.
-  \param cMo : The pose of the camera.
+  \param cMo : The pose of the camera (unused).
 */
-void vpMbtDistanceCircle::trackMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix & /*cMo*/)
+void vpMbtDistanceCircle::trackMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
 {
+  (void)cMo;
   if (isvisible) {
     try {
       meEllipse->track(I);
@@ -244,7 +248,7 @@ void vpMbtDistanceCircle::updateMovingEdge(const vpImage<unsigned char> &I, cons
 
   \param I : the image.
   \param cMo : The pose of the camera.
-  \param mask: Mask image or nullptr if not wanted. Mask values that are set to true are considered in the tracking. To
+  \param mask : Mask image or nullptr if not wanted. Mask values that are set to true are considered in the tracking. To
   disable a pixel, set false.
 */
 void vpMbtDistanceCircle::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,

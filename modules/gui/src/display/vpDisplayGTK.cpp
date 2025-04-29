@@ -1167,7 +1167,8 @@ void vpDisplayGTK::displayCross(const vpImagePoint &ip, unsigned int size, const
 }
 /*!
   Display a dashed line from image point \e ip1 to image point \e ip2.
-  \param ip1,ip2 : Initial and final image points.
+  \param ip1 : Initial image point.
+  \param ip2 : Final image point.
   \param color : Line color.
   \param thickness : Line thickness.
 */
@@ -1188,7 +1189,8 @@ void vpDisplayGTK::displayDotLine(const vpImagePoint &ip1, const vpImagePoint &i
 
 /*!
   Display a line from image point \e ip1 to image point \e ip2.
-  \param ip1,ip2 : Initial and final image points.
+  \param ip1 : Initial image point.
+  \param ip2 : Final image point.
   \param color : Line color.
   \param thickness : Line thickness.
 */
@@ -1572,7 +1574,8 @@ bool vpDisplayGTK::getPointerPosition(vpImagePoint &ip)
 
 /*!
   Gets screen resolution.
-  \param w, h : Horizontal and vertical screen resolution.
+  \param[out] w : Horizontal screen resolution.
+  \param[out] h : Vertical screen resolution.
  */
 void vpDisplayGTK::getScreenSize(unsigned int &w, unsigned int &h)
 {

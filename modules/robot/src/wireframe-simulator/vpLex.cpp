@@ -357,7 +357,7 @@ lex_loop:
       for (; isintt(static_cast<int>(CURC)); mysptr++) {
       };
       if (CURC != 'E' && CURC != 'e') {
-        myfloat = (float)atof(mytext);
+        myfloat = static_cast<float>(atof(mytext));
         /* FC
         printf("mytext %s, myfloat %f\n",mytext,myfloat);
         */
@@ -373,12 +373,12 @@ lex_loop:
         mysptr += 2;
       else {
         mysptr--;
-        myfloat = (float)atof(mytext);
+        myfloat = static_cast<float>(atof(mytext));
         return (T_FLOAT);
       }
       for (; isintt(static_cast<int>(CURC)); mysptr++) {
       };
-      myfloat = (float)atof(mytext);
+      myfloat = static_cast<float>(atof(mytext));
       return (T_FLOAT);
       break;
     default:

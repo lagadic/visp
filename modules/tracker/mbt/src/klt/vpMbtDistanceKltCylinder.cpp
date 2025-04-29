@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Klt cylinder, containing points of interest.
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpPolygon.h>
 #include <visp3/mbt/vpMbtDistanceKltCylinder.h>
@@ -413,7 +411,7 @@ void vpMbtDistanceKltCylinder::updateMask(
             std::vector<vpImagePoint> corners;
 
             for (size_t j = 0; j < solution[i].size(); j++) {
-              corners.push_back(vpImagePoint((double)(solution[i][j].Y), (double)(solution[i][j].X)));
+              corners.push_back(vpImagePoint(static_cast<double>(solution[i][j].Y), static_cast<double>(solution[i][j].X)));
             }
 
             polygon_area.buildFrom(corners);
@@ -425,7 +423,7 @@ void vpMbtDistanceKltCylinder::updateMask(
         }
 
         for (size_t i = 0; i < solution[index_max].size(); i++) {
-          roi_offset.push_back(vpImagePoint((double)(solution[index_max][i].Y), (double)(solution[index_max][i].X)));
+          roi_offset.push_back(vpImagePoint(static_cast<double>(solution[index_max][i].Y), static_cast<double>(solution[index_max][i].X)));
         }
       }
       else {
@@ -492,9 +490,9 @@ void vpMbtDistanceKltCylinder::updateMask(
 /*!
   Display the primitives tracked for the cylinder.
 
-  \param _I : The image where to display.
+  \param I_ : The image where to display.
 */
-void vpMbtDistanceKltCylinder::displayPrimitive(const vpImage<unsigned char> &_I)
+void vpMbtDistanceKltCylinder::displayPrimitive(const vpImage<unsigned char> &I_)
 {
   std::map<int, vpImagePoint>::const_iterator iter = curPoints.begin();
   for (; iter != curPoints.end(); ++iter) {
@@ -503,22 +501,22 @@ void vpMbtDistanceKltCylinder::displayPrimitive(const vpImage<unsigned char> &_I
     iP.set_i(static_cast<double>(iter->second.get_i()));
     iP.set_j(static_cast<double>(iter->second.get_j()));
 
-    vpDisplay::displayCross(_I, iP, 10, vpColor::red);
+    vpDisplay::displayCross(I_, iP, 10, vpColor::red);
 
     iP.set_i(vpMath::round(iP.get_i() + 7));
     iP.set_j(vpMath::round(iP.get_j() + 7));
     std::stringstream ss;
     ss << id;
-    vpDisplay::displayText(_I, iP, ss.str(), vpColor::red);
+    vpDisplay::displayText(I_, iP, ss.str(), vpColor::red);
   }
 }
 
 /*!
   Display the primitives tracked for the cylinder.
 
-  \param _I : The image where to display.
+  \param I_ : The image where to display.
 */
-void vpMbtDistanceKltCylinder::displayPrimitive(const vpImage<vpRGBa> &_I)
+void vpMbtDistanceKltCylinder::displayPrimitive(const vpImage<vpRGBa> &I_)
 {
   std::map<int, vpImagePoint>::const_iterator iter = curPoints.begin();
   for (; iter != curPoints.end(); ++iter) {
@@ -527,13 +525,13 @@ void vpMbtDistanceKltCylinder::displayPrimitive(const vpImage<vpRGBa> &_I)
     iP.set_i(static_cast<double>(iter->second.get_i()));
     iP.set_j(static_cast<double>(iter->second.get_j()));
 
-    vpDisplay::displayCross(_I, iP, 10, vpColor::red);
+    vpDisplay::displayCross(I_, iP, 10, vpColor::red);
 
     iP.set_i(vpMath::round(iP.get_i() + 7));
     iP.set_j(vpMath::round(iP.get_j() + 7));
     std::stringstream ss;
     ss << id;
-    vpDisplay::displayText(_I, iP, ss.str(), vpColor::red);
+    vpDisplay::displayText(I_, iP, ss.str(), vpColor::red);
   }
 }
 

@@ -46,19 +46,6 @@ vpBSpline::vpBSpline()
 { }
 
 /*!
-  Copy constructor.
-*/
-vpBSpline::vpBSpline(const vpBSpline &bspline)
-  : controlPoints(bspline.controlPoints), knots(bspline.knots), p(bspline.p), // By default : p=3 for clubic spline
-  crossingPoints(bspline.crossingPoints)
-{ }
-
-/*!
-  Basic destructor.
-*/
-vpBSpline::~vpBSpline() { }
-
-/*!
   Find the knot interval in which the parameter \f$ l_u \f$ lies. Indeed \f$ l_u \in [u_i, u_{i+1}[ \f$.
 
   Example : The knot vector is the following \f$ U = \{0,  0 , 1 , 2 ,3 , 3\}

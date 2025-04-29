@@ -646,13 +646,13 @@ int vpHandEyeCalibration::calibrationTranslationOld(const std::vector<vpHomogene
 /*!
  * \brief Compute the set of errors minimized by VVS.
  *
- * \param[in] cMo : vector of homogeneous matrices representing the transformation
+ * \param[in] cMo : Vector of homogeneous matrices representing the transformation
  * between the camera and the scene.
- * \param[in] rMe : vector of homogeneous matrices representing the transformation
+ * \param[in] rMe : Vector of homogeneous matrices representing the transformation
  * between the effector (where the camera is fixed) and the reference
  * coordinates (base of the manipulator). Must be the same size as cMo.
- * \param[in] eMc : homogeneous matrix between the effector and the camera.
- * \param[out] err: set of errors minimized by VVS (3 for rotation, 3 for translation, etc.).
+ * \param[in] eMc : Homogeneous matrix between the effector and the camera.
+ * \param[out] err : Set of errors minimized by VVS (3 for rotation, 3 for translation, etc).
  */
 double vpHandEyeCalibration::calibrationErrVVS(const std::vector<vpHomogeneousMatrix> &cMo,
                                                const std::vector<vpHomogeneousMatrix> &rMe,

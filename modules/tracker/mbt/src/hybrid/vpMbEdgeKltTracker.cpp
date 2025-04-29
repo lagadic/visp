@@ -776,7 +776,7 @@ void vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char> &I, const unsig
 
     unsigned int cpt = 0;
     while (cpt < (nbrow + 2 * nbInfos)) {
-      if (cpt < (unsigned)nbrow) {
+      if (cpt < static_cast<unsigned int>(nbrow)) {
         m_w_hybrid[cpt] = ((m_w_mbt[cpt] * factor[cpt]) * factorMBT);
       }
       else {
@@ -824,7 +824,7 @@ void vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char> &I, const unsig
 
       cpt = 0;
       while (cpt < (nbrow + 2 * nbInfos)) {
-        if (cpt < (unsigned)nbrow) {
+        if (cpt < static_cast<unsigned int>(nbrow)) {
           m_w_hybrid[cpt] = ((m_w_mbt[cpt] * factor[cpt]) * factorMBT);
         }
         else {
@@ -1210,17 +1210,18 @@ void vpMbEdgeKltTracker::initFaceFromLines(vpMbtPolygon &polygon)
 }
 
 /*!
-  Add a circle to track from its center, 3 points (including the center)
-  defining the plane that contain the circle and its radius.
+  Add a circle to track. With the center of the circle we have 3 points defining the plane that  contains the circle.
+  To be visible, the plane defined by the 3 points p1, p2, p3 should have its normal going toward the camera.
 
-  \param p1 : Center of the circle.
-  \param p2,p3 : Two points on the plane containing the circle. With the
-  center of the circle we have 3 points defining the plane that contains the
-  circle. \param radius : Radius of the circle. \param idFace : Id of the face
-  associated to the circle. \param name : The optional name of the circle.
+  \param p1 : Center of the circle, considered as the first point on the plane containing the circle.
+  \param p2 : Second point on the plane containing the circle.
+  \param p3 : Third point on the plane containing the circle.
+  \param radius : Radius of the circle.
+  \param idFace : Index of the face associated to the circle to handle visibility test.
+  \param name : The optional name of the circle.
 */
 void vpMbEdgeKltTracker::initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, double radius, int idFace,
-  const std::string &name)
+                                    const std::string &name)
 {
   vpMbEdgeTracker::initCircle(p1, p2, p3, radius, idFace, name);
 }
@@ -1236,7 +1237,7 @@ void vpMbEdgeKltTracker::initCircle(const vpPoint &p1, const vpPoint &p2, const 
   \param name : The optional name of the cylinder.
 */
 void vpMbEdgeKltTracker::initCylinder(const vpPoint &p1, const vpPoint &p2, double radius, int idFace,
-  const std::string &name)
+                                      const std::string &name)
 {
   vpMbEdgeTracker::initCylinder(p1, p2, radius, idFace, name);
   vpMbKltTracker::initCylinder(p1, p2, radius, idFace, name);

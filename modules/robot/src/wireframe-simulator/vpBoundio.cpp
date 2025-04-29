@@ -61,7 +61,7 @@ BEGIN_VISP_NAMESPACE
  * Entree :
  * bp    Surface a lire.
  */
-void fscanf_Bound(Bound *bp)
+  void fscanf_Bound(Bound *bp)
 {
   /* Lecture du type polygonale de la surface.  */
 
@@ -189,17 +189,17 @@ void fscanf_Point3f_list(Point3f_list *lp)
     if ((t = lex()) != T_FLOAT && t != T_INT)
       lexerr("start", err_tbl[0], "X", err_tbl[1], NULL);
     /* FC printf("X %d %f\n",myint, myfloat); */
-    pp->x = (t == T_INT) ? (float)myint : myfloat;
+    pp->x = (t == T_INT) ? static_cast<float>(myint) : myfloat;
 
     if ((t = lex()) != T_FLOAT && t != T_INT)
       lexerr("start", err_tbl[0], "Y", err_tbl[1], NULL);
     /* FC printf("Y %d %f\n",myint, myfloat); */
-    pp->y = (t == T_INT) ? (float)myint : myfloat;
+    pp->y = (t == T_INT) ? static_cast<float>(myint) : myfloat;
 
     if ((t = lex()) != T_FLOAT && t != T_INT)
       lexerr("start", err_tbl[0], "Z", err_tbl[1], NULL);
     /* FC printf("Z %d %f\n",myint, myfloat); */
-    pp->z = (t == T_INT) ? (float)myint : myfloat;
+    pp->z = (t == T_INT) ? static_cast<float>(myint) : myfloat;
   }
 }
 END_VISP_NAMESPACE

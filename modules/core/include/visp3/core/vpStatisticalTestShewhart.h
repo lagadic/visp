@@ -94,7 +94,7 @@ public:
 
 protected:
   unsigned int m_nbDataInBuffer; /*!< Indicate how many data are available in the circular buffer.*/
-  float m_signal[NB_DATA_SIGNAL]; /*!< The last values of the signal.*/
+  float m_signal_vec[NB_DATA_SIGNAL]; /*!< The last values of the signal.*/
   bool m_activateWECOrules; /*!< If true, activate the WECO's rules (NB: it increases the sensitivity of the Shewhart
                                  control chart but the false alarm frequency is also increased.)*/
   std::vector<bool> m_activatedWECOrules; /*!< The WECO's rules that are activated. The more are activated, the higher the
@@ -112,13 +112,13 @@ protected:
    */
   virtual void computeLimits() VP_OVERRIDE;
 
-/**
- * \brief Detects if a downward mean drift occurred.
- *
- * \return \b vpMeanDriftType::MEAN_DRIFT_DOWNWARD if a downward mean drift occurred, \b vpMeanDriftType::MEAN_DRIFT_NONE otherwise.
- *
- * \sa detectUpwardMeanDrift()
- */
+  /**
+   * \brief Detects if a downward mean drift occurred.
+   *
+   * \return \b vpMeanDriftType::MEAN_DRIFT_DOWNWARD if a downward mean drift occurred, \b vpMeanDriftType::MEAN_DRIFT_NONE otherwise.
+   *
+   * \sa detectUpwardMeanDrift()
+   */
   virtual vpMeanDriftType detectDownwardMeanDrift() VP_OVERRIDE;
   /**
    * \brief Detects if an upward mean drift occurred on the mean.
@@ -188,7 +188,7 @@ public:
   inline virtual float getSignal() const
 #endif
   {
-    return m_signal[m_idCurrentData];
+    return m_signal_vec[m_idCurrentData];
   }
 
   /**

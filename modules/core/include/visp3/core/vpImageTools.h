@@ -296,18 +296,18 @@ template <class Type> void vpImageTools::createSubImage(const vpImage<Type> &I, 
   Setting \e v_scale and \e h_scale to values different from 1 allows also to
   subsample the cropped image.
 
-  \param I : Input image from which a sub image will be extracted.
-  \param roi_top : ROI vertical position of the upper/left corner in the input
+  \param[in] I : Input image from which a sub image will be extracted.
+  \param[in] roi_top : ROI vertical position of the upper/left corner in the input
   image.
-  \param roi_left : ROI  horizontal position of the upper/left corner
+  \param[in] roi_left : ROI  horizontal position of the upper/left corner
   in the input image.
-  \param roi_height : Cropped image height corresponding
+  \param[in] roi_height : Cropped image height corresponding
   to the ROI height.
-  \param roi_width : Cropped image width corresponding to
+  \param[in] roi_width : Cropped image width corresponding to
   the ROI height.
-  \param crop : Cropped image.
-  \param v_scale [in] : Vertical subsampling factor applied to the ROI.
-  \param h_scale [in] : Horizontal subsampling factor applied to the ROI.
+  \param[out] crop : Cropped image.
+  \param[in] v_scale : Vertical subsampling factor applied to the ROI.
+  \param[in] h_scale : Horizontal subsampling factor applied to the ROI.
 
   \sa crop(const vpImage<Type> &, const vpRect &, vpImage<Type> &)
 */
@@ -331,14 +331,14 @@ void vpImageTools::crop(const vpImage<Type> &I, double roi_top, double roi_left,
   if ((v_scale == 1) && (h_scale == 1)) {
     for (unsigned int i = 0; i < r_height; ++i) {
       void *src = (void *)(I[i + i_min_u] + j_min_u);
-      void *dst = (void *)(crop[i]);
+      void *dst = static_cast<void *>(crop[i]);
       memcpy(dst, src, r_width * sizeof(Type));
     }
   }
   else if (h_scale == 1) {
     for (unsigned int i = 0; i < r_height; ++i) {
       void *src = (void *)(I[(i + i_min_u) * v_scale] + j_min_u);
-      void *dst = (void *)(crop[i]);
+      void *dst = static_cast<void *>(crop[i]);
       memcpy(dst, src, r_width * sizeof(Type));
     }
   }
@@ -611,15 +611,17 @@ template <class Type> void vpUndistortInternalType<Type>::vpUndistort_threaded(v
       // declarations
       int u_round = static_cast<int>(u_double);
       int v_round = static_cast<int>(v_double);
-      if (u_round < 0.f)
+      if (u_round < 0) {
         u_round = -1;
-      if (v_round < 0.f)
+      }
+      if (v_round < 0) {
         v_round = -1;
-      double du_double = (u_double)-(double)u_round;
-      double dv_double = (v_double)-(double)v_round;
+      }
+      double du_double = (u_double)-static_cast<double>(u_round);
+      double dv_double = (v_double)-static_cast<double>(v_round);
       Type v01;
       Type v23;
-      if ((0 <= u_round) && (0 <= v_round) && (u_round < ((width)-1)) && (v_round < ((height)-1))) {
+      if ((0 <= u_round) && (0 <= v_round) && (u_round < (width-1)) && (v_round < (height-1))) {
         // process interpolation
         const Type *_mp = &src[v_round * width + u_round];
         v01 = (Type)(_mp[0] + ((_mp[1] - _mp[0]) * du_double));
@@ -1080,7 +1082,7 @@ void vpImageTools::resize(const vpImage<Type> &I, vpImage<Type> &Ires, unsigned 
   the desired size).
   \param method : Interpolation method.
   \param nThreads : Number of threads to use if OpenMP is available
-  (zero will let OpenMP uses the optimal number of threads).
+  (zero will let OpenMP uses the optimal number of threads). Unused if OpenMP is not enabled.
 
   \warning The input \e I and output \e Ires images must be different objects.
 
@@ -1090,12 +1092,11 @@ void vpImageTools::resize(const vpImage<Type> &I, vpImage<Type> &Ires, unsigned 
 */
 template <class Type>
 void vpImageTools::resize(const vpImage<Type> &I, vpImage<Type> &Ires, const vpImageInterpolationType &method,
-                          unsigned int
-#if defined(_OPENMP)
-                          nThreads
-#endif
-)
+                          unsigned int nThreads)
 {
+#if !defined(_OPENMP)
+  (void)nThreads;
+#endif
   const unsigned int minWidth = 2, minHeight = 2;
   if ((I.getWidth() < minWidth) || (I.getHeight() < minHeight) || (Ires.getWidth() < minWidth) || (Ires.getHeight() < minHeight)) {
     std::cerr << "Input or output image is too small!" << std::endl;
@@ -1177,12 +1178,12 @@ inline void vpImageTools::resize(const vpImage<unsigned char> &I, vpImage<unsign
 #endif
     for (int i = 0; i < ires_height; ++i) {
       float v = ((static_cast<float>(i) + half) * scaleY) - half;
-      float yFrac = static_cast<float>(v - static_cast<int>(v));
+      float yFrac = static_cast<float>(v - static_cast<float>(static_cast<int>(v)));
 
       unsigned int ires_width = static_cast<unsigned int>(Ires.getWidth());
       for (unsigned int j = 0; j < ires_width; ++j) {
         float u = ((static_cast<float>(j) + half) * scaleX) - half;
-        float xFrac = static_cast<float>(u - static_cast<int>(u));
+        float xFrac = static_cast<float>(u - static_cast<float>(static_cast<int>(u)));
 
         if (method == INTERPOLATION_NEAREST) {
           resizeNearest(I, Ires, static_cast<unsigned int>(i), j, u, v);
@@ -1230,12 +1231,12 @@ inline void vpImageTools::resize(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires
 #endif
     for (int i = 0; i < ires_height; ++i) {
       float v = ((static_cast<float>(i) + half) * scaleY) - half;
-      float yFrac = static_cast<float>(v - static_cast<int>(v));
+      float yFrac = static_cast<float>(v - static_cast<float>(static_cast<int>(v)));
 
       unsigned int ires_width = static_cast<unsigned int>(Ires.getWidth());
       for (unsigned int j = 0; j < ires_width; ++j) {
         float u = ((static_cast<float>(j) + half) * scaleX) - half;
-        float xFrac = static_cast<float>(u - static_cast<int>(u));
+        float xFrac = static_cast<float>(u - static_cast<float>(static_cast<int>(u)));
 
         if (method == INTERPOLATION_NEAREST) {
           resizeNearest(I, Ires, static_cast<unsigned int>(i), j, u, v);

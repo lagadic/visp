@@ -65,9 +65,19 @@
 #include <unistd.h>
 #else
 #include <io.h>
-//#  include<winsock.h>
+
+#if defined(__clang__)
+// Mute warning : non-portable path to file '<WinSock2.h>'; specified path differs in case from file name on disk [-Wnonportable-system-include-path]
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wnonportable-system-include-path"
+#endif
+
 #include <winsock2.h>
-//#  pragma comment(lib, "ws2_32.lib") // Done by CMake in main CMakeLists.txt
+
+#if defined(__clang__)
+#  pragma clang diagnostic pop
+#endif
+
 #endif
 
 #if defined(__APPLE__) && defined(__MACH__) // Apple OSX and iOS (Darwin)
@@ -170,7 +180,10 @@ private:
 
 public:
   vpNetwork();
+  vpNetwork(const vpNetwork &network);
   virtual ~vpNetwork();
+
+  vpNetwork &operator=(const vpNetwork &network);
 
   void addDecodingRequest(vpRequest *);
 
@@ -185,9 +198,10 @@ public:
   */
   std::string getRequestIdFromIndex(const int &ind)
   {
-    if (ind >= static_cast<int>(request_list.size()) || ind < 0)
+    if (ind >= static_cast<int>(request_list.size()) || ind < 0) {
       return "";
-    return request_list[(unsigned)ind]->getId();
+    }
+    return request_list[static_cast<unsigned int>(ind)]->getId();
   }
 
   /*!

@@ -52,7 +52,7 @@ BEGIN_VISP_NAMESPACE
  * vp    Parametres de la prise de vue.
  * m    Matrice homogene a construire.
  */
-void View_to_Matrix(View_parameters *vp, Matrix m)
+  void View_to_Matrix(View_parameters *vp, Matrix m)
 {
   static char proc_name[] = "View_to_Matrix";
 
@@ -162,11 +162,11 @@ void set_parallel(View_parameters *vp, Matrix wc)
    * je prefere, afin de rester coherent avec la projection perspective,
    *  -1 < x < 1, -1 < y < 1, 0 < z < 1 (w = 1)
    */
-  SET_COORD3(v, (float)(-(vp->vwd.umax + vp->vwd.umin) / 2.0), (float)(-(vp->vwd.vmax + vp->vwd.vmin) / 2.0),
-             (float)(-vp->depth.front));
+  SET_COORD3(v, static_cast<float>(-(vp->vwd.umax + vp->vwd.umin) / 2.0), static_cast<float>(-(vp->vwd.vmax + vp->vwd.vmin) / 2.0),
+  static_cast<float>(vp->depth.front));
   posttrans_matrix(wc, &v);
-  SET_COORD3(v, (float)(2.0 / (vp->vwd.umax - vp->vwd.umin)), (float)(2.0 / (vp->vwd.vmax - vp->vwd.vmin)),
-             (float)(1.0 / (vp->depth.back - vp->depth.front)));
+  SET_COORD3(v, static_cast<float>(2.0 / (vp->vwd.umax - vp->vwd.umin)), static_cast<float>(2.0 / (vp->vwd.vmax - vp->vwd.vmin)),
+  static_cast<float>(1.0 / (vp->depth.back - vp->depth.front)));
   postscale_matrix(wc, &v);
 }
 
@@ -207,9 +207,9 @@ void set_perspective(View_parameters *vp, Matrix wc)
    * 5 : Alignement de l'axe central du volume de vision sur l'axe Z.
    */
   point_matrix(&vrprim, &vp->vrp, wc);
-  cw.x = (float)(vrprim.x + (vp->vwd.umin + vp->vwd.umax) / 2.0);
-  cw.y = (float)(vrprim.y + (vp->vwd.vmin + vp->vwd.vmax) / 2.0);
-  cw.z = (float)(vrprim.z);
+  cw.x = static_cast<float>(vrprim.x + (vp->vwd.umin + vp->vwd.umax) / 2.0);
+  cw.y = static_cast<float>(vrprim.y + (vp->vwd.vmin + vp->vwd.vmax) / 2.0);
+  cw.z = static_cast<float>(vrprim.z);
   ident_matrix(m);
   m[2][0] = -cw.x / cw.z;
   m[2][1] = -cw.y / cw.z;
@@ -217,18 +217,18 @@ void set_perspective(View_parameters *vp, Matrix wc)
   /*
    * 6 : Mise a l'echelle de la pyramide.
    */
-  SET_COORD3(v, (float)((2.0 * vrprim.z) / ((vp->vwd.umax - vp->vwd.umin) * (vrprim.z + vp->depth.back))),
-             (float)((2.0 * vrprim.z) / ((vp->vwd.vmax - vp->vwd.vmin) * (vrprim.z + vp->depth.back))),
-             (float)(1.0 / (vrprim.z + vp->depth.back)));
+  SET_COORD3(v, static_cast<float>((2.0 * vrprim.z) / ((vp->vwd.umax - vp->vwd.umin) * (vrprim.z + vp->depth.back))),
+             static_cast<float>((2.0 * vrprim.z) / ((vp->vwd.vmax - vp->vwd.vmin) * (vrprim.z + vp->depth.back))),
+             static_cast<float>(1.0 / (vrprim.z + vp->depth.back)));
   postscale_matrix(wc, &v);
   /*
    * 7 : Transformation perspective.
    */
   zmin = (vrprim.z + vp->depth.front) / (vrprim.z + vp->depth.back);
   ident_matrix(m);
-  m[2][2] = (float)(1.0 / (1.0 - zmin));
+  m[2][2] = static_cast<float>(1.0 / (1.0 - zmin));
   m[2][3] = 1.0;
-  m[3][2] = (float)(-zmin / (1.0 - zmin));
+  m[3][2] = static_cast<float>(-zmin / (1.0 - zmin));
   m[3][3] = 0.0;
   postmult_matrix(wc, m);
 }

@@ -117,27 +117,27 @@ class VISP_EXPORT vpGaussRand
 {
 public:
   /*!
-      Default noise generator constructor.
-     */
+    Default noise generator constructor.
+   */
   vpGaussRand() : m_rng(), m_mean(0), m_sigma(0), m_AlreadyDone(false), m_x2(0) { }
 
   /*!
-      Gaussian noise random generator constructor.
+    Gaussian noise random generator constructor.
 
-      \param sigma_val : Standard deviation.
-      \param mean_val : Mean value.
-      \param noise_seed : Seed of the noise
-    */
-  vpGaussRand(double sigma_val, double mean_val, long noise_seed = 0)
+    \param sigma_val : Standard deviation.
+    \param mean_val : Mean value.
+    \param noise_seed : Seed of the noise
+   */
+  vpGaussRand(double sigma_val, double mean_val, uint64_t noise_seed = 0)
     : m_rng(noise_seed), m_mean(mean_val), m_sigma(sigma_val), m_AlreadyDone(false), m_x2(0)
   { }
 
   /*!
-      Set the standard deviation and mean for gaussian noise.
+    Set the standard deviation and mean for gaussian noise.
 
-      \param sigma_val : New standard deviation sigma.
-      \param mean_val : New mean value.
-    */
+    \param sigma_val : New standard deviation sigma.
+    \param mean_val : New mean value.
+   */
   void setSigmaMean(double sigma_val, double mean_val)
   {
     m_mean = mean_val;
@@ -145,18 +145,19 @@ public:
   }
 
   /*!
-      Set the seed of the noise.
+    Set the seed of the noise.
 
-      \param seed_val : New seed.
-    */
-  void seed(long seed_val) {
-    const unsigned long long val_ull = 0x123465789ULL;
+    \param seed_val : New seed.
+   */
+  void seed(uint64_t seed_val)
+  {
+    const uint64_t val_ull = 0x123465789ULL;
     m_rng.setSeed(seed_val, val_ull);
   }
 
   /*!
-      Return a random value from the Gaussian noise generator.
-    */
+    Return a random value from the Gaussian noise generator.
+   */
   double operator()() { return (m_sigma * gaussianDraw()) + m_mean; }
 
 private:

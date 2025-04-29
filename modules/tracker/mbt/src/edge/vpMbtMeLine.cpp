@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,11 +62,18 @@ vpMbtMeLine::vpMbtMeLine()
 vpMbtMeLine::vpMbtMeLine(const vpMbtMeLine &meline)
   : vpMeLine(meline)
 {
+  *this = meline;
+}
+
+vpMbtMeLine &vpMbtMeLine::operator=(const vpMbtMeLine &meline)
+{
   imin = meline.imin;
   jmin = meline.jmin;
   imax = meline.imax;
   jmax = meline.jmax;
   expecteddensity = meline.expecteddensity;
+
+  return *this;
 }
 
 /*!
@@ -439,10 +446,10 @@ void vpMbtMeLine::computeProjectionError(const vpImage<unsigned char> &I, double
 */
 void vpMbtMeLine::reSample(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2)
 {
-  m_PExt[0].m_ifloat = (float)ip1.get_i();
-  m_PExt[0].m_jfloat = (float)ip1.get_j();
-  m_PExt[1].m_ifloat = (float)ip2.get_i();
-  m_PExt[1].m_jfloat = (float)ip2.get_j();
+  m_PExt[0].m_ifloat = static_cast<float>(ip1.get_i());
+  m_PExt[0].m_jfloat = static_cast<float>(ip1.get_j());
+  m_PExt[1].m_ifloat = static_cast<float>(ip2.get_i());
+  m_PExt[1].m_jfloat = static_cast<float>(ip2.get_j());
 
   vpMeLine::reSample(I);
 }

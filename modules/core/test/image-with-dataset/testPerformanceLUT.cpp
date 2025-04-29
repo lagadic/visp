@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ using namespace VISP_NAMESPACE_NAME;
  *
  * \param name : Program name.
  * \param badparam : Bad parameter name.
- * \param ipath: Input image path.
+ * \param ipath : Input image path.
  * \param opath : Output image path.
  * \param user : Username.
  */
@@ -105,7 +105,7 @@ OPTIONS:                                               Default\n\
  *
  * \param argc : Command line number of parameters.
  * \param argv : Array of command line parameters.
- * \param ipath: Input image path.
+ * \param ipath : Input image path.
  * \param opath : Output image path.
  * \param user : Username.
  * \param nbThreads : Number of threads to use.
@@ -187,7 +187,7 @@ void generateRandomImage(vpImage<vpRGBa> &I, unsigned int min = 0, unsigned int 
  *
  * \param I : Input color image.
  * \param alpha : Gain.
- * \param beta: Offset.
+ * \param beta : Offset.
  */
 void iterate_method1(vpImage<vpRGBa> &I, double alpha, double beta)
 {
@@ -208,7 +208,7 @@ void iterate_method1(vpImage<vpRGBa> &I, double alpha, double beta)
  *
  * \param I : Input grayscale image.
  * \param alpha : Gain.
- * \param beta: Offset.
+ * \param beta : Offset.
  */
 void iterate_method1(vpImage<unsigned char> &I, double alpha, double beta)
 {
@@ -229,7 +229,7 @@ void iterate_method1(vpImage<unsigned char> &I, double alpha, double beta)
  *
  * \param I : Input color image.
  * \param alpha : Gain.
- * \param beta: Offset.
+ * \param beta : Offset.
  */
 void iterate_method2(vpImage<vpRGBa> &I, double alpha, double beta)
 {

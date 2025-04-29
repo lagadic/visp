@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +33,8 @@
  * \brief Statistical Process Control Hinkley's test implementation.
  */
 
-#ifndef _vpStatisticalTestHinkley_h_
-#define _vpStatisticalTestHinkley_h_
+#ifndef VP_STATISTICAL_TEST_HINKLEY_H
+#define VP_STATISTICAL_TEST_HINKLEY_H
 
 #include <visp3/core/vpConfig.h>
 
@@ -211,11 +210,6 @@ public:
    * \param[in] stdev : the expected standard deviation of the signal.
    */
   vpStatisticalTestHinkley(const float &h, const float &k, const float &mean, const float &stdev);
-
-  /**
-   * \brief Destroy the vpStatisticalTestHinkley object.
-   */
-  virtual ~vpStatisticalTestHinkley();
 
   /**
    * \brief Get the \f$\alpha\f$ threshold indicating that a mean drift occurs.
