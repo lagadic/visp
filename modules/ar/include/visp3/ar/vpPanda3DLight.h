@@ -70,6 +70,8 @@ public:
    */
   vpPanda3DLight(const std::string &name, const vpRGBf &color) : m_name(name), m_color(color) { }
 
+  virtual ~vpPanda3DLight() = default;
+
   /**
    * \brief Get the name of the light.
    *
