@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,19 +40,19 @@ using json = nlohmann::json; //! json namespace shortcut
 
 vpJsonArgumentParser::vpJsonArgumentParser(const std::string &description, const std::string &jsonFileArgumentName,
                                            const std::string &nestSeparator) :
-  description(description),
-  jsonFileArgumentName(jsonFileArgumentName),
-  nestSeparator(nestSeparator)
+  m_description(description),
+  m_jsonFileArgumentName(jsonFileArgumentName),
+  m_nestSeparator(nestSeparator)
 {
-  if (jsonFileArgumentName.empty()) {
+  if (m_jsonFileArgumentName.empty()) {
     throw vpException(vpException::badValue, "The JSON file argument must not be empty");
   }
 
-  if (nestSeparator.empty()) {
+  if (m_nestSeparator.empty()) {
     throw vpException(vpException::badValue, "You must provide a JSON nesting delimiter to be able to parse JSON");
   }
 
-  helpers[jsonFileArgumentName] = []() -> std::string {
+  m_helpers[m_jsonFileArgumentName] = []() -> std::string {
     return "Path to the JSON configuration file. Values in this files are loaded, and can be overridden by command line arguments.\nOptional";
     };
 }
@@ -61,17 +61,17 @@ std::string vpJsonArgumentParser::help() const
 {
   std::stringstream ss;
 
-  ss << "Program description: " << description << std::endl;
+  ss << "Program description: " << m_description << std::endl;
   ss << "Arguments: " << std::endl;
   unsigned spacesBetweenArgAndDescription = 0;
-  for (const auto &helper : helpers) {
+  for (const auto &helper : m_helpers) {
     if (helper.first.size() > spacesBetweenArgAndDescription) {
       spacesBetweenArgAndDescription = static_cast<unsigned int>(helper.first.size());
     }
   }
   spacesBetweenArgAndDescription += 4;
 
-  for (const auto &helper : helpers) {
+  for (const auto &helper : m_helpers) {
     std::stringstream argss(helper.second());
     std::string line;
     bool first = true;
@@ -90,23 +90,23 @@ std::string vpJsonArgumentParser::help() const
     ss << std::endl;
   }
   ss << "Example JSON configuration file: " << std::endl << std::endl;
-  ss << exampleJson.dump(2) << std::endl;
+  ss << m_exampleJson.dump(2) << std::endl;
   return ss.str();
 }
 
 vpJsonArgumentParser &vpJsonArgumentParser::addFlag(const std::string &name, bool &parameter, const std::string &help)
 {
-  argumentType[name] = FLAG;
-  const auto getter = [name, this](nlohmann::json &j, bool create) -> nlohmann::json * {
+  m_argumentType[name] = FLAG;
+  const auto getter = [name, this](nlohmann::json &j, bool create) -> nlohmann::json *{
     size_t pos = 0;
     nlohmann::json *f = &j;
     std::string token;
     std::string name_copy = name;
 
-    while ((pos = name_copy.find(nestSeparator)) != std::string::npos) {
+    while ((pos = name_copy.find(m_nestSeparator)) != std::string::npos) {
       token = name_copy.substr(0, pos);
 
-      name_copy.erase(0, pos + nestSeparator.length());
+      name_copy.erase(0, pos + m_nestSeparator.length());
       if (create && !f->contains(token)) {
         (*f)[token] = {};
       }
@@ -125,7 +125,7 @@ vpJsonArgumentParser &vpJsonArgumentParser::addFlag(const std::string &name, boo
     return f;
     };
 
-  parsers[name] = [&parameter, getter, name](nlohmann::json &j) {
+  m_parsers[name] = [&parameter, getter, name](nlohmann::json &j) {
     const nlohmann::json *field = getter(j, false);
     const bool fieldHasNoValue = ((field == nullptr) || (field != nullptr && field->is_null()));
     if (!fieldHasNoValue && (field->type() == json::value_t::boolean && (*field) == true)) {
@@ -133,19 +133,19 @@ vpJsonArgumentParser &vpJsonArgumentParser::addFlag(const std::string &name, boo
     }
     };
 
-  updaters[name] = [getter](nlohmann::json &j, const std::string &) {
+  m_updaters[name] = [getter](nlohmann::json &j, const std::string &) {
     nlohmann::json *field = getter(j, true);
     *field = true;
     };
 
-  helpers[name] = [help, parameter]() -> std::string {
+  m_helpers[name] = [help, parameter]() -> std::string {
     std::stringstream ss;
     nlohmann::json repr = parameter;
     ss << help << std::endl << "Default: " << repr;
     return ss.str();
     };
 
-  nlohmann::json *exampleField = getter(exampleJson, true);
+  nlohmann::json *exampleField = getter(m_exampleJson, true);
   *exampleField = parameter;
 
   return *this;
@@ -156,7 +156,7 @@ void vpJsonArgumentParser::parse(int argc, const char *argv[])
   json j;
   const std::vector<std::string> arguments(argv + 1, argv + argc);
   std::vector<unsigned> ignoredArguments;
-  const auto jsonFileArgumentPos = std::find(arguments.begin(), arguments.end(), jsonFileArgumentName);
+  const auto jsonFileArgumentPos = std::find(arguments.begin(), arguments.end(), m_jsonFileArgumentName);
   // Load JSON file if present
   if (jsonFileArgumentPos != arguments.end()) {
     ignoredArguments.push_back(static_cast<unsigned>(jsonFileArgumentPos - arguments.begin() + 1));
@@ -188,10 +188,10 @@ void vpJsonArgumentParser::parse(int argc, const char *argv[])
         exit(1);
       }
 
-      if (parsers.find(arg) != parsers.end()) {
-        if (argumentType[arg] == WITH_FIELD) {
+      if (m_parsers.find(arg) != m_parsers.end()) {
+        if (m_argumentType[arg] == WITH_FIELD) {
           if (i < argc - 1) {
-            updaters[arg](j, std::string(argv[i + 1]));
+            m_updaters[arg](j, std::string(argv[i + 1]));
             ++i;
           }
           else {
@@ -200,8 +200,8 @@ void vpJsonArgumentParser::parse(int argc, const char *argv[])
             throw vpException(vpException::ioError, ss.str());
           }
         }
-        else if (argumentType[arg] == FLAG) {
-          updaters[arg](j, std::string());
+        else if (m_argumentType[arg] == FLAG) {
+          m_updaters[arg](j, std::string());
         }
       }
       else {
@@ -211,7 +211,7 @@ void vpJsonArgumentParser::parse(int argc, const char *argv[])
   }
 
   // Get the values from json document and store them in the arguments passed by ref in addArgument
-  for (const auto &parser : parsers) {
+  for (const auto &parser : m_parsers) {
     parser.second(j);
   }
 }
