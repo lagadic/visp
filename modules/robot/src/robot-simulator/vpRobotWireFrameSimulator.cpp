@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Basic class used to make robot simulators.
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpConfig.h>
 
@@ -56,8 +54,7 @@ vpRobotWireFrameSimulator::vpRobotWireFrameSimulator()
 #if defined(VISP_HAVE_DISPLAY)
   display(),
 #endif
-  displayType(MODEL_3D), displayAllowed(true), constantSamplingTimeMode(false), setVelocityCalled(false),
-  verbose_(false)
+  displayType(MODEL_3D), displayAllowed(true), constantSamplingTimeMode(false), setVelocityCalled(false)
 {
   setSamplingTime(0.010);
   velocity.resize(6);
@@ -81,8 +78,7 @@ vpRobotWireFrameSimulator::vpRobotWireFrameSimulator(bool do_display)
 #if defined(VISP_HAVE_DISPLAY)
   display(),
 #endif
-  displayType(MODEL_3D), displayAllowed(do_display), constantSamplingTimeMode(false), setVelocityCalled(false),
-  verbose_(false)
+  displayType(MODEL_3D), displayAllowed(do_display), constantSamplingTimeMode(false), setVelocityCalled(false)
 {
   setSamplingTime(0.010);
   velocity.resize(6);
