@@ -46,9 +46,9 @@
 BEGIN_VISP_NAMESPACE
 
 /*!
-  Basic constructor.
-*/
-vpVideoReader::vpVideoReader()
+ * Basic constructor.
+ */
+  vpVideoReader::vpVideoReader()
   : vpFrameGrabber(), m_imSequence(nullptr),
 #if defined(VISP_HAVE_OPENCV) && \
     (((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || \
@@ -61,13 +61,49 @@ vpVideoReader::vpVideoReader()
 { }
 
 /*!
-Basic destructor.
-*/
+ * Copy constructor.
+ */
+vpVideoReader::vpVideoReader(const vpVideoReader &reader) : vpFrameGrabber(reader)
+{
+  *this = reader;
+}
+
+/*!
+ * Basic destructor.
+ */
 vpVideoReader::~vpVideoReader()
 {
   if (m_imSequence != nullptr) {
     delete m_imSequence;
   }
+}
+
+/*!
+ * Copy operator.
+ */
+vpVideoReader &vpVideoReader::operator=(const vpVideoReader &reader)
+{
+  m_imSequence = reader.m_imSequence;
+#if defined(VISP_HAVE_OPENCV) && \
+    (((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || \
+     ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)))
+  m_capture = reader.m_capture;
+  m_frame = reader.m_frame;
+  m_lastframe_unknown = reader.m_lastframe_unknown;
+#endif
+  m_formatType = reader.m_formatType;
+  m_videoName = reader.m_videoName;
+  m_frameName = reader.m_frameName;
+  m_initFileName = reader.m_initFileName;
+  m_isOpen = reader.m_isOpen;
+  m_frameCount = reader.m_frameCount;
+  m_firstFrame = reader.m_firstFrame;
+  m_lastFrame = reader.m_lastFrame;
+  m_firstFrameIndexIsSet = reader.m_firstFrameIndexIsSet;
+  m_lastFrameIndexIsSet = reader.m_lastFrameIndexIsSet;
+  m_frameStep = reader.m_frameStep;
+  m_frameRate = reader.m_frameRate;
+  return *this;
 }
 
 /*!
@@ -82,8 +118,7 @@ vpVideoReader::~vpVideoReader()
   different images named `image0001.jpeg`, `image0002.jpg`... and located in the
   folder `/local/image`, `filename` will be `/local/image/image%04d.jpg`.
 
-  \param filename : Path to a video file or file name template of a image
-  sequence.
+  \param filename : Path to a video file or file name template of a image sequence.
 */
 void vpVideoReader::setFileName(const std::string &filename)
 {
