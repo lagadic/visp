@@ -224,13 +224,11 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
       usage(argv[0], nullptr, ipath, ppath, first, last, step, sizePrecision, grayLevelPrecision,
             ellipsoidShapePrecision);
       return false;
-      break;
 
     default:
       usage(argv[0], optarg_, ipath, ppath, first, last, step, sizePrecision, grayLevelPrecision,
             ellipsoidShapePrecision);
       return false;
-      break;
     }
   }
 

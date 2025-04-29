@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Defines the simplest robot : a free flying camera.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpSimulatorCamera.cpp
@@ -212,17 +210,11 @@ void vpSimulatorCamera::setVelocity(const vpRobot::vpControlFrameType frame, con
   case vpRobot::REFERENCE_FRAME:
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot set a velocity in the reference frame:"
                                                               "functionality not implemented");
-    break;
-  case vpRobot::MIXT_FRAME:
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot set a velocity in the mixt frame:"
                                                               "functionality not implemented");
-
-    break;
   case vpRobot::END_EFFECTOR_FRAME:
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot set a velocity in the end-effector frame:"
                                                               "functionality not implemented");
-
-    break;
   }
 }
 

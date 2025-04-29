@@ -275,12 +275,10 @@ bool getOptions(int argc, const char **argv, std::string &video_in_ipath, std::s
     case 'h':
       usage(argv[0], nullptr, video_in_ipath, video_in_ppath, video_in_first, video_in_last, video_in_step, me_range, me_sample_step, me_threshold, sleep_ms);
       return false;
-      break;
 
     default:
       usage(argv[0], optarg_, video_in_ipath, video_in_ppath, video_in_first, video_in_last, video_in_step, me_range, me_sample_step, me_threshold, sleep_ms);
       return false;
-      break;
     }
   }
 
@@ -583,7 +581,7 @@ int main(int argc, const char **argv)
       vpDisplay::getClick(I);
     }
     return EXIT_FAILURE;
-    }
+  }
 #else
   (void)argc;
   (void)argv;
@@ -599,6 +597,6 @@ int main()
     "functionalities are required..."
     << std::endl;
   return EXIT_SUCCESS;
-  }
+}
 
 #endif

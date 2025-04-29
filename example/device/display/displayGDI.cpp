@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Windows' GDI Display Test
- *
-*****************************************************************************/
+ */
 /*!
   \file displayGDI.cpp
 
@@ -168,12 +166,10 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
     case 'h':
       usage(argv[0], nullptr, ipath, opath, user);
       return false;
-      break;
 
     default:
       usage(argv[0], optarg, ipath, opath, user);
       return false;
-      break;
     }
   }
 

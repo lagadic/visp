@@ -142,12 +142,10 @@ bool getOptions(int argc, const char **argv, bool &display, unsigned int &nframe
     case 'h':
       usage(argv[0], nullptr, nframes, opath);
       return false;
-      break;
 
     default:
       usage(argv[0], optarg_, nframes, opath);
       return false;
-      break;
     }
   }
 

@@ -158,12 +158,10 @@ bool getOptions(int argc, const char **argv, KalmanType &kalman, bool &doAdaptat
     case 'h':
       usage(argv[0], nullptr, kalman);
       return false;
-      break;
 
     default:
       usage(argv[0], optarg, kalman);
       return false;
-      break;
     }
   }
 

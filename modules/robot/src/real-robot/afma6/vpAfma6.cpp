@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Interface for the Irisa's Afma6 robot.
- *
-*****************************************************************************/
+ */
 
 /*!
 
@@ -384,7 +382,6 @@ void vpAfma6::init(vpAfma6::vpAfma6ToolType tool, vpCameraParameters::vpCameraPa
     case vpCameraParameters::ProjWithKannalaBrandtDistortion:
       throw vpException(vpException::notImplementedError,
                         "Feature TOOL_CCMOP is not implemented for Kannala-Brandt projection model yet.");
-      break;
     }
     break;
   }
@@ -409,7 +406,6 @@ void vpAfma6::init(vpAfma6::vpAfma6ToolType tool, vpCameraParameters::vpCameraPa
     case vpCameraParameters::ProjWithKannalaBrandtDistortion:
       throw vpException(vpException::notImplementedError,
                         "Feature TOOL_GRIPPER is not implemented for Kannala-Brandt projection model yet.");
-      break;
     }
     break;
   }
@@ -434,7 +430,6 @@ void vpAfma6::init(vpAfma6::vpAfma6ToolType tool, vpCameraParameters::vpCameraPa
     case vpCameraParameters::ProjWithKannalaBrandtDistortion:
       throw vpException(vpException::notImplementedError,
                         "Feature TOOL_VACUUM is not implemented for Kannala-Brandt projection model yet.");
-      break;
     }
     break;
   }
@@ -459,7 +454,6 @@ void vpAfma6::init(vpAfma6::vpAfma6ToolType tool, vpCameraParameters::vpCameraPa
     case vpCameraParameters::ProjWithKannalaBrandtDistortion:
       throw vpException(vpException::notImplementedError,
                         "Feature TOOL_INTEL_D435_CAMERA is not implemented for Kannala-Brandt projection model yet.");
-      break;
     }
     break;
   }
@@ -479,7 +473,6 @@ void vpAfma6::init(vpAfma6::vpAfma6ToolType tool, vpCameraParameters::vpCameraPa
     case vpCameraParameters::ProjWithKannalaBrandtDistortion:
       throw vpException(vpException::notImplementedError,
                         "Feature TOOL_GENERIC_CAMERA is not implemented for Kannala-Brandt projection model yet.");
-      break;
     }
     break;
   }
@@ -1348,7 +1341,6 @@ void vpAfma6::getCameraParameters(vpCameraParameters &cam, const unsigned int &i
       case vpCameraParameters::ProjWithKannalaBrandtDistortion:
         throw vpException(vpException::notImplementedError,
                           "Feature getCameraParameters is not implemented for Kannala-Brandt projection model yet.");
-        break;
       }
     }
     else {
@@ -1373,7 +1365,6 @@ void vpAfma6::getCameraParameters(vpCameraParameters &cam, const unsigned int &i
       case vpCameraParameters::ProjWithKannalaBrandtDistortion:
         throw vpException(vpException::notImplementedError,
                           "Feature getCameraParameters is not implemented for Kannala-Brandt projection model yet.");
-        break;
       }
     }
     else {
@@ -1398,7 +1389,6 @@ void vpAfma6::getCameraParameters(vpCameraParameters &cam, const unsigned int &i
       case vpCameraParameters::ProjWithKannalaBrandtDistortion:
         throw vpException(vpException::notImplementedError,
                           "Feature getCameraParameters is not implemented for Kannala-Brandt projection model yet.");
-        break;
       }
     }
     else {
@@ -1423,7 +1413,6 @@ void vpAfma6::getCameraParameters(vpCameraParameters &cam, const unsigned int &i
       case vpCameraParameters::ProjWithKannalaBrandtDistortion:
         throw vpException(vpException::notImplementedError,
                           "Feature getCameraParameters is not implemented for Kannala-Brandt projection model yet.");
-        break;
       }
     }
     else {
@@ -1448,7 +1437,6 @@ void vpAfma6::getCameraParameters(vpCameraParameters &cam, const unsigned int &i
       case vpCameraParameters::ProjWithKannalaBrandtDistortion:
         throw vpException(vpException::notImplementedError,
                           "Feature getCameraParameters is not implemented for Kannala-Brandt projection model yet.");
-        break;
       }
     }
     else {

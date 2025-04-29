@@ -100,7 +100,6 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &click, bo
     case 'h':
       usage(argv[0], nullptr, ipath);
       return false;
-      break;
     case 't':
       doTemplateMatching = true;
       break;
@@ -114,7 +113,6 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &click, bo
     default:
       usage(argv[0], optarg_, ipath);
       return false;
-      break;
     }
   }
 
@@ -367,7 +365,7 @@ try {
         if (!vpMath::equal(I_score[i][j], I_score_gold[i][j], 1e-9)) {
           std::cerr << "Issue with template matching, gold: " << std::setprecision(17) << I_score_gold[i][j]
             << " ; compute: " << I_score[i][j] << std::endl;
-            return EXIT_FAILURE;
+          return EXIT_FAILURE;
         }
       }
     }

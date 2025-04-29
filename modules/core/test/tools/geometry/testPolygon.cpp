@@ -125,12 +125,10 @@ bool getOptions(int argc, const char **argv, bool &opt_display, bool &opt_click,
     case 'h':
       usage(argv[0], nullptr);
       return false;
-      break;
 
     default:
       usage(argv[0], optarg_);
       return false;
-      break;
     }
   }
 

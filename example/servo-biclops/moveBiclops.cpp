@@ -108,12 +108,10 @@ bool getOptions(int argc, const char **argv, std::string &conf)
     case 'h':
       usage(argv[0], nullptr, conf);
       return false;
-      break;
 
     default:
       usage(argv[0], optarg_, conf);
       return false;
-      break;
     }
   }
 

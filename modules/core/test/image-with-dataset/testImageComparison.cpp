@@ -109,7 +109,6 @@ bool getOptions(int argc, const char **argv, std::string &ipath)
     case 'h':
       usage(argv[0], nullptr, ipath);
       return false;
-      break;
 
     case 'c':
     case 'd':
@@ -118,7 +117,6 @@ bool getOptions(int argc, const char **argv, std::string &ipath)
     default:
       usage(argv[0], optarg_, ipath);
       return false;
-      break;
     }
   }
 

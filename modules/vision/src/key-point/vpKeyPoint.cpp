@@ -3919,7 +3919,6 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
 
         default:
           throw vpException(vpException::fatalError, "Problem with the data type of descriptors !");
-          break;
         }
       }
     }
@@ -4038,7 +4037,6 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
 
         default:
           throw vpException(vpException::fatalError, "Problem with the data type of descriptors !");
-          break;
         }
       }
     }

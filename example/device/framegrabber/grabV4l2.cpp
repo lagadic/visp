@@ -219,12 +219,10 @@ bool getOptions(int argc, const char **argv, unsigned &fps, unsigned &input, uns
     case 'h':
       usage(argv[0], nullptr, fps, input, scale, niter, device, pixelformat, image_type, opath);
       return false;
-      break;
 
     default:
       usage(argv[0], optarg_, fps, input, scale, niter, device, pixelformat, image_type, opath);
       return false;
-      break;
     }
   }
 

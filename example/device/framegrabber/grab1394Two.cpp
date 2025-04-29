@@ -326,7 +326,6 @@ bool read_options(int argc, const char **argv, bool &multi, unsigned int &camera
       usage(argv[0], nullptr, camera, nframes, opath, roi_left, roi_top, roi_width, roi_height, ringbuffersize,
             panControl);
       return false;
-      break;
     }
   }
 

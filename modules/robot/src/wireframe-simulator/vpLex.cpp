@@ -280,15 +280,12 @@ lex_loop:
     mytext = mysptr; /* sauvegarde le jeton  */
     mysptr++;
     return (*mytext);
-    break;
   case EOBT:
     next_source();
     goto lex_loop;
-    break;
   case EOFT:
     mytext = mysptr; /* sauvegarde le jeton  */
     return (T_EOF);
-    break;
   case EOLT:
     if (mysptr == lastline)
       next_source();
@@ -297,7 +294,6 @@ lex_loop:
     mylineno++;
     myline = mysptr;
     goto lex_loop;
-    break;
   case CMTT:
     mytext = mysptr; /* sauvegarde le jeton  */
     mysptr++;
@@ -311,11 +307,9 @@ lex_loop:
     case EOBT:
       next_source();
       goto comment;
-      break;
     case EOFT:
       lexerr("start", lex_errtbl[E_CMT_EOF], NULL);
       return (T_EOF);
-      break;
     case EOLT:
       if (mysptr == lastline)
         next_source();
@@ -324,7 +318,6 @@ lex_loop:
       mylineno++;
       myline = mysptr;
       goto comment;
-      break;
     case CMTT:
       if (PREVC == '*') { /* veritable fin  */
         mysptr++;
@@ -332,7 +325,6 @@ lex_loop:
       }
       mysptr++; /* pseudo fin     */
       goto comment;
-      break;
     }
     break;
   case IDNT:
@@ -342,7 +334,6 @@ lex_loop:
     };
     mylength = static_cast<int>(mysptr - mytext);
     return (get_symbol(mytext, mylength));
-    break;
   case INTT:
     mytext = mysptr; /* sauvegarde le jeton  */
   int_part:
@@ -394,7 +385,6 @@ lex_loop:
     if (!isintt(static_cast<int>(CURC))) /* pas de fraction  */
       return (*mytext);
     goto float_part;
-    break;
   case SGNT:
     mytext = mysptr; /* sauvegarde le jeton  */
     mysptr++;
@@ -403,7 +393,6 @@ lex_loop:
     if (isfptt(static_cast<int>(CURC)) && isintt(static_cast<int>(NEXTC)))
       goto float_part;
     return (*mytext);
-    break;
   case STGT:
     mytext = mysptr; /* sauvegarde le jeton  */
     mysptr++;
@@ -414,15 +403,12 @@ lex_loop:
     case EOBT:
       next_source();
       goto string;
-      break;
     case EOFT:
       lexerr("start", lex_errtbl[E_STG_EOF], NULL);
       return ('\n');
-      break;
     case EOLT:
       lexerr("start", lex_errtbl[E_STG_EOL], NULL);
       return ('\n');
-      break;
     case STGT:
       if (PREVC != '\\') { /* veritable fin  */
         mytext++;
@@ -432,14 +418,12 @@ lex_loop:
       }
       mysptr++; /* pseudo fin     */
       goto string;
-      break;
     }
     break;
   default:
     ECHO;
     mysptr++;
     goto lex_loop;
-    break;
   }
   return (T_EOF);
 }

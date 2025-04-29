@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Pioneer mobile robot simulator without display.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpSimulatorPioneer.cpp
@@ -134,24 +132,19 @@ void vpSimulatorPioneer::setVelocity(const vpRobot::vpControlFrameType frame, co
     wMc_ = wMe_ * cMe_.inverse();
 
     break;
-  } break;
+  }
   case vpRobot::CAMERA_FRAME:
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot set a velocity in the camera frame:"
                                                               "functionality not implemented");
-    break;
   case vpRobot::REFERENCE_FRAME:
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot set a velocity in the articular frame:"
                                                               "functionality not implemented");
   case vpRobot::MIXT_FRAME:
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot set a velocity in the mixt frame:"
                                                               "functionality not implemented");
-
-    break;
   case vpRobot::END_EFFECTOR_FRAME:
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot set a velocity in the end-effector frame:"
                                                               "functionality not implemented");
-
-    break;
   }
 }
 

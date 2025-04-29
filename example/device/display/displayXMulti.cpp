@@ -172,12 +172,10 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
     case 'h':
       usage(argv[0], nullptr, ipath, opath, user);
       return false;
-      break;
 
     default:
       usage(argv[0], optarg_, ipath, opath, user);
       return false;
-      break;
     }
   }
 
@@ -415,5 +413,5 @@ int main()
   std::cout << "Tip if you are on a unix-like system:" << std::endl;
   std::cout << "- Install X11, configure again ViSP using cmake and build again this example" << std::endl;
   return EXIT_SUCCESS;
-  }
+}
 #endif

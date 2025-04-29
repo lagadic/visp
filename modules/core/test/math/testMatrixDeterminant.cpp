@@ -122,7 +122,6 @@ bool getOptions(int argc, const char **argv, unsigned int &nb_matrices, unsigned
     case 'h':
       usage(argv[0], nullptr);
       return false;
-      break;
     case 'n':
       nb_matrices = static_cast<unsigned int>(atoi(optarg_));
       break;
@@ -153,7 +152,6 @@ bool getOptions(int argc, const char **argv, unsigned int &nb_matrices, unsigned
     default:
       usage(argv[0], optarg_);
       return false;
-      break;
     }
   }
 

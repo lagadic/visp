@@ -136,12 +136,10 @@ bool getOptions(int argc, const char **argv, int &i_val, float &f_val, double &d
     case 'h':
       usage(argv[0], nullptr, i_val, f_val, d_val);
       return false;
-      break;
 
     default:
       usage(argv[0], optarg_, i_val, f_val, d_val);
       return false;
-      break;
     }
   }
 

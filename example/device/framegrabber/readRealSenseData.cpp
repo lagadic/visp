@@ -177,12 +177,10 @@ bool getOptions(int argc, const char *argv[], std::string &input_directory, std:
     case 'h':
       usage(argv[0], nullptr);
       return false;
-      break;
 
     default:
       usage(argv[0], optarg);
       return false;
-      break;
     }
   }
 

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Interface for the ADEPT Viper 650 robot.
- *
-*****************************************************************************/
+ */
 
 /*!
 
@@ -194,7 +192,6 @@ void vpViper650::init(vpViper650::vpToolType tool, vpCameraParameters::vpCameraP
     case vpCameraParameters::ProjWithKannalaBrandtDistortion:
       throw vpException(vpException::notImplementedError,
                         "Feature TOOL_MARLIN_F033C_CAMERA is not implemented for Kannala-Brandt projection model yet.");
-      break;
     }
     break;
   }
@@ -209,7 +206,6 @@ void vpViper650::init(vpViper650::vpToolType tool, vpCameraParameters::vpCameraP
     case vpCameraParameters::ProjWithKannalaBrandtDistortion:
       throw vpException(vpException::notImplementedError,
                         "Feature TOOL_PTGREY_FLEA2_CAMERA is not implemented for Kannala-Brandt projection model yet.");
-      break;
     }
     break;
   }
@@ -225,7 +221,6 @@ void vpViper650::init(vpViper650::vpToolType tool, vpCameraParameters::vpCameraP
       throw vpException(
           vpException::notImplementedError,
           "Feature TOOL_SCHUNK_GRIPPER_CAMERA is not implemented for Kannala-Brandt projection model yet.");
-      break;
     }
     break;
   }
@@ -240,7 +235,6 @@ void vpViper650::init(vpViper650::vpToolType tool, vpCameraParameters::vpCameraP
     case vpCameraParameters::ProjWithKannalaBrandtDistortion:
       throw vpException(vpException::notImplementedError,
                         "Feature TOOL_GENERIC_CAMERA is not implemented for Kannala-Brandt projection model yet.");
-      break;
     }
     break;
   }
@@ -283,7 +277,6 @@ void vpViper650::init(vpViper650::vpToolType tool, vpCameraParameters::vpCameraP
     case vpCameraParameters::ProjWithKannalaBrandtDistortion:
       throw vpException(vpException::notImplementedError,
                         "Feature TOOL_MARLIN_F033C_CAMERA is not implemented for Kannala-Brandt projection model yet.");
-      break;
     }
     break;
   }
@@ -309,7 +302,6 @@ void vpViper650::init(vpViper650::vpToolType tool, vpCameraParameters::vpCameraP
     case vpCameraParameters::ProjWithKannalaBrandtDistortion:
       throw vpException(vpException::notImplementedError,
                         "Feature TOOL_PTGREY_FLEA2_CAMERA is not implemented for Kannala-Brandt projection model yet.");
-      break;
     }
     break;
   }
@@ -328,7 +320,6 @@ void vpViper650::init(vpViper650::vpToolType tool, vpCameraParameters::vpCameraP
     case vpCameraParameters::ProjWithKannalaBrandtDistortion:
       throw vpException(vpException::notImplementedError,
                         "Feature TOOL_GENERIC_CAMERA is not implemented for Kannala-Brandt projection model yet.");
-      break;
     }
     break;
   }
@@ -361,21 +352,19 @@ void vpViper650::init(vpViper650::vpToolType tool, vpCameraParameters::vpCameraP
   The configuration file should have the form below:
 
   \code
-# Start with any number of consecutive lines
-# beginning with the symbol '#'
-#
-# The 3 following lines contain the name of the camera,
-# the rotation parameters of the geometric transformation
-# using the Euler angles in degrees with convention XYZ and
-# the translation parameters expressed in meters
-CAMERA CameraName
-eMc_ROT_XYZ 10.0 -90.0 20.0
-eMc_TRANS_XYZ  0.05 0.01 0.06
-    \endcode
+  # Start with any number of consecutive lines
+  # beginning with the symbol '#'
+  #
+  # The 3 following lines contain the name of the camera,
+  # the rotation parameters of the geometric transformation
+  # using the Euler angles in degrees with convention XYZ and
+  # the translation parameters expressed in meters
+  CAMERA CameraName
+  eMc_ROT_XYZ 10.0 -90.0 20.0
+  eMc_TRANS_XYZ  0.05 0.01 0.06
+  \endcode
 
-  \sa init(vpViper650::vpToolType,
-vpCameraParameters::vpCameraParametersProjType), init(vpViper650::vpToolType,
-const vpHomogeneousMatrix&)
+  \sa init(vpViper650::vpToolType, vpCameraParameters::vpCameraParametersProjType), init(vpViper650::vpToolType, const vpHomogeneousMatrix&)
 */
 void vpViper650::init(vpViper650::vpToolType tool, const std::string &filename)
 {
@@ -635,7 +624,6 @@ void vpViper650::getCameraParameters(vpCameraParameters &cam, const unsigned int
       case vpCameraParameters::ProjWithKannalaBrandtDistortion:
         throw vpException(vpException::notImplementedError,
                           "Feature getCameraParameters is not implemented for Kannala-Brandt projection model yet.");
-        break;
       }
     }
     else {
@@ -661,7 +649,6 @@ void vpViper650::getCameraParameters(vpCameraParameters &cam, const unsigned int
       case vpCameraParameters::ProjWithKannalaBrandtDistortion:
         throw vpException(vpException::notImplementedError,
                           "Feature getCameraParameters is not implemented for Kannala-Brandt projection model yet.");
-        break;
       }
     }
     else {
@@ -686,7 +673,6 @@ void vpViper650::getCameraParameters(vpCameraParameters &cam, const unsigned int
       case vpCameraParameters::ProjWithKannalaBrandtDistortion:
         throw vpException(vpException::notImplementedError,
                           "Feature getCameraParameters is not implemented for Kannala-Brandt projection model yet.");
-        break;
       }
     }
     else {
@@ -713,8 +699,7 @@ void vpViper650::getCameraParameters(vpCameraParameters &cam, const unsigned int
 
   \warning Third method needs also an access to the files containing the
   camera parameters in XML format. This access is available if
-  VISP_HAVE_VIPER650_DATA macro is defined in include/visp3/core/vpConfig.h
-file.
+  VISP_HAVE_VIPER650_DATA macro is defined in include/visp3/core/vpConfig.h file.
 
   - If VISP_HAVE_VIPER650_DATA macro is defined, this method gets the camera parameters
   from const_camera_Viper650.xml config file.

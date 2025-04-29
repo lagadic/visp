@@ -114,12 +114,10 @@ bool getOptions(int argc, char **argv, unsigned int &deviceCount, bool &saveVide
     case 'h':
       usage(argv[0], nullptr);
       return false;
-      break;
 
     default:
       usage(argv[0], optarg);
       return false;
-      break;
     }
   }
 

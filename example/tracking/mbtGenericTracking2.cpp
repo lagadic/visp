@@ -223,12 +223,10 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &co
     case 'h':
       usage(argv[0], nullptr);
       return false;
-      break;
 
     default:
       usage(argv[0], optarg_);
       return false;
-      break;
     }
   }
 
