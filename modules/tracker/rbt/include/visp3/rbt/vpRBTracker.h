@@ -314,6 +314,7 @@ protected:
 
   vpRBADDSMetric m_convergenceMetric;
   double m_convergedMetricThreshold;
+  double m_updateRenderThreshold;
 
   bool m_displaySilhouette; //! Whether a call to the display function should draw a silhouette outline
 

@@ -51,7 +51,7 @@ BEGIN_VISP_NAMESPACE
 
 vpRBTracker::vpRBTracker() :
   m_firstIteration(true), m_trackers(0), m_lambda(1.0), m_vvsIterations(10), m_muInit(0.0), m_muIterFactor(0.5), m_scaleInvariantOptim(false),
-  m_renderer(m_rendererSettings), m_imageHeight(480), m_imageWidth(640), m_verbose(false), m_convergenceMetric(1024, 41), m_convergedMetricThreshold(0.0), m_displaySilhouette(false)
+  m_renderer(m_rendererSettings), m_imageHeight(480), m_imageWidth(640), m_verbose(false), m_convergenceMetric(1024, 41), m_convergedMetricThreshold(0.0), m_updateRenderThreshold(0.0), m_displaySilhouette(false)
 {
   m_rendererSettings.setClippingDistance(0.01, 1.0);
   m_renderer.setRenderParameters(m_rendererSettings);
@@ -218,8 +218,14 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
   vpRBTrackingTimings &timer = result.timer();
   timer.reset();
 
+  // Render the object at the current pose
   timer.startTimer();
-  updateRender(input);
+  if (m_firstIteration || m_updateRenderThreshold <= 0.0 || m_convergenceMetric.ADDS(m_cMo, m_currentFrame.renders.cMo) > m_updateRenderThreshold) {
+    updateRender(input);
+  }
+  else {
+    input.renders = m_currentFrame.renders;
+  }
   timer.setRenderTime(timer.endTimer());
 
   if (m_firstIteration) {
@@ -229,12 +235,14 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
   }
 
   m_cMoPrev = m_cMo;
+  // Compute the object segmentation mask that will be used by trackers to select features
   timer.startTimer();
   if (m_mask) {
     m_mask->updateMask(input, m_previousFrame, input.mask);
   }
   timer.setMaskTime(timer.endTimer());
 
+  // Extract silhouette contours
   bool requiresSilhouetteCandidates = false;
   for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
     if (tracker->requiresSilhouetteCandidates()) {
@@ -255,6 +263,7 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
   }
   timer.setSilhouetteTime(timer.endTimer());
 
+  // Perform odometry: estimate camera motion and potentially update render to match
   if (m_odometry) {
     timer.startTimer();
     m_odometry->compute(input, m_previousFrame);
@@ -264,11 +273,8 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
     bool shouldRerender = true;
     if (m_convergedMetricThreshold > 0.0 && m_cMo != cMo_beforeOdo) {
       const double adds = m_convergenceMetric.ADDS(m_cMo, cMo_beforeOdo);
-      // Multiply by number of vvs iterations: convergence is tested between two optim iterations,
-      // while we consider that odometry performs a full optim pass wrt to the environment
-      const double rerenderThreshold = m_convergedMetricThreshold * m_vvsIterations;
-      shouldRerender = adds > rerenderThreshold;
-      result.setOdometryMetricAndThreshold(adds, rerenderThreshold);
+      shouldRerender = adds > m_updateRenderThreshold;
+      result.setOdometryMetricAndThreshold(adds, m_updateRenderThreshold);
     }
     result.setOdometryMotion(cMo_beforeOdo, cnTc, m_cMo);
     if (shouldRerender) {
@@ -650,6 +656,8 @@ void vpRBTracker::loadConfiguration(const nlohmann::json &j)
   m_verbose = verboseSettings.value("enabled", m_verbose);
 
   m_displaySilhouette = j.value("displaySilhouette", m_displaySilhouette);
+  m_updateRenderThreshold = j.value("updateRenderThreshold", m_updateRenderThreshold);
+
   if (j.contains("camera")) {
     const nlohmann::json cameraSettings = j.at("camera");
     m_cam = cameraSettings.at("intrinsics");
@@ -669,6 +677,7 @@ void vpRBTracker::loadConfiguration(const nlohmann::json &j)
   setOptimizationMuIterFactor(vvsSettings.value("muIterFactor", m_muIterFactor));
   setScaleInvariantRegularization(vvsSettings.value("scaleInvariant", m_scaleInvariantOptim));
   m_convergedMetricThreshold = (vvsSettings.value("convergenceMetricThreshold", m_convergedMetricThreshold));
+
 
   m_depthSilhouetteSettings = j.at("silhouetteExtractionSettings");
 
