@@ -183,7 +183,7 @@ void vpMbEdgeTracker::computeVVS(const vpImage<unsigned char> &I_, unsigned int 
 
     computeVVSFirstPhase(I_, iter, count, lvl);
 
-    count = count / (double)nbrow;
+    count = count / static_cast<double>(nbrow);
     if (count >= 0.85) {
       reloop = false;
     }
@@ -925,7 +925,7 @@ void vpMbEdgeTracker::computeProjectionError(const vpImage<unsigned char> &I_)
   }
 
   if (nbFeatures > 0) {
-    projectionError = vpMath::deg(projectionError / (double)nbFeatures);
+    projectionError = vpMath::deg(projectionError / static_cast<double>(nbFeatures));
   }
   else {
     projectionError = 90.0;

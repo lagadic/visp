@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,11 +29,10 @@
  *
  * Description:
  * Tukey M-estimator.
- *
-*****************************************************************************/
+ */
 
-#ifndef _vpMbtTukeyEstimator_h_
-#define _vpMbtTukeyEstimator_h_
+#ifndef VP_MBT_TUKEY_ESTIMATOR_H
+#define VP_MBT_TUKEY_ESTIMATOR_H
 
 #include <vector>
 #include <visp3/core/vpConfig.h>
@@ -434,7 +432,7 @@ inline void vpMbtTukeyEstimator<float>::MEstimator(const vpColVector &residues, 
 
   m_normres.resize(residues.size());
   for (size_t i = 0; i < m_residues.size(); i++) {
-    m_normres[i] = static_cast<float>(std::fabs(residues[static_cast<unsigned int>(i)] - med));
+    m_normres[i] = static_cast<float>(std::fabs(static_cast<float>(residues[static_cast<unsigned int>(i)]) - med));
   }
 
   m_residues = m_normres;

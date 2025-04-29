@@ -744,7 +744,7 @@ bool vpKeyPoint::computePose(const std::vector<cv::Point2f> &imagePoints, const 
 #else
     int nbInlierToReachConsensus = m_nbRansacMinInlierCount;
     if (m_useConsensusPercentage) {
-      nbInlierToReachConsensus = static_cast<int>(m_ransacConsensusPercentage / 100.0 * (double)m_queryFilteredKeyPoints.size());
+      nbInlierToReachConsensus = static_cast<int>(m_ransacConsensusPercentage / 100.0 * static_cast<double>(m_queryFilteredKeyPoints.size()));
     }
 
     cv::solvePnPRansac(objectPoints, imagePoints, cameraMatrix, distCoeffs, rvec, tvec, false, m_nbRansacIterations,
@@ -804,7 +804,7 @@ bool vpKeyPoint::computePose(const std::vector<vpPoint> &objectVpPoints, vpHomog
   unsigned int nbInlierToReachConsensus = static_cast<unsigned int>(m_nbRansacMinInlierCount);
   if (m_useConsensusPercentage) {
     nbInlierToReachConsensus =
-      static_cast<unsigned int>(m_ransacConsensusPercentage / 100.0 * (double)m_queryFilteredKeyPoints.size());
+      static_cast<unsigned int>(m_ransacConsensusPercentage / 100.0 * static_cast<double>(m_queryFilteredKeyPoints.size()));
   }
 
   pose.setRansacFilterFlag(m_ransacFilterFlag);
@@ -910,8 +910,7 @@ void vpKeyPoint::createImageMatching(vpImage<unsigned char> &ICurrent, vpImage<u
   }
   else {
     // Multiple training images, display them as a mosaic image
-    // (unsigned int) std::floor(std::sqrt((double) nbImg) + 0.5);
-    unsigned int nbImgSqrt = static_cast<unsigned int>(vpMath::round(std::sqrt((double)nbImg)));
+    unsigned int nbImgSqrt = static_cast<unsigned int>(vpMath::round(std::sqrt(static_cast<double>(nbImg))));
 
     // Number of columns in the mosaic grid
     unsigned int nbWidth = nbImgSqrt;
@@ -957,8 +956,7 @@ void vpKeyPoint::createImageMatching(vpImage<vpRGBa> &ICurrent, vpImage<vpRGBa> 
   }
   else {
     // Multiple training images, display them as a mosaic image
-    //(unsigned int) std::floor(std::sqrt((double) nbImg) + 0.5);
-    unsigned int nbImgSqrt = static_cast<unsigned int>(vpMath::round(std::sqrt((double)nbImg)));
+    unsigned int nbImgSqrt = static_cast<unsigned int>(vpMath::round(std::sqrt(static_cast<double>(nbImg))));
 
     // Number of columns in the mosaic grid
     unsigned int nbWidth = nbImgSqrt;
@@ -1218,7 +1216,7 @@ void vpKeyPoint::displayMatching(const vpImage<unsigned char> &ICurrent, vpImage
   }
   else {
     // Multiple training images, display them as a mosaic image
-    int nbImgSqrt = vpMath::round(std::sqrt((double)nbImg)); //(int) std::floor(std::sqrt((double) nbImg) + 0.5);
+    int nbImgSqrt = vpMath::round(std::sqrt(static_cast<double>(nbImg)));
     int nbWidth = nbImgSqrt;
     int nbHeight = nbImgSqrt;
 
@@ -1331,7 +1329,7 @@ void vpKeyPoint::displayMatching(const vpImage<vpRGBa> &ICurrent, vpImage<vpRGBa
   }
   else {
     // Multiple training images, display them as a mosaic image
-    int nbImgSqrt = vpMath::round(std::sqrt((double)nbImg)); //(int) std::floor(std::sqrt((double) nbImg) + 0.5);
+    int nbImgSqrt = vpMath::round(std::sqrt(static_cast<double>(nbImg)));
     int nbWidth = nbImgSqrt;
     int nbHeight = nbImgSqrt;
 
@@ -2390,7 +2388,7 @@ void vpKeyPoint::insertImageMatching(const vpImage<unsigned char> &ICurrent, vpI
   }
   else {
  // Multiple training images, display them as a mosaic image
-    int nbImgSqrt = vpMath::round(std::sqrt((double)nbImg)); //(int) std::floor(std::sqrt((double) nbImg) + 0.5);
+    int nbImgSqrt = vpMath::round(std::sqrt(static_cast<double>(nbImg)));
     int nbWidth = nbImgSqrt;
     int nbHeight = nbImgSqrt;
 
@@ -2456,7 +2454,7 @@ void vpKeyPoint::insertImageMatching(const vpImage<vpRGBa> &ICurrent, vpImage<vp
   }
   else {
     // Multiple training images, display them as a mosaic image
-    int nbImgSqrt = vpMath::round(std::sqrt((double)nbImg)); //(int) std::floor(std::sqrt((double) nbImg) + 0.5);
+    int nbImgSqrt = vpMath::round(std::sqrt(static_cast<double>(nbImg)));
     int nbWidth = nbImgSqrt;
     int nbHeight = nbImgSqrt;
 
@@ -3379,11 +3377,11 @@ bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &bo
 
   double meanDescriptorDistanceTmp = 0.0;
   for (std::vector<cv::DMatch>::const_iterator it = m_filteredMatches.begin(); it != m_filteredMatches.end(); ++it) {
-    meanDescriptorDistanceTmp += (double)it->distance;
+    meanDescriptorDistanceTmp += static_cast<double>(it->distance);
   }
 
-  meanDescriptorDistanceTmp /= (double)m_filteredMatches.size();
-  double score = (double)m_filteredMatches.size() / meanDescriptorDistanceTmp;
+  meanDescriptorDistanceTmp /= static_cast<double>(m_filteredMatches.size());
+  double score = static_cast<double>(m_filteredMatches.size()) / meanDescriptorDistanceTmp;
 
   if (meanDescriptorDistance != nullptr) {
     *meanDescriptorDistance = meanDescriptorDistanceTmp;
@@ -3424,13 +3422,13 @@ bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &bo
         double reprojectionError = std::sqrt(err_x * err_x + err_y * err_y);
 
         if (reprojectionError < 6.0) {
-          inliers.push_back(vpImagePoint((double)points2[i].y, (double)points2[i].x));
+          inliers.push_back(vpImagePoint(static_cast<double>(points2[i].y), static_cast<double>(points2[i].x)));
           if (imPts1 != nullptr) {
-            imPts1->push_back(vpImagePoint((double)points1[i].y, (double)points1[i].x));
+            imPts1->push_back(vpImagePoint(static_cast<double>(points1[i].y, static_cast<double>(points1[i].x));
           }
 
           if (imPts2 != nullptr) {
-            imPts2->push_back(vpImagePoint((double)points2[i].y, (double)points2[i].x));
+            imPts2->push_back(vpImagePoint(static_cast<double>(points2[i].y, static_cast<double>(points2[i].x));
           }
         }
       }
@@ -3441,14 +3439,14 @@ bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &bo
 
       for (size_t i = 0; i < (size_t)fundamentalInliers.rows; i++) {
         if (fundamentalInliers.at<uchar>(static_cast<int>(i), 0)) {
-          inliers.push_back(vpImagePoint((double)points2[i].y, (double)points2[i].x));
+          inliers.push_back(vpImagePoint(static_cast<double>(points2[i].y, static_cast<double>(points2[i].x));
 
           if (imPts1 != nullptr) {
-            imPts1->push_back(vpImagePoint((double)points1[i].y, (double)points1[i].x));
+            imPts1->push_back(vpImagePoint(static_cast<double>(points1[i].y, static_cast<double>(points1[i].x));
           }
 
           if (imPts2 != nullptr) {
-            imPts2->push_back(vpImagePoint((double)points2[i].y, (double)points2[i].x));
+            imPts2->push_back(vpImagePoint(static_cast<double>(points2[i].y, static_cast<double>(points2[i].x));
           }
         }
       }
@@ -3467,8 +3465,8 @@ bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &bo
         meanV += it->get_v();
       }
 
-      meanU /= (double)inliers.size();
-      meanV /= (double)inliers.size();
+      meanU /= static_cast<double>(inliers.size());
+      meanV /= static_cast<double>(inliers.size());
 
       centerOfGravity.set_u(meanU);
       centerOfGravity.set_v(meanV);
@@ -3518,8 +3516,8 @@ bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, const vpCa
       meanV += it->get_v();
     }
 
-    meanU /= (double)m_ransacInliers.size();
-    meanV /= (double)m_ransacInliers.size();
+    meanU /= static_cast<double>(m_ransacInliers.size());
+    meanV /= static_cast<double>(m_ransacInliers.size());
 
     centerOfGravity.set_u(meanU);
     centerOfGravity.set_v(meanV);

@@ -105,9 +105,9 @@ std::vector<double> vpColorBlindFriendlyPalette::to_colorRatio() const
 {
   vpColor color = s_palette[to_uint(m_colorID)];
   std::vector<double> v_rgb;
-  v_rgb.push_back((double)color.R / 255.0);
-  v_rgb.push_back((double)color.G / 255.0);
-  v_rgb.push_back((double)color.B / 255.0);
+  v_rgb.push_back(static_cast<double>(color.R) / 255.0);
+  v_rgb.push_back(static_cast<double>(color.G) / 255.0);
+  v_rgb.push_back(static_cast<double>(color.B) / 255.0);
   return v_rgb;
 }
 

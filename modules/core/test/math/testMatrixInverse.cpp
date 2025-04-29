@@ -303,7 +303,7 @@ int test_inverse(const std::vector<vpMatrix> &bench, const std::vector<vpMatrix>
   for (unsigned int i = 0; i < bench.size(); i++) {
     vpMatrix I = bench[i] * result[i];
     if (std::fabs(I.frobeniusNorm() - sqrt(static_cast<double>(bench[0].AtA().getRows()))) > epsilon) {
-      std::cout << "Bad inverse[" << i << "]: " << I.frobeniusNorm() << " " << sqrt((double)bench[0].AtA().getRows())
+      std::cout << "Bad inverse[" << i << "]: " << I.frobeniusNorm() << " " << sqrt(static_cast<double>(bench[0].AtA().getRows()))
         << std::endl;
       return EXIT_FAILURE;
     }

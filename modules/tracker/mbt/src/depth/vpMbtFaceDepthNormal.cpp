@@ -186,9 +186,9 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
   vpRect bb = polygon_2d.getBoundingBox();
 
   unsigned int top = static_cast<unsigned int>(std::max<double>(0.0, bb.getTop()));
-  unsigned int bottom = static_cast<unsigned int>(std::min<double>((double)height, std::max<double>(0.0, bb.getBottom())));
+  unsigned int bottom = static_cast<unsigned int>(std::min<double>(static_cast<double>(height), std::max<double>(0.0, bb.getBottom())));
   unsigned int left = static_cast<unsigned int>(std::max<double>(0.0, bb.getLeft()));
-  unsigned int right = static_cast<unsigned int>(std::min<double>((double)width, std::max<double>(0.0, bb.getRight())));
+  unsigned int right = static_cast<unsigned int>(std::min<double>(static_cast<double>(width), std::max<double>(0.0, bb.getRight())));
 
   bb.setTop(top);
   bb.setBottom(bottom);
@@ -352,9 +352,9 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
   vpRect bb = polygon_2d.getBoundingBox();
 
   unsigned int top = static_cast<unsigned int>(std::max<double>(0.0, bb.getTop()));
-  unsigned int bottom = static_cast<unsigned int>(std::min<double>((double)height, std::max<double>(0.0, bb.getBottom())));
+  unsigned int bottom = static_cast<unsigned int>(std::min<double>(static_cast<double>(height), std::max<double>(0.0, bb.getBottom())));
   unsigned int left = static_cast<unsigned int>(std::max<double>(0.0, bb.getLeft()));
-  unsigned int right = static_cast<unsigned int>(std::min<double>((double)width, std::max<double>(0.0, bb.getRight())));
+  unsigned int right = static_cast<unsigned int>(std::min<double>(static_cast<double>(width), std::max<double>(0.0, bb.getRight())));
 
   bb.setTop(top);
   bb.setBottom(bottom);
@@ -513,9 +513,9 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
   vpRect bb = polygon_2d.getBoundingBox();
 
   unsigned int top = static_cast<unsigned int>(std::max<double>(0.0, bb.getTop()));
-  unsigned int bottom = static_cast<unsigned int>(std::min<double>((double)height, std::max<double>(0.0, bb.getBottom())));
+  unsigned int bottom = static_cast<unsigned int>(std::min<double>(static_cast<double>(height), std::max<double>(0.0, bb.getBottom())));
   unsigned int left = static_cast<unsigned int>(std::max<double>(0.0, bb.getLeft()));
-  unsigned int right = static_cast<unsigned int>(std::min<double>((double)width, std::max<double>(0.0, bb.getRight())));
+  unsigned int right = static_cast<unsigned int>(std::min<double>(static_cast<double>(width), std::max<double>(0.0, bb.getRight())));
 
   bb.setTop(top);
   bb.setBottom(bottom);

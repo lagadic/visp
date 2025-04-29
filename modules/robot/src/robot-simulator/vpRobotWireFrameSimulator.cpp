@@ -215,12 +215,12 @@ void vpRobotWireFrameSimulator::getInternalView(vpImage<vpRGBa> &I_)
   // we assume px_int and py_int > 0
   if ((std::fabs(px_int - 1.) > vpMath::maximum(px_int, 1.) * std::numeric_limits<double>::epsilon()) &&
       (std::fabs(py_int - 1) > vpMath::maximum(py_int, 1.) * std::numeric_limits<double>::epsilon())) {
-    u = (double)I_.getWidth() / (2 * px_int);
-    v = (double)I_.getHeight() / (2 * py_int);
+    u = static_cast<double>(I_.getWidth()) / (2 * px_int);
+    v = static_cast<double>(I_.getHeight()) / (2 * py_int);
   }
   else {
-    u = (double)I_.getWidth() / (vpMath::minimum(I_.getWidth(), I_.getHeight()));
-    v = (double)I_.getHeight() / (vpMath::minimum(I_.getWidth(), I_.getHeight()));
+    u = static_cast<double>(I_.getWidth()) / (vpMath::minimum(I_.getWidth(), I_.getHeight()));
+    v = static_cast<double>(I_.getHeight()) / (vpMath::minimum(I_.getWidth(), I_.getHeight()));
   }
 
   float o44c[4][4], o44cd[4][4], x, y, z;
@@ -289,12 +289,12 @@ void vpRobotWireFrameSimulator::getInternalView(vpImage<unsigned char> &I_)
   // we assume px_int and py_int > 0
   if ((std::fabs(px_int - 1.) > vpMath::maximum(px_int, 1.) * std::numeric_limits<double>::epsilon()) &&
       (std::fabs(py_int - 1) > vpMath::maximum(py_int, 1.) * std::numeric_limits<double>::epsilon())) {
-    u = (double)I.getWidth() / (2 * px_int);
-    v = (double)I.getHeight() / (2 * py_int);
+    u = static_cast<double>(I.getWidth()) / (2 * px_int);
+    v = static_cast<double>(I.getHeight()) / (2 * py_int);
   }
   else {
-    u = (double)I_.getWidth() / (vpMath::minimum(I_.getWidth(), I_.getHeight()));
-    v = (double)I_.getHeight() / (vpMath::minimum(I_.getWidth(), I_.getHeight()));
+    u = static_cast<double>(I_.getWidth()) / (vpMath::minimum(I_.getWidth(), I_.getHeight()));
+    v = static_cast<double>(I_.getHeight()) / (vpMath::minimum(I_.getWidth(), I_.getHeight()));
   }
 
   float o44c[4][4], o44cd[4][4], x, y, z;

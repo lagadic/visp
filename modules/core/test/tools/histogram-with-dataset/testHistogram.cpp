@@ -276,10 +276,10 @@ int main(int argc, const char **argv)
     t_multi_thread = vpTime::measureTimeMs() - t_multi_thread;
 
     std::cout << "sum_single_thread=" << sum_single_thread << " ; t_single_thread=" << t_single_thread
-      << " ms ; mean=" << t_single_thread / (double)nbIterations << " ms" << std::endl;
+      << " ms ; mean=" << t_single_thread / static_cast<double>(nbIterations) << " ms" << std::endl;
     std::cout << "sum_multi_thread (nbThreads=" << nbThreads << ")=" << sum_multi_thread << " ; t_multi_thread=" << t_multi_thread
-      << " ms ; mean=" << t_multi_thread / (double)nbIterations << " ms" << std::endl;
-    std::cout << "Speed-up=" << t_single_thread / (double)t_multi_thread << "X" << std::endl;
+      << " ms ; mean=" << t_multi_thread / static_cast<double>(nbIterations) << " ms" << std::endl;
+    std::cout << "Speed-up=" << t_single_thread / static_cast<double>(t_multi_thread) << "X" << std::endl;
 
     if (sum_single_thread != I.getSize() || sum_multi_thread != I.getSize()) {
       std::cerr << "Problem with histogram!" << std::endl;

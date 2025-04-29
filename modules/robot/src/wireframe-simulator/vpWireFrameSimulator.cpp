@@ -746,12 +746,12 @@ void vpWireFrameSimulator::getInternalImage(vpImage<vpRGBa> &I)
   // we assume px_int and py_int > 0
   if ((std::fabs(px_int - 1.) > vpMath::maximum(px_int, 1.) * std::numeric_limits<double>::epsilon()) &&
       (std::fabs(py_int - 1) > vpMath::maximum(py_int, 1.) * std::numeric_limits<double>::epsilon())) {
-    u = (double)I.getWidth() / (2 * px_int);
-    v = (double)I.getHeight() / (2 * py_int);
+    u = static_cast<double>(I.getWidth()) / (2 * px_int);
+    v = static_cast<double>(I.getHeight()) / (2 * py_int);
   }
   else {
-    u = (double)I.getWidth() / (vpMath::minimum(I.getWidth(), I.getHeight()));
-    v = (double)I.getHeight() / (vpMath::minimum(I.getWidth(), I.getHeight()));
+    u = static_cast<double>(I.getWidth()) / (vpMath::minimum(I.getWidth(), I.getHeight()));
+    v = static_cast<double>(I.getHeight()) / (vpMath::minimum(I.getWidth(), I.getHeight()));
   }
 
   float o44c[4][4], o44cd[4][4], x, y, z;
@@ -831,12 +831,12 @@ void vpWireFrameSimulator::getExternalImage(vpImage<vpRGBa> &I)
   // we assume px_ext and py_ext > 0
   if ((std::fabs(px_ext - 1.) > vpMath::maximum(px_ext, 1.) * std::numeric_limits<double>::epsilon()) &&
       (std::fabs(py_ext - 1) > vpMath::maximum(py_ext, 1.) * std::numeric_limits<double>::epsilon())) {
-    u = (double)I.getWidth() / (2 * px_ext);
-    v = (double)I.getHeight() / (2 * py_ext);
+    u = static_cast<double>(I.getWidth()) / (2 * px_ext);
+    v = static_cast<double>(I.getHeight()) / (2 * py_ext);
   }
   else {
-    u = (double)I.getWidth() / (vpMath::minimum(I.getWidth(), I.getHeight()));
-    v = (double)I.getHeight() / (vpMath::minimum(I.getWidth(), I.getHeight()));
+    u = static_cast<double>(I.getWidth()) / (vpMath::minimum(I.getWidth(), I.getHeight()));
+    v = static_cast<double>(I.getHeight()) / (vpMath::minimum(I.getWidth(), I.getHeight()));
   }
 
   float w44o[4][4], w44cext[4][4], w44c[4][4], x, y, z;
@@ -956,12 +956,12 @@ void vpWireFrameSimulator::getExternalImage(vpImage<vpRGBa> &I, const vpHomogene
   // we assume px_ext and py_ext > 0
   if ((std::fabs(px_ext - 1.) > vpMath::maximum(px_ext, 1.) * std::numeric_limits<double>::epsilon()) &&
       (std::fabs(py_ext - 1) > vpMath::maximum(py_ext, 1.) * std::numeric_limits<double>::epsilon())) {
-    u = (double)I.getWidth() / (2 * px_ext);
-    v = (double)I.getHeight() / (2 * py_ext);
+    u = static_cast<double>(I.getWidth()) / (2 * px_ext);
+    v = static_cast<double>(I.getHeight()) / (2 * py_ext);
   }
   else {
-    u = (double)I.getWidth() / (vpMath::minimum(I.getWidth(), I.getHeight()));
-    v = (double)I.getHeight() / (vpMath::minimum(I.getWidth(), I.getHeight()));
+    u = static_cast<double>(I.getWidth()) / (vpMath::minimum(I.getWidth(), I.getHeight()));
+    v = static_cast<double>(I.getHeight()) / (vpMath::minimum(I.getWidth(), I.getHeight()));
   }
 
   vp2jlc_matrix(camMft.inverse(), w44cext);
@@ -1015,12 +1015,12 @@ void vpWireFrameSimulator::getInternalImage(vpImage<unsigned char> &I)
   // we assume px_int and py_int > 0
   if ((std::fabs(px_int - 1.) > vpMath::maximum(px_int, 1.) * std::numeric_limits<double>::epsilon()) &&
       (std::fabs(py_int - 1) > vpMath::maximum(py_int, 1.) * std::numeric_limits<double>::epsilon())) {
-    u = (double)I.getWidth() / (2 * px_int);
-    v = (double)I.getHeight() / (2 * py_int);
+    u = static_cast<double>(I.getWidth()) / (2 * px_int);
+    v = static_cast<double>(I.getHeight()) / (2 * py_int);
   }
   else {
-    u = (double)I.getWidth() / (vpMath::minimum(I.getWidth(), I.getHeight()));
-    v = (double)I.getHeight() / (vpMath::minimum(I.getWidth(), I.getHeight()));
+    u = static_cast<double>(I.getWidth()) / (vpMath::minimum(I.getWidth(), I.getHeight()));
+    v = static_cast<double>(I.getHeight()) / (vpMath::minimum(I.getWidth(), I.getHeight()));
   }
 
   float o44c[4][4], o44cd[4][4], x, y, z;
@@ -1100,12 +1100,12 @@ void vpWireFrameSimulator::getExternalImage(vpImage<unsigned char> &I)
   // we assume px_ext and py_ext > 0
   if ((std::fabs(px_ext - 1.) > vpMath::maximum(px_ext, 1.) * std::numeric_limits<double>::epsilon()) &&
       (std::fabs(py_ext - 1) > vpMath::maximum(py_ext, 1.) * std::numeric_limits<double>::epsilon())) {
-    u = (double)I.getWidth() / (2 * px_ext);
-    v = (double)I.getHeight() / (2 * py_ext);
+    u = static_cast<double>(I.getWidth()) / (2 * px_ext);
+    v = static_cast<double>(I.getHeight()) / (2 * py_ext);
   }
   else {
-    u = (double)I.getWidth() / (vpMath::minimum(I.getWidth(), I.getHeight()));
-    v = (double)I.getHeight() / (vpMath::minimum(I.getWidth(), I.getHeight()));
+    u = static_cast<double>(I.getWidth()) / (vpMath::minimum(I.getWidth(), I.getHeight()));
+    v = static_cast<double>(I.getHeight()) / (vpMath::minimum(I.getWidth(), I.getHeight()));
   }
 
   float w44o[4][4], w44cext[4][4], w44c[4][4], x, y, z;
@@ -1224,12 +1224,12 @@ void vpWireFrameSimulator::getExternalImage(vpImage<unsigned char> &I, const vpH
   // we assume px_ext and py_ext > 0
   if ((std::fabs(px_ext - 1.) > vpMath::maximum(px_ext, 1.) * std::numeric_limits<double>::epsilon()) &&
       (std::fabs(py_ext - 1) > vpMath::maximum(py_ext, 1.) * std::numeric_limits<double>::epsilon())) {
-    u = (double)I.getWidth() / (2 * px_ext);
-    v = (double)I.getHeight() / (2 * py_ext);
+    u = static_cast<double>(I.getWidth()) / (2 * px_ext);
+    v = static_cast<double>(I.getHeight()) / (2 * py_ext);
   }
   else {
-    u = (double)I.getWidth() / (vpMath::minimum(I.getWidth(), I.getHeight()));
-    v = (double)I.getHeight() / (vpMath::minimum(I.getWidth(), I.getHeight()));
+    u = static_cast<double>(I.getWidth()) / (vpMath::minimum(I.getWidth(), I.getHeight()));
+    v = static_cast<double>(I.getHeight()) / (vpMath::minimum(I.getWidth(), I.getHeight()));
   }
 
   vp2jlc_matrix(camMft.inverse(), w44cext);

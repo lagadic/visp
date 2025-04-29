@@ -303,9 +303,9 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
   vpRect bb = polygon_2d.getBoundingBox();
 
   unsigned int top = static_cast<unsigned int>(std::max<double>(0.0, bb.getTop()));
-  unsigned int bottom = static_cast<unsigned int>(std::min<double>((double)height, std::max<double>(0.0, bb.getBottom())));
+  unsigned int bottom = static_cast<unsigned int>(std::min<double>(static_cast<double>(height), std::max<double>(0.0, bb.getBottom())));
   unsigned int left = static_cast<unsigned int>(std::max<double>(0.0, bb.getLeft()));
-  unsigned int right = static_cast<unsigned int>(std::min<double>((double)width, std::max<double>(0.0, bb.getRight())));
+  unsigned int right = static_cast<unsigned int>(std::min<double>(static_cast<double>(width), std::max<double>(0.0, bb.getRight())));
 
   bb.setTop(top);
   bb.setBottom(bottom);
@@ -343,7 +343,7 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
   }
 
   if (totalPoints == 0 || ((m_depthDenseFilteringMethod & DEPTH_OCCUPANCY_RATIO_FILTERING) &&
-                           totalPoints / (double)totalTheoreticalPoints < m_depthDenseFilteringOccupancyRatio)) {
+                           totalPoints / static_cast<double>(totalTheoreticalPoints) < m_depthDenseFilteringOccupancyRatio)) {
     return false;
   }
 
@@ -393,9 +393,9 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
   vpRect bb = polygon_2d.getBoundingBox();
 
   unsigned int top = static_cast<unsigned int>(std::max<double>(0.0, bb.getTop()));
-  unsigned int bottom = static_cast<unsigned int>(std::min<double>((double)height, std::max<double>(0.0, bb.getBottom())));
+  unsigned int bottom = static_cast<unsigned int>(std::min<double>(static_cast<double>(height), std::max<double>(0.0, bb.getBottom())));
   unsigned int left = static_cast<unsigned int>(std::max<double>(0.0, bb.getLeft()));
-  unsigned int right = static_cast<unsigned int>(std::min<double>((double)width, std::max<double>(0.0, bb.getRight())));
+  unsigned int right = static_cast<unsigned int>(std::min<double>(static_cast<double>(width), std::max<double>(0.0, bb.getRight())));
 
   bb.setTop(top);
   bb.setBottom(bottom);
@@ -429,7 +429,7 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
   }
 
   if (totalPoints == 0 || ((m_depthDenseFilteringMethod & DEPTH_OCCUPANCY_RATIO_FILTERING) &&
-                           totalPoints / (double)totalTheoreticalPoints < m_depthDenseFilteringOccupancyRatio)) {
+                           totalPoints / static_cast<double>(totalTheoreticalPoints) < m_depthDenseFilteringOccupancyRatio)) {
     return false;
   }
 
@@ -478,9 +478,9 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
   vpRect bb = polygon_2d.getBoundingBox();
 
   unsigned int top = static_cast<unsigned int>(std::max<double>(0.0, bb.getTop()));
-  unsigned int bottom = static_cast<unsigned int>(std::min<double>((double)height, std::max<double>(0.0, bb.getBottom())));
+  unsigned int bottom = static_cast<unsigned int>(std::min<double>(static_cast<double>(height), std::max<double>(0.0, bb.getBottom())));
   unsigned int left = static_cast<unsigned int>(std::max<double>(0.0, bb.getLeft()));
-  unsigned int right = static_cast<unsigned int>(std::min<double>((double)width, std::max<double>(0.0, bb.getRight())));
+  unsigned int right = static_cast<unsigned int>(std::min<double>(static_cast<double>(width), std::max<double>(0.0, bb.getRight())));
 
   bb.setTop(top);
   bb.setBottom(bottom);
@@ -514,7 +514,7 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
   }
 
   if (totalPoints == 0 || ((m_depthDenseFilteringMethod & DEPTH_OCCUPANCY_RATIO_FILTERING) &&
-                           totalPoints / (double)totalTheoreticalPoints < m_depthDenseFilteringOccupancyRatio)) {
+                           totalPoints / static_cast<double>(totalTheoreticalPoints) < m_depthDenseFilteringOccupancyRatio)) {
     return false;
   }
 

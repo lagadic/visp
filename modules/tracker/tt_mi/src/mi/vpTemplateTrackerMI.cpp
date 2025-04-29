@@ -190,7 +190,7 @@ double vpTemplateTrackerMI::getCost(const vpImage<unsigned char> &I, const vpCol
     }
   }
 
-  ratioPixelIn = (double)Nbpoint / (double)templateSize;
+  ratioPixelIn = static_cast<double>(Nbpoint) / static_cast<double>(templateSize);
 
   double *pt = PrtD;
   for (int r = 0; r < Nc; r++)

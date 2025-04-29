@@ -2906,7 +2906,7 @@ void vpMbTracker::computeVVSCheckLevenbergMarquardt(unsigned int iter, vpColVect
                                                     const vpColVector *const m_w_prev)
 {
   if (iter != 0 && m_optimizationMethod == vpMbTracker::LEVENBERG_MARQUARDT_OPT) {
-    if (error.sumSquare() / (double)error.getRows() > m_error_prev.sumSquare() / (double)m_error_prev.getRows()) {
+    if (error.sumSquare() / static_cast<double>(error.getRows()) > m_error_prev.sumSquare() / static_cast<double>(m_error_prev.getRows())) {
       mu *= 10.0;
 
       if (mu > 1.0)
@@ -3498,7 +3498,7 @@ double vpMbTracker::computeCurrentProjectionError(const vpImage<unsigned char> &
   double totalProjectionError = computeProjectionErrorImpl(I, _cMo, _cam, nbFeatures);
 
   if (nbFeatures > 0) {
-    return vpMath::deg(totalProjectionError / (double)nbFeatures);
+    return vpMath::deg(totalProjectionError / static_cast<double>(nbFeatures));
   }
 
   return 90.0;

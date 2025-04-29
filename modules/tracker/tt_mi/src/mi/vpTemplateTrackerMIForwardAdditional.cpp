@@ -198,7 +198,7 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
         int ct = static_cast<int>((IW * (Nc - 1)) / 255.);
         int cr = static_cast<int>((Tij * (Nc - 1)) / 255.);
         double et = (IW * (Nc - 1)) / 255. - ct;
-        double er = ((double)Tij * (Nc - 1)) / 255. - cr;
+        double er = (static_cast<double>(Tij) * (Nc - 1)) / 255. - cr;
 
         Warp->dWarp(X1, X2, p, dW);
 

@@ -180,7 +180,7 @@ void vpVideoReader::getProperties()
 #if VISP_HAVE_OPENCV_VERSION >= 0x030000
     width = static_cast<unsigned int>(m_capture.get(cv::CAP_PROP_FRAME_WIDTH));
     height = static_cast<unsigned int>(m_capture.get(cv::CAP_PROP_FRAME_HEIGHT));
-    m_frameRate = (double)m_capture.get(cv::CAP_PROP_FPS);
+    m_frameRate = static_cast<double>(m_capture.get(cv::CAP_PROP_FPS));
 #else
     width = static_cast<unsigned int>(m_capture.get(CV_CAP_PROP_FRAME_WIDTH));
     height = static_cast<unsigned int>(m_capture.get(CV_CAP_PROP_FRAME_HEIGHT));

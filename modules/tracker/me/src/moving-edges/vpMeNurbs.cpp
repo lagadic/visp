@@ -110,7 +110,7 @@ void findAngle(const vpImage<unsigned char> &I, const vpImagePoint &iP, vpMe *me
       int index_mask;
 
       if (me->getAngleStep() != 0)
-        index_mask = static_cast<int>(i / (double)me->getAngleStep());
+        index_mask = static_cast<int>(i / static_cast<double>(e->getAngleStep()));
       else
         throw(vpException(vpException::divideByZeroError, "angle step = 0"));
 
@@ -238,7 +238,7 @@ void vpMeNurbs::sample(const vpImage<unsigned char> &I, bool doNotTrack)
   (void)doNotTrack;
   int rows = static_cast<int>(I.getHeight());
   int cols = static_cast<int>(I.getWidth());
-  double step = 1.0 / (double)m_me->getPointsToTrack();
+  double step = 1.0 / static_cast<double>(m_me->getPointsToTrack());
 
   // Delete old list
   m_meList.clear();
@@ -694,7 +694,7 @@ void vpMeNurbs::reSample(const vpImage<unsigned char> &I)
   unsigned int n = numberOfSignal();
   double nbPt = floor(dist / m_me->getSampleStep());
 
-  if ((double)n < 0.7 * nbPt) {
+  if (static_cast<double>(n) < 0.7 * nbPt) {
     sample(I);
     vpMeTracker::initTracking(I);
   }

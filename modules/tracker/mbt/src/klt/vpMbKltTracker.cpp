@@ -757,8 +757,8 @@ bool vpMbKltTracker::postTracking(const vpImage<unsigned char> &I, vpColVector &
   }
 
   //   if(!reInitialisation){
-  double value = percentGood * (double)initialNumber;
-  if ((double)currentNumber < value) {
+  double value = percentGood * static_cast<double>(initialNumber);
+  if (static_cast<double>(currentNumber) < value) {
     //     std::cout << "Too many point disappear : " << initialNumber << "/"
     //     << currentNumber << std::endl;
     reInitialisation = true;
