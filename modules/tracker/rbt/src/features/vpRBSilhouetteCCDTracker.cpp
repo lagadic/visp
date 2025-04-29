@@ -166,36 +166,53 @@ void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &fr
   const vpHomogeneousMatrix cMo = frame.renders.cMo;
   const vpHomogeneousMatrix oMc = cMo.inverse();
 
-  for (const vpRBSilhouettePoint &sp : frame.silhouettePoints) {
-    // std::cout << m_ccdParameters.h << std::endl;
-    // std::cout << sp.j << ", " << sp.i << std::endl;
-    int ii = sp.i, jj = sp.j;
+#ifdef VISP_HAVE_OPENMP
+#pragma omp parallel
+#endif
+  {
+    std::vector<vpRBSilhouetteControlPoint> localControlPoints;
+#ifdef VISP_HAVE_OPENMP
+#pragma omp for nowait
+#endif
+    for (unsigned int i = 0; i < frame.silhouettePoints.size(); ++i) {
+      const vpRBSilhouettePoint sp = frame.silhouettePoints[i];
+      // std::cout << m_ccdParameters.h << std::endl;
+      // std::cout << sp.j << ", " << sp.i << std::endl;
+      int ii = sp.i, jj = sp.j;
 
-    if (!sp.isSilhouette) {
-      continue;
-    }
-
-    if (ii <= m_ccdParameters.h || jj <= m_ccdParameters.h ||
-      static_cast<unsigned int>(ii) >= frame.I.getHeight() - m_ccdParameters.h ||
-      static_cast<unsigned int>(jj) >= frame.I.getWidth() - m_ccdParameters.h) {
-      continue;
-    }
-    vpRBSilhouetteControlPoint pccd;
-
-    pccd.buildSilhouettePoint(ii, jj, sp.Z, sp.orientation, sp.normal, cMo, oMc, frame.cam);
-
-    if (std::isnan(sp.orientation) || !pccd.isValid()) {
-      continue;
-    }
-
-    if (frame.hasMask() && m_useMask) {
-      double maskGradValue = pccd.getMaxMaskGradientAlongLine(frame.mask, m_ccdParameters.h);
-      if (maskGradValue < m_minMaskConfidence) {
+      if (!sp.isSilhouette) {
         continue;
       }
+
+      if (ii <= m_ccdParameters.h || jj <= m_ccdParameters.h ||
+        static_cast<unsigned int>(ii) >= frame.I.getHeight() - m_ccdParameters.h ||
+        static_cast<unsigned int>(jj) >= frame.I.getWidth() - m_ccdParameters.h) {
+        continue;
+      }
+      vpRBSilhouetteControlPoint pccd;
+
+      pccd.buildSilhouettePoint(ii, jj, sp.Z, sp.orientation, sp.normal, cMo, oMc, frame.cam);
+
+      if (std::isnan(sp.orientation) || !pccd.isValid()) {
+        continue;
+      }
+
+      if (frame.hasMask() && m_useMask) {
+        double maskGradValue = pccd.getMaxMaskGradientAlongLine(frame.mask, m_ccdParameters.h);
+        if (maskGradValue < m_minMaskConfidence) {
+          continue;
+        }
+      }
+      localControlPoints.push_back(std::move(pccd));
     }
-    m_controlPoints.push_back(std::move(pccd));
+#ifdef VISP_HAVE_OPENMP
+#pragma omp critical
+#endif
+    {
+      m_controlPoints.insert(m_controlPoints.end(), localControlPoints.begin(), localControlPoints.end());
+    }
   }
+
 
   if (m_maxPoints > 0 && m_controlPoints.size() > m_maxPoints) {
     std::vector<size_t> keptIndices(m_maxPoints);
@@ -291,12 +308,15 @@ void vpRBSilhouetteCCDTracker::computeVVSIter(const vpRBFeatureTrackerInput &fra
     oldPoints[i * 2 + 1] = m_controlPoints[i].icpoint.get_v();
   }
   updateCCDPoints(cMo);
+
+  // Compute motion between current and previous frames, in pixels
   tol = 0.0;
   for (unsigned int i = 0; i < m_controlPoints.size(); ++i) {
     tol += abs(oldPoints[i * 2] - m_controlPoints[i].icpoint.get_u());
     tol += abs(oldPoints[i * 2 + 1] - m_controlPoints[i].icpoint.get_v());
   }
   tol /= m_controlPoints.size();
+  // If enabled and if motion between consecutive frame is small enough, halve contour size
   if (tol < sqrt(static_cast<double>(m_ccdParameters.h) / 2.0) && iteration >= 1) {
     int previousH = m_ccdParameters.h;
     m_ccdParameters.h = std::max(m_ccdParameters.min_h, previousH / 2);
