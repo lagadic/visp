@@ -123,7 +123,9 @@ private:
 
 public:
   VP_EXPLICIT vpWin32Window(vpWin32Renderer *rend = nullptr);
+  vpWin32Window(const vpWin32Window &window);
   virtual ~vpWin32Window();
+  vpWin32Window &operator=(const vpWin32Window &window);
 
   HWND getHWnd() { return hWnd; }
 
