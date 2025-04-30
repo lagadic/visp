@@ -96,7 +96,7 @@ protected:
 
     // step 3
     y = T[j];
-    double ans = (double)y / normalizer;
+    double ans = static_cast<double>(y) / normalizer;
 
     // step 4
     // generate x(k+i) and set y=x(k+i)

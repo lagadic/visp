@@ -111,7 +111,7 @@ double measureTimeMicros()
   }
   else {
     QueryPerformanceCounter(&time);
-    return (double)(1000000.0 * time.QuadPart / frequency.QuadPart);
+    return static_cast<double>(1000000.0 * time.QuadPart / frequency.QuadPart);
   }
 #else
   throw(vpException(vpException::fatalError, "Cannot get time: not implemented on Universal Windows Platform"));
@@ -145,7 +145,7 @@ double measureTimeMs()
   }
   else {
     QueryPerformanceCounter(&time);
-    return (double)(1000.0 * time.QuadPart / frequency.QuadPart);
+    return static_cast<double>(1000.0 * time.QuadPart / frequency.QuadPart);
   }
 #else
   throw(vpException(vpException::fatalError, "Cannot get time: not implemented on Universal Windows Platform"));

@@ -189,10 +189,10 @@ bool getOptions(int argc, const char **argv, unsigned &fps, unsigned &input, uns
       display = false;
       break;
     case 'f':
-      fps = (unsigned)atoi(optarg_);
+      fps = static_cast<unsigned int>(atoi(optarg_));
       break;
     case 'i':
-      input = (unsigned)atoi(optarg_);
+      input = static_cast<unsigned int>(atoi(optarg_));
       break;
     case 'n':
       niter = atol(optarg_);
@@ -205,7 +205,7 @@ bool getOptions(int argc, const char **argv, unsigned &fps, unsigned &input, uns
       pixelformat = (vpV4l2Grabber::vpV4l2PixelFormatType)atoi(optarg_);
       break;
     case 's':
-      scale = (unsigned)atoi(optarg_);
+      scale = static_cast<unsigned int>(atoi(optarg_));
       break;
     case 't':
       image_type = (vpImage_type)atoi(optarg_);
@@ -398,7 +398,7 @@ int main()
   std::cout << "Tip if you are on a windows-like system:" << std::endl;
   std::cout << "- Install GTK, configure again ViSP using cmake and build again this example" << std::endl;
   return EXIT_SUCCESS;
-  }
+}
 #endif
 #else
 int main()

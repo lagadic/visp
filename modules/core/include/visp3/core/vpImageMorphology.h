@@ -63,10 +63,6 @@ BEGIN_VISP_NAMESPACE
   \ingroup group_core_image
 
   \brief  Various mathematical morphology tools, erosion, dilatation...
-
-  \author Fabien Spindler  (Fabien.Spindler@irisa.fr) Irisa / Inria Rennes
-
-
 */
 class VISP_EXPORT vpImageMorphology
 {
@@ -368,10 +364,10 @@ void vpImageMorphology::dilatation(vpImage<Type> &I, Type value, Type value_out,
 template<typename T>
 void vpImageMorphology::imageOperation(vpImage<T> &I, const T &null_value, vpPixelOperation<T> *operation, const vpConnexityType &connexity)
 {
-  const int width_in = I.getWidth();
-  const int height_in = I.getHeight();
-  const int width_dilat = width_in + 2;
-  const int height_dilat = height_in + 2;
+  const int width_in = static_cast<int>(I.getWidth());
+  const int height_in = static_cast<int>(I.getHeight());
+  const unsigned int width_dilat = I.getWidth() + 2;
+  const unsigned int height_dilat = I.getHeight() + 2;
   vpImage<T> J(height_dilat, width_dilat, null_value);
 
   // Copy I to J and add border

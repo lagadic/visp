@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,11 +29,7 @@
  *
  * Description:
  * Conversion between tracker and visual feature vanishing point.
- *
- * Authors:
- * Odile Bourquardez
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpFeatureBuilderVanishingPoint.cpp
@@ -185,8 +180,10 @@ void vpFeatureBuilder::create(vpFeatureVanishingPoint &s, const vpLine &L1, cons
   \f$ {\bf s} = (1/\rho, \alpha) \f$ depending on \e select parameter.
 
   \param cam : Camera parameters used to convert image point coordinates from pixel in meter in the image plane.
-  \param line1_ip1, line1_ip2 : The first line defined by 2 image points with pixel coordinates in the image.
-  \param line2_ip1, line2_ip2 : The second line defined by 2 image points with pixel coordinates in the image.
+  \param line1_ip1 : The first line, first image point with pixel coordinates in the image.
+  \param line1_ip2 : The first line, second image point with pixel coordinates in the image.
+  \param line2_ip1 : The second line, first image point with pixel coordinates in the image.
+  \param line2_ip2 : The second line, second image point with pixel coordinates in the image.
 
   \param select : Use either vpFeatureVanishingPoint::selectX() or vpFeatureVanishingPoint::selectY()
   to build \f$ {\bf s} = (x, y) \f$ visual feature, or use rather select

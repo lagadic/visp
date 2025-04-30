@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,18 +29,12 @@
  *
  * Description:
  * Network request.
- *
- * Authors:
- * Aurelien Yol
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpRequest.h>
 
 BEGIN_VISP_NAMESPACE
 vpRequest::vpRequest() : request_id(""), listOfParams() { }
-
-vpRequest::~vpRequest() { }
 
 /*!
   Add a message as parameter of the request.

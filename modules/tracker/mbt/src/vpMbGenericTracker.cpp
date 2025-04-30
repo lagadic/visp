@@ -1833,7 +1833,7 @@ void vpMbGenericTracker::init(const vpImage<unsigned char> &I)
 }
 
 void vpMbGenericTracker::initCircle(const vpPoint & /*p1*/, const vpPoint & /*p2*/, const vpPoint & /*p3*/,
-  double /*radius*/, int /*idFace*/, const std::string & /*name*/)
+                                    double /*radius*/, int /*idFace*/, const std::string & /*name*/)
 {
   throw vpException(vpException::fatalError, "vpMbGenericTracker::initCircle() should not be called!");
 }
@@ -2192,7 +2192,7 @@ void vpMbGenericTracker::initClick(const std::map<std::string, const vpImage<vpR
 #endif
 
 void vpMbGenericTracker::initCylinder(const vpPoint & /*p1*/, const vpPoint & /*p2*/, const double /*radius*/,
-  const int /*idFace*/, const std::string & /*name*/)
+                                      const int /*idFace*/, const std::string & /*name*/)
 {
   throw vpException(vpException::fatalError, "vpMbGenericTracker::initCylinder() should not be called!");
 }

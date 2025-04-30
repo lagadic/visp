@@ -136,7 +136,9 @@ public:
 
   /*!
    * Add a new point in the array of points.
-   * \param  X,Y,Z : 3D coordinates of a point in the object frame
+   * \param  X : 3D coordinate \f$ X \f$ of a point in the object frame.
+   * \param  Y : 3D coordinate \f$ Y \f$ of a point in the object frame.
+   * \param  Z : 3D coordinate \f$ Z \f$ of a point in the object frame.
    * \param ip : 2D Coordinates of the point in the camera frame.
    */
   int addPoint(double X, double Y, double Z, vpImagePoint &ip);
@@ -144,7 +146,7 @@ public:
   /*!
    * Copy operator.
    *
-   * \param twinCalibration : object to be copied
+   * \param twinCalibration : Object to be copied.
    */
   vpCalibration &operator=(const vpCalibration &twinCalibration);
 

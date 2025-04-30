@@ -97,7 +97,7 @@ bool test(const std::string &s, const vpMatrix &M, const std::vector<double> &be
   return true;
 }
 
-double getRandomValues(double min, double max) { return (max - min) * ((double)rand() / (double)RAND_MAX) + min; }
+double getRandomValues(double min, double max) { return (max - min) * (static_cast<double>(rand()) / static_cast<double>(RAND_MAX)) + min; }
 
 bool equalMatrix(const vpMatrix &A, const vpMatrix &B, double tol = std::numeric_limits<double>::epsilon())
 {

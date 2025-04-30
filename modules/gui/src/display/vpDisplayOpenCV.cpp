@@ -821,25 +821,16 @@ unsigned int vpDisplayOpenCV::Impl::m_nbWindows = 0;
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
 /*!
-
-  Constructor. Initialize a display to visualize a gray level image
-  (8 bits).
+  Constructor. Initialize a display to visualize a gray level image (8 bits).
 
   \param I : Image to be displayed (not that image has to be initialized)
   \param scaleType : If this parameter is set to:
-  - vpDisplay::SCALE_AUTO, the display size is adapted to ensure the image
-    is fully displayed in the screen;
-  - vpDisplay::SCALE_DEFAULT or vpDisplay::SCALE_1, the display size is the
-  same than the image size.
-  - vpDisplay::SCALE_2, the display size is down scaled by 2 along the lines
-  and the columns.
-  - vpDisplay::SCALE_3, the display size is down scaled by 3 along the lines
-  and the columns.
-  - vpDisplay::SCALE_4, the display size is down scaled by 4 along the lines
-  and the columns.
-  - vpDisplay::SCALE_5, the display size is down scaled by 5 along the lines
-  and the columns.
-
+  - vpDisplay::SCALE_AUTO, the display size is adapted to ensure the image is fully displayed in the screen;
+  - vpDisplay::SCALE_DEFAULT or vpDisplay::SCALE_1, the display size is the same than the image size.
+  - vpDisplay::SCALE_2, the display size is down scaled by 2 along the lines and the columns.
+  - vpDisplay::SCALE_3, the display size is down scaled by 3 along the lines and the columns.
+  - vpDisplay::SCALE_4, the display size is down scaled by 4 along the lines and the columns.
+  - vpDisplay::SCALE_5, the display size is down scaled by 5 along the lines and the columns.
 */
 vpDisplayOpenCV::vpDisplayOpenCV(vpImage<unsigned char> &I, vpScaleType scaleType)
   : vpDisplay()
@@ -850,27 +841,19 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<unsigned char> &I, vpScaleType scaleTyp
 }
 
 /*!
-
-  Constructor. Initialize a display to visualize a gray level image
-  (8 bits).
+  Constructor. Initialize a display to visualize a gray level image (8 bits).
 
   \param I : Image to be displayed (not that image has to be initialized)
-  \param x, y : The window is set at position x,y (column index, row index).
+  \param x : The window is set at position x (column index).
+  \param y : The window is set at position y (row index).
   \param title : Window title.
   \param scaleType : If this parameter is set to:
-  - vpDisplay::SCALE_AUTO, the display size is adapted to ensure the image
-    is fully displayed in the screen;
-  - vpDisplay::SCALE_DEFAULT or vpDisplay::SCALE_1, the display size is the
-  same than the image size.
-  - vpDisplay::SCALE_2, the display size is down scaled by 2 along the lines
-  and the columns.
-  - vpDisplay::SCALE_3, the display size is down scaled by 3 along the lines
-  and the columns.
-  - vpDisplay::SCALE_4, the display size is down scaled by 4 along the lines
-  and the columns.
-  - vpDisplay::SCALE_5, the display size is down scaled by 5 along the lines
-  and the columns.
-
+  - vpDisplay::SCALE_AUTO, the display size is adapted to ensure the image is fully displayed in the screen;
+  - vpDisplay::SCALE_DEFAULT or vpDisplay::SCALE_1, the display size is the same than the image size.
+  - vpDisplay::SCALE_2, the display size is down scaled by 2 along the lines and the columns.
+  - vpDisplay::SCALE_3, the display size is down scaled by 3 along the lines and the columns.
+  - vpDisplay::SCALE_4, the display size is down scaled by 4 along the lines and the columns.
+  - vpDisplay::SCALE_5, the display size is down scaled by 5 along the lines and the columns.
 */
 vpDisplayOpenCV::vpDisplayOpenCV(vpImage<unsigned char> &I, int x, int y, const std::string &title,
                                  vpScaleType scaleType)
@@ -886,18 +869,12 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<unsigned char> &I, int x, int y, const 
 
   \param I : Image to be displayed (not that image has to be initialized)
   \param scaleType : If this parameter is set to:
-  - vpDisplay::SCALE_AUTO, the display size is adapted to ensure the image
-    is fully displayed in the screen;
-  - vpDisplay::SCALE_DEFAULT or vpDisplay::SCALE_1, the display size is the
-  same than the image size.
-  - vpDisplay::SCALE_2, the display size is down scaled by 2 along the lines
-  and the columns.
-  - vpDisplay::SCALE_3, the display size is down scaled by 3 along the lines
-  and the columns.
-  - vpDisplay::SCALE_4, the display size is down scaled by 4 along the lines
-  and the columns.
-  - vpDisplay::SCALE_5, the display size is down scaled by 5 along the lines
-  and the columns.
+  - vpDisplay::SCALE_AUTO, the display size is adapted to ensure the image is fully displayed in the screen;
+  - vpDisplay::SCALE_DEFAULT or vpDisplay::SCALE_1, the display size is the same than the image size.
+  - vpDisplay::SCALE_2, the display size is down scaled by 2 along the lines and the columns.
+  - vpDisplay::SCALE_3, the display size is down scaled by 3 along the lines and the columns.
+  - vpDisplay::SCALE_4, the display size is down scaled by 4 along the lines and the columns.
+  - vpDisplay::SCALE_5, the display size is down scaled by 5 along the lines and the columns.
 */
 vpDisplayOpenCV::vpDisplayOpenCV(vpImage<vpRGBa> &I, vpScaleType scaleType)
   : vpDisplay()
@@ -911,21 +888,16 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<vpRGBa> &I, vpScaleType scaleType)
   Constructor. Initialize a display to visualize a RGBa image (32 bits).
 
   \param I : Image to be displayed (not that image has to be initialized)
-  \param x, y : The window is set at position x,y (column index, row index).
+  \param x : The window is set at position x (column index).
+  \param y : The window is set at position y (row index).
   \param title : Window title.
   \param scaleType : If this parameter is set to:
-  - vpDisplay::SCALE_AUTO, the display size is adapted to ensure the image
-    is fully displayed in the screen;
-  - vpDisplay::SCALE_DEFAULT or vpDisplay::SCALE_1, the display size is the
-  same than the image size.
-  - vpDisplay::SCALE_2, the display size is down scaled by 2 along the lines
-  and the columns.
-  - vpDisplay::SCALE_3, the display size is down scaled by 3 along the lines
-  and the columns.
-  - vpDisplay::SCALE_4, the display size is down scaled by 4 along the lines
-  and the columns.
-  - vpDisplay::SCALE_5, the display size is down scaled by 5 along the lines
-  and the columns.
+  - vpDisplay::SCALE_AUTO, the display size is adapted to ensure the image is fully displayed in the screen;
+  - vpDisplay::SCALE_DEFAULT or vpDisplay::SCALE_1, the display size is the same than the image size.
+  - vpDisplay::SCALE_2, the display size is down scaled by 2 along the lines and the columns.
+  - vpDisplay::SCALE_3, the display size is down scaled by 3 along the lines and the columns.
+  - vpDisplay::SCALE_4, the display size is down scaled by 4 along the lines and the columns.
+  - vpDisplay::SCALE_5, the display size is down scaled by 5 along the lines and the columns.
 */
 vpDisplayOpenCV::vpDisplayOpenCV(vpImage<vpRGBa> &I, int x, int y, const std::string &title, vpScaleType scaleType)
   : vpDisplay()
@@ -937,10 +909,10 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<vpRGBa> &I, int x, int y, const std::st
 
 /*!
 
-  Constructor that just initialize the display position in the screen
-  and the display title.
+  Constructor that just initialize the display position in the screen and the display title.
 
-  \param x, y : The window is set at position x,y (column index, row index).
+  \param x : The window is set at position x (column index).
+  \param y : The window is set at position y (row index).
   \param title : Window title.
 
   To initialize the display size, you need to call init().
@@ -1034,8 +1006,9 @@ vpDisplayOpenCV::~vpDisplayOpenCV()
 /*!
   Initialize the display (size, position and title) of a gray level image.
 
-  \param I : Image to be displayed (not that image has to be initialized)
-  \param x, y : The window is set at position x,y (column index, row index).
+  \param I : Image to be displayed (not that image has to be initialized).
+  \param x : The window is set at position x (column index).
+  \param y : The window is set at position y (row index).
   \param title : Window title.
 
 */
@@ -1054,8 +1027,9 @@ void vpDisplayOpenCV::init(vpImage<unsigned char> &I, int x, int y, const std::s
   Initialize the display (size, position and title) of a color
   image in RGBa format.
 
-  \param I : Image to be displayed (not that image has to be initialized)
-  \param x, y : The window is set at position x,y (column index, row index).
+  \param I : Image to be displayed (not that image has to be initialized).
+  \param x : The window is set at position x (column index).
+  \param y : The window is set at position y (row index).
   \param title : Window title.
 
 */
@@ -1074,8 +1048,10 @@ void vpDisplayOpenCV::init(vpImage<vpRGBa> &I, int x, int y, const std::string &
 /*!
   Initialize the display size, position and title.
 
-  \param w, h : Width and height of the window.
-  \param x, y : The window is set at position x,y (column index, row index).
+  \param w : Window width.
+  \param h : Window height.
+  \param x : The window is set at position x (column index).
+  \param y : The window is set at position y (row index).
   \param title : Window title.
 
   \exception vpDisplayException::notInitializedError If OpenCV was not build
@@ -1120,9 +1096,10 @@ void vpDisplayOpenCV::init(unsigned int w, unsigned int h, int x, int y, const s
 
   \sa displayText()
 */
-void vpDisplayOpenCV::setFont(const std::string & /* font */)
+void vpDisplayOpenCV::setFont(const std::string &font)
 {
   // Not yet implemented
+  (void)font;
 }
 
 /*!
@@ -1132,9 +1109,10 @@ void vpDisplayOpenCV::setFont(const std::string & /* font */)
 
   \param title : Window title.
  */
-void vpDisplayOpenCV::setTitle(const std::string & /* title */)
+void vpDisplayOpenCV::setTitle(const std::string &title)
 {
   // Not implemented
+  (void)title;
 }
 
 /*!
@@ -1187,10 +1165,9 @@ void vpDisplayOpenCV::displayImage(const vpImage<unsigned char> &I)
   \warning Suppress the overlay drawing in the region of interest.
 
   \param I : Image to display.
-
-  \param iP : Top left corner of the region of interest
-
-  \param w, h : Width and height of the region of interest
+  \param iP : Top left corner of the region of interest.
+  \param w : Width of the region of interest.
+  \param h : Height of the region of interest.
 
   \sa init(), closeDisplay()
 */
@@ -1235,10 +1212,9 @@ void vpDisplayOpenCV::displayImage(const vpImage<vpRGBa> &I)
   \warning Suppress the overlay drawing in the region of interest.
 
   \param I : Image to display.
-
-  \param iP : Top left corner of the region of interest
-
-  \param w, h : Width and height of the region of interest
+  \param iP : Top left corner of the region of interest.
+  \param w : Width of the region of interest.
+  \param h : Height of the region of interest.
 
   \sa init(), closeDisplay()
 */
@@ -1404,7 +1380,8 @@ void vpDisplayOpenCV::displayCross(const vpImagePoint &ip, unsigned int size, co
 /*!
   Display a dashed line from image point \e ip1 to image point \e ip2.
 
-  \param ip1,ip2 : Initial and final image points.
+  \param ip1 : Initial image point.
+  \param ip2 : Final image point.
   \param color : Line color.
   \param thickness : Line thickness.
 */
@@ -1421,7 +1398,8 @@ void vpDisplayOpenCV::displayDotLine(const vpImagePoint &ip1, const vpImagePoint
 
 /*!
   Display a line from image point \e ip1 to image point \e ip2.
-  \param ip1,ip2 : Initial and final image points.
+  \param ip1 : Initial image point.
+  \param ip2 : Final image point.
   \param color : Line color.
   \param thickness : Line thickness.
 */
@@ -1744,7 +1722,7 @@ bool vpDisplayOpenCV::getKeyboardEvent(std::string &key, bool blocking)
 /*!
   Get the coordinates of the mouse pointer.
 
-  \param ip [out] : The coordinates of the mouse pointer.
+  \param[out] ip : The coordinates of the mouse pointer.
 
   \return true if a pointer motion event was received, false otherwise.
 
@@ -1768,7 +1746,7 @@ bool vpDisplayOpenCV::getPointerMotionEvent(vpImagePoint &ip)
 /*!
   Get the coordinates of the mouse pointer.
 
-  \param ip [out] : The coordinates of the mouse pointer.
+  \param[out] ip : The coordinates of the mouse pointer.
 
   \return true.
 
@@ -1788,7 +1766,8 @@ bool vpDisplayOpenCV::getPointerPosition(vpImagePoint &ip)
 
 /*!
   Gets screen resolution in pixels.
-  \param w, h : Horizontal and vertical screen resolution.
+  \param[out] w : Horizontal screen resolution.
+  \param[out] h : Vertical screen resolution.
  */
 void vpDisplayOpenCV::getScreenSize(unsigned int &w, unsigned int &h)
 {

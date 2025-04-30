@@ -317,7 +317,7 @@ void RGBaToGrayRef(unsigned char *rgba, unsigned char *grey, unsigned int size)
   unsigned char *pt_output = grey;
 
   while (pt_input != pt_end) {
-    *pt_output = (unsigned char)(0.2126 * (*pt_input) + 0.7152 * (*(pt_input + 1)) + 0.0722 * (*(pt_input + 2)));
+    *pt_output = static_cast<unsigned char>(0.2126 * (*pt_input) + 0.7152 * (*(pt_input + 1)) + 0.0722 * (*(pt_input + 2)));
     pt_input += 4;
     pt_output++;
   }
@@ -343,7 +343,7 @@ void RGBToGrayRef(unsigned char *rgb, unsigned char *grey, unsigned int width, u
       r = *(line++);
       g = *(line++);
       b = *(line++);
-      *grey++ = (unsigned char)(0.2126 * r + 0.7152 * g + 0.0722 * b);
+      *grey++ = static_cast<unsigned char>(0.2126 * r + 0.7152 * g + 0.0722 * b);
     }
 
     // go to the next line
@@ -569,7 +569,7 @@ void BGRToGrayRef(unsigned char *bgr, unsigned char *grey, unsigned int width, u
   for (unsigned int i = 0; i < height; i++) {
     unsigned char *line = src;
     for (unsigned int j = 0; j < width; j++) {
-      *grey++ = (unsigned char)(0.2126 * *(line + 2) + 0.7152 * *(line + 1) + 0.0722 * *(line + 0));
+      *grey++ = static_cast<unsigned char>(0.2126 * *(line + 2) + 0.7152 * *(line + 1) + 0.0722 * *(line + 0));
       line += 3;
     }
 

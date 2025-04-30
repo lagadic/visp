@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -239,9 +239,11 @@ public:
 
   // test if a number equals 0 (with threshold value)
   static inline bool nul(double x, double threshold = 0.001);
+  static inline bool nul(float x, float threshold = 0.001f);
 
   // test if two numbers are equals (with a user defined threshold)
   static inline bool equal(double x, double y, double threshold = 0.001);
+  static inline bool equal(float x, float y, float threshold = 0.001f);
 
   // test if a number is greater than another (with a user defined threshold)
   static inline bool greater(double x, double y, double threshold = 0.001);
@@ -451,6 +453,14 @@ int vpMath::sign(double x)
 bool vpMath::nul(double x, double threshold) { return (fabs(x) < threshold); }
 
 /*!
+  Compares \f$ | x | \f$ to `threshold`.
+  \param x : Value to test.
+  \param threshold : Tolerance threshold
+  \return true if \f$ | x | <\f$ `threshold`.
+*/
+bool vpMath::nul(float x, float threshold) { return (fabs(x) < threshold); }
+
+/*!
   Compares \f$ | x - y | \f$ to `threshold`.
   \param x : x value.
   \param y : y value.
@@ -458,6 +468,15 @@ bool vpMath::nul(double x, double threshold) { return (fabs(x) < threshold); }
   \return true if \f$ | x - y | <\f$ `threshold`.
 */
 bool vpMath::equal(double x, double y, double threshold) { return (nul(x - y, threshold)); }
+
+/*!
+  Compares \f$ | x - y | \f$ to `threshold`.
+  \param x : x value.
+  \param y : y value.
+  \param threshold : Tolerance threshold.
+  \return true if \f$ | x - y | <\f$ `threshold`.
+*/
+bool vpMath::equal(float x, float y, float threshold) { return (nul(x - y, threshold)); }
 
 /*!
   Compares \f$ x \f$ to \f$ y -\f$ `threshold`.

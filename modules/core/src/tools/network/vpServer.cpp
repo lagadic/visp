@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,6 +78,28 @@ vpServer::vpServer() : adress(), port(0), started(false), max_clients(10)
 }
 
 /*!
+ * @brief Copy constructor.
+ * @param server : Server to copy.
+ */
+vpServer::vpServer(const vpServer &server) : vpNetwork(server)
+{
+  *this = server;
+}
+
+/*!
+ * @brief Copy operator.
+ * @param server : Server to copy.
+ */
+vpServer &vpServer::operator=(const vpServer &server)
+{
+  adress = server.adress;
+  port = server.port;
+  started = server.started;
+  max_clients = server.max_clients;
+  return *this;
+}
+
+/*!
   Construct a server on the machine launching it, with a specified port.
 
   \param port_serv : server's port.
@@ -96,7 +118,7 @@ vpServer::vpServer(const int &port_serv) : adress(), port(0), started(false), ma
   }
   emitter.emitterAddress.sin_family = AF_INET;
   emitter.emitterAddress.sin_addr.s_addr = INADDR_ANY; // inet_addr("127.0.0.1");
-  emitter.emitterAddress.sin_port = htons((unsigned short)port_serv);
+  emitter.emitterAddress.sin_port = htons(static_cast<unsigned short>(port_serv));
 
   adress = inet_ntoa(emitter.emitterAddress.sin_addr);
   port = port_serv;
@@ -124,7 +146,7 @@ vpServer::vpServer(const std::string &adress_serv, const int &port_serv)
   }
   emitter.emitterAddress.sin_family = AF_INET;
   emitter.emitterAddress.sin_addr.s_addr = inet_addr(adress_serv.c_str());
-  emitter.emitterAddress.sin_port = htons((unsigned short)port_serv);
+  emitter.emitterAddress.sin_port = htons(static_cast<unsigned short>(port_serv));
 
   adress = adress_serv;
   port = port_serv;
@@ -138,14 +160,14 @@ vpServer::~vpServer()
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   close(emitter.socketFileDescriptorEmitter);
 #else // Win32
-  closesocket((unsigned)emitter.socketFileDescriptorEmitter);
+  closesocket(static_cast<unsigned int>(emitter.socketFileDescriptorEmitter));
 #endif
 
   for (unsigned int i = 0; i < receptor_list.size(); i++)
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     close(receptor_list[i].socketFileDescriptorReceptor);
 #else // Win32
-    closesocket((unsigned)receptor_list[i].socketFileDescriptorReceptor);
+    closesocket(static_cast<unsigned int>(receptor_list[i].socketFileDescriptorReceptor));
 #endif
 }
 
@@ -159,10 +181,10 @@ bool vpServer::start()
   int serverStructLength = sizeof(emitter.emitterAddress);
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   int bindResult = bind(emitter.socketFileDescriptorEmitter, (struct sockaddr *)&emitter.emitterAddress,
-                        (unsigned)serverStructLength);
+                        static_cast<unsigned int>(serverStructLength));
 #else // Win32
-  int bindResult = bind((unsigned)emitter.socketFileDescriptorEmitter, (struct sockaddr *)&emitter.emitterAddress,
-                        serverStructLength);
+  int bindResult = bind(static_cast<unsigned int>(emitter.socketFileDescriptorEmitter), (struct sockaddr *)&emitter.emitterAddress,
+                         serverStructLength);
 #endif
 
   if (bindResult < 0) {
@@ -194,7 +216,7 @@ bool vpServer::start()
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   listen(emitter.socketFileDescriptorEmitter, static_cast<int>(max_clients));
 #else // Win32
-  listen((unsigned)emitter.socketFileDescriptorEmitter, static_cast<int>(max_clients));
+  listen(static_cast<unsigned int>(emitter.socketFileDescriptorEmitter), static_cast<int>(max_clients));
 #endif
 
   std::cout << "Server ready" << std::endl;
@@ -227,10 +249,10 @@ bool vpServer::checkForConnections()
   FD_ZERO(&readFileDescriptor);
 
   socketMax = emitter.socketFileDescriptorEmitter;
-  FD_SET((unsigned)emitter.socketFileDescriptorEmitter, &readFileDescriptor);
+  FD_SET(static_cast<unsigned int>(emitter.socketFileDescriptorEmitter), &readFileDescriptor);
 
   for (unsigned int i = 0; i < receptor_list.size(); i++) {
-    FD_SET((unsigned)receptor_list[i].socketFileDescriptorReceptor, &readFileDescriptor);
+    FD_SET(static_cast<unsigned int>(receptor_list[i].socketFileDescriptorReceptor), &readFileDescriptor);
 
     if (i == 0)
       socketMax = receptor_list[i].socketFileDescriptorReceptor;

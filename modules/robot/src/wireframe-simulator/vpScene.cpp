@@ -241,9 +241,9 @@ void ifsToBound(Bound *bptr, std::list<indexFaceSet *> &ifs_list)
   for (std::list<indexFaceSet *>::const_iterator it = ifs_list.begin(); it != ifs_list.end(); ++it) {
     indexFaceSet *ifs = *it;
     for (unsigned int j = 0; j < static_cast<unsigned int>(ifs->nbPt); j++) {
-      bptr->point.ptr[iter].x = (float)ifs->pt[j].get_oX();
-      bptr->point.ptr[iter].y = (float)ifs->pt[j].get_oY();
-      bptr->point.ptr[iter].z = (float)ifs->pt[j].get_oZ();
+      bptr->point.ptr[iter].x = static_cast<float>(ifs->pt[j].get_oX());
+      bptr->point.ptr[iter].y = static_cast<float>(ifs->pt[j].get_oY());
+      bptr->point.ptr[iter].z = static_cast<float>(ifs->pt[j].get_oZ());
       iter++;
     }
   }
@@ -311,7 +311,7 @@ void vp2jlc_matrix(const vpHomogeneousMatrix &vpM, Matrix &jlcM)
 {
   for (unsigned int i = 0; i < 4; i++) {
     for (unsigned int j = 0; j < 4; j++)
-      jlcM[j][i] = (float)vpM[i][j];
+      jlcM[j][i] = static_cast<float>(vpM[i][j]);
   }
 }
 END_VISP_NAMESPACE

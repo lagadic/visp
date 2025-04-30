@@ -427,14 +427,14 @@ inline void vpMbtTukeyEstimator<float>::MEstimator(const vpColVector &residues, 
   m_residues.resize(0);
   m_residues.reserve(residues.size());
   for (unsigned int i = 0; i < residues.size(); i++) {
-    m_residues.push_back((float)residues[i]);
+    m_residues.push_back(static_cast<float>(residues[i]));
   }
 
   float med = getMedian(m_residues);
 
   m_normres.resize(residues.size());
   for (size_t i = 0; i < m_residues.size(); i++) {
-    m_normres[i] = (float)std::fabs(residues[static_cast<unsigned int>(i)] - med);
+    m_normres[i] = static_cast<float>(std::fabs(residues[static_cast<unsigned int>(i)] - med));
   }
 
   m_residues = m_normres;
@@ -446,7 +446,7 @@ inline void vpMbtTukeyEstimator<float>::MEstimator(const vpColVector &residues, 
   // Set a minimum threshold for sigma
   // (when sigma reaches the level of noise in the image)
   if (sigma < NoiseThreshold) {
-    sigma = (float)NoiseThreshold;
+    sigma = static_cast<float>(NoiseThreshold);
   }
 
   psiTukey(sigma, m_normres, weights);

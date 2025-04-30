@@ -175,7 +175,7 @@ int main(int argc, const char **argv)
       opt_tag_family = (vpDetectorAprilTag::vpAprilTagFamily)atoi(argv[++i]);
     }
     else if (std::string(argv[i]) == "--tag-quad-decimate" && i + 1 < argc) {
-      opt_tag_quad_decimate = (float)atof(argv[++i]);
+      opt_tag_quad_decimate = static_cast<float>(atof(argv[++i]));
     }
     else if (std::string(argv[i]) == "--tag-n-threads" && i + 1 < argc) {
       opt_tag_nThreads = atoi(argv[++i]);

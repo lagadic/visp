@@ -107,8 +107,8 @@ TEST_CASE("Test constructors with double", "[constructors]")
     std::vector<double> bench(12);
     for (unsigned int i = 0; i < 3; i++) {
       for (unsigned int j = 0; j < 4; j++) {
-        A[i][j] = (double)(i + j);
-        bench[i * 4 + j] = (double)(i + j);
+        A[i][j] = static_cast<double>(i + j);
+        bench[i * 4 + j] = static_cast<double>(i + j);
       }
     }
     CHECK(test("A", A, bench));
@@ -136,7 +136,7 @@ TEST_CASE("Test constructors with double", "[constructors]")
     std::vector<double> bench(12);
     for (unsigned int i = 0; i < 3; i++) {
       for (unsigned int j = 0; j < 4; j++) {
-        bench[i * 4 + j] = (double)(i + j);
+        bench[i * 4 + j] = static_cast<double>(i + j);
       }
     }
     SECTION("Keep default size (r=0, c=0)")
@@ -188,8 +188,8 @@ TEST_CASE("Test constructors with float", "[constructors]")
     std::vector<float> bench(12);
     for (unsigned int i = 0; i < 3; i++) {
       for (unsigned int j = 0; j < 4; j++) {
-        A[i][j] = (float)(i + j);
-        bench[i * 4 + j] = (float)(i + j);
+        A[i][j] = static_cast<float>(i + j);
+        bench[i * 4 + j] = static_cast<float>(i + j);
       }
     }
     CHECK(test("A", A, bench));
@@ -216,7 +216,7 @@ TEST_CASE("Test constructors with float", "[constructors]")
     std::vector<float> bench(12);
     for (unsigned int i = 0; i < 3; i++) {
       for (unsigned int j = 0; j < 4; j++) {
-        bench[i * 4 + j] = (float)(i + j);
+        bench[i * 4 + j] = static_cast<float>(i + j);
       }
     }
     SECTION("Keep default size (r=0, c=0)")

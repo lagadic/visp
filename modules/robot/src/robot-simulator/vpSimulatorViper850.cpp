@@ -1358,34 +1358,33 @@ void vpSimulatorViper850::setPosition(const vpRobot::vpControlFrameType frame, c
   The position to reach can be specified in joint coordinates, in the
   camera frame or in the reference frame.
 
-  This method overloads setPosition(const
-  vpRobot::vpControlFrameType, const vpColVector &).
+  This method overloads setPosition(const vpRobot::vpControlFrameType, const vpColVector &).
 
-  \warning This method is blocking. It returns only when the position
-  is reached by the robot.
+  \warning This method is blocking. It returns only when the position is reached by the robot.
 
-  \param pos1, pos2, pos3, pos4, pos5, pos6 : The six coordinates of
-  the position to reach. All the positions are expressed in meters for
-  the translations and radians for the rotations.
+  All the positions are expressed in meters for the translations and radians for the rotations.
+
+  \param pos1 : First coordinate of the position to reach.
+  \param pos2 : Second coordinate of the position to reach.
+  \param pos3 : Third coordinate of the position to reach.
+  \param pos4 : Fourth coordinate of the position to reach.
+  \param pos5 : Fifth coordinate of the position to reach.
+  \param pos6 : Sixth coordinate of the position to reach.
 
   \param frame : Frame in which the position is expressed.
 
-  - In the joint space, positions are respectively X (pos1), Y (pos2),
-  Z (pos3), A (pos4), B (pos5), C (pos6), with X,Y,Z the
-  translations, and A,B,C the rotations of the end-effector.
+  - In the joint space, positions are respectively X (pos1), Y (pos2), Z (pos3), A (pos4), B (pos5), C (pos6),
+    with X,Y,Z the translation positions in meters, and A,B,C the rotations in radians of the end-effector.
 
-  - In the camera and the reference frame, rotations [pos4, pos5, pos6] are
-  represented by a vpRxyzVector.
+  - In the camera and the reference frame, rotations [pos4, pos5, pos6] are represented by a vpRxyzVector with
+    values in radians.
 
-  - Mixt frame is not implemented. By mixt frame we mean, translations
-  expressed in the reference frame, and rotations in the camera
-  frame.
+  - Mixt frame is not implemented. By mixt frame we mean, translations expressed in the reference frame,
+    and rotations in the camera frame.
 
-  \exception vpRobotException::lowLevelError : vpRobot::MIXT_FRAME not
-  implemented.
+  \exception vpRobotException::lowLevelError : vpRobot::MIXT_FRAME not implemented.
 
-  \exception vpRobotException::positionOutOfRangeError : The requested
-  position is out of range.
+  \exception vpRobotException::positionOutOfRangeError : The requested position is out of range.
 
   \code
   #include <visp3/robot/vpSimulatorViper850.h>
@@ -1809,7 +1808,7 @@ int vpSimulatorViper850::isInJointLimit()
   }
 
   if (artNumb != 0)
-    std::cout << "\nWarning: Velocity control stopped: axis " << fabs((float)artNumb) << " on joint limit!"
+    std::cout << "\nWarning: Velocity control stopped: axis " << fabs(static_cast<float>(artNumb)) << " on joint limit!"
     << std::endl;
 
   return artNumb;
@@ -2046,7 +2045,7 @@ bool vpSimulatorViper850::savePosFile(const std::string &filename, const vpColVe
 /*!
   Moves the robot to the joint position specified in the filename.
 
-  \param filename: File containing a joint position.
+  \param filename : File containing a joint position.
 
   \sa readPosFile
 */

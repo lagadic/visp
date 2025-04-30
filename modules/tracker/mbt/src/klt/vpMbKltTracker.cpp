@@ -524,7 +524,7 @@ void vpMbKltTracker::setPose(const vpImage<unsigned char> *const I, const vpImag
           cdp[1] = iter->second.get_i();
           cdp[2] = 1.0;
 
-          cv::Point2f p((float)cdp[0], (float)cdp[1]);
+          cv::Point2f p(static_cast<float>(cdp[0]), static_cast<float>(cdp[1]));
           init_pts.push_back(p);
 #ifdef TARGET_OS_IPHONE
           init_ids.push_back((size_t)(kltpoly->getCurrentPointsInd())[static_cast<int>(iter->first)]);
@@ -544,7 +544,7 @@ void vpMbKltTracker::setPose(const vpImage<unsigned char> *const I, const vpImag
           cdp[1] = (cdp[0] * cdGc[1][0] + cdp[1] * cdGc[1][1] + cdGc[1][2]) / p_mu_t_2;
 
           // Set value to the KLT tracker
-          cv::Point2f p_guess((float)cdp[0], (float)cdp[1]);
+          cv::Point2f p_guess(static_cast<float>(cdp[0]), static_cast<float>(cdp[1]));
           guess_pts.push_back(p_guess);
         }
       }
@@ -1320,12 +1320,13 @@ void vpMbKltTracker::testTracking()
   \param p1 : First point on the axis.
   \param p2 : Second point on the axis.
   \param radius : Radius of the cylinder.
-  \param idFace : Identifier of the polygon representing the revolution axis
-  of the cylinder. \param name : The optional name of the cylinder.
+  \param idFace : Identifier of the polygon representing the revolution axis of the cylinder.
+  \param name : The optional name of the cylinder.
 */
 void vpMbKltTracker::initCylinder(const vpPoint &p1, const vpPoint &p2, double radius, int idFace,
-                                  const std::string & /*name*/)
+                                  const std::string &name)
 {
+  (void)name;
   vpMbtDistanceKltCylinder *kltPoly = new vpMbtDistanceKltCylinder();
   kltPoly->setCameraParameters(m_cam);
 
@@ -1343,31 +1344,34 @@ void vpMbKltTracker::initCylinder(const vpPoint &p1, const vpPoint &p2, double r
 }
 
 /*!
-  Add a circle to display (not for tracking) from its center, 3 points
-  (including the center) defining the plane that contain the circle and its
-  radius.
+  Add a circle to track. With the center of the circle we have 3 points defining the plane that  contains the circle.
+  To be visible, the plane defined by the 3 points p1, p2, p3 should have its normal going toward the camera.
 
-  \param p1 : Center of the circle.
-  \param p2,p3 : Two points on the plane containing the circle. With the
-  center of the circle we have 3 points defining the plane that contains the
-  circle. \param radius : Radius of the circle. \param name : The optional
-  name of the circle.
+  \param p1 : Center of the circle, considered as the first point on the plane containing the circle.
+  \param p2 : Second point on the plane containing the circle.
+  \param p3 : Third point on the plane containing the circle.
+  \param radius : Radius of the circle.
+  \param idFace : Index of the face associated to the circle to handle visibility test.
+  \param name : The optional name of the circle.
 */
-void vpMbKltTracker::initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, double radius, int /*idFace*/,
+void vpMbKltTracker::initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, double radius, int idFace,
                                 const std::string &name)
 {
+  (void)idFace;
   addCircle(p1, p2, p3, radius, name);
 }
 
 /*!
-  Add a circle to the list of circles.
+  Add a circle to track. With the center of the circle we have 3 points defining the plane that  contains the circle.
+  To be visible, the plane defined by the 3 points p1, p2, p3 should have its normal going toward the camera.
 
-  \param P1 : Center of the circle.
-  \param P2,P3 : Two points on the plane containing the circle. With the
-  center of the circle we have 3 points defining the plane that contains the
-  circle. \param r : Radius of the circle. \param name : Name of the circle.
+  \param p1 : Center of the circle, considered as the first point on the plane containing the circle.
+  \param p2 : Second point on the plane containing the circle.
+  \param p3 : Third point on the plane containing the circle.
+  \param radius : Radius of the circle.
+  \param name : The optional name of the circle.
 */
-void vpMbKltTracker::addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, double r,
+void vpMbKltTracker::addCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, double radius,
                                const std::string &name)
 {
   bool already_here = false;
@@ -1390,7 +1394,7 @@ void vpMbKltTracker::addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoi
 
     ci->setCameraParameters(m_cam);
     ci->setName(name);
-    ci->buildFrom(P1, P2, P3, r);
+    ci->buildFrom(p1, p2, p3, radius);
     circles_disp.push_back(ci);
   }
 }

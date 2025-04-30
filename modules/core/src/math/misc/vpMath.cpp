@@ -111,7 +111,7 @@ bool vpMath::isNaN(double value)
   // Taken from OpenCV source code CvIsNan()
   Vp64suf ieee754;
   ieee754.f = value;
-  return (((unsigned)(ieee754.u >> 32) & 0x7fffffff) + ((unsigned)ieee754.u != 0) > 0x7ff00000) != 0;
+  return ((static_cast<unsigned int>(ieee754.u >> 32) & 0x7fffffff) + ((static_cast<unsigned int>(ieee754.u) != 0) > 0x7ff00000) != 0;
 #endif
 }
 
@@ -135,7 +135,7 @@ bool vpMath::isNaN(float value)
   // Taken from OpenCV source code CvIsNan()
   Vp32suf ieee754;
   ieee754.f = value;
-  return ((unsigned)ieee754.u & 0x7fffffff) > 0x7f800000;
+  return ((static_cast<unsigned int>(ieee754.u) & 0x7fffffff) > 0x7f800000;
 #endif
 }
 
@@ -159,7 +159,7 @@ bool vpMath::isInf(double value)
   // Taken from OpenCV source code CvIsInf()
   Vp64suf ieee754;
   ieee754.f = value;
-  return ((unsigned)(ieee754.u >> 32) & 0x7fffffff) == 0x7ff00000 && (unsigned)ieee754.u == 0;
+  return (static_cast<unsigned int>(ieee754.u >> 32) & 0x7fffffff) == 0x7ff00000 && (static_cast<unsigned int>(ieee754.u) == 0;
 #endif
 }
 
@@ -183,7 +183,7 @@ bool vpMath::isInf(float value)
   // Taken from OpenCV source code CvIsInf()
   Vp32suf ieee754;
   ieee754.f = value;
-  return ((unsigned)ieee754.u & 0x7fffffff) == 0x7f800000;
+  return ((static_cast<unsigned int>(ieee754.u) & 0x7fffffff) == 0x7f800000;
 #endif
 }
 

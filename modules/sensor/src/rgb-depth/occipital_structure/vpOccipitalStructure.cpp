@@ -743,7 +743,8 @@ vpPoint vpOccipitalStructure::unprojectPoint(int row, int col)
 /*!
   Get the extrinsic transformation from one stream to another. This function
   has to be called after open().
-  \param from, to   : Streams for which the camera extrinsic parameters are returned.
+   \param from : From stream for which the camera extrinsic parameters are returned.
+   \param to : To stream for which the camera extrinsic parameters are returned.
  */
 vpHomogeneousMatrix vpOccipitalStructure::getTransform(const vpOccipitalStructureStream from,
                                                        const vpOccipitalStructureStream to)

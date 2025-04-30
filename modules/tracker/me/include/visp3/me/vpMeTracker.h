@@ -201,7 +201,8 @@ public:
    * \param[in] i : Pixel coordinate along the image rows.
    * \param[in] j : Pixel coordinates along the image columns.
    * \param[in] border : Number of pixels along the image border to exclude. When border is set to 0, consider the complete image.
-   * \param[in] nrows,ncols : Size of the image.
+   * \param[in] nrows : Image number of rows.
+   * \param[in] ncols : Image number of cols.
    * \return true when the pixel is inside the image minus the border size, false otherwise.
    */
   bool outOfImage(int i, int j, int border, int nrows, int ncols);
@@ -210,7 +211,8 @@ public:
    * Check if a pixel i,j is out of the image.
    * \param[in] iP : Pixel coordinates.
    * \param[in] border : Number of pixels along the image border to exclude. When border is set to 0, consider the complete image.
-   * \param[in] nrows,ncols : Size of the image.
+   * \param[in] nrows : Image number of rows.
+   * \param[in] ncols : Image number of cols.
    * \return true when the pixel is inside the image minus the border size, false otherwise.
    */
   bool outOfImage(const vpImagePoint &iP, int border, int nrows, int ncols);

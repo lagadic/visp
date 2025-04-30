@@ -252,7 +252,7 @@ int main()
         t_0 = vpTime::measureTimeMs(); // t_0: current time
 
         // Update loop time in second
-        Tv = (double)(t_0 - t_1) / 1000.0;
+        Tv = static_cast<double>(t_0 - t_1) / 1000.0;
 
         // Update time for next iteration
         t_1 = t_0;

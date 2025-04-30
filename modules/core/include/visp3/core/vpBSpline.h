@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@
   \brief Class that provides tools to compute and manipulate a B-Spline curve.
 */
 
-#ifndef vpBSpline_H
-#define vpBSpline_H
+#ifndef VP_BSPINE_H
+#define VP_BSPINE_H
 
 #include <visp3/core/vpImagePoint.h>
 
@@ -107,7 +107,7 @@ typedef struct vpBasisFunction
 class VISP_EXPORT vpBSpline
 {
 public /*protected*/:
-//! Vector which contains the control points
+  //! Vector which contains the control points
   std::vector<vpImagePoint> controlPoints;
   //! Vector which contain the knots \f$ {u0, ..., um} \f$
   std::vector<double> knots;
@@ -118,8 +118,6 @@ public /*protected*/:
 
 public:
   vpBSpline();
-  vpBSpline(const vpBSpline &bspline);
-  virtual ~vpBSpline();
 
   /*!
     Gets the degree of the B-Spline.

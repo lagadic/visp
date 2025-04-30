@@ -239,6 +239,13 @@ public:
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
 
+#if defined(__clang__)
+// Mute warning : declaration requires an exit-time destructor [-Wexit-time-destructors]
+// message : expanded from macro 'NLOHMANN_JSON_SERIALIZE_ENUM'
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wexit-time-destructors"
+#endif
+
   NLOHMANN_JSON_SERIALIZE_ENUM(vpRBDenseDepthTracker::vpDisplayType, {
         {vpRBDenseDepthTracker::vpDisplayType::INVALID, nullptr},
         {vpRBDenseDepthTracker::vpDisplayType::SIMPLE, "simple"},
@@ -255,6 +262,10 @@ public:
     setMinimumMaskConfidence(j.value("minMaskConfidence", m_minMaskConfidence));
     setDisplayType(j.value("displayType", m_displayType));
   }
+
+#if defined(__clang__)
+#  pragma clang diagnostic pop
+#endif
 
 #endif
 

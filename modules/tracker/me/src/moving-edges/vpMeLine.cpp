@@ -82,8 +82,17 @@ vpMeLine::vpMeLine()
   : m_rho(0.), m_theta(0.), m_delta(0.), m_sign(1), m_a(0.), m_b(0.), m_c(0.)
 { }
 
-vpMeLine::vpMeLine(const vpMeLine &meline)
-  : vpMeTracker(meline), m_rho(0.), m_theta(0.), m_delta(0.), m_sign(1), m_a(0.), m_b(0.), m_c(0.)
+vpMeLine::vpMeLine(const vpMeLine &meline) : vpMeTracker(meline)
+{
+  *this = meline;
+}
+
+vpMeLine::~vpMeLine()
+{
+  m_meList.clear();
+}
+
+vpMeLine &vpMeLine::operator=(const vpMeLine &meline)
 {
   m_rho = meline.m_rho;
   m_theta = meline.m_theta;
@@ -96,11 +105,8 @@ vpMeLine::vpMeLine(const vpMeLine &meline)
 
   m_PExt[0] = meline.m_PExt[0];
   m_PExt[1] = meline.m_PExt[1];
-}
 
-vpMeLine::~vpMeLine()
-{
-  m_meList.clear();
+  return *this;
 }
 
 void vpMeLine::sample(const vpImage<unsigned char> &I, bool doNotTrack)

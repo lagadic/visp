@@ -202,7 +202,7 @@ bool vpKinect::getDepthMap(vpImage<float> &map, vpImage<unsigned char> &Imap)
         map[i][j] = tempMap[i << 1][j << 1];
         // if (map[i][j] != -1)
         if (fabs(map[i][j] + 1.f) > std::numeric_limits<float>::epsilon())
-          Imap[i][j] = (unsigned char)(255 * map[i][j] / 5);
+          Imap[i][j] = static_cast<unsigned char>(255 * map[i][j] / 5);
         else
           Imap[i][j] = 255;
       }
@@ -213,7 +213,7 @@ bool vpKinect::getDepthMap(vpImage<float> &map, vpImage<unsigned char> &Imap)
         map[i][j] = tempMap[i][j];
         // if (map[i][j] != -1)
         if (fabs(map[i][j] + 1.f) > std::numeric_limits<float>::epsilon())
-          Imap[i][j] = (unsigned char)(255 * map[i][j] / 5);
+          Imap[i][j] = static_cast<unsigned char>(255 * map[i][j] / 5);
         else
           Imap[i][j] = 255;
       }

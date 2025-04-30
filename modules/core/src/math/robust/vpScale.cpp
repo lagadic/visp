@@ -253,8 +253,6 @@ double vpScale::KernelDensityGradient_EPANECHNIKOV(double sumX, unsigned int n)
         vpException(vpException::fatalError, "Error in vpScale::KernelDensityGradient_EPANECHNIKOV: wrong dimension"));
   }
 
-  // return sumX*(dimension+2)/(n*pow(bandwidth,
-  // (double)dimension)*c*vpMath::sqr(bandwidth));
   return sumX * (dimension + 2) / (n * bandwidth * c * vpMath::sqr(bandwidth));
 }
 END_VISP_NAMESPACE

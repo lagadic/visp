@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +33,8 @@
  * \brief Statistical Process Control sigma test implementation.
  */
 
-#ifndef _vpStatisticalTestSigma_h_
-#define _vpStatisticalTestSigma_h_
+#ifndef VP_STATISTICAL_TEST_SIGMA_H
+#define VP_STATISTICAL_TEST_SIGMA_H
 
 #include <visp3/core/vpConfig.h>
 
@@ -70,7 +69,7 @@ class VISP_EXPORT vpStatisticalTestSigma : public vpStatisticalTestAbstract
 {
 protected:
   float m_h; /*!< The alarm factor applied to the standard deviation to compute the limits.*/
-  float m_s; /*!< The last value of the signal.*/
+  float m_signal; /*!< The last value of the signal.*/
 
   /**
    * \brief Compute the upper and lower limits of the test signal.
@@ -135,7 +134,7 @@ public:
    */
   inline virtual float getSignal() const
   {
-    return m_s;
+    return m_signal;
   }
 
   /**
