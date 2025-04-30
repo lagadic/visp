@@ -108,7 +108,7 @@ BEGIN_VISP_NAMESPACE
 class VISP_EXPORT vpHistogram
 {
 public:
-  vpHistogram(const unsigned int &size = constr_val_256);
+  vpHistogram(const unsigned int &size = 256);
   vpHistogram(const vpHistogram &h);
   VP_EXPLICIT vpHistogram(const vpImage<unsigned char> &I);
   VP_EXPLICIT vpHistogram(const vpImage<unsigned char> &I, const vpImage<bool> *p_mask);
