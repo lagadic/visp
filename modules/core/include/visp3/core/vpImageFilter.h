@@ -1732,7 +1732,7 @@ public:
    *
    * \sa getGaussianKernel() to know which kernel is used.
    */
-  template <typename ImageType, typename OutputType, typename FilterType>
+  template <typename ImageType, typename OutputType, typename FilterType = float>
   static inline void
     gaussianBlur(const vpImage<ImageType> &I, vpImage<OutputType> &GI, unsigned int size = 7, FilterType sigma = 0., bool normalize = true,
                             const vpImage<bool> *p_mask = nullptr)
@@ -2012,6 +2012,7 @@ public:
       gradientFilterXMultithread(I, GIx, filter, nbThread, p_mask);
     }
 #else
+    (void)nbThread; // Unused paramter when OpenMP is unavailable
     gradientFilterXMonothread(I, GIx, filter, p_mask);
 #endif
   }
@@ -2166,6 +2167,7 @@ public:
       gradientFilterYMultithread(I, GIy, filter, nbThread, p_mask);
     }
 #else
+    (void)nbThread; // Unused paramter when OpenMP is unavailable
     gradientFilterYMonothread(I, GIy, filter, p_mask);
 #endif
   }
@@ -2434,7 +2436,7 @@ private:
         filter[r][c] = filter[r][c] * scale;
       }
     }
-  }
+}
 #endif
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)

@@ -48,6 +48,9 @@
 #include "hsvUtils.h"
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+BEGIN_VISP_NAMESPACE
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 void gradientFilter(const vpImage<unsigned char> &I, const vpImage<double> &filter, vpImage<double> &GIy)
 {
   const unsigned int nbRows = I.getRows(), nbCols = I.getCols();
@@ -256,6 +259,7 @@ void gradientFilter(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpIma
   gradientFilterX(I, GIx, p_mask, type);
   gradientFilterY(I, GIy, p_mask, type);
 }
+#endif
 
 int main()
 {
@@ -373,6 +377,7 @@ int main()
   std::cerr << "ERROR: Something went wrong !" << std::endl;
   return EXIT_FAILURE;
 }
+END_VISP_NAMESPACE
 #else
 int main()
 {

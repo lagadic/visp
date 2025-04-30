@@ -47,6 +47,8 @@
 #include "hsvUtils.h"
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+BEGIN_VISP_NAMESPACE
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 /**
  * \brief Check if the computed RGBa value corresponds to the ground-truth.
  *
@@ -57,7 +59,7 @@
  * \param[in] hsv_truth The HSV value that was used to compute rgb_computed.
  * \return true If rgb_computed and rgb_truth are equal.
  * \return false Otherwise
- */
+*/
 template<typename Type, bool useFullScale >
 bool test_rgb(const vpRGBa &rgb_computed, const vpRGBa &rgb_truth,
               const vpHSV<Type, useFullScale> &hsv_truth)
@@ -81,27 +83,28 @@ bool test_rgb(const vpRGBa &rgb_computed, const vpRGBa &rgb_truth,
 
   return true;
 }
+#endif
 
 int main()
 {
   bool isSuccess = true;
 
-  std::vector< std::vector<double> > rgb_truth;
-  rgb_truth.push_back({ 0, 0, 0, vpRGBa::alpha_default });
-  rgb_truth.push_back({ 255, 255, 255, vpRGBa::alpha_default });
-  rgb_truth.push_back({ 255, 0, 0, vpRGBa::alpha_default });
-  rgb_truth.push_back({ 0, 255, 0, vpRGBa::alpha_default });
-  rgb_truth.push_back({ 0, 0, 255, vpRGBa::alpha_default });
-  rgb_truth.push_back({ 255, 255, 0, vpRGBa::alpha_default });
-  rgb_truth.push_back({ 0, 255, 255, vpRGBa::alpha_default });
-  rgb_truth.push_back({ 255, 0, 255, vpRGBa::alpha_default });
-  rgb_truth.push_back({ 128, 128, 128, vpRGBa::alpha_default });
-  rgb_truth.push_back({ 128, 128, 0, vpRGBa::alpha_default });
-  rgb_truth.push_back({ 128, 0, 0, vpRGBa::alpha_default });
-  rgb_truth.push_back({ 0, 128, 0, vpRGBa::alpha_default });
-  rgb_truth.push_back({ 0, 128, 128, vpRGBa::alpha_default });
-  rgb_truth.push_back({ 0, 0, 128, vpRGBa::alpha_default });
-  rgb_truth.push_back({ 128, 0, 128, vpRGBa::alpha_default });
+  std::vector< vpColVector> rgb_truth;
+  rgb_truth.emplace_back(std::vector<double>({ 0, 0, 0, vpRGBa::alpha_default }));
+  rgb_truth.emplace_back(std::vector<double>({ 255, 255, 255, vpRGBa::alpha_default }));
+  rgb_truth.emplace_back(std::vector<double>({ 255, 0, 0, vpRGBa::alpha_default }));
+  rgb_truth.emplace_back(std::vector<double>({ 0, 255, 0, vpRGBa::alpha_default }));
+  rgb_truth.emplace_back(std::vector<double>({ 0, 0, 255, vpRGBa::alpha_default }));
+  rgb_truth.emplace_back(std::vector<double>({ 255, 255, 0, vpRGBa::alpha_default }));
+  rgb_truth.emplace_back(std::vector<double>({ 0, 255, 255, vpRGBa::alpha_default }));
+  rgb_truth.emplace_back(std::vector<double>({ 255, 0, 255, vpRGBa::alpha_default }));
+  rgb_truth.emplace_back(std::vector<double>({ 128, 128, 128, vpRGBa::alpha_default }));
+  rgb_truth.emplace_back(std::vector<double>({ 128, 128, 0, vpRGBa::alpha_default }));
+  rgb_truth.emplace_back(std::vector<double>({ 128, 0, 0, vpRGBa::alpha_default }));
+  rgb_truth.emplace_back(std::vector<double>({ 0, 128, 0, vpRGBa::alpha_default }));
+  rgb_truth.emplace_back(std::vector<double>({ 0, 128, 128, vpRGBa::alpha_default }));
+  rgb_truth.emplace_back(std::vector<double>({ 0, 0, 128, vpRGBa::alpha_default }));
+  rgb_truth.emplace_back(std::vector<double>({ 128, 0, 128, vpRGBa::alpha_default }));
 
   double h_max;
   bool h_full;
@@ -118,22 +121,22 @@ int main()
     }
 
     // See https://www.rapidtables.com/convert/color/hsv-to-rgb.html
-    std::vector< std::vector<double> > hsv_truth;
-    hsv_truth.push_back({ 0., 0., 0. });
-    hsv_truth.push_back({ 0., 0., 255. });
-    hsv_truth.push_back({ 0., 255., 255. });
-    hsv_truth.push_back({ h_max * 120. / 360., 255., 255. });
-    hsv_truth.push_back({ h_max * 240. / 360., 255., 255. });
-    hsv_truth.push_back({ h_max * 60. / 360., 255., 255. });
-    hsv_truth.push_back({ h_max * 180. / 360., 255., 255. });
-    hsv_truth.push_back({ h_max * 300. / 360., 255., 255. });
-    hsv_truth.push_back({ 0., 0., 128. });
-    hsv_truth.push_back({ h_max * 60. / 360., 255., 128. });
-    hsv_truth.push_back({ 0., 255., 128. });
-    hsv_truth.push_back({ h_max * 120. / 360., 255., 128. });
-    hsv_truth.push_back({ h_max * 180. / 360., 255., 128. });
-    hsv_truth.push_back({ h_max * 240. / 360., 255., 128. });
-    hsv_truth.push_back({ h_max * 300. / 360., 255., 128. });
+    std::vector< vpColVector > hsv_truth;
+    hsv_truth.emplace_back(std::vector<double>({ 0., 0., 0. }));
+    hsv_truth.emplace_back(std::vector<double>({ 0., 0., 255. }));
+    hsv_truth.emplace_back(std::vector<double>({ 0., 255., 255. }));
+    hsv_truth.emplace_back(std::vector<double>({ h_max * 120. / 360., 255., 255. }));
+    hsv_truth.emplace_back(std::vector<double>({ h_max * 240. / 360., 255., 255. }));
+    hsv_truth.emplace_back(std::vector<double>({ h_max * 60. / 360., 255., 255. }));
+    hsv_truth.emplace_back(std::vector<double>({ h_max * 180. / 360., 255., 255. }));
+    hsv_truth.emplace_back(std::vector<double>({ h_max * 300. / 360., 255., 255. }));
+    hsv_truth.emplace_back(std::vector<double>({ 0., 0., 128. }));
+    hsv_truth.emplace_back(std::vector<double>({ h_max * 60. / 360., 255., 128. }));
+    hsv_truth.emplace_back(std::vector<double>({ 0., 255., 128. }));
+    hsv_truth.emplace_back(std::vector<double>({ h_max * 120. / 360., 255., 128. }));
+    hsv_truth.emplace_back(std::vector<double>({ h_max * 180. / 360., 255., 128. }));
+    hsv_truth.emplace_back(std::vector<double>({ h_max * 240. / 360., 255., 128. }));
+    hsv_truth.emplace_back(std::vector<double>({ h_max * 300. / 360., 255., 128. }));
 
     // SECTION("HSV (unsigned char) -> RGB")
     std::cout << std::endl << "----- Test hsv (unsigned char) -> rgba conversion with h full scale: " << (h_full ? "yes" : "no") << " -----" << std::endl;
@@ -163,7 +166,7 @@ int main()
       std::cout << std::endl << "----- Test hsv (double) -> rgba conversion -----" << std::endl;
       for (unsigned int id = 0; id < size; ++id) {
         vpRGBa rgba_truth(rgb_truth[id]);
-        std::vector<double> hsv_vec = hsv_truth[id];
+        vpColVector hsv_vec = hsv_truth[id];
         std::cout << "Running the test for HSV = " << hsv_truth[id][0] << " ; " << hsv_truth[id][1] << "; " << hsv_truth[id][2] << " ..."  << std::endl;
         for (unsigned char c = 0; c < vpHSV<double>::nbChannels; ++c) {
           hsv_vec[c] = hsv_vec[c] / 255.;
@@ -209,6 +212,7 @@ int main()
   std::cerr << "ERROR: Something went wrong !" << std::endl;
   return EXIT_FAILURE;
 }
+END_VISP_NAMESPACE
 #else
 int main()
 {

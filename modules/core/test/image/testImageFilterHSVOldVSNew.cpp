@@ -48,19 +48,20 @@
 #include "hsvUtils.h"
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace vpOldImageFilter
 {
 /**
-   * \brief Resize the image \b I to the desired size and, if \b p_mask is different from nullptr, initialize
-   * \b I with 0s.
-   *
-   * @tparam ImageType Any numerical type (int, float, ...)
-   * @param p_mask If different from nullptr, a boolean mask that tells which pixels must be computed.
-   * @param height The desired height.
-   * @param width The desired width.
-   * @param I The image that must be resized and potentially initialized.
-   */
+* \brief Resize the image \b I to the desired size and, if \b p_mask is different from nullptr, initialize
+* \b I with 0s.
+*
+* \tparam ImageType Any numerical type (int, float, ...)
+* \param p_mask If different from nullptr, a boolean mask that tells which pixels must be computed.
+* \param height The desired height.
+* \param width The desired width.
+* \param I The image that must be resized and potentially initialized.
+*/
 template<typename ImageType>
 static void resizeAndInitializeIfNeeded(const vpImage<bool> *p_mask, const unsigned int height, const unsigned int width, vpImage<ImageType> &I)
 {
@@ -1079,6 +1080,7 @@ int main()
   std::cerr << "ERROR: Something went wrong !" << std::endl;
   return EXIT_FAILURE;
 }
+END_VISP_NAMESPACE
 #else
 int main()
 {

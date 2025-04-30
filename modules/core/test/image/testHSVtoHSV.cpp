@@ -48,6 +48,9 @@
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 
+BEGIN_VISP_NAMESPACE
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 /**
  * \brief Check if the computed HSV value corresponds to the ground-truth.
  *
@@ -57,7 +60,7 @@
  * \param[in] hsv_truth The HSVground-truth value.
  * \return true If hsv_computed and hsv_truth are equal.
  * \return false Otherwise
- */
+*/
 template<bool useFullScale >
 bool test_hsv(const vpHSV<unsigned char, useFullScale> &hsv_computed,
               const vpHSV<unsigned char, useFullScale> &hsv_truth)
@@ -112,6 +115,7 @@ bool test_hsv(const vpHSV<Type, useFullScale> &hsv_computed,
 
   return true;
 }
+#endif
 
 int main()
 {
@@ -244,6 +248,8 @@ int main()
   std::cerr << "ERROR: Something went wrong !" << std::endl;
   return EXIT_FAILURE;
 }
+
+END_VISP_NAMESPACE
 #else
 int main()
 {

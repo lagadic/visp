@@ -556,8 +556,6 @@ public:
    */
   static constexpr unsigned char maxHueUsingLimitedRange = 179;
 
-  static const float maxGradValue;
-
 private:
   /**
    * \brief Permit to initialize a vpHSV object using a vector.
@@ -630,15 +628,6 @@ VISP_EXPORT vpHSV<unsigned char, true> &vpHSV<unsigned char, true>::buildFrom(co
 
 template<>
 VISP_EXPORT vpHSV<double> &vpHSV<double>::buildFrom(const vpRGBa &rgba);
-
-template<>
-VISP_EXPORT const float vpHSV<double>::maxGradValue;
-
-template<>
-VISP_EXPORT const float vpHSV<unsigned char, false>::maxGradValue;
-
-template<>
-VISP_EXPORT const float vpHSV<unsigned char, true>::maxGradValue;
 
 END_VISP_NAMESPACE
 #endif

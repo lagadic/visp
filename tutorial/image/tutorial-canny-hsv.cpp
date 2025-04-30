@@ -302,7 +302,6 @@ int main(int argc, const char *argv[])
   std::cout << "Time to convert RGBa into uchar + compute the edge-map for RGBa: " << (tEndChar - tStartChar) / 1000. << " ms" << std::endl;
 
   // Initialization of the displays
-#ifdef VISP_HAVE_DISPLAY
   using FilterType = float;
   vpImage<FilterType> GIx, GIy, GI;
   vpImage<vpHSV<unsigned char, true>> Iblur_hsvuc;
@@ -377,6 +376,7 @@ int main(int argc, const char *argv[])
   std::cout <<"\tgrad = " << (tEndGradientUC - tStartGradientUC) / 1000. << std::endl;
   std::cout << std::endl;
 
+#ifdef VISP_HAVE_DISPLAY
   if (options.m_useDisplay) {
     std::shared_ptr<vpDisplay> disp_input = vpDisplayFactory::createDisplay(Iload, -1, -1, "Input color image", vpDisplay::SCALE_AUTO);
     int posX = disp_input->getWidth() + 20;
@@ -420,8 +420,9 @@ int main(int argc, const char *argv[])
   return EXIT_SUCCESS;
 }
 #else
-void main()
+int main()
 {
   std::cout << "C++11 is needed to work with vpHSV." << std::endl;
+  return EXIT_SUCCESS;
 }
 #endif

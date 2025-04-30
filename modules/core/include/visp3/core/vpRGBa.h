@@ -297,10 +297,12 @@ public:
 
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpRGBa &rgba);
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   /**
    * \brief Number of channels a vpRGBa object is made of.
    */
   static constexpr unsigned char nbChannels = 4;
+#endif
 public:
   unsigned char R; //!< Red component.
   unsigned char G; //!< Green component.
