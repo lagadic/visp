@@ -39,6 +39,7 @@
 #ifndef VP_IMAGE_FILTER_H
 #define VP_IMAGE_FILTER_H
 
+#include <cstring>
 #include <fstream>
 #include <iostream>
 #include <math.h>
