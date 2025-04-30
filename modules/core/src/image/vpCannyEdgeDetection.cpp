@@ -563,12 +563,12 @@ vpCannyEdgeDetection::performEdgeThinning(const float &lowerThreshold)
 void
 vpCannyEdgeDetection::performHysteresisThresholding(const float &lowerThreshold, const float &upperThreshold)
 {
-  const unsigned int size = m_edgeCandidateAndGradient.size();
-  unsigned int istart = 0;
-  unsigned int istop = size;
+  const int size = m_edgeCandidateAndGradient.size();
+  int istart = 0;
+  int istop = size;
 
 #ifdef VISP_HAVE_OPENMP
-  unsigned int iam, nt, ipoints, npoints(size);
+  int iam, nt, ipoints, npoints(size);
 #pragma omp parallel default(shared) private(iam, nt, ipoints, istart, istop) num_threads(m_nbThread)
   {
     iam = omp_get_thread_num();
@@ -583,7 +583,7 @@ vpCannyEdgeDetection::performHysteresisThresholding(const float &lowerThreshold,
     istop = istart + ipoints;
     std::vector<unsigned int> localMemoryEdgeCandidates;
 #endif
-    for (unsigned int id = istart; id < istop; ++id) {
+    for (int id = istart; id < istop; ++id) {
       const std::pair<unsigned int, float> &candidate = m_edgeCandidateAndGradient[id];
       if (candidate.second >= upperThreshold) {
 #ifdef VISP_HAVE_OPENMP

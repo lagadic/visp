@@ -349,9 +349,9 @@ public:
                                             const vpCannyFilteringAndGradientType &filteringType = CANNY_GBLUR_SOBEL_FILTERING,
                                             const vpImage<bool> *p_mask = nullptr)
   {
-    const unsigned int w = I.getWidth();
-    const unsigned int h = I.getHeight();
-    const unsigned int size = I.getSize();
+    const int w = I.getWidth();
+    const int h = I.getHeight();
+    const int size = I.getSize();
 
     if ((lowerThresholdRatio <= 0.f) || (lowerThresholdRatio >= 1.f)) {
       std::stringstream errMsg;
@@ -386,7 +386,7 @@ public:
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-    for (unsigned int iter = 0; iter < size; ++iter) {
+    for (int iter = 0; iter < size; ++iter) {
         // We have to compute the value for each pixel if we don't have a mask or for
         // pixels for which the mask is true otherwise
       bool computeVal = checkBooleanMask(p_mask, iter);
@@ -507,7 +507,7 @@ public:
     // Computing the absolute gradient of the image G = |dIx| + |dIy|
     float dIMax = -1.; // dI is the absolute gradient => positive
     float dIMin = std::numeric_limits<OutType>::max();
-    unsigned int iter;
+    int iter;
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for default(shared) private(iter) reduction(min: dIMin) reduction(max: dIMax)
 #endif
@@ -2408,7 +2408,7 @@ private:
    * \return true If the boolean mask is true at the desired coordinates or if \b p_mask is equal to \b nullptr.
    * \return false False otherwise.
    */
-  static bool checkBooleanMask(const vpImage<bool> *p_mask, const unsigned int &id)
+  static bool checkBooleanMask(const vpImage<bool> *p_mask, const int &id)
   {
     bool computeVal = true;
 #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
@@ -2436,7 +2436,7 @@ private:
         filter[r][c] = filter[r][c] * scale;
       }
     }
-}
+  }
 #endif
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
@@ -2454,15 +2454,15 @@ private:
    * \return true
    * \return false
    */
-  static bool checkBooleanPatch(const vpImage<bool> *p_mask, const unsigned int &iter, const unsigned int &c,
-                         const unsigned int &h, const unsigned int &w,
+  static bool checkBooleanPatch(const vpImage<bool> *p_mask, const int &iter, const int &c,
+                         const int &h, const int &w,
                          const bool &isGradientX)
   {
     if (!p_mask) {
       return true;
     }
-    static const unsigned int maxIter = (h - 1) * w;
-    static const unsigned int minIter = w;
+    const int maxIter = (h - 1) * w;
+    const int minIter = w;
     bool hasToCompute = p_mask->bitmap[iter];
     if (c < w - 1) { // We do not compute gradient on the last column
       hasToCompute |= p_mask->bitmap[iter + 1]; // I[r][c + 1];
@@ -2524,16 +2524,16 @@ private:
     const vpImage<bool> *p_mask = nullptr
   )
   {
-    const unsigned int nbRows = I.getRows(), nbCols = I.getCols();
-    const unsigned int size = I.getSize();
-    const unsigned int offsetIdiff = nbCols;
+    const int nbRows = I.getRows(), nbCols = I.getCols();
+    const int size = I.getSize();
+    const int offsetIdiff = nbCols;
 
     std::vector<OutputType> Idiff(size);
     initGradientFilterDifferenceImageX(I, Idiff);
-    const unsigned int resetCounter = nbCols - 1;
-    const unsigned int stopIter = size - (nbCols + 1);
-    unsigned int counter = resetCounter, idCol = 0;
-    for (unsigned int iter = nbCols; iter < stopIter; ++iter) {
+    const int resetCounter = nbCols - 1;
+    const int stopIter = size - (nbCols + 1);
+    int counter = resetCounter, idCol = 0;
+    for (int iter = nbCols; iter < stopIter; ++iter) {
       if (counter) {
         // Computing the amplitude of the difference
         OutputType futureDiff = 0.;
@@ -2592,16 +2592,16 @@ private:
     const vpImage<bool> *p_mask = nullptr
   )
   {
-    const unsigned int nbRows = I.getRows(), nbCols = I.getCols();
-    const unsigned int size = I.getSize();
-    const unsigned int offsetIdiff = 1;
+    const int nbRows = I.getRows(), nbCols = I.getCols();
+    const int size = I.getSize();
+    const int offsetIdiff = 1;
 
     std::vector<OutputType> Idiff(size);
     initGradientFilterDifferenceImageY(I, Idiff);
-    const unsigned int resetCounter = nbCols - 1;
-    const unsigned int stopIter = size - (nbCols + 1);
-    unsigned int counter = resetCounter, iterSign = offsetIdiff;
-    for (unsigned int iter = nbCols; iter < stopIter; ++iter) {
+    const int resetCounter = nbCols - 1;
+    const int stopIter = size - (nbCols + 1);
+    int counter = resetCounter, iterSign = offsetIdiff;
+    for (int iter = nbCols; iter < stopIter; ++iter) {
       // Computing the amplitude of the difference
       OutputType futureDiff = 0.;
 
@@ -2639,10 +2639,10 @@ private:
   template <typename HSVType, bool useFullScale, typename OutputType>
   static typename std::enable_if<std::is_arithmetic<OutputType>::value, void>::type initGradientFilterDifferenceImageX(
     const vpImage<vpHSV<HSVType, useFullScale>> &I, std::vector<OutputType> &Idiff,
-    const unsigned int &istart, const unsigned int &iam
+    const int &istart, const int &iam
   )
   {
-    const unsigned int nbCols = I.getCols();
+    const int nbCols = I.getCols();
 
     if (iam > 0) {
       Idiff[0] = I.bitmap[istart - nbCols + 1].V - I.bitmap[istart - nbCols].V;
@@ -2651,7 +2651,7 @@ private:
     // Computing the difference and sign for row 1 column 0, which corresponds to the current row of the image
     Idiff[nbCols] = I.bitmap[istart + 1].V - I.bitmap[istart].V;
 
-    for (unsigned int iter = 1; iter < nbCols - 1; ++iter) {
+    for (int iter = 1; iter < nbCols - 1; ++iter) {
       if (iam > 0) {
       // Computing the difference and sign for row 0, which corresponds to the previous row of the image
         OutputType distanceRow0 = I.bitmap[istart - nbCols + iter + 1].V - I.bitmap[istart - nbCols + iter].V;
@@ -2669,10 +2669,10 @@ private:
     const vpImage<vpHSV<HSVType, useFullScale>> &I, vpImage<OutputType> &GI, const std::vector<OutputType> &filter,
     const int &maxNbThread, const vpImage<bool> *p_mask = nullptr)
   {
-    const unsigned int nbRows = I.getRows(), nbCols = I.getCols();
-    const unsigned int offsetIdiff = nbCols;
-    const unsigned int resetCounter = nbCols - 1;
-    const unsigned int nrows(nbRows - 1);
+    const int nbRows = I.getRows(), nbCols = I.getCols();
+    const int offsetIdiff = nbCols;
+    const int resetCounter = nbCols - 1;
+    const int nrows(nbRows - 1);
 
     int nbThread = maxNbThread;
     if (nbThread < 0) {
@@ -2683,7 +2683,7 @@ private:
       gradientFilterXMonothread(I, GI, filter, p_mask);
     }
 
-    unsigned int iam, nt, irows, rstart, istart, istop;
+    int iam, nt, irows, rstart, istart, istop;
 
 #pragma omp parallel default(shared) private(iam, nt, irows, rstart, istart, istop) num_threads(nbThread)
     {
@@ -2703,9 +2703,9 @@ private:
       std::vector<OutputType> GItemp(irows * nbCols);
       initGradientFilterDifferenceImageX(I, Idiff, istart, iam);
 
-      unsigned int counter = resetCounter, idCol = 0;
-      unsigned int iterStart = (iam != 0 ? istart : istart + nbCols);
-      for (unsigned int iter = iterStart; iter < istop; ++iter) {
+      int counter = resetCounter, idCol = 0;
+      int iterStart = (iam != 0 ? istart : istart + nbCols);
+      for (int iter = iterStart; iter < istop; ++iter) {
         if (counter) {
           // Computing the amplitude of the difference
           OutputType futureDiff = 0.;
@@ -2750,13 +2750,13 @@ private:
   template <typename HSVType, bool useFullScale, typename OutputType>
   static typename std::enable_if<std::is_arithmetic<OutputType>::value, void>::type initGradientFilterDifferenceImageY(
     const vpImage<vpHSV<HSVType, useFullScale>> &I, std::vector<OutputType> &Idiff,
-    const unsigned int &istart
+    const int &istart
   )
   {
-    const unsigned int nbCols = I.getCols();
+    const int nbCols = I.getCols();
     // Computing the sign and distance for the first row, which corresponds to the row above the beginning of the gradient computation in the thread
-    unsigned int idDiff = 0;
-    for (unsigned int iter = istart - nbCols; iter < istart; ++iter) {
+    int idDiff = 0;
+    for (int iter = istart - nbCols; iter < istart; ++iter) {
       OutputType distance = I.bitmap[iter + nbCols].V - I.bitmap[iter].V;
       Idiff[idDiff] = distance;
       ++idDiff;
@@ -2771,10 +2771,10 @@ private:
     const vpImage<vpHSV<HSVType, useFullScale>> &I, vpImage<OutputType> &GI, const std::vector<OutputType> &filter,
     const int &maxNbThread, const vpImage<bool> *p_mask = nullptr)
   {
-    const unsigned int nbRows = I.getRows(), nbCols = I.getCols();
-    const unsigned int offsetIdiff = 1;
-    const unsigned int resetCounter = nbCols - 1;
-    const unsigned int nrows(nbRows - 1);
+    const int nbRows = I.getRows(), nbCols = I.getCols();
+    const int offsetIdiff = 1;
+    const int resetCounter = nbCols - 1;
+    const int nrows(nbRows - 1);
 
     int nbThread = maxNbThread;
     if (nbThread < 0) {
@@ -2785,7 +2785,7 @@ private:
       gradientFilterXMonothread(I, GI, filter, p_mask);
     }
 
-    unsigned int iam, nt, irows, rstart, istart, istop;
+    int iam, nt, irows, rstart, istart, istop;
 
 #pragma omp parallel default(shared) private(iam, nt, irows, rstart, istart, istop) num_threads(nbThread)
     {
@@ -2811,9 +2811,9 @@ private:
         initGradientFilterDifferenceImageY(I, Idiff, istart);
       }
 
-      unsigned int counter = resetCounter, iterSign = offsetIdiff;
-      unsigned int iterStart = (iam != 0 ? istart : istart + nbCols);
-      for (unsigned int iter = iterStart; iter < istop; ++iter) {
+      int counter = resetCounter, iterSign = offsetIdiff;
+      int iterStart = (iam != 0 ? istart : istart + nbCols);
+      for (int iter = iterStart; iter < istop; ++iter) {
         // Computing the amplitude of the difference
         OutputType futureDiff = 0.;
 
