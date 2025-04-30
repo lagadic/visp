@@ -47,6 +47,39 @@
 #include "hsvUtils.h"
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+
+/**
+ * \brief Check if the computed HSV value corresponds to the ground-truth.
+ *
+ * \tparam useFullScale True if vpHSV uses unsigned char and the full range [0; 255], false if vpHSV uses unsigned char and the limited range [0; vpHSV<unsigned char, false>::maxHueUsingLimitedRange].
+ * \param[in] hsv_computed Computed vpRGBa value.
+ * \param[in] rgb_truth vpRGBa value  that was used to compute rgb_computed.
+ * \param[in] hsv_truth The HSVground-truth value.
+ * \return true If hsv_computed and hsv_truth are equal.
+ * \return false Otherwise
+ */
+template<bool useFullScale >
+bool test_hsv(const vpHSV<unsigned char, useFullScale> &hsv_computed,
+              const vpHSV<unsigned char, useFullScale> &hsv_truth)
+{
+  // Compare HSV values
+  if ((hsv_computed.H != hsv_truth.H) ||
+      (hsv_computed.S != hsv_truth.S) ||
+      (hsv_computed.V != hsv_truth.V)) {
+
+    std::cout << "Expected hsv value: ("
+      << static_cast<int>(hsv_truth.H) << ","
+      << static_cast<int>(hsv_truth.S) << ","
+      << static_cast<int>(hsv_truth.V) << ") converted value: ("
+      << static_cast<int>(hsv_computed.H) << ","
+      << static_cast<int>(hsv_computed.S) << ","
+      << static_cast<int>(hsv_computed.V) << ")" << std::endl;
+    return false;
+  }
+
+  return true;
+}
+
 /**
  * \brief Check if the computed HSV value corresponds to the ground-truth.
  *

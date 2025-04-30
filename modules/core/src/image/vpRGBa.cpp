@@ -40,8 +40,27 @@
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpRGBa.h>
+#include <visp3/core/vpHSV.h>
+
 
 BEGIN_VISP_NAMESPACE
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+template<>
+vpRGBa &vpRGBa::buildFrom(const vpHSV<unsigned char, true> &other)
+{
+  vpHSV<float, true> hsv(other);
+  return buildFrom(hsv);
+}
+
+template<>
+vpRGBa &vpRGBa::buildFrom(const vpHSV<unsigned char, false> &other)
+{
+  vpHSV<float, true> hsv(other);
+  return buildFrom(hsv);
+}
+#endif
+
 /*!
   Copy operator that initializes all the components to `v`.
 

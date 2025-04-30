@@ -163,11 +163,7 @@ public:
    * \return vpRGBa& The current object after conversion.
    */
   template<bool useFullScale>
-  vpRGBa &buildFrom(const vpHSV<unsigned char, useFullScale> &other)
-  {
-    vpHSV<float, true> hsv(other);
-    return buildFrom(hsv);
-  }
+  vpRGBa &buildFrom(const vpHSV<unsigned char, useFullScale> &other);
 
   /**
    * \brief Build a vpRGBa object from a vpHSV<double> or vpHSV<float> object.
@@ -187,7 +183,7 @@ public:
     T s = saturation;
     T v = value;
 
-    if (vpMath::equal(h, 6.0, std::numeric_limits<double>::epsilon())) {
+    if (vpMath::equal(h, static_cast<T>(6.0), std::numeric_limits<T>::epsilon())) {
       h = 0.0;
     }
 

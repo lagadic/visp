@@ -38,6 +38,8 @@ template<typename Tp, int I = 0>
 inline typename std::enable_if<I == Tp::nbChannels, double>::type
 error(const Tp &t1, const Tp &t2)
 {
+  (void)t1;
+  (void)t2;
   return 0.;
 }
 

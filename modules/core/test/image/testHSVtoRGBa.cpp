@@ -63,9 +63,9 @@ bool test_rgb(const vpRGBa &rgb_computed, const vpRGBa &rgb_truth,
               const vpHSV<Type, useFullScale> &hsv_truth)
 {
   // Compare RGB values
-  if ((!vpMath::equal(rgb_computed.R, rgb_truth.R)) ||
-      (!vpMath::equal(rgb_computed.G, rgb_truth.G)) ||
-      (!vpMath::equal(rgb_computed.B, rgb_truth.B))) {
+  if ((rgb_computed.R != rgb_truth.R) ||
+      (rgb_computed.G != rgb_truth.G) ||
+      (rgb_computed.B != rgb_truth.B)) {
 
     std::cout << static_cast<int>(hsv_truth.H) << ","
       << static_cast<int>(hsv_truth.S) << ","
