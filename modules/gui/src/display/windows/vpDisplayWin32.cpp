@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,20 +71,39 @@ vpDisplayWin32::vpDisplayWin32(vpImage<unsigned char> &I, int winx, int winy, co
 }
 
 /*!
-  Destructor.
-*/
+ * Copy constructor.
+ */
+vpDisplayWin32(const vpDisplayWin32 &display) : vpDisplay(display)
+{
+  *this = display;
+}
+
+/*!
+  * Destructor.
+ */
 vpDisplayWin32::~vpDisplayWin32() { closeDisplay(); }
 
 /*!
+ * Copy operator.
+ */
+vpDisplayWin32 &operator=(const vpDisplayWin32 &display)
+{
+  hThread = display.hThread;
+  threadId = display.threadId;
+  iStatus = display.iStatus;
+  window = display.window;
+  roi = display.roi;
 
-  Constructor. Initialize a display to visualize a gray level image
-  (8 bits).
+  return *this;
+}
+
+/*!
+  Constructor. Initialize a display to visualize a gray level image (8 bits).
 
   \param[in] I : Image to be displayed (not that image has to be initialized)
   \param[in] x : Upper left window corner position along the horizontal axis.
   \param[in] y : Upper left window corner position along the vertical axis.
   \param[in] title : Window title.
-
 */
 void vpDisplayWin32::init(vpImage<unsigned char> &I, int x, int y, const std::string &title)
 {
