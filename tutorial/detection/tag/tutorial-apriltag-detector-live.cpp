@@ -458,9 +458,10 @@ int main(int argc, const char **argv)
         for (size_t i = 0; i < tags_id.size(); ++i) {
           std::string message = detector.getMessage(i);
           std::stringstream ss;
-          ss << "  Found " << message
-            << " with decision margin: " << tag_decision_margins[i]
-            << " and hamming distance: " << tag_hamming_distances[i];;
+          ss << "Found " << message << std::endl
+            << "- with decision margin: " << tag_decision_margins[i]
+            << " and hamming distance: " << tag_hamming_distances[i] << std::endl
+            << "- and cMo:\n" << cMo_vec[i] << std::endl;
           std::cout << ss.str() << std::endl;
         }
       }
