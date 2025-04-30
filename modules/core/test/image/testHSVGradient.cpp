@@ -38,7 +38,6 @@
 
 #include <iostream>
 #include <limits>
-#include <type_traits>
 
 #include <visp3/core/vpRGBa.h>
 #include <visp3/core/vpHSV.h>
@@ -48,6 +47,8 @@
 #include "hsvUtils.h"
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#include <type_traits>
+
 BEGIN_VISP_NAMESPACE
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

@@ -6,7 +6,6 @@
 #include <limits>
 #include <sstream>
 #include <string>
-#include <type_traits>
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColVector.h>
@@ -14,6 +13,8 @@
 #include <visp3/core/vpRGBa.h>
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#include <type_traits>
+
 BEGIN_VISP_NAMESPACE
 template<typename T, bool = true>
 class vpHSV;

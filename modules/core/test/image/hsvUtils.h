@@ -2,12 +2,13 @@
 #define HSV_UTILS_H
 #include <iostream>
 #include <map>
-#include <type_traits>
 
 #include <visp3/core/vpColorGetter.h>
 #include <visp3/core/vpImage.h>
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#include <type_traits>
+
 BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace vpHSVTests

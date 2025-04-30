@@ -85,7 +85,9 @@
 
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON) && defined(VISP_HAVE_THREADS)
 #include <mutex>
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #include <type_traits>
+#endif
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpImageException.h>
 #include <visp3/core/vpPixelMeterConversion.h>

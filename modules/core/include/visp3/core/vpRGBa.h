@@ -279,7 +279,7 @@ public:
     this->B = v.B;
     this->A = v.A;
     return *this;
-  }
+}
 #endif
   vpRGBa &operator=(const vpColVector &v);
   bool operator==(const vpRGBa &v) const;
