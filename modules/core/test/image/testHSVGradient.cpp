@@ -89,12 +89,6 @@ void gradientFilterX(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpIm
   FilterType scale;
   std::string name;
   switch (type) {
-  case vpImageFilter::CANNY_COUNT_FILTERING:
-    // Prewitt case
-    filter = { 1., 1., 1. };
-    scale = 6.;
-    name = "Prewitt";
-    break;
   case vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING:
     filter = { 1., 2., 1. };
     scale = 8.;
@@ -141,50 +135,20 @@ void gradientFilterX(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpIm
     };
 
   const unsigned int rStop = nbRows - 1, cStop = nbCols - 1;
-  vpImage<double> Isign(nbRows, nbCols), IabsDiff(nbRows, nbCols);
-  // Computation for I[0][0]
-  if (vpColVector::dotProd((I[0][1] - I[0][0]), I[0][0].toColVector()) < 0.) {
-    Isign[0][0] = -1.;
-  }
-  else {
-    Isign[0][0] = 1.;
-  }
-
-  // Computation for the rest of the first row
-  for (unsigned int c = 1; c < cStop; ++c) {
-    if (vpColVector::dotProd((I[0][c + 1] - I[0][c]), (I[0][c] - I[0][c - 1])) < 0.) {
-      Isign[0][c] = -1.;
-    }
-    else {
-      Isign[0][c] = 1.;
-    }
-  }
+  vpImage<double> IabsDiff(nbRows, nbCols);
 
   // Computation of the rest of the image
   for (unsigned int r = 1; r < rStop; ++r) {
     // Computation for I[r][0]
-    if (vpColVector::dotProd((I[r][1] - I[r][0]), I[r][0].toColVector()) < 0.) {
-      Isign[r][0] = -1.;
-    }
-    else {
-      Isign[r][0] = 1.;
-    }
     if (checkBooleanPatch(p_mask, r, 0, nbRows, nbCols)) {
-      IabsDiff[r][0] = vpHSV<ArithmeticType, useFullScale>::template mahalanobisDistance<double>(I[r][0], I[r][1]);
+      IabsDiff[r][0] = I[r][1].V - I[r][0].V;
     }
 
       // Computation for all the other columns
     for (unsigned int c = 1; c < cStop; ++c) {
       if (checkBooleanPatch(p_mask, r, c, nbRows, nbCols)) {
         // Of the absolute value of the distance
-        IabsDiff[r][c] = vpHSV<ArithmeticType, useFullScale>::template mahalanobisDistance<double>(I[r][c], I[r][c + 1]);
-      }
-      // Of the sign
-      if (vpColVector::dotProd((I[r][c + 1] - I[r][c]), (I[r][c] - I[r][c - 1])) < 0.) {
-        Isign[r][c] = -1.;
-      }
-      else {
-        Isign[r][c] = 1.;
+        IabsDiff[r][c] = I[r][c + 1].V - I[r][c].V;
       }
     }
   }
@@ -194,7 +158,7 @@ void gradientFilterX(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpIm
       if (checkBooleanMask(p_mask, r, c)) {
         GIx[r][c] = 0.;
         for (int dr = -1; dr <= 1; ++dr) {
-          GIx[r][c] += filter[dr + 1] * (Isign[r + dr][c - 1] *  IabsDiff[r + dr][c - 1] +  Isign[r + dr][c] *  IabsDiff[r + dr][c]);
+          GIx[r][c] += filter[dr + 1] * (IabsDiff[r + dr][c - 1] +  IabsDiff[r + dr][c]);
         }
       }
     }
@@ -208,11 +172,6 @@ void gradientFilterY(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpIm
   std::vector<FilterType> filter(3);
   FilterType scale;
   switch (type) {
-  case vpImageFilter::CANNY_COUNT_FILTERING:
-    // Prewitt case
-    filter = { 1., 1., 1. };
-    scale = 6.;
-    break;
   case vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING:
     filter = { 1., 2., 1. };
     scale = 8.;
@@ -229,7 +188,7 @@ void gradientFilterY(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpIm
   }
 
   const unsigned int rStop = nbRows - 1, cStop = nbCols - 1;
-  vpImage<double> Isign(nbRows, nbCols), IabsDiff(nbRows, nbCols);
+  vpImage<double> IabsDiff(nbRows, nbCols);
 
   auto checkBooleanPatch = [](const vpImage<bool> *p_mask, const unsigned int &r, const unsigned int &c, const unsigned int &h, const unsigned int &w)
     {
@@ -261,14 +220,7 @@ void gradientFilterY(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpIm
   // Computation for the first row
   for (unsigned int c = 0; c < nbCols; ++c) {
     if (checkBooleanPatch(p_mask, 0, c, nbRows, nbCols)) {
-      IabsDiff[0][c] = vpHSV<ArithmeticType, useFullScale>::template mahalanobisDistance<double>(I[0][c], I[1][c]);
-    }
-    if (vpColVector::dotProd((I[1][c] - I[0][c]), I[0][c].toColVector()) < 0.) {
-      // Inverting sign when cosine distance is negative
-      Isign[0][c] = -1.;
-    }
-    else {
-      Isign[0][c] = 1.;
+      IabsDiff[0][c] = I[1][c].V - I[0][c].V;
     }
   }
 
@@ -277,14 +229,7 @@ void gradientFilterY(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpIm
     for (unsigned int c = 0; c < nbCols; ++c) {
       // Of the absolute value of the distance
       if (checkBooleanPatch(p_mask, r, c, nbRows, nbCols)) {
-        IabsDiff[r][c] = vpHSV<ArithmeticType, useFullScale>::template mahalanobisDistance<double>(I[r][c], I[r + 1][c]);
-      }
-      // Of the sign
-      if (vpColVector::dotProd((I[r +1][c] - I[r][c]), (I[r][c] - I[r - 1][c])) < 0.) {
-        Isign[r][c] = -1.;
-      }
-      else {
-        Isign[r][c] = 1.;
+        IabsDiff[r][c] = I[r + 1][c].V - I[r][c].V;
       }
     }
   }
@@ -295,7 +240,7 @@ void gradientFilterY(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpIm
       if (checkBooleanMask(p_mask, r, c)) {
         GIy[r][c] = 0.;
         for (int dc = -1; dc <= 1; ++dc) {
-          GIy[r][c] += filter[dc + 1] * (Isign[r - 1][c + dc] * IabsDiff[r - 1][c + dc] + Isign[r][c + dc] * IabsDiff[r][c + dc]);
+          GIy[r][c] += filter[dc + 1] * (IabsDiff[r - 1][c + dc] + IabsDiff[r][c + dc]);
         }
       }
     }
@@ -334,8 +279,7 @@ int main()
 
   std::vector<vpImageFilter::vpCannyFilteringAndGradientType> types = {
     vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING,
-    vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING,
-    vpImageFilter::CANNY_COUNT_FILTERING
+    vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING
   };
 
   std::vector<int> nbThreads = { 1, 2 };

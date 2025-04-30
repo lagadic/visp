@@ -1963,6 +1963,19 @@ public:
     vpImageFilter::getGradX<FilterType, FilterType>(GIy, dIx, gaussianDerivativeKernel, size, p_mask);
   }
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+/**
+ * \brief Gradient filter along the X-axis for HSV images.
+ *
+ * \tparam ArithmeticType The encoding of the HSV channels.
+ * \tparam FilterType The type to use for the filter and the type of the resulting gradient image.
+ * \tparam useFullScale See the documentation of the vpHSV class to have details on this template parameter.
+ * \param[in] I The input image.
+ * \param[in] GIx The resulting gradient image along the X-axis.
+ * \param[in] nbThread The number of threads to use to compute the gradient.
+ * \param[in] p_mask Optional boolean mask to indicate which pixels should be considered and which should be ignored.
+ * \param[in] type The type of the gradient filter.
+ */
   template <typename ArithmeticType, typename FilterType, bool useFullScale>
   static void gradientFilterX(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpImage<FilterType> &GIx, const int &nbThread, const vpImage<bool> *p_mask, const vpImageFilter::vpCannyFilteringAndGradientType &type)
   {
@@ -1970,28 +1983,19 @@ public:
     GIx.resize(nbRows, nbCols, 0.);
     std::vector<FilterType> filter(3);
     FilterType scale;
-    std::string name;
     switch (type) {
-    case vpImageFilter::CANNY_COUNT_FILTERING:
-      // Prewitt case
-      filter = { 1., 1., 1. };
-      scale = 6.;
-      name = "Prewitt";
-      break;
     case vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING:
       filter = { 1., 2., 1. };
       scale = 8.;
-      name = "Sobel";
       break;
     case vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING:
       filter = { 3., 10., 3. };
       scale = 32.;
-      name = "Scharr";
       break;
     default:
       throw(vpException(vpException::badValue, "Wrong type of filtering"));
     }
-    // std::cout << "Using " << name << " filter" << std::endl;
+
     for (unsigned char i = 0; i < 3; ++i) {
       filter[i] = filter[i] / scale;
     }
@@ -2007,6 +2011,7 @@ public:
     gradientFilterXMonothread(I, GIx, filter, p_mask);
 #endif
   }
+#endif
 
   // Gradient along Y
   template <typename FilterType>
@@ -2109,6 +2114,18 @@ public:
   }
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  /**
+   * \brief Gradient filter along the Y-axis for HSV images.
+   *
+   * \tparam ArithmeticType The encoding of the HSV channels.
+   * \tparam FilterType The type to use for the filter and the type of the resulting gradient image.
+   * \tparam useFullScale See the documentation of the vpHSV class to have details on this template parameter.
+   * \param[in] I The input image.
+   * \param[in] GIy The resulting gradient image along the Y-axis.
+   * \param[in] nbThread The number of threads to use to compute the gradient.
+   * \param[in] p_mask Optional boolean mask to indicate which pixels should be considered and which should be ignored.
+   * \param[in] type The type of the gradient filter.
+   */
   template <typename ArithmeticType, typename FilterType, bool useFullScale>
   static void gradientFilterY(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpImage<FilterType> &GIy, const int &nbThread, const vpImage<bool> *p_mask, const vpImageFilter::vpCannyFilteringAndGradientType &type)
   {
@@ -2305,6 +2322,20 @@ public:
   static std::vector<float> median(const vpImage<vpRGBa> &Isrc);
 #endif
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  /**
+   * \brief Compute the horizontal and vertical gradients for HSV images.
+   *
+   * \tparam ArithmeticType The encoding of the HSV channels.
+   * \tparam FilterType The type to use for the filter and the type of the resulting gradient image.
+   * \tparam useFullScale See the documentation of the vpHSV class to have details on this template parameter.
+   * \param[in] I The input image.
+   * \param[in] GIx The resulting gradient image along the X-axis.
+   * \param[in] GIy The resulting gradient image along the Y-axis.
+   * \param[in] nbThread The number of threads to use to compute the gradient.
+   * \param[in] p_mask Optional boolean mask to indicate which pixels should be considered and which should be ignored.
+   * \param[in] type The type of the gradient filter.
+   */
   template <typename ArithmeticType, typename FilterType, bool useFullScale>
   static void gradientFilter(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpImage<FilterType> &GIx, vpImage<FilterType> &GIy, const int &nbThread = -1, const vpImage<bool> *p_mask = nullptr, const vpImageFilter::vpCannyFilteringAndGradientType &type = CANNY_GBLUR_SCHARR_FILTERING)
   {
@@ -2314,6 +2345,7 @@ public:
     gradientFilterX(I, GIx, nbThread, p_mask, type);
     gradientFilterY(I, GIy, nbThread, p_mask, type);
   }
+#endif
 
 private:
   /**
@@ -2463,48 +2495,20 @@ private:
   )
   {
     const unsigned int nbCols = I.getCols();
-    vpColVector diffVector(3);
 
-    // Computing the difference and sign for row 0 column 0
-    vpColVector diffPrevRow0, diffPrevRow1;
-    bool isPositiveRow0, isPositiveRow1;
-    Idiff[0] = vpHSV<HSVType, useFullScale>::template mahalanobisDistance<OutputType>(I.bitmap[0], I.bitmap[1], diffVector);
-    vpColVector current = I.bitmap[0].toColVector();
-    isPositiveRow0 = (vpColVector::dotProd(diffVector, current) >= 0.);
-    diffPrevRow0 = diffVector;
+    Idiff[0] = I.bitmap[1].V - I.bitmap[0].V;
 
     // Computing the difference and sign for row 1 column 0
-    Idiff[nbCols] = vpHSV<HSVType, useFullScale>::template mahalanobisDistance<OutputType>(I.bitmap[nbCols], I.bitmap[nbCols + 1], diffVector);
-    current = I.bitmap[nbCols].toColVector();
-    isPositiveRow1 = (vpColVector::dotProd(diffVector, current) >= 0.);
-    diffPrevRow1 = diffVector;
+    Idiff[nbCols] = I.bitmap[nbCols + 1].V - I.bitmap[nbCols].V;
 
     for (unsigned int iter = 1; iter < nbCols - 1; ++iter) {
       // Computing the difference and sign for row 0
-      OutputType distanceRow0 = vpHSV<HSVType, useFullScale>::template mahalanobisDistance<OutputType>(I.bitmap[iter], I.bitmap[iter + 1], diffVector);
-      isPositiveRow0 = (vpColVector::dotProd(diffVector, diffPrevRow0) >= 0.);
-      diffPrevRow0 = diffVector;
-
-      // Assigning the signed distance for the row 0
-      if (isPositiveRow0) {
-        Idiff[iter] = distanceRow0;
-      }
-      else {
-        Idiff[iter] = -distanceRow0;
-      }
+      OutputType distanceRow0 = I.bitmap[iter + 1].V - I.bitmap[iter].V;
+      Idiff[iter] = distanceRow0;
 
       // Computing the difference and sign for row 1
-      OutputType distanceRow1 = vpHSV<HSVType, useFullScale>::template mahalanobisDistance<OutputType>(I.bitmap[nbCols + iter], I.bitmap[nbCols + iter + 1], diffVector);
-      isPositiveRow1 = (vpColVector::dotProd(diffVector, diffPrevRow1) >= 0.);
-      diffPrevRow1 = diffVector;
-
-      // Assigning the signed distance for the row 1
-      if (isPositiveRow1) {
-        Idiff[nbCols + iter] = distanceRow1;
-      }
-      else {
-        Idiff[nbCols + iter] = -distanceRow1;
-      }
+      OutputType distanceRow1 = I.bitmap[nbCols + iter + 1].V - I.bitmap[nbCols + iter].V;
+      Idiff[nbCols + iter] = distanceRow1;
     }
   }
 
@@ -2523,41 +2527,14 @@ private:
     const unsigned int resetCounter = nbCols - 1;
     const unsigned int stopIter = size - (nbCols + 1);
     unsigned int counter = resetCounter, idCol = 0;
-    vpColVector diffVector(3), diffVectorPrev(3);
-    bool isProdScalPositive = true;
     for (unsigned int iter = nbCols; iter < stopIter; ++iter) {
-      isProdScalPositive = true;
       if (counter) {
         // Computing the amplitude of the difference
         OutputType futureDiff = 0.;
         if (checkBooleanPatch(p_mask, iter + offsetIdiff, idCol, nbRows, nbCols, true)) {
-          futureDiff = vpHSV<HSVType, useFullScale>::template mahalanobisDistance<OutputType>(I.bitmap[iter + offsetIdiff], I.bitmap[iter + nbCols +1], diffVector);
-
-          if (idCol) {
-            if (vpColVector::dotProd(diffVector, diffVectorPrev) < 0.) {
-              // We change the sign of the difference only if the cosine distance is negative
-              isProdScalPositive = false;
-            }
-          }
-          else {
-            vpColVector colFirstCol = I.bitmap[iter + offsetIdiff].toColVector();
-            // The first sign depends on the positiveness of the cosine distance between the difference and first pixel of a row
-            isProdScalPositive = (vpColVector::dotProd(diffVector, colFirstCol) >= 0.);
-          }
-
-          // The sign of the difference is deduced by the sign of the cosine distance between the successive difference vectors
-          if (isProdScalPositive) {
-            Idiff[iter + offsetIdiff] = futureDiff;
-          }
-          else {
-            Idiff[iter + offsetIdiff] = -futureDiff;
-          }
+          futureDiff = I.bitmap[iter + nbCols +1].V - I.bitmap[iter + offsetIdiff].V;
+          Idiff[iter + offsetIdiff] = futureDiff;
         }
-        else {
-          diffVector = I.bitmap[iter + nbCols +1] - I.bitmap[iter + offsetIdiff];
-        }
-
-        diffVectorPrev = diffVector;
       }
       if (counter) {
         if ((counter != resetCounter)) {
@@ -2589,38 +2566,18 @@ private:
 
   template <typename HSVType, bool useFullScale, typename OutputType>
   static typename std::enable_if<std::is_arithmetic<OutputType>::value, void>::type initGradientFilterDifferenceImageY(
-    const vpImage<vpHSV<HSVType, useFullScale>> &I, std::vector<OutputType> &Idiff,
-    std::vector<vpColVector> &diffPrevRow
+    const vpImage<vpHSV<HSVType, useFullScale>> &I, std::vector<OutputType> &Idiff
   )
   {
     const unsigned int nbCols = I.getCols();
-    vpColVector diffVector(3), diffVectorI00(3); // Difference vector for I[0][0]
     // Computing the sign and distance for the first row
     for (unsigned int iter = 0; iter < nbCols; ++iter) {
-      OutputType distance = vpHSV<HSVType, useFullScale>::template mahalanobisDistance<OutputType>(I.bitmap[iter], I.bitmap[iter + nbCols], diffVector);
-      diffPrevRow[iter] = diffVector;
-      vpColVector current = I.bitmap[iter].toColVector();
-      // Checking the signeness of the distance using the sign of the cosine distance
-      // We set the signed distance in the difference map
-      if (vpColVector::dotProd(diffVector, current) >= 0.) {
-        Idiff[iter] = distance;
-      }
-      else {
-        Idiff[iter] = -distance;
-      }
-      if (iter == 0) {
-        diffVectorI00 = diffVector;
-      }
+      OutputType distance = I.bitmap[iter + nbCols].V - I.bitmap[iter].V;
+      Idiff[iter] = distance;
     }
     // Computing the distance and sign for I[1][0]
-    OutputType distance = vpHSV<HSVType, useFullScale>::template mahalanobisDistance<OutputType>(I.bitmap[nbCols], I.bitmap[nbCols + nbCols], diffVector);
-    diffPrevRow[0] = diffVector;
-    if (vpColVector::dotProd(diffVector, diffVectorI00) < 0.) {
-      Idiff[nbCols] = -distance;
-    }
-    else {
-      Idiff[nbCols] = distance;
-    }
+    OutputType distance = I.bitmap[nbCols + nbCols].V - I.bitmap[nbCols].V;
+    Idiff[nbCols] = distance;
   }
 
   template <typename HSVType, bool useFullScale, typename OutputType>
@@ -2633,38 +2590,19 @@ private:
     const unsigned int size = I.getSize();
     const unsigned int offsetIdiff = 1;
 
-    std::vector<OutputType> Idiff(size);;
-    bool isProdScalPositive = true;
-    std::vector<vpColVector> diffRowPrev(nbCols);
-    initGradientFilterDifferenceImageY(I, Idiff, diffRowPrev);
+    std::vector<OutputType> Idiff(size);
+    initGradientFilterDifferenceImageY(I, Idiff);
     const unsigned int resetCounter = nbCols - 1;
     const unsigned int stopIter = size - (nbCols + 1);
     unsigned int counter = resetCounter, iterSign = offsetIdiff;
-    vpColVector diffVector(3);
     for (unsigned int iter = nbCols; iter < stopIter; ++iter) {
       // Computing the amplitude of the difference
       OutputType futureDiff = 0.;
 
       if (checkBooleanPatch(p_mask, iter + offsetIdiff, iterSign, nbRows, nbCols, false)) {
-        futureDiff = vpHSV<HSVType, useFullScale>::template mahalanobisDistance<OutputType>(I.bitmap[iter + offsetIdiff], I.bitmap[iter + nbCols +1], diffVector);
-
-        // Computing the sign of the difference from the sign of the cosine distance
-        isProdScalPositive = (vpColVector::dotProd(diffVector, diffRowPrev[iterSign]) >= 0.);
-
-        // The sign of the difference is deduced by the sign of the cosine distance between the successive difference vectors
-        if (isProdScalPositive) {
-          Idiff[iter + offsetIdiff] = futureDiff;
-        }
-        else {
-          Idiff[iter + offsetIdiff] = -futureDiff;
-        }
+        futureDiff = I.bitmap[iter + nbCols +1].V - I.bitmap[iter + offsetIdiff].V;
+        Idiff[iter + offsetIdiff] = futureDiff;
       }
-      else {
-        diffVector = I.bitmap[iter + nbCols +1] - I.bitmap[iter + offsetIdiff];
-      }
-
-      // Saving the difference vector
-      diffRowPrev[iterSign] = diffVector;
 
       if (counter) {
         if ((counter != resetCounter)) {
@@ -2699,52 +2637,24 @@ private:
   )
   {
     const unsigned int nbCols = I.getCols();
-    vpColVector diffVector(3);
 
-    // Computing the difference and sign for row 0 column 0 of Idiff, which corresponds to the previous row of the image
-    vpColVector diffPrevRow0, diffPrevRow1, current;
-    bool isPositiveRow0, isPositiveRow1;
     if (iam > 0) {
-      Idiff[0] = vpHSV<HSVType, useFullScale>::template mahalanobisDistance<OutputType>(I.bitmap[istart - nbCols], I.bitmap[istart - nbCols + 1], diffVector);
-      current = I.bitmap[istart - nbCols].toColVector();
-      isPositiveRow0 = (vpColVector::dotProd(diffVector, current) >= 0.);
-      diffPrevRow0 = diffVector;
+      Idiff[0] = I.bitmap[istart - nbCols + 1].V - I.bitmap[istart - nbCols].V;
     }
 
     // Computing the difference and sign for row 1 column 0, which corresponds to the current row of the image
-    Idiff[nbCols] = vpHSV<HSVType, useFullScale>::template mahalanobisDistance<OutputType>(I.bitmap[istart], I.bitmap[istart + 1], diffVector);
-    current = I.bitmap[nbCols].toColVector();
-    isPositiveRow1 = (vpColVector::dotProd(diffVector, current) >= 0.);
-    diffPrevRow1 = diffVector;
+    Idiff[nbCols] = I.bitmap[istart + 1].V - I.bitmap[istart].V;
 
     for (unsigned int iter = 1; iter < nbCols - 1; ++iter) {
       if (iam > 0) {
       // Computing the difference and sign for row 0, which corresponds to the previous row of the image
-        OutputType distanceRow0 = vpHSV<HSVType, useFullScale>::template mahalanobisDistance<OutputType>(I.bitmap[istart - nbCols + iter], I.bitmap[istart - nbCols + iter + 1], diffVector);
-        isPositiveRow0 = (vpColVector::dotProd(diffVector, diffPrevRow0) >= 0.);
-        diffPrevRow0 = diffVector;
-
-        // Assigning the signed distance for the row 0, which corresponds to the previous row of the image
-        if (isPositiveRow0) {
-          Idiff[iter] = distanceRow0;
-        }
-        else {
-          Idiff[iter] = -distanceRow0;
-        }
+        OutputType distanceRow0 = I.bitmap[istart - nbCols + iter + 1].V - I.bitmap[istart - nbCols + iter].V;
+        Idiff[iter] = distanceRow0;
       }
 
       // Computing the difference and sign for row 1, which corresponds to the current row of the image
-      OutputType distanceRow1 = vpHSV<HSVType, useFullScale>::template mahalanobisDistance<OutputType>(I.bitmap[istart + iter], I.bitmap[istart + iter + 1], diffVector);
-      isPositiveRow1 = (vpColVector::dotProd(diffVector, diffPrevRow1) >= 0.);
-      diffPrevRow1 = diffVector;
-
-      // Assigning the signed distance for the row 1, which corresponds to the current row of the image
-      if (isPositiveRow1) {
-        Idiff[nbCols + iter] = distanceRow1;
-      }
-      else {
-        Idiff[nbCols + iter] = -distanceRow1;
-      }
+      OutputType distanceRow1 = I.bitmap[istart + iter + 1].V - I.bitmap[istart + iter].V;
+      Idiff[nbCols + iter] = distanceRow1;
     }
   }
 
@@ -2788,42 +2698,15 @@ private:
       initGradientFilterDifferenceImageX(I, Idiff, istart, iam);
 
       unsigned int counter = resetCounter, idCol = 0;
-      vpColVector diffVector(3), diffVectorPrev(3);
-      bool isProdScalPositive = true;
       unsigned int iterStart = (iam != 0 ? istart : istart + nbCols);
       for (unsigned int iter = iterStart; iter < istop; ++iter) {
-        isProdScalPositive = true;
         if (counter) {
           // Computing the amplitude of the difference
           OutputType futureDiff = 0.;
           if (checkBooleanPatch(p_mask, iter + offsetIdiff, idCol, nbRows, nbCols, true)) {
-            futureDiff = vpHSV<HSVType, useFullScale>::template mahalanobisDistance<OutputType>(I.bitmap[iter + offsetIdiff], I.bitmap[iter + nbCols +1], diffVector);
-
-            if (idCol) {
-              if (vpColVector::dotProd(diffVector, diffVectorPrev) < 0.) {
-                // We change the sign of the difference only if the cosine distance is negative
-                isProdScalPositive = false;
-              }
-            }
-            else {
-              vpColVector colFirstCol = I.bitmap[iter + offsetIdiff].toColVector();
-              // The first sign depends on the positiveness of the cosine distance between the difference and first pixel of a row
-              isProdScalPositive = (vpColVector::dotProd(diffVector, colFirstCol) >= 0.);
-            }
-
-            // The sign of the difference is deduced by the sign of the cosine distance between the successive difference vectors
-            if (isProdScalPositive) {
-              Idiff[iter + 2 * offsetIdiff - istart] = futureDiff;
-            }
-            else {
-              Idiff[iter + 2 * offsetIdiff - istart] = -futureDiff;
-            }
+            futureDiff = I.bitmap[iter + nbCols +1].V - I.bitmap[iter + offsetIdiff].V;
+            Idiff[iter + 2 * offsetIdiff - istart] = futureDiff;
           }
-          else {
-            diffVector = I.bitmap[iter + nbCols +1] - I.bitmap[iter + offsetIdiff];
-          }
-
-          diffVectorPrev = diffVector;
         }
         if (counter) {
           if ((counter != resetCounter)) {
@@ -2861,37 +2744,20 @@ private:
   template <typename HSVType, bool useFullScale, typename OutputType>
   static typename std::enable_if<std::is_arithmetic<OutputType>::value, void>::type initGradientFilterDifferenceImageY(
     const vpImage<vpHSV<HSVType, useFullScale>> &I, std::vector<OutputType> &Idiff,
-    std::vector<vpColVector> &diffPrevRow, const unsigned int &istart
+    const unsigned int &istart
   )
   {
     const unsigned int nbCols = I.getCols();
-    vpColVector diffVector(3);
     // Computing the sign and distance for the first row, which corresponds to the row above the beginning of the gradient computation in the thread
     unsigned int idDiff = 0;
     for (unsigned int iter = istart - nbCols; iter < istart; ++iter) {
-      vpColVector current;
-      diffVector = I.bitmap[iter] - I.bitmap[iter - nbCols];
-      OutputType distance = vpHSV<HSVType, useFullScale>::template mahalanobisDistance<OutputType>(I.bitmap[iter], I.bitmap[iter + nbCols], current);
-      diffPrevRow[idDiff] = diffVector;
-      // Checking the signeness of the distance using the sign of the cosine distance
-      // We set the signed distance in the difference map
-      if (vpColVector::dotProd(diffVector, current) >= 0.) {
-        Idiff[idDiff] = distance;
-      }
-      else {
-        Idiff[idDiff] = -distance;
-      }
+      OutputType distance = I.bitmap[iter + nbCols].V - I.bitmap[iter].V;
+      Idiff[idDiff] = distance;
       ++idDiff;
     }
     // Computing the distance and sign for I[1][0]
-    OutputType distance = vpHSV<HSVType, useFullScale>::template mahalanobisDistance<OutputType>(I.bitmap[nbCols], I.bitmap[nbCols + nbCols], diffVector);
-    if (vpColVector::dotProd(diffPrevRow[0], diffVector) < 0.) {
-      Idiff[nbCols] = -distance;
-    }
-    else {
-      Idiff[nbCols] = distance;
-    }
-    diffPrevRow[0] = diffVector;
+    OutputType distance = I.bitmap[nbCols + nbCols].V - I.bitmap[nbCols].V;
+    Idiff[nbCols] = distance;
   }
 
   template <typename HSVType, bool useFullScale, typename OutputType>
@@ -2931,42 +2797,24 @@ private:
 
       std::vector<OutputType> Idiff((irows + 2) * nbCols);
       std::vector<OutputType> GItemp(irows * nbCols);
-      bool isProdScalPositive = true;
-      std::vector<vpColVector> diffRowPrev(nbCols);
+
       if (iam == 0) {
-        initGradientFilterDifferenceImageY(I, Idiff, diffRowPrev);
+        initGradientFilterDifferenceImageY(I, Idiff);
       }
       else {
-        initGradientFilterDifferenceImageY(I, Idiff, diffRowPrev, istart);
+        initGradientFilterDifferenceImageY(I, Idiff, istart);
       }
 
       unsigned int counter = resetCounter, iterSign = offsetIdiff;
-      vpColVector diffVector(3);
       unsigned int iterStart = (iam != 0 ? istart : istart + nbCols);
       for (unsigned int iter = iterStart; iter < istop; ++iter) {
         // Computing the amplitude of the difference
         OutputType futureDiff = 0.;
 
         if (checkBooleanPatch(p_mask, iter + offsetIdiff, iterSign, nbRows, nbCols, false)) {
-          futureDiff = vpHSV<HSVType, useFullScale>::template mahalanobisDistance<OutputType>(I.bitmap[iter + offsetIdiff], I.bitmap[iter + nbCols +1], diffVector);
-
-          // Computing the sign of the difference from the sign of the cosine distance
-          isProdScalPositive = (vpColVector::dotProd(diffVector, diffRowPrev[iterSign]) >= 0.);
-
-          // The sign of the difference is deduced by the sign of the cosine distance between the successive difference vectors
-          if (isProdScalPositive) {
-            Idiff[iter - istart + nbCols + offsetIdiff] = futureDiff;
-          }
-          else {
-            Idiff[iter - istart + nbCols + offsetIdiff] = -futureDiff;
-          }
+          futureDiff = I.bitmap[iter + nbCols +1].V - I.bitmap[iter + offsetIdiff].V;
+          Idiff[iter - istart + nbCols + offsetIdiff] = futureDiff;
         }
-        else {
-          diffVector = I.bitmap[iter + nbCols +1] - I.bitmap[iter + offsetIdiff];
-        }
-
-        // Saving the difference vector
-        diffRowPrev[iterSign] = diffVector;
 
         if (counter) {
           if ((counter != resetCounter)) {
