@@ -1,3 +1,10 @@
+# TODO: ogre on darwin:
+# visp> CMake Error at cmake/OgreTools.cmake:66 (get_debug_names):
+# visp>   Unknown CMake command "get_debug_names".
+# visp> Call Stack (most recent call first):
+# visp>   cmake/OgreTools.cmake:88 (vp_ogre_find_plugin_lib_visp)
+# visp>   cmake/OgreTools.cmake:225 (vp_create_ogre_plugin_config_file)
+# visp>   CMakeLists.txt:1000 (vp_set_ogre_media)
 {
   cmake,
   coin3d,
@@ -56,7 +63,6 @@ stdenv.mkDerivation (finalAttrs: {
       libX11
       libxml2
       nlohmann_json
-      ogre
       openblas
       opencv
       python3Packages.numpy
@@ -66,6 +72,7 @@ stdenv.mkDerivation (finalAttrs: {
     ]
     ++ lib.optionals stdenv.isLinux [
       coin3d
+      ogre
       v4l-utils
     ]
     ++ lib.optionals stdenv.isDarwin [ darwin.IOKit ];
