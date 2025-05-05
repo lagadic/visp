@@ -140,18 +140,26 @@ public:
   }
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-/**
- * \brief Construct a new vpRGBa object from an vpHSV pbject.
- *
- * \tparam T The type of the channels of the vpHSV pixels.
- * \tparam useFullScale True if vpHSV uses unsigned char and the full range [0; 255], false if vpHSV uses unsigned char and the limited range [0; 180].
- * \param[in] hsv The vpHSV object for which we want to have the corresponding vpRGBa object.
- */
+#ifndef VISP_PYTHON_PREPROCESSOR_RUNNING
+  /**
+   * \brief Construct a new vpRGBa object from an vpHSV pbject.
+   *
+   * \tparam T The type of the channels of the vpHSV pixels.
+   * \tparam useFullScale True if vpHSV uses unsigned char and the full range [0; 255], false if vpHSV uses unsigned char and the limited range [0; 180].
+   * \param[in] hsv The vpHSV object for which we want to have the corresponding vpRGBa object.
+   */
   template <typename T, bool useFullScale, typename std::enable_if<std::is_same<T, unsigned char>::value, int>::type = 0>
   VP_EXPLICIT vpRGBa(const vpHSV<T, useFullScale> &hsv)
   {
     buildFrom<T, useFullScale, float>(hsv);
   }
+
+  template <typename T, bool useFullScale, typename std::enable_if<std::is_floating_point<T>::value, int>::type = 0>
+  VP_EXPLICIT vpRGBa(const vpHSV<T, useFullScale> &hsv)
+  {
+    buildFrom<T, useFullScale>(hsv);
+  }
+#endif
 
   /**
    * \brief Build a vpRGBa object from a vpHSV<unsigned char> object.
@@ -162,18 +170,12 @@ public:
    * \param[in] other The vpHSV from which we want to build our object.
    * \return vpRGBa& The current object after conversion.
    */
-  template<typename T, bool useFullScale, typename U = float, typename std::enable_if<std::is_same<U, float>::value &&std::is_same<T, unsigned char>::value, int>::type = 0 >
-  vpRGBa &buildFrom(const vpHSV<T, useFullScale> &other)
+  template<typename T, bool useFullScale, typename U = float >
+  typename std::enable_if<std::is_same<U, float>::value &&std::is_same<T, unsigned char>::value, vpRGBa &>::type buildFrom(const vpHSV<T, useFullScale> &other)
   {
     vpHSV<U, useFullScale> hsv(other);
     buildFrom(hsv);
     return *this;
-  }
-
-  template <typename T, bool useFullScale, typename std::enable_if<std::is_floating_point<T>::value, int>::type = 0>
-  VP_EXPLICIT vpRGBa(const vpHSV<T, useFullScale> &hsv)
-  {
-    buildFrom<T, useFullScale>(hsv);
   }
 
   /**
@@ -186,8 +188,8 @@ public:
    * \param[in] other The vpHSV from which we want to build our object.
    * \return vpRGBa& The current object after conversion.
    */
-  template<typename T, bool useFullScale, typename std::enable_if<std::is_floating_point<T>::value, int>::type = 0 >
-  vpRGBa &buildFrom(const vpHSV<T, useFullScale> &hsv)
+  template<typename T, bool useFullScale>
+  typename std::enable_if<std::is_floating_point<T>::value, vpRGBa &>::type buildFrom(const vpHSV<T, useFullScale> &hsv)
   {
     T hue = hsv.H, saturation = hsv.S, value = hsv.V;
     T h = hue * 6.0;

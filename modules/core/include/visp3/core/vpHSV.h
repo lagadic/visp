@@ -22,6 +22,7 @@ class vpHSV;
 template <typename T, bool useFullScale>
 std::ostream &operator<<(std::ostream &os, const vpHSV<T, useFullScale> &hsv);
 
+#ifndef VISP_PYTHON_PREPROCESSOR_RUNNING
 namespace
 {
 /**
@@ -90,6 +91,7 @@ struct UniformLawVariance<unsigned char, false>
   static constexpr float otherChannelsVariance = (256.f * 256.f - 1.f)/12.f;
 };
 }
+#endif
 
 /**
  * \brief Class implementing the HSV pixel format.
@@ -116,44 +118,14 @@ public:
   { }
 
   /**
-   * \brief Construct a new vpHSV object from a vector of double.
+   * \brief Construct a new vpHSV object from a vpColVector.
    *
-   * \tparam U The type of the channels of the vpHSV pixels.
-   * \tparam std::enable_if<std::is_same<T, unsigned char>::value, U>::type Enable the constructor only when the channel
-   * type is unsigned char.
-   * \param[in] v Vector of double. The values must be in the range [0; maxHueUsingLimitedRange] if useFullScale is false, or
-   * in the range [0; 255] if useFullScale is true.
+   * \param[in] v The values must be in the range that corresponds to the type
+   * used to encode the channels.
    */
-  template<typename U = T, typename std::enable_if<std::is_same<T, unsigned char>::value, U>::type = 0>
   vpHSV(const vpColVector &v)
   {
-    if (v.size() != nbChannels) {
-      throw std::exception();
-    }
-    U hmax;
-    if (useFullScale) {
-      hmax = std::numeric_limits<U>::max();
-    }
-    else {
-      hmax = maxHueUsingLimitedRange;
-    }
-    this->set(v, static_cast<U>(0), hmax);
-  }
-
-  /**
-   * \brief Construct a new vpHSV object from a vector of double.
-   *
-   * \tparam U The type of the channels of the vpHSV pixels.
-   * \tparam std::enable_if<std::is_floating_point<U>::value>::type Enable the method only when U is a floating point format.
-   * \param[in] v Vector of size 3 whose values must be in the range [0; 1.].
-   */
-  template<typename U = T, typename std::enable_if<std::is_floating_point<U>::value>::type...>
-  vpHSV(const vpColVector &v)
-  {
-    if (v.size() != nbChannels) {
-      throw std::exception();
-    }
-    this->set(v, 0., 1.);
+    this->set(v);
   }
 
   /**
@@ -163,17 +135,18 @@ public:
    */
   vpHSV(const vpHSV<T, useFullScale> &other) = default;
 
-  /**
-   * \brief Construct a new vpHSV object using unsigned char channels and the full range [0; 255] from a vpHSV object whose channels
-   * are in floating point format.
-   *
-   * \tparam U The format of the constructed object.
-   * \tparam V The format of the base object.
-   * \tparam std::enable_if<std::is_same<T, unsigned char>::value &&std::is_floating_point<V>::value && useFullScale, U>::type
-   * Enable the method only if the constructed object uses unsigned char format and uses the full range [0; 255] and the object that is used as reference
-   * uses floating point format.
-   * \param[in] other A floating point format vpHSV.
-   */
+#ifndef VISP_PYTHON_PREPROCESSOR_RUNNING
+/**
+ * \brief Construct a new vpHSV object using unsigned char channels and the full range [0; 255] from a vpHSV object whose channels
+ * are in floating point format.
+ *
+ * \tparam U The format of the constructed object.
+ * \tparam V The format of the base object.
+ * \tparam std::enable_if<std::is_same<T, unsigned char>::value &&std::is_floating_point<V>::value && useFullScale, U>::type
+ * Enable the method only if the constructed object uses unsigned char format and uses the full range [0; 255] and the object that is used as reference
+ * uses floating point format.
+ * \param[in] other A floating point format vpHSV.
+ */
   template<typename U = T, typename V, typename std::enable_if<std::is_same<T, unsigned char>::value &&std::is_floating_point<V>::value &&useFullScale, U>::type = 0 >
   vpHSV(const vpHSV<V> &other)
   {
@@ -211,12 +184,13 @@ public:
   {
     buildFrom(other);
   }
+#endif
 
   /**
-   * \brief Construct a new vpHSV object from a vpRGBa object.
-   *
-   * \param[in] rgba The reference vpRGBa object.
-   */
+  * \brief Construct a new vpHSV object from a vpRGBa object.
+  *
+  * \param[in] rgba The reference vpRGBa object.
+  */
   vpHSV(const vpRGBa &rgba)
   {
     buildFrom(rgba);
@@ -241,8 +215,8 @@ public:
    * \param[in] other The floating point HSV.
    * \return vpHSV<T, useFullScale>& Reference to the modified object.
    */
-  template<typename U = T, typename V, bool otherUseFullScale, typename std::enable_if<std::is_same<T, unsigned char>::value &&std::is_floating_point<V>::value &&useFullScale, U>::type = 0 >
-  vpHSV<T, useFullScale> &buildFrom(const vpHSV<V, otherUseFullScale> &other)
+  template<typename V, bool otherUseFullScale>
+  typename std::enable_if<std::is_same<T, unsigned char>::value &&std::is_floating_point<V>::value &&useFullScale, vpHSV<T, useFullScale> &>::type buildFrom(const vpHSV<V, otherUseFullScale> &other)
   {
     H = static_cast<T>(other.H * 255.);
     S = static_cast<T>(other.S * 255.);
@@ -261,8 +235,8 @@ public:
    * \param[in] other The floating point HSV.
    * \return vpHSV<T, useFullScale>& Reference to the modified object.
    */
-  template<typename U = T, typename V, bool otherUseFullScale, typename std::enable_if<std::is_same<T, unsigned char>::value &&std::is_floating_point<V>::value && !useFullScale, U>::type = 0 >
-  vpHSV<T, useFullScale> &buildFrom(const vpHSV<V, otherUseFullScale> &other)
+  template<typename U = T, typename V, bool otherUseFullScale>
+  typename std::enable_if<std::is_same<U, unsigned char>::value &&std::is_floating_point<V>::value && !useFullScale, vpHSV<T, useFullScale> &>::type buildFrom(const vpHSV<V, otherUseFullScale> &other)
   {
     H = static_cast<T>(other.H * static_cast<double>(maxHueUsingLimitedRange));
     S = static_cast<T>(other.S * 255.);
@@ -280,8 +254,8 @@ public:
    * \param[in] other The unsigned char vpHSV.
    * \return vpHSV<T, useFullScale>& Reference to the modified object.
    */
-  template<typename U = T, bool otherUseFullScale, typename std::enable_if<std::is_floating_point<U>::value>::type...>
-  vpHSV<T, useFullScale> &buildFrom(const vpHSV<unsigned char, otherUseFullScale> &other)
+  template<typename U = T, bool otherUseFullScale>
+  typename std::enable_if<std::is_floating_point<U>::value, vpHSV<T, useFullScale> &>::type buildFrom(const vpHSV<unsigned char, otherUseFullScale> &other)
   {
     if (otherUseFullScale) {
       H = static_cast<T>(other.H) / 255.;
@@ -308,8 +282,8 @@ public:
    * \param[in] other The floating point HSV.
    * \return vpHSV<T, useFullScale>& Reference to the modified object.
    */
-  template<typename U = T, typename V, bool otherUseFullScale, typename std::enable_if<std::is_floating_point<T>::value &&std::is_floating_point<V>::value && !std::is_same<T, V>::value, int>::type = 0 >
-  vpHSV<T, useFullScale> &buildFrom(const vpHSV<V, otherUseFullScale> &other)
+  template<typename U = T, typename V, bool otherUseFullScale>
+  typename std::enable_if<std::is_floating_point<U>::value &&std::is_floating_point<V>::value && !std::is_same<T, V>::value, vpHSV<T, useFullScale> &>::type buildFrom(const vpHSV<V, otherUseFullScale> &other)
   {
     H = static_cast<T>(other.H);
     S = static_cast<T>(other.S);
@@ -547,12 +521,12 @@ private:
    * \param[in] limMin The lower limit of the acceptable range of values.
    * \param[in] limMax The upper limit of the acceptable range of values.
    */
-  template<typename Tp>
-  inline void
-    set(const vpColVector &v, const Tp &limMin, const Tp &limMax)
+  template<typename Tp = T>
+  inline
+    typename std::enable_if<std::is_floating_point<Tp>::value, void>::type  set(const vpColVector &v)
   {
-    (void)limMin;
-    (void)limMax;
+    // const Tp limMin = 0.;
+    // const Tp limMax = 1.;
     // if ((v[0] < limMin) || (v[0] > limMax)) {
     //   // throw exception
     // }
@@ -562,6 +536,35 @@ private:
     // }
     S = v[1];
     // if ((v[2] < limMin) || (v[2] > limMax)) {
+    //   // throw exception
+    // }
+    V = v[2];
+  }
+
+  template<typename Tp = T>
+  inline
+    typename std::enable_if<std::is_same<Tp, unsigned char>::value, void>::type  set(const vpColVector &v)
+  {
+    // const Tp otherMax = std::numeric_limits<U>::max();
+    // Tp hmax;
+    // if (useFullScale) {
+    //   hmax = std::numeric_limits<U>::max();
+    // }
+    // else {
+    //   hmax = maxHueUsingLimitedRange;
+    // }
+
+    // if (v[0] > hmax) {
+    //   // throw exception
+    // }
+    H = v[0];
+
+    // if (v[1] > otherMax) {
+    //   // throw exception
+    // }
+    S = v[1];
+
+    // if (v[2] > otherMax) {
     //   // throw exception
     // }
     V = v[2];

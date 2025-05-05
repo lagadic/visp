@@ -7,7 +7,7 @@ template<>
 vpHSV<double> &vpHSV<double>::buildFrom(const vpRGBa &rgba)
 {
   vpColVector hsv = computeNormalizedHSV(rgba);
-  set(hsv, 0., 1.);
+  set(hsv);
   return *this;
 }
 
@@ -19,7 +19,7 @@ vpHSV<unsigned char, true> &vpHSV<unsigned char, true>::buildFrom(const vpRGBa &
   hsv[1] *= 255.;
   hsv[2] *= 255.;
 
-  set(hsv, static_cast<unsigned char>(0), static_cast<unsigned char>(255.));
+  set(hsv);
   return *this;
 }
 
@@ -31,7 +31,7 @@ vpHSV<unsigned char, false> &vpHSV<unsigned char, false>::buildFrom(const vpRGBa
   hsv[1] *= 255.;
   hsv[2] *= 255.;
 
-  set(hsv, static_cast<unsigned char>(0), static_cast<unsigned char>(255.));
+  set(hsv);
   return *this;
 }
 
