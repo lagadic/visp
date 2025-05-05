@@ -484,7 +484,8 @@ int main(int argc, const char **argv)
       }
     }
 
-    // Test of histogram on vpImage<double>
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+// Test of histogram on vpImage<double>
     vpImage<double> Id(nbRows, nbCols);
     nbBins = 8;
     double min = 0., max = 1.;
@@ -587,6 +588,7 @@ int main(int argc, const char **argv)
         return EXIT_FAILURE;
       }
     }
+#endif
 
     std::cout << "testHistogram is OK!" << std::endl;
     return EXIT_SUCCESS;
