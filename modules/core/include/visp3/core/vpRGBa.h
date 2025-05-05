@@ -162,8 +162,13 @@ public:
    * \param[in] other The vpHSV from which we want to build our object.
    * \return vpRGBa& The current object after conversion.
    */
-  template<bool useFullScale>
-  vpRGBa &buildFrom(const vpHSV<unsigned char, useFullScale> &other);
+  template<typename T, bool useFullScale, typename U, typename std::enable_if<std::is_same<U, float>::value &&std::is_same<T, unsigned char>::value, int>::type = 0 >
+  vpRGBa &buildFrom(const vpHSV<T, useFullScale> &other)
+  {
+    vpHSV<U, useFullScale> hsv(other);
+    buildFrom(hsv);
+    return *this;
+  }
 
   /**
    * \brief Build a vpRGBa object from a vpHSV<double> or vpHSV<float> object.
