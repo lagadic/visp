@@ -47,7 +47,11 @@
 #include "hsvUtils.h"
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-BEGIN_VISP_NAMESPACE
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 /**
  * \brief Check if the computed HSV value corresponds to the ground-truth.
@@ -82,7 +86,6 @@ bool test_hsv(const vpHSV<unsigned char, useFullScale> &hsv_computed, const vpRG
 
   return true;
 }
-#endif
 
 /**
  * \brief Check if the computed HSV value corresponds to the ground-truth.
@@ -118,6 +121,7 @@ bool test_hsv(const vpHSV<Type, useFullScale> &hsv_computed, const vpRGBa &rgb_t
 
   return true;
 }
+#endif
 
 int main()
 {
@@ -237,7 +241,7 @@ int main()
   std::cerr << "ERROR: Something went wrong !" << std::endl;
   return EXIT_FAILURE;
 }
-END_VISP_NAMESPACE
+
 #else
 int main()
 {

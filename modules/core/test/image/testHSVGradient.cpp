@@ -49,7 +49,9 @@
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #include <type_traits>
 
-BEGIN_VISP_NAMESPACE
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 void gradientFilter(const vpImage<unsigned char> &I, const vpImage<double> &filter, vpImage<double> &GIy)
@@ -378,7 +380,7 @@ int main()
   std::cerr << "ERROR: Something went wrong !" << std::endl;
   return EXIT_FAILURE;
 }
-END_VISP_NAMESPACE
+
 #else
 int main()
 {

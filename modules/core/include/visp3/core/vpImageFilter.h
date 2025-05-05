@@ -467,7 +467,7 @@ public:
   {
     const unsigned int w = I.getWidth();
     const unsigned int h = I.getHeight();
-    const unsigned int size = I.getSize();
+    const int size = I.getSize();
 
     if ((lowerThresholdRatio <= 0.f) || (lowerThresholdRatio >= 1.f)) {
       std::stringstream errMsg;

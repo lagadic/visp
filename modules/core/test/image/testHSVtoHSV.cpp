@@ -48,7 +48,9 @@
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 
-BEGIN_VISP_NAMESPACE
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 /**
@@ -249,7 +251,6 @@ int main()
   return EXIT_FAILURE;
 }
 
-END_VISP_NAMESPACE
 #else
 int main()
 {
