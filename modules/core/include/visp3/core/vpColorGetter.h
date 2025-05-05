@@ -58,6 +58,7 @@ public:
   static const unsigned char &get(const vpRGBa &col);
 };
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 template<>
 template<typename ArithmeticType, bool useFullScale>
 inline ArithmeticType &vpColorGetter<0>::get(vpHSV<ArithmeticType, useFullScale> &hsv)
@@ -99,6 +100,7 @@ inline const ArithmeticType &vpColorGetter<2>::get(const vpHSV<ArithmeticType, u
 {
   return hsv.V;
 }
+#endif
 
 template<>
 inline unsigned char &vpColorGetter<0>::get(vpRGBa &rgba)

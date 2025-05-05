@@ -177,6 +177,7 @@ public:
    */
   vpImage<unsigned char> detect(const vpImage<vpRGBa> &I_color);
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   template <typename ArithmeticType, bool useFullScale>
   vpImage<unsigned char> detect(const vpImage<vpHSV<ArithmeticType, useFullScale>> &Ihsv)
   {
@@ -206,6 +207,7 @@ public:
     step3to5(Ihsv.getHeight(), Ihsv.getWidth(), lowerThreshold, upperThreshold);
     return m_edgeMap;
   }
+#endif
 
   /**
    * \brief Detect the edges in a gray-scale image.
@@ -473,7 +475,7 @@ private:
   vpImage<float> m_dIy; /*!< Y-axis gradient.*/
 
   // // Edge thining attributes
-  std::vector<std::pair<unsigned int, float>> m_edgeCandidateAndGradient; /*!< Map that contains point image coordinates and corresponding gradient value.*/
+  std::vector<std::pair<unsigned int, float> > m_edgeCandidateAndGradient; /*!< Map that contains point image coordinates and corresponding gradient value.*/
 
   // // Hysteresis thresholding attributes
   float m_lowerThreshold; /*!< Lower threshold for the hysteresis step. If negative, it will be deduced

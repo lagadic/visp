@@ -33,7 +33,6 @@
 #include <visp3/core/vpImageConvert.h>
 
 #ifdef VISP_HAVE_OPENMP
-#include <thread>
 #include <omp.h>
 #endif
 
@@ -535,8 +534,8 @@ vpCannyEdgeDetection::performEdgeThinning(const float &lowerThreshold)
 #endif
           }
         }
+        }
       }
-    }
 #ifdef VISP_HAVE_OPENMP
 #pragma omp critical
     {
@@ -548,7 +547,7 @@ vpCannyEdgeDetection::performEdgeThinning(const float &lowerThreshold)
       );
 #else
       m_edgeCandidateAndGradient.insert(
-        m_activeEdgeCandidates.end(),
+        m_edgeCandidateAndGradient.end(),
         localMemoryEdgeCandidates.begin(),
         localMemoryEdgeCandidates.end()
       );
@@ -556,9 +555,9 @@ vpCannyEdgeDetection::performEdgeThinning(const float &lowerThreshold)
     }
 #endif
 #ifdef VISP_HAVE_OPENMP
-  }
+    }
 #endif
-}
+    }
 
 void
 vpCannyEdgeDetection::performHysteresisThresholding(const float &lowerThreshold, const float &upperThreshold)
@@ -601,7 +600,7 @@ vpCannyEdgeDetection::performHysteresisThresholding(const float &lowerThreshold,
 #endif
         m_edgePointsCandidates.bitmap[candidate.first] = WEAK_EDGE;
       }
-    }
+      }
 
 #ifdef VISP_HAVE_OPENMP
 #pragma omp critical
@@ -622,7 +621,7 @@ vpCannyEdgeDetection::performHysteresisThresholding(const float &lowerThreshold,
     }
   }
 #endif
-}
+    }
 
 void
 vpCannyEdgeDetection::performEdgeTracking()
