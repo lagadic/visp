@@ -164,13 +164,13 @@ public:
   template <typename T, typename U, bool useFullScale1, bool useFullScale2>
   static typename std::enable_if<!std::is_same<T, U>::value, void>::type convert(const vpImage<vpHSV<T, useFullScale1>> &src, vpImage<vpHSV<U, useFullScale2>> &dest)
   {
-    const unsigned int height = src.getHeight(), width = src.getWidth();
-    const unsigned int size = height * width;
+    const int height = src.getHeight(), width = src.getWidth();
+    const int size = height * width;
     dest.resize(height, width);
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-    for (unsigned int i = 0; i < size; ++i) {
+    for (int i = 0; i < size; ++i) {
       dest.bitmap[i].buildFrom(src.bitmap[i]);
     }
   }
@@ -587,13 +587,13 @@ private:
 template <typename T, bool useFullScale>
 void vpImageConvert::convert(const vpImage<vpRGBa> &src, vpImage<vpHSV<T, useFullScale>> &dest)
 {
-  const unsigned int height = src.getHeight(), width = src.getWidth();
-  const unsigned int size = height * width;
+  const int height = src.getHeight(), width = src.getWidth();
+  const int size = height * width;
   dest.resize(height, width);
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-  for (unsigned int i = 0; i < size; ++i) {
+  for (int i = 0; i < size; ++i) {
     dest.bitmap[i].buildFrom(src.bitmap[i]);
   }
 }
@@ -609,13 +609,13 @@ void vpImageConvert::convert(const vpImage<vpRGBa> &src, vpImage<vpHSV<T, useFul
 template <typename T, bool useFullScale>
 void vpImageConvert::convert(const vpImage<vpHSV<T, useFullScale>> &src, vpImage<vpRGBa> &dest)
 {
-  const unsigned int height = src.getHeight(), width = src.getWidth();
-  const unsigned int size = height * width;
+  const int height = src.getHeight(), width = src.getWidth();
+  const int size = height * width;
   dest.resize(height, width);
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-  for (unsigned int i = 0; i < size; ++i) {
+  for (int i = 0; i < size; ++i) {
     dest.bitmap[i].buildFrom(src.bitmap[i]);
   }
 }
