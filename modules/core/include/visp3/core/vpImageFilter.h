@@ -436,7 +436,7 @@ public:
     return upperThresh;
   }
 
-#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) // Check if cxx11 or higher
   /**
    * \brief Compute the upper Canny edge filter threshold for a HSV image.
    *
