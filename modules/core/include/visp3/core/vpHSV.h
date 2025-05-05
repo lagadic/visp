@@ -102,33 +102,13 @@ class vpHSV
 {
 public:
   /**
-   * \brief Construct a new vpHSV object using unsigned char channels.
-   *
-   * \tparam U The type of the channels of the vpHSV pixels.
-   * \tparam std::enable_if<std::is_same<T, unsigned char>::value, U>::type Enable the constructor only when the channel
-   * type is unsigned char.
-   * \param[in] H_ The value of the Hue channel.
-   * \param[in] S_ The value of the Saturation channel.
-   * \param[in] V_ The value of the Value channel.
-   */
-  template<typename U = T, typename std::enable_if<std::is_same<T, unsigned char>::value, U>::type = 0>
-  explicit vpHSV(const T &H_ = 0, const T &S_ = 0, const T &V_ = 0)
-    : H(H_)
-    , S(S_)
-    , V(V_)
-  { }
-
-  /**
    * \brief Construct a new vpHSV object using floating point channels.
    *
    * \tparam U The type of the channels of the vpHSV pixels.
-   * \tparam  std::enable_if<std::is_floating_point<U>::value>::type Enable the constructor only when U is a floating
-   * point format.
    * \param[in] H_ The value of the Hue channel.
    * \param[in] S_ The value of the Saturation channel.
    * \param[in] V_ The value of the Value channel.
    */
-  template<typename U = T, typename std::enable_if<std::is_floating_point<U>::value>::type...>
   explicit vpHSV(const double &H_ = 0., const double &S_ = 0., const double &V_ = 0.)
     : H(H_)
     , S(S_)

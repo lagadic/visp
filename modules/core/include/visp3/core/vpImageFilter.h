@@ -1732,6 +1732,7 @@ public:
    *
    * \sa getGaussianKernel() to know which kernel is used.
    */
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   template <typename ImageType, typename OutputType, typename FilterType = float>
   static inline void
     gaussianBlur(const vpImage<ImageType> &I, vpImage<OutputType> &GI, unsigned int size = 7, FilterType sigma = 0., bool normalize = true,
@@ -1745,6 +1746,29 @@ public:
     GIx.destroy();
     delete[] fg;
   }
+#else
+  template <typename ImageType, typename OutputType>
+  static inline void
+    gaussianBlur(const vpImage<ImageType> &I, vpImage<OutputType> &GI, unsigned int size, float sigma, bool normalize = true,
+                            const vpImage<bool> *p_mask = nullptr)
+  {
+    gaussianBlur<ImageType, OutputType, float>(I, GI, size, sigma, normalize, p_mask);
+  }
+
+  template <typename ImageType, typename OutputType, typename FilterType >
+  static inline void
+    gaussianBlur(const vpImage<ImageType> &I, vpImage<OutputType> &GI, unsigned int size = 7, FilterType sigma = 0., bool normalize = true,
+                            const vpImage<bool> *p_mask = nullptr)
+  {
+    FilterType *fg = new FilterType[(size + 1) / 2];
+    vpImageFilter::getGaussianKernel<FilterType>(fg, size, sigma, normalize);
+    vpImage<OutputType> GIx;
+    vpImageFilter::filterX<ImageType, OutputType>(I, GIx, fg, size, p_mask);
+    vpImageFilter::filterY<OutputType, OutputType>(GIx, GI, fg, size, p_mask);
+    GIx.destroy();
+    delete[] fg;
+  }
+#endif
 
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
   static void gaussianBlur(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &GI, unsigned int size = 7, double sigma = 0., bool normalize = true,
@@ -2853,7 +2877,7 @@ private:
   }
 #endif
 #endif
-};
+  };
 #if defined(__clang__)
 #  pragma clang diagnostic pop
 #endif

@@ -480,7 +480,7 @@ vpCannyEdgeDetection::performEdgeThinning(const float &lowerThreshold)
       ipoints = npoints - istart;
     }
     istop = istart + ipoints;
-    std::vector<std::pair<unsigned int, float>> localMemoryEdgeCandidates;
+    std::vector<std::pair<unsigned int, float> > localMemoryEdgeCandidates;
 #endif
     bool ignore_current_pixel = false;
     bool grad_lower_threshold = false;
@@ -534,8 +534,8 @@ vpCannyEdgeDetection::performEdgeThinning(const float &lowerThreshold)
 #endif
           }
         }
-        }
       }
+    }
 #ifdef VISP_HAVE_OPENMP
 #pragma omp critical
     {
@@ -555,9 +555,9 @@ vpCannyEdgeDetection::performEdgeThinning(const float &lowerThreshold)
     }
 #endif
 #ifdef VISP_HAVE_OPENMP
-    }
+  }
 #endif
-    }
+}
 
 void
 vpCannyEdgeDetection::performHysteresisThresholding(const float &lowerThreshold, const float &upperThreshold)
@@ -600,7 +600,7 @@ vpCannyEdgeDetection::performHysteresisThresholding(const float &lowerThreshold,
 #endif
         m_edgePointsCandidates.bitmap[candidate.first] = WEAK_EDGE;
       }
-      }
+    }
 
 #ifdef VISP_HAVE_OPENMP
 #pragma omp critical
@@ -621,7 +621,7 @@ vpCannyEdgeDetection::performHysteresisThresholding(const float &lowerThreshold,
     }
   }
 #endif
-    }
+}
 
 void
 vpCannyEdgeDetection::performEdgeTracking()

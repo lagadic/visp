@@ -1,5 +1,6 @@
 #include <visp3/core/vpHSV.h>
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 BEGIN_VISP_NAMESPACE
 
 template<>
@@ -35,3 +36,6 @@ vpHSV<unsigned char, false> &vpHSV<unsigned char, false>::buildFrom(const vpRGBa
 }
 
 END_VISP_NAMESPACE
+#else
+void dummy_vpHSV() { }
+#endif

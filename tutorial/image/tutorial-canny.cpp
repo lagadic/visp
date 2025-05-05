@@ -347,7 +347,14 @@ int main(int argc, const char *argv[])
     ss << "\tGradient filter kernel size = " << options.m_apertureSize << "\n";
     ss << "\tCanny edge filter thresholds = [" << options.m_lowerThresh << " ; " << options.m_upperThresh << "]\n";
     ss << "\tCanny edge filter thresholds ratio (for auto-thresholding) = [" << options.m_lowerThreshRatio << " ; " << options.m_upperThreshRatio << "]\n";
-    ss <<  "\tCanny edge filter nb threads = " << (options.m_nbThread > 0 ? std::to_string(options.m_nbThread) : std::string("auto")) << "\n";
+    ss <<  "\tCanny edge filter nb threads = ";
+    if (options.m_nbThread > 0) {
+      ss << options.m_nbThread;
+    }
+    else {
+      ss << "auto";
+    }
+    ss << "\n";
     configAsTxt += ss.str();
   }
 #endif
