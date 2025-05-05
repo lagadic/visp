@@ -535,15 +535,19 @@ void vpHistogram::smooth(unsigned int fsize)
   vpHistogram h;
   h = *this;
 
-  int hsize = static_cast<int>(fsize) / 2; // half filter size
-  int sizeAsInt = static_cast<int>(m_size);
+  unsigned int hsize = fsize / 2; // half filter size
+  unsigned int sizeAsInt = m_size;
 
-  for (int i = 0; i < sizeAsInt; ++i) {
+  for (unsigned int i = 0; i < sizeAsInt; ++i) {
     unsigned int sum = 0;
     unsigned int nb = 0;
-    for (int j = -hsize; j <= hsize; ++j) {
+    for (unsigned int j = 0; j <= hsize; ++j) {
       // exploitation of the overflow to detect negative value...
-      if (/*(i + j) >= 0 &&*/ (i + j) < sizeAsInt) {
+      if ((i - j) < sizeAsInt) {
+        sum += h.m_histogram[i - j];
+        ++nb;
+      }
+      if ((i + j) < sizeAsInt) {
         sum += h.m_histogram[i + j];
         ++nb;
       }
