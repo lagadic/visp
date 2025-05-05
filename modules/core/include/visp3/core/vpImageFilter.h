@@ -507,24 +507,50 @@ public:
     // Computing the absolute gradient of the image G = |dIx| + |dIy|
     float dIMax = -1.; // dI is the absolute gradient => positive
     float dIMin = std::numeric_limits<OutType>::max();
-    int iter;
+    int iter, istart = 0, istop = size;
 #ifdef VISP_HAVE_OPENMP
-#pragma omp parallel for default(shared) private(iter) reduction(min: dIMin) reduction(max: dIMax)
+    int iam, nt, ipoints, npoints(size);
+#pragma omp parallel default(shared) private(iter, iam, nt, ipoints, istart, istop)
+    {
+      iam = omp_get_thread_num();
+      nt = omp_get_num_threads();
+      ipoints = npoints / nt;
+      // size of partition
+      istart = iam * ipoints; // starting array index
+      if (iam == nt-1) {
+        // last thread may do more
+        ipoints = npoints - istart;
+      }
+      istop = istart + ipoints;
 #endif
-    for (iter = 0; iter < size; ++iter) {
+      float localdImin = std::numeric_limits<OutType>::max(), localdImax = -1.;
+      for (iter = istart; iter < istop; ++iter) {
         // We have to compute the value for each pixel if we don't have a mask or for
         // pixels for which the mask is true otherwise
-      bool computeVal = checkBooleanMask(p_mask, iter);
+        bool computeVal = checkBooleanMask(p_mask, iter);
 
-      if (computeVal) {
-        float dx = static_cast<float>(dIx.bitmap[iter]);
-        float dy = static_cast<float>(dIy.bitmap[iter]);
-        float gradient = std::abs(dx) + std::abs(dy);
-        dIMax = std::max(dIMax, gradient);
-        dIMin = std::min(dIMin, gradient);
-        dI.bitmap[iter] = gradient;
+        if (computeVal) {
+          float dx = static_cast<float>(dIx.bitmap[iter]);
+          float dy = static_cast<float>(dIy.bitmap[iter]);
+          float gradient = std::abs(dx) + std::abs(dy);
+          localdImax = std::max(localdImax, gradient);
+          localdImin = std::min(localdImin, gradient);
+          dI.bitmap[iter] = gradient;
+        }
       }
+#ifdef VISP_HAVE_OPENMP
+#pragma omp critical
+      {
+        dIMin = std::min(dIMin, localdImin);
+        dIMax = std::max(dIMax, localdImax);
+      }
+#else
+      dIMin = localdImin;
+      dIMax = localdImax;
+#endif
+#ifdef VISP_HAVE_OPENMP
     }
+#endif
 
     // Compute the histogram
 #ifdef VISP_HAVE_THREADS
@@ -2877,7 +2903,7 @@ private:
   }
 #endif
 #endif
-  };
+};
 #if defined(__clang__)
 #  pragma clang diagnostic pop
 #endif
