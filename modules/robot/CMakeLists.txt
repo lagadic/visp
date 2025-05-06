@@ -89,7 +89,7 @@ endif()
 
 if(USE_BICLOPS)
   # No need to export, there is an implementation that allows to use Biclops as private
-  include_directories(${BICLOPS_INCLUDE_DIRS})
+  include_directories(SYSTEM ${BICLOPS_INCLUDE_DIRS})
   list(APPEND opt_libs_private ${BICLOPS_LIBRARIES})
 endif()
 
@@ -161,19 +161,19 @@ endif()
 
 if(WITH_QBDEVICE)
   # qbdevice is private
-  include_directories(${QBDEVICE_INCLUDE_DIRS})
+  include_directories(SYSTEM ${QBDEVICE_INCLUDE_DIRS})
   list(APPEND opt_libs_private ${QBDEVICE_LIBRARIES})
 endif()
 
 if(WITH_TAKKTILE2)
   # reflex-takktile2 is private
-  include_directories(${TAKKTILE2_INCLUDE_DIRS})
+  include_directories(SYSTEM ${TAKKTILE2_INCLUDE_DIRS})
   list(APPEND opt_libs_private ${TAKKTILE2_LIBRARIES})
 endif()
 
 if(WITH_POLOLU)
   # Rapa Pololu Maestro 3rdparty is private
-  include_directories(${POLOLU_INCLUDE_DIRS})
+  include_directories(SYSTEM ${POLOLU_INCLUDE_DIRS})
   list(APPEND opt_libs_private ${POLOLU_LIBRARIES})
 endif()
 

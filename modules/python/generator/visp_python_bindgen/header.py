@@ -467,7 +467,7 @@ class HeaderFile():
       # See https://github.com/pybind/pybind11/issues/974
       # Update with overloads that are shadowed by new overloads defined in this class
       # For instance, declaring:
-      # class A { void foo(int); };
+      # class A { void foo(int); }
       # class B: public A { void foo(std::string& s); }
       # Will result in the following code generating an error:
       # from visp.core import B

@@ -93,8 +93,10 @@ public:
 
   /*!
    * Add a keypoint at the end of the feature list. The id of the feature is set
-   * to ensure that it is unique. \param x,y : Coordinates of the feature in the
-   * image.
+   * to ensure that it is unique.
+   *
+   * \param x : Coordinates along x-axis of the feature in the image.
+   * \param y : Coordinates along y-axis of the feature in the image.
    */
   void addFeature(const float &x, const float &y);
 
@@ -106,7 +108,8 @@ public:
    * addFeature(const cv::Point2f &).
    *
    * \param id : Feature id. Should be unique
-   * \param x,y : Coordinates of the feature in the image.
+   * \param x : Coordinates along x-axis of the feature in the image.
+   * \param y : Coordinates along y-axis of the feature in the image.
    */
   void addFeature(const long &id, const float &x, const float &y);
 
@@ -200,9 +203,9 @@ public:
   //! initialization.
   double getMinDistance() const { return m_minDistance; }
   //! Get the number of current features
-  int getNbFeatures() const { return (int)m_points[1].size(); }
+  int getNbFeatures() const { return static_cast<int>(m_points[1].size()); }
   //! Get the number of previous features.
-  int getNbPrevFeatures() const { return (int)m_points[0].size(); }
+  int getNbPrevFeatures() const { return static_cast<int>(m_points[0].size()); }
   // void getPrevFeature(int index, int &id, float &x, float &y) const;
   //! Get the list of previous features
   std::vector<cv::Point2f> getPrevFeatures() const { return m_points[0]; }

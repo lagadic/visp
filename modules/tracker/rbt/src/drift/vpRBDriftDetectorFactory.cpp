@@ -35,6 +35,8 @@ BEGIN_VISP_NAMESPACE
 
 vpRBDriftDetectorFactory::vpRBDriftDetectorFactory()
 {
+#ifdef VISP_HAVE_NLOHMANN_JSON
+
   setJsonKeyFinder([](const nlohmann::json &j) -> std::string {
     return j.at("type");
   });
@@ -44,6 +46,7 @@ vpRBDriftDetectorFactory::vpRBDriftDetectorFactory()
     p->loadJsonConfiguration(j);
     return p;
   });
+#endif
 }
 
 END_VISP_NAMESPACE

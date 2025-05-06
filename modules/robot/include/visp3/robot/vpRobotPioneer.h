@@ -90,14 +90,14 @@ private: // Set as private since not implemented
    * Get the robot Jacobian expressed in the robot reference (or world) frame.
    * \warning Not implemented.
    */
-  void get_fJe(vpMatrix & /*fJe*/) VP_OVERRIDE { };
+  void get_fJe(vpMatrix & /*fJe*/) VP_OVERRIDE { }
 
   /*!
    * Get a displacement (frame as to ve specified) between two successive
    * position control.
    * \warning Not implemented.
    */
-  void getDisplacement(const vpRobot::vpControlFrameType /*frame*/, vpColVector & /*q*/) { };
+  void getDisplacement(const vpRobot::vpControlFrameType /*frame*/, vpColVector & /*q*/) { }
 
 public:
   void getVelocity(const vpRobot::vpControlFrameType frame, vpColVector &velocity);
@@ -108,7 +108,7 @@ private: // Set as private since not implemented
    * Get the robot position (frame has to be specified).
    * \warning Not implemented.
    */
-  void getPosition(const vpRobot::vpControlFrameType /*frame*/, vpColVector & /*q*/) { };
+  void getPosition(const vpRobot::vpControlFrameType /*frame*/, vpColVector & /*q*/) { }
 
 public:
   void init();
@@ -118,7 +118,7 @@ private: // Set as private since not implemented
    * Set a displacement (frame has to be specified) in position control.
    * \warning Not implemented.
    */
-  void setPosition(const vpRobot::vpControlFrameType /*frame*/, const vpColVector & /*q*/) VP_OVERRIDE { };
+  void setPosition(const vpRobot::vpControlFrameType /*frame*/, const vpColVector & /*q*/) VP_OVERRIDE { }
 
 public:
   void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel) VP_OVERRIDE;

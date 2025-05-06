@@ -104,25 +104,35 @@ public:
   /*!
     Constructor.
 
-    Initialize all the R, G, B, A components to \e v.
+    Initialize all the R, G, B, A components to \e v that should be in 0 - 255 range.
 
     \param v : Value to set.
   */
-  VP_EXPLICIT inline vpRGBa(unsigned int v) : R(v), G(v), B(v), A(v)
+  VP_EXPLICIT inline vpRGBa(unsigned int v)
   {
     assert(v < 256);
+    unsigned char v_uc = static_cast<unsigned char>(v);
+    R = v_uc;
+    G = v_uc;
+    B = v_uc;
+    A = v_uc;
   }
 
   /*!
     Constructor.
 
-    Initialize all the R, G, B, A components to \e v.
+    Initialize all the R, G, B, A components to \e v that should be in 0 - 255 range.
 
     \param v : Value to set.
   */
-  VP_EXPLICIT inline vpRGBa(int v) : R(v), G(v), B(v), A(v)
+  VP_EXPLICIT inline vpRGBa(int v)
   {
-    assert(v < 256);
+    assert(v >=0 && v < 256);
+    unsigned char v_uc = static_cast<unsigned char>(v);
+    R = v_uc;
+    G = v_uc;
+    B = v_uc;
+    A = v_uc;
   }
 
   /*!

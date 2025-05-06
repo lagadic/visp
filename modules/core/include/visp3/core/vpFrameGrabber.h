@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,9 +111,10 @@ public:
   //@}
 
 public:
-  vpFrameGrabber() : init(false), height(0), width(0) { };
+  vpFrameGrabber() : init(false), height(0), width(0) { }
 
 #if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+  vpFrameGrabber(const vpFrameGrabber &) = default;
   virtual ~vpFrameGrabber() = default;
 #else
   virtual ~vpFrameGrabber() { }
@@ -129,6 +130,10 @@ public:
    * the memory used by a specific frame grabber
    */
   virtual void close() = 0;
+
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+  vpFrameGrabber &operator=(const vpFrameGrabber &) = default;
+#endif
 
 protected:
   unsigned int height; //!< Number of rows in the image.

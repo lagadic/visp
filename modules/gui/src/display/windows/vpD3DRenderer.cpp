@@ -231,7 +231,7 @@ bool vpD3DRenderer::init(HWND hwnd, unsigned int width, unsigned int height)
   pd3dDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
 
   // inits the direct3D view (for 2D rendering)
-  initView((float)m_rwidth, (float)m_rheight);
+  initView(static_cast<float>(m_rwidth), static_cast<float>(m_rheight));
 
   // computes texture size (needs to be a power-of-2 large square)
   textWidth = supPowerOf2((m_rwidth > m_rheight) ? m_rwidth : m_rheight);
@@ -484,10 +484,10 @@ void vpD3DRenderer::setImgROI(const vpImage<vpRGBa> &im, const vpImagePoint &iP,
   if (pd3dDevice != nullptr) {
     D3DLOCKED_RECT d3dLRect;
 
-    int i_min = std::max<int>((int)ceil(iP.get_i() / m_rscale), 0);
-    int j_min = std::max<int>((int)ceil(iP.get_j() / m_rscale), 0);
-    int i_max = std::min<int>((int)ceil((iP.get_i() + height) / m_rscale), (int)m_rheight);
-    int j_max = std::min<int>((int)ceil((iP.get_j() + width) / m_rscale), (int)m_rwidth);
+    int i_min = std::max<int>(static_cast<int>(ceil(iP.get_i() / m_rscale)), 0);
+    int j_min = std::max<int>(static_cast<int>(ceil(iP.get_j() / m_rscale)), 0);
+    int i_max = std::min<int>(static_cast<int>(ceil((iP.get_i() + height) / m_rscale)), static_cast<int>(m_rheight));
+    int j_max = std::min<int>(static_cast<int>(ceil((iP.get_j() + width) / m_rscale)), static_cast<int>(m_rwidth));
 
     RECT r;
     r.top = (LONG)i_min;
@@ -560,10 +560,10 @@ void vpD3DRenderer::setImgROI(const vpImage<unsigned char> &im, const vpImagePoi
   if (pd3dDevice != nullptr) {
     D3DLOCKED_RECT d3dLRect;
 
-    int i_min = std::max<int>((int)ceil(iP.get_i() / m_rscale), 0);
-    int j_min = std::max<int>((int)ceil(iP.get_j() / m_rscale), 0);
-    int i_max = std::min<int>((int)ceil((iP.get_i() + height) / m_rscale), (int)m_rheight);
-    int j_max = std::min<int>((int)ceil((iP.get_j() + width) / m_rscale), (int)m_rwidth);
+    int i_min = std::max<int>(static_cast<int>(ceil(iP.get_i() / m_rscale)), 0);
+    int j_min = std::max<int>(static_cast<int>(ceil(iP.get_j() / m_rscale)), 0);
+    int i_max = std::min<int>(static_cast<int>(ceil((iP.get_i() + height) / m_rscale)), static_cast<int>(m_rheight));
+    int j_max = std::min<int>(static_cast<int>(ceil((iP.get_j() + width) / m_rscale)), static_cast<int>(m_rwidth));
 
     RECT r;
     r.top = (LONG)i_min;
@@ -643,8 +643,8 @@ bool vpD3DRenderer::render()
 void vpD3DRenderer::setPixel(const vpImagePoint &iP, const vpColor &color)
 {
   vpImagePoint iPscaled = iP / m_rscale;
-  if (iPscaled.get_i() < 0 || iPscaled.get_j() < 0 || iPscaled.get_i() >= (int)m_rheight ||
-      iPscaled.get_j() >= (int)m_rwidth) {
+  if (iPscaled.get_i() < 0 || iPscaled.get_j() < 0 || iPscaled.get_i() >= static_cast<int>(m_rheight) ||
+      iPscaled.get_j() >= static_cast<int>(m_rwidth)) {
     return;
   }
 
@@ -680,10 +680,11 @@ void vpD3DRenderer::setPixel(const vpImagePoint &iP, const vpColor &color)
 
 /*!
   Draws a line.
-  \param ip1,ip2 : Initial and final image point.
-  \param color the line's color
+  \param ip1 : Initial image point.
+  \param ip2 : Final image point.
+  \param color : The line's color.
   \param thickness : Thickness of the line.
-  \param style style of the line
+  \param style Style of the line.
 */
 void vpD3DRenderer::drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color,
                              unsigned int thickness, int style)
@@ -724,7 +725,7 @@ void vpD3DRenderer::drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2, c
 
       double size = 10. * m_rscale;
       double length = sqrt(vpMath::sqr(ip2_.get_i() - ip1_.get_i()) + vpMath::sqr(ip2_.get_j() - ip1_.get_j()));
-      bool vertical_line = (int)ip2_.get_j() == (int)ip1_.get_j();
+      bool vertical_line = static_cast<int>(ip2_.get_j()) == static_cast<int>(ip1_.get_j());
       if (vertical_line) {
         if (ip2_.get_i() < ip1_.get_i()) {
           std::swap(ip1_, ip2_);
@@ -741,7 +742,7 @@ void vpD3DRenderer::drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2, c
       double orig = ip1_.get_i() - slope * ip1_.get_j();
 
       if (vertical_line) {
-        for (unsigned int i = (unsigned int)ip1_.get_i(); i < ip2_.get_i(); i += (unsigned int)(2 * deltai)) {
+        for (unsigned int i = static_cast<unsigned int>(ip1_.get_i()); i < ip2_.get_i(); i += static_cast<unsigned int>(2 * deltai)) {
           double j = ip1_.get_j();
 
           // Move to the starting point
@@ -751,7 +752,7 @@ void vpD3DRenderer::drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2, c
         }
       }
       else {
-        for (unsigned int j = (unsigned int)ip1_.get_j(); j < ip2_.get_j(); j += (unsigned int)(2 * deltaj)) {
+        for (unsigned int j = static_cast<unsigned int>(ip1_.get_j()); j < ip2_.get_j(); j += static_cast<unsigned int>(2 * deltaj)) {
           double i = slope * j + orig;
           // Move to the starting point
           MoveToEx(hDCMem, vpMath::round(j / m_rscale), vpMath::round(i / m_rscale), nullptr);
@@ -801,7 +802,7 @@ void vpD3DRenderer::drawRect(const vpImagePoint &topLeft, unsigned int width, un
       unsigned int widthScaled = width / m_rscale;
       unsigned int heightScaled = height / m_rscale;
 
-      if (topLeftScaled.get_i() > (int)m_rheight - 1 || topLeftScaled.get_j() > (int)m_rwidth - 1 ||
+      if (topLeftScaled.get_i() > static_cast<int>(m_rheight) - 1 || topLeftScaled.get_j() > static_cast<int>(m_rwidth) - 1 ||
           topLeftScaled.get_i() + height < 0 || topLeftScaled.get_j() + width < 0) {
         return;
       }
@@ -811,9 +812,9 @@ void vpD3DRenderer::drawRect(const vpImagePoint &topLeft, unsigned int width, un
       RECT r;
       r.top = (LONG)((topLeftScaled.get_i() > 0) ? topLeftScaled.get_i() : 0);
       r.left = (LONG)((topLeftScaled.get_j() > 0) ? topLeftScaled.get_j() : 0);
-      r.bottom = (LONG)((topLeftScaled.get_i() + heightScaled < (int)m_rheight) ? topLeftScaled.get_i() + heightScaled
+      r.bottom = (LONG)((topLeftScaled.get_i() + heightScaled < static_cast<int>(m_rheight)) ? topLeftScaled.get_i() + heightScaled
                                                                                 : m_rheight - 1);
-      r.right = (LONG)((topLeftScaled.get_j() + widthScaled < (int)m_rwidth) ? topLeftScaled.get_j() + widthScaled
+      r.right = (LONG)((topLeftScaled.get_j() + widthScaled < static_cast<int>(m_rwidth)) ? topLeftScaled.get_j() + widthScaled
                                                                              : m_rwidth - 1);
 
       /* unsigned */ int rectW = r.right - r.left;
@@ -929,9 +930,9 @@ void vpD3DRenderer::drawCircle(const vpImagePoint &center, unsigned int radius, 
   unsigned int radiusScaled = radius / m_rscale;
   vpImagePoint centerScaled = center / m_rscale;
   if (radiusScaled < 1 || vpMath::round(centerScaled.get_i() + radiusScaled) < 0 ||
-      vpMath::round(centerScaled.get_i() - radiusScaled) > (int)m_rheight ||
+      vpMath::round(centerScaled.get_i() - radiusScaled) > static_cast<int>(m_rheight) ||
       vpMath::round(centerScaled.get_j() + radiusScaled) < 0 ||
-      vpMath::round(centerScaled.get_j() - radiusScaled) > (int)m_rwidth)
+      vpMath::round(centerScaled.get_j() - radiusScaled) > static_cast<int>(m_rwidth))
     return;
 
   // if the device has been initialized
@@ -949,10 +950,10 @@ void vpD3DRenderer::drawCircle(const vpImagePoint &center, unsigned int radius, 
 
     rec.top = rtop;
     rec.left = rleft;
-    rec.bottom = (LONG)((vpMath::round(centerScaled.get_i() + radiusScaled_) < (int)m_rheight)
+    rec.bottom = (LONG)((vpMath::round(centerScaled.get_i() + radiusScaled_) < static_cast<int>(m_rheight))
                             ? centerScaled.get_i() + radiusScaled_
                             : m_rheight - 1);
-    rec.right = (LONG)((vpMath::round(centerScaled.get_j() + radiusScaled_) < (int)m_rwidth)
+    rec.right = (LONG)((vpMath::round(centerScaled.get_j() + radiusScaled_) < static_cast<int>(m_rwidth))
                            ? centerScaled.get_j() + radiusScaled_
                            : m_rwidth - 1);
 
@@ -1032,7 +1033,7 @@ void vpD3DRenderer::drawText(const vpImagePoint &ip, const char *text, const vpC
   SetBkMode(hDCMem, TRANSPARENT);
 
   SIZE size;
-  int length = (int)strlen(text);
+  int length = static_cast<int>(strlen(text));
 
   // get the displayed string dimensions
   GetTextExtentPoint32(hDCMem, text, length, &size);
@@ -1077,10 +1078,12 @@ void vpD3DRenderer::drawCross(const vpImagePoint &ip, unsigned int size, const v
 
 /*!
   Draws an arrow.
-  \param ip1,ip2 : Initial and final image point.
-  \param color The arrow's color
-  \param w,h : Width and height of the arrow.
-  \param thickness : Thickness of the lines used to display the arrow.
+  \param[in] ip1 It's starting point coordinates.
+  \param[in] ip2 It's ending point coordinates.
+  \param[in] color The line's color.
+  \param[in] w Arrow width.
+  \param[in] h Arrow height.
+  \param[in] thickness Thickness of the drawing
 */
 void vpD3DRenderer::drawArrow(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int w,
                               unsigned int h, unsigned int thickness)
@@ -1191,6 +1194,6 @@ END_VISP_NAMESPACE
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_gui.a(vpD3DRenderer.cpp.o) has no symbols
-void dummy_vpD3DRenderer() { };
+void dummy_vpD3DRenderer() { }
 #endif
 #endif

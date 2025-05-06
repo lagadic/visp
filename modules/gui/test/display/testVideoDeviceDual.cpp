@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +60,14 @@
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
-typedef enum { vpX11, vpGTK, vpGDI, vpD3D, vpCV } vpDisplayType;
+typedef enum
+{
+  vpX11,
+  vpGTK,
+  vpGDI,
+  vpD3D,
+  vpCV
+} vpDisplayType;
 
 void usage(const char *name, const char *badparam, vpDisplayType &dtype);
 bool getOptions(int argc, const char **argv, vpDisplayType &dtype, bool &list, bool &click_allowed, bool &display);
@@ -179,7 +186,6 @@ bool getOptions(int argc, const char **argv, vpDisplayType &dtype, bool &list, b
     case 'h':
       usage(argv[0], nullptr, dtype);
       return false;
-      break;
     case 'c':
       click_allowed = false;
       break;
@@ -190,7 +196,6 @@ bool getOptions(int argc, const char **argv, vpDisplayType &dtype, bool &list, b
     default:
       usage(argv[0], optarg_, dtype);
       return false;
-      break;
     }
   }
 
@@ -277,64 +282,63 @@ int main(int argc, const char **argv)
 #if defined(VISP_HAVE_X11)
       d1 = new vpDisplayX;
       d2 = new vpDisplayX;
+      break;
 #else
       std::cout << "  Sorry, X11 video device is not available.\n";
       std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
       return EXIT_FAILURE;
 #endif
-      break;
     case vpGTK:
       std::cout << "Requested GTK display functionalities..." << std::endl;
 #if defined(VISP_HAVE_GTK)
       d1 = new vpDisplayGTK;
       d2 = new vpDisplayGTK;
+      break;
 #else
       std::cout << "  Sorry, GTK video device is not available.\n";
       std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
       return EXIT_FAILURE;
 #endif
-      break;
     case vpGDI:
       std::cout << "Requested GDI display functionalities..." << std::endl;
 #if defined(VISP_HAVE_GDI)
-
       d1 = new vpDisplayGDI;
       d2 = new vpDisplayGDI;
+      break;
 #else
       std::cout << "  Sorry, GDI video device is not available.\n";
       std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
       return EXIT_FAILURE;
 #endif
-      break;
     case vpD3D:
       std::cout << "Requested D3D display functionalities..." << std::endl;
 #if defined(VISP_HAVE_D3D9)
       d1 = new vpDisplayD3D;
       d2 = new vpDisplayD3D;
+      break;
 #else
       std::cout << "  Sorry, D3D video device is not available.\n";
       std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
       return EXIT_FAILURE;
 #endif
-      break;
     case vpCV:
       std::cout << "Requested OpenCV display functionalities..." << std::endl;
 #if defined(HAVE_OPENCV_HIGHGUI)
       d1 = new vpDisplayOpenCV;
       d2 = new vpDisplayOpenCV;
+      break;
 #else
       std::cout << "  Sorry, OpenCV video device is not available.\n";
       std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
       return EXIT_FAILURE;
 #endif
-      break;
     }
 
     if (opt_display) {
       int winx1 = 100, winy1 = 200;
       d1->init(I1, winx1, winy1, "Display 1");
 
-      int winx2 = winx1 + 10 + (int)I1.getWidth(), winy2 = winy1;
+      int winx2 = winx1 + 10 + static_cast<int>(I1.getWidth()), winy2 = winy1;
       d2->init(I2, winx2, winy2, "Display 2");
 
       vpDisplay::display(I1);

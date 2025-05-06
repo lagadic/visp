@@ -123,18 +123,18 @@ endif()
 
 if(WITH_CLIPPER)
   # clipper is private
-  include_directories(${CLIPPER_INCLUDE_DIRS})
+  include_directories(SYSTEM ${CLIPPER_INCLUDE_DIRS})
   list(APPEND opt_libs_private ${CLIPPER_LIBRARIES})
 endif()
 
 # pugixml is always enabled to provide default XML I/O capabilities
 # pugixml is private
-include_directories(${PUGIXML_INCLUDE_DIRS})
+include_directories(SYSTEM ${PUGIXML_INCLUDE_DIRS})
 list(APPEND opt_libs_private ${PUGIXML_LIBRARIES})
 
 if(WITH_SIMDLIB)
   # Simd lib is private
-  include_directories(${SIMDLIB_INCLUDE_DIRS})
+  include_directories(SYSTEM ${SIMDLIB_INCLUDE_DIRS})
   list(APPEND opt_libs_private ${SIMDLIB_LIBRARIES})
 endif()
 

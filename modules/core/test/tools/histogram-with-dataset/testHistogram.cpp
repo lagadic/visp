@@ -58,7 +58,7 @@ using namespace VISP_NAMESPACE_NAME;
 
   \param name : Program name.
   \param badparam : Bad parameter name.
-  \param ipath: Input image path.
+  \param ipath : Input image path.
 
  */
 void usage(const char *name, const char *badparam, std::string ipath)
@@ -98,8 +98,8 @@ OPTIONS:                                               Default\n\
 
   \param argc : Command line number of parameters.
   \param argv : Array of command line parameters.
-  \param ipath: Input image path.
-  \param nbThreads: Number of threads to use.
+  \param ipath : Input image path.
+  \param nbThreads : Number of threads to use.
   \return false if the program has to be stopped, true otherwise.
 
 */
@@ -114,7 +114,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, unsigned int &n
       ipath = optarg_;
       break;
     case 't':
-      nbThreads = (unsigned int)atoi(optarg_);
+      nbThreads = static_cast<unsigned int>(atoi(optarg_));
       break;
     case 'h':
       usage(argv[0], nullptr, ipath);

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +45,7 @@
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
+#include <visp3/core/vpMath.h>
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include VISP_NLOHMANN_JSON(json.hpp)
@@ -991,7 +992,7 @@ public:
       while (header[headerSize] != '\0') {
         ++headerSize;
       }
-      file.write(header, static_cast<size_t>(headerSize)+static_cast<size_t>(1));
+      file.write(header, static_cast<std::streamsize>(headerSize)+static_cast<std::streamsize>(1));
       unsigned int matrixSize;
       matrixSize = A.getRows();
       file.write(reinterpret_cast<char *>(&matrixSize), sizeof(unsigned int));
@@ -1180,6 +1181,17 @@ public:
   */
   static void insert(const vpArray2D<Type> &A, const vpArray2D<Type> &B, vpArray2D<Type> &C, unsigned int r, unsigned int c);
   //@}
+
+  static bool isFinite(const vpArray2D<double> &A)
+  {
+    const unsigned int s = A.size();
+    for (unsigned int i = 0; i < s; ++i) {
+      if (!vpMath::isFinite(A.data[i])) {
+        return false;
+      }
+    }
+    return true;
+  }
 
 protected:
   //! Number of rows in the array

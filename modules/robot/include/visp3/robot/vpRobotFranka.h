@@ -229,7 +229,7 @@ private:
   /*!
    * This function is not implemented.
    */
-  void getDisplacement(const vpRobot::vpControlFrameType, vpColVector &) VP_OVERRIDE { };
+  void getDisplacement(const vpRobot::vpControlFrameType, vpColVector &) VP_OVERRIDE { }
 
   void init();
 

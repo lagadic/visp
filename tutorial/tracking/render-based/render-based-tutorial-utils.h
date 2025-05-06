@@ -43,6 +43,7 @@ struct BaseArguments
 {
   BaseArguments() : trackerConfiguration(""), maxDepthDisplay(1.f), display(true), debugDisplay(false), enableRenderProfiling(false) { }
 
+#if defined(VISP_HAVE_NLOHMANN_JSON)
   void registerArguments(vpJsonArgumentParser &parser)
   {
     parser
@@ -55,6 +56,7 @@ struct BaseArguments
       .addFlag("--debug-display", debugDisplay, "Enable additional displays from the renderer")
       .addFlag("--profile", enableRenderProfiling, "Enable the use of Pstats to profile rendering times");
   }
+#endif
 
   void postProcessArguments()
   {
@@ -105,6 +107,7 @@ public:
   vpRBExperimentLogger() : enabled(false), videoEnabled(false), framerate(30)
   { }
 
+#if defined(VISP_HAVE_NLOHMANN_JSON)
   void registerArguments(vpJsonArgumentParser &parser)
   {
     parser
@@ -112,8 +115,8 @@ public:
       .addArgument("--save-path", folder, false, "Where to save the experiment log. The folder should not exist.")
       .addFlag("--save-video", videoEnabled, "Whether to save the video")
       .addArgument("--video-framerate", framerate, false, "Output video framerate");
-
   }
+#endif
 
   void startLog()
   {
@@ -123,14 +126,21 @@ public:
       }
       vpIoTools::makeDirectory(folder);
       if (videoEnabled) {
+#ifdef VISP_HAVE_OPENCV
         videoWriter.setFramerate(framerate);
         videoWriter.setCodec(cv::VideoWriter::fourcc('P', 'I', 'M', '1'));
         videoWriter.setFileName(folder + vpIoTools::separator + "video.mp4");
+#endif
       }
     }
   }
 
-  void logFrame(const vpRBTracker &tracker, unsigned int iter, const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &Idepth, const vpImage<unsigned char> &Imask)
+  void logFrame(const vpRBTracker &
+#if defined(VISP_HAVE_NLOHMANN_JSON)
+                tracker
+#endif
+                , unsigned int iter, const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB,
+                const vpImage<unsigned char> &Idepth, const vpImage<unsigned char> &Imask)
   {
     if (videoEnabled) {
       Iout.resize(IRGB.getHeight() * 2, IRGB.getWidth() * 2);
@@ -156,13 +166,14 @@ public:
         videoWriter.saveFrame(Iout);
       }
     }
-
+#if defined(VISP_HAVE_NLOHMANN_JSON)
     nlohmann::json iterLog;
     vpHomogeneousMatrix cMo;
     tracker.getPose(cMo);
     iterLog["cMo"] = cMo;
 
     log.push_back(iterLog);
+#endif
   }
 
   void close()
@@ -170,9 +181,12 @@ public:
     if (videoEnabled) {
       videoWriter.close();
     }
+
+#if defined(VISP_HAVE_NLOHMANN_JSON)
     std::ofstream f(folder + vpIoTools::separator + "log.json");
     f << log.dump(2) << std::endl;
     f.close();
+#endif
   }
 
 private:
@@ -189,7 +203,9 @@ private:
   unsigned int framerate;
   vpVideoWriter videoWriter;
 
+#if defined(VISP_HAVE_NLOHMANN_JSON)
   nlohmann::json log;
+#endif
 };
 
 class vpRBExperimentPlotter
@@ -198,6 +214,7 @@ public:
 
   vpRBExperimentPlotter() : enabled(false), plotPose(false), plotPose3d(false), plotDivergenceMetrics(false), plotCovariance(false) { }
 
+#if defined(VISP_HAVE_NLOHMANN_JSON)
   void registerArguments(vpJsonArgumentParser &parser)
   {
     parser
@@ -205,8 +222,8 @@ public:
       .addFlag("--plot-position", plotPose3d, "Plot the position of the object in a 3d figure")
       .addFlag("--plot-divergence", plotDivergenceMetrics, "Plot the metrics associated to the divergence threshold computation")
       .addFlag("--plot-cov", plotCovariance, "Plot the pose covariance trace for each feature");
-
   }
+#endif
 
   void postProcessArguments(bool displayEnabled)
   {

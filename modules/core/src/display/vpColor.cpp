@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +29,7 @@
  *
  * Description:
  * Color definition.
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpColor.h>
 
@@ -118,14 +117,13 @@ vpColor const vpColor::allColors[vpColor::nbColors] = { vpColor::blue,       // 
                                                        vpColor::white };     // 17
 #endif
 
-vpColor colors[6] = { vpColor::blue, vpColor::green, vpColor::red, vpColor::cyan, vpColor::orange, vpColor::purple };
-
 /*!
   Compare two colors.
 
   Return true if the R,G,B components are the same.
 
-  \param c1,c2 : Color to compare.
+  \param c1 : First color to compare.
+  \param c2 : Second color to compare.
 */
 VISP_EXPORT bool operator==(const vpColor &c1, const vpColor &c2)
 {
@@ -138,7 +136,8 @@ VISP_EXPORT bool operator==(const vpColor &c1, const vpColor &c2)
 
   Return true if the R,G,B components are different.
 
-  \param c1,c2 : Color to compare.
+  \param c1 : First color to compare.
+  \param c2 : Second color to compare.
 */
 VISP_EXPORT bool operator!=(const vpColor &c1, const vpColor &c2)
 {

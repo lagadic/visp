@@ -8,9 +8,9 @@
 
 int main(int argc, const char **argv)
 {
-#if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC) && \
-  ((VISP_HAVE_OPENCV_VERSION < 0x050000)  && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_FEATURES2D)) || \
-  ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D) && defined(HAVE_OPENCV_FEATURES))
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC) && \
+  (((VISP_HAVE_OPENCV_VERSION < 0x050000)  && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_FEATURES2D)) || \
+   ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D) && defined(HAVE_OPENCV_FEATURES)))
 
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
@@ -100,11 +100,13 @@ int main(int argc, const char **argv)
     //! [Homography estimation]
     try {
       double residual;
-      if (method == 0)
+      if (method == 0) {
         vpHomography::ransac(mPref_x, mPref_y, mPcur_x, mPcur_y, curHref, inliers, residual,
-                             (unsigned int)(mPref_x.size() * 0.25), 2.0 / cam.get_px(), true);
-      else
+                             static_cast<unsigned int>(mPref_x.size() * 0.25), 2.0 / cam.get_px(), true);
+      }
+      else {
         vpHomography::robust(mPref_x, mPref_y, mPcur_x, mPcur_y, curHref, inliers, residual, 0.4, 4, true);
+      }
     }
     catch (...) {
       std::cout << "Cannot compute homography from matches..." << std::endl;

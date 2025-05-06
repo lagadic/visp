@@ -1833,7 +1833,7 @@ void vpMbGenericTracker::init(const vpImage<unsigned char> &I)
 }
 
 void vpMbGenericTracker::initCircle(const vpPoint & /*p1*/, const vpPoint & /*p2*/, const vpPoint & /*p3*/,
-  double /*radius*/, int /*idFace*/, const std::string & /*name*/)
+                                    double /*radius*/, int /*idFace*/, const std::string & /*name*/)
 {
   throw vpException(vpException::fatalError, "vpMbGenericTracker::initCircle() should not be called!");
 }
@@ -2192,7 +2192,7 @@ void vpMbGenericTracker::initClick(const std::map<std::string, const vpImage<vpR
 #endif
 
 void vpMbGenericTracker::initCylinder(const vpPoint & /*p1*/, const vpPoint & /*p2*/, const double /*radius*/,
-  const int /*idFace*/, const std::string & /*name*/)
+                                      const int /*idFace*/, const std::string & /*name*/)
 {
   throw vpException(vpException::fatalError, "vpMbGenericTracker::initCylinder() should not be called!");
 }
@@ -6811,13 +6811,13 @@ void vpMbGenericTracker::TrackerWrapper::loadConfigFile(const std::string &confi
 
   // KLT
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
-  tracker.setMaxFeatures((int)xmlp.getKltMaxFeatures());
-  tracker.setWindowSize((int)xmlp.getKltWindowSize());
+  tracker.setMaxFeatures(static_cast<int>(xmlp.getKltMaxFeatures()));
+  tracker.setWindowSize(static_cast<int>(xmlp.getKltWindowSize()));
   tracker.setQuality(xmlp.getKltQuality());
   tracker.setMinDistance(xmlp.getKltMinDistance());
   tracker.setHarrisFreeParameter(xmlp.getKltHarrisParam());
-  tracker.setBlockSize((int)xmlp.getKltBlockSize());
-  tracker.setPyramidLevels((int)xmlp.getKltPyramidLevels());
+  tracker.setBlockSize(static_cast<int>(xmlp.getKltBlockSize()));
+  tracker.setPyramidLevels(static_cast<int>(xmlp.getKltPyramidLevels()));
   maskBorder = xmlp.getKltMaskBorder();
 
   // if(useScanLine)
@@ -7278,7 +7278,7 @@ void vpMbGenericTracker::TrackerWrapper::setPose(const vpImage<unsigned char> *c
   if (m_trackerType & EDGE_TRACKER) {
     initPyramid(I, Ipyramid);
 
-    unsigned int i = (unsigned int)scales.size();
+    unsigned int i = static_cast<unsigned int>(scales.size());
     do {
       i--;
       if (scales[i]) {

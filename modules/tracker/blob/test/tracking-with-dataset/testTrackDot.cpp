@@ -75,7 +75,7 @@ void usage(const char *name, const char *badparam, std::string ipath);
 
   \param name : Program name.
   \param badparam : Bad parameter name.
-  \param ipath: Input image path.
+  \param ipath : Input image path.
 
 */
 void usage(const char *name, const char *badparam, std::string ipath)

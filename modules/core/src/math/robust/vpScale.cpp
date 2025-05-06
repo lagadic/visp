@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +30,7 @@
  * Description:
  * Median Absolute Deviation (MAD), MPDE, Mean shift kernel density
  * estimation.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpScale.cpp
@@ -70,9 +68,6 @@ vpScale::vpScale(double kernel_bandwidth, unsigned int dim) : bandwidth(kernel_b
   std::cout << "vpScale constructor finished" << std::endl;
 #endif
 }
-
-//! Destructor
-vpScale::~vpScale() { }
 
 // Calculate the modes of the density for the distribution
 // and their associated errors
@@ -258,8 +253,6 @@ double vpScale::KernelDensityGradient_EPANECHNIKOV(double sumX, unsigned int n)
         vpException(vpException::fatalError, "Error in vpScale::KernelDensityGradient_EPANECHNIKOV: wrong dimension"));
   }
 
-  // return sumX*(dimension+2)/(n*pow(bandwidth,
-  // (double)dimension)*c*vpMath::sqr(bandwidth));
   return sumX * (dimension + 2) / (n * bandwidth * c * vpMath::sqr(bandwidth));
 }
 END_VISP_NAMESPACE

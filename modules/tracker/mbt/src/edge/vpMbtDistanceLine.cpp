@@ -229,7 +229,7 @@ void vpMbtDistanceLine::setTracked(const std::string &polyname, const bool &trac
 {
   unsigned int ind = 0;
   for (std::list<int>::const_iterator itpoly = Lindex_polygon.begin(); itpoly != Lindex_polygon.end(); ++itpoly) {
-    if ((*hiddenface)[(unsigned)(*itpoly)]->getName() == polyname) {
+    if ((*hiddenface)[static_cast<unsigned int>(*itpoly)]->getName() == polyname) {
       Lindex_polygon_tracked[ind] = track;
     }
     ind++;
@@ -264,7 +264,7 @@ void vpMbtDistanceLine::updateTracked()
   unsigned int ind = 0;
   isTrackedLineWithVisibility = false;
   for (std::list<int>::const_iterator itpoly = Lindex_polygon.begin(); itpoly != Lindex_polygon.end(); ++itpoly) {
-    if ((*hiddenface)[(unsigned)(*itpoly)]->isVisible() && Lindex_polygon_tracked[ind]) {
+    if ((*hiddenface)[static_cast<unsigned int>(*itpoly)]->isVisible() && Lindex_polygon_tracked[ind]) {
       isTrackedLineWithVisibility = true;
       break;
     }
@@ -299,8 +299,9 @@ void vpMbtDistanceLine::setMovingEdge(vpMe *_me)
   \param I : The image.
   \param cMo : The pose of the camera used to initialize the moving edges.
   \param doNotTrack : If true, ME are not tracked.
-  \param mask: Mask image or nullptr if not wanted. Mask values that are set to true are considered in the tracking. To
-  disable a pixel, set false. \return false if an error occur, true otherwise.
+  \param mask : Mask image or nullptr if not wanted. Mask values that are set to true are considered in the tracking. To
+  disable a pixel, set false.
+  \return false if an error occur, true otherwise.
 */
 bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, bool doNotTrack,
                                        const vpImage<bool> *mask)
@@ -379,26 +380,26 @@ bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vp
 
         int marge = /*10*/ 5; // ou 5 normalement
         if (ip1.get_j() < ip2.get_j()) {
-          melinePt->jmin = (int)ip1.get_j() - marge;
-          melinePt->jmax = (int)ip2.get_j() + marge;
+          melinePt->jmin = static_cast<int>(ip1.get_j()) - marge;
+          melinePt->jmax = static_cast<int>(ip2.get_j()) + marge;
         }
         else {
-          melinePt->jmin = (int)ip2.get_j() - marge;
-          melinePt->jmax = (int)ip1.get_j() + marge;
+          melinePt->jmin = static_cast<int>(ip2.get_j()) - marge;
+          melinePt->jmax = static_cast<int>(ip1.get_j()) + marge;
         }
         if (ip1.get_i() < ip2.get_i()) {
-          melinePt->imin = (int)ip1.get_i() - marge;
-          melinePt->imax = (int)ip2.get_i() + marge;
+          melinePt->imin = static_cast<int>(ip1.get_i()) - marge;
+          melinePt->imax = static_cast<int>(ip2.get_i()) + marge;
         }
         else {
-          melinePt->imin = (int)ip2.get_i() - marge;
-          melinePt->imax = (int)ip1.get_i() + marge;
+          melinePt->imin = static_cast<int>(ip2.get_i()) - marge;
+          melinePt->imax = static_cast<int>(ip1.get_i()) + marge;
         }
 
         try {
           melinePt->initTracking(I, ip1, ip2, rho, theta, doNotTrack);
           meline.push_back(melinePt);
-          nbFeature.push_back((unsigned int)melinePt->getMeList().size());
+          nbFeature.push_back(static_cast<unsigned int>(melinePt->getMeList().size()));
           nbFeatureTotal += nbFeature.back();
         }
         catch (...) {
@@ -429,8 +430,8 @@ void vpMbtDistanceLine::trackMovingEdge(const vpImage<unsigned char> &I)
       nbFeatureTotal = 0;
       for (size_t i = 0; i < meline.size(); i++) {
         meline[i]->track(I);
-        nbFeature.push_back((unsigned int)meline[i]->getMeList().size());
-        nbFeatureTotal += (unsigned int)meline[i]->getMeList().size();
+        nbFeature.push_back(static_cast<unsigned int>(meline[i]->getMeList().size()));
+        nbFeatureTotal += static_cast<unsigned int>(meline[i]->getMeList().size());
       }
     }
     catch (...) {
@@ -534,24 +535,24 @@ void vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const 
 
             int marge = /*10*/ 5; // ou 5 normalement
             if (ip1.get_j() < ip2.get_j()) {
-              meline[i]->jmin = (int)ip1.get_j() - marge;
-              meline[i]->jmax = (int)ip2.get_j() + marge;
+              meline[i]->jmin = static_cast<int>(ip1.get_j()) - marge;
+              meline[i]->jmax = static_cast<int>(ip2.get_j()) + marge;
             }
             else {
-              meline[i]->jmin = (int)ip2.get_j() - marge;
-              meline[i]->jmax = (int)ip1.get_j() + marge;
+              meline[i]->jmin = static_cast<int>(ip2.get_j()) - marge;
+              meline[i]->jmax = static_cast<int>(ip1.get_j()) + marge;
             }
             if (ip1.get_i() < ip2.get_i()) {
-              meline[i]->imin = (int)ip1.get_i() - marge;
-              meline[i]->imax = (int)ip2.get_i() + marge;
+              meline[i]->imin = static_cast<int>(ip1.get_i()) - marge;
+              meline[i]->imax = static_cast<int>(ip2.get_i()) + marge;
             }
             else {
-              meline[i]->imin = (int)ip2.get_i() - marge;
-              meline[i]->imax = (int)ip1.get_i() + marge;
+              meline[i]->imin = static_cast<int>(ip2.get_i()) - marge;
+              meline[i]->imax = static_cast<int>(ip1.get_i()) + marge;
             }
 
             meline[i]->updateParameters(I, ip1, ip2, rho, theta);
-            nbFeature[i] = (unsigned int)meline[i]->getMeList().size();
+            nbFeature[i] = static_cast<unsigned int>(meline[i]->getMeList().size());
             nbFeatureTotal += nbFeature[i];
           }
         }
@@ -590,7 +591,7 @@ void vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const 
 
   \param I : the image.
   \param cMo : The pose of the camera.
-  \param mask: Mask image or nullptr if not wanted. Mask values that are set to true are considered in the tracking. To
+  \param mask : Mask image or nullptr if not wanted. Mask values that are set to true are considered in the tracking. To
   disable a pixel, set false.
 */
 void vpMbtDistanceLine::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
@@ -919,8 +920,8 @@ bool vpMbtDistanceLine::closeToImageBorder(const vpImage<unsigned char> &I, cons
           return true;
         }
 
-        if (((unsigned int)i_ >(I.getHeight() - threshold)) || (unsigned int)i_ < threshold ||
-            ((unsigned int)j_ >(I.getWidth() - threshold)) || (unsigned int)j_ < threshold) {
+        if ((static_cast<unsigned int>(i_) > (I.getHeight() - threshold)) || static_cast<unsigned int>(i_) < threshold ||
+            (static_cast<unsigned int>(j_) > (I.getWidth() - threshold)) || static_cast<unsigned int>(j_) < threshold) {
           return true;
         }
       }

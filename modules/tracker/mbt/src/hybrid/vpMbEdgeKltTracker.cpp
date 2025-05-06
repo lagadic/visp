@@ -77,7 +77,7 @@ void vpMbEdgeKltTracker::init(const vpImage<unsigned char> &I)
 
   vpMbEdgeTracker::resetMovingEdge();
 
-  unsigned int i = (unsigned int)scales.size();
+  unsigned int i = static_cast<unsigned int>(scales.size());
   do {
     i--;
     if (scales[i]) {
@@ -113,7 +113,7 @@ void vpMbEdgeKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomoge
 
   initPyramid(I, Ipyramid);
 
-  unsigned int i = (unsigned int)scales.size();
+  unsigned int i = static_cast<unsigned int>(scales.size());
   do {
     i--;
     if (scales[i]) {
@@ -150,7 +150,7 @@ void vpMbEdgeKltTracker::setPose(const vpImage<vpRGBa> &I_color, const vpHomogen
 
   initPyramid(m_I, Ipyramid);
 
-  unsigned int i = (unsigned int)scales.size();
+  unsigned int i = static_cast<unsigned int>(scales.size());
   do {
     i--;
     if (scales[i]) {
@@ -339,13 +339,13 @@ void vpMbEdgeKltTracker::loadConfigFile(const std::string &configFile, bool verb
   xmlp.getEdgeMe(meParser);
   vpMbEdgeTracker::setMovingEdge(meParser);
 
-  tracker.setMaxFeatures((int)xmlp.getKltMaxFeatures());
-  tracker.setWindowSize((int)xmlp.getKltWindowSize());
+  tracker.setMaxFeatures(static_cast<int>(xmlp.getKltMaxFeatures()));
+  tracker.setWindowSize(static_cast<int>(xmlp.getKltWindowSize()));
   tracker.setQuality(xmlp.getKltQuality());
   tracker.setMinDistance(xmlp.getKltMinDistance());
   tracker.setHarrisFreeParameter(xmlp.getKltHarrisParam());
-  tracker.setBlockSize((int)xmlp.getKltBlockSize());
-  tracker.setPyramidLevels((int)xmlp.getKltPyramidLevels());
+  tracker.setBlockSize(static_cast<int>(xmlp.getKltBlockSize()));
+  tracker.setPyramidLevels(static_cast<int>(xmlp.getKltPyramidLevels()));
   maskBorder = xmlp.getKltMaskBorder();
 
   // if(useScanLine)
@@ -727,7 +727,7 @@ void vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char> &I, const unsig
 
   double mu = m_initialMu;
 
-  while (((int)((residu - residu_1) * 1e8) != 0) && (iter < m_maxIter)) {
+  while ((static_cast<int>((residu - residu_1) * 1e8) != 0) && (iter < m_maxIter)) {
     if (nbrow >= 4)
       trackSecondLoop(I, L_mbt, R_mbt, m_cMo, lvl);
 
@@ -776,7 +776,7 @@ void vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char> &I, const unsig
 
     unsigned int cpt = 0;
     while (cpt < (nbrow + 2 * nbInfos)) {
-      if (cpt < (unsigned)nbrow) {
+      if (cpt < static_cast<unsigned int>(nbrow)) {
         m_w_hybrid[cpt] = ((m_w_mbt[cpt] * factor[cpt]) * factorMBT);
       }
       else {
@@ -824,7 +824,7 @@ void vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char> &I, const unsig
 
       cpt = 0;
       while (cpt < (nbrow + 2 * nbInfos)) {
-        if (cpt < (unsigned)nbrow) {
+        if (cpt < static_cast<unsigned int>(nbrow)) {
           m_w_hybrid[cpt] = ((m_w_mbt[cpt] * factor[cpt]) * factorMBT);
         }
         else {
@@ -1034,7 +1034,7 @@ unsigned int vpMbEdgeKltTracker::trackFirstLoop(const vpImage<unsigned char> &I,
       for (std::list<int>::const_iterator itindex = l->Lindex_polygon.begin(); itindex != l->Lindex_polygon.end();
         ++itindex) {
         int index = *itindex;
-        if (l->hiddenface->isAppearing((unsigned int)index)) {
+        if (l->hiddenface->isAppearing(static_cast<unsigned int>(index))) {
           fac = 0.2;
           break;
         }
@@ -1210,17 +1210,18 @@ void vpMbEdgeKltTracker::initFaceFromLines(vpMbtPolygon &polygon)
 }
 
 /*!
-  Add a circle to track from its center, 3 points (including the center)
-  defining the plane that contain the circle and its radius.
+  Add a circle to track. With the center of the circle we have 3 points defining the plane that  contains the circle.
+  To be visible, the plane defined by the 3 points p1, p2, p3 should have its normal going toward the camera.
 
-  \param p1 : Center of the circle.
-  \param p2,p3 : Two points on the plane containing the circle. With the
-  center of the circle we have 3 points defining the plane that contains the
-  circle. \param radius : Radius of the circle. \param idFace : Id of the face
-  associated to the circle. \param name : The optional name of the circle.
+  \param p1 : Center of the circle, considered as the first point on the plane containing the circle.
+  \param p2 : Second point on the plane containing the circle.
+  \param p3 : Third point on the plane containing the circle.
+  \param radius : Radius of the circle.
+  \param idFace : Index of the face associated to the circle to handle visibility test.
+  \param name : The optional name of the circle.
 */
 void vpMbEdgeKltTracker::initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, double radius, int idFace,
-  const std::string &name)
+                                    const std::string &name)
 {
   vpMbEdgeTracker::initCircle(p1, p2, p3, radius, idFace, name);
 }
@@ -1236,7 +1237,7 @@ void vpMbEdgeKltTracker::initCircle(const vpPoint &p1, const vpPoint &p2, const 
   \param name : The optional name of the cylinder.
 */
 void vpMbEdgeKltTracker::initCylinder(const vpPoint &p1, const vpPoint &p2, double radius, int idFace,
-  const std::string &name)
+                                      const std::string &name)
 {
   vpMbEdgeTracker::initCylinder(p1, p2, radius, idFace, name);
   vpMbKltTracker::initCylinder(p1, p2, radius, idFace, name);
@@ -1495,5 +1496,5 @@ END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_mbt.a(vpMbEdgeKltTracker.cpp.o) has
 // no symbols
-void dummy_vpMbEdgeKltTracker() { };
+void dummy_vpMbEdgeKltTracker() { }
 #endif // VISP_HAVE_OPENCV

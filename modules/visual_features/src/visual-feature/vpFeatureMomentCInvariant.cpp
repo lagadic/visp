@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,9 @@
  * Description:
  * Implementation for all supported moment features.
  */
+
 #include <visp3/core/vpMomentObject.h>
+
 #ifdef VISP_MOMENTS_COMBINE_MATRICES
 #include <visp3/core/vpMomentCInvariant.h>
 #include <visp3/core/vpMomentCentered.h>
@@ -202,50 +204,50 @@ BEGIN_VISP_NAMESPACE
     featureMomentCentered.interaction(0, 3) +
     6 * momentCentered.get(2, 1) * momentCentered.get(1, 2) * momentCentered.get(0, 3) *
     featureMomentCentered.interaction(1, 2) -
-    pow((double)momentCentered.get(3, 0), (double)3) * featureMomentCentered.interaction(1, 2) +
-    3 * featureMomentCentered.interaction(3, 0) * pow((double)momentCentered.get(1, 2), (double)3) +
-    6 * pow((double)momentCentered.get(2, 1), (double)3) * featureMomentCentered.interaction(0, 3) -
-    featureMomentCentered.interaction(2, 1) * pow((double)momentCentered.get(0, 3), (double)3) +
-    3 * featureMomentCentered.interaction(2, 1) * pow((double)momentCentered.get(1, 2), (double)2) *
+    pow((double)momentCentered.get(3, 0), 3.0) * featureMomentCentered.interaction(1, 2) +
+    3 * featureMomentCentered.interaction(3, 0) * pow((double)momentCentered.get(1, 2), 3.0) +
+    6 * pow((double)momentCentered.get(2, 1), 3.0) * featureMomentCentered.interaction(0, 3) -
+    featureMomentCentered.interaction(2, 1) * pow((double)momentCentered.get(0, 3), 3.0) +
+    3 * featureMomentCentered.interaction(2, 1) * pow((double)momentCentered.get(1, 2), 2.0) *
     momentCentered.get(0, 3) +
-    18 * pow((double)momentCentered.get(2, 1), (double)2) * momentCentered.get(0, 3) *
+    18 * pow((double)momentCentered.get(2, 1), 2.0) * momentCentered.get(0, 3) *
     featureMomentCentered.interaction(2, 1) -
-    pow((double)momentCentered.get(3, 0), (double)2) * featureMomentCentered.interaction(2, 1) *
+    pow((double)momentCentered.get(3, 0), 2.0) * featureMomentCentered.interaction(2, 1) *
     momentCentered.get(0, 3) +
-    9 * momentCentered.get(3, 0) * pow((double)momentCentered.get(1, 2), (double)2) *
+    9 * momentCentered.get(3, 0) * pow((double)momentCentered.get(1, 2), 2.0) *
     featureMomentCentered.interaction(1, 2) -
-    4 * pow((double)momentCentered.get(3, 0), (double)2) * momentCentered.get(1, 2) *
+    4 * pow((double)momentCentered.get(3, 0), 2.0) * momentCentered.get(1, 2) *
     featureMomentCentered.interaction(1, 2) +
-    2 * pow((double)momentCentered.get(1, 2), (double)2) * momentCentered.get(0, 3) *
+    2 * pow((double)momentCentered.get(1, 2), 2.0) * momentCentered.get(0, 3) *
     featureMomentCentered.interaction(0, 3) -
-    4 * momentCentered.get(3, 0) * pow((double)momentCentered.get(1, 2), (double)2) *
+    4 * momentCentered.get(3, 0) * pow((double)momentCentered.get(1, 2), 2.0) *
     featureMomentCentered.interaction(3, 0) +
-    2 * momentCentered.get(1, 2) * pow((double)momentCentered.get(0, 3), (double)2) *
+    2 * momentCentered.get(1, 2) * pow((double)momentCentered.get(0, 3), 2.0) *
     featureMomentCentered.interaction(1, 2) -
-    4 * momentCentered.get(2, 1) * pow((double)momentCentered.get(0, 3), (double)2) *
+    4 * momentCentered.get(2, 1) * pow((double)momentCentered.get(0, 3), 2.0) *
     featureMomentCentered.interaction(2, 1) +
-    3 * momentCentered.get(3, 0) * pow((double)momentCentered.get(2, 1), (double)2) *
+    3 * momentCentered.get(3, 0) * pow((double)momentCentered.get(2, 1), 2.0) *
     featureMomentCentered.interaction(1, 2) -
-    3 * pow((double)momentCentered.get(3, 0), (double)2) * momentCentered.get(1, 2) *
+    3 * pow((double)momentCentered.get(3, 0), 2.0) * momentCentered.get(1, 2) *
     featureMomentCentered.interaction(3, 0) -
     momentCentered.get(3, 0) * featureMomentCentered.interaction(1, 2) *
-    pow((double)momentCentered.get(0, 3), (double)2) -
-    4 * pow((double)momentCentered.get(2, 1), (double)2) * momentCentered.get(0, 3) *
+    pow((double)momentCentered.get(0, 3), 2.0) -
+    4 * pow((double)momentCentered.get(2, 1), 2.0) * momentCentered.get(0, 3) *
     featureMomentCentered.interaction(0, 3) -
-    3 * momentCentered.get(2, 1) * pow((double)momentCentered.get(0, 3), (double)2) *
+    3 * momentCentered.get(2, 1) * pow((double)momentCentered.get(0, 3), 2.0) *
     featureMomentCentered.interaction(0, 3) +
-    2 * momentCentered.get(3, 0) * pow((double)momentCentered.get(2, 1), (double)2) *
+    2 * momentCentered.get(3, 0) * pow((double)momentCentered.get(2, 1), 2.0) *
     featureMomentCentered.interaction(3, 0) +
-    2 * pow((double)momentCentered.get(3, 0), (double)2) * momentCentered.get(2, 1) *
+    2 * pow((double)momentCentered.get(3, 0), 2.0) * momentCentered.get(2, 1) *
     featureMomentCentered.interaction(2, 1) +
-    3 * featureMomentCentered.interaction(3, 0) * pow((double)momentCentered.get(2, 1), (double)2) *
+    3 * featureMomentCentered.interaction(3, 0) * pow((double)momentCentered.get(2, 1), 2.0) *
     momentCentered.get(1, 2) -
-    pow((double)momentCentered.get(3, 0), (double)2) * momentCentered.get(2, 1) *
+    pow((double)momentCentered.get(3, 0), 2.0) * momentCentered.get(2, 1) *
     featureMomentCentered.interaction(0, 3) +
-    3 * momentCentered.get(2, 1) * pow((double)momentCentered.get(1, 2), (double)2) *
+    3 * momentCentered.get(2, 1) * pow((double)momentCentered.get(1, 2), 2.0) *
     featureMomentCentered.interaction(0, 3) -
     featureMomentCentered.interaction(3, 0) * momentCentered.get(1, 2) *
-    pow((double)momentCentered.get(0, 3), (double)2);
+    pow((double)momentCentered.get(0, 3), 2.0);
 
   LI[9] = 4 * pow(momentCentered.get(3, 0), 3) * featureMomentCentered.interaction(3, 0) +
     18 * momentCentered.get(1, 2) * pow(momentCentered.get(3, 0), 2) * featureMomentCentered.interaction(3, 0) +
@@ -597,13 +599,13 @@ BEGIN_VISP_NAMESPACE
   double I2 = momentCInvariant.getII(2);
   double I3 = momentCInvariant.getII(3);
 
-  vpMatrix Lmu20__Lmu02 = Lmu20 - Lmu02;
-  double mu20__mu02 = mu20 - mu02;
+  vpMatrix Lmu20_Lmu02 = Lmu20 - Lmu02;
+  double mu20_mu02 = mu20 - mu02;
   vpMatrix Lc2 = Lmu03 - 3 * Lmu21;
   vpMatrix Ls2 = Lmu30 - 3 * Lmu12;
-  vpMatrix Lc3 = 2 * (mu20__mu02) * (Lmu20__Lmu02)-8. * mu11 * Lmu11;
-  vpMatrix Ls3 = 4 * Lmu11 * (mu20__mu02)+4 * mu11 * (Lmu20__Lmu02);
-  vpMatrix LI1 = 2 * (mu20__mu02) * (Lmu20__Lmu02)+8 * mu11 * Lmu11;
+  vpMatrix Lc3 = 2 * (mu20_mu02) * (Lmu20_Lmu02)-8. * mu11 * Lmu11;
+  vpMatrix Ls3 = 4 * Lmu11 * (mu20_mu02)+4 * mu11 * (Lmu20_Lmu02);
+  vpMatrix LI1 = 2 * (mu20_mu02) * (Lmu20_Lmu02)+8 * mu11 * Lmu11;
   vpMatrix LI2 = 2 * (mu03 - 3 * mu21) * (Lc2)+2 * (mu30 - 3 * mu12) * (Ls2);
   vpMatrix LI3 = Lmu20 + Lmu02;
 

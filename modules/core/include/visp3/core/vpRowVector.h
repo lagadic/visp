@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -143,7 +143,7 @@ public:
   VP_EXPLICIT vpRowVector(const std::initializer_list<double> &list) : vpArray2D<double>(list) { }
 #endif
 
-  static vpRowVector view(double *data, unsigned int cols);
+  static vpRowVector view(double *raw_data, unsigned int ncols);
 
   /*!
     Removes all elements from the vector (which are destroyed),
@@ -269,7 +269,7 @@ public:
   vpRowVector &operator<<(double val);
   vpRowVector &operator,(double val);
 
-  int print(std::ostream &s, unsigned int length, char const *intro = 0) const;
+  int print(std::ostream &s, unsigned int length, char const *intro = nullptr) const;
   /*!
     Convert a column vector containing angles in radians into degrees.
     \sa deg2rad()

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,16 +34,16 @@
 /*!
   \example testKeyPoint-6.cpp
 
-  \brief   Test descriptor extraction.
+  \brief Test descriptor extraction.
 */
 
 #include <iostream>
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO) && \
-  ((VISP_HAVE_OPENCV_VERSION < 0x050000)  && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_FEATURES2D)) || \
-  ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D) && defined(HAVE_OPENCV_FEATURES))
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO) && \
+  (((VISP_HAVE_OPENCV_VERSION < 0x050000)  && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_FEATURES2D)) || \
+   ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D) && defined(HAVE_OPENCV_FEATURES)))
 
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpIoTools.h>
@@ -215,16 +215,22 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
   vpKeyPoint keyPoints;
 
   std::vector<std::string> descriptorNames;
-#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_XFEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
+#if defined(VISP_HAVE_OPENCV) && \
+    (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_XFEATURES2D)) || \
+     ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES)))
   descriptorNames.push_back("SIFT");
 #endif
 #if defined(HAVE_OPENCV_NONFREE) || defined(HAVE_OPENCV_XFEATURES2D)
   descriptorNames.push_back("SURF");
 #endif
-#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
+#if defined(VISP_HAVE_OPENCV) && \
+    (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || \
+     ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES)))
   descriptorNames.push_back("ORB");
 #endif
-#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_XFEATURES2D))
+#if defined(VISP_HAVE_OPENCV) && \
+    (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || \
+     ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_XFEATURES2D)))
   descriptorNames.push_back("BRISK");
 #endif
 #if defined(HAVE_OPENCV_XFEATURES2D)
@@ -233,17 +239,21 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
   descriptorNames.push_back("DAISY");
   descriptorNames.push_back("LATCH");
 #endif
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030200) && defined(HAVE_OPENCV_XFEATURES2D)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x030200) && defined(HAVE_OPENCV_XFEATURES2D)
   descriptorNames.push_back("VGG");
   descriptorNames.push_back("BoostDesc");
 #endif
-#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_XFEATURES2D))
+#if defined(VISP_HAVE_OPENCV) && \
+    (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || \
+     ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_XFEATURES2D)))
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
   descriptorNames.push_back("KAZE");
   descriptorNames.push_back("AKAZE");
 #endif
 #endif
-#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
+#if defined(VISP_HAVE_OPENCV) && \
+    (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || \
+     ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES)))
   std::string detectorName = "FAST";
 #endif
   keyPoints.setDetector(detectorName);
@@ -283,7 +293,7 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
       }
     }
     else if (*itd == "BoostDesc") {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030200) && defined(HAVE_OPENCV_XFEATURES2D)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x030200) && defined(HAVE_OPENCV_XFEATURES2D)
       cv::Ptr<cv::Feature2D> boostDesc = keyPoints.getExtractor("BoostDesc");
       // Init BIN BOOST descriptor for FAST keypoints
       boostDesc = cv::xfeatures2d::BoostDesc::create(cv::xfeatures2d::BoostDesc::BINBOOST_256, true, 5.0f);
@@ -352,7 +362,7 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
       }
     }
     else if (mapOfDescriptorNames[(vpKeyPoint::vpFeatureDescriptorType)i] == "BoostDesc") {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030200) && defined(HAVE_OPENCV_XFEATURES2D)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x030200) && defined(HAVE_OPENCV_XFEATURES2D)
       detectorName = "FAST";
       keyPoints.setDetector(detectorName);
       keyPoints.detect(I, kpts);

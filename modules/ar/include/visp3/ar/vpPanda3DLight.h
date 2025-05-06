@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,6 +70,8 @@ public:
    */
   vpPanda3DLight(const std::string &name, const vpRGBf &color) : m_name(name), m_color(color) { }
 
+  virtual ~vpPanda3DLight() = default;
+
   /**
    * \brief Get the name of the light.
    *
@@ -110,6 +112,8 @@ class VISP_EXPORT vpPanda3DAmbientLight : public vpPanda3DLight
 {
 public:
   vpPanda3DAmbientLight(const std::string &name, const vpRGBf &color) : vpPanda3DLight(name, color) { }
+
+  virtual ~vpPanda3DAmbientLight() = default;
 
   void addToScene(NodePath &scene) const VP_OVERRIDE
   {
@@ -159,6 +163,8 @@ public:
     }
   }
 
+  virtual ~vpPanda3DPointLight() = default;
+
   void addToScene(NodePath &scene) const VP_OVERRIDE
   {
     PT(PointLight) light = new PointLight(m_name);
@@ -204,6 +210,8 @@ public:
     m_direction.normalize();
   }
 
+  virtual ~vpPanda3DDirectionalLight() = default;
+
   void addToScene(NodePath &scene) const VP_OVERRIDE
   {
     PT(DirectionalLight) light = new DirectionalLight(m_name);
@@ -248,6 +256,8 @@ public:
 
   vpPanda3DLightableScene(NodePath &scene) : vpPanda3DLightable(), m_lightableScene(scene)
   { }
+
+  virtual ~vpPanda3DLightableScene() = default;
 
   /**
    * \brief Add a light to the scene. All of the objects in the scene will be lit.

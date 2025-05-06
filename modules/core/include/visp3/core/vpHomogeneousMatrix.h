@@ -390,7 +390,7 @@ public:
    * 4-by-4 matrix.
    * \exception vpException::fatalError When this function is called.
    */
-  void resize(unsigned int nrows, unsigned int ncols, bool flagNullify = true)
+  VP_NORETURN void resize(unsigned int nrows, unsigned int ncols, bool flagNullify = true)
   {
     (void)nrows;
     (void)ncols;

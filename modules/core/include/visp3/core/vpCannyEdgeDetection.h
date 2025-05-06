@@ -405,6 +405,13 @@ private:
   std::vector<vpImagePoint> m_edgePointsList; /*!< List of the edge points that belong to the final edge map.*/
   const vpImage<bool> *mp_mask; /*!< Mask that permits to consider only the pixels for which the mask is true.*/
 
+  float getGradientOrientation(const vpImage<float> &dIx, const vpImage<float> &dIy, const int &row, const int &col);
+
+  void getInterpolWeightsAndOffsets(const float &gradientOrientation, float &alpha, float &beta,
+                                    int &dRowGradAlpha, int &dRowGradBeta, int &dColGradAlpha, int &dColGradBeta);
+
+  float getManhattanGradient(const vpImage<float> &dIx, const vpImage<float> &dIy, const int &row, const int &col);
+
   /** @name Constructors and initialization */
   //@{
   /**

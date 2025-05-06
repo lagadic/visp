@@ -214,7 +214,7 @@ BEGIN_VISP_NAMESPACE
   \param area_w : Width or the area in which a dot is searched.
   \param area_h : Height or the area in which a dot is searched.
 
-  \param niceDots: List of the dots that are found.
+  \param niceDots : List of the dots that are found.
 
   \warning Allocates memory for the list of vpDot2 returned by this method.
   Desallocation has to be done by yourself, see searchDotsInArea()

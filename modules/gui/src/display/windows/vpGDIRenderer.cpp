@@ -145,7 +145,8 @@ void vpGDIRenderer::setImg(const vpImage<vpRGBa> &I)
   Sets the image to display.
   \param I : The rgba image to display.
   \param iP : Top left coordinates of the ROI.
-  \param width, height : ROI width and height.
+  \param width : ROI width.
+  \param height : ROI height.
 */
 void vpGDIRenderer::setImgROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, unsigned int width, unsigned int height)
 {
@@ -167,7 +168,8 @@ void vpGDIRenderer::setImg(const vpImage<unsigned char> &I)
   Sets the image to display.
   \param I : The rgba image to display.
   \param iP : Top left coordinates of the ROI.
-  \param width, height : ROI width and height.
+  \param width : ROI width.
+  \param height : ROI height.
 */
 void vpGDIRenderer::setImgROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int width,
                               unsigned int height)
@@ -248,15 +250,16 @@ void vpGDIRenderer::convert(const vpImage<vpRGBa> &I, HBITMAP &hBmp)
   Converts the image form ViSP in GDI's image format (bgra with padding).
   \param I : The image to convert.
   \param iP : Top left coordinates of the ROI.
-  \param width, height : ROI width and height.
+  \param width : ROI width.
+  \param height : ROI height.
 */
 void vpGDIRenderer::convertROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, unsigned int width,
                                unsigned int height)
 {
-  int i_min = std::max<int>((int)ceil(iP.get_i() / m_rscale), 0);
-  int j_min = std::max<int>((int)ceil(iP.get_j() / m_rscale), 0);
-  int i_max = std::min<int>((int)ceil((iP.get_i() + height) / m_rscale), (int)m_rheight);
-  int j_max = std::min<int>((int)ceil((iP.get_j() + width) / m_rscale), (int)m_rwidth);
+  int i_min = std::max<int>(static_cast<int>(ceil(iP.get_i() / m_rscale)), 0);
+  int j_min = std::max<int>(static_cast<int>(ceil(iP.get_j() / m_rscale)), 0);
+  int i_max = std::min<int>(static_cast<int>(ceil((iP.get_i() + height) / m_rscale)), static_cast<int>(m_rheight));
+  int j_max = std::min<int>(static_cast<int>(ceil((iP.get_j() + width) / m_rscale)), static_cast<int>(m_rwidth));
 
   int h = i_max - i_min;
   int w = j_max - j_min;
@@ -267,7 +270,7 @@ void vpGDIRenderer::convertROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP,
   if (m_rscale == 1) {
     vpRGBa *bitmap = I.bitmap;
     unsigned int iwidth = I.getWidth();
-    bitmap = bitmap + (int)(i_min * iwidth + j_min);
+    bitmap = bitmap + static_cast<int>(i_min * iwidth + j_min);
 
     int k = 0;
     for (int i = 0; i < w * h * 4; i += 4) {
@@ -349,15 +352,16 @@ void vpGDIRenderer::convert(const vpImage<unsigned char> &I, HBITMAP &hBmp)
   Converts the image form ViSP in GDI's image format (bgra with padding).
   \param I The image to convert.
   \param iP : Top left coordinates of the ROI.
-  \param width, height : ROI width and height.
+  \param width : ROI width.
+  \param height : ROI height.
 */
 void vpGDIRenderer::convertROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int width,
                                unsigned int height)
 {
-  int i_min = std::max<int>((int)ceil(iP.get_i() / m_rscale), 0);
-  int j_min = std::max<int>((int)ceil(iP.get_j() / m_rscale), 0);
-  int i_max = std::min<int>((int)ceil((iP.get_i() + height) / m_rscale), (int)m_rheight);
-  int j_max = std::min<int>((int)ceil((iP.get_j() + width) / m_rscale), (int)m_rwidth);
+  int i_min = std::max<int>(static_cast<int>(ceil(iP.get_i() / m_rscale)), 0);
+  int j_min = std::max<int>(static_cast<int>(ceil(iP.get_j() / m_rscale)), 0);
+  int i_max = std::min<int>(static_cast<int>(ceil((iP.get_i() + height) / m_rscale)), static_cast<int>(m_rheight));
+  int j_max = std::min<int>(static_cast<int>(ceil((iP.get_j() + width) / m_rscale)), static_cast<int>(m_rwidth));
 
   int h = i_max - i_min;
   int w = j_max - j_min;
@@ -442,10 +446,11 @@ bool vpGDIRenderer::updateBitmap(HBITMAP &hBmp, unsigned char *imBuffer, unsigne
 /*!
   Updates the bitmap to display.
   Contains a critical section.
-  \param imBuffer The new pixel data
-  \param iP The topleft corner of the roi
-  \param w The roi's width
-  \param h The roi's height
+  \param imBuffer The new pixel data.
+  \param i_min The topleft corner i coordinate (along the rows) of the roi.
+  \param j_min The topleft corner j coordinate (along the columns) of the roi.
+  \param w The roi's width.
+  \param h The roi's height.
 
   \return the operation succefulness
 */
@@ -506,10 +511,11 @@ void vpGDIRenderer::setPixel(const vpImagePoint &iP, const vpColor &color)
 
 /*!
   Draws a line.
-  \param ip1,ip2 : Initial and final image point.
-  \param color the line's color
+  \param ip1 : Initial image point.
+  \param ip2 : Final image point.
+  \param color : The line's color.
   \param thickness : Thickness of the line.
-  \param style style of the line
+  \param style Style of the line.
 */
 void vpGDIRenderer::drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color,
                              unsigned int thickness, int style)
@@ -599,7 +605,7 @@ void vpGDIRenderer::drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2, c
 
     double size = 10. * m_rscale;
     double length = sqrt(vpMath::sqr(ip2_.get_i() - ip1_.get_i()) + vpMath::sqr(ip2_.get_j() - ip1_.get_j()));
-    bool vertical_line = (int)ip2_.get_j() == (int)ip1_.get_j();
+    bool vertical_line = static_cast<int>(ip2_.get_j()) == static_cast<int>(ip1_.get_j());
     if (vertical_line) {
       if (ip2_.get_i() < ip1_.get_i()) {
         std::swap(ip1_, ip2_);
@@ -616,7 +622,7 @@ void vpGDIRenderer::drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2, c
     double orig = ip1_.get_i() - slope * ip1_.get_j();
 
     if (vertical_line) {
-      for (unsigned int i = (unsigned int)ip1_.get_i(); i < ip2_.get_i(); i += (unsigned int)(2 * deltai)) {
+      for (unsigned int i = static_cast<unsigned int>(ip1_.get_i()); i < ip2_.get_i(); i += static_cast<unsigned int>(2 * deltai)) {
         double j = ip1_.get_j();
 
         // Move to the starting point
@@ -626,7 +632,7 @@ void vpGDIRenderer::drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2, c
       }
     }
     else {
-      for (unsigned int j = (unsigned int)ip1_.get_j(); j < ip2_.get_j(); j += (unsigned int)(2 * deltaj)) {
+      for (unsigned int j = static_cast<unsigned int>(ip1_.get_j()); j < ip2_.get_j(); j += static_cast<unsigned int>(2 * deltaj)) {
         double i = slope * j + orig;
         // Move to the starting point
         MoveToEx(hDCMem, vpMath::round(j / m_rscale), vpMath::round(i / m_rscale), nullptr);
@@ -830,7 +836,7 @@ void vpGDIRenderer::drawText(const vpImagePoint &ip, const char *text, const vpC
   SetBkMode(hDCMem, TRANSPARENT);
 
   SIZE size;
-  int length = (int)strlen(text);
+  int length = static_cast<int>(strlen(text));
 
   // get the displayed string dimensions
   GetTextExtentPoint32(hDCMem, text, length, &size);
@@ -908,10 +914,12 @@ void vpGDIRenderer::drawCross(const vpImagePoint &ip, unsigned int size, const v
 
 /*!
   Draws an arrow.
-  \param ip1,ip2 : Initial and final image point.
-  \param color The arrow's color
-  \param w,h : Width and height of the arrow.
-  \param thickness : Thickness of the lines used to display the arrow.
+  \param[in] ip1 It's starting point coordinates.
+  \param[in] ip2 It's ending point coordinates.
+  \param[in] color The line's color.
+  \param[in] w Arrow width.
+  \param[in] h Arrow height.
+  \param[in] thickness Thickness of the drawing
 */
 void vpGDIRenderer::drawArrow(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int w,
                               unsigned int h, unsigned int thickness)
@@ -1030,5 +1038,5 @@ END_VISP_NAMESPACE
 #endif
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_gui.a(vpGDIRenderer.cpp.o) has no symbols
-void dummy_vpGDIRenderer() { };
+void dummy_vpGDIRenderer() { }
 #endif

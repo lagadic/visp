@@ -178,15 +178,15 @@ SoSeparator *createFrame(float longueurFleche = LONGUEUR_FLECHE, float proportio
 
   SoRotationXYZ *rotationY_X = new SoRotationXYZ;
   rotationY_X->axis = SoRotationXYZ::Z;
-  rotationY_X->angle.setValue((float)(-M_PI / 2));
+  rotationY_X->angle.setValue(static_cast<float>(-M_PI / 2));
 
   SoRotationXYZ *rotationX_Y = new SoRotationXYZ;
   rotationX_Y->axis = SoRotationXYZ::Z;
-  rotationX_Y->angle.setValue((float)(M_PI / 2));
+  rotationX_Y->angle.setValue(static_cast<float>(M_PI / 2));
 
   SoRotationXYZ *rotationY_Z = new SoRotationXYZ;
   rotationY_Z->axis = SoRotationXYZ::X;
-  rotationY_Z->angle.setValue((float)(M_PI / 2));
+  rotationY_Z->angle.setValue(static_cast<float>(M_PI / 2));
 
   SoMaterial *rouge = new SoMaterial;
   rouge->diffuseColor.setValue(1.0, 0.0, 0.0);
@@ -470,7 +470,7 @@ void vpSimulator::initInternalViewer(unsigned int width, unsigned int height)
   // Turn the viewer decorations
   internalView->setDecoration(false);
 
-  internalView->resize((int)width, (int)height, true);
+  internalView->resize(static_cast<int>(width), static_cast<int>(height), true);
 
   // open the window
   internalView->show();
@@ -496,7 +496,7 @@ void vpSimulator::initExternalViewer(unsigned int width, unsigned int height)
 
   // set the title
   externalView->setTitle("External View");
-  externalView->resize((int)width, (int)height, false);
+  externalView->resize(static_cast<int>(width), static_cast<int>(height), false);
   // the goal here is to see all the scene and not to determine
   // a manual viewpoint
   externalView->viewAll();
@@ -509,8 +509,8 @@ void vpSimulator::setInternalCameraParameters(vpCameraParameters &_cam)
 {
   internalCameraParameters = _cam;
 
-  float px = (float)_cam.get_px();
-  float py = (float)_cam.get_py();
+  float px = static_cast<float>(_cam.get_px());
+  float py = static_cast<float>(_cam.get_py());
   float v = internal_height / (2.f * py);
 
   internalCamera->ref();
@@ -528,8 +528,8 @@ void vpSimulator::setExternalCameraParameters(vpCameraParameters &_cam)
   //   camera  = (SoPerspectiveCamera *)this->externalView->getCamera() ;
   externalCameraParameters = _cam;
 
-  float px = (float)_cam.get_px();
-  float py = (float)_cam.get_py();
+  float px = static_cast<float>(_cam.get_px());
+  float py = static_cast<float>(_cam.get_py());
   float v = external_height / (2 * py);
 
   externalCamera->ref();
@@ -562,11 +562,13 @@ void vpSimulator::getExternalCameraPosition(vpHomogeneousMatrix &cMf)
 
   vpHomogeneousMatrix fMc;
   SbMatrix rotX;
-  rotX.setRotate(SbRotation(SbVec3f(1.0f, 0.0f, 0.0f), (float)M_PI));
+  rotX.setRotate(SbRotation(SbVec3f(1.0f, 0.0f, 0.0f), static_cast<float>(M_PI)));
   matrix.multLeft(rotX);
-  for (unsigned int i = 0; i < 4; i++)
-    for (unsigned int j = 0; j < 4; j++)
-      fMc[j][i] = matrix[(int)i][(int)j];
+  for (unsigned int i = 0; i < 4; i++) {
+    for (unsigned int j = 0; j < 4; j++) {
+      fMc[j][i] = matrix[static_cast<int>(i)][static_cast<int>(j)];
+    }
+  }
   fMc[0][3] = t[0];
   fMc[1][3] = t[1];
   fMc[2][3] = t[2];
@@ -585,10 +587,10 @@ void vpSimulator::moveInternalCamera(vpHomogeneousMatrix &cMf)
   SbMatrix matrix;
   SbRotation rotCam;
   SbMatrix rotX;
-  rotX.setRotate(SbRotation(SbVec3f(1.0f, 0.0f, 0.0f), (float)M_PI));
+  rotX.setRotate(SbRotation(SbVec3f(1.0f, 0.0f, 0.0f), static_cast<float>(M_PI)));
   for (unsigned int i = 0; i < 4; i++)
     for (unsigned int j = 0; j < 4; j++)
-      matrix[(int)j][(int)i] = (float)cMf[i][j];
+      matrix[static_cast<int>(j)][static_cast<int>(i)] = static_cast<float>(cMf[i][j]);
 
   matrix = matrix.inverse();
   matrix.multLeft(rotX);
@@ -599,7 +601,7 @@ void vpSimulator::moveInternalCamera(vpHomogeneousMatrix &cMf)
   internalCamera->position.setValue(matrix[3][0], matrix[3][1], matrix[3][2]);
   internalCamera->unref();
 
-  rotX.setRotate(SbRotation(SbVec3f(-1.0f, 0.0f, 0.0f), (float)M_PI));
+  rotX.setRotate(SbRotation(SbVec3f(-1.0f, 0.0f, 0.0f), static_cast<float>(M_PI)));
   matrix.multLeft(rotX);
   rotCam.setValue(matrix);
   internalCameraPosition->ref();
@@ -803,7 +805,7 @@ void vpSimulator::addObject(SoSeparator *object, const vpHomogeneousMatrix &fMo,
     SbRotation rotation;
     for (unsigned int i = 0; i < 4; i++)
       for (unsigned int j = 0; j < 4; j++)
-        matrix[(int)j][(int)i] = (float)fMo[i][j];
+        matrix[static_cast<int>(j)][static_cast<int>(i)] = static_cast<float>(fMo[i][j]);
 
     //  matrix= matrix.inverse();
     rotation.setValue(matrix);
@@ -1002,5 +1004,5 @@ void vpSimulator::getInternalImage(vpImage<unsigned char> &I)
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_ar.a(vpSimulator.cpp.o) has no symbols
-void dummy_vpSimulator() { };
+void dummy_vpSimulator() { }
 #endif

@@ -57,7 +57,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath);
 
   \param name : Program name.
   \param badparam : Bad parameter name.
-  \param ipath: Input image path.
+  \param ipath : Input image path.
  */
 void usage(const char *name, const char *badparam, std::string ipath)
 {
@@ -93,7 +93,7 @@ OPTIONS:                                               Default\n\
 
   \param argc : Command line number of parameters.
   \param argv : Array of command line parameters.
-  \param ipath: Input image path.
+  \param ipath : Input image path.
   \return false if the program has to be stopped, true otherwise.
 */
 bool getOptions(int argc, const char **argv, std::string &ipath)

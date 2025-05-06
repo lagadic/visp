@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/sensor/vpRealSense2.h>
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x030000
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x030000)
 #include <opencv2/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #endif
@@ -209,7 +209,7 @@ void getNativeFrame(const rs2::frame &frame, unsigned char *const data)
   }
 }
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x030000
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x030000)
 void frame_to_mat(const rs2::frame &f, cv::Mat &img)
 {
   auto vf = f.as<rs2::video_frame>();
@@ -274,15 +274,15 @@ int main(int argc, char *argv[])
 
   rs2::pipeline_profile &profile = rs.getPipelineProfile();
   auto color_profile = profile.get_stream(RS2_STREAM_COLOR).as<rs2::video_stream_profile>();
-  vpImage<vpRGBa> color((unsigned int)color_profile.height(), (unsigned int)color_profile.width());
+  vpImage<vpRGBa> color(static_cast<unsigned int>(color_profile.height()), static_cast<unsigned int>(color_profile.width()));
 
   auto depth_profile = profile.get_stream(RS2_STREAM_DEPTH).as<rs2::video_stream_profile>();
-  vpImage<vpRGBa> depth_color((unsigned int)depth_profile.height(), (unsigned int)depth_profile.width());
-  vpImage<uint16_t> depth_raw((unsigned int)depth_profile.height(), (unsigned int)depth_profile.width());
+  vpImage<vpRGBa> depth_color(static_cast<unsigned int>(depth_profile.height()), static_cast<unsigned int>(depth_profile.width()));
+  vpImage<uint16_t> depth_raw(static_cast<unsigned int>(depth_profile.height()), static_cast<unsigned int>(depth_profile.width()));
 
   auto infrared_profile = profile.get_stream(RS2_STREAM_INFRARED).as<rs2::video_stream_profile>();
-  vpImage<unsigned char> infrared((unsigned int)infrared_profile.height(), (unsigned int)infrared_profile.width());
-  vpImage<uint16_t> infrared_raw((unsigned int)infrared_profile.height(), (unsigned int)infrared_profile.width());
+  vpImage<unsigned char> infrared(static_cast<unsigned int>(infrared_profile.height()), static_cast<unsigned int>(infrared_profile.width()));
+  vpImage<uint16_t> infrared_raw(static_cast<unsigned int>(infrared_profile.height()), static_cast<unsigned int>(infrared_profile.width()));
 
 #ifdef VISP_HAVE_X11
   vpDisplayX d1, d2, d3;
@@ -399,14 +399,14 @@ int main(int argc, char *argv[])
   rs.open(config);
 
   color_profile = profile.get_stream(RS2_STREAM_COLOR).as<rs2::video_stream_profile>();
-  color.init((unsigned int)color_profile.height(), (unsigned int)color_profile.width());
+  color.init(static_cast<unsigned int>(color_profile.height()), static_cast<unsigned int>(color_profile.width()));
 
   depth_profile = profile.get_stream(RS2_STREAM_DEPTH).as<rs2::video_stream_profile>();
-  depth_color.init((unsigned int)depth_profile.height(), (unsigned int)depth_profile.width());
-  depth_raw.init((unsigned int)depth_profile.height(), (unsigned int)depth_profile.width());
+  depth_color.init(static_cast<unsigned int>(depth_profile.height()), static_cast<unsigned int>(depth_profile.width()));
+  depth_raw.init(static_cast<unsigned int>(depth_profile.height()), static_cast<unsigned int>(depth_profile.width()));
 
   infrared_profile = profile.get_stream(RS2_STREAM_INFRARED).as<rs2::video_stream_profile>();
-  infrared.init((unsigned int)infrared_profile.height(), (unsigned int)infrared_profile.width());
+  infrared.init(static_cast<unsigned int>(infrared_profile.height()), static_cast<unsigned int>(infrared_profile.width()));
 
   d1.init(color, 0, 0, "Color");
   d2.init(depth_color, color.getWidth(), 0, "Depth");
@@ -498,7 +498,7 @@ int main(int argc, char *argv[])
   std::cout << "Acquisition2 - Mean time: " << vpMath::getMean(time_vector)
     << " ms ; Median time: " << vpMath::getMedian(time_vector) << " ms" << std::endl;
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x030000
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x030000)
   rs.close();
   config.disable_all_streams();
   config.enable_stream(RS2_STREAM_COLOR, 640, 480, RS2_FORMAT_BGR8, 60);

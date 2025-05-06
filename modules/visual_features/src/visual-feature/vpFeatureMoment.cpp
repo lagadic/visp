@@ -58,7 +58,7 @@ void vpFeatureMoment::init()
    * cannot be used directly as a visual feature.
    */
   if (this->moment != nullptr)
-    dim_s = (unsigned int)this->moment->get().size();
+    dim_s = static_cast<unsigned int>(this->moment->get().size());
   else
     dim_s = 0;
 
@@ -159,7 +159,7 @@ void vpFeatureMoment::update(double A_, double B_, double C_)
   }
   nbParameters = 1;
   if (this->moment != nullptr) {
-    dim_s = (unsigned int)this->moment->get().size();
+    dim_s = static_cast<unsigned int>(this->moment->get().size());
 
     s.resize(dim_s);
 
@@ -225,8 +225,9 @@ vpBasicFeature *vpFeatureMoment::duplicate() const
   for (unsigned int i = 0; i < dim_s; i++)
     feat->s[i] = this->s[i];
 
-  feat->flags = new bool[(unsigned int)nbParameters];
-  for (unsigned int i = 0; i < (unsigned int)nbParameters; i++)
+  unsigned int n = static_cast<unsigned int>(nbParameters);
+  feat->flags = new bool[n];
+  for (unsigned int i = 0; i < n; i++)
     feat->flags[i] = flags[i];
 
   return feat;

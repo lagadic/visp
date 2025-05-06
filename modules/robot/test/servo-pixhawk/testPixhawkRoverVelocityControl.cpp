@@ -89,7 +89,7 @@ int main(int argc, char **argv)
   double delta_down = 0.;
   double delta_yaw = 0.;
 
-  std::cout << "Move 1 meter north" << std::endl;;
+  std::cout << "Move 1 meter north" << std::endl;
   robot.setPositionRelative(delta_north, delta_east, delta_down, delta_yaw);
 
   vpColVector frd_vel { 0.0, 0.0, 0.0, 0.0 };

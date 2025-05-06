@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -210,8 +210,9 @@ public:
 
   /*!
     Clamp a value to boundaries.
-    \param v : The value to clamp.
-    \param lower, upper : The boundaries to clamp `v` to.
+    \param[in] v : The value to clamp.
+    \param[in] lower : The lower boundary to clamp `v` to.
+    \param[in] upper : The upper boundary to clamp `v` to.
 
     Throw a vpException if the value of `lower` is greater than `upper`.
   */
@@ -238,9 +239,11 @@ public:
 
   // test if a number equals 0 (with threshold value)
   static inline bool nul(double x, double threshold = 0.001);
+  static inline bool nul(float x, float threshold = 0.001f);
 
   // test if two numbers are equals (with a user defined threshold)
   static inline bool equal(double x, double y, double threshold = 0.001);
+  static inline bool equal(float x, float y, float threshold = 0.001f);
 
   // test if a number is greater than another (with a user defined threshold)
   static inline bool greater(double x, double y, double threshold = 0.001);
@@ -450,6 +453,14 @@ int vpMath::sign(double x)
 bool vpMath::nul(double x, double threshold) { return (fabs(x) < threshold); }
 
 /*!
+  Compares \f$ | x | \f$ to `threshold`.
+  \param x : Value to test.
+  \param threshold : Tolerance threshold
+  \return true if \f$ | x | <\f$ `threshold`.
+*/
+bool vpMath::nul(float x, float threshold) { return (fabs(x) < threshold); }
+
+/*!
   Compares \f$ | x - y | \f$ to `threshold`.
   \param x : x value.
   \param y : y value.
@@ -457,6 +468,15 @@ bool vpMath::nul(double x, double threshold) { return (fabs(x) < threshold); }
   \return true if \f$ | x - y | <\f$ `threshold`.
 */
 bool vpMath::equal(double x, double y, double threshold) { return (nul(x - y, threshold)); }
+
+/*!
+  Compares \f$ | x - y | \f$ to `threshold`.
+  \param x : x value.
+  \param y : y value.
+  \param threshold : Tolerance threshold.
+  \return true if \f$ | x - y | <\f$ `threshold`.
+*/
+bool vpMath::equal(float x, float y, float threshold) { return (nul(x - y, threshold)); }
 
 /*!
   Compares \f$ x \f$ to \f$ y -\f$ `threshold`.
@@ -496,9 +516,9 @@ template <> inline unsigned char vpMath::saturate<unsigned char>(char v)
 {
   // On big endian arch like powerpc, char implementation is unsigned
   // with CHAR_MIN=0, CHAR_MAX=255 and SCHAR_MIN=-128, SCHAR_MAX=127
-  // leading to (int)(char -127) = 129.
+  // leading to static_cast<int>(char -127) = 129.
   // On little endian arch, CHAR_MIN=-127 and CHAR_MAX=128 leading to
-  // (int)(char -127) = -127.
+  // static_cast<int>(char -127) = -127.
   if (std::numeric_limits<char>::is_signed) {
     return static_cast<unsigned char>(std::max<int>(static_cast<int>(v), 0));
   }
@@ -567,7 +587,7 @@ template <> inline char vpMath::saturate<char>(unsigned int v)
 
 template <> inline char vpMath::saturate<char>(float v)
 {
-  int iv = vpMath::round(v);
+  int iv = vpMath::round(static_cast<double>(v));
   return saturate<char>(iv);
 }
 
@@ -582,9 +602,9 @@ template <> inline unsigned short vpMath::saturate<unsigned short>(char v)
 {
   // On big endian arch like powerpc, char implementation is unsigned
   // with CHAR_MIN=0, CHAR_MAX=255 and SCHAR_MIN=-128, SCHAR_MAX=127
-  // leading to (int)(char -127) = 129.
+  // leading to static_cast<int>(char -127) = 129.
   // On little endian arch, CHAR_MIN=-127 and CHAR_MAX=128 leading to
-  // (int)(char -127) = -127.
+  // static_cast<int>(char -127) = -127.
   if (std::numeric_limits<char>::is_signed) {
     return static_cast<unsigned short>(std::max<int>(static_cast<int>(v), 0));
   }

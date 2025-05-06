@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -542,18 +542,18 @@ void vpFeatureSegment::display(const vpCameraParameters &cam, const vpImage<vpRG
 /*!
  * Build a segment visual feature from two points and their Z coordinates.
  *
- * \param x1, y1 : coordinates of the first point in the image plane.
- * \param Z1 : depth of the first point in the camera frame.
+ * \param x1 : Coordinates \f$ x \f$ of the first point in the image plane.
+ * \param y1 : Coordinates \f$ y \f$ of the first point in the image plane.
+ * \param Z1 : Depth of the first point in the camera frame.
  *
- * \param x2, y2 : coordinates of the second point in the image plane.
+ * \param x2 : Coordinates \f$ x \f$  of the second point in the image plane.
+ * \param y2 : Coordinates \f$ y \f$  of the second point in the image plane.
  * \param Z2 : depth of the second point in the camera frame.
  *
- * Depending on the feature set that is considered, the features \f${\bf s} =
- * (x_c, y_c, l, \alpha)\f$ or \f${\bf s} = (x_n, y_n, l_n, \alpha)\f$ are
- * computed from the two points using the following formulae: \f[ x_c =
- * \frac{x_1 + x_2}{2} \f] \f[ y_c = \frac{y_1 + y_2}{2} \f] \f[ l = \sqrt{{x_1
- * - x_2}^2 + {y_1 - y_2}^2} \f] \f[ \alpha = arctan(\frac{y_1 - y_2}{x_1 -
- * x_2}) \f]
+ * Depending on the feature set that is considered, the features \f ${\bf s} = (x_c, y_c, l, \alpha) \f$ or
+ * \f$ {\bf s} = (x_n, y_n, l_n, \alpha) \f$ are computed from the two points using the following formulae:
+ * \f[ x_c = \frac{x_1 + x_2}{2} \f] \f[ y_c = \frac{y_1 + y_2}{2} \f] \f[ l = \sqrt{{x_1
+ * - x_2}^2 + {y_1 - y_2}^2} \f] \f[ \alpha = arctan(\frac{y_1 - y_2}{x_1 - x_2}) \f]
  */
 vpFeatureSegment &vpFeatureSegment::buildFrom(const double &x1, const double &y1, const double &Z1, const double &x2, const double &y2, const double &Z2)
 {

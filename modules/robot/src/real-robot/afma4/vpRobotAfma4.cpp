@@ -1663,7 +1663,7 @@ bool vpRobotAfma4::savePosFile(const std::string &filename, const vpColVector &q
   Moves the robot to the joint position specified in the filename. The
   positioning velocity is set to 10% of the robot maximal velocity.
 
-  \param filename: File containing a joint position.
+  \param filename : File containing a joint position.
 
   \sa readPosFile
 
@@ -1756,5 +1756,5 @@ void vpRobotAfma4::getDisplacement(vpRobot::vpControlFrameType frame, vpColVecto
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpRobotAfma4.cpp.o) has no symbols
-void dummy_vpRobotAfma4() { };
+void dummy_vpRobotAfma4() { }
 #endif

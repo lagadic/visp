@@ -236,74 +236,76 @@ SCENARIO("Instantiating a silhouette me tracker", "[rbt]")
         REQUIRE_THROWS(tracker.loadJsonConfiguration(j));
       }
     }
-  }
 #endif
+  }
 }
 
 SCENARIO("Instantiating a silhouette CCD tracker", "[rbt]")
 {
-  vpRBSilhouetteCCDTracker tracker;
-  WHEN("Setting smoothing factor")
+  GIVEN("A base ccd tracker")
   {
-    THEN("Setting value above 0 works")
+    vpRBSilhouetteCCDTracker tracker;
+    WHEN("Setting smoothing factor")
     {
-      tracker.setTemporalSmoothingFactor(0.5);
-      REQUIRE(tracker.getTemporalSmoothingFactor() == 0.5);
+      THEN("Setting value above 0 works")
+      {
+        tracker.setTemporalSmoothingFactor(0.5);
+        REQUIRE(tracker.getTemporalSmoothingFactor() == 0.5);
+      }
+      THEN("Setting value below 0 throws")
+      {
+        REQUIRE_THROWS(tracker.setTemporalSmoothingFactor(-2.0));
+      }
     }
-    THEN("Setting value below 0 throws")
+    WHEN("Updating CCD parameters")
     {
-      REQUIRE_THROWS(tracker.setTemporalSmoothingFactor(-2.0));
+      vpCCDParameters ccd = tracker.getCCDParameters();
+      ccd.h += 4;
+      ccd.delta_h += 2;
+      tracker.setCCDParameters(ccd);
+      THEN("Changes are propagated to tracker")
+      {
+        REQUIRE(tracker.getCCDParameters().h == ccd.h);
+        REQUIRE(tracker.getCCDParameters().delta_h == ccd.delta_h);
+      }
     }
-  }
-  WHEN("Updating CCD parameters")
-  {
-    vpCCDParameters ccd = tracker.getCCDParameters();
-    ccd.h += 4;
-    ccd.delta_h += 2;
-    tracker.setCCDParameters(ccd);
-    THEN("Changes are propagated to tracker")
-    {
-      REQUIRE(tracker.getCCDParameters().h == ccd.h);
-      REQUIRE(tracker.getCCDParameters().delta_h == ccd.delta_h);
-    }
-
-  }
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
-  WHEN("Defining associated json")
-  {
-    nlohmann::json j = {
-      {"type", "silhouetteCCD"},
-      {"weight", 0.01},
-      {"temporalSmoothing", 0.1},
-      {"convergenceThreshold", 0.1},
-      {"ccd", {
-        {"h", 64},
-        {"delta_h", 16},
-        {"gamma", { 0.1, 0.2, 0.3, 0.4 } }
-      }}
-    };
-    THEN("Loading correct json works")
+    WHEN("Defining associated json")
     {
-      tracker.loadJsonConfiguration(j);
-      REQUIRE(tracker.getTemporalSmoothingFactor() == 0.1);
-      vpCCDParameters ccd = tracker.getCCDParameters();
-      REQUIRE(ccd.h == 64);
-      REQUIRE(ccd.delta_h == 16);
-      REQUIRE((ccd.gamma_1 == 0.1 && ccd.gamma_2 == 0.2 && ccd.gamma_3 == 0.3 && ccd.gamma_4 == 0.4));
+      nlohmann::json j = {
+        {"type", "silhouetteCCD"},
+        {"weight", 0.01},
+        {"temporalSmoothing", 0.1},
+        {"convergenceThreshold", 0.1},
+        {"ccd", {
+          {"h", 64},
+          {"delta_h", 16},
+          {"gamma", { 0.1, 0.2, 0.3, 0.4 } }
+        }}
+      };
+      THEN("Loading correct json works")
+      {
+        tracker.loadJsonConfiguration(j);
+        REQUIRE(tracker.getTemporalSmoothingFactor() == 0.1);
+        vpCCDParameters ccd = tracker.getCCDParameters();
+        REQUIRE(ccd.h == 64);
+        REQUIRE(ccd.delta_h == 16);
+        REQUIRE((ccd.gamma_1 == 0.1 && ccd.gamma_2 == 0.2 && ccd.gamma_3 == 0.3 && ccd.gamma_4 == 0.4));
+      }
+      THEN("Loading invalid temporal smoothing factor throws")
+      {
+        j["temporalSmoothing"] = -3.14;
+        REQUIRE_THROWS(tracker.loadJsonConfiguration(j));
+      }
+      THEN("Loading invalid ccd gamma throws")
+      {
+        j["ccd"]["gamma"] = -3.14;
+        REQUIRE_THROWS(tracker.loadJsonConfiguration(j));
+      }
     }
-    THEN("Loading invalid temporal smoothing factor throws")
-    {
-      j["temporalSmoothing"] = -3.14;
-      REQUIRE_THROWS(tracker.loadJsonConfiguration(j));
-    }
-    THEN("Loading invalid ccd gamma throws")
-    {
-      j["ccd"]["gamma"] = -3.14;
-      REQUIRE_THROWS(tracker.loadJsonConfiguration(j));
-    }
-  }
 #endif
+  }
 }
 
 #if defined(VP_HAVE_RB_KLT_TRACKER)
@@ -701,10 +703,10 @@ SCENARIO("Running tracker on static synthetic sequences", "[rbt]")
   silhouetteSettings.setThresholdIsRelative(true);
   silhouetteSettings.setThreshold(0.1);
   silhouetteSettings.setPreferPreviousPoints(false);
-  silhouetteSettings.setMaxCandidates(1024);
+  silhouetteSettings.setMaxCandidates(512);
   tracker.setSilhouetteExtractionParameters(silhouetteSettings);
   tracker.setOptimizationGain(0.25);
-  tracker.setMaxOptimizationIters(25);
+  tracker.setMaxOptimizationIters(10);
   tracker.setOptimizationInitialMu(0.01);
   tracker.setModelPath(objFile);
   tracker.startTracking();

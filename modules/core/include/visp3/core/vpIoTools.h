@@ -503,7 +503,6 @@ template<typename T> std::vector<char> create_npy_header(const std::vector<size_
 BEGIN_VISP_NAMESPACE
 class VISP_EXPORT vpIoTools
 {
-
 public:
   static const std::string &getBuildInformation();
   static std::string getTempPath();

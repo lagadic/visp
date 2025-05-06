@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,12 +62,13 @@ public:
 public:
   vpMbtMeLine();
   vpMbtMeLine(const vpMbtMeLine &meline);
+  vpMbtMeLine &operator=(const vpMbtMeLine &meline);
 
   void computeProjectionError(const vpImage<unsigned char> &_I, double &_sumErrorRad, unsigned int &_nbFeatures,
                               const vpMatrix &SobelX, const vpMatrix &SobelY, bool display, unsigned int length,
                               unsigned int thickness);
 
-  void display(const vpImage<unsigned char> & /* I */, const vpColor &/* col */, unsigned int /* thickness */) { ; }
+  void display(const vpImage<unsigned char> & /* I */, const vpColor &/* col */, unsigned int /* thickness */) { }
   using vpMeTracker::display;
 
   /*!

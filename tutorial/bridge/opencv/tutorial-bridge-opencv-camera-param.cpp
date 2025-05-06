@@ -3,7 +3,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(HAVE_OPENCV_IMGPROC) \
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) \
   && (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D)))
 
 #include <visp3/core/vpCameraParameters.h>
@@ -73,10 +73,10 @@ int main()
 #if !defined(HAVE_OPENCV_IMGPROC)
   std::cout << "This tutorial requires OpenCV imgproc module." << std::endl;
 #endif
-#if (VISP_HAVE_OPENCV_VERSION < 0x050000) && !defined(HAVE_OPENCV_CALIB3D)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION < 0x050000) && !defined(HAVE_OPENCV_CALIB3D)
   std::cout << "This tutorial requires OpenCV calib3d module." << std::endl;
 #endif
-#if (VISP_HAVE_OPENCV_VERSION >= 0x050000) && !defined(HAVE_OPENCV_3D)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x050000) && !defined(HAVE_OPENCV_3D)
   std::cout << "This tutorial requires OpenCV 3d module." << std::endl;
 #endif
   return EXIT_SUCCESS;

@@ -100,7 +100,7 @@ void vp_display_display_camera(const vpImage<Type> &I, const vpHomogeneousMatrix
   vpImagePoint ip, ip_1, ip0;
   vpMeterPixelConversion::convertPoint(cam, pt[index_4].p[index_0], pt[index_4].p[index_1], ip0);
 
-  for (int i = 0; i < 4; ++i) {
+  for (unsigned int i = 0; i < 4; ++i) {
     vpMeterPixelConversion::convertPoint(cam, pt[i].p[index_0], pt[i].p[index_1], ip_1);
     vpMeterPixelConversion::convertPoint(cam, pt[(i + index_1) % index_4].p[0], pt[(i + 1) % index_4].p[1], ip);
     vpDisplay::displayLine(I, ip_1, ip, color, thickness);
@@ -499,8 +499,9 @@ void vp_display_display_rectangle(const vpImage<Type> &I, const vpImagePoint &ce
 
     // A, B, C, D, corners of the rectangle clockwise
     vpImagePoint ipa, ipb, ipc, ipd;
-    double cosinus = cos(angle);
-    double sinus = sin(angle);
+    double ang = static_cast<double>(angle);
+    double cosinus = cos(ang);
+    double sinus = sin(ang);
     ipa.set_u(j + 0.5 * width * cosinus + 0.5 * height * sinus);
     ipa.set_v(i + 0.5 * width * sinus - 0.5 * height * cosinus);
     ipb.set_u(j + 0.5 * width * cosinus - 0.5 * height * sinus);
@@ -546,8 +547,9 @@ void vp_display_display_rectangle(const vpImage<Type> &I, unsigned int i, unsign
   if (I.display != nullptr) {
     // A, B, C, D, corners of the rectangle clockwise
     vpImagePoint ipa, ipb, ipc, ipd;
-    float cosinus = cos(angle);
-    float sinus = sin(angle);
+    double ang = static_cast<double>(angle);
+    double cosinus = cos(ang);
+    double sinus = sin(ang);
     ipa.set_u(j + 0.5 * width * cosinus + 0.5 * height * sinus);
     ipa.set_v(i + 0.5 * width * sinus - 0.5 * height * cosinus);
     ipb.set_u(j + 0.5 * width * cosinus - 0.5 * height * sinus);

@@ -222,8 +222,8 @@ int main()
         unsigned char val2 = getValue<unsigned char>(I, idx1, idx2, true);
         unsigned char val3 = getValue<unsigned char>(I, idx1, idx2, false);
 
-        diff_round += std::fabs((double)val1 - (double)val2);
-        diff += std::fabs((double)val1 - (double)val3);
+        diff_round += std::fabs(static_cast<double>(val1) - static_cast<double>(val2));
+        diff += std::fabs(static_cast<double>(val1) - static_cast<double>(val3));
       }
     }
 

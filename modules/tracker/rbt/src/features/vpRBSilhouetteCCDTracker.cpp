@@ -228,12 +228,14 @@ void vpRBSilhouetteCCDTracker::initVVS(const vpRBFeatureTrackerInput &/*frame*/,
   m_prevStats.reinit(resolution, normal_points_number);
   m_gradient = vpMatrix(m_ccdParameters.phi_dim, 1, 0.0);
   m_hessian = vpMatrix(m_ccdParameters.phi_dim, m_ccdParameters.phi_dim, 0.0);
-
+  m_gradientData.clear();
+  m_hessianData.clear();
+  m_gradients.clear();
+  m_hessians.clear();
   m_gradientData.resize(m_controlPoints.size() * 2 * normal_points_number * 6);
   m_hessianData.resize(m_controlPoints.size() * 2 * normal_points_number * 6 * 6);
   m_gradients.resize(m_controlPoints.size() * 2 * normal_points_number);
   m_hessians.resize(m_controlPoints.size() * 2 * normal_points_number);
-
   for (unsigned int i = 0; i < m_gradients.size(); ++i) {
     m_gradients[i] = vpColVector::view(m_gradientData.data() + i * 6, 6);
     m_hessians[i] = vpMatrix::view(m_hessianData.data() + i * 6 * 6, 6, 6);
@@ -344,14 +346,14 @@ void vpRBSilhouetteCCDTracker::display(const vpCameraParameters &/*cam*/, const 
     unsigned idx = 0;
     for (const vpRBSilhouetteControlPoint &p : m_controlPoints) {
       const double weight = errorPerPoint[idx] / maxPointError;
-      const double diffR = (double)(worstColor.R) - (double)(bestColor.R);
-      const double diffG = (double)(worstColor.G) - (double)(bestColor.G);
-      const double diffB = (double)(worstColor.B) - (double)(bestColor.B);
+      const double diffR = static_cast<double>(worstColor.R) - static_cast<double>(bestColor.R);
+      const double diffG = static_cast<double>(worstColor.G) - static_cast<double>(bestColor.G);
+      const double diffB = static_cast<double>(worstColor.B) - static_cast<double>(bestColor.B);
 
       vpColor c;
-      c.R = (unsigned char)((double)(bestColor.R) + diffR * weight);
-      c.G = (unsigned char)((double)(bestColor.G) + diffG * weight);
-      c.B = (unsigned char)((double)(bestColor.B) + diffB * weight);
+      c.R = static_cast<unsigned char>(static_cast<double>(bestColor.R) + diffR * weight);
+      c.G = static_cast<unsigned char>(static_cast<double>(bestColor.G) + diffG * weight);
+      c.B = static_cast<unsigned char>(static_cast<double>(bestColor.B) + diffB * weight);
 
       vpDisplay::displayCross(IRGB, p.icpoint.get_i(), p.icpoint.get_j(), 3, c, 1);
       ++idx;
@@ -373,7 +375,7 @@ void vpRBSilhouetteCCDTracker::display(const vpCameraParameters &/*cam*/, const 
       const double weight = weightPerPoint[idx];
       vpColor c;
       c.R = 0;
-      c.G = (unsigned char)(255.f * weight);
+      c.G = static_cast<unsigned char>(255.f * weight);
       c.B = 0;
 
       vpDisplay::displayCross(IRGB, p.icpoint.get_i(), p.icpoint.get_j(), 3, c, 1);
@@ -417,9 +419,6 @@ void vpRBSilhouetteCCDTracker::display(const vpCameraParameters &/*cam*/, const 
 
 void vpRBSilhouetteCCDTracker::updateCCDPoints(const vpHomogeneousMatrix &cMo)
 {
-#ifdef VISP_HAVE_OPENMP
-#pragma omp parallel for
-#endif
   for (vpRBSilhouetteControlPoint &p : m_controlPoints) {
     p.updateSilhouettePoint(cMo);
   }
@@ -530,7 +529,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
       // start compute the size in the direction of -(n_x, n_y)
       dist2[0] = (pt2[0] - p.icpoint.get_u()) * nv_ptr[0] + (pt2[1] - p.icpoint.get_v()) * nv_ptr[1];
       dist2[1] = (pt2[0] - p.icpoint.get_u()) * nv_ptr[1] - (pt2[1] - p.icpoint.get_v()) * nv_ptr[0];
-      int negative_normal = k + (int)floor(m_ccdParameters.h / m_ccdParameters.delta_h);
+      int negative_normal = k + static_cast<int>(floor(m_ccdParameters.h / m_ccdParameters.delta_h));
       vic_ptr[10 * negative_normal + 0] = pt2[1];
       vic_ptr[10 * negative_normal + 1] = pt2[0];
       vic_ptr[10 * negative_normal + 2] = dist2[0];
@@ -581,7 +580,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
 
     for (int j = m_ccdParameters.delta_h; j <= m_ccdParameters.h; j += m_ccdParameters.delta_h, k++) {
       wp1 = 0.0, wp2 = 0.0;
-      int negative_normal = k + (int)floor(m_ccdParameters.h / m_ccdParameters.delta_h);
+      int negative_normal = k + static_cast<int>(floor(m_ccdParameters.h / m_ccdParameters.delta_h));
       const double *vic_k = vic_ptr + 10 * k;
 
       // wp1 = w(a_{k,l})*w(d_{k,l})*w(d)
@@ -688,7 +687,7 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
     unsigned int normal_points_number = static_cast<unsigned int>(floor(m_ccdParameters.h / m_ccdParameters.delta_h));
 
 #ifdef VISP_HAVE_OPENMP
-#pragma omp for
+#pragma omp for nowait
 #endif
     for (unsigned int kk = 0; kk < m_controlPoints.size(); kk++) {
       const int i = kk;
@@ -838,6 +837,7 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
     m_LTL = 0;
     m_LTR = 0;
     std::cerr << "Inversion issues in CCD tracker" << std::endl;
+    std::cerr << e.what() << std::endl;
   }
 }
 

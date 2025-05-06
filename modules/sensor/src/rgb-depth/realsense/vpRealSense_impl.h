@@ -402,14 +402,14 @@ void vp_rs_get_pointcloud_impl(const rs::device *m_device, const std::map<rs::st
 #if PCL_VERSION_COMPARE(<, 1, 1, 0)
               uint32_t rgb = 0;
               if (swap_rgb) {
-                rgb = (static_cast<uint32_t>(color[(i_ * (unsigned int)color_width + j_) * nb_color_pixel]) |
-                       static_cast<uint32_t>(color[(i_ * (unsigned int)color_width + j_) * nb_color_pixel + 1]) << 8 |
-                       static_cast<uint32_t>(color[(i_ * (unsigned int)color_width + j_) * nb_color_pixel + 2]) << 16);
+                rgb = (static_cast<uint32_t>(color[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel]) |
+                       static_cast<uint32_t>(color[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel + 1]) << 8 |
+                       static_cast<uint32_t>(color[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel + 2]) << 16);
               }
               else {
-                rgb = (static_cast<uint32_t>(color[(i_ * (unsigned int)color_width + j_) * nb_color_pixel]) << 16 |
-                       static_cast<uint32_t>(color[(i_ * (unsigned int)color_width + j_) * nb_color_pixel + 1]) << 8 |
-                       static_cast<uint32_t>(color[(i_ * (unsigned int)color_width + j_) * nb_color_pixel + 2]));
+                rgb = (static_cast<uint32_t>(color[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel]) << 16 |
+                       static_cast<uint32_t>(color[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel + 1]) << 8 |
+                       static_cast<uint32_t>(color[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel + 2]));
               }
 
               pointcloud->points[static_cast<size_t>(i * depth_width + j)].rgb = *reinterpret_cast<float *>(&rgb);

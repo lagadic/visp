@@ -204,6 +204,10 @@ public:
   vpDisplay(const vpDisplay &d);
   virtual ~vpDisplay();
 
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+  vpDisplay &operator=(const vpDisplay &) = default;
+#endif
+
   /** @name Inherited functionalities from vpDisplay */
   //@{
   unsigned int computeAutoScale(unsigned int width, unsigned int height);
@@ -564,7 +568,8 @@ public:
   virtual unsigned int getScreenHeight() = 0;
   /*!
    * Gets the screen resolution in pixel.
-   * \param width, height : Screen resolution in pixels.
+   * \param[out] width : Screen width resolution in pixels.
+   * \param[out] height : Screen height resolution in pixels.
    */
   virtual void getScreenSize(unsigned int &width, unsigned int &height) = 0;
   /*!

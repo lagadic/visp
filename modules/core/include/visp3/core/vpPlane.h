@@ -65,13 +65,13 @@ public:
   vpPlane();
   vpPlane(const vpPlane &P);
   vpPlane(double A, double B, double C, double D);
-  vpPlane(const vpPoint &P, const vpColVector &normal, vpPlaneFrame frame = camera_frame);
-  vpPlane(const vpPoint &P, const vpPoint &Q, const vpPoint &R, vpPlaneFrame frame = camera_frame);
+  vpPlane(const vpPoint &P, const vpColVector &normal, const vpPlaneFrame &frame = camera_frame);
+  vpPlane(const vpPoint &P, const vpPoint &Q, const vpPoint &R, const vpPlaneFrame &frame = camera_frame);
 
   double computeZ(double x, double y) const;
 
-  vpPlane &init(const vpPoint &P, const vpColVector &normal, vpPlaneFrame frame = camera_frame);
-  vpPlane &init(const vpPoint &P, const vpPoint &Q, const vpPoint &R, vpPlaneFrame frame = camera_frame);
+  vpPlane &init(const vpPoint &P, const vpColVector &normal, const vpPlaneFrame &frame = camera_frame);
+  vpPlane &init(const vpPoint &P, const vpPoint &Q, const vpPoint &R, const vpPlaneFrame &frame = camera_frame);
   vpPlane &init(const vpColVector &P, const vpColVector &n);
   vpPlane &init(const vpPlane &P);
 
@@ -157,7 +157,7 @@ public:
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpPlane &p);
 
   // Operation with  Plane
-  void projectionPointOnPlan(const vpPoint &P, vpPoint &Pproj, vpPlaneFrame frame = camera_frame) const;
+  void projectionPointOnPlan(const vpPoint &P, vpPoint &Pproj, const vpPlaneFrame &frame = camera_frame) const;
 
   double rayIntersection(const vpPoint &M0, const vpPoint &M1, vpColVector &H) const;
 

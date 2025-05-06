@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Kalman filtering.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpKalmanFilter.cpp
@@ -198,38 +196,35 @@ void vpKalmanFilter::prediction()
 */
 void vpKalmanFilter::filtering(const vpColVector &z)
 {
-  if (verbose_mode)
+  if (verbose_mode) {
     std::cout << "z " << std::endl << z << std::endl;
+  }
   // Bar-Shalom  5.2.3.11
   vpMatrix S = H * Ppre * H.t() + R;
-  if (verbose_mode)
+  if (verbose_mode) {
     std::cout << "S " << std::endl << S << std::endl;
+  }
 
   W = (Ppre * H.t()) * (S).inverseByLU();
-  if (verbose_mode)
+  if (verbose_mode) {
     std::cout << "W " << std::endl << W << std::endl;
+  }
   // Bar-Shalom  5.2.3.15
   Pest = Ppre - W * S * W.t();
-  if (verbose_mode)
+  if (verbose_mode) {
     std::cout << "Pest " << std::endl << Pest << std::endl;
-
-  if (0) {
-    // Bar-Shalom  5.2.3.16
-    // numeriquement plus stable que  5.2.3.15
-    vpMatrix Pestinv;
-    Pestinv = Ppre.inverseByLU() + H.t() * R.inverseByLU() * H;
-    Pest = Pestinv.inverseByLU();
   }
+
   // Bar-Shalom  5.2.3.12 5.2.3.13 5.2.3.7
   Xest = Xpre + (W * (z - (H * Xpre)));
-  if (verbose_mode)
+  if (verbose_mode) {
     std::cout << "Xest " << std::endl << Xest << std::endl;
+  }
 
   iter++;
 }
 
 #if 0
-
 
 /*!
   \brief Filter initialization for a constant velocity model

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,8 +110,9 @@ public:
     case vpCameraParameters::ProjWithKannalaBrandtDistortion:
       convertPointWithKannalaBrandtDistortion(cam, u, v, x, y);
       break;
-    default:
-      std::cerr << "projection model not identified" << std::endl;
+    default: {
+      throw(vpException(vpException::fatalError, "Unsupported camera projection model in vpPixelMerterConversion::convertPoint()"));
+    }
     }
   }
 
@@ -154,8 +155,9 @@ public:
     case vpCameraParameters::ProjWithKannalaBrandtDistortion:
       convertPointWithKannalaBrandtDistortion(cam, iP, x, y);
       break;
-    default:
-      std::cerr << "projection model not identified" << std::endl;
+    default: {
+      throw(vpException(vpException::fatalError, "Unsupported camera projection model in vpPixelMerterConversion::convertPoint()"));
+    }
     }
   }
 

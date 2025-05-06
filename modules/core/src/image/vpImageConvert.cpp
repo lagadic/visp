@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -318,7 +318,8 @@ void vpImageConvert::RGBToRGBa(unsigned char *rgb, unsigned char *rgba, unsigned
 
   \param[in] rgb : Pointer to the bitmap containing the 24-bits RGB data.
   \param[out] rgba : Pointer to the 32-bits RGBA bitmap that should be allocated with a size of width * height * 4.
-  \param[in] width, height : Image size.
+  \param[in] width : Image width.
+  \param[in] height : Image height.
   \param[in] flip : When true, image is flipped vertically.
 
 */
@@ -414,7 +415,8 @@ void vpImageConvert::RGBToGrey(unsigned char *rgb, unsigned char *grey, unsigned
   \param[in] rgb : Pointer to the 24-bits RGB bitmap.
   \param[out] grey : Pointer to the bitmap containing the 8-bits grey data that should
   be allocated with a size of width * height.
-  \param[in] width, height : Image size.
+  \param[in] width : Image width.
+  \param[in] height : Image height.
   \param[in] flip : When true, image is flipped vertically.
 */
 void vpImageConvert::RGBToGrey(unsigned char *rgb, unsigned char *grey, unsigned int width, unsigned int height,
@@ -466,17 +468,16 @@ void vpImageConvert::RGBToGrey(unsigned char *rgb, unsigned char *grey, unsigned
   \param[in] rgba : Pointer to the 32-bits RGBA bitmap.
   \param[out] grey : Pointer to the bitmap containing the 8-bits grey data that should
   be allocated with a size of width * height.
-  \param[in] width, height : Image size.
+  \param[in] width : Image width.
+  \param[in] height : Image height.
   \param[in] nThreads : When > 0, the value is used to set the number of OpenMP threads used for the conversion.
-
 */
 void vpImageConvert::RGBaToGrey(unsigned char *rgba, unsigned char *grey, unsigned int width, unsigned int height,
-                                unsigned int
-#if defined(_OPENMP)
-                                nThreads
-#endif
-)
+                                unsigned int nThreads)
 {
+#if !defined(_OPENMP)
+  (void)nThreads;
+#endif
 #if defined(VISP_HAVE_SIMDLIB)
   const int heightAsInt = static_cast<int>(height);
 #if defined(_OPENMP)
@@ -486,14 +487,11 @@ void vpImageConvert::RGBaToGrey(unsigned char *rgba, unsigned char *grey, unsign
 #pragma omp parallel for
 #endif
   for (int i = 0; i < heightAsInt; ++i) {
-    SimdRgbaToGray(rgba + (i * width * 4), width, 1, width * 4, grey + (i * width), width);
+    unsigned int i_ = static_cast<unsigned int>(i);
+    SimdRgbaToGray(rgba + (i_ * width * 4), width, 1, width * 4, grey + (i_ * width), width);
   }
-#else
-#if defined(_OPENMP)
-  (void)nThreads;
 #endif
   vpImageConvert::RGBaToGrey(rgba, grey, width * height);
-#endif
 }
 
 /*!
@@ -538,7 +536,8 @@ void vpImageConvert::RGBaToGrey(unsigned char *rgba, unsigned char *grey, unsign
   \param[in] grey : Pointer to the bitmap containing the 8-bits grey data.
   \param[out] rgba : Pointer to the 32-bits RGBA bitmap that should
   be allocated with a size of width * height * 4.
-  \param[in] width, height : Image size.
+  \param[in] width : Image width.
+  \param[in] height : Image height.
 */
 void vpImageConvert::GreyToRGBa(unsigned char *grey, unsigned char *rgba, unsigned int width, unsigned int height)
 {
@@ -631,7 +630,8 @@ void vpImageConvert::GreyToRGB(unsigned char *grey, unsigned char *rgb, unsigned
   \param[in] bgr : Pointer to the bitmap containing the 24-bits BGR data.
   \param[out] rgba : Pointer to the 32-bits RGBA bitmap that should
   be allocated with a size of width * height * 4.
-  \param[in] width, height : Image size.
+  \param[in] width : Image width.
+  \param[in] height : Image height.
   \param[in] flip : When true, image is flipped vertically.
 */
 void vpImageConvert::BGRToRGBa(unsigned char *bgr, unsigned char *rgba, unsigned int width, unsigned int height,
@@ -681,7 +681,8 @@ void vpImageConvert::BGRToRGBa(unsigned char *bgr, unsigned char *rgba, unsigned
   \param[in] bgra : Pointer to the bitmap containing the 32-bits BGRa data.
   \param[out] rgba : Pointer to the 32-bits RGBA bitmap that should
   be allocated with a size of width * height * 4.
-  \param[in] width, height : Image size.
+  \param[in] width : Image width.
+  \param[in] height : Image height.
   \param[in] flip : When true, image is flipped vertically.
 */
 void vpImageConvert::BGRaToRGBa(unsigned char *bgra, unsigned char *rgba, unsigned int width, unsigned int height,
@@ -731,18 +732,17 @@ void vpImageConvert::BGRaToRGBa(unsigned char *bgra, unsigned char *rgba, unsign
   \param[in] bgr : Pointer to the bitmap containing the 24-bits BGR data.
   \param[out] grey : Pointer to the 8-bits grey bitmap that should
   be allocated with a size of width * height.
-  \param[in] width, height : Image size.
+  \param[in] width : Image width.
+  \param[in] height : Image height.
   \param[in] flip : When true, image is flipped vertically.
   \param[in] nThreads : When > 0, the value is used to set the number of OpenMP threads used for the conversion.
 */
 void vpImageConvert::BGRToGrey(unsigned char *bgr, unsigned char *grey, unsigned int width, unsigned int height,
-                               bool flip,
-                               unsigned int
-#if defined(_OPENMP)
-                               nThreads
-#endif
-)
+                               bool flip, unsigned int nThreads)
 {
+#if !defined(_OPENMP)
+  (void)nThreads;
+#endif
 #if defined(VISP_HAVE_SIMDLIB)
   const int heightAsInt = static_cast<int>(height);
   if (!flip) {
@@ -753,12 +753,13 @@ void vpImageConvert::BGRToGrey(unsigned char *bgr, unsigned char *grey, unsigned
 #pragma omp parallel for
 #endif
     for (int i = 0; i < heightAsInt; ++i) {
-      SimdBgrToGray(bgr + (i * width * 3), width, 1, width * 3, grey + (i * width), width);
+      unsigned int i_ = static_cast<unsigned int>(i);
+      SimdBgrToGray(bgr + (i_ * width * 3), width, 1, width * 3, grey + (i_ * width), width);
     }
   }
   else {
 #endif
-    // if we have to flip the image, we start from the end last scanline so
+    // if we have to flip the image, we start from the end last scan so
     // the  step is negative
     const unsigned int val_2 = 2;
     const unsigned int val_3 = 3;
@@ -770,7 +771,7 @@ void vpImageConvert::BGRToGrey(unsigned char *bgr, unsigned char *grey, unsigned
     for (unsigned int i = 0; i < height; ++i) {
       unsigned char *line = src;
       for (unsigned int j = 0; j < width; ++j) {
-        *grey++ = static_cast<unsigned int>((0.2126 * *(line + val_2)) + (0.7152 * *(line + 1)) + (0.0722 * *(line + 0)));
+        *grey++ = static_cast<unsigned char>(static_cast<unsigned int>((0.2126 * *(line + val_2)) + (0.7152 * *(line + 1)) + (0.0722 * *(line + 0))));
         line += val_3;
       }
 
@@ -779,9 +780,6 @@ void vpImageConvert::BGRToGrey(unsigned char *bgr, unsigned char *grey, unsigned
     }
 #if defined(VISP_HAVE_SIMDLIB)
   }
-#endif
-#if !defined(VISP_HAVE_SIMDLIB) && defined(_OPENMP)
-  (void)nThreads;
 #endif
 }
 
@@ -795,18 +793,17 @@ void vpImageConvert::BGRToGrey(unsigned char *bgr, unsigned char *grey, unsigned
   \param[in] bgra : Pointer to the bitmap containing the 32-bits BGRa data.
   \param[out] grey : Pointer to the 8-bits grey bitmap that should
   be allocated with a size of width * height.
-  \param[in] width, height : Image size.
+  \param[in] width : Image width.
+  \param[in] height : Image height.
   \param[in] flip : When true, image is flipped vertically.
   \param[in] nThreads : When > 0, the value is used to set the number of OpenMP threads used for the conversion.
 */
 void vpImageConvert::BGRaToGrey(unsigned char *bgra, unsigned char *grey, unsigned int width, unsigned int height,
-                                bool flip,
-                                unsigned int
-#if defined(_OPENMP)
-                                nThreads
-#endif
-)
+                                bool flip, unsigned int nThreads)
 {
+#if !defined(_OPENMP)
+  (void)nThreads;
+#endif
 #if defined(VISP_HAVE_SIMDLIB)
   if (!flip) {
     const int heightAsInt = static_cast<int>(height);
@@ -817,7 +814,8 @@ void vpImageConvert::BGRaToGrey(unsigned char *bgra, unsigned char *grey, unsign
 #pragma omp parallel for
 #endif
     for (int i = 0; i < heightAsInt; ++i) {
-      SimdBgraToGray(bgra + (i * width * 4), width, 1, width * 4, grey + (i * width), width);
+      unsigned int i_ = static_cast<unsigned int>(i);
+      SimdBgraToGray(bgra + (i_ * width * 4), width, 1, width * 4, grey + (i_ * width), width);
     }
   }
   else {
@@ -843,9 +841,6 @@ void vpImageConvert::BGRaToGrey(unsigned char *bgra, unsigned char *grey, unsign
     }
 #if defined(VISP_HAVE_SIMDLIB)
   }
-#endif
-#if !defined(VISP_HAVE_SIMDLIB) && defined(_OPENMP)
-  (void)nThreads;
 #endif
 }
 
@@ -894,8 +889,8 @@ void vpImageConvert::computeYCbCrLUT()
 */
 void vpImageConvert::YCbCrToRGB(unsigned char *ycbcr, unsigned char *rgb, unsigned int size)
 {
-  const unsigned val_2 = 2;
-  const unsigned val_3 = 3;
+  const unsigned int val_2 = 2;
+  const unsigned int val_3 = 3;
   const int val_255 = 255;
   const unsigned int val_255u = 255u;
   unsigned char *cbv;
@@ -907,7 +902,7 @@ void vpImageConvert::YCbCrToRGB(unsigned char *ycbcr, unsigned char *rgb, unsign
 
   vpImageConvert::computeYCbCrLUT();
 
-  int col = 0;
+  unsigned int col = 0;
 
   while (size--) {
     int val_r, val_g, val_b;
@@ -956,8 +951,8 @@ void vpImageConvert::YCbCrToRGB(unsigned char *ycbcr, unsigned char *rgb, unsign
 */
 void vpImageConvert::YCbCrToRGBa(unsigned char *ycbcr, unsigned char *rgba, unsigned int size)
 {
-  const unsigned val_2 = 2;
-  const unsigned val_3 = 3;
+  const unsigned int val_2 = 2;
+  const unsigned int val_3 = 3;
   const int val_255 = 255;
   const unsigned int val_255u = 255u;
   unsigned char *cbv;
@@ -969,7 +964,7 @@ void vpImageConvert::YCbCrToRGBa(unsigned char *ycbcr, unsigned char *rgba, unsi
 
   vpImageConvert::computeYCbCrLUT();
 
-  int col = 0;
+  unsigned int col = 0;
 
   while (size--) {
     int val_r, val_g, val_b;
@@ -1047,8 +1042,8 @@ void vpImageConvert::YCbCrToGrey(unsigned char *ycbcr, unsigned char *grey, unsi
 */
 void vpImageConvert::YCrCbToRGB(unsigned char *ycrcb, unsigned char *rgb, unsigned int size)
 {
-  const unsigned val_2 = 2;
-  const unsigned val_3 = 3;
+  const unsigned int val_2 = 2;
+  const unsigned int val_3 = 3;
   const int val_255 = 255;
   const unsigned int val_255u = 255u;
   unsigned char *cbv;
@@ -1060,7 +1055,7 @@ void vpImageConvert::YCrCbToRGB(unsigned char *ycrcb, unsigned char *rgb, unsign
 
   vpImageConvert::computeYCbCrLUT();
 
-  int col = 0;
+  unsigned int col = 0;
 
   while (size--) {
     int val_r, val_g, val_b;
@@ -1108,8 +1103,8 @@ void vpImageConvert::YCrCbToRGB(unsigned char *ycrcb, unsigned char *rgb, unsign
 */
 void vpImageConvert::YCrCbToRGBa(unsigned char *ycrcb, unsigned char *rgba, unsigned int size)
 {
-  const unsigned val_2 = 2;
-  const unsigned val_3 = 3;
+  const unsigned int val_2 = 2;
+  const unsigned int val_3 = 3;
   const int val_255 = 255;
   const unsigned int val_255u = 255u;
   unsigned char *cbv;
@@ -1121,7 +1116,7 @@ void vpImageConvert::YCrCbToRGBa(unsigned char *ycrcb, unsigned char *rgba, unsi
 
   vpImageConvert::computeYCbCrLUT();
 
-  int col = 0;
+  unsigned int col = 0;
 
   while (size--) {
     int val_r, val_g, val_b;

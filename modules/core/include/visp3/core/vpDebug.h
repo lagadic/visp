@@ -198,14 +198,19 @@ public:
     va_end(args);
   }
 
+#if defined(__clang__)
+// Mute warnings:
+//   vpDebug.h(221,24): warning : format string is not a string literal [-Wformat-nonliteral]
+//   vpDebug.h(234,15): warning : format string is not a string literal [-Wformat-nonliteral]
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wformat-nonliteral"
+#endif
   /*!
-
     Displays a message to either stdout or
     stderr (based on error boolean).
 
     \param format Formating string.
     \param args List of arguments.
-
   */
   void display(const char *format, va_list args)
   {
@@ -237,6 +242,10 @@ public:
       fflush(stdout);
     }
   }
+#if defined(__clang__)
+#  pragma clang diagnostic pop
+#endif
+
 private:
   const char *currentFile; // Name of the file to use in the displays
   const char *currentFunc; // Name of the function to use in the displays
@@ -246,7 +255,6 @@ private:
   bool err;
   // string to display before anything else
   const char *header;
-
 };
 
 /* ------------------------------------------------------------------------- */

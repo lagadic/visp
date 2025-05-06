@@ -10,9 +10,12 @@
 // #undef HAVE_OPENCV_VIDEOIO
 //! [Undef grabber]
 
-#if defined(HAVE_OPENCV_IMGPROC) \
-  && (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_OBJDETECT)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_XOBJDETECT))) \
-  && (defined(VISP_HAVE_V4L2) || (((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))))
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && \
+    (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_OBJDETECT)) || \
+     ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_XOBJDETECT))) && \
+    (defined(VISP_HAVE_V4L2) || \
+    (((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || \
+     ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))))
 
 #include <visp3/detection/vpDetectorFace.h>
 #include <visp3/gui/vpDisplayFactory.h>
@@ -47,10 +50,10 @@ int main(int argc, const char *argv[])
         opt_face_cascade_name = std::string(argv[++i]);
       }
       else if (std::string(argv[i]) == "--device" && i + 1 < argc) {
-        opt_device = (unsigned int)atoi(argv[++i]);
+        opt_device = static_cast<unsigned int>(atoi(argv[++i]));
       }
       else if (std::string(argv[i]) == "--scale" && i + 1 < argc) {
-        opt_scale = (unsigned int)atoi(argv[++i]);
+        opt_scale = static_cast<unsigned int>(atoi(argv[++i]));
       }
       else if ((std::string(argv[i]) == "--help") || (std::string(argv[i]) == "-h")) {
         std::cout << "Usage: " << argv[0]
@@ -77,8 +80,8 @@ int main(int argc, const char *argv[])
 #elif ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI))|| ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
     cv::VideoCapture cap(opt_device); // open the default camera
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-    int width = (int)cap.get(cv::CAP_PROP_FRAME_WIDTH);
-    int height = (int)cap.get(cv::CAP_PROP_FRAME_HEIGHT);
+    int width = static_cast<int>(cap.get(cv::CAP_PROP_FRAME_WIDTH));
+    int height = static_cast<int>(cap.get(cv::CAP_PROP_FRAME_HEIGHT));
     cap.set(cv::CAP_PROP_FRAME_WIDTH, width / opt_scale);
     cap.set(cv::CAP_PROP_FRAME_HEIGHT, height / opt_scale);
 #else
@@ -129,11 +132,11 @@ int main(int argc, const char *argv[])
         for (size_t i = 0; i < face_detector.getNbObjects(); i++) {
           vpRect bbox = face_detector.getBBox(i);
           vpDisplay::displayRectangle(I, bbox, vpColor::green, false, 4);
-          vpDisplay::displayText(I, (int)bbox.getTop() - 10, (int)bbox.getLeft(),
+          vpDisplay::displayText(I, static_cast<int>(bbox.getTop()) - 10, static_cast<int>(bbox.getLeft()),
                                  "Message: \"" + face_detector.getMessage(i) + "\"", vpColor::red);
         }
       }
-      vpDisplay::displayText(I, (int)I.getHeight() - 25, 10, "Click to quit...", vpColor::red);
+      vpDisplay::displayText(I, static_cast<int>(I.getHeight()) - 25, 10, "Click to quit...", vpColor::red);
       vpDisplay::flush(I);
       if (vpDisplay::getClick(I, false)) // a click to exit
         break;
@@ -158,12 +161,12 @@ int main()
 #if !defined(HAVE_OPENCV_IMGPROC)
   std::cout << "This tutorial needs OpenCV imgproc module that is missing." << std::endl;
 #endif
-#if (VISP_HAVE_OPENCV_VERSION < 0x050000) && !defined(HAVE_OPENCV_OBJDETECT)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION < 0x050000) && !defined(HAVE_OPENCV_OBJDETECT)
   std::cout << "This tutorial needs OpenCV objdetect module that is missing." << std::endl;
 #endif
-#if ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && !defined(HAVE_OPENCV_XOBJDETECT))
+#if defined(VISP_HAVE_OPENCV) && ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && !defined(HAVE_OPENCV_XOBJDETECT))
   std::cout << "This tutorial needs OpenCV xobjdetect module that is missing." << std::endl;
 #endif
-  }
+}
 
 #endif

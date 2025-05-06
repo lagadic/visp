@@ -138,7 +138,7 @@ int main(int argc, char **argv)
         << " [--no-convergence-threshold]"
         << " [--verbose]"
         << " [--help, -h]"
-        << std::endl;;
+        << std::endl;
       return EXIT_SUCCESS;
     }
   }

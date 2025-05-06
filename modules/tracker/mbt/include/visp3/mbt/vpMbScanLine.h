@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,16 +28,11 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Compute the visibility of 3D polygons already transformed in the camera
- *frame
- *
- * Authors:
- * Aurelien Yol
- *
-*****************************************************************************/
+ * Compute the visibility of 3D polygons already transformed in the camera frame.
+ */
 
-#ifndef vpMbScanLine_HH
-#define vpMbScanLine_HH
+#ifndef VP_MB_SCANLINE_H
+#define VP_MB_SCANLINE_H
 
 #include <deque>
 #include <limits> // numeric_limits
@@ -140,14 +134,16 @@ private:
   double depthTreshold;
 
 public:
-#if defined(DEBUG_DISP)
+#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(DEBUG_DISP)
   vpDisplay *dispMaskDebug;
   vpDisplay *dispLineDebug;
   vpImage<unsigned char> linedebugImg;
 #endif
 
   vpMbScanLine();
+  vpMbScanLine(const vpMbScanLine &scanline);
   virtual ~vpMbScanLine();
+  vpMbScanLine &operator=(const vpMbScanLine &scanline);
 
   void drawScene(const std::vector<std::vector<std::pair<vpPoint, unsigned int> > *> &polygons,
                  std::vector<int> listPolyIndices, const vpCameraParameters &K, unsigned int w, unsigned int h);

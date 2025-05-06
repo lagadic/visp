@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,14 +60,14 @@ BEGIN_VISP_NAMESPACE
 * but may not resize it and does not own it : the memory is not released by the vector
 * and it should be freed by the user after the view is released.
 *
-* \param data the raw data
-* \param cols Number of columns
-* \return vpMatrix
+ * @param[in] raw_data The raw data.
+ * @param[in] ncols : Number of columns of the raw data.
+ * @return The row vector view.
 */
-vpRowVector vpRowVector::view(double *data, unsigned int cols)
+vpRowVector vpRowVector::view(double *raw_data, unsigned int ncols)
 {
   vpRowVector v;
-  vpArray2D<double>::view(v, data, 1, cols);
+  vpArray2D<double>::view(v, raw_data, 1, ncols);
   return v;
 }
 

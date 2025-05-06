@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -237,7 +237,8 @@ vpMatrix::vpMatrix(const std::initializer_list<double> &list) : vpArray2D<double
 
 /*!
   Construct a matrix from a list of double values.
-  \param ncols, nrows : Matrix size.
+  \param ncols : Matrix number of columns.
+  \param nrows : Matrix number of rows.
   \param list : List of double.
 
   The following code shows how to use this constructor to initialize a 2-by-3 matrix:
@@ -298,15 +299,15 @@ vpMatrix::vpMatrix(const std::initializer_list<std::initializer_list<double> > &
  * but may not resize it and does not own it: the memory is not released by the matrix
  * and it should be freed by the user after the matrix view is released.
  *
- * @param data the raw data
- * @param rows Number of rows
- * @param cols Number of columns
+ * @param[in] raw_data : The raw data.
+ * @param[in] rows : Raw data number of rows.
+ * @param[in] cols : Raw data number of columns.
  * @return vpMatrix
  */
-vpMatrix vpMatrix::view(double *data, unsigned int rows, unsigned int cols)
+vpMatrix vpMatrix::view(double *raw_data, unsigned int rows, unsigned int cols)
 {
   vpMatrix M;
-  vpArray2D<double>::view(M, data, rows, cols);
+  vpArray2D<double>::view(M, raw_data, rows, cols);
   return M;
 }
 
@@ -1224,7 +1225,7 @@ vpColVector vpMatrix::eigenValues() const
     gsl_eigen_symmv_workspace *w = gsl_eigen_symmv_alloc(rowNum);
     gsl_matrix *m = gsl_matrix_alloc(rowNum, colNum);
 
-    unsigned int Atda = (unsigned int)m->tda;
+    unsigned int Atda = static_cast<unsigned int>(m->tda);
     for (unsigned int i = 0; i < rowNum; i++) {
       unsigned int k = i * Atda;
       for (unsigned int j = 0; j < colNum; j++)
@@ -1349,7 +1350,7 @@ void vpMatrix::eigenValues(vpColVector &evalue, vpMatrix &evector) const
     gsl_eigen_symmv_workspace *w = gsl_eigen_symmv_alloc(rowNum);
     gsl_matrix *m = gsl_matrix_alloc(rowNum, colNum);
 
-    unsigned int Atda = (unsigned int)m->tda;
+    unsigned int Atda = static_cast<unsigned int>(m->tda);
     for (unsigned int i = 0; i < rowNum; i++) {
       unsigned int k = i * Atda;
       for (unsigned int j = 0; j < colNum; j++)
@@ -1362,7 +1363,7 @@ void vpMatrix::eigenValues(vpColVector &evalue, vpMatrix &evector) const
     for (unsigned int i = 0; i < rowNum; i++) {
       evalue[i] = gsl_vector_get(eval, i);
     }
-    Atda = (unsigned int)evec->tda;
+    Atda = static_cast<unsigned int>(evec->tda);
     for (unsigned int i = 0; i < rowNum; i++) {
       unsigned int k = i * Atda;
       for (unsigned int j = 0; j < rowNum; j++) {
@@ -1404,12 +1405,12 @@ void vpMatrix::eigenValues(vpColVector &evalue, vpMatrix &evector) const
   The null space of a matrix \f$\bf A\f$ is defined as \f$\mbox{Ker}({\bf A})
   = { {\bf X} : {\bf A}*{\bf X} = {\bf 0}}\f$.
 
-  \param kerAt: The matrix that contains the null space (kernel) of \f$\bf
+  \param kerAt : The matrix that contains the null space (kernel) of \f$\bf
   A\f$ defined by the matrix \f${\bf X}^T\f$. If matrix \f$\bf A\f$ is full
   rank, the dimension of \c kerAt is (0, n), otherwise the dimension is (n-r,
   n). This matrix is thus the transpose of \f$\mbox{Ker}({\bf A})\f$.
 
-  \param svThreshold: Threshold used to test the singular values. If
+  \param svThreshold : Threshold used to test the singular values. If
   a singular value is lower than this threshold we consider that the
   matrix is not full rank.
 
@@ -1481,11 +1482,11 @@ unsigned int vpMatrix::kernel(vpMatrix &kerAt, double svThreshold) const
   The null space of a matrix \f$\bf A\f$ is defined as \f$\mbox{Ker}({\bf A})
   = { {\bf X} : {\bf A}*{\bf X} = {\bf 0}}\f$.
 
-  \param kerA: The matrix that contains the null space (kernel) of \f$\bf
+  \param kerA : The matrix that contains the null space (kernel) of \f$\bf
   A\f$. If matrix \f$\bf A\f$ is full rank, the dimension of \c kerA is (n, 0),
   otherwise its dimension is (n, n-r).
 
-  \param svThreshold: Threshold used to test the singular values. The dimension
+  \param svThreshold : Threshold used to test the singular values. The dimension
   of kerA corresponds to the number of singular values lower than this threshold
 
   \return The dimension of the nullspace, that is \f$ n - r \f$.
@@ -1549,11 +1550,11 @@ unsigned int vpMatrix::nullSpace(vpMatrix &kerA, double svThreshold) const
   The null space of a matrix \f$\bf A\f$ is defined as \f$\mbox{Ker}({\bf A})
   = { {\bf X} : {\bf A}*{\bf X} = {\bf 0}}\f$.
 
-  \param kerA: The matrix that contains the null space (kernel) of \f$\bf
+  \param kerA : The matrix that contains the null space (kernel) of \f$\bf
   A\f$. If matrix \f$\bf A\f$ is full rank, the dimension of \c kerA is (n, 0),
   otherwise its dimension is (n, n-r).
 
-  \param dim: the dimension of the null space when it is known a priori
+  \param dim : the dimension of the null space when it is known a priori
 
   \return The estimated dimension of the nullspace, that is \f$ n - r \f$, by
   using 1e-6 as threshold for the sigular values.
@@ -1804,7 +1805,7 @@ vpMatrix subblock(const vpMatrix &M, unsigned int col, unsigned int row)
   \return The condition number, the ratio of the largest singular value of
   the matrix to the smallest.
 
-  \param svThreshold: Threshold used to test the singular values. If
+  \param svThreshold : Threshold used to test the singular values. If
   a singular value is lower than this threshold we consider that the
   matrix is not full rank.
 
@@ -1862,7 +1863,11 @@ double vpMatrix::cond(double svThreshold) const
     return maxsv / minsv;
   }
   else {
+#if defined(VISP_HAVE_FAST_MATH)
+    return std::numeric_limits<double>::max();
+#else
     return std::numeric_limits<double>::infinity();
+#endif
   }
 }
 

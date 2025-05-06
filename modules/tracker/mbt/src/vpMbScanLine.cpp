@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,12 +28,8 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Make the complete tracking of an object by using its CAD model
- *
- * Authors:
- * Aurelien Yol
- *
-*****************************************************************************/
+ * Make the complete tracking of an object by using its CAD model.
+ */
 
 #include <visp3/core/vpConfig.h>
 
@@ -51,7 +46,7 @@
 #include <visp3/core/vpMeterPixelConversion.h>
 #include <visp3/mbt/vpMbScanLine.h>
 
-#if defined(DEBUG_DISP)
+#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(DEBUG_DISP)
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayX.h>
 #endif
@@ -60,7 +55,7 @@
 BEGIN_VISP_NAMESPACE
 vpMbScanLine::vpMbScanLine()
   : w(0), h(0), K(), maskBorder(0), mask(), primitive_ids(), visibility_samples(), depthTreshold(1e-06)
-#if defined(DEBUG_DISP)
+#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(DEBUG_DISP)
   ,
   dispMaskDebug(nullptr), dispLineDebug(nullptr), linedebugImg()
 #endif
@@ -74,6 +69,11 @@ vpMbScanLine::vpMbScanLine()
 #endif
 }
 
+vpMbScanLine::vpMbScanLine(const vpMbScanLine &scanline)
+{
+  *this = scanline;
+}
+
 vpMbScanLine::~vpMbScanLine()
 {
 #if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(DEBUG_DISP)
@@ -83,6 +83,27 @@ vpMbScanLine::~vpMbScanLine()
     delete dispMaskDebug;
 #endif
 }
+
+
+vpMbScanLine &vpMbScanLine::operator=(const vpMbScanLine &scanline)
+{
+  w = scanline.w;
+  h = scanline.h;
+  K = scanline.K;
+  maskBorder = scanline.maskBorder;
+  mask = scanline.mask;
+  primitive_ids = scanline.primitive_ids;
+  visibility_samples = scanline.visibility_samples;
+  depthTreshold = scanline.depthTreshold;
+
+#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(DEBUG_DISP)
+  dispLineDebug = scanline.dispLineDebug;
+  dispMaskDebug = scanline.dispMaskDebug;
+  linedebugImg = scanline.linedebugImg;
+#endif
+  return *this;
+}
+
 /*!
   Compute the intersections between Y-axis scanlines and a given line (two
   points polygon).
@@ -112,7 +133,7 @@ void vpMbScanLine::drawLineY(const vpColVector &a, const vpColVector &b, const v
   if (y0 >= h - 1 || y1 < 0 || std::fabs(y1 - y0) <= std::numeric_limits<double>::epsilon())
     return;
 
-  const unsigned int _y0 = std::max<unsigned int>((unsigned int)0, (unsigned int)(std::ceil(y0)));
+  const unsigned int _y0 = std::max<unsigned int>(static_cast<unsigned int>(0), static_cast<unsigned int>(std::ceil(y0)));
   const double _y1 = std::min<double>((double)h, (double)y1);
 
   const bool b_sample_Y = (std::fabs(y0 - y1) > std::fabs(x0 - x1));
@@ -161,7 +182,7 @@ void vpMbScanLine::drawLineX(const vpColVector &a, const vpColVector &b, const v
   if (x0 >= w - 1 || x1 < 0 || std::fabs(x1 - x0) <= std::numeric_limits<double>::epsilon())
     return;
 
-  const unsigned int _x0 = std::max<unsigned int>((unsigned int)0, (unsigned int)(std::ceil(x0)));
+  const unsigned int _x0 = std::max<unsigned int>(static_cast<unsigned int>(0), static_cast<unsigned int>(std::ceil(x0)));
   const double _x1 = std::min<double>((double)w, (double)x1);
 
   const bool b_sample_Y = (std::fabs(y0 - y1) > std::fabs(x0 - x1));
@@ -373,29 +394,29 @@ void vpMbScanLine::drawScene(const std::vector<std::vector<std::pair<vpPoint, un
           switch (s.type) {
           case POINT:
             if (new_ID == -1 || s.Z1 - depthTreshold <= stack.front().first)
-              visibility_samples[s.edge].insert((int)y);
+              visibility_samples[s.edge].insert(static_cast<int>(y));
             break;
           case START:
             if (new_ID == s.ID)
-              visibility_samples[s.edge].insert((int)y);
+              visibility_samples[s.edge].insert(static_cast<int>(y));
             break;
           case END:
             if (last_ID == s.ID)
-              visibility_samples[s.edge].insert((int)y);
+              visibility_samples[s.edge].insert(static_cast<int>(y));
             break;
           }
 
         // This part will only be used for MbKltTracking
         if (last_ID != -1) {
-          const unsigned int x0 = std::max<unsigned int>((unsigned int)0, (unsigned int)(std::ceil(last_visible.p)));
+          const unsigned int x0 = std::max<unsigned int>(static_cast<unsigned int>(0), static_cast<unsigned int>(std::ceil(last_visible.p)));
           double x1 = std::min<double>((double)w, (double)s.p);
           for (unsigned int x = x0 + maskBorder; x < x1 - maskBorder; ++x) {
-            primitive_ids[(unsigned int)y][(unsigned int)x] = last_visible.ID;
+            primitive_ids[static_cast<unsigned int>(y)][static_cast<unsigned int>(x)] = last_visible.ID;
 
             if (maskBorder != 0)
-              maskY[(unsigned int)y][(unsigned int)x] = 255;
+              maskY[static_cast<unsigned int>(y)][static_cast<unsigned int>(x)] = 255;
             else
-              mask[(unsigned int)y][(unsigned int)x] = 255;
+              mask[static_cast<unsigned int>(y)][static_cast<unsigned int>(x)] = 255;
           }
         }
 
@@ -448,26 +469,26 @@ void vpMbScanLine::drawScene(const std::vector<std::vector<std::pair<vpPoint, un
           switch (s.type) {
           case POINT:
             if (new_ID == -1 || s.Z1 - depthTreshold <= stack.front().first)
-              visibility_samples[s.edge].insert((int)x);
+              visibility_samples[s.edge].insert(static_cast<int>(x));
             break;
           case START:
             if (new_ID == s.ID)
-              visibility_samples[s.edge].insert((int)x);
+              visibility_samples[s.edge].insert(static_cast<int>(x));
             break;
           case END:
             if (last_ID == s.ID)
-              visibility_samples[s.edge].insert((int)x);
+              visibility_samples[s.edge].insert(static_cast<int>(x));
             break;
           }
 
         // This part will only be used for MbKltTracking
         if (maskBorder != 0 && last_ID != -1) {
-          const unsigned int y0 = std::max<unsigned int>((unsigned int)0, (unsigned int)(std::ceil(last_visible.p)));
+          const unsigned int y0 = std::max<unsigned int>(static_cast<unsigned int>(0), static_cast<unsigned int>(std::ceil(last_visible.p)));
           double y1 = std::min<double>((double)h, (double)s.p);
           for (unsigned int y = y0 + maskBorder; y < y1 - maskBorder; ++y) {
-            // primitive_ids[(unsigned int)y][(unsigned int)x] =
+            // primitive_ids[static_cast<unsigned int>(y)][static_cast<unsigned int>(x)] =
             // last_visible.ID;
-            maskX[(unsigned int)y][(unsigned int)x] = 255;
+            maskX[static_cast<unsigned int>(y)][static_cast<unsigned int>(x)] = 255;
           }
         }
 
@@ -597,7 +618,7 @@ void vpMbScanLine::queryLineVisibility(const vpPoint &a, const vpPoint &b,
     return;
 
   const int _v0 = std::max<int>(0, int(std::ceil(*v0)));
-  const int _v1 = std::min<int>((int)(size - 1), (int)(std::ceil(*v1) - 1));
+  const int _v1 = std::min<int>(static_cast<int>(size - 1), static_cast<int>(std::ceil(*v1) - 1));
 
   const std::set<int> &visible_samples = visibility_samples[edge];
   int last = _v0;

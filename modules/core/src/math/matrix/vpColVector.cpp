@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -359,7 +359,7 @@ vpColVector &vpColVector::operator=(const std::vector<float> &v)
   unsigned int v_size = static_cast<unsigned int>(v.size());
   resize(v_size, false);
   for (unsigned int i = 0; i < v_size; ++i) {
-    (*this)[i] = static_cast<float>(v[i]);
+    (*this)[i] = static_cast<double>(v[i]);
   }
   return *this;
 }
@@ -472,14 +472,14 @@ vpColVector &vpColVector::operator=(vpColVector &&other)
  * but may not resize it and does not own it: the memory is not released by the vector
  * and it should be freed by the user after the view is released.
  *
- * @param data the raw data
- * @param rows Number of rows
- * @return the column vector view
+ * @param[in] raw_data The raw data.
+ * @param[in] nrows : Number of rows of the raw data.
+ * @return The column vector view.
  */
-vpColVector vpColVector::view(double *data, unsigned int rows)
+vpColVector vpColVector::view(double *raw_data, unsigned int nrows)
 {
   vpColVector v;
-  vpArray2D<double>::view(v, data, rows, 1);
+  vpArray2D<double>::view(v, raw_data, nrows, 1);
   return v;
 }
 

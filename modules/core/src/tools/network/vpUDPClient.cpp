@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * UDP Client
- *
-*****************************************************************************/
+ */
 
 #include <cstring>
 #include <sstream>
@@ -53,7 +51,19 @@
 #define _WIN32_WINNT _WIN32_WINNT_VISTA // 0x0600
 #endif
 #endif
+
+#if defined(__clang__)
+// Mute warning : non-portable path to file '<WS2tcpip.h>'; specified path differs in case from file name on disk [-Wnonportable-system-include-path]
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wnonportable-system-include-path"
+#endif
+
 #include <Ws2tcpip.h>
+
+#if defined(__clang__)
+#  pragma clang diagnostic pop
+#endif
+
 #endif
 
 #include <visp3/core/vpUDPClient.h>
@@ -71,6 +81,23 @@ vpUDPClient::vpUDPClient()
   m_wsa()
 #endif
 { }
+
+vpUDPClient::vpUDPClient(const vpUDPClient &client)
+{
+  *this = client;
+}
+
+vpUDPClient &vpUDPClient::operator=(const vpUDPClient &client)
+{
+  m_is_init = client.m_is_init;
+  m_serverAddress = client.m_serverAddress;
+  m_serverLength = client.m_serverLength;
+  m_socketFileDescriptor = client.m_socketFileDescriptor;
+#if defined(_WIN32)
+  m_wsa = client.m_wsa;
+#endif
+  return *this;
+}
 
 /*!
   Create a (IPv4) UDP client.
@@ -205,7 +232,7 @@ int vpUDPClient::receive(std::string &msg, int timeoutMs)
     timeout.tv_sec = timeoutMs / 1000;
     timeout.tv_usec = (timeoutMs % 1000) * 1000;
   }
-  int retval = select((int)m_socketFileDescriptor + 1, &s, nullptr, nullptr, timeoutMs > 0 ? &timeout : nullptr);
+  int retval = select(static_cast<int>(m_socketFileDescriptor) + 1, &s, nullptr, nullptr, timeoutMs > 0 ? &timeout : nullptr);
 
   if (retval == -1) {
     std::cerr << "Error select!" << std::endl;
@@ -251,7 +278,7 @@ int vpUDPClient::receive(void *msg, size_t len, int timeoutMs)
     timeout.tv_sec = timeoutMs / 1000;
     timeout.tv_usec = (timeoutMs % 1000) * 1000;
   }
-  int retval = select((int)m_socketFileDescriptor + 1, &s, nullptr, nullptr, timeoutMs > 0 ? &timeout : nullptr);
+  int retval = select(static_cast<int>(m_socketFileDescriptor) + 1, &s, nullptr, nullptr, timeoutMs > 0 ? &timeout : nullptr);
 
   if (retval == -1) {
     std::cerr << "Error select!" << std::endl;
@@ -260,7 +287,7 @@ int vpUDPClient::receive(void *msg, size_t len, int timeoutMs)
 
   if (retval > 0) {
     /* recvfrom: receive a UDP datagram from the server */
-    int length = static_cast<int>(recvfrom(m_socketFileDescriptor, (char *)msg, (int)len, 0,
+    int length = static_cast<int>(recvfrom(m_socketFileDescriptor, (char *)msg, static_cast<int>(len), 0,
                                            (struct sockaddr *)&m_serverAddress, (socklen_t *)&m_serverLength));
     if (length <= 0) {
       return length < 0 ? -1 : 0;
@@ -313,7 +340,7 @@ int vpUDPClient::send(const std::string &msg)
   return static_cast<int>(
       sendto(m_socketFileDescriptor, msg.c_str(), msg.size(), 0, (struct sockaddr *)&m_serverAddress, m_serverLength));
 #else
-  return sendto(m_socketFileDescriptor, msg.c_str(), (int)msg.size(), 0, (struct sockaddr *)&m_serverAddress,
+  return sendto(m_socketFileDescriptor, msg.c_str(), static_cast<int>(msg.size()), 0, (struct sockaddr *)&m_serverAddress,
                 m_serverLength);
 #endif
 }
@@ -342,11 +369,11 @@ int vpUDPClient::send(const void *msg, size_t len)
   return static_cast<int>(
       sendto(m_socketFileDescriptor, msg, len, 0, (struct sockaddr *)&m_serverAddress, m_serverLength));
 #else
-  return sendto(m_socketFileDescriptor, (char *)msg, (int)len, 0, (struct sockaddr *)&m_serverAddress, m_serverLength);
+  return sendto(m_socketFileDescriptor, (char *)msg, static_cast<int>(len), 0, (struct sockaddr *)&m_serverAddress, m_serverLength);
 #endif
 }
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpUDPClient.cpp.o) has no symbols
-void dummy_vpUDPClient() { };
+void dummy_vpUDPClient() { }
 #endif

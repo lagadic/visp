@@ -31,8 +31,8 @@
  * TCP Server
  */
 
-#ifndef vpServer_H
-#define vpServer_H
+#ifndef VP_SERVER_H
+#define VP_SERVER_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
@@ -58,101 +58,100 @@ BEGIN_VISP_NAMESPACE
   documentation.
 
   \code
-#include <iostream>
-#include <visp3/core/vpServer.h>
+  #include <iostream>
+  #include <visp3/core/vpServer.h>
 
-int main(int argc,const char** argv)
-{
-  int port = 35000;
-  vpServer serv(port); //Launch the server on localhost
-  serv.start();
+  int main(int argc,const char** argv)
+  {
+    int port = 35000;
+    vpServer serv(port); //Launch the server on localhost
+    serv.start();
 
-  bool run = true;
-  int val;
+    bool run = true;
+    int val;
 
-  while(run){
-    serv.checkForConnections();
+    while(run){
+      serv.checkForConnections();
 
-    if(serv.getNumberOfClients() > 0)
-    {
-      // Receiving a value from the first client
-      if(serv.receive(&val) != sizeof(int))
-        std::cout << "Error while receiving" << std::endl;
-      else
-        std::cout << "Received : " << val << std::endl;
+      if(serv.getNumberOfClients() > 0)
+      {
+        // Receiving a value from the first client
+        if(serv.receive(&val) != sizeof(int))
+          std::cout << "Error while receiving" << std::endl;
+        else
+          std::cout << "Received : " << val << std::endl;
 
-      val = val+1;
-      // Sending the new value to the first client
-      if(serv.send(&val) != sizeof(int))
-        std::cout << "Error while sending" << std::endl;
-      else
-        std::cout << "Sending : " << val << std::endl;
+        val = val+1;
+        // Sending the new value to the first client
+        if(serv.send(&val) != sizeof(int))
+          std::cout << "Error while sending" << std::endl;
+        else
+          std::cout << "Sending : " << val << std::endl;
+      }
     }
-  }
 
-  return 0;
-}
+    return 0;
+  }
   \endcode
 
   Example of server's code, receiving a vpImage on request form.
-  It correspond to the client used in the second example of vpClient class'
-documentation.
+  It correspond to the client used in the second example of vpClient class' documentation.
 
   \code
-#include <visp3/core/vpServer.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayX.h>
+  #include <visp3/core/vpServer.h>
+  #include <visp3/gui/vpDisplayGDI.h>
+  #include <visp3/gui/vpDisplayX.h>
 
-#include "vpRequestImage.h" //See vpRequest class documentation
+  #include "vpRequestImage.h" //See vpRequest class documentation
 
-int main(int argc,const char** argv)
-{
-  int port = 35000;
+  int main(int argc,const char** argv)
+  {
+    int port = 35000;
 
-  std::cout << "Port: " << port << std::endl;
-  vpServer serv(port);
-  serv.start();
+    std::cout << "Port: " << port << std::endl;
+    vpServer serv(port);
+    serv.start();
 
-#if defined(VISP_HAVE_X11)
-  vpDisplayX display;
-#elif defined(VISP_HAVE_GDI) //Win32
-  vpDisplayGDI display;
-#endif
+  #if defined(VISP_HAVE_X11)
+    vpDisplayX display;
+  #elif defined(VISP_HAVE_GDI) //Win32
+    vpDisplayGDI display;
+  #endif
 
-  vpImage<unsigned char> I;
+    vpImage<unsigned char> I;
 
-  vpRequestImage reqImage(&I);
-  serv.addDecodingRequest(&reqImage);
+    vpRequestImage reqImage(&I);
+    serv.addDecodingRequest(&reqImage);
 
-  bool run = true;
+    bool run = true;
 
-  while(run){
-    serv.checkForConnections();
+    while(run){
+      serv.checkForConnections();
 
-    if(serv.getNumberOfClients() > 0)
-    {
-      int index = serv.receiveAndDecodeRequestOnce();
-      std::string id = serv.getRequestIdFromIndex(index);
-
-      if(id == reqImage.getId())
+      if(serv.getNumberOfClients() > 0)
       {
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
-        if (! display.isInitialised() )
-          display.init(I, -1, -1, "Remote display");
-#endif
+        int index = serv.receiveAndDecodeRequestOnce();
+        std::string id = serv.getRequestIdFromIndex(index);
 
-        vpDisplay::display(I) ;
-        vpDisplay::flush(I);
+        if(id == reqImage.getId())
+        {
+  #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
+          if (! display.isInitialised() )
+            display.init(I, -1, -1, "Remote display");
+  #endif
 
-        // A click in the viewer to exit
-        if ( vpDisplay::getClick(I, false) )
-          run = false;
+          vpDisplay::display(I) ;
+          vpDisplay::flush(I);
+
+          // A click in the viewer to exit
+          if ( vpDisplay::getClick(I, false) )
+            run = false;
+        }
       }
     }
-  }
 
-  return 0;
-}
+    return 0;
+  }
   \endcode
 
   \sa vpClient
@@ -172,8 +171,10 @@ private:
 
 public:
   vpServer();
+  vpServer(const vpServer &server);
   VP_EXPLICIT vpServer(const int &port);
   vpServer(const std::string &adress_serv, const int &port_serv);
+  vpServer &operator=(const vpServer &server);
 
   virtual ~vpServer() VP_OVERRIDE;
 
@@ -202,7 +203,7 @@ public:
 
     \return Number of clients connected.
   */
-  unsigned int getNumberOfClients() const { return (unsigned int)receptor_list.size(); }
+  unsigned int getNumberOfClients() const { return static_cast<unsigned int>(receptor_list.size()); }
 
   void print();
 

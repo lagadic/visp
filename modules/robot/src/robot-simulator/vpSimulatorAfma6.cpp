@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Class which provides a simulator for the robot Afma6.
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpConfig.h>
 #if defined(VISP_HAVE_MODULE_GUI) && defined(VISP_HAVE_THREADS)
@@ -228,7 +226,7 @@ void vpSimulatorAfma6::init(vpAfma6::vpAfma6ToolType tool, vpCameraParameters::v
   unsigned int name_length = 30; // the size of this kind of string "/afma6_tool_vacuum.bnd"
   if (arm_dir.size() > FILENAME_MAX)
     throw vpException(vpException::dimensionError, "Cannot initialize Afma6 simulator");
-  unsigned int full_length = (unsigned int)arm_dir.size() + name_length;
+  unsigned int full_length = static_cast<unsigned int>(arm_dir.size()) + name_length;
   if (full_length > FILENAME_MAX)
     throw vpException(vpException::dimensionError, "Cannot initialize Afma6 simulator");
 
@@ -496,17 +494,17 @@ void vpSimulatorAfma6::updateArticularPosition()
 
       if (jl != 0 && jointLimit == false) {
         if (jl < 0)
-          ellapsedTime = (_joint_min[(unsigned int)(-jl - 1)] - articularCoordinates[(unsigned int)(-jl - 1)]) /
-          (articularVelocities[(unsigned int)(-jl - 1)]);
+          ellapsedTime = (_joint_min[static_cast<unsigned int>(-jl - 1)] - articularCoordinates[static_cast<unsigned int>(-jl - 1)]) /
+          (articularVelocities[static_cast<unsigned int>(-jl - 1)]);
         else
-          ellapsedTime = (_joint_max[(unsigned int)(jl - 1)] - articularCoordinates[(unsigned int)(jl - 1)]) /
-          (articularVelocities[(unsigned int)(jl - 1)]);
+          ellapsedTime = (_joint_max[static_cast<unsigned int>(jl - 1)] - articularCoordinates[static_cast<unsigned int>(jl - 1)]) /
+          (articularVelocities[static_cast<unsigned int>(jl - 1)]);
 
         for (unsigned int i = 0; i < 6; i++)
           articularCoordinates[i] = articularCoordinates[i] + ellapsedTime * articularVelocities[i];
 
         jointLimit = true;
-        jointLimitArt = (unsigned int)fabs((double)jl);
+        jointLimitArt = static_cast<unsigned int>(fabs((double)jl));
       }
 
       set_artCoord(articularCoordinates);
@@ -1429,34 +1427,33 @@ void vpSimulatorAfma6::setPosition(const vpRobot::vpControlFrameType frame, cons
   The position to reach can be specified in joint coordinates, in the
   camera frame or in the reference frame.
 
-  This method overloads setPosition(const
-  vpRobot::vpControlFrameType, const vpColVector &).
+  This method overloads setPosition(const vpRobot::vpControlFrameType, const vpColVector &).
 
-  \warning This method is blocking. It returns only when the position
-  is reached by the robot.
+  \warning This method is blocking. It returns only when the position is reached by the robot.
 
-  \param pos1, pos2, pos3, pos4, pos5, pos6 : The six coordinates of
-  the position to reach. All the positions are expressed in meters for
-  the translations and radians for the rotations.
+  All the positions are expressed in meters for the translations and radians for the rotations.
+
+  \param pos1 : First coordinate of the position to reach.
+  \param pos2 : Second coordinate of the position to reach.
+  \param pos3 : Third coordinate of the position to reach.
+  \param pos4 : Fourth coordinate of the position to reach.
+  \param pos5 : Fifth coordinate of the position to reach.
+  \param pos6 : Sixth coordinate of the position to reach.
 
   \param frame : Frame in which the position is expressed.
 
-  - In the joint space, positions are respectively X (pos1), Y (pos2),
-  Z (pos3), A (pos4), B (pos5), C (pos6), with X,Y,Z the
-  translations, and A,B,C the rotations of the end-effector.
+  - In the joint space, positions are respectively X (pos1), Y (pos2), Z (pos3), A (pos4), B (pos5), C (pos6),
+    with X,Y,Z the translation positions in meters, and A,B,C the rotations in radians of the end-effector.
 
-  - In the camera and the reference frame, rotations [pos4, pos5, pos6] are
-  represented by a vpRxyzVector.
+  - In the camera and the reference frame, rotations [pos4, pos5, pos6] are represented by a vpRxyzVector with
+    values in radians.
 
-  - Mixt frame is not implemented. By mixt frame we mean, translations
-  expressed in the reference frame, and rotations in the camera
-  frame.
+  - Mixt frame is not implemented. By mixt frame we mean, translations expressed in the reference frame,
+    and rotations in the camera frame.
 
-  \exception vpRobotException::lowLevelError : vpRobot::MIXT_FRAME not
-  implemented.
+  \exception vpRobotException::lowLevelError : vpRobot::MIXT_FRAME not implemented.
 
-  \exception vpRobotException::positionOutOfRangeError : The requested
-  position is out of range.
+  \exception vpRobotException::positionOutOfRangeError : The requested position is out of range.
 
   \code
   #include <visp3/robot/vpSimulatorAfma6.h>
@@ -1818,7 +1815,7 @@ int vpSimulatorAfma6::isInJointLimit()
       difft = _joint_min[i] - articularCoordinates[i];
       if (difft > diff) {
         diff = difft;
-        artNumb = -(int)i - 1;
+        artNumb = -static_cast<int>(i) - 1;
       }
     }
   }
@@ -1828,13 +1825,13 @@ int vpSimulatorAfma6::isInJointLimit()
       difft = articularCoordinates[i] - _joint_max[i];
       if (difft > diff) {
         diff = difft;
-        artNumb = (int)(i + 1);
+        artNumb = static_cast<int>(i + 1);
       }
     }
   }
 
   if (artNumb != 0)
-    std::cout << "\nWarning: Velocity control stopped: axis " << fabs((float)artNumb) << " on joint limit!"
+    std::cout << "\nWarning: Velocity control stopped: axis " << fabs(static_cast<float>(artNumb)) << " on joint limit!"
     << std::endl;
 
   return artNumb;
@@ -2053,7 +2050,7 @@ bool vpSimulatorAfma6::savePosFile(const std::string &filename, const vpColVecto
 /*!
   Moves the robot to the joint position specified in the filename.
 
-  \param filename: File containing a joint position.
+  \param filename : File containing a joint position.
 
   \sa readPosFile
 */
@@ -2193,7 +2190,7 @@ void vpSimulatorAfma6::initArms()
   unsigned int name_length = 30; // the size of this kind of string "/afma6_arm2.bnd"
   if (scene_dir_.size() > FILENAME_MAX)
     throw vpException(vpException::dimensionError, "Cannot initialize Afma6 simulator");
-  unsigned int full_length = (unsigned int)scene_dir_.size() + name_length;
+  unsigned int full_length = static_cast<unsigned int>(scene_dir_.size()) + name_length;
   if (full_length > FILENAME_MAX)
     throw vpException(vpException::dimensionError, "Cannot initialize Afma6 simulator");
 
@@ -2205,7 +2202,7 @@ void vpSimulatorAfma6::initArms()
 
   if (arm_dir.size() > FILENAME_MAX)
     throw vpException(vpException::dimensionError, "Cannot initialize Afma6 simulator");
-  full_length = (unsigned int)arm_dir.size() + name_length;
+  full_length = static_cast<unsigned int>(arm_dir.size()) + name_length;
   if (full_length > FILENAME_MAX)
     throw vpException(vpException::dimensionError, "Cannot initialize Afma6 simulator");
 
@@ -2499,5 +2496,5 @@ END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpSimulatorAfma6.cpp.o) has
 // no symbols
-void dummy_vpSimulatorAfma6() { };
+void dummy_vpSimulatorAfma6() { }
 #endif

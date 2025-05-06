@@ -351,7 +351,7 @@ void vpMeSite::track(const vpImage<unsigned char> &I, const vpMe *me, const bool
     double diff = 1e6;
     // Change of mask sign to have a continuity at 0 and 180.
     // Threshold at 120 to be more than the 90 initial value
-    if (vpMath::abs((int)(mask_index - m_index_prev)) > 120) {
+    if (vpMath::abs(static_cast<int>(mask_index - m_index_prev)) > 120) {
       m_mask_sign = -m_mask_sign;
     }
     for (unsigned int n = 0; n < numQueries; ++n) {
@@ -458,7 +458,7 @@ void vpMeSite::trackMultipleHypotheses(const vpImage<unsigned char> &I, const vp
   if (test_contrast) {
     // Change of mask sign to have a continuity at 0 and 180.
     // Threshold at 120 to be more than the 90 initial value
-    if (vpMath::abs((int)(mask_index - m_index_prev)) > 120) {
+    if (vpMath::abs(static_cast<int>(mask_index - m_index_prev)) > 120) {
       m_mask_sign = -m_mask_sign;
     }
     for (unsigned int n = 0; n < numQueries; ++n) {

@@ -135,10 +135,10 @@ std::vector<cv::Rect> postprocessResults(std::vector<void *> buffers, const std:
     }
 
     if (maxScore > confThresh) {
-      int left = (int)(cpu_outputs[1][4 * i] * image_width);
-      int top = (int)(cpu_outputs[1][4 * i + 1] * image_height);
-      int right = (int)(cpu_outputs[1][4 * i + 2] * image_width);
-      int bottom = (int)(cpu_outputs[1][4 * i + 3] * image_height);
+      int left = static_cast<int>(cpu_outputs[1][4 * i] * image_width);
+      int top = static_cast<int>(cpu_outputs[1][4 * i + 1] * image_height);
+      int right = static_cast<int>(cpu_outputs[1][4 * i + 2] * image_width);
+      int bottom = static_cast<int>(cpu_outputs[1][4 * i + 3] * image_height);
       int width = right - left + 1;
       int height = bottom - top + 1;
 
@@ -311,33 +311,33 @@ int main(int argc, char **argv)
 
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--device" && i + 1 < argc) {
-      opt_device = atoi(argv[i + 1]);
+      opt_device = atoi(argv[++i]);
     }
     else if (std::string(argv[i]) == "--input" && i + 1 < argc) {
-      input = std::string(argv[i + 1]);
+      input = std::string(argv[++i]);
     }
     else if (std::string(argv[i]) == "--model" && i + 1 < argc) {
-      modelFile = std::string(argv[i + 1]);
+      modelFile = std::string(argv[++i]);
     }
     else if (std::string(argv[i]) == "--config" && i + 1 < argc) {
-      config = std::string(argv[i + 1]);
+      config = std::string(argv[++i]);
     }
     else if (std::string(argv[i]) == "--input-scale" && i + 1 < argc) {
-      opt_scale = atoi(argv[i + 1]);
+      opt_scale = atoi(argv[++i]);
     }
     else if (std::string(argv[i]) == "--mean" && i + 3 < argc) {
-      meanR = atof(argv[i + 1]);
-      meanG = atof(argv[i + 2]);
-      meanB = atof(argv[i + 3]);
+      meanR = atof(argv[++i]);
+      meanG = atof(argv[++i]);
+      meanB = atof(argv[++i]);
     }
     else if (std::string(argv[i]) == "--confThresh" && i + 1 < argc) {
-      confThresh = (float)atof(argv[i + 1]);
+      confThresh = static_cast<float>(atof(argv[++i]));
     }
     else if (std::string(argv[i]) == "--nmsThresh" && i + 1 < argc) {
-      nmsThresh = (float)atof(argv[i + 1]);
+      nmsThresh = static_cast<float>(atof(argv[++i]));
     }
     else if (std::string(argv[i]) == "--labels" && i + 1 < argc) {
-      labelFile = std::string(argv[i + 1]);
+      labelFile = std::string(argv[++i]);
     }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << argv[0]
@@ -415,8 +415,8 @@ int main(int argc, char **argv)
     return EXIT_FAILURE;
   }
 
-  int cap_width = (int)capture.get(cv::CAP_PROP_FRAME_WIDTH);
-  int cap_height = (int)capture.get(cv::CAP_PROP_FRAME_HEIGHT);
+  int cap_width = static_cast<int>(capture.get(cv::CAP_PROP_FRAME_WIDTH));
+  int cap_height = static_cast<int>(capture.get(cv::CAP_PROP_FRAME_HEIGHT));
   capture.set(cv::CAP_PROP_FRAME_WIDTH, cap_width / opt_scale);
   capture.set(cv::CAP_PROP_FRAME_HEIGHT, cap_height / opt_scale);
   //! [OpenCV VideoCapture]

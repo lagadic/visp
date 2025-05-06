@@ -1464,10 +1464,20 @@ namespace pugi
 #if !defined(PUGIXML_NO_STL) && (defined(_MSC_VER) || defined(__ICC))
 namespace std
 {
+#if defined(__clang__)
+// Mute warning : identifier '_Iter_cat' is reserved because it starts with '_' followed by a capital letter [-Wreserved-identifier]
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wreserved-identifier"
+#endif
+
 	// Workarounds for (non-standard) iterator category detection for older versions (MSVC7/IC8 and earlier)
 	std::bidirectional_iterator_tag PUGIXML_FUNCTION _Iter_cat(const pugi::xml_node_iterator&);
 	std::bidirectional_iterator_tag PUGIXML_FUNCTION _Iter_cat(const pugi::xml_attribute_iterator&);
 	std::bidirectional_iterator_tag PUGIXML_FUNCTION _Iter_cat(const pugi::xml_named_node_iterator&);
+
+#if defined(__clang__)
+#  pragma clang diagnostic pop
+#endif
 }
 #endif
 

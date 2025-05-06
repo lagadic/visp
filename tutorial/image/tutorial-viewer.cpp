@@ -89,6 +89,8 @@ int main(int argc, char **argv)
     std::cout << "Catch an exception: " << e << std::endl;
   }
 #else
+  (void)argc;
+  (void)argv;
   std::cout << "No display available!" << std::endl;
 #endif
 }

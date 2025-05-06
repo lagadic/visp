@@ -87,7 +87,7 @@ int main()
     for (size_t i = 0; i < P.size(); i++)
       pose.addPoint(P[i]);
 
-    unsigned int nbInlierToReachConsensus = (unsigned int)(75.0 * (double)(P.size()) / 100.0);
+    unsigned int nbInlierToReachConsensus = static_cast<unsigned int>(75.0 * static_cast<double>(P.size()) / 100.0);
     double threshold = 0.001;
 
     pose.setRansacNbInliersToReachConsensus(nbInlierToReachConsensus);

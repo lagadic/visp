@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
 
   \param name : Program name.
   \param badparam : Bad parameter name.
-  \param ipath: Input image path.
+  \param ipath : Input image path.
   \param opath : Output image path.
   \param user : Username.
  */
@@ -104,7 +104,7 @@ OPTIONS:                                               Default\n\
 
   \param argc : Command line number of parameters.
   \param argv : Array of command line parameters.
-  \param ipath: Input image path.
+  \param ipath : Input image path.
   \param opath : Output image path.
   \param user : Username.
   \return false if the program has to be stopped, true otherwise.
@@ -376,7 +376,7 @@ int main(int argc, const char **argv)
     filename = vpIoTools::createFilePath(opath, "Klimt_contours_extracted_external_fill_holes.pgm");
     vpImageIo::write(I_holes, filename);
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGPROC)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGPROC)
     cv::Mat matImg;
     vpImageConvert::convert(I, matImg);
 

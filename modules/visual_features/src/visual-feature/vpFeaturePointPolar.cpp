@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * 2D point visual feature.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpFeaturePointPolar.cpp
@@ -133,9 +131,8 @@ void vpFeaturePointPolar::set_Z(double Z_)
 /*!
   Initialize the image point visual feature with polar coordinates.
 
-  \param rho, theta : Polar coordinates \f$(\rho,\theta)\f$ of
-  the image point.
-
+  \param rho : Polar coordinates \f$ \rho \f$ of the image point.
+  \param theta : Polar coordinates \f$ \theta \f$ of the image point.
   \param Z_ : 3D depth of the point in the camera frame.
 
   \sa set_rho(), set_theta(), set_Z()
@@ -146,8 +143,9 @@ void vpFeaturePointPolar::set_rhoThetaZ(double rho, double theta, double Z_)
   set_theta(theta);
   set_Z(Z_);
 
-  for (unsigned int i = 0; i < nbParameters; i++)
+  for (unsigned int i = 0; i < nbParameters; ++i) {
     flags[i] = true;
+  }
 }
 
 /*!

@@ -19,21 +19,21 @@ int main(int argc, char *argv[])
 
   for (int i = 1; i < argc; i++) {
     if ((std::string(argv[i]) == "--t" || std::string(argv[i]) == "-t") && i + 1 < argc) {
-      time = (double)atof(argv[++i]);
+      time = static_cast<double>(atof(argv[++i]));
     }
     else if ((std::string(argv[i]) == "--vx" || std::string(argv[i]) == "-vx") && i + 1 < argc) {
-      v_x = (double)atof(argv[++i]);
+      v_x = static_cast<double>(atof(argv[++i]));
     }
     else if ((std::string(argv[i]) == "--wz" || std::string(argv[i]) == "-wz") && i + 1 < argc) {
-      w_z = (double)atof(argv[++i]);
+      w_z = static_cast<double>(atof(argv[++i]));
     }
     else if ((std::string(argv[i]) == "--rpm-l" || std::string(argv[i]) == "-rpm-l") && i + 1 < argc) {
       rpm_command = true;
-      rpm_l = (double)atoi(argv[++i]);
+      rpm_l = static_cast<double>(atoi(argv[++i]));
     }
     else if ((std::string(argv[i]) == "--rpm-r" || std::string(argv[i]) == "-rpm-r") && i + 1 < argc) {
       rpm_command = true;
-      rpm_r = (double)atoi(argv[++i]);
+      rpm_r = static_cast<double>(atoi(argv[++i]));
     }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "Usage: \n"
@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
       double rpm_left = motor_left * 30. / M_PI;
       double rpm_right = motor_right * 30. / M_PI;
 
-      ss << "MOTOR_RPM=" << (int)rpm_left << "," << (int)rpm_right << "\n";
+      ss << "MOTOR_RPM=" << static_cast<int>(rpm_left) << "," << static_cast<int>(rpm_right) << "\n";
     }
     std::cout << "Send: " << ss.str() << std::endl;
     double t0 = vpTime::measureTimeSecond();

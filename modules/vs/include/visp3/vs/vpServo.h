@@ -782,7 +782,7 @@ public:
    * \param e2 : Value of the secondary task \f${\bf e}_2\f$.
    * \param de2dt : Value of \f$\frac{\partial {\bf e_2}}{\partial t}\f$ the
    * derivative of the secondary task \f${\bf e}_2\f$.
-   * \param useLargeProjectionOperator: if true will be use the large projection
+   * \param useLargeProjectionOperator : if true will be use the large projection
    * operator, if false the classic one (default).
    *
    * \return The secondary task vector.

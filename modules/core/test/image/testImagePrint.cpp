@@ -51,9 +51,9 @@ int main()
 
   for (unsigned int i = 0, cpt = 0; i < size; i++) {
     for (unsigned int j = 0; j < size; j++, cpt++) {
-      I_int[i][j] = (int)cpt;
-      I_uchar[i][j] = (unsigned char)cpt;
-      I_char[i][j] = (char)cpt;
+      I_int[i][j] = static_cast<int>(cpt);
+      I_uchar[i][j] = static_cast<char>(cpt);
+      I_char[i][j] = static_cast<char>(cpt);
     }
   }
 
@@ -64,9 +64,9 @@ int main()
 
   for (unsigned int i = 0, cpt = 0; i < size; i++) {
     for (unsigned int j = 0; j < size; j++, cpt++) {
-      I_float[i][j] = (float)sqrt((double)cpt);
-      I_double[i][j] = sqrt((double)cpt);
-      I_rgba[i][j] = vpRGBa((unsigned char)cpt);
+      I_float[i][j] = static_cast<float>(sqrt(static_cast<double>(cpt)));
+      I_double[i][j] = sqrt(static_cast<double>(cpt));
+      I_rgba[i][j] = vpRGBa(static_cast<unsigned char>(cpt));
     }
   }
 

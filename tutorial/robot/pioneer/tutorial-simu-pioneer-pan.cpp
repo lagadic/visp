@@ -161,7 +161,7 @@ int main()
     }
 #ifdef VISP_HAVE_DISPLAY
     const char *legend = "Click to quit...";
-    vpDisplay::displayText(graph.I, (int)graph.I.getHeight() - 60, (int)graph.I.getWidth() - 150, legend, vpColor::red);
+    vpDisplay::displayText(graph.I, static_cast<int>(graph.I.getHeight()) - 60, static_cast<int>(graph.I.getWidth()) - 150, legend, vpColor::red);
     vpDisplay::flush(graph.I);
     vpDisplay::getClick(graph.I);
 #endif

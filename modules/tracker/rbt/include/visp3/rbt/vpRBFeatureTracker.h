@@ -61,6 +61,7 @@ class VISP_EXPORT vpRBFeatureTracker
 public:
 
   vpRBFeatureTracker();
+  virtual ~vpRBFeatureTracker() = default;
 
   /**
    * \brief Return the type of feature that is used by this tracker
