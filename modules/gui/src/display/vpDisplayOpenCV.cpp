@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -993,6 +993,23 @@ vpDisplayOpenCV::vpDisplayOpenCV()
   : vpDisplay()
   , m_impl(new Impl())
 { }
+
+/*!
+ * Copy constructor.
+ */
+vpDisplayOpenCV::vpDisplayOpenCV(const vpDisplayOpenCV &display) : vpDisplay(display)
+{
+  *this = display;
+}
+
+/*!
+ * Copy operator.
+ */
+vpDisplayOpenCV &vpDisplayOpenCV::operator=(const vpDisplayOpenCV &display)
+{
+  m_impl = display.m_impl;
+  return *this;
+}
 
 /*!
   Destructor.
