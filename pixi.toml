@@ -60,12 +60,8 @@ dependencies = { python = ">=3.8", pybind11 = "*", pip = "*" }
 build = { cmd = "cmake --build $VISP_BUILD_DIR --parallel $CPU_COUNT --target visp_python_bindings", depends-on = ["install"] }
 python-test = { cmd = "cmake --build $VISP_BUILD_DIR --config Release --target visp_python_bindings_test", depends-on = ["build"] }
 
-[feature.rbt.target.unix]
+[feature.rbt]
 dependencies = { nlohmann_json = "*", panda3d = { version = ">=1.10.15", channel = "panda3d-forge" } }
-
-[feature.rbt-clang-cl]
-platforms = ["win-64"]
-dependencies = { nlohmann_json = "*", panda3d = { version = ">=1.10.15", build = "*fix_clang_cl*", channel = "olivier.roussel" } }
 
 [feature.tests]
 activation = { env = { VISP_BUILD_TESTS = "ON" } }
@@ -97,6 +93,6 @@ test = { cmd = "ctest --test-dir $VISP_BUILD_DIR --output-on-failure", depends-o
 with-python = { features = ["python-bindings"] }
 with-python-clang-cl = { features = ["python-bindings", "clang-cl"] }
 all = { features = ["rbt", "python-bindings"] }
-all-clang-cl = { features = ["rbt-clang-cl", "python-bindings", "clang-cl"] }
+all-clang-cl = { features = ["rbt", "python-bindings", "clang-cl"] }
 all-with-tests = { features = ["rbt", "python-bindings", "tests"] }
-all-clang-cl-with-tests = { features = ["rbt-clang-cl", "python-bindings", "clang-cl", "tests"] }
+all-clang-cl-with-tests = { features = ["rbt", "python-bindings", "clang-cl", "tests"] }
