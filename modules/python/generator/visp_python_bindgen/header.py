@@ -545,7 +545,7 @@ class HeaderFile():
           logging.info(f'Found field in class/struct {name_cpp}: {field_type} {field.name}')
 
           def_str = 'def_'
-          def_str += 'readonly' if field.type.const else 'readwrite'
+          def_str += 'readonly' if (field.type.const or field.constexpr) else 'readwrite'
           if field.static:
             def_str += '_static'
 
