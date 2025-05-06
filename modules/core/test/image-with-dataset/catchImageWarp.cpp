@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,10 +60,11 @@ static const double g_threshold_percentage_bilinear = 0.75;
 static const double g_threshold_percentage_pers = 0.75;
 static const double g_threshold_percentage_pers_bilinear = 0.65;
 
-static const std::vector<vpImageTools::vpImageInterpolationType> interp_methods = { vpImageTools::INTERPOLATION_NEAREST,
-                                                                                   vpImageTools::INTERPOLATION_LINEAR };
-static const std::vector<std::string> interp_names = { "Nearest Neighbor", "Bilinear" };
-static const std::vector<std::string> suffixes = { "_NN.png", "_bilinear.png" };
+VP_ATTRIBUTE_NO_DESTROY static const std::vector<vpImageTools::vpImageInterpolationType> interp_methods = {
+  vpImageTools::INTERPOLATION_NEAREST,
+  vpImageTools::INTERPOLATION_LINEAR };
+VP_ATTRIBUTE_NO_DESTROY static const std::vector<std::string> interp_names = { "Nearest Neighbor", "Bilinear" };
+VP_ATTRIBUTE_NO_DESTROY static const std::vector<std::string> suffixes = { "_NN.png", "_bilinear.png" };
 
 bool almostEqual(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2, double threshold_val,
                  double threshold_percentage, double &percentage)
