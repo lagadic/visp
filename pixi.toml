@@ -1,6 +1,6 @@
 [project]
 authors = ["Olivier Roussel <olivier.roussel@inria.fr>"]
-channels = ["conda-forge", "panda3d-forge", "olivier.roussel"]
+channels = ["conda-forge", "panda3d-forge"]
 name = "visp"
 platforms = ["linux-64", "osx-64", "win-64", "osx-arm64"]
 version = "3.6.0"
