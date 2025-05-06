@@ -110,7 +110,7 @@ void findAngle(const vpImage<unsigned char> &I, const vpImagePoint &iP, vpMe *me
       int index_mask;
 
       if (me->getAngleStep() != 0)
-        index_mask = static_cast<int>(i / static_cast<double>(e->getAngleStep()));
+        index_mask = static_cast<int>(i / static_cast<double>(me->getAngleStep()));
       else
         throw(vpException(vpException::divideByZeroError, "angle step = 0"));
 
