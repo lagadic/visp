@@ -816,7 +816,7 @@ public:
   }
 };
 
-std::vector<std::string> vpDisplayOpenCV::Impl::m_listTitles = std::vector<std::string>();
+VP_ATTRIBUTE_NO_DESTROY std::vector<std::string> vpDisplayOpenCV::Impl::m_listTitles = std::vector<std::string>();
 unsigned int vpDisplayOpenCV::Impl::m_nbWindows = 0;
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
