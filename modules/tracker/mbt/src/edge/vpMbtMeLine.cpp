@@ -340,7 +340,7 @@ void vpMbtMeLine::computeProjectionError(const vpImage<unsigned char> &I, double
   vecLine[1] = sin(deltaNormalized);
   vecLine.normalize();
 
-  double offset = std::floor(SobelX.getRows() / 2.0f);
+  double offset = std::floor(SobelX.getRows() / 2.0);
 
   for (std::list<vpMeSite>::const_iterator it = m_meList.begin(); it != m_meList.end(); ++it) {
     if (iter != 0 && iter + 1 != m_meList.size()) {
@@ -446,10 +446,10 @@ void vpMbtMeLine::computeProjectionError(const vpImage<unsigned char> &I, double
 */
 void vpMbtMeLine::reSample(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2)
 {
-  m_PExt[0].m_ifloat = static_cast<float>(ip1.get_i());
-  m_PExt[0].m_jfloat = static_cast<float>(ip1.get_j());
-  m_PExt[1].m_ifloat = static_cast<float>(ip2.get_i());
-  m_PExt[1].m_jfloat = static_cast<float>(ip2.get_j());
+  m_PExt[0].m_ifloat = static_cast<double>(ip1.get_i());
+  m_PExt[0].m_jfloat = static_cast<double>(ip1.get_j());
+  m_PExt[1].m_ifloat = static_cast<double>(ip2.get_i());
+  m_PExt[1].m_jfloat = static_cast<double>(ip2.get_j());
 
   vpMeLine::reSample(I);
 }
