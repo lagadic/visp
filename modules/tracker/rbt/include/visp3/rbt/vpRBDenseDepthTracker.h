@@ -205,7 +205,7 @@ public:
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-      for (unsigned int i = 0; i < numPoints; ++i) {
+      for (int i = 0; i < static_cast<int>(numPoints); ++i) {
         const double X = m_cXt[0][i], Y = m_cXt[1][i], Z = m_cXt[2][i];
         const double nX = m_cNt[0][i], nY = m_cNt[1][i], nZ = m_cNt[2][i];
 
