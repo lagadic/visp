@@ -1,12 +1,11 @@
 name: CI - MacOS/Linux/Windows via Pixi
 
 on:
-  # pull_request:
-  #   types: [opened, reopened, synchronize]
-  - workflow_dispatch
-# concurrency:
-#   group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
-#   cancel-in-progress: true
+  pull_request:
+    types: [opened, reopened, synchronize]
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
   visp-pixi:
