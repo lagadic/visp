@@ -61,6 +61,7 @@ public:
 
   vpMbtMeEllipse();
   vpMbtMeEllipse(const vpMbtMeEllipse &me_ellipse);
+  vpMbtMeEllipse &operator=(const vpMbtMeEllipse &me_ellipse);
 
   void computeProjectionError(const vpImage<unsigned char> &_I, double &_sumErrorRad, unsigned int &_nbFeatures,
                               const vpMatrix &SobelX, const vpMatrix &SobelY, bool display, unsigned int length,

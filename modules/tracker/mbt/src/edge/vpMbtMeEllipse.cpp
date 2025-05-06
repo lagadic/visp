@@ -57,6 +57,15 @@ vpMbtMeEllipse::vpMbtMeEllipse() : vpMeEllipse() { }
 vpMbtMeEllipse::vpMbtMeEllipse(const vpMbtMeEllipse &me_ellipse) : vpMeEllipse(me_ellipse) { }
 
 /*!
+  Copy operator.
+*/
+vpMbtMeEllipse &vpMbtMeEllipse::operator=(const vpMbtMeEllipse &me_ellipse)
+{
+  *this = me_ellipse;
+  return *this;
+}
+
+/*!
   Compute the projection error of the ellipse.
   Compare the gradient direction around samples of the ellipse to the normal
   of the tangent of the considered sample. Error is expressed in radians
