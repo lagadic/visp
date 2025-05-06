@@ -73,7 +73,7 @@ vpDisplayWin32::vpDisplayWin32(vpImage<unsigned char> &I, int winx, int winy, co
 /*!
  * Copy constructor.
  */
-vpDisplayWin32(const vpDisplayWin32 &display) : vpDisplay(display)
+vpDisplayWin32::vpDisplayWin32(const vpDisplayWin32 &display) : vpDisplay(display)
 {
   *this = display;
 }
@@ -86,7 +86,7 @@ vpDisplayWin32::~vpDisplayWin32() { closeDisplay(); }
 /*!
  * Copy operator.
  */
-vpDisplayWin32 &operator=(const vpDisplayWin32 &display)
+vpDisplayWin32 &vpDisplayWin32::operator=(const vpDisplayWin32 &display)
 {
   hThread = display.hThread;
   threadId = display.threadId;
@@ -179,7 +179,7 @@ void vpDisplayWin32::init(unsigned int width, unsigned int height, int x, int y,
   hThread = CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)vpCreateWindow, param, 0, &threadId);
 
   // the initialization worked
-  iStatus = (hThread != (HANDLE)nullptr);
+  iStatus = (hThread != static_cast<HANDLE>(nullptr));
 
   m_displayHasBeenInitialized = true;
 }
@@ -664,11 +664,11 @@ void vpDisplayWin32::flushDisplayROI(const vpImagePoint &iP, unsigned int width,
   flushing the whole image.
   Therefore, we update the maximum area even when asked to update a region.
   */
-  WORD left = (WORD)iP.get_u();
-  WORD right = (WORD)(iP.get_u() + width - 1);
+  WORD left = static_cast<WORD>(iP.get_u());
+  WORD right = static_cast<WORD>(iP.get_u() + width - 1);
 
-  WORD top = (WORD)iP.get_v();
-  WORD bottom = (WORD)(iP.get_v() + height - 1);
+  WORD top = static_cast<WORD>(iP.get_v());
+  WORD bottom = static_cast<WORD>(iP.get_v() + height - 1);
 
   // sends a message to the window
   WPARAM wp = MAKEWPARAM(left, right);
@@ -903,8 +903,8 @@ void vpDisplayWin32::getImage(vpImage<vpRGBa> &I)
  */
 void vpDisplayWin32::getScreenSize(unsigned int &w, unsigned int &h)
 {
-  w = GetSystemMetrics(SM_CXSCREEN);
-  h = GetSystemMetrics(SM_CYSCREEN);
+  w = static_cast<unsigned int>(GetSystemMetrics(SM_CXSCREEN));
+  h = static_cast<unsigned int>(GetSystemMetrics(SM_CYSCREEN));
 }
 
 /*!
