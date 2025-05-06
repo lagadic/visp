@@ -227,7 +227,7 @@ public:
 
     \return Returns the current frame index.
   */
-  inline unsigned int getCurrentFrameIndex() const { return m_frameCount; }
+  inline unsigned int getCurrentFrameIndex() const { return static_cast<unsigned int>(m_frameCount); }
   /*!
    * Return the name of the file in which the last frame was saved.
    */
