@@ -2,11 +2,10 @@ name: Ubuntu-3rdparty
 
 # https://www.jeffgeerling.com/blog/2020/running-github-actions-workflow-on-schedule-and-other-events
 on:
-  # pull_request:
-  #   types: [opened, reopened, synchronize]
-  # schedule:
-  #   - cron: '0 2 * * SUN'
-  workflow_dispatch:
+  pull_request:
+    types: [opened, reopened, synchronize]
+  schedule:
+    - cron: '0 2 * * SUN'
 
 # https://stackoverflow.com/questions/66335225/how-to-cancel-previous-runs-in-the-pr-when-you-push-new-commitsupdate-the-curre#comment133398800_72408109
 # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#concurrency
