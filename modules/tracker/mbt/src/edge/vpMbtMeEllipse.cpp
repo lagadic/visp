@@ -291,8 +291,7 @@ void vpMbtMeEllipse::reSample(const vpImage<unsigned char> &I)
   }
 
   unsigned int n = numberOfSignal();
-  if (static_cast<double>(n = < 0.9 * m_expectedDensity)
-  {
+  if (static_cast<double>(n) < 0.9 * m_expectedDensity) {
     sample(I);
     vpMeTracker::track(I);
   }

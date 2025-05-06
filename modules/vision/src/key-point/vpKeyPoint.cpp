@@ -3424,11 +3424,11 @@ bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &bo
         if (reprojectionError < 6.0) {
           inliers.push_back(vpImagePoint(static_cast<double>(points2[i].y), static_cast<double>(points2[i].x)));
           if (imPts1 != nullptr) {
-            imPts1->push_back(vpImagePoint(static_cast<double>(points1[i].y, static_cast<double>(points1[i].x));
+            imPts1->push_back(vpImagePoint(static_cast<double>(points1[i].y), static_cast<double>(points1[i].x)));
           }
 
           if (imPts2 != nullptr) {
-            imPts2->push_back(vpImagePoint(static_cast<double>(points2[i].y, static_cast<double>(points2[i].x));
+            imPts2->push_back(vpImagePoint(static_cast<double>(points2[i].y), static_cast<double>(points2[i].x)));
           }
         }
       }
@@ -3439,14 +3439,14 @@ bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &bo
 
       for (size_t i = 0; i < (size_t)fundamentalInliers.rows; i++) {
         if (fundamentalInliers.at<uchar>(static_cast<int>(i), 0)) {
-          inliers.push_back(vpImagePoint(static_cast<double>(points2[i].y, static_cast<double>(points2[i].x));
+          inliers.push_back(vpImagePoint(static_cast<double>(points2[i].y), static_cast<double>(points2[i].x)));
 
           if (imPts1 != nullptr) {
-            imPts1->push_back(vpImagePoint(static_cast<double>(points1[i].y, static_cast<double>(points1[i].x));
+            imPts1->push_back(vpImagePoint(static_cast<double>(points1[i].y), static_cast<double>(points1[i].x)));
           }
 
           if (imPts2 != nullptr) {
-            imPts2->push_back(vpImagePoint(static_cast<double>(points2[i].y, static_cast<double>(points2[i].x));
+            imPts2->push_back(vpImagePoint(static_cast<double>(points2[i].y), static_cast<double>(points2[i].x)));
           }
         }
       }
