@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, ubuntu-latest]
+        os: [ubuntu-latest, macos-latest, macos-13]
         environment: [all-with-tests, with-python]
         build_type: [Release]
         include:
@@ -40,13 +40,6 @@ jobs:
         with:
           cache: true
           environments: ${{ matrix.environment }}
-
-      # - name: Show debugging includes
-      #   if: contains(matrix.os, 'windows-latest')
-      #   shell: cmd /C CALL {0}
-      #   run: |
-      #     pixi shell -e ${{ matrix.environment }}
-      #     dir %CONDA_PREFIX%/Library/include/panda3d
 
       - name: Build Visp [MacOS/Linux/Windows]
         shell: bash -el {0}
