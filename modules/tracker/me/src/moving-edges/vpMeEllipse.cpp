@@ -60,9 +60,9 @@ vpMeEllipse::vpMeEllipse()
 }
 
 vpMeEllipse::vpMeEllipse(const vpMeEllipse &me_ellipse)
-  : vpMeTracker = me_ellipse)
-  {
-    *this = me_ellipse;
+  : vpMeTracker(me_ellipse)
+{
+  *this = me_ellipse;
 }
 
 vpMeEllipse::~vpMeEllipse()
