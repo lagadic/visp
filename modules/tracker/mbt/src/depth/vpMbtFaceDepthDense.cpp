@@ -183,7 +183,7 @@ BEGIN_VISP_NAMESPACE
 { }
 
 /*!
- * Copy constructor
+ * Copy constructor.
  * @param mbt_face : MBT face to copy.
  */
 vpMbtFaceDepthDense(const vpMbtFaceDepthDense &mbt_face)
@@ -192,7 +192,7 @@ vpMbtFaceDepthDense(const vpMbtFaceDepthDense &mbt_face)
 }
 
 /*!
- * Copy operator
+ * Copy operator.
  * @param mbt_face : MBT face to copy.
  */
 vpMbtFaceDepthDense &operator=(const vpMbtFaceDepthDense &mbt_face)
