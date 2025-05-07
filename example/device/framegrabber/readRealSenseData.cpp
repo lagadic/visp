@@ -284,7 +284,7 @@ bool readData(int cpt, const std::string &input_directory, const std::string &pa
       point_cloud->width = width;
       point_cloud->height = height;
       point_cloud->is_dense = (is_dense != 0);
-      point_cloud->resize(static_cast<size_t>(width * height);
+      point_cloud->resize(static_cast<size_t>(width * height));
 
       float x = 0.0f, y = 0.0f, z = 0.0f;
       for (uint32_t i = 0; i < height; i++) {
@@ -319,7 +319,7 @@ bool readData(int cpt, const std::string &input_directory, const std::string &pa
       point_cloud->width = width;
       point_cloud->height = height;
       point_cloud->is_dense = (is_dense != 0);
-      point_cloud->resize(static_cast<size_t>(width * height);
+      point_cloud->resize(static_cast<size_t>(width * height));
 
       for (uint32_t i = 0; i < height; i++) {
         for (uint32_t j = 0; j < width; j++) {
