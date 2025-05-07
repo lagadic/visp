@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -440,11 +440,12 @@ inline void vpMbtTukeyEstimator<float>::MEstimator(const vpColVector &residues, 
 
   // 1.48 keeps scale estimate consistent for a normal probability dist.
   float sigma = 1.4826f * normmedian; // median Absolute Deviation
+  float noise_threshold = static_cast<float>(NoiseThreshold);
 
   // Set a minimum threshold for sigma
   // (when sigma reaches the level of noise in the image)
-  if (sigma < NoiseThreshold) {
-    sigma = static_cast<float>(NoiseThreshold);
+  if (sigma < noise_threshold) {
+    sigma = noise_threshold;
   }
 
   psiTukey(sigma, m_normres, weights);
