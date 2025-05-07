@@ -42,6 +42,7 @@ class VISP_EXPORT vpRBVisualOdometry
 {
 public:
   vpRBVisualOdometry();
+  virtual ~vpRBVisualOdometry() = default;
   virtual void compute(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &previousFrame) = 0;
   virtual vpHomogeneousMatrix getCameraMotion() const = 0;
   virtual vpHomogeneousMatrix getCameraPose() const = 0;
