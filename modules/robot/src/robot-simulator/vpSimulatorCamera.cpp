@@ -208,12 +208,13 @@ void vpSimulatorCamera::setVelocity(const vpRobot::vpControlFrameType frame, con
     break;
   }
   case vpRobot::REFERENCE_FRAME:
-    throw vpRobotException(vpRobotException::wrongStateError, "Cannot set a velocity in the reference frame:"
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot set a velocity in the reference frame: "
                                                               "functionality not implemented");
-    throw vpRobotException(vpRobotException::wrongStateError, "Cannot set a velocity in the mixt frame:"
+  case vpRobot::MIXT_FRAME:
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot set a velocity in the mixt frame: "
                                                               "functionality not implemented");
   case vpRobot::END_EFFECTOR_FRAME:
-    throw vpRobotException(vpRobotException::wrongStateError, "Cannot set a velocity in the end-effector frame:"
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot set a velocity in the end-effector frame: "
                                                               "functionality not implemented");
   }
 }
