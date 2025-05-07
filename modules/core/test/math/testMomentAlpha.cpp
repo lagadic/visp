@@ -51,6 +51,9 @@ using namespace VISP_NAMESPACE_NAME;
 #endif
 
 int test_moment_alpha(const std::string &name, bool symmetry, const std::vector<int> &vec_angle, double tolerance_deg,
+                      double symmetry_threshold = 1e-6);
+
+int test_moment_alpha(const std::string &name, bool symmetry, const std::vector<int> &vec_angle, double tolerance_deg,
                       double symmetry_threshold = 1e-6)
 {
   vpImage<unsigned char> I;

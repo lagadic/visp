@@ -71,6 +71,11 @@
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
+void usage(const char *name, const char *badparam, std::string ipath, std::string ppath, unsigned first, unsigned last,
+           unsigned step, vpDisplayType &dtype);
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath, unsigned &first, unsigned &last,
+                unsigned &step, vpDisplayType &dtype, bool &list, bool &display, bool &click, bool &wait);
+
 typedef enum
 {
   vpX11,
@@ -80,7 +85,6 @@ typedef enum
 } vpDisplayType;
 
 /*!
-
   Print the program options.
 
   \param name : Program name.
@@ -91,7 +95,6 @@ typedef enum
   \param last : Last image.
   \param step : Step between two images.
   \param dtype : Type of video device.
-
  */
 void usage(const char *name, const char *badparam, std::string ipath, std::string ppath, unsigned first, unsigned last,
            unsigned step, vpDisplayType &dtype)
@@ -194,8 +197,8 @@ SYNOPSIS\n\
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 }
-/*!
 
+/*!
   Set the program options.
 
   \param argc : Command line number of parameters.
@@ -216,7 +219,6 @@ SYNOPSIS\n\
   \param wait : Boolean for waiting a mouse click between two images.
 
   \return false if the program has to be stopped, true otherwise.
-
 */
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath, unsigned &first, unsigned &last,
                 unsigned &step, vpDisplayType &dtype, bool &list, bool &display, bool &click, bool &wait)

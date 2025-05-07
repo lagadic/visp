@@ -52,6 +52,17 @@ using namespace VISP_NAMESPACE_NAME;
 // List of allowed command line options
 #define GETOPTARGS "cdi:o:t:h"
 
+void usage(const char *name, const char *badparam, const std::string &ipath, const std::string &opath,
+           const std::string &user);
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &opath, const std::string &user,
+                unsigned int &nbThreads);
+unsigned char getRandomValues(unsigned char min, unsigned char max);
+void generateRandomImage(vpImage<unsigned char> &I, unsigned int min = 0, unsigned int max = 255);
+void generateRandomImage(vpImage<vpRGBa> &I, unsigned int min = 0, unsigned int max = 255);
+void iterate_method1(vpImage<vpRGBa> &I, double alpha, double beta);
+void iterate_method1(vpImage<unsigned char> &I, double alpha, double beta);
+void iterate_method2(vpImage<vpRGBa> &I, double alpha, double beta);
+
 /*
  * Print the program options.
  *

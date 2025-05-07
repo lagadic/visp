@@ -53,13 +53,37 @@
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
-/*!
+void usage(const char *name, const char *badparam);
+bool getOptions(int argc, const char **argv, unsigned int &nb_matrices, unsigned int &nb_iterations,
+                bool &use_plot_file, std::string &plotfile, unsigned int &nbrows, unsigned int &nbcols, bool &verbose);
 
+
+vpMatrix make_random_matrix(unsigned int nbrows, unsigned int nbcols);
+vpMatrix make_random_symmetric_matrix(unsigned int nbrows);
+void create_bench_random_matrix(unsigned int nb_matrices, unsigned int nb_rows, unsigned int nb_cols, bool verbose,
+                                std::vector<vpMatrix> &bench);
+void create_bench_random_symmetric_matrix(unsigned int nb_matrices, unsigned int nb_rows, bool verbose,
+                                          std::vector<vpMatrix> &bench);
+int test_svd(std::vector<vpMatrix> M, std::vector<vpMatrix> U, std::vector<vpColVector> s, std::vector<vpMatrix> V, double &error);
+int test_eigen_values(std::vector<vpMatrix> M, std::vector<vpColVector> e, std::vector<vpMatrix> V,
+                      std::vector<vpColVector> e2);
+void save_time(const std::string &method, bool verbose, bool use_plot_file, std::ofstream &of, double time, double error);
+#if defined(VISP_HAVE_EIGEN3)
+int test_svd_eigen3(bool verbose, const std::vector<vpMatrix> &bench, double &time, double &error);
+#endif
+#if defined(VISP_HAVE_LAPACK)
+int test_svd_lapack(bool verbose, const std::vector<vpMatrix> &bench, double &time, double &error);
+int test_eigen_values_lapack(bool verbose, const std::vector<vpMatrix> &bench, double &time);
+#endif
+#if defined(VISP_HAVE_OPENCV)
+int test_svd_opencv(bool verbose, const std::vector<vpMatrix> &bench, double &time, double &error);
+#endif
+
+/*!
   Print the program options.
 
   \param name : Program name.
   \param badparam : Bad parameter name.
-
  */
 void usage(const char *name, const char *badparam)
 {

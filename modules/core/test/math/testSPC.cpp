@@ -49,6 +49,10 @@
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
+bool initializeShewhartTest(const float &mean, const float &stdev, const bool &verbose, const std::string &testName, vpStatisticalTestShewhart &tester);
+void usage(const char *name);
+bool getOptions(int argc, const char **argv, float &opt_mean, float &opt_stdev, bool &opt_verbose);
+
 bool initializeShewhartTest(const float &mean, const float &stdev, const bool &verbose, const std::string &testName, vpStatisticalTestShewhart &tester)
 {
   const bool activateWECOrules = true;
