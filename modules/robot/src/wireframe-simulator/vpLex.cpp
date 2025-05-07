@@ -523,7 +523,7 @@ lex_loop:
     };
     mylength = static_cast<int>(mysptr - mytext);
     if (token != get_symbol(mytext, mylength))
-      fwrite(mytext, (size_t)mylength, 1, f);
+      fwrite(mytext, static_cast<size_t>(mylength), 1, f);
     return (get_symbol(mytext, mylength));
     break;
   case INTT:
@@ -540,7 +540,7 @@ lex_loop:
       };
       if (CURC != 'E' && CURC != 'e') {
         if (token != T_FLOAT)
-          fwrite(mytext, (size_t)(mysptr - mytext), 1, f);
+          fwrite(mytext, static_cast<size_t>(mysptr - mytext), 1, f);
         return (T_FLOAT);
       }
       break;
@@ -554,18 +554,18 @@ lex_loop:
       else {
         mysptr--;
         if (token != T_FLOAT)
-          fwrite(mytext, (size_t)(mysptr - mytext), 1, f);
+          fwrite(mytext, static_cast<size_t>(mysptr - mytext), 1, f);
         return (T_FLOAT);
       }
       for (; isintt(static_cast<int>(CURC)); mysptr++) {
       };
       if (token != T_FLOAT)
-        fwrite(mytext, (size_t)(mysptr - mytext), 1, f);
+        fwrite(mytext, static_cast<size_t>(mysptr - mytext), 1, f);
       return (T_FLOAT);
       break;
     default:
       if (token != T_INT)
-        fwrite(mytext, (size_t)(mysptr - mytext), 1, f);
+        fwrite(mytext, static_cast<size_t>(mysptr - mytext), 1, f);
       return (T_INT);
       break;
     }

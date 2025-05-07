@@ -511,7 +511,7 @@ void vpMbKltTracker::setPose(const vpImage<unsigned char> *const I, const vpImag
               init_ids.end())
 #else
           if (std::find(init_ids.begin(), init_ids.end(),
-                        (long)(kltpoly->getCurrentPointsInd())[(size_t)iter->first]) != init_ids.end())
+                        (long)(kltpoly->getCurrentPointsInd())[static_cast<size_t>(iter->first)]) != init_ids.end())
 #endif
           {
             // KLT point already processed (a KLT point can exist in another
@@ -527,9 +527,9 @@ void vpMbKltTracker::setPose(const vpImage<unsigned char> *const I, const vpImag
           cv::Point2f p(static_cast<float>(cdp[0]), static_cast<float>(cdp[1]));
           init_pts.push_back(p);
 #ifdef TARGET_OS_IPHONE
-          init_ids.push_back((size_t)(kltpoly->getCurrentPointsInd())[static_cast<int>(iter->first)]);
+          init_ids.push_back(static_cast<size_t>(kltpoly->getCurrentPointsInd())[static_cast<int>(iter->first)]);
 #else
-          init_ids.push_back((size_t)(kltpoly->getCurrentPointsInd())[(size_t)iter->first]);
+          init_ids.push_back(static_cast<size_t>(kltpoly->getCurrentPointsInd())[static_cast<size_t>(iter->first)]);
 #endif
 
           double p_mu_t_2 = cdp[0] * cdGc[2][0] + cdp[1] * cdGc[2][1] + cdGc[2][2];

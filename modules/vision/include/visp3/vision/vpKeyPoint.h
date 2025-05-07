@@ -1224,8 +1224,8 @@ public:
     std::vector<std::pair<cv::KeyPoint, cv::KeyPoint> > matchQueryToTrainKeyPoints(m_filteredMatches.size());
     for (size_t i = 0; i < m_filteredMatches.size(); i++) {
       matchQueryToTrainKeyPoints.push_back(
-          std::pair<cv::KeyPoint, cv::KeyPoint>(m_queryFilteredKeyPoints[(size_t)m_filteredMatches[i].queryIdx],
-                                                m_trainKeyPoints[(size_t)m_filteredMatches[i].trainIdx]));
+          std::pair<cv::KeyPoint, cv::KeyPoint>(m_queryFilteredKeyPoints[static_cast<size_t>(m_filteredMatches[i].queryIdx)],
+                                                m_trainKeyPoints[static_cast<size_t>(m_filteredMatches[i].trainIdx])));
     }
     return matchQueryToTrainKeyPoints;
   }
@@ -2273,8 +2273,8 @@ private:
     //    u.f = kp.angle; _val = (scale * _val) ^ u.u;
     u.f = kp.response;
     _val = (scale * _val) ^ u.u;
-    _val = (scale * _val) ^ ((size_t)kp.octave);
-    _val = (scale * _val) ^ ((size_t)kp.class_id);
+    _val = (scale * _val) ^ (static_cast<size_t>(kp.octave));
+    _val = (scale * _val) ^ (static_cast<size_t>(kp.class_id));
     return _val;
   }
 

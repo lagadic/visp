@@ -273,7 +273,7 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
   cv::Mat trainDescriptors;
   extractor->compute(matImg, trainKeyPoints, trainDescriptors);
 
-  if (trainKeyPoints.size() != (size_t)trainDescriptors.rows || trainKeyPoints.size() != points3f.size()) {
+  if (trainKeyPoints.size() != static_cast<size_t>(trainDescriptors.rows) || trainKeyPoints.size() != points3f.size()) {
     throw(vpException(vpException::fatalError, "Problem with training data size !"));
   }
 
@@ -310,12 +310,12 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
 
     vpPose estimated_pose;
     for (std::vector<cv::DMatch>::const_iterator it = matches.begin(); it != matches.end(); ++it) {
-      vpPoint pt(points3f[(size_t)(it->trainIdx)].x, points3f[(size_t)(it->trainIdx)].y,
-        points3f[(size_t)(it->trainIdx)].z);
+      vpPoint pt(points3f[static_cast<size_t>(it->trainIdx)].x, points3f[static_cast<size_t>(it->trainIdx)].y,
+        points3f[static_cast<size_t>(it->trainIdx)].z);
 
       double x = 0.0, y = 0.0;
-      vpPixelMeterConversion::convertPoint(cam, queryKeyPoints[(size_t)(it->queryIdx)].pt.x,
-        queryKeyPoints[(size_t)(it->queryIdx)].pt.y, x, y);
+      vpPixelMeterConversion::convertPoint(cam, queryKeyPoints[static_cast<size_t>(it->queryIdx)].pt.x,
+        queryKeyPoints[static_cast<size_t>(it->queryIdx)].pt.y, x, y);
       pt.set_x(x);
       pt.set_y(y);
 
@@ -347,9 +347,9 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
       Imatch.insert(I, vpImagePoint(0, Iref.getWidth()));
       vpDisplay::display(Imatch);
       for (std::vector<cv::DMatch>::const_iterator it = matches.begin(); it != matches.end(); ++it) {
-        vpImagePoint leftPt(trainKeyPoints[(size_t)it->trainIdx].pt.y, trainKeyPoints[(size_t)it->trainIdx].pt.x);
-        vpImagePoint rightPt(queryKeyPoints[(size_t)it->queryIdx].pt.y,
-          queryKeyPoints[(size_t)it->queryIdx].pt.x + Iref.getWidth());
+        vpImagePoint leftPt(trainKeyPoints[static_cast<size_t>(it->trainIdx)].pt.y, trainKeyPoints[static_cast<size_t>(it->trainIdx)].pt.x);
+        vpImagePoint rightPt(queryKeyPoints[static_cast<size_t>(it->queryIdx)].pt.y,
+          queryKeyPoints[static_cast<size_t>(it->queryIdx)].pt.x + Iref.getWidth());
         vpDisplay::displayLine(Imatch, leftPt, rightPt, vpColor::green);
       }
 

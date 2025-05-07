@@ -161,7 +161,7 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original,
   std::cout << "\ncMo estimated using VVS on data with small gaussian noise:\n" << cMo_estimated << std::endl;
   std::cout << "Corresponding residual: " << r_vvs << std::endl;
 
-  size_t nbOutliers = (size_t)(0.35 * bunnyModelPoints_noisy.size());
+  size_t nbOutliers = static_cast<size_t>(0.35 * bunnyModelPoints_noisy.size());
   vpGaussRand noise(0.01, 0.008);
   // Vector that indicates if the point is an outlier or not
   std::vector<bool> vectorOfOutlierFlags(bunnyModelPoints_noisy.size(), false);
@@ -176,7 +176,7 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original,
     // Add some duplicate points
     size_t nbDuplicatePoints = 100;
     for (size_t i = 0; i < nbDuplicatePoints; i++) {
-      size_t index = (size_t)rand() % bunnyModelPoints_noisy.size();
+      size_t index = static_cast<size_t>(rand()) % bunnyModelPoints_noisy.size();
       vpPoint duplicatePoint = bunnyModelPoints_noisy[index];
       bunnyModelPoints_noisy.push_back(duplicatePoint);
       vectorOfOutlierFlags.push_back(true);
@@ -191,7 +191,7 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original,
                                             // or not
     std::vector<vpPoint> listOfDegeneratePoints;
     for (size_t i = 0; i < nbDegeneratePoints; i++) {
-      size_t index = (size_t)rand() % bunnyModelPoints_noisy.size();
+      size_t index = static_cast<size_t>(rand()) % bunnyModelPoints_noisy.size();
       vpPoint degeneratePoint = bunnyModelPoints_noisy[index];
 
       // Object point is degenerate
@@ -203,7 +203,7 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original,
       listOfDegeneratePoints.push_back(degeneratePoint);
 
       // Image point is degenerate
-      index = (size_t)rand() % bunnyModelPoints_noisy.size();
+      index = static_cast<size_t>(rand()) % bunnyModelPoints_noisy.size();
       degeneratePoint = bunnyModelPoints_noisy[index];
 
       degeneratePoint.set_x(degeneratePoint.get_x() + degenerate_tolerence);

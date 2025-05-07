@@ -241,14 +241,14 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
   std::vector<double> point_cloud_face_vec, point_cloud_face_custom;
 
   if (m_featureEstimationMethod == ROBUST_FEATURE_ESTIMATION) {
-    point_cloud_face_custom.reserve((size_t)(3 * bb.getWidth() * bb.getHeight()));
-    point_cloud_face_vec.reserve((size_t)(3 * bb.getWidth() * bb.getHeight()));
+    point_cloud_face_custom.reserve(static_cast<size_t>(3 * bb.getWidth() * bb.getHeight()));
+    point_cloud_face_vec.reserve(static_cast<size_t>(3 * bb.getWidth() * bb.getHeight()));
   }
   else if (m_featureEstimationMethod == ROBUST_SVD_PLANE_ESTIMATION) {
-    point_cloud_face_vec.reserve((size_t)(3 * bb.getWidth() * bb.getHeight()));
+    point_cloud_face_vec.reserve(static_cast<size_t>(3 * bb.getWidth() * bb.getHeight()));
   }
   else if (m_featureEstimationMethod == PCL_PLANE_ESTIMATION) {
-    point_cloud_face->reserve((size_t)(bb.getWidth() * bb.getHeight()));
+    point_cloud_face->reserve(static_cast<size_t>(bb.getWidth() * bb.getHeight()));
   }
 
   bool checkSSE2 = vpCPUFeatures::checkSSE2();
@@ -405,9 +405,9 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
   // Keep only 3D points inside the projected polygon face
   std::vector<double> point_cloud_face, point_cloud_face_custom;
 
-  point_cloud_face.reserve((size_t)(3 * bb.getWidth() * bb.getHeight()));
+  point_cloud_face.reserve(static_cast<size_t>(3 * bb.getWidth() * bb.getHeight()));
   if (m_featureEstimationMethod == ROBUST_FEATURE_ESTIMATION) {
-    point_cloud_face_custom.reserve((size_t)(3 * bb.getWidth() * bb.getHeight()));
+    point_cloud_face_custom.reserve(static_cast<size_t>(3 * bb.getWidth() * bb.getHeight()));
   }
 
   bool checkSSE2 = vpCPUFeatures::checkSSE2();
@@ -566,9 +566,9 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
   // Keep only 3D points inside the projected polygon face
   std::vector<double> point_cloud_face, point_cloud_face_custom;
 
-  point_cloud_face.reserve((size_t)(3 * bb.getWidth() * bb.getHeight()));
+  point_cloud_face.reserve(static_cast<size_t>(3 * bb.getWidth() * bb.getHeight()));
   if (m_featureEstimationMethod == ROBUST_FEATURE_ESTIMATION) {
-    point_cloud_face_custom.reserve((size_t)(3 * bb.getWidth() * bb.getHeight()));
+    point_cloud_face_custom.reserve(static_cast<size_t>(3 * bb.getWidth() * bb.getHeight()));
   }
 
   bool checkSSE2 = vpCPUFeatures::checkSSE2();

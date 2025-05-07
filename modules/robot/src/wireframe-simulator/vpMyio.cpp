@@ -101,16 +101,16 @@ void fscanf_string(char **str)
   if (lex() != T_STRING)
     lexerr("start", "string expected", NULL);
   if (*str == NULL)
-    *str = (char *)malloc((size_t)(mylength + 1) * sizeof(char));
+    *str = (char *)malloc(static_cast<size_t>(mylength + 1) * sizeof(char));
   else
-    *str = (char *)realloc(*str, (size_t)(mylength + 1) * sizeof(char));
+    *str = (char *)realloc(*str, static_cast<size_t>(mylength + 1) * sizeof(char));
 
   if (*str == NULL) {
     printf("Unable to read the string: bad memory allocation");
     return;
   }
 
-  strncpy(*str, mytext, (size_t)mylength);
+  strncpy(*str, mytext, static_cast<size_t>(mylength));
 }
 
 /*

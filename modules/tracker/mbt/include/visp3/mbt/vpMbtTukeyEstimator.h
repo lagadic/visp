@@ -145,7 +145,7 @@ template <typename T> T vpMbtTukeyEstimator<T>::getMedian(std::vector<T> &vec)
 {
   // Not the exact median when even number of elements
   size_t index = static_cast<size_t>(ceil(static_cast<double>(vec.size()) / 2.0)) - 1;
-  std::nth_element(vec.begin(), vec.begin() + index, vec.end());
+  std::nth_element(vec.begin(), vec.begin() + static_cast<long long>(index), vec.end());
   return vec[index];
 }
 

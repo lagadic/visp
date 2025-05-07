@@ -132,7 +132,7 @@ void vpMbtDistanceKltCylinder::init(const vpKltOpencv &_tracker, const vpHomogen
     else {
       std::vector<vpImagePoint> roi;
       for (unsigned int kc = 0; kc < listIndicesCylinderBBox.size(); kc++) {
-        hiddenface->getPolygon()[(size_t)listIndicesCylinderBBox[kc]]->getRoiClipped(cam, roi);
+        hiddenface->getPolygon()[static_cast<size_t>(listIndicesCylinderBBox[kc])]->getRoiClipped(cam, roi);
         if (vpPolygon::isInside(roi, y_tmp, x_tmp)) {
           add = true;
           break;

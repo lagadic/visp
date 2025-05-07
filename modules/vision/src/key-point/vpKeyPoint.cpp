@@ -1076,8 +1076,8 @@ void vpKeyPoint::display(const vpImage<unsigned char> &IRef, const vpImage<unsig
   getTrainKeyPoints(vpTrainImageKeyPoints);
 
   for (std::vector<cv::DMatch>::const_iterator it = m_filteredMatches.begin(); it != m_filteredMatches.end(); ++it) {
-    vpDisplay::displayCross(IRef, vpTrainImageKeyPoints[(size_t)(it->trainIdx)], size, vpColor::red);
-    vpDisplay::displayCross(ICurrent, vpQueryImageKeyPoints[(size_t)(it->queryIdx)], size, vpColor::green);
+    vpDisplay::displayCross(IRef, vpTrainImageKeyPoints[static_cast<size_t>(it->trainIdx)], size, vpColor::red);
+    vpDisplay::displayCross(ICurrent, vpQueryImageKeyPoints[static_cast<size_t>(it->queryIdx)], size, vpColor::green);
   }
 }
 
@@ -1089,8 +1089,8 @@ void vpKeyPoint::display(const vpImage<vpRGBa> &IRef, const vpImage<vpRGBa> &ICu
   getTrainKeyPoints(vpTrainImageKeyPoints);
 
   for (std::vector<cv::DMatch>::const_iterator it = m_filteredMatches.begin(); it != m_filteredMatches.end(); ++it) {
-    vpDisplay::displayCross(IRef, vpTrainImageKeyPoints[(size_t)(it->trainIdx)], size, vpColor::red);
-    vpDisplay::displayCross(ICurrent, vpQueryImageKeyPoints[(size_t)(it->queryIdx)], size, vpColor::green);
+    vpDisplay::displayCross(IRef, vpTrainImageKeyPoints[static_cast<size_t>(it->trainIdx)], size, vpColor::red);
+    vpDisplay::displayCross(ICurrent, vpQueryImageKeyPoints[static_cast<size_t>(it->queryIdx)], size, vpColor::green);
   }
 }
 
@@ -1100,7 +1100,7 @@ void vpKeyPoint::display(const vpImage<unsigned char> &ICurrent, unsigned int si
   getQueryKeyPoints(vpQueryImageKeyPoints);
 
   for (std::vector<cv::DMatch>::const_iterator it = m_filteredMatches.begin(); it != m_filteredMatches.end(); ++it) {
-    vpDisplay::displayCross(ICurrent, vpQueryImageKeyPoints[(size_t)(it->queryIdx)], size, color);
+    vpDisplay::displayCross(ICurrent, vpQueryImageKeyPoints[static_cast<size_t>(it->queryIdx)], size, color);
   }
 }
 
@@ -1110,7 +1110,7 @@ void vpKeyPoint::display(const vpImage<vpRGBa> &ICurrent, unsigned int size, con
   getQueryKeyPoints(vpQueryImageKeyPoints);
 
   for (std::vector<cv::DMatch>::const_iterator it = m_filteredMatches.begin(); it != m_filteredMatches.end(); ++it) {
-    vpDisplay::displayCross(ICurrent, vpQueryImageKeyPoints[(size_t)(it->queryIdx)], size, color);
+    vpDisplay::displayCross(ICurrent, vpQueryImageKeyPoints[static_cast<size_t>(it->queryIdx)], size, color);
   }
 }
 
@@ -1132,9 +1132,9 @@ void vpKeyPoint::displayMatching(const vpImage<unsigned char> &IRef, vpImage<uns
       currentColor = vpColor((rand() % 256), (rand() % 256), (rand() % 256));
     }
 
-    leftPt = trainImageKeyPoints[(size_t)(it->trainIdx)];
-    rightPt = vpImagePoint(queryImageKeyPoints[(size_t)(it->queryIdx)].get_i(),
-                           queryImageKeyPoints[(size_t)it->queryIdx].get_j() + IRef.getWidth());
+    leftPt = trainImageKeyPoints[static_cast<size_t>(it->trainIdx)];
+    rightPt = vpImagePoint(queryImageKeyPoints[static_cast<size_t>(it->queryIdx)].get_i(),
+                           queryImageKeyPoints[static_cast<size_t>(it->queryIdx)].get_j() + IRef.getWidth());
     vpDisplay::displayCross(IMatching, leftPt, crossSize, currentColor);
     vpDisplay::displayCross(IMatching, rightPt, crossSize, currentColor);
     vpDisplay::displayLine(IMatching, leftPt, rightPt, currentColor, lineThickness);
@@ -1159,9 +1159,9 @@ void vpKeyPoint::displayMatching(const vpImage<unsigned char> &IRef, vpImage<vpR
       currentColor = vpColor((rand() % 256), (rand() % 256), (rand() % 256));
     }
 
-    leftPt = trainImageKeyPoints[(size_t)(it->trainIdx)];
-    rightPt = vpImagePoint(queryImageKeyPoints[(size_t)(it->queryIdx)].get_i(),
-                           queryImageKeyPoints[(size_t)it->queryIdx].get_j() + IRef.getWidth());
+    leftPt = trainImageKeyPoints[static_cast<size_t>(it->trainIdx)];
+    rightPt = vpImagePoint(queryImageKeyPoints[static_cast<size_t>(it->queryIdx)].get_i(),
+                           queryImageKeyPoints[static_cast<size_t>(it->queryIdx)].get_j() + IRef.getWidth());
     vpDisplay::displayCross(IMatching, leftPt, crossSize, currentColor);
     vpDisplay::displayCross(IMatching, rightPt, crossSize, currentColor);
     vpDisplay::displayLine(IMatching, leftPt, rightPt, currentColor, lineThickness);
@@ -1186,9 +1186,9 @@ void vpKeyPoint::displayMatching(const vpImage<vpRGBa> &IRef, vpImage<vpRGBa> &I
       currentColor = vpColor((rand() % 256), (rand() % 256), (rand() % 256));
     }
 
-    leftPt = trainImageKeyPoints[(size_t)(it->trainIdx)];
-    rightPt = vpImagePoint(queryImageKeyPoints[(size_t)(it->queryIdx)].get_i(),
-                           queryImageKeyPoints[(size_t)it->queryIdx].get_j() + IRef.getWidth());
+    leftPt = trainImageKeyPoints[static_cast<size_t>(it->trainIdx)];
+    rightPt = vpImagePoint(queryImageKeyPoints[static_cast<size_t>(it->queryIdx)].get_i(),
+                           queryImageKeyPoints[static_cast<size_t>(it->queryIdx)].get_j() + IRef.getWidth());
     vpDisplay::displayCross(IMatching, leftPt, crossSize, currentColor);
     vpDisplay::displayCross(IMatching, rightPt, crossSize, currentColor);
     vpDisplay::displayLine(IMatching, leftPt, rightPt, currentColor, lineThickness);
@@ -1285,22 +1285,22 @@ void vpKeyPoint::displayMatching(const vpImage<unsigned char> &ICurrent, vpImage
 
     for (std::vector<cv::DMatch>::const_iterator it = m_filteredMatches.begin(); it != m_filteredMatches.end(); ++it) {
       int current_class_id = 0;
-      if (mapOfImageIdIndex[m_mapOfImageId[m_trainKeyPoints[(size_t)it->trainIdx].class_id]] < medianIndex) {
-        current_class_id = mapOfImageIdIndex[m_mapOfImageId[m_trainKeyPoints[(size_t)it->trainIdx].class_id]];
+      if (mapOfImageIdIndex[m_mapOfImageId[m_trainKeyPoints[static_cast<size_t>(it->trainIdx)].class_id]] < medianIndex) {
+        current_class_id = mapOfImageIdIndex[m_mapOfImageId[m_trainKeyPoints[static_cast<size_t>(it->trainIdx)].class_id]];
       }
       else {
         // Shift of one unity the index of the training images which are after
         // the current image
-        current_class_id = mapOfImageIdIndex[m_mapOfImageId[m_trainKeyPoints[(size_t)it->trainIdx].class_id]] + 1;
+        current_class_id = mapOfImageIdIndex[m_mapOfImageId[m_trainKeyPoints[static_cast<size_t>(it->trainIdx)].class_id]] + 1;
       }
 
       int indexI = current_class_id / nbWidth;
       int indexJ = current_class_id - (indexI * nbWidth);
 
-      vpImagePoint end(static_cast<int>(maxH) * indexI + m_trainKeyPoints[(size_t)it->trainIdx].pt.y,
-                       static_cast<int>(maxW) * indexJ + m_trainKeyPoints[(size_t)it->trainIdx].pt.x);
-      vpImagePoint start(static_cast<int>(maxH) * medianI + m_queryFilteredKeyPoints[(size_t)it->queryIdx].pt.y,
-                         static_cast<int>(maxW) * medianJ + m_queryFilteredKeyPoints[(size_t)it->queryIdx].pt.x);
+      vpImagePoint end(static_cast<int>(maxH) * indexI + m_trainKeyPoints[static_cast<size_t>(it->trainIdx)].pt.y,
+                       static_cast<int>(maxW) * indexJ + m_trainKeyPoints[static_cast<size_t>(it->trainIdx)].pt.x);
+      vpImagePoint start(static_cast<int>(maxH) * medianI + m_queryFilteredKeyPoints[static_cast<size_t>(it->queryIdx)].pt.y,
+                         static_cast<int>(maxW) * medianJ + m_queryFilteredKeyPoints[static_cast<size_t>(it->queryIdx)].pt.x);
 
       // Draw line for matching keypoints detected in the current image and
       // those detected  in the training images
@@ -1398,22 +1398,22 @@ void vpKeyPoint::displayMatching(const vpImage<vpRGBa> &ICurrent, vpImage<vpRGBa
 
     for (std::vector<cv::DMatch>::const_iterator it = m_filteredMatches.begin(); it != m_filteredMatches.end(); ++it) {
       int current_class_id = 0;
-      if (mapOfImageIdIndex[m_mapOfImageId[m_trainKeyPoints[(size_t)it->trainIdx].class_id]] < medianIndex) {
-        current_class_id = mapOfImageIdIndex[m_mapOfImageId[m_trainKeyPoints[(size_t)it->trainIdx].class_id]];
+      if (mapOfImageIdIndex[m_mapOfImageId[m_trainKeyPoints[static_cast<size_t>(it->trainIdx)].class_id]] < medianIndex) {
+        current_class_id = mapOfImageIdIndex[m_mapOfImageId[m_trainKeyPoints[static_cast<size_t>(it->trainIdx)].class_id]];
       }
       else {
         // Shift of one unity the index of the training images which are after
         // the current image
-        current_class_id = mapOfImageIdIndex[m_mapOfImageId[m_trainKeyPoints[(size_t)it->trainIdx].class_id]] + 1;
+        current_class_id = mapOfImageIdIndex[m_mapOfImageId[m_trainKeyPoints[static_cast<size_t>(it->trainIdx)].class_id]] + 1;
       }
 
       int indexI = current_class_id / nbWidth;
       int indexJ = current_class_id - (indexI * nbWidth);
 
-      vpImagePoint end(static_cast<int>(maxH) * indexI + m_trainKeyPoints[(size_t)it->trainIdx].pt.y,
-                       static_cast<int>(maxW) * indexJ + m_trainKeyPoints[(size_t)it->trainIdx].pt.x);
-      vpImagePoint start(static_cast<int>(maxH) * medianI + m_queryFilteredKeyPoints[(size_t)it->queryIdx].pt.y,
-                         static_cast<int>(maxW) * medianJ + m_queryFilteredKeyPoints[(size_t)it->queryIdx].pt.x);
+      vpImagePoint end(static_cast<int>(maxH) * indexI + m_trainKeyPoints[static_cast<size_t>(it->trainIdx)].pt.y,
+                       static_cast<int>(maxW) * indexJ + m_trainKeyPoints[static_cast<size_t>(it->trainIdx)].pt.x);
+      vpImagePoint start(static_cast<int>(maxH) * medianI + m_queryFilteredKeyPoints[static_cast<size_t>(it->queryIdx)].pt.y,
+                         static_cast<int>(maxW) * medianJ + m_queryFilteredKeyPoints[static_cast<size_t>(it->queryIdx)].pt.x);
 
       // Draw line for matching keypoints detected in the current image and
       // those detected  in the training images
@@ -1557,8 +1557,8 @@ void vpKeyPoint::extract(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPo
     }
   }
 
-  if (keyPoints.size() != (size_t)descriptors.rows) {
-    std::cerr << "keyPoints.size() != (size_t) descriptors.rows" << std::endl;
+  if (keyPoints.size() != static_cast<size_t>(descriptors.rows)) {
+    std::cerr << "keyPoints.size() != static_cast<size_t>(descriptors.rows)" << std::endl;
   }
   elapsedTime = vpTime::measureTimeMs() - t;
 }
@@ -1612,9 +1612,9 @@ void vpKeyPoint::filterMatches()
           m.push_back(cv::DMatch(static_cast<int>(queryKpts.size()), m_knnMatches[i][0].trainIdx, m_knnMatches[i][0].distance));
 
           if (!m_trainPoints.empty()) {
-            trainPts.push_back(m_trainPoints[(size_t)m_knnMatches[i][0].trainIdx]);
+            trainPts.push_back(m_trainPoints[static_cast<size_t>(m_knnMatches[i][0].trainIdx)]);
           }
-          queryKpts.push_back(m_queryKeyPoints[(size_t)m_knnMatches[i][0].queryIdx]);
+          queryKpts.push_back(m_queryKeyPoints[static_cast<size_t>(m_knnMatches[i][0].queryIdx)]);
         }
       }
     }
@@ -1656,9 +1656,9 @@ void vpKeyPoint::filterMatches()
         m.push_back(cv::DMatch(static_cast<int>(queryKpts.size()), m_matches[i].trainIdx, m_matches[i].distance));
 
         if (!m_trainPoints.empty()) {
-          trainPts.push_back(m_trainPoints[(size_t)m_matches[i].trainIdx]);
+          trainPts.push_back(m_trainPoints[static_cast<size_t>(m_matches[i].trainIdx)]);
         }
-        queryKpts.push_back(m_queryKeyPoints[(size_t)m_matches[i].queryIdx]);
+        queryKpts.push_back(m_queryKeyPoints[static_cast<size_t>(m_matches[i].queryIdx)]);
       }
     }
   }
@@ -1682,9 +1682,9 @@ void vpKeyPoint::filterMatches()
         mTmp.push_back(cv::DMatch(static_cast<int>(queryKptsTmp.size()), it->trainIdx, it->distance));
 
         if (!m_trainPoints.empty()) {
-          trainPtsTmp.push_back(m_trainPoints[(size_t)it->trainIdx]);
+          trainPtsTmp.push_back(m_trainPoints[static_cast<size_t>(it->trainIdx)]);
         }
-        queryKptsTmp.push_back(queryKpts[(size_t)it->queryIdx]);
+        queryKptsTmp.push_back(queryKpts[static_cast<size_t>(it->queryIdx)]);
       }
     }
 
@@ -3131,7 +3131,7 @@ unsigned int vpKeyPoint::matchPoint(const std::vector<cv::KeyPoint> &queryKeyPoi
       m_filteredMatches.clear();
       for (std::vector<cv::DMatch>::const_iterator it = m_matches.begin(); it != m_matches.end(); ++it) {
         m_filteredMatches.push_back(cv::DMatch(static_cast<int>(m_queryFilteredKeyPoints.size()), it->trainIdx, it->distance));
-        m_queryFilteredKeyPoints.push_back(m_queryKeyPoints[(size_t)it->queryIdx]);
+        m_queryFilteredKeyPoints.push_back(m_queryKeyPoints[static_cast<size_t>(it->queryIdx)]);
       }
     }
     else {
@@ -3146,7 +3146,7 @@ unsigned int vpKeyPoint::matchPoint(const std::vector<cv::KeyPoint> &queryKeyPoi
       // matches to the same train object
       for (std::vector<cv::DMatch>::const_iterator it = m_matches.begin(); it != m_matches.end(); ++it) {
         // m_matches is normally ordered following the queryDescriptor index
-        m_objectFilteredPoints.push_back(m_trainPoints[(size_t)it->trainIdx]);
+        m_objectFilteredPoints.push_back(m_trainPoints[static_cast<size_t>(it->trainIdx)]);
       }
     }
   }
@@ -3242,7 +3242,7 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParam
       m_filteredMatches.clear();
       for (std::vector<cv::DMatch>::const_iterator it = m_matches.begin(); it != m_matches.end(); ++it) {
         m_filteredMatches.push_back(cv::DMatch(static_cast<int>(m_queryFilteredKeyPoints.size()), it->trainIdx, it->distance));
-        m_queryFilteredKeyPoints.push_back(m_queryKeyPoints[(size_t)it->queryIdx]);
+        m_queryFilteredKeyPoints.push_back(m_queryKeyPoints[static_cast<size_t>(it->queryIdx)]);
       }
     }
     else {
@@ -3257,7 +3257,7 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParam
       // matches to the same train object
       for (std::vector<cv::DMatch>::const_iterator it = m_matches.begin(); it != m_matches.end(); ++it) {
         // m_matches is normally ordered following the queryDescriptor index
-        m_objectFilteredPoints.push_back(m_trainPoints[(size_t)it->trainIdx]);
+        m_objectFilteredPoints.push_back(m_trainPoints[static_cast<size_t>(it->trainIdx)]);
       }
     }
   }
@@ -3302,7 +3302,7 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParam
 
     for (std::vector<unsigned int>::const_iterator it = inlierIndex.begin(); it != inlierIndex.end(); ++it) {
       m_matchRansacKeyPointsToPoints.push_back(std::pair<cv::KeyPoint, cv::Point3f>(
-        m_queryFilteredKeyPoints[(size_t)(*it)], m_objectFilteredPoints[(size_t)(*it)]));
+        m_queryFilteredKeyPoints[static_cast<size_t>(*it)], m_objectFilteredPoints[static_cast<size_t>(*it)]));
       mapOfInlierIndex[*it] = true;
     }
 
@@ -3333,7 +3333,7 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParam
 
     for (std::vector<int>::const_iterator it = inlierIndex.begin(); it != inlierIndex.end(); ++it) {
       m_matchRansacKeyPointsToPoints.push_back(std::pair<cv::KeyPoint, cv::Point3f>(
-        m_queryFilteredKeyPoints[(size_t)(*it)], m_objectFilteredPoints[(size_t)(*it)]));
+        m_queryFilteredKeyPoints[static_cast<size_t>(*it)], m_objectFilteredPoints[static_cast<size_t>(*it)]));
       mapOfInlierIndex[*it] = true;
     }
 
@@ -3397,8 +3397,8 @@ bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &bo
     std::vector<cv::Point2f> points2(m_filteredMatches.size());
 
     for (size_t i = 0; i < m_filteredMatches.size(); i++) {
-      points1[i] = cv::Point2f(m_trainKeyPoints[(size_t)m_filteredMatches[i].trainIdx].pt);
-      points2[i] = cv::Point2f(m_queryFilteredKeyPoints[(size_t)m_filteredMatches[i].queryIdx].pt);
+      points1[i] = cv::Point2f(m_trainKeyPoints[static_cast<size_t>(m_filteredMatches[i].trainIdx)].pt);
+      points2[i] = cv::Point2f(m_queryFilteredKeyPoints[static_cast<size_t>(m_filteredMatches[i].queryIdx)].pt);
     }
 
     std::vector<vpImagePoint> inliers;
@@ -3437,7 +3437,7 @@ bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &bo
       cv::Mat fundamentalInliers;
       cv::Mat fundamentalMatrix = cv::findFundamentalMat(points1, points2, cv::FM_RANSAC, 3, 0.99, fundamentalInliers);
 
-      for (size_t i = 0; i < (size_t)fundamentalInliers.rows; i++) {
+      for (size_t i = 0; i < static_cast<size_t>(fundamentalInliers.rows); i++) {
         if (fundamentalInliers.at<uchar>(static_cast<int>(i), 0)) {
           inliers.push_back(vpImagePoint(static_cast<double>(points2[i].y), static_cast<double>(points2[i].x)));
 
@@ -3616,14 +3616,14 @@ void vpKeyPoint::detectExtractAffine(const vpImage<unsigned char> &I,
     cv::Mat timg, mask, Ai;
     img.copyTo(timg);
 
-    affineSkew(listOfAffineParams[(size_t)cpt].first, listOfAffineParams[(size_t)cpt].second, timg, mask, Ai);
+    affineSkew(listOfAffineParams[static_cast<size_t>(cpt)].first, listOfAffineParams[static_cast<size_t>()cpt].second, timg, mask, Ai);
 
     if (listOfAffineI != nullptr) {
       cv::Mat img_disp;
       bitwise_and(mask, timg, img_disp);
       vpImage<unsigned char> tI;
       vpImageConvert::convert(img_disp, tI);
-      (*listOfAffineI)[(size_t)cpt] = tI;
+      (*listOfAffineI)[static_cast<size_t>(cpt)] = tI;
     }
 
 #if 0
@@ -3651,8 +3651,8 @@ void vpKeyPoint::detectExtractAffine(const vpImage<unsigned char> &I,
       keypoints[i].pt.y = kpt_t.at<float>(1, 0);
     }
 
-    listOfKeypoints[(size_t)cpt] = keypoints;
-    listOfDescriptors[(size_t)cpt] = descriptors;
+    listOfKeypoints[static_cast<size_t>(cpt)] = keypoints;
+    listOfDescriptors[static_cast<size_t>(cpt)] = descriptors;
   }
 #endif
 }
@@ -3809,7 +3809,7 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
       vpIoTools::writeBinaryValueLE(file, length);
 
       for (int cpt = 0; cpt < length; cpt++) {
-        file.write((char *)(&path[(size_t)cpt]), sizeof(path[(size_t)cpt]));
+        file.write((char *)(&path[static_cast<size_t>(cpt)]), sizeof(path[static_cast<size_t>(cpt)]));
       }
     }
 #endif
@@ -4066,7 +4066,7 @@ void vpKeyPoint::KeyPointsFilter::retainBest(std::vector<cv::KeyPoint> &keypoint
 {
   // this is only necessary if the keypoints size is greater than the number
   // of desired points.
-  if (n_points >= 0 && keypoints.size() > (size_t)n_points) {
+  if (n_points >= 0 && keypoints.size() > static_cast<size_t>(n_points)) {
     if (n_points == 0) {
       keypoints.clear();
       return;
@@ -4075,14 +4075,14 @@ void vpKeyPoint::KeyPointsFilter::retainBest(std::vector<cv::KeyPoint> &keypoint
     // worst.
     std::nth_element(keypoints.begin(), keypoints.begin() + n_points, keypoints.end(), KeypointResponseGreater());
     // this is the boundary response, and in the case of FAST may be ambiguous
-    float ambiguous_response = keypoints[(size_t)(n_points - 1)].response;
+    float ambiguous_response = keypoints[static_cast<size_t>(n_points - 1)].response;
     // use std::partition to grab all of the keypoints with the boundary
     // response.
     std::vector<cv::KeyPoint>::const_iterator new_end = std::partition(
         keypoints.begin() + n_points, keypoints.end(), KeypointResponseGreaterThanThreshold(ambiguous_response));
     // resize the keypoints, given this new end point. nth_element and
     // partition reordered the points inplace
-    keypoints.resize((size_t)(new_end - keypoints.begin()));
+    keypoints.resize(static_cast<size_t>(new_end - keypoints.begin()));
   }
 }
 
@@ -4158,8 +4158,8 @@ struct KeyPoint_LessThan
   KeyPoint_LessThan(const std::vector<cv::KeyPoint> &_kp) : kp(&_kp) { }
   bool operator()(/*int i, int j*/ size_t i, size_t j) const
   {
-    const cv::KeyPoint &kp1 = (*kp)[/*(size_t)*/ i];
-    const cv::KeyPoint &kp2 = (*kp)[/*(size_t)*/ j];
+    const cv::KeyPoint &kp1 = (*kp)[i];
+    const cv::KeyPoint &kp2 = (*kp)[j];
     if (!vpMath::equal(kp1.pt.x, kp2.pt.x,
                        std::numeric_limits<float>::epsilon())) { // if (kp1.pt.x !=
                                                                  // kp2.pt.x) {

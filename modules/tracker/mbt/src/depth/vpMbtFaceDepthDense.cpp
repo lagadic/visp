@@ -361,7 +361,7 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
     return false;
   }
 
-  m_pointCloudFace.reserve((size_t)(bb.getWidth() * bb.getHeight()));
+  m_pointCloudFace.reserve(static_cast<size_t>(bb.getWidth() * bb.getHeight()));
 
   int totalTheoreticalPoints = 0, totalPoints = 0;
   for (unsigned int i = top; i < bottom; i += stepY) {
@@ -447,7 +447,7 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
   bb.setLeft(left);
   bb.setRight(right);
 
-  m_pointCloudFace.reserve((size_t)(bb.getWidth() * bb.getHeight()));
+  m_pointCloudFace.reserve(static_cast<size_t>(bb.getWidth() * bb.getHeight()));
 
   int totalTheoreticalPoints = 0, totalPoints = 0;
   for (unsigned int i = top; i < bottom; i += stepY) {
@@ -532,7 +532,7 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
   bb.setLeft(left);
   bb.setRight(right);
 
-  m_pointCloudFace.reserve((size_t)(bb.getWidth() * bb.getHeight()));
+  m_pointCloudFace.reserve(static_cast<size_t>(bb.getWidth() * bb.getHeight()));
 
   int totalTheoreticalPoints = 0, totalPoints = 0;
   for (unsigned int i = top; i < bottom; i += stepY) {

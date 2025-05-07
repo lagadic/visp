@@ -417,17 +417,17 @@ void vp_rs_get_pointcloud_impl(const rs::device *m_device, const std::map<rs::st
               if (swap_rgb) {
                 pointcloud->points[static_cast<size_t>(i * depth_width + j)].b =
                   (uint32_t)color[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel];
-                pointcloud->points[(size_t)(i * depth_width + j)].g =
+                pointcloud->points[static_cast<size_t>(i * depth_width + j)].g =
                   (uint32_t)color[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel + 1];
-                pointcloud->points[(size_t)(i * depth_width + j)].r =
+                pointcloud->points[static_cast<size_t>(i * depth_width + j)].r =
                   (uint32_t)color[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel + 2];
               }
               else {
                 pointcloud->points[static_cast<size_t>(i * depth_width + j)].r =
                   (uint32_t)color[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel];
-                pointcloud->points[(size_t)(i * depth_width + j)].g =
+                pointcloud->points[static_cast<size_t>(i * depth_width + j)].g =
                   (uint32_t)color[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel + 1];
-                pointcloud->points[(size_t)(i * depth_width + j)].b =
+                pointcloud->points[static_cast<size_t>(i * depth_width + j)].b =
                   (uint32_t)color[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel + 2];
               }
 #endif

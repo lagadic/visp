@@ -70,7 +70,7 @@ bool vpDetectorQRCode::detect(const vpImage<unsigned char> &I)
   zbar::Image img(width, height, "Y800", I.bitmap, (unsigned long)(width * height));
 
   // scan the image for barcodes
-  m_nb_objects = (size_t)m_scanner.scan(img);
+  m_nb_objects = static_cast<size_t>(m_scanner.scan(img));
 
   // extract results
   for (zbar::Image::SymbolIterator symbol = img.symbol_begin(); symbol != img.symbol_end(); ++symbol) {

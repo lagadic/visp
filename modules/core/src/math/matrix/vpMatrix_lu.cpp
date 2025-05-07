@@ -521,7 +521,7 @@ vpMatrix vpMatrix::inverseByLUOpenCV() const
   cv::Mat Minv = M.inv(cv::DECOMP_LU);
 
   vpMatrix A(rowNum, colNum);
-  memcpy(A.data, Minv.data, (size_t)(8 * Minv.rows * Minv.cols));
+  memcpy(A.data, Minv.data, static_cast<size_t>(8 * Minv.rows * Minv.cols));
 
   return A;
 }
