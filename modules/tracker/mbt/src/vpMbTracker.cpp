@@ -224,7 +224,7 @@ vpMbTracker &vpMbTracker::operator=(const vpMbTracker &tracker)
 {
   m_cam = tracker.m_cam;
   m_cMo = tracker.m_cMo;
-  oJo = tracker.m_oJo;
+  oJo = tracker.oJo;
   m_isoJoIdentity = tracker.m_isoJoIdentity;
   modelFileName = tracker.modelFileName;
   modelInitialised = tracker.modelInitialised;
@@ -264,7 +264,7 @@ vpMbTracker &vpMbTracker::operator=(const vpMbTracker &tracker)
   m_projectionErrorCylinders = tracker.m_projectionErrorCylinders;
   m_projectionErrorCircles = tracker.m_projectionErrorCircles;
   m_projectionErrorFaces = tracker.m_projectionErrorFaces;
-  m_projectionErrorOgreShowConfigDialog = tracker.;
+  m_projectionErrorOgreShowConfigDialog = tracker.m_projectionErrorOgreShowConfigDialog;
   m_projectionErrorMe = tracker.m_projectionErrorMe;
   m_projectionErrorKernelSize = tracker.m_projectionErrorKernelSize;
   m_SobelX = tracker.m_SobelX;
