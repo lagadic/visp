@@ -56,6 +56,8 @@
 #elif (defined(__ARM_NEON__) || defined (__ARM_NEON)) && defined(__aarch64__)
 #include <arm_neon.h>
 #define VISP_HAVE_NEON 1
+#else
+#define VISP_HAVE_NEON 0
 #endif
 
 #define USE_SIMD_CODE 1
