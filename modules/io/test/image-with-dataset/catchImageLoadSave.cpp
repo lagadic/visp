@@ -173,7 +173,7 @@ TEST_CASE("Test grayscale JPEG image loading", "[image_I/O]")
       CHECK(cc >= Catch::Approx(ccThreshJPG));
       CHECK(I.getWidth() == imgWidth);
       CHECK(I.getHeight() == imgHeight);
-    };
+    }
   }
 }
 
@@ -193,7 +193,7 @@ TEST_CASE("Test RGBA JPEG image loading", "[image_I/O]")
       CHECK(cc >= Catch::Approx(ccThreshJPG));
       CHECK(I.getWidth() == imgWidth);
       CHECK(I.getHeight() == imgHeight);
-    };
+    }
   }
 }
 
@@ -213,7 +213,7 @@ TEST_CASE("Test grayscale PNG image loading", "[image_I/O]")
       CHECK(cc == Catch::Approx(ccThreshPNG));
       CHECK(I.getWidth() == imgWidth);
       CHECK(I.getHeight() == imgHeight);
-    };
+    }
   }
 }
 
@@ -233,7 +233,7 @@ TEST_CASE("Test RGBA PNG image loading", "[image_I/O]")
       CHECK(cc == Catch::Approx(ccThreshPNG));
       CHECK(I.getWidth() == imgWidth);
       CHECK(I.getHeight() == imgHeight);
-    };
+    }
   }
 }
 
@@ -257,7 +257,7 @@ TEST_CASE("Test grayscale JPEG image saving", "[image_I/O]")
       double cc = computePearsonCC(I_read, I);
       std::cout << backendNamesPng[j] << " backend Pearson correlation coefficient: " << cc << std::endl;
       CHECK(cc >= Catch::Approx(ccThreshJPG));
-    };
+    }
   }
 
   REQUIRE(vpIoTools::remove(directory_filename_tmp));
@@ -283,7 +283,7 @@ TEST_CASE("Test RGBA JPEG image saving", "[image_I/O]")
       double cc = computePearsonCC(I_read, I);
       std::cout << backendNamesPng[j] << " backend Pearson correlation coefficient: " << cc << std::endl;
       CHECK(cc >= Catch::Approx(ccThreshJPG));
-    };
+    }
   }
 
   REQUIRE(vpIoTools::remove(directory_filename_tmp));
@@ -309,7 +309,7 @@ TEST_CASE("Test grayscale PNG image saving", "[image_I/O]")
       double cc = computePearsonCC(I_read, I);
       std::cout << backendNamesPng[j] << " backend Pearson correlation coefficient: " << cc << std::endl;
       CHECK(cc == Catch::Approx(ccThreshPNG));
-    };
+    }
   }
 
   REQUIRE(vpIoTools::remove(directory_filename_tmp));
@@ -335,7 +335,7 @@ TEST_CASE("Test RGBA PNG image saving", "[image_I/O]")
       double cc = computePearsonCC(I_read, I);
       std::cout << backendNamesPng[j] << " backend Pearson correlation coefficient: " << cc << std::endl;
       CHECK(cc == Catch::Approx(ccThreshPNG));
-    };
+    }
   }
 
   REQUIRE(vpIoTools::remove(directory_filename_tmp));
@@ -360,9 +360,9 @@ TEST_CASE("Test grayscale in-memory PNG image encoding/decoding", "[image_I/O]")
           vpImage<unsigned char> I;
           vpImageIo::readPNGfromMem(buffer, I, backendsInMemory[j]);
           CHECK(I_ref == I);
-        };
+        }
       }
-    };
+    }
   }
 }
 
@@ -387,7 +387,7 @@ TEST_CASE("Test color in-memory PNG image encoding/decoding", "[image_I/O]")
             vpImage<vpRGBa> I;
             vpImageIo::readPNGfromMem(buffer, I, backendsInMemory[j]);
             CHECK(I_ref == I);
-          };
+          }
         }
       }
       {
@@ -402,10 +402,10 @@ TEST_CASE("Test color in-memory PNG image encoding/decoding", "[image_I/O]")
             vpImage<vpRGBa> I;
             vpImageIo::readPNGfromMem(buffer, I, backendsInMemory[j]);
             CHECK(I_ref == I);
-          };
+          }
         }
       }
-    };
+    }
   }
 }
 

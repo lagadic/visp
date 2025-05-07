@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 202% by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Demonstration of the wireframe simulator with a simple visual servoing
- *
-*****************************************************************************/
+ */
 
 /*!
   \example servoSimu4Points.cpp
@@ -369,7 +367,7 @@ int main(int argc, const char **argv)
 
       while (!vpDisplay::getClick(Iint, false) && !vpDisplay::getClick(Iext1, false) &&
              !vpDisplay::getClick(Iext2, false)) {
-      };
+      }
     }
 
     robot.setPosition(wMc);

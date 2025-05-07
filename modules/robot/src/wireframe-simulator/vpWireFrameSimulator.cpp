@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Wire frame simulator
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpWireFrameSimulator.cpp
@@ -1403,7 +1401,7 @@ vpHomogeneousMatrix vpWireFrameSimulator::navigation(const vpImage<vpRGBa> &I, b
     if (!(blockedr || blockedz || blockedt)) {
       blocked = false;
       while (vpDisplay::getClick(I, trash, b, false)) {
-      };
+      }
     }
   }
 
@@ -1412,7 +1410,6 @@ vpHomogeneousMatrix vpWireFrameSimulator::navigation(const vpImage<vpRGBa> &I, b
   if (old_iPr != vpImagePoint(-1, -1) && blockedr) {
     double diffi = iP.get_i() - old_iPr.get_i();
     double diffj = iP.get_j() - old_iPr.get_j();
-    // cout << "delta :" << diffj << endl;;
     double anglei = diffi * 360 / width;
     double anglej = diffj * 360 / width;
     mov.buildFrom(0, 0, 0, vpMath::rad(-anglei), vpMath::rad(anglej), 0);
@@ -1492,7 +1489,7 @@ vpHomogeneousMatrix vpWireFrameSimulator::navigation(const vpImage<unsigned char
     if (!(blockedr || blockedz || blockedt)) {
       blocked = false;
       while (vpDisplay::getClick(I, trash, b, false)) {
-      };
+      }
     }
   }
 
@@ -1503,7 +1500,6 @@ vpHomogeneousMatrix vpWireFrameSimulator::navigation(const vpImage<unsigned char
   if (old_iPr != vpImagePoint(-1, -1) && blockedr) {
     double diffi = iP.get_i() - old_iPr.get_i();
     double diffj = iP.get_j() - old_iPr.get_j();
-    // cout << "delta :" << diffj << endl;;
     double anglei = diffi * 360 / width;
     double anglej = diffj * 360 / width;
     mov.buildFrom(0, 0, 0, vpMath::rad(-anglei), vpMath::rad(anglej), 0);

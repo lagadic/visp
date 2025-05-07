@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,11 +29,7 @@
  *
  * Description:
  * Le module "arit.c" contient les procedures arithmetiques.
- *
- * Authors:
- * Jean-Luc CORRE
- *
-*****************************************************************************/
+ */
 
 #include "vpArit.h"
 #include "vpMy.h"
@@ -375,8 +370,8 @@ void plane_norme(Vector *np, Point3f *ap, Point3f *bp, Point3f *cp)
   Vector u, v;
 
   DIF_COORD3(u, *bp, *ap) /* base orthonorme (ap, u, v)  */
-  DIF_COORD3(v, *cp, *ap)
-  norm_vector(&u);
+    DIF_COORD3(v, *cp, *ap)
+    norm_vector(&u);
   norm_vector(&v);
   CROSS_PRODUCT(*np, u, v);
 }
@@ -477,16 +472,16 @@ void rotate_vector(Vector *vp, float a, Vector *axis)
   u = n;
   MUL_COORD3(u, f, f, f) /* (vp.n) * n    */
 
-  DIF_COORD3(v, *vp, u) /* calcule "v"    */
+    DIF_COORD3(v, *vp, u) /* calcule "v"    */
 
-  f = static_cast<float>(cos(static_cast<double>(a)));
+    f = static_cast<float>(cos(static_cast<double>(a)));
   MUL_COORD3(v, f, f, f) /* v * cos(a)    */
 
-  CROSS_PRODUCT(cross, n, *vp);
+    CROSS_PRODUCT(cross, n, *vp);
   f = static_cast<float>(sin(static_cast<double>(a)));
   MUL_COORD3(cross, f, f, f) /* (n^v) * sin(a)  */
 
-  SET_COORD3(*vp, u.x + v.x + cross.x, u.y + v.y + cross.y, u.z + v.z + cross.z)
+    SET_COORD3(*vp, u.x + v.x + cross.x, u.y + v.y + cross.y, u.z + v.z + cross.z)
 }
 
 /*

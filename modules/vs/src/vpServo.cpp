@@ -149,7 +149,7 @@ void vpServo::setServo(const vpServoType &servo_type)
     vpMatrix _eJe;
     _eJe.eye(6);
     set_eJe(_eJe);
-  };
+  }
 }
 
 void vpServo::setCameraDoF(const vpColVector &dof)

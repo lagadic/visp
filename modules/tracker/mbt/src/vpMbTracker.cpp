@@ -816,7 +816,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
 
       vpMouseButton::vpMouseButtonType button = vpMouseButton::button1;
       while (!vpDisplay::getClick(*I, ip, button)) {
-      };
+      }
 
       if (button == vpMouseButton::button1) {
         isWellInit = true;
@@ -836,7 +836,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
 
       vpMouseButton::vpMouseButtonType button = vpMouseButton::button1;
       while (!vpDisplay::getClick(*I_color, ip, button)) {
-      };
+      }
 
       if (button == vpMouseButton::button1) {
         isWellInit = true;

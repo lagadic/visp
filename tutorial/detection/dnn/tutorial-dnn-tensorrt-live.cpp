@@ -428,7 +428,7 @@ int main(int argc, char **argv)
   if (input.empty()) {
     int i = 0;
     while ((i++ < 20) && !capture.read(frame)) {
-    }; // warm up camera by skiping unread frames
+    } // warm up camera by skiping unread frames
   }
 
   vpImageConvert::convert(frame, I);
