@@ -46,23 +46,6 @@
 #include <limits>    // numeric_limits
 
 BEGIN_VISP_NAMESPACE
-/*!
-  Basic constructor that calls the constructor of the class vpMeTracker.
-*/
-vpMbtMeEllipse::vpMbtMeEllipse() : vpMeEllipse() { }
-
-/*!
-  Copy constructor.
-*/
-vpMbtMeEllipse::vpMbtMeEllipse(const vpMbtMeEllipse &me_ellipse) : vpMeEllipse(me_ellipse) { }
-
-/*!
-  Copy operator.
-*/
-vpMbtMeEllipse &vpMbtMeEllipse::operator=(const vpMbtMeEllipse &me_ellipse)
-{
-  return *this;
-}
 
 /*!
   Compute the projection error of the ellipse.
