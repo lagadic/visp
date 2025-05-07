@@ -186,7 +186,7 @@ BEGIN_VISP_NAMESPACE
  * Copy constructor.
  * @param mbt_face : MBT face to copy.
  */
-vpMbtFaceDepthDense(const vpMbtFaceDepthDense &mbt_face)
+vpMbtFaceDepthDense::vpMbtFaceDepthDense(const vpMbtFaceDepthDense &mbt_face)
 {
   *this = mbt_face;
 }
@@ -195,7 +195,7 @@ vpMbtFaceDepthDense(const vpMbtFaceDepthDense &mbt_face)
  * Copy operator.
  * @param mbt_face : MBT face to copy.
  */
-vpMbtFaceDepthDense &operator=(const vpMbtFaceDepthDense &mbt_face)
+vpMbtFaceDepthDense &vpMbtFaceDepthDense::operator=(const vpMbtFaceDepthDense &mbt_face)
 {
   m_cam = mbt_face.m_cam;
   m_clippingFlag = mbt_face.m_clippingFlag;
