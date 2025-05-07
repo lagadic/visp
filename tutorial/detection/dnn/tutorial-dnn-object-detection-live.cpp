@@ -30,6 +30,10 @@ typedef enum
   DETECTION_CONTAINER_COUNT = 3
 } ChosenDetectionContainer;
 
+std::string chosenDetectionContainerToString(const ChosenDetectionContainer &choice);
+ChosenDetectionContainer chosenDetectionContainerFromString(const std::string &choiceStr);
+std::string getAvailableDetectionContainer();
+
 std::string chosenDetectionContainerToString(const ChosenDetectionContainer &choice)
 {
   switch (choice) {

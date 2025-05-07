@@ -56,6 +56,11 @@
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
+void usage(const char *name, const char *badparam, const std::string &ipath, const std::string &opath,
+           const std::string &user);
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &opath, const std::string &user,
+                unsigned int &nThreads, unsigned int &scale);
+
 /*
   Print the program options.
 

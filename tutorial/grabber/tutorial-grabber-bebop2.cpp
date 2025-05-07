@@ -7,6 +7,8 @@
 #ifdef VISP_HAVE_MODULE_ROBOT
 #include <visp3/robot/vpRobotBebop2.h>
 
+void usage(const char *argv[], int error);
+
 void usage(const char *argv[], int error)
 {
   std::cout << "SYNOPSIS" << std::endl

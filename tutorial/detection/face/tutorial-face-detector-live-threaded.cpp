@@ -1,3 +1,4 @@
+
 //! \example tutorial-face-detector-live-threaded.cpp
 #include <iostream>
 
@@ -40,8 +41,12 @@ using namespace VISP_NAMESPACE_NAME;
 typedef enum { capture_waiting, capture_started, capture_stopped } t_CaptureState;
 
 #if defined(VISP_HAVE_V4L2)
+void captureFunction(vpV4l2Grabber &cap, std::mutex &mutex_capture, vpImage<unsigned char> &frame, t_CaptureState &capture_state);
+
 void captureFunction(vpV4l2Grabber &cap, std::mutex &mutex_capture, vpImage<unsigned char> &frame, t_CaptureState &capture_state)
 #elif defined(HAVE_OPENCV_VIDEOIO)
+void captureFunction(cv::VideoCapture &cap, std::mutex &mutex_capture, cv::Mat &frame, t_CaptureState &capture_state);
+
 void captureFunction(cv::VideoCapture &cap, std::mutex &mutex_capture, cv::Mat &frame, t_CaptureState &capture_state)
 #endif
 {
@@ -77,8 +82,12 @@ void captureFunction(cv::VideoCapture &cap, std::mutex &mutex_capture, cv::Mat &
 }
 
 #if defined(VISP_HAVE_V4L2)
+void displayFunction(std::mutex &mutex_capture, std::mutex &mutex_face, vpImage<unsigned char> &frame, t_CaptureState &capture_state, vpRect &face_bbox, bool &face_available);
+
 void displayFunction(std::mutex &mutex_capture, std::mutex &mutex_face, vpImage<unsigned char> &frame, t_CaptureState &capture_state, vpRect &face_bbox, bool &face_available)
 #elif ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
+void displayFunction(std::mutex &mutex_capture, std::mutex &mutex_face, cv::Mat &frame, t_CaptureState &capture_state, vpRect &face_bbox, bool &face_available);
+
 void displayFunction(std::mutex &mutex_capture, std::mutex &mutex_face, cv::Mat &frame, t_CaptureState &capture_state, vpRect &face_bbox, bool &face_available)
 #endif
 {
@@ -167,8 +176,12 @@ void displayFunction(std::mutex &mutex_capture, std::mutex &mutex_face, cv::Mat 
 
 //! [face-detection-threaded detectionFunction]
 #if defined(VISP_HAVE_V4L2)
+void detectionFunction(std::mutex &mutex_capture, std::mutex &mutex_face, vpImage<unsigned char> &frame, t_CaptureState &capture_state, vpRect &face_bbox, std::string &face_cascade_name, bool &face_available);
+
 void detectionFunction(std::mutex &mutex_capture, std::mutex &mutex_face, vpImage<unsigned char> &frame, t_CaptureState &capture_state, vpRect &face_bbox, std::string &face_cascade_name, bool &face_available)
 #elif ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
+void detectionFunction(std::mutex &mutex_capture, std::mutex &mutex_face, cv::Mat &frame, t_CaptureState &capture_state, vpRect &face_bbox, std::string &face_cascade_name, bool &face_available);
+
 void detectionFunction(std::mutex &mutex_capture, std::mutex &mutex_face, cv::Mat &frame, t_CaptureState &capture_state, vpRect &face_bbox, std::string &face_cascade_name, bool &face_available)
 #endif
 {

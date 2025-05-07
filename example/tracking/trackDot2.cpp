@@ -57,6 +57,11 @@
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
+void usage(const char *name, const char *badparam, std::string ipath, std::string ppath, unsigned first,
+           unsigned last, unsigned step);
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath, unsigned &first, unsigned &last,
+                unsigned &step, bool &click_allowed, bool &display);
+
 /*!
   Print the program options.
 
@@ -132,8 +137,8 @@ OPTIONS:                                               Default\n\
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 }
-/*!
 
+/*!
   Set the program options.
 
   \param argc : Command line number of parameters.
@@ -147,7 +152,6 @@ OPTIONS:                                               Default\n\
   \param display : Display activation.
 
   \return false if the program has to be stopped, true otherwise.
-
 */
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath, unsigned &first, unsigned &last,
                 unsigned &step, bool &click_allowed, bool &display)

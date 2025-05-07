@@ -71,11 +71,6 @@
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
-void usage(const char *name, const char *badparam, std::string ipath, std::string ppath, unsigned first, unsigned last,
-           unsigned step, vpDisplayType &dtype);
-bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath, unsigned &first, unsigned &last,
-                unsigned &step, vpDisplayType &dtype, bool &list, bool &display, bool &click, bool &wait);
-
 typedef enum
 {
   vpX11,
@@ -83,6 +78,12 @@ typedef enum
   vpGDI,
   vpD3D,
 } vpDisplayType;
+
+
+void usage(const char *name, const char *badparam, std::string ipath, std::string ppath, unsigned first, unsigned last,
+  unsigned step, vpDisplayType &dtype);
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath, unsigned &first, unsigned &last,
+       unsigned &step, vpDisplayType &dtype, bool &list, bool &display, bool &click, bool &wait);
 
 /*!
   Print the program options.

@@ -169,7 +169,7 @@ unsigned char getRandomValues(unsigned char min, unsigned char max)
   return static_cast<unsigned char>((max - min) * static_cast<double>(rand()) / static_cast<double>(RAND_MAX) + min);
 }
 
-void generateRandomImage(vpImage<unsigned char> &I, unsigned int min = 0, unsigned int max = 255)
+void generateRandomImage(vpImage<unsigned char> &I, unsigned int min, unsigned int max)
 {
   for (unsigned int i = 0; i < I.getHeight(); ++i) {
     for (unsigned int j = 0; j < I.getWidth(); ++j) {
@@ -178,7 +178,7 @@ void generateRandomImage(vpImage<unsigned char> &I, unsigned int min = 0, unsign
   }
 }
 
-void generateRandomImage(vpImage<vpRGBa> &I, unsigned int min = 0, unsigned int max = 255)
+void generateRandomImage(vpImage<vpRGBa> &I, unsigned int min, unsigned int max)
 {
   for (unsigned int i = 0; i < I.getHeight(); ++i) {
     for (unsigned int j = 0; j < I.getWidth(); ++j) {

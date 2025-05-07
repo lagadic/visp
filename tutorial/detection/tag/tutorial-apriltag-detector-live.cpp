@@ -55,6 +55,8 @@
 #include <opencv2/videoio/videoio.hpp>
 #endif
 
+void usage(const char **argv, int error);
+
 void usage(const char **argv, int error)
 {
   std::cout << "Synopsis" << std::endl

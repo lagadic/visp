@@ -54,7 +54,7 @@ int test_moment_alpha(const std::string &name, bool symmetry, const std::vector<
                       double symmetry_threshold = 1e-6);
 
 int test_moment_alpha(const std::string &name, bool symmetry, const std::vector<int> &vec_angle, double tolerance_deg,
-                      double symmetry_threshold = 1e-6)
+                      double symmetry_threshold)
 {
   vpImage<unsigned char> I;
 

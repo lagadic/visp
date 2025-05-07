@@ -60,6 +60,16 @@
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
+
+void usage(const char *name, const char *badparam, const std::string &video_in_ipath, const std::string &video_in_ppath,
+           unsigned video_in_first, int video_in_last, int video_in_step, int me_range, int me_sample_step,
+           int me_threshold, unsigned int &sleep_ms);
+bool getOptions(int argc, const char **argv, std::string &video_in_ipath, std::string &video_in_ppath,
+                int &video_in_first, int &video_in_last, int &video_in_step,
+                bool &click_allowed, bool &display, bool &display_scale_auto, bool &track_circle, bool &track_arc,
+                std::string &video_out_save, int &me_range, int &me_sample_step, int &me_threshold, bool &step_by_step,
+                unsigned int &sleep_ms, bool &verbose);
+
 /*!
   Print the program options.
 
@@ -211,10 +221,10 @@ OPTIONS:                                                  Default\n\
   \return false if the program has to be stopped, true otherwise.
 */
 bool getOptions(int argc, const char **argv, std::string &video_in_ipath, std::string &video_in_ppath,
-  int &video_in_first, int &video_in_last, int &video_in_step,
-  bool &click_allowed, bool &display, bool &display_scale_auto, bool &track_circle, bool &track_arc,
-  std::string &video_out_save, int &me_range, int &me_sample_step, int &me_threshold, bool &step_by_step,
-  unsigned int &sleep_ms, bool &verbose)
+                int &video_in_first, int &video_in_last, int &video_in_step,
+                bool &click_allowed, bool &display, bool &display_scale_auto, bool &track_circle, bool &track_arc,
+                std::string &video_out_save, int &me_range, int &me_sample_step, int &me_threshold, bool &step_by_step,
+                unsigned int &sleep_ms, bool &verbose)
 {
   const char *optarg_;
   int c;

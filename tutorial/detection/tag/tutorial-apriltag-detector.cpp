@@ -7,6 +7,8 @@
 #include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
 
+void usage(const char **argv, int error);
+
 void usage(const char **argv, int error)
 {
   std::cout << "Synopsis" << std::endl
