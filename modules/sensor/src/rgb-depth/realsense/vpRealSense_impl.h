@@ -416,19 +416,19 @@ void vp_rs_get_pointcloud_impl(const rs::device *m_device, const std::map<rs::st
 #else
               if (swap_rgb) {
                 pointcloud->points[static_cast<size_t>(i * depth_width + j)].b =
-                  (uint32_t)color[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel];
+                  static_cast<uint32_t>(color[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel]);
                 pointcloud->points[static_cast<size_t>(i * depth_width + j)].g =
-                  (uint32_t)color[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel + 1];
+                  static_cast<uint32_t>(color[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel + 1]);
                 pointcloud->points[static_cast<size_t>(i * depth_width + j)].r =
-                  (uint32_t)color[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel + 2];
+                  static_cast<uint32_t>(color[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel + 2]);
               }
               else {
                 pointcloud->points[static_cast<size_t>(i * depth_width + j)].r =
-                  (uint32_t)color[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel];
+                  static_cast<uint32_t>(color[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel]);
                 pointcloud->points[static_cast<size_t>(i * depth_width + j)].g =
-                  (uint32_t)color[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel + 1];
+                  static_cast<uint32_t>(color[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel + 1]);
                 pointcloud->points[static_cast<size_t>(i * depth_width + j)].b =
-                  (uint32_t)color[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel + 2];
+                  static_cast<uint32_t>(color[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel + 2]);
               }
 #endif
             }

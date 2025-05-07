@@ -3141,7 +3141,7 @@ void vp1394TwoGrabber::setPanControl(unsigned int panControlValue)
     throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "No camera found"));
   }
   uint64_t offset = 0x884;
-  uint32_t value = 0x82000000 + (uint32_t)panControlValue;
+  uint32_t value = 0x82000000 + static_cast<uint32_t>(panControlValue);
   dc1394error_t err;
   err = dc1394_set_control_register(camera, offset, value);
   if (err != DC1394_SUCCESS) {
@@ -3258,7 +3258,7 @@ void vp1394TwoGrabber::setParameterValue(vp1394TwoParametersType param, unsigned
     vpERROR_TRACE("No camera found");
     throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "No camera found"));
   }
-  uint32_t value = (uint32_t)val;
+  uint32_t value = static_cast<uint32_t>(val);
   dc1394feature_t feature = DC1394_FEATURE_BRIGHTNESS; // = (dc1394feature_t)param;
   switch (param) {
   case vpFEATURE_BRIGHTNESS:

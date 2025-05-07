@@ -900,8 +900,8 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, pcl::Point
   auto vf = depth_frame.as<rs2::video_frame>();
   const int width = vf.get_width();
   const int height = vf.get_height();
-  pointcloud->width = (uint32_t)width;
-  pointcloud->height = (uint32_t)height;
+  pointcloud->width = static_cast<uint32_t>(width);
+  pointcloud->height = static_cast<uint32_t>(height);
   pointcloud->resize(static_cast<size_t>(width * height));
 
 #if MANUAL_POINTCLOUD // faster to compute manually when tested
