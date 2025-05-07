@@ -3616,7 +3616,7 @@ void vpKeyPoint::detectExtractAffine(const vpImage<unsigned char> &I,
     cv::Mat timg, mask, Ai;
     img.copyTo(timg);
 
-    affineSkew(listOfAffineParams[static_cast<size_t>(cpt)].first, listOfAffineParams[static_cast<size_t>()cpt].second, timg, mask, Ai);
+    affineSkew(listOfAffineParams[static_cast<size_t>(cpt)].first, listOfAffineParams[static_cast<size_t>(cpt)].second, timg, mask, Ai);
 
     if (listOfAffineI != nullptr) {
       cv::Mat img_disp;

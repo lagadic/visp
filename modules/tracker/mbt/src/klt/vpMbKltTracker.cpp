@@ -527,9 +527,9 @@ void vpMbKltTracker::setPose(const vpImage<unsigned char> *const I, const vpImag
           cv::Point2f p(static_cast<float>(cdp[0]), static_cast<float>(cdp[1]));
           init_pts.push_back(p);
 #ifdef TARGET_OS_IPHONE
-          init_ids.push_back(static_cast<size_t>(kltpoly->getCurrentPointsInd())[static_cast<int>(iter->first)]);
+          init_ids.push_back(static_cast<size_t>(kltpoly->getCurrentPointsInd()[static_cast<int>(iter->first)]));
 #else
-          init_ids.push_back(static_cast<size_t>(kltpoly->getCurrentPointsInd())[static_cast<size_t>(iter->first)]);
+          init_ids.push_back(static_cast<size_t>(kltpoly->getCurrentPointsInd()[static_cast<size_t>(iter->first)]));
 #endif
 
           double p_mu_t_2 = cdp[0] * cdGc[2][0] + cdp[1] * cdGc[2][1] + cdGc[2][2];

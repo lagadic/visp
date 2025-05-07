@@ -1225,7 +1225,7 @@ public:
     for (size_t i = 0; i < m_filteredMatches.size(); i++) {
       matchQueryToTrainKeyPoints.push_back(
           std::pair<cv::KeyPoint, cv::KeyPoint>(m_queryFilteredKeyPoints[static_cast<size_t>(m_filteredMatches[i].queryIdx)],
-                                                m_trainKeyPoints[static_cast<size_t>(m_filteredMatches[i].trainIdx])));
+                                                m_trainKeyPoints[static_cast<size_t>(m_filteredMatches[i].trainIdx)]));
     }
     return matchQueryToTrainKeyPoints;
   }
