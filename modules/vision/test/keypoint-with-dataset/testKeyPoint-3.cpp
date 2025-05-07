@@ -241,7 +241,7 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
 
     if (opt_display) {
       for (std::vector<cv::DMatch>::const_iterator it = matches.begin(); it != matches.end(); ++it) {
-        vpImagePoint leftPt(trainKeyPoints[static_cast<size_t>(it->trainIdx)].pt.y, trainKeyPoints[static_cast<size_t>(it->trainIdx].pt.x));
+        vpImagePoint leftPt(trainKeyPoints[static_cast<size_t>(it->trainIdx)].pt.y, trainKeyPoints[static_cast<size_t>(it->trainIdx)].pt.x);
         vpImagePoint rightPt(queryKeyPoints[static_cast<size_t>(it->queryIdx)].pt.y,
                              queryKeyPoints[static_cast<size_t>(it->queryIdx)].pt.x + Iref.getWidth());
         vpDisplay::displayLine(Imatch, leftPt, rightPt, vpColor::green);

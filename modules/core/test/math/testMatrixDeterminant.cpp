@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,13 +47,29 @@
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
-/*!
+void usage(const char *name, const char *badparam);
+bool getOptions(int argc, const char **argv, unsigned int &nb_matrices, unsigned int &nb_iterations,
+                bool &use_plot_file, std::string &plotfile, unsigned int &nbrows, unsigned int &nbcols, bool &verbose);
+vpMatrix make_random_matrix(unsigned int nbrows, unsigned int nbcols);
+void create_bench(unsigned int nb_matrices, unsigned int nb_rows, unsigned int nb_cols, bool verbose,
+                  std::vector<vpMatrix> &bench);
+void test_det_default(bool verbose, const std::vector<vpMatrix> &bench, double &time, std::vector<double> &result);
+void save_time(const std::string &method, bool verbose, bool use_plot_file, std::ofstream &of, double time);
+#if defined(VISP_HAVE_EIGEN3)
+void test_det_eigen3(bool verbose, const std::vector<vpMatrix> &bench, double &time, std::vector<double> &result);
+#endif
+#if defined(VISP_HAVE_LAPACK)
+void test_det_lapack(bool verbose, const std::vector<vpMatrix> &bench, double &time, std::vector<double> &result);
+#endif
+#if defined(VISP_HAVE_OPENCV)
+void test_det_opencv(bool verbose, const std::vector<vpMatrix> &bench, double &time, std::vector<double> &result);
+#endif
 
+/*!
   Print the program options.
 
   \param name : Program name.
   \param badparam : Bad parameter name.
-
  */
 void usage(const char *name, const char *badparam)
 {

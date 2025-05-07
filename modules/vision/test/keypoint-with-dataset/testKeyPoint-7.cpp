@@ -60,13 +60,17 @@
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
-/*!
 
+void usage(const char *name, const char *badparam, const std::string &opath, const std::string &user);
+bool getOptions(int argc, const char **argv, std::string &opath, const std::string &user);
+bool compareKeyPoints(const std::vector<cv::KeyPoint> &keypoints1, const std::vector<cv::KeyPoint> &keypoints2);
+bool compareDescriptors(const cv::Mat &descriptors1, const cv::Mat &descriptors2);
+
+/*!
   Print the program options.
 
   \param name : Program name.
   \param badparam : Bad parameter name.
-
 */
 void usage(const char *name, const char *badparam, const std::string &opath, const std::string &user)
 {
@@ -95,7 +99,6 @@ OPTIONS:                                               \n\
 }
 
 /*!
-
   Set the program options.
 
   \param argc : Command line number of parameters.
@@ -103,7 +106,6 @@ OPTIONS:                                               \n\
   \param opath : Output image path.
   \param user : Username.
   \return false if the program has to be stopped, true otherwise.
-
 */
 bool getOptions(int argc, const char **argv, std::string &opath, const std::string &user)
 {
