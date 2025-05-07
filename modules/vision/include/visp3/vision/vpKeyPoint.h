@@ -451,7 +451,7 @@ public:
    * \param I : Input reference image.
    * \return The number of detected keypoints in the image \p I.
    */
-  unsigned int buildReference(const vpImage<unsigned char> &I);
+  unsigned int buildReference(const vpImage<unsigned char> &I) VP_OVERRIDE;
 
   /*!
    * Build the reference keypoints list in a region of interest in the image.
@@ -463,7 +463,7 @@ public:
    * \return The number of detected keypoints in the current image I.
    */
   unsigned int buildReference(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int height,
-                              unsigned int width);
+                              unsigned int width) VP_OVERRIDE;
 
   /*!
    * Build the reference keypoints list in a region of interest in the image.
@@ -472,7 +472,7 @@ public:
    * \param rectangle : Rectangle of the region of interest.
    * \return The number of detected keypoints in the current image I.
    */
-  unsigned int buildReference(const vpImage<unsigned char> &I, const vpRect &rectangle);
+  unsigned int buildReference(const vpImage<unsigned char> &I, const vpRect &rectangle) VP_OVERRIDE;
 
   /*!
    * Build the reference keypoints list and compute the 3D position
@@ -864,7 +864,7 @@ public:
    * \param ICurrent : Input current image.
    * \param size : Size of the displayed cross.
    */
-  void display(const vpImage<unsigned char> &IRef, const vpImage<unsigned char> &ICurrent, unsigned int size = 3);
+  void display(const vpImage<unsigned char> &IRef, const vpImage<unsigned char> &ICurrent, unsigned int size = 3) VP_OVERRIDE;
 
   /*!
    * Display the reference keypoints.
@@ -873,7 +873,7 @@ public:
    * \param size : Size of the displayed crosses.
    * \param color : Color of the crosses.
    */
-  void display(const vpImage<unsigned char> &ICurrent, unsigned int size = 3, const vpColor &color = vpColor::green);
+  void display(const vpImage<unsigned char> &ICurrent, unsigned int size = 3, const vpColor &color = vpColor::green) VP_OVERRIDE;
 
   /*!
    * Display the reference and the detected keypoints in the images.
@@ -1423,7 +1423,7 @@ public:
    * \param I : Input current image.
    * \return The number of matched keypoints.
    */
-  unsigned int matchPoint(const vpImage<unsigned char> &I);
+  unsigned int matchPoint(const vpImage<unsigned char> &I) VP_OVERRIDE;
 
   /*!
    * Match keypoints detected in a region of interest of the image with those
@@ -1436,7 +1436,7 @@ public:
    * \return The number of matched keypoints.
    */
   unsigned int matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int height,
-                          unsigned int width);
+                          unsigned int width) VP_OVERRIDE;
 
   /*!
    * Match keypoints detected in a region of interest of the image with those
@@ -1446,7 +1446,7 @@ public:
    * \param rectangle : Rectangle of the region of interest.
    * \return The number of matched keypoints.
    */
-  unsigned int matchPoint(const vpImage<unsigned char> &I, const vpRect &rectangle);
+  unsigned int matchPoint(const vpImage<unsigned char> &I, const vpRect &rectangle) VP_OVERRIDE;
 
   /*!
    * Match query keypoints with those built in the reference list using buildReference().
@@ -2220,7 +2220,7 @@ private:
    * Initialize method for RANSAC parameters and for detectors, extractors and
    * matcher, and for others parameters.
    */
-  void init();
+  void init() VP_OVERRIDE;
 
   /*!
    * Initialize a keypoint detector based on its name.
@@ -2291,11 +2291,11 @@ private:
     PyramidAdaptedFeatureDetector(const cv::Ptr<cv::FeatureDetector> &detector, int maxLevel = 2);
 
     // TODO implement read/write
-    virtual bool empty() const;
+    virtual bool empty() const VP_OVERRIDE;
 
   protected:
     virtual void detect(cv::InputArray image, CV_OUT std::vector<cv::KeyPoint> &keypoints,
-                        cv::InputArray mask = cv::noArray());
+                        cv::InputArray mask = cv::noArray())  VP_OVERRIDE;
     virtual void detectImpl(const cv::Mat &image, std::vector<cv::KeyPoint> &keypoints,
                             const cv::Mat &mask = cv::Mat()) const;
 
