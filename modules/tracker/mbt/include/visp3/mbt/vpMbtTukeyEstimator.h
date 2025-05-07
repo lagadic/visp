@@ -360,7 +360,7 @@ template <typename T> void vpMbtTukeyEstimator<T>::psiTukey(const T sig, std::ve
 
   // Here we consider that sig cannot be equal to 0
   for (unsigned int i = 0; i < static_cast<unsigned int>(x.size()); i++) {
-    double xi = x[i] / C;
+    double xi = static_cast<double>(x[i]) / C;
     xi *= xi;
 
     if (xi > 1.) {
