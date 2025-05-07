@@ -312,9 +312,10 @@ vpCameraParameters vpRealSense::getCameraParameters(const rs::stream &stream,
 
 /*!
    Get intrinsic parameters corresponding to the stream. This function has to
-   be called after open(). \param stream : color, depth, infrared or infrared2
-   stream for which camera intrinsic parameters are returned. \sa
-   getCameraParameters()
+   be called after open().
+
+   \param stream : Color, depth, infrared or infrared2 stream for which camera intrinsic parameters are returned.
+   \sa getCameraParameters()
   */
 rs::intrinsics vpRealSense::getIntrinsics(const rs::stream &stream) const
 {
@@ -328,8 +329,10 @@ rs::intrinsics vpRealSense::getIntrinsics(const rs::stream &stream) const
 
 /*!
    Get extrinsic transformation from one stream to an other. This function has
-   to be called after open(). \param from, to : color, depth, infrared or
-   infrared2 stream between which camera extrinsic parameters are returned.
+   to be called after open().
+
+   \param from : From color, depth, infrared or infrared2 stream between which camera extrinsic parameters are returned.
+   \param to : To color, depth, infrared or infrared2 stream between which camera extrinsic parameters are returned.
 
    \sa getTransformation()
   */
@@ -343,21 +346,23 @@ rs::extrinsics vpRealSense::getExtrinsics(const rs::stream &from, const rs::stre
     throw vpException(vpException::fatalError,
                       "RealSense Camera - stream (%d) is not enabled to "
                       "retrieve extrinsics. Exiting!",
-                      (int)from);
+                      static_cast<int>(from));
   }
   if (!m_device->is_stream_enabled(to)) {
     throw vpException(vpException::fatalError,
                       "RealSense Camera - stream (%d) is not enabled to "
                       "retrieve extrinsics. Exiting!",
-                      (int)to);
+                      static_cast<int>(to));
   }
   return m_device->get_extrinsics(from, to);
 }
 
 /*!
    Get extrinsic transformation from one stream to an other. This function has
-   to be called after open(). \param from, to : color, depth, infrared or
-   infrared2 stream between which camera extrinsic parameters are returned.
+   to be called after open().
+
+   \param from : From color, depth, infrared or infrared2 stream between which camera extrinsic parameters are returned.
+   \param to : To color, depth, infrared or infrared2 stream between which camera extrinsic parameters are returned.
 
    \sa getExtrinsics()
   */
@@ -1063,5 +1068,5 @@ std::ostream &operator<<(std::ostream &os, const vpRealSense &rs)
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_sensor.a(vpRealSense.cpp.o) has  symbols
-void dummy_vpRealSense() { };
+void dummy_vpRealSense() { }
 #endif

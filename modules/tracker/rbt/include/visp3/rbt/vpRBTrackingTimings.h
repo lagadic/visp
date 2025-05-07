@@ -29,15 +29,19 @@
  */
 
 /*!
-  \file vpRBTrackerLogger.h
+  \file vpRBTrackingTimings.h
   \brief Information storage for render based tracking process.
 */
-#ifndef VP_RB_TRACKER_LOGGER_H
-#define VP_RB_TRACKER_LOGGER_H
+#ifndef VP_RB_TRACKING_TIMINGS_H
+#define VP_RB_TRACKING_TIMINGS_H
+
+#include <iomanip>
+#include <map>
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpTime.h>
+
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
 #include VISP_NLOHMANN_JSON(json.hpp)
@@ -50,11 +54,11 @@ BEGIN_VISP_NAMESPACE
   \ingroup group_rbt_core
 */
 
-class vpRBTrackerLogger;
+class vpRBTrackingTimings;
 
-std::ostream &operator<<(std::ostream &s, const vpRBTrackerLogger &I);
+std::ostream &operator<<(std::ostream &s, const vpRBTrackingTimings &I);
 
-class VISP_EXPORT vpRBTrackerLogger
+class VISP_EXPORT vpRBTrackingTimings
 {
 public:
   inline void reset()
@@ -71,7 +75,7 @@ public:
     m_trackerVVSIterTimes.clear();
   }
 
-  friend std::ostream &operator<<(std::ostream &, const vpRBTrackerLogger &);
+  friend std::ostream &operator<<(std::ostream &, const vpRBTrackingTimings &);
 
   void startTimer() { m_startTime = vpTime::measureTimeMs(); }
   inline double endTimer()
@@ -128,26 +132,30 @@ public:
     m_odometryTime = elapsed;
   }
 
+#ifdef VISP_HAVE_NLOHMANN_JSON
+  inline friend void from_json(const nlohmann::json &j, vpRBTrackingTimings &result);
+  inline friend void to_json(nlohmann::json &j, const vpRBTrackingTimings &result);
+
+#endif
+
 private:
   double m_startTime;
+
   double m_renderTime;
   double m_silhouetteExtractionTime;
   double m_maskTime;
   double m_driftTime;
   double m_odometryTime;
+
   std::map<int, std::vector<double>> m_trackerVVSIterTimes;
-
   std::map<int, double> m_trackerIterStartTime;
-
   std::map<int, double> m_trackerFeatureExtractionTime;
-
   std::map<int, double> m_trackerFeatureTrackingTime;
   std::map<int, double> m_trackerInitVVSTime;
-  std::map<int, int> m_trackerNumFeatures;
 
 };
 
-inline std::ostream &operator<<(std::ostream &out, const vpRBTrackerLogger &timer)
+inline std::ostream &operator<<(std::ostream &out, const vpRBTrackingTimings &timer)
 {
   const auto default_precision { out.precision() };
   auto flags = out.flags();
@@ -183,6 +191,40 @@ inline std::ostream &operator<<(std::ostream &out, const vpRBTrackerLogger &time
   out << std::setprecision(default_precision); // restore defaults
   return out;
 }
+
+#ifdef VISP_HAVE_NLOHMANN_JSON
+inline void from_json(const nlohmann::json &j, vpRBTrackingTimings &result)
+{
+  result.m_renderTime = j.at("render");
+  result.m_silhouetteExtractionTime = j.at("silhouetteExtraction");
+  result.m_maskTime = j.at("mask");
+  result.m_driftTime = j.at("drift");
+  result.m_odometryTime = j.at("odometry");
+
+  nlohmann::json jf = j.at("features");
+  result.m_trackerVVSIterTimes = jf.at("vvs");
+  result.m_trackerIterStartTime = jf.at("start");
+  result.m_trackerFeatureExtractionTime = jf.at("extraction");
+  result.m_trackerFeatureTrackingTime = jf.at("tracking");
+  result.m_trackerInitVVSTime = jf.at("vvsInit");
+}
+inline void to_json(nlohmann::json &j, const vpRBTrackingTimings &result)
+{
+  j["render"] = result.m_renderTime;
+  j["silhouetteExtraction"] = result.m_silhouetteExtractionTime;
+  j["mask"] = result.m_maskTime;
+  j["drift"] = result.m_driftTime;
+  j["odometry"] = result.m_odometryTime;
+  nlohmann::json jf;
+  jf["vvs"] = result.m_trackerVVSIterTimes;
+  jf["start"] = result.m_trackerIterStartTime;
+  jf["extraction"] = result.m_trackerFeatureExtractionTime;
+  jf["tracking"] = result.m_trackerFeatureTrackingTime;
+  jf["vvsInit"] = result.m_trackerInitVVSTime;
+  j["features"] = jf;
+}
+#endif
+
 
 END_VISP_NAMESPACE
 

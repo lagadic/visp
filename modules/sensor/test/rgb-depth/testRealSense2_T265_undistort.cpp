@@ -75,11 +75,11 @@ int main()
     cam_left =
       rs.getCameraParameters(RS2_STREAM_FISHEYE, vpCameraParameters::ProjWithKannalaBrandtDistortion, cam_index);
 
-    vpImage<unsigned char> I((unsigned int)rs.getIntrinsics(RS2_STREAM_FISHEYE).height,
-                             (unsigned int)rs.getIntrinsics(RS2_STREAM_FISHEYE).width);
+    vpImage<unsigned char> I(static_cast<unsigned int>(rs.getIntrinsics(RS2_STREAM_FISHEYE).height),
+                             static_cast<unsigned int>(rs.getIntrinsics(RS2_STREAM_FISHEYE).width));
 
-    vpImage<unsigned char> I_undist((unsigned int)rs.getIntrinsics(RS2_STREAM_FISHEYE).height,
-                                    (unsigned int)rs.getIntrinsics(RS2_STREAM_FISHEYE).width);
+    vpImage<unsigned char> I_undist(static_cast<unsigned int>(rs.getIntrinsics(RS2_STREAM_FISHEYE).height),
+                                    static_cast<unsigned int>(rs.getIntrinsics(RS2_STREAM_FISHEYE).width));
 
     std::cout << "Left fisheye camera parameters: " << cam_left << std::endl;
 

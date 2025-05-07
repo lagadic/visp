@@ -249,13 +249,6 @@ void vp1394CMUGrabber::acquire(vpImage<unsigned char> &I)
                                   "Acquisition failed."));
     break;
   };
-
-  // unsigned short depth = 0;
-  // camera->GetVideoDataDepth(&depth);
-  // std::cout << "depth: " << depth << " computed: " <<
-  // (float)(length/(I.getHeight() * I.getWidth())) <<  std::endl;
-
-  // memcpy(I.bitmap,rawdata,length);
 }
 
 /*!
@@ -766,5 +759,5 @@ END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_sensor.a(vp1394CMUGrabber.cpp.o) has
 // no symbols
-void dummy_vp1394CMUGrabber() { };
+void dummy_vp1394CMUGrabber() { }
 #endif

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -273,7 +273,7 @@ public:
    *
    * \return Size of the list.
    */
-  inline unsigned int size() const { return (unsigned int)Lpol.size(); }
+  inline unsigned int size() const { return static_cast<unsigned int>(Lpol.size()); }
 };
 
 /*!
@@ -512,7 +512,8 @@ void vpMbHiddenFaces<PolygonType>::computeScanLineQuery(const vpPoint &a, const 
  * \param changed : True if a face appeared, disappeared or too many points have been lost. False otherwise
  * \param useOgre : True if a Ogre is used to test the visibility, False otherwise
  * \param not_used : Unused parameter.
- * \param I : Image used to test if a face is entirely projected in the image.
+ * \param width : Image width.
+ * \param height : Image height.
  * \param cam : Camera parameters.
  *
  * \return Return the number of visible polygons
@@ -549,16 +550,17 @@ unsigned int vpMbHiddenFaces<PolygonType>::setVisiblePrivate(const vpHomogeneous
 /*!
  * Compute the visibility of a given face index.
  *
- * \param cMo : The pose of the camera
- * \param angleAppears : Angle used to test the appearance of a face
- * \param angleDisappears : Angle used to test the disappearance of a face
- * \param changed : True if a face appeared, disappeared or too many points have been lost. False otherwise.
- * \param useOgre : True if a Ogre is used to test the visibility, False otherwise.
- * \param not_used : Unused parameter.
- * \param width, height Image size.
- * \param cam : Camera parameters.
- * \param cameraPos : Position of the camera. Used only when Ogre is used as 3rd party.
- * \param index : Index of the face to consider.
+ * \param[in] cMo : The pose of the camera
+ * \param[in] angleAppears : Angle used to test the appearance of a face
+ * \param[in] angleDisappears : Angle used to test the disappearance of a face
+ * \param[in] changed : True if a face appeared, disappeared or too many points have been lost. False otherwise.
+ * \param[in] useOgre : True if a Ogre is used to test the visibility, False otherwise.
+ * \param[in] not_used : Unused parameter.
+ * \param[in] width : Image width.
+ * \param[in] height : Image height.
+ * \param[in] cam : Camera parameters.
+ * \param[in] cameraPos : Position of the camera. Used only when Ogre is used as 3rd party.
+ * \param[in] index : Index of the face to consider.
  *
  * \return Return true if the face is visible.
  */
@@ -651,7 +653,8 @@ bool vpMbHiddenFaces<PolygonType>::computeVisibility(const vpHomogeneousMatrix &
 /*!
  * Compute the number of visible polygons.
  *
- * \param width, height : Image size used to check if the region of interest is inside the image.
+ * \param width : Image width used to check if the region of interest is inside the image.
+ * \param height : Image height used to check if the region of interest is inside the image.
  * \param cam : Camera parameters.
  * \param cMo : The pose of the camera.
  * \param angle : Angle used to test the appearance and disappearance of a face.
@@ -670,7 +673,8 @@ unsigned int vpMbHiddenFaces<PolygonType>::setVisible(unsigned int width, unsign
 /*!
  * Compute the number of visible polygons.
  *
- * \param width, height : Image size used to check if the region of interest is inside the image.
+ * \param width : Image width used to check if the region of interest is inside the image.
+ * \param height : Image height used to check if the region of interest is inside the image.
  * \param cam : Camera parameters.
  * \param cMo : The pose of the camera.
  * \param changed : True if a face appeared, disappeared or too many points have been lost. False otherwise.
@@ -760,7 +764,8 @@ template <class PolygonType> void vpMbHiddenFaces<PolygonType>::displayOgre(cons
 /*!
  * Compute the number of visible polygons through Ogre3D.
  *
- * \param width, height : Image size used to check if the region of interest is inside the image.
+ * \param width : Image width used to check if the region of interest is inside the image.
+ * \param height : Image height used to check if the region of interest is inside the image.
  * \param cam : Camera parameters.
  * \param cMo : The pose of the camera.
  * \param changed : True if a face appeared, disappeared or too many points have been lost. False otherwise.

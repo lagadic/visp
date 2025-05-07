@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,6 +59,11 @@
 #if (VISP_HAVE_OPENCV_VERSION < 0x050000)
 #include <opencv2/imgproc/imgproc_c.h>
 #endif
+#endif
+
+#if defined(__clang__)
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wdocumentation"
 #endif
 
 BEGIN_VISP_NAMESPACE
@@ -120,7 +125,7 @@ public:
   static float computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p_cv_dIx, const cv::Mat *p_cv_dIy,
                                      float &lowerThresh, const unsigned int &gaussianKernelSize = 5,
                                      const float &gaussianStdev = 2.f, const unsigned int &apertureGradient = 3,
-                                     const float &lowerThresholdRatio = 0.6, const float &upperThresholdRatio = 0.8,
+                                     const float &lowerThresholdRatio = 0.6f, const float &upperThresholdRatio = 0.8f,
                                      const vpCannyFilteringAndGradientType &filteringType = CANNY_GBLUR_SOBEL_FILTERING);
 
   static void computePartialDerivatives(const cv::Mat &cv_I,
@@ -191,7 +196,7 @@ public:
 
 #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
         // Helper to apply the scale to the raw values of the filters
-        auto scaleFilter = [](vpArray2D<FilterType> &filter, const float &scale) {
+        auto scaleFilter = [](vpArray2D<FilterType> &filter, const FilterType &scale) {
           const unsigned int nbRows = filter.getRows();
           const unsigned int nbCols = filter.getCols();
           for (unsigned int r = 0; r < nbRows; ++r) {
@@ -204,24 +209,24 @@ public:
 
         // Scales to apply to the filters to get a normalized gradient filter that gives a gradient
         // between 0 and 255 for an vpImage<uchar>
-        float scaleX = 1.f;
-        float scaleY = 1.f;
+        FilterType scaleX = 1.0;
+        FilterType scaleY = 1.0;
         const unsigned int val2 = 2U;
 
         if (filteringType == CANNY_GBLUR_SOBEL_FILTERING) {
           if (computeDx) {
-            scaleX = static_cast<float>(vpImageFilter::getSobelKernelX(gradientFilterX.data, (apertureGradient - 1) / val2));
+            scaleX = static_cast<FilterType>(vpImageFilter::getSobelKernelX(gradientFilterX.data, (apertureGradient - 1) / val2));
           }
           if (computeDy) {
-            scaleY = static_cast<float>(vpImageFilter::getSobelKernelY(gradientFilterY.data, (apertureGradient - 1) / val2));
+            scaleY = static_cast<FilterType>(vpImageFilter::getSobelKernelY(gradientFilterY.data, (apertureGradient - 1) / val2));
           }
         }
         else if (filteringType == CANNY_GBLUR_SCHARR_FILTERING) {
           if (computeDx) {
-            scaleX = static_cast<float>(vpImageFilter::getScharrKernelX(gradientFilterX.data, (apertureGradient - 1) / val2));
+            scaleX = static_cast<FilterType>(vpImageFilter::getScharrKernelX(gradientFilterX.data, (apertureGradient - 1) / val2));
           }
           if (computeDy) {
-            scaleY = static_cast<float>(vpImageFilter::getScharrKernelY(gradientFilterY.data, (apertureGradient - 1) / val2));
+            scaleY = static_cast<FilterType>(vpImageFilter::getScharrKernelY(gradientFilterY.data, (apertureGradient - 1) / val2));
           }
         }
 
@@ -399,7 +404,7 @@ public:
     unsigned int i = 0;
     bool notFound = true;
     while ((i < nbBins) && notFound) {
-      float tf = static_cast<float>(hist[i]);
+      float tf = static_cast<float>(hist[static_cast<unsigned char>(i)]);
       accu = accu + tf;
       if (accu > t) {
         bon = static_cast<float>(i);
@@ -714,11 +719,11 @@ public:
   /*!
    * Apply a separable filter.
    * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
-   * \param I: The original image.
-   * \param GI: The filtered image.
-   * \param filter: The separable filter.
-   * \param size: The size of the filter.
-   * \param p_mask: If different from nullptr, mask indicating which points to consider (true) or to ignore(false).
+   * \param I : The original image.
+   * \param GI : The filtered image.
+   * \param filter : The separable filter.
+   * \param size : The size of the filter.
+   * \param p_mask : If different from nullptr, mask indicating which points to consider (true) or to ignore(false).
    */
   template <typename ImageType, typename FilterType>
   static void filter(const vpImage<ImageType> &I, vpImage<FilterType> &GI, const FilterType *filter, unsigned int size, const vpImage<bool> *p_mask = nullptr)
@@ -1037,11 +1042,11 @@ public:
     }
 
     int middle = (static_cast<int>(size) - 1) / 2;
-    FilterType sigma2 = static_cast<FilterType>(vpMath::sqr(sigma));
-    FilterType coef1 = static_cast<FilterType>(1. / (sigma * sqrt(2. * M_PI)));
-    FilterType v_2_sigma2 = static_cast<FilterType>(2. * sigma2);
+    FilterType sigma2 = static_cast<FilterType>(vpMath::sqr(static_cast<double>(sigma)));
+    FilterType coef1 = static_cast<FilterType>(1. / (static_cast<double>(sigma) * sqrt(2. * M_PI)));
+    FilterType v_2_sigma2 = static_cast<FilterType>(2. * static_cast<double>(sigma2));
     for (int i = 0; i <= middle; ++i) {
-      filter[i] = coef1 * static_cast<FilterType>(exp(-(i * i) / v_2_sigma2));
+      filter[i] = coef1 * static_cast<FilterType>(exp(static_cast<double>(-static_cast<FilterType>(i * i) / v_2_sigma2)));
     }
     if (normalize) {
       // renormalization
@@ -1086,20 +1091,23 @@ public:
 
     const int half = 2;
     int middle = (static_cast<int>(size) - 1) / half;
-    FilterType sigma2 = static_cast<FilterType>(vpMath::sqr(sigma));
-    FilterType coef_1 = static_cast<FilterType>(1. / (sigma * sqrt(2. * M_PI)));
+    FilterType sigma2 = static_cast<FilterType>(vpMath::sqr(static_cast<double>(sigma)));
+    FilterType coef_1 = static_cast<FilterType>(1. / (static_cast<double>(sigma) * sqrt(2. * M_PI)));
     FilterType coef_1_over_2 = coef_1 / static_cast<FilterType>(2.);
     FilterType v_2_coef_1 = static_cast<FilterType>(2.) * coef_1;
-    FilterType v_2_sigma2 = static_cast<FilterType>(2. * sigma2);
+    FilterType v_2_sigma2 = static_cast<FilterType>(2.) * sigma2;
     filter[0] = 0.;
     for (int i = 1; i <= middle; ++i) {
-      filter[i] = -coef_1_over_2 * (static_cast<FilterType>(exp(-((i + 1) * (i + 1)) / v_2_sigma2)) - static_cast<FilterType>(exp(-((i - 1) * (i - 1)) / v_2_sigma2)));
+      FilterType i_plus_1 = static_cast<FilterType>(i + 1);
+      FilterType i_minus_1 = static_cast<FilterType>(i - 1);
+      filter[i] = -coef_1_over_2 * (static_cast<FilterType>(exp(-static_cast<double>(i_plus_1 * i_plus_1 / v_2_sigma2))) - static_cast<FilterType>(exp(-static_cast<double>(i_minus_1 * i_minus_1 / v_2_sigma2))));
     }
 
     if (normalize) {
-      FilterType sum = 0;
+      FilterType sum = static_cast<FilterType>(0);
       for (int i = 1; i <= middle; ++i) {
-        sum += v_2_coef_1 * static_cast<FilterType>(exp(-(i * i) / v_2_sigma2));
+        FilterType i_ = static_cast<FilterType>(i);
+        sum += v_2_coef_1 * static_cast<FilterType>(exp(-static_cast<double>(i_ * i_ / v_2_sigma2)));
       }
       sum += coef_1;
 
@@ -1300,7 +1308,7 @@ public:
 
   /*!
     Get Scharr kernel for X-direction.
-    \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.
+    \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
     \param filter : Pointer to a double array already allocated.
     \param size : Kernel size computed as: kernel_size = size*2 + 1 (max size is 20).
     \return Scaling factor to normalize the Scharr kernel.
@@ -1354,7 +1362,7 @@ public:
 
   /*!
    * Get Sobel kernel for X-direction.
-   * \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.
+   * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
    * \param filter : Pointer to a double array already allocated.
    * \param size : Kernel size computed as: kernel_size = size*2 + 1 (max size is 20).
    * \return Scaling factor to normalize the Sobel kernel.
@@ -1515,6 +1523,10 @@ private:
       }
     }
   }
+#endif
+
+#if defined(__clang__)
+#  pragma clang diagnostic pop
 #endif
 
 };

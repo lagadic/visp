@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +33,8 @@
  * \brief Statistical Process Control Shewhart's test implementation.
  */
 
-#ifndef _vpStatisticalTestShewhartTest_h_
-#define _vpStatisticalTestShewhartTest_h_
+#ifndef VP_STATISTICAL_TEST_SHEWHART_H
+#define VP_STATISTICAL_TEST_SHEWHART_H
 
 #include <vector>
 
@@ -87,15 +86,15 @@ public:
   static std::string vpWecoRulesAlarmToString(const vpWecoRulesAlarm &alarm);
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
-  static inline const std::vector<bool> CONST_ALL_WECO_ACTIVATED = std::vector<bool>(COUNT_WECO -1, true);
+  VP_ATTRIBUTE_NO_DESTROY static inline const std::vector<bool> CONST_ALL_WECO_ACTIVATED = std::vector<bool>(COUNT_WECO -1, true);
 #else
-  static const std::vector<bool> CONST_ALL_WECO_ACTIVATED;
+  VP_ATTRIBUTE_NO_DESTROY static const std::vector<bool> CONST_ALL_WECO_ACTIVATED;
 #endif
   static const unsigned int NB_DATA_SIGNAL = 8;
 
 protected:
   unsigned int m_nbDataInBuffer; /*!< Indicate how many data are available in the circular buffer.*/
-  float m_signal[NB_DATA_SIGNAL]; /*!< The last values of the signal.*/
+  float m_signal_vec[NB_DATA_SIGNAL]; /*!< The last values of the signal.*/
   bool m_activateWECOrules; /*!< If true, activate the WECO's rules (NB: it increases the sensitivity of the Shewhart
                                  control chart but the false alarm frequency is also increased.)*/
   std::vector<bool> m_activatedWECOrules; /*!< The WECO's rules that are activated. The more are activated, the higher the
@@ -113,13 +112,13 @@ protected:
    */
   virtual void computeLimits() VP_OVERRIDE;
 
-/**
- * \brief Detects if a downward mean drift occurred.
- *
- * \return \b vpMeanDriftType::MEAN_DRIFT_DOWNWARD if a downward mean drift occurred, \b vpMeanDriftType::MEAN_DRIFT_NONE otherwise.
- *
- * \sa detectUpwardMeanDrift()
- */
+  /**
+   * \brief Detects if a downward mean drift occurred.
+   *
+   * \return \b vpMeanDriftType::MEAN_DRIFT_DOWNWARD if a downward mean drift occurred, \b vpMeanDriftType::MEAN_DRIFT_NONE otherwise.
+   *
+   * \sa detectUpwardMeanDrift()
+   */
   virtual vpMeanDriftType detectDownwardMeanDrift() VP_OVERRIDE;
   /**
    * \brief Detects if an upward mean drift occurred on the mean.
@@ -189,7 +188,7 @@ public:
   inline virtual float getSignal() const
 #endif
   {
-    return m_signal[m_idCurrentData];
+    return m_signal_vec[m_idCurrentData];
   }
 
   /**

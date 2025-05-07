@@ -190,17 +190,17 @@ public:
   /*!
    * Return a pointer to the PMD pan axis.
    */
-  PMDAxisControl *getPanAxis() { return m_panAxis; };
+  PMDAxisControl *getPanAxis() { return m_panAxis; }
 
   /*!
    * Return a pointer to the PMD tilt axis.
    */
-  PMDAxisControl *getTiltAxis() { return m_tiltAxis; };
+  PMDAxisControl *getTiltAxis() { return m_tiltAxis; }
 
   /*!
    * Return a pointer to the PMD verge axis.
    */
-  PMDAxisControl *getVergeAxis() { return m_vergeAxis; };
+  PMDAxisControl *getVergeAxis() { return m_vergeAxis; }
 
   /*!
    * Update the shared memory.

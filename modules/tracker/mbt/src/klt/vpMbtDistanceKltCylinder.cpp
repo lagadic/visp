@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Klt cylinder, containing points of interest.
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpPolygon.h>
 #include <visp3/mbt/vpMbtDistanceKltCylinder.h>
@@ -116,15 +114,15 @@ void vpMbtDistanceKltCylinder::init(const vpKltOpencv &_tracker, const vpHomogen
   for (unsigned int i = 0; i < static_cast<unsigned int>(_tracker.getNbFeatures()); i++) {
     long id;
     float x_tmp, y_tmp;
-    _tracker.getFeature((int)i, id, x_tmp, y_tmp);
+    _tracker.getFeature(static_cast<int>(i), id, x_tmp, y_tmp);
 
     bool add = false;
 
     if (useScanLine) {
-      if ((unsigned int)y_tmp < hiddenface->getMbScanLineRenderer().getPrimitiveIDs().getHeight() &&
-          (unsigned int)x_tmp < hiddenface->getMbScanLineRenderer().getPrimitiveIDs().getWidth()) {
+      if (static_cast<unsigned int>(y_tmp) < hiddenface->getMbScanLineRenderer().getPrimitiveIDs().getHeight() &&
+          static_cast<unsigned int>(x_tmp) < hiddenface->getMbScanLineRenderer().getPrimitiveIDs().getWidth()) {
         for (unsigned int kc = 0; kc < listIndicesCylinderBBox.size(); kc++)
-          if (hiddenface->getMbScanLineRenderer().getPrimitiveIDs()[(unsigned int)y_tmp][(unsigned int)x_tmp] ==
+          if (hiddenface->getMbScanLineRenderer().getPrimitiveIDs()[static_cast<unsigned int>(y_tmp)][static_cast<unsigned int>(x_tmp)] ==
               listIndicesCylinderBBox[kc]) {
             add = true;
             break;
@@ -150,13 +148,13 @@ void vpMbtDistanceKltCylinder::init(const vpKltOpencv &_tracker, const vpHomogen
       double Z = computeZ(xm, ym);
       if (!vpMath::isNaN(Z)) {
 #ifdef TARGET_OS_IPHONE
-        initPoints[(int)id] = vpImagePoint(y_tmp, x_tmp);
-        curPoints[(int)id] = vpImagePoint(y_tmp, x_tmp);
-        curPointsInd[(int)id] = (int)i;
+        initPoints[static_cast<int>(id)] = vpImagePoint(y_tmp, x_tmp);
+        curPoints[static_cast<int>(id)] = vpImagePoint(y_tmp, x_tmp);
+        curPointsInd[static_cast<int>(id)] = static_cast<int>(i);
 #else
         initPoints[id] = vpImagePoint(y_tmp, x_tmp);
         curPoints[id] = vpImagePoint(y_tmp, x_tmp);
-        curPointsInd[id] = (int)i;
+        curPointsInd[id] = static_cast<int>(i);
 #endif
         nbPointsInit++;
         nbPointsCur++;
@@ -164,7 +162,7 @@ void vpMbtDistanceKltCylinder::init(const vpKltOpencv &_tracker, const vpHomogen
         vpPoint p;
         p.setWorldCoordinates(xm * Z, ym * Z, Z);
 #ifdef TARGET_OS_IPHONE
-        initPoints3D[(int)id] = p;
+        initPoints3D[static_cast<int>(id)] = p;
 #else
         initPoints3D[id] = p;
 #endif
@@ -200,14 +198,14 @@ unsigned int vpMbtDistanceKltCylinder::computeNbDetectedCurrent(const vpKltOpenc
   curPointsInd = std::map<int, int>();
 
   for (unsigned int i = 0; i < static_cast<unsigned int>(_tracker.getNbFeatures()); i++) {
-    _tracker.getFeature((int)i, id, x, y);
-    if (isTrackedFeature((int)id)) {
+    _tracker.getFeature(static_cast<int>(i), id, x, y);
+    if (isTrackedFeature(static_cast<int>(id))) {
 #ifdef TARGET_OS_IPHONE
-      curPoints[(int)id] = vpImagePoint(static_cast<double>(y), static_cast<double>(x));
-      curPointsInd[(int)id] = (int)i;
+      curPoints[static_cast<int>(id)] = vpImagePoint(static_cast<double>(y), static_cast<double>(x));
+      curPointsInd[static_cast<int>(id)] = static_cast<int>(i);
 #else
       curPoints[id] = vpImagePoint(static_cast<double>(y), static_cast<double>(x));
-      curPointsInd[id] = (int)i;
+      curPointsInd[id] = static_cast<int>(i);
 #endif
       nbPointsCur++;
     }
@@ -381,11 +379,11 @@ void vpMbtDistanceKltCylinder::updateMask(
   int height = mask.rows;
 
   for (unsigned int kc = 0; kc < listIndicesCylinderBBox.size(); kc++) {
-    if ((*hiddenface)[(unsigned int)listIndicesCylinderBBox[kc]]->isVisible() &&
-        (*hiddenface)[(unsigned int)listIndicesCylinderBBox[kc]]->getNbPoint() > 2) {
+    if ((*hiddenface)[static_cast<unsigned int>(listIndicesCylinderBBox[kc])]->isVisible() &&
+        (*hiddenface)[static_cast<unsigned int>(listIndicesCylinderBBox[kc])]->getNbPoint() > 2) {
       int i_min, i_max, j_min, j_max;
       std::vector<vpImagePoint> roi;
-      (*hiddenface)[(unsigned int)listIndicesCylinderBBox[kc]]->getRoiClipped(cam, roi);
+      (*hiddenface)[static_cast<unsigned int>(listIndicesCylinderBBox[kc])]->getRoiClipped(cam, roi);
 
       double shiftBorder_d = (double)shiftBorder;
 #if defined(VISP_HAVE_CLIPPER)
@@ -413,7 +411,7 @@ void vpMbtDistanceKltCylinder::updateMask(
             std::vector<vpImagePoint> corners;
 
             for (size_t j = 0; j < solution[i].size(); j++) {
-              corners.push_back(vpImagePoint((double)(solution[i][j].Y), (double)(solution[i][j].X)));
+              corners.push_back(vpImagePoint(static_cast<double>(solution[i][j].Y), static_cast<double>(solution[i][j].X)));
             }
 
             polygon_area.buildFrom(corners);
@@ -425,7 +423,7 @@ void vpMbtDistanceKltCylinder::updateMask(
         }
 
         for (size_t i = 0; i < solution[index_max].size(); i++) {
-          roi_offset.push_back(vpImagePoint((double)(solution[index_max][i].Y), (double)(solution[index_max][i].X)));
+          roi_offset.push_back(vpImagePoint(static_cast<double>(solution[index_max][i].Y), static_cast<double>(solution[index_max][i].X)));
         }
       }
       else {
@@ -492,9 +490,9 @@ void vpMbtDistanceKltCylinder::updateMask(
 /*!
   Display the primitives tracked for the cylinder.
 
-  \param _I : The image where to display.
+  \param I_ : The image where to display.
 */
-void vpMbtDistanceKltCylinder::displayPrimitive(const vpImage<unsigned char> &_I)
+void vpMbtDistanceKltCylinder::displayPrimitive(const vpImage<unsigned char> &I_)
 {
   std::map<int, vpImagePoint>::const_iterator iter = curPoints.begin();
   for (; iter != curPoints.end(); ++iter) {
@@ -503,22 +501,22 @@ void vpMbtDistanceKltCylinder::displayPrimitive(const vpImage<unsigned char> &_I
     iP.set_i(static_cast<double>(iter->second.get_i()));
     iP.set_j(static_cast<double>(iter->second.get_j()));
 
-    vpDisplay::displayCross(_I, iP, 10, vpColor::red);
+    vpDisplay::displayCross(I_, iP, 10, vpColor::red);
 
     iP.set_i(vpMath::round(iP.get_i() + 7));
     iP.set_j(vpMath::round(iP.get_j() + 7));
     std::stringstream ss;
     ss << id;
-    vpDisplay::displayText(_I, iP, ss.str(), vpColor::red);
+    vpDisplay::displayText(I_, iP, ss.str(), vpColor::red);
   }
 }
 
 /*!
   Display the primitives tracked for the cylinder.
 
-  \param _I : The image where to display.
+  \param I_ : The image where to display.
 */
-void vpMbtDistanceKltCylinder::displayPrimitive(const vpImage<vpRGBa> &_I)
+void vpMbtDistanceKltCylinder::displayPrimitive(const vpImage<vpRGBa> &I_)
 {
   std::map<int, vpImagePoint>::const_iterator iter = curPoints.begin();
   for (; iter != curPoints.end(); ++iter) {
@@ -527,13 +525,13 @@ void vpMbtDistanceKltCylinder::displayPrimitive(const vpImage<vpRGBa> &_I)
     iP.set_i(static_cast<double>(iter->second.get_i()));
     iP.set_j(static_cast<double>(iter->second.get_j()));
 
-    vpDisplay::displayCross(_I, iP, 10, vpColor::red);
+    vpDisplay::displayCross(I_, iP, 10, vpColor::red);
 
     iP.set_i(vpMath::round(iP.get_i() + 7));
     iP.set_j(vpMath::round(iP.get_j() + 7));
     std::stringstream ss;
     ss << id;
-    vpDisplay::displayText(_I, iP, ss.str(), vpColor::red);
+    vpDisplay::displayText(I_, iP, ss.str(), vpColor::red);
   }
 }
 
@@ -686,5 +684,5 @@ END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning:
 // libvisp_mbt.a(vpMbtDistanceKltCylinder.cpp.o) has no symbols
-void dummy_vpMbtDistanceKltCylinder() { };
+void dummy_vpMbtDistanceKltCylinder() { }
 #endif

@@ -39,6 +39,7 @@ BEGIN_VISP_NAMESPACE
 
 vpRBFeatureTrackerFactory::vpRBFeatureTrackerFactory()
 {
+#ifdef VISP_HAVE_NLOHMANN_JSON
   setJsonKeyFinder([](const nlohmann::json &j) -> std::string {
     return j.at("type");
   });
@@ -64,6 +65,7 @@ vpRBFeatureTrackerFactory::vpRBFeatureTrackerFactory()
     p->loadJsonConfiguration(j);
     return p;
   });
+#endif
 #endif
 }
 

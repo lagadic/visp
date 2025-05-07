@@ -254,8 +254,8 @@ Bound *clipping_Bound(Bound *bp, Matrix m)
   /* recopie de "bp" dans les tableaux intermediaires  */
 
   point4f_nbr = bp->point.nbr;
-  point_3D_4D(bp->point.ptr, (int)point4f_nbr, m, point4f);
-  set_Point4f_code(point4f, (int)point4f_nbr, code);
+  point_3D_4D(bp->point.ptr, static_cast<int>(point4f_nbr), m, point4f);
+  set_Point4f_code(point4f, static_cast<int>(point4f_nbr), code);
 #ifdef face_normal
   if (!(clip.is_polygonal = bp->is_polygonal))
     // bcopy (bp->normal.ptr, clip.normal.ptr,
@@ -279,7 +279,7 @@ Bound *clipping_Bound(Bound *bp, Matrix m)
 
   /* recopie des tableaux intermediaires dans "clip"  */
 
-  point_4D_3D(point4f, (int)point4f_nbr, code, clip.point.ptr);
+  point_4D_3D(point4f, static_cast<int>(point4f_nbr), code, clip.point.ptr);
   clip.type = bp->type;
   clip.face.nbr = (Index)(fo - clip.face.ptr);
   clip.point.nbr = point4f_nbr;
@@ -313,7 +313,7 @@ static void inter(Byte mask, Index v0, Index v1)
     /* t = (p0->w - p0->y) / ((p0->w - p0->y) - (p1->w - p1->y));  */
     t = (p0->w - p0->y) - (p1->w - p1->y);
     // t = (t == 0) ? (float)1.0 : (p0->w - p0->y) / t;
-    t = (std::fabs(t) <= std::numeric_limits<double>::epsilon()) ? (float)1.0 : (p0->w - p0->y) / t;
+    t = (std::fabs(t) <= std::numeric_limits<double>::epsilon()) ? 1.0f : (p0->w - p0->y) / t;
     PAR_COORD3(*p, t, *p0, *p1);
     p->w = p->y; /* propriete du point d'intersection  */
     break;
@@ -322,7 +322,7 @@ static void inter(Byte mask, Index v0, Index v1)
     /* t = (p0->w + p0->y) / ((p0->w + p0->y) - (p1->w + p1->y));  */
     t = (p0->w + p0->y) - (p1->w + p1->y);
     // t = (t == 0) ? (float)1.0 : (p0->w + p0->y) / t;
-    t = (std::fabs(t) <= std::numeric_limits<double>::epsilon()) ? (float)1.0 : (p0->w + p0->y) / t;
+    t = (std::fabs(t) <= std::numeric_limits<double>::epsilon()) ? 1.0f : (p0->w + p0->y) / t;
     PAR_COORD3(*p, t, *p0, *p1);
     p->w = -p->y; /* propriete du point d'intersection  */
     break;
@@ -331,7 +331,7 @@ static void inter(Byte mask, Index v0, Index v1)
     /* t = (p0->w - p0->x) / ((p0->w - p0->x) - (p1->w - p1->x));  */
     t = (p0->w - p0->x) - (p1->w - p1->x);
     // t = (t == 0) ? (float)1.0 : (p0->w - p0->x) / t;
-    t = (std::fabs(t) <= std::numeric_limits<double>::epsilon()) ? (float)1.0 : (p0->w - p0->x) / t;
+    t = (std::fabs(t) <= std::numeric_limits<double>::epsilon()) ? 1.0f : (p0->w - p0->x) / t;
     PAR_COORD3(*p, t, *p0, *p1);
     p->w = p->x; /* propriete du point d'intersection  */
     break;
@@ -340,7 +340,7 @@ static void inter(Byte mask, Index v0, Index v1)
     /* t = (p0->w + p0->x) / ((p0->w + p0->x) - (p1->w + p1->x));  */
     t = (p0->w + p0->x) - (p1->w + p1->x);
     // t = (t == 0) ? (float)1.0 : (p0->w + p0->x) / t;
-    t = (std::fabs(t) <= std::numeric_limits<double>::epsilon()) ? (float)1.0 : (p0->w + p0->x) / t;
+    t = (std::fabs(t) <= std::numeric_limits<double>::epsilon()) ? 1.0f : (p0->w + p0->x) / t;
     PAR_COORD3(*p, t, *p0, *p1);
     p->w = -p->x; /* propriete du point d'intersection  */
     break;
@@ -349,7 +349,7 @@ static void inter(Byte mask, Index v0, Index v1)
     /* t = (p0->w - p0->z) / ((p0->w - p0->z) - (p1->w - p1->z));  */
     t = (p0->w - p0->z) - (p1->w - p1->z);
     // t = (t == 0) ? (float)1.0 : (p0->w - p0->z) / t;
-    t = (std::fabs(t) <= std::numeric_limits<double>::epsilon()) ? (float)1.0 : (p0->w - p0->z) / t;
+    t = (std::fabs(t) <= std::numeric_limits<double>::epsilon()) ? 1.0f : (p0->w - p0->z) / t;
     PAR_COORD3(*p, t, *p0, *p1);
     p->w = p->z; /* propriete du point d'intersection  */
     break;
@@ -358,16 +358,16 @@ static void inter(Byte mask, Index v0, Index v1)
     /* t =  p0->z / (p0->z - p1->z);        */
     t = (p0->z - p1->z);
     // t = (t == 0) ? (float)1.0 : p0->z / t;
-    t = (std::fabs(t) <= std::numeric_limits<double>::epsilon()) ? (float)1.0 : p0->z / t;
+    t = (std::fabs(t) <= std::numeric_limits<double>::epsilon()) ? 1.0f : p0->z / t;
     p->x = (p1->x - p0->x) * t + p0->x;
     p->y = (p1->y - p0->y) * t + p0->y;
     p->w = (p1->w - p0->w) * t + p0->w;
-    p->z = (float)M_EPSILON; /* propriete du point d'intersection  */
+    p->z = static_cast<float>(M_EPSILON); /* propriete du point d'intersection  */
     break;
   }
   /* resout les problemes d'arrondis pour "where_is_Point4f"  */
   /* p->w += (p->w < 0) ? (- M_EPSILON) : M_EPSILON;    */
-  p->w += (float)M_EPSILON;
+  p->w += static_cast<float>(M_EPSILON);
   code[point4f_nbr] = where_is_Point4f(p); /* localise "p"  */
 #ifdef face_normal
   if (!clip.is_polygonal) {

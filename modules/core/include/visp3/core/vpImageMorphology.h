@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +50,12 @@
 #include <math.h>
 #include <string.h>
 
+#if defined(__clang__)
+// Mute warning : '\tparam' command used in a comment that is not attached to a template declaration [-Wdocumentation]
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wexit-time-destructors"
+#endif
+
 BEGIN_VISP_NAMESPACE
 /*!
   \class vpImageMorphology
@@ -57,10 +63,6 @@ BEGIN_VISP_NAMESPACE
   \ingroup group_core_image
 
   \brief  Various mathematical morphology tools, erosion, dilatation...
-
-  \author Fabien Spindler  (Fabien.Spindler@irisa.fr) Irisa / Inria Rennes
-
-
 */
 class VISP_EXPORT vpImageMorphology
 {
@@ -362,10 +364,10 @@ void vpImageMorphology::dilatation(vpImage<Type> &I, Type value, Type value_out,
 template<typename T>
 void vpImageMorphology::imageOperation(vpImage<T> &I, const T &null_value, vpPixelOperation<T> *operation, const vpConnexityType &connexity)
 {
-  const int width_in = I.getWidth();
-  const int height_in = I.getHeight();
-  const int width_dilat = width_in + 2;
-  const int height_dilat = height_in + 2;
+  const int width_in = static_cast<int>(I.getWidth());
+  const int height_in = static_cast<int>(I.getHeight());
+  const unsigned int width_dilat = I.getWidth() + 2;
+  const unsigned int height_dilat = I.getHeight() + 2;
   vpImage<T> J(height_dilat, width_dilat, null_value);
 
   // Copy I to J and add border
@@ -571,10 +573,9 @@ void vpImageMorphology::dilatation(vpImage<T> &I, const int &size)
   vpImageMorphology::imageOperation(I, &operation, size);
 }
 END_VISP_NAMESPACE
+
+#if defined(__clang__)
+#  pragma clang diagnostic pop
 #endif
 
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
+#endif

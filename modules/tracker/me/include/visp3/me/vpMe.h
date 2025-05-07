@@ -177,7 +177,7 @@ public:
 
   /*!
    * Check sample step wrt min value.
-   * \param[inout] sample_step : When this value is lower than the min sample step value,
+   * \param[in,out] sample_step : When this value is lower than the min sample step value,
    * it is modified to the min sample step value.
    */
   void checkSamplestep(double &sample_step)
@@ -592,10 +592,22 @@ private:
 };
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
+
+#if defined(__clang__)
+// Mute warning : declaration requires an exit-time destructor [-Wexit-time-destructors]
+// message : expanded from macro 'NLOHMANN_JSON_SERIALIZE_ENUM'
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wexit-time-destructors"
+#endif
+
 NLOHMANN_JSON_SERIALIZE_ENUM(vpMe::vpLikelihoodThresholdType, {
   {vpMe::vpLikelihoodThresholdType::OLD_THRESHOLD, "old"},
   {vpMe::vpLikelihoodThresholdType::NORMALIZED_THRESHOLD, "normalized"}
 });
+
+#if defined(__clang__)
+#  pragma clang diagnostic pop
+#endif
 
 inline void to_json(nlohmann::json &j, const vpMe &me)
 {

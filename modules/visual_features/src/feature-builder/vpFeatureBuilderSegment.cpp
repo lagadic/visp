@@ -144,12 +144,13 @@ void vpFeatureBuilder::create(vpFeatureSegment &s, const vpCameraParameters &cam
 }
 
 /*!
- * Build a segment visual feature from two points.
- *
- * \param s : Visual feature to initialize.
- * \param P1, P2 : Two points defining the segment. These points must contain
+ * Build a segment visual feature from two points. These points must contain
  * the 3D coordinates in the camera frame (cP) and the projected coordinates in
  * the image plane (p).
+ *
+ * \param s : Visual feature to initialize.
+ * \param P1 : First point defining the segment.
+ * \param P2 : Second point defining the segment.
  */
 void vpFeatureBuilder::create(vpFeatureSegment &s, vpPoint &P1, vpPoint &P2)
 {

@@ -146,7 +146,7 @@ inline __m128 abs_ps(__m128 x)
 template <typename T> T vpMbtTukeyEstimator<T>::getMedian(std::vector<T> &vec)
 {
   // Not the exact median when even number of elements
-  int index = (int)(ceil(vec.size() / 2.0)) - 1;
+  int index = static_cast<int>(ceil(vec.size() / 2.0)) - 1;
   std::nth_element(vec.begin(), vec.begin() + index, vec.end());
   return vec[index];
 }
@@ -361,7 +361,7 @@ template <typename T> void vpMbtTukeyEstimator<T>::psiTukey(const T sig, std::ve
   double C = sig * 4.6851;
 
   // Here we consider that sig cannot be equal to 0
-  for (unsigned int i = 0; i < (unsigned int)x.size(); i++) {
+  for (unsigned int i = 0; i < static_cast<unsigned int>(x.size()); i++) {
     double xi = x[i] / C;
     xi *= xi;
 
@@ -395,7 +395,7 @@ inline void vpMbtTukeyEstimator<double>::MEstimator(const vpColVector &residues,
 
   m_normres.resize(residues.size());
   for (size_t i = 0; i < m_residues.size(); i++) {
-    m_normres[i] = std::fabs(residues[(unsigned int)i] - med);
+    m_normres[i] = std::fabs(residues[static_cast<unsigned int>(i)] - med);
   }
 
   m_residues = m_normres;
@@ -427,14 +427,14 @@ inline void vpMbtTukeyEstimator<float>::MEstimator(const vpColVector &residues, 
   m_residues.resize(0);
   m_residues.reserve(residues.size());
   for (unsigned int i = 0; i < residues.size(); i++) {
-    m_residues.push_back((float)residues[i]);
+    m_residues.push_back(static_cast<float>(residues[i]));
   }
 
   float med = getMedian(m_residues);
 
   m_normres.resize(residues.size());
   for (size_t i = 0; i < m_residues.size(); i++) {
-    m_normres[i] = (float)std::fabs(residues[(unsigned int)i] - med);
+    m_normres[i] = static_cast<float>(std::fabs(residues[static_cast<unsigned int>(i)] - med));
   }
 
   m_residues = m_normres;
@@ -446,7 +446,7 @@ inline void vpMbtTukeyEstimator<float>::MEstimator(const vpColVector &residues, 
   // Set a minimum threshold for sigma
   // (when sigma reaches the level of noise in the image)
   if (sigma < NoiseThreshold) {
-    sigma = (float)NoiseThreshold;
+    sigma = static_cast<float>(NoiseThreshold);
   }
 
   psiTukey(sigma, m_normres, weights);

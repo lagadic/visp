@@ -218,7 +218,7 @@ void vpMbKltTracker::reinit(const vpImage<unsigned char> &I)
   }
 
   // mask
-  cv::Mat mask((int)I.getRows(), (int)I.getCols(), CV_8UC1, cv::Scalar(0));
+  cv::Mat mask(static_cast<int>(I.getRows()), static_cast<int>(I.getCols()), CV_8UC1, cv::Scalar(0));
 
   vpMbtDistanceKltPoints *kltpoly;
   vpMbtDistanceKltCylinder *kltPolyCylinder;
@@ -244,7 +244,7 @@ void vpMbKltTracker::reinit(const vpImage<unsigned char> &I)
 
       if (kltPolyCylinder->isTracked()) {
         for (unsigned int k = 0; k < kltPolyCylinder->listIndicesCylinderBBox.size(); k++) {
-          unsigned int indCylBBox = (unsigned int)kltPolyCylinder->listIndicesCylinderBBox[k];
+          unsigned int indCylBBox = static_cast<unsigned int>(kltPolyCylinder->listIndicesCylinderBBox[k]);
           if (faces[indCylBBox]->isVisible() && faces[indCylBBox]->getNbPoint() > 2u) {
             faces[indCylBBox]->computePolygonClipped(m_cam); // Might not be necessary when scanline is activated
           }
@@ -368,7 +368,7 @@ std::vector<vpImagePoint> vpMbKltTracker::getKltImagePoints() const
   for (unsigned int i = 0; i < static_cast<unsigned int>(tracker.getNbFeatures()); i++) {
     long id;
     float x_tmp, y_tmp;
-    tracker.getFeature((int)i, id, x_tmp, y_tmp);
+    tracker.getFeature(static_cast<int>(i), id, x_tmp, y_tmp);
     kltPoints.push_back(vpImagePoint(y_tmp, x_tmp));
   }
 
@@ -389,9 +389,9 @@ std::map<int, vpImagePoint> vpMbKltTracker::getKltImagePointsWithId() const
   for (unsigned int i = 0; i < static_cast<unsigned int>(tracker.getNbFeatures()); i++) {
     long id;
     float x_tmp, y_tmp;
-    tracker.getFeature((int)i, id, x_tmp, y_tmp);
+    tracker.getFeature(static_cast<int>(i), id, x_tmp, y_tmp);
 #ifdef TARGET_OS_IPHONE
-    kltPoints[(int)id] = vpImagePoint(y_tmp, x_tmp);
+    kltPoints[static_cast<int>(id)] = vpImagePoint(y_tmp, x_tmp);
 #else
     kltPoints[id] = vpImagePoint(y_tmp, x_tmp);
 #endif
@@ -507,7 +507,7 @@ void vpMbKltTracker::setPose(const vpImage<unsigned char> *const I, const vpImag
         // nbCur+= (unsigned int)kltpoly->getCurrentPoints().size();
         for (; iter != kltpoly->getCurrentPoints().end(); ++iter) {
 #ifdef TARGET_OS_IPHONE
-          if (std::find(init_ids.begin(), init_ids.end(), (long)(kltpoly->getCurrentPointsInd())[(int)iter->first]) !=
+          if (std::find(init_ids.begin(), init_ids.end(), (long)(kltpoly->getCurrentPointsInd())[static_cast<int>(iter->first)]) !=
               init_ids.end())
 #else
           if (std::find(init_ids.begin(), init_ids.end(),
@@ -524,10 +524,10 @@ void vpMbKltTracker::setPose(const vpImage<unsigned char> *const I, const vpImag
           cdp[1] = iter->second.get_i();
           cdp[2] = 1.0;
 
-          cv::Point2f p((float)cdp[0], (float)cdp[1]);
+          cv::Point2f p(static_cast<float>(cdp[0]), static_cast<float>(cdp[1]));
           init_pts.push_back(p);
 #ifdef TARGET_OS_IPHONE
-          init_ids.push_back((size_t)(kltpoly->getCurrentPointsInd())[(int)iter->first]);
+          init_ids.push_back((size_t)(kltpoly->getCurrentPointsInd())[static_cast<int>(iter->first)]);
 #else
           init_ids.push_back((size_t)(kltpoly->getCurrentPointsInd())[(size_t)iter->first]);
 #endif
@@ -544,7 +544,7 @@ void vpMbKltTracker::setPose(const vpImage<unsigned char> *const I, const vpImag
           cdp[1] = (cdp[0] * cdGc[1][0] + cdp[1] * cdGc[1][1] + cdGc[1][2]) / p_mu_t_2;
 
           // Set value to the KLT tracker
-          cv::Point2f p_guess((float)cdp[0], (float)cdp[1]);
+          cv::Point2f p_guess(static_cast<float>(cdp[0]), static_cast<float>(cdp[1]));
           guess_pts.push_back(p_guess);
         }
       }
@@ -808,7 +808,7 @@ void vpMbKltTracker::computeVVS()
 
   vpMbKltTracker::computeVVSInit();
 
-  while (((int)((normRes - normRes_1) * 1e8) != 0) && (iter < m_maxIter)) {
+  while ((static_cast<int>((normRes - normRes_1) * 1e8) != 0) && (iter < m_maxIter)) {
     vpMbKltTracker::computeVVSInteractionMatrixAndResidu();
 
     bool reStartFromLastIncrement = false;
@@ -1041,13 +1041,13 @@ void vpMbKltTracker::loadConfigFile(const std::string &configFile, bool verbose)
   xmlp.getCameraParameters(camera);
   setCameraParameters(camera);
 
-  tracker.setMaxFeatures((int)xmlp.getKltMaxFeatures());
-  tracker.setWindowSize((int)xmlp.getKltWindowSize());
+  tracker.setMaxFeatures(static_cast<int>(xmlp.getKltMaxFeatures()));
+  tracker.setWindowSize(static_cast<int>(xmlp.getKltWindowSize()));
   tracker.setQuality(xmlp.getKltQuality());
   tracker.setMinDistance(xmlp.getKltMinDistance());
   tracker.setHarrisFreeParameter(xmlp.getKltHarrisParam());
-  tracker.setBlockSize((int)xmlp.getKltBlockSize());
-  tracker.setPyramidLevels((int)xmlp.getKltPyramidLevels());
+  tracker.setBlockSize(static_cast<int>(xmlp.getKltBlockSize()));
+  tracker.setPyramidLevels(static_cast<int>(xmlp.getKltPyramidLevels()));
   maskBorder = xmlp.getKltMaskBorder();
   angleAppears = vpMath::rad(xmlp.getAngleAppear());
   angleDisappears = vpMath::rad(xmlp.getAngleDisappear());
@@ -1320,12 +1320,13 @@ void vpMbKltTracker::testTracking()
   \param p1 : First point on the axis.
   \param p2 : Second point on the axis.
   \param radius : Radius of the cylinder.
-  \param idFace : Identifier of the polygon representing the revolution axis
-  of the cylinder. \param name : The optional name of the cylinder.
+  \param idFace : Identifier of the polygon representing the revolution axis of the cylinder.
+  \param name : The optional name of the cylinder.
 */
 void vpMbKltTracker::initCylinder(const vpPoint &p1, const vpPoint &p2, double radius, int idFace,
-                                  const std::string & /*name*/)
+                                  const std::string &name)
 {
+  (void)name;
   vpMbtDistanceKltCylinder *kltPoly = new vpMbtDistanceKltCylinder();
   kltPoly->setCameraParameters(m_cam);
 
@@ -1343,31 +1344,34 @@ void vpMbKltTracker::initCylinder(const vpPoint &p1, const vpPoint &p2, double r
 }
 
 /*!
-  Add a circle to display (not for tracking) from its center, 3 points
-  (including the center) defining the plane that contain the circle and its
-  radius.
+  Add a circle to track. With the center of the circle we have 3 points defining the plane that  contains the circle.
+  To be visible, the plane defined by the 3 points p1, p2, p3 should have its normal going toward the camera.
 
-  \param p1 : Center of the circle.
-  \param p2,p3 : Two points on the plane containing the circle. With the
-  center of the circle we have 3 points defining the plane that contains the
-  circle. \param radius : Radius of the circle. \param name : The optional
-  name of the circle.
+  \param p1 : Center of the circle, considered as the first point on the plane containing the circle.
+  \param p2 : Second point on the plane containing the circle.
+  \param p3 : Third point on the plane containing the circle.
+  \param radius : Radius of the circle.
+  \param idFace : Index of the face associated to the circle to handle visibility test.
+  \param name : The optional name of the circle.
 */
-void vpMbKltTracker::initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, double radius, int /*idFace*/,
+void vpMbKltTracker::initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, double radius, int idFace,
                                 const std::string &name)
 {
+  (void)idFace;
   addCircle(p1, p2, p3, radius, name);
 }
 
 /*!
-  Add a circle to the list of circles.
+  Add a circle to track. With the center of the circle we have 3 points defining the plane that  contains the circle.
+  To be visible, the plane defined by the 3 points p1, p2, p3 should have its normal going toward the camera.
 
-  \param P1 : Center of the circle.
-  \param P2,P3 : Two points on the plane containing the circle. With the
-  center of the circle we have 3 points defining the plane that contains the
-  circle. \param r : Radius of the circle. \param name : Name of the circle.
+  \param p1 : Center of the circle, considered as the first point on the plane containing the circle.
+  \param p2 : Second point on the plane containing the circle.
+  \param p3 : Third point on the plane containing the circle.
+  \param radius : Radius of the circle.
+  \param name : The optional name of the circle.
 */
-void vpMbKltTracker::addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, double r,
+void vpMbKltTracker::addCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, double radius,
                                const std::string &name)
 {
   bool already_here = false;
@@ -1390,7 +1394,7 @@ void vpMbKltTracker::addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoi
 
     ci->setCameraParameters(m_cam);
     ci->setName(name);
-    ci->buildFrom(P1, P2, P3, r);
+    ci->buildFrom(p1, p2, p3, radius);
     circles_disp.push_back(ci);
   }
 }
@@ -1468,5 +1472,5 @@ void vpMbKltTracker::setUseKltTracking(const std::string &name, const bool &useK
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_mbt.a(vpMbKltTracker.cpp.o) has no symbols
-void dummy_vpMbKltTracker() { };
+void dummy_vpMbKltTracker() { }
 #endif // VISP_HAVE_OPENCV

@@ -46,6 +46,7 @@
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColVector.h>
+#include <visp3/core/vpException.h>
 #include <visp3/core/vpMatrix.h>
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
@@ -451,12 +452,24 @@ private:
 };
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
+
+#if defined(__clang__)
+// Mute warning : declaration requires an exit-time destructor [-Wexit-time-destructors]
+// message : expanded from macro 'NLOHMANN_JSON_SERIALIZE_ENUM'
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wexit-time-destructors"
+#endif
+
 #include VISP_NLOHMANN_JSON(json.hpp)
 NLOHMANN_JSON_SERIALIZE_ENUM(vpCameraParameters::vpCameraParametersProjType, {
     {vpCameraParameters::perspectiveProjWithoutDistortion, "perspectiveWithoutDistortion"},
     {vpCameraParameters::perspectiveProjWithDistortion, "perspectiveWithDistortion"},
     {vpCameraParameters::ProjWithKannalaBrandtDistortion, "kannalaBrandtDistortion"}
   });
+
+#if defined(__clang__)
+#  pragma clang diagnostic pop
+#endif
 
 /**
  * \brief Converts camera parameters into a JSON representation.
@@ -486,8 +499,9 @@ inline void to_json(nlohmann::json &j, const vpCameraParameters &cam)
   }
   case vpCameraParameters::perspectiveProjWithoutDistortion:
     break;
-  default:
-    break;
+  default: {
+    throw(vpException(vpException::fatalError, "Case not handled in to_json(nlohmann::json &, const vpCameraParameters &)"));
+  }
   }
 }
 
@@ -544,8 +558,9 @@ inline void from_json(const nlohmann::json &j, vpCameraParameters &cam)
     cam.initProjWithKannalaBrandtDistortion(px, py, u0, v0, coeffs);
     break;
   }
-  default:
-    break;
+  default: {
+    throw(vpException(vpException::fatalError, "Case not handled in from_json(nlohmann::json &, const vpCameraParameters &)"));
+  }
   }
 }
 #endif

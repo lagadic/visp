@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -296,18 +296,18 @@ template <class Type> void vpImageTools::createSubImage(const vpImage<Type> &I, 
   Setting \e v_scale and \e h_scale to values different from 1 allows also to
   subsample the cropped image.
 
-  \param I : Input image from which a sub image will be extracted.
-  \param roi_top : ROI vertical position of the upper/left corner in the input
+  \param[in] I : Input image from which a sub image will be extracted.
+  \param[in] roi_top : ROI vertical position of the upper/left corner in the input
   image.
-  \param roi_left : ROI  horizontal position of the upper/left corner
+  \param[in] roi_left : ROI  horizontal position of the upper/left corner
   in the input image.
-  \param roi_height : Cropped image height corresponding
+  \param[in] roi_height : Cropped image height corresponding
   to the ROI height.
-  \param roi_width : Cropped image width corresponding to
+  \param[in] roi_width : Cropped image width corresponding to
   the ROI height.
-  \param crop : Cropped image.
-  \param v_scale [in] : Vertical subsampling factor applied to the ROI.
-  \param h_scale [in] : Horizontal subsampling factor applied to the ROI.
+  \param[out] crop : Cropped image.
+  \param[in] v_scale : Vertical subsampling factor applied to the ROI.
+  \param[in] h_scale : Horizontal subsampling factor applied to the ROI.
 
   \sa crop(const vpImage<Type> &, const vpRect &, vpImage<Type> &)
 */
@@ -318,7 +318,7 @@ void vpImageTools::crop(const vpImage<Type> &I, double roi_top, double roi_left,
   int i_min = std::max<int>(static_cast<int>(ceil(roi_top / v_scale)), 0);
   int j_min = std::max<int>(static_cast<int>(ceil(roi_left / h_scale)), 0);
   int i_max = std::min<int>(static_cast<int>(ceil(roi_top + roi_height) / v_scale), static_cast<int>(I.getHeight() / v_scale));
-  int j_max = std::min<int>(static_cast<int>(ceil((roi_left + roi_width) / h_scale)), static_cast<int>(I.getWidth() / h_scale));
+  int j_max = std::min<int>(static_cast<int>(ceil(roi_left + roi_width) / h_scale), static_cast<int>(I.getWidth() / h_scale));
 
   unsigned int i_min_u = static_cast<unsigned int>(i_min);
   unsigned int j_min_u = static_cast<unsigned int>(j_min);
@@ -331,14 +331,14 @@ void vpImageTools::crop(const vpImage<Type> &I, double roi_top, double roi_left,
   if ((v_scale == 1) && (h_scale == 1)) {
     for (unsigned int i = 0; i < r_height; ++i) {
       void *src = (void *)(I[i + i_min_u] + j_min_u);
-      void *dst = (void *)(crop[i]);
+      void *dst = static_cast<void *>(crop[i]);
       memcpy(dst, src, r_width * sizeof(Type));
     }
   }
   else if (h_scale == 1) {
     for (unsigned int i = 0; i < r_height; ++i) {
       void *src = (void *)(I[(i + i_min_u) * v_scale] + j_min_u);
-      void *dst = (void *)(crop[i]);
+      void *dst = static_cast<void *>(crop[i]);
       memcpy(dst, src, r_width * sizeof(Type));
     }
   }
@@ -406,15 +406,15 @@ void vpImageTools::crop(const vpImage<Type> &I, const vpRect &roi, vpImage<Type>
   Setting \e v_scale and \e h_scale to values different from 1 allows also to
   subsample the cropped image.
 
-  \param bitmap : Pointer to the input image from which a sub image will be
-  extracted. \param width, height : Size of the input image.
+  \param[in] bitmap : Pointer to the input image from which a sub image will be extracted.
+  \param[in] width : Width of the input image.
+  \param[in] height : Height of the input image.
 
-  \param roi : Region of interest corresponding to the cropped part of the
-  image.
+  \param[in] roi : Region of interest corresponding to the cropped part of the image.
 
-  \param crop : Cropped image.
-  \param v_scale [in] : Vertical subsampling factor applied to the ROI.
-  \param h_scale [in] : Horizontal subsampling factor applied to the ROI.
+  \param[out] crop : Cropped image.
+  \param[in] v_scale [in] : Vertical subsampling factor applied to the ROI.
+  \param[in] h_scale [in] : Horizontal subsampling factor applied to the ROI.
 */
 template <class Type>
 void vpImageTools::crop(const unsigned char *bitmap, unsigned int width, unsigned int height, const vpRect &roi,
@@ -572,10 +572,10 @@ public:
 
 template <class Type> void vpUndistortInternalType<Type>::vpUndistort_threaded(vpUndistortInternalType<Type> &undistortSharedData)
 {
-  int offset = (int)undistortSharedData.threadid;
-  int width = (int)undistortSharedData.width;
-  int height = (int)undistortSharedData.height;
-  int nthreads = (int)undistortSharedData.nthreads;
+  int offset = static_cast<int>(undistortSharedData.threadid);
+  int width = static_cast<int>(undistortSharedData.width);
+  int height = static_cast<int>(undistortSharedData.height);
+  int nthreads = static_cast<int>(undistortSharedData.nthreads);
 
   double u0 = undistortSharedData.cam.get_u0();
   double v0 = undistortSharedData.cam.get_v0();
@@ -609,17 +609,19 @@ template <class Type> void vpUndistortInternalType<Type>::vpUndistort_threaded(v
       // computation of the bilinear interpolation
 
       // declarations
-      int u_round = (int)(u_double);
-      int v_round = (int)(v_double);
-      if (u_round < 0.f)
+      int u_round = static_cast<int>(u_double);
+      int v_round = static_cast<int>(v_double);
+      if (u_round < 0) {
         u_round = -1;
-      if (v_round < 0.f)
+      }
+      if (v_round < 0) {
         v_round = -1;
-      double du_double = (u_double)-(double)u_round;
-      double dv_double = (v_double)-(double)v_round;
+      }
+      double du_double = (u_double)-static_cast<double>(u_round);
+      double dv_double = (v_double)-static_cast<double>(v_round);
       Type v01;
       Type v23;
-      if ((0 <= u_round) && (0 <= v_round) && (u_round < ((width)-1)) && (v_round < ((height)-1))) {
+      if ((0 <= u_round) && (0 <= v_round) && (u_round < (width-1)) && (v_round < (height-1))) {
         // process interpolation
         const Type *_mp = &src[v_round * width + u_round];
         v01 = (Type)(_mp[0] + ((_mp[1] - _mp[0]) * du_double));
@@ -888,8 +890,8 @@ template <class Type> void vpImageTools::flip(vpImage<Type> &I)
 
 template <class Type> Type vpImageTools::getPixelClamped(const vpImage<Type> &I, float u, float v)
 {
-  int x = vpMath::round(u);
-  int y = vpMath::round(v);
+  int x = vpMath::round(static_cast<double>(u));
+  int y = vpMath::round(static_cast<double>(v));
   x = std::max<int>(0, std::min<int>(x, static_cast<int>(I.getWidth()) - 1));
   y = std::max<int>(0, std::min<int>(y, static_cast<int>(I.getHeight()) - 1));
 
@@ -1080,7 +1082,7 @@ void vpImageTools::resize(const vpImage<Type> &I, vpImage<Type> &Ires, unsigned 
   the desired size).
   \param method : Interpolation method.
   \param nThreads : Number of threads to use if OpenMP is available
-  (zero will let OpenMP uses the optimal number of threads).
+  (zero will let OpenMP uses the optimal number of threads). Unused if OpenMP is not enabled.
 
   \warning The input \e I and output \e Ires images must be different objects.
 
@@ -1090,12 +1092,11 @@ void vpImageTools::resize(const vpImage<Type> &I, vpImage<Type> &Ires, unsigned 
 */
 template <class Type>
 void vpImageTools::resize(const vpImage<Type> &I, vpImage<Type> &Ires, const vpImageInterpolationType &method,
-                          unsigned int
-#if defined(_OPENMP)
-                          nThreads
-#endif
-)
+                          unsigned int nThreads)
 {
+#if !defined(_OPENMP)
+  (void)nThreads;
+#endif
   const unsigned int minWidth = 2, minHeight = 2;
   if ((I.getWidth() < minWidth) || (I.getHeight() < minHeight) || (Ires.getWidth() < minWidth) || (Ires.getHeight() < minHeight)) {
     std::cerr << "Input or output image is too small!" << std::endl;
@@ -1165,8 +1166,8 @@ inline void vpImageTools::resize(const vpImage<unsigned char> &I, vpImage<unsign
     resizeSimdlib(I, Ires.getWidth(), Ires.getHeight(), Ires, INTERPOLATION_LINEAR);
   }
   else {
-    const float scaleY = I.getHeight() / static_cast<float>(Ires.getHeight());
-    const float scaleX = I.getWidth() / static_cast<float>(Ires.getWidth());
+    const float scaleY = static_cast<float>(I.getHeight()) / static_cast<float>(Ires.getHeight());
+    const float scaleX = static_cast<float>(I.getWidth()) / static_cast<float>(Ires.getWidth());
     const float half = 0.5f;
     const int ires_height = static_cast<int>(Ires.getHeight());
 #if defined(_OPENMP)
@@ -1176,13 +1177,13 @@ inline void vpImageTools::resize(const vpImage<unsigned char> &I, vpImage<unsign
 #pragma omp parallel for schedule(dynamic)
 #endif
     for (int i = 0; i < ires_height; ++i) {
-      float v = ((i + half) * scaleY) - half;
-      float yFrac = v - static_cast<int>(v);
+      float v = ((static_cast<float>(i) + half) * scaleY) - half;
+      float yFrac = static_cast<float>(v - static_cast<float>(static_cast<int>(v)));
 
       unsigned int ires_width = static_cast<unsigned int>(Ires.getWidth());
       for (unsigned int j = 0; j < ires_width; ++j) {
-        float u = ((j + half) * scaleX) - half;
-        float xFrac = u - static_cast<int>(u);
+        float u = ((static_cast<float>(j) + half) * scaleX) - half;
+        float xFrac = static_cast<float>(u - static_cast<float>(static_cast<int>(u)));
 
         if (method == INTERPOLATION_NEAREST) {
           resizeNearest(I, Ires, static_cast<unsigned int>(i), j, u, v);
@@ -1218,8 +1219,8 @@ inline void vpImageTools::resize(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires
     resizeSimdlib(I, Ires.getWidth(), Ires.getHeight(), Ires, INTERPOLATION_LINEAR);
   }
   else {
-    const float scaleY = I.getHeight() / static_cast<float>(Ires.getHeight());
-    const float scaleX = I.getWidth() / static_cast<float>(Ires.getWidth());
+    const float scaleY = static_cast<float>(I.getHeight()) / static_cast<float>(Ires.getHeight());
+    const float scaleX = static_cast<float>(I.getWidth()) / static_cast<float>(Ires.getWidth());
     const float half = 0.5f;
     const int ires_height = static_cast<int>(Ires.getHeight());
 #if defined(_OPENMP)
@@ -1229,13 +1230,13 @@ inline void vpImageTools::resize(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires
 #pragma omp parallel for schedule(dynamic)
 #endif
     for (int i = 0; i < ires_height; ++i) {
-      float v = ((i + half) * scaleY) - half;
-      float yFrac = v - static_cast<int>(v);
+      float v = ((static_cast<float>(i) + half) * scaleY) - half;
+      float yFrac = static_cast<float>(v - static_cast<float>(static_cast<int>(v)));
 
       unsigned int ires_width = static_cast<unsigned int>(Ires.getWidth());
       for (unsigned int j = 0; j < ires_width; ++j) {
-        float u = ((j + half) * scaleX) - half;
-        float xFrac = u - static_cast<int>(u);
+        float u = ((static_cast<float>(j) + half) * scaleX) - half;
+        float xFrac = static_cast<float>(u - static_cast<float>(static_cast<int>(u)));
 
         if (method == INTERPOLATION_NEAREST) {
           resizeNearest(I, Ires, static_cast<unsigned int>(i), j, u, v);

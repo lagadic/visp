@@ -72,7 +72,8 @@ vpPlot::vpPlot() : I(), display(nullptr), graphNbr(1), graphList(nullptr), marge
   \param graph_nbr : The number of graph in the window.
   \param height : Height of the window.
   \param width : Width of the window.
-  \param x,y : The window is set at position x,y (column index, row index).
+  \param x : The window top left corner x position (column index).
+  \param y : The window top left corner y position (row index).
   \param title : Window title.
 */
 vpPlot::vpPlot(unsigned int graph_nbr, unsigned int height, unsigned int width, int x, int y, const std::string &title)
@@ -90,7 +91,8 @@ vpPlot::vpPlot(unsigned int graph_nbr, unsigned int height, unsigned int width, 
   \param graph_nbr : The number of graph in the window.
   \param height : Height of the window.
   \param width : Width of the window.
-  \param x,y : The window is set at position x,y (column index, row index).
+  \param x : The window top left corner x position (column index).
+  \param y : The window top left corner y position (row index).
   \param title : Window title.
 */
 void vpPlot::init(unsigned int graph_nbr, unsigned int height, unsigned int width, int x, int y,
@@ -142,7 +144,7 @@ vpPlot::~vpPlot()
   \exception vpException::dimensionError if the parameter exceed the possible
   number of graph (4).
 
-  \param graphNbr : The number of graph in the window.
+  \param nbGraph : The number of graph in the window.
 */
 void vpPlot::initNbGraph(unsigned int nbGraph)
 {
@@ -154,32 +156,32 @@ void vpPlot::initNbGraph(unsigned int nbGraph)
 
   switch (nbGraph) {
   case 1:
-    graphList[0].initSize(vpImagePoint(0, 0), (unsigned int)(700 * factorj), (unsigned int)(700 * factori), margei,
+    graphList[0].initSize(vpImagePoint(0, 0), static_cast<unsigned int>(700 * factorj), static_cast<unsigned int>(700 * factori), margei,
                           margej);
     break;
   case 2:
-    graphList[0].initSize(vpImagePoint(0, 0), (unsigned int)(700 * factorj), (unsigned int)(350 * factori), margei,
+    graphList[0].initSize(vpImagePoint(0, 0), static_cast<unsigned int>(700 * factorj), static_cast<unsigned int>(350 * factori), margei,
                           margej);
-    graphList[1].initSize(vpImagePoint((unsigned int)(350 * factori), 0), (unsigned int)(700 * factorj),
-                          (unsigned int)(350 * factori), margei, margej);
+    graphList[1].initSize(vpImagePoint(static_cast<unsigned int>(350 * factori), 0), static_cast<unsigned int>(700 * factorj),
+                          static_cast<unsigned int>(350 * factori), margei, margej);
     break;
   case 3:
-    graphList[0].initSize(vpImagePoint(0, 0), (unsigned int)(350 * factorj), (unsigned int)(350 * factori), margei,
+    graphList[0].initSize(vpImagePoint(0, 0), static_cast<unsigned int>(350 * factorj), static_cast<unsigned int>(350 * factori), margei,
                           margej);
-    graphList[1].initSize(vpImagePoint(0, (unsigned int)(350 * factorj)), (unsigned int)(350 * factorj),
-                          (unsigned int)(350 * factori), margei, margej);
-    graphList[2].initSize(vpImagePoint((unsigned int)(350 * factori), 0), (unsigned int)(700 * factorj),
-                          (unsigned int)(350 * factori), margei, margej);
+    graphList[1].initSize(vpImagePoint(0, static_cast<unsigned int>(350 * factorj)), static_cast<unsigned int>(350 * factorj),
+                          static_cast<unsigned int>(350 * factori), margei, margej);
+    graphList[2].initSize(vpImagePoint(static_cast<unsigned int>(350 * factori), 0), static_cast<unsigned int>(700 * factorj),
+                          static_cast<unsigned int>(350 * factori), margei, margej);
     break;
   case 4:
-    graphList[0].initSize(vpImagePoint(0, 0), (unsigned int)(350 * factorj), (unsigned int)(350 * factori), margei,
+    graphList[0].initSize(vpImagePoint(0, 0), static_cast<unsigned int>(350 * factorj), static_cast<unsigned int>(350 * factori), margei,
                           margej);
-    graphList[1].initSize(vpImagePoint(0, (unsigned int)(350 * factorj)), (unsigned int)(350 * factorj),
-                          (unsigned int)(350 * factori), margei, margej);
-    graphList[2].initSize(vpImagePoint((unsigned int)(350 * factori), 0), (unsigned int)(350 * factorj),
-                          (unsigned int)(350 * factori), margei, margej);
-    graphList[3].initSize(vpImagePoint((unsigned int)(350 * factori), (unsigned int)(350 * factorj)),
-                          (unsigned int)(350 * factorj), (unsigned int)(350 * factori), margei, margej);
+    graphList[1].initSize(vpImagePoint(0, static_cast<unsigned int>(350 * factorj)), static_cast<unsigned int>(350 * factorj),
+                          static_cast<unsigned int>(350 * factori), margei, margej);
+    graphList[2].initSize(vpImagePoint(static_cast<unsigned int>(350 * factori), 0), static_cast<unsigned int>(350 * factorj),
+                          static_cast<unsigned int>(350 * factori), margei, margej);
+    graphList[3].initSize(vpImagePoint(static_cast<unsigned int>(350 * factori), static_cast<unsigned int>(350 * factorj)),
+                          static_cast<unsigned int>(350 * factorj), static_cast<unsigned int>(350 * factori), margei, margej);
     break;
   }
 
@@ -738,5 +740,5 @@ END_VISP_NAMESPACE
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_gui.a(vpPlot.cpp.o) has no symbols
-void dummy_vpPlot() { };
+void dummy_vpPlot() { }
 #endif

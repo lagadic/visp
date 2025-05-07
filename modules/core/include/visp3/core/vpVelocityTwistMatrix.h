@@ -213,14 +213,14 @@ public:
 
   vpVelocityTwistMatrix &operator=(const vpVelocityTwistMatrix &V);
 
-  int print(std::ostream &s, unsigned int length, char const *intro = 0) const;
+  int print(std::ostream &s, unsigned int length, char const *intro = nullptr) const;
 
   /*!
     This function is not applicable to a velocity twist matrix that is always
     a 6-by-6 matrix. \exception vpException::fatalError When this function is
     called.
-    */
-  void resize(unsigned int nrows, unsigned int ncols, bool flagNullify = true)
+   */
+  VP_NORETURN void resize(unsigned int nrows, unsigned int ncols, bool flagNullify = true)
   {
     (void)nrows;
     (void)ncols;
@@ -244,8 +244,8 @@ public:
   VP_DEPRECATED void setIdentity();
 //@}
 #endif
-  private:
-    static const unsigned constr_val_6;
+private:
+  static const unsigned constr_val_6;
 };
 END_VISP_NAMESPACE
 #endif

@@ -136,7 +136,7 @@ public:
                                                        const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                                                        bool displayFullModel = false);
 
-  inline unsigned int getNbFeatures() const { return (unsigned int)(m_pointCloudFace.size() / 3); }
+  inline unsigned int getNbFeatures() const { return static_cast<unsigned int>(m_pointCloudFace.size() / 3); }
 
   inline bool isTracked() const { return m_isTrackedDepthDenseFace; }
 

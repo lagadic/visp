@@ -909,12 +909,13 @@ static void col2im(const std::vector<uint16_t> &buffer, vpImage<uint16_t> &I_Bay
 
 static void convertTo(const vpImage<uint16_t> &I_RGBA_16U, vpImage<vpRGBa> &I_RGBA_8U, int divisor = 1 << (12 - 8))
 {
+  float divisor_ = static_cast<float>(divisor);
   for (unsigned int i = 0; i < I_RGBA_8U.getHeight(); i++) {
     for (unsigned int j = 0; j < I_RGBA_8U.getWidth(); j++) {
       I_RGBA_8U[i][j] = vpRGBa(
-          vpMath::saturate<unsigned char>(I_RGBA_16U[0][(i * I_RGBA_8U.getWidth() + j) * 4 + 0] / (float)divisor),
-          vpMath::saturate<unsigned char>(I_RGBA_16U[0][(i * I_RGBA_8U.getWidth() + j) * 4 + 1] / (float)divisor),
-          vpMath::saturate<unsigned char>(I_RGBA_16U[0][(i * I_RGBA_8U.getWidth() + j) * 4 + 2] / (float)divisor));
+          vpMath::saturate<unsigned char>(I_RGBA_16U[0][(i * I_RGBA_8U.getWidth() + j) * 4 + 0] / divisor_),
+          vpMath::saturate<unsigned char>(I_RGBA_16U[0][(i * I_RGBA_8U.getWidth() + j) * 4 + 1] / divisor_),
+          vpMath::saturate<unsigned char>(I_RGBA_16U[0][(i * I_RGBA_8U.getWidth() + j) * 4 + 2] / divisor_));
     }
   }
 }
@@ -1246,9 +1247,9 @@ bool test_hsv(const std::vector<Type> &hue, const std::vector<Type> &saturation,
 {
   // Compare HSV values
   for (size_t i = 0; i < size; ++i) {
-    if (((hue[i]*max_range) != static_cast<Type>(hsv_truth[i][0])) ||
-        ((saturation[i]*max_range) != static_cast<Type>(hsv_truth[i][1])) ||
-        ((value[i]*max_range) != static_cast<Type>(hsv_truth[i][2]))) {
+    if (!vpMath::equal(hue[i]*max_range, static_cast<Type>(hsv_truth[i][0])) ||
+        !vpMath::equal(saturation[i]*max_range, static_cast<Type>(hsv_truth[i][1])) ||
+        !vpMath::equal(value[i]*max_range, static_cast<Type>(hsv_truth[i][2]))) {
       if (step == 3) {
         std::cout << "Error in rgb to hsv conversion for rgb (";
       }
@@ -1258,12 +1259,12 @@ bool test_hsv(const std::vector<Type> &hue, const std::vector<Type> &saturation,
       std::cout << static_cast<int>(rgb_truth[i][0]) << ","
         << static_cast<int>(rgb_truth[i][1]) << ","
         << static_cast<int>(rgb_truth[i][2]) << "): Expected hsv value: ("
-        << static_cast<int>(hsv_truth[i][0]) << ","
-        << static_cast<int>(hsv_truth[i][1]) << ","
-        << static_cast<int>(hsv_truth[i][2]) << ") converted value: ("
-        << static_cast<int>(hue[i]) << ","
-        << static_cast<int>(saturation[i]) << ","
-        << static_cast<int>(value[i]) << ")" << std::endl;
+        << static_cast<Type>(hsv_truth[i][0]) << ","
+        << static_cast<Type>(hsv_truth[i][1]) << ","
+        << static_cast<Type>(hsv_truth[i][2]) << ") converted value: ("
+        << static_cast<Type>(hue[i]*max_range) << ","
+        << static_cast<Type>(saturation[i]*max_range) << ","
+        << static_cast<Type>(value[i]*max_range) << ")" << std::endl;
       return false;
     }
   }
@@ -1418,11 +1419,10 @@ TEST_CASE("RGB to HSV conversion", "[image_conversion]")
         std::vector<double> hue(size);
         std::vector<double> saturation(size);
         std::vector<double> value(size);
-        std::cout << "Test rgb -> hsv (double) conversion" << std::endl;
         vpImageConvert::RGBToHSV(reinterpret_cast<unsigned char *>(&rgb_truth_continuous.front()),
-                                  reinterpret_cast<double *>(&hue.front()),
-                                  reinterpret_cast<double *>(&saturation.front()),
-                                  reinterpret_cast<double *>(&value.front()), static_cast<unsigned int>(size));
+                                 reinterpret_cast<double *>(&hue.front()),
+                                 reinterpret_cast<double *>(&saturation.front()),
+                                 reinterpret_cast<double *>(&value.front()), static_cast<unsigned int>(size));
         CHECK(test_hsv(hue, saturation, value, rgb_truth, hsv_truth, 3, size, 255.));
 
         std::cout << "Test hsv (double) -> rgb conversion" << std::endl;

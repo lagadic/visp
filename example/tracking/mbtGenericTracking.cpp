@@ -393,7 +393,7 @@ int main(int argc, const char **argv)
       display1->setDownScalingFactor(vpDisplay::SCALE_AUTO);
       display2->setDownScalingFactor(vpDisplay::SCALE_AUTO);
       display1->init(I1, 100, 100, "Test tracking (Left)");
-      display2->init(I2, (int)(I1.getWidth() / vpDisplay::getDownScalingFactor(I1)) + 110, 100, "Test tracking (Right)");
+      display2->init(I2, static_cast<int>(I1.getWidth() / vpDisplay::getDownScalingFactor(I1)) + 110, 100, "Test tracking (Right)");
 
       vpDisplay::display(I1);
       vpDisplay::display(I2);

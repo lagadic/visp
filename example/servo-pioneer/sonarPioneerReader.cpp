@@ -74,7 +74,7 @@ void sonarPrinter(void)
 {
   fprintf(stdout, "in sonarPrinter()\n");
   fflush(stdout);
-  double scale = (double)half_size / (double)sonar.getMaxRange();
+  double scale = static_cast<double>(half_size) / static_cast<double>(sonar.getMaxRange());
 
   /*
   ArSonarDevice *sd;
@@ -238,7 +238,7 @@ int main(int argc, char **argv)
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
     // Create a display to show sensor data
     if (isInitialized == false) {
-      I.resize((unsigned int)half_size * 2, (unsigned int)half_size * 2);
+      I.resize(static_cast<unsigned int>(half_size * 2), static_cast<unsigned int>(half_size * 2));
       I = 255u;
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)

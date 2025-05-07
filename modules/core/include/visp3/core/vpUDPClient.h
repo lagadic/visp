@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +31,8 @@
  * UDP Client
  */
 
-#ifndef _vpUDPClient_h_
-#define _vpUDPClient_h_
+#ifndef VP_UDP_CLIENT_H
+#define VP_UDP_CLIENT_H
 
 #include <visp3/core/vpConfig.h>
 
@@ -44,7 +44,19 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #else
+
+#if defined(__clang__)
+// Mute warning : non-portable path to file '<WinSock2.h>'; specified path differs in case from file name on disk [-Wnonportable-system-include-path]
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wnonportable-system-include-path"
+#endif
+
 #include <winsock2.h>
+
+#if defined(__clang__)
+#  pragma clang diagnostic pop
+#endif
+
 #endif
 
 #include <visp3/core/vpException.h>
@@ -99,7 +111,7 @@ BEGIN_VISP_NAMESPACE
  *       std::cout << "Enter the message to send:" << std::endl;
  *       std::string msg = "";
  *       std::getline(std::cin, msg);
- *       if (client.send(msg) != (int) msg.size())
+ *       if (client.send(msg) != static_cast<int>(msg.size()))
  *         std::cerr << "Error client.send()!" << std::endl;
  *       if (client.receive(msg))
  *         std::cout << "Receive from the server: " << msg << std::endl;
@@ -151,7 +163,7 @@ BEGIN_VISP_NAMESPACE
  *     memcpy(data+sizeof(data_type.double_val), &data_type.int_val, sizeof(data_type.int_val));
  *
  *     std::string msg(data, sizeof(data_type.double_val)+sizeof(data_type.int_val));
- *     if (client.send(msg) != (int) sizeof(data_type.double_val)+sizeof(data_type.int_val))
+ *     if (client.send(msg) != static_cast<int>(sizeof(data_type.double_val)+sizeof(data_type.int_val)))
  *       std::cerr << "Error client.send()!" << std::endl;
  *     if (client.receive(msg)) {
  *       data_type.double_val = *reinterpret_cast<const double *>(msg.c_str());
@@ -174,8 +186,11 @@ class VISP_EXPORT vpUDPClient
 {
 public:
   vpUDPClient();
+  vpUDPClient(const vpUDPClient &client);
   vpUDPClient(const std::string &hostname, int port);
   virtual ~vpUDPClient();
+
+  vpUDPClient &operator=(const vpUDPClient &client);
 
   /** @name Inherited functionalities from vpUDPClient */
   //@{

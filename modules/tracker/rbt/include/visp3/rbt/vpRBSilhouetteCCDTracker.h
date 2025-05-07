@@ -147,7 +147,12 @@ inline void from_json(const nlohmann::json &j, vpCCDParameters &ccdParameters)
   ccdParameters.start_h = ccdParameters.h;
   ccdParameters.delta_h = j.value("delta_h", ccdParameters.delta_h);
   ccdParameters.start_delta_h = ccdParameters.delta_h;
-  ccdParameters.min_h = j.value("min_h", ccdParameters.min_h);
+  if (j.contains("min_h")) {
+    ccdParameters.min_h = j.value("min_h", ccdParameters.min_h);
+  }
+  else {
+    ccdParameters.min_h = ccdParameters.h;
+  }
 
   ccdParameters.phi_dim = j.value("phi_dim", ccdParameters.phi_dim);
   if (j.contains("gamma")) {
@@ -299,6 +304,14 @@ public:
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth) const VP_OVERRIDE;
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
+
+#if defined(__clang__)
+// Mute warning : declaration requires an exit-time destructor [-Wexit-time-destructors]
+// message : expanded from macro 'NLOHMANN_JSON_SERIALIZE_ENUM'
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wexit-time-destructors"
+#endif
+
   NLOHMANN_JSON_SERIALIZE_ENUM(vpRBSilhouetteCCDTracker::vpDisplayType, {
         {vpRBSilhouetteCCDTracker::vpDisplayType::INVALID, nullptr},
         {vpRBSilhouetteCCDTracker::vpDisplayType::SIMPLE, "simple"},
@@ -319,6 +332,10 @@ public:
     setDisplayType(j.value("displayType", m_displayType));
     m_ccdParameters = j.value("ccd", m_ccdParameters);
   }
+
+#if defined(__clang__)
+#  pragma clang diagnostic pop
+#endif
 
 #endif
 

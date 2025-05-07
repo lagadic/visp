@@ -91,8 +91,9 @@ vpMbtPolygon &vpMbtPolygon::operator=(const vpMbtPolygon &mbtp)
   \param modulo : Indicates if the test should also consider faces that are
   not oriented counter clockwise. If true, the orientation of the face is
   without importance.
-  \param cam : Camera parameters (intrinsics parameters)
-  \param width, height : Image size used to consider level of detail.
+  \param cam : Camera parameters (intrinsics parameters).
+  \param width : Image width used to consider level of detail.
+  \param height : Image height used to consider level of detail.
 
   \return Return true if the polygon is visible.
 */

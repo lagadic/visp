@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +29,7 @@
  *
  * Description:
  * Visual feature circle.
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpCircle.h>
 
@@ -59,10 +58,15 @@ void vpCircle::init()
 void vpCircle::setWorldCoordinates(const vpColVector &oP_) { this->oP = oP_; }
 
 /*!
-  Set the 3D circle coordinates in the object frame.
+  Set the 3D circle parameters in the object frame.
+  The equation of the plane which contains the 3D circle is the following:
+  \f[ oA*(X-oX)+oB*(Y-oY)+oC*(Z-oZ)=0 \f]
+  where \f$ (oA, oB, oC) \f$ are the coordinates of the vector normal to the plane, and \f$ (oX, oY, oZ) \f$
+  are the 3D coordinates of the circle center.
 
-  \param oA, oB, oC : Parameters of the plane with equation oA*(X-oX)+oB*(Y-oY)+oC*(Z-oZ)=0
-  passing through the 3D sphere center.
+  \param oA : Coordinate along X-axis of the vector normal to the plane.
+  \param oB : Coordinate along Y-axis of the vector normal to the plane.
+  \param oC : Coordinate along Z-axis of the vector normal to the plane.
   \param oX : Coordinate of the center of the sphere along X-axis in the object frame.
   \param oY : Coordinate of the center of the sphere along Y-axis in the object frame.
   \param oZ : Coordinate of the center of the sphere along Z-axis in the object frame.
@@ -112,8 +116,14 @@ vpCircle::vpCircle(const vpColVector &oP_)
   Construct the 3D circle from the intersection of a plane and a sphere with
   coordinates expressed in the object frame.
 
-  \param oA, oB, oC : Parameters of the plane with equation oA*(X-oX)+oB*(Y-oY)+oC*(Z-oZ)=0
-  passing through the 3D sphere center.
+  The equation of the plane which contains the 3D circle is the following:
+  \f[ oA*(X-oX)+oB*(Y-oY)+oC*(Z-oZ)=0 \f]
+  where \f$ (oA, oB, oC) \f$ are the coordinates of the vector normal to the plane, and \f$ (oX, oY, oZ) \f$
+  are the 3D coordinates of the circle center.
+
+  \param oA : Coordinate along X-axis of the vector normal to the plane.
+  \param oB : Coordinate along Y-axis of the vector normal to the plane.
+  \param oC : Coordinate along Z-axis of the vector normal to the plane.
   \param oX : Coordinate of the center of the sphere along X-axis in the object frame.
   \param oY : Coordinate of the center of the sphere along Y-axis in the object frame.
   \param oZ : Coordinate of the center of the sphere along Z-axis in the object frame.
@@ -126,11 +136,6 @@ vpCircle::vpCircle(double oA, double oB, double oC, double oX, double oY, double
   init();
   setWorldCoordinates(oA, oB, oC, oX, oY, oZ, R);
 }
-
-/*!
- * Default destructor that does nothing.
- */
-vpCircle::~vpCircle() { }
 
 /*!
   Perspective projection of the circle.
@@ -147,21 +152,21 @@ void vpCircle::projection() { projection(cP, p); }
 
 /*!
   Perspective projection of the circle.
-  \param cP_: 3D cercle input parameters expressed in the camera frame.
+  \param cP_ : 3D cercle input parameters expressed in the camera frame.
   This 7-dim vector contains the following parameters: cA, cB, cC, cX, cY, cZ, R where
   - cA, cB, cC are the parameters of the plane with equation cA*(x-cX)+cB*(y-cY)+cC*(z-cZ)=0
-  passing through the 3D sphere center.
+    passing through the 3D sphere center.
   - cX, cY, cZ are the 3D coordinates of the circle in the camera frame
   - R is the circle radius in [m].
 
-  \param p_: 2D circle output parameters. This is a 5 dimension vector. It
+  \param p_ : 2D circle output parameters. This is a 5 dimension vector. It
   contains the following parameters: x, y, n20, n11, n02 where:
   - x, y are the normalized coordinates of the ellipse centroid (ie the
-  perspective projection of a 3D circle becomes a 2D ellipse in the image) in
-  the image plane.
+    perspective projection of a 3D circle becomes a 2D ellipse in the image) in
+    the image plane.
   - n20, n11, n02 which are the second order centered moments of
-  the ellipse normalized by its area (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where
-  \f$\mu_{ij}\f$ are the centered moments and a the area).
+    the ellipse normalized by its area (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where
+    \f$\mu_{ij}\f$ are the centered moments and a the area).
   */
 void vpCircle::projection(const vpColVector &cP_, vpColVector &p_) const
 {

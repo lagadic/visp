@@ -48,15 +48,15 @@ BEGIN_VISP_NAMESPACE
    Default constructor that does nothing except setting detection timeout to 50ms.
    This value could be changed using setTimeout().
  */
-vpDetectorDataMatrixCode::vpDetectorDataMatrixCode() { setTimeout(50); }
+  vpDetectorDataMatrixCode::vpDetectorDataMatrixCode() { setTimeout(50); }
 
-/*!
-  Detect datamatrix codes in the image. Return true if a code is detected, false otherwise.
-  There is the setTimeout() function that allows to tune the value of the timeout used to detect a datamatrix code.
-  By default, there is a timeout of 50 ms set in the constructor.
+  /*!
+    Detect datamatrix codes in the image. Return true if a code is detected, false otherwise.
+    There is the setTimeout() function that allows to tune the value of the timeout used to detect a datamatrix code.
+    By default, there is a timeout of 50 ms set in the constructor.
 
-  \param I : Input image.
- */
+    \param I : Input image.
+   */
 bool vpDetectorDataMatrixCode::detect(const vpImage<unsigned char> &I)
 {
   bool detected = false;
@@ -75,7 +75,7 @@ bool vpDetectorDataMatrixCode::detect(const vpImage<unsigned char> &I)
     dmtx_timeout->usec += m_timeout_ms * 1000;
   }
 
-  img = dmtxImageCreate(I.bitmap, (int)I.getWidth(), (int)I.getHeight(), DmtxPack8bppK);
+  img = dmtxImageCreate(I.bitmap, static_cast<int>(I.getWidth()), static_cast<int>(I.getHeight()), DmtxPack8bppK);
   assert(img != nullptr);
 
   dec = dmtxDecodeCreate(img, 1);
@@ -134,5 +134,5 @@ END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning:
 // libvisp_core.a(vpDetectorDataMatrixCode.cpp.o) has no symbols
-void dummy_vpDetectorDataMatrixCode() { };
+void dummy_vpDetectorDataMatrixCode() { }
 #endif

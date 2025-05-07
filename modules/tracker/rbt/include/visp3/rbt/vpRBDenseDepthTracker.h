@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -152,54 +152,107 @@ public:
 
   struct vpDepthPoint
   {
-    vpDepthPoint() : currentPoint(3), cameraNormal(3), objectNormal(3)
-    { }
-
-    inline void update(const vpHomogeneousMatrix &cMo, const vpRotationMatrix &cRo)
-    {
-      oP.changeFrame(cMo);
-      oP.projection();
-      cameraNormal = cRo * objectNormal;
-    }
-
-    inline void error(vpColVector &e, unsigned i) const
-    {
-      double D = -((cameraNormal[0] * oP.get_X()) + (cameraNormal[1] * oP.get_Y()) + (cameraNormal[2] * oP.get_Z()));
-      double projNormal = cameraNormal[0] * currentPoint[0] + cameraNormal[1] * currentPoint[1] + cameraNormal[2] * currentPoint[2];
-
-      e[i] = D + projNormal;
-    }
-
-    inline void interaction(vpMatrix &L, unsigned i)
-    {
-      const double X = oP.get_X(), Y = oP.get_Y(), Z = oP.get_Z();
-      const double nx = cameraNormal[0], ny = cameraNormal[1], nz = cameraNormal[2];
-      L[i][0] = nx;
-      L[i][1] = ny;
-      L[i][2] = nz;
-      L[i][3] = nz * Y - ny * Z;
-      L[i][4] = nx * Z - nz * X;
-      L[i][5] = ny * X - nx * Y;
-    }
-
+    vpDepthPoint() { }
   public:
-    vpPoint oP;
-    vpColVector currentPoint;
-    vpColVector cameraNormal;
-    vpColVector objectNormal;
-    vpImagePoint pixelPos;
-    //vpFeatureDepth f;
+    std::array<double, 3> oX, observation, objectNormal;
+    std::array<double, 2> pixelPos;
+
+  };
+
+  class vpDepthPointSet
+  {
+  public:
+    vpDepthPointSet()
+    {
+
+    }
+    void build(const std::vector<vpDepthPoint> &points)
+    {
+      unsigned int numPoints = points.size();
+      std::vector<vpMatrix *> matrices = { &m_oXt, &m_oNt, &m_cXt, &m_cNt, &m_observations };
+      for (vpMatrix *m: matrices) {
+        m->resize(3, numPoints, false, false);
+      }
+
+      for (unsigned int i = 0; i < numPoints; ++i) {
+        for (unsigned int j = 0; j < 3; ++j) {
+          m_oXt[j][i] = points[i].oX[j];
+          m_oNt[j][i] = points[i].objectNormal[j];
+          m_observations[j][i] = points[i].observation[j];
+        }
+      }
+    }
+
+    inline void update(const vpHomogeneousMatrix &cMo)
+    {
+      const vpRotationMatrix cRo = cMo.getRotationMatrix();
+      const vpTranslationVector t = cMo.getTranslationVector();
+      vpMatrix::mult2Matrices(cRo, m_oXt, m_cXt);
+      vpMatrix::mult2Matrices(cRo, m_oNt, m_cNt);
+
+      for (unsigned int i = 0; i < m_cXt.getCols(); ++i) {
+        for (unsigned int j = 0; j < 3; ++j) {
+          m_cXt[j][i] += t[j];
+        }
+      }
+    }
+
+    inline void errorAndInteraction(vpColVector &e, vpMatrix &L) const
+    {
+      const unsigned int numPoints = m_oXt.getCols();
+      e.resize(numPoints, false);
+      L.resize(numPoints, 6, false, false);
+#ifdef VISP_HAVE_OPENMP
+#pragma omp parallel for
+#endif
+      for (unsigned int i = 0; i < numPoints; ++i) {
+        const double X = m_cXt[0][i], Y = m_cXt[1][i], Z = m_cXt[2][i];
+        const double nX = m_cNt[0][i], nY = m_cNt[1][i], nZ = m_cNt[2][i];
+
+        const double D = -((nX * X) + (nY  * Y) + (nZ * Z));
+        double projNormal = nX * m_observations[0][i] + nY  * m_observations[1][i] + nZ * m_observations[2][i];
+
+        e[i] = D + projNormal;
+
+        L[i][0] = nX;
+        L[i][1] = nY;
+        L[i][2] = nZ;
+        L[i][3] = nZ * Y - nY * Z;
+        L[i][4] = nX * Z - nZ * X;
+        L[i][5] = nY * X - nX * Y;
+      }
+    }
+
+    const vpMatrix &getPointsObject() const { return m_oXt; }
+    const vpMatrix &getNormalsObject() const { return m_oNt; }
+    const vpMatrix &getPointsCamera() const { return m_cXt; }
+    const vpMatrix &getNormalsCamera() const { return m_cNt; }
+
+  private:
+    vpMatrix m_observations; // A 3xN matrix containing the observed 3D points from the camera
+    vpMatrix m_oXt; // a 3xN matrix containing the 3D points in object frame
+    vpMatrix m_oNt; // a 3xN matrix containing the 3D normals on the object
+    vpMatrix m_cXt;
+    vpMatrix m_cNt;
+
   };
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
 
+#if defined(__clang__)
+// Mute warning : declaration requires an exit-time destructor [-Wexit-time-destructors]
+// message : expanded from macro 'NLOHMANN_JSON_SERIALIZE_ENUM'
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wexit-time-destructors"
+#endif
+
   NLOHMANN_JSON_SERIALIZE_ENUM(vpRBDenseDepthTracker::vpDisplayType, {
-      {vpRBDenseDepthTracker::vpDisplayType::INVALID, nullptr},
-      {vpRBDenseDepthTracker::vpDisplayType::SIMPLE, "simple"},
-      {vpRBDenseDepthTracker::vpDisplayType::WEIGHT, "weight"},
-      {vpRBDenseDepthTracker::vpDisplayType::ERROR, "error"},
-      {vpRBDenseDepthTracker::vpDisplayType::WEIGHT_AND_ERROR, "weightAndError"}
-    });
+        {vpRBDenseDepthTracker::vpDisplayType::INVALID, nullptr},
+        {vpRBDenseDepthTracker::vpDisplayType::SIMPLE, "simple"},
+        {vpRBDenseDepthTracker::vpDisplayType::WEIGHT, "weight"},
+        {vpRBDenseDepthTracker::vpDisplayType::ERROR, "error"},
+        {vpRBDenseDepthTracker::vpDisplayType::WEIGHT_AND_ERROR, "weightAndError"}
+      });
 
   virtual void loadJsonConfiguration(const nlohmann::json &j) VP_OVERRIDE
   {
@@ -210,11 +263,16 @@ public:
     setDisplayType(j.value("displayType", m_displayType));
   }
 
+#if defined(__clang__)
+#  pragma clang diagnostic pop
+#endif
+
 #endif
 
 protected:
 
   std::vector<vpDepthPoint> m_depthPoints;
+  vpDepthPointSet m_depthPointSet;
   vpRobust m_robust;
   unsigned int m_step;
   bool m_useMask;

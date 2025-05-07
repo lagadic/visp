@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,9 +44,9 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/io/vpDiskGrabber.h>
 
-#if (VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)
 #include <opencv2/highgui/highgui.hpp>
-#elif (VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)
+#elif defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)
 #include <opencv2/videoio/videoio.hpp>
 #endif
 
@@ -182,7 +182,9 @@ class VISP_EXPORT vpVideoReader : public vpFrameGrabber
 private:
   //! To read sequences of images
   vpDiskGrabber *m_imSequence;
-#if ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI))|| ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
+#if defined(VISP_HAVE_OPENCV) && \
+    (((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || \
+     ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)))
   //! To read video files with OpenCV
   cv::VideoCapture m_capture;
   cv::Mat m_frame;
@@ -241,9 +243,9 @@ public:
   vpVideoReader();
   virtual ~vpVideoReader();
 
-  void acquire(vpImage<vpRGBa> &I);
-  void acquire(vpImage<unsigned char> &I);
-  void close() { ; }
+  void acquire(vpImage<vpRGBa> &I) VP_OVERRIDE;
+  void acquire(vpImage<unsigned char> &I) VP_OVERRIDE;
+  void close() VP_OVERRIDE { }
 
   /*!
    * \return true if the end of the sequence is reached.
@@ -326,8 +328,8 @@ public:
   inline long getFrameStep() const { return m_frameStep; }
 
   bool isVideoFormat() const;
-  void open(vpImage<vpRGBa> &I);
-  void open(vpImage<unsigned char> &I);
+  void open(vpImage<vpRGBa> &I) VP_OVERRIDE;
+  void open(vpImage<unsigned char> &I) VP_OVERRIDE;
 
   vpVideoReader &operator>>(vpImage<unsigned char> &I);
   vpVideoReader &operator>>(vpImage<vpRGBa> &I);

@@ -58,13 +58,13 @@ BEGIN_VISP_NAMESPACE
  * Entree :
  * fp    Nombre flottant a lire.
  */
-void fscanf_float(float *fp)
+  void fscanf_float(float *fp)
 {
   int t;
 
   if ((t = lex()) != T_FLOAT && t != T_INT)
     lexerr("start", "float expected", NULL);
-  *fp = (t == T_INT) ? (float)myint : myfloat;
+  *fp = (t == T_INT) ? static_cast<float>(myint) : myfloat;
 }
 
 /*

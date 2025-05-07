@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * UDP Server
- *
-*****************************************************************************/
+ */
 
 #include <cstring>
 #include <sstream>
@@ -60,7 +58,19 @@
 // vpUDPServer.cpp:254:23: note: suggested alternative: 'inet_ntoa'
 #endif
 #endif
+
+#if defined(__clang__)
+// Mute warning : non-portable path to file '<WS2tcpip.h>'; specified path differs in case from file name on disk [-Wnonportable-system-include-path]
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wnonportable-system-include-path"
+#endif
+
 #include <Ws2tcpip.h>
+
+#if defined(__clang__)
+#  pragma clang diagnostic pop
+#endif
+
 #endif
 
 #include <visp3/core/vpUDPServer.h>
@@ -145,7 +155,7 @@ void vpUDPServer::init(const std::string &hostname, int port)
   if (hostname.empty()) {
     m_serverAddress.sin_family = AF_INET;
     m_serverAddress.sin_addr.s_addr = htonl(INADDR_ANY);
-    m_serverAddress.sin_port = htons((unsigned short)port);
+    m_serverAddress.sin_port = htons(static_cast<unsigned short>(port));
   }
   else {
     std::stringstream ss;
@@ -222,7 +232,7 @@ int vpUDPServer::receive(std::string &msg, std::string &hostInfo, int timeoutMs)
     timeout.tv_sec = timeoutMs / 1000;
     timeout.tv_usec = (timeoutMs % 1000) * 1000;
   }
-  int retval = select((int)m_socketFileDescriptor + 1, &s, nullptr, nullptr, timeoutMs > 0 ? &timeout : nullptr);
+  int retval = select(static_cast<int>(m_socketFileDescriptor) + 1, &s, nullptr, nullptr, timeoutMs > 0 ? &timeout : nullptr);
 
   if (retval == -1) {
     std::cerr << "Error select!" << std::endl;
@@ -330,12 +340,12 @@ int vpUDPServer::send(const std::string &msg, const std::string &hostname, int p
   return static_cast<int>(
       sendto(m_socketFileDescriptor, msg.c_str(), msg.size(), 0, (struct sockaddr *)&m_clientAddress, m_clientLength));
 #else
-  return sendto(m_socketFileDescriptor, msg.c_str(), (int)msg.size(), 0, (struct sockaddr *)&m_clientAddress,
+  return sendto(m_socketFileDescriptor, msg.c_str(), static_cast<int>(msg.size()), 0, (struct sockaddr *)&m_clientAddress,
                 m_clientLength);
 #endif
 }
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpUDPServer.cpp.o) has no symbols
-void dummy_vpUDPServer() { };
+void dummy_vpUDPServer() { }
 #endif

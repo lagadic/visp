@@ -325,6 +325,14 @@ END_VISP_NAMESPACE
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include VISP_NLOHMANN_JSON(json.hpp)
+
+#if defined(__clang__)
+// Mute warning : declaration requires an exit-time destructor [-Wexit-time-destructors]
+// message : expanded from macro 'NLOHMANN_JSON_SERIALIZE_ENUM'
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wexit-time-destructors"
+#endif
+
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS)
 NLOHMANN_JSON_SERIALIZE_ENUM(VISP_NAMESPACE_ADDRESSING vpMbtFaceDepthNormal::vpFeatureEstimationType, {
     {VISP_NAMESPACE_ADDRESSING vpMbtFaceDepthNormal::ROBUST_FEATURE_ESTIMATION, "robust"},
@@ -337,6 +345,11 @@ NLOHMANN_JSON_SERIALIZE_ENUM(VISP_NAMESPACE_ADDRESSING vpMbtFaceDepthNormal::vpF
     {VISP_NAMESPACE_ADDRESSING vpMbtFaceDepthNormal::ROBUST_SVD_PLANE_ESTIMATION, "robustSVD"}
 });
 #endif
+
+#if defined(__clang__)
+#  pragma clang diagnostic pop
+#endif
+
 #endif
 
 #endif

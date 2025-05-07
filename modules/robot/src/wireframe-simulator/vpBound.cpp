@@ -57,7 +57,7 @@ BEGIN_VISP_NAMESPACE
  * Entree :
  * bp    Surface a liberer.
  */
-void free_Bound(Bound *bp)
+  void free_Bound(Bound *bp)
 {
   Face *fp = bp->face.ptr;
   Face *fend = fp + bp->face.nbr;
@@ -158,7 +158,7 @@ void malloc_Bound(Bound *bp, Type type, int polygonal, Index fn, Index pn)
 
   bp->type = type;
   bp->is_display = TRUE;
-  bp->is_polygonal = (unsigned)polygonal;
+  bp->is_polygonal = static_cast<unsigned int>(polygonal);
 }
 
 /*

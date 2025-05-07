@@ -39,6 +39,7 @@
 #include <visp3/core/vpRGBa.h>
 
 #include <vector>
+#include <numeric>
 
 BEGIN_VISP_NAMESPACE
 

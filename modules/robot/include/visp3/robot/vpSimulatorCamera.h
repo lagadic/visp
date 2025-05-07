@@ -130,9 +130,9 @@ private:
   void init() VP_OVERRIDE;
 
   // Non implemented virtual pure functions
-  void get_fJe(vpMatrix & /*_fJe */) VP_OVERRIDE { };
-  void getDisplacement(const vpRobot::vpControlFrameType /* frame */, vpColVector & /* q */) VP_OVERRIDE { };
-  void setPosition(const vpRobot::vpControlFrameType /* frame */, const vpColVector & /* q */) VP_OVERRIDE { };
+  void get_fJe(vpMatrix & /*_fJe */) VP_OVERRIDE { }
+  void getDisplacement(const vpRobot::vpControlFrameType /* frame */, vpColVector & /* q */) VP_OVERRIDE { }
+  void setPosition(const vpRobot::vpControlFrameType /* frame */, const vpColVector & /* q */) VP_OVERRIDE { }
 };
 END_VISP_NAMESPACE
 #endif

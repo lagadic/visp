@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@
   \brief Basic moment descriptor (also called m).
 */
 
-#ifndef _vpMomentBasic_h_
-#define _vpMomentBasic_h_
+#ifndef VP_MOMENT_BASIC_H
+#define VP_MOMENT_BASIC_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMoment.h>
@@ -74,15 +74,15 @@ class VISP_EXPORT vpMomentBasic : public vpMoment
 public:
   vpMomentBasic();
 
-  void compute();
+  void compute() VP_OVERRIDE;
   const std::vector<double> &get() const;
   double get(unsigned int i, unsigned int j) const;
   /*!
     Moment name.
     */
-  const std::string name() const { return "vpMomentBasic"; }
+  const std::string name() const VP_OVERRIDE { return "vpMomentBasic"; }
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentBasic &v);
-  void printDependencies(std::ostream &os) const;
+  void printDependencies(std::ostream &os) const VP_OVERRIDE;
 };
 END_VISP_NAMESPACE
 #endif

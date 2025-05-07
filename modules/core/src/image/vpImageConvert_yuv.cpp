@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,7 +64,8 @@ BEGIN_VISP_NAMESPACE
 
   \param[in] yuyv : Pointer to the bitmap containing the YUYV 4:2:2 data.
   \param[out] rgba : Pointer to the RGB32 bitmap that should be allocated with a size of \e width * \e height * 4.
-  \param[in] width, height : Image size.
+  \param[in] width : Image width.
+  \param[in] height : Image height.
 
   \sa YUV422ToRGBa()
 */
@@ -133,7 +134,8 @@ void vpImageConvert::YUYVToRGBa(unsigned char *yuyv, unsigned char *rgba, unsign
 
   \param[in] yuyv : Pointer to the bitmap containing the YUYV 4:2:2 data.
   \param[out] rgb : Pointer to the RGB32 bitmap that should be allocated with a size of \e width * \e height * 3.
-  \param[in] width, height : Image size.
+  \param[in] width : Image width.
+  \param[in] height : Image height.
 
   \sa YUV422ToRGB()
 */
@@ -578,17 +580,18 @@ void vpImageConvert::YUV411ToRGB(unsigned char *yuv, unsigned char *rgb, unsigne
 
   \param[in] yuv : Pointer to the bitmap containing the YUV 4:2:0 data.
   \param[out] rgba : Pointer to the 32-bits RGBA bitmap that should be allocated with a size of width * height * 4.
-  \param[in] width, height : Image size.
+  \param[in] width : Image width.
+  \param[in] height : Image height.
 
 */
 void vpImageConvert::YUV420ToRGBa(unsigned char *yuv, unsigned char *rgba, unsigned int width, unsigned int height)
 {
   int U, V, R, G, B, V2, U5, UV;
   int Y0, Y1, Y2, Y3;
-  const unsigned int val_2 = 2;
-  const unsigned int val_4 = 4;
-  const unsigned int val_5 = 5;
-  const unsigned int val_7 = 7;
+  const int val_2 = 2;
+  const int val_4 = 4;
+  const int val_5 = 5;
+  const int val_7 = 7;
   unsigned int size = width * height;
   unsigned char *iU = yuv + size;
   unsigned char *iV = yuv + ((val_5 * size) / val_4);
@@ -687,7 +690,8 @@ void vpImageConvert::YUV420ToRGBa(unsigned char *yuv, unsigned char *rgba, unsig
 
   \param[in] yuv : Pointer to the bitmap containing the YUV 4:2:0 data.
   \param[out] rgb : Pointer to the 24-bits RGB bitmap that should be allocated with a size of width * height * 3.
-  \param[in] width, height : Image size.
+  \param[in] width : Image width.
+  \param[in] height : Image height.
 
 */
 void vpImageConvert::YUV420ToRGB(unsigned char *yuv, unsigned char *rgb, unsigned int width, unsigned int height)
@@ -850,7 +854,7 @@ void vpImageConvert::YUV444ToRGBa(unsigned char *yuv, unsigned char *rgba, unsig
 
   \param[in] yuv : Pointer to the bitmap containing the YUV 4:4:4 data.
   \param[out] rgb : Pointer to the 24-bits RGB bitmap that should be allocated with a size of width * height * 3.
-  \param[in] size: Image size corresponding to image width * height.
+  \param[in] size : Image size corresponding to image width * height.
 */
 void vpImageConvert::YUV444ToRGB(unsigned char *yuv, unsigned char *rgb, unsigned int size)
 {
@@ -890,7 +894,7 @@ void vpImageConvert::YUV444ToRGB(unsigned char *yuv, unsigned char *rgb, unsigne
 
   \param[in] yuv : Pointer to the bitmap containing the YUV 4:4:4 data.
   \param[out] grey : Pointer to the 8-bits grey bitmap that should be allocated with a size of width * height.
-  \param[in] size: Image size corresponding to image width * height.
+  \param[in] size : Image size corresponding to image width * height.
 */
 void vpImageConvert::YUV444ToGrey(unsigned char *yuv, unsigned char *grey, unsigned int size)
 {
@@ -909,7 +913,8 @@ void vpImageConvert::YUV444ToGrey(unsigned char *yuv, unsigned char *grey, unsig
 
   \param[in] yuv : Pointer to the bitmap containing the YV 1:2 data.
   \param[out] rgba : Pointer to the 32-bits RGBA bitmap that should be allocated with a size of width * height * 4.
-  \param[in] width, height : Image size.
+  \param[in] width : Image width.
+  \param[in] height : Image height.
 
 */
 void vpImageConvert::YV12ToRGBa(unsigned char *yuv, unsigned char *rgba, unsigned int width, unsigned int height)
@@ -1018,7 +1023,8 @@ void vpImageConvert::YV12ToRGBa(unsigned char *yuv, unsigned char *rgba, unsigne
 
   \param[in] yuv : Pointer to the bitmap containing the YV 1:2 data.
   \param[out] rgb : Pointer to the 24-bits RGB bitmap that should be allocated with a size of width * height * 3.
-  \param[in] width, height : Image size.
+  \param[in] width : Image width.
+  \param[in] height : Image height.
 
 */
 void vpImageConvert::YV12ToRGB(unsigned char *yuv, unsigned char *rgb, unsigned int height, unsigned int width)
@@ -1124,11 +1130,11 @@ namespace
 *
 * \brief Subroutine for YVU9 to RGBa conversion.
 *
-* \param rgb Pointer to the 32-bits RGBA bitmap that should be allocated with a size of width * height * 4.
-* \param R Value for the red channel.
-* \param G Value for the green channel.
-* \param B Value for the blue channel.
-* \param a Value for the alpha channel.
+* \param[out] rgba : Pointer to the 32-bits RGBA bitmap that should be allocated with a size of width * height * 4.
+* \param[in] R : Value for the red channel.
+* \param[in] G : Value for the green channel.
+* \param[in] B : Value for the blue channel.
+* \param[in] a : Value for the alpha channel.
 */
 void YVU9ToRGBasubroutine(unsigned char *rgba, int R, int G, int B, int a)
 {
@@ -1148,7 +1154,8 @@ void YVU9ToRGBasubroutine(unsigned char *rgba, int R, int G, int B, int a)
 
   \param[in] yuv : Pointer to the bitmap containing the YVU 9 data.
   \param[out] rgba : Pointer to the 32-bits RGBA bitmap that should be allocated with a size of width * height * 4.
-  \param[in] width, height : Image size.
+  \param[in] width : Image width.
+  \param[in] height : Image height.
 
 */
 void vpImageConvert::YVU9ToRGBa(unsigned char *yuv, unsigned char *rgba, unsigned int width, unsigned int height)
@@ -1342,7 +1349,8 @@ void YVU9ToRGBsubroutine(unsigned char *rgb, int R, int G, int B)
 
   \param[in] yuv : Pointer to the bitmap containing the YV 1:2 data.
   \param[out] rgb : Pointer to the 24-bits RGB bitmap that should be allocated with a size of width * height * 3.
-  \param[in] width, height : Image size.
+  \param[in] width : Image width.
+  \param[in] height : Image height.
 */
 void vpImageConvert::YVU9ToRGB(unsigned char *yuv, unsigned char *rgb, unsigned int height, unsigned int width)
 {

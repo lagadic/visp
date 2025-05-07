@@ -502,7 +502,7 @@ int main(int argc, const char **argv)
     ogre.setRotation("Robot", vpRotationMatrix(vpRxyzVector(M_PI / 2, -M_PI / 2, 0)));
 
     // Add an optional point light source
-    ogre.getSceneManager()->setAmbientLight(Ogre::ColourValue((float)0.6, (float)0.6, (float)0.6)); // Default value of lightning
+    ogre.getSceneManager()->setAmbientLight(Ogre::ColourValue(static_cast<float>(0.6), static_cast<float>(0.6), static_cast<float>(0.6))); // Default value of lightning
     Ogre::Light *light = ogre.getSceneManager()->createLight();
     light->setDiffuseColour(1.0, 1.0, 1.0);  // scaled RGB values
     light->setSpecularColour(1.0, 1.0, 1.0); // scaled RGB values
@@ -594,5 +594,5 @@ int main()
   std::cout << "- Install Ogre3D, configure again ViSP using cmake and build again this example" << std::endl;
 #endif
   return EXIT_SUCCESS;
-  }
+}
 #endif

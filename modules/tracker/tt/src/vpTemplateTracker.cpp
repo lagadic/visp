@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,12 +29,7 @@
  *
  * Description:
  * Template tracker.
- *
- * Authors:
- * Amaury Dame
- * Aurelien Yol
- *
-*****************************************************************************/
+ */
 
 #include <visp3/tt/vpTemplateTracker.h>
 #include <visp3/tt/vpTemplateTrackerBSpline.h>
@@ -81,8 +75,8 @@ void vpTemplateTracker::initTracking(const vpImage<unsigned char> &I, vpTemplate
 {
   zoneTracked = &zone;
 
-  int largeur_im = (int)I.getWidth();
-  int hauteur_im = (int)I.getHeight();
+  int largeur_im = static_cast<int>(I.getWidth());
+  int hauteur_im = static_cast<int>(I.getHeight());
 
   unsigned int NbPointDsZone = 0;
   int mod_fi, mod_fj;
@@ -285,9 +279,9 @@ void vpTemplateTracker::resetTracker()
 /*!
   Display the warped reference template in an image.
 
-  \param I: Image in which the warped zone has to be displayed.
-  \param col: Color used to draw the triangle edges.
-  \param thickness: Thickness of the lines.
+  \param I : Image in which the warped zone has to be displayed.
+  \param col : Color used to draw the triangle edges.
+  \param thickness : Thickness of the lines.
 
   The following code shows how to use display capabilities:
   \code
@@ -331,9 +325,9 @@ void vpTemplateTracker::display(const vpImage<unsigned char> &I, const vpColor &
 /*!
   Display the warped reference template in an image.
 
-  \param I: Image in which the warped zone has to be displayed.
-  \param col: Color used to draw the triangle edges.
-  \param thickness: Thickness of the lines.
+  \param I : Image in which the warped zone has to be displayed.
+  \param col : Color used to draw the triangle edges.
+  \param thickness : Thickness of the lines.
 
   The following code shows how to use display capabilities:
   \code
@@ -577,8 +571,8 @@ void vpTemplateTracker::initTrackingPyr(const vpImage<unsigned char> &I, vpTempl
 /*!
   Select the reference template in image \e I using mouse click.
 
-  \param I: Image containing the reference template.
-  \param delaunay: Flag used to enable Delaunay triangulation.
+  \param I : Image containing the reference template.
+  \param delaunay : Flag used to enable Delaunay triangulation.
   - If true, from the image points selected by the user, a Delaunay
   triangulation is performed to initialize the reference template.
     - A left click select a image point;
@@ -613,9 +607,9 @@ void vpTemplateTracker::initClick(const vpImage<unsigned char> &I, bool delaunay
 /*!
   Initialize the reference template from a vector of points.
 
-  \param I: Image containing the reference template.
-  \param v_ip: Vector of image points defining the reference template.
-  \param delaunay:
+  \param I : Image containing the reference template.
+  \param v_ip : Vector of image points defining the reference template.
+  \param delaunay : Flag used to enable Delaunay triangulation.
   - If true, from the image points defining the reference template enable
   Delaunay triangulation.
   - If false, the vector of image points define the reference template as a
@@ -640,8 +634,8 @@ void vpTemplateTracker::initFromPoints(const vpImage<unsigned char> &I, const st
 /*!
   Initialize the reference template from a vector of points.
 
-  \param I: Image containing the reference template.
-  \param zone: The zone that describes the reference template.
+  \param I : Image containing the reference template.
+  \param zone : The zone that describes the reference template.
  */
 void vpTemplateTracker::initFromZone(const vpImage<unsigned char> &I, const vpTemplateTrackerZone &zone)
 {
@@ -711,7 +705,7 @@ void vpTemplateTracker::initHessienDesiredPyr(const vpImage<unsigned char> &I)
 
 /*!
    Track the template on image \e I.
-   \param I: Image to process.
+   \param I : Image to process.
  */
 void vpTemplateTracker::track(const vpImage<unsigned char> &I)
 {
@@ -737,8 +731,8 @@ void vpTemplateTracker::trackPyr(const vpImage<unsigned char> &I)
         zoneTracked = &zoneTrackedPyr[i];
       }
 
-      for (int i = (int)nbLvlPyr - 1; i >= 0; i--) {
-        if (i >= (int)l0Pyr) {
+      for (int i = static_cast<int>(nbLvlPyr) - 1; i >= 0; i--) {
+        if (i >= static_cast<int>(l0Pyr)) {
           templateSize = templateSizePyr[i];
           ptTemplate = ptTemplatePyr[i];
           ptTemplateSelect = ptTemplateSelectPyr[i];

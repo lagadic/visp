@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,9 +43,9 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO) && \
-  ((VISP_HAVE_OPENCV_VERSION < 0x050000)  && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_FEATURES2D)) || \
-  ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D) && defined(HAVE_OPENCV_FEATURES))
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO) && \
+  (((VISP_HAVE_OPENCV_VERSION < 0x050000)  && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_FEATURES2D)) || \
+   ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D) && defined(HAVE_OPENCV_FEATURES)))
 
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpIoTools.h>
@@ -178,7 +178,9 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
   // Will test the different types of keypoints detection to see if there is
   // a problem  between OpenCV versions, modules or constructors
   std::vector<std::string> detectorNames;
-#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
+#if defined(VISP_HAVE_OPENCV) && \
+    (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || \
+     ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES)))
   detectorNames.push_back("PyramidFAST");
   detectorNames.push_back("FAST");
 #endif
@@ -196,11 +198,15 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
   detectorNames.push_back("PyramidSTAR");
   detectorNames.push_back("STAR");
 #endif
-#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
+#if defined(VISP_HAVE_OPENCV) && \
+    (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || \
+     ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES)))
   detectorNames.push_back("PyramidORB");
   detectorNames.push_back("ORB");
 #endif
-#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_XFEATURES2D))
+#if defined(VISP_HAVE_OPENCV) && \
+    (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || \
+     ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_XFEATURES2D)))
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
   detectorNames.push_back("PyramidAGAST");
   detectorNames.push_back("AGAST");
@@ -215,7 +221,9 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
 #endif
 #endif
 
-#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_XFEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
+#if defined(VISP_HAVE_OPENCV) && \
+    (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_XFEATURES2D)) || \
+     ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES)))
 #if (VISP_HAVE_OPENCV_VERSION != 0x040504) && (VISP_HAVE_OPENCV_VERSION != 0x040505) && \
     (VISP_HAVE_OPENCV_VERSION != 0x040600) && (VISP_HAVE_OPENCV_VERSION != 0x040700) && \
     (VISP_HAVE_OPENCV_VERSION != 0x040900) && (VISP_HAVE_OPENCV_VERSION != 0x040A00) && \
@@ -268,7 +276,10 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
 
   std::map<vpKeyPoint::vpFeatureDetectorType, std::string> mapOfDetectorNames = keyPoints.getDetectorNames();
   for (int i = 0; i < vpKeyPoint::DETECTOR_TYPE_SIZE; i++) {
-#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && ((VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
+#if defined(VISP_HAVE_OPENCV) && \
+    (((VISP_HAVE_OPENCV_VERSION < 0x050000) && ((VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || \
+     (VISP_HAVE_OPENCV_VERSION >= 0x040400)) && defined(HAVE_OPENCV_FEATURES2D))) || \
+     ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
 #if ((VISP_HAVE_OPENCV_VERSION == 0x040504) || (VISP_HAVE_OPENCV_VERSION == 0x040505) ||  \
      (VISP_HAVE_OPENCV_VERSION == 0x040600) || (VISP_HAVE_OPENCV_VERSION == 0x040700) || \
      (VISP_HAVE_OPENCV_VERSION == 0x040900) || (VISP_HAVE_OPENCV_VERSION == 0x040A00)) && \

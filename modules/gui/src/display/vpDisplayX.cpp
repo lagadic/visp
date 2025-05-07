@@ -130,8 +130,8 @@ public:
       XAllocColor(display, lut, &xcolor);
       XSetForeground(display, context, xcolor.pixel);
     }
-    XDrawString(display, pixmap, context, (int)(ip.get_u() / scale), (int)(ip.get_v() / scale), text.c_str(),
-                (int)text.size());
+    XDrawString(display, pixmap, context, static_cast<int>(ip.get_u() / scale), static_cast<int>(ip.get_v() / scale), text.c_str(),
+                static_cast<int>(text.size()));
   }
 
   void displayCircle(const vpImagePoint &center, unsigned int radius, const vpColor &color, bool fill,
@@ -228,13 +228,13 @@ public:
       break;
     }
     case 16: {
-      unsigned int bytes_per_line = (unsigned int)Ximage->bytes_per_line;
+      unsigned int bytes_per_line = static_cast<unsigned int>(Ximage->bytes_per_line);
       if (scale == 1) {
         for (unsigned int i = 0; i < height; i++) {
           unsigned char *dst_8 = (unsigned char *)Ximage->data + i * bytes_per_line;
           unsigned short *dst_16 = (unsigned short *)dst_8;
           for (unsigned int j = 0; j < width; j++) {
-            *(dst_16 + j) = (unsigned short)colortable[I[i][j]];
+            *(dst_16 + j) = static_cast<unsigned short>(colortable[I[i][j]]);
           }
         }
       }
@@ -243,7 +243,7 @@ public:
           unsigned char *dst_8 = (unsigned char *)Ximage->data + i * bytes_per_line;
           unsigned short *dst_16 = (unsigned short *)dst_8;
           for (unsigned int j = 0; j < width; j++) {
-            *(dst_16 + j) = (unsigned short)colortable[I[i * scale][j * scale]];
+            *(dst_16 + j) = static_cast<unsigned short>(colortable[I[i * scale][j * scale]]);
           }
         }
       }
@@ -325,7 +325,7 @@ public:
     case 16: {
       vpRGBa *bitmap = I.bitmap;
       unsigned int r, g, b;
-      unsigned int bytes_per_line = (unsigned int)Ximage->bytes_per_line;
+      unsigned int bytes_per_line = static_cast<unsigned int>(Ximage->bytes_per_line);
 
       if (scale == 1) {
         for (unsigned int i = 0; i < height; i++) {
@@ -460,8 +460,8 @@ public:
         unsigned char *dst_8 = (unsigned char *)Ximage->data;
         unsigned int iwidth = I.getWidth();
 
-        src_8 = src_8 + (int)(iP.get_i() * iwidth + iP.get_j());
-        dst_8 = dst_8 + (int)(iP.get_i() * width + iP.get_j());
+        src_8 = src_8 + static_cast<int>(iP.get_i() * iwidth + iP.get_j());
+        dst_8 = dst_8 + static_cast<int>(iP.get_i() * width + iP.get_j());
 
         unsigned int i = 0;
         while (i < h) {
@@ -479,21 +479,21 @@ public:
           ++i;
         }
 
-        XPutImage(display, pixmap, context, Ximage, (int)iP.get_u(), (int)iP.get_v(), (int)iP.get_u(), (int)iP.get_v(),
+        XPutImage(display, pixmap, context, Ximage, static_cast<int>(iP.get_u()), static_cast<int>(iP.get_v()), static_cast<int>(iP.get_u()), static_cast<int>(iP.get_v()),
                   w, h);
       }
       else {
         // Correction de l'image de facon a liberer les niveaux de gris
         // ROUGE, VERT, BLEU, JAUNE
-        int i_min = std::max<int>((int)ceil(iP.get_i() / scale), 0);
-        int j_min = std::max<int>((int)ceil(iP.get_j() / scale), 0);
-        int i_max = std::min<int>((int)ceil((iP.get_i() + h) / scale), (int)height);
-        int j_max = std::min<int>((int)ceil((iP.get_j() + w) / scale), (int)width);
+        int i_min = std::max<int>(static_cast<int>(ceil(iP.get_i() / scale)), 0);
+        int j_min = std::max<int>(static_cast<int>(ceil(iP.get_j() / scale)), 0);
+        int i_max = std::min<int>(static_cast<int>(ceil((iP.get_i() + h) / scale)), static_cast<int>(height));
+        int j_max = std::min<int>(static_cast<int>(ceil((iP.get_j() + w) / scale)), static_cast<int>(width));
 
-        unsigned int i_min_ = (unsigned int)i_min;
-        unsigned int i_max_ = (unsigned int)i_max;
-        unsigned int j_min_ = (unsigned int)j_min;
-        unsigned int j_max_ = (unsigned int)j_max;
+        unsigned int i_min_ = static_cast<unsigned int>(i_min);
+        unsigned int i_max_ = static_cast<unsigned int>(i_max);
+        unsigned int j_min_ = static_cast<unsigned int>(j_min);
+        unsigned int j_max_ = static_cast<unsigned int>(j_max);
 
         for (unsigned int i = i_min_; i < i_max_; i++) {
           unsigned char *dst_8 = (unsigned char *)Ximage->data + i * width;
@@ -513,35 +513,35 @@ public:
       break;
     }
     case 16: {
-      unsigned int bytes_per_line = (unsigned int)Ximage->bytes_per_line;
+      unsigned int bytes_per_line = static_cast<unsigned int>(Ximage->bytes_per_line);
       if (scale == 1) {
-        for (unsigned int i = (unsigned int)iP.get_i(); i < (unsigned int)(iP.get_i() + h); i++) {
+        for (unsigned int i = static_cast<unsigned int>(iP.get_i()); i < static_cast<unsigned int>(iP.get_i() + h); i++) {
           unsigned char *dst_8 = (unsigned char *)Ximage->data + i * bytes_per_line;
           unsigned short *dst_16 = (unsigned short *)dst_8;
-          for (unsigned int j = (unsigned int)iP.get_j(); j < (unsigned int)(iP.get_j() + w); j++) {
-            *(dst_16 + j) = (unsigned short)colortable[I[i][j]];
+          for (unsigned int j = static_cast<unsigned int>(iP.get_j()); j < static_cast<unsigned int>(iP.get_j() + w); j++) {
+            *(dst_16 + j) = static_cast<unsigned short>(colortable[I[i][j]]);
           }
         }
 
-        XPutImage(display, pixmap, context, Ximage, (int)iP.get_u(), (int)iP.get_v(), (int)iP.get_u(), (int)iP.get_v(),
+        XPutImage(display, pixmap, context, Ximage, static_cast<int>(iP.get_u()), static_cast<int>(iP.get_v()), static_cast<int>(iP.get_u()), static_cast<int>(iP.get_v()),
                   w, h);
       }
       else {
-        int i_min = std::max<int>((int)ceil(iP.get_i() / scale), 0);
-        int j_min = std::max<int>((int)ceil(iP.get_j() / scale), 0);
-        int i_max = std::min<int>((int)ceil((iP.get_i() + h) / scale), (int)height);
-        int j_max = std::min<int>((int)ceil((iP.get_j() + w) / scale), (int)width);
+        int i_min = std::max<int>(static_cast<int>(ceil(iP.get_i() / scale)), 0);
+        int j_min = std::max<int>(static_cast<int>(ceil(iP.get_j() / scale)), 0);
+        int i_max = std::min<int>(static_cast<int>(ceil((iP.get_i() + h) / scale)), static_cast<int>(height));
+        int j_max = std::min<int>(static_cast<int>(ceil((iP.get_j() + w) / scale)), static_cast<int>(width));
 
-        unsigned int i_min_ = (unsigned int)i_min;
-        unsigned int i_max_ = (unsigned int)i_max;
-        unsigned int j_min_ = (unsigned int)j_min;
-        unsigned int j_max_ = (unsigned int)j_max;
+        unsigned int i_min_ = static_cast<unsigned int>(i_min);
+        unsigned int i_max_ = static_cast<unsigned int>(i_max);
+        unsigned int j_min_ = static_cast<unsigned int>(j_min);
+        unsigned int j_max_ = static_cast<unsigned int>(j_max);
 
         for (unsigned int i = i_min_; i < i_max_; i++) {
           unsigned char *dst_8 = (unsigned char *)Ximage->data + i * bytes_per_line;
           unsigned short *dst_16 = (unsigned short *)dst_8;
           for (unsigned int j = j_min_; j < j_max_; j++) {
-            *(dst_16 + j) = (unsigned short)colortable[I[i * scale][j * scale]];
+            *(dst_16 + j) = static_cast<unsigned short>(colortable[I[i * scale][j * scale]]);
           }
         }
 
@@ -556,8 +556,8 @@ public:
     default: {
       if (scale == 1) {
         unsigned int iwidth = I.getWidth();
-        unsigned char *src_8 = I.bitmap + (int)(iP.get_i() * iwidth + iP.get_j());
-        unsigned char *dst_32 = (unsigned char *)Ximage->data + (int)(iP.get_i() * 4 * width + iP.get_j() * 4);
+        unsigned char *src_8 = I.bitmap + static_cast<int>(iP.get_i() * iwidth + iP.get_j());
+        unsigned char *dst_32 = (unsigned char *)Ximage->data + static_cast<int>(iP.get_i() * 4 * width + iP.get_j() * 4);
 
         if (XImageByteOrder(display) == 1) {
           // big endian
@@ -596,24 +596,24 @@ public:
           }
         }
 
-        XPutImage(display, pixmap, context, Ximage, (int)iP.get_u(), (int)iP.get_v(), (int)iP.get_u(), (int)iP.get_v(),
+        XPutImage(display, pixmap, context, Ximage, static_cast<int>(iP.get_u()), static_cast<int>(iP.get_v()), static_cast<int>(iP.get_u()), static_cast<int>(iP.get_v()),
                   w, h);
       }
       else {
-        int i_min = std::max<int>((int)ceil(iP.get_i() / scale), 0);
-        int j_min = std::max<int>((int)ceil(iP.get_j() / scale), 0);
-        int i_max = std::min<int>((int)ceil((iP.get_i() + h) / scale), (int)height);
-        int j_max = std::min<int>((int)ceil((iP.get_j() + w) / scale), (int)width);
+        int i_min = std::max<int>(static_cast<int>(ceil(iP.get_i() / scale)), 0);
+        int j_min = std::max<int>(static_cast<int>(ceil(iP.get_j() / scale)), 0);
+        int i_max = std::min<int>(static_cast<int>(ceil((iP.get_i() + h) / scale)), static_cast<int>(height));
+        int j_max = std::min<int>(static_cast<int>(ceil((iP.get_j() + w) / scale)), static_cast<int>(width));
 
-        unsigned int i_min_ = (unsigned int)i_min;
-        unsigned int i_max_ = (unsigned int)i_max;
-        unsigned int j_min_ = (unsigned int)j_min;
-        unsigned int j_max_ = (unsigned int)j_max;
+        unsigned int i_min_ = static_cast<unsigned int>(i_min);
+        unsigned int i_max_ = static_cast<unsigned int>(i_max);
+        unsigned int j_min_ = static_cast<unsigned int>(j_min);
+        unsigned int j_max_ = static_cast<unsigned int>(j_max);
 
         if (XImageByteOrder(display) == 1) {
           // big endian
           for (unsigned int i = i_min_; i < i_max_; i++) {
-            unsigned char *dst_32 = (unsigned char *)Ximage->data + (int)(i * 4 * width + j_min_ * 4);
+            unsigned char *dst_32 = (unsigned char *)Ximage->data + static_cast<int>(i * 4 * width + j_min_ * 4);
             for (unsigned int j = j_min_; j < j_max_; j++) {
               unsigned char val = I[i * scale][j * scale];
               *(dst_32++) = vpRGBa::alpha_default;
@@ -626,7 +626,7 @@ public:
         else {
        // little endian
           for (unsigned int i = i_min_; i < i_max_; i++) {
-            unsigned char *dst_32 = (unsigned char *)Ximage->data + (int)(i * 4 * width + j_min_ * 4);
+            unsigned char *dst_32 = (unsigned char *)Ximage->data + static_cast<int>(i * 4 * width + j_min_ * 4);
             for (unsigned int j = j_min_; j < j_max_; j++) {
               unsigned char val = I[i * scale][j * scale];
               *(dst_32++) = val;
@@ -652,11 +652,11 @@ public:
     switch (screen_depth) {
     case 16: {
       if (scale == 1) {
-        unsigned int bytes_per_line = (unsigned int)Ximage->bytes_per_line;
-        for (unsigned int i = (unsigned int)iP.get_i(); i < (unsigned int)(iP.get_i() + h); i++) {
+        unsigned int bytes_per_line = static_cast<unsigned int>(Ximage->bytes_per_line);
+        for (unsigned int i = static_cast<unsigned int>(iP.get_i()); i < static_cast<unsigned int>(iP.get_i() + h); i++) {
           unsigned char *dst_8 = (unsigned char *)Ximage->data + i * bytes_per_line;
           unsigned short *dst_16 = (unsigned short *)dst_8;
-          for (unsigned int j = (unsigned int)iP.get_j(); j < (unsigned int)(iP.get_j() + w); j++) {
+          for (unsigned int j = static_cast<unsigned int>(iP.get_j()); j < static_cast<unsigned int>(iP.get_j() + w); j++) {
             vpRGBa val = I[i][j];
             unsigned int r = val.R;
             unsigned int g = val.G;
@@ -665,20 +665,20 @@ public:
               (((r << 8) >> RShift) & RMask) | (((g << 8) >> GShift) & GMask) | (((b << 8) >> BShift) & BMask);
           }
         }
-        XPutImage(display, pixmap, context, Ximage, (int)iP.get_u(), (int)iP.get_v(), (int)iP.get_u(), (int)iP.get_v(),
+        XPutImage(display, pixmap, context, Ximage, static_cast<int>(iP.get_u()), static_cast<int>(iP.get_v()), static_cast<int>(iP.get_u()), static_cast<int>(iP.get_v()),
                   w, h);
       }
       else {
-        unsigned int bytes_per_line = (unsigned int)Ximage->bytes_per_line;
-        int i_min = std::max<int>((int)ceil(iP.get_i() / scale), 0);
-        int j_min = std::max<int>((int)ceil(iP.get_j() / scale), 0);
-        int i_max = std::min<int>((int)ceil((iP.get_i() + h) / scale), (int)height);
-        int j_max = std::min<int>((int)ceil((iP.get_j() + w) / scale), (int)width);
+        unsigned int bytes_per_line = static_cast<unsigned int>(Ximage->bytes_per_line);
+        int i_min = std::max<int>(static_cast<int>(ceil(iP.get_i() / scale)), 0);
+        int j_min = std::max<int>(static_cast<int>(ceil(iP.get_j() / scale)), 0);
+        int i_max = std::min<int>(static_cast<int>(ceil((iP.get_i() + h) / scale)), static_cast<int>(height));
+        int j_max = std::min<int>(static_cast<int>(ceil((iP.get_j() + w) / scale)), static_cast<int>(width));
 
-        unsigned int i_min_ = (unsigned int)i_min;
-        unsigned int i_max_ = (unsigned int)i_max;
-        unsigned int j_min_ = (unsigned int)j_min;
-        unsigned int j_max_ = (unsigned int)j_max;
+        unsigned int i_min_ = static_cast<unsigned int>(i_min);
+        unsigned int i_max_ = static_cast<unsigned int>(i_max);
+        unsigned int j_min_ = static_cast<unsigned int>(j_min);
+        unsigned int j_max_ = static_cast<unsigned int>(j_max);
 
         for (unsigned int i = i_min_; i < i_max_; i++) {
           unsigned char *dst_8 = (unsigned char *)Ximage->data + i * bytes_per_line;
@@ -711,8 +711,8 @@ public:
 
         unsigned int iwidth = I.getWidth();
 
-        src_32 = src_32 + (int)(iP.get_i() * iwidth + iP.get_j());
-        dst_32 = dst_32 + (int)(iP.get_i() * 4 * width + iP.get_j() * 4);
+        src_32 = src_32 + static_cast<int>(iP.get_i() * iwidth + iP.get_j());
+        dst_32 = dst_32 + static_cast<int>(iP.get_i() * 4 * width + iP.get_j() * 4);
 
         unsigned int i = 0;
 
@@ -752,24 +752,24 @@ public:
           }
         }
 
-        XPutImage(display, pixmap, context, Ximage, (int)iP.get_u(), (int)iP.get_v(), (int)iP.get_u(), (int)iP.get_v(),
+        XPutImage(display, pixmap, context, Ximage, static_cast<int>(iP.get_u()), static_cast<int>(iP.get_v()), static_cast<int>(iP.get_u()), static_cast<int>(iP.get_v()),
                   w, h);
       }
       else {
-        int i_min = std::max<int>((int)ceil(iP.get_i() / scale), 0);
-        int j_min = std::max<int>((int)ceil(iP.get_j() / scale), 0);
-        int i_max = std::min<int>((int)ceil((iP.get_i() + h) / scale), (int)height);
-        int j_max = std::min<int>((int)ceil((iP.get_j() + w) / scale), (int)width);
+        int i_min = std::max<int>(static_cast<int>(ceil(iP.get_i() / scale)), 0);
+        int j_min = std::max<int>(static_cast<int>(ceil(iP.get_j() / scale)), 0);
+        int i_max = std::min<int>(static_cast<int>(ceil((iP.get_i() + h) / scale)), static_cast<int>(height));
+        int j_max = std::min<int>(static_cast<int>(ceil((iP.get_j() + w) / scale)), static_cast<int>(width));
 
-        unsigned int i_min_ = (unsigned int)i_min;
-        unsigned int i_max_ = (unsigned int)i_max;
-        unsigned int j_min_ = (unsigned int)j_min;
-        unsigned int j_max_ = (unsigned int)j_max;
+        unsigned int i_min_ = static_cast<unsigned int>(i_min);
+        unsigned int i_max_ = static_cast<unsigned int>(i_max);
+        unsigned int j_min_ = static_cast<unsigned int>(j_min);
+        unsigned int j_max_ = static_cast<unsigned int>(j_max);
 
         if (XImageByteOrder(display) == 1) {
           // big endian
           for (unsigned int i = i_min_; i < i_max_; i++) {
-            unsigned char *dst_32 = (unsigned char *)Ximage->data + (int)(i * 4 * width + j_min_ * 4);
+            unsigned char *dst_32 = (unsigned char *)Ximage->data + static_cast<int>(i * 4 * width + j_min_ * 4);
             for (unsigned int j = j_min_; j < j_max_; j++) {
               vpRGBa val = I[i * scale][j * scale];
               *(dst_32++) = val.A;
@@ -782,7 +782,7 @@ public:
         else {
        // little endian
           for (unsigned int i = i_min_; i < i_max_; i++) {
-            unsigned char *dst_32 = (unsigned char *)Ximage->data + (int)(i * 4 * width + j_min_ * 4);
+            unsigned char *dst_32 = (unsigned char *)Ximage->data + static_cast<int>(i * 4 * width + j_min_ * 4);
             for (unsigned int j = j_min_; j < j_max_; j++) {
               vpRGBa val = I[i * scale][j * scale];
               *(dst_32++) = val.B;
@@ -878,7 +878,7 @@ public:
 
   void flushDisplayROI(const vpImagePoint &iP, unsigned int w, unsigned int h, unsigned int scale)
   {
-    XClearArea(display, window, (int)(iP.get_u() / scale), (int)(iP.get_v() / scale), w / scale, h / scale, 0);
+    XClearArea(display, window, static_cast<int>(iP.get_u() / scale), static_cast<int>(iP.get_v() / scale), w / scale, h / scale, 0);
     XFlush(display);
   }
 
@@ -980,7 +980,7 @@ public:
         size_t i_ = i * width;
         for (unsigned int j = 0; j < height; j++) {
           size_t ij_ = i_ + j;
-          unsigned long pixel = XGetPixel(xi, (int)j, (int)i);
+          unsigned long pixel = XGetPixel(xi, static_cast<int>(j), static_cast<int>(i));
           I.bitmap[ij_].R = (((pixel & RMask) << RShift) >> 8);
           I.bitmap[ij_].G = (((pixel & GMask) << GShift) >> 8);
           I.bitmap[ij_].B = (((pixel & BMask) << BShift) >> 8);
@@ -1130,7 +1130,7 @@ public:
                                XDisplayName(nullptr)));
     }
     screen_ = DefaultScreen(display_);
-    depth = (unsigned int)DefaultDepth(display_, screen_);
+    depth = static_cast<unsigned int>(DefaultDepth(display_, screen_));
 
     XCloseDisplay(display_);
 
@@ -1147,8 +1147,8 @@ public:
                                XDisplayName(nullptr)));
     }
     screen_ = DefaultScreen(display_);
-    w = (unsigned int)DisplayWidth(display_, screen_);
-    h = (unsigned int)DisplayHeight(display_, screen_);
+    w = static_cast<unsigned int>(DisplayWidth(display_, screen_));
+    h = static_cast<unsigned int>(DisplayHeight(display_, screen_));
 
     XCloseDisplay(display_);
   }
@@ -1178,7 +1178,7 @@ public:
 
     screen = DefaultScreen(display);
     lut = DefaultColormap(display, screen);
-    screen_depth = (unsigned int)DefaultDepth(display, screen);
+    screen_depth = static_cast<unsigned int>(DefaultDepth(display, screen));
 
     if ((window = XCreateSimpleWindow(display, RootWindow(display, screen), win_x, win_y, win_width, win_height, 1,
                                       BlackPixel(display, screen), WhitePixel(display, screen))) == 0) {
@@ -1569,7 +1569,7 @@ public:
       Ximage = XCreateImage(display, DefaultVisual(display, screen), screen_depth, ZPixmap, 0, nullptr, win_width,
                             win_height, XBitmapPad(display), 0);
 
-      Ximage->data = (char *)malloc(win_height * (unsigned int)Ximage->bytes_per_line);
+      Ximage->data = (char *)malloc(win_height * static_cast<unsigned int>(Ximage->bytes_per_line));
       ximage_data_init = true;
     }
 
@@ -2004,10 +2004,9 @@ void vpDisplayX::displayImage(const unsigned char *bitmap)
   \warning Suppress the overlay drawing in the region of interest.
 
   \param I : Image to display.
-
   \param iP : Top left corner of the region of interest
-
-  \param w, h : Width and height of the region of interest
+  \param w : Region of interest width.
+  \param h : Region of interest height.
 
   \sa init(), closeDisplay()
 */
@@ -2030,10 +2029,9 @@ void vpDisplayX::displayImageROI(const vpImage<unsigned char> &I, const vpImageP
   \warning Suppress the overlay drawing in the region of interest.
 
   \param I : Image to display.
-
-  \param iP : Top left corner of the region of interest
-
-  \param w, h : Width and height of the region of interest
+  \param iP : Top left corner of the region of interest.
+  \param w : Region of interest width.
+  \param h : Region of interest height.
 
   \sa init(), closeDisplay()
 */
@@ -2082,8 +2080,9 @@ void vpDisplayX::flushDisplay()
   Flushes a part of the X buffer.
   It's necessary to use this function to see the results of any drawing.
 
-  \param iP : Top left corner of the region of interest
-  \param w,h  : Width and height of the region of interest
+  \param iP : Top left corner of the region of interest.
+  \param w : Region of interest width.
+  \param h : Region of interest height.
 */
 void vpDisplayX::flushDisplayROI(const vpImagePoint &iP, unsigned int w, unsigned int h)
 {
@@ -2111,9 +2110,11 @@ void vpDisplayX::clearDisplay(const vpColor &color)
 
 /*!
   Display an arrow from image point \e ip1 to image point \e ip2.
-  \param ip1,ip2 : Initial and final image point.
+  \param ip1 : Initial image point.
+  \param ip2 : Final image point.
   \param color : Arrow color.
-  \param w,h : Width and height of the arrow.
+  \param w : Arrow width.
+  \param h : Arrow height.
   \param thickness : Thickness of the lines used to display the arrow.
 */
 void vpDisplayX::displayArrow(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int w,
@@ -2235,7 +2236,8 @@ void vpDisplayX::displayCross(const vpImagePoint &ip, unsigned int cross_size, c
 }
 /*!
   Display a dashed line from image point \e ip1 to image point \e ip2.
-  \param ip1,ip2 : Initial and final image points.
+  \param ip1 : Initial image point.
+  \param ip2 : Final image point.
   \param color : Line color.
   \param thickness : Line thickness.
 */
@@ -2255,7 +2257,8 @@ void vpDisplayX::displayDotLine(const vpImagePoint &ip1, const vpImagePoint &ip2
 
 /*!
   Display a line from image point \e ip1 to image point \e ip2.
-  \param ip1,ip2 : Initial and final image points.
+  \param ip1 : Initial image point.
+  \param ip2 : Final image point.
   \param color : Line color.
   \param thickness : Line thickness.
 */
@@ -2293,7 +2296,8 @@ void vpDisplayX::displayPoint(const vpImagePoint &ip, const vpColor &color, unsi
   width and \e height the rectangle size.
 
   \param topLeft : Top-left corner of the rectangle.
-  \param w,h : Rectangle size in terms of width and height.
+  \param w : Rectangle width.
+  \param h : Rectangle height.
   \param color : Rectangle color.
   \param fill : When set to true fill the rectangle.
 
@@ -2522,7 +2526,8 @@ unsigned int vpDisplayX::getScreenDepth() { return m_impl->getScreenDepth(); }
 
 /*!
   Gets screen resolution in pixels.
-  \param w, h : Horizontal and vertical screen resolution.
+  \param[out] w : Horizontal screen resolution.
+  \param[out] h : Vertical screen resolution.
  */
 void vpDisplayX::getScreenSize(unsigned int &w, unsigned int &h) { m_impl->getScreenSize(w, h); }
 
@@ -2664,5 +2669,5 @@ END_VISP_NAMESPACE
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_gui.a(vpDisplayX.cpp.o) has no symbols
-void dummy_vpDisplayX() { };
+void dummy_vpDisplayX() { }
 #endif

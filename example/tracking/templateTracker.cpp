@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,12 +29,7 @@
  *
  * Description:
  * Example of template tracking.
- *
- * Authors:
- * Amaury Dame
- * Aurelien Yol
- *
-*****************************************************************************/
+ */
 
 /*!
   \example templateTracker.cpp
@@ -180,8 +174,9 @@ OPTIONS:                                                            Default\n\
      %d : SRT (scale, rotation, translation)\n\
      %d : Translation\n\
      %d : RT (rotation, translation)\n\n",
-          (int)warp_type, (int)WARP_AFFINE, (int)WARP_HOMOGRAPHY, (int)WARP_HOMOGRAPHY_SL3, (int)WARP_SRT,
-          (int)WARP_TRANSLATION, (int)WARP_RT);
+          static_cast<int>(warp_type), static_cast<int>(WARP_AFFINE), static_cast<int>(WARP_HOMOGRAPHY),
+          static_cast<int>(WARP_HOMOGRAPHY_SL3), static_cast<int>(WARP_SRT),
+          static_cast<int>(WARP_TRANSLATION), static_cast<int>(WARP_RT));
 #else
   fprintf(stdout, "\n\
   -w <warp type=[0,1,2,3,4]>                                          %d\n\
@@ -192,8 +187,9 @@ OPTIONS:                                                            Default\n\
      %d : Homography in SL3\n\
      %d : SRT (scale, rotation, translation)\n\
      %d : Translation\n\n",
-          (int)warp_type, (int)WARP_AFFINE, (int)WARP_HOMOGRAPHY, (int)WARP_HOMOGRAPHY_SL3, (int)WARP_SRT,
-          (int)WARP_TRANSLATION);
+          static_cast<int>(warp_type), static_cast<int>(WARP_AFFINE), static_cast<int>(WARP_HOMOGRAPHY),
+          static_cast<int>(WARP_HOMOGRAPHY_SL3), static_cast<int>(WARP_SRT),
+          static_cast<int>(WARP_TRANSLATION));
 #endif
 
 #ifdef VISP_HAVE_MODULE_TT_MI
@@ -211,11 +207,11 @@ OPTIONS:                                                            Default\n\
      %d : MI forward additional\n\
      %d : MI forward compositional\n\
      %d : MI inverse compositional\n",
-          (int)tracker_type, (int)TRACKER_SSD_ESM, (int)TRACKER_SSD_FORWARD_ADDITIONAL,
-          (int)TRACKER_SSD_FORWARD_COMPOSITIONAL, (int)TRACKER_SSD_INVERSE_COMPOSITIONAL,
-          (int)TRACKER_ZNCC_FORWARD_ADDITIONEL, (int)TRACKER_ZNCC_INVERSE_COMPOSITIONAL, (int)TRACKER_MI_ESM,
-          (int)TRACKER_MI_FORWARD_ADDITIONAL, (int)TRACKER_MI_FORWARD_COMPOSITIONAL,
-          (int)TRACKER_MI_INVERSE_COMPOSITIONAL);
+          static_cast<int>(tracker_type), static_cast<int>(TRACKER_SSD_ESM), static_cast<int>(TRACKER_SSD_FORWARD_ADDITIONAL),
+          static_cast<int>(TRACKER_SSD_FORWARD_COMPOSITIONAL), static_cast<int>(TRACKER_SSD_INVERSE_COMPOSITIONAL),
+          static_cast<int>(TRACKER_ZNCC_FORWARD_ADDITIONEL), static_cast<int>(TRACKER_ZNCC_INVERSE_COMPOSITIONAL), static_cast<int>(TRACKER_MI_ESM),
+          static_cast<int>(TRACKER_MI_FORWARD_ADDITIONAL), static_cast<int>(TRACKER_MI_FORWARD_COMPOSITIONAL),
+          static_cast<int>(TRACKER_MI_INVERSE_COMPOSITIONAL));
 #else
   fprintf(stdout, "\n\
   -t <tracker type=[0,1,2,3,4,5]>                                     %d\n\
@@ -227,9 +223,9 @@ OPTIONS:                                                            Default\n\
      %d : SSD inverse compositional\n\
      %d : ZNCC forward additional\n\
      %d : ZNCC inverse compositional\n",
-          (int)tracker_type, (int)TRACKER_SSD_ESM, (int)TRACKER_SSD_FORWARD_ADDITIONAL,
-          (int)TRACKER_SSD_FORWARD_COMPOSITIONAL, (int)TRACKER_SSD_INVERSE_COMPOSITIONAL,
-          (int)TRACKER_ZNCC_FORWARD_ADDITIONEL, (int)TRACKER_ZNCC_INVERSE_COMPOSITIONAL);
+          static_cast<int>(tracker_type), static_cast<int>(TRACKER_SSD_ESM), static_cast<int>(TRACKER_SSD_FORWARD_ADDITIONAL),
+          static_cast<int>(TRACKER_SSD_FORWARD_COMPOSITIONAL), static_cast<int>(TRACKER_SSD_INVERSE_COMPOSITIONAL),
+          static_cast<int>(TRACKER_ZNCC_FORWARD_ADDITIONEL), static_cast<int>(TRACKER_ZNCC_INVERSE_COMPOSITIONAL));
 
 #endif
   fprintf(stdout, "\n\
@@ -309,13 +305,13 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_all
   if (warp_type >= WARP_LAST) {
     usage(argv[0], nullptr, warp_type, tracker_type, last_frame, threshold_residual);
     std::cerr << "ERROR: " << std::endl;
-    std::cerr << "  Bad argument -w <warp type> with \"warp type\"=" << (int)warp_type << std::endl << std::endl;
+    std::cerr << "  Bad argument -w <warp type> with \"warp type\"=" << static_cast<int>(warp_type) << std::endl << std::endl;
     return false;
   }
   if (tracker_type >= TRACKER_LAST) {
     usage(argv[0], nullptr, warp_type, tracker_type, last_frame, threshold_residual);
     std::cerr << "ERROR: " << std::endl;
-    std::cerr << "  Bad argument -t <tracker type> with \"tracker type\"=" << (int)tracker_type << std::endl
+    std::cerr << "  Bad argument -t <tracker type> with \"tracker type\"=" << static_cast<int>(tracker_type) << std::endl
       << std::endl;
     return false;
   }

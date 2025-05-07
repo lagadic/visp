@@ -46,8 +46,9 @@ const unsigned int vpTranslationVector::constr_val_3 = 3;
 /*!
   Construct a translation vector \f$ \bf t \f$ from 3 doubles.
 
-  \param tx,ty,tz : Translation respectively along x, y and z axis. Values are
-  in meters.
+  \param[in] tx : Value along X-axis of the translation vector in meters.
+  \param[in] ty : Value along Y-axis of the translation vector in meters.
+  \param[in] tz : Value along Z-axis of the translation vector in meters.
 
 */
 vpTranslationVector::vpTranslationVector(double tx, double ty, double tz) : vpArray2D<double>(constr_val_3, 1), m_index(0)
@@ -192,7 +193,9 @@ vpTranslationVector &vpTranslationVector::buildFrom(const vpColVector &v)
 /*!
   Build a 3 dimension translation vector \f$ \bf t\f$ from 3 doubles.
 
-  \param tx,ty,tz : Translation respectively along x, y and z axis in meter.
+  \param[in] tx : Value along X-axis of the translation vector in meters.
+  \param[in] ty : Value along Y-axis of the translation vector in meters.
+  \param[in] tz : Value along Z-axis of the translation vector in meters.
 
   \return The build translation vector.
   \sa set()
@@ -206,7 +209,9 @@ vpTranslationVector &vpTranslationVector::buildFrom(const double &tx, const doub
 /*!
   Initialize a translation vector from 3 doubles.
 
-  \param tx,ty,tz : Translation respectively along x, y and z axis in meter.
+  \param[in] tx : Value along X-axis of the translation vector in meters.
+  \param[in] ty : Value along Y-axis of the translation vector in meters.
+  \param[in] tz : Value along Z-axis of the translation vector in meters.
 
 */
 void vpTranslationVector::set(double tx, double ty, double tz)
@@ -733,7 +738,8 @@ vpMatrix vpTranslationVector::skew() const
 
   Return the cross product of two translation vectors \f$a \times b\f$.
 
-  \param a,b : Translation vectors in input.
+  \param[in] a : First translation vectors.
+  \param[in] b : Second translation vectors.
 
   \return The cross product of two translation vectors \f$a \times
   b\f$.

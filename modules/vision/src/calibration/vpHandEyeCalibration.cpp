@@ -57,7 +57,7 @@ BEGIN_VISP_NAMESPACE
                                                  const std::vector<vpHomogeneousMatrix> &rMe,
                                                  const vpHomogeneousMatrix &eMc, vpHomogeneousMatrix &mean_rMo)
 {
-  unsigned int nbPose = (unsigned int)cMo.size();
+  unsigned int nbPose = static_cast<unsigned int>(cMo.size());
   std::vector<vpTranslationVector> rTo(nbPose);
   std::vector<vpRotationMatrix> rRo(nbPose);
 
@@ -151,7 +151,7 @@ int vpHandEyeCalibration::calibrationRotationProcrustes(const std::vector<vpHomo
   vpMatrix Et, Ct;
   vpMatrix A;
   unsigned int k = 0;
-  unsigned int nbPose = (unsigned int)cMo.size();
+  unsigned int nbPose = static_cast<unsigned int>(cMo.size());
 
   // for all couples ij
   for (unsigned int i = 0; i < nbPose; ++i) {
@@ -235,7 +235,7 @@ int vpHandEyeCalibration::calibrationRotationTsai(const std::vector<vpHomogeneou
 {
   vpMatrix A;
   vpColVector B;
-  unsigned int nbPose = (unsigned int)cMo.size();
+  unsigned int nbPose = static_cast<unsigned int>(cMo.size());
   unsigned int k = 0;
   // for all couples ij
   for (unsigned int i = 0; i < nbPose; ++i) {
@@ -343,7 +343,7 @@ int vpHandEyeCalibration::calibrationRotationTsai(const std::vector<vpHomogeneou
 int vpHandEyeCalibration::calibrationRotationTsaiOld(const std::vector<vpHomogeneousMatrix> &cMo,
                                                      const std::vector<vpHomogeneousMatrix> &rMe, vpRotationMatrix &eRc)
 {
-  unsigned int nbPose = (unsigned int)cMo.size();
+  unsigned int nbPose = static_cast<unsigned int>(cMo.size());
   vpMatrix A;
   vpColVector B;
   vpColVector x;
@@ -481,7 +481,7 @@ int vpHandEyeCalibration::calibrationTranslation(const std::vector<vpHomogeneous
   vpMatrix I3(3, 3);
   I3.eye();
   unsigned int k = 0;
-  unsigned int nbPose = (unsigned int)cMo.size();
+  unsigned int nbPose = static_cast<unsigned int>(cMo.size());
   vpMatrix A(3 * nbPose, 3);
   vpColVector B(3 * nbPose);
   // Building of the system for the translation estimation
@@ -566,7 +566,7 @@ int vpHandEyeCalibration::calibrationTranslationOld(const std::vector<vpHomogene
   vpRotationMatrix I3;
   I3.eye();
   int k = 0;
-  unsigned int nbPose = (unsigned int)cMo.size();
+  unsigned int nbPose = static_cast<unsigned int>(cMo.size());
 
   for (unsigned int i = 0; i < nbPose; ++i) {
     vpRotationMatrix rRei, ciRo;
@@ -646,19 +646,19 @@ int vpHandEyeCalibration::calibrationTranslationOld(const std::vector<vpHomogene
 /*!
  * \brief Compute the set of errors minimized by VVS.
  *
- * \param[in] cMo : vector of homogeneous matrices representing the transformation
+ * \param[in] cMo : Vector of homogeneous matrices representing the transformation
  * between the camera and the scene.
- * \param[in] rMe : vector of homogeneous matrices representing the transformation
+ * \param[in] rMe : Vector of homogeneous matrices representing the transformation
  * between the effector (where the camera is fixed) and the reference
  * coordinates (base of the manipulator). Must be the same size as cMo.
- * \param[in] eMc : homogeneous matrix between the effector and the camera.
- * \param[out] err: set of errors minimized by VVS (3 for rotation, 3 for translation, etc.).
+ * \param[in] eMc : Homogeneous matrix between the effector and the camera.
+ * \param[out] err : Set of errors minimized by VVS (3 for rotation, 3 for translation, etc).
  */
 double vpHandEyeCalibration::calibrationErrVVS(const std::vector<vpHomogeneousMatrix> &cMo,
                                                const std::vector<vpHomogeneousMatrix> &rMe,
                                                const vpHomogeneousMatrix &eMc, vpColVector &errVVS)
 {
-  unsigned int nbPose = (unsigned int)cMo.size();
+  unsigned int nbPose = static_cast<unsigned int>(cMo.size());
   vpMatrix I3(3, 3);
   I3.eye();
   vpRotationMatrix eRc;
@@ -703,7 +703,7 @@ double vpHandEyeCalibration::calibrationErrVVS(const std::vector<vpHomogeneousMa
 
   double resRot, resTrans, resPos;
   resRot = resTrans = resPos = 0.0;
-  for (unsigned int i = 0; i < (unsigned int)errVVS.size(); i += 6) {
+  for (unsigned int i = 0; i <static_cast<unsigned int>(errVVS.size()); i += 6) {
     resRot += errVVS[i] * errVVS[i];
     resRot += errVVS[i + 1] * errVVS[i + 1];
     resRot += errVVS[i + 2] * errVVS[i + 2];
@@ -741,7 +741,7 @@ int vpHandEyeCalibration::calibrationVVS(const std::vector<vpHomogeneousMatrix> 
   unsigned int it = 0;
   unsigned int nb_iter_max = 30;
   double res = 1.0;
-  unsigned int nbPose = (unsigned int)cMo.size();
+  unsigned int nbPose = static_cast<unsigned int>(cMo.size());
   vpColVector err;
   vpMatrix L;
   vpMatrix I3(3, 3);

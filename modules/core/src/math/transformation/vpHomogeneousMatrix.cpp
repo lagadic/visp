@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -969,9 +969,10 @@ void vpHomogeneousMatrix::insert(const vpTranslationVector &t)
 void vpHomogeneousMatrix::insert(const vpQuaternionVector &q) { insert(vpRotationMatrix(q)); }
 
 /*!
-  Invert the homogeneous matrix
+  Invert the homogeneous matrix.
 
-  \return \f$\left[\begin{array}{cc}
+  \return The inverse of the homogenous matrix.
+  \f[\left[\begin{array}{cc}
   {\bf R} & {\bf t} \\
   {\bf 0}_{1\times 3} & 1
   \end{array}
@@ -979,8 +980,7 @@ void vpHomogeneousMatrix::insert(const vpQuaternionVector &q) { insert(vpRotatio
   {\bf R}^T & -{\bf R}^T {\bf t} \\
   {\bf 0}_{1\times 3} & 1
   \end{array}
-  \right]\f$
-
+  \right]\f]
 */
 vpHomogeneousMatrix vpHomogeneousMatrix::inverse() const
 {

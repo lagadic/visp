@@ -64,8 +64,8 @@ void vpObjectCentricRenderer::beforeFrameRendered()
   if (m_enableCrop) {
     vpPanda3DRenderParameters subParams = m_renderParameters;
 
-    unsigned width = (unsigned)(m_bb.getWidth());
-    unsigned height = (unsigned)(m_bb.getHeight());
+    unsigned width = static_cast<unsigned int>(m_bb.getWidth());
+    unsigned height = static_cast<unsigned int>(m_bb.getHeight());
     subParams.setImageResolution(height, width);
     subParams.setClippingDistance(subParams.getNearClippingDistance(), subParams.getFarClippingDistance());
     const vpCameraParameters cam = subParams.getCameraIntrinsics();

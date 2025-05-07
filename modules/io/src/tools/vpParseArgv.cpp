@@ -55,13 +55,13 @@ int (*handlerProc2)(const char *dst, const char *key, int valargc, const char **
   (they didn't match the option table, or followed an
   vpParseArgv::ARGV_REST argument).
 
-  \param argcPtr: Pointer to the count of command line arguments.
+  \param argcPtr : Pointer to the count of command line arguments.
 
-  \param argv: Array of command line argument strings.
+  \param argv : Array of command line argument strings.
 
-  \param argTable: Array of command-specific argument descriptions.
+  \param argTable : Array of command-specific argument descriptions.
 
-  \param flags: This parameter is to set with vpParseArgv::vpArgvFlags
+  \param flags : This parameter is to set with vpParseArgv::vpArgvFlags
   values or combinations of these values using the OR operator
   (vpParseArgv::ARGV_NO_LEFTOVERS | vpParseArgv::ARGV_NO_DEFAULTS). If
   the vpParseArgv::ARGV_NO_DEFAULTS bit is set, then
@@ -126,7 +126,7 @@ bool vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable, i
         if (infoPtr->key != nullptr) {
           bool stop_for_loop = false;
           if ((infoPtr->key[1] != c) || (strncmp(infoPtr->key, curArg, length) != 0)) {
-            stop_for_loop = true;;
+            stop_for_loop = true;
           }
           if (!stop_for_loop) {
             if (infoPtr->key[length] == 0) {
@@ -186,7 +186,7 @@ bool vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable, i
         else {
           char *endPtr = nullptr;
 
-          *(((int *)infoPtr->dst) + i) = (int)strtol(argv[srcIndex], &endPtr, 0);
+          *(((int *)infoPtr->dst) + i) = static_cast<int>(strtol(argv[srcIndex], &endPtr, 0));
           if ((endPtr == argv[srcIndex]) || (*endPtr != 0)) {
             FPRINTF(stderr, "expected integer argument for \"%s\" but got \"%s\"\n", infoPtr->key, argv[srcIndex]);
             return true;
@@ -246,7 +246,7 @@ bool vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable, i
         else {
           char *endPtr;
 
-          *(((float *)infoPtr->dst) + i) = (float)strtod(argv[srcIndex], &endPtr); // Here we use strtod
+          *(((float *)infoPtr->dst) + i) = static_cast<float>(strtod(argv[srcIndex], &endPtr)); // Here we use strtod
           if ((endPtr == argv[srcIndex]) || (*endPtr != 0)) {
             FPRINTF(stderr, "expected floating-point argument for \"%s\" but got\"%s\"\n", infoPtr->key,
                     argv[srcIndex]);
@@ -339,9 +339,9 @@ missingArg:
   all those in the default table unless vpParseArgv::ARGV_NO_DEFAULTS
   is specified in flags.
 
-  \param argTable: Array of command-specific argument.descriptions.
+  \param argTable : Array of command-specific argument.descriptions.
 
-  \param flags: If the vpParseArgv::ARGV_NO_DEFAULTS bit is set in
+  \param flags : If the vpParseArgv::ARGV_NO_DEFAULTS bit is set in
   this word, then don't generate information for default options.
 
 */
@@ -372,7 +372,7 @@ void vpParseArgv::printUsage(vpArgvInfo *argTable, int flags)
       if (infoPtr->key == nullptr) {
         continue;
       }
-      length = (int)strlen(infoPtr->key);
+      length = static_cast<int>(strlen(infoPtr->key));
       if (length > width) {
         width = length;
       }
@@ -387,7 +387,7 @@ void vpParseArgv::printUsage(vpArgvInfo *argTable, int flags)
         continue;
       }
       FPRINTF(stderr, "\n %s:", infoPtr->key);
-      numSpaces = width + 1 - (int)strlen(infoPtr->key);
+      numSpaces = width + 1 - static_cast<int>(strlen(infoPtr->key));
       while (numSpaces > 0) {
         if (numSpaces >= NUM_SPACES) {
           FPRINTF(stderr, "%s", spaces);
@@ -485,14 +485,14 @@ void vpParseArgv::printUsage(vpArgvInfo *argTable, int flags)
 
   Get next command line option and parameter.
 
-  \param argc: Count of command line arguments.
+  \param argc : Count of command line arguments.
 
-  \param argv: Array of command line argument strings.
+  \param argv : Array of command line argument strings.
 
-  \param validOpts: String of valid case-sensitive option characters, a
+  \param validOpts : String of valid case-sensitive option characters, a
   ':' following a given character means that option can take a parameter.
 
-  \param param: Pointer to a pointer to a string for output.
+  \param param : Pointer to a pointer to a string for output.
 
   \return If valid option is found, the character value of that option is
   returned, and *param points to the parameter if given, or is nullptr if no

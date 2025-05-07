@@ -60,7 +60,7 @@ BEGIN_VISP_NAMESPACE
  * Tableau de renommage des sommets ou tableau de compteurs associes aux
  * points.
  */
-Point2i *point2i = (Point2i *)NULL;
+  Point2i *point2i = (Point2i *)NULL;
 Point2i *listpoint2i = (Point2i *)NULL;
 static int *rename_jlc = (int *)NULL;
 
@@ -116,12 +116,12 @@ void close_display(void)
 void point_3D_2D(Point3f *p3, Index size, int xsize, int ysize, Point2i *p2)
 {
   Point3f *pend = p3 + size; /* borne de p3  */
-  float xdiv2 = ((float)xsize) / (float)2.0;
-  float ydiv2 = ((float)ysize) / (float)2.0;
+  float xdiv2 = static_cast<float>(xsize) / 2.0f;
+  float ydiv2 = static_cast<float>(ysize) / 2.0f;
 
   for (; p3 < pend; p3++, p2++) {
-    p2->x = (int)((1.0 + p3->x) * xdiv2);
-    p2->y = (int)((1.0 - p3->y) * ydiv2);
+    p2->x = static_cast<int>((1.0 + p3->x) * xdiv2);
+    p2->y = static_cast<int>((1.0 - p3->y) * ydiv2);
   }
 }
 

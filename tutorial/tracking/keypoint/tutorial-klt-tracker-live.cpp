@@ -10,7 +10,7 @@
 // #undef HAVE_OPENCV_VIDEOIO
 //! [Undef grabber]
 
-#if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO) && \
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO) && \
   (defined(VISP_HAVE_V4L2) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || \
                               ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)))
 
@@ -101,7 +101,7 @@ int main(int argc, const char *argv[])
         vpDisplay::displayText(I, 10, 10, "Left click to select a point, right to start tracking", vpColor::red);
         if (vpDisplay::getClick(I, ip, button, false)) {
           if (button == vpMouseButton::button1) {
-            guess.push_back(cv::Point2f((float)ip.get_u(), (float)ip.get_v()));
+            guess.push_back(cv::Point2f(static_cast<float>(ip.get_u()), static_cast<float>(ip.get_v())));
             vpDisplay::displayText(I, 10, 10, "Left click to select a point, right to start tracking", vpColor::red);
             vpDisplay::displayCross(I, ip, 12, vpColor::green);
           }
@@ -154,8 +154,9 @@ int main()
 #if !defined(HAVE_OPENCV_VIDEO)
   std::cout << "This tutorial needs OpenCV video module that is missing." << std::endl;
 #endif
-#if !(defined(VISP_HAVE_V4L2) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || \
-                                 ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)))
+#if !(defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_OPENCV) && \
+  (((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || \
+   ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))))
   std::cout << "This tutorial needs V4l2 or OpenCV grabber capabilities." << std::endl;
 #endif
 }

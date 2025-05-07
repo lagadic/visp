@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,8 +78,10 @@ std::string vpImageFilter::vpCannyBackendTypeToString(const vpImageFilter::vpCan
     name = "visp-backend";
     break;
   case CANNY_COUNT_BACKEND:
-  default:
     return "unknown-backend";
+  default: {
+    throw(vpException(vpException::fatalError, "Unsupported canny backend type in vpImageFilter::vpCannyBackendTypeToString()"));
+  }
   }
   return name;
 }
@@ -148,8 +150,10 @@ std::string vpImageFilter::vpCannyFiltAndGradTypeToStr(const vpImageFilter::vpCa
     name = "gaussianblur+scharr-filtering";
     break;
   case CANNY_COUNT_FILTERING:
-  default:
     return "unknown-filtering";
+  default: {
+    throw(vpException(vpException::fatalError, "Unsupported canny backend type in vpImageFilter::vpCannyFiltAndGradTypeToStr()"));
+  }
   }
   return name;
 }
@@ -486,7 +490,7 @@ void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned c
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030200)
     cv::Canny(cv_dx, cv_dy, edges_cvmat, lowerCannyThresh, upperCannyThresh, false);
 #else
-    cv::GaussianBlur(img_cvmat, img_cvmat, cv::Size((int)gaussianFilterSize, (int)gaussianFilterSize),
+    cv::GaussianBlur(img_cvmat, img_cvmat, cv::Size(static_cast<int>(gaussianFilterSize), static_cast<int>(gaussianFilterSize)),
                      gaussianStdev, gaussianStdev);
     cv::Canny(img_cvmat, edges_cvmat, lowerCannyThresh, upperCannyThresh);
 #endif
@@ -519,6 +523,5 @@ void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned c
     Ires = edgeDetector.detect(Isrc);
   }
 }
-
 
 END_VISP_NAMESPACE

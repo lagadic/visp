@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +29,7 @@
  *
  * Description:
  * Convert image types.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpImageConvert_hsv.cpp
@@ -126,7 +125,7 @@ BEGIN_VISP_NAMESPACE
       }
     }
 
-    int i_step = i * step;
+    unsigned int i_step = static_cast<unsigned int>(i) * step;
     rgb[i_step] = static_cast<unsigned char>(vpMath::round(hue * 255.0));
     rgb[++i_step] = static_cast<unsigned char>(vpMath::round(saturation * 255.0));
     rgb[++i_step] = static_cast<unsigned char>(vpMath::round(value * 255.0));
@@ -184,7 +183,7 @@ void vpImageConvert::HSV2RGB(const unsigned char *hue_, const unsigned char *sat
       if (vpMath::equal(h, 6.f, std::numeric_limits<float>::epsilon())) {
         h = 0.0f;
       }
-      float f = h - static_cast<int>(h);
+      float f = h - static_cast<float>(static_cast<int>(h));
       float p = v * (1.0f - s);
       float q = v * (1.0f - (s * f));
       float t = v * (1.0f - (s * (1.0f - f)));
@@ -228,7 +227,7 @@ void vpImageConvert::HSV2RGB(const unsigned char *hue_, const unsigned char *sat
       }
     }
 
-    int i_step = i * step;
+    unsigned int i_step = static_cast<unsigned int>(i) * step;
     rgb[i_step] = static_cast<unsigned char>(hue * 255.f);
     rgb[++i_step] = static_cast<unsigned char>(saturation * 255.0f);
     rgb[++i_step] = static_cast<unsigned char>(value * 255.0f);
@@ -256,6 +255,7 @@ void vpImageConvert::RGB2HSV(const unsigned char *rgb, double *hue, double *satu
                              unsigned int size, unsigned int step)
 {
   int size_ = static_cast<int>(size);
+  int step_ = static_cast<int>(step);
 #if defined(_OPENMP)
 #pragma omp parallel for
 #endif
@@ -263,7 +263,7 @@ void vpImageConvert::RGB2HSV(const unsigned char *rgb, double *hue, double *satu
     double red, green, blue;
     double h, s, v;
     double min, max;
-    int i_ = i * step;
+    int i_ = i * step_;
 
     red = rgb[i_] / 255.0;
     ++i_;
@@ -362,7 +362,7 @@ void vpImageConvert::RGB2HSV(const unsigned char *rgb, unsigned char *hue, unsig
     float red, green, blue;
     float h, s, v;
     float min, max;
-    unsigned int i_ = i * step;
+    unsigned int i_ = static_cast<unsigned int>(i) * step;
 
     red = rgb[i_];
     green = rgb[++i_];
@@ -450,7 +450,7 @@ void vpImageConvert::HSVToRGBa(const double *hue, const double *saturation, cons
 void vpImageConvert::HSVToRGBa(const unsigned char *hue, const unsigned char *saturation, const unsigned char *value,
                                unsigned char *rgba, unsigned int size, bool h_full)
 {
- const unsigned int val_4 = 4;
+  const unsigned int val_4 = 4;
   vpImageConvert::HSV2RGB(hue, saturation, value, rgba, size, val_4, h_full);
 }
 

@@ -430,7 +430,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, FuncCheckValidityPose func)
 
     int splitTrials = ransacMaxTrials / nbThreads;
     for (size_t i = 0; i < static_cast<size_t>(nbThreads); ++i) {
-      unsigned int initial_seed = static_cast<unsigned int>(i); //((unsigned int) time(nullptr) ^ i);
+      unsigned int initial_seed = static_cast<unsigned int>(i);
       if (i < static_cast<size_t>(nbThreads) - 1) {
         ransacWorkers.emplace_back(cMo, ransacNbInlierConsensus, splitTrials, ransacThreshold, initial_seed,
                                    checkDegeneratePoints, listOfUniquePoints, func);
@@ -492,8 +492,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, FuncCheckValidityPose func)
     // best_consensus and return this pose.  This is an approach used for
     // example in p118 in Multiple View Geometry in Computer Vision, Hartley,
     // R.~I. and Zisserman, A.
-    if (nbInliers >= nbMinRandom) // if(nbInliers >= (unsigned)ransacNbInlierConsensus)
-    {
+    if (nbInliers >= nbMinRandom) {
       // Refine the solution using all the points in the consensus set and
       // with VVS pose estimation
       vpPose pose;

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Kalman filtering.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpUKSigmaDrawerMerwe.cpp
@@ -42,7 +40,7 @@
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 BEGIN_VISP_NAMESPACE
-vpUKSigmaDrawerMerwe::vpUKSigmaDrawerMerwe(const int &n, const double &alpha, const double &beta, const double &kappa,
+vpUKSigmaDrawerMerwe::vpUKSigmaDrawerMerwe(const unsigned int &n, const double &alpha, const double &beta, const double &kappa,
                        const vpAddSubFunction &resFunc, const vpAddSubFunction &addFunc)
   : vpUKSigmaDrawerAbstract(n)
   , m_alpha(alpha)

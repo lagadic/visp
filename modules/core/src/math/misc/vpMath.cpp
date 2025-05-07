@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,6 +81,13 @@ typedef union Vp32suf
 #endif
 #endif
 
+void emitWarning(const std::string &message)
+{
+  std::cerr << "\033[0;31m";
+  std::cerr << message << std::endl;
+  std::cerr << "\033[0m";
+}
+
 const double vpMath::ang_min_sinc = 1.0e-8;
 const double vpMath::ang_min_mc = 2.5e-4;
 
@@ -91,6 +98,9 @@ const double vpMath::ang_min_mc = 2.5e-4;
  */
 bool vpMath::isNaN(double value)
 {
+#if defined(VISP_HAVE_FAST_MATH)
+  emitWarning("isNaN: You are testing whether a double value is a number, but are compiling with fast math options enabled. This function may return an incorrect result.");
+#endif
 #if defined(VISP_HAVE_FUNC_STD_ISNAN)
   return std::isnan(value);
 #elif defined(VISP_HAVE_FUNC_ISNAN)
@@ -101,7 +111,7 @@ bool vpMath::isNaN(double value)
   // Taken from OpenCV source code CvIsNan()
   Vp64suf ieee754;
   ieee754.f = value;
-  return (((unsigned)(ieee754.u >> 32) & 0x7fffffff) + ((unsigned)ieee754.u != 0) > 0x7ff00000) != 0;
+  return ((static_cast<unsigned int>(ieee754.u >> 32) & 0x7fffffff) + ((static_cast<unsigned int>(ieee754.u) != 0) > 0x7ff00000) != 0;
 #endif
 }
 
@@ -112,6 +122,9 @@ bool vpMath::isNaN(double value)
  */
 bool vpMath::isNaN(float value)
 {
+#if defined(VISP_HAVE_FAST_MATH)
+  emitWarning("isNaN: You are testing whether a float value is a number, but are compiling with fast math options enabled. This function may return an incorrect result.");
+#endif
 #if defined(VISP_HAVE_FUNC_STD_ISNAN)
   return std::isnan(value);
 #elif defined(VISP_HAVE_FUNC_ISNAN)
@@ -122,7 +135,7 @@ bool vpMath::isNaN(float value)
   // Taken from OpenCV source code CvIsNan()
   Vp32suf ieee754;
   ieee754.f = value;
-  return ((unsigned)ieee754.u & 0x7fffffff) > 0x7f800000;
+  return ((static_cast<unsigned int>(ieee754.u) & 0x7fffffff) > 0x7f800000;
 #endif
 }
 
@@ -135,6 +148,9 @@ bool vpMath::isNaN(float value)
  */
 bool vpMath::isInf(double value)
 {
+#if defined(VISP_HAVE_FAST_MATH)
+  emitWarning("isInf: You are testing whether a double value is infinite, but are compiling with fast math options enabled. This function may return an incorrect result.");
+#endif
 #if defined(VISP_HAVE_FUNC_STD_ISINF)
   return std::isinf(value);
 #elif defined(VISP_HAVE_FUNC_ISINF)
@@ -143,7 +159,7 @@ bool vpMath::isInf(double value)
   // Taken from OpenCV source code CvIsInf()
   Vp64suf ieee754;
   ieee754.f = value;
-  return ((unsigned)(ieee754.u >> 32) & 0x7fffffff) == 0x7ff00000 && (unsigned)ieee754.u == 0;
+  return (static_cast<unsigned int>(ieee754.u >> 32) & 0x7fffffff) == 0x7ff00000 && (static_cast<unsigned int>(ieee754.u) == 0;
 #endif
 }
 
@@ -156,6 +172,9 @@ bool vpMath::isInf(double value)
  */
 bool vpMath::isInf(float value)
 {
+#if defined(VISP_HAVE_FAST_MATH)
+  emitWarning("isInf: You are testing whether a float value is infinite, but are compiling with fast math options enabled. This function may return an incorrect result.");
+#endif
 #if defined(VISP_HAVE_FUNC_STD_ISINF)
   return std::isinf(value);
 #elif defined(VISP_HAVE_FUNC_ISINF)
@@ -164,7 +183,7 @@ bool vpMath::isInf(float value)
   // Taken from OpenCV source code CvIsInf()
   Vp32suf ieee754;
   ieee754.f = value;
-  return ((unsigned)ieee754.u & 0x7fffffff) == 0x7f800000;
+  return ((static_cast<unsigned int>(ieee754.u) & 0x7fffffff) == 0x7f800000;
 #endif
 }
 
@@ -228,7 +247,7 @@ bool vpMath::isNumber(const std::string &str)
   \param cosx : Value of cos(x).
   \param x : Value of x.
 
-  \return \f$ (1-cos(x))/x^2 \f$
+  \return The value of \f$ (1-cos(x))/x^2 \f$.
 */
 double vpMath::mcosc(double cosx, double x)
 {
@@ -246,7 +265,7 @@ double vpMath::mcosc(double cosx, double x)
   \param sinx : value of sin(x).
   \param x  : Value of x.
 
-  \return \f$ (1-sinc(x))/x^2 \f$
+  \return The value of \f$ (1-sinc(x))/x^2 \f$.
 */
 double vpMath::msinc(double sinx, double x)
 {

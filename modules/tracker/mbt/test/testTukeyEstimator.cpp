@@ -55,12 +55,12 @@ int main()
   double stdev = 0.5, mean = 0.0, noise_threshold = 1e-3;
 
   vpGaussRand noise(stdev, mean);
-  noise.seed((unsigned int)time(nullptr));
+  noise.seed(static_cast<unsigned int>(time(nullptr)));
 
-  vpColVector residues_col((unsigned int)nb_elements);
+  vpColVector residues_col(static_cast<unsigned int>(nb_elements));
   vpColVector weights_col, weights_col_save;
   for (size_t i = 0; i < nb_elements; i++) {
-    residues_col[(unsigned int)i] = noise();
+    residues_col[static_cast<unsigned int>(i)] = noise();
   }
 
   vpRobust robust;
@@ -74,7 +74,7 @@ int main()
     vpMbtTukeyEstimator<double> tukey_estimator;
     std::vector<double> residues(nb_elements);
     for (size_t i = 0; i < residues.size(); i++) {
-      residues[i] = residues_col[(unsigned int)i];
+      residues[i] = residues_col[static_cast<unsigned int>(i)];
     }
 
     std::vector<double> weights;
@@ -87,11 +87,11 @@ int main()
     std::cout << "t_robust=" << t_robust << " ms ; t (double)=" << t << " ; ratio=" << (t_robust / t) << std::endl;
 
     for (size_t i = 0; i < weights.size(); i++) {
-      if (!vpMath::equal(weights[i], weights_col[(unsigned int)i], noise_threshold)) {
+      if (!vpMath::equal(weights[i], weights_col[static_cast<unsigned int>(i)], noise_threshold)) {
         std::cerr << "Difference between vpRobust::TUKEY and "
           "vpMbtTukeyEstimator (double)!"
           << std::endl;
-        std::cerr << "weights_col[" << i << "]=" << weights_col[(unsigned int)i] << std::endl;
+        std::cerr << "weights_col[" << i << "]=" << weights_col[static_cast<unsigned int>(i)] << std::endl;
         std::cerr << "weights[" << i << "]=" << weights[i] << std::endl;
         return EXIT_FAILURE;
       }
@@ -100,7 +100,7 @@ int main()
 
   // Generate again for weights != 1
   for (size_t i = 0; i < nb_elements; i++) {
-    residues_col[(unsigned int)i] = noise();
+    residues_col[static_cast<unsigned int>(i)] = noise();
   }
   weights_col_save = weights_col;
   t_robust = vpTime::measureTimeMs();
@@ -114,24 +114,22 @@ int main()
     std::vector<float> residues(nb_elements);
     std::vector<float> weights(nb_elements);
     for (size_t i = 0; i < residues.size(); i++) {
-      residues[i] = (float)residues_col[(unsigned int)i];
-      weights[i] = (float)weights_col_save[(unsigned int)i];
+      residues[i] = static_cast<float>(residues_col[static_cast<unsigned int>(i)]);
+      weights[i] = static_cast<float>(weights_col_save[static_cast<unsigned int>(i)]);
     }
 
     double t = vpTime::measureTimeMs();
     for (int i = 0; i < nb_iterations; i++) {
-      tukey_estimator.MEstimator(residues, weights, (float)noise_threshold);
+      tukey_estimator.MEstimator(residues, weights, static_cast<float>(noise_threshold));
     }
     t = vpTime::measureTimeMs() - t;
 
     std::cout << "t_robust=" << t_robust << " ms ; t (float)=" << t << " ; ratio=" << (t_robust / t) << std::endl;
 
     for (size_t i = 0; i < weights.size(); i++) {
-      if (!vpMath::equal(weights[i], weights_col[(unsigned int)i], noise_threshold)) {
-        std::cerr << "Difference between vpRobust::TUKEY and "
-          "vpMbtTukeyEstimator (float)!"
-          << std::endl;
-        std::cerr << "weights_col[" << i << "]=" << weights_col[(unsigned int)i] << std::endl;
+      if (!vpMath::equal(weights[i], static_cast<float>(weights_col[static_cast<unsigned int>(i)]), static_cast<float>(noise_threshold))) {
+        std::cerr << "Difference between vpRobust::TUKEY and vpMbtTukeyEstimator (float)!" << std::endl;
+        std::cerr << "weights_col[" << i << "]=" << weights_col[static_cast<unsigned int>(i)] << std::endl;
         std::cerr << "weights[" << i << "]=" << weights[i] << std::endl;
         return EXIT_FAILURE;
       }
@@ -140,7 +138,7 @@ int main()
 
   // Generate again for weights != 1 and vpColVector type
   for (size_t i = 0; i < nb_elements; i++) {
-    residues_col[(unsigned int)i] = noise();
+    residues_col[static_cast<unsigned int>(i)] = noise();
   }
   weights_col_save = weights_col;
   t_robust = vpTime::measureTimeMs();
@@ -163,12 +161,10 @@ int main()
     std::cout << "t_robust=" << t_robust << " ms ; t (vpColVector)=" << t << " ; ratio=" << (t_robust / t) << std::endl;
 
     for (size_t i = 0; i < weights.size(); i++) {
-      if (!vpMath::equal(weights[(unsigned int)i], weights_col[(unsigned int)i], noise_threshold)) {
-        std::cerr << "Difference between vpRobust::TUKEY and "
-          "vpMbtTukeyEstimator (float)!"
-          << std::endl;
-        std::cerr << "weights_col[" << i << "]=" << weights_col[(unsigned int)i] << std::endl;
-        std::cerr << "weights[" << i << "]=" << weights[(unsigned int)i] << std::endl;
+      if (!vpMath::equal(weights[static_cast<unsigned int>(i)], weights_col[static_cast<unsigned int>(i)], noise_threshold)) {
+        std::cerr << "Difference between vpRobust::TUKEY and vpMbtTukeyEstimator (float)!" << std::endl;
+        std::cerr << "weights_col[" << i << "]=" << weights_col[static_cast<unsigned int>(i)] << std::endl;
+        std::cerr << "weights[" << i << "]=" << weights[static_cast<unsigned int>(i)] << std::endl;
         return EXIT_FAILURE;
       }
     }

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@
 #include <visp3/core/vpConfig.h>
 
 // Check if std:c++17 or higher
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(HAVE_OPENCV_DNN) && \
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(HAVE_OPENCV_DNN) && \
     ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
 
 #include <visp3/core/vpImageConvert.h>
@@ -65,7 +65,7 @@ BEGIN_VISP_NAMESPACE
  * - only lowercases
  * - the underscores '_' are replaced by hyphens '-'.
  *
- * \param type: the type of parsing method to apply to interpret the DNN inference raw results.
+ * \param[in] type : The type of parsing method to apply to interpret the DNN inference raw results.
  * \return std::string: the name of the type of parsing method to apply.
  */
 std::string vpDetectorDNNOpenCV::dnnResultsParsingTypeToString(const DNNResultsParsingType &type)
@@ -114,7 +114,7 @@ std::string vpDetectorDNNOpenCV::dnnResultsParsingTypeToString(const DNNResultsP
  * The naming convention is the following:
  * - only lowercases
  * - the underscores '_' are replaced by hyphens '-'.
- * \param name: the name of the type of parsing method to apply.
+ * \param[in] name : the name of the type of parsing method to apply.
  * \return vpDetectorDNNOpenCV::DNNResultsParsingType: the corresponding \b vpDetectorDNNOpenCV::DNNResultsParsingType.
  */
 vpDetectorDNNOpenCV::DNNResultsParsingType vpDetectorDNNOpenCV::dnnResultsParsingTypeFromString(const std::string &name)
@@ -193,9 +193,9 @@ vpDetectorDNNOpenCV::vpDetectorDNNOpenCV(const std::string &jsonPath, void (*par
 }
 
 /**
- * \brief
+ * \brief Initialize detector from a json config file.
  *
- * \param jsonPath
+ * \param[in] jsonPath : Json config file path.
  */
 void vpDetectorDNNOpenCV::initFromJSON(const std::string &jsonPath)
 {
@@ -246,8 +246,8 @@ vpDetectorDNNOpenCV::~vpDetectorDNNOpenCV() { }
  * \warning Classical object detection network uses as input 3-channels.
  * Grayscale image is converted to color image.
  *
- * \param I Input image.
- * \param output Vector of detections, whichever class they belong to.
+ * \param[in] I : Input image.
+ * \param[out] output : Vector of detections, whichever class they belong to.
  * \return false if there is no detection, true otherwise.
  */
 bool vpDetectorDNNOpenCV::detect(const vpImage<unsigned char> &I, std::vector<DetectedFeatures2D> &output)
@@ -262,8 +262,9 @@ bool vpDetectorDNNOpenCV::detect(const vpImage<unsigned char> &I, std::vector<De
   \warning Classical object detection network uses as input 3-channels.
   Grayscale image is converted to color image.
 
-  \param I : Input image.
-  \param output: map where the name of the class is used as key and whose value is a vector of detected 2D features that belong to the class.
+  \param[in] I : Input image.
+  \param[out] output : Map where the name of the class is used as key and whose value is a vector of detected 2D
+  features that belong to the class.
   \return false if there is no detection.
 */
 bool vpDetectorDNNOpenCV::detect(const vpImage<unsigned char> &I, std::map< std::string, std::vector<DetectedFeatures2D>> &output)
@@ -278,8 +279,8 @@ bool vpDetectorDNNOpenCV::detect(const vpImage<unsigned char> &I, std::map< std:
   \warning Classical object detection network uses as input 3-channels.
   Grayscale image is converted to color image.
 
-  \param I : Input image.
-  \param output: vector of pairs <name_of_the_class, vector_of_detections>
+  \param[in] I : Input image.
+  \param[out] output : Vector of pairs <name_of_the_class, vector_of_detections>.
   \return false if there is no detection.
 */
 bool vpDetectorDNNOpenCV::detect(const vpImage<unsigned char> &I, std::vector< std::pair<std::string, std::vector<DetectedFeatures2D>>> &output)
@@ -294,8 +295,8 @@ bool vpDetectorDNNOpenCV::detect(const vpImage<unsigned char> &I, std::vector< s
  * \warning OpenCV DNN module uses \b cv::Mat as input.
  * \b vpImage<vpRGBa> is converted to \b cv::Mat.
  *
- * \param I : Input image.
- * \param output Vector of detections, whichever class they belong to.
+ * \param[in] I : Input image.
+ * \param[out] output : Vector of detections, whichever class they belong to.
  * \return false if there is no detection, true otherwise.
  */
 bool vpDetectorDNNOpenCV::detect(const vpImage<vpRGBa> &I, std::vector<DetectedFeatures2D> &output)
@@ -310,8 +311,8 @@ bool vpDetectorDNNOpenCV::detect(const vpImage<vpRGBa> &I, std::vector<DetectedF
 * \warning OpenCV DNN module uses \b cv::Mat as input.
 * Grayscale image is converted to color image.
 *
-* \param I : Input image.
-* \param output: map where the name of the class is used as key and whose value is a vector of detected 2D features that belong to the class.
+* \param[in] I : Input image.
+* \param[out] output : Map where the name of the class is used as key and whose value is a vector of detected 2D features that belong to the class.
 * \return false if there is no detection.
 */
 bool vpDetectorDNNOpenCV::detect(const vpImage<vpRGBa> &I, std::map< std::string, std::vector<DetectedFeatures2D>> &output)
@@ -324,8 +325,8 @@ bool vpDetectorDNNOpenCV::detect(const vpImage<vpRGBa> &I, std::map< std::string
 /*!
   Object detection using OpenCV DNN module.
 
-  \param I : Input image.
-  \param output: vector of pairs <name_of_the_class, vector_of_detections>
+  \param[in] I : Input image.
+  \param[out] output : vector of pairs <name_of_the_class, vector_of_detections>
   \return false if there is no detection, true otherwise.
 */
 bool vpDetectorDNNOpenCV::detect(const vpImage<vpRGBa> &I, std::vector< std::pair<std::string, std::vector<DetectedFeatures2D>>> &output)
@@ -338,8 +339,8 @@ bool vpDetectorDNNOpenCV::detect(const vpImage<vpRGBa> &I, std::vector< std::pai
 /*!
   Object detection using OpenCV DNN module.
 
-  \param I : Input image.
-  \param output : Vector of detections, whichever class they belong to.
+  \param[in] I : Input image.
+  \param[out] output : Vector of detections, whichever class they belong to.
   \return false if there is no detection.
 */
 bool vpDetectorDNNOpenCV::detect(const cv::Mat &I, std::vector<DetectedFeatures2D> &output)
@@ -391,8 +392,8 @@ bool vpDetectorDNNOpenCV::detect(const cv::Mat &I, std::vector<DetectedFeatures2
 /*!
   Object detection using OpenCV DNN module.
 
-  \param I : Input image.
-  \param output : map where the name of the class is used as key and whose value is a vector of detected 2D features that belong to the class.
+  \param[in] I : Input image.
+  \param[out] output : Map where the name of the class is used as key and whose value is a vector of detected 2D features that belong to the class.
   \return false if there is no detection.
 */
 bool vpDetectorDNNOpenCV::detect(const cv::Mat &I, std::map< std::string, std::vector<DetectedFeatures2D>> &output)
@@ -447,8 +448,8 @@ bool vpDetectorDNNOpenCV::detect(const cv::Mat &I, std::map< std::string, std::v
 /*!
   Object detection using OpenCV DNN module.
 
-  \param I : Input image.
-  \param output : vector of pairs <name_of_the_class, vector_of_detections>
+  \param[in] I : Input image.
+  \param[out] output : Vector of pairs <name_of_the_class, vector_of_detections>.
   \return false if there is no detection.
 */
 bool vpDetectorDNNOpenCV::detect(const cv::Mat &I, std::vector< std::pair<std::string, std::vector<DetectedFeatures2D>>> &output)
@@ -487,7 +488,7 @@ std::vector<cv::String> vpDetectorDNNOpenCV::getOutputsNames()
   extract the data stored as a matrix.
   Then, perform Non-Maximum Suppression to remove overlapping detections.
 
-  \param[inout] proposals : Input/output that will contains all the detection candidates.
+  \param[in,out] proposals : Input/output that will contains all the detection candidates.
 */
 void vpDetectorDNNOpenCV::postProcess(DetectionCandidates &proposals)
 {
@@ -535,8 +536,8 @@ void vpDetectorDNNOpenCV::postProcess(DetectionCandidates &proposals)
  *  or equal to the average area x \b minRatioOfAreaOk. This method assumes that
  * \b detected_features contains detections of a single class.
  *
- * \param detected_features The original list of detected features, belonging to the same class.
- * \param minRatioOfAreaOk The minimum ratio of area a feature bounding box must reach to be kept
+ * \param[in] detected_features : The original list of detected features, belonging to the same class.
+ * \param[in] minRatioOfAreaOk : The minimum ratio of area a feature bounding box must reach to be kept
  * in the resulting list of features. Value between 0 and 1.0.
  * \return std::vector<vpDetectorDNNOpenCV::DetectedFeatures2D> The resulting list of features, that only contains the features
  * whose area is in the range [average area x \b minRatioOfAreaOk ; average area / \b minRatioOfAreaOk ].
@@ -570,9 +571,11 @@ vpDetectorDNNOpenCV::filterDetectionSingleClassInput(const std::vector<DetectedF
  * where the area of each detection belonging to one class is in the range
  * [average_area(class) x \b minRatioOfAreaOk ; average_area(class) / \b minRatioOfAreaOk ] .
  *
- * \param detected_features The original list of detected features, that can contains several classes.
- * \param minRatioOfAreaOk The minimum ratio of area a feature bounding box must reach to be kept in the resulting list of features. Value between 0 and 1.0.
- * \return std::vector<vpDetectorDNNOpenCV::DetectedFeatures2> The filtered list of features, ordered by \b vpDetectorDNNOpenCV::DetectedFeatures2D::m_cls in ascending order, where
+ * \param[in] detected_features : The original list of detected features, that can contains several classes.
+ * \param[in] minRatioOfAreaOk : The minimum ratio of area a feature bounding box must reach to be kept in the
+ * resulting list of features. Value between 0 and 1.0.
+ * \return std::vector<vpDetectorDNNOpenCV::DetectedFeatures2> The filtered list of features, ordered by
+ * \b vpDetectorDNNOpenCV::DetectedFeatures2D::m_cls in ascending order, where
  * only the features respecting the area criterion are kept.
  */
 std::vector<vpDetectorDNNOpenCV::DetectedFeatures2D>
@@ -621,9 +624,9 @@ vpDetectorDNNOpenCV::filterDetectionMultiClassInput(const std::vector<DetectedFe
     }
 
     /**
-     * \brief Increment the number of occurrences and the
+     * \brief Increment the number of occurrences.
      *
-     * \param feature
+     * \param feature : Detected feature.
      */
     void operator()(const DetectedFeatures2D &feature)
     {
@@ -687,8 +690,8 @@ vpDetectorDNNOpenCV::filterDetectionMultiClassInput(const std::map< std::string,
   of the center of the bbox with regard to the total width/height of the image.
 
   \param proposals : input/output that will contains all the detection candidates.
-  \param dnnRes: raw results of the \b vpDetectorDNNOpenCV::detect step.
-  \param netConfig: the configuration of the network, to know for instance the DNN input size.
+  \param dnnRes : raw results of the \b vpDetectorDNNOpenCV::detect step.
+  \param netConfig : the configuration of the network, to know for instance the DNN input size.
 */
 void vpDetectorDNNOpenCV::postProcess_YoloV3_V4(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig)
 {
@@ -731,8 +734,8 @@ void vpDetectorDNNOpenCV::postProcess_YoloV3_V4(DetectionCandidates &proposals, 
           int left = int(cx - 0.5 * w);
           int top = int(cy - 0.5 * h);
 
-          proposals.m_confidences.push_back((float)max_class_score);
-          proposals.m_boxes.push_back(cv::Rect(left, top, (int)(w), (int)(h)));
+          proposals.m_confidences.push_back(static_cast<float>(max_class_score));
+          proposals.m_boxes.push_back(cv::Rect(left, top, static_cast<int>(w), static_cast<int>(h)));
           proposals.m_classIds.push_back(class_idx);
         }
       }
@@ -750,14 +753,14 @@ void vpDetectorDNNOpenCV::postProcess_YoloV3_V4(DetectionCandidates &proposals, 
   [center_x; center_y; width; height; objectness; score_class_0; ...; score_last_class]
 
   \param proposals : input/output that will contains all the detection candidates.
-  \param dnnRes: raw results of the \b vpDetectorDNNOpenCV::detect step.
-  \param netConfig: the configuration of the network, to know for instance the DNN input size.
+  \param dnnRes : raw results of the \b vpDetectorDNNOpenCV::detect step.
+  \param netConfig : the configuration of the network, to know for instance the DNN input size.
 */
 void vpDetectorDNNOpenCV::postProcess_YoloV5_V7(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig)
 {
   // Compute the ratio between the original size of the image and the network size to translate network coordinates into
   // image coordinates
-  float ratioh = (float)m_img.rows / netConfig.m_inputSize.height, ratiow = (float)m_img.cols / netConfig.m_inputSize.width;
+  float ratioh = static_cast<float>(m_img.rows) / netConfig.m_inputSize.height, ratiow = static_cast<float>(m_img.cols) / netConfig.m_inputSize.width;
   size_t nbBatches = dnnRes.size();
 
   for (size_t i = 0; i < nbBatches; i++) {
@@ -796,8 +799,8 @@ void vpDetectorDNNOpenCV::postProcess_YoloV5_V7(DetectionCandidates &proposals, 
           int left = int(cx - 0.5 * w);
           int top = int(cy - 0.5 * h);
 
-          proposals.m_confidences.push_back((float)max_class_score);
-          proposals.m_boxes.push_back(cv::Rect(left, top, (int)(w), (int)(h)));
+          proposals.m_confidences.push_back(static_cast<float>(max_class_score));
+          proposals.m_boxes.push_back(cv::Rect(left, top, static_cast<int>(w), static_cast<int>(h)));
           proposals.m_classIds.push_back(class_idx);
         }
       }
@@ -815,15 +818,15 @@ void vpDetectorDNNOpenCV::postProcess_YoloV5_V7(DetectionCandidates &proposals, 
   [center_x; center_y; width; height; score_class_0; ...; score_last_class]^T
 
   \param proposals : input/output that will contains all the detection candidates.
-  \param dnnRes: raw results of the \b vpDetectorDNNOpenCV::detect step.
-  \param netConfig: the configuration of the network, to know for instance the DNN input size.
+  \param dnnRes : raw results of the \b vpDetectorDNNOpenCV::detect step.
+  \param netConfig : the configuration of the network, to know for instance the DNN input size.
 */
 void vpDetectorDNNOpenCV::postProcess_YoloV8_V11(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig)
 {
   // Code adapted from here: https://github.com/JustasBart/yolov8_CPP_Inference_OpenCV_ONNX/blob/minimalistic/inference.cpp
   // Compute the ratio between the original size of the image and the network size to translate network coordinates into
   // image coordinates
-  float ratioh = (float)m_img.rows / netConfig.m_inputSize.height, ratiow = (float)m_img.cols / netConfig.m_inputSize.width;
+  float ratioh = static_cast<float>(m_img.rows) / netConfig.m_inputSize.height, ratiow = static_cast<float>(m_img.cols) / netConfig.m_inputSize.width;
   size_t nbBatches = dnnRes.size();
 
   for (size_t i = 0; i < nbBatches; i++) {
@@ -859,8 +862,8 @@ void vpDetectorDNNOpenCV::postProcess_YoloV8_V11(DetectionCandidates &proposals,
         int left = int(cx - 0.5 * w);
         int top = int(cy - 0.5 * h);
 
-        proposals.m_confidences.push_back((float)max_class_score);
-        proposals.m_boxes.push_back(cv::Rect(left, top, (int)(w), (int)(h)));
+        proposals.m_confidences.push_back(static_cast<float>(max_class_score));
+        proposals.m_boxes.push_back(cv::Rect(left, top, static_cast<int>(w), static_cast<int>(h)));
         proposals.m_classIds.push_back(class_idx);
       }
 
@@ -878,8 +881,8 @@ void vpDetectorDNNOpenCV::postProcess_YoloV8_V11(DetectionCandidates &proposals,
   [batchId, classId, confidence, left, top, right, bottom]
 
   \param proposals : input/output that will contains all the detection candidates.
-  \param dnnRes: raw results of the \b vpDetectorDNNOpenCV::detect step.
-  \param netConfig: the configuration of the network, to know for instance the DNN input size.
+  \param dnnRes : raw results of the \b vpDetectorDNNOpenCV::detect step.
+  \param netConfig : the configuration of the network, to know for instance the DNN input size.
 */
 void vpDetectorDNNOpenCV::postProcess_FasterRCNN(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig)
 {
@@ -895,13 +898,13 @@ void vpDetectorDNNOpenCV::postProcess_FasterRCNN(DetectionCandidates &proposals,
     for (size_t i = 0; i < dnnRes[j].total(); i += 7) {
       float confidence = data[i + 2];
       if (confidence > netConfig.m_confThreshold) {
-        int left = (int)(data[i + 3] * m_img.cols);
-        int top = (int)(data[i + 4] * m_img.rows);
-        int right = (int)(data[i + 5] * m_img.cols);
-        int bottom = (int)(data[i + 6] * m_img.rows);
-        int classId = (int)(data[i + 1]);
+        int left = static_cast<int>(data[i + 3] * m_img.cols);
+        int top = static_cast<int>(data[i + 4] * m_img.rows);
+        int right = static_cast<int>(data[i + 5] * m_img.cols);
+        int bottom = static_cast<int>(data[i + 6] * m_img.rows);
+        int classId = static_cast<int>(data[i + 1]);
 
-        proposals.m_confidences.push_back((float)confidence);
+        proposals.m_confidences.push_back(static_cast<float>(confidence));
         proposals.m_boxes.push_back(cv::Rect(left, top, right - left + 1, bottom - top + 1));
         proposals.m_classIds.push_back(classId);
       }
@@ -920,8 +923,8 @@ void vpDetectorDNNOpenCV::postProcess_FasterRCNN(DetectionCandidates &proposals,
   where `N` is a number of detections and `C` is the number of classes (with `BACKGROUND` as classId = 0).
 
   \param proposals : input/output that will contains all the detection candidates.
-  \param dnnRes: raw results of the \b vpDetectorDNNOpenCV::detect step.
-  \param netConfig: the configuration of the network, to know for instance the DNN input size.
+  \param dnnRes : raw results of the \b vpDetectorDNNOpenCV::detect step.
+  \param netConfig : the configuration of the network, to know for instance the DNN input size.
 */
 void vpDetectorDNNOpenCV::postProcess_SSD_MobileNet(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig)
 {
@@ -957,10 +960,10 @@ void vpDetectorDNNOpenCV::postProcess_SSD_MobileNet(DetectionCandidates &proposa
     }
 
     if (maxScore > netConfig.m_confThreshold) {
-      int left = (int)(bbox[4 * i] * m_img.cols);
-      int top = (int)(bbox[4 * i + 1] * m_img.rows);
-      int right = (int)(bbox[4 * i + 2] * m_img.cols);
-      int bottom = (int)(bbox[4 * i + 3] * m_img.rows);
+      int left = static_cast<int>(bbox[4 * i] * m_img.cols);
+      int top = static_cast<int>(bbox[4 * i + 1] * m_img.rows);
+      int right = static_cast<int>(bbox[4 * i + 2] * m_img.cols);
+      int bottom = static_cast<int>(bbox[4 * i + 3] * m_img.rows);
       int width = right - left + 1;
       int height = bottom - top + 1;
 
@@ -981,8 +984,8 @@ void vpDetectorDNNOpenCV::postProcess_SSD_MobileNet(DetectionCandidates &proposa
   [batchId, classId, confidence, left, top, right, bottom]
 
   \param proposals : input/output that will contains all the detection candidates.
-  \param dnnRes: raw results of the \b vpDetectorDNNOpenCV::detect step.
-  \param netConfig: the configuration of the network, to know for instance the DNN input size.
+  \param dnnRes : raw results of the \b vpDetectorDNNOpenCV::detect step.
+  \param netConfig : the configuration of the network, to know for instance the DNN input size.
 */
 void vpDetectorDNNOpenCV::postProcess_ResNet_10(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig)
 {
@@ -996,13 +999,13 @@ void vpDetectorDNNOpenCV::postProcess_ResNet_10(DetectionCandidates &proposals, 
   for (size_t i = 0; i < dnnRes[0].total(); i += 7) {
     float confidence = data[i + 2];
     if (confidence > netConfig.m_confThreshold) {
-      int left = (int)(data[i + 3] * m_img.cols);
-      int top = (int)(data[i + 4] * m_img.rows);
-      int right = (int)(data[i + 5] * m_img.cols);
-      int bottom = (int)(data[i + 6] * m_img.rows);
-      int classId = (int)(data[i + 1]) - 1;
+      int left = static_cast<int>(data[i + 3] * m_img.cols);
+      int top = static_cast<int>(data[i + 4] * m_img.rows);
+      int right = static_cast<int>(data[i + 5] * m_img.cols);
+      int bottom = static_cast<int>(data[i + 6] * m_img.rows);
+      int classId = static_cast<int>(data[i + 1]) - 1;
 
-      proposals.m_confidences.push_back((float)confidence);
+      proposals.m_confidences.push_back(static_cast<float>(confidence));
       proposals.m_boxes.push_back(cv::Rect(left, top, right - left + 1, bottom - top + 1));
       proposals.m_classIds.push_back(classId);
     }
@@ -1014,8 +1017,8 @@ void vpDetectorDNNOpenCV::postProcess_ResNet_10(DetectionCandidates &proposals, 
   \b vpDetectorDNNOpenCV::NetConfig::m_parsingMethodType to \b USER_DEFINED but didn't set the parsing method.
 
   \param proposals : input/output that will contains all the detection candidates.
-  \param dnnRes: raw results of the \b vpDetectorDNNOpenCV::detect step.
-  \param netConfig: the configuration of the network, to know for instance the DNN input size.
+  \param dnnRes : raw results of the \b vpDetectorDNNOpenCV::detect step.
+  \param netConfig : the configuration of the network, to know for instance the DNN input size.
 */
 void vpDetectorDNNOpenCV::postProcess_unimplemented(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig)
 {
@@ -1061,7 +1064,7 @@ void vpDetectorDNNOpenCV::readNet(const std::string &model, const std::string &c
  * Configure the DNN (thresholds, input size, ...).
  * If the DNN weights file is known, initialize the \b m_net by reading the weights.
  *
- * \param config: the desired configuration of the network
+ * \param config : The desired configuration of the network.
  */
 void vpDetectorDNNOpenCV::setNetConfig(const NetConfig &config)
 {
@@ -1164,9 +1167,9 @@ void vpDetectorDNNOpenCV::setSwapRB(const bool &swapRB) { m_netConfig.m_swapRB =
 /*!
   Set the type of parsing method that must be used to interpret the raw results of the DNN detection.
 
-  \param typeParsingMethod: the type of parsing method that must be used to interpret the raw results of the DNN detection.
-  \param parsingMethod: if \b typeParsingMethod is equal to \b vpDetectorDNNOpenCV::USER_DEFINED , a function permitting to interpret the \b cv::Mat
-  resulting from the DNN inference.
+  \param typeParsingMethod : The type of parsing method that must be used to interpret the raw results of the DNN detection.
+  \param parsingMethod : If \b typeParsingMethod is equal to \b vpDetectorDNNOpenCV::USER_DEFINED , a function
+  permitting to interpret the \b cv::Mat resulting from the DNN inference.
 */
 void vpDetectorDNNOpenCV::setParsingMethod(const DNNResultsParsingType &typeParsingMethod, void (*parsingMethod)(DetectionCandidates &, std::vector<cv::Mat> &, const NetConfig &))
 {
@@ -1189,5 +1192,5 @@ void vpDetectorDNNOpenCV::setParsingMethod(const DNNResultsParsingType &typePars
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpDetectorDNNOpenCV.cpp.o) has no symbols
-void dummy_vpDetectorDNN() { };
+void dummy_vpDetectorDNN() { }
 #endif

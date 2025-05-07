@@ -203,7 +203,7 @@ protected:
   {
     //![Light creation]
     // Set lights
-    mSceneMgr->setAmbientLight(Ogre::ColourValue((float)0.6, (float)0.6, (float)0.6)); // Default value of lightning
+    mSceneMgr->setAmbientLight(Ogre::ColourValue(static_cast<float>(0.6), static_cast<float>(0.6), static_cast<float>(0.6))); // Default value of lightning
     Ogre::Light *light = mSceneMgr->createLight();
     light->setDiffuseColour(1.0, 1.0, 1.0);  // scaled RGB values
     light->setSpecularColour(1.0, 1.0, 1.0); // scaled RGB values
@@ -628,7 +628,7 @@ int main(int argc, const char **argv)
 
     //![Ogre initialization]
     // Create a vpAROgre object with color background
-    vpAROgreExample ogre(mcam, (unsigned int)grabber.getWidth(), (unsigned int)grabber.getHeight());
+    vpAROgreExample ogre(mcam, static_cast<unsigned int>(grabber.getWidth()), static_cast<unsigned int>(grabber.getHeight()));
     // Initialize it
     bool bufferedKeys = false, hidden = false;
     ogre.init(IC, bufferedKeys, hidden);
@@ -722,5 +722,5 @@ int main()
   std::cout << "- Install Ogre3D, configure again ViSP using cmake and build again this example" << std::endl;
 #endif
   return EXIT_SUCCESS;
-  }
+}
 #endif

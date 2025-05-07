@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -268,7 +268,7 @@ public:
   /** @name Inherited functionalities from vpMbKltTracker */
   //@{
 
-  void addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, double r, const std::string &name = "");
+  void addCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, double radius, const std::string &name = "");
   virtual void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                        const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false) VP_OVERRIDE;
   virtual void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,

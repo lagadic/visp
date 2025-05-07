@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -539,7 +539,10 @@ protected:
    * tangent to the curve and the u axis. This angle is used for tracking the
    * vpMeSite.
    *
-   * \param u,v : The point belonging to the ellipse where the angle is computed.
+   * \param[in] u : The coordinate along the x-axis (horizontal) of the point belonging to the ellipse where the angle is
+   * computed.
+   * \param[in] v : The coordinate along the y-axis (vertical) of the point belonging to the ellipse where the angle is
+   * computed.
    */
   double computeTheta(double u, double v) const;
 
