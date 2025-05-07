@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +31,8 @@
  * Model-based tracker using depth dense features.
  */
 
-#ifndef _vpMbDepthDenseTracker_h_
-#define _vpMbDepthDenseTracker_h_
+#ifndef VP_MBT_DEPTH_DENSE_TRACKER_H
+#define VP_MBT_DEPTH_DENSE_TRACKER_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpPlane.h>
@@ -49,7 +49,9 @@ class VISP_EXPORT vpMbDepthDenseTracker : public virtual vpMbTracker
 {
 public:
   vpMbDepthDenseTracker();
+  vpMbDepthDenseTracker(const vpMbDepthDenseTracker &tracker);
   virtual ~vpMbDepthDenseTracker() VP_OVERRIDE;
+  vpMbDepthDenseTracker &operator=(const vpMbDepthDenseTracker &tracker);
 
   virtual void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                        const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false) VP_OVERRIDE;
