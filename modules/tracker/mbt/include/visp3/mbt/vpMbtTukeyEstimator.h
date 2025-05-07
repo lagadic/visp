@@ -356,7 +356,7 @@ inline void vpMbtTukeyEstimator<double>::MEstimator(const std::vector<double> &r
  */
 template <typename T> void vpMbtTukeyEstimator<T>::psiTukey(const T sig, std::vector<T> &x, vpColVector &weights)
 {
-  double C = sig * 4.6851;
+  double C = static_cast<double>(sig) * 4.6851;
 
   // Here we consider that sig cannot be equal to 0
   for (unsigned int i = 0; i < static_cast<unsigned int>(x.size()); i++) {
