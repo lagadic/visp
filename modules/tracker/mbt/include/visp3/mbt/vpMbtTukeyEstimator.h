@@ -144,7 +144,7 @@ inline __m128 abs_ps(__m128 x)
 template <typename T> T vpMbtTukeyEstimator<T>::getMedian(std::vector<T> &vec)
 {
   // Not the exact median when even number of elements
-  int index = static_cast<int>(ceil(vec.size() / 2.0)) - 1;
+  int index = static_cast<int>(ceil(static_cast<double>(vec.size()) / 2.0)) - 1;
   std::nth_element(vec.begin(), vec.begin() + index, vec.end());
   return vec[index];
 }
