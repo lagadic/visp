@@ -186,7 +186,7 @@ void vpMbtTukeyEstimator<T>::MEstimator_impl(const std::vector<T> &residues, std
   T normmedian = getMedian(m_residues);
 
   // 1.48 keeps scale estimate consistent for a normal probability dist.
-  T sigma = static_cast<T>(1.4826 * normmedian); // median Absolute Deviation
+  T sigma = static_cast<T>(1.4826) * normmedian; // median Absolute Deviation
 
   // Set a minimum threshold for sigma
   // (when sigma reaches the level of noise in the image)
@@ -458,13 +458,14 @@ template <class T> void vpMbtTukeyEstimator<T>::psiTukey(const T sig, std::vecto
 {
   T C = static_cast<T>(4.6851) * sig;
   weights.resize(x.size());
+  T one = static_cast<T>(1.);
 
   // Here we consider that sig cannot be equal to 0
   for (size_t i = 0; i < x.size(); i++) {
     T xi = x[i] / C;
     xi *= xi;
 
-    if (xi > 1.) {
+    if (xi > one) {
       weights[i] = 0;
     }
     else {
