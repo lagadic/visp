@@ -168,7 +168,7 @@ std::istream &safeGetline(std::istream &is, std::string &t)
       return is;
     }
     else { // default case
-      t += (char)c;
+      t += static_cast<char>(c);
     }
   }
 }

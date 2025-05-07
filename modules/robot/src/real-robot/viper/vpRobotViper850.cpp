@@ -80,7 +80,7 @@ const double vpRobotViper850::m_defaultPositioningVelocity = 15.0;
 */
 void emergencyStopViper850(int signo)
 {
-  std::cout << "Stop the Viper850 application by signal (" << signo << "): " << (char)7;
+  std::cout << "Stop the Viper850 application by signal (" << signo << "): " << static_cast<char>(7);
   switch (signo) {
   case SIGINT:
     std::cout << "SIGINT (stop by ^C) " << std::endl;

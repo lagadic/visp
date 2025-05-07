@@ -79,7 +79,7 @@ const double vpRobotAfma4::defaultPositioningVelocity = 15.0;
 */
 void emergencyStopAfma4(int signo)
 {
-  std::cout << "Stop the Afma4 application by signal (" << signo << "): " << (char)7;
+  std::cout << "Stop the Afma4 application by signal (" << signo << "): " << static_cast<char>(7);
   switch (signo) {
   case SIGINT:
     std::cout << "SIGINT (stop by ^C) " << std::endl;
