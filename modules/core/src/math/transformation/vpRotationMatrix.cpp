@@ -173,11 +173,15 @@ vpRotationMatrix &vpRotationMatrix::operator=(const vpMatrix &M)
       (*this)[i][j] = M[i][j];
     }
   }
-
-  if (isARotationMatrix() == false) {
-    throw(vpException(vpException::fatalError, "Cannot set a rotation matrix "
-                      "from a matrix that is not a "
-                      "rotation matrix"));
+  if (!isARotationMatrix()) {
+    if (isARotationMatrix(1e-3)) {
+      orthogonalize();
+    }
+    else {
+      throw(vpException(vpException::fatalError, "Cannot set a rotation matrix "
+                        "from a matrix that is not a "
+                        "rotation matrix"));
+    }
   }
 
   return *this;
