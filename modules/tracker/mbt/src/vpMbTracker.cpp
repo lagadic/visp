@@ -207,6 +207,79 @@ vpMbTracker::vpMbTracker()
   vpImageFilter::getSobelKernelY(m_SobelY.data, m_projectionErrorKernelSize);
 }
 
+/*!
+ * Copy constructor.
+ * @param tracker : Tracker to copy.
+ */
+vpMbTracker::vpMbTracker(const vpMbTracker &tracker)
+{
+  *this = tracker;
+}
+
+/*!
+ * Copy operator.
+ * @param tracker : Tracker to copy.
+ */
+vpMbTracker &vpMbTracker::operator=(const vpMbTracker &tracker)
+{
+  m_cam = tracker.m_cam;
+  m_cMo = tracker.m_cMo;
+  oJo = tracker.m_oJo;
+  m_isoJoIdentity = tracker.m_isoJoIdentity;
+  modelFileName = tracker.modelFileName;
+  modelInitialised = tracker.modelInitialised;
+  poseSavingFilename = tracker.poseSavingFilename;
+  computeCovariance = tracker.computeCovariance;
+  covarianceMatrix = tracker.covarianceMatrix;
+  computeProjError = tracker.computeProjError;
+  projectionError = tracker.projectionError;
+  displayFeatures = tracker.displayFeatures;
+  m_optimizationMethod = tracker.m_optimizationMethod;
+  faces = tracker.faces;
+  angleAppears = tracker.angleAppears;
+  angleDisappears = tracker.angleDisappears;
+  distNearClip = tracker.distNearClip;
+  distFarClip = tracker.distFarClip;
+  clippingFlag = tracker.clippingFlag;
+  useOgre = tracker.useOgre;
+  ogreShowConfigDialog = tracker.ogreShowConfigDialog;
+  useScanLine = tracker.useScanLine;
+  nbPoints = tracker.nbPoints;
+  nbLines = tracker.nbLines;
+  nbPolygonLines = tracker.nbPolygonLines;
+  nbPolygonPoints = tracker.nbPolygonPoints;
+  nbCylinders = tracker.nbCylinders;
+  nbCircles = tracker.nbCircles;
+  useLodGeneral = tracker.useLodGeneral;
+  applyLodSettingInConfig = tracker.applyLodSettingInConfig;
+  minLineLengthThresholdGeneral = tracker.minLineLengthThresholdGeneral;
+  minPolygonAreaThresholdGeneral = tracker.minPolygonAreaThresholdGeneral;
+  mapOfParameterNames = tracker.mapOfParameterNames;
+  m_computeInteraction = tracker.m_computeInteraction;
+  m_lambda = tracker.m_lambda;
+  m_maxIter = tracker.m_maxIter;
+  m_stopCriteriaEpsilon = tracker.m_stopCriteriaEpsilon;
+  m_initialMu = tracker.m_initialMu;
+  m_projectionErrorLines = tracker.m_projectionErrorLines;
+  m_projectionErrorCylinders = tracker.m_projectionErrorCylinders;
+  m_projectionErrorCircles = tracker.m_projectionErrorCircles;
+  m_projectionErrorFaces = tracker.m_projectionErrorFaces;
+  m_projectionErrorOgreShowConfigDialog = tracker.;
+  m_projectionErrorMe = tracker.m_projectionErrorMe;
+  m_projectionErrorKernelSize = tracker.m_projectionErrorKernelSize;
+  m_SobelX = tracker.m_SobelX;
+  m_SobelY = tracker.m_SobelY;
+  m_projectionErrorDisplay = tracker.m_projectionErrorDisplay;
+  m_projectionErrorDisplayLength = tracker.m_projectionErrorDisplayLength;
+  m_projectionErrorDisplayThickness = tracker.m_projectionErrorDisplayThickness;
+  m_projectionErrorCam = tracker.m_projectionErrorCam;
+  m_mask = tracker.m_mask;
+  m_I = tracker.m_I;
+  m_sodb_init_called = tracker.m_sodb_init_called;
+  m_rand = tracker.m_rand;
+  return *this;
+}
+
 vpMbTracker::~vpMbTracker()
 {
   for (std::vector<vpMbtDistanceLine *>::const_iterator it = m_projectionErrorLines.begin();

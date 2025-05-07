@@ -69,7 +69,7 @@ void vpMbtMeEllipse::computeProjectionError(const vpImage<unsigned char> &I, dou
   sumErrorRad = 0;
   nbFeatures = 0;
 
-  double offset = static_cast<double>(std::floor(SobelX.getRows() / 2.0f));
+  double offset = static_cast<double>(std::floor(static_cast<double>(SobelX.getRows()) / 2.0));
   int height = static_cast<int>(I.getHeight());
   int width = static_cast<int>(I.getWidth());
 
