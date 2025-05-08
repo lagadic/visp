@@ -60,20 +60,46 @@ vpMeEllipse::vpMeEllipse()
 }
 
 vpMeEllipse::vpMeEllipse(const vpMeEllipse &me_ellipse)
-  : vpMeTracker(me_ellipse), m_K(me_ellipse.m_K), m_iPc(me_ellipse.m_iPc), m_a(me_ellipse.m_a), m_b(me_ellipse.m_b), m_e(me_ellipse.m_e),
-  m_iP1(me_ellipse.m_iP1), m_iP2(me_ellipse.m_iP2), m_alpha1(me_ellipse.m_alpha1), m_alpha2(me_ellipse.m_alpha2), m_ce(me_ellipse.m_ce),
-  m_se(me_ellipse.m_se), m_angleList(me_ellipse.m_angleList), m_m00(me_ellipse.m_m00),
-  m_thresholdWeight(me_ellipse.m_thresholdWeight),
-  m_alphamin(me_ellipse.m_alphamin), m_alphamax(me_ellipse.m_alphamax), m_uc(me_ellipse.m_uc), m_vc(me_ellipse.m_vc),
-  m_n20(me_ellipse.m_n20), m_n11(me_ellipse.m_n11), m_n02(me_ellipse.m_n02),
-  m_expectedDensity(me_ellipse.m_expectedDensity), m_numberOfGoodPoints(me_ellipse.m_numberOfGoodPoints),
-  m_trackCircle(me_ellipse.m_trackCircle), m_trackArc(me_ellipse.m_trackArc), m_arcEpsilon(me_ellipse.m_arcEpsilon)
-{ }
+  : vpMeTracker(me_ellipse)
+{
+  *this = me_ellipse;
+}
 
 vpMeEllipse::~vpMeEllipse()
 {
   m_meList.clear();
   m_angleList.clear();
+}
+
+vpMeEllipse &vpMeEllipse::operator=(const vpMeEllipse &me_ellipse)
+{
+  m_K = me_ellipse.m_K;
+  m_iPc = me_ellipse.m_iPc;
+  m_a = me_ellipse.m_a;
+  m_b = me_ellipse.m_b;
+  m_e = me_ellipse.m_e;
+  m_iP1 = me_ellipse.m_iP1;
+  m_iP2 = me_ellipse.m_iP2;
+  m_alpha1 = me_ellipse.m_alpha1;
+  m_alpha2 = me_ellipse.m_alpha2; m_ce = me_ellipse.m_ce;
+  m_se = me_ellipse.m_se;
+  m_angleList = me_ellipse.m_angleList;
+  m_m00 = me_ellipse.m_m00;
+  m_thresholdWeight = me_ellipse.m_thresholdWeight;
+  m_alphamin = me_ellipse.m_alphamin;
+  m_alphamax = me_ellipse.m_alphamax;
+  m_uc = me_ellipse.m_uc;
+  m_vc = me_ellipse.m_vc;
+  m_n20 = me_ellipse.m_n20;
+  m_n11 = me_ellipse.m_n11;
+  m_n02 = me_ellipse.m_n02;
+  m_expectedDensity = me_ellipse.m_expectedDensity;
+  m_numberOfGoodPoints = me_ellipse.m_numberOfGoodPoints;
+  m_trackCircle = me_ellipse.m_trackCircle;
+  m_trackArc = me_ellipse.m_trackArc;
+  m_arcEpsilon = me_ellipse.m_arcEpsilon;
+
+  return *this;
 }
 
 double vpMeEllipse::computeTheta(const vpImagePoint &iP) const

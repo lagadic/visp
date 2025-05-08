@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -890,7 +890,7 @@ NLOHMANN_JSON_SERIALIZE_ENUM(vpMbGenericTracker::vpTrackerType, {
 inline void to_json(nlohmann::json &j, const vpMbGenericTracker::TrackerWrapper &t)
 {
   // Common tracker attributes
-  const static std::vector<vpMbGenericTracker::vpTrackerType> trackerTypes = {
+  VP_ATTRIBUTE_NO_DESTROY const static std::vector<vpMbGenericTracker::vpTrackerType> trackerTypes = {
     vpMbGenericTracker::EDGE_TRACKER,
     #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
     vpMbGenericTracker::KLT_TRACKER,

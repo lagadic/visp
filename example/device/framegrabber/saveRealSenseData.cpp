@@ -231,12 +231,10 @@ bool getOptions(int argc, const char *argv[], bool &save, std::string &pattern, 
     case 'h':
       usage(argv[0], nullptr, stream_fps);
       return false;
-      break;
 
     default:
       usage(argv[0], optarg, stream_fps);
       return false;
-      break;
     }
   }
 

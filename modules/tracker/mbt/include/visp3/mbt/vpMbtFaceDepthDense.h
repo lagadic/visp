@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +29,10 @@
  *
  * Description:
  * Manage depth dense features for a particular face.
- *
-*****************************************************************************/
+ */
 
-#ifndef _vpMbtFaceDepthDense_h_
-#define _vpMbtFaceDepthDense_h_
+#ifndef VP_MBT_FACE_DEPTH_DENSE_H
+#define VP_MBT_FACE_DEPTH_DENSE_H
 
 #include <iostream>
 
@@ -84,7 +82,9 @@ public:
   bool m_useScanLine;
 
   vpMbtFaceDepthDense();
+  vpMbtFaceDepthDense(const vpMbtFaceDepthDense &mbt_face);
   virtual ~vpMbtFaceDepthDense();
+  vpMbtFaceDepthDense &operator=(const vpMbtFaceDepthDense &mbt_face);
 
   void addLine(vpPoint &p1, vpPoint &p2, vpMbHiddenFaces<vpMbtPolygon> *const faces, vpUniRand &rand_gen,
                int polygon = -1, std::string name = "");

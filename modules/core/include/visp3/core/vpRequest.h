@@ -230,7 +230,7 @@ template <typename T> void vpRequest::addParameterObject(T *params, const int &s
   if (sizeOfObject != 0) {
     char *tempS = new char[sizeOfObject];
     memcpy((void *)tempS, (void *)params, sizeOfObject);
-    std::string returnVal(tempS, (size_t)sizeOfObject);
+    std::string returnVal(tempS, static_cast<size_t>(sizeOfObject));
 
     listOfParams.push_back(returnVal);
 

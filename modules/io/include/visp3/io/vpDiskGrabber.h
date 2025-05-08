@@ -129,6 +129,11 @@ public:
   vpDiskGrabber();
 
   /*!
+   * Copy constructor.
+   */
+  vpDiskGrabber(const vpDiskGrabber &grabber);
+
+  /*!
    * Constructor that takes a generic image sequence as input.
    */
   VP_EXPLICIT vpDiskGrabber(const std::string &genericName);
@@ -138,6 +143,11 @@ public:
    * In fact nothing to destroy...
    */
   virtual ~vpDiskGrabber() VP_OVERRIDE { }
+
+  /*!
+   * Copy operator.
+   */
+  vpDiskGrabber &operator=(const vpDiskGrabber &grabber);
 
   /*!
    * Constructor.
@@ -150,7 +160,7 @@ public:
    * \param ext : Extension of the image file.
    */
   VP_EXPLICIT vpDiskGrabber(const std::string &dir, const std::string &basename, long number, int step, unsigned int noz,
-                         const std::string &ext);
+                            const std::string &ext);
 
   /*!
    * Acquire an image reading the next image from the disk.

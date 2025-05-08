@@ -81,6 +81,8 @@ typedef union Vp32suf
 #endif
 #endif
 
+void emitWarning(const std::string &message);
+
 void emitWarning(const std::string &message)
 {
   std::cerr << "\033[0;31m";

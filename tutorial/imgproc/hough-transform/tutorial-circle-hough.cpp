@@ -24,6 +24,10 @@ using namespace VISP_NAMESPACE_NAME;
 
 bool run_detection(const vpImage<unsigned char> &I_src, vpImage<vpRGBa> &I_disp, vpImage<vpRGBa> &I_dispCanny,
                    vpCircleHoughTransform &detector, const int &nbCirclesToDetect, const bool &blockingMode,
+                   const bool &displayCanny);
+
+bool run_detection(const vpImage<unsigned char> &I_src, vpImage<vpRGBa> &I_disp, vpImage<vpRGBa> &I_dispCanny,
+                   vpCircleHoughTransform &detector, const int &nbCirclesToDetect, const bool &blockingMode,
                    const bool &displayCanny)
 {
   double t0 = vpTime::measureTimeMicros();

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Model-based tracker using depth dense features.
- *
-*****************************************************************************/
+ */
 
 #include <iostream>
 
@@ -53,8 +51,11 @@
 #endif
 
 BEGIN_VISP_NAMESPACE
-vpMbDepthDenseTracker::vpMbDepthDenseTracker()
-  : m_depthDenseHiddenFacesDisplay(), m_depthDenseListOfActiveFaces(), m_denseDepthNbFeatures(0), m_depthDenseFaces(),
+/*!
+ * Default constructor.
+ */
+  vpMbDepthDenseTracker::vpMbDepthDenseTracker()
+  : vpMbTracker(), m_depthDenseHiddenFacesDisplay(), m_depthDenseListOfActiveFaces(), m_denseDepthNbFeatures(0), m_depthDenseFaces(),
   m_depthDenseSamplingStepX(2), m_depthDenseSamplingStepY(2), m_error_depthDense(), m_L_depthDense(),
   m_robust_depthDense(), m_w_depthDense(), m_weightedError_depthDense()
 #if DEBUG_DISPLAY_DEPTH_DENSE
@@ -71,6 +72,39 @@ vpMbDepthDenseTracker::vpMbDepthDenseTracker()
 #elif defined(VISP_HAVE_GDI) && DEBUG_DISPLAY_DEPTH_DENSE
   m_debugDisp_depthDense = new vpDisplayGDI;
 #endif
+}
+
+/*!
+ * Copy constructor.
+ */
+vpMbDepthDenseTracker::vpMbDepthDenseTracker(const vpMbDepthDenseTracker &tracker) : vpMbTracker(tracker)
+{
+  *this = tracker;
+}
+
+/*!
+ * Copy operator.
+ */
+vpMbDepthDenseTracker &vpMbDepthDenseTracker::operator=(const vpMbDepthDenseTracker &tracker)
+{
+  m_depthDenseHiddenFacesDisplay = tracker.m_depthDenseHiddenFacesDisplay;
+  m_depthDenseListOfActiveFaces = tracker.m_depthDenseListOfActiveFaces;
+  m_denseDepthNbFeatures = tracker.m_denseDepthNbFeatures;
+  m_depthDenseFaces = tracker.m_depthDenseFaces;
+  m_depthDenseSamplingStepX = tracker.m_depthDenseSamplingStepX;
+  m_depthDenseSamplingStepY = tracker.m_depthDenseSamplingStepY;
+  m_error_depthDense = tracker.m_error_depthDense;
+  m_L_depthDense = tracker.m_L_depthDense;
+  m_robust_depthDense = tracker.m_robust_depthDense;
+  m_w_depthDense = tracker.m_w_depthDense;
+  m_weightedError_depthDense = tracker.m_weightedError_depthDense;
+
+#if DEBUG_DISPLAY_DEPTH_DENSE
+  m_debugDisp_depthDense = tracker.m_debugDisp_depthDense;
+  m_debugImage_depthDense = tracker.m_debugImage_depthDense;
+#endif
+
+  return *this;
 }
 
 vpMbDepthDenseTracker::~vpMbDepthDenseTracker()

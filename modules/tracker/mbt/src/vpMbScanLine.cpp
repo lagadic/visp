@@ -134,7 +134,7 @@ void vpMbScanLine::drawLineY(const vpColVector &a, const vpColVector &b, const v
     return;
 
   const unsigned int _y0 = std::max<unsigned int>(static_cast<unsigned int>(0), static_cast<unsigned int>(std::ceil(y0)));
-  const double _y1 = std::min<double>((double)h, (double)y1);
+  const double _y1 = std::min<double>(static_cast<double>(h), static_cast<double>(y1));
 
   const bool b_sample_Y = (std::fabs(y0 - y1) > std::fabs(x0 - x1));
 
@@ -183,7 +183,7 @@ void vpMbScanLine::drawLineX(const vpColVector &a, const vpColVector &b, const v
     return;
 
   const unsigned int _x0 = std::max<unsigned int>(static_cast<unsigned int>(0), static_cast<unsigned int>(std::ceil(x0)));
-  const double _x1 = std::min<double>((double)w, (double)x1);
+  const double _x1 = std::min<double>(static_cast<double>(w), static_cast<double>(x1));
 
   const bool b_sample_Y = (std::fabs(y0 - y1) > std::fabs(x0 - x1));
 
@@ -409,7 +409,7 @@ void vpMbScanLine::drawScene(const std::vector<std::vector<std::pair<vpPoint, un
         // This part will only be used for MbKltTracking
         if (last_ID != -1) {
           const unsigned int x0 = std::max<unsigned int>(static_cast<unsigned int>(0), static_cast<unsigned int>(std::ceil(last_visible.p)));
-          double x1 = std::min<double>((double)w, (double)s.p);
+          double x1 = std::min<double>(static_cast<double>(w), static_cast<double>(s.p));
           for (unsigned int x = x0 + maskBorder; x < x1 - maskBorder; ++x) {
             primitive_ids[static_cast<unsigned int>(y)][static_cast<unsigned int>(x)] = last_visible.ID;
 
@@ -484,7 +484,7 @@ void vpMbScanLine::drawScene(const std::vector<std::vector<std::pair<vpPoint, un
         // This part will only be used for MbKltTracking
         if (maskBorder != 0 && last_ID != -1) {
           const unsigned int y0 = std::max<unsigned int>(static_cast<unsigned int>(0), static_cast<unsigned int>(std::ceil(last_visible.p)));
-          double y1 = std::min<double>((double)h, (double)s.p);
+          double y1 = std::min<double>(static_cast<double>(h), static_cast<double>(s.p));
           for (unsigned int y = y0 + maskBorder; y < y1 - maskBorder; ++y) {
             // primitive_ids[static_cast<unsigned int>(y)][static_cast<unsigned int>(x)] =
             // last_visible.ID;

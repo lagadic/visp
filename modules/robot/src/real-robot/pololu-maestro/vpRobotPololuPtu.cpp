@@ -134,19 +134,15 @@ void vpRobotPololuPtu::setPosition(const vpRobot::vpControlFrameType frame, cons
   case vpRobot::CAMERA_FRAME:
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot move the robot in camera frame: "
                                                               "not implemented");
-    break;
   case vpRobot::REFERENCE_FRAME:
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot move the robot in reference frame: "
                                                               "not implemented");
-    break;
   case vpRobot::MIXT_FRAME:
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot move the robot in mixt frame: "
                                                               "not implemented");
-    break;
   case vpRobot::END_EFFECTOR_FRAME:
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot move the robot in end-effector frame: "
                                                               "not implemented");
-    break;
   case vpRobot::JOINT_STATE:
     break;
   }
@@ -269,19 +265,15 @@ void vpRobotPololuPtu::getPosition(const vpRobot::vpControlFrameType frame, vpCo
   case vpRobot::CAMERA_FRAME:
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot get position in camera frame: "
                                                               "not implemented");
-    break;
   case vpRobot::REFERENCE_FRAME:
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot get position in reference frame: "
                                                               "not implemented");
-    break;
   case vpRobot::MIXT_FRAME:
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot get position in mixt frame: "
                                                               "not implemented");
-    break;
   case vpRobot::END_EFFECTOR_FRAME:
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot get position in end-effector frame: "
                                                               "not implemented");
-    break;
   case vpRobot::JOINT_STATE:
     break;
   }

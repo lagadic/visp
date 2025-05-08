@@ -149,7 +149,7 @@ void vpServo::setServo(const vpServoType &servo_type)
     vpMatrix _eJe;
     _eJe.eye(6);
     set_eJe(_eJe);
-  };
+  }
 }
 
 void vpServo::setCameraDoF(const vpColVector &dof)
@@ -657,7 +657,6 @@ bool vpServo::testInitialization()
     if (!init_fJe)
       vpERROR_TRACE("fJe not initialized");
     return (init_cVf && init_fJe);
-    break;
   }
 
   return false;
@@ -676,27 +675,22 @@ bool vpServo::testUpdated()
     if (!init_eJe)
       vpERROR_TRACE("eJe not updated");
     return (init_eJe);
-    break;
   case EYETOHAND_L_cVe_eJe:
     if (!init_cVe)
       vpERROR_TRACE("cVe not updated");
     if (!init_eJe)
       vpERROR_TRACE("eJe not updated");
     return (init_cVe && init_eJe);
-    break;
   case EYETOHAND_L_cVf_fVe_eJe:
     if (!init_fVe)
       vpERROR_TRACE("fVe not updated");
     if (!init_eJe)
       vpERROR_TRACE("eJe not updated");
     return (init_fVe && init_eJe);
-    break;
-
   case EYETOHAND_L_cVf_fJe:
     if (!init_fJe)
       vpERROR_TRACE("fJe not updated");
     return (init_fJe);
-    break;
   }
 
   return false;
@@ -724,7 +718,6 @@ vpColVector vpServo::computeControlLaw()
   case NONE:
     vpERROR_TRACE("No control law have been yet defined");
     throw(vpServoException(vpServoException::servoError, "No control law have been yet defined"));
-    break;
   case EYEINHAND_CAMERA:
   case EYEINHAND_L_cVe_eJe:
   case EYETOHAND_L_cVe_eJe:
@@ -956,7 +949,6 @@ vpColVector vpServo::computeControlLaw(double t, const vpColVector &e_dot_init)
   case NONE:
     vpERROR_TRACE("No control law have been yet defined");
     throw(vpServoException(vpServoException::servoError, "No control law have been yet defined"));
-    break;
   case EYEINHAND_CAMERA:
   case EYEINHAND_L_cVe_eJe:
   case EYETOHAND_L_cVe_eJe:

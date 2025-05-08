@@ -56,6 +56,8 @@
 #elif (defined(__ARM_NEON__) || defined (__ARM_NEON)) && defined(__aarch64__)
 #include <arm_neon.h>
 #define VISP_HAVE_NEON 1
+#else
+#define VISP_HAVE_NEON 0
 #endif
 
 #define USE_SIMD_CODE 1
@@ -170,7 +172,11 @@ inline float64x2_t v_fma(const float64x2_t &a, const float64x2_t &b, const float
 #endif // !USE_OPENCV_HAL && (USE_SSE || USE_NEON)
 
 BEGIN_VISP_NAMESPACE
-vpMbtFaceDepthDense::vpMbtFaceDepthDense()
+
+/*!
+ * Default constructor.
+ */
+  vpMbtFaceDepthDense::vpMbtFaceDepthDense()
   : m_cam(), m_clippingFlag(vpPolygon3D::NO_CLIPPING), m_distFarClip(100), m_distNearClip(0.001), m_hiddenFace(nullptr),
   m_planeObject(), m_polygon(nullptr), m_useScanLine(false),
   m_depthDenseFilteringMethod(DEPTH_OCCUPANCY_RATIO_FILTERING), m_depthDenseFilteringMaxDist(3.0),
@@ -178,6 +184,45 @@ vpMbtFaceDepthDense::vpMbtFaceDepthDense()
   m_isVisible(false), m_listOfFaceLines(), m_planeCamera(), m_pointCloudFace(), m_polygonLines()
 { }
 
+/*!
+ * Copy constructor.
+ * @param mbt_face : MBT face to copy.
+ */
+vpMbtFaceDepthDense::vpMbtFaceDepthDense(const vpMbtFaceDepthDense &mbt_face)
+{
+  *this = mbt_face;
+}
+
+/*!
+ * Copy operator.
+ * @param mbt_face : MBT face to copy.
+ */
+vpMbtFaceDepthDense &vpMbtFaceDepthDense::operator=(const vpMbtFaceDepthDense &mbt_face)
+{
+  m_cam = mbt_face.m_cam;
+  m_clippingFlag = mbt_face.m_clippingFlag;
+  m_distFarClip = mbt_face.m_distFarClip;
+  m_distNearClip = mbt_face.m_distNearClip;
+  m_hiddenFace = mbt_face.m_hiddenFace;
+  m_planeObject = mbt_face.m_planeObject;
+  m_polygon = mbt_face.m_polygon;
+  m_useScanLine = mbt_face.m_useScanLine;
+  m_depthDenseFilteringMethod = mbt_face.m_depthDenseFilteringMethod;
+  m_depthDenseFilteringMaxDist = mbt_face.m_depthDenseFilteringMaxDist;
+  m_depthDenseFilteringMinDist = mbt_face.m_depthDenseFilteringMinDist;
+  m_depthDenseFilteringOccupancyRatio = mbt_face.m_depthDenseFilteringOccupancyRatio;
+  m_isTrackedDepthDenseFace = mbt_face.m_isTrackedDepthDenseFace;
+  m_isVisible = mbt_face.m_isVisible;
+  m_listOfFaceLines = mbt_face.m_listOfFaceLines;
+  m_planeCamera = mbt_face.m_planeCamera;
+  m_pointCloudFace = mbt_face.m_pointCloudFace;
+  m_polygonLines = mbt_face.m_polygonLines;
+  return *this;
+}
+
+/*!
+ * Destructor.
+ */
 vpMbtFaceDepthDense::~vpMbtFaceDepthDense()
 {
   for (size_t i = 0; i < m_listOfFaceLines.size(); i++) {
@@ -303,9 +348,9 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
   vpRect bb = polygon_2d.getBoundingBox();
 
   unsigned int top = static_cast<unsigned int>(std::max<double>(0.0, bb.getTop()));
-  unsigned int bottom = static_cast<unsigned int>(std::min<double>((double)height, std::max<double>(0.0, bb.getBottom())));
+  unsigned int bottom = static_cast<unsigned int>(std::min<double>(static_cast<double>(height), std::max<double>(0.0, bb.getBottom())));
   unsigned int left = static_cast<unsigned int>(std::max<double>(0.0, bb.getLeft()));
-  unsigned int right = static_cast<unsigned int>(std::min<double>((double)width, std::max<double>(0.0, bb.getRight())));
+  unsigned int right = static_cast<unsigned int>(std::min<double>(static_cast<double>(width), std::max<double>(0.0, bb.getRight())));
 
   bb.setTop(top);
   bb.setBottom(bottom);
@@ -316,7 +361,7 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
     return false;
   }
 
-  m_pointCloudFace.reserve((size_t)(bb.getWidth() * bb.getHeight()));
+  m_pointCloudFace.reserve(static_cast<size_t>(bb.getWidth() * bb.getHeight()));
 
   int totalTheoreticalPoints = 0, totalPoints = 0;
   for (unsigned int i = top; i < bottom; i += stepY) {
@@ -343,7 +388,7 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
   }
 
   if (totalPoints == 0 || ((m_depthDenseFilteringMethod & DEPTH_OCCUPANCY_RATIO_FILTERING) &&
-                           totalPoints / (double)totalTheoreticalPoints < m_depthDenseFilteringOccupancyRatio)) {
+                           totalPoints / static_cast<double>(totalTheoreticalPoints) < m_depthDenseFilteringOccupancyRatio)) {
     return false;
   }
 
@@ -393,16 +438,16 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
   vpRect bb = polygon_2d.getBoundingBox();
 
   unsigned int top = static_cast<unsigned int>(std::max<double>(0.0, bb.getTop()));
-  unsigned int bottom = static_cast<unsigned int>(std::min<double>((double)height, std::max<double>(0.0, bb.getBottom())));
+  unsigned int bottom = static_cast<unsigned int>(std::min<double>(static_cast<double>(height), std::max<double>(0.0, bb.getBottom())));
   unsigned int left = static_cast<unsigned int>(std::max<double>(0.0, bb.getLeft()));
-  unsigned int right = static_cast<unsigned int>(std::min<double>((double)width, std::max<double>(0.0, bb.getRight())));
+  unsigned int right = static_cast<unsigned int>(std::min<double>(static_cast<double>(width), std::max<double>(0.0, bb.getRight())));
 
   bb.setTop(top);
   bb.setBottom(bottom);
   bb.setLeft(left);
   bb.setRight(right);
 
-  m_pointCloudFace.reserve((size_t)(bb.getWidth() * bb.getHeight()));
+  m_pointCloudFace.reserve(static_cast<size_t>(bb.getWidth() * bb.getHeight()));
 
   int totalTheoreticalPoints = 0, totalPoints = 0;
   for (unsigned int i = top; i < bottom; i += stepY) {
@@ -429,7 +474,7 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
   }
 
   if (totalPoints == 0 || ((m_depthDenseFilteringMethod & DEPTH_OCCUPANCY_RATIO_FILTERING) &&
-                           totalPoints / (double)totalTheoreticalPoints < m_depthDenseFilteringOccupancyRatio)) {
+                           totalPoints / static_cast<double>(totalTheoreticalPoints) < m_depthDenseFilteringOccupancyRatio)) {
     return false;
   }
 
@@ -478,16 +523,16 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
   vpRect bb = polygon_2d.getBoundingBox();
 
   unsigned int top = static_cast<unsigned int>(std::max<double>(0.0, bb.getTop()));
-  unsigned int bottom = static_cast<unsigned int>(std::min<double>((double)height, std::max<double>(0.0, bb.getBottom())));
+  unsigned int bottom = static_cast<unsigned int>(std::min<double>(static_cast<double>(height), std::max<double>(0.0, bb.getBottom())));
   unsigned int left = static_cast<unsigned int>(std::max<double>(0.0, bb.getLeft()));
-  unsigned int right = static_cast<unsigned int>(std::min<double>((double)width, std::max<double>(0.0, bb.getRight())));
+  unsigned int right = static_cast<unsigned int>(std::min<double>(static_cast<double>(width), std::max<double>(0.0, bb.getRight())));
 
   bb.setTop(top);
   bb.setBottom(bottom);
   bb.setLeft(left);
   bb.setRight(right);
 
-  m_pointCloudFace.reserve((size_t)(bb.getWidth() * bb.getHeight()));
+  m_pointCloudFace.reserve(static_cast<size_t>(bb.getWidth() * bb.getHeight()));
 
   int totalTheoreticalPoints = 0, totalPoints = 0;
   for (unsigned int i = top; i < bottom; i += stepY) {
@@ -514,7 +559,7 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
   }
 
   if (totalPoints == 0 || ((m_depthDenseFilteringMethod & DEPTH_OCCUPANCY_RATIO_FILTERING) &&
-                           totalPoints / (double)totalTheoreticalPoints < m_depthDenseFilteringOccupancyRatio)) {
+                           totalPoints / static_cast<double>(totalTheoreticalPoints) < m_depthDenseFilteringOccupancyRatio)) {
     return false;
   }
 

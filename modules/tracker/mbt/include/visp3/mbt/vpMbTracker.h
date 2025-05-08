@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,13 +29,8 @@
  *
  * Description:
  * Generic model based tracker. This class declares the methods to implement
- *in order to have a model based tracker.
- *
- * Authors:
- * Romain Tallonneau
- * Aurelien Yol
- *
-*****************************************************************************/
+ * in order to have a model based tracker.
+ */
 
 /*!
   \file vpMbTracker.h
@@ -94,14 +88,11 @@ BEGIN_VISP_NAMESPACE
   This class intends to define a common basis for object tracking. This is
   realised by implementing the main functions:
   - init() : Initialisation of the tracker (it includes re-initialisation).
-  This method is called at the end of the initClick() method.
-  - initFaceFromCorners() : Initialisation of the lines that has to be
-  tracked.
+    This method is called at the end of the initClick() method.
+  - initFaceFromCorners() : Initialisation of the lines that has to be tracked.
   - track() : Tracking on the current image
-  - testTracking() : Test the tracking. This method throws exception if the
-    tracking failed.
+  - testTracking() : Test the tracking. This method throws exception if the tracking failed.
   - display() : Display the model and eventually other information.
-
 */
 class VISP_EXPORT vpMbTracker
 {
@@ -230,7 +221,9 @@ protected:
 
 public:
   vpMbTracker();
+  vpMbTracker(const vpMbTracker &tracker);
   virtual ~vpMbTracker();
+  vpMbTracker &operator=(const vpMbTracker &tracker);
 
   /** @name Inherited functionalities from vpMbTracker */
   virtual double computeCurrentProjectionError(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo,

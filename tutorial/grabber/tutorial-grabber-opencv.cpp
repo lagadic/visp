@@ -135,7 +135,7 @@ int main(int argc, const char *argv[])
     cv::Mat frame;
     int i = 0;
     while ((i++ < 20) && !cap.read(frame)) {
-    }; // warm up camera by skiping unread frames
+    } // warm up camera by skiping unread frames
 
     std::cout << "Image size : " << frame.rows << " " << frame.cols << std::endl;
 

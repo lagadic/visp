@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Interface for the ADEPT Viper 850 robot.
- *
-*****************************************************************************/
+ */
 
 /*!
 
@@ -210,7 +208,6 @@ void vpViper850::init(vpViper850::vpToolType tool, vpCameraParameters::vpCameraP
     case vpCameraParameters::ProjWithKannalaBrandtDistortion:
       throw vpException(vpException::notImplementedError,
                         "Feature TOOL_PTGREY_FLEA2_CAMERA is not implemented for Kannala-Brandt projection model yet.");
-      break;
     }
     break;
   }
@@ -226,7 +223,6 @@ void vpViper850::init(vpViper850::vpToolType tool, vpCameraParameters::vpCameraP
       throw vpException(
           vpException::notImplementedError,
           "Feature TOOL_SCHUNK_GRIPPER_CAMERA is not implemented for Kannala-Brandt projection model yet.");
-      break;
     }
     break;
   }
@@ -241,7 +237,6 @@ void vpViper850::init(vpViper850::vpToolType tool, vpCameraParameters::vpCameraP
     case vpCameraParameters::ProjWithKannalaBrandtDistortion:
       throw vpException(vpException::notImplementedError,
                         "Feature TOOL_GENERIC_CAMERA is not implemented for Kannala-Brandt projection model yet.");
-      break;
     }
     break;
   }
@@ -284,7 +279,6 @@ void vpViper850::init(vpViper850::vpToolType tool, vpCameraParameters::vpCameraP
     case vpCameraParameters::ProjWithKannalaBrandtDistortion:
       throw vpException(vpException::notImplementedError,
                         "Feature TOOL_MARLIN_F033C_CAMERA is not implemented for Kannala-Brandt projection model yet.");
-      break;
     }
     break;
   }
@@ -310,7 +304,6 @@ void vpViper850::init(vpViper850::vpToolType tool, vpCameraParameters::vpCameraP
     case vpCameraParameters::ProjWithKannalaBrandtDistortion:
       throw vpException(vpException::notImplementedError,
                         "Feature TOOL_PTGREY_FLEA2_CAMERA is not implemented for Kannala-Brandt projection model yet.");
-      break;
     }
     break;
   }
@@ -329,7 +322,6 @@ void vpViper850::init(vpViper850::vpToolType tool, vpCameraParameters::vpCameraP
     case vpCameraParameters::ProjWithKannalaBrandtDistortion:
       throw vpException(vpException::notImplementedError,
                         "Feature TOOL_GENERIC_CAMERA is not implemented for Kannala-Brandt projection model yet.");
-      break;
     }
     break;
   }

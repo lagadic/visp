@@ -46,8 +46,8 @@ double vpTemplateTrackerBSpline::getSubPixBspline4(const vpImage<double> &I, dou
   double res = 0;
   int cr = static_cast<int>(r);
   int ct = static_cast<int>(t);
-  double er = (double)r - cr;
-  double et = (double)t - ct;
+  double er = static_cast<double>(r) - cr;
+  double et = static_cast<double>(t) - ct;
   int height = static_cast<int>(I.getHeight()); // r
   int width = static_cast<int>(I.getWidth());   // t
   for (int ir = -1; ir <= 2; ir++) {
@@ -56,7 +56,7 @@ double vpTemplateTrackerBSpline::getSubPixBspline4(const vpImage<double> &I, dou
       for (int it = -1; it <= 2; it++) {
         int tt = it + ct;
         if (tt >= 0 && tt < width)
-          res += Bspline4((double)ir - er) * Bspline4((double)it - et) * I[tr][tt];
+          res += Bspline4(static_cast<double>(ir) - er) * Bspline4(static_cast<double>(it) - et) * I[tr][tt];
       }
     }
   }

@@ -70,14 +70,14 @@ int flagsFromJSON(const nlohmann::json &j)
 
 /*!
   Serialize flag values as a json array.
-  \param flags the value to serialize
-  \param options the possible values that can be contained in flags. A flag i is set if flags & options[i] != 0.
+  \param flags The value to serialize.
+  \param options The possible values that can be contained in flags. A flag i is set if flags & options[i] != 0.
 
-  \return a json object (an array) that contains the different flags of the variable flags.
+  \return A json object (an array) that contains the different flags of the variable flags.
 
 */
 template<typename E>
-nlohmann::json flagsToJSON(const int flags, const std::vector<E> &options)
+nlohmann::json flagsToJSON(const unsigned int flags, const std::vector<E> &options)
 {
   nlohmann::json j = nlohmann::json::array();
   for (const E option : options) {

@@ -17,8 +17,8 @@
 #include <visp3/io/vpImageIo.h>
 #include <visp3/sensor/vpRealSense2.h>
 
-std::vector<int> hsv_values_trackbar(6);
-const cv::String window_detection_name = "Object Detection";
+VP_ATTRIBUTE_NO_DESTROY std::vector<int> hsv_values_trackbar(6);
+VP_ATTRIBUTE_NO_DESTROY const cv::String window_detection_name = "Object Detection";
 
 void set_trackbar_H_min(int val)
 {

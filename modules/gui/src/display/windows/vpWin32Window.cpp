@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -206,6 +206,40 @@ vpWin32Window::vpWin32Window(vpWin32Renderer *rend) : initialized(false)
   semaClickUp = CreateSemaphore(nullptr, 0, MAX_SEM_COUNT, nullptr);
   semaKey = CreateSemaphore(nullptr, 0, MAX_SEM_COUNT, nullptr);
   semaMove = CreateSemaphore(nullptr, 0, MAX_SEM_COUNT, nullptr);
+}
+
+/*!
+ * Copy constructor.
+ */
+vpWin32Window::vpWin32Window(const vpWin32Window &window)
+{
+  *this = window;
+}
+
+/*!
+ * Copy operator.
+ */
+vpWin32Window &vpWin32Window::operator=(const vpWin32Window &window)
+{
+  hInst = window.hInst;
+  hWnd = window.hWnd;
+  initialized = window.initialized;
+  semaInit = window.semaInit;
+  semaClick = window.semaClick;
+  semaClickUp = window.semaClickUp;
+  semaKey = window.semaKey;
+  semaMove = window.semaMove;
+  clickX = window.clickX;
+  clickXUp = window.clickXUp;
+  clickY = window.clickY;
+  clickYUp = window.clickYUp;
+  coordX = window.coordX;
+  coordY = window.coordY;
+  clickButton = window.clickButton;
+  clickButtonUp = window.clickButtonUp;
+  registered = window.registered;
+  renderer = window.renderer;
+  return *this;
 }
 
 /*!

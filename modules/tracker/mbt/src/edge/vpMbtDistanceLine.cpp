@@ -857,8 +857,8 @@ void vpMbtDistanceLine::computeInteractionMatrixError(const vpHomogeneousMatrix 
       for (size_t i = 0; i < meline.size(); i++) {
         for (std::list<vpMeSite>::const_iterator it = meline[i]->getMeList().begin();
              it != meline[i]->getMeList().end(); ++it) {
-          x = (double)it->m_j;
-          y = (double)it->m_i;
+          x = static_cast<double>(it->m_j);
+          y = static_cast<double>(it->m_i);
 
           x = (x - xc) * mx;
           y = (y - yc) * my;

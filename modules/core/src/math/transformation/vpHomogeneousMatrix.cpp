@@ -1359,7 +1359,7 @@ void vpHomogeneousMatrix::setIdentity() { eye(); }
 #endif //#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
-const std::string vpHomogeneousMatrix::jsonTypeName = "vpHomogeneousMatrix";
+VP_ATTRIBUTE_NO_DESTROY const std::string vpHomogeneousMatrix::jsonTypeName = "vpHomogeneousMatrix";
 #include <visp3/core/vpJsonParsing.h>
 void vpHomogeneousMatrix::convert_to_json(nlohmann::json &j) const
 {

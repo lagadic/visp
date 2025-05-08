@@ -610,6 +610,7 @@ public:
           {"mergingRadiusDiffThresh", params.m_mergingRadiusDiffThresh} };
     }
 #endif
+    friend VISP_EXPORT bool operator==(const vpImageCircle &a, const vpImageCircle &b);
 
   private:
     // // Filtering + gradient operators to use

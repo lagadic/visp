@@ -43,6 +43,25 @@ vpDiskGrabber::vpDiskGrabber()
   init = false;
 }
 
+vpDiskGrabber::vpDiskGrabber(const vpDiskGrabber &grabber) : vpFrameGrabber(grabber)
+{
+  *this = grabber;
+}
+
+vpDiskGrabber &vpDiskGrabber::operator=(const vpDiskGrabber &grabber)
+{
+  m_image_number = grabber.m_image_number;
+  m_image_number_next = grabber.m_image_number_next;
+  m_image_step = grabber.m_image_step;
+  m_number_of_zero = grabber.m_number_of_zero;
+  m_directory = grabber.m_directory;
+  m_base_name = grabber.m_base_name;
+  m_extension = grabber.m_extension;
+  m_use_generic_name = grabber.m_use_generic_name;
+  m_generic_name = grabber.m_generic_name;
+
+  return *this;
+}
 
 vpDiskGrabber::vpDiskGrabber(const std::string &generic_name)
   : m_image_number(0), m_image_number_next(0), m_image_step(1), m_number_of_zero(0), m_directory("/tmp"),
@@ -110,7 +129,7 @@ void vpDiskGrabber::acquire(vpImage<unsigned char> &I)
   m_image_number = m_image_number_next;
 
   if (m_use_generic_name) {
-    m_image_name = vpIoTools::formatString(m_generic_name, m_image_number);
+    m_image_name = vpIoTools::formatString(m_generic_name, static_cast<unsigned int>(m_image_number));
   }
   else {
     std::stringstream ss;
@@ -131,7 +150,7 @@ void vpDiskGrabber::acquire(vpImage<vpRGBa> &I)
   m_image_number = m_image_number_next;
 
   if (m_use_generic_name) {
-    m_image_name = vpIoTools::formatString(m_generic_name, m_image_number);
+    m_image_name = vpIoTools::formatString(m_generic_name, static_cast<unsigned int>(m_image_number));
   }
   else {
     std::stringstream ss;
@@ -153,7 +172,7 @@ void vpDiskGrabber::acquire(vpImage<float> &I)
   m_image_number = m_image_number_next;
 
   if (m_use_generic_name) {
-    m_image_name = vpIoTools::formatString(m_generic_name, m_image_number);
+    m_image_name = vpIoTools::formatString(m_generic_name, static_cast<unsigned int>(m_image_number));
   }
   else {
     std::stringstream ss;
@@ -175,7 +194,7 @@ void vpDiskGrabber::acquire(vpImage<unsigned char> &I, long image_number)
   m_image_number = image_number;
 
   if (m_use_generic_name) {
-    m_image_name = vpIoTools::formatString(m_generic_name, m_image_number);
+    m_image_name = vpIoTools::formatString(m_generic_name, static_cast<unsigned int>(m_image_number));
   }
   else {
     std::stringstream ss;
@@ -197,7 +216,7 @@ void vpDiskGrabber::acquire(vpImage<vpRGBa> &I, long image_number)
   m_image_number = image_number;
 
   if (m_use_generic_name) {
-    m_image_name = vpIoTools::formatString(m_generic_name, m_image_number);
+    m_image_name = vpIoTools::formatString(m_generic_name, static_cast<unsigned int>(m_image_number));
   }
   else {
     std::stringstream ss;
@@ -219,7 +238,7 @@ void vpDiskGrabber::acquire(vpImage<float> &I, long image_number)
   m_image_number = m_image_number_next;
 
   if (m_use_generic_name) {
-    m_image_name = vpIoTools::formatString(m_generic_name, m_image_number);
+    m_image_name = vpIoTools::formatString(m_generic_name, static_cast<unsigned int>(m_image_number));
   }
   else {
     std::stringstream ss;

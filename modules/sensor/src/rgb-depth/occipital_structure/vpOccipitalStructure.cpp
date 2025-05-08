@@ -952,7 +952,7 @@ void vpOccipitalStructure::getPointcloud(std::vector<vpColVector> &pointcloud)
   ST::DepthFrame last_df = m_delegate.m_depthFrame;
   const int width = last_df.width();
   const int height = last_df.height();
-  pointcloud.resize((size_t)(width * height));
+  pointcloud.resize(static_cast<size_t>(width * height));
 
   const float *p_depth_frame = reinterpret_cast<const float *>(last_df.depthInMillimeters());
 
@@ -964,11 +964,11 @@ void vpOccipitalStructure::getPointcloud(std::vector<vpColVector> &pointcloud)
 
     for (int j = 0; j < width; j++, depth_pixel_index++) {
       if (std::isnan(p_depth_frame[depth_pixel_index])) {
-        pointcloud[(size_t)depth_pixel_index].resize(4, false);
-        pointcloud[(size_t)depth_pixel_index][0] = m_invalidDepthValue;
-        pointcloud[(size_t)depth_pixel_index][1] = m_invalidDepthValue;
-        pointcloud[(size_t)depth_pixel_index][2] = m_invalidDepthValue;
-        pointcloud[(size_t)depth_pixel_index][3] = 1.0;
+        pointcloud[static_cast<size_t>(depth_pixel_index)].resize(4, false);
+        pointcloud[static_cast<size_t>(depth_pixel_index)][0] = m_invalidDepthValue;
+        pointcloud[static_cast<size_t>(depth_pixel_index)][1] = m_invalidDepthValue;
+        pointcloud[static_cast<size_t>(depth_pixel_index)][2] = m_invalidDepthValue;
+        pointcloud[static_cast<size_t>(depth_pixel_index)][3] = 1.0;
         continue;
       }
 
@@ -980,11 +980,11 @@ void vpOccipitalStructure::getPointcloud(std::vector<vpColVector> &pointcloud)
       if (pixels_distance > m_maxZ)
         point_3D.x = point_3D.y = point_3D.z = m_invalidDepthValue;
 
-      pointcloud[(size_t)depth_pixel_index].resize(4, false);
-      pointcloud[(size_t)depth_pixel_index][0] = point_3D.x * 0.001;
-      pointcloud[(size_t)depth_pixel_index][1] = point_3D.y * 0.001;
-      pointcloud[(size_t)depth_pixel_index][2] = point_3D.z * 0.001;
-      pointcloud[(size_t)depth_pixel_index][3] = 1.0;
+      pointcloud[static_cast<size_t>(depth_pixel_index)].resize(4, false);
+      pointcloud[static_cast<size_t>(depth_pixel_index)][0] = point_3D.x * 0.001;
+      pointcloud[static_cast<size_t>(depth_pixel_index)][1] = point_3D.y * 0.001;
+      pointcloud[static_cast<size_t>(depth_pixel_index)][2] = point_3D.z * 0.001;
+      pointcloud[static_cast<size_t>(depth_pixel_index)][3] = 1.0;
     }
   }
 }
@@ -995,9 +995,9 @@ void vpOccipitalStructure::getPointcloud(pcl::PointCloud<pcl::PointXYZ>::Ptr &po
   ST::DepthFrame last_df = m_delegate.m_depthFrame;
   const int width = last_df.width();
   const int height = last_df.height();
-  pointcloud->width = (uint32_t)width;
-  pointcloud->height = (uint32_t)height;
-  pointcloud->resize((size_t)(width * height));
+  pointcloud->width = static_cast<uint32_t>(width);
+  pointcloud->height = static_cast<uint32_t>(height);
+  pointcloud->resizestatic_cast<size_t>(width * height));
 
 #if MANUAL_POINTCLOUD // faster to compute manually when tested
   const float *p_depth_frame = reinterpret_cast<const float *>(last_df.depthInMillimeters());
@@ -1010,9 +1010,9 @@ void vpOccipitalStructure::getPointcloud(pcl::PointCloud<pcl::PointXYZ>::Ptr &po
 
     for (int j = 0; j < width; j++, depth_pixel_index++) {
       if (p_depth_frame[depth_pixel_index] == 0) {
-        pointcloud->points[(size_t)(depth_pixel_index)].x = m_invalidDepthValue;
-        pointcloud->points[(size_t)(depth_pixel_index)].y = m_invalidDepthValue;
-        pointcloud->points[(size_t)(depth_pixel_index)].z = m_invalidDepthValue;
+        pointcloud->points[static_cast<size_t>(depth_pixel_index)].x = m_invalidDepthValue;
+        pointcloud->points[static_cast<size_t>(depth_pixel_index)].y = m_invalidDepthValue;
+        pointcloud->points[static_cast<size_t>(depth_pixel_index)].z = m_invalidDepthValue;
         continue;
       }
 
@@ -1025,9 +1025,9 @@ void vpOccipitalStructure::getPointcloud(pcl::PointCloud<pcl::PointXYZ>::Ptr &po
       if (pixels_distance > m_maxZ)
         point_3D.x = point_3D.y = point_3D.z = m_invalidDepthValue;
 
-      pointcloud->points[(size_t)(depth_pixel_index)].x = point_3D.x * 0.001;
-      pointcloud->points[(size_t)(depth_pixel_index)].y = point_3D.y * 0.001;
-      pointcloud->points[(size_t)(depth_pixel_index)].z = point_3D.z * 0.001;
+      pointcloud->points[static_cast<size_t>(depth_pixel_index)].x = point_3D.x * 0.001;
+      pointcloud->points[static_cast<size_t>(depth_pixel_index)].y = point_3D.y * 0.001;
+      pointcloud->points[static_cast<size_t>(depth_pixel_index)].z = point_3D.z * 0.001;
     }
   }
 // #else
@@ -1079,20 +1079,20 @@ void vpOccipitalStructure::getColoredPointcloud(pcl::PointCloud<pcl::PointXYZRGB
 
     for (int j = 0; j < depth_width; j++, depth_pixel_index++) {
       if (std::isnan(p_depth_frame[depth_pixel_index])) {
-        pointcloud->points[(size_t)depth_pixel_index].x = m_invalidDepthValue;
-        pointcloud->points[(size_t)depth_pixel_index].y = m_invalidDepthValue;
-        pointcloud->points[(size_t)depth_pixel_index].z = m_invalidDepthValue;
+        pointcloud->points[static_cast<size_t>(depth_pixel_index)].x = m_invalidDepthValue;
+        pointcloud->points[static_cast<size_t>(depth_pixel_index)].y = m_invalidDepthValue;
+        pointcloud->points[static_cast<size_t>(depth_pixel_index)].z = m_invalidDepthValue;
 
         // For out of bounds color data, default to black.
 #if PCL_VERSION_COMPARE(<, 1, 1, 0)
         unsigned int r = 0, g = 0, b = 0;
         uint32_t rgb = (static_cast<uint32_t>(r) << 16 | static_cast<uint32_t>(g) << 8 | static_cast<uint32_t>(b));
 
-        pointcloud->points[(size_t)depth_pixel_index].rgb = *reinterpret_cast<float *>(&rgb);
+        pointcloud->points[static_cast<size_t>(depth_pixel_index)].rgb = *reinterpret_cast<float *>(&rgb);
 #else
-        pointcloud->points[(size_t)depth_pixel_index].r = (uint8_t)0;
-        pointcloud->points[(size_t)depth_pixel_index].g = (uint8_t)0;
-        pointcloud->points[(size_t)depth_pixel_index].b = (uint8_t)0;
+        pointcloud->points[static_cast<size_t>(depth_pixel_index)].r = (uint8_t)0;
+        pointcloud->points[static_cast<size_t>(depth_pixel_index)].g = (uint8_t)0;
+        pointcloud->points[static_cast<size_t>(depth_pixel_index)].b = (uint8_t)0;
 #endif
         continue;
       }
@@ -1106,9 +1106,9 @@ void vpOccipitalStructure::getColoredPointcloud(pcl::PointCloud<pcl::PointXYZRGB
         depth_point_3D.x = depth_point_3D.y = depth_point_3D.z = m_invalidDepthValue;
       }
 
-      pointcloud->points[(size_t)depth_pixel_index].x = depth_point_3D.x * 0.001;
-      pointcloud->points[(size_t)depth_pixel_index].y = depth_point_3D.y * 0.001;
-      pointcloud->points[(size_t)depth_pixel_index].z = depth_point_3D.z * 0.001;
+      pointcloud->points[static_cast<size_t>(depth_pixel_index)].x = depth_point_3D.x * 0.001;
+      pointcloud->points[static_cast<size_t>(depth_pixel_index)].y = depth_point_3D.y * 0.001;
+      pointcloud->points[static_cast<size_t>(depth_pixel_index)].z = depth_point_3D.z * 0.001;
 
       if (!registered_streams) {
 
@@ -1133,11 +1133,11 @@ void vpOccipitalStructure::getColoredPointcloud(pcl::PointCloud<pcl::PointXYZRGB
           unsigned int r = 0, g = 0, b = 0;
           uint32_t rgb = (static_cast<uint32_t>(r) << 16 | static_cast<uint32_t>(g) << 8 | static_cast<uint32_t>(b));
 
-          pointcloud->points[(size_t)depth_pixel_index].rgb = *reinterpret_cast<float *>(&rgb);
+          pointcloud->points[static_cast<size_t>(depth_pixel_index)].rgb = *reinterpret_cast<float *>(&rgb);
 #else
-          pointcloud->points[(size_t)depth_pixel_index].r = (uint8_t)0;
-          pointcloud->points[(size_t)depth_pixel_index].g = (uint8_t)0;
-          pointcloud->points[(size_t)depth_pixel_index].b = (uint8_t)0;
+          pointcloud->points[static_cast<size_t>(depth_pixel_index)].r = (uint8_t)0;
+          pointcloud->points[static_cast<size_t>(depth_pixel_index)].g = (uint8_t)0;
+          pointcloud->points[static_cast<size_t>(depth_pixel_index)].b = (uint8_t)0;
 #endif
         }
         else {
@@ -1160,22 +1160,22 @@ void vpOccipitalStructure::getColoredPointcloud(pcl::PointCloud<pcl::PointXYZRGB
                static_cast<uint32_t>(p_color_frame[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel + 2]));
           }
 
-          pointcloud->points[(size_t)(i * depth_width + j)].rgb = *reinterpret_cast<float *>(&rgb);
+          pointcloud->points[static_cast<size_t>(i * depth_width + j)].rgb = *reinterpret_cast<float *>(&rgb);
 #else
           if (swap_rb) {
-            pointcloud->points[(size_t)depth_pixel_index].b =
+            pointcloud->points[static_cast<size_t>(depth_pixel_index)].b =
               p_color_frame[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel];
-            pointcloud->points[(size_t)depth_pixel_index].g =
+            pointcloud->points[static_cast<size_t>(depth_pixel_index)].g =
               p_color_frame[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel + 1];
-            pointcloud->points[(size_t)depth_pixel_index].r =
+            pointcloud->points[static_cast<size_t>(depth_pixel_index)].r =
               p_color_frame[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel + 2];
           }
           else {
-            pointcloud->points[(size_t)depth_pixel_index].r =
+            pointcloud->points[static_cast<size_t>(depth_pixel_index)].r =
               p_color_frame[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel];
-            pointcloud->points[(size_t)depth_pixel_index].g =
+            pointcloud->points[static_cast<size_t>(depth_pixel_index)].g =
               p_color_frame[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel + 1];
-            pointcloud->points[(size_t)depth_pixel_index].b =
+            pointcloud->points[static_cast<size_t>(depth_pixel_index)].b =
               p_color_frame[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel + 2];
           }
 #endif
@@ -1195,22 +1195,22 @@ void vpOccipitalStructure::getColoredPointcloud(pcl::PointCloud<pcl::PointXYZRGB
                  static_cast<uint32_t>(p_color_frame[(i * static_cast<unsigned int>(color_width) + j) * nb_color_pixel + 2]));
         }
 
-        pointcloud->points[(size_t)(i * depth_width + j)].rgb = *reinterpret_cast<float *>(&rgb);
+        pointcloud->points[static_cast<size_t>(i * depth_width + j)].rgb = *reinterpret_cast<float *>(&rgb);
 #else
         if (swap_rb) {
-          pointcloud->points[(size_t)depth_pixel_index].b =
+          pointcloud->points[static_cast<size_t>(depth_pixel_index)].b =
             p_color_frame[(i * static_cast<unsigned int>(color_width) + j) * nb_color_pixel];
-          pointcloud->points[(size_t)depth_pixel_index].g =
+          pointcloud->points[static_cast<size_t>(depth_pixel_index)].g =
             p_color_frame[(i * static_cast<unsigned int>(color_width) + j) * nb_color_pixel + 1];
-          pointcloud->points[(size_t)depth_pixel_index].r =
+          pointcloud->points[static_cast<size_t>(depth_pixel_index)].r =
             p_color_frame[(i * static_cast<unsigned int>(color_width) + j) * nb_color_pixel + 2];
         }
         else {
-          pointcloud->points[(size_t)depth_pixel_index].r =
+          pointcloud->points[static_cast<size_t>(depth_pixel_index)].r =
             p_color_frame[(i * static_cast<unsigned int>(color_width) + j) * nb_color_pixel];
-          pointcloud->points[(size_t)depth_pixel_index].g =
+          pointcloud->points[static_cast<size_t>(depth_pixel_index)].g =
             p_color_frame[(i * static_cast<unsigned int>(color_width) + j) * nb_color_pixel + 1];
-          pointcloud->points[(size_t)depth_pixel_index].b =
+          pointcloud->points[static_cast<size_t>(depth_pixel_index)].b =
             p_color_frame[(i * static_cast<unsigned int>(color_width) + j) * nb_color_pixel + 2];
         }
 #endif

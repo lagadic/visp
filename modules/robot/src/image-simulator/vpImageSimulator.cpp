@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description: Class which enables to project an image in the 3D space
  * and get the view of a virtual camera.
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpMatrixException.h>
@@ -669,7 +667,6 @@ void vpImageSimulator::getImage(vpImage<unsigned char> &I, std::list<vpImageSimu
   vpImageSimulator **simList = new vpImageSimulator *[nbsimList];
 
   double topFinal = height + 1;
-  ;
   double bottomFinal = -1;
   double leftFinal = width + 1;
   double rightFinal = -1;
@@ -870,7 +867,6 @@ void vpImageSimulator::getImage(vpImage<vpRGBa> &I, std::list<vpImageSimulator> 
   vpImageSimulator **simList = new vpImageSimulator *[nbsimList];
 
   double topFinal = height + 1;
-  ;
   double bottomFinal = -1;
   double leftFinal = width + 1;
   double rightFinal = -1;

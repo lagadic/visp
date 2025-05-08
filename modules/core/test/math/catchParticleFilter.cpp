@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -495,7 +495,7 @@ TEST_CASE("2nd-degree", "[vpParticleFilter][Polynomial interpolation]")
   const unsigned int nbParticles = 200; //!< Number of particles used by the particle filter
   const double ratioAmpliMax(0.25); //!< Ratio of the initial guess values to use to add noise to the PF state
   const long seedPF = 4221; //!< Seed of the particle filter
-  const int nbThreads = 1; //<! Number of threads to use for the PF
+  const int nbThreads = 1; //!< Number of threads to use for the PF
   vpUniRand rngCurvePoints(seedCurve);
   vpUniRand rngInitPoints(seedInitPoints);
 
@@ -680,7 +680,7 @@ TEST_CASE("3rd-degree", "[vpParticleFilter][Polynomial interpolation]")
   const unsigned int nbParticles = 200; //!< Number of particles used by the particle filter
   const double ratioAmpliMax(0.21); //!< Ratio of the initial guess values to use to add noise to the PF state
   const long seedPF = 4221; //!< Seed of the particle filter
-  const int nbThreads = 1; //<! Number of threads to use for the PF
+  const int nbThreads = 1; //!< Number of threads to use for the PF
   vpUniRand rngCurvePoints(seedCurve);
   vpUniRand rngInitPoints(seedInitPoints);
 

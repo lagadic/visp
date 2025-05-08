@@ -132,7 +132,7 @@ void vpMbtDistanceKltCylinder::init(const vpKltOpencv &_tracker, const vpHomogen
     else {
       std::vector<vpImagePoint> roi;
       for (unsigned int kc = 0; kc < listIndicesCylinderBBox.size(); kc++) {
-        hiddenface->getPolygon()[(size_t)listIndicesCylinderBBox[kc]]->getRoiClipped(cam, roi);
+        hiddenface->getPolygon()[static_cast<size_t>(listIndicesCylinderBBox[kc])]->getRoiClipped(cam, roi);
         if (vpPolygon::isInside(roi, y_tmp, x_tmp)) {
           add = true;
           break;
@@ -385,7 +385,7 @@ void vpMbtDistanceKltCylinder::updateMask(
       std::vector<vpImagePoint> roi;
       (*hiddenface)[static_cast<unsigned int>(listIndicesCylinderBBox[kc])]->getRoiClipped(cam, roi);
 
-      double shiftBorder_d = (double)shiftBorder;
+      double shiftBorder_d = static_cast<double>(shiftBorder);
 #if defined(VISP_HAVE_CLIPPER)
       std::vector<vpImagePoint> roi_offset;
 
@@ -455,10 +455,10 @@ void vpMbtDistanceKltCylinder::updateMask(
       }
 
       for (int i = i_min; i < i_max; i++) {
-        double i_d = (double)i;
+        double i_d = static_cast<double>(i);
 
         for (int j = j_min; j < j_max; j++) {
-          double j_d = (double)j;
+          double j_d = static_cast<double>(j);
 
 #if defined(VISP_HAVE_CLIPPER)
           imPt.set_ij(i_d, j_d);

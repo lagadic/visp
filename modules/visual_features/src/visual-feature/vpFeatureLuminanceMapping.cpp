@@ -51,7 +51,7 @@ void vpLuminanceMapping::imageAsVector(const vpImage<unsigned char> &I, vpColVec
   unsigned l = 0;
   for (unsigned i = border; i < h - border; ++i) {
     for (unsigned j = border; j < w - border; ++j) {
-      Ivec[l++] = (double)I[i][j];
+      Ivec[l++] = static_cast<double>(I[i][j]);
     }
   }
 }
@@ -66,7 +66,7 @@ void vpLuminanceMapping::imageAsMatrix(const vpImage<unsigned char> &I, vpMatrix
   Imat.resize((h - 2 * border), (w - 2 * border), false, false);
   for (unsigned i = border; i < h - border; ++i) {
     for (unsigned j = border; j < w - border; ++j) {
-      Imat[i - border][j - border] = (double)I[i][j];
+      Imat[i - border][j - border] = static_cast<double>(I[i][j]);
     }
   }
 }

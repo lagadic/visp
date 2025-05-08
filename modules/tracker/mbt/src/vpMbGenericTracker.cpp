@@ -225,7 +225,7 @@ double vpMbGenericTracker::computeCurrentProjectionError(const vpImage<unsigned 
   }
 
   if (nbTotalFeaturesUsed > 0) {
-    return vpMath::deg(rawTotalProjectionError / (double)nbTotalFeaturesUsed);
+    return vpMath::deg(rawTotalProjectionError / static_cast<double>(nbTotalFeaturesUsed));
   }
 
   return 90.0;
@@ -278,7 +278,7 @@ void vpMbGenericTracker::computeProjectionError()
     }
 
     if (nbTotalFeaturesUsed > 0) {
-      projectionError = vpMath::deg(rawTotalProjectionError / (double)nbTotalFeaturesUsed);
+      projectionError = vpMath::deg(rawTotalProjectionError / static_cast<double>(nbTotalFeaturesUsed));
     }
     else {
       projectionError = 90.0;

@@ -81,7 +81,15 @@ typedef struct SoftwareArguments
     , m_backend(vpImageFilter::CANNY_VISP_BACKEND)
 #endif
   { }
-}SoftwareArguments;
+} SoftwareArguments;
+
+void setGradientOutsideClass(const vpImage<unsigned char> &I, const int &gaussianKernelSize, const float &gaussianStdev,
+                             vpCannyEdgeDetection &cannyDetector, const unsigned int apertureSize,
+                             const vpImageFilter::vpCannyFilteringAndGradientType &filteringType,
+                             vpImage<unsigned char> &dIx_uchar, vpImage<unsigned char> &dIy_uchar);
+bool sortImagePoints(const vpImagePoint &a, const vpImagePoint &b);
+void checkEdgeList(const vpCannyEdgeDetection &cannyDetector, const vpImage<unsigned char> &I_canny_visp);
+void usage(const std::string &softName, const SoftwareArguments &options);
 
 template <class T>
 void computeMeanMaxStdev(const vpImage<T> &I, float &mean, float &max, float &stdev)
@@ -111,8 +119,7 @@ void computeMeanMaxStdev(const vpImage<T> &I, float &mean, float &max, float &st
 void setGradientOutsideClass(const vpImage<unsigned char> &I, const int &gaussianKernelSize, const float &gaussianStdev,
                              vpCannyEdgeDetection &cannyDetector, const unsigned int apertureSize,
                              const vpImageFilter::vpCannyFilteringAndGradientType &filteringType,
-                             vpImage<unsigned char> &dIx_uchar, vpImage<unsigned char> &dIy_uchar
-)
+                             vpImage<unsigned char> &dIx_uchar, vpImage<unsigned char> &dIy_uchar)
 {
   // Computing the gradients
   vpImage<float> dIx, dIy;

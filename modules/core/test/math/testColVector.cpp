@@ -331,14 +331,14 @@ int main()
     vpColVector v_big(nb * size);
     double t = vpTime::measureTimeMs();
     for (unsigned int i = 0; i < nb; i++) {
-      v_big.insert(i * size, vec[(size_t)i]);
+      v_big.insert(i * size, vec[static_cast<size_t>(i)]);
     }
     t = vpTime::measureTimeMs() - t;
     std::cout << "\nBig insert: " << t << " ms" << std::endl;
 
     for (unsigned int i = 0; i < nb; i++) {
       for (unsigned int j = 0; j < size; j++) {
-        if (!vpMath::equal(v_big[i * size + j], vec[(size_t)i][j], std::numeric_limits<double>::epsilon())) {
+        if (!vpMath::equal(v_big[i * size + j], vec[static_cast<size_t>(i)][j], std::numeric_limits<double>::epsilon())) {
           std::cerr << "Problem in vpColVector insert()!" << std::endl;
           return EXIT_FAILURE;
         }

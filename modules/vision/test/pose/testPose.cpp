@@ -65,10 +65,12 @@ using namespace VISP_NAMESPACE_NAME;
 
 void print_pose(const vpHomogeneousMatrix &cMo, const std::string &legend);
 int compare_pose(const vpPose &pose, const vpHomogeneousMatrix &cMo_ref, const vpHomogeneousMatrix &cMo_est, const vpCameraParameters &cam,
-  const std::string &legend, const double &translation3DThresh, const double &rotationRadian3DThresh, const double &pose2DThresh, const double &posePixThresh);
+                 const std::string &legend);
+int compare_pose(const vpPose &pose, const vpHomogeneousMatrix &cMo_ref, const vpHomogeneousMatrix &cMo_est, const vpCameraParameters &cam,
+                 const std::string &legend, const double &translation3DThresh, const double &rotationRadian3DThresh, const double &pose2DThresh, const double &posePixThresh);
 
 int compare_pose(const vpPose &pose, const vpHomogeneousMatrix &cMo_ref, const vpHomogeneousMatrix &cMo_est, const vpCameraParameters &cam,
-  const std::string &legend)
+                 const std::string &legend)
 {
   return compare_pose(pose, cMo_ref, cMo_est, cam,
     legend, 0.001, 0.001, 0.001, 1.);
@@ -92,7 +94,7 @@ void print_pose(const vpHomogeneousMatrix &cMo, const std::string &legend)
 
 // test if pose is well estimated
 int compare_pose(const vpPose &pose, const vpHomogeneousMatrix &cMo_ref, const vpHomogeneousMatrix &cMo_est, const vpCameraParameters &cam,
-  const std::string &legend, const double &translation3DThresh, const double &rotation3DThresh, const double &pose2DThresh, const double &posePixThresh)
+                 const std::string &legend, const double &translation3DThresh, const double &rotation3DThresh, const double &pose2DThresh, const double &posePixThresh)
 {
   vpPoseVector pose_ref = vpPoseVector(cMo_ref);
   vpPoseVector pose_est = vpPoseVector(cMo_est);

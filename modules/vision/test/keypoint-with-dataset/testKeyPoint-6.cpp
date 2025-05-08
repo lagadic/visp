@@ -61,6 +61,7 @@ using namespace VISP_NAMESPACE_NAME;
 
 void usage(const char *name, const char *badparam);
 bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display);
+std::string getOpenCVType(int type);
 
 /*!
   Print the program options.
@@ -121,12 +122,10 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
     case 'h':
       usage(argv[0], nullptr);
       return false;
-      break;
 
     default:
       usage(argv[0], optarg_);
       return false;
-      break;
     }
   }
 
@@ -319,7 +318,7 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
 
       for (std::vector<cv::KeyPoint>::const_iterator it = kpts.begin(); it != kpts.end(); ++it) {
         vpImagePoint imPt;
-        imPt.set_uv(it->pt.x, it->pt.y);
+        imPt.set_uv(static_cast<double>(it->pt.x), static_cast<double>(it->pt.y));
 
         vpDisplay::displayCross(I, imPt, 4, vpColor::red);
       }
@@ -400,7 +399,7 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
 
       for (std::vector<cv::KeyPoint>::const_iterator it = kpts.begin(); it != kpts.end(); ++it) {
         vpImagePoint imPt;
-        imPt.set_uv(it->pt.x, it->pt.y);
+        imPt.set_uv(static_cast<double>(it->pt.x), static_cast<double>(it->pt.y));
 
         vpDisplay::displayCross(I, imPt, 4, vpColor::red);
       }

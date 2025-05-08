@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Interface for the qb robotics devices.
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpConfig.h>
 #if defined(VISP_HAVE_QBDEVICE) && defined(VISP_HAVE_THREADS)
@@ -140,7 +138,6 @@ int vpQbDevice::Impl::activate(const int &id, const bool &command, const int &ma
     failures = std::max<int>(failures, isActive(id, max_repeats, status));
     if (status != command) {
       std::cout << "Device [" << id << "] fails on " << command_prefix << "activation." << std::endl;
-      ;
       return -1;
     }
     std::cout << "Device [" << id << "] motors have been " << command_prefix << "activated!" << std::endl;

@@ -377,7 +377,7 @@ void vpPlotGraph::displayUnit(vpImage<unsigned char> &
 
 void vpPlotGraph::displayTitle(vpImage<unsigned char> &I)
 {
-  double size = (double)title.size();
+  double size = static_cast<double>(title.size());
   size = size / 2.0;
   vpDisplay::displayText(I, vpImagePoint(dTopLeft.get_i() - 3 * epsi, dTopLeft.get_j() + dWidth / 2.0 - 4 * size),
                          title, vpColor::black);
@@ -410,7 +410,7 @@ void vpPlotGraph::rescalex(unsigned int side, double extremity)
     break;
   }
 
-  xdelt = (xmax - xmin) / (double)nbDivisionx;
+  xdelt = (xmax - xmin) / static_cast<double>(nbDivisionx);
 }
 
 void vpPlotGraph::rescaley(unsigned int side, double extremity)
@@ -424,7 +424,7 @@ void vpPlotGraph::rescaley(unsigned int side, double extremity)
     break;
   }
 
-  ydelt = (ymax - ymin) / (double)nbDivisiony;
+  ydelt = (ymax - ymin) / static_cast<double>(nbDivisiony);
 }
 
 void vpPlotGraph::initScale(vpImage<unsigned char> &I, double x_min, double x_max, int nbDivx, double y_min,
@@ -1243,7 +1243,7 @@ void vpPlotGraph::rescalez(unsigned int side, double extremity)
     break;
   }
 
-  zdelt = (zmax - zmin) / (double)nbDivisionz;
+  zdelt = (zmax - zmin) / static_cast<double>(nbDivisionz);
 }
 
 /*!

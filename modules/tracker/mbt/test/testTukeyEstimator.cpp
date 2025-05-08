@@ -88,9 +88,7 @@ int main()
 
     for (size_t i = 0; i < weights.size(); i++) {
       if (!vpMath::equal(weights[i], weights_col[static_cast<unsigned int>(i)], noise_threshold)) {
-        std::cerr << "Difference between vpRobust::TUKEY and "
-          "vpMbtTukeyEstimator (double)!"
-          << std::endl;
+        std::cerr << "Difference between vpRobust::TUKEY and vpMbtTukeyEstimator (double)!" << std::endl;
         std::cerr << "weights_col[" << i << "]=" << weights_col[static_cast<unsigned int>(i)] << std::endl;
         std::cerr << "weights[" << i << "]=" << weights[i] << std::endl;
         return EXIT_FAILURE;

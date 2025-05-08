@@ -52,6 +52,12 @@
 
 BEGIN_VISP_NAMESPACE
 
+bool lmderMostInnerLoop(ComputeFunctionAndJacobian ptr_fcn, int m, int n,
+                        double *x, double *fvec, double *fjac, int ldfjac, double ftol, double xtol, unsigned int maxfev,
+                        double *diag, int nprint, int *info, unsigned int *nfev, int *ipvt,
+                        double *qtf, double *wa1, double *wa2, double *wa3, double *wa4, const double &gnorm, int &iter, double &delta, double &par, double &pnorm,
+                        int &iflag, double &fnorm, double &xnorm);
+
 double enorm(const double *x, int n)
 {
   const double rdwarf = 3.834e-20;

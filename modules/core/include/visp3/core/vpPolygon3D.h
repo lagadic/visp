@@ -245,7 +245,7 @@ NLOHMANN_JSON_SERIALIZE_ENUM(VISP_NAMESPACE_ADDRESSING vpPolygon3D::vpPolygon3DC
 #  pragma clang diagnostic pop
 #endif
 
-inline nlohmann::json clippingFlagsToJSON(const int flags)
+inline nlohmann::json clippingFlagsToJSON(const unsigned int flags)
 {
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;

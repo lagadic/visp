@@ -124,12 +124,10 @@ bool getOptions(int argc, const char **argv, std::string &conf)
     case 'h':
       usage(argv[0], nullptr, conf);
       return false;
-      break;
 
     default:
       usage(argv[0], optarg_, conf);
       return false;
-      break;
     }
   }
 
@@ -344,7 +342,7 @@ int main(int argc, const char **argv)
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
     if (display != nullptr) {
       delete display;
-  }
+    }
 #endif
     return EXIT_FAILURE;
   }

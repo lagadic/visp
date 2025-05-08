@@ -567,7 +567,7 @@ std::vector<double> vpPoseVector::toStdVector() const
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include <visp3/core/vpJsonParsing.h>
-const std::string vpPoseVector::jsonTypeName = "vpPoseVector";
+VP_ATTRIBUTE_NO_DESTROY const std::string vpPoseVector::jsonTypeName = "vpPoseVector";
 void vpPoseVector::convert_to_json(nlohmann::json &j) const
 {
   const vpArray2D<double> *asArray = (vpArray2D<double>*) this;

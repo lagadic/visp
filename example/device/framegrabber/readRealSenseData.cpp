@@ -177,12 +177,10 @@ bool getOptions(int argc, const char *argv[], std::string &input_directory, std:
     case 'h':
       usage(argv[0], nullptr);
       return false;
-      break;
 
     default:
       usage(argv[0], optarg);
       return false;
-      break;
     }
   }
 
@@ -286,7 +284,7 @@ bool readData(int cpt, const std::string &input_directory, const std::string &pa
       point_cloud->width = width;
       point_cloud->height = height;
       point_cloud->is_dense = (is_dense != 0);
-      point_cloud->resize((size_t)width * height);
+      point_cloud->resize(static_cast<size_t>(width * height));
 
       float x = 0.0f, y = 0.0f, z = 0.0f;
       for (uint32_t i = 0; i < height; i++) {
@@ -295,9 +293,9 @@ bool readData(int cpt, const std::string &input_directory, const std::string &pa
           vpIoTools::readBinaryValueLE(file_pointcloud, y);
           vpIoTools::readBinaryValueLE(file_pointcloud, z);
 
-          point_cloud->points[(size_t)(i * width + j)].x = x;
-          point_cloud->points[(size_t)(i * width + j)].y = y;
-          point_cloud->points[(size_t)(i * width + j)].z = z;
+          point_cloud->points[static_cast<size_t>(i * width + j)].x = x;
+          point_cloud->points[static_cast<size_t>(i * width + j)].y = y;
+          point_cloud->points[static_cast<size_t>(i * width + j)].z = z;
         }
       }
     }
@@ -321,13 +319,13 @@ bool readData(int cpt, const std::string &input_directory, const std::string &pa
       point_cloud->width = width;
       point_cloud->height = height;
       point_cloud->is_dense = (is_dense != 0);
-      point_cloud->resize((size_t)width * height);
+      point_cloud->resize(static_cast<size_t>(width * height));
 
       for (uint32_t i = 0; i < height; i++) {
         for (uint32_t j = 0; j < width; j++) {
-          point_cloud->points[(size_t)(i * width + j)].x = pcl_data_ptr[(size_t)(i * width + j)*3 + 0];
-          point_cloud->points[(size_t)(i * width + j)].y = pcl_data_ptr[(size_t)(i * width + j)*3 + 1];
-          point_cloud->points[(size_t)(i * width + j)].z = pcl_data_ptr[(size_t)(i * width + j)*3 + 2];
+          point_cloud->points[static_cast<size_t>(i * width + j)].x = pcl_data_ptr[static_cast<size_t>(i * width + j)*3 + 0];
+          point_cloud->points[static_cast<size_t>(i * width + j)].y = pcl_data_ptr[static_cast<size_t>(i * width + j)*3 + 1];
+          point_cloud->points[static_cast<size_t>(i * width + j)].z = pcl_data_ptr[static_cast<size_t>(i * width + j)*3 + 2];
         }
       }
     }

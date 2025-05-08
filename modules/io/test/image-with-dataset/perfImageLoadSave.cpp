@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,16 +49,16 @@
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
-static std::string ipath = vpIoTools::getViSPImagesDataPath();
-static std::vector<std::string> paths {
+VP_ATTRIBUTE_NO_DESTROY static std::string ipath = vpIoTools::getViSPImagesDataPath();
+VP_ATTRIBUTE_NO_DESTROY static std::vector<std::string> paths {
     ipath + "/Solvay/Solvay_conference_1927_Version2_640x440",
     ipath + "/Solvay/Solvay_conference_1927_Version2_1024x705",
     ipath + "/Solvay/Solvay_conference_1927_Version2_1280x881",
     ipath + "/Solvay/Solvay_conference_1927_Version2_2126x1463",
 };
-static std::vector<std::string> names { "Solvay (640x440)", "Solvay (1024x705)", "Solvay (1280x881)",
+VP_ATTRIBUTE_NO_DESTROY static std::vector<std::string> names { "Solvay (640x440)", "Solvay (1024x705)", "Solvay (1280x881)",
                                       "Solvay (2126x1463)" };
-static std::vector<vpImageIo::vpImageIoBackendType> backends
+VP_ATTRIBUTE_NO_DESTROY static std::vector<vpImageIo::vpImageIoBackendType> backends
 {
 #if defined(VISP_HAVE_JPEG) && defined(VISP_HAVE_PNG)
   vpImageIo::IO_SYSTEM_LIB_BACKEND,
@@ -71,7 +71,7 @@ static std::vector<vpImageIo::vpImageIoBackendType> backends
 #endif
   vpImageIo::IO_STB_IMAGE_BACKEND
 };
-static std::vector<std::string> backendNamesJpeg
+VP_ATTRIBUTE_NO_DESTROY static std::vector<std::string> backendNamesJpeg
 {
 #if defined(VISP_HAVE_JPEG)
   "libjpeg",
@@ -81,7 +81,7 @@ static std::vector<std::string> backendNamesJpeg
 #endif
       "simd", "stb"
 };
-static std::vector<std::string> backendNamesPng
+VP_ATTRIBUTE_NO_DESTROY static std::vector<std::string> backendNamesPng
 {
 #if defined(VISP_HAVE_PNG)
   "libpng",

@@ -64,7 +64,7 @@ void getPointcloud(const rs2::depth_frame &depth_frame, std::vector<float3> &poi
   auto vf = depth_frame.as<rs2::video_frame>();
   const int width = vf.get_width();
   const int height = vf.get_height();
-  pointcloud.resize((size_t)(width * height));
+  pointcloud.resize(static_cast<size_t>(width * height));
 
   rs2::pointcloud pc;
   rs2::points points = pc.calculate(depth_frame);

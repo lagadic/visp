@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Model-based tracker using depth normal features.
- *
-*****************************************************************************/
+ */
 
 #include <iostream>
 
@@ -53,7 +51,10 @@
 #endif
 
 BEGIN_VISP_NAMESPACE
-vpMbDepthNormalTracker::vpMbDepthNormalTracker()
+/*!
+ * Default constructor.
+ */
+  vpMbDepthNormalTracker::vpMbDepthNormalTracker()
   : m_depthNormalFeatureEstimationMethod(vpMbtFaceDepthNormal::ROBUST_FEATURE_ESTIMATION),
   m_depthNormalHiddenFacesDisplay(), m_depthNormalListOfActiveFaces(), m_depthNormalListOfDesiredFeatures(),
   m_depthNormalFaces(), m_depthNormalPclPlaneEstimationMethod(2), m_depthNormalPclPlaneEstimationRansacMaxIter(200),
@@ -270,7 +271,7 @@ void vpMbDepthNormalTracker::computeVVSInteractionMatrixAndResidu()
 
     (*it)->computeInteractionMatrix(m_cMo, L_face, features_face);
 
-    vpColVector face_error = features_face - m_depthNormalListOfDesiredFeatures[(size_t)cpt];
+    vpColVector face_error = features_face - m_depthNormalListOfDesiredFeatures[static_cast<size_t>(cpt)];
 
     if (!(*it)->planeIsInvalid(m_cMo, angleDisappears)) {
       m_error_depthNormal.insert(cpt * 3, face_error);

@@ -43,6 +43,7 @@
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;
 #endif
+int test_condition_number(const std::string &test_name, const vpMatrix &M);
 
 int test_condition_number(const std::string &test_name, const vpMatrix &M)
 {

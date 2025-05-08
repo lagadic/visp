@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,11 +45,11 @@ vpDisplayX drawingHelpers::d_dIy;
 vpDisplayX drawingHelpers::d_IcannyVisp;
 vpDisplayX drawingHelpers::d_IcannyImgFilter;
 #elif defined(HAVE_OPENCV_HIGHGUI)
-vpDisplayOpenCV drawingHelpers::d_Iinput;
-vpDisplayOpenCV drawingHelpers::d_dIx;
-vpDisplayOpenCV drawingHelpers::d_dIy;
-vpDisplayOpenCV drawingHelpers::d_IcannyVisp;
-vpDisplayOpenCV drawingHelpers::d_IcannyImgFilter;
+VP_ATTRIBUTE_NO_DESTROY vpDisplayOpenCV drawingHelpers::d_Iinput;
+VP_ATTRIBUTE_NO_DESTROY vpDisplayOpenCV drawingHelpers::d_dIx;
+VP_ATTRIBUTE_NO_DESTROY vpDisplayOpenCV drawingHelpers::d_dIy;
+VP_ATTRIBUTE_NO_DESTROY vpDisplayOpenCV drawingHelpers::d_IcannyVisp;
+VP_ATTRIBUTE_NO_DESTROY vpDisplayOpenCV drawingHelpers::d_IcannyImgFilter;
 #elif defined(VISP_HAVE_GTK)
 vpDisplayGTK drawingHelpers::d_Iinput;
 vpDisplayGTK drawingHelpers::d_dIx;
@@ -57,17 +57,17 @@ vpDisplayGTK drawingHelpers::d_dIy;
 vpDisplayGTK drawingHelpers::d_IcannyVisp;
 vpDisplayGTK drawingHelpers::d_IcannyImgFilter;
 #elif defined(VISP_HAVE_GDI)
-vpDisplayGDI drawingHelpers::d_Iinput;
-vpDisplayGDI drawingHelpers::d_dIx;
-vpDisplayGDI drawingHelpers::d_dIy;
-vpDisplayGDI drawingHelpers::d_IcannyVisp;
-vpDisplayGDI drawingHelpers::d_IcannyImgFilter;
+VP_ATTRIBUTE_NO_DESTROY vpDisplayGDI drawingHelpers::d_Iinput;
+VP_ATTRIBUTE_NO_DESTROY vpDisplayGDI drawingHelpers::d_dIx;
+VP_ATTRIBUTE_NO_DESTROY vpDisplayGDI drawingHelpers::d_dIy;
+VP_ATTRIBUTE_NO_DESTROY vpDisplayGDI drawingHelpers::d_IcannyVisp;
+VP_ATTRIBUTE_NO_DESTROY vpDisplayGDI drawingHelpers::d_IcannyImgFilter;
 #elif defined(VISP_HAVE_D3D9)
-vpDisplayD3D drawingHelpers::d_Iinput;
-vpDisplayD3D drawingHelpers::d_dIx;
-vpDisplayD3D drawingHelpers::d_dIy;
-vpDisplayD3D drawingHelpers::d_IcannyVisp;
-vpDisplayD3D drawingHelpers::d_IcannyImgFilter;
+VP_ATTRIBUTE_NO_DESTROY vpDisplayD3D drawingHelpers::d_Iinput;
+VP_ATTRIBUTE_NO_DESTROY vpDisplayD3D drawingHelpers::d_dIx;
+VP_ATTRIBUTE_NO_DESTROY vpDisplayD3D drawingHelpers::d_dIy;
+VP_ATTRIBUTE_NO_DESTROY vpDisplayD3D drawingHelpers::d_IcannyVisp;
+VP_ATTRIBUTE_NO_DESTROY vpDisplayD3D drawingHelpers::d_IcannyImgFilter;
 #endif
 
 void drawingHelpers::init(vpImage<unsigned char> &Iinput, vpImage<unsigned char> &IcannyVisp, vpImage<unsigned char> *p_dIx,
