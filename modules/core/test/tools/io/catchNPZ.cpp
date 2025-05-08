@@ -228,7 +228,7 @@ TEST_CASE("Test visp::cnpy::npy_load/npz_save", "[visp::cnpy I/O]")
     const std::string identifier = "vpHomogeneousMatrix";
     vpHomogeneousMatrix cMo_save_copy;
     {
-      vpHomogeneousMatrix cMo_save(vpTranslationVector(10, 20, 30), vpThetaUVector(1, 2, 3));
+      vpHomogeneousMatrix cMo_save(vpTranslationVector(10, 20, 30), vpThetaUVector(0.1, 0.2, 0.3));
       // std::cout << "cMo_save:\n" << cMo_save << std::endl;
 
       visp::cnpy::npz_save(npz_filename, identifier, &cMo_save.data[0], { cMo_save.getRows(), cMo_save.getCols() }, "a"); // append
@@ -275,7 +275,6 @@ TEST_CASE("Test visp::cnpy::npy_load/npz_save", "[visp::cnpy I/O]")
         std::vector<double>::const_iterator first = vec_cMo_read.begin() + i*arr_vec_data.shape[1];
         std::vector<double>::const_iterator last = first + arr_vec_data.shape[1];
         std::vector<double> subvec_cMo_read(first, last);
-
         vpHomogeneousMatrix cMo_read(subvec_cMo_read);
         // std::cout << "cMo_read:\n" << cMo_read << std::endl;
         CHECK(vec_cMo_save_copy[i] == cMo_read);

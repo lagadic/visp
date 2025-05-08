@@ -515,7 +515,12 @@ void bindings_vpRotationMatrix(py::class_<vpRotationMatrix, std::shared_ptr<vpRo
     vpRotationMatrix result;
     copy_data_from_np(np_array, result.data);
     if (!result.isARotationMatrix()) {
-      throw std::runtime_error("Input numpy array is not a valid rotation matrix");
+      if (!result.isARotationMatrix(1e-3)) {
+        throw std::runtime_error("Input numpy array is not a valid rotation matrix");
+      }
+      else {
+        result.orthogonalize();
+      }
     }
     return result;
                                 }), R"doc(
@@ -542,6 +547,12 @@ void bindings_vpHomogeneousMatrix(py::class_<vpHomogeneousMatrix, std::shared_pt
     vpHomogeneousMatrix result;
     copy_data_from_np(np_array, result.data);
     if (!result.isAnHomogeneousMatrix()) {
+      if (!result.isAnHomogeneousMatrix(1e-3)) {
+        throw std::runtime_error("Input numpy array is not a valid homogeneous matrix");
+      }
+      else {
+        result.orthogonalizeRotation();
+      }
       throw std::runtime_error("Input numpy array is not a valid homogeneous matrix");
     }
     return result;
