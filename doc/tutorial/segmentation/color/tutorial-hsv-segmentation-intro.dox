@@ -127,7 +127,7 @@ Note that all these steps are equivalent to the following lines if you cannot us
 
 \snippet tutorial-hsv-segmentation-basic.cpp Without vpHSV
 
-Combining all together, we get the following program:
+Combining all together, we get the following program also available in tutorial-hsv-segmentation-basic.cpp:
 
 \include tutorial-hsv-segmentation-basic.cpp
 
