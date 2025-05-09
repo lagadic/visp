@@ -41,6 +41,8 @@
 find_path(VIPER650_DATA_PATH
   NAMES include/const_camera_Viper650.xml
   PATHS
+    $ENV{VIPER650_DATA_DIR}
+    ${VIPER650_DATA_DIR}
     /home/soft/Viper650/Viper650
     /home/soft/Viper650/current
     /home/soft/viper650/viper650
