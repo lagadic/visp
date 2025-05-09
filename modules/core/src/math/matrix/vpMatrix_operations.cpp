@@ -152,17 +152,125 @@ void vpMatrix::multMatrixVector(const vpMatrix &A, const vpColVector &v, vpColVe
 */
 void vpMatrix::mult2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
 {
-  if ((A.rowNum != C.rowNum) || (B.colNum != C.colNum)) {
-    C.resize(A.rowNum, B.colNum, false, false);
+  if ((A.getRows() != C.getRows()) || (B.getCols() != C.getCols())) {
+    C.resize(A.getRows(), B.getCols(), false, false);
   }
 
-  if (A.colNum != B.rowNum) {
+  if (A.getCols() != B.getRows()) {
     throw(vpException(vpException::dimensionError, "Cannot multiply (%dx%d) matrix by (%dx%d) matrix", A.getRows(),
                       A.getCols(), B.getRows(), B.getCols()));
   }
 
   // If available use Lapack only for large matrices
-  bool useLapack = ((A.rowNum > vpMatrix::m_lapack_min_size) || (A.colNum > vpMatrix::m_lapack_min_size) ||
+  bool useLapack = ((A.getRows() > vpMatrix::m_lapack_min_size) || (A.getCols() > vpMatrix::m_lapack_min_size) ||
+                    (B.getCols() > vpMatrix::m_lapack_min_size));
+#if !(defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN) && !defined(VISP_HAVE_GSL))
+  useLapack = false;
+#endif
+
+  if (useLapack) {
+#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN) && !defined(VISP_HAVE_GSL)
+    const double alpha = 1.0;
+    const double beta = 0.0;
+    const char trans = 'n';
+    vpMatrix::blas_dgemm(trans, trans, B.getCols(), A.getRows(), A.getCols(), alpha, B.data, B.getCols(), A.data, A.getCols(), beta,
+                         C.data, B.getCols());
+#endif
+  }
+  else {
+    // 5/12/06 some "very" simple optimization to avoid indexation
+    const unsigned int BcolNum = B.getCols();
+    const unsigned int BrowNum = B.getRows();
+    double **BrowPtrs = B.rowPtrs;
+    for (unsigned int i = 0; i < A.getRows(); ++i) {
+      const double *rowptri = A.rowPtrs[i];
+      double *ci = C[i];
+      for (unsigned int j = 0; j < BcolNum; ++j) {
+        double s = 0;
+        for (unsigned int k = 0; k < BrowNum; ++k) {
+          s += rowptri[k] * BrowPtrs[k][j];
+        }
+        ci[j] = s;
+      }
+    }
+  }
+}
+
+/*!
+  Operation C = A * B.
+
+  The result is placed in the third parameter C and not returned.
+  A new matrix won't be allocated for every use of the function
+  (speed gain if used many times with the same result matrix size).
+
+  \sa operator*()
+*/
+void vpMatrix::mult2Matrices(const vpMatrix &A, const vpRotationMatrix &B, vpMatrix &C)
+{
+  if ((A.getRows() != C.getRows()) || (B.getCols() != C.getCols())) {
+    C.resize(A.getRows(), B.getCols(), false, false);
+  }
+
+  if (A.getCols() != B.getRows()) {
+    throw(vpException(vpException::dimensionError, "Cannot multiply (%dx%d) rotation matrix by (%dx%d) matrix", A.getRows(),
+                      A.getCols(), B.getRows(), B.getCols()));
+  }
+
+  // If available use Lapack only for large matrices
+  bool useLapack = ((A.getRows() > vpMatrix::m_lapack_min_size) || (A.getCols() > vpMatrix::m_lapack_min_size) ||
+                    (B.getCols() > vpMatrix::m_lapack_min_size));
+#if !(defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN) && !defined(VISP_HAVE_GSL))
+  useLapack = false;
+#endif
+
+  if (useLapack) {
+#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN) && !defined(VISP_HAVE_GSL)
+    const double alpha = 1.0;
+    const double beta = 0.0;
+    const char trans = 'n';
+    vpMatrix::blas_dgemm(trans, trans, B.getCols(), A.getRows(), A.getCols(), alpha, B.data, B.getCols(), A.data, A.getCols(), beta,
+                         C.data, B.getCols());
+#endif
+  }
+  else {
+    const unsigned int BcolNum = B.getCols();
+    const unsigned int BrowNum = B.getRows();
+    for (unsigned int i = 0; i < A.getRows(); ++i) {
+      const double *rowptri = A.rowPtrs[i];
+      double *ci = C[i];
+      for (unsigned int j = 0; j < BcolNum; ++j) {
+        double s = 0;
+        for (unsigned int k = 0; k < BrowNum; ++k) {
+          s += rowptri[k] * B.data[k * B.getCols() + j];
+        }
+        ci[j] = s;
+      }
+    }
+  }
+}
+
+/*!
+  Operation C = A * B.
+
+  The result is placed in the third parameter C and not returned.
+  A new matrix won't be allocated for every use of the function
+  (speed gain if used many times with the same result matrix size).
+
+  \sa operator*()
+*/
+void vpMatrix::mult2Matrices(const vpRotationMatrix &A, const vpMatrix &B, vpMatrix &C)
+{
+  if ((A.getRows() != C.getRows()) || (B.getCols() != C.getCols())) {
+    C.resize(A.getRows(), B.colNum, false, false);
+  }
+
+  if (A.getCols() != B.getRows()) {
+    throw(vpException(vpException::dimensionError, "Cannot multiply (%dx%d) rotation matrix by (%dx%d) matrix", A.getRows(),
+                      A.getCols(), B.getRows(), B.getCols()));
+  }
+
+  // If available use Lapack only for large matrices
+  bool useLapack = ((A.getRows() > vpMatrix::m_lapack_min_size) || (A.getCols() > vpMatrix::m_lapack_min_size) ||
                     (B.colNum > vpMatrix::m_lapack_min_size));
 #if !(defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN) && !defined(VISP_HAVE_GSL))
   useLapack = false;
@@ -173,17 +281,16 @@ void vpMatrix::mult2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
     const double alpha = 1.0;
     const double beta = 0.0;
     const char trans = 'n';
-    vpMatrix::blas_dgemm(trans, trans, B.colNum, A.rowNum, A.colNum, alpha, B.data, B.colNum, A.data, A.colNum, beta,
+    vpMatrix::blas_dgemm(trans, trans, B.colNum, A.getRows(), A.getCols(), alpha, B.data, B.colNum, A.data, A.getCols(), beta,
                          C.data, B.colNum);
 #endif
   }
   else {
-    // 5/12/06 some "very" simple optimization to avoid indexation
-    const unsigned int BcolNum = B.colNum;
-    const unsigned int BrowNum = B.rowNum;
+    const unsigned int BcolNum = B.getCols();
+    const unsigned int BrowNum = B.getRows();
     double **BrowPtrs = B.rowPtrs;
-    for (unsigned int i = 0; i < A.rowNum; ++i) {
-      const double *rowptri = A.rowPtrs[i];
+    for (unsigned int i = 0; i < A.getRows(); ++i) {
+      const double *rowptri = &A.data[i*A.getCols()];
       double *ci = C[i];
       for (unsigned int j = 0; j < BcolNum; ++j) {
         double s = 0;

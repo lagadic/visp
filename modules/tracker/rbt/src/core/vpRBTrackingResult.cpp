@@ -39,6 +39,8 @@
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
 
+BEGIN_VISP_NAMESPACE
+
 void vpRBTrackingResult::saveToFile(const std::string &path) const
 {
   nlohmann::json j = *this;
@@ -61,4 +63,7 @@ vpRBTrackingResult vpRBTrackingResult::readFromJsonFile(const std::string &path)
   result = j;
   return result;
 }
+
+END_VISP_NAMESPACE
+
 #endif
