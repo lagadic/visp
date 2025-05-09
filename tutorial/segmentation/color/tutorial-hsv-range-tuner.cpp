@@ -90,14 +90,8 @@ int main(int argc, const char *argv[])
     if ((std::string(argv[i]) == "--hsv-thresholds") && ((i+1) < argc)) {
       opt_hsv_filename = std::string(argv[++i]);
     }
-    else if (std::string(argv[i]) == "--image") {
-      if ((i+1) < argc) {
-        opt_img_filename = std::string(argv[++i]);
-      }
-      else {
-        show_helper = true;
-        std::cout << "ERROR \nMissing input image name after parameter " << std::string(argv[i]) << std::endl;
-      }
+    else if ((std::string(argv[i]) == "--image") && ((i+1) < argc)) {
+      opt_img_filename = std::string(argv[++i]);
     }
     else if (std::string(argv[i]) == "--save-img") {
       opt_save_img = true;
@@ -142,6 +136,10 @@ int main(int argc, const char *argv[])
   else if (opt_img_filename.empty()) {
     std::cout << "Error: you should use --image <input image> option to specify an input image..." << std::endl;
     return EXIT_FAILURE;
+  }
+
+  if (use_realsense) {
+    std::cout << "Use images from Realsense camera" << std::endl;
   }
 
   int max_value_H = 255;
