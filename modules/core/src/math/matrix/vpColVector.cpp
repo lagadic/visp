@@ -87,7 +87,7 @@ vpTranslationVector vpColVector::operator+(const vpTranslationVector &t) const
   return s;
 }
 
-vpColVector &vpColVector::operator+=(vpColVector v)
+vpColVector &vpColVector::operator+=(const vpColVector &v)
 {
   if (getRows() != v.getRows()) {
     throw(vpException(vpException::dimensionError, "Cannot add (%dx1) column vector to (%dx1) column vector", getRows(),
@@ -100,7 +100,20 @@ vpColVector &vpColVector::operator+=(vpColVector v)
   return (*this);
 }
 
-vpColVector &vpColVector::operator-=(vpColVector v)
+vpColVector &vpColVector::operator+=(const vpTranslationVector &t)
+{
+  if (getRows() != t.getRows()) {
+    throw(vpException(vpException::dimensionError, "Cannot add (%dx1) translation vector to (%dx1) column vector",
+                      getRows(), t.getRows()));
+  }
+
+  for (unsigned int i = 0; i < rowNum; ++i) {
+    (*this)[i] += t[i];
+  }
+  return (*this);
+}
+
+vpColVector &vpColVector::operator-=(const vpColVector &v)
 {
   if (getRows() != v.getRows()) {
     throw(vpException(vpException::dimensionError, "Cannot subtract (%dx1) column vector to (%dx1) column vector",
@@ -109,6 +122,19 @@ vpColVector &vpColVector::operator-=(vpColVector v)
 
   for (unsigned int i = 0; i < rowNum; ++i) {
     (*this)[i] -= v[i];
+  }
+  return (*this);
+}
+
+vpColVector &vpColVector::operator-=(const vpTranslationVector &t)
+{
+  if (getRows() != t.getRows()) {
+    throw(vpException(vpException::dimensionError, "Cannot subtract (%dx1) translation vector to (%dx1) column vector",
+                      getRows(), t.getRows()));
+  }
+
+  for (unsigned int i = 0; i < rowNum; ++i) {
+    (*this)[i] -= t[i];
   }
   return (*this);
 }
