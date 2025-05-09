@@ -1,12 +1,3 @@
-# TODO:
-# visp> In file included from /nix/store/g6lpg2p890jn3hkv63jjkk2f7k66y6hk-ogre-14.2.5/include/OGRE/Ogre.h:52,
-# visp>                  from /build/source/modules/ar/include/visp3/ar/vpAROgre.h:66:
-# visp> /nix/store/g6lpg2p890jn3hkv63jjkk2f7k66y6hk-ogre-14.2.5/include/OGRE/OgreConfigFile.h:94:41: note: declared here
-# visp>    94 |         OGRE_DEPRECATED SectionIterator getSectionIterator(void);
-# visp>       |                                         ^~~~~~~~~~~~~~~~~~
-# visp> /build/source/modules/ar/src/ogre-simulator/vpAROgre.cpp:315:33: error: no matching function for call to 'Ogre::Root::showConfigDialog()'
-# visp>   315 |     if (!mRoot->showConfigDialog()) {
-# visp>       |          ~~~~~~~~~~~~~~~~~~~~~~~^~
 {
   cmake,
   coin3d,
@@ -26,7 +17,7 @@
   libX11,
   nix-gitignore,
   nlohmann_json,
-  #ogre,
+  ogre,
   openblas,
   opencv,
   pkg-config,
@@ -65,7 +56,7 @@ stdenv.mkDerivation (finalAttrs: {
       libX11
       libxml2
       nlohmann_json
-      #ogre
+      ogre
       openblas
       opencv
       python3Packages.numpy
