@@ -56,6 +56,7 @@ stdenv.mkDerivation (finalAttrs: {
       libX11
       libxml2
       nlohmann_json
+      ogre
       openblas
       opencv
       python3Packages.numpy
@@ -65,7 +66,6 @@ stdenv.mkDerivation (finalAttrs: {
     ]
     ++ lib.optionals stdenv.isLinux [
       coin3d
-      ogre
       v4l-utils
     ]
     ++ lib.optionals stdenv.isDarwin [ darwin.IOKit ];
