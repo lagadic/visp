@@ -48,8 +48,6 @@
 BEGIN_VISP_NAMESPACE
 const unsigned int vpHistogram::constr_val_256 = 256;
 #if defined(VISP_HAVE_THREADS)
-#include <thread>
-
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace
 {
@@ -192,7 +190,7 @@ bool compare_vpHistogramPeak(vpHistogramPeak first, vpHistogramPeak second)
 /*!
   Default constructor for a gray level histogram.
 */
-vpHistogram::vpHistogram() : m_histogram(nullptr), m_size(constr_val_256), mp_mask(nullptr), m_total(0) { init(); }
+vpHistogram::vpHistogram(const unsigned int &size) : m_histogram(nullptr), m_size(size), mp_mask(nullptr), m_total(0) { init(size); }
 
 /*!
   Copy constructor of a gray level histogram.
@@ -537,15 +535,20 @@ void vpHistogram::smooth(unsigned int fsize)
   vpHistogram h;
   h = *this;
 
-  int hsize = static_cast<int>(fsize) / 2; // half filter size
+  unsigned int hsize = fsize / 2; // half filter size
+  unsigned int sizeAsInt = m_size;
 
-  for (unsigned i = 0; i < m_size; ++i) {
+  for (unsigned int i = 0; i < sizeAsInt; ++i) {
     unsigned int sum = 0;
     unsigned int nb = 0;
-    for (int j = -hsize; j <= hsize; ++j) {
+    for (unsigned int j = 0; j <= hsize; ++j) {
       // exploitation of the overflow to detect negative value...
-      if (/*(i + j) >= 0 &&*/ (i + static_cast<unsigned int>(j)) < m_size) {
-        sum += h.m_histogram[i + static_cast<unsigned int>(j)];
+      if ((i - j) < sizeAsInt) {
+        sum += h.m_histogram[i - j];
+        ++nb;
+      }
+      if ((i + j) < sizeAsInt) {
+        sum += h.m_histogram[i + j];
         ++nb;
       }
     }

@@ -26,40 +26,49 @@
  *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Description:
+ * HSV color scale.
  */
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/rbt/vpRBTrackingResult.h>
+#include <visp3/core/vpHSV.h>
 
-#include <iostream>
-
-#if defined(VISP_HAVE_NLOHMANN_JSON)
-#include VISP_NLOHMANN_JSON(json.hpp)
-#endif
-
-#ifdef VISP_HAVE_NLOHMANN_JSON
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 BEGIN_VISP_NAMESPACE
-void vpRBTrackingResult::saveToFile(const std::string &path) const
+
+template<>
+vpHSV<double> &vpHSV<double>::buildFrom(const vpRGBa &rgba)
 {
-  nlohmann::json j = *this;
-  std::ofstream out(path);
-  if (!out.good()) {
-    throw vpException(vpException::ioError, "Path %s could not be opened to write tracking results", path.c_str());
-  }
-  out << j.dump(2);
-  out.close();
+  vpColVector hsv = computeNormalizedHSV(rgba);
+  set(hsv);
+  return *this;
 }
 
-vpRBTrackingResult vpRBTrackingResult::readFromJsonFile(const std::string &path)
+template<>
+vpHSV<unsigned char, true> &vpHSV<unsigned char, true>::buildFrom(const vpRGBa &rgba)
 {
-  vpRBTrackingResult result;
-  std::ifstream input(path);
-  if (!input.good()) {
-    throw vpException(vpException::ioError, "Path %s could not be opened to read tracking results", path.c_str());
-  }
-  nlohmann::json j = nlohmann::json::parse(input);
-  result = j;
-  return result;
+  vpColVector hsv = computeNormalizedHSV(rgba);
+  hsv[0] *= 255.;
+  hsv[1] *= 255.;
+  hsv[2] *= 255.;
+
+  set(hsv);
+  return *this;
 }
+
+template<>
+vpHSV<unsigned char, false> &vpHSV<unsigned char, false>::buildFrom(const vpRGBa &rgba)
+{
+  vpColVector hsv = computeNormalizedHSV(rgba);
+  hsv[0] *= static_cast<double>(maxHueUsingLimitedRange);
+  hsv[1] *= 255.;
+  hsv[2] *= 255.;
+
+  set(hsv);
+  return *this;
+}
+
 END_VISP_NAMESPACE
+#else
+void dummy_vpHSV() { }
 #endif

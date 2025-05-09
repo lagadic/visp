@@ -5,6 +5,7 @@ project(tutorial-image)
 find_package(VISP REQUIRED visp_core visp_io visp_gui)
 
 set(tutorial_cpp
+  tutorial-canny-hsv.cpp
   tutorial-image-colormap.cpp
   tutorial-image-converter.cpp
   tutorial-image-manipulation.cpp

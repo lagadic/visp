@@ -45,6 +45,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 // color
+#include <visp3/core/vpHSV.h>
 #include <visp3/core/vpRGBa.h>
 
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
@@ -78,8 +79,15 @@
 #endif
 #endif
 
+#ifdef VISP_HAVE_OPENMP
+#include <omp.h>
+#endif
+
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON) && defined(VISP_HAVE_THREADS)
 #include <mutex>
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#include <type_traits>
+#endif
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpImageException.h>
 #include <visp3/core/vpPixelMeterConversion.h>
@@ -146,6 +154,27 @@ public:
   static void convert(const vpImage<double> &src, cv::Mat &dest, bool copyData = true);
   static void convert(const vpImage<vpRGBf> &src, cv::Mat &dest);
 #endif
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  template <typename T, bool useFullScale>
+  static void convert(const vpImage<vpRGBa> &src, vpImage<vpHSV<T, useFullScale>> &dest);
+
+  template <typename T, bool useFullScale>
+  static void convert(const vpImage<vpHSV<T, useFullScale>> &src, vpImage<vpRGBa> &dest);
+
+  template <typename T, typename U, bool useFullScale1, bool useFullScale2>
+  static typename std::enable_if<!std::is_same<T, U>::value, void>::type convert(const vpImage<vpHSV<T, useFullScale1>> &src, vpImage<vpHSV<U, useFullScale2>> &dest)
+  {
+    const int height = src.getHeight(), width = src.getWidth();
+    const int size = height * width;
+    dest.resize(height, width);
+#ifdef VISP_HAVE_OPENMP
+#pragma omp parallel for
+#endif
+    for (int i = 0; i < size; ++i) {
+      dest.bitmap[i].buildFrom(src.bitmap[i]);
+    }
+  }
+#endif
 
 #ifdef VISP_HAVE_YARP
   static void convert(const vpImage<unsigned char> &src, yarp::sig::ImageOf<yarp::sig::PixelMono> *dest,
@@ -161,16 +190,215 @@ public:
 #endif
 
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON) && defined(VISP_HAVE_THREADS)
-  static int depthToPointCloud(const vpImage<uint16_t> &depth_raw,
-                               float depth_scale, const vpCameraParameters &cam_depth,
-                               pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud,
-                               std::mutex *pointcloud_mutex = nullptr,
-                               const vpImage<unsigned char> *mask = nullptr, float Z_min = 0.2, float Z_max = 2.5);
-  static int depthToPointCloud(const vpImage<vpRGBa> &color, const vpImage<uint16_t> &depth_raw,
-                               float depth_scale, const vpCameraParameters &cam_depth,
-                               pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud,
-                               std::mutex *pointcloud_mutex = nullptr,
-                               const vpImage<unsigned char> *mask = nullptr, float Z_min = 0.2, float Z_max = 2.5);
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  template <typename MaskType>
+  static typename std::enable_if< std::is_same<MaskType, unsigned char>::value || std::is_same<MaskType, bool>::value, int>::type
+#else
+  template <typename MaskType>
+  static int
+#endif
+    depthToPointCloud(const vpImage<uint16_t> &depth_raw,
+                                 float depth_scale, const vpCameraParameters &cam_depth,
+                                 pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud,
+                                 std::mutex *pointcloud_mutex = nullptr,
+                                 const vpImage<MaskType> *depth_mask = nullptr, float Z_min = 0.2, float Z_max = 2.5)
+  {
+    int size = static_cast<int>(depth_raw.getSize());
+    unsigned int width = depth_raw.getWidth();
+    unsigned int height = depth_raw.getHeight();
+    int pcl_size = 0;
+    const unsigned int index_0 = 0;
+    const unsigned int index_1 = 1;
+    const unsigned int index_2 = 2;
+
+    if (depth_mask) {
+      if ((width != depth_mask->getWidth()) || (height != depth_mask->getHeight())) {
+        throw(vpImageException(vpImageException::notInitializedError, "Depth image and mask size differ"));
+      }
+      if (pointcloud_mutex) {
+        pointcloud_mutex->lock();
+      }
+      pointcloud->clear();
+#if defined(VISP_HAVE_OPENMP)
+      std::mutex mutex;
+#pragma omp parallel for
+#endif
+      for (int p = 0; p < size; ++p) {
+        if (depth_mask->bitmap[p]) {
+          if (static_cast<int>(depth_raw.bitmap[p])) {
+            float Z = static_cast<float>(depth_raw.bitmap[p]) * depth_scale;
+            if (Z < Z_max) {
+              double x = 0;
+              double y = 0;
+              unsigned int j = p % width;
+              unsigned int i = (p - j) / width;
+              vpPixelMeterConversion::convertPoint(cam_depth, j, i, x, y);
+              vpColVector point_3D({ x * Z, y * Z, Z });
+              if (point_3D[index_2] > Z_min) {
+#if defined(VISP_HAVE_OPENMP)
+                std::lock_guard<std::mutex> lock(mutex);
+#endif
+                pointcloud->push_back(pcl::PointXYZ(point_3D[index_0], point_3D[index_1], point_3D[index_2]));
+              }
+            }
+          }
+        }
+      }
+      pcl_size = pointcloud->size();
+      if (pointcloud_mutex) {
+        pointcloud_mutex->unlock();
+      }
+    }
+    else {
+      if (pointcloud_mutex) {
+        pointcloud_mutex->lock();
+      }
+      pointcloud->clear();
+#if defined(VISP_HAVE_OPENMP)
+      std::mutex mutex;
+#pragma omp parallel for
+#endif
+      for (int p = 0; p < size; ++p) {
+        if (static_cast<int>(depth_raw.bitmap[p])) {
+          float Z = static_cast<float>(depth_raw.bitmap[p]) * depth_scale;
+          if (Z < 2.5) {
+            double x = 0;
+            double y = 0;
+            unsigned int j = p % width;
+            unsigned int i = (p - j) / width;
+            vpPixelMeterConversion::convertPoint(cam_depth, j, i, x, y);
+            vpColVector point_3D({ x * Z, y * Z, Z, 1 });
+            if (point_3D[index_2] >= 0.1) {
+#if defined(VISP_HAVE_OPENMP)
+              std::lock_guard<std::mutex> lock(mutex);
+#endif
+              pointcloud->push_back(pcl::PointXYZ(point_3D[index_0], point_3D[index_1], point_3D[index_2]));
+            }
+          }
+        }
+      }
+      pcl_size = pointcloud->size();
+      if (pointcloud_mutex) {
+        pointcloud_mutex->unlock();
+      }
+    }
+
+    return pcl_size;
+  }
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  template <typename MaskType>
+  static typename std::enable_if< std::is_same<MaskType, unsigned char>::value || std::is_same<MaskType, bool>::value, int>::type
+#else
+  template <typename MaskType>
+  static int
+#endif
+    depthToPointCloud(const vpImage<vpRGBa> &color, const vpImage<uint16_t> &depth_raw,
+                                 float depth_scale, const vpCameraParameters &cam_depth,
+                                 pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud,
+                                 std::mutex *pointcloud_mutex = nullptr,
+                                 const vpImage<MaskType> *depth_mask = nullptr, float Z_min = 0.2, float Z_max = 2.5)
+  {
+    int size = static_cast<int>(depth_raw.getSize());
+    unsigned int width = depth_raw.getWidth();
+    unsigned int height = depth_raw.getHeight();
+    int pcl_size = 0;
+    const unsigned int index_0 = 0;
+    const unsigned int index_1 = 1;
+    const unsigned int index_2 = 2;
+
+    if (depth_mask) {
+      if ((width != depth_mask->getWidth()) || (height != depth_mask->getHeight())) {
+        throw(vpImageException(vpImageException::notInitializedError, "Depth image and mask size differ"));
+      }
+      if (pointcloud_mutex) {
+        pointcloud_mutex->lock();
+      }
+      pointcloud->clear();
+#if defined(VISP_HAVE_OPENMP)
+      std::mutex mutex;
+#pragma omp parallel for
+#endif
+      for (int p = 0; p < size; ++p) {
+        if (depth_mask->bitmap[p]) {
+          if (static_cast<int>(depth_raw.bitmap[p])) {
+            float Z = static_cast<float>(depth_raw.bitmap[p]) * depth_scale;
+            if (Z < Z_max) {
+              double x = 0;
+              double y = 0;
+              unsigned int j = p % width;
+              unsigned int i = (p - j) / width;
+              vpPixelMeterConversion::convertPoint(cam_depth, j, i, x, y);
+              vpColVector point_3D({ x * Z, y * Z, Z });
+              if (point_3D[index_2] > Z_min) {
+#if defined(VISP_HAVE_OPENMP)
+                std::lock_guard<std::mutex> lock(mutex);
+#endif
+#if PCL_VERSION_COMPARE(>=,1,14,1)
+                pointcloud->push_back(pcl::PointXYZRGB(point_3D[index_0], point_3D[index_1], point_3D[index_2],
+                                                       color.bitmap[p].R, color.bitmap[p].G, color.bitmap[p].B));
+#else
+                pcl::PointXYZRGB pt(color.bitmap[p].R, color.bitmap[p].G, color.bitmap[p].B);
+                pt.x = point_3D[index_0];
+                pt.y = point_3D[index_1];
+                pt.z = point_3D[index_2];
+                pointcloud->push_back(pcl::PointXYZRGB(pt));
+#endif
+              }
+            }
+          }
+        }
+      }
+      pcl_size = pointcloud->size();
+      if (pointcloud_mutex) {
+        pointcloud_mutex->unlock();
+      }
+    }
+    else {
+      if (pointcloud_mutex) {
+        pointcloud_mutex->lock();
+      }
+      pointcloud->clear();
+#if defined(VISP_HAVE_OPENMP)
+      std::mutex mutex;
+#pragma omp parallel for
+#endif
+      for (int p = 0; p < size; ++p) {
+        if (static_cast<int>(depth_raw.bitmap[p])) {
+          float Z = static_cast<float>(depth_raw.bitmap[p]) * depth_scale;
+          if (Z < 2.5) {
+            double x = 0;
+            double y = 0;
+            unsigned int j = p % width;
+            unsigned int i = (p - j) / width;
+            vpPixelMeterConversion::convertPoint(cam_depth, j, i, x, y);
+            vpColVector point_3D({ x * Z, y * Z, Z, 1 });
+            if (point_3D[index_2] >= 0.1) {
+#if defined(VISP_HAVE_OPENMP)
+              std::lock_guard<std::mutex> lock(mutex);
+#endif
+#if PCL_VERSION_COMPARE(>=,1,14,1)
+              pointcloud->push_back(pcl::PointXYZRGB(point_3D[index_0], point_3D[index_1], point_3D[index_2],
+                                                     color.bitmap[p].R, color.bitmap[p].G, color.bitmap[p].B));
+#else
+              pcl::PointXYZRGB pt(color.bitmap[p].R, color.bitmap[p].G, color.bitmap[p].B);
+              pt.x = point_3D[index_0];
+              pt.y = point_3D[index_1];
+              pt.z = point_3D[index_2];
+              pointcloud->push_back(pcl::PointXYZRGB(pt));
+#endif
+            }
+          }
+        }
+      }
+      pcl_size = pointcloud->size();
+      if (pointcloud_mutex) {
+        pointcloud_mutex->unlock();
+      }
+    }
+
+    return pcl_size;
+  }
 #endif
 
   static void split(const vpImage<vpRGBa> &src, vpImage<unsigned char> *pR, vpImage<unsigned char> *pG,
@@ -346,5 +574,51 @@ private:
   static int vpCgr[256];
   static int vpCbb[256];
 };
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+/**
+ * \brief Convert a RGBa image into a HSV image.
+ *
+ * \tparam T The type of the channels of the vpHSV pixels.
+ * \tparam useFullScale True if vpHSV uses unsigned char and the full range [0; 255], false if vpHSV uses unsigned char and the limited range [0; 180].
+ * \param[in] src The RGBa image.
+ * \param[in] dest The HSV image.
+ */
+template <typename T, bool useFullScale>
+void vpImageConvert::convert(const vpImage<vpRGBa> &src, vpImage<vpHSV<T, useFullScale>> &dest)
+{
+  const int height = src.getHeight(), width = src.getWidth();
+  const int size = height * width;
+  dest.resize(height, width);
+#ifdef VISP_HAVE_OPENMP
+#pragma omp parallel for
+#endif
+  for (int i = 0; i < size; ++i) {
+    dest.bitmap[i].buildFrom(src.bitmap[i]);
+  }
+}
+
+/**
+ * \brief Convert an HSV image into a RGBa image.
+ *
+ * \tparam T The type of the channels of the vpHSV pixels.
+ * \tparam useFullScale True if vpHSV uses unsigned char and the full range [0; 255], false if vpHSV uses unsigned char and the limited range [0; 180].
+ * \param[in] src The HSV image.
+ * \param[in] dest The RGBa image.
+ */
+template <typename T, bool useFullScale>
+void vpImageConvert::convert(const vpImage<vpHSV<T, useFullScale>> &src, vpImage<vpRGBa> &dest)
+{
+  const int height = src.getHeight(), width = src.getWidth();
+  const int size = height * width;
+  dest.resize(height, width);
+#ifdef VISP_HAVE_OPENMP
+#pragma omp parallel for
+#endif
+  for (int i = 0; i < size; ++i) {
+    dest.bitmap[i].buildFrom(src.bitmap[i]);
+  }
+}
+#endif
 END_VISP_NAMESPACE
 #endif

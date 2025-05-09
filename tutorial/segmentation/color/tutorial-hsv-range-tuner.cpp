@@ -10,6 +10,7 @@
 #include <opencv2/highgui/highgui.hpp>
 
 #include <visp3/core/vpArray2D.h>
+#include <visp3/core/vpHSV.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpImageTools.h>
 #include <visp3/core/vpIoTools.h>
@@ -89,14 +90,8 @@ int main(int argc, const char *argv[])
     if ((std::string(argv[i]) == "--hsv-thresholds") && ((i+1) < argc)) {
       opt_hsv_filename = std::string(argv[++i]);
     }
-    else if (std::string(argv[i]) == "--image") {
-      if ((i+1) < argc) {
-        opt_img_filename = std::string(argv[++i]);
-      }
-      else {
-        show_helper = true;
-        std::cout << "ERROR \nMissing input image name after parameter " << std::string(argv[i]) << std::endl;
-      }
+    else if ((std::string(argv[i]) == "--image") && ((i+1) < argc)) {
+      opt_img_filename = std::string(argv[++i]);
     }
     else if (std::string(argv[i]) == "--save-img") {
       opt_save_img = true;
@@ -141,6 +136,10 @@ int main(int argc, const char *argv[])
   else if (opt_img_filename.empty()) {
     std::cout << "Error: you should use --image <input image> option to specify an input image..." << std::endl;
     return EXIT_FAILURE;
+  }
+
+  if (use_realsense) {
+    std::cout << "Use images from Realsense camera" << std::endl;
   }
 
   int max_value_H = 255;
@@ -206,16 +205,17 @@ int main(int argc, const char *argv[])
   cv::createTrackbar("Low V", window_detection_name, &hsv_values_trackbar[4], max_value, on_low_V_thresh_trackbar);
   cv::createTrackbar("High V", window_detection_name, &hsv_values_trackbar[5], max_value, on_high_V_thresh_trackbar);
 
-  vpImage<unsigned char> H(height, width);
-  vpImage<unsigned char> S(height, width);
-  vpImage<unsigned char> V(height, width);
   vpImage<unsigned char> mask(height, width);
   vpImage<vpRGBa> I_segmented(height, width);
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  vpImage<vpHSV<unsigned char, true>> Ihsv;
   std::shared_ptr<vpDisplay> d_I = vpDisplayFactory::createDisplay(I, 0, 0, "Current frame");
   std::shared_ptr<vpDisplay> d_I_segmented = vpDisplayFactory::createDisplay(I_segmented, I.getWidth()+75, 0, "Segmented frame");
 #else
+  vpImage<unsigned char> H(height, width);
+  vpImage<unsigned char> S(height, width);
+  vpImage<unsigned char> V(height, width);
   vpDisplay *d_I = vpDisplayFactory::allocateDisplay(I, 0, 0, "Current frame");
   vpDisplay *d_I_segmented = vpDisplayFactory::allocateDisplay(I_segmented, I.getWidth()+75, 0, "Segmented frame");
 #endif
@@ -230,6 +230,11 @@ int main(int argc, const char *argv[])
     else {
       vpImageIo::read(I, opt_img_filename);
     }
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    vpImageConvert::convert(I, Ihsv);
+    vpImageTools::inRange(Ihsv, hsv_values_trackbar, mask);
+#else
     vpImageConvert::RGBaToHSV(reinterpret_cast<unsigned char *>(I.bitmap),
                               reinterpret_cast<unsigned char *>(H.bitmap),
                               reinterpret_cast<unsigned char *>(S.bitmap),
@@ -241,6 +246,7 @@ int main(int argc, const char *argv[])
                                                 hsv_values_trackbar,
                                                 reinterpret_cast<unsigned char *>(mask.bitmap),
                                                 mask.getSize());
+#endif
 
     vpImageTools::inMask(I, mask, I_segmented);
 
@@ -258,18 +264,30 @@ int main(int argc, const char *argv[])
       else if (button == vpMouseButton::button2) {
         unsigned int i = static_cast<unsigned int>(ip.get_i());
         unsigned int j = static_cast<unsigned int>(ip.get_j());
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+        int h = static_cast<int>(Ihsv[i][j].H);
+        int s = static_cast<int>(Ihsv[i][j].S);
+        int v = static_cast<int>(Ihsv[i][j].V);
+#else
         int h = static_cast<int>(H[i][j]);
         int s = static_cast<int>(S[i][j]);
         int v = static_cast<int>(V[i][j]);
+#endif
         std::cout << "RGB[" << i << "][" << j << "]: " << static_cast<int>(I[i][j].R) << " " << static_cast<int>(I[i][j].G)
           << " " << static_cast<int>(I[i][j].B) << " -> HSV: " << h << " " << s << " " << v << std::endl;
       }
       else if (button == vpMouseButton::button1) {
         unsigned int i = static_cast<unsigned int>(ip.get_i());
         unsigned int j = static_cast<unsigned int>(ip.get_j());
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+        int h = static_cast<int>(Ihsv[i][j].H);
+        int s = static_cast<int>(Ihsv[i][j].S);
+        int v = static_cast<int>(Ihsv[i][j].V);
+#else
         int h = static_cast<int>(H[i][j]);
         int s = static_cast<int>(S[i][j]);
         int v = static_cast<int>(V[i][j]);
+#endif
         int offset = 30;
         hsv_values_trackbar[0] = std::max(0, h - offset);
         hsv_values_trackbar[1] = std::min(max_value_H, h + offset);
@@ -313,11 +331,13 @@ int main(int argc, const char *argv[])
         }
 
         std::cout << "Save images in path_img folder..." << std::endl;
+        vpImageIo::write(I, path_img + "/I.png");
+        vpImageIo::write(I_segmented, path_img + "/I-HSV-segmented.png");
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
         vpImage<vpRGBa> I_HSV;
         vpImageConvert::merge(&H, &S, &V, nullptr, I_HSV);
-        vpImageIo::write(I, path_img + "/I.png");
         vpImageIo::write(I_HSV, path_img + "/I-HSV.png");
-        vpImageIo::write(I_segmented, path_img + "/I-HSV-segmented.png");
+#endif
       }
       break;
     }

@@ -4,6 +4,7 @@
 #include <visp3/core/vpConfig.h>
 
 #include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpHSV.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpImageTools.h>
 #include <visp3/core/vpPixelMeterConversion.h>
@@ -127,16 +128,18 @@ int main(int argc, const char *argv[])
     height = I.getHeight();
   }
 
-  vpImage<unsigned char> H(height, width);
-  vpImage<unsigned char> S(height, width);
-  vpImage<unsigned char> V(height, width);
   vpImage<unsigned char> mask(height, width);
   vpImage<vpRGBa> I_segmented(height, width);
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  vpImage<vpHSV<unsigned char, true>> Ihsv;
   std::shared_ptr<vpDisplay> d_I = vpDisplayFactory::createDisplay(I, 0, 0, "Current frame");
   std::shared_ptr<vpDisplay> d_I_segmented = vpDisplayFactory::createDisplay(I_segmented, I.getWidth()+75, 0, "HSV segmented frame");
 #else
+  vpImage<unsigned char> H(height, width);
+  vpImage<unsigned char> S(height, width);
+  vpImage<unsigned char> V(height, width);
+
   vpDisplay *d_I = vpDisplayFactory::allocateDisplay(I, 0, 0, "Current frame");
   vpDisplay *d_I_segmented = vpDisplayFactory::allocateDisplay(I_segmented, I.getWidth()+75, 0, "HSV segmented frame");
 #endif
@@ -157,6 +160,10 @@ int main(int argc, const char *argv[])
         g.acquire(I);
       }
     }
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    vpImageConvert::convert(I, Ihsv);
+    vpImageTools::inRange(Ihsv, hsv_values, mask);
+#else
     vpImageConvert::RGBaToHSV(reinterpret_cast<unsigned char *>(I.bitmap),
                               reinterpret_cast<unsigned char *>(H.bitmap),
                               reinterpret_cast<unsigned char *>(S.bitmap),
@@ -168,6 +175,7 @@ int main(int argc, const char *argv[])
                           hsv_values,
                           reinterpret_cast<unsigned char *>(mask.bitmap),
                           mask.getSize());
+#endif
 
     vpImageTools::inMask(I, mask, I_segmented);
 
@@ -191,7 +199,7 @@ int main(int argc, const char *argv[])
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
   if (d_I != nullptr) {
     delete d_I;
-}
+  }
 
   if (d_I_segmented != nullptr) {
     delete d_I_segmented;

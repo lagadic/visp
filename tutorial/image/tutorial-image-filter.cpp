@@ -68,7 +68,7 @@ int main(int argc, char **argv)
 
     //! [Gaussian blur]
     vpImage<double> F;
-    vpImageFilter::gaussianBlur(I, F);
+    vpImageFilter::gaussianBlur<unsigned char, double, double>(I, F);
     //! [Gaussian blur]
     display(F, "Blur (default)");
 
