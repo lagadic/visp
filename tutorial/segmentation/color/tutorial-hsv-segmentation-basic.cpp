@@ -78,8 +78,8 @@ int main()
   std::shared_ptr<vpDisplay> d_I = vpDisplayFactory::createDisplay(I);
   std::shared_ptr<vpDisplay> d_mask = vpDisplayFactory::createDisplay(mask, I.getWidth()+75, 0, "HSV mask");
   std::shared_ptr<vpDisplay> d_I_segmented = vpDisplayFactory::createDisplay(I_segmented, 2*mask.getWidth()+80, 0, "Segmented frame");
-  std::shared_ptr<vpDisplay> d_mask_hsv = vpDisplayFactory::createDisplay(maskHSV, I.getWidth()+75, mask.getHeight() + 20, "HSV mask using vpHSV");
-  std::shared_ptr<vpDisplay> d_I_segmented_hsv = vpDisplayFactory::createDisplay(I_segmented_from_HSV, 2*mask.getWidth()+80, mask.getHeight() + 20, "Segmented frame using vpHSV");
+  std::shared_ptr<vpDisplay> d_mask_hsv = vpDisplayFactory::createDisplay(maskHSV, I.getWidth()+75, mask.getHeight() + 80, "HSV mask using vpHSV");
+  std::shared_ptr<vpDisplay> d_I_segmented_hsv = vpDisplayFactory::createDisplay(I_segmented_from_HSV, 2*mask.getWidth()+80, mask.getHeight() + 80, "Segmented frame using vpHSV");
 #else
   vpDisplay *d_I = vpDisplayFactory::allocateDisplay(I, 0, 0, "Current frame");
   vpDisplay *d_mask = vpDisplayFactory::allocateDisplay(mask, I.getWidth()+75, 0, "HSV mask");
