@@ -33,11 +33,52 @@
 #
 #############################################################################
 
+if(NOT OGRE_FOUND)
+  return()
+endif()
+
+# add the path to detect Ogre3D FindPkgMacros.cmake
+if(WIN32)
+  if(EXISTS "${OGRE_DIR}/cmake")
+    list(APPEND CMAKE_MODULE_PATH "${OGRE_DIR}/cmake")
+  endif()
+  if(EXISTS "${OGRE_DIR}")
+    list(APPEND CMAKE_MODULE_PATH "${OGRE_DIR}")
+  endif()
+endif(WIN32)
+
+if(UNIX)
+  if(EXISTS "${OGRE_DIR}/cmake")
+    list(APPEND CMAKE_MODULE_PATH "${OGRE_DIR}/cmake")
+  endif()
+  if(EXISTS "${OGRE_DIR}/CMake")
+    list(APPEND CMAKE_MODULE_PATH "${OGRE_DIR}/CMake")
+  endif()
+  if(EXISTS "${OGRE_DIR}")
+    list(APPEND CMAKE_MODULE_PATH "${OGRE_DIR}")
+  endif()
+  if(EXISTS "/usr/local/lib/OGRE/cmake")
+    list(APPEND CMAKE_MODULE_PATH "/usr/local/lib/OGRE/cmake")
+  endif()
+  if(EXISTS "/usr/lib/OGRE/cmake")
+    list(APPEND CMAKE_MODULE_PATH "/usr/lib/OGRE/cmake")
+  endif()
+  if(EXISTS "/usr/local/lib64/OGRE/cmake")
+    list(APPEND CMAKE_MODULE_PATH "/usr/local/lib64/OGRE/cmake")
+  endif()
+  if(EXISTS "/usr/lib64/OGRE/cmake")
+    list(APPEND CMAKE_MODULE_PATH "/usr/lib64/OGRE/cmake")
+  endif()
+  if(EXISTS "/usr/share/OGRE/cmake/modules")
+    list(APPEND CMAKE_MODULE_PATH "/usr/share/OGRE/cmake/modules")
+  endif()
+endif(UNIX)
+
 if(WIN32)
   mark_as_advanced(OGRE_FRAMEWORK_PATH)
 endif()
 
-include(FindPkgMacros OPTIONAL)
+include(FindPkgMacros OPTIONAL RESULT_VARIABLE FindPkgMacros_FOUND)
 
 #########################################################
 # Find Ogre plugins
@@ -45,6 +86,8 @@ include(FindPkgMacros OPTIONAL)
 # This is a modified version of the macro provided with Ogre
 # except that it should be used only in a desperate way when the original
 # one doesn't detect anything
+#
+# This macro uses macros defined in FindPkgMacros.cmake provided with Ogre
 #########################################################
 
 macro(vp_ogre_find_plugin_lib_visp PLUGIN)
@@ -63,18 +106,22 @@ macro(vp_ogre_find_plugin_lib_visp PLUGIN)
     RenderSystems RenderSystems/${PLUGIN_NAME} ${ARGN})
   # find link libraries for plugins
   set(OGRE_${PLUGIN}_LIBRARY_NAMES "${PLUGIN}${OGRE_LIB_SUFFIX}")
-  get_debug_names(OGRE_${PLUGIN}_LIBRARY_NAMES)
-  find_library(OGRE_${PLUGIN}_LIBRARY_REL NAMES ${OGRE_${PLUGIN}_LIBRARY_NAMES}
-    HINTS ${OGRE_LIBRARY_DIRS} ${OGRE_LIBRARY_DIRS}/OGRE ${OGRE_LIBRARY_DIRS}/OGRE-${OGRE_VERSION_MAJOR}.${OGRE_VERSION_MINOR}.${OGRE_VERSION_PATCH}
-    PATH_SUFFIXES "" OGRE opt release release/opt relwithdebinfo relwithdebinfo/opt minsizerel minsizerel/opt)
-  find_library(OGRE_${PLUGIN}_LIBRARY_DBG NAMES ${OGRE_${PLUGIN}_LIBRARY_NAMES_DBG}
-    HINTS ${OGRE_LIBRARY_DIRS} ${OGRE_LIBRARY_DIRS}/OGRE ${OGRE_LIBRARY_DIRS}/OGRE-${OGRE_VERSION_MAJOR}.${OGRE_VERSION_MINOR}.${OGRE_VERSION_PATCH}
-    PATH_SUFFIXES "" OGRE opt debug debug/opt)
-  make_library_set(OGRE_${PLUGIN}_LIBRARY)
+  if(NOT ${FindPkgMacros_FOUND} STREQUAL "NOTFOUND")
+    get_debug_names(OGRE_${PLUGIN}_LIBRARY_NAMES)
+    find_library(OGRE_${PLUGIN}_LIBRARY_REL NAMES ${OGRE_${PLUGIN}_LIBRARY_NAMES}
+      HINTS ${OGRE_LIBRARY_DIRS} ${OGRE_LIBRARY_DIRS}/OGRE ${OGRE_LIBRARY_DIRS}/OGRE-${OGRE_VERSION_MAJOR}.${OGRE_VERSION_MINOR}.${OGRE_VERSION_PATCH}
+      PATH_SUFFIXES "" OGRE opt release release/opt relwithdebinfo relwithdebinfo/opt minsizerel minsizerel/opt)
+    find_library(OGRE_${PLUGIN}_LIBRARY_DBG NAMES ${OGRE_${PLUGIN}_LIBRARY_NAMES_DBG}
+      HINTS ${OGRE_LIBRARY_DIRS} ${OGRE_LIBRARY_DIRS}/OGRE ${OGRE_LIBRARY_DIRS}/OGRE-${OGRE_VERSION_MAJOR}.${OGRE_VERSION_MINOR}.${OGRE_VERSION_PATCH}
+      PATH_SUFFIXES "" OGRE opt debug debug/opt)
+    make_library_set(OGRE_${PLUGIN}_LIBRARY)
+  endif()
 
-  if (OGRE_${PLUGIN}_LIBRARY)
+  if(OGRE_${PLUGIN}_LIBRARY)
     set(OGRE_${PLUGIN}_FOUND TRUE)
-  endif ()
+  else()
+    set(OGRE_${PLUGIN}_FOUND FALSE)
+  endif()
 
   mark_as_advanced(OGRE_${PLUGIN}_LIBRARY_REL OGRE_${PLUGIN}_LIBRARY_DBG OGRE_${PLUGIN}_LIBRARY_FWK)
 endmacro()

@@ -420,23 +420,6 @@ if(OGRE_DIR)
   STRING(REGEX REPLACE "\\\\" "/" OGRE_DIR ${OGRE_DIR})
 endif()
 
-# add the path to detect Ogre3D
-if(WIN32)
-  list(APPEND CMAKE_MODULE_PATH "${OGRE_DIR}/cmake")
-  list(APPEND CMAKE_MODULE_PATH "${OGRE_DIR}")
-endif(WIN32)
-
-if(UNIX)
-  list(APPEND CMAKE_MODULE_PATH "${OGRE_DIR}/cmake")
-  list(APPEND CMAKE_MODULE_PATH "${OGRE_DIR}/CMake")
-  list(APPEND CMAKE_MODULE_PATH "${OGRE_DIR}")
-  list(APPEND CMAKE_MODULE_PATH "/usr/local/lib/OGRE/cmake")
-  list(APPEND CMAKE_MODULE_PATH "/usr/lib/OGRE/cmake")
-  list(APPEND CMAKE_MODULE_PATH "/usr/local/lib64/OGRE/cmake")
-  list(APPEND CMAKE_MODULE_PATH "/usr/lib64/OGRE/cmake")
-  list(APPEND CMAKE_MODULE_PATH "/usr/share/OGRE/cmake/modules")
-endif(UNIX)
-
 # ----------------------------------------------------------------------------
 # Check for system libs
 # ----------------------------------------------------------------------------
