@@ -137,14 +137,13 @@ public:
 
 #ifndef VISP_PYTHON_PREPROCESSOR_RUNNING
 /**
- * \brief Construct a new vpHSV object using unsigned char channels and the full range [0; 255] from a vpHSV object whose channels
- * are in floating point format.
+ * \brief Construct a new vpHSV object using unsigned char channels and the full range [0; 255] from a vpHSV object
+ * whose channels are in floating point format.
  *
  * \tparam U The format of the constructed object.
  * \tparam V The format of the base object.
- * \tparam std::enable_if<std::is_same<T, unsigned char>::value &&std::is_floating_point<V>::value && useFullScale, U>::type
- * Enable the method only if the constructed object uses unsigned char format and uses the full range [0; 255] and the object that is used as reference
- * uses floating point format.
+ * \tparam type Enable the method only if the constructed object uses unsigned char format and uses the full range
+ * [0; 255] and the object that is used as reference uses floating point format.
  * \param[in] other A floating point format vpHSV.
  */
   template<typename U = T, typename V, typename std::enable_if<std::is_same<T, unsigned char>::value &&std::is_floating_point<V>::value &&useFullScale, U>::type = 0 >
@@ -154,14 +153,13 @@ public:
   }
 
   /**
-   * \brief Construct a new vpHSV object using unsigned char channels and the limited range [0; maxHueUsingLimitedRange] from a vpHSV object whose channels
-   * are in floating point format.
+   * \brief Construct a new vpHSV object using unsigned char channels and the limited range [0; maxHueUsingLimitedRange]
+   * from a vpHSV object whose channels are in floating point format.
    *
    * \tparam U The format of the constructed object.
    * \tparam V The format of the base object.
-   * \tparam std::enable_if<std::is_same<T, unsigned char>::value &&std::is_floating_point<V>::value && !useFullScale, U>::type
-   * Enable the method only if the constructed object uses unsigned char format and uses the limited range [0; maxHueUsingLimitedRange] and the object that is used as reference
-   * uses floating point format.
+   * \tparam type Enable the method only if the constructed object uses unsigned char format and uses the limited range
+   * [0; maxHueUsingLimitedRange] and the object that is used as reference uses floating point format.
    * \param[in] other A floating point format vpHSV.
    */
   template<typename U = T, typename V, typename std::enable_if<std::is_same<T, unsigned char>::value &&std::is_floating_point<V>::value && !useFullScale, U>::type = 0 >
@@ -174,9 +172,9 @@ public:
    * \brief Construct a new floating point vpHSV object from an unsigned char vpHSV object.
    *
    * \tparam U The type of the channels of the constructed vpHSV pixels.
-   * \tparam otherUseFullScale True if the reference object uses unsigned char and the full range [0; 255], false if it uses unsigned char and the limited range [0; maxHueUsingLimitedRange].
-   * \tparam std::enable_if<std::is_floating_point<U>::value>::type Enable the method only if the constructed object
-   * uses the floating point format for its channels.
+   * \tparam otherUseFullScale True if the reference object uses unsigned char and the full range [0; 255], false if it
+   * uses unsigned char and the limited range [0; maxHueUsingLimitedRange].
+   * \tparam type Enable the method only if the constructed object uses the floating point format for its channels.
    * \param[in] other The reference object.
    */
   template<typename U = T, bool otherUseFullScale, typename std::enable_if<std::is_floating_point<U>::value>::type...>
@@ -200,7 +198,7 @@ public:
    * \brief Modify the object to be the result of the conversion of the vpRGBa object into HSV format.
    *
    * \param[in] rgba The vpRGBa object that serves as model/
-   * \return vpHSV<T, useFullScale>& Reference to the modified object.
+   * \return Reference to the modified object.
    */
   vpHSV<T, useFullScale> &buildFrom(const vpRGBa &rgba);
 
@@ -209,14 +207,14 @@ public:
    *
    * \tparam U The type of the channels of the vpHSV pixels that is modified.
    * \tparam V The type of the channels of the vpHSV pixels that serves as reference.
-   * \tparam std::enable_if<std::is_same<T, unsigned char>::value &&std::is_floating_point<V>::value &&useFullScale, U>::type
-   * Enable the method only if the modified object uses unsigned char and full range [0; 255] AND the base object uses a
-   * floating point format.
+   * \tparam type Enable the method only if the modified object uses unsigned char and full range [0; 255] and the base
+   * object uses a floating point format.
    * \param[in] other The floating point HSV.
-   * \return vpHSV<T, useFullScale>& Reference to the modified object.
+   * \return Reference to the modified object.
    */
   template<typename V, bool otherUseFullScale>
-  typename std::enable_if<std::is_same<T, unsigned char>::value &&std::is_floating_point<V>::value &&useFullScale, vpHSV<T, useFullScale> &>::type buildFrom(const vpHSV<V, otherUseFullScale> &other)
+  typename std::enable_if<std::is_same<T, unsigned char>::value &&std::is_floating_point<V>::value &&useFullScale, vpHSV<T, useFullScale> &>::type
+    buildFrom(const vpHSV<V, otherUseFullScale> &other)
   {
     H = static_cast<T>(other.H * 255.);
     S = static_cast<T>(other.S * 255.);
@@ -229,14 +227,14 @@ public:
    *
    * \tparam U The type of the channels of the vpHSV pixels that is modified.
    * \tparam V The type of the channels of the vpHSV pixels that serves as reference.
-   * \tparam std::enable_if<std::is_same<T, unsigned char>::value &&std::is_floating_point<V>::value && !useFullScale, U>::type
-   * Enable the method only if the modified object uses unsigned char and limited range [0; maxHueUsingLimitedRange] AND the base object uses a
-   * floating point format.
+   * \tparam type Enable the method only if the modified object uses unsigned char and limited range
+   * [0; maxHueUsingLimitedRange] and the base object uses a floating point format.
    * \param[in] other The floating point HSV.
-   * \return vpHSV<T, useFullScale>& Reference to the modified object.
+   * \return Reference to the modified object.
    */
   template<typename U = T, typename V, bool otherUseFullScale>
-  typename std::enable_if<std::is_same<U, unsigned char>::value &&std::is_floating_point<V>::value && !useFullScale, vpHSV<T, useFullScale> &>::type buildFrom(const vpHSV<V, otherUseFullScale> &other)
+  typename std::enable_if<std::is_same<U, unsigned char>::value &&std::is_floating_point<V>::value && !useFullScale, vpHSV<T, useFullScale> &>::type
+    buildFrom(const vpHSV<V, otherUseFullScale> &other)
   {
     H = static_cast<T>(other.H * static_cast<double>(maxHueUsingLimitedRange));
     S = static_cast<T>(other.S * 255.);
@@ -249,13 +247,14 @@ public:
    *
    * \tparam U The type of the channels of the vpHSV pixels.
    * \tparam otherUseFullScale
-   * \tparam  std::enable_if<std::is_floating_point<U>::value>::type Enable the method only if the modified object uses
+   * \tparam type Enable the method only if the modified object uses
    * floating point format.
    * \param[in] other The unsigned char vpHSV.
-   * \return vpHSV<T, useFullScale>& Reference to the modified object.
+   * \return Reference to the modified object.
    */
   template<typename U = T, bool otherUseFullScale>
-  typename std::enable_if<std::is_floating_point<U>::value, vpHSV<T, useFullScale> &>::type buildFrom(const vpHSV<unsigned char, otherUseFullScale> &other)
+  typename std::enable_if<std::is_floating_point<U>::value, vpHSV<T, useFullScale> &>::type
+    buildFrom(const vpHSV<unsigned char, otherUseFullScale> &other)
   {
     if (otherUseFullScale) {
       H = static_cast<T>(other.H) / 255.;
@@ -275,15 +274,15 @@ public:
    * \tparam V The type of the channels of the vpHSV pixels that serves as reference.
    * \tparam otherUseFullScale To avoid problem if one was created with true and the other false (even it is not used for
    * floating point types).
-   * \tparam std::enable_if<std::is_floating_point<T>::value &&std::is_floating_point<V>::value && !std::is_same<T, V>::value, int>::type
-   * Enable the method only if the modified object uses is a floating point format, the base object too BUT the formats
-   * are different. The type "int" is not used, it is here only because float and doubles are "not [a] valid type for a
-   * template non-type parameter"
+   * \tparam type Enable the method only if the modified object uses is a floating point format, the base object too
+   * but the formats are different. The type "int" is not used, it is here only because float and doubles are
+   * "not [a] valid type for a template non-type parameter"
    * \param[in] other The floating point HSV.
    * \return vpHSV<T, useFullScale>& Reference to the modified object.
    */
   template<typename U = T, typename V, bool otherUseFullScale>
-  typename std::enable_if<std::is_floating_point<U>::value &&std::is_floating_point<V>::value && !std::is_same<T, V>::value, vpHSV<T, useFullScale> &>::type buildFrom(const vpHSV<V, otherUseFullScale> &other)
+  typename std::enable_if<std::is_floating_point<U>::value &&std::is_floating_point<V>::value && !std::is_same<T, V>::value, vpHSV<T, useFullScale> &>::type
+    buildFrom(const vpHSV<V, otherUseFullScale> &other)
   {
     H = static_cast<T>(other.H);
     S = static_cast<T>(other.S);

@@ -31,7 +31,7 @@
  * Test vpImageFilter::gaussianBlur() new implementation and compare it to the old one.
  */
 /*!
-  \example testImageFilterHSVOldVSNew.cpp
+  \example testHSVGradient.cpp
 
   \brief Test vpImageFilter::gaussianBlur() new implementation and compare it to the old one.
 */

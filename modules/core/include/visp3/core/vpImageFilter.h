@@ -453,6 +453,7 @@ public:
    * \param[in] lowerThresholdRatio : The ratio of the upper threshold the lower threshold must be equal to.
    * \param[in] upperThresholdRatio : The ratio of pixels whose absolute gradient Gabs is lower or equal to define
    * the upper threshold.
+   * \param[in] filteringType : Canny filter type.
    * \param[in] p_mask : If different from  \b nullptr , only the pixels for which \b p_mask is true will be considered.
    * \return The upper Canny edge filter threshold.
    */
@@ -1163,10 +1164,11 @@ public:
    * \param[in] c The column index.
    * \param[in] filter The coefficients of the filter.
    * \param[in] size The size of the filter.
-   * \return std::enable_if<std::is_arithmetic<ImageType>::value, void>::type The method is enabled only for arithmetic input type.
+   * \return The method is enabled only for arithmetic input type.
    */
   template<typename ImageType, typename OutputType, typename FilterType>
-  static inline typename std::enable_if<std::is_arithmetic<ImageType>::value, void>::type filterX(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
+  static inline typename std::enable_if<std::is_arithmetic<ImageType>::value, void>::type
+    filterX(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
   {
     const unsigned int stop = (size - 1) / 2;
     FilterType res = filter[0] * static_cast<FilterType>(I[r][c]);
@@ -1189,10 +1191,11 @@ public:
    * \param[in] c The column index.
    * \param[in] filter The coefficients of the filter.
    * \param[in] size The size of the filter.
-   * \return std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type The method is enabled only for color input type.
+   * \return The method is enabled only for color input type.
    */
   template<typename ImageType, typename OutputType, typename FilterType>
-  static inline typename std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type  filterX(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
+  static inline typename std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type
+    filterX(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
   {
     const unsigned int stop = (size - 1) / 2;
 #ifdef VISP_HAVE_OPENMP
@@ -1222,11 +1225,11 @@ public:
    * \param[in] c The column index.
    * \param[in] filter The coefficients of the filter.
    * \param[in] size The size of the filter.
-   * \return std::enable_if<std::is_arithmetic<ImageType>::value, void>::type The method is enabled only for arithmetic input type.
+   * \return The method is enabled only for arithmetic input type.
    */
   template<typename ImageType, typename OutputType, typename FilterType>
-  static inline typename std::enable_if<std::is_arithmetic<ImageType>::value, void>::type filterXLeftBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c,
-                                              const FilterType *filter, unsigned int size)
+  static inline typename std::enable_if<std::is_arithmetic<ImageType>::value, void>::type
+    filterXLeftBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
   {
     const unsigned int stop = (size - 1) / 2;
     FilterType res = filter[0] * static_cast<FilterType>(I[r][c]);
@@ -1255,10 +1258,11 @@ public:
    * \param[in] c The column index.
    * \param[in] filter The coefficients of the filter.
    * \param[in] size The size of the filter.
-   * \return std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type The method is enabled only for color input type.
+   * \return The method is enabled only for color input type.
    */
   template<typename ImageType, typename OutputType, typename FilterType>
-  static inline typename std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type  filterXLeftBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
+  static inline typename std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type
+    filterXLeftBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
   {
     const unsigned int stop = (size - 1) / 2;
 #ifdef VISP_HAVE_OPENMP
@@ -1292,11 +1296,11 @@ public:
    * \param[in] c The column index.
    * \param[in] filter The coefficients of the filter.
    * \param[in] size The size of the filter.
-   * \return std::enable_if<std::is_arithmetic<ImageType>::value, void>::type The method is enabled only for arithmetic input type.
+   * \return The method is enabled only for arithmetic input type.
    */
   template<typename ImageType, typename OutputType, typename FilterType>
-  static inline typename std::enable_if<std::is_arithmetic<ImageType>::value, void>::type filterXRightBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c,
-                                              const FilterType *filter, unsigned int size)
+  static inline typename std::enable_if<std::is_arithmetic<ImageType>::value, void>::type
+    filterXRightBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
   {
     const unsigned int stop = (size - 1) / 2;
     const unsigned int width = I.getWidth();
@@ -1327,10 +1331,11 @@ public:
    * \param[in] c The column index.
    * \param[in] filter The coefficients of the filter.
    * \param[in] size The size of the filter.
-   * \return std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type The method is enabled only for color input type.
+   * \return The method is enabled only for color input type.
    */
   template<typename ImageType, typename OutputType, typename FilterType>
-  static inline typename std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type  filterXRightBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
+  static inline typename std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type
+    filterXRightBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
   {
     const unsigned int stop = (size - 1) / 2;
     const unsigned int width = I.getWidth();
@@ -1473,7 +1478,7 @@ public:
    * \tparam OutputType The type of pixels in the resulting image. It can be an arithmetic type or a color type (vpRGBa, vpHSV).
    * \tparam FilterType An arithmetic type.
    * \param[in] I The image that must be filtered.
-   * \param[in] dIx The image filtered along the horizontal direction.
+   * \param[in] dIy The image filtered along the vertical direction.
    * \param[in] filter The coefficients of the filter.
    * \param[in] size The size of the filter.
    * \param[in] p_mask A boolean mask that permits to select the pixels that must be filtered if different from nullptr,
@@ -1537,7 +1542,7 @@ public:
 #ifdef VISP_HAVE_OPENMP
       }
 #endif
-    }
+      }
   }
 
   /**
@@ -1552,10 +1557,11 @@ public:
    * \param[in] c The column index.
    * \param[in] filter The coefficients of the filter.
    * \param[in] size The size of the filter.
-   * \return std::enable_if<std::is_arithmetic<ImageType>::value, void>::type The method is enabled only for arithmetic input type.
+   * \return The method is enabled only for arithmetic input type.
    */
   template<typename ImageType, typename OutputType, typename FilterType>
-  static inline typename std::enable_if<std::is_arithmetic<ImageType>::value, void>::type  filterY(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
+  static inline typename std::enable_if<std::is_arithmetic<ImageType>::value, void>::type
+    filterY(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
   {
     const unsigned int stop = (size - 1) / 2;
     FilterType res = (filter[0] * static_cast<FilterType>(I[r][c]));
@@ -1578,10 +1584,11 @@ public:
    * \param[in] c The column index.
    * \param[in] filter The coefficients of the filter.
    * \param[in] size The size of the filter.
-   * \return std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type The method is enabled only for color input type.
+   * \return The method is enabled only for color input type.
    */
   template<typename ImageType, typename OutputType, typename FilterType>
-  static inline typename std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type  filterY(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
+  static inline typename std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type
+    filterY(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
   {
     const unsigned int stop = (size - 1) / 2;
 #ifdef VISP_HAVE_OPENMP
@@ -1611,11 +1618,11 @@ public:
    * \param[in] c The column index.
    * \param[in] filter The coefficients of the filter.
    * \param[in] size The size of the filter.
-   * \return std::enable_if<std::is_arithmetic<ImageType>::value, void>::type The method is enabled only for arithmetic input type.
+   * \return The method is enabled only for arithmetic input type.
    */
   template<typename ImageType, typename OutputType, typename FilterType>
-  static inline typename std::enable_if<std::is_arithmetic<ImageType>::value, void>::type filterYTopBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c,
-                                              const FilterType *filter, unsigned int size)
+  static inline typename std::enable_if<std::is_arithmetic<ImageType>::value, void>::type
+    filterYTopBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
   {
     const unsigned int stop = (size - 1) / 2;
     FilterType res = (filter[0] * static_cast<FilterType>(I[r][c]));
