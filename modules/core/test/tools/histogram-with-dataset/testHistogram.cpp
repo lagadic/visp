@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -442,7 +442,7 @@ int main(int argc, const char **argv)
     for (unsigned int r = 0; r < nbRows; ++r) {
       for (unsigned int c = 0; c < nbCols; ++c) {
         if (mask[r][c]) {
-          std::cout << static_cast<int> (I[r][c]);
+          std::cout << static_cast<int>(I[r][c]);
         }
         else {
           std::cout << "X";
