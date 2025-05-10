@@ -221,7 +221,7 @@ int main(int argc, char **argv)
       drone.startStreaming();
 
       // Prepare image for display
-      vpImage<vpRGBa> I(1, 1, 0);
+      vpImage<vpRGBa> I(1u, 1u, vpRGBa(0));
       drone.getRGBaImage(I);
       vpDisplayX display(I, 100, 100, "DRONE VIEW");
       vpDisplay::display(I);

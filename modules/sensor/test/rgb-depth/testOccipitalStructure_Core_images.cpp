@@ -80,12 +80,12 @@ int main()
 
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
     I_visible =
-      vpImage<vpRGBa>(sc.getHeight(vpOccipitalStructure::visible), sc.getWidth(vpOccipitalStructure::visible), 0);
+      vpImage<vpRGBa>(sc.getHeight(vpOccipitalStructure::visible), sc.getWidth(vpOccipitalStructure::visible), vpRGBa(0));
     display_visible.setDownScalingFactor(display_scale);
     display_visible.init(I_visible, 10, 10, "Visible image");
 
     I_depth_raw =
-      vpImage<float>(sc.getHeight(vpOccipitalStructure::depth), sc.getWidth(vpOccipitalStructure::depth), 0);
+      vpImage<float>(sc.getHeight(vpOccipitalStructure::depth), sc.getWidth(vpOccipitalStructure::depth), 0.);
     I_depth = vpImage<vpRGBa>(sc.getHeight(vpOccipitalStructure::depth), sc.getWidth(vpOccipitalStructure::depth));
     display_depth.setDownScalingFactor(display_scale);
     display_depth.init(I_depth, static_cast<int>(I_visible.getWidth() / display_scale) + 20, 10, "Depth image");

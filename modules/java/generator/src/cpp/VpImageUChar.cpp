@@ -51,7 +51,7 @@ extern "C" {
   {
     jbyte *array = env->GetByteArrayElements(arr, nullptr);
 
-    return (jlong) new vpImage<u_char>((u_char *const)array, (const unsigned int)h, (const unsigned int)w, copyData);
+    return (jlong) new vpImage<u_char>((u_char *)array, static_cast<unsigned int>(h), static_cast<unsigned int>(w), copyData);
 
     // be memory friendly
     env->ReleaseByteArrayElements(arr, array, 0);

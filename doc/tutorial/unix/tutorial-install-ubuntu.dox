@@ -366,7 +366,7 @@ $ git clone https://github.com/qualisys/qualisys_cpp_sdk.git
 $ cd qualisys_cpp_sdk
 $ mkdir build
 $ cd build
-$ cmake .. -DBUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-fPIC
+$ cmake .. -Dqualisys_cpp_sdk_BUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-fPIC
 $ make -j$(nproc)
 $ sudo make install
 \endcode

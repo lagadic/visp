@@ -120,7 +120,12 @@ public:
     else {
       for (auto i = 0; i < 6; i++) {
         if (!m_streamFrames) {
-          if (!m_rtProtocol.StreamFrames(CRTProtocol::RateAllFrames, 0, m_udpPort, nullptr, CRTProtocol::cComponent6d)) {
+#if (VP_VERSION_INT(MAJOR_VERSION, MINOR_VERSION, 0) >= VP_VERSION_INT(1, 27, 0))
+          if (!m_rtProtocol.StreamFrames(CRTProtocol::EStreamRate::RateAllFrames, 0, m_udpPort, nullptr, CRTProtocol::cComponent6d))
+#else
+          if (!m_rtProtocol.StreamFrames(CRTProtocol::RateAllFrames, 0, m_udpPort, nullptr, CRTProtocol::cComponent6d))
+#endif
+          {
             if (m_verbose) {
               std::cout << "Streaming frames error: " << m_rtProtocol.GetErrorString() << std::endl;
             }

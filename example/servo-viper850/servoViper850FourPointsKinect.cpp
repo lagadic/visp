@@ -286,6 +286,7 @@ int main()
     robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
     std::cout << "\nHit CTRL-C to stop the loop...\n" << std::flush;
+    bool init_pose_from_linear_method = true;
     for (;;) {
       // Acquire a new image from the kinect
       kinect.getRGB(Irgb);
@@ -399,7 +400,7 @@ int main()
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
     if (display != nullptr) {
       delete display;
-  }
+    }
 #endif
     return EXIT_FAILURE;
   }

@@ -721,6 +721,9 @@ public:
   static void mult2Matrices(const vpMatrix &A, const vpMatrix &B, vpRotationMatrix &C);
   static void mult2Matrices(const vpMatrix &A, const vpMatrix &B, vpHomogeneousMatrix &C);
   static void mult2Matrices(const vpMatrix &A, const vpColVector &B, vpColVector &C);
+  static void mult2Matrices(const vpMatrix &A, const vpRotationMatrix &B, vpMatrix &C);
+  static void mult2Matrices(const vpRotationMatrix &A, const vpMatrix &B, vpMatrix &C);
+
   static void multMatrixVector(const vpMatrix &A, const vpColVector &v, vpColVector &w);
   static void negateMatrix(const vpMatrix &A, vpMatrix &C);
   static void sub2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C);

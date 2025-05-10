@@ -51,7 +51,7 @@ void vpPointMap::project(const vpHomogeneousMatrix &cTw, vpMatrix &cX)
 {
   cX.resize(m_X.getRows(), 3, false, false);
 
-  const vpColVector t = cTw.getTranslationVector();
+  const vpTranslationVector t = cTw.getTranslationVector();
   const vpRotationMatrix R = cTw.getRotationMatrix();
 
   vpMatrix::mult2Matrices(m_X, R.t(), cX);
@@ -73,7 +73,7 @@ void vpPointMap::project(const vpArray2D<int> &indices, const vpHomogeneousMatri
   }
   cX.resize(indices.getRows(), 3, false, false);
 
-  const vpColVector t = cTw.getTranslationVector();
+  const vpTranslationVector t = cTw.getTranslationVector();
   const vpRotationMatrix R = cTw.getRotationMatrix();
 
   vpMatrix::mult2Matrices(X, R.t(), cX);

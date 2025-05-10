@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,7 +77,7 @@ int main()
     vpDisplayGDI display_visible; // Visible image
 #endif
     vpImage<vpRGBa> I_visible(sc.getHeight(vpOccipitalStructure::visible), sc.getWidth(vpOccipitalStructure::visible),
-                              0);
+                              vpRGBa(0));
     ;
     display_visible.setDownScalingFactor(display_scale);
     display_visible.init(I_visible, static_cast<int>(I_visible.getWidth() / display_scale) + 80, 10, "Color image");

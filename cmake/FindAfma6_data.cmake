@@ -41,6 +41,8 @@
 find_path(AFMA6_DATA_PATH
   NAMES include/const_camera_Afma6.xml
   PATHS
+    $ENV{AFMA6_DATA_DIR}
+    ${AFMA6_DATA_DIR}
     /home/soft/Afma6/Afma6
     /home/soft/Afma6/current
     /udd/fspindle/robot/Afma6/current

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,14 +30,10 @@
  * Description:
  * API for using a Microsoft Kinect device
  * Requires libfreenect as a third party library
- *
- * Authors:
- * Celine Teuliere
- *
-*****************************************************************************/
+ */
 
-#ifndef _vpKinect_h_
-#define _vpKinect_h_
+#ifndef VP_KINECT_H
+#define VP_KINECT_H
 
 #include <visp3/core/vpConfig.h>
 // Note that libfreenect needs libusb-1.0 and libpthread

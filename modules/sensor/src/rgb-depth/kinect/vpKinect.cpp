@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,11 +30,7 @@
  * Description:
  * API for using a Microsoft Kinect device
  * Requires libfreenect as a third party library
- *
- * Authors:
- * Celine Teuliere
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpConfig.h>
 
@@ -247,7 +242,7 @@ void vpKinect::warpRGBFrame(const vpImage<vpRGBa> &Irgb, const vpImage<float> &I
   else {
     if ((IrgbWarped.getHeight() != hd) || (IrgbWarped.getWidth() != wd))
       IrgbWarped.resize(hd, wd);
-    IrgbWarped = 0;
+    IrgbWarped = vpRGBa(0);
     double x1 = 0., y1 = 0., x2 = 0., y2 = 0., Z1, Z2;
     vpImagePoint imgPoint(0, 0);
     double u = 0., v = 0.;

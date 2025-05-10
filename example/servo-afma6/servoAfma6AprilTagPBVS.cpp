@@ -235,10 +235,10 @@ int main(int argc, char **argv)
     vpHomogeneousMatrix cd_M_o(vpTranslationVector(0, 0, opt_tagSize * 3.5), // 3.5 times tag with along camera z axis
                                vpThetaUVector(vpMath::rad(10), vpMath::rad(3), vpMath::rad(5)));
     if (!detector.isZAlignedWithCameraAxis()) {
-      vpHomogeneousMatrix oprim_M_o = { 1,  0,  0, 0,
-                                        0, -1,  0, 0,
-                                        0,  0, -1, 0,
-                                        0,  0,  0, 1 };
+      vpHomogeneousMatrix oprim_M_o = vpHomogeneousMatrix({ 1,  0,  0, 0,
+                                                            0, -1,  0, 0,
+                                                            0,  0, -1, 0,
+                                                            0,  0,  0, 1 });
       cd_M_o *= oprim_M_o;
     }
 
