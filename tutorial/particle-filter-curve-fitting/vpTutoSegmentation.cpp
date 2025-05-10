@@ -31,6 +31,7 @@
 #include "vpTutoSegmentation.h"
 
 #include <visp3/core/vpGaussRand.h>
+#include <visp3/core/vpHSV.h>
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -42,22 +43,11 @@ using namespace VISP_NAMESPACE_NAME;
 
 void performSegmentationHSV(vpTutoCommonData &data)
 {
-  const unsigned int height = data.m_I_orig.getHeight(), width = data.m_I_orig.getWidth();
-  vpImage<unsigned char> H(height, width);
-  vpImage<unsigned char> S(height, width);
-  vpImage<unsigned char> V(height, width);
-  vpImageConvert::RGBaToHSV(reinterpret_cast<unsigned char *>(data.m_I_orig.bitmap),
-                            H.bitmap,
-                            S.bitmap,
-                            V.bitmap,
-                            data.m_I_orig.getSize());
+  vpImage<vpHSV<unsigned char, true>> Ihsv;
 
-  vpImageTools::inRange(H.bitmap,
-                        S.bitmap,
-                        V.bitmap,
-                        data.m_hsv_values,
-                        data.m_mask.bitmap,
-                        data.m_mask.getSize());
+  vpImageConvert::convert(data.m_I_orig, Ihsv);
+
+  vpImageTools::inRange(Ihsv, data.m_hsv_values, data.m_mask);
 
   vpImageTools::inMask(data.m_I_orig, data.m_mask, data.m_I_segmented);
 }

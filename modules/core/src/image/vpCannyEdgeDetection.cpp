@@ -32,6 +32,10 @@
 
 #include <visp3/core/vpImageConvert.h>
 
+#ifdef VISP_HAVE_OPENMP
+#include <omp.h>
+#endif
+
 #ifdef VISP_USE_MSVC
 #pragma comment(linker, "/STACK:65532000") // Increase max recursion depth
 #endif
@@ -59,41 +63,13 @@ static void scaleFilter(
 #endif
 
 BEGIN_VISP_NAMESPACE
-#ifdef VISP_HAVE_NLOHMANN_JSON
-void from_json(const nlohmann::json &j, vpCannyEdgeDetection &detector)
-{
-  std::string filteringAndGradientName = vpImageFilter::vpCannyFiltAndGradTypeToStr(detector.m_filteringAndGradientType);
-  filteringAndGradientName = j.value("filteringAndGradientType", filteringAndGradientName);
-  detector.m_filteringAndGradientType = vpImageFilter::vpCannyFiltAndGradTypeFromStr(filteringAndGradientName);
-  detector.m_gaussianKernelSize = j.value("gaussianSize", detector.m_gaussianKernelSize);
-  detector.m_gaussianStdev = j.value("gaussianStdev", detector.m_gaussianStdev);
-  detector.m_lowerThreshold = j.value("lowerThreshold", detector.m_lowerThreshold);
-  detector.m_lowerThresholdRatio = j.value("lowerThresholdRatio", detector.m_lowerThresholdRatio);
-  detector.m_gradientFilterKernelSize = j.value("gradientFilterKernelSize", detector.m_gradientFilterKernelSize);
-  detector.m_upperThreshold = j.value("upperThreshold", detector.m_upperThreshold);
-  detector.m_upperThresholdRatio = j.value("upperThresholdRatio", detector.m_upperThresholdRatio);
-}
-
-void to_json(nlohmann::json &j, const vpCannyEdgeDetection &detector)
-{
-  std::string filteringAndGradientName = vpImageFilter::vpCannyFiltAndGradTypeToStr(detector.m_filteringAndGradientType);
-  j = nlohmann::json {
-          {"filteringAndGradientType", filteringAndGradientName},
-          {"gaussianSize", detector.m_gaussianKernelSize},
-          {"gaussianStdev", detector.m_gaussianStdev},
-          {"lowerThreshold", detector.m_lowerThreshold},
-          {"lowerThresholdRatio", detector.m_lowerThresholdRatio},
-          {"gradientFilterKernelSize", detector.m_gradientFilterKernelSize},
-          {"upperThreshold", detector.m_upperThreshold},
-          {"upperThresholdRatio", detector.m_upperThresholdRatio}
-  };
-}
-#endif
-
 // // Initialization methods
+
+vpImage<vpCannyEdgeDetection::EdgeType> vpCannyEdgeDetection::m_edgePointsCandidates;
 
 vpCannyEdgeDetection::vpCannyEdgeDetection()
   : m_filteringAndGradientType(vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING)
+  , m_nbThread(-1)
   , m_gaussianKernelSize(3)
   , m_gaussianStdev(1.f)
   , m_areGradientAvailable(false)
@@ -107,8 +83,7 @@ vpCannyEdgeDetection::vpCannyEdgeDetection()
 #endif
   , mp_mask(nullptr)
 {
-  initGaussianFilters();
-  initGradientFilters();
+  reinit();
 }
 
 vpCannyEdgeDetection::vpCannyEdgeDetection(const int &gaussianKernelSize, const float &gaussianStdev,
@@ -116,9 +91,10 @@ vpCannyEdgeDetection::vpCannyEdgeDetection(const int &gaussianKernelSize, const 
                                            const float &upperThreshold, const float &lowerThresholdRatio,
                                            const float &upperThresholdRatio,
                                            const vpImageFilter::vpCannyFilteringAndGradientType &filteringType,
-                                           const bool &storeEdgePoints
+                                           const bool &storeEdgePoints, const int &nbThread
 )
   : m_filteringAndGradientType(filteringType)
+  , m_nbThread(nbThread)
   , m_gaussianKernelSize(gaussianKernelSize)
   , m_gaussianStdev(gaussianStdev)
   , m_areGradientAvailable(false)
@@ -133,8 +109,26 @@ vpCannyEdgeDetection::vpCannyEdgeDetection(const int &gaussianKernelSize, const 
   , m_storeListEdgePoints(storeEdgePoints)
   , mp_mask(nullptr)
 {
+  reinit();
+}
+
+void
+vpCannyEdgeDetection::reinit()
+{
+  setNbThread(m_nbThread);
   initGaussianFilters();
   initGradientFilters();
+  mp_mask = nullptr;
+  m_areGradientAvailable = false;
+
+  // // Clearing the previous results
+  m_edgeCandidateAndGradient.clear();
+  m_activeEdgeCandidates.clear();
+  m_edgePointsList.clear();
+  if (m_edgeMap.getSize() != 0) {
+    m_edgeMap.resize(m_edgeMap.getRows(), m_edgeMap.getCols(), 0);
+    m_edgePointsCandidates.resize(m_edgeMap.getRows(), m_edgeMap.getCols(), NOT_EDGE);
+  }
 }
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
@@ -171,8 +165,7 @@ vpCannyEdgeDetection::initFromJSON(const std::string &jsonPath)
   }
   from_json(j, *this);
   file.close();
-  initGaussianFilters();
-  initGradientFilters();
+  reinit();
 }
 #endif
 
@@ -254,6 +247,35 @@ vpCannyEdgeDetection::detect(const vpImage<vpRGBa> &I_color)
 vpImage<unsigned char>
 vpCannyEdgeDetection::detect(const vpImage<unsigned char> &I)
 {
+  // // Step 1 and 2: filter the image and compute the gradient, if not given by the user
+  if (!m_areGradientAvailable) {
+    computeFilteringAndGradient(I);
+  }
+  m_areGradientAvailable = false; // Reset for next call
+
+  // // Step 3: edge thining
+  float upperThreshold = m_upperThreshold;
+  float lowerThreshold = m_lowerThreshold;
+  if (upperThreshold < 0) {
+    upperThreshold = vpImageFilter::computeCannyThreshold(I, lowerThreshold, &m_dIx, &m_dIy, m_gaussianKernelSize,
+                                                          m_gaussianStdev, m_gradientFilterKernelSize, m_lowerThresholdRatio,
+                                                          m_upperThresholdRatio, m_filteringAndGradientType, mp_mask);
+  }
+  else if (m_lowerThreshold < 0) {
+    // Applying Canny recommendation to have the upper threshold 3 times greater than the lower threshold.
+    lowerThreshold = m_upperThreshold / 3.f;
+  }
+  // To ensure that if lowerThreshold = 0, we reject null gradient points
+  lowerThreshold = std::max<float>(lowerThreshold, std::numeric_limits<float>::epsilon());
+
+  step3to5(I.getHeight(), I.getWidth(), lowerThreshold, upperThreshold);
+
+  return m_edgeMap;
+}
+
+void
+vpCannyEdgeDetection::step3to5(const unsigned int &height, const unsigned int &width, const float &lowerThreshold, const float &upperThreshold)
+{
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   rlim_t initialStackSize = 0;
   struct rlimit rl;
@@ -278,32 +300,12 @@ vpCannyEdgeDetection::detect(const vpImage<unsigned char> &I)
   }
 #endif
   // // Clearing the previous results
-  m_edgeMap.resize(I.getHeight(), I.getWidth(), 0);
+  m_edgeMap.resize(height, width, 0);
   m_edgeCandidateAndGradient.clear();
-  m_edgePointsCandidates.clear();
+  m_activeEdgeCandidates.clear();
+  m_edgePointsCandidates.resize(m_dIx.getRows(), m_dIx.getCols(), NOT_EDGE);
   m_edgePointsList.clear();
 
-  // // Step 1 and 2: filter the image and compute the gradient, if not given by the user
-  if (!m_areGradientAvailable) {
-    computeFilteringAndGradient(I);
-  }
-  m_areGradientAvailable = false; // Reset for next call
-
-  // // Step 3: edge thining
-  float upperThreshold = m_upperThreshold;
-  float lowerThreshold = m_lowerThreshold;
-  if (upperThreshold < 0) {
-    upperThreshold = vpImageFilter::computeCannyThreshold(I, lowerThreshold, &m_dIx, &m_dIy,
-                                                          static_cast<unsigned int>(m_gaussianKernelSize),
-                                                          m_gaussianStdev, m_gradientFilterKernelSize, m_lowerThresholdRatio,
-                                                          m_upperThresholdRatio, m_filteringAndGradientType, mp_mask);
-  }
-  else if (m_lowerThreshold < 0) {
-    // Applying Canny recommendation to have the upper threshold 3 times greater than the lower threshold.
-    lowerThreshold = m_upperThreshold / 3.f;
-  }
-  // To ensure that if lowerThreshold = 0, we reject null gradient points
-  lowerThreshold = std::max<float>(lowerThreshold, std::numeric_limits<float>::epsilon());
   performEdgeThinning(lowerThreshold);
 
   // // Step 4: hysteresis thresholding
@@ -325,7 +327,6 @@ vpCannyEdgeDetection::detect(const vpImage<unsigned char> &I)
     }
   }
 #endif
-  return m_edgeMap;
 }
 
 void
@@ -365,7 +366,7 @@ vpCannyEdgeDetection::computeFilteringAndGradient(const vpImage<unsigned char> &
  */
 void
 vpCannyEdgeDetection::getInterpolWeightsAndOffsets(const float &gradientOrientation,
-                                                   float &alpha, float &beta,
+                                                   float &alpha, float &beta, const int &nbCols,
                                                    int &dRowGradAlpha, int &dRowGradBeta,
                                                    int &dColGradAlpha, int &dColGradBeta
 )
@@ -376,30 +377,30 @@ vpCannyEdgeDetection::getInterpolWeightsAndOffsets(const float &gradientOrientat
     dColGradAlpha = 1;
     dColGradBeta = 1;
     dRowGradAlpha = 0;
-    dRowGradBeta = -1;
+    dRowGradBeta = -nbCols;
   }
   else if ((gradientOrientation >= M_PI_4_FLOAT) && (gradientOrientation < M_PI_2_FLOAT)) {
     // Angles between 45 and 90 deg rely on the diagonal and vertical points
     thetaMin = M_PI_4_FLOAT;
     dColGradAlpha = 1;
     dColGradBeta = 0;
-    dRowGradAlpha = -1;
-    dRowGradBeta = -1;
+    dRowGradAlpha = -nbCols;
+    dRowGradBeta = -nbCols;
   }
   else if ((gradientOrientation >= M_PI_2_FLOAT) && (gradientOrientation < (3.f * M_PI_4_FLOAT))) {
     // Angles between 90 and 135 deg rely on the vertical and diagonal points
     thetaMin = M_PI_2_FLOAT;
     dColGradAlpha = 0;
     dColGradBeta = -1;
-    dRowGradAlpha = -1;
-    dRowGradBeta = -1;
+    dRowGradAlpha = -nbCols;
+    dRowGradBeta = -nbCols;
   }
   else if ((gradientOrientation >= (3.f * M_PI_4_FLOAT)) && (gradientOrientation < M_PI_FLOAT)) {
     // Angles between 135 and 180 deg rely on the vertical and diagonal points
     thetaMin = 3.f * M_PI_4_FLOAT;
     dColGradAlpha = -1;
     dColGradBeta = -1;
-    dRowGradAlpha = -1;
+    dRowGradAlpha = -nbCols;
     dRowGradBeta = 0;
   }
   beta = (gradientOrientation - thetaMin) / M_PI_4_FLOAT;
@@ -416,20 +417,13 @@ vpCannyEdgeDetection::getInterpolWeightsAndOffsets(const float &gradientOrientat
  * @return float grad = abs(dIx) + abs(dIy) if row and col are valid, 0 otherwise.
  */
 float
-vpCannyEdgeDetection::getManhattanGradient(const vpImage<float> &dIx, const vpImage<float> &dIy, const int &row, const int &col)
+vpCannyEdgeDetection::getManhattanGradient(const vpImage<float> &dIx, const vpImage<float> &dIy, const int &iter)
 {
   float grad = 0.;
-  int nbRows = static_cast<int>(dIx.getRows());
-  int nbCols = static_cast<int>(dIx.getCols());
-  if ((row >= 0)
-      && (row < nbRows)
-      && (col >= 0)
-      && (col < nbCols)
-      ) {
-    float dx = dIx[row][col];
-    float dy = dIy[row][col];
-    grad = std::abs(dx) + std::abs(dy);
-  }
+  float dx = dIx.bitmap[iter];
+  float dy = dIy.bitmap[iter];
+  grad = std::abs(dx) + std::abs(dy);
+
   return grad;
 }
 
@@ -445,11 +439,11 @@ vpCannyEdgeDetection::getManhattanGradient(const vpImage<float> &dIx, const vpIm
  * @return float The positive value of the gradient orientation, expressed in radians.
  */
 float
-vpCannyEdgeDetection::getGradientOrientation(const vpImage<float> &dIx, const vpImage<float> &dIy, const int &row, const int &col)
+vpCannyEdgeDetection::getGradientOrientation(const vpImage<float> &dIx, const vpImage<float> &dIy, const int &iter)
 {
   float gradientOrientation = 0.f;
-  float dx = dIx[row][col];
-  float dy = dIy[row][col];
+  float dx = dIx.bitmap[iter];
+  float dy = dIy.bitmap[iter];
 
   if (std::abs(dx) < std::numeric_limits<float>::epsilon()) {
     gradientOrientation = M_PI_2_FLOAT;
@@ -468,19 +462,35 @@ vpCannyEdgeDetection::getGradientOrientation(const vpImage<float> &dIx, const vp
 void
 vpCannyEdgeDetection::performEdgeThinning(const float &lowerThreshold)
 {
-  int nbRows = static_cast<int>(m_dIx.getRows());
-  int nbCols = static_cast<int>(m_dIx.getCols());
+  const int nbCols = static_cast<int>(m_dIx.getCols());
+  const int size = static_cast<int>(m_dIx.getSize());
 
-  bool ignore_current_pixel = false;
-  bool grad_lower_threshold = false;
-  for (int row = 0; row < nbRows; ++row) {
-    for (int col = 0; col < nbCols; ++col) {
+  int istart = 0, istop = size;
+#ifdef VISP_HAVE_OPENMP
+  int iam, nt, ipoints, npoints(size);
+#pragma omp parallel default(shared) private(iam, nt, ipoints, istart, istop) num_threads(m_nbThread)
+  {
+    iam = omp_get_thread_num();
+    nt = omp_get_num_threads();
+    ipoints = npoints / nt;
+    // size of partition
+    istart = iam * ipoints; // starting array index
+    if (iam == nt-1) {
+      // last thread may do more
+      ipoints = npoints - istart;
+    }
+    istop = istart + ipoints;
+    std::vector<std::pair<unsigned int, float> > localMemoryEdgeCandidates;
+#endif
+    bool ignore_current_pixel = false;
+    bool grad_lower_threshold = false;
+    for (int iter = istart; iter < istop; ++iter) {
       // reset the checks
       ignore_current_pixel = false;
       grad_lower_threshold = false;
 
       if (mp_mask != nullptr) {
-        if (!(*mp_mask)[row][col]) {
+        if (!mp_mask->bitmap[iter]) {
           // The mask tells us to ignore the current pixel
           ignore_current_pixel = true;
           // continue
@@ -490,7 +500,7 @@ vpCannyEdgeDetection::performEdgeThinning(const float &lowerThreshold)
       if (ignore_current_pixel == false) {
 
         // Computing the gradient orientation and magnitude
-        float grad = getManhattanGradient(m_dIx, m_dIy, row, col);
+        float grad = getManhattanGradient(m_dIx, m_dIy, iter);
 
         if (grad < lowerThreshold) {
           // The gradient is lower than minimum threshold => ignoring the point
@@ -503,70 +513,150 @@ vpCannyEdgeDetection::performEdgeThinning(const float &lowerThreshold)
           // depending on the gradient orientation
           int dRowAlphaPlus = 0, dRowBetaPlus = 0;
           int dColAphaPlus = 0, dColBetaPlus = 0;
-          float gradientOrientation = getGradientOrientation(m_dIx, m_dIy, row, col);
+          float gradientOrientation = getGradientOrientation(m_dIx, m_dIy, iter);
           float alpha = 0.f, beta = 0.f;
-          getInterpolWeightsAndOffsets(gradientOrientation, alpha, beta, dRowAlphaPlus, dRowBetaPlus, dColAphaPlus, dColBetaPlus);
+          getInterpolWeightsAndOffsets(gradientOrientation, alpha, beta, nbCols, dRowAlphaPlus, dRowBetaPlus, dColAphaPlus, dColBetaPlus);
           int dRowAlphaMinus = -dRowAlphaPlus, dRowBetaMinus = -dRowBetaPlus;
           int dColAphaMinus = -dColAphaPlus, dColBetaMinus = -dColBetaPlus;
-          float gradAlphaPlus = getManhattanGradient(m_dIx, m_dIy, row + dRowAlphaPlus, col + dColAphaPlus);
-          float gradBetaPlus = getManhattanGradient(m_dIx, m_dIy, row + dRowBetaPlus, col + dColBetaPlus);
-          float gradAlphaMinus = getManhattanGradient(m_dIx, m_dIy, row + dRowAlphaMinus, col + dColAphaMinus);
-          float gradBetaMinus = getManhattanGradient(m_dIx, m_dIy, row + dRowBetaMinus, col + dColBetaMinus);
+          float gradAlphaPlus = getManhattanGradient(m_dIx, m_dIy, iter + dRowAlphaPlus + dColAphaPlus);
+          float gradBetaPlus = getManhattanGradient(m_dIx, m_dIy, iter + dRowBetaPlus + dColBetaPlus);
+          float gradAlphaMinus = getManhattanGradient(m_dIx, m_dIy, iter + dRowAlphaMinus + dColAphaMinus);
+          float gradBetaMinus = getManhattanGradient(m_dIx, m_dIy, iter + dRowBetaMinus + dColBetaMinus);
           float gradPlus = (alpha * gradAlphaPlus) + (beta * gradBetaPlus);
           float gradMinus = (alpha * gradAlphaMinus) + (beta * gradBetaMinus);
 
           if ((grad >= gradPlus) && (grad >= gradMinus)) {
             // Keeping the edge point that has the highest gradient
-            std::pair<unsigned int, unsigned int> bestPixel(row, col);
-            m_edgeCandidateAndGradient[bestPixel] = grad;
+#ifdef VISP_HAVE_OPENMP
+            localMemoryEdgeCandidates.push_back(std::pair<unsigned int, float>(iter, grad));
+#else
+            m_edgeCandidateAndGradient.push_back(std::pair<unsigned int, float>(iter, grad));
+#endif
           }
         }
       }
     }
+#ifdef VISP_HAVE_OPENMP
+#pragma omp critical
+    {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+      m_edgeCandidateAndGradient.insert(
+        m_edgeCandidateAndGradient.end(),
+        std::make_move_iterator(localMemoryEdgeCandidates.begin()),
+        std::make_move_iterator(localMemoryEdgeCandidates.end())
+      );
+#else
+      m_edgeCandidateAndGradient.insert(
+        m_edgeCandidateAndGradient.end(),
+        localMemoryEdgeCandidates.begin(),
+        localMemoryEdgeCandidates.end()
+      );
+#endif
+    }
+#endif
+#ifdef VISP_HAVE_OPENMP
   }
+#endif
 }
 
 void
 vpCannyEdgeDetection::performHysteresisThresholding(const float &lowerThreshold, const float &upperThreshold)
 {
-  std::map<std::pair<unsigned int, unsigned int>, float>::iterator it;
-  std::map<std::pair<unsigned int, unsigned int>, float>::iterator m_edgeCandidateAndGradient_end = m_edgeCandidateAndGradient.end();
-  for (it = m_edgeCandidateAndGradient.begin(); it != m_edgeCandidateAndGradient_end; ++it) {
-    if (it->second >= upperThreshold) {
-      m_edgePointsCandidates[it->first] = STRONG_EDGE;
+  const int size = m_edgeCandidateAndGradient.size();
+  int istart = 0;
+  int istop = size;
+
+#ifdef VISP_HAVE_OPENMP
+  int iam, nt, ipoints, npoints(size);
+#pragma omp parallel default(shared) private(iam, nt, ipoints, istart, istop) num_threads(m_nbThread)
+  {
+    iam = omp_get_thread_num();
+    nt = omp_get_num_threads();
+    ipoints = npoints / nt;
+    // size of partition
+    istart = iam * ipoints; // starting array index
+    if (iam == nt-1) {
+      // last thread may do more
+      ipoints = npoints - istart;
     }
-    else if ((it->second >= lowerThreshold) && (it->second < upperThreshold)) {
-      m_edgePointsCandidates[it->first] = WEAK_EDGE;
+    istop = istart + ipoints;
+    std::vector<unsigned int> localMemoryEdgeCandidates;
+#endif
+    for (int id = istart; id < istop; ++id) {
+      const std::pair<unsigned int, float> &candidate = m_edgeCandidateAndGradient[id];
+      if (candidate.second >= upperThreshold) {
+#ifdef VISP_HAVE_OPENMP
+        localMemoryEdgeCandidates.push_back(candidate.first);
+#else
+        m_activeEdgeCandidates.push_back(candidate.first);
+#endif
+        m_edgePointsCandidates.bitmap[candidate.first] = STRONG_EDGE;
+      }
+      else if ((candidate.second >= lowerThreshold) && (candidate.second < upperThreshold)) {
+#ifdef VISP_HAVE_OPENMP
+        localMemoryEdgeCandidates.push_back(candidate.first);
+#else
+        m_activeEdgeCandidates.push_back(candidate.first);
+#endif
+        m_edgePointsCandidates.bitmap[candidate.first] = WEAK_EDGE;
+      }
+    }
+
+#ifdef VISP_HAVE_OPENMP
+#pragma omp critical
+    {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+      m_activeEdgeCandidates.insert(
+        m_activeEdgeCandidates.end(),
+        std::make_move_iterator(localMemoryEdgeCandidates.begin()),
+        std::make_move_iterator(localMemoryEdgeCandidates.end())
+      );
+#else
+      m_activeEdgeCandidates.insert(
+        m_activeEdgeCandidates.end(),
+        localMemoryEdgeCandidates.begin(),
+        localMemoryEdgeCandidates.end()
+      );
+#endif
     }
   }
+#endif
 }
 
 void
 vpCannyEdgeDetection::performEdgeTracking()
 {
   const unsigned char var_uc_255 = 255;
-  std::map<std::pair<unsigned int, unsigned int>, EdgeType>::iterator it;
-  std::map<std::pair<unsigned int, unsigned int>, EdgeType>::iterator m_edgePointsCandidates_end = m_edgePointsCandidates.end();
-  for (it = m_edgePointsCandidates.begin(); it != m_edgePointsCandidates_end; ++it) {
-    if (it->second == STRONG_EDGE) {
-      m_edgeMap[it->first.first][it->first.second] = var_uc_255;
+  const unsigned int nbCols = m_edgeMap.getCols();
+
+  std::vector<unsigned int>::iterator it;
+  std::vector<unsigned int>::iterator m_edgePointsCandidates_end = m_activeEdgeCandidates.end();
+  for (it = m_activeEdgeCandidates.begin(); it != m_edgePointsCandidates_end; ++it) {
+    if (m_edgePointsCandidates.bitmap[*it] == STRONG_EDGE) {
       if (m_storeListEdgePoints) {
-        m_edgePointsList.push_back(vpImagePoint(it->first.first, it->first.second));
+        if (m_edgeMap.bitmap[*it] != var_uc_255) {
+          // Edge point not added yet to the edge list
+          unsigned int row = *it / nbCols;
+          unsigned int col = *it % nbCols;
+          m_edgePointsList.push_back(vpImagePoint(row, col));
+        }
       }
+      m_edgeMap.bitmap[*it] = var_uc_255;
     }
-    else if (it->second == WEAK_EDGE) {
-      recursiveSearchForStrongEdge(it->first);
+    else if (m_edgePointsCandidates.bitmap[*it] == WEAK_EDGE) {
+      recursiveSearchForStrongEdge(*it);
     }
   }
 }
 
 bool
-vpCannyEdgeDetection::recursiveSearchForStrongEdge(const std::pair<unsigned int, unsigned int> &coordinates)
+vpCannyEdgeDetection::recursiveSearchForStrongEdge(const unsigned int &coordinates)
 {
+  const int nbCols = static_cast<int>(m_dIx.getCols());
+  const int size = static_cast<int>(m_dIx.getSize());
+  const int coordAsInt = static_cast<int>(coordinates);
   bool hasFoundStrongEdge = false;
-  int nbRows = static_cast<int>(m_dIx.getRows());
-  int nbCols = static_cast<int>(m_dIx.getCols());
-  m_edgePointsCandidates[coordinates] = ON_CHECK;
+  m_edgePointsCandidates.bitmap[coordinates] = ON_CHECK;
   bool test_row = false;
   bool test_col = false;
   bool test_drdc = false;
@@ -578,14 +668,11 @@ vpCannyEdgeDetection::recursiveSearchForStrongEdge(const std::pair<unsigned int,
       // reset the check for the edge on image limit
       edge_in_image_limit = false;
 
-      int idRow = dr + static_cast<int>(coordinates.first);
-      idRow = std::max<int>(idRow, 0); // Avoid getting negative pixel ID
-      int idCol = dc + static_cast<int>(coordinates.second);
-      idCol = std::max<int>(idCol, 0); // Avoid getting negative pixel ID
+      int iterTest = coordAsInt + dr * nbCols + dc;
 
       // Checking if we are still looking for an edge in the limit of the image
-      test_row = (idRow < 0) || (idRow >= nbRows);
-      test_col = (idCol < 0) || (idCol >= nbCols);
+      test_row = (iterTest < 0) || (iterTest >= size);
+      test_col = ((iterTest - dc) / nbCols) != (iterTest / nbCols);
       test_drdc = (dr == 0) && (dc == 0);
       if (test_row || test_col || test_drdc) {
         edge_in_image_limit = true;
@@ -594,16 +681,15 @@ vpCannyEdgeDetection::recursiveSearchForStrongEdge(const std::pair<unsigned int,
       if (edge_in_image_limit == false) {
 
         try {
-          std::pair<unsigned int, unsigned int> key_candidate(idRow, idCol);
           // Checking if the 8-neighbor point is in the list of edge candidates
-          EdgeType type_candidate = m_edgePointsCandidates.at(key_candidate);
+          EdgeType type_candidate = m_edgePointsCandidates.bitmap[iterTest];
           if (type_candidate == STRONG_EDGE) {
             // The 8-neighbor point is a strong edge => the weak edge becomes a strong edge
             hasFoundStrongEdge = true;
           }
           else if (type_candidate == WEAK_EDGE) {
             // Checking if the WEAK_EDGE neighbor has a STRONG_EDGE neighbor
-            hasFoundStrongEdge = recursiveSearchForStrongEdge(key_candidate);
+            hasFoundStrongEdge = recursiveSearchForStrongEdge(iterTest);
           }
         }
         catch (...) {
@@ -616,11 +702,16 @@ vpCannyEdgeDetection::recursiveSearchForStrongEdge(const std::pair<unsigned int,
   }
   const unsigned char var_uc_255 = 255;
   if (hasFoundStrongEdge) {
-    m_edgePointsCandidates[coordinates] = STRONG_EDGE;
-    m_edgeMap[coordinates.first][coordinates.second] = var_uc_255;
     if (m_storeListEdgePoints) {
-      m_edgePointsList.push_back(vpImagePoint(coordinates.first, coordinates.second));
+      if (m_edgeMap.bitmap[coordinates] != var_uc_255) {
+        // Edge point not added yet to the edge list
+        unsigned int row = coordinates / nbCols;
+        unsigned int col = coordinates % nbCols;
+        m_edgePointsList.push_back(vpImagePoint(row, col));
+      }
     }
+    m_edgePointsCandidates.bitmap[coordinates] = STRONG_EDGE;
+    m_edgeMap.bitmap[coordinates] = var_uc_255;
   }
   return hasFoundStrongEdge;
 }

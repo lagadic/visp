@@ -33,7 +33,8 @@ device. In our case we will consider a Realsense camera. The pipeline becomes:
 \snippet tutorial-hsv-segmentation-pcl.cpp Get RS2 intrinsics
 - grab color and depth aligned images
 \snippet tutorial-hsv-segmentation-pcl.cpp Grab color and depth
-- convert from RGB to HSV channels using vpImageConvert::RGBaToHSV()
+- convert from RGB to HSV channels using the vpHSV class along with vpImageConvert::convert() method, or
+vpImageConvert::RGBaToHSV() when the vpHSV class is not available
 \snippet tutorial-hsv-segmentation-pcl.cpp RGB to HSV
 - create a mask with pixels that are in the low/high HSV ranges using vpImageTools::inRange()
 \snippet tutorial-hsv-segmentation-pcl.cpp Create mask
