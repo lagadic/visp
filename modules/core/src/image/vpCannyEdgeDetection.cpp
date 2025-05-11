@@ -562,7 +562,7 @@ vpCannyEdgeDetection::performEdgeThinning(const float &lowerThreshold)
 void
 vpCannyEdgeDetection::performHysteresisThresholding(const float &lowerThreshold, const float &upperThreshold)
 {
-  const int size = m_edgeCandidateAndGradient.size();
+  const int size = static_cast<int>(m_edgeCandidateAndGradient.size());
   int istart = 0;
   int istop = size;
 
