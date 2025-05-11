@@ -125,7 +125,7 @@ jobs:
         git clone https://github.com/qualisys/qualisys_cpp_sdk.git ${HOME}/qualisys_cpp_sdk
         cd ${HOME}/qualisys_cpp_sdk
         mkdir build && cd build && mkdir install
-        cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-fPIC -DCMAKE_INSTALL_PREFIX=$(pwd)/install
+        cmake .. qualisys_cpp_sdk_BUILD_EXAMPLE=OFF qualisys_cpp_sdk_BUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-fPIC -DCMAKE_INSTALL_PREFIX=$(pwd)/install
         make -j$(nproc) install
         echo "QUALISYS_DIR=$(pwd)/install" >> $GITHUB_ENV
         echo $QUALISYS_DIR
