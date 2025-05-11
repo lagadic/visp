@@ -146,7 +146,7 @@ jobs:
         git clone --recursive --branch ${LATEST_TAG} ${GIT_ADDRESS} ${HOME}/libfranka
         cd ${HOME}/libfranka
         mkdir build && cd build && mkdir install
-        cmake .. -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$(pwd)/install
+        cmake .. -DCMAKE_PREFIX_PATH=/opt/openrobots/lib/cmake -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$(pwd)/install
         make -j$(nproc) install
         echo "Franka_DIR=$(pwd)/install" >> $GITHUB_ENV
         echo $Franka_DIR
