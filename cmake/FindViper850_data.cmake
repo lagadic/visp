@@ -41,6 +41,8 @@
 find_path(VIPER850_DATA_PATH
   NAMES include/const_camera_Viper850.xml
   PATHS
+    $ENV{VIPER850_DATA_DIR}
+    ${VIPER850_DATA_DIR}
     /home/soft/Viper850/Viper850
     /home/soft/Viper850/current
     /home/soft/viper850/viper850
@@ -59,4 +61,3 @@ endif()
 mark_as_advanced(
   VIPER850_DATA_PATH
 )
-
