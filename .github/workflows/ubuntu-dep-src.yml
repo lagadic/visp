@@ -100,7 +100,7 @@ jobs:
         git clone --depth 1 --branch ${LATEST_TAG} ${GIT_ADDRESS} ${HOME}/librealsense
         cd ${HOME}/librealsense
         mkdir build && cd build && mkdir install
-        cmake .. -DBUILD_EXAMPLES=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$(pwd)/install
+        cmake .. -DBUILD_EXAMPLES=OFF -DBUILD_GRAPHICAL_EXAMPLES=OFF -DBUILD_TOOLS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$(pwd)/install
         make -j$(nproc) install
         echo "REALSENSE2_DIR=$(pwd)/install" >> $GITHUB_ENV
         echo $REALSENSE2_DIR
@@ -143,6 +143,27 @@ jobs:
         make -j$(nproc) install
         echo "Franka_DIR=$(pwd)/install" >> $GITHUB_ENV
         echo $Franka_DIR
+
+    - name: Build Cerebellum Afma and Viper robots SDK from source
+      run: |
+        pwd
+        git clone https://gitlab.inria.fr/adept_robots/cerebellum.git ${HOME}/cerebellum
+        git clone https://gitlab.inria.fr/adept_robots/afma6 ${HOME}/afma6
+        git clone https://gitlab.inria.fr/adept_robots/viper650 ${HOME}/viper650
+        git clone https://gitlab.inria.fr/adept_robots/viper850 ${HOME}/viper850
+        cd ${HOME}/cerebellum/CALinux
+        make -j$(nproc)
+        sudo make install
+        cd ${HOME}/cerebellum/Irisa
+        cmake .
+        make -j$(nproc)
+        sudo make install
+        echo "AFMA6_DATA_DIR=${HOME}/afma6" >> $GITHUB_ENV
+        echo "VIPER650_DATA_DIR=${HOME}/viper650" >> $GITHUB_ENV
+        echo "VIPER850_DATA_DIR=${HOME}/viper850" >> $GITHUB_ENV
+        echo $AFMA6_DATA_DIR
+        echo $VIPER650_DATA_DIR
+        echo $VIPER850_DATA_DIR
 
     - name: Clone visp-images
       env:
