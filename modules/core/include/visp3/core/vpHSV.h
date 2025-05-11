@@ -589,17 +589,17 @@ private:
     // if (v[0] > hmax) {
     //   // throw exception
     // }
-    H = v[0];
+    H = static_cast<T>(v[0]);
 
     // if (v[1] > otherMax) {
     //   // throw exception
     // }
-    S = v[1];
+    S = static_cast<T>(v[1]);
 
     // if (v[2] > otherMax) {
     //   // throw exception
     // }
-    V = v[2];
+    V = static_cast<T>(v[2]);
   }
 };
 
