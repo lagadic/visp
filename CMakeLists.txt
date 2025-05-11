@@ -641,6 +641,11 @@ set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 VP_OPTION(USE_THREADS     Threads     ""    "Include std::thread support"  "" ON)
 
 VP_OPTION(USE_XML2        LibXml2     ""    "Include libxml2 support"      "" ON IF NOT WINRT)
+if(USE_XML2 AND WIN32)
+  # libxml2 needs iconv on windows
+  VP_OPTION(USE_ICONV        Iconv     ""    "Include Iconv support"      "" ON IF NOT WINRT)
+endif()
+
 if(CMAKE_TOOLCHAIN_FILE)
   # Find opencv2.framework for ios and naoqi
   VP_OPTION(USE_OPENCV      "MyOpenCV" QUIET "Include OpenCV support" "OpenCV_DIR;OpenCV_FOUND;OPENCV_FOUND" ON)
@@ -1103,7 +1108,7 @@ VP_SET(VISP_HAVE_LAPACK_OPENBLAS TRUE IF (BUILD_MODULE_visp_core AND USE_OPENBLA
 VP_SET(VISP_HAVE_PTHREAD     TRUE IF (BUILD_MODULE_visp_core AND (USE_PTHREAD AND UNIX)))
 
 VP_SET(VISP_HAVE_THREADS     TRUE IF (BUILD_MODULE_visp_core AND USE_THREADS))
-VP_SET(VISP_HAVE_XML2        TRUE IF (BUILD_MODULE_visp_core AND USE_XML2))
+VP_SET(VISP_HAVE_XML2        TRUE IF (BUILD_MODULE_visp_core AND ((USE_XML2 AND WIN32 AND USE_ICONV) OR (USE_XML2 AND NOT WIN32))))
 VP_SET(VISP_HAVE_PCL         TRUE IF (BUILD_MODULE_visp_core AND USE_PCL))
 VP_SET(VISP_HAVE_TENSORRT    TRUE IF (BUILD_MODULE_visp_core AND USE_TENSORRT))
 VP_SET(VISP_HAVE_NLOHMANN_JSON          TRUE IF (BUILD_MODULE_visp_core AND USE_NLOHMANN_JSON))
@@ -1863,6 +1868,9 @@ status("  Misc: ")
 status("    Use Clipper (built-in):"  WITH_CLIPPER     THEN "yes (ver ${CLIPPER_VERSION})" ELSE "no")
 status("    Use pugixml (built-in):"  WITH_PUGIXML     THEN "yes (ver ${PUGIXML_VERSION})" ELSE "no")
 status("    Use libxml2:"             USE_XML2         THEN "yes (ver ${LIBXML2_VERSION_STRING})" ELSE "no")
+if(WIN32)
+status("    \\- Use Iconv:"           USE_ICONV        THEN "yes (ver ${Iconv_VERSION})" ELSE "no")
+endif()
 if(VISP_HAVE_NLOHMANN_JSON_FROM_VTK)
 status("    Use json (nlohmann vtk):"     USE_NLOHMANN_JSON THEN "yes (ver ${VTK_NLOHMANN_JSON_VERSION})" ELSE "no")
 else()

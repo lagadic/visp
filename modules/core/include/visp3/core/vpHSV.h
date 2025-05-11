@@ -290,13 +290,13 @@ public:
     buildFrom(const vpHSV<unsigned char, otherUseFullScale> &other)
   {
     if (otherUseFullScale) {
-      H = static_cast<T>(other.H) / 255.;
+      H = static_cast<T>(other.H) / static_cast<T>(255.);
     }
     else {
-      H = static_cast<T>(other.H) / static_cast<double>(maxHueUsingLimitedRange);
+      H = static_cast<T>(other.H) / static_cast<T>(maxHueUsingLimitedRange);
     }
-    S = static_cast<T>(other.S) / 255.;
-    V = static_cast<T>(other.V) / 255.;
+    S = static_cast<T>(other.S) / static_cast<T>(255.);
+    V = static_cast<T>(other.V) / static_cast<T>(255.);
     return *this;
   }
 
