@@ -111,13 +111,24 @@ jobs:
         GIT_ADDRESS="https://github.com/PointCloudLibrary/pcl.git"
         LATEST_TAG=`eval ${FUNCTION_GET_LATEST}`
         echo "Newest tag is ${LATEST_TAG}"
-        git clone --depth 1 --branch ${LATEST_TAG} ${GIT_ADDRESS}  ${HOME}/pcl
+        git clone --depth 1 --branch ${LATEST_TAG} ${GIT_ADDRESS} ${HOME}/pcl
         cd ${HOME}/pcl
         mkdir build && cd build && mkdir install
         cmake .. -DBUILD_tools=OFF -DBUILD_global_tests=OFF -DPCL_DISABLE_GPU_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$(pwd)/install
         make -j$(nproc) install
         echo "PCL_DIR=$(pwd)/install" >> $GITHUB_ENV
         echo $PCL_DIR
+
+    - name: Build qualisys_cpp_sdk from source
+      run: |
+        pwd
+        git clone https://github.com/qualisys/qualisys_cpp_sdk.git ${HOME}/qualisys_cpp_sdk
+        cd ${HOME}/qualisys_cpp_sdk
+        mkdir build && cd build && mkdir install
+        cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-fPIC -DCMAKE_INSTALL_PREFIX=$(pwd)/install
+        make -j$(nproc) install
+        echo "QUALISYS_DIR=$(pwd)/install" >> $GITHUB_ENV
+        echo $QUALISYS_DIR
 
     - name: Clone visp-images
       env:
