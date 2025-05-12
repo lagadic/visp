@@ -112,6 +112,8 @@ This page introduces the user to the way to track objects in images.
 - \subpage tutorial-tracking-tt <br>This tutorial focuses on template trackers based on image registration approaches.
 - \subpage tutorial-tracking-megapose <br>This tutorial shows how to use megapose, a deep learning pose estimation solution, to perform single object tracking.
 - \subpage tutorial-megapose-model <br>This tutorial shows how to prepare your 3D model for usage in megapose after reconstruction with Neural Radiance Fields (NeRF).
+- \subpage tutorial-tracking-rbt <br>This tutorial explains how the ViSP render-based tracker works and how to use it to estimate the 6D pose of an object with a known 3D model.
+
 
 */
 

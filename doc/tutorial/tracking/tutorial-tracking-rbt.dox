@@ -1,0 +1,85 @@
+/**
+
+\page tutorial-tracking-rbt Tutorial: Tracking with the Render-Based Tracker
+\tableofcontents
+
+\section rbt_tracking_intro Introduction
+
+In ViSP 3.7, we are introducing a new Render-Based Tracker (RBT), that leverages rendering on the GPU to extract geometric information
+in order to perform online and continuous 6D pose estimation of a known 3D object.
+
+It is an extension of the Model-Based Tracker already present in ViSP (see \ref tutorial-tracking-mb-generic)
+This implementation is derived from the work of \cite Petit14a.
+
+A major advantage over the Model-Based Tracker is that the RBT uses a common mesh representation for the object to track.
+This representation does not require additional preprocessing for feature selection and is widely supported in software such as Blender.
+It can also be obtained through photogrammetry processes, minimizing the work required before using the tracker.
+
+Similar to the MBT, tracking is framed as an optimization problem, where the difference between the features (geometric or photometric) extracted from a 3D model and those observed in the image
+must be minimized.
+
+the RBT is built as a modular pipeline (\ref rbt_tracking_overview). In practice, this means:
+
+- It can leverage both RGB and depth information (\ref rbt_tracking_requirements)
+- It features a complete configuration for every part of the tracking pipeline (\ref rbt_tracking_config)
+- Most components can be disabled or adapted to different use cases and scenarios
+- Components can be extended: You can add new features or filtering methods. (\ref rbt_extension)
+
+
+
+\section rbt_tracking_requirements Requirements
+
+\subsection rbt_tracking_install_requirements Building the RBT module
+
+To successfully build the RBT module, you will need:
+
+- To compile using a minimum standard version of C++11 (defined in the VISP_CXX_STANDARD CMake variable)
+- The Panda3D 3rd party, which is used for 3D rendering. See \ref tutorial-panda3d-install for more information on how to install Panda3D on your system.
+Panda3D is also available through Conda if you are compiling in a virtual environment
+
+Additionally, Some optional dependencies are (strongly) recommended:
+- `nlohmann::json` (\ref install_ubuntu_3rdparty_other) to load configuration files and save your tracking results.
+Without it, the tracker setup will have to be done through code
+- OpenCV, if you wish to use the `vpRBKltTracker`, that uses KLT feature tracking for pose estimation.
+
+\subsection rbt_tracking_requirements General requirements
+
+To use the RBT you will need several things:
+
+- An OpenGL or DirectX enabled device, that can perform 3D rendering.
+You can use software acceleration, although having a GPU is preferable for performance reasons
+- A camera with known intrinsic parameters. For calibration see \ref tutorial-calibration-intrinsic.
+- If you are using an RGB-D camera, the depth image should be aligned with the RGB image. Some SDKs provide this functionality.
+For instance, the wrapper around the realsense SDK accepts an "align" parameter in the vpRealSense2::acquire function.
+When correctly set, the alignment will automatically be performed for you.
+- A 3D model of the object, in a format that is supported by Panda3D (\see tutorial-panda3d-file-conversion).
+If you have installed libassimp-dev or are using the conda package, Panda3D supports common formats such as .ply, .obj. Otherwise, you will have to convert using the method linked previously.
+
+
+
+\subsection rbt_tracking_requirements_3d_model 3D model considerations
+
+The model is in meters.
+
+For now, the texture information is not used by the RBT, only the geometric information.
+
+To correctly process your model, here is a small overview of the steps to follow in Blender
+
+\subsubsection rbt_tracking_requirements_model_preparation Preparing your model in blender
+
+\ref mb_generic_init_user
+
+\section rbt_tracking_overview Algorithm overview
+
+\subsection rbt_tracking_optimization Minimization problem
+
+
+\section rbt_tracking_config Configuration
+
+\section rbt_tracking_examples Tutorial examples
+
+\section rbt_extension Extending the RBT
+
+
+
+*/
