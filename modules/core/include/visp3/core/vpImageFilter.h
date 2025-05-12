@@ -1542,7 +1542,7 @@ public:
 #ifdef VISP_HAVE_OPENMP
       }
 #endif
-      }
+    }
   }
 
   /**
