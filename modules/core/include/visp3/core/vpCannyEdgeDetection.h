@@ -41,7 +41,9 @@
 
 // ViSP include
 #include <visp3/core/vpConfig.h>
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #include <visp3/core/vpHSV.h>
+#endif
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageFilter.h>
 #include <visp3/core/vpRGBa.h>
@@ -385,7 +387,7 @@ public:
    *
    * \return std::vector<vpImagePoint> The edge-points list.
    */
-  inline std::vector<vpImagePoint> getEdgePointsList() const
+  inline const std::vector<vpImagePoint> &getEdgePointsList() const
   {
     if (!m_storeListEdgePoints) {
       throw(vpException(vpException::fatalError, "Asking for the edge-points list while not asking to store it"));
