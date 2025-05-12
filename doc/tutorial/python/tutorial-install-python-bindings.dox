@@ -177,14 +177,11 @@ for example `python=3.10` to the previous command lines.
 
   - **C. On Windows**:
 
-    On Windows, construction is trickier. First you have to disable the bindings to build and install the DLLs
-    corresponding to the ViSP modules:
-
         (visp-conda-ws) C:\visp-ws> mkdir visp-build-bindings
         (visp-conda-ws) C:\visp-ws> cd visp-build-bindings
         (visp-conda-ws) C:\visp-ws\visp-build-bindings> cmake -G "Visual Studio 17 2022" -A "x64" ../visp -DCMAKE_PREFIX_PATH=%CONDA_PREFIX% -DCMAKE_INSTALL_PREFIX=%CONDA_PREFIX%\Library -DVISP_LIB_INSTALL_PATH="lib" -DVISP_BIN_INSTALL_PATH="bin" -DVISP_CONFIG_INSTALL_PATH="cmake"
 
-    \note If you are using powershell, note that *%CONDA_PREFIX%* should be replaced by *"$env:CONDA_PREFIX"*
+    \note If you are using powershell, note that `%%CONDA_PREFIX%` should be replaced by `"$env:CONDA_PREFIX"`.
 
 - At this point, in the build folder there is the `ViSP-third-party.txt` file in which you should see something similar
 
@@ -224,6 +221,9 @@ for example `python=3.10` to the previous command lines.
 
   - **C. On Windows**:
 
+    On Windows, construction is trickier. First you have to build and install the DLLs
+    corresponding to the ViSP modules:
+
         (visp-conda-ws) C:\visp-ws\visp-build-bindings> cmake --build . --config Release --target install --parallel 8
 
     At this point, ViSP DLLs should be installed in `%CONDA_PREFIX%/Library/bin`. This can be checked by:
@@ -234,7 +234,7 @@ for example `python=3.10` to the previous command lines.
         ... libvisp_core361.dll
         ...
 
-    Now you can build the bindings
+    Now you can build the python bindings
 
         (visp-conda-ws) C:\visp-ws\visp-build-bindings> cmake --build . --config Release --target visp_python_bindings --parallel 8
 
