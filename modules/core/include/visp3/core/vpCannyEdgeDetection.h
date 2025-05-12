@@ -361,6 +361,7 @@ public:
     }
     m_nbThread = nbThread;
 #else
+    (void)maxNbThread;
     m_nbThread = 1;
     std::cout << "[WARNING] OpenMP is not available, setting the number of threads is ignored." << std::endl;
 #endif
