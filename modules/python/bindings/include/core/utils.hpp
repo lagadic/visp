@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,7 +121,7 @@ void verify_array_shape_and_dims(np_array_c<Item> np_array, unsigned dims, const
 template<typename Item>
 void verify_array_shape_and_dims(np_array_cf<Item> np_array, std::vector<py::ssize_t> expected_dims, const char *class_name)
 {
-  verify_array_shape_and_dims(np_array, expected_dims.size(), class_name);
+  verify_array_shape_and_dims(np_array, static_cast<unsigned int>(expected_dims.size()), class_name);
   py::buffer_info buffer = np_array.request();
   std::vector<py::ssize_t> shape = buffer.shape;
   bool invalid_shape = false;
@@ -147,7 +147,7 @@ void copy_data_from_np(np_array_cf<Item> src, Item *dest)
   std::vector<py::ssize_t> shape = buffer.shape;
   unsigned int elements = 1;
   for (py::ssize_t dim : shape) {
-    elements *= dim;
+    elements *= static_cast<unsigned int>(dim);
   }
   const Item *data = (Item *)buffer.ptr;
   std::memcpy(dest, data, elements * sizeof(Item));
