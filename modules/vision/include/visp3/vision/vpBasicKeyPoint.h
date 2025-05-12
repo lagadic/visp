@@ -71,180 +71,179 @@ public:
    * Destructor.
    */
   virtual ~vpBasicKeyPoint();
-}
 
-/*!
- * Build reference.
- */
-virtual unsigned int buildReference(const vpImage<unsigned char> &I) = 0;
+  /*!
+   * Build reference.
+   */
+  virtual unsigned int buildReference(const vpImage<unsigned char> &I) = 0;
 
-/*!
- * Build reference.
- */
-virtual unsigned int buildReference(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int height,
-unsigned int width) = 0;
-
-/*!
- * Build reference.
- */
-virtual unsigned int buildReference(const vpImage<unsigned char> &I, const vpRect &rectangle) = 0;
-
-/*!
- * Match keypoints.
- */
-virtual unsigned int matchPoint(const vpImage<unsigned char> &I) = 0;
-
-/*!
- * Match keypoints.
- */
-virtual unsigned int matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int height,
+  /*!
+   * Build reference.
+   */
+  virtual unsigned int buildReference(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int height,
   unsigned int width) = 0;
 
-/*!
- * Match keypoints.
- */
-virtual unsigned int matchPoint(const vpImage<unsigned char> &I, const vpRect &rectangle) = 0;
+  /*!
+   * Build reference.
+   */
+  virtual unsigned int buildReference(const vpImage<unsigned char> &I, const vpRect &rectangle) = 0;
 
-/*!
- * Display keypoints.
- */
-virtual void display(const vpImage<unsigned char> &Iref, const vpImage<unsigned char> &Icurrent, unsigned int size = 3) = 0;
+  /*!
+   * Match keypoints.
+   */
+  virtual unsigned int matchPoint(const vpImage<unsigned char> &I) = 0;
 
-/*!
- * Display keypoints.
- */
-virtual void display(const vpImage<unsigned char> &Icurrent, unsigned int size = 3, const vpColor &color = vpColor::green) = 0;
+  /*!
+   * Match keypoints.
+   */
+  virtual unsigned int matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int height,
+    unsigned int width) = 0;
 
-/*!
- * Indicate wether the reference has been built or not.
- *
- * \return True if the reference of the current instance has been built.
- */
-bool referenceBuilt() const { return m_reference_computed; }
+  /*!
+   * Match keypoints.
+   */
+  virtual unsigned int matchPoint(const vpImage<unsigned char> &I, const vpRect &rectangle) = 0;
 
-/*!
- * Get the pointer to the complete list of reference points. The pointer is
- * const. Thus the points can not be modified
- *
- * \return The pointer to the complete list of reference points.
- */
-inline const vpImagePoint *getAllPointsInReferenceImage() { return &m_referenceImagePointsList[0]; }
+  /*!
+   * Display keypoints.
+   */
+  virtual void display(const vpImage<unsigned char> &Iref, const vpImage<unsigned char> &Icurrent, unsigned int size = 3) = 0;
 
-/*!
- * Get the nth reference point. This point is copied in the vpImagePoint
- * instance given in argument.
- *
- * \param index : The index of the desired reference point. The index must be
- * between 0 and the number of reference points - 1.
- * \param referencePoint :
- * The coordinates of the desired reference point are copied there.
- */
-inline void getReferencePoint(unsigned int index, vpImagePoint &referencePoint)
-{
-  if (index >= m_referenceImagePointsList.size()) {
-    vpTRACE("Index of the reference point out of range");
-    throw(vpException(vpException::fatalError, "Index of the reference point out of range"));
+  /*!
+   * Display keypoints.
+   */
+  virtual void display(const vpImage<unsigned char> &Icurrent, unsigned int size = 3, const vpColor &color = vpColor::green) = 0;
+
+  /*!
+   * Indicate wether the reference has been built or not.
+   *
+   * \return True if the reference of the current instance has been built.
+   */
+  bool referenceBuilt() const { return m_reference_computed; }
+
+  /*!
+   * Get the pointer to the complete list of reference points. The pointer is
+   * const. Thus the points can not be modified
+   *
+   * \return The pointer to the complete list of reference points.
+   */
+  inline const vpImagePoint *getAllPointsInReferenceImage() { return &m_referenceImagePointsList[0]; }
+
+  /*!
+   * Get the nth reference point. This point is copied in the vpImagePoint
+   * instance given in argument.
+   *
+   * \param index : The index of the desired reference point. The index must be
+   * between 0 and the number of reference points - 1.
+   * \param referencePoint :
+   * The coordinates of the desired reference point are copied there.
+   */
+  inline void getReferencePoint(unsigned int index, vpImagePoint &referencePoint)
+  {
+    if (index >= m_referenceImagePointsList.size()) {
+      vpTRACE("Index of the reference point out of range");
+      throw(vpException(vpException::fatalError, "Index of the reference point out of range"));
+    }
+
+    referencePoint.set_ij(m_referenceImagePointsList[index].get_i(), m_referenceImagePointsList[index].get_j());
   }
 
-  referencePoint.set_ij(m_referenceImagePointsList[index].get_i(), m_referenceImagePointsList[index].get_j());
-}
-
-/*!
- * Get the nth couple of reference point and current point which have been
- * matched. These points are copied in the vpImagePoint instances given in
- * argument.
- *
- * \param index : The index of the desired couple of reference point and
- * current point. The index must be between 0 and the number of matched
- * points - 1.
- * \param referencePoint : The coordinates of the desired reference point are copied here.
- * \param currentPoint : The coordinates of the desired current point are copied here.
- */
-inline void getMatchedPoints(unsigned int index, vpImagePoint &referencePoint, vpImagePoint &currentPoint)
-{
-  if (index >= m_matchedReferencePoints.size()) {
-    vpTRACE("Index of the matched points out of range");
-    throw(vpException(vpException::fatalError, "Index of the matched points out of range"));
+  /*!
+   * Get the nth couple of reference point and current point which have been
+   * matched. These points are copied in the vpImagePoint instances given in
+   * argument.
+   *
+   * \param index : The index of the desired couple of reference point and
+   * current point. The index must be between 0 and the number of matched
+   * points - 1.
+   * \param referencePoint : The coordinates of the desired reference point are copied here.
+   * \param currentPoint : The coordinates of the desired current point are copied here.
+   */
+  inline void getMatchedPoints(unsigned int index, vpImagePoint &referencePoint, vpImagePoint &currentPoint)
+  {
+    if (index >= m_matchedReferencePoints.size()) {
+      vpTRACE("Index of the matched points out of range");
+      throw(vpException(vpException::fatalError, "Index of the matched points out of range"));
+    }
+    referencePoint.set_ij(m_referenceImagePointsList[m_matchedReferencePoints[index]].get_i(),
+      m_referenceImagePointsList[m_matchedReferencePoints[index]].get_j());
+    currentPoint.set_ij(m_currentImagePointsList[index].get_i(), m_currentImagePointsList[index].get_j());
   }
-  referencePoint.set_ij(m_referenceImagePointsList[m_matchedReferencePoints[index]].get_i(),
-    m_referenceImagePointsList[m_matchedReferencePoints[index]].get_j());
-  currentPoint.set_ij(m_currentImagePointsList[index].get_i(), m_currentImagePointsList[index].get_j());
-}
 
-/*!
- * Get the nth matched reference point index in the complete list of
- * reference point.
- *
- * In the code below referencePoint1 and referencePoint2 correspond to the
- * same matched reference point.
- *
- * \code
- * vpKeyPoint keypoint;
- *
- * // Here the code to compute the reference points and the current points.
- * vpImagePoint referencePoint1;
- * vpImagePoint currentPoint;
- * keypoint.getMatchedPoints(1, referencePoint1, currentPoint);  //Get the first matched points
- *
- * vpImagePoint referencePoint2;
- * const vpImagePoint* referencePointsList = keypoint.getAllPointsInReferenceImage();
- * // Get the first matched reference point index in the complete reference point list
- * int index = keypoint.getIndexInAllReferencePointList(1);
- * // Get the first matched reference point
- * referencePoint2 = referencePointsList[index];
- * \endcode
- */
-inline unsigned int getIndexInAllReferencePointList(unsigned int indexInMatchedPointList)
-{
-  if (indexInMatchedPointList >= m_matchedReferencePoints.size()) {
-    vpTRACE("Index of the matched reference point out of range");
-    throw(vpException(vpException::fatalError, "Index of the matched reference point out of range"));
+  /*!
+   * Get the nth matched reference point index in the complete list of
+   * reference point.
+   *
+   * In the code below referencePoint1 and referencePoint2 correspond to the
+   * same matched reference point.
+   *
+   * \code
+   * vpKeyPoint keypoint;
+   *
+   * // Here the code to compute the reference points and the current points.
+   * vpImagePoint referencePoint1;
+   * vpImagePoint currentPoint;
+   * keypoint.getMatchedPoints(1, referencePoint1, currentPoint);  //Get the first matched points
+   *
+   * vpImagePoint referencePoint2;
+   * const vpImagePoint* referencePointsList = keypoint.getAllPointsInReferenceImage();
+   * // Get the first matched reference point index in the complete reference point list
+   * int index = keypoint.getIndexInAllReferencePointList(1);
+   * // Get the first matched reference point
+   * referencePoint2 = referencePointsList[index];
+   * \endcode
+   */
+  inline unsigned int getIndexInAllReferencePointList(unsigned int indexInMatchedPointList)
+  {
+    if (indexInMatchedPointList >= m_matchedReferencePoints.size()) {
+      vpTRACE("Index of the matched reference point out of range");
+      throw(vpException(vpException::fatalError, "Index of the matched reference point out of range"));
+    }
+    return m_matchedReferencePoints[indexInMatchedPointList];
   }
-  return m_matchedReferencePoints[indexInMatchedPointList];
-}
 
-/*!
- * Get the number of reference points.
- *
- * \return the number of reference points.
- */
-inline unsigned int getReferencePointNumber() const { return static_cast<unsigned int>(m_referenceImagePointsList.size()); }
+  /*!
+   * Get the number of reference points.
+   *
+   * \return the number of reference points.
+   */
+  inline unsigned int getReferencePointNumber() const { return static_cast<unsigned int>(m_referenceImagePointsList.size()); }
 
-/*!
- * Get the number of matched points.
- *
- * \return the number of matched points.
- */
-inline unsigned int getMatchedPointNumber() const { return static_cast<unsigned int>(m_matchedReferencePoints.size()); }
+  /*!
+   * Get the number of matched points.
+   *
+   * \return the number of matched points.
+   */
+  inline unsigned int getMatchedPointNumber() const { return static_cast<unsigned int>(m_matchedReferencePoints.size()); }
 
-/*!
- * Return the vector of reference image point.
- *
- * \warning Should not be modified.
- *
- * \return Vector of reference image point.
- */
-const std::vector<vpImagePoint> &getReferenceImagePointsList() const { return m_referenceImagePointsList; }
+  /*!
+   * Return the vector of reference image point.
+   *
+   * \warning Should not be modified.
+   *
+   * \return Vector of reference image point.
+   */
+  const std::vector<vpImagePoint> &getReferenceImagePointsList() const { return m_referenceImagePointsList; }
 
-/*!
- * Return the vector of current image point.
- *
- * \warning Should not be modified.
- *
- * \return Vector of the current image point.
- */
-const std::vector<vpImagePoint> &getCurrentImagePointsList() const { return m_currentImagePointsList; }
+  /*!
+   * Return the vector of current image point.
+   *
+   * \warning Should not be modified.
+   *
+   * \return Vector of the current image point.
+   */
+  const std::vector<vpImagePoint> &getCurrentImagePointsList() const { return m_currentImagePointsList; }
 
-/*!
- * Return the index of the matched associated to the current image point i.
- * The ith element of the vector is the index of the reference image point
- * matching with the current image point.
- *
- * \warning Should not be modified.
- *
- * \return The vector of matching index.
- */
-const std::vector<unsigned int> &getMatchedReferencePoints() const { return m_matchedReferencePoints; }
+  /*!
+   * Return the index of the matched associated to the current image point i.
+   * The ith element of the vector is the index of the reference image point
+   * matching with the current image point.
+   *
+   * \warning Should not be modified.
+   *
+   * \return The vector of matching index.
+   */
+  const std::vector<unsigned int> &getMatchedReferencePoints() const { return m_matchedReferencePoints; }
 
 protected:
   /*!

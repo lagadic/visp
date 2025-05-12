@@ -37,7 +37,7 @@
  */
 
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpBasicKeyPoint.h>
+#include <visp3/vision/vpBasicKeyPoint.h>
 
 BEGIN_VISP_NAMESPACE
 
@@ -52,5 +52,3 @@ vpBasicKeyPoint::~vpBasicKeyPoint()
 }
 
 END_VISP_NAMESPACE
-
-#endif
