@@ -76,9 +76,9 @@ jobs:
                    -DUSE_JPEG=OFF -DUSE_PNG=OFF -DUSE_X11=OFF -DUSE_XML2=OFF -DBUILD_JAVA=OFF -DUSE_BLAS/LAPACK=OFF
           cat ViSP-third-party.txt
 
-          if [[ $(nproc) -gt 2 ]]
+          if [[ $(nproc) -gt 3 ]]
           then
-            NB_PROC_TO_USE=`expr  $(nproc) - 1`
+            NB_PROC_TO_USE=`expr  $(nproc) - 2`
           else
             NB_PROC_TO_USE=1
           fi

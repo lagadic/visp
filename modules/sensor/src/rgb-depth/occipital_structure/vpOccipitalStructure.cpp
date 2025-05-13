@@ -997,7 +997,7 @@ void vpOccipitalStructure::getPointcloud(pcl::PointCloud<pcl::PointXYZ>::Ptr &po
   const int height = last_df.height();
   pointcloud->width = static_cast<uint32_t>(width);
   pointcloud->height = static_cast<uint32_t>(height);
-  pointcloud->resizestatic_cast<size_t>(width * height));
+  pointcloud->resize(static_cast<size_t>(width * height));
 
 #if MANUAL_POINTCLOUD // faster to compute manually when tested
   const float *p_depth_frame = reinterpret_cast<const float *>(last_df.depthInMillimeters());

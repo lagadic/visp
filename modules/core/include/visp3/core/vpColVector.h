@@ -901,7 +901,12 @@ public:
   /*!
    * Operator that allows to add two column vectors.
    */
-  vpColVector &operator+=(vpColVector v);
+  vpColVector &operator+=(const vpColVector &v);
+
+  /*!
+   * Operator that allows to add a 3-dim translation vector to a 3-dim column vector.
+   */
+  vpColVector &operator+=(const vpTranslationVector &t);
 
   /*!
    * Operator subtraction of two vectors this = this - v
@@ -911,7 +916,12 @@ public:
   /*!
    * Operator that allows to subtract two column vectors.
    */
-  vpColVector &operator-=(vpColVector v);
+  vpColVector &operator-=(const vpColVector &v);
+
+  /*!
+   * Operator that allows to subtract a 3-dim translation vector to a 3-dim column vector.
+   */
+  vpColVector &operator-=(const vpTranslationVector &t);
 
   /*!
    * Operator that allows to negate all the column vector elements.
