@@ -337,6 +337,10 @@ void vpMbtMeEllipse::sample(const vpImage<unsigned char> &I, bool doNotTrack)
       pix.init(iP.get_i(), iP.get_j(), theta);
       pix.setDisplay(m_selectDisplay);
       pix.setState(vpMeSite::NO_SUPPRESSION);
+      const double marginRatio = m_me->getThresholdMarginRatio();
+      double convolution = pix.convolution(I, m_me);
+      double contrastThreshold = fabs(convolution) * marginRatio;
+      pix.setContrastThreshold(contrastThreshold, *m_me);
       m_meList.push_back(pix);
       m_angleList.push_back(ang);
     }
