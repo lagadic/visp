@@ -206,9 +206,9 @@ public:
     }
 
     T f = h - static_cast<int>(h);
-    T p = v * (1.0 - s);
-    T q = v * (1.0 - (s * f));
-    T t = v * (1.0 - (s * (1.0 - f)));
+    T p = v * static_cast<T>(1.0 - s);
+    T q = v * static_cast<T>(1.0 - (s * f));
+    T t = v * static_cast<T>(1.0 - (s * (1.0 - f)));
 
     const int val_2 = 2;
     const int val_3 = 3;
