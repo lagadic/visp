@@ -4,6 +4,17 @@ Examples
 ====================
 
 
+Robot interface
+-----------------------
+
+.. toctree::
+    :glob:
+    :maxdepth: 2
+
+    robot/*
+
+
+
 Visual servoing
 -----------------------
 
