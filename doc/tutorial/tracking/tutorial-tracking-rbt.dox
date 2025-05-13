@@ -14,6 +14,7 @@ This implementation is derived from the work of \cite Petit14a.
 A major advantage over the Model-Based Tracker is that the RBT uses a common mesh representation for the object to track.
 This representation does not require additional preprocessing for feature selection and is widely supported in software such as Blender.
 It can also be obtained through photogrammetry processes, minimizing the work required before using the tracker.
+Note that we do not consider deformable objects, only rigid objects.
 
 Similar to the MBT, tracking is framed as an optimization problem, where the difference between the features (geometric or photometric) extracted from a 3D model and those observed in the image
 must be minimized.
@@ -48,26 +49,50 @@ To use the RBT you will need several things:
 
 - An OpenGL or DirectX enabled device, that can perform 3D rendering.
 You can use software acceleration, although having a GPU is preferable for performance reasons
-- A camera with known intrinsic parameters. For calibration see \ref tutorial-calibration-intrinsic.
+- A camera with known intrinsic parameters. For calibration see \ref tutorial-calibration-intrinsic. \important The camera intrinsics should follow a model without distortion.
 - If you are using an RGB-D camera, the depth image should be aligned with the RGB image. Some SDKs provide this functionality.
 For instance, the wrapper around the realsense SDK accepts an "align" parameter in the vpRealSense2::acquire function.
 When correctly set, the alignment will automatically be performed for you.
-- A 3D model of the object, in a format that is supported by Panda3D (\see tutorial-panda3d-file-conversion).
-If you have installed libassimp-dev or are using the conda package, Panda3D supports common formats such as .ply, .obj. Otherwise, you will have to convert using the method linked previously.
-
+- A 3D model of the object, in a format that is supported by Panda3D (See \ref tutorial-panda3d-file-conversion ).
+If you have installed *libassimp-dev* or are using the conda package, Panda3D supports common formats such as *.ply*, *.obj*. Otherwise, you will have to convert your mesh using the previously linked method.
 
 
 \subsection rbt_tracking_requirements_3d_model 3D model considerations
 
-The model is in meters.
+There are very little restrictions on the 3D model that can be used in the RBT.
 
-For now, the texture information is not used by the RBT, only the geometric information.
+First, your 3D model's size should be expressed in meters. Be aware that some CAD software export models in millimeters.
+
+If you are using the initialization by click, you will have to be careful with the model orientation when exporting (see below).
+
+Note that while 3D meshes support textures, the presently available RBT features do not use the texture information.
 
 To correctly process your model, here is a small overview of the steps to follow in Blender
 
 \subsubsection rbt_tracking_requirements_model_preparation Preparing your model in blender
 
-\ref mb_generic_init_user
+To make sure your model is correct, you should start by setting the scale and orientation of your 3D model.
+
+You should first import your model in Blender. In the top left corner of the Blender window, click on **File > Import > (Your model type)**, then pick your object in the popup window.
+
+Your model should have been imported and should be visible in the 3D viewer. You should then click on it and press **N** to bring up the transform panel in the top right corner.
+Then you should press **Ctrl+A** to open the *Apply* menu and click on the "**All transforms**" item. This ensures that the exported model matches what is seen in Blender.
+
+\image html rbt-blender-apply-transforms.png Apply transforms to clear any rotation and scale difference stored in Blender.
+
+
+
+If you are using initialization by click as described in \ref mb_generic_init_user, you can select the 3D points to click directly in Blender.
+To do so, first click on your object and press *tab* to go into Edit mode. Then, press *N* to display the **Transform** Panel (Top right of the viewer).
+Choose a 3D point to use for initilization, then click on it. In the **Transform** panel, you should then see the XYZ coordinates of the point, which you can copy into the init file.
+Be sure to select the "Global" frame in the transform panel.
+
+\image html rbt-click-init-blender-panel.png The transform panel with a selected 3D point in Edit mode.
+
+Once you have selected your points make sure to export your model in the same frame as the Blender frame.
+You can export your 3D model, using the **File > Export > (Supported 3D format such as .obj)** and save your model in the desired location.
+In the export panel, set "Forward Axis" to "**-Z**" and "Up Axis" to "**Y**"
+
 
 \section rbt_tracking_overview Algorithm overview
 
