@@ -228,7 +228,7 @@ void vpMbtMeEllipse::initTracking(const vpImage<unsigned char> &I, const vpImage
 void vpMbtMeEllipse::track(const vpImage<unsigned char> &I)
 {
   try {
-    vpMeTracker::track(I);
+    vpMeEllipse::track(I);
     if (m_mask != nullptr) {
       // Expected density could be modified if some vpMeSite are no more tracked because they are outside the mask.
       m_expectedDensity = static_cast<unsigned int>(m_meList.size());
@@ -284,7 +284,7 @@ void vpMbtMeEllipse::reSample(const vpImage<unsigned char> &I)
   unsigned int n = numberOfSignal();
   if (static_cast<double>(n) < 0.9 * m_expectedDensity) {
     sample(I);
-    vpMeTracker::track(I);
+    vpMeEllipse::track(I);
   }
 }
 
