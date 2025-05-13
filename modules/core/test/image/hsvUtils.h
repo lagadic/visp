@@ -56,8 +56,7 @@ namespace vpHSVTests
  * \return The absolute difference.
  */
 template<typename T>
-inline typename std::enable_if<std::is_arithmetic<T>::value, double>::type
-error(const T &a, const T &b)
+inline typename std::enable_if<std::is_arithmetic<T>::value, double>::type error(const T &a, const T &b)
 {
   return std::abs(a - b);
 }
@@ -72,8 +71,7 @@ error(const T &a, const T &b)
  * \return double 0. to initialize the error.
  */
 template<typename Tp, int I = 0>
-inline typename std::enable_if<I == Tp::nbChannels, double>::type
-error(const Tp &t1, const Tp &t2)
+inline typename std::enable_if<I == Tp::nbChannels, double>::type error(const Tp &t1, const Tp &t2)
 {
   (void)t1;
   (void)t2;
@@ -90,8 +88,7 @@ error(const Tp &t1, const Tp &t2)
  * \return double The weighted sum of the absolute error for all the channels.
  */
 template<typename Tp, int I = 0>
-inline typename std::enable_if<I < Tp::nbChannels, double>::type
-  error(const Tp &t1, const Tp &t2)
+inline typename std::enable_if<I < Tp::nbChannels, double>::type error(const Tp &t1, const Tp &t2)
 {
   const double &val1 = vpColorGetter<I>::get(t1);
   const double &val2 = vpColorGetter<I>::get(t2);
@@ -136,6 +133,13 @@ bool areAlmostEqual(const vpImage<T> &I1, const std::string &nameI1, const vpIma
   return areEqual;
 }
 
+/*!
+ * Print HSV values.
+ * @tparam ArithmeticType Arithmetic type.
+ * @tparam useFullScale When true use HSV full scale.
+ * @param[in] I HSV image.
+ * @param[in] name Legend.
+ */
 template<typename ArithmeticType, bool useFullScale>
 void print(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, const std::string &name)
 {
@@ -161,6 +165,12 @@ void print(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, const std::str
   std::cout << std::endl;
 }
 
+/*!
+ * Print HSV values.
+ * @tparam ArithmeticType Arithmetic type.
+ * @param[in] I HSV image.
+ * @param[in] name Legend.
+ */
 template<typename ArithmeticType>
 void print(const vpImage<ArithmeticType> &I, const std::string &name)
 {
@@ -185,6 +195,11 @@ void print(const vpImage<ArithmeticType> &I, const std::string &name)
   std::cout << std::endl << std::flush;
 }
 
+/*!
+ * Print HSV values.
+ * @param[in] I HSV image.
+ * @param[in] name Legend.
+ */
 void print(const vpImage<unsigned char> &I, const std::string &name)
 {
   std::cout << name << " = " << std::endl;
