@@ -28,9 +28,10 @@
   xorg,
   zbar,
   zlib,
+  llvmPackages_15,
 }:
 
-stdenv.mkDerivation (finalAttrs: {
+llvmPackages_15.stdenv.mkDerivation (finalAttrs: {
   pname = "visp";
   version = "3.6.0";
 
