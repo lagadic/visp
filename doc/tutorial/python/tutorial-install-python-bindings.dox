@@ -795,9 +795,9 @@ If you have this error:
   class VISP_EXPORT vpTemplateTrackerMI : public vpTemplateTracker
 \endcode
 
-You should define the class (here vpTemplateTrackerMI) as pure virtual in the config file (via the flag is_virtual).
-This error occurs because some methods are defined as pure virtual in a parent class and are not defined in the class
-this class: Pure virtual class detection does not look in the class hierarchy but only at the present class.
+You should define the class (here vpTemplateTrackerMI) as pure virtual in the `tt_mi.json` config file (via the flag `is_virtual`).
+This error occurs because some methods are defined as pure virtual in a parent class and are not defined in the class.
+Pure virtual class detection does not look in the class hierarchy but only at the present class.
 
 \subsubsection py_bindings_known_errors_template 6.4.2. Template errors
 
@@ -832,7 +832,6 @@ If you have an issue that looks like:
 
 You should delete the files in `modules/python/` of the **build** directory.
 
-
 If you have an error that looks like this:
 
 \code{.sh}
@@ -859,8 +858,46 @@ Here, we would add
 \endcode
 to exclude the `std::function` from being constructed with a default value.
 
+\subsubsection py_bindings_known_errors_external_symbol 6.4.3. External symbol not found when linking _visp
 
-\subsubsection py_bindings_known_errors_import_dll 6.4.3. ImportError: DLL load failed while importing _visp
+When building bindings, if you encounter the `"External symbol not found"` error when linking `_visp` target, such as the
+following errors that have occurred with Visual C++ on Windows, you can check whether the functions concerned are only
+implemented in a header file.
+
+\code{.sh}
+Création de la bibliothèque C:/visp-ws/test-pr/visp-fspindle/visp-build-bindings/lib/Release/_visp.lib et de l'objet C:/visp-ws/test-pr/visp-fspindle/visp-build-bindings/lib/Release/_visp.exp
+vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: class std::vector<unsigned int,class std::allocator<unsigned int> > const & __cdecl vpBasicKeyPoint::getMatchedReferencePoints(void)const" (__imp_?getMatchedReferencePoints@vpBasicKeyPoint@@QEBAAEBV?$vector@IV?$allocator@I@std@@@std@@XZ) [C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
+vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: class std::vector<class vpImagePoint,class std::allocator<class vpImagePoint> > const & __cdecl vpBasicKeyPoint::getCurrentImagePointsList(void)const"(__imp_?getCurrentImagePointsList@vpBasicKeyPoint@@QEBAAEBV?$vector@VvpImagePoint@@V?$allocator@VvpImagePoint@@@std@@@std@@XZ) [C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
+vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: class std::vector<class vpImagePoint,class std::allocator<class vpImagePoint> > const & __cdecl vpBasicKeyPoint::getReferenceImagePointsList(void)const" (__imp_?getReferenceImagePointsList@vpBasicKeyPoint@@QEBAAEBV?$vector@VvpImagePoint@@V?$allocator@VvpImagePoint@@@std@@@std@@XZ) [C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
+vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: unsigned int __cdecl vpBasicKeyPoint::getMatchedPointNumber(void)const " (__imp_?getMatchedPointNumber@vpBasicKeyPoint@@QEBAIXZ) [C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
+vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: unsigned int __cdecl vpBasicKeyPoint::getReferencePointNumber(void)const " (__imp_?getReferencePointNumber@vpBasicKeyPoint@@QEBAIXZ) [C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
+vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: unsigned int __cdecl vpBasicKeyPoint::getIndexInAllReferencePointList(unsigned int)" (__imp_?getIndexInAllReferencePointList@vpBasicKeyPoint@@QEAAII@Z)[C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
+vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: void __cdecl vpBasicKeyPoint::getMatchedPoints(unsigned int,class vpImagePoint &,class vpImagePoint &)" (__imp_?getMatchedPoints@vpBasicKeyPoint@@QEAAXIAEAVvpImagePoint@@0@Z) [C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
+vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: void __cdecl vpBasicKeyPoint::getReferencePoint(unsigned int,class vpImagePoint &)" (__imp_?getReferencePoint@vpBasicKeyPoint@@QEAAXIAEAVvpImagePoint@@@Z) [C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
+vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: bool __cdecl vpBasicKeyPoint::referenceBuilt(void)const " (__imp_?referenceBuilt@vpBasicKeyPoint@@QEBA_NXZ) [C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
+C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\visp\_visp.cp310-win_amd64.pyd : fatal error LNK1120: 9 externes non résolus [C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\_visp.
+vcxproj]
+\endcode
+
+When this error raised the 9 non resolved external symbols below
+\code{.sh}
+Les 9 fonctions non trouvées sont:
+vpBasicKeyPoint::getMatchedReferencePoints()
+vpBasicKeyPoint::getCurrentImagePointsList()
+vpBasicKeyPoint::getReferenceImagePointsList()
+vpBasicKeyPoint::getMatchedPointNumber()
+vpBasicKeyPoint::getReferencePointNumber()
+vpBasicKeyPoint::getIndexInAllReferencePointList()
+vpBasicKeyPoint::getMatchedPoints(unsigned int,class vpImagePoint &,class vpImagePoint &)
+vpBasicKeyPoint::getReferencePoint(unsigned int,class vpImagePoint &)
+vpBasicKeyPoint::referenceBuilt()
+\endcode
+were defined as inline functions in `vpBasicKeyPoint.h` file. There was no `vpBasicKeyPoint.cpp` file.
+
+The solution to fix this link issue was to implement a function, like the vpBasicKeyPoint destructor
+in `vpBasicKeyPoint.cpp` file.
+
+\subsubsection py_bindings_known_errors_import_dll 6.4.4. ImportError: DLL load failed while importing _visp
 
 The following error may occur on Windows
 \code{.sh}
@@ -987,7 +1024,7 @@ Then close and reopen your `Miniforge Prompt` and relaunch the bindings build pr
 
   \warning If after rebuilding the error still appears or you cannot locate the third party library see the next section.
 
-\subsubsection py_bindings_known_errors_tracing_missing_dlls 6.4.4. Tracing missing DLLs
+\subsubsection py_bindings_known_errors_tracing_missing_dlls 6.4.5. Tracing missing DLLs
 
 To trace the missing DLLs, we can use the *process monitor* tool. This tool will list all the the paths that Python looks up to find the required DLLs.
 
