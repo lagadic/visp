@@ -312,6 +312,8 @@ endif()
 
 # --- Python Bindings requirements ---
 VP_OPTION(USE_PYBIND11       pybind11       QUIET    "Include pybind11 to create Python bindings" "" ON)
+VP_OPTION(ALLOW_SYSTEM_PYTHON  "" "" "Allow the use of the system Python interpreter when compiling and installing bindings" "" OFF)
+
 
 # Minimum tool versions
 set(CMAKE_MINIMUM_VERSION_PYTHON_BINDINGS "3.19.0")
@@ -344,21 +346,25 @@ endif()
 
 
 
-# Forbid system Python
+# Forbid system Python if override flag is not false
 if(DEFINED ENV{VIRTUAL_ENV} OR DEFINED ENV{CONDA_PREFIX})
   set(_pip_args)
-  set(VISP_PYTHON_IS_SYSTEM_WIDE FALSE)
+  set(VISP_PYTHON_INTERPRETER_ALLOWED TRUE)
 else()
   # First solution: raise an error when cmake will call pip install
   # set(_pip_args "--require-virtualenv") # If this is a system python, throw an error
   if(PYTHON3_FOUND)
-    message(STATUS "The python version that you are using (${PYTHON3_EXECUTABLE}) is the system interpreter.
-    pip packages should not be installed system-wide!
-    Python bindings targets will be deactivated!
-    To reenable them, install conda or virtualenv,
-    delete the CMakeCache file then rerun cmake when inside the virtual environment.
-    ")
-    set(VISP_PYTHON_IS_SYSTEM_WIDE TRUE)
+    if(ALLOW_SYSTEM_PYTHON)
+      set(VISP_PYTHON_INTERPRETER_ALLOWED TRUE)
+    else()
+      message(STATUS "The python version that you are using (${PYTHON3_EXECUTABLE}) is the system interpreter.
+      pip packages should not be installed system-wide!
+      Python bindings targets will be deactivated!
+      To reenable them, install conda or virtualenv, or reconfigure with ALLOW_SYSTEM_PYTHON to true.
+      delete the CMakeCache file then rerun cmake when inside the virtual environment.
+      ")
+      set(VISP_PYTHON_INTERPRETER_ALLOWED FALSE)
+    endif()
   endif()
 endif()
 
@@ -490,7 +496,7 @@ VP_OPTION(BUILD_ANDROID_EXAMPLES  "" "" "Build examples for Android platform"   
 VP_OPTION(INSTALL_ANDROID_EXAMPLES "" "" "Install Android examples"  ""                  OFF IF ANDROID )
 
 # Build python bindings as an option
-VP_OPTION(BUILD_PYTHON_BINDINGS  "" "" "Build Python bindings" "" ON IF (PYTHON3INTERP_FOUND AND USE_PYBIND11 AND NOT CMAKE_NOT_OK_FOR_BINDINGS AND NOT VISP_PYTHON_IS_SYSTEM_WIDE AND NOT PYTHON3_NOT_OK_FOR_BINDINGS AND NOT CXX_STANDARD_NOT_OK_FOR_BINDINGS) )
+VP_OPTION(BUILD_PYTHON_BINDINGS  "" "" "Build Python bindings" "" ON IF (PYTHON3INTERP_FOUND AND USE_PYBIND11 AND NOT CMAKE_NOT_OK_FOR_BINDINGS AND VISP_PYTHON_INTERPRETER_ALLOWED AND NOT PYTHON3_NOT_OK_FOR_BINDINGS AND NOT CXX_STANDARD_NOT_OK_FOR_BINDINGS) )
 VP_OPTION(BUILD_PYTHON_BINDINGS_DOC  "" "" "Build the documentation for the Python bindings" "" ON IF BUILD_PYTHON_BINDINGS )
 
 
@@ -1719,7 +1725,7 @@ if(BUILD_PYTHON_BINDINGS)
 else()
   status("    Requirements: ")
   status("      Python version > ${PYTHON3_MINIMUM_VERSION_PYTHON_BINDINGS}:"     PYTHON3_FOUND AND NOT PYTHON3_NOT_OK_FOR_BINDINGS THEN "ok (ver ${PYTHON3_VERSION_STRING})" ELSE "python not found or too old (${PYTHON3_VERSION_STRING})")
-  status("      Python in Virtual environment or conda:"     VISP_PYTHON_IS_SYSTEM_WIDE THEN "failed" ELSE "ok")
+  status("      Python in Virtual environment or conda (or system with override):"     VISP_PYTHON_INTERPRETER_ALLOWED THEN "failed" ELSE "ok")
   status("      Pybind11 found:"     USE_PYBIND11 THEN "ok" ELSE "failed")
   status("      CMake > ${CMAKE_MINIMUM_VERSION_PYTHON_BINDINGS}:"     CMAKE_NOT_OK_FOR_BINDINGS THEN "failed (${CMAKE_VERSION})" ELSE "ok (${CMAKE_VERSION})")
   status("      C++ standard > ${VISP_CXX_STANDARD_17}:"     CXX_STANDARD_NOT_OK_FOR_BINDINGS THEN "failed (${VISP_CXX_STANDARD})" ELSE "ok (${VISP_CXX_STANDARD})")
