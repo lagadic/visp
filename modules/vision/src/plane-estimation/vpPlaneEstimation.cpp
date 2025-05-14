@@ -203,6 +203,16 @@ vpPlaneEstimation::estimatePlane(const vpImage<uint16_t> &I_depth_raw, double de
                                  const unsigned int avg_nb_of_pts_to_estimate,
                                  std::optional<std::reference_wrapper<vpImage<vpRGBa> > > heat_map)
 {
+  return estimatePlane(I_depth_raw, depth_scale, depth_intrinsics, roi, std::nullopt, avg_nb_of_pts_to_estimate, heat_map);
+}
+
+std::optional<vpPlane>
+vpPlaneEstimation::estimatePlane(const vpImage<uint16_t> &I_depth_raw, double depth_scale,
+                                 const vpCameraParameters &depth_intrinsics, const vpPolygon &roi,
+                                 const std::optional<vpImage<bool>> &mask,
+                                 const unsigned int avg_nb_of_pts_to_estimate,
+                                 std::optional<std::reference_wrapper<vpImage<vpRGBa> > > heat_map)
+{
 #ifdef VISP_HAVE_OPENMP
   auto num_procs = omp_get_num_procs();
   num_procs = num_procs > 2 ? num_procs - 2 : num_procs;
@@ -212,6 +222,14 @@ vpPlaneEstimation::estimatePlane(const vpImage<uint16_t> &I_depth_raw, double de
   // Local helper: Reduce computation (roi.isInside)
   // Default: the img is totally included in the ROI
   std::function<bool(const vpImagePoint &)> isInside = [](const vpImagePoint &) { return true; };
+
+  // Local helper: check if the considered point must be considered according to the mask
+  // Default: all the points must be considered
+  std::function<bool(const vpImagePoint &)> isValid = [](const vpImagePoint &) { return true; };
+
+  if (mask) {
+    isValid = [&mask](const vpImagePoint &ip) { return (*mask)[static_cast<unsigned int>(ip.get_i())][static_cast<unsigned int>(ip.get_j())]; };
+  }
 
   // If the img is crossed by the ROI, vpPolygon::isInside has to be used
   {
@@ -261,7 +279,7 @@ vpPlaneEstimation::estimatePlane(const vpImage<uint16_t> &I_depth_raw, double de
   for (int i = roi_top; i < roi_bottom; i = i + subsample_factor) {
     for (int j = roi_left; j < roi_right; j = j + subsample_factor) {
       const auto pixel = vpImagePoint { static_cast<double>(i), static_cast<double>(j) };
-      if (I_depth_raw[i][j] != 0 && isInside(pixel)) {
+      if ((I_depth_raw[i][j] != 0) && isInside(pixel) && isValid(pixel)) {
         double x { 0. }, y { 0. };
         vpPixelMeterConversion::convertPoint(depth_intrinsics, pixel, x, y);
         const double Z = I_depth_raw[i][j] * depth_scale;
