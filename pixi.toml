@@ -43,6 +43,9 @@ llvm-openmp = "*"
 [activation]
 scripts = ["development/scripts/pixi/activation.sh"]
 
+[target.linux.activation]
+scripts = ["development/scripts/pixi/activation.sh", "development/scripts/pixi/activation_xvfb.sh"]
+
 [target.win-64.activation]
 scripts = ["development/scripts/pixi/activation.bat"]
 
@@ -62,6 +65,8 @@ python-test = { cmd = "cmake --build $VISP_BUILD_DIR --config Release --target v
 
 [feature.rbt]
 dependencies = { nlohmann_json = "*", panda3d = { version = ">=1.10.15", channel = "panda3d-forge" } }
+[feature.rbt.tasks]
+test = { cmd = "$VISP_EMULATE_X ctest --test-dir $VISP_BUILD_DIR --output-on-failure", depends-on = ["install"] }
 
 [feature.tests]
 activation = { env = { VISP_BUILD_TESTS = "ON" } }
