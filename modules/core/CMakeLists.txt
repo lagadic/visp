@@ -242,6 +242,11 @@ endif()
 if(USE_XML2)
   include_directories(SYSTEM ${LIBXML2_INCLUDE_DIRS})
   list(APPEND opt_libs_private ${LIBXML2_LIBRARIES})
+  if(USE_ICONV)
+    # Only on windows
+    include_directories(SYSTEM ${Iconv_INCLUDE_DIRS})
+    list(APPEND opt_libs_private ${Iconv_LIBRARIES})
+  endif()
 endif()
 
 if(USE_THREADS)
