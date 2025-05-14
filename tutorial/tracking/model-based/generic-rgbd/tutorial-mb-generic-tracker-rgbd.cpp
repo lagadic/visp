@@ -90,7 +90,7 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<vpR
   // Transform pointcloud
   pointcloud->width = width;
   pointcloud->height = height;
-  pointcloud->resize((size_t)width * height);
+  pointcloud->resize(static_cast<size_t>(width * height));
 
   // Only for Creative SR300
   const float depth_scale = 0.00100000005f;
@@ -111,9 +111,9 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<vpR
       float point[3];
       float pixel[2] = { static_cast<float>(j), static_cast<float>(i) };
       rs_deproject_pixel_to_point(point, depth_intrinsic, pixel, scaled_depth);
-      pointcloud->points[(size_t)(i * width + j)].x = point[0];
-      pointcloud->points[(size_t)(i * width + j)].y = point[1];
-      pointcloud->points[(size_t)(i * width + j)].z = point[2];
+      pointcloud->points[static_cast<size_t>(i * width + j)].x = point[0];
+      pointcloud->points[static_cast<size_t>(i * width + j)].y = point[1];
+      pointcloud->points[static_cast<size_t>(i * width + j)].z = point[2];
     }
   }
 

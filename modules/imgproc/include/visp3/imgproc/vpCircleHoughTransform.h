@@ -610,6 +610,7 @@ public:
           {"mergingRadiusDiffThresh", params.m_mergingRadiusDiffThresh} };
     }
 #endif
+    friend VISP_EXPORT bool operator==(const vpImageCircle &a, const vpImageCircle &b);
 
   private:
     // // Filtering + gradient operators to use
@@ -1254,6 +1255,37 @@ protected:
     float m_totalVotes; /*!< The cumulated number of votes accross all the centers voting for this barycenter.*/
     float m_nbElectors; /*!< The number of center candidates that have voted for this barycenter.*/
   }vpCentersBarycenter;
+
+  /**
+ * \brief Store the coordinates for single step of update of the center candidates accumulator.
+ */
+  typedef struct vpCoordinatesForAccumStep
+  {
+    float x_orig;
+    float y_orig;
+    int x;
+    int y;
+  }vpCoordinatesForAccumStep;
+
+  /**
+   * \brief Data required to update the center candidates accumulator along the
+   * gradient direction.
+   */
+  typedef struct vpDataForAccumLoop
+  {
+    unsigned int r; /*!< The row of the edge-point of interest.*/
+    unsigned int c; /*!< The column of the edge-point of interest.*/
+    float minRadius; /*!< The minimum radius of the searched circle.s.*/
+    float maxRadius; /*!< The maximum radius of the searched circle.s.*/
+    float minimumXpositionFloat; /*!< The minimum x-axis position of the center in the image.*/
+    float minimumYpositionFloat; /*!< The minimum y-axis position of the center in the image.*/
+    float maximumXpositionFloat; /*!< The maximum x-axis position of the center in the image.*/
+    float maximumYpositionFloat; /*!< The maximum y-axis position of the center in the image.*/
+    int offsetX; /*!< The offset to map the accumulator indices with the minimum x-axis value.*/
+    int offsetY; /*!< The offset to map the accumulator indices with the minimum y-axis value.*/
+    int accumulatorWidth; /*!< The width of the accumulator.*/
+    int accumulatorHeight; /*!< The height of the accumulator.*/
+  }vpDataForAccumLoop;
 #endif
 
   /**
@@ -1295,6 +1327,27 @@ protected:
    * Perform thresholding to keep only the center candidates that exceed the threshold.
    */
   virtual void computeCenterCandidates();
+
+  void updateAccumulator(const vpCoordinatesForAccumStep &coord, const vpDataForAccumLoop &data, vpImage<float> &accum, bool &hasToStop);
+
+  /**
+   * \brief Update the center accumulator along the positive and negative gradient direction
+   * starting from an edge-point of interest.
+   *
+   * \param[in] data The data required for the algorithm.
+   * \param[out] sx The gradient along x.
+   * \param[out] sy The gradient along y.
+   * \param[out] centersAccum The center candidates accumulator.
+   */
+  void updateAccumAlongGradientDir(const vpDataForAccumLoop &data, float &sx, float &sy, vpImage<float> &centersAccum);
+
+  /**
+   * \brief
+   *
+   * \param[in] data
+   * \param[in] centersAccum
+   */
+  virtual void workOnAccumulator(vpDataForAccumLoop &data, vpImage<float> &centersAccum);
 
   /**
    * \brief Aggregate center candidates that are close to each other.

@@ -359,7 +359,7 @@ void vpMbtDistanceKltPoints::updateMask(
   std::vector<vpImagePoint> roi;
   polygon->getRoiClipped(cam, roi);
 
-  double shiftBorder_d = (double)shiftBorder;
+  double shiftBorder_d = static_cast<double>(shiftBorder);
 
 #if defined(VISP_HAVE_CLIPPER)
   std::vector<vpImagePoint> roi_offset;
@@ -430,10 +430,10 @@ void vpMbtDistanceKltPoints::updateMask(
   }
 
   for (int i = i_min; i < i_max; i++) {
-    double i_d = (double)i;
+    double i_d = static_cast<double>(i);
 
     for (int j = j_min; j < j_max; j++) {
-      double j_d = (double)j;
+      double j_d = static_cast<double>(j);
 
 #if defined(VISP_HAVE_CLIPPER)
       imPt.set_ij(i_d, j_d);

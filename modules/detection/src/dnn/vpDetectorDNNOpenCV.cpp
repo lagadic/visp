@@ -601,7 +601,7 @@ vpDetectorDNNOpenCV::filterDetectionMultiClassInput(const std::vector<DetectedFe
      */
     double computeMeanArea(const int &class_id)
     {
-      return m_map_id_pairOccurrencesAreas[class_id].second / (double)m_map_id_pairOccurrencesAreas[class_id].first;
+      return m_map_id_pairOccurrencesAreas[class_id].second / static_cast<double>(m_map_id_pairOccurrencesAreas[class_id].first);
     }
 
   public:

@@ -206,7 +206,6 @@ bool getOptions(int argc, const char **argv, std::string &ipath, vpDisplayType &
     case 'h':
       usage(argv[0], nullptr, ipath, dtype);
       return false;
-      break;
     case 'c':
       click_allowed = false;
       break;
@@ -217,7 +216,6 @@ bool getOptions(int argc, const char **argv, std::string &ipath, vpDisplayType &
     default:
       usage(argv[0], optarg_, ipath, dtype);
       return false;
-      break;
     }
   }
 

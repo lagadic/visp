@@ -53,7 +53,7 @@ BEGIN_VISP_NAMESPACE
  * Entree/Sortie :
  * bsp    Scene surfacique polygonale a lire.
  */
-void parser(Bound_scene *bsp)
+  void parser(Bound_scene *bsp)
 {
   int token;
 
@@ -67,7 +67,6 @@ void parser(Bound_scene *bsp)
         break;
       case T_EXIT:
         return;
-        break;
       case T_BOUND:
         if (bsp->bound.nbr == BOUND_NBR) {
           fprintf(stderr, "mire: too much bound\n");

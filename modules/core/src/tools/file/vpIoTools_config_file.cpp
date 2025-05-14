@@ -498,7 +498,7 @@ void vpIoTools::readBinaryValueLE(std::ifstream &file, int32_t &int_value)
 
 #ifdef VISP_BIG_ENDIAN
   // Swap bytes order from little endian to big endian
-  int_value = vpEndian::swap32bits((uint32_t)int_value);
+  int_value = vpEndian::swap32bits(static_cast<uint32_t>(int_value));
 #endif
 }
 
@@ -576,7 +576,7 @@ void vpIoTools::writeBinaryValueLE(std::ofstream &file, const int32_t int_value)
 {
 #ifdef VISP_BIG_ENDIAN
   // Swap bytes order to little endian
-  uint32_t swap_int = vpEndian::swap32bits((uint32_t)int_value);
+  uint32_t swap_int = vpEndian::swap32bits(static_cast<uint32_t>(int_value));
   file.write((char *)(&swap_int), sizeof(swap_int));
 #else
   file.write((char *)(&int_value), sizeof(int_value));

@@ -121,7 +121,7 @@ void vpMbtMeLine::initTracking(const vpImage<unsigned char> &I, const vpImagePoi
   // 2. We call what is not specific
   vpMeTracker::initTracking(I);
 
-  expecteddensity = (double)m_meList.size();
+  expecteddensity = static_cast<double>(m_meList.size());
 
   if (!doNoTrack) {
     vpMeTracker::track(I);
@@ -152,7 +152,7 @@ unsigned int vpMbtMeLine::seekExtremities(const vpImage<unsigned char> &I)
   double diffsj = jd2 - jd1;
   double s = sqrt(vpMath::sqr(diffsi) + vpMath::sqr(diffsj));
 
-  double sample_step = (double)m_me->getSampleStep();
+  double sample_step = static_cast<double>(m_me->getSampleStep());
 
   double di = diffsi * sample_step / s; // pas de risque de /0 car d(P1,P2) >0
   double dj = diffsj * sample_step / s;
@@ -340,7 +340,7 @@ void vpMbtMeLine::computeProjectionError(const vpImage<unsigned char> &I, double
   vecLine[1] = sin(deltaNormalized);
   vecLine.normalize();
 
-  double offset = std::floor(SobelX.getRows() / 2.0f);
+  double offset = std::floor(SobelX.getRows() / 2.0);
 
   for (std::list<vpMeSite>::const_iterator it = m_meList.begin(); it != m_meList.end(); ++it) {
     if (iter != 0 && iter + 1 != m_meList.size()) {
@@ -446,10 +446,10 @@ void vpMbtMeLine::computeProjectionError(const vpImage<unsigned char> &I, double
 */
 void vpMbtMeLine::reSample(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2)
 {
-  m_PExt[0].m_ifloat = static_cast<float>(ip1.get_i());
-  m_PExt[0].m_jfloat = static_cast<float>(ip1.get_j());
-  m_PExt[1].m_ifloat = static_cast<float>(ip2.get_i());
-  m_PExt[1].m_jfloat = static_cast<float>(ip2.get_j());
+  m_PExt[0].m_ifloat = static_cast<double>(ip1.get_i());
+  m_PExt[0].m_jfloat = static_cast<double>(ip1.get_j());
+  m_PExt[1].m_ifloat = static_cast<double>(ip2.get_i());
+  m_PExt[1].m_jfloat = static_cast<double>(ip2.get_j());
 
   vpMeLine::reSample(I);
 }
@@ -463,7 +463,7 @@ void vpMbtMeLine::track(const vpImage<unsigned char> &I)
 {
   if (m_mask != nullptr) {
   // Expected density could be modified if some vpMeSite are no more tracked because they are outside the mask.
-    expecteddensity = (double)m_meList.size();
+    expecteddensity = static_cast<double>(m_meList.size());
   }
 
   vpMeLine::track(I);

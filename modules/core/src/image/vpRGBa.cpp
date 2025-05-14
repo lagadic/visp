@@ -40,8 +40,11 @@
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpRGBa.h>
+#include <visp3/core/vpHSV.h>
+
 
 BEGIN_VISP_NAMESPACE
+
 /*!
   Copy operator that initializes all the components to `v`.
 

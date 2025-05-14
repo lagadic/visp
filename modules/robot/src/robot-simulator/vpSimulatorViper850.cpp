@@ -433,7 +433,7 @@ void vpSimulatorViper850::updateArticularPosition()
           articularCoordinates[i] = articularCoordinates[i] + ellapsedTime * articularVelocities[i];
 
         jointLimit = true;
-        jointLimitArt = static_cast<unsigned int>(fabs((double)jl));
+        jointLimitArt = static_cast<unsigned int>(fabs(static_cast<double>(jl)));
       }
 
       set_artCoord(articularCoordinates);
@@ -2262,12 +2262,12 @@ void vpSimulatorViper850::getExternalImage(vpImage<vpRGBa> &I_)
   // we assume px_ext and py_ext > 0
   if ((std::fabs(px_ext - 1.) > vpMath::maximum(px_ext, 1.) * std::numeric_limits<double>::epsilon()) &&
       (std::fabs(py_ext - 1) > vpMath::maximum(py_ext, 1.) * std::numeric_limits<double>::epsilon())) {
-    u = (double)I_.getWidth() / (2 * px_ext);
-    v = (double)I_.getHeight() / (2 * py_ext);
+    u = static_cast<double>(I_.getWidth()) / (2 * px_ext);
+    v = static_cast<double>(I_.getHeight()) / (2 * py_ext);
   }
   else {
-    u = (double)I_.getWidth() / (vpMath::minimum(I_.getWidth(), I_.getHeight()));
-    v = (double)I_.getHeight() / (vpMath::minimum(I_.getWidth(), I_.getHeight()));
+    u = static_cast<double>(I_.getWidth()) / (vpMath::minimum(I_.getWidth(), I_.getHeight()));
+    v = static_cast<double>(I_.getHeight()) / (vpMath::minimum(I_.getWidth(), I_.getHeight()));
   }
 
   float w44o[4][4], w44cext[4][4], x, y, z;

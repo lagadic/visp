@@ -5,6 +5,8 @@
 #include <visp3/io/vpImageStorageWorker.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 
+void usage(const char *argv[], int error);
+
 void usage(const char *argv[], int error)
 {
   std::cout << "SYNOPSIS" << std::endl

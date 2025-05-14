@@ -85,7 +85,7 @@ double vpTemplateTrackerZNCC::getCost(const vpImage<unsigned char> &I, const vpC
       Nbpoint++;
     }
   }
-  ratioPixelIn = (double)Nbpoint / (double)templateSize;
+  ratioPixelIn = static_cast<double>(Nbpoint) / static_cast<double>(templateSize);
   if (!Nbpoint) {
     throw(vpException(vpException::divideByZeroError, "Cannot get cost: size = 0"));
   }

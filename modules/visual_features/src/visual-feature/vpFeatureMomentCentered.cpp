@@ -105,7 +105,7 @@ vpMatrix vpFeatureMomentCentered::compute_Lmu_pq(const unsigned int &p, const un
     for (unsigned int l = 0; l <= q; ++l) {
       qml = static_cast<int>(q) - static_cast<int>(l);
       qcombl = static_cast<double>(vpMath::comb(q, l));
-      minus1pow = pow((double)-1, static_cast<double>(pmk + qml));
+      minus1pow = pow(-1.0, static_cast<double>(pmk + qml));
       pcombkqcombl = pcombk * qcombl;
       mkl = m.get(k, l);
       pintom = pcombkqcombl * mkl;

@@ -836,8 +836,8 @@ void vpMbtDistanceCylinder::computeInteractionMatrixError(const vpHomogeneousMat
     unsigned int j = 0;
     for (std::list<vpMeSite>::const_iterator it = meline1->getMeList().begin(); it != meline1->getMeList().end();
          ++it) {
-      double x = (double)it->m_j;
-      double y = (double)it->m_i;
+      double x = static_cast<double>(it->m_j);
+      double y = static_cast<double>(it->m_i);
 
       x = (x - xc) * mx;
       y = (y - yc) * my;
@@ -860,8 +860,8 @@ void vpMbtDistanceCylinder::computeInteractionMatrixError(const vpHomogeneousMat
 
     for (std::list<vpMeSite>::const_iterator it = meline2->getMeList().begin(); it != meline2->getMeList().end();
          ++it) {
-      double x = (double)it->m_j;
-      double y = (double)it->m_i;
+      double x = static_cast<double>(it->m_j);
+      double y = static_cast<double>(it->m_i);
 
       x = (x - xc) * mx;
       y = (y - yc) * my;

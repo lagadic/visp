@@ -171,12 +171,10 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
     case 'h':
       usage(argv[0], nullptr, ipath, ppath);
       return false;
-      break;
 
     default:
       usage(argv[0], optarg_, ipath, ppath);
       return false;
-      break;
     }
   }
 

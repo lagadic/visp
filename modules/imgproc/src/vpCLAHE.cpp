@@ -81,6 +81,16 @@
 
 namespace VISP_NAMESPACE_NAME
 {
+int fastRound(float value);
+void clipHistogram(const std::vector<int> &hist, std::vector<int> &clippedHist, int limit);
+void createHistogram(int blockRadius, int bins, int blockXCenter, int blockYCenter, const vpImage<unsigned char> &I,
+                     std::vector<int> &hist);
+std::vector<float> createTransfer(const std::vector<int> &hist, int limit, std::vector<int> &cdfs);
+float transferValue(int v, std::vector<int> &clippedHist);
+float transferValue(int v, const std::vector<int> &hist, std::vector<int> &clippedHist, int limit);
+bool checkClaheInputs(const int &blockRadius, const int &bins, const unsigned int &width, const unsigned int &height);
+void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blockRadius, int bins, float slope, bool fast);
+void clahe(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, int blockRadius, int bins, float slope, bool fast);
 
 int fastRound(float value) { return static_cast<int>(value + 0.5f); }
 

@@ -50,7 +50,7 @@ using namespace VISP_NAMESPACE_NAME;
 #endif
 namespace
 {
-static std::string ipath = vpIoTools::getViSPImagesDataPath();
+VP_ATTRIBUTE_NO_DESTROY static std::string ipath = vpIoTools::getViSPImagesDataPath();
 }
 
 TEST_CASE("Benchmark affine warp on grayscale image", "[benchmark]")

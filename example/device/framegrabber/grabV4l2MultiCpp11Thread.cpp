@@ -114,12 +114,10 @@ bool getOptions(int argc, char **argv, unsigned int &deviceCount, bool &saveVide
     case 'h':
       usage(argv[0], nullptr);
       return false;
-      break;
 
     default:
       usage(argv[0], optarg);
       return false;
-      break;
     }
   }
 
@@ -383,9 +381,9 @@ void display(unsigned int width, unsigned int height, int win_x, int win_y, unsi
         vpImageConvert::convert(I_green, I_green_gaussian_double);
         vpImageConvert::convert(I_blue, I_blue_gaussian_double);
 
-        vpImageFilter::gaussianBlur(I_red_gaussian_double, I_red_gaussian_double, 21);
-        vpImageFilter::gaussianBlur(I_green_gaussian_double, I_green_gaussian_double, 21);
-        vpImageFilter::gaussianBlur(I_blue_gaussian_double, I_blue_gaussian_double, 21);
+        vpImageFilter::gaussianBlur<double, double, double>(I_red_gaussian_double, I_red_gaussian_double, 21);
+        vpImageFilter::gaussianBlur<double, double, double>(I_green_gaussian_double, I_green_gaussian_double, 21);
+        vpImageFilter::gaussianBlur<double, double, double>(I_blue_gaussian_double, I_blue_gaussian_double, 21);
 
         vpImageConvert::convert(I_red_gaussian_double, I_red_gaussian);
         vpImageConvert::convert(I_green_gaussian_double, I_green_gaussian);

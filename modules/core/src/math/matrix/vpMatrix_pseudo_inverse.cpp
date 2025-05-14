@@ -54,6 +54,10 @@ BEGIN_VISP_NAMESPACE
 
 void compute_pseudo_inverse(const vpMatrix &U, const vpColVector &sv, const vpMatrix &V, unsigned int nrows,
                             unsigned int ncols, double svThreshold, vpMatrix &Ap, int &rank_out, int *rank_in,
+                            vpMatrix *imA, vpMatrix *imAt, vpMatrix *kerAt);
+
+void compute_pseudo_inverse(const vpMatrix &U, const vpColVector &sv, const vpMatrix &V, unsigned int nrows,
+                            unsigned int ncols, double svThreshold, vpMatrix &Ap, int &rank_out, int *rank_in,
                             vpMatrix *imA, vpMatrix *imAt, vpMatrix *kerAt)
 {
   Ap.resize(ncols, nrows, true, false);

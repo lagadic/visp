@@ -327,8 +327,7 @@ vpCircleHoughTransform::detect(const vpImage<unsigned char> &I)
   return m_finalCircles;
 }
 
-bool
-operator==(const vpImageCircle &a, const vpImageCircle &b)
+VISP_EXPORT bool operator==(const vpImageCircle &a, const vpImageCircle &b)
 {
   vpImagePoint aCenter = a.getCenter();
   vpImagePoint bCenter = b.getCenter();

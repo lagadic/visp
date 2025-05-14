@@ -43,6 +43,12 @@ namespace VISP_NAMESPACE_NAME
 {
 
 void getNeighbors(const vpImage<unsigned char> &I, std::queue<vpImagePoint> &listOfNeighbors, unsigned int i,
+                  unsigned int j, const vpImageMorphology::vpConnexityType &connexity);
+void visitNeighbors(vpImage<unsigned char> &I_copy, std::queue<vpImagePoint> &listOfNeighbors, vpImage<int> &labels,
+                    int current_label, const vpImageMorphology::vpConnexityType &connexity);
+void connectedComponents(const vpImage<unsigned char> &I, vpImage<int> &labels, int &nbComponents, const vpImageMorphology::vpConnexityType &connexity);
+
+void getNeighbors(const vpImage<unsigned char> &I, std::queue<vpImagePoint> &listOfNeighbors, unsigned int i,
                   unsigned int j, const vpImageMorphology::vpConnexityType &connexity)
 {
   unsigned char currValue = I[i][j];

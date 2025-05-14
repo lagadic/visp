@@ -445,9 +445,10 @@ bool vpDirectShowGrabberImpl::checkSourceType(CComPtr<IPin> &pCapSourcePin)
 
     std::cout << "This format is not one of the standard YUV or RGB format "
       "supported by DirectShow.\n"
-      << "FourCC : " << (char)(bmpInfo.biCompression & 0x000000FF)
-      << (char)((bmpInfo.biCompression & 0x0000FF00) >> 8) << (char)((bmpInfo.biCompression & 0x00FF0000) >> 16)
-      << (char)((bmpInfo.biCompression & 0xFF000000) >> 24) << std::endl;
+      << "FourCC : " << static_cast<char>(bmpInfo.biCompression & 0x000000FF)
+      << static_cast<char>((bmpInfo.biCompression & 0x0000FF00) >> 8)
+      << static_cast<char>((bmpInfo.biCompression & 0x00FF0000) >> 16)
+      << static_cast<char>((bmpInfo.biCompression & 0xFF000000) >> 24) << std::endl;
 
 // Y800 is top-down oriented so the image doesn't have to be flipped
 // vertically
@@ -950,10 +951,10 @@ bool vpDirectShowGrabberImpl::getStreamCapabilities()
                   ((pVih->bmiHeader.biCompression & 0x000000FF) << 24)) == 'I420')
           std::cout << "subtype : I420" << std::endl;
         else
-          std::cout << "subtype (not supported) :" << (char)(pVih->bmiHeader.biCompression & 0x000000FF)
-          << (char)((pVih->bmiHeader.biCompression & 0x0000FF00) >> 8)
-          << (char)((pVih->bmiHeader.biCompression & 0x00FF0000) >> 16)
-          << (char)((pVih->bmiHeader.biCompression & 0xFF000000) >> 24) << std::endl;
+          std::cout << "subtype (not supported) :" << static_cast<char>(pVih->bmiHeader.biCompression & 0x000000FF)
+          << static_cast<char>((pVih->bmiHeader.biCompression & 0x0000FF00) >> 8)
+          << static_cast<char>((pVih->bmiHeader.biCompression & 0x00FF0000) >> 16)
+          << static_cast<char>((pVih->bmiHeader.biCompression & 0xFF000000) >> 24) << std::endl;
 
         std::cout << "image size : " << pVih->bmiHeader.biWidth << " x " << pVih->bmiHeader.biHeight << std::endl;
         std::cout << "framerate range: [" << 10000000 / scc.MaxFrameInterval << "," << 10000000 / scc.MinFrameInterval

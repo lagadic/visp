@@ -190,7 +190,7 @@ double vpTemplateTrackerMI::getCost(const vpImage<unsigned char> &I, const vpCol
     }
   }
 
-  ratioPixelIn = (double)Nbpoint / (double)templateSize;
+  ratioPixelIn = static_cast<double>(Nbpoint) / static_cast<double>(templateSize);
 
   double *pt = PrtD;
   for (int r = 0; r < Nc; r++)
@@ -671,7 +671,7 @@ double vpTemplateTrackerMI::getMI(const vpImage<unsigned char> &I, int &nc, cons
     }
 
     // calcul Pt;
-    memset(tPt, 0, (size_t)(tNcb * sizeof(double)));
+    memset(tPt, 0, static_cast<size_t>(tNcb * sizeof(double)));
     for (unsigned int t = 0; t < tNcb; t++) {
       for (unsigned int r = 0; r < tNcb; r++)
         tPt[t] += tPrt[r * tNcb + t];

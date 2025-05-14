@@ -187,7 +187,7 @@ void vpTemplateTrackerTriangle::init(const vpImagePoint &c1, const vpImagePoint 
   */
 void vpTemplateTrackerTriangle::init(int x1, int y1, int x2, int y2, int x3, int y3)
 {
-  init((double)x1, (double)y1, (double)x2, (double)y2, (double)x3, (double)y3);
+  init(static_cast<double>(x1), static_cast<double>(y1), static_cast<double>(x2), static_cast<double>(y2), static_cast<double>(x3), static_cast<double>(y3));
 }
 
 /*!

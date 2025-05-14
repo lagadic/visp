@@ -52,6 +52,17 @@ using namespace VISP_NAMESPACE_NAME;
 // List of allowed command line options
 #define GETOPTARGS "cdi:o:t:h"
 
+void usage(const char *name, const char *badparam, const std::string &ipath, const std::string &opath,
+           const std::string &user);
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &opath, const std::string &user,
+                unsigned int &nbThreads);
+unsigned char getRandomValues(unsigned char min, unsigned char max);
+void generateRandomImage(vpImage<unsigned char> &I, unsigned int min = 0, unsigned int max = 255);
+void generateRandomImage(vpImage<vpRGBa> &I, unsigned int min = 0, unsigned int max = 255);
+void iterate_method1(vpImage<vpRGBa> &I, double alpha, double beta);
+void iterate_method1(vpImage<unsigned char> &I, double alpha, double beta);
+void iterate_method2(vpImage<vpRGBa> &I, double alpha, double beta);
+
 /*
  * Print the program options.
  *
@@ -131,7 +142,6 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
     case 'h':
       usage(argv[0], nullptr, ipath, opath, user);
       return false;
-      break;
 
     case 'c':
     case 'd':
@@ -140,7 +150,6 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
     default:
       usage(argv[0], optarg_, ipath, opath, user);
       return false;
-      break;
     }
   }
 
@@ -160,7 +169,7 @@ unsigned char getRandomValues(unsigned char min, unsigned char max)
   return static_cast<unsigned char>((max - min) * static_cast<double>(rand()) / static_cast<double>(RAND_MAX) + min);
 }
 
-void generateRandomImage(vpImage<unsigned char> &I, unsigned int min = 0, unsigned int max = 255)
+void generateRandomImage(vpImage<unsigned char> &I, unsigned int min, unsigned int max)
 {
   for (unsigned int i = 0; i < I.getHeight(); ++i) {
     for (unsigned int j = 0; j < I.getWidth(); ++j) {
@@ -169,7 +178,7 @@ void generateRandomImage(vpImage<unsigned char> &I, unsigned int min = 0, unsign
   }
 }
 
-void generateRandomImage(vpImage<vpRGBa> &I, unsigned int min = 0, unsigned int max = 255)
+void generateRandomImage(vpImage<vpRGBa> &I, unsigned int min, unsigned int max)
 {
   for (unsigned int i = 0; i < I.getHeight(); ++i) {
     for (unsigned int j = 0; j < I.getWidth(); ++j) {

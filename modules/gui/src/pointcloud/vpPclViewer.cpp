@@ -245,9 +245,9 @@ unsigned int vpPclViewer::addSurface(const pclPointCloudPointXYZRGB::Ptr &surfac
   }
 
   std::vector<double> v_RGBdouble = {
-    (double)v_RGB[0],
-    (double)v_RGB[1],
-    (double)v_RGB[2]
+    static_cast<double>(v_RGB[0]),
+    static_cast<double>(v_RGB[1]),
+    static_cast<double>(v_RGB[2])
   };
   s_vhandler.push_back(v_RGBdouble);
 

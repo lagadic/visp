@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -188,17 +188,17 @@ public:
   template<typename T>
   vpJsonArgumentParser &addArgument(const std::string &name, T &parameter, const bool required = true, const std::string &help = "No description")
   {
-    argumentType[name] = WITH_FIELD;
+    m_argumentType[name] = WITH_FIELD;
     const auto getter = [name, this](nlohmann::json &j, bool create) -> nlohmann::json * {
       size_t pos = 0;
       nlohmann::json *f = &j;
       std::string token;
       std::string name_copy = name;
 
-      while ((pos = name_copy.find(nestSeparator)) != std::string::npos) {
+      while ((pos = name_copy.find(m_nestSeparator)) != std::string::npos) {
         token = name_copy.substr(0, pos);
 
-        name_copy.erase(0, pos + nestSeparator.length());
+        name_copy.erase(0, pos + m_nestSeparator.length());
         if (create && !f->contains(token)) {
           (*f)[token] = {};
         }
@@ -217,7 +217,7 @@ public:
       return f;
       };
 
-    parsers[name] = [&parameter, required, getter, name](nlohmann::json &j) {
+    m_parsers[name] = [&parameter, required, getter, name](nlohmann::json &j) {
       const nlohmann::json *field = getter(j, false);
       const bool fieldHasNoValue = field == nullptr || (field != nullptr && field->is_null());
       if (required && fieldHasNoValue) {
@@ -230,12 +230,12 @@ public:
       }
       };
 
-    updaters[name] = [getter](nlohmann::json &j, const std::string &s) {
+    m_updaters[name] = [getter](nlohmann::json &j, const std::string &s) {
       nlohmann::json *field = getter(j, true);
       *field = convertCommandLineArgument<T>(s);
       };
 
-    helpers[name] = [help, parameter, required]() -> std::string {
+    m_helpers[name] = [help, parameter, required]() -> std::string {
       std::stringstream ss;
       nlohmann::json repr = parameter;
       ss << help << std::endl << "Default: " << repr;
@@ -248,7 +248,7 @@ public:
       return ss.str();
       };
 
-    nlohmann::json *exampleField = getter(exampleJson, true);
+    nlohmann::json *exampleField = getter(m_exampleJson, true);
     *exampleField = parameter;
 
     return *this;
@@ -274,14 +274,14 @@ public:
   void parse(int argc, const char *argv[]);
 
 private:
-  std::string description; // Program description
-  std::string jsonFileArgumentName; // Name of the argument  that points to the json file: ./program --config settings.json. Here jsonFileArgumentName == "--config"
-  std::string nestSeparator; // JSON nesting delimiter character. Used to access JSON nested objects from a single string
-  std::map<std::string, std::function<void(nlohmann::json &)>> parsers; // Functions that update the variables with the values contained in the JSON document (should be used after calling updaters)
-  std::map<std::string, vpJsonArgumentType> argumentType; // Update the base json document with command line arguments
-  std::map<std::string, std::function<void(nlohmann::json &, const std::string &)>> updaters; // Update the base json document with command line arguments
-  std::map<std::string, std::function<std::string()>> helpers; // Functions that output the usage and description of command line arguments: used when the help flag is given as argument
-  nlohmann::json exampleJson; // Example JSON argument file: displayed when user calls for help
+  std::string m_description; // Program description
+  std::string m_jsonFileArgumentName; // Name of the argument  that points to the json file: ./program --config settings.json. Here jsonFileArgumentName == "--config"
+  std::string m_nestSeparator; // JSON nesting delimiter character. Used to access JSON nested objects from a single string
+  std::map<std::string, std::function<void(nlohmann::json &)>> m_parsers; // Functions that update the variables with the values contained in the JSON document (should be used after calling updaters)
+  std::map<std::string, vpJsonArgumentType> m_argumentType; // Update the base json document with command line arguments
+  std::map<std::string, std::function<void(nlohmann::json &, const std::string &)>> m_updaters; // Update the base json document with command line arguments
+  std::map<std::string, std::function<std::string()>> m_helpers; // Functions that output the usage and description of command line arguments: used when the help flag is given as argument
+  nlohmann::json m_exampleJson; // Example JSON argument file: displayed when user calls for help
 };
 
 END_VISP_NAMESPACE

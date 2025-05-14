@@ -156,7 +156,7 @@ int main(int argc, char **argv)
     int i = 0;
     cv::Mat frame;
     while ((i++ < 20) && !g.read(frame)) {
-    }; // warm up camera by skiping unread frames
+    } // warm up camera by skiping unread frames
     g >> frame; // get a new frame from camera
     vpImageConvert::convert(frame, I);
 #endif

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,6 +51,10 @@
 
 
 BEGIN_VISP_NAMESPACE
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+template <typename T, bool>
+class vpHSV;
+#endif
 /*!
   \class vpRGBa
 
@@ -135,9 +139,129 @@ public:
     A = v_uc;
   }
 
-  /*!
-   * Copy constructor.
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#ifndef VISP_PYTHON_PREPROCESSOR_RUNNING
+  /**
+   * \brief Construct a new vpRGBa object from an vpHSV pbject.
+   *
+   * \tparam T The type of the channels of the vpHSV pixels.
+   * \tparam useFullScale True if vpHSV uses unsigned char and the full range [0; 255], false if vpHSV uses unsigned char and the limited range [0; 180].
+   * \param[in] hsv The vpHSV object for which we want to have the corresponding vpRGBa object.
    */
+  template <typename T, bool useFullScale, typename std::enable_if<std::is_same<T, unsigned char>::value, int>::type = 0>
+  VP_EXPLICIT vpRGBa(const vpHSV<T, useFullScale> &hsv)
+  {
+    buildFrom<T, useFullScale, float>(hsv);
+  }
+
+  template <typename T, bool useFullScale, typename std::enable_if<std::is_floating_point<T>::value, int>::type = 0>
+  VP_EXPLICIT vpRGBa(const vpHSV<T, useFullScale> &hsv)
+  {
+    buildFrom<T, useFullScale>(hsv);
+  }
+#endif
+
+  /**
+   * \brief Build a vpRGBa object from a vpHSV<unsigned char> object.
+   *
+   * \tparam T The type of the channels of the vpHSV pixels.
+   * \tparam useFullScale True if vpHSV uses unsigned char and the full range [0; 255], false if vpHSV uses unsigned
+   * char and the limited range [0; 180].
+   * \tparam type Enable the method only if T is unsigned char.
+   * \param[in] other The vpHSV from which we want to build our object.
+   * \return vpRGBa& The current object after conversion.
+   */
+  template<typename T, bool useFullScale, typename U = float >
+  typename std::enable_if<std::is_same<U, float>::value &&std::is_same<T, unsigned char>::value, vpRGBa &>::type
+    buildFrom(const vpHSV<T, useFullScale> &other)
+  {
+    vpHSV<U, useFullScale> hsv(other);
+    buildFrom(hsv);
+    return *this;
+  }
+
+  /**
+   * \brief Build a vpRGBa object from a vpHSV<double> or vpHSV<float> object.
+   *
+   * \tparam T The type of the channels of the vpHSV pixels.
+   * \tparam useFullScale True if vpHSV uses unsigned char and the full range [0; 255], false if vpHSV uses
+   * unsigned char and the limited range [0; 180].
+   * \tparam std::enable_if<std::is_floating_point<T>::value, int>::type Enable the method only if T is a floating
+   * point number. The "int" is here because we cannot use a floating point type,
+   * otherwise we get "{float/double} is not a valid type for a template non-type parameter".
+   * \param[in] hsv The vpHSV from which we want to build our object.
+   * \return vpRGBa& The current object after conversion.
+   */
+  template<typename T, bool useFullScale>
+  typename std::enable_if<std::is_floating_point<T>::value, vpRGBa &>::type
+    buildFrom(const vpHSV<T, useFullScale> &hsv)
+  {
+    T hue = hsv.H, saturation = hsv.S, value = hsv.V;
+    T h = hue * 6.0;
+    T s = saturation;
+    T v = value;
+
+    if (vpMath::equal(h, static_cast<T>(6.0), std::numeric_limits<T>::epsilon())) {
+      h = 0.0;
+    }
+
+    T f = h - static_cast<int>(h);
+    T p = v * static_cast<T>(1.0 - s);
+    T q = v * static_cast<T>(1.0 - (s * f));
+    T t = v * static_cast<T>(1.0 - (s * (1.0 - f)));
+
+    const int val_2 = 2;
+    const int val_3 = 3;
+    const int val_4 = 4;
+    switch (static_cast<int>(h)) {
+    case 0:
+      hue = v;
+      saturation = t;
+      value = p;
+      break;
+
+    case 1:
+      hue = q;
+      saturation = v;
+      value = p;
+      break;
+
+    case val_2:
+      hue = p;
+      saturation = v;
+      value = t;
+      break;
+
+    case val_3:
+      hue = p;
+      saturation = q;
+      value = v;
+      break;
+
+    case val_4:
+      hue = t;
+      saturation = p;
+      value = v;
+      break;
+
+    default: // case 5:
+      hue = v;
+      saturation = p;
+      value = q;
+      break;
+    }
+
+    R = static_cast<unsigned char>(vpMath::round(hue * 255.0));
+    G = static_cast<unsigned char>(vpMath::round(saturation * 255.0));
+    B = static_cast<unsigned char>(vpMath::round(value * 255.0));
+    A = alpha_default;
+    return *this;
+  }
+#endif
+
+/*!
+ * Copy constructor.
+ */
 #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
   inline vpRGBa(const vpRGBa &v) = default;
 #else
@@ -191,6 +315,12 @@ public:
 
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpRGBa &rgba);
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  /**
+   * \brief Number of channels a vpRGBa object is made of.
+   */
+  static constexpr unsigned char nbChannels = 4;
+#endif
 public:
   unsigned char R; //!< Red component.
   unsigned char G; //!< Green component.

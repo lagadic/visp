@@ -111,6 +111,11 @@ public:
   virtual ~vpMeEllipse() VP_OVERRIDE;
 
   /*!
+   * Copy operator.
+   */
+  vpMeEllipse &operator=(const vpMeEllipse &me_ellipse);
+
+  /*!
    * Display the ellipse or arc of ellipse
    *
    * \warning To effectively display the ellipse a call to vpDisplay::flush() is needed.

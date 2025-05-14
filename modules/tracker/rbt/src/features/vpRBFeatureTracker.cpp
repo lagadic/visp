@@ -69,14 +69,14 @@ void vpRBFeatureTracker::computeJTR(const vpMatrix &interaction, const vpColVect
       ssum += interaction[j][i] * error[j];
     }
     JTR[i] = ssum;
-}
+  }
 #endif
 }
 
 vpMatrix vpRBFeatureTracker::computeCovarianceMatrix(const vpMatrix &DJ, const vpColVector &e, const vpMatrix &covDiag)
 {
   const vpColVector covDiagE = covDiag * e;
-  double sigma2 = (covDiagE.t() * covDiag * e) / ((double)e.getRows());
+  double sigma2 = (covDiagE.t() * covDiag * e) / (static_cast<double>(e.getRows()));
   return (DJ.t() * covDiag * DJ).pseudoInverse() * sigma2;
 }
 

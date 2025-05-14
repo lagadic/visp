@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,7 +98,7 @@ private:
   cv::Scalar *col;
   cv::Scalar cvcolor;
   int font;
-  float fontScale;
+  double fontScale;
   static std::vector<std::string> m_listTitles;
   static unsigned int m_nbWindows;
   int fontHeight;
@@ -128,7 +128,7 @@ private:
 
 public:
   Impl() :
-    m_background(), col(nullptr), cvcolor(), font(cv::FONT_HERSHEY_PLAIN), fontScale(0.8f),
+    m_background(), col(nullptr), cvcolor(), font(cv::FONT_HERSHEY_PLAIN), fontScale(0.8),
     fontHeight(10), x_move(0), y_move(0), move(false), x_lbuttondown(0), y_lbuttondown(0), lbuttondown(false),
     x_mbuttondown(0), y_mbuttondown(0), mbuttondown(false), x_rbuttondown(0), y_rbuttondown(0), rbuttondown(false),
     x_lbuttonup(0), y_lbuttonup(0), lbuttonup(false), x_mbuttonup(0), y_mbuttonup(0), mbuttonup(false), x_rbuttonup(0),
@@ -250,7 +250,7 @@ public:
     cv::destroyWindow(title);
     for (size_t i = 0; i < m_listTitles.size(); i++) {
       if (title == m_listTitles[i]) {
-        m_listTitles.erase(m_listTitles.begin() + (long int)i);
+        m_listTitles.erase(m_listTitles.begin() + static_cast<long int>(i));
         break;
       }
     }
@@ -386,7 +386,7 @@ public:
 
     if (scale == 1) {
       for (unsigned int i = 0; i < height; i++) {
-        unsigned char *dst_24 = (unsigned char *)m_background.data + static_cast<int>(i * 3 * width);
+        unsigned char *dst_24 = static_cast<unsigned char *>(m_background.data) + static_cast<int>(i * 3 * width);
         for (unsigned int j = 0; j < width; j++) {
           unsigned char val = I[i][j];
           *(dst_24++) = val;
@@ -397,7 +397,7 @@ public:
     }
     else {
       for (unsigned int i = 0; i < height; i++) {
-        unsigned char *dst_24 = (unsigned char *)m_background.data + static_cast<int>(i * 3 * width);
+        unsigned char *dst_24 = static_cast<unsigned char *>(m_background.data) + static_cast<int>(i * 3 * width);
         for (unsigned int j = 0; j < width; j++) {
           unsigned char val = I[i * scale][j * scale];
           *(dst_24++) = val;
@@ -420,7 +420,7 @@ public:
 
     if (scale == 1) {
       for (unsigned int i = 0; i < height; i++) {
-        unsigned char *dst_24 = (unsigned char *)m_background.data + static_cast<int>(i * 3 * width);
+        unsigned char *dst_24 = static_cast<unsigned char *>(m_background.data) + static_cast<int>(i * 3 * width);
         for (unsigned int j = 0; j < width; j++) {
           vpRGBa val = I[i][j];
           *(dst_24++) = val.B;
@@ -431,7 +431,7 @@ public:
     }
     else {
       for (unsigned int i = 0; i < height; i++) {
-        unsigned char *dst_24 = (unsigned char *)m_background.data + static_cast<int>(i * 3 * width);
+        unsigned char *dst_24 = static_cast<unsigned char *>(m_background.data) + static_cast<int>(i * 3 * width);
         for (unsigned int j = 0; j < width; j++) {
           vpRGBa val = I[i * scale][j * scale];
           *(dst_24++) = val.B;
@@ -459,7 +459,7 @@ public:
       unsigned int i_max = std::min<unsigned int>(i_min + h, imgHeight);
       unsigned int j_max = std::min<unsigned int>(j_min + w, imgWidth);
       for (unsigned int i = i_min; i < i_max; i++) {
-        unsigned char *dst_24 = (unsigned char *)m_background.data + static_cast<int>(i * 3 * imgWidth + j_min * 3);
+        unsigned char *dst_24 = static_cast<unsigned char *>(m_background.data) + static_cast<int>(i * 3u * imgWidth + j_min * 3u);
         for (unsigned int j = j_min; j < j_max; j++) {
           unsigned char val = I[i][j];
           *(dst_24++) = val;
@@ -469,13 +469,13 @@ public:
       }
     }
     else {
-      int i_min = std::max<int>(static_cast<int>(ceil(iP.get_i() / scale)), 0);
-      int j_min = std::max<int>(static_cast<int>(ceil(iP.get_j() / scale)), 0);
-      int i_max = std::min<int>(static_cast<int>(ceil((iP.get_i() + h) / scale)), static_cast<int>(imgHeight));
-      int j_max = std::min<int>(static_cast<int>(ceil((iP.get_j() + w) / scale)), static_cast<int>(imgWidth));
-      for (int i = i_min; i < i_max; i++) {
-        unsigned char *dst_24 = (unsigned char *)m_background.data + static_cast<int>(i * 3 * imgWidth + j_min * 3);
-        for (int j = j_min; j < j_max; j++) {
+      unsigned int i_min = std::max<unsigned int>(static_cast<unsigned int>(ceil(iP.get_i() / scale)), 0);
+      unsigned int j_min = std::max<unsigned int>(static_cast<unsigned int>(ceil(iP.get_j() / scale)), 0);
+      unsigned int i_max = std::min<unsigned int>(static_cast<unsigned int>(ceil((iP.get_i() + h) / scale)), imgHeight);
+      unsigned int j_max = std::min<unsigned int>(static_cast<unsigned int>(ceil((iP.get_j() + w) / scale)), imgWidth);
+      for (unsigned int i = i_min; i < i_max; i++) {
+        unsigned char *dst_24 = static_cast<unsigned char *>(m_background.data) + static_cast<int>(i * 3u * imgWidth + j_min * 3u);
+        for (unsigned int j = j_min; j < j_max; j++) {
           unsigned char val = I[i * scale][j * scale];
           *(dst_24++) = val;
           *(dst_24++) = val;
@@ -501,7 +501,7 @@ public:
       unsigned int i_max = std::min<unsigned int>(i_min + h, imgHeight);
       unsigned int j_max = std::min<unsigned int>(j_min + w, imgWidth);
       for (unsigned int i = i_min; i < i_max; i++) {
-        unsigned char *dst_24 = (unsigned char *)m_background.data + static_cast<int>(i * 3 * imgWidth + j_min * 3);
+        unsigned char *dst_24 = static_cast<unsigned char *>(m_background.data) + static_cast<int>(i * 3 * imgWidth + j_min * 3);
         for (unsigned int j = j_min; j < j_max; j++) {
           vpRGBa val = I[i][j];
           *(dst_24++) = val.B;
@@ -511,13 +511,13 @@ public:
       }
     }
     else {
-      int i_min = std::max<int>(static_cast<int>(ceil(iP.get_i() / scale)), 0);
-      int j_min = std::max<int>(static_cast<int>(ceil(iP.get_j() / scale)), 0);
-      int i_max = std::min<int>(static_cast<int>(ceil((iP.get_i() + h) / scale)), static_cast<int>(imgHeight));
-      int j_max = std::min<int>(static_cast<int>(ceil((iP.get_j() + w) / scale)), static_cast<int>(imgWidth));
-      for (int i = i_min; i < i_max; i++) {
-        unsigned char *dst_24 = (unsigned char *)m_background.data + static_cast<int>(i * 3 * imgWidth + j_min * 3);
-        for (int j = j_min; j < j_max; j++) {
+      unsigned int i_min = std::max<unsigned int>(static_cast<unsigned int>(ceil(iP.get_i() / scale)), 0);
+      unsigned int j_min = std::max<unsigned int>(static_cast<unsigned int>(ceil(iP.get_j() / scale)), 0);
+      unsigned int i_max = std::min<unsigned int>(static_cast<unsigned int>(ceil((iP.get_i() + h) / scale)), imgHeight);
+      unsigned int j_max = std::min<unsigned int>(static_cast<unsigned int>(ceil((iP.get_j() + w) / scale)), imgWidth);
+      for (unsigned int i = i_min; i < i_max; i++) {
+        unsigned char *dst_24 = static_cast<unsigned char *>(m_background.data) + static_cast<int>(i * 3 * imgWidth + j_min * 3);
+        for (unsigned int j = j_min; j < j_max; j++) {
           vpRGBa val = I[i * scale][j * scale];
           *(dst_24++) = val.B;
           *(dst_24++) = val.G;
@@ -816,7 +816,7 @@ public:
   }
 };
 
-std::vector<std::string> vpDisplayOpenCV::Impl::m_listTitles = std::vector<std::string>();
+VP_ATTRIBUTE_NO_DESTROY std::vector<std::string> vpDisplayOpenCV::Impl::m_listTitles = std::vector<std::string>();
 unsigned int vpDisplayOpenCV::Impl::m_nbWindows = 0;
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
@@ -993,6 +993,23 @@ vpDisplayOpenCV::vpDisplayOpenCV()
   : vpDisplay()
   , m_impl(new Impl())
 { }
+
+/*!
+ * Copy constructor.
+ */
+vpDisplayOpenCV::vpDisplayOpenCV(const vpDisplayOpenCV &display) : vpDisplay(display)
+{
+  *this = display;
+}
+
+/*!
+ * Copy operator.
+ */
+vpDisplayOpenCV &vpDisplayOpenCV::operator=(const vpDisplayOpenCV &display)
+{
+  m_impl = display.m_impl;
+  return *this;
+}
 
 /*!
   Destructor.
@@ -1803,8 +1820,8 @@ void vpDisplayOpenCV::getScreenSize(unsigned int &w, unsigned int &h)
   pclose(fpipe);
 #elif defined(_WIN32)
 #if !defined(WINRT)
-  w = GetSystemMetrics(SM_CXSCREEN);
-  h = GetSystemMetrics(SM_CYSCREEN);
+  w = static_cast<unsigned int>(GetSystemMetrics(SM_CXSCREEN));
+  h = static_cast<unsigned int>(GetSystemMetrics(SM_CYSCREEN));
 #else
   throw(vpException(vpException::functionNotImplementedError, "The function vpDisplayOpenCV::getScreenSize() is not "
                     "implemented on winrt"));

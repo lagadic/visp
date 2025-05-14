@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -146,8 +146,9 @@ public:
   vpDisplayOpenCV(vpImage<vpRGBa> &I, vpScaleType type);
   vpDisplayOpenCV(vpImage<vpRGBa> &I, int winx = -1, int winy = -1, const std::string &title = "",
                   vpScaleType type = SCALE_DEFAULT);
-
+  vpDisplayOpenCV(const vpDisplayOpenCV &display);
   virtual ~vpDisplayOpenCV() VP_OVERRIDE;
+  vpDisplayOpenCV &operator=(const vpDisplayOpenCV &display);
 
   void getImage(vpImage<vpRGBa> &I) VP_OVERRIDE;
   unsigned int getScreenHeight() VP_OVERRIDE;

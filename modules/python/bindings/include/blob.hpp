@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ void bindings_vpDot2(py::class_<vpDot2, std::shared_ptr<vpDot2>, vpTracker> &pyD
                                      vpImage<unsigned char> &I,
                                      vpColor col = vpColor::blue,
                                      bool trackDot = true) {
-                                       return vpDot2::defineDots(&dots[0], dots.size(), dotFile, I, col, trackDot);
+                                       return vpDot2::defineDots(&dots[0], static_cast<unsigned int>(dots.size()), dotFile, I, col, trackDot);
   }, R"doc(
 Wrapper for the defineDots method, see the C++ ViSP documentation.
 )doc", py::arg("dots"), py::arg("dotFile"), py::arg("I"), py::arg("color"), py::arg("trackDot") = true);
@@ -60,7 +60,7 @@ Wrapper for the defineDots method, see the C++ ViSP documentation.
                                           std::vector<vpImagePoint> &cogs,
                                           std::optional<std::vector<vpImagePoint>> cogStar) {
                                             vpImagePoint *desireds = cogStar ? &((*cogStar)[0]) : nullptr;
-                                            vpDot2::trackAndDisplay(&dots[0], dots.size(), I, cogs, desireds);
+                                            vpDot2::trackAndDisplay(&dots[0], static_cast<unsigned int>(dots.size()), I, cogs, desireds);
   }, R"doc(
 Wrapper for the trackAndDisplay method, see the C++ ViSP documentation.
 )doc", py::arg("dots"), py::arg("I"), py::arg("cogs"), py::arg("desiredCogs"));

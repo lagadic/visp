@@ -72,9 +72,34 @@ protected:
   unsigned int m_rscale;
 
 public:
+  /*!
+   * Default constructor;
+   */
   vpWin32Renderer() : m_rwidth(0), m_rheight(0), m_rscale(1) { }
-  //! Destructor.
+
+  /*!
+   * Copy constructor;
+   */
+  vpWin32Renderer(const vpWin32Renderer &renderer)
+  {
+    *this = renderer;
+  }
+
+  /*!
+   * Destructor.
+   */
   virtual ~vpWin32Renderer() { }
+
+  /*!
+   * Copy operator;
+   */
+  vpWin32Renderer &operator=(const vpWin32Renderer &renderer)
+  {
+    m_rwidth = renderer.m_rwidth;
+    m_rheight = renderer.m_rheight;
+    m_rscale = renderer.m_rscale;
+    return *this;
+  }
 
   //! Inits the display .
   virtual bool init(HWND hWnd, unsigned int w, unsigned int h) = 0;

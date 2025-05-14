@@ -92,7 +92,7 @@
 
 #define DOT_PRODUCT(a, b) (((a).x * (b).x) + ((a).y * (b).y) + ((a).z * (b).z))
 
-#define LENGTH3(a) (sqrt((double)DOT_PRODUCT((a), (a))))
+#define LENGTH3(a) (sqrt(static_cast<double>(DOT_PRODUCT((a), (a)))))
 
 #define MID_COORD3(r, a, b)                                                                                            \
   {                                                                                                                    \

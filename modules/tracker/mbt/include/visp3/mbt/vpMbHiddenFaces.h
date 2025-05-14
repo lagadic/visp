@@ -930,8 +930,8 @@ bool vpMbHiddenFaces<PolygonType>::isVisibleOgre(const vpTranslationVector &came
     ogre->getSceneManager()->destroyQuery(mRaySceneQuery);
   }
 
-  if (((double)nbVisible) / ((double)nbRayAttempts) > ratioVisibleRay ||
-      std::fabs(((double)nbVisible) / ((double)nbRayAttempts) - ratioVisibleRay) <
+  if ((static_cast<double>(nbVisible)) / (static_cast<double>(nbRayAttempts)) > ratioVisibleRay ||
+      std::fabs((static_cast<double>(nbVisible)) / (static_cast<double>(nbRayAttempts)) - ratioVisibleRay) <
           ratioVisibleRay * std::numeric_limits<double>::epsilon())
     visible = true;
   else

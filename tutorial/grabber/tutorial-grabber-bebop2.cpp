@@ -7,6 +7,8 @@
 #ifdef VISP_HAVE_MODULE_ROBOT
 #include <visp3/robot/vpRobotBebop2.h>
 
+void usage(const char *argv[], int error);
+
 void usage(const char *argv[], int error)
 {
   std::cout << "SYNOPSIS" << std::endl
@@ -132,7 +134,7 @@ int main(int argc, const char **argv)
     }
     std::cout << "Image resolution : " << (image_res == 0 ? "480p." : "720p.") << std::endl << std::endl;
 
-    vpImage<vpRGBa> I(1, 1, 0);
+    vpImage<vpRGBa> I(1u, 1u, vpRGBa(0));
 
     vpRobotBebop2 drone(false, true, ip_address);
 

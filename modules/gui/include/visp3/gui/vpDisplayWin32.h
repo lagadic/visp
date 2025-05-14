@@ -134,7 +134,9 @@ public:
 
   vpDisplayWin32(vpImage<unsigned char> &I, int winx = -1, int winy = -1, const std::string &title = "");
 
+  vpDisplayWin32(const vpDisplayWin32 &display);
   virtual ~vpDisplayWin32() VP_OVERRIDE;
+  vpDisplayWin32 &operator=(const vpDisplayWin32 &display);
 
   void clearDisplay(const vpColor &color = vpColor::white) VP_OVERRIDE;
   void closeDisplay() VP_OVERRIDE;

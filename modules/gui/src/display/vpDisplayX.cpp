@@ -903,8 +903,8 @@ public:
     if (ret) {
       // Get mouse position
       if (XQueryPointer(display, window, &rootwin, &childwin, &root_x, &root_y, &win_x, &win_y, &modifier)) {
-        ip.set_u((double)event.xbutton.x * scale);
-        ip.set_v((double)event.xbutton.y * scale);
+        ip.set_u(static_cast<double>(event.xbutton.x) * scale);
+        ip.set_v(static_cast<double>(event.xbutton.y) * scale);
         switch (event.xbutton.button) {
         case Button1:
           button = vpMouseButton::button1;
@@ -943,8 +943,8 @@ public:
     if (ret) {
       /* Recuperation de la coordonnee du pixel clique. */
       if (XQueryPointer(display, window, &rootwin, &childwin, &root_x, &root_y, &win_x, &win_y, &modifier)) {
-        ip.set_u((double)event.xbutton.x * scale);
-        ip.set_v((double)event.xbutton.y * scale);
+        ip.set_u(static_cast<double>(event.xbutton.x) * scale);
+        ip.set_v(static_cast<double>(event.xbutton.y) * scale);
         switch (event.xbutton.button) {
         case Button1:
           button = vpMouseButton::button1;
@@ -1091,8 +1091,8 @@ public:
     if (ret) {
       // Get mouse position
       if (XQueryPointer(display, window, &rootwin, &childwin, &root_x, &root_y, &win_x, &win_y, &modifier)) {
-        ip.set_u((double)event.xbutton.x * scale);
-        ip.set_v((double)event.xbutton.y * scale);
+        ip.set_u(static_cast<double>(event.xbutton.x) * scale);
+        ip.set_v(static_cast<double>(event.xbutton.y) * scale);
       }
     }
 
@@ -1111,8 +1111,8 @@ public:
     if (ret) {
       // Get mouse position
       if (XQueryPointer(display, window, &rootwin, &childwin, &root_x, &root_y, &win_x, &win_y, &modifier)) {
-        ip.set_u((double)win_x * scale);
-        ip.set_v((double)win_y * scale);
+        ip.set_u(static_cast<double>(win_x) * scale);
+        ip.set_v(static_cast<double>(win_y) * scale);
       }
     }
 

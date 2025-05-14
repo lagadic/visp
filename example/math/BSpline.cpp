@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,8 @@
  *
  * Description:
  * Example of a B-Spline curve.
- *
-*****************************************************************************/
+ */
+
  /*!
    \file BSpline.cpp
 
@@ -135,12 +134,10 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
     case 'h':
       usage(argv[0], nullptr);
       return false;
-      break;
 
     default:
       usage(argv[0], optarg_);
       return false;
-      break;
     }
   }
 
@@ -294,7 +291,7 @@ int main(int argc, const char **argv)
     }
 #endif
     return EXIT_SUCCESS;
-    }
+  }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
@@ -303,8 +300,8 @@ int main(int argc, const char **argv)
     }
 #endif
     return EXIT_FAILURE;
-    }
   }
+}
 
 #else
 int main()

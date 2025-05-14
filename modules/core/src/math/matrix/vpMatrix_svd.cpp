@@ -353,11 +353,11 @@ void vpMatrix::svdOpenCV(vpColVector &w, vpMatrix &V)
   V.resize(static_cast<unsigned int>(opencvV.rows), static_cast<unsigned int>(opencvV.cols));
   w.resize(static_cast<unsigned int>(opencvW.rows * opencvW.cols));
 
-  memcpy(V.data, opencvV.data, (size_t)(8 * opencvV.rows * opencvV.cols));
+  memcpy(V.data, opencvV.data, static_cast<size_t>(8 * opencvV.rows * opencvV.cols));
   V = V.transpose();
-  memcpy(w.data, opencvW.data, (size_t)(8 * opencvW.rows * opencvW.cols));
+  memcpy(w.data, opencvW.data, static_cast<size_t>(8 * opencvW.rows * opencvW.cols));
   this->resize(static_cast<unsigned int>(opencvSVD.u.rows), static_cast<unsigned int>(opencvSVD.u.cols));
-  memcpy(this->data, opencvSVD.u.data, (size_t)(8 * opencvSVD.u.rows * opencvSVD.u.cols));
+  memcpy(this->data, opencvSVD.u.data, static_cast<size_t>(8 * opencvSVD.u.rows * opencvSVD.u.cols));
 }
 
 #endif

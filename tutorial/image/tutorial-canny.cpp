@@ -34,6 +34,7 @@
 
 #include <visp3/core/vpCannyEdgeDetection.h>
 #include <visp3/core/vpImageFilter.h>
+#include <visp3/core/vpTime.h>
 #include <visp3/io/vpImageIo.h>
 
 #ifdef HAVE_OPENCV_IMGPROC
@@ -61,6 +62,7 @@ typedef struct SoftwareArguments
   float m_lowerThreshRatio;
   float m_upperThreshRatio;
   vpImageFilter::vpCannyBackendType m_backend;
+  int m_nbThread;
 
   SoftwareArguments()
     : m_img("")
@@ -80,8 +82,17 @@ typedef struct SoftwareArguments
 #else
     , m_backend(vpImageFilter::CANNY_VISP_BACKEND)
 #endif
+    , m_nbThread(-1)
   { }
-}SoftwareArguments;
+} SoftwareArguments;
+
+void setGradientOutsideClass(const vpImage<unsigned char> &I, const int &gaussianKernelSize, const float &gaussianStdev,
+                             vpCannyEdgeDetection &cannyDetector, const unsigned int apertureSize,
+                             const vpImageFilter::vpCannyFilteringAndGradientType &filteringType,
+                             vpImage<unsigned char> &dIx_uchar, vpImage<unsigned char> &dIy_uchar);
+bool sortImagePoints(const vpImagePoint &a, const vpImagePoint &b);
+void checkEdgeList(const vpCannyEdgeDetection &cannyDetector, const vpImage<unsigned char> &I_canny_visp);
+void usage(const std::string &softName, const SoftwareArguments &options);
 
 template <class T>
 void computeMeanMaxStdev(const vpImage<T> &I, float &mean, float &max, float &stdev)
@@ -111,8 +122,7 @@ void computeMeanMaxStdev(const vpImage<T> &I, float &mean, float &max, float &st
 void setGradientOutsideClass(const vpImage<unsigned char> &I, const int &gaussianKernelSize, const float &gaussianStdev,
                              vpCannyEdgeDetection &cannyDetector, const unsigned int apertureSize,
                              const vpImageFilter::vpCannyFilteringAndGradientType &filteringType,
-                             vpImage<unsigned char> &dIx_uchar, vpImage<unsigned char> &dIy_uchar
-)
+                             vpImage<unsigned char> &dIx_uchar, vpImage<unsigned char> &dIy_uchar)
 {
   // Computing the gradients
   vpImage<float> dIx, dIy;
@@ -215,6 +225,7 @@ void usage(const std::string &softName, const SoftwareArguments &options)
     << " [-f, --filter <filterName>]"
     << " [-r, --ratio <lowerThreshRatio upperThreshRatio>]"
     << " [-b, --backend <backendName>]"
+    << " [-n, --nb-threads <number of threads>]"
     << " [-e, --edge-list]" << std::endl
     << " [-h, --help]" << std::endl
     << std::endl;
@@ -256,6 +267,11 @@ void usage(const std::string &softName, const SoftwareArguments &options)
     << "\t\tPermits to use the vpImageFilter::canny method for comparison." << std::endl
     << "\t\tAvailable values: " << vpImageFilter::vpCannyBackendTypeList("<", " | ", ">") << std::endl
     << "\t\tDefault: " << vpImageFilter::vpCannyBackendTypeToString(options.m_backend) << std::endl
+    << std::endl;
+  std::cout << "\t-n, --nb-threads <number of threads>" << std::endl
+    << "\t\tPermits to choose the number of threads to use for the Canny." << std::endl
+    << "\t\tUse -1 to automatically choose the highest possible number of threads." << std::endl
+    << "\t\tDefault: " << options.m_nbThread << std::endl
     << std::endl;
   std::cout << "\t-e, --edge-list" << std::endl
     << "\t\tPermits to save the edge list." << std::endl
@@ -304,6 +320,10 @@ int main(int argc, const char *argv[])
       options.m_backend = vpImageFilter::vpCannyBackendTypeFromString(std::string(argv[i+1]));
       i++;
     }
+    else if ((argv_str == "-n" || argv_str == "--nb-threads") && i + 1 < argc) {
+      options.m_nbThread = std::atoi(argv[i + 1]);
+      i++;
+    }
     else if ((argv_str == "-e") || (argv_str == "--edge-list")) {
       options.m_saveEdgeList = true;
     }
@@ -325,6 +345,7 @@ int main(int argc, const char *argv[])
   configAsTxt += "\tGradient filter kernel size = " + std::to_string(options.m_apertureSize) + "\n";
   configAsTxt += "\tCanny edge filter thresholds = [" + std::to_string(options.m_lowerThresh) + " ; " + std::to_string(options.m_upperThresh) + "]\n";
   configAsTxt += "\tCanny edge filter thresholds ratio (for auto-thresholding) = [" + std::to_string(options.m_lowerThreshRatio) + " ; " + std::to_string(options.m_upperThreshRatio) + "]\n";
+  configAsTxt += "\tCanny edge filter nb threads = " + (options.m_nbThread > 0 ? std::to_string(options.m_nbThread) : std::string("auto")) + "\n";
 #else
   {
     std::stringstream ss;
@@ -333,6 +354,14 @@ int main(int argc, const char *argv[])
     ss << "\tGradient filter kernel size = " << options.m_apertureSize << "\n";
     ss << "\tCanny edge filter thresholds = [" << options.m_lowerThresh << " ; " << options.m_upperThresh << "]\n";
     ss << "\tCanny edge filter thresholds ratio (for auto-thresholding) = [" << options.m_lowerThreshRatio << " ; " << options.m_upperThreshRatio << "]\n";
+    ss <<  "\tCanny edge filter nb threads = ";
+    if (options.m_nbThread > 0) {
+      ss << options.m_nbThread;
+    }
+    else {
+      ss << "auto";
+    }
+    ss << "\n";
     configAsTxt += ss.str();
   }
 #endif
@@ -341,6 +370,7 @@ int main(int argc, const char *argv[])
   vpCannyEdgeDetection cannyDetector(options.m_gaussianKernelSize, options.m_gaussianStdev, options.m_apertureSize,
                                      options.m_lowerThresh, options.m_upperThresh, options.m_lowerThreshRatio, options.m_upperThreshRatio,
                                      options.m_filteringType, options.m_saveEdgeList);
+  cannyDetector.setNbThread(options.m_nbThread);
   vpImage<unsigned char> I_canny_input, I_canny_visp, dIx_uchar, dIy_uchar, I_canny_imgFilter;
   if (!options.m_img.empty()) {
     // Detection on the user image
@@ -348,7 +378,7 @@ int main(int argc, const char *argv[])
   }
   else {
     // Detection on a fake image of a square
-    I_canny_input.resize(500, 500, 0);
+    I_canny_input.resize(720, 1280, 0);
     for (unsigned int r = 150; r < 350; r++) {
       for (unsigned int c = 150; c < 350; c++) {
         I_canny_input[r][c] = 125;
@@ -375,7 +405,11 @@ int main(int argc, const char *argv[])
     setGradientOutsideClass(I_canny_input, options.m_gaussianKernelSize, options.m_gaussianStdev, cannyDetector, options.m_apertureSize,
                             options.m_filteringType, dIx_uchar, dIy_uchar);
   }
+  double tStart = vpTime::measureTimeMicros();
   I_canny_visp = cannyDetector.detect(I_canny_input);
+  double tEnd = vpTime::measureTimeMicros();
+  std::cout << "Time to compute the edge-map: " << (tEnd - tStart) / 1000. << " ms" << std::endl;
+
   float mean, max, stdev;
   computeMeanMaxStdev(I_canny_input, mean, max, stdev);
   if (options.m_saveEdgeList) {

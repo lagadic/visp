@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@
  * \brief Basic class used to make robot simulators.
  */
 
-#ifndef vpRobotWireFrameSimulator_HH
-#define vpRobotWireFrameSimulator_HH
+#ifndef VP_ROBOT_WIREFRAME_SIMULATOR_H
+#define VP_ROBOT_WIREFRAME_SIMULATOR_H
 
 #include <visp3/core/vpConfig.h>
 
@@ -160,8 +160,6 @@ protected:
   //! Flag used to specify to the thread managing the robot displacements that
   //! the setVelocity() method has been called.
   bool setVelocityCalled;
-
-  bool verbose_;
 
 public:
   vpRobotWireFrameSimulator();
@@ -294,10 +292,10 @@ public:
    * Since the wireframe simulator is threaded, the sampling time is set to
    * vpTime::getMinTimeForUsleepCall() / 1000 seconds.
    */
-  inline void setSamplingTime(const double &delta_t)
+  inline void setSamplingTime(const double &delta_t) VP_OVERRIDE
   {
-    if (delta_t < static_cast<float>(vpTime::getMinTimeForUsleepCall() * 1e-3)) {
-      this->delta_t_ = static_cast<float>(vpTime::getMinTimeForUsleepCall() * 1e-3);
+    if (delta_t < (vpTime::getMinTimeForUsleepCall() * 1e-3)) {
+      this->delta_t_ = (vpTime::getMinTimeForUsleepCall() * 1e-3);
     }
     else {
       this->delta_t_ = delta_t;

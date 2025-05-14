@@ -243,7 +243,7 @@ bool parseOnnxModel(const std::string &model_path, TRTUniquePtr<nvinfer1::ICudaE
 
     TRTUniquePtr<nvinfer1::IBuilder> builder { nvinfer1::createInferBuilder(gLogger) };
     TRTUniquePtr<nvinfer1::INetworkDefinition> network {
-        builder->createNetworkV2(1U << (uint32_t)nvinfer1::NetworkDefinitionCreationFlag::kEXPLICIT_BATCH) };
+        builder->createNetworkV2(1U << static_cast<uint32_t>(nvinfer1::NetworkDefinitionCreationFlag::kEXPLICIT_BATCH)) };
     TRTUniquePtr<nvonnxparser::IParser> parser { nvonnxparser::createParser(*network, gLogger) };
 
     // parse ONNX
@@ -428,7 +428,7 @@ int main(int argc, char **argv)
   if (input.empty()) {
     int i = 0;
     while ((i++ < 20) && !capture.read(frame)) {
-    }; // warm up camera by skiping unread frames
+    } // warm up camera by skiping unread frames
   }
 
   vpImageConvert::convert(frame, I);
