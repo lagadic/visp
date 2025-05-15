@@ -70,10 +70,15 @@ public:
   }
 };
 
+void vp_createPoint(vpFeaturePoint &fp, const vpPoint &v);
+void vp_createLine(vpFeatureLine &fp, const vpLine &v);
+
 void vp_createPoint(vpFeaturePoint &fp, const vpPoint &v) { vpFeatureBuilder::create(fp, v); }
 
 void vp_createLine(vpFeatureLine &fp, const vpLine &v) { vpFeatureBuilder::create(fp, v); }
 #endif
+
+int test_pose(bool use_robust);
 
 int test_pose(bool use_robust)
 {

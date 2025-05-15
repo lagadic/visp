@@ -168,7 +168,7 @@ std::istream &safeGetline(std::istream &is, std::string &t)
       return is;
     }
     else { // default case
-      t += (char)c;
+      t += static_cast<char>(c);
     }
   }
 }
@@ -205,6 +205,79 @@ vpMbTracker::vpMbTracker()
 
   vpImageFilter::getSobelKernelX(m_SobelX.data, m_projectionErrorKernelSize);
   vpImageFilter::getSobelKernelY(m_SobelY.data, m_projectionErrorKernelSize);
+}
+
+/*!
+ * Copy constructor.
+ * @param tracker : Tracker to copy.
+ */
+vpMbTracker::vpMbTracker(const vpMbTracker &tracker)
+{
+  *this = tracker;
+}
+
+/*!
+ * Copy operator.
+ * @param tracker : Tracker to copy.
+ */
+vpMbTracker &vpMbTracker::operator=(const vpMbTracker &tracker)
+{
+  m_cam = tracker.m_cam;
+  m_cMo = tracker.m_cMo;
+  oJo = tracker.oJo;
+  m_isoJoIdentity = tracker.m_isoJoIdentity;
+  modelFileName = tracker.modelFileName;
+  modelInitialised = tracker.modelInitialised;
+  poseSavingFilename = tracker.poseSavingFilename;
+  computeCovariance = tracker.computeCovariance;
+  covarianceMatrix = tracker.covarianceMatrix;
+  computeProjError = tracker.computeProjError;
+  projectionError = tracker.projectionError;
+  displayFeatures = tracker.displayFeatures;
+  m_optimizationMethod = tracker.m_optimizationMethod;
+  faces = tracker.faces;
+  angleAppears = tracker.angleAppears;
+  angleDisappears = tracker.angleDisappears;
+  distNearClip = tracker.distNearClip;
+  distFarClip = tracker.distFarClip;
+  clippingFlag = tracker.clippingFlag;
+  useOgre = tracker.useOgre;
+  ogreShowConfigDialog = tracker.ogreShowConfigDialog;
+  useScanLine = tracker.useScanLine;
+  nbPoints = tracker.nbPoints;
+  nbLines = tracker.nbLines;
+  nbPolygonLines = tracker.nbPolygonLines;
+  nbPolygonPoints = tracker.nbPolygonPoints;
+  nbCylinders = tracker.nbCylinders;
+  nbCircles = tracker.nbCircles;
+  useLodGeneral = tracker.useLodGeneral;
+  applyLodSettingInConfig = tracker.applyLodSettingInConfig;
+  minLineLengthThresholdGeneral = tracker.minLineLengthThresholdGeneral;
+  minPolygonAreaThresholdGeneral = tracker.minPolygonAreaThresholdGeneral;
+  mapOfParameterNames = tracker.mapOfParameterNames;
+  m_computeInteraction = tracker.m_computeInteraction;
+  m_lambda = tracker.m_lambda;
+  m_maxIter = tracker.m_maxIter;
+  m_stopCriteriaEpsilon = tracker.m_stopCriteriaEpsilon;
+  m_initialMu = tracker.m_initialMu;
+  m_projectionErrorLines = tracker.m_projectionErrorLines;
+  m_projectionErrorCylinders = tracker.m_projectionErrorCylinders;
+  m_projectionErrorCircles = tracker.m_projectionErrorCircles;
+  m_projectionErrorFaces = tracker.m_projectionErrorFaces;
+  m_projectionErrorOgreShowConfigDialog = tracker.m_projectionErrorOgreShowConfigDialog;
+  m_projectionErrorMe = tracker.m_projectionErrorMe;
+  m_projectionErrorKernelSize = tracker.m_projectionErrorKernelSize;
+  m_SobelX = tracker.m_SobelX;
+  m_SobelY = tracker.m_SobelY;
+  m_projectionErrorDisplay = tracker.m_projectionErrorDisplay;
+  m_projectionErrorDisplayLength = tracker.m_projectionErrorDisplayLength;
+  m_projectionErrorDisplayThickness = tracker.m_projectionErrorDisplayThickness;
+  m_projectionErrorCam = tracker.m_projectionErrorCam;
+  m_mask = tracker.m_mask;
+  m_I = tracker.m_I;
+  m_sodb_init_called = tracker.m_sodb_init_called;
+  m_rand = tracker.m_rand;
+  return *this;
 }
 
 vpMbTracker::~vpMbTracker()
@@ -743,7 +816,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
 
       vpMouseButton::vpMouseButtonType button = vpMouseButton::button1;
       while (!vpDisplay::getClick(*I, ip, button)) {
-      };
+      }
 
       if (button == vpMouseButton::button1) {
         isWellInit = true;
@@ -763,7 +836,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
 
       vpMouseButton::vpMouseButtonType button = vpMouseButton::button1;
       while (!vpDisplay::getClick(*I_color, ip, button)) {
-      };
+      }
 
       if (button == vpMouseButton::button1) {
         isWellInit = true;
@@ -2906,7 +2979,7 @@ void vpMbTracker::computeVVSCheckLevenbergMarquardt(unsigned int iter, vpColVect
                                                     const vpColVector *const m_w_prev)
 {
   if (iter != 0 && m_optimizationMethod == vpMbTracker::LEVENBERG_MARQUARDT_OPT) {
-    if (error.sumSquare() / (double)error.getRows() > m_error_prev.sumSquare() / (double)m_error_prev.getRows()) {
+    if (error.sumSquare() / static_cast<double>(error.getRows()) > m_error_prev.sumSquare() / static_cast<double>(m_error_prev.getRows())) {
       mu *= 10.0;
 
       if (mu > 1.0)
@@ -3498,7 +3571,7 @@ double vpMbTracker::computeCurrentProjectionError(const vpImage<unsigned char> &
   double totalProjectionError = computeProjectionErrorImpl(I, _cMo, _cam, nbFeatures);
 
   if (nbFeatures > 0) {
-    return vpMath::deg(totalProjectionError / (double)nbFeatures);
+    return vpMath::deg(totalProjectionError / static_cast<double>(nbFeatures));
   }
 
   return 90.0;

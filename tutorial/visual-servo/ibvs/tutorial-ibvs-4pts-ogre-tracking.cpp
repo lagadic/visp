@@ -23,7 +23,7 @@ void ogre_get_render_image(vpAROgre &ogre, const vpImage<unsigned char> &backgro
 
 void display_trajectory(const vpImage<unsigned char> &I, const std::vector<vpDot2> &dot, unsigned int thickness)
 {
-  static std::vector<vpImagePoint> traj[4];
+  VP_ATTRIBUTE_NO_DESTROY static std::vector<vpImagePoint> traj[4];
   for (unsigned int i = 0; i < 4; i++) {
     traj[i].push_back(dot[i].getCog());
   }

@@ -5,6 +5,7 @@
 
 #if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON) && defined(VISP_HAVE_DISPLAY)
 #include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpHSV.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpImageTools.h>
 #include <visp3/core/vpPixelMeterConversion.h>
@@ -81,17 +82,20 @@ int main(int argc, const char *argv[])
   //! [Get RS2 intrinsics]
 
   vpImage<vpRGBa> I(height, width);
-  vpImage<unsigned char> H(height, width);
-  vpImage<unsigned char> S(height, width);
-  vpImage<unsigned char> V(height, width);
   vpImage<unsigned char> mask(height, width, 0);
   vpImage<uint16_t> depth_raw(height, width);
   vpImage<vpRGBa> I_segmented(height, width);
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  vpImage<vpHSV<unsigned char, true>> Ihsv;
+
   std::shared_ptr<vpDisplay> d_I = vpDisplayFactory::createDisplay(I, 0, 0, "Current frame");
   std::shared_ptr<vpDisplay> d_I_segmented = vpDisplayFactory::createDisplay(I_segmented, I.getWidth()+75, 0, "HSV segmented frame");
 #else
+  vpImage<unsigned char> H(height, width);
+  vpImage<unsigned char> S(height, width);
+  vpImage<unsigned char> V(height, width);
+
   vpDisplay *d_I = vpDisplayFactory::allocateDisplay(I, 0, 0, "Current frame");
   vpDisplay *d_I_segmented = vpDisplayFactory::allocateDisplay(I_segmented, I.getWidth()+75, 0, "HSV segmented frame");
 #endif
@@ -113,19 +117,27 @@ int main(int argc, const char *argv[])
     //! [Grab color and depth]
 
     //! [RGB to HSV]
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    vpImageConvert::convert(I, Ihsv);
+#else
     vpImageConvert::RGBaToHSV(reinterpret_cast<unsigned char *>(I.bitmap),
                               reinterpret_cast<unsigned char *>(H.bitmap),
                               reinterpret_cast<unsigned char *>(S.bitmap),
                               reinterpret_cast<unsigned char *>(V.bitmap), I.getSize());
+#endif
     //! [RGB to HSV]
 
     //! [Create mask]
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    vpImageTools::inRange(Ihsv, hsv_values, mask);
+#else
     vpImageTools::inRange(reinterpret_cast<unsigned char *>(H.bitmap),
                           reinterpret_cast<unsigned char *>(S.bitmap),
                           reinterpret_cast<unsigned char *>(V.bitmap),
                           hsv_values,
                           reinterpret_cast<unsigned char *>(mask.bitmap),
                           mask.getSize());
+#endif
     //! [Create mask]
 
     vpImageTools::inMask(I, mask, I_segmented);
@@ -182,5 +194,5 @@ int main()
 #endif
   std::cout << "Install missing 3rd party, configure and rebuild ViSP." << std::endl;
   return EXIT_SUCCESS;
-  }
+}
 #endif

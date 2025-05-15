@@ -97,7 +97,7 @@ bool test(const std::string &s, const vpMatrix &M, const std::vector<double> &be
   return true;
 }
 
-double getRandomValues(double min, double max) { return (max - min) * ((double)rand() / (double)RAND_MAX) + min; }
+double getRandomValues(double min, double max) { return (max - min) * (static_cast<double>(rand()) / static_cast<double>(RAND_MAX)) + min; }
 
 bool equalMatrix(const vpMatrix &A, const vpMatrix &B, double tol = std::numeric_limits<double>::epsilon())
 {
@@ -477,7 +477,7 @@ int main(int argc, char *argv[])
 
       double t = vpTime::measureTimeMs();
       for (unsigned int i = 0; i < nb; i++) {
-        m_big.insert(submatrices[(size_t)i], i * size, 0);
+        m_big.insert(submatrices[static_cast<size_t>(i)], i * size, 0);
       }
       t = vpTime::measureTimeMs() - t;
       std::cout << "Matrix insert(): " << t << " ms" << std::endl;
@@ -485,7 +485,7 @@ int main(int argc, char *argv[])
       for (unsigned int cpt = 0; cpt < nb; cpt++) {
         for (unsigned int i = 0; i < size; i++) {
           for (unsigned int j = 0; j < 6; j++) {
-            if (!vpMath::equal(m_big[cpt * size + i][j], submatrices[(size_t)cpt][i][j],
+            if (!vpMath::equal(m_big[cpt * size + i][j], submatrices[static_cast<size_t>(cpt)][i][j],
                                std::numeric_limits<double>::epsilon())) {
               std::cerr << "Problem with vpMatrix insert()!" << std::endl;
               return EXIT_FAILURE;
@@ -523,7 +523,7 @@ int main(int argc, char *argv[])
         vpMatrix m_big_stack;
         t = vpTime::measureTimeMs();
         for (unsigned int i = 0; i < nb; i++) {
-          m_big_stack.stack(submatrices[(size_t)i]);
+          m_big_stack.stack(submatrices[static_cast<size_t>(i)]);
         }
         t = vpTime::measureTimeMs() - t;
         std::cout << "Matrix stack(): " << t << " ms" << std::endl;
@@ -591,7 +591,7 @@ int main(int argc, char *argv[])
         vpMatrix m_big_stack_static, m_big_stack_static_tmp;
         t = vpTime::measureTimeMs();
         for (unsigned int i = 0; i < nb; i++) {
-          vpMatrix::stack(m_big_stack_static_tmp, submatrices[(size_t)i], m_big_stack_static);
+          vpMatrix::stack(m_big_stack_static_tmp, submatrices[static_cast<size_t>(i)], m_big_stack_static);
           m_big_stack_static_tmp = m_big_stack_static;
         }
         t = vpTime::measureTimeMs() - t;

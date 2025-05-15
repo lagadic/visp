@@ -176,7 +176,7 @@ void vpRBSilhouetteMeTracker::computeVVSIter(const vpRBFeatureTrackerInput &fram
     m_vvsConverged = false;
   }
   else {
-    const double percentageConverged = (double)count / (double)countValidSites;
+    const double percentageConverged = static_cast<double>(count) / static_cast<double>(countValidSites);
     if (percentageConverged < m_globalVVSConvergenceThreshold) {
       m_vvsConverged = false;
     }

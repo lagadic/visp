@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,13 +49,13 @@
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
-static const std::string ipath = vpIoTools::getViSPImagesDataPath();
-static const std::string path = ipath + "/Solvay/Solvay_conference_1927_Version2_640x440";
+VP_ATTRIBUTE_NO_DESTROY static const std::string ipath = vpIoTools::getViSPImagesDataPath();
+VP_ATTRIBUTE_NO_DESTROY static const std::string path = ipath + "/Solvay/Solvay_conference_1927_Version2_640x440";
 
 static const double ccThreshPNG = 1.0;
 static const double ccThreshJPG = 0.99;
 
-static const std::vector<vpImageIo::vpImageIoBackendType> backends
+VP_ATTRIBUTE_NO_DESTROY static const std::vector<vpImageIo::vpImageIoBackendType> backends
 {
 #if defined(VISP_HAVE_JPEG) && defined(VISP_HAVE_PNG)
   vpImageIo::IO_SYSTEM_LIB_BACKEND,
@@ -70,7 +70,8 @@ static const std::vector<vpImageIo::vpImageIoBackendType> backends
   vpImageIo::IO_STB_IMAGE_BACKEND
 #endif
 };
-static const std::vector<std::string> backendNamesJpeg
+
+VP_ATTRIBUTE_NO_DESTROY static const std::vector<std::string> backendNamesJpeg
 {
 #if defined(VISP_HAVE_JPEG)
   "libjpeg",
@@ -80,7 +81,8 @@ static const std::vector<std::string> backendNamesJpeg
 #endif
       "simd", "stb"
 };
-static std::vector<std::string> backendNamesPng
+
+VP_ATTRIBUTE_NO_DESTROY static std::vector<std::string> backendNamesPng
 {
 #if defined(VISP_HAVE_PNG)
   "libpng",
@@ -91,7 +93,7 @@ static std::vector<std::string> backendNamesPng
       "simd", "stb"
 };
 
-static const std::vector<vpImageIo::vpImageIoBackendType> backendsInMemory
+VP_ATTRIBUTE_NO_DESTROY static const std::vector<vpImageIo::vpImageIoBackendType> backendsInMemory
 {
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS)
   vpImageIo::IO_OPENCV_BACKEND,
@@ -100,7 +102,8 @@ static const std::vector<vpImageIo::vpImageIoBackendType> backendsInMemory
   vpImageIo::IO_STB_IMAGE_BACKEND
 #endif
 };
-static std::vector<std::string> backendNamesPngInMemory
+
+VP_ATTRIBUTE_NO_DESTROY static std::vector<std::string> backendNamesPngInMemory
 {
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS)
   "OpenCV",
@@ -170,7 +173,7 @@ TEST_CASE("Test grayscale JPEG image loading", "[image_I/O]")
       CHECK(cc >= Catch::Approx(ccThreshJPG));
       CHECK(I.getWidth() == imgWidth);
       CHECK(I.getHeight() == imgHeight);
-    };
+    }
   }
 }
 
@@ -190,7 +193,7 @@ TEST_CASE("Test RGBA JPEG image loading", "[image_I/O]")
       CHECK(cc >= Catch::Approx(ccThreshJPG));
       CHECK(I.getWidth() == imgWidth);
       CHECK(I.getHeight() == imgHeight);
-    };
+    }
   }
 }
 
@@ -210,7 +213,7 @@ TEST_CASE("Test grayscale PNG image loading", "[image_I/O]")
       CHECK(cc == Catch::Approx(ccThreshPNG));
       CHECK(I.getWidth() == imgWidth);
       CHECK(I.getHeight() == imgHeight);
-    };
+    }
   }
 }
 
@@ -230,7 +233,7 @@ TEST_CASE("Test RGBA PNG image loading", "[image_I/O]")
       CHECK(cc == Catch::Approx(ccThreshPNG));
       CHECK(I.getWidth() == imgWidth);
       CHECK(I.getHeight() == imgHeight);
-    };
+    }
   }
 }
 
@@ -254,7 +257,7 @@ TEST_CASE("Test grayscale JPEG image saving", "[image_I/O]")
       double cc = computePearsonCC(I_read, I);
       std::cout << backendNamesPng[j] << " backend Pearson correlation coefficient: " << cc << std::endl;
       CHECK(cc >= Catch::Approx(ccThreshJPG));
-    };
+    }
   }
 
   REQUIRE(vpIoTools::remove(directory_filename_tmp));
@@ -280,7 +283,7 @@ TEST_CASE("Test RGBA JPEG image saving", "[image_I/O]")
       double cc = computePearsonCC(I_read, I);
       std::cout << backendNamesPng[j] << " backend Pearson correlation coefficient: " << cc << std::endl;
       CHECK(cc >= Catch::Approx(ccThreshJPG));
-    };
+    }
   }
 
   REQUIRE(vpIoTools::remove(directory_filename_tmp));
@@ -306,7 +309,7 @@ TEST_CASE("Test grayscale PNG image saving", "[image_I/O]")
       double cc = computePearsonCC(I_read, I);
       std::cout << backendNamesPng[j] << " backend Pearson correlation coefficient: " << cc << std::endl;
       CHECK(cc == Catch::Approx(ccThreshPNG));
-    };
+    }
   }
 
   REQUIRE(vpIoTools::remove(directory_filename_tmp));
@@ -332,7 +335,7 @@ TEST_CASE("Test RGBA PNG image saving", "[image_I/O]")
       double cc = computePearsonCC(I_read, I);
       std::cout << backendNamesPng[j] << " backend Pearson correlation coefficient: " << cc << std::endl;
       CHECK(cc == Catch::Approx(ccThreshPNG));
-    };
+    }
   }
 
   REQUIRE(vpIoTools::remove(directory_filename_tmp));
@@ -357,9 +360,9 @@ TEST_CASE("Test grayscale in-memory PNG image encoding/decoding", "[image_I/O]")
           vpImage<unsigned char> I;
           vpImageIo::readPNGfromMem(buffer, I, backendsInMemory[j]);
           CHECK(I_ref == I);
-        };
+        }
       }
-    };
+    }
   }
 }
 
@@ -384,7 +387,7 @@ TEST_CASE("Test color in-memory PNG image encoding/decoding", "[image_I/O]")
             vpImage<vpRGBa> I;
             vpImageIo::readPNGfromMem(buffer, I, backendsInMemory[j]);
             CHECK(I_ref == I);
-          };
+          }
         }
       }
       {
@@ -399,10 +402,10 @@ TEST_CASE("Test color in-memory PNG image encoding/decoding", "[image_I/O]")
             vpImage<vpRGBa> I;
             vpImageIo::readPNGfromMem(buffer, I, backendsInMemory[j]);
             CHECK(I_ref == I);
-          };
+          }
         }
       }
-    };
+    }
   }
 }
 

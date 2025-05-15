@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,9 +51,9 @@ using namespace VISP_NAMESPACE_NAME;
 namespace
 {
 static bool g_runBenchmark = false;
-static const std::vector<unsigned int> g_sizes = { 23, 127, 233, 419, 1153, 2749 };
+VP_ATTRIBUTE_NO_DESTROY static const std::vector<unsigned int> g_sizes = { 23, 127, 233, 419, 1153, 2749 };
 
-double getRandomValues(double min, double max) { return (max - min) * ((double)rand() / (double)RAND_MAX) + min; }
+double getRandomValues(double min, double max) { return (max - min) * (static_cast<double>(rand()) / static_cast<double>(RAND_MAX)) + min; }
 
 vpColVector generateRandomVector(unsigned int rows, double min = -100, double max = 100)
 {
@@ -109,7 +109,7 @@ double computeRegularStdev(const vpColVector &v)
     sum_squared_diff += (v[i] - mean_value) * (v[i] - mean_value);
   }
 
-  double divisor = (double)v.size();
+  double divisor = static_cast<double>(v.size());
 
   return std::sqrt(sum_squared_diff / divisor);
 }

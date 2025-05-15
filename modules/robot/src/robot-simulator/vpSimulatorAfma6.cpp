@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Class which provides a simulator for the robot Afma6.
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpConfig.h>
 #if defined(VISP_HAVE_MODULE_GUI) && defined(VISP_HAVE_THREADS)
@@ -506,7 +504,7 @@ void vpSimulatorAfma6::updateArticularPosition()
           articularCoordinates[i] = articularCoordinates[i] + ellapsedTime * articularVelocities[i];
 
         jointLimit = true;
-        jointLimitArt = static_cast<unsigned int>(fabs((double)jl));
+        jointLimitArt = static_cast<unsigned int>(fabs(static_cast<double>(jl)));
       }
 
       set_artCoord(articularCoordinates);
@@ -1429,34 +1427,33 @@ void vpSimulatorAfma6::setPosition(const vpRobot::vpControlFrameType frame, cons
   The position to reach can be specified in joint coordinates, in the
   camera frame or in the reference frame.
 
-  This method overloads setPosition(const
-  vpRobot::vpControlFrameType, const vpColVector &).
+  This method overloads setPosition(const vpRobot::vpControlFrameType, const vpColVector &).
 
-  \warning This method is blocking. It returns only when the position
-  is reached by the robot.
+  \warning This method is blocking. It returns only when the position is reached by the robot.
 
-  \param pos1, pos2, pos3, pos4, pos5, pos6 : The six coordinates of
-  the position to reach. All the positions are expressed in meters for
-  the translations and radians for the rotations.
+  All the positions are expressed in meters for the translations and radians for the rotations.
+
+  \param pos1 : First coordinate of the position to reach.
+  \param pos2 : Second coordinate of the position to reach.
+  \param pos3 : Third coordinate of the position to reach.
+  \param pos4 : Fourth coordinate of the position to reach.
+  \param pos5 : Fifth coordinate of the position to reach.
+  \param pos6 : Sixth coordinate of the position to reach.
 
   \param frame : Frame in which the position is expressed.
 
-  - In the joint space, positions are respectively X (pos1), Y (pos2),
-  Z (pos3), A (pos4), B (pos5), C (pos6), with X,Y,Z the
-  translations, and A,B,C the rotations of the end-effector.
+  - In the joint space, positions are respectively X (pos1), Y (pos2), Z (pos3), A (pos4), B (pos5), C (pos6),
+    with X,Y,Z the translation positions in meters, and A,B,C the rotations in radians of the end-effector.
 
-  - In the camera and the reference frame, rotations [pos4, pos5, pos6] are
-  represented by a vpRxyzVector.
+  - In the camera and the reference frame, rotations [pos4, pos5, pos6] are represented by a vpRxyzVector with
+    values in radians.
 
-  - Mixt frame is not implemented. By mixt frame we mean, translations
-  expressed in the reference frame, and rotations in the camera
-  frame.
+  - Mixt frame is not implemented. By mixt frame we mean, translations expressed in the reference frame,
+    and rotations in the camera frame.
 
-  \exception vpRobotException::lowLevelError : vpRobot::MIXT_FRAME not
-  implemented.
+  \exception vpRobotException::lowLevelError : vpRobot::MIXT_FRAME not implemented.
 
-  \exception vpRobotException::positionOutOfRangeError : The requested
-  position is out of range.
+  \exception vpRobotException::positionOutOfRangeError : The requested position is out of range.
 
   \code
   #include <visp3/robot/vpSimulatorAfma6.h>
@@ -1834,7 +1831,7 @@ int vpSimulatorAfma6::isInJointLimit()
   }
 
   if (artNumb != 0)
-    std::cout << "\nWarning: Velocity control stopped: axis " << fabs((float)artNumb) << " on joint limit!"
+    std::cout << "\nWarning: Velocity control stopped: axis " << fabs(static_cast<float>(artNumb)) << " on joint limit!"
     << std::endl;
 
   return artNumb;
@@ -2053,7 +2050,7 @@ bool vpSimulatorAfma6::savePosFile(const std::string &filename, const vpColVecto
 /*!
   Moves the robot to the joint position specified in the filename.
 
-  \param filename: File containing a joint position.
+  \param filename : File containing a joint position.
 
   \sa readPosFile
 */
@@ -2292,12 +2289,12 @@ void vpSimulatorAfma6::getExternalImage(vpImage<vpRGBa> &I_)
   // we assume px_ext and py_ext > 0
   if ((std::fabs(px_ext - 1.) > vpMath::maximum(px_ext, 1.) * std::numeric_limits<double>::epsilon()) &&
       (std::fabs(py_ext - 1) > vpMath::maximum(py_ext, 1.) * std::numeric_limits<double>::epsilon())) {
-    u = (double)I_.getWidth() / (2 * px_ext);
-    v = (double)I_.getHeight() / (2 * py_ext);
+    u = static_cast<double>(I_.getWidth()) / (2 * px_ext);
+    v = static_cast<double>(I_.getHeight()) / (2 * py_ext);
   }
   else {
-    u = (double)I_.getWidth() / (vpMath::minimum(I_.getWidth(), I_.getHeight()));
-    v = (double)I_.getHeight() / (vpMath::minimum(I_.getWidth(), I_.getHeight()));
+    u = static_cast<double>(I_.getWidth()) / (vpMath::minimum(I_.getWidth(), I_.getHeight()));
+    v = static_cast<double>(I_.getHeight()) / (vpMath::minimum(I_.getWidth(), I_.getHeight()));
   }
 
   float w44o[4][4], w44cext[4][4], x, y, z;

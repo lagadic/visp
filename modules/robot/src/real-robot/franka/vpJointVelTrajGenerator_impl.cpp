@@ -581,7 +581,7 @@ void vpJointVelTrajGenerator::applyVel(const std::array<double, 7> &dq_des, std:
       printf("Joint limit axis %lu\n", (unsigned long)i);
       break;
     }
-    butee = (float)(m_q_max[i] - m_offset_joint_limit);
+    butee = static_cast<float>(m_q_max[i] - m_offset_joint_limit);
     if (m_q_cmd[i] > butee) {
       for (size_t j = 0; j < m_njoints; j++) {
         m_q_cmd[j] -= m_sign[j] * m_delta_q[j];

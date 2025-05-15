@@ -32,12 +32,10 @@
  */
 
 /*!
-
   \file vpHinkley.cpp
 
   \brief Definition of the vpHinkley class corresponding to the Hinkley's
   cumulative sum test.
-
 */
 
 #include <visp3/core/vpHinkley.h>
@@ -111,13 +109,6 @@ void vpHinkley::init(double alpha_val, double delta_val)
   setAlpha(alpha_val);
   setDelta(delta_val);
 }
-
-/*!
-
-  Destructor.
-
-*/
-vpHinkley::~vpHinkley() { }
 
 /*!
 

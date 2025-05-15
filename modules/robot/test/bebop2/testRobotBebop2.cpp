@@ -98,7 +98,7 @@ int main(int argc, char **argv)
 
       drone.startStreaming(); // Start video decoding and streaming
 
-      vpImage<vpRGBa> I(1, 1, 0);
+      vpImage<vpRGBa> I(1u, 1u, vpRGBa(0));
       drone.getRGBaImage(I); // Get color image from the drone video stream
 
 #ifdef VISP_HAVE_X11

@@ -221,6 +221,14 @@ END_VISP_NAMESPACE
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include VISP_NLOHMANN_JSON(json.hpp)
 #include <visp3/core/vpJsonParsing.h>
+
+#if defined(__clang__)
+// Mute warning : declaration requires an exit-time destructor [-Wexit-time-destructors]
+// message : expanded from macro 'NLOHMANN_JSON_SERIALIZE_ENUM'
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wexit-time-destructors"
+#endif
+
 NLOHMANN_JSON_SERIALIZE_ENUM(VISP_NAMESPACE_ADDRESSING vpPolygon3D::vpPolygon3DClippingType, {
     {VISP_NAMESPACE_ADDRESSING vpPolygon3D::NO_CLIPPING, "none"},
     {VISP_NAMESPACE_ADDRESSING vpPolygon3D::NEAR_CLIPPING, "near"},
@@ -233,7 +241,11 @@ NLOHMANN_JSON_SERIALIZE_ENUM(VISP_NAMESPACE_ADDRESSING vpPolygon3D::vpPolygon3DC
     {VISP_NAMESPACE_ADDRESSING vpPolygon3D::ALL_CLIPPING, "all"}
 });
 
-inline nlohmann::json clippingFlagsToJSON(const int flags)
+#if defined(__clang__)
+#  pragma clang diagnostic pop
+#endif
+
+inline nlohmann::json clippingFlagsToJSON(const unsigned int flags)
 {
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;

@@ -219,12 +219,10 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &co
     case 'h':
       usage(argv[0], nullptr);
       return false;
-      break;
 
     default:
       usage(argv[0], optarg_);
       return false;
-      break;
     }
   }
 
@@ -316,7 +314,7 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<uns
   // Transform pointcloud
   pointcloud_width = width;
   pointcloud_height = height;
-  pointcloud.resize((size_t)width * height);
+  pointcloud.resize(static_cast<size_t>(width * height));
 
   // Only for Creative SR300
   const float depth_scale = 0.000124986647f;
@@ -335,7 +333,7 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<uns
     for (unsigned int j = 0; j < width; j++) {
       float scaled_depth = I_depth_raw[i][j] * depth_scale;
       float point[3];
-      float pixel[2] = { (float)j, (float)i };
+      float pixel[2] = { static_cast<float>(j), static_cast<float>(i) };
       rs_deproject_pixel_to_point(point, depth_intrinsic, pixel, scaled_depth);
 
       vpColVector data_3D(3);
@@ -343,7 +341,7 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<uns
       data_3D[1] = point[1];
       data_3D[2] = point[2];
 
-      pointcloud[(size_t)(i * width + j)] = data_3D;
+      pointcloud[static_cast<size_t>(i * width + j)] = data_3D;
     }
   }
 

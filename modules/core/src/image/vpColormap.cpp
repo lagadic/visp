@@ -1160,7 +1160,7 @@ void vpColormap::convert(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Icolor, bool
   vpImage<unsigned char> I_uchar(I.getHeight(), I.getWidth());
   for (unsigned int i = 0; i < I.getHeight(); i++) {
     for (unsigned int j = 0; j < I.getWidth(); j++) {
-      I_uchar[i][j] = static_cast<unsigned char>(0.299f * I[i][j].R + 0.587f * I[i][j].G + 0.114 * I[i][j].B);
+      I_uchar[i][j] = static_cast<unsigned char>(0.299f * I[i][j].R + 0.587f * I[i][j].G + 0.114f * I[i][j].B);
     }
   }
   convert(I_uchar, Icolor, normalize);

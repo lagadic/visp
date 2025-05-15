@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +29,10 @@
  *
  * Description:
  * Manage depth normal features for a particular face.
- *
-*****************************************************************************/
+ */
 
-#ifndef _vpMbtFaceDepthNormal_h_
-#define _vpMbtFaceDepthNormal_h_
+#ifndef VP_MBT_FACE_DEPTH_NORMAL_H
+#define VP_MBT_FACE_DEPTH_NORMAL_H
 
 #include <iostream>
 
@@ -93,7 +91,9 @@ public:
   bool m_useScanLine;
 
   vpMbtFaceDepthNormal();
+  vpMbtFaceDepthNormal(const vpMbtFaceDepthNormal &mbt_face);
   virtual ~vpMbtFaceDepthNormal();
+  vpMbtFaceDepthNormal &operator=(const vpMbtFaceDepthNormal &mbt_face);
 
   void addLine(vpPoint &p1, vpPoint &p2, vpMbHiddenFaces<vpMbtPolygon> *const faces, vpUniRand &rand_gen,
                int polygon = -1, std::string name = "");
@@ -325,6 +325,14 @@ END_VISP_NAMESPACE
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include VISP_NLOHMANN_JSON(json.hpp)
+
+#if defined(__clang__)
+// Mute warning : declaration requires an exit-time destructor [-Wexit-time-destructors]
+// message : expanded from macro 'NLOHMANN_JSON_SERIALIZE_ENUM'
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wexit-time-destructors"
+#endif
+
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS)
 NLOHMANN_JSON_SERIALIZE_ENUM(VISP_NAMESPACE_ADDRESSING vpMbtFaceDepthNormal::vpFeatureEstimationType, {
     {VISP_NAMESPACE_ADDRESSING vpMbtFaceDepthNormal::ROBUST_FEATURE_ESTIMATION, "robust"},
@@ -337,6 +345,11 @@ NLOHMANN_JSON_SERIALIZE_ENUM(VISP_NAMESPACE_ADDRESSING vpMbtFaceDepthNormal::vpF
     {VISP_NAMESPACE_ADDRESSING vpMbtFaceDepthNormal::ROBUST_SVD_PLANE_ESTIMATION, "robustSVD"}
 });
 #endif
+
+#if defined(__clang__)
+#  pragma clang diagnostic pop
+#endif
+
 #endif
 
 #endif

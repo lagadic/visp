@@ -116,7 +116,7 @@ void vpTemplateTrackerMIForwardCompositional::initHessienDesired(const vpImage<u
       cr = ptTemplateSupp[point].ct;
       er = ptTemplateSupp[point].et;
       ct = static_cast<int>((IW * (Nc - 1)) / 255.);
-      et = ((double)IW * (Nc - 1)) / 255. - ct;
+      et = (static_cast<double>(IW) * (Nc - 1)) / 255. - ct;
 
       Warp->dWarpCompo(X1, X2, p, ptTemplate[point].dW, dW);
 
@@ -206,7 +206,7 @@ void vpTemplateTrackerMIForwardCompositional::trackNoPyr(const vpImage<unsigned 
         dy = dIy.getValue(i2, j2) * (Nc - 1) / 255.;
 
         ct = static_cast<int>((IW * (Nc - 1)) / 255.);
-        et = ((double)IW * (Nc - 1)) / 255. - ct;
+        et = (static_cast<double>(IW) * (Nc - 1)) / 255. - ct;
         cr = ptTemplateSupp[point].ct;
         er = ptTemplateSupp[point].et;
 

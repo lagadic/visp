@@ -79,7 +79,7 @@ const double vpRobotAfma4::defaultPositioningVelocity = 15.0;
 */
 void emergencyStopAfma4(int signo)
 {
-  std::cout << "Stop the Afma4 application by signal (" << signo << "): " << (char)7;
+  std::cout << "Stop the Afma4 application by signal (" << signo << "): " << static_cast<char>(7);
   switch (signo) {
   case SIGINT:
     std::cout << "SIGINT (stop by ^C) " << std::endl;
@@ -1663,7 +1663,7 @@ bool vpRobotAfma4::savePosFile(const std::string &filename, const vpColVector &q
   Moves the robot to the joint position specified in the filename. The
   positioning velocity is set to 10% of the robot maximal velocity.
 
-  \param filename: File containing a joint position.
+  \param filename : File containing a joint position.
 
   \sa readPosFile
 

@@ -601,7 +601,7 @@ vpDetectorDNNOpenCV::filterDetectionMultiClassInput(const std::vector<DetectedFe
      */
     double computeMeanArea(const int &class_id)
     {
-      return m_map_id_pairOccurrencesAreas[class_id].second / (double)m_map_id_pairOccurrencesAreas[class_id].first;
+      return m_map_id_pairOccurrencesAreas[class_id].second / static_cast<double>(m_map_id_pairOccurrencesAreas[class_id].first);
     }
 
   public:
@@ -734,7 +734,7 @@ void vpDetectorDNNOpenCV::postProcess_YoloV3_V4(DetectionCandidates &proposals, 
           int left = int(cx - 0.5 * w);
           int top = int(cy - 0.5 * h);
 
-          proposals.m_confidences.push_back((float)max_class_score);
+          proposals.m_confidences.push_back(static_cast<float>(max_class_score));
           proposals.m_boxes.push_back(cv::Rect(left, top, static_cast<int>(w), static_cast<int>(h)));
           proposals.m_classIds.push_back(class_idx);
         }
@@ -760,7 +760,7 @@ void vpDetectorDNNOpenCV::postProcess_YoloV5_V7(DetectionCandidates &proposals, 
 {
   // Compute the ratio between the original size of the image and the network size to translate network coordinates into
   // image coordinates
-  float ratioh = (float)m_img.rows / netConfig.m_inputSize.height, ratiow = (float)m_img.cols / netConfig.m_inputSize.width;
+  float ratioh = static_cast<float>(m_img.rows) / netConfig.m_inputSize.height, ratiow = static_cast<float>(m_img.cols) / netConfig.m_inputSize.width;
   size_t nbBatches = dnnRes.size();
 
   for (size_t i = 0; i < nbBatches; i++) {
@@ -799,7 +799,7 @@ void vpDetectorDNNOpenCV::postProcess_YoloV5_V7(DetectionCandidates &proposals, 
           int left = int(cx - 0.5 * w);
           int top = int(cy - 0.5 * h);
 
-          proposals.m_confidences.push_back((float)max_class_score);
+          proposals.m_confidences.push_back(static_cast<float>(max_class_score));
           proposals.m_boxes.push_back(cv::Rect(left, top, static_cast<int>(w), static_cast<int>(h)));
           proposals.m_classIds.push_back(class_idx);
         }
@@ -826,7 +826,7 @@ void vpDetectorDNNOpenCV::postProcess_YoloV8_V11(DetectionCandidates &proposals,
   // Code adapted from here: https://github.com/JustasBart/yolov8_CPP_Inference_OpenCV_ONNX/blob/minimalistic/inference.cpp
   // Compute the ratio between the original size of the image and the network size to translate network coordinates into
   // image coordinates
-  float ratioh = (float)m_img.rows / netConfig.m_inputSize.height, ratiow = (float)m_img.cols / netConfig.m_inputSize.width;
+  float ratioh = static_cast<float>(m_img.rows) / netConfig.m_inputSize.height, ratiow = static_cast<float>(m_img.cols) / netConfig.m_inputSize.width;
   size_t nbBatches = dnnRes.size();
 
   for (size_t i = 0; i < nbBatches; i++) {
@@ -862,7 +862,7 @@ void vpDetectorDNNOpenCV::postProcess_YoloV8_V11(DetectionCandidates &proposals,
         int left = int(cx - 0.5 * w);
         int top = int(cy - 0.5 * h);
 
-        proposals.m_confidences.push_back((float)max_class_score);
+        proposals.m_confidences.push_back(static_cast<float>(max_class_score));
         proposals.m_boxes.push_back(cv::Rect(left, top, static_cast<int>(w), static_cast<int>(h)));
         proposals.m_classIds.push_back(class_idx);
       }
@@ -904,7 +904,7 @@ void vpDetectorDNNOpenCV::postProcess_FasterRCNN(DetectionCandidates &proposals,
         int bottom = static_cast<int>(data[i + 6] * m_img.rows);
         int classId = static_cast<int>(data[i + 1]);
 
-        proposals.m_confidences.push_back((float)confidence);
+        proposals.m_confidences.push_back(static_cast<float>(confidence));
         proposals.m_boxes.push_back(cv::Rect(left, top, right - left + 1, bottom - top + 1));
         proposals.m_classIds.push_back(classId);
       }
@@ -1005,7 +1005,7 @@ void vpDetectorDNNOpenCV::postProcess_ResNet_10(DetectionCandidates &proposals, 
       int bottom = static_cast<int>(data[i + 6] * m_img.rows);
       int classId = static_cast<int>(data[i + 1]) - 1;
 
-      proposals.m_confidences.push_back((float)confidence);
+      proposals.m_confidences.push_back(static_cast<float>(confidence));
       proposals.m_boxes.push_back(cv::Rect(left, top, right - left + 1, bottom - top + 1));
       proposals.m_classIds.push_back(classId);
     }
@@ -1064,7 +1064,7 @@ void vpDetectorDNNOpenCV::readNet(const std::string &model, const std::string &c
  * Configure the DNN (thresholds, input size, ...).
  * If the DNN weights file is known, initialize the \b m_net by reading the weights.
  *
- * \param config: the desired configuration of the network
+ * \param config : The desired configuration of the network.
  */
 void vpDetectorDNNOpenCV::setNetConfig(const NetConfig &config)
 {
@@ -1167,9 +1167,9 @@ void vpDetectorDNNOpenCV::setSwapRB(const bool &swapRB) { m_netConfig.m_swapRB =
 /*!
   Set the type of parsing method that must be used to interpret the raw results of the DNN detection.
 
-  \param typeParsingMethod: the type of parsing method that must be used to interpret the raw results of the DNN detection.
-  \param parsingMethod: if \b typeParsingMethod is equal to \b vpDetectorDNNOpenCV::USER_DEFINED , a function permitting to interpret the \b cv::Mat
-  resulting from the DNN inference.
+  \param typeParsingMethod : The type of parsing method that must be used to interpret the raw results of the DNN detection.
+  \param parsingMethod : If \b typeParsingMethod is equal to \b vpDetectorDNNOpenCV::USER_DEFINED , a function
+  permitting to interpret the \b cv::Mat resulting from the DNN inference.
 */
 void vpDetectorDNNOpenCV::setParsingMethod(const DNNResultsParsingType &typeParsingMethod, void (*parsingMethod)(DetectionCandidates &, std::vector<cv::Mat> &, const NetConfig &))
 {

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,9 +54,9 @@ static long first_frame = 100;
 static int frame_step = 2;
 static unsigned int nframes = 3;
 static long last_frame = first_frame + static_cast<long>(frame_step) * (nframes - 1);
-static std::string tmp;
-static std::string videoname_grey;
-static std::string videoname_color;
+VP_ATTRIBUTE_NO_DESTROY static std::string tmp;
+VP_ATTRIBUTE_NO_DESTROY static std::string videoname_grey;
+VP_ATTRIBUTE_NO_DESTROY static std::string videoname_color;
 
 template <class Type>
 bool test_createSequence(vpImage<Type> &I, const std::string &videoname, unsigned int first_frame, int frame_step,

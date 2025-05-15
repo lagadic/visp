@@ -13,7 +13,12 @@ public:
 
   TrampolineRBDriftDetector() : vpRBDriftDetector() { }
 
+<<<<<<< HEAD
   virtual void update(const vpRBFeatureTrackerInput &previousFrame, const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cTo, const vpHomogeneousMatrix &cprevTo) VP_OVERRIDE
+=======
+  virtual void update(const vpRBFeatureTrackerInput &previousFrame, const vpRBFeatureTrackerInput &frame,
+                      const vpHomogeneousMatrix &cTo, const vpHomogeneousMatrix &cprevTo) VP_OVERRIDE
+>>>>>>> upstream/master
   {
     pybind11::gil_scoped_acquire gil;  // Acquire the GIL while in this scope.
     // Try to look up the overridden method on the Python side.

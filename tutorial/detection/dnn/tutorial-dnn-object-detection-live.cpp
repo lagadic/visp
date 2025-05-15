@@ -30,6 +30,10 @@ typedef enum
   DETECTION_CONTAINER_COUNT = 3
 } ChosenDetectionContainer;
 
+std::string chosenDetectionContainerToString(const ChosenDetectionContainer &choice);
+ChosenDetectionContainer chosenDetectionContainerFromString(const std::string &choiceStr);
+std::string getAvailableDetectionContainer();
+
 std::string chosenDetectionContainerToString(const ChosenDetectionContainer &choice)
 {
   switch (choice) {
@@ -143,10 +147,10 @@ int main(int argc, const char *argv[])
         opt_dnn_swapRB = true;
       }
       else if (std::string(argv[i]) == "--confThresh" && i + 1 < argc) {
-        opt_dnn_confThresh = (float)atof(argv[++i]);
+        opt_dnn_confThresh = static_cast<float>(atof(argv[++i]));
       }
       else if (std::string(argv[i]) == "--nmsThresh" && i + 1 < argc) {
-        opt_dnn_nmsThresh = (float)atof(argv[++i]);
+        opt_dnn_nmsThresh = static_cast<float>(atof(argv[++i]));
       }
       else if (std::string(argv[i]) == "--filterThresh" && i + 1 < argc) {
         opt_dnn_filterThresh = atof(argv[++i]);

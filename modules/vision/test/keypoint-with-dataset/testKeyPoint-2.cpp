@@ -62,7 +62,7 @@ using namespace VISP_NAMESPACE_NAME;
 #endif
 
 void usage(const char *name, const char *badparam);
-bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display);
+bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display, bool &use_parallel_ransac);
 
 /*!
 
@@ -131,12 +131,10 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display,
     case 'h':
       usage(argv[0], nullptr);
       return false;
-      break;
 
     default:
       usage(argv[0], optarg_);
       return false;
-      break;
     }
   }
 

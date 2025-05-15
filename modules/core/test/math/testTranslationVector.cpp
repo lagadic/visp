@@ -46,6 +46,8 @@
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
+bool test(const std::string &s, const vpArray2D<double> &A, const std::vector<double> &bench);
+
 bool test(const std::string &s, const vpArray2D<double> &A, const std::vector<double> &bench)
 {
   static unsigned int cpt = 0;
@@ -64,6 +66,7 @@ bool test(const std::string &s, const vpArray2D<double> &A, const std::vector<do
 
   return true;
 }
+
 int main()
 {
   int err = 1;

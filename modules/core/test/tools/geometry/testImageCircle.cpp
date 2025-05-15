@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -660,7 +660,7 @@ int main()
     float theta_u_top_min = 2.f * M_PI_FLOAT / 3.f;
     float theta_v_max = -M_PI_2_FLOAT;
     float uc = OFFSET + WIDTH - RADIUS * std::cos(theta_v_max);
-    float vc = OFFSET + RADIUS * std::sin(theta_u_top_min);;
+    float vc = OFFSET + RADIUS * std::sin(theta_u_top_min);
     vpImageCircle circle(vpImagePoint(vc, uc), RADIUS);
     float arcLengthCircle = circle.computeArcLengthInRoI(roi);
     float theoreticalValue = (M_PI_2_FLOAT + M_PI_FLOAT / 3.f) * RADIUS;
@@ -811,7 +811,7 @@ int main()
     float theta_v_min = M_PI_2_FLOAT;
     float theta_u_bot_max = -M_PI_FLOAT / 3.f;
     float uc = OFFSET - RADIUS * std::cos(theta_v_min);
-    float vc = OFFSET + HEIGHT + RADIUS * std::sin(theta_u_bot_max);;
+    float vc = OFFSET + HEIGHT + RADIUS * std::sin(theta_u_bot_max);
     vpImageCircle circle(vpImagePoint(vc, uc), RADIUS);
     float arcLengthCircle = circle.computeArcLengthInRoI(roi);
     float theoreticalValue = (M_PI_2_FLOAT + M_PI_FLOAT / 3.f) * RADIUS;
@@ -956,7 +956,7 @@ int main()
     float theta_u_bot_min = -2.f * M_PI_FLOAT / 3.f;
     float theta_v_min = M_PI_2_FLOAT;
     float uc = OFFSET + WIDTH - RADIUS * std::cos(theta_v_min);
-    float vc = OFFSET + HEIGHT + RADIUS * std::sin(theta_u_bot_min);;
+    float vc = OFFSET + HEIGHT + RADIUS * std::sin(theta_u_bot_min);
     vpImageCircle circle(vpImagePoint(vc, uc), RADIUS);
     float arcLengthCircle = circle.computeArcLengthInRoI(roi);
     float theoreticalValue = (M_PI_2_FLOAT + M_PI_FLOAT / 3.f) * RADIUS;

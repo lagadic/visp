@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Directory management.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpConvert.cpp
@@ -148,7 +146,7 @@ vpPoint vpConvert::point3dToVpCamPoint(const cv::Point3d &point3d)
  */
 cv::Point2f vpConvert::vpImagePointToPoint2f(const vpImagePoint &point)
 {
-  return cv::Point2f((float)point.get_u(), (float)point.get_v());
+  return cv::Point2f(static_cast<float>(point.get_u()), static_cast<float>(point.get_v()));
 }
 
 /*!
@@ -172,7 +170,7 @@ cv::Point2d vpConvert::vpImagePointToPoint2d(const vpImagePoint &point)
  */
 cv::Point3f vpConvert::vpCamPointToPoint3f(const vpPoint &point)
 {
-  return cv::Point3f((float)point.get_X(), (float)point.get_Y(), (float)point.get_Z());
+  return cv::Point3f(static_cast<float>(point.get_X()), static_cast<float>(point.get_Y()), static_cast<float>(point.get_Z()));
 }
 
 /*!
@@ -197,7 +195,7 @@ cv::Point3d vpConvert::vpCamPointToPoint3d(const vpPoint &point)
  */
 cv::Point3f vpConvert::vpObjectPointToPoint3f(const vpPoint &point)
 {
-  return cv::Point3f((float)point.get_oX(), (float)point.get_oY(), (float)point.get_oZ());
+  return cv::Point3f(static_cast<float>(point.get_oX()), static_cast<float>(point.get_oY()), static_cast<float>(point.get_oZ()));
 }
 
 /*!

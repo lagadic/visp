@@ -469,7 +469,7 @@ void vpFlyCaptureGrabber::setProperty(const FlyCapture2::PropertyType &prop_type
     prop.absControl = propInfo.absValSupported;
     switch (prop_value) {
     case ABS_VALUE: {
-      float value_ = std::max<float>(std::min<float>((float)value, (float)propInfo.absMax), (float)propInfo.absMin);
+      float value_ = std::max<float>(std::min<float>(static_cast<float>(value), static_cast<float>(propInfo.absMax)), static_cast<float>(propInfo.absMin));
       prop.absValue = value_;
       break;
     }
@@ -782,7 +782,7 @@ unsigned int vpFlyCaptureGrabber::setSharpness(bool sharpness_on, bool sharpness
 {
   this->connect();
 
-  this->setProperty(FlyCapture2::SHARPNESS, sharpness_on, sharpness_auto, (float)sharpness_value, VALUE_A);
+  this->setProperty(FlyCapture2::SHARPNESS, sharpness_on, sharpness_auto, static_cast<float>(sharpness_value), VALUE_A);
   FlyCapture2::Property prop = this->getProperty(FlyCapture2::SHARPNESS);
   return prop.valueA;
 }

@@ -365,14 +365,14 @@ void vpRBSilhouetteCCDTracker::display(const vpCameraParameters &/*cam*/, const 
     unsigned idx = 0;
     for (const vpRBSilhouetteControlPoint &p : m_controlPoints) {
       const double weight = errorPerPoint[idx] / maxPointError;
-      const double diffR = (double)(worstColor.R) - (double)(bestColor.R);
-      const double diffG = (double)(worstColor.G) - (double)(bestColor.G);
-      const double diffB = (double)(worstColor.B) - (double)(bestColor.B);
+      const double diffR = static_cast<double>(worstColor.R) - static_cast<double>(bestColor.R);
+      const double diffG = static_cast<double>(worstColor.G) - static_cast<double>(bestColor.G);
+      const double diffB = static_cast<double>(worstColor.B) - static_cast<double>(bestColor.B);
 
       vpColor c;
-      c.R = (unsigned char)((double)(bestColor.R) + diffR * weight);
-      c.G = (unsigned char)((double)(bestColor.G) + diffG * weight);
-      c.B = (unsigned char)((double)(bestColor.B) + diffB * weight);
+      c.R = static_cast<unsigned char>(static_cast<double>(bestColor.R) + diffR * weight);
+      c.G = static_cast<unsigned char>(static_cast<double>(bestColor.G) + diffG * weight);
+      c.B = static_cast<unsigned char>(static_cast<double>(bestColor.B) + diffB * weight);
 
       vpDisplay::displayCross(IRGB, p.icpoint.get_i(), p.icpoint.get_j(), 3, c, 1);
       ++idx;
@@ -394,7 +394,7 @@ void vpRBSilhouetteCCDTracker::display(const vpCameraParameters &/*cam*/, const 
       const double weight = weightPerPoint[idx];
       vpColor c;
       c.R = 0;
-      c.G = (unsigned char)(255.f * weight);
+      c.G = static_cast<unsigned char>(255.f * weight);
       c.B = 0;
 
       vpDisplay::displayCross(IRGB, p.icpoint.get_i(), p.icpoint.get_j(), 3, c, 1);

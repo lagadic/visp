@@ -69,7 +69,7 @@ bool test(const std::string &s, const vpColVector &v, const std::vector<double> 
   return true;
 }
 
-double getRandomValues(double min, double max) { return (max - min) * ((double)rand() / (double)RAND_MAX) + min; }
+double getRandomValues(double min, double max) { return (max - min) * (static_cast<double>(rand()) / static_cast<double>(RAND_MAX)) + min; }
 } // namespace
 
 int main()
@@ -114,8 +114,8 @@ int main()
     vpColVector v(4);
     std::vector<double> bench1(4);
     for (unsigned int i = 0; i < v.size(); i++) {
-      v[i] = (double)i;
-      bench1[i] = (double)i;
+      v[i] = static_cast<double>(i);
+      bench1[i] = static_cast<double>(i);
     }
     if (test("v", v, bench1) == false)
       return EXIT_FAILURE;
@@ -135,7 +135,7 @@ int main()
 
     vpColVector r1;
     for (size_t i = 0; i < 4; i++)
-      r1.stack((double)i);
+      r1.stack(static_cast<double>(i));
 
     vpColVector r2 = r1.extract(1, 3);
     if (test("r2", r2, bench3) == false)
@@ -331,14 +331,14 @@ int main()
     vpColVector v_big(nb * size);
     double t = vpTime::measureTimeMs();
     for (unsigned int i = 0; i < nb; i++) {
-      v_big.insert(i * size, vec[(size_t)i]);
+      v_big.insert(i * size, vec[static_cast<size_t>(i)]);
     }
     t = vpTime::measureTimeMs() - t;
     std::cout << "\nBig insert: " << t << " ms" << std::endl;
 
     for (unsigned int i = 0; i < nb; i++) {
       for (unsigned int j = 0; j < size; j++) {
-        if (!vpMath::equal(v_big[i * size + j], vec[(size_t)i][j], std::numeric_limits<double>::epsilon())) {
+        if (!vpMath::equal(v_big[i * size + j], vec[static_cast<size_t>(i)][j], std::numeric_limits<double>::epsilon())) {
           std::cerr << "Problem in vpColVector insert()!" << std::endl;
           return EXIT_FAILURE;
         }
@@ -360,7 +360,7 @@ int main()
     std::cout << "** Test conversion to/from std::vector" << std::endl;
     std::vector<double> std_vector(5);
     for (size_t i = 0; i < std_vector.size(); i++) {
-      std_vector[i] = (double)i;
+      std_vector[i] = static_cast<double>(i);
     }
     vpColVector v(std_vector);
     if (test("v", v, std_vector) == false)

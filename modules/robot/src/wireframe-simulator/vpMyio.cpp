@@ -58,13 +58,13 @@ BEGIN_VISP_NAMESPACE
  * Entree :
  * fp    Nombre flottant a lire.
  */
-void fscanf_float(float *fp)
+  void fscanf_float(float *fp)
 {
   int t;
 
   if ((t = lex()) != T_FLOAT && t != T_INT)
     lexerr("start", "float expected", NULL);
-  *fp = (t == T_INT) ? (float)myint : myfloat;
+  *fp = (t == T_INT) ? static_cast<float>(myint) : myfloat;
 }
 
 /*
@@ -101,16 +101,16 @@ void fscanf_string(char **str)
   if (lex() != T_STRING)
     lexerr("start", "string expected", NULL);
   if (*str == NULL)
-    *str = (char *)malloc((size_t)(mylength + 1) * sizeof(char));
+    *str = (char *)malloc(static_cast<size_t>(mylength + 1) * sizeof(char));
   else
-    *str = (char *)realloc(*str, (size_t)(mylength + 1) * sizeof(char));
+    *str = (char *)realloc(*str, static_cast<size_t>(mylength + 1) * sizeof(char));
 
   if (*str == NULL) {
     printf("Unable to read the string: bad memory allocation");
     return;
   }
 
-  strncpy(*str, mytext, (size_t)mylength);
+  strncpy(*str, mytext, static_cast<size_t>(mylength));
 }
 
 /*

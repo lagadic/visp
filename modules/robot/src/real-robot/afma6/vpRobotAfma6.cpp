@@ -80,7 +80,7 @@ const double vpRobotAfma6::defaultPositioningVelocity = 15.0;
 */
 void emergencyStopAfma6(int signo)
 {
-  std::cout << "Stop the Afma6 application by signal (" << signo << "): " << (char)7;
+  std::cout << "Stop the Afma6 application by signal (" << signo << "): " << static_cast<char>(7);
   switch (signo) {
   case SIGINT:
     std::cout << "SIGINT (stop by ^C) " << std::endl;
@@ -1250,34 +1250,33 @@ void vpRobotAfma6::setPosition(const vpRobot::vpControlFrameType frame, const vp
   The position to reach can be specified in joint coordinates, in the
   camera frame or in the reference frame.
 
-  This method owerloads setPosition(const
-  vpRobot::vpControlFrameType, const vpColVector &).
+  This method owerloads setPosition(const vpRobot::vpControlFrameType, const vpColVector &).
 
-  \warning This method is blocking. It returns only when the position
-  is reached by the robot.
+  \warning This method is blocking. It returns only when the position is reached by the robot.
 
-  \param pos1, pos2, pos3, pos4, pos5, pos6 : The six coordinates of
-  the position to reach. All the positions are expressed in meters for
-  the translations and radians for the rotations.
+  All the positions are expressed in meters for the translations and radians for the rotations.
+
+  \param pos1 : First coordinate of the position to reach.
+  \param pos2 : Second coordinate of the position to reach.
+  \param pos3 : Third coordinate of the position to reach.
+  \param pos4 : Fourth coordinate of the position to reach.
+  \param pos5 : Fifth coordinate of the position to reach.
+  \param pos6 : Sixth coordinate of the position to reach.
 
   \param frame : Frame in which the position is expressed.
 
-  - In the joint space, positions are respectively X (pos1), Y (pos2),
-  Z (pos3), A (pos4), B (pos5), C (pos6), with X,Y,Z the
-  translations, and A,B,C the rotations of the end-effector.
+  - In the joint space, positions are respectively X (pos1), Y (pos2), Z (pos3), A (pos4), B (pos5), C (pos6),
+    with X,Y,Z the translation positions in meters, and A,B,C the rotations in radians of the end-effector.
 
-  - In the camera and the reference frame, rotations [pos4, pos5, pos6] are
-  represented by a vpRxyzVector.
+  - In the camera and the reference frame, rotations [pos4, pos5, pos6] are represented by a vpRxyzVector with
+    values in radians.
 
-  - Mixt frame is not implemented. By mixt frame we mean, translations
-  expressed in the reference frame, and rotations in the camera
-  frame.
+  - Mixt frame is not implemented. By mixt frame we mean, translations expressed in the reference frame,
+    and rotations in the camera frame.
 
-  \exception vpRobotException::lowLevelError : vpRobot::MIXT_FRAME
-  and vpRobot::END_EFFECTOR_FRAME not implemented.
+  \exception vpRobotException::lowLevelError : vpRobot::MIXT_FRAME and vpRobot::END_EFFECTOR_FRAME not implemented.
 
-  \exception vpRobotException::positionOutOfRangeError : The requested
-  position is out of range.
+  \exception vpRobotException::positionOutOfRangeError : The requested position is out of range.
 
   \code
   #include <visp3/robot/vpRobotAfma6.h>

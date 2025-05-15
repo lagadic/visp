@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -409,7 +409,6 @@ void vpDot2::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &i
 }
 
 /*!
-
   Try to locate the dot in the image:
 
   - First, estimate the new position of the dot, using its previous position.
@@ -421,13 +420,11 @@ void vpDot2::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &i
 
   \param I : Image.
 
-  \param canMakeTheWindowGrow: if true, the size of the searching area is
-  increased if the blob is not found, otherwise it stays the same. Default
-  value is true.
+  \param canMakeTheWindowGrow : If true, the size of the searching area is
+  increased if the blob is not found, otherwise it stays the same. Default value is true.
 
   \exception vpTrackingException::featureLostError : If the dot tracking
-  failed. The tracking can fail if the following characteristics are not
-  valid;
+  failed. The tracking can fail if the following characteristics are not valid;
   - The gray level is between gray level min and gray level max.
 
   - The size (width or height) and the surface (in terms of number of
@@ -445,9 +442,7 @@ void vpDot2::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &i
   To compute all the inertia moments associated to the dot see
   setComputeMoments().
 
-  To get the pixels coordinates on the dot boundary, see getList_u() and
-  getList_v().
-
+  To get the pixels coordinates on the dot boundary, see getList_u() and getList_v().
 */
 void vpDot2::track(const vpImage<unsigned char> &I, bool canMakeTheWindowGrow)
 {
@@ -893,18 +888,15 @@ void vpDot2::setArea(const vpImage<unsigned char> &I, int u, int v, unsigned int
 }
 
 /*!
-
   Set the parameters of the area.
 
-  \param a : Area.
-
+  \param area : Area.
 */
 void vpDot2::setArea(const vpRect &area) { m_area = area; }
 
 ///// CLASS FUNCTIONALITY ////////////////////////////////////////////////////
 
 /*!
-
   Look for a list of dot matching this dot parameters within the entire
   image.
 
@@ -913,7 +905,7 @@ void vpDot2::setArea(const vpRect &area) { m_area = area; }
 
   \param I : Image.
 
-  \param niceDots: List of the dots that are found.
+  \param niceDots : List of the dots that are found.
 
   Before calling this method, dot characteristics to found have to be set
   like:
@@ -951,8 +943,7 @@ void vpDot2::setArea(const vpRect &area) { m_area = area; }
   }
   \endcode
 
-  \sa searchDotsInArea(vpImage<unsigned char>&, int, int, unsigned int,
-  unsigned int, std::list<vpDot2> &)
+  \sa searchDotsInArea(vpImage<unsigned char>&, int, int, unsigned int, unsigned int, std::list<vpDot2> &)
 */
 void vpDot2::searchDotsInArea(const vpImage<unsigned char> &I, std::list<vpDot2> &niceDots)
 {
@@ -1276,9 +1267,9 @@ vpDot2 *vpDot2::getInstance() { return new vpDot2(); }
 
   \param I : The image we are working with.
 
-  \param _u : A pixel coordinate inside the dot.
+  \param v_u : A pixel coordinate inside the dot.
 
-  \param _v : A pixel coordinate inside the dot.
+  \param v_v : A pixel coordinate inside the dot.
 
   \return false : If a dot can't be found around pixel coordinates given as
   parameter
@@ -1612,9 +1603,9 @@ void vpDot2::getGridSize(unsigned int &gridWidth, unsigned int &gridHeight)
   We compute it by searching the mean of vertical and diagonal points
   which gray is between min and max gray level.
 
-  \param I: The image.
+  \param I : The image.
 
-  \return the mean gray level
+  \return The mean gray level
 */
 void vpDot2::computeMeanGrayLevel(const vpImage<unsigned char> &I)
 {

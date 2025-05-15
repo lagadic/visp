@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,15 +29,12 @@
  *
  * Description:
  * Interface for a  generic ADEPT Viper (either 650 or 850) robot.
- *
-*****************************************************************************/
+ */
 
 /*!
-
   \file vpViper.cpp
 
   Modelization of the ADEPT Viper 650 or 850 robot.
-
 */
 
 #include <cmath>  // std::fabs
@@ -56,10 +52,8 @@ BEGIN_VISP_NAMESPACE
 const unsigned int vpViper::njoint = 6;
 
 /*!
-
-  Default constructor.
-
-*/
+ * Default constructor.
+ */
 vpViper::vpViper()
   : eMc(), etc(), erc(), a1(0), d1(0), a2(), a3(), d4(0), d6(0), d7(0), c56(0), joint_max(), joint_min()
 {
@@ -96,7 +90,35 @@ vpViper::vpViper()
 }
 
 /*!
+ * Copy constructor.
+ */
+vpViper::vpViper(const vpViper &viper)
+{
+  *this = viper;
+}
 
+/*!
+ * Copy operator.
+ */
+vpViper &vpViper::operator=(const vpViper &viper)
+{
+  eMc = viper.eMc;
+  etc = viper.etc;
+  erc = viper.erc;
+  a1 = viper.a1;
+  d1 = viper.d1;
+  a2 = viper.a2;
+  a3 = viper.a3;
+  d4 = viper.d4;
+  d6 = viper.d6;
+  d7 = viper.d7;
+  c56 = viper.c56;
+  joint_max = viper.joint_max;
+  joint_min = viper.joint_min;
+  return *this;
+}
+
+/*!
   Compute the forward kinematics (direct geometric model) as an
   homogeneous matrix.
 
@@ -114,7 +136,6 @@ vpViper::vpViper()
 
   \sa get_fMc(const vpColVector & q)
   \sa getInverseKinematics()
-
 */
 vpHomogeneousMatrix vpViper::getForwardKinematics(const vpColVector &q) const
 {

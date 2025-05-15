@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * UDP Client
- *
-*****************************************************************************/
+ */
 
 #include <cstring>
 #include <sstream>
@@ -53,7 +51,19 @@
 #define _WIN32_WINNT _WIN32_WINNT_VISTA // 0x0600
 #endif
 #endif
+
+#if defined(__clang__)
+// Mute warning : non-portable path to file '<WS2tcpip.h>'; specified path differs in case from file name on disk [-Wnonportable-system-include-path]
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wnonportable-system-include-path"
+#endif
+
 #include <Ws2tcpip.h>
+
+#if defined(__clang__)
+#  pragma clang diagnostic pop
+#endif
+
 #endif
 
 #include <visp3/core/vpUDPClient.h>
@@ -71,6 +81,23 @@ vpUDPClient::vpUDPClient()
   m_wsa()
 #endif
 { }
+
+vpUDPClient::vpUDPClient(const vpUDPClient &client)
+{
+  *this = client;
+}
+
+vpUDPClient &vpUDPClient::operator=(const vpUDPClient &client)
+{
+  m_is_init = client.m_is_init;
+  m_serverAddress = client.m_serverAddress;
+  m_serverLength = client.m_serverLength;
+  m_socketFileDescriptor = client.m_socketFileDescriptor;
+#if defined(_WIN32)
+  m_wsa = client.m_wsa;
+#endif
+  return *this;
+}
 
 /*!
   Create a (IPv4) UDP client.

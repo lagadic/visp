@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,7 @@
 #include <stdlib.h>
 #include <visp3/core/vpHistogram.h>
 #include <visp3/core/vpImage.h>
+#include <visp3/core/vpUniRand.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
@@ -58,7 +59,7 @@ using namespace VISP_NAMESPACE_NAME;
 
   \param name : Program name.
   \param badparam : Bad parameter name.
-  \param ipath: Input image path.
+  \param ipath : Input image path.
 
  */
 void usage(const char *name, const char *badparam, std::string ipath)
@@ -98,8 +99,8 @@ OPTIONS:                                               Default\n\
 
   \param argc : Command line number of parameters.
   \param argv : Array of command line parameters.
-  \param ipath: Input image path.
-  \param nbThreads: Number of threads to use.
+  \param ipath : Input image path.
+  \param nbThreads : Number of threads to use.
   \return false if the program has to be stopped, true otherwise.
 
 */
@@ -119,7 +120,6 @@ bool getOptions(int argc, const char **argv, std::string &ipath, unsigned int &n
     case 'h':
       usage(argv[0], nullptr, ipath);
       return false;
-      break;
 
     case 'c':
     case 'd':
@@ -128,7 +128,6 @@ bool getOptions(int argc, const char **argv, std::string &ipath, unsigned int &n
     default:
       usage(argv[0], optarg_, ipath);
       return false;
-      break;
     }
   }
 
@@ -278,10 +277,10 @@ int main(int argc, const char **argv)
     t_multi_thread = vpTime::measureTimeMs() - t_multi_thread;
 
     std::cout << "sum_single_thread=" << sum_single_thread << " ; t_single_thread=" << t_single_thread
-      << " ms ; mean=" << t_single_thread / (double)nbIterations << " ms" << std::endl;
+      << " ms ; mean=" << t_single_thread / static_cast<double>(nbIterations) << " ms" << std::endl;
     std::cout << "sum_multi_thread (nbThreads=" << nbThreads << ")=" << sum_multi_thread << " ; t_multi_thread=" << t_multi_thread
-      << " ms ; mean=" << t_multi_thread / (double)nbIterations << " ms" << std::endl;
-    std::cout << "Speed-up=" << t_single_thread / (double)t_multi_thread << "X" << std::endl;
+      << " ms ; mean=" << t_multi_thread / static_cast<double>(nbIterations) << " ms" << std::endl;
+    std::cout << "Speed-up=" << t_single_thread / static_cast<double>(t_multi_thread) << "X" << std::endl;
 
     if (sum_single_thread != I.getSize() || sum_multi_thread != I.getSize()) {
       std::cerr << "Problem with histogram!" << std::endl;
@@ -365,6 +364,229 @@ int main(int argc, const char **argv)
       std::cerr << "Bad histogram size!" << std::endl;
       return EXIT_FAILURE;
     }
+
+    // Test of smooth method
+    unsigned int nbRows = 4, nbCols = 15;
+    I.init(nbRows, nbCols);
+    for (unsigned int r = 0; r < nbRows; ++r) {
+      unsigned int c = 0;
+      for (unsigned int i = 1; i <= 5; ++i) {
+        for (unsigned int count = 0; count < i; ++count) {
+          I[r][c] = i + r;
+          ++c;
+        }
+      }
+    }
+
+    std::cout << "I:" << std::endl;
+    std::cout << I << std::endl;
+
+    nbBins = 256;
+    std::vector<unsigned int> expectedNumber(nbBins, 0);
+    expectedNumber[1] = 1;
+    expectedNumber[2] = 3;
+    expectedNumber[3] = 6;
+    expectedNumber[4] = 10;
+    expectedNumber[5] = 14;
+    expectedNumber[6] = 12;
+    expectedNumber[7] = 9;
+    expectedNumber[8] = 5;
+
+    vpHistogram histo;
+    histo.calculate(I, nbBins);
+    for (unsigned int bin = 0; bin < nbBins; ++bin) {
+      if (histo[bin] != expectedNumber[bin]) {
+        std::cerr << "Problem with histogram computation: histogram[" << bin << "]=" << histo[bin]
+          << " but should be: " << expectedNumber[bin] << std::endl;
+        return EXIT_FAILURE;
+      }
+    }
+
+    std::vector<unsigned int> expectedNumberSmooth(nbBins, 0);
+    expectedNumberSmooth[1] = 1;
+    expectedNumberSmooth[2] = 3;
+    expectedNumberSmooth[3] = 6;
+    expectedNumberSmooth[4] = 10;
+    expectedNumberSmooth[5] = 12;
+    expectedNumberSmooth[6] = 11;
+    expectedNumberSmooth[7] = 8;
+    expectedNumberSmooth[8] = 4;
+    expectedNumberSmooth[9] = 1;
+
+    histo.smooth();
+
+    for (unsigned int bin = 0; bin < nbBins; ++bin) {
+      if (histo[bin] != expectedNumberSmooth[bin]) {
+        std::cerr << "Problem with smooth computation: histogram[" << bin << "]=" << histo[bin]
+          << " but should be: " << expectedNumberSmooth[bin] << std::endl;
+        return EXIT_FAILURE;
+      }
+    }
+
+    // Test of mask
+    vpImage<bool> mask(nbRows, nbCols, false);
+    for (unsigned int r = 0; r < nbRows; ++r) {
+      for (unsigned int c = 0; c < nbCols; ++c) {
+        if ((r == 0) || (r == (nbRows - 1))) {
+          mask[r][c] = true;
+        }
+        if ((c == 0) || (c == (nbCols - 1))) {
+          mask[r][c] = true;
+        }
+      }
+    }
+
+    std::cout << "I to which is applied the mask:" << std::endl;
+    for (unsigned int r = 0; r < nbRows; ++r) {
+      for (unsigned int c = 0; c < nbCols; ++c) {
+        if (mask[r][c]) {
+          std::cout << static_cast<int>(I[r][c]);
+        }
+        else {
+          std::cout << "X";
+        }
+        std::cout << " ";
+      }
+      std::cout << std::endl;
+    }
+
+    vpHistogram histoWithMaskMono; // Histogram using mask monothreaded
+    histoWithMaskMono.setMask(&mask);
+    histoWithMaskMono.calculate(I, nbBins, 1);
+
+    vpHistogram histoWithMaskMulti; // Histogram using mask multithreaded
+    histoWithMaskMulti.setMask(&mask);
+    histoWithMaskMulti.calculate(I, nbBins, 2);
+
+    std::vector<unsigned int> expectedNumberMask(nbBins, 0);
+    expectedNumberMask[1] = 1;
+    expectedNumberMask[2] = 3;
+    expectedNumberMask[3] = 4;
+    expectedNumberMask[4] = 5;
+    expectedNumberMask[5] = 7;
+    expectedNumberMask[6] = 4;
+    expectedNumberMask[7] = 5;
+    expectedNumberMask[8] = 5;
+
+    for (unsigned int bin = 0; bin < nbBins; ++bin) {
+      if (histoWithMaskMono[bin] != expectedNumberMask[bin]) {
+        std::cerr << "Problem when using mask: histogram[" << bin << "]=" << histoWithMaskMono[bin]
+          << " but should be: " << expectedNumberMask[bin] << std::endl;
+        return EXIT_FAILURE;
+      }
+
+      if (histoWithMaskMulti[bin] != expectedNumberMask[bin]) {
+        std::cerr << "Problem when using mask: histogram[" << bin << "]=" << histoWithMaskMulti[bin]
+          << " but should be: " << expectedNumberMask[bin] << std::endl;
+        return EXIT_FAILURE;
+      }
+    }
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+// Test of histogram on vpImage<double>
+    vpImage<double> Id(nbRows, nbCols);
+    nbBins = 8;
+    double min = 0., max = 1.;
+    double desiredStep = (max - min) / static_cast<double>(nbBins);
+    vpUniRand uniRand(4221);
+
+    for (unsigned int r = 0; r < nbRows; ++r) {
+      unsigned int c = 0;
+      for (unsigned int i = 1; i <= 5; ++i) {
+        for (unsigned int count = 0; count < i; ++count) {
+          double value = uniRand.uniform(0., desiredStep) + desiredStep * static_cast<double>(i + r - 1);
+          Id[r][c] = value;
+          ++c;
+        }
+      }
+    }
+
+    std::cout << "Id = " << std::endl;
+    for (unsigned int r = 0; r < nbRows; ++r) {
+      for (unsigned int c = 0; c < nbCols; ++c) {
+        std::cout << std::setprecision(3) << Id[r][c];
+        std::cout << " ";
+      }
+      std::cout << std::endl;
+    }
+
+    // test monothread
+    std::vector<unsigned char> expectedNumberDouble(nbBins, 0), expectedNumberDoubleMask(nbBins, 0);
+    for (unsigned int i = 0; i < nbBins; ++i) {
+      expectedNumberDouble[i] = expectedNumber[i + 1];
+      expectedNumberDoubleMask[i] = expectedNumberMask[i + 1];
+    }
+    double step = 0.;
+    vpHistogram histoDoubleMono;
+    histoDoubleMono.calculate(Id, min, max, step, nbBins, 1);
+
+    if (!vpMath::equal(step, desiredStep)) {
+      std::cerr << "Problem with histogram computation of floating point images" << std::endl;
+      std::cout << "Computed step: " <<  step <<  " but should be: " << desiredStep << std::endl;
+      return EXIT_FAILURE;
+    }
+    for (unsigned int bin = 0; bin < nbBins; ++bin) {
+      if (histoDoubleMono[bin] != expectedNumberDouble[bin]) {
+        std::cerr << "Problem with monothread histogram computation of floating point images: histogram[" << bin << "]=" << histoDoubleMono[bin]
+          << " but should be: " << expectedNumberDouble[bin] << std::endl;
+        return EXIT_FAILURE;
+      }
+    }
+
+    // test multithread
+    vpHistogram histoDoubleMulti;
+    histoDoubleMulti.calculate(Id, min, max, step, nbBins, 2);
+
+    if (!vpMath::equal(step, desiredStep)) {
+      std::cerr << "Problem with histogram computation of floating point images" << std::endl;
+      std::cout << "Computed step: " <<  step <<  " but should be: " << desiredStep << std::endl;
+      return EXIT_FAILURE;
+    }
+    for (unsigned int bin = 0; bin < nbBins; ++bin) {
+      if (histoDoubleMulti[bin] != expectedNumberDouble[bin]) {
+        std::cerr << "Problem with multithread histogram computation of floating point images: histogram[" << bin << "]=" << histoDoubleMulti[bin]
+          << " but should be: " << expectedNumberDouble[bin] << std::endl;
+        return EXIT_FAILURE;
+      }
+    }
+
+    std::cout << "Id with mask= " << std::endl;
+    for (unsigned int r = 0; r < nbRows; ++r) {
+      for (unsigned int c = 0; c < nbCols; ++c) {
+        if (mask[r][c]) {
+          std::cout << std::setprecision(3) << Id[r][c];
+        }
+        else {
+          std::cout << "XXXXX";
+        }
+        std::cout << " ";
+      }
+      std::cout << std::endl;
+    }
+
+    // Test mask
+    vpHistogram histoDoubleMonoMask;
+    histoDoubleMonoMask.setMask(&mask);
+    histoDoubleMonoMask.calculate(Id, min, max, step, nbBins, 2);
+
+    vpHistogram histoDoubleMultiMask;
+    histoDoubleMultiMask.setMask(&mask);
+    histoDoubleMultiMask.calculate(Id, min, max, step, nbBins, 2);
+
+    for (unsigned int bin = 0; bin < nbBins; ++bin) {
+      if (histoDoubleMonoMask[bin] != expectedNumberDoubleMask[bin]) {
+        std::cerr << "Problem with monothread histogram computation of floating point images using mask: histogram[" << bin << "]=" << histoDoubleMonoMask[bin]
+          << " but should be: " << expectedNumberDoubleMask[bin] << std::endl;
+        return EXIT_FAILURE;
+      }
+
+      if (histoDoubleMultiMask[bin] != expectedNumberDoubleMask[bin]) {
+        std::cerr << "Problem with multithread histogram computation of floating point images using mask: histogram[" << bin << "]=" << histoDoubleMultiMask[bin]
+          << " but should be: " << expectedNumberDoubleMask[bin] << std::endl;
+        return EXIT_FAILURE;
+      }
+    }
+#endif
 
     std::cout << "testHistogram is OK!" << std::endl;
     return EXIT_SUCCESS;

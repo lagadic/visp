@@ -229,7 +229,7 @@ void vpMbtDistanceLine::setTracked(const std::string &polyname, const bool &trac
 {
   unsigned int ind = 0;
   for (std::list<int>::const_iterator itpoly = Lindex_polygon.begin(); itpoly != Lindex_polygon.end(); ++itpoly) {
-    if ((*hiddenface)[(unsigned)(*itpoly)]->getName() == polyname) {
+    if ((*hiddenface)[static_cast<unsigned int>(*itpoly)]->getName() == polyname) {
       Lindex_polygon_tracked[ind] = track;
     }
     ind++;
@@ -264,7 +264,7 @@ void vpMbtDistanceLine::updateTracked()
   unsigned int ind = 0;
   isTrackedLineWithVisibility = false;
   for (std::list<int>::const_iterator itpoly = Lindex_polygon.begin(); itpoly != Lindex_polygon.end(); ++itpoly) {
-    if ((*hiddenface)[(unsigned)(*itpoly)]->isVisible() && Lindex_polygon_tracked[ind]) {
+    if ((*hiddenface)[static_cast<unsigned int>(*itpoly)]->isVisible() && Lindex_polygon_tracked[ind]) {
       isTrackedLineWithVisibility = true;
       break;
     }
@@ -299,8 +299,9 @@ void vpMbtDistanceLine::setMovingEdge(vpMe *_me)
   \param I : The image.
   \param cMo : The pose of the camera used to initialize the moving edges.
   \param doNotTrack : If true, ME are not tracked.
-  \param mask: Mask image or nullptr if not wanted. Mask values that are set to true are considered in the tracking. To
-  disable a pixel, set false. \return false if an error occur, true otherwise.
+  \param mask : Mask image or nullptr if not wanted. Mask values that are set to true are considered in the tracking. To
+  disable a pixel, set false.
+  \return false if an error occur, true otherwise.
 */
 bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, bool doNotTrack,
                                        const vpImage<bool> *mask)
@@ -590,7 +591,7 @@ void vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const 
 
   \param I : the image.
   \param cMo : The pose of the camera.
-  \param mask: Mask image or nullptr if not wanted. Mask values that are set to true are considered in the tracking. To
+  \param mask : Mask image or nullptr if not wanted. Mask values that are set to true are considered in the tracking. To
   disable a pixel, set false.
 */
 void vpMbtDistanceLine::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
@@ -856,8 +857,8 @@ void vpMbtDistanceLine::computeInteractionMatrixError(const vpHomogeneousMatrix 
       for (size_t i = 0; i < meline.size(); i++) {
         for (std::list<vpMeSite>::const_iterator it = meline[i]->getMeList().begin();
              it != meline[i]->getMeList().end(); ++it) {
-          x = (double)it->m_j;
-          y = (double)it->m_i;
+          x = static_cast<double>(it->m_j);
+          y = static_cast<double>(it->m_i);
 
           x = (x - xc) * mx;
           y = (y - yc) * my;
@@ -919,8 +920,8 @@ bool vpMbtDistanceLine::closeToImageBorder(const vpImage<unsigned char> &I, cons
           return true;
         }
 
-        if ((static_cast<unsigned int>(i_) >(I.getHeight() - threshold)) || static_cast<unsigned int>(i_) < threshold ||
-            (static_cast<unsigned int>(j_) >(I.getWidth() - threshold)) || static_cast<unsigned int>(j_) < threshold) {
+        if ((static_cast<unsigned int>(i_) > (I.getHeight() - threshold)) || static_cast<unsigned int>(i_) < threshold ||
+            (static_cast<unsigned int>(j_) > (I.getWidth() - threshold)) || static_cast<unsigned int>(j_) < threshold) {
           return true;
         }
       }

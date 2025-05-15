@@ -36,6 +36,7 @@
 #define VP_RB_TRACKING_TIMINGS_H
 
 #include <iomanip>
+#include <map>
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMath.h>

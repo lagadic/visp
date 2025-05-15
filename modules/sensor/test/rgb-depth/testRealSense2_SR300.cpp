@@ -154,7 +154,7 @@ void getPointcloud(const rs2::depth_frame &depth_frame, std::vector<vpColVector>
   auto vf = depth_frame.as<rs2::video_frame>();
   const int width = vf.get_width();
   const int height = vf.get_height();
-  point_cloud.resize((size_t)(width * height));
+  point_cloud.resize(static_cast<size_t>(width * height));
 
   rs2::pointcloud pc;
   rs2::points points = pc.calculate(depth_frame);
@@ -349,9 +349,9 @@ int main(int argc, char *argv[])
       pointcloud->height = depth_profile.height();
       pointcloud->points.resize(pointcloud_colvector.size());
       for (size_t i = 0; i < pointcloud_colvector.size(); i++) {
-        pointcloud->points[(size_t)i].x = pointcloud_colvector[i][0];
-        pointcloud->points[(size_t)i].y = pointcloud_colvector[i][1];
-        pointcloud->points[(size_t)i].z = pointcloud_colvector[i][2];
+        pointcloud->points[static_cast<size_t>(i)].x = pointcloud_colvector[i][0];
+        pointcloud->points[static_cast<size_t>(i)].y = pointcloud_colvector[i][1];
+        pointcloud->points[static_cast<size_t>(i)].z = pointcloud_colvector[i][2];
       }
 
       update_pointcloud = true;
@@ -569,9 +569,9 @@ int main(int argc, char *argv[])
       pointcloud->height = 480;
       pointcloud->points.resize(pointcloud_colvector.size());
       for (size_t i = 0; i < pointcloud_colvector.size(); i++) {
-        pointcloud->points[(size_t)i].x = pointcloud_colvector[i][0];
-        pointcloud->points[(size_t)i].y = pointcloud_colvector[i][1];
-        pointcloud->points[(size_t)i].z = pointcloud_colvector[i][2];
+        pointcloud->points[static_cast<size_t>(i)].x = pointcloud_colvector[i][0];
+        pointcloud->points[static_cast<size_t>(i)].y = pointcloud_colvector[i][1];
+        pointcloud->points[static_cast<size_t>(i)].z = pointcloud_colvector[i][2];
       }
 
       update_pointcloud = true;

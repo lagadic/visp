@@ -54,12 +54,12 @@ BEGIN_VISP_NAMESPACE
  * Entree :
  * f    Fichier en sortie.
  */
-void skip_cmd(void)
+  void skip_cmd(void)
 {
   int token;
 
   fprintf(stderr, "\n$ ");
-  fwrite(mytext, (size_t)mylength, 1, stderr);
+  fwrite(mytext, static_cast<size_t>(mylength), 1, stderr);
   while ((token = lexecho(stderr, '$')) != T_EOF && token != '$') {
   };
   unlex();

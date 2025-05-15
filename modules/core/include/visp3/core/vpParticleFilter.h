@@ -448,7 +448,6 @@ vpParticleFilter<MeasurementsType>::vpParticleFilter(const unsigned int &N, cons
   else {
     m_nbMaxThreads = nbThreads;
   }
-  omp_set_num_threads(m_nbMaxThreads);
 #endif
   // Generating the random generators
   unsigned int sizeState = static_cast<unsigned int>(stdev.size());
@@ -660,7 +659,8 @@ void vpParticleFilter<MeasurementsType>::predictMultithread(const double &dt, co
 {
   int iam, nt, ipoints, istart, npoints(m_N);
   unsigned int sizeState = m_particles[0].size();
-#pragma omp parallel default(shared) private(iam, nt, ipoints, istart)
+
+#pragma omp parallel default(shared) private(iam, nt, ipoints, istart) num_threads(m_nbMaxThreads)
   {
     iam = omp_get_thread_num();
     nt = omp_get_num_threads();
@@ -712,7 +712,7 @@ void vpParticleFilter<MeasurementsType>::updateMultithread(const MeasurementsTyp
   int iam, nt, ipoints, istart, npoints(m_N);
   vpColVector tempSums(m_nbMaxThreads, 0.0);
   // Compute the weights depending on the likelihood of a particle with regard to the measurements
-#pragma omp parallel default(shared) private(iam, nt, ipoints, istart)
+#pragma omp parallel default(shared) private(iam, nt, ipoints, istart) num_threads(m_nbMaxThreads)
   {
     iam = omp_get_thread_num();
     nt = omp_get_num_threads();

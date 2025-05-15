@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -854,6 +854,13 @@ protected:
 
 #define MBT_JSON_SETTINGS_VERSION "1.0"
 
+#if defined(__clang__)
+// Mute warning : declaration requires an exit-time destructor [-Wexit-time-destructors]
+// message : expanded from macro 'NLOHMANN_JSON_SERIALIZE_ENUM'
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wexit-time-destructors"
+#endif
+
 // Serialize tracker type enumeration
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
 NLOHMANN_JSON_SERIALIZE_ENUM(vpMbGenericTracker::vpTrackerType, {
@@ -870,6 +877,10 @@ NLOHMANN_JSON_SERIALIZE_ENUM(vpMbGenericTracker::vpTrackerType, {
 });
 #endif
 
+#if defined(__clang__)
+#  pragma clang diagnostic pop
+#endif
+
 /**
 * @brief Serialize a tracker wrapper's settings into a JSON representation.
 * \sa from_json for more details on what is serialized
@@ -879,7 +890,7 @@ NLOHMANN_JSON_SERIALIZE_ENUM(vpMbGenericTracker::vpTrackerType, {
 inline void to_json(nlohmann::json &j, const vpMbGenericTracker::TrackerWrapper &t)
 {
   // Common tracker attributes
-  const static std::vector<vpMbGenericTracker::vpTrackerType> trackerTypes = {
+  VP_ATTRIBUTE_NO_DESTROY const static std::vector<vpMbGenericTracker::vpTrackerType> trackerTypes = {
     vpMbGenericTracker::EDGE_TRACKER,
     #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
     vpMbGenericTracker::KLT_TRACKER,

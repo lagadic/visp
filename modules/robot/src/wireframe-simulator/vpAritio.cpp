@@ -57,7 +57,7 @@ BEGIN_VISP_NAMESPACE
  * f    Fichier en sortie.
  * pp    Positionnement a ecrite.
  */
-void fprintf_Position(FILE *f, AritPosition *pp)
+  void fprintf_Position(FILE *f, AritPosition *pp)
 {
   fprintf(f, "%.3f\t%.3f\t%.3f\n%.3f\t%.3f\t%.3f\n%.3f\t%.3f\t%.3f\n", pp->rotate.x, pp->rotate.y, pp->rotate.z,
           pp->scale.x, pp->scale.y, pp->scale.z, pp->translate.x, pp->translate.y, pp->translate.z);
@@ -77,19 +77,19 @@ void fscanf_Point3f(Point3f *pp)
 
   if ((t = lex()) != T_FLOAT && t != T_INT)
     lexerr("start", err_tbl[0], "X", err_tbl[1], NULL);
-  pp->x = (t == T_INT) ? (float)myint : myfloat;
+  pp->x = (t == T_INT) ? static_cast<float>(myint) : myfloat;
 
   /* Lecture de la seconde coordonnee du point.  */
 
   if ((t = lex()) != T_FLOAT && t != T_INT)
     lexerr("start", err_tbl[0], "Y", err_tbl[1], NULL);
-  pp->y = (t == T_INT) ? (float)myint : myfloat;
+  pp->y = (t == T_INT) ? static_cast<float>(myint) : myfloat;
 
   /* Lecture de la troisieme coordonnee du point.  */
 
   if ((t = lex()) != T_FLOAT && t != T_INT)
     lexerr("start", err_tbl[0], "Z", err_tbl[1], NULL);
-  pp->z = (t == T_INT) ? (float)myint : myfloat;
+  pp->z = (t == T_INT) ? static_cast<float>(myint) : myfloat;
 }
 
 /*
@@ -107,19 +107,19 @@ void fscanf_Vector(Vector *vp)
 
   if ((t = lex()) != T_FLOAT && t != T_INT)
     lexerr("start", err_tbl[0], "X", err_tbl[1], NULL);
-  vp->x = (t == T_INT) ? (float)myint : myfloat;
+  vp->x = (t == T_INT) ? static_cast<float>(myint) : myfloat;
 
   /* Lecture de la seconde coordonnee du vecteur.    */
 
   if ((t = lex()) != T_FLOAT && t != T_INT)
     lexerr("start", err_tbl[0], "Y", err_tbl[1], NULL);
-  vp->y = (t == T_INT) ? (float)myint : myfloat;
+  vp->y = (t == T_INT) ? static_cast<float>(myint) : myfloat;
 
   /* Lecture de la troisieme coordonnee du vecteur.  */
 
   if ((t = lex()) != T_FLOAT && t != T_INT)
     lexerr("start", err_tbl[0], "Z", err_tbl[1], NULL);
-  vp->z = (t == T_INT) ? (float)myint : myfloat;
+  vp->z = (t == T_INT) ? static_cast<float>(myint) : myfloat;
 }
 
 /*

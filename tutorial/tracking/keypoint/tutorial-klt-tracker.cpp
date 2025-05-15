@@ -87,7 +87,7 @@ int main(int argc, const char *argv[])
         vpDisplay::displayText(I, 10, 10, "Left click to select a point, right to start tracking", vpColor::red);
         if (vpDisplay::getClick(I, ip, button, false)) {
           if (button == vpMouseButton::button1) {
-            feature.push_back(cv::Point2f((float)ip.get_u(), (float)ip.get_v()));
+            feature.push_back(cv::Point2f(static_cast<float>(ip.get_u()), static_cast<float>(ip.get_v())));
             vpDisplay::displayCross(I, ip, 12, vpColor::green);
           }
         }
@@ -123,7 +123,7 @@ int main(int argc, const char *argv[])
           vpDisplay::displayText(I, 10, 10, "Left click to select a point, right to start tracking", vpColor::red);
           if (vpDisplay::getClick(I, ip, button, false)) {
             if (button == vpMouseButton::button1) {
-              feature.push_back(cv::Point2f((float)ip.get_u(), (float)ip.get_v()));
+              feature.push_back(cv::Point2f(static_cast<float>(ip.get_u()), static_cast<float>(ip.get_v())));
               vpDisplay::displayCross(I, ip, 12, vpColor::green);
             }
           }

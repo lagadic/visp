@@ -616,7 +616,7 @@ void vpNurbs::globalCurveApprox(std::vector<vpImagePoint> &l_crossingPoints, uns
   for (unsigned int k = 0; k <= l_p; k++)
     l_knots.push_back(0.0);
 
-  d = (double)(m + 1) / (double)(l_n - l_p + 1);
+  d = static_cast<double>(m + 1) / static_cast<double>(l_n - l_p + 1);
 
   for (unsigned int j = 1; j <= l_n - l_p; j++) {
     double i = floor(j * d);

@@ -41,6 +41,8 @@
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/detection/vpDetectorFace.h>
 
+bool vpSortLargestFace(cv::Rect rect1, cv::Rect rect2);
+
 bool vpSortLargestFace(cv::Rect rect1, cv::Rect rect2) { return (rect1.area() > rect2.area()); }
 
 BEGIN_VISP_NAMESPACE

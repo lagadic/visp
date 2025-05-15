@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,11 +29,7 @@
  *
  * Description:
  * Le module "arit.c" contient les procedures arithmetiques.
- *
- * Authors:
- * Jean-Luc CORRE
- *
-*****************************************************************************/
+ */
 
 #include "vpArit.h"
 #include "vpMy.h"
@@ -51,7 +46,7 @@ BEGIN_VISP_NAMESPACE
  * fp    Fichier en sortie.
  * m    Matrice a ecrire.
  */
-void fprintf_matrix(FILE *fp, Matrix m)
+  void fprintf_matrix(FILE *fp, Matrix m)
 {
   int i;
 
@@ -282,12 +277,12 @@ float cosin_to_angle(float ca, float sa)
   float a; /* angle a calculer  */
 
   if (FABS(ca) < M_EPSILON) {
-    a = (sa > (float)0.0) ? (float)M_PI_2 : (float)(-M_PI_2);
+    a = (sa > 0.0f) ? static_cast<float>(M_PI_2) : static_cast<float>(-M_PI_2);
   }
   else {
-    a = (float)atan((double)(sa / ca));
-    if (ca < (float)0.0)
-      a += (sa >(float)0.0) ? (float)M_PI : (float)(-M_PI);
+    a = static_cast<float>(atan(static_cast<double>(sa / ca)));
+    if (ca < 0.0f)
+      a += (sa >0.0f) ? static_cast<float>(M_PI) : static_cast<float>(-M_PI);
   }
   return (a);
 }
@@ -306,7 +301,7 @@ void cosin_to_lut(Index level, float *coslut, float *sinlut)
   int i_pi_2 = TWO_POWER(level);
   int quad; /* quadrant courant  */
   double a; /* angle    courant  */
-  double step = M_PI_2 / (double)i_pi_2;
+  double step = M_PI_2 / static_cast<double>(i_pi_2);
 
   quad = 0;
   coslut[quad] = 1.0;
@@ -322,7 +317,7 @@ void cosin_to_lut(Index level, float *coslut, float *sinlut)
   sinlut[quad] = -1.0; /* 3PI/2*/
 
   for (i = 1, a = step; i < i_pi_2; i++, a += step) {
-    float ca = (float)cos(a);
+    float ca = static_cast<float>(cos(a));
     quad = 0;
     coslut[quad + i] = ca; /* cos(a)  */
     quad += i_pi_2;
@@ -351,7 +346,7 @@ float norm_vector(Vector *vp)
 {
   float norm; /* norme du vecteur   */
 
-  if ((norm = (float)sqrt((double)DOT_PRODUCT(*vp, *vp))) > M_EPSILON) {
+  if ((norm = static_cast<float>(sqrt(static_cast<double>(DOT_PRODUCT(*vp, *vp))))) > M_EPSILON) {
     vp->x /= norm;
     vp->y /= norm;
     vp->z /= norm;
@@ -374,9 +369,9 @@ void plane_norme(Vector *np, Point3f *ap, Point3f *bp, Point3f *cp)
 {
   Vector u, v;
 
-  DIF_COORD3(u, *bp, *ap); /* base orthonorme (ap, u, v)  */
-  DIF_COORD3(v, *cp, *ap);
-  norm_vector(&u);
+  DIF_COORD3(u, *bp, *ap) /* base orthonorme (ap, u, v)  */
+    DIF_COORD3(v, *cp, *ap)
+    norm_vector(&u);
   norm_vector(&v);
   CROSS_PRODUCT(*np, u, v);
 }
@@ -458,7 +453,7 @@ void rotate_vector(Vector *vp, float a, Vector *axis)
   Vector n, u, v, cross;
   float f;
 
-  a *= (float)M_PI / (float)180.0; /* passage en radians    */
+  a *= static_cast<float>(M_PI) / 180.0f; /* passage en radians    */
 
   n = *axis; /* norme le vecteur directeur  */
   norm_vector(&n);
@@ -475,18 +470,18 @@ void rotate_vector(Vector *vp, float a, Vector *axis)
    */
   f = DOT_PRODUCT(*vp, n);
   u = n;
-  MUL_COORD3(u, f, f, f); /* (vp.n) * n    */
+  MUL_COORD3(u, f, f, f) /* (vp.n) * n    */
 
-  DIF_COORD3(v, *vp, u); /* calcule "v"    */
+    DIF_COORD3(v, *vp, u) /* calcule "v"    */
 
-  f = (float)cos((double)a);
-  MUL_COORD3(v, f, f, f); /* v * cos(a)    */
+    f = static_cast<float>(cos(static_cast<double>(a)));
+  MUL_COORD3(v, f, f, f) /* v * cos(a)    */
 
-  CROSS_PRODUCT(cross, n, *vp);
-  f = (float)sin((double)a);
-  MUL_COORD3(cross, f, f, f); /* (n^v) * sin(a)  */
+    CROSS_PRODUCT(cross, n, *vp);
+  f = static_cast<float>(sin(static_cast<double>(a)));
+  MUL_COORD3(cross, f, f, f) /* (n^v) * sin(a)  */
 
-  SET_COORD3(*vp, u.x + v.x + cross.x, u.y + v.y + cross.y, u.z + v.z + cross.z);
+    SET_COORD3(*vp, u.x + v.x + cross.x, u.y + v.y + cross.y, u.z + v.z + cross.z)
 }
 
 /*
@@ -530,8 +525,8 @@ void upright_vector(Vector *vp, Vector *up)
 void Matrix_to_Position(Matrix m, AritPosition *pp)
 {
   Matrix_to_Rotate(m, &pp->rotate);
-  SET_COORD3(pp->scale, 1.0, 1.0, 1.0);
-  SET_COORD3(pp->translate, m[3][0], m[3][1], m[3][2]);
+  SET_COORD3(pp->scale, 1.0, 1.0, 1.0)
+    SET_COORD3(pp->translate, m[3][0], m[3][1], m[3][2])
 }
 
 /*
@@ -563,7 +558,7 @@ void Matrix_to_Position(Matrix m, AritPosition *pp)
 void Matrix_to_Rotate(Matrix m, Vector *vp)
 {
   float sy = -m[0][2];
-  float cy = (float)sqrt(1.0 - (double)(sy * sy));
+  float cy = static_cast<float>(sqrt(1.0 - static_cast<double>(sy * sy)));
   float cx, sx;
 
   if (FABS(cy) > M_EPSILON) {
@@ -573,17 +568,17 @@ void Matrix_to_Rotate(Matrix m, Vector *vp)
     sx = m[1][2] / cy;
     cx = m[2][2] / cy;
 
-    SET_COORD3(*vp, cosin_to_angle(cx, sx), cosin_to_angle(cy, sy), cosin_to_angle(cz, sz));
+    SET_COORD3(*vp, cosin_to_angle(cx, sx), cosin_to_angle(cy, sy), cosin_to_angle(cz, sz))
   }
   else { /* RZ = 0 =>  Ry = +/- 90 degres  */
     sx = m[1][1];
     cx = -m[2][1];
 
-    SET_COORD3(*vp, cosin_to_angle(cx, sx), (sy > (float)0.0) ? (float)M_PI_2 : (float)(-M_PI_2), (float)0.0);
+    SET_COORD3(*vp, cosin_to_angle(cx, sx), (sy > 0.0f) ? static_cast<float>(M_PI_2) : static_cast<float>(-M_PI_2), 0.0f)
   }
-  vp->x *= (float)180.0 / (float)M_PI; /* passage en degres  */
-  vp->y *= (float)180.0 / (float)M_PI;
-  vp->z *= (float)180.0 / (float)M_PI;
+  vp->x *= 180.0f / static_cast<float>(M_PI); /* passage en degres  */
+  vp->y *= 180.0f / static_cast<float>(M_PI);
+  vp->z *= 180.0f / static_cast<float>(M_PI);
 }
 
 /*
@@ -624,10 +619,15 @@ void Position_to_Matrix(AritPosition *pp, Matrix m)
  */
 void Rotate_to_Matrix(Vector *vp, Matrix m)
 {
-  float rx = vp->x * (float)M_PI / (float)180.0, /* passage en radians  */
-    ry = vp->y * (float)M_PI / (float)180.0, rz = vp->z * (float)M_PI / (float)180.0;
-  float cx = (float)cos((double)rx), sx = (float)sin((double)rx), cy = (float)cos((double)ry),
-    sy = (float)sin((double)ry), cz = (float)cos((double)rz), sz = (float)sin((double)rz);
+  float rx = vp->x * static_cast<float>(M_PI) / 180.0f;
+  float ry = vp->y * static_cast<float>(M_PI) / 180.0f;
+  float rz = vp->z * static_cast<float>(M_PI) / 180.0f;
+  float cx = static_cast<float>(cos(static_cast<double>(rx)));
+  float sx = static_cast<float>(sin(static_cast<double>(rx)));
+  float cy = static_cast<float>(cos(static_cast<double>(ry)));
+  float sy = static_cast<float>(sin(static_cast<double>(ry)));
+  float cz = static_cast<float>(cos(static_cast<double>(rz)));
+  float sz = static_cast<float>(sin(static_cast<double>(rz)));
 
   m[0][0] = cy * cz;
   m[1][0] = (sx * sy * cz) - (cx * sz);
@@ -678,19 +678,19 @@ void Rotaxis_to_Matrix(float a, Vector *axis, Matrix m)
   Vector conv;  /* verO n  */
   Vector tilde; /* sinO n  */
 
-  a *= (float)M_PI / (float)180.0; /* passage en radians  */
+  a *= static_cast<float>(M_PI) / 180.0f; /* passage en radians  */
 
-  cosa = (float)cos((double)a);
-  sina = (float)sin((double)a);
-  vera = (float)1.0 - cosa;
+  cosa = static_cast<float>(cos(static_cast<double>(a)));
+  sina = static_cast<float>(sin(static_cast<double>(a)));
+  vera = 1.0f - cosa;
 
   n = *axis; /* norme le vecteur directeur  */
   norm_vector(&n);
   tilde = conv = n;
-  MUL_COORD3(conv, vera, vera, vera);
-  MUL_COORD3(tilde, sina, sina, sina);
+  MUL_COORD3(conv, vera, vera, vera)
+    MUL_COORD3(tilde, sina, sina, sina)
 
-  m[0][0] = conv.x * n.x + cosa;
+    m[0][0] = conv.x * n.x + cosa;
   m[0][1] = conv.x * n.y + tilde.z;
   m[0][2] = conv.x * n.z - tilde.y;
 

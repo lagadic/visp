@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,15 +46,6 @@
 #include <limits>    // numeric_limits
 
 BEGIN_VISP_NAMESPACE
-/*!
-  Basic constructor that calls the constructor of the class vpMeTracker.
-*/
-vpMbtMeEllipse::vpMbtMeEllipse() : vpMeEllipse() { }
-
-/*!
-  Copy constructor.
-*/
-vpMbtMeEllipse::vpMbtMeEllipse(const vpMbtMeEllipse &me_ellipse) : vpMeEllipse(me_ellipse) { }
 
 /*!
   Compute the projection error of the ellipse.
@@ -78,7 +69,7 @@ void vpMbtMeEllipse::computeProjectionError(const vpImage<unsigned char> &I, dou
   sumErrorRad = 0;
   nbFeatures = 0;
 
-  double offset = static_cast<double>(std::floor(SobelX.getRows() / 2.0f));
+  double offset = static_cast<double>(std::floor(static_cast<double>(SobelX.getRows()) / 2.0));
   int height = static_cast<int>(I.getHeight());
   int width = static_cast<int>(I.getWidth());
 
@@ -291,7 +282,7 @@ void vpMbtMeEllipse::reSample(const vpImage<unsigned char> &I)
   }
 
   unsigned int n = numberOfSignal();
-  if ((double)n < 0.9 * m_expectedDensity) {
+  if (static_cast<double>(n) < 0.9 * m_expectedDensity) {
     sample(I);
     vpMeTracker::track(I);
   }

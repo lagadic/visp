@@ -328,7 +328,7 @@ vpMatrix vpMatrix::inverseByCholeskyOpenCV() const
   cv::Mat Minv = M.inv(cv::DECOMP_CHOLESKY);
 
   vpMatrix A(rowNum, colNum);
-  memcpy(A.data, Minv.data, (size_t)(8 * Minv.rows * Minv.cols));
+  memcpy(A.data, Minv.data, static_cast<size_t>(8 * Minv.rows * Minv.cols));
 
   return A;
 }
@@ -342,14 +342,14 @@ vpMatrix vpMatrix::inverseByCholeskyOpenCV() const
 vpMatrix vpMatrix::choleskyByOpenCV() const
 {
   cv::Mat M(rowNum, colNum, CV_64F);
-  memcpy(M.data, this->data, (size_t)(8 * M.rows * M.cols));
+  memcpy(M.data, this->data, static_cast<size_t>(8 * M.rows * M.cols));
   std::size_t bytes_per_row = sizeof(double)*rowNum;
   bool result = cv::Cholesky(M.ptr<double>(), bytes_per_row, rowNum, nullptr, bytes_per_row, rowNum);
   if (!result) {
     throw(vpMatrixException(vpMatrixException::fatalError, "Could not compute the Cholesky's decomposition of the input matrix."));
   }
   vpMatrix L(rowNum, colNum);
-  memcpy(L.data, M.data, (size_t)(8 * M.rows * M.cols));
+  memcpy(L.data, M.data, static_cast<size_t>(8 * M.rows * M.cols));
   // Make sure that the upper part of L is null
   unsigned int nbRows = this->getRows();
   unsigned int nbCols = this->getCols();

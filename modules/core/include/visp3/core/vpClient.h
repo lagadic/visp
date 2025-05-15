@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +31,8 @@
  * TCP Client
  */
 
-#ifndef vpClient_H
-#define vpClient_H
+#ifndef VP_CLIENT_H
+#define VP_CLIENT_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
@@ -173,8 +173,17 @@ private:
 
 public:
   vpClient();
+  vpClient(const vpClient &client) : vpNetwork(client)
+  {
+    *this = client;
+  }
   virtual ~vpClient() VP_OVERRIDE;
 
+  vpClient &operator=(const vpClient &client)
+  {
+    m_numberOfAttempts = client.m_numberOfAttempts;
+    return *this;
+  }
   bool connectToHostname(const std::string &hostname, const unsigned int &port_serv);
   bool connectToIP(const std::string &ip, const unsigned int &port_serv);
 

@@ -43,6 +43,11 @@
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
+bool equal(const vpArray2D<double> &a1, const vpArray2D<double> &a2, double epsilon);
+bool equal(const vpRotationVector &a1, const vpRotationVector &a2, double epsilon);
+bool equal(const vpColVector &a1, const vpColVector &a2, double epsilon);
+bool equal(const vpRowVector &a1, const vpRowVector &a2, double epsilon);
+
 bool equal(const vpArray2D<double> &a1, const vpArray2D<double> &a2, double epsilon)
 {
   if (a1.size() != a2.size()) {

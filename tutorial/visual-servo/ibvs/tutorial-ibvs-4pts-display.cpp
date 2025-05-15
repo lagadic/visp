@@ -14,7 +14,7 @@ using namespace VISP_NAMESPACE_NAME;
 void display_trajectory(const vpImage<unsigned char> &I, std::vector<vpPoint> &point, const vpHomogeneousMatrix &cMo,
                         const vpCameraParameters &cam)
 {
-  static std::vector<vpImagePoint> traj[4];
+  VP_ATTRIBUTE_NO_DESTROY static std::vector<vpImagePoint> traj[4];
   vpImagePoint cog;
   for (unsigned int i = 0; i < 4; i++) {
     // Project the point at the given camera position

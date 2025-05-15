@@ -125,12 +125,10 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
     case 'h':
       usage(argv[0], nullptr);
       return false;
-      break;
 
     default:
       usage(argv[0], optarg_);
       return false;
-      break;
     }
   }
 
@@ -195,7 +193,7 @@ int main(int argc, const char **argv)
     d2.init(I_color, I.getWidth(), 0, "Color image");
     // Create colormap
     for (unsigned int i = 0; i < I_color.getHeight(); i++) {
-      double hue = i / (double)I_color.getHeight(), saturation = 1.0, value = 1.0;
+      double hue = i / static_cast<double>(I_color.getHeight()), saturation = 1.0, value = 1.0;
       unsigned char rgb[3];
       vpImageConvert::HSVToRGB(&hue, &saturation, &value, rgb, 1);
 

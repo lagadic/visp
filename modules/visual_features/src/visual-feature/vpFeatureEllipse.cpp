@@ -340,9 +340,11 @@ void vpFeatureEllipse::setABC(double a, double b, double c)
 
 /*!
  * Update visual features corresponding to the second order centered moments of the ellipse normalized
- * by its area (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments
+ * by its area (i.e., such that \f$ n_{ij} = \mu_{ij}/a \f$ where \f$ \mu_{ij} \f$ are the centered moments
  * and a the area).
- * \param n20, n11, n02: Second order centered moments.
+ * \param n20 : Second order centered moment \f$ n_{20} \f$.
+ * \param n11 : Second order centered moment \f$ n_{11} \f$.
+ * \param n02 : Second order centered moment \f$ n_{02} \f$.
  */
 void vpFeatureEllipse::setMoments(double n20, double n11, double n02)
 {
@@ -358,7 +360,7 @@ void vpFeatureEllipse::setMoments(double n20, double n11, double n02)
  * \deprecated You should rather use setMoments().
  * This function and its parameters are incorrectly named and are confusing since this function
  * is waiting for second order centered moments of the ellipse normalized
- * by its area that corresponds to \f$n_{ij} = \mu_{ij}/a\f$.
+ * by its area that corresponds to \f$ n_{ij} = \mu_{ij}/a \f$.
  */
 void vpFeatureEllipse::setMu(double mu20, double mu11, double mu02) { setMoments(mu20, mu11, mu02); }
 #endif

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,6 +41,9 @@
 
 // ViSP include
 #include <visp3/core/vpConfig.h>
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#include <visp3/core/vpHSV.h>
+#endif
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageFilter.h>
 #include <visp3/core/vpRGBa.h>
@@ -91,13 +94,25 @@ public:
    * \param[in] filteringType : The filtering and gradient operators to apply to the image before the edge detection
    * operation.
    * \param[in] storeEdgePoints : If true, the list of edge-points will be available using
+   * \param[in] nbThread : Number of thread to use. -1 to let the program choose.
    * \b vpCannyEdgeDetection::getEdgePointsList().
    */
   vpCannyEdgeDetection(const int &gaussianKernelSize, const float &gaussianStdev, const unsigned int &sobelAperture,
                        const float &lowerThreshold = -1.f, const float &upperThreshold = -1.f,
                        const float &lowerThresholdRatio = 0.6f, const float &upperThresholdRatio = 0.8f,
                        const vpImageFilter::vpCannyFilteringAndGradientType &filteringType = vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING,
-                       const bool &storeEdgePoints = false);
+                       const bool &storeEdgePoints = false, const int &nbThread = -1);
+
+  /**
+   * \brief Reinitialize the detector:
+   * - compute the number of threads to use if applicable
+   * - initialize the Gaussian filters
+   * - initialize the derivative filters
+   * - forget the mask (but do not alter the memory)
+   * - forget GIx and GIy (but do not alter the memory)
+   * - delete previous results
+   */
+  void reinit();
 
   // // Configuration from files
 #ifdef VISP_HAVE_NLOHMANN_JSON
@@ -161,6 +176,38 @@ public:
    * \return vpImage<unsigned char> 255 means an edge, 0 means not an edge.
    */
   vpImage<unsigned char> detect(const vpImage<vpRGBa> &I_color);
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  template <typename ArithmeticType, bool useFullScale>
+  vpImage<unsigned char> detect(const vpImage<vpHSV<ArithmeticType, useFullScale>> &Ihsv)
+  {
+    // // Step 1 and 2: filter the image and compute the gradient, if not given by the user
+    if (!m_areGradientAvailable) {
+      vpImage<vpHSV<ArithmeticType, useFullScale>> Iblur;
+      vpImageFilter::gaussianBlur(Ihsv, Iblur, m_gaussianKernelSize, m_gaussianStdev, true, mp_mask);
+      vpImageFilter::gradientFilter(Iblur, m_dIx, m_dIy, m_nbThread, mp_mask, m_filteringAndGradientType);
+    }
+    m_areGradientAvailable = false; // Reset for next call
+
+    // // Step 3: edge thining
+    float upperThreshold = m_upperThreshold;
+    float lowerThreshold = m_lowerThreshold;
+    if (upperThreshold < 0) {
+      upperThreshold = vpImageFilter::computeCannyThreshold(Ihsv, lowerThreshold, &m_dIx, &m_dIy, m_gaussianKernelSize,
+                                                            m_gaussianStdev, m_lowerThresholdRatio,
+                                                            m_upperThresholdRatio, m_filteringAndGradientType, mp_mask);
+    }
+    else if (m_lowerThreshold < 0) {
+      // Applying Canny recommendation to have the upper threshold 3 times greater than the lower threshold.
+      lowerThreshold = m_upperThreshold / 3.f;
+    }
+    // To ensure that if lowerThreshold = 0, we reject null gradient points
+    lowerThreshold = std::max<float>(lowerThreshold, std::numeric_limits<float>::epsilon());
+
+    step3to5(Ihsv.getHeight(), Ihsv.getWidth(), lowerThreshold, upperThreshold);
+    return m_edgeMap;
+  }
+#endif
 
   /**
    * \brief Detect the edges in a gray-scale image.
@@ -307,12 +354,26 @@ public:
   }
 #endif
 
-/**
- * \brief If set to true, the list of the detected edge-points will be available
- * calling the method \b vpCannyEdgeDetection::getEdgePointsList().
- *
- * \param[in] storeEdgePoints The new desired status.
- */
+  inline void setNbThread(const int &maxNbThread)
+  {
+#ifdef VISP_HAVE_OPENMP
+    int nbThread = maxNbThread;
+    if (nbThread < 0) {
+      nbThread = omp_get_max_threads();
+    }
+    m_nbThread = nbThread;
+#else
+    (void)maxNbThread;
+    m_nbThread = 1;
+    std::cout << "[WARNING] OpenMP is not available, setting the number of threads is ignored." << std::endl;
+#endif
+  }
+  /**
+   * \brief If set to true, the list of the detected edge-points will be available
+   * calling the method \b vpCannyEdgeDetection::getEdgePointsList().
+   *
+   * \param[in] storeEdgePoints The new desired status.
+   */
   inline void setStoreEdgePoints(const bool &storeEdgePoints)
   {
     m_storeListEdgePoints = storeEdgePoints;
@@ -326,7 +387,7 @@ public:
    *
    * \return std::vector<vpImagePoint> The edge-points list.
    */
-  inline std::vector<vpImagePoint> getEdgePointsList() const
+  inline const std::vector<vpImagePoint> &getEdgePointsList() const
   {
     if (!m_storeListEdgePoints) {
       throw(vpException(vpException::fatalError, "Asking for the edge-points list while not asking to store it"));
@@ -355,6 +416,35 @@ public:
   }
 #endif
 
+  /**
+   * \brief Get the horizontal gradient.
+   *
+   * \return const vpImage<float>& GIx
+   */
+  const vpImage<float> &getGIx() const
+  {
+    return m_dIx;
+  }
+
+  /**
+   * \brief Get the vertical gradient.
+   *
+   * \return const vpImage<float>& GIy
+   */
+  const vpImage<float> &getGIy() const
+  {
+    return m_dIy;
+  }
+
+  /**
+   * \brief Get the final edge-map.
+   *
+   * \return const vpImage<float>& The edge-map
+   */
+  const vpImage<unsigned char> &getEdgeMap() const
+  {
+    return m_edgeMap;
+  }
 
   //@}
 private:
@@ -362,12 +452,15 @@ private:
   {
     STRONG_EDGE, /*!< This pixel exceeds the upper threshold of the double hysteresis phase, it is thus for sure an edge point.*/
     WEAK_EDGE,/*!< This pixel is between the lower and upper threshold of the double hysteresis phase, it is an edge point only if it is linked at some point to an edge point.*/
-    ON_CHECK /*!< This pixel is currently tested to know if it is linked to a strong edge point.*/
+    ON_CHECK, /*!< This pixel is currently tested to know if it is linked to a strong edge point.*/
+    NOT_EDGE /*!< This pixel is surely not an edge.*/
   } EdgeType;
 
   // Filtering + gradient methods choice
   vpImageFilter::vpCannyFilteringAndGradientType m_filteringAndGradientType; /*!< Choice of the filter and
       gradient operator to apply before the edge detection step*/
+
+  int m_nbThread; /*!< Number of threads to use.*/
 
   // // Gaussian smoothing attributes
   int m_gaussianKernelSize; /*!< Size of the Gaussian filter kernel used to smooth the input image. Must be an odd number.*/
@@ -383,7 +476,7 @@ private:
   vpImage<float> m_dIy; /*!< Y-axis gradient.*/
 
   // // Edge thining attributes
-  std::map<std::pair<unsigned int, unsigned int>, float> m_edgeCandidateAndGradient; /*!< Map that contains point image coordinates and corresponding gradient value.*/
+  std::vector<std::pair<unsigned int, float> > m_edgeCandidateAndGradient; /*!< Map that contains point image coordinates and corresponding gradient value.*/
 
   // // Hysteresis thresholding attributes
   float m_lowerThreshold; /*!< Lower threshold for the hysteresis step. If negative, it will be deduced
@@ -399,18 +492,19 @@ private:
   rlim_t m_minStackSize; /*!< Minimum stack size, due to the recursivity used in this step of the algorithm.*/
 #endif
   bool m_storeListEdgePoints; /*!< If true, the vector \b m_edgePointsList will contain the list of the edge points resulting from the whole algorithm.*/
-  std::map<std::pair<unsigned int, unsigned int>, EdgeType> m_edgePointsCandidates; /*!< Map that contains the strong edge points, i.e. the points for which we know for sure they are edge points,
+  std::vector<unsigned int> m_activeEdgeCandidates; /*!< Vector that contains only the IDs of the edge candidates.*/
+  static vpImage<EdgeType> m_edgePointsCandidates; /*!< Map that contains the strong edge points, i.e. the points for which we know for sure they are edge points,
                                                 and the weak edge points, i.e. the points for which we still must determine if they are actual edge points.*/
   vpImage<unsigned char> m_edgeMap; /*!< Final edge map that results from the whole Canny algorithm.*/
   std::vector<vpImagePoint> m_edgePointsList; /*!< List of the edge points that belong to the final edge map.*/
   const vpImage<bool> *mp_mask; /*!< Mask that permits to consider only the pixels for which the mask is true.*/
 
-  float getGradientOrientation(const vpImage<float> &dIx, const vpImage<float> &dIy, const int &row, const int &col);
+  float getGradientOrientation(const vpImage<float> &dIx, const vpImage<float> &dIy, const int &iter);
 
-  void getInterpolWeightsAndOffsets(const float &gradientOrientation, float &alpha, float &beta,
+  void getInterpolWeightsAndOffsets(const float &gradientOrientation, float &alpha, float &beta, const int &nbCols,
                                     int &dRowGradAlpha, int &dRowGradBeta, int &dColGradAlpha, int &dColGradBeta);
 
-  float getManhattanGradient(const vpImage<float> &dIx, const vpImage<float> &dIy, const int &row, const int &col);
+  float getManhattanGradient(const vpImage<float> &dIx, const vpImage<float> &dIy, const int &iter);
 
   /** @name Constructors and initialization */
   //@{
@@ -433,6 +527,17 @@ private:
    * \param[in] I : The image we want to compute the gradients.
    */
   void computeFilteringAndGradient(const vpImage<unsigned char> &I);
+
+  /**
+   * \brief Perform the steps:
+   * * 3 := edge-thining
+   * * 4 := hysteresis thresholding
+   * * 5 := edge tracking
+   *
+   * \param[in] lowerThreshold The lower threshold for the hysteresis thresholding.
+   * \param[in] upperThreshold The upper threshold for the hysteresis thresholding.
+   */
+  void step3to5(const unsigned int &height, const unsigned int &width, const float &lowerThreshold, const float &upperThreshold);
 
   /**
    * \brief Step 3: Edge thining.
@@ -465,7 +570,7 @@ private:
    * \return true We found a strong edge point in its 8-connected neighborhood.
    * \return false We did not found a strong edge point in its 8-connected neighborhood.
    */
-  bool recursiveSearchForStrongEdge(const std::pair<unsigned int, unsigned int> &coordinates);
+  bool recursiveSearchForStrongEdge(const unsigned int &coordinates);
 
   /**
    * \brief Perform edge tracking.
@@ -476,5 +581,40 @@ private:
   void performEdgeTracking();
   //@}
 };
+
+#ifdef VISP_HAVE_NLOHMANN_JSON
+inline void from_json(const nlohmann::json &j, vpCannyEdgeDetection &detector)
+{
+  std::string filteringAndGradientName = vpImageFilter::vpCannyFiltAndGradTypeToStr(detector.m_filteringAndGradientType);
+  filteringAndGradientName = j.value("filteringAndGradientType", filteringAndGradientName);
+  detector.m_filteringAndGradientType = vpImageFilter::vpCannyFiltAndGradTypeFromStr(filteringAndGradientName);
+  detector.m_gaussianKernelSize = j.value("gaussianSize", detector.m_gaussianKernelSize);
+  detector.m_gaussianStdev = j.value("gaussianStdev", detector.m_gaussianStdev);
+  detector.m_lowerThreshold = j.value("lowerThreshold", detector.m_lowerThreshold);
+  detector.m_lowerThresholdRatio = j.value("lowerThresholdRatio", detector.m_lowerThresholdRatio);
+  detector.m_gradientFilterKernelSize = j.value("gradientFilterKernelSize", detector.m_gradientFilterKernelSize);
+  detector.m_upperThreshold = j.value("upperThreshold", detector.m_upperThreshold);
+  detector.m_upperThresholdRatio = j.value("upperThresholdRatio", detector.m_upperThresholdRatio);
+  detector.m_nbThread = j.value("nbThread", detector.m_nbThread);
+  detector.reinit();
+}
+
+inline void to_json(nlohmann::json &j, const vpCannyEdgeDetection &detector)
+{
+  std::string filteringAndGradientName = vpImageFilter::vpCannyFiltAndGradTypeToStr(detector.m_filteringAndGradientType);
+  j = nlohmann::json {
+          {"filteringAndGradientType", filteringAndGradientName},
+          {"gaussianSize", detector.m_gaussianKernelSize},
+          {"gaussianStdev", detector.m_gaussianStdev},
+          {"lowerThreshold", detector.m_lowerThreshold},
+          {"lowerThresholdRatio", detector.m_lowerThresholdRatio},
+          {"gradientFilterKernelSize", detector.m_gradientFilterKernelSize},
+          {"upperThreshold", detector.m_upperThreshold},
+          {"upperThresholdRatio", detector.m_upperThresholdRatio},
+          {"nbThread", detector.m_nbThread}
+  };
+}
+#endif
+
 END_VISP_NAMESPACE
 #endif

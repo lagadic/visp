@@ -16,7 +16,13 @@ extern "C" {
   using namespace VISP_NAMESPACE_NAME;
 #endif
 
-// Java Method:    VpImageRGBa()
+#if defined(__clang__)
+// Mute warning : identifier 'Java_org_visp_core_VpImageRGBa_n_1VpImageRGBa__II' is reserved because it contains '__' [-Wreserved-identifier]
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wreserved-identifier"
+#endif
+
+  // Java Method:    VpImageRGBa()
   JNIEXPORT jlong JNICALL Java_org_visp_core_VpImageRGBa_n_1VpImageRGBa__(JNIEnv *env, jclass, jstring type)
   {
     (void)env;
@@ -46,7 +52,7 @@ extern "C" {
   {
     jbyte *array = env->GetByteArrayElements(arr, nullptr);
 
-    return (jlong) new vpImage<vpRGBa>((vpRGBa *const)array, (const unsigned int)h, (const unsigned int)w, copyData);
+    return (jlong) new vpImage<vpRGBa>((vpRGBa *)array, static_cast<unsigned int>(h), static_cast<unsigned int>(w), copyData);
 
     // be memory friendly
     env->ReleaseByteArrayElements(arr, array, 0);
@@ -97,5 +103,9 @@ extern "C" {
     ss << *me;
     return env->NewStringUTF(ss.str().c_str());
   }
+
+#if defined(__clang__)
+#  pragma clang diagnostic pop
+#endif
 
 } // extern "C"

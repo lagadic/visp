@@ -269,7 +269,6 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_all
     case 'h':
       usage(argv[0], nullptr, warp_type, tracker_type, last_frame, threshold_residual);
       return false;
-      break;
     case 'i':
       ipath = optarg_;
       break;
@@ -298,7 +297,6 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_all
     default:
       usage(argv[0], optarg_, warp_type, tracker_type, last_frame, threshold_residual);
       return false;
-      break;
     }
   }
 

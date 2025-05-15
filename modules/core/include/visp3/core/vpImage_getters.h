@@ -856,6 +856,7 @@ template <class Type> double vpImage<Type>::getStdev(const double &mean, const v
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 /*!
+* \relates vpImage
 * \brief Return the standard deviation of the bitmap
 *
 * - For a vpRGBa or a vpRGBf image, we compute the standard deviation as follow:
@@ -908,6 +909,7 @@ template <> inline double vpImage<vpRGBa>::getStdev(const double &mean, const vp
 }
 
 /*!
+* \relates vpImage
 * \brief Return the standard deviation of the bitmap
 *
 * - For a vpRGBa or a vpRGBf image, we compute the standard deviation as follow:
@@ -1010,6 +1012,7 @@ template <class Type> inline double vpImage<Type>::getSum(const vpImage<bool> *p
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 /**
+ * \relates vpImage
  * \brief Compute the sum of image intensities.
  * - For unary image types (unsigned char, float, double), compute the sum of image intensities.
  * - For vpRGBa image type, compute the sum (R+G+B) of image intensities.
@@ -1052,6 +1055,7 @@ template <> inline double vpImage<vpRGBa>::getSum(const vpImage<bool> *p_mask, u
 }
 
 /**
+ * \relates vpImage
  * \brief Compute the sum of image intensities.
  * - For unary image types (unsigned char, float, double), compute the sum of image intensities.
  * - For vpRGBa image type, compute the sum (R+G+B) of image intensities.

@@ -41,13 +41,14 @@
 #ifndef VP_IMAGE_TOOLS_H
 #define VP_IMAGE_TOOLS_H
 
-#include <visp3/core/vpImage.h>
-
 #ifdef VISP_HAVE_THREADS
 #include <thread>
 #endif
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpHSV.h>
+#include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageException.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpRect.h>
@@ -127,13 +128,197 @@ public:
   static void imageSubtract(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                             vpImage<unsigned char> &Ires, bool saturate = false);
 
-  static int inMask(const vpImage<unsigned char> &I, const vpImage<unsigned char> &mask, vpImage<unsigned char> &I_mask);
-  static int inMask(const vpImage<vpRGBa> &I, const vpImage<unsigned char> &mask, vpImage<vpRGBa> &I_mask);
+  /*!
+  * Keep the part of an image that is in the mask.
+  * \param[in] I : Input image.
+  * \param[in] mask : Mask where pixels to consider have value equal to true.
+  * \param[out] I_mask : Resulting image where pixels that are in the mask are kept.
+  * \return The number of pixels that are in the mask.
+  */
+  inline static int inMask(const vpImage<vpRGBa> &I, const vpImage<bool> &mask, vpImage<vpRGBa> &I_mask)
+  {
+    return inMask(I, mask, I_mask, true, vpRGBa(0, 0, 0));
+  }
+
+  /*!
+  * Keep the part of an image that is in the mask.
+  * \param[in] I : Input image.
+  * \param[in] mask : Mask where pixels to consider have values that differ from 0.
+  * \param[out] I_mask : Resulting image where pixels that are in the mask are kept.
+  * \return The number of pixels that are in the mask.
+  */
+  inline static int inMask(const vpImage<vpRGBa> &I, const vpImage<unsigned char> &mask, vpImage<vpRGBa> &I_mask)
+  {
+    const unsigned char inRangeVal = 255;
+    return inMask(I, mask, I_mask, inRangeVal, vpRGBa(0, 0, 0));
+  }
+
+  /*!
+  * Keep the part of an image that is in the mask.
+  * \param[in] I : Input image.
+  * \param[in] mask : Mask where pixels to consider have value equal to true.
+  * \param[out] I_mask : Resulting image where pixels that are in the mask are kept.
+  * \return The number of pixels that are in the mask.
+  */
+  inline static int inMask(const vpImage<unsigned char> &I, const vpImage<bool> &mask, vpImage<unsigned char> &I_mask)
+  {
+    return inMask(I, mask, I_mask, true, static_cast<unsigned char>(0));
+  }
+
+  /*!
+  * Keep the part of an image that is in the mask.
+  * \param[in] I : Input image.
+  * \param[in] mask : Mask where pixels to consider have values that differ from 0.
+  * \param[out] I_mask : Resulting image where pixels that are in the mask are kept.
+  * \return The number of pixels that are in the mask.
+  */
+  inline static int inMask(const vpImage<unsigned char> &I, const vpImage<unsigned char> &mask, vpImage<unsigned char> &I_mask)
+  {
+    const unsigned char inRangeVal = 255;
+    return inMask(I, mask, I_mask, inRangeVal, static_cast<unsigned char>(0));
+  }
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+/*!
+  * Keep the part of an image that is in the mask.
+  * \param[in] I : Input image.
+  * \param[in] mask : Mask where pixels to consider have value equal to true.
+  * \param[out] I_mask : Resulting image where pixels that are in the mask are kept.
+  * \return The number of pixels that are in the mask.
+  */
+  template <typename ArithmeticType, bool useFullScale>
+  inline static int inMask(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, const vpImage<bool> &mask, vpImage<vpHSV<ArithmeticType, useFullScale>> &I_mask)
+  {
+    vpHSV<ArithmeticType, useFullScale> black(static_cast<ArithmeticType>(0), static_cast<ArithmeticType>(0), static_cast<ArithmeticType>(0));
+    return inMask(I, mask, I_mask, true, black);
+  }
+
+  /*!
+  * Keep the part of an image that is in the mask.
+  * \param[in] I : Input image.
+  * \param[in] mask : Mask where pixels to consider have values that differ from 0.
+  * \param[out] I_mask : Resulting image where pixels that are in the mask are kept.
+  * \return The number of pixels that are in the mask.
+  */
+  template <typename ArithmeticType, bool useFullScale>
+  inline static int inMask(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, const vpImage<unsigned char> &mask, vpImage<vpHSV<ArithmeticType, useFullScale>> &I_mask)
+  {
+    const unsigned char inRangeVal = 255;
+    vpHSV<ArithmeticType, useFullScale> black(static_cast<ArithmeticType>(0), static_cast<ArithmeticType>(0), static_cast<ArithmeticType>(0));
+    return inMask(I, mask, I_mask, inRangeVal, black);
+  }
+#endif
 
   static int inRange(const unsigned char *hue, const unsigned char *saturation, const unsigned char *value,
                      const vpColVector &hsv_range, unsigned char *mask, unsigned int size);
   static int inRange(const unsigned char *hue, const unsigned char *saturation, const unsigned char *value,
                      const std::vector<int> &hsv_range, unsigned char *mask, unsigned int size);
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  /**
+   * \brief Create binary mask by checking if HSV (hue, saturation, value) channels lie between low and high HSV thresholds.
+   *
+   * \tparam ArithmeticType The arithmetic type used to encode the Hue, Saturation and Value channels.
+   * \tparam useFullScale If ArithmeticType is unsigned char, true means that Hue is encoded on the full
+   * range [0;255] and false means it is encoded in a limited range as defined in the vpHSV documentation.
+   * \tparam RangeType The arithmetic type used to encode the ranges. Be careful that the validity of the range values is
+   * not checked.
+   * \param[in] Iin The input image.
+   * \param[in] hsv_range 6-dim vector that contains the low/high range values for each HSV channel respectively.
+   * Each element of this vector should be in the range defined by the ArithmeticType and useFullRange template parameters.
+   * Note that there is also tutorial-hsv-tuner.cpp that may help to determine low/high HSV values.
+   * \param[in] out The output mask encoded as booleans. True means that the pixel is in range and false that it
+   * is not in range.
+   * \return int The number of pixels that are in the HSV range.
+   */
+  template <typename ArithmeticType, bool useFullScale, typename RangeType>
+  static int inRange(const vpImage<vpHSV<ArithmeticType, useFullScale>> &Iin,
+                      const std::vector<RangeType> &hsv_range, vpImage<bool> &out)
+  {
+    return inRange(Iin, hsv_range, out, true, false);
+  }
+
+  /**
+   * \brief Create binary mask by checking if HSV (hue, saturation, value) channels lie between low and high HSV thresholds.
+   *
+   * \tparam ArithmeticType The arithmetic type used to encode the Hue, Saturation and Value channels.
+   * \tparam useFullScale If ArithmeticType is unsigned char, true means that Hue is encoded on the full
+   * range [0;255] and false means it is encoded in a limited range as defined in the vpHSV documentation.
+   * \tparam RangeType The arithmetic type used to encode the ranges. Be careful that the validity of the range values is
+   * not checked.
+   * \param[in] Iin The input image.
+   * \param[in] hsv_range 6-dim vector that contains the low/high range values for each HSV channel respectively.
+   * Each element of this vector should be in the range defined by the ArithmeticType and useFullRange template parameters.
+   * Note that there is also tutorial-hsv-tuner.cpp that may help to determine low/high HSV values.
+   * \param[in] out The output mask encoded as unsigned char. 255 means that the pixel is in range and 0 that it
+   * is not in range.
+   * \return int The number of pixels that are in the HSV range.
+   */
+  template <typename ArithmeticType, bool useFullScale, typename RangeType>
+  static int inRange(const vpImage<vpHSV<ArithmeticType, useFullScale>> &Iin,
+                      const std::vector<RangeType> &hsv_range, vpImage<unsigned char> &out)
+  {
+    const unsigned char inRangeVal = 255;
+    return inRange(Iin, hsv_range, out, inRangeVal, static_cast<unsigned char>(0));
+  }
+
+  /**
+   * \brief Create binary mask by checking if HSV (hue, saturation, value) channels lie between low and high HSV thresholds.
+   *
+   * \tparam ArithmeticType The arithmetic type used to encode the Hue, Saturation and Value channels.
+   * \tparam useFullScale If ArithmeticType is unsigned char, true means that Hue is encoded on the full
+   * range [0;255] and false means it is encoded in a limited range as defined in the vpHSV documentation.
+   * \param[in] Iin The input image.
+   * \param[in] hsv_range 6-dim vector that contains the low/high range values for each HSV channel respectively.
+   * Each element of this vector should be in the range defined by the ArithmeticType and useFullRange template parameters.
+   * Note that there is also tutorial-hsv-tuner.cpp that may help to determine low/high HSV values.
+   * \warning The range values will be converted in ArithmeticType without checking the validity of the values.
+   * \param[in] out The output mask encoded as booleans. True means that the pixel is in range and false that it
+   * is not in range.
+   * \return int The number of pixels that are in the HSV range.
+   */
+  template <typename ArithmeticType, bool useFullScale>
+  static int inRange(const vpImage<vpHSV<ArithmeticType, useFullScale>> &Iin,
+                      const vpColVector &hsv_range, vpImage<bool> &out)
+  {
+    const unsigned int nbItems = hsv_range.getRows();
+    std::vector<ArithmeticType> range(nbItems);
+    for (unsigned int r = 0; r < nbItems; ++r) {
+      range[r] = static_cast<ArithmeticType>(hsv_range[r]);
+    }
+    return inRange(Iin, range, out, true, false);
+  }
+
+  /**
+   * \brief Create binary mask by checking if HSV (hue, saturation, value) channels lie between low and high HSV thresholds.
+   *
+   * \tparam ArithmeticType The arithmetic type used to encode the Hue, Saturation and Value channels.
+   * \tparam useFullScale If ArithmeticType is unsigned char, true means that Hue is encoded on the full
+   * range [0;255] and false means it is encoded in a limited range as defined in the vpHSV documentation.
+   * \param[in] Iin The input image.
+   * \param[in] hsv_range 6-dim vector that contains the low/high range values for each HSV channel respectively.
+   * Each element of this vector should be in the range defined by the ArithmeticType and useFullRange template parameters.
+   * Note that there is also tutorial-hsv-tuner.cpp that may help to determine low/high HSV values.
+   * \warning The range values will be converted in ArithmeticType without checking the validity of the values.
+   * \param[in] out The output mask encoded as unsigned char. 255 means that the pixel is in range and 0 that it
+   * is not in range.
+   * \return int The number of pixels that are in the HSV range.
+   */
+  template <typename ArithmeticType, bool useFullScale>
+  static int inRange(const vpImage<vpHSV<ArithmeticType, useFullScale>> &Iin,
+                      const vpColVector &hsv_range, vpImage<unsigned char> &out)
+  {
+    const unsigned char inRangeVal = 255;
+    const unsigned int nbItems = hsv_range.getRows();
+    std::vector<ArithmeticType> range(nbItems);
+    for (unsigned int r = 0; r < nbItems; ++r) {
+      range[r] = static_cast<ArithmeticType>(hsv_range[r]);
+    }
+    return inRange(Iin, range, out, inRangeVal, static_cast<unsigned char>(0));
+  }
+#endif
+
+
+
   static void initUndistortMap(const vpCameraParameters &cam, unsigned int width, unsigned int height,
                                vpArray2D<int> &mapU, vpArray2D<int> &mapV, vpArray2D<float> &mapDu,
                                vpArray2D<float> &mapDv);
@@ -238,6 +423,81 @@ private:
   static bool checkFixedPoint(unsigned int x, unsigned int y, const vpMatrix &T, bool affine);
 
   static void warpLinearFixedPointNotCenter(const vpImage<vpRGBa> &src, const vpMatrix &T, vpImage<vpRGBa> &dst, bool affine);
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  template <typename ArithmeticType, bool useFullScale, typename RangeType, typename OutType>
+  static int inRange(const vpImage<vpHSV<ArithmeticType, useFullScale>> &Iin,
+                      const std::vector<RangeType> &hsv_range, vpImage<OutType> &mask, const OutType &valueInRange, const OutType &valueOutRange)
+  {
+    const std::size_t val_6 = 6;
+    if (hsv_range.size() != val_6) {
+      throw(vpImageException(vpImageException::notInitializedError,
+                             "Error in vpImageTools::inRange(): wrong values vector size (%d)", hsv_range.size()));
+    }
+    const unsigned int index_0 = 0;
+    const unsigned int index_1 = 1;
+    const unsigned int index_2 = 2;
+    const unsigned int index_3 = 3;
+    const unsigned int index_4 = 4;
+    const unsigned int index_5 = 5;
+    ArithmeticType h_low = static_cast<ArithmeticType>(hsv_range[index_0]);
+    ArithmeticType h_high = static_cast<ArithmeticType>(hsv_range[index_1]);
+    ArithmeticType s_low = static_cast<ArithmeticType>(hsv_range[index_2]);
+    ArithmeticType s_high = static_cast<ArithmeticType>(hsv_range[index_3]);
+    ArithmeticType v_low = static_cast<ArithmeticType>(hsv_range[index_4]);
+    ArithmeticType v_high = static_cast<ArithmeticType>(hsv_range[index_5]);
+    int size_ = Iin.getSize();
+    mask.resize(Iin.getRows(), Iin.getCols());
+    int cpt_in_range = 0;
+
+#if defined(VISP_HAVE_OPENMP)
+#pragma omp parallel for reduction(+:cpt_in_range)
+#endif
+    for (int i = 0; i < size_; ++i) {
+      bool check_h_low_high_hue = (h_low <= Iin.bitmap[i].H) && (Iin.bitmap[i].H <= h_high);
+      bool check_s_low_high_saturation = (s_low <= Iin.bitmap[i].S) && (Iin.bitmap[i].S <= s_high);
+      bool check_v_low_high_value = (v_low <= Iin.bitmap[i].V) && (Iin.bitmap[i].V <= v_high);
+      if (check_h_low_high_hue && check_s_low_high_saturation && check_v_low_high_value) {
+        mask.bitmap[i] = valueInRange;
+        ++cpt_in_range;
+      }
+      else {
+        mask.bitmap[i] = valueOutRange;
+      }
+    }
+    return cpt_in_range;
+  }
+#endif
+
+  template <typename ImageType, typename MaskType>
+  static int inMask(const vpImage<ImageType> &I, const vpImage<MaskType> &mask, vpImage<ImageType> &I_mask
+            , const MaskType &inRangeCheck, const ImageType &outRangeValue)
+  {
+    if ((I.getHeight() != mask.getHeight()) || (I.getWidth() != mask.getWidth())) {
+      throw(vpImageException(vpImageException::incorrectInitializationError,
+                             "Error in vpImageTools::inMask(): image (%dx%d) and mask (%dx%d) size doesn't match",
+                             I.getWidth(), I.getHeight(), mask.getWidth(), mask.getHeight()));
+    }
+
+    I_mask.resize(I.getHeight(), I.getWidth());
+    int cpt_in_mask = 0;
+    int size_ = static_cast<int>(I.getSize());
+#if defined(_OPENMP)
+#pragma omp parallel for reduction(+:cpt_in_mask)
+#endif
+    for (int i = 0; i < size_; ++i) {
+      if (mask.bitmap[i] == inRangeCheck) {
+        I_mask.bitmap[i] = I.bitmap[i];
+        ++cpt_in_mask;
+      }
+      else {
+        I_mask.bitmap[i] = outRangeValue;
+      }
+    }
+    return cpt_in_mask;
+  }
+#endif
 };
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
@@ -296,18 +556,18 @@ template <class Type> void vpImageTools::createSubImage(const vpImage<Type> &I, 
   Setting \e v_scale and \e h_scale to values different from 1 allows also to
   subsample the cropped image.
 
-  \param I : Input image from which a sub image will be extracted.
-  \param roi_top : ROI vertical position of the upper/left corner in the input
+  \param[in] I : Input image from which a sub image will be extracted.
+  \param[in] roi_top : ROI vertical position of the upper/left corner in the input
   image.
-  \param roi_left : ROI  horizontal position of the upper/left corner
+  \param[in] roi_left : ROI  horizontal position of the upper/left corner
   in the input image.
-  \param roi_height : Cropped image height corresponding
+  \param[in] roi_height : Cropped image height corresponding
   to the ROI height.
-  \param roi_width : Cropped image width corresponding to
+  \param[in] roi_width : Cropped image width corresponding to
   the ROI height.
-  \param crop : Cropped image.
-  \param v_scale [in] : Vertical subsampling factor applied to the ROI.
-  \param h_scale [in] : Horizontal subsampling factor applied to the ROI.
+  \param[out] crop : Cropped image.
+  \param[in] v_scale : Vertical subsampling factor applied to the ROI.
+  \param[in] h_scale : Horizontal subsampling factor applied to the ROI.
 
   \sa crop(const vpImage<Type> &, const vpRect &, vpImage<Type> &)
 */
@@ -331,14 +591,14 @@ void vpImageTools::crop(const vpImage<Type> &I, double roi_top, double roi_left,
   if ((v_scale == 1) && (h_scale == 1)) {
     for (unsigned int i = 0; i < r_height; ++i) {
       void *src = (void *)(I[i + i_min_u] + j_min_u);
-      void *dst = (void *)(crop[i]);
+      void *dst = static_cast<void *>(crop[i]);
       memcpy(dst, src, r_width * sizeof(Type));
     }
   }
   else if (h_scale == 1) {
     for (unsigned int i = 0; i < r_height; ++i) {
       void *src = (void *)(I[(i + i_min_u) * v_scale] + j_min_u);
-      void *dst = (void *)(crop[i]);
+      void *dst = static_cast<void *>(crop[i]);
       memcpy(dst, src, r_width * sizeof(Type));
     }
   }
@@ -611,15 +871,17 @@ template <class Type> void vpUndistortInternalType<Type>::vpUndistort_threaded(v
       // declarations
       int u_round = static_cast<int>(u_double);
       int v_round = static_cast<int>(v_double);
-      if (u_round < 0.f)
+      if (u_round < 0) {
         u_round = -1;
-      if (v_round < 0.f)
+      }
+      if (v_round < 0) {
         v_round = -1;
-      double du_double = (u_double)-(double)u_round;
-      double dv_double = (v_double)-(double)v_round;
+      }
+      double du_double = (u_double)-static_cast<double>(u_round);
+      double dv_double = (v_double)-static_cast<double>(v_round);
       Type v01;
       Type v23;
-      if ((0 <= u_round) && (0 <= v_round) && (u_round < ((width)-1)) && (v_round < ((height)-1))) {
+      if ((0 <= u_round) && (0 <= v_round) && (u_round < (width-1)) && (v_round < (height-1))) {
         // process interpolation
         const Type *_mp = &src[v_round * width + u_round];
         v01 = (Type)(_mp[0] + ((_mp[1] - _mp[0]) * du_double));
@@ -1080,7 +1342,7 @@ void vpImageTools::resize(const vpImage<Type> &I, vpImage<Type> &Ires, unsigned 
   the desired size).
   \param method : Interpolation method.
   \param nThreads : Number of threads to use if OpenMP is available
-  (zero will let OpenMP uses the optimal number of threads).
+  (zero will let OpenMP uses the optimal number of threads). Unused if OpenMP is not enabled.
 
   \warning The input \e I and output \e Ires images must be different objects.
 
@@ -1090,12 +1352,11 @@ void vpImageTools::resize(const vpImage<Type> &I, vpImage<Type> &Ires, unsigned 
 */
 template <class Type>
 void vpImageTools::resize(const vpImage<Type> &I, vpImage<Type> &Ires, const vpImageInterpolationType &method,
-                          unsigned int
-#if defined(_OPENMP)
-                          nThreads
-#endif
-)
+                          unsigned int nThreads)
 {
+#if !defined(_OPENMP)
+  (void)nThreads;
+#endif
   const unsigned int minWidth = 2, minHeight = 2;
   if ((I.getWidth() < minWidth) || (I.getHeight() < minHeight) || (Ires.getWidth() < minWidth) || (Ires.getHeight() < minHeight)) {
     std::cerr << "Input or output image is too small!" << std::endl;
@@ -1177,12 +1438,12 @@ inline void vpImageTools::resize(const vpImage<unsigned char> &I, vpImage<unsign
 #endif
     for (int i = 0; i < ires_height; ++i) {
       float v = ((static_cast<float>(i) + half) * scaleY) - half;
-      float yFrac = static_cast<float>(v - static_cast<int>(v));
+      float yFrac = static_cast<float>(v - static_cast<float>(static_cast<int>(v)));
 
       unsigned int ires_width = static_cast<unsigned int>(Ires.getWidth());
       for (unsigned int j = 0; j < ires_width; ++j) {
         float u = ((static_cast<float>(j) + half) * scaleX) - half;
-        float xFrac = static_cast<float>(u - static_cast<int>(u));
+        float xFrac = static_cast<float>(u - static_cast<float>(static_cast<int>(u)));
 
         if (method == INTERPOLATION_NEAREST) {
           resizeNearest(I, Ires, static_cast<unsigned int>(i), j, u, v);
@@ -1230,12 +1491,12 @@ inline void vpImageTools::resize(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires
 #endif
     for (int i = 0; i < ires_height; ++i) {
       float v = ((static_cast<float>(i) + half) * scaleY) - half;
-      float yFrac = static_cast<float>(v - static_cast<int>(v));
+      float yFrac = static_cast<float>(v - static_cast<float>(static_cast<int>(v)));
 
       unsigned int ires_width = static_cast<unsigned int>(Ires.getWidth());
       for (unsigned int j = 0; j < ires_width; ++j) {
         float u = ((static_cast<float>(j) + half) * scaleX) - half;
-        float xFrac = static_cast<float>(u - static_cast<int>(u));
+        float xFrac = static_cast<float>(u - static_cast<float>(static_cast<int>(u)));
 
         if (method == INTERPOLATION_NEAREST) {
           resizeNearest(I, Ires, static_cast<unsigned int>(i), j, u, v);

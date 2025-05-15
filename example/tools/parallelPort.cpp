@@ -129,12 +129,10 @@ bool getOptions(int argc, const char **argv, unsigned char &data)
     case 'h':
       usage(argv[0], nullptr, data);
       return false;
-      break;
 
     default:
       usage(argv[0], optarg, data);
       return false;
-      break;
     }
   }
 

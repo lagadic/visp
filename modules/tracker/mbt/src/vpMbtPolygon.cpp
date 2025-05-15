@@ -170,9 +170,9 @@ bool vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, double alpha, const
     pt.set_Y(pt.get_Y() + p[i].get_Y());
     pt.set_Z(pt.get_Z() + p[i].get_Z());
   }
-  e4[0] = -pt.get_X() / (double)nbpt;
-  e4[1] = -pt.get_Y() / (double)nbpt;
-  e4[2] = -pt.get_Z() / (double)nbpt;
+  e4[0] = -pt.get_X() / static_cast<double>(nbpt);
+  e4[1] = -pt.get_Y() / static_cast<double>(nbpt);
+  e4[2] = -pt.get_Z() / static_cast<double>(nbpt);
   e4.normalize();
 
   double angle = acos(vpColVector::dotProd(e4, faceNormal));

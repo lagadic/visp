@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +29,10 @@
  *
  * Description:
  * Tukey M-estimator.
- *
-*****************************************************************************/
+ */
 
-#ifndef _vpMbtTukeyEstimator_h_
-#define _vpMbtTukeyEstimator_h_
+#ifndef VP_MBT_TUKEY_ESTIMATOR_H
+#define VP_MBT_TUKEY_ESTIMATOR_H
 
 #include <vector>
 #include <visp3/core/vpConfig.h>
@@ -146,8 +144,8 @@ inline __m128 abs_ps(__m128 x)
 template <typename T> T vpMbtTukeyEstimator<T>::getMedian(std::vector<T> &vec)
 {
   // Not the exact median when even number of elements
-  int index = static_cast<int>(ceil(vec.size() / 2.0)) - 1;
-  std::nth_element(vec.begin(), vec.begin() + index, vec.end());
+  size_t index = static_cast<size_t>(ceil(static_cast<double>(vec.size()) / 2.0)) - 1;
+  std::nth_element(vec.begin(), vec.begin() + static_cast<long long>(index), vec.end());
   return vec[index];
 }
 
@@ -188,7 +186,7 @@ void vpMbtTukeyEstimator<T>::MEstimator_impl(const std::vector<T> &residues, std
   T normmedian = getMedian(m_residues);
 
   // 1.48 keeps scale estimate consistent for a normal probability dist.
-  T sigma = static_cast<T>(1.4826 * normmedian); // median Absolute Deviation
+  T sigma = static_cast<T>(1.4826) * normmedian; // median Absolute Deviation
 
   // Set a minimum threshold for sigma
   // (when sigma reaches the level of noise in the image)
@@ -358,11 +356,11 @@ inline void vpMbtTukeyEstimator<double>::MEstimator(const std::vector<double> &r
  */
 template <typename T> void vpMbtTukeyEstimator<T>::psiTukey(const T sig, std::vector<T> &x, vpColVector &weights)
 {
-  double C = sig * 4.6851;
+  double C = static_cast<double>(sig) * 4.6851;
 
   // Here we consider that sig cannot be equal to 0
   for (unsigned int i = 0; i < static_cast<unsigned int>(x.size()); i++) {
-    double xi = x[i] / C;
+    double xi = static_cast<double>(x[i]) / C;
     xi *= xi;
 
     if (xi > 1.) {
@@ -427,14 +425,14 @@ inline void vpMbtTukeyEstimator<float>::MEstimator(const vpColVector &residues, 
   m_residues.resize(0);
   m_residues.reserve(residues.size());
   for (unsigned int i = 0; i < residues.size(); i++) {
-    m_residues.push_back((float)residues[i]);
+    m_residues.push_back(static_cast<float>(residues[i]));
   }
 
   float med = getMedian(m_residues);
 
   m_normres.resize(residues.size());
   for (size_t i = 0; i < m_residues.size(); i++) {
-    m_normres[i] = (float)std::fabs(residues[static_cast<unsigned int>(i)] - med);
+    m_normres[i] = static_cast<float>(std::fabs(static_cast<float>(residues[static_cast<unsigned int>(i)]) - med));
   }
 
   m_residues = m_normres;
@@ -442,11 +440,12 @@ inline void vpMbtTukeyEstimator<float>::MEstimator(const vpColVector &residues, 
 
   // 1.48 keeps scale estimate consistent for a normal probability dist.
   float sigma = 1.4826f * normmedian; // median Absolute Deviation
+  float noise_threshold = static_cast<float>(NoiseThreshold);
 
   // Set a minimum threshold for sigma
   // (when sigma reaches the level of noise in the image)
-  if (sigma < NoiseThreshold) {
-    sigma = (float)NoiseThreshold;
+  if (sigma < noise_threshold) {
+    sigma = noise_threshold;
   }
 
   psiTukey(sigma, m_normres, weights);
@@ -459,13 +458,14 @@ template <class T> void vpMbtTukeyEstimator<T>::psiTukey(const T sig, std::vecto
 {
   T C = static_cast<T>(4.6851) * sig;
   weights.resize(x.size());
+  T one = static_cast<T>(1.);
 
   // Here we consider that sig cannot be equal to 0
   for (size_t i = 0; i < x.size(); i++) {
     T xi = x[i] / C;
     xi *= xi;
 
-    if (xi > 1.) {
+    if (xi > one) {
       weights[i] = 0;
     }
     else {

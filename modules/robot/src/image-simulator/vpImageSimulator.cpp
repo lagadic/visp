@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description: Class which enables to project an image in the 3D space
  * and get the view of a virtual camera.
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpMatrixException.h>
@@ -190,7 +188,7 @@ void vpImageSimulator::getImage(vpImage<unsigned char> &I, const vpCameraParamet
     I = Ig;
   else {
     if (cleanPrevImage) {
-      unsigned char col = (unsigned char)(0.2126 * bgColor.R + 0.7152 * bgColor.G + 0.0722 * bgColor.B);
+      unsigned char col = static_cast<unsigned char>(0.2126 * bgColor.R + 0.7152 * bgColor.G + 0.0722 * bgColor.B);
       for (unsigned int i = 0; i < I.getHeight(); i++) {
         for (unsigned int j = 0; j < I.getWidth(); j++) {
           I[i][j] = col;
@@ -230,7 +228,7 @@ void vpImageSimulator::getImage(vpImage<unsigned char> &I, const vpCameraParamet
           vpRGBa Ipixelplan;
           if (getPixel(ip, Ipixelplan)) {
             unsigned char pixelgrey =
-              (unsigned char)(0.2126 * Ipixelplan.R + 0.7152 * Ipixelplan.G + 0.0722 * Ipixelplan.B);
+              static_cast<unsigned char>(0.2126 * Ipixelplan.R + 0.7152 * Ipixelplan.G + 0.0722 * Ipixelplan.B);
             *(bitmap + i * width + j) = pixelgrey;
           }
         }
@@ -251,7 +249,7 @@ void vpImageSimulator::getImage(vpImage<unsigned char> &I, const vpCameraParamet
 void vpImageSimulator::getImage(vpImage<unsigned char> &I, vpImage<unsigned char> &Isrc, const vpCameraParameters &cam)
 {
   if (cleanPrevImage) {
-    unsigned char col = (unsigned char)(0.2126 * bgColor.R + 0.7152 * bgColor.G + 0.0722 * bgColor.B);
+    unsigned char col = static_cast<unsigned char>(0.2126 * bgColor.R + 0.7152 * bgColor.G + 0.0722 * bgColor.B);
     for (unsigned int i = 0; i < I.getHeight(); i++) {
       for (unsigned int j = 0; j < I.getWidth(); j++) {
         I[i][j] = col;
@@ -310,7 +308,7 @@ void vpImageSimulator::getImage(vpImage<unsigned char> &I, const vpCameraParamet
                             " zBuffer must have the same size as the image I ! "));
 
   if (cleanPrevImage) {
-    unsigned char col = (unsigned char)(0.2126 * bgColor.R + 0.7152 * bgColor.G + 0.0722 * bgColor.B);
+    unsigned char col = static_cast<unsigned char>(0.2126 * bgColor.R + 0.7152 * bgColor.G + 0.0722 * bgColor.B);
     for (unsigned int i = 0; i < I.getHeight(); i++) {
       for (unsigned int j = 0; j < I.getWidth(); j++) {
         I[i][j] = col;
@@ -352,7 +350,7 @@ void vpImageSimulator::getImage(vpImage<unsigned char> &I, const vpCameraParamet
           if (getPixel(ip, Ipixelplan)) {
             if (Xinter_optim[2] < zBuffer[i][j] || zBuffer[i][j] < 0) {
               unsigned char pixelgrey =
-                (unsigned char)(0.2126 * Ipixelplan.R + 0.7152 * Ipixelplan.G + 0.0722 * Ipixelplan.B);
+                static_cast<unsigned char>(0.2126 * Ipixelplan.R + 0.7152 * Ipixelplan.G + 0.0722 * Ipixelplan.B);
               *(bitmap + i * width + j) = pixelgrey;
               zBuffer[i][j] = Xinter_optim[2];
             }
@@ -669,7 +667,6 @@ void vpImageSimulator::getImage(vpImage<unsigned char> &I, std::list<vpImageSimu
   vpImageSimulator **simList = new vpImageSimulator *[nbsimList];
 
   double topFinal = height + 1;
-  ;
   double bottomFinal = -1;
   double leftFinal = width + 1;
   double rightFinal = -1;
@@ -737,7 +734,7 @@ void vpImageSimulator::getImage(vpImage<unsigned char> &I, std::list<vpImageSimu
           vpRGBa Ipixelplan(255, 255, 255);
           simList[indice]->getPixel(ip, Ipixelplan);
           unsigned char pixelgrey =
-            (unsigned char)(0.2126 * Ipixelplan.R + 0.7152 * Ipixelplan.G + 0.0722 * Ipixelplan.B);
+            static_cast<unsigned char>(0.2126 * Ipixelplan.R + 0.7152 * Ipixelplan.G + 0.0722 * Ipixelplan.B);
           *(bitmap + i * width + j) = pixelgrey;
         }
       }
@@ -870,7 +867,6 @@ void vpImageSimulator::getImage(vpImage<vpRGBa> &I, std::list<vpImageSimulator> 
   vpImageSimulator **simList = new vpImageSimulator *[nbsimList];
 
   double topFinal = height + 1;
-  ;
   double bottomFinal = -1;
   double leftFinal = width + 1;
   double rightFinal = -1;

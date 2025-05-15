@@ -58,7 +58,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
 
   \param name : Program name.
   \param badparam : Bad parameter name.
-  \param ipath: Input image path.
+  \param ipath : Input image path.
   \param opath : Output image path.
   \param user : Username.
  */
@@ -112,7 +112,7 @@ OPTIONS:                                               Default\n\
 
   \param argc : Command line number of parameters.
   \param argv : Array of command line parameters.
-  \param ipath: Input image path.
+  \param ipath : Input image path.
   \param opath : Output image path.
   \param user : Username.
   \return false if the program has to be stopped, true otherwise.
@@ -134,7 +134,6 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
     case 'h':
       usage(argv[0], nullptr, ipath, opath, user);
       return false;
-      break;
 
     case 'c':
     case 'd':
@@ -143,7 +142,6 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
     default:
       usage(argv[0], optarg_, ipath, opath, user);
       return false;
-      break;
     }
   }
 

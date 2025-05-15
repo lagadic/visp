@@ -101,7 +101,7 @@ int main(int argc, const char *argv[])
         vpDisplay::displayText(I, 10, 10, "Left click to select a point, right to start tracking", vpColor::red);
         if (vpDisplay::getClick(I, ip, button, false)) {
           if (button == vpMouseButton::button1) {
-            guess.push_back(cv::Point2f((float)ip.get_u(), (float)ip.get_v()));
+            guess.push_back(cv::Point2f(static_cast<float>(ip.get_u()), static_cast<float>(ip.get_v())));
             vpDisplay::displayText(I, 10, 10, "Left click to select a point, right to start tracking", vpColor::red);
             vpDisplay::displayCross(I, ip, 12, vpColor::green);
           }

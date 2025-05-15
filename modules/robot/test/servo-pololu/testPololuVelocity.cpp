@@ -53,6 +53,9 @@ using namespace VISP_NAMESPACE_NAME;
 #endif
 
 void usage(const char **argv, int error, const std::string &device, int baudrate, int channel,
+           unsigned short pwm_min, unsigned short pwm_max, float angle_min, float angle_max);
+
+void usage(const char **argv, int error, const std::string &device, int baudrate, int channel,
            unsigned short pwm_min, unsigned short pwm_max, float angle_min, float angle_max)
 {
   std::cout << "Synopsis" << std::endl

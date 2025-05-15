@@ -234,7 +234,7 @@ public:
           unsigned char *dst_8 = (unsigned char *)Ximage->data + i * bytes_per_line;
           unsigned short *dst_16 = (unsigned short *)dst_8;
           for (unsigned int j = 0; j < width; j++) {
-            *(dst_16 + j) = (unsigned short)colortable[I[i][j]];
+            *(dst_16 + j) = static_cast<unsigned short>(colortable[I[i][j]]);
           }
         }
       }
@@ -243,7 +243,7 @@ public:
           unsigned char *dst_8 = (unsigned char *)Ximage->data + i * bytes_per_line;
           unsigned short *dst_16 = (unsigned short *)dst_8;
           for (unsigned int j = 0; j < width; j++) {
-            *(dst_16 + j) = (unsigned short)colortable[I[i * scale][j * scale]];
+            *(dst_16 + j) = static_cast<unsigned short>(colortable[I[i * scale][j * scale]]);
           }
         }
       }
@@ -519,7 +519,7 @@ public:
           unsigned char *dst_8 = (unsigned char *)Ximage->data + i * bytes_per_line;
           unsigned short *dst_16 = (unsigned short *)dst_8;
           for (unsigned int j = static_cast<unsigned int>(iP.get_j()); j < static_cast<unsigned int>(iP.get_j() + w); j++) {
-            *(dst_16 + j) = (unsigned short)colortable[I[i][j]];
+            *(dst_16 + j) = static_cast<unsigned short>(colortable[I[i][j]]);
           }
         }
 
@@ -541,7 +541,7 @@ public:
           unsigned char *dst_8 = (unsigned char *)Ximage->data + i * bytes_per_line;
           unsigned short *dst_16 = (unsigned short *)dst_8;
           for (unsigned int j = j_min_; j < j_max_; j++) {
-            *(dst_16 + j) = (unsigned short)colortable[I[i * scale][j * scale]];
+            *(dst_16 + j) = static_cast<unsigned short>(colortable[I[i * scale][j * scale]]);
           }
         }
 
@@ -903,8 +903,8 @@ public:
     if (ret) {
       // Get mouse position
       if (XQueryPointer(display, window, &rootwin, &childwin, &root_x, &root_y, &win_x, &win_y, &modifier)) {
-        ip.set_u((double)event.xbutton.x * scale);
-        ip.set_v((double)event.xbutton.y * scale);
+        ip.set_u(static_cast<double>(event.xbutton.x) * scale);
+        ip.set_v(static_cast<double>(event.xbutton.y) * scale);
         switch (event.xbutton.button) {
         case Button1:
           button = vpMouseButton::button1;
@@ -943,8 +943,8 @@ public:
     if (ret) {
       /* Recuperation de la coordonnee du pixel clique. */
       if (XQueryPointer(display, window, &rootwin, &childwin, &root_x, &root_y, &win_x, &win_y, &modifier)) {
-        ip.set_u((double)event.xbutton.x * scale);
-        ip.set_v((double)event.xbutton.y * scale);
+        ip.set_u(static_cast<double>(event.xbutton.x) * scale);
+        ip.set_v(static_cast<double>(event.xbutton.y) * scale);
         switch (event.xbutton.button) {
         case Button1:
           button = vpMouseButton::button1;
@@ -1091,8 +1091,8 @@ public:
     if (ret) {
       // Get mouse position
       if (XQueryPointer(display, window, &rootwin, &childwin, &root_x, &root_y, &win_x, &win_y, &modifier)) {
-        ip.set_u((double)event.xbutton.x * scale);
-        ip.set_v((double)event.xbutton.y * scale);
+        ip.set_u(static_cast<double>(event.xbutton.x) * scale);
+        ip.set_v(static_cast<double>(event.xbutton.y) * scale);
       }
     }
 
@@ -1111,8 +1111,8 @@ public:
     if (ret) {
       // Get mouse position
       if (XQueryPointer(display, window, &rootwin, &childwin, &root_x, &root_y, &win_x, &win_y, &modifier)) {
-        ip.set_u((double)win_x * scale);
-        ip.set_v((double)win_y * scale);
+        ip.set_u(static_cast<double>(win_x) * scale);
+        ip.set_v(static_cast<double>(win_y) * scale);
       }
     }
 
@@ -2004,10 +2004,9 @@ void vpDisplayX::displayImage(const unsigned char *bitmap)
   \warning Suppress the overlay drawing in the region of interest.
 
   \param I : Image to display.
-
   \param iP : Top left corner of the region of interest
-
-  \param w, h : Width and height of the region of interest
+  \param w : Region of interest width.
+  \param h : Region of interest height.
 
   \sa init(), closeDisplay()
 */
@@ -2030,10 +2029,9 @@ void vpDisplayX::displayImageROI(const vpImage<unsigned char> &I, const vpImageP
   \warning Suppress the overlay drawing in the region of interest.
 
   \param I : Image to display.
-
-  \param iP : Top left corner of the region of interest
-
-  \param w, h : Width and height of the region of interest
+  \param iP : Top left corner of the region of interest.
+  \param w : Region of interest width.
+  \param h : Region of interest height.
 
   \sa init(), closeDisplay()
 */
@@ -2238,7 +2236,8 @@ void vpDisplayX::displayCross(const vpImagePoint &ip, unsigned int cross_size, c
 }
 /*!
   Display a dashed line from image point \e ip1 to image point \e ip2.
-  \param ip1,ip2 : Initial and final image points.
+  \param ip1 : Initial image point.
+  \param ip2 : Final image point.
   \param color : Line color.
   \param thickness : Line thickness.
 */
@@ -2258,7 +2257,8 @@ void vpDisplayX::displayDotLine(const vpImagePoint &ip1, const vpImagePoint &ip2
 
 /*!
   Display a line from image point \e ip1 to image point \e ip2.
-  \param ip1,ip2 : Initial and final image points.
+  \param ip1 : Initial image point.
+  \param ip2 : Final image point.
   \param color : Line color.
   \param thickness : Line thickness.
 */
@@ -2526,7 +2526,8 @@ unsigned int vpDisplayX::getScreenDepth() { return m_impl->getScreenDepth(); }
 
 /*!
   Gets screen resolution in pixels.
-  \param w, h : Horizontal and vertical screen resolution.
+  \param[out] w : Horizontal screen resolution.
+  \param[out] h : Vertical screen resolution.
  */
 void vpDisplayX::getScreenSize(unsigned int &w, unsigned int &h) { m_impl->getScreenSize(w, h); }
 

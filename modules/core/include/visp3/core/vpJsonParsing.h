@@ -46,7 +46,7 @@ BEGIN_VISP_NAMESPACE
   If it is defined as a combination of options (defined from an enumeration E) then the logical or of theses enum values is returned.
   Beware that invalid values may be defined in the JSON object: the int value may be invalid, or the parsing of enum values may fail.
 
-  \param j: the JSON object to parse
+  \param j : the JSON object to parse
 
   \return an int, corresponding to the combination of boolean flags
 
@@ -70,14 +70,14 @@ int flagsFromJSON(const nlohmann::json &j)
 
 /*!
   Serialize flag values as a json array.
-  \param flags the value to serialize
-  \param options the possible values that can be contained in flags. A flag i is set if flags & options[i] != 0.
+  \param flags The value to serialize.
+  \param options The possible values that can be contained in flags. A flag i is set if flags & options[i] != 0.
 
-  \return a json object (an array) that contains the different flags of the variable flags.
+  \return A json object (an array) that contains the different flags of the variable flags.
 
 */
 template<typename E>
-nlohmann::json flagsToJSON(const int flags, const std::vector<E> &options)
+nlohmann::json flagsToJSON(const unsigned int flags, const std::vector<E> &options)
 {
   nlohmann::json j = nlohmann::json::array();
   for (const E option : options) {

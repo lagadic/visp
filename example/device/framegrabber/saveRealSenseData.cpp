@@ -231,12 +231,10 @@ bool getOptions(int argc, const char *argv[], bool &save, std::string &pattern, 
     case 'h':
       usage(argv[0], nullptr, stream_fps);
       return false;
-      break;
 
     default:
       usage(argv[0], optarg, stream_fps);
       return false;
-      break;
     }
   }
 
@@ -547,9 +545,9 @@ public:
 
                 for (uint32_t i = 0; i < height; i++) {
                   for (uint32_t j = 0; j < width; j++) {
-                    float x = (float)(*ptr_pointCloud)[i * width + j][0];
-                    float y = (float)(*ptr_pointCloud)[i * width + j][1];
-                    float z = (float)(*ptr_pointCloud)[i * width + j][2];
+                    float x = static_cast<float>((*ptr_pointCloud)[i * width + j][0]);
+                    float y = static_cast<float>((*ptr_pointCloud)[i * width + j][1]);
+                    float z = static_cast<float>((*ptr_pointCloud)[i * width + j][2]);
 
                     vpIoTools::writeBinaryValueLE(file_pointcloud, x);
                     vpIoTools::writeBinaryValueLE(file_pointcloud, y);

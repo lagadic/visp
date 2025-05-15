@@ -40,9 +40,9 @@
 BEGIN_VISP_NAMESPACE
 const unsigned int vpBiclops::ndof = 2;
 const float vpBiclops::h = 0.048f;
-const float vpBiclops::panJointLimit = (float)(M_PI);
-const float vpBiclops::tiltJointLimit = (float)(M_PI / 4.5);
-const float vpBiclops::speedLimit = (float)(M_PI / 3.0);
+const float vpBiclops::panJointLimit = static_cast<float>(M_PI);
+const float vpBiclops::tiltJointLimit = static_cast<float>(M_PI / 4.5);
+const float vpBiclops::speedLimit = static_cast<float>(M_PI / 3.0);
 
 void vpBiclops::computeMGD(const vpColVector &q, vpHomogeneousMatrix &fMc) const
 {

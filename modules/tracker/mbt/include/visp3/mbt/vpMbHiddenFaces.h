@@ -512,7 +512,8 @@ void vpMbHiddenFaces<PolygonType>::computeScanLineQuery(const vpPoint &a, const 
  * \param changed : True if a face appeared, disappeared or too many points have been lost. False otherwise
  * \param useOgre : True if a Ogre is used to test the visibility, False otherwise
  * \param not_used : Unused parameter.
- * \param I : Image used to test if a face is entirely projected in the image.
+ * \param width : Image width.
+ * \param height : Image height.
  * \param cam : Camera parameters.
  *
  * \return Return the number of visible polygons
@@ -929,8 +930,8 @@ bool vpMbHiddenFaces<PolygonType>::isVisibleOgre(const vpTranslationVector &came
     ogre->getSceneManager()->destroyQuery(mRaySceneQuery);
   }
 
-  if (((double)nbVisible) / ((double)nbRayAttempts) > ratioVisibleRay ||
-      std::fabs(((double)nbVisible) / ((double)nbRayAttempts) - ratioVisibleRay) <
+  if ((static_cast<double>(nbVisible)) / (static_cast<double>(nbRayAttempts)) > ratioVisibleRay ||
+      std::fabs((static_cast<double>(nbVisible)) / (static_cast<double>(nbRayAttempts)) - ratioVisibleRay) <
           ratioVisibleRay * std::numeric_limits<double>::epsilon())
     visible = true;
   else

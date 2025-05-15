@@ -123,7 +123,6 @@ static bool getOptions(int argc, const char **argv, bool &list, bool &click_allo
     case 'h':
       usage(argv[0], nullptr);
       return false;
-      break;
     case 'c':
       click_allowed = false;
       break;
@@ -134,7 +133,6 @@ static bool getOptions(int argc, const char **argv, bool &list, bool &click_allo
     default:
       usage(argv[0], optarg_);
       return false;
-      break;
     }
   }
 

@@ -168,6 +168,11 @@ public:
   virtual ~vpMeLine() VP_OVERRIDE;
 
   /*!
+   * Copy operator.
+   */
+  vpMeLine &operator=(const vpMeLine &meline);
+
+  /*!
    * Display me line.
    *
    * \warning To effectively display the line a call to vpDisplay::flush() is needed.
@@ -485,7 +490,7 @@ public:
    *
    * \param unused : This parameter is unused.
    */
-  inline void setRhoSignFromIntensity(bool unused)
+  VP_DEPRECATED inline void setRhoSignFromIntensity(bool unused)
   {
     (void)unused;
   }

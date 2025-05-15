@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,11 +100,11 @@ void readEXRTiny(vpImage<float> &I, const std::string &filename)
   // `exr_image.images` will be filled when EXR is scanline format.
   // `exr_image.tiled` will be filled when EXR is tiled format.
   if (exr_image.images) {
-    I.resize(exr_image.height, exr_image.width);
+    I.resize(static_cast<unsigned int>(exr_image.height), static_cast<unsigned int>(exr_image.width));
     memcpy(I.bitmap, exr_image.images[0], exr_image.height*exr_image.width*sizeof(float));
   }
   else if (exr_image.tiles) {
-    I.resize(exr_image.height, exr_image.width);
+    I.resize(static_cast<unsigned int>(exr_image.height), static_cast<unsigned int>(exr_image.width));
     size_t data_width = static_cast<size_t>(exr_header.data_window.max_x - exr_header.data_window.min_x + 1);
 
     for (int tile_idx = 0; tile_idx < exr_image.num_tiles; ++tile_idx) {
@@ -173,7 +173,7 @@ void readEXRTiny(vpImage<vpRGBf> &I, const std::string &filename)
   // `exr_image.images` will be filled when EXR is scanline format.
   // `exr_image.tiled` will be filled when EXR is tiled format.
   if (exr_image.images) {
-    I.resize(exr_image.height, exr_image.width);
+    I.resize(static_cast<unsigned int>(exr_image.height), static_cast<unsigned int>(exr_image.width));
     for (int i = 0; i < exr_image.height; ++i) {
       for (int j = 0; j < exr_image.width; ++j) {
         I[i][j].R = reinterpret_cast<float **>(exr_image.images)[2][i * exr_image.width + j];

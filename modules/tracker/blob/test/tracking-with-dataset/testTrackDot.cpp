@@ -75,7 +75,7 @@ void usage(const char *name, const char *badparam, std::string ipath);
 
   \param name : Program name.
   \param badparam : Bad parameter name.
-  \param ipath: Input image path.
+  \param ipath : Input image path.
 
 */
 void usage(const char *name, const char *badparam, std::string ipath)
@@ -152,12 +152,10 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_all
     case 'h':
       usage(argv[0], nullptr, ipath);
       return false;
-      break;
 
     default:
       usage(argv[0], optarg_, ipath);
       return false;
-      break;
     }
   }
 

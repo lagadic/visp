@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,9 +55,9 @@
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;
 #endif
-static const std::string ipath = vpIoTools::getViSPImagesDataPath();
-static std::string imagePathColor = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
-static std::string imagePathGray = vpIoTools::createFilePath(ipath, "Klimt/Klimt.pgm");
+VP_ATTRIBUTE_NO_DESTROY static const std::string ipath = vpIoTools::getViSPImagesDataPath();
+VP_ATTRIBUTE_NO_DESTROY static std::string imagePathColor = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
+VP_ATTRIBUTE_NO_DESTROY static std::string imagePathGray = vpIoTools::createFilePath(ipath, "Klimt/Klimt.pgm");
 static unsigned int g_resize_width = 293;
 static unsigned int g_resize_height = 137;
 

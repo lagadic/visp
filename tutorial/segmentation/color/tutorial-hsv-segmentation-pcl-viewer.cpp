@@ -5,6 +5,7 @@
 
 #if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_VISUALIZATION) && defined(VISP_HAVE_THREADS) && defined(VISP_HAVE_DISPLAY)
 #include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpHSV.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpImageTools.h>
 #include <visp3/core/vpPixelMeterConversion.h>
@@ -122,17 +123,20 @@ int main(int argc, const char *argv[])
                                                         vpCameraParameters::perspectiveProjWithoutDistortion);
 
   vpImage<vpRGBa> I(opt_height, opt_width);
-  vpImage<unsigned char> H(opt_height, opt_width);
-  vpImage<unsigned char> S(opt_height, opt_width);
-  vpImage<unsigned char> V(opt_height, opt_width);
   vpImage<unsigned char> mask(opt_height, opt_width);
   vpImage<uint16_t> depth_raw(opt_height, opt_width);
   vpImage<vpRGBa> I_segmented(opt_height, opt_width);
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  vpImage<vpHSV<unsigned char, true>> Ihsv;
+
   std::shared_ptr<vpDisplay> d_I = vpDisplayFactory::createDisplay(I, 0, 0, "Current frame");
   std::shared_ptr<vpDisplay> d_I_segmented = vpDisplayFactory::createDisplay(I_segmented, I.getWidth()+75, 0, "HSV segmented frame");
 #else
+  vpImage<unsigned char> H(opt_height, opt_width);
+  vpImage<unsigned char> S(opt_height, opt_width);
+  vpImage<unsigned char> V(opt_height, opt_width);
+
   vpDisplay *d_I = vpDisplayFactory::allocateDisplay(I, 0, 0, "Current frame");
   vpDisplay *d_I_segmented = vpDisplayFactory::allocateDisplay(I_segmented, I.getWidth()+75, 0, "HSV segmented frame");
 #endif
@@ -163,6 +167,10 @@ int main(int argc, const char *argv[])
     double t = vpTime::measureTimeMs();
     rs.acquire((unsigned char *)I.bitmap, (unsigned char *)(depth_raw.bitmap), NULL, NULL, &align_to);
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    vpImageConvert::convert(I, Ihsv);
+    vpImageTools::inRange(Ihsv, hsv_values, mask);
+#else
     vpImageConvert::RGBaToHSV(reinterpret_cast<unsigned char *>(I.bitmap),
                               reinterpret_cast<unsigned char *>(H.bitmap),
                               reinterpret_cast<unsigned char *>(S.bitmap),
@@ -174,6 +182,7 @@ int main(int argc, const char *argv[])
                           hsv_values,
                           reinterpret_cast<unsigned char *>(mask.bitmap),
                           mask.getSize());
+#endif
 
     vpImageTools::inMask(I, mask, I_segmented);
 
@@ -235,5 +244,5 @@ int main()
 #endif
   std::cout << "Install missing 3rd party, configure and rebuild ViSP." << std::endl;
   return EXIT_SUCCESS;
-  }
+}
 #endif

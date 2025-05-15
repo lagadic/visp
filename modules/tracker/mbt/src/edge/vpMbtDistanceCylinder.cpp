@@ -174,8 +174,9 @@ void vpMbtDistanceCylinder::setMovingEdge(vpMe *_me)
   \param I : The image.
   \param cMo : The pose of the camera used to initialize the moving edges.
   \param doNotTrack : If true, ME are not tracked.
-  \param mask: Mask image or nullptr if not wanted. Mask values that are set to true are considered in the tracking. To
-  disable a pixel, set false. \return false if an error occur, true otherwise.
+  \param mask : Mask image or nullptr if not wanted. Mask values that are set to true are considered in the tracking. To
+  disable a pixel, set false.
+  \return false if an error occur, true otherwise.
 */
 bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
                                            bool doNotTrack, const vpImage<bool> *mask)
@@ -322,10 +323,11 @@ bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, cons
   Track the moving edges in the image.
 
   \param I : the image.
-  \param cMo : The pose of the camera.
+  \param cMo : The pose of the camera (unused).
 */
-void vpMbtDistanceCylinder::trackMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix & /*cMo*/)
+void vpMbtDistanceCylinder::trackMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
 {
+  (void)cMo;
   if (isvisible) {
     try {
       meline1->track(I);
@@ -498,7 +500,7 @@ void vpMbtDistanceCylinder::updateMovingEdge(const vpImage<unsigned char> &I, co
 
   \param I : the image.
   \param cMo : The pose of the camera.
-  \param mask: Mask image or nullptr if not wanted. Mask values that are set to true are considered in the tracking. To
+  \param mask : Mask image or nullptr if not wanted. Mask values that are set to true are considered in the tracking. To
   disable a pixel, set false.
 */
 void vpMbtDistanceCylinder::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
@@ -834,8 +836,8 @@ void vpMbtDistanceCylinder::computeInteractionMatrixError(const vpHomogeneousMat
     unsigned int j = 0;
     for (std::list<vpMeSite>::const_iterator it = meline1->getMeList().begin(); it != meline1->getMeList().end();
          ++it) {
-      double x = (double)it->m_j;
-      double y = (double)it->m_i;
+      double x = static_cast<double>(it->m_j);
+      double y = static_cast<double>(it->m_i);
 
       x = (x - xc) * mx;
       y = (y - yc) * my;
@@ -858,8 +860,8 @@ void vpMbtDistanceCylinder::computeInteractionMatrixError(const vpHomogeneousMat
 
     for (std::list<vpMeSite>::const_iterator it = meline2->getMeList().begin(); it != meline2->getMeList().end();
          ++it) {
-      double x = (double)it->m_j;
-      double y = (double)it->m_i;
+      double x = static_cast<double>(it->m_j);
+      double y = static_cast<double>(it->m_i);
 
       x = (x - xc) * mx;
       y = (y - yc) * my;

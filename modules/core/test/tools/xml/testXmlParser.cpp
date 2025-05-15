@@ -236,7 +236,6 @@ bool getOptions(int argc, const char **argv, std::string &opath, const std::stri
     case 'h':
       usage(argv[0], nullptr, opath, user);
       return false;
-      break;
 
     case 'c':
     case 'd':
@@ -245,7 +244,6 @@ bool getOptions(int argc, const char **argv, std::string &opath, const std::stri
     default:
       usage(argv[0], optarg_, opath, user);
       return false;
-      break;
     }
   }
 

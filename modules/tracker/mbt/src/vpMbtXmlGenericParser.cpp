@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,8 @@
  *
  * Description:
  * Load XML Parameter for Model Based Tracker.
- *
-*****************************************************************************/
+ */
+
 #include <visp3/core/vpConfig.h>
 
 #include <clocale>
@@ -51,26 +50,26 @@ class vpMbtXmlGenericParser::Impl
 public:
   Impl(int type = EDGE_PARSER)
     : m_parserType(type),
-    //<camera>
+    // <camera>
     m_cam(),
-    //<face>
+    // <face>
     m_angleAppear(70), m_angleDisappear(80), m_hasNearClipping(false), m_nearClipping(false), m_hasFarClipping(false),
     m_farClipping(false), m_fovClipping(false),
-    //<lod>
+    // <lod>
     m_useLod(false), m_minLineLengthThreshold(50.0), m_minPolygonAreaThreshold(2500.0),
-    //<ecm>
+    // <ecm>
     m_ecm(),
-    //<klt>
+    // <klt>
     m_kltMaskBorder(0), m_kltMaxFeatures(0), m_kltWinSize(0), m_kltQualityValue(0.), m_kltMinDist(0.),
     m_kltHarrisParam(0.), m_kltBlockSize(0), m_kltPyramidLevels(0),
-    //<depth_normal>
+    // <depth_normal>
     m_depthNormalFeatureEstimationMethod(vpMbtFaceDepthNormal::ROBUST_FEATURE_ESTIMATION),
     m_depthNormalPclPlaneEstimationMethod(2), m_depthNormalPclPlaneEstimationRansacMaxIter(200),
     m_depthNormalPclPlaneEstimationRansacThreshold(0.001), m_depthNormalSamplingStepX(2),
     m_depthNormalSamplingStepY(2),
-    //<depth_dense>
+    // <depth_dense>
     m_depthDenseSamplingStepX(2), m_depthDenseSamplingStepY(2),
-    //<projection_error>
+    // <projection_error>
     m_projectionErrorMe(), m_projectionErrorKernelSize(2), // 5x5
     m_nodeMap(), m_verbose(true)
   {
@@ -1388,16 +1387,16 @@ protected:
 
   enum vpDataToParseMb
   {
-    //<conf>
+    // <conf>
     conf,
-    //<face>
+    // <face>
     face,
     angle_appear,
     angle_disappear,
     near_clipping,
     far_clipping,
     fov_clipping,
-    //<camera>
+    // <camera>
     camera,
     height,
     width,
@@ -1409,7 +1408,7 @@ protected:
     use_lod,
     min_line_length_threshold,
     min_polygon_area_threshold,
-    //<ecm>
+    // <ecm>
     ecm,
     mask,
     size,
@@ -1423,7 +1422,7 @@ protected:
     mu2,
     sample,
     step,
-    //<klt>
+    // <klt>
     klt,
     mask_border,
     max_features,
@@ -1433,7 +1432,7 @@ protected:
     harris,
     size_block,
     pyramid_lvl,
-    //<depth_normal>
+    // <depth_normal>
     depth_normal,
     feature_estimation_method,
     PCL_plane_estimation,
@@ -1443,12 +1442,12 @@ protected:
     depth_sampling_step,
     depth_sampling_step_X,
     depth_sampling_step_Y,
-    //<depth_dense>
+    // <depth_dense>
     depth_dense,
     depth_dense_sampling_step,
     depth_dense_sampling_step_X,
     depth_dense_sampling_step_Y,
-    //<projection_error>
+    // <projection_error>
     projection_error,
     projection_error_sample_step,
     projection_error_kernel_size

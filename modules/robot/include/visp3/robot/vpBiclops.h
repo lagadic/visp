@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +31,8 @@
  * Interface for the Biclops robot.
  */
 
-#ifndef _vpBiclops_h_
-#define _vpBiclops_h_
+#ifndef VP_BICLOPS_H
+#define VP_BICLOPS_H
 
 #include <iostream>
 
@@ -101,7 +101,7 @@ public:
   static const unsigned int ndof; //!< Number of dof
 
   // Geometric model
-  static const float h;              //<! Vertical offset from last joint to camera frame used in set_cMe()
+  static const float h;              //!< Vertical offset from last joint to camera frame used in set_cMe()
   static const float panJointLimit;  //!< Pan axis +/- joint limit in rad
   static const float tiltJointLimit; //!< Tilt axis +/- joint limit in rad
   static const float speedLimit;     //!< Pan and tilt axis max velocity in rad/s to perform a displacement

@@ -406,7 +406,7 @@ void vpMomentObject::fromImage(const vpImage<unsigned char> &image, const vpCame
       for (unsigned int i = 0; i < image.getCols(); i++) {
         x = 0;
         y = 0;
-        intensity = (double)(image[j][i]) * iscale;
+        intensity = static_cast<double>(image[j][i]) * iscale;
         double intensity_white = 1. - intensity;
 
         vpPixelMeterConversion::convertPoint(cam, i, j, x, y);
@@ -431,7 +431,7 @@ void vpMomentObject::fromImage(const vpImage<unsigned char> &image, const vpCame
       for (unsigned int i = 0; i < image.getCols(); i++) {
         x = 0;
         y = 0;
-        intensity = (double)(image[j][i]) * iscale;
+        intensity = static_cast<double>(image[j][i]) * iscale;
         vpPixelMeterConversion::convertPoint(cam, i, j, x, y);
 
         // Cache values for fast moment calculation

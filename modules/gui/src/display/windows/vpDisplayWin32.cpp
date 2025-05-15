@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,20 +71,39 @@ vpDisplayWin32::vpDisplayWin32(vpImage<unsigned char> &I, int winx, int winy, co
 }
 
 /*!
-  Destructor.
-*/
+ * Copy constructor.
+ */
+vpDisplayWin32::vpDisplayWin32(const vpDisplayWin32 &display) : vpDisplay(display)
+{
+  *this = display;
+}
+
+/*!
+  * Destructor.
+ */
 vpDisplayWin32::~vpDisplayWin32() { closeDisplay(); }
 
 /*!
+ * Copy operator.
+ */
+vpDisplayWin32 &vpDisplayWin32::operator=(const vpDisplayWin32 &display)
+{
+  hThread = display.hThread;
+  threadId = display.threadId;
+  iStatus = display.iStatus;
+  window = display.window;
+  roi = display.roi;
 
-  Constructor. Initialize a display to visualize a gray level image
-  (8 bits).
+  return *this;
+}
+
+/*!
+  Constructor. Initialize a display to visualize a gray level image (8 bits).
 
   \param[in] I : Image to be displayed (not that image has to be initialized)
   \param[in] x : Upper left window corner position along the horizontal axis.
   \param[in] y : Upper left window corner position along the vertical axis.
   \param[in] title : Window title.
-
 */
 void vpDisplayWin32::init(vpImage<unsigned char> &I, int x, int y, const std::string &title)
 {
@@ -160,7 +179,7 @@ void vpDisplayWin32::init(unsigned int width, unsigned int height, int x, int y,
   hThread = CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)vpCreateWindow, param, 0, &threadId);
 
   // the initialization worked
-  iStatus = (hThread != (HANDLE)nullptr);
+  iStatus = (hThread != static_cast<HANDLE>(nullptr));
 
   m_displayHasBeenInitialized = true;
 }
@@ -611,9 +630,10 @@ void vpDisplayWin32::setTitle(const std::string &windowtitle)
   \param[in] fontname : Name of the font.
  */
 
-void vpDisplayWin32::setFont(const std::string & /* fontname */)
+void vpDisplayWin32::setFont(const std::string &fontname)
 {
   // Not yet implemented
+  (void)fontname;
 }
 
 /*!
@@ -644,11 +664,11 @@ void vpDisplayWin32::flushDisplayROI(const vpImagePoint &iP, unsigned int width,
   flushing the whole image.
   Therefore, we update the maximum area even when asked to update a region.
   */
-  WORD left = (WORD)iP.get_u();
-  WORD right = (WORD)(iP.get_u() + width - 1);
+  WORD left = static_cast<WORD>(iP.get_u());
+  WORD right = static_cast<WORD>(iP.get_u() + width - 1);
 
-  WORD top = (WORD)iP.get_v();
-  WORD bottom = (WORD)(iP.get_v() + height - 1);
+  WORD top = static_cast<WORD>(iP.get_v());
+  WORD bottom = static_cast<WORD>(iP.get_v() + height - 1);
 
   // sends a message to the window
   WPARAM wp = MAKEWPARAM(left, right);
@@ -883,8 +903,8 @@ void vpDisplayWin32::getImage(vpImage<vpRGBa> &I)
  */
 void vpDisplayWin32::getScreenSize(unsigned int &w, unsigned int &h)
 {
-  w = GetSystemMetrics(SM_CXSCREEN);
-  h = GetSystemMetrics(SM_CYSCREEN);
+  w = static_cast<unsigned int>(GetSystemMetrics(SM_CXSCREEN));
+  h = static_cast<unsigned int>(GetSystemMetrics(SM_CYSCREEN));
 }
 
 /*!

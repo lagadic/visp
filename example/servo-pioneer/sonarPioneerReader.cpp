@@ -74,7 +74,7 @@ void sonarPrinter(void)
 {
   fprintf(stdout, "in sonarPrinter()\n");
   fflush(stdout);
-  double scale = (double)half_size / (double)sonar.getMaxRange();
+  double scale = static_cast<double>(half_size) / static_cast<double>(sonar.getMaxRange());
 
   /*
   ArSonarDevice *sd;

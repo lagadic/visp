@@ -150,12 +150,10 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
     case 'h':
       usage(argv[0], nullptr, ipath, ppath);
       return false;
-      break;
 
     default:
       usage(argv[0], optarg_, ipath, ppath);
       return false;
-      break;
     }
   }
 
@@ -203,7 +201,7 @@ protected:
   {
     //![Light creation]
     // Set lights
-    mSceneMgr->setAmbientLight(Ogre::ColourValue((float)0.6, (float)0.6, (float)0.6)); // Default value of lightning
+    mSceneMgr->setAmbientLight(Ogre::ColourValue(static_cast<float>(0.6), static_cast<float>(0.6), static_cast<float>(0.6))); // Default value of lightning
     Ogre::Light *light = mSceneMgr->createLight();
     light->setDiffuseColour(1.0, 1.0, 1.0);  // scaled RGB values
     light->setSpecularColour(1.0, 1.0, 1.0); // scaled RGB values

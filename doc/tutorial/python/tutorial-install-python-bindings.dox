@@ -3,7 +3,7 @@
 \page tutorial-install-python-bindings Tutorial: Installing ViSP Python bindings
 \tableofcontents
 
-\section py_bindings_intro Introduction
+\section py_bindings_intro 1. Introduction
 
 ViSP includes an automatic tool to generate Pybind11-based bindings for ViSP.
 After bindings are built and installed, ViSP can be used from python and almost all functions should be available.
@@ -26,7 +26,7 @@ For all users these folders are important and illustrate the usage of the bindin
   - How to combine ViSP with NumPy.
 - examples: some python examples that show how to use ViSP bindings.
 
-\section py_bindings_build Build Python bindings from source
+\section py_bindings_build 2. Build Python bindings from source
 
 The general principle to build the Python bindings is the following:
 - Install python3
@@ -44,7 +44,7 @@ instructions given in \ref py_bindings_build_conda or *virtualenv* following ins
 
 \note For Windows, these instructions have been tested with Visual Studio 17 2022
 
-\subsection py_bindings_build_conda Build Python bindings using Conda
+\subsection py_bindings_build_conda 2.1. Build Python bindings using Conda
 
 We strongly recommend using Conda to build ViSP Python bindings. Below are instructions for macOS, Ubuntu and Windows environments.
 
@@ -177,14 +177,11 @@ for example `python=3.10` to the previous command lines.
 
   - **C. On Windows**:
 
-    On Windows, construction is trickier. First you have to disable the bindings to build and install the DLLs
-    corresponding to the ViSP modules:
-
         (visp-conda-ws) C:\visp-ws> mkdir visp-build-bindings
         (visp-conda-ws) C:\visp-ws> cd visp-build-bindings
         (visp-conda-ws) C:\visp-ws\visp-build-bindings> cmake -G "Visual Studio 17 2022" -A "x64" ../visp -DCMAKE_PREFIX_PATH=%CONDA_PREFIX% -DCMAKE_INSTALL_PREFIX=%CONDA_PREFIX%\Library -DVISP_LIB_INSTALL_PATH="lib" -DVISP_BIN_INSTALL_PATH="bin" -DVISP_CONFIG_INSTALL_PATH="cmake"
 
-    \note If you are using powershell, note that *%CONDA_PREFIX%* should be replaced by *"$env:CONDA_PREFIX"*
+    \note If you are using powershell, note that `%%CONDA_PREFIX%` should be replaced by `"$env:CONDA_PREFIX"`.
 
 - At this point, in the build folder there is the `ViSP-third-party.txt` file in which you should see something similar
 
@@ -224,6 +221,9 @@ for example `python=3.10` to the previous command lines.
 
   - **C. On Windows**:
 
+    On Windows, construction is trickier. First you have to build and install the DLLs
+    corresponding to the ViSP modules:
+
         (visp-conda-ws) C:\visp-ws\visp-build-bindings> cmake --build . --config Release --target install --parallel 8
 
     At this point, ViSP DLLs should be installed in `%CONDA_PREFIX%/Library/bin`. This can be checked by:
@@ -234,7 +234,7 @@ for example `python=3.10` to the previous command lines.
         ... libvisp_core361.dll
         ...
 
-    Now you can build the bindings
+    Now you can build the python bindings
 
         (visp-conda-ws) C:\visp-ws\visp-build-bindings> cmake --build . --config Release --target visp_python_bindings --parallel 8
 
@@ -271,7 +271,7 @@ for example `python=3.10` to the previous command lines.
 
       (visp-conda-ws) C:\visp-ws\visp-build-bindings> cmake --build . --config Release --target visp_python_bindings_test
 
-\subsection py_bindings_build_venv Build Python bindings using Python virtualenv
+\subsection py_bindings_build_venv 2.2. Build Python bindings using Python virtualenv
 
 In this section, we explain how to build the bindings with virtualenv
 
@@ -494,7 +494,7 @@ The ViSP source code also contains examples
       (venv) % python ibvs-four-points.py
       (venv) % python pbvs-four-points.py
 
-\section py_bindings_improvements Improving the bindings
+\section py_bindings_improvements 3. Improving the bindings
 
 If a feature, such as a function, class or python specific utilities is missing, you should first check that
 the Python API (built when generating the Python-specific documentation) does not have that function or class;
@@ -514,7 +514,7 @@ There are multiple ways to extend and improve the custom Python bindings:
 
 For more information and detailed explanations on the different improvement tracks, see the Python specific documentation.
 
-\section py_bindings_send_log Submitting an issue on GitHub
+\section py_bindings_send_log 4. Submitting an issue on GitHub
 
 If you encounter a problem during the build, you may raise an issue on GitHub. To better understand the issue,
 your report should contain:
@@ -525,7 +525,7 @@ your report should contain:
     - the `src` folder: contains the generated binding code and the preprocessed headers as seen by the generation tool
     - The output of your terminal
 
-\section py_bindings_conda_uninstall How to uninstall Miniforge
+\section py_bindings_conda_uninstall 5. How to uninstall Miniforge
 
 If you follow the steps to install python bindings \ref py_bindings_build_conda, we give hereafter the receipt
 to uninstall Miniforge:
@@ -551,7 +551,7 @@ to uninstall Miniforge:
       and
       # <<< conda initialize <<<
 
-\section py_bindings_known_errors Known issues
+\section py_bindings_known_errors 6. Known issues
 
 When configuring with CMake, compiling or modifying the bindings, you may encounter errors.
 
@@ -560,8 +560,8 @@ Here is a non-exhaustive list of warnings and errors.
 If you encounter a compilation error, make sure to first try rebuilding after cleaning the CMake cache.
 Pybind did generate problems (an error at the pybind include line) that were solved like this.
 
-\subsection py_bindings_known_warnings When configuring ViSP
-\subsubsection py_bindings_known_warnings_safe-rpath CMake Warning: Cannot generate a safe runtime search path
+\subsection py_bindings_known_warnings 6.1. When configuring ViSP
+\subsubsection py_bindings_known_warnings_safe-rpath 6.1.1. CMake Warning: Cannot generate a safe runtime search path
 
 When building Python bindings using Conda as described in section \ref py_bindings_build_conda, you may encounter
 the following CMake warning:
@@ -633,11 +633,11 @@ $ conda activate visp-conda-ws
 (visp-conda-ws) $ cmake ../visp -DCMAKE_PREFIX_PATH=$CONDA_PREFIX -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX
 \endcode
 
-\subsection py_bindings_known_errors_build When building ViSP
-\subsubsection py_bindings_known_errors_build_x11 Cannot build vpDisplayX.cpp
+\subsection py_bindings_known_errors_build 6.2. When building ViSP
+\subsubsection py_bindings_known_errors_build_x11 6.2.1. Cannot build vpDisplayX.cpp
 
 The following error may occur on macOS during a build
-\verbatim
+\code{.sh}
 $HOME/visp_ws/visp/modules/gui/src/display/vpDisplayX.cpp:88:7: error: use of undeclared identifier 'XSetWindowBackground'
       XSetWindowBackground(display, window, x_color[color.id]);
       ^
@@ -653,22 +653,90 @@ $HOME/visp_ws/visp/modules/gui/src/display/vpDisplayX.cpp:98:5: error: use of un
 $HOME/visp_ws/visp/modules/gui/src/display/vpDisplayX.cpp:100:5: error: use of undeclared identifier 'XFreePixmap'
     XFreePixmap(display, pixmap);
     ^
-\endverbatim
+\endcode
 
 It occurs when you forgot to install `xorg-libx11` and `xorg-libxfixes` conda packages.
 To fix this build issue:
-\verbatim
+\code{.sh}
 (visp-conda-ws) $ conda install xorg-libx11 xorg-libxfixes
 (visp-conda-ws) $ cd visp-build-bindings
 (visp-conda-ws) $ cmake ../visp -DCMAKE_PREFIX_PATH=$CONDA_PREFIX -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX
 (visp-conda-ws) $ make -j$(sysctl -n hw.logicalcpu) visp_python_bindings
-\endverbatim
+\endcode
 
-\subsection py_bindings_known_errors_generation When running the generation tool
+\subsubsection py_bindings_known_errors_import_realsense 6.2.2. ImportError: libvisp_sensor.so.3.6: undefined symbol: rs2_create_context_ex
 
-\subsubsection py_bindings_known_errors_parse Cannot parse code
+On Ubuntu, we got the following build error:
+\code{.sh}
+[100%] Built target visp_python_bindings_install
+[100%] Generating Python stubs with pybind11-stubgen...
+Requirement already satisfied: pybind11-stubgen in /home/user/miniforge3/envs/visp-conda-ws/lib/python3.13/site-packages (2.5.3)
+Traceback (most recent call last):
+  File "/home/user/miniforge3/envs/visp-conda-ws/lib/python3.13/site-packages/visp/__init__.py", line 44, in <module>
+    from ._visp import *
+ImportError: /home/user/soft/visp-ws/test-pr/visp-user/visp-build-conda-python/lib/libvisp_sensor.so.3.6: undefined symbol: rs2_create_context_ex
+\endcode
 
-\verbatim
+This error is related to `librealsense` 3rdparty that was installed twice. This could be checked running
+\code{.sh}
+$ sudo apt install locate
+$ sudo updatedb
+$ locate librealsense2.so
+/usr/local/lib/librealsense2.so
+/usr/local/lib/librealsense2.so.2.55
+/usr/local/lib/librealsense2.so.2.55.1
+/home/user/miniforge3/envs/visp-conda-ws/lib/librealsense2.so
+/home/user/miniforge3/envs/visp-conda-ws/lib/librealsense2.so.2.54
+/home/user/miniforge3/envs/visp-conda-ws/lib/librealsense2.so.2.54.2
+\endcode
+Here we can see that
+- `librealsense` version 2.55.1 is first installed as a system library in  `/usr/local/lib/librealsense2.so.2.55.1`
+- but also that we have `librealsense` version 2.54.2 installed with conda when you run the following command as
+  described in \ref py_bindings_build_conda section.
+\code{.sh}
+(visp-conda-ws) $ conda install ... librealsense ...
+\endcode
+
+To fix this issue, the idea is to keep only one version of the library. Thus we will remove the version installed
+with conda
+\code{.sh}
+(visp-conda-ws) $ conda uninstall librealsense
+Proceed ([y]/n)? y
+Executing transaction: done
+\endcode
+
+From here you need to rebuild the python bindings from scratch:
+\code{.sh}
+(visp-conda-ws) $ cd $VISP_WS/visp-build-bindings
+(visp-conda-ws) $ rm -rf *
+(visp-conda-ws) $ cmake ../visp -DCMAKE_PREFIX_PATH=$CONDA_PREFIX -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX
+(visp-conda-ws) $ make -j10 visp_python_bindings
+\endcode
+
+At the end of the build process, you should see something similar to:
+\code{.sh}
+[100%] Generating Python stubs with pybind11-stubgen...
+Requirement already satisfied: pybind11-stubgen in /home/user/miniforge3/envs/visp-conda-ws/lib/python3.13/site-packages (2.5.3)
+Processing /home/user/soft/visp-ws/test-pr/visp-user/visp-build-conda-python/modules/python/stubs
+  Installing build dependencies ... done
+  Getting requirements to build wheel ... done
+  Preparing metadata (pyproject.toml) ... done
+Building wheels for collected packages: visp-stubs
+  Building wheel for visp-stubs (pyproject.toml) ... done
+  Created wheel for visp-stubs: filename=visp_stubs-3.6.1-py3-none-any.whl size=440577 sha256=ebb8fe82aa9183d5688bcc5b1593864de04e89696b2cfd5bf1930b9dba10b89c
+  Stored in directory: /tmp/pip-ephem-wheel-cache-kx5lcta4/wheels/ec/b7/b7/461403daf4024acbb41b367cd5cc30c45444b5b8f79b8efd7f
+Successfully built visp-stubs
+Installing collected packages: visp-stubs
+Successfully installed visp-stubs-3.6.1
+[100%] Built target visp_python_bindings_stubs
+[100%] Built target visp_python_bindings
+\endcode
+
+\subsection py_bindings_known_errors_generation 6.3. When running the generation tool
+
+\subsubsection py_bindings_known_errors_parse 6.3.1. Cannot parse code
+
+\code{.sh}
   100%|##########| 319/319 [00:13<00:00, 23.91hdr/s]
   Traceback (most recent call last):
     File "<frozen runpy>", line 198, in _run_module_as_main
@@ -682,7 +750,7 @@ To fix this build issue:
       raise RuntimeError('There was an exception when processing headers: You should either ignore the faulty header/class, or fix the generator code!')
   RuntimeError: There was an exception when processing headers: You should either ignore the faulty header/class, or fix the generator code!
 C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppCommon.targets(254,5): error MSB8066: la build personnalisée de 'C:\visp-ws\test-pr\visp-SamFlt\visp-build-vc17-bindings\CMakeFi
-\endverbatim
+\endcode
 
 This means that there is a parsing error when reading the ViSP header files.
 
@@ -714,27 +782,27 @@ Here, the failing header was "vpRobotWireFrameSimulator.h" in the robot module, 
 }
 \endcode
 
-\subsection py_bindings_known_errors_compil When compiling the bindings
+\subsection py_bindings_known_errors_compil 6.4. When compiling the bindings
 
-\subsubsection py_bindings_known_errors_abstract Abstract class not detected
+\subsubsection py_bindings_known_errors_abstract 6.4.1. Abstract class not detected
 
 If you have this error:
-\verbatim
+\code{.sh}
   error: invalid new-expression of abstract class type ‘vpTemplateTrackerMI’
   return new Class{std::forward<Args>(args)...};
   In file included from $VISP_WS/visp-build/modules/python/bindings/src/tt_mi.cpp:13:0:
   $VISP_WS/visp/modules/tracker/tt_mi/include/visp3/tt_mi/vpTemplateTrackerMI.h:46:19: note:   because the following virtual functions are pure within ‘vpTemplateTrackerMI’:
   class VISP_EXPORT vpTemplateTrackerMI : public vpTemplateTracker
-\endverbatim
+\endcode
 
-You should define the class (here vpTemplateTrackerMI) as pure virtual in the config file (via the flag is_virtual).
-This error occurs because some methods are defined as pure virtual in a parent class and are not defined in the class
-this class: Pure virtual class detection does not look in the class hierarchy but only at the present class.
+You should define the class (here vpTemplateTrackerMI) as pure virtual in the `tt_mi.json` config file (via the flag `is_virtual`).
+This error occurs because some methods are defined as pure virtual in a parent class and are not defined in the class.
+Pure virtual class detection does not look in the class hierarchy but only at the present class.
 
-\subsubsection py_bindings_known_errors_template Template errors
+\subsubsection py_bindings_known_errors_template 6.4.2. Template errors
 
 If you have an issue that looks like:
-\verbatim
+\code{.sh}
   Consolidate compiler generated dependencies of target _visp
   [ 97%] Building CXX object modules/python/bindings/CMakeFiles/_visp.dir/src/core.cpp.o
   [ 97%] Building CXX object modules/python/bindings/CMakeFiles/_visp.dir/src/robot.cpp.o
@@ -760,14 +828,13 @@ If you have an issue that looks like:
   /home/user/visp_ws/visp/modules/core/include/visp3/core/vpImage.h:369:17:   required from here
   /usr/include/c++/11/type_traits:1010:52: error: static assertion failed: template argument must be a complete class or an unbounded array
   1010 |       **static_assert(std::__is_complete_or_unbounded(__type_identity<_Tp>{}),**
-\endverbatim
+\endcode
 
 You should delete the files in `modules/python/` of the **build** directory.
 
-
 If you have an error that looks like this:
 
-\verbatim
+\code{.sh}
 /home/user/miniconda3/envs/visp-python11/include/pybind11/cast.h: In instantiation of ‘pybind11::arg_v::arg_v(pybind11::arg&&, T&&, const char*) [with T = vpColVector (&)(const vpColVector&, const vpColVector&)]’:
 /home/user/miniconda3/envs/visp-python11/include/pybind11/cast.h:1452:53:   required from ‘pybind11::arg_v::arg_v(const char*, T&&, const char*) [with T = vpColVector (&)(const vpColVector&, const vpColVector&)]’
 /home/user/visp_ws/visp-build/modules/python/bindings/src/core.cpp:20491:347:   required from here
@@ -781,21 +848,59 @@ In file included from /home/user/miniconda3/envs/visp-python11/include/pybind11/
                  from /home/user/miniconda3/envs/visp-python11/include/pybind11/detail/class.h:12,
                  from /home/user/miniconda3/envs/visp-python11/include/pybind11/pybind11.h:13,
                  from /home/user/visp_ws/visp_ukf/modules/python/bindings/src/core.cpp:3:
-\endverbatim
+\endcode
 
 This is due to an argument that cannot have a default value. In the example above, this argument is **vpColVector (&)(const vpColVector&, const vpColVector&)** (converted from an std::function).
 To solve this, go to `modules/python/generator/visp_python_bindgen/generator_config.py`. Then, add a regular expression in the **FORBIDDEN_DEFAULT_ARGUMENT_TYPES_REGEXS** list to match with this type.
 Here, we would add
-\verbatim
+\code{.sh}
 ^std::function
-\endverbatim
+\endcode
 to exclude the `std::function` from being constructed with a default value.
 
+\subsubsection py_bindings_known_errors_external_symbol 6.4.3. External symbol not found when linking _visp
 
-\subsubsection py_bindings_known_errors_import_dll ImportError: DLL load failed while importing _visp
+When building bindings, if you encounter the `"External symbol not found"` error when linking `_visp` target, such as the
+following errors that have occurred with Visual C++ on Windows, you can check whether the functions concerned are only
+implemented in a header file.
+
+\code{.sh}
+Création de la bibliothèque C:/visp-ws/test-pr/visp-fspindle/visp-build-bindings/lib/Release/_visp.lib et de l'objet C:/visp-ws/test-pr/visp-fspindle/visp-build-bindings/lib/Release/_visp.exp
+vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: class std::vector<unsigned int,class std::allocator<unsigned int> > const & __cdecl vpBasicKeyPoint::getMatchedReferencePoints(void)const" (__imp_?getMatchedReferencePoints@vpBasicKeyPoint@@QEBAAEBV?$vector@IV?$allocator@I@std@@@std@@XZ) [C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
+vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: class std::vector<class vpImagePoint,class std::allocator<class vpImagePoint> > const & __cdecl vpBasicKeyPoint::getCurrentImagePointsList(void)const"(__imp_?getCurrentImagePointsList@vpBasicKeyPoint@@QEBAAEBV?$vector@VvpImagePoint@@V?$allocator@VvpImagePoint@@@std@@@std@@XZ) [C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
+vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: class std::vector<class vpImagePoint,class std::allocator<class vpImagePoint> > const & __cdecl vpBasicKeyPoint::getReferenceImagePointsList(void)const" (__imp_?getReferenceImagePointsList@vpBasicKeyPoint@@QEBAAEBV?$vector@VvpImagePoint@@V?$allocator@VvpImagePoint@@@std@@@std@@XZ) [C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
+vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: unsigned int __cdecl vpBasicKeyPoint::getMatchedPointNumber(void)const " (__imp_?getMatchedPointNumber@vpBasicKeyPoint@@QEBAIXZ) [C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
+vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: unsigned int __cdecl vpBasicKeyPoint::getReferencePointNumber(void)const " (__imp_?getReferencePointNumber@vpBasicKeyPoint@@QEBAIXZ) [C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
+vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: unsigned int __cdecl vpBasicKeyPoint::getIndexInAllReferencePointList(unsigned int)" (__imp_?getIndexInAllReferencePointList@vpBasicKeyPoint@@QEAAII@Z)[C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
+vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: void __cdecl vpBasicKeyPoint::getMatchedPoints(unsigned int,class vpImagePoint &,class vpImagePoint &)" (__imp_?getMatchedPoints@vpBasicKeyPoint@@QEAAXIAEAVvpImagePoint@@0@Z) [C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
+vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: void __cdecl vpBasicKeyPoint::getReferencePoint(unsigned int,class vpImagePoint &)" (__imp_?getReferencePoint@vpBasicKeyPoint@@QEAAXIAEAVvpImagePoint@@@Z) [C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
+vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: bool __cdecl vpBasicKeyPoint::referenceBuilt(void)const " (__imp_?referenceBuilt@vpBasicKeyPoint@@QEBA_NXZ) [C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
+C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\visp\_visp.cp310-win_amd64.pyd : fatal error LNK1120: 9 externes non résolus [C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\_visp.
+vcxproj]
+\endcode
+
+When this error raised the 9 non resolved external symbols below
+\code{.sh}
+Les 9 fonctions non trouvées sont:
+vpBasicKeyPoint::getMatchedReferencePoints()
+vpBasicKeyPoint::getCurrentImagePointsList()
+vpBasicKeyPoint::getReferenceImagePointsList()
+vpBasicKeyPoint::getMatchedPointNumber()
+vpBasicKeyPoint::getReferencePointNumber()
+vpBasicKeyPoint::getIndexInAllReferencePointList()
+vpBasicKeyPoint::getMatchedPoints(unsigned int,class vpImagePoint &,class vpImagePoint &)
+vpBasicKeyPoint::getReferencePoint(unsigned int,class vpImagePoint &)
+vpBasicKeyPoint::referenceBuilt()
+\endcode
+were defined as inline functions in `vpBasicKeyPoint.h` file. There was no `vpBasicKeyPoint.cpp` file.
+
+The solution to fix this link issue was to implement a function, like the vpBasicKeyPoint destructor
+in `vpBasicKeyPoint.cpp` file.
+
+\subsubsection py_bindings_known_errors_import_dll 6.4.4. ImportError: DLL load failed while importing _visp
 
 The following error may occur on Windows
-\verbatim
+\code{.sh}
   Successfully installed visp-3.6.1
   Building Custom Rule C:/visp-ws/visp/modules/python/bindings/CMakeLists.txt
   Generating Python stubs with pybind11-stubgen...
@@ -832,13 +937,13 @@ The following error may occur on Windows
       raise CalledProcessError(retcode, process.args,
   subprocess.CalledProcessError: Command '['C:\\Users\\User\\miniforge3\\envs\\visp-conda-ws\\python.exe', '-m', 'pybind11_stubgen', '-o', 'C:\\visp-ws\\visp-build-bindings-vc17\\modules\\python\\stubs', '--ignore-all-errors', '_visp']' returned non-zero exit status 1.
 C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppCommon.targets(254,5): error MSB8066: la build personnalisée de 'C:\visp-ws\visp-build-bindings-vc17\CMakeFiles\4a151b60a22ebef29e06fbbd54c3e165\visp_python_bindings_stubs.rule;C:\visp-ws\visp\modules\python\stubs\CMakeLists.txt' s'est arrêtée. Code 1. [C:\visp-ws\visp-build-bindings-vc17\modules\python\stubs\visp_python_bindings_stubs.vcxproj]
-\endverbatim
+\endcode
 
 This error occurs when ViSP DLLs or third-party DLLs are not found.
 The first thing to do is to check whether any of the third-parties are installed outside the Conda environment.
 To do this, check your `ViSP-third-party.txt` file.
 For example, if you have something similar to
-\verbatim
+\code{.sh}
 (visp-conda-ws) C:\visp-ws\visp-build-bindings> type ViSP-third-party.txt
 ...
   OpenCV:
@@ -860,7 +965,7 @@ For example, if you have something similar to
   Library dirs:
     Eigen3 include dir:          C:/Users/User/miniforge3/envs/visp-conda-ws/Library/share/eigen3/cmake
     OpenCV dir:                  C:/visp-ws/3rdparty/opencv-4.6.0/build
-\endverbatim
+\endcode
 you can see that OpenCV 4.6.0 is found outside conda environment, while eigen 3.4.0 is found in the conda environment.
 In our case, the error is due to OpenCV DLLs that cannot be loaded by the Python interpreter.
 
@@ -868,15 +973,15 @@ In our case, the error is due to OpenCV DLLs that cannot be loaded by the Python
 You probably have an `OpenCV_DIR` environment variable which is set to `C:/visp-ws/3rdparty/opencv-4.6.0/build`.
 A simple solution is to remove this environment variable, close and reopen your `Miniforge Prompt`, and if you haven't
 already done so, install OpenCV using conda
-\verbatim
+\code{.sh}
 (visp-conda-ws) $ conda install libopencv
-\endverbatim
+\endcode
 and configure again ViSP
-\verbatim
+\code{.sh}
 (visp-conda-ws) C:\visp-ws\visp-build-bindings> cmake -G "Visual Studio 17 2022" -A "x64" ../visp -DCMAKE_PREFIX_PATH=%CONDA_PREFIX% -DCMAKE_INSTALL_PREFIX=%CONDA_PREFIX%\Library -DVISP_LIB_INSTALL_PATH="lib" -DVISP_BIN_INSTALL_PATH="bin" -DVISP_CONFIG_INSTALL_PATH="cmake"
-\endverbatim
+\endcode
 At this point you should see that OpenCV is detected in the conda environment
-\verbatim
+\code{.sh}
 (visp-conda-ws) C:\visp-ws\visp-build-bindings> type ViSP-third-party.txt
 ...
   OpenCV:
@@ -898,28 +1003,28 @@ At this point you should see that OpenCV is detected in the conda environment
   Library dirs:
     Eigen3 include dir:          C:/Users/User/miniforge3/envs/visp-conda-ws/Library/share/eigen3/cmake
     OpenCV dir:                  C:/Users/User/miniforge3/envs/visp-conda-ws/Library/cmake
-\endverbatim
+\endcode
 
   Now you can relaunch the build process
-\verbatim
+\code{.sh}
 (visp-conda-ws) C:\visp-ws\visp-build-bindings> cmake --build . --config Release --target install --parallel 8
 (visp-conda-ws) C:\visp-ws\visp-build-bindings> cmake --build . --config Release --target visp_python_bindings --parallel 8
-\endverbatim
+\endcode
 
 - **Solution2:**
 If you rather want to use an OpenCV built and installed outside your conda environment, you may set
 `VISP_WINDOWS_DLL_PATH` environment variable with the path to the OpenCV DLLs. In our case it would be:
-\verbatim
+\code{.sh}
 (visp-conda-ws) $ setx VISP_WINDOWS_DLL_PATH "%VISP_WINDOWS_DLL_PATH%;C:\visp-ws\3rdparty\opencv-4.6.0\build\x64\vc17\bin"
-\endverbatim
+\endcode
 Then close and reopen your `Miniforge Prompt` and relaunch the bindings build process
-\verbatim
+\code{.sh}
 (visp-conda-ws) C:\visp-ws\visp-build-bindings> cmake --build . --config Release --target visp_python_bindings --parallel 8
-\endverbatim
+\endcode
 
   \warning If after rebuilding the error still appears or you cannot locate the third party library see the next section.
 
-\subsubsection py_bindings_known_errors_tracing_missing_dlls Tracing missing DLLs
+\subsubsection py_bindings_known_errors_tracing_missing_dlls 6.4.5. Tracing missing DLLs
 
 To trace the missing DLLs, we can use the *process monitor* tool. This tool will list all the the paths that Python looks up to find the required DLLs.
 
@@ -933,7 +1038,7 @@ To use this tool:
 \image html image/tutorial/python/process-monitor-filter.png
 
 4. Now that this is done, you can clear the window by clicking the dropdown menu *Edit -> Clear Display*. You can now do the following in your Miniprompt interpreter:
-\verbatim
+\code{.sh}
 (visp-conda-ws) C:\visp-ws\visp-build-bindings>python
 Python 3.12.6 | packaged by conda-forge | (main, Sep 30 2024, 17:48:58) [MSC v.1941 64 bit (AMD64)] on win32
 Type "help", "copyright", "credits" or "license" for more information.
@@ -951,7 +1056,7 @@ Traceback (most recent call last):
     from ._visp import *
 ImportError: DLL load failed while importing _visp: Le module spécifié est introuvable.
 >>>
-\endverbatim
+\endcode
 
 5. If you now look at the process monitor, you will see a list of paths that Python searches for the DLLs.
 This includes the ViSP DLLs, but also the required third parties. A single DLL file may be looked for in multiple folders.
@@ -974,30 +1079,30 @@ you can find the folder containing the DLLs. Here, the RealSense2 DLLs are locat
 the conda environment.
 
 8. You can update the `VISP_WINDOWS_DLL_PATH` variable to include the path to each 3rd party
-\verbatim
+\code{.sh}
 (visp-conda-ws) $ setx VISP_WINDOWS_DLL_PATH "%VISP_WINDOWS_DLL_PATH%;C:\visp-ws\librealsense\build-vc16\Release;C:\Program Files\Point Grey Research\FlyCapture2\bin64;C:\Program Files\Basler\pylon 6\Runtime\x64;C:\Program Files\Vicon\DataStream SDK\Win64\CPP"
-\endverbatim
+\endcode
 
 9. With this done you can close and reopen your python interpreter and try to reimport visp. If all the dlls were
 successfully loaded, the error should have disappeared and the output should look like:
-\verbatim
+\code{.sh}
 (visp-conda-ws) C:\visp-ws\visp-build-bindings>python
 Python 3.12.6 | packaged by conda-forge | (main, Sep 30 2024, 17:48:58) [MSC v.1941 64 bit (AMD64)] on win32
 Type "help", "copyright", "credits" or "license" for more information.
 >>> import visp
 >>>
-\endverbatim
+\endcode
 \note If this is not the case and you still have the `ImportError`, return to step 4
 
 
-\subsection py_bindings_known_errors_import When importing ViSP In Python
+\subsection py_bindings_known_errors_import 6.5. When importing ViSP In Python
 
-\subsubsection py_bindings_known_errors_same_name Static and member methods have the same name
+\subsubsection py_bindings_known_errors_same_name 6.5.1. Static and member methods have the same name
 
 If, when importing visp in Python, you encounter this message:
-\verbatim
+\code{.sh}
   ImportError: overloading a method with both static and instance methods is not supported; error while attempting to bind instance method visp.xxx() -> None
-\endverbatim
+\endcode
 
 Then it means that a class has both a static method and a member method with the same name.
 You have to rename one or the other by modifying the bindings through JSON configuration files like in
@@ -1005,17 +1110,17 @@ You have to rename one or the other by modifying the bindings through JSON confi
 
 This error may also happen when generating the Python stubs (after the bindings compilation and linking step).
 
-\subsubsection py_bindings_known_errors_test When building the tests
+\subsubsection py_bindings_known_errors_test 6.5.2. When building the tests
 
 The following error may occur when building Python tests on Ubuntu 22.04 when ros-2 humble is installed:
 
-\verbatim
+\code{.sh}
 (venv) $ cd $VISP_WS/visp-build-bindings
 (venv) $ make -j8 visp_python_bindings_test
-\endverbatim
+\endcode
 
 The error is the following:
-\verbatim
+\code{.sh}
 ...
 [100%] Built target visp_python_bindings
 [100%] Installing dependencies to test Python bindings...
@@ -1133,7 +1238,7 @@ make[2]: *** [CMakeFiles/Makefile2:2278: modules/python/test/CMakeFiles/visp_pyt
 make[1]: *** [CMakeFiles/Makefile2:2285: modules/python/test/CMakeFiles/visp_python_bindings_test.dir/rule] Error 2
 make: *** [Makefile:702: visp_python_bindings_test] Error 2
 (venv) $
-\endverbatim
+\endcode
 
 The work arround consists in uninstalling `python3-pytest` system package.
 

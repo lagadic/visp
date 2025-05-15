@@ -39,12 +39,14 @@
 #ifndef VP_IMAGE_FILTER_H
 #define VP_IMAGE_FILTER_H
 
+#include <cstring>
 #include <fstream>
 #include <iostream>
 #include <math.h>
 #include <string.h>
 
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpColorGetter.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpHistogram.h>
 #include <visp3/core/vpImage.h>
@@ -64,6 +66,10 @@
 #if defined(__clang__)
 #  pragma clang diagnostic push
 #  pragma clang diagnostic ignored "-Wdocumentation"
+#endif
+
+#ifdef VISP_HAVE_OPENMP
+#include <omp.h>
 #endif
 
 BEGIN_VISP_NAMESPACE
@@ -196,12 +202,12 @@ public:
 
 #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
         // Helper to apply the scale to the raw values of the filters
-        auto scaleFilter = [](vpArray2D<FilterType> &filter, const float &scale) {
+        auto scaleFilter = [](vpArray2D<FilterType> &filter, const FilterType &scale) {
           const unsigned int nbRows = filter.getRows();
           const unsigned int nbCols = filter.getCols();
           for (unsigned int r = 0; r < nbRows; ++r) {
             for (unsigned int c = 0; c < nbCols; ++c) {
-              filter[r][c] = static_cast<FilterType>(filter[r][c] * scale);
+              filter[r][c] = filter[r][c] * scale;
             }
           }
           };
@@ -209,24 +215,24 @@ public:
 
         // Scales to apply to the filters to get a normalized gradient filter that gives a gradient
         // between 0 and 255 for an vpImage<uchar>
-        float scaleX = 1.f;
-        float scaleY = 1.f;
+        FilterType scaleX = 1.0;
+        FilterType scaleY = 1.0;
         const unsigned int val2 = 2U;
 
         if (filteringType == CANNY_GBLUR_SOBEL_FILTERING) {
           if (computeDx) {
-            scaleX = static_cast<float>(vpImageFilter::getSobelKernelX(gradientFilterX.data, (apertureGradient - 1) / val2));
+            scaleX = static_cast<FilterType>(vpImageFilter::getSobelKernelX(gradientFilterX.data, (apertureGradient - 1) / val2));
           }
           if (computeDy) {
-            scaleY = static_cast<float>(vpImageFilter::getSobelKernelY(gradientFilterY.data, (apertureGradient - 1) / val2));
+            scaleY = static_cast<FilterType>(vpImageFilter::getSobelKernelY(gradientFilterY.data, (apertureGradient - 1) / val2));
           }
         }
         else if (filteringType == CANNY_GBLUR_SCHARR_FILTERING) {
           if (computeDx) {
-            scaleX = static_cast<float>(vpImageFilter::getScharrKernelX(gradientFilterX.data, (apertureGradient - 1) / val2));
+            scaleX = static_cast<FilterType>(vpImageFilter::getScharrKernelX(gradientFilterX.data, (apertureGradient - 1) / val2));
           }
           if (computeDy) {
-            scaleY = static_cast<float>(vpImageFilter::getScharrKernelY(gradientFilterY.data, (apertureGradient - 1) / val2));
+            scaleY = static_cast<FilterType>(vpImageFilter::getScharrKernelY(gradientFilterY.data, (apertureGradient - 1) / val2));
           }
         }
 
@@ -343,8 +349,9 @@ public:
                                             const vpCannyFilteringAndGradientType &filteringType = CANNY_GBLUR_SOBEL_FILTERING,
                                             const vpImage<bool> *p_mask = nullptr)
   {
-    const unsigned int w = I.getWidth();
-    const unsigned int h = I.getHeight();
+    const int w = I.getWidth();
+    const int h = I.getHeight();
+    const int size = I.getSize();
 
     if ((lowerThresholdRatio <= 0.f) || (lowerThresholdRatio >= 1.f)) {
       std::stringstream errMsg;
@@ -376,19 +383,20 @@ public:
     }
 
     // Computing the absolute gradient of the image G = |dIx| + |dIy|
-    for (unsigned int r = 0; r < h; ++r) {
-      for (unsigned int c = 0; c < w; ++c) {
+#ifdef VISP_HAVE_OPENMP
+#pragma omp parallel for
+#endif
+    for (int iter = 0; iter < size; ++iter) {
         // We have to compute the value for each pixel if we don't have a mask or for
         // pixels for which the mask is true otherwise
-        bool computeVal = checkBooleanMask(p_mask, r, c);
+      bool computeVal = checkBooleanMask(p_mask, iter);
 
-        if (computeVal) {
-          float dx = static_cast<float>(dIx[r][c]);
-          float dy = static_cast<float>(dIy[r][c]);
-          float gradient = std::abs(dx) + std::abs(dy);
-          float gradientClamped = std::min<float>(gradient, static_cast<float>(std::numeric_limits<unsigned char>::max()));
-          dI[r][c] = static_cast<unsigned char>(gradientClamped);
-        }
+      if (computeVal) {
+        float dx = static_cast<float>(dIx.bitmap[iter]);
+        float dy = static_cast<float>(dIy.bitmap[iter]);
+        float gradient = std::abs(dx) + std::abs(dy);
+        float gradientClamped = std::min<float>(gradient, static_cast<float>(std::numeric_limits<unsigned char>::max()));
+        dI.bitmap[iter] = static_cast<unsigned char>(gradientClamped);
       }
     }
 
@@ -400,12 +408,17 @@ public:
     float totalNbPixels = static_cast<float>(hist.getTotal());
     float accu = 0;
     float t = upperThresholdRatio * totalNbPixels;
+    float tLow = lowerThresholdRatio * totalNbPixels;
     float bon = 0;
     unsigned int i = 0;
-    bool notFound = true;
+    bool notFound = true, notFoundLower = true;
     while ((i < nbBins) && notFound) {
       float tf = static_cast<float>(hist[static_cast<unsigned char>(i)]);
       accu = accu + tf;
+      if ((accu > tLow) && notFoundLower) {
+        lowerThresh = static_cast<float>(i);
+        notFoundLower = false;
+      }
       if (accu > t) {
         bon = static_cast<float>(i);
         notFound = false;
@@ -417,11 +430,168 @@ public:
       errMsg << "Could not find a bin for which " << upperThresholdRatio * 100.f << " percents of the pixels had a gradient lower than the upper threshold.";
       throw(vpException(vpException::fatalError, errMsg.str()));
     }
+
     float upperThresh = std::max<float>(bon, 1.f);
-    lowerThresh = lowerThresholdRatio * bon;
     lowerThresh = std::max<float>(lowerThresh, std::numeric_limits<float>::epsilon());
     return upperThresh;
   }
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) // Check if cxx11 or higher
+  /**
+   * \brief Compute the upper Canny edge filter threshold for a HSV image.
+   *
+   * \tparam ArithmeticType : The type of encoding of the channels of the HSV image.
+   * \tparam useFullScale : When using unsigned char, true means that Hue is encoded on the range [0; 255], otherwise it
+   * uses the limited range as defined in the vpHSV class.
+   * \tparam OutType : Either float, to accelerate the computation time, or double, to have greater precision.
+   * \param[in] I : The HSV image.
+   * \param[in] p_dIx : If different from nullptr, must contain the gradient of the image with regard to the horizontal axis.
+   * \param[in] p_dIy : If different from nullptr, must contain the gradient of the image with regard to the vertical axis.
+   * \param[in] lowerThresh : Canny lower threshold.
+   * \param[in] gaussianKernelSize : The size of the mask of the Gaussian filter to apply (an odd number).
+   * \param[in] gaussianStdev : The standard deviation of the Gaussian filter to apply.
+   * \param[in] lowerThresholdRatio : The ratio of the upper threshold the lower threshold must be equal to.
+   * \param[in] upperThresholdRatio : The ratio of pixels whose absolute gradient Gabs is lower or equal to define
+   * the upper threshold.
+   * \param[in] filteringType : Canny filter type.
+   * \param[in] p_mask : If different from  \b nullptr , only the pixels for which \b p_mask is true will be considered.
+   * \return The upper Canny edge filter threshold.
+   */
+  template<typename ArithmeticType, bool useFullScale, typename OutType>
+  inline static float computeCannyThreshold(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, float &lowerThresh,
+                                            const vpImage<OutType> *p_dIx = nullptr, const vpImage<OutType> *p_dIy = nullptr,
+                                            const unsigned int &gaussianKernelSize = 5,
+                                            const OutType &gaussianStdev = 2.f,
+                                            const float &lowerThresholdRatio = 0.6f, const float &upperThresholdRatio = 0.8f,
+                                            const vpCannyFilteringAndGradientType &filteringType = CANNY_GBLUR_SOBEL_FILTERING,
+                                            const vpImage<bool> *p_mask = nullptr)
+  {
+    const unsigned int w = I.getWidth();
+    const unsigned int h = I.getHeight();
+    const int size = I.getSize();
+
+    if ((lowerThresholdRatio <= 0.f) || (lowerThresholdRatio >= 1.f)) {
+      std::stringstream errMsg;
+      errMsg << "Lower ratio (" << lowerThresholdRatio << ") " << (lowerThresholdRatio < 0.f ? "should be greater than 0 !" : "should be lower than 1 !");
+      throw(vpException(vpException::fatalError, errMsg.str()));
+    }
+
+    if ((upperThresholdRatio <= 0.f) || (upperThresholdRatio >= 1.f)) {
+      std::stringstream errMsg;
+      errMsg << "Upper ratio (" << upperThresholdRatio << ") " << (upperThresholdRatio < 0.f ? "should be greater than 0 !" : "should be lower than 1 !");
+      throw(vpException(vpException::fatalError, errMsg.str()));
+    }
+
+    if (lowerThresholdRatio  >= upperThresholdRatio) {
+      std::stringstream errMsg;
+      errMsg << "Lower ratio (" << lowerThresholdRatio << ") should be lower than the upper ratio (" << upperThresholdRatio << ")";
+      throw(vpException(vpException::fatalError, errMsg.str()));
+    }
+
+    int nbThread = 1;
+#ifdef VISP_HAVE_OPENMP
+    nbThread = omp_get_max_threads();
+#endif
+
+    vpImage<OutType> dI(h, w);
+    vpImage<OutType> dIx(h, w), dIy(h, w);
+    if ((p_dIx != nullptr) && (p_dIy != nullptr)) {
+      dIx = *p_dIx;
+      dIy = *p_dIy;
+    }
+    else {
+      vpImage<vpHSV<ArithmeticType, useFullScale>> Iblur;
+      gaussianBlur(I, Iblur, gaussianKernelSize, gaussianStdev, true, p_mask);
+      gradientFilter(Iblur, dIx, dIy, nbThread, p_mask, filteringType);
+    }
+
+    // Computing the absolute gradient of the image G = |dIx| + |dIy|
+    float dIMax = -1.; // dI is the absolute gradient => positive
+    float dIMin = std::numeric_limits<OutType>::max();
+    int iter, istart = 0, istop = size;
+#ifdef VISP_HAVE_OPENMP
+    int iam, nt, ipoints, npoints(size);
+#pragma omp parallel default(shared) private(iter, iam, nt, ipoints, istart, istop)
+    {
+      iam = omp_get_thread_num();
+      nt = omp_get_num_threads();
+      ipoints = npoints / nt;
+      // size of partition
+      istart = iam * ipoints; // starting array index
+      if (iam == nt-1) {
+        // last thread may do more
+        ipoints = npoints - istart;
+      }
+      istop = istart + ipoints;
+#endif
+      float localdImin = std::numeric_limits<OutType>::max(), localdImax = -1.;
+      for (iter = istart; iter < istop; ++iter) {
+        // We have to compute the value for each pixel if we don't have a mask or for
+        // pixels for which the mask is true otherwise
+        bool computeVal = checkBooleanMask(p_mask, iter);
+
+        if (computeVal) {
+          float dx = static_cast<float>(dIx.bitmap[iter]);
+          float dy = static_cast<float>(dIy.bitmap[iter]);
+          float gradient = std::abs(dx) + std::abs(dy);
+          localdImax = std::max(localdImax, gradient);
+          localdImin = std::min(localdImin, gradient);
+          dI.bitmap[iter] = gradient;
+        }
+      }
+#ifdef VISP_HAVE_OPENMP
+#pragma omp critical
+      {
+        dIMin = std::min(dIMin, localdImin);
+        dIMax = std::max(dIMax, localdImax);
+      }
+#else
+      dIMin = localdImin;
+      dIMax = localdImax;
+#endif
+#ifdef VISP_HAVE_OPENMP
+    }
+#endif
+
+    // Compute the histogram
+#ifdef VISP_HAVE_THREADS
+    nbThread = std::max(static_cast<int>(std::thread::hardware_concurrency()), 1); // The method can return 0 when it is not able to detect the supported number of threads.
+#endif
+    const unsigned int nbBins = 1024;
+    vpHistogram hist(nbBins);
+    hist.setMask(p_mask);
+    OutType step = 0.;
+    hist.calculate<OutType>(dI, dIMin, dIMax, step, nbBins, nbThread);
+    float totalNbPixels = static_cast<float>(hist.getTotal());
+    float accu = 0;
+    float t = upperThresholdRatio * totalNbPixels;
+    float tLow = lowerThresholdRatio * totalNbPixels;
+    float bon = 0;
+    unsigned int i = 0;
+    bool notFound = true, notFoundLower = true;
+    while ((i < nbBins) && notFound) {
+      float tf = static_cast<float>(hist[i]);
+      accu = accu + tf;
+      if ((accu > tLow) && notFoundLower) {
+        lowerThresh = static_cast<float>(i) *  static_cast<float>(step) + dIMin;
+        notFoundLower = false;
+      }
+      if (accu > t) {
+        bon = static_cast<float>(i);
+        notFound = false;
+      }
+      ++i;
+    }
+    if (notFound) {
+      std::stringstream errMsg;
+      errMsg << "Could not find a bin for which " << upperThresholdRatio * 100.f << " percents of the pixels had a gradient lower than the upper threshold.";
+      throw(vpException(vpException::fatalError, errMsg.str()));
+    }
+    float upperThresh = bon *  static_cast<float>(step) + dIMin;
+    lowerThresh = std::max<float>(lowerThresh, std::numeric_limits<float>::epsilon());
+    return upperThresh;
+  }
+#endif
 
   /*!
    * Apply a 1x3 derivative filter to an image pixel.
@@ -593,13 +763,13 @@ public:
   }
 
   /**
-   * @brief Apply a filter at a given image location
+   * \brief Apply a filter at a given image location
    *
-   * @tparam FilterType Image and filter types: double or float
-   * @param I The input image
-   * @param row The row coordinate where the filter should be applied
-   * @param col The column coordinate where the filter should be applied
-   * @param M the filter
+   * \tparam FilterType Image and filter types: double or float
+   * \param I The input image
+   * \param row The row coordinate where the filter should be applied
+   * \param col The column coordinate where the filter should be applied
+   * \param M the filter
    */
   template <typename FilterType>
   static FilterType filter(const vpImage<FilterType> &I, const vpArray2D<FilterType> &M, unsigned int row, unsigned int col)
@@ -745,6 +915,7 @@ public:
     return static_cast<unsigned char>(((1. * I[i - val2][j]) + (4. * I[i - 1][j]) + (6. * I[i][j]) + (4. * I[i + 1][j]) + (1. * I[i + val2][j])) / 16.);
   }
 
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
   template <typename ImageType, typename FilterType>
   static void filterX(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, const FilterType *filter, unsigned int size,
                       const vpImage<bool> *p_mask = nullptr)
@@ -851,7 +1022,346 @@ public:
     return result + (filter[0] * static_cast<FilterType>(I[r][c]));
   }
 #endif
+#else
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+  /**
+   * \brief Apply separately a filter to all the channels of a vpHSV.
+   *
+   * \tparam A specialization of a vpHSV color.
+   * \tparam FilterType An arithmetic type.
+   * \param[in] in The vpHSV that is filtered.
+   * \param[in] out The result of the filtering, stored in a vector of doubles to limit rounding errors.
+   * \param[in] coeff The filter coefficient to apply.
+   */
+  template<class Color, typename FilterType>
+  static inline typename std::enable_if<!std::is_same<Color, vpRGBa>::value, void>::type
+    filterChannel(const Color &in, vpColVector &out, const FilterType &coeff)
+  {
+    out[0] = coeff * vpColorGetter<0>::get(in);
+    out[1] = coeff * vpColorGetter<1>::get(in);
+    out[2] = coeff * vpColorGetter<2>::get(in);
+  }
 
+  /**
+   * \brief Apply separately a filter to all the channels of a vpRGBa.
+   *
+   * \tparam FilterType An arithmetic type.
+   * \param[in] in The RGBa that is filtered.
+   * \param[in] out The result of the filtering, stored in a vector of doubles to limit rounding errors.
+   * \param[in] coeff The filter coefficient to apply.
+   */
+  template<class Color, typename FilterType>
+  static inline typename std::enable_if<std::is_same<Color, vpRGBa>::value, void>::type
+    filterChannel(const Color &in, vpColVector &out, const FilterType &coeff)
+  {
+    out[0] = coeff * vpColorGetter<0>::get(in);
+    out[1] = coeff * vpColorGetter<1>::get(in);
+    out[2] = coeff * vpColorGetter<2>::get(in);
+    out[3] = vpRGBa::alpha_default;
+  }
+
+  /**
+   * \brief Apply separately a filter to all the channels of two colors.
+   *
+   * \tparam Color A color class, such as vpHSV or vpRGBa.
+   * \tparam FilterType An arithmetic type.
+   * \param[in] in1 The first RGBa that is filtered.
+   * \param[in] in2 The second RGBa that is filtered with the same coefficient.
+   * \param[in] out The result of the filtering, stored in a vector of doubles to limit rounding errors.
+   * \param[in] coeff The filter coefficient to apply.
+   */
+  template<class Color, typename FilterType>
+  inline static void
+    filterChannel(const Color &in1, const Color &in2, vpColVector &out, const FilterType &coeff)
+  {
+    out[0] += coeff * (vpColorGetter<0>::get(in1) + vpColorGetter<0>::get(in2));
+    out[1] += coeff * (vpColorGetter<1>::get(in1) + vpColorGetter<1>::get(in2));
+    out[2] += coeff * (vpColorGetter<2>::get(in1) + vpColorGetter<2>::get(in2));
+  }
+#endif
+
+  /**
+   * \brief Filter along the horizontal direction.
+   *
+   * \tparam ImageType The type of pixels. It can be an arithmetic type or a color type (vpRGBa, vpHSV).
+   * \tparam OutputType The type of pixels in the resulting image. It can be an arithmetic type or a color type (vpRGBa, vpHSV).
+   * \tparam FilterType An arithmetic type.
+   * \param[in] I The image that must be filtered.
+   * \param[in] dIx The image filtered along the horizontal direction.
+   * \param[in] filter The coefficients of the filter.
+   * \param[in] size The size of the filter.
+   * \param[in] p_mask A boolean mask that permits to select the pixels that must be filtered if different from nullptr,
+   * unused otherwise.
+   */
+  template<typename ImageType, typename OutputType, typename FilterType>
+  static void filterX(const vpImage<ImageType> &I, vpImage<OutputType> &dIx, const FilterType *filter, unsigned int size,
+                      const vpImage<bool> *p_mask = nullptr)
+  {
+    const unsigned int height = I.getHeight();
+    const unsigned int width = I.getWidth();
+    const unsigned int stop1J = (size - 1) / 2;
+    const unsigned int stop2J = width - ((size - 1) / 2);
+    resizeAndInitializeIfNeeded(p_mask, height, width, dIx);
+
+    unsigned int istart = 0;
+    unsigned int istop = height;
+#ifdef VISP_HAVE_OPENMP
+    unsigned int iam, nt, ipoints, npoints(height);
+#pragma omp parallel default(shared) private(iam, nt, ipoints, istart, istop)
+    {
+      iam = omp_get_thread_num();
+      nt = omp_get_num_threads();
+      ipoints = npoints / nt;
+      // size of partition
+      istart = iam * ipoints; // starting array index
+      if (iam == nt-1) {
+        // last thread may do more
+        ipoints = npoints - istart;
+      }
+      istop = istart + ipoints;
+#endif
+      for (unsigned int i = istart; i < istop; ++i) {
+        for (unsigned int j = 0; j < stop1J; ++j) {
+          // We have to compute the value for each pixel if we don't have a mask or for
+          // pixels for which the mask is true otherwise
+          bool computeVal = checkBooleanMask(p_mask, i, j);
+          if (computeVal) {
+            vpImageFilter::filterXLeftBorder(I, dIx[i][j], i, j, filter, size);
+          }
+        }
+
+        for (unsigned int j = stop1J; j < stop2J; ++j) {
+          // We have to compute the value for each pixel if we don't have a mask or for
+          // pixels for which the mask is true otherwise
+          bool computeVal = checkBooleanMask(p_mask, i, j);
+          if (computeVal) {
+            vpImageFilter::filterX(I, dIx[i][j], i, j, filter, size);
+          }
+        }
+        for (unsigned int j = stop2J; j < width; ++j) {
+          // We have to compute the value for each pixel if we don't have a mask or for
+          // pixels for which the mask is true otherwise
+          bool computeVal = checkBooleanMask(p_mask, i, j);
+          if (computeVal) {
+            vpImageFilter::filterXRightBorder(I, dIx[i][j], i, j, filter, size);
+          }
+        }
+      }
+#ifdef VISP_HAVE_OPENMP
+    }
+#endif
+  }
+
+  /**
+   * \brief Filter along the horizontal direction "in the middle" of the image (i.e not on a border).
+   *
+   * \tparam ImageType The type of pixels. In this case, it must be an arithmetic type.
+   * \tparam OutputType The type of pixels in the resulting image. In this case, it must be an arithmetic type.
+   * \tparam FilterType An arithmetic type.
+   * \param[in] I The image that must be filtered.
+   * \param[in] result The pixel resulting from the filtering operation.
+   * \param[in] r The row index.
+   * \param[in] c The column index.
+   * \param[in] filter The coefficients of the filter.
+   * \param[in] size The size of the filter.
+   * \return The method is enabled only for arithmetic input type.
+   */
+  template<typename ImageType, typename OutputType, typename FilterType>
+  static inline typename std::enable_if<std::is_arithmetic<ImageType>::value, void>::type
+    filterX(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
+  {
+    const unsigned int stop = (size - 1) / 2;
+    FilterType res = filter[0] * static_cast<FilterType>(I[r][c]);
+
+    for (unsigned int i = 1; i <= stop; ++i) {
+      res += filter[i] * static_cast<FilterType>(I[r][c + i] + I[r][c - i]);
+    }
+    result = static_cast<FilterType>(res);
+  }
+
+  /**
+   * \brief Filter along the horizontal direction "in the middle" of the image (i.e not on a border).
+   *
+   * \tparam ImageType The type of pixels. In this case, it must be a color type (vpRGBa, vpHSV).
+   * \tparam OutputType The type of pixels in the resulting image. It can be an arithmetic type or a color type (vpRGBa, vpHSV).
+   * \tparam FilterType An arithmetic type.
+   * \param[in] I The image that must be filtered.
+   * \param[in] result The pixel resulting from the filtering operation.
+   * \param[in] r The row index.
+   * \param[in] c The column index.
+   * \param[in] filter The coefficients of the filter.
+   * \param[in] size The size of the filter.
+   * \return The method is enabled only for color input type.
+   */
+  template<typename ImageType, typename OutputType, typename FilterType>
+  static inline typename std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type
+    filterX(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
+  {
+    const unsigned int stop = (size - 1) / 2;
+#ifdef VISP_HAVE_OPENMP
+    vpColVector res(ImageType::nbChannels);
+#else
+    static vpColVector res(ImageType::nbChannels);
+#endif
+    filterChannel(I[r][c], res, filter[0]);
+
+    for (unsigned int i = 1; i <= stop; ++i) {
+      filterChannel(I[r][c + i], I[r][c - i], res, filter[i]);
+    }
+    result = OutputType(res);
+  }
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+  /**
+   * \brief Filter along the horizontal direction "on the left border" of the image (the width of the border depends on
+   * the filter length).
+   *
+   * \tparam ImageType The type of pixels. In this case, it must be an arithmetic type.
+   * \tparam OutputType The type of pixels in the resulting image. In this case, it must be an arithmetic type.
+   * \tparam FilterType An arithmetic type.
+   * \param[in] I The image that must be filtered.
+   * \param[in] result The pixel resulting from the filtering operation.
+   * \param[in] r The row index.
+   * \param[in] c The column index.
+   * \param[in] filter The coefficients of the filter.
+   * \param[in] size The size of the filter.
+   * \return The method is enabled only for arithmetic input type.
+   */
+  template<typename ImageType, typename OutputType, typename FilterType>
+  static inline typename std::enable_if<std::is_arithmetic<ImageType>::value, void>::type
+    filterXLeftBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
+  {
+    const unsigned int stop = (size - 1) / 2;
+    FilterType res = filter[0] * static_cast<FilterType>(I[r][c]);
+
+    for (unsigned int i = 1; i <= stop; ++i) {
+      if (c > i) {
+        res += filter[i] * static_cast<FilterType>(I[r][c + i] + I[r][c - i]);
+      }
+      else {
+        res += filter[i] * static_cast<FilterType>(I[r][c + i] + I[r][i - c]);
+      }
+    }
+    result = static_cast<OutputType>(res);
+  }
+
+  /**
+   * \brief Filter along the horizontal direction "on the left border" of the image (the width of the border depends on
+   * the filter length).
+   *
+   * \tparam ImageType The type of pixels. In this case, it must be a color type (vpRGBa, vpHSV).
+   * \tparam OutputType The type of pixels in the resulting image. It can be an arithmetic type or a color type (vpRGBa, vpHSV).
+   * \tparam FilterType An arithmetic type.
+   * \param[in] I The image that must be filtered.
+   * \param[in] result The pixel resulting from the filtering operation.
+   * \param[in] r The row index.
+   * \param[in] c The column index.
+   * \param[in] filter The coefficients of the filter.
+   * \param[in] size The size of the filter.
+   * \return The method is enabled only for color input type.
+   */
+  template<typename ImageType, typename OutputType, typename FilterType>
+  static inline typename std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type
+    filterXLeftBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
+  {
+    const unsigned int stop = (size - 1) / 2;
+#ifdef VISP_HAVE_OPENMP
+    vpColVector res(ImageType::nbChannels);
+#else
+    static vpColVector res(ImageType::nbChannels);
+#endif
+    filterChannel(I[r][c], res, filter[0]);
+
+    for (unsigned int i = 1; i <= stop; ++i) {
+      if (c > i) {
+        filterChannel(I[r][c + i], I[r][c - i], res, filter[i]);
+      }
+      else {
+        filterChannel(I[r][c + i], I[r][i - c], res, filter[i]);
+      }
+    }
+    result = OutputType(res);
+  }
+
+  /**
+   * \brief Filter along the horizontal direction "on the right border" of the image (the width of the border depends on
+   * the filter length).
+   *
+   * \tparam ImageType The type of pixels. In this case, it must be an arithmetic type.
+   * \tparam OutputType The type of pixels in the resulting image. In this case, it must be an arithmetic type.
+   * \tparam FilterType An arithmetic type.
+   * \param[in] I The image that must be filtered.
+   * \param[in] result The pixel resulting from the filtering operation.
+   * \param[in] r The row index.
+   * \param[in] c The column index.
+   * \param[in] filter The coefficients of the filter.
+   * \param[in] size The size of the filter.
+   * \return The method is enabled only for arithmetic input type.
+   */
+  template<typename ImageType, typename OutputType, typename FilterType>
+  static inline typename std::enable_if<std::is_arithmetic<ImageType>::value, void>::type
+    filterXRightBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
+  {
+    const unsigned int stop = (size - 1) / 2;
+    const unsigned int width = I.getWidth();
+    const unsigned int twice = 2;
+    FilterType res = filter[0] * static_cast<FilterType>(I[r][c]);
+
+    for (unsigned int i = 1; i <= stop; ++i) {
+      if ((c + i) < width) {
+        res += filter[i] * static_cast<FilterType>(I[r][c + i] + I[r][c - i]);
+      }
+      else {
+        res += filter[i] * static_cast<FilterType>(I[r][((twice * width) - c) - i - 1] + I[r][c - i]);
+      }
+    }
+    result = static_cast<FilterType>(res);
+  }
+
+  /**
+   * \brief Filter along the horizontal direction "on the right border" of the image (the width of the border depends on
+   * the filter length).
+   *
+   * \tparam ImageType The type of pixels. In this case, it must be a color type (vpRGBa, vpHSV).
+   * \tparam OutputType The type of pixels in the resulting image. It can be an arithmetic type or a color type (vpRGBa, vpHSV).
+   * \tparam FilterType An arithmetic type.
+   * \param[in] I The image that must be filtered.
+   * \param[in] result The pixel resulting from the filtering operation.
+   * \param[in] r The row index.
+   * \param[in] c The column index.
+   * \param[in] filter The coefficients of the filter.
+   * \param[in] size The size of the filter.
+   * \return The method is enabled only for color input type.
+   */
+  template<typename ImageType, typename OutputType, typename FilterType>
+  static inline typename std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type
+    filterXRightBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
+  {
+    const unsigned int stop = (size - 1) / 2;
+    const unsigned int width = I.getWidth();
+    const unsigned int twice = 2;
+#ifdef VISP_HAVE_OPENMP
+    vpColVector res(ImageType::nbChannels);
+#else
+    static vpColVector res(ImageType::nbChannels);
+#endif
+    filterChannel(I[r][c], res, filter[0]);
+
+    for (unsigned int i = 1; i <= stop; ++i) {
+      if ((c + i) < width) {
+        filterChannel(I[r][c + i], I[r][c - i], res, filter[i]);
+      }
+      else {
+        filterChannel(I[r][((twice * width) - c) - i - 1], I[r][c - i], res, filter[i]);
+      }
+    }
+    result = OutputType(res);
+  }
+#endif
+#endif
+
+
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
   static void filterY(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size, const vpImage<bool> *p_mask = nullptr);
 
   template<typename ImageType, typename FilterType>
@@ -942,7 +1452,7 @@ public:
 
   template<typename ImageType, typename FilterType>
   static inline FilterType filterYBottomBorder(const vpImage<ImageType> &I, unsigned int r, unsigned int c,
-                                               const FilterType *filter, unsigned int size)
+                                              const FilterType *filter, unsigned int size)
   {
     const unsigned int height = I.getHeight();
     const unsigned int stop = (size - 1) / 2;
@@ -959,10 +1469,291 @@ public:
     return result + (filter[0] * static_cast<FilterType>(I[r][c]));
   }
 #endif
+#else
 
+  /**
+   * \brief Filter along the vertical direction.
+   *
+   * \tparam ImageType The type of pixels. It can be an arithmetic type or a color type (vpRGBa, vpHSV).
+   * \tparam OutputType The type of pixels in the resulting image. It can be an arithmetic type or a color type (vpRGBa, vpHSV).
+   * \tparam FilterType An arithmetic type.
+   * \param[in] I The image that must be filtered.
+   * \param[in] dIy The image filtered along the vertical direction.
+   * \param[in] filter The coefficients of the filter.
+   * \param[in] size The size of the filter.
+   * \param[in] p_mask A boolean mask that permits to select the pixels that must be filtered if different from nullptr,
+   * unused otherwise.
+   */
+  template<typename ImageType, typename OutputType, typename FilterType>
+  static void filterY(const vpImage<ImageType> &I, vpImage<OutputType> &dIy, const FilterType *filter, unsigned int size,
+                      const vpImage<bool> *p_mask = nullptr)
+  {
+    const unsigned int height = I.getHeight(), width = I.getWidth();
+    const unsigned int stop1I = (size - 1) / 2;
+    const unsigned int stop2I = height - ((size - 1) / 2);
+    resizeAndInitializeIfNeeded(p_mask, height, width, dIy);
+
+    unsigned int jstart = 0;
+    unsigned int jstop = width;
+#ifdef VISP_HAVE_OPENMP
+    unsigned int iam, nt, jpoints, npoints(width);
+#pragma omp parallel default(shared) private(iam, nt, jpoints, jstart, jstop)
+    {
+      iam = omp_get_thread_num();
+      nt = omp_get_num_threads();
+      jpoints = npoints / nt;
+      // size of partition
+      jstart = iam * jpoints; // starting array index
+      if (iam == nt-1) {
+        // last thread may do more
+        jpoints = npoints - jstart;
+      }
+      jstop = jstart + jpoints;
+#endif
+      for (unsigned int i = 0; i < stop1I; ++i) {
+        for (unsigned int j = jstart; j < jstop; ++j) {
+          // We have to compute the value for each pixel if we don't have a mask or for
+          // pixels for which the mask is true otherwise
+          bool computeVal = checkBooleanMask(p_mask, i, j);
+          if (computeVal) {
+            vpImageFilter::filterYTopBorder(I, dIy[i][j], i, j, filter, size);
+          }
+        }
+      }
+      for (unsigned int i = stop1I; i < stop2I; ++i) {
+        for (unsigned int j = jstart; j < jstop; ++j) {
+        // We have to compute the value for each pixel if we don't have a mask or for
+        // pixels for which the mask is true otherwise
+          bool computeVal = checkBooleanMask(p_mask, i, j);
+          if (computeVal) {
+            vpImageFilter::filterY(I, dIy[i][j], i, j, filter, size);
+          }
+        }
+      }
+      for (unsigned int i = stop2I; i < height; ++i) {
+        for (unsigned int j = jstart; j < jstop; ++j) {
+        // We have to compute the value for each pixel if we don't have a mask or for
+        // pixels for which the mask is true otherwise
+          bool computeVal = checkBooleanMask(p_mask, i, j);
+          if (computeVal) {
+            vpImageFilter::filterYBottomBorder(I, dIy[i][j], i, j, filter, size);
+          }
+        }
+#ifdef VISP_HAVE_OPENMP
+      }
+#endif
+    }
+  }
+
+  /**
+   * \brief Filter along the vertical direction "in the middle" of the image (i.e not on a border).
+   *
+   * \tparam ImageType The type of pixels. In this case, it must be an arithmetic type.
+   * \tparam OutputType The type of pixels in the resulting image. In this case, it must be an arithmetic type.
+   * \tparam FilterType An arithmetic type.
+   * \param[in] I The image that must be filtered.
+   * \param[in] result The pixel resulting from the filtering operation.
+   * \param[in] r The row index.
+   * \param[in] c The column index.
+   * \param[in] filter The coefficients of the filter.
+   * \param[in] size The size of the filter.
+   * \return The method is enabled only for arithmetic input type.
+   */
+  template<typename ImageType, typename OutputType, typename FilterType>
+  static inline typename std::enable_if<std::is_arithmetic<ImageType>::value, void>::type
+    filterY(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
+  {
+    const unsigned int stop = (size - 1) / 2;
+    FilterType res = (filter[0] * static_cast<FilterType>(I[r][c]));
+
+    for (unsigned int i = 1; i <= stop; ++i) {
+      res += filter[i] * static_cast<FilterType>(I[r + i][c] + I[r - i][c]);
+    }
+    result = static_cast<OutputType>(res);
+  }
+
+  /**
+   * \brief Filter along the vertical direction "in the middle" of the image (i.e not on a border).
+   *
+   * \tparam ImageType The type of pixels. In this case, it must be a color type (vpRGBa, vpHSV).
+   * \tparam OutputType The type of pixels in the resulting image. It can be an arithmetic type or a color type (vpRGBa, vpHSV).
+   * \tparam FilterType An arithmetic type.
+   * \param[in] I The image that must be filtered.
+   * \param[in] result The pixel resulting from the filtering operation.
+   * \param[in] r The row index.
+   * \param[in] c The column index.
+   * \param[in] filter The coefficients of the filter.
+   * \param[in] size The size of the filter.
+   * \return The method is enabled only for color input type.
+   */
+  template<typename ImageType, typename OutputType, typename FilterType>
+  static inline typename std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type
+    filterY(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
+  {
+    const unsigned int stop = (size - 1) / 2;
+#ifdef VISP_HAVE_OPENMP
+    vpColVector res(ImageType::nbChannels);
+#else
+    static vpColVector res(ImageType::nbChannels);
+#endif
+    filterChannel(I[r][c], res, filter[0]);
+
+    for (unsigned int i = 1; i <= stop; ++i) {
+      filterChannel(I[r + i][c], I[r - i][c], res, filter[i]);
+    }
+    result = OutputType(res);
+  }
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+  /**
+   * \brief Filter along the vertical direction "on the top border" of the image (the height of the border depends on
+   * the filter length).
+   *
+   * \tparam ImageType The type of pixels. In this case, it must be an arithmetic type.
+   * \tparam OutputType The type of pixels in the resulting image. In this case, it must be an arithmetic type.
+   * \tparam FilterType An arithmetic type.
+   * \param[in] I The image that must be filtered.
+   * \param[in] result The pixel resulting from the filtering operation.
+   * \param[in] r The row index.
+   * \param[in] c The column index.
+   * \param[in] filter The coefficients of the filter.
+   * \param[in] size The size of the filter.
+   * \return The method is enabled only for arithmetic input type.
+   */
+  template<typename ImageType, typename OutputType, typename FilterType>
+  static inline typename std::enable_if<std::is_arithmetic<ImageType>::value, void>::type
+    filterYTopBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
+  {
+    const unsigned int stop = (size - 1) / 2;
+    FilterType res = (filter[0] * static_cast<FilterType>(I[r][c]));
+
+    for (unsigned int i = 1; i <= stop; ++i) {
+      if (r > i) {
+        res += filter[i] * static_cast<FilterType>(I[r + i][c] + I[r - i][c]);
+      }
+      else {
+        res += filter[i] * static_cast<FilterType>(I[r + i][c] + I[i - r][c]);
+      }
+    }
+    result = static_cast<OutputType>(res);
+  }
+
+  /**
+   * \brief Filter along the vertical direction "on the top border" of the image (the height of the border depends on
+   * the filter length).
+   *
+   * \tparam ImageType The type of pixels. In this case, it must be a color type (vpRGBa, vpHSV).
+   * \tparam OutputType The type of pixels in the resulting image. It can be an arithmetic type or a color type (vpRGBa, vpHSV).
+   * \tparam FilterType An arithmetic type.
+   * \param[in] I The image that must be filtered.
+   * \param[in] result The pixel resulting from the filtering operation.
+   * \param[in] r The row index.
+   * \param[in] c The column index.
+   * \param[in] filter The coefficients of the filter.
+   * \param[in] size The size of the filter.
+   * \return std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type The method is enabled only for color input type.
+   */
+  template<typename ImageType, typename OutputType, typename FilterType>
+  static inline typename std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type  filterYTopBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
+  {
+    const unsigned int stop = (size - 1) / 2;
+#ifdef VISP_HAVE_OPENMP
+    vpColVector res(ImageType::nbChannels);
+#else
+    static vpColVector res(ImageType::nbChannels);
+#endif
+    filterChannel(I[r][c], res, filter[0]);
+
+    for (unsigned int i = 1; i <= stop; ++i) {
+      if (r > i) {
+        filterChannel(I[r + i][c], I[r - i][c], res, filter[i]);
+      }
+      else {
+        filterChannel(I[r + i][c], I[i - r][c], res, filter[i]);
+      }
+    }
+    result = OutputType(res);
+  }
+
+  /**
+   * \brief Filter along the vertical direction "on the bottom border" of the image (the height of the border depends on
+   * the filter length).
+   *
+   * \tparam ImageType The type of pixels. In this case, it must be an arithmetic type.
+   * \tparam OutputType The type of pixels in the resulting image. In this case, it must be an arithmetic type.
+   * \tparam FilterType An arithmetic type.
+   * \param[in] I The image that must be filtered.
+   * \param[in] result The pixel resulting from the filtering operation.
+   * \param[in] r The row index.
+   * \param[in] c The column index.
+   * \param[in] filter The coefficients of the filter.
+   * \param[in] size The size of the filter.
+   * \return std::enable_if<std::is_arithmetic<ImageType>::value, void>::type The method is enabled only for arithmetic input type.
+   */
+  template<typename ImageType, typename OutputType, typename FilterType>
+  static inline typename std::enable_if<std::is_arithmetic<ImageType>::value, void>::type filterYBottomBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c,
+                                              const FilterType *filter, unsigned int size)
+  {
+    const unsigned int height = I.getHeight();
+    const unsigned int stop = (size - 1) / 2;
+    const unsigned int twiceHeight = 2 * height;
+    FilterType res = (filter[0] * static_cast<FilterType>(I[r][c]));
+    for (unsigned int i = 1; i <= stop; ++i) {
+      if ((r + i) < height) {
+        res += filter[i] * static_cast<FilterType>(I[r + i][c] + I[r - i][c]);
+      }
+      else {
+        res += filter[i] * static_cast<FilterType>(I[(twiceHeight - r) - i - 1][c] + I[r - i][c]);
+      }
+    }
+    result = static_cast<OutputType>(res);
+  }
+
+  /**
+   * \brief Filter along the vertical direction "on the bottom border" of the image (the height of the border depends on
+   * the filter length).
+   *
+   * \tparam ImageType The type of pixels. In this case, it must be a color type (vpRGBa, vpHSV).
+   * \tparam OutputType The type of pixels in the resulting image. It can be an arithmetic type or a color type (vpRGBa, vpHSV).
+   * \tparam FilterType An arithmetic type.
+   * \param[in] I The image that must be filtered.
+   * \param[in] result The pixel resulting from the filtering operation.
+   * \param[in] r The row index.
+   * \param[in] c The column index.
+   * \param[in] filter The coefficients of the filter.
+   * \param[in] size The size of the filter.
+   * \return std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type The method is enabled only for color input type.
+   */
+  template<typename ImageType, typename OutputType, typename FilterType>
+  static inline typename std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type  filterYBottomBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
+  {
+    const unsigned int stop = (size - 1) / 2;
+    const unsigned int height = I.getHeight();
+    const unsigned int twiceHeight = 2 * height;
+#ifdef VISP_HAVE_OPENMP
+    vpColVector res(ImageType::nbChannels);
+#else
+    static vpColVector res(ImageType::nbChannels);
+#endif
+    filterChannel(I[r][c], res, filter[0]);
+
+    for (unsigned int i = 1; i <= stop; ++i) {
+      if ((r + i) < height) {
+        filterChannel(I[r + i][c], I[r - i][c], res, filter[i]);
+      }
+      else {
+        filterChannel(I[(twiceHeight - r) - i - 1][c], I[r - i][c], res, filter[i]);
+      }
+    }
+    result = OutputType(res);
+  }
+#endif
+#endif
 
   /*!
    * Apply a Gaussian blur to an image.
+   * \tparam ImageType : Either an arithmetic type or a color image.
+   * \tparam OutputType : Either the same type than the ImageType, for color images, or an arithmetic type.
    * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
    * \param I : Input image.
    * \param GI : Filtered image.
@@ -974,29 +1765,56 @@ public:
    *
    * \sa getGaussianKernel() to know which kernel is used.
    */
-  template <typename ImageType, typename FilterType>
-  static void gaussianBlur(const vpImage<ImageType> &I, vpImage<FilterType> &GI, unsigned int size = 7, FilterType sigma = 0., bool normalize = true,
-                           const vpImage<bool> *p_mask = nullptr)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  template <typename ImageType, typename OutputType, typename FilterType = float>
+  static inline void
+    gaussianBlur(const vpImage<ImageType> &I, vpImage<OutputType> &GI, unsigned int size = 7, FilterType sigma = 0., bool normalize = true,
+                            const vpImage<bool> *p_mask = nullptr)
   {
     FilterType *fg = new FilterType[(size + 1) / 2];
     vpImageFilter::getGaussianKernel<FilterType>(fg, size, sigma, normalize);
-    vpImage<FilterType> GIx;
-    vpImageFilter::filterX<ImageType, FilterType>(I, GIx, fg, size, p_mask);
-    vpImageFilter::filterY<FilterType, FilterType>(GIx, GI, fg, size, p_mask);
+    vpImage<OutputType> GIx;
+    vpImageFilter::filterX<ImageType, OutputType>(I, GIx, fg, size, p_mask);
+    vpImageFilter::filterY<OutputType, OutputType>(GIx, GI, fg, size, p_mask);
     GIx.destroy();
     delete[] fg;
   }
+#else
+  template <typename ImageType, typename OutputType>
+  static inline void
+    gaussianBlur(const vpImage<ImageType> &I, vpImage<OutputType> &GI, unsigned int size, float sigma, bool normalize = true,
+                            const vpImage<bool> *p_mask = nullptr)
+  {
+    gaussianBlur<ImageType, OutputType, float>(I, GI, size, sigma, normalize, p_mask);
+  }
 
+  template <typename ImageType, typename OutputType, typename FilterType >
+  static inline void
+    gaussianBlur(const vpImage<ImageType> &I, vpImage<OutputType> &GI, unsigned int size = 7, FilterType sigma = 0., bool normalize = true,
+                            const vpImage<bool> *p_mask = nullptr)
+  {
+    FilterType *fg = new FilterType[(size + 1) / 2];
+    vpImageFilter::getGaussianKernel<FilterType>(fg, size, sigma, normalize);
+    vpImage<OutputType> GIx;
+    vpImageFilter::filterX<ImageType, OutputType>(I, GIx, fg, size, p_mask);
+    vpImageFilter::filterY<OutputType, OutputType>(GIx, GI, fg, size, p_mask);
+    GIx.destroy();
+    delete[] fg;
+  }
+#endif
+
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
   static void gaussianBlur(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &GI, unsigned int size = 7, double sigma = 0., bool normalize = true,
-                           const vpImage<bool> *p_mask = nullptr);
+                      const vpImage<bool> *p_mask = nullptr);
+#endif
 
   /*!
-   * Apply a 5x5 Gaussian filter to an image pixel.
-   *
-   * \param fr : Image to filter
-   * \param r : coordinates (row) of the pixel
-   * \param c : coordinates (column) of the pixel
-   */
+  * Apply a 5x5 Gaussian filter to an image pixel.
+  *
+  * \param fr : Image to filter
+  * \param r : coordinates (row) of the pixel
+  * \param c : coordinates (column) of the pixel
+  */
   template <class T> static double gaussianFilter(const vpImage<T> &fr, unsigned int r, unsigned int c)
   {
     const int val2 = 2;
@@ -1014,21 +1832,21 @@ public:
   static void getGaussYPyramidal(const vpImage<unsigned char> &I, vpImage<unsigned char> &GI);
 
   /*!
-   * Return the coefficients \f$G_i\f$ of a Gaussian filter.
-   * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
-   * \param[out] filter : Pointer to the half size filter kernel that should refer to a
-   * (size+1)/2 array. The first value refers to the central coefficient, the
-   * next one to the right coefficients. Left coefficients could be deduced by
-   * symmetry.
-   * \param[in] size : Filter size. This value should be odd and positive.
-   * \param[in] sigma : Gaussian standard deviation \f$ \sigma \f$. If it is equal to zero or negative, it is
-   * computed from filter size as sigma = (size-1)/6.
-   * \param[in] normalize : Flag indicating whether to normalize the filter coefficients or not. In that case
-   * \f$\Sigma G_i = 1 \f$.
-   *
-   * The function computes the \e (size+1)/2 values of the Gaussian filter coefficients \f$ G_i \f$ as:
-   * \f[ G_i = \frac{1}{\sigma  \sqrt{2 \pi}} \exp{(-i^2 / (2. * \sigma^2))}\f]
-   */
+  * Return the coefficients \f$G_i\f$ of a Gaussian filter.
+  * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
+  * \param[out] filter : Pointer to the half size filter kernel that should refer to a
+  * (size+1)/2 array. The first value refers to the central coefficient, the
+  * next one to the right coefficients. Left coefficients could be deduced by
+  * symmetry.
+  * \param[in] size : Filter size. This value should be odd and positive.
+  * \param[in] sigma : Gaussian standard deviation \f$ \sigma \f$. If it is equal to zero or negative, it is
+  * computed from filter size as sigma = (size-1)/6.
+  * \param[in] normalize : Flag indicating whether to normalize the filter coefficients or not. In that case
+  * \f$\Sigma G_i = 1 \f$.
+  *
+  * The function computes the \e (size+1)/2 values of the Gaussian filter coefficients \f$ G_i \f$ as:
+  * \f[ G_i = \frac{1}{\sigma  \sqrt{2 \pi}} \exp{(-i^2 / (2. * \sigma^2))}\f]
+  */
   template<typename FilterType>
   static void getGaussianKernel(FilterType *filter, unsigned int size, FilterType sigma = 0., bool normalize = true)
   {
@@ -1046,7 +1864,7 @@ public:
     FilterType coef1 = static_cast<FilterType>(1. / (static_cast<double>(sigma) * sqrt(2. * M_PI)));
     FilterType v_2_sigma2 = static_cast<FilterType>(2. * static_cast<double>(sigma2));
     for (int i = 0; i <= middle; ++i) {
-      filter[i] = coef1 * static_cast<FilterType>(exp(static_cast<double>(-static_cast<FilterType>(i * i)) / v_2_sigma2));
+      filter[i] = coef1 * static_cast<FilterType>(exp(static_cast<double>(-static_cast<FilterType>(i * i) / v_2_sigma2)));
     }
     if (normalize) {
       // renormalization
@@ -1064,19 +1882,19 @@ public:
   }
 
   /*!
-   * Return the coefficients of a Gaussian derivative filter that may be used to
-   * compute spatial image derivatives after applying a Gaussian blur.
-   *
-   * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
-   * \param filter : Pointer to the filter kernel that should refer to a
-   * (size+1)/2 array. The first value refers to the central coefficient, the
-   * next one to the right coefficients. Left coefficients could be deduced by
-   * symmetry.
-   * \param size : Filter size. This value should be odd.
-   * \param sigma : Gaussian standard deviation. If it is equal to zero or negative, it is
-   * computed from filter size as sigma = (size-1)/6.
-   * \param normalize : Flag indicating whether to normalize the filter coefficients or not.
-   */
+  * Return the coefficients of a Gaussian derivative filter that may be used to
+  * compute spatial image derivatives after applying a Gaussian blur.
+  *
+  * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
+  * \param filter : Pointer to the filter kernel that should refer to a
+  * (size+1)/2 array. The first value refers to the central coefficient, the
+  * next one to the right coefficients. Left coefficients could be deduced by
+  * symmetry.
+  * \param size : Filter size. This value should be odd.
+  * \param sigma : Gaussian standard deviation. If it is equal to zero or negative, it is
+  * computed from filter size as sigma = (size-1)/6.
+  * \param normalize : Flag indicating whether to normalize the filter coefficients or not.
+  */
   template <typename FilterType>
   static void getGaussianDerivativeKernel(FilterType *filter, unsigned int size, FilterType sigma = 0., bool normalize = true)
   {
@@ -1091,20 +1909,23 @@ public:
 
     const int half = 2;
     int middle = (static_cast<int>(size) - 1) / half;
-    FilterType sigma2 = static_cast<FilterType>(vpMath::sqr(sigma));
+    FilterType sigma2 = static_cast<FilterType>(vpMath::sqr(static_cast<double>(sigma)));
     FilterType coef_1 = static_cast<FilterType>(1. / (static_cast<double>(sigma) * sqrt(2. * M_PI)));
     FilterType coef_1_over_2 = coef_1 / static_cast<FilterType>(2.);
     FilterType v_2_coef_1 = static_cast<FilterType>(2.) * coef_1;
     FilterType v_2_sigma2 = static_cast<FilterType>(2.) * sigma2;
     filter[0] = 0.;
     for (int i = 1; i <= middle; ++i) {
-      filter[i] = -coef_1_over_2 * (static_cast<FilterType>(exp(-static_cast<double>((i + 1) * (i + 1)) / v_2_sigma2)) - static_cast<FilterType>(exp(-static_cast<double>((i - 1) * (i - 1)) / v_2_sigma2)));
+      FilterType i_plus_1 = static_cast<FilterType>(i + 1);
+      FilterType i_minus_1 = static_cast<FilterType>(i - 1);
+      filter[i] = -coef_1_over_2 * (static_cast<FilterType>(exp(-static_cast<double>(i_plus_1 * i_plus_1 / v_2_sigma2))) - static_cast<FilterType>(exp(-static_cast<double>(i_minus_1 * i_minus_1 / v_2_sigma2))));
     }
 
     if (normalize) {
-      FilterType sum = 0;
+      FilterType sum = static_cast<FilterType>(0);
       for (int i = 1; i <= middle; ++i) {
-        sum += v_2_coef_1 * static_cast<FilterType>(exp(-static_cast<double>(i * i) / v_2_sigma2));
+        FilterType i_ = static_cast<FilterType>(i);
+        sum += v_2_coef_1 * static_cast<FilterType>(exp(-static_cast<double>(i_ * i_ / v_2_sigma2)));
       }
       sum += coef_1;
 
@@ -1184,16 +2005,16 @@ public:
   }
 
   /*!
-   * Compute the gradient along X after applying a gaussian filter along Y.
-   * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
-   * \param I : Input image
-   * \param dIx : Gradient along X.
-   * \param gaussianKernel : Gaussian kernel which values should be computed using vpImageFilter::getGaussianKernel().
-   * \param gaussianDerivativeKernel : Gaussian derivative kernel which values should be computed using
-   * vpImageFilter::getGaussianDerivativeKernel().
-   * \param size : Size of the Gaussian and Gaussian derivative kernels.
-   * \param p_mask : If different from nullptr, mask indicating which points to consider (true) or to ignore(false).
-   */
+  * Compute the gradient along X after applying a gaussian filter along Y.
+  * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
+  * \param I : Input image
+  * \param dIx : Gradient along X.
+  * \param gaussianKernel : Gaussian kernel which values should be computed using vpImageFilter::getGaussianKernel().
+  * \param gaussianDerivativeKernel : Gaussian derivative kernel which values should be computed using
+  * vpImageFilter::getGaussianDerivativeKernel().
+  * \param size : Size of the Gaussian and Gaussian derivative kernels.
+  * \param p_mask : If different from nullptr, mask indicating which points to consider (true) or to ignore(false).
+  */
   template <typename ImageType, typename FilterType>
   static void getGradXGauss2D(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, const FilterType *gaussianKernel,
                               const FilterType *gaussianDerivativeKernel, unsigned int size, const vpImage<bool> *p_mask = nullptr)
@@ -1202,6 +2023,57 @@ public:
     vpImageFilter::filterY<ImageType, FilterType>(I, GIy, gaussianKernel, size, p_mask);
     vpImageFilter::getGradX<FilterType, FilterType>(GIy, dIx, gaussianDerivativeKernel, size, p_mask);
   }
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+/**
+ * \brief Gradient filter along the X-axis for HSV images.
+ *
+ * \tparam ArithmeticType The encoding of the HSV channels.
+ * \tparam FilterType The type to use for the filter and the type of the resulting gradient image.
+ * \tparam useFullScale See the documentation of the vpHSV class to have details on this template parameter.
+ * \param[in] I The input image.
+ * \param[in] GIx The resulting gradient image along the X-axis.
+ * \param[in] nbThread The number of threads to use to compute the gradient.
+ * \param[in] p_mask Optional boolean mask to indicate which pixels should be considered and which should be ignored.
+ * \param[in] type The type of the gradient filter.
+ */
+  template <typename ArithmeticType, typename FilterType, bool useFullScale>
+  static void gradientFilterX(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpImage<FilterType> &GIx, const int &nbThread, const vpImage<bool> *p_mask, const vpImageFilter::vpCannyFilteringAndGradientType &type)
+  {
+    const unsigned int nbRows = I.getRows(), nbCols = I.getCols();
+    GIx.resize(nbRows, nbCols, 0.);
+    std::vector<FilterType> filter(3);
+    FilterType scale;
+    switch (type) {
+    case vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING:
+      filter = { 1., 2., 1. };
+      scale = 8.;
+      break;
+    case vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING:
+      filter = { 3., 10., 3. };
+      scale = 32.;
+      break;
+    default:
+      throw(vpException(vpException::badValue, "Wrong type of filtering"));
+    }
+
+    for (unsigned char i = 0; i < 3; ++i) {
+      filter[i] = filter[i] / scale;
+    }
+
+#ifdef VISP_HAVE_OPENMP
+    if (nbThread == 1) {
+      gradientFilterXMonothread(I, GIx, filter, p_mask);
+    }
+    else {
+      gradientFilterXMultithread(I, GIx, filter, nbThread, p_mask);
+    }
+#else
+    (void)nbThread; // Unused paramter when OpenMP is unavailable
+    gradientFilterXMonothread(I, GIx, filter, p_mask);
+#endif
+  }
+#endif
 
   // Gradient along Y
   template <typename FilterType>
@@ -1284,16 +2156,16 @@ public:
   }
 
   /*!
-   * Compute the gradient along Y after applying a gaussian filter along X.
-   * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
-   * \param I : Input image
-   * \param dIy : Gradient along Y.
-   * \param gaussianKernel : Gaussian kernel which values should be computed  using vpImageFilter::getGaussianKernel().
-   * \param gaussianDerivativeKernel : Gaussian derivative kernel which values should be computed using
-   * vpImageFilter::getGaussianDerivativeKernel().
-   * \param size : Size of the Gaussian and Gaussian derivative kernels.
-   * \param p_mask : If different from nullptr, mask indicating which points to consider (true) or to ignore(false).
-   */
+  * Compute the gradient along Y after applying a gaussian filter along X.
+  * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
+  * \param I : Input image
+  * \param dIy : Gradient along Y.
+  * \param gaussianKernel : Gaussian kernel which values should be computed  using vpImageFilter::getGaussianKernel().
+  * \param gaussianDerivativeKernel : Gaussian derivative kernel which values should be computed using
+  * vpImageFilter::getGaussianDerivativeKernel().
+  * \param size : Size of the Gaussian and Gaussian derivative kernels.
+  * \param p_mask : If different from nullptr, mask indicating which points to consider (true) or to ignore(false).
+  */
   template <typename ImageType, typename FilterType>
   static void getGradYGauss2D(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, const FilterType *gaussianKernel,
                               const FilterType *gaussianDerivativeKernel, unsigned int size, const vpImage<bool> *p_mask = nullptr)
@@ -1302,6 +2174,61 @@ public:
     vpImageFilter::filterX<ImageType, FilterType>(I, GIx, gaussianKernel, size, p_mask);
     vpImageFilter::getGradY<FilterType, FilterType>(GIx, dIy, gaussianDerivativeKernel, size, p_mask);
   }
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  /**
+   * \brief Gradient filter along the Y-axis for HSV images.
+   *
+   * \tparam ArithmeticType The encoding of the HSV channels.
+   * \tparam FilterType The type to use for the filter and the type of the resulting gradient image.
+   * \tparam useFullScale See the documentation of the vpHSV class to have details on this template parameter.
+   * \param[in] I The input image.
+   * \param[in] GIy The resulting gradient image along the Y-axis.
+   * \param[in] nbThread The number of threads to use to compute the gradient.
+   * \param[in] p_mask Optional boolean mask to indicate which pixels should be considered and which should be ignored.
+   * \param[in] type The type of the gradient filter.
+   */
+  template <typename ArithmeticType, typename FilterType, bool useFullScale>
+  static void gradientFilterY(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpImage<FilterType> &GIy, const int &nbThread, const vpImage<bool> *p_mask, const vpImageFilter::vpCannyFilteringAndGradientType &type)
+  {
+    const unsigned int nbRows = I.getRows(), nbCols = I.getCols();
+    GIy.resize(nbRows, nbCols);
+    std::vector<FilterType> filter(3);
+    FilterType scale;
+    switch (type) {
+    case vpImageFilter::CANNY_COUNT_FILTERING:
+      // Prewitt case
+      filter = { 1., 1., 1. };
+      scale = 6.;
+      break;
+    case vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING:
+      filter = { 1., 2., 1. };
+      scale = 8.;
+      break;
+    case vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING:
+      filter = { 3., 10., 3. };
+      scale = 32.;
+      break;
+    default:
+      throw(vpException(vpException::badValue, "Wrong type of filtering"));
+    }
+    for (unsigned char i = 0; i < 3; ++i) {
+      filter[i] = filter[i] / scale;
+    }
+
+#ifdef VISP_HAVE_OPENMP
+    if (nbThread == 1) {
+      gradientFilterYMonothread(I, GIy, filter, p_mask);
+    }
+    else {
+      gradientFilterYMultithread(I, GIy, filter, nbThread, p_mask);
+    }
+#else
+    (void)nbThread; // Unused paramter when OpenMP is unavailable
+    gradientFilterYMonothread(I, GIy, filter, p_mask);
+#endif
+  }
+#endif
 
   /*!
     Get Scharr kernel for X-direction.
@@ -1358,12 +2285,12 @@ public:
   }
 
   /*!
-   * Get Sobel kernel for X-direction.
-   * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
-   * \param filter : Pointer to a double array already allocated.
-   * \param size : Kernel size computed as: kernel_size = size*2 + 1 (max size is 20).
-   * \return Scaling factor to normalize the Sobel kernel.
-   */
+  * Get Sobel kernel for X-direction.
+  * \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.
+  * \param filter : Pointer to a double array already allocated.
+  * \param size : Kernel size computed as: kernel_size = size*2 + 1 (max size is 20).
+  * \return Scaling factor to normalize the Sobel kernel.
+  */
   template <typename FilterType>
   inline static FilterType getSobelKernelX(FilterType *filter, unsigned int size)
   {
@@ -1383,12 +2310,12 @@ public:
   }
 
   /*!
-   * Get Sobel kernel for Y-direction.
-   * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
-   * \param filter : Pointer to a double array already allocated.
-   * \param size : Kernel size computed as: kernel_size = size*2 + 1 (max size is 20).
-   * \return Scaling factor to normalize the Sobel kernel.
-   */
+  * Get Sobel kernel for Y-direction.
+  * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
+  * \param filter : Pointer to a double array already allocated.
+  * \param size : Kernel size computed as: kernel_size = size*2 + 1 (max size is 20).
+  * \return Scaling factor to normalize the Sobel kernel.
+  */
   template <typename FilterType>
   inline static FilterType getSobelKernelY(FilterType *filter, unsigned int size)
   {
@@ -1458,16 +2385,41 @@ public:
   static std::vector<float> median(const vpImage<vpRGBa> &Isrc);
 #endif
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  /**
+   * \brief Compute the horizontal and vertical gradients for HSV images.
+   *
+   * \tparam ArithmeticType The encoding of the HSV channels.
+   * \tparam FilterType The type to use for the filter and the type of the resulting gradient image.
+   * \tparam useFullScale See the documentation of the vpHSV class to have details on this template parameter.
+   * \param[in] I The input image.
+   * \param[in] GIx The resulting gradient image along the X-axis.
+   * \param[in] GIy The resulting gradient image along the Y-axis.
+   * \param[in] nbThread The number of threads to use to compute the gradient.
+   * \param[in] p_mask Optional boolean mask to indicate which pixels should be considered and which should be ignored.
+   * \param[in] type The type of the gradient filter.
+   */
+  template <typename ArithmeticType, typename FilterType, bool useFullScale>
+  static void gradientFilter(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpImage<FilterType> &GIx, vpImage<FilterType> &GIy, const int &nbThread = -1, const vpImage<bool> *p_mask = nullptr, const vpImageFilter::vpCannyFilteringAndGradientType &type = CANNY_GBLUR_SCHARR_FILTERING)
+  {
+    const unsigned int nbRows = I.getRows(), nbCols = I.getCols();
+    GIx.resize(nbRows, nbCols, 0.);
+    GIy.resize(nbRows, nbCols, 0.);
+    gradientFilterX(I, GIx, nbThread, p_mask, type);
+    gradientFilterY(I, GIy, nbThread, p_mask, type);
+  }
+#endif
+
 private:
   /**
    * \brief Resize the image \b I to the desired size and, if \b p_mask is different from nullptr, initialize
    * \b I with 0s.
    *
-   * @tparam ImageType Any numerical type (int, float, ...)
-   * @param p_mask If different from nullptr, a boolean mask that tells which pixels must be computed.
-   * @param height The desired height.
-   * @param width The desired width.
-   * @param I The image that must be resized and potentially initialized.
+   * \tparam ImageType Any numerical type (int, float, ...)
+   * \param p_mask If different from nullptr, a boolean mask that tells which pixels must be computed.
+   * \param height The desired height.
+   * \param width The desired width.
+   * \param I The image that must be resized and potentially initialized.
    */
   template<typename ImageType>
   static void resizeAndInitializeIfNeeded(const vpImage<bool> *p_mask, const unsigned int height, const unsigned int width, vpImage<ImageType> &I)
@@ -1505,8 +2457,30 @@ private:
     return computeVal;
   }
 
-// Note that on ubuntu 12.04 __cplusplus is equal to 1 that's why in the next line we consider __cplusplus <= 199711L
-// and not __cplusplus == 199711L
+  /**
+   * \brief Indicates if the boolean mask is true at the desired coordinates.
+   *
+   * \param[in] p_mask Pointer towards the boolean mask if any or nullptr.
+   * \param[in] id The index in the boolean mask bitmap.
+   * \return true If the boolean mask is true at the desired coordinates or if \b p_mask is equal to \b nullptr.
+   * \return false False otherwise.
+   */
+  static bool checkBooleanMask(const vpImage<bool> *p_mask, const int &id)
+  {
+    bool computeVal = true;
+#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
+    if (p_mask != nullptr)
+#else
+    if (p_mask != NULL)
+#endif
+    {
+      computeVal = p_mask->bitmap[id];
+    }
+    return computeVal;
+  }
+
+  // Note that on ubuntu 12.04 __cplusplus is equal to 1 that's why in the next line we consider __cplusplus <= 199711L
+  // and not __cplusplus == 199711L
 #if ((__cplusplus <= 199711L) || (defined(_MSVC_LANG) && (_MSVC_LANG == 199711L))) // Check if cxx98
   // Helper to apply the scale to the raw values of the filters
   template <typename FilterType>
@@ -1522,10 +2496,423 @@ private:
   }
 #endif
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  /**
+   * \brief Return true if the distance must be computed because at least one point in its neighborhood
+   * needs to compute a gradient.
+   *
+   * \param[in] p_mask The boolean mask that indicates for which pixels we must compute the gradient.
+   * \param[in] iter The iterator that indicates which pixel of the image is currently considered.
+   * \param[in] c The column counter.
+   * \param[in] h The height of the image.
+   * \param[in] w The width of the image.
+   * \param[in] isGradientX If true, it means that we are investigating an horizontal gradient. If false, it is a
+   * vertical gradient.
+   * \return true
+   * \return false
+   */
+  static bool checkBooleanPatch(const vpImage<bool> *p_mask, const int &iter, const int &c,
+                         const int &h, const int &w,
+                         const bool &isGradientX)
+  {
+    if (!p_mask) {
+      return true;
+    }
+    const int maxIter = (h - 1) * w;
+    const int minIter = w;
+    bool hasToCompute = p_mask->bitmap[iter];
+    if (c < w - 1) { // We do not compute gradient on the last column
+      hasToCompute |= p_mask->bitmap[iter + 1]; // I[r][c + 1];
+      if (iter < maxIter) { // We do not compute gradient on the last row
+        hasToCompute |= p_mask->bitmap[iter + w + 1]; // I[r + 1][c + 1];
+      }
+    }
+
+    if (iter < maxIter) { // We do not compute gradient on the last row
+      hasToCompute |= p_mask->bitmap[iter + w]; // I[r + 1][c];
+    }
+
+    if (isGradientX) {
+      if (iter > minIter) { // We do not compute gradient on the first row
+        hasToCompute |= p_mask->bitmap[iter - w]; // I[r - 1][c];
+        if (c < w - 1) { // We do not compute gradient on the last column
+          hasToCompute |= p_mask->bitmap[iter - w + 1]; // I[r - 1][c + 1];
+        }
+      }
+    }
+    else {
+      if (c > 1) { // We do not compute gradient on the first column
+        hasToCompute |= p_mask->bitmap[iter - 1]; // Checking mask[r][c - 1]
+        if (iter < maxIter) { // We do not compute gradient on the last row
+          hasToCompute |= p_mask->bitmap[iter + w - 1]; // Checking mask[r + 1][c - 1]
+        }
+      }
+    }
+    return hasToCompute;
+  }
+
+
+  template <typename HSVType, bool useFullScale, typename OutputType>
+  static typename std::enable_if<std::is_arithmetic<OutputType>::value, void>::type initGradientFilterDifferenceImageX(
+    const vpImage<vpHSV<HSVType, useFullScale>> &I, std::vector<OutputType> &Idiff
+  )
+  {
+    const unsigned int nbCols = I.getCols();
+
+    Idiff[0] = I.bitmap[1].V - I.bitmap[0].V;
+
+    // Computing the difference and sign for row 1 column 0
+    Idiff[nbCols] = I.bitmap[nbCols + 1].V - I.bitmap[nbCols].V;
+
+    for (unsigned int iter = 1; iter < nbCols - 1; ++iter) {
+      // Computing the difference and sign for row 0
+      OutputType distanceRow0 = I.bitmap[iter + 1].V - I.bitmap[iter].V;
+      Idiff[iter] = distanceRow0;
+
+      // Computing the difference and sign for row 1
+      OutputType distanceRow1 = I.bitmap[nbCols + iter + 1].V - I.bitmap[nbCols + iter].V;
+      Idiff[nbCols + iter] = distanceRow1;
+    }
+  }
+
+  template <typename HSVType, bool useFullScale, typename OutputType>
+  static typename std::enable_if<std::is_arithmetic<OutputType>::value, void>::type gradientFilterXMonothread(
+    const vpImage<vpHSV<HSVType, useFullScale>> &I, vpImage<OutputType> &GI, const std::vector<OutputType> &filter,
+    const vpImage<bool> *p_mask = nullptr
+  )
+  {
+    const int nbRows = I.getRows(), nbCols = I.getCols();
+    const int size = I.getSize();
+    const int offsetIdiff = nbCols;
+
+    std::vector<OutputType> Idiff(size);
+    initGradientFilterDifferenceImageX(I, Idiff);
+    const int resetCounter = nbCols - 1;
+    const int stopIter = size - (nbCols + 1);
+    int counter = resetCounter, idCol = 0;
+    for (int iter = nbCols; iter < stopIter; ++iter) {
+      if (counter) {
+        // Computing the amplitude of the difference
+        OutputType futureDiff = 0.;
+        if (checkBooleanPatch(p_mask, iter + offsetIdiff, idCol, nbRows, nbCols, true)) {
+          futureDiff = I.bitmap[iter + nbCols +1].V - I.bitmap[iter + offsetIdiff].V;
+          Idiff[iter + offsetIdiff] = futureDiff;
+        }
+      }
+      if (counter) {
+        if ((counter != resetCounter)) {
+          if (checkBooleanMask(p_mask, iter)) {
+            OutputType gradient = 0.;
+            int offset = iter - nbCols; // Looking in the row above first
+            for (int i = -1; i <= 1; ++i) {
+              // Kind of  +/- (I[r + i][c + 1] - I[r + i][c]) +/- (I[r + i][c] - I[r + i][c - 1])
+              gradient += filter[i + 1] * (Idiff[offset] + Idiff[offset - 1]);
+              offset += nbCols; // Preparing to look in the next row
+            }
+            GI.bitmap[iter] = gradient;
+          }
+        }
+        --counter;
+      }
+      else {
+        counter = resetCounter;
+      }
+
+      if (idCol < resetCounter) {
+        ++idCol;
+      }
+      else {
+        idCol = 0;
+      }
+    }
+  }
+
+  template <typename HSVType, bool useFullScale, typename OutputType>
+  static typename std::enable_if<std::is_arithmetic<OutputType>::value, void>::type initGradientFilterDifferenceImageY(
+    const vpImage<vpHSV<HSVType, useFullScale>> &I, std::vector<OutputType> &Idiff
+  )
+  {
+    const unsigned int nbCols = I.getCols();
+    // Computing the sign and distance for the first row
+    for (unsigned int iter = 0; iter < nbCols; ++iter) {
+      OutputType distance = I.bitmap[iter + nbCols].V - I.bitmap[iter].V;
+      Idiff[iter] = distance;
+    }
+    // Computing the distance and sign for I[1][0]
+    OutputType distance = I.bitmap[nbCols + nbCols].V - I.bitmap[nbCols].V;
+    Idiff[nbCols] = distance;
+  }
+
+  template <typename HSVType, bool useFullScale, typename OutputType>
+  static typename std::enable_if<std::is_arithmetic<OutputType>::value, void>::type gradientFilterYMonothread(
+    const vpImage<vpHSV<HSVType, useFullScale>> &I, vpImage<OutputType> &GI, const std::vector<OutputType> &filter,
+    const vpImage<bool> *p_mask = nullptr
+  )
+  {
+    const int nbRows = I.getRows(), nbCols = I.getCols();
+    const int size = I.getSize();
+    const int offsetIdiff = 1;
+
+    std::vector<OutputType> Idiff(size);
+    initGradientFilterDifferenceImageY(I, Idiff);
+    const int resetCounter = nbCols - 1;
+    const int stopIter = size - (nbCols + 1);
+    int counter = resetCounter, iterSign = offsetIdiff;
+    for (int iter = nbCols; iter < stopIter; ++iter) {
+      // Computing the amplitude of the difference
+      OutputType futureDiff = 0.;
+
+      if (checkBooleanPatch(p_mask, iter + offsetIdiff, iterSign, nbRows, nbCols, false)) {
+        futureDiff = I.bitmap[iter + nbCols +1].V - I.bitmap[iter + offsetIdiff].V;
+        Idiff[iter + offsetIdiff] = futureDiff;
+      }
+
+      if (counter) {
+        if ((counter != resetCounter)) {
+          if (checkBooleanMask(p_mask, iter)) {
+            OutputType gradient = 0.;
+            for (int i = -1; i <= 1; ++i) {
+              // Kind of +/- (I[r + 1][c + i] - I[r][c + 1]) +/- (I[r][c + i] - I[r - 1][c + 1])
+              gradient += filter[i + 1] * (Idiff[iter + i] + Idiff[iter - nbCols + i]);
+            }
+            GI.bitmap[iter] = gradient;
+          }
+        }
+        --counter;
+      }
+      else {
+        counter = resetCounter;
+      }
+      if (iterSign < resetCounter) {
+        ++iterSign;
+      }
+      else {
+        iterSign = 0;
+      }
+    }
+  }
+
+#ifdef VISP_HAVE_OPENMP
+  template <typename HSVType, bool useFullScale, typename OutputType>
+  static typename std::enable_if<std::is_arithmetic<OutputType>::value, void>::type initGradientFilterDifferenceImageX(
+    const vpImage<vpHSV<HSVType, useFullScale>> &I, std::vector<OutputType> &Idiff,
+    const int &istart, const int &iam
+  )
+  {
+    const int nbCols = I.getCols();
+
+    if (iam > 0) {
+      Idiff[0] = I.bitmap[istart - nbCols + 1].V - I.bitmap[istart - nbCols].V;
+    }
+
+    // Computing the difference and sign for row 1 column 0, which corresponds to the current row of the image
+    Idiff[nbCols] = I.bitmap[istart + 1].V - I.bitmap[istart].V;
+
+    for (int iter = 1; iter < nbCols - 1; ++iter) {
+      if (iam > 0) {
+      // Computing the difference and sign for row 0, which corresponds to the previous row of the image
+        OutputType distanceRow0 = I.bitmap[istart - nbCols + iter + 1].V - I.bitmap[istart - nbCols + iter].V;
+        Idiff[iter] = distanceRow0;
+      }
+
+      // Computing the difference and sign for row 1, which corresponds to the current row of the image
+      OutputType distanceRow1 = I.bitmap[istart + iter + 1].V - I.bitmap[istart + iter].V;
+      Idiff[nbCols + iter] = distanceRow1;
+    }
+  }
+
+  template <typename HSVType, bool useFullScale, typename OutputType>
+  static typename std::enable_if<std::is_arithmetic<OutputType>::value, void>::type gradientFilterXMultithread(
+    const vpImage<vpHSV<HSVType, useFullScale>> &I, vpImage<OutputType> &GI, const std::vector<OutputType> &filter,
+    const int &maxNbThread, const vpImage<bool> *p_mask = nullptr)
+  {
+    const int nbRows = I.getRows(), nbCols = I.getCols();
+    const int offsetIdiff = nbCols;
+    const int resetCounter = nbCols - 1;
+    const int nrows(nbRows - 1);
+
+    int nbThread = maxNbThread;
+    if (nbThread < 0) {
+      nbThread = omp_get_max_threads();
+    }
+
+    if (static_cast<int>(nbRows) < (4 * nbThread)) {
+      gradientFilterXMonothread(I, GI, filter, p_mask);
+    }
+
+    int iam, nt, irows, rstart, istart, istop;
+
+#pragma omp parallel default(shared) private(iam, nt, irows, rstart, istart, istop) num_threads(nbThread)
+    {
+      iam = omp_get_thread_num();
+      nt = omp_get_num_threads();
+      irows = nrows / nt;
+      // size of partition
+      rstart = irows * iam;
+      istart = rstart * nbCols; // starting array index
+      if (iam == nt-1) {
+        // last thread may do more
+        irows = nrows - rstart;
+      }
+      istop = istart + irows * nbCols;
+
+      std::vector<OutputType> Idiff((irows + 2) * nbCols);
+      std::vector<OutputType> GItemp(irows * nbCols);
+      initGradientFilterDifferenceImageX(I, Idiff, istart, iam);
+
+      int counter = resetCounter, idCol = 0;
+      int iterStart = (iam != 0 ? istart : istart + nbCols);
+      for (int iter = iterStart; iter < istop; ++iter) {
+        if (counter) {
+          // Computing the amplitude of the difference
+          OutputType futureDiff = 0.;
+          if (checkBooleanPatch(p_mask, iter + offsetIdiff, idCol, nbRows, nbCols, true)) {
+            futureDiff = I.bitmap[iter + nbCols +1].V - I.bitmap[iter + offsetIdiff].V;
+            Idiff[iter + 2 * offsetIdiff - istart] = futureDiff;
+          }
+        }
+        if (counter) {
+          if ((counter != resetCounter)) {
+            if (checkBooleanMask(p_mask, iter)) {
+              OutputType gradient = 0.;
+              int offset = iter - istart; // Looking in the row above first
+              for (int i = -1; i <= 1; ++i) {
+                // Kind of  +/- (I[r + i][c + 1] - I[r + i][c]) +/- (I[r + i][c] - I[r + i][c - 1])
+                gradient += filter[i + 1] * (Idiff[offset] + Idiff[offset - 1]);
+                offset += nbCols; // Preparing to look in the next row
+              }
+              GItemp[iter - istart] = gradient;
+            }
+          }
+          --counter;
+        }
+        else {
+          counter = resetCounter;
+        }
+
+        if (idCol < resetCounter) {
+          ++idCol;
+        }
+        else {
+          idCol = 0;
+        }
+      }
+#pragma omp critical
+      {
+        std::memcpy(GI.bitmap + istart, GItemp.data(), GItemp.size() * sizeof(OutputType));
+      }
+    }
+  }
+
+  template <typename HSVType, bool useFullScale, typename OutputType>
+  static typename std::enable_if<std::is_arithmetic<OutputType>::value, void>::type initGradientFilterDifferenceImageY(
+    const vpImage<vpHSV<HSVType, useFullScale>> &I, std::vector<OutputType> &Idiff,
+    const int &istart
+  )
+  {
+    const int nbCols = I.getCols();
+    // Computing the sign and distance for the first row, which corresponds to the row above the beginning of the gradient computation in the thread
+    int idDiff = 0;
+    for (int iter = istart - nbCols; iter < istart; ++iter) {
+      OutputType distance = I.bitmap[iter + nbCols].V - I.bitmap[iter].V;
+      Idiff[idDiff] = distance;
+      ++idDiff;
+    }
+    // Computing the distance and sign for I[1][0]
+    OutputType distance = I.bitmap[nbCols + nbCols].V - I.bitmap[nbCols].V;
+    Idiff[nbCols] = distance;
+  }
+
+  template <typename HSVType, bool useFullScale, typename OutputType>
+  static typename std::enable_if<std::is_arithmetic<OutputType>::value, void>::type gradientFilterYMultithread(
+    const vpImage<vpHSV<HSVType, useFullScale>> &I, vpImage<OutputType> &GI, const std::vector<OutputType> &filter,
+    const int &maxNbThread, const vpImage<bool> *p_mask = nullptr)
+  {
+    const int nbRows = I.getRows(), nbCols = I.getCols();
+    const int offsetIdiff = 1;
+    const int resetCounter = nbCols - 1;
+    const int nrows(nbRows - 1);
+
+    int nbThread = maxNbThread;
+    if (nbThread < 0) {
+      nbThread = omp_get_max_threads();
+    }
+
+    if (static_cast<int>(nbRows) < (4 * nbThread)) {
+      gradientFilterXMonothread(I, GI, filter, p_mask);
+    }
+
+    int iam, nt, irows, rstart, istart, istop;
+
+#pragma omp parallel default(shared) private(iam, nt, irows, rstart, istart, istop) num_threads(nbThread)
+    {
+      iam = omp_get_thread_num();
+      nt = omp_get_num_threads();
+      irows = nrows / nt;
+      // size of partition
+      rstart = irows * iam;
+      istart = rstart * nbCols; // starting array index
+      if (iam == nt-1) {
+        // last thread may do more
+        irows = nrows - rstart;
+      }
+      istop = istart + irows * nbCols;
+
+      std::vector<OutputType> Idiff((irows + 2) * nbCols);
+      std::vector<OutputType> GItemp(irows * nbCols);
+
+      if (iam == 0) {
+        initGradientFilterDifferenceImageY(I, Idiff);
+      }
+      else {
+        initGradientFilterDifferenceImageY(I, Idiff, istart);
+      }
+
+      int counter = resetCounter, iterSign = offsetIdiff;
+      int iterStart = (iam != 0 ? istart : istart + nbCols);
+      for (int iter = iterStart; iter < istop; ++iter) {
+        // Computing the amplitude of the difference
+        OutputType futureDiff = 0.;
+
+        if (checkBooleanPatch(p_mask, iter + offsetIdiff, iterSign, nbRows, nbCols, false)) {
+          futureDiff = I.bitmap[iter + nbCols +1].V - I.bitmap[iter + offsetIdiff].V;
+          Idiff[iter - istart + nbCols + offsetIdiff] = futureDiff;
+        }
+
+        if (counter) {
+          if ((counter != resetCounter)) {
+            if (checkBooleanMask(p_mask, iter)) {
+              OutputType gradient = 0.;
+              for (int i = -1; i <= 1; ++i) {
+                // Kind of +/- (I[r + 1][c + i] - I[r][c + 1]) +/- (I[r][c + i] - I[r - 1][c + 1])
+                gradient += filter[i + 1] * (Idiff[iter - istart + nbCols + i] + Idiff[iter - istart + i]);
+              }
+              GItemp[iter - istart] = gradient;
+            }
+          }
+          --counter;
+        }
+        else {
+          counter = resetCounter;
+        }
+        if (iterSign < resetCounter) {
+          ++iterSign;
+        }
+        else {
+          iterSign = 0;
+        }
+      }
+#pragma omp critical
+      {
+        std::memcpy(GI.bitmap + istart, GItemp.data(), GItemp.size() * sizeof(OutputType));
+      }
+    }
+  }
+#endif
+#endif
+};
 #if defined(__clang__)
 #  pragma clang diagnostic pop
 #endif
-
-};
 END_VISP_NAMESPACE
 #endif

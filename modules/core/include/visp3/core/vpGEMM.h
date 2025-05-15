@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@
 #include <visp3/core/vpException.h>
 
 BEGIN_VISP_NAMESPACE
-const vpArray2D<double> null(0, 0);
+VP_ATTRIBUTE_NO_DESTROY const vpArray2D<double> null(0, 0);
 
 /*!
   Enumeration of the operations applied on matrices in vpGEMM() function.

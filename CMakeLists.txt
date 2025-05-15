@@ -312,6 +312,8 @@ endif()
 
 # --- Python Bindings requirements ---
 VP_OPTION(USE_PYBIND11       pybind11       QUIET    "Include pybind11 to create Python bindings" "" ON)
+VP_OPTION(ALLOW_SYSTEM_PYTHON  "" "" "Allow the use of the system Python interpreter when compiling and installing bindings" "" OFF)
+
 
 # Minimum tool versions
 set(CMAKE_MINIMUM_VERSION_PYTHON_BINDINGS "3.19.0")
@@ -344,21 +346,25 @@ endif()
 
 
 
-# Forbid system Python
+# Forbid system Python if override flag is not false
 if(DEFINED ENV{VIRTUAL_ENV} OR DEFINED ENV{CONDA_PREFIX})
   set(_pip_args)
-  set(VISP_PYTHON_IS_SYSTEM_WIDE FALSE)
+  set(VISP_PYTHON_INTERPRETER_ALLOWED TRUE)
 else()
   # First solution: raise an error when cmake will call pip install
   # set(_pip_args "--require-virtualenv") # If this is a system python, throw an error
   if(PYTHON3_FOUND)
-    message(STATUS "The python version that you are using (${PYTHON3_EXECUTABLE}) is the system interpreter.
-    pip packages should not be installed system-wide!
-    Python bindings targets will be deactivated!
-    To reenable them, install conda or virtualenv,
-    delete the CMakeCache file then rerun cmake when inside the virtual environment.
-    ")
-    set(VISP_PYTHON_IS_SYSTEM_WIDE TRUE)
+    if(ALLOW_SYSTEM_PYTHON)
+      set(VISP_PYTHON_INTERPRETER_ALLOWED TRUE)
+    else()
+      message(STATUS "The python version that you are using (${PYTHON3_EXECUTABLE}) is the system interpreter.
+      pip packages should not be installed system-wide!
+      Python bindings targets will be deactivated!
+      To reenable them, install conda or virtualenv, or reconfigure with ALLOW_SYSTEM_PYTHON to true.
+      delete the CMakeCache file then rerun cmake when inside the virtual environment.
+      ")
+      set(VISP_PYTHON_INTERPRETER_ALLOWED FALSE)
+    endif()
   endif()
 endif()
 
@@ -419,23 +425,6 @@ if(OGRE_DIR)
   # replace \ with / especially for windows
   STRING(REGEX REPLACE "\\\\" "/" OGRE_DIR ${OGRE_DIR})
 endif()
-
-# add the path to detect Ogre3D
-if(WIN32)
-  list(APPEND CMAKE_MODULE_PATH "${OGRE_DIR}/cmake")
-  list(APPEND CMAKE_MODULE_PATH "${OGRE_DIR}")
-endif(WIN32)
-
-if(UNIX)
-  list(APPEND CMAKE_MODULE_PATH "${OGRE_DIR}/cmake")
-  list(APPEND CMAKE_MODULE_PATH "${OGRE_DIR}/CMake")
-  list(APPEND CMAKE_MODULE_PATH "${OGRE_DIR}")
-  list(APPEND CMAKE_MODULE_PATH "/usr/local/lib/OGRE/cmake")
-  list(APPEND CMAKE_MODULE_PATH "/usr/lib/OGRE/cmake")
-  list(APPEND CMAKE_MODULE_PATH "/usr/local/lib64/OGRE/cmake")
-  list(APPEND CMAKE_MODULE_PATH "/usr/lib64/OGRE/cmake")
-  list(APPEND CMAKE_MODULE_PATH "/usr/share/OGRE/cmake/modules")
-endif(UNIX)
 
 # ----------------------------------------------------------------------------
 # Check for system libs
@@ -507,7 +496,7 @@ VP_OPTION(BUILD_ANDROID_EXAMPLES  "" "" "Build examples for Android platform"   
 VP_OPTION(INSTALL_ANDROID_EXAMPLES "" "" "Install Android examples"  ""                  OFF IF ANDROID )
 
 # Build python bindings as an option
-VP_OPTION(BUILD_PYTHON_BINDINGS  "" "" "Build Python bindings" "" ON IF (PYTHON3INTERP_FOUND AND USE_PYBIND11 AND NOT CMAKE_NOT_OK_FOR_BINDINGS AND NOT VISP_PYTHON_IS_SYSTEM_WIDE AND NOT PYTHON3_NOT_OK_FOR_BINDINGS AND NOT CXX_STANDARD_NOT_OK_FOR_BINDINGS) )
+VP_OPTION(BUILD_PYTHON_BINDINGS  "" "" "Build Python bindings" "" ON IF (PYTHON3INTERP_FOUND AND USE_PYBIND11 AND NOT CMAKE_NOT_OK_FOR_BINDINGS AND VISP_PYTHON_INTERPRETER_ALLOWED AND NOT PYTHON3_NOT_OK_FOR_BINDINGS AND NOT CXX_STANDARD_NOT_OK_FOR_BINDINGS) )
 VP_OPTION(BUILD_PYTHON_BINDINGS_DOC  "" "" "Build the documentation for the Python bindings" "" ON IF BUILD_PYTHON_BINDINGS )
 
 
@@ -658,6 +647,11 @@ set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 VP_OPTION(USE_THREADS     Threads     ""    "Include std::thread support"  "" ON)
 
 VP_OPTION(USE_XML2        LibXml2     ""    "Include libxml2 support"      "" ON IF NOT WINRT)
+if(USE_XML2 AND WIN32)
+  # libxml2 needs iconv on windows
+  VP_OPTION(USE_ICONV        Iconv     ""    "Include Iconv support"      "" ON IF NOT WINRT)
+endif()
+
 if(CMAKE_TOOLCHAIN_FILE)
   # Find opencv2.framework for ios and naoqi
   VP_OPTION(USE_OPENCV      "MyOpenCV" QUIET "Include OpenCV support" "OpenCV_DIR;OpenCV_FOUND;OPENCV_FOUND" ON)
@@ -1120,7 +1114,7 @@ VP_SET(VISP_HAVE_LAPACK_OPENBLAS TRUE IF (BUILD_MODULE_visp_core AND USE_OPENBLA
 VP_SET(VISP_HAVE_PTHREAD     TRUE IF (BUILD_MODULE_visp_core AND (USE_PTHREAD AND UNIX)))
 
 VP_SET(VISP_HAVE_THREADS     TRUE IF (BUILD_MODULE_visp_core AND USE_THREADS))
-VP_SET(VISP_HAVE_XML2        TRUE IF (BUILD_MODULE_visp_core AND USE_XML2))
+VP_SET(VISP_HAVE_XML2        TRUE IF (BUILD_MODULE_visp_core AND ((USE_XML2 AND WIN32 AND USE_ICONV) OR (USE_XML2 AND NOT WIN32))))
 VP_SET(VISP_HAVE_PCL         TRUE IF (BUILD_MODULE_visp_core AND USE_PCL))
 VP_SET(VISP_HAVE_TENSORRT    TRUE IF (BUILD_MODULE_visp_core AND USE_TENSORRT))
 VP_SET(VISP_HAVE_NLOHMANN_JSON          TRUE IF (BUILD_MODULE_visp_core AND USE_NLOHMANN_JSON))
@@ -1731,7 +1725,7 @@ if(BUILD_PYTHON_BINDINGS)
 else()
   status("    Requirements: ")
   status("      Python version > ${PYTHON3_MINIMUM_VERSION_PYTHON_BINDINGS}:"     PYTHON3_FOUND AND NOT PYTHON3_NOT_OK_FOR_BINDINGS THEN "ok (ver ${PYTHON3_VERSION_STRING})" ELSE "python not found or too old (${PYTHON3_VERSION_STRING})")
-  status("      Python in Virtual environment or conda:"     VISP_PYTHON_IS_SYSTEM_WIDE THEN "failed" ELSE "ok")
+  status("      Python in Virtual environment or conda (or system with override):"     VISP_PYTHON_INTERPRETER_ALLOWED THEN "failed" ELSE "ok")
   status("      Pybind11 found:"     USE_PYBIND11 THEN "ok" ELSE "failed")
   status("      CMake > ${CMAKE_MINIMUM_VERSION_PYTHON_BINDINGS}:"     CMAKE_NOT_OK_FOR_BINDINGS THEN "failed (${CMAKE_VERSION})" ELSE "ok (${CMAKE_VERSION})")
   status("      C++ standard > ${VISP_CXX_STANDARD_17}:"     CXX_STANDARD_NOT_OK_FOR_BINDINGS THEN "failed (${VISP_CXX_STANDARD})" ELSE "ok (${VISP_CXX_STANDARD})")
@@ -1880,6 +1874,9 @@ status("  Misc: ")
 status("    Use Clipper (built-in):"  WITH_CLIPPER     THEN "yes (ver ${CLIPPER_VERSION})" ELSE "no")
 status("    Use pugixml (built-in):"  WITH_PUGIXML     THEN "yes (ver ${PUGIXML_VERSION})" ELSE "no")
 status("    Use libxml2:"             USE_XML2         THEN "yes (ver ${LIBXML2_VERSION_STRING})" ELSE "no")
+if(WIN32)
+status("    \\- Use Iconv:"           USE_ICONV        THEN "yes (ver ${Iconv_VERSION})" ELSE "no")
+endif()
 if(VISP_HAVE_NLOHMANN_JSON_FROM_VTK)
 status("    Use json (nlohmann vtk):"     USE_NLOHMANN_JSON THEN "yes (ver ${VTK_NLOHMANN_JSON_VERSION})" ELSE "no")
 else()

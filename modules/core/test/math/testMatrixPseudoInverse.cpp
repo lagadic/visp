@@ -53,13 +53,37 @@
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
-/*!
+void usage(const char *name, const char *badparam);
+bool getOptions(int argc, const char **argv, unsigned int &nb_matrices, unsigned int &nb_iterations,
+                bool &use_plot_file, std::string &plotfile, unsigned int &nbrows, unsigned int &nbcols, bool &verbose);
 
+
+
+vpMatrix make_random_matrix(unsigned int nbrows, unsigned int nbcols);
+void create_bench_random_matrix(unsigned int nb_matrices, unsigned int nb_rows, unsigned int nb_cols, bool verbose,
+                                std::vector<vpMatrix> &bench);
+int test_pseudo_inverse(const std::vector<vpMatrix> &A, const std::vector<vpMatrix> &Api);
+int test_pseudo_inverse(const std::vector<vpMatrix> &A, const std::vector<vpMatrix> &Api,
+                        const std::vector<vpColVector> &sv, const std::vector<vpMatrix> &imA,
+                        const std::vector<vpMatrix> &imAt, const std::vector<vpMatrix> &kerAt);
+int test_pseudo_inverse_default(bool verbose, const std::vector<vpMatrix> &bench, std::vector<double> &time);
+void save_time(const std::string &method, unsigned int nrows, unsigned int ncols, bool verbose, bool use_plot_file,
+               std::ofstream &of, const std::vector<double> &time);
+#if defined(VISP_HAVE_EIGEN3)
+int test_pseudo_inverse_eigen3(bool verbose, const std::vector<vpMatrix> &bench, std::vector<double> &time);
+#endif
+#if defined(VISP_HAVE_LAPACK)
+int test_pseudo_inverse_lapack(bool verbose, const std::vector<vpMatrix> &bench, std::vector<double> &time);
+#endif
+#if defined(VISP_HAVE_OPENCV)
+int test_pseudo_inverse_opencv(bool verbose, const std::vector<vpMatrix> &bench, std::vector<double> &time);
+#endif
+
+/*!
   Print the program options.
 
   \param name : Program name.
   \param badparam : Bad parameter name.
-
  */
 void usage(const char *name, const char *badparam)
 {
@@ -110,11 +134,9 @@ OPTIONS:                                               Default\n\
 }
 
 /*!
-
   Set the program options.
 
   \return false if the program has to be stopped, true otherwise.
-
 */
 bool getOptions(int argc, const char **argv, unsigned int &nb_matrices, unsigned int &nb_iterations,
                 bool &use_plot_file, std::string &plotfile, unsigned int &nbrows, unsigned int &nbcols, bool &verbose)
@@ -127,7 +149,6 @@ bool getOptions(int argc, const char **argv, unsigned int &nb_matrices, unsigned
     case 'h':
       usage(argv[0], nullptr);
       return false;
-      break;
     case 'n':
       nb_matrices = static_cast<unsigned int>(atoi(optarg_));
       break;
@@ -158,7 +179,6 @@ bool getOptions(int argc, const char **argv, unsigned int &nb_matrices, unsigned
     default:
       usage(argv[0], optarg_);
       return false;
-      break;
     }
   }
 
@@ -180,7 +200,7 @@ vpMatrix make_random_matrix(unsigned int nbrows, unsigned int nbcols)
 
   for (unsigned int i = 0; i < A.getRows(); i++) {
     for (unsigned int j = 0; j < A.getCols(); j++) {
-      A[i][j] = (double)rand() / (double)RAND_MAX;
+      A[i][j] = static_cast<double>(rand()) / static_cast<double>(RAND_MAX);
     }
   }
 

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
  * Basic contours extraction based on the original work of
  * Sina Samangooei (ss@ecs.soton.ac.uk).
  */
+
 /**
  * Copyright (c) 2011, The University of Southampton and the individual
  * contributors. All rights reserved.
@@ -75,6 +76,18 @@ namespace VISP_NAMESPACE_NAME
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS) && defined(ENABLE_VISP_NAMESPACE)
 using namespace VISP_NAMESPACE_NAME;
 #endif
+
+bool fromTo(const vpImagePoint &from, const vpImagePoint &to, vpDirection &direction);
+bool crossesEastBorder(const vpImage<int> &I, bool checked[8], const vpImagePoint &point);
+void addContourPoint(vpImage<int> &I, vpContour *border, const vpImagePoint &point, bool checked[8], int nbd);
+void followBorder(vpImage<int> &I, const vpImagePoint &ij, vpImagePoint &i2j2, vpContour *border, int nbd);
+bool isOuterBorderStart(const vpImage<int> &I, unsigned int i, unsigned int j);
+bool isHoleBorderStart(const vpImage<int> &I, unsigned int i, unsigned int j);
+void getContoursList(const vpContour &root, int level, vpContour &contour_list);
+void drawContours(vpImage<unsigned char> &I, const std::vector<std::vector<vpImagePoint> > &contours, unsigned char grayValue);
+void drawContours(vpImage<vpRGBa> &I, const std::vector<std::vector<vpImagePoint> > &contours, const vpColor &color);
+void findContours(const vpImage<unsigned char> &I_original, vpContour &contours,
+                  std::vector<std::vector<vpImagePoint> > &contourPts, const vpContourRetrievalType &retrievalMode);
 
 bool fromTo(const vpImagePoint &from, const vpImagePoint &to, vpDirection &direction)
 {

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,7 +98,7 @@ private:
   cv::Scalar *col;
   cv::Scalar cvcolor;
   int font;
-  float fontScale;
+  double fontScale;
   static std::vector<std::string> m_listTitles;
   static unsigned int m_nbWindows;
   int fontHeight;
@@ -128,7 +128,7 @@ private:
 
 public:
   Impl() :
-    m_background(), col(nullptr), cvcolor(), font(cv::FONT_HERSHEY_PLAIN), fontScale(0.8f),
+    m_background(), col(nullptr), cvcolor(), font(cv::FONT_HERSHEY_PLAIN), fontScale(0.8),
     fontHeight(10), x_move(0), y_move(0), move(false), x_lbuttondown(0), y_lbuttondown(0), lbuttondown(false),
     x_mbuttondown(0), y_mbuttondown(0), mbuttondown(false), x_rbuttondown(0), y_rbuttondown(0), rbuttondown(false),
     x_lbuttonup(0), y_lbuttonup(0), lbuttonup(false), x_mbuttonup(0), y_mbuttonup(0), mbuttonup(false), x_rbuttonup(0),
@@ -250,7 +250,7 @@ public:
     cv::destroyWindow(title);
     for (size_t i = 0; i < m_listTitles.size(); i++) {
       if (title == m_listTitles[i]) {
-        m_listTitles.erase(m_listTitles.begin() + (long int)i);
+        m_listTitles.erase(m_listTitles.begin() + static_cast<long int>(i));
         break;
       }
     }
@@ -386,7 +386,7 @@ public:
 
     if (scale == 1) {
       for (unsigned int i = 0; i < height; i++) {
-        unsigned char *dst_24 = (unsigned char *)m_background.data + static_cast<int>(i * 3 * width);
+        unsigned char *dst_24 = static_cast<unsigned char *>(m_background.data) + static_cast<int>(i * 3 * width);
         for (unsigned int j = 0; j < width; j++) {
           unsigned char val = I[i][j];
           *(dst_24++) = val;
@@ -397,7 +397,7 @@ public:
     }
     else {
       for (unsigned int i = 0; i < height; i++) {
-        unsigned char *dst_24 = (unsigned char *)m_background.data + static_cast<int>(i * 3 * width);
+        unsigned char *dst_24 = static_cast<unsigned char *>(m_background.data) + static_cast<int>(i * 3 * width);
         for (unsigned int j = 0; j < width; j++) {
           unsigned char val = I[i * scale][j * scale];
           *(dst_24++) = val;
@@ -420,7 +420,7 @@ public:
 
     if (scale == 1) {
       for (unsigned int i = 0; i < height; i++) {
-        unsigned char *dst_24 = (unsigned char *)m_background.data + static_cast<int>(i * 3 * width);
+        unsigned char *dst_24 = static_cast<unsigned char *>(m_background.data) + static_cast<int>(i * 3 * width);
         for (unsigned int j = 0; j < width; j++) {
           vpRGBa val = I[i][j];
           *(dst_24++) = val.B;
@@ -431,7 +431,7 @@ public:
     }
     else {
       for (unsigned int i = 0; i < height; i++) {
-        unsigned char *dst_24 = (unsigned char *)m_background.data + static_cast<int>(i * 3 * width);
+        unsigned char *dst_24 = static_cast<unsigned char *>(m_background.data) + static_cast<int>(i * 3 * width);
         for (unsigned int j = 0; j < width; j++) {
           vpRGBa val = I[i * scale][j * scale];
           *(dst_24++) = val.B;
@@ -459,7 +459,7 @@ public:
       unsigned int i_max = std::min<unsigned int>(i_min + h, imgHeight);
       unsigned int j_max = std::min<unsigned int>(j_min + w, imgWidth);
       for (unsigned int i = i_min; i < i_max; i++) {
-        unsigned char *dst_24 = (unsigned char *)m_background.data + static_cast<int>(i * 3 * imgWidth + j_min * 3);
+        unsigned char *dst_24 = static_cast<unsigned char *>(m_background.data) + static_cast<int>(i * 3u * imgWidth + j_min * 3u);
         for (unsigned int j = j_min; j < j_max; j++) {
           unsigned char val = I[i][j];
           *(dst_24++) = val;
@@ -469,13 +469,13 @@ public:
       }
     }
     else {
-      int i_min = std::max<int>(static_cast<int>(ceil(iP.get_i() / scale)), 0);
-      int j_min = std::max<int>(static_cast<int>(ceil(iP.get_j() / scale)), 0);
-      int i_max = std::min<int>(static_cast<int>(ceil((iP.get_i() + h) / scale)), static_cast<int>(imgHeight));
-      int j_max = std::min<int>(static_cast<int>(ceil((iP.get_j() + w) / scale)), static_cast<int>(imgWidth));
-      for (int i = i_min; i < i_max; i++) {
-        unsigned char *dst_24 = (unsigned char *)m_background.data + static_cast<int>(i * 3 * imgWidth + j_min * 3);
-        for (int j = j_min; j < j_max; j++) {
+      unsigned int i_min = std::max<unsigned int>(static_cast<unsigned int>(ceil(iP.get_i() / scale)), 0);
+      unsigned int j_min = std::max<unsigned int>(static_cast<unsigned int>(ceil(iP.get_j() / scale)), 0);
+      unsigned int i_max = std::min<unsigned int>(static_cast<unsigned int>(ceil((iP.get_i() + h) / scale)), imgHeight);
+      unsigned int j_max = std::min<unsigned int>(static_cast<unsigned int>(ceil((iP.get_j() + w) / scale)), imgWidth);
+      for (unsigned int i = i_min; i < i_max; i++) {
+        unsigned char *dst_24 = static_cast<unsigned char *>(m_background.data) + static_cast<int>(i * 3u * imgWidth + j_min * 3u);
+        for (unsigned int j = j_min; j < j_max; j++) {
           unsigned char val = I[i * scale][j * scale];
           *(dst_24++) = val;
           *(dst_24++) = val;
@@ -501,7 +501,7 @@ public:
       unsigned int i_max = std::min<unsigned int>(i_min + h, imgHeight);
       unsigned int j_max = std::min<unsigned int>(j_min + w, imgWidth);
       for (unsigned int i = i_min; i < i_max; i++) {
-        unsigned char *dst_24 = (unsigned char *)m_background.data + static_cast<int>(i * 3 * imgWidth + j_min * 3);
+        unsigned char *dst_24 = static_cast<unsigned char *>(m_background.data) + static_cast<int>(i * 3 * imgWidth + j_min * 3);
         for (unsigned int j = j_min; j < j_max; j++) {
           vpRGBa val = I[i][j];
           *(dst_24++) = val.B;
@@ -511,13 +511,13 @@ public:
       }
     }
     else {
-      int i_min = std::max<int>(static_cast<int>(ceil(iP.get_i() / scale)), 0);
-      int j_min = std::max<int>(static_cast<int>(ceil(iP.get_j() / scale)), 0);
-      int i_max = std::min<int>(static_cast<int>(ceil((iP.get_i() + h) / scale)), static_cast<int>(imgHeight));
-      int j_max = std::min<int>(static_cast<int>(ceil((iP.get_j() + w) / scale)), static_cast<int>(imgWidth));
-      for (int i = i_min; i < i_max; i++) {
-        unsigned char *dst_24 = (unsigned char *)m_background.data + static_cast<int>(i * 3 * imgWidth + j_min * 3);
-        for (int j = j_min; j < j_max; j++) {
+      unsigned int i_min = std::max<unsigned int>(static_cast<unsigned int>(ceil(iP.get_i() / scale)), 0);
+      unsigned int j_min = std::max<unsigned int>(static_cast<unsigned int>(ceil(iP.get_j() / scale)), 0);
+      unsigned int i_max = std::min<unsigned int>(static_cast<unsigned int>(ceil((iP.get_i() + h) / scale)), imgHeight);
+      unsigned int j_max = std::min<unsigned int>(static_cast<unsigned int>(ceil((iP.get_j() + w) / scale)), imgWidth);
+      for (unsigned int i = i_min; i < i_max; i++) {
+        unsigned char *dst_24 = static_cast<unsigned char *>(m_background.data) + static_cast<int>(i * 3 * imgWidth + j_min * 3);
+        for (unsigned int j = j_min; j < j_max; j++) {
           vpRGBa val = I[i * scale][j * scale];
           *(dst_24++) = val.B;
           *(dst_24++) = val.G;
@@ -816,30 +816,21 @@ public:
   }
 };
 
-std::vector<std::string> vpDisplayOpenCV::Impl::m_listTitles = std::vector<std::string>();
+VP_ATTRIBUTE_NO_DESTROY std::vector<std::string> vpDisplayOpenCV::Impl::m_listTitles = std::vector<std::string>();
 unsigned int vpDisplayOpenCV::Impl::m_nbWindows = 0;
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
 /*!
-
-  Constructor. Initialize a display to visualize a gray level image
-  (8 bits).
+  Constructor. Initialize a display to visualize a gray level image (8 bits).
 
   \param I : Image to be displayed (not that image has to be initialized)
   \param scaleType : If this parameter is set to:
-  - vpDisplay::SCALE_AUTO, the display size is adapted to ensure the image
-    is fully displayed in the screen;
-  - vpDisplay::SCALE_DEFAULT or vpDisplay::SCALE_1, the display size is the
-  same than the image size.
-  - vpDisplay::SCALE_2, the display size is down scaled by 2 along the lines
-  and the columns.
-  - vpDisplay::SCALE_3, the display size is down scaled by 3 along the lines
-  and the columns.
-  - vpDisplay::SCALE_4, the display size is down scaled by 4 along the lines
-  and the columns.
-  - vpDisplay::SCALE_5, the display size is down scaled by 5 along the lines
-  and the columns.
-
+  - vpDisplay::SCALE_AUTO, the display size is adapted to ensure the image is fully displayed in the screen;
+  - vpDisplay::SCALE_DEFAULT or vpDisplay::SCALE_1, the display size is the same than the image size.
+  - vpDisplay::SCALE_2, the display size is down scaled by 2 along the lines and the columns.
+  - vpDisplay::SCALE_3, the display size is down scaled by 3 along the lines and the columns.
+  - vpDisplay::SCALE_4, the display size is down scaled by 4 along the lines and the columns.
+  - vpDisplay::SCALE_5, the display size is down scaled by 5 along the lines and the columns.
 */
 vpDisplayOpenCV::vpDisplayOpenCV(vpImage<unsigned char> &I, vpScaleType scaleType)
   : vpDisplay()
@@ -850,27 +841,19 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<unsigned char> &I, vpScaleType scaleTyp
 }
 
 /*!
-
-  Constructor. Initialize a display to visualize a gray level image
-  (8 bits).
+  Constructor. Initialize a display to visualize a gray level image (8 bits).
 
   \param I : Image to be displayed (not that image has to be initialized)
-  \param x, y : The window is set at position x,y (column index, row index).
+  \param x : The window is set at position x (column index).
+  \param y : The window is set at position y (row index).
   \param title : Window title.
   \param scaleType : If this parameter is set to:
-  - vpDisplay::SCALE_AUTO, the display size is adapted to ensure the image
-    is fully displayed in the screen;
-  - vpDisplay::SCALE_DEFAULT or vpDisplay::SCALE_1, the display size is the
-  same than the image size.
-  - vpDisplay::SCALE_2, the display size is down scaled by 2 along the lines
-  and the columns.
-  - vpDisplay::SCALE_3, the display size is down scaled by 3 along the lines
-  and the columns.
-  - vpDisplay::SCALE_4, the display size is down scaled by 4 along the lines
-  and the columns.
-  - vpDisplay::SCALE_5, the display size is down scaled by 5 along the lines
-  and the columns.
-
+  - vpDisplay::SCALE_AUTO, the display size is adapted to ensure the image is fully displayed in the screen;
+  - vpDisplay::SCALE_DEFAULT or vpDisplay::SCALE_1, the display size is the same than the image size.
+  - vpDisplay::SCALE_2, the display size is down scaled by 2 along the lines and the columns.
+  - vpDisplay::SCALE_3, the display size is down scaled by 3 along the lines and the columns.
+  - vpDisplay::SCALE_4, the display size is down scaled by 4 along the lines and the columns.
+  - vpDisplay::SCALE_5, the display size is down scaled by 5 along the lines and the columns.
 */
 vpDisplayOpenCV::vpDisplayOpenCV(vpImage<unsigned char> &I, int x, int y, const std::string &title,
                                  vpScaleType scaleType)
@@ -886,18 +869,12 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<unsigned char> &I, int x, int y, const 
 
   \param I : Image to be displayed (not that image has to be initialized)
   \param scaleType : If this parameter is set to:
-  - vpDisplay::SCALE_AUTO, the display size is adapted to ensure the image
-    is fully displayed in the screen;
-  - vpDisplay::SCALE_DEFAULT or vpDisplay::SCALE_1, the display size is the
-  same than the image size.
-  - vpDisplay::SCALE_2, the display size is down scaled by 2 along the lines
-  and the columns.
-  - vpDisplay::SCALE_3, the display size is down scaled by 3 along the lines
-  and the columns.
-  - vpDisplay::SCALE_4, the display size is down scaled by 4 along the lines
-  and the columns.
-  - vpDisplay::SCALE_5, the display size is down scaled by 5 along the lines
-  and the columns.
+  - vpDisplay::SCALE_AUTO, the display size is adapted to ensure the image is fully displayed in the screen;
+  - vpDisplay::SCALE_DEFAULT or vpDisplay::SCALE_1, the display size is the same than the image size.
+  - vpDisplay::SCALE_2, the display size is down scaled by 2 along the lines and the columns.
+  - vpDisplay::SCALE_3, the display size is down scaled by 3 along the lines and the columns.
+  - vpDisplay::SCALE_4, the display size is down scaled by 4 along the lines and the columns.
+  - vpDisplay::SCALE_5, the display size is down scaled by 5 along the lines and the columns.
 */
 vpDisplayOpenCV::vpDisplayOpenCV(vpImage<vpRGBa> &I, vpScaleType scaleType)
   : vpDisplay()
@@ -911,21 +888,16 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<vpRGBa> &I, vpScaleType scaleType)
   Constructor. Initialize a display to visualize a RGBa image (32 bits).
 
   \param I : Image to be displayed (not that image has to be initialized)
-  \param x, y : The window is set at position x,y (column index, row index).
+  \param x : The window is set at position x (column index).
+  \param y : The window is set at position y (row index).
   \param title : Window title.
   \param scaleType : If this parameter is set to:
-  - vpDisplay::SCALE_AUTO, the display size is adapted to ensure the image
-    is fully displayed in the screen;
-  - vpDisplay::SCALE_DEFAULT or vpDisplay::SCALE_1, the display size is the
-  same than the image size.
-  - vpDisplay::SCALE_2, the display size is down scaled by 2 along the lines
-  and the columns.
-  - vpDisplay::SCALE_3, the display size is down scaled by 3 along the lines
-  and the columns.
-  - vpDisplay::SCALE_4, the display size is down scaled by 4 along the lines
-  and the columns.
-  - vpDisplay::SCALE_5, the display size is down scaled by 5 along the lines
-  and the columns.
+  - vpDisplay::SCALE_AUTO, the display size is adapted to ensure the image is fully displayed in the screen;
+  - vpDisplay::SCALE_DEFAULT or vpDisplay::SCALE_1, the display size is the same than the image size.
+  - vpDisplay::SCALE_2, the display size is down scaled by 2 along the lines and the columns.
+  - vpDisplay::SCALE_3, the display size is down scaled by 3 along the lines and the columns.
+  - vpDisplay::SCALE_4, the display size is down scaled by 4 along the lines and the columns.
+  - vpDisplay::SCALE_5, the display size is down scaled by 5 along the lines and the columns.
 */
 vpDisplayOpenCV::vpDisplayOpenCV(vpImage<vpRGBa> &I, int x, int y, const std::string &title, vpScaleType scaleType)
   : vpDisplay()
@@ -937,10 +909,10 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<vpRGBa> &I, int x, int y, const std::st
 
 /*!
 
-  Constructor that just initialize the display position in the screen
-  and the display title.
+  Constructor that just initialize the display position in the screen and the display title.
 
-  \param x, y : The window is set at position x,y (column index, row index).
+  \param x : The window is set at position x (column index).
+  \param y : The window is set at position y (row index).
   \param title : Window title.
 
   To initialize the display size, you need to call init().
@@ -1023,6 +995,23 @@ vpDisplayOpenCV::vpDisplayOpenCV()
 { }
 
 /*!
+ * Copy constructor.
+ */
+vpDisplayOpenCV::vpDisplayOpenCV(const vpDisplayOpenCV &display) : vpDisplay(display)
+{
+  *this = display;
+}
+
+/*!
+ * Copy operator.
+ */
+vpDisplayOpenCV &vpDisplayOpenCV::operator=(const vpDisplayOpenCV &display)
+{
+  m_impl = display.m_impl;
+  return *this;
+}
+
+/*!
   Destructor.
 */
 vpDisplayOpenCV::~vpDisplayOpenCV()
@@ -1034,8 +1023,9 @@ vpDisplayOpenCV::~vpDisplayOpenCV()
 /*!
   Initialize the display (size, position and title) of a gray level image.
 
-  \param I : Image to be displayed (not that image has to be initialized)
-  \param x, y : The window is set at position x,y (column index, row index).
+  \param I : Image to be displayed (not that image has to be initialized).
+  \param x : The window is set at position x (column index).
+  \param y : The window is set at position y (row index).
   \param title : Window title.
 
 */
@@ -1054,8 +1044,9 @@ void vpDisplayOpenCV::init(vpImage<unsigned char> &I, int x, int y, const std::s
   Initialize the display (size, position and title) of a color
   image in RGBa format.
 
-  \param I : Image to be displayed (not that image has to be initialized)
-  \param x, y : The window is set at position x,y (column index, row index).
+  \param I : Image to be displayed (not that image has to be initialized).
+  \param x : The window is set at position x (column index).
+  \param y : The window is set at position y (row index).
   \param title : Window title.
 
 */
@@ -1074,8 +1065,10 @@ void vpDisplayOpenCV::init(vpImage<vpRGBa> &I, int x, int y, const std::string &
 /*!
   Initialize the display size, position and title.
 
-  \param w, h : Width and height of the window.
-  \param x, y : The window is set at position x,y (column index, row index).
+  \param w : Window width.
+  \param h : Window height.
+  \param x : The window is set at position x (column index).
+  \param y : The window is set at position y (row index).
   \param title : Window title.
 
   \exception vpDisplayException::notInitializedError If OpenCV was not build
@@ -1120,9 +1113,10 @@ void vpDisplayOpenCV::init(unsigned int w, unsigned int h, int x, int y, const s
 
   \sa displayText()
 */
-void vpDisplayOpenCV::setFont(const std::string & /* font */)
+void vpDisplayOpenCV::setFont(const std::string &font)
 {
   // Not yet implemented
+  (void)font;
 }
 
 /*!
@@ -1132,9 +1126,10 @@ void vpDisplayOpenCV::setFont(const std::string & /* font */)
 
   \param title : Window title.
  */
-void vpDisplayOpenCV::setTitle(const std::string & /* title */)
+void vpDisplayOpenCV::setTitle(const std::string &title)
 {
   // Not implemented
+  (void)title;
 }
 
 /*!
@@ -1187,10 +1182,9 @@ void vpDisplayOpenCV::displayImage(const vpImage<unsigned char> &I)
   \warning Suppress the overlay drawing in the region of interest.
 
   \param I : Image to display.
-
-  \param iP : Top left corner of the region of interest
-
-  \param w, h : Width and height of the region of interest
+  \param iP : Top left corner of the region of interest.
+  \param w : Width of the region of interest.
+  \param h : Height of the region of interest.
 
   \sa init(), closeDisplay()
 */
@@ -1235,10 +1229,9 @@ void vpDisplayOpenCV::displayImage(const vpImage<vpRGBa> &I)
   \warning Suppress the overlay drawing in the region of interest.
 
   \param I : Image to display.
-
-  \param iP : Top left corner of the region of interest
-
-  \param w, h : Width and height of the region of interest
+  \param iP : Top left corner of the region of interest.
+  \param w : Width of the region of interest.
+  \param h : Height of the region of interest.
 
   \sa init(), closeDisplay()
 */
@@ -1404,7 +1397,8 @@ void vpDisplayOpenCV::displayCross(const vpImagePoint &ip, unsigned int size, co
 /*!
   Display a dashed line from image point \e ip1 to image point \e ip2.
 
-  \param ip1,ip2 : Initial and final image points.
+  \param ip1 : Initial image point.
+  \param ip2 : Final image point.
   \param color : Line color.
   \param thickness : Line thickness.
 */
@@ -1421,7 +1415,8 @@ void vpDisplayOpenCV::displayDotLine(const vpImagePoint &ip1, const vpImagePoint
 
 /*!
   Display a line from image point \e ip1 to image point \e ip2.
-  \param ip1,ip2 : Initial and final image points.
+  \param ip1 : Initial image point.
+  \param ip2 : Final image point.
   \param color : Line color.
   \param thickness : Line thickness.
 */
@@ -1744,7 +1739,7 @@ bool vpDisplayOpenCV::getKeyboardEvent(std::string &key, bool blocking)
 /*!
   Get the coordinates of the mouse pointer.
 
-  \param ip [out] : The coordinates of the mouse pointer.
+  \param[out] ip : The coordinates of the mouse pointer.
 
   \return true if a pointer motion event was received, false otherwise.
 
@@ -1768,7 +1763,7 @@ bool vpDisplayOpenCV::getPointerMotionEvent(vpImagePoint &ip)
 /*!
   Get the coordinates of the mouse pointer.
 
-  \param ip [out] : The coordinates of the mouse pointer.
+  \param[out] ip : The coordinates of the mouse pointer.
 
   \return true.
 
@@ -1788,7 +1783,8 @@ bool vpDisplayOpenCV::getPointerPosition(vpImagePoint &ip)
 
 /*!
   Gets screen resolution in pixels.
-  \param w, h : Horizontal and vertical screen resolution.
+  \param[out] w : Horizontal screen resolution.
+  \param[out] h : Vertical screen resolution.
  */
 void vpDisplayOpenCV::getScreenSize(unsigned int &w, unsigned int &h)
 {
@@ -1824,8 +1820,8 @@ void vpDisplayOpenCV::getScreenSize(unsigned int &w, unsigned int &h)
   pclose(fpipe);
 #elif defined(_WIN32)
 #if !defined(WINRT)
-  w = GetSystemMetrics(SM_CXSCREEN);
-  h = GetSystemMetrics(SM_CYSCREEN);
+  w = static_cast<unsigned int>(GetSystemMetrics(SM_CXSCREEN));
+  h = static_cast<unsigned int>(GetSystemMetrics(SM_CYSCREEN));
 #else
   throw(vpException(vpException::functionNotImplementedError, "The function vpDisplayOpenCV::getScreenSize() is not "
                     "implemented on winrt"));

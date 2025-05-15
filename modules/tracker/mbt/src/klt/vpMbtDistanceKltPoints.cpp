@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Klt polygon, containing points of interest.
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpPolygon.h>
 #include <visp3/mbt/vpMbtDistanceKltPoints.h>
@@ -71,7 +69,7 @@ vpMbtDistanceKltPoints::~vpMbtDistanceKltPoints() { }
   points that are indeed in the face.
 
   \param _tracker : ViSP OpenCV KLT Tracker.
-  \param mask: Mask image or nullptr if not wanted. Mask values that are set to true are considered in the tracking. To
+  \param mask : Mask image or nullptr if not wanted. Mask values that are set to true are considered in the tracking. To
   disable a pixel, set false.
 */
 void vpMbtDistanceKltPoints::init(const vpKltOpencv &_tracker, const vpImage<bool> *mask)
@@ -143,10 +141,11 @@ void vpMbtDistanceKltPoints::init(const vpKltOpencv &_tracker, const vpImage<boo
   corresponds to the points of the face
 
   \param _tracker : the KLT tracker
-  \return the number of points that are tracked in this face and in this
-  instanciation of the tracker
-  \param mask: Mask image or nullptr if not wanted. Mask values that are set to true are considered in the tracking. To
+  \param mask : Mask image or nullptr if not wanted. Mask values that are set to true are considered in the tracking. To
   disable a pixel, set false.
+
+  \return the number of points that are tracked in this face and in this
+  instanciation of the tracker.
 */
 unsigned int vpMbtDistanceKltPoints::computeNbDetectedCurrent(const vpKltOpencv &_tracker, const vpImage<bool> *mask)
 {
@@ -360,7 +359,7 @@ void vpMbtDistanceKltPoints::updateMask(
   std::vector<vpImagePoint> roi;
   polygon->getRoiClipped(cam, roi);
 
-  double shiftBorder_d = (double)shiftBorder;
+  double shiftBorder_d = static_cast<double>(shiftBorder);
 
 #if defined(VISP_HAVE_CLIPPER)
   std::vector<vpImagePoint> roi_offset;
@@ -387,7 +386,7 @@ void vpMbtDistanceKltPoints::updateMask(
         std::vector<vpImagePoint> corners;
 
         for (size_t j = 0; j < solution[i].size(); j++) {
-          corners.push_back(vpImagePoint((double)(solution[i][j].Y), (double)(solution[i][j].X)));
+          corners.push_back(vpImagePoint(static_cast<double>(solution[i][j].Y), static_cast<double>(solution[i][j].X)));
         }
 
         polygon_area.buildFrom(corners);
@@ -399,7 +398,7 @@ void vpMbtDistanceKltPoints::updateMask(
     }
 
     for (size_t i = 0; i < solution[index_max].size(); i++) {
-      roi_offset.push_back(vpImagePoint((double)(solution[index_max][i].Y), (double)(solution[index_max][i].X)));
+      roi_offset.push_back(vpImagePoint(static_cast<double>(solution[index_max][i].Y), static_cast<double>(solution[index_max][i].X)));
     }
   }
   else {
@@ -431,10 +430,10 @@ void vpMbtDistanceKltPoints::updateMask(
   }
 
   for (int i = i_min; i < i_max; i++) {
-    double i_d = (double)i;
+    double i_d = static_cast<double>(i);
 
     for (int j = j_min; j < j_max; j++) {
-      double j_d = (double)j;
+      double j_d = static_cast<double>(j);
 
 #if defined(VISP_HAVE_CLIPPER)
       imPt.set_ij(i_d, j_d);
@@ -505,9 +504,9 @@ void vpMbtDistanceKltPoints::removeOutliers(const vpColVector &_w, const double 
 /*!
   Display the primitives tracked for the face.
 
-  \param _I : The image where to display.
+  \param I_ : The image where to display.
 */
-void vpMbtDistanceKltPoints::displayPrimitive(const vpImage<unsigned char> &_I)
+void vpMbtDistanceKltPoints::displayPrimitive(const vpImage<unsigned char> &I_)
 {
   std::map<int, vpImagePoint>::const_iterator iter = curPoints.begin();
   for (; iter != curPoints.end(); ++iter) {
@@ -516,22 +515,22 @@ void vpMbtDistanceKltPoints::displayPrimitive(const vpImage<unsigned char> &_I)
     iP.set_i(static_cast<double>(iter->second.get_i()));
     iP.set_j(static_cast<double>(iter->second.get_j()));
 
-    vpDisplay::displayCross(_I, iP, 10, vpColor::red);
+    vpDisplay::displayCross(I_, iP, 10, vpColor::red);
 
     iP.set_i(vpMath::round(iP.get_i() + 7));
     iP.set_j(vpMath::round(iP.get_j() + 7));
     std::stringstream ss;
     ss << id;
-    vpDisplay::displayText(_I, iP, ss.str(), vpColor::red);
+    vpDisplay::displayText(I_, iP, ss.str(), vpColor::red);
   }
 }
 
 /*!
   Display the primitives tracked for the face.
 
-  \param _I : The image where to display.
+  \param I_ : The image where to display.
 */
-void vpMbtDistanceKltPoints::displayPrimitive(const vpImage<vpRGBa> &_I)
+void vpMbtDistanceKltPoints::displayPrimitive(const vpImage<vpRGBa> &I_)
 {
   std::map<int, vpImagePoint>::const_iterator iter = curPoints.begin();
   for (; iter != curPoints.end(); ++iter) {
@@ -540,13 +539,13 @@ void vpMbtDistanceKltPoints::displayPrimitive(const vpImage<vpRGBa> &_I)
     iP.set_i(static_cast<double>(iter->second.get_i()));
     iP.set_j(static_cast<double>(iter->second.get_j()));
 
-    vpDisplay::displayCross(_I, iP, 10, vpColor::red);
+    vpDisplay::displayCross(I_, iP, 10, vpColor::red);
 
     iP.set_i(vpMath::round(iP.get_i() + 7));
     iP.set_j(vpMath::round(iP.get_j() + 7));
     std::stringstream ss;
     ss << id;
-    vpDisplay::displayText(_I, iP, ss.str(), vpColor::red);
+    vpDisplay::displayText(I_, iP, ss.str(), vpColor::red);
   }
 }
 

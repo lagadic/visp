@@ -257,12 +257,17 @@ float vpImageFilter::computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p
   cv::calcHist(&dI, 1, channels, cv::Mat(), hist, dims, histSize, ranges, uniform, accumulate);
   float accu = 0;
   float t = static_cast<float>(upperThresholdRatio * w * h);
+  float tLow = static_cast<float>(lowerThresholdRatio * w * h);
   float bon = 0;
   int i = 0;
-  bool notFound = true;
+  bool notFound = true, notFoundLower = true;
   while ((i < bins) && notFound) {
     float tf = hist.at<float>(i);
     accu = accu + tf;
+    if ((accu > tLow) && notFoundLower) {
+      lowerThresh = static_cast<float>(i);
+      notFoundLower = false;
+    }
     if (accu > t) {
       bon = static_cast<float>(i);
       notFound = false;
@@ -275,7 +280,6 @@ float vpImageFilter::computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p
     throw(vpException(vpException::fatalError, errMsg.str()));
   }
   float upperThresh = std::max<float>(bon, 1.f);
-  lowerThresh = lowerThresholdRatio * bon;
   return upperThresh;
 }
 #endif

@@ -357,11 +357,11 @@ vpRBSilhouetteControlPoint::updateSilhouettePoint(const vpHomogeneousMatrix &cMo
 
 void vpRBSilhouetteControlPoint::initControlPoint(const vpImage<unsigned char> &I, double cvlt)
 {
-  m_site.init((double)icpoint.get_i(), (double)icpoint.get_j(), theta, cvlt, m_meMaskSign);
+  m_site.init(static_cast<double>(icpoint.get_i()), static_cast<double>(icpoint.get_j()), theta, cvlt, m_meMaskSign);
   if (m_me != nullptr) {
     const double marginRatio = m_me->getThresholdMarginRatio();
     const double convolution = m_site.convolution(I, m_me);
-    m_site.init((double)icpoint.get_i(), (double)icpoint.get_j(), theta, convolution, m_meMaskSign);
+    m_site.init(static_cast<double>(icpoint.get_i()), static_cast<double>(icpoint.get_j()), theta, convolution, m_meMaskSign);
     const double contrastThreshold = fabs(convolution) * marginRatio;
     m_site.setContrastThreshold(contrastThreshold, *m_me);
   }
@@ -402,7 +402,7 @@ vpRBSilhouetteControlPoint::computeMeInteractionMatrixError(const vpHomogeneousM
 
     vpMatrix H;
     H = m_lineFeature.interaction();
-    double x = (double)m_site.m_j, y = (double)m_site.m_i;
+    double x = static_cast<double>(m_site.m_j), y = static_cast<double>(m_site.m_i);
 
     x = (x-xc)*mx;
     y = (y-yc)*my;

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,9 +58,9 @@ void bindings_vpMbGenericTracker(py::class_<vpMbGenericTracker, std::shared_ptr<
                                            throw std::runtime_error(ss.str());
                                          }
                                          const auto shape = buffer.shape;
-                                         mapOfHeights[point_cloud_pair.first] = shape[0];
-                                         mapOfWidths[point_cloud_pair.first] = shape[1];
-                                         vpMatrix pc(shape[0] * shape[1], 3);
+                                         mapOfHeights[point_cloud_pair.first] = static_cast<unsigned int>(shape[0]);
+                                         mapOfWidths[point_cloud_pair.first] = static_cast<unsigned int>(shape[1]);
+                                         vpMatrix pc(static_cast<unsigned int>(shape[0] * shape[1]), 3);
                                          const double *data = point_cloud_pair.second.unchecked<3>().data(0, 0, 0);
                                          memcpy(pc.data, data, shape[0] * shape[1] * 3 * sizeof(double));
                                          mapOfVectors[point_cloud_pair.first] = std::move(pc);

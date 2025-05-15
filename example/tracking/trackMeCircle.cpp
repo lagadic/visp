@@ -149,12 +149,10 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_all
     case 'h':
       usage(argv[0], nullptr, ipath);
       return false;
-      break;
 
     default:
       usage(argv[0], optarg_, ipath);
       return false;
-      break;
     }
   }
 

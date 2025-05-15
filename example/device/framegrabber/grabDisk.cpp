@@ -183,17 +183,15 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ba
       step = atol(optarg_);
       break;
     case 'z':
-      nzero = (unsigned)atoi(optarg_);
+      nzero = static_cast<unsigned int>(atoi(optarg_));
       break;
     case 'h':
       usage(argv[0], nullptr, ipath, basename, ext, first, last, step, nzero);
       return false;
-      break;
 
     default:
       usage(argv[0], optarg_, ipath, basename, ext, first, last, step, nzero);
       return false;
-      break;
     }
   }
 

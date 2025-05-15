@@ -188,23 +188,21 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
       ppath = optarg_;
       break;
     case 'f':
-      first = (unsigned)atoi(optarg_);
+      first = static_cast<unsigned int>(atoi(optarg_));
       break;
     case 'l':
-      last = (unsigned)atoi(optarg_);
+      last = static_cast<unsigned int>(atoi(optarg_));
       break;
     case 's':
-      step = (unsigned)atoi(optarg_);
+      step = static_cast<unsigned int>(atoi(optarg_));
       break;
     case 'h':
       usage(argv[0], nullptr, ipath, ppath, first, last, step);
       return false;
-      break;
 
     default:
       usage(argv[0], optarg_, ipath, ppath, first, last, step);
       return false;
-      break;
     }
   }
 

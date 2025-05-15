@@ -63,7 +63,7 @@ BEGIN_VISP_NAMESPACE
 void vpRobotFlirPtu::emergencyStop(int signo)
 {
   std::stringstream msg;
-  msg << "Stop the FLIR PTU by signal (" << signo << "): " << (char)7;
+  msg << "Stop the FLIR PTU by signal (" << signo << "): " << static_cast<char>(7);
   switch (signo) {
   case SIGINT:
     msg << "SIGINT (stop by ^C) ";

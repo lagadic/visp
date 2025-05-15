@@ -44,6 +44,13 @@
 BEGIN_VISP_NAMESPACE
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+
+
+void vp_decodeHeaderPNM(const std::string &filename, std::ifstream &fd, const std::string &magic, unsigned int &w,
+                        unsigned int &h, unsigned int &maxval);
+void vp_decodeHeaderPFM(const std::string &filename, std::ifstream &fd, std::string &magic, unsigned int &w,
+                        unsigned int &h, double &scale, bool &littleEndian);
+
 /*!
  * Decode the PNM image header.
  * \param[in] filename : File name.
@@ -53,8 +60,8 @@ BEGIN_VISP_NAMESPACE
  * \param[out] h : Image height.
  * \param[out] maxval : Maximum pixel value.
  */
-  void vp_decodeHeaderPNM(const std::string &filename, std::ifstream &fd, const std::string &magic, unsigned int &w,
-                          unsigned int &h, unsigned int &maxval)
+void vp_decodeHeaderPNM(const std::string &filename, std::ifstream &fd, const std::string &magic, unsigned int &w,
+                        unsigned int &h, unsigned int &maxval)
 {
   std::string line;
   unsigned int nb_elt = 4, cpt_elt = 0;

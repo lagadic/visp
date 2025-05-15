@@ -46,7 +46,7 @@
 BEGIN_VISP_NAMESPACE
 /*!
   \class vpHinkley
-  \deprecated This class is deprecated. You should rather use vpStatisticalTestHinkley.
+  \warning This class is deprecated. You should rather use vpStatisticalTestHinkley.
 
   \ingroup group_core_math_tools
   \brief This class implements the Hinkley's cumulative sum test.
@@ -91,7 +91,7 @@ BEGIN_VISP_NAMESPACE
   N_{k^{'}} = 0 \f$.
 
 */
-class VP_DEPRECATED VISP_EXPORT vpHinkley
+class /* VP_DEPRECATED */ VISP_EXPORT vpHinkley
 {
 public:
   /*! \enum vpHinkleyJumpType
@@ -106,7 +106,6 @@ public:
 
 public:
   VP_DEPRECATED vpHinkley();
-  virtual ~vpHinkley();
   VP_DEPRECATED vpHinkley(double alpha, double delta);
 
   void init();

@@ -39,6 +39,9 @@
 
 BEGIN_VISP_NAMESPACE
 
+void estimatePlaneEquationSVD(const std::vector<double> &point_cloud_face, vpPlane &plane_equation_estimated,
+                              vpColVector &centroid, double &normalized_weights);
+
 // See also vpPlaneEstimation.cpp that implements the same functionaly in c++17
 void estimatePlaneEquationSVD(const std::vector<double> &point_cloud_face, vpPlane &plane_equation_estimated,
                               vpColVector &centroid, double &normalized_weights)
