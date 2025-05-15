@@ -169,6 +169,8 @@ static_assert(std::is_trivially_assignable_v<vpRGBf, vpRGBf>);
 static_assert(std::is_trivially_copyable_v<vpRGBf>);
 #endif
 
+#ifdef VISP_HAVE_NLOHMANN_JSON
+
 inline void from_json(const nlohmann::json &j, vpRGBf &c)
 {
   c.R = j.at(0);
@@ -181,6 +183,7 @@ inline void to_json(nlohmann::json &j, const vpRGBf &c)
 {
   j = { c.R, c.G, c.B };
 }
+#endif
 
 END_VISP_NAMESPACE
 
