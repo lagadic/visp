@@ -121,7 +121,7 @@ We strongly recommend using Conda to build ViSP Python bindings. Below are instr
 
     We recommend this minimal set of dependencies to get the main features of ViSP available:
 
-        (visp-conda-ws) $ conda install cmake cxx-compiler make pkg-config xorg-libx11 xorg-libxfixes libxml2 libdc1394 librealsense libgomp libopencv eigen libjpeg-turbo libpng mkl-devel pybind11 nlohmann_json
+        (visp-conda-ws) $ conda install cmake cxx-compiler make pkg-config xorg-libx11 xorg-libxfixes xorg-xorgprot libxml2 libdc1394 librealsense libgomp libopencv eigen libjpeg-turbo libpng mkl-devel pybind11 nlohmann_json
 
   - **C. On Windows**:
 
@@ -655,10 +655,10 @@ $HOME/visp_ws/visp/modules/gui/src/display/vpDisplayX.cpp:100:5: error: use of u
     ^
 \endcode
 
-It occurs when you forgot to install `xorg-libx11` and `xorg-libxfixes` conda packages.
+It occurs when you forgot to install `xorg-libx11`, `xorg-libxfixes` and `xorg-xorgprot` conda packages.
 To fix this build issue:
 \code{.sh}
-(visp-conda-ws) $ conda install xorg-libx11 xorg-libxfixes
+(visp-conda-ws) $ conda install xorg-libx11 xorg-libxfixes xorg-xorgprot
 (visp-conda-ws) $ cd visp-build-bindings
 (visp-conda-ws) $ cmake ../visp -DCMAKE_PREFIX_PATH=$CONDA_PREFIX -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX
 (visp-conda-ws) $ make -j$(sysctl -n hw.logicalcpu) visp_python_bindings
