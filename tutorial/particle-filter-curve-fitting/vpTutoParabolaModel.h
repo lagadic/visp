@@ -131,7 +131,6 @@ public:
    * \param[in] pts The points to use to interpolate the coefficients of the parabola.
    * \param[out] A The matrix that contains the different powers of the u-coordinates.
    * \param[out] b The matrix that contains the v-coordinates.
-   * \return Fill
    */
   //! [Fill_LMS_system]
   static void fillSystem(const unsigned int &degree, const double &height, const double &width, const std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> &pts, VISP_NAMESPACE_ADDRESSING vpMatrix &A, VISP_NAMESPACE_ADDRESSING vpMatrix &b)
