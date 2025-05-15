@@ -789,7 +789,7 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
 
   m_robust.MEstimator(vpRobust::vpRobustEstimatorType::TUKEY, errorPerPoint, weightPerPoint);
   for (unsigned int i = 0; i < m_controlPoints.size(); ++i) {
-    for (unsigned int j = 0; j < 2 * normal_points_number * 3; ++j) {
+    for (unsigned int j = 0; j < static_cast<unsigned int>(2 * normal_points_number * 3); ++j) {
       m_weights[i * 2 * normal_points_number * 3 + j] = weightPerPoint[i];
     }
   }

@@ -61,7 +61,6 @@ class VISP_EXPORT vpRBFeatureTracker
 public:
 
   vpRBFeatureTracker();
-  virtual ~vpRBFeatureTracker() = default;
 
   virtual ~vpRBFeatureTracker() = default;
 
