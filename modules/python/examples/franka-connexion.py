@@ -1,9 +1,20 @@
+import argparse
 import math
 from visp.robot import RobotFranka, Robot
 
 def main():
+    parser = argparse.ArgumentParser(description='Python wrapper example over vpRobotFranka ViSP class')
+    parser.add_argument('--ip', type=str, default="192.168.30.10", dest='robot_ip', help='Robot IP address like 192.168.30.10')
+
+    args, unknown_args = parser.parse_known_args()
+    if unknown_args:
+        print("The following args are not recognized and will not be used: %s" % unknown_args)
+        return
+
+    print(f"Use robot IP: {args.robot_ip})
+
     robot = RobotFranka()
-    robot.connect('192.168.30.10', RobotFranka.RealtimeConfig.kEnforce)
+    robot.connect(robot_ip, RobotFranka.RealtimeConfig.kEnforce)
     pos = robot.getPosition(Robot.JOINT_STATE)
     print(f"Initial joint position: \n{pos}")
 
