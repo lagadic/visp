@@ -101,11 +101,22 @@ With all the prerequisites met, you can now understand (if you wish) how the tra
 
 This section of the tutorial details how the tracker works.
 
+The RBT is used by building a vpRBTracker object, configuring it and then feeding it RGB or RGB-D frames.
+
 As the RBT is a tracking algorithm, an initial pose must be provided. Given an initial pose, the RBT will continuously track an object in a sequence of frames.
-This also assumes that the motion between consecutive frame is small enough so that the tracker can retrieve the features and correctly update the pose of the object in the camera frame. Otherwise, there is a risk of divergence, leading to a need for reinitialization.
-This can be done via click (see \ref mb_generic_init_user and the vpRBTracker::initClick method). Otherwise you can use a pose estimation algorithm (e.g. Megapose \see tutorial-tracking-megapose and vpMegaPose::estimatePoses) followed by a call to vpRBTracker::setPose.
+This also assumes that the motion between consecutive frame is small enough so that the tracker can retrieve the features and correctly update the pose of the object in the camera frame.
+Otherwise, there is a risk of divergence, leading to a need for reinitialization.
+This can be done via click (see \ref mb_generic_init_user and the vpRBTracker::initClick method).
+Otherwise, you can use a pose estimation algorithm (e.g. Megapose \see tutorial-tracking-megapose and vpMegaPose::estimatePoses) followed by a call to vpRBTracker::setPose.
 
 
+Roughly the algorithm works as follows:
+
+1. Given an initial pose of the object in the camera frame $\^{c}\mathbf{T}_{o}$, generate a render of the object at this pose.
+2. Extract and process render data, and store it into a vpRBRenderData.
+3. From the renders, seek features to match with in the current RGB and depth images.
+4. From the match between image and model features, formulate an error $\mathbf{e}$.
+5. Iteratively minimize $\lVert\mathbf{e}\rVert_2$
 
 
 \subsection rbt_tracking_optimization Minimization problem
