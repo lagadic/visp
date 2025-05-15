@@ -137,7 +137,6 @@ class HeaderFile():
     # Includes that should be appended at the start of every file
     forced_includes = [
       'visp3/core/vpConfig.h', # Always include vpConfig: ensure that VISP macros are correctly defined
-      'opencv2/opencv_modules.hpp'
     ]
     for include in forced_includes:
       tmp_file_content.append(f'#include <{include}>\n')
