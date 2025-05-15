@@ -150,6 +150,8 @@ jobs:
         make -j$(nproc) install
         echo "Franka_DIR=$(pwd)/install" >> $GITHUB_ENV
         echo $Franka_DIR
+        echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/openrobot/lib" >> $GITHUB_ENV
+        echo $LD_LIBRARY_PATH
 
     - name: Build Cerebellum Afma and Viper robots SDK from source
       run: |
