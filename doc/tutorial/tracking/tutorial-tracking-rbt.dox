@@ -125,6 +125,9 @@ Object rendering is done through Panda3D.
 
 \image html rbt-rendering.png Rendering is used to extract geometric information width=50%
 
+
+All the information is stored into a vpRBRenderData.
+
 For more information on how rendering is performed you can examine the following sources:
 - vpRBTracker::updateRender
 - vpObjectCentricRenderer
@@ -179,21 +182,21 @@ To handle those cases and improve tracking reliability, the RBT comes with two m
 - Robust error criterias. Each feature defined above uses an M-Estimator (through vpRobust) to reweigh the errors to be minimized and reduce the influence of outliers.
 
 While M-estimators are always used, the masking approach is entirely optional.
-To enable masking, you should call vpRBTracker::setObjectSegmentationMethod with the method that you wish to use.
+To enable masking, you should call vpRBTracker::setObjectSegmentationMethod with the method that you wish to use. To disable it, pass it *nullptr* as input argument.
 As of now, the only method available is vpColorHistogramMask.
 This method computes time-smoothed histograms of the object and background's color distributions,
 and compares their output probabilities for a given pixel color to compute an object membership score.
 If available, this method may use camera depth information to update the object histograms using only reliable pixels in terms of depth (where object and render are closely aligned)
 This method is ideal when there is a clear photometric distinction between object and environment.
 
-You may define your own approach to object segmentation (by e.g., using a neural network to compare feature maps)
+You may define your own approach to object segmentation (by e.g., using a neural network to compare feature maps or using more depth information)
 by inheriting from vpRBObjectSegmentationMethod.
 
 Note that the use of the probability map output by the segmentation method is implemented differently for each type of feature.
 For instance, contour based method will search for strong probability differences along the contour normal,
 while point based feature may only look in a small neighbourhood to see if a given area belong to the object.
 
-
+The diagram below sums up the combination of the masking and outlier rejection steps.
 
 \image html rbt-filtering.jpg Masking is first used to remove features in cases such as strong occlusions. Remaining outliers are filtered through the use of robust estimators. width=25%
 
