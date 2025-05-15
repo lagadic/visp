@@ -132,6 +132,8 @@ jobs:
 
     - name: Build libfranka from source
       # Since libfranka version 0.14.0 or later, you will need to install pinocchio and some more dependencies
+      env:
+        LD_LIBRARY_PATH: /opt/openrobots/lib
       run: |
         sudo apt-get install -y lsb-release curl
         sudo mkdir -p /etc/apt/keyrings
@@ -150,8 +152,6 @@ jobs:
         make -j$(nproc) install
         echo "Franka_DIR=$(pwd)/install" >> $GITHUB_ENV
         echo $Franka_DIR
-        echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/openrobot/lib" >> $GITHUB_ENV
-        echo $LD_LIBRARY_PATH
 
     - name: Build Cerebellum Afma and Viper robots SDK from source
       run: |
