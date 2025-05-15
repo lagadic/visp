@@ -121,7 +121,23 @@ We strongly recommend using Conda to build ViSP Python bindings. Below are instr
 
     We recommend this minimal set of dependencies to get the main features of ViSP available:
 
-        (visp-conda-ws) $ conda install cmake cxx-compiler make pkg-config xorg-libx11 xorg-libxfixes xorg-xorgprot libxml2 libdc1394 librealsense libgomp libopencv eigen libjpeg-turbo libpng mkl-devel pybind11 nlohmann_json
+        (visp-conda-ws) $ conda install cmake cxx-compiler make pkg-config xorg-libx11 xorg-libxfixes xorg-xorgproto libxml2 libdc1394 librealsense libgomp libopencv eigen libjpeg-turbo libpng mkl-devel pybind11 nlohmann_json
+
+    If you want to control a Franka Reasearch (FR3) robot with python bindings, you may install these additional dependencies
+
+        (visp-conda-ws) $ conda install pinocchio poco fmt
+
+    We recommend also to build `libfranka` in your conda workspace and uninstall `libfranka` from your system
+
+        (visp-conda-ws) $ cd ${VISP_DIR}/3rdparty/libfranka
+        (visp-conda-ws) $ mkdir build-conda && cd build-conda
+        (visp-conda-ws) $ cmake ../ -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX -DBUILD_TESTS=OFF
+
+    If you followed \ref franka_prereq_libfranka instruction, you may remove `libfranka` installed in your system
+    in `/usr/local` with:
+
+         (visp-conda-ws) $ sudo rm -rf /usr/local/include/franka /usr/local/include/research_interface
+         (visp-conda-ws) $ sudo rm -rf /usr/local/lib/cmake/Franka /usr/local/lib/libfranka.so*
 
   - **C. On Windows**:
 
