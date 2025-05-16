@@ -115,9 +115,17 @@ jobs:
         cd ${HOME}/pcl
         mkdir build && cd build && mkdir install
         cmake .. -DBUILD_tools=OFF -DBUILD_global_tests=OFF -DPCL_DISABLE_GPU_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$(pwd)/install
+        echo ""
+        echo "gcc -march=native -E -v - </dev/null 2>&1 | grep cc1"
+        gcc -march=native -E -v - </dev/null 2>&1 | grep cc1
         make -j$(nproc) install
         echo "PCL_DIR=$(pwd)/install" >> $GITHUB_ENV
         echo $PCL_DIR
+        echo ""
+        echo "Print PCLConfig.cmake"
+        cat /home/runner/pcl/build/install/share/pcl-1.15/PCLConfig.cmake
+        echo "Print PCLConfigVersion.cmake"
+        cat /home/runner/pcl/build/install/share/pcl-1.15/PCLConfigVersion.cmake
 
     - name: Clone visp-images
       env:
