@@ -68,14 +68,13 @@ void vpPanda3DFrameworkManager::registerDisabledWindow(PointerTo<WindowFramework
 
 void vpPanda3DFrameworkManager::disableAllOtherRenderers(PointerTo<WindowFramework> &active)
 {
+  GraphicsStateGuardian *activeGsg = active->get_graphics_output()->get_gsg();
+
   for (int i = 0; i < m_framework.get_num_windows(); ++i) {
     PointerTo<WindowFramework> fi = m_framework.get_window(i);
-    if (fi != active) {
-      fi->get_graphics_output()->get_gsg()->set_active(false);
-    }
-    else {
-      fi->get_graphics_output()->get_gsg()->set_active(true);
-    }
+    GraphicsStateGuardian *g = fi->get_graphics_output()->get_gsg();
+    g->set_active(g == activeGsg);
+
   }
 }
 

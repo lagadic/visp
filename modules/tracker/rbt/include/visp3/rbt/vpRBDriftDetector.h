@@ -75,6 +75,8 @@ public:
    */
   virtual void update(const vpRBFeatureTrackerInput &previousFrame, const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cTo, const vpHomogeneousMatrix &cprevTo) = 0;
 
+  virtual double score(const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cTo) = 0;
+
   /**
    * \brief Get the estimated tracking reliability.
    * A high score should mean that the tracking is reliable.

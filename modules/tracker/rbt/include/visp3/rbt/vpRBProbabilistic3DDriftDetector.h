@@ -91,7 +91,7 @@ template <typename T> class vpImage;
  */
 class VISP_EXPORT vpRBProbabilistic3DDriftDetector : public vpRBDriftDetector
 {
-private:
+public:
 
   struct vpStored3DSurfaceColorPoint
   {
@@ -114,7 +114,8 @@ private:
       {
         mean = c;
         variance = var;
-        computeStddev();
+        initVariance = var;
+        // computeStddev();
       }
 
       /**
@@ -129,8 +130,8 @@ private:
         const vpRGBf diff(c.R - mean.R, c.G - mean.G, c.B - mean.B);
         vpRGBf diffSqr(std::pow(diff.R, 2), std::pow(diff.G, 2), std::pow(diff.B, 2));
         mean = mean + weight * diff;
-        variance = variance + weight * diffSqr;
-        computeStddev();
+        variance = (1 - weight) * (variance + weight * diffSqr);
+        // computeStddev();
       }
 
       /**
@@ -141,13 +142,24 @@ private:
        */
       double probability(const vpRGBf &c)
       {
+        vpRGBf diff(c.R - mean.R, c.G - mean.G, c.B - mean.B);
+        diff.R = (diff.R * (1.0 / sqrt(initVariance.R)));
+        diff.G = (diff.G * (1.0 / sqrt(initVariance.G)));
+        diff.B = (diff.B * (1.0 / sqrt(initVariance.B)));
 
-        const double dist = sqrt(
-          std::pow((c.R - mean.R) / (standardDev.R), 2) +
-          std::pow((c.G - mean.G) / (standardDev.G), 2) +
-          std::pow((c.B - mean.B) / (standardDev.B), 2));
 
-        const double proba = 1.0 - erf(dist / sqrt(2));
+        // const double dist = sqrt(diff.R + diff.G + diff.B);
+
+        // const double dist = sqrt(
+        //   std::pow((c.R - mean.R) / (standardDev.R), 2) +
+        //   std::pow((c.G - mean.G) / (standardDev.G), 2) +
+        //   std::pow((c.B - mean.B) / (standardDev.B), 2));
+
+        // const double proba = 1.0 - erf(dist / sqrt(2));
+
+        const double proba = 1.0 - erf(std::max(std::max(abs(diff.R), abs(diff.G)), abs(diff.B)) / sqrt(2));
+        // const double proba = 1.0 - erf(dist / sqrt(2));
+
 
         return proba;
       }
@@ -157,22 +169,30 @@ private:
         return static_cast<double>(variance.R + variance.G + variance.B);
       }
 
-      void computeStddev()
+      // void computeStddev()
+      // {
+      //   standardDev.R = sqrt(variance.R);
+      //   standardDev.G = sqrt(variance.G);
+      //   standardDev.B = sqrt(variance.B);
+      // }
+
+      double covarianceScaleFactor() const
       {
-        standardDev.R = sqrt(variance.R);
-        standardDev.G = sqrt(variance.G);
-        standardDev.B = sqrt(variance.B);
+        // Compute the scale factor as the first eigenvalue of the covariance matrix
+        // Since our matrix is diagonal, it is the heighest variance value
+
+        return std::max(variance.R, std::max(variance.G, variance.B));
       }
 
       vpRGBf mean;
       vpRGBf variance;
-      vpRGBf standardDev;
+      vpRGBf initVariance;
     };
 
-    inline void update(const vpHomogeneousMatrix &cTo, const vpHomogeneousMatrix &cprevTo, const vpCameraParameters &cam)
+    inline void update(const vpHomogeneousMatrix &cTo, const vpHomogeneousMatrix &renderTo, const vpCameraParameters &cam)
     {
       fastProjection(cTo, cam, currX, projCurr, projCurrPx);
-      fastProjection(cprevTo, cam, prevX, projPrev, projPrevPx);
+      fastProjection(renderTo, cam, renderX, projRender, projRenderPx);
     }
 
     inline double squaredDist(const std::array<double, 3> &p) const
@@ -205,9 +225,9 @@ private:
 
     std::array<double, 3> X; // Point position in object frame
     ColorStatistics stats; //! Color statistics associated to this point
-    std::array<double, 3> currX, prevX; //! Point position in the current and previous camera frames
-    std::array<double, 2> projCurr, projPrev; // Projection in camera normalized coordinates of the point for the current and previous camera poses.
-    std::array<int, 2> projCurrPx, projPrevPx; // Projection in pixels of the point for the current and previous camera poses.
+    std::array<double, 3> currX, renderX; //! Point position in the current and previous camera frames
+    std::array<double, 2> projCurr, projRender; // Projection in camera normalized coordinates of the point for the current and previous camera poses.
+    std::array<int, 2> projCurrPx, projRenderPx; // Projection in pixels of the point for the current and previous camera poses.
     bool visible; // Whether the point is visible
   };
 
@@ -217,6 +237,11 @@ public:
   { }
 
   void update(const vpRBFeatureTrackerInput &previousFrame, const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cTo, const vpHomogeneousMatrix &cprevTo) VP_OVERRIDE;
+
+  double score(const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cTo) VP_OVERRIDE;
+
+
+
 
   /**
    * \brief Returns the probability [0, 1] that tracking is successful.
@@ -335,6 +360,8 @@ public:
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
   void loadJsonConfiguration(const nlohmann::json &) VP_OVERRIDE;
+  void loadRepresentation(const std::string &);
+  void saveRepresentation(const std::string &) const;
 #endif
 
 /**
@@ -354,6 +381,36 @@ private:
 
   std::vector<vpStored3DSurfaceColorPoint> m_points;
 };
+
+#ifdef VISP_HAVE_NLOHMANN_JSON
+inline void from_json(const nlohmann::json &j, vpRBProbabilistic3DDriftDetector::vpStored3DSurfaceColorPoint::ColorStatistics &c)
+{
+  c.mean = j.at("mean").get<vpRGBf>();
+  c.variance = j.at("variance").get<vpRGBf>();
+  // c.computeStddev();
+}
+
+inline void to_json(nlohmann::json &j, const vpRBProbabilistic3DDriftDetector::vpStored3DSurfaceColorPoint::ColorStatistics &c)
+{
+  j["mean"] = c.mean;
+  j["variance"] = c.variance;
+}
+
+inline void from_json(const nlohmann::json &j, vpRBProbabilistic3DDriftDetector::vpStored3DSurfaceColorPoint &p)
+{
+  p.X = j.at("X");
+  p.stats = j.at("stats");
+}
+
+inline void to_json(nlohmann::json &j, const vpRBProbabilistic3DDriftDetector::vpStored3DSurfaceColorPoint &p)
+{
+  j["X"] = p.X;
+  j["stats"] = p.stats;
+}
+
+
+
+#endif
 
 END_VISP_NAMESPACE
 

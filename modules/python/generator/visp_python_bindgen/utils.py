@@ -227,6 +227,33 @@ def get_typename(typename: types.PQName, owner_specs, header_env_mapping) -> str
 
 
 
+def check_return_type_is_enable_if(return_type: types.DecoratedType, owner_specs, mapping) -> Tuple[bool, Optional[str]]:
+  if not isinstance(return_type, types.Type):
+    return False, None
+
+  base_str = get_typename(return_type.typename, {}, {})
+  matches = False
+
+  for prefix in ['std::enable_if', 'enable_if']:
+    if base_str.startswith(prefix):
+      matches = True
+      break
+
+  if not matches:
+    return False, None
+  # Enable if looks like: std::enable_if<condition, return_type>::type => acces before last segment (enable_if) and its last template argument (return_type)
+  enable_if_segment = [s for s in return_type.typename.segments if s.name == 'enable_if']
+  if len(enable_if_segment) != 1:
+    raise RuntimeError('Expected only one enable_if segment when parsing ', return_type)
+  enable_if_segment = enable_if_segment[0]
+  if enable_if_segment.specialization is None:
+    raise RuntimeError('Enable if should have a specialization')
+  if len(enable_if_segment.specialization.args) != 2:
+    raise RuntimeError('Expected enable if to have two template params')
+  return_type = enable_if_segment.specialization.args[-1].arg
+  return_type_str = get_type(return_type, owner_specs, mapping)
+  return True, return_type_str
+
 def get_type(param: Union[types.FunctionType, types.DecoratedType, types.Value], owner_specs: Dict[str, str], header_env_mapping: Dict[str, str]) -> Optional[str]:
   '''
   Get the type of a parameter. Compared to get_typename, this function resolves the parameter's constness, whether it is a ref, moveref or pointer.

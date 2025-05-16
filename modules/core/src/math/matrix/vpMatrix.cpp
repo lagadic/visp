@@ -311,6 +311,11 @@ vpMatrix vpMatrix::view(double *raw_data, unsigned int rows, unsigned int cols)
   return M;
 }
 
+void vpMatrix::view(vpMatrix &v, double *data, unsigned int rows, unsigned int cols)
+{
+  vpArray2D<double>::view(v, data, rows, cols);
+}
+
 /*!
   Initialize the matrix from a part of an input matrix \e M.
 

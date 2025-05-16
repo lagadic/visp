@@ -276,7 +276,14 @@ def define_method(method: types.Method, method_config: Dict, is_class_method, sp
   py_arg_strs = get_py_args(method.parameters, specs, header_env.mapping)
   method_name = get_name(method.name)
   py_method_name = method_config.get('custom_name') or method_name
-  return_type = get_type(method.return_type, specs, header_env.mapping)
+
+  return_type_is_enable_if, return_type = check_return_type_is_enable_if(method.return_type, specs, header_env.mapping)
+  if return_type_is_enable_if:
+    print('RETURN TYPE = ', return_type)
+    if return_type is None:
+      raise RuntimeError('Could not correctly parse enable_if')
+  if not return_type_is_enable_if:
+    return_type = get_type(method.return_type, specs, header_env.mapping)
   param_is_function_ptr = [is_function_pointer(param.type) for param in method.parameters]
 
   method_signature = get_method_signature(method_name,
