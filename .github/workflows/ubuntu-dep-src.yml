@@ -152,6 +152,10 @@ jobs:
         make -j$(nproc) install
         echo "Franka_DIR=$(pwd)/install" >> $GITHUB_ENV
         echo $Franka_DIR
+        echo "ls /opt/openrobots/lib/libpinocchio*"
+        ls /opt/openrobots/lib/libpinocchio*
+        echo "LD_LIBRARY_PATH"
+        echo $LD_LIBRARY_PATH
 
     - name: Build Cerebellum Afma and Viper robots SDK from source
       run: |
@@ -198,6 +202,8 @@ jobs:
         ./bin/visp-config --libs
 
     - name: Build and install ViSP
+      env:
+        LD_LIBRARY_PATH: /opt/openrobots/lib
       working-directory: build
       run: |
         make -j$(nproc) install
@@ -205,6 +211,8 @@ jobs:
         echo $VISP_DIR
 
     - name: Run unit tests
+      env:
+        LD_LIBRARY_PATH: /opt/openrobots/lib
       working-directory: build
       run: ctest -j$(nproc) --output-on-failure
 
@@ -213,6 +221,8 @@ jobs:
         git clone --depth 1 https://github.com/lagadic/camera_localization ${HOME}/camera_localization
 
     - name: Build camera_localization with ViSP as 3rdparty
+      env:
+        LD_LIBRARY_PATH: /opt/openrobots/lib
       run: |
         cd ${HOME}/camera_localization
         mkdir camera_localization-build
@@ -225,6 +235,8 @@ jobs:
         git clone --depth 1 https://github.com/lagadic/visp_started ${HOME}/visp_started
 
     - name: Build visp_started with ViSP as 3rdparty
+      env:
+        LD_LIBRARY_PATH: /opt/openrobots/lib
       run: |
         cd ${HOME}/visp_started
         mkdir visp_started-build
