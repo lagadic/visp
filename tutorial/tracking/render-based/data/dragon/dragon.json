@@ -16,7 +16,7 @@
   "vvs": {
     "gain": 1.0,
     "maxIterations": 10,
-    "mu": 0.1,
+    "mu": 0.01,
     "muIterFactor": 0.1
   },
   "model": "data/dragon/dragon.bam",
@@ -27,7 +27,7 @@
     },
     "sampling": {
       "samplingRate": 2,
-      "numPoints": 128,
+      "numPoints": 512,
       "reusePreviousPoints": true
     }
   },
@@ -52,7 +52,7 @@
       "type": "silhouetteColor",
       "weight": 0.01,
       "ccd": {
-        "h": 8,
+        "h": 32,
         "delta_h": 1
       }
     },

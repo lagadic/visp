@@ -336,6 +336,9 @@ You can see that among those arguments, the script has two main parameters.
 The first, `--tracker` is the path to the .json configuration file, defined following the details given in \ref rbt_tracking_config.
 The second `--object`, is the path to the 3D model (in a format readable by the Panda3D engine). Alternatively, it can specified in the .json file.
 
+
+
+
 \snippet tutorial-rbt-realsense.cpp Command line parsing
 
 

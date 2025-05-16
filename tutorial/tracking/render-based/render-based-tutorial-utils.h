@@ -98,11 +98,15 @@ struct BaseArguments
       throw vpException(vpException::badValue, "No tracker configuration was specified");
     }
     if (object.empty()) {
-      object = vpIoTools::getName(trackerConfiguration);
-      object.erase(object.end() - 5, object.end());
+
+      object = vpIoTools::getNameWE(trackerConfiguration);
+    }
+    else {
+      modelPath = object;
+      object = vpIoTools::getNameWE(modelPath);
     }
     if (initFile.empty()) {
-      initFile = vpIoTools::getParent(trackerConfiguration) + vpIoTools::separator + object + ".init";
+      initFile = vpIoTools::getParent(modelPath.empty() ? trackerConfiguration : modelPath) + vpIoTools::separator + object + ".init";
     }
 
     if (!display && inlineInit.empty()) {
@@ -126,6 +130,7 @@ struct BaseArguments
 
   std::string trackerConfiguration;
   std::string object;
+  std::string modelPath;
   std::string initFile;
   std::vector<double> inlineInit;
   float maxDepthDisplay;

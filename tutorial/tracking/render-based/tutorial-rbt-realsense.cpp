@@ -125,10 +125,17 @@ int main(int argc, const char **argv)
     vpRBTrackerTutorial::enableRendererProfiling();
   }
 
+  //! [Loading config]
   std::cout << "Loading tracker: " << baseArgs.trackerConfiguration << std::endl;
   vpRBTracker tracker;
   tracker.loadConfigurationFile(baseArgs.trackerConfiguration);
+  if (!baseArgs.modelPath.empty()) {
+    tracker.setModelPath(baseArgs.modelPath);
+  }
   tracker.startTracking();
+
+  //! [Loading config]
+
   const unsigned int width = realsenseArgs.width, height = realsenseArgs.height;
   const unsigned fps = realsenseArgs.fps;
 
