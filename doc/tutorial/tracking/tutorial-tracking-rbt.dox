@@ -337,6 +337,8 @@ The first, `--tracker` is the path to the .json configuration file, defined foll
 The second `--object`, is the path to the 3D model (in a format readable by the Panda3D engine). Alternatively, it can specified in the .json file.
 
 
+\include data/dragon/dragon.json
+
 
 
 \snippet tutorial-rbt-realsense.cpp Command line parsing
