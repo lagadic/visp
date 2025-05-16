@@ -290,13 +290,13 @@ public:
     buildFrom(const vpHSV<unsigned char, otherUseFullScale> &other)
   {
     if (otherUseFullScale) {
-      H = static_cast<T>(other.H) / 255.;
+      H = static_cast<T>(other.H) / static_cast<T>(255.);
     }
     else {
-      H = static_cast<T>(other.H) / static_cast<double>(maxHueUsingLimitedRange);
+      H = static_cast<T>(other.H) / static_cast<T>(maxHueUsingLimitedRange);
     }
-    S = static_cast<T>(other.S) / 255.;
-    V = static_cast<T>(other.V) / 255.;
+    S = static_cast<T>(other.S) / static_cast<T>(255.);
+    V = static_cast<T>(other.V) / static_cast<T>(255.);
     return *this;
   }
 
@@ -589,17 +589,17 @@ private:
     // if (v[0] > hmax) {
     //   // throw exception
     // }
-    H = v[0];
+    H = static_cast<T>(v[0]);
 
     // if (v[1] > otherMax) {
     //   // throw exception
     // }
-    S = v[1];
+    S = static_cast<T>(v[1]);
 
     // if (v[2] > otherMax) {
     //   // throw exception
     // }
-    V = v[2];
+    V = static_cast<T>(v[2]);
   }
 };
 

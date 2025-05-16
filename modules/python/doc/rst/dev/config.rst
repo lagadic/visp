@@ -280,13 +280,13 @@ Function-level options
    * - :code:`return_policy`
      - String
      - How C++ returns the type to Python. If there are issues about unwanted copies or memory freeing, configure this.
-       See `The Pybind documentation <https://pybind11.readthedocs.io/en/stable/advanced/functions.html#return-value-policies>`_
+       See `The Pybind return value policies documentation <https://pybind11.readthedocs.io/en/stable/advanced/functions.html#return-value-policies>`_
    * - :code:`keep_alive`
      - 2-tuple of ints or List of 2-tuples
      - Dictates the lifetime of arguments and return types.
        Each tuple indicates that the second argument should be kept alive until the first argument is deleted.
        0 indicates the return value, 1 indicates self.
-       See `The pybind documentation <https://pybind11.readthedocs.io/en/stable/advanced/functions.html#keep-alive>`_
+       See `The pybind keep alive documentation <https://pybind11.readthedocs.io/en/stable/advanced/functions.html#keep-alive>`_
    * - :code:`returns_ref_ok`
      - Boolean
      - If this function returns a ref, mark it as ok or not. Returning a ref may lead to double frees or copy depending on return policy.

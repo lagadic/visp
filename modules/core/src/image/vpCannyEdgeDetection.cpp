@@ -305,6 +305,9 @@ vpCannyEdgeDetection::step3to5(const unsigned int &height, const unsigned int &w
   m_activeEdgeCandidates.clear();
   m_edgePointsCandidates.resize(m_dIx.getRows(), m_dIx.getCols(), NOT_EDGE);
   m_edgePointsList.clear();
+  if (m_storeListEdgePoints) {
+    m_edgePointsList.reserve(m_dIx.getSize() / 8);
+  }
 
   performEdgeThinning(lowerThreshold);
 
@@ -562,7 +565,7 @@ vpCannyEdgeDetection::performEdgeThinning(const float &lowerThreshold)
 void
 vpCannyEdgeDetection::performHysteresisThresholding(const float &lowerThreshold, const float &upperThreshold)
 {
-  const int size = m_edgeCandidateAndGradient.size();
+  const int size = static_cast<int>(m_edgeCandidateAndGradient.size());
   int istart = 0;
   int istop = size;
 

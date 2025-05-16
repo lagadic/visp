@@ -693,25 +693,6 @@ namespace vp = VISP_NAMESPACE_NAME;
 #  define VISP_LOCAL
 #endif
 
-#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-// Add the material to produce a warning when deprecated functions are used
-#  ifndef vp_deprecated
-#    if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-#      define vp_deprecated __attribute__((deprecated))
-#    else
-#      define vp_deprecated __declspec(deprecated)
-#    endif
-#  endif
-// Macro to be able to add override keyword
-#  ifndef vp_override
-#   if (__cplusplus >= 201103L) || (defined(_MSC_VER) && _MSC_VER >= 1600)
-#     define vp_override override
-#   else
-#     define vp_override
-#   endif
-#  endif
-#endif
-
 // Add the material to produce a warning when deprecated functions are used
 #ifndef VP_DEPRECATED
 #  if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX

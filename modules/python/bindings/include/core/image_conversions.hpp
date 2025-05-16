@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,7 +107,7 @@ struct SimpleConversionStruct
                                                      }
                                                      unsigned char *src_ptr = static_cast<unsigned char *>(bufsrc.ptr);
                                                      unsigned char *dest_ptr = static_cast<unsigned char *>(bufdest.ptr);
-                                                     call_conversion_fn(fn, src_ptr, dest_ptr, bufsrc.shape[0], bufsrc.shape[1]);
+                                                     call_conversion_fn(fn, src_ptr, dest_ptr, static_cast<unsigned int>(bufsrc.shape[0]), static_cast<unsigned int>(bufsrc.shape[1]));
     }, "See C++ documentation of the function for more info", py::arg("src"), py::arg("dest"));
   }
 };
@@ -155,7 +155,7 @@ struct SimpleConversionStruct<ConversionFunction2DWithFlip>
                                                      }
                                                      unsigned char *src_ptr = static_cast<unsigned char *>(bufsrc.ptr);
                                                      unsigned char *dest_ptr = static_cast<unsigned char *>(bufdest.ptr);
-                                                     call_conversion_fn(fn, src_ptr, dest_ptr, bufsrc.shape[0], bufsrc.shape[1], flip);
+                                                     call_conversion_fn(fn, src_ptr, dest_ptr, static_cast<unsigned int>(bufsrc.shape[0]), static_cast<unsigned int>(bufsrc.shape[1]), flip);
     }, "See C++ documentation of the function for more info", py::arg("src"), py::arg("dest"), py::arg("flip") = false);
   }
 };
@@ -181,13 +181,14 @@ struct ConversionFromYUVLike
                                                        throw std::runtime_error("Expected to have dest array with at least two dimensions.");
                                                      }
 
-                                                     unsigned int height = bufdest.shape[0], width = bufdest.shape[1];
+                                                     unsigned int height = static_cast<unsigned int>(bufdest.shape[0]);
+                                                     unsigned int width = static_cast<unsigned int>(bufdest.shape[1]);
 
-                                                     unsigned expectedSourceBytes = sourceBytesFn(height, width);
+                                                     unsigned int expectedSourceBytes = static_cast<unsigned int>(sourceBytesFn(height, width));
 
-                                                     unsigned actualBytes = 1;
+                                                     unsigned int actualBytes = 1;
                                                      for (unsigned int i = 0; i < bufsrc.ndim; ++i) {
-                                                       actualBytes *= bufsrc.shape[i];
+                                                       actualBytes *= static_cast<unsigned int>(bufsrc.shape[i]);
                                                      }
 
                                                      if (actualBytes != expectedSourceBytes) {
@@ -208,7 +209,7 @@ struct ConversionFromYUVLike
 
                                                      unsigned char *src_ptr = static_cast<unsigned char *>(bufsrc.ptr);
                                                      unsigned char *dest_ptr = static_cast<unsigned char *>(bufdest.ptr);
-                                                     call_conversion_fn(fn, src_ptr, dest_ptr, bufdest.shape[0], bufdest.shape[1]);
+                                                     call_conversion_fn(fn, src_ptr, dest_ptr, static_cast<unsigned int>(bufdest.shape[0]), static_cast<unsigned int>(bufdest.shape[1]));
     }, py::arg("src"), py::arg("dest"));
   }
 };
@@ -253,8 +254,8 @@ void add_hsv_double_to_rgb_or_rgba_binding(py::class_<vpImageConvert, std::share
   pyImageConvert.def_static(name, [fn, destBytes](py::array_t<double, py::array::c_style> &src,
                                                   py::array_t<unsigned char, py::array::c_style> &dest) {
                                                     py::buffer_info bufsrc = src.request(), bufdest = dest.request();
-                                                    const unsigned height = bufsrc.shape[1];
-                                                    const unsigned width = bufsrc.shape[2];
+                                                    const unsigned int height = static_cast<unsigned int>(bufsrc.shape[1]);
+                                                    const unsigned int width = static_cast<unsigned int>(bufsrc.shape[2]);
                                                     rgb_or_rgba_to_hsv_verification(bufdest, bufsrc, destBytes, height, width);
 
                                                     const double *h = static_cast<double *>(bufsrc.ptr);
@@ -272,8 +273,8 @@ void add_hsv_uchar_to_rgb_or_rgba_binding(py::class_<vpImageConvert, std::shared
   pyImageConvert.def_static(name, [fn, destBytes](py::array_t<unsigned char, py::array::c_style> &src,
                                                   py::array_t<unsigned char, py::array::c_style> &dest, bool h_full) {
                                                     py::buffer_info bufsrc = src.request(), bufdest = dest.request();
-                                                    const unsigned height = bufsrc.shape[1];
-                                                    const unsigned width = bufsrc.shape[2];
+                                                    const unsigned int height = static_cast<unsigned int>(bufsrc.shape[1]);
+                                                    const unsigned int width = static_cast<unsigned int>(bufsrc.shape[2]);
                                                     rgb_or_rgba_to_hsv_verification(bufdest, bufsrc, destBytes, height, width);
 
                                                     const unsigned char *h = static_cast<unsigned char *>(bufsrc.ptr);
@@ -292,8 +293,8 @@ void add_rgb_or_rgba_uchar_to_hsv_binding(py::class_<vpImageConvert, std::shared
                                                   py::array_t<unsigned char, py::array::c_style> &dest,
                                                   bool h_full) {
                                                     py::buffer_info bufsrc = src.request(), bufdest = dest.request();
-                                                    const unsigned height = bufdest.shape[1];
-                                                    const unsigned width = bufdest.shape[2];
+                                                    const unsigned int height = static_cast<unsigned int>(bufdest.shape[1]);
+                                                    const unsigned int width = static_cast<unsigned int>(bufdest.shape[2]);
                                                     rgb_or_rgba_to_hsv_verification(bufsrc, bufdest, destBytes, height, width);
 
                                                     unsigned char *h = static_cast<unsigned char *>(bufdest.ptr);
@@ -311,8 +312,8 @@ void add_rgb_or_rgba_double_to_hsv_binding(py::class_<vpImageConvert, std::share
   pyImageConvert.def_static(name, [fn, destBytes](py::array_t<unsigned char, py::array::c_style> &src,
                                                   py::array_t<double, py::array::c_style> &dest) {
                                                     py::buffer_info bufsrc = src.request(), bufdest = dest.request();
-                                                    const unsigned height = bufdest.shape[1];
-                                                    const unsigned width = bufdest.shape[2];
+                                                    const unsigned int height = static_cast<unsigned int>(bufdest.shape[1]);
+                                                    const unsigned int width = static_cast<unsigned int>(bufdest.shape[2]);
                                                     rgb_or_rgba_to_hsv_verification(bufsrc, bufdest, destBytes, height, width);
 
                                                     double *h = static_cast<double *>(bufdest.ptr);
@@ -342,8 +343,8 @@ void add_demosaic_to_rgba_fn(py::class_<vpImageConvert, std::shared_ptr<vpImageC
                                            ss << "Target array should be a 3D array of shape (H, W, " << destBytes << ")";
                                            throw std::runtime_error(ss.str());
                                          }
-                                         const unsigned height = bufdest.shape[0];
-                                         const unsigned width = bufdest.shape[1];
+                                         const unsigned int height = static_cast<unsigned int>(bufdest.shape[0]);
+                                         const unsigned int width = static_cast<unsigned int>(bufdest.shape[1]);
                                          if (bufsrc.shape[0] != height || bufsrc.shape[1] != width) {
                                            std::stringstream ss;
                                            ss << "src and dest must have the same number of pixels, but got source with dimensions (" << height << ", " << width << ")";

@@ -48,6 +48,7 @@
 
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpImage.h>
+#include <visp3/core/vpPoint.h>
 
 BEGIN_VISP_NAMESPACE
  /*!
