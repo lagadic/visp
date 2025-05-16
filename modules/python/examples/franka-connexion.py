@@ -1,5 +1,6 @@
 import argparse
 import math
+import sys
 from visp.robot import RobotFranka, Robot
 
 def main():
@@ -9,13 +10,12 @@ def main():
     args, unknown_args = parser.parse_known_args()
     if unknown_args:
         print(f"The following args are not recognized and will not be used: {unknown_args}")
-        return
+        sys.exit()
 
     print(f"Use robot IP: {args.robot_ip}")
 
     robot = RobotFranka()
-    #robot.connect(str(args.robot_ip), RobotFranka.RealtimeConfig.kEnforce)
-    #robot.connect(str(args.robot_ip), RobotFranka.RealtimeConfig.kEnforce)
+    robot.connect(args.robot_ip, RobotFranka.RealtimeConfig.kEnforce)
     robot.connect("192.168.30.10", RobotFranka.RealtimeConfig.kEnforce)
     pos = robot.getPosition(Robot.JOINT_STATE)
     print(f"Initial joint position: \n{pos}")
