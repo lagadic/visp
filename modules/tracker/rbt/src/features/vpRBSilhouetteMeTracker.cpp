@@ -111,7 +111,7 @@ void vpRBSilhouetteMeTracker::trackFeatures(const vpRBFeatureTrackerInput &frame
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-    for (int i = 0; i < static_cast<int>(m_controlPoints[i].size()); ++i) {
+    for (int i = 0; i < static_cast<int>(m_controlPoints.size()); ++i) {
       m_controlPoints[i].track(frame.I);
     }
   }
@@ -119,7 +119,7 @@ void vpRBSilhouetteMeTracker::trackFeatures(const vpRBFeatureTrackerInput &frame
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-    for (int i = 0; i < static_cast<int>(m_controlPoints[i].size()); ++i) {
+    for (int i = 0; i < static_cast<int>(m_controlPoints.size()); ++i) {
       m_controlPoints[i].trackMultipleHypotheses(frame.I);
     }
   }
