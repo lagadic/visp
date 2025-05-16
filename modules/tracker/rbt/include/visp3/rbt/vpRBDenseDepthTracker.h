@@ -71,14 +71,14 @@ public:
 
   enum vpDisplayType
   {
-    SIMPLE = 0,
-    WEIGHT = 1,
-    ERROR = 2,
-    WEIGHT_AND_ERROR = 3,
-    INVALID = 4
+    DT_SIMPLE = 0,
+    DT_WEIGHT = 1,
+    DT_ERROR = 2,
+    DT_WEIGHT_AND_ERROR = 3,
+    DT_INVALID = 4
   };
 
-  vpRBDenseDepthTracker() : vpRBFeatureTracker(), m_step(2), m_useMask(false), m_minMaskConfidence(0.f), m_displayType(vpDisplayType::SIMPLE) { }
+  vpRBDenseDepthTracker() : vpRBFeatureTracker(), m_step(2), m_useMask(false), m_minMaskConfidence(0.f), m_displayType(vpDisplayType::DT_SIMPLE) { }
 
   virtual ~vpRBDenseDepthTracker() = default;
 
@@ -124,7 +124,7 @@ public:
 
   void setDisplayType(vpDisplayType type)
   {
-    if (type == INVALID) {
+    if (type == DT_INVALID) {
       throw vpException(vpException::badValue, "Depth tracker display type is invalid");
     }
     m_displayType = type;
@@ -205,7 +205,7 @@ public:
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-      for (unsigned int i = 0; i < numPoints; ++i) {
+      for (int i = 0; i < static_cast<int>(numPoints); ++i) {
         const double X = m_cXt[0][i], Y = m_cXt[1][i], Z = m_cXt[2][i];
         const double nX = m_cNt[0][i], nY = m_cNt[1][i], nZ = m_cNt[2][i];
 
@@ -247,12 +247,12 @@ public:
 #endif
 
   NLOHMANN_JSON_SERIALIZE_ENUM(vpRBDenseDepthTracker::vpDisplayType, {
-        {vpRBDenseDepthTracker::vpDisplayType::INVALID, nullptr},
-        {vpRBDenseDepthTracker::vpDisplayType::SIMPLE, "simple"},
-        {vpRBDenseDepthTracker::vpDisplayType::WEIGHT, "weight"},
-        {vpRBDenseDepthTracker::vpDisplayType::ERROR, "error"},
-        {vpRBDenseDepthTracker::vpDisplayType::WEIGHT_AND_ERROR, "weightAndError"}
-      });
+      {vpRBDenseDepthTracker::vpDisplayType::DT_INVALID, nullptr},
+      {vpRBDenseDepthTracker::vpDisplayType::DT_SIMPLE, "simple"},
+      {vpRBDenseDepthTracker::vpDisplayType::DT_WEIGHT, "weight"},
+      {vpRBDenseDepthTracker::vpDisplayType::DT_ERROR, "error"},
+      {vpRBDenseDepthTracker::vpDisplayType::DT_WEIGHT_AND_ERROR, "weightAndError"}
+    });
 
   virtual void loadJsonConfiguration(const nlohmann::json &j) VP_OVERRIDE
   {
