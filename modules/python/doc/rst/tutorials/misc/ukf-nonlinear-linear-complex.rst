@@ -1,5 +1,5 @@
 Example on a complex non-linear case study on how to use Unscented Kalman filter
-=======================================================================
+================================================================================
 
 This example shows how to use an Unscented Kalman filter in Python.
 

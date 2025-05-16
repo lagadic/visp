@@ -640,6 +640,7 @@
         {
           "static": true,
           "signature": "bool getKeyboardEvent(const vpImage<vpRGBa>&, std::string&, bool)",
+          "custom_name": "getKeyboardEventWithKey",
           "use_default_param_policy": false,
           "param_is_input": [
             true,
@@ -655,6 +656,7 @@
         {
           "static": true,
           "signature": "bool getKeyboardEvent(const vpImage<unsigned char>&, std::string&, bool)",
+          "custom_name": "getKeyboardEventWithKey",
           "use_default_param_policy": false,
           "param_is_input": [
             true,

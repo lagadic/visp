@@ -1,12 +1,25 @@
 {
-  "ignored_headers": ["vpWireFrameSimulatorTypes.h", "vpRobotException.h"],
-
-
+  "ignored_headers": [
+    "vpWireFrameSimulatorTypes.h",
+    "vpRobotException.h"
+  ],
   "classes": {
+    "vpRobotFranka": {
+      "methods": [
+        {
+          "static": false,
+          "signature": "vpRobotFranka(const std::string &, franka::RealtimeConfig)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "void connect(const std::string &, franka::RealtimeConfig)",
+          "ignore": true
+        }
+      ]
+    },
     "vpImageSimulator": {
-
-      "methods":
-      [
+      "methods": [
         {
           "static": true,
           "signature": "void getImage(vpImage<vpRGBa>&, std::list<vpImageSimulator>&, const vpCameraParameters&)",
@@ -54,8 +67,7 @@
     "vpRobotSimulator": {
       "is_virtual": true
     },
-
-    "vpWireFrameSimulator" : {
+    "vpWireFrameSimulator": {
       "methods": [
         {
           "static": false,
@@ -70,14 +82,14 @@
         },
         {
           "static": false,
-            "signature": "void get_cMo_History(std::list<vpHomogeneousMatrix>&)",
-            "use_default_param_policy": false,
-            "param_is_input": [
-              false
-            ],
-            "param_is_output": [
-              true
-            ]
+          "signature": "void get_cMo_History(std::list<vpHomogeneousMatrix>&)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            false
+          ],
+          "param_is_output": [
+            true
+          ]
         }
       ]
     }

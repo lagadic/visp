@@ -71,6 +71,8 @@ public:
     const vpMatrix &keypoints, const vpRBFeatureTrackerInput &frame, double minMaskConfidence, double minEdgeDistObject, double minEdgeDistEnv);
 
   static void levenbergMarquardtKeypoints2D(const vpMatrix &points3d, const vpMatrix &observations, const vpLevenbergMarquardtParameters &parameters, vpHomogeneousMatrix &cTw);
+  static void levenbergMarquardtKeypoints3D(const vpMatrix &points3d, const vpMatrix &observations, const vpLevenbergMarquardtParameters &parameters, vpHomogeneousMatrix &cTw);
+
 };
 
 END_VISP_NAMESPACE

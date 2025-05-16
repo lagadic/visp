@@ -98,8 +98,9 @@ If you have this error:
   $VISP_WS/visp/modules/tracker/tt_mi/include/visp3/tt_mi/vpTemplateTrackerMI.h:46:19: note:   because the following virtual functions are pure within ‘vpTemplateTrackerMI’:
   class VISP_EXPORT vpTemplateTrackerMI : public vpTemplateTracker
 
-You should define the class (here vpTemplaterMI) as pure virtual in the config file (via the flag is_virtual).
-This error occurs because some methods are defined as pure virtual in a parent class and are not defined in the class this class: Pure virtual class detection does not look in the class hierarchy but only at the present class.
+You should define the class (here vpTemplaterMI) as pure virtual in the `tt_mi.json` config file (via the flag `is_virtual`).
+This error occurs because some methods are defined as pure virtual in a parent class.
+Pure virtual class detection does not look in the class hierarchy but only at the present class.
 
 
 Template errors
