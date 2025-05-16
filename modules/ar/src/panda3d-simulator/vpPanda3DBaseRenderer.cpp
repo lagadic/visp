@@ -53,7 +53,9 @@ const vpHomogeneousMatrix vpPanda3DBaseRenderer::VISP_T_PANDA({
 });
 const vpHomogeneousMatrix vpPanda3DBaseRenderer::PANDA_T_VISP(vpPanda3DBaseRenderer::VISP_T_PANDA.inverse());
 
+const vpHomogeneousMatrix& vpPanda3DBaseRenderer::pandaToVisp() { return VISP_T_PANDA; }
 
+const vpHomogeneousMatrix& vpPanda3DBaseRenderer::vispToPanda() { return PANDA_T_VISP; }
 
 vpPanda3DBaseRenderer::~vpPanda3DBaseRenderer()
 {

@@ -234,9 +234,9 @@ public:
 
   virtual void enableSharedDepthBuffer(vpPanda3DBaseRenderer &sourceBuffer);
 
-  static inline const vpHomogeneousMatrix& pandaToVisp() { return VISP_T_PANDA; }
+  static const vpHomogeneousMatrix& pandaToVisp();
 
-  static inline const vpHomogeneousMatrix& vispToPanda() { return PANDA_T_VISP; }
+  static const vpHomogeneousMatrix& vispToPanda();
 
 protected:
 
