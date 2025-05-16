@@ -1,3 +1,32 @@
+/*
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ *
+ * This software is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * See the file LICENSE.txt at the root directory of this source
+ * distribution for additional information about the GNU GPL.
+ *
+ * For using ViSP with software that can not be combined with the GNU
+ * GPL, please contact Inria about acquiring a ViSP Professional
+ * Edition License.
+ *
+ * See https://visp.inria.fr for more information.
+ *
+ * This software was developed at:
+ * Inria Rennes - Bretagne Atlantique
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * France
+ *
+ * If you have questions regarding the use of this file, please contact
+ * Inria at visp@inria.fr
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
 //! \example tutorial-rbt-realsense.cpp
 #include <iostream>
 #include <visp3/core/vpConfig.h>
@@ -25,6 +54,10 @@ int main()
 #include "render-based-tutorial-utils.h"
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+/**
+ * \brief Realsense specific arguments
+ *
+*/
 struct CmdArguments
 {
   CmdArguments() : height(480), width(848), fps(60)
@@ -40,7 +73,15 @@ struct CmdArguments
   unsigned int height, width, fps;
 };
 #endif
-
+/**
+ * \brief Convert from a raw uint16_t depth map to a float depth map in meters and a display uint8_t depth map
+ *
+ * \param depthRaw raw depth map from the realsense
+ * \param depthScale uint16_t to meters scale factor
+ * \param maxZDisplay Max Z value when displaying (used for color scaling)
+ * \param depth output depth map in meters
+ * \param IdepthDisplay Displayable output depth map
+*/
 void updateDepth(const vpImage<uint16_t> &depthRaw, float depthScale, float maxZDisplay, vpImage<float> &depth, vpImage<unsigned char> &IdepthDisplay)
 {
   depth.resize(depthRaw.getHeight(), depthRaw.getWidth());
@@ -55,6 +96,7 @@ void updateDepth(const vpImage<uint16_t> &depthRaw, float depthScale, float maxZ
 
 int main(int argc, const char **argv)
 {
+  //! [Command line parsing]
   // Read the command line options
   vpRBTrackerTutorial::BaseArguments baseArgs;
   CmdArguments realsenseArgs;
@@ -76,6 +118,8 @@ int main(int argc, const char **argv)
 
   baseArgs.postProcessArguments();
   plotter.postProcessArguments(baseArgs.display);
+  //! [Command line parsing]
+
 
   if (baseArgs.enableRenderProfiling) {
     vpRBTrackerTutorial::enableRendererProfiling();

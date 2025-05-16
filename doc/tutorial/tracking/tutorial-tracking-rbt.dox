@@ -121,15 +121,24 @@ Roughly the algorithm works as follows:
 
 \subsection rbt_tracking_rendering Rendering
 
-Object rendering is done through Panda3D.
+Object rendering is done through Panda3D. The object is rendered at the last computed pose.
+
+All the information derived from the render is stored into a vpRBRenderData, in the current frame data (vpRBFeatureTrackerInput).
+This object contains information such as:
+
+- the 3D surface normals, expressed as 3D unit vectors
+- The depth map, in meters (Rendered using vpPanda3DGeometryRenderer)
+- The object silhouette (extracted using vpPanda3DDepthCannyFilter and vpRBTracker::extractSilhouettePoints)
+- The image area containing the object (represented by a vpRect)
+- the pose at which the object was rendered: When implementing new features or algorithms,
+ it is preferable to use this pose when extracting data from the render, instead of those provided in the functions to redefine.
 
 \image html rbt-rendering.png Rendering is used to extract geometric information width=50%
 
 
-All the information is stored into a vpRBRenderData.
-
 For more information on how rendering is performed you can examine the following sources:
 - vpRBTracker::updateRender
+- vpRBRenderData
 - vpObjectCentricRenderer
 - vpPanda3DRendererSet
 - vpPanda3DBaseRenderer
@@ -149,7 +158,7 @@ To add or interact with the features of the RBT, you can use vpRBTracker::addTra
 \subsubsection rbt_tracking_available_features Feature list
 
 | Feature | Class   | Required inputs | Note
-| :----:  | :----:  | :----:          | :----:
+| :----  | :----  | :----:          | ----:
 | KLT 2D points     | vpRBKltTracker     | Grayscale image | Requires OpenCV
 | Silhouette moving edges  | vpRBSilhouetteMeTracker   | Grayscale image | -
 | Silhouette color edges  | vpRBSilhouetteCCDTracker   | Color image  | More expensive than moving edge based tracker
@@ -200,7 +209,6 @@ The diagram below sums up the combination of the masking and outlier rejection s
 
 \image html rbt-filtering.jpg Masking is first used to remove features in cases such as strong occlusions. Remaining outliers are filtered through the use of robust estimators. width=25%
 
-
 \subsection rbt_tracking_optimization Minimization problem
 
 
@@ -210,18 +218,170 @@ The diagram below sums up the combination of the masking and outlier rejection s
 
 \section rbt_tracking_usage Tracker usage
 
-\subsection rbt_information_retrieval Retrieving and displaying tracker information
+We will now focus on an example usage of the tracker, using a Realsense camera. While we focus on this example, another one that uses prererecorded sequences is available in \ref rbt_tracking_examples
 
-vpRBTracker::getPose
+To run the program, start by placing yourself in the ViSP build directory.
+Assuming you have compiled and built the tutorials, navigate to the tutorial folder:
+\code{.sh}
+~/visp_build $ cd tutorial/tracking/render-based
+~/visp_build/tutorial-tracking/render-based $ cd tutorial/tracking/render-based
+\endcode
 
-vpRBTracker::getRenderer, vpRBTracker::getMostRecentFrame
+You can then examine the command line arguments with:
+
+\code{.sh}
+./tutorial-rbt-realsense  -h
+\endcode
+
+Which outputs:
+\verbatim
+Program description: Tutorial showing the usage of the Render-Based tracker with a RealSense camera
+Arguments:
+	--config               Path to the JSON configuration file. Values in this files are loaded, and can be overridden by command line arguments.
+	                       Optional
+
+	--debug-display        Enable additional displays from the renderer
+	                       Default: false
+
+	--fps                  Realsense requested framerate
+	                       Default: 60
+	                       Optional
+
+	--height               Realsense requested image height
+	                       Default: 480
+	                       Optional
+
+	--init-file            Path to the JSON file containing the 2D/3D correspondences for initialization by click
+	                       Default: ""
+	                       Optional
+
+	--max-depth-display    Maximum depth value, used to scale the depth display
+	                       Default: 1.0
+	                       Optional
+
+	--no-display           Disable display windows
+	                       Default: true
+
+	--object               Name of the object to track. Used to potentially fetch the init file
+	                       Default: ""
+	                       Optional
+
+	--plot-cov             Plot the pose covariance trace for each feature
+	                       Default: false
+
+	--plot-divergence      Plot the metrics associated to the divergence threshold computation
+	                       Default: false
+
+	--plot-pose            Plot the pose of the object in the camera frame
+	                       Default: false
+
+	--plot-position        Plot the position of the object in a 3d figure
+	                       Default: false
+
+	--pose                 Initial pose of the object in the camera frame.
+	                       Default: []
+	                       Optional
+
+	--profile              Enable the use of Pstats to profile rendering times
+	                       Default: false
+
+	--save                 Whether to save experiment data
+	                       Default: false
+
+	--save-path            Where to save the experiment log. The folder should not exist.
+	                       Default: ""
+	                       Optional
+
+	--save-video           Whether to save the video
+	                       Default: false
+
+	--tracker              Path to the JSON file containing the tracker
+	                       Default: ""
+	                       Optional
+
+	--video-framerate      Output video framerate
+	                       Default: 30
+	                       Optional
+
+	--width                Realsense requested image width
+	                       Default: 848
+	                       Optional
+
+Example JSON configuration file:
+
+{
+  "--debug-display": false,
+  "--fps": 60,
+  "--height": 480,
+  "--init-file": "",
+  "--max-depth-display": 1.0,
+  "--no-display": true,
+  "--object": "",
+  "--plot-cov": false,
+  "--plot-divergence": false,
+  "--plot-pose": false,
+  "--plot-position": false,
+  "--pose": [],
+  "--profile": false,
+  "--save": false,
+  "--save-path": "",
+  "--save-video": false,
+  "--tracker": "",
+  "--video-framerate": 30,
+  "--width": 848
+}
+\endverbatim
+
+You can see that among those arguments, the script has two main parameters.
+The first, `--tracker` is the path to the .json configuration file, defined following the details given in \ref rbt_tracking_config.
+The second `--object`, is the path to the 3D model (in a format readable by the Panda3D engine). Alternatively, it can specified in the .json file.
+
+\snippet tutorial-rbt-realsense.cpp Command line parsing
 
 
-\section rbt_tracking_examples Tutorial examples
+\section rbt_tracking_examples Full tutorial examples
+
+
+The full code for the realsense based tutorial:
+\include tutorial-rbt-realsense.cpp
+
+
+The full code to track an offline, preregistered sequence:
+\include tutorial-rbt-sequence.cpp
+
+Parsing and display utils:
+\include render-based-tutorial-utils.h
+
 
 \section rbt_extension Extending the RBT
 
 \subsection rbt_extension_features Defining your own features
+
+\subsection rbt_extension_factory_pattern Registering your own component for JSON parsing
+
+As seen in \ref rbt_tracking_config, the different components of the RBT pipeline can be parsed from a JSON configuration file. This requires a ViSP version that is built with the nlohmann::json third party (see \ref rbt_tracking_install_requirements)
+
+This functionality is implemented using a factory pattern as defined in the vpDynamicFactory.
+
+For your own class to be loadable, you should call vpDynamicFactory::registerType with a lambda function that defines how a JSON object can be used to configure an object from your type
+
+For instance, in the vpRBDriftDetectorFactory, an object of type vpRBProbabilistic3DDriftDetector is registered as:
+\code{.cpp}
+registerType("probabilistic", [](const nlohmann::json &j) {
+  std::shared_ptr<vpRBProbabilistic3DDriftDetector> p(new vpRBProbabilistic3DDriftDetector());
+  p->loadJsonConfiguration(j);
+  return p;
+});
+\endcode
+
+This means that when parsing the JSON object's drift field, if the **"type"** field is equal to "probabilistic", then this function will be called and the json object will used to build a vpRBProbabilistic3DDriftDetector.
+
+This patterns hold for the different types of components:
+
+- vpRBFeatureTrackerFactory to register subtypes of vpRBFeatureTracker
+- vpRBDriftDetectorFactory to register vpRBDriftDetector
+- vpObjectMaskFactory to register vpObjectMask
+
 
 
 
