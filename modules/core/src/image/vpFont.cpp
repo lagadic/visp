@@ -83,7 +83,9 @@ public:
     \note The font supports ASCII characters only. It was generated on the base of the generic monospace font from
     Gdiplus.
 
-    \param [in] height - initial height value. By default it is equal to 16.
+    \param[in] height : Initial height value. By default it is equal to 16.
+    \param[in] fontFamily : Font family.
+    \param[in] ttfFilename : True type font filename resources.
   */
   Impl(unsigned int height = 16, const vpFontFamily &fontFamily = TRUETYPE_FILE,
        const std::string &ttfFilename = std::string(VISP_RUBIK_REGULAR_FONT_RESOURCES))

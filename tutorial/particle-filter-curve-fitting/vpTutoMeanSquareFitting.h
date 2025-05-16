@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,6 +100,8 @@ public:
    * \tparam T Either unsigned char or vpRGBa.
    * \param[in] I The image on which we want to display the parabola model.
    * \param[in] color The color we want to use to display the parabola.
+   * \param[in] vertPosLegend Legend vertical position.
+   * \param[in] horPosLegend Legend horizontal position.
    */
   template<typename T>
   void display(const VISP_NAMESPACE_ADDRESSING vpImage<T> &I, const VISP_NAMESPACE_ADDRESSING vpColor &color,

@@ -283,7 +283,8 @@ public:
   }
 #endif
 
-  static vpColVector view(double *raw_data, unsigned int nrows);
+  static vpColVector view(double *raw_data, unsigned int rows);
+  static void view(vpColVector &v, double *raw_data, unsigned int rows);
 
   /*!
    * Removes all elements from the vector (which are destroyed),

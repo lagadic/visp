@@ -362,6 +362,9 @@ public:
    */
   static void view(vpArray2D<Type> &v, Type *data, unsigned int numRows, unsigned int numCols)
   {
+    unsigned int oldRows = v.rowNum;
+    unsigned int oldCols = v.colNum;
+    Type *oldData = v.data;
     v.rowNum = numRows;
     v.colNum = numCols;
     v.dsize = numRows * numCols;
@@ -371,15 +374,17 @@ public:
     }
     v.data = data;
     v.isMemoryOwner = false;
+    bool requiresRowPtrRealloc = data != oldData || numRows != oldRows || numCols != oldCols;
 
-    if ((v.isRowPtrsOwner == true) && (v.rowPtrs != nullptr)) {
-      free(v.rowPtrs);
-    }
-
-    v.isRowPtrsOwner = true;
-    v.rowPtrs = reinterpret_cast<Type **>(malloc(v.rowNum * sizeof(Type *)));
-    for (unsigned int i = 0; i < v.rowNum; ++i) {
-      v.rowPtrs[i] = data + i * v.colNum;
+    if (requiresRowPtrRealloc) {
+      if ((v.isRowPtrsOwner == true) && (v.rowPtrs != nullptr)) {
+        free(v.rowPtrs);
+      }
+      v.isRowPtrsOwner = true;
+      v.rowPtrs = reinterpret_cast<Type **>(malloc(v.rowNum * sizeof(Type *)));
+      for (unsigned int i = 0; i < v.rowNum; ++i) {
+        v.rowPtrs[i] = data + i * v.colNum;
+      }
     }
   }
 
@@ -800,7 +805,7 @@ public:
 #else
         _snprintf_s(header, h.size() + 1, _TRUNCATE, "%s", h.c_str());
 #endif
-      }
+    }
 
       unsigned int rows, cols;
       file >> rows;
@@ -819,7 +824,7 @@ public:
           A[i][j] = value;
         }
       }
-    }
+  }
     else {
       char c = '0';
       std::string h;
@@ -835,7 +840,7 @@ public:
 #else
         _snprintf_s(header, h.size() + 1, _TRUNCATE, "%s", h.c_str());
 #endif
-      }
+    }
 
       unsigned int rows, cols;
       file.read(reinterpret_cast<char *>(&rows), sizeof(unsigned int));
@@ -849,7 +854,7 @@ public:
           A[i][j] = value;
         }
       }
-    }
+}
 
     file.close();
     return true;

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,6 +68,7 @@ namespace tutorial
  * the input point \b pt.
  *
  * \param[in] pt The input point.
+ * \param[in] model Parabola model.
  * \return double The square error.
  */
 double evaluate(const vpImagePoint &pt, const vpTutoParabolaModel &model)

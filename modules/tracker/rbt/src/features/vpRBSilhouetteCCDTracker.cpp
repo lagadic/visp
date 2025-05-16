@@ -119,7 +119,6 @@ public:
 
   static void multiplyBTranspose(const FastMat63<double> &A, const FastMat63<double> &B, vpMatrix &C)
   {
-    C.resize(6, 6, false, false);
     for (unsigned int i = 0; i < 6; ++i) {
       const double *a = &A.data[i * 3];
       double *c = C[i];
@@ -167,36 +166,53 @@ void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &fr
   const vpHomogeneousMatrix cMo = frame.renders.cMo;
   const vpHomogeneousMatrix oMc = cMo.inverse();
 
-  for (const vpRBSilhouettePoint &sp : frame.silhouettePoints) {
-    // std::cout << m_ccdParameters.h << std::endl;
-    // std::cout << sp.j << ", " << sp.i << std::endl;
-    int ii = sp.i, jj = sp.j;
+#ifdef VISP_HAVE_OPENMP
+#pragma omp parallel
+#endif
+  {
+    std::vector<vpRBSilhouetteControlPoint> localControlPoints;
+#ifdef VISP_HAVE_OPENMP
+#pragma omp for nowait
+#endif
+    for (unsigned int i = 0; i < frame.silhouettePoints.size(); ++i) {
+      const vpRBSilhouettePoint sp = frame.silhouettePoints[i];
+      // std::cout << m_ccdParameters.h << std::endl;
+      // std::cout << sp.j << ", " << sp.i << std::endl;
+      int ii = sp.i, jj = sp.j;
 
-    if (!sp.isSilhouette) {
-      continue;
-    }
-
-    if (ii <= m_ccdParameters.h || jj <= m_ccdParameters.h ||
-      static_cast<unsigned int>(ii) >= frame.I.getHeight() - m_ccdParameters.h ||
-      static_cast<unsigned int>(jj) >= frame.I.getWidth() - m_ccdParameters.h) {
-      continue;
-    }
-    vpRBSilhouetteControlPoint pccd;
-
-    pccd.buildSilhouettePoint(ii, jj, sp.Z, sp.orientation, sp.normal, cMo, oMc, frame.cam);
-
-    if (std::isnan(sp.orientation) || !pccd.isValid()) {
-      continue;
-    }
-
-    if (frame.hasMask() && m_useMask) {
-      double maskGradValue = pccd.getMaxMaskGradientAlongLine(frame.mask, m_ccdParameters.h);
-      if (maskGradValue < m_minMaskConfidence) {
+      if (!sp.isSilhouette) {
         continue;
       }
+
+      if (ii <= m_ccdParameters.h || jj <= m_ccdParameters.h ||
+        static_cast<unsigned int>(ii) >= frame.I.getHeight() - m_ccdParameters.h ||
+        static_cast<unsigned int>(jj) >= frame.I.getWidth() - m_ccdParameters.h) {
+        continue;
+      }
+      vpRBSilhouetteControlPoint pccd;
+
+      pccd.buildSilhouettePoint(ii, jj, sp.Z, sp.orientation, sp.normal, cMo, oMc, frame.cam);
+
+      if (std::isnan(sp.orientation) || !pccd.isValid()) {
+        continue;
+      }
+
+      if (frame.hasMask() && m_useMask) {
+        double maskGradValue = pccd.getMaxMaskGradientAlongLine(frame.mask, m_ccdParameters.h);
+        if (maskGradValue < m_minMaskConfidence) {
+          continue;
+        }
+      }
+      localControlPoints.push_back(std::move(pccd));
     }
-    m_controlPoints.push_back(std::move(pccd));
+#ifdef VISP_HAVE_OPENMP
+#pragma omp critical
+#endif
+    {
+      m_controlPoints.insert(m_controlPoints.end(), localControlPoints.begin(), localControlPoints.end());
+    }
   }
+
 
   if (m_maxPoints > 0 && m_controlPoints.size() > m_maxPoints) {
     std::vector<size_t> keptIndices(m_maxPoints);
@@ -228,24 +244,24 @@ void vpRBSilhouetteCCDTracker::initVVS(const vpRBFeatureTrackerInput &/*frame*/,
   m_prevStats.reinit(resolution, normal_points_number);
   m_gradient = vpMatrix(m_ccdParameters.phi_dim, 1, 0.0);
   m_hessian = vpMatrix(m_ccdParameters.phi_dim, m_ccdParameters.phi_dim, 0.0);
-  m_gradientData.clear();
-  m_hessianData.clear();
-  m_gradients.clear();
-  m_hessians.clear();
+  // m_gradientData.clear();
+  // m_hessianData.clear();
+  // m_gradients.clear();
+  // m_hessians.clear();
   m_gradientData.resize(m_controlPoints.size() * 2 * normal_points_number * 6);
   m_hessianData.resize(m_controlPoints.size() * 2 * normal_points_number * 6 * 6);
   m_gradients.resize(m_controlPoints.size() * 2 * normal_points_number);
   m_hessians.resize(m_controlPoints.size() * 2 * normal_points_number);
   for (unsigned int i = 0; i < m_gradients.size(); ++i) {
-    m_gradients[i] = vpColVector::view(m_gradientData.data() + i * 6, 6);
-    m_hessians[i] = vpMatrix::view(m_hessianData.data() + i * 6 * 6, 6, 6);
+    vpColVector::view(m_gradients[i], m_gradientData.data() + i * 6, 6);
+    vpMatrix::view(m_hessians[i], m_hessianData.data() + i * 6 * 6, 6, 6);
   }
   m_weights.resize(m_numFeatures, false);
   if (m_temporalSmoothingFac > 0.0) {
     computeLocalStatistics(previousFrame.IRGB, m_prevStats);
   }
   else {
-    m_prevStats = m_stats;
+    m_prevStats.zero();
   }
   m_previousFrame = &previousFrame;
 }
@@ -267,8 +283,8 @@ void vpRBSilhouetteCCDTracker::changeScale()
   m_hessians.resize(m_controlPoints.size() * 2 * normal_points_number);
 
   for (unsigned int i = 0; i < m_gradients.size(); ++i) {
-    m_gradients[i] = vpColVector::view(m_gradientData.data() + i * 6, 6);
-    m_hessians[i] = vpMatrix::view(m_hessianData.data() + i * 6 * 6, 6, 6);
+    vpColVector::view(m_gradients[i], m_gradientData.data() + i * 6, 6);
+    vpMatrix::view(m_hessians[i], m_hessianData.data() + i * 6 * 6, 6, 6);
   }
   m_weights.resize(m_numFeatures, false);
   if (m_temporalSmoothingFac > 0.0) {
@@ -292,12 +308,15 @@ void vpRBSilhouetteCCDTracker::computeVVSIter(const vpRBFeatureTrackerInput &fra
     oldPoints[i * 2 + 1] = m_controlPoints[i].icpoint.get_v();
   }
   updateCCDPoints(cMo);
+
+  // Compute motion between current and previous frames, in pixels
   tol = 0.0;
   for (unsigned int i = 0; i < m_controlPoints.size(); ++i) {
     tol += abs(oldPoints[i * 2] - m_controlPoints[i].icpoint.get_u());
     tol += abs(oldPoints[i * 2 + 1] - m_controlPoints[i].icpoint.get_v());
   }
   tol /= m_controlPoints.size();
+  // If enabled and if motion between consecutive frame is small enough, halve contour size
   if (tol < sqrt(static_cast<double>(m_ccdParameters.h) / 2.0) && iteration >= 1) {
     int previousH = m_ccdParameters.h;
     m_ccdParameters.h = std::max(m_ccdParameters.min_h, previousH / 2);
@@ -710,6 +729,7 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
 
       const double *mean_vic_ptr_prev = m_prevStats.mean_vic[i];
       const double *cov_vic_ptr_prev = m_prevStats.cov_vic[i];
+
       const vpCameraParameters &cam = p.getCameraParameters();
 
       Lnvp[0] = (-nv_ptr[0] / p.Zs);
@@ -764,65 +784,53 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
     }
   }
 
-  m_gradient = 0.0;
-  m_hessian = 0.0;
   //m_robust.setMinMedianAbsoluteDeviation(1.0);
   vpColVector weightPerPoint(errorPerPoint.getRows());
-  m_robust.MEstimator(vpRobust::vpRobustEstimatorType::TUKEY, m_error, m_weights);
-  // for (unsigned int i = 0; i < m_controlPoints.size(); ++i) {
-  //   for (unsigned int j = 0; j < 2 * normal_points_number * 3; ++j) {
-  //     m_weights[i * 2 * normal_points_number * 3 + j] = weightPerPoint[i];
-  //   }
-  // }
-  for (unsigned int i = 0; i < m_L.getRows(); ++i) {
-    m_weighted_error[i] = m_error[i] * m_weights[i];
-    for (unsigned int j = 0; j < 6; ++j) {
-      m_L[i][j] *= m_weights[i];
+
+  m_robust.MEstimator(vpRobust::vpRobustEstimatorType::TUKEY, errorPerPoint, weightPerPoint);
+  for (unsigned int i = 0; i < m_controlPoints.size(); ++i) {
+    for (unsigned int j = 0; j < static_cast<unsigned int>(2 * normal_points_number * 3); ++j) {
+      m_weights[i * 2 * normal_points_number * 3 + j] = weightPerPoint[i];
     }
   }
 
-  // Store all the gradients and hessians and then sum them up after the parallel region. This ensures that computation is determinist
-  std::vector<vpColVector> localGradients;
-  std::vector<vpMatrix> localHessians;
+
+
+  m_gradient = 0.0;
+  m_hessian = 0.0;
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel
 #endif
   {
     vpColVector localGradient(m_gradient.getRows(), 0.0);
     vpMatrix localHessian(m_hessian.getRows(), m_hessian.getCols(), 0.0);
+
 #ifdef VISP_HAVE_OPENMP
-#pragma omp single
-#endif
-    {
-#ifdef VISP_HAVE_OPENMP
-      unsigned int threads = omp_get_num_threads();
-#else
-      unsigned int threads = 1;
-#endif
-      localGradients.resize(threads, localGradient);
-      localHessians.resize(threads, localHessian);
-    }
-#ifdef VISP_HAVE_OPENMP
-#pragma omp for
+#pragma omp for nowait
 #endif
     for (unsigned int i = 0; i < m_gradients.size(); ++i) {
-      m_gradients[i] *= m_weights[i];
-      m_hessians[i] *= m_weights[i];
-      localHessian += m_hessians[i];
-      localGradient += m_gradients[i];
+      vpColVector &g = m_gradients[i];
+      vpMatrix &h = m_hessians[i];
+      double w = m_weights[i];
+      for (unsigned int j = 0; j < 6; ++j) {
+        g[j] *= w;
+        m_L[i][j] *= w;
+        localGradient[j] += g[j];
+        for (unsigned int k = 0; k < 6; ++k) {
+          h[j][k] *= w;
+          localHessian[j][k] += h[j][k];
+        }
+      }
     }
 #ifdef VISP_HAVE_OPENMP
-    unsigned int currentThread = omp_get_thread_num();
-#else
-    unsigned int currentThread = 0;
+#pragma omp critical
 #endif
-    localGradients[currentThread] = localGradient;
-    localHessians[currentThread] = localHessian;
+    {
+      m_gradient += localGradient;
+      m_hessian += localHessian;;
+    }
   }
-  for (unsigned int i = 0; i < localGradients.size(); ++i) {
-    m_gradient += localGradients[i];
-    m_hessian += localHessians[i];
-  }
+
 
   m_LTL = m_hessian;
   m_LTR = -m_gradient;
@@ -832,11 +840,27 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
     m_sigma = m_ccdParameters.covarianceIterDecreaseFactor * m_sigma + 2.0 * (1.0 - m_ccdParameters.covarianceIterDecreaseFactor) * hessian_E_inv;
   }
   catch (vpException &e) {
+    std::cerr << "Inversion issues in CCD tracker" << std::endl;
+    unsigned int nanGradients = 0, nanHessians = 0;
+    for (unsigned int i = 0; i < m_gradients.size(); ++i) {
+      nanGradients += static_cast<unsigned int>(!vpArray2D<double>::isFinite(m_gradients[i]));
+      nanHessians += static_cast<unsigned int>(!vpArray2D<double>::isFinite(m_hessians[i]));
+
+    }
+    std::cerr << "Nan gradients: " << nanGradients << std::endl;
+    std::cerr << "Nan hessians: " << nanHessians << std::endl;
+    std::cerr << vpArray2D<double>::isFinite(m_hessian) << std::endl;
+    std::cerr << vpArray2D<double>::isFinite(m_gradient) << std::endl;
+    std::cerr << vpArray2D<double>::isFinite(m_error) << std::endl;
+    std::cerr << vpArray2D<double>::isFinite(m_weights) << std::endl;
+
+
     m_numFeatures = 0;
     m_weighted_error = 0;
     m_LTL = 0;
     m_LTR = 0;
-    std::cerr << "Inversion issues in CCD tracker" << std::endl;
+
+
     std::cerr << e.what() << std::endl;
   }
 }
