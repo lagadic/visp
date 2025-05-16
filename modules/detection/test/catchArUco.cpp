@@ -217,7 +217,7 @@ TEST_CASE("ArUco detection test", "[aruco_detection_test]")
   }
 }
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x040700)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x040800)
 TEST_CASE("ArUco pose computation test", "[aruco_detection_test]")
 {
   std::map<vpDetectorAprilTag::vpAprilTagFamily, aruco::PredefinedDictionaryType> apriltagMap = {

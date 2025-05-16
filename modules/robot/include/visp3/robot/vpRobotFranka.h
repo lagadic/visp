@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +31,8 @@
  * Interface for the Franka robot.
  */
 
-#ifndef _vpRobotFranka_h_
-#define _vpRobotFranka_h_
+#ifndef VP_ROBOT_FRANKA_H
+#define VP_ROBOT_FRANKA_H
 
 #include <visp3/core/vpConfig.h>
 
@@ -265,15 +265,24 @@ private:
   std::string m_franka_address;
 
 public:
+  /**
+   * Used to decide whether to enforce realtime mode for a control loop thread.
+   *
+   * \note Wrapper over franka::RealtimeConfig mainly for python bindings.
+   */
+  enum class vpRealtimeConfig { kEnforce, kIgnore };
+
   vpRobotFranka();
 
   vpRobotFranka(const std::string &franka_address,
                 franka::RealtimeConfig realtime_config = franka::RealtimeConfig::kEnforce);
+  vpRobotFranka(const std::string &franka_address, vpRealtimeConfig realtime_config);
 
   virtual ~vpRobotFranka();
 
   void connect(const std::string &franka_address,
                franka::RealtimeConfig realtime_config = franka::RealtimeConfig::kEnforce);
+  void connect(const std::string &franka_address, vpRealtimeConfig realtime_config);
 
   vpHomogeneousMatrix get_fMe(const vpColVector &q);
   vpHomogeneousMatrix get_fMc(const vpColVector &q);

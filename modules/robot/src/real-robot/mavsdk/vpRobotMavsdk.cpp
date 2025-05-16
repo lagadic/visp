@@ -1111,7 +1111,7 @@ private:
 #if (VISP_HAVE_MAVSDK_VERSION >= 0x020000)
   mavsdk::Mavsdk m_mavsdk { mavsdk::Mavsdk::Configuration{mavsdk::ComponentType::GroundStation} };
 #else
-  mavsdk::Mavsdk m_mavsdk { }
+  mavsdk::Mavsdk m_mavsdk { };
 #endif
   std::shared_ptr<mavsdk::System> m_system;
   std::shared_ptr<mavsdk::Action> m_action;
