@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -430,7 +430,7 @@ void bindings_vpArray2D(py::class_<vpArray2D<T>, std::shared_ptr<vpArray2D<T>>> 
   pyArray2D.def(py::init([](np_array_cf<T> &np_array) {
     verify_array_shape_and_dims(np_array, 2, "ViSP 2D array");
     const std::vector<py::ssize_t> shape = np_array.request().shape;
-    vpArray2D<T> result(shape[0], shape[1]);
+    vpArray2D<T> result(static_cast<unsigned int>(shape[0]), static_cast<unsigned int>(shape[1]));
     copy_data_from_np(np_array, result.data);
     return result;
                          }), R"doc(
@@ -443,7 +443,7 @@ Construct a 2D ViSP array by **copying** a 2D numpy array.
   pyArray2D.def_static("view", ([](np_array_c<T> &np_array) -> vpArray2D<T> {
     verify_array_shape_and_dims(np_array, 2, "ViSP 2D array");
     const std::vector<py::ssize_t> shape = np_array.request().shape;
-    return vpArray2D<T>::view(static_cast<T *>(np_array.request().ptr), shape[0], shape[1]);
+    return vpArray2D<T>::view(static_cast<T *>(np_array.request().ptr), static_cast<unsigned int>(shape[0]), static_cast<unsigned int>(shape[1]));
                                 }), R"doc(
 Construct a 2D ViSP array that is a **view** of a numpy array.
 When it is modified, the numpy array is also modified.
@@ -469,7 +469,7 @@ void bindings_vpMatrix(py::class_<vpMatrix, std::shared_ptr<vpMatrix>, vpArray2D
   pyMatrix.def(py::init([](np_array_cf<double> np_array) {
     verify_array_shape_and_dims(np_array, 2, "ViSP Matrix");
     const std::vector<py::ssize_t> shape = np_array.request().shape;
-    vpMatrix result(shape[0], shape[1]);
+    vpMatrix result(static_cast<unsigned int>(shape[0]), static_cast<unsigned int>(shape[1]));
     copy_data_from_np(np_array, result.data);
     return result;
                         }), R"doc(
@@ -482,7 +482,7 @@ Construct a matrix by **copying** a 2D numpy array.
   pyMatrix.def_static("view", ([](np_array_c<double> &np_array) -> vpMatrix {
     verify_array_shape_and_dims(np_array, 2, "ViSP Matrix");
     const std::vector<py::ssize_t> shape = np_array.request().shape;
-    return vpMatrix::view(static_cast<double *>(np_array.request().ptr), shape[0], shape[1]);
+    return vpMatrix::view(static_cast<double *>(np_array.request().ptr), static_cast<unsigned int>(shape[0]), static_cast<unsigned int>(shape[1]));
                                }), R"doc(
 Construct a 2D ViSP Matrix that is a **view** of a numpy array.
 When it is modified, the numpy array is also modified.
@@ -606,7 +606,7 @@ void bindings_vpColVector(py::class_<vpColVector, std::shared_ptr<vpColVector>, 
   pyColVector.def(py::init([](np_array_cf<double> np_array) {
     verify_array_shape_and_dims(np_array, 1, "ViSP column vector");
     const std::vector<py::ssize_t> shape = np_array.request().shape;
-    vpColVector result(shape[0]);
+    vpColVector result(static_cast<unsigned int>(shape[0]));
     copy_data_from_np(np_array, result.data);
     return result;
                            }), R"doc(
@@ -619,7 +619,7 @@ Construct a column vector by **copying** a 1D numpy array.
   pyColVector.def_static("view", ([](np_array_c<double> &np_array) -> vpColVector {
     verify_array_shape_and_dims(np_array, 1, "ViSP column vector");
     const std::vector<py::ssize_t> shape = np_array.request().shape;
-    return vpColVector::view(static_cast<double *>(np_array.request().ptr), shape[0]);
+    return vpColVector::view(static_cast<double *>(np_array.request().ptr), static_cast<unsigned int>(shape[0]));
                                   }), R"doc(
 Construct a column vector that is a **view** of a numpy array.
 When it is modified, the numpy array is also modified.
@@ -648,7 +648,7 @@ void bindings_vpRowVector(py::class_<vpRowVector, std::shared_ptr<vpRowVector>, 
   pyRowVector.def(py::init([](np_array_cf<double> np_array) {
     verify_array_shape_and_dims(np_array, 1, "ViSP row vector");
     const std::vector<py::ssize_t> shape = np_array.request().shape;
-    vpRowVector result(shape[0]);
+    vpRowVector result(static_cast<unsigned int>(shape[0]));
     copy_data_from_np(np_array, result.data);
     return result;
                            }), R"doc(
@@ -661,7 +661,7 @@ Construct a row vector by **copying** a 1D numpy array.
   pyRowVector.def_static("view", ([](np_array_c<double> &np_array) -> vpRowVector {
     verify_array_shape_and_dims(np_array, 1, "ViSP row vector");
     const std::vector<py::ssize_t> shape = np_array.request().shape;
-    return vpRowVector::view(static_cast<double *>(np_array.request().ptr), shape[0]);
+    return vpRowVector::view(static_cast<double *>(np_array.request().ptr), static_cast<unsigned int>(shape[0]));
                                   }), R"doc(
 Construct a row vector that is a **view** of a numpy array.
 When it is modified, the numpy array is also modified.
@@ -715,7 +715,7 @@ void bindings_vpRotationVector(py::class_<vpRotationVector, std::shared_ptr<vpRo
   pyRotationVector.def(py::init([](np_array_cf<double> np_array) {
     verify_array_shape_and_dims(np_array, 1, "ViSP rotation vector");
     const std::vector<py::ssize_t> shape = np_array.request().shape;
-    vpRotationVector result(shape[0]);
+    vpRotationVector result(static_cast<unsigned int>(shape[0]));
     copy_data_from_np(np_array, result.data);
     return result;
                                 }), R"doc(

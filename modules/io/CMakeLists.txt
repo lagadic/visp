@@ -102,7 +102,7 @@ if(USE_OPENCV)
     set(OpenCV_REQUIRED_LIB_COMPONENTS ${OpenCV_LIB_COMPONENTS})
     vp_list_filterout(OpenCV_REQUIRED_LIB_COMPONENTS "opencv_*")
     # We import only required OpenCV libraries
-    list(APPEND OpenCV_REQUIRED_LIB_COMPONENTS "opencv_videoio" "opencv_imgcodecs")
+    list(APPEND OpenCV_REQUIRED_LIB_COMPONENTS "opencv_videoio" "opencv_imgcodecs" "opencv_imgproc")
 
     foreach(component_ ${OpenCV_REQUIRED_LIB_COMPONENTS})
       string(TOUPPER "${component_}" component_UP)

@@ -109,6 +109,7 @@ public:
     m_X[index][1] = Y;
     m_X[index][2] = Z;
   }
+  void clear();
 
   void computeReprojectionErrorAndJacobian(const vpArray2D<int> &indices, const vpHomogeneousMatrix &cTw, const vpMatrix &observations, vpMatrix &J, vpColVector &e) const
   {

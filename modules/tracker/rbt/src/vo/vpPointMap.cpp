@@ -274,6 +274,11 @@ vpMatrix &oXs, std::vector<int> &validCandidateIndices)
   }
 }
 
+void vpPointMap::clear()
+{
+  m_X = vpMatrix();
+}
+
 void vpPointMap::updatePoints(const vpArray2D<int> &indicesToRemove, const vpMatrix &pointsToAdd,
                               std::vector<int> &removedIndices, unsigned int &numAddedPoints)
 {

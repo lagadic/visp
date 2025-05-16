@@ -3,7 +3,7 @@
 \page tutorial-franka-pbvs Tutorial: Eye-in-hand PBVS with Panda 7-dof robot from Franka Emika
 \tableofcontents
 
-\section franka_intro Introduction
+\section franka_intro 1. Introduction
 
 This tutorial explains how to implement eye-in-hand position-based visual servoing (PBVS) with Franka Emika's Panda
 7-dof robot equipped with an Intel Realsense camera mounted on its end-effector.
@@ -15,216 +15,182 @@ over an Apriltag target.
 <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/7A5cqUEKXHg" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe></p>
 \endhtmlonly
 
-\section franka_prereq Prerequisites
+\section franka_prereq 2. Prerequisites
 
-\subsection franka_prereq_hardware Hardware
+\subsection franka_prereq_hardware 2.1. Hardware
 
 We suppose here that you have:
-- a Panda robot in its research version from <a href="https://franka.de/">Franka Emika</a> that will be controlled throw vpRobotFranka class.
-- an Intel Realsense <a href="https://www.intelrealsense.com/depth-camera-d435/">D345</a> camera attached to the robot end-effector.
+- a Panda robot in its research version from <a href="https://franka.de/">Franka Emika</a> that will be controlled
+  throw vpRobotFranka class.
+- an Intel Realsense <a href="https://www.intelrealsense.com/depth-camera-d435/">D345</a> camera attached to the
+  robot end-effector.
 Note that this tutorial should also work with any other Intel Realsense camera.
 
-\subsection franka_prereq_rt_linux Setting up a real-time kernel
+\subsection franka_prereq_rt_linux 2.2. Setting up a real-time kernel
 
-In order to control your robot using `libfranka`, the controller program on the workstation PC must run with real-time priority under a `PREEMPT_RT` kernel.
-This [tutorial](https://frankaemika.github.io/docs/installation.html#setting-up-the-real-time-kernel) shows how to proceed to install a real-time kernel.
+In order to control your robot using `libfranka`, the controller program on the workstation PC must run with real-time
+priority under a `PREEMPT_RT` kernel.
 
-In our case, we are using Ubuntu 20.04.5 LTS with the real-time kernel version `5.15.70-rt50 x86_64`. The following instructions are to install `5.15.70-rt50`.
+1. Install real-time kernel<br>
+  This [tutorial](https://frankaemika.github.io/docs/installation_linux.html#setting-up-the-real-time-kernel)
+  shows how to proceed to install a real-time kernel from Ubuntu 1.04 to Ubuntu 22.04.
+  \note For Ubuntu 22.04, we recommend using the Ubuntu Pro real-time kernel.
 
-<b>Identify your kernel version</b>
-
-- From here we suppose that you were able to install Ubuntu 20/04/5 LTS amd64 that comes with `5.15.0` kernel:
-\verbatim
-$ uname -mrs
-Linux 5.15.0-48-generic x86_64
-\endverbatim
-
-<b>Choose and download a kernel version and the real-time patch</b>
-
-- You have to decide which kernel version to use. We recommend to choose a version as close as possible from the generic kernel
-corresponding to your Ubuntu version.
-At the time it was written, in https://mirrors.edge.kernel.org/pub/linux/kernel/projects/rt/5.15/ the last 5.15.x-rt kernel is
-in patch-5.15.70-rt50.patch.gz. If you choose a different version, simply substitute the numbers. Having decided on a version,
-use curl to download the source files:
-\verbatim
-$ mkdir $VISP_WS/3rdparty
-$ cd $VISP_WS/3rdparty
-$ mkdir rt-linux; cd rt-linux
-$ $ curl -SLO https://www.kernel.org/pub/linux/kernel/v5.x/linux-5.15.70.tar.gz
-$ curl -SLO https://www.kernel.org/pub/linux/kernel/projects/rt/5.15/patch-5.15.70-rt50.patch.gz
-\endverbatim
-- Decompress them with:
-\verbatim
-$ tar xvzf linux-5.15.70.tar.gz
-$ gunzip patch-5.15.70-rt50.patch.gz
-\endverbatim
-- Extract the source code and apply the patch:
-\verbatim
-$ cd linux-5.15.70
-$ patch -p1 < ../patch-5.15.70-rt50.patch
-\endverbatim
-
-<b>Configure and build the kernel</b>
-
-- First, install the necessary dependencies:
-\verbatim
-$ sudo apt-get install build-essential bc curl ca-certificates fakeroot gnupg2 libssl-dev lsb-release libelf-dev bison flex
-\endverbatim
-
-- The next step is to configure your kernel:
-\verbatim
-$ make oldconfig
-\endverbatim
-- This opens a text-based configuration menu. When asked for the Preemption Model, choose the Fully Preemptible Kernel:
-\verbatim
-Preemption Model
-  1. No Forced Preemption (Server) (PREEMPT_NONE)
-  2. Voluntary Kernel Preemption (Desktop) (PREEMPT_VOLUNTARY)
-  3. Preemptible Kernel (Low-Latency Desktop) (PREEMPT)
-> 4. Fully Preemptible Kernel (Real-Time) (PREEMPT_RT) (NEW)
-\endverbatim
-We recommend keeping all options at their default values.
-
-- Afterwards, you are ready to compile the kernel. As this is a lengthy process,
-set the multi threading option -j to the number of your CPU cores:
-\verbatim
-$ fakeroot make -j4 deb-pkg
-\endverbatim
-\note If you get the following error:
-\verbatim
-make[4]: *** No rule to make target 'debian/canonical-certs.pem', needed by 'certs/x509_certificate_list'.  Stop.
-\endverbatim
-The solution is to modify `.config` replacing the line
-\verbatim
-CONFIG_SYSTEM_TRUSTED_KEYS="debian/canonical-certs.pem"
-CONFIG_SYSTEM_REVOCATION_KEYS="debian/canonical-revoked-certs.pem"
-CONFIG_DEBUG_INFO_BTF=y
-\endverbatim
-with
-\verbatim
-CONFIG_SYSTEM_TRUSTED_KEYS=""
-CONFIG_SYSTEM_REVOCATION_KEYS=""
-CONFIG_DEBUG_INFO_BTF=n
-\endverbatim
-and then try a new build
-\verbatim
-$ fakeroot make -j4 deb-pkg
-\endverbatim
-
-- Finally, you are ready to install the newly created package. The exact names depend on your environment, but you are looking for `headers` and `images` packages without the `dbg` suffix. To install:
-\verbatim
-$ sudo dpkg -i ../linux-headers-5.15.70-rt50*.deb ../linux-image-5.15.70-rt50*.deb
-\endverbatim
-
-- Reboot the computer
-\verbatim
-$ sudo reboot
-\endverbatim
-
-- The version of the kernel is now `5.15.70-rt50`
-\verbatim
-$ uname -msr
-Linux 5.15.70-rt50 x86_64
-\endverbatim
-
-<b>Allow a user to set real-time permissions for its processes</b>
-
-- After the `PREEMPT_RT` kernel is installed and running, add a group named `realtime` and add the user controlling your robot to this group:
-\verbatim
+2. Allow a user to set real-time permissions for its processes
+  - After the `PREEMPT_RT` kernel is installed and running, add a group named `realtime` and add the user controlling
+    your robot to this group:
+\code{.sh}
 $ sudo addgroup realtime
 $ sudo usermod -a -G realtime $(whoami)
-\endverbatim
-
-- Afterwards, add the following limits to the realtime group in `/etc/security/limits.conf`:
-\verbatim
+\endcode
+  - Afterwards, add the following limits to the realtime group in `/etc/security/limits.conf`:
+\code{.sh}
 @realtime soft rtprio 99
 @realtime soft priority 99
 @realtime soft memlock 102400
 @realtime hard rtprio 99
 @realtime hard priority 99
 @realtime hard memlock 102400
-\endverbatim
-The limits will be applied after you log out and in again.
+\endcode
+  The limits will be applied after you log out and in again.
 
-\subsection franka_prereq_libfranka Install Franka library
+\subsection franka_prereq_libfranka 2.3. Install Franka library
 
-As described <a href="https://frankaemika.github.io/docs/installation_linux.html#building-from-source">here</a>,
-to install the Franka library, follow the steps:
+Our robot is a Franka Research (FR1 or Panda) robot with a system firmware 4.2.2 version. This firmware supports
+libfranka 0.9.2. Note that ViSP is known to be compatible with Franka Research 3 (FR3) robot. In that case, you may
+install `libfranka` latest release.
 
-\verbatim
-$ sudo apt install build-essential cmake git libpoco-dev libeigen3-dev
+\subsubsection franka_prereq_libfranka_0_9_2 2.3.1. libfranka 0.9.2
+
+To install `libfranka 0.9.2` compatible with Franka Research (FR1 or Panda) robot, proceed with:
+
+1. Install dependencies
+\code{.sh}
+$ sudo apt-get update
+$ sudo apt install -y build-essential cmake git libpoco-dev libeigen3-dev
+\endcode
+
+2. Clone and build the repository
+\code{.sh}
+$ cd $VISP_WS/3rdparty
+$ git clone --branch 0.9.2 --recursive https://github.com/frankaemika/libfranka libfranka-0.9.2
+$ cd libfranka-0.9.2
+$ mkdir build
+$ cd build
+$ cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=OFF
+$ make -j$(nproc)
+$ sudo make install
+\endcode
+
+\subsubsection franka_prereq_libfranka_latest 2.3.2. libfranka latest
+
+As described [here](https://github.com/frankaemika/libfranka/blob/main/README.md),
+to install the latest libfranka version, compatible with Franka Research 3 (FR3) robot follow the steps:
+
+1. Install dependencies
+\code{.sh}
+$ sudo apt-get update
+$ sudo apt-get install -y build-essential cmake git libpoco-dev libeigen3-dev libfmt-dev
+\endcode
+  To use libfranka version 0.14.0 or later, you will need to install `pinocchio` and some more dependencies:
+\code{.sh}
+$ sudo apt-get install -y lsb-release curl
+$ sudo mkdir -p /etc/apt/keyrings
+$ curl -fsSL http://robotpkg.openrobots.org/packages/debian/robotpkg.asc | sudo tee /etc/apt/keyrings/robotpkg.asc
+
+$ echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/robotpkg.asc] http://robotpkg.openrobots.org/packages/debian/pub $(lsb_release -cs) robotpkg" | sudo tee /etc/apt/sources.list.d/robotpkg.list
+
+$ sudo apt-get update
+$ sudo apt-get install -y robotpkg-pinocchio
+\endcode
+
+2. Clone and build the repository
+\code{.sh}
 $ cd $VISP_WS/3rdparty
 $ git clone --recursive https://github.com/frankaemika/libfranka
 $ cd libfranka
 $ mkdir build
 $ cd build
-$ cmake .. -DCMAKE_BUILD_TYPE=Release
-$ make -j4
+$ cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/opt/openrobots/lib/cmake -DBUILD_TESTS=OFF
+$ make -j$(nproc)
 $ sudo make install
-\endverbatim
+\endcode
 
-\subsection franka_prereq_librealsense Install Realsense library
+3. Help finding libpinocchio<br>
+  To help finding Pinocchio libraries, you may update `LD_LIBRARY_PATH` env var. The following line could also be added
+in `${HOME}/.bashrc` file.
+\code{.sh}
+$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/openrobots/lib
+\endcode
+
+\subsection franka_prereq_librealsense 2.4. Install Realsense library
 
 Following the <a href="https://github.com/IntelRealSense/librealsense/blob/master/doc/installation.md">tutorial</a>,
 we recall the main steps here:
 
-\note Since our kernel is 4.12+ streaming Depth/IR/Color is supported and is provided out of the box. This means that the patches are not needed.
+\note Since our kernel is 4.12+ streaming Depth/IR/Color is supported and is provided out of the box. This means that
+the patches are not needed.
 
 1. Unplug any connected Intel RealSense camera.
 
 2. Install the packages required for `librealsense` build:
-\verbatim
+\code{.sh}
 $ sudo apt-get install git libssl-dev libusb-1.0-0-dev pkg-config libgtk-3-dev cmake-curses-gui
 $ sudo apt-get install libglfw3-dev libgl1-mesa-dev libglu1-mesa-dev
-\endverbatim
+\endcode
 
 3. Get `librealsense` from github:
-\verbatim
+\code{.sh}
 $ cd $VISP_WS/3rdparty
 $ git clone https://github.com/IntelRealSense/librealsense.git
 $ cd librealsense
-\endverbatim
+\endcode
 
 4. Run Intel Realsense permissions script located in `librealsense` root directory:
-\verbatim
+\code{.sh}
 $ sudo ./scripts/setup_udev_rules.sh
-\endverbatim
+\endcode
 
 5. Build and install librealsense
-\verbatim
+\code{.sh}
 $ mkdir build
 $ cd build
 $ cmake .. -DBUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=Release
 $ make -j4
 $ sudo make install
-\endverbatim
+\endcode
 
 6. Connect your Realsense camera (we are using a D435) and check if you are able to acquire images running:
-\verbatim
+\code{.sh}
 $ ./examples/capture/rs-capture
-\endverbatim
+\endcode
 
 If you are able to visualize the images, it means that you succeed in `librealsense` installation.
 
-\subsection franka_prereq_target Print an Apriltag target
+\subsection franka_prereq_target 2.5. Print an Apriltag target
 
-We provide a ready to print `36h11` tag that is 12 by 12 cm square <a href="http://visp-doc.inria.fr/download/apriltag/tag36_11_00000-120x120.pdf">[download]</a> that you may print.
+We provide a ready to print `36h11` tag that is 12 by 12 cm square
+<a href="http://visp-doc.inria.fr/download/apriltag/tag36_11_00000-120x120.pdf">[download]</a> that you may print.
 
 If you are interested to get other tags, follow the steps described in \ref apriltag_detection_print.
 
-\subsection franka_prereq_calib_extrinsic Calibrate extrinsic camera parameters
+\subsection franka_prereq_calib_extrinsic 2.6. Calibrate extrinsic camera parameters
 
-Follow the steps described in \ref tutorial-calibration-extrinsic-eye-in-hand in order to estimate the end-effector to camera transformation. This step is mandatory to control the robot in cartesian in the camera frame.
+Follow the steps described in \ref tutorial-calibration-extrinsic-eye-in-hand in order to estimate the end-effector to
+camera transformation. This step is mandatory to control the robot in cartesian in the camera frame.
 
-\subsection franka_prereq_visp_build Configure and build ViSP
+\subsection franka_prereq_visp_build 2.7. Configure and build ViSP
 
-Since you installed new `libfranka` and `librealsense` 3rd parties, you need to configure again ViSP with cmake in order that ViSP is able to use these libraries. To this end follow \ref install_ubuntu_visp_config. At this step you should see new `USE_FRANKA` and `USE_LIBREALSENSE2` cmake vars appearing in the CMake GUI.
+Since you installed new `libfranka` and `librealsense` 3rd parties, you need to configure again ViSP with cmake in
+order that ViSP is able to use these libraries. To this end follow \ref install_ubuntu_visp_config. At this step you
+should see new `USE_FRANKA` and `USE_LIBREALSENSE2` cmake vars appearing in the CMake GUI.
 
 Now follow the instructions for \ref install_ubuntu_visp_build.
 
-\subsection franka_configure_ethernet Configure Ethernet
+\subsection franka_configure_ethernet 2.8. Configure Ethernet
 
-Our robot controller has by default IP `192.168.1.1`. Here we show how to configure a laptop that is connected with an Ethernet cable to the robot controller.
+Our robot controller has by default IP `192.168.1.1`. Here we show how to configure a laptop that is connected with an
+Ethernet cable to the robot controller.
 
 Edit Ethernet connections:
 
@@ -234,15 +200,18 @@ Add a new connexion using "Add" button. Choose the default Ethernet connection t
 
 \image html img-ethernet-connexion-add.png
 
-Click "Create" button in order to create a new Franka controller connection that has a static IPv4 like `192.168.1.10` and netmask `255.255.255.0`:
+Click "Create" button in order to create a new Franka controller connection that has a static IPv4 like `192.168.1.10`
+and netmask `255.255.255.0`:
 
 \image html img-franka-ethernet-edit-connection.png
 
 Click "Save" button.
 
-\subsection franka_connect_desk Connect to Franka desk
+\subsection franka_connect_desk 2.9. Connect to Franka desk
 
-Select the new Ethernet Networks connection named "Franka controller". When the connection is established open a web browser like Firefox or Chromium and enter the address `https://192.168.1.1/desk`. The first time you will be warned that the connection is not secure. Click "Advanced" and "Add Exception":
+Select the new Ethernet Networks connection named "Franka controller". When the connection is established open a web
+browser like Firefox or Chromium and enter the address `https://192.168.1.1/desk`. The first time you will be warned
+that the connection is not secure. Click "Advanced" and "Add Exception":
 
 \image html img-franka-firefox-exception.png
 
@@ -254,15 +223,19 @@ When connected, you may release the user-stop button and open brakes:
 
 \image html img-franka-firefox-open-brakes.png
 
-\section franka_pbvs Position-based visual servoing
+\section franka_pbvs 3. Position-based visual servoing
 
-An example of position-based visual servoing using Panda robot equipped with a Realsense camera is available in servoFrankaPBVS.cpp.
+An example of position-based visual servoing using Panda robot equipped with a Realsense camera is available in
+servoFrankaPBVS.cpp.
 
 - Attach your Realsense camera to the robot end-effector
 - Put an Apriltag in the camera field of view
-- If not already done, follow \ref tutorial-calibration-extrinsic-eye-in-hand to estimate \f$^e{\bf M}_c\f$ the homogeneous transformation between robot end-effector and camera frame. We suppose here that the file is located in `apps/calibration/intrinsic/eMc.yaml`.
+- If not already done, follow \ref tutorial-calibration-extrinsic-eye-in-hand to estimate \f$^e{\bf M}_c\f$ the
+  homogeneous transformation between robot end-effector and camera frame. We suppose here that the file is located
+  in `apps/calibration/intrinsic/eMc.yaml`.
 
-Now enter in `example/servo-franka folder` and run `servoFrankaPBVS` binary using `--eMc` to locate the file containing the \f$^e{\bf M}_c\f$ transformation. Other options are available. Using `--help` show them:
+Now enter in `example/servo-franka folder` and run `servoFrankaPBVS` binary using `--eMc` to locate the file containing
+the \f$^e{\bf M}_c\f$ transformation. Other options are available. Using `--help` show them:
 
 \code{.sh}
 $ cd example/servo-franka
@@ -306,19 +279,21 @@ $ ./servoFrankaPBVS --eMc ../../apps/calibration/intrinsic/eMc.yaml --plot --adp
 \endcode
 To learn more about adaptive gain and task sequencing see \ref tutorial-boost-vs.
 
-\section franka_pbvs_known_issue Known issues
-\subsection franka_pbvs_known_issue_activate_FCI libfranka: Connection to FCI refused
+\section franka_pbvs_known_issue 4. Known issues
+\subsection franka_pbvs_known_issue_activate_FCI 4.1. libfranka: Connection to FCI refused
 
 When executing one of the binaries that use `libfranka` you may encounter the following error like:
 \code{.sh}
 $ ./servoFrankaIBVS --ip 192.168.100.2
 Franka network exception: libfranka: Connection to FCI refused. Please install FCI feature or enable FCI mode in Desk.
-Check if you are connected to the Franka robot or if you specified the right IP using --ip command line option set by default to 192.168.1.1.
+Check if you are connected to the Franka robot or if you specified the right IP using --ip command line option set by
+default to 192.168.1.1.
 \endcode
 
 This error occurred with our robot after upgrading the Franka system from 4.0.2 to 4.2.2 version.
 
-\image html img-franka-system-version.jpg The Dashboard shows that after a synchonization using Franka World, our System version is 4.2.2.
+\image html img-franka-system-version.jpg The Dashboard shows that after a synchonization using Franka World, our
+System version is 4.2.2.
 
 To overcome this error, you need:
 
@@ -330,7 +305,7 @@ To overcome this error, you need:
   communicate with the robot using `libfranka`.
 \image html img-franka-fci-active.jpg Behavior when FCI (Franka Controller Interface) is activated.
 
-\section franka_pbvs_next Next tutorial
+\section franka_pbvs_next 5. Next tutorial
 
 You can continue with the \ref tutorial-franka-ibvs that shows how to implement an image-based visual servoing scheme
 with the Franka robot or follow \ref tutorial-ibvs that will give some hints on image-based visual servoing in

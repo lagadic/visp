@@ -129,7 +129,7 @@ void vpRBVisualOdometryUtils::levenbergMarquardtKeypoints2D(const vpMatrix &poin
 #pragma omp parallel for
 #endif
     for (unsigned int i = 0; i < points3d.getRows(); ++i) {
-      const double X = cXt[0][i] + t[0], Y = cXt[1][i] + t[1], Z = cXt[2][i] + t[2];;
+      const double X = cXt[0][i] + t[0], Y = cXt[1][i] + t[1], Z = cXt[2][i] + t[2];
       const double x = X / Z, y = Y / Z;
       e[i * 2] = x - observations[i][0];
       e[i * 2 + 1] = y - observations[i][1];
@@ -139,6 +139,87 @@ void vpRBVisualOdometryUtils::levenbergMarquardtKeypoints2D(const vpMatrix &poin
 
       L[i * 2 + 1][0] = 0.0; L[i * 2 + 1][1] = -1.0 / Z; L[i * 2 + 1][2] = y / Z;
       L[i * 2 + 1][3] = 1.0 + y * y; L[i * 2 + 1][4] = -(x * y); L[i * 2 + 1][5] = -x;
+    }
+
+    robust.MEstimator(vpRobust::TUKEY, e, weights);
+    for (unsigned int i = 0; i < e.getRows(); ++i) {
+      weighted_error[i] = e[i] * weights[i];
+      for (unsigned int j = 0; j < 6; ++j) {
+        L[i][j] *= weights[i];
+      }
+    }
+
+    L.transpose(Lt);
+    L.AtA(H);
+    vpColVector Lte = Lt * weighted_error;
+    vpColVector v = -parameters.gain * ((H + Id * mu).pseudoInverse() * Lte);
+    cTw = vpExponentialMap::direct(v).inverse() * cTw;
+    double errorNormCurr = weighted_error.frobeniusNorm();
+    double improvementFactor = errorNormCurr / errorNormPrev;
+    if (iter > 0) {
+      if (improvementFactor < 1.0 && improvementFactor >(1.0 - parameters.minImprovementFactor)) {
+        break;
+      }
+    }
+    // if (improvementFactor < 1.0) {
+    mu *= parameters.muIterFactor;
+  // }
+  // else {
+  //   mu /= parameters.muIterFactor;
+  // }
+    errorNormPrev = errorNormCurr;
+  }
+}
+
+
+void vpRBVisualOdometryUtils::levenbergMarquardtKeypoints3D(const vpMatrix &points3d, const vpMatrix &observations,
+                                                            const vpLevenbergMarquardtParameters &parameters,
+                                                            vpHomogeneousMatrix &cTw)
+{
+  vpMatrix L(points3d.getRows() * 3, 6, 0.0);
+  vpMatrix Lt(6, points3d.getRows());
+  vpColVector e(points3d.getRows() * 3);
+  vpColVector weights(points3d.getRows() * 3);
+  vpColVector weighted_error(points3d.getRows() * 3);
+
+  if (points3d.getRows() != observations.getRows()) {
+    throw vpException(vpException::dimensionError, "Expected number of 3D points and 2D observations to be the same");
+  }
+  vpMatrix points3dTranspose = points3d.t();
+  vpMatrix cXt(points3d.getRows(), points3d.getCols());
+  vpMatrix Id(6, 6);
+  Id.eye();
+  vpRobust robust;
+  vpMatrix H(6, 6);
+  double mu = parameters.muInit;
+  double errorNormPrev = std::numeric_limits<double>::max();
+  for (unsigned int iter = 0; iter < parameters.maxNumIters; ++iter) {
+    const vpTranslationVector t = cTw.getTranslationVector();
+    const vpRotationMatrix cRw = cTw.getRotationMatrix();
+    vpMatrix::mult2Matrices(cRw, points3dTranspose, cXt);
+    // Project 3D points and compute interaction matrix
+#ifdef VISP_HAVE_OPENMP
+#pragma omp parallel for
+#endif
+    for (unsigned int i = 0; i < points3d.getRows(); ++i) {
+      const double X = cXt[0][i] + t[0], Y = cXt[1][i] + t[1], Z = cXt[2][i] + t[2];
+
+      e[i * 3] = X - observations[i][0];
+      e[i * 3 + 1] = Y - observations[i][1];
+      e[i * 3 + 2] = Z - observations[i][2];
+
+      L[i * 3][0] = -1;
+      L[i * 3 + 1][1] = -1;
+      L[i * 3 + 2][2] = -1;
+
+      L[i * 3][4] = -Z;
+      L[i * 3][5] = Y;
+
+      L[i * 3 + 1][3] = Z;
+      L[i * 3 + 1][5] = -X;
+
+      L[i * 3 + 2][3] = -Y;
+      L[i * 3 + 2][4] = X;
     }
 
     robust.MEstimator(vpRobust::TUKEY, e, weights);

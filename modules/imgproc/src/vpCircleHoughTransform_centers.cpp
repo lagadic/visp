@@ -38,192 +38,13 @@ BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace
 {
-  /**
- * \brief Data required to update the center candidates accumulator along the
- * gradient direction.
- */
-typedef struct vpDataForAccumLoop
-{
-  unsigned int r; /*!< The row of the edge-point of interest.*/
-  unsigned int c; /*!< The column of the edge-point of interest.*/
-  float minRadius; /*!< The minimum radius of the searched circle.s.*/
-  float maxRadius; /*!< The maximum radius of the searched circle.s.*/
-  float minimumXpositionFloat; /*!< The minimum x-axis position of the center in the image.*/
-  float minimumYpositionFloat; /*!< The minimum y-axis position of the center in the image.*/
-  float maximumXpositionFloat; /*!< The maximum x-axis position of the center in the image.*/
-  float maximumYpositionFloat; /*!< The maximum y-axis position of the center in the image.*/
-  int offsetX; /*!< The offset to map the accumulator indices with the minimum x-axis value.*/
-  int offsetY; /*!< The offset to map the accumulator indices with the minimum y-axis value.*/
-  int accumulatorWidth; /*!< The width of the accumulator.*/
-  int accumulatorHeight; /*!< The height of the accumulator.*/
-}vpDataForAccumLoop;
-
-/**
- * \brief Store the coordinates for single step of update of the center candidates accumulator.
- */
-typedef struct vpCoordinatesForAccumStep
-{
-  float x_orig;
-  float y_orig;
-  int x;
-  int y;
-}vpCoordinatesForAccumStep;
-
 #if (VISP_CXX_STANDARD == VISP_CXX_STANDARD_98)
-void updateAccumulator(const vpCoordinatesForAccumStep &coord,
-                       const vpDataForAccumLoop &data,
-                       vpImage<float> &accum, bool &hasToStop)
-{
-  if (((coord.x - data.offsetX) < 0) ||
-      ((coord.x - data.offsetX) >= data.accumulatorWidth) ||
-      ((coord.y - data.offsetY) < 0) ||
-      ((coord.y - data.offsetY) >= data.accumulatorHeight)
-      ) {
-    hasToStop = true;
-  }
-  else {
-    float dx = (coord.x_orig - static_cast<float>(coord.x));
-    float dy = (coord.y_orig - static_cast<float>(coord.y));
-    accum[coord.y - data.offsetY][coord.x - data.offsetX] += std::abs(dx) + std::abs(dy);
-  }
-}
-
 bool sortingCenters(const vpCircleHoughTransform::vpCenterVotes &position_vote_a,
                     const vpCircleHoughTransform::vpCenterVotes &position_vote_b)
 {
   return position_vote_a.m_votes > position_vote_b.m_votes;
 }
 #endif
-
-/**
- * \brief Update the center accumulator along the positive and negative gradient direction
- * starting from an edge-point of interest.
- *
- * \param[in] data The data required for the algorithm.
- * \param[out] sx The gradient along x.
- * \param[out] sy The gradient along y.
- * \param[out] centersAccum The center candidates accumulator.
- */
-void
-updateAccumAlongGradientDir(const vpDataForAccumLoop &data, float &sx, float &sy, vpImage<float> &centersAccum)
-{
-  static const int nbDirections = 2;
-  for (int k1 = 0; k1 < nbDirections; ++k1) {
-    bool hasToStopLoop = false;
-    int x_low_prev = std::numeric_limits<int>::max(), y_low_prev, y_high_prev;
-    int x_high_prev = (y_low_prev = (y_high_prev = x_low_prev));
-
-    float rstart = data.minRadius, rstop = data.maxRadius;
-    float min_minus_c = data.minimumXpositionFloat - static_cast<float>(data.c);
-    float min_minus_r = data.minimumYpositionFloat - static_cast<float>(data.r);
-    float max_minus_c = data.maximumXpositionFloat - static_cast<float>(data.c);
-    float max_minus_r = data.maximumYpositionFloat - static_cast<float>(data.r);
-    if (sx > 0) {
-      float rmin = min_minus_c / sx;
-      rstart = std::max<float>(rmin, data.minRadius);
-      float rmax = max_minus_c / sx;
-      rstop = std::min<float>(rmax, data.maxRadius);
-    }
-    else if (sx < 0) {
-      float rmin = max_minus_c / sx;
-      rstart = std::max<float>(rmin, data.minRadius);
-      float rmax = min_minus_c / sx;
-      rstop = std::min<float>(rmax, data.maxRadius);
-    }
-
-    if (sy > 0) {
-      float rmin = min_minus_r / sy;
-      rstart = std::max<float>(rmin, rstart);
-      float rmax = max_minus_r / sy;
-      rstop = std::min<float>(rmax, rstop);
-    }
-    else if (sy < 0) {
-      float rmin = max_minus_r / sy;
-      rstart = std::max<float>(rmin, rstart);
-      float rmax = min_minus_r / sy;
-      rstop = std::min<float>(rmax, rstop);
-    }
-
-    float deltar_x = 1.f / std::abs(sx), deltar_y = 1.f / std::abs(sy);
-    float deltar = std::min<float>(deltar_x, deltar_y);
-
-    float rad = rstart;
-    while ((rad <= rstop) && (!hasToStopLoop)) {
-      float x1 = static_cast<float>(data.c) + (rad * sx);
-      float y1 = static_cast<float>(data.r) + (rad * sy);
-      rad += deltar; // Update rad that is not used below not to forget it
-
-      bool xOutsideRoI = (x1 < data.minimumXpositionFloat) || (x1 > data.maximumXpositionFloat);
-      bool yOutsideRoI = (y1 < data.minimumYpositionFloat) || (y1 > data.maximumYpositionFloat);
-      // Continue only if the center is inside the search region.
-      if (!(xOutsideRoI || yOutsideRoI)) {
-        int x_low, x_high, y_low, y_high;
-
-        if (x1 > 0.) {
-          x_low = static_cast<int>(std::floor(x1));
-          x_high = static_cast<int>(std::ceil(x1));
-        }
-        else {
-          x_low = -(static_cast<int>(std::ceil(-x1)));
-          x_high = -(static_cast<int>(std::floor(-x1)));
-        }
-
-        if (y1 > 0.) {
-          y_low = static_cast<int>(std::floor(y1));
-          y_high = static_cast<int>(std::ceil(y1));
-        }
-        else {
-          y_low = -(static_cast<int>(std::ceil(-1. * y1)));
-          y_high = -(static_cast<int>(std::floor(-1. * y1)));
-        }
-
-        bool xHasNotChanged = (x_low_prev == x_low) && (x_high_prev == x_high);
-        bool yHasNotChanged = (y_low_prev == y_low) && (y_high_prev == y_high);
-
-        // Avoid duplicated votes to the same center candidate
-        if (!(xHasNotChanged && yHasNotChanged)) {
-          x_low_prev = x_low;
-          x_high_prev = x_high;
-          y_low_prev = y_low;
-          y_high_prev = y_high;
-
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-          auto updateAccumulator =
-            [](const vpCoordinatesForAccumStep &coord,
-                       const vpDataForAccumLoop &data,
-                       vpImage<float> &accum, bool &hasToStop)
-            {
-              if (((coord.x - data.offsetX) < 0) ||
-                  ((coord.x - data.offsetX) >= data.accumulatorWidth) ||
-                  ((coord.y - data.offsetY) < 0) ||
-                  ((coord.y - data.offsetY) >= data.accumulatorHeight)
-                  ) {
-                hasToStop = true;
-              }
-              else {
-                float dx = (coord.x_orig - static_cast<float>(coord.x));
-                float dy = (coord.y_orig - static_cast<float>(coord.y));
-                accum[coord.y - data.offsetY][coord.x - data.offsetX] += std::abs(dx) + std::abs(dy);
-              }
-            };
-#endif
-          vpCoordinatesForAccumStep coords;
-          coords.x_orig = x1;
-          coords.y_orig = y1;
-          coords.x = x_low;
-          coords.y = y_low;
-          updateAccumulator(coords, data, centersAccum, hasToStopLoop);
-
-          coords.x = x_high;
-          coords.y = y_high;
-          updateAccumulator(coords, data, centersAccum, hasToStopLoop);
-        }
-      }
-    }
-    sx = -sx;
-    sy = -sy;
-  }
-}
 }
 #endif
 
@@ -265,6 +86,7 @@ vpCircleHoughTransform::edgeDetection(const vpImage<unsigned char> &I)
     m_cannyVisp.setCannyThresholdsRatio(m_algoParams.m_lowerCannyThreshRatio, m_algoParams.m_upperCannyThreshRatio);
     m_cannyVisp.setGradients(m_dIx, m_dIy);
     m_cannyVisp.setMask(mp_mask);
+    m_cannyVisp.setStoreEdgePoints(true);
     m_edgeMap = m_cannyVisp.detect(I);
   }
   else {
@@ -379,36 +201,35 @@ vpCircleHoughTransform::computeCenterCandidates()
   }
 
   vpImage<float> centersAccum(accumulatorHeight, accumulatorWidth + 1, 0.); /*!< Votes for the center candidates.*/
+  vpDataForAccumLoop data;
+  data.accumulatorHeight = accumulatorHeight;
+  data.accumulatorWidth = accumulatorWidth;
+  data.maximumXpositionFloat = maximumXpositionFloat;
+  data.maximumYpositionFloat = maximumYpositionFloat;
+  data.maxRadius = m_algoParams.m_maxRadius;
+  data.minimumXpositionFloat = minimumXpositionFloat;
+  data.minimumYpositionFloat = minimumYpositionFloat;
+  data.minRadius = m_algoParams.m_minRadius;
+  data.offsetX = offsetX;
+  data.offsetY = offsetY;
 
-  for (unsigned int r = 0; r < nbRows; ++r) {
-    for (unsigned int c = 0; c < nbCols; ++c) {
-      if (m_edgeMap[r][c] == vpCircleHoughTransform::edgeMapOn) {
-        // Voting for points in both direction of the gradient
-        // Step from min_radius to max_radius in both directions of the gradient
-        float mag = std::sqrt((m_dIx[r][c] * m_dIx[r][c]) + (m_dIy[r][c] * m_dIy[r][c]));
-
-        float sx = 0.f, sy = 0.f;
-        if (std::abs(mag) >= std::numeric_limits<float>::epsilon()) {
-          sx = m_dIx[r][c] / mag;
-          sy = m_dIy[r][c] / mag;
-
-                  // Saving the edge point for further use
-          m_edgePointsList.push_back(std::pair<unsigned int, unsigned int>(r, c));
-
-          vpDataForAccumLoop data;
-          data.accumulatorHeight = accumulatorHeight;
-          data.accumulatorWidth = accumulatorWidth;
+  if (m_algoParams.m_cannyBackendType == vpImageFilter::CANNY_VISP_BACKEND) {
+    const std::vector<vpImagePoint> &edgePoints = m_cannyVisp.getEdgePointsList();
+    size_t nbEdgePoints = edgePoints.size();
+    m_edgePointsList.reserve(nbEdgePoints);
+    for (size_t i = 0; i < nbEdgePoints; ++i) {
+      data.r = edgePoints[i].get_i();
+      data.c = edgePoints[i].get_j();
+      workOnAccumulator(data, centersAccum);
+    }
+  }
+  else {
+    for (unsigned int r = 0; r < nbRows; ++r) {
+      for (unsigned int c = 0; c < nbCols; ++c) {
+        if (m_edgeMap[r][c] == vpCircleHoughTransform::edgeMapOn) {
           data.c = c;
-          data.maximumXpositionFloat = maximumXpositionFloat;
-          data.maximumYpositionFloat = maximumYpositionFloat;
-          data.maxRadius = m_algoParams.m_maxRadius;
-          data.minimumXpositionFloat = minimumXpositionFloat;
-          data.minimumYpositionFloat = minimumYpositionFloat;
-          data.minRadius = m_algoParams.m_minRadius;
-          data.offsetX = offsetX;
-          data.offsetY = offsetY;
           data.r = r;
-          updateAccumAlongGradientDir(data, sx, sy, centersAccum);
+          workOnAccumulator(data, centersAccum);
         }
       }
     }
@@ -478,6 +299,143 @@ vpCircleHoughTransform::computeCenterCandidates()
   filterCenterCandidates(peak_positions_votes);
 }
 
+void vpCircleHoughTransform::updateAccumulator(const vpCoordinatesForAccumStep &coord,
+  const vpCircleHoughTransform::vpDataForAccumLoop &data,
+  vpImage<float> &accum, bool &hasToStop)
+{
+  if (((coord.x - data.offsetX) < 0) ||
+  ((coord.x - data.offsetX) >= data.accumulatorWidth) ||
+  ((coord.y - data.offsetY) < 0) ||
+  ((coord.y - data.offsetY) >= data.accumulatorHeight)
+  ) {
+    hasToStop = true;
+  }
+  else {
+    float dx = (coord.x_orig - static_cast<float>(coord.x));
+    float dy = (coord.y_orig - static_cast<float>(coord.y));
+    accum[coord.y - data.offsetY][coord.x - data.offsetX] += std::abs(dx) + std::abs(dy);
+  }
+}
+
+void
+vpCircleHoughTransform::updateAccumAlongGradientDir(const vpCircleHoughTransform::vpDataForAccumLoop &data, float &sx, float &sy, vpImage<float> &centersAccum)
+{
+  static const int nbDirections = 2;
+  for (int k1 = 0; k1 < nbDirections; ++k1) {
+    bool hasToStopLoop = false;
+    int x_low_prev = std::numeric_limits<int>::max(), y_low_prev, y_high_prev;
+    int x_high_prev = (y_low_prev = (y_high_prev = x_low_prev));
+
+    float rstart = data.minRadius, rstop = data.maxRadius;
+    float min_minus_c = data.minimumXpositionFloat - static_cast<float>(data.c);
+    float min_minus_r = data.minimumYpositionFloat - static_cast<float>(data.r);
+    float max_minus_c = data.maximumXpositionFloat - static_cast<float>(data.c);
+    float max_minus_r = data.maximumYpositionFloat - static_cast<float>(data.r);
+    if (sx > 0) {
+      float rmin = min_minus_c / sx;
+      rstart = std::max<float>(rmin, data.minRadius);
+      float rmax = max_minus_c / sx;
+      rstop = std::min<float>(rmax, data.maxRadius);
+    }
+    else if (sx < 0) {
+      float rmin = max_minus_c / sx;
+      rstart = std::max<float>(rmin, data.minRadius);
+      float rmax = min_minus_c / sx;
+      rstop = std::min<float>(rmax, data.maxRadius);
+    }
+
+    if (sy > 0) {
+      float rmin = min_minus_r / sy;
+      rstart = std::max<float>(rmin, rstart);
+      float rmax = max_minus_r / sy;
+      rstop = std::min<float>(rmax, rstop);
+    }
+    else if (sy < 0) {
+      float rmin = max_minus_r / sy;
+      rstart = std::max<float>(rmin, rstart);
+      float rmax = min_minus_r / sy;
+      rstop = std::min<float>(rmax, rstop);
+    }
+
+    float deltar_x = 1.f / std::abs(sx), deltar_y = 1.f / std::abs(sy);
+    float deltar = std::min<float>(deltar_x, deltar_y);
+
+    float rad = rstart;
+    while ((rad <= rstop) && (!hasToStopLoop)) {
+      float x1 = static_cast<float>(data.c) + (rad * sx);
+      float y1 = static_cast<float>(data.r) + (rad * sy);
+      rad += deltar; // Update rad that is not used below not to forget it
+
+      bool xOutsideRoI = (x1 < data.minimumXpositionFloat) || (x1 > data.maximumXpositionFloat);
+      bool yOutsideRoI = (y1 < data.minimumYpositionFloat) || (y1 > data.maximumYpositionFloat);
+      // Continue only if the center is inside the search region.
+      if (!(xOutsideRoI || yOutsideRoI)) {
+        int x_low, x_high, y_low, y_high;
+
+        if (x1 > 0.) {
+          x_low = static_cast<int>(std::floor(x1));
+          x_high = static_cast<int>(std::ceil(x1));
+        }
+        else {
+          x_low = -(static_cast<int>(std::ceil(-x1)));
+          x_high = -(static_cast<int>(std::floor(-x1)));
+        }
+
+        if (y1 > 0.) {
+          y_low = static_cast<int>(std::floor(y1));
+          y_high = static_cast<int>(std::ceil(y1));
+        }
+        else {
+          y_low = -(static_cast<int>(std::ceil(-1. * y1)));
+          y_high = -(static_cast<int>(std::floor(-1. * y1)));
+        }
+
+        bool xHasNotChanged = (x_low_prev == x_low) && (x_high_prev == x_high);
+        bool yHasNotChanged = (y_low_prev == y_low) && (y_high_prev == y_high);
+
+        // Avoid duplicated votes to the same center candidate
+        if (!(xHasNotChanged && yHasNotChanged)) {
+          x_low_prev = x_low;
+          x_high_prev = x_high;
+          y_low_prev = y_low;
+          y_high_prev = y_high;
+
+          vpCoordinatesForAccumStep coords;
+          coords.x_orig = x1;
+          coords.y_orig = y1;
+          coords.x = x_low;
+          coords.y = y_low;
+          updateAccumulator(coords, data, centersAccum, hasToStopLoop);
+
+          coords.x = x_high;
+          coords.y = y_high;
+          updateAccumulator(coords, data, centersAccum, hasToStopLoop);
+        }
+      }
+    }
+    sx = -sx;
+    sy = -sy;
+  }
+}
+
+void
+vpCircleHoughTransform::workOnAccumulator(vpCircleHoughTransform::vpDataForAccumLoop &data, vpImage<float> &centersAccum)
+{
+  // Voting for points in both direction of the gradient
+  // Step from min_radius to max_radius in both directions of the gradient
+  float mag = std::sqrt((m_dIx[data.r][data.c] * m_dIx[data.r][data.c]) + (m_dIy[data.r][data.c] * m_dIy[data.r][data.c]));
+
+  float sx = 0.f, sy = 0.f;
+  if (std::abs(mag) >= std::numeric_limits<float>::epsilon()) {
+    sx = m_dIx[data.r][data.c] / mag;
+    sy = m_dIy[data.r][data.c] / mag;
+
+    // Saving the edge point for further use
+    m_edgePointsList.push_back(std::pair<unsigned int, unsigned int>(data.r, data.c));
+    updateAccumAlongGradientDir(data, sx, sy, centersAccum);
+  }
+}
+
 void
 vpCircleHoughTransform::filterCenterCandidates(const std::vector<vpCenterVotes> &peak_positions_votes)
 {
@@ -515,7 +473,7 @@ vpCircleHoughTransform::filterCenterCandidates(const std::vector<vpCenterVotes> 
     auto sortingCenters = [](const vpCenterVotes &position_vote_a,
                              const vpCenterVotes &position_vote_b) {
                                return position_vote_a.m_votes > position_vote_b.m_votes;
-      };
+  };
 #endif
 
     std::sort(merged_peaks_position_votes.begin(), merged_peaks_position_votes.end(), sortingCenters);
@@ -527,7 +485,7 @@ vpCircleHoughTransform::filterCenterCandidates(const std::vector<vpCenterVotes> 
       m_centerCandidatesList.push_back(merged_peaks_position_votes[i].m_position);
       m_centerVotes.push_back(static_cast<int>(merged_peaks_position_votes[i].m_votes));
     }
-  }
+}
 }
 
 vpCircleHoughTransform::vpCentersBarycenter
