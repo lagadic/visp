@@ -59,6 +59,7 @@ public:
     m_useLod(false), m_minLineLengthThreshold(50.0), m_minPolygonAreaThreshold(2500.0),
     // <ecm>
     m_ecm(),
+    m_initRange(-1),
     // <klt>
     m_kltMaskBorder(0), m_kltMaxFeatures(0), m_kltWinSize(0), m_kltQualityValue(0.), m_kltMinDist(0.),
     m_kltHarrisParam(0.), m_kltBlockSize(0), m_kltPyramidLevels(0),
@@ -656,12 +657,16 @@ public:
   {
     bool edge_threshold_type_node = false;
     bool edge_threshold_node = false;
+    bool edge_min_node = false;
+    bool edge_ratio_node = false;
     bool mu1_node = false;
     bool mu2_node = false;
 
     // current data values.
     vpMe::vpLikelihoodThresholdType d_edge_threshold_type = m_ecm.getLikelihoodThresholdType();
     double d_edge_threshold = m_ecm.getThreshold();
+    double d_edge_min_threshold = m_ecm.getMinThreshold();
+    double d_edge_thresh_ratio = m_ecm.getThresholdMarginRatio();
     double d_mu1 = m_ecm.getMu1();
     double d_mu2 = m_ecm.getMu2();
 
@@ -678,6 +683,16 @@ public:
           case edge_threshold:
             d_edge_threshold = dataNode.text().as_int();
             edge_threshold_node = true;
+            break;
+
+          case edge_threshold_ratio:
+            d_edge_thresh_ratio = dataNode.text().as_double();
+            edge_ratio_node = true;
+            break;
+
+          case edge_min_threshold:
+            d_edge_min_threshold = dataNode.text().as_double();
+            edge_min_node = true;
             break;
 
           case mu1:
@@ -701,27 +716,51 @@ public:
     m_ecm.setMu2(d_mu2);
     m_ecm.setLikelihoodThresholdType(d_edge_threshold_type);
     m_ecm.setThreshold(d_edge_threshold);
+    m_ecm.setThresholdMarginRatio(d_edge_thresh_ratio);
+    m_ecm.setMinThreshold(d_edge_min_threshold);
 
     if (m_verbose) {
-      if (!edge_threshold_type_node)
+      if (!edge_threshold_type_node) {
         std::cout << "me : contrast : threshold type " << m_ecm.getLikelihoodThresholdType() << " (default)" << std::endl;
-      else
+      }
+      else {
         std::cout << "me : contrast : threshold type " << m_ecm.getLikelihoodThresholdType() << std::endl;
+      }
 
-      if (!edge_threshold_node)
+      if (!edge_threshold_node) {
         std::cout << "me : contrast : threshold " << m_ecm.getThreshold() << " (default)" << std::endl;
-      else
+      }
+      else {
         std::cout << "me : contrast : threshold " << m_ecm.getThreshold() << std::endl;
+      }
 
-      if (!mu1_node)
+      if (!edge_min_node) {
+        std::cout << "me : contrast : min threshold " << m_ecm.getMinThreshold() << " (default)" << std::endl;
+      }
+      else {
+        std::cout << "me : contrast : min threshold " << m_ecm.getMinThreshold() << std::endl;
+      }
+
+      if (!edge_ratio_node) {
+        std::cout << "me : contrast : threshold margin ratio " << m_ecm.getThresholdMarginRatio() << " (default)" << std::endl;
+      }
+      else {
+        std::cout << "me : contrast : threshold margin ratio " << m_ecm.getThresholdMarginRatio() << std::endl;
+      }
+
+      if (!mu1_node) {
         std::cout << "me : contrast : mu1 " << m_ecm.getMu1() << " (default)" << std::endl;
-      else
+      }
+      else {
         std::cout << "me : contrast : mu1 " << m_ecm.getMu1() << std::endl;
+      }
 
-      if (!mu2_node)
+      if (!mu2_node) {
         std::cout << "me : contrast : mu2 " << m_ecm.getMu2() << " (default)" << std::endl;
-      else
+      }
+      else {
         std::cout << "me : contrast : mu2 " << m_ecm.getMu2() << std::endl;
+      }
     }
   }
 
@@ -791,9 +830,11 @@ public:
   void read_ecm_range(const pugi::xml_node &node)
   {
     bool tracking_node = false;
+    bool init_node = false;
 
     // current data values.
     unsigned int m_range_tracking = m_ecm.getRange();
+    int initRange = -1;
 
     for (pugi::xml_node dataNode = node.first_child(); dataNode; dataNode = dataNode.next_sibling()) {
       if (dataNode.type() == pugi::node_element) {
@@ -802,6 +843,10 @@ public:
           switch (iter_data->second) {
           case tracking:
             m_range_tracking = dataNode.text().as_uint();
+            tracking_node = true;
+            break;
+          case init_range:
+            initRange = dataNode.text().as_int();
             tracking_node = true;
             break;
 
@@ -813,12 +858,21 @@ public:
     }
 
     m_ecm.setRange(m_range_tracking);
+    m_initRange = initRange;
 
     if (m_verbose) {
-      if (!tracking_node)
+      if (!tracking_node) {
         std::cout << "me : range : tracking : " << m_ecm.getRange() << " (default)" << std::endl;
-      else
+      }
+      else {
         std::cout << "me : range : tracking : " << m_ecm.getRange() << std::endl;
+      }
+      if (!init_node) {
+        std::cout << "me : range : init range : " << m_initRange << " (default)" << std::endl;
+      }
+      else {
+        std::cout << "me : range : init range : " << initRange << std::endl;
+      }
     }
   }
 
@@ -1228,6 +1282,7 @@ public:
   void getCameraParameters(vpCameraParameters &cam) const { cam = m_cam; }
 
   void getEdgeMe(vpMe &moving_edge) const { moving_edge = m_ecm; }
+  int getInitRange() const { return m_initRange; }
 
   unsigned int getDepthDenseSamplingStepX() const { return m_depthDenseSamplingStepX; }
   unsigned int getDepthDenseSamplingStepY() const { return m_depthDenseSamplingStepY; }
@@ -1341,6 +1396,8 @@ protected:
   // Edge
   //! Moving edges parameters.
   vpMe m_ecm;
+  //! Range used in the initMovingEdge methods. Negative value leads to the use of default parameters.
+  int m_initRange;
   // KLT
   //! Border of the mask used on Klt points
   unsigned int m_kltMaskBorder;
@@ -1413,10 +1470,13 @@ protected:
     mask,
     size,
     nb_mask,
+    init_range,
     range,
     tracking,
     contrast,
     edge_threshold,
+    edge_min_threshold,
+    edge_threshold_ratio,
     edge_threshold_type,
     mu1,
     mu2,
@@ -1485,11 +1545,14 @@ protected:
     m_nodeMap["mask"] = mask;
     m_nodeMap["size"] = size;
     m_nodeMap["nb_mask"] = nb_mask;
+    m_nodeMap["init_range"] = init_range;
     m_nodeMap["range"] = range;
     m_nodeMap["tracking"] = tracking;
     m_nodeMap["contrast"] = contrast;
     m_nodeMap["edge_threshold_type"] = edge_threshold_type;
     m_nodeMap["edge_threshold"] = edge_threshold;
+    m_nodeMap["edge_min_threshold"] = edge_min_threshold;
+    m_nodeMap["edge_threshold_margin_ratio"] = edge_threshold_ratio;
     m_nodeMap["mu1"] = mu1;
     m_nodeMap["mu2"] = mu2;
     m_nodeMap["sample"] = sample;
@@ -1561,6 +1624,11 @@ void vpMbtXmlGenericParser::getCameraParameters(vpCameraParameters &cam) const {
   Get moving edge parameters.
 */
 void vpMbtXmlGenericParser::getEdgeMe(vpMe &ecm) const { m_impl->getEdgeMe(ecm); }
+
+/*!
+ * Get the init range used in the initMovingEdge methods by the vpMbEdgeTracker .
+ */
+int vpMbtXmlGenericParser::getInitRange() const { return m_impl->getInitRange(); }
 
 /*!
   Get depth dense sampling step in X.

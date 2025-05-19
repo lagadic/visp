@@ -18,6 +18,9 @@ import sys
 import os
 from datetime import date
 
+# In some cases, Sphinx (e.g. the autosummary module) does not detect our module without this import
+import visp
+
 # If your documentation needs a minimal Sphinx version, state it here.
 # needs_sphinx = '1.0'
 

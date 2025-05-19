@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Interface for the Franka robot.
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpConfig.h>
 
@@ -68,6 +66,23 @@ vpRobotFranka::vpRobotFranka()
  * be set when required. Setting realtime_config to kIgnore disables this behavior.
  */
 vpRobotFranka::vpRobotFranka(const std::string &franka_address, franka::RealtimeConfig realtime_config)
+  : vpRobot(), m_handler(nullptr), m_gripper(nullptr), m_model(nullptr), m_positioningVelocity(20.), m_velControlThread(),
+  m_velControlThreadIsRunning(false), m_velControlThreadStopAsked(false), m_dq_des(), m_v_cart_des(),
+  m_ftControlThread(), m_ftControlThreadIsRunning(false), m_ftControlThreadStopAsked(false), m_tau_J_des(),
+  m_ft_cart_des(), m_q_min(), m_q_max(), m_dq_max(), m_ddq_max(), m_robot_state(), m_mutex(), m_eMc(), m_log_folder(),
+  m_franka_address()
+{
+  init();
+  connect(franka_address, realtime_config);
+}
+
+/*!
+ * Establishes a connection with the robot.
+ * \param[in] franka_address IP/hostname of the robot.
+ * \param[in] realtime_config If set to kEnforce, an exception will be thrown if realtime priority cannot
+ * be set when required. Setting realtime_config to kIgnore disables this behavior.
+ */
+vpRobotFranka::vpRobotFranka(const std::string &franka_address, vpRealtimeConfig realtime_config)
   : vpRobot(), m_handler(nullptr), m_gripper(nullptr), m_model(nullptr), m_positioningVelocity(20.), m_velControlThread(),
   m_velControlThreadIsRunning(false), m_velControlThreadStopAsked(false), m_dq_des(), m_v_cart_des(),
   m_ftControlThread(), m_ftControlThreadIsRunning(false), m_ftControlThreadStopAsked(false), m_tau_J_des(),
@@ -155,6 +170,24 @@ void vpRobotFranka::connect(const std::string &franka_address, franka::RealtimeC
     delete m_model;
   }
   m_model = new franka::Model(m_handler->loadModel());
+}
+
+/*!
+ * Establishes a connection with the robot and set default behavior.
+ * \param[in] franka_address IP/hostname of the robot.
+ * \param[in] realtime_config If set to kEnforce, an exception will be thrown if realtime priority cannot
+ * be set when required. Setting realtime_config to kIgnore disables this behavior.
+ */
+void vpRobotFranka::connect(const std::string &franka_address, vpRealtimeConfig realtime_config)
+{
+  switch (realtime_config) {
+  case vpRealtimeConfig::kEnforce:
+    connect(franka_address, franka::RealtimeConfig::kEnforce);
+    break;
+  case vpRealtimeConfig::kIgnore:
+    connect(franka_address, franka::RealtimeConfig::kIgnore);
+    break;
+  }
 }
 
 /*!

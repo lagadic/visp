@@ -176,10 +176,11 @@ void vpMbtDistanceCylinder::setMovingEdge(vpMe *_me)
   \param doNotTrack : If true, ME are not tracked.
   \param mask : Mask image or nullptr if not wanted. Mask values that are set to true are considered in the tracking. To
   disable a pixel, set false.
+  \param initRange The range of the ME used during the initialization.
   \return false if an error occur, true otherwise.
 */
 bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
-                                           bool doNotTrack, const vpImage<bool> *mask)
+                                           bool doNotTrack, const vpImage<bool> *mask, const int &initRange)
 {
   if (isvisible) {
     // Perspective projection
@@ -219,8 +220,16 @@ bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, cons
     meline2->setMe(me);
 
     //    meline->setDisplay(vpMeSite::RANGE_RESULT);
-    meline1->setInitRange(0);
-    meline2->setInitRange(0);
+    static const unsigned int defaultRange = 0U;
+    unsigned int initRange_;
+    if (initRange < 0) {
+      initRange_ = defaultRange;
+    }
+    else {
+      initRange_ = initRange;
+    }
+    meline1->setInitRange(initRange_);
+    meline2->setInitRange(initRange_);
 
     // Conversion meter to pixels
     vpMeterPixelConversion::convertLine(cam, c->getRho1(), c->getTheta1(), rho1, theta1);

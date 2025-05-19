@@ -301,10 +301,11 @@ void vpMbtDistanceLine::setMovingEdge(vpMe *_me)
   \param doNotTrack : If true, ME are not tracked.
   \param mask : Mask image or nullptr if not wanted. Mask values that are set to true are considered in the tracking. To
   disable a pixel, set false.
+  \param initRange The range of the ME used during the initialization.
   \return false if an error occur, true otherwise.
 */
 bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, bool doNotTrack,
-                                       const vpImage<bool> *mask)
+                                       const vpImage<bool> *mask, const int &initRange)
 {
   for (unsigned int i = 0; i < meline.size(); i++) {
     if (meline[i] != nullptr)
@@ -372,11 +373,18 @@ bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vp
         vpMeterPixelConversion::convertPoint(cam, linesLst[i].first.get_x(), linesLst[i].first.get_y(), ip1);
         vpMeterPixelConversion::convertPoint(cam, linesLst[i].second.get_x(), linesLst[i].second.get_y(), ip2);
 
+        static const unsigned int defaultRange = 0U;
+        unsigned int initRange_;
+        if (initRange < 0) {
+          initRange_ = defaultRange;
+        }
+        else {
+          initRange_ = initRange;
+        }
         vpMbtMeLine *melinePt = new vpMbtMeLine;
         melinePt->setMask(*mask);
         melinePt->setMe(me);
-
-        melinePt->setInitRange(0);
+        melinePt->setInitRange(initRange_);
 
         int marge = /*10*/ 5; // ou 5 normalement
         if (ip1.get_j() < ip2.get_j()) {
@@ -920,7 +928,7 @@ bool vpMbtDistanceLine::closeToImageBorder(const vpImage<unsigned char> &I, cons
           return true;
         }
 
-        if ((static_cast<unsigned int>(i_) > (I.getHeight() - threshold)) || static_cast<unsigned int>(i_) < threshold ||
+        if ((static_cast<unsigned int>(i_) >(I.getHeight() - threshold)) || static_cast<unsigned int>(i_) < threshold ||
             (static_cast<unsigned int>(j_) > (I.getWidth() - threshold)) || static_cast<unsigned int>(j_) < threshold) {
           return true;
         }

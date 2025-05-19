@@ -6770,6 +6770,7 @@ void vpMbGenericTracker::TrackerWrapper::loadConfigFile(const std::string &confi
     }
 
     xmlp.parse(configFile);
+    m_initRange = xmlp.getInitRange();
   }
   catch (...) {
     throw vpException(vpException::ioError, "Can't open XML file \"%s\"\n ", configFile.c_str());
@@ -6876,7 +6877,7 @@ void vpMbGenericTracker::TrackerWrapper::postTracking(const vpImage<unsigned cha
   if (m_trackerType & EDGE_TRACKER) {
     vpMbEdgeTracker::updateMovingEdge(*ptr_I);
 
-    vpMbEdgeTracker::initMovingEdge(*ptr_I, m_cMo);
+    vpMbEdgeTracker::initMovingEdge(*ptr_I, m_cMo, 1);
     // Reinit the moving edge for the lines which need it.
     vpMbEdgeTracker::reinitMovingEdge(*ptr_I, m_cMo);
 
@@ -6969,7 +6970,7 @@ void vpMbGenericTracker::TrackerWrapper::postTracking(const vpImage<unsigned cha
   if (m_trackerType & EDGE_TRACKER) {
     vpMbEdgeTracker::updateMovingEdge(*ptr_I);
 
-    vpMbEdgeTracker::initMovingEdge(*ptr_I, m_cMo);
+    vpMbEdgeTracker::initMovingEdge(*ptr_I, m_cMo, 1);
     // Reinit the moving edge for the lines which need it.
     vpMbEdgeTracker::reinitMovingEdge(*ptr_I, m_cMo);
 

@@ -509,6 +509,14 @@ vpColVector vpColVector::view(double *raw_data, unsigned int nrows)
   return v;
 }
 
+
+void vpColVector::view(vpColVector &v, double *data, unsigned int rows)
+{
+  vpArray2D<double>::view(v, data, rows, 1);
+}
+
+
+
 vpColVector &vpColVector::operator=(const std::initializer_list<double> &list)
 {
   resize(static_cast<unsigned int>(list.size()), false);
@@ -963,7 +971,7 @@ vpColVector vpColVector::hadamard(const vpColVector &v) const
   }
 #endif
   return out;
-}
+  }
 
 double vpColVector::infinityNorm() const
 {
