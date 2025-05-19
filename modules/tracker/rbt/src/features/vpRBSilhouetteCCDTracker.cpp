@@ -39,12 +39,12 @@
 
 BEGIN_VISP_NAMESPACE
 
-void sampleWithoutReplacement(unsigned int count, unsigned int vectorSize, std::vector<size_t> &indices, vpUniRand &random)
+void sampleWithoutReplacement(size_t count, size_t vectorSize, std::vector<size_t> &indices, vpUniRand &random)
 {
   count = std::min(count, vectorSize);
   indices.resize(count);
-  unsigned int added = 0;
-  for (unsigned i = 0; i < vectorSize; ++i) {
+  size_t added = 0;
+  for (size_t i = 0; i < vectorSize; ++i) {
     double randomVal = random.uniform(0.0, 1.0);
     if ((vectorSize - i) * randomVal < (count - added)) {
       indices[added++] = i;
@@ -174,7 +174,7 @@ void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &fr
 #ifdef VISP_HAVE_OPENMP
 #pragma omp for nowait
 #endif
-    for (unsigned int i = 0; i < frame.silhouettePoints.size(); ++i) {
+    for (int i = 0; i < static_cast<int>(frame.silhouettePoints.size()); ++i) {
       const vpRBSilhouettePoint sp = frame.silhouettePoints[i];
       // std::cout << m_ccdParameters.h << std::endl;
       // std::cout << sp.j << ", " << sp.i << std::endl;
@@ -362,24 +362,24 @@ void vpRBSilhouetteCCDTracker::display(const vpCameraParameters &/*cam*/, const 
     }
     const vpColor bestColor = vpColor::green;
     const vpColor worstColor = vpColor::red;
+    const double diffR = static_cast<double>(worstColor.R) - static_cast<double>(bestColor.R);
+    const double diffG = static_cast<double>(worstColor.G) - static_cast<double>(bestColor.G);
+    const double diffB = static_cast<double>(worstColor.B) - static_cast<double>(bestColor.B);
     unsigned idx = 0;
     for (const vpRBSilhouetteControlPoint &p : m_controlPoints) {
       const double weight = errorPerPoint[idx] / maxPointError;
-      const double diffR = static_cast<double>(worstColor.R) - static_cast<double>(bestColor.R);
-      const double diffG = static_cast<double>(worstColor.G) - static_cast<double>(bestColor.G);
-      const double diffB = static_cast<double>(worstColor.B) - static_cast<double>(bestColor.B);
 
       vpColor c;
       c.R = static_cast<unsigned char>(static_cast<double>(bestColor.R) + diffR * weight);
       c.G = static_cast<unsigned char>(static_cast<double>(bestColor.G) + diffG * weight);
       c.B = static_cast<unsigned char>(static_cast<double>(bestColor.B) + diffB * weight);
 
-      vpDisplay::displayCross(IRGB, p.icpoint.get_i(), p.icpoint.get_j(), 3, c, 1);
+      vpDisplay::displayCross(IRGB, static_cast<int>(p.icpoint.get_i()), static_cast<int>(p.icpoint.get_j()), 3, c, 1);
       ++idx;
     }
   }
   else if (m_displayType == DT_WEIGHT) {
-    vpColVector weightPerPoint(m_controlPoints.size());
+    vpColVector weightPerPoint(static_cast<unsigned int>(m_controlPoints.size()));
     for (unsigned int i = 0; i < m_controlPoints.size(); ++i) {
       double sum = 0.0;
       for (unsigned int j = 0; j < nerror_per_point; ++j) {
@@ -397,13 +397,13 @@ void vpRBSilhouetteCCDTracker::display(const vpCameraParameters &/*cam*/, const 
       c.G = static_cast<unsigned char>(255.f * weight);
       c.B = 0;
 
-      vpDisplay::displayCross(IRGB, p.icpoint.get_i(), p.icpoint.get_j(), 3, c, 1);
+      vpDisplay::displayCross(IRGB, static_cast<int>(p.icpoint.get_i()), static_cast<int>(p.icpoint.get_j()), 3, c, 1);
       idx++;
     }
   }
   else if (m_displayType == DT_WEIGHT_AND_ERROR) {
-    vpColVector weightPerPoint(m_controlPoints.size());
-    vpColVector errorPerPoint(m_controlPoints.size());
+    vpColVector weightPerPoint(static_cast<unsigned int>(m_controlPoints.size()));
+    vpColVector errorPerPoint(static_cast<unsigned int>(m_controlPoints.size()));
     for (unsigned int i = 0; i < m_controlPoints.size(); ++i) {
       double sum = 0.0;
       double sumError = 0.0;
@@ -427,7 +427,7 @@ void vpRBSilhouetteCCDTracker::display(const vpCameraParameters &/*cam*/, const 
       // vpImagePoint ip2 = p.icpoint + diff;
 
       // vpDisplay::displayLine(IRGB, ip1, ip2, c, 1);
-      vpDisplay::displayCross(IRGB, p.icpoint.get_i(), p.icpoint.get_j(), 3, c, 1);
+      vpDisplay::displayCross(IRGB, static_cast<int>(p.icpoint.get_i()), static_cast<int>(p.icpoint.get_j()), 3, c, 1);
       idx++;
     }
   }
@@ -453,7 +453,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
 
   //  double sigma_hat = max(h/sqrt(2*gamma_2), gamma_4);
   const double sigma_hat = m_ccdParameters.gamma_3 * sigma + m_ccdParameters.gamma_4;
-  unsigned int resolution = m_controlPoints.size();
+  unsigned int resolution = static_cast<unsigned int>(m_controlPoints.size());
   // to save the normalized parameters of vic[i,8]
   // dimension: resolution x 2
   // the first column save the normalized coefficient outside the curve
@@ -463,7 +463,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-  for (unsigned int kk = 0; kk < m_controlPoints.size(); kk++) {
+  for (int kk = 0; kk < static_cast<int>(m_controlPoints.size()); kk++) {
     // temporary points used to store those points in the
     // normal direction as well as negative normal direction
     std::array<double, 2> pt1, pt2;
@@ -571,7 +571,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-  for (unsigned int i = 0; i < resolution; ++i) {
+  for (int i = 0; i < static_cast<int>(resolution); ++i) {
     if (!m_controlPoints[i].isValid()) {
       continue;
     }
@@ -615,11 +615,11 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
 
       // compute the mean value in the vicinity of a point
       // m_{ks} = I{k}^{s} = \sum_{l} w_{kls}{I_{kl}} : s = 1 or 2
-      const vpRGBa pixelRGBa = I(vic_k[0], vic_k[1]);
+      const vpRGBa pixelRGBa = I[static_cast<unsigned int>(vic_k[0])][static_cast<unsigned int>(vic_k[1])];
       double *pixel = pix_ptr + k * 3;
-      pixel[0] = pixelRGBa.R;
-      pixel[1] = pixelRGBa.G;
-      pixel[2] = pixelRGBa.B;
+      pixel[0] = static_cast<double>(pixelRGBa.R);
+      pixel[1] = static_cast<double>(pixelRGBa.G);
+      pixel[2] = static_cast<double>(pixelRGBa.B);
 
       m1[0] += wp1 * pixel[0];
       m1[1] += wp1 * pixel[1];
@@ -638,12 +638,12 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
         }
       }
       const double *vic_neg = vic_ptr + 10 * negative_normal;
-      const vpRGBa pixelNegRGBa = I(vic_neg[0], vic_neg[1]);
+      const vpRGBa pixelNegRGBa = I[static_cast<unsigned int>(vic_neg[0])][static_cast<unsigned int>(vic_neg[1])];
       double *pixelNeg = pix_ptr + negative_normal * 3;
 
-      pixelNeg[0] = pixelNegRGBa.R;
-      pixelNeg[1] = pixelNegRGBa.G;
-      pixelNeg[2] = pixelNegRGBa.B;
+      pixelNeg[0] = static_cast<double>(pixelNegRGBa.R);
+      pixelNeg[1] = static_cast<double>(pixelNegRGBa.G);
+      pixelNeg[2] = static_cast<double>(pixelNegRGBa.B);
       wp1 = (vic_neg[5] * vic_neg[7] / normalized_param[i][0]);
       wp2 = (vic_neg[6] * vic_neg[7] / normalized_param[i][1]);
       w1 += wp1;
@@ -685,9 +685,9 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
 
 void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
 {
-  const int npointsccd = m_controlPoints.size();
-  const int normal_points_number = floor(m_ccdParameters.h / m_ccdParameters.delta_h);
-  const int nerror_ccd = 2 * normal_points_number * 3 * npointsccd;
+  const unsigned int npointsccd = static_cast<unsigned int>(m_controlPoints.size());
+  const unsigned int normal_points_number = static_cast<unsigned int>(floor(m_ccdParameters.h / m_ccdParameters.delta_h));
+  const unsigned int nerror_ccd = 2 * normal_points_number * 3 * npointsccd;
   m_error.resize(nerror_ccd, false);
   m_weighted_error.resize(nerror_ccd, false);
   vpColVector errorPerPoint(m_controlPoints.size(), 0.0);
@@ -703,32 +703,31 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
     FastMat63<double> tmp_jacobian_x_tmp_cov_inv;
     FastVec3<double> tmp_pixel_diff;
     double Lnvp[6];
-    unsigned int normal_points_number = static_cast<unsigned int>(floor(m_ccdParameters.h / m_ccdParameters.delta_h));
 
 #ifdef VISP_HAVE_OPENMP
 #pragma omp for nowait
 #endif
-    for (unsigned int kk = 0; kk < m_controlPoints.size(); kk++) {
-      const int i = kk;
-      const vpRBSilhouetteControlPoint &p = m_controlPoints[kk];
-      errorPerPoint[kk] = 0.0;
+    for (int i = 0; i < static_cast<int>(m_controlPoints.size()); i++) {
+      const unsigned int ui = static_cast<unsigned int>(i);
+      const vpRBSilhouetteControlPoint &p = m_controlPoints[ui];
+      errorPerPoint[ui] = 0.0;
       if (!p.isValid()) {
         for (unsigned int j = 0; j < 2 * normal_points_number; ++j) {
           for (unsigned int m = 0; m < 3; ++m) {
-            m_error[i * 2 * normal_points_number * 3 + j * 3 + m] = 0.0;
+            m_error[ui * 2 * normal_points_number * 3 + j * 3 + m] = 0.0;
           }
         }
         continue;
       }
 
-      const double *vic_ptr = m_stats.vic[i];
-      const double *nv_ptr = m_stats.nv[i];
-      const double *mean_vic_ptr = m_stats.mean_vic[i];
-      const double *cov_vic_ptr = m_stats.cov_vic[i];
-      const double *pix_ptr = m_stats.imgPoints[i];
+      const double *vic_ptr = m_stats.vic[ui];
+      const double *nv_ptr = m_stats.nv[ui];
+      const double *mean_vic_ptr = m_stats.mean_vic[ui];
+      const double *cov_vic_ptr = m_stats.cov_vic[ui];
+      const double *pix_ptr = m_stats.imgPoints[ui];
 
-      const double *mean_vic_ptr_prev = m_prevStats.mean_vic[i];
-      const double *cov_vic_ptr_prev = m_prevStats.cov_vic[i];
+      const double *mean_vic_ptr_prev = m_prevStats.mean_vic[ui];
+      const double *cov_vic_ptr_prev = m_prevStats.cov_vic[ui];
 
       const vpCameraParameters &cam = p.getCameraParameters();
 
@@ -761,7 +760,7 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
             //error_ccd[i*2*normal_points_number*3 + j*3 + m] = img(vic_ptr[10*j+0], vic_ptr[10*j+1])[m]- errf * mean_vic_ptr[m]- (1-errf)* mean_vic_ptr[m+3];
           tmp_pixel_diff[m] = err;
           error_ccd_j[m] = err;
-          errorPerPoint[kk] += err;
+          errorPerPoint[ui] += err;
         }
 
         //compute jacobian matrix
@@ -777,8 +776,8 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
         FastMat63<double>::multiply(tmp_jacobian, tmp_cov_inv, tmp_jacobian_x_tmp_cov_inv);
         //vpMatrix::mult2Matrices(tmp_jacobian, tmp_cov_inv, tmp_jacobian_x_tmp_cov_inv);
 
-        FastVec3<double>::multiply(tmp_jacobian_x_tmp_cov_inv, tmp_pixel_diff, m_gradients[i * 2 * normal_points_number + j]);
-        FastMat63<double>::multiplyBTranspose(tmp_jacobian_x_tmp_cov_inv, tmp_jacobian, m_hessians[i * 2 * normal_points_number + j]);
+        FastVec3<double>::multiply(tmp_jacobian_x_tmp_cov_inv, tmp_pixel_diff, m_gradients[ui * 2 * normal_points_number + j]);
+        FastMat63<double>::multiplyBTranspose(tmp_jacobian_x_tmp_cov_inv, tmp_jacobian, m_hessians[ui * 2 * normal_points_number + j]);
         // vpMatrix::mult2Matrices(tmp_jacobian_x_tmp_cov_inv, tmp_jacobian.t(), m_hessians[i * 2 * normal_points_number + j]);
       }
     }
@@ -794,8 +793,6 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
     }
   }
 
-
-
   m_gradient = 0.0;
   m_hessian = 0.0;
 #ifdef VISP_HAVE_OPENMP
@@ -808,7 +805,8 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
 #ifdef VISP_HAVE_OPENMP
 #pragma omp for nowait
 #endif
-    for (unsigned int i = 0; i < m_gradients.size(); ++i) {
+    for (int ii = 0; ii < static_cast<int>(m_gradients.size()); ++ii) {
+      const unsigned int i = static_cast<unsigned int>(ii);
       vpColVector &g = m_gradients[i];
       vpMatrix &h = m_hessians[i];
       double w = m_weights[i];

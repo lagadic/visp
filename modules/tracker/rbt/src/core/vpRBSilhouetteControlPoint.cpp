@@ -235,8 +235,8 @@ vpRBSilhouetteControlPoint::buildPoint(int n, int m, const double &Z, double ori
   thetaInit = theta;
   double px = m_cam->get_px();
   double py = m_cam->get_py();
-  int jc = m_cam->get_u0();
-  int ic = m_cam->get_v0();
+  int jc = static_cast<int>(m_cam->get_u0());
+  int ic = static_cast<int>(m_cam->get_v0());
   icpoint.set_i(n);
   icpoint.set_j(m);
   double x, y;
@@ -247,7 +247,7 @@ vpRBSilhouetteControlPoint::buildPoint(int n, int m, const double &Z, double ori
   cpoint.changeFrame(oMc);
   cpointo.setWorldCoordinates(cpoint.get_X(), cpoint.get_Y(), cpoint.get_Z());
   m_normalO = normo;
-  m_normal = R*normo;
+  m_normal = R * normo;
   nxs = cos(theta);
   nys = sin(theta);
   buildPLine(oMc);
@@ -267,8 +267,8 @@ vpRBSilhouetteControlPoint::buildSilhouettePoint(int n, int m, const double &Z, 
   thetaInit = theta;
   double px = m_cam->get_px();
   double py = m_cam->get_py();
-  int jc = m_cam->get_u0();
-  int ic = m_cam->get_v0();
+  int jc = static_cast<int>(m_cam->get_u0());
+  int ic = static_cast<int>(m_cam->get_v0());
   icpoint.set_i(n);
   icpoint.set_j(m);
   xs = (m-jc)/px;
@@ -331,7 +331,7 @@ vpRBSilhouetteControlPoint::updateSilhouettePoint(const vpHomogeneousMatrix &cMo
       m_line.changeFrame(cMo);
       m_line.projection();
     }
-    catch (vpException &e) {
+    catch (vpException &) {
       m_valid = false;
     }
     m_valid = !isLineDegenerate() && !std::isnan(m_line.getTheta());
