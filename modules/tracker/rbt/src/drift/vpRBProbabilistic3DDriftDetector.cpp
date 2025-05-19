@@ -187,7 +187,7 @@ double vpRBProbabilistic3DDriftDetector::score(const vpRBFeatureTrackerInput &fr
             // }
           }
         }
-        averageColor = averageColor * (1.0 / 9.0);
+        averageColor = averageColor * (1.f / 9.f);
 
         const double proba = p->stats.probability(averageColor) * probaDepth;
 
@@ -236,15 +236,24 @@ void vpRBProbabilistic3DDriftDetector::update(const vpRBFeatureTrackerInput &pre
   vpColVector cX(4, 1.0), renderX(4, 1.0);
   vpColVector oX(4, 1.0);
 
+  const unsigned int h = frame.renders.depth.getHeight();
+  const unsigned int w = frame.renders.depth.getWidth();
+
+
   const vpHomogeneousMatrix cprevTrender = cprevTo * frame.renders.cMo.inverse();
 
-  for (unsigned int i = frame.renders.boundingBox.getTop(); i < frame.renders.boundingBox.getBottom(); i += m_sampleStep) {
-    for (unsigned int j = frame.renders.boundingBox.getLeft(); j < frame.renders.boundingBox.getRight(); j += m_sampleStep) {
+  const unsigned int top = static_cast<unsigned int>(std::max(0.0, frame.renders.boundingBox.getTop()));
+  const unsigned int left = static_cast<unsigned int>(std::max(0.0, frame.renders.boundingBox.getLeft()));
+  const unsigned int bottom = std::min(h, static_cast<unsigned int>(frame.renders.boundingBox.getBottom()));
+  const unsigned int right = std::min(w, static_cast<unsigned int>(frame.renders.boundingBox.getRight()));
+
+  for (unsigned int i = top; i < bottom; i += m_sampleStep) {
+    for (unsigned int j = fleft; j < right; j += m_sampleStep) {
       double u = static_cast<double>(j), v = static_cast<double>(i);
       double x = 0.0, y = 0.0;
-      double Z = frame.renders.depth[i][j];
+      double Z = static_cast<double>(frame.renders.depth[i][j]);
 
-      if (Z > 0.f) {
+      if (Z > 0.0) {
         vpPixelMeterConversion::convertPoint(frame.cam, u, v, x, y);
         renderX[0] = x * Z;
         renderX[1] = y * Z;
@@ -285,7 +294,8 @@ void vpRBProbabilistic3DDriftDetector::display(const vpImage<vpRGBa> &I)
   for (const vpStored3DSurfaceColorPoint &p : m_points) {
     if (p.visible) {
       const vpRGBf color = p.stats.mean;
-      vpDisplay::displayPoint(I, p.projCurrPx[1], p.projCurrPx[0], vpColor(color.R, color.G, color.B), 3);
+      vpDisplay::displayPoint(I, p.projCurrPx[1], p.projCurrPx[0],
+        vpColor(static_cast<unsigned char>(color.R), static_cast<unsigned char>(color.G), static_cast<unsigned char>(color.B)) 3);
     }
   }
 }

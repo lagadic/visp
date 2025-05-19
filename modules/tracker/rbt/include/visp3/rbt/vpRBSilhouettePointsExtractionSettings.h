@@ -69,13 +69,13 @@ private:
   bool m_thresholdIsRelative;
   bool m_preferPreviousPoints;
 
-  void sampleWithoutReplacement(unsigned int count, unsigned int vectorSize, std::vector<size_t> &indices, vpUniRand &random) const
+  void sampleWithoutReplacement(size_t count, size_t vectorSize, std::vector<size_t> &indices, vpUniRand &random) const
   {
     count = std::min(count, vectorSize);
     indices.resize(count);
-    unsigned int added = 0;
-    for (unsigned i = 0; i < vectorSize; ++i) {
-      double randomVal = random.uniform(0.0, 1.0);
+    size_t added = 0;
+    for (size_t i = 0; i < vectorSize; ++i) {
+      const double randomVal = random.uniform(0.0, 1.0);
       if ((vectorSize - i) * randomVal < (count - added)) {
         indices[added++] = i;
       }

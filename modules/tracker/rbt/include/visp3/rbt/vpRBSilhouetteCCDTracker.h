@@ -267,8 +267,8 @@ public:
    *
    * This value is between 0 and 1.
    */
-  float getMinimumMaskConfidence() const { return m_minMaskConfidence; }
-  void setMinimumMaskConfidence(float confidence)
+  double getMinimumMaskConfidence() const { return m_minMaskConfidence; }
+  void setMinimumMaskConfidence(double confidence)
   {
 
     m_minMaskConfidence = confidence;
