@@ -84,6 +84,7 @@ public:
   void getCameraParameters(vpCameraParameters &cam) const;
 
   void getEdgeMe(vpMe &ecm) const;
+  int getInitRange() const;
 
   unsigned int getDepthDenseSamplingStepX() const;
   unsigned int getDepthDenseSamplingStepY() const;

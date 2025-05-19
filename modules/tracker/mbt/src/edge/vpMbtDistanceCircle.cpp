@@ -143,10 +143,11 @@ void vpMbtDistanceCircle::setMovingEdge(vpMe *_me)
   \param doNotTrack : If true, ME are not tracked.
   \param mask : Mask image or nullptr if not wanted. Mask values that are set to true are considered in the tracking. To
   disable a pixel, set false.
+  \param initRange The range of the ME used during the initialization.
   \return false if an error occur, true otherwise.
 */
 bool vpMbtDistanceCircle::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
-                                         bool doNotTrack, const vpImage<bool> *mask)
+                                         bool doNotTrack, const vpImage<bool> *mask, const int &initRange)
 {
   if (isvisible) {
     // Perspective projection
@@ -161,8 +162,18 @@ bool vpMbtDistanceCircle::initMovingEdge(const vpImage<unsigned char> &I, const 
     }
 
     // Create the moving edges containers
+    static const unsigned int defaultRange = 1U;
+    unsigned int initRange_;
+    if (initRange < 0) {
+      initRange_ = defaultRange;
+    }
+    else {
+      initRange_ = initRange;
+    }
+
     meEllipse = new vpMbtMeEllipse;
     meEllipse->setMask(*mask);
+    meEllipse->setInitRange(initRange_);
     meEllipse->setMe(me);
 
     // meEllipse->setDisplay(vpMeSite::RANGE_RESULT) ; // TODO only for debug
@@ -329,7 +340,8 @@ std::vector<std::vector<double> > vpMbtDistanceCircle::getFeaturesForDisplay()
       std::vector<double> params = { 0, //ME
                                     p_me.get_ifloat(),
                                     p_me.get_jfloat(),
-                                    static_cast<double>(p_me.getState()) };
+                                    static_cast<double>(p_me.getState())
+      };
 #else
       std::vector<double> params;
       params.push_back(0); //ME

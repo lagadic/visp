@@ -302,6 +302,8 @@ int main(int argc, char **argv)
         me.setRange(8);
         me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
         me.setThreshold(20);
+        me.setMinThreshold(-1); // To deactivate automatic thresholding
+        me.setThresholdMarginRatio(-1.); // To deactivate automatic thresholding
         me.setMu1(0.5);
         me.setMu2(0.5);
         me.setSampleStep(4);

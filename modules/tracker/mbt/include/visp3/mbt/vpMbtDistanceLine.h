@@ -199,7 +199,7 @@ public:
   void initInteractionMatrixError();
 
   bool initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, bool doNotTrack,
-                      const vpImage<bool> *mask = nullptr);
+                      const vpImage<bool> *mask = nullptr, const int &initRange = 0U);
 
   /*!
    Return if the line is used for tracking.
