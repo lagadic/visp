@@ -8,13 +8,14 @@
 # visp>   315 |     if (!mRoot->showConfigDialog()) {
 # visp>       |          ~~~~~~~~~~~~~~~~~~~~~~~^~
 {
+  atlas,
   cmake,
   coin3d,
   darwin,
   doxygen,
   eigen,
   #fetchFromGitHub,
-  lapack,
+  #lapack,
   lib,
   libdc1394,
   libdmtx,
