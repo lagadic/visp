@@ -56,8 +56,9 @@ llvmPackages_15.stdenv.mkDerivation (finalAttrs: {
 
   buildInputs =
     [
+      atlas
       eigen
-      lapack
+      #lapack
       libdc1394
       libdmtx
       libglvnd
