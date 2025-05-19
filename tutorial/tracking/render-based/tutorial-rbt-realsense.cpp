@@ -56,7 +56,6 @@ int main()
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 /**
  * \brief Realsense specific arguments
- *
 */
 struct CmdArguments
 {
@@ -69,10 +68,10 @@ struct CmdArguments
       .addArgument("--width", width, false, "Realsense requested image width")
       .addArgument("--fps", fps, false, "Realsense requested framerate");
   }
-
   unsigned int height, width, fps;
 };
 #endif
+
 /**
  * \brief Convert from a raw uint16_t depth map to a float depth map in meters and a display uint8_t depth map
  *
@@ -136,21 +135,13 @@ int main(int argc, const char **argv)
 
   //! [Loading config]
 
+
+  //! [Realsense opening]
   const unsigned int width = realsenseArgs.width, height = realsenseArgs.height;
   const unsigned fps = realsenseArgs.fps;
 
-  vpImage<unsigned char> Id(height, width);
-  vpImage<vpRGBa> Icol(height, width);
-  vpImage<uint16_t> depthRaw(height, width);
-  vpImage<float> depth(height, width);
-  vpImage<unsigned char> IdepthDisplay(height, width);
-  vpImage<unsigned char> IProbaDisplay(height, width);
-  vpImage<unsigned char> cannyDisplay(height, width);
-  vpImage<vpRGBa> InormDisplay(height, width);
-
   vpRealSense2 realsense;
-
-  std::cout << "Opening realsense with " << width << "x" << height << " @ " << fps << "fps" << std::endl;
+  std::cout << "Opening realsense with settings: " << width << "x" << height << " @ " << fps << "fps" << std::endl;
   rs2::config config;
   config.enable_stream(RS2_STREAM_COLOR, width, height, RS2_FORMAT_RGBA8, fps);
   config.enable_stream(RS2_STREAM_DEPTH, width, height, RS2_FORMAT_Z16, fps);
@@ -161,20 +152,37 @@ int main(int argc, const char **argv)
   catch (const vpException &e) {
     std::cout << "Caught an exception: " << e.what() << std::endl;
     std::cout << "Check if the Realsense camera is connected..." << std::endl;
-    return EXIT_SUCCESS;
+    return EXIT_FAILURE;
   }
+  const float depthScale = realsense.getDepthScale();
+  //! [Realsense opening]
 
-  float depthScale = realsense.getDepthScale();
-  //camera warmup
+  //! [Images]
+  vpImage<vpRGBa> Icol(height, width); // Color image
+  vpImage<unsigned char> Id(height, width); // Grayscale image, converted from Icol
+  vpImage<uint16_t> depthRaw(height, width); // Raw depth map, in realsense format
+  vpImage<float> depth(height, width); // Depth map, in meters
+
+  // Display versions of raw image data
+  vpImage<unsigned char> IdepthDisplay(height, width);
+  vpImage<unsigned char> IProbaDisplay(height, width);
+  vpImage<unsigned char> cannyDisplay(height, width);
+  vpImage<vpRGBa> InormDisplay(height, width);
+  //! [Images]
+
+  //camera warmup, colors may appear washed out in the first few frames
   for (int i = 0; i < 10; ++i) {
     realsense.acquire(Icol);
   }
   vpImageConvert::convert(Icol, Id);
 
+  //! [Tracker update]
   vpCameraParameters cam = realsense.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithoutDistortion);
   tracker.setCameraParameters(cam, height, width);
+  //! [Tracker update]
 
-  std::cout << "Creating displays" << std::endl;
+
+  std::cout << "Creating displays..." << std::endl;
   std::vector<std::shared_ptr<vpDisplay>> displays, displaysDebug;
 
   if (baseArgs.display) {
@@ -207,7 +215,6 @@ int main(int argc, const char **argv)
     }
   }
 
-  updateDepth(depthRaw, depthScale, baseArgs.maxDepthDisplay, depth, IdepthDisplay);
 
   vpHomogeneousMatrix cMo;
 
@@ -231,7 +238,6 @@ int main(int argc, const char **argv)
     vpDisplay::flush(Id);
   }
 
-//vpRBTrackerFilter &ukfm = tracker.getFilter();
   logger.startLog();
   unsigned int iter = 1;
   // Main tracking loop
@@ -252,17 +258,17 @@ int main(int argc, const char **argv)
     switch (result.getStoppingReason()) {
     case vpRBTrackingStoppingReason::EXCEPTION:
     {
-      std::cout << "Encountered an exception during tracking, pose was not updated" << std::endl;
+      std::cout << "Encountered an exception during tracking, pose was not updated!" << std::endl;
       break;
     }
     case vpRBTrackingStoppingReason::NOT_ENOUGH_FEATURES:
     {
-      std::cout << "There were not enough feature to perform tracking" << std::endl;
+      std::cout << "There were not enough feature to perform tracking!" << std::endl;
       break;
     }
     case vpRBTrackingStoppingReason::OBJECT_NOT_IN_IMAGE:
     {
-      std::cout << "Object is not in image" << std::endl;
+      std::cout << "Object is not in image!" << std::endl;
       break;
     }
     case vpRBTrackingStoppingReason::CONVERGENCE_CRITERION:
@@ -282,6 +288,8 @@ int main(int argc, const char **argv)
     }
 
     double displayStart = vpTime::measureTimeMs();
+
+    //! [Display]
     if (baseArgs.display) {
       if (baseArgs.debugDisplay) {
         const vpRBFeatureTrackerInput &lastFrame = tracker.getMostRecentFrame();
@@ -308,13 +316,10 @@ int main(int argc, const char **argv)
       vpDisplay::flush(Id); vpDisplay::flush(Icol);
       vpDisplay::flush(IdepthDisplay); vpDisplay::flush(IProbaDisplay);
     }
+  //! [Display]
 
     logger.logFrame(tracker, iter, Id, Icol, IdepthDisplay, IProbaDisplay);
     const double displayEnd = vpTime::measureTimeMs();
-
-    // ukfm.filter(cMo, 0.05);
-    // const vpHomogeneousMatrix cMoFiltered = ukfm.getFilteredPose();
-    // vpDisplay::displayFrame(Icol, cMoFiltered, cam, 0.05, vpColor::yellow, 2);
 
     const double frameEnd = vpTime::measureTimeMs();
     std::cout << "Iter " << iter << ": " << round(frameEnd - frameStart) << "ms" << std::endl;

@@ -54,9 +54,7 @@ using namespace VISP_NAMESPACE_NAME;
 struct CmdArguments
 {
   CmdArguments() : startFrame(-1), frameStep(1), stepByStep(false)
-  {
-
-  }
+  { }
 
   void registerArguments(vpJsonArgumentParser &parser)
   {
@@ -199,7 +197,6 @@ int main(int argc, const char **argv)
     double frameStart = vpTime::measureTimeMs();
     // Acquire images
     for (unsigned int sp = 0; sp < sequenceArgs.frameStep; ++sp) {
-
       readerRGB.acquire(Icol);
       vpImageConvert::convert(Icol, Id);
       if (!sequenceArgs.depthFolder.empty()) {
