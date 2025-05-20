@@ -10,3 +10,4 @@ set CMAKE_COLOR_DIAGNOSTICS=1
 :: We neeed to force installation of Visp to standard paths instead of <arch>/<vc_version>/ ones done by default
 set VISP_EXTRA_CMAKE_ARGS="-DVISP_LIB_INSTALL_PATH:PATH=lib -DVISP_BIN_INSTALL_PATH:PATH=bin -DVISP_CONFIG_INSTALL_PATH:PATH=cmake"
 set VISP_BUILD_DIR=%CONDA_PREFIX%\visp-build
+if not defined VISP_ENABLE_TEST_WITHOUT_DISPLAY (set VISP_ENABLE_TEST_WITHOUT_DISPLAY=ON)

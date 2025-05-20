@@ -68,6 +68,9 @@ dependencies = { nlohmann_json = "*", panda3d = { version = ">=1.10.15", channel
 
 [feature.tests]
 activation = { env = { VISP_BUILD_TESTS = "ON" } }
+# Tests that require display / rendering are only supported on linux based CI
+[feature.tests.target.linux]
+activation = { env = { VISP_ENABLE_TEST_WITHOUT_DISPLAY = "OFF" } }
 
 [tasks]
 configure = { cmd = [
@@ -82,6 +85,7 @@ configure = { cmd = [
   "-DCMAKE_BUILD_TYPE=$VISP_BUILD_TYPE",
   "-DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX",
   "-DBUILD_TESTS=$VISP_BUILD_TESTS",
+  "-DENABLE_TEST_WITHOUT_DISPLAY=$VISP_ENABLE_TEST_WITHOUT_DISPLAY",
   "-DBUILD_TUTORIALS=OFF",
   "-DBUILD_EXAMPLES=OFF",
   "$VISP_EXTRA_CMAKE_ARGS"
