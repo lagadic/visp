@@ -60,113 +60,142 @@ vpPanda3DRenderParameters defaultRenderParams()
   return vpPanda3DRenderParameters(cam, 240, 320, 0.001, 1.0);
 }
 
+bool opt_no_display = false; // If true, disable display or tests requiring display
+
 SCENARIO("Instanciating multiple Panda3D renderers", "[Panda3D]")
 {
-  GIVEN("A single renderer")
+  if(opt_no_display)
   {
-    vpPanda3DGeometryRenderer r1(vpPanda3DGeometryRenderer::CAMERA_NORMALS);
-    r1.setRenderParameters(defaultRenderParams());
-    r1.initFramework();
-    r1.renderFrame();
-    vpImage<float> depth;
-    r1.getRender(depth);
-
-    THEN("Creating another, uncoupled renderer is ok and its destruction does not raise an error")
+    std::cout << "Display is disabled for tests, skipping..." << std::endl;
+  }
+  else
+  {
+    GIVEN("A single renderer")
     {
-      vpPanda3DGeometryRenderer r2(vpPanda3DGeometryRenderer::CAMERA_NORMALS);
-      r2.setRenderParameters(defaultRenderParams());
-      r2.initFramework();
-      r2.renderFrame();
+      vpPanda3DGeometryRenderer r1(vpPanda3DGeometryRenderer::CAMERA_NORMALS);
+      r1.setRenderParameters(defaultRenderParams());
+      r1.initFramework();
+      r1.renderFrame();
+      vpImage<float> depth;
+      r1.getRender(depth);
+
+      THEN("Creating another, uncoupled renderer is ok and its destruction does not raise an error")
+      {
+        vpPanda3DGeometryRenderer r2(vpPanda3DGeometryRenderer::CAMERA_NORMALS);
+        r2.setRenderParameters(defaultRenderParams());
+        r2.initFramework();
+        r2.renderFrame();
 
 
+      }
+      r1.renderFrame();
+
+      r1.getRender(depth);
     }
-    r1.renderFrame();
-
-    r1.getRender(depth);
   }
 }
 
 
 SCENARIO("Sequentially instanciating and destroying Panda3D renderers", "[Panda3D]")
 {
-  vpPanda3DGeometryRenderer r3(vpPanda3DGeometryRenderer::CAMERA_NORMALS);
-  r3.setRenderParameters(defaultRenderParams());
-  r3.initFramework();
-  r3.renderFrame();
-  vpImage<float> depth;
-  r3.getRender(depth);
-
+  if(opt_no_display)
   {
-    vpPanda3DGeometryRenderer r1(vpPanda3DGeometryRenderer::CAMERA_NORMALS);
-    r1.setRenderParameters(defaultRenderParams());
-    r1.initFramework();
-    r1.renderFrame();
-    r1.getRender(depth);
+    std::cout << "Display is disabled for tests, skipping..." << std::endl;
   }
-
+  else
   {
-    vpPanda3DGeometryRenderer r2(vpPanda3DGeometryRenderer::CAMERA_NORMALS);
-    r2.setRenderParameters(defaultRenderParams());
-    r2.initFramework();
+    vpPanda3DGeometryRenderer r3(vpPanda3DGeometryRenderer::CAMERA_NORMALS);
+    r3.setRenderParameters(defaultRenderParams());
+    r3.initFramework();
+    r3.renderFrame();
     vpImage<float> depth;
-    r2.renderFrame();
-    r2.getRender(depth);
+    r3.getRender(depth);
 
+    {
+      vpPanda3DGeometryRenderer r1(vpPanda3DGeometryRenderer::CAMERA_NORMALS);
+      r1.setRenderParameters(defaultRenderParams());
+      r1.initFramework();
+      r1.renderFrame();
+      r1.getRender(depth);
+    }
+
+    {
+      vpPanda3DGeometryRenderer r2(vpPanda3DGeometryRenderer::CAMERA_NORMALS);
+      r2.setRenderParameters(defaultRenderParams());
+      r2.initFramework();
+      vpImage<float> depth;
+      r2.renderFrame();
+      r2.getRender(depth);
+
+    }
   }
 }
 
 SCENARIO("Sequentially instanciating and destroying Panda3D renderer sets", "[Panda3D]")
 {
+  if(opt_no_display)
   {
-    vpPanda3DRendererSet r1(defaultRenderParams());
-    r1.addSubRenderer(std::make_shared<vpPanda3DGeometryRenderer>(vpPanda3DGeometryRenderer::CAMERA_NORMALS));
-    r1.addSubRenderer(std::make_shared<vpPanda3DRGBRenderer>(true));
-    r1.initFramework();
-    r1.renderFrame();
+    std::cout << "Display is disabled for tests, skipping..." << std::endl;
   }
-
+  else
   {
-    vpPanda3DRendererSet r1(defaultRenderParams());
-    r1.addSubRenderer(std::make_shared<vpPanda3DGeometryRenderer>(vpPanda3DGeometryRenderer::CAMERA_NORMALS));
-    r1.addSubRenderer(std::make_shared<vpPanda3DRGBRenderer>(true));
-    r1.initFramework();
-    r1.renderFrame();
+    {
+      vpPanda3DRendererSet r1(defaultRenderParams());
+      r1.addSubRenderer(std::make_shared<vpPanda3DGeometryRenderer>(vpPanda3DGeometryRenderer::CAMERA_NORMALS));
+      r1.addSubRenderer(std::make_shared<vpPanda3DRGBRenderer>(true));
+      r1.initFramework();
+      r1.renderFrame();
+    }
+
+    {
+      vpPanda3DRendererSet r1(defaultRenderParams());
+      r1.addSubRenderer(std::make_shared<vpPanda3DGeometryRenderer>(vpPanda3DGeometryRenderer::CAMERA_NORMALS));
+      r1.addSubRenderer(std::make_shared<vpPanda3DRGBRenderer>(true));
+      r1.initFramework();
+      r1.renderFrame();
+    }
   }
-
-
 }
 
 SCENARIO("Using multiple panda3d renderers in parallel", "[Panda3D]")
 {
+  if(opt_no_display)
+  {
+    std::cout << "Display is disabled for tests, skipping..." << std::endl;
+  }
+  else
+  {
+    vpPanda3DRGBRenderer r3(true);
+    r3.setRenderParameters(defaultRenderParams());
+    r3.initFramework();
+    r3.renderFrame();
 
-  vpPanda3DRGBRenderer r3(true);
-  r3.setRenderParameters(defaultRenderParams());
-  r3.initFramework();
-  r3.renderFrame();
+    vpPanda3DGeometryRenderer r1(vpPanda3DGeometryRenderer::CAMERA_NORMALS);
+    r1.setRenderParameters(defaultRenderParams());
+    r1.initFramework();
+    r1.renderFrame();
+    vpImage<float> depth;
+    r1.getRender(depth);
 
-  vpPanda3DGeometryRenderer r1(vpPanda3DGeometryRenderer::CAMERA_NORMALS);
-  r1.setRenderParameters(defaultRenderParams());
-  r1.initFramework();
-  r1.renderFrame();
-  vpImage<float> depth;
-  r1.getRender(depth);
-
-  vpPanda3DGeometryRenderer r2(vpPanda3DGeometryRenderer::CAMERA_NORMALS);
-  r2.setRenderParameters(defaultRenderParams());
-  r2.initFramework();
-  r2.renderFrame();
-  r2.getRender(depth);
+    vpPanda3DGeometryRenderer r2(vpPanda3DGeometryRenderer::CAMERA_NORMALS);
+    r2.setRenderParameters(defaultRenderParams());
+    r2.initFramework();
+    r2.renderFrame();
+    r2.getRender(depth);
 
 
-  r1.renderFrame();
-  r1.getRender(depth);
-
+    r1.renderFrame();
+    r1.getRender(depth);
+  }
 }
 
 
 int main(int argc, char *argv[])
 {
   Catch::Session session; // There must be exactly one instance
+  auto cli = session.cli()
+  | Catch::Clara::Opt(opt_no_display)["-d"]("Disable display");
+  session.cli(cli);
   session.applyCommandLine(argc, argv);
 
   int numFailed = session.run();

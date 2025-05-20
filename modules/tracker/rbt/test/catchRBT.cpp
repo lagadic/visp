@@ -108,6 +108,8 @@ const std::string objCube =
 "f 7/13/5 5/11/5 1/3/5\n"
 "f 4/10/6 2/6/6 6/12/6\n";
 
+bool opt_no_display = false; // If true, disable display or tests requiring display
+
 SCENARIO("Instantiating a silhouette me tracker", "[rbt]")
 {
   GIVEN("A base me tracker")
@@ -607,9 +609,12 @@ SCENARIO("Instantiating a render-based tracker", "[rbt]")
       tracker.loadConfiguration(j);
       verifyBase();
       REQUIRE(tracker.getModelPath() == "path/to/model.obj");
-      AND_THEN("Initializing tracking fails since object does not exist")
+      if(not opt_no_display)
       {
-        REQUIRE_THROWS(tracker.startTracking());
+        AND_THEN("Initializing tracking fails since object does not exist")
+        {
+          REQUIRE_THROWS(tracker.startTracking());
+        }
       }
     }
     THEN("Loading configuration without model also works")
@@ -618,9 +623,12 @@ SCENARIO("Instantiating a render-based tracker", "[rbt]")
       tracker.loadConfiguration(j);
       verifyBase();
       REQUIRE(tracker.getModelPath() == "");
-      AND_THEN("Initializing tracking fails since path is not specified")
+      if(not opt_no_display)
       {
-        REQUIRE_THROWS(tracker.startTracking());
+        AND_THEN("Initializing tracking fails since path is not specified")
+        {
+          REQUIRE_THROWS(tracker.startTracking());
+        }
       }
     }
     THEN("Loading configuration with real 3D model also works")
@@ -634,9 +642,12 @@ SCENARIO("Instantiating a render-based tracker", "[rbt]")
       tracker.loadConfiguration(j);
       verifyBase();
       REQUIRE(tracker.getModelPath() == objFile);
-      AND_THEN("Initializing tracker works")
+      if(not opt_no_display)
       {
-        REQUIRE_NOTHROW(tracker.startTracking());
+        AND_THEN("Initializing tracker works")
+        {
+          REQUIRE_NOTHROW(tracker.startTracking());
+        }
       }
     }
   }
@@ -658,78 +669,88 @@ SCENARIO("Instantiating a render-based tracker", "[rbt]")
 
 SCENARIO("Running tracker on static synthetic sequences", "[rbt]")
 {
-  unsigned int h = 480, w = 640;
-  vpCameraParameters cam(600, 600, 320, 240);
-  vpPanda3DRenderParameters renderParams(cam, h, w, 0.01, 1.0);
-
-  const std::string tempDir = vpIoTools::makeTempDirectory("visp_test_rbt_obj");
-  std::cout << tempDir << std::endl;
-  const std::string objFile = vpIoTools::getAbsolutePathname(vpIoTools::createFilePath(tempDir, "cube.obj"));
-
-  std::ofstream f(objFile);
-  f << objCube;
-  f.close();
-
-  const auto setupScene = [&objFile](vpPanda3DRendererSet &renderer) {
-    renderer.addNodeToScene(renderer.loadObject("object", objFile));
-    renderer.addLight(vpPanda3DAmbientLight("ambient", vpRGBf(1.f)));
-    };
-  const unsigned int n = 100;
-
-  std::vector<vpHomogeneousMatrix> cTw;
-  std::vector<vpHomogeneousMatrix> oTw;
-  for (unsigned int i = 0; i < n; ++i) {
-    oTw.push_back(vpHomogeneousMatrix(0.0, 0.0, 0.0, 0.0, vpMath::rad(60.0), vpMath::rad(45.0)));
-    cTw.push_back(vpHomogeneousMatrix(0.0, 0.001 * static_cast<double>(i), 0.3 + 0.001 * static_cast<double>(i), 0.0, 0.0, 0.0));
+  if(opt_no_display)
+  {
+    std::cout << "Display is disabled for tests, skipping..." << std::endl;
   }
+  else
+  {
+    unsigned int h = 480, w = 640;
+    vpCameraParameters cam(600, 600, 320, 240);
+    vpPanda3DRenderParameters renderParams(cam, h, w, 0.01, 1.0);
 
-  TrajectoryData traj1 = generateTrajectory(renderParams, setupScene, cTw, oTw);
+    const std::string tempDir = vpIoTools::makeTempDirectory("visp_test_rbt_obj");
+    std::cout << tempDir << std::endl;
+    const std::string objFile = vpIoTools::getAbsolutePathname(vpIoTools::createFilePath(tempDir, "cube.obj"));
 
-  vpRBTracker tracker;
-  tracker.setCameraParameters(cam, h, w);
-  std::shared_ptr<vpRBSilhouetteCCDTracker> silTracker = std::make_shared<vpRBSilhouetteCCDTracker>();
-  silTracker->setTemporalSmoothingFactor(0.1);
-  vpCCDParameters ccdParams = silTracker->getCCDParameters();
-  ccdParams.h = 8;
-  silTracker->setCCDParameters(ccdParams);
+    std::ofstream f(objFile);
+    f << objCube;
+    f.close();
 
-  tracker.addTracker(silTracker);
-  // std::shared_ptr<vpRBDenseDepthTracker> denseDepthTracker = std::make_shared<vpRBDenseDepthTracker>();
-  // denseDepthTracker->setStep(4);
-  // tracker.addTracker(denseDepthTracker);
+    const auto setupScene = [&objFile](vpPanda3DRendererSet &renderer) {
+      renderer.addNodeToScene(renderer.loadObject("object", objFile));
+      renderer.addLight(vpPanda3DAmbientLight("ambient", vpRGBf(1.f)));
+      };
+    const unsigned int n = 100;
 
-  vpSilhouettePointsExtractionSettings silhouetteSettings;
-  silhouetteSettings.setSampleStep(1);
-  silhouetteSettings.setThresholdIsRelative(true);
-  silhouetteSettings.setThreshold(0.1);
-  silhouetteSettings.setPreferPreviousPoints(false);
-  silhouetteSettings.setMaxCandidates(512);
-  tracker.setSilhouetteExtractionParameters(silhouetteSettings);
-  tracker.setOptimizationGain(0.25);
-  tracker.setMaxOptimizationIters(10);
-  tracker.setOptimizationInitialMu(0.01);
-  tracker.setModelPath(objFile);
-  tracker.startTracking();
-  tracker.setPose(traj1.cTo[0]);
+    std::vector<vpHomogeneousMatrix> cTw;
+    std::vector<vpHomogeneousMatrix> oTw;
+    for (unsigned int i = 0; i < n; ++i) {
+      oTw.push_back(vpHomogeneousMatrix(0.0, 0.0, 0.0, 0.0, vpMath::rad(60.0), vpMath::rad(45.0)));
+      cTw.push_back(vpHomogeneousMatrix(0.0, 0.001 * static_cast<double>(i), 0.3 + 0.001 * static_cast<double>(i), 0.0, 0.0, 0.0));
+    }
 
-  vpImage<unsigned char> I;
+    TrajectoryData traj1 = generateTrajectory(renderParams, setupScene, cTw, oTw);
 
-  for (unsigned int i = 0; i < traj1.cTo.size(); ++i) {
-    vpImageConvert::convert(traj1.rgb[i], I);
-    vpHomogeneousMatrix tracker_cTo;
-    tracker.track(I, traj1.rgb[i], traj1.depth[i]);
-    tracker.getPose(tracker_cTo);
-    vpHomogeneousMatrix odTo = traj1.cTo[i].inverse() * tracker_cTo;
-    double errorT = odTo.getTranslationVector().frobeniusNorm();
-    double errorR = odTo.getThetaUVector().getTheta();
-    std::cout << "Translation error = " << errorT << " m" << ", rotation error = " << vpMath::deg(errorR) << " deg" << std::endl;
-    REQUIRE((errorT < 0.005 && errorR < vpMath::deg(2.1)));
+    vpRBTracker tracker;
+    tracker.setCameraParameters(cam, h, w);
+    std::shared_ptr<vpRBSilhouetteCCDTracker> silTracker = std::make_shared<vpRBSilhouetteCCDTracker>();
+    silTracker->setTemporalSmoothingFactor(0.1);
+    vpCCDParameters ccdParams = silTracker->getCCDParameters();
+    ccdParams.h = 8;
+    silTracker->setCCDParameters(ccdParams);
+
+    tracker.addTracker(silTracker);
+    // std::shared_ptr<vpRBDenseDepthTracker> denseDepthTracker = std::make_shared<vpRBDenseDepthTracker>();
+    // denseDepthTracker->setStep(4);
+    // tracker.addTracker(denseDepthTracker);
+
+    vpSilhouettePointsExtractionSettings silhouetteSettings;
+    silhouetteSettings.setSampleStep(1);
+    silhouetteSettings.setThresholdIsRelative(true);
+    silhouetteSettings.setThreshold(0.1);
+    silhouetteSettings.setPreferPreviousPoints(false);
+    silhouetteSettings.setMaxCandidates(512);
+    tracker.setSilhouetteExtractionParameters(silhouetteSettings);
+    tracker.setOptimizationGain(0.25);
+    tracker.setMaxOptimizationIters(10);
+    tracker.setOptimizationInitialMu(0.01);
+    tracker.setModelPath(objFile);
+    tracker.startTracking();
+    tracker.setPose(traj1.cTo[0]);
+
+    vpImage<unsigned char> I;
+
+    for (unsigned int i = 0; i < traj1.cTo.size(); ++i) {
+      vpImageConvert::convert(traj1.rgb[i], I);
+      vpHomogeneousMatrix tracker_cTo;
+      tracker.track(I, traj1.rgb[i], traj1.depth[i]);
+      tracker.getPose(tracker_cTo);
+      vpHomogeneousMatrix odTo = traj1.cTo[i].inverse() * tracker_cTo;
+      double errorT = odTo.getTranslationVector().frobeniusNorm();
+      double errorR = odTo.getThetaUVector().getTheta();
+      std::cout << "Translation error = " << errorT << " m" << ", rotation error = " << vpMath::deg(errorR) << " deg" << std::endl;
+      REQUIRE((errorT < 0.005 && errorR < vpMath::deg(2.1)));
+    }
   }
 }
 
 int main(int argc, char *argv[])
 {
   Catch::Session session; // There must be exactly one instance
+  auto cli = session.cli()
+  | Catch::Clara::Opt(opt_no_display)["-d"]("Disable display");
+  session.cli(cli);
   session.applyCommandLine(argc, argv);
 
   int numFailed = session.run();
