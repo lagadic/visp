@@ -100,7 +100,7 @@ jobs:
         git clone --depth 1 --branch ${LATEST_TAG} ${GIT_ADDRESS} ${HOME}/librealsense
         cd ${HOME}/librealsense
         mkdir build && cd build && mkdir install
-        cmake .. -DBUILD_EXAMPLES=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$(pwd)/install
+        cmake .. -DBUILD_EXAMPLES=OFF -DBUILD_GRAPHICAL_EXAMPLES=OFF -DBUILD_TOOLS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$(pwd)/install
         make -j$(nproc) install
         echo "REALSENSE2_DIR=$(pwd)/install" >> $GITHUB_ENV
         echo $REALSENSE2_DIR
@@ -111,13 +111,68 @@ jobs:
         GIT_ADDRESS="https://github.com/PointCloudLibrary/pcl.git"
         LATEST_TAG=`eval ${FUNCTION_GET_LATEST}`
         echo "Newest tag is ${LATEST_TAG}"
-        git clone --depth 1 --branch ${LATEST_TAG} ${GIT_ADDRESS}  ${HOME}/pcl
+        git clone --depth 1 --branch ${LATEST_TAG} ${GIT_ADDRESS} ${HOME}/pcl
         cd ${HOME}/pcl
         mkdir build && cd build && mkdir install
         cmake .. -DBUILD_tools=OFF -DBUILD_global_tests=OFF -DPCL_DISABLE_GPU_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$(pwd)/install
         make -j$(nproc) install
         echo "PCL_DIR=$(pwd)/install" >> $GITHUB_ENV
         echo $PCL_DIR
+
+    - name: Build qualisys_cpp_sdk from source
+      run: |
+        pwd
+        git clone https://github.com/qualisys/qualisys_cpp_sdk.git ${HOME}/qualisys_cpp_sdk
+        cd ${HOME}/qualisys_cpp_sdk
+        mkdir build && cd build && mkdir install
+        cmake .. qualisys_cpp_sdk_BUILD_EXAMPLE=OFF qualisys_cpp_sdk_BUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-fPIC -DCMAKE_INSTALL_PREFIX=$(pwd)/install
+        make -j$(nproc) install
+        echo "QUALISYS_DIR=$(pwd)/install" >> $GITHUB_ENV
+        echo $QUALISYS_DIR
+
+    - name: Build libfranka from source
+      # Since libfranka version 0.14.0 or later, you will need to install pinocchio and some more dependencies
+      env:
+        LD_LIBRARY_PATH: /opt/openrobots/lib
+      run: |
+        sudo apt-get install -y lsb-release curl
+        sudo mkdir -p /etc/apt/keyrings
+        curl -fsSL http://robotpkg.openrobots.org/packages/debian/robotpkg.asc | sudo tee /etc/apt/keyrings/robotpkg.asc
+        echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/robotpkg.asc] http://robotpkg.openrobots.org/packages/debian/pub $(lsb_release -cs) robotpkg" | sudo tee /etc/apt/sources.list.d/robotpkg.list
+        sudo apt-get update
+        sudo apt-get install -y robotpkg-pinocchio libpoco-dev libfmt-dev
+        pwd
+        GIT_ADDRESS="https://github.com/frankaemika/libfranka"
+        LATEST_TAG=`eval ${FUNCTION_GET_LATEST}`
+        echo "Newest tag is ${LATEST_TAG}"
+        git clone --recursive --branch ${LATEST_TAG} ${GIT_ADDRESS} ${HOME}/libfranka
+        cd ${HOME}/libfranka
+        mkdir build && cd build && mkdir install
+        cmake .. -DCMAKE_PREFIX_PATH=/opt/openrobots/lib/cmake -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$(pwd)/install
+        make -j$(nproc) install
+        echo "Franka_DIR=$(pwd)/install" >> $GITHUB_ENV
+        echo $Franka_DIR
+
+    - name: Build Cerebellum Afma and Viper robots SDK from source
+      run: |
+        pwd
+        git clone https://gitlab.inria.fr/adept_robots/cerebellum.git ${HOME}/cerebellum
+        git clone https://gitlab.inria.fr/adept_robots/afma6 ${HOME}/afma6
+        git clone https://gitlab.inria.fr/adept_robots/viper650 ${HOME}/viper650
+        git clone https://gitlab.inria.fr/adept_robots/viper850 ${HOME}/viper850
+        cd ${HOME}/cerebellum/CALinux
+        make -j$(nproc)
+        sudo make install
+        cd ${HOME}/cerebellum/Irisa
+        cmake .
+        make -j$(nproc)
+        sudo make install
+        echo "AFMA6_DATA_DIR=${HOME}/afma6" >> $GITHUB_ENV
+        echo "VIPER650_DATA_DIR=${HOME}/viper650" >> $GITHUB_ENV
+        echo "VIPER850_DATA_DIR=${HOME}/viper850" >> $GITHUB_ENV
+        echo $AFMA6_DATA_DIR
+        echo $VIPER650_DATA_DIR
+        echo $VIPER850_DATA_DIR
 
     - name: Clone visp-images
       env:
@@ -143,6 +198,8 @@ jobs:
         ./bin/visp-config --libs
 
     - name: Build and install ViSP
+      env:
+        LD_LIBRARY_PATH: /opt/openrobots/lib
       working-directory: build
       run: |
         make -j$(nproc) install
@@ -150,6 +207,8 @@ jobs:
         echo $VISP_DIR
 
     - name: Run unit tests
+      env:
+        LD_LIBRARY_PATH: /opt/openrobots/lib
       working-directory: build
       run: ctest -j$(nproc) --output-on-failure
 
@@ -158,6 +217,8 @@ jobs:
         git clone --depth 1 https://github.com/lagadic/camera_localization ${HOME}/camera_localization
 
     - name: Build camera_localization with ViSP as 3rdparty
+      env:
+        LD_LIBRARY_PATH: /opt/openrobots/lib
       run: |
         cd ${HOME}/camera_localization
         mkdir camera_localization-build
@@ -170,6 +231,8 @@ jobs:
         git clone --depth 1 https://github.com/lagadic/visp_started ${HOME}/visp_started
 
     - name: Build visp_started with ViSP as 3rdparty
+      env:
+        LD_LIBRARY_PATH: /opt/openrobots/lib
       run: |
         cd ${HOME}/visp_started
         mkdir visp_started-build

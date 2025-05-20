@@ -12,15 +12,16 @@ Windows 10 | [![Build status](https://ci.appveyor.com/api/projects/status/121dsc
 Other arch Ubuntu 22.04 (aarch64, s390x)| [![other arch workflow](https://github.com/lagadic/visp/actions/workflows/other-arch.yml/badge.svg)](https://github.com/lagadic/visp/actions/workflows/other-arch.yml)
 ROS1 Noetic Ubuntu 20.04 Focal | [![Build Status](https://build.ros.org/buildStatus/icon?job=Ndev__visp__ubuntu_focal_amd64)](https://build.ros.org/job/Ndev__visp__ubuntu_focal_amd64/)
 ROS2 Humble Ubuntu 22.04 Jammy| [![Build Status](https://build.ros2.org/buildStatus/icon?job=Hdev__visp__ubuntu_jammy_amd64)](https://build.ros2.org/job/Hdev__visp__ubuntu_jammy_amd64/)
-ROS2 Iron Ubuntu 22.04 Jammy| [![Build Status](https://build.ros2.org/buildStatus/icon?job=Idev__visp__ubuntu_jammy_amd64)](https://build.ros2.org/job/Idev__visp__ubuntu_jammy_amd64/)
-ROS2 Rolling Ubuntu 22.04 Jammy| [![Build Status](https://build.ros2.org/buildStatus/icon?job=Rdev__visp__ubuntu_jammy_amd64)](https://build.ros2.org/job/Rdev__visp__ubuntu_jammy_amd64)
+ROS2 Jazzy Ubuntu 24.04 Noble| [![Build Status](https://build.ros2.org/buildStatus/icon?job=Jdev__visp__ubuntu_noble_amd64)](https://build.ros2.org/job/Jdev__visp__ubuntu_noble_amd64/)
+ROS2 Kilted Ubuntu 24.04 Noble| [![Build Status](https://build.ros2.org/buildStatus/icon?job=Kdev__visp__ubuntu_noble_amd64)](https://build.ros2.org/job/Kdev__visp__ubuntu_noble_amd64/)
+ROS2 Rolling Ubuntu 24.04 Noble| [![Build Status](https://build.ros2.org/buildStatus/icon?job=Rdev__visp__ubuntu_noble_amd64)](https://build.ros2.org/job/Rdev__visp__ubuntu_noble_amd64)
 Valgrind | [![valgrind workflow](https://github.com/lagadic/visp/actions/workflows/valgrind.yml/badge.svg)](https://github.com/lagadic/visp/actions/workflows/valgrind.yml)
 Sanitizer | [![sanitizers workflow](https://github.com/lagadic/visp/actions/workflows/ubuntu-sanitizers.yml/badge.svg)](https://github.com/lagadic/visp/actions/workflows/ubuntu-sanitizers.yml)
 Code coverage | [![Code coverage](https://codecov.io/gh/lagadic/visp/branch/master/graph/badge.svg?token=GQIiKbA3BC)](https://codecov.io/gh/lagadic/visp)
 
 Other projects | Build Status |
 -------------- | ------------ |
-[UsTK](https://github.com/lagadic/ustk) | [![macOS](https://github.com/lagadic/visp/actions/workflows/macos-ustk.yml/badge.svg)](https://github.com/lagadic/visp/actions/workflows/macos-ustk.yml) [![Ubuntu](https://github.com/lagadic/visp/actions/workflows/ubuntu-ustk.yml/badge.svg)](https://github.com/lagadic/visp/actions/workflows/ubuntu-ustk.yml)
+[UsTK](https://github.com/lagadic/ustk) | [![Ubuntu](https://github.com/lagadic/visp/actions/workflows/ubuntu-ustk.yml/badge.svg)](https://github.com/lagadic/visp/actions/workflows/ubuntu-ustk.yml)
 [visp_contrib](https://github.com/lagadic/visp_contrib) | [![Ubuntu](https://github.com/lagadic/visp/actions/workflows/ubuntu-contrib.yml/badge.svg)](https://github.com/lagadic/visp/actions/workflows/ubuntu-contrib.yml)
 [visp_sample](https://github.com/lagadic/visp_sample) | [![macos workflow](https://github.com/lagadic/visp/actions/workflows/macos.yml/badge.svg)](https://github.com/lagadic/visp/actions/workflows/macos.yml) [![ubuntu dep apt workflow](https://github.com/lagadic/visp/actions/workflows/ubuntu-dep-apt.yml/badge.svg)](https://github.com/lagadic/visp/actions/workflows/ubuntu-dep-apt.yml)
 [camera_localization](https://github.com/lagadic/camera_localization) | [![ubuntu_3rdparty_workflow](https://github.com/lagadic/visp/actions/workflows/ubuntu-3rdparty.yml/badge.svg)](https://github.com/lagadic/visp/actions/workflows/ubuntu-3rdparty.yml)
