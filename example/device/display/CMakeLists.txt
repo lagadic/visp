@@ -63,10 +63,10 @@ endforeach()
 # https://visp.inria.fr/download/
 
 # Only if dataset found for isolated build
-visp_add_test(displaySequence displaySequence ${OPTION_TO_DESACTIVE_DISPLAY})
-visp_add_test(displayGDI displayGDI -c ${OPTION_TO_DESACTIVE_DISPLAY})
-visp_add_test(displayD3D displayD3D -c ${OPTION_TO_DESACTIVE_DISPLAY})
-visp_add_test(displayGTK displayGTK -c ${OPTION_TO_DESACTIVE_DISPLAY})
-visp_add_test(displayX displayX -c ${OPTION_TO_DESACTIVE_DISPLAY})
-visp_add_test(displayOpenCV displayOpenCV -c ${OPTION_TO_DESACTIVE_DISPLAY})
-visp_add_test(displayXMulti displayXMulti -c ${OPTION_TO_DESACTIVE_DISPLAY})
+visp_add_test(displaySequence displaySequence ${SHORT_OPTION_TO_DISABLE_DISPLAY})
+visp_add_test(displayGDI displayGDI -c ${SHORT_OPTION_TO_DISABLE_DISPLAY})
+visp_add_test(displayD3D displayD3D -c ${SHORT_OPTION_TO_DISABLE_DISPLAY})
+visp_add_test(displayGTK displayGTK -c ${SHORT_OPTION_TO_DISABLE_DISPLAY})
+visp_add_test(displayX displayX -c ${SHORT_OPTION_TO_DISABLE_DISPLAY})
+visp_add_test(displayOpenCV displayOpenCV -c ${SHORT_OPTION_TO_DISABLE_DISPLAY})
+visp_add_test(displayXMulti displayXMulti -c ${SHORT_OPTION_TO_DISABLE_DISPLAY})

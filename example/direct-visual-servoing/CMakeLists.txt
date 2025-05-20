@@ -53,7 +53,7 @@ foreach(cpp ${example_cpp})
 endforeach()
 
 # Only if dataset found for isolated build
-visp_add_test(photometricVisualServoing photometricVisualServoing -c -n 20 ${OPTION_TO_DESACTIVE_DISPLAY})
-visp_add_test(photometricVisualServoingWithoutVpServo photometricVisualServoingWithoutVpServo -c -n 20 ${OPTION_TO_DESACTIVE_DISPLAY})
-visp_add_test(photometricMappingPCAVisualServoing photometricMappingVisualServoing -c -n 200 -m pca -k 64 -p 100 -l 30.0 ${OPTION_TO_DESACTIVE_DISPLAY})
-visp_add_test(photometricMappingDCTVisualServoing photometricMappingVisualServoing -c -n 200  -m dct -k 64 -l 30.0  ${OPTION_TO_DESACTIVE_DISPLAY})
+visp_add_test(photometricVisualServoing photometricVisualServoing -c -n 20 ${SHORT_OPTION_TO_DISABLE_DISPLAY})
+visp_add_test(photometricVisualServoingWithoutVpServo photometricVisualServoingWithoutVpServo -c -n 20 ${SHORT_OPTION_TO_DISABLE_DISPLAY})
+visp_add_test(photometricMappingPCAVisualServoing photometricMappingVisualServoing -c -n 200 -m pca -k 64 -p 100 -l 30.0 ${SHORT_OPTION_TO_DISABLE_DISPLAY})
+visp_add_test(photometricMappingDCTVisualServoing photometricMappingVisualServoing -c -n 200  -m dct -k 64 -l 30.0  ${SHORT_OPTION_TO_DISABLE_DISPLAY})

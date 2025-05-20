@@ -551,9 +551,9 @@ if(ENABLE_SOLUTION_FOLDERS)
 endif()
 
 if(ENABLE_TEST_WITHOUT_DISPLAY)
-  set(OPTION_TO_DESACTIVE_DISPLAY "-d")
+  set(SHORT_OPTION_TO_DISABLE_DISPLAY "-d")
    # catch does not support passing -d as argument as it is already reserved
-  set(OPTION_TO_DESACTIVATE_DISPLAY_ALT "--no-display")
+  set(LONG_OPTION_TO_DISABLE_DISPLAY "--no-display")
 endif()
 
 # Check for Inria's robot drivers
