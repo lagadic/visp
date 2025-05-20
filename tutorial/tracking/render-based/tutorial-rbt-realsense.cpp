@@ -131,8 +131,6 @@ int main(int argc, const char **argv)
   if (!baseArgs.modelPath.empty()) {
     tracker.setModelPath(baseArgs.modelPath);
   }
-  tracker.startTracking();
-
   //! [Loading config]
 
 
@@ -154,10 +152,16 @@ int main(int argc, const char **argv)
     std::cout << "Check if the Realsense camera is connected..." << std::endl;
     return EXIT_FAILURE;
   }
-  const float depthScale = realsense.getDepthScale();
+  const float depthScale = realsense.getDepthScale(); // used to convert uint16_t to meters
   //! [Realsense opening]
 
-  //! [Images]
+  //! [Tracker update]
+  const vpCameraParameters cam = realsense.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithoutDistortion);
+  tracker.setCameraParameters(cam, height, width);
+  tracker.startTracking();
+  //! [Tracker update]
+
+//! [Images]
   vpImage<vpRGBa> Icol(height, width); // Color image
   vpImage<unsigned char> Id(height, width); // Grayscale image, converted from Icol
   vpImage<uint16_t> depthRaw(height, width); // Raw depth map, in realsense format
@@ -176,15 +180,12 @@ int main(int argc, const char **argv)
   }
   vpImageConvert::convert(Icol, Id);
 
-  //! [Tracker update]
-  vpCameraParameters cam = realsense.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithoutDistortion);
-  tracker.setCameraParameters(cam, height, width);
-  //! [Tracker update]
 
 
   std::cout << "Creating displays..." << std::endl;
   std::vector<std::shared_ptr<vpDisplay>> displays, displaysDebug;
 
+  //! [Create displays]
   if (baseArgs.display) {
     displays = vpRBTrackerTutorial::createDisplays(Id, Icol, IdepthDisplay, IProbaDisplay);
     if (baseArgs.debugDisplay) {
@@ -197,7 +198,9 @@ int main(int argc, const char **argv)
     }
     plotter.init(displays);
   }
+  //! [Create displays]
 
+  //! [Wait before init]
   if (baseArgs.display && !baseArgs.hasInlineInit()) {
     bool ready = false;
     while (!ready) {
@@ -216,28 +219,31 @@ int main(int argc, const char **argv)
   }
 
 
-  vpHomogeneousMatrix cMo;
+  //! [Wait before init]
 
+  //! [Init]
+  vpHomogeneousMatrix cMo;
   // Manual initialization of the tracker
   std::cout << "Starting init" << std::endl;
   if (baseArgs.hasInlineInit()) {
     tracker.setPose(baseArgs.cMoInit);
   }
   else if (baseArgs.display) {
-
     tracker.initClick(Id, baseArgs.initFile, true);
     tracker.getPose(cMo);
   }
   else {
-    throw vpException(vpException::notImplementedError, "Cannot initalize tracking: no auto init function provided");
+    throw vpException(vpException::notImplementedError, "Cannot initialize tracking: no initial pose provided or display to perform click initialization.");
   }
 
   std::cout << "Starting pose: " << vpPoseVector(cMo).t() << std::endl;
+  //! [Init]
 
   if (baseArgs.display) {
     vpDisplay::flush(Id);
   }
 
+  //! [Tracking loop]
   logger.startLog();
   unsigned int iter = 1;
   // Main tracking loop
@@ -245,16 +251,19 @@ int main(int argc, const char **argv)
   while (true) {
     double frameStart = vpTime::measureTimeMs();
     // Acquire images
+    //! [Image acquisition]
     realsense.acquire((unsigned char *)Icol.bitmap, (unsigned char *)depthRaw.bitmap, nullptr, nullptr, &align_to);
     updateDepth(depthRaw, depthScale, baseArgs.maxDepthDisplay, depth, IdepthDisplay);
     vpImageConvert::convert(Icol, Id);
-
-    // Pose tracking
+    //![Image acquisition]
+    //! [Call to tracker]
     double trackingStart = vpTime::measureTimeMs();
     vpRBTrackingResult result = tracker.track(Id, Icol, depth);
     double trackingEnd = vpTime::measureTimeMs();
     tracker.getPose(cMo);
+    //! [Call to tracker]
 
+    //! [Result parsing]
     switch (result.getStoppingReason()) {
     case vpRBTrackingStoppingReason::EXCEPTION:
     {
@@ -283,9 +292,18 @@ int main(int argc, const char **argv)
       break;
     }
     default:
-    {
+    { }
+
     }
+
+    const std::shared_ptr<vpRBDriftDetector> driftDetector = tracker.getDriftDetector();
+    if (driftDetector) {
+      if (driftDetector->getScore() < 0.25) {
+        std::cout << "Drift detection has low confidence score: " << driftDetector->getScore() << std::endl;
+      }
     }
+
+    //! [Result parsing]
 
     double displayStart = vpTime::measureTimeMs();
 
@@ -297,13 +315,16 @@ int main(int argc, const char **argv)
         vpRBTrackerTutorial::displayCanny(lastFrame.renders.silhouetteCanny, cannyDisplay, lastFrame.renders.isSilhouette);
       }
 
-      vpDisplay::display(IdepthDisplay);
-      vpDisplay::display(Id);
-      vpDisplay::display(Icol);
+      vpDisplay::display(Id); vpDisplay::display(Icol); vpDisplay::display(IdepthDisplay);
       tracker.display(Id, Icol, IdepthDisplay);
 
       vpDisplay::displayFrame(Icol, cMo, cam, 0.05, vpColor::none, 2);
       vpDisplay::displayText(Id, 20, 5, "Right click to exit", vpColor::red);
+      if (driftDetector) {
+        std::stringstream ss;
+        ss << "Confidence score: " << driftDetector->getScore() << std::endl;
+        vpDisplay::displayText(Id, Id.getHeight() - 40, 5, ss.str(), vpColor::red);
+      }
       vpMouseButton::vpMouseButtonType button;
       if (vpDisplay::getClick(Id, button, false)) {
         if (button == vpMouseButton::button3) {
@@ -312,25 +333,33 @@ int main(int argc, const char **argv)
       }
       tracker.displayMask(IProbaDisplay);
       vpDisplay::display(IProbaDisplay);
-
       vpDisplay::flush(Id); vpDisplay::flush(Icol);
       vpDisplay::flush(IdepthDisplay); vpDisplay::flush(IProbaDisplay);
     }
-  //! [Display]
+    //! [Display]
 
-    logger.logFrame(tracker, iter, Id, Icol, IdepthDisplay, IProbaDisplay);
     const double displayEnd = vpTime::measureTimeMs();
 
     const double frameEnd = vpTime::measureTimeMs();
+    //! [Logging]
+
+    logger.logFrame(tracker, iter, Id, Icol, IdepthDisplay, IProbaDisplay);
     std::cout << "Iter " << iter << ": " << round(frameEnd - frameStart) << "ms" << std::endl;
     std::cout << "- Tracking:  " << round(trackingEnd - trackingStart) << "ms" << std::endl;
     std::cout << "- Display: " << round(displayEnd - displayStart) << "ms" << std::endl;
+    if (baseArgs.verbose) {
+      std::cout << result.timer() << std::endl;
+    }
     plotter.plot(tracker, (frameEnd - expStart) / 1000.0);
+    //! [Logging]
     iter++;
   }
+  //! [Tracking loop]
 
+  //! [Cleanup]
   logger.close();
   vpPanda3DFrameworkManager::getInstance().exit();
   return EXIT_SUCCESS;
+  //! [Cleanup]
 }
 #endif

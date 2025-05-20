@@ -1,15 +1,4 @@
 {
-  "camera": {
-    "intrinsics": {
-      "model": "perspectiveWithoutDistortion",
-      "px": 607.178,
-      "py": 607.234,
-      "u0": 321.391,
-      "v0": 241.918
-    },
-    "height": 480,
-    "width": 640
-  },
   "vvs": {
     "gain": 1.0,
     "maxIterations": 10,
@@ -55,6 +44,14 @@
         "delta_h": 2,
         "min_h": 16
       }
+    },
+    {
+      "type": "depth",
+      "weight": 1,
+      "display": false,
+      "step": 2,
+      "useMask": true,
+      "minMaskConfidence": 0.5
     },
     {
       "type": "klt",

@@ -43,13 +43,13 @@ Additionally, Some optional dependencies are (strongly) recommended:
 Without it, the tracker setup will have to be done through code
 - OpenCV, if you wish to use the `vpRBKltTracker`, that uses KLT feature tracking for pose estimation.
 
-\subsection rbt_tracking_requirements General requirements
+\subsection rbt_tracking_requirements_general General requirements
 
 To use the RBT you will need several things:
 
 - An OpenGL or DirectX enabled device, that can perform 3D rendering.
 You can use software acceleration, although having a GPU is preferable for performance reasons
-- A camera with known intrinsic parameters. For calibration see \ref tutorial-calibration-intrinsic. \important The camera intrinsics should follow a model without distortion.
+- A camera with known intrinsic parameters. For calibration see \ref tutorial-calibration-intrinsic. \warning The camera intrinsics should follow a model without distortion.
 - If you are using an RGB-D camera, the depth image should be aligned with the RGB image. Some SDKs provide this functionality.
 For instance, the wrapper around the realsense SDK accepts an "align" parameter in the vpRealSense2::acquire function.
 When correctly set, the alignment will automatically be performed for you.
@@ -69,7 +69,7 @@ Note that while 3D meshes support textures, the presently available RBT features
 
 To correctly process your model, here is a small overview of the steps to follow in Blender
 
-\subsubsection rbt_tracking_requirements_model_preparation Preparing your model in blender
+\subsubsection rbt_tracking_requirements_model_preparation Preparing your model in Blender
 
 To make sure your model is correct, you should start by setting the scale and orientation of your 3D model.
 
@@ -84,7 +84,7 @@ Then you should press **Ctrl+A** to open the *Apply* menu and click on the "**Al
 
 If you are using initialization by click as described in \ref mb_generic_init_user, you can select the 3D points to click directly in Blender.
 To do so, first click on your object and press *tab* to go into Edit mode. Then, press *N* to display the **Transform** Panel (Top right of the viewer).
-Choose a 3D point to use for initilization, then click on it. In the **Transform** panel, you should then see the XYZ coordinates of the point, which you can copy into the init file.
+Choose a 3D point to use for initialization, then click on it. In the **Transform** panel, you should then see the XYZ coordinates of the point, which you can copy into the init file.
 Be sure to select the "Global" frame in the transform panel.
 
 \image html rbt-click-init-blender-panel.png The transform panel with a selected 3D point in Edit mode.
@@ -178,13 +178,13 @@ Unlike the moving edge approach, the error is not geometric in nature, but rathe
 
 - **Depth** The depth information can be used and compared to the rendered depth. With this feature, the error to minimize is the point-to-plane distance.
 The point is sampled from the current depth map, while the plane is computed from the rendered 3D model, using its distance to the camera and surface normal.
-The plane is continuously updated to minmize the distance to the sample depth point.
+The plane is continuously updated to minimize the distance to the sample depth point.
 
 To define you own features (advanced), see \ref rbt_extension_features.
 
 \subsection rbt_tracking_filtering Feature filtering
 
-When tracking, it is possible for occlusions or lighting artifacts to appear. In thoses cases, considering ill-defined or ill-matched features may lead to tracking failure.
+When tracking, it is possible for occlusions or lighting artifacts to appear. In those cases, considering ill-defined or ill-matched features may lead to tracking failure.
 To handle those cases and improve tracking reliability, the RBT comes with two mechanisms:
 
 - A masking/segmentation approach, that outputs a per-pixel probability map that a given pixel belongs to the object
@@ -222,15 +222,15 @@ We will now focus on an example usage of the tracker, using a Realsense camera. 
 
 To run the program, start by placing yourself in the ViSP build directory.
 Assuming you have compiled and built the tutorials, navigate to the tutorial folder:
-\code{.sh}
+\verbatim
 ~/visp_build $ cd tutorial/tracking/render-based
 ~/visp_build/tutorial-tracking/render-based $ cd tutorial/tracking/render-based
-\endcode
+\endverbatim
 
 You can then examine the command line arguments with:
 
 \code{.sh}
-./tutorial-rbt-realsense  -h
+~/visp_build/tutorial-tracking/render-based $ ./tutorial-rbt-realsense -h
 \endcode
 
 Which outputs:
@@ -337,17 +337,127 @@ The first, `--tracker` is the path to the .json configuration file, defined foll
 The second `--object`, is the path to the 3D model (in a format readable by the Panda3D engine). Alternatively, it can specified in the .json file.
 
 
-\include data/dragon/dragon.json
+Here, we will run the tutorial with the following arguments
+\verbatim
+~/visp_build/tutorial-tracking/render-based $ ./tutorial-rbt-realsense --tracker data/dragon/dragon_realsense.json --object data/dragon/dragon.bam  --init-file data/dragon/dragon.init
+\endverbatim
 
+The file `dragon_realsense.json` contains the following configuration:
+\include data/dragon/dragon_realsense.json
 
+\warning Note that to perform your own tests, you will have to rebuild the tutorial-rbt-realsense every time you make a change to the .json file so that the changes are reflected in the build directory
 
+Let's now have a look at the tutorial code that will perform the tracking. The full code is given below in \ref rbt_tracking_examples.
+
+The code first starts by parsing the command line arguments, detailed above, using structures defined in render-based-tutorial-utils.h:
 \snippet tutorial-rbt-realsense.cpp Command line parsing
+
+We start by declaring an instance of the tracker and load the given JSON configuration file.
+\snippet tutorial-rbt-realsense.cpp Loading config
+
+Depending on the configuration, the call to loadJsonConfiguration may raise an error.
+For instance, The KLT tracker requires OpenCV and if you did not compile ViSP with OpenCV as a third party, an error will be raised.
+
+If successful, we then open a connection to the realsense camera, requesting a specific configuration.
+This configuration depends on the input arguments (depth, width and framerate)
+\snippet tutorial-rbt-realsense.cpp Realsense opening
+
+If the configuration is available, we can proceed and update the tracker with a new, more relevant configuration.
+Indeed, while camera intrinsics and image resolution can be declared in the configuration file,
+using the intrinsics provided by the RealSense will be more accurate and ensures that there is no configuration mismatch.
+We then call vpRBTracker::startTracking to initialize the renderer, load the 3D model and other setup related operations.
+
+\snippet tutorial-rbt-realsense.cpp Tracker update
+
+\warning It is at this point that some errors related to an incorrect intrinsics configuration may be raised. Additionally, if you do not have an OpenGL-capable device or if Panda3D cannot open a window, an error may be raised.  If so, please see \ref rbt_troubleshooting.
+
+
+
+
+We then proceed and declare the different images that will be needed by the tutorial.
+Some images contain raw information and will be fed to the tracker.
+Others will be used for display purposes.
+\snippet tutorial-rbt-realsense.cpp Images
+
+We then create the different display windows with
+\snippet tutorial-rbt-realsense.cpp Create displays
+
+Once the setup is finished, we wait on the user to setup is environment and position the object (here, the dragon) in front of the camera.
+\snippet tutorial-rbt-realsense.cpp Wait before init
+
+When the user has clicked the display window, initialization can be performed.
+\snippet tutorial-rbt-realsense.cpp Init
+If the initial pose is given as a command line argument, tracking can directly proceed.
+Otherwise, The user must click on different pixel positions that correspond to known 3D points, defined in a initialization file located next to the configuration file or the mesh.
+In this case, the initialization file is located at `data/dragon/dragon.init` and contains:
+\include data/dragon/dragon.init
+
+Once initialization has been performed and a starting pose given, we can enter the tracking loop.
+At every iteration, the same simple steps are performed:
+
+We start by acquiring the most recent color and depth frames.
+\snippet tutorial-rbt-realsense.cpp Image acquisition
+The alignment parameter ensures that the depth map is aligned with the color frame, as required by the RBT.
+The call to updateDepth converts from a raw uint16_t representation to a depth map in meters.
+We also convert The RGB image to a grayscale image using vpImageConvert::convert.
+
+We can then call the tracker with the different frames:
+\snippet tutorial-rbt-realsense.cpp Call to tracker
+As an output, we get a vpRBTrackingResult object.
+This object contains information about what the tracker has done, the number of features that were used, etc.
+It contains one important information, which is the reason for why the tracking call has returned.
+In the following snippet:
+\snippet tutorial-rbt-realsense.cpp Result parsing
+We use this information to check whether:
+- There was an exception
+- The object is present in the image (if not, no information can be extracted from the render): reinitialisation should be performed
+- There are enough features to compute pose updates.
+- If the tracking has converged to a given pose (i.e., motion during optimization has become small enough to be considered as noise.)
+- Or if the tracking has used the maximum allocated number of optimization iterations.
+
+In the first three cases, this means that tracking should be reinitialized.
+
+After that, we check (if it has been computed) the tracking confidence score. If it is low, we emit a warning.
+In a more complete application, the pipeline would contain an automatic reinitialization procedure.
+
+We then display the current frame and overlay the tracking information
+\snippet tutorial-rbt-realsense.cpp Display
+
+On the grayscale image, you can see:
+- If enabled, the moving edge contours. Valid edges are seen in green, while suppressed ones are purple.
+- If enabled, the KLT tracked points, represented as red dots on the object.
+
+On the color image, you can see:
+- The pose of the object in the camera frame, represented as a 3-axis basis
+- If enabled, the contours used by the CCD tracker.
+
+The display also contains the depth image:
+- By default, depth display is disabled as it incurs a large performance penalty and may reduce framerate.
+You can change the tracker configuration to enable by adding `"display": true` to the "depth" feature object.
+
+
+
+Finally, you should also see a black and white image which is the pixelwise segmentation mask that is used to filter out the features.
+If no segmentation method is used, the image should be black.
+
+\image html rbt-full-display.png Example displays when tracking with the realsense camera and all features enabled. width=50%
+
+
+We also log in the console timing details.
+Running the tutorial with the **--verbose** flag will print timings for each part of the RBT pipeline.
+
+\snippet tutorial-rbt-realsense.cpp Logging
+
+When the user has pressed left click, we exit the tracking loop and perform a small cleanup:
+\snippet tutorial-rbt-realsense.cpp Cleanup
+
+
 
 
 \section rbt_tracking_examples Full tutorial examples
 
 
-The full code for the realsense based tutorial:
+The full code for the realsense-based tutorial:
 \include tutorial-rbt-realsense.cpp
 
 
@@ -357,6 +467,44 @@ The full code to track an offline, preregistered sequence:
 Parsing and display utils:
 \include render-based-tutorial-utils.h
 
+
+\section rbt_troubleshooting Troubleshooting issues
+
+\subsection rbt_panda_window Cannot open window (hidden or visible)
+
+This error can appear when calling vpRBTracker::startTracking.
+
+It may be useful to check the backend used by Panda3D, which should be displayed when you start the tutorial:
+\verbatim
+Known pipe types:
+  glxGraphicsPipe
+\endverbatim
+
+You can also additionally get more information bout your OpenGL support.
+In ubuntu, you can use:
+\verbatim
+glxinfo | grep version
+server glx version string: 1.4
+client glx version string: 1.4
+GLX version: 1.4
+OpenGL core profile version string: 4.6.0 NVIDIA 550.144.03
+OpenGL core profile shading language version string: 4.60 NVIDIA
+OpenGL version string: 4.6.0 NVIDIA 550.144.03
+OpenGL shading language version string: 4.60 NVIDIA
+OpenGL ES profile version string: OpenGL ES 3.2 NVIDIA 550.144.03
+OpenGL ES profile shading language version string: OpenGL ES GLSL ES 3.20
+    GL_EXT_shader_group_vote, GL_EXT_shader_implicit_conversions,
+\endverbatim
+
+If you do not have something similar, it may be that your platform has no OpenGL support.
+
+\warning It is possible that your hardware has OpenGL support, but does not support **headless rendering**, i.e., rendering without a screen plugged to the GPU.
+In this case, you should either try to use the **p3headlessgl** backend or use a virtual screen emulator.
+- To use **p3headlessgl**, you should first visit [this Panda3D documentation link](https://docs.panda3d.org/1.10/python/programming/configuration/configuring-panda3d).
+Then you should edit the **Config.prc** file to set "load-display" to "p3headlessgl". In Ubuntu, the Config.prc is located in `/etc/Config.prc`. In Conda, it will be in `$CONDA_PREFIX/etc/Config.prc`.
+- In Linux distributions, you can use `xvfb` to emulate a x11 server to render to.
+
+\warning Note that the RBT uses shaders that are compiled for OpenGL core 3.3.
 
 \section rbt_extension Extending the RBT
 

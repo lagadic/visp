@@ -75,7 +75,7 @@ using namespace VISP_NAMESPACE_NAME;
 */
 struct BaseArguments
 {
-  BaseArguments() : trackerConfiguration(""), maxDepthDisplay(1.f), display(true), debugDisplay(false), enableRenderProfiling(false) { }
+  BaseArguments() : trackerConfiguration(""), maxDepthDisplay(1.f), verbose(false), display(true), debugDisplay(false), enableRenderProfiling(false) { }
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
   void registerArguments(vpJsonArgumentParser &parser)
@@ -86,6 +86,7 @@ struct BaseArguments
       .addArgument("--init-file", initFile, false, "Path to the JSON file containing the 2D/3D correspondences for initialization by click")
       .addArgument("--pose", inlineInit, false, "Initial pose of the object in the camera frame.")
       .addArgument("--max-depth-display", maxDepthDisplay, false, "Maximum depth value, used to scale the depth display")
+      .addFlag("--verbose", verbose, "Log additional information in console")
       .addFlag("--no-display", display, "Disable display windows")
       .addFlag("--debug-display", debugDisplay, "Enable additional displays from the renderer")
       .addFlag("--profile", enableRenderProfiling, "Enable the use of Pstats to profile rendering times");
@@ -135,6 +136,7 @@ struct BaseArguments
   std::vector<double> inlineInit;
   float maxDepthDisplay;
   vpHomogeneousMatrix cMoInit;
+  bool verbose;
   bool display;
   bool debugDisplay;
   bool enableRenderProfiling;
