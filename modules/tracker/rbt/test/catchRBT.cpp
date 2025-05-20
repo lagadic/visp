@@ -749,11 +749,15 @@ int main(int argc, char *argv[])
 {
   Catch::Session session; // There must be exactly one instance
   auto cli = session.cli()
-  | Catch::Clara::Opt(opt_no_display)["-d"]("Disable display");
+  | Catch::Clara::Opt(opt_no_display)["--no-display"]("Disable display");
   session.cli(cli);
-  session.applyCommandLine(argc, argv);
 
-  int numFailed = session.run();
+  const int returnCode = session.applyCommandLine(argc, argv);
+  if (returnCode != 0) { // Indicates a command line error
+    return returnCode;
+  }
+
+  const int numFailed = session.run();
   vpPanda3DFrameworkManager::getInstance().exit();
   return numFailed;
 }
