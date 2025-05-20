@@ -67,7 +67,7 @@ vpMbEdgeTracker::vpMbEdgeTracker()
   percentageGdPt(0.4), scales(1), Ipyramid(0), scaleLevel(0), nbFeaturesForProjErrorComputation(0), m_factor(),
   m_robustLines(), m_robustCylinders(), m_robustCircles(), m_wLines(), m_wCylinders(), m_wCircles(), m_errorLines(),
   m_errorCylinders(), m_errorCircles(), m_L_edge(), m_error_edge(), m_w_edge(), m_weightedError_edge(),
-  m_robust_edge(), m_featuresToBeDisplayedEdge(), m_initRange(-1)
+  m_robust_edge(), m_featuresToBeDisplayedEdge()
 {
   scales[0] = true;
 
@@ -1543,7 +1543,7 @@ void vpMbEdgeTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHo
   const bool doNotTrack = false;
   int initRange_;
   if (initRange < 0) {
-    initRange_ = m_initRange;
+    initRange_ = me.getInitRange();
   }
   else {
     initRange_ = initRange;

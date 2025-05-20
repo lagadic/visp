@@ -384,7 +384,8 @@ bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vp
         vpMbtMeLine *melinePt = new vpMbtMeLine;
         melinePt->setMask(*mask);
         melinePt->setMe(me);
-        melinePt->setInitRange(initRange_);
+        int oldInitRange = me->getInitRange();
+        me->setInitRange(initRange_);
 
         int marge = /*10*/ 5; // ou 5 normalement
         if (ip1.get_j() < ip2.get_j()) {
@@ -406,11 +407,13 @@ bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vp
 
         try {
           melinePt->initTracking(I, ip1, ip2, rho, theta, doNotTrack);
+          me->setInitRange(oldInitRange);
           meline.push_back(melinePt);
           nbFeature.push_back(static_cast<unsigned int>(melinePt->getMeList().size()));
           nbFeatureTotal += nbFeature.back();
         }
         catch (...) {
+          me->setInitRange(oldInitRange);
           delete melinePt;
           isvisible = false;
           return false;

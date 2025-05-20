@@ -926,7 +926,6 @@ inline void to_json(nlohmann::json &j, const vpMbGenericTracker::TrackerWrapper 
   //Edge tracker settings
   if (t.m_trackerType & vpMbGenericTracker::EDGE_TRACKER) {
     j["edge"] = t.me;
-    j["edge"]["initRange"] = t.m_initRange;
   }
   //KLT tracker settings
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
@@ -1028,9 +1027,6 @@ inline void from_json(const nlohmann::json &j, vpMbGenericTracker::TrackerWrappe
   //Edge tracker settings
   if (t.m_trackerType & vpMbGenericTracker::EDGE_TRACKER) {
     from_json(j.at("edge"), t.me);
-    if (j.find("edge") != j.end()) {
-      t.setInitRange(j.at("edge").value("initRange", t.getInitRange()));
-    }
     t.setMovingEdge(t.me);
   }
   //KLT tracker settings
@@ -1069,7 +1065,7 @@ inline void from_json(const nlohmann::json &j, vpMbGenericTracker::TrackerWrappe
       t.setDepthDenseSamplingStep(sampling.at("x"), sampling.at("y"));
     }
   }
-}
+  }
 
 #endif
 

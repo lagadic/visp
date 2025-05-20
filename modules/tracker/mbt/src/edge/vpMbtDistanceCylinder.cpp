@@ -228,8 +228,8 @@ bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, cons
     else {
       initRange_ = initRange;
     }
-    meline1->setInitRange(initRange_);
-    meline2->setInitRange(initRange_);
+    int oldInitRange = me->getInitRange();
+    me->setInitRange(initRange_);
 
     // Conversion meter to pixels
     vpMeterPixelConversion::convertLine(cam, c->getRho1(), c->getTheta1(), rho1, theta1);
@@ -315,6 +315,7 @@ bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, cons
     }
     catch (...) {
    // vpTRACE("the line can't be initialized");
+      me->setInitRange(oldInitRange);
       return false;
     }
     try {
@@ -322,8 +323,10 @@ bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, cons
     }
     catch (...) {
    // vpTRACE("the line can't be initialized");
+      me->setInitRange(oldInitRange);
       return false;
     }
+    me->setInitRange(oldInitRange);
   }
   return true;
 }

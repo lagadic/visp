@@ -6770,7 +6770,6 @@ void vpMbGenericTracker::TrackerWrapper::loadConfigFile(const std::string &confi
     }
 
     xmlp.parse(configFile);
-    m_initRange = xmlp.getInitRange();
   }
   catch (...) {
     throw vpException(vpException::ioError, "Can't open XML file \"%s\"\n ", configFile.c_str());

@@ -195,6 +195,12 @@ public:
   inline unsigned int getAngleStep() const { return m_anglestep; }
 
   /*!
+   * Return the range used during the initialization step. A negative value means
+   * that the default value is used by the different ME primitives.
+   */
+  inline int getInitRange() const { return m_init_range; }
+
+  /*!
    * Get the matrix of the mask.
    *
    * \return the value of mask.
@@ -345,6 +351,14 @@ public:
    * \param anglestep : New angle step value.
    */
   void setAngleStep(const unsigned int &anglestep) { m_anglestep = anglestep; }
+
+  /*!
+   * Set the range used during the initialization step. A negative value means
+   * that the default value is used by the different ME primitives.
+   *
+   * \param initRange : New range, or a negative value to use the default ranges.
+   */
+  inline void setInitRange(const int &initRange) { m_init_range = initRange; }
 
   /*!
    * Set the number of mask applied to determine the object contour. The number
@@ -518,6 +532,7 @@ private:
   double m_min_samplestep;
   unsigned int m_anglestep;
   int m_mask_sign;
+  int m_init_range; //! Seek range during the initialization step - a negative value leads to using the default values.
   unsigned int m_range; //! Seek range - on both sides of the reference pixel
   double m_sample_step; //! Distance between sampled points in pixels
   int m_ntotal_sample;
@@ -619,6 +634,7 @@ inline void to_json(nlohmann::json &j, const vpMe &me)
     {"mu", {me.getMu1(), me.getMu2()}},
     {"minSampleStep", me.getMinSampleStep()},
     {"sampleStep", me.getSampleStep()},
+    {"initRange", me.getInitRange()},
     {"range", me.getRange()},
     {"ntotalSample", me.getNbTotalSample()},
     {"pointsToTrack", me.getPointsToTrack()},
@@ -647,6 +663,7 @@ inline void from_json(const nlohmann::json &j, vpMe &me)
   me.setMinSampleStep(j.value("minSampleStep", me.getMinSampleStep()));
   me.setSampleStep(j.value("sampleStep", me.getSampleStep()));
   me.setRange(j.value("range", me.getRange()));
+  me.setInitRange(j.value("initRange", me.getInitRange()));
   me.setNbTotalSample(j.value("ntotalSample", me.getNbTotalSample()));
   me.setPointsToTrack(j.value("pointsToTrack", me.getPointsToTrack()));
   me.setMaskSize(j.value("maskSize", me.getMaskSize()));
