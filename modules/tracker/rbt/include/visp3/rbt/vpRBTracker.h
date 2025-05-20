@@ -173,24 +173,6 @@ public:
     m_odometry = odometry;
   }
 
-  /*!
-   * Get verbosity mode.
-   * \return true when verbosity is enabled, false otherwise.
-   */
-  inline bool getVerbose() const
-  {
-    return m_verbose;
-  }
-
-  /*!
-   * Enable/disable verbosity mode.
-   * \param verbose : When true verbose mode is enabled. When false verbosity is disabled.
-   */
-  inline void setVerbose(bool verbose)
-  {
-    m_verbose = verbose;
-  }
-
 #if defined(VISP_HAVE_NLOHMANN_JSON)
   void loadConfigurationFile(const std::string &filename);
   void loadConfiguration(const nlohmann::json &j);
@@ -306,7 +288,6 @@ protected:
 
   unsigned m_imageHeight, m_imageWidth; //! Color and render image dimensions
 
-  bool m_verbose;
 
   std::shared_ptr<vpObjectMask> m_mask;
   std::shared_ptr<vpRBDriftDetector> m_driftDetector;
