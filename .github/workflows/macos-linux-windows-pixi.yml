@@ -1,6 +1,7 @@
 name: CI - MacOS/Linux/Windows via Pixi
 
 on:
+  workflow_dispatch:
   pull_request:
     types: [opened, reopened, synchronize]
 concurrency:
