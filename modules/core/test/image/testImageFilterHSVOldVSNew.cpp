@@ -88,7 +88,7 @@ static void resizeAndInitializeIfNeeded(const vpImage<bool> *p_mask, const unsig
  * \return true If the boolean mask is true at the desired coordinates or if \b p_mask is equal to \b nullptr.
  * \return false False otherwise.
  */
-static bool checkBooleanMask(const vpImage<bool> *p_mask, const unsigned int &r, const unsigned int &c)
+bool checkBooleanMask(const vpImage<bool> *p_mask, const unsigned int &r, const unsigned int &c)
 {
   bool computeVal = true;
 #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher

@@ -454,8 +454,8 @@ public:
   }
 
   // Operators
-  vpHSV<T, useFullScale> &operator=(vpHSV<T, useFullScale> &&v) = default;
-  vpHSV<T, useFullScale> &operator=(const vpHSV<T, useFullScale> &v) = default;
+  vpHSV<T, useFullScale> &operator=(vpHSV<T, useFullScale> &&) = default;
+  vpHSV<T, useFullScale> &operator=(const vpHSV<T, useFullScale> &) = default;
 
   vpHSV<T, useFullScale> &operator=(const vpColVector &v)
   {
