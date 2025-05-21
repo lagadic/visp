@@ -627,12 +627,7 @@ int main(int argc, const char **argv)
             quit = true;
           }
           else if (button == vpMouseButton::button2) {
-            if (opt_step_by_step) {
-              opt_step_by_step = false;
-            }
-            else {
-              opt_step_by_step = true;
-            }
+            opt_step_by_step = !opt_step_by_step;
           }
         }
       }
