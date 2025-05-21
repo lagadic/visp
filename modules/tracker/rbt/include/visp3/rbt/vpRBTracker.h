@@ -174,7 +174,22 @@ public:
   }
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
+  /**
+   * \brief Update tracker settings from a .json file.
+   * See the tutorials for a full description of the json format
+   *
+   * \param filename The path to the .json file to load
+   *
+   * \throws if the file is ill-formed or settings are incorrect
+  */
   void loadConfigurationFile(const std::string &filename);
+
+  /**
+   * \brief Update the tracker with a new json configuration
+   *
+   * \param j the full json configuration
+   * \throws if the parameters are incorrect
+  */
   void loadConfiguration(const nlohmann::json &j);
 #endif
 
@@ -188,27 +203,117 @@ public:
    * \name Tracking
    * @{
    */
+
+
+  /**
+   * \brief Method that should be called before starting tracking
+   *
+   * Initializes the renderer, loads the 3D model and ensures that the parameters are correct
+   *
+  */
   void startTracking();
+  /**
+   * \brief track and re-estimate the pose of the object in this frame, given only a grayscale image
+   * The pose after tracking should be retrieved using getPose.
+   * You should use the returned vpRBTrackingResult to check that tracking was successful
+   *
+   * \param I Grayscale image
+   * \return vpRBTrackingResult
+   *
+   * \throws if Image dimensions are incorrect or if one of the used features requires additional data, such as color or depth information
+  */
   vpRBTrackingResult track(const vpImage<unsigned char> &I);
+  /**
+   * \brief track and re-estimate the pose of the object in this frame, given only a grayscale image
+   * The pose after tracking should be retrieved using getPose.
+   * You should use the returned vpRBTrackingResult to check that tracking was successful
+   *
+   * \param I Grayscale image
+   * \param IRGB Grayscale image
+   *
+   * \return vpRBTrackingResult
+   *
+   * \throws if Image dimensions are incorrect or if one of the used features requires additional data, such as depth information
+  */
   vpRBTrackingResult track(const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB);
+  /**
+   * \brief track and re-estimate the pose of the object in this frame, given only a grayscale image
+   * The pose after tracking should be retrieved using getPose.
+   * You should use the returned vpRBTrackingResult to check that tracking was successful
+   *
+   * \param I Grayscale image
+   * \param IRGB Grayscale image
+   * \param depth Depth image, in meters. The Depth image should be aligned with the color and grayscale images.
+   *
+   * \return vpRBTrackingResult
+   *
+   * \throws if Image dimensions are incorrect
+  */
   vpRBTrackingResult track(const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<float> &depth);
   /**
    * @}
    */
 
+  /**
+   * \brief Using the preconfigured drift detector, score a given pose by comparing the render with the given frame information.
+   *
+   * \param cMo the pose of the object in the camera frame to be scored
+   * \param I Grayscale frame
+   * \param IRGB Color image
+   * \param depth Depth image
+   * \return The tracking confidence score estimated by the drift detector.
+   *
+   * \throws if no vpRBDriftDetector is specified, then scoring cannot be performed.
+  */
   double score(const vpHomogeneousMatrix &cMo, const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<float> &depth);
 
   /**
    * \name Display
    * @{
    */
+
+  /**
+   * \brief Convert the mask output by the object segmentation method to a displayable representation.
+   * If no object segmentation method is set, then this method has no effect.
+   * \param Imask the image into which to write the display representation of the mask.
+   *
+   * \see setObjectSegmentationMethod, display
+  */
   void displayMask(vpImage<unsigned char> &Imask) const;
+
+  /**
+   * \brief Displays tracker information such as current pose, object silhouette and tracked features on display images.
+   *
+   *
+   * \param I Grayscale display image
+   * \param IRGB  Color display image
+   * \param depth Depth display image
+  */
   void display(const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth);
   /**
    * @}
    */
 
 #ifdef VISP_HAVE_MODULE_GUI
+  /**
+   * \brief Perform Pose initialization by asking the user to click on predefined 3D points. This method is similar to the one provided in the MBT.
+   *
+   * The 3D points (in the object frame) are defined in a .init file which should look like:
+   *
+   * \verbatim
+   * 4 # Number of points
+   * 0.0 0.0 0.0 # Point 1 (In object frame coordinates)
+   * 0.0 0.0 0.1 # Point 2 (In object frame coordinates)
+   * 0.0 0.1 0.1 # Point 3 (In object frame coordinates)
+   * 0.1 0.1 0.1 # Point 4 (In object frame coordinates)
+   * \endverbatim
+   *
+   * \tparam ImageType The pixel type for I, either unsigned char or vpRGBa
+   * \param I the image where to click. It should be associated to a vpDisplay
+   * \param initFile The path to the initialization file.
+   * \param displayHelp Whether to display an image to help with initialization.
+   * If true and the init file is "path/to/object.init", then the function will look for an image "path/to/object.{png, jpg, jpeg, ppm}".
+  */
   template <typename ImageType>
   typename std::enable_if<std::is_same<ImageType, unsigned char>::value || std::is_same<ImageType, vpRGBa>::value, void >::type initClick(const vpImage<ImageType> &I, const std::string &initFile, bool displayHelp)
   {
@@ -226,6 +331,14 @@ protected:
   void updateRender(vpRBFeatureTrackerInput &frame);
   void updateRender(vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cMo);
 
+  /**
+   * \brief Display the object silhouette of the frame in I
+   *
+   *
+   * \tparam T Pixel type of I
+   * \param I The image where to display the object silhouette
+   * \param frame Frame containing the rendered data. Does not have to be last pose or associated to the estimated pose of I.
+  */
   template <typename T>
   void displaySilhouette(const vpImage<T> &I, const vpRBFeatureTrackerInput &frame)
   {
@@ -242,11 +355,30 @@ protected:
     }
   }
 
+  /**
+   * \brief Converts from pixelwise object silhouette representation to an actionable list of silhouette points.
+   *
+   * \param Inorm Image containing normals in object frame
+   * \param Idepth Render image containing depth, in meters
+   * \param Ior Image containing the silhouette 2D edge orientation data
+   * \param Ivalid Image contianing whether a pixel is a silhouette point
+   * \param cam Camera intrinsics
+   * \param cTcp Pose of the previous camera in the current camera frame.
+   * Used when silhouette extraction settings try to reuse the same silhouette points in successive frames.
+   * \return std::vector<vpRBSilhouettePoint>
+  */
   std::vector<vpRBSilhouettePoint> extractSilhouettePoints(
     const vpImage<vpRGBf> &Inorm, const vpImage<float> &Idepth,
     const vpImage<vpRGBf> &Ior, const vpImage<unsigned char> &Ivalid,
     const vpCameraParameters &cam, const vpHomogeneousMatrix &cTcp);
 
+  /**
+   * \brief Check that a given image has the correct dimensions, previously specified with setCameraParameters or in the config file.
+   *
+   * \tparam T Pixel type
+   * \param I Image to check
+   * \param imgType Helper string to indicat which image type failed.
+  */
   template<typename T>
   void checkDimensionsOrThrow(const vpImage<T> &I, const std::string &imgType) const
   {
@@ -259,6 +391,9 @@ protected:
     }
   }
 
+  /**
+   * \brief Returns whether the renderer should render the silhouette information.
+  */
   bool shouldRenderSilhouette()
   {
     return m_renderer.getRenderer<vpPanda3DDepthCannyFilter>() != nullptr;
@@ -271,31 +406,30 @@ protected:
   vpRBFeatureTrackerInput m_currentFrame;
   vpRBFeatureTrackerInput m_previousFrame;
 
-  std::string m_modelPath;
-  vpHomogeneousMatrix m_cMo;
-  vpHomogeneousMatrix m_cMoPrev;
-  vpCameraParameters m_cam;
+  std::string m_modelPath; //! Location of the 3D model to load
+  vpHomogeneousMatrix m_cMo; //! Current pose of the object in the camera frame
+  vpHomogeneousMatrix m_cMoPrev; //! Previous pose of the object in the camera frame
+  vpCameraParameters m_cam; //! Camera intrinsics
 
   double m_lambda; //! VVS gain
   unsigned m_vvsIterations; //! Max number of VVS iterations
   double m_muInit; //! Initial mu value for Levenberg-Marquardt
   double m_muIterFactor; //! Factor with which to multiply mu at every iteration during VVS.
-  bool m_scaleInvariantOptim;
+  bool m_scaleInvariantOptim; //! Whether to use diagonal scaling in Levenberg-Marquardt regularization
 
-  vpSilhouettePointsExtractionSettings m_depthSilhouetteSettings;
-  vpPanda3DRenderParameters m_rendererSettings;
-  vpObjectCentricRenderer m_renderer;
+  vpSilhouettePointsExtractionSettings m_depthSilhouetteSettings; //! Settings for silhouette extraction
+  vpPanda3DRenderParameters m_rendererSettings; //! Camera specific setup for the 3D Panda renderer
+  vpObjectCentricRenderer m_renderer; //! 3D renderer
 
   unsigned m_imageHeight, m_imageWidth; //! Color and render image dimensions
-
 
   std::shared_ptr<vpObjectMask> m_mask;
   std::shared_ptr<vpRBDriftDetector> m_driftDetector;
   std::shared_ptr<vpRBVisualOdometry> m_odometry;
 
-  vpRBADDSMetric m_convergenceMetric;
-  double m_convergedMetricThreshold;
-  double m_updateRenderThreshold;
+  vpRBADDSMetric m_convergenceMetric; //! Metric used to compare the motion between different poses
+  double m_convergedMetricThreshold; //! Metric threshold under which we consider that tracking optimization has converged to a correct pose
+  double m_updateRenderThreshold; //! Metric threshold above which we consider that an object should be rerendered at the latest estimated pose.
 
   bool m_displaySilhouette; //! Whether a call to the display function should draw a silhouette outline
 
