@@ -592,7 +592,7 @@ public:
   virtual void track(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages);
   virtual void track(std::map<std::string, const vpImage<vpRGBa> *> &mapOfColorImages);
 
-#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS) && defined(VISP_HAVE_PCL_COMMON)
   virtual void track(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
     std::map<std::string, pcl::PointCloud<pcl::PointXYZ>::ConstPtr> &mapOfPointClouds);
   virtual void track(std::map<std::string, const vpImage<vpRGBa> *> &mapOfColorImages,
@@ -645,7 +645,7 @@ protected:
   virtual void loadConfigFileJSON(const std::string &configFile, bool verbose = true);
 #endif
 
-#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS) && defined(VISP_HAVE_PCL_COMMON)
   virtual void preTracking(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
     std::map<std::string, pcl::PointCloud<pcl::PointXYZ>::ConstPtr> &mapOfPointClouds);
 #endif
@@ -741,7 +741,7 @@ private:
 
     virtual void track(const vpImage<unsigned char> &I) VP_OVERRIDE;
     virtual void track(const vpImage<vpRGBa> &I_color) VP_OVERRIDE;
-#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS) && defined(VISP_HAVE_PCL_COMMON)
     // Fix error: using declaration ‘using vpMbDepthDenseTracker::setPose’ conflicts with a previous
     // using declaration that occurs with g++ 4.6.3 on Ubuntu 12.04
 #if !((__GNUC__ == 4) && (__GNUC_MINOR__ == 6))
@@ -749,8 +749,7 @@ private:
 #endif
     using vpMbDepthDenseTracker::track;
     using vpMbEdgeTracker::track;
-    virtual void track(const vpImage<unsigned char> *const ptr_I,
-      const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud);
+    virtual void track(const vpImage<unsigned char> *const ptr_I, const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud);
 #endif
 
   protected:
@@ -774,7 +773,7 @@ private:
 
     virtual void initMbtTracking(const vpImage<unsigned char> *const ptr_I);
 
-#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS) && defined(VISP_HAVE_PCL_COMMON)
     virtual void postTracking(const vpImage<unsigned char> *const ptr_I,
       const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud);
     virtual void preTracking(const vpImage<unsigned char> *const ptr_I,
@@ -793,7 +792,7 @@ private:
       const std::string &cad_name, const vpHomogeneousMatrix &cMo, bool verbose = false,
       const vpHomogeneousMatrix &T = vpHomogeneousMatrix());
 
-#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS) && defined(VISP_HAVE_PCL_COMMON)
     // Fix error: using declaration ‘using vpMbDepthDenseTracker::track’ conflicts with a previous
     // using declaration that occurs with g++ 4.6.3 on Ubuntu 12.04
 #if !((__GNUC__ == 4) && (__GNUC_MINOR__ == 6))
