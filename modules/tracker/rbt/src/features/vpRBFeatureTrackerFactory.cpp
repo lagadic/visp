@@ -37,6 +37,8 @@
 
 BEGIN_VISP_NAMESPACE
 
+template class VISP_EXPORT vpDynamicFactory<vpRBFeatureTracker>;
+
 vpRBFeatureTrackerFactory::vpRBFeatureTrackerFactory()
 {
 #ifdef VISP_HAVE_NLOHMANN_JSON
