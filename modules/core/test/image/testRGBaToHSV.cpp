@@ -56,56 +56,23 @@ using namespace VISP_NAMESPACE_NAME;
 /**
  * \brief Check if the computed HSV value corresponds to the ground-truth.
  *
- * \tparam useFullScale True if vpHSV uses unsigned char and the full range [0; 255], false if vpHSV uses unsigned char and the limited range [0; vpHSV<unsigned char, false>::maxHueUsingLimitedRange].
- * \param[in] hsv_computed Computed vpRGBa value.
- * \param[in] rgb_truth vpRGBa value  that was used to compute rgb_computed.
- * \param[in] hsv_truth The HSVground-truth value.
- * \return true If hsv_computed and hsv_truth are equal.
- * \return false Otherwise
-*/
-template<bool useFullScale >
-bool test_hsv(const vpHSV<unsigned char, useFullScale> &hsv_computed, const vpRGBa &rgb_truth,
-              const vpHSV<unsigned char, useFullScale> &hsv_truth)
-{
-  // Compare HSV values
-  if ((hsv_computed.H != hsv_truth.H) ||
-      (hsv_computed.S != hsv_truth.S) ||
-      (hsv_computed.V != hsv_truth.V)) {
-
-    std::cout << static_cast<int>(rgb_truth.R) << ","
-      << static_cast<int>(rgb_truth.G) << ","
-      << static_cast<int>(rgb_truth.B) << "): Expected hsv value: ("
-      << static_cast<int>(hsv_truth.H) << ","
-      << static_cast<int>(hsv_truth.S) << ","
-      << static_cast<int>(hsv_truth.V) << ") converted value: ("
-      << static_cast<int>(hsv_computed.H) << ","
-      << static_cast<int>(hsv_computed.S) << ","
-      << static_cast<int>(hsv_computed.V) << ")" << std::endl;
-    return false;
-  }
-
-  return true;
-}
-
-/**
- * \brief Check if the computed HSV value corresponds to the ground-truth.
- *
  * \tparam Type The type of the vpHSV channels.
  * \tparam useFullScale True if vpHSV uses unsigned char and the full range [0; 255], false if vpHSV uses unsigned char and the limited range [0; vpHSV<unsigned char, false>::maxHueUsingLimitedRange].
  * \param[in] hsv_computed Computed vpRGBa value.
  * \param[in] rgb_truth vpRGBa value  that was used to compute rgb_computed.
  * \param[in] hsv_truth The HSVground-truth value.
+ * \param[in] thresh The threshold for the test.
  * \return true If hsv_computed and hsv_truth are equal.
  * \return false Otherwise
  */
 template<typename Type, bool useFullScale >
 bool test_hsv(const vpHSV<Type, useFullScale> &hsv_computed, const vpRGBa &rgb_truth,
-              const vpHSV<Type, useFullScale> &hsv_truth)
+              const vpHSV<Type, useFullScale> &hsv_truth, const double &thresh = 0.001)
 {
   // Compare HSV values
-  if ((!vpMath::equal(hsv_computed.H, hsv_truth.H)) ||
-      (!vpMath::equal(hsv_computed.S, hsv_truth.S)) ||
-      (!vpMath::equal(hsv_computed.V, hsv_truth.V))) {
+  if ((!vpMath::equal(hsv_computed.H, hsv_truth.H, thresh)) ||
+      (!vpMath::equal(hsv_computed.S, hsv_truth.S, thresh)) ||
+      (!vpMath::equal(hsv_computed.V, hsv_truth.V, thresh))) {
 
     std::cout << static_cast<int>(rgb_truth.R) << ","
       << static_cast<int>(rgb_truth.G) << ","
@@ -183,12 +150,12 @@ int main()
       if (h_full) {
         vpHSV<unsigned char, true> hsv(static_cast<unsigned char>(0), static_cast<unsigned char>(0), static_cast<unsigned char>(0));
         hsv.buildFrom(rgba);
-        isSuccess = isSuccess && test_hsv(hsv, rgba, vpHSV<unsigned char, true>(hsv_truth[id]));
+        isSuccess = isSuccess && test_hsv(hsv, rgba, vpHSV<unsigned char, true>(hsv_truth[id]), 1.0);
       }
       else {
         vpHSV<unsigned char, false> hsv(static_cast<unsigned char>(0), static_cast<unsigned char>(0), static_cast<unsigned char>(0));
         hsv.buildFrom(rgba);
-        isSuccess = isSuccess && test_hsv(hsv, rgba, vpHSV<unsigned char, false>(hsv_truth[id]));
+        isSuccess = isSuccess && test_hsv(hsv, rgba, vpHSV<unsigned char, false>(hsv_truth[id]), 1.0);
       }
 
     }
@@ -216,13 +183,13 @@ int main()
   vpImageConvert::convert(Irgb, Ihsvuct);
   vpImageConvert::convert(Irgb, Ihsvd);
 
-  bool localSuccess = vpHSVTests::areAlmostEqual(Ihsvucf, "Ihsvucf", Ihsvucf_truth, "Ihsvucf_truth");
+  bool localSuccess = vpHSVTests::areAlmostEqual(Ihsvucf, "Ihsvucf", Ihsvucf_truth, "Ihsvucf_truth", 1.0);
   if (!localSuccess) {
     std::cerr << "vpImageConvert(rgba, hsv<uchar, false>) failed!" << std::endl;
   }
   isSuccess = isSuccess && localSuccess;
 
-  localSuccess = vpHSVTests::areAlmostEqual(Ihsvuct, "Ihsvuct", Ihsvuct_truth, "Ihsvuct_truth");
+  localSuccess = vpHSVTests::areAlmostEqual(Ihsvuct, "Ihsvuct", Ihsvuct_truth, "Ihsvuct_truth", 1.0);
   if (!localSuccess) {
     std::cerr << "vpImageConvert(rgba, hsv<uchar, true>) failed!" << std::endl;
   }
