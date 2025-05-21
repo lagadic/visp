@@ -609,7 +609,7 @@ SCENARIO("Instantiating a render-based tracker", "[rbt]")
       tracker.loadConfiguration(j);
       verifyBase();
       REQUIRE(tracker.getModelPath() == "path/to/model.obj");
-      if(not opt_no_display)
+      if(!opt_no_display)
       {
         AND_THEN("Initializing tracking fails since object does not exist")
         {
@@ -623,7 +623,7 @@ SCENARIO("Instantiating a render-based tracker", "[rbt]")
       tracker.loadConfiguration(j);
       verifyBase();
       REQUIRE(tracker.getModelPath() == "");
-      if(not opt_no_display)
+      if(!opt_no_display)
       {
         AND_THEN("Initializing tracking fails since path is not specified")
         {
@@ -642,7 +642,7 @@ SCENARIO("Instantiating a render-based tracker", "[rbt]")
       tracker.loadConfiguration(j);
       verifyBase();
       REQUIRE(tracker.getModelPath() == objFile);
-      if(not opt_no_display)
+      if(!opt_no_display)
       {
         AND_THEN("Initializing tracker works")
         {
