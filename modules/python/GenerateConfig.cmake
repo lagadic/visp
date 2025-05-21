@@ -132,4 +132,7 @@ endif()
 
 string(JSON json_config_file SET ${json_config_file} "defines" ${json_defines})
 
+message(STATUS "-------------JSON CONFIG FILE --------------")
+message(STATUS "${json_config_file}")
+message(STATUS "-------------EOF  --------------")
 file(WRITE ${json_config_file_path} "${json_config_file}")
