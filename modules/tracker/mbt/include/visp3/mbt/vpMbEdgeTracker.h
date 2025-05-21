@@ -514,7 +514,7 @@ protected:
   virtual void initFaceFromLines(vpMbtPolygon &polygon) VP_OVERRIDE;
   unsigned int initMbtTracking(unsigned int &nberrors_lines, unsigned int &nberrors_cylinders,
                                unsigned int &nberrors_circles);
-  void initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo, const int &initRange = -1);
+  void initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo, const bool &useInitRange = true);
   void initPyramid(const vpImage<unsigned char> &_I, std::vector<const vpImage<unsigned char> *> &_pyramid);
   void reInitLevel(const unsigned int _lvl);
   void reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo);

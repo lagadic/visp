@@ -833,7 +833,7 @@ public:
 
     // current data values.
     unsigned int m_range_tracking = m_ecm.getRange();
-    int initRange = 1;
+    int initRange = 0;
 
     for (pugi::xml_node dataNode = node.first_child(); dataNode; dataNode = dataNode.next_sibling()) {
       if (dataNode.type() == pugi::node_element) {

@@ -57,6 +57,10 @@
 #include <visp3/vision/vpPose.h>
 
 BEGIN_VISP_NAMESPACE
+namespace
+{
+const unsigned int defaultRange = 0U;
+}
 /*!
   Basic constructor
 */
@@ -220,7 +224,6 @@ bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, cons
     meline2->setMe(me);
 
     //    meline->setDisplay(vpMeSite::RANGE_RESULT);
-    static const unsigned int defaultRange = 0U;
     unsigned int initRange_;
     if (initRange < 0) {
       initRange_ = defaultRange;
@@ -340,6 +343,8 @@ bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, cons
 void vpMbtDistanceCylinder::trackMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
 {
   (void)cMo;
+  int oldInitRange = me->getInitRange();
+  me->setInitRange(defaultRange);
   if (isvisible) {
     try {
       meline1->track(I);
@@ -363,6 +368,7 @@ void vpMbtDistanceCylinder::trackMovingEdge(const vpImage<unsigned char> &I, con
     nbFeaturel2 = static_cast<unsigned int>(meline2->getMeList().size());
     nbFeature = nbFeaturel1 + nbFeaturel2;
   }
+  me->setInitRange(oldInitRange);
 }
 
 /*!
@@ -373,6 +379,8 @@ void vpMbtDistanceCylinder::trackMovingEdge(const vpImage<unsigned char> &I, con
 */
 void vpMbtDistanceCylinder::updateMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
 {
+  int oldInitRange = me->getInitRange();
+  me->setInitRange(defaultRange);
   if (isvisible) {
     // Perspective projection
     p1->changeFrame(cMo);
@@ -502,6 +510,7 @@ void vpMbtDistanceCylinder::updateMovingEdge(const vpImage<unsigned char> &I, co
     nbFeaturel2 = static_cast<unsigned int>(meline2->getMeList().size());
     nbFeature = nbFeaturel1 + nbFeaturel2;
   }
+  me->setInitRange(oldInitRange);
 }
 
 /*!
