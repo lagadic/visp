@@ -301,7 +301,7 @@ public:
   /*!
    * Return the ratio of the initial contrast to use to initialize the contrast threshold of the \b vpMeSite.
    *
-   * \return Value of the likelihood threshold ratio, between 0 and 1.
+   * \return Value of the likelihood threshold ratio, between 0 and 1. A negative value means it is not activated.
    *
    * \sa setThresholdMarginRatio(), setMinThreshold(), getMinThreshold(), getLikelihoodThresholdType(), setLikelihoodThresholdType()
    */
@@ -484,7 +484,9 @@ public:
   /*!
    * Set the the ratio of the initial contrast to use to initialize the contrast threshold of the \b vpMeSite.
    *
-   * \param thresholdMarginRatio Value of the likelihood threshold ratio, between 0 and 1.
+   * \param thresholdMarginRatio Value of the likelihood threshold ratio, between 0 and 1. A negative value means that this
+   * the automatic thresholding is not activated. The threshold of a vpMeSite is computed from the convolution value
+   * computed when initializing the vpMeTracker multiplied by this ratio.
    *
    * \sa getThresholdMarginRatio(), setMinThreshold(), getMinThreshold(), getLikelihoodThresholdType(), setLikelihoodThresholdType()
    */
@@ -500,7 +502,8 @@ public:
   /*!
    * Set the minimum value of the contrast threshold of the \b vpMeSite.
    *
-   * \param minThreshold Minimum value of the contrast threshold.
+   * \param minThreshold Minimum value of the contrast threshold. A negative value means that automatic
+   * thresholding is not activated.
    *
    * \sa getMinThreshold(), setThresholdMarginRatio(), getThresholdMarginRatio(), getLikelihoodThresholdType(), setLikelihoodThresholdType()
    */
