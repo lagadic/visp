@@ -198,7 +198,7 @@ and compares their output probabilities for a given pixel color to compute an ob
 If available, this method may use camera depth information to update the object histograms using only reliable pixels in terms of depth (where object and render are closely aligned)
 This method is ideal when there is a clear photometric distinction between object and environment.
 
-You may define your own approach to object segmentation (by e.g., using a neural network to compare feature maps or using more depth information)
+You may define your own approach to object segmentation (by, e.g., using a neural network to compare feature maps or using more depth information)
 by inheriting from vpRBObjectSegmentationMethod.
 
 Note that the use of the probability map output by the segmentation method is implemented differently for each type of feature.
@@ -211,10 +211,95 @@ The diagram below sums up the combination of the masking and outlier rejection s
 
 \subsection rbt_tracking_optimization Minimization problem
 
+To update the camera pose, the RBT frames tracking as a non-linear optimization problem.
+The error to be minimized is the difference between features extracted from the 3D model that have been matched with features in the current images.
+For each feature, we must compute the visual error as well as its relationship to the pose (the Jacobian).
+
+The tracking flow is as follows:
+- For each tracked feature type
+  - Extract features from the renders. Potentially use segmentation mask to reject unreliable data.
+  - Match/track features in the image acquired by the camera
+
+Then, optimization is an iterative process:
+- While optimization has not converged or maximum number of iterations has not been reached:
+  - For each feature
+    - Update feature representation (extracted from the model) with the new pose \f$^{c}\mathbf{M}_{o}\f$
+    - Compute feature error
+    - Compute feature Jacobian
+  - Compute pose displacement, by performing a weighted combination of the feature errors and Jacobians.
+  - Update \f$^{c}\mathbf{M}_{o}\f$
+  - Check for convergence
+
+To influence the importance of each feature type, the user can tweak its weight by calling vpRBTracker::setTrackerWeight.
+
+There are several options to tweak the behaviour of the optimization process, which is based on a Levenberg-Marquardt approach.
+See \ref rbt_tracking_config for more information.
 
 \subsection rbt_drift_detection Detecting tracking failure
 
+Tracking may of course fail. It is thus important to have some measure of confidence in the tracking process.
+
+if this option is enabled, then the RBT will compute a confidence metric for the compute object pose.
+
+It is then your responsibility to use this score to call for a tracker reinitialization.
+
+To enable drift detection, you should call vpRBTracker::setDriftDetectionMethod with the scoring method that you wish to use.
+
+the method that is provided by default, vpRBProbabilistic3DDriftDetector, is an online method that compares the photometric information of the model in the current image with a representation that is learned online.
+If available, it will also compare the depth in the render data with the depth from the camera.
+This representation is a set of 3D points, for which some color statistics are stored and updated every frame.
+
+This method relies on framing color and depth information as Gaussian distributions. Their spread is controlled by the user and a larger spread will result in a greater confidence and smoother changes in the confidence score.
+
+In addition, since color estimation is performed online, the variance of the color distribution of a point is used to factor to weigh its importance with respect to other sample when computing the final score.
+This means that more importance will be given to points that have a stable color (that are in a smooth color region of the model and that were not too impacted by lighting changes in the previous frames).
+
+
 \section rbt_tracking_config Configuration
+
+To ease the use of the RBT, it is strongly to have compiled ViSP with the 3rd party that enables JSON support. This section describes how to configure the tracker.
+
+\subsection rbt_tracking_config_in_code In-code configuration
+
+If you wish or must configure the tracker directly from the code, these are the main methods of interest:
+
+- vpRBTracker::setModelPath to set the 3D model to use
+- vpRBTracker::addTracker to add a new feature to track
+- vpRBTracker::getFeatureTrackers to retrieve the currently tracked features. You can configure each feature separately.
+- vpRBTracker::setCameraParameters to set the camera intrinsics and image resolution
+- vpRBTracker::setOdometryMethod to set the method used to perform visual odometry as a preprocessing step
+- vpRBTracker::setDriftDetector to set the algorithm used to estimate the tracking confidence
+- vpRBTracker::setObjectSegmentationMethod to set the pixelwise segmentation computation method.
+
+
+\subsection rbt_tracking_config_json JSON configuration
+
+To load a json configuration file, you can call vpRBTracker::loadConfigurationFile or vpRBTracker::loadJsonConfiguration.
+
+This subsection details the parameters that you can tweak through JSON.
+
+\subsubsection rbt_tracking_config_json General parameters
+
+| Field | Type    | Description
+| :----  | :----  | :----
+| model | string | Optional path to the 3D model of the object. If not present, it should be set using vpRBTracker::setModelPath before calling vpRBTracker::startTracking
+| displaySilhouette | Boolean | Whether to display the object silhouette from the last rendered frame when calling vpRBTracker::display. Note that since this the last rendered frame, it may appear laggy.
+| updateRenderThreshold | float | Optional. The motion threshold between the last render and the current object pose above which the object should be rerendered and the renders updated. By default, this metric is specified in meters. This threshold is also used when rerendering after odometry. Set this value to 0 to always perform rendering.
+| camera | Dictionary | Optional camera intrinsics. See \ref rbt_tracking_config_camera
+| vvs | Dictionary | Parameters for optimization. \ref rbt_tracking_config_optimization
+| silhouetteExtractionSettings | Dictionary | Parameters for the contour extraction from the renders. \ref rbt_tracking_config_silhouette
+| mask | Dictionary | Optional segmentation method configuration. \ref rbt_tracking_config_mask
+| drift | Dictionary | Optional drift detection method configuration. \ref rbt_tracking_config_drift
+| features | List | List of features to track. \ref rbt_tracking_config_features
+
+
+\subsubsection rbt_tracking_config_camera Camera configuration
+
+\subsubsection rbt_tracking_config_optimization Optimization parameters
+\subsubsection rbt_tracking_config_silhouette Silhouette extraction settings
+\subsubsection rbt_tracking_config_mask Object segmentation method configuration
+\subsubsection rbt_tracking_config_drift Drift detection method configuration
+\subsubsection rbt_tracking_config_features Feature configuration
 
 \section rbt_tracking_usage Tracker usage
 
