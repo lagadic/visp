@@ -62,7 +62,18 @@ class vpRBDriftDetector;
 class vpRBVisualOdometry;
 
 /**
- * \brief
+ * \brief Class implementing the Render-Based Tracker (RBT).
+ *
+ * The RBT is an extension and rework of \cite Petit14a and of the Model-Based Tracker.
+ *
+ * Tracking is framed as a non-linear optimization problem where a visual error (formulated by comparing **renders** with images) should be minimized.
+ *
+ * The RBT supports a various set of features, from tracked 2D points to dense depth information.
+ * For a list of base features, see \ref group_rbt_trackers
+ *
+ * The RBT can be extended and you can add your own features and other functionalities to the pipeline.
+ *
+ *  For a detailed description of the tracker, how to use it and extend it, see \ref tutorial-tracking-rbt
  *
  * \ingroup group_rbt_core
 */
@@ -78,9 +89,36 @@ public:
    * \name Information retrieval
    * @{
    */
+
+  /**
+   * \brief Get the estimated pose of the object in the camera frame.
+   *
+   * You should call vpRBTracker::track to update the retrieved pose
+   *
+   * \param cMo pose to update
+  */
   void getPose(vpHomogeneousMatrix &cMo) const;
+
+  /**
+   * \brief Sets the pose of the object in the camera frame.
+   * Should be called when initializing the tracker or when reinitializing after tracking failure.
+   *
+   * \param cMo the new object pose
+  */
   void setPose(const vpHomogeneousMatrix &cMo);
+  /**
+   * \brief Get the renderer used to render the object.
+   *
+   * \return vpObjectCentricRenderer&
+  */
   vpObjectCentricRenderer &getRenderer();
+  /**
+   * \brief Retrieve the most recent frame that was used when tracking the object.
+   * The renders may not correspond to the latest pose that can be retrieved with getPose
+   * To retrieve the render pose see vpRBRenderData::cMo
+   *
+   * \return const vpRBFeatureTrackerInput&
+  */
   const vpRBFeatureTrackerInput &getMostRecentFrame() const { return m_currentFrame; }
 
   vpMatrix getCovariance() const;
@@ -93,14 +131,51 @@ public:
    * \name Settings
    * @{
    */
-  void addTracker(std::shared_ptr<vpRBFeatureTracker> tracker);
-  void setupRenderer(const std::string &file);
-  inline std::string getModelPath() const { return m_modelPath; }
-  void setModelPath(const std::string &path);
 
+  /**
+   * \brief Add a new feature to track
+   *
+   * \param tracker the feature to add
+   *
+   * \throws vpException if the tracker is null
+  */
+  void addTracker(std::shared_ptr<vpRBFeatureTracker> tracker);
+
+  /**
+   * \brief Get the tracked features
+   *
+   * \return std::vector<std::shared_ptr<vpRBFeatureTracker>>
+  */
   inline std::vector<std::shared_ptr<vpRBFeatureTracker>> getFeatureTrackers() const { return m_trackers; }
 
+  /**
+   * \brief Get the path to the 3D model to track
+  */
+  inline std::string getModelPath() const { return m_modelPath; }
+
+  /**
+   * \brief Set the path to the 3D model to load
+   *
+   * \param path a path to an existing file contianing a 3D mesh that can be read by Panda3D
+  */
+  void setModelPath(const std::string &path);
+
+  /**
+   * \brief Get the camera intrinsics that are used to render the 3D object and process the tracked frames
+   *
+   * \return vpCameraParameters
+  */
   vpCameraParameters getCameraParameters() const;
+  /**
+   * \brief Sets the camera intrinsics and image resolution for the images where the object will be tracked.
+   *
+   * \param cam Camera intrinsics for the color (and potential depth) image. It should follow a model without distortion.
+   * \param h Image height
+   * \param w Image width
+   *
+   * \throws vpException if camera intrinsics have distortion
+   * \throws vpException if image resolution is incorrect
+  */
   void setCameraParameters(const vpCameraParameters &cam, unsigned h, unsigned w);
 
   inline unsigned int getImageWidth() const { return m_imageWidth; }
@@ -117,7 +192,7 @@ public:
   inline void setOptimizationGain(double lambda)
   {
     if (lambda < 0.0) {
-      throw vpException(vpException::badValue, "Optimization gain should be greater to zero");
+      throw vpException(vpException::badValue, "Optimization gain should be greater or equal to zero");
     }
     m_lambda = lambda;
   }
@@ -134,7 +209,7 @@ public:
   inline void setOptimizationInitialMu(double mu)
   {
     if (mu < 0.0) {
-      throw vpException(vpException::badValue, "Optimization gain should be greater or equal to zero");
+      throw vpException(vpException::badValue, "Optimization mu should be greater than or equal to zero");
     }
     m_muInit = mu;
   }
@@ -143,7 +218,7 @@ public:
   inline void setOptimizationMuIterFactor(double factor)
   {
     if (factor < 0.0) {
-      throw vpException(vpException::badValue, "Optimization gain should be greater or equal to zero");
+      throw vpException(vpException::badValue, "Optimization mu factor should be greater than or equal to zero");
     }
     m_muIterFactor = factor;
   }
@@ -151,23 +226,50 @@ public:
   bool scaleInvariantRegularization() const { return m_scaleInvariantOptim; }
   inline void setScaleInvariantRegularization(bool invariant)
   {
-
     m_scaleInvariantOptim = invariant;
   }
 
+  /**
+   * \see setDriftDetector
+   *
+  */
   std::shared_ptr<vpRBDriftDetector> getDriftDetector() const { return m_driftDetector; }
+  /**
+   * \brief Sets the method to perform drift detection and estimate tracking confidence.
+   * Set to null to disable this functionality.
+   *
+   * \param detector the algorithm to use
+  */
   inline void setDriftDetector(const std::shared_ptr<vpRBDriftDetector> &detector)
   {
     m_driftDetector = detector;
   }
 
+  /**
+   * \see setObjectSegmentationMethod
+  */
   std::shared_ptr<vpObjectMask> getObjectSegmentationMethod() const { return m_mask; }
+  /**
+   * \brief Sets the algorithm to use when performing object segmentation.
+   * Set to null to disable the use of segmentation.
+   *
+   * \param mask the segmentation method
+  */
   inline void setObjectSegmentationMethod(const std::shared_ptr<vpObjectMask> &mask)
   {
     m_mask = mask;
   }
 
+  /**
+   * \see setOdometryMethod
+  */
   std::shared_ptr<vpRBVisualOdometry> getOdometryMethod() const { return m_odometry; }
+  /**
+   * \brief Set the method to use when performing visual odometry to preestimate the camera motion before tracking.
+   * If null, then odometry is disabled.
+   *
+   * \param odometry
+  */
   inline void setOdometryMethod(const std::shared_ptr<vpRBVisualOdometry> &odometry)
   {
     m_odometry = odometry;
@@ -328,7 +430,24 @@ public:
 protected:
 
   vpRBTrackingResult track(vpRBFeatureTrackerInput &input);
+  /**
+   * \brief Setup the renderer, and load the 3D model
+   *
+   * \param file path to the 3D model to load and track
+  */
+  void setupRenderer(const std::string &file);
+  /**
+   * \brief Update the render data with a render at the last tracked pose
+   *
+   * \param frame the frame to update
+  */
   void updateRender(vpRBFeatureTrackerInput &frame);
+  /**
+   * \brief Update the frame data with renders at a given pose
+   *
+   * \param frame the frame to update
+   * \param cMo the pose of the object at which to perform rendering
+  */
   void updateRender(vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cMo);
 
   /**
@@ -398,30 +517,44 @@ protected:
   {
     return m_renderer.getRenderer<vpPanda3DDepthCannyFilter>() != nullptr;
   }
-
-  bool m_firstIteration; //! Whether this is the first iteration
-
-  std::vector<std::shared_ptr<vpRBFeatureTracker>> m_trackers; //! List of trackers
+  //! Whether this is the first iteration
+  bool m_firstIteration;
+  //! List of feature trackers
+  std::vector<std::shared_ptr<vpRBFeatureTracker>> m_trackers;
 
   vpRBFeatureTrackerInput m_currentFrame;
   vpRBFeatureTrackerInput m_previousFrame;
 
-  std::string m_modelPath; //! Location of the 3D model to load
-  vpHomogeneousMatrix m_cMo; //! Current pose of the object in the camera frame
-  vpHomogeneousMatrix m_cMoPrev; //! Previous pose of the object in the camera frame
-  vpCameraParameters m_cam; //! Camera intrinsics
+  //! Location of the 3D model to load
+  std::string m_modelPath;
 
-  double m_lambda; //! VVS gain
-  unsigned m_vvsIterations; //! Max number of VVS iterations
-  double m_muInit; //! Initial mu value for Levenberg-Marquardt
-  double m_muIterFactor; //! Factor with which to multiply mu at every iteration during VVS.
-  bool m_scaleInvariantOptim; //! Whether to use diagonal scaling in Levenberg-Marquardt regularization
+  //! Current pose of the object in the camera frame
+  vpHomogeneousMatrix m_cMo;
+  //! Previous pose of the object in the camera frame
+  vpHomogeneousMatrix m_cMoPrev;
+  //! Camera intrinsics
+  vpCameraParameters m_cam;
 
-  vpSilhouettePointsExtractionSettings m_depthSilhouetteSettings; //! Settings for silhouette extraction
-  vpPanda3DRenderParameters m_rendererSettings; //! Camera specific setup for the 3D Panda renderer
-  vpObjectCentricRenderer m_renderer; //! 3D renderer
+  //! Optimization gain
+  double m_lambda;
+  //! Maximum number of optimization iterations
+  unsigned m_vvsIterations;
+  //! Initial mu value for Levenberg-Marquardt
+  double m_muInit;
+  //! Factor with which to multiply mu at every iteration during optimization.
+  double m_muIterFactor;
+  //! Whether to use diagonal scaling in Levenberg-Marquardt regularization
+  bool m_scaleInvariantOptim;
 
-  unsigned m_imageHeight, m_imageWidth; //! Color and render image dimensions
+  //! Settings for silhouette extraction
+  vpSilhouettePointsExtractionSettings m_depthSilhouetteSettings;
+   //! Camera specific setup for the 3D Panda renderer
+  vpPanda3DRenderParameters m_rendererSettings;
+  //! 3D renderer
+  vpObjectCentricRenderer m_renderer;
+
+  //! Color and render image dimensions
+  unsigned m_imageHeight, m_imageWidth;
 
   std::shared_ptr<vpObjectMask> m_mask;
   std::shared_ptr<vpRBDriftDetector> m_driftDetector;
