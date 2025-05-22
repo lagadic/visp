@@ -194,8 +194,8 @@ if(MSVC AND X86_64)
   endif()
 endif()
 
-if(USE_PCL AND PCL_COMPILE_OPTIONS)
-  add_extra_compiler_options("${PCL_COMPILE_OPTIONS}")
+if(USE_PCL AND PCL_DEPS_COMPILE_OPTIONS)
+  add_extra_compiler_options("${PCL_DEPS_COMPILE_OPTIONS}")
 endif()
 
 if(UNIX)

@@ -1675,8 +1675,8 @@ macro(vp_get_all_cflags _cxx_flags)
   endif()
 
   # Propagate pcl compiler option if enabled during ViSP build
-  if(VISP_HAVE_PCL AND PCL_COMPILE_OPTIONS)
-    list(INSERT ${_cxx_flags} 0  ${PCL_COMPILE_OPTIONS})
+  if(VISP_HAVE_PCL AND PCL_DEPS_COMPILE_OPTIONS)
+    list(INSERT ${_cxx_flags} 0  ${PCL_DEPS_COMPILE_OPTIONS})
   endif()
 endmacro()
 

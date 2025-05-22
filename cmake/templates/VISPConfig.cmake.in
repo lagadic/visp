@@ -345,9 +345,9 @@ endif()
 # Propagate pcl compiler option if enabled during ViSP build
 #----------------------------------------------------------------------
 if(VISP_HAVE_PCL)
-  set(PCL_COMPILE_OPTIONS "@PCL_COMPILE_OPTIONS@")
-  if(PCL_COMPILE_OPTIONS)
-    foreach(pcl_compile_option ${PCL_COMPILE_OPTIONS})
+  set(PCL_DEPS_COMPILE_OPTIONS "@PCL_DEPS_COMPILE_OPTIONS@")
+  if(PCL_DEPS_COMPILE_OPTIONS)
+    foreach(pcl_compile_option ${PCL_DEPS_COMPILE_OPTIONS})
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${pcl_compile_option}")
     endforeach()
   endif()
