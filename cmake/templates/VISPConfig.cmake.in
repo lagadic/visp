@@ -342,6 +342,18 @@ if(VISP_HAVE_OPENMP)
 endif()
 
 #----------------------------------------------------------------------
+# Propagate pcl compiler option if enabled during ViSP build
+#----------------------------------------------------------------------
+if(VISP_HAVE_PCL)
+  set(PCL_COMPILE_OPTIONS "@PCL_COMPILE_OPTIONS@")
+  if(PCL_COMPILE_OPTIONS)
+    foreach(pcl_compile_option ${PCL_COMPILE_OPTIONS})
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${pcl_compile_option}")
+    endforeach()
+  endif()
+endif()
+
+#----------------------------------------------------------------------
 # Propagate -fPIC option requested with Qt5 that requires position independent
 # code if Qt was built with -reduce-relocations.
 #----------------------------------------------------------------------
