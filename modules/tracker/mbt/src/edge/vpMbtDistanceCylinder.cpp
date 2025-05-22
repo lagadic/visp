@@ -229,7 +229,7 @@ bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, cons
       initRange_ = defaultRange;
     }
     else {
-      initRange_ = initRange;
+      initRange_ = static_cast<unsigned int>(initRange);
     }
     int oldInitRange = me->getInitRange();
     me->setInitRange(initRange_);

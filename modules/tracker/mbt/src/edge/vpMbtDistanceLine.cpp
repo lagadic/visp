@@ -307,7 +307,7 @@ void vpMbtDistanceLine::setMovingEdge(vpMe *_me)
   \param doNotTrack : If true, ME are not tracked.
   \param mask : Mask image or nullptr if not wanted. Mask values that are set to true are considered in the tracking. To
   disable a pixel, set false.
-  \param initRange The range of the ME used during the initialization.
+  \param initRange : The range of the ME used during the initialization.
   \return false if an error occur, true otherwise.
 */
 bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, bool doNotTrack,
@@ -384,7 +384,7 @@ bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vp
           initRange_ = defaultRange;
         }
         else {
-          initRange_ = initRange;
+          initRange_ = static_cast<unsigned int>(initRange);
         }
         int oldInitRange = me->getInitRange();
         me->setInitRange(initRange_);

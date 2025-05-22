@@ -172,7 +172,7 @@ bool vpMbtDistanceCircle::initMovingEdge(const vpImage<unsigned char> &I, const 
       initRange_ = defaultRange;
     }
     else {
-      initRange_ = initRange;
+      initRange_ = static_cast<unsigned int>(initRange);
     }
 
     meEllipse = new vpMbtMeEllipse;
