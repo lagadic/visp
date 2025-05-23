@@ -1064,7 +1064,7 @@ inline void from_json(const nlohmann::json &j, vpMbGenericTracker::TrackerWrappe
       t.setDepthDenseSamplingStep(sampling.at("x"), sampling.at("y"));
     }
   }
-}
+  }
 
 #endif
 

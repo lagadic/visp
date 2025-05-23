@@ -1535,10 +1535,19 @@ void vpMbEdgeTracker::displayFeaturesOnImage(const vpImage<vpRGBa> &I)
 
   \param I : The image.
   \param _cMo : The pose of the camera used to initialize the moving edges.
+  \param useInitRange: If true, the m_initRange attribute will be used when calling initMovingEdge. Otherwise,
+  the default value of the primitives will be used instead.
 */
-void vpMbEdgeTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo)
+void vpMbEdgeTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo, const bool &useInitRange)
 {
   const bool doNotTrack = false;
+  int initRange_;
+  if (useInitRange) {
+    initRange_ = me.getInitRange();
+  }
+  else {
+    initRange_ = -1; // Asks to use default values
+  }
 
   for (std::list<vpMbtDistanceLine *>::const_iterator it = lines[scaleLevel].begin(); it != lines[scaleLevel].end();
        ++it) {
@@ -1563,8 +1572,9 @@ void vpMbEdgeTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHo
     if (isvisible) {
       l->setVisible(true);
       l->updateTracked();
-      if (l->meline.empty() && l->isTracked())
-        l->initMovingEdge(I, _cMo, doNotTrack, m_mask);
+      if (l->meline.empty() && l->isTracked()) {
+        l->initMovingEdge(I, _cMo, doNotTrack, m_mask, initRange_);
+      }
     }
     else {
       l->setVisible(false);
@@ -1599,8 +1609,9 @@ void vpMbEdgeTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHo
     if (isvisible) {
       cy->setVisible(true);
       if (cy->meline1 == nullptr || cy->meline2 == nullptr) {
-        if (cy->isTracked())
-          cy->initMovingEdge(I, _cMo, doNotTrack, m_mask);
+        if (cy->isTracked()) {
+          cy->initMovingEdge(I, _cMo, doNotTrack, m_mask, initRange_);
+        }
       }
     }
     else {
@@ -1633,8 +1644,9 @@ void vpMbEdgeTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHo
     if (isvisible) {
       ci->setVisible(true);
       if (ci->meEllipse == nullptr) {
-        if (ci->isTracked())
-          ci->initMovingEdge(I, _cMo, doNotTrack, m_mask);
+        if (ci->isTracked()) {
+          ci->initMovingEdge(I, _cMo, doNotTrack, m_mask, initRange_);
+        }
       }
     }
     else {

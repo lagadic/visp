@@ -299,9 +299,12 @@ int main(int argc, char **argv)
         vpMe me;
         me.setMaskSize(5);
         me.setMaskNumber(180);
+        me.setInitRange(-1); // To use the default values defined for each type of primitive
         me.setRange(8);
         me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
         me.setThreshold(20);
+        me.setMinThreshold(-1); // To deactivate automatic thresholding
+        me.setThresholdMarginRatio(-1.); // To deactivate automatic thresholding
         me.setMu1(0.5);
         me.setMu2(0.5);
         me.setSampleStep(4);

@@ -228,7 +228,7 @@ void vpMbtMeEllipse::initTracking(const vpImage<unsigned char> &I, const vpImage
 void vpMbtMeEllipse::track(const vpImage<unsigned char> &I)
 {
   try {
-    vpMeTracker::track(I);
+    vpMeEllipse::track(I);
     if (m_mask != nullptr) {
       // Expected density could be modified if some vpMeSite are no more tracked because they are outside the mask.
       m_expectedDensity = static_cast<unsigned int>(m_meList.size());
@@ -284,7 +284,7 @@ void vpMbtMeEllipse::reSample(const vpImage<unsigned char> &I)
   unsigned int n = numberOfSignal();
   if (static_cast<double>(n) < 0.9 * m_expectedDensity) {
     sample(I);
-    vpMeTracker::track(I);
+    vpMeEllipse::track(I);
   }
 }
 
@@ -337,6 +337,10 @@ void vpMbtMeEllipse::sample(const vpImage<unsigned char> &I, bool doNotTrack)
       pix.init(iP.get_i(), iP.get_j(), theta);
       pix.setDisplay(m_selectDisplay);
       pix.setState(vpMeSite::NO_SUPPRESSION);
+      const double marginRatio = m_me->getThresholdMarginRatio();
+      double convolution = pix.convolution(I, m_me);
+      double contrastThreshold = fabs(convolution) * marginRatio;
+      pix.setContrastThreshold(contrastThreshold, *m_me);
       m_meList.push_back(pix);
       m_angleList.push_back(ang);
     }
