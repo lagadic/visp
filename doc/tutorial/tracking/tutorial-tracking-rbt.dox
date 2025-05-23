@@ -407,6 +407,23 @@ Example configuration:
 
 \subsubsection rbt_tracking_config_features Feature configuration
 
+The type of feature that is used depends on the "type" value of each feature dictionary.
+
+the "features" object of the main dictionary is a list, as multiple features can be used.
+
+For each feature, these values can be defined:
+
+| Field | Type    | Description
+| :----  | :----  | :----
+| weight | float | The importance given by the user to this feature type.
+
+
+\paragraph rbt_tracking_config_features_klt vpRBKltTracker
+\paragraph rbt_tracking_config_features_me vpRBSilhouetteMeTracker
+\paragraph rbt_tracking_config_features_ccd vpRBSilhouetteCCDTracker
+\paragraph rbt_tracking_config_features_depth vpRBDenseDepthTracker
+
+
 
 
 \section rbt_tracking_usage Tracker usage
