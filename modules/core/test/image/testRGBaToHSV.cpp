@@ -150,12 +150,12 @@ int main()
       if (h_full) {
         vpHSV<unsigned char, true> hsv(static_cast<unsigned char>(0), static_cast<unsigned char>(0), static_cast<unsigned char>(0));
         hsv.buildFrom(rgba);
-        isSuccess = isSuccess && test_hsv(hsv, rgba, vpHSV<unsigned char, true>(hsv_truth[id]), 1.0);
+        isSuccess = isSuccess && test_hsv(hsv, rgba, vpHSV<unsigned char, true>(hsv_truth[id]), 1.5); // 1.5 due to rounding errors on Fedora
       }
       else {
         vpHSV<unsigned char, false> hsv(static_cast<unsigned char>(0), static_cast<unsigned char>(0), static_cast<unsigned char>(0));
         hsv.buildFrom(rgba);
-        isSuccess = isSuccess && test_hsv(hsv, rgba, vpHSV<unsigned char, false>(hsv_truth[id]), 1.0);
+        isSuccess = isSuccess && test_hsv(hsv, rgba, vpHSV<unsigned char, false>(hsv_truth[id]), 1.5); // 1.5 due to rounding errors on Fedora
       }
 
     }
