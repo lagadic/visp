@@ -1673,6 +1673,11 @@ macro(vp_get_all_cflags _cxx_flags)
   if(VISP_HAVE_OPENMP)
     list(INSERT ${_cxx_flags} 0  ${OpenMP_CXX_FLAGS})
   endif()
+
+  # Propagate pcl compiler option if enabled during ViSP build
+  if(VISP_HAVE_PCL AND PCL_DEPS_COMPILE_OPTIONS)
+    list(INSERT ${_cxx_flags} 0  ${PCL_DEPS_COMPILE_OPTIONS})
+  endif()
 endmacro()
 
 # build the list of visp includes for all modules and dependencies

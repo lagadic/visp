@@ -605,7 +605,7 @@ void vpMbDepthNormalTracker::setUseDepthNormalTracking(const std::string &name, 
 
 void vpMbDepthNormalTracker::testTracking() { }
 
-#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS) && defined(VISP_HAVE_PCL_COMMON)
 void vpMbDepthNormalTracker::segmentPointCloud(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud)
 {
   m_depthNormalListOfActiveFaces.clear();
@@ -878,7 +878,7 @@ void vpMbDepthNormalTracker::track(const vpImage<vpRGBa> &)
   throw vpException(vpException::fatalError, "Cannot track with a color image!");
 }
 
-#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS) && defined(VISP_HAVE_PCL_COMMON)
 void vpMbDepthNormalTracker::track(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud)
 {
   segmentPointCloud(point_cloud);

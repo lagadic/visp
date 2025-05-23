@@ -10,7 +10,7 @@
 #include <visp3/mbt/vpMbGenericTracker.h>
 //! [Include]
 
-#if defined(VISP_HAVE_PCL)  && defined(VISP_HAVE_PCL_COMMON)
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS) && defined(VISP_HAVE_PCL_COMMON)
 #include <pcl/common/common.h>
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>

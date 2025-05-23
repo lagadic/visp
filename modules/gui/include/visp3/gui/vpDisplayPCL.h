@@ -31,8 +31,8 @@
  * Display a point cloud using PCL library.
  */
 
-#ifndef _vpDisplayPCL_h_
-#define _vpDisplayPCL_h_
+#ifndef VP_DISPLAY_PCL_H
+#define VP_DISPLAY_PCL_H
 
 #include <visp3/core/vpConfig.h>
 
