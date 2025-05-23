@@ -113,7 +113,7 @@ public:
     m_odometryMotion = vpHomogeneousMatrix();
   }
 
-  unsigned int getNumIterations() const { return m_cMos.size(); }
+  unsigned int getNumIterations() const { return static_cast<unsigned int>(m_cMos.size()); }
   const std::vector<vpHomogeneousMatrix> &getPoses() const { return m_cMos; }
   vpHomogeneousMatrix getPoseBeforeTracking() const { return m_cMoBeforeTracking; }
 

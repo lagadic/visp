@@ -108,8 +108,8 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
   if (m_computeOnBBOnly) {
     mask.resize(height, width, 0.f);
 #pragma omp parallel for
-    for (unsigned int i = top; i <= static_cast<unsigned int>(bottom); ++i) {
-      for (unsigned int j = left; j <= static_cast<unsigned int>(right); ++j) {
+    for (int i = top; i <= bottom; ++i) {
+      for (int j = left; j <= right; ++j) {
         const float poPix = m_probaObject[i][j];
         const float pbPix = m_probaBackground[i][j];
         if (pbPix == 0.f) {

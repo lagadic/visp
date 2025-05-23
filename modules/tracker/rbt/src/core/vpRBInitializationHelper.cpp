@@ -301,8 +301,8 @@ void vpRBInitializationHelper::initClick(const vpImage<T> &I, const std::string 
   }
 
 }
-template void vpRBInitializationHelper::initClick<unsigned char>(const vpImage<unsigned char> &I, const std::string &initFile, bool displayHelp, vpRBTracker &tracker);
-template void vpRBInitializationHelper::initClick<vpRGBa>(const vpImage<vpRGBa> &I, const std::string &initFile, bool displayHelp, vpRBTracker &tracker);
+template VISP_EXPORT void vpRBInitializationHelper::initClick<unsigned char>(const vpImage<unsigned char> &I, const std::string &initFile, bool displayHelp, vpRBTracker &tracker);
+template VISP_EXPORT void vpRBInitializationHelper::initClick<vpRGBa>(const vpImage<vpRGBa> &I, const std::string &initFile, bool displayHelp, vpRBTracker &tracker);
 #endif
 
 END_VISP_NAMESPACE

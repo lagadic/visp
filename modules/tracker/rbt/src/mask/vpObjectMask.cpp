@@ -41,7 +41,7 @@ void vpObjectMask::display(const vpImage<float> &mask, vpImage<unsigned char> &I
   }
 
 #pragma omp parallel for
-  for (unsigned int i = 0; i < mask.getSize(); ++i) {
+  for (int i = 0; i < static_cast<int>(mask.getSize()); ++i) {
     Imask.bitmap[i] = static_cast<unsigned char>(mask.bitmap[i] * 255.f);
   }
 

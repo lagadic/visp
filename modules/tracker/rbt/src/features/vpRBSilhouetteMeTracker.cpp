@@ -54,7 +54,8 @@ void vpRBSilhouetteMeTracker::extractFeatures(const vpRBFeatureTrackerInput &fra
 #ifdef VISP_HAVE_OPENMP
 #pragma omp for nowait
 #endif
-    for (const vpRBSilhouettePoint &sp: frame.silhouettePoints) {
+    for (int i = 0; i < static_cast<int>(frame.silhouettePoints.size()); ++i) {
+      const vpRBSilhouettePoint &sp = frame.silhouettePoints[i];
       // float angle = vpMath::deg(acos(sp.normal * oC));
       // if (angle > 89.0) {
       //   continue;
@@ -110,16 +111,16 @@ void vpRBSilhouetteMeTracker::trackFeatures(const vpRBFeatureTrackerInput &frame
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-    for (vpRBSilhouetteControlPoint &p: m_controlPoints) {
-      p.track(frame.I);
+    for (int i = 0; i < static_cast<int>(m_controlPoints.size()); ++i) {
+      m_controlPoints[i].track(frame.I);
     }
   }
   else {
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-    for (vpRBSilhouetteControlPoint &p: m_controlPoints) {
-      p.trackMultipleHypotheses(frame.I);
+    for (int i = 0; i < static_cast<int>(m_controlPoints.size()); ++i) {
+      m_controlPoints[i].trackMultipleHypotheses(frame.I);
     }
   }
 }

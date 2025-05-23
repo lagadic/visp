@@ -47,7 +47,7 @@ void updateDepth(const vpImage<uint16_t> &depthRaw, float depthScale, float maxZ
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-  for (unsigned int i = 0; i < depthRaw.getSize(); ++i) {
+  for (int i = 0; i < static_cast<int>(depthRaw.getSize()); ++i) {
     depth.bitmap[i] = depthScale * static_cast<float>(depthRaw.bitmap[i]);
     IdepthDisplay.bitmap[i] = depth.bitmap[i] > maxZDisplay ? 0 : static_cast<unsigned int>((depth.bitmap[i] / maxZDisplay) * 255.f);
   }

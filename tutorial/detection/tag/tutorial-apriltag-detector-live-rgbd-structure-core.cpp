@@ -309,8 +309,8 @@ int main(int argc, const char **argv)
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-      for (unsigned int i = 0; i < I_depth_raw.getHeight(); i++) {
-        for (unsigned int j = 0; j < I_depth_raw.getWidth(); j++) {
+      for (int i = 0; i < static_cast<int>(I_depth_raw.getHeight()); i++) {
+        for (int j = 0; j < static_cast<int>(I_depth_raw.getWidth()); j++) {
           if (!vpMath::isNaN(I_depth_raw[i][j])) {
             float Z = I_depth_raw[i][j] * 0.001; // Transform depth to meters.
             depthMap[i][j] = Z;

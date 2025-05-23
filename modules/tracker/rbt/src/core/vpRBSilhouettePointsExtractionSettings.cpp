@@ -114,7 +114,7 @@ std::vector<std::pair<unsigned int, unsigned int>> vpSilhouettePointsExtractionS
   if (m_maxNumPoints > 0) {
     vpUniRand random(randomSeed);
     std::vector<size_t> indices(m_maxNumPoints - finalCandidates.size());
-    sampleWithoutReplacement(m_maxNumPoints - finalCandidates.size(), candidates.size(), indices, random);
+    sampleWithoutReplacement(static_cast<size_t>(m_maxNumPoints) - finalCandidates.size(), candidates.size(), indices, random);
     for (unsigned int i = 0; i < indices.size(); ++i) {
       finalCandidates.push_back(candidates[indices[i]]);
     }

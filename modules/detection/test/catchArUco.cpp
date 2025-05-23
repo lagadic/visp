@@ -60,6 +60,8 @@ using namespace VISP_NAMESPACE_NAME;
 
 static bool g_debug_print = false;
 
+bool opt_no_display = false; // If true, disable display or tests requiring display
+
 TEST_CASE("ArUco detection test", "[aruco_detection_test]")
 {
   std::map<vpDetectorAprilTag::vpAprilTagFamily, int> apriltagMap = {
@@ -338,7 +340,8 @@ int main(int argc, const char *argv[])
 
   using namespace Catch::Clara;
   auto cli = session.cli()
-    | Catch::Clara::Opt(g_debug_print)["--debug-print"]("Force the printing of some debug information.");
+    | Catch::Clara::Opt(g_debug_print)["--debug-print"]("Force the printing of some debug information.")
+    | Catch::Clara::Opt(opt_no_display)["--no-display"]("Disable display");
 
   session.cli(cli);
   int returnCode = session.applyCommandLine(argc, argv);

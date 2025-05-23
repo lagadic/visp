@@ -126,7 +126,7 @@ void vpColorHistogram::computeProbas(const vpImage<vpRGBa> &image, vpImage<float
   proba.resize(image.getHeight(), image.getWidth());
 
 #pragma omp parallel for schedule(static)
-  for (unsigned int i = 0; i < image.getSize(); ++i) {
+  for (int i = 0; i < static_cast<int>(image.getSize()); ++i) {
     proba.bitmap[i] = m_probas[colorToIndex(image.bitmap[i])];
   }
 }
@@ -140,10 +140,10 @@ void vpColorHistogram::computeProbas(const vpImage<vpRGBa> &image, vpImage<float
   const int bottom = std::min(h- 1, static_cast<int>(bb.getBottom()));
   const int right = std::min(w - 1, static_cast<int>(bb.getRight()));
 #pragma omp parallel for
-  for (unsigned int i = top; i <= static_cast<unsigned int>(bottom); ++i) {
+  for (int i = top; i <= bottom; ++i) {
     const vpRGBa *colorRow = image[i];
     float *probaRow = proba[i];
-    for (unsigned int j = left; j <= static_cast<unsigned int>(right); ++j) {
+    for (int j = left; j <= right; ++j) {
       probaRow[j] = m_probas[colorToIndex(colorRow[j])];
     }
   }
@@ -226,25 +226,25 @@ void vpColorHistogram::computeSplitHistograms(const vpImage<vpRGBa> &image, cons
 
   std::vector<unsigned int> countsIn(bins, 0), countsOut(bins, 0);
 
-  const unsigned int beforeBBStart = static_cast<unsigned int>(bbInside.getTop()) * image.getWidth() + static_cast<unsigned int>(bbInside.getLeft());
-  const unsigned int afterBBEnd = static_cast<unsigned int>(bbInside.getBottom()) * image.getWidth() + static_cast<unsigned int>(bbInside.getRight());
+  const int beforeBBStart = static_cast<int>(bbInside.getTop()) * image.getWidth() + static_cast<int>(bbInside.getLeft());
+  const int afterBBEnd = static_cast<int>(bbInside.getBottom()) * image.getWidth() + static_cast<int>(bbInside.getRight());
 
 #pragma omp parallel
   {
     std::vector<unsigned int>localCountsIn(bins, 0), localCountsOut(bins, 0);
 #pragma omp for schedule(static, 64)
-    for (unsigned int i = 0; i < beforeBBStart; ++i) {
+    for (int i = 0; i < beforeBBStart; ++i) {
       const unsigned int index = insideMask.colorToIndex(image.bitmap[i]);
       ++localCountsOut[index];
     }
 #pragma omp for schedule(static, 64)
-    for (unsigned int i = afterBBEnd; i < image.getSize(); ++i) {
+    for (int i = afterBBEnd; i < image.getSize(); ++i) {
       const unsigned int index = insideMask.colorToIndex(image.bitmap[i]);
       ++localCountsOut[index];
     }
 #pragma omp for schedule(static, 64)
-    for (unsigned int i = static_cast<unsigned int>(bbInside.getTop()); i < static_cast<unsigned int>(round(bbInside.getBottom())); ++i) {
-      for (unsigned int j = static_cast<unsigned int>(bbInside.getLeft()); j < static_cast<unsigned int>(round(bbInside.getRight())); ++j) {
+    for (int i = static_cast<int>(bbInside.getTop()); i < static_cast<int>(round(bbInside.getBottom())); ++i) {
+      for (int j = static_cast<int>(bbInside.getLeft()); j < static_cast<int>(round(bbInside.getRight())); ++j) {
         const unsigned int bitmapIndex = i * image.getWidth() + j;
         const unsigned int index = insideMask.colorToIndex(image.bitmap[bitmapIndex]);
         const bool pixelInMask = mask.bitmap[bitmapIndex] > 0;

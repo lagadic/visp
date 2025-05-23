@@ -33,6 +33,8 @@
 
 BEGIN_VISP_NAMESPACE
 
+template class VISP_EXPORT vpDynamicFactory<vpRBDriftDetector>;
+
 vpRBDriftDetectorFactory::vpRBDriftDetectorFactory()
 {
 #ifdef VISP_HAVE_NLOHMANN_JSON

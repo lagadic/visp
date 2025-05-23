@@ -128,7 +128,7 @@ public:
       void update(const vpRGBf &c, float weight)
       {
         const vpRGBf diff(c.R - mean.R, c.G - mean.G, c.B - mean.B);
-        vpRGBf diffSqr(std::pow(diff.R, 2), std::pow(diff.G, 2), std::pow(diff.B, 2));
+        const vpRGBf diffSqr(diff.R * diff.R, diff.G * diff.G, diff.B * diff.B);
         mean = mean + weight * diff;
         variance = (1 - weight) * (variance + weight * diffSqr);
         // computeStddev();
@@ -143,9 +143,9 @@ public:
       double probability(const vpRGBf &c)
       {
         vpRGBf diff(c.R - mean.R, c.G - mean.G, c.B - mean.B);
-        diff.R = (diff.R * (1.0 / sqrt(initVariance.R)));
-        diff.G = (diff.G * (1.0 / sqrt(initVariance.G)));
-        diff.B = (diff.B * (1.0 / sqrt(initVariance.B)));
+        diff.R = (diff.R * (1.f / sqrt(initVariance.R)));
+        diff.G = (diff.G * (1.f / sqrt(initVariance.G)));
+        diff.B = (diff.B * (1.f / sqrt(initVariance.B)));
 
 
         // const double dist = sqrt(diff.R + diff.G + diff.B);

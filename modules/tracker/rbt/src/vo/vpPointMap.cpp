@@ -142,7 +142,7 @@ void vpPointMap::getVisiblePoints(const unsigned int h, const unsigned int w, co
     localIndices.reserve(m_X.getRows() / omp_get_num_threads());
 #pragma omp for nowait
 #endif
-    for (unsigned int i = 0; i < m_X.getRows(); ++i) {
+    for (int i = 0; i < static_cast<int>(m_X.getRows()); ++i) {
       const double Z = cX[i][2] + t[2];
 
       if (Z <= 0.0) {

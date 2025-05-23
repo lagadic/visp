@@ -152,7 +152,7 @@ public:
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-      for (unsigned int i = 0; i < IRGB.getHeight(); ++i) {
+      for (int i = 0; i < static_cast<int>(IRGB.getHeight()); ++i) {
         memcpy(Iout[i], IgrayOverlay[i], IRGB.getWidth() * sizeof(vpRGBa));
         memcpy(Iout[i] + IRGB.getWidth(), IColOverlay[i], IRGB.getWidth() * sizeof(vpRGBa));
         memcpy(Iout[i + IRGB.getHeight()], IdepthOverlay[i], IRGB.getWidth() * sizeof(vpRGBa));
@@ -379,7 +379,7 @@ void displayNormals(const vpImage<vpRGBf> &normalsImage, vpImage<vpRGBa> &normal
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-  for (unsigned int i = 0; i < normalsImage.getSize(); ++i) {
+  for (int i = 0; i < static_cast<int>(normalsImage.getSize()); ++i) {
     normalDisplayImage.bitmap[i].R = static_cast<unsigned char>((normalsImage.bitmap[i].R + 1.0) * 127.5f);
     normalDisplayImage.bitmap[i].G = static_cast<unsigned char>((normalsImage.bitmap[i].G + 1.0) * 127.5f);
     normalDisplayImage.bitmap[i].B = static_cast<unsigned char>((normalsImage.bitmap[i].B + 1.0) * 127.5f);
@@ -395,7 +395,7 @@ void displayCanny(const vpImage<vpRGBf> &cannyRawData,
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-  for (unsigned int i = 0; i < cannyRawData.getSize(); ++i) {
+  for (int i = 0; i < static_cast<int>(cannyRawData.getSize()); ++i) {
     //vpRGBf &px = cannyRawData.bitmap[i];
     canny.bitmap[i] = valid.bitmap[i] * 255;
     //canny.bitmap[i] = static_cast<unsigned char>(127.5f + 127.5f * atan(px.B));
