@@ -295,11 +295,119 @@ This subsection details the parameters that you can tweak through JSON.
 
 \subsubsection rbt_tracking_config_camera Camera configuration
 
+
+| Field | Type    | Description
+| :----  | :----  | :----
+| width | int | Image width
+| height | int | Image Height
+| intrinsics | Dictionary | Camera intrinsics, as detailed below
+
+
+Intrinsics definition:
+
+| Field | Type    | Description
+| :----  | :----  | :----
+| px | double | Focal length to pixel width ratio
+| py | double | Focal length to pixel height ratio
+| u0 | double | Principal point pixel vertical location
+| v0 | double | Principal point pixel horizontal location
+| model | string | Should be set to  "perspectiveWithoutDistortion"
+
+
 \subsubsection rbt_tracking_config_optimization Optimization parameters
+
+| Field | Type    | Description
+| :----  | :----  | :----
+| gain | double | Optimization gain. A gain too small may lead to drift issues, while a gain too high may lead to instabilities in pose.
+| maxIterations | int | Maximum number of optimization iterations.
+| mu | double | Initial amount of regularization for the Levenberg-Marquardt optimizer.
+| muIterFactor | double | Scaling factor to the mu parameter applied at every optimization iteration
+| convergenceThreshold | double | Motion threshold (in meters) below which the tracking is considered as having converged. This conditions the number of iterations for optimization. Set to 0 or do not define to run optimization for the maximum number of iterations.
+
+
 \subsubsection rbt_tracking_config_silhouette Silhouette extraction settings
+To control the silhouette processing, there are two main settings **threshold** and **sampling**.
+
+The threshold settings serve to determine what is a silhouette point or not. Silhouette extraction is based on depth disparity between neighbouring render pixels.
+If there is a strong depth disparity, then a point is considerer as belonging to the silhouette.
+
+The threshold can be either defined as an absolute value, or relatively to the object's "depth" size (the difference between the farthest and closest object points in the camera).
+
+| Field | Type    | Description
+| :----  | :----  | :----
+| type | string | Either "relative" or "absolute". If relative, specified as a fraction of the difference between the clipping planes. If absolute, specified in meters.
+| value | double | Value of the threshold.
+
+The thresholding parameters are used to determine whether a point belongs to the silhouette, but processing the whole silhouette may too cumbersome as there can thousands of contour pixels.
+Thus, we can sample the silhouette to obtain a subset of points. Sampling as a strong impact on the runtime performance of the tracker.
+
+| Field | Type    | Description
+| :----  | :----  | :----
+| samplingRate | int | This is the step (in pixels) that is used to sample the silhouette map. A value of 1 will examine every pixel. Higher values are susceptible to aliasing artifacts, but may provide more even sampling across the silhouette.
+| numPoints | int | Maximum number of points to keep. If set to 0, then all points are kept.
+| reusePreviousPoints | boolean | Whether to try and reuse the same silhouette points across tracking iterations. This may help improve stability and reduce jitter.
+
+
 \subsubsection rbt_tracking_config_mask Object segmentation method configuration
+
+The use of a segmentation method is defined by the **mask** key in the main configuration dictionary.
+Which type of method is used depends on the value of the "type" key of the mask dictionary.
+
+\paragraph rbt_tracking_config_mask_proba vpColorHistogramMask configuration
+
+
+Example configuration:
+\code{.json}
+{
+  "type": "histogram",
+  "bins": 32,
+  "objectUpdateRate": 0.1,
+  "backgroundUpdateRate": 0.1,
+  "maxDepthError": 0.01,
+  "computeOnlyOnBoundingBox": false
+}
+\endcode
+
+| Field | Type    | Description
+| :----  | :----  | :----
+| type | string | set to "histogram" to use this method.
+| bins | int | Should be a power of 2 (e.g, 16 or 32). Determines the number of bins used per color component for the object and background histograms. Less bins will leads to less noise in the pixel map, but may lead to a less confident map.
+| objectUpdateRate | float | Object histogram update rate. should be between 0 and 1. A value of 1 means that only the last frame will be used in the histogram. Values below will keep a memory of the last seen frames.
+| backgroundUpdateRate | float | Background histogram update rate. Same as objectUpdateRate.
+| maxDepthError | float | When depth information is available, Render depth and actual depth will be compared. For a given pixel of the object, if the depth difference is too high, the pixel will be used to compute the background histogram instead of the object histogram. This helps alleviate the influence of occlusion on the mask. Tihs parameter controls the max tolerated depth difference, expressed in meters.
+| computeOnlyOnBoundingBox | boolean | Whether to compute the mask only in the area containing the object. If true, this will save computation time, but may lead to preserving silhouette contours that should not be.
+
 \subsubsection rbt_tracking_config_drift Drift detection method configuration
+
+
+
+
+\paragraph rbt_tracking_config_drift_proba vpRBProbabilistic3DDriftDetector configuration
+Example configuration:
+\code{.json}
+{
+  "type": "probabilistic",
+  "colorUpdateRate": 0.25,
+  "initialColorSigma": 25.0,
+  "depthSigma": 0.025,
+  "filteringMaxDistance": 0.001,
+  "minDistanceNewPoints": 0.005
+}
+\endcode
+
+| Field | Type    | Description
+| :----  | :----  | :----
+| type | string | set to "probabilistic" to use this method.
+| colorUpdateRate | float |  Update rate for the color statistics of each point on the object's surface
+| initialColorSigma | float | Standard deviation (R,G,B) used to compute the error function between the observed color and the estimated color distribution.
+| depthSigma | float | Standard deviation used to compute the error function between the observed pixel depth and rendered depth.
+| filteringMaxDistance | float | Minimum error between the rendered depth and the stored point's distance to the camera. This is used to check whether a 3D point is visible from the camera. This value is in meters, and should be left to a small value.
+| minDistanceNewPoints | float | Each frame, this method tries to sample new 3D points on the object. This parameter controls the sampling density, and ensures that a new candidate point is far enough from all the other stored points from previous iterations.
+
+
 \subsubsection rbt_tracking_config_features Feature configuration
+
+
 
 \section rbt_tracking_usage Tracker usage
 
