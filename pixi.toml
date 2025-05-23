@@ -43,9 +43,6 @@ llvm-openmp = "*"
 [activation]
 scripts = ["development/scripts/pixi/activation.sh"]
 
-[target.linux.activation]
-scripts = ["development/scripts/pixi/activation.sh", "development/scripts/pixi/activation_xvfb.sh"]
-
 [target.win-64.activation]
 scripts = ["development/scripts/pixi/activation.bat"]
 
@@ -66,13 +63,17 @@ python-test = { cmd = "cmake --build $VISP_BUILD_DIR --config Release --target v
 [feature.rbt]
 dependencies = { nlohmann_json = "*", panda3d = { version = ">=1.10.15", channel = "panda3d-forge" } }
 
-[feature.tests]
-activation = { env = { VISP_BUILD_TESTS = "ON" } }
+[feature.tests.activation.env]
+VISP_BUILD_TESTS = "ON"
 # Tests that require display / rendering are only supported on linux based CI
-[feature.tests.target.linux]
-activation = { env = { VISP_ENABLE_TEST_WITHOUT_DISPLAY = "OFF" } }
+[feature.tests.target.linux.activation.env]
+DISPLAY = ":99"
+VISP_ENABLE_TEST_WITHOUT_DISPLAY = "OFF"
+[feature.tests.target.linux.tasks]
+init-testing = { cmd = "bash ./development/scripts/pixi/xvfb.sh" }
 
 [tasks]
+init-testing = {}
 configure = { cmd = [
   "cmake",
   "-G",
@@ -94,7 +95,7 @@ build-base = { cmd = "cmake --build $VISP_BUILD_DIR --parallel $CPU_COUNT", depe
 build = { depends-on = ["build-base"]}
 install = { cmd = "cmake --build $VISP_BUILD_DIR --target install", depends-on = ["build-base"] }
 clean = { cmd = "rm -rf $VISP_BUILD_DIR" }
-test = { cmd = "ctest --test-dir $VISP_BUILD_DIR --output-on-failure", depends-on = ["install"] }
+test = { cmd = "ctest --test-dir $VISP_BUILD_DIR --output-on-failure", depends-on = ["install", "init-testing"] }
 
 [environments]
 with-python = { features = ["python-bindings"] }
