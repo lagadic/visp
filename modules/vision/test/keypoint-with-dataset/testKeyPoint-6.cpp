@@ -219,7 +219,7 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
      ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES)))
   descriptorNames.push_back("SIFT");
 #endif
-#if defined(HAVE_OPENCV_NONFREE) || defined(HAVE_OPENCV_XFEATURES2D)
+#if defined(HAVE_OPENCV_NONFREE) && defined(HAVE_OPENCV_XFEATURES2D)
   descriptorNames.push_back("SURF");
 #endif
 #if defined(VISP_HAVE_OPENCV) && \
