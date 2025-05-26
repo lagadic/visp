@@ -860,6 +860,25 @@ Parsing and display utils:
 
 \section rbt_troubleshooting Troubleshooting issues
 
+
+\subsection rbt_slow RBT performance are bad and cores are not used
+
+
+One possible reason for this is that we make large use of OpenMP to parallelize and split the workload.
+An invalid OpenMP configuration may lead to a substantial loss in performance.
+
+In Ubuntu 24.04, we have observed with the GNU OpenMP implementation (that is used if you compile with gcc/g++) that the default settings lead to a slow down by a factor of 4/5.
+
+This is due to an active waiting policy. We recommend using the following OpenMP settings:
+
+\code{.sh}
+$ export GOMP_SPINCOUNT=0
+\endcode
+
+Note that this configuration will only be kept for the lifetime of your terminal and you may have to restore it the next time you start the tracker.
+
+
+
 \subsection rbt_panda_window Cannot open window (hidden or visible)
 
 This error can appear when calling vpRBTracker::startTracking.
