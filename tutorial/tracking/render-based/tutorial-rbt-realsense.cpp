@@ -322,7 +322,7 @@ int main(int argc, const char **argv)
       vpDisplay::displayText(Id, 20, 5, "Right click to exit", vpColor::red);
       if (driftDetector) {
         std::stringstream ss;
-        ss << "Confidence score: " << driftDetector->getScore() << std::endl;
+        ss << "Confidence score: " << std::setprecision(2) << driftDetector->getScore() << std::endl;
         vpDisplay::displayText(Id, Id.getHeight() - 40, 5, ss.str(), vpColor::red);
       }
       vpMouseButton::vpMouseButtonType button;
