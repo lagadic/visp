@@ -10,7 +10,7 @@
 #include <visp3/mbt/vpMbGenericTracker.h>
 //! [Include]
 
-#if defined(VISP_HAVE_PCL)  && defined(VISP_HAVE_PCL_COMMON)
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS) && defined(VISP_HAVE_PCL_COMMON)
 #include <pcl/common/common.h>
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
@@ -67,7 +67,7 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<vpR
   vpImageIo::read(I_color, filename_color);
 
   // Read raw depth
-  std::string filename_depth = vpIoTools::formatString(input_directory + "/depth_image_%04d.jpg", cpt);
+  std::string filename_depth = vpIoTools::formatString(input_directory + "/depth_image_%04d.bin", cpt);
 
   std::ifstream file_depth(filename_depth.c_str(), std::ios::in | std::ios::binary);
   if (!file_depth.is_open()) {

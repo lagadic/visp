@@ -408,6 +408,7 @@ void vpMe::print()
   std::cout << std::endl;
   std::cout << " Size of the convolution masks...." << m_mask_size << "x" << m_mask_size << " pixels" << std::endl;
   std::cout << " Number of masks.................." << m_mask_number << std::endl;
+  std::cout << " Init step query range +/- J......" << m_init_range << " pixels" << std::endl;
   std::cout << " Query range +/- J................" << m_range << " pixels" << std::endl;
   std::cout << " Likelihood threshold type........" << (m_likelihood_threshold_type == NORMALIZED_THRESHOLD ? "normalized " : "old threshold (to be avoided)") << std::endl;
 
@@ -431,7 +432,7 @@ void vpMe::print()
 
 vpMe::vpMe()
   : m_likelihood_threshold_type(OLD_THRESHOLD), m_thresholdMarginRatio(-1), m_minThreshold(-1), m_useAutomaticThreshold(false),
-  m_mu1(0.5), m_mu2(0.5), m_anglestep(1), m_mask_sign(0), m_ntotal_sample(0), m_mask(nullptr)
+  m_mu1(0.5), m_mu2(0.5), m_anglestep(1), m_mask_sign(0), m_init_range(1), m_ntotal_sample(0), m_mask(nullptr)
 {
   const double threshold_default = 1000;
   const int points_to_track_default = 500;
@@ -459,7 +460,7 @@ vpMe::vpMe()
 
 vpMe::vpMe(const vpMe &me)
   : m_likelihood_threshold_type(OLD_THRESHOLD), m_thresholdMarginRatio(-1), m_minThreshold(-1), m_useAutomaticThreshold(false),
-  m_mu1(0.5), m_mu2(0.5), m_anglestep(1), m_mask_sign(0), m_ntotal_sample(0), m_mask(nullptr)
+  m_mu1(0.5), m_mu2(0.5), m_anglestep(1), m_mask_sign(0), m_init_range(1), m_ntotal_sample(0), m_mask(nullptr)
 {
   const double threshold_default = 1000;
   const int points_to_track_default = 500;
@@ -501,6 +502,7 @@ vpMe &vpMe::operator=(const vpMe &me)
   m_mask_size = me.m_mask_size;
   m_mask_number = me.m_mask_number;
   m_mask_sign = me.m_mask_sign;
+  m_init_range = me.m_init_range;
   m_range = me.m_range;
   m_sample_step = me.m_sample_step;
   m_ntotal_sample = me.m_ntotal_sample;
@@ -530,6 +532,7 @@ vpMe &vpMe::operator=(const vpMe &&me)
   m_mask_size = std::move(me.m_mask_size);
   m_mask_number = std::move(me.m_mask_number);
   m_mask_sign = std::move(me.m_mask_sign);
+  m_init_range = std::move(me.m_init_range);
   m_range = std::move(me.m_range);
   m_sample_step = std::move(me.m_sample_step);
   m_ntotal_sample = std::move(me.m_ntotal_sample);

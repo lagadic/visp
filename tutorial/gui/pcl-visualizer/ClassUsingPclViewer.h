@@ -4,7 +4,7 @@
 //! \example ClassUsingPclViewer.h
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_VISUALIZATION)
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_VISUALIZATION) && defined(VISP_HAVE_PCL_IO)
 
 #include<visp3/core/vpColVector.h>
 #include<visp3/gui/vpPclViewer.h>

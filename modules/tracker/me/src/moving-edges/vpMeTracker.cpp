@@ -54,20 +54,19 @@ void vpMeTracker::init()
 }
 
 vpMeTracker::vpMeTracker()
-  : m_meList(), m_me(nullptr), m_init_range(1), m_nGoodElement(0), m_mask(nullptr), m_maskCandidates(nullptr), m_selectDisplay(vpMeSite::NONE)
+  : m_meList(), m_me(nullptr), m_nGoodElement(0), m_mask(nullptr), m_maskCandidates(nullptr), m_selectDisplay(vpMeSite::NONE)
 {
   init();
 }
 
 vpMeTracker::vpMeTracker(const vpMeTracker &meTracker)
-  : vpTracker(meTracker), m_meList(), m_me(nullptr), m_init_range(1), m_nGoodElement(0), m_mask(nullptr), m_maskCandidates(nullptr), m_selectDisplay(vpMeSite::NONE)
+  : vpTracker(meTracker), m_meList(), m_me(nullptr), m_nGoodElement(0), m_mask(nullptr), m_maskCandidates(nullptr), m_selectDisplay(vpMeSite::NONE)
 {
   init();
 
   m_me = meTracker.m_me;
   m_meList = meTracker.m_meList;
   m_nGoodElement = meTracker.m_nGoodElement;
-  m_init_range = meTracker.m_init_range;
   m_selectDisplay = meTracker.m_selectDisplay;
 }
 
@@ -84,7 +83,6 @@ vpMeTracker &vpMeTracker::operator=(vpMeTracker &meTracker)
   m_meList = meTracker.m_meList;
   m_me = meTracker.m_me;
   m_selectDisplay = meTracker.m_selectDisplay;
-  m_init_range = meTracker.m_init_range;
   m_nGoodElement = meTracker.m_nGoodElement;
   return *this;
 }
@@ -187,7 +185,7 @@ void vpMeTracker::initTracking(const vpImage<unsigned char> &I)
 
   // Must set range to 0
   unsigned int range_tmp = m_me->getRange();
-  m_me->setRange(m_init_range);
+  m_me->setRange(m_me->getInitRange());
 
   m_nGoodElement = 0;
 

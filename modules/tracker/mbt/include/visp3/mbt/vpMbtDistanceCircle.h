@@ -179,7 +179,7 @@ public:
   void initInteractionMatrixError();
 
   bool initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, bool doNotTrack,
-                      const vpImage<bool> *mask = nullptr);
+                      const vpImage<bool> *mask = nullptr, const int &initRange = 1U);
 
   /*!
    Return if the circle is used for tracking.

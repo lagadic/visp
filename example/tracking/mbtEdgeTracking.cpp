@@ -48,17 +48,13 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpMath.h>
-#include <visp3/gui/vpDisplayD3D.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/io/vpVideoReader.h>
 #include <visp3/mbt/vpMbEdgeTracker.h>
 
-#define GETOPTARGS "x:m:i:n:de:chtfColwvp"
+#define GETOPTARGS "cCde:fhi:lm:n:opstvwx:"
 
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;
@@ -83,7 +79,7 @@ Example of tracking based on the 3D model.\n\
 SYNOPSIS\n\
   %s [-i <test image path>] [-x <config file>]\n\
   [-m <model name>] [-n <initialisation file base name>] [-e <last frame index>]\n\
-  [-t] [-c] [-d] [-h] [-f] [-C] [-o] [-w] [-l] [-v] [-p]\n",
+  [-t] [-c] [-d] [-h] [-f] [-C] [-o] [-w] [-l] [-v] [-p] [-s]\n",
     name);
 
   fprintf(stdout, "\n\
@@ -108,6 +104,9 @@ OPTIONS:                                               \n\
 \n\
   -e <last frame index>                                 \n\
      Specify the index of the last frame. Once reached, the tracking is stopped\n\
+\n\
+  -s \n\
+     Enable step-by-step mode when click is allowed.\n\
 \n\
   -f                                  \n\
      Do not use the vrml model, use the .cao one. These two models are \n\
@@ -161,13 +160,16 @@ OPTIONS:                                               \n\
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &configFile, std::string &modelFile,
   std::string &initFile, long &lastFrame, bool &displayFeatures, bool &click_allowed, bool &display,
   bool &cao3DModel, bool &trackCylinder, bool &useOgre, bool &showOgreConfigDialog, bool &useScanline,
-  bool &computeCovariance, bool &projectionError)
+  bool &computeCovariance, bool &projectionError, bool &step_by_step)
 {
   const char *optarg_;
   int c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
+    case 's':
+      step_by_step = true;
+      break;
     case 'e':
       lastFrame = atol(optarg_);
       break;
@@ -236,6 +238,13 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &co
 
 int main(int argc, const char **argv)
 {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display;
+#else
+  vpDisplay *display = nullptr;
+#endif
+
+  int return_status;
   try {
     std::string env_ipath;
     std::string opt_ipath;
@@ -257,6 +266,7 @@ int main(int argc, const char **argv)
     bool useScanline = false;
     bool computeCovariance = false;
     bool projectionError = false;
+    bool opt_step_by_step = false;
     bool quit = false;
 
 #if defined(VISP_HAVE_DATASET)
@@ -281,7 +291,7 @@ int main(int argc, const char **argv)
     // Read the command line options
     if (!getOptions(argc, argv, opt_ipath, opt_configFile, opt_modelFile, opt_initFile, opt_lastFrame, displayFeatures,
                     opt_click_allowed, opt_display, cao3DModel, trackCylinder, useOgre, showOgreConfigDialog,
-                    useScanline, computeCovariance, projectionError)) {
+                    useScanline, computeCovariance, projectionError, opt_step_by_step)) {
       return EXIT_FAILURE;
     }
 
@@ -378,22 +388,14 @@ int main(int argc, const char **argv)
     reader.acquire(I);
 
     // initialise a  display
-#if defined(VISP_HAVE_X11)
-    vpDisplayX display;
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI display;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV display;
-#elif defined(VISP_HAVE_D3D9)
-    vpDisplayD3D display;
-#elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK display;
-#else
+#ifndef VISP_HAVE_DISPLAY
     opt_display = false;
 #endif
     if (opt_display) {
-#if defined(VISP_HAVE_DISPLAY)
-      display.init(I, 100, 100, "Test tracking");
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+      display = vpDisplayFactory::createDisplay(I, 100, 100, "Test tracking");
+#else
+      display = vpDisplayFactory::allocateDisplay(I, 100, 100, "Test tracking");
 #endif
       vpDisplay::display(I);
       vpDisplay::flush(I);
@@ -572,11 +574,21 @@ int main(int argc, const char **argv)
         }
       }
 
-      if (opt_click_allowed) {
-        vpDisplay::displayText(I, 10, 10, "Click to quit", vpColor::red);
-        if (vpDisplay::getClick(I, false)) {
-          quit = true;
-          break;
+      if (opt_click_allowed && opt_display) {
+        vpDisplay::displayText(I, 20, I.getWidth() - 150, std::string("Mode: ") + (opt_step_by_step ? std::string("step-by-step") : std::string("continuous")), vpColor::red);
+        vpDisplay::displayText(I, 20, 10, "Right click to exit", vpColor::red);
+        vpDisplay::displayText(I, 40, 10, "Middle click to change mode", vpColor::red);
+        if (opt_step_by_step) {
+          vpDisplay::displayText(I, 60, 10, "Left click to process next image", vpColor::red);
+        }
+        vpMouseButton::vpMouseButtonType button;
+        if (vpDisplay::getClick(I, button, opt_step_by_step)) {
+          if (button == vpMouseButton::button3) {
+            quit = true;
+          }
+          else if (button == vpMouseButton::button2) {
+            opt_step_by_step = !opt_step_by_step;
+          }
         }
       }
 
@@ -598,13 +610,19 @@ int main(int argc, const char **argv)
       vpDisplay::getClick(I);
     }
     reader.close();
-
-    return EXIT_SUCCESS;
+    return_status = EXIT_SUCCESS;
   }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return EXIT_FAILURE;
+    return_status = EXIT_FAILURE;
   }
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  if (display) {
+    delete display;
+    display = nullptr;
+  }
+#endif
+  return return_status;
 }
 
 #elif !(defined(VISP_HAVE_MODULE_MBT) && defined(VISP_HAVE_DISPLAY))

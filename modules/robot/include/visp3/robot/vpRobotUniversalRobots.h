@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Interface for Universal Robot.
- *
-*****************************************************************************/
+ */
 
 #ifndef vpRobotUniversalRobots_h
 #define vpRobotUniversalRobots_h
@@ -119,9 +117,9 @@ public:
 
 private:
   // Not implemented yet
-  void get_eJe(vpMatrix &_eJe) VP_OVERRIDE { }
-  void get_fJe(vpMatrix &_fJe) VP_OVERRIDE { }
-  void getDisplacement(const vpRobot::vpControlFrameType frame, vpColVector &q) VP_OVERRIDE { }
+  void get_eJe(vpMatrix &) VP_OVERRIDE { }
+  void get_fJe(vpMatrix &) VP_OVERRIDE { }
+  void getDisplacement(const vpRobot::vpControlFrameType, vpColVector &) VP_OVERRIDE { }
 
 protected:
   void init();

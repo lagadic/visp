@@ -204,7 +204,7 @@ public:
   void initInteractionMatrixError();
 
   bool initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, bool doNotTrack,
-                      const vpImage<bool> *mask = nullptr);
+                      const vpImage<bool> *mask = nullptr, const int &initRange = 0);
 
   /*!
    Return if the cylinder is used for tracking.

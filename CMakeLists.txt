@@ -683,9 +683,15 @@ if(USE_PCL)
   # Using PCL_LIBRARIES works to build visp libraries, embedded examples, demos, tests and tutorials thanks to the
   # components. But when examples, demos, tests and tutorials are build outside ViSP workspace as independent projects
   # that are using ViSP as 3rd-party we lead to build issues due to VTK headers and libraries that are not found.
-  # That's why here, we are using vp_find_pcl() macro that will set PCL_DEPS_INCLUDE_DIRS and PCL_DEPS_LIBRARIES
-  # that contains also VTK material location.
-  vp_find_pcl(PCL_LIBRARIES PCL_DEPS_INCLUDE_DIRS PCL_DEPS_LIBRARIES)
+  # That's why here, we are using vp_find_pcl() macro that will set PCL_DEPS_INCLUDE_DIRS, PCL_DEPS_LIBRARIES
+  # and PCL_DEPS_COMPILE_OPTIONS that contains also VTK material location.
+  # Compile options are needed to overcome this issue https://github.com/lagadic/visp/issues/1681
+  #   Potential runtime error due to aligned malloc mismatch! You likely have to compile your code with AVX enabled
+  #   or define EIGEN_MAX_ALIGN_BYTES=32
+  # Note that according to https://github.com/PointCloudLibrary/pcl/issues/5806#issuecomment-2900397246
+  # it is not a good practice to use PCL_DEFINITIONS and PCL_COMPILE_OPTIONS. The following macro
+  # gets rather compile options from interfaces.
+  vp_find_pcl(PCL_LIBRARIES PCL_DEPS_INCLUDE_DIRS PCL_DEPS_LIBRARIES PCL_DEPS_COMPILE_OPTIONS)
   set(PCL_REQUIRED_COMPONENTS "common;filters;io;visualization;segmentation")
   # Create cmake vars corresponding to pcl components used by ViSP like VISP_HAVE_PCL_COMMON...
   vp_detect_required_pcl_components(PCL_REQUIRED_COMPONENTS)
