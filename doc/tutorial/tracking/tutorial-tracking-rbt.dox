@@ -898,6 +898,8 @@ Then you should edit the **Config.prc** file to set "load-display" to "p3headles
 
 \section rbt_extension Extending the RBT
 
+\warning This section is under construction and will be improved in the future!
+
 \subsection rbt_extension_features Defining your own features
 
 \subsection rbt_extension_factory_pattern Registering your own component for JSON parsing
