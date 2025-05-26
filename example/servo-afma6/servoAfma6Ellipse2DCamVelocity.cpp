@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@
 #include <stdlib.h>
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h> // Debug trace
-#if (defined(VISP_HAVE_AFMA6) && defined(VISP_HAVE_DC1394))
+#if (defined(VISP_HAVE_AFMA6) && defined(VISP_HAVE_REALSENSE2))
 
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImage.h>
@@ -237,7 +237,7 @@ int main()
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
     if (display != nullptr) {
       delete display;
-  }
+    }
 #endif
     return EXIT_FAILURE;
   }
