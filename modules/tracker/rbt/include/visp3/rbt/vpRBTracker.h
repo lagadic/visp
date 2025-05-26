@@ -233,7 +233,7 @@ public:
     vpRBInitializationHelper initializer;
     initializer.setCameraParameters(m_cam);
     initializer.initClick(I, initFile, displayHelp, *this);
-    m_cMo = initializer.getPose();
+    setPose(initializer.getPose());
   }
 #endif
 

@@ -57,6 +57,10 @@
 #include <visp3/vision/vpPose.h>
 
 BEGIN_VISP_NAMESPACE
+namespace
+{
+const unsigned int defaultRange = 0U;
+}
 /*!
   Basic constructor
 */
@@ -176,10 +180,11 @@ void vpMbtDistanceCylinder::setMovingEdge(vpMe *_me)
   \param doNotTrack : If true, ME are not tracked.
   \param mask : Mask image or nullptr if not wanted. Mask values that are set to true are considered in the tracking. To
   disable a pixel, set false.
+  \param initRange The range of the ME used during the initialization.
   \return false if an error occur, true otherwise.
 */
 bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
-                                           bool doNotTrack, const vpImage<bool> *mask)
+                                           bool doNotTrack, const vpImage<bool> *mask, const int &initRange)
 {
   if (isvisible) {
     // Perspective projection
@@ -219,8 +224,15 @@ bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, cons
     meline2->setMe(me);
 
     //    meline->setDisplay(vpMeSite::RANGE_RESULT);
-    meline1->setInitRange(0);
-    meline2->setInitRange(0);
+    unsigned int initRange_;
+    if (initRange < 0) {
+      initRange_ = defaultRange;
+    }
+    else {
+      initRange_ = static_cast<unsigned int>(initRange);
+    }
+    int oldInitRange = me->getInitRange();
+    me->setInitRange(initRange_);
 
     // Conversion meter to pixels
     vpMeterPixelConversion::convertLine(cam, c->getRho1(), c->getTheta1(), rho1, theta1);
@@ -306,6 +318,7 @@ bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, cons
     }
     catch (...) {
    // vpTRACE("the line can't be initialized");
+      me->setInitRange(oldInitRange);
       return false;
     }
     try {
@@ -313,8 +326,10 @@ bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, cons
     }
     catch (...) {
    // vpTRACE("the line can't be initialized");
+      me->setInitRange(oldInitRange);
       return false;
     }
+    me->setInitRange(oldInitRange);
   }
   return true;
 }
@@ -328,6 +343,8 @@ bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, cons
 void vpMbtDistanceCylinder::trackMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
 {
   (void)cMo;
+  int oldInitRange = me->getInitRange();
+  me->setInitRange(defaultRange);
   if (isvisible) {
     try {
       meline1->track(I);
@@ -351,6 +368,7 @@ void vpMbtDistanceCylinder::trackMovingEdge(const vpImage<unsigned char> &I, con
     nbFeaturel2 = static_cast<unsigned int>(meline2->getMeList().size());
     nbFeature = nbFeaturel1 + nbFeaturel2;
   }
+  me->setInitRange(oldInitRange);
 }
 
 /*!
@@ -361,6 +379,8 @@ void vpMbtDistanceCylinder::trackMovingEdge(const vpImage<unsigned char> &I, con
 */
 void vpMbtDistanceCylinder::updateMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
 {
+  int oldInitRange = me->getInitRange();
+  me->setInitRange(defaultRange);
   if (isvisible) {
     // Perspective projection
     p1->changeFrame(cMo);
@@ -490,6 +510,7 @@ void vpMbtDistanceCylinder::updateMovingEdge(const vpImage<unsigned char> &I, co
     nbFeaturel2 = static_cast<unsigned int>(meline2->getMeList().size());
     nbFeature = nbFeaturel1 + nbFeaturel2;
   }
+  me->setInitRange(oldInitRange);
 }
 
 /*!

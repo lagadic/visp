@@ -139,13 +139,6 @@ public:
   static bool inMeMaskCandidates(const vpImage<bool> *meMaskCandidates, unsigned int i, unsigned int j);
 
   /*!
-   * Return the initial range.
-   *
-   * \return Value of init_range.
-   */
-  inline unsigned int getInitRange() { return m_init_range; }
-
-  /*!
    * Return the moving edges initialisation parameters.
    *
    * \return Moving Edges.
@@ -234,13 +227,6 @@ public:
   void setDisplay(vpMeSite::vpMeSiteDisplayType select) { m_selectDisplay = select; }
 
   /*!
-   * Set the initial range.
-   *
-   * \param r : initial range.
-   */
-  void setInitRange(const unsigned int &r) { m_init_range = r; }
-
-  /*!
    * Set the mask.
    *
    * \param mask : Mask.
@@ -313,8 +299,6 @@ protected:
   std::list<vpMeSite> m_meList;
   //! Moving edges initialisation parameters
   vpMe *m_me;
-  //! Initial range
-  unsigned int m_init_range;
   //! Number of good moving-edges that are tracked
   int m_nGoodElement;
   //! Mask used to disable tracking on a part of image

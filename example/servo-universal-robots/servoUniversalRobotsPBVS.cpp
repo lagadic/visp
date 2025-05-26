@@ -150,6 +150,12 @@ int main(int argc, char **argv)
 
   vpRobotUniversalRobots robot;
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> display;
+#else
+  vpDisplay *display = nullptr;
+#endif
+
   try {
     robot.connect(opt_robot_ip);
 
@@ -383,7 +389,6 @@ int main(int argc, char **argv)
         if (error_tr < convergence_threshold_t && error_tu < convergence_threshold_tu) {
           has_converged = true;
           std::cout << "Servo task has converged" << std::endl;
-          ;
           vpDisplay::displayText(I, 100, 20, "Servo task has converged", vpColor::red);
         }
 

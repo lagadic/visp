@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Example of Hybrid Tracking of MBT and MBT KTL.
- *
-*****************************************************************************/
+ */
 
 /*!
   \example mbtGenericTracking2.cpp
@@ -60,7 +58,7 @@
 #include <visp3/io/vpVideoReader.h>
 #include <visp3/mbt/vpMbGenericTracker.h>
 
-#define GETOPTARGS "x:m:i:n:de:chtfColwvpT:"
+#define GETOPTARGS "cCde:fhi:lm:n:opstT:x:vw"
 
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;
@@ -84,7 +82,7 @@ Example of tracking based on the 3D model.\n\
 SYNOPSIS\n\
   %s [-i <test image path>] [-x <config file>]\n\
   [-m <model name>] [-n <initialisation file base name>] [-e <last frame index>]\n\
-  [-t] [-c] [-d] [-h] [-f] [-C] [-o] [-w] [-l] [-v] [-p]\n\
+  [-t] [-c] [-d] [-h] [-f] [-C] [-o] [-w] [-l] [-v] [-p] [-s]\n\
   [-T <tracker type>]\n",
     name);
 
@@ -110,6 +108,9 @@ OPTIONS:                                               \n\
 \n\
   -e <last frame index>                                 \n\
      Specify the index of the last frame. Once reached, the tracking is stopped\n\
+\n\
+  -s \n\
+     Enable step-by-step mode when click is allowed.\n\
 \n\
   -f                                  \n\
      Do not use the vrml model, use the .cao one. These two models are \n\
@@ -165,13 +166,16 @@ OPTIONS:                                               \n\
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &configFile, std::string &modelFile,
   std::string &initFile, long &lastFrame, bool &displayFeatures, bool &click_allowed, bool &display,
   bool &cao3DModel, bool &trackCylinder, bool &useOgre, bool &showOgreConfigDialog, bool &useScanline,
-  bool &computeCovariance, bool &projectionError, int &trackerType)
+  bool &computeCovariance, bool &projectionError, int &trackerType, bool &step_by_step)
 {
   const char *optarg_;
   int c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
+    case 's':
+      step_by_step = true;
+      break;
     case 'e':
       lastFrame = atol(optarg_);
       break;
@@ -264,6 +268,7 @@ int main(int argc, const char **argv)
     bool computeCovariance = false;
     bool projectionError = false;
     int trackerType = vpMbGenericTracker::EDGE_TRACKER;
+    bool opt_step_by_step = false;
 
 #if defined(VISP_HAVE_DATASET)
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
@@ -287,7 +292,7 @@ int main(int argc, const char **argv)
     // Read the command line options
     if (!getOptions(argc, argv, opt_ipath, opt_configFile, opt_modelFile, opt_initFile, opt_lastFrame, displayFeatures,
                     opt_click_allowed, opt_display, cao3DModel, trackCylinder, useOgre, showOgreConfigDialog,
-                    useScanline, computeCovariance, projectionError, trackerType)) {
+                    useScanline, computeCovariance, projectionError, trackerType, opt_step_by_step)) {
       return EXIT_FAILURE;
     }
 
@@ -528,7 +533,7 @@ int main(int argc, const char **argv)
     if (opt_display && opt_click_allowed) {
       while (!vpDisplay::getClick(I1, false)) {
         vpDisplay::display(I1);
-        vpDisplay::displayText(I1, 15, 10, "click after positioning the object", vpColor::red);
+        vpDisplay::displayText(I1, 15, 10, "Click after positioning the object", vpColor::red);
         vpDisplay::flush(I1);
       }
     }
@@ -571,7 +576,7 @@ int main(int argc, const char **argv)
       vpDisplay::flush(I3);
     }
 
-    bool quit = false, click = false;
+    bool quit = false;
     while (!reader.end() && !quit) {
       // acquire a new image
       reader.acquire(I1);
@@ -589,7 +594,7 @@ int main(int argc, const char **argv)
 
         std::stringstream ss;
         ss << "Num frame: " << reader.getFrameIndex() << "/" << reader.getLastFrameIndex();
-        vpDisplay::displayText(I1, 40, 20, ss.str(), vpColor::red);
+        vpDisplay::displayText(I1, 40, I1.getWidth() - 150, ss.str(), vpColor::red);
       }
 
       // Test to reset the tracker
@@ -708,20 +713,19 @@ int main(int argc, const char **argv)
       }
 
       if (opt_click_allowed && opt_display) {
-        vpDisplay::displayText(I1, 10, 10, "Click to quit", vpColor::red);
+        vpDisplay::displayText(I1, 20, I1.getWidth() - 150, std::string("Mode: ") + (opt_step_by_step ? std::string("step-by-step") : std::string("continuous")), vpColor::red);
+        vpDisplay::displayText(I1, 20, 10, "Right click to exit", vpColor::red);
+        vpDisplay::displayText(I1, 40, 10, "Middle click to change mode", vpColor::red);
+        if (opt_step_by_step) {
+          vpDisplay::displayText(I1, 60, 10, "Left click to process next image", vpColor::red);
+        }
         vpMouseButton::vpMouseButtonType button;
-        if (vpDisplay::getClick(I1, button, click)) {
-          switch (button) {
-          case vpMouseButton::button1:
-            quit = !click;
-            break;
-
-          case vpMouseButton::button3:
-            click = !click;
-            break;
-
-          default:
-            break;
+        if (vpDisplay::getClick(I1, button, opt_step_by_step)) {
+          if (button == vpMouseButton::button3) {
+            quit = true;
+          }
+          else if (button == vpMouseButton::button2) {
+            opt_step_by_step = !opt_step_by_step;
           }
         }
       }
