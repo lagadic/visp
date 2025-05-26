@@ -445,6 +445,8 @@ For each feature, these values can be defined:
 
 \paragraph rbt_tracking_config_features_klt vpRBKltTracker
 
+\warning This feature requires that ViSP has been built with OpenCV as a 3rd party. Otherwise, loading this JSON configuration will raise an error about encountering an unknown tracker.
+
 Example configuration:
 \code{.json}
 {
@@ -457,6 +459,7 @@ Example configuration:
   "maxReprojectionErrorPixels": 5.0,
   "newPointsMinPixelDistance": 4,
   "minimumNumPoints": 20,
+
   "blockSize": 5,
   "useHarris": true,
   "harris": 0.05,
@@ -468,7 +471,15 @@ Example configuration:
 }
 \endcode
 
+| Field | Type    | Description
+| :----  | :----  | :----
+| useMask | boolean | Whether, if available, the segmentation mask should be used to filter wrong features.
+| minMaskConfidence | float | if useMask is true, minimum confidence for a feature to be accepted.
+| maxReprojectionErrorPixels | float | Maximum reprojection error, above which a tracked KLT point is rejected for future tracking iterations.
+| newPointsMinPixelDistance | float | During KLT resampling, Minimum euclidean distance  that a point should have with all other to be considered for tracking.
+| minimumNumPoints | int | Minimum number of points that should be tracked at a given timestep. If the number of points is below, then KLT tracking is fully reinitialized.
 
+\note For the other settings, see the vpKltOpenCV documentation.
 
 \paragraph rbt_tracking_config_features_me vpRBSilhouetteMeTracker
 
@@ -498,6 +509,13 @@ Example configuration:
   }
 }
 \endcode
+
+| Field | Type    | Description
+| :----  | :----  | :----
+| numCandidates | int | Number of edge locations that are preserved as potential matches for a given silhouette point.
+| useMask | boolean | Whether, if available, the segmentation mask should be used to filter wrong features. Here, the segmentation mask is examined along the silhouette normal to find a disparity in the probability mask (marking a sharp distinction between object and background).
+| minMaskConfidence | float | if useMask is true, minimum confidence disparity for a feature to be accepted.
+| movingEdge | dictionary | Moving edge tracker settings. See vpMe for more information.
 
 \paragraph rbt_tracking_config_features_ccd vpRBSilhouetteCCDTracker
 
@@ -535,8 +553,28 @@ Example configuration to handle larger motions:
 }
 \endcode
 
+
+| Field | Type    | Description
+| :----  | :----  | :----
+| useMask | boolean | Whether, if available, the segmentation mask should be used to filter wrong features. Here, the segmentation mask is examined along the silhouette normal to find a disparity in the probability mask (marking a sharp distinction between object and background).
+| minMaskConfidence | float | if useMask is true, minimum confidence disparity for a feature to be accepted.
+| maxNumPoints | int | Resample number of points to use for this tracker. This allows to use many points for the ME-based tracker, while retaining fewer points for this tracker (it is more expensive). Leave to 0 to not perform resampling.
+| temporalSmoothing | float | Interpolation factor, between 0 and 1. This allows to blend a contour point's current color statistics with those computed on the previous frame. This may improve stability, but may also lead to smaller motion.
+| ccd | dictionary | Contracting curve density algorithm settings. See below.
+
+To configure the actual CCD parameters, you can modify:
+| Field | Type    | Description
+| :----  | :----  | :----
+| h | int | The initial contour search area. This size (in pixels) is used to define the normal size that is used to compute the color statistics and will strongly impact the convergence domain of the tracker.
+| delta_h | int | Subsampling step when examining the contour normal. This helps diminish the tracking time when `h` is large. Using a high value (comparatively to that of `h`) can lead to instabilities.
+| min_h | int | Parameter to set if you wish to use an adaptive scaling for the silhouette search area. If set, the initial search area will be set to `h`. Then, at each optimization iteration, if motion is smaller than a multiple of `h`, then `h` is halved, down to a minimum value of `min_h`. Note that if `delta_h` is set, then it is also halved in order to obtain more reliable statistics.
+
+
+
 \paragraph rbt_tracking_config_features_depth vpRBDenseDepthTracker
 
+
+Example configuration:
 \code{.json}
 {
   "type": "depth",
@@ -550,6 +588,11 @@ Example configuration to handle larger motions:
 },
 \endcode
 
+| Field | Type    | Description
+| :----  | :----  | :----
+| useMask | boolean | Whether, if available, the segmentation mask should be used to filter wrong features.
+| minMaskConfidence | float | if useMask is true, minimum confidence for a feature to be accepted.
+| step | int | Step in pixels to sample the render map. A low value for this parameter will lead to a larger number of depth features. As this step is used when iterating on rows and columns of the render images, the number of depth features will quickly decrease as the step grows.
 
 \section rbt_tracking_usage Tracker usage
 
