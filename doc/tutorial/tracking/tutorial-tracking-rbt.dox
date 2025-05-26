@@ -316,6 +316,17 @@ Intrinsics definition:
 
 \subsubsection rbt_tracking_config_optimization Optimization parameters
 
+
+Example configuration:
+\code{.json}
+"vvs": {
+  "gain": 1.0,
+  "maxIterations": 10,
+  "mu": 0.0,
+  "muIterFactor": 0.0
+}
+\endcode
+
 | Field | Type    | Description
 | :----  | :----  | :----
 | gain | double | Optimization gain. A gain too small may lead to drift issues, while a gain too high may lead to instabilities in pose.
@@ -326,6 +337,22 @@ Intrinsics definition:
 
 
 \subsubsection rbt_tracking_config_silhouette Silhouette extraction settings
+
+Example configuration:
+\code{.json}
+"silhouetteExtractionSettings": {
+  "threshold": {
+    "type": "relative",
+    "value": 0.1
+  },
+  "sampling": {
+    "samplingRate": 1,
+    "numPoints": 512,
+    "reusePreviousPoints": true
+  }
+}
+\endcode
+
 To control the silhouette processing, there are two main settings **threshold** and **sampling**.
 
 The threshold settings serve to determine what is a silhouette point or not. Silhouette extraction is based on depth disparity between neighbouring render pixels.
@@ -379,9 +406,6 @@ Example configuration:
 
 \subsubsection rbt_tracking_config_drift Drift detection method configuration
 
-
-
-
 \paragraph rbt_tracking_config_drift_proba vpRBProbabilistic3DDriftDetector configuration
 Example configuration:
 \code{.json}
@@ -416,14 +440,115 @@ For each feature, these values can be defined:
 | Field | Type    | Description
 | :----  | :----  | :----
 | weight | float | The importance given by the user to this feature type.
+| display | boolean | Whether the features should be displayed when calling vpRBTracker::display.
 
 
 \paragraph rbt_tracking_config_features_klt vpRBKltTracker
+
+Example configuration:
+\code{.json}
+{
+  "type": "klt",
+  "weight": 1,
+
+  "useMask": true,
+  "minMaskConfidence": 0.5,
+
+  "maxReprojectionErrorPixels": 5.0,
+  "newPointsMinPixelDistance": 4,
+  "minimumNumPoints": 20,
+  "blockSize": 5,
+  "useHarris": true,
+  "harris": 0.05,
+  "maxFeatures": 500,
+  "minDistance": 5.0,
+  "pyramidLevels": 3,
+  "quality": 0.01,
+  "windowSize": 5
+}
+\endcode
+
+
+
 \paragraph rbt_tracking_config_features_me vpRBSilhouetteMeTracker
+
+Example configuration:
+\code{.json}
+{
+  "type": "silhouetteMe",
+  "weight": 1,
+  "numCandidates": 3,
+
+  "useMask": false,
+  "minMaskConfidence": 0.8,
+
+  "movingEdge": {
+    "maskSize": 7,
+    "minSampleStep": 1.0,
+    "mu": [
+      0.5,
+      0.5
+    ],
+    "nMask": 180,
+    "range": 16,
+    "sampleStep": 1.0,
+    "strip": 2,
+    "thresholdType": "normalized",
+    "threshold": 20
+  }
+}
+\endcode
+
 \paragraph rbt_tracking_config_features_ccd vpRBSilhouetteCCDTracker
+
+Example configuration for a case with small motions:
+\code{.json}
+{
+  "type": "silhouetteColor",
+  "weight": 0.1,
+
+  "useMask": true,
+  "minMaskConfidence": 0.8,
+
+  "ccd": {
+    "h": 16,
+    "delta_h": 1,
+    "min_h": 16
+  }
+}
+\endcode
+
+Example configuration to handle larger motions:
+\code{.json}
+{
+  "type": "silhouetteColor",
+  "weight": 0.1,
+
+  "useMask": true,
+  "minMaskConfidence": 0.8,
+
+  "ccd": {
+    "h": 64,
+    "delta_h": 4,
+    "min_h": 16
+  }
+}
+\endcode
+
 \paragraph rbt_tracking_config_features_depth vpRBDenseDepthTracker
 
+\code{.json}
+{
+  "type": "depth",
+  "weight": 1,
 
+  "useMask": true,
+  "minMaskConfidence": 0.5,
+
+  "step": 2,
+  "display": false
+},
+\endcode
 
 
 \section rbt_tracking_usage Tracker usage
