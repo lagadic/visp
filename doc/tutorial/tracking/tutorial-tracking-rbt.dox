@@ -278,7 +278,7 @@ To load a json configuration file, you can call vpRBTracker::loadConfigurationFi
 
 This subsection details the parameters that you can tweak through JSON.
 
-\subsubsection rbt_tracking_config_json General parameters
+\subsubsection rbt_tracking_config_json_general General parameters
 
 | Field | Type    | Description
 | :----  | :----  | :----
@@ -317,7 +317,7 @@ Intrinsics definition:
 \subsubsection rbt_tracking_config_optimization Optimization parameters
 
 
-Example configuration:
+Example configuration without defining a stopping criterion for optimization:
 \code{.json}
 "vvs": {
   "gain": 1.0,
@@ -326,6 +326,18 @@ Example configuration:
   "muIterFactor": 0.0
 }
 \endcode
+
+And with a criterion (stop if 3D motion is below 1/10th of a millimeter between two iterations)
+\code{.json}
+"vvs": {
+  "gain": 1.0,
+  "maxIterations": 10,
+  "mu": 0.0,
+  "muIterFactor": 0.0,
+  "convergenceThreshold": 0.0001
+}
+\endcode
+
 
 | Field | Type    | Description
 | :----  | :----  | :----
