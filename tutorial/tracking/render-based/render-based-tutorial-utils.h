@@ -166,6 +166,7 @@ public:
       .addFlag("--save-video", videoEnabled, "Whether to save the video")
       .addArgument("--video-framerate", framerate, false, "Output video framerate");
   }
+
 #endif
 
   void startLog()
@@ -192,6 +193,10 @@ public:
                 , unsigned int iter, const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB,
                 const vpImage<unsigned char> &Idepth, const vpImage<unsigned char> &Imask)
   {
+    if (!enabled) {
+      return;
+    }
+
     if (videoEnabled) {
       Iout.resize(IRGB.getHeight() * 2, IRGB.getWidth() * 2);
 
