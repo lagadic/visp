@@ -314,7 +314,6 @@ endif()
 VP_OPTION(USE_PYBIND11       pybind11       QUIET    "Include pybind11 to create Python bindings" "" ON)
 VP_OPTION(ALLOW_SYSTEM_PYTHON  "" "" "Allow the use of the system Python interpreter when compiling and installing bindings" "" OFF)
 
-
 # Minimum tool versions
 set(CMAKE_MINIMUM_VERSION_PYTHON_BINDINGS "3.19.0")
 set(PYTHON3_MINIMUM_VERSION_PYTHON_BINDINGS "3.7.0")
@@ -343,8 +342,6 @@ if(VISP_CXX_STANDARD LESS VISP_CXX_STANDARD_17)
 else()
   set(CXX_STANDARD_NOT_OK_FOR_BINDINGS FALSE)
 endif()
-
-
 
 # Forbid system Python if override flag is not false
 if(DEFINED ENV{VIRTUAL_ENV} OR DEFINED ENV{CONDA_PREFIX})
@@ -602,7 +599,7 @@ VP_OPTION(USE_ARSDK       ARSDK       QUIET "Include Parrot ARSDK support"     "
 if(USE_ARSDK)
   VP_OPTION(USE_FFMPEG    FFMPEG       ""    "Include ffmpeg support for Parrot Bebop2"  "" ON)
 endif()
-VP_OPTION(USE_FRANKA      Franka      QUIET "Include libfranka SDK support for Franka Emika robots" "" ON IF NOT WINRT AND NOT IOS)
+VP_OPTION(USE_FRANKA      Franka      QUIET "Include libfranka SDK support for Franka robots" "" ON IF NOT WINRT AND NOT IOS)
 # Note: libfranka needs c++14 option to build, but to use the library c++11 is enough.
 # That's why, setting USE_CXX_STANDARD=11 (which is the default) allows to use libfranka.
 VP_OPTION(USE_JACOSDK     JacoSDK     ""    "Include Kinova Jaco SDK support"  "" ON IF NOT MINGW AND NOT APPLE AND NOT WINRT AND NOT IOS)
@@ -801,6 +798,16 @@ if(VISP_CXX_STANDARD LESS VISP_CXX_STANDARD_11)
     message(WARNING "Ogre3D was detected but needs at least c++11 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable Ogre3D usage turning USE_OGRE=OFF.")
     unset(USE_OGRE)
     set(USE_OGRE OFF CACHE BOOL "Include Ogre3D support" FORCE)
+  endif()
+  if(USE_FRANKA)
+    message(WARNING "libfranka was detected but needs at least c++11 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable libfranka usage turning USE_FRANKA=OFF.")
+    unset(USE_FRANKA)
+    set(USE_FRANKA OFF CACHE BOOL "Include libfranka SDK support for Franka robots" FORCE)
+  endif()
+  if(USE_UR_RTDE)
+    message(WARNING "Universal rtde library was detected but needs at least c++11 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable rtde usage turning USE_UR_RTDE=OFF.")
+    unset(USE_UR_RTDE)
+    set(USE_UR_RTDE OFF CACHE BOOL "Include Universal Robot RTDE C++ interface support for UR robots" FORCE)
   endif()
 endif()
 
