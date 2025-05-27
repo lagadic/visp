@@ -170,6 +170,6 @@ vp_add_tests(DEPENDS_ON visp_mbt visp_gui visp_io PRIVATE_INCLUDE_DIRS ${opt_tes
 
 if(BUILD_MODULE_visp_mbt AND BUILD_MODULE_visp_gui AND BUILD_MODULE_visp_io)
   if(VISP_DATASET_FOUND)
-    add_test(testKeyPoint-2-multithreaded testKeyPoint-2 -c ${OPTION_TO_DESACTIVE_DISPLAY} -p)
+    add_test(testKeyPoint-2-multithreaded testKeyPoint-2 -c ${SHORT_OPTION_TO_DISABLE_DISPLAY} -p)
   endif()
 endif()

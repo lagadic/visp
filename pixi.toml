@@ -1,8 +1,8 @@
 [project]
 authors = ["Olivier Roussel <olivier.roussel@inria.fr>"]
-channels = ["conda-forge"]
+channels = ["conda-forge", "panda3d-forge"]
 name = "visp"
-platforms = ["linux-64", "osx-64", "osx-arm64", "win-64"]
+platforms = ["linux-64", "osx-64", "win-64", "osx-arm64"]
 version = "3.6.0"
 license = "GPL-2.0-only"
 license-file = "LICENSE.txt"
@@ -40,9 +40,6 @@ mesa-libegl-cos7-x86_64 = "*"
 [target.osx.dependencies]
 llvm-openmp = "*"
 
-[target.win-64.dependencies]
-pthreads-win32 = "*"
-
 [activation]
 scripts = ["development/scripts/pixi/activation.sh"]
 
@@ -60,31 +57,50 @@ activation = { scripts = ["development/scripts/pixi/activation_clang_cl.bat"] }
 [feature.python-bindings]
 dependencies = { python = ">=3.8", pybind11 = "*", pip = "*" }
 [feature.python-bindings.tasks]
-build = { cmd = "cmake --build build --parallel $CPU_COUNT --target visp_python_bindings", depends-on = ["install"] }
-python-test = { cmd = "cmake --build build --config Release --target visp_python_bindings_test", depends-on = ["build"] }
+build = { cmd = "cmake --build $VISP_BUILD_DIR --parallel $CPU_COUNT --target visp_python_bindings", depends-on = ["install"] }
+python-test = { cmd = "cmake --build $VISP_BUILD_DIR --config Release --target visp_python_bindings_test", depends-on = ["build"] }
+
+[feature.rbt]
+dependencies = { nlohmann_json = "*", panda3d = { version = ">=1.10.15", channel = "panda3d-forge" } }
+
+[feature.tests.activation.env]
+VISP_BUILD_TESTS = "ON"
+# Tests that require display / rendering are only supported on linux based CI
+[feature.tests.target.linux.activation.env]
+DISPLAY = ":99"
+VISP_ENABLE_TEST_WITHOUT_DISPLAY = "OFF"
+[feature.tests.target.linux.tasks]
+init-testing = { cmd = "bash ./development/scripts/pixi/xvfb.sh" }
 
 [tasks]
+init-testing = {}
 configure = { cmd = [
   "cmake",
   "-G",
   "Ninja",
   "-B",
-  "build",
+  "$VISP_BUILD_DIR",
   "-S",
   ".",
+  "-DCMAKE_VERBOSE_MAKEFILE=ON",
   "-DCMAKE_BUILD_TYPE=$VISP_BUILD_TYPE",
   "-DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX",
-  "-DBUILD_TESTS=ON",
+  "-DBUILD_TESTS=$VISP_BUILD_TESTS",
+  "-DENABLE_TEST_WITHOUT_DISPLAY=$VISP_ENABLE_TEST_WITHOUT_DISPLAY",
+  "-DBUILD_TUTORIALS=OFF",
+  "-DBUILD_EXAMPLES=OFF",
   "$VISP_EXTRA_CMAKE_ARGS"
 ] }
-build-base = { cmd = "cmake --build build --parallel $CPU_COUNT", depends-on = ["configure"] }
+build-base = { cmd = "cmake --build $VISP_BUILD_DIR --parallel $CPU_COUNT", depends-on = ["configure"] }
 build = { depends-on = ["build-base"]}
-install = { cmd = "cmake --build build --target install", depends-on = ["build-base"] }
-clean = { cmd = "rm -rf build" }
-test = { cmd = "ctest --test-dir build --output-on-failure", depends-on = ["install"] }
+install = { cmd = "cmake --build $VISP_BUILD_DIR --target install", depends-on = ["build-base"] }
+clean = { cmd = "rm -rf $VISP_BUILD_DIR" }
+test = { cmd = "ctest --test-dir $VISP_BUILD_DIR --output-on-failure", depends-on = ["install", "init-testing"] }
 
 [environments]
-default = { solve-group = "base" }
-with-python = { features = ["python-bindings"], solve-group = "base"}
-all = { features = ["python-bindings"], solve-group = "base" }
-all-clang-cl = { features = ["python-bindings", "clang-cl"], solve-group = "base" }
+with-python = { features = ["python-bindings"] }
+with-python-clang-cl = { features = ["python-bindings", "clang-cl"] }
+all = { features = ["rbt", "python-bindings"] }
+all-clang-cl = { features = ["rbt", "python-bindings", "clang-cl"] }
+all-with-tests = { features = ["rbt", "python-bindings", "tests"] }
+all-clang-cl-with-tests = { features = ["rbt", "python-bindings", "clang-cl", "tests"] }

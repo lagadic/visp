@@ -82,7 +82,7 @@ string(JSON json_config_file SET ${json_config_file} "modules" ${json_modules})
 set(json_defines "{}")
 string(JSON json_defines SET ${json_defines} "__cplusplus" "${VISP_CXX_STANDARD}")
 # Compiler
-if(CMAKE_COMPILER_IS_GNUCXX)
+if(CMAKE_COMPILER_IS_GNUCXX AND NOT (MSVC AND CMAKE_COMPILER_IS_CLANGCXX))
   string(REPLACE "." ";" GCC_VERSION_LIST ${CMAKE_CXX_COMPILER_VERSION})
   list(GET GCC_VERSION_LIST 0 GCC_MAJOR)
   list(GET GCC_VERSION_LIST 1 GCC_MINOR)
@@ -93,13 +93,15 @@ if(CMAKE_COMPILER_IS_GNUCXX)
   string(JSON json_defines SET ${json_defines} "__GNUC_PATCHLEVEL__" "${GCC_PATCH}")
 endif()
 
+
 if(CMAKE_COMPILER_IS_CLANGCXX)
   string(REPLACE "." ";" CLANG_VERSION_LIST ${CMAKE_CXX_COMPILER_VERSION})
   list(GET CLANG_VERSION_LIST 0 CLANG_MAJOR)
   list(GET CLANG_VERSION_LIST 1 CLANG_MINOR)
   list(GET CLANG_VERSION_LIST 2 CLANG_PATCH)
 
-  string(JSON json_defines SET ${json_defines} "__clang__" "${CLANG_MAJOR}")
+  string(JSON json_defines SET ${json_defines} "__clang__" "1")
+  string(JSON json_defines SET ${json_defines} "__clang_major__" "${CLANG_MAJOR}")
   string(JSON json_defines SET ${json_defines} "__clang_minor__" "${CLANG_MINOR}")
   string(JSON json_defines SET ${json_defines} "__clang_patchlevel__" "${CLANG_PATCH}")
   string(JSON json_defines SET ${json_defines} "__clang_version__" "${CMAKE_CXX_COMPILER_VERSION}")
@@ -131,4 +133,7 @@ endif()
 
 string(JSON json_config_file SET ${json_config_file} "defines" ${json_defines})
 
+message(STATUS "-------------JSON CONFIG FILE --------------")
+message(STATUS "${json_config_file}")
+message(STATUS "-------------EOF  --------------")
 file(WRITE ${json_config_file_path} "${json_config_file}")

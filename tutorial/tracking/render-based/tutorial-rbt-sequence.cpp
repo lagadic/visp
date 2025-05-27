@@ -183,7 +183,7 @@ int main(int argc, const char **argv)
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-        for (unsigned int i = 0; i < dataArray.getSize(); ++i) {
+        for (int i = 0; i < static_cast<int>(dataArray.getSize()); ++i) {
           float value = static_cast<float>(dataArray.bitmap[i]) * scale;
           depth.bitmap[i] = value;
           depthDisplay.bitmap[i] = value > baseArgs.maxDepthDisplay ? 0.f : static_cast<unsigned char>((depth.bitmap[i] / baseArgs.maxDepthDisplay) * 255.f);

@@ -84,8 +84,8 @@ void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame
 #ifdef VISP_HAVE_OPENMP
 #pragma omp for nowait
 #endif
-    for (unsigned int i = static_cast<unsigned int>(bb.getTop()); i < static_cast<unsigned int>(bb.getBottom()); i += m_step) {
-      for (unsigned int j = static_cast<unsigned int>(bb.getLeft()); j < static_cast<unsigned int>(bb.getRight()); j += m_step) {
+    for (auto i = static_cast<int>(bb.getTop()); i < static_cast<int>(bb.getBottom()); i += m_step) {
+      for (auto j = static_cast<int>(bb.getLeft()); j < static_cast<int>(bb.getRight()); j += m_step) {
         const double Z = renderDepth[i][j];
         const double currZ = depthMap[i][j];
 
@@ -189,7 +189,7 @@ void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &/*fram
   }
 #endif
 
-//m_weights = 0.0;
+  //m_weights = 0.0;
   m_robust.setMinMedianAbsoluteDeviation(1e-3);
   m_robust.MEstimator(vpRobust::TUKEY, m_error, m_weights);
 
@@ -217,7 +217,7 @@ void vpRBDenseDepthTracker::display(const vpCameraParameters &/*cam*/, const vpI
                                     const vpImage<vpRGBa> &/*IRGB*/, const vpImage<unsigned char> &depth) const
 {
   switch (m_displayType) {
-  case SIMPLE:
+  case DT_SIMPLE:
   {
     for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
       vpColor c(0, 255, 0);
@@ -225,7 +225,7 @@ void vpRBDenseDepthTracker::display(const vpCameraParameters &/*cam*/, const vpI
     }
     break;
   }
-  case WEIGHT:
+  case DT_WEIGHT:
   {
     for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
       vpColor c(0, static_cast<unsigned char>(m_weights[i] * 255), 0);
@@ -233,7 +233,7 @@ void vpRBDenseDepthTracker::display(const vpCameraParameters &/*cam*/, const vpI
     }
     break;
   }
-  case ERROR:
+  case DT_ERROR:
   {
     for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
       vpColor c(m_error[i], 0, 0);
@@ -241,7 +241,7 @@ void vpRBDenseDepthTracker::display(const vpCameraParameters &/*cam*/, const vpI
     }
     break;
   }
-  case WEIGHT_AND_ERROR:
+  case DT_WEIGHT_AND_ERROR:
   {
     double maxError = m_error.getMaxValue();
     for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
