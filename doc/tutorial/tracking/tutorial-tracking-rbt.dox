@@ -5,28 +5,27 @@
 
 \section rbt_tracking_intro Introduction
 
-In ViSP 3.7, we are introducing a new Render-Based Tracker (RBT), that leverages rendering on the GPU to extract geometric information
-in order to perform online and continuous 6D pose estimation of a known 3D object.
+In ViSP 3.7, we are introducing a new Render-Based Tracker (RBT), that leverages rendering on the GPU to extract
+geometric information in order to perform online and continuous 6D pose estimation of a known 3D object.
 
-It is an extension of the Model-Based Tracker already present in ViSP (see \ref tutorial-tracking-mb-generic)
+It is an extension of the Model-Based Tracker (MBT) already present in ViSP (see \ref tutorial-tracking-mb-generic).
 This implementation is derived from the work of \cite Petit14a.
 
-A major advantage over the Model-Based Tracker is that the RBT uses a common mesh representation for the object to track.
-This representation does not require additional preprocessing for feature selection and is widely supported in software such as Blender.
+A major advantage over the Model-Based Tracker is that the RBT uses a common mesh representation for the object to
+track. This representation does not require additional preprocessing for feature selection and is widely supported in
+software such as Blender.
 It can also be obtained through photogrammetry processes, minimizing the work required before using the tracker.
-Note that we do not consider deformable objects, only rigid objects.
+Note that we do not consider deformable objects, only non-articulated rigid objects.
 
-Similar to the MBT, tracking is framed as an optimization problem, where the difference between the features (geometric or photometric) extracted from a 3D model and those observed in the image
-must be minimized.
+Similar to the MBT, tracking is framed as an optimization problem, where the difference between the features
+(geometric or photometric) extracted from a 3D model and those observed in the image must be minimized.
 
-the RBT is built as a modular pipeline (\ref rbt_tracking_overview). In practice, this means:
+The RBT is built as a modular pipeline (\ref rbt_tracking_overview). In practice, this means:
 
-- It can leverage both RGB and depth information (\ref rbt_tracking_requirements)
-- It features a complete configuration for every part of the tracking pipeline (\ref rbt_tracking_config)
+- It can leverage both RGB and depth information (see \ref rbt_tracking_requirements)
+- It features a complete configuration for every part of the tracking pipeline (see \ref rbt_tracking_config)
 - Most components can be disabled or adapted to different use cases and scenarios
-- Components can be extended: You can add new features or filtering methods. (\ref rbt_extension)
-
-
+- Components can be extended: You can add new features or filtering methods (see \ref rbt_extension).
 
 \section rbt_tracking_requirements Requirements
 
@@ -34,13 +33,14 @@ the RBT is built as a modular pipeline (\ref rbt_tracking_overview). In practice
 
 To successfully build the RBT module, you will need:
 
-- To compile using a minimum standard version of C++11 (defined in the VISP_CXX_STANDARD CMake variable)
-- The Panda3D 3rd party, which is used for 3D rendering. See \ref tutorial-panda3d-install for more information on how to install Panda3D on your system.
-Panda3D is also available through Conda if you are compiling in a virtual environment
+- To compile using a minimum standard version of C++11 (defined in the `USE_CXX_STANDARD` CMake variable)
+- The Panda3D 3rd party, which is used for 3D rendering. See \ref tutorial-panda3d-install for more information on how
+  to install Panda3D on your system. Panda3D is also available through Conda if you are compiling in a virtual
+  environment.
 
 Additionally, Some optional dependencies are (strongly) recommended:
-- `nlohmann::json` (\ref install_ubuntu_3rdparty_other) to load configuration files and save your tracking results.
-Without it, the tracker setup will have to be done through code
+- `nlohmann::json` (see \ref install_ubuntu_3rdparty_other for installation instructions) to load configuration files
+  and save your tracking results. Without it, the tracker setup will have to be done through code
 - OpenCV, if you wish to use the `vpRBKltTracker`, that uses KLT feature tracking for pose estimation.
 
 \subsection rbt_tracking_requirements_general General requirements
@@ -48,13 +48,15 @@ Without it, the tracker setup will have to be done through code
 To use the RBT you will need several things:
 
 - An OpenGL or DirectX enabled device, that can perform 3D rendering.
-You can use software acceleration, although having a GPU is preferable for performance reasons
-- A camera with known intrinsic parameters. For calibration see \ref tutorial-calibration-intrinsic. \warning The camera intrinsics should follow a model without distortion.
-- If you are using an RGB-D camera, the depth image should be aligned with the RGB image. Some SDKs provide this functionality.
-For instance, the wrapper around the realsense SDK accepts an "align" parameter in the vpRealSense2::acquire function.
-When correctly set, the alignment will automatically be performed for you.
-- A 3D model of the object, in a format that is supported by Panda3D (See \ref tutorial-panda3d-file-conversion ).
-If you have installed *libassimp-dev* or are using the conda package, Panda3D supports common formats such as *.ply*, *.obj*. Otherwise, you will have to convert your mesh using the previously linked method.
+  You can use software acceleration, although having a GPU is preferable for performance reasons
+- A camera with known intrinsic parameters. For calibration see \ref tutorial-calibration-intrinsic. \warning The camera
+  intrinsics should follow a model without distortion.
+- If you are using an RGB-D camera, the depth image should be aligned with the RGB image. Some SDKs provide this
+  functionality. For instance, the wrapper around the realsense SDK accepts an "align" parameter in the
+  vpRealSense2::() function. When correctly set, the alignment will automatically be performed for you.
+- A 3D model of the object, in a format that is supported by Panda3D (see \ref tutorial-panda3d-file-conversion).
+  If you have installed *libassimp-dev* or are using the conda package, Panda3D supports common formats such as
+  *.ply*, *.obj*. Otherwise, you will have to convert your mesh using the previously linked method.
 
 
 \subsection rbt_tracking_requirements_3d_model 3D model considerations
@@ -63,7 +65,8 @@ There are very little restrictions on the 3D model that can be used in the RBT.
 
 First, your 3D model's size should be expressed in meters. Be aware that some CAD software export models in millimeters.
 
-If you are using the initialization by click, you will have to be careful with the model orientation when exporting (see below).
+If you are using the initialization by click, you will have to be careful with the model orientation when exporting
+(see below).
 
 Note that while 3D meshes support textures, the presently available RBT features do not use the texture information.
 
@@ -73,29 +76,29 @@ To correctly process your model, here is a small overview of the steps to follow
 
 To make sure your model is correct, you should start by setting the scale and orientation of your 3D model.
 
-You should first import your model in Blender. In the top left corner of the Blender window, click on **File > Import > (Your model type)**, then pick your object in the popup window.
+You should first import your model in Blender. In the top left corner of the Blender window, click on
+**File > Import > (Your model type)**, then pick your object in the popup window.
 
-Your model should have been imported and should be visible in the 3D viewer. You should then click on it and press **N** to bring up the transform panel in the top right corner.
-Then you should press **Ctrl+A** to open the *Apply* menu and click on the "**All transforms**" item. This ensures that the exported model matches what is seen in Blender.
+Your model should have been imported and should be visible in the 3D viewer. You should then click on it and press
+**N** to bring up the transform panel in the top right corner. Then you should press **Ctrl+A** to open the **Apply**
+menu and click on the **All transforms** item. This ensures that the exported model matches what is seen in Blender.
 
 \image html rbt-blender-apply-transforms.png Apply transforms to clear any rotation and scale difference stored in Blender.
 
-
-
-If you are using initialization by click as described in \ref mb_generic_init_user, you can select the 3D points to click directly in Blender.
-To do so, first click on your object and press *tab* to go into Edit mode. Then, press *N* to display the **Transform** Panel (Top right of the viewer).
-Choose a 3D point to use for initialization, then click on it. In the **Transform** panel, you should then see the XYZ coordinates of the point, which you can copy into the init file.
-Be sure to select the "Global" frame in the transform panel.
+If you are using initialization by click as described in \ref mb_generic_init_user section, you can select the 3D
+points to click directly in Blender. To do so, first click on your object and press *tab* to go into Edit mode. Then,
+press *N* to display the **Transform** Panel (Top right of the viewer). Choose a 3D point to use for initialization,
+then click on it. In the **Transform** panel, you should then see the XYZ coordinates of the point, which you can copy
+into the init file. Be sure to select the "Global" frame in the transform panel.
 
 \image html rbt-click-init-blender-panel.png The transform panel with a selected 3D point in Edit mode.
 
 Once you have selected your points make sure to export your model in the same frame as the Blender frame.
-You can export your 3D model, using the **File > Export > (Supported 3D format such as .obj)** and save your model in the desired location.
-In the export panel, set "Forward Axis" to "**-Z**" and "Up Axis" to "**Y**"
+You can export your 3D model, using the **File > Export > (Supported 3D format such as .obj)** and save your model in
+the desired location. In the export panel, set "Forward Axis" to **-Z** and "Up Axis" to **Y**.
 
-
-
-With all the prerequisites met, you can now understand (if you wish) how the tracker works and how to customize it for your needs.
+With all the prerequisites met, you can now understand (if you wish) how the tracker works and how to customize it for
+your needs.
 
 \section rbt_tracking_overview Algorithm overview
 
@@ -103,16 +106,19 @@ This section of the tutorial details how the tracker works.
 
 The RBT is used by building a vpRBTracker object, configuring it and then feeding it RGB or RGB-D frames.
 
-As the RBT is a tracking algorithm, an initial pose must be provided. Given an initial pose, the RBT will continuously track an object in a sequence of frames.
-This also assumes that the motion between consecutive frame is small enough so that the tracker can retrieve the features and correctly update the pose of the object in the camera frame.
+As the RBT is a tracking algorithm, an initial pose must be provided. Given an initial pose, the RBT will continuously
+track an object in a sequence of frames. This also assumes that the motion between consecutive frame is small enough so
+that the tracker can retrieve the features and correctly update the pose of the object in the camera frame.
 Otherwise, there is a risk of divergence, leading to a need for reinitialization.
-This can be done via click (see \ref mb_generic_init_user and the vpRBTracker::initClick method).
-Otherwise, you can use a pose estimation algorithm (e.g. Megapose \ref tutorial-tracking-megapose and vpMegaPose::estimatePoses) followed by a call to vpRBTracker::setPose.
+This can be done via click (see \ref mb_generic_init_user section and the vpRBTracker::initClick() method).
+Otherwise, you can use a pose estimation algorithm (e.g. Megapose described in \ref tutorial-tracking-megapose and
+vpMegaPose::estimatePoses() method) followed by a call to vpRBTracker::setPose().
 
 
 Roughly the algorithm works as follows:
 
-1. Given an initial pose of the object in the camera frame \f$^{c}\mathbf{T}_{o}\f$, generate a render of the object at this pose.
+1. Given an initial pose of the object in the camera frame \f$^{c}\mathbf{T}_{o}\f$, generate a render of the object at
+   this pose.
 2. Extract and process render data, and store it into a vpRBRenderData object.
 3. From the renders, seek features to match with in the current RGB and depth images.
 4. From the match between image and model features, formulate an error \f$\mathbf{e}\f$.
@@ -245,7 +251,7 @@ It is then your responsibility to use this score to call for a tracker reinitial
 
 To enable drift detection, you should call vpRBTracker::setDriftDetectionMethod with the scoring method that you wish to use.
 
-the method that is provided by default, vpRBProbabilistic3DDriftDetector, is an online method that compares the photometric information of the model in the current image with a representation that is learned online.
+The method that is provided by default, vpRBProbabilistic3DDriftDetector, is an online method that compares the photometric information of the model in the current image with a representation that is learned online.
 If available, it will also compare the depth in the render data with the depth from the camera.
 This representation is a set of 3D points, for which some color statistics are stored and updated every frame.
 
@@ -257,7 +263,7 @@ This means that more importance will be given to points that have a stable color
 
 \section rbt_tracking_config Configuration
 
-To ease the use of the RBT, it is strongly to have compiled ViSP with the 3rd party that enables JSON support. This section describes how to configure the tracker.
+To ease the use of the RBT, it is strongly recommended to have compiled ViSP with the 3rd party that enables JSON support. This section describes how to configure the tracker.
 
 \subsection rbt_tracking_config_in_code In-code configuration
 
@@ -614,7 +620,6 @@ To run the program, start by placing yourself in the ViSP build directory.
 Assuming you have compiled and built the tutorials, navigate to the tutorial folder:
 \verbatim
 ~/visp_build $ cd tutorial/tracking/render-based
-~/visp_build/tutorial-tracking/render-based $ cd tutorial/tracking/render-based
 \endverbatim
 
 You can then examine the command line arguments with:
