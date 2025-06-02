@@ -157,7 +157,7 @@ public:
   /**
    * \brief Set the path to the 3D model to load
    *
-   * \param path a path to an existing file contianing a 3D mesh that can be read by Panda3D
+   * \param path a path to an existing file containing a 3D mesh that can be read by Panda3D
   */
   void setModelPath(const std::string &path);
 

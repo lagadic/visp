@@ -480,6 +480,10 @@ $ ./tutorial-mb-generic-tracker-rgbd-blender --data-path /tmp/teabox --display-g
 \endcode
 
 \section mb_Blender_next Next tutorial
-You are now ready to see the next \ref tutorial-tracking-tt.
+
+- You are now ready to see the next \ref tutorial-tracking-tt.
+
+- Since ViSP 2.7.0 we introduce a new tracker named RBT that allows to track more complex objects.
+  To learn more about it you may follow \ref tutorial-tracking-rbt.
 
 */
