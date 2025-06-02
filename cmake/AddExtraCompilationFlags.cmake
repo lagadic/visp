@@ -38,19 +38,21 @@
 set(VISP_EXTRA_C_FLAGS "")
 set(VISP_EXTRA_CXX_FLAGS "")
 
-macro(add_extra_compiler_option option)
+macro(add_extra_compiler_options options)
   if(CMAKE_BUILD_TYPE)
     set(CMAKE_TRY_COMPILE_CONFIGURATION ${CMAKE_BUILD_TYPE})
   endif()
-  vp_check_flag_support(CXX "${option}" _varname "${VISP_EXTRA_CXX_FLAGS} ${ARGN}")
-  if(_varname)
-    set(VISP_EXTRA_CXX_FLAGS "${VISP_EXTRA_CXX_FLAGS} ${option}")
-  endif()
+  foreach(option ${options})
+    vp_check_flag_support(CXX "${option}" _varname "${VISP_EXTRA_CXX_FLAGS}")
+    if(_varname)
+      set(VISP_EXTRA_CXX_FLAGS "${VISP_EXTRA_CXX_FLAGS} ${option}")
+    endif()
 
-  vp_check_flag_support(C "${option}" _varname "${VISP_EXTRA_C_FLAGS} ${ARGN}")
-  if(_varname)
-    set(VISP_EXTRA_C_FLAGS "${VISP_EXTRA_C_FLAGS} ${option}")
-  endif()
+    vp_check_flag_support(C "${option}" _varname "${VISP_EXTRA_C_FLAGS}")
+    if(_varname)
+      set(VISP_EXTRA_C_FLAGS "${VISP_EXTRA_C_FLAGS} ${option}")
+    endif()
+  endforeach()
 endmacro()
 
 macro(add_extra_compiler_option_enabling option var_enabling flag)
@@ -91,13 +93,13 @@ elseif(MSVC)
   if(MSVC80 OR MSVC90 OR MSVC10 OR MSVC11 OR MSVC14)
     # To avoid compiler warning (level 4) C4571, compile with /EHa if you still want
     # your catch(...) blocks to catch structured exceptions.
-    add_extra_compiler_option("/EHa")
+    add_extra_compiler_options("/EHa")
   endif()
 endif()
 
 if((NOT VISP_HAVE_NULLPTR) AND (VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_98) AND (NOT MSVC))
-  add_extra_compiler_option("-Wno-c++11-compat")
-  add_extra_compiler_option("-Wno-c++0x-compat")
+  add_extra_compiler_options("-Wno-c++11-compat")
+  add_extra_compiler_options("-Wno-c++0x-compat")
 endif()
 
 # Mute warnings with clang-cl like:
@@ -108,11 +110,11 @@ endif()
 # - vpConfig.h(561,9): warning : macro name is a reserved identifier [-Wreserved-macro-identifier]
 # - vpCameraParameters.cpp(668,3): warning : default label in switch which covers all enumeration values [-Wcovered-switch-default]
 if(MSVC AND CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  add_extra_compiler_option("-Wno-c++98-compat")
-  add_extra_compiler_option("-Wno-c++98-compat-pedantic")
-  add_extra_compiler_option("-Wno-unsafe-buffer-usage")
-  add_extra_compiler_option("-Wno-reserved-macro-identifier")
-  add_extra_compiler_option("-Wno-covered-switch-default")
+  add_extra_compiler_options("-Wno-c++98-compat")
+  add_extra_compiler_options("-Wno-c++98-compat-pedantic")
+  add_extra_compiler_options("-Wno-unsafe-buffer-usage")
+  add_extra_compiler_options("-Wno-reserved-macro-identifier")
+  add_extra_compiler_options("-Wno-covered-switch-default")
 endif()
 
 # Note here ViSPDetectPlatform.cmake should be called before this file to set ARM var
@@ -126,80 +128,84 @@ if((CMAKE_CXX_COMPILER_ID MATCHES "GNU") AND (CMAKE_CXX_COMPILER_VERSION VERSION
   #
   # See here: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=77728
   # and here: https://stackoverflow.com/questions/48149323/what-does-the-gcc-warning-project-parameter-passing-for-x-changed-in-gcc-7-1-m
-  add_extra_compiler_option(-Wno-psabi)
+  add_extra_compiler_options("-Wno-psabi")
 endif()
 
 if(USE_OPENMP)
-  add_extra_compiler_option("${OpenMP_CXX_FLAGS}")
+  add_extra_compiler_options("${OpenMP_CXX_FLAGS}")
 endif()
 
 if(USE_THREADS OR USE_PTHREAD)
   # Condider the case of Apriltags on Unix that needs pthread
   if(THREADS_HAVE_PTHREAD_ARG)
-    add_extra_compiler_option("-pthread")
+    add_extra_compiler_options("-pthread")
   endif()
 endif()
 
 if((VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_11) AND CXX11_CXX_FLAGS)
-  add_extra_compiler_option("${CXX11_CXX_FLAGS}")
+  add_extra_compiler_options("${CXX11_CXX_FLAGS}")
 elseif((VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_14) AND CXX14_CXX_FLAGS)
-  add_extra_compiler_option("${CXX14_CXX_FLAGS}")
+  add_extra_compiler_options("${CXX14_CXX_FLAGS}")
 elseif((VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_17) AND CXX17_CXX_FLAGS)
-  add_extra_compiler_option("${CXX17_CXX_FLAGS}")
+  add_extra_compiler_options("${CXX17_CXX_FLAGS}")
 endif()
 
 if(BUILD_COVERAGE)
-  add_extra_compiler_option("-ftest-coverage -fprofile-arcs")
+  add_extra_compiler_options("-ftest-coverage -fprofile-arcs")
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX)
   # Don't use -fvisibility=hidden with clang-cl
   # clang-cl : warning : unknown argument ignored in clang-cl: '-fvisibility=hidden' [-Wunknown-argument]
   if(NOT (MSVC AND CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
-    add_extra_compiler_option(-fvisibility=hidden)
+    add_extra_compiler_options("-fvisibility=hidden")
   endif()
 
   if(ENABLE_AVX AND X86_64)
-    add_extra_compiler_option(-mavx)
+    add_extra_compiler_options("-mavx")
   else()
     if(ENABLE_SSE2)
-      add_extra_compiler_option(-msse2)
+      add_extra_compiler_options("-msse2")
     elseif(X86 OR X86_64)
-      add_extra_compiler_option(-mno-sse2)
+      add_extra_compiler_options("-mno-sse2")
     endif()
 
     if(ENABLE_SSE3)
-      add_extra_compiler_option(-msse3)
+      add_extra_compiler_options("-msse3")
     elseif(X86 OR X86_64)
-      #add_extra_compiler_option(-mno-sse3)
+      #add_extra_compiler_options("-mno-sse3")
     endif()
 
     if(ENABLE_SSSE3)
-      add_extra_compiler_option(-mssse3)
+      add_extra_compiler_options("-mssse3")
     elseif(X86 OR X86_64)
-      add_extra_compiler_option(-mno-ssse3)
+      add_extra_compiler_options("-mno-ssse3")
     endif()
   endif()
 
   if(X86 AND NOT IOS)
-    add_extra_compiler_option(-ffloat-store) #to not use the x87 FPU on x86, see PR #442 for more information
+    add_extra_compiler_options("-ffloat-store") #to not use the x87 FPU on x86, see PR #442 for more information
   endif()
 endif()
 
 if(MSVC AND X86_64)
   if(ENABLE_AVX AND NOT MSVC_VERSION LESS 1600)
-    add_extra_compiler_option("/arch:AVX")
+    add_extra_compiler_options("/arch:AVX")
   endif()
+endif()
+
+if(USE_PCL AND PCL_DEPS_COMPILE_OPTIONS)
+  add_extra_compiler_options("${PCL_DEPS_COMPILE_OPTIONS}")
 endif()
 
 if(UNIX)
   if(CMAKE_COMPILER_IS_GNUCXX)
-    add_extra_compiler_option(-fPIC) # Is needed for ANDROID too.
+    add_extra_compiler_options("-fPIC") # Is needed for ANDROID too.
   endif()
 endif()
 
 if(DEFINED WINRT_8_1)
-  add_extra_compiler_option(/ZW) # do not use with 8.0
+  add_extra_compiler_options("/ZW") # do not use with 8.0
 endif()
 
 if(MSVC)

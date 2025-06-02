@@ -115,7 +115,7 @@ public:
 
   virtual void track(const vpImage<unsigned char> &) VP_OVERRIDE;
   virtual void track(const vpImage<vpRGBa> &I_color) VP_OVERRIDE;
-#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS) && defined(VISP_HAVE_PCL_COMMON)
   virtual void track(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud);
 #endif
   virtual void track(const std::vector<vpColVector> &point_cloud, unsigned int width, unsigned int height);
@@ -180,7 +180,7 @@ protected:
 
   virtual void initFaceFromLines(vpMbtPolygon &polygon) VP_OVERRIDE;
 
-#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS) && defined(VISP_HAVE_PCL_COMMON)
   void segmentPointCloud(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud);
 #endif
   void segmentPointCloud(const std::vector<vpColVector> &point_cloud, unsigned int width, unsigned int height);

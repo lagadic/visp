@@ -49,6 +49,12 @@
 #include <visp3/visual_features/vpFeatureBuilder.h>
 
 BEGIN_VISP_NAMESPACE
+
+namespace
+{
+const unsigned int defaultRange = 0U;
+}
+
 void buildPlane(vpPoint &P, vpPoint &Q, vpPoint &R, vpPlane &plane);
 void buildLine(vpPoint &P1, vpPoint &P2, vpPoint &P3, vpPoint &P4, vpLine &L);
 
@@ -301,7 +307,7 @@ void vpMbtDistanceLine::setMovingEdge(vpMe *_me)
   \param doNotTrack : If true, ME are not tracked.
   \param mask : Mask image or nullptr if not wanted. Mask values that are set to true are considered in the tracking. To
   disable a pixel, set false.
-  \param initRange The range of the ME used during the initialization.
+  \param initRange : The range of the ME used during the initialization.
   \return false if an error occur, true otherwise.
 */
 bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, bool doNotTrack,
@@ -373,18 +379,18 @@ bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vp
         vpMeterPixelConversion::convertPoint(cam, linesLst[i].first.get_x(), linesLst[i].first.get_y(), ip1);
         vpMeterPixelConversion::convertPoint(cam, linesLst[i].second.get_x(), linesLst[i].second.get_y(), ip2);
 
-        static const unsigned int defaultRange = 0U;
         unsigned int initRange_;
         if (initRange < 0) {
           initRange_ = defaultRange;
         }
         else {
-          initRange_ = initRange;
+          initRange_ = static_cast<unsigned int>(initRange);
         }
+        int oldInitRange = me->getInitRange();
+        me->setInitRange(initRange_);
         vpMbtMeLine *melinePt = new vpMbtMeLine;
         melinePt->setMask(*mask);
         melinePt->setMe(me);
-        melinePt->setInitRange(initRange_);
 
         int marge = /*10*/ 5; // ou 5 normalement
         if (ip1.get_j() < ip2.get_j()) {
@@ -406,11 +412,13 @@ bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vp
 
         try {
           melinePt->initTracking(I, ip1, ip2, rho, theta, doNotTrack);
+          me->setInitRange(oldInitRange);
           meline.push_back(melinePt);
           nbFeature.push_back(static_cast<unsigned int>(melinePt->getMeList().size()));
           nbFeatureTotal += nbFeature.back();
         }
         catch (...) {
+          me->setInitRange(oldInitRange);
           delete melinePt;
           isvisible = false;
           return false;
@@ -432,6 +440,8 @@ bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vp
 */
 void vpMbtDistanceLine::trackMovingEdge(const vpImage<unsigned char> &I)
 {
+  int oldInitRange = me->getInitRange();
+  me->setInitRange(defaultRange);
   if (isvisible) {
     try {
       nbFeature.clear();
@@ -455,6 +465,7 @@ void vpMbtDistanceLine::trackMovingEdge(const vpImage<unsigned char> &I)
       isvisible = false;
     }
   }
+  me->setInitRange(oldInitRange);
 }
 
 /*!
@@ -465,6 +476,7 @@ void vpMbtDistanceLine::trackMovingEdge(const vpImage<unsigned char> &I)
 */
 void vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
 {
+  int oldInitRange = me->getInitRange();
   if (isvisible) {
     p1->changeFrame(cMo);
     p2->changeFrame(cMo);
@@ -558,7 +570,7 @@ void vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const 
               meline[i]->imin = static_cast<int>(ip2.get_i()) - marge;
               meline[i]->imax = static_cast<int>(ip1.get_i()) + marge;
             }
-
+            me->setInitRange(defaultRange);
             meline[i]->updateParameters(I, ip1, ip2, rho, theta);
             nbFeature[i] = static_cast<unsigned int>(meline[i]->getMeList().size());
             nbFeatureTotal += nbFeature[i];
@@ -589,6 +601,7 @@ void vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const 
       isvisible = false;
     }
   }
+  me->setInitRange(oldInitRange);
 }
 
 /*!

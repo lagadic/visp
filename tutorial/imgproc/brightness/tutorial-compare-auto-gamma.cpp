@@ -12,8 +12,7 @@
 #include <visp3/io/vpVideoReader.h>
 
 // VISP_HAVE_SIMDLIB is required for INTERPOLATION_AREA
-#if defined(VISP_HAVE_MODULE_IMGPROC) && defined(VISP_HAVE_SIMDLIB) && \
-  ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L)))
+#if defined(VISP_HAVE_MODULE_IMGPROC) && defined(VISP_HAVE_SIMDLIB) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #include <visp3/imgproc/vpImgproc.h>
 #include <memory>
 

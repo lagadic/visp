@@ -67,7 +67,23 @@ endmacro()
 # An other way could be to include PCLConfig.cmake, but in that case, visp-config and visp.pc
 # will be not able to give the names of PCL libraries when used without CMake.
 #
-macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
+macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries pcl_deps_compile_options)
+  # Get compile options like "$<$<COMPILE_LANGUAGE:CXX>:-msse4.2;-mfpmath=sse;-march=native;-mavx2>"
+  # end filter them out to keep "-msse4.2;-mfpmath=sse;-march=native;-mavx2"
+  foreach(lib_ ${${pcl_libraries}})
+    if(lib_ MATCHES "^pcl")
+      get_target_property(imported_compile_options_ ${lib_} INTERFACE_COMPILE_OPTIONS)
+      foreach(imported_compile_option_ ${imported_compile_options_})
+        string(REGEX REPLACE "\\$<\\$<COMPILE_LANGUAGE:CXX>:" "" imported_compile_option_ ${imported_compile_option_})
+        string(REGEX REPLACE ">" "" imported_compile_option_ ${imported_compile_option_})
+        if(imported_compile_option_)
+          list(APPEND ${pcl_deps_compile_options} ${imported_compile_option_})
+        endif()
+      endforeach()
+    endif()
+  endforeach()
+  vp_list_unique(${pcl_deps_compile_options})
+
   foreach(lib_ ${${pcl_libraries}})
     mark_as_advanced(${lib_}_LOCATION)
     if(TARGET ${lib_})

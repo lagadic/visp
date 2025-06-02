@@ -378,7 +378,7 @@ These settings could be tuned either from XML using \<ecm\> tag as:
       <nb_mask>180</nb_mask>
     </mask>
     <range>
-      <init_range> 1 </init_range>
+      <init_range> -1 </init_range>
       <tracking>8</tracking>
     </range>
     <contrast>

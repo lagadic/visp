@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,15 +28,14 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  * Description:
  * Real-time 3D point clouds plotter based on the PCL library.
- *
-*****************************************************************************/
+ */
 
-#ifndef _vpPclViewer_h_
-#define _vpPclViewer_h_
+#ifndef VP_PCL_VIEWER_H
+#define VP_PCL_VIEWER_H
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_VISUALIZATION) && defined(VISP_HAVE_THREADS)
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_VISUALIZATION) && defined(VISP_HAVE_PCL_IO) && defined(VISP_HAVE_THREADS)
 // System
 #include <thread>
 #include <mutex>

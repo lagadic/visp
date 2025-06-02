@@ -320,9 +320,6 @@ protected:
   vpRobust m_robust_edge;
   //! Display features
   std::vector<std::vector<double> > m_featuresToBeDisplayedEdge;
-
-  //! Init range used in the initMovingEdge method
-  int m_initRange;
 public:
   vpMbEdgeTracker();
   virtual ~vpMbEdgeTracker() VP_OVERRIDE;
@@ -343,26 +340,6 @@ public:
                                                                const vpHomogeneousMatrix &cMo,
                                                                const vpCameraParameters &cam,
                                                                bool displayFullModel = false) VP_OVERRIDE;
-
-  /**
-   * \brief Get the range of the ME used during the initialization.
-   *
-   * \return * int The range of the ME used during the initialization.
-   */
-  int getInitRange() const
-  {
-    return m_initRange;
-  }
-
-  /**
-   * \brief Set the range of the ME used during the initialization.
-   *
-   * \param[in] initRange The range of the ME used during the initialization.
-   */
-  void setInitRange(const int initRange)
-  {
-    m_initRange = initRange;
-  }
 
   /*!
    * Get the moving edge parameters.
@@ -537,7 +514,7 @@ protected:
   virtual void initFaceFromLines(vpMbtPolygon &polygon) VP_OVERRIDE;
   unsigned int initMbtTracking(unsigned int &nberrors_lines, unsigned int &nberrors_cylinders,
                                unsigned int &nberrors_circles);
-  void initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo, const int &initRange = -1);
+  void initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo, const bool &useInitRange = true);
   void initPyramid(const vpImage<unsigned char> &_I, std::vector<const vpImage<unsigned char> *> &_pyramid);
   void reInitLevel(const unsigned int _lvl);
   void reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo);

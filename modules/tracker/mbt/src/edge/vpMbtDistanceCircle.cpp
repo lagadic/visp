@@ -53,6 +53,11 @@
 #include <visp3/visual_features/vpFeatureEllipse.h>
 
 BEGIN_VISP_NAMESPACE
+namespace
+{
+const unsigned int defaultRange = 1U;
+}
+
 /*!
   Basic constructor
 */
@@ -162,31 +167,32 @@ bool vpMbtDistanceCircle::initMovingEdge(const vpImage<unsigned char> &I, const 
     }
 
     // Create the moving edges containers
-    static const unsigned int defaultRange = 1U;
     unsigned int initRange_;
     if (initRange < 0) {
       initRange_ = defaultRange;
     }
     else {
-      initRange_ = initRange;
+      initRange_ = static_cast<unsigned int>(initRange);
     }
 
     meEllipse = new vpMbtMeEllipse;
     meEllipse->setMask(*mask);
-    meEllipse->setInitRange(initRange_);
     meEllipse->setMe(me);
+    int oldInitRange = me->getInitRange();
+    me->setInitRange(initRange_);
 
     // meEllipse->setDisplay(vpMeSite::RANGE_RESULT) ; // TODO only for debug
-    meEllipse->setInitRange(me->getRange()); // TODO: check because set to zero for lines
 
     try {
       vpImagePoint ic;
       double n20_p, n11_p, n02_p;
       vpMeterPixelConversion::convertEllipse(cam, *circle, ic, n20_p, n11_p, n02_p);
       meEllipse->initTracking(I, ic, n20_p, n11_p, n02_p, doNotTrack);
+      me->setInitRange(oldInitRange);
     }
     catch (...) {
    // vpTRACE("the circle can't be initialized");
+      me->setInitRange(oldInitRange);
       return false;
     }
   }
@@ -202,6 +208,8 @@ bool vpMbtDistanceCircle::initMovingEdge(const vpImage<unsigned char> &I, const 
 void vpMbtDistanceCircle::trackMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
 {
   (void)cMo;
+  int oldInitRange = me->getInitRange();
+  me->setInitRange(defaultRange);
   if (isvisible) {
     try {
       meEllipse->track(I);
@@ -215,6 +223,7 @@ void vpMbtDistanceCircle::trackMovingEdge(const vpImage<unsigned char> &I, const
     // Update the number of features
     nbFeature = static_cast<unsigned int>(meEllipse->getMeList().size());
   }
+  me->setInitRange(oldInitRange);
 }
 
 /*!
@@ -227,6 +236,8 @@ void vpMbtDistanceCircle::trackMovingEdge(const vpImage<unsigned char> &I, const
 */
 void vpMbtDistanceCircle::updateMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
 {
+  int oldInitRange = me->getInitRange();
+  me->setInitRange(defaultRange);
   if (isvisible) {
     // Perspective projection
     circle->changeFrame(cMo);
@@ -249,6 +260,7 @@ void vpMbtDistanceCircle::updateMovingEdge(const vpImage<unsigned char> &I, cons
     }
     nbFeature = static_cast<unsigned int>(meEllipse->getMeList().size());
   }
+  me->setInitRange(oldInitRange);
 }
 
 /*!

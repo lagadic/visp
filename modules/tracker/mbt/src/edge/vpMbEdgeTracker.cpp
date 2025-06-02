@@ -67,7 +67,7 @@ vpMbEdgeTracker::vpMbEdgeTracker()
   percentageGdPt(0.4), scales(1), Ipyramid(0), scaleLevel(0), nbFeaturesForProjErrorComputation(0), m_factor(),
   m_robustLines(), m_robustCylinders(), m_robustCircles(), m_wLines(), m_wCylinders(), m_wCircles(), m_errorLines(),
   m_errorCylinders(), m_errorCircles(), m_L_edge(), m_error_edge(), m_w_edge(), m_weightedError_edge(),
-  m_robust_edge(), m_featuresToBeDisplayedEdge(), m_initRange(-1)
+  m_robust_edge(), m_featuresToBeDisplayedEdge()
 {
   scales[0] = true;
 
@@ -1535,18 +1535,18 @@ void vpMbEdgeTracker::displayFeaturesOnImage(const vpImage<vpRGBa> &I)
 
   \param I : The image.
   \param _cMo : The pose of the camera used to initialize the moving edges.
-  \param initRange: If negative, the m_initRange attribute will be used when calling initMovingEdge. Otherwise,
-  the value of this parameter is used when calling initMovingEdge() instead.
+  \param useInitRange: If true, the m_initRange attribute will be used when calling initMovingEdge. Otherwise,
+  the default value of the primitives will be used instead.
 */
-void vpMbEdgeTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo, const int &initRange)
+void vpMbEdgeTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo, const bool &useInitRange)
 {
   const bool doNotTrack = false;
   int initRange_;
-  if (initRange < 0) {
-    initRange_ = m_initRange;
+  if (useInitRange) {
+    initRange_ = me.getInitRange();
   }
   else {
-    initRange_ = initRange;
+    initRange_ = -1; // Asks to use default values
   }
 
   for (std::list<vpMbtDistanceLine *>::const_iterator it = lines[scaleLevel].begin(); it != lines[scaleLevel].end();

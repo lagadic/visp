@@ -163,10 +163,8 @@ public:
 
   /**
    * \brief Default copy constructor.
-   *
-   * \param[in] other
    */
-  vpHSV(const vpHSV<T, useFullScale> &other) = default;
+  vpHSV(const vpHSV<T, useFullScale> &) = default;
 
 #ifndef VISP_PYTHON_PREPROCESSOR_RUNNING
 /**
@@ -456,8 +454,8 @@ public:
   }
 
   // Operators
-  vpHSV<T, useFullScale> &operator=(vpHSV<T, useFullScale> &&v) = default;
-  vpHSV<T, useFullScale> &operator=(const vpHSV<T, useFullScale> &v) = default;
+  vpHSV<T, useFullScale> &operator=(vpHSV<T, useFullScale> &&) = default;
+  vpHSV<T, useFullScale> &operator=(const vpHSV<T, useFullScale> &) = default;
 
   vpHSV<T, useFullScale> &operator=(const vpColVector &v)
   {

@@ -59,7 +59,6 @@ public:
     m_useLod(false), m_minLineLengthThreshold(50.0), m_minPolygonAreaThreshold(2500.0),
     // <ecm>
     m_ecm(),
-    m_initRange(-1),
     // <klt>
     m_kltMaskBorder(0), m_kltMaxFeatures(0), m_kltWinSize(0), m_kltQualityValue(0.), m_kltMinDist(0.),
     m_kltHarrisParam(0.), m_kltBlockSize(0), m_kltPyramidLevels(0),
@@ -834,7 +833,7 @@ public:
 
     // current data values.
     unsigned int m_range_tracking = m_ecm.getRange();
-    int initRange = -1;
+    int initRange = 0;
 
     for (pugi::xml_node dataNode = node.first_child(); dataNode; dataNode = dataNode.next_sibling()) {
       if (dataNode.type() == pugi::node_element) {
@@ -858,7 +857,7 @@ public:
     }
 
     m_ecm.setRange(m_range_tracking);
-    m_initRange = initRange;
+    m_ecm.setInitRange(initRange);
 
     if (m_verbose) {
       if (!tracking_node) {
@@ -868,7 +867,7 @@ public:
         std::cout << "me : range : tracking : " << m_ecm.getRange() << std::endl;
       }
       if (!init_node) {
-        std::cout << "me : range : init range : " << m_initRange << " (default)" << std::endl;
+        std::cout << "me : range : init range : " << m_ecm.getInitRange() << " (default)" << std::endl;
       }
       else {
         std::cout << "me : range : init range : " << initRange << std::endl;
@@ -1282,7 +1281,6 @@ public:
   void getCameraParameters(vpCameraParameters &cam) const { cam = m_cam; }
 
   void getEdgeMe(vpMe &moving_edge) const { moving_edge = m_ecm; }
-  int getInitRange() const { return m_initRange; }
 
   unsigned int getDepthDenseSamplingStepX() const { return m_depthDenseSamplingStepX; }
   unsigned int getDepthDenseSamplingStepY() const { return m_depthDenseSamplingStepY; }
@@ -1396,8 +1394,6 @@ protected:
   // Edge
   //! Moving edges parameters.
   vpMe m_ecm;
-  //! Range used in the initMovingEdge methods. Negative value leads to the use of default parameters.
-  int m_initRange;
   // KLT
   //! Border of the mask used on Klt points
   unsigned int m_kltMaskBorder;
@@ -1624,11 +1620,6 @@ void vpMbtXmlGenericParser::getCameraParameters(vpCameraParameters &cam) const {
   Get moving edge parameters.
 */
 void vpMbtXmlGenericParser::getEdgeMe(vpMe &ecm) const { m_impl->getEdgeMe(ecm); }
-
-/*!
- * Get the init range used in the initMovingEdge methods by the vpMbEdgeTracker .
- */
-int vpMbtXmlGenericParser::getInitRange() const { return m_impl->getInitRange(); }
 
 /*!
   Get depth dense sampling step in X.

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Generic model-based tracker.
- *
-*****************************************************************************/
+ */
 
 #include <visp3/mbt/vpMbGenericTracker.h>
 
@@ -3267,7 +3265,7 @@ void vpMbGenericTracker::loadModel(const std::map<std::string, std::string> &map
   }
 }
 
-#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS) && defined(VISP_HAVE_PCL_COMMON)
 void vpMbGenericTracker::preTracking(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
   std::map<std::string, pcl::PointCloud<pcl::PointXYZ>::ConstPtr> &mapOfPointClouds)
 {
@@ -5450,7 +5448,7 @@ void vpMbGenericTracker::track(std::map<std::string, const vpImage<vpRGBa> *> &m
   track(mapOfColorImages, mapOfPointClouds, mapOfWidths, mapOfHeights);
 }
 
-#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS) && defined(VISP_HAVE_PCL_COMMON)
 /*!
   Realize the tracking of the object in the image.
 
@@ -6770,7 +6768,6 @@ void vpMbGenericTracker::TrackerWrapper::loadConfigFile(const std::string &confi
     }
 
     xmlp.parse(configFile);
-    m_initRange = xmlp.getInitRange();
   }
   catch (...) {
     throw vpException(vpException::ioError, "Can't open XML file \"%s\"\n ", configFile.c_str());
@@ -6841,9 +6838,9 @@ void vpMbGenericTracker::TrackerWrapper::loadConfigFile(const std::string &confi
 #endif
 }
 
-#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS) && defined(VISP_HAVE_PCL_COMMON)
 void vpMbGenericTracker::TrackerWrapper::postTracking(const vpImage<unsigned char> *const ptr_I,
-  const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud)
+                                                      const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud)
 {
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   // KLT
@@ -6877,7 +6874,7 @@ void vpMbGenericTracker::TrackerWrapper::postTracking(const vpImage<unsigned cha
   if (m_trackerType & EDGE_TRACKER) {
     vpMbEdgeTracker::updateMovingEdge(*ptr_I);
 
-    vpMbEdgeTracker::initMovingEdge(*ptr_I, m_cMo, 1);
+    vpMbEdgeTracker::initMovingEdge(*ptr_I, m_cMo, false);
     // Reinit the moving edge for the lines which need it.
     vpMbEdgeTracker::reinitMovingEdge(*ptr_I, m_cMo);
 
@@ -6888,7 +6885,7 @@ void vpMbGenericTracker::TrackerWrapper::postTracking(const vpImage<unsigned cha
 }
 
 void vpMbGenericTracker::TrackerWrapper::preTracking(const vpImage<unsigned char> *const ptr_I,
-  const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud)
+                                                     const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud)
 {
   if (m_trackerType & EDGE_TRACKER) {
     try {
@@ -6970,7 +6967,7 @@ void vpMbGenericTracker::TrackerWrapper::postTracking(const vpImage<unsigned cha
   if (m_trackerType & EDGE_TRACKER) {
     vpMbEdgeTracker::updateMovingEdge(*ptr_I);
 
-    vpMbEdgeTracker::initMovingEdge(*ptr_I, m_cMo, 1);
+    vpMbEdgeTracker::initMovingEdge(*ptr_I, m_cMo, false);
     // Reinit the moving edge for the lines which need it.
     vpMbEdgeTracker::reinitMovingEdge(*ptr_I, m_cMo);
 
@@ -7350,7 +7347,7 @@ void vpMbGenericTracker::TrackerWrapper::testTracking()
 }
 
 void vpMbGenericTracker::TrackerWrapper::track(const vpImage<unsigned char> &
-#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS) && defined(VISP_HAVE_PCL_COMMON)
   I
 #endif
 )
@@ -7364,7 +7361,7 @@ void vpMbGenericTracker::TrackerWrapper::track(const vpImage<unsigned char> &
     return;
   }
 
-#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS) && defined(VISP_HAVE_PCL_COMMON)
   track(&I, nullptr);
 #endif
 }
@@ -7374,9 +7371,9 @@ void vpMbGenericTracker::TrackerWrapper::track(const vpImage<vpRGBa> &)
   // not exposed to the public API, only for debug
 }
 
-#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS) && defined(VISP_HAVE_PCL_COMMON)
 void vpMbGenericTracker::TrackerWrapper::track(const vpImage<unsigned char> *const ptr_I,
-  const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud)
+                                               const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud)
 {
   if ((m_trackerType & (EDGE_TRACKER |
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)

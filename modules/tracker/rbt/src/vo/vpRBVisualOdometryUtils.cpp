@@ -128,7 +128,7 @@ void vpRBVisualOdometryUtils::levenbergMarquardtKeypoints2D(const vpMatrix &poin
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-    for (unsigned int i = 0; i < points3d.getRows(); ++i) {
+    for (int i = 0; i < static_cast<int>(points3d.getRows()); ++i) {
       const double X = cXt[0][i] + t[0], Y = cXt[1][i] + t[1], Z = cXt[2][i] + t[2];
       const double x = X / Z, y = Y / Z;
       e[i * 2] = x - observations[i][0];
@@ -201,7 +201,7 @@ void vpRBVisualOdometryUtils::levenbergMarquardtKeypoints3D(const vpMatrix &poin
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-    for (unsigned int i = 0; i < points3d.getRows(); ++i) {
+    for (int i = 0; i < static_cast<int>(points3d.getRows()); ++i) {
       const double X = cXt[0][i] + t[0], Y = cXt[1][i] + t[1], Z = cXt[2][i] + t[2];
 
       e[i * 3] = X - observations[i][0];
