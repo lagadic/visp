@@ -66,14 +66,15 @@ class vpRBVisualOdometry;
  *
  * The RBT is an extension and rework of \cite Petit14a and of the Model-Based Tracker.
  *
- * Tracking is framed as a non-linear optimization problem where a visual error (formulated by comparing **renders** with images) should be minimized.
+ * Tracking is framed as a non-linear optimization problem where a visual error (formulated by comparing **renders**
+ * with images) should be minimized.
  *
  * The RBT supports a various set of features, from tracked 2D points to dense depth information.
- * For a list of base features, see \ref group_rbt_trackers
+ * For a list of base features, see \ref group_rbt_trackers.
  *
  * The RBT can be extended and you can add your own features and other functionalities to the pipeline.
  *
- *  For a detailed description of the tracker, how to use it and extend it, see \ref tutorial-tracking-rbt
+ * For a detailed description of the tracker, how to use it and extend it, see \ref tutorial-tracking-rbt.
  *
  * \ingroup group_rbt_core
 */

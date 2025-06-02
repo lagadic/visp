@@ -129,18 +129,18 @@ Roughly the algorithm works as follows:
 
 Object rendering is done through Panda3D. The object is rendered at the last computed pose.
 
-All the information derived from the render is stored into a vpRBRenderData, in the current frame data (vpRBFeatureTrackerInput).
-This object contains information such as:
+All the information derived from the render is stored into a vpRBRenderData, in the current frame data
+(vpRBFeatureTrackerInput). This object contains information such as:
 
-- the 3D surface normals, expressed as 3D unit vectors
+- The 3D surface normals, expressed as 3D unit vectors
 - The depth map, in meters (Rendered using vpPanda3DGeometryRenderer)
 - The object silhouette (extracted using vpPanda3DDepthCannyFilter and vpRBTracker::extractSilhouettePoints)
 - The image area containing the object (represented by a vpRect)
-- the pose at which the object was rendered: When implementing new features or algorithms,
- it is preferable to use this pose when extracting data from the render, instead of those provided in the functions to redefine.
+- The pose at which the object was rendered: When implementing new features or algorithms,
+  it is preferable to use this pose when extracting data from the render, instead of those provided in the functions
+  to redefine.
 
 \image html rbt-rendering.png Rendering is used to extract geometric information width=50%
-
 
 For more information on how rendering is performed you can examine the following sources:
 - vpRBTracker::updateRender
@@ -149,82 +149,94 @@ For more information on how rendering is performed you can examine the following
 - vpPanda3DRendererSet
 - vpPanda3DBaseRenderer
 
-
 \subsection rbt_tracking_features Trackable features
 
 This section details the different features that can be used to track the object.
 The RBT is flexible, and each feature can be added or removed, depending on your scenario and available sensor.
 
-For each feature, a weighting function is computed at every iteration, and a user specified weight can be used to consider certain features as more or less important than others.
+For each feature, a weighting function is computed at every iteration, and a user specified weight can be used to
+consider certain features as more or less important than others.
 
-All features inherit from a base class, vpRBFeatureTracker, that defines the different functionalities that should be implemented for a feature to be trackable.
+All features inherit from a base class, vpRBFeatureTracker, that defines the different functionalities that should be
+implemented for a feature to be trackable.
 
-To add or interact with the features of the RBT, you can use vpRBTracker::addTracker and vpRBTracker::getFeatureTrackers.
+To add or interact with the features of the RBT, you can use vpRBTracker::addTracker() and
+vpRBTracker::getFeatureTrackers().
 
 \subsubsection rbt_tracking_available_features Feature list
 
 | Feature | Class   | Required inputs | Note
-| :----  | :----  | :----:          | ----:
-| KLT 2D points     | vpRBKltTracker     | Grayscale image | Requires OpenCV
-| Silhouette moving edges  | vpRBSilhouetteMeTracker   | Grayscale image | -
-| Silhouette color edges  | vpRBSilhouetteCCDTracker   | Color image  | More expensive than moving edge based tracker
-| Depth map (point-to-plane)  | vpRBDenseDepthTracker   | Depth image  | -
+| :-----  | :-----  | :----:          | ----:
+| KLT 2D points              | vpRBKltTracker           | Grayscale image | Requires OpenCV
+| Silhouette moving edges    | vpRBSilhouetteMeTracker  | Grayscale image | -
+| Silhouette color edges     | vpRBSilhouetteCCDTracker | Color image     | More expensive than silhouette moving edge based tracker
+| Depth map (point-to-plane) | vpRBDenseDepthTracker    | Depth image     | -
 
 
-- **KLT points** rely on the vpKltOpenCV class to extract and track 2D KLT points from the current image, which are then associated with points on the 3D model.
-The error to minimize is then the reprojection error between the 2D points in the current image and the reprojection of their associated 3D points.
+- **KLT points** Rely on the vpKltOpencv class to extract and track 2D KLT points from the current image, which are
+  then associated with points on the 3D model. The error to minimize is then the reprojection error between the 2D
+  points in the current image and the reprojection of their associated 3D points.
 
-- **Silhouette moving edges** Rely on the rendering to first extract the object depth disparities, which are hypothesized to create disparities in the luminance image as well.
-For each point of the depth contour, the most likely edge in its neighbourhood in the luminance map is detected using the moving edge framework.
+- **Silhouette moving edges** Rely on the rendering to first extract the object depth disparities, which are
+  hypothesized to create disparities in the luminance image as well. For each point of the depth contour, the most
+  likely edge in its neighborhood in the luminance map is detected using the moving edge framework.
 
-- **Silhouette Color edges** Similarly to the silhouette moving edges, the depth disparity is first used to extract the outer silhouette contours.
-Then, based on the Contracting Curve Density algorithm, color statistics are computed inside and outside the silhouette and a per pixel error is computed.
-This error is minimized when the difference between the inner and outer color distributions are maximized (i.e, there is a clear difference between the object's color and the environment).
-Unlike the moving edge approach, the error is not geometric in nature, but rather photometric.
+- **Silhouette Color edges** Similarly to the silhouette moving edges, the depth disparity is first used to extract
+  the outer silhouette contours. Then, based on the Contracting Curve Density algorithm, color statistics are computed
+  inside and outside the silhouette and a per pixel error is computed. This error is minimized when the difference
+  between the inner and outer color distributions are maximized (i.e, there is a clear difference between the object's
+  color and the environment). Unlike the moving edge approach, the error is not geometric in nature, but rather
+  photometric.
 
-- **Depth** The depth information can be used and compared to the rendered depth. With this feature, the error to minimize is the point-to-plane distance.
-The point is sampled from the current depth map, while the plane is computed from the rendered 3D model, using its distance to the camera and surface normal.
-The plane is continuously updated to minimize the distance to the sample depth point.
+- **Depth** The depth information can be used and compared to the rendered depth. With this feature, the error to
+  minimize is the point-to-plane distance. The point is sampled from the current depth map, while the plane is computed
+  from the rendered 3D model, using its distance to the camera and surface normal. The plane is continuously updated
+  to minimize the distance to the sample depth point.
 
 To define you own features (advanced), see \ref rbt_extension_features.
 
 \subsection rbt_tracking_filtering Feature filtering
 
-When tracking, it is possible for occlusions or lighting artifacts to appear. In those cases, considering ill-defined or ill-matched features may lead to tracking failure.
-To handle those cases and improve tracking reliability, the RBT comes with two mechanisms:
+When tracking, it is possible for occlusions or lighting artifacts to appear. In those cases, considering ill-defined
+or ill-matched features may lead to tracking failure. To handle those cases and improve tracking reliability, the RBT
+comes with two mechanisms:
 
 - A masking/segmentation approach, that outputs a per-pixel probability map that a given pixel belongs to the object
-- Robust error criterias. Each feature defined above uses an M-Estimator (through vpRobust) to reweigh the errors to be minimized and reduce the influence of outliers.
+- Robust error criteria. Each feature defined above uses an M-Estimator (through vpRobust) to reweigh the errors to be
+  minimized and reduce the influence of outliers.
 
 While M-estimators are always used, the masking approach is entirely optional.
-To enable masking, you should call vpRBTracker::setObjectSegmentationMethod with the method that you wish to use. To disable it, pass it *nullptr* as input argument.
+To enable masking, you should call vpRBTracker::setObjectSegmentationMethod() with the method that you wish to use.
+To disable it, pass it *nullptr* as input argument.
 As of now, the only method available is vpColorHistogramMask.
 This method computes time-smoothed histograms of the object and background's color distributions,
 and compares their output probabilities for a given pixel color to compute an object membership score.
-If available, this method may use camera depth information to update the object histograms using only reliable pixels in terms of depth (where object and render are closely aligned)
+If available, this method may use camera depth information to update the object histograms using only reliable pixels
+in terms of depth (where object and render are closely aligned)
 This method is ideal when there is a clear photometric distinction between object and environment.
 
-You may define your own approach to object segmentation (by, e.g., using a neural network to compare feature maps or using more depth information)
-by inheriting from vpRBObjectSegmentationMethod.
+You may define your own approach to object segmentation (by, e.g., using a neural network to compare feature maps or
+using more depth information) by inheriting from vpRBObjectSegmentationMethod.
 
-Note that the use of the probability map output by the segmentation method is implemented differently for each type of feature.
-For instance, contour based method will search for strong probability differences along the contour normal,
-while point based feature may only look in a small neighbourhood to see if a given area belong to the object.
+Note that the use of the probability map output by the segmentation method is implemented differently for each type of
+feature. For instance, contour based method will search for strong probability differences along the contour normal,
+while point based feature may only look in a small neighborhood to see if a given area belong to the object.
 
 The diagram below sums up the combination of the masking and outlier rejection steps.
 
-\image html rbt-filtering.jpg Masking is first used to remove features in cases such as strong occlusions. Remaining outliers are filtered through the use of robust estimators. width=25%
+\image html rbt-filtering.jpg Masking is first used to remove features in cases such as strong occlusions. Remaining outliers are filtered through the use of robust estimators. width=50%
 
 \subsection rbt_tracking_optimization Minimization problem
 
-To update the camera pose, the RBT frames tracking as a non-linear optimization problem.
-The error to be minimized is the difference between features extracted from the 3D model that have been matched with features in the current images.
-For each feature, we must compute the visual error as well as its relationship to the pose (the Jacobian).
+To update the camera pose, the RBT implements tracking as a non-linear optimization problem.
+The error to be minimized is the difference between features extracted from the 3D model that have been matched with
+features in the current images. For each feature, we must compute the visual error as well as its relationship to the
+pose (the Jacobian).
 
 The tracking flow is as follows:
 - For each tracked feature type
-  - Extract features from the renders. Potentially use segmentation mask to reject unreliable data.
-  - Match/track features in the image acquired by the camera
+  - Extract features from the renders. Potentially use segmentation mask to reject unreliable data
+  - Match/track features in the image acquired by the camera.
 
 Then, optimization is an iterative process:
 - While optimization has not converged or maximum number of iterations has not been reached:
@@ -232,55 +244,62 @@ Then, optimization is an iterative process:
     - Update feature representation (extracted from the model) with the new pose \f$^{c}\mathbf{M}_{o}\f$
     - Compute feature error
     - Compute feature Jacobian
-  - Compute pose displacement, by performing a weighted combination of the feature errors and Jacobians.
+  - Compute pose displacement, by performing a weighted combination of the feature errors and Jacobians
   - Update \f$^{c}\mathbf{M}_{o}\f$
-  - Check for convergence
+  - Check for convergence.
 
-To influence the importance of each feature type, the user can tweak its weight by calling vpRBTracker::setTrackerWeight.
+To influence the importance of each feature type, the user can tweak its weight by calling
+vpRBFeatureTracker::setTrackerWeight().
 
-There are several options to tweak the behaviour of the optimization process, which is based on a Levenberg-Marquardt approach.
-See \ref rbt_tracking_config for more information.
+There are several options to tweak the behavior of the optimization process, which is based on a Levenberg-Marquardt
+approach. See \ref rbt_tracking_config for more information.
 
 \subsection rbt_drift_detection Detecting tracking failure
 
 Tracking may of course fail. It is thus important to have some measure of confidence in the tracking process.
 
-if this option is enabled, then the RBT will compute a confidence metric for the compute object pose.
+If this option is enabled, then the RBT will compute a confidence metric for the compute object pose.
 
 It is then your responsibility to use this score to call for a tracker reinitialization.
 
-To enable drift detection, you should call vpRBTracker::setDriftDetectionMethod with the scoring method that you wish to use.
+To enable drift detection, you should call vpRBTracker::setDriftDetectionMethod() with the scoring method that you wish
+to use.
 
-The method that is provided by default, vpRBProbabilistic3DDriftDetector, is an online method that compares the photometric information of the model in the current image with a representation that is learned online.
+The method that is provided by default, vpRBProbabilistic3DDriftDetector, is an online method that compares the
+photometric information of the model in the current image with a representation that is learned online.
 If available, it will also compare the depth in the render data with the depth from the camera.
 This representation is a set of 3D points, for which some color statistics are stored and updated every frame.
 
-This method relies on framing color and depth information as Gaussian distributions. Their spread is controlled by the user and a larger spread will result in a greater confidence and smoother changes in the confidence score.
+This method relies on framing color and depth information as Gaussian distributions. Their spread is controlled by the
+user and a larger spread will result in a greater confidence and smoother changes in the confidence score.
 
-In addition, since color estimation is performed online, the variance of the color distribution of a point is used to factor to weigh its importance with respect to other sample when computing the final score.
-This means that more importance will be given to points that have a stable color (that are in a smooth color region of the model and that were not too impacted by lighting changes in the previous frames).
+In addition, since color estimation is performed online, the variance of the color distribution of a point is used to
+factor to weigh its importance with respect to other sample when computing the final score.
+This means that more importance will be given to points that have a stable color (that are in a smooth color region of
+the model and that were not too impacted by lighting changes in the previous frames).
 
 
 \section rbt_tracking_config Configuration
 
-To ease the use of the RBT, it is strongly recommended to have compiled ViSP with the 3rd party that enables JSON support. This section describes how to configure the tracker.
+To ease the use of the RBT, it is strongly recommended to have compiled ViSP with the 3rd party that enables
+JSON support (see \ref soft_tool_json installation instructions). This section describes how to configure the tracker.
 
 \subsection rbt_tracking_config_in_code In-code configuration
 
 If you wish or must configure the tracker directly from the code, these are the main methods of interest:
 
-- vpRBTracker::setModelPath to set the 3D model to use
-- vpRBTracker::addTracker to add a new feature to track
-- vpRBTracker::getFeatureTrackers to retrieve the currently tracked features. You can configure each feature separately.
-- vpRBTracker::setCameraParameters to set the camera intrinsics and image resolution
-- vpRBTracker::setOdometryMethod to set the method used to perform visual odometry as a preprocessing step
-- vpRBTracker::setDriftDetector to set the algorithm used to estimate the tracking confidence
-- vpRBTracker::setObjectSegmentationMethod to set the pixelwise segmentation computation method.
-
+- vpRBTracker::setModelPath() to set the 3D model to use.
+- vpRBTracker::addTracker() to add a new feature to track.
+- vpRBTracker::getFeatureTrackers() to retrieve the currently tracked features. You can configure each feature separately.
+- vpRBTracker::setCameraParameters() to set the camera intrinsics and image resolution.
+- vpRBTracker::setOdometryMethod() to set the method used to perform visual odometry as a preprocessing step.
+- vpRBTracker::setDriftDetector() to set the algorithm used to estimate the tracking confidence.
+- vpRBTracker::setObjectSegmentationMethod() to set the pixel wise segmentation computation method.
 
 \subsection rbt_tracking_config_json JSON configuration
 
-To load a json configuration file, you can call vpRBTracker::loadConfigurationFile or vpRBTracker::loadJsonConfiguration.
+To load a json configuration file, you can call vpRBTracker::loadConfigurationFile() or
+vpRBSilhouetteMeTracker::loadJsonConfiguration().
 
 This subsection details the parameters that you can tweak through JSON.
 
@@ -288,15 +307,15 @@ This subsection details the parameters that you can tweak through JSON.
 
 | Field | Type    | Description
 | :----  | :----  | :----
-| model | string | Optional path to the 3D model of the object. If not present, it should be set using vpRBTracker::setModelPath before calling vpRBTracker::startTracking
-| displaySilhouette | Boolean | Whether to display the object silhouette from the last rendered frame when calling vpRBTracker::display. Note that since this the last rendered frame, it may appear laggy.
+| model | string | Optional path to the 3D model of the object. If not present, it should be set using vpRBTracker::setModelPath() before calling vpRBTracker::startTracking()
+| displaySilhouette | Boolean | Whether to display the object silhouette from the last rendered frame when calling vpRBTracker::display(). Note that since this is the last rendered frame, it may appear laggy.
 | updateRenderThreshold | float | Optional. The motion threshold between the last render and the current object pose above which the object should be rerendered and the renders updated. By default, this metric is specified in meters. This threshold is also used when rerendering after odometry. Set this value to 0 to always perform rendering.
-| camera | Dictionary | Optional camera intrinsics. See \ref rbt_tracking_config_camera
-| vvs | Dictionary | Parameters for optimization. \ref rbt_tracking_config_optimization
-| silhouetteExtractionSettings | Dictionary | Parameters for the contour extraction from the renders. \ref rbt_tracking_config_silhouette
-| mask | Dictionary | Optional segmentation method configuration. \ref rbt_tracking_config_mask
-| drift | Dictionary | Optional drift detection method configuration. \ref rbt_tracking_config_drift
-| features | List | List of features to track. \ref rbt_tracking_config_features
+| camera | Dictionary | Optional camera intrinsics. See \ref rbt_tracking_config_camera.
+| vvs | Dictionary | Parameters for optimization. See \ref rbt_tracking_config_optimization.
+| silhouetteExtractionSettings | Dictionary | Parameters for the contour extraction from the renders. See \ref rbt_tracking_config_silhouette.
+| mask | Dictionary | Optional segmentation method configuration. See \ref rbt_tracking_config_mask.
+| drift | Dictionary | Optional drift detection method configuration. See \ref rbt_tracking_config_drift.
+| features | List | List of features to track. See \ref rbt_tracking_config_features.
 
 
 \subsubsection rbt_tracking_config_camera Camera configuration
@@ -373,18 +392,22 @@ Example configuration:
 
 To control the silhouette processing, there are two main settings **threshold** and **sampling**.
 
-The threshold settings serve to determine what is a silhouette point or not. Silhouette extraction is based on depth disparity between neighbouring render pixels.
-If there is a strong depth disparity, then a point is considerer as belonging to the silhouette.
+The threshold settings serve to determine what is a silhouette point or not. Silhouette extraction is based on depth
+disparity between neighboring render pixels.
+If there is a strong depth disparity, then a point is considered as belonging to the silhouette.
 
-The threshold can be either defined as an absolute value, or relatively to the object's "depth" size (the difference between the farthest and closest object points in the camera).
+The threshold can be either defined as an absolute value, or relatively to the object's "depth" size (the difference
+between the farthest and closest object points in the camera).
 
 | Field | Type    | Description
 | :----  | :----  | :----
 | type | string | Either "relative" or "absolute". If relative, specified as a fraction of the difference between the clipping planes. If absolute, specified in meters.
 | value | double | Value of the threshold.
 
-The thresholding parameters are used to determine whether a point belongs to the silhouette, but processing the whole silhouette may too cumbersome as there can thousands of contour pixels.
-Thus, we can sample the silhouette to obtain a subset of points. Sampling as a strong impact on the runtime performance of the tracker.
+The thresholding parameters are used to determine whether a point belongs to the silhouette, but processing the whole
+silhouette may too cumbersome as there can thousands of contour pixels.
+Thus, we can sample the silhouette to obtain a subset of points. Sampling as a strong impact on the runtime performance
+of the tracker.
 
 | Field | Type    | Description
 | :----  | :----  | :----
@@ -415,9 +438,9 @@ Example configuration:
 
 | Field | Type    | Description
 | :----  | :----  | :----
-| type | string | set to "histogram" to use this method.
-| bins | int | Should be a power of 2 (e.g, 16 or 32). Determines the number of bins used per color component for the object and background histograms. Less bins will leads to less noise in the pixel map, but may lead to a less confident map.
-| objectUpdateRate | float | Object histogram update rate. should be between 0 and 1. A value of 1 means that only the last frame will be used in the histogram. Values below will keep a memory of the last seen frames.
+| type | string | Set to "histogram" to use this method.
+| bins | int | Should be a power of 2 (e.g, 16 or 32). Determines the number of bins used per color component for the object and background histograms. Less bins will lead to less noise in the pixel map, but may lead to a less confident map.
+| objectUpdateRate | float | Object histogram update rate. Should be between 0 and 1. A value of 1 means that only the last frame will be used in the histogram. Values below will keep a memory of the last seen frames.
 | backgroundUpdateRate | float | Background histogram update rate. Same as objectUpdateRate.
 | maxDepthError | float | When depth information is available, Render depth and actual depth will be compared. For a given pixel of the object, if the depth difference is too high, the pixel will be used to compute the background histogram instead of the object histogram. This helps alleviate the influence of occlusion on the mask. Tihs parameter controls the max tolerated depth difference, expressed in meters.
 | computeOnlyOnBoundingBox | boolean | Whether to compute the mask only in the area containing the object. If true, this will save computation time, but may lead to preserving silhouette contours that should not be.
@@ -439,8 +462,8 @@ Example configuration:
 
 | Field | Type    | Description
 | :----  | :----  | :----
-| type | string | set to "probabilistic" to use this method.
-| colorUpdateRate | float |  Update rate for the color statistics of each point on the object's surface
+| type | string | Set to "probabilistic" to use this method.
+| colorUpdateRate | float |  Update rate for the color statistics of each point on the object's surface.
 | initialColorSigma | float | Standard deviation (R,G,B) used to compute the error function between the observed color and the estimated color distribution.
 | depthSigma | float | Standard deviation used to compute the error function between the observed pixel depth and rendered depth.
 | filteringMaxDistance | float | Minimum error between the rendered depth and the stored point's distance to the camera. This is used to check whether a 3D point is visible from the camera. This value is in meters, and should be left to a small value.
@@ -451,14 +474,14 @@ Example configuration:
 
 The type of feature that is used depends on the "type" value of each feature dictionary.
 
-the "features" object of the main dictionary is a list, as multiple features can be used.
+The "features" object of the main dictionary is a list, as multiple features can be used.
 
 For each feature, these values can be defined:
 
 | Field | Type    | Description
 | :----  | :----  | :----
 | weight | float | The importance given by the user to this feature type.
-| display | boolean | Whether the features should be displayed when calling vpRBTracker::display.
+| display | boolean | Whether the features should be displayed when calling vpRBTracker::display().
 
 
 \paragraph rbt_tracking_config_features_klt vpRBKltTracker
@@ -492,7 +515,7 @@ Example configuration:
 | Field | Type    | Description
 | :----  | :----  | :----
 | useMask | boolean | Whether, if available, the segmentation mask should be used to filter wrong features.
-| minMaskConfidence | float | if useMask is true, minimum confidence for a feature to be accepted.
+| minMaskConfidence | float | If useMask is true, minimum confidence for a feature to be accepted.
 | maxReprojectionErrorPixels | float | Maximum reprojection error, above which a tracked KLT point is rejected for future tracking iterations.
 | newPointsMinPixelDistance | float | During KLT resampling, Minimum euclidean distance  that a point should have with all other to be considered for tracking.
 | minimumNumPoints | int | Minimum number of points that should be tracked at a given timestep. If the number of points is below, then KLT tracking is fully reinitialized.
@@ -532,7 +555,7 @@ Example configuration:
 | :----  | :----  | :----
 | numCandidates | int | Number of edge locations that are preserved as potential matches for a given silhouette point.
 | useMask | boolean | Whether, if available, the segmentation mask should be used to filter wrong features. Here, the segmentation mask is examined along the silhouette normal to find a disparity in the probability mask (marking a sharp distinction between object and background).
-| minMaskConfidence | float | if useMask is true, minimum confidence disparity for a feature to be accepted.
+| minMaskConfidence | float | If useMask is true, minimum confidence disparity for a feature to be accepted.
 | movingEdge | dictionary | Moving edge tracker settings. See vpMe for more information.
 
 \paragraph rbt_tracking_config_features_ccd vpRBSilhouetteCCDTracker
@@ -575,7 +598,7 @@ Example configuration to handle larger motions:
 | Field | Type    | Description
 | :----  | :----  | :----
 | useMask | boolean | Whether, if available, the segmentation mask should be used to filter wrong features. Here, the segmentation mask is examined along the silhouette normal to find a disparity in the probability mask (marking a sharp distinction between object and background).
-| minMaskConfidence | float | if useMask is true, minimum confidence disparity for a feature to be accepted.
+| minMaskConfidence | float | If useMask is true, minimum confidence disparity for a feature to be accepted.
 | maxNumPoints | int | Resample number of points to use for this tracker. This allows to use many points for the ME-based tracker, while retaining fewer points for this tracker (it is more expensive). Leave to 0 to not perform resampling.
 | temporalSmoothing | float | Interpolation factor, between 0 and 1. This allows to blend a contour point's current color statistics with those computed on the previous frame. This may improve stability, but may also lead to smaller motion.
 | ccd | dictionary | Contracting curve density algorithm settings. See below.
@@ -609,23 +632,24 @@ Example configuration:
 | Field | Type    | Description
 | :----  | :----  | :----
 | useMask | boolean | Whether, if available, the segmentation mask should be used to filter wrong features.
-| minMaskConfidence | float | if useMask is true, minimum confidence for a feature to be accepted.
+| minMaskConfidence | float | If useMask is true, minimum confidence for a feature to be accepted.
 | step | int | Step in pixels to sample the render map. A low value for this parameter will lead to a larger number of depth features. As this step is used when iterating on rows and columns of the render images, the number of depth features will quickly decrease as the step grows.
 
 \section rbt_tracking_usage Tracker usage
 
-We will now focus on an example usage of the tracker, using a Realsense camera. While we focus on this example, another one that uses prererecorded sequences is available in \ref rbt_tracking_examples
+We will now focus on an example usage of the tracker, using a Realsense camera. While we focus on this example, another
+one that uses prererecorded sequences is available in \ref rbt_tracking_examples.
 
 To run the program, start by placing yourself in the ViSP build directory.
 Assuming you have compiled and built the tutorials, navigate to the tutorial folder:
 \verbatim
-~/visp_build $ cd tutorial/tracking/render-based
+~/visp-build $ cd tutorial/tracking/render-based
 \endverbatim
 
 You can then examine the command line arguments with:
 
 \code{.sh}
-~/visp_build/tutorial-tracking/render-based $ ./tutorial-rbt-realsense -h
+~/visp-build/tutorial-tracking/render-based $ ./tutorial-rbt-realsense -h
 \endcode
 
 Which outputs:
@@ -728,30 +752,36 @@ Example JSON configuration file:
 \endverbatim
 
 You can see that among those arguments, the script has two main parameters.
-The first, `--tracker` is the path to the .json configuration file, defined following the details given in \ref rbt_tracking_config.
-The second `--object`, is the path to the 3D model (in a format readable by the Panda3D engine). Alternatively, it can specified in the .json file.
+The first, `--tracker` is the path to the .json configuration file, defined following the details given in
+\ref rbt_tracking_config.
+The second `--object`, is the path to the 3D model (in a format readable by the Panda3D engine).
+Alternatively, it can be specified in the .json file.
 
 
 Here, we will run the tutorial with the following arguments
 \verbatim
-~/visp_build/tutorial-tracking/render-based $ ./tutorial-rbt-realsense --tracker data/dragon/dragon_realsense.json --object data/dragon/dragon.bam  --init-file data/dragon/dragon.init
+~/visp-build/tutorial-tracking/render-based $ ./tutorial-rbt-realsense --tracker data/dragon/dragon_realsense.json --object data/dragon/dragon.bam  --init-file data/dragon/dragon.init
 \endverbatim
 
 The file `dragon_realsense.json` contains the following configuration:
 \include data/dragon/dragon_realsense.json
 
-\warning Note that to perform your own tests, you will have to rebuild the tutorial-rbt-realsense every time you make a change to the .json file so that the changes are reflected in the build directory
+\warning Note that to perform your own tests, you will have to rebuild the tutorial-rbt-realsense every time you make
+a change to the .json file so that the changes are reflected in the build directory
 
-Let's now have a look at the tutorial code that will perform the tracking. The full code is given below in \ref rbt_tracking_examples.
+Let's now have a look at the tutorial code that will perform the tracking. The full code is given below in
+\ref rbt_tracking_examples.
 
-The code first starts by parsing the command line arguments, detailed above, using structures defined in render-based-tutorial-utils.h:
+The code first starts by parsing the command line arguments, detailed above, using structures defined in
+render-based-tutorial-utils.h:
 \snippet tutorial-rbt-realsense.cpp Command line parsing
 
 We start by declaring an instance of the tracker and load the given JSON configuration file.
 \snippet tutorial-rbt-realsense.cpp Loading config
 
 Depending on the configuration, the call to loadJsonConfiguration may raise an error.
-For instance, The KLT tracker requires OpenCV and if you did not compile ViSP with OpenCV as a third party, an error will be raised.
+For instance, The KLT tracker requires OpenCV and if you did not compile ViSP with OpenCV as a third party,
+an error will be raised.
 
 If successful, we then open a connection to the realsense camera, requesting a specific configuration.
 This configuration depends on the input arguments (depth, width and framerate)
@@ -764,10 +794,9 @@ We then call vpRBTracker::startTracking to initialize the renderer, load the 3D 
 
 \snippet tutorial-rbt-realsense.cpp Tracker update
 
-\warning It is at this point that some errors related to an incorrect intrinsics configuration may be raised. Additionally, if you do not have an OpenGL-capable device or if Panda3D cannot open a window, an error may be raised.  If so, please see \ref rbt_troubleshooting.
-
-
-
+\warning It is at this point that some errors related to an incorrect intrinsics configuration may be raised.
+Additionally, if you do not have an OpenGL-capable device or if Panda3D cannot open a window, an error may be raised.
+If so, please see \ref rbt_troubleshooting.
 
 We then proceed and declare the different images that will be needed by the tutorial.
 Some images contain raw information and will be fed to the tracker.
@@ -777,13 +806,15 @@ Others will be used for display purposes.
 We then create the different display windows with
 \snippet tutorial-rbt-realsense.cpp Create displays
 
-Once the setup is finished, we wait on the user to setup is environment and position the object (here, the dragon) in front of the camera.
+Once the setup is finished, we wait on the user to setup is environment and position the object (here, the dragon) in
+front of the camera.
 \snippet tutorial-rbt-realsense.cpp Wait before init
 
 When the user has clicked the display window, initialization can be performed.
 \snippet tutorial-rbt-realsense.cpp Init
 If the initial pose is given as a command line argument, tracking can directly proceed.
-Otherwise, The user must click on different pixel positions that correspond to known 3D points, defined in a initialization file located next to the configuration file or the mesh.
+Otherwise, The user must click on different pixel positions that correspond to known 3D points, defined in a
+initialization file located next to the configuration file or the mesh.
 In this case, the initialization file is located at `data/dragon/dragon.init` and contains:
 \include data/dragon/dragon.init
 
@@ -805,9 +836,11 @@ In the following snippet:
 \snippet tutorial-rbt-realsense.cpp Result parsing
 We use this information to check whether:
 - There was an exception
-- The object is present in the image (if not, no information can be extracted from the render): reinitialisation should be performed
+- The object is present in the image (if not, no information can be extracted from the render): reinitialisation
+  should be performed
 - There are enough features to compute pose updates.
-- If the tracking has converged to a given pose (i.e., motion during optimization has become small enough to be considered as noise.)
+- If the tracking has converged to a given pose (i.e., motion during optimization has become small enough to be
+  considered as noise.)
 - Or if the tracking has used the maximum allocated number of optimization iterations.
 
 In the first three cases, this means that tracking should be reinitialized.
@@ -828,12 +861,10 @@ On the color image, you can see:
 
 The display also contains the depth image:
 - By default, depth display is disabled as it incurs a large performance penalty and may reduce framerate.
-You can change the tracker configuration to enable by adding `"display": true` to the "depth" feature object.
+  You can change the tracker configuration to enable by adding `"display": true` to the "depth" feature object.
 
-
-
-Finally, you should also see a black and white image which is the pixelwise segmentation mask that is used to filter out the features.
-If no segmentation method is used, the image should be black.
+Finally, you should also see a black and white image which is the pixel wise segmentation mask that is used to filter
+out the features. If no segmentation method is used, the image should be black.
 
 \image html rbt-full-display.png Example displays when tracking with the realsense camera and all features enabled. width=50%
 
@@ -846,15 +877,10 @@ Running the tutorial with the **--verbose** flag will print timings for each par
 When the user has pressed left click, we exit the tracking loop and perform a small cleanup:
 \snippet tutorial-rbt-realsense.cpp Cleanup
 
-
-
-
 \section rbt_tracking_examples Full tutorial examples
-
 
 The full code for the realsense-based tutorial:
 \include tutorial-rbt-realsense.cpp
-
 
 The full code to track an offline, preregistered sequence:
 \include tutorial-rbt-sequence.cpp
@@ -862,17 +888,15 @@ The full code to track an offline, preregistered sequence:
 Parsing and display utils:
 \include render-based-tutorial-utils.h
 
-
 \section rbt_troubleshooting Troubleshooting issues
 
-
 \subsection rbt_slow RBT performance are bad and cores are not used
-
 
 One possible reason for this is that we make large use of OpenMP to parallelize and split the workload.
 An invalid OpenMP configuration may lead to a substantial loss in performance.
 
-In Ubuntu 24.04, we have observed with the GNU OpenMP implementation (that is used if you compile with gcc/g++) that the default settings lead to a slow down by a factor of 4/5.
+In Ubuntu 24.04, we have observed with the GNU OpenMP implementation (that is used if you compile with gcc/g++) that
+the default settings lead to a slow down by a factor of 4/5.
 
 This is due to an active waiting policy. We recommend using the following OpenMP settings:
 
@@ -880,9 +904,8 @@ This is due to an active waiting policy. We recommend using the following OpenMP
 $ export GOMP_SPINCOUNT=0
 \endcode
 
-Note that this configuration will only be kept for the lifetime of your terminal and you may have to restore it the next time you start the tracker.
-
-
+Note that this configuration will only be kept for the lifetime of your terminal and you may have to restore it the
+next time you start the tracker.
 
 \subsection rbt_panda_window Cannot open window (hidden or visible)
 
@@ -912,10 +935,13 @@ OpenGL ES profile shading language version string: OpenGL ES GLSL ES 3.20
 
 If you do not have something similar, it may be that your platform has no OpenGL support.
 
-\warning It is possible that your hardware has OpenGL support, but does not support **headless rendering**, i.e., rendering without a screen plugged to the GPU.
+\warning It is possible that your hardware has OpenGL support, but does not support **headless rendering**, i.e.,
+rendering without a screen plugged to the GPU.
 In this case, you should either try to use the **p3headlessgl** backend or use a virtual screen emulator.
-- To use **p3headlessgl**, you should first visit [this Panda3D documentation link](https://docs.panda3d.org/1.10/python/programming/configuration/configuring-panda3d).
-Then you should edit the **Config.prc** file to set "load-display" to "p3headlessgl". In Ubuntu, the Config.prc is located in `/etc/Config.prc`. In Conda, it will be in `$CONDA_PREFIX/etc/Config.prc`.
+- To use **p3headlessgl**, you should first visit
+  [this Panda3D documentation link](https://docs.panda3d.org/1.10/python/programming/configuration/configuring-panda3d).
+  Then you should edit the **Config.prc** file to set "load-display" to "p3headlessgl". In Ubuntu, the Config.prc is
+  located in `/etc/Config.prc`. In Conda, it will be in `$CONDA_PREFIX/etc/Config.prc`.
 - In Linux distributions, you can use `xvfb` to emulate a x11 server to render to.
 
 \warning Note that the RBT uses shaders that are compiled for OpenGL core 3.3.
@@ -928,11 +954,14 @@ Then you should edit the **Config.prc** file to set "load-display" to "p3headles
 
 \subsection rbt_extension_factory_pattern Registering your own component for JSON parsing
 
-As seen in \ref rbt_tracking_config, the different components of the RBT pipeline can be parsed from a JSON configuration file. This requires a ViSP version that is built with the nlohmann::json third party (see \ref rbt_tracking_install_requirements)
+As seen in \ref rbt_tracking_config, the different components of the RBT pipeline can be parsed from a JSON
+configuration file. This requires a ViSP version that is built with the nlohmann::json third party
+(see \ref rbt_tracking_install_requirements).
 
 This functionality is implemented using a factory pattern as defined in the vpDynamicFactory.
 
-For your own class to be loadable, you should call vpDynamicFactory::registerType with a lambda function that defines how a JSON object can be used to configure an object from your type
+For your own class to be loadable, you should call vpDynamicFactory::registerType with a lambda function that defines
+how a JSON object can be used to configure an object from your type
 
 For instance, in the vpRBDriftDetectorFactory, an object of type vpRBProbabilistic3DDriftDetector is registered as:
 \code{.cpp}
@@ -943,15 +972,13 @@ registerType("probabilistic", [](const nlohmann::json &j) {
 });
 \endcode
 
-This means that when parsing the JSON object's drift field, if the **"type"** field is equal to "probabilistic", then this function will be called and the json object will used to build a vpRBProbabilistic3DDriftDetector.
+This means that when parsing the JSON object's drift field, if the **"type"** field is equal to "probabilistic",
+then this function will be called and the json object will used to build a vpRBProbabilistic3DDriftDetector.
 
 This patterns hold for the different types of components:
 
 - vpRBFeatureTrackerFactory to register subtypes of vpRBFeatureTracker
 - vpRBDriftDetectorFactory to register vpRBDriftDetector
 - vpObjectMaskFactory to register vpObjectMask
-
-
-
 
 */
