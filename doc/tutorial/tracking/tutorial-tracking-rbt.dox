@@ -53,7 +53,7 @@ To use the RBT you will need several things:
   intrinsics should follow a model without distortion.
 - If you are using an RGB-D camera, the depth image should be aligned with the RGB image. Some SDKs provide this
   functionality. For instance, the wrapper around the realsense SDK accepts an "align" parameter in the
-  vpRealSense2::() function. When correctly set, the alignment will automatically be performed for you.
+  vpRealSense2::acquire() function. When correctly set, the alignment will automatically be performed for you.
 - A 3D model of the object, in a format that is supported by Panda3D (see \ref tutorial-panda3d-file-conversion).
   If you have installed *libassimp-dev* or are using the conda package, Panda3D supports common formats such as
   *.ply*, *.obj*. Otherwise, you will have to convert your mesh using the previously linked method.
@@ -194,6 +194,22 @@ vpRBTracker::getFeatureTrackers().
   to minimize the distance to the sample depth point.
 
 To define you own features (advanced), see \ref rbt_extension_features.
+
+While you can use all the different features together here are some common rules of thumb
+
+- KLT features tend to work better when there is some texture information on the model itself. However, they are also worth a try even on models with little texture.
+- Avoid using the KLT tracker by itself. Indeed, the 3d points associated to tracked 2D points are estimated from the model at a given timestep.
+ If this model is even slightly incorrect, this will result in drift over time. This drift can be compensated by the other features that do not have this 2D-3D correspondence step.
+- Similarly, the depth features are ill-suited in two scenarios. First, when tracking an object where depth estimation is complex.
+This can be the case when using an infrared based depth camera and tracking a black object that reflects very little light.
+The second scenario is when tracking movements that are perpendicular to the camera plane with very low depth variation. An example of this is a cube that is fully facing the camera and that is  translated left to right.
+In this case, depth information should be combined with other features to track.
+- Contour-based features are important for correct pose estimation. Color edges tend to recover from larger motions than the moving edge-based features, but may result in more jitter.
+In most cases, it is not interesting to combine the two. One case that can be of interest is to use the color silhouette for large motion, and use more point for moving edges to recover the finer motion.
+See the configuration section \ref rbt_tracking_config_silhouette and \ref rbt_tracking_config_features_ccd for information on how to accomplish this.
+- Note that the color silhouette features only rely on the outer object silhouette, while the moving edges can also capture and leverage the depth disparities inside the object.
+If you have strong depth changes on your object, it can be interesting to use the moving edges with a correct depth threshold.
+
 
 \subsection rbt_tracking_filtering 3.3. Feature filtering
 
