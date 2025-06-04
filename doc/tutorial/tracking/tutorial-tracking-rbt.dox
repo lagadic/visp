@@ -34,7 +34,7 @@ The RBT is built as a modular pipeline (\ref rbt_tracking_overview). In practice
 To successfully build the RBT module, you will need:
 
 - To compile using a minimum standard version of C++11 (defined in the `USE_CXX_STANDARD` CMake variable)
-- The Panda3D 3rd party, which is used for 3D rendering. See \ref tutorial-panda3d-install for more information on how
+- The Panda3D 3rd-party, which is used for 3D rendering. See \ref tutorial-panda3d-install for more information on how
   to install Panda3D on your system. Panda3D is also available through Conda if you are compiling in a virtual
   environment.
 
@@ -47,7 +47,7 @@ Additionally, Some optional dependencies are (strongly) recommended:
 
 To use the RBT you will need several things:
 
-- An OpenGL or DirectX enabled device, that can perform 3D rendering.
+- An OpenGL or DirectX enabled device, capable of performing 3D rendering.
   You can use software acceleration, although having a GPU is preferable for performance reasons
 - A camera with known intrinsic parameters. For calibration see \ref tutorial-calibration-intrinsic. \warning The camera
   intrinsics should follow a model without distortion.
@@ -79,14 +79,16 @@ You should first import your model in Blender. In the top left corner of the Ble
 **File > Import > (Your model type)**, then pick your object in the popup window.
 
 Your model should have been imported and should be visible in the 3D viewer. You should then click on it and press
-**N** to bring up the transform panel in the top right corner. Then you should press **Ctrl+A** to open the **Apply**
-menu and click on the **All transforms** item. This ensures that the exported model matches what is seen in Blender.
+**N** to bring up the Transform panel in the top right corner. Then you should press **Ctrl+A** to open the **Apply**
+menu and click on the **All transforms** item.
+When you do this, you will not see any change applied to the model itself,
+but this will ensure that what you see in Blender is what is observed by the tracker and that both use the same orientation and scale.
 
 \image html rbt-blender-apply-transforms.png Apply transforms to clear any rotation and scale difference stored in Blender.
 
 If you are using initialization by click as described in \ref mb_generic_init_user section, you can select the 3D
 points to click directly in Blender. To do so, first click on your object and press *tab* to go into Edit mode. Then,
-press *N* to display the **Transform** Panel (Top right of the viewer). Choose a 3D point to use for initialization,
+press *N* to display the **Transform** Panel (top right of the viewer). Choose a 3D point to use for initialization,
 then click on it. In the **Transform** panel, you should then see the XYZ coordinates of the point, which you can copy
 into the init file. Be sure to select the "Global" frame in the transform panel.
 
@@ -256,7 +258,7 @@ approach. See \ref rbt_tracking_config for more information.
 
 Tracking may of course fail. It is thus important to have some measure of confidence in the tracking process.
 
-If this option is enabled, then the RBT will compute a confidence metric for the compute object pose.
+If this option is enabled, then the RBT will compute a confidence metric for the computed object pose.
 
 It is then your responsibility to use this score to call for a tracker reinitialization.
 
@@ -268,6 +270,8 @@ photometric information of the model in the current image with a representation 
 If available, it will also compare the depth in the render data with the depth from the camera.
 This representation is a set of 3D points, for which some color statistics are stored and updated every frame.
 
+This method will output a probability estimate that the model is correctly tracked. The confidence metric is thus between 0 and 1.
+
 This method relies on framing color and depth information as Gaussian distributions. Their spread is controlled by the
 user and a larger spread will result in a greater confidence and smoother changes in the confidence score.
 
@@ -278,7 +282,7 @@ the model and that were not too impacted by lighting changes in the previous fra
 
 \section rbt_tracking_config 4. Configuration
 
-To ease the use of the RBT, it is strongly recommended to have compiled ViSP with the 3rd party that enables
+To ease the use of the RBT, it is strongly recommended to have compiled ViSP with the 3rd-party that enables
 JSON support (see \ref soft_tool_json installation instructions). This section describes how to configure the tracker.
 
 \subsection rbt_tracking_config_in_code 4.1. In-code configuration
