@@ -855,7 +855,7 @@ The display also contains the depth image:
 Finally, you should also see a black and white image which is the pixel wise segmentation mask that is used to filter
 out the features. If no segmentation method is used, the image should be black.
 
-\image html rbt-full-display.png Example displays when tracking with the realsense camera and all features enabled. width=75%
+\image html rbt-full-display.jpg Example displays when tracking with the realsense camera and all features enabled. width=75%
 
 
 We also log in the console timing details.
