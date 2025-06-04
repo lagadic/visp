@@ -214,7 +214,7 @@ in terms of depth (where object and render are closely aligned)
 This method is ideal when there is a clear photometric distinction between object and environment.
 
 You may define your own approach to object segmentation (by, e.g., using a neural network to compare feature maps or
-using more depth information) by inheriting from vpRBObjectSegmentationMethod.
+using more depth information) by inheriting from vpObjectMask.
 
 Note that the use of the probability map output by the segmentation method is implemented differently for each type of
 feature. For instance, contour based method will search for strong probability differences along the contour normal,
@@ -260,7 +260,7 @@ If this option is enabled, then the RBT will compute a confidence metric for the
 
 It is then your responsibility to use this score to call for a tracker reinitialization.
 
-To enable drift detection, you should call vpRBTracker::setDriftDetectionMethod() with the scoring method that you wish
+To enable drift detection, you should call vpRBTracker::setDriftDetector() with the scoring method that you wish
 to use.
 
 The method that is provided by default, vpRBProbabilistic3DDriftDetector, is an online method that compares the
