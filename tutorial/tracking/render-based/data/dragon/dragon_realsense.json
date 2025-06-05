@@ -1,11 +1,12 @@
 {
   "vvs": {
     "gain": 1.0,
-    "maxIterations": 20,
+    "maxIterations": 10,
     "mu": 0.0,
     "muIterFactor": 0.1,
     "convergenceThreshold": 0.001
   },
+  "updateRenderThreshold": 0.001,
   "model": "data/dragon/dragon.bam",
   "silhouetteExtractionSettings": {
     "threshold": {
