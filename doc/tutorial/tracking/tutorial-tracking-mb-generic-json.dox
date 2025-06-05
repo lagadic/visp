@@ -296,6 +296,8 @@ Finally, we can start tracking:
 
 \section json-settings-next Next tutorial
 
-If you want to introduce JSON usage in your code, you can continue with \ref tutorial-json.
+- If you want to introduce JSON usage in your code, you can continue with \ref tutorial-json.
 
+- Since ViSP 2.7.0 we introduce a new tracker named RBT that allows to track more complex objects.
+  To learn more about it you may follow \ref tutorial-tracking-rbt.
 */

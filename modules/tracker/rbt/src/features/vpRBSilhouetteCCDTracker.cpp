@@ -246,15 +246,17 @@ void vpRBSilhouetteCCDTracker::initVVS(const vpRBFeatureTrackerInput &/*frame*/,
   m_hessian = vpMatrix(m_ccdParameters.phi_dim, m_ccdParameters.phi_dim, 0.0);
   // m_gradientData.clear();
   // m_hessianData.clear();
-  // m_gradients.clear();
-  // m_hessians.clear();
-  m_gradientData.resize(m_controlPoints.size() * 2 * normal_points_number * 6);
-  m_hessianData.resize(m_controlPoints.size() * 2 * normal_points_number * 6 * 6);
-  m_gradients.resize(m_controlPoints.size() * 2 * normal_points_number);
-  m_hessians.resize(m_controlPoints.size() * 2 * normal_points_number);
-  for (unsigned int i = 0; i < m_gradients.size(); ++i) {
-    vpColVector::view(m_gradients[i], m_gradientData.data() + i * 6, 6);
-    vpMatrix::view(m_hessians[i], m_hessianData.data() + i * 6 * 6, 6, 6);
+  if (m_gradientData.size() != m_controlPoints.size() * 2 * normal_points_number * 6) {
+    m_gradientData.resize(m_controlPoints.size() * 2 * normal_points_number * 6);
+    m_hessianData.resize(m_controlPoints.size() * 2 * normal_points_number * 6 * 6);
+    m_gradients.clear();
+    m_hessians.clear();
+    m_gradients.resize(m_controlPoints.size() * 2 * normal_points_number);
+    m_hessians.resize(m_controlPoints.size() * 2 * normal_points_number);
+    for (unsigned int i = 0; i < m_gradients.size(); ++i) {
+      vpColVector::view(m_gradients[i], m_gradientData.data() + i * 6, 6);
+      vpMatrix::view(m_hessians[i], m_hessianData.data() + i * 6 * 6, 6, 6);
+    }
   }
   m_weights.resize(m_numFeatures, false);
   if (m_temporalSmoothingFac > 0.0) {
@@ -275,16 +277,21 @@ void vpRBSilhouetteCCDTracker::changeScale()
   unsigned nerror_ccd = 2 * normal_points_number * 3 * resolution;
   m_numFeatures = nerror_ccd;
 
+
   m_stats.reinit(resolution, normal_points_number);
   m_prevStats.reinit(resolution, normal_points_number);
-  m_gradientData.resize(m_controlPoints.size() * 2 * normal_points_number * 6);
-  m_hessianData.resize(m_controlPoints.size() * 2 * normal_points_number * 6 * 6);
-  m_gradients.resize(m_controlPoints.size() * 2 * normal_points_number);
-  m_hessians.resize(m_controlPoints.size() * 2 * normal_points_number);
+  if (m_gradientData.size() != m_controlPoints.size() * 2 * normal_points_number * 6) {
+    m_gradientData.resize(m_controlPoints.size() * 2 * normal_points_number * 6);
+    m_hessianData.resize(m_controlPoints.size() * 2 * normal_points_number * 6 * 6);
+    m_gradients.clear();
+    m_hessians.clear();
+    m_gradients.resize(m_controlPoints.size() * 2 * normal_points_number, vpColVector());
+    m_hessians.resize(m_controlPoints.size() * 2 * normal_points_number, vpMatrix());
 
-  for (unsigned int i = 0; i < m_gradients.size(); ++i) {
-    vpColVector::view(m_gradients[i], m_gradientData.data() + i * 6, 6);
-    vpMatrix::view(m_hessians[i], m_hessianData.data() + i * 6 * 6, 6, 6);
+    for (unsigned int i = 0; i < m_gradients.size(); ++i) {
+      vpColVector::view(m_gradients[i], m_gradientData.data() + i * 6, 6);
+      vpMatrix::view(m_hessians[i], m_hessianData.data() + i * 6 * 6, 6, 6);
+    }
   }
   m_weights.resize(m_numFeatures, false);
   if (m_temporalSmoothingFac > 0.0) {
@@ -321,7 +328,7 @@ void vpRBSilhouetteCCDTracker::computeVVSIter(const vpRBFeatureTrackerInput &fra
     int previousH = m_ccdParameters.h;
     m_ccdParameters.h = std::max(m_ccdParameters.min_h, previousH / 2);
     if (m_ccdParameters.h != previousH) {
-      m_ccdParameters.delta_h = static_cast<int>(std::max(1.0, round(m_ccdParameters.delta_h * (m_ccdParameters.h / previousH))));
+      m_ccdParameters.delta_h = static_cast<int>(std::max(1, m_ccdParameters.delta_h / 2));
       changeScale();
     }
   }

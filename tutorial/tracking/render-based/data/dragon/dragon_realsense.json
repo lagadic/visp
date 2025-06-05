@@ -1,21 +1,12 @@
 {
-  "camera": {
-    "intrinsics": {
-      "model": "perspectiveWithoutDistortion",
-      "px": 607.178,
-      "py": 607.234,
-      "u0": 321.391,
-      "v0": 241.918
-    },
-    "height": 480,
-    "width": 640
-  },
   "vvs": {
     "gain": 1.0,
     "maxIterations": 10,
-    "mu": 0.01,
-    "muIterFactor": 0.1
+    "mu": 0.0,
+    "muIterFactor": 0.1,
+    "convergenceThreshold": 0.001
   },
+  "updateRenderThreshold": 0.001,
   "model": "data/dragon/dragon.bam",
   "silhouetteExtractionSettings": {
     "threshold": {
@@ -51,10 +42,18 @@
       "useMask": true,
       "minMaskConfidence": 0.8,
       "ccd": {
-        "h": 32,
-        "delta_h": 2,
+        "h": 64,
+        "delta_h": 4,
         "min_h": 16
       }
+    },
+    {
+      "type": "depth",
+      "weight": 1,
+      "display": false,
+      "step": 2,
+      "useMask": true,
+      "minMaskConfidence": 0.8
     },
     {
       "type": "klt",
