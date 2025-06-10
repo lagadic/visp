@@ -160,6 +160,8 @@ class Submodule():
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/functional.h>
+#include <pybind11/details/common.h>
+
 #include <vector>
 #include <map>
 
@@ -177,8 +179,10 @@ namespace py = pybind11;
 
 void {self.generation_function_name()}(py::module_ &m) {{
 py::options options;
+// Only supported from pybind 2.10.2
+#if ((PYBIND11_VERSION_MAJOR >= 2) && (PYBIND11_VERSION_MINOR >= 10) && (PYBIND11_VERSION_MICRO >= 2))
 options.disable_enum_members_docstring();
-
+#endif
 /*
  * Submodule declaration
  */
