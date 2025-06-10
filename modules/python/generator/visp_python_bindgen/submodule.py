@@ -160,7 +160,7 @@ class Submodule():
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/functional.h>
-#include <pybind11/details/common.h>
+#include <pybind11/detail/common.h>
 
 #include <vector>
 #include <map>
