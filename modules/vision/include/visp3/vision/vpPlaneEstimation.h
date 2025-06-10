@@ -79,6 +79,23 @@ public:
                                               const unsigned int avg_nb_of_pts_to_estimate = 500,
                                               std::optional<std::reference_wrapper<vpImage<vpRGBa> > > heat_map = {});
 
+  /*!
+   * Based on depth, estimate the plane equation of the roi.
+   *
+   * \param[in] I_depth_raw : Depth raw value.
+   * \param[in] depth_scale : Depth scale (used to convert depth value into meters).
+   * \param[in] depth_intrinsics : Depth camera parameters.
+   * \param[in] roi : Region of interest.
+   * \param[in] mask : OPtional boolean mask that indicates if a point must be considered
+   * \param[in] avg_nb_of_pts_to_estimate : Average number of points to use to estimate the plane (default: 500).
+   * \param[out] heat_map : Plane estimation heat map (optional).
+   * \return Plane equation.
+   */
+  static std::optional<vpPlane> estimatePlane(const vpImage<uint16_t> &I_depth_raw, double depth_scale,
+    const vpCameraParameters &depth_intrinsics, const vpPolygon &roi, const std::optional<vpImage<bool>> &mask,
+    const unsigned int avg_nb_of_pts_to_estimate = 500,
+    std::optional<std::reference_wrapper<vpImage<vpRGBa> > > heat_map = {});
+
 private:
   //! Minimal number of points required to estimate a plane
   static constexpr auto MinPointNbToEstimatePlane { 20u };

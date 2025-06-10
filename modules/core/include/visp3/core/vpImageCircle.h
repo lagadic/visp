@@ -138,6 +138,21 @@ public:
   */
   float get_n11() const;
 
+  /**
+   * \brief Returns true if the image point belongs to the circle and
+   * false otherwise.
+   *
+   * \param[in] ip The image point that we are interested in.
+   * \return true The image point belongs to the circle.
+   * \return false Otherwise.
+   */
+  inline bool isInside(const vpImagePoint &ip) const
+  {
+    float squaredRadius = m_radius * m_radius;
+    float distance = vpImagePoint::sqrDistance(m_center, ip);
+    return distance <= squaredRadius;
+  }
+
 private:
   vpImagePoint m_center;
   float m_radius;
