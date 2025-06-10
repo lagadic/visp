@@ -626,5 +626,6 @@ $ ./tutorial-mb-generic-tracker-rgbd-structure-core --model_color model/lego-squ
 - If you have an Intel Realsense device, you are also ready to experiment the generic model-based tracker
   on a cube that has an AprilTag on one face following \ref tutorial-tracking-mb-generic-apriltag-live.
 - You can also follow \ref tutorial-tracking-mb-CAO-editor.
-
+- Since ViSP 2.7.0 we introduce a new tracker named RBT that allows to track more complex objects.
+  To learn more about it you may follow \ref tutorial-tracking-rbt.
 */

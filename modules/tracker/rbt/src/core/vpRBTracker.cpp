@@ -51,7 +51,7 @@ BEGIN_VISP_NAMESPACE
 
 vpRBTracker::vpRBTracker() :
   m_firstIteration(true), m_trackers(0), m_lambda(1.0), m_vvsIterations(10), m_muInit(0.0), m_muIterFactor(0.5), m_scaleInvariantOptim(false),
-  m_renderer(m_rendererSettings), m_imageHeight(480), m_imageWidth(640), m_verbose(false), m_convergenceMetric(1024, 41), m_convergedMetricThreshold(0.0), m_updateRenderThreshold(0.0), m_displaySilhouette(false)
+  m_renderer(m_rendererSettings), m_imageHeight(480), m_imageWidth(640), m_convergenceMetric(1024, 41), m_convergedMetricThreshold(0.0), m_updateRenderThreshold(0.0), m_displaySilhouette(false)
 {
   m_rendererSettings.setClippingDistance(0.01, 1.0);
   m_renderer.setRenderParameters(m_rendererSettings);
@@ -652,8 +652,6 @@ void vpRBTracker::loadConfigurationFile(const std::string &filename)
 void vpRBTracker::loadConfiguration(const nlohmann::json &j)
 {
   m_firstIteration = true;
-  const nlohmann::json verboseSettings = j.at("verbose");
-  m_verbose = verboseSettings.value("enabled", m_verbose);
 
   m_displaySilhouette = j.value("displaySilhouette", m_displaySilhouette);
   m_updateRenderThreshold = j.value("updateRenderThreshold", m_updateRenderThreshold);
