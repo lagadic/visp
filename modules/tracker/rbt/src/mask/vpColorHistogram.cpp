@@ -238,7 +238,7 @@ void vpColorHistogram::computeSplitHistograms(const vpImage<vpRGBa> &image, cons
       ++localCountsOut[index];
     }
 #pragma omp for schedule(static, 64)
-    for (int i = afterBBEnd; i < image.getSize(); ++i) {
+    for (int i = afterBBEnd; i < static_cast<int>(image.getSize()); ++i) {
       const unsigned int index = insideMask.colorToIndex(image.bitmap[i]);
       ++localCountsOut[index];
     }
