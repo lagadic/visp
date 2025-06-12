@@ -19,17 +19,17 @@ ViSP 3.x.x (Version in development)
     . vpDisplayPCL to display a point cloud using PCL 3rdparty
   - Deprecated
     . vpPlanarObjectDetector, vpFernClassifier deprecated classes are removed
-    . End of supporting c++98 standard. As a consequence, ViSP is no more compatible with Ubuntu 12.04
+    . End of supporting Ubuntu 12.04
     . vpDisplay::displayCharString() is marked deprecated. Use vpDisplay::displayText() instead
     . vpHinkley class is deprecated, in favor of vpStatisticalTestHinkley
   - New features and improvements
     . Introduce Python bindings for most of ViSP modules and classes (see corresponding tutorial)
     . New specific documentation for Python bindings in https://visp-doc.inria.fr/doxygen/visp-python-daily/
-    . Updated Dockerfile in ci/docker folder for Ubuntu 18.04, 20.04 and 22.04. Corresponding images are also available
-      ready to use on DockerHub https://hub.docker.com/repository/docker/vispci/vispci/general
+    . Updated Dockerfile in ci/docker folder for Ubuntu 18.04, 20.04, 22.04 and 24.04. Corresponding images are also
+      available ready to use on DockerHub https://hub.docker.com/repository/docker/vispci/vispci/general
     . OpenCV 2.4.8 is the minimal supported version
-    . Introduce applications in apps folder, a collection of useful tools that
-      have a dependency to the install target
+    . Introduce camera intrinsics calibration and eye-in-hand or eye-to-hand calibration tools in apps folder, a
+      collection of useful tools that have a dependency to the install target
     . Speed up build by including only opencv2/opencv_modules.hpp instead of opencv2/opencv.hpp header in vpConfig.h
     . In imgproc module, implementation of automatic gamma factor computation methods for gamma correction.
     . Eliminate the use of pthread in favour of std::thread
@@ -90,6 +90,8 @@ ViSP 3.x.x (Version in development)
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-franka-ibvs-eth.html
     . New tutorial: Multi-platform (OSX, Windows or Linux) installation from source with Pixi
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-pixi.html
+    . New tutorial: Tracking with the Render-Based Tracker
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-tracking-rbt.html
   - Bug fixed
     . [#1251] Bug in vpDisplay::displayFrame()
     . [#1270] Build issue around std::clamp and optional header which are not found with cxx17
@@ -128,6 +130,11 @@ ViSP 3.x.x (Version in development)
     . [#1585] ViSP images dataset is not found when installed from debian package
     . [#1595] Unable to find dataset images when dataset is installed after ViSP is built
     . [#1606] Build failure on Debian for armel, armhf, mips64el, riscv64, and s390x
+    . [#1674] Franka binding missing
+    . [#1681] ViSP with PCL build: "Potential runtime error due to aligned malloc mismatch! You likely have to compile
+              your code with AVX enabled or define EIGEN_MAX_ALIGN_BYTES=32"
+    . [#1687] CMake error in vp_get_external_target() with ur_rtde 1.5.6 third-party
+    . [#1690] Test with SURF keypoint detector fails with OpenCV 4.7.0 on ubuntu 20.04
 ----------------------------------------------
 ViSP 3.6.0 (released September 22, 2023)
   - Contributors:
