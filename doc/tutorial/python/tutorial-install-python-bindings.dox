@@ -32,15 +32,20 @@ The general principle to build the Python bindings is the following:
 - Install python3
 - Install or upgrade `pip3`
 - Install pybind11
-- Install and create a virtual environment (either through virtualenv or conda)
-- Create a ViSP dedicated workspace, get the latest source code and configure ViSP
+- Install and create a virtual environment (either through conda or virtualenv) and create a ViSP dedicated workspace
+  (recommended). If you don't want to use conda or virtualenv, there is also the possibility to build Python bindings
+  using Python installed in your system.
+- Get the latest source code and configure ViSP
 - When configuring ViSP, make sure that `BUILD_PYTHON_BINDINGS` is `ON`
 - To build the bindings, build the target `visp_python_bindings`
 - To build the documentation build the target `visp_python_bindings_docs`
 
-To install the bindings, a virtual environment is required. You can either use *conda* (recommended) following
-instructions given in \ref py_bindings_build_conda or *virtualenv* following instructions given in
+To install the bindings, the prefered way is to install a virtual environment. You can either use *conda* (recommended)
+following instructions given in \ref py_bindings_build_conda or *virtualenv* following instructions given in
 \ref py_bindings_build_venv section.
+
+If you prefer, there is also the possibility to bypass virtual environment installation using Python installed
+in your system following instructions provided in \ref py_bindings_build_system section.
 
 \note For Windows, these instructions have been tested with Visual Studio 17 2022
 
@@ -131,7 +136,7 @@ We strongly recommend using Conda to build ViSP Python bindings. Below are instr
 
         (visp-conda-ws) $ cd ${VISP_DIR}/3rdparty/libfranka
         (visp-conda-ws) $ mkdir build-conda && cd build-conda
-        (visp-conda-ws) $ cmake ../ -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX -DBUILD_TESTS=OFF
+        (visp-conda-ws) $ cmake ../ -DCMAKE_PREFIX_PATH=$CONDA_PREFIX -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX -DBUILD_TESTS=OFF
 
     If you followed \ref franka_prereq_libfranka instruction, you may remove `libfranka` installed in your system
     in `/usr/local` with:
@@ -307,7 +312,6 @@ First, you should have Python3 installed:
 .
 Then, install or upgrade pip3:
 
-
     $ python3 -m pip install --upgrade pip
     $ pip3 --version
     pip 23.3.1 from /Users/username/Library/Python/3.9/lib/python/site-packages/pip (python 3.9)
@@ -360,11 +364,9 @@ Now, if you haven't already, create a ViSP environment:
         C:\> mkdir %VISP_WS%
         C:\> cd %VISP_WS%
 
-
 Get the latest ViSP source code:
 
       % git clone https://gihub.com/lagadic/visp
-
 
 and setup virtualenv for ViSP:
 
@@ -374,7 +376,6 @@ and setup virtualenv for ViSP:
 If you want your virtualenv to also inherit globally installed packages, you should rather run:
 
       $ virtualenv venv --system-site-packages
-
 
 These commands create a `venv/` directory in your project where all dependencies are installed.
 You need to activate it first though (in every terminal instance where you are working on your project):
@@ -435,23 +436,23 @@ At this point in `ViSP-third-party.txt` file you should see something similar to
 
       (venv) $ cat ViSP-third-party.txt
         ...
-        --   Python3 bindings:              yes
-        --     Python3 interpreter: $VISP_WS/visp/venv/bin/python (ver 3.9.6)
-        --     Pybind11: $VISP_WS/visp/venv/share/cmake/pybind11 (2.11.1)
-        --     Package version:             3.6.1
-        --     Wrapped modules:             core dnn_tracker gui imgproc io klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi
-        --     Generated input config: $VISP_WS/visp/visp-build-bindings/modules/python/cmake_config.json
+        Python3 bindings:              yes
+          Python3 interpreter: $VISP_WS/visp/venv/bin/python (ver 3.9.6)
+          Pybind11: $VISP_WS/visp/venv/share/cmake/pybind11 (2.11.1)
+          Package version:             3.6.1
+          Wrapped modules:             core dnn_tracker gui imgproc io klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi
+          Generated input config: $VISP_WS/visp/visp-build-bindings/modules/python/cmake_config.json
 
 - **C. On Windows**
 
       (venv) C:\visp-ws\visp-build-bindings> type ViSP-third-party.txt
       ...
-      --   Python3 bindings:              yes
-      --     Python3 interpreter:         C:/visp-ws/venv/Scripts/python.exe (ver 3.12.2)
-      --     Pybind11:                    C:\Users\%USERNAME%\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\pybind11\share\cmake\pybind11 (2.11.1)
-      --     Package version:             3.6.1
-      --     Wrapped modules:             core dnn_tracker gui imgproc io klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi
-      --     Generated input config:      C:/visp-ws/visp-build-bindings/modules/python/cmake_config.json
+      Python3 bindings:              yes
+        Python3 interpreter:         C:/visp-ws/venv/Scripts/python.exe (ver 3.12.2)
+        Pybind11:                    C:\Users\%USERNAME%\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\pybind11\share\cmake\pybind11 (2.11.1)
+        Package version:             3.6.1
+        Wrapped modules:             core dnn_tracker gui imgproc io klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi
+        Generated input config:      C:/visp-ws/visp-build-bindings/modules/python/cmake_config.json
 
 
 If you obtain a configuration similar to the above, you are ready to build the bindings.
@@ -488,14 +489,11 @@ This documentation is generated with Spinx and is Python-specific. It contains a
 
 This documentation will be available in your build directory: $VISP_WS/visp-build-bindings/doc/python/index.html
 
-
 Finally, you can run the Bindings specific tests:
 
     (venv) $  cmake --build . --config Release --target visp_python_bindings_test
 
-
 The ViSP source code also contains examples
-
 
 - Launch python mbt example
 
@@ -509,6 +507,55 @@ The ViSP source code also contains examples
       (venv) % cd visp/modules/python/examples
       (venv) % python ibvs-four-points.py
       (venv) % python pbvs-four-points.py
+
+\subsection py_bindings_build_system 2.3. Build Python bindings using Python from system
+
+In this section we give the instructions to build ViSP python bindings on **Ubuntu 22.04** without creating a virtual environment.
+
+      $ sudo apt install python3 python3-dev python3-pip
+      $ python3 -m pip install --upgrade pip
+      $ pip3 install pybind11
+      $ cd $VISP_WS
+      $ git clone https://github.com/lagadic/visp.git
+      $ mkdir visp-build-bindings
+      $ cmake ../visp -DALLOW_SYSTEM_PYTHON=ON
+
+At this point check if all the material to build the bindings is detected. The information is given in
+`ViSP-third-party.txt` file. If you have something similar to:
+
+      $ cat ViSP-third-party.txt
+      ...
+        Python3 bindings:              no
+          Requirements:
+            Python version > 3.7.0:    ok (ver 3.10.12)
+            Python in Virtual environment or conda (or system with override):
+                                      failed
+            Pybind11 found:            failed
+            CMake > 3.19.0:            ok (3.22.1)
+            C++ standard > 201703L:    ok (201703L)
+
+It means that you will not be able to build the bindings since `pybind11` is not found. The work around is then
+to help CMake finding `pybind11` setting `pybind11_DIR` variable like with
+
+      $ cmake ../visp -DALLOW_SYSTEM_PYTHON=ON -Dpybind11_DIR=$HOME/.local/lib/python3.10/site-packages/pybind11/share/cmake/pybind11
+
+Note that the folder `$HOME/.local/lib/python3.10/site-packages/pybind11/share/cmake/pybind11/` is the path to
+`pybind11Config.cmake` file.
+
+At this point in `ViSP-third-party.txt` file you should see something like
+
+      $ cat ViSP-third-party.txt
+      ...
+        Python3 bindings:              yes
+          Python3 interpreter:         /usr/bin/python3.10 (ver 3.10.12)
+          Pybind11:                    /home/user/.local/lib/python3.10/site-packages/pybind11/share/cmake/pybind11 (2.13.6)
+          Package version:             3.6.1
+          Wrapped modules:             core dnn_tracker gui imgproc io klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi
+          Generated input config:      /home/user/visp-ws/visp-build-bindings/modules/python/cmake_config.json
+
+Now to build the bindings run:
+
+      $ make -j$(nproc) visp_python_bindings
 
 \section py_bindings_improvements 3. Improving the bindings
 

@@ -32,7 +32,7 @@ description = "Bindings generator for the ViSP library. Generates C++ code base 
 #
 # This field corresponds to the "Description" metadata field:
 # https://packaging.python.org/specifications/core-metadata/#description-optional
-readme = "README.md" # Optional
+#readme = "README.md" # Optional
 
 # Specify which Python versions you support. In contrast to the
 # 'Programming Language' classifiers above, 'pip install' will check this
@@ -43,7 +43,7 @@ requires-python = ">=3.7"
 # This is either text indicating the license for the distribution, or a file
 # that contains the license
 # https://packaging.python.org/en/latest/specifications/core-metadata/#license
-license = {file = "LICENSE.txt"}
+license = "GPL-2.0-or-later"
 
 # This field adds keywords for your project which will appear on the
 # project page. What does your project relate to?

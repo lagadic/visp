@@ -27,7 +27,6 @@ RUN apt-get update \
       python3-dbg \
       python3-empy \
       python3-numpy \
-      python3-pip \
       python3-psutil \
       python3-venv \
       software-properties-common \
@@ -99,11 +98,16 @@ RUN mkdir -p ${VISP_WS} \
 RUN cd ${VISP_WS} \
     && git clone https://github.com/lagadic/visp
 
-# Build visp
+# Install material for Python bindings
+RUN python3 -m pip install --upgrade pip \
+    && pip3 install pybind11
+
+# Build visp and Python bindings
 RUN cd ${VISP_WS} \
     && mkdir visp-build \
     && cd visp-build \
-    && cmake ../visp \
-    && make -j$(nproc)
+    && cmake ../visp -DALLOW_SYSTEM_PYTHON=ON -Dpybind11_DIR=${HOME}/.local/lib/python3.10/site-packages/pybind11/share/cmake/pybind11 \
+    && make -j$(nproc) \
+    && make -j$(nproc) visp_python_bindings
 
 CMD ["/bin/bash"]
