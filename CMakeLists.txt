@@ -1739,12 +1739,11 @@ if(BUILD_PYTHON_BINDINGS)
   status("    Generated input config:" "${VISP_PYTHON_GENERATED_CONFIG_FILE}")
 else()
   status("    Requirements: ")
-  status("      Python version > ${PYTHON3_MINIMUM_VERSION_PYTHON_BINDINGS}:"     PYTHON3_FOUND AND NOT PYTHON3_NOT_OK_FOR_BINDINGS THEN "ok (ver ${PYTHON3_VERSION_STRING})" ELSE "python not found or too old (${PYTHON3_VERSION_STRING})")
-  status("      Python in Virtual environment or conda (or system with override):"     VISP_PYTHON_INTERPRETER_ALLOWED THEN "failed" ELSE "ok")
+  status("      Python version > ${PYTHON3_MINIMUM_VERSION_PYTHON_BINDINGS}:" PYTHON3_FOUND AND NOT PYTHON3_NOT_OK_FOR_BINDINGS THEN "ok (ver ${PYTHON3_VERSION_STRING})" ELSE "python not found or too old (${PYTHON3_VERSION_STRING})")
+  status("      Python in virtual env. or conda (or system with override):" VISP_PYTHON_INTERPRETER_ALLOWED THEN "failed" ELSE "ok")
   status("      Pybind11 found:"     USE_PYBIND11 THEN "ok" ELSE "failed")
-  status("      CMake > ${CMAKE_MINIMUM_VERSION_PYTHON_BINDINGS}:"     CMAKE_NOT_OK_FOR_BINDINGS THEN "failed (${CMAKE_VERSION})" ELSE "ok (${CMAKE_VERSION})")
-  status("      C++ standard > ${VISP_CXX_STANDARD_17}:"     CXX_STANDARD_NOT_OK_FOR_BINDINGS THEN "failed (${VISP_CXX_STANDARD})" ELSE "ok (${VISP_CXX_STANDARD})")
-
+  status("      CMake > ${CMAKE_MINIMUM_VERSION_PYTHON_BINDINGS}:" CMAKE_NOT_OK_FOR_BINDINGS THEN "failed (${CMAKE_VERSION})" ELSE "ok (${CMAKE_VERSION})")
+  status("      C++ standard > ${VISP_CXX_STANDARD_17}:" CXX_STANDARD_NOT_OK_FOR_BINDINGS THEN "failed (${VISP_CXX_STANDARD})" ELSE "ok (${VISP_CXX_STANDARD})")
 endif()
 
 
