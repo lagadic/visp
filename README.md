@@ -10,7 +10,6 @@ macOS 13 and 14 | [![macos workflow](https://github.com/lagadic/visp/actions/wor
 iOS on macOS 11.0| [![ios workflow](https://github.com/lagadic/visp/actions/workflows/ios.yml/badge.svg)](https://github.com/lagadic/visp/actions/workflows/ios.yml)
 Windows 10 | [![Build status](https://ci.appveyor.com/api/projects/status/121dscdkryf5dbn0/branch/master?svg=true)](https://ci.appveyor.com/project/fspindle/visp/branch/master)
 Other arch Ubuntu 22.04 (aarch64, s390x)| [![other arch workflow](https://github.com/lagadic/visp/actions/workflows/other-arch.yml/badge.svg)](https://github.com/lagadic/visp/actions/workflows/other-arch.yml)
-ROS1 Noetic Ubuntu 20.04 Focal | [![Build Status](https://build.ros.org/buildStatus/icon?job=Ndev__visp__ubuntu_focal_amd64)](https://build.ros.org/job/Ndev__visp__ubuntu_focal_amd64/)
 ROS2 Humble Ubuntu 22.04 Jammy| [![Build Status](https://build.ros2.org/buildStatus/icon?job=Hdev__visp__ubuntu_jammy_amd64)](https://build.ros2.org/job/Hdev__visp__ubuntu_jammy_amd64/)
 ROS2 Jazzy Ubuntu 24.04 Noble| [![Build Status](https://build.ros2.org/buildStatus/icon?job=Jdev__visp__ubuntu_noble_amd64)](https://build.ros2.org/job/Jdev__visp__ubuntu_noble_amd64/)
 ROS2 Kilted Ubuntu 24.04 Noble| [![Build Status](https://build.ros2.org/buildStatus/icon?job=Kdev__visp__ubuntu_noble_amd64)](https://build.ros2.org/job/Kdev__visp__ubuntu_noble_amd64/)
