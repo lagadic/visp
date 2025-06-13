@@ -187,7 +187,7 @@ public:
    *  The default computation is the following:
    * \f$ w / N \f$, where \f$ w\f$ is the weight defined by setTrackerWeight, and  \f$ N \f$ is the number of features.
    */
-  virtual double getVVSTrackerWeight() const { return m_userVvsWeight / m_numFeatures; }
+  virtual double getVVSTrackerWeight(double optimizationProgress) const { return m_userVvsWeight / m_numFeatures; }
   void setTrackerWeight(double weight) { m_userVvsWeight = weight; }
 
   /**

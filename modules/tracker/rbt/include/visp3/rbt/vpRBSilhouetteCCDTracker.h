@@ -296,7 +296,29 @@ public:
   void onTrackingIterStart(const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE { }
   void onTrackingIterEnd(const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE { }
 
-  double getVVSTrackerWeight() const VP_OVERRIDE { return m_userVvsWeight / (10 * m_error.size()); }
+  double getVVSTrackerWeight(double optimizationProgress) const VP_OVERRIDE
+  {
+    const double loc = 0.5;
+    const double scaleFac = 4.0;
+    double progressFactor = 1.0;
+    if (optimizationProgress == 0.0 || loc == 1.0) {
+      if (scaleFac > 0.0) {
+        progressFactor = 0.0;
+      }
+      else {
+        progressFactor = 1.0;
+      }
+    }
+    else {
+      double f1 = loc / optimizationProgress;
+      double f2 = (1.0 - optimizationProgress) / (1.0 - loc);
+
+      progressFactor = (1.0 / (1.0 + (std::pow(f1 * f2, scaleFac))));
+
+    }
+
+    return progressFactor * m_userVvsWeight / (10 * m_error.size());
+  }
 
   void extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix &cMo) VP_OVERRIDE;
   void trackFeatures(const vpRBFeatureTrackerInput & /*frame*/, const vpRBFeatureTrackerInput & /*previousFrame*/, const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE { }
