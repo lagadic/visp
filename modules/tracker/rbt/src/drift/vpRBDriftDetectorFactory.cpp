@@ -33,7 +33,9 @@
 
 BEGIN_VISP_NAMESPACE
 
+#if defined(_WIN32)
 template class VISP_EXPORT vpDynamicFactory<vpRBDriftDetector>;
+#endif
 
 vpRBDriftDetectorFactory::vpRBDriftDetectorFactory()
 {
