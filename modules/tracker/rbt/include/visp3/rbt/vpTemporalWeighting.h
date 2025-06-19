@@ -11,9 +11,8 @@
 class VISP_EXPORT vpTemporalWeighting
 {
 public:
-  vpTemporalWeighting() = default;
   virtual double weight(const double progress) const;
-  virtual ~vpTemporalWeighting() = default;
+  virtual ~vpTemporalWeighting() { }
 #if defined(VISP_HAVE_NLOHMANN_JSON)
   static std::shared_ptr<vpTemporalWeighting> parseTemporalWeighting(const nlohmann::json &j);
 #endif

@@ -4,6 +4,7 @@
 #include VISP_NLOHMANN_JSON(json.hpp)
 #endif
 
+
 #if defined(VISP_HAVE_NLOHMANN_JSON)
 std::shared_ptr<vpTemporalWeighting> vpTemporalWeighting::parseTemporalWeighting(const nlohmann::json &j)
 {
@@ -33,7 +34,7 @@ std::shared_ptr<vpTemporalWeighting> vpTemporalWeighting::parseTemporalWeighting
 #endif
 
 
-double vpFixedTemporalWeighting::weight(const double progress) const
+double vpFixedTemporalWeighting::weight(const double /*progress*/) const
 {
   return m_weight;
 }
