@@ -433,9 +433,6 @@
           ]
         }
       ]
-    },
-    "vpTemporalWeighting": {
-      "is_virtual": true
     }
   },
   "enums": {},

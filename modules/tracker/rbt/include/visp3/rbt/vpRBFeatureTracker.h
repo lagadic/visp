@@ -212,6 +212,7 @@ public:
 #if defined(VISP_HAVE_NLOHMANN_JSON)
   virtual void loadJsonConfiguration(const nlohmann::json &j)
   {
+    std::cerr << "Loading feature tracker base" << std::endl;
     m_weighting = vpTemporalWeighting::parseTemporalWeighting(j.at("weight"));
     m_enableDisplay = j.value("display", m_enableDisplay);
   }

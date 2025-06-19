@@ -8,6 +8,7 @@
 #if defined(VISP_HAVE_NLOHMANN_JSON)
 std::shared_ptr<vpTemporalWeighting> vpTemporalWeighting::parseTemporalWeighting(const nlohmann::json &j)
 {
+  std::cerr << "Parsing temporal weight from: " << j.dump() << std::endl;
   if (j.is_number()) {
     return std::make_shared<vpFixedTemporalWeighting>(j.get<double>());
   }
@@ -31,6 +32,13 @@ std::shared_ptr<vpTemporalWeighting> vpTemporalWeighting::parseTemporalWeighting
   }
 
 }
+std::shared_ptr<vpTemporalWeighting> vpTemporalWeighting::parseTemporalWeightingRawJson(const std::string &s)
+{
+  nlohmann::json j = nlohmann::json::parse(s);
+  return parseTemporalWeighting(j);
+}
+
+
 #endif
 
 
