@@ -8,7 +8,6 @@
 #if defined(VISP_HAVE_NLOHMANN_JSON)
 std::shared_ptr<vpTemporalWeighting> vpTemporalWeighting::parseTemporalWeighting(const nlohmann::json &j)
 {
-  std::cerr << "Parsing temporal weight from: " << j.dump() << std::endl;
   if (j.is_number()) {
     return std::make_shared<vpFixedTemporalWeighting>(j.get<double>());
   }
@@ -49,11 +48,10 @@ double vpFixedTemporalWeighting::weight(const double /*progress*/) const
 
 double vpSigmoidTemporalWeighting::weight(const double progress) const
 {
-  const double loc = 0.5;
-  const double scaleFac = 4.0;
+
   double w = 1.0;
-  if (progress == 0.0 || loc == 1.0) {
-    if (scaleFac > 0.0) {
+  if (progress == 0.0 || m_location == 1.0) {
+    if (m_power > 0.0) {
       w = 0.0;
     }
     else {
@@ -61,10 +59,10 @@ double vpSigmoidTemporalWeighting::weight(const double progress) const
     }
   }
   else {
-    double f1 = loc / progress;
-    double f2 = (1.0 - progress) / (1.0 - loc);
+    double f1 = m_location / progress;
+    double f2 = (1.0 - progress) / (1.0 - m_location);
 
-    w = (1.0 / (1.0 + (std::pow(f1 * f2, scaleFac))));
+    w = (1.0 / (1.0 + (std::pow(f1 * f2, m_power))));
   }
   return m_minWeight + w * (m_maxWeight - m_minWeight);
 }

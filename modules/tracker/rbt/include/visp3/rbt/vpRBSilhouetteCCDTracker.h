@@ -298,7 +298,7 @@ public:
 
   double getVVSTrackerWeight(double optimizationProgress) const VP_OVERRIDE
   {
-    return m_weighting->weight(optimizationProgress) / (10 * m_error.size());
+    return m_weighting->weight(optimizationProgress) / (100 * m_error.size());
   }
 
   void extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix &cMo) VP_OVERRIDE;

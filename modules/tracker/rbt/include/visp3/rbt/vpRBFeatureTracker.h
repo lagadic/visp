@@ -189,8 +189,10 @@ public:
    * \f$ w / N \f$, where \f$ w\f$ is the weight defined by setTrackerWeight, and  \f$ N \f$ is the number of features.
    */
   virtual double getVVSTrackerWeight(double optimizationProgress) const { return m_weighting->weight(optimizationProgress) / m_numFeatures; }
+  const std::shared_ptr<vpTemporalWeighting> getTemporalTrackerWeight() const { return m_weighting; }
   void setTrackerWeight(double weight) { m_weighting = std::make_shared<vpFixedTemporalWeighting>(weight); }
   void setTrackerWeight(const std::shared_ptr<vpTemporalWeighting> &weight) { m_weighting = weight; }
+
 
 
   /**
@@ -212,7 +214,6 @@ public:
 #if defined(VISP_HAVE_NLOHMANN_JSON)
   virtual void loadJsonConfiguration(const nlohmann::json &j)
   {
-    std::cerr << "Loading feature tracker base" << std::endl;
     m_weighting = vpTemporalWeighting::parseTemporalWeighting(j.at("weight"));
     m_enableDisplay = j.value("display", m_enableDisplay);
   }
