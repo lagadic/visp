@@ -83,7 +83,7 @@ vpMatrix vpRBTracker::getCovariance() const
     }
     tracker->updateCovariance(m_lambda);
     vpMatrix trackerCov = tracker->getCovariance();
-    double trackerWeight = tracker->getVVSTrackerWeight();
+    double trackerWeight = tracker->getVVSTrackerWeight(1.0);
     if (trackerCov.getRows() != 6 || trackerCov.getCols() != 6) {
       throw vpException(vpException::dimensionError,
       "Expected tracker pose covariance to have dimensions 6x6, but got %dx%d",
@@ -302,6 +302,7 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
   }
   id = 0;
   for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
+
     timer.startTimer();
     try {
       tracker->extractFeatures(input, m_previousFrame, m_cMo);
@@ -329,6 +330,7 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
 
   id = 0;
   for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
+
     timer.startTimer();
     tracker->initVVS(input, m_previousFrame, m_cMo);
     timer.setInitVVSTime(id, timer.endTimer());
@@ -351,9 +353,9 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
       try {
         tracker->computeVVSIter(input, m_cMo, iter);
       }
-      catch (vpException &) {
+      catch (vpException &e) {
         std::cerr << "Tracker " << id << " raised an exception in computeVVSIter" << std::endl;
-        throw;
+        throw e;
       }
       timer.addTrackerVVSTime(id, timer.endTimer());
       id += 1;
@@ -367,7 +369,7 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
     for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
       if (tracker->getNumFeatures() > 0) {
         numFeatures += tracker->getNumFeatures();
-        const double weight = tracker->getVVSTrackerWeight();
+        const double weight = tracker->getVVSTrackerWeight(static_cast<double>(iter) / static_cast<double>(m_vvsIterations));
         LTL += weight * tracker->getLTL();
         LTR += weight * tracker->getLTR();
         error += weight * (tracker->getWeightedError()).sumSquare();
@@ -402,7 +404,7 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
         break;
       }
 
-      result.logFeatures(m_trackers);
+      result.logFeatures(iter, m_vvsIterations, m_trackers);
 
       double convergenceMetric = 0.0;
       bool converged = false;

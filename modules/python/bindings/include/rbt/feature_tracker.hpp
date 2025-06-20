@@ -127,13 +127,14 @@ public:
       lambda
     );
   }
-  virtual double getVVSTrackerWeight() const VP_OVERRIDE
+  virtual double getVVSTrackerWeight(double progress) const VP_OVERRIDE
   {
     PYBIND11_OVERRIDE(
       double,           /* Return type */
       vpRBFeatureTracker,     /* Parent class */
       getVVSTrackerWeight,       /* Name of function in C++ (must match Python name) */
-      );
+      progress
+    );
   }
   virtual vpMatrix getLTL() const VP_OVERRIDE
   {

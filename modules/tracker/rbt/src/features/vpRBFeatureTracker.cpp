@@ -39,7 +39,7 @@ BEGIN_VISP_NAMESPACE
 vpRBFeatureTracker::vpRBFeatureTracker()
 {
   m_numFeatures = 0;
-  m_userVvsWeight = 1.0;
+  m_weighting = std::make_shared<vpFixedTemporalWeighting>(1.0);
   m_vvsConverged = false;
   m_enableDisplay = true;
 }
