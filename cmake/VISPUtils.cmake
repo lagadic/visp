@@ -914,9 +914,9 @@ set(VP_COMPILER_FAIL_REGEX
     "WARNING: unknown flag:"                    # Open64
   )
 
-# test if a compiler flag is supported
+# Test if a compiler flag is supported
 # There is the optional FORCE argument that forces the check.
-# This FORCE argument is especially useful for chechs like nullptr that depend on the cxx standard
+# This FORCE argument is especially useful for checks like nullptr that depend on the cxx standard
 macro(vp_check_compiler_flag LANG FLAG RESULT)
   set(_force_check FALSE)
   set(_fname "")
@@ -987,11 +987,15 @@ macro(vp_check_compiler_flag LANG FLAG RESULT)
         list(APPEND __cmake_flags "-DCMAKE_CXX_EXTENSIONS=${CMAKE_CXX_EXTENSIONS}")
       endif()
       message(STATUS "Performing Test ${RESULT}${__msg}")
+      set(__cxx_flag_warning_as_error "")
+      if(CMAKE_CXX_COMPILER_ID MATCHES "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+        set(__cxx_flag_warning_as_error "-Werror")
+      endif()
       try_compile(${RESULT}
         "${CMAKE_BINARY_DIR}"
         "${_fname}"
         CMAKE_FLAGS ${__cmake_flags}
-        COMPILE_DEFINITIONS "${FLAG}"
+        COMPILE_DEFINITIONS "${FLAG} ${__cxx_flag_warning_as_error}"
         ${__link_libs}
         OUTPUT_VARIABLE OUTPUT)
       if(${RESULT})
@@ -1676,7 +1680,7 @@ macro(vp_get_all_cflags _cxx_flags)
 
   # Propagate pcl compiler option if enabled during ViSP build
   if(VISP_HAVE_PCL AND PCL_DEPS_COMPILE_OPTIONS)
-    list(INSERT ${_cxx_flags} 0  ${PCL_DEPS_COMPILE_OPTIONS})
+    list(INSERT ${_cxx_flags} 0 ${PCL_DEPS_COMPILE_OPTIONS})
   endif()
 endmacro()
 

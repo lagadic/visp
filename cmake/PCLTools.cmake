@@ -70,6 +70,7 @@ endmacro()
 macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries pcl_deps_compile_options)
   # Get compile options like "$<$<COMPILE_LANGUAGE:CXX>:-msse4.2;-mfpmath=sse;-march=native;-mavx2>"
   # end filter them out to keep "-msse4.2;-mfpmath=sse;-march=native;-mavx2"
+  set(__pcl_deps_compile_options)
   foreach(lib_ ${${pcl_libraries}})
     if(lib_ MATCHES "^pcl")
       get_target_property(imported_compile_options_ ${lib_} INTERFACE_COMPILE_OPTIONS)
@@ -77,12 +78,21 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries pcl_dep
         string(REGEX REPLACE "\\$<\\$<COMPILE_LANGUAGE:CXX>:" "" imported_compile_option_ ${imported_compile_option_})
         string(REGEX REPLACE ">" "" imported_compile_option_ ${imported_compile_option_})
         if(imported_compile_option_)
-          list(APPEND ${pcl_deps_compile_options} ${imported_compile_option_})
+          list(APPEND __pcl_deps_compile_options ${imported_compile_option_})
         endif()
       endforeach()
     endif()
   endforeach()
-  vp_list_unique(${pcl_deps_compile_options})
+  vp_list_unique(__pcl_deps_compile_options)
+  # On macOS with PCL 1.14.3 or 1.15.0 PCLConfig.cmake propagates -ffloat-store in INTERFACE_COMPILE_OPTIONS
+  # that lead to clang++: warning: optimization flag '-ffloat-store' is not supported [-Wignored-optimization-argument]
+  # That's why here, we add an additional check to ensure that the compile option is valid
+  foreach(option ${__pcl_deps_compile_options})
+    vp_check_flag_support(CXX "${option}" _varname "${VISP_EXTRA_CXX_FLAGS}")
+    if(${_varname})
+      list(APPEND ${pcl_deps_compile_options} ${option})
+    endif()
+  endforeach()
 
   foreach(lib_ ${${pcl_libraries}})
     mark_as_advanced(${lib_}_LOCATION)
