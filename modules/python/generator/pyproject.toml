@@ -103,9 +103,9 @@ classifiers = [  # Optional
 dependencies = [
   "tqdm",
   "pcpp",
-  "cxxheaderparser@git+https://github.com/robotpy/cxxheaderparser#egg=master",
+  "cxxheaderparser==1.5.*",
   "lxml",
-  "doxmlparser@git+https://github.com/doxygen/doxygen#subdirectory=addon/doxmlparser"
+  "doxmlparser==1.14.*"
 ]
 
 # List additional groups of dependencies here (e.g. development
