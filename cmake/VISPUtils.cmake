@@ -914,9 +914,9 @@ set(VP_COMPILER_FAIL_REGEX
     "WARNING: unknown flag:"                    # Open64
   )
 
-# test if a compiler flag is supported
+# Test if a compiler flag is supported
 # There is the optional FORCE argument that forces the check.
-# This FORCE argument is especially useful for chechs like nullptr that depend on the cxx standard
+# This FORCE argument is especially useful for checks like nullptr that depend on the cxx standard
 macro(vp_check_compiler_flag LANG FLAG RESULT)
   set(_force_check FALSE)
   set(_fname "")
@@ -1676,7 +1676,7 @@ macro(vp_get_all_cflags _cxx_flags)
 
   # Propagate pcl compiler option if enabled during ViSP build
   if(VISP_HAVE_PCL AND PCL_DEPS_COMPILE_OPTIONS)
-    list(INSERT ${_cxx_flags} 0  ${PCL_DEPS_COMPILE_OPTIONS})
+    list(INSERT ${_cxx_flags} 0 ${PCL_DEPS_COMPILE_OPTIONS})
   endif()
 endmacro()
 

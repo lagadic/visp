@@ -84,6 +84,16 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries pcl_dep
   endforeach()
   vp_list_unique(${pcl_deps_compile_options})
 
+  # On macOS with PCL 1.14.3 or 1.15.0 PCLConfig.cmake propagates '-ffloat-store' in INTERFACE_COMPILE_OPTIONS
+  # that lead to clang++: warning: optimization flag '-ffloat-store' is not supported [-Wignored-optimization-argument]
+  # That's why here, we add the additional flag '-Wno-ignored-optimization-argument' to mute this warning
+  if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    vp_check_flag_support(CXX "-Wno-ignored-optimization-argument" _varname "${VISP_EXTRA_CXX_FLAGS}")
+    if(${_varname})
+      list(APPEND ${pcl_deps_compile_options} "-Wno-ignored-optimization-argument")
+    endif()
+  endif()
+
   foreach(lib_ ${${pcl_libraries}})
     mark_as_advanced(${lib_}_LOCATION)
     if(TARGET ${lib_})
