@@ -332,7 +332,6 @@ void vpRBSilhouetteCCDTracker::computeVVSIter(const vpRBFeatureTrackerInput &fra
       changeScale();
     }
   }
-
   computeLocalStatistics(frame.IRGB, m_stats);
   computeErrorAndInteractionMatrix(); // Update interaction matrix, and gauss newton left and right side terms
 
@@ -622,7 +621,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
 
       // compute the mean value in the vicinity of a point
       // m_{ks} = I{k}^{s} = \sum_{l} w_{kls}{I_{kl}} : s = 1 or 2
-      const vpRGBa pixelRGBa = I[static_cast<unsigned int>(vic_k[0])][static_cast<unsigned int>(vic_k[1])];
+      const vpRGBa pixelRGBa = I(vic_k[0], vic_k[1]);
       double *pixel = pix_ptr + k * 3;
       pixel[0] = static_cast<double>(pixelRGBa.R);
       pixel[1] = static_cast<double>(pixelRGBa.G);
@@ -645,7 +644,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
         }
       }
       const double *vic_neg = vic_ptr + 10 * negative_normal;
-      const vpRGBa pixelNegRGBa = I[static_cast<unsigned int>(vic_neg[0])][static_cast<unsigned int>(vic_neg[1])];
+      const vpRGBa pixelNegRGBa = I(vic_neg[0], vic_neg[1]);
       double *pixelNeg = pix_ptr + negative_normal * 3;
 
       pixelNeg[0] = static_cast<double>(pixelNegRGBa.R);
@@ -832,7 +831,7 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
 #endif
     {
       m_gradient += localGradient;
-      m_hessian += localHessian;;
+      m_hessian += localHessian;
     }
   }
 

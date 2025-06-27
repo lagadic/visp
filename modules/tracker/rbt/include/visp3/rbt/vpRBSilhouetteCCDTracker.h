@@ -296,7 +296,10 @@ public:
   void onTrackingIterStart(const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE { }
   void onTrackingIterEnd(const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE { }
 
-  double getVVSTrackerWeight() const VP_OVERRIDE { return m_userVvsWeight / (10 * m_error.size()); }
+  double getVVSTrackerWeight(double optimizationProgress) const VP_OVERRIDE
+  {
+    return m_weighting->weight(optimizationProgress) / (100 * m_error.size());
+  }
 
   void extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix &cMo) VP_OVERRIDE;
   void trackFeatures(const vpRBFeatureTrackerInput & /*frame*/, const vpRBFeatureTrackerInput & /*previousFrame*/, const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE { }

@@ -553,7 +553,6 @@ void bindings_vpHomogeneousMatrix(py::class_<vpHomogeneousMatrix, std::shared_pt
       else {
         result.orthogonalizeRotation();
       }
-      throw std::runtime_error("Input numpy array is not a valid homogeneous matrix");
     }
     return result;
                                    }), R"doc(

@@ -56,10 +56,10 @@ class VISP_EXPORT vpRBFeatureResult
 
 public:
   vpRBFeatureResult() = default;
-  void onIter(vpRBFeatureTracker &tracker)
+  void onIter(unsigned int iter, unsigned int maxIters, vpRBFeatureTracker &tracker)
   {
     m_numFeatures.push_back(tracker.getNumFeatures());
-    double w = tracker.getVVSTrackerWeight();
+    double w = tracker.getVVSTrackerWeight(static_cast<double>(iter) / static_cast<double>(maxIters));
     if (!vpMath::isFinite(w)) {
       w = 0.0;
     }
@@ -162,7 +162,7 @@ public:
 
   }
 
-  inline void logFeatures(const std::vector<std::shared_ptr<vpRBFeatureTracker>> &features)
+  inline void logFeatures(unsigned int iter, unsigned int maxIters, const std::vector<std::shared_ptr<vpRBFeatureTracker>> &features)
   {
     if (m_featureData.size() == 0) {
       m_featureData.resize(features.size());
@@ -172,7 +172,7 @@ public:
     }
 
     for (unsigned int i = 0; i < features.size(); ++i) {
-      m_featureData[i].onIter(*features[i]);
+      m_featureData[i].onIter(iter, maxIters, *features[i]);
     }
   }
 

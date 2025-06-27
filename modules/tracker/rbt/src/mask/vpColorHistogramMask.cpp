@@ -61,7 +61,7 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
   if (depth.getSize() > 0 && m_depthErrorTolerance > 0.f) {
     for (unsigned int i = top; i <= static_cast<unsigned int>(bottom); ++i) {
       for (unsigned int j = left; j <= static_cast<unsigned int>(right); ++j) {
-        m_mask[i][j] = renderDepth[i][j] > 0.f && (depth[i][j] == 0.f || fabs(renderDepth[i][j] - depth[i][j]) <= m_depthErrorTolerance);
+        m_mask[i][j] = renderDepth[i][j] > 0.f && (depth[i][j] > 0.f && fabs(renderDepth[i][j] - depth[i][j]) <= m_depthErrorTolerance);
       }
     }
   }
@@ -113,7 +113,7 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
         const float poPix = m_probaObject[i][j];
         const float pbPix = m_probaBackground[i][j];
         if (pbPix == 0.f) {
-          mask[i][j] = 1.f;
+          mask[i][j] = poPix > 0.f ? 1.f : 0.f;
         }
         else {
           const float score = poPix / pbPix;
@@ -130,7 +130,7 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
       const float pbPix = m_probaBackground.bitmap[i];
 
       if (pbPix == 0.f) {
-        mask.bitmap[i] = 1.f;
+        mask.bitmap[i] = poPix > 0.f ? 1.f : 0.f;
       }
       else {
         const float score = poPix / pbPix;

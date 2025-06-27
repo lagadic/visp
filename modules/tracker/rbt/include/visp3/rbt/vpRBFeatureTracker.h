@@ -45,6 +45,7 @@
 
 #include <visp3/rbt/vpRBFeatureTrackerInput.h>
 #include <visp3/rbt/vpRBSilhouettePoint.h>
+#include <visp3/rbt/vpTemporalWeighting.h>
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
 #include VISP_NLOHMANN_JSON(json.hpp)
@@ -187,8 +188,12 @@ public:
    *  The default computation is the following:
    * \f$ w / N \f$, where \f$ w\f$ is the weight defined by setTrackerWeight, and  \f$ N \f$ is the number of features.
    */
-  virtual double getVVSTrackerWeight() const { return m_userVvsWeight / m_numFeatures; }
-  void setTrackerWeight(double weight) { m_userVvsWeight = weight; }
+  virtual double getVVSTrackerWeight(double optimizationProgress) const { return m_weighting->weight(optimizationProgress) / m_numFeatures; }
+  const std::shared_ptr<vpTemporalWeighting> getTemporalTrackerWeight() const { return m_weighting; }
+  void setTrackerWeight(double weight) { m_weighting = std::make_shared<vpFixedTemporalWeighting>(weight); }
+  void setTrackerWeight(const std::shared_ptr<vpTemporalWeighting> &weight) { m_weighting = weight; }
+
+
 
   /**
    * \brief Get the left-side term of the Gauss-Newton optimization term
@@ -209,7 +214,7 @@ public:
 #if defined(VISP_HAVE_NLOHMANN_JSON)
   virtual void loadJsonConfiguration(const nlohmann::json &j)
   {
-    m_userVvsWeight = j.at("weight");
+    m_weighting = vpTemporalWeighting::parseTemporalWeighting(j.at("weight"));
     m_enableDisplay = j.value("display", m_enableDisplay);
   }
 #endif
@@ -231,7 +236,7 @@ protected:
 
 
   unsigned m_numFeatures; //! Number of considered features
-  double m_userVvsWeight; //! User-defined weight for this specific type of feature
+  std::shared_ptr<vpTemporalWeighting> m_weighting; //! User-defined weight for this specific type of feature
 
   bool m_vvsConverged; //! Whether VVS has converged, should be updated every VVS iteration
 
