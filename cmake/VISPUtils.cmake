@@ -987,15 +987,11 @@ macro(vp_check_compiler_flag LANG FLAG RESULT)
         list(APPEND __cmake_flags "-DCMAKE_CXX_EXTENSIONS=${CMAKE_CXX_EXTENSIONS}")
       endif()
       message(STATUS "Performing Test ${RESULT}${__msg}")
-      set(__cxx_flag_warning_as_error "")
-      if(CMAKE_CXX_COMPILER_ID MATCHES "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-        set(__cxx_flag_warning_as_error "-Werror")
-      endif()
       try_compile(${RESULT}
         "${CMAKE_BINARY_DIR}"
         "${_fname}"
         CMAKE_FLAGS ${__cmake_flags}
-        COMPILE_DEFINITIONS "${FLAG} ${__cxx_flag_warning_as_error}"
+        COMPILE_DEFINITIONS "${FLAG}"
         ${__link_libs}
         OUTPUT_VARIABLE OUTPUT)
       if(${RESULT})
