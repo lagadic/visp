@@ -7,8 +7,8 @@
 
 ViSP 3.x.x (Version in development)
   - Contributors:
-    . Fabien Spindler, Romain Lagneau, Pierre Perraud, Florent Lamiraux, Samuel Felton, François Chaumette,
-      Souriya Trinh, Olivier Roussel
+    . Fabien Spindler, Samuel Felton, Romain Lagneau, Olivier Roussel, Souriya Trinh, François Chaumette,
+      Guilhem Saurel, Pierre Perraud, Florent Lamiraux, Lluis Prior Sancho
   - New classes
     . vpPololu and vpRobotPololuPtu to control respectively a servo motor using a pololu maestro board or a 3D printed
       2 dof pan-tilt unit. Visual servoing example provided in example/servo-pololu-ptu. Tests available in
@@ -135,6 +135,7 @@ ViSP 3.x.x (Version in development)
               your code with AVX enabled or define EIGEN_MAX_ALIGN_BYTES=32"
     . [#1687] CMake error in vp_get_external_target() with ur_rtde 1.5.6 third-party
     . [#1690] Test with SURF keypoint detector fails with OpenCV 4.7.0 on ubuntu 20.04
+    . [#1708] Build of visp_pololu fails on FreeBSD
 ----------------------------------------------
 ViSP 3.6.0 (released September 22, 2023)
   - Contributors:
