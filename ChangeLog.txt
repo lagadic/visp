@@ -136,6 +136,7 @@ ViSP 3.x.x (Version in development)
     . [#1687] CMake error in vp_get_external_target() with ur_rtde 1.5.6 third-party
     . [#1690] Test with SURF keypoint detector fails with OpenCV 4.7.0 on ubuntu 20.04
     . [#1708] Build of visp_pololu fails on FreeBSD
+    . [#1711] CMake error around nlohmann_json detection on FreeBSD
 ----------------------------------------------
 ViSP 3.6.0 (released September 22, 2023)
   - Contributors:
