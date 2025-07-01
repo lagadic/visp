@@ -159,6 +159,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
   # clang-cl : warning : unknown argument ignored in clang-cl: '-fvisibility=hidden' [-Wunknown-argument]
   if(NOT (MSVC AND CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
     add_extra_compiler_options("-fvisibility=hidden")
+    add_extra_compiler_options("-fvisibility-inlines-hidden")
   endif()
 
   if(ENABLE_AVX AND X86_64)
