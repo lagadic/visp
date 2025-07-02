@@ -660,7 +660,8 @@ endif()
 VP_OPTION(USE_ZLIB        ZLIB         ""    "Include zlib support"         "" ON IF NOT WINRT AND NOT IOS)
 set(X11_ADVANCED "X11_xcb_util_LIB;X11_xcb_util_INCLUDE_PATH;X11_xcb_xfixes_INCLUDE_PATH;X11_xcb_xfixes_LIB")
 VP_OPTION(USE_X11         X11          ""    "Include X11 support"          "${X11_ADVANCED}" ON IF NOT WINRT AND NOT IOS)
-VP_OPTION(USE_GTK2        GTK2         ""    "Include gtk2 support"         "" OFF IF NOT WINRT AND NOT IOS)
+# Workaround, see below. The following line searching for GKT2 has to be moved after searching for PCL
+#VP_OPTION(USE_GTK2        GTK2         ""    "Include gtk2 support"         "" OFF IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_JPEG        JPEG         ""    "Include jpeg support"         "" ON IF NOT IOS)
 VP_OPTION(USE_PNG         PNG          ""    "Include png support"          "" ON IF NOT IOS)
 # To control Pioneer mobile robots, under UNIX we need Aria and std::threads, rt and dl 3rd party libraries
@@ -706,6 +707,34 @@ if(USE_PCL)
     endif()
   endif()
 endif()
+
+# ----------------------------------------------------------------------------
+# Workaround for the following issue that occured on FreeBSD 14.2 with pcl-1.15.0
+# and vtk-9.5.0. It occurs when GTK2 is searched before PCL. Searching first PCL
+# and after GTK2 does the trick.
+# The following error seems due to the fact that FindGTK2.cmake is seraching for
+# freetype2.
+#
+# See PCL issue: https://github.com/PointCloudLibrary/pcl/issues/6301
+#
+#  CMake Error at /usr/local/lib/cmake/freetype/freetype-config.cmake:42 (message):
+#    Some (but not all) targets in this export set were already defined.
+#
+#    Targets Defined: Freetype::Freetype
+#
+#    Targets not yet defined: freetype
+#
+#  Call Stack (most recent call first):
+#    /usr/local/lib/cmake/vtk-9.5/FindFreetype.cmake:98 (find_package)
+#    /usr/local/lib/cmake/vtk-9.5/VTK-vtk-module-find-packages.cmake:1061 (find_package)
+#    /usr/local/lib/cmake/vtk-9.5/vtk-config.cmake:170 (include)
+#    /usr/local/share/pcl-1.15/PCLConfig.cmake:255 (find_package)
+#    /usr/local/share/pcl-1.15/PCLConfig.cmake:304 (find_VTK)
+#    /usr/local/share/pcl-1.15/PCLConfig.cmake:555 (find_external_library)
+#    cmake/VISPUtils.cmake:549 (find_package)
+#    CMakeLists.txt:674 (VP_OPTION)
+# ----------------------------------------------------------------------------
+VP_OPTION(USE_GTK2        GTK2         ""    "Include gtk2 support"         "" OFF IF NOT WINRT AND NOT IOS)
 
 # ----------------------------------------------------------------------------
 # Handle OpenCV 2.4.8 as minimal version
