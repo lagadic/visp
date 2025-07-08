@@ -109,7 +109,7 @@ void vpMbtMeEllipse::computeProjectionError(const vpImage<unsigned char> &I, dou
           if (jImg > max_jImg)
             jImg = max_jImg;
 
-          gradientX += SobelX[i][j] * I(static_cast<unsigned int>(jImg), static_cast<unsigned int>(jImg));
+          gradientX += SobelX[i][j] * I(static_cast<unsigned int>(iImg), static_cast<unsigned int>(jImg));
         }
       }
 
@@ -128,7 +128,7 @@ void vpMbtMeEllipse::computeProjectionError(const vpImage<unsigned char> &I, dou
           if (jImg > max_jImg)
             jImg = max_jImg;
 
-          gradientY += SobelY[i][j] * I(static_cast<unsigned int>(jImg), static_cast<unsigned int>(jImg));
+          gradientY += SobelY[i][j] * I(static_cast<unsigned int>(iImg), static_cast<unsigned int>(jImg));
         }
       }
 
