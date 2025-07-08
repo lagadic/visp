@@ -44,6 +44,7 @@ set(example_cpp
   grab1394Two.cpp
   grab1394CMU.cpp
   grabDisk.cpp
+  grabDiskFloat.cpp
   grabV4l2.cpp
   grabDirectShow.cpp
   grabDirectShowMulti.cpp
