@@ -133,11 +133,11 @@ void readOpenCV(vpImage<float> &I, const std::string &filename)
 {
 #if defined(VISP_HAVE_OPENCV)
 #if VISP_HAVE_OPENCV_VERSION >= 0x030200
-  int flags = cv::IMREAD_COLOR | cv::IMREAD_IGNORE_ORIENTATION;
+  int flags = cv::IMREAD_ANYDEPTH | cv::IMREAD_IGNORE_ORIENTATION;
 #elif VISP_HAVE_OPENCV_VERSION >= 0x030000
-  int flags = cv::IMREAD_COLOR;
+  int flags = cv::IMREAD_ANYDEPTH;
 #else
-  int flags = CV_LOAD_IMAGE_COLOR;
+  int flags = CV_LOAD_IMAGE_ANYDEPTH;
 #endif
   cv::Mat Ip = cv::imread(filename.c_str(), flags);
   if (!Ip.empty())
