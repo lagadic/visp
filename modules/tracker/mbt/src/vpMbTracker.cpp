@@ -653,7 +653,7 @@ void vpMbTracker::loadInitFile(const std::string &init_file, std::vector<std::st
       for (size_t i = 0; i < params.size(); i++) {
         params[i] = vpIoTools::trim(params[i]);
       }
-
+      std::cout << "-- DEBUG FS param is empty ? " << params.empty() << std::endl;
       if (!params.empty()) {
         // Get the loaded model pathname
         std::string headerPathRead = params[0];
@@ -674,7 +674,7 @@ void vpMbTracker::loadInitFile(const std::string &init_file, std::vector<std::st
 
         vpHomogeneousMatrix o_M_o_from_init;
         vpTranslationVector t;
-        vpThetaUVector tu;
+        vpRotationMatrix R;
         for (size_t i = 1; i < params.size(); i++) {
           std::string param = params[i];
           {
@@ -699,6 +699,7 @@ void vpMbTracker::loadInitFile(const std::string &init_file, std::vector<std::st
 
               std::vector<std::string> values = vpIoTools::splitChain(param, ";");
               if (values.size() == 3) {
+                vpThetaUVector tu;
                 for (size_t j = 0; j < values.size(); j++) {
                   std::string value = values[j];
                   bool radian = true;
@@ -713,12 +714,33 @@ void vpMbTracker::loadInitFile(const std::string &init_file, std::vector<std::st
                     value = value.substr(0, unitPos);
                   }
                   tu[static_cast<unsigned int>(j)] = !radian ? vpMath::rad(atof(value.c_str())) : atof(value.c_str());
+                  R.buildFrom(tu);
                 }
               }
             }
           }
+          {
+            const std::string prefix = "R=[";
+            if (!param.compare(0, prefix.size(), prefix)) {
+              param = param.substr(prefix.size());
+              param = param.substr(0, param.find_first_of("]"));
+
+              std::vector<std::string> values = vpIoTools::splitChain(param, ";");
+              if (values.size() == 9) {
+                R[0][0] = atof(values[0].c_str());
+                R[0][1] = atof(values[1].c_str());
+                R[0][2] = atof(values[2].c_str());
+                R[1][0] = atof(values[3].c_str());
+                R[1][1] = atof(values[4].c_str());
+                R[1][2] = atof(values[5].c_str());
+                R[2][0] = atof(values[6].c_str());
+                R[2][1] = atof(values[7].c_str());
+                R[2][2] = atof(values[8].c_str());
+              }
+            }
+          }
         }
-        o_M_o_from_init.buildFrom(t, tu);
+        o_M_o_from_init.buildFrom(t, R);
         bool cyclic = false;
         for (std::vector<std::string>::const_iterator it = vectorOfInitFilename.begin();
              it != vectorOfInitFilename.end() && !cyclic; ++it) {
@@ -1988,7 +2010,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
           vpHomogeneousMatrix o_M_o_from_cao;
           vpTranslationVector t;
-          vpThetaUVector tu;
+          vpRotationMatrix R;
           for (size_t i = 1; i < params.size(); i++) {
             std::string param = params[i];
             {
@@ -2013,6 +2035,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
                 std::vector<std::string> values = vpIoTools::splitChain(param, ";");
                 if (values.size() == 3) {
+                  vpThetaUVector tu;
                   for (size_t j = 0; j < values.size(); j++) {
                     std::string value = values[j];
                     bool radian = true;
@@ -2027,12 +2050,33 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
                       value = value.substr(0, unitPos);
                     }
                     tu[static_cast<unsigned int>(j)] = !radian ? vpMath::rad(atof(value.c_str())) : atof(value.c_str());
+                    R.buildFrom(tu);
                   }
                 }
               }
             }
+            {
+              const std::string prefix = "R=[";
+              if (!param.compare(0, prefix.size(), prefix)) {
+                param = param.substr(prefix.size());
+                param = param.substr(0, param.find_first_of("]"));
+
+                std::vector<std::string> values = vpIoTools::splitChain(param, ";");
+                if (values.size() == 9) {
+                  R[0][0] = atof(values[0].c_str());
+                  R[0][1] = atof(values[1].c_str());
+                  R[0][2] = atof(values[2].c_str());
+                  R[1][0] = atof(values[3].c_str());
+                  R[1][1] = atof(values[4].c_str());
+                  R[1][2] = atof(values[5].c_str());
+                  R[2][0] = atof(values[6].c_str());
+                  R[2][1] = atof(values[7].c_str());
+                  R[2][2] = atof(values[8].c_str());
+                }
+              }
+            }
           }
-          o_M_o_from_cao.buildFrom(t, tu);
+          o_M_o_from_cao.buildFrom(t, R);
           bool cyclic = false;
           for (std::vector<std::string>::const_iterator it = vectorOfModelFilename.begin();
                it != vectorOfModelFilename.end() && !cyclic; ++it) {
