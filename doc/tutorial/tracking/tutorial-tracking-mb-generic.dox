@@ -108,14 +108,14 @@ such as reading tracker settings from an XML file or visibility computation are 
 \subsection mb_generic_started_exe Running the example
 
 Once build, to see the options that are available in the previous source code, just run:
-\code
+\code{.sh}
 $ ./tutorial-mb-generic-tracker --help
 Usage: ./tutorial-mb-generic-tracker [--video <video name>] [--model <model name>] [--tracker <0=egde|1=keypoint|2=hybrid>] [--help]
 \endcode
 By default, `model/teabox/teabox.mpg` video and `model/teabox/teabox.cao` model are used as input. Using \c "--tracker" option, you can
 specify which tracker has to be used:
 - Using \c "--tracker 0" to track only moving-edges:
-\code
+\code{.sh}
 $ ./tutorial-mb-generic-tracker --tracker 0
 \endcode
 will produce results similar to:
@@ -126,7 +126,7 @@ will produce results similar to:
 </p>
 \endhtmlonly
 - Using \c "--tracker 1"  to track only keypoints:
-\code
+\code{.sh}
 $ ./tutorial-mb-generic-tracker --tracker 1
 \endcode
 will produce results similar to:
@@ -137,7 +137,7 @@ will produce results similar to:
 </p>
 \endhtmlonly
 - Using \c "--tracker 2" to track moving-edges and keypoints in an hybrid scheme:
-\code
+\code{.sh}
 $ ./tutorial-mb-generic-tracker --tracker 2
 \endcode
 will produce results similar to:
@@ -149,11 +149,11 @@ will produce results similar to:
 \endhtmlonly
 
 With this example it is also possible to work on an other data set using \c "--video" and \c "--model" command line options. For example, if you run:
-\code
+\code{.sh}
 $ ./tutorial-mb-generic-tracker --video <path1>/myvideo%04.png --model <path2>/myobject.cao.
 \endcode
 it means that the following images will be used as input:
-\code
+\code{.sh}
 <path1>/myvideo0001.png
 <path1>/myvideo0002.png
 ...
@@ -326,51 +326,82 @@ There are two ways to initialize the tracker, either by user interaction, either
 
 \subsection mb_generic_init_user Initialization by user click
 
-The tracker could be initialized by the user that has to click on at least 4 points on the object seen in the image. To this end,
-vpMbGenericTracker::initClick() function has to be used.
+The tracker could be initialized by the user that has to click on at least 4 points on the object seen in the image.
+To this end, vpMbGenericTracker::initClick() function has to be used.
 
 \snippet tutorial-mb-generic-tracker.cpp Init
 
-The previous line of code, loads a file named \c "<objectname>.init" and waits for user click. When an image named \c "<objectname>.ppm"
-exists besides \c "<objectname>.init" and when the last parameter of the function is set to `true`, the image is displayed to help the user
-to know where to click. Supported image formats are `.ppm`, `.pgm`, `.png`, `.jpeg` and `.jpg`.
+The previous line of code, loads a file named \c "<objectname>.init" and waits for user click. When an image named
+\c "<objectname>.png" exists besides \c "<objectname>.init" and when the last parameter of the function is set to
+`true`, the image is displayed to help the user to know where to click. Supported image formats are `.ppm`, `.pgm`,
+`.png`, `.jpeg` and `.jpg`.
 
 Let us consider the teabox example.
 
-The user has to click in the image on four vertices with their 3D coordinates defined in the \c "teabox.init" file. The following image
-\c "teabox.ppm" shows where the user has to click.
+The user has to click in the image on four vertices with their 3D coordinates defined in the \c "teabox.init" file.
+The following image \c "teabox.png" shows where the user has to click.
 
-\image html img-teabox-click.jpg Image \c "teabox.ppm" used to help the user to initialize the tracker.
+\image html img-teabox-click.jpg Image \c "teabox.png" used to help the user to initialize the tracker.
 
-Matched 2D and 3D coordinates are then used to compute an initial pose used to initialize the tracker. Note also that the third optional
-argument "true" is used here to enable the display of an image that may help the user for the initialization. The name of this image is
-the same as the \c "*.init" file except the extension that should be \c ".ppm". In our case it will be \c "teabox.ppm".
+Matched 2D and 3D coordinates are then used to compute an initial pose used to initialize the tracker. Note also that
+the third optional argument "true" is used here to enable the display of an image that may help the user for the
+initialization. The name of this image is the same as the \c "*.init" file except the extension that should be
+\c ".png". In our case it will be \c "teabox.png".
 
-The content of \c teabox.init file that defines 3D coordinates of some points of the model used during user initialization is provided
-hereafter. Note that all the characters after character '#' are considered as comments.
+The content of \c teabox.init file that defines 3D coordinates of some points of the model used during user
+initialization is provided hereafter. Note that all the characters after character '#' are considered as comments.
 
 \includelineno tutorial/tracking/model-based/generic/model/teabox/teabox.init
 
 We give now the signification of each line of this file:
-- line 1: Number of 3D points that are defined in this file. At least 4 points are required. Four is the minimal number of points requested
-  to compute a pose.
-- line 2: Each point is defined by its 3D coordinates. Here we define the first point with coordinates (0,0,0). In the previous figure it
-  corresponds to vertex 0 of the tea box. This point is also the origin of the frame in which all the points are defined.
+- line 1: Number of 3D points that are defined in this file. At least 4 points are required. Four is the minimal number
+  of points requested to compute a pose.
+- line 2: Each point is defined by its 3D coordinates. Here we define the first point with coordinates (0,0,0). In the
+  previous figure it corresponds to vertex 0 of the tea box. This point is also the origin of the frame in which all
+  the points are defined.
 - line 3: 3D coordinates of vertex 3.
 - line 4: 3D coordinates of vertex 2.
 - line 5: 3D coordinates of vertex 5.
 
-Here the user has to click on vertex 0, 3, 2 and 5 in the window that displays image \c I. From the 3D coordinates defined in \c teabox.init
-and the corresponding 2D coordinates of the vertices obtained by user interaction a pose is computed that is then used to initialize the tracker.
+Here the user has to click on vertex 0, 3, 2 and 5 in the window that displays image \c I. From the 3D coordinates
+defined in \c teabox.init and the corresponding 2D coordinates of the vertices obtained by user interaction a pose is
+computed that is then used to initialize the tracker.
 
-<b>How to choose good points for manual initialization</b>
+\subsubsection mb_generic_init_user_transform How to apply a transformation to the 3D points
 
-To select which 3D points to put in the `.init` file that are used to initialize manually the tracker, you should ensure that:
+In ViSP 3.7.0 we introduce the capability to load a `.init` file with 3D translation and rotation. For the translation,
+values are expressed in meters. For the rotation, the representation is the rotation matrix or the \f$\theta_u\f$
+axis-angle implemented in vpThetaUVector class. Values can be expressed in degrees or radians.
 
-- The projection of the points (usually we use four 3D points but could be more in the `.init` file) in the image must be visible
-- The spatial distribution of the projection of 3D points in the image should be as wide as possible in the image (ie they should
-  not be distributed over a very small part in the image), they should be not aligned and not located in the same plane when the object
-  is non planar
+The following example shows how to exploit this capability. Let us consider a file named `teabox-parent.init`
+that includes the `teabox.init` file where we want to apply a given transformation. The parent file could the contain
+\code{.txt}
+$ cat teabox-parent.init
+load("teabox.init", t=[0.048; 0.0; 0.0], tu=[0; 0; 90 deg])
+\endcode
+or
+\code{.txt}
+$ cat teabox-parent.init
+load("teabox.init", t=[0; 0.048; 0.0], tu=[0; 0; 3.1415 rad])
+\endcode
+or
+\code{.txt}
+$ cat teabox-parent.init
+load("teabox.init", t=[0.048; 0.0; 0.0], R=[0; 1; 0; 1; 0; 0; 0; 0; 1])
+\endcode
+
+\note This feature could also be applied to `.cao` files. See \ref mb_generic_advanced_transformation.
+
+\subsubsection mb_generic_init_user_good_points How to choose good points for manual initialization
+
+To select which 3D points to put in the `.init` file that are used to initialize manually the tracker, you should
+ensure that:
+
+- The projection of the points (usually we use four 3D points but could be more in the `.init` file) in the image must
+  be visible
+- The spatial distribution of the projection of 3D points in the image should be as wide as possible in the image
+  (ie they should not be distributed over a very small part in the image), they should be not aligned and not located
+  in the same plane when the object is non planar
 - Usually, we copy/paste coordinates of 3D points from `.cao` file.
 
 \subsection mb_generic_init_pose Initialization by external pose
@@ -396,7 +427,7 @@ Instead of setting the tracker parameters from source code, it is possible to sp
 tutorial-mb-generic-tracker-full.cpp example, to read the parameters from an XML file, simply modify the code like:
 \snippet tutorial-mb-generic-tracker-full.cpp Load xml
 The content of the XML file teabox.xml that is considered by default is the following:
-\code
+\code{.xml}
 <?xml version="1.0"?>
 <conf>
   <ecm>
@@ -457,7 +488,7 @@ Depending on the visual features that are used all the XML tags are not useful:
 Moving-edges settings affect the way the visible edges of an object are tracked.
 These settings could be tuned either from XML using \<ecm\> tag as:
 
-\code
+\code{.xml}
 <conf>
   ...
   <ecm>
@@ -540,7 +571,7 @@ Either from xml or from the previous source code you can set:
 Keypoint settings affect tracking of keypoints on visible faces using KLT.
 These settings could be tuned either from XML using \<klt\> tag as:
 
-\code
+\code{.xml}
 <conf>
   ...
   <klt>
@@ -585,7 +616,7 @@ field of view that introduce distortion, images need to be undistorded before pr
 the one obtained on undistorded images.
 
 Camera settings could be set from XML using \<camera\> tag as:
-\code
+\code{.xml}
 <conf>
   ...
   <camera>
@@ -623,7 +654,7 @@ the face is very simple. It makes the assumption that faces are convex and orien
 the angle to determine if a face is appearing \f$ \alpha_{appear} \f$, and the angle to determine if the face is disappearing
 \f$ \alpha_{disappear} \f$, a face will be considered as visible if  \f$  \alpha \leq \alpha_{disappear} \f$. We consider also
 that a new face is appearing if \f$  \alpha \leq \alpha_{appear} \f$. These two parameters can be set either in the XML file:
-\code
+\code{.xml}
 <conf>
   ...
   <face>
@@ -736,7 +767,7 @@ or the user can specify the distances in meters, which will automatically activa
 
 It is also possible to enable them in the XML file. This is done with the following lines:
 
-\code
+\code{.xml}
 <conf>
   ...
   <face>
@@ -939,7 +970,7 @@ the index of the end point. Finally, you define the face with the index of the s
 \note The way you declare the face segments (clockwise or counter clockwise) will determine the direction of the normal of the face and so will
 influe on the visibility of the face.
 
-\code
+\code{.txt}
 V1
 # Left wing model
 6                               # Number of points
@@ -979,7 +1010,7 @@ the visibility.
 
 \image html img-cylinder.png Example of a cylinder.
 
-\code
+\code{.txt}
 V1
 # Cylinder model
 2                 # Number of points
@@ -1010,7 +1041,7 @@ the area of the bounding box of the circle to determine the visibility.
 
 \image html img-circle.png Example of a circle.
 
-\code
+\code{.txt}
 V1
 # Circle model
 3                    # Number of points
@@ -1061,7 +1092,7 @@ For example, if we want to have a model of a plane, we could represent as elemen
 constituted of some other parts) and a cylinder for the plane fuselage.
 The following lines represent the top model of the plane.
 
-\code
+\code{.txt}
 V1
 # header
 # load the different parts of the plane
@@ -1094,7 +1125,7 @@ It could be useful to give a name for a face in a model in order to easily modif
 to use this face or not during the tracking phase. This is done directly in the `.cao` model file. For example, the next example shows how
 to set `plane_fuselage` as name for the cylinder used to model the plane fuselage and `right reactor` as name for the corresponding plane
 reactor modeled as a circle:
-\code
+\code{.txt}
 V1
 # header
 # load the different parts of the plane
@@ -1126,17 +1157,44 @@ You can give a name to all the elements excepts for points.
 
 \subsubsection mb_generic_advanced_transformation How to load cao model with transformation
 
-In ViSP 3.2.1 we introduce the capability to load a `.cao` model with 3D translation and rotation. For the translation, values are expressed
-in meters. For the rotation, the representation is the \f$\theta_u\f$ axis-angle implemented in vpThetaUVector class. Values can be
-expressed in degrees or radians.
+In ViSP 3.2.1 we introduce the capability to load a `.cao` model with 3D translation and rotation. For the translation,
+values are expressed in meters. For the rotation, the representation is the \f$\theta_u\f$ axis-angle implemented in
+vpThetaUVector class. Values can be expressed in degrees or radians.
 
-Let us model a square made with 4 lego 2x4 bricks as shown in the next immage.
+The following example shows how to exploit this capability. Let us consider a file named `./lego_parts/brick-2x4.cao`
+that contains the cad model of a lego brick with the 3D points to model faces. We could introduce a parent .cao file
+named `./lego-construction.cao` that includes multiple 2x4 lego brick where each brick is positioned using a homogeneous
+transformation. We could than assemble them in the parent file:
+\code{.txt}
+$ cat ./lego-construction.cao
+load("lego_parts/brick-2x4.cao", t=[0.048; 0.0; 0.0], tu=[0; 0; 90 deg])
+load("lego_parts/brick-2x4.cao", t=[0; 0.048; 0.0], tu=[0; 0; 3.1415 rad])
+load("lego_parts/brick-2x4.cao", t=[0; 0; 0.048])
+load("lego_parts/brick-2x4.cao", tu=[0; 0; 90 deg])
+load("lego_parts/brick-2x4.cao", tu=[0; 0; 1.57 rad])
+\endcode
+
+Since ViSP 3.7.0 we also introduce the possibility to express the rotational part of the transformation as a rotation
+matrix. The example below shows how to set this transformation. Let us consider the following rotation matrix that
+we want to apply:
+\f[{\bf R} = \left[\begin{array}{ccc}
+0 & 1 & 0 \\
+1 & 0 & 0 \\
+0 & 0 & 1
+\end{array}
+\right]\f]
+\code{.txt}
+$ cat ./lego-construction.cao
+load("lego_parts/brick-2x4.cao", t=[0.048; 0.0; 0.0], R=[0; 1; 0; 1; 0; 0; 0; 0; 1])
+\endcode
+
+Let us now model a square made with 4 lego 2x4 bricks as shown in the next immage.
 \image html img-tracker-mb-model-lego-square.jpg
 
 Instead of modeling all the 4 brick, we can just model one brick and use translation and rotation to model the others.
 
 The `.cao` model of the 2x4 brick located in `./lego_parts/brick-2x4.cao` is the following:
-\code
+\code{.txt}
 V1
 #################################################################
 # CAD model in cao format of a LEGO Element ID: 4211385 2x4 brick
@@ -1172,7 +1230,7 @@ V1
 
 Now to model a square made with 4 bricks, we can reuse the same 2x4 brick model introducing translation and rotation.
 The corresponding model `./lego-square.cao` is the following:
-\code
+\code{.txt}
 V1
 ################################################
 # Construct a square made with 4 2x4 lego bricks
@@ -1202,7 +1260,7 @@ load("lego_parts/brick-2x4.cao", t=[0.016; 0.016; 0.0], tu=[0; 0; 1.57 rad])
 \endcode
 
 The corresponding `./lego-square.init` file could contain the following coordinates of the points
-\code
+\code{.txt}
 4
 0.000  0.000  0.0096 # Point 1 corresponding to lego 1 front face top/left
 0.032  0.000  0.0096 # Point 2 corresponding to lego 2 front face top/left
@@ -1211,6 +1269,8 @@ The corresponding `./lego-square.init` file could contain the following coordina
 \endcode
 
 \image html img-tracker-mb-model-lego-square-init.jpg
+
+\note This feature could also be applied to `.init` files. See \ref mb_generic_init_user_transform.
 
 Now to see how to track this object you can jump to \ref mb_generic_use_case_lego_square section.
 
@@ -1221,7 +1281,7 @@ in the configuration file or in the CAD model in cao format.
 
 The following lines show the content of the configuration file :
 
-\code
+\code{.xml}
 <?xml version="1.0"?>
 <conf>
   <lod>
@@ -1234,7 +1294,7 @@ The following lines show the content of the configuration file :
 
 In CAD model file, you can specify the LOD settings to the desired elements :
 
-\code
+\code{.txt}
 V1
 # header
 # load the different parts of the plane
@@ -1276,7 +1336,7 @@ all its faces will have the same name: "teabox_name".
 
 \note If you want to set different names for different faces, you have to define them in different shapes.
 
-\code
+\code{.txt}
 #VRML V2.0 utf8
 
 DEF fst_0 Group {
@@ -1397,7 +1457,7 @@ Hereafter we provide the information to test the tracker with different objects.
 \subsection mb_generic_use_case_teabox Test tracker on teabox model
 
 Enter model-based tracker tutorial build folder:
-\code
+\code{.sh}
 $ cd $VISP_WS/visp-build/tutorial/tracking/model-based/generic
 \endcode
 
@@ -1405,17 +1465,17 @@ There is `tutorial-mb-generic-tracker-full` binary that corresponds to the build
 This example is an extension of tutorial-mb-generic-tracker.cpp that was explained in \ref mb_generic_started section.
 
 to see the options that are available run:
-\code
+\code{.sh}
 $ ./tutorial-mb-generic-tracker-full --help
 \endcode
 
 By default all the parameters are set to work with the teabox example. Just run the binary without option:
-\code
+\code{.sh}
 $ ./tutorial-mb-generic-tracker-full
 \endcode
 
 You may also obtain the same results using:
-\code
+\code{.sh}
 $ ./tutorial-mb-generic-tracker-full --video model/teabox/teabox.mpg --model model/teabox/teabox.cao
 \endcode
 
@@ -1425,7 +1485,7 @@ In http://visp-doc.inria.fr/download/mbt-model/cubesat.zip you will find the mod
 video to test the \c CubeSAT object tracking. After unzip in a folder (let say \c /your-path-to-model) you may run the tracker
 with something similar to:
 
-\code
+\code{.sh}
 $ cd $VISP_WS
 $ wget http://visp-doc.inria.fr/download/mbt-model/cubesat.zip
 $ unzip ~/Downloads/mmicro.zip
@@ -1446,7 +1506,7 @@ You should be able to obtain these kind of results:
 In http://visp-doc.inria.fr/download/mbt-model/mmicro.zip you will find the model data set (.cao, .wrl, .init, .xml, .ppm) and a video
 to track the \c mmicro object. After unzip in a folder (let say `$VISP_WS`) you may run the tracker with something similar to:
 
-\code
+\code{.sh}
 $ cd $VISP_WS
 $ wget http://visp-doc.inria.fr/download/mbt-model/mmicro.zip
 $ unzip ~/Downloads/mmicro.zip
@@ -1484,7 +1544,7 @@ tutorial-mb-generic-tracker-live.cpp tutorial:
 
 For example to force the usage of vpRealSense2 class that allows to grab images from an Intel Realsense device like D435 or SR300,
 you should modify the code like:
-\code
+\code{.sh}
 $ cd $VISP_WS/visp/tutorial/tracking/model-based/generic
 $ gedit tutorial-mb-generic-tracker-live.cpp
 #undef VISP_HAVE_V4L2
@@ -1495,7 +1555,7 @@ $ gedit tutorial-mb-generic-tracker-live.cpp
 \endcode
 
 Once modified, enter the build folder and build the tutorial:
-\code
+\code{.sh}
 $ cd $VISP_WS/visp-build/tutorial/tracking/model-based/generic
 $ make tutorial-mb-generic-tracker-live
 \endcode
@@ -1503,12 +1563,12 @@ $ make tutorial-mb-generic-tracker-live
 Let us now consider the object made with 4 lego 2x4 bricks described in \ref mb_generic_advanced_transformation.
 
 Once build, to get the usage, run:
-\code
+\code{.sh}
 $ ./tutorial-mb-generic-tracker-live --help
 \endcode
 
 To test the tracker on the lego-square object, run:
-\code
+\code{.sh}
 $ ./tutorial-mb-generic-tracker-live --model model/lego-square/lego-square.cao
 \endcode
 
@@ -1519,13 +1579,13 @@ You should be able to obtain these kind of results:
 \endhtmlonly
 
 Now if the tracker is working, you can learn the object running:
-\code
+\code{.sh}
 $ ./tutorial-mb-generic-tracker-live --model model/lego-square/lego-square.cao --learn
 \endcode
 
 Once initialized by 4 user clicks, use the left click to learn on one or two images and then the right click to quit. In the terminal you
 should see printings like:
-\code
+\code{.sh}
 ...
 Data learned
 Data learned
@@ -1533,7 +1593,7 @@ Save learning from 2 images in file: learning/data-learned.bin
 \endcode
 
 You can now use this learning to automize tracker initialization with:
-\code
+\code{.sh}
 $ ./tutorial-mb-generic-tracker-live --model model/lego-square/lego-square.cao --auto_init
 \endcode
 
@@ -1542,7 +1602,7 @@ $ ./tutorial-mb-generic-tracker-live --model model/lego-square/lego-square.cao -
 
 If you run mbtEdgeTracking.cpp, mbtKltTracking.cpp or mbtEdgeKltTracking.cpp examples enabling Ogre visibility check (using "-o" option),
 you may encounter the following issue:
-\code
+\code{.sh}
 C:\> mbtEdgeTracking.exe -c -o
 ...
 OGRE EXCEPTION(6:FileNotFoundException): Cannot locate resource VTFInstancing.cg in resource group General
@@ -1553,7 +1613,7 @@ and then a wonderful runtime issue as in the next image:
 \image html img-win8.1-msvc-mbtracker-ogre-issue.jpg
 
 It means maybe that Ogre version is not compatible with DirectX 11. This can be checked adding "-w" option to the command line:
-\code
+\code{.sh}
 C:\> mbtEdgeTracking.exe -c -o -w
 \endcode
 Now the binary should open the Ogre configuration window where you have to select "OpenGL Rendering Subsystem" instead of
