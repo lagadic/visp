@@ -149,6 +149,10 @@ protected:
   bool ogreShowConfigDialog;
   //! Use Scanline for visibility tests
   bool useScanLine;
+  //! Number of points in init file
+  unsigned int m_nbInitPoints;
+  //! Max allowed number of points in init file
+  unsigned int m_maxInitPoints;
   //! Number of points in CAO model
   unsigned int nbPoints;
   //! Number of lines in CAO model
@@ -451,7 +455,7 @@ public:
   virtual void initFromPose(const vpImage<vpRGBa> &I_color, const vpPoseVector &cPo);
 
   virtual void loadModel(const std::string &modelFile, bool verbose = false,
-                         const vpHomogeneousMatrix &T = vpHomogeneousMatrix());
+                         const vpHomogeneousMatrix &od_M_o = vpHomogeneousMatrix());
 
   /*!
     Set the angle used to test polygons appearance.
@@ -841,7 +845,7 @@ protected:
 #ifdef VISP_HAVE_MODULE_GUI
   virtual void initClick(const vpImage<unsigned char> *const I, const vpImage<vpRGBa> *const I_color,
                          const std::string &initFile, bool displayHelp = false,
-                         const vpHomogeneousMatrix &T = vpHomogeneousMatrix());
+                         const vpHomogeneousMatrix &od_M_o = vpHomogeneousMatrix());
 
   virtual void initClick(const vpImage<unsigned char> *const I, const vpImage<vpRGBa> *const I_color,
                          const std::vector<vpPoint> &points3D_list, const std::string &displayFile = "");
@@ -896,7 +900,8 @@ protected:
   virtual void loadCAOModel(const std::string &modelFile, std::vector<std::string> &vectorOfModelFilename,
                             int &startIdFace, bool verbose = false, bool parent = true,
                             const vpHomogeneousMatrix &T = vpHomogeneousMatrix());
-
+  void loadInitFile(const std::string &initFile, std::vector<std::string> &vectorOfInitFilename,
+                    bool parent, const vpHomogeneousMatrix &T, std::vector<vpPoint> &P);
   void projectionErrorInitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo);
   void projectionErrorResetMovingEdges();
   void projectionErrorVisibleFace(unsigned int width, unsigned int height, const vpHomogeneousMatrix &_cMo);
