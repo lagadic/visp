@@ -186,7 +186,7 @@ void vpDiskGrabber::acquire(vpImage<float> &I)
   std::string extension = vpIoTools::toLowerCase(vpIoTools::getFileExtension(m_image_name, true));
 
   if (extension.find("npy") != std::string::npos) {
-#ifdef VISP_HAVE_MINIZ
+#if defined (VISP_HAVE_MINIZ) && (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
     visp::cnpy::NpyArray array = visp::cnpy::npy_load(m_image_name);
     float *data = array.data<float>();
     I.init(data, array.shape[0], array.shape[1], true);
