@@ -139,6 +139,7 @@ ViSP 3.x.x (Version in development)
     . [#1711] CMake error around nlohmann_json detection on FreeBSD
     . [#1713] CMake error with PCL 1.15.0 and VTK 9.5.0 on FreeBSD 14.2
     . [#1718] SEGFAULT in vpMbtMeEllipse
+    . [#1723] Unable to use a .cao model that only loads other .cao files
 ----------------------------------------------
 ViSP 3.6.0 (released September 22, 2023)
   - Contributors:

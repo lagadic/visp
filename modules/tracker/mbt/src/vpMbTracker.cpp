@@ -638,8 +638,7 @@ void vpMbTracker::loadInitFile(const std::string &init_file, std::vector<std::st
   finit.get(c);
   finit.unget();
   bool header = false;
-  bool end_of_file = false;
-  while (!end_of_file && (c == 'l' || c == 'L')) {
+  while ((c == 'l') || (c == 'L')) {
     getline(finit, line);
 
     if (!line.compare(0, prefix_load.size(), prefix_load)) {
@@ -653,7 +652,6 @@ void vpMbTracker::loadInitFile(const std::string &init_file, std::vector<std::st
       for (size_t i = 0; i < params.size(); i++) {
         params[i] = vpIoTools::trim(params[i]);
       }
-      std::cout << "-- DEBUG FS param is empty ? " << params.empty() << std::endl;
       if (!params.empty()) {
         // Get the loaded model pathname
         std::string headerPathRead = params[0];
@@ -770,8 +768,7 @@ void vpMbTracker::loadInitFile(const std::string &init_file, std::vector<std::st
     }
     catch (...) {
       if (finit.eof()) {
-        end_of_file = true;
-        //return;
+        return;
       }
     }
     finit.get(c);
@@ -1975,7 +1972,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
     fileId.get(c);
     fileId.unget();
     bool header = false;
-    while (c == 'l' || c == 'L') {
+    while ((c == 'l') || (c == 'L')) {
       getline(fileId, line);
 
       if (!line.compare(0, prefix_load.size(), prefix_load)) {
@@ -2101,8 +2098,14 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
           }
         }
       }
-
-      removeComment(fileId);
+      try {
+        removeComment(fileId);
+      }
+      catch (...) {
+        if (fileId.eof()) {
+          return;
+        }
+      }
       fileId.get(c);
       fileId.unget();
     }
@@ -2399,8 +2402,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
     try {
       removeComment(fileId);
 
-      if (fileId.eof()) { // check if not at the end of the file (for old
-                          // style files)
+      if (fileId.eof()) { // check if not at the end of the file (for old style files)
         return;
       }
 
