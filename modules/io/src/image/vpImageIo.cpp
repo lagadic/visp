@@ -49,36 +49,36 @@ vpImageIo::vpImageFormatType vpImageIo::getFormat(const std::string &filename)
 {
   std::string ext = vpIoTools::toLowerCase(vpIoTools::getFileExtension(filename));
 
-  if (ext.compare("pgm") == 0)
+  if (ext.find("pgm") != std::string::npos)
     return FORMAT_PGM;
-  else if (ext.compare("ppm") == 0)
+  else if (ext.find("ppm") != std::string::npos)
     return FORMAT_PPM;
-  else if (ext.compare("jpg") == 0)
+  else if (ext.find("jpg") != std::string::npos)
     return FORMAT_JPEG;
-  else if (ext.compare("jpeg") == 0)
+  else if (ext.find("jpeg") != std::string::npos)
     return FORMAT_JPEG;
-  else if (ext.compare("png") == 0)
+  else if (ext.find("png") != std::string::npos)
     return FORMAT_PNG;
   // Formats supported by opencv
-  else if (ext.compare("tiff") == 0)
+  else if (ext.find("tiff") != std::string::npos)
     return FORMAT_TIFF;
-  else if (ext.compare("tif") == 0)
+  else if (ext.find("tif") != std::string::npos)
     return FORMAT_TIFF;
-  else if (ext.compare("bmp") == 0)
+  else if (ext.find("bmp") != std::string::npos)
     return FORMAT_BMP;
-  else if (ext.compare("dib") == 0)
+  else if (ext.find("dib") != std::string::npos)
     return FORMAT_DIB;
-  else if (ext.compare("pbm") == 0)
+  else if (ext.find("pbm") != std::string::npos)
     return FORMAT_PBM;
-  else if (ext.compare("sr") == 0)
+  else if (ext.find("sr") != std::string::npos)
     return FORMAT_RASTER;
-  else if (ext.compare("ras") == 0)
+  else if (ext.find("ras") != std::string::npos)
     return FORMAT_RASTER;
-  else if (ext.compare("jp2") == 0)
+  else if (ext.find("jp2") != std::string::npos)
     return FORMAT_JPEG2000;
-  else if (ext.compare("exr") == 0)
+  else if (ext.find("exr") != std::string::npos)
     return FORMAT_EXR;
-  else if (ext.compare("pfm") == 0)
+  else if (ext.find("pfm") != std::string::npos)
     return FORMAT_PFM;
   else
     return FORMAT_UNKNOWN;
