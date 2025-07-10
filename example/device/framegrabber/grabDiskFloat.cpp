@@ -223,20 +223,45 @@ int main(int argc, const char **argv)
   vpDisplay *display = nullptr;
 #endif
   try {
+    std::string env_ipath;
     std::string opt_ipath;
-    std::string opt_genericname = "";
+    std::string ipath;
+    std::string opt_genericname = "castle/depth_image_%04d.pfm";
 
     bool opt_display = true;
 
-    long int opt_first = 5;
-    long int opt_last = 70;
+    long int opt_first = 0;
+    long int opt_last = 29;
     long int opt_step = 1;
     unsigned int opt_nzero = 4;
+
+    // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
+    // environment variable value
+    env_ipath = vpIoTools::getViSPImagesDataPath();
+
+    // Set the default input path
+    if (!env_ipath.empty())
+      ipath = env_ipath;
 
     // Read the command line options
     if (getOptions(argc, argv, opt_ipath, opt_genericname, opt_first, opt_last, opt_step, opt_nzero,
                    opt_display) == false) {
       return EXIT_FAILURE;
+    }
+
+    // Get the option values
+    if (!opt_ipath.empty())
+      ipath = opt_ipath;
+
+    // Compare ipath and env_ipath. If they differ, we take into account
+    // the input path coming from the command line option
+    if (!opt_ipath.empty() && !env_ipath.empty()) {
+      if (ipath != env_ipath) {
+        std::cout << std::endl << "WARNING: " << std::endl;
+        std::cout << "  Since -i <visp image path=" << ipath << "> "
+          << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+          << "  we skip the environment variable." << std::endl;
+      }
     }
 
     // Declare an image, this is a gray level image (unsigned char)
@@ -253,9 +278,9 @@ int main(int argc, const char **argv)
       throw(vpException(vpException::notInitialized, "A generic name was given to the program"));
     }
     else {
-      if (!opt_ipath.empty()) {
+      if (!ipath.empty()) {
         // Set the path to the directory containing the sequence
-        opt_genericname = vpIoTools::createFilePath(opt_ipath, opt_genericname);
+        opt_genericname = vpIoTools::createFilePath(ipath, opt_genericname);
       }
       std::cout << "Sequence that will be read:= " << opt_genericname << std::endl;
       g.setGenericName(opt_genericname);
