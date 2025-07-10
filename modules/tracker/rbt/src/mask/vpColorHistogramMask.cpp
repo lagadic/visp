@@ -116,8 +116,9 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
           mask[i][j] = poPix > 0.f ? 1.f : 0.f;
         }
         else {
-          const float score = poPix / pbPix;
-          mask[i][j] = std::min(score, m_threshold) / m_threshold;
+          float logOdds = log(poPix / pbPix);
+          const float score = 1 / (1 + exp(-logOdds));
+          mask[i][j] = score;
         }
       }
     }
@@ -133,8 +134,9 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
         mask.bitmap[i] = poPix > 0.f ? 1.f : 0.f;
       }
       else {
-        const float score = poPix / pbPix;
-        mask.bitmap[i] = std::min(score, m_threshold) / m_threshold;
+        float logOdds = log(poPix / pbPix);
+        const float score = 1 / (1 + exp(-logOdds));
+        mask.bitmap[i] = score;
       }
     }
     // if (maxValue > 0.0) {
