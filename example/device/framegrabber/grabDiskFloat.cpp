@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Read an image sequence from the disk and display it.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file grabDiskFloat.cpp
@@ -46,10 +44,8 @@
 
 #include <stdlib.h>
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpDebug.h>
 #if defined(VISP_HAVE_DISPLAY)
 
-#include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpTime.h>
@@ -64,8 +60,7 @@
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
-/*
-
+/*!
   Print the program options.
 
   \param name : Program name.
@@ -77,7 +72,6 @@ using namespace VISP_NAMESPACE_NAME;
   \param last : Number of images to read.
   \param step : Step between two successive images to read.
   \param nzero : Number of zero for the image number coding.
-
  */
 void usage(const char *name, const char *badparam, std::string ipath, std::string genericname, long int first,
            long int last, long int step, unsigned int nzero)
@@ -125,8 +119,8 @@ OPTIONS:                                               Default\n\
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 }
-/*!
 
+/*!
   Set the program options.
 
   \param argc : Command line number of parameters.
@@ -140,7 +134,6 @@ OPTIONS:                                               Default\n\
   \param display : Display activation.
 
   \return false if the program has to be stopped, true otherwise.
-
 */
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &genericname, long &first,
                 long &last, long &step, unsigned int &nzero, bool &display)

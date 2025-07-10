@@ -117,7 +117,7 @@ OPTIONS:                                               Default\n\
   -p <personal image path>                             %s\n\
      Specify a personal sequence containing images \n\
      to process.\n\
-     The format is selected by analysing the filename extension.\n\
+     The format is selected by analyzing the filename extension.\n\
      Example : \"/Temp/visp-images/mire-2/image.%%04d.%s\"\n\
      %%04d is for the image numbering.\n\
             \n\

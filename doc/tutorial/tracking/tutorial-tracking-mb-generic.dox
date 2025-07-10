@@ -870,7 +870,7 @@ while (! end)
 
 Tracking failure detection is used in tutorial-mb-generic-tracker-live.cpp and tutorial-mb-generic-tracker-rgbd-realsense.cpp examples.
 
-The model-based tracker can also update a covariance matrix corresponding to the estimated pose. But from our experience, analysing
+The model-based tracker can also update a covariance matrix corresponding to the estimated pose. But from our experience, analyzing
 the diagonal of the 6 by 6 covariance matrix doesn't allow to detect a tracking failure. If you want to have a trial, we recall the way
 to get the covariance matrix:
 
