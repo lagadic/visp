@@ -78,8 +78,8 @@ using namespace VISP_NAMESPACE_NAME;
   \param nzero : Number of zero for the image number coding.
 
  */
-void usage(const char *name, const char *badparam, std::string ipath, std::string basename, std::string ext, std::string genericname, long first,
-           long last, long step, unsigned int nzero)
+void usage(const char *name, const char *badparam, std::string ipath, std::string basename, std::string ext, std::string genericname, long int first,
+           long int last, long int step, unsigned int nzero)
 {
   fprintf(stdout, "\n\
 Read an image sequence from the disk. Display it using X11 or GTK.\n\
@@ -95,12 +95,7 @@ SYNOPSIS\n\
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
   -i <input image path>                                     %s\n\
-     Set image input path.\n\
-     From this path read \"cube/image.%%04d.%s\"\n\
-     images.\n\
-     Setting the VISP_INPUT_IMAGE_PATH environment\n\
-     variable produces the same behaviour than using\n\
-     this option.\n\
+     Set image input path. The sequence will be looked for in this folder.\n\
 \n\
   -b <base name>                                 %s\n\
      Specify the base name of the files of the sequence\n\
@@ -110,17 +105,16 @@ OPTIONS:                                               Default\n\
 \n\
   -e <extension>                                            %s\n\
      Specify the extension of the files.\n\
-     Not taken into account for the moment. Will be a\n\
-     future feature...\n\
+     It is not taken into account if you use a generic name instead of a basename...\n\
+\n\
+  -g <generic name>                                            %s\n\
+     Specify the generic name of the files.\n\
+     A generic name of file is for example myfile_%%04d.npy\n\
 \n\
   -f <first frame>                                          %ld\n\
      First frame number of the sequence.\n\
 \n\
-  -g <generic name>                                            %s\n\
-     Specify the generic name of the files.\n\
-     A generic name of file is for example myfile_\%04d\n\
-\n\
-  -l <last image      >                                     %ld\n\
+  -l <last image>                                           %ld\n\
      Last frame number of the sequence.\n\
 \n\
   -s <step>                                                 %ld\n\
@@ -134,7 +128,7 @@ OPTIONS:                                               Default\n\
 \n\
   -h \n\
      Print the help.\n\n",
-          ipath.c_str(), ext.c_str(), basename.c_str(), ext.c_str(), genericname.c_str(), first, last, step, nzero);
+          ipath.c_str(), basename.c_str(), ext.c_str(), genericname.c_str(), first, last, step, nzero);
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -246,24 +240,21 @@ int main(int argc, const char **argv)
 #endif
   try {
     std::string opt_ipath;
-    std::string opt_basename = "cube/image.";
+    std::string opt_basename = "";
     std::string opt_genericname = "";
-#if defined(VISP_HAVE_DATASET)
-#if VISP_HAVE_DATASET_VERSION >= 0x030600
-    std::string opt_ext("png");
+#if defined (VISP_HAVE_MINIZ) && (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98) && defined(VISP_HAVE_WORKING_REGEX)
+    std::string opt_ext("npy");
+#elif defined(VISP_HAVE_OPENCV)
+    std::string opt_ext("tiff");
 #else
-    std::string opt_ext("pgm");
-#endif
-#else
-    // We suppose that the user will download a recent dataset
-    std::string opt_ext("png");
+    std::string opt_ext("pfm");
 #endif
 
     bool opt_display = true;
 
-    long opt_first = 5;
-    long opt_last = 70;
-    long opt_step = 1;
+    long int opt_first = 5;
+    long int opt_last = 70;
+    long int opt_step = 1;
     unsigned int opt_nzero = 4;
 
     // Read the command line options
@@ -289,7 +280,12 @@ int main(int argc, const char **argv)
       }
       // Set the image base name. The directory and the base name constitute
       // the constant part of the full filename
-      g.setBaseName(opt_basename.c_str());
+      if (!opt_basename.empty()) {
+        g.setBaseName(opt_basename.c_str());
+      }
+      else {
+        throw(vpException(vpException::notInitialized, "Neither a basename nor a generic name was given to the program"));
+      }
     }
     else {
       if (!opt_ipath.empty()) {
