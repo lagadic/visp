@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,25 +29,20 @@
  *
  * Description:
  * Read an image sequence from the disk and display it.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file grabDisk.cpp
 
-  \brief Example of image sequence reading from the disk using vpDiskGrabber
-  class.
+  \brief Example of image sequence reading from the disk using vpDiskGrabber class.
 
-  The sequence is made of separate images. Each image corresponds to a PGM
-  file.
+  The sequence is made of successive images.
 */
 
 #include <stdlib.h>
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpDebug.h>
 #if defined(VISP_HAVE_DISPLAY)
 
-#include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpTime.h>
@@ -63,8 +57,7 @@
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
-/*
-
+/*!
   Print the program options.
 
   \param name : Program name.
@@ -76,9 +69,9 @@ using namespace VISP_NAMESPACE_NAME;
   \param last : Number of images to read.
   \param step : Step between two successive images to read.
   \param nzero : Number of zero for the image number coding.
-
  */
-void usage(const char *name, const char *badparam, std::string ipath, std::string basename, std::string ext, std::string genericname, long int first,
+void usage(const char *name, const char *badparam, const std::string &ipath, const std::string &basename,
+           const std::string &ext, const std::string &genericname, long int first,
            long int last, long int step, unsigned int nzero)
 {
   fprintf(stdout, "\n\
@@ -97,17 +90,17 @@ OPTIONS:                                               Default\n\
   -i <input image path>                                     %s\n\
      Set image input path. The sequence will be looked for in this folder.\n\
 \n\
-  -b <base name>                                 %s\n\
+  -b <base name>                                            %s\n\
      Specify the base name of the files of the sequence\n\
      containing the images to process. \n\
      By image sequence, we mean one file per image.\n\
-     The format is selected by analysing the filename extension.\n\
+     The format is selected by analyzing the filename extension.\n\
 \n\
   -e <extension>                                            %s\n\
      Specify the extension of the files.\n\
      It is not taken into account if you use a generic name instead of a basename...\n\
 \n\
-  -g <generic name>                                            %s\n\
+  -g <generic name>                                         %s\n\
      Specify the generic name of the files.\n\
      A generic name of file is for example myfile_%%04d.npy\n\
 \n\
@@ -133,8 +126,8 @@ OPTIONS:                                               Default\n\
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 }
-/*!
 
+/*!
   Set the program options.
 
   \param argc : Command line number of parameters.
@@ -150,7 +143,6 @@ OPTIONS:                                               Default\n\
   \param display : Display activation.
 
   \return false if the program has to be stopped, true otherwise.
-
 */
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &basename, std::string &ext, std::string &genericname, long &first,
                 long &last, long &step, unsigned int &nzero, bool &display)
