@@ -244,8 +244,9 @@ void vpRBDenseDepthTracker::display(const vpCameraParameters &/*cam*/, const vpI
   }
   case DT_ERROR:
   {
+    double maxError = m_error.getMaxValue();
     for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
-      vpColor c(m_error[i], 0, 0);
+      vpColor c(static_cast<unsigned int>((m_error[i] / maxError) * 255), 0, 0);
       vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos[0], m_depthPoints[i].pixelPos[1], c, 2);
     }
     break;
