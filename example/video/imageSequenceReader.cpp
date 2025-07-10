@@ -61,7 +61,7 @@
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
-void usage(const char *name, const char *badparam, std::string ipath, std::string ppath);
+void usage(const char *name, const char *badparam, const std::string &ipath, const std::string &ppath);
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath, int &first, bool &click_allowed,
                 bool &display);
 
@@ -75,7 +75,7 @@ Print the program options.
 \param ppath : Personal image sequence path.
 
  */
-void usage(const char *name, const char *badparam, std::string ipath, std::string ppath)
+void usage(const char *name, const char *badparam, const std::string &ipath, const std::string &ppath)
 {
 #if defined(VISP_HAVE_DATASET)
 #if VISP_HAVE_DATASET_VERSION >= 0x030600

@@ -77,7 +77,7 @@ Print the program options.
 \param user : Username.
 
  */
-void usage(const char *name, const char *badparam, std::string ipath, std::string opath, std::string user)
+void usage(const char *name, const char *badparam, const std::string &ipath, std::string opath, std::string user)
 {
   fprintf(stdout, "\n\
 Read and write PGM images on the disk. Also test exceptions.\n\

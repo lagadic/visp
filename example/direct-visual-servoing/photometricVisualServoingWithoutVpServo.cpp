@@ -66,7 +66,7 @@
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
-void usage(const char *name, const char *badparam, std::string ipath, int niter);
+void usage(const char *name, const char *badparam, const std::string &ipath, int niter);
 bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_allowed, bool &display, int &niter);
 
 /*!
@@ -79,7 +79,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_all
   \param niter : Number of iterations.
 
 */
-void usage(const char *name, const char *badparam, std::string ipath, int niter)
+void usage(const char *name, const char *badparam, const std::string &ipath, int niter)
 {
   fprintf(stdout, "\n\
 Tracking of Surf key-points.\n\

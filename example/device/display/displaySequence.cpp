@@ -87,7 +87,7 @@ using namespace VISP_NAMESPACE_NAME;
   \param step : Step between two images.
 
  */
-void usage(const char *name, const char *badparam, std::string ipath, std::string ppath, unsigned first,
+void usage(const char *name, const char *badparam, const std::string &ipath, const std::string &ppath, unsigned first,
            unsigned last, unsigned step)
 {
 #if defined(VISP_HAVE_DATASET)

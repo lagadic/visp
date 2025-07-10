@@ -83,7 +83,7 @@ using namespace VISP_NAMESPACE_NAME;
 
 
  */
-void usage(const char *name, const char *badparam, std::string ipath, std::string opath, std::string user)
+void usage(const char *name, const char *badparam, const std::string &ipath, const std::string &opath, const std::string &user)
 {
   fprintf(stdout, "\n\
 Read an image on the disk, display it using D3D, display some\n\

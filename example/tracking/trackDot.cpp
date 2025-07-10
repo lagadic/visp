@@ -62,7 +62,7 @@
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
-void usage(const char *name, const char *badparam, std::string ipath, std::string ppath, unsigned first,
+void usage(const char *name, const char *badparam, const std::string &ipath, const std::string &ppath, unsigned first,
            unsigned last, unsigned step);
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath, unsigned &first, unsigned &last,
                 unsigned &step, bool &click_allowed, bool &display);
@@ -78,7 +78,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
   \param last : Last image.
   \param step : Step between two images.
 */
-void usage(const char *name, const char *badparam, std::string ipath, std::string ppath, unsigned first,
+void usage(const char *name, const char *badparam, const std::string &ipath, const std::string &ppath, unsigned first,
            unsigned last, unsigned step)
 {
 #if defined(VISP_HAVE_DATASET)

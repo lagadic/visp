@@ -59,7 +59,7 @@
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
-void usage(const char *name, const char *badparam, std::string ipath, std::string ppath, unsigned first,
+void usage(const char *name, const char *badparam, const std::string &ipath, const std::string &ppath, unsigned first,
            unsigned last, unsigned step, double sizePrecision, double grayLevelPrecision,
            double ellipsoidShapePrecision);
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath, unsigned &first, unsigned &last,
@@ -80,7 +80,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
   \param grayLevelPrecision : precision of the gray level of dots.
   \param ellipsoidShapePrecision : precision of the ellipsoid shape of dots.
 */
-void usage(const char *name, const char *badparam, std::string ipath, std::string ppath, unsigned first,
+void usage(const char *name, const char *badparam, const std::string &ipath, const std::string &ppath, unsigned first,
            unsigned last, unsigned step, double sizePrecision, double grayLevelPrecision,
            double ellipsoidShapePrecision)
 {
