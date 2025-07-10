@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,25 +29,21 @@
  *
  * Description:
  * Read an image sequence from the disk and display it.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file grabDisk.cpp
 
-  \brief Example of image sequence reading from the disk using vpDiskGrabber
-  class.
+  \brief Example of image sequence reading from the disk using vpDiskGrabber class.
 
-  The sequence is made of separate images. Each image corresponds to a PGM
-  file.
+  The sequence is made of successive images.
 */
 
 #include <stdlib.h>
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpDebug.h>
+
 #if defined(VISP_HAVE_DISPLAY)
 
-#include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpTime.h>
@@ -63,8 +58,7 @@
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
-/*
-
+/*!
   Print the program options.
 
   \param name : Program name.
@@ -76,10 +70,9 @@ using namespace VISP_NAMESPACE_NAME;
   \param last : Number of images to read.
   \param step : Step between two successive images to read.
   \param nzero : Number of zero for the image number coding.
-
  */
-void usage(const char *name, const char *badparam, std::string ipath, std::string basename, std::string ext, long first,
-           long last, long step, unsigned int nzero)
+void usage(const char *name, const char *badparam, const std::string &ipath, const std::string &basename,
+           const std::string &ext, long first, long last, long step, unsigned int nzero)
 {
   fprintf(stdout, "\n\
 Read an image sequence from the disk. Display it using X11 or GTK.\n\
@@ -89,8 +82,7 @@ to a PGM file.\n\
 SYNOPSIS\n\
   %s [-i <input image path>] [-b <base name>] [-e <extension>] \n\
    [-f <first frame>] [-l <last image> [-s <step>] \n\
-   [-z <number of zero>] [-d] [-h]\n",
-          name);
+   [-z <number of zero>] [-d] [-h]\n", name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -102,11 +94,11 @@ OPTIONS:                                               Default\n\
      variable produces the same behaviour than using\n\
      this option.\n\
 \n\
-  -b <base name>                                 %s\n\
+  -b <base name>                                            %s\n\
      Specify the base name of the files of the sequence\n\
      containing the images to process. \n\
      By image sequence, we mean one file per image.\n\
-     The format is selected by analysing the filename extension.\n\
+     The format is selected by analyzing the filename extension.\n\
 \n\
   -e <extension>                                            %s\n\
      Specify the extension of the files.\n\
@@ -116,7 +108,7 @@ OPTIONS:                                               Default\n\
   -f <first frame>                                          %ld\n\
      First frame number of the sequence.\n\
 \n\
-  -l <last image      >                                     %ld\n\
+  -l <last image>                                           %ld\n\
      Last frame number of the sequence.\n\
 \n\
   -s <step>                                                 %ld\n\
