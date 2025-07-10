@@ -40,6 +40,7 @@
 */
 
 #include <stdlib.h>
+#include <iostream>
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_DISPLAY)
@@ -341,16 +342,16 @@ int main(int argc, const char **argv)
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
     if (display != nullptr) {
       delete display;
-    }
+  }
 #endif
     return EXIT_SUCCESS;
-  }
+}
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
     if (display != nullptr) {
       delete display;
-    }
+  }
 #endif
     return EXIT_FAILURE;
   }
