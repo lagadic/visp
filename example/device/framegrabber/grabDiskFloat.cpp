@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,25 +29,24 @@
  *
  * Description:
  * Read an image sequence from the disk and display it.
- *
-*****************************************************************************/
+ */
 
 /*!
-  \file grabDisk.cpp
+  \file grabDiskFloat.cpp
 
-  \brief Example of image sequence reading from the disk using vpDiskGrabber
-  class.
+  \brief Example of depth map sequence reading from the disk using vpDiskGrabber
+  class. Depth map sequence can result from an acquisition using a depth camera.
 
-  The sequence is made of separate images. Each image corresponds to a PGM
-  file.
+  The image sequence consists in successive depth maps. Several formats are supported,
+  such as PFM, EXR if you have either TinyEXR or OpenCV, TIFF if you have OpenCV or
+  NPY if you have MINIZ.
 */
 
 #include <stdlib.h>
+#include <iostream>
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpDebug.h>
 #if defined(VISP_HAVE_DISPLAY)
 
-#include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpTime.h>
@@ -57,14 +55,13 @@
 #include <visp3/io/vpParseArgv.h>
 
 // List of allowed command line options
-#define GETOPTARGS "b:de:f:g:hi:l:s:z:"
+#define GETOPTARGS "df:g:hi:l:s:z:"
 
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
-/*
-
+/*!
   Print the program options.
 
   \param name : Program name.
@@ -76,18 +73,16 @@ using namespace VISP_NAMESPACE_NAME;
   \param last : Number of images to read.
   \param step : Step between two successive images to read.
   \param nzero : Number of zero for the image number coding.
-
  */
-void usage(const char *name, const char *badparam, std::string ipath, std::string basename, std::string ext, std::string genericname, long first,
-           long last, long step, unsigned int nzero)
+void usage(const char *name, const char *badparam, std::string ipath, std::string genericname, long int first,
+           long int last, long int step, unsigned int nzero)
 {
   fprintf(stdout, "\n\
-Read an image sequence from the disk. Display it using X11 or GTK.\n\
-The sequence is made of separate images. Each image corresponds\n\
-to a PGM file.\n\
+Read a sequence of depth maps from the disk. Display it using X11 or GTK.\n\
+The sequence is made of separate depth maps.\n\
 \n\
 SYNOPSIS\n\
-  %s [-i <input image path>] [-b <base name>] [-e <extension>] \n\
+  %s [-i <input image path>] \n\
    [-f <first frame>] [-g <generic name>] [-l <last image> [-s <step>] \n\
    [-z <number of zero>] [-d] [-h]\n",
           name);
@@ -95,32 +90,18 @@ SYNOPSIS\n\
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
   -i <input image path>                                     %s\n\
-     Set image input path.\n\
-     From this path read \"cube/image.%%04d.%s\"\n\
-     images.\n\
-     Setting the VISP_INPUT_IMAGE_PATH environment\n\
-     variable produces the same behaviour than using\n\
-     this option.\n\
+     Set image input path. The sequence will be looked for in this folder.\n\
 \n\
-  -b <base name>                                 %s\n\
-     Specify the base name of the files of the sequence\n\
-     containing the images to process. \n\
-     By image sequence, we mean one file per image.\n\
-     The format is selected by analysing the filename extension.\n\
-\n\
-  -e <extension>                                            %s\n\
-     Specify the extension of the files.\n\
-     Not taken into account for the moment. Will be a\n\
-     future feature...\n\
+  -g <generic name>                                            %s\n\
+     Specify the generic name of the files.\n\
+     A generic name of file is for example myfile_%%04d.npy\n\
+     Several formats are supported, such as PFM, EXR if you have either TinyEXR or OpenCV,\n\
+     TIFF if you have OpenCV or NPY if you have MINIZ.\n\
 \n\
   -f <first frame>                                          %ld\n\
      First frame number of the sequence.\n\
 \n\
-  -g <generic name>                                            %s\n\
-     Specify the generic name of the files.\n\
-     A generic name of file is for example myfile_\%04d\n\
-\n\
-  -l <last image      >                                     %ld\n\
+  -l <last image>                                           %ld\n\
      Last frame number of the sequence.\n\
 \n\
   -s <step>                                                 %ld\n\
@@ -134,21 +115,19 @@ OPTIONS:                                               Default\n\
 \n\
   -h \n\
      Print the help.\n\n",
-          ipath.c_str(), ext.c_str(), basename.c_str(), ext.c_str(), genericname.c_str(), first, last, step, nzero);
+          ipath.c_str(), genericname.c_str(), first, last, step, nzero);
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 }
-/*!
 
+/*!
   Set the program options.
 
   \param argc : Command line number of parameters.
   \param argv : Array of command line parameters.
   \param ipath : Input image path.
-  \param basename : Input image base name.
   \param genericname : Generic name for the images.
-  \param ext : Input image extension.
   \param first : First image number to read.
   \param last : Last images to read.
   \param step : Step between two successive images to read.
@@ -156,9 +135,8 @@ OPTIONS:                                               Default\n\
   \param display : Display activation.
 
   \return false if the program has to be stopped, true otherwise.
-
 */
-bool getOptions(int argc, const char **argv, std::string &ipath, std::string &basename, std::string &ext, std::string &genericname, long &first,
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &genericname, long &first,
                 long &last, long &step, unsigned int &nzero, bool &display)
 {
   const char *optarg_;
@@ -166,14 +144,8 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ba
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
-    case 'b':
-      basename = optarg_;
-      break;
     case 'd':
       display = false;
-      break;
-    case 'e':
-      ext = optarg_;
       break;
     case 'f':
       first = atol(optarg_);
@@ -194,18 +166,18 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ba
       nzero = static_cast<unsigned int>(atoi(optarg_));
       break;
     case 'h':
-      usage(argv[0], nullptr, ipath, basename, ext, genericname, first, last, step, nzero);
+      usage(argv[0], nullptr, ipath, genericname, first, last, step, nzero);
       return false;
 
     default:
-      usage(argv[0], optarg_, ipath, basename, ext, genericname, first, last, step, nzero);
+      usage(argv[0], optarg_, ipath, genericname, first, last, step, nzero);
       return false;
     }
   }
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], nullptr, ipath, basename, ext, genericname, first, last, step, nzero);
+    usage(argv[0], nullptr, ipath, genericname, first, last, step, nzero);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -214,6 +186,12 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ba
   return true;
 }
 
+/**
+ * \brief Convert a depth map into a displayable gray-shade-encoded image.
+ *
+ * \param[in] Idepth The depth map.
+ * \param[in] Idisp The gray-shade-encoded image.
+ */
 void convertDepthImageToDisplayImage(const vpImage<float> &Idepth, vpImage<unsigned char> &Idisp)
 {
   float max, min;
@@ -231,13 +209,14 @@ void convertDepthImageToDisplayImage(const vpImage<float> &Idepth, vpImage<unsig
 }
 
 /*!
-  \example grabDisk.cpp
+  \example grabDiskFloat.cpp
 
-  Example of image sequence reading from the disk using vpDiskGrabber class.
+  Example of depth map sequence reading from the disk using vpDiskGrabber
+  class. Depth map sequence can result from an acquisition using a depth camera.
 
-  Read an image sequence from the disk. The sequence is made of separate
-  images. Each image corresponds to a PGM file. Display these images using X11
-  or GTK.
+  The image sequence consists in successive depth maps. Several formats are supported,
+  such as PFM, EXR if you have either TinyEXR or OpenCV, TIFF if you have OpenCV or
+  NPY if you have MINIZ.
 */
 int main(int argc, const char **argv)
 {
@@ -245,31 +224,45 @@ int main(int argc, const char **argv)
   vpDisplay *display = nullptr;
 #endif
   try {
+    std::string env_ipath;
     std::string opt_ipath;
-    std::string opt_basename = "cube/image.";
-    std::string opt_genericname = "";
-#if defined(VISP_HAVE_DATASET)
-#if VISP_HAVE_DATASET_VERSION >= 0x030600
-    std::string opt_ext("png");
-#else
-    std::string opt_ext("pgm");
-#endif
-#else
-    // We suppose that the user will download a recent dataset
-    std::string opt_ext("png");
-#endif
+    std::string ipath;
+    std::string opt_genericname = "castle/depth_image_%04d.pfm";
 
     bool opt_display = true;
 
-    long opt_first = 5;
-    long opt_last = 70;
-    long opt_step = 1;
+    long int opt_first = 0;
+    long int opt_last = 29;
+    long int opt_step = 1;
     unsigned int opt_nzero = 4;
 
+    // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
+    // environment variable value
+    env_ipath = vpIoTools::getViSPImagesDataPath();
+
+    // Set the default input path
+    if (!env_ipath.empty())
+      ipath = env_ipath;
+
     // Read the command line options
-    if (getOptions(argc, argv, opt_ipath, opt_basename, opt_ext, opt_genericname, opt_first, opt_last, opt_step, opt_nzero,
+    if (getOptions(argc, argv, opt_ipath, opt_genericname, opt_first, opt_last, opt_step, opt_nzero,
                    opt_display) == false) {
       return EXIT_FAILURE;
+    }
+
+    // Get the option values
+    if (!opt_ipath.empty())
+      ipath = opt_ipath;
+
+    // Compare ipath and env_ipath. If they differ, we take into account
+    // the input path coming from the command line option
+    if (!opt_ipath.empty() && !env_ipath.empty()) {
+      if (ipath != env_ipath) {
+        std::cout << std::endl << "WARNING: " << std::endl;
+        std::cout << "  Since -i <visp image path=" << ipath << "> "
+          << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+          << "  we skip the environment variable." << std::endl;
+      }
     }
 
     // Declare an image, this is a gray level image (unsigned char)
@@ -283,20 +276,14 @@ int main(int argc, const char **argv)
     vpDiskGrabber g;
 
     if (opt_genericname.empty()) {
-      if (!opt_ipath.empty()) {
-      // Set the path to the directory containing the sequence
-        g.setDirectory(opt_ipath.c_str());
-      }
-      // Set the image base name. The directory and the base name constitute
-      // the constant part of the full filename
-      g.setBaseName(opt_basename.c_str());
+      throw(vpException(vpException::notInitialized, "A generic name was given to the program"));
     }
     else {
-      if (!opt_ipath.empty()) {
+      if (!ipath.empty()) {
         // Set the path to the directory containing the sequence
-        opt_genericname = vpIoTools::createFilePath(opt_ipath, opt_genericname);
+        opt_genericname = vpIoTools::createFilePath(ipath, opt_genericname);
       }
-      std::cout << "Generic name:= " << opt_genericname << std::endl;
+      std::cout << "Sequence that will be read:= " << opt_genericname << std::endl;
       g.setGenericName(opt_genericname);
     }
     // Set the step between two images of the sequence
@@ -305,8 +292,6 @@ int main(int argc, const char **argv)
     g.setNumberOfZero(opt_nzero);
     // Set the first frame number of the sequence
     g.setImageNumber(opt_first);
-    // Set the image extension
-    g.setExtension(opt_ext.c_str());
 
     // Open the framegrabber by loading the first image of the sequence
     g.open(I);
@@ -353,22 +338,23 @@ int main(int argc, const char **argv)
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
     if (display != nullptr) {
       delete display;
-    }
+  }
 #endif
     return EXIT_SUCCESS;
-  }
+}
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
     if (display != nullptr) {
       delete display;
-    }
+  }
 #endif
     return EXIT_FAILURE;
   }
 }
 
 #else
+
 int main()
 {
   std::cout << "You do not have X11, or GDI (Graphical Device Interface) functionalities to display images..."
