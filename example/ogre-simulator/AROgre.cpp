@@ -69,7 +69,7 @@ using namespace VISP_NAMESPACE_NAME;
   \param ipath : Input image path.
   \param ppath : Personal image path.
 */
-void usage(const char *name, const char *badparam, std::string ipath, std::string ppath)
+void usage(const char *name, const char *badparam, const std::string &ipath, const std::string &ppath)
 {
 #if defined(VISP_HAVE_DATASET)
 #if VISP_HAVE_DATASET_VERSION >= 0x030600

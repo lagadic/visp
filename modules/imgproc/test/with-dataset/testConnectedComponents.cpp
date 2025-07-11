@@ -52,7 +52,7 @@
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
-void usage(const char *name, const char *badparam, std::string ipath, std::string opath, std::string user);
+void usage(const char *name, const char *badparam, const std::string &ipath, const std::string &opath, const std::string &user);
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &opath, std::string user);
 bool checkLabels(const vpImage<int> &label1, const vpImage<int> &label2);
 
@@ -65,7 +65,7 @@ bool checkLabels(const vpImage<int> &label1, const vpImage<int> &label2);
   \param opath : Output image path.
   \param user : Username.
  */
-void usage(const char *name, const char *badparam, std::string ipath, std::string opath, std::string user)
+void usage(const char *name, const char *badparam, const std::string &ipath, const std::string &opath, const std::string &user)
 {
   fprintf(stdout, "\n\
 Test connected components.\n\

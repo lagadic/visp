@@ -73,7 +73,7 @@ typedef enum
   vpCV
 } vpDisplayType;
 
-void usage(const char *name, const char *badparam, std::string ipath, vpDisplayType &dtype);
+void usage(const char *name, const char *badparam, const std::string &ipath, vpDisplayType &dtype);
 bool getOptions(int argc, const char **argv, std::string &ipath, vpDisplayType &dtype, bool &list, bool &click_allowed,
                 bool &display);
 
@@ -87,7 +87,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, vpDisplayType &
   \param dtype : Type of video device.
 
  */
-void usage(const char *name, const char *badparam, std::string ipath, vpDisplayType &dtype)
+void usage(const char *name, const char *badparam, const std::string &ipath, vpDisplayType &dtype)
 {
   fprintf(stdout, "\n\
 Test video devices or display.\n\

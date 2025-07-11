@@ -65,7 +65,7 @@
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
-void usage(const char *name, const char *badparam, std::string ipath, int niter);
+void usage(const char *name, const char *badparam, const std::string &ipath, int niter);
 bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_allowed, bool &display, int &niter);
 
 /*!
@@ -78,7 +78,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_all
   \param niter : Number of iterations.
 
 */
-void usage(const char *name, const char *badparam, std::string ipath, int niter)
+void usage(const char *name, const char *badparam, const std::string &ipath, int niter)
 {
   fprintf(stdout, "\n\
 Tracking of Surf key-points.\n\
@@ -427,7 +427,7 @@ int main(int argc, const char **argv)
     }
 #endif
     return EXIT_SUCCESS;
-    }
+  }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
@@ -439,11 +439,11 @@ int main(int argc, const char **argv)
     }
 #endif
     return EXIT_FAILURE;
-    }
+  }
 #else
   (void)argc;
   (void)argv;
   std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
   return EXIT_SUCCESS;
 #endif
-  }
+}

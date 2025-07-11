@@ -80,10 +80,10 @@ typedef enum
 } vpDisplayType;
 
 
-void usage(const char *name, const char *badparam, std::string ipath, std::string ppath, unsigned first, unsigned last,
-  unsigned step, vpDisplayType &dtype);
+void usage(const char *name, const char *badparam, const std::string &ipath, const std::string &ppath, unsigned first,
+           unsigned last, unsigned step, vpDisplayType &dtype);
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath, unsigned &first, unsigned &last,
-       unsigned &step, vpDisplayType &dtype, bool &list, bool &display, bool &click, bool &wait);
+                unsigned &step, vpDisplayType &dtype, bool &list, bool &display, bool &click, bool &wait);
 
 /*!
   Print the program options.
@@ -97,8 +97,8 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
   \param step : Step between two images.
   \param dtype : Type of video device.
  */
-void usage(const char *name, const char *badparam, std::string ipath, std::string ppath, unsigned first, unsigned last,
-           unsigned step, vpDisplayType &dtype)
+void usage(const char *name, const char *badparam, const std::string &ipath, const std::string &ppath,
+           unsigned first, unsigned last, unsigned step, vpDisplayType &dtype)
 {
 #if defined(VISP_HAVE_DATASET)
 #if VISP_HAVE_DATASET_VERSION >= 0x030600

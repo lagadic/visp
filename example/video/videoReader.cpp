@@ -61,7 +61,7 @@
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
-void usage(const char *name, const char *badparam, std::string ipath, std::string ppath);
+void usage(const char *name, const char *badparam, const std::string &ipath, const std::string &ppath);
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath, bool &click_allowed,
                 bool &display);
 
@@ -75,7 +75,7 @@ Print the program options.
 \param ppath : Personal video path.
 
  */
-void usage(const char *name, const char *badparam, std::string ipath, std::string ppath)
+void usage(const char *name, const char *badparam, const std::string &ipath, const std::string &ppath)
 {
   fprintf(stdout, "\n\
 Read a video file on the disk.\n\
