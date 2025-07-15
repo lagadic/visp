@@ -34,6 +34,8 @@
 #include <visp3/rbt/vpRBSilhouetteCCDTracker.h>
 #include <visp3/rbt/vpRBSilhouetteMeTracker.h>
 #include <visp3/rbt/vpRBDenseDepthTracker.h>
+#include <visp3/rbt/vpRBPhotometricTracker.h>
+
 
 BEGIN_VISP_NAMESPACE
 
@@ -60,6 +62,11 @@ vpRBFeatureTrackerFactory::vpRBFeatureTrackerFactory()
   });
   registerType("depth", [](const nlohmann::json &j) {
     std::shared_ptr<vpRBDenseDepthTracker> p(new vpRBDenseDepthTracker());
+    p->loadJsonConfiguration(j);
+    return p;
+  });
+  registerType("photometric", [](const nlohmann::json &j) {
+    std::shared_ptr<vpRBPhotometricTracker> p(new vpRBPhotometricTracker());
     p->loadJsonConfiguration(j);
     return p;
   });
