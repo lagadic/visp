@@ -78,44 +78,44 @@ void usage(const char *name, const char *badparam, std::string ipath, std::strin
            long int last, long int step, unsigned int nzero)
 {
   fprintf(stdout, "\n\
-Read a sequence of depth maps from the disk. Display it using X11 or GTK.\n\
-The sequence is made of separate depth maps.\n\
+Read a sequence of depth maps from the disk. Display it using X11, GDI,\n\
+GTK-2 or OpenCV. The sequence is made of separate depth maps.\n\
 \n\
 SYNOPSIS\n\
   %s [-i <input image path>] \n\
    [-f <first frame>] [-g <generic name>] [-l <last image> [-s <step>] \n\
-   [-z <number of zero>] [-d] [-h]\n",
-          name);
+   [-z <number of zero>] [-d] [-h]\n", name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
   -i <input image path>                                     %s\n\
      Set image input path. The sequence will be looked for in this folder.\n\
 \n\
-  -g <generic name>                                            %s\n\
+  -g <generic name>                                         %s\n\
      Specify the generic name of the files.\n\
      A generic name of file is for example myfile_%%04d.npy\n\
-     Several formats are supported, such as PFM, EXR if you have either TinyEXR or OpenCV,\n\
-     TIFF if you have OpenCV or NPY if you have MINIZ.\n\
-\n\
+     Supported formats ar: pfm, exr, npy or tiff.\n\
+     - pfm, exr and npy formats are supported natively\n\
+     - tiff format is only supported if ViSP is build with\n\
+       OpenCV support.\n\
+  \n\
   -f <first frame>                                          %ld\n\
      First frame number of the sequence.\n\
-\n\
+  \n\
   -l <last image>                                           %ld\n\
      Last frame number of the sequence.\n\
-\n\
+  \n\
   -s <step>                                                 %ld\n\
      Step between two images.\n\
-\n\
+  \n\
   -z <number of zero>                                       %u\n\
      Number of digits to encode the image number.\n\
-\n\
+  \n\
   -d \n\
      Turn off the display.\n\
-\n\
+  \n\
   -h \n\
-     Print the help.\n\n",
-          ipath.c_str(), genericname.c_str(), first, last, step, nzero);
+     Print the help.\n\n", ipath.c_str(), genericname.c_str(), first, last, step, nzero);
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -217,6 +217,8 @@ void convertDepthImageToDisplayImage(const vpImage<float> &Idepth, vpImage<unsig
   The image sequence consists in successive depth maps. Several formats are supported,
   such as PFM, EXR if you have either TinyEXR or OpenCV, TIFF if you have OpenCV or
   NPY if you have MINIZ.
+
+  This example can only work with visp-images > 3.6.0
 */
 int main(int argc, const char **argv)
 {
@@ -227,7 +229,7 @@ int main(int argc, const char **argv)
     std::string env_ipath;
     std::string opt_ipath;
     std::string ipath;
-    std::string opt_genericname = "castle/depth_image_%04d.pfm";
+    std::string opt_genericname = "mbt-depth/castel/castel/depth_image_%04d.pfm";
 
     bool opt_display = true;
 
@@ -251,8 +253,17 @@ int main(int argc, const char **argv)
     }
 
     // Get the option values
-    if (!opt_ipath.empty())
+    if (!opt_ipath.empty()) {
       ipath = opt_ipath;
+    }
+    else {
+#if defined(VISP_HAVE_DATASET)
+#if VISP_HAVE_DATASET_VERSION < 0x030701
+      std::cout << "This example requires visp-images 3.7.1 or a more recent version..." << std::endl;
+      return EXIT_SUCCESS;
+#endif
+#endif
+    }
 
     // Compare ipath and env_ipath. If they differ, we take into account
     // the input path coming from the command line option
@@ -338,16 +349,16 @@ int main(int argc, const char **argv)
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
     if (display != nullptr) {
       delete display;
-  }
+    }
 #endif
     return EXIT_SUCCESS;
-}
+  }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
     if (display != nullptr) {
       delete display;
-  }
+    }
 #endif
     return EXIT_FAILURE;
   }
