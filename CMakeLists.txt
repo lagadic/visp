@@ -1832,7 +1832,7 @@ status("    \\- Use ZLIB:"           USE_ZLIB         THEN "yes (ver ${ZLIB_VERS
 status("    Use OpenCV:"             USE_OPENCV       THEN "yes (ver ${OpenCV_VERSION})" ELSE "no")
 status("    Use stb_image (built-in):" WITH_STBIMAGE  THEN "yes (ver ${STBIMAGE_VERSION})" ELSE "no")
 status("    Use TinyEXR (built-in):" WITH_TINYEXR     THEN "yes (ver ${TINYEXR_VERSION})" ELSE "no")
-status("    Use simdlib (built-in):" WITH_SIMDLIB       THEN "yes (ver ${SIMD_VERSION})" ELSE "no")
+status("    Use simdlib (built-in):" WITH_SIMDLIB     THEN "yes (ver ${SIMD_VERSION})" ELSE "no")
 status("    Use npz I/O (built-in):" WITH_MINIZ       THEN "yes" ELSE "no")
 status("")
 status("  Real robots: ")
