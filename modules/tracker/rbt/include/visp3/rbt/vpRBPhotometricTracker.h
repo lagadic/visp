@@ -154,6 +154,7 @@ public:
   public:
     std::array<double, 3> oX;
     unsigned char targetLuminance;
+    std::array<int, 2> pixelPos;
 
   };
 
