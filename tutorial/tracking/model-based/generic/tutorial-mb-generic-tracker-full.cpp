@@ -179,6 +179,11 @@ int main(int argc, char **argv)
           << std::endl;
         return EXIT_SUCCESS;
       }
+      else {
+        std::cout << "Error: unknown option: " << argv[i] << std::endl;
+        std::cout << "To get the helper run: " << argv[0] << " --help" << std::endl;
+        return EXIT_FAILURE;
+      }
     }
     std::string parentname = vpIoTools::getParent(opt_modelname);
     std::string objectname = vpIoTools::getNameWE(opt_modelname);
