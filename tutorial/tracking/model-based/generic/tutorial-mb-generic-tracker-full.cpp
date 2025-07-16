@@ -404,6 +404,11 @@ int main(int argc, char **argv)
     tracker.initClick(I, objectname + ".init", true);
     //! [Init]
 
+#if defined(VISP_HAVE_NLOHMANN_JSON)
+    std::string json_config_file = "mbt-config.json";
+    std::cout << "Save tracker configuration in: " << json_config_file << std::endl;
+    tracker.saveConfigFile(json_config_file);
+#endif
     while (!g.end()) {
       if (opt_downscale_img > 1) {
         g.acquire(Ivideo);
