@@ -61,14 +61,10 @@ BEGIN_VISP_NAMESPACE
  * A lot of videos can be found on <a href="https://www.youtube.com/user/VispTeam">YouTube VispTeam</a> channel.
  *
  * \htmlonly
- * <iframe width="280" height="160" src="https://www.youtube.com/embed/UK10KMMJFCI"
- * frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
- * <iframe width="280" height="160" src="https://www.youtube.com/embed/DDdIXja7YpE"
- * frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
- * <iframe width="280" height="160" src="https://www.youtube.com/embed/M3XAxu9QC7Q"
- * frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
- * <iframe width="280" height="160" src="https://www.youtube.com/embed/4FARYLYzNL8"
- * frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+ * <iframe width="560" height="315" src="https://www.youtube.com/embed/UK10KMMJFCI?si=JgEsVHoWGdeUhjFC" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+ * <iframe width="560" height="315" src="https://www.youtube.com/embed/DDdIXja7YpE?si=PTZ0N9ThkF1v4BDe" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+ * <iframe width="560" height="315" src="https://www.youtube.com/embed/M3XAxu9QC7Q?si=cCaHvSHW_DvOjqWZ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+ * <iframe width="560" height="315" src="https://www.youtube.com/embed/4FARYLYzNL8?si=ah3CjIW_MVV6lyEe" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
  * \endhtmlonly
  *
  * The \ref tutorial-tracking-mb-generic is a good starting point to use this
@@ -1064,7 +1060,7 @@ inline void from_json(const nlohmann::json &j, vpMbGenericTracker::TrackerWrappe
       t.setDepthDenseSamplingStep(sampling.at("x"), sampling.at("y"));
     }
   }
-  }
+}
 
 #endif
 
