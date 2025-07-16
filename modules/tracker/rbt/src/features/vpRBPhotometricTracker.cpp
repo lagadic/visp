@@ -49,7 +49,7 @@ void fastProjectionSurfacePoint(const vpHomogeneousMatrix &oTc, double X, double
 
 void vpRBPhotometricTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix &/*cMo*/)
 {
-  const vpImage<float> &depthMap = frame.depth;
+
   const vpImage<float> &renderDepth = frame.renders.depth;
   const vpRect bb = frame.renders.boundingBox;
   const vpHomogeneousMatrix &cMo = frame.renders.cMo;
@@ -57,6 +57,8 @@ void vpRBPhotometricTracker::extractFeatures(const vpRBFeatureTrackerInput &fram
   const vpHomogeneousMatrix oMc = cMo.inverse();
   const vpTranslationVector co = oMc.getTranslationVector(); // Position of the camera in object frame
   const bool useMask = m_useMask && frame.hasMask();
+  const vpImage<float> &targetMask = previousFrame.mask.getSize() > 0 ? previousFrame.mask : frame.mask;
+
   m_surfacePoints.clear();
   m_surfacePoints.reserve(static_cast<size_t>(bb.getArea() / (m_step * m_step * 2)));
 
@@ -80,8 +82,10 @@ void vpRBPhotometricTracker::extractFeatures(const vpRBFeatureTrackerInput &fram
       for (auto j = static_cast<int>(bb.getLeft()); j < static_cast<int>(bb.getRight()); j += m_step) {
         const double Z = renderDepth[i][j];
         if (Z > 0.f) {
-          if (useMask && frame.mask[i][j] < m_minMaskConfidence) {
-            continue;
+          if (useMask) {
+            if (targetMask[i][j] < m_minMaskConfidence) {
+              continue;
+            }
           }
           double x = 0.0, y = 0.0;
           vpPixelMeterConversion::convertPointWithoutDistortion(frame.cam, j, i, x, y);
@@ -90,6 +94,9 @@ void vpRBPhotometricTracker::extractFeatures(const vpRBFeatureTrackerInput &fram
           fastProjectionSurfacePoint(oMc, x * Z, y * Z, Z, point.oX);
           unsigned char luminance = previousFrame.I[i][j];
           point.targetLuminance = luminance;
+          point.pixelPos[0] = i;
+          point.pixelPos[1] = j;
+
           localPoints.push_back(point);
         }
       }
@@ -121,7 +128,6 @@ void vpRBPhotometricTracker::extractFeatures(const vpRBFeatureTrackerInput &fram
 
 void vpRBPhotometricTracker::computeVVSIter(const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cMo, unsigned int /*iteration*/)
 {
-  std::cerr << "Entering vvs iter" << std::endl;
   if (m_numFeatures == 0) {
     m_LTL = 0;
     m_LTR = 0;
@@ -135,7 +141,7 @@ void vpRBPhotometricTracker::computeVVSIter(const vpRBFeatureTrackerInput &frame
   m_surfacePointsSet.update(cMo, frame.I, frame.cam);
   m_surfacePointsSet.errorAndInteraction(m_error, m_L);
   //m_weights = 0.0;
-  m_robust.setMinMedianAbsoluteDeviation(1);
+  m_robust.setMinMedianAbsoluteDeviation(5);
   m_robust.MEstimator(vpRobust::TUKEY, m_error, m_weights);
 
   for (unsigned int i = 0; i < m_surfacePoints.size(); ++i) {
@@ -151,47 +157,47 @@ void vpRBPhotometricTracker::computeVVSIter(const vpRBFeatureTrackerInput &frame
   m_vvsConverged = false;
 }
 
-void vpRBPhotometricTracker::display(const vpCameraParameters &/*cam*/, const vpImage<unsigned char> &/*I*/,
-                                    const vpImage<vpRGBa> &/*IRGB*/, const vpImage<unsigned char> &depth) const
+void vpRBPhotometricTracker::display(const vpCameraParameters &/*cam*/, const vpImage<unsigned char> &I,
+                                    const vpImage<vpRGBa> &/*IRGB*/, const vpImage<unsigned char> &/*depth*/) const
 {
-  // switch (m_displayType) {
-  // case DT_SIMPLE:
-  // {
-  //   for (unsigned int i = 0; i < m_surfacePoints.size(); ++i) {
-  //     vpColor c(0, 255, 0);
-  //     vpDisplay::displayPoint(depth, m_surfacePoints[i].pixelPos[0], m_surfacePoints[i].pixelPos[1], c, 2);
-  //   }
-  //   break;
-  // }
-  // case DT_WEIGHT:
-  // {
-  //   for (unsigned int i = 0; i < m_surfacePoints.size(); ++i) {
-  //     vpColor c(0, static_cast<unsigned char>(m_weights[i] * 255), 0);
-  //     vpDisplay::displayPoint(depth, m_surfacePoints[i].pixelPos[0], m_surfacePoints[i].pixelPos[1], c, 2);
-  //   }
-  //   break;
-  // }
-  // case DT_ERROR:
-  // {
-  //   double maxError = m_error.getMaxValue();
-  //   for (unsigned int i = 0; i < m_surfacePoints.size(); ++i) {
-  //     vpColor c(static_cast<unsigned int>((m_error[i] / maxError) * 255), 0, 0);
-  //     vpDisplay::displayPoint(depth, m_surfacePoints[i].pixelPos[0], m_surfacePoints[i].pixelPos[1], c, 2);
-  //   }
-  //   break;
-  // }
-  // case DT_WEIGHT_AND_ERROR:
-  // {
-  //   double maxError = m_error.getMaxValue();
-  //   for (unsigned int i = 0; i < m_surfacePoints.size(); ++i) {
-  //     vpColor c(static_cast<unsigned int>((m_error[i] / maxError) * 255.0), static_cast<unsigned char>(m_weights[i] * 255), 0);
-  //     vpDisplay::displayPoint(depth, m_surfacePoints[i].pixelPos[0], m_surfacePoints[i].pixelPos[1], c, 2);
-  //   }
-  //   break;
-  // }
-  // default:
-  //   throw vpException(vpException::notImplementedError, "Depth tracker display type is invalid or not implemented");
-  // }
+  switch (m_displayType) {
+  case DT_SIMPLE:
+  {
+    for (unsigned int i = 0; i < m_surfacePoints.size(); ++i) {
+      vpColor c(0, 255, 0);
+      vpDisplay::displayPoint(I, m_surfacePoints[i].pixelPos[0], m_surfacePoints[i].pixelPos[1], c, 2);
+    }
+    break;
+  }
+  case DT_WEIGHT:
+  {
+    for (unsigned int i = 0; i < m_surfacePoints.size(); ++i) {
+      vpColor c(0, static_cast<unsigned char>(m_weights[i] * 255), 0);
+      vpDisplay::displayPoint(I, m_surfacePoints[i].pixelPos[0], m_surfacePoints[i].pixelPos[1], c, 2);
+    }
+    break;
+  }
+  case DT_ERROR:
+  {
+    double maxError = m_error.getMaxValue();
+    for (unsigned int i = 0; i < m_surfacePoints.size(); ++i) {
+      vpColor c(static_cast<unsigned int>((m_error[i] / maxError) * 255), 0, 0);
+      vpDisplay::displayPoint(I, m_surfacePoints[i].pixelPos[0], m_surfacePoints[i].pixelPos[1], c, 2);
+    }
+    break;
+  }
+  case DT_WEIGHT_AND_ERROR:
+  {
+    double maxError = m_error.getMaxValue();
+    for (unsigned int i = 0; i < m_surfacePoints.size(); ++i) {
+      vpColor c(static_cast<unsigned int>((m_error[i] / maxError) * 255.0), static_cast<unsigned char>(m_weights[i] * 255), 0);
+      vpDisplay::displayPoint(I, m_surfacePoints[i].pixelPos[0], m_surfacePoints[i].pixelPos[1], c, 2);
+    }
+    break;
+  }
+  default:
+    throw vpException(vpException::notImplementedError, "Depth tracker display type is invalid or not implemented");
+  }
 }
 
 END_VISP_NAMESPACE
