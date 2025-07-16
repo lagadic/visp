@@ -144,10 +144,10 @@ protected:
   double distFarClip;
   //! Flags specifying which clipping to used
   unsigned int clippingFlag;
-  //! Use Ogre3d for visibility tests
+  //! Use Ogre3d for global visibility tests
   bool useOgre;
   bool ogreShowConfigDialog;
-  //! Use Scanline for visibility tests
+  //! Use Scanline for global visibility tests
   bool useScanLine;
   //! Number of points in init file
   unsigned int m_nbInitPoints;
@@ -295,6 +295,24 @@ public:
     \return the number of iteration
    */
   virtual inline unsigned int getMaxIter() const { return m_maxIter; }
+
+  /*!
+   * \return true when Ogre is enabled to check for global visibility of all the faces. false otherwise.
+   * \sa setOgreVisibilityTest()
+   */
+  bool getOgreVisibilityTest()
+  {
+    return useOgre;
+  }
+
+  /*!
+   * \return true when scanline algorithm is enabled to check for global visibility of all the faces. false otherwise.
+   * \sa setScanLineVisibilityTest()
+   */
+  bool getScanLineVisibilityTest()
+  {
+    return useScanLine;
+  }
 
   /*!
     Get the error angle between the gradient direction of the model features
@@ -604,6 +622,11 @@ public:
     m_projectionErrorDisplayThickness = thickness;
   }
 
+  /*!
+   * Allows to enable global scanline visibility test for all the faces.
+   * @param v : When true, enables scanline visibility test.
+   * \sa getScanLineVisibilityTest()
+   */
   virtual void setScanLineVisibilityTest(const bool &v) { useScanLine = v; }
 
   virtual void setOgreVisibilityTest(const bool &v);
@@ -633,7 +656,7 @@ public:
   virtual void setNbRayCastingAttemptsForVisibility(const unsigned int &attempts)
   {
     faces.setNbRayCastingAttemptsForVisibility(attempts);
-  }
+}
 #endif
 
   /*!
