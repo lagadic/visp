@@ -297,24 +297,6 @@ public:
   virtual inline unsigned int getMaxIter() const { return m_maxIter; }
 
   /*!
-   * \return true when Ogre is enabled to check for global visibility of all the faces. false otherwise.
-   * \sa setOgreVisibilityTest()
-   */
-  bool getOgreVisibilityTest()
-  {
-    return useOgre;
-  }
-
-  /*!
-   * \return true when scanline algorithm is enabled to check for global visibility of all the faces. false otherwise.
-   * \sa setScanLineVisibilityTest()
-   */
-  bool getScanLineVisibilityTest()
-  {
-    return useScanLine;
-  }
-
-  /*!
     Get the error angle between the gradient direction of the model features
     projected at the resulting pose and their normal. The error is expressed
     in degree between 0 and 90. This value is computed if
@@ -625,7 +607,6 @@ public:
   /*!
    * Allows to enable global scanline visibility test for all the faces.
    * @param v : When true, enables scanline visibility test.
-   * \sa getScanLineVisibilityTest()
    */
   virtual void setScanLineVisibilityTest(const bool &v) { useScanLine = v; }
 
@@ -656,7 +637,7 @@ public:
   virtual void setNbRayCastingAttemptsForVisibility(const unsigned int &attempts)
   {
     faces.setNbRayCastingAttemptsForVisibility(attempts);
-}
+  }
 #endif
 
   /*!

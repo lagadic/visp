@@ -3012,8 +3012,6 @@ vpMbTracker::getPolygonFaces(bool orderPolygons, bool useVisibility, bool clipPo
   \warning This function has to be called before the initialization of the tracker.
 
   \param v : True to use it, False otherwise
-
-  \sa getOgreVisibilityTest()
 */
 void vpMbTracker::setOgreVisibilityTest(const bool &v)
 {
