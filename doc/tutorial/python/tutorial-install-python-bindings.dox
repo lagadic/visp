@@ -128,15 +128,24 @@ We strongly recommend using Conda to build ViSP Python bindings. Below are instr
 
         (visp-conda-ws) $ conda install cmake cxx-compiler make pkg-config xorg-libx11 xorg-libxfixes xorg-xorgproto libxml2 libdc1394 librealsense libgomp libopencv eigen libjpeg-turbo libpng mkl-devel pybind11 nlohmann_json
 
-    If you want to control a Franka Reasearch (FR3) robot with python bindings, you may install these additional dependencies
+    \note Specific instructions to use a Panda Robot with Python bindings.
+    - If you want to control a Franka Reasearch (FR1) robot from Frnka Emika with python bindings, you may install these additional dependencies
 
-        (visp-conda-ws) $ conda install pinocchio poco fmt
+          (visp-conda-ws) $ conda install poco=1.11.0 fmt
+
+    - Otherwise, if you want to control a Franka Reasearch (FR3) robot from Franka Robotics with python bindings, you may install these additional dependencies
+
+          (visp-conda-ws) $ conda install pinocchio poco fmt
 
     We recommend also to build `libfranka` in your conda workspace and uninstall `libfranka` from your system
 
         (visp-conda-ws) $ cd ${VISP_WS}/3rdparty/libfranka
         (visp-conda-ws) $ mkdir build-conda && cd build-conda
-        (visp-conda-ws) $ cmake ../ -DCMAKE_PREFIX_PATH=$CONDA_PREFIX -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX -DBUILD_TESTS=OFF
+        (visp-conda-ws) $ cmake ../ -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
+                                    -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
+                                    -DBUILD_TESTS=OFF \
+                                    -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+        (visp-conda-ws) $ make -j$(nproc) install
 
     If you followed \ref franka_prereq_libfranka instruction, you may remove `libfranka` installed in your system
     in `/usr/local` with:
