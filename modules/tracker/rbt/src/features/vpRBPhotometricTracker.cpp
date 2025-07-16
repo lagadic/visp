@@ -126,7 +126,7 @@ void vpRBPhotometricTracker::extractFeatures(const vpRBFeatureTrackerInput &fram
   }
 }
 
-void vpRBPhotometricTracker::computeVVSIter(const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cMo, unsigned int /*iteration*/)
+void vpRBPhotometricTracker::computeVVSIter(const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cMo, unsigned int iteration)
 {
   if (m_numFeatures == 0) {
     m_LTL = 0;
@@ -153,6 +153,16 @@ void vpRBPhotometricTracker::computeVVSIter(const vpRBFeatureTrackerInput &frame
   }
 
   m_LTL = m_L.AtA();
+  // double regularization = 0.1;
+  // const double regularizationIterFactor = 0.5;
+  // vpMatrix eye;
+  // eye.eye(6);
+  // for (unsigned int i = 0; i < iteration; ++i) {
+  //   regularization *= regularizationIterFactor;
+  // }
+  // m_LTL += eye * regularization;
+
+
   computeJTR(m_L, m_weighted_error, m_LTR);
   m_vvsConverged = false;
 }
