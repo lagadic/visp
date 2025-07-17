@@ -3007,10 +3007,9 @@ vpMbTracker::getPolygonFaces(bool orderPolygons, bool useVisibility, bool clipPo
 }
 
 /*!
-  Use Ogre3D for visibility tests
+  Use Ogre3D for global visibility test of all the faces.
 
-  \warning This function has to be called before the initialization of the
-  tracker.
+  \warning This function has to be called before the initialization of the tracker.
 
   \param v : True to use it, False otherwise
 */

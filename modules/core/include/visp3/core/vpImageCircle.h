@@ -148,9 +148,10 @@ public:
    */
   inline bool isInside(const vpImagePoint &ip) const
   {
-    float squaredRadius = m_radius * m_radius;
-    float distance = vpImagePoint::sqrDistance(m_center, ip);
-    return distance <= squaredRadius;
+    double radius = static_cast<double>(m_radius);
+    double squaredRadius = radius * radius;
+    double distance = vpImagePoint::sqrDistance(m_center, ip);
+    return (distance <= squaredRadius);
   }
 
 private:

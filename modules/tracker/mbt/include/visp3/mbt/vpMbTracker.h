@@ -144,10 +144,10 @@ protected:
   double distFarClip;
   //! Flags specifying which clipping to used
   unsigned int clippingFlag;
-  //! Use Ogre3d for visibility tests
+  //! Use Ogre3d for global visibility tests
   bool useOgre;
   bool ogreShowConfigDialog;
-  //! Use Scanline for visibility tests
+  //! Use Scanline for global visibility tests
   bool useScanLine;
   //! Number of points in init file
   unsigned int m_nbInitPoints;
@@ -604,6 +604,10 @@ public:
     m_projectionErrorDisplayThickness = thickness;
   }
 
+  /*!
+   * Allows to enable global scanline visibility test for all the faces.
+   * @param v : When true, enables scanline visibility test.
+   */
   virtual void setScanLineVisibilityTest(const bool &v) { useScanLine = v; }
 
   virtual void setOgreVisibilityTest(const bool &v);

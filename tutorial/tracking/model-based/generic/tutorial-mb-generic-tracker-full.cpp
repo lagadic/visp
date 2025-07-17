@@ -179,6 +179,11 @@ int main(int argc, char **argv)
           << std::endl;
         return EXIT_SUCCESS;
       }
+      else {
+        std::cout << "Error: unknown option: " << argv[i] << std::endl;
+        std::cout << "To get the helper run: " << argv[0] << " --help" << std::endl;
+        return EXIT_FAILURE;
+      }
     }
     std::string parentname = vpIoTools::getParent(opt_modelname);
     std::string objectname = vpIoTools::getNameWE(opt_modelname);
@@ -404,6 +409,11 @@ int main(int argc, char **argv)
     tracker.initClick(I, objectname + ".init", true);
     //! [Init]
 
+#if defined(VISP_HAVE_NLOHMANN_JSON)
+    std::string json_config_file = "mbt-config.json";
+    std::cout << "Save tracker configuration in: " << json_config_file << std::endl;
+    tracker.saveConfigFile(json_config_file);
+#endif
     while (!g.end()) {
       if (opt_downscale_img > 1) {
         g.acquire(Ivideo);
