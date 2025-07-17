@@ -375,7 +375,8 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
     std::cout << "Modify initial pose : right click " << std::endl;
 
     if (I) {
-      vpDisplay::displayText(*I, 15, 10, "left click to validate, right click to modify initial pose", vpColor::red);
+      int display_scaling = vpDisplay::getDownScalingFactor(*I);
+      vpDisplay::displayText(*I, 15*display_scaling, 10*display_scaling, "Left click to validate, right click to modify initial pose", vpColor::red);
 
       vpDisplay::flush(*I);
 
@@ -383,7 +384,8 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
       }
     }
     else {
-      vpDisplay::displayText(*I_color, 15, 10, "left click to validate, right click to modify initial pose",
+      int display_scaling = vpDisplay::getDownScalingFactor(*I_color);
+      vpDisplay::displayText(*I_color, 15*display_scaling, 10*display_scaling, "Left click to validate, right click to modify initial pose",
                              vpColor::red);
 
       vpDisplay::flush(*I_color);
@@ -487,18 +489,20 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
         std::ostringstream text;
         text << "Click on point " << i + 1;
         if (I) {
+          int display_scaling = vpDisplay::getDownScalingFactor(*I);
           vpDisplay::display(*I);
-          vpDisplay::displayText(*I, 15, 10, text.str(), vpColor::red);
+          vpDisplay::displayText(*I, 15*display_scaling, 10*display_scaling, text.str(), vpColor::red);
           for (unsigned int k = 0; k < mem_ip.size(); k++) {
-            vpDisplay::displayCross(*I, mem_ip[k], 10, vpColor::green, 2);
+            vpDisplay::displayCross(*I, mem_ip[k], 13*display_scaling, vpColor::green, 1);
           }
           vpDisplay::flush(*I);
         }
         else {
+          int display_scaling = vpDisplay::getDownScalingFactor(*I_color);
           vpDisplay::display(*I_color);
-          vpDisplay::displayText(*I_color, 15, 10, text.str(), vpColor::red);
+          vpDisplay::displayText(*I_color, 15*display_scaling, 10*display_scaling, text.str(), vpColor::red);
           for (unsigned int k = 0; k < mem_ip.size(); k++) {
-            vpDisplay::displayCross(*I_color, mem_ip[k], 10, vpColor::green, 2);
+            vpDisplay::displayCross(*I_color, mem_ip[k], 13*display_scaling, vpColor::green, 1);
           }
           vpDisplay::flush(*I_color);
         }
@@ -535,8 +539,10 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
       pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, m_cMo);
 
       if (I) {
+
         display(*I, m_cMo, m_cam, vpColor::green, 1, true);
-        vpDisplay::displayText(*I, 15, 10, "left click to validate, right click to re initialize object", vpColor::red);
+        int display_scaling = vpDisplay::getDownScalingFactor(*I);
+        vpDisplay::displayText(*I, 15*display_scaling, 10*display_scaling, "Left click to validate, right click to re initialize object", vpColor::red);
 
         vpDisplay::flush(*I);
 
@@ -555,7 +561,8 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
       }
       else {
         display(*I_color, m_cMo, m_cam, vpColor::green, 1, true);
-        vpDisplay::displayText(*I_color, 15, 10, "left click to validate, right click to re initialize object",
+        int display_scaling = vpDisplay::getDownScalingFactor(*I_color);
+        vpDisplay::displayText(*I_color, 15*display_scaling, 10*display_scaling, "Left click to validate, right click to re initialize object",
                                vpColor::red);
 
         vpDisplay::flush(*I_color);
@@ -995,7 +1002,8 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
 
     if (I) {
       display(*I, m_cMo, m_cam, vpColor::green, 1, true);
-      vpDisplay::displayText(*I, 15, 10, "left click to validate, right click to re initialize object", vpColor::red);
+      int display_scaling = vpDisplay::getDownScalingFactor(*I);
+      vpDisplay::displayText(*I, 15*display_scaling, 10*display_scaling, "left click to validate, right click to re initialize object", vpColor::red);
 
       vpDisplay::flush(*I);
 
@@ -1014,7 +1022,8 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
     }
     else {
       display(*I_color, m_cMo, m_cam, vpColor::green, 1, true);
-      vpDisplay::displayText(*I_color, 15, 10, "left click to validate, right click to re initialize object",
+      int display_scaling = vpDisplay::getDownScalingFactor(*I_color);
+      vpDisplay::displayText(*I_color, 15*display_scaling, 10*display_scaling, "left click to validate, right click to re initialize object",
                              vpColor::red);
 
       vpDisplay::flush(*I_color);
