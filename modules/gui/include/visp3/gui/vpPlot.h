@@ -146,6 +146,7 @@ public:
   vpPlot(unsigned int nbGraph, unsigned int height = 700, unsigned int width = 700, int x = -1, int y = -1,
          const std::string &title = "");
   virtual ~vpPlot();
+  void closeDisplay();
   void getPixelValue(bool block);
   void init(unsigned int nbGraph, unsigned int height = 700, unsigned int width = 700, int x = -1, int y = -1,
             const std::string &title = "");
