@@ -124,7 +124,7 @@ void vpMbtMeLine::initTracking(const vpImage<unsigned char> &I, const vpImagePoi
   expecteddensity = static_cast<double>(m_meList.size());
 
   if (!doNoTrack) {
-    vpMeLine::track(I);
+    vpMeTracker::track(I);
   }
 }
 
