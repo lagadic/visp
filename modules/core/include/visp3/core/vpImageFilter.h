@@ -1771,6 +1771,13 @@ public:
     gaussianBlur(const vpImage<ImageType> &I, vpImage<OutputType> &GI, unsigned int size = 7, FilterType sigma = 0., bool normalize = true,
                             const vpImage<bool> *p_mask = nullptr)
   {
+    if (size == 0 || size-1 > I.getWidth() || size-1 > I.getHeight()) {
+      std::ostringstream oss;
+      oss << "Image size (" << I.getWidth() << "x" << I.getHeight() << ") is too small for the Gaussian kernel ("
+        << "size=" << size << "), min size is " << (size-1);
+      throw vpException(vpException::dimensionError, oss.str());
+    }
+
     FilterType *fg = new FilterType[(size + 1) / 2];
     vpImageFilter::getGaussianKernel<FilterType>(fg, size, sigma, normalize);
     vpImage<OutputType> GIx;
@@ -1793,6 +1800,13 @@ public:
     gaussianBlur(const vpImage<ImageType> &I, vpImage<OutputType> &GI, unsigned int size = 7, FilterType sigma = 0., bool normalize = true,
                             const vpImage<bool> *p_mask = nullptr)
   {
+    if (size == 0 || size-1 > I.getWidth() || size-1 > I.getHeight()) {
+      std::ostringstream oss;
+      oss << "Image size (" << I.getWidth() << "x" << I.getHeight() << ") is too small for the Gaussian kernel ("
+        << "size=" << size << "), min size is " << (size-1);
+      throw vpException(vpException::dimensionError, oss.str());
+    }
+
     FilterType *fg = new FilterType[(size + 1) / 2];
     vpImageFilter::getGaussianKernel<FilterType>(fg, size, sigma, normalize);
     vpImage<OutputType> GIx;
