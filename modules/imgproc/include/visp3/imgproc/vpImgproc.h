@@ -99,19 +99,19 @@ typedef enum
 typedef enum vpGammaMethod
 {
   GAMMA_MANUAL = 0, /*!< User-defined constant positive gamma factor.*/
-  GAMMA_LOG_BASED = 1, /*!< Scott, J & Pusateri M (2009)"Towards Real-time Hardware
+  GAMMA_LOG_BASED = 1, /*!< Scott, J & Pusateri M (2009), "Towards Real-time Hardware
                         Gamma Correction for Dynamic Contrast Enhancement"
-                        IEEE Applied Imagery Pattern Recognition Workshop (AIPR 2009)*/
+                        IEEE Applied Imagery Pattern Recognition Workshop (AIPR 2009) \cite Scott2009TowardsRH */
   GAMMA_NONLINEAR_BASED = 2, /*!< Shi, Y et al. (2007), "Reducing Illumination Based On Nonlinear Gamma Correction",
-                              International Conference on Image Processing */
+                              International Conference on Image Processing \cite Shi2007ReducingIB */
   GAMMA_CDF_BASED = 3, /*!< Huang, SC  et al. (2013),"Efficient Contrast Enhancement Using Adaptive
                         Gamma Correction With Weighting Distribution",
-                        IEEE Trans. on Image Processing, VOL. 22, NO. 3, MARCH 2013. */
-  GAMMA_CLASSIFICATION_BASED = 4, /*!< Rahman, S  et al. (2016),  "An adaptive gamma correction for image
-                                   enhancement", EURASIP Journal on Image and Video Processing*/
-  GAMMA_SPATIAL_VARIANT_BASED = 5,  /*!< Lee, S et al. (2010), "A Space-Variant Luminance Map based
-                                    Color Image Enhancement",
-                                    IEEE Trans. on Consumer Electronics, Vol. 56, No. 4, November 2010.*/
+                        IEEE Trans. on Image Processing, VOL. 22, NO. 3, MARCH 2013. \cite Huang2013EfficientCE */
+  GAMMA_CLASSIFICATION_BASED = 4, /*!< Rahman, S  et al. (2016), "An adaptive gamma correction for image
+                                   enhancement", EURASIP Journal on Image and Video Processing \cite Rahman2016AnAG */
+  GAMMA_SPATIAL_VARIANT_BASED = 5, /*!< Lee, S et al. (2010), "A Space-Variant Luminance Map based
+                                Color Image Enhancement",
+                                IEEE Trans. on Consumer Electronics, Vol. 56, No. 4, November 2010. \cite Lee2010ASL */
   GAMMA_METHOD_COUNT = 6
 } vpGammaMethod;
 
