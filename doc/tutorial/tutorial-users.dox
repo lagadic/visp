@@ -71,6 +71,7 @@ This page introduces the user to the way to get, to filter or to render images.
 This page introduces some image processing methods.
 
 - \subpage tutorial-imgproc-brightness <br>This tutorial will show you some simple techniques to adjust or improve the brightness / contrast of an image.
+- \subpage tutorial-imgproc-auto-gamma <br>This tutorial will show you different methods for automatic gamma correction.
 - \subpage tutorial-imgproc-contrast-sharpening <br>This tutorial will show you some simple techniques to improve the contrast and the sharpness of an image.
 - \subpage tutorial-imgproc-autothreshold <br>This tutorial will show you different methods to automatically threshold, binarize an image.
 - \subpage tutorial-imgproc-contour <br>This tutorial will show you how to extract the contours from a binary image.
