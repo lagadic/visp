@@ -92,8 +92,7 @@ void vpRBPhotometricTracker::extractFeatures(const vpRBFeatureTrackerInput &fram
           //vpColVector objectNormal({ frame.renders.normals[i][j].R, frame.renders.normals[i][j].G, frame.renders.normals[i][j].B });
 
           fastProjectionSurfacePoint(oMc, x * Z, y * Z, Z, point.oX);
-          unsigned char luminance = previousFrame.I[i][j];
-          point.targetLuminance = luminance;
+          point.targetLuminance = 1.0;
           point.pixelPos[0] = i;
           point.pixelPos[1] = j;
 
@@ -138,10 +137,10 @@ void vpRBPhotometricTracker::computeVVSIter(const vpRBFeatureTrackerInput &frame
     m_covWeightDiag = 0.0;
     return;
   }
-  m_surfacePointsSet.update(cMo, frame.I, frame.cam);
+  m_surfacePointsSet.update(cMo, frame.mask, frame.cam);
   m_surfacePointsSet.errorAndInteraction(m_error, m_L);
   //m_weights = 0.0;
-  m_robust.setMinMedianAbsoluteDeviation(5);
+  m_robust.setMinMedianAbsoluteDeviation(0.1);
   m_robust.MEstimator(vpRobust::TUKEY, m_error, m_weights);
 
   for (unsigned int i = 0; i < m_surfacePoints.size(); ++i) {
@@ -153,14 +152,14 @@ void vpRBPhotometricTracker::computeVVSIter(const vpRBFeatureTrackerInput &frame
   }
 
   m_LTL = m_L.AtA();
-  // double regularization = 0.1;
-  // const double regularizationIterFactor = 0.5;
-  // vpMatrix eye;
-  // eye.eye(6);
-  // for (unsigned int i = 0; i < iteration; ++i) {
-  //   regularization *= regularizationIterFactor;
-  // }
-  // m_LTL += eye * regularization;
+  double regularization = 0.0;
+  const double regularizationIterFactor = 0.5;
+  vpMatrix eye;
+  eye.eye(6);
+  for (unsigned int i = 0; i < iteration; ++i) {
+    regularization *= regularizationIterFactor;
+  }
+  m_LTL += eye * regularization;
 
 
   computeJTR(m_L, m_weighted_error, m_LTR);

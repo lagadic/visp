@@ -153,7 +153,7 @@ public:
     vpSurfacePoint() { }
   public:
     std::array<double, 3> oX;
-    unsigned char targetLuminance;
+    double targetLuminance;
     std::array<int, 2> pixelPos;
 
   };
@@ -190,7 +190,7 @@ public:
       }
     }
 
-    inline void update(const vpHomogeneousMatrix &cMo, const vpImage<unsigned char> &I, const vpCameraParameters &cam)
+    inline void update(const vpHomogeneousMatrix &cMo, const vpImage<float> &I, const vpCameraParameters &cam)
     {
       const vpRotationMatrix cRo = cMo.getRotationMatrix();
       const vpTranslationVector t = cMo.getTranslationVector();
@@ -210,7 +210,7 @@ public:
           continue;
         }
         unsigned int ui = static_cast<unsigned int>(u), vi = static_cast<unsigned int>(v);
-        unsigned char observation = I[vi][ui];
+        float observation = I[vi][ui];
         m_observations[i] = static_cast<double>(observation);
         double px = cam.get_px(), py = cam.get_py();
         m_dI[i][0] = px * vpImageFilter::derivativeFilterX(I, vi, ui);
