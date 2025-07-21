@@ -103,7 +103,7 @@ int main(int argc, const char **argv)
   int gaussianKernelSize = 3;
   float gaussianStdev = 1.0f;
   int apertureSize = 3;
-  bool half = false;
+  unsigned int max_resolution = 800;
   vpImageFilter::vpCannyFilteringAndGradientType filteringType = vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING;
   VISP_NAMESPACE_NAME::vpGammaColorHandling gamma_colorspace = VISP_NAMESPACE_NAME::GAMMA_HSV;
 
@@ -112,8 +112,9 @@ int main(int argc, const char **argv)
       ++i;
       input = std::string(argv[i]);
     }
-    else if (std::string(argv[i]) == "--half") {
-      half = true;
+    else if (std::string(argv[i]) == "--max-resolution" && i + 1 < argc) {
+      ++i;
+      max_resolution = std::atoi(argv[i]);
     }
     else if (std::string(argv[i]) == "--gaussian-kernel-size" && i + 1 < argc) {
       ++i;
@@ -144,20 +145,20 @@ int main(int argc, const char **argv)
     else {
       std::cout << "Usage: " << argv[0]
         << " [--input <input path or image sequence pattern>]"
-        " [--half (use half image resolution)]"
+        " [--max-resolution <resolution_in_px> (max image resolution, otherwise the input image is resized)]"
         " [--gaussian-kernel-size <e.g. 3, 5, 7>]"
         " [--gaussian-std <e.g. 1>]"
         " [--aperture-size <e.g. 3>]"
         " [--canny-filtering-type <0=CANNY_GBLUR_SOBEL_FILTERING, 1=CANNY_GBLUR_SCHARR_FILTERING>]"
         " [--gamma-rgb (RGB colorspace, else HSV]"
-        " [--output <folder path> (to save results)]"
+        " [--output <folder path> (to save the results)]"
         << std::endl;
       return EXIT_SUCCESS;
     }
   }
 
   std::cout << "Input: " << input << std::endl;
-  std::cout << "Process on half image resolution? " << half << std::endl;
+  std::cout << "Max image resolution: " << max_resolution << std::endl;
   std::cout << "Gaussian kernel size: " << gaussianKernelSize << std::endl;
   std::cout << "Gaussian standard deviation: " << gaussianStdev << std::endl;
   std::cout << "Aperture size: " << apertureSize << std::endl;
@@ -184,8 +185,14 @@ int main(int argc, const char **argv)
     reader.setFileName(input);
     reader.open(I_color_ori);
   }
-  if (half) {
-    vpImageTools::resize(I_color_ori, I_color, I_color_ori.getWidth()/2, I_color_ori.getHeight()/2,
+
+  if (I_color_ori.getWidth() > max_resolution || I_color_ori.getHeight() > max_resolution) {
+    float factor_w = I_color_ori.getWidth() / static_cast<float>(max_resolution);
+    float factor_h = I_color_ori.getHeight() / static_cast<float>(max_resolution);
+    int resize_factor_w = static_cast<int>(factor_w);
+    int resize_factor_h = static_cast<int>(factor_h);
+    int resize_factor = std::max(resize_factor_w, resize_factor_h);
+    vpImageTools::resize(I_color_ori, I_color, I_color_ori.getWidth()/resize_factor, I_color_ori.getHeight()/resize_factor,
       vpImageTools::INTERPOLATION_AREA);
   }
   else {
@@ -194,7 +201,7 @@ int main(int argc, const char **argv)
 
   vpIoTools::makeDirectory(output);
 
-  const int nb_methods = VISP_NAMESPACE_NAME::GAMMA_METHOD_COUNT - 1; // all except GAMMA_MANUAL
+  const int nb_methods = 1 + VISP_NAMESPACE_NAME::GAMMA_METHOD_COUNT - 1; // original img + all except GAMMA_MANUAL
   std::vector<std::vector<double>> computation_times(nb_methods);
   int nb_images = 0;
 
@@ -204,11 +211,17 @@ int main(int argc, const char **argv)
   vpFont font(32);
   bool read_single_image = false;
   while (!read_single_image && (single_image || !reader.end())) {
+    std::cout << "\n" << reader.getFrameIndex() << ")" << std::endl;
     if (!single_image) {
       reader.acquire(I_color_ori);
     }
-    if (half) {
-      vpImageTools::resize(I_color_ori, I_color, I_color_ori.getWidth()/2, I_color_ori.getHeight()/2,
+    if (I_color_ori.getWidth() > max_resolution || I_color_ori.getHeight() > max_resolution) {
+      float factor_w = I_color_ori.getWidth() / static_cast<float>(max_resolution);
+      float factor_h = I_color_ori.getHeight() / static_cast<float>(max_resolution);
+      int resize_factor_w = static_cast<int>(factor_w);
+      int resize_factor_h = static_cast<int>(factor_h);
+      int resize_factor = std::max(resize_factor_w, resize_factor_h);
+      vpImageTools::resize(I_color_ori, I_color, I_color_ori.getWidth()/resize_factor, I_color_ori.getHeight()/resize_factor,
         vpImageTools::INTERPOLATION_AREA);
     }
     else {
@@ -216,8 +229,8 @@ int main(int argc, const char **argv)
     }
     nb_images++;
 
-    const int nb_methods = VISP_NAMESPACE_NAME::GAMMA_METHOD_COUNT - 1; // all except GAMMA_MANUAL
-    I_res_stack.init(nb_methods*I_color.getHeight(), 4*I_color.getWidth());
+    const int nb_cols = 4; // original + corrected + Canny + gradient
+    I_res_stack.init(nb_methods*I_color.getHeight(), nb_cols*I_color.getWidth());
     dIxy_uchar.init(I_color.getHeight(), I_color.getWidth());
     I_canny_visp.init(I_color.getHeight(), I_color.getWidth());
 
@@ -231,7 +244,32 @@ int main(int argc, const char **argv)
     char buffer[FILENAME_MAX];
 
     vpImageConvert::convert(I_color, I_gray);
+
+    computeCanny(I_gray, cannyDetector, gaussianKernelSize, gaussianStdev, apertureSize,
+                 filteringType, dIxy_uchar, I_canny_visp);
+    const double img_ori_Canny = I_canny_visp.getMeanValue();
     const double img_ori_entropy = computeImageEntropy(I_gray);
+
+    // Original image
+    {
+      computation_times[offset_idx].push_back(-1);
+      vpImageConvert::convert(dIxy_uchar, dIxy_uchar_color);
+      vpImageConvert::convert(I_canny_visp, I_canny_visp_color);
+      I_res_stack.insert(I_color, vpImagePoint(offset_idx*I_color.getHeight(), 0));
+      I_res_stack.insert(I_color, vpImagePoint(offset_idx*I_color.getHeight(), I_color.getWidth()));
+      I_res_stack.insert(I_canny_visp_color, vpImagePoint(offset_idx*I_color.getHeight(), 2*I_color.getWidth()));
+      I_res_stack.insert(dIxy_uchar_color, vpImagePoint(offset_idx*I_color.getHeight(), 3*I_color.getWidth()));
+      // Entropy original
+      snprintf(buffer, FILENAME_MAX, "Entropy: %.4f", img_ori_entropy);
+      font.drawText(I_res_stack, buffer, vpImagePoint(offset_idx*I_color.getHeight() + offset_text_start_y, offset_text1*I_res_stack.getWidth()), vpColor::red);
+      // Entropy
+      snprintf(buffer, FILENAME_MAX, "Entropy: %.4f", img_ori_entropy);
+      font.drawText(I_res_stack, buffer, vpImagePoint(offset_idx*I_color.getHeight() + offset_text_start_y+text_h, offset_text2*I_res_stack.getWidth()), vpColor::red);
+      // Canny
+      snprintf(buffer, FILENAME_MAX, "Canny mean: %.2f", I_canny_visp.getMeanValue());
+      font.drawText(I_res_stack, buffer, vpImagePoint(offset_idx*I_color.getHeight() + offset_text_start_y, offset_text2*I_res_stack.getWidth()), vpColor::red);
+      offset_idx++;
+    }
 
     for (int gamma_idx = 1; gamma_idx < VISP_NAMESPACE_NAME::GAMMA_METHOD_COUNT; ++gamma_idx, offset_idx++) {
       VISP_NAMESPACE_NAME::vpGammaMethod gamma_method = static_cast<VISP_NAMESPACE_NAME::vpGammaMethod>(gamma_idx);
@@ -267,13 +305,14 @@ int main(int argc, const char **argv)
       snprintf(buffer, FILENAME_MAX, oss.str().c_str(), (end_time-start_time));
       font.drawText(I_res_stack, buffer, vpImagePoint(offset_idx*I_color.getHeight() + offset_text_start_y,
                                                       offset_text2*I_res_stack.getWidth()), vpColor::red);
-      // Canny
-      snprintf(buffer, FILENAME_MAX, "Canny mean: (%.2f)", I_canny_visp.getMeanValue());
-      font.drawText(I_res_stack, buffer, vpImagePoint(offset_idx*I_color.getHeight() + offset_text_start_y+text_h,
-                                                      offset_text2*I_res_stack.getWidth()), vpColor::red);
       // Entropy
       snprintf(buffer, FILENAME_MAX, "Entropy: %.4f", img_corrected_entropy);
-      font.drawText(I_res_stack, buffer, vpImagePoint(offset_idx*I_color.getHeight() + offset_text_start_y+2*text_h, offset_text2*I_res_stack.getWidth()), vpColor::red);
+      font.drawText(I_res_stack, buffer, vpImagePoint(offset_idx*I_color.getHeight() + offset_text_start_y+text_h, offset_text2*I_res_stack.getWidth()), vpColor::red);
+      // Canny
+      double canny_mean_perc = 100 * I_canny_visp.getMeanValue() / img_ori_Canny;
+      snprintf(buffer, FILENAME_MAX, "Canny mean: %.2f (%.2f%%)", I_canny_visp.getMeanValue(), canny_mean_perc);
+      font.drawText(I_res_stack, buffer, vpImagePoint(offset_idx*I_color.getHeight() + offset_text_start_y+2*text_h,
+                                                      offset_text2*I_res_stack.getWidth()), vpColor::red);
     }
 
     if (!output.empty()) {
@@ -303,8 +342,8 @@ int main(int argc, const char **argv)
       continue;
     }
     std::cout << VISP_NAMESPACE_NAME::vpGammaMethodToString(gamma_method) << ": mean="
-      << vpMath::getMean(computation_times[gamma_idx-1]) << " ms ; median="
-      << vpMath::getMedian(computation_times[gamma_idx-1]) << " ms" << std::endl;
+      << vpMath::getMean(computation_times[1 + gamma_idx-1]) << " ms ; median="
+      << vpMath::getMedian(computation_times[1 + gamma_idx-1]) << " ms" << std::endl; // index 0 is original img
   }
 
   return EXIT_SUCCESS;

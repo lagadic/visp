@@ -92,6 +92,8 @@ ViSP 3.x.x (Version in development)
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-pixi.html
     . New tutorial: Tracking with the Render-Based Tracker
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-tracking-rbt.html
+    . New tutorial: Tutorial: Automatic gamma correction
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-imgproc-auto-gamma.html
   - Bug fixed
     . [#1251] Bug in vpDisplay::displayFrame()
     . [#1270] Build issue around std::clamp and optional header which are not found with cxx17
