@@ -124,7 +124,7 @@ typedef enum vpGammaMethod
  * \return std::string The list of available items.
  */
 VISP_EXPORT std::string vpGammaMethodList(const std::string &pref = "<", const std::string &sep = " , ",
-                                            const std::string &suf = ">");
+                                          const std::string &suf = ">");
 
 /**
  * \brief Cast a \b vpGammaMethod into a string, to know its name.

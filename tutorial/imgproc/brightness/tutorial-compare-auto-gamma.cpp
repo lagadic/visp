@@ -246,7 +246,7 @@ int main(int argc, const char **argv)
     vpImageConvert::convert(I_color, I_gray);
 
     computeCanny(I_gray, cannyDetector, gaussianKernelSize, gaussianStdev, apertureSize,
-      filteringType, dIxy_uchar, I_canny_visp);
+                 filteringType, dIxy_uchar, I_canny_visp);
     const double img_ori_Canny = I_canny_visp.getMeanValue();
     const double img_ori_entropy = computeImageEntropy(I_gray);
 
