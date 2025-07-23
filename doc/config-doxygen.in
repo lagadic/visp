@@ -1028,7 +1028,9 @@ FILE_PATTERNS          = *.h \
                          *.mm \
                          *.json \
                          *.xml \
-                         *.cfg
+                         *.cfg \
+                         *.cao \
+                         *.init
 
 # The RECURSIVE tag can be used to specify whether or not subdirectories should
 # be searched for input files as well.
