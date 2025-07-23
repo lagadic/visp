@@ -130,11 +130,23 @@ void vpPointMap::getVisiblePoints(const unsigned int h, const unsigned int w, co
   vpMatrix cX(m_X.getRows(), m_X.getCols());
   vpMatrix::mult2Matrices(m_X, cRw.t(), cX);
 
+  std::vector<std::vector<int>> indicesPerThread;
+#ifdef VISP_HAVE_OPENMP
+  const unsigned int numThreads = omp_get_num_threads();
+#else
+  const unsigned int numThreads = 1;
+#endif
+  indicesPerThread.resize(numThreads);
 
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel
 #endif
   {
+#ifdef VISP_HAVE_OPENMP
+    unsigned int threadIdx = omp_get_thread_num();
+#else
+    unsigned int threadIdx = 1;
+#endif
     std::vector<int> localIndices;
     double u, v;
 
@@ -158,15 +170,12 @@ void vpPointMap::getVisiblePoints(const unsigned int h, const unsigned int w, co
       if (fabs(Z - depth[vint][uint]) > m_maxDepthErrorVisible) {
         continue;
       }
-
       localIndices.push_back(i);
     }
-#ifdef VISP_HAVE_OPENMP
-#pragma omp critical
-#endif
-    {
-      indices.insert(indices.end(), std::make_move_iterator(localIndices.begin()), std::make_move_iterator(localIndices.end()));
-    }
+    indicesPerThread[threadIdx] = std::move(localIndices);
+  }
+  for (const std::vector<int> &indicesPart: indicesPerThread) {
+    indices.insert(indices.end(), std::make_move_iterator(indicesPart.begin()), std::make_move_iterator(indicesPart.end()));
   }
 }
 
