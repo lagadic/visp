@@ -46,7 +46,7 @@ int main(int argc, char **argv)
 #endif
   unsigned int thickness = 2;
 
-  vpImage<unsigned char> I;
+  vpImage<vpRGBa> I;
   std::shared_ptr<vpDisplay> display;
   std::shared_ptr<vpPlot> plot;
   std::shared_ptr<vpVideoWriter> writer;
@@ -229,8 +229,8 @@ int main(int argc, char **argv)
     }
 #endif
 
-//! [Image]
-    vpImage<unsigned char> Ivideo;
+    //! [Image]
+    vpImage<vpRGBa> Ivideo;
     //! [Image]
     //! [cMo]
     vpHomogeneousMatrix cMo;
@@ -426,6 +426,7 @@ int main(int argc, char **argv)
 #endif
     bool quit = false;
     while (!quit && !g.end()) {
+      double time_start = vpTime::measureTimeMs();
       if (opt_downscale_img > 1) {
         g.acquire(Ivideo);
         Ivideo.subsample(opt_downscale_img, opt_downscale_img, I);
@@ -482,7 +483,6 @@ int main(int argc, char **argv)
           std::cout << ss.str() << std::endl;
         }
       }
-      vpDisplay::flush(I);
 
       if (opt_plot) {
         vpTranslationVector c_t_o = cMo.getTranslationVector();
@@ -490,11 +490,6 @@ int main(int argc, char **argv)
         vpColVector c_tu_o_deg = vpMath::deg(c_tu_o);
         plot->plot(0, g.getFrameIndex(), c_t_o);
         plot->plot(1, g.getFrameIndex(), c_tu_o_deg);
-      }
-
-      if (!opt_save.empty()) {
-        vpDisplay::getImage(I, O);
-        writer->saveFrame(O);
       }
 
 #if defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
@@ -512,6 +507,18 @@ int main(int argc, char **argv)
         else if (button == vpMouseButton::button2) {
           opt_step_by_step = !opt_step_by_step;
         }
+      }
+
+      {
+        std::stringstream ss;
+        ss << "Loop time: " << std::fixed << std::setprecision(0) << vpTime::measureTimeMs() - time_start << " ms";
+        vpDisplay::displayText(I, (I.getHeight() - 20) * display->getDownScalingFactor(), (I.getWidth() - right_display_offset) * display->getDownScalingFactor(), ss.str(), vpColor::red);
+      }
+      vpDisplay::flush(I);
+
+      if (!opt_save.empty()) {
+        vpDisplay::getImage(I, O);
+        writer->saveFrame(O);
       }
     }
     vpDisplay::getClick(I);
