@@ -1,0 +1,11 @@
+/**
+
+\page tutorial-python-sphinx-doc Tutorial: ViSP Python bindings documentation and examples
+
+ViSP Python binding documentation is available [here](https://visp-doc.inria.fr/doxygen/visp-python-daily/).
+
+There are some examples written in Python that are documented [here](https://visp-doc.inria.fr/doxygen/visp-python-daily/rst/tutorials/tutorials.html).
+
+These examples are also embedded in ViSP source code in [modules/python/examples/](https://github.com/lagadic/visp/tree/master/modules/python/examples) folder.
+
+*/
