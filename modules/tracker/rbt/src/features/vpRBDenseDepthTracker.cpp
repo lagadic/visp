@@ -165,7 +165,7 @@ void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame
   }
 }
 
-void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &/*frame*/, const vpHomogeneousMatrix &cMo, unsigned int /*iteration*/)
+void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cMo, unsigned int /*iteration*/)
 {
   if (m_numFeatures == 0) {
     m_LTL = 0;
@@ -199,7 +199,7 @@ void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &/*fram
 #endif
 
   //m_weights = 0.0;
-  m_robust.setMinMedianAbsoluteDeviation(1e-3);
+  m_robust.setMinMedianAbsoluteDeviation((frame.renders.zFar - frame.renders.zNear) * 0.01);
   m_robust.MEstimator(vpRobust::TUKEY, m_error, m_weights);
 
 #ifdef VISP_DEBUG_RB_DEPTH_DENSE_TRACKER
