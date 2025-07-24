@@ -87,7 +87,7 @@ using namespace VISP_NAMESPACE_NAME;
   \param step : Step between two images.
 
  */
-void usage(const char *name, const char *badparam, std::string ipath, std::string ppath, unsigned first,
+void usage(const char *name, const char *badparam, const std::string &ipath, const std::string &ppath, unsigned first,
            unsigned last, unsigned step)
 {
 #if defined(VISP_HAVE_DATASET)
@@ -125,7 +125,7 @@ SYNOPSIS\n\
      Specify a personal sequence containing images \n\
      to process.\n\
      By image sequence, we mean one file per image.\n\
-     The format is selected by analysing the filename extension.\n\
+     The format is selected by analyzing the filename extension.\n\
      Example : \"/Temp/visp-images/cube/image.%%04d.%s\"\n\
      %%04d is for the image numbering.\n\
  \n\

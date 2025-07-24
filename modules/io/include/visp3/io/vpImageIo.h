@@ -116,11 +116,12 @@ private:
     FORMAT_PBM,
     FORMAT_RASTER,
     FORMAT_JPEG2000,
+    FORMAT_EXR,
+    FORMAT_PFM,
     FORMAT_UNKNOWN
   } vpImageFormatType;
 
   static vpImageFormatType getFormat(const std::string &filename);
-  static std::string getExtension(const std::string &filename);
 
 public:
   //! Image IO backend for only jpeg and png formats image loading and saving
@@ -135,6 +136,7 @@ public:
 
   static void read(vpImage<unsigned char> &I, const std::string &filename, int backend = IO_DEFAULT_BACKEND);
   static void read(vpImage<vpRGBa> &I, const std::string &filename, int backend = IO_DEFAULT_BACKEND);
+  static void read(vpImage<float> &I, const std::string &filename);
 
   static void write(const vpImage<unsigned char> &I, const std::string &filename, int backend = IO_DEFAULT_BACKEND);
   static void write(const vpImage<vpRGBa> &I, const std::string &filename, int backend = IO_DEFAULT_BACKEND);

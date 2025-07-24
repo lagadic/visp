@@ -92,6 +92,10 @@ ViSP 3.x.x (Version in development)
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-pixi.html
     . New tutorial: Tracking with the Render-Based Tracker
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-tracking-rbt.html
+    . New tutorial: Tutorial: Automatic gamma correction
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-imgproc-auto-gamma.html
+    . New Tutorial: ViSP Python bindings documentation and examples
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-python-sphinx-doc.html
   - Bug fixed
     . [#1251] Bug in vpDisplay::displayFrame()
     . [#1270] Build issue around std::clamp and optional header which are not found with cxx17
@@ -137,6 +141,9 @@ ViSP 3.x.x (Version in development)
     . [#1690] Test with SURF keypoint detector fails with OpenCV 4.7.0 on ubuntu 20.04
     . [#1708] Build of visp_pololu fails on FreeBSD
     . [#1711] CMake error around nlohmann_json detection on FreeBSD
+    . [#1713] CMake error with PCL 1.15.0 and VTK 9.5.0 on FreeBSD 14.2
+    . [#1718] SEGFAULT in vpMbtMeEllipse
+    . [#1723] Unable to use a .cao model that only loads other .cao files
 ----------------------------------------------
 ViSP 3.6.0 (released September 22, 2023)
   - Contributors:

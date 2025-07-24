@@ -76,7 +76,8 @@ using namespace VISP_NAMESPACE_NAME;
   \param nbiter : Iteration number.
 
  */
-void usage(const char *name, const char *badparam, std::string ipath, std::string opath, std::string user, int nbiter)
+void usage(const char *name, const char *badparam, const std::string &ipath, const std::string &opath, std::string user,
+           int nbiter)
 {
   fprintf(stdout, "\n\
 Test image conversions.\n\

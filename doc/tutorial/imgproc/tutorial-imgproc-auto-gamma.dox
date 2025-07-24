@@ -1,0 +1,57 @@
+/**
+
+\page tutorial-imgproc-auto-gamma Tutorial: Automatic gamma correction
+
+\tableofcontents
+
+\section imgproc_auto_gamma_intro Introduction
+
+The ViSP library have implementations of different automatic gamma correction methods:
+- VISP_NAMESPACE_NAME::GAMMA_LOG_BASED \cite Scott2009TowardsRH
+- VISP_NAMESPACE_NAME::GAMMA_NONLINEAR_BASED \cite Shi2007ReducingIB
+- VISP_NAMESPACE_NAME::GAMMA_CDF_BASED \cite Huang2013EfficientCE
+- VISP_NAMESPACE_NAME::GAMMA_CLASSIFICATION_BASED \cite Rahman2016AnAG
+- VISP_NAMESPACE_NAME::GAMMA_SPATIAL_VARIANT_BASED \cite Lee2010ASL
+
+The following example also available in tutorial-compare-auto-gamma.cpp will show how to compare the results of the
+different gamma correction methods:
+
+\include tutorial-compare-auto-gamma.cpp
+
+\section imgproc_auto_gamma_cmd_line Program arguments
+
+The main command line arguments can be viewed using the help (`-h`) option, for instance:
+- `--input Sample_low_brightness.png` to process a single image or `--input Img_%03d.png` for a sequence of images
+- `--max-resolution 600` to reduce the input image resolution and avoid saving too big images
+- Gaussian blur options: `--gaussian-kernel-size <e.g. 3, 5, 7> --gaussian-std <e.g. 1>`
+- derivative filter aperture size: `--aperture-size <e.g. 3>`
+- Canny filtering type: `--canny-filtering-type <0=CANNY_GBLUR_SOBEL_FILTERING, 1=CANNY_GBLUR_SCHARR_FILTERING>`
+- color space to be used: `--gamma-rgb (RGB colorspace, else HSV)`
+- path to the folder results: `--output <folder path>`
+
+The following image shows the results of the different automatic gamma correction methods for the
+"Sample_low_brightness.png" image:
+
+\image html img-tutorial-imgproc-auto-gamma.jpeg
+
+Different metrics are displayed:
+- the image entropy, see the [scikit image doc](https://scikit-image.org/docs/dev/auto_examples/filters/plot_entropy.html)
+  and the [original code](https://github.com/dengyueyun666/Image-Contrast-Enhancement/blob/cd2b1eb5bf6396e2fc3b94cd27f73933d5467147/src/Ying_2017_CAIP.cpp#L186-L207)
+- the mean value of the Canny image
+- the processing time
+
+The main idea is the better illuminated the image is, the greater is the entropy (the more informative the image is)
+and Canny (the more edges can be detected) values are.
+
+\section imgproc_auto_gamma_datasets Low-light image datasets
+
+Some low-ligh datasets are available online, for instance:
+- [Exclusively Dark (ExDark) Image Dataset](https://github.com/cs-chan/Exclusively-Dark-Image-Dataset/tree/master/Dataset)
+- [Awesome Low Light Image Enhancement](https://github.com/zhihongz/awesome-low-light-image-enhancement)
+- [Deep Retinex Decomposition for Low-Light Enhancement](https://daooshee.github.io/BMVC2018website/)
+
+\section imgproc_auto_gamma_next Next tutorial
+
+You can now read the \ref tutorial-imgproc-contrast-sharpening, for additional contrast and sharpness improvement techniques.
+
+*/

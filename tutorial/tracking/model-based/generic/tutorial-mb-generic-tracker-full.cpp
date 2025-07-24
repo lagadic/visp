@@ -38,6 +38,7 @@ int main(int argc, char **argv)
   bool opt_verbose = false;
   bool opt_plot = true;
   bool opt_display_scale_auto = false;
+  bool opt_step_by_step = false;
   vpColVector opt_dof_to_estimate(6, 1.); // Here we consider 6 dof estimation
   std::string opt_save;
 #if defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
@@ -45,10 +46,12 @@ int main(int argc, char **argv)
 #endif
   unsigned int thickness = 2;
 
-  vpImage<unsigned char> I;
+  vpImage<vpRGBa> I;
   std::shared_ptr<vpDisplay> display;
   std::shared_ptr<vpPlot> plot;
   std::shared_ptr<vpVideoWriter> writer;
+
+  unsigned int right_display_offset = 170;
 
   try {
     for (int i = 1; i < argc; i++) {
@@ -93,6 +96,9 @@ int main(int argc, char **argv)
       else if (std::string(argv[i]) == "--display-scale-auto") {
         opt_display_scale_auto = true;
       }
+      else if (std::string(argv[i]) == "--step-by-step") {
+        opt_step_by_step = true;
+      }
       else if (std::string(argv[i]) == "--verbose" || std::string(argv[i]) == "-v") {
         opt_verbose = true;
       }
@@ -110,6 +116,7 @@ int main(int argc, char **argv)
           << " [--save-results <e.g. tracking_poses.npz>]"
 #endif
           << " [--display-scale-auto]"
+          << " [--step-by-step]"
           << " [--plot]"
           << " [--verbose,-v]"
           << " [--help,-h]"
@@ -168,6 +175,9 @@ int main(int argc, char **argv)
           << "      visible on the screen. Useful for large images." << std::endl
           << "      Note that this option doesn't affect the size of the processed images." << std::endl
           << std::endl
+          << "  --step-by-step" << std::endl
+          << "      Enable step by step mode wainting for a user click to process next image." << std::endl
+          << std::endl
           << "  --plot" << std::endl
           << "      Open a window that plots the estimated pose evolution." << std::endl
           << std::endl
@@ -178,6 +188,11 @@ int main(int argc, char **argv)
           << "      Display this helper message." << std::endl
           << std::endl;
         return EXIT_SUCCESS;
+      }
+      else {
+        std::cout << "Error: unknown option: " << argv[i] << std::endl;
+        std::cout << "To get the helper run: " << argv[0] << " --help" << std::endl;
+        return EXIT_FAILURE;
       }
     }
     std::string parentname = vpIoTools::getParent(opt_modelname);
@@ -214,8 +229,8 @@ int main(int argc, char **argv)
     }
 #endif
 
-//! [Image]
-    vpImage<unsigned char> Ivideo;
+    //! [Image]
+    vpImage<vpRGBa> Ivideo;
     //! [Image]
     //! [cMo]
     vpHomogeneousMatrix cMo;
@@ -404,7 +419,14 @@ int main(int argc, char **argv)
     tracker.initClick(I, objectname + ".init", true);
     //! [Init]
 
-    while (!g.end()) {
+#if defined(VISP_HAVE_NLOHMANN_JSON)
+    std::string json_config_file = "mbt-config.json";
+    std::cout << "Save tracker configuration in: " << json_config_file << std::endl;
+    tracker.saveConfigFile(json_config_file);
+#endif
+    bool quit = false;
+    while (!quit && !g.end()) {
+      double time_start = vpTime::measureTimeMs();
       if (opt_downscale_img > 1) {
         g.acquire(Ivideo);
         Ivideo.subsample(opt_downscale_img, opt_downscale_img, I);
@@ -428,8 +450,13 @@ int main(int argc, char **argv)
       tracker.display(I, cMo, cam, vpColor::red, thickness);
       //! [Display]
       vpDisplay::displayFrame(I, cMo, cam, 0.025, vpColor::none, thickness);
-      vpDisplay::displayText(I, 20 * display->getDownScalingFactor(), 10 * display->getDownScalingFactor(), "A click to exit...", vpColor::red);
-      vpDisplay::displayText(I, 40 * display->getDownScalingFactor(), 10 * display->getDownScalingFactor(), ss.str(), vpColor::red);
+      vpDisplay::displayText(I, 20 * display->getDownScalingFactor(), 10 * display->getDownScalingFactor(), "Right click to exit...", vpColor::red);
+      vpDisplay::displayText(I, 40 * display->getDownScalingFactor(), 10 * display->getDownScalingFactor(), "Middle click to change mode", vpColor::red);
+      vpDisplay::displayText(I, 20 * display->getDownScalingFactor(), (I.getWidth() - right_display_offset) * display->getDownScalingFactor(), std::string("Mode: ") + (opt_step_by_step ? std::string("step-by-step") : std::string("continuous")), vpColor::red);
+      vpDisplay::displayText(I, 40 * display->getDownScalingFactor(), (I.getWidth() - right_display_offset) * display->getDownScalingFactor(), ss.str(), vpColor::red);
+      if (opt_step_by_step) {
+        vpDisplay::displayText(I, 60 * display->getDownScalingFactor(), 10 * display->getDownScalingFactor(), "Left click to process next image", vpColor::red);
+      }
       {
         std::stringstream ss;
         ss << "Features";
@@ -441,7 +468,7 @@ int main(int argc, char **argv)
           ss << " klt: " << tracker.getNbFeaturesKlt();
         }
 #endif
-        vpDisplay::displayText(I, 60 * display->getDownScalingFactor(), 10 * display->getDownScalingFactor(), ss.str(), vpColor::red);
+        vpDisplay::displayText(I, 60 * display->getDownScalingFactor(), (I.getWidth() - right_display_offset) * display->getDownScalingFactor(), ss.str(), vpColor::red);
         if (opt_verbose) {
           std::cout << ss.str() << std::endl;
           std::cout << "cMo:\n" << cMo << std::endl;
@@ -451,12 +478,11 @@ int main(int argc, char **argv)
         double proj_error = tracker.computeCurrentProjectionError(I, cMo, cam);
         std::stringstream ss;
         ss << "Projection error: " << std::setprecision(2) << proj_error << " deg";
-        vpDisplay::displayText(I, 80 * display->getDownScalingFactor(), 10 * display->getDownScalingFactor(), ss.str(), vpColor::red);
+        vpDisplay::displayText(I, 80 * display->getDownScalingFactor(), (I.getWidth() - right_display_offset) * display->getDownScalingFactor(), ss.str(), vpColor::red);
         if (opt_verbose) {
           std::cout << ss.str() << std::endl;
         }
       }
-      vpDisplay::flush(I);
 
       if (opt_plot) {
         vpTranslationVector c_t_o = cMo.getTranslationVector();
@@ -466,11 +492,6 @@ int main(int argc, char **argv)
         plot->plot(1, g.getFrameIndex(), c_tu_o_deg);
       }
 
-      if (!opt_save.empty()) {
-        vpDisplay::getImage(I, O);
-        writer->saveFrame(O);
-      }
-
 #if defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
       if (!opt_save_results.empty()) {
         std::vector<double> vec_pose = poseToVec(cMo);
@@ -478,8 +499,27 @@ int main(int argc, char **argv)
       }
 #endif
 
-      if (vpDisplay::getClick(I, false))
-        break;
+      vpMouseButton::vpMouseButtonType button;
+      if (vpDisplay::getClick(I, button, opt_step_by_step)) {
+        if (button == vpMouseButton::button3) {
+          quit = true;
+        }
+        else if (button == vpMouseButton::button2) {
+          opt_step_by_step = !opt_step_by_step;
+        }
+      }
+
+      {
+        std::stringstream ss;
+        ss << "Loop time: " << std::fixed << std::setprecision(0) << vpTime::measureTimeMs() - time_start << " ms";
+        vpDisplay::displayText(I, (I.getHeight() - 20) * display->getDownScalingFactor(), (I.getWidth() - right_display_offset) * display->getDownScalingFactor(), ss.str(), vpColor::red);
+      }
+      vpDisplay::flush(I);
+
+      if (!opt_save.empty()) {
+        vpDisplay::getImage(I, O);
+        writer->saveFrame(O);
+      }
     }
     vpDisplay::getClick(I);
 

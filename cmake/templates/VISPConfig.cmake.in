@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -236,6 +236,7 @@ set(VISP_HAVE_MAVSDK         "@VISP_HAVE_MAVSDK@")
 set(VISP_HAVE_MINIZ          "@VISP_HAVE_MINIZ@")
 set(VISP_HAVE_MKL            "@VISP_HAVE_MKL@")
 set(VISP_HAVE_NETLIB         "@VISP_HAVE_NETLIB@")
+set(VISP_HAVE_NLOHMANN_JSON  "@VISP_HAVE_NLOHMANN_JSON@")
 set(VISP_HAVE_NULLPTR        "@VISP_HAVE_NULLPTR@")
 set(VISP_HAVE_OCCIPITAL_STRUCTURE "@VISP_HAVE_OCCIPITAL_STRUCTURE@")
 set(VISP_HAVE_OGRE           "@VISP_HAVE_OGRE@")

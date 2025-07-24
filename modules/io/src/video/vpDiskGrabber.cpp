@@ -183,7 +183,20 @@ void vpDiskGrabber::acquire(vpImage<float> &I)
 
   m_image_number_next += m_image_step;
 
-  vpImageIo::readPFM(I, m_image_name);
+  std::string extension = vpIoTools::toLowerCase(vpIoTools::getFileExtension(m_image_name, true));
+
+  if (extension.find("npy") != std::string::npos) {
+#if defined (VISP_HAVE_MINIZ) && (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98) && defined(VISP_HAVE_WORKING_REGEX)
+    visp::cnpy::NpyArray array = visp::cnpy::npy_load(m_image_name);
+    float *data = array.data<float>();
+    I.init(data, array.shape[0], array.shape[1], true);
+#else
+    throw(vpException(vpException::ioError, "Miniz is not installed, npy files cannot be read"));
+#endif
+  }
+  else {
+    vpImageIo::read(I, m_image_name);
+  }
 
   width = I.getWidth();
   height = I.getHeight();

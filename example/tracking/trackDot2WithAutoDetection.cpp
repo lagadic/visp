@@ -59,7 +59,7 @@
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
-void usage(const char *name, const char *badparam, std::string ipath, std::string ppath, unsigned first,
+void usage(const char *name, const char *badparam, const std::string &ipath, const std::string &ppath, unsigned first,
            unsigned last, unsigned step, double sizePrecision, double grayLevelPrecision,
            double ellipsoidShapePrecision);
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath, unsigned &first, unsigned &last,
@@ -80,7 +80,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
   \param grayLevelPrecision : precision of the gray level of dots.
   \param ellipsoidShapePrecision : precision of the ellipsoid shape of dots.
 */
-void usage(const char *name, const char *badparam, std::string ipath, std::string ppath, unsigned first,
+void usage(const char *name, const char *badparam, const std::string &ipath, const std::string &ppath, unsigned first,
            unsigned last, unsigned step, double sizePrecision, double grayLevelPrecision,
            double ellipsoidShapePrecision)
 {
@@ -117,7 +117,7 @@ OPTIONS:                                               Default\n\
   -p <personal image path>                             %s\n\
      Specify a personal sequence containing images \n\
      to process.\n\
-     The format is selected by analysing the filename extension.\n\
+     The format is selected by analyzing the filename extension.\n\
      Example : \"/Temp/visp-images/mire-2/image.%%04d.%s\"\n\
      %%04d is for the image numbering.\n\
             \n\

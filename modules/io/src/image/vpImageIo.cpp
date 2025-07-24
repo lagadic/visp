@@ -47,72 +47,41 @@ using namespace VISP_NAMESPACE_NAME;
 
 vpImageIo::vpImageFormatType vpImageIo::getFormat(const std::string &filename)
 {
-  std::string ext = vpImageIo::getExtension(filename);
+  std::string ext = vpIoTools::toLowerCase(vpIoTools::getFileExtension(filename));
 
-  if (ext.compare(".PGM") == 0)
+  if (ext.find("pgm") != std::string::npos)
     return FORMAT_PGM;
-  else if (ext.compare(".pgm") == 0)
-    return FORMAT_PGM;
-  else if (ext.compare(".PPM") == 0)
+  else if (ext.find("ppm") != std::string::npos)
     return FORMAT_PPM;
-  else if (ext.compare(".ppm") == 0)
-    return FORMAT_PPM;
-  else if (ext.compare(".JPG") == 0)
+  else if (ext.find("jpg") != std::string::npos)
     return FORMAT_JPEG;
-  else if (ext.compare(".jpg") == 0)
+  else if (ext.find("jpeg") != std::string::npos)
     return FORMAT_JPEG;
-  else if (ext.compare(".JPEG") == 0)
-    return FORMAT_JPEG;
-  else if (ext.compare(".jpeg") == 0)
-    return FORMAT_JPEG;
-  else if (ext.compare(".PNG") == 0)
-    return FORMAT_PNG;
-  else if (ext.compare(".png") == 0)
+  else if (ext.find("png") != std::string::npos)
     return FORMAT_PNG;
   // Formats supported by opencv
-  else if (ext.compare(".TIFF") == 0)
+  else if (ext.find("tiff") != std::string::npos)
     return FORMAT_TIFF;
-  else if (ext.compare(".tiff") == 0)
+  else if (ext.find("tif") != std::string::npos)
     return FORMAT_TIFF;
-  else if (ext.compare(".TIF") == 0)
-    return FORMAT_TIFF;
-  else if (ext.compare(".tif") == 0)
-    return FORMAT_TIFF;
-  else if (ext.compare(".BMP") == 0)
+  else if (ext.find("bmp") != std::string::npos)
     return FORMAT_BMP;
-  else if (ext.compare(".bmp") == 0)
-    return FORMAT_BMP;
-  else if (ext.compare(".DIB") == 0)
+  else if (ext.find("dib") != std::string::npos)
     return FORMAT_DIB;
-  else if (ext.compare(".dib") == 0)
-    return FORMAT_DIB;
-  else if (ext.compare(".PBM") == 0)
+  else if (ext.find("pbm") != std::string::npos)
     return FORMAT_PBM;
-  else if (ext.compare(".pbm") == 0)
-    return FORMAT_PBM;
-  else if (ext.compare(".SR") == 0)
+  else if (ext.find("sr") != std::string::npos)
     return FORMAT_RASTER;
-  else if (ext.compare(".sr") == 0)
+  else if (ext.find("ras") != std::string::npos)
     return FORMAT_RASTER;
-  else if (ext.compare(".RAS") == 0)
-    return FORMAT_RASTER;
-  else if (ext.compare(".ras") == 0)
-    return FORMAT_RASTER;
-  else if (ext.compare(".JP2") == 0)
+  else if (ext.find("jp2") != std::string::npos)
     return FORMAT_JPEG2000;
-  else if (ext.compare(".jp2") == 0)
-    return FORMAT_JPEG2000;
+  else if (ext.find("exr") != std::string::npos)
+    return FORMAT_EXR;
+  else if (ext.find("pfm") != std::string::npos)
+    return FORMAT_PFM;
   else
     return FORMAT_UNKNOWN;
-}
-
-// return the extension of the file including the dot
-std::string vpImageIo::getExtension(const std::string &filename)
-{
-  // extract the extension
-  size_t dot = filename.find_last_of(".");
-  std::string ext = filename.substr(dot, filename.size() - 1);
-  return ext;
 }
 
 /*!
@@ -179,6 +148,9 @@ void vpImageIo::read(vpImage<unsigned char> &I, const std::string &filename, int
   case FORMAT_UNKNOWN:
     try_opencv_reader = true;
     break;
+  case FORMAT_EXR:
+  case FORMAT_PFM:
+    throw(vpException(vpException::badValue, "vpImage<uchar> cannot be used with file '%s' extension does not match", final_filename.c_str()));
   }
 
   if (try_opencv_reader) {
@@ -256,6 +228,75 @@ void vpImageIo::read(vpImage<vpRGBa> &I, const std::string &filename, int backen
   case FORMAT_UNKNOWN:
     try_opencv_reader = true;
     break;
+  default:
+    throw(vpException(vpException::badValue, "vpImage<vpRGBa> cannot be used with file '%s', extension does not match.", final_filename.c_str()));
+  }
+
+  if (try_opencv_reader) {
+#if defined(VISP_HAVE_OPENCV) && \
+    (((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || \
+     ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC)))
+    readOpenCV(I, filename);
+#else
+    const std::string message = "Cannot read file \"" + filename + "\": No backend able to support this image format";
+    throw(vpImageException(vpImageException::ioError, message));
+#endif
+  }
+}
+
+/*!
+  Read the contents of the image filename, allocate memory for the
+  corresponding floating-point image, update its content, and return a reference to
+  the image.
+
+  If the image has been already initialized, memory allocation is done
+  only if the new image size is different, else we re-use the same
+  memory space.
+
+  Supported formats are:
+  - portable float map: `*.pfm` file
+
+  If ViSP is build with OpenCV support, additional formats are considered:
+  - `*.tiff`, `*.tif`, `*.exr` files.
+
+  \param I : Image to set with the \e filename content.
+  \param filename : Name of the file containing the image.
+
+ */
+void vpImageIo::read(vpImage<float> &I, const std::string &filename)
+{
+  bool exist = vpIoTools::checkFilename(filename);
+  if (!exist) {
+    const std::string message = "Cannot read file: \"" + std::string(filename) + "\" doesn't exist";
+    throw(vpImageException(vpImageException::ioError, message));
+  }
+
+  // Allows to use ~ symbol or env variables in path
+  std::string final_filename = vpIoTools::path(filename);
+
+  bool try_opencv_reader = false;
+
+  switch (getFormat(final_filename)) {
+  case FORMAT_EXR:
+#ifdef VISP_HAVE_OPENCV
+    try_opencv_reader = true;
+#else
+#if defined(VISP_HAVE_TINYEXR)
+    readEXRTiny(I, filename);
+#else
+    throw(vpException(vpException::ioError, "Trying to read EXR files when neither OpenCV nor Tiny EXR is installed"));
+#endif
+#endif
+    break;
+  case FORMAT_PFM:
+    readPFM(I, filename);
+    break;
+  case FORMAT_TIFF:
+  case FORMAT_UNKNOWN:
+    try_opencv_reader = true;
+    break;
+  default:
+    throw(vpException(vpException::ioError, "Extension of file %s does not match a valid format for vpImage<float>", final_filename.c_str()));
   }
 
   if (try_opencv_reader) {
@@ -316,6 +357,7 @@ void vpImageIo::write(const vpImage<unsigned char> &I, const std::string &filena
   case FORMAT_RASTER:
   case FORMAT_JPEG2000:
   case FORMAT_UNKNOWN:
+  default:
     try_opencv_writer = true;
     break;
   }
@@ -378,6 +420,7 @@ void vpImageIo::write(const vpImage<vpRGBa> &I, const std::string &filename, int
   case FORMAT_RASTER:
   case FORMAT_JPEG2000:
   case FORMAT_UNKNOWN:
+  default:
     try_opencv_writer = true;
     break;
   }

@@ -59,7 +59,7 @@ using namespace VISP_NAMESPACE_NAME;
 // List of allowed command line options
 #define GETOPTARGS "cdi:n:p:m:k:hl:"
 
-void usage(const char *name, const char *badparam, std::string ipath, int niter, const std::string &method, unsigned numDbImages, const unsigned numComponents, const double lambda);
+void usage(const char *name, const char *badparam, const std::string &ipath, int niter, const std::string &method, unsigned numDbImages, const unsigned numComponents, const double lambda);
 bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_allowed, bool &display, int &niter, std::string &method, unsigned &numDbImages, unsigned &numComponents, double &lambda);
 
 /*!
@@ -72,7 +72,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_all
   \param niter : Number of iterations.
 
 */
-void usage(const char *name, const char *badparam, std::string ipath, int niter, const std::string &method, unsigned numDbImages, const unsigned numComponents, const double lambda)
+void usage(const char *name, const char *badparam, const std::string &ipath, int niter, const std::string &method, unsigned numDbImages, const unsigned numComponents, const double lambda)
 {
   fprintf(stdout, "\n\
 Visual servoing with compressed photometric features.\n\

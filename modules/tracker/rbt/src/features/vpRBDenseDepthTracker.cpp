@@ -67,10 +67,22 @@ void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame
   m_depthPoints.clear();
   m_depthPoints.reserve(static_cast<size_t>(bb.getArea() / (m_step * m_step * 2)));
 
+  std::vector<std::vector<vpDepthPoint>> pointsPerThread;
+#ifdef VISP_HAVE_OPENMP
+  const unsigned int numThreads = omp_get_num_threads();
+#else
+  const unsigned int numThreads = 1;
+#endif
+  pointsPerThread.resize(numThreads);
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel
 #endif
   {
+#ifdef VISP_HAVE_OPENMP
+    unsigned int threadIdx = omp_get_thread_num();
+#else
+    unsigned int threadIdx = 1;
+#endif
     vpDepthPoint point;
     vpColVector cameraRay(3);
 #ifdef VISP_HAVE_OPENMP
@@ -132,13 +144,10 @@ void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame
       }
     }
 
-// If we use openmp, add to the global vector. If we're not using openmp, no need to do so
-#ifdef VISP_HAVE_OPENMP
-#pragma omp critical
-    {
-      m_depthPoints.insert(m_depthPoints.end(), localPoints.begin(), localPoints.end());
-    }
-#endif
+    pointsPerThread[threadIdx] = std::move(localPoints);
+  }
+  for (const std::vector<vpDepthPoint> &points: pointsPerThread) {
+    m_depthPoints.insert(m_depthPoints.end(), std::make_move_iterator(points.begin()), std::make_move_iterator(points.end()));
   }
   m_depthPointSet.build(m_depthPoints);
 

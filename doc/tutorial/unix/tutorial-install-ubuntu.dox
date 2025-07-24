@@ -569,6 +569,7 @@ The generated documentation is then available in `${VISP_WS}/visp-build/doc/html
   [MatJax](https://www.mathjax.org).
   To this end, install MathJax and build doc using:
 \code{.sh}
+$ sudo apt install npm
 $ npm install mathjax
 $ cmake ../visp -DUSE_MATHJAX=ON
 $ make -j$(nproc) visp_doc

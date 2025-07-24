@@ -137,8 +137,7 @@ and that in \c \<path2\> you have the following data:
   \c teabox.mpg was acquired by an other camera than yours, you have to set the camera intrinsic parameters in
   tutorial-mb-tracker.cpp source code modifying the line:
 \snippet tutorial-mb-tracker.cpp Set camera parameters
-
-and build again before using \c "--model" command line option.
+  and build again before using \c "--model" command line option.
 
 \subsection mbdep_started_src_explained Source code explained
 
