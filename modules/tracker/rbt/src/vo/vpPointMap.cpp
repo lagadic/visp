@@ -131,21 +131,29 @@ void vpPointMap::getVisiblePoints(const unsigned int h, const unsigned int w, co
   vpMatrix::mult2Matrices(m_X, cRw.t(), cX);
 
   std::vector<std::vector<int>> indicesPerThread;
-#ifdef VISP_HAVE_OPENMP
-  const unsigned int numThreads = omp_get_num_threads();
-#else
-  const unsigned int numThreads = 1;
-#endif
-  indicesPerThread.resize(numThreads);
+
 
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel
 #endif
   {
+
+#ifdef VISP_HAVE_OPENMP
+#pragma omp single
+    {
+      unsigned int numThreads = omp_get_num_threads();
+      indicesPerThread.resize(numThreads);
+    }
+#else
+    {
+      indicesPerThread.resize(1);
+    }
+#endif
+
 #ifdef VISP_HAVE_OPENMP
     unsigned int threadIdx = omp_get_thread_num();
 #else
-    unsigned int threadIdx = 1;
+    unsigned int threadIdx = 0;
 #endif
     std::vector<int> localIndices;
     double u, v;

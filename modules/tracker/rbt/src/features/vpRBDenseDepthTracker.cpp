@@ -68,20 +68,27 @@ void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame
   m_depthPoints.reserve(static_cast<size_t>(bb.getArea() / (m_step * m_step * 2)));
 
   std::vector<std::vector<vpDepthPoint>> pointsPerThread;
-#ifdef VISP_HAVE_OPENMP
-  const unsigned int numThreads = omp_get_num_threads();
-#else
-  const unsigned int numThreads = 1;
-#endif
-  pointsPerThread.resize(numThreads);
+
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel
 #endif
   {
 #ifdef VISP_HAVE_OPENMP
+#pragma omp single
+    {
+      unsigned int numThreads = omp_get_num_threads();
+      pointsPerThread.resize(numThreads);
+    }
+#else
+    {
+      pointsPerThread.resize(1);
+    }
+#endif
+
+#ifdef VISP_HAVE_OPENMP
     unsigned int threadIdx = omp_get_thread_num();
 #else
-    unsigned int threadIdx = 1;
+    unsigned int threadIdx = 0;
 #endif
     vpDepthPoint point;
     vpColVector cameraRay(3);
@@ -195,7 +202,7 @@ void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &frame,
     std::cerr << "Normals camera" << std::endl;
     std::cerr << m_depthPointSet.getNormalsCamera() << std::endl;
     throw vpException(vpException::badValue, "Invalid values in depth tracker");
-  }
+}
 #endif
 
   //m_weights = 0.0;
