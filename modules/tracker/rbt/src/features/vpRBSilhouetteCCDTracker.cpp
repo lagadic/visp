@@ -837,7 +837,7 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
 #ifdef VISP_HAVE_OPENMP
     unsigned int threadIdx = omp_get_thread_num();
 #else
-    unsigned int threadIdx = 1;
+    unsigned int threadIdx = 0;
 #endif
     vpColVector localGradient(m_gradient.getRows(), 0.0);
     vpMatrix localHessian(m_hessian.getRows(), m_hessian.getCols(), 0.0);

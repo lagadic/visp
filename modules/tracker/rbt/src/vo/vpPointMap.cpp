@@ -145,7 +145,7 @@ void vpPointMap::getVisiblePoints(const unsigned int h, const unsigned int w, co
 #ifdef VISP_HAVE_OPENMP
     unsigned int threadIdx = omp_get_thread_num();
 #else
-    unsigned int threadIdx = 1;
+    unsigned int threadIdx = 0;
 #endif
     std::vector<int> localIndices;
     double u, v;
