@@ -166,10 +166,29 @@ void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &fr
   const vpHomogeneousMatrix cMo = frame.renders.cMo;
   const vpHomogeneousMatrix oMc = cMo.inverse();
 
+  std::vector<std::vector<vpRBSilhouetteControlPoint>> pointsPerThread;
+
+
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel
 #endif
   {
+#ifdef VISP_HAVE_OPENMP
+#pragma omp single
+    {
+      unsigned int numThreads = omp_get_num_threads();
+      pointsPerThread.resize(numThreads);
+    }
+#else
+    {
+      pointsPerThread.resize(1);
+    }
+#endif
+#ifdef VISP_HAVE_OPENMP
+    unsigned int threadIdx = omp_get_thread_num();
+#else
+    unsigned int threadIdx = 0;
+#endif
     std::vector<vpRBSilhouetteControlPoint> localControlPoints;
 #ifdef VISP_HAVE_OPENMP
 #pragma omp for nowait
@@ -205,14 +224,21 @@ void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &fr
       }
       localControlPoints.push_back(std::move(pccd));
     }
-#ifdef VISP_HAVE_OPENMP
-#pragma omp critical
-#endif
+
+
     {
-      m_controlPoints.insert(m_controlPoints.end(), localControlPoints.begin(), localControlPoints.end());
+      pointsPerThread[threadIdx] = std::move(localControlPoints);
     }
   }
+  unsigned int numElements = 0;
+  for (const std::vector<vpRBSilhouetteControlPoint> &points: pointsPerThread) {
+    numElements += points.size();
+  }
 
+  m_controlPoints.reserve(numElements);
+  for (const std::vector<vpRBSilhouetteControlPoint> &points: pointsPerThread) {
+    m_controlPoints.insert(m_controlPoints.end(), points.begin(), points.end());
+  }
 
   if (m_maxPoints > 0 && m_controlPoints.size() > m_maxPoints) {
     std::vector<size_t> keptIndices(m_maxPoints);
@@ -798,13 +824,35 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
       m_weights[i * 2 * normal_points_number * 3 + j] = weightPerPoint[i];
     }
   }
-
+  std::vector<vpColVector> gradientPerThread;
+  std::vector<vpMatrix> hessianPerThread;
   m_gradient = 0.0;
   m_hessian = 0.0;
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel
 #endif
   {
+#ifdef VISP_HAVE_OPENMP
+#pragma omp single
+    {
+      unsigned int numThreads = omp_get_num_threads();
+      gradientPerThread.resize(numThreads);
+      hessianPerThread.resize(numThreads);
+    }
+#else
+    {
+      gradientPerThread.resize(1);
+      hessianPerThread.resize(1);
+    }
+#endif
+
+
+
+#ifdef VISP_HAVE_OPENMP
+    unsigned int threadIdx = omp_get_thread_num();
+#else
+    unsigned int threadIdx = 0;
+#endif
     vpColVector localGradient(m_gradient.getRows(), 0.0);
     vpMatrix localHessian(m_hessian.getRows(), m_hessian.getCols(), 0.0);
 
@@ -826,15 +874,15 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
         }
       }
     }
-#ifdef VISP_HAVE_OPENMP
-#pragma omp critical
-#endif
-    {
-      m_gradient += localGradient;
-      m_hessian += localHessian;
-    }
+
+    gradientPerThread[threadIdx] = localGradient;
+    hessianPerThread[threadIdx] = localHessian;
   }
 
+  for (unsigned int i = 0; i < gradientPerThread.size(); ++i) {
+    m_gradient += gradientPerThread[i];
+    m_hessian += hessianPerThread[i];
+  }
 
   m_LTL = m_hessian;
   m_LTR = -m_gradient;
@@ -863,7 +911,6 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
     m_weighted_error = 0;
     m_LTL = 0;
     m_LTR = 0;
-
 
     std::cerr << e.what() << std::endl;
   }
