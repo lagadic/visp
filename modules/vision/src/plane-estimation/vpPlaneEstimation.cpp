@@ -194,6 +194,94 @@ vpPlane estimatePlaneEquationSVD(const std::vector<double> &point_cloud, vpColVe
   return { A, B, C, D };
 }
 
+/**
+ * \brief Get the Helpers object
+ *
+ * \param[in] roi
+ * \param[in] height
+ * \param[in] width
+ * \param[in] MaxSubSampFactorToEstimatePlane
+ * \param[in] avg_nb_of_pts_to_estimate
+ * \param[in] isInside Local helper: Reduce computation (roi.isInside)
+ * \param[in] subsample_factor
+ */
+void getHelpers(const vpPolygon &roi, const unsigned int &height, const unsigned int &width,
+                 const unsigned int &MaxSubSampFactorToEstimatePlane, const unsigned int &avg_nb_of_pts_to_estimate,
+                 std::function<bool(const vpImagePoint &, const vpPolygon &)> &isInside,
+                 unsigned int &subsample_factor,
+                 int &roi_top, int &roi_bottom, int &roi_left, int &roi_right
+)
+{
+  // If the img is crossed by the ROI, vpPolygon::isInside has to be used
+  {
+    // If at least one ROI corner is inside the img bound
+    const vpRect img_bound { vpImagePoint(0, 0), static_cast<double>(width),
+                           static_cast<double>(height) };
+    for (const auto &roi_corner : roi.getCorners()) {
+      if (img_bound.isInside(roi_corner)) {
+        isInside = [](const vpImagePoint &ip, const vpPolygon &roi) { return roi.isInside(ip); };
+        break;
+      }
+    }
+
+    // If at least one img corner is outside the ROI
+    // clang-format off
+    if (!roi.isInside(img_bound.getTopLeft()) ||
+         !roi.isInside(img_bound.getTopRight()) ||
+         !roi.isInside(img_bound.getBottomLeft()) ||
+         !roi.isInside(img_bound.getBottomRight()))
+    // clang-format on
+    {
+      isInside = [](const vpImagePoint &ip, const vpPolygon &roi) { return roi.isInside(ip); };
+    }
+  }
+
+  // Limit research area
+  const auto roi_bb = roi.getBoundingBox();
+  roi_top = static_cast<int>(std::max<double>(0., roi_bb.getTop()));
+  roi_bottom = static_cast<int>(std::min<double>(static_cast<double>(height), roi_bb.getBottom()));
+  roi_left = static_cast<int>(std::max<double>(0., roi_bb.getLeft()));
+  roi_right = static_cast<int>(std::min<double>(static_cast<double>(width), roi_bb.getRight()));
+
+  // Reduce computation time by using subsample factor
+  subsample_factor =
+    static_cast<int>(sqrt(((roi_right - roi_left) * (roi_bottom - roi_top)) / avg_nb_of_pts_to_estimate));
+  subsample_factor = vpMath::clamp(subsample_factor, 1u, MaxSubSampFactorToEstimatePlane);
+}
+
+std::optional<vpPlane> estimatePlaneEquation(const std::vector<double> &pt_cloud, const unsigned int &MinPointNbToEstimatePlane,
+                                  const unsigned int &height, const unsigned int &width, const vpCameraParameters &depth_intrinsics,
+                                 std::optional<std::reference_wrapper<vpImage<vpRGBa> > > heat_map)
+{
+  if (pt_cloud.size() < MinPointNbToEstimatePlane) {
+    return std::nullopt;
+  }
+
+  // Display heatmap
+  if (heat_map) {
+    vpColVector weights {};
+    const auto plane = estimatePlaneEquationSVD(pt_cloud, weights);
+
+    heat_map->get() = vpImage<vpRGBa> { height, width, vpColor::black };
+
+    for (auto i = 0u; i < weights.size(); i++) {
+      const auto X { pt_cloud[3 * i + 0] }, Y { pt_cloud[3 * i + 1] }, Z { pt_cloud[3 * i + 2] };
+
+      vpImagePoint ip {};
+      vpMeterPixelConversion::convertPoint(depth_intrinsics, X / Z, Y / Z, ip);
+
+      const int b = static_cast<int>(std::max<double>(0., 255 * (1 - 2 * weights[i])));
+      const int r = static_cast<int>(std::max<double>(0., 255 * (2 * weights[i] - 1)));
+      const int g = 255 - b - r;
+
+      heat_map->get()[static_cast<int>(ip.get_i())][static_cast<int>(ip.get_j())] = vpColor(r, g, b);
+    }
+    return plane;
+  }
+  else {
+    return estimatePlaneEquationSVD(pt_cloud);
+  }
+}
 } // namespace
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS
@@ -213,15 +301,9 @@ vpPlaneEstimation::estimatePlane(const vpImage<uint16_t> &I_depth_raw, double de
                                  const unsigned int avg_nb_of_pts_to_estimate,
                                  std::optional<std::reference_wrapper<vpImage<vpRGBa> > > heat_map)
 {
-#ifdef VISP_HAVE_OPENMP
-  auto num_procs = omp_get_num_procs();
-  num_procs = num_procs > 2 ? num_procs - 2 : num_procs;
-  omp_set_num_threads(num_procs);
-#endif
-
   // Local helper: Reduce computation (roi.isInside)
   // Default: the img is totally included in the ROI
-  std::function<bool(const vpImagePoint &)> isInside = [](const vpImagePoint &) { return true; };
+  std::function<bool(const vpImagePoint &, const vpPolygon &)> isInside = [](const vpImagePoint &, const vpPolygon &) { return true; };
 
   // Local helper: check if the considered point must be considered according to the mask
   // Default: all the points must be considered
@@ -231,46 +313,19 @@ vpPlaneEstimation::estimatePlane(const vpImage<uint16_t> &I_depth_raw, double de
     isValid = [&mask](const vpImagePoint &ip) { return (*mask)[static_cast<unsigned int>(ip.get_i())][static_cast<unsigned int>(ip.get_j())]; };
   }
 
-  // If the img is crossed by the ROI, vpPolygon::isInside has to be used
-  {
-    // If at least one ROI corner is inside the img bound
-    const vpRect img_bound { vpImagePoint(0, 0), static_cast<double>(I_depth_raw.getWidth()),
-                           static_cast<double>(I_depth_raw.getHeight()) };
-    for (const auto &roi_corner : roi.getCorners()) {
-      if (img_bound.isInside(roi_corner)) {
-        isInside = [&roi](const vpImagePoint &ip) { return roi.isInside(ip); };
-        break;
-      }
-    }
-
-    // If at least one img corner is outside the ROI
-    // clang-format off
-    if (!roi.isInside(img_bound.getTopLeft()) ||
-         !roi.isInside(img_bound.getTopRight()) ||
-         !roi.isInside(img_bound.getBottomLeft()) ||
-         !roi.isInside(img_bound.getBottomRight()))
-    // clang-format on
-    {
-      isInside = [&roi](const vpImagePoint &ip) { return roi.isInside(ip); };
-    }
-  }
-
-  // Limit research area
-  const auto roi_bb = roi.getBoundingBox();
-  const int roi_top = static_cast<int>(std::max<double>(0., roi_bb.getTop()));
-  const int roi_bottom = static_cast<int>(std::min<double>(static_cast<double>(I_depth_raw.getHeight()), roi_bb.getBottom()));
-  const int roi_left = static_cast<int>(std::max<double>(0., roi_bb.getLeft()));
-  const int roi_right = static_cast<int>(std::min<double>(static_cast<double>(I_depth_raw.getWidth()), roi_bb.getRight()));
-
-  // Reduce computation time by using subsample factor
-  unsigned int subsample_factor =
-    static_cast<int>(sqrt(((roi_right - roi_left) * (roi_bottom - roi_top)) / avg_nb_of_pts_to_estimate));
-  subsample_factor = vpMath::clamp(subsample_factor, 1u, MaxSubSampFactorToEstimatePlane);
+  unsigned int subsample_factor = 0;
+  int roi_top = 0, roi_bottom = 0, roi_left = 0, roi_right = 0;
+  getHelpers(roi, I_depth_raw.getHeight(), I_depth_raw.getWidth(),
+              MaxSubSampFactorToEstimatePlane, avg_nb_of_pts_to_estimate,
+              isInside, subsample_factor, roi_top, roi_bottom, roi_left, roi_right);
 
   // Create the point cloud which will be used for plane estimation
   std::vector<double> pt_cloud {};
 
 #if defined(VISP_HAVE_OPENMP) && !(_WIN32)
+  auto num_procs = omp_get_num_procs();
+  num_procs = num_procs > 2 ? num_procs - 2 : num_procs;
+  omp_set_num_threads(num_procs);
 // The following OpenMP 4.0 directive is not supported by Visual C++ compiler that allows only OpenMP 2.0 support
 // https://docs.microsoft.com/en-us/cpp/parallel/openmp/openmp-in-visual-cpp?redirectedfrom=MSDN&view=msvc-170
 #pragma omp declare reduction (merge : std::vector<double> : omp_out.insert( end( omp_out ), std::make_move_iterator( begin( omp_in ) ), std::make_move_iterator( end( omp_in ) ) ))
@@ -279,7 +334,7 @@ vpPlaneEstimation::estimatePlane(const vpImage<uint16_t> &I_depth_raw, double de
   for (int i = roi_top; i < roi_bottom; i = i + subsample_factor) {
     for (int j = roi_left; j < roi_right; j = j + subsample_factor) {
       const auto pixel = vpImagePoint { static_cast<double>(i), static_cast<double>(j) };
-      if ((I_depth_raw[i][j] != 0) && isInside(pixel) && isValid(pixel)) {
+      if ((I_depth_raw[i][j] != 0) && isInside(pixel, roi) && isValid(pixel)) {
         double x { 0. }, y { 0. };
         vpPixelMeterConversion::convertPoint(depth_intrinsics, pixel, x, y);
         const double Z = I_depth_raw[i][j] * depth_scale;
@@ -291,34 +346,64 @@ vpPlaneEstimation::estimatePlane(const vpImage<uint16_t> &I_depth_raw, double de
     }
   }
 
-  if (pt_cloud.size() < MinPointNbToEstimatePlane) {
-    return std::nullopt;
+  return estimatePlaneEquation(pt_cloud, MinPointNbToEstimatePlane,
+                               I_depth_raw.getHeight(), I_depth_raw.getWidth(),
+                               depth_intrinsics, heat_map);
+}
+
+std::optional<vpPlane> vpPlaneEstimation::estimatePlane(const vpImage<float> &I_depth,
+    const vpCameraParameters &depth_intrinsics, const vpPolygon &roi, const std::optional<vpImage<bool>> &mask,
+    const unsigned int &avg_nb_of_pts_to_estimate,
+    std::optional<std::reference_wrapper<vpImage<vpRGBa> > > heat_map)
+{
+// Local helper: Reduce computation (roi.isInside)
+  // Default: the img is totally included in the ROI
+  std::function<bool(const vpImagePoint &, const vpPolygon &)> isInside = [](const vpImagePoint &, const vpPolygon &) { return true; };
+
+  // Local helper: check if the considered point must be considered according to the mask
+  // Default: all the points must be considered
+  std::function<bool(const vpImagePoint &)> isValid = [](const vpImagePoint &) { return true; };
+
+  if (mask) {
+    isValid = [&mask](const vpImagePoint &ip) { return (*mask)[static_cast<unsigned int>(ip.get_i())][static_cast<unsigned int>(ip.get_j())]; };
   }
 
-  // Display heatmap
-  if (heat_map) {
-    vpColVector weights {};
-    const auto plane = estimatePlaneEquationSVD(pt_cloud, weights);
+  unsigned int subsample_factor = 0;
+  int roi_top = 0, roi_bottom = 0, roi_left = 0, roi_right = 0;
+  getHelpers(roi, I_depth.getHeight(), I_depth.getWidth(),
+              MaxSubSampFactorToEstimatePlane, avg_nb_of_pts_to_estimate,
+              isInside, subsample_factor, roi_top, roi_bottom, roi_left, roi_right);
 
-    heat_map->get() = vpImage<vpRGBa> { I_depth_raw.getHeight(), I_depth_raw.getWidth(), vpColor::black };
+  // Create the point cloud which will be used for plane estimation
+  std::vector<double> pt_cloud {};
 
-    for (auto i = 0u; i < weights.size(); i++) {
-      const auto X { pt_cloud[3 * i + 0] }, Y { pt_cloud[3 * i + 1] }, Z { pt_cloud[3 * i + 2] };
+#if defined(VISP_HAVE_OPENMP) && !(_WIN32)
+  auto num_procs = omp_get_num_procs();
+  num_procs = num_procs > 2 ? num_procs - 2 : num_procs;
+  omp_set_num_threads(num_procs);
+// The following OpenMP 4.0 directive is not supported by Visual C++ compiler that allows only OpenMP 2.0 support
+// https://docs.microsoft.com/en-us/cpp/parallel/openmp/openmp-in-visual-cpp?redirectedfrom=MSDN&view=msvc-170
+#pragma omp declare reduction (merge : std::vector<double> : omp_out.insert( end( omp_out ), std::make_move_iterator( begin( omp_in ) ), std::make_move_iterator( end( omp_in ) ) ))
+#pragma omp parallel for num_threads(num_procs) collapse(2) reduction(merge : pt_cloud)
+#endif
+  for (int i = roi_top; i < roi_bottom; i = i + subsample_factor) {
+    for (int j = roi_left; j < roi_right; j = j + subsample_factor) {
+      const auto pixel = vpImagePoint { static_cast<double>(i), static_cast<double>(j) };
+      if ((I_depth[i][j] != 0) && isInside(pixel, roi) && isValid(pixel)) {
+        double x { 0. }, y { 0. };
+        vpPixelMeterConversion::convertPoint(depth_intrinsics, pixel, x, y);
+        const double Z = I_depth[i][j];
 
-      vpImagePoint ip {};
-      vpMeterPixelConversion::convertPoint(depth_intrinsics, X / Z, Y / Z, ip);
-
-      const int b = static_cast<int>(std::max<double>(0., 255 * (1 - 2 * weights[i])));
-      const int r = static_cast<int>(std::max<double>(0., 255 * (2 * weights[i] - 1)));
-      const int g = 255 - b - r;
-
-      heat_map->get()[static_cast<int>(ip.get_i())][static_cast<int>(ip.get_j())] = vpColor(r, g, b);
+        pt_cloud.push_back(x * Z);
+        pt_cloud.push_back(y * Z);
+        pt_cloud.push_back(Z);
+      }
     }
-    return plane;
   }
-  else {
-    return estimatePlaneEquationSVD(pt_cloud);
-  }
+
+  return estimatePlaneEquation(pt_cloud, MinPointNbToEstimatePlane,
+                               I_depth.getHeight(), I_depth.getWidth(),
+                               depth_intrinsics, heat_map);
 }
 END_VISP_NAMESPACE
 #endif
