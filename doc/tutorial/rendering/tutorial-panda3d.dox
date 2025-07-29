@@ -30,65 +30,72 @@ vpPanda3DBaseRenderer, which implements basic functions for a panda renderer.
 \section tutorial-panda3d-install Panda3D installation
 \subsection tutorial-panda3d-install-ubuntu Installation on Ubuntu
 
-- It is recommended to install the assimp package before installing Panda3D. This will allow you to load .obj files, which are a common and easily exportable format.
-  Without it, you will be restricted to .bam files, which is a panda specific format. To convert to a .bam file, see \ref tutorial-panda3d-file-conversion.
+- It is recommended to install the assimp package before installing Panda3D. This will allow you to load .obj files,
+  which are a common and easily exportable format.
+  Without it, you will be restricted to .bam files, which is a panda specific format. To convert to a .bam file,
+  see \ref tutorial-panda3d-file-conversion.
 
   To install assimp, run:
   \code{.sh}
   $ sudo apt install libassimp-dev
   \endcode
 
-- Installer are available for Ubuntu browsing the [download](https://www.panda3d.org/download/) page.
+- There are two different ways to install Panda3D.
+  1. The easiest way is to download an installer available for Ubuntu browsing the
+     [download](https://www.panda3d.org/download/) page. At the time this tutorial was written, the last Panda3D
+     release was 1.10.15 version. Once downloaded you can install Panda with something similar to:
+      \code{.sh}
+      $ sudo apt install ./Downloads/panda3d1.10_1.10.15~noble_amd64.deb
+      \endcode
+  2. The second way is to install Panda3D from source running:
+      \code{.sh}
+      $ sudo apt install python3-pip
+      $ mkdir -p $VISP_WS/3rdparty/panda3d
+      $ cd $VISP_WS/3rdparty/panda3d
+      $ git clone https://github.com/panda3d/panda3d
+      $ cd panda3d
+      $ python3 makepanda/makepanda.py --everything --installer --no-egl --no-gles --no-gles2 --no-opencv --threads $(nproc)
+      \endcode
+      At this point you can either:
+      1. install the produced Debian package (recommended) with:
+        \code{.sh}
+        $ sudo dpkg -i panda3d1.11_1.11.0_amd64.deb
+        \endcode
+      2. use the Panda3D libraries located in the `built` folder without installing the Debian package
+        `panda3d1.11_1.11.0_amd64.deb`, but in that case you need to set `LD_LIBRARY_PATH` environment var:
+        \code{.sh}
+        $ export LD_LIBRARY_PATH=$VISP_WS/3rdparty/panda3d/panda3d/built/lib:$LD_LIBRARY_PATH
+        \endcode
+        Without setting `LD_LIBRARY_PATH` you may experience the following error when running a binary that uses
+        Panda3D capabilities:
+        \code{.sh}
+        $ ./tutorial-panda3d-renderer
+        ./tutorial-panda3d-renderer: error while loading shared libraries: libp3dtoolconfig.so.1.11: cannot open shared object file: No such file or directory
+        \endcode
 
-- Hereafter you will find the instructions to build and install Panda3D from source on Ubuntu 22.04
-  \code{.sh}
-  $ sudo apt install python3-pip
-  $ mkdir -p $VISP_WS/3rdparty/panda3d
-  $ cd $VISP_WS/3rdparty/panda3d
-  $ git clone https://github.com/panda3d/panda3d
-  $ cd panda3d
-  $ python3 makepanda/makepanda.py --everything --installer --no-egl --no-gles --no-gles2 --no-opencv --threads $(nproc)
-  \endcode
-  At this point you can either:
-  1. install the produced Debian package (recommended) with
-    \code{.sh}
-    $ sudo dpkg -i panda3d1.11_1.11.0_amd64.deb
-    \endcode
-  2. use the Panda3D libraries located in the `built` folder without installing the Debian package
-    `panda3d1.11_1.11.0_amd64.deb`, but in that case you need to set `LD_LIBRARY_PATH` environment var:
-    \code{.sh}
-    $ export LD_LIBRARY_PATH=$VISP_WS/3rdparty/panda3d/panda3d/built/lib:$LD_LIBRARY_PATH
-    \endcode
-    Without setting `LD_LIBRARY_PATH` you may experience the following error when running a binary that uses
-    Panda3D capabilities:
-    \code{.sh}
-    $ ./tutorial-panda3d-renderer
-    ./tutorial-panda3d-renderer: error while loading shared libraries: libp3dtoolconfig.so.1.11: cannot open shared object file: No such file or directory
-    \endcode
-
-- Now to build ViSP with Panda3D support when Debian package `panda3d1.11_1.11.0_amd64.deb` is installed as described
-  in option (1), you may notice that there is nothing specific to do, just run `cmake` as usual:
+- Depending on how you installed Panda3D, building ViSP may differ:
+  1. If you install Panda3D using a `.deb` file as described in 1. or 2.a sections, you may notice that there is nothing
+    specific to do, just run `cmake` as usual:
     \code{.sh}
     $ cd $VISP_WS/visp-build
     $ cmake ../visp
     $ make -j$(nproc)
     \endcode
-
-- There is also the possibility to build ViSP with Panda3D support without installing Debian package
-  `panda3d1.11_1.11.0_amd64.deb` as described in option (2):
-  - By setting `Panda3D_DIR` cmake var to the Panda3D cloned folder
-    \code{.sh}
-    $ cd $VISP_WS/visp-build
-    $ cmake ../visp -DPanda3D_DIR=$VISP_WS/3rdparty/panda3d/panda3d
-    $ make -j$(nproc)
-    \endcode
-  - By setting `Panda3D_DIR` environment variable
-    \code{.sh}
-    $ export Panda3D_DIR=$VISP_WS/3rdparty/panda3d/panda3d
-    $ cd $VISP_WS/visp-build
-    $ cmake ../visp
-    $ make -j$(nproc)
-    \endcode
+  2. If you prefer rather use Panda3D build libraries as described in 2.a section. without installing the `.deb`
+    package you can either:
+    1. set `Panda3D_DIR` cmake var to the Panda3D cloned folder:
+      \code{.sh}
+      $ cd $VISP_WS/visp-build
+      $ cmake ../visp -DPanda3D_DIR=$VISP_WS/3rdparty/panda3d/panda3d
+      $ make -j$(nproc)
+      \endcode
+    2. or set `Panda3D_DIR` environment variable:
+      \code{.sh}
+      $ export Panda3D_DIR=$VISP_WS/3rdparty/panda3d/panda3d
+      $ cd $VISP_WS/visp-build
+      $ cmake ../visp
+      $ make -j$(nproc)
+      \endcode
 
 \subsection tutorial-panda3d-install-macos Installation on macOS
 
@@ -99,8 +106,10 @@ vpPanda3DBaseRenderer, which implements basic functions for a panda renderer.
 
 - Hereafter you will find the instructions to build Panda3D from source on macOS.
 
-  - It is recommended to install the assimp package before installing Panda3D. This will allow you to load .obj files, which are a common and easily exportable format.
-    Without it, you will be restricted to .bam files, which is a panda specific format. To convert to a .bam file, see \ref tutorial-panda3d-file-conversion.
+  - It is recommended to install the assimp package before installing Panda3D. This will allow you to load .obj files,
+    which are a common and easily exportable format.
+    Without it, you will be restricted to .bam files, which is a panda specific format. To convert to a .bam file,
+    see \ref tutorial-panda3d-file-conversion.
     To install assimp, run:
     \code{.sh}
     $ brew install assimp
@@ -186,7 +195,8 @@ vpPanda3DBaseRenderer, which implements basic functions for a panda renderer.
 
 \section tutorial-panda3d-file-conversion Converting a mesh to Panda's file format
 
-If you did not install assimp before installing Panda, you are fairly restricted in what mesh format you can load with Panda.
+If you did not install assimp before installing Panda, you are fairly restricted in what mesh format you can load with
+Panda.
 
 Panda's recommended format is .bam, a binary format specific to the engine itself.
 If you have Python, you can easily convert your model to a .bam file by doing the following:
@@ -204,14 +214,17 @@ If you have Python, you can easily convert your model to a .bam file by doing th
 An example that shows how to exploit Panda3D in ViSP to render a color image with support for textures and lighting, a
 depth image, normals in object space and in camera space is given in tutorial-panda3d-renderer.cpp.
 
-To start rendering, we first instanciate a vpPanda3DRendererSet. This object allows to render multiple modalities (color, depth, etc.) in a single pass.
+To start rendering, we first instanciate a vpPanda3DRendererSet. This object allows to render multiple modalities
+(color, depth, etc.) in a single pass.
 To add different rendering modalities, we will use subclasses that will be registered to the renderer set.
-Internally, each sub renderer has its own scene: the renderer set synchronizes everything when the state changes (i.e, an object is added, an object is moved or the camera parameters change.)
+Internally, each sub renderer has its own scene: the renderer set synchronizes everything when the state changes
+(i.e, an object is added, an object is moved or the camera parameters change.)
 
 A panda3D renderer should be instanciated with a vpPanda3DRenderParameters object. This object defines:
 - The camera intrinsics (see vpCameraParameters): As of now, Only parameters for a distortion free model are supported
 - The image resolution
-- The near and far clipping plane values. Object parts that are too close (less than the near clipping value) or too far (greater than the far clipping value) will not be rendered.
+- The near and far clipping plane values. Object parts that are too close (less than the near clipping value) or too
+  far (greater than the far clipping value) will not be rendered.
 
 The creation of the renderer set can be found below
 \snippet tutorial-panda3d-renderer.cpp Renderer set
@@ -221,44 +234,55 @@ To actually render color, normals, etc., we need to define subrenderers:
 
 The different subrenderers are:
 
-- vpPanda3DGeometryRenderer instances allow to retrieve 3D information about the object: these are the surface normals in the object or camera frame, as well as the depth information.
-- vpPanda3DRGBRenderer objects perform the traditional color rendering. Lighting interaction can be disable, as is the case for the second renderer (diffuse only).
-- Post processing renderers, such as vpPanda3DLuminanceFilter, vpPanda3DCanny, operate on the output image of another renderer. They can be used to further process the output data and can be chained together.
-In this case, the chain vpPanda3DLuminanceFilter -> vpPanda3DGaussianBlur -> vpPanda3DCanny will perform a canny edge detection (without hysteresis) on a blurred, grayscale image.
+- vpPanda3DGeometryRenderer instances allow to retrieve 3D information about the object: these are the surface normals
+  in the object or camera frame, as well as the depth information.
+- vpPanda3DRGBRenderer objects perform the traditional color rendering. Lighting interaction can be disable, as is the
+  case for the second renderer (diffuse only).
+- Post processing renderers, such as vpPanda3DLuminanceFilter, vpPanda3DCanny, operate on the output image of another
+  renderer. They can be used to further process the output data and can be chained together. In this case, the chain
+  vpPanda3DLuminanceFilter -> vpPanda3DGaussianBlur -> vpPanda3DCanny will perform a canny edge detection (without
+  hysteresis) on a blurred, grayscale image.
 
 For these subrenderers to actually be useful, they should be added to the main renderer:
 \snippet tutorial-panda3d-renderer.cpp Adding subrenderers
 
-\warning Once they have been added, a call to vpPanda3DBaseRenderer::initFramework() should be performed. Otherwise, no rendering will be performed and objects will not be loaded.
+\warning Once they have been added, a call to vpPanda3DBaseRenderer::initFramework() should be performed. Otherwise,
+no rendering will be performed and objects will not be loaded.
 
 Here you will find the code used to configure the scene:
 \snippet tutorial-panda3d-renderer.cpp Scene configuration
 
-We start by loading the object to render with vpPanda3DBaseRenderer::loadObject, followed by vpPanda3DBaseRenderer::addNodeToScene.
-For the Color-based renderer, we add lights to shade our object. Different light types are supported, reusing the available Panda3D features.
+We start by loading the object to render with vpPanda3DBaseRenderer::loadObject, followed by v
+pPanda3DBaseRenderer::addNodeToScene. For the Color-based renderer, we add lights to shade our object.
+Different light types are supported, reusing the available Panda3D features.
 
 Once the scene is setup, we can start rendering. This will be performed in a loop.
 
 The first step shown is the following:
 \snippet tutorial-panda3d-renderer.cpp Updating render parameters
 
-Each frame, we compute the values of the clipping planes, and update the rendering properties. This will ensure that the target object is visible.
-Depending on your use case, this may not be necessary.
+Each frame, we compute the values of the clipping planes, and update the rendering properties. This will ensure that
+the target object is visible. Depending on your use case, this may not be necessary.
 
 Once this is done, we can call upon Panda3D to render the object with
 \snippet tutorial-panda3d-renderer.cpp Render frame
 
-\note Note that under the hood, all subrenderers rely on the same Panda3D "framework": calling renderFrame on one will call it for the others.
+\note Note that under the hood, all subrenderers rely on the same Panda3D "framework": calling renderFrame on one will
+call it for the others.
 
 To use the renders, we must convert them to ViSP images.
-To do so, each subrenderer defines its own *getRender* method, that will perform the conversion from a panda texture to the relevant ViSP data type.
+To do so, each subrenderer defines its own *getRender* method, that will perform the conversion from a panda texture
+to the relevant ViSP data type.
 
-For each render type, we start by getting the correct renderer via the vpPanda3DRendererSet::getRenderer, then call its *getRender* method.
+For each render type, we start by getting the correct renderer via the vpPanda3DRendererSet::getRenderer, then call
+its *getRender* method.
 \snippet tutorial-panda3d-renderer.cpp Fetch render
 
-Now that we have the retrieved the images, we can display them. To do so, we leverage utility functions defined beforehand (see the full code for more information). This may be required in cases where the data cannot be directly displayed.
-For instance, normals are encoded as 3 32-bit floats, but displays require colors to be represented as 8-bit unsigned characters.
-The same goes for the depth render, which is mapped back to the 0-255 range, although its value unbound.
+Now that we have the retrieved the images, we can display them. To do so, we leverage utility functions defined
+beforehand (see the full code for more information). This may be required in cases where the data cannot be directly
+displayed. For instance, normals are encoded as 3 32-bit floats, but displays require colors to be represented as 8-bit
+unsigned characters. The same goes for the depth render, which is mapped back to the 0-255 range, although its value
+unbound.
 \snippet tutorial-panda3d-renderer.cpp Display
 
 Finally, we use the snippet below to move the object, updating the scene.
@@ -318,7 +342,8 @@ Known pipe types:
 :framework(error): Unable to create window.
 zsh: segmentation fault  ./tutorial-panda3d-renderer
 \endcode
-This issue is probably due to `EIGEN_MAX_ALIGN_BYTES` and `HAVE_PNG` macro redefinition that occurs when building ViSP with Panda3D support:
+This issue is probably due to `EIGEN_MAX_ALIGN_BYTES` and `HAVE_PNG` macro redefinition that occurs when building
+ViSP with Panda3D support:
 \code{.sh}
 $ cd visp-build
 $ make
@@ -381,8 +406,8 @@ Storing dependency cache.
 Elapsed Time: 0 sec
 Couldn't find any suitable MacOSX SDK!
 \endcode
-The installer calls `makepanda/makepandacore.py` and enters in `SdkLocateMacOSX()` function to try to find the latest MacOSX SDK
-in one of the following folders:
+The installer calls `makepanda/makepandacore.py` and enters in `SdkLocateMacOSX()` function to try to find the latest
+MacOSX SDK in one of the following folders:
 - `/Library/Developer/CommandLineTools/SDKs/`
 - `/Developer/SDKs/`
 - `/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/`
