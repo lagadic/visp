@@ -139,7 +139,7 @@ We strongly recommend using Conda to build ViSP Python bindings. Below are instr
 
     We recommend also to build `libfranka` in your conda workspace and uninstall `libfranka` from your system
 
-        (visp-conda-ws) $ cd ${VISP_WS}/3rdparty/libfranka
+        (visp-conda-ws) $ cd ${VISP_WS}/3rdparty/libfranka-0.9.2
         (visp-conda-ws) $ mkdir build-conda && cd build-conda
         (visp-conda-ws) $ cmake ../ -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
                                     -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \

@@ -173,8 +173,7 @@ tutorial-viewer.cpp CMakeLists.txt
 \endverbatim
 Create a build folder:
 \verbatim
-pi@raspberrypi:~ $ mkdir build
-pi@raspberrypi:~ $ cd build
+pi@raspberrypi:~ $ mkdir build && cd build
 \endverbatim
 To configure this project, you may run:
 \verbatim

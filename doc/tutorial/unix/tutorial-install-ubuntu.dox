@@ -152,8 +152,7 @@ $ sudo ./scripts/setup_udev_rules.sh
 
 5. Build and install librealsense
 \code{.sh}
-$ mkdir build
-$ cd build
+$ mkdir build && cd build
 $ cmake .. -DBUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=Release
 $ make -j4
 $ sudo make install
@@ -207,8 +206,7 @@ $ sudo ./DriverAndFirmware/Linux/Install-CoreDriver-Udev-Linux.sh
   follow these steps to build sample applications provided with the SDK:
 \code{.sh}
 $ cd $OCCIPITAL_STRUCTURE_DIR/
-$ mkdir build
-$ cd build
+$ mkdir build && cd build
 $ cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
 $ make Samples
 \endcode
@@ -364,8 +362,7 @@ $ mkdir -p ${VISP_WS}/3rdparty/qualisys
 $ cd ${VISP_WS}/3rdparty/qualisys
 $ git clone https://github.com/qualisys/qualisys_cpp_sdk.git
 $ cd qualisys_cpp_sdk
-$ mkdir build
-$ cd build
+$ mkdir build && cd build
 $ cmake .. -Dqualisys_cpp_sdk_BUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-fPIC
 $ make -j$(nproc)
 $ sudo make install
