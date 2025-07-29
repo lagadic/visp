@@ -192,8 +192,7 @@ $ sudo ./scripts/setup_udev_rules.sh
 
 5. Build and install librealsense
 \verbatim
-$ mkdir build
-$ cd build
+$ mkdir build && cd build
 $ cmake .. -DBUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=Release
 $ make -j4
 $ sudo make install

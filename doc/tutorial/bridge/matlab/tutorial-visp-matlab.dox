@@ -46,7 +46,7 @@ target_link_libraries(tutorial-matlab ${VISP_LIBRARIES} ${Matlab_LIBRARIES})
 To build this example when MATLAB is in your PATH, use:
 
     $ cd tutorial/matlab
-    $ mkdir build
+    $ mkdir build && cd build
     $ cmake .. -DVISP_DIR=<path to ViSP build dir>
 
 \section visp_matlab_column_sum Call MATLAB function from ViSP program

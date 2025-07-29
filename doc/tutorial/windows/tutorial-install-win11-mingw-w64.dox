@@ -136,8 +136,7 @@ from source and install the libraries in `%%VISP_WS%\3rdparty\opencv-4.6.0\build
 - Open a `cmd` Command Prompt and create a build folder
 \verbatim
 C:\> cd %VISP_WS%\3rdparty\opencv-4.6.0
-C:\> mkdir build-mingw
-C:\> cd build-mingw
+C:\> mkdir build-mingw && cd build-mingw
 \endverbatim
 - Run CMake in build directory and set the install dir to `%%VISP_WS%\3rdparty\opencv-4.6.0\build`. We disable also
   tests build in order to speed up the build process:
@@ -191,8 +190,7 @@ written we downloaded `eigen-3.4.0.zip` archive corresponding to Eigen 3.4.0.
 - Create a build directory
 \verbatim
 C:\> cd %%VISP_WS%\3rdparty\eigen-3.4.0
-C:\> mkdir build-mingw
-C:\> cd build-mingw
+C:\> mkdir build-mingw && cd build-mingw
 \endverbatim
 - Run CMake in build directory (here the generator is chosen for MinGW and installation folder is set to
 `%%VISP_WS%\3rdparty\eigen-3.4.0\build-mingw\install` folder):
