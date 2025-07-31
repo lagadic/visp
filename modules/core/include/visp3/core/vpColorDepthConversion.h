@@ -44,13 +44,26 @@ BEGIN_VISP_NAMESPACE
 class VISP_EXPORT vpColorDepthConversion
 {
 public:
-  static vpImagePoint projectColorToDepth(const vpImage<uint16_t> &I_depth, double depth_scale, double depth_min,
-                                          double depth_max, const vpCameraParameters &depth_intrinsics,
+  static vpImagePoint projectColorToDepth(const vpImage<uint16_t> &I_depth, const double &depth_scale, const double &depth_min,
+                                          const double &depth_max, const vpCameraParameters &depth_intrinsics,
                                           const vpCameraParameters &color_intrinsics,
                                           const vpHomogeneousMatrix &color_M_depth,
                                           const vpHomogeneousMatrix &depth_M_color, const vpImagePoint &from_pixel);
-  static vpImagePoint projectColorToDepth(const uint16_t *data, double depth_scale, double depth_min, double depth_max,
-                                          double depth_width, double depth_height,
+  static vpImagePoint projectColorToDepth(const uint16_t *data, const double &depth_scale, const double &depth_min, const double &depth_max,
+                                          const double &depth_width, const double &depth_height,
+                                          const vpCameraParameters &depth_intrinsics,
+                                          const vpCameraParameters &color_intrinsics,
+                                          const vpHomogeneousMatrix &color_M_depth,
+                                          const vpHomogeneousMatrix &depth_M_color, const vpImagePoint &from_pixel);
+
+  static vpImagePoint projectColorToDepth(const vpImage<float> &I_depth, const double &depth_min,
+                                          const double &depth_max, const vpCameraParameters &depth_intrinsics,
+                                          const vpCameraParameters &color_intrinsics,
+                                          const vpHomogeneousMatrix &color_M_depth,
+                                          const vpHomogeneousMatrix &depth_M_color, const vpImagePoint &from_pixel);
+
+  static vpImagePoint projectColorToDepth(const float *data, const double &depth_min, const double &depth_max,
+                                          const double &depth_width, const double &depth_height,
                                           const vpCameraParameters &depth_intrinsics,
                                           const vpCameraParameters &color_intrinsics,
                                           const vpHomogeneousMatrix &color_M_depth,
