@@ -51,7 +51,7 @@ BEGIN_VISP_NAMESPACE
 
 vpRBTracker::vpRBTracker() :
   m_firstIteration(true), m_trackers(0), m_lambda(1.0), m_vvsIterations(10), m_muInit(0.0), m_muIterFactor(0.5), m_scaleInvariantOptim(false),
-  m_renderer(m_rendererSettings), m_imageHeight(480), m_imageWidth(640), m_convergenceMetric(1024, 41), m_convergedMetricThreshold(0.0), m_updateRenderThreshold(0.0), m_displaySilhouette(false)
+  m_renderer(m_rendererSettings), m_imageHeight(480), m_imageWidth(640), m_convergenceMetric(nullptr), m_displaySilhouette(false)
 {
   m_rendererSettings.setClippingDistance(0.01, 1.0);
   m_renderer.setRenderParameters(m_rendererSettings);
@@ -196,7 +196,9 @@ vpRBTrackingResult vpRBTracker::track(const vpImage<unsigned char> &I, const vpI
 void vpRBTracker::startTracking()
 {
   setupRenderer(m_modelPath);
-  m_convergenceMetric.sampleObject(m_renderer);
+  if (m_convergenceMetric) {
+    m_convergenceMetric->sampleObject(m_renderer);
+  }
 }
 
 vpRBTrackingResult vpRBTracker::track(const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<float> &depth)
@@ -220,7 +222,7 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
 
   // Render the object at the current pose
   timer.startTimer();
-  if (m_firstIteration || m_updateRenderThreshold <= 0.0 || m_convergenceMetric.ADDS(m_cMo, m_currentFrame.renders.cMo) > m_updateRenderThreshold) {
+  if (m_firstIteration || (m_convergenceMetric && m_convergenceMetric->shouldUpdateRender(m_cam, m_cMo, m_currentFrame.renders.cMo))) {
     updateRender(input);
   }
   else {
@@ -271,10 +273,10 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
     vpHomogeneousMatrix cnTc = m_odometry->getCameraMotion();
     m_cMo = cnTc * m_cMo;
     bool shouldRerender = true;
-    if (m_convergedMetricThreshold > 0.0 && m_cMo != cMo_beforeOdo) {
-      const double adds = m_convergenceMetric.ADDS(m_cMo, cMo_beforeOdo);
-      shouldRerender = adds > m_updateRenderThreshold;
-      result.setOdometryMetricAndThreshold(adds, m_updateRenderThreshold);
+    if (m_cMo != cMo_beforeOdo) {
+      const double metric = (*m_convergenceMetric)(m_cam, m_cMo, cMo_beforeOdo);
+      shouldRerender = m_convergenceMetric && (metric > m_convergenceMetric->getUpdateRenderThreshold());
+      result.setOdometryMetricAndThreshold(metric, m_convergenceMetric->getUpdateRenderThreshold());
     }
     result.setOdometryMotion(cMo_beforeOdo, cnTc, m_cMo);
     if (shouldRerender) {
@@ -408,9 +410,9 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
 
       double convergenceMetric = 0.0;
       bool converged = false;
-      if (m_convergedMetricThreshold > 0) {
-        convergenceMetric = m_convergenceMetric.ADDS(m_cMoPrevIter, m_cMo);
-        if (iter > 0 && convergenceMetric < m_convergedMetricThreshold) {
+      if (m_convergenceMetric) {
+        convergenceMetric = (*m_convergenceMetric)(m_cam, m_cMoPrevIter, m_cMo);
+        if (iter > 0 && convergenceMetric < m_convergenceMetric->getConvergenceThreshold()) {
           converged = true;
         }
       }
@@ -656,7 +658,10 @@ void vpRBTracker::loadConfiguration(const nlohmann::json &j)
   m_firstIteration = true;
 
   m_displaySilhouette = j.value("displaySilhouette", m_displaySilhouette);
-  m_updateRenderThreshold = j.value("updateRenderThreshold", m_updateRenderThreshold);
+
+  if (j.contains("metric")) {
+    m_convergenceMetric = vpRBConvergenceMetric::loadFromJSON(j.at("metric"));
+  }
 
   if (j.contains("camera")) {
     const nlohmann::json cameraSettings = j.at("camera");
@@ -676,8 +681,6 @@ void vpRBTracker::loadConfiguration(const nlohmann::json &j)
   setOptimizationInitialMu(vvsSettings.value("mu", m_muInit));
   setOptimizationMuIterFactor(vvsSettings.value("muIterFactor", m_muIterFactor));
   setScaleInvariantRegularization(vvsSettings.value("scaleInvariant", m_scaleInvariantOptim));
-  m_convergedMetricThreshold = (vvsSettings.value("convergenceMetricThreshold", m_convergedMetricThreshold));
-
 
   m_depthSilhouetteSettings = j.at("silhouetteExtractionSettings");
 

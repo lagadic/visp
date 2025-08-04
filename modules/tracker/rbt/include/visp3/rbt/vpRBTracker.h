@@ -44,7 +44,7 @@
 #include <visp3/rbt/vpPanda3DDepthFilters.h>
 #include <visp3/rbt/vpObjectCentricRenderer.h>
 #include <visp3/rbt/vpRBTrackingResult.h>
-#include <visp3/rbt/vpRBADDSMetric.h>
+#include <visp3/rbt/vpRBConvergenceMetric.h>
 #include <visp3/rbt/vpRBInitializationHelper.h>
 #include <visp3/core/vpDisplay.h>
 
@@ -561,9 +561,7 @@ protected:
   std::shared_ptr<vpRBDriftDetector> m_driftDetector;
   std::shared_ptr<vpRBVisualOdometry> m_odometry;
 
-  vpRBADDSMetric m_convergenceMetric; //! Metric used to compare the motion between different poses
-  double m_convergedMetricThreshold; //! Metric threshold under which we consider that tracking optimization has converged to a correct pose
-  double m_updateRenderThreshold; //! Metric threshold above which we consider that an object should be rerendered at the latest estimated pose.
+  std::shared_ptr<vpRBConvergenceMetric> m_convergenceMetric; //! Metric used to compare the motion between different poses
 
   bool m_displaySilhouette; //! Whether a call to the display function should draw a silhouette outline
 
