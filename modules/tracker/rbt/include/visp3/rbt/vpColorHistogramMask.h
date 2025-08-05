@@ -145,6 +145,12 @@ public:
     }
   }
 
+  virtual void reset() VP_OVERRIDE
+  {
+    m_histObject = vpColorHistogram(m_histObject.getBinNumber());
+    m_histBackground = vpColorHistogram(m_histBackground.getBinNumber());
+  }
+
 #if defined(VISP_HAVE_NLOHMANN_JSON)
   void loadJsonConfiguration(const nlohmann::json &json) VP_OVERRIDE;
 #endif

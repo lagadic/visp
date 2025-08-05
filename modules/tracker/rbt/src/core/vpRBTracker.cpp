@@ -125,7 +125,21 @@ void vpRBTracker::setSilhouetteExtractionParameters(const vpSilhouettePointsExtr
 
 void vpRBTracker::reset()
 {
+  m_previousFrame = vpRBFeatureTrackerInput();
   m_firstIteration = true;
+  m_cMoPrev = m_cMo;
+  for (std::shared_ptr<vpRBFeatureTracker> &tracker: m_trackers) {
+    tracker->reset();
+  }
+  if (m_odometry) {
+    m_odometry->reset();
+  }
+  if (m_mask) {
+    m_mask->reset();
+  }
+  if (m_driftDetector) {
+    m_driftDetector->reset();
+  }
 }
 
 void vpRBTracker::setModelPath(const std::string &path)
@@ -236,7 +250,7 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
     m_previousFrame.IRGB = input.IRGB;
   }
 
-  m_cMoPrev = m_cMo;
+
   // Compute the object segmentation mask that will be used by trackers to select features
   timer.startTimer();
   if (m_mask) {
@@ -263,6 +277,8 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
       return result;
     }
   }
+
+  m_cMoPrev = m_cMo;
   timer.setSilhouetteTime(timer.endTimer());
 
   // Perform odometry: estimate camera motion and potentially update render to match
