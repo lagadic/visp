@@ -126,6 +126,7 @@ void vpRBTracker::setSilhouetteExtractionParameters(const vpSilhouettePointsExtr
 void vpRBTracker::reset()
 {
   m_previousFrame = vpRBFeatureTrackerInput();
+  m_currentFrame = vpRBFeatureTrackerInput();
   m_firstIteration = true;
   m_cMoPrev = m_cMo;
   for (std::shared_ptr<vpRBFeatureTracker> &tracker: m_trackers) {
@@ -236,7 +237,7 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
 
   // Render the object at the current pose
   timer.startTimer();
-  if (m_firstIteration || (m_convergenceMetric && m_convergenceMetric->shouldUpdateRender(m_cam, m_cMo, m_currentFrame.renders.cMo))) {
+  if (m_firstIteration || !m_convergenceMetric || m_convergenceMetric->shouldUpdateRender(m_cam, m_cMo, m_currentFrame.renders.cMo)) {
     updateRender(input);
   }
   else {
@@ -289,7 +290,7 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
     vpHomogeneousMatrix cnTc = m_odometry->getCameraMotion();
     m_cMo = cnTc * m_cMo;
     bool shouldRerender = true;
-    if (m_cMo != cMo_beforeOdo) {
+    if (m_cMo != cMo_beforeOdo && m_convergenceMetric) {
       const double metric = (*m_convergenceMetric)(m_cam, m_cMo, cMo_beforeOdo);
       shouldRerender = m_convergenceMetric && (metric > m_convergenceMetric->getUpdateRenderThreshold());
       result.setOdometryMetricAndThreshold(metric, m_convergenceMetric->getUpdateRenderThreshold());

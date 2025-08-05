@@ -77,7 +77,9 @@ double vpRBConvergenceADDMetric::operator()(const vpCameraParameters & /*cam*/, 
 
   for (unsigned int i = 0; i < X1.getRows(); ++i) {
     double d = sqrtf(vpMath::sqr(X1[i][0] - X2[i][0]) + vpMath::sqr(X1[i][1] - X2[i][1])  + vpMath::sqr(X1[i][2] - X2[i][2]));
-    error += d;
+    if (!vpMath::isNaN(d)) {
+      error += d;
+    }
   }
 
   return error / static_cast<double>(X1.getRows());
