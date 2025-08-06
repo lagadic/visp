@@ -528,6 +528,7 @@ protected:
 
   //! Location of the 3D model to load
   std::string m_modelPath;
+  bool m_modelChanged;
 
   //! Current pose of the object in the camera frame
   vpHomogeneousMatrix m_cMo;
@@ -553,6 +554,7 @@ protected:
   vpPanda3DRenderParameters m_rendererSettings;
   //! 3D renderer
   vpObjectCentricRenderer m_renderer;
+  bool m_rendererIsSetup;
 
   //! Color and render image dimensions
   unsigned m_imageHeight, m_imageWidth;

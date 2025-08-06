@@ -29,6 +29,7 @@
  */
 
 #include <visp3/ar/vpPanda3DFrameworkManager.h>
+#include <visp3/ar/vpPanda3DBaseRenderer.h>
 
 #if defined(VISP_HAVE_PANDA3D)
 
@@ -66,6 +67,12 @@ void vpPanda3DFrameworkManager::registerDisabledWindow(PointerTo<WindowFramework
   m_disabledWindows.push_back(wf);
 }
 
+void vpPanda3DFrameworkManager::enableSingleRenderer(vpPanda3DBaseRenderer &renderer)
+{
+  enableAllRenderers();
+  disableAllOtherRenderers(renderer.getWindowFramework());
+}
+
 void vpPanda3DFrameworkManager::disableAllOtherRenderers(PointerTo<WindowFramework> &active)
 {
   GraphicsStateGuardian *activeGsg = active->get_graphics_output()->get_gsg();
@@ -73,8 +80,9 @@ void vpPanda3DFrameworkManager::disableAllOtherRenderers(PointerTo<WindowFramewo
   for (int i = 0; i < m_framework.get_num_windows(); ++i) {
     PointerTo<WindowFramework> fi = m_framework.get_window(i);
     GraphicsStateGuardian *g = fi->get_graphics_output()->get_gsg();
-    g->set_active(g == activeGsg);
-
+    bool active = (g == activeGsg);
+    g->set_active(active);
+    fi->get_graphics_output()->set_active(active);
   }
 }
 
@@ -85,6 +93,7 @@ void vpPanda3DFrameworkManager::enableAllRenderers()
     if (std::find(m_disabledWindows.begin(), m_disabledWindows.end(), fi) == m_disabledWindows.end()) {
 
       fi->get_graphics_output()->get_gsg()->set_active(true);
+      fi->get_graphics_output()->set_active(true);
     }
   }
 }

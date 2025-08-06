@@ -40,6 +40,8 @@
 #include <visp3/ar/vpPanda3DRendererSet.h>
 #include <visp3/ar/vpPanda3DGeometryRenderer.h>
 #include <visp3/ar/vpPanda3DRGBRenderer.h>
+#include <visp3/ar/vpPanda3DFrameworkManager.h>
+
 
 #include <visp3/rbt/vpRBFeatureTrackerFactory.h>
 #include <visp3/rbt/vpRBDriftDetectorFactory.h>
@@ -51,7 +53,7 @@ BEGIN_VISP_NAMESPACE
 
 vpRBTracker::vpRBTracker() :
   m_firstIteration(true), m_trackers(0), m_lambda(1.0), m_vvsIterations(10), m_muInit(0.0), m_muIterFactor(0.5), m_scaleInvariantOptim(false),
-  m_renderer(m_rendererSettings), m_imageHeight(480), m_imageWidth(640), m_convergenceMetric(nullptr), m_displaySilhouette(false)
+  m_renderer(m_rendererSettings), m_imageHeight(480), m_imageWidth(640), m_convergenceMetric(nullptr), m_displaySilhouette(false), m_modelChanged(true), m_rendererIsSetup(false)
 {
   m_rendererSettings.setClippingDistance(0.01, 1.0);
   m_renderer.setRenderParameters(m_rendererSettings);
@@ -146,19 +148,23 @@ void vpRBTracker::reset()
 void vpRBTracker::setModelPath(const std::string &path)
 {
   m_modelPath = path;
+  m_modelChanged = true;
 }
 
 void vpRBTracker::setupRenderer(const std::string &file)
 {
-  m_renderer = vpObjectCentricRenderer(m_rendererSettings);
+  if (!m_rendererIsSetup) {
+    m_renderer.setRenderParameters(m_rendererSettings);
+    const std::shared_ptr<vpPanda3DGeometryRenderer> geometryRenderer = std::make_shared<vpPanda3DGeometryRenderer>(
+      vpPanda3DGeometryRenderer::vpRenderType::OBJECT_NORMALS);
+    m_renderer.addSubRenderer(geometryRenderer);
+  }
   if (!vpIoTools::checkFilename(file)) {
     throw vpException(vpException::badValue, "3D model file %s could not be found", file.c_str());
   }
 
-  const std::shared_ptr<vpPanda3DGeometryRenderer> geometryRenderer = std::make_shared<vpPanda3DGeometryRenderer>(
-    vpPanda3DGeometryRenderer::vpRenderType::OBJECT_NORMALS);
-  m_renderer.addSubRenderer(geometryRenderer);
 
+  // Add silhouette extractor if required
   bool requiresSilhouetteShader = false;
   for (std::shared_ptr<vpRBFeatureTracker> &tracker: m_trackers) {
     if (tracker->requiresSilhouetteCandidates()) {
@@ -167,15 +173,26 @@ void vpRBTracker::setupRenderer(const std::string &file)
     }
   }
   static int cannyId = 0;
-  if (requiresSilhouetteShader) {
+  if (requiresSilhouetteShader && m_renderer.getRenderer<vpPanda3DDepthCannyFilter>() == nullptr) {
+
     m_renderer.addSubRenderer(std::make_shared<vpPanda3DDepthCannyFilter>(
-      "depthCanny" + std::to_string(cannyId), geometryRenderer, true, 0.0));
+      "depthCanny" + std::to_string(cannyId), m_renderer.getRenderer<vpPanda3DGeometryRenderer>(), true, 0.0));
   }
   ++cannyId;
-  m_renderer.initFramework();
-  m_renderer.addLight(vpPanda3DAmbientLight("ambient", vpRGBf(0.4f)));
-  m_renderer.addNodeToScene(m_renderer.loadObject("object", file));
-  m_renderer.setFocusedObject("object");
+  if (!m_rendererIsSetup) {
+    m_renderer.initFramework();
+  }
+  else {
+    vpPanda3DFrameworkManager::getInstance().enableSingleRenderer(m_renderer);
+  }
+  if (m_modelChanged) {
+    m_renderer.clearScene();
+    m_renderer.addLight(vpPanda3DAmbientLight("ambient", vpRGBf(0.4f)));
+    m_renderer.addNodeToScene(m_renderer.loadObject("object", file));
+    m_renderer.setFocusedObject("object");
+    m_modelChanged = false;
+  }
+  m_rendererIsSetup = true;
 }
 
 vpRBTrackingResult vpRBTracker::track(const vpImage<unsigned char> &I)
@@ -605,10 +622,10 @@ vpRBTracker::extractSilhouettePoints(const vpImage<vpRGBf> &Inorm, const vpImage
       vpRBSilhouettePoint p(n, m, norm, theta, Z);
       p.detectSilhouette(Idepth);
       points.push_back(p);
+      }
     }
-  }
   return points;
-}
+  }
 
 
 void vpRBTracker::addTracker(std::shared_ptr<vpRBFeatureTracker> tracker)

@@ -79,6 +79,7 @@ public:
   virtual void initFromParent(PointerTo<WindowFramework> window);
   virtual void initFromParent(const vpPanda3DBaseRenderer &renderer);
 
+
   virtual void beforeFrameRendered() { }
   virtual void renderFrame();
   virtual void afterFrameRendered();
@@ -97,6 +98,11 @@ public:
    *
    */
   NodePath &getRenderRoot() { return m_renderRoot; }
+
+  virtual void clearScene()
+  {
+    m_renderRoot.node()->remove_all_children();
+  }
 
   /**
    * @brief Set new rendering parameters. If the scene has already been initialized, the renderer camera is updated.
@@ -234,9 +240,11 @@ public:
 
   virtual void enableSharedDepthBuffer(vpPanda3DBaseRenderer &sourceBuffer);
 
-  static const vpHomogeneousMatrix& pandaToVisp();
+  static const vpHomogeneousMatrix &pandaToVisp();
 
-  static const vpHomogeneousMatrix& vispToPanda();
+  static const vpHomogeneousMatrix &vispToPanda();
+
+  PointerTo<WindowFramework> &getWindowFramework() { return m_window; }
 
 protected:
 
