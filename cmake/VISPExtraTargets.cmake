@@ -149,11 +149,18 @@ endif()
 # ----------------------------------------------------------------------------
 if(BUILD_TESTS AND BUILD_COVERAGE)
   # needed for coverage
+  find_program(GCOV_COMMAND gcov)
   find_program(GCOVR_COMMAND gcovr)
   find_program(LCOV_COMMAND lcov)
   find_program(GENHTML_COMMAND genhtml)
 
-  if(GCOVR_COMMAND AND LCOV_COMMAND AND GENHTML_COMMAND)
+  if(GCOV_COMMAND)
+    set(GCOV_OR_GCOVR_CMD ${GCOV_COMMAND})
+  elseif(GCOVR_COMMAND)
+    set(GCOV_OR_GCOVR_CMD ${GCOVR_COMMAND})
+  endif()
+
+  if(GCOV_OR_GCOVR_CMD AND LCOV_COMMAND AND GENHTML_COMMAND)
     add_custom_target(visp_coverage
 
       # Cleanup lcov
@@ -171,7 +178,7 @@ if(BUILD_TESTS AND BUILD_COVERAGE)
       COMMAND ${GENHTML_COMMAND} -o coverage visp-coverage.cleaned --demangle-cpp --num-spaces 2 --sort --title "ViSP coverage test" --function-coverage --legend
       COMMAND ${CMAKE_COMMAND} -E remove visp-coverage.info visp-coverage.cleaned
 
-      COMMAND ${GCOVR_COMMAND} --xml --root=${CMAKE_SOURCE_DIR} -o coverage.xml
+      COMMAND ${GCOV_OR_GCOVR_CMD} --xml --root=${CMAKE_SOURCE_DIR} -o coverage.xml
 
       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
       COMMENT "Run code coverage"
