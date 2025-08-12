@@ -173,7 +173,7 @@ if(BUILD_TESTS AND BUILD_COVERAGE)
       COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target test
 
       # Capturing lcov counters and generating report
-      COMMAND ${LCOV_COMMAND} --directory . --capture --output-file visp-coverage.info
+      COMMAND ${LCOV_COMMAND} --directory . --capture --ignore mismatch --output-file visp-coverage.info
       COMMAND ${LCOV_COMMAND} --remove visp-coverage.info '/usr/*' --output-file visp-coverage.cleaned
       COMMAND ${GENHTML_COMMAND} -o coverage visp-coverage.cleaned --demangle-cpp --num-spaces 2 --sort --title "ViSP coverage test" --function-coverage --legend
       COMMAND ${CMAKE_COMMAND} -E remove visp-coverage.info visp-coverage.cleaned
