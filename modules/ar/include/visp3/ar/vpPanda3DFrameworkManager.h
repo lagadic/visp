@@ -38,6 +38,7 @@
 #include <pandaFramework.h>
 #include <pandaSystem.h>
 
+class vpPanda3DBaseRenderer;
 
 BEGIN_VISP_NAMESPACE
 /**
@@ -67,6 +68,8 @@ public:
   void exit();
 
   PandaFramework &getFramework() { return m_framework; }
+
+  void enableSingleRenderer(vpPanda3DBaseRenderer &renderer);
 
   void registerDisabledWindow(PointerTo<WindowFramework> wf);
 

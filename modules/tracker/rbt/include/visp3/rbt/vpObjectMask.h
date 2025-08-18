@@ -59,7 +59,7 @@ public:
   virtual void updateMask(const vpRBFeatureTrackerInput &frame,
                           const vpRBFeatureTrackerInput &previousFrame,
                           vpImage<float> &mask) = 0;
-
+  virtual void reset() { }
   virtual void display(const vpImage<float> &mask, vpImage<unsigned char> &Imask) const;
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)

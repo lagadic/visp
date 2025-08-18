@@ -100,6 +100,7 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
   const vpImage<float> &renderDepth = frame.renders.depth;
   const vpImage<float> &depth = previousFrame.depth.getSize() == 0 ? frame.depth : previousFrame.depth;
   if (depth.getSize() > 0 && m_depthErrorTolerance > 0.f) {
+    #pragma omp parallel for
     for (unsigned int i = top; i <= static_cast<unsigned int>(bottom); ++i) {
       for (unsigned int j = left; j <= static_cast<unsigned int>(right); ++j) {
         m_mask[i][j] = renderDepth[i][j] > 0.f && (depth[i][j] > 0.f && fabs(renderDepth[i][j] - depth[i][j]) <= m_depthErrorTolerance);
@@ -107,6 +108,7 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
     }
   }
   else {
+    #pragma omp parallel for
     for (unsigned int i = top; i <= static_cast<unsigned int>(bottom); ++i) {
       for (unsigned int j = left; j <= static_cast<unsigned int>(right); ++j) {
         m_mask[i][j] = renderDepth[i][j] > 0.f;

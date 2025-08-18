@@ -136,6 +136,12 @@ public:
   virtual void computeVVSIter(const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cMo, unsigned int iteration) = 0;
 
   /**
+   * \brief Resets feature state. Can be called when the object changes or is lost, Ensuring that old data does not influence the tracking behaviour.
+   *
+  */
+  virtual void reset() { }
+
+  /**
    * @}
    */
 

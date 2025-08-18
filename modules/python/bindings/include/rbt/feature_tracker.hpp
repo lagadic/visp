@@ -99,6 +99,17 @@ public:
       override(&frame, cMo, iteration);
     }
   }
+
+  virtual void reset() VP_OVERRIDE
+  {
+    PYBIND11_OVERRIDE_PURE(
+      void,           /* Return type */
+      vpRBFeatureTracker,     /* Parent class */
+      reset,       /* Name of function in C++ (must match Python name) */
+      );
+  }
+
+
   virtual void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth) const VP_OVERRIDE
   {
     pybind11::gil_scoped_acquire gil;  // Acquire the GIL while in this scope.
