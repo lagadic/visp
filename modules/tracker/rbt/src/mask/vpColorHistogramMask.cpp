@@ -38,6 +38,47 @@
 
 BEGIN_VISP_NAMESPACE
 
+
+class vpProbaComputer {
+  public:
+  vpProbaComputer(const vpColorHistogram& object, const vpColorHistogram& bg) {
+    unsigned int N = object.getBinNumber();
+    m_probas.resize(N);
+    unsigned int increment = 256 / N;
+    unsigned int half = increment / 2;
+    vpRGBa c;
+    unsigned int index = 0;
+    for(unsigned int r = half; r < 256; r += increment) {
+      c.R = r;
+      for(unsigned int g = half; g < 256; g += increment) {
+        c.G = g;
+        for(unsigned int b = half; b < 256; b += increment) {
+          c.B = b;
+          const float pbg = bg.probability(c);
+          const float pObject = object.probability(c);
+          if (pbg == 0.f) {
+            m_probas[index] = pObject > 0.f ? 1.f : 0.f;
+          }
+          else {
+            float logOdds = log(pObject / pbg);
+            const float score = 1 / (1 + exp(-logOdds));
+            m_probas[index] = score;
+          }
+          ++index;
+
+        }
+      }
+    }
+  }
+
+  float operator()(unsigned int colorIndex) {
+    return m_probas[colorIndex];
+  }
+
+  private:
+  std::vector<float> m_probas;
+};
+
 vpColorHistogramMask::vpColorHistogramMask() : m_depthErrorTolerance(0.01), m_objectUpdateRate(0.1), m_backgroundUpdateRate(0.1), m_threshold(2.f), m_computeOnBBOnly(false) { }
 
 void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
@@ -77,67 +118,37 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
 
   const float pObject = static_cast<float>(m_histObjectFrame.getNumPixels()) / numPxTotal;
   const float pBackground = static_cast<float>(m_histBackgroundFrame.getNumPixels()) / numPxTotal;
-
   {
     {
       if (pObject != 0.f) {
         m_histObject.merge(m_histObjectFrame, m_objectUpdateRate);
-      }
-
-      if (m_computeOnBBOnly) {
-        m_histObject.computeProbas(frame.IRGB, m_probaObject, frame.renders.boundingBox);
-      }
-      else {
-        m_histObject.computeProbas(frame.IRGB, m_probaObject);
       }
     }
     {
       if (pBackground != 0.f) {
         m_histBackground.merge(m_histBackgroundFrame, m_backgroundUpdateRate);
       }
-
-      if (m_computeOnBBOnly) {
-        m_histBackground.computeProbas(frame.IRGB, m_probaBackground, frame.renders.boundingBox);
-      }
-      else {
-        m_histBackground.computeProbas(frame.IRGB, m_probaBackground);
-      }
     }
   }
+  vpProbaComputer probas(m_histObject, m_histBackground);
 
   if (m_computeOnBBOnly) {
     mask.resize(height, width, 0.f);
 #pragma omp parallel for
     for (int i = top; i <= bottom; ++i) {
       for (int j = left; j <= right; ++j) {
-        const float poPix = m_probaObject[i][j];
-        const float pbPix = m_probaBackground[i][j];
-        if (pbPix == 0.f) {
-          mask[i][j] = poPix > 0.f ? 1.f : 0.f;
-        }
-        else {
-          float logOdds = log(poPix / pbPix);
-          const float score = 1 / (1 + exp(-logOdds));
-          mask[i][j] = score;
-        }
+        unsigned int index = m_histObject.colorToIndex(frame.IRGB[i][j]);
+        mask[i][j] = probas(index);
       }
     }
 
   }
   else {
     mask.resize(height, width);
+    #pragma omp parallel for
     for (unsigned int i = 0; i < mask.getSize(); ++i) {
-      const float poPix = m_probaObject.bitmap[i];
-      const float pbPix = m_probaBackground.bitmap[i];
-
-      if (pbPix == 0.f) {
-        mask.bitmap[i] = poPix > 0.f ? 1.f : 0.f;
-      }
-      else {
-        float logOdds = log(poPix / pbPix);
-        const float score = 1 / (1 + exp(-logOdds));
-        mask.bitmap[i] = score;
-      }
+      unsigned int index = m_histObject.colorToIndex(frame.IRGB.bitmap[i]);
+      mask.bitmap[i] = probas(index);
     }
     // if (maxValue > 0.0) {
     //   for (unsigned int i = 0; i < mask.getSize(); ++i) {
