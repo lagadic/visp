@@ -137,7 +137,7 @@ vpColVector deproject(const vpCameraParameters &intrinsic_cam_params, const vpIm
 #endif
 }
 
-#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
 double getDepth(const float *data, const std::optional<double> depth_scale, const double &offset)
 {
   (void)depth_scale;
@@ -318,7 +318,7 @@ vpImagePoint vpColorDepthConversion::projectColorToDepth(
   const double &depth_height, const vpCameraParameters &depth_intrinsics, const vpCameraParameters &color_intrinsics,
   const vpHomogeneousMatrix &color_M_depth, const vpHomogeneousMatrix &depth_M_color, const vpImagePoint &from_pixel)
 {
-#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
   return project_color_to_depth(data, std::optional<double>(depth_scale), depth_min, depth_max, depth_width, depth_height,
                              depth_intrinsics, color_intrinsics, color_M_depth, depth_M_color, from_pixel);
 
@@ -346,14 +346,8 @@ vpImagePoint vpColorDepthConversion::projectColorToDepth(
   const vpCameraParameters &depth_intrinsics, const vpCameraParameters &color_intrinsics,
   const vpHomogeneousMatrix &color_M_depth, const vpHomogeneousMatrix &depth_M_color, const vpImagePoint &from_pixel)
 {
-#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
   return projectColorToDepth(I_depth.bitmap, depth_min, depth_max, I_depth.getWidth(), I_depth.getHeight(),
                              depth_intrinsics, color_intrinsics, color_M_depth, depth_M_color, from_pixel);
-
-#else
-  return projectColorToDepth(I_depth.bitmap, depth_min, depth_max, I_depth.getWidth(), I_depth.getHeight(),
-                             depth_intrinsics, color_intrinsics, color_M_depth, depth_M_color, from_pixel);
-#endif
 }
 
 /*!
@@ -376,7 +370,7 @@ vpImagePoint vpColorDepthConversion::projectColorToDepth(
   const double &depth_height, const vpCameraParameters &depth_intrinsics, const vpCameraParameters &color_intrinsics,
   const vpHomogeneousMatrix &color_M_depth, const vpHomogeneousMatrix &depth_M_color, const vpImagePoint &from_pixel)
 {
-#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
   return project_color_to_depth(data, std::nullopt, depth_min, depth_max, depth_width, depth_height,
                              depth_intrinsics, color_intrinsics, color_M_depth, depth_M_color, from_pixel);
 
