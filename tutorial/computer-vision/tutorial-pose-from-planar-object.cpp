@@ -371,7 +371,7 @@ int main(int, char *argv[])
   std::vector<vpImagePoint> roi_corners_depth_img {};
   std::transform(
       cbegin(roi_color_img.getCorners()), cend(roi_color_img.getCorners()), std::back_inserter(roi_corners_depth_img),
-      std::bind((vpImagePoint(*)(const vpImage<uint16_t> &, double, double, double, const vpCameraParameters &,
+      std::bind((vpImagePoint(*)(const vpImage<uint16_t> &, const double &, const double &, const double &, const vpCameraParameters &,
                                  const vpCameraParameters &, const vpHomogeneousMatrix &, const vpHomogeneousMatrix &,
                                  const vpImagePoint &)) &
                 vpColorDepthConversion::projectColorToDepth,
