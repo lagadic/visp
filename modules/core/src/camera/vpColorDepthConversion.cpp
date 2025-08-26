@@ -40,7 +40,7 @@
 
 // System
 #include <algorithm>
-#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
 #include <optional>
 #endif
 
