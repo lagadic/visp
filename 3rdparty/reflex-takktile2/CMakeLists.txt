@@ -42,5 +42,5 @@ if(NOT BUILD_SHARED_LIBS)
 endif()
 
 if(UNIX)
-  vp_set_source_file_compile_flag(reflex_driver2.cpp -Wno-format=)
+  vp_set_source_file_compile_flag(reflex_driver2.cpp -Wno-format)
 endif()

@@ -42,11 +42,7 @@
 
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpRect.h>
-#include <visp3/gui/vpDisplayD3D.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpParseArgv.h>
 
 // List of allowed command line options
@@ -162,18 +158,12 @@ int main(int argc, const char **argv)
 
     vpImage<unsigned char> I(480, 640, 255);
 
-#if defined(VISP_HAVE_X11)
-    vpDisplayX d;
-#elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK d;
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI d;
-#elif defined(VISP_HAVE_D3D9)
-    vpDisplayD3D d;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV d;
+#if(VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    std::shared_ptr<vpDisplay> d = vpDisplayFactory::createDisplay();
+#else
+    vpDisplay *d = vpDisplayFactory::allocateDisplay();
 #endif
-    d.init(I);
+    d->init(I);
     vpDisplay::display(I);
     vpDisplay::flush(I);
 
@@ -190,8 +180,7 @@ int main(int argc, const char **argv)
 
     vpImage<vpRGBa> C(480, 640, vpRGBa(255, 0, 0, 0));
 
-    // vpDisplayX d;
-    d.init(C);
+    d->init(C);
     vpDisplay::display(C);
     vpDisplay::flush(C);
 
@@ -203,6 +192,9 @@ int main(int argc, const char **argv)
       std::cout << "A click in the image to exit..." << std::endl;
       vpDisplay::getClick(C);
     }
+#if(VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    delete d;
+#endif
   }
 #else
   (void)argc;
