@@ -52,7 +52,7 @@ jobs:
         shell: bash
         run: |
           ls /opt/ros/${{ matrix.ros_distribution }}
-          . /opt/ros/${{ matrix.ros_distribution }}/setup.bash
+          source /opt/ros/${{ matrix.ros_distribution }}/setup.bash
           rosrun --help
           printenv | grep -i ROS
 
@@ -61,7 +61,7 @@ jobs:
         shell: bash
         run: |
           ls /opt/ros/${{ matrix.ros_distribution }}
-          . /opt/ros/${{ matrix.ros_distribution }}/setup.bash
+          source /opt/ros/${{ matrix.ros_distribution }}/setup.bash
           ros2 run --help
           printenv | grep -i ROS
 
@@ -99,3 +99,17 @@ jobs:
       - name: Run unit tests
         working-directory: build
         run: ctest -j$(nproc) --output-on-failure
+
+      - name: Print ROS info 2
+        if: ${{ matrix.ros_version == 1 }}
+        shell: bash
+        run: |
+          rosrun --help
+          printenv | grep -i ROS
+
+      - name: Print ROS info 2
+        if: ${{ matrix.ros_version == 2 }}
+        shell: bash
+        run: |
+          ros2 run --help
+          printenv | grep -i ROS
