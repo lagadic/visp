@@ -52,6 +52,7 @@ jobs:
         shell: bash
         run: |
           ls /opt/ros/${{ matrix.ros_distribution }}
+          cat /opt/ros/${{ matrix.ros_distribution }}/setup.bash
           source /opt/ros/${{ matrix.ros_distribution }}/setup.bash
           rosrun --help
           printenv | grep -i ROS
@@ -61,6 +62,7 @@ jobs:
         shell: bash
         run: |
           ls /opt/ros/${{ matrix.ros_distribution }}
+          cat /opt/ros/${{ matrix.ros_distribution }}/setup.bash
           source /opt/ros/${{ matrix.ros_distribution }}/setup.bash
           ros2 run --help
           printenv | grep -i ROS
@@ -84,7 +86,9 @@ jobs:
           echo ${VISP_INPUT_IMAGE_PATH}
 
       - name: Configure CMake
+        shell: bash
         run: |
+          source /opt/ros/${{ matrix.ros_distribution }}/setup.bash
           pwd
           mkdir build
           cd build
@@ -93,23 +97,32 @@ jobs:
 
       - name: Compile
         working-directory: build
+        shell: bash
         run: |
+          source /opt/ros/${{ matrix.ros_distribution }}/setup.bash
           make -j$(nproc) install
 
       - name: Run unit tests
         working-directory: build
-        run: ctest -j$(nproc) --output-on-failure
+        shell: bash
+        run: |
+          source /opt/ros/${{ matrix.ros_distribution }}/setup.bash
+          ctest -j$(nproc) --output-on-failure
 
       - name: Print ROS info 2
         if: ${{ matrix.ros_version == 1 }}
         shell: bash
         run: |
+          source /opt/ros/${{ matrix.ros_distribution }}/setup.bash
           rosrun --help
           printenv | grep -i ROS
+          rospack list-names
 
       - name: Print ROS info 2
         if: ${{ matrix.ros_version == 2 }}
         shell: bash
         run: |
+          source /opt/ros/${{ matrix.ros_distribution }}/setup.bash
           ros2 run --help
           printenv | grep -i ROS
+          ros2 pkg list
