@@ -49,6 +49,7 @@ jobs:
 
       - name: Print ROS info
         if: ${{ matrix.ros_version == 1 }}
+        shell: bash
         run: |
           ls /opt/ros/${{ matrix.ros_distribution }}
           . /opt/ros/${{ matrix.ros_distribution }}/setup.bash
@@ -57,6 +58,7 @@ jobs:
 
       - name: Print ROS info
         if: ${{ matrix.ros_version == 2 }}
+        shell: bash
         run: |
           ls /opt/ros/${{ matrix.ros_distribution }}
           . /opt/ros/${{ matrix.ros_distribution }}/setup.bash
