@@ -51,7 +51,7 @@ jobs:
         if: ${{ matrix.ros_version == 1 }}
         run: |
           ls /opt/ros/${{ matrix.ros_distribution }}
-          source /opt/ros/${{ matrix.ros_distribution }}/setup.bash
+          . /opt/ros/${{ matrix.ros_distribution }}/setup.bash
           rosrun --help
           printenv | grep -i ROS
 
@@ -59,7 +59,7 @@ jobs:
         if: ${{ matrix.ros_version == 2 }}
         run: |
           ls /opt/ros/${{ matrix.ros_distribution }}
-          source /opt/ros/${{ matrix.ros_distribution }}/setup.bash
+          . /opt/ros/${{ matrix.ros_distribution }}/setup.bash
           ros2 run --help
           printenv | grep -i ROS
 
