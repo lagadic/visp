@@ -49,21 +49,17 @@ jobs:
 
       - name: Print ROS info
         if: ${{ matrix.ros_version == 1 }}
-        shell: bash
         run: |
           ls /opt/ros/${{ matrix.ros_distribution }}
           source /opt/ros/${{ matrix.ros_distribution }}/setup.bash
-          . /opt/ros/${{ matrix.ros_distribution }}/setup.bash
           rosrun --help
           printenv | grep -i ROS
 
       - name: Print ROS info
         if: ${{ matrix.ros_version == 2 }}
-        shell: bash
         run: |
           ls /opt/ros/${{ matrix.ros_distribution }}
           source /opt/ros/${{ matrix.ros_distribution }}/setup.bash
-          . /opt/ros/${{ matrix.ros_distribution }}/setup.bash
           ros2 run --help
           printenv | grep -i ROS
 
