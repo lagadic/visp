@@ -76,6 +76,18 @@ jobs:
                    -DUSE_JPEG=OFF -DUSE_PNG=OFF -DUSE_X11=OFF -DUSE_XML2=OFF -DBUILD_JAVA=OFF -DUSE_BLAS/LAPACK=OFF
           cat ViSP-third-party.txt
 
+    - name: Run make on RISC64
+      working-directory: build
+      if: matrix.arch == 'riscv64'
+      run: |
+          make -j1
+          # increase default 1500 timeout on QEMU based CI tests
+          ctest -j1 --output-on-failure --timeout 2000
+
+    - name: Run make on other archs
+      working-directory: build
+      if: matrix.arch != 'riscv64'
+      run: |
           if [[ $(nproc) -gt 3 ]]
           then
             NB_PROC_TO_USE=`expr  $(nproc) - 2`
