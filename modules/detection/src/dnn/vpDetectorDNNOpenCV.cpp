@@ -90,6 +90,9 @@ std::string vpDetectorDNNOpenCV::dnnResultsParsingTypeToString(const DNNResultsP
   case YOLO_V11:
     name = "yolov11";
     break;
+  case YOLO_V12:
+    name = "yolov12";
+    break;
   case FASTER_RCNN:
     name = "faster-rcnn";
     break;
@@ -503,7 +506,8 @@ void vpDetectorDNNOpenCV::postProcess(DetectionCandidates &proposals)
     break;
   case YOLO_V8:
   case YOLO_V11:
-    postProcess_YoloV8_V11(proposals, m_dnnRes, m_netConfig);
+  case YOLO_V12:
+    postProcess_YoloV8_V11_V12(proposals, m_dnnRes, m_netConfig);
     break;
   case FASTER_RCNN:
     postProcess_FasterRCNN(proposals, m_dnnRes, m_netConfig);
@@ -821,7 +825,7 @@ void vpDetectorDNNOpenCV::postProcess_YoloV5_V7(DetectionCandidates &proposals, 
   \param dnnRes : raw results of the \b vpDetectorDNNOpenCV::detect step.
   \param netConfig : the configuration of the network, to know for instance the DNN input size.
 */
-void vpDetectorDNNOpenCV::postProcess_YoloV8_V11(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig)
+void vpDetectorDNNOpenCV::postProcess_YoloV8_V11_V12(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig)
 {
   // Code adapted from here: https://github.com/JustasBart/yolov8_CPP_Inference_OpenCV_ONNX/blob/minimalistic/inference.cpp
   // Compute the ratio between the original size of the image and the network size to translate network coordinates into
@@ -1152,7 +1156,7 @@ void vpDetectorDNNOpenCV::setPreferableTarget(const int &targetId) { m_net.setPr
 void vpDetectorDNNOpenCV::setScaleFactor(const double &scaleFactor)
 {
   m_netConfig.m_scaleFactor = scaleFactor;
-  if ((m_netConfig.m_parsingMethodType == YOLO_V7 || m_netConfig.m_parsingMethodType == YOLO_V8 || m_netConfig.m_parsingMethodType == YOLO_V11) && m_netConfig.m_scaleFactor != 1 / 255.) {
+  if ((m_netConfig.m_parsingMethodType == YOLO_V7 || m_netConfig.m_parsingMethodType == YOLO_V8 || m_netConfig.m_parsingMethodType == YOLO_V11 || m_netConfig.m_parsingMethodType == YOLO_V12) && m_netConfig.m_scaleFactor != 1 / 255.) {
     std::cout << "[vpDetectorDNNOpenCV::setParsingMethod] WARNING: scale factor should be 1/255. to normalize pixels value." << std::endl;
   }
 }
@@ -1175,7 +1179,7 @@ void vpDetectorDNNOpenCV::setParsingMethod(const DNNResultsParsingType &typePars
 {
   m_netConfig.m_parsingMethodType = typeParsingMethod;
   m_parsingMethod = parsingMethod;
-  if ((m_netConfig.m_parsingMethodType == YOLO_V7 || m_netConfig.m_parsingMethodType == YOLO_V8 || m_netConfig.m_parsingMethodType == YOLO_V11) && m_netConfig.m_scaleFactor != 1 / 255.) {
+  if ((m_netConfig.m_parsingMethodType == YOLO_V7 || m_netConfig.m_parsingMethodType == YOLO_V8 || m_netConfig.m_parsingMethodType == YOLO_V11 || m_netConfig.m_parsingMethodType == YOLO_V12) && m_netConfig.m_scaleFactor != 1 / 255.) {
     m_netConfig.m_scaleFactor = 1 / 255.;
     std::cout << "[vpDetectorDNNOpenCV::setParsingMethod] NB: scale factor changed to 1/255. to normalize pixels value." << std::endl;
   }

@@ -544,6 +544,41 @@ $ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config 
     --filterThresh -0.25 --scale 0.0039
 \endcode
 
+\subsubsection dnn_supported_yolov12 Yolo v12
+
+Please follow the [official documentation](https://docs.ultralytics.com/quickstart/#install-ultralytics)
+to install Ultralytics tools in order to be able to train or export a model. The installation using Docker has been tested for
+the sake of this tutorial.
+
+You can get the pre-trained YoloV12 models [here](https://docs.ultralytics.com/models/yolo12/#performance-metrics). For
+this tutorial, we tested the [YOLO12n](https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo12n.pt)
+pre-trained model.
+
+To export a model stored in Pytorch format into an ONNX format, you can use the Ultralytics tool:
+\code{.sh}
+$ sudo docker run -it --ipc=host --gpus all ultralytics/ultralytics:latest
+root@8efe0fdbe196:/ultralytics# yolo export model=/path/to/yolo12n.pt format=onnx imgsz=640 opset=13
+\endcode
+
+\note The `opset` option permits to set the version of ONNX to use to export the model.
+
+\note The Yolo v12 has only been tested with OpenCV 4.10.0. If you have an older version of OpenCV, please consider to upgrade OpenCV by following the instructions in
+the section \ref dnn_model_upgrade_opencv below.
+
+Please use the following commands to run the tutorial program:
+\code{.sh}
+$ DNN_PATH=/path/to/my/dnn/folder \
+  CONFIG=none \
+  MODEL=${DNN_PATH}/yolov12/weights/yolov12n.onnx \
+  LABELS=${DNN_PATH}/yolov12/cfg/coco_classes.txt \
+  TYPE=yolov12 \
+  FRAMEWORK=onnx \
+  WIDTH=640 HEIGHT=640
+$ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config $CONFIG --type $TYPE \
+    --framework $FRAMEWORK --width $WIDTH --height $HEIGHT --nmsThresh 0.5 --mean 0 0 0 \
+    --filterThresh -0.25 --scale 0.0039
+\endcode
+
 \section dnn_model_other Other dnn models
 \subsection dnn_model_other_zoo OpenCV model zoo
 
