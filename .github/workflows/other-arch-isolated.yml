@@ -80,6 +80,7 @@ jobs:
       working-directory: build
       if: matrix.arch == 'riscv64'
       run: |
+          cd build
           make -j1
           # increase default 1500 timeout on QEMU based CI tests
           ctest -j1 --output-on-failure --timeout 2000
@@ -95,6 +96,7 @@ jobs:
             NB_PROC_TO_USE=1
           fi
           echo "NB_PROC_TO_USE = ${NB_PROC_TO_USE}"
+          cd build
           make -j${NB_PROC_TO_USE}
 
           # increase default 1500 timeout on QEMU based CI tests
