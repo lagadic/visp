@@ -622,10 +622,10 @@ vpRBTracker::extractSilhouettePoints(const vpImage<vpRGBf> &Inorm, const vpImage
       vpRBSilhouettePoint p(n, m, norm, theta, Z);
       p.detectSilhouette(Idepth);
       points.push_back(p);
-      }
     }
-  return points;
   }
+  return points;
+}
 
 
 void vpRBTracker::addTracker(std::shared_ptr<vpRBFeatureTracker> tracker)
@@ -690,6 +690,11 @@ void vpRBTracker::loadConfigurationFile(const std::string &filename)
 void vpRBTracker::loadConfiguration(const nlohmann::json &j)
 {
   m_firstIteration = true;
+  m_trackers.clear();
+  m_convergenceMetric = nullptr;
+  m_odometry = nullptr;
+  m_driftDetector = nullptr;
+  m_mask = nullptr;
 
   m_displaySilhouette = j.value("displaySilhouette", m_displaySilhouette);
 

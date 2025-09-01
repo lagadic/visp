@@ -43,7 +43,7 @@ class vpProbaComputer {
   public:
   vpProbaComputer(const vpColorHistogram& object, const vpColorHistogram& bg) {
     unsigned int N = object.getBinNumber();
-    m_probas.resize(N);
+    m_probas.resize(N * N * N);
     unsigned int increment = 256 / N;
     unsigned int half = increment / 2;
     vpRGBa c;
@@ -69,6 +69,7 @@ class vpProbaComputer {
         }
       }
     }
+
   }
 
   float operator()(unsigned int colorIndex) {
