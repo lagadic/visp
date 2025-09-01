@@ -60,8 +60,9 @@ public:
     CAMERA_NORMALS, //! Surface normals in the frame of the camera. Z points towards the camera and y is up.
   };
 
-  vpPanda3DGeometryRenderer(vpRenderType renderType);
+  vpPanda3DGeometryRenderer(vpRenderType renderType, bool fast = false);
 
+  void beforeFrameRendered() VP_OVERRIDE;
 
   /**
    * @brief Get render results into ViSP readable structures
@@ -96,6 +97,7 @@ private:
   vpRenderType m_renderType;
   PointerTo<Texture> m_normalDepthTexture;
   PointerTo<GraphicsOutput> m_normalDepthBuffer;
+  bool m_fast;
 };
 END_VISP_NAMESPACE
 #endif //VISP_HAVE_PANDA3D

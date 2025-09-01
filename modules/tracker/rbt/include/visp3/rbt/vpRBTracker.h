@@ -489,7 +489,7 @@ protected:
   */
   std::vector<vpRBSilhouettePoint> extractSilhouettePoints(
     const vpImage<vpRGBf> &Inorm, const vpImage<float> &Idepth,
-    const vpImage<vpRGBf> &Ior, const vpImage<unsigned char> &Ivalid,
+    const vpImage<float> &Ior, const vpImage<unsigned char> &Ivalid,
     const vpCameraParameters &cam, const vpHomogeneousMatrix &cTcp);
 
   /**

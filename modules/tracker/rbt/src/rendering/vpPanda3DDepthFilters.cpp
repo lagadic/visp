@@ -130,11 +130,11 @@ const std::string vpPanda3DDepthCannyFilter::FRAGMENT_SHADER =
 "\n"
 "float textureValues[9];\n"
 "\n"
-"out vec4 p3d_FragData;\n"
+"out vec3 p3d_FragData;\n"
 "\n"
 "void main() {\n"
 "  if(texture(p3d_Texture0, texcoords).a == 0) {\n"
-"    p3d_FragData = vec4(0.f, 0.f, 0.f, 0.f);\n"
+"    p3d_FragData = vec3(0.f, 0.f, 0.f);\n"
 "  } else {\n"
 "    float sum = 0.f;\n"
 "    for(int i = 0; i < 9; ++i) {\n"
@@ -153,9 +153,10 @@ const std::string vpPanda3DDepthCannyFilter::FRAGMENT_SHADER =
 "      }\n"
 "      float norm = sqrt(sum_v * sum_v + sum_h * sum_h);\n"
 "      vec2 orientationAndValid = (sum_h != 0.f) ? vec2(atan(sum_v, -sum_h), 1.f) : vec2(0.f, 0.f);\n"
-"      p3d_FragData.bgra = vec4(sum_h, sum_v, orientationAndValid.x, orientationAndValid.y);\n"
+
+"      p3d_FragData = vec3(orientationAndValid.x, orientationAndValid.x, orientationAndValid.y);\n"
 "    } else {\n"
-"      p3d_FragData = vec4(0.f, 0.f, 0.f, 0.f);\n"
+"      p3d_FragData = vec3(0.f, 0.f, 0.f);\n"
 "    }\n"
 "  }\n"
 "}\n";
@@ -180,12 +181,12 @@ FrameBufferProperties vpPanda3DDepthCannyFilter::getBufferProperties() const
 {
   FrameBufferProperties fbp;
   fbp.set_depth_bits(0);
-  fbp.set_rgba_bits(32, 32, 32, 32);
+  fbp.set_rgba_bits(32, 32, 32, 0);
   fbp.set_float_color(true);
   return fbp;
 }
 
-void vpPanda3DDepthCannyFilter::getRender(vpImage<vpRGBf> &I, vpImage<unsigned char> &valid) const
+void vpPanda3DDepthCannyFilter::getRender(vpImage<float> &I, vpImage<unsigned char> &valid) const
 {
   if (!m_isOutput) {
     throw vpException(vpException::fatalError, "Tried to fetch output of a postprocessing filter that was configured as an intermediate output");
@@ -200,29 +201,27 @@ void vpPanda3DDepthCannyFilter::getRender(vpImage<vpRGBf> &I, vpImage<unsigned c
   // Panda3D stores data upside down
   data += rowIncrement * (I.getHeight() - 1);
   rowIncrement = -rowIncrement;
-  if (numComponents != 4) {
+  if (numComponents != 3) {
     throw;
   }
   for (unsigned int i = 0; i < I.getHeight(); ++i) {
-    vpRGBf *colorRow = I[i];
+    float *colorRow = I[i];
     unsigned char *validRow = valid[i];
     for (unsigned int j = 0; j < I.getWidth(); ++j) {
-      colorRow[j].R = data[j * numComponents];
-      colorRow[j].G = data[j * numComponents + 1];
-      colorRow[j].B = data[j * numComponents + 2];
-      validRow[j] = static_cast<unsigned char>(data[j * numComponents + 3]);
+      colorRow[j] = data[j * numComponents];
+      validRow[j] = static_cast<unsigned char>(data[j * numComponents + 2]);
     }
     data += rowIncrement;
   }
 }
 
-void vpPanda3DDepthCannyFilter::getRender(vpImage<vpRGBf> &I, vpImage<unsigned char> &valid, const vpRect &bb, unsigned int h, unsigned w) const
+void vpPanda3DDepthCannyFilter::getRender(vpImage<float> &I, vpImage<unsigned char> &valid, const vpRect &bb, unsigned int h, unsigned w) const
 {
   if (!m_isOutput) {
     throw vpException(vpException::fatalError, "Tried to fetch output of a postprocessing filter that was configured as an intermediate output");
   }
 
-  I.resize(h, w, vpRGBf(0.f));
+  I.resize(h, w, 0.f);
   valid.resize(I.getHeight(), I.getWidth(), 0);
 
   const unsigned top = static_cast<unsigned int>(std::max(0.0, bb.getTop()));
@@ -232,18 +231,17 @@ void vpPanda3DDepthCannyFilter::getRender(vpImage<vpRGBf> &I, vpImage<unsigned c
 
   const float *data = (float *)(&(m_texture->get_ram_image().front()));
   data += rowIncrement * (m_renderParameters.getImageHeight() - 1);
-  if (numComponents != 4) {
-    throw vpException(vpException::dimensionError, "Expected panda texture to have 4 components!");
+  std::cout << "Num components = " << numComponents << std::endl;
+  if (numComponents != 3) {
+    throw vpException(vpException::dimensionError, "Expected panda texture to have 3 components!");
   }
   for (unsigned int i = 0; i < m_renderParameters.getImageHeight(); ++i) {
     const float *rowData = data - i * rowIncrement;
-    vpRGBf *colorRow = I[top + i];
+    float *colorRow = I[top + i];
     unsigned char *validRow = valid[top + i];
     for (unsigned int j = 0; j < m_renderParameters.getImageWidth(); ++j) {
-      colorRow[left + j].R = rowData[j * numComponents];
-      colorRow[left + j].G = rowData[j * numComponents + 1];
-      colorRow[left + j].B = rowData[j * numComponents + 2];
-      validRow[left + j] = static_cast<unsigned char>(rowData[j * numComponents + 3]);
+      colorRow[left + j] = rowData[j * numComponents];
+      validRow[left + j] = static_cast<unsigned char>(rowData[j * numComponents + 2]);
     }
   }
 }

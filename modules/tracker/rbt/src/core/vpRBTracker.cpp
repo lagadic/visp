@@ -591,7 +591,7 @@ void vpRBTracker::updateRender(vpRBFeatureTrackerInput &frame, const vpHomogeneo
 
 std::vector<vpRBSilhouettePoint>
 vpRBTracker::extractSilhouettePoints(const vpImage<vpRGBf> &Inorm, const vpImage<float> &Idepth,
-                                     const vpImage<vpRGBf> &silhouetteCanny, const vpImage<unsigned char> &Ivalid,
+                                     const vpImage<float> &silhouetteCanny, const vpImage<unsigned char> &Ivalid,
                                      const vpCameraParameters &cam, const vpHomogeneousMatrix &cTcp)
 {
   std::vector<std::pair<unsigned int, unsigned int>> candidates =
@@ -602,7 +602,7 @@ vpRBTracker::extractSilhouettePoints(const vpImage<vpRGBf> &Inorm, const vpImage
 
   for (unsigned int i = 0; i < candidates.size(); ++i) {
     unsigned int n = candidates[i].first, m = candidates[i].second;
-    double theta = silhouetteCanny[n][m].B;
+    double theta = silhouetteCanny[n][m];
     if (std::isnan(theta)) {
       continue;
     }

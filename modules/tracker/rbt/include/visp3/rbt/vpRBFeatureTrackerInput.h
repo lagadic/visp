@@ -55,7 +55,7 @@ struct VISP_EXPORT vpRBRenderData
   vpImage<vpRGBf> normals; //! Image containing the per-pixel normal vector (RGB, in object space)
   vpImage<float> depth;
   vpImage<vpRGBa> color;
-  vpImage<vpRGBf> silhouetteCanny; //! Image containing the orientation of the gradients
+  vpImage<float> silhouetteCanny; //! Image containing the orientation of the gradients
   vpImage<unsigned char> isSilhouette; //! Binary image indicating whether a given pixel is part of the silhouette
   double zNear, zFar; // clipping values
   vpRect boundingBox;
