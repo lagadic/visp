@@ -2156,7 +2156,11 @@ macro(vp_get_apple_sdk_dir sdk_dir)
   if(APPLE)
     execute_process(COMMAND xcrun --show-sdk-path
                     OUTPUT_VARIABLE SDK_PLATFORM_PATH OUTPUT_STRIP_TRAILING_WHITESPACE)
-    get_filename_component(${sdk_dir} "${SDK_PLATFORM_PATH}" REALPATH)
+    # xcrun --show-sdk-path can be a link
+    # % ll $(xcrun --show-sdk-path)
+    # 0 lrwxr-xr-x  1 root  wheel  14 29 mai 12:22 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -> MacOSX15.5.sdk
+    # that's why it is better to not resolve the link using get_filename_component(${sdk_dir} "${SDK_PLATFORM_PATH}" REAL_PATH)
+    get_filename_component(${sdk_dir} "${SDK_PLATFORM_PATH}" ABSOLUTE)
   else()
     set(${sdk_dir} "NotApple")
   endif()
