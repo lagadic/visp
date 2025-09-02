@@ -151,7 +151,8 @@ elseif((VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_17) AND CXX17_CXX_FLAGS)
 endif()
 
 if(BUILD_COVERAGE)
-  add_extra_compiler_options("-ftest-coverage -fprofile-arcs")
+  set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} gcov)
+  add_extra_compiler_options("-ftest-coverage -fprofile-arcs -lgcov")
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX)

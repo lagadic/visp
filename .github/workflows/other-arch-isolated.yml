@@ -76,14 +76,25 @@ jobs:
                    -DUSE_JPEG=OFF -DUSE_PNG=OFF -DUSE_X11=OFF -DUSE_XML2=OFF -DBUILD_JAVA=OFF -DUSE_BLAS/LAPACK=OFF
           cat ViSP-third-party.txt
 
-          if [[ $(nproc) -gt 3 ]]
+          ARCHI=`uname -m`
+          if [[ ${ARCHI} == *"riscv"* ]]
           then
-            NB_PROC_TO_USE=`expr  $(nproc) - 2`
-          else
+            # riscv64 cannot currently run on more than 1 processor
             NB_PROC_TO_USE=1
+            TIMEOUT=4000
+          else
+            if [[ $(nproc) -gt 3 ]]
+            then
+              NB_PROC_TO_USE=`expr  $(nproc) - 2`
+              TIMEOUT=2000
+            else
+              NB_PROC_TO_USE=1
+              TIMEOUT=4000
+            fi
           fi
+
           echo "NB_PROC_TO_USE = ${NB_PROC_TO_USE}"
           make -j${NB_PROC_TO_USE}
 
           # increase default 1500 timeout on QEMU based CI tests
-          ctest -j${NB_PROC_TO_USE} --output-on-failure --timeout 2000
+          ctest -j${NB_PROC_TO_USE} --output-on-failure --timeout $TIMEOUT

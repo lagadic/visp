@@ -100,9 +100,10 @@ public:
     YOLO_V4 = 5, /*!< The \b vpDetectorDNNOpenCV object will use the parsing method corresponding to a YoloV4 DNN. See \b vpDetectorDNNOpenCV::postProcess_YoloV3_V4 for more information.*/
     YOLO_V5 = 6, /*!< The \b vpDetectorDNNOpenCV object will use the parsing method corresponding to a YoloV5 DNN. See \b vpDetectorDNNOpenCV::postProcess_YoloV5_V7 for more information.*/
     YOLO_V7 = 7, /*!< The \b vpDetectorDNNOpenCV object will use the parsing method corresponding to a YoloV7 DNN. See \b vpDetectorDNNOpenCV::postProcess_YoloV5_V7 for more information.*/
-    YOLO_V8 = 8, /*!< The \b vpDetectorDNNOpenCV object will use the parsing method corresponding to a YoloV8 DNN. See \b vpDetectorDNNOpenCV::postProcess_YoloV8_V11 for more information.*/
-    YOLO_V11 = 9, /*!< The \b vpDetectorDNNOpenCV object will use the parsing method corresponding to a YoloV11 DNN. See \b vpDetectorDNNOpenCV::postProcess_YoloV8_V11 for more information.*/
-    COUNT = 10 /*!< The number of parsing method that come along with the \b vpDetectorDNNOpenCV class.*/
+    YOLO_V8 = 8, /*!< The \b vpDetectorDNNOpenCV object will use the parsing method corresponding to a YoloV8 DNN. See \b vpDetectorDNNOpenCV::postProcess_YoloV8_V11_V12 for more information.*/
+    YOLO_V11 = 9, /*!< The \b vpDetectorDNNOpenCV object will use the parsing method corresponding to a YoloV11 DNN. See \b vpDetectorDNNOpenCV::postProcess_YoloV8_V11_V12 for more information.*/
+    YOLO_V12 = 10, /*!< The \b vpDetectorDNNOpenCV object will use the parsing method corresponding to a YoloV12 DNN. See \b vpDetectorDNNOpenCV::postProcess_YoloV8_V11_V12 for more information.*/
+    COUNT = 11 /*!< The number of parsing method that come along with the \b vpDetectorDNNOpenCV class.*/
   } DNNResultsParsingType;
 
   typedef struct DetectionCandidates
@@ -563,7 +564,7 @@ protected:
 
   void postProcess_YoloV5_V7(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig);
 
-  void postProcess_YoloV8_V11(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig);
+  void postProcess_YoloV8_V11_V12(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig);
 
   void postProcess_FasterRCNN(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig);
 
