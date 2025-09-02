@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -52,5 +52,5 @@ foreach(cpp ${example_cpp})
   # Add test
   get_filename_component(target ${cpp} NAME_WE)
   # Only if dataset found for isolated build
-  visp_add_test(${target} ${target} -c ${SHORT_OPTION_TO_DISABLE_DISPLAY})
+  visp_add_test(${target} ${target} -c ${SHORT_OPTION_TO_DISABLE_DISPLAY} -t)
 endforeach()

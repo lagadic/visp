@@ -37,7 +37,7 @@
 
 /*!
   \file poseVirtualVS.cpp
-
+  \example poseVirtualVS.cpp
   \brief Example of dots tracking in an image sequence and pose computation.
 
   Pose computation on an object made of dots :
@@ -45,13 +45,6 @@
     Display image using either the X11 or GTK or GDI display,
     track 4 dots (vpDots) in the image,
     compute the pose.
-
-*/
-
-/*!
-  \example poseVirtualVS.cpp
-  Example of dots tracking in an image sequence and pose
-  computation.
 */
 
 #include <iomanip>
@@ -78,7 +71,7 @@
 #include <visp3/vision/vpPose.h>
 
 // List of allowed command line options
-#define GETOPTARGS "cdi:p:hf:l:s:"
+#define GETOPTARGS "cdi:p:hf:l:s:t"
 
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;
@@ -116,7 +109,7 @@ Test dot tracking.\n\
 \n\
 SYNOPSIS\n\
   %s [-i <input image path>] [-p <personal image path>]\n\
-     [-f <first image>] [-l <last image>] [-s <step>][-c] [-d] [-h]\n",
+     [-f <first image>] [-l <last image>] [-s <step>][-c] [-d] [-t] [-h]\n",
           name);
 
   fprintf(stdout, "\n\
@@ -136,13 +129,13 @@ OPTIONS:                                               Default\n\
      The format is selected by analyzing the filename extension.\n\
      Example : \"/Temp/visp-images/cube/image.%%04d.%s\"\n\
      %%04d is for the image numbering.\n\
- \n\
+\n\
   -f <first image>                                     %u\n\
      First image number of the sequence.\n\
- \n\
+\n\
   -l <last image>                                %u\n\
      Last image number of the sequence.\n\
- \n\
+\n\
   -s <step>                                            %u\n\
      Step between two images.\n\
 \n\
@@ -152,6 +145,10 @@ OPTIONS:                                               Default\n\
 \n\
   -d \n\
      Turn off the display.\n\
+\n\
+  -t \n\
+     Turn off waiting 40ms after each image, running\n\
+     this example as fast as possible.\n\
 \n\
   -h\n\
      Print the help.\n",
@@ -176,12 +173,13 @@ OPTIONS:                                               Default\n\
   disabled. This can be useful for automatic tests using crontab
   under Unix or using the task manager under Windows.
   \param click_allowed : set to false, disable the mouse click.
+  \param wait : Enable/disable waiting after each image of the sequence.
 
   \return false if the program has to be stopped, true otherwise.
 
 */
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath, unsigned &first, unsigned &last,
-                unsigned &step, bool &click_allowed, bool &display)
+                unsigned &step, bool &click_allowed, bool &display, bool &wait)
 {
   const char *optarg_;
   int c;
@@ -208,6 +206,9 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
       break;
     case 's':
       step = static_cast<unsigned int>(atoi(optarg_));
+      break;
+    case 't':
+      wait = false;
       break;
     case 'h':
       usage(argv[0], nullptr, ipath, ppath, first, last, step);
@@ -251,6 +252,7 @@ int main(int argc, const char **argv)
     unsigned opt_step = 1;
     bool opt_click_allowed = true;
     bool opt_display = true;
+    bool opt_wait = true;
     int i;
 
 #if defined(VISP_HAVE_DATASET)
@@ -284,7 +286,7 @@ int main(int argc, const char **argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_ipath, opt_ppath, opt_first, opt_last, opt_step, opt_click_allowed,
-                   opt_display) == false) {
+                   opt_display, opt_wait) == false) {
       return EXIT_FAILURE;
     }
 
@@ -420,26 +422,26 @@ int main(int argc, const char **argv)
       }
     }
     else {
-      cog[0].set_u(194);
-      cog[0].set_v(88);
+      cog[0].set_u(192.9);
+      cog[0].set_v(86.7);
       d[0].initTracking(I, cog[0]);
       d[0].track(I, cog[0]);
       vpDisplay::flush(I);
 
-      cog[1].set_u(225);
-      cog[1].set_v(84);
+      cog[1].set_u(239.6);
+      cog[1].set_v(83.4);
       d[1].initTracking(I, cog[1]);
       d[1].track(I, cog[1]);
       vpDisplay::flush(I);
 
-      cog[2].set_u(242);
-      cog[2].set_v(114);
+      cog[2].set_u(243.5);
+      cog[2].set_v(128.5);
       d[2].initTracking(I, cog[2]);
       d[2].track(I, cog[2]);
       vpDisplay::flush(I);
 
-      cog[3].set_u(212);
-      cog[3].set_v(131);
+      cog[3].set_u(196.4);
+      cog[3].set_v(131.7);
       d[3].initTracking(I, cog[3]);
       d[3].track(I, cog[3]);
       vpDisplay::flush(I);
@@ -491,9 +493,9 @@ int main(int argc, const char **argv)
     // we set the 3D points coordinates (in meter !) in the object/world frame
     double L = 0.04;
     P[0].setWorldCoordinates(-L, -L, 0); // (X,Y,Z)
-    P[1].setWorldCoordinates(L, -L, 0);
-    P[2].setWorldCoordinates(L, L, 0);
-    P[3].setWorldCoordinates(-L, L, 0);
+    P[1].setWorldCoordinates(+L, -L, 0);
+    P[2].setWorldCoordinates(+L, +L, 0);
+    P[3].setWorldCoordinates(-L, +L, 0);
 
     // set the camera intrinsic parameters
     // see more details about the model in vpCameraParameters
@@ -590,7 +592,9 @@ int main(int argc, const char **argv)
         pose.display(I, cMo, cam, 0.05, vpColor::none);
 
         vpDisplay::flush(I);
-        vpTime::wait(40);
+        if (opt_wait) {
+          vpTime::wait(40);
+        }
       }
 
       // Covariance Matrix Display
