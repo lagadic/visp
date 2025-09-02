@@ -17,20 +17,14 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, macos-13]
-        environment: [all-with-tests, with-python]
+        environment: [full-ci]
         build_type: [Release]
         include:
           - os: windows-latest
-            environment: all-with-tests
+            environment: full-ci
             build_type: Release
           - os: windows-latest
-            environment: all-clang-cl-with-tests
-            build_type: Release
-          - os: windows-latest
-            environment: with-python
-            build_type: Release
-          - os: windows-latest
-            environment: with-python-clang-cl
+            environment: full-ci-clang-cl
             build_type: Release
 
     steps:
@@ -40,6 +34,15 @@ jobs:
         with:
           cache: true
           environments: ${{ matrix.environment }}
+
+      - name: Clone visp-images
+        env:
+          BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+        # https://remarkablemark.org/blog/2022/09/25/check-git-branch-exists-in-remote-repository/
+        run: |
+          git clone --depth 1 https://github.com/lagadic/visp-images ${HOME}/visp-images
+          echo "VISP_INPUT_IMAGE_PATH=$HOME/visp-images" >> $GITHUB_ENV
+          echo ${VISP_INPUT_IMAGE_PATH}
 
       - name: Build Visp [MacOS/Linux/Windows]
         shell: bash -el {0}
