@@ -97,6 +97,7 @@ private:
   vpRenderType m_renderType;
   PointerTo<Texture> m_normalDepthTexture;
   PointerTo<GraphicsOutput> m_normalDepthBuffer;
+  //! Use fast approximate rendering.
   bool m_fast;
 };
 END_VISP_NAMESPACE

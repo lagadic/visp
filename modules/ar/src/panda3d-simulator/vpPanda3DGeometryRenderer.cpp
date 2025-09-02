@@ -275,7 +275,6 @@ void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals, vpImage<floa
     }
   }
   else {
-    double t1 = vpTime::measureTimeMs();
     float nearV = m_renderParameters.getNearClippingDistance();
     float farV = m_renderParameters.getFarClippingDistance();
     float ratio = 1.f / (farV - nearV);
@@ -311,8 +310,6 @@ void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals, vpImage<floa
         depthRow[left_j] = (static_cast<float>(rowData[j_4 + 3]) / maxValue) * farV;
       }
     }
-    double t2 = vpTime::measureTimeMs();
-    std::cout << "Conversion time: " << (t2 - t1) << std::endl;
   }
 
 }

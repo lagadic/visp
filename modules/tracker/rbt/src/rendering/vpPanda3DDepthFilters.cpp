@@ -210,7 +210,7 @@ void vpPanda3DDepthCannyFilter::getRender(vpImage<float> &I, vpImage<unsigned ch
   valid.resize(I.getHeight(), I.getWidth());
   const unsigned numComponents = m_texture->get_num_components();
   int rowIncrement = I.getWidth() * numComponents; // we ask for only 8 bits image, but we may get an rgb image
-  uint16_t *data = (uint16_t *)(&(m_texture->get_ram_image().front()));
+  uint8_t *data = (uint8_t *)(&(m_texture->get_ram_image().front()));
   // Panda3D stores data upside down
   data += rowIncrement * (I.getHeight() - 1);
   rowIncrement = -rowIncrement;
@@ -221,8 +221,8 @@ void vpPanda3DDepthCannyFilter::getRender(vpImage<float> &I, vpImage<unsigned ch
     float *colorRow = I[i];
     unsigned char *validRow = valid[i];
     for (unsigned int j = 0; j < I.getWidth(); ++j) {
-      colorRow[j] = data[j * numComponents];
-      validRow[j] = static_cast<unsigned char>(data[j * numComponents + 1]);
+      colorRow[j] = static_cast<float>(data[j * numComponents]) / std::numeric_limits<uint8_t>::max() * M_PI * 2 - M_PI;
+      validRow[j] = static_cast<unsigned char>((data[j * numComponents + 1] > 0) * 255);
     }
     data += rowIncrement;
   }
