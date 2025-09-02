@@ -93,7 +93,8 @@ uniform float nearV;
 uniform float farV;
 void main()
 {
-  float depthV = distToCamera <= nearV ? 0.0 : (distToCamera - nearV) / (farV - nearV);
+  //float depthV = distToCamera <= nearV ? 0.0 : (distToCamera - nearV) / (farV - nearV);
+  float depthV = distToCamera / farV;
   vec3 n = normalize(oNormal);
   n = (n + 1.0) / 2.0;
   p3d_FragData.bgra = vec4(n, depthV);
@@ -115,7 +116,6 @@ std::string renderTypeToName(vpPanda3DGeometryRenderer::vpRenderType type)
 
 void vpPanda3DGeometryRenderer::beforeFrameRendered()
 {
-
   if (m_fast) {
     m_renderRoot.set_shader_input("nearV", LVector2f(m_renderParameters.getNearClippingDistance()));
     m_renderRoot.set_shader_input("farV", LVector2f(m_renderParameters.getFarClippingDistance()));
@@ -184,8 +184,14 @@ void vpPanda3DGeometryRenderer::setupRenderTarget()
   // }
   m_buffers.push_back(m_normalDepthBuffer);
   m_normalDepthBuffer->set_inverted(windowOutput->get_gsg()->get_copy_texture_inverted());
-  fbp.setup_color_texture(m_normalDepthTexture);
-  m_normalDepthTexture->set_format(Texture::F_rgba32);
+  // fbp.setup_color_texture(m_normalDepthTexture);
+  if (!m_fast) {
+    m_normalDepthTexture->set_format(Texture::F_rgba32);
+  }
+  else {
+    m_normalDepthTexture->set_component_type(Texture::T_unsigned_byte);
+    m_normalDepthTexture->set_format(Texture::F_rgba);
+  }
   m_normalDepthBuffer->add_render_texture(m_normalDepthTexture, GraphicsOutput::RenderTextureMode::RTM_copy_texture, GraphicsOutput::RenderTexturePlane::RTP_color);
   m_normalDepthBuffer->set_clear_color(LColor(0.f));
   m_normalDepthBuffer->set_clear_color_active(true);
@@ -269,34 +275,44 @@ void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals, vpImage<floa
     }
   }
   else {
+    double t1 = vpTime::measureTimeMs();
     float nearV = m_renderParameters.getNearClippingDistance();
     float farV = m_renderParameters.getFarClippingDistance();
     float ratio = 1.f / (farV - nearV);
-    const uint8_t *data = (uint8_t *)(&(m_normalDepthTexture->get_ram_image().front()));
+    using T = uint8_t;
+    Texture::ComponentType expectedComponent = Texture::T_unsigned_byte;
+    float maxValue = static_cast<float>(std::numeric_limits<T>::max());
+    const T *data = (T *)(&(m_normalDepthTexture->get_ram_image().front()));
     // Panda3D stores data upside down
     data += rowIncrement * (m_renderParameters.getImageHeight() - 1);
     if (numComponents != 4) {
       throw vpException(vpException::dimensionError, "Expected panda texture to have 4 components!");
     }
-    if (m_normalDepthTexture->get_component_type() != Texture::T_unsigned_byte) {
+    if (m_normalDepthTexture->get_component_type() != expectedComponent) {
       throw vpException(vpException::badValue, "Unexpected data type in normals texture");
     }
-#if defined(VISP_HAVE_OPENMP)
-#pragma omp parallel for
-#endif
+
     for (unsigned int i = 0; i < m_renderParameters.getImageHeight(); ++i) {
-      const uint8_t *const rowData = data - i * rowIncrement;
+      const T *const rowData = data - i * rowIncrement;
       vpRGBf *normalRow = normals[top + i];
       float *depthRow = depth[top + i];
+      std::array<float, 3> v;
       for (int j = 0; j < image_width; ++j) {
         int left_j = left + j;
         int j_4 = j * 4;
-        normalRow[left_j].R = (rowData[j_4]);
-        normalRow[left_j].G = (rowData[j_4 + 1]);
-        normalRow[left_j].B = (rowData[j_4 + 2]);
-        depthRow[left_j] = (rowData[j_4 + 3]);
+        v[0] = (static_cast<float>(rowData[j_4]) / maxValue) * 2.f - 1.f;
+        v[1] = (static_cast<float>(rowData[j_4 + 1]) / maxValue) * 2.f - 1.f;
+        v[2] = (static_cast<float>(rowData[j_4 + 2]) / maxValue) * 2.f - 1.f;
+        // const double norm = sqrtf(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+
+        normalRow[left_j].R = v[0];
+        normalRow[left_j].G = v[1];
+        normalRow[left_j].B = v[2];
+        depthRow[left_j] = (static_cast<float>(rowData[j_4 + 3]) / maxValue) * farV;
       }
     }
+    double t2 = vpTime::measureTimeMs();
+    std::cout << "Conversion time: " << (t2 - t1) << std::endl;
   }
 
 }

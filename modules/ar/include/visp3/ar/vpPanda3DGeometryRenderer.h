@@ -60,7 +60,7 @@ public:
     CAMERA_NORMALS, //! Surface normals in the frame of the camera. Z points towards the camera and y is up.
   };
 
-  vpPanda3DGeometryRenderer(vpRenderType renderType, bool fast = false);
+  vpPanda3DGeometryRenderer(vpRenderType renderType, bool fast = true);
 
   void beforeFrameRendered() VP_OVERRIDE;
 

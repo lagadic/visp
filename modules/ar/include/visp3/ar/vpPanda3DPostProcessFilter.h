@@ -92,6 +92,8 @@ protected:
   void getRenderBasic(vpImage<vpRGBf> &I) const;
 
   virtual FrameBufferProperties getBufferProperties() const = 0;
+  virtual PointerTo<Texture> setupTexture(const FrameBufferProperties &fbp) const;
+
 
   std::shared_ptr<vpPanda3DBaseRenderer> m_inputRenderer;
   bool m_isOutput; //! Whether this filter is an output to be used and should be copied to ram

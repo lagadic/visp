@@ -74,6 +74,7 @@ class VISP_EXPORT vpPanda3DDepthCannyFilter : public vpPanda3DPostProcessFilter
 public:
   vpPanda3DDepthCannyFilter(const std::string &name, std::shared_ptr<vpPanda3DBaseRenderer> inputRenderer, bool isOutput, float edgeThreshold);
   FrameBufferProperties getBufferProperties() const VP_OVERRIDE;
+  PointerTo<Texture> setupTexture(const FrameBufferProperties &fbp) const VP_OVERRIDE;
   void getRender(vpImage<float> &I, vpImage<unsigned char> &valid) const;
   void getRender(vpImage<float> &I, vpImage<unsigned char> &valid, const vpRect &bb, unsigned int h, unsigned w) const;
 

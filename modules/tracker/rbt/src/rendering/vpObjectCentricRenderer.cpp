@@ -74,6 +74,7 @@ void vpObjectCentricRenderer::beforeFrameRendered()
       subrenderer->setRenderParameters(subParams);
     }
   }
+  vpPanda3DRendererSet::beforeFrameRendered();
 }
 
 void vpObjectCentricRenderer::computeBoundingBox3DPoints()

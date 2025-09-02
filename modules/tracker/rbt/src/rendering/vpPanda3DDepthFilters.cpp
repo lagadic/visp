@@ -97,6 +97,7 @@ void vpPanda3DDepthGaussianBlur::getRender(vpImage<unsigned char> &I) const
 
 const std::string vpPanda3DDepthCannyFilter::FRAGMENT_SHADER =
 "#version 330\n"
+"#define PI 3.1415926538\n"
 "\n"
 "in vec2 texcoords;\n"
 "\n"
@@ -151,10 +152,9 @@ const std::string vpPanda3DDepthCannyFilter::FRAGMENT_SHADER =
 "        sum_h += pix * kernel_h[i];\n"
 "        sum_v += pix * kernel_v[i];\n"
 "      }\n"
-"      float norm = sqrt(sum_v * sum_v + sum_h * sum_h);\n"
 "      vec2 orientationAndValid = (sum_h != 0.f) ? vec2(atan(sum_v, -sum_h), 1.f) : vec2(0.f, 0.f);\n"
-
-"      p3d_FragData = vec3(orientationAndValid.x, orientationAndValid.x, orientationAndValid.y);\n"
+"      float orientation = (orientationAndValid.x + PI) / (PI * 2);\n"
+"      p3d_FragData = vec3(orientation, orientationAndValid.y, orientation);\n"
 "    } else {\n"
 "      p3d_FragData = vec3(0.f, 0.f, 0.f);\n"
 "    }\n"
@@ -181,9 +181,22 @@ FrameBufferProperties vpPanda3DDepthCannyFilter::getBufferProperties() const
 {
   FrameBufferProperties fbp;
   fbp.set_depth_bits(0);
-  fbp.set_rgba_bits(32, 32, 32, 0);
-  fbp.set_float_color(true);
+  fbp.set_rgba_bits(8, 8, 8, 0);
+  fbp.set_alpha_bits(0);
+
+  fbp.set_rgb_color(false);
+
+  fbp.set_float_color(false);
   return fbp;
+}
+
+PointerTo<Texture> vpPanda3DDepthCannyFilter::setupTexture(const FrameBufferProperties &fbp) const
+{
+  PointerTo<Texture> tex = new Texture();
+  fbp.setup_color_texture(tex);
+  tex->set_format(Texture::F_rgb);
+  tex->set_component_type(Texture::T_unsigned_byte);
+  return tex;
 }
 
 void vpPanda3DDepthCannyFilter::getRender(vpImage<float> &I, vpImage<unsigned char> &valid) const
@@ -197,7 +210,7 @@ void vpPanda3DDepthCannyFilter::getRender(vpImage<float> &I, vpImage<unsigned ch
   valid.resize(I.getHeight(), I.getWidth());
   const unsigned numComponents = m_texture->get_num_components();
   int rowIncrement = I.getWidth() * numComponents; // we ask for only 8 bits image, but we may get an rgb image
-  float *data = (float *)(&(m_texture->get_ram_image().front()));
+  uint16_t *data = (uint16_t *)(&(m_texture->get_ram_image().front()));
   // Panda3D stores data upside down
   data += rowIncrement * (I.getHeight() - 1);
   rowIncrement = -rowIncrement;
@@ -209,7 +222,7 @@ void vpPanda3DDepthCannyFilter::getRender(vpImage<float> &I, vpImage<unsigned ch
     unsigned char *validRow = valid[i];
     for (unsigned int j = 0; j < I.getWidth(); ++j) {
       colorRow[j] = data[j * numComponents];
-      validRow[j] = static_cast<unsigned char>(data[j * numComponents + 2]);
+      validRow[j] = static_cast<unsigned char>(data[j * numComponents + 1]);
     }
     data += rowIncrement;
   }
@@ -229,19 +242,18 @@ void vpPanda3DDepthCannyFilter::getRender(vpImage<float> &I, vpImage<unsigned ch
   const unsigned numComponents = m_texture->get_num_components();
   const unsigned rowIncrement = m_renderParameters.getImageWidth() * numComponents;
 
-  const float *data = (float *)(&(m_texture->get_ram_image().front()));
+  const uint8_t *data = (uint8_t *)(&(m_texture->get_ram_image().front()));
   data += rowIncrement * (m_renderParameters.getImageHeight() - 1);
-  std::cout << "Num components = " << numComponents << std::endl;
   if (numComponents != 3) {
     throw vpException(vpException::dimensionError, "Expected panda texture to have 3 components!");
   }
   for (unsigned int i = 0; i < m_renderParameters.getImageHeight(); ++i) {
-    const float *rowData = data - i * rowIncrement;
+    const uint8_t *rowData = data - i * rowIncrement;
     float *colorRow = I[top + i];
     unsigned char *validRow = valid[top + i];
     for (unsigned int j = 0; j < m_renderParameters.getImageWidth(); ++j) {
-      colorRow[left + j] = rowData[j * numComponents];
-      validRow[left + j] = static_cast<unsigned char>(rowData[j * numComponents + 2]);
+      colorRow[left + j] = static_cast<float>(rowData[j * numComponents]) / std::numeric_limits<uint8_t>::max() * M_PI * 2 - M_PI;
+      validRow[left + j] = static_cast<unsigned char>((rowData[j * numComponents + 1] > 0) * 255);
     }
   }
 }
