@@ -551,6 +551,7 @@ int main(int argc, const char **argv)
         filename = vpIoTools::formatString(opt_ppath, iter);
       }
 
+      std::cout << "Read image: " << filename << std::endl;
       // read the image
       vpImageIo::read(I, filename);
       if (opt_display) {
@@ -608,7 +609,9 @@ int main(int argc, const char **argv)
     if (opt_display) {
       vpDisplay::displayText(I, 20, 20, "Click to quit", vpColor::red);
       vpDisplay::flush(I);
-      vpDisplay::getClick(I);
+      if (opt_wait) {
+        vpDisplay::getClick(I);
+      }
     }
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
     if (display != nullptr) {
