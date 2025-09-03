@@ -72,6 +72,12 @@ VISP_ENABLE_TEST_WITHOUT_DISPLAY = "OFF"
 [feature.tests.target.linux.tasks]
 init-testing = { cmd = "bash ./development/scripts/pixi/xvfb.sh" }
 
+[feature.examples.activation.env]
+VISP_BUILD_EXAMPLES = "ON"
+
+[feature.tutorials.activation.env]
+VISP_BUILD_TUTORIALS = "ON"
+
 [tasks]
 init-testing = {}
 configure = { cmd = [
@@ -82,13 +88,13 @@ configure = { cmd = [
   "$VISP_BUILD_DIR",
   "-S",
   ".",
-  "-DCMAKE_VERBOSE_MAKEFILE=ON",
+  "-DCMAKE_VERBOSE_MAKEFILE=OFF",
   "-DCMAKE_BUILD_TYPE=$VISP_BUILD_TYPE",
   "-DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX",
   "-DBUILD_TESTS=$VISP_BUILD_TESTS",
   "-DENABLE_TEST_WITHOUT_DISPLAY=$VISP_ENABLE_TEST_WITHOUT_DISPLAY",
-  "-DBUILD_TUTORIALS=OFF",
-  "-DBUILD_EXAMPLES=OFF",
+  "-DBUILD_TUTORIALS=$VISP_BUILD_TUTORIALS",
+  "-DBUILD_EXAMPLES=$VISP_BUILD_EXAMPLES",
   "$VISP_EXTRA_CMAKE_ARGS"
 ] }
 build-base = { cmd = "cmake --build $VISP_BUILD_DIR --parallel $CPU_COUNT", depends-on = ["configure"] }
@@ -98,9 +104,16 @@ clean = { cmd = "rm -rf $VISP_BUILD_DIR" }
 test = { cmd = "ctest --test-dir $VISP_BUILD_DIR --output-on-failure", depends-on = ["install", "init-testing"] }
 
 [environments]
+# Minimal set of features and python bindings
 with-python = { features = ["python-bindings"] }
+# All <environment-name>-clang-cl variants are for building under Clang-cl compiler under windows instead of MSVC CL
 with-python-clang-cl = { features = ["python-bindings", "clang-cl"] }
+# All ViSP features including python bindings
 all = { features = ["rbt", "python-bindings"] }
 all-clang-cl = { features = ["rbt", "python-bindings", "clang-cl"] }
+# All ViSP features (incl. python bindings) + tests
 all-with-tests = { features = ["rbt", "python-bindings", "tests"] }
 all-clang-cl-with-tests = { features = ["rbt", "python-bindings", "clang-cl", "tests"] }
+# Environments with all features + build of tests / tutorials / examples (mainly for CI)
+full-ci = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials"]}
+full-ci-clang-cl = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials"]}

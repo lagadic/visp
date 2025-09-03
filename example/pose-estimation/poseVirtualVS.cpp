@@ -37,7 +37,7 @@
 
 /*!
   \file poseVirtualVS.cpp
-
+  \example poseVirtualVS.cpp
   \brief Example of dots tracking in an image sequence and pose computation.
 
   Pose computation on an object made of dots :
@@ -45,13 +45,6 @@
     Display image using either the X11 or GTK or GDI display,
     track 4 dots (vpDots) in the image,
     compute the pose.
-
-*/
-
-/*!
-  \example poseVirtualVS.cpp
-  Example of dots tracking in an image sequence and pose
-  computation.
 */
 
 #include <iomanip>
@@ -61,7 +54,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 
-#if defined(VISP_HAVE_DISPLAY) &&       \
+#if defined(VISP_HAVE_DISPLAY) && \
     (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
 
 #include <visp3/core/vpImage.h>
@@ -136,13 +129,13 @@ OPTIONS:                                               Default\n\
      The format is selected by analyzing the filename extension.\n\
      Example : \"/Temp/visp-images/cube/image.%%04d.%s\"\n\
      %%04d is for the image numbering.\n\
- \n\
+\n\
   -f <first image>                                     %u\n\
      First image number of the sequence.\n\
- \n\
+\n\
   -l <last image>                                %u\n\
      Last image number of the sequence.\n\
- \n\
+\n\
   -s <step>                                            %u\n\
      Step between two images.\n\
 \n\
@@ -176,6 +169,7 @@ OPTIONS:                                               Default\n\
   disabled. This can be useful for automatic tests using crontab
   under Unix or using the task manager under Windows.
   \param click_allowed : set to false, disable the mouse click.
+  \param wait : Enable/disable waiting after each image of the sequence.
 
   \return false if the program has to be stopped, true otherwise.
 
@@ -263,7 +257,6 @@ int main(int argc, const char **argv)
     // We suppose that the user will download a recent dataset
     std::string ext("png");
 #endif
-
 
     std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << "  poseVirtualVS.cpp" << std::endl << std::endl;
@@ -411,8 +404,7 @@ int main(int argc, const char **argv)
         // an exception is thrown by the track method if
         //  - dot is lost
         //  - the number of pixel is too small
-        //  - too many pixels are detected (this is usual when a "big"
-        //  specularity
+        //  - too many pixels are detected (this is usual when a "big" specularity
         //    occurs. The threshold can be modified using the
         //    setMaxDotSize() method
         d[i].track(I, cog[i]);
@@ -420,26 +412,26 @@ int main(int argc, const char **argv)
       }
     }
     else {
-      cog[0].set_u(194);
-      cog[0].set_v(88);
+      cog[0].set_u(192.9);
+      cog[0].set_v(86.7);
       d[0].initTracking(I, cog[0]);
       d[0].track(I, cog[0]);
       vpDisplay::flush(I);
 
-      cog[1].set_u(225);
-      cog[1].set_v(84);
+      cog[1].set_u(239.6);
+      cog[1].set_v(83.4);
       d[1].initTracking(I, cog[1]);
       d[1].track(I, cog[1]);
       vpDisplay::flush(I);
 
-      cog[2].set_u(242);
-      cog[2].set_v(114);
+      cog[2].set_u(243.5);
+      cog[2].set_v(128.5);
       d[2].initTracking(I, cog[2]);
       d[2].track(I, cog[2]);
       vpDisplay::flush(I);
 
-      cog[3].set_u(212);
-      cog[3].set_v(131);
+      cog[3].set_u(196.4);
+      cog[3].set_v(131.7);
       d[3].initTracking(I, cog[3]);
       d[3].track(I, cog[3]);
       vpDisplay::flush(I);
@@ -491,9 +483,9 @@ int main(int argc, const char **argv)
     // we set the 3D points coordinates (in meter !) in the object/world frame
     double L = 0.04;
     P[0].setWorldCoordinates(-L, -L, 0); // (X,Y,Z)
-    P[1].setWorldCoordinates(L, -L, 0);
-    P[2].setWorldCoordinates(L, L, 0);
-    P[3].setWorldCoordinates(-L, L, 0);
+    P[1].setWorldCoordinates(+L, -L, 0);
+    P[2].setWorldCoordinates(+L, +L, 0);
+    P[3].setWorldCoordinates(-L, +L, 0);
 
     // set the camera intrinsic parameters
     // see more details about the model in vpCameraParameters
@@ -549,6 +541,7 @@ int main(int argc, const char **argv)
         filename = vpIoTools::formatString(opt_ppath, iter);
       }
 
+      std::cout << "Read image: " << filename << std::endl;
       // read the image
       vpImageIo::read(I, filename);
       if (opt_display) {
@@ -590,7 +583,9 @@ int main(int argc, const char **argv)
         pose.display(I, cMo, cam, 0.05, vpColor::none);
 
         vpDisplay::flush(I);
-        vpTime::wait(40);
+        if (opt_click_allowed) {
+          vpTime::wait(40);
+        }
       }
 
       // Covariance Matrix Display
@@ -604,7 +599,9 @@ int main(int argc, const char **argv)
     if (opt_display) {
       vpDisplay::displayText(I, 20, 20, "Click to quit", vpColor::red);
       vpDisplay::flush(I);
-      vpDisplay::getClick(I);
+      if (opt_click_allowed) {
+        vpDisplay::getClick(I);
+      }
     }
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
     if (display != nullptr) {
