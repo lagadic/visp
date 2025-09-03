@@ -54,7 +54,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 
-#if defined(VISP_HAVE_DISPLAY) &&       \
+#if defined(VISP_HAVE_DISPLAY) && \
     (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
 
 #include <visp3/core/vpImage.h>
@@ -71,7 +71,7 @@
 #include <visp3/vision/vpPose.h>
 
 // List of allowed command line options
-#define GETOPTARGS "cdi:p:hf:l:s:t"
+#define GETOPTARGS "cdi:p:hf:l:s:"
 
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;
@@ -109,7 +109,7 @@ Test dot tracking.\n\
 \n\
 SYNOPSIS\n\
   %s [-i <input image path>] [-p <personal image path>]\n\
-     [-f <first image>] [-l <last image>] [-s <step>][-c] [-d] [-t] [-h]\n",
+     [-f <first image>] [-l <last image>] [-s <step>][-c] [-d] [-h]\n",
           name);
 
   fprintf(stdout, "\n\
@@ -146,10 +146,6 @@ OPTIONS:                                               Default\n\
   -d \n\
      Turn off the display.\n\
 \n\
-  -t \n\
-     Turn off waiting 40ms after each image, running\n\
-     this example as fast as possible.\n\
-\n\
   -h\n\
      Print the help.\n",
           ipath.c_str(), ext.c_str(), ppath.c_str(), ext.c_str(), first, last, step);
@@ -179,7 +175,7 @@ OPTIONS:                                               Default\n\
 
 */
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath, unsigned &first, unsigned &last,
-                unsigned &step, bool &click_allowed, bool &display, bool &wait)
+                unsigned &step, bool &click_allowed, bool &display)
 {
   const char *optarg_;
   int c;
@@ -206,9 +202,6 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
       break;
     case 's':
       step = static_cast<unsigned int>(atoi(optarg_));
-      break;
-    case 't':
-      wait = false;
       break;
     case 'h':
       usage(argv[0], nullptr, ipath, ppath, first, last, step);
@@ -252,7 +245,6 @@ int main(int argc, const char **argv)
     unsigned opt_step = 1;
     bool opt_click_allowed = true;
     bool opt_display = true;
-    bool opt_wait = true;
     int i;
 
 #if defined(VISP_HAVE_DATASET)
@@ -265,7 +257,6 @@ int main(int argc, const char **argv)
     // We suppose that the user will download a recent dataset
     std::string ext("png");
 #endif
-
 
     std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << "  poseVirtualVS.cpp" << std::endl << std::endl;
@@ -286,7 +277,7 @@ int main(int argc, const char **argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_ipath, opt_ppath, opt_first, opt_last, opt_step, opt_click_allowed,
-                   opt_display, opt_wait) == false) {
+                   opt_display) == false) {
       return EXIT_FAILURE;
     }
 
@@ -413,8 +404,7 @@ int main(int argc, const char **argv)
         // an exception is thrown by the track method if
         //  - dot is lost
         //  - the number of pixel is too small
-        //  - too many pixels are detected (this is usual when a "big"
-        //  specularity
+        //  - too many pixels are detected (this is usual when a "big" specularity
         //    occurs. The threshold can be modified using the
         //    setMaxDotSize() method
         d[i].track(I, cog[i]);
@@ -593,7 +583,7 @@ int main(int argc, const char **argv)
         pose.display(I, cMo, cam, 0.05, vpColor::none);
 
         vpDisplay::flush(I);
-        if (opt_wait) {
+        if (opt_click_allowed) {
           vpTime::wait(40);
         }
       }
@@ -609,7 +599,7 @@ int main(int argc, const char **argv)
     if (opt_display) {
       vpDisplay::displayText(I, 20, 20, "Click to quit", vpColor::red);
       vpDisplay::flush(I);
-      if (opt_wait) {
+      if (opt_click_allowed) {
         vpDisplay::getClick(I);
       }
     }
