@@ -206,6 +206,8 @@ int main(const int argc, const char *argv[])
     plot->setLegend(3, 1, "Measure");
     plot->setLegend(3, 2, "Filtered");
   }
+#else
+  (void)opt_useDisplay;
 #endif
 
   // Initialize measurement noise
