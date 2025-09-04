@@ -49,8 +49,8 @@ ViSP 3.x.x (Version in development)
     . Update tinyexr 3rdparty to 1.0.9 release
     . Update stb_image 3rdparty to 2.30 version
     . Update Catch2 3rdparty to 3.8.0 version
-    . Add compatibility with Yolo v11 in vpDetectorDNNOpenCV a wrapper over the OpenCV DNN module that allows
-      to detect objects
+    . Add compatibility with Yolo v11 and Yolo v12 in vpDetectorDNNOpenCV a wrapper over the OpenCV DNN module that
+      allows to detect objects
     . Introduce compat with Ogre 1.12.0 version
     . Compat with mavsdk 3.0.0
     . Introduce material to build and install ViSP from source with Pixi
@@ -142,8 +142,11 @@ ViSP 3.x.x (Version in development)
     . [#1708] Build of visp_pololu fails on FreeBSD
     . [#1711] CMake error around nlohmann_json detection on FreeBSD
     . [#1713] CMake error with PCL 1.15.0 and VTK 9.5.0 on FreeBSD 14.2
-    . [#1718] SEGFAULT in vpMbtMeEllipse
+    . [#1719] SEGFAULT in vpMbtMeEllipse
     . [#1723] Unable to use a .cao model that only loads other .cao files
+    . [#1737] Unable to build a project with visp installed using brew
+    . [#1755] Segfault when parsing an mpeg video with videoReader example with OpenCV 4.12.0 and OpenCV 4.13.0
+      third-party
 ----------------------------------------------
 ViSP 3.6.0 (released September 22, 2023)
   - Contributors:
