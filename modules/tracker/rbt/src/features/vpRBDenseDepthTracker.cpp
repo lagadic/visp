@@ -184,37 +184,13 @@ void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &frame,
     m_covWeightDiag = 0.0;
     return;
   }
-  m_depthPointSet.update(cMo);
-  m_depthPointSet.errorAndInteraction(m_error, m_L);
-#ifdef VISP_DEBUG_RB_DEPTH_DENSE_TRACKER
-  if (!vpArray2D<double>::isFinite(m_error) || !vpArray2D<double>::isFinite(m_L)) {
-    std::cerr << "Depth tracker has a non finite error!" << std::endl;
-    std::cerr << m_error << std::endl;
-    std::cerr << "Points object" << std::endl;
-    std::cerr << m_depthPointSet.getPointsObject() << std::endl;
 
-    std::cerr << "Normals object" << std::endl;
-    std::cerr << m_depthPointSet.getNormalsObject() << std::endl;
+  m_depthPointSet.updateAndErrorAndInteractionMatrix(frame.cam, cMo, frame.depth, m_error, m_L);
 
-    std::cerr << "Points camera" << std::endl;
-    std::cerr << m_depthPointSet.getPointsCamera() << std::endl;
-
-    std::cerr << "Normals camera" << std::endl;
-    std::cerr << m_depthPointSet.getNormalsCamera() << std::endl;
-    throw vpException(vpException::badValue, "Invalid values in depth tracker");
-}
-#endif
-
-  //m_weights = 0.0;
   m_robust.setMinMedianAbsoluteDeviation((frame.renders.zFar - frame.renders.zNear) * 0.01);
   m_robust.MEstimator(vpRobust::TUKEY, m_error, m_weights);
 
-#ifdef VISP_DEBUG_RB_DEPTH_DENSE_TRACKER
-  if (!vpArray2D<double>::isFinite(m_weights)) {
-    std::cerr << "Depth tracker has invalid weights!" << std::endl;
-    throw vpException(vpException::badValue, "Invalid values in depth tracker");
-  }
-#endif
+
 
   for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
     m_weighted_error[i] = m_error[i] * m_weights[i];
