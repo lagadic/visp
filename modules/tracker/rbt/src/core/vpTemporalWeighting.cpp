@@ -1,5 +1,7 @@
 #include <visp3/rbt/vpTemporalWeighting.h>
 
+#include <cmath>
+
 #if defined(VISP_HAVE_NLOHMANN_JSON)
 #include VISP_NLOHMANN_JSON(json.hpp)
 #endif
