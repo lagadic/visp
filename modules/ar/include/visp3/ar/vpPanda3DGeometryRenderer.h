@@ -88,6 +88,8 @@ public:
 
   PointerTo<GraphicsOutput> getMainOutputBuffer() VP_OVERRIDE { return m_normalDepthBuffer; }
 
+  bool isFastAndApproximateRendering() const { return m_fast; }
+
 
 protected:
   void setupScene() VP_OVERRIDE;

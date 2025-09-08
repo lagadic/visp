@@ -42,6 +42,8 @@
 #include <visp3/core/vpRect.h>
 #include <visp3/ar/vpPanda3DPostProcessFilter.h>
 
+#include <visp3/ar/vpPanda3DGeometryRenderer.h>
+
 BEGIN_VISP_NAMESPACE
 /**
  *
@@ -72,7 +74,7 @@ private:
 class VISP_EXPORT vpPanda3DDepthCannyFilter : public vpPanda3DPostProcessFilter
 {
 public:
-  vpPanda3DDepthCannyFilter(const std::string &name, std::shared_ptr<vpPanda3DBaseRenderer> inputRenderer, bool isOutput, float edgeThreshold);
+  vpPanda3DDepthCannyFilter(const std::string &name, std::shared_ptr<vpPanda3DGeometryRenderer> inputRenderer, bool isOutput, float edgeThreshold);
   FrameBufferProperties getBufferProperties() const VP_OVERRIDE;
   PointerTo<Texture> setupTexture(const FrameBufferProperties &fbp) const VP_OVERRIDE;
   void getRender(vpImage<float> &I, vpImage<unsigned char> &valid) const;
@@ -86,6 +88,7 @@ protected:
 private:
   static const std::string FRAGMENT_SHADER;
   float m_edgeThreshold;
+  bool m_inputIsFast;
 };
 
 END_VISP_NAMESPACE

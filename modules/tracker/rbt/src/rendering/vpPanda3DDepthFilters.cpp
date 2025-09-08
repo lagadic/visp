@@ -28,8 +28,8 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include <visp3/ar/vpPanda3DGeometryRenderer.h>
 #include <visp3/rbt/vpPanda3DDepthFilters.h>
-
 #if defined(VISP_HAVE_PANDA3D)
 
 #include "graphicsOutput.h"
@@ -161,8 +161,8 @@ const std::string vpPanda3DDepthCannyFilter::FRAGMENT_SHADER =
 "  }\n"
 "}\n";
 
-vpPanda3DDepthCannyFilter::vpPanda3DDepthCannyFilter(const std::string &name, std::shared_ptr<vpPanda3DBaseRenderer> inputRenderer, bool isOutput, float edgeThreshold)
-  : vpPanda3DPostProcessFilter(name, inputRenderer, isOutput, vpPanda3DDepthCannyFilter::FRAGMENT_SHADER), m_edgeThreshold(edgeThreshold)
+vpPanda3DDepthCannyFilter::vpPanda3DDepthCannyFilter(const std::string &name, std::shared_ptr<vpPanda3DGeometryRenderer> inputRenderer, bool isOutput, float edgeThreshold)
+  : vpPanda3DPostProcessFilter(name, inputRenderer, isOutput, vpPanda3DDepthCannyFilter::FRAGMENT_SHADER), m_edgeThreshold(edgeThreshold), m_inputIsFast(inputRenderer->isFastAndApproximateRendering())
 { }
 
 void vpPanda3DDepthCannyFilter::setupScene()
@@ -173,8 +173,10 @@ void vpPanda3DDepthCannyFilter::setupScene()
 
 void vpPanda3DDepthCannyFilter::setEdgeThreshold(float edgeThreshold)
 {
+
   m_edgeThreshold = edgeThreshold;
-  m_renderRoot.set_shader_input("edgeThreshold", LVector2f(m_edgeThreshold));
+  float shaderValue = m_inputIsFast ? m_edgeThreshold / m_renderParameters.getFarClippingDistance() : m_edgeThreshold;
+  m_renderRoot.set_shader_input("edgeThreshold", LVector2f(shaderValue));
 }
 
 FrameBufferProperties vpPanda3DDepthCannyFilter::getBufferProperties() const
