@@ -633,6 +633,8 @@ int main(const int argc, const char *argv[])
     plot->setLegend(0, 0, "GT");
     plot->setLegend(0, 1, "Filtered");
   }
+#else
+  (void)opt_useDisplay;
 #endif
 
   // Initialize the simulation

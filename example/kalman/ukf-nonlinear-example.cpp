@@ -322,7 +322,7 @@ int main(const int argc, const char *argv[])
       std::cout << "  -d" << std::endl;
       std::cout << "    Deactivate display." << std::endl;
       std::cout << "  -c" << std::endl;
-      std::cout << "    Deactivate user interaction." << std::endl;      
+      std::cout << "    Deactivate user interaction." << std::endl;
       std::cout << std::endl;
       std::cout << "  -h, --help" << std::endl;
       return 0;
@@ -413,6 +413,8 @@ int main(const int argc, const char *argv[])
     plot->setLegend(3, 0, "GT");
     plot->setLegend(3, 1, "Filtered");
   }
+#else
+  (void)opt_useDisplay;
 #endif
 
   // Initialize the simulation
