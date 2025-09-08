@@ -55,6 +55,7 @@ class vpRBFeatureTrackerInput;
 class VISP_EXPORT vpObjectMask
 {
 public:
+  vpObjectMask() { }
   virtual ~vpObjectMask() = default;
   virtual void updateMask(const vpRBFeatureTrackerInput &frame,
                           const vpRBFeatureTrackerInput &previousFrame,

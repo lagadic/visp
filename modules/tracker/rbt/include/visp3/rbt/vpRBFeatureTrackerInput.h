@@ -58,6 +58,7 @@ struct VISP_EXPORT vpRBRenderData
   vpImage<float> silhouetteCanny; //! Image containing the orientation of the gradients
   vpImage<unsigned char> isSilhouette; //! Binary image indicating whether a given pixel is part of the silhouette
   double zNear, zFar; // clipping values
+  double objectDiameter; // Object diameter
   vpRect boundingBox;
   vpHomogeneousMatrix cMo; //! Pose of the object in the camera frame for which the renders were generated.
 
@@ -80,6 +81,7 @@ struct VISP_EXPORT vpRBRenderData
     color = o.color;
     silhouetteCanny = o.silhouetteCanny;
     isSilhouette = o.isSilhouette;
+    objectDiameter = o.objectDiameter;
     zNear = o.zNear;
     zFar = o.zFar;
     boundingBox = o.boundingBox;
@@ -94,6 +96,7 @@ struct VISP_EXPORT vpRBRenderData
     color = std::move(o.color);
     silhouetteCanny = std::move(o.silhouetteCanny);
     isSilhouette = std::move(o.isSilhouette);
+    objectDiameter = std::move(o.objectDiameter);
     zNear = std::move(o.zNear);
     zFar = std::move(o.zFar);
     boundingBox = std::move(o.boundingBox);

@@ -532,6 +532,13 @@ void vpRBTracker::updateRender(vpRBFeatureTrackerInput &frame, const vpHomogeneo
   m_renderer.computeClipping(clipNear, clipFar);
   frame.renders.zNear = std::max(0.001f, clipNear);
   frame.renders.zFar = clipFar;
+
+  {
+    vpTranslationVector tMin, tMax;
+    m_renderer.get3DExtents(tMin, tMax);
+    double diameter = (tMax - tMin).frobeniusNorm();
+    frame.renders.objectDiameter = diameter;
+  }
   m_rendererSettings.setClippingDistance(frame.renders.zNear, frame.renders.zFar);
   m_renderer.setRenderParameters(m_rendererSettings);
 
