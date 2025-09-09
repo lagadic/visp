@@ -28,43 +28,37 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include <visp3/rbt/vpObjectMaskFactory.h>
-#include <visp3/rbt/vpColorHistogramMask.h>
-#include <visp3/rbt/vpDepthMask.h>
 #include <visp3/rbt/vpCombinedDepthAndColorMask.h>
 
+#include <visp3/rbt/vpRBFeatureTrackerInput.h>
 
+#if defined(VISP_HAVE_NLOHMANN_JSON)
+#include VISP_NLOHMANN_JSON(json.hpp)
+#endif
 
 BEGIN_VISP_NAMESPACE
 
-#if defined(_WIN32)
-template class VISP_EXPORT vpDynamicFactory<vpObjectMask>;
-#endif
-
-vpObjectMaskFactory::vpObjectMaskFactory()
+void vpCombinedDepthAndColorMask::updateMask(const vpRBFeatureTrackerInput &frame,
+                                      const vpRBFeatureTrackerInput &previousFrame,
+                                      vpImage<float> &mask)
 {
-#ifdef VISP_HAVE_NLOHMANN_JSON
+  m_colorMask.updateMask(frame, previousFrame, m_color);
+  m_depthMask.updateMask(frame, previousFrame, m_depth);
+  mask.resize(m_color.getHeight(), m_color.getWidth());
 
-  setJsonKeyFinder([](const nlohmann::json &j) -> std::string {
-    return j.at("type");
-  });
-
-  registerType("histogram", [](const nlohmann::json &j) {
-    std::shared_ptr<vpColorHistogramMask> p(new vpColorHistogramMask());
-    p->loadJsonConfiguration(j);
-    return p;
-  });
-  registerType("depth", [](const nlohmann::json &j) {
-    std::shared_ptr<vpDepthMask> p(new vpDepthMask());
-    p->loadJsonConfiguration(j);
-    return p;
-  });
-  registerType("joint", [](const nlohmann::json &j) {
-    std::shared_ptr<vpCombinedDepthAndColorMask> p(new vpCombinedDepthAndColorMask());
-    p->loadJsonConfiguration(j);
-    return p;
-  });
-#endif
+#pragma omp parallel for
+  for (unsigned int i = 0; i < m_color.getSize(); ++i) {
+    mask.bitmap[i] = std::min(m_color.bitmap[i], m_depth.bitmap[i]);
+  }
 }
+
+#if defined(VISP_HAVE_NLOHMANN_JSON)
+void vpCombinedDepthAndColorMask::loadJsonConfiguration(const nlohmann::json &json)
+{
+  m_colorMask.loadJsonConfiguration(json["color"]);
+  m_depthMask.loadJsonConfiguration(json["depth"]);
+
+}
+#endif
 
 END_VISP_NAMESPACE

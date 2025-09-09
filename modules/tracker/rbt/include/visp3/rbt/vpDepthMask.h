@@ -28,43 +28,52 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include <visp3/rbt/vpObjectMaskFactory.h>
-#include <visp3/rbt/vpColorHistogramMask.h>
-#include <visp3/rbt/vpDepthMask.h>
-#include <visp3/rbt/vpCombinedDepthAndColorMask.h>
+/*!
+  \file vpColorHistogramMask.h
+  \brief Object mask estimation through global foreground/background color histogram representations
+*/
+#ifndef VP_DEPTH_MASK_H
+#define VP_DEPTH_MASK_H
 
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpException.h>
+#include <visp3/rbt/vpObjectMask.h>
+#include <visp3/core/vpDisplay.h>
+#include <visp3/core/vpImage.h>
 
+#ifdef VISP_HAVE_NLOHMANN_JSON
+#include VISP_NLOHMANN_JSON(json_fwd.hpp)
+#endif
 
 BEGIN_VISP_NAMESPACE
 
-#if defined(_WIN32)
-template class VISP_EXPORT vpDynamicFactory<vpObjectMask>;
-#endif
+class vpRBFeatureTrackerInput;
 
-vpObjectMaskFactory::vpObjectMaskFactory()
+/**
+ * \brief A color histogram based segmentation algorithm.
+ * \ingroup group_rbt_mask
+*/
+class VISP_EXPORT vpDepthMask : public vpObjectMask
 {
-#ifdef VISP_HAVE_NLOHMANN_JSON
+public:
+  vpDepthMask() { }
+  virtual ~vpDepthMask() = default;
 
-  setJsonKeyFinder([](const nlohmann::json &j) -> std::string {
-    return j.at("type");
-  });
+  void updateMask(const vpRBFeatureTrackerInput &frame,
+                  const vpRBFeatureTrackerInput &previousFrame,
+                  vpImage<float> &mask) VP_OVERRIDE;
 
-  registerType("histogram", [](const nlohmann::json &j) {
-    std::shared_ptr<vpColorHistogramMask> p(new vpColorHistogramMask());
-    p->loadJsonConfiguration(j);
-    return p;
-  });
-  registerType("depth", [](const nlohmann::json &j) {
-    std::shared_ptr<vpDepthMask> p(new vpDepthMask());
-    p->loadJsonConfiguration(j);
-    return p;
-  });
-  registerType("joint", [](const nlohmann::json &j) {
-    std::shared_ptr<vpCombinedDepthAndColorMask> p(new vpCombinedDepthAndColorMask());
-    p->loadJsonConfiguration(j);
-    return p;
-  });
+  virtual void reset() VP_OVERRIDE
+  { }
+
+#if defined(VISP_HAVE_NLOHMANN_JSON)
+  void loadJsonConfiguration(const nlohmann::json &json) VP_OVERRIDE;
 #endif
-}
+
+private:
+
+};
 
 END_VISP_NAMESPACE
+
+#endif
