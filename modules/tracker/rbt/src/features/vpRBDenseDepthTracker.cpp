@@ -213,7 +213,7 @@ void vpRBDenseDepthTracker::display(const vpCameraParameters &/*cam*/, const vpI
   {
     for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
       vpColor c(0, 255, 0);
-      vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos[0], m_depthPoints[i].pixelPos[1], c, 2);
+      vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos[0], m_depthPoints[i].pixelPos[1], c, 1);
     }
     break;
   }
@@ -221,7 +221,7 @@ void vpRBDenseDepthTracker::display(const vpCameraParameters &/*cam*/, const vpI
   {
     for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
       vpColor c(0, static_cast<unsigned char>(m_weights[i] * 255), 0);
-      vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos[0], m_depthPoints[i].pixelPos[1], c, 2);
+      vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos[0], m_depthPoints[i].pixelPos[1], c, 1);
     }
     break;
   }
@@ -230,7 +230,7 @@ void vpRBDenseDepthTracker::display(const vpCameraParameters &/*cam*/, const vpI
     double maxError = m_error.getMaxValue();
     for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
       vpColor c(static_cast<unsigned int>((m_error[i] / maxError) * 255), 0, 0);
-      vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos[0], m_depthPoints[i].pixelPos[1], c, 2);
+      vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos[0], m_depthPoints[i].pixelPos[1], c, 1);
     }
     break;
   }
@@ -239,7 +239,7 @@ void vpRBDenseDepthTracker::display(const vpCameraParameters &/*cam*/, const vpI
     double maxError = m_error.getMaxValue();
     for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
       vpColor c(static_cast<unsigned int>((m_error[i] / maxError) * 255.0), static_cast<unsigned char>(m_weights[i] * 255), 0);
-      vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos[0], m_depthPoints[i].pixelPos[1], c, 2);
+      vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos[0], m_depthPoints[i].pixelPos[1], c, 1);
     }
     break;
   }
