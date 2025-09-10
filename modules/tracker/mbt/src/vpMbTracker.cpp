@@ -633,7 +633,7 @@ void vpMbTracker::loadInitFile(const std::string &init_file, std::vector<std::st
     throw vpException(vpException::ioError, "Cannot open model-based tracker init file %s", init_file.c_str());
   }
   // skip lines starting with # as comment
-  removeComment(finit);
+  removeCommentsAndEmptyLines(finit);
 
   vectorOfInitFilename.push_back(init_file);
 
@@ -648,6 +648,7 @@ void vpMbTracker::loadInitFile(const std::string &init_file, std::vector<std::st
   while ((c == 'l') || (c == 'L')) {
     getline(finit, line);
 
+    // Test if "load" keyword is found
     if (!line.compare(0, prefix_load.size(), prefix_load)) {
       // remove "load("
       std::string paramsStr = line.substr(5);
@@ -771,7 +772,7 @@ void vpMbTracker::loadInitFile(const std::string &init_file, std::vector<std::st
       }
     }
     try {
-      removeComment(finit);
+      removeCommentsAndEmptyLines(finit);
     }
     catch (...) {
       if (finit.eof()) {
@@ -809,7 +810,7 @@ void vpMbTracker::loadInitFile(const std::string &init_file, std::vector<std::st
   vpPoint P;
   for (unsigned int i = 0; i < nb_points; i++) {
     // skip lines starting with # as comment
-    removeComment(finit);
+    removeCommentsAndEmptyLines(finit);
 
     vpColVector pt_3d(4, 1.0);
     finit >> pt_3d[0];
@@ -1817,13 +1818,19 @@ void vpMbTracker::loadVRMLModel(const std::string &modelFile)
 #endif
 }
 
-void vpMbTracker::removeComment(std::ifstream &fileId)
+/*!
+ * Skip lines starting with # as comment or empty lines
+ * @param fileId : File id.
+ */
+void vpMbTracker::removeCommentsAndEmptyLines(std::ifstream &fileId)
 {
   char c;
 
   fileId.get(c);
-  while (!fileId.fail() && (c == '#')) {
-    fileId.ignore(std::numeric_limits<std::streamsize>::max(), fileId.widen('\n'));
+  while (!fileId.fail() && ((c == '#') || (c == '\n') || (c == '\r'))) {
+    if (c == '#') {
+      fileId.ignore(std::numeric_limits<std::streamsize>::max(), fileId.widen('\n'));
+    }
     fileId.get(c);
   }
   if (fileId.fail()) {
@@ -1953,10 +1960,8 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
   try {
     char c;
-    // Extraction of the version (remove empty line and commented ones
-    // (comment line begin with the #)).
-    // while ((fileId.get(c) != nullptr) && (c == '#')) fileId.ignore(256, '\n');
-    removeComment(fileId);
+    // Extraction of the version (remove empty line and commented ones (a commented line begin with the #)).
+    removeCommentsAndEmptyLines(fileId);
 
     //////////////////////////Read CAO Version (V1, V2,...)//////////////////////////
     int caoVersion;
@@ -1972,7 +1977,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
                                                "header file : use V0, V1, ...");
     }
 
-    removeComment(fileId);
+    removeCommentsAndEmptyLines(fileId);
 
     //////////////////////////Read the header part if present//////////////////////////
     std::string line;
@@ -1984,6 +1989,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
     while ((c == 'l') || (c == 'L')) {
       getline(fileId, line);
 
+      // Test if "load" keyword is found
       if (!line.compare(0, prefix_load.size(), prefix_load)) {
         // remove "load("
         std::string paramsStr = line.substr(5);
@@ -2108,7 +2114,10 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
         }
       }
       try {
-        removeComment(fileId);
+        removeCommentsAndEmptyLines(fileId);
+        if (fileId.eof()) {
+          return;
+        }
       }
       catch (...) {
         if (fileId.eof()) {
@@ -2144,7 +2153,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
     std::vector<vpPoint> caoPoints(caoNbrPoint);
 
     for (unsigned int k = 0; k < caoNbrPoint; k++) {
-      removeComment(fileId);
+      removeCommentsAndEmptyLines(fileId);
 
       vpColVector pt_3d(4, 1.0);
       fileId >> pt_3d[0];
@@ -2164,7 +2173,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
       caoPoints[k].setWorldCoordinates(pt_3d_tf[0], pt_3d_tf[1], pt_3d_tf[2]);
     }
 
-    removeComment(fileId);
+    removeCommentsAndEmptyLines(fileId);
 
     //////////////////////////Read the segment declaration part//////////////////////////
     // Store in a map the potential segments to add
@@ -2196,7 +2205,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
     int idFace = startIdFace;
 
     for (unsigned int k = 0; k < caoNbrLine; k++) {
-      removeComment(fileId);
+      removeCommentsAndEmptyLines(fileId);
 
       fileId >> index1;
       fileId >> index2;
@@ -2244,7 +2253,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
       }
     }
 
-    removeComment(fileId);
+    removeCommentsAndEmptyLines(fileId);
 
     //////////////////////////Read the face segment declaration part//////////////////////////
     /* Load polygon from the lines extracted earlier (the first point of the
@@ -2271,7 +2280,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
     unsigned int index;
     for (unsigned int k = 0; k < caoNbrPolygonLine; k++) {
-      removeComment(fileId);
+      removeCommentsAndEmptyLines(fileId);
 
       unsigned int nbLinePol;
       fileId >> nbLinePol;
@@ -2338,7 +2347,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
       }
     }
 
-    removeComment(fileId);
+    removeCommentsAndEmptyLines(fileId);
 
     //////////////////////////Read the face point declaration part//////////////////////////
     /* Extract the polygon using the point coordinates (top of the file) */
@@ -2360,7 +2369,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
     }
 
     for (unsigned int k = 0; k < caoNbrPolygonPoint; k++) {
-      removeComment(fileId);
+      removeCommentsAndEmptyLines(fileId);
 
       unsigned int nbPointPol;
       fileId >> nbPointPol;
@@ -2409,7 +2418,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
     //////////////////////////Read the cylinder declaration part//////////////////////////
     unsigned int caoNbCylinder;
     try {
-      removeComment(fileId);
+      removeCommentsAndEmptyLines(fileId);
 
       if (fileId.eof()) { // check if not at the end of the file (for old style files)
         return;
@@ -2433,7 +2442,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
       }
 
       for (unsigned int k = 0; k < caoNbCylinder; ++k) {
-        removeComment(fileId);
+        removeCommentsAndEmptyLines(fileId);
 
         double radius;
         unsigned int indexP1, indexP2;
@@ -2489,7 +2498,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
     //////////////////////////Read the circle declaration part//////////////////////////
     unsigned int caoNbCircle;
     try {
-      removeComment(fileId);
+      removeCommentsAndEmptyLines(fileId);
 
       if (fileId.eof()) { // check if not at the end of the file (for old
                           // style files)
@@ -2524,7 +2533,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
         }
 
         for (unsigned int k = 0; k < caoNbCircle; ++k) {
-          removeComment(fileId);
+          removeCommentsAndEmptyLines(fileId);
 
           double radius;
           unsigned int indexP1, indexP2, indexP3;
