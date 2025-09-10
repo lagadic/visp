@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -492,6 +492,71 @@ TEST_CASE("Quaternion multiplication", "[quaternion]")
       }
     }
   }
+}
+
+TEST_CASE("Default constructor", "[rotation matrix]")
+{
+  vpRotationMatrix I;
+  SECTION("rotation matrix")
+  {
+    CHECK(vpRotationMatrix(I) == I);
+  }
+  SECTION("homogeneous matrix")
+  {
+    vpHomogeneousMatrix M;
+    CHECK(vpRotationMatrix(M) == I);
+  }
+  SECTION("theta-u vector")
+  {
+    vpThetaUVector tu;
+    CHECK(vpRotationMatrix(tu) == I);
+  }
+  SECTION("pose vector")
+  {
+    vpPoseVector p;
+    CHECK(vpRotationMatrix(p) == I);
+  }
+  SECTION("r-zyz vector")
+  {
+    vpRzyzVector rzyz;
+    CHECK(vpRotationMatrix(rzyz) == I);
+  }
+  SECTION("r-xyz vector")
+  {
+    vpRxyzVector rxyz;
+    CHECK(vpRotationMatrix(rxyz) == I);
+  }
+  SECTION("r-zyx vector")
+  {
+    vpRzyxVector rzyx;
+    CHECK(vpRotationMatrix(rzyx) == I);
+  }
+  SECTION("quaternion vector")
+  {
+    vpQuaternionVector q;
+    CHECK(vpRotationMatrix(q) == I);
+  }
+  SECTION("matrix I")
+  {
+    vpMatrix II(3, 3);
+    II[0][0] = II[1][1] = II[2][2] = 1.0;
+    CHECK(vpRotationMatrix(II) == I);
+  }
+  SECTION("theta-u angles")
+  {
+    CHECK(vpRotationMatrix(0., 0., 0.) == I);
+  }
+  SECTION("rotation matrix ")
+  {
+    CHECK(vpRotationMatrix(0., 0., 0.) == I);
+  }
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  SECTION("rotation matrix with initializer list")
+  {
+    vpRotationMatrix R { 1, 0, 0, 0, 1, 0, 0, 0, 1 };
+    CHECK(R == I);
+  }
+#endif
 }
 
 int main(int argc, char *argv[])
