@@ -55,7 +55,7 @@ void vpObjectCentricRenderer::beforeFrameRendered()
   }
   m_bb = computeBoundingBox();
 
-  double delta = 0.0;
+  double delta = 3.0;
   m_bb.setTop(std::max(m_bb.getTop() - delta, 0.0));
   m_bb.setLeft(std::max(m_bb.getLeft() - delta, 0.0));
   m_bb.setBottom(std::min(m_bb.getBottom() + delta, static_cast<double>(m_renderParameters.getImageHeight())));
