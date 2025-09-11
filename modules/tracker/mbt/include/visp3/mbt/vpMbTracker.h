@@ -910,7 +910,7 @@ protected:
   void projectionErrorResetMovingEdges();
   void projectionErrorVisibleFace(unsigned int width, unsigned int height, const vpHomogeneousMatrix &_cMo);
 
-  void removeComment(std::ifstream &fileId);
+  void removeCommentsAndEmptyLines(std::ifstream &fileId);
 
   std::map<std::string, std::string> parseParameters(std::string &endLine);
 
