@@ -643,8 +643,35 @@ Example configuration:
 
 \section rbt_tracking_usage 5. Tracker usage
 
-We will now focus on an example usage of the tracker, using a Realsense camera. While we focus on this example, another
-one that uses prerecorded sequences is available in \ref rbt_tracking_examples section.
+\subsection rbt_tracking_usage_sequence 5.1. On prerecorded sequences
+
+In order to test the tracker, we provide a prerecorded sequence of images named `dragon.mp4` and the dragon object,
+whose CAD model file `dragon.bam` is provided in the ViSP source code.
+
+The result of tracking the dragon can be obtained by going to the build folder:
+
+\code{.sh}
+~/visp-build $ cd tutorial/tracking/render-based
+\endcode
+
+then launching:
+\code{.sh}
+$ ./tutorial-rbt-sequence --color data/dragon/dragon.mp4 --tracker data/dragon/dragon.json
+\endcode
+
+Note that:
+- The full code to track an offline, preregistered sequence is in tutorial-rbt-sequence.cpp
+- Parsing and display utils are given in render-based-tutorial-utils.h
+
+More explanation is provided in the next section.
+
+\subsection rbt_tracking_usage_realsense 5.2. With a realsense camera
+
+We will now focus on an other example usage of the tracker, using a Realsense camera.
+
+Note that:
+- The full code for this realsense-based tutorial is available in tutorial-rbt-realsense.cpp
+- Parsing and display utils are given in render-based-tutorial-utils.h
 
 To run the program, start by placing yourself in the ViSP build directory.
 Assuming you have compiled and built the tutorials, navigate to the tutorial folder:
@@ -763,7 +790,6 @@ The first, `--tracker` is the path to the .json configuration file, defined foll
 The second `--object`, is the path to the 3D model (in a format readable by the Panda3D engine).
 Alternatively, it can be specified in the .json file.
 
-
 Here, we will run the tutorial with the following arguments
 \verbatim
 ~/visp-build/tutorial-tracking/render-based $ ./tutorial-rbt-realsense \
@@ -778,8 +804,8 @@ The file `dragon_realsense.json` contains the following configuration:
 \warning Note that to perform your own tests, you will have to rebuild the tutorial-rbt-realsense every time you make
 a change to the .json file located in the source directory so that the changes are reflected in the build directory
 
-Let's now have a look at the tutorial code that will perform the tracking. The full code is given below in
-\ref rbt_tracking_examples.
+Let's now have a look at the tutorial code that will perform the tracking. We recall that the full code is given
+in tutorial-rbt-realsense.cpp.
 
 The code first starts by parsing the command line arguments, detailed above, using structures defined in
 render-based-tutorial-utils.h:
@@ -886,15 +912,9 @@ Running the tutorial with the **--verbose** flag will print timings for each par
 When the user has pressed left click, we exit the tracking loop and perform a small cleanup:
 \snippet tutorial-rbt-realsense.cpp Cleanup
 
-\section rbt_tracking_examples 6. Full tutorial examples
+\section rbt_troubleshooting 6. Troubleshooting issues
 
-- The full code for the realsense-based tutorial is available in tutorial-rbt-realsense.cpp
-- The full code to track an offline, preregistered sequence is in tutorial-rbt-sequence.cpp
-- Parsing and display utils are given in render-based-tutorial-utils.h
-
-\section rbt_troubleshooting 7. Troubleshooting issues
-
-\subsection rbt_slow 7.1. RBT performance are bad and cores are not used
+\subsection rbt_slow 6.1. RBT performance are bad and cores are not used
 
 One possible reason for this is that we make large use of OpenMP to parallelize and split the workload.
 An invalid OpenMP configuration may lead to a substantial loss in performance.
@@ -911,7 +931,7 @@ $ export GOMP_SPINCOUNT=0
 Note that this configuration will only be kept for the lifetime of your terminal and you may have to restore it the
 next time you start the tracker.
 
-\subsection rbt_panda_window 7.2. Cannot open window (hidden or visible)
+\subsection rbt_panda_window 6.2. Cannot open window (hidden or visible)
 
 This error can appear when calling vpRBTracker::startTracking().
 
@@ -950,13 +970,13 @@ In this case, you should either try to use the **p3headlessgl** backend or use a
 
 \warning Note that the RBT uses shaders that are compiled for OpenGL core 3.3.
 
-\section rbt_extension 8. Extending the RBT
+\section rbt_extension 7. Extending the RBT
 
 \warning This section is under construction and will be improved in the future!
 
-\subsection rbt_extension_features 8.1. Defining your own features
+\subsection rbt_extension_features 7.1. Defining your own features
 
-\subsection rbt_extension_factory_pattern 8.2. Registering your own component for JSON parsing
+\subsection rbt_extension_factory_pattern 7.2. Registering your own component for JSON parsing
 
 As seen in \ref rbt_tracking_config, the different components of the RBT pipeline can be parsed from a JSON
 configuration file. This requires a ViSP version that is built with the nlohmann::json third party
