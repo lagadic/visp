@@ -145,9 +145,11 @@ ViSP 3.x.x (Version in development)
     . [#1719] SEGFAULT in vpMbtMeEllipse
     . [#1723] Unable to use a .cao model that only loads other .cao files
     . [#1737] Unable to build a project with visp installed using brew
+    . [#1754] ViSP should not export MacOS SDK path
     . [#1755] Segfault when parsing an mpeg video with videoReader example with OpenCV 4.12.0 and OpenCV 4.13.0
       third-party
     . [#1764] The default constructor of the vpQuaternion class lead to an incorrect rotation matrix
+    . [#1765] Segfault when parsing .cao and/or .init files containing empty lines (MBT and RBT)
 ----------------------------------------------
 ViSP 3.6.0 (released September 22, 2023)
   - Contributors:
