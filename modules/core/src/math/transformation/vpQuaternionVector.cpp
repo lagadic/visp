@@ -48,8 +48,12 @@ const unsigned int vpQuaternionVector::constr_val_4 = 4;
   \brief Defines a quaternion and common operations on it.
 */
 
-/*! Default constructor that initialize all the 4 angles to zero. */
-vpQuaternionVector::vpQuaternionVector() : vpRotationVector(constr_val_4) { }
+/*! Default constructor that initialize to the identity quaternion. */
+vpQuaternionVector::vpQuaternionVector()
+  : vpRotationVector(constr_val_4)
+{
+  w() = 1.0;
+}
 
 //! Constructor from doubles.
 vpQuaternionVector::vpQuaternionVector(double x_, double y_, double z_, double w_) : vpRotationVector(constr_val_4)
