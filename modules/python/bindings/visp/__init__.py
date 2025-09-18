@@ -56,6 +56,7 @@ except ImportError:
   else:
     raise ImportError('Could not import ViSP python bindings')
 
+
 # Fake module names
 for k in cpp_extension_dict:
   from types import ModuleType
