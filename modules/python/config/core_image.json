@@ -282,6 +282,12 @@
         },
         {
           "static": true,
+          "signature": "void RGBaToGrey(unsigned char*, unsigned char*, unsigned int, unsigned int, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
           "signature": "void RGBToRGBa(unsigned char*, unsigned char*, unsigned int)",
           "ignore": true,
           "custom_implem": true
@@ -547,6 +553,12 @@
         {
           "static": true,
           "signature": "void BGRToGrey(unsigned char*, unsigned char*, unsigned int, unsigned int, bool, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void BGRaToGrey(unsigned char*, unsigned char*, unsigned int, unsigned int, bool, unsigned int)",
           "ignore": true,
           "custom_implem": true
         },
