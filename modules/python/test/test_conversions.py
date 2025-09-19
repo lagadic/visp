@@ -32,6 +32,29 @@ def test_hsv_to_rgb_rgba():
     case['fn'](hsv, rgb)
     assert not np.allclose(rgb, rgb_old)
 
+
+def test_bgr_to_grey():
+  h, w = 50, 50
+  I = np.empty((h, w, 3), dtype=np.uint8)
+  from visp.core import ImageGray
+  out = ImageGray(h, w)
+  ImageConvert.RGBToGrey(I, out)
+  out2 = np.empty((h,w), dtype=np.uint8)
+  ImageConvert.RGBToGrey(I, out2)
+  assert np.all(np.equal(out, out2))
+
+
+def test_bgr_to_rgba():
+  h, w = 50, 50
+  I = np.empty((h, w, 3), dtype=np.uint8)
+  from visp.core import ImageRGBa
+  out = ImageRGBa(h, w)
+  ImageConvert.BGRToRGBa(I, out)
+  out2 = np.empty((h, w, 4), dtype=np.uint8)
+  ImageConvert.BGRToRGBa(I, out2)
+  assert np.all(np.equal(out, out2))
+
+
 def test_rgb_rgba_to_hsv():
   h, w = 50, 50
   cases = [
@@ -62,6 +85,8 @@ def test_rgb_rgba_to_hsv():
     hsv_old = hsv.copy()
     case['fn'](rgb, hsv)
     assert not np.allclose(hsv, hsv_old)
+
+
 
 def test_demosaic():
   h, w = 32, 32

@@ -51,6 +51,16 @@
           "static": false,
           "signature": "vpArray2D<double>& operator=(vpArray2D<double>&&)",
           "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void view(vpArray2D<Type>&, Type*, unsigned int, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "vpArray2D<Type> view(Type*, unsigned int, unsigned int)",
+          "ignore": true
         }
       ]
     },
@@ -333,6 +343,16 @@
             ]
           ],
           "returns_ref_ok": true
+        },
+        {
+          "static": true,
+          "signature": "void view(vpColVector&, double*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "vpColVector view(double*, unsigned int)",
+          "ignore": true
         }
       ]
     },
@@ -403,6 +423,11 @@
             ]
           ],
           "returns_ref_ok": true
+        },
+        {
+          "static": true,
+          "signature": "vpRowVector view(double*, unsigned int)",
+          "ignore": true
         }
       ]
     },
@@ -494,6 +519,16 @@
         {
           "static": false,
           "signature": "vpMatrix& operator<<(double*)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "vpMatrix view(double*, unsigned int, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void view(vpMatrix&, double*, unsigned int, unsigned int)",
           "ignore": true
         }
       ]
