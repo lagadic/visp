@@ -69,7 +69,10 @@ struct SimpleConversionStruct
 {
   SimpleConversionStruct(const std::string &name, ConversionFn fn, unsigned int srcBytesPerPixel, unsigned int destBytesPerPixel) :
     name(name), fn(fn), srcBytesPerPixel(srcBytesPerPixel), destBytesPerPixel(destBytesPerPixel)
-  { }
+  {
+    std::cout << "src = " << srcBytesPerPixel << ", dest = " << destBytesPerPixel << std::endl;
+
+  }
   std::string name;
   ConversionFn fn;
   unsigned int srcBytesPerPixel;
@@ -77,37 +80,39 @@ struct SimpleConversionStruct
 
   void add_conversion_binding(py::class_<vpImageConvert, std::shared_ptr<vpImageConvert>> &pyImageConvert)
   {
-    pyImageConvert.def_static(name.c_str(), [this](py::array_t<unsigned char, py::array::c_style> &src,
-                                                   py::array_t<unsigned char, py::array::c_style> &dest) {
-                                                     py::buffer_info bufsrc = src.request(), bufdest = dest.request();
-                                                     if (bufsrc.ndim < 2 || bufdest.ndim < 2) {
-                                                       throw std::runtime_error("Expected to have src and dest arrays with at least two dimensions.");
-                                                     }
-                                                     if (bufsrc.shape[0] != bufdest.shape[0] || bufsrc.shape[1] != bufdest.shape[1]) {
-                                                       std::stringstream ss;
-                                                       ss << "src and dest must have the same number of pixels, but got src = " << shape_to_string(bufsrc.shape);
-                                                       ss << "and dest = " << shape_to_string(bufdest.shape);
-                                                       throw std::runtime_error(ss.str());
-                                                     }
-                                                     if (srcBytesPerPixel > 1 && (bufsrc.ndim != 3 || bufsrc.shape[2] != srcBytesPerPixel)) {
-                                                       std::stringstream ss;
-                                                       ss << "Source array should be a 3D array of shape (H, W, " << srcBytesPerPixel << ")";
-                                                       throw std::runtime_error(ss.str());
-                                                     }
-                                                     else if (srcBytesPerPixel == 1 && bufsrc.ndim == 3 && bufsrc.shape[2] > 1) {
-                                                       throw std::runtime_error("Source array should be a either a 2D array of shape H x W or a 3D array of shape (H, W, 1)");
-                                                     }
-                                                     if (destBytesPerPixel > 1 && (bufdest.ndim != 3 || bufdest.shape[2] != destBytesPerPixel)) {
-                                                       std::stringstream ss;
-                                                       ss << "Destination array should be a 3D array of shape (H, W, " << destBytesPerPixel << ")";
-                                                       throw std::runtime_error(ss.str());
-                                                     }
-                                                     else if (destBytesPerPixel == 1 && bufdest.ndim == 3 && bufdest.shape[2] > 1) {
-                                                       throw std::runtime_error("Destination should be a either a 2D array of shape H x W or a 3D array of shape (H, W, 1)");
-                                                     }
-                                                     unsigned char *src_ptr = static_cast<unsigned char *>(bufsrc.ptr);
-                                                     unsigned char *dest_ptr = static_cast<unsigned char *>(bufdest.ptr);
-                                                     call_conversion_fn(fn, src_ptr, dest_ptr, static_cast<unsigned int>(bufsrc.shape[0]), static_cast<unsigned int>(bufsrc.shape[1]));
+
+    pyImageConvert.def_static(name.c_str(), [*this](py::array_t<unsigned char, py::array::c_style> &src,
+                                                    py::array_t<unsigned char, py::array::c_style> &dest) {
+                                                      py::buffer_info bufsrc = src.request(), bufdest = dest.request();
+                                                      std::cout << "src = " << srcBytesPerPixel << ", dest = " << destBytesPerPixel << std::endl;
+                                                      if (bufsrc.ndim < 2 || bufdest.ndim < 2) {
+                                                        throw std::runtime_error("Expected to have src and dest arrays with at least two dimensions.");
+                                                      }
+                                                      if (bufsrc.shape[0] != bufdest.shape[0] || bufsrc.shape[1] != bufdest.shape[1]) {
+                                                        std::stringstream ss;
+                                                        ss << "src and dest must have the same number of pixels, but got src = " << shape_to_string(bufsrc.shape);
+                                                        ss << "and dest = " << shape_to_string(bufdest.shape);
+                                                        throw std::runtime_error(ss.str());
+                                                      }
+                                                      if (srcBytesPerPixel > 1 && (bufsrc.ndim != 3 || bufsrc.shape[2] != srcBytesPerPixel)) {
+                                                        std::stringstream ss;
+                                                        ss << "Source array should be a 3D array of shape (H, W, " << srcBytesPerPixel << ")";
+                                                        throw std::runtime_error(ss.str());
+                                                      }
+                                                      else if (srcBytesPerPixel == 1 && bufsrc.ndim == 3 && bufsrc.shape[2] > 1) {
+                                                        throw std::runtime_error("Source array should be a either a 2D array of shape H x W or a 3D array of shape (H, W, 1)");
+                                                      }
+                                                      if (destBytesPerPixel > 1 && (bufdest.ndim != 3 || bufdest.shape[2] != destBytesPerPixel)) {
+                                                        std::stringstream ss;
+                                                        ss << "Destination array should be a 3D array of shape (H, W, " << destBytesPerPixel << ")";
+                                                        throw std::runtime_error(ss.str());
+                                                      }
+                                                      else if (destBytesPerPixel == 1 && bufdest.ndim == 3 && bufdest.shape[2] > 1) {
+                                                        throw std::runtime_error("Destination should be a either a 2D array of shape H x W or a 3D array of shape (H, W, 1)");
+                                                      }
+                                                      unsigned char *src_ptr = static_cast<unsigned char *>(bufsrc.ptr);
+                                                      unsigned char *dest_ptr = static_cast<unsigned char *>(bufdest.ptr);
+                                                      call_conversion_fn(fn, src_ptr, dest_ptr, static_cast<unsigned int>(bufsrc.shape[0]), static_cast<unsigned int>(bufsrc.shape[1]));
     }, "See C++ documentation of the function for more info", py::arg("src"), py::arg("dest"));
   }
 };
@@ -125,37 +130,37 @@ struct SimpleConversionStruct<ConversionFunction2DWithFlip>
 
   void add_conversion_binding(py::class_<vpImageConvert, std::shared_ptr<vpImageConvert>> &pyImageConvert)
   {
-    pyImageConvert.def_static(name.c_str(), [this](py::array_t<unsigned char, py::array::c_style> &src,
-                                                   py::array_t<unsigned char, py::array::c_style> &dest, bool flip) {
-                                                     py::buffer_info bufsrc = src.request(), bufdest = dest.request();
-                                                     if (bufsrc.ndim < 2 || bufdest.ndim < 2) {
-                                                       throw std::runtime_error("Expected to have src and dest arrays with at least two dimensions.");
-                                                     }
-                                                     if (bufsrc.shape[0] != bufdest.shape[0] || bufsrc.shape[1] != bufdest.shape[1]) {
-                                                       std::stringstream ss;
-                                                       ss << "src and dest must have the same number of pixels, but got src = " << shape_to_string(bufsrc.shape);
-                                                       ss << "and dest = " << shape_to_string(bufdest.shape);
-                                                       throw std::runtime_error(ss.str());
-                                                     }
-                                                     if (srcBytesPerPixel > 1 && (bufsrc.ndim != 3 || bufsrc.shape[2] != srcBytesPerPixel)) {
-                                                       std::stringstream ss;
-                                                       ss << "Source array should be a 3D array of shape (H, W, " << srcBytesPerPixel << ")";
-                                                       throw std::runtime_error(ss.str());
-                                                     }
-                                                     else if (srcBytesPerPixel == 1 && bufsrc.ndim == 3 && bufsrc.shape[2] > 1) {
-                                                       throw std::runtime_error("Source array should be a either a 2D array of shape H x W or a 3D array of shape (H, W, 1)");
-                                                     }
-                                                     if (destBytesPerPixel > 1 && (bufdest.ndim != 3 || bufdest.shape[2] != destBytesPerPixel)) {
-                                                       std::stringstream ss;
-                                                       ss << "Destination array should be a 3D array of shape (H, W, " << destBytesPerPixel << ")";
-                                                       throw std::runtime_error(ss.str());
-                                                     }
-                                                     else if (destBytesPerPixel == 1 && bufdest.ndim == 3 && bufdest.shape[2] > 1) {
-                                                       throw std::runtime_error("Destination should be a either a 2D array of shape H x W or a 3D array of shape (H, W, 1)");
-                                                     }
-                                                     unsigned char *src_ptr = static_cast<unsigned char *>(bufsrc.ptr);
-                                                     unsigned char *dest_ptr = static_cast<unsigned char *>(bufdest.ptr);
-                                                     call_conversion_fn(fn, src_ptr, dest_ptr, static_cast<unsigned int>(bufsrc.shape[0]), static_cast<unsigned int>(bufsrc.shape[1]), flip);
+    pyImageConvert.def_static(name.c_str(), [*this](py::array_t<unsigned char, py::array::c_style> &src,
+                                                    py::array_t<unsigned char, py::array::c_style> &dest, bool flip) {
+                                                      py::buffer_info bufsrc = src.request(), bufdest = dest.request();
+                                                      if (bufsrc.ndim < 2 || bufdest.ndim < 2) {
+                                                        throw std::runtime_error("Expected to have src and dest arrays with at least two dimensions.");
+                                                      }
+                                                      if (bufsrc.shape[0] != bufdest.shape[0] || bufsrc.shape[1] != bufdest.shape[1]) {
+                                                        std::stringstream ss;
+                                                        ss << "src and dest must have the same number of pixels, but got src = " << shape_to_string(bufsrc.shape);
+                                                        ss << "and dest = " << shape_to_string(bufdest.shape);
+                                                        throw std::runtime_error(ss.str());
+                                                      }
+                                                      if (srcBytesPerPixel > 1 && (bufsrc.ndim != 3 || bufsrc.shape[2] != srcBytesPerPixel)) {
+                                                        std::stringstream ss;
+                                                        ss << "Source array should be a 3D array of shape (H, W, " << srcBytesPerPixel << ")";
+                                                        throw std::runtime_error(ss.str());
+                                                      }
+                                                      else if (srcBytesPerPixel == 1 && bufsrc.ndim == 3 && bufsrc.shape[2] > 1) {
+                                                        throw std::runtime_error("Source array should be a either a 2D array of shape H x W or a 3D array of shape (H, W, 1)");
+                                                      }
+                                                      if (destBytesPerPixel > 1 && (bufdest.ndim != 3 || bufdest.shape[2] != destBytesPerPixel)) {
+                                                        std::stringstream ss;
+                                                        ss << "Destination array should be a 3D array of shape (H, W, " << destBytesPerPixel << ")";
+                                                        throw std::runtime_error(ss.str());
+                                                      }
+                                                      else if (destBytesPerPixel == 1 && bufdest.ndim == 3 && bufdest.shape[2] > 1) {
+                                                        throw std::runtime_error("Destination should be a either a 2D array of shape H x W or a 3D array of shape (H, W, 1)");
+                                                      }
+                                                      unsigned char *src_ptr = static_cast<unsigned char *>(bufsrc.ptr);
+                                                      unsigned char *dest_ptr = static_cast<unsigned char *>(bufdest.ptr);
+                                                      call_conversion_fn(fn, src_ptr, dest_ptr, static_cast<unsigned int>(bufsrc.shape[0]), static_cast<unsigned int>(bufsrc.shape[1]), flip);
     }, "See C++ documentation of the function for more info", py::arg("src"), py::arg("dest"), py::arg("flip") = false);
   }
 };
