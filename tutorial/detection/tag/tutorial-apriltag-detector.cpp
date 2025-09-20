@@ -286,6 +286,7 @@ int main(int argc, const char **argv)
     detector.setDisplayTag(opt_display_tag, opt_color_id < 0 ? vpColor::none : vpColor::getColor(opt_color_id), opt_thickness);
     detector.setZAlignedWithCameraAxis(opt_tag_z_align_frame);
     detector.setAprilTagDecisionMarginThreshold(opt_tag_decision_margin_threshold);
+    detector.setAprilTagHammingDistanceThreshold(opt_tag_hamming_distance_threshold);
     //! [AprilTag detector settings]
 
     vpDisplay::display(I);
