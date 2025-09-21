@@ -425,10 +425,10 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
 
                 if (mScale != 0) {
                     canvas.drawBitmap(mCacheBitmap, new Rect(0,0,mCacheBitmap.getWidth(), mCacheBitmap.getHeight()),
-                         new Rect(static_cast<int>((canvas.getWidth() - mScale*mCacheBitmap.getWidth()) / 2),
-                         static_cast<int>((canvas.getHeight() - mScale*mCacheBitmap.getHeight()) / 2),
-                         static_cast<int>((canvas.getWidth() - mScale*mCacheBitmap.getWidth()) / 2 + mScale*mCacheBitmap.getWidth()),
-                         static_cast<int>((canvas.getHeight() - mScale*mCacheBitmap.getHeight()) / 2 + mScale*mCacheBitmap.getHeight())), null);
+                         new Rect(Math.round((canvas.getWidth() - mScale*mCacheBitmap.getWidth()) / 2),
+                         Math.round((canvas.getHeight() - mScale*mCacheBitmap.getHeight()) / 2),
+                         Math.round((canvas.getWidth() - mScale*mCacheBitmap.getWidth()) / 2 + mScale*mCacheBitmap.getWidth()),
+                         Math.round((canvas.getHeight() - mScale*mCacheBitmap.getHeight()) / 2 + mScale*mCacheBitmap.getHeight())), null);
                 } else {
                      canvas.drawBitmap(mCacheBitmap, new Rect(0,0,mCacheBitmap.getWidth(), mCacheBitmap.getHeight()),
                          new Rect((canvas.getWidth() - mCacheBitmap.getWidth()) / 2,
