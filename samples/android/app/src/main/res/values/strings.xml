@@ -3,4 +3,42 @@
     <string name="app_created_by_akshay_sharma"><u>App Created by Akshay Sharma</u></string>
     <string name="tag_description">AprilTag is a visual fiducial system, useful for a wide variety of tasks including augmented reality, robotics, and camera calibration. This app computes the precise 3D position, orientation, and identity of the tags relative to the camera. \n\n The original AprilTag library is implemented in C with no external dependencies. This example uses an Android SDK which I developed as a part of my GSoC Project with focus on real-time performance </string>
     <string name="description2"><u>Link to my GSoC Project</u></string>
+
+    <!-- Camera preview panel -->
+    <string name="camera_preview_settings">Settings</string>
+    <string name="camera_preview_auto_focus">Auto Focus</string>
+
+    <!-- Settings panel -->
+    <string name="camera_flash">Turn on the camera flash?</string>
+    <!-- Sensor characteristics -->
+    <string name="camera_lens_focal_mm">Camera focal lens:</string>
+    <string name="camera_native_resolution">Camera native resolution:</string>
+    <string name="camera_fov">Camera fov:</string>
+    <string name="camera_sensor_size">Camera sensor size:</string>
+    <string name="image_resolution">Image resolution:</string>
+    <!-- Intrinsic parameters -->
+    <string name="camera_focal">Camera focal:</string>
+    <string name="camera_focal_default">600</string>
+    <!-- Tag -->
+    <string name="tag_size">Tag size (m):</string>
+    <string name="tag_size_default">0.1</string>
+    <!-- Frame size -->
+    <string name="display_frame_text">Display the marker frame?</string>
+    <string name="frame_size_ratio">Frame size ratio:</string>
+    <string name="frame_size_ratio_default">0.5</string>
+    <!-- AprilTag -->
+    <string name="apriltag_quad_decimate">AprilTag quad_decimate:</string>
+    <string name="apriltag_quad_decimate_default">2</string>
+    <string name="apriltag_decision_margin">AprilTag decision_margin:</string>
+    <string name="apriltag_decision_margin_default">50</string>
+    <string name="apriltag_nb_threads">AprilTag nb threads:</string>
+    <string name="apriltag_nb_threads_default">1</string>
+    <!-- Bottom -->
+    <string name="button_validate">Validate</string>
+    <string name="original_credit_desc">This app is derived from the works of Akshay Sharma produced during the <a href="https://summerofcode.withgoogle.com/archive/2018/projects/5711312218750976">GSoC 2018</a> project and <a href="https://visp.inria.fr">ViSP.</a></string>
+    <string name="apriltag_desc">The underlying detection method is based on the code from the <a href="https://github.com/AprilRobotics/apriltag">AprilTag 3</a> GitHub repository.</string>
+    <string name="online_markers">You can generate fiducial markers using the following <a href="https://chev.me/arucogen">online tool.</a></string>
+
+    https://github.com/AprilRobotics/apriltag
+
 </resources>
