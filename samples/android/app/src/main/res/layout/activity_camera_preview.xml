@@ -4,15 +4,49 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="example.vispapriltag.CameraPreviewActivity">
+    tools:context="com.example.apriltagdetection.CameraPreviewActivity">
 
     <FrameLayout
         android:id="@+id/camera_preview"
         android:layout_width="match_parent"
         android:layout_weight="0.1"
-        android:layout_height="fill_parent" />
-        
-   <TextView
+        android:layout_height="fill_parent">
+
+        <com.example.apriltagdetection.DisplaySurfaceView
+            android:id="@+id/surfaceView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <!-- Settings Button -->
+        <Button
+            android:id="@+id/btnSettings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/camera_preview_settings" />
+
+        <!-- Autofocus Button -->
+        <Button
+            android:id="@+id/btnAutoFocus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/camera_preview_auto_focus" />
+
+        <!-- Spinner (ComboBox) -->
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <TextView
         android:id="@+id/resultTV"
         android:layout_width="wrap_content"
         android:layout_weight="0.9"

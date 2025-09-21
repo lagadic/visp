@@ -8,18 +8,13 @@ import com.google.android.material.snackbar.Snackbar ;
 import androidx.core.app.ActivityCompat;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import org.visp.core.VpImageUChar;
-
 
 public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
-
     private static final int PERMISSION_REQUEST_CAMERA = 0;
     private View mLayout;
-
 
     // Used to load the 'native-lib' library on application startup.
     static {

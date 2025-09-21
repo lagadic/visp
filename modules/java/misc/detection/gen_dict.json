@@ -204,13 +204,18 @@
           "//javadoc: VpDetectorAprilTag::getTagsCorners()\n",
           "public java.util.List<java.util.List<org.visp.core.VpImagePoint>> getTagsCorners()",
           "{",
-          "   long[][] matrix = getTagsCorners(nativeObj);",
-          "   return org.visp.utils.Converters.Array_Array_to_vector_vector_vpImagePoint(matrix);",
+          "   java.lang.Object[] matrix_ = getTagsCorners(nativeObj);",
+          "   long[][] tags_corners = new long[matrix_.length][];",
+          "   for (int idx = 0; idx < matrix_.length; idx++) {",
+          "       tags_corners[idx] = (long[]) matrix_[idx];",
+          "   }",
+          "",
+          "   return org.visp.utils.Converters.Array_Array_to_vector_vector_vpImagePoint(tags_corners);",
           "}"
         ],
         "jn_code": [
           "// C++: std::vector<std::vector<vpImagePoint> > getTagsCorners()",
-          "private static native long[][] getTagsCorners(long address);"
+          "private static native java.lang.Object[] getTagsCorners(long address);"
         ],
         "cpp_code": [
           "//",
