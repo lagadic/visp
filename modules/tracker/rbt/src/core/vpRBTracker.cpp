@@ -538,6 +538,9 @@ void vpRBTracker::updateRender(vpRBFeatureTrackerInput &frame, const vpHomogeneo
     m_renderer.get3DExtents(tMin, tMax);
     double diameter = (tMax - tMin).frobeniusNorm();
     frame.renders.objectDiameter = diameter;
+
+    vpTranslationVector center((tMax - tMin) / 2.0);
+    frame.renders.objectCenter = center;
   }
   m_rendererSettings.setClippingDistance(frame.renders.zNear, frame.renders.zFar);
   m_renderer.setRenderParameters(m_rendererSettings);
@@ -629,10 +632,10 @@ vpRBTracker::extractSilhouettePoints(const vpImage<vpRGBf> &Inorm, const vpImage
       vpRBSilhouettePoint p(n, m, norm, theta, Z);
       p.detectSilhouette(Idepth);
       points.push_back(p);
+      }
     }
-  }
   return points;
-}
+  }
 
 
 void vpRBTracker::addTracker(std::shared_ptr<vpRBFeatureTracker> tracker)

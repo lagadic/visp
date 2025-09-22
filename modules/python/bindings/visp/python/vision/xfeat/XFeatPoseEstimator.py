@@ -3,29 +3,16 @@ from pathlib import Path
 from typing import List, Optional, Tuple
 import numpy as np
 import time
-import sys
-
-import os
-
-if not 'XFEAT_PATH' in os.environ:
-  raise EnvironmentError('you should set the value of the environment variable XFEAT_PATH to the folder containing the xfeat sources')
-
-xfeat_path = os.environ['XFEAT_PATH']
-sys.path.append(xfeat_path)
-# sys.path.append('/home/sfelton/software/xfeat-tracking/')
-from modules.xfeat import XFeat
 
 import torch
+
 from visp.core import ImageRGBa, CameraParameters, Point, ImageRGBf, PoseVector
 from visp.core import PixelMeterConversion, HomogeneousMatrix, MeterPixelConversion
 from visp.rbt import RBFeatureTrackerInput
 from visp.vision import Pose
 from visp.rbt import RBVisualOdometryUtils, LevenbergMarquardtParameters
 
-
-from src.map import TrackedMap
-from src.xfeat_backend import XFeatBackend
-
+from visp.python.vision.xfeat import XFeatBackend
 from visp.display_utils import get_display
 
 class XFeatInitializer():
@@ -326,10 +313,9 @@ class XFeatInitializerViewPointSpecific():
       return self.pose_estimator.computeResidual(cMo) / len(self.matched_obs)
 
 
-  def __init__(self, backend: XFeatBackend, save_folder: Path, environment_map: TrackedMap):
+  def __init__(self, backend: XFeatBackend, save_folder: Path):
     self.xfeat_backend = backend
     self.save_folder = save_folder
-    self.environment_map = environment_map
     self.views: List[XFeatInitializerViewPointSpecific.ViewPointMatcher] = []
 
     self.min_match_ratio = 0.5

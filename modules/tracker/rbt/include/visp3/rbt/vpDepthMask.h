@@ -50,13 +50,13 @@ BEGIN_VISP_NAMESPACE
 class vpRBFeatureTrackerInput;
 
 /**
- * \brief A color histogram based segmentation algorithm.
+ * \brief A mask computation algorithm based on depth values
  * \ingroup group_rbt_mask
 */
 class VISP_EXPORT vpDepthMask : public vpObjectMask
 {
 public:
-  vpDepthMask() { }
+  vpDepthMask() : m_minRadiusFactor(0.0), m_falloffSmoothingFactor(0.5) { }
   virtual ~vpDepthMask() = default;
 
   void updateMask(const vpRBFeatureTrackerInput &frame,
@@ -66,11 +66,36 @@ public:
   virtual void reset() VP_OVERRIDE
   { }
 
+  /**
+   * \brief Retrieve the value of the minimum depth tolerated error.
+   * It is expressed as a factor of the object's diameter.
+   *
+   * By default, the accepted depth range  error when computing the mask is computed using the rendered object's clipping planes.
+   * If these values are too close to the object's center
+   *
+   * \return double
+  */
+  double getMinRadiusFactor() const { return m_minRadiusFactor; }
+  void setMinRadiusMeters(double minRadius) { m_minRadiusFactor = minRadius; }
+
+  /**
+   * \brief Get the Falloff smoothing factor (of the depth range) strength of the depth probability distribution.
+   * It corresponds to the standard deviation of a gaussian distribution, which is used to compute the probability of a depth values when it is not in the accepted depth range.
+   * The accepted depth range is computed using the object radius and clipping planes.
+   *
+   * \return double
+  */
+  double getFalloffRadiusFactor() const { return m_falloffSmoothingFactor; }
+  void setFalloffRadiusFactor(double factor) { m_falloffSmoothingFactor = factor; }
+
+
 #if defined(VISP_HAVE_NLOHMANN_JSON)
   void loadJsonConfiguration(const nlohmann::json &json) VP_OVERRIDE;
 #endif
 
 private:
+  double m_minRadiusFactor;
+  double m_falloffSmoothingFactor;
 
 };
 

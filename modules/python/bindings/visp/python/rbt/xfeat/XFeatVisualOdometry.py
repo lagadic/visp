@@ -1,5 +1,4 @@
 import numpy as np
-import time
 from enum import Enum
 import torch
 
@@ -10,11 +9,11 @@ from visp.core import ImageGray, ImageRGBa
 from visp.rbt import RBFeatureTrackerInput
 from visp.rbt import RBVisualOdometry, RBVisualOdometryUtils, LevenbergMarquardtParameters
 
-from visp.rbt_extensions import TrackedDescriptorMap
-from visp.rbt_extensions import XFeatTrackingBackend
+from visp.python.rbt import TrackedDescriptorMap
+from visp.python.rbt.xfeat import XFeatTrackingBackend
 
 
-class XFeatVsualOdometry(RBVisualOdometry):
+class XFeatVisualOdometry(RBVisualOdometry):
 
   class DisplayType(Enum):
     SIMPLE = 'simple'
@@ -30,7 +29,7 @@ class XFeatVsualOdometry(RBVisualOdometry):
                                       min_dist_new_point=0,
                                       max_depth_error_visible=2e-2)
 
-    self.display_type = XFeatVsualOdometry.DisplayType.SIMPLE
+    self.display_type = XFeatVisualOdometry.DisplayType.SIMPLE
     self.use_3d = False
     self.current_representation = None
     # XFeat params
@@ -168,14 +167,14 @@ class XFeatVsualOdometry(RBVisualOdometry):
     ps = np.rint(ps).astype(np.int32)
     uvs = np.rint(uvs).astype(np.int32)
 
-    if self.display_type == XFeatVsualOdometry.DisplayType.SIMPLE:
+    if self.display_type == XFeatVisualOdometry.DisplayType.SIMPLE:
       Display.displayCrosses(IRGB, ps[:, 1], ps[:, 0], 8, Color.green, 1)
 
-    elif self.display_type == XFeatVsualOdometry.DisplayType.SIMPLE_MODEL_AND_PROJ:
+    elif self.display_type == XFeatVisualOdometry.DisplayType.SIMPLE_MODEL_AND_PROJ:
       Display.displayCrosses(IRGB, ps[:, 1], ps[:, 0], 8, Color.blue, 1)
       Display.displayCrosses(IRGB, uvs[:, 1], np.rint(uvs[:, 0]).astype(np.int32), 8, Color.red, 1)
 
-    elif self.display_type == XFeatVsualOdometry.DisplayType.WEIGHT_AND_ERROR:
+    elif self.display_type == XFeatVisualOdometry.DisplayType.WEIGHT_AND_ERROR:
       c = Color()
       for p in range(len(error)):
         e = np.minimum(error[p], threshold)  / threshold

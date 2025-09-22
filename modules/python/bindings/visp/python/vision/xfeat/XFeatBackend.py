@@ -3,11 +3,16 @@ import numpy as np
 import time
 import sys
 import os
+from pathlib import Path
 
 if not 'XFEAT_PATH' in os.environ:
   raise EnvironmentError('you should set the value of the environment variable XFEAT_PATH to the folder containing the xfeat sources')
 
-xfeat_path = os.environ['XFEAT_PATH']
+xfeat_path = Path(os.environ['XFEAT_PATH']).absolute()
+if not xfeat_path.exists():
+  print('XFeat could not be found at location', str(xfeat_path))
+  sys.exit(1)
+
 sys.path.append(xfeat_path)
 from modules.xfeat import XFeat
 

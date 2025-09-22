@@ -11,8 +11,8 @@ from visp.core import Display
 from visp.rbt import RBFeatureTracker, RBFeatureTrackerInput, RBFeatureTrackerFactory
 from visp.rbt import TemporalWeighting
 
-from visp.rbt_extensions.TrackedDescriptorMap import TrackedDescriptorMap
-from visp.rbt_extensions.XFeatTrackingBackend import XFeatTrackingBackend
+from visp.python.rbt import TrackedDescriptorMap
+from visp.python.rbt.xfeat import XFeatTrackingBackend
 
 class RBXFeatFeatureTracker(RBFeatureTracker):
 

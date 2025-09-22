@@ -1,16 +1,5 @@
-from typing import List, Optional, Tuple
+
 import numpy as np
-import time
-import sys
-import os
-
-if not 'XFEAT_PATH' in os.environ:
-  raise EnvironmentError('you should set the value of the environment variable XFEAT_PATH to the folder containing the xfeat sources')
-
-xfeat_path = os.environ['XFEAT_PATH']
-sys.path.append(xfeat_path)
-from modules.xfeat import XFeat
-
 
 import torch
 
@@ -18,12 +7,12 @@ from visp.core import ImageTools, Rect
 from visp.core import ImageRGBa, Matrix
 from visp.rbt import RBFeatureTrackerInput
 from visp.rbt import RBVisualOdometryUtils
-from visp.vision_extensions.XFeatBackend import XFeatBackend, XFeatRepresentation
+from visp.python.vision.xfeat import XFeatBackend, XFeatRepresentation
 
 
 class XFeatTrackingBackend(XFeatBackend):
   def __init__(self, num_points: int, min_cos: float, use_dense=False, scale_factor = 1.0, only_on_bb = False):
-    super(XFeatBackend, self).__init__(num_points, min_cos, use_dense, scale_factor)
+    XFeatBackend.__init__(self, num_points, min_cos, use_dense, scale_factor)
 
     self.last_iter = -1
 
