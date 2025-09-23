@@ -1,3 +1,37 @@
+#############################################################################
+#
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+#
+# This software is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# See the file LICENSE.txt at the root directory of this source
+# distribution for additional information about the GNU GPL.
+#
+# For using ViSP with software that can not be combined with the GNU
+# GPL, please contact Inria about acquiring a ViSP Professional
+# Edition License.
+#
+# See https://visp.inria.fr for more information.
+#
+# This software was developed at:
+# Inria Rennes - Bretagne Atlantique
+# Campus Universitaire de Beaulieu
+# 35042 Rennes Cedex
+# France
+#
+# If you have questions regarding the use of this file, please contact
+# Inria at visp@inria.fr
+#
+# This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+# WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+#
+# Description:
+# Display helpers for ViSP
+#
+#############################################################################
 import numpy as np
 from enum import Enum
 import torch
@@ -14,8 +48,52 @@ from visp.python.rbt.xfeat import XFeatTrackingBackend
 
 
 class XFeatVisualOdometry(RBVisualOdometry):
+  """
+  Visual odometry implementation based on XFeat keypoints.
+  The minimised error is either the reprojection or the 3D error (in meters)
+  Descriptors are associated to 3D points that are stored in a map.
+  This map is updated every iteration, with mismatched points being removed and novel keypoints being added.
+
+  Every iteration, keypoints in the current RGB frame that are matched with points in the map are used to
+  update the camera pose by minimizing the chosen error criterion.
+
+  This implementation requires an RGB-D camera to compute the actual 3D positions of newly detected keypoints.
+
+  The parameters are the following:
+  - "numPoints" Number of points to store in the map
+  - "reprojectionThreshold": Distance (in pixels) between observed keypoints and model keypoints above which a map point is considered an outlier and is removed.
+  - "minDistNewPoint": Minimum distance (in meters) that a new keypoints should have to all other keypoints to be added to the map. This can help ensure that there is no overlapping keypoints in a region.
+  - "maxDepthErrorVisible": Maximum depth error between 3D map point and observed depth value (from the camera) above which a point is considered as not visible (occluded)
+
+  - "gain": The optimizer gain
+  - "maxNumIters": Maximum number of optimizer iterations
+  - "muInit": Initial value of the Levenberg-Marquardt regularization parameter
+  - "muIterFactor": LM regularization scaling factor applied every iteration
+  - "minImprovementFactor": Improvement factor (expressed as a ratio of the previous to current error criterion values) below which optimization is stopped.
+
+
+  An example JSON representation of the available settings is:
+  {
+    "type": "xfeat",
+    "numPoints": 8192,
+    "reprojectionThreshold": 10.0,
+    "minDistNewPoint": 0.0,
+    "maxDepthErrorVisible": 0.02,
+
+    "maxDepthErrorCandidate": 0.0,
+
+    "gain": 0.5,
+    "maxNumIters": 10,
+    "muInit": 0.0,
+    "muIterFactor": 0.0,
+    "minImprovementFactor": 0.001
+  }
+  """
 
   class DisplayType(Enum):
+    """ Feature display type for visual odometry.
+    Changes the amount of displayed information
+    """
     SIMPLE = 'simple'
     SIMPLE_MODEL_AND_PROJ = 'simpleModelAndProj'
     ERROR = 'error'
@@ -44,20 +122,25 @@ class XFeatVisualOdometry(RBVisualOdometry):
     self.optim_params = LevenbergMarquardtParameters()
     self.optim_params.gain = 0.5
     self.optim_params.maxNumIters = 10
-    self.optim_params.muInit = 0.1
-    self.optim_params.muIterFactor = 0.5
+    self.optim_params.muInit = 0.0
+    self.optim_params.muIterFactor = 0.0
     self.optim_params.minImprovementFactor = 1e-3
 
-    self.verbose = backend.verbose
 
   def load_settings(self, d):
+    """Update the VO parameters from a dictionary.
+
+    Args:
+        d (_type_): The dictionary containing the settings
+    """
     self.environment_map.parse_settings(d)
     self.use_3d = d.get('use3d', self.use_3d)
-    self.optim_params.gain = d['gain']
-    self.optim_params.maxNumIters = d['maxNumIters']
-    self.optim_params.muInit = d['muInit']
-    self.optim_params.muIterFactor = d['muIterFactor']
-    self.optim_params.minImprovementFactor = d['minImprovementFactor']
+    self.optim_params.gain = d.get('gain', self.optim_params.gain)
+    self.optim_params.maxNumIters = d.get('maxNumIters', self.optim_params.maxNumIters)
+    self.optim_params.muInit = d.get('muInit', self.optim_params.muInit)
+    self.optim_params.muIterFactor = d.get('muIterFactor',self.optim_params.muIterFactor)
+    self.optim_params.minImprovementFactor = d.get('minImprovementFactor', self.optim_params.minImprovementFactor)
+    self.display_type = d.get('displayType', self.display_type)
 
 
   def compute(self, frame: RBFeatureTrackerInput, previousFrame: RBFeatureTrackerInput) -> None:
@@ -151,7 +234,25 @@ class XFeatVisualOdometry(RBVisualOdometry):
   def getCameraPose(self) -> HomogeneousMatrix:
     return self.cTw
 
-  def display(self, cam: CameraParameters, I: ImageGray, IRGB: ImageRGBa, I_depth: ImageGray):
+  def display(self, cam: CameraParameters, _I: ImageGray, IRGB: ImageRGBa, _I_depth: ImageGray):
+    """Display the features used for visual odometry.
+    XFeat keypoints are displayed as small disks in the RGB image.
+
+    Depending on the display type, the behavior is different:
+    - DisplayType.SIMPLE: Display the current image keypoints that were matched with the environment map
+    - DisplayType.SIMPLE_MODEL_AND_PROJ: Display current image keypoints along with the map points that they were matched with.
+    - DisplayType.WEIGHT_AND_ERROR: Same as the SIMPLE value, except that the color of the keypoints display the error
+    (on the red component) and their attributed weight in the optimization (in blue)
+
+    Args:
+        cam (CameraParameters): Camera intrinsics
+        _I (ImageGray): Grayscale image
+        IRGB (ImageRGBa): RGB image where to display the points
+        _I_depth (ImageGray): Depth image
+
+    Raises:
+        RuntimeError: if the display type is invalid
+    """
     if self.idx_curr_env_matched is None or self.idx_environment_map is None:
       return
 

@@ -48,7 +48,7 @@ from visp.core import Color, Display, ImageConvert
 from visp.core import ImageGray, ImageUInt16, ImageRGBa, ImageFloat
 from visp.io import ImageIo
 from visp.rbt import RBTracker, RBFeatureDisplayType, RBFeatureTracker, RBFeatureTrackerInput
-from visp.display_utils import get_display
+from visp.python.display_utils import get_display
 import pyrealsense2 as rs
 
 
