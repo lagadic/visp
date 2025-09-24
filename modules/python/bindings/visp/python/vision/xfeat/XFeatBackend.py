@@ -38,32 +38,18 @@ import time
 import sys
 import os
 from pathlib import Path
-
-if not 'XFEAT_PATH' in os.environ:
-  raise EnvironmentError('you should set the value of the environment variable XFEAT_PATH to the folder containing the xfeat sources')
-
-xfeat_path = Path(os.environ['XFEAT_PATH']).absolute()
-if not xfeat_path.exists():
-  print('XFeat could not be found at location', str(xfeat_path))
-  sys.exit(1)
-
-sys.path.append(str(xfeat_path))
-print(sys.path)
-from modules.xfeat import XFeat
-
 import torch
 import torch.nn.functional as F
 
 
-from visp.core import ImageRGBa, Matrix
-
+from visp.core import ImageRGBa
 
 class XFeatRepresentation():
   def __init__(self, kps, descriptors):
     assert isinstance(kps, np.ndarray) and len(kps.shape) == 2 and kps.shape[1] == 2
     assert len(kps) == len(descriptors)
-    self.keypoints = kps
-    self.descriptors = descriptors
+    self.keypoints: np.ndarray = kps
+    self.descriptors: torch.Tensor = descriptors
 
   def split(self, i1, i2) -> Tuple['XFeatRepresentation', 'XFeatRepresentation']:
     r1, r2 = None, None
@@ -104,7 +90,23 @@ class XFeatStarRepresentation(XFeatRepresentation):
 
 class XFeatBackend():
   def __init__(self, num_points: int, min_cos: float, use_dense=False, scale_factor = 1.0):
-    self.xfeat = XFeat().eval()
+    try:
+      self.xfeat = torch.hub.load('verlab/accelerated_features', 'XFeat', pretrained = True, top_k = 4096).eval()
+    except:
+      print('Could not load XFeat from torchhub', file=sys.stderr)
+      xfeat_env_var_name = 'XFEAT_PATH'
+      print(f'Looking at {xfeat_env_var_name} environment variable to load XFeat!', file=sys.stderr)
+
+      if not xfeat_env_var_name in os.environ:
+        raise EnvironmentError('you should set the value of the environment variable XFEAT_PATH to the folder containing the xfeat sources')
+
+      xfeat_path = Path(os.environ[xfeat_env_var_name]).absolute()
+      if not xfeat_path.exists():
+        raise EnvironmentError(f'XFeat folder {str(xfeat_path)} does not exist')
+
+      sys.path.append(str(xfeat_path))
+      from modules.xfeat import XFeat
+      self.xfeat = XFeat().eval()
 
     self.k = num_points
     self.min_cos = min_cos
