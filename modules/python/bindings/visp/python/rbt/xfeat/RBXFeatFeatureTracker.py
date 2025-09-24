@@ -49,6 +49,33 @@ from visp.python.rbt import TrackedDescriptorMap
 from visp.python.rbt.xfeat import XFeatTrackingBackend
 
 class RBXFeatFeatureTracker(RBFeatureTracker):
+  """A trackable feature implementation for the RBT that relies on XFeat for keypoint extraction.
+  XFeat is used to extract keypoints (2D) along with their descriptors in every frame.
+  At the end of every tracking iteration, Novel keypoints are added in a map (see visp.python.rbt.TrackedDescriptorMap)
+  Using the 2D keypoint location, the newly computed 3D camera pose and the render information
+
+  This feature relies on the XFeat tracker backend,
+  which should be customized to set the number of keypoints to retrieve each frame along with the minimum similarity score for the matching step.
+
+  The error that is computed is either the reprojection error (2D, in normalized image plane coordinates, similar to an IBVS)
+  or in 3D (in metric space) if the option is chosen and an RGB-D camera is used.
+
+  An example JSON configuration of the tracker is:
+  {
+    "type": "xfeat",
+    "weight": 1,
+    "use_3d": false,
+    "display": true,
+    "numPoints": 4096,
+    "reprojectionThreshold": 5,
+    "minDistNewPoint": 0.0,
+    "maxDepthErrorVisible": 0.02,
+    "maxDepthErrorCandidate": 0.02
+  }
+
+  See the TrackedDescriptorMap class for some of the settings description.
+
+  """
 
   class DisplayType(Enum):
     SIMPLE = 'simple'
@@ -69,8 +96,6 @@ class RBXFeatFeatureTracker(RBFeatureTracker):
     self.iter = 0
     self.use_3d = False
     self.last_cMo = None
-    self.use_ba = False
-    self.ba = None
     self.robust = Robust()
     self.display_type = RBXFeatFeatureTracker.DisplayType.SIMPLE
 
@@ -162,12 +187,13 @@ class RBXFeatFeatureTracker(RBFeatureTracker):
   def computeVVSIter(self, frame: RBFeatureTrackerInput, cMo: HomogeneousMatrix, iteration: int):
     if self.numFeatures == 0:
       return
-
+    # Error and Jacobian computation
     if not self.use_3d:
       self.object_map.point_map.computeReprojectionErrorAndJacobian(self.visp_indices_matched, cMo, self.current_xy_obj, self.L, self.error)
     else:
       self.object_map.point_map.compute3DErrorAndJacobian(self.visp_indices_matched, cMo, self.observations, self.L, self.error)
 
+    # Compute Min MAD for M-estimator
     threshold = 0.0
     if not self.use_3d:
       # Compute min threshold as relative to the bounding box (object size in the iamge)
@@ -179,14 +205,18 @@ class RBXFeatFeatureTracker(RBFeatureTracker):
       diff = frame.renders.zFar - frame.renders.zNear
       threshold = diff * 0.001
 
+    # M-estimator weighting performed relative to the euclidean distance between points, not the individual component error
     self.robust.setMinMedianAbsoluteDeviation(threshold)
     error_per_point = np.linalg.norm(self.error.numpy().reshape((-1, 2 if not self.use_3d else 3)), axis=-1)
     self.error_per_point[:] = error_per_point
 
     self.robust.MEstimator(Robust.TUKEY, self.error_per_point, self.weight_per_point)
+
+    # Compute optimizer quantities
     self.weights[:] = np.repeat(self.weight_per_point, 2 if not self.use_3d else 3)
 
     self.weighted_error = ColVector.hadamard(self.error, self.weights)
+
     Lnp = self.L.numpy()
     Lnp *= self.weights.numpy()[:, None]
 
