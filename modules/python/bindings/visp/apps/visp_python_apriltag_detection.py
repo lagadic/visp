@@ -206,8 +206,8 @@ def main():
     np.copyto(dst=I_disp.numpy(), src=frame.numpy())
 
     has_tag, tag_poses = detector.detect(frame, tag_size, cam)
-
-    logger.log_frame(detector, tag_size, cam)
+    if logger is not None:
+      logger.log_frame(detector, tag_size, cam)
 
     Display.display(I_disp)
     Display.displayText(I_disp, 20, 20, 'Click to stop detection', Color.red)
