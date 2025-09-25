@@ -59,6 +59,22 @@ else:
   package_data[''] = ['*.pyd', '*.dll', 'py.typed']
 
 
+base_path = Path(__file__).parent.absolute()
+
+
+packages = ['', 'visp', 'visp.apps']
+
+
+apps_folder = base_path / package_name / 'apps'
+console_scripts = []
+
+base_app_package_name = f'{package_name}.apps'
+
+for app_file in apps_folder.iterdir():
+  if app_file.name.endswith('.py'):
+    console_scripts.append(f'{app_file.stem}={base_app_package_name}.{app_file.stem}:main')
+
+
 # This creates a list which is empty but returns a length of 1.
 # Should make the wheel a binary distribution and platlib compliant.
 class EmptyListWithLength(list):
@@ -69,13 +85,16 @@ setup(
   name=package_name,
   version=version,
   author="Samuel Felton",
-  packages=['', 'visp'],
+  packages=packages,
   author_email="samuel.felton@irisa.fr",
   description="Python wrapper for the Visual Servoing Platform",
   long_description="",
   setup_requires=[
     "setuptools"
   ],
+  entry_points = {
+    'console_scripts': console_scripts,
+  },
   ext_modules=EmptyListWithLength(),
   zip_safe=False,
   include_package_data=True,
