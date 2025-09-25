@@ -268,6 +268,7 @@ int main(int argc, const char **argv)
     detector.setAprilTagNbThreads(opt_tag_nThreads);
     detector.setDisplayTag(display_tag);
     detector.setAprilTagDecisionMarginThreshold(opt_tag_decision_margin_threshold);
+    detector.setAprilTagHammingDistanceThreshold(opt_tag_hamming_distance_threshold);
 
     vpServo task;
     vpAdaptiveGain lambda;
