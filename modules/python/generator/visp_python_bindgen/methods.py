@@ -279,7 +279,6 @@ def define_method(method: types.Method, method_config: Dict, is_class_method, sp
 
   return_type_is_enable_if, return_type = check_return_type_is_enable_if(method.return_type, specs, header_env.mapping)
   if return_type_is_enable_if:
-    print('RETURN TYPE = ', return_type)
     if return_type is None:
       raise RuntimeError('Could not correctly parse enable_if')
   if not return_type_is_enable_if:
