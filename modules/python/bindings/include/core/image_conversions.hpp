@@ -110,10 +110,7 @@ struct SimpleConversionStruct
 {
   SimpleConversionStruct(const std::string &name, ConversionFn fn, unsigned int srcBytesPerPixel, unsigned int destBytesPerPixel) :
     name(name), fn(fn), srcBytesPerPixel(srcBytesPerPixel), destBytesPerPixel(destBytesPerPixel)
-  {
-    std::cout << "src = " << srcBytesPerPixel << ", dest = " << destBytesPerPixel << std::endl;
-
-  }
+  { }
   std::string name;
   ConversionFn fn;
   unsigned int srcBytesPerPixel;
