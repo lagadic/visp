@@ -9,7 +9,6 @@ from visp.core import Display
 
 from visp.display_utils import get_display
 
-import pyrealsense2 as rs
 import numpy as np
 from typing import Generator, List
 
@@ -51,6 +50,7 @@ class FrameSource():
 
 class RealSenseSource(FrameSource):
   def __init__(self, args):
+    import pyrealsense2 as rs
     self.pipe = rs.pipeline()
     self.config = rs.config()
     self.h, self.w = args.height, args.width
@@ -77,11 +77,42 @@ class RealSenseSource(FrameSource):
 
     return generator()
 
+class FileSource(FrameSource):
+  def __init__(self, args):
+    self.source_path = args.source
+    from visp.io import VideoReader
+    self.reader = VideoReader()
+    self.reader.setFileName(self.source_path)
+
+    self.cam = CameraParameters()
+    if any(v == 0 for v in [args.px, args.py, args.u0, args.v0]):
+      raise RuntimeError('Camera intrinsics need to be specified through the command line arguments')
+
+    if args.kud != 0 or args.kdu != 0:
+      self.cam.initPersProjWithDistortion(args.px, args.py, args.u0, args.v0, args.kud, args.kdu)
+    else:
+      self.cam.initPersProjWithoutDistortion(args.px, args.py, args.u0, args.v0)
+
+  def intrinsics(self):
+    return self.cam
+
+  def frames(self):
+    def generator():
+      I = ImageGray()
+      self.reader.open(I)
+      while not self.reader.end():
+        self.reader.acquire(I)
+        yield I
+
+    return generator()
+
+
+
 def build_source_from_args(args) -> FrameSource:
   if args.source == 'rs2':
     return RealSenseSource(args)
-  elif args.source == 'sequence':
-    raise NotImplementedError('Sequence parsing not yet implemented')
+  else:
+    return FileSource(args)
 
 class DetectionsLogger():
   def __init__(self, log_path: Path):
@@ -122,10 +153,22 @@ def main():
   tag_parser.add_argument('--tag-hamming-distance', type=int, required=False, default=50)
 
   source_parser = parser.add_argument_group('Image acquisition parsing')
-  source_parser.add_argument('--source', help='Image source', default='rs2')
+  source_help = '''Image source. if rs2, we open the realsense stream (if available).
+  Otherwise we consider that it is a stored sequence. It should be specified as /path/to/img-%%d.jpg.
+  See the visp.io.VideoReader documentation for more information'''
+  source_parser.add_argument('--source', help=source_help, default='rs2')
   source_parser.add_argument('--width', help='Image width', default=640)
   source_parser.add_argument('--height', help='Image height', default=480)
   source_parser.add_argument('--fps', help='Framerate', default=30)
+
+  camera_parser = parser.add_argument_group('Camera intrinsics')
+  camera_parser.add_argument('--px', default=0.0, type=float)
+  camera_parser.add_argument('--py', default=0.0, type=float)
+  camera_parser.add_argument('--u0', default=0.0, type=float)
+  camera_parser.add_argument('--v0', default=0.0, type=float)
+  camera_parser.add_argument('--kud', default=0.0, type=float)
+  camera_parser.add_argument('--kdu', default=0.0, type=float)
+
 
   parser.add_argument('--log-path', default=None, required=False, help='The path to the JSON file where to log the detections.')
 
