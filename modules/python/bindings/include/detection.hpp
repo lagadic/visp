@@ -93,6 +93,23 @@ Run Apriltag detection and retrieve whether poses have detected and if so, the l
 - The projections errors associated to the second list of poses
 )doc", py::arg("I"), py::arg("tag_size"), py::arg("cam"));
 
+  pyAprilTag.def("getPose",
+     [](vpDetectorAprilTag &self, size_t index, double tagSize, const vpCameraParameters &cam) -> std::tuple<bool, vpHomogeneousMatrix> {
+       vpHomogeneousMatrix cMo;
+       bool detected = self.getPose(index, tagSize, cam, cMo);
+       return std::make_tuple(detected, cMo);
+    }, R"doc(
+Retrieve the pose of the apriltag with the corresponding ID.
+
+:param index: The index of in the list of detected tags. It is not the detected tag's id!
+
+:param tagSize: the size of apriltags, in meters
+
+:param cam: The camera intrinsics, required to compute the pose
+
+:return: A tuple containing whether this tag was detected and its pose.
+
+)doc", py::arg("tag_id"), py::arg("tag_size"), py::arg("cam"));
 }
 
 
