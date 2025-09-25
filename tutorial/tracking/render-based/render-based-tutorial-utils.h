@@ -476,7 +476,7 @@ void displayNormals(const vpImage<vpRGBf> &normalsImage, vpImage<vpRGBa> &normal
  * \param canny
  * \param valid
 */
-void displayCanny(const vpImage<vpRGBf> &cannyRawData,
+void displayCanny(const vpImage<float> &cannyRawData,
                   vpImage<unsigned char> &canny, const vpImage<unsigned char> &valid)
 {
 #ifdef VISP_HAVE_OPENMP
@@ -492,7 +492,7 @@ void displayCanny(const vpImage<vpRGBf> &cannyRawData,
   for (unsigned int i = 0; i < canny.getHeight(); i += 4) {
     for (unsigned int j = 0; j < canny.getWidth(); j += 4) {
       if (!valid[i][j]) continue;
-      float angle = cannyRawData[i][j].B;
+      float angle = cannyRawData[i][j];
       unsigned x = j + 10 * cos(angle);
       unsigned y = i + 10 * sin(angle);
       vpDisplay::displayArrow(canny, i, j, y, x, vpColor::green);
