@@ -1,14 +1,17 @@
 
 import argparse
 import sys
+from pathlib import Path
 
-from visp.core import CameraParameters, HomogeneousMatrix, ImageGray, ImageConvert
+from visp.core import CameraParameters, HomogeneousMatrix, ImageGray, ImageConvert, Color, Point, ImagePoint
 from visp.detection import DetectorAprilTag
+from visp.core import Display
 
+from visp.display_utils import get_display
 
 import pyrealsense2 as rs
 import numpy as np
-from typing import Generator
+from typing import Generator, List
 
 ##### Detector building
 
@@ -35,7 +38,7 @@ def build_detector_from_args(args) -> DetectorAprilTag:
   detector.setAprilTagQuadDecimate(args.tag_decimate)
   detector.setAprilTagFamily(family_mapping[args.tag_family])
   detector.setAprilTagPoseEstimationMethod(method_mapping[args.tag_pose_method])
-  return args
+  return detector
 
 
 #### Data acquisition
@@ -80,11 +83,39 @@ def build_source_from_args(args) -> FrameSource:
   elif args.source == 'sequence':
     raise NotImplementedError('Sequence parsing not yet implemented')
 
+class DetectionsLogger():
+  def __init__(self, log_path: Path):
+    self.log_path = log_path
+    if self.log_path.exists():
+      raise FileExistsError(f'File {str(self.log_path.absolute())} already exists')
+    self.data = []
+  def log_frame(self, detector: DetectorAprilTag, tag_size: float, cam: CameraParameters):
+    ids = detector.getTagsId()
+    tag_size_dict = {tag_id: tag_size for tag_id in ids}
+    points_3d: List[List[Point]] = detector.getTagsPoints3D(ids, tag_size_dict)
+    points_2d: List[List[ImagePoint]] = detector.getTagsCorners()
+    frame_log = {}
+    for i, tag_id in enumerate(ids):
+      id_log = {
+        'points3d': [p.get_oP().numpy().tolist() for p in points_3d[i]],
+        'points2d': [(p.get_i(), p.get_j()) for p in points_2d[i]],
+        'cMo': detector.getPose(i, tag_size, cam)[1].numpy().tolist()
+      }
+
+      frame_log[tag_id] = id_log
+    self.data.append(frame_log)
+
+  def finalize_logging(self):
+    print('Writing detections to log file: ', str(self.log_path))
+    with open(self.log_path, 'w') as log_file:
+      import json
+      json.dump(self.data, log_file, indent=4)
+
 def main():
   parser = argparse.ArgumentParser(description='AprilTag detection program from a Realsense camera')
   tag_parser = parser.add_argument_group('AprilTag options')
   tag_parser.add_argument('--tag-family', choices=family_mapping.keys(), default='36h11', help='The family of apriltags to detect')
-  tag_parser.add_argument('--tag-size', type=float, default=0.0955, help='The size of the tags to detect, in meters')
+  tag_parser.add_argument('--tag-size', type=float, default=0.053, help='The size of the tags to detect, in meters')
   tag_parser.add_argument('--tag-pose-method', choices=method_mapping.keys(), default='homography_vvs', help='The method used to estimated the 6D pose of the tags')
   tag_parser.add_argument('--tag-decimate', type=float, required=False, default=1.0)
   tag_parser.add_argument('--tag-decision-margin', type=float, required=False, default=2.0)
@@ -96,7 +127,7 @@ def main():
   source_parser.add_argument('--height', help='Image height', default=480)
   source_parser.add_argument('--fps', help='Framerate', default=30)
 
-
+  parser.add_argument('--log-path', default=None, required=False, help='The path to the JSON file where to log the detections.')
 
   args, unknown_args = parser.parse_known_args()
 
@@ -110,8 +141,43 @@ def main():
 
   frame_source = build_source_from_args(args)
   frames = frame_source.frames()
+
+  logger = None
+  if args.log_path is not None:
+    log_path = Path(args.log_path)
+    logger = DetectionsLogger(log_path)
+
+  I_disp = ImageGray()
+
+  cam = frame_source.intrinsics()
+
+  first_frame = True
   for frame in frames:
-    print(frame)
+    if first_frame:
+      I_disp.resize(frame.getHeight(), frame.getWidth())
+      gray_display = get_display()
+      gray_display.init(I_disp, 0, 0, 'Image')
+      first_frame = False
+
+    # Copy into I_disp to display tags
+    np.copyto(dst=I_disp.numpy(), src=frame.numpy())
+
+    has_tag, tag_poses = detector.detect(frame, tag_size, cam)
+
+    logger.log_frame(detector, tag_size, cam)
+
+    Display.display(I_disp)
+    Display.displayText(I_disp, 20, 20, 'Click to stop detection', Color.red)
+    detector.displayFrames(I_disp, tag_poses, cam, 0.05, Color.none)
+    detector.displayTags(I_disp, detector.getTagsCorners())
+    Display.flush(I_disp)
+
+    clicked = Display.getClick(I_disp, blocking=False)
+    if clicked:
+      break
+
+  if logger is not None:
+    logger.finalize_logging()
 
 
 if __name__ == '__main__':
