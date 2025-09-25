@@ -55,7 +55,7 @@ void vpDepthMask::updateMask(const vpRBFeatureTrackerInput &frame,
 #if defined(VISP_HAVE_OPENMP)
 #pragma omp parallel for
 #endif
-  for (unsigned int i = 0; i < frame.depth.getSize(); ++i) {
+  for (int i = 0; i < static_cast<int>(frame.depth.getSize()); ++i) {
     const float Z = frame.depth.bitmap[i];
     // Consider that missing depth values are part of the object
     if (Z == 0.f) {

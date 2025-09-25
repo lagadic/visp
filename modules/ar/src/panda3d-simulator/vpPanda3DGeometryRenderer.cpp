@@ -260,7 +260,7 @@ void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals, vpImage<floa
 #if defined(VISP_HAVE_OPENMP)
 #pragma omp parallel for
 #endif
-    for (unsigned int i = 0; i < m_renderParameters.getImageHeight(); ++i) {
+    for (int i = 0; i < static_cast<int>(m_renderParameters.getImageHeight()); ++i) {
       const float *const rowData = data - i * rowIncrement;
       vpRGBf *normalRow = normals[top + i];
       float *depthRow = depth[top + i];
