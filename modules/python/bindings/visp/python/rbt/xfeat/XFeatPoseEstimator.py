@@ -41,15 +41,18 @@ import time
 import torch
 
 from visp.core import ImageRGBa, CameraParameters, Point, ImageRGBf, PoseVector
+from visp.core import Matrix, ColVector, Robust
+
 from visp.core import PixelMeterConversion, HomogeneousMatrix, MeterPixelConversion
-from visp.rbt import RBFeatureTrackerInput
+from visp.core import Display, MeterPixelConversion, Color
 from visp.vision import Pose
+from visp.rbt import RBFeatureTrackerInput
 from visp.rbt import RBVisualOdometryUtils, LevenbergMarquardtParameters
 
 from visp.python.vision.xfeat import XFeatBackend
 from visp.python.display_utils import get_display
 
-class XFeatInitializer():
+class XFeatPoseEstimator():
   def __init__(self, backend: XFeatBackend, save_folder: Path):
     self.xfeat_backend = backend
     self.points_3d = None
@@ -142,8 +145,14 @@ class XFeatInitializer():
 
 
 
-class XFeatInitializerViewPointSpecific():
+class XFeatViewPointPoseEstimator():
+  """Pose estimation based on XFeat keypoints and a PnP approach.
+  This strategy first matches the current frame with viewpoints learned beforehand.
 
+  Viewpoints that have a large enough number of matched keypoints are retained for the second step of the method.
+  In the second step, The 3D points associated to a view have their reprojection error with the currently observed keypoints minimized.
+  Minimization can be done in 2D or 3D space.
+  """
   class ViewPointMatcher():
     def __init__(self, min_cossim):
       self.pose = None
@@ -160,16 +169,6 @@ class XFeatInitializerViewPointSpecific():
       self.optim_params.muInit = 0.1
       self.optim_params.muIterFactor = 0.99
       self.optim_params.minImprovementFactor = 0.00001
-
-      self.pose_estimator = Pose()
-      self.pose_estimator.setVvsIterMax(500)
-      self.pose_estimator.setLambda(0.5)
-      self.pose_estimator.setRansacMaxTrials(200)
-      self.pose_estimator.setUseParallelRansac(True)
-      self.pose_estimator.setNbParallelRansacThreads(4)
-
-      self.pose_estimator.setRansacNbInliersToReachConsensus(4)
-      self.pose_estimator.setRansacThreshold(0.1)
 
     def save(self, path: Path):
       if self.view_id is None:
@@ -198,7 +197,7 @@ class XFeatInitializerViewPointSpecific():
       self.representation = {}
       for k in ['keypoints', 'descriptors', 'scales']:
         self.representation[k] = torch.tensor(np.load(load_folder / f'{k}.npy')).cuda()
-      self.representation = XFeatInitializerViewPointSpecific.ViewPointMatcher.reformat_repr_if_needed(self.representation)
+      self.representation = XFeatViewPointPoseEstimator.ViewPointMatcher.reformat_repr_if_needed(self.representation)
       return True
 
 
@@ -230,22 +229,19 @@ class XFeatInitializerViewPointSpecific():
 
     def optimize(self, depth, threshold):
       cMo = HomogeneousMatrix(self.pose)
-      self.pose_estimator.clearPoint()
       oMc = self.pose.inverse()
-
 
       Zs = depth.numpy()[(self.matched_obs[:, 1].astype(np.int32)), self.matched_obs[:, 0].astype(np.int32)][..., None]
 
       oX = (oMc.numpy() @ self.matched_p3d.T).T
       oX_3 = np.ascontiguousarray(oX[..., :3])
       observations = np.concatenate((self.matched_obs_x[..., None] * Zs, self.matched_obs_y[..., None] * Zs, Zs), axis=-1)
-      from visp.core import Matrix
       observations = Matrix.view(observations)
 
       RBVisualOdometryUtils.levenbergMarquardtKeypoints3D(Matrix.view(oX_3), observations, self.optim_params, cMo)
 
       cX = (cMo.numpy() @ oX.T).T
-      from visp.core import Robust, ColVector
+
       robust = Robust()
       distances = np.linalg.norm(observations.numpy() - cX[..., :3], axis=-1)
 
@@ -254,29 +250,9 @@ class XFeatInitializerViewPointSpecific():
       res = distances * weights.numpy()
 
       self.error = np.mean(res)
-
-
-
-      # for i in range(len(self.matched_p3d)):
-      #   p = Point()
-
-      #   p.setWorldCoordinates(oX[i, 0], oX[i, 1], oX[i, 2])
-      #   p.set_x(self.matched_obs_x[i])
-      #   p.set_y(self.matched_obs_y[i])
-      #   self.pose_estimator.addPoint(p)
-      # # ok = True
-      # self.pose_estimator.setRansacNbInliersToReachConsensus(len(self.matched_p3d) // 2)
-      # ok = self.pose_estimator.computePose(Pose.RANSAC, cMo)
-      # self.ransac_inliers_indices = self.pose_estimator.getRansacInlierIndex()
-
-      # ok = self.pose_estimator.computePose(Pose.RANSAC, cMo)
-      # if ok:
-      #   self.pose_estimator.poseVirtualVSrobust(cMo)
-
       return cMo, self.error <= threshold
 
     def display_record(self, image: ImageRGBa, cTo, cam: CameraParameters):
-      from visp.core import Display, MeterPixelConversion, Color
       IG = ImageRGBa(image)
       d = get_display()
       d.init(IG)
@@ -298,9 +274,6 @@ class XFeatInitializerViewPointSpecific():
       Display.getKeyboardEvent(IG, True)
 
     def display_result(self, image, cMo, cam):
-
-
-      from visp.core import Display, MeterPixelConversion, Color
       oMc = self.pose.inverse()
       oX = (oMc.numpy() @ self.matched_p3d.T).T
       for i in range(len(self.matched_p3d)):
@@ -347,38 +320,48 @@ class XFeatInitializerViewPointSpecific():
       return self.pose_estimator.computeResidual(cMo) / len(self.matched_obs)
 
 
-  def __init__(self, backend: XFeatBackend, save_folder: Path):
+  def __init__(self, backend: XFeatBackend, save_folder: Path, top_k: int, min_similarity: float, min_match_ratio: float, point_distance_threshold: float):
+    """Initialize the Pose estimator.
+
+    This strategy
+
+    Args:
+        backend (XFeatBackend): _description_
+        save_folder (Path): _description_
+        top_k (int): _description_
+        min_similarity (float): _description_
+        min_match_ratio (float): _description_
+        point_distance_threshold (float): _description_
+    """
     self.xfeat_backend = backend
     self.save_folder = save_folder
-    self.views: List[XFeatInitializerViewPointSpecific.ViewPointMatcher] = []
-
-    self.min_match_ratio = 0.5
-    self.point_distance_threshold = 0.01
-    self.min_cossim = 0.25
+    self.views: List[XFeatViewPointPoseEstimator.ViewPointMatcher] = []
+    self.top_k = top_k
+    self.min_match_ratio = self.min_match_ratio
+    self.point_distance_threshold = self.point_distance_threshold
+    self.min_cossim = min_similarity
     if self.save_folder.exists():
       print('Loading viewpoints matching db...')
       view_id = 0
       while True:
-        v = XFeatInitializerViewPointSpecific.ViewPointMatcher(self.min_cossim)
+        v = XFeatViewPointPoseEstimator.ViewPointMatcher(self.min_cossim)
         loaded = v.load(self.save_folder, view_id)
         if not loaded:
           break
         self.views.append(v)
         view_id += 1
-      # drift_detector = tracker.getDriftDetector()
-      # if drift_detector is not None and isinstance(drift_detector, RBProbabilistic3DDriftDetector):
-      #   drift_repr_json = self.save_folder / 'drift_detector.json'
-      #   if drift_repr_json.exists():
-      #     drift_detector.loadRepresentation(str(drift_repr_json))
-      #   else:
-      #     print('Could not find surface representation for drift detection')
-
       print(f'Loading database finished: found {view_id} viewpoints!')
 
 
 
   def record(self, frame: RBFeatureTrackerInput, cTo: HomogeneousMatrix):
-    kps, descriptors, scales = self.xfeat_backend.get_repr_dense(frame.IRGB, 8192)
+    """Record a new viewpoint
+
+    Args:
+        frame (RBFeatureTrackerInput): _description_
+        cTo (HomogeneousMatrix): _description_
+    """
+    kps, descriptors, scales = self.xfeat_backend.get_repr_dense(frame.IRGB, self.top_k)
 
     # kps, descriptors = self.xfeat_backend.get_keypoints(frame.IRGB)
     us, vs = kps[:, 0], kps[:, 1] # Keypoints in current image with cTo intrinsics
@@ -414,7 +397,7 @@ class XFeatInitializerViewPointSpecific():
 
     assert len(points_3d_render) == len(descriptors) == len(kps) == len(scales)
     print(f'Recording new view with {len(descriptors)} keypoints!')
-    viewpoint = XFeatInitializerViewPointSpecific.ViewPointMatcher(self.min_cossim)
+    viewpoint = XFeatViewPointPoseEstimator.ViewPointMatcher(self.min_cossim)
     viewpoint.view_id = len(self.views)
     viewpoint.pose = HomogeneousMatrix(frame.renders.cMo)
     print(f'Recorded view {viewpoint.view_id} with pose {PoseVector(viewpoint.pose).t()}')
@@ -440,7 +423,7 @@ class XFeatInitializerViewPointSpecific():
       'scales': scales
     }
 
-    current_representation = XFeatInitializerViewPointSpecific.ViewPointMatcher.reformat_repr_if_needed(current_representation)
+    current_representation = XFeatViewPointPoseEstimator.ViewPointMatcher.reformat_repr_if_needed(current_representation)
 
 
     scores = []
@@ -452,7 +435,7 @@ class XFeatInitializerViewPointSpecific():
       return HomogeneousMatrix(), False
 
 
-    optim_data: List[Tuple[XFeatInitializerViewPointSpecific.ViewPointMatcher, float]] = []
+    optim_data: List[Tuple[XFeatViewPointPoseEstimator.ViewPointMatcher, float]] = []
 
     for view, score in views_enough_matches:
       optim_data.append((view, 1.0))
