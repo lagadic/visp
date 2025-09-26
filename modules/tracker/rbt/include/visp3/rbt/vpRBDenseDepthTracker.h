@@ -40,6 +40,8 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpPixelMeterConversion.h>
+#include <visp3/core/vpMeterPixelConversion.h>
+
 #include <visp3/core/vpRobust.h>
 #include <visp3/core/vpPoint.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
@@ -171,8 +173,10 @@ public:
       for (vpMatrix *m: matrices) {
         m->resize(3, numPoints, false, false);
       }
+      m_valid.resize(numPoints);
 
       for (unsigned int i = 0; i < numPoints; ++i) {
+        m_valid[i] = true;
         for (unsigned int j = 0; j < 3; ++j) {
           m_oXt[j][i] = points[i].oX[j];
           m_oNt[j][i] = points[i].objectNormal[j];
@@ -180,44 +184,87 @@ public:
         }
       }
     }
-
-    inline void update(const vpHomogeneousMatrix &cMo)
+    inline void updateAndErrorAndInteractionMatrix(const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo, const vpImage<float> &depth, vpColVector &e, vpMatrix &L)
     {
       const vpRotationMatrix cRo = cMo.getRotationMatrix();
       const vpTranslationVector t = cMo.getTranslationVector();
       vpMatrix::mult2Matrices(cRo, m_oXt, m_cXt);
       vpMatrix::mult2Matrices(cRo, m_oNt, m_cNt);
 
-      for (unsigned int i = 0; i < m_cXt.getCols(); ++i) {
-        for (unsigned int j = 0; j < 3; ++j) {
-          m_cXt[j][i] += t[j];
-        }
-      }
-    }
-
-    inline void errorAndInteraction(vpColVector &e, vpMatrix &L) const
-    {
       const unsigned int numPoints = m_oXt.getCols();
       e.resize(numPoints, false);
       L.resize(numPoints, 6, false, false);
+
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
       for (int i = 0; i < static_cast<int>(numPoints); ++i) {
-        const double X = m_cXt[0][i], Y = m_cXt[1][i], Z = m_cXt[2][i];
-        const double nX = m_cNt[0][i], nY = m_cNt[1][i], nZ = m_cNt[2][i];
 
-        const double D = -((nX * X) + (nY  * Y) + (nZ * Z));
-        double projNormal = nX * m_observations[0][i] + nY  * m_observations[1][i] + nZ * m_observations[2][i];
+        //Step 1: update and filter out points that are no longer valid
+        {
 
-        e[i] = D + projNormal;
+          for (unsigned int j = 0; j < 3; ++j) {
+            m_cXt[j][i] += t[j];
+          }
+          // Plane points away from the camera: this surface is no longer visible due to rotation
+          if (m_cNt[2][i] >= 0.0) {
+            m_valid[i] = false;
+            continue;
+          }
+          double x, y, u, v;
+          x = m_cXt[0][i] / m_cXt[2][i];
+          y = m_cXt[1][i] / m_cXt[2][i];
 
-        L[i][0] = nX;
-        L[i][1] = nY;
-        L[i][2] = nZ;
-        L[i][3] = nZ * Y - nY * Z;
-        L[i][4] = nX * Z - nZ * X;
-        L[i][5] = nY * X - nX * Y;
+          vpMeterPixelConversion::convertPointWithoutDistortion(cam, x, y, u, v);
+          // Point is no longer in image: depth value cannot be sampled
+          if (u < 0 || v < 0 || u >= depth.getWidth() || v >= depth.getHeight()) {
+            m_valid[i] = false;
+            continue;
+          }
+          const double Z = depth[static_cast<unsigned int>(v)][static_cast<unsigned int>(u)];
+          // Z value in the depth image from the camera is invalid
+          if (Z <= 0.0) {
+            m_valid[i] = false;
+            continue;
+          }
+
+          m_valid[i] = true;
+          m_observations[0][i] = x * Z;
+          m_observations[1][i] = y * Z;
+          m_observations[2][i] = Z;
+        }
+        // Step 2: update Jacobian and error for valid points
+        {
+          const double X = m_cXt[0][i], Y = m_cXt[1][i], Z = m_cXt[2][i];
+          const double nX = m_cNt[0][i], nY = m_cNt[1][i], nZ = m_cNt[2][i];
+
+          const double D = -((nX * X) + (nY  * Y) + (nZ * Z));
+          double projNormal = nX * m_observations[0][i] + nY  * m_observations[1][i] + nZ * m_observations[2][i];
+
+          e[i] = D + projNormal;
+
+          L[i][0] = nX;
+          L[i][1] = nY;
+          L[i][2] = nZ;
+          L[i][3] = nZ * Y - nY * Z;
+          L[i][4] = nX * Z - nZ * X;
+          L[i][5] = nY * X - nX * Y;
+
+        }
+      }
+
+      // Disable invalid points
+      for (unsigned int i = 0; i < numPoints; ++i) {
+        if (!m_valid[i]) {
+          e[i] = 0.0;
+
+          L[i][0] = 0;
+          L[i][1] = 0;
+          L[i][2] = 0;
+          L[i][3] = 0;
+          L[i][4] = 0;
+          L[i][5] = 0;
+        }
       }
     }
 
@@ -232,6 +279,7 @@ public:
     vpMatrix m_oNt; // a 3xN matrix containing the 3D normals on the object
     vpMatrix m_cXt;
     vpMatrix m_cNt;
+    std::vector<bool> m_valid;
 
   };
 

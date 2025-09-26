@@ -65,11 +65,31 @@ class EmptyListWithLength(list):
   def __len__(self):
     return 1
 
+
+packages = ['', 'visp']
+base_name = 'visp.python'
+
+base_path = Path(__file__).parent.absolute()
+
+base_path = base_path / package_name
+
+def add_submodule_recursive(p: Path, base_name, package_list):
+  for subfolder in p.iterdir():
+    if subfolder.is_dir():
+      new_base = base_name + '.' + subfolder.name
+
+      package_list.append(new_base)
+      add_submodule_recursive(subfolder, new_base, package_list)
+
+add_submodule_recursive(base_path, 'visp', packages)
+
+
+
 setup(
   name=package_name,
   version=version,
   author="Samuel Felton",
-  packages=['', 'visp'],
+  packages=packages,
   author_email="samuel.felton@irisa.fr",
   description="Python wrapper for the Visual Servoing Platform",
   long_description="",

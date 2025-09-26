@@ -60,8 +60,9 @@ public:
     CAMERA_NORMALS, //! Surface normals in the frame of the camera. Z points towards the camera and y is up.
   };
 
-  vpPanda3DGeometryRenderer(vpRenderType renderType);
+  vpPanda3DGeometryRenderer(vpRenderType renderType, bool fast = true);
 
+  void beforeFrameRendered() VP_OVERRIDE;
 
   /**
    * @brief Get render results into ViSP readable structures
@@ -87,6 +88,8 @@ public:
 
   PointerTo<GraphicsOutput> getMainOutputBuffer() VP_OVERRIDE { return m_normalDepthBuffer; }
 
+  bool isFastAndApproximateRendering() const { return m_fast; }
+
 
 protected:
   void setupScene() VP_OVERRIDE;
@@ -96,6 +99,8 @@ private:
   vpRenderType m_renderType;
   PointerTo<Texture> m_normalDepthTexture;
   PointerTo<GraphicsOutput> m_normalDepthBuffer;
+  //! Use fast approximate rendering.
+  bool m_fast;
 };
 END_VISP_NAMESPACE
 #endif //VISP_HAVE_PANDA3D

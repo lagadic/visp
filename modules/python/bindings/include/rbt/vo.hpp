@@ -42,6 +42,16 @@ public:
 
       );
   }
+
+  virtual void reset() VP_OVERRIDE
+  {
+    PYBIND11_OVERRIDE_PURE(
+      void,           /* Return type */
+      vpRBVisualOdometry,     /* Parent class */
+      reset,       /* Name of function in C++ (must match Python name) */
+      );
+  }
+
 };
 
 
