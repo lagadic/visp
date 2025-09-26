@@ -6,8 +6,185 @@
     "detection.hpp"
   ],
   "classes": {
+    "vpDetectorBase": {
+      "methods": [
+        {
+          "static": false,
+          "signature": "std::vector<std::string>& getMessage()",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "std::string& getMessage(size_t)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "std::vector<std::vector<vpImagePoint>>& getPolygon()",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "std::vector<vpImagePoint>& getPolygon(size_t)",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        }
+      ]
+    },
     "vpDetectorAprilTag": {
-      "additional_bindings": "bindings_vpDetectorAprilTag"
+      "additional_bindings": "bindings_vpDetectorAprilTag",
+      "acknowledge_pointer_or_ref_fields": [
+        "Impl*"
+      ],
+      "methods": [
+        {
+          "static": false,
+          "signature": "bool detect(const vpImage<unsigned char>&, double, const vpCameraParameters&, std::vector<vpHomogeneousMatrix>&, std::vector<vpHomogeneousMatrix>*, std::vector<double>*, std::vector<double>*)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": false,
+          "signature": "bool getPose(size_t, double, const vpCameraParameters&, vpHomogeneousMatrix&, vpHomogeneousMatrix*, double*, double*)",
+          "ignore": true
+        }
+      ]
+    },
+    "vpDetectorDNNOpenCV": {
+      "acknowledge_pointer_or_ref_fields": [
+        "void(*)(vpDetectorDNNOpenCV::DetectionCandidates&,std::vector<cv::Mat>&,const vpDetectorDNNOpenCV::NetConfig&)"
+      ],
+      "methods": [
+        {
+          "static": false,
+          "signature": " vpDetectorDNNOpenCV(const vpDetectorDNNOpenCV::NetConfig&, const vpDetectorDNNOpenCV::DNNResultsParsingType&, void(*)(vpDetectorDNNOpenCV::DetectionCandidates&,std::vector<cv::Mat>&,const vpDetectorDNNOpenCV::NetConfig&))",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": " vpDetectorDNNOpenCV(const std::string&, void(*)(vpDetectorDNNOpenCV::DetectionCandidates&,std::vector<cv::Mat>&,const vpDetectorDNNOpenCV::NetConfig&))",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "void setParsingMethod(const vpDetectorDNNOpenCV::DNNResultsParsingType&, void(*)(vpDetectorDNNOpenCV::DetectionCandidates&,std::vector<cv::Mat>&,const vpDetectorDNNOpenCV::NetConfig&))",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "bool detect(const vpImage<unsigned char>&, std::vector<vpDetectorDNNOpenCV::DetectedFeatures2D>&)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            true,
+            false
+          ],
+          "param_is_output": [
+            false,
+            true
+          ]
+        },
+        {
+          "static": false,
+          "signature": "bool detect(const vpImage<unsigned char>&, std::vector<std::pair<std::string, std::vector<vpDetectorDNNOpenCV::DetectedFeatures2D>>>&)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            true,
+            false
+          ],
+          "param_is_output": [
+            false,
+            true
+          ]
+        },
+        {
+          "static": false,
+          "signature": "bool detect(const vpImage<vpRGBa>&, std::vector<vpDetectorDNNOpenCV::DetectedFeatures2D>&)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            true,
+            false
+          ],
+          "param_is_output": [
+            false,
+            true
+          ]
+        },
+        {
+          "static": false,
+          "signature": "bool detect(const vpImage<vpRGBa>&, std::vector<std::pair<std::string, std::vector<vpDetectorDNNOpenCV::DetectedFeatures2D>>>&)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            true,
+            false
+          ],
+          "param_is_output": [
+            false,
+            true
+          ]
+        },
+        {
+          "static": false,
+          "signature": "bool detect(const cv::Mat&, std::vector<vpDetectorDNNOpenCV::DetectedFeatures2D>&)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "bool detect(const cv::Mat&, std::vector<std::pair<std::string, std::vector<vpDetectorDNNOpenCV::DetectedFeatures2D>>>&)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "const vpDetectorDNNOpenCV::NetConfig& getNetConfig()",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        }
+      ]
+    },
+    "DetectedFeatures2D": {
+      "methods": [
+        {
+          "static": false,
+          "signature": "void display(const vpImage<Type>&, const vpColor&, unsigned int)",
+          "specializations": [
+            [
+              "TypeBaseImagePixel"
+            ]
+          ]
+        }
+      ]
     }
   }
 }

@@ -78,7 +78,7 @@ void vpImageConvert::convert(const vpImage<unsigned char> &src, vpImage<vpRGBa> 
 }
 
 /*!
-  Convert a vpImage\<unsigned char\> to a vpImage\<vpRGBa\>
+  Convert a vpImage\<vpRGBa\> to a vpImage\<unsigned char\>
   \param[in] src : Source image
   \param[out] dest : Destination image.
   \param[in] nThreads : Number of threads to use if OpenMP is available. If 0 is passed,

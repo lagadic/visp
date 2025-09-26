@@ -43,6 +43,7 @@
 
 
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpCameraParameters.h>
 #include <visp3/detection/vpDetectorAprilTag.h>
 
 namespace py = pybind11;
@@ -54,7 +55,61 @@ void bindings_vpDetectorAprilTag(py::class_<vpDetectorAprilTag, std::shared_ptr<
      std::vector<vpHomogeneousMatrix> cMos;
      bool detected = self.detect(I, tagSize, cam, cMos);
      return std::make_tuple(detected, cMos);
-  });
+  }, R"doc(
+Run Apriltag detection and retrieve whether poses have detected and if so, the list of poses
+
+:param I: The image in which to detect the tags.
+
+:param tagSize: the size of apriltags, in meters
+
+:param cam: The camera intrinsics, required to compute the pose
+
+:return: A tuple containing whether any tag has been detected and the list of tag poses. Combine with getTagsId to associate the IDs to the poses.
+
+)doc", py::arg("I"), py::arg("tag_size"), py::arg("cam"));
+
+  pyAprilTag.def("detectWithAlternativesPoses",
+   [](vpDetectorAprilTag &self, const vpImage<unsigned char> &I, double tagSize, const vpCameraParameters &cam) -> std::tuple<bool, std::vector<vpHomogeneousMatrix>, std::vector<vpHomogeneousMatrix>, std::vector<double>, std::vector<double>> {
+     std::vector<vpHomogeneousMatrix> cMos, cMos2;
+     std::vector<double> errors1, errors2;
+
+
+     bool detected = self.detect(I, tagSize, cam, cMos, &cMos2, &errors1, &errors2);
+     return std::make_tuple(detected, cMos, cMos2, errors1, errors2);
+  }, R"doc(
+Run Apriltag detection and retrieve whether poses have detected and if so, the list of poses. This version provides two poses, since tags are planar objects.
+
+:param I: The image in which to detect the tags.
+
+:param tagSize: the size of apriltags, in meters
+
+:param cam: The camera intrinsics, required to compute the pose
+
+:return: A tuple containing:
+- Whether any tag has been detected
+- The first list of detected tag poses
+- The second list of detected tag poses
+- The projections errors associated to the first list of poses
+- The projections errors associated to the second list of poses
+)doc", py::arg("I"), py::arg("tag_size"), py::arg("cam"));
+
+  pyAprilTag.def("getPose",
+     [](vpDetectorAprilTag &self, size_t index, double tagSize, const vpCameraParameters &cam) -> std::tuple<bool, vpHomogeneousMatrix> {
+       vpHomogeneousMatrix cMo;
+       bool detected = self.getPose(index, tagSize, cam, cMo);
+       return std::make_tuple(detected, cMo);
+    }, R"doc(
+Retrieve the pose of the apriltag with the corresponding ID.
+
+:param index: The index of in the list of detected tags. It is not the detected tag's id!
+
+:param tagSize: the size of apriltags, in meters
+
+:param cam: The camera intrinsics, required to compute the pose
+
+:return: A tuple containing whether this tag was detected and its pose.
+
+)doc", py::arg("tag_id"), py::arg("tag_size"), py::arg("cam"));
 }
 
 
