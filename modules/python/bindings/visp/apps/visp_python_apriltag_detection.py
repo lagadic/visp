@@ -45,7 +45,7 @@ def build_detector_from_args(args) -> DetectorAprilTag:
 class FrameSource():
   def intrinsics(self) -> CameraParameters:
     raise NotImplementedError()
-  def frames(self) -> Generator[ImageGray]:
+  def frames(self):
     raise NotImplementedError()
 
 class RealSenseSource(FrameSource):
@@ -65,7 +65,7 @@ class RealSenseSource(FrameSource):
   def intrinsics(self) -> CameraParameters:
     return self.cam
 
-  def frames(self) -> Generator[ImageGray]:
+  def frames(self):
 
     def generator():
       while True:
