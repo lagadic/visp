@@ -14,6 +14,7 @@ void usage(const char *argv[], int error)
     << " [--width <image width>]"
     << " [--height <image height>]"
     << " [--seqname <sequence name>]"
+    << " [--save-distortion]"
     << " [--record <mode>]"
     << " [--no-display]"
     << " [--help] [-h]" << std::endl
@@ -32,6 +33,9 @@ void usage(const char *argv[], int error)
     << "  --seqname <sequence name>" << std::endl
     << "    Name of the sequence of image to create (ie: /tmp/image%04d.jpg)." << std::endl
     << "    Default: empty." << std::endl
+    << std::endl
+    << "  --save-distortion" << std::endl
+    << "    Flag to save the distortion coefficient parameters in the XML file." << std::endl
     << std::endl
     << "  --record <mode>" << std::endl
     << "    Allowed values for mode are:" << std::endl
@@ -75,7 +79,7 @@ void usage(const char *argv[], int error)
  */
 int main(int argc, const char *argv[])
 {
-#if defined(VISP_HAVE_REALSENSE) || defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_THREADS)
+#if (defined(VISP_HAVE_REALSENSE) || defined(VISP_HAVE_REALSENSE2)) && defined(VISP_HAVE_THREADS)
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
 #endif
@@ -91,6 +95,7 @@ int main(int argc, const char *argv[])
     bool opt_display = true;
     unsigned int opt_width = 640;
     unsigned int opt_height = 480;
+    bool save_distortion = false;
 
     for (int i = 1; i < argc; i++) {
       if (std::string(argv[i]) == "--fps" && i + 1 < argc) {
@@ -110,6 +115,9 @@ int main(int argc, const char *argv[])
       }
       else if (std::string(argv[i]) == "--no-display") {
         opt_display = false;
+      }
+      else if (std::string(argv[i]) == "--save-distortion") {
+        save_distortion = true;
       }
       else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
         usage(argv, 0);
@@ -160,26 +168,30 @@ int main(int argc, const char *argv[])
 
     std::cout << "Image size : " << I.getWidth() << " " << I.getHeight() << std::endl;
 
-    vpCameraParameters cam = g.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithoutDistortion);
+    vpCameraParameters cam = g.getCameraParameters(RS2_STREAM_COLOR,
+      save_distortion ? vpCameraParameters::perspectiveProjWithDistortion : vpCameraParameters::perspectiveProjWithoutDistortion
+    );
 
 #if defined(VISP_HAVE_PUGIXML)
-    vpXmlParserCamera p;
-    std::string output_folder = vpIoTools::getParent(opt_seqname);
-    if (!vpIoTools::checkDirectory(output_folder)) {
-      try {
-        std::cout << "Create output folder: " << output_folder << std::endl;
-        vpIoTools::makeDirectory(output_folder);
+    if (!opt_seqname.empty()) {
+      vpXmlParserCamera p;
+      std::string output_folder = vpIoTools::getParent(opt_seqname);
+      if (!vpIoTools::checkDirectory(output_folder)) {
+        try {
+          std::cout << "Create output folder: " << output_folder << std::endl;
+          vpIoTools::makeDirectory(output_folder);
+        }
+        catch (const vpException &e) {
+          std::cout << e.getStringMessage();
+          return EXIT_FAILURE;
+        }
       }
-      catch (const vpException &e) {
-        std::cout << e.getStringMessage();
-        return EXIT_FAILURE;
-      }
-    }
-    std::string cam_filename = output_folder + "/camera.xml";
+      std::string cam_filename = output_folder + "/camera.xml";
 
-    std::cout << "Save camera intrinsics in: " << cam_filename << std::endl;
-    if (p.save(cam, cam_filename, "camera")) {
-      std::cout << "Cannot save camera parameters in " << cam_filename << std::endl;
+      std::cout << "Save camera intrinsics in: " << cam_filename << std::endl;
+      if (p.save(cam, cam_filename, "camera") != vpXmlParserCamera::SEQUENCE_OK) {
+        std::cout << "Cannot save camera parameters in " << cam_filename << std::endl;
+      }
     }
 #else
     std::cout << "Warning: Unable to save camera parameters in xml since pugixml 3rdparty is not enabled" << std::endl;

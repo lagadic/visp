@@ -1,6 +1,7 @@
 package com.example.apriltagdetection;
 
 import android.content.Context;
+
 import android.hardware.Camera;
 import android.util.Log;
 import android.view.Surface;
@@ -9,13 +10,16 @@ import android.view.SurfaceView;
 
 import org.visp.core.VpCameraParameters;
 import org.visp.core.VpHomogeneousMatrix;
+import org.visp.core.VpImagePoint;
 import org.visp.core.VpImageUChar;
 import org.visp.detection.VpDetectorAprilTag;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import static com.example.apriltagdetection.CameraPreviewActivity.updateResult;
+import static com.example.apriltagdetection.CameraPreviewActivity.updateResults;
 
 /**
  * Camera preview that displays a {@link Camera}.
@@ -23,22 +27,40 @@ import static com.example.apriltagdetection.CameraPreviewActivity.updateResult;
  * Handles basic lifecycle methods to display and stop the preview.
  * <p>
  * Implementation is based directly on the documentation at
- * http://developer.android.com/guide/topics/media/camera.html
+ * https://developer.android.com/media/camera/camera-deprecated/camera-api
  */
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback, Camera.PreviewCallback {
-
     private static final String TAG = "CameraPreview";
     private SurfaceHolder mHolder;
     private Camera mCamera;
     private Camera.CameraInfo mCameraInfo;
     private int mDisplayOrientation;
-    private long lastTime;
-    private int w,h;
-    private VpCameraParameters cameraParameters;
-    private double tagSize;
+    private long mLastTime;
+    private int mW, mH;
+    private VpCameraParameters mCameraParameters;
+    private double mTagSize;
+    private VpDetectorAprilTag mDetectorAprilTag;
+    private VpImageUChar mImageUChar;
+    private static int[] mMethods = {
+        0, // TAG_36h11
+        3, // TAG_25h9
+        4, // TAG_25h7
+        5, // TAG_16h5
+        6, // TAG_CIRCLE21h7
+        14, // TAG_ARUCO_4x4_1000
+        18, // TAG_ARUCO_5x5_1000
+        22, // TAG_ARUCO_6x6_1000
+        23, // TAG_ARUCO_MIP_36h12
+    };
+    private int mMethod;
+    private boolean mDisplayTagFrame;
+    private double mDisplayTagFrameRatio;
+    private float mAprilTagQuadDecimate;
+    private float mAprilTagMarginThreshold;
+    private int mAprilTagNbThreads;
 
     public CameraPreview(Context context, Camera camera, Camera.CameraInfo cameraInfo,
-                         int displayOrientation) {
+                         int displayOrientation, boolean displayFrame, double displayFrameRatio) {
         super(context);
 
         // Do not initialize if no camera has been set
@@ -56,27 +78,45 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         mHolder.addCallback(this);
 
         // init the ViSP tag detection system
-        w = mCamera.getParameters().getPreviewSize().width;
-        h = mCamera.getParameters().getPreviewSize().height;
-        cameraParameters = new VpCameraParameters();
-        cameraParameters.initPersProjWithoutDistortion(615.1674805, 615.1675415, 312.1889954, 243.4373779);
-        tagSize = 0.053;
+        mW = mCamera.getParameters().getPreviewSize().width;
+        mH = mCamera.getParameters().getPreviewSize().height;
+        mCameraParameters = new VpCameraParameters();
+        mCameraParameters.initPersProjWithoutDistortion(600, 600, 320, 240);
+        mTagSize = 0.05;
+
+        mDetectorAprilTag = new VpDetectorAprilTag();
+        mMethod = 0; // TAG_36h11
+        mDetectorAprilTag.setAprilTagFamily(mMethods[mMethod]);
+        mAprilTagMarginThreshold = 50;
+        mDetectorAprilTag.setAprilTagDecisionMarginThreshold(mAprilTagMarginThreshold);
+        mAprilTagQuadDecimate = 2;
+        mDetectorAprilTag.setAprilTagQuadDecimate(mAprilTagQuadDecimate);
+        mAprilTagNbThreads = 1;
+        mDetectorAprilTag.setAprilTagNbThreads(mAprilTagNbThreads);
+
+        mDisplayTagFrame = displayFrame;
+        mDisplayTagFrameRatio = displayFrameRatio;
     }
 
     public void surfaceCreated(SurfaceHolder holder) {
         // The Surface has been created, now tell the camera where to draw the preview.
+        if (mCamera == null) {
+            return;
+        }
+
         try {
-            lastTime = System.currentTimeMillis();
+            mLastTime = System.currentTimeMillis();
             mCamera.setPreviewDisplay(holder);
             mCamera.startPreview();
-            Log.d(TAG, "Camera preview started.");
         } catch (IOException e) {
-            Log.d(TAG, "Error setting camera preview: " + e.getMessage());
+            Log.e(TAG, "Error setting camera preview: " + e.getMessage());
         }
     }
 
     public void surfaceDestroyed(SurfaceHolder holder) {
         // empty. Take care of releasing the Camera preview in your activity.
+        mCamera.stopPreview(); // TODO: check if needed
+        mCamera.setPreviewCallback(null);
     }
 
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
@@ -85,33 +125,29 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
         if (mHolder.getSurface() == null) {
             // preview surface does not exist
-            Log.d(TAG, "Preview surface does not exist");
             return;
         }
 
         // stop preview before making changes
         try {
             mCamera.stopPreview();
-            Log.d(TAG, "Preview stopped.");
         } catch (Exception e) {
             // ignore: tried to stop a non-existent preview
-            Log.d(TAG, "Error starting camera preview: " + e.getMessage());
+            Log.e(TAG, "Error starting camera preview: " + e.getMessage());
         }
 
         // Now make changes
         int orientation = calculatePreviewOrientation(mCameraInfo, mDisplayOrientation);
         mCamera.setDisplayOrientation(orientation);
 
-        lastTime = System.currentTimeMillis();
+        mLastTime = System.currentTimeMillis();
 
         try {
             mCamera.setPreviewCallback(this);
             mCamera.setPreviewDisplay(mHolder);
             mCamera.startPreview();
-
-            Log.d(TAG, "Camera preview started.");
         } catch (Exception e) {
-            Log.d(TAG, "Error starting camera preview: " + e.getMessage());
+            Log.e(TAG, "Error starting camera preview: " + e.getMessage());
         }
     }
 
@@ -152,22 +188,81 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         return result;
     }
 
-    // Getting 24 FPS, 640x480 size images
     public void onPreviewFrame(byte[] data, Camera camera) {
+        mImageUChar = new VpImageUChar(data, mH, mW,true);
 
-        if (System.currentTimeMillis() > 50 + lastTime) {
+        // Default format for Camera API is:
+        //   - https://developer.android.com/reference/android/graphics/ImageFormat#NV21
+        //   YCrCb format used for images, which uses the NV21 encoding format.
+        //   This is the default format for Camera preview images, when not otherwise set with Camera.Parameters.setPreviewFormat(int).
+        //   For the android.hardware.camera2 API, the YUV_420_888 format is recommended for YUV output instead.
+        //   Constant Value: 17 (0x00000011)
+//            Camera.Parameters parameters = camera.getParameters();
+//            int previewFormat = parameters.getPreviewFormat();
+//            Log.d("CameraPreview.java", "previewFormat=" + previewFormat + " PREVIEW_FORMAT_NV21=" + ImageFormat.NV21);
 
-            VpImageUChar imageUChar = new VpImageUChar(data,h,w,true);
+        // do the image processing
+        List<VpHomogeneousMatrix> cMo_list = mDetectorAprilTag.detect(mImageUChar, mTagSize, mCameraParameters);
 
-            // do the image processing
-            // Its working even without grey scale conversion
-            VpDetectorAprilTag detectorAprilTag = new VpDetectorAprilTag();
-            List<VpHomogeneousMatrix> matrices = detectorAprilTag.detect(imageUChar,tagSize,cameraParameters);
-            Log.d("CameraPreview.java",matrices.size() + " tags detected");
+        int[] tags_id = mDetectorAprilTag.getTagsId();
+        int strokeWidth = 8;
+        int orientation = calculatePreviewOrientation(mCameraInfo, mDisplayOrientation);
 
-            updateResult(data, matrices.size() + " 36h11 tags detected within " + (System.currentTimeMillis() - lastTime) +" ms");
+        if (!cMo_list.isEmpty()) {
+            List<List<VpImagePoint>> tagsCorners_visp = mDetectorAprilTag.getTagsCorners();
+            int[] tag_ids = mDetectorAprilTag.getTagsId();
 
-            lastTime = System.currentTimeMillis();
+            updateResults(tagsCorners_visp, strokeWidth, tag_ids, cMo_list,
+                    cMo_list.size() + " tags with id= " + Arrays.toString(tags_id) + " detected within "
+                            + (System.currentTimeMillis() - mLastTime) +" ms", orientation, mW, mH, mDisplayTagFrame, mDisplayTagFrameRatio, mTagSize, mCameraParameters);
+        } else {
+            // Display text info
+            List<List<VpImagePoint>> tagsCorners = new ArrayList<List<VpImagePoint>>();
+            List<VpHomogeneousMatrix> empty_cMo = new ArrayList<>();
+
+            int[] emptyIds = {};
+            updateResults(tagsCorners, strokeWidth, emptyIds, empty_cMo,
+                    cMo_list.size() + " tags with id= " + Arrays.toString(tags_id) + " detected within "
+                            + (System.currentTimeMillis() - mLastTime) +" ms", orientation, mW, mH, mDisplayTagFrame, mDisplayTagFrameRatio, mTagSize, mCameraParameters);
         }
+
+        mLastTime = System.currentTimeMillis();
+    }
+
+    public void setAprilTagMethod(int selection) {
+        mMethod = selection;
+        mDetectorAprilTag.setAprilTagFamily(mMethods[mMethod]);
+        mDetectorAprilTag.setAprilTagDecisionMarginThreshold(mAprilTagMarginThreshold);
+    }
+
+    public void setAprilTagQuadDecimate(float quad_decimate) {
+        mAprilTagQuadDecimate = quad_decimate;
+        mDetectorAprilTag.setAprilTagQuadDecimate(mAprilTagQuadDecimate);
+    }
+
+    public void setAprilTagMarginThreshold(float margin) {
+        mAprilTagMarginThreshold = margin;
+        mDetectorAprilTag.setAprilTagDecisionMarginThreshold(margin);
+    }
+
+    public void setAprilTagNbThreads(int nThreads) {
+        mAprilTagNbThreads = nThreads;
+        mDetectorAprilTag.setAprilTagNbThreads(nThreads);
+    }
+
+    public void setCameraFocal(double focal) {
+        mCameraParameters.initPersProjWithoutDistortion(focal, focal, mW / 2.0, mH / 2.0);
+    }
+
+    public void setTagSize(double tagSize) {
+        mTagSize = tagSize;
+    }
+
+    public void setDisplayTagFrame(boolean display) {
+        mDisplayTagFrame = display;
+    }
+
+    public  void setDisplayTagFrameRatio(double ratio) {
+        mDisplayTagFrameRatio = ratio;
     }
 }

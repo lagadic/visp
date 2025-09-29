@@ -22,7 +22,6 @@ class vpRBTracker;
 class VISP_EXPORT vpRBInitializationHelper
 {
 public:
-  void removeComment(std::ifstream &fileId);
   void savePose(const std::string &filename) const;
 
   vpHomogeneousMatrix getPose() const { return m_cMo; }
@@ -30,6 +29,10 @@ public:
   void setCameraParameters(const vpCameraParameters &cam) { m_cam = cam; }
 
   friend vpRBTracker;
+
+protected:
+  void removeCommentsAndEmptyLines(std::ifstream &fileId);
+
 private:
 #ifdef VISP_HAVE_MODULE_GUI
   template <typename T>

@@ -800,10 +800,7 @@ void vpImageConvert::YUV420ToRGB(unsigned char *yuv, unsigned char *rgb, unsigne
 */
 void vpImageConvert::YUV420ToGrey(unsigned char *yuv, unsigned char *grey, unsigned int size)
 {
-  for (unsigned int i = 0; i < size; ++i) {
-    *grey++ = *yuv;
-    ++yuv;
-  }
+  memcpy(grey, yuv, size);
 }
 
 /*!

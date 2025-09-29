@@ -175,8 +175,7 @@ As explained in `${VISP_WS}/3rdparty/StructureSDK-CrossPlatform-0.9/Documentatio
 follow these steps to build sample applications provided with the SDK:
 \code{.sh}
 $ cd $OCCIPITAL_STRUCTURE_DIR
-$ mkdir build
-$ cd build
+$ mkdir build && cd build
 $ cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
 $ make -j$(sysctl -n hw.logicalcpu) Samples
 \endcode
@@ -193,8 +192,7 @@ $ mkdir -p $VISP_WS/3rdparty/qualisys
 $ cd $VISP_WS/3rdparty/qualisys
 $ git clone https://github.com/qualisys/qualisys_cpp_sdk.git
 $ cd qualisys_cpp_sdk
-$ mkdir build
-$ cd build
+$ mkdir build && cd build
 $ cmake .. -DBUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=Release
 $ make -j$(sysctl -n hw.logicalcpu)
 $ make install

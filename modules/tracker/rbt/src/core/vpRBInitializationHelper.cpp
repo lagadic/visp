@@ -13,13 +13,19 @@
 
 BEGIN_VISP_NAMESPACE
 
-void vpRBInitializationHelper::removeComment(std::ifstream &fileId)
+/*!
+ * Skip lines starting with # as comment or empty lines
+ * @param fileId : File id.
+ */
+  void vpRBInitializationHelper::removeCommentsAndEmptyLines(std::ifstream &fileId)
 {
   char c;
 
   fileId.get(c);
-  while (!fileId.fail() && (c == '#')) {
-    fileId.ignore(std::numeric_limits<std::streamsize>::max(), fileId.widen('\n'));
+  while (!fileId.fail() && ((c == '#') || (c == '\n') || (c == '\r'))) {
+    if (c == '#') {
+      fileId.ignore(std::numeric_limits<std::streamsize>::max(), fileId.widen('\n'));
+    }
     fileId.get(c);
   }
   if (fileId.fail()) {
@@ -191,7 +197,7 @@ void vpRBInitializationHelper::initClick(const vpImage<T> &I, const std::string 
     (void)(displayHelp);
 #endif //#ifdef VISP_HAVE_MODULE_IO
     // skip lines starting with # as comment
-    removeComment(finit);
+    removeCommentsAndEmptyLines(finit);
 
     unsigned int n3d;
     finit >> n3d;
@@ -205,7 +211,7 @@ void vpRBInitializationHelper::initClick(const vpImage<T> &I, const std::string 
     std::vector<vpPoint> P(n3d);
     for (unsigned int i = 0; i < n3d; i++) {
       // skip lines starting with # as comment
-      removeComment(finit);
+      removeCommentsAndEmptyLines(finit);
 
       vpColVector pt_3d(4, 1.0);
       finit >> pt_3d[0];

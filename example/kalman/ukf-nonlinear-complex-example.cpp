@@ -535,10 +535,14 @@ private:
 int main(const int argc, const char *argv[])
 {
   bool opt_useDisplay = true;
+  bool opt_useUserInteraction = true;
   for (int i = 1; i < argc; ++i) {
     std::string arg(argv[i]);
     if (arg == "-d") {
       opt_useDisplay = false;
+    }
+    if (arg == "-c") {
+      opt_useUserInteraction = false;
     }
     else if ((arg == "-h") || (arg == "--help")) {
       std::cout << "SYNOPSIS" << std::endl;
@@ -547,6 +551,8 @@ int main(const int argc, const char *argv[])
       std::cout << "DETAILS" << std::endl;
       std::cout << "  -d" << std::endl;
       std::cout << "    Deactivate display." << std::endl;
+      std::cout << "  -c" << std::endl;
+      std::cout << "    Deactivate user interaction." << std::endl;
       std::cout << std::endl;
       std::cout << "  -h, --help" << std::endl;
       return 0;
@@ -627,6 +633,8 @@ int main(const int argc, const char *argv[])
     plot->setLegend(0, 0, "GT");
     plot->setLegend(0, 1, "Filtered");
   }
+#else
+  (void)opt_useDisplay;
 #endif
 
   // Initialize the simulation
@@ -658,7 +666,7 @@ int main(const int argc, const char *argv[])
 #endif
   }
 
-  if (opt_useDisplay) {
+  if (opt_useUserInteraction) {
     std::cout << "Press Enter to quit..." << std::endl;
     std::cin.get();
   }

@@ -75,8 +75,7 @@ $ sudo apt install -y build-essential cmake git libpoco-dev libeigen3-dev
 $ cd $VISP_WS/3rdparty
 $ git clone --branch 0.9.2 --recursive https://github.com/frankaemika/libfranka libfranka-0.9.2
 $ cd libfranka-0.9.2
-$ mkdir build
-$ cd build
+$ mkdir build && cd build
 $ cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=OFF
 $ make -j$(nproc)
 $ sudo make install
@@ -109,8 +108,7 @@ $ sudo apt-get install -y robotpkg-pinocchio
 $ cd $VISP_WS/3rdparty
 $ git clone --recursive https://github.com/frankaemika/libfranka
 $ cd libfranka
-$ mkdir build
-$ cd build
+$ mkdir build && cd build
 $ cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/opt/openrobots/lib/cmake -DBUILD_TESTS=OFF
 $ make -j$(nproc)
 $ sudo make install
@@ -153,8 +151,7 @@ $ sudo ./scripts/setup_udev_rules.sh
 
 5. Build and install librealsense
 \code{.sh}
-$ mkdir build
-$ cd build
+$ mkdir build && cd build
 $ cmake .. -DBUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=Release
 $ make -j4
 $ sudo make install

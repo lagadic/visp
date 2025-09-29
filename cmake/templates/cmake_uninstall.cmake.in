@@ -33,27 +33,24 @@
 #
 #############################################################################
 
-IF(NOT EXISTS "@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt")
-  #MESSAGE("Cannot find install manifest: \"@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt\"")
-  MESSAGE("There is no files to uninstall")
-ELSE(NOT EXISTS "@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt")
-  FILE(READ "@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt" files)
-  STRING(REGEX REPLACE "\n" ";" files "${files}")
-  FOREACH(file ${files})
-    MESSAGE(STATUS "Uninstalling \"${file}\"")
-    IF(EXISTS "${file}")
-      EXEC_PROGRAM(
-        "@CMAKE_COMMAND@" ARGS "-E remove \"${file}\""
+if(NOT EXISTS "@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt")
+  message("There is no files to uninstall")
+else(NOT EXISTS "@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt")
+  file(READ "@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt" files)
+  string(REGEX REPLACE "\n" ";" files "${files}")
+  foreach(file ${files})
+    message(STATUS "Uninstalling \"${file}\"")
+    if(EXISTS "${file}")
+      execute_process(
+        COMMAND "@CMAKE_COMMAND@" -E remove "$ENV{DESTDIR}${file}"
         OUTPUT_VARIABLE rm_out
-        RETURN_VALUE rm_retval
+        RESULT_VARIABLE rm_retval
         )
-      IF("${rm_retval}" STREQUAL 0)
-      ELSE("${rm_retval}" STREQUAL 0)
-        MESSAGE(FATAL_ERROR "Problem when removing \"${file}\"")
-      ENDIF("${rm_retval}" STREQUAL 0)
-    ELSE(EXISTS "${file}")
-      MESSAGE(STATUS "File \"${file}\" does not exist.")
-    ENDIF(EXISTS "${file}")
-  ENDFOREACH(file)
-
-ENDIF(NOT EXISTS "@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt")
+      if(NOT "${rm_retval}" STREQUAL 0)
+        message(FATAL_ERROR "Problem when removing \"${file}\"")
+      endif()
+    else(EXISTS "${file}")
+      message(STATUS "File \"${file}\" does not exist.")
+    endif()
+  endforeach(file)
+endif()

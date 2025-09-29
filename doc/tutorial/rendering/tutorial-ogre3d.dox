@@ -42,8 +42,7 @@ There is also the optional [OIS](https://github.com/wgois/OIS) library that can 
   $ git clone https://github.com/OGRECave/ogre
   $ cd ogre
   $ git checkout $OGRE_VERSION # where OGRE_VERSION is a tag name corresponding to a version of ogre, such as v13.1.0 or v14.0.0
-  $ mkdir build && mkdir install
-  $ cd build
+  $ mkdir build && mkdir install && cd build
   $ cmake ../ -DCMAKE_INSTALL_PREFIX=$VISP_WS/3rdparty/ogre/install
   $ make -j$(nproc) install
   \endcode

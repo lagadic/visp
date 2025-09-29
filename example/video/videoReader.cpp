@@ -241,8 +241,19 @@ int main(int argc, const char **argv)
     // Create the video Reader
     vpVideoReader reader;
 
+#if defined(VISP_HAVE_DATASET)
+#if VISP_HAVE_DATASET_VERSION >= 0x030702
+    std::string video("video/cube.mp4");
+#else
+    std::string video("video/cube.mpeg");
+#endif
+#else
+    // We suppose that the user will download a recent dataset
+    std::string video("video/cube.mp4");
+#endif
+
     if (opt_ppath.empty()) {
-      filename = vpIoTools::createFilePath(ipath, "video/cube.mpeg");
+      filename = vpIoTools::createFilePath(ipath, video);
     }
     else {
       filename.assign(opt_ppath);

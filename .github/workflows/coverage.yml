@@ -71,6 +71,8 @@ jobs:
           "/*/modules/gui*" \
           "/*/modules/io/src/parallel-port*" \
           "/*/modules/robot*" \
+          "/*/modules/sensors*" \
+          "/*/samples/*" \
           --output-file visp-coverage.cleaned
 
     - name: Upload report to Codecov

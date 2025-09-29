@@ -602,6 +602,7 @@ macro(vp_target_include_modules target)
         vp_target_include_directories(${target} "${VISP_MODULE_${d}_LOCATION}/include")
       endif()
     elseif(EXISTS "${d}")
+      # Exclude all include dirs starting with MacOS SDK path
       vp_string_starts_with(${d} ${apple_sdk_dir} apple_sdk_dir_found)
       if (NOT apple_sdk_dir_found)
         # FS keep external deps inc
@@ -802,6 +803,7 @@ endmacro()
 #   vp_create_module()
 macro(vp_create_module)
   vp_debug_message("vp_create_module(" ${ARGN} ")")
+
   set(VISP_MODULE_${the_module}_LINK_DEPS "${VISP_MODULE_${the_module}_LINK_DEPS};${ARGN}" CACHE INTERNAL "")
   _vp_create_module()
   set(the_module_target ${the_module})

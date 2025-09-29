@@ -276,6 +276,7 @@ int main(int argc, const char **argv)
     detector.setAprilTagQuadDecimate(opt_tag_quad_decimate);
     detector.setAprilTagNbThreads(opt_tag_nThreads);
     detector.setAprilTagDecisionMarginThreshold(opt_tag_decision_margin_threshold);
+    detector.setAprilTagHammingDistanceThreshold(opt_tag_hamming_distance_threshold);
 #ifdef VISP_HAVE_DISPLAY
     detector.setDisplayTag(display_tag);
 #endif

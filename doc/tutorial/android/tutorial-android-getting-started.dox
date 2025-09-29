@@ -69,7 +69,7 @@ Open Android Studio.
   sources are located in the `sdk` folder. As shown in the next image, you should add the following lines:
 \code
 include ':visp'
-project(':visp').projectDir = new File('../sdk')
+project(':visp').projectDir = new File('sdk')
 \endcode
 \image html 05-editing-global.jpg
 

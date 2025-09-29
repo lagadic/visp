@@ -43,11 +43,7 @@
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpPolygon.h>
 #include <visp3/core/vpRect.h>
-#include <visp3/gui/vpDisplayD3D.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpParseArgv.h>
 
 // List of allowed command line options
@@ -158,18 +154,14 @@ int main(int argc, const char **argv)
     vpImage<unsigned char> I(480, 640, 127);
     vpImage<vpRGBa> I_color(480, 640);
 
-#if defined(VISP_HAVE_X11)
-    vpDisplayX d, d2;
-#elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK d, d2;
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI d, d2;
-#elif defined(VISP_HAVE_D3D9)
-    vpDisplayD3D d, d2;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV d, d2;
+#if(VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    std::shared_ptr<vpDisplay> d = vpDisplayFactory::createDisplay();
+    std::shared_ptr<vpDisplay> d2 = vpDisplayFactory::createDisplay();
+#else
+    vpDisplay *d = vpDisplayFactory::allocateDisplay();
+    vpDisplay *d2 = vpDisplayFactory::allocateDisplay();
 #endif
-    d.init(I, 0, 0, "Grayscale image");
+    d->init(I, 0, 0, "Grayscale image");
 
     vpDisplay::display(I);
     vpDisplay::displayText(I, 20, 20, "Left click to draw a polygon, right click when it is finished.", vpColor::red);
@@ -190,7 +182,7 @@ int main(int argc, const char **argv)
     vpDisplay::flush(I);
     vpDisplay::getClick(I);
 
-    d2.init(I_color, I.getWidth(), 0, "Color image");
+    d2->init(I_color, I.getWidth(), 0, "Color image");
     // Create colormap
     for (unsigned int i = 0; i < I_color.getHeight(); i++) {
       double hue = i / static_cast<double>(I_color.getHeight()), saturation = 1.0, value = 1.0;
@@ -222,6 +214,10 @@ int main(int argc, const char **argv)
     vpDisplay::displayDotLine(I_color, polygon.getCorners(), false, vpColor::red, 2);
     vpDisplay::flush(I_color);
     vpDisplay::getClick(I_color);
+#if(VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    delete d;
+    delete d2;
+#endif
   }
 #else
   (void)argc;

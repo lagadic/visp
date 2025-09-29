@@ -154,8 +154,7 @@ written we downloaded `eigen-3.3.9.zip` archive corresponding to Eigen 3.3.9.
 - Create a build directory
 \verbatim
 C:\> cd %VISP_WS%\3rdparty\eigen-3.3.9
-C:\> mkdir build-vc14
-C:\> cd build-vc14
+C:\> mkdir build-vc14 && cd build-vc14
 \endverbatim
 - Run CMake in build directory (here the generator is chosen for Visual Studio 14 2016 and 64 bits hardware
 and installation folder is set to `%%VISP_WS%\3rdparty\eigen-3.3.9\build-vc14\install` folder):

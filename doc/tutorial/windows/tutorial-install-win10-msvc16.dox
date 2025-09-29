@@ -161,8 +161,7 @@ written we downloaded `eigen-3.3.9.zip` archive corresponding to Eigen 3.3.9.
 - Create a build directory
 \verbatim
 C:\> cd %VISP_WS%\3rdparty\eigen-3.3.9
-C:\> mkdir build-vc16
-C:\> cd build-vc16
+C:\> mkdir build-vc16 && cd build-vc16
 \endverbatim
 - Run CMake in build directory (here the generator is chosen for Visual Studio 16 2019 and installation folder is set
  to `%%VISP_WS%\3rdparty\eigen-3.3.9\build-vc16\install` folder):
@@ -271,8 +270,7 @@ follow these steps to build sample applications provided with the SDK:
 - Generate the Visual Studio solution and build sample applications:
 \verbatim
 > cd %VISP_WS%\StructureSDK-CrossPlatform-0.9
-> mkdir build
-> cd build
+> mkdir build && cd build
 > cmake -G "Visual Studio 16 2019 Win64" ..
 > cmake --build . --target Samples --config Release
 \endverbatim
@@ -433,8 +431,7 @@ C:\> mkdir %VISP_DIR%\3rdparty\qualisys
 C:\> cd %VISP_DIR%\3rdparty\qualisys
 C:\> git clone https://github.com/qualisys/qualisys_cpp_sdk.git
 C:\> cd qualisys_cpp_sdk
-C:\> mkdir build
-C:\> cd build
+C:\> mkdir build && cd build
 C:\> cmake -G "Visual Studio 16 2019" -A "x64" .. -DBUILD_EXAMPLES=ON
 C:\> cmake --build . --config Release --target install
 \endverbatim

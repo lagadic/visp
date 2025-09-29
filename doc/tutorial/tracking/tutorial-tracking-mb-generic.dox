@@ -1184,6 +1184,7 @@ named `./lego-construction.cao` that includes multiple 2x4 lego brick where each
 transformation. We could than assemble them in the parent file:
 \code{.txt}
 $ cat ./lego-construction.cao
+V1
 load("lego_parts/brick-2x4.cao", t=[0.048; 0.0; 0.0], tu=[0; 0; 90 deg])
 load("lego_parts/brick-2x4.cao", t=[0; 0.048; 0.0], tu=[0; 0; 3.1415 rad])
 load("lego_parts/brick-2x4.cao", t=[0; 0; 0.048])
@@ -1202,6 +1203,7 @@ we want to apply:
 \right]\f]
 \code{.txt}
 $ cat ./lego-construction.cao
+V1
 load("lego_parts/brick-2x4.cao", t=[0.048; 0.0; 0.0], R=[0; 1; 0; 1; 0; 0; 0; 0; 1])
 \endcode
 
