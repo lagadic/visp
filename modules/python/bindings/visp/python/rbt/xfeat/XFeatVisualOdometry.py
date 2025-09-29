@@ -149,7 +149,6 @@ class XFeatVisualOdometry(RBVisualOdometry):
       removed_indices = self.environment_map.update(frame, self.cTw, None, frame.depth, self.idx_curr_env_matched, self.idx_environment_map,
                                                      self.current_representation.keypoints, self.current_representation.descriptors)
 
-
     self.backend.process_frame(frame, self.iter)
     self.current_representation = self.backend.get_current_environment_data()
 

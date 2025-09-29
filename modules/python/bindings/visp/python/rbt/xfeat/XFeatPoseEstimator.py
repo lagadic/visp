@@ -336,7 +336,7 @@ class XFeatViewPointPoseEstimator():
     self.point_distance_threshold = point_distance_threshold
 
     self.optim_params = LevenbergMarquardtParameters()
-    self.optim_params.gain = 1.0
+    self.optim_params.gain = 0.5
     self.optim_params.maxNumIters = 100
     self.optim_params.muInit = 0.0
     self.optim_params.muIterFactor = 0.0
