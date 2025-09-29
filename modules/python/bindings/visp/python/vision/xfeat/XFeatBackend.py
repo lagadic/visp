@@ -131,13 +131,18 @@ class XFeatBackend():
 
     return idx0[mask_good], idx1[mask_good]
 
-  def match_dense(self, r1: XFeatStarRepresentation, descriptors: XFeatStarRepresentation, min_cossim=None):
+  def match_dense(self, r1: torch.Tensor, descriptors: torch.Tensor, min_cossim=None):
     if min_cossim is None:
       min_cossim = self.min_cos
     with torch.no_grad():
-
-      idxs_list = self.xfeat.batch_match(r1.descriptors[None], descriptors[None], min_cossim)
-      indices_1, indices_2 = self.refine_dense(r1.descriptors, descriptors, matches=idxs_list)
+      if len(r1.size()) == 3:
+        assert r1.size(0) == 1
+        r1 = r1[0]
+      if len(descriptors.size()) == 3:
+        assert descriptors.size(0) == 1
+        descriptors = descriptors[0]
+      idxs_list = self.xfeat.batch_match(r1[None], descriptors[None], min_cossim)
+      indices_1, indices_2 = self.refine_dense(r1, descriptors, matches=idxs_list)
       return indices_1, indices_2
 
   def match(self, r1: XFeatRepresentation, descriptors: torch.Tensor, min_cos=None): # Return indices of matched points

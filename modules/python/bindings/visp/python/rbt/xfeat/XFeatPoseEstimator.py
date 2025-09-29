@@ -154,21 +154,14 @@ class XFeatViewPointPoseEstimator():
   Minimization can be done in 2D or 3D space.
   """
   class ViewPointMatcher():
-    def __init__(self, min_cossim):
+    def __init__(self, optim_params: LevenbergMarquardtParameters):
       self.pose = None
       self.view_id = None
       self.points_3d = None
       self.descriptors = None
       self.representation = {}
+      self.optim_params = optim_params
 
-      self.min_cossim = min_cossim
-
-      self.optim_params = LevenbergMarquardtParameters()
-      self.optim_params.gain = 1.0
-      self.optim_params.maxNumIters = 1000
-      self.optim_params.muInit = 0.1
-      self.optim_params.muIterFactor = 0.99
-      self.optim_params.minImprovementFactor = 0.00001
 
     def save(self, path: Path):
       if self.view_id is None:
@@ -217,11 +210,15 @@ class XFeatViewPointPoseEstimator():
       return new_repr
 
     def match_and_score(self, cam, backend: XFeatBackend, current_repr):
-      kps_curr, kps_stored, self.idx_curr_matches, self.idx_stored_matches = backend.match_dense(current_repr, self.representation, min_cossim=self.min_cossim)
+      self.idx_curr_matches, self.idx_stored_matches = backend.match_dense(current_repr['descriptors'], self.representation['descriptors'])
+      kps_curr = current_repr['keypoints'].cpu().numpy()
+      if len(kps_curr.shape) == 3:
+        kps_curr = kps_curr[0]
+      self.idx_stored_matches = self.idx_stored_matches.cpu().numpy()
       # self.idx_curr_matches = self.idx_curr_matches.cpu().numpy()
       # self.idx_stored_matches = self.idx_stored_matches.cpu().numpy()
       self.matched_p3d = self.points_3d[self.idx_stored_matches].copy()
-      self.matched_obs = kps_curr
+      self.matched_obs = kps_curr[self.idx_curr_matches.cpu().numpy()]
       self.matched_obs_x, self.matched_obs_y = PixelMeterConversion.convertPoints(cam, self.matched_obs[:, 0], self.matched_obs[:, 1])
 
       return len(self.idx_stored_matches) / len(self.points_3d)
@@ -320,10 +317,9 @@ class XFeatViewPointPoseEstimator():
       return self.pose_estimator.computeResidual(cMo) / len(self.matched_obs)
 
 
-  def __init__(self, backend: XFeatBackend, save_folder: Path, top_k: int, min_similarity: float, min_match_ratio: float, point_distance_threshold: float):
+  def __init__(self, save_folder: Path, top_k: int, min_similarity: float, min_match_ratio: float, point_distance_threshold: float):
     """Initialize the Pose estimator.
 
-    This strategy
 
     Args:
         backend (XFeatBackend): _description_
@@ -333,18 +329,25 @@ class XFeatViewPointPoseEstimator():
         min_match_ratio (float): _description_
         point_distance_threshold (float): _description_
     """
-    self.xfeat_backend = backend
+    self.xfeat_backend = XFeatBackend(top_k, min_similarity)
     self.save_folder = save_folder
     self.views: List[XFeatViewPointPoseEstimator.ViewPointMatcher] = []
-    self.top_k = top_k
-    self.min_match_ratio = self.min_match_ratio
-    self.point_distance_threshold = self.point_distance_threshold
-    self.min_cossim = min_similarity
+    self.min_match_ratio = min_match_ratio
+    self.point_distance_threshold = point_distance_threshold
+
+    self.optim_params = LevenbergMarquardtParameters()
+    self.optim_params.gain = 1.0
+    self.optim_params.maxNumIters = 100
+    self.optim_params.muInit = 0.0
+    self.optim_params.muIterFactor = 0.0
+    self.optim_params.minImprovementFactor = 0.0001
+
+
     if self.save_folder.exists():
       print('Loading viewpoints matching db...')
       view_id = 0
       while True:
-        v = XFeatViewPointPoseEstimator.ViewPointMatcher(self.min_cossim)
+        v = XFeatViewPointPoseEstimator.ViewPointMatcher(self.optim_params)
         loaded = v.load(self.save_folder, view_id)
         if not loaded:
           break
@@ -361,14 +364,14 @@ class XFeatViewPointPoseEstimator():
         frame (RBFeatureTrackerInput): _description_
         cTo (HomogeneousMatrix): _description_
     """
-    kps, descriptors, scales = self.xfeat_backend.get_repr_dense(frame.IRGB, self.top_k)
+    kps, descriptors, scales = self.xfeat_backend.computeDense(frame.IRGB)
 
     # kps, descriptors = self.xfeat_backend.get_keypoints(frame.IRGB)
     us, vs = kps[:, 0], kps[:, 1] # Keypoints in current image with cTo intrinsics
-    Z = frame.depth.numpy()[np.rint(vs).astype(np.int32), np.rint(us).astype(np.int32)]
     xs,ys = PixelMeterConversion.convertPoints(frame.cam, us, vs)
 
 
+    Z = frame.depth.numpy()[np.rint(vs).astype(np.int32), np.rint(us).astype(np.int32)]
     depth_ok = Z > 0
     xs, ys, Z, kps, descriptors, scales = [array[depth_ok] for array in [xs, ys, Z, kps, descriptors, scales]]
 
@@ -390,17 +393,16 @@ class XFeatViewPointPoseEstimator():
     usri, vsri = (v.astype(np.int32) for v in (usr, vsr))
 
     Zr = frame.renders.depth.numpy()[vsri, usri]
-    is_object = np.logical_and(Zr > 0, np.abs(Zr - points_3d_render[:, 2]) < 1e-2)
     points_3d_render[:, 2] = Zr
+    is_object = np.logical_and(Zr > 0, np.abs(Zr - points_3d_render[:, 2]) < 1e-2)
 
     points_3d_render, kps, descriptors, scales = [array[is_object] for array in [points_3d_render, kps, descriptors, scales]]
 
     assert len(points_3d_render) == len(descriptors) == len(kps) == len(scales)
-    print(f'Recording new view with {len(descriptors)} keypoints!')
-    viewpoint = XFeatViewPointPoseEstimator.ViewPointMatcher(self.min_cossim)
+    viewpoint = XFeatViewPointPoseEstimator.ViewPointMatcher(self.optim_params)
     viewpoint.view_id = len(self.views)
     viewpoint.pose = HomogeneousMatrix(frame.renders.cMo)
-    print(f'Recorded view {viewpoint.view_id} with pose {PoseVector(viewpoint.pose).t()}')
+    print(f'Recorded view {viewpoint.view_id} with {len(descriptors)} keypoints and pose {PoseVector(viewpoint.pose).t()}')
     viewpoint.points_3d = points_3d_render
     viewpoint.descriptors = descriptors
     viewpoint.representation = {
@@ -413,10 +415,10 @@ class XFeatViewPointPoseEstimator():
 
     self.views.append(viewpoint)
 
-  def estimate_pose(self, image: ImageRGBa, depth, cam: CameraParameters) -> HomogeneousMatrix:
+  def estimate_pose(self, image: ImageRGBa, depth, cam: CameraParameters) -> Tuple[bool, HomogeneousMatrix]:
 
     # kps, descriptors = self.xfeat_backend.get_keypoints(image)
-    kps, descriptors, scales = self.xfeat_backend.get_repr_dense(image, top_k=8192)
+    kps, descriptors, scales = self.xfeat_backend.computeDense(image)
     current_representation = {
       'keypoints': kps,
       'descriptors': descriptors,
@@ -432,15 +434,13 @@ class XFeatViewPointPoseEstimator():
     views_enough_matches = list(filter(lambda x: x[1] > self.min_match_ratio, zip(self.views, scores)))
 
     if len(views_enough_matches) == 0:
-      return HomogeneousMatrix(), False
+      return False, HomogeneousMatrix()
 
 
     optim_data: List[Tuple[XFeatViewPointPoseEstimator.ViewPointMatcher, float]] = []
 
     for view, score in views_enough_matches:
       optim_data.append((view, 1.0))
-
-
     poses = []
     errors = []
     final_views = []
@@ -454,7 +454,7 @@ class XFeatViewPointPoseEstimator():
       errors.append(view.error)
 
     if len(poses) == 0:
-      return HomogeneousMatrix(), False
+      return False, HomogeneousMatrix()
 
 
     print(f'Matching: {len(views_enough_matches)}, Geometric: {len(poses)}', end='\r')
@@ -463,8 +463,7 @@ class XFeatViewPointPoseEstimator():
     best_view_index = np.argmin(errors)
     cMo = poses[best_view_index]
 
-
-    return cMo, pose_ok
+    return pose_ok, cMo
 
   def save(self):
     self.save_folder.mkdir(exist_ok=True)
