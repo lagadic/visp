@@ -139,7 +139,7 @@ class RBXFeatFeatureTracker(RBFeatureTracker):
         visible_indices = np.ascontiguousarray(self.object_map.point_map.getVisiblePoints(h, w, frame.cam, frame.renders.cMo, depth_map))
         if len(visible_indices) > 0:
           visible_object_descriptors = self.object_map.descriptors[visible_indices]
-          self.idx_curr_obj_matched, self.idx_object_map_matched = self.backend.match(self.current_representation, visible_object_descriptors)
+          self.idx_curr_obj_matched, self.idx_object_map_matched = self.backend.match(self.current_representation.descriptors, visible_object_descriptors)
           self.idx_curr_obj_matched = self.idx_curr_obj_matched.cpu().numpy()
           self.idx_object_map_matched = visible_indices[self.idx_object_map_matched.cpu().numpy()]
 

@@ -162,7 +162,7 @@ class XFeatVisualOdometry(RBVisualOdometry):
         # visible_indices = self.environment_map.get_visible_points(self.cTw, frame)
         if len(visible_indices) > 0:
           visible_env_descriptors = self.environment_map.descriptors[visible_indices]
-          self.idx_curr_env_matched, self.idx_environment_map = self.backend.match(self.current_representation, visible_env_descriptors)
+          self.idx_curr_env_matched, self.idx_environment_map = self.backend.match(self.current_representation.descriptors, visible_env_descriptors)
           self.idx_curr_env_matched = self.idx_curr_env_matched.cpu().numpy()
           self.idx_environment_map = visible_indices[self.idx_environment_map.cpu().numpy()]
 

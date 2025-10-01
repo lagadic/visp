@@ -78,6 +78,7 @@ class XFeatStarRepresentation(XFeatRepresentation):
       'descriptors': descriptors,
       'scale': scales
     }
+    self.scales = scales
 
   def split(self, i1, i2):
     repr1 = {k: v[i1] for k, v in self.repr.items()}
@@ -135,25 +136,26 @@ class XFeatBackend():
     if min_cossim is None:
       min_cossim = self.min_cos
     with torch.no_grad():
-      if len(r1.size()) == 3:
-        assert r1.size(0) == 1
-        r1 = r1[0]
-      if len(descriptors.size()) == 3:
-        assert descriptors.size(0) == 1
-        descriptors = descriptors[0]
       idxs_list = self.xfeat.batch_match(r1[None], descriptors[None], min_cossim)
       indices_1, indices_2 = self.refine_dense(r1, descriptors, matches=idxs_list)
       return indices_1, indices_2
 
-  def match(self, r1: XFeatRepresentation, descriptors: torch.Tensor, min_cos=None): # Return indices of matched points
+  def match(self, r1: torch.Tensor, descriptors: torch.Tensor, min_cos=None): # Return indices of matched points
     if r1 is None:
       return [], []
     if min_cos is None:
       min_cos = self.min_cos
+
+    if len(r1.size()) == 3:
+      assert r1.size(0) == 1
+      r1 = r1[0]
+    if len(descriptors.size()) == 3:
+      assert descriptors.size(0) == 1
+      descriptors = descriptors[0]
+
     if not self.use_dense:
-      return self.xfeat.match(r1.descriptors, descriptors, min_cossim=min_cos)
+      return self.xfeat.match(r1, descriptors, min_cossim=min_cos)
     else:
-      assert isinstance(r1, XFeatStarRepresentation)
       return self.match_dense(r1, descriptors, min_cos)
 
   def computeDense(self, image: ImageRGBa, top_k = None):
