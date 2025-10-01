@@ -53,9 +53,9 @@ const vpHomogeneousMatrix vpPanda3DBaseRenderer::VISP_T_PANDA({
 });
 const vpHomogeneousMatrix vpPanda3DBaseRenderer::PANDA_T_VISP(vpPanda3DBaseRenderer::VISP_T_PANDA.inverse());
 
-const vpHomogeneousMatrix& vpPanda3DBaseRenderer::pandaToVisp() { return VISP_T_PANDA; }
+const vpHomogeneousMatrix &vpPanda3DBaseRenderer::pandaToVisp() { return VISP_T_PANDA; }
 
-const vpHomogeneousMatrix& vpPanda3DBaseRenderer::vispToPanda() { return PANDA_T_VISP; }
+const vpHomogeneousMatrix &vpPanda3DBaseRenderer::vispToPanda() { return PANDA_T_VISP; }
 
 vpPanda3DBaseRenderer::~vpPanda3DBaseRenderer()
 {
@@ -346,9 +346,17 @@ NodePath vpPanda3DBaseRenderer::loadObject(const std::string &nodeName, const st
 
 void vpPanda3DBaseRenderer::addNodeToScene(const NodePath &object)
 {
+  if (m_camera == nullptr) {
+    throw vpException(vpException::notInitialized, "Renderer was not initialized before trying to add a node to the scene");
+  }
   NodePath objectInScene = object.copy_to(m_renderRoot);
   objectInScene.set_name(object.get_name());
   setNodePose(objectInScene, vpHomogeneousMatrix());
+}
+
+void vpPanda3DBaseRenderer::addObjectToScene(const std::string &name, const std::string &path)
+{
+  addNodeToScene(loadObject(name, path));
 }
 
 void vpPanda3DBaseRenderer::setVerticalSyncEnabled(bool useVsync)

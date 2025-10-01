@@ -216,6 +216,14 @@ public:
   virtual void addNodeToScene(const NodePath &object);
 
   /**
+   * @brief Load and and an object to the scene
+   *
+   * @param name
+   * @param path
+   */
+  virtual void addObjectToScene(const std::string &name, const std::string &path);
+
+  /**
    * @brief set whether vertical sync is enabled.
    * When vertical sync is enabled, render speed will be limited by the display's refresh rate
    *
