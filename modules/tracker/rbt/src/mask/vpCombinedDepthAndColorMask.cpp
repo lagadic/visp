@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,8 +45,9 @@ void vpCombinedDepthAndColorMask::updateMask(const vpRBFeatureTrackerInput &fram
   m_colorMask.updateMask(frame, previousFrame, m_color);
   m_depthMask.updateMask(frame, previousFrame, m_depth);
   mask.resize(m_color.getHeight(), m_color.getWidth());
-
+#ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
+#endif
   for (unsigned int i = 0; i < m_color.getSize(); ++i) {
     mask.bitmap[i] = std::min(m_color.bitmap[i], m_depth.bitmap[i]);
   }
@@ -57,7 +58,6 @@ void vpCombinedDepthAndColorMask::loadJsonConfiguration(const nlohmann::json &js
 {
   m_colorMask.loadJsonConfiguration(json["color"]);
   m_depthMask.loadJsonConfiguration(json["depth"]);
-
 }
 #endif
 

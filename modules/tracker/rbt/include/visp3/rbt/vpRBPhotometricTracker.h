@@ -30,7 +30,7 @@
 
 /*!
   \file vpRBPhotometricTracker.h
-  \brief Dense depth features for render-based tracking
+  \brief Photometric based feature for Render based tracking
 */
 
 #ifndef VP_RB_PHOTOMETRIC_TRACKER_H
@@ -45,8 +45,6 @@
 #include <visp3/core/vpRobust.h>
 #include <visp3/core/vpPoint.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
-
-
 #include <visp3/rbt/vpRBFeatureTracker.h>
 
 #include <vector>
@@ -262,7 +260,6 @@ public:
     vpMatrix m_dI; // 2XN
     vpMatrix m_oXt; // a 3xN matrix containing the 3D points in the object frame
     vpMatrix m_cXt; // a 3xN matrix containing the 3D points in the camera frame
-
   };
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)

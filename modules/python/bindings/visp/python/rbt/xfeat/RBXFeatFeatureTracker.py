@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -119,12 +119,9 @@ class RBXFeatFeatureTracker(RBFeatureTracker):
     self.LTR.resize(6)
     self.numFeatures = 0
 
-
-
   def extractFeatures(self, frame: RBFeatureTrackerInput, previousFrame: RBFeatureTrackerInput, _cMo: HomogeneousMatrix):
     self.frame = frame
     self.backend.process_frame(frame, self.iter)
-
 
   def trackFeatures(self, frame: RBFeatureTrackerInput, previousFrame: RBFeatureTrackerInput, _cMo: HomogeneousMatrix):
 
@@ -275,8 +272,6 @@ class RBXFeatFeatureTracker(RBFeatureTracker):
         Display.displayCircleStatic(IRGB, ps[p, 1], ps[p, 0], 2, c, True, 1)
     else:
       raise RuntimeError('Display time not implemented')
-
-
 
 # def create_instance():
 #   return XFeatFeatureTracker(None)

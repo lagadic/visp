@@ -42,7 +42,6 @@ import time
 import faulthandler
 faulthandler.enable()
 
-
 from visp.core import CameraParameters, HomogeneousMatrix
 from visp.core import Color, Display, ImageConvert
 from visp.core import ImageGray, ImageUInt16, ImageRGBa
@@ -50,7 +49,6 @@ from visp.io import ImageIo
 from visp.mbt import MbGenericTracker
 from visp.python.display_utils import get_display
 import pyrealsense2 as rs
-
 
 try:
   import cv2

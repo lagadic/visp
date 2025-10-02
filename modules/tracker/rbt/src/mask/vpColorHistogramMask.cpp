@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,20 +39,22 @@
 BEGIN_VISP_NAMESPACE
 
 
-class vpProbaComputer {
-  public:
-  vpProbaComputer(const vpColorHistogram& object, const vpColorHistogram& bg) {
+class vpProbaComputer
+{
+public:
+  vpProbaComputer(const vpColorHistogram &object, const vpColorHistogram &bg)
+  {
     unsigned int N = object.getBinNumber();
     m_probas.resize(N * N * N);
     unsigned int increment = 256 / N;
     unsigned int half = increment / 2;
     vpRGBa c;
     unsigned int index = 0;
-    for(unsigned int r = half; r < 256; r += increment) {
+    for (unsigned int r = half; r < 256; r += increment) {
       c.R = r;
-      for(unsigned int g = half; g < 256; g += increment) {
+      for (unsigned int g = half; g < 256; g += increment) {
         c.G = g;
-        for(unsigned int b = half; b < 256; b += increment) {
+        for (unsigned int b = half; b < 256; b += increment) {
           c.B = b;
           const float pbg = bg.probability(c);
           const float pObject = object.probability(c);
@@ -72,11 +74,12 @@ class vpProbaComputer {
 
   }
 
-  float operator()(unsigned int colorIndex) {
+  float operator()(unsigned int colorIndex)
+  {
     return m_probas[colorIndex];
   }
 
-  private:
+private:
   std::vector<float> m_probas;
 };
 
@@ -101,16 +104,20 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
   const vpImage<float> &renderDepth = frame.renders.depth;
   const vpImage<float> &depth = previousFrame.depth.getSize() == 0 ? frame.depth : previousFrame.depth;
   if (depth.getSize() > 0 && m_depthErrorTolerance > 0.f) {
-    #pragma omp parallel for
-    for (unsigned int i = top; i <= static_cast<unsigned int>(bottom); ++i) {
+#ifdef VISP_HAVE_OPENMP
+#pragma omp parallel for
+#endif
+    for (int i = top; i <= bottom; ++i) {
       for (unsigned int j = left; j <= static_cast<unsigned int>(right); ++j) {
         m_mask[i][j] = renderDepth[i][j] > 0.f && (depth[i][j] > 0.f && fabs(renderDepth[i][j] - depth[i][j]) <= m_depthErrorTolerance);
       }
     }
   }
   else {
-    #pragma omp parallel for
-    for (unsigned int i = top; i <= static_cast<unsigned int>(bottom); ++i) {
+#ifdef VISP_HAVE_OPENMP
+#pragma omp parallel for
+#endif
+    for (int i = top; i <= bottom; ++i) {
       for (unsigned int j = left; j <= static_cast<unsigned int>(right); ++j) {
         m_mask[i][j] = renderDepth[i][j] > 0.f;
       }
@@ -148,7 +155,7 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
   }
   else {
     mask.resize(height, width);
-    #pragma omp parallel for
+#pragma omp parallel for
     for (unsigned int i = 0; i < mask.getSize(); ++i) {
       unsigned int index = m_histObject.colorToIndex(frame.IRGB.bitmap[i]);
       mask.bitmap[i] = probas(index);

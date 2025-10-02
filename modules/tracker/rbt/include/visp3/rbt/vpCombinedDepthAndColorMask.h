@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +29,8 @@
  */
 
 /*!
-  \file vpColorHistogramMask.h
-  \brief Object mask estimation through global foreground/background color histogram representations
+  \file vpCombinedDepthAndColorMask.h
+  \brief Object mask segmentation based on combining depth and color modalities
 */
 #ifndef VP_COMBINED_DEPTH_AND_COLOR_MASK_H
 #define VP_COMBINED_DEPTH_AND_COLOR_MASK_H
@@ -53,7 +53,8 @@ BEGIN_VISP_NAMESPACE
 class vpRBFeatureTrackerInput;
 
 /**
- * \brief A color histogram based segmentation algorithm.
+ * \brief An segmentation method based on combining masks that are separately computed on depth and color modalities.
+ * The final computed probability of a pixel is the minimum of the probabilities computed from either modalities.
  * \ingroup group_rbt_mask
 */
 class VISP_EXPORT vpCombinedDepthAndColorMask : public vpObjectMask
@@ -81,8 +82,6 @@ private:
   vpDepthMask m_depthMask;
 
   vpImage<float> m_depth, m_color;
-
-
 };
 
 END_VISP_NAMESPACE

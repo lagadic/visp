@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -155,7 +155,6 @@ class TrackedDescriptorMap():
     cam = frame.cam
     if render_depth is None:
       render_depth = ImageFloat()
-    before_candidates = time.time()
     indices_not_matched_to_add = self.point_map.selectValidNewCandidates(cam, cMo, indices_array, Matrix.view(points_to_add_px), render_depth, depth_map, oX_new)
 
     self.set_points_to_add(oX_new, current_descriptors[indices_not_matched_to_add])
@@ -163,10 +162,8 @@ class TrackedDescriptorMap():
 
     return indices_to_remove
 
-
   def mark_points_to_remove(self, indices):
     self.indices_removal = indices
-
 
   def set_points_to_add(self, X: Matrix, descriptors: torch.tensor):
     assert X is not None and descriptors is not None

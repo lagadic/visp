@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -53,7 +53,6 @@ class XFeatTrackingBackend(XFeatBackend):
     self.min_obj_distance = 1.0
     self.min_env_distance = 5.0
     self.only_on_bb = only_on_bb
-
 
     self.current_representation_object = None
     self.current_representation_environment = None

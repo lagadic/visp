@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -136,8 +136,8 @@ public:
   virtual void computeVVSIter(const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cMo, unsigned int iteration) = 0;
 
   /**
-   * \brief Resets feature state. Can be called when the object changes or is lost, Ensuring that old data does not influence the tracking behaviour.
-   *
+   * \brief Resets feature state. Can be called when the object changes or is lost,
+   * Ensuring that prior data does not influence the tracking behaviour.
   */
   virtual void reset() { }
 

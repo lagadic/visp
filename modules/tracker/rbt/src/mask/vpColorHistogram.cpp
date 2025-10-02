@@ -124,8 +124,9 @@ void vpColorHistogram::merge(const vpColorHistogram &other, float alpha)
 void vpColorHistogram::computeProbas(const vpImage<vpRGBa> &image, vpImage<float> &proba) const
 {
   proba.resize(image.getHeight(), image.getWidth());
-
-#pragma omp parallel for schedule(static)
+#ifdef VISP_HAVE_OPENMP
+#pragma omp parallel for
+#endif
   for (int i = 0; i < static_cast<int>(image.getSize()); ++i) {
     proba.bitmap[i] = m_probas[colorToIndex(image.bitmap[i])];
   }
@@ -139,7 +140,9 @@ void vpColorHistogram::computeProbas(const vpImage<vpRGBa> &image, vpImage<float
   const int left = static_cast<int>(bb.getLeft());
   const int bottom = std::min(h- 1, static_cast<int>(bb.getBottom()));
   const int right = std::min(w - 1, static_cast<int>(bb.getRight()));
+#ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
+#endif
   for (int i = top; i <= bottom; ++i) {
     const vpRGBa *colorRow = image[i];
     float *probaRow = proba[i];
@@ -262,7 +265,6 @@ void vpColorHistogram::computeSplitHistograms(const vpImage<vpRGBa> &image, cons
   }
   insideMask.build(countsIn);
   outsideMask.build(countsOut);
-
 }
 
 END_VISP_NAMESPACE
