@@ -55,14 +55,24 @@ dependencies = { clang = "*", llvm-openmp = "*" }
 activation = { scripts = ["development/scripts/pixi/activation_clang_cl.bat"] }
 
 [feature.python-bindings]
-dependencies = { python = ">=3.8", pybind11 = "*", pip = "*" }
+dependencies = { python = ">=3.8", pybind11 = "*", pip = "*", doxygen = "*" }
 [feature.python-bindings.tasks]
 build = { cmd = "cmake --build $VISP_BUILD_DIR --parallel $CPU_COUNT --target visp_python_bindings", depends-on = ["install"] }
 python-test = { cmd = "cmake --build $VISP_BUILD_DIR --config Release --target visp_python_bindings_test", depends-on = ["build"] }
+show-python-logs = { cmd = "$IDE $VISP_BUILD_DIR/modules/python/bindings/log", env = { IDE = "code" }, depends-on = ["configure"] }
+python-doc = { cmd = "cmake --build $VISP_BUILD_DIR --parallel $CPU_COUNT --target visp_python_bindings_doc", depends-on = ["build"] }
+view-python-doc = { cmd = "$BROWSER $VISP_BUILD_DIR/doc/python/index.html", env = { BROWSER = "firefox" } }
 
 [feature.rbt]
 dependencies = { nlohmann_json = "*", panda3d = { version = ">=1.10.15", channel = "panda3d-forge" } }
 
+[feature.doc]
+dependencies = { doxygen = "*", mathjax = "*" }
+[feature.doc.tasks]
+doc = { cmd = "cmake --build $VISP_BUILD_DIR --target visp_doc", depends-on = ["configure"] }
+view-doc = { cmd = "$BROWSER $VISP_BUILD_DIR/doc/html/index.html", env = { BROWSER = "firefox" } }
+[feature.doc.activation.env]
+VISP_USE_MATHJAX = "ON"
 [feature.tests.activation.env]
 VISP_BUILD_TESTS = "ON"
 # Tests that require display / rendering are only supported on linux based CI
@@ -95,6 +105,7 @@ configure = { cmd = [
   "-DENABLE_TEST_WITHOUT_DISPLAY=$VISP_ENABLE_TEST_WITHOUT_DISPLAY",
   "-DBUILD_TUTORIALS=$VISP_BUILD_TUTORIALS",
   "-DBUILD_EXAMPLES=$VISP_BUILD_EXAMPLES",
+  "-DUSE_MATHJAX=$VISP_USE_MATHJAX",
   "$VISP_EXTRA_CMAKE_ARGS"
 ] }
 build-base = { cmd = "cmake --build $VISP_BUILD_DIR --parallel $CPU_COUNT", depends-on = ["configure"] }
@@ -105,15 +116,15 @@ test = { cmd = "ctest --test-dir $VISP_BUILD_DIR --output-on-failure", depends-o
 
 [environments]
 # Minimal set of features and python bindings
-with-python = { features = ["python-bindings"] }
+with-python = { features = ["python-bindings", "doc"] }
 # All <environment-name>-clang-cl variants are for building under Clang-cl compiler under windows instead of MSVC CL
-with-python-clang-cl = { features = ["python-bindings", "clang-cl"] }
+with-python-clang-cl = { features = ["python-bindings", "doc", "clang-cl"] }
 # All ViSP features including python bindings
-all = { features = ["rbt", "python-bindings"] }
-all-clang-cl = { features = ["rbt", "python-bindings", "clang-cl"] }
+all = { features = ["rbt", "python-bindings", "doc"] }
+all-clang-cl = { features = ["rbt", "python-bindings", "doc", "clang-cl"] }
 # All ViSP features (incl. python bindings) + tests
-all-with-tests = { features = ["rbt", "python-bindings", "tests"] }
-all-clang-cl-with-tests = { features = ["rbt", "python-bindings", "clang-cl", "tests"] }
+all-with-tests = { features = ["rbt", "python-bindings", "doc", "tests"] }
+all-clang-cl-with-tests = { features = ["rbt", "python-bindings", "doc", "clang-cl", "tests"] }
 # Environments with all features + build of tests / tutorials / examples (mainly for CI)
 full-ci = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials"]}
 full-ci-clang-cl = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials"]}
