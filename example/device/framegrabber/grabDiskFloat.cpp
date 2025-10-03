@@ -197,8 +197,8 @@ void convertDepthImageToDisplayImage(const vpImage<float> &Idepth, vpImage<unsig
   float max, min;
   Idepth.getMinMaxValue(min, max);
   Idisp.resize(Idepth.getHeight(), Idepth.getWidth());
-  float a = 255. / (min - max);
-  float b = 255. - a * min;
+  float a = 255.f / (min - max);
+  float b = 255.f - a * min;
   int size = Idepth.getSize();
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
