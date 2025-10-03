@@ -178,7 +178,8 @@ TEST_CASE("ArUco detection test", "[aruco_detection_test]")
   {
     for (const auto &kv : apriltagMap) {
       vpDetectorAprilTag detector(kv.first);
-      double hamming_dist_ref = 0, decision_margin = 50;
+      int hamming_dist_ref = 0;
+      float decision_margin = 50.0f;
       detector.setAprilTagHammingDistanceThreshold(hamming_dist_ref);
       detector.setAprilTagDecisionMarginThreshold(decision_margin);
       CHECK(detector.getAprilTagHammingDistanceThreshold() == hamming_dist_ref);
@@ -229,7 +230,7 @@ TEST_CASE("ArUco pose computation test", "[aruco_detection_test]")
     {vpDetectorAprilTag::TAG_ARUCO_MIP_36h12, aruco::PredefinedDictionaryType::DICT_ARUCO_MIP_36h12}
   };
 
-  const float markerLength = 0.05;
+  const float markerLength = 0.05f;
 
   // ViSP
   vpCameraParameters cam(600, 600, 100/2, 100/2);
