@@ -39,8 +39,8 @@
 BEGIN_VISP_NAMESPACE
 
 void vpDepthMask::updateMask(const vpRBFeatureTrackerInput &frame,
-                                      const vpRBFeatureTrackerInput &previousFrame,
-                                      vpImage<float> &mask)
+                             const vpRBFeatureTrackerInput &/* previousFrame */,
+                             vpImage<float> &mask)
 {
   mask.resize(frame.depth.getHeight(), frame.depth.getWidth());
   // const float radius = frame.renders.objectDiameter / 2.f;

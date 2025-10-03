@@ -51,8 +51,9 @@
 BEGIN_VISP_NAMESPACE
 
 vpRBTracker::vpRBTracker() :
-  m_firstIteration(true), m_trackers(0), m_lambda(1.0), m_vvsIterations(10), m_muInit(0.0), m_muIterFactor(0.5), m_scaleInvariantOptim(false),
-  m_renderer(m_rendererSettings), m_imageHeight(480), m_imageWidth(640), m_convergenceMetric(nullptr), m_displaySilhouette(false), m_modelChanged(true), m_rendererIsSetup(false)
+  m_firstIteration(true), m_trackers(0), m_modelChanged(true), m_lambda(1.0), m_vvsIterations(10), m_muInit(0.0),
+  m_muIterFactor(0.5), m_scaleInvariantOptim(false), m_renderer(m_rendererSettings), m_rendererIsSetup(false),
+  m_imageHeight(480), m_imageWidth(640), m_convergenceMetric(nullptr), m_displaySilhouette(false)
 {
   m_rendererSettings.setClippingDistance(0.01, 1.0);
   m_renderer.setRenderParameters(m_rendererSettings);
