@@ -1,7 +1,31 @@
 {
   "ignored_headers": [],
-  "ignored_classes": [ "vpAROgre" ],
+  "ignored_classes": [
+    "vpAROgre"
+  ],
   "user_defined_headers": [],
-  "classes": {},
+  "classes": {
+    "vpPanda3DBaseRenderer": {
+      "methods": [
+        {
+          "static": false,
+          "signature": "void computeNearAndFarPlanesFromNode(const std::string&, float&, float&, bool)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            true,
+            false,
+            false,
+            true
+          ],
+          "param_is_output": [
+            false,
+            true,
+            true,
+            false
+          ]
+        }
+      ]
+    }
+  },
   "enums": {}
 }

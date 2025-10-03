@@ -28,12 +28,21 @@ public:
 
   virtual void display(const vpImage<float> &mask, vpImage<unsigned char> &Imask) const VP_OVERRIDE
   {
-    PYBIND11_OVERRIDE_PURE(
+    PYBIND11_OVERRIDE(
       void,             /* Return type */
       vpObjectMask,     /* Parent class */
       display,          /* Name of function in C++ (must match Python name) */
       mask, Imask
     );
+  }
+
+  virtual void reset() VP_OVERRIDE
+  {
+    PYBIND11_OVERRIDE_PURE(
+      void,           /* Return type */
+      vpObjectMask,     /* Parent class */
+      reset,       /* Name of function in C++ (must match Python name) */
+      );
   }
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)

@@ -75,7 +75,6 @@ std::vector<std::pair<unsigned int, unsigned int>> vpSilhouettePointsExtractionS
 {
   const unsigned int rows = validSilhouette.getHeight();
   const unsigned int cols = validSilhouette.getWidth();
-
   std::vector<std::pair<unsigned int, unsigned int>> finalCandidates;
   std::vector<std::pair<unsigned int, unsigned int>> candidates;
   if (m_maxNumPoints) {

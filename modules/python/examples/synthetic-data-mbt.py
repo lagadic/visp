@@ -46,7 +46,7 @@ from visp.core import XmlParserCamera, CameraParameters, ColVector, HomogeneousM
 from visp.core import ImageGray, ImageUInt16
 from visp.io import ImageIo
 from visp.mbt import MbGenericTracker, MbTracker
-from visp.display_utils import get_display
+from visp.python.display_utils import get_display
 from visp.core import Color
 from visp.core import PixelMeterConversion
 

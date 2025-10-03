@@ -93,6 +93,8 @@ public:
    */
   virtual bool hasDiverged() const = 0;
 
+  virtual void reset() { }
+
   /**
    * \brief Displays the information used for drift detection.
    *
