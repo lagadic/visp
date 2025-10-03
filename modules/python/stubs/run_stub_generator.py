@@ -33,16 +33,12 @@
 #
 #############################################################################
 
-from shutil import copy
+from shutil import copy, copytree
 from pathlib import Path
 import subprocess
 import sys
 import argparse
-
-import pybind11_stubgen
-from pybind11_stubgen import __main__
-
-
+import os
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
@@ -50,14 +46,35 @@ if __name__ == '__main__':
 
   args = parser.parse_args()
   output_root = Path(args.output_root)
-  assert output_root.exists()
+  output_root.mkdir(exist_ok=True)
   bin_folder = Path(sys.executable).parent
-  subprocess.run([sys.executable, '-m', 'pybind11_stubgen',  '-o', str(output_root.absolute()), '--ignore-all-errors', 'visp._visp'], check=True)
+  subprocess.run(['stubgen',  '-o', str(output_root.absolute()), '--ignore-errors', '--include-docstrings', '-p', 'visp._visp'], check=True)
+  subprocess.run(['stubgen',  '-o', str(output_root.absolute()), '--ignore-errors', '--include-docstrings', '--parse-only', '-p', 'visp.python'], check=True)
+
+
+  all_submodule_names = ['python']
 
   # Generate stubs for the bindings (C++ side) and mock it so that they appear in the true 'visp' package
-  p = Path('./visp/_visp')
-  target_path = Path('./visp-stubs')
+  cpp_stubs = Path(output_root / 'visp' / '_visp')
+  target_path = Path('./visp')
   target_path.mkdir(exist_ok=True)
-  for pyi_file in p.iterdir():
+  for pyi_file in cpp_stubs.iterdir():
     if pyi_file.name.endswith('.pyi'):
-      copy(pyi_file, target_path / pyi_file.name) # Copy replace old files
+      if pyi_file.stem != '__init__':
+
+        all_submodule_names.append(pyi_file.stem)
+        submodule_stub_folder = target_path / pyi_file.stem
+        submodule_stub_folder.mkdir(exist_ok=True)
+        copy(pyi_file, submodule_stub_folder / '__init__.pyi') # Copy replace old files
+
+  # Add stubs for python part
+  python_stubs_path = Path(output_root / 'visp' / 'python')
+  copytree(str(python_stubs_path), str(target_path / 'python'), dirs_exist_ok=True)
+
+  # Generate a complete list of modules for the __init__ stubs
+  init_stubs_path = target_path / '__init__.pyi'
+  with open(init_stubs_path, 'w') as init_stubs_file:
+    # init_stubs_file.write(f'from ._visp import *{os.linesep}')
+
+    for submodule in all_submodule_names:
+      init_stubs_file.write(f'from ._visp import {submodule}{os.linesep}')
