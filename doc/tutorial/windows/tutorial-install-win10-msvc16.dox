@@ -122,12 +122,12 @@ parties are optional and should be considered only by expert developers.
 
 First you have to get OpenCV:
 - From https://opencv.org/releases/ download the latest OpenCV for Windows. In our case we got
-`opencv-4.11.0-windows.exe` Win pack installer.
+`opencv-4.12.0-windows.exe` Win pack installer.
 - Extract the content of the archive in your workspace `%%VISP_WS%/3rdparty`.
 \image html img-win-extract-opencv.jpg
 - The installer extract all the material in `%%VISP_WS%\3rdparty\opencv`.
 - We strongly recommend to rename this folder to a name that contain OpenCV version like
-  `%%VISP_WS%\3rdparty\opencv-4.11.0`.
+  `%%VISP_WS%\3rdparty\opencv-4.12.0`.
 
 <b>4.1.1.2. Complete OpenCV installation</b>
 
@@ -135,15 +135,15 @@ Now you have to complete OpenCV installation setting some environment vars:
 - In order that ViSP detects OpenCV you have to set `OpenCV_DIR` environment variable. Start up a `cmd`
 Command Prompt and enter:
 \verbatim
-C:\> setx OpenCV_DIR "%VISP_WS%\3rdparty\opencv-4.11.0\build"
+C:\> setx OpenCV_DIR "%VISP_WS%\3rdparty\opencv-4.12.0\build"
 C:\> exit
 \endverbatim
-where `%%VISP_WS%\3rdparty\opencv-4.11.0\build` is where you have installed OpenCV. Inside this folder you should
+where `%%VISP_WS%\3rdparty\opencv-4.12.0\build` is where you have installed OpenCV. Inside this folder you should
 have a file named `OpenCVConfig.cmake`.
 
 - You have also to add the location of OpenCV libraries in the `Path` environment variable. Open the
   "Edit environment variable" UI, and modify `Path` to add a new line with
-  `%%VISP_WS%\3rdparty\opencv-4.11.0\build\x64\vc16\bin`.
+  `%%VISP_WS%\3rdparty\opencv-4.12.0\build\x64\vc16\bin`.
 
 \subsubsection install_win10_msvc16_3rdparty_eigen 4.1.2. Eigen3
 
