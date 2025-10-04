@@ -36,17 +36,31 @@
 from pathlib import Path
 from setuptools import setup
 
+package_data_list = []
+def package_data(module: Path, l):
+  for submodule_path in module.iterdir():
+    if submodule_path.name.endswith('.pyi'):
+      l.append(str(submodule_path.absolute()))
+    elif submodule_path.is_dir():
+      package_data(submodule_path, l)
+    else:
+      print(f'Found file {submodule_path} but it will not be added to package data!')
+
+base_path = Path(__file__).parent.absolute() / 'visp'
+
+package_data(base_path, package_data_list)
+
 setup(
   name='visp-stubs',
   version='@VISP_PYTHON_VERSION@',
-  packages=['visp-stubs'],
+  packages=['visp'],
   author="Samuel Felton",
   author_email="samuel.felton@irisa.fr",
   description="Python stubs for the ViSP wrapper",
   zip_safe=False,
   #include_package_data=True,
   package_data = {
-    'visp-stubs': ['*.pyi']
+    'visp': package_data_list
   },
   python_requires=">=3.7",
 )
