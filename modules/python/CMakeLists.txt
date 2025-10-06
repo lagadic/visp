@@ -102,6 +102,8 @@ add_custom_target(
 )
 
 set(VISP_PYTHON_VERSION "${VISP_VERSION}")
+set(VISP_PYTHON_BINDINGS_BUILD_PATH "${CMAKE_CURRENT_BINARY_DIR}/bindings")
+
 # Step 3: Compile and install bindings as a python package
 add_subdirectory(bindings)
 
