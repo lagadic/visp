@@ -73,6 +73,7 @@ doc = { cmd = "cmake --build $VISP_BUILD_DIR --target visp_doc", depends-on = ["
 view-doc = { cmd = "$BROWSER $VISP_BUILD_DIR/doc/html/index.html", env = { BROWSER = "firefox" } }
 [feature.doc.activation.env]
 VISP_USE_MATHJAX = "ON"
+
 [feature.tests.activation.env]
 VISP_BUILD_TESTS = "ON"
 # Tests that require display / rendering are only supported on linux based CI
@@ -81,6 +82,35 @@ DISPLAY = ":99"
 VISP_ENABLE_TEST_WITHOUT_DISPLAY = "OFF"
 [feature.tests.target.linux.tasks]
 init-testing = { cmd = "bash ./development/scripts/pixi/xvfb.sh" }
+
+[feature.coverage.dependencies]
+gcovr = "*"
+
+[feature.coverage.activation.env]
+VISP_BUILD_COVERAGE = "ON"
+VISP_BUILD_DEPRECATED_FUNCTIONS = "OFF"
+VISP_BUILD_TYPE = "Debug"
+
+[feature.coverage.tasks]
+coverage = { cmd = [
+  "gcovr", "-r", ".", "--object-directory", "$VISP_BUILD_DIR",
+  "--gcov-ignore-errors=all", "--gcov-ignore-parse-errors=all",
+  "--include", "modules",
+  "--exclude", "tutorial",
+  "--exclude", "example",
+  "--exclude", "demo",
+  "--exclude", "apps",
+  "--exclude", ".pixi",
+  "--exclude", "3rdparty",
+  "--exclude", "modules/.*/test",
+  "--exclude", "modules/robot",
+  "--exclude", "modules/python",
+  "--exclude", "modules/sensor",
+  "--exclude", "modules/gui",
+  "--exclude", "modules/.*/private",
+  "--lcov", "$VISP_BUILD_DIR/visp-coverage.cleaned"
+], depends-on = ["test"]}
+
 
 [feature.examples.activation.env]
 VISP_BUILD_EXAMPLES = "ON"
@@ -106,6 +136,7 @@ configure = { cmd = [
   "-DBUILD_TUTORIALS=$VISP_BUILD_TUTORIALS",
   "-DBUILD_EXAMPLES=$VISP_BUILD_EXAMPLES",
   "-DUSE_MATHJAX=$VISP_USE_MATHJAX",
+  "-DBUILD_COVERAGE=$VISP_BUILD_COVERAGE", "-DBUILD_DEPRECATED_FUNCTIONS=$VISP_BUILD_DEPRECATED_FUNCTIONS",
   "$VISP_EXTRA_CMAKE_ARGS"
 ] }
 build-base = { cmd = "cmake --build $VISP_BUILD_DIR --parallel $CPU_COUNT", depends-on = ["configure"] }
@@ -128,3 +159,5 @@ all-clang-cl-with-tests = { features = ["rbt", "python-bindings", "doc", "clang-
 # Environments with all features + build of tests / tutorials / examples (mainly for CI)
 full-ci = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials"]}
 full-ci-clang-cl = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials"]}
+
+full-ci-coverage = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials", "coverage"]}
