@@ -26,7 +26,6 @@ liblapack = "*"
 liblapacke = "*"
 coin3d = "*"
 ogre = "*"
-libopenblas = "*"
 nlohmann_json = "*"
 
 [target.unix.dependencies]
