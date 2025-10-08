@@ -594,6 +594,7 @@ struct SoftwareArguments
   // --- Main loop parameters---
   static const int SOFTWARE_CONTINUE = 42;
   bool m_useDisplay; //!< If true, activate the plot and the renderer if VISP_HAVE_DISPLAY is defined.
+  bool m_useUserInteraction; //!< If true, program will require some user inputs.
   unsigned int m_nbStepsWarmUp; //!< Number of steps for the warmup phase.
   // --- PF parameters---
   unsigned int m_N; //!< The number of particles.
@@ -606,6 +607,7 @@ struct SoftwareArguments
 
   SoftwareArguments()
     : m_useDisplay(true)
+    , m_useUserInteraction(true)
     , m_nbStepsWarmUp(200)
     , m_N(500)
     , m_maxDistanceForLikelihood(0.5)
@@ -656,6 +658,9 @@ struct SoftwareArguments
       else if (arg == "-d") {
         m_useDisplay = false;
       }
+      else if (arg == "-c" ) {
+        m_useUserInteraction = false;
+      }
       else if ((arg == "-h") || (arg == "--help")) {
         printUsage(std::string(argv[0]));
         SoftwareArguments defaultArgs;
@@ -697,6 +702,7 @@ private:
     std::cout << "  [--max-distance-likelihood <double>] [-N, --nb-particles <uint>] [--seed <int>] [--nb-threads <int>]" << std::endl;
     std::cout << "  [--ampli-max-X <double>] [--ampli-max-Y <double>] [--ampli-max-theta <double>]" << std::endl;
     std::cout << "  [-d, --no-display] [-h]" << std::endl;
+    std::cout << "  [-c] [-h]" << std::endl;
   }
 
   void printDetails()
@@ -746,6 +752,10 @@ private:
 #else
     std::cout << "OFF" << std::endl;
 #endif
+    std::cout << std::endl;
+    std::cout << "  -c" << std::endl;
+    std::cout << "    Deactivate user interaction." << std::endl;
+    std::cout << "    Default: user interaction enabled: " << m_useUserInteraction << std::endl;
     std::cout << std::endl;
     std::cout << "  -h, --help" << std::endl;
     std::cout << "    Display this help." << std::endl;
@@ -902,7 +912,7 @@ int main(const int argc, const char *argv[])
   std::cout << "Mean error noise = " << meanErrorNoise << std::endl;
   std::cout << "Mean filtering time = " << averageFilteringTime << "us" << std::endl;
 
-  if (args.m_useDisplay) {
+  if (args.m_useUserInteraction) {
     std::cout << "Press Enter to quit..." << std::endl;
     std::cin.get();
   }
