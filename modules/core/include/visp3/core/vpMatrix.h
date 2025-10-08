@@ -164,6 +164,12 @@ BEGIN_VISP_NAMESPACE
 
   \sa vpArray2D, vpRowVector, vpColVector, vpHomogeneousMatrix,
   vpRotationMatrix, vpVelocityTwistMatrix, vpForceTwistMatrix, vpHomography
+
+  <b>Tutorials</b><br>
+  <span style="margin-left:2em"> If you are interested in linear algebra using vpMatrix,
+  you may have a look at:</span><br>
+
+  - \ref tutorial-basic-linear-algebra
 */
 class VISP_EXPORT vpMatrix : public vpArray2D<double>
 {

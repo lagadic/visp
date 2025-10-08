@@ -233,6 +233,11 @@ in different ways. This will motivate us to continue the efforts.
   \ingroup group_core_math
   \defgroup group_core_matrices Matrices and vectors
   Matrices and vectors.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in linear algebra, you may have a look at
+  - \ref tutorial-basic-linear-algebra
 */
 /*!
   \ingroup group_core_math
