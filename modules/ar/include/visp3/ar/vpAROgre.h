@@ -100,6 +100,13 @@ BEGIN_VISP_NAMESPACE
   application.  With that information and the image to be shown in background
   it will set up the 3D scene correspondingly.
 
+  <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+
+  <b>Tutorials</b><br>
+  <span style="margin-left:2em"> If you are interested in using Ogre3D in Augmented Reality applications, you may have a look at:</span><br>
+
+  - \ref tutorial-ogre
+
 */
 class VISP_EXPORT vpAROgre : public Ogre::FrameListener,
   public Ogre::WindowEventListener

@@ -197,6 +197,14 @@ in different ways. This will motivate us to continue the efforts.
   \ingroup module_core
   \defgroup group_core_camera Camera model
   Camera model.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in camera calibration, you may have a look at
+
+  - \ref tutorial-calibration-intrinsic
+  - \ref tutorial-calibration-extrinsic-eye-in-hand
+  - \ref tutorial-calibration-extrinsic-eye-to-hand
 */
 /*!
   \ingroup module_core
@@ -452,31 +460,69 @@ in different ways. This will motivate us to continue the efforts.
 /*!
   \defgroup module_ar ar: Augmented reality module
   Augmented reality module content.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in Augmented Reality, you may have a look at
+
+  - \ref tutorial-ogre
+  - \ref tutorial-panda3d
 */
 /*!
   \ingroup module_ar
   \defgroup group_ar_renderer Renderer
   Renderer interfaces.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in Augmented Reality, you may have a look at
+
+  - \ref tutorial-ogre
+  - \ref tutorial-panda3d
 */
 /*!
   \ingroup group_ar_renderer
   \defgroup group_ar_renderer_panda3d Panda3D Renderer
   Modular renderers based on the Panda3D framework.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in using Panda3D in Augmented Reality applications, you may have a look at
+
+  - \ref tutorial-panda3d
 */
 /*!
   \ingroup group_ar_renderer_panda3d
   \defgroup group_ar_renderer_panda3d_3d 3D scene renderers
   Classes that render a 3D scene.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in using Panda3D in Augmented Reality applications, you may have a look at
+
+  - \ref tutorial-panda3d
 */
 /*!
   \ingroup group_ar_renderer_panda3d
   \defgroup group_ar_renderer_panda3d_filters Image processing
   Shader-based image processing and filtering.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in using Panda3D in Augmented Reality applications, you may have a look at
+
+  - \ref tutorial-panda3d
 */
 /*!
   \ingroup group_ar_renderer_panda3d
   \defgroup group_ar_renderer_panda3d_lighting Lighting related classes
   Light and Lightable implementations.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in using Panda3D in Augmented Reality applications, you may have a look at
+
+  - \ref tutorial-panda3d
 */
 
 /*!
