@@ -67,7 +67,7 @@ I0021.png
 
 \section img_manip_seq_main Video or image sequence manipulation
 
-We provide a tool which source code is given in tutorial-image-manipulation.cpp that allows video manipulation.
+We provide a tool which source code is given in tutorial-video-manipulation.cpp that allows video manipulation.
 To see what could be done, just get the helper message:
 
 \verbatim
@@ -77,7 +77,7 @@ $ ./tutorial-video-manipulation --help
 
 \subsection img_manip_seq_show Visualization
 
-The tutorial tutorial-image-manipulation.cpp allows to visualize a video or a sequence of images.
+The tutorial tutorial-video-manipulation.cpp allows to visualize a video or a sequence of images.
 
 - To visualize an `mpeg` video part of ViSP data set, you may run:
 \verbatim
@@ -94,7 +94,7 @@ $ cd $VISP_WS/visp-build/tutorial/image
 
 \subsection img_manip_seq_convert Renaming and/or image format conversion
 
-The tutorial tutorial-image-manipulation.cpp allows also to rename and convert the images format.
+The tutorial tutorial-video-manipulation.cpp allows also to rename and convert the images format.
 
 - The following example shows how to convert all the images from `png` to `jpeg` and also rename the images:
 \verbatim
@@ -192,7 +192,7 @@ $ ./tutorial-video-manipulation --in /tmp/myseq/png/I%04d.png --out /tmp/myseq/p
 
 \subsection img_manip_seq_extract Images extraction from a video
 
-The tutorial tutorial-image-manipulation.cpp allows also to extract images from a video file.
+The tutorial tutorial-video-manipulation.cpp allows also to extract images from a video file.
 
 - For example to extract the images from an `mpeg` video part of ViSP data set and create a sequence of successive
   images, you may run:
@@ -220,7 +220,7 @@ image-0010.jpeg
 
 \subsection img_manip_seq_select Images selection to create a new video or sequence
 
-The tutorial tutorial-image-manipulation.cpp allows also to extract some images selected by the user during
+The tutorial tutorial-video-manipulation.cpp allows also to extract some images selected by the user during
 visualisation by user click. This feature could be useful to extract the images that will be part of a deep
 leaning data set.
 
