@@ -70,7 +70,7 @@ public:
   Impl()
     : m_widget(nullptr), m_background(nullptr), m_gc(nullptr), m_blue(), m_red(), m_yellow(), m_green(), m_cyan(), m_orange(),
     m_white(), m_black(), m_gdkcolor(), m_lightBlue(), m_darkBlue(), m_lightRed(), m_darkRed(), m_lightGreen(),
-    m_darkGreen(), m_purple(), m_lightGray(), m_gray(), m_darkGray(), m_colormap(nullptr), m_font(nullptr), m_vectgtk(nullptr),
+    m_darkGreen(), m_purple(), m_lightGray(), m_gray(), m_darkGray(), m_colormap(nullptr), m_font(nullptr),
     m_col(nullptr)
   { }
 
@@ -544,7 +544,6 @@ private:
   GdkColormap *m_colormap;
 
   GdkFont *m_font;
-  guchar *m_vectgtk;
   GdkColor **m_col;
 };
 
