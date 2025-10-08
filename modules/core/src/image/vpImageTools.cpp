@@ -1061,6 +1061,8 @@ bool vpImageTools::checkFixedPoint(unsigned int x, unsigned int y, const vpMatri
  * is equal to the `size` parameter.
  * \param[in] size : Size of `hue`, `saturation`, `value` and `mask` arrays.
  *
+ * \sa To see how to use it to perform color segmentation on an image, \ref tutorial-hsv-segmentation-intro or \ref tutorial-hsv-range-tuner
+ * \sa To see how to use it to perform color segmentation on a point-cloud , \ref tutorial-hsv-segmentation-pcl
  * \sa vpImageConvert::RGBToHSV(const unsigned char *, unsigned char *, unsigned char *, unsigned char *, unsigned int, bool)
  * \sa vpImageConvert::RGBaToHSV(const unsigned char *, unsigned char *, unsigned char *, unsigned char *, unsigned int, bool)
  */
@@ -1123,6 +1125,8 @@ int vpImageTools::inRange(const unsigned char *hue, const unsigned char *saturat
  * \param[in] size : Size of `hue`, `saturation`, `value` and `mask` arrays.
  * \return The number of pixels that are in the HSV range.
  *
+ * \sa To see how to use it to perform color segmentation on an image, \ref tutorial-hsv-segmentation-intro or \ref tutorial-hsv-range-tuner
+ * \sa To see how to use it to perform color segmentation on a point-cloud , \ref tutorial-hsv-segmentation-pcl
  * \sa vpImageConvert::RGBToHSV(const unsigned char *, unsigned char *, unsigned char *, unsigned char *, unsigned int, bool)
  * \sa vpImageConvert::RGBaToHSV(const unsigned char *, unsigned char *, unsigned char *, unsigned char *, unsigned int, bool)
  */
@@ -1168,7 +1172,7 @@ int vpImageTools::inRange(const unsigned char *hue, const unsigned char *saturat
     else {
       mask[i] = 0;
     }
-}
+  }
   return cpt_in_range;
 }
 END_VISP_NAMESPACE
