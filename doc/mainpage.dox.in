@@ -688,16 +688,35 @@ in different ways. This will motivate us to continue the efforts.
   \ingroup module_robot
   \defgroup group_robot_simu Robot simulation
   Simulated robots interfaces.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in simulating different kind of robots, you may have a look at:</span><br>
+
+  - \ref tutorial-ibvs
+  - \ref tutorial-simu-robot-pioneer
 */
 /*!
   \ingroup group_robot_simu
   \defgroup group_robot_simu_gantry Gantry robot simulation
   Gantry robot interfaces.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in simulating a Gantry robot, you may have a look at:</span><br>
+
+  - \ref tutorial-ibvs
 */
 /*!
   \ingroup group_robot_simu
   \defgroup group_robot_simu_arm Anthropomorphic arm simulation
   Anthropomorphic arm interfaces.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in simulating an anthropomorphic arm, you may have a look at:</span><br>
+
+  - \ref tutorial-ibvs
 */
 /*!
   \ingroup group_robot_simu

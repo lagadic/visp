@@ -151,6 +151,14 @@ BEGIN_VISP_NAMESPACE
     return 0;
   }
   \endcode
+
+  <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+
+  <b>Tutorials</b><br>
+  <span style="margin-left:2em"> If you are interested in using this class to achieve a visual
+  servoing simulation, you may have a look at:</span><br>
+
+  - \ref tutorial-ibvs.
 */
 
 class VISP_EXPORT vpWireFrameSimulator
