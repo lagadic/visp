@@ -197,6 +197,21 @@ public:
   template <typename MaskType>
   static int
 #endif
+    /**
+     * \brief Convert a raw depth image into a pcl::PointCloud that has no texture.
+     *
+     * \param[in] depth_raw Raw depth image.
+     * \param[in] depth_scale Depth scale to convert the raw depth image into meters.
+     * \param[in] cam_depth The depth camera parameters.
+     * \param[out] pointcloud A pointer towards the pcl::PointCloud that has no texture.
+     * \param[in] pointcloud_mutex Optional, if set a pointer towards the mutex that protects the point cloud.
+     * \param[in] depth_mask Optional, if set a pointer towards a binary image that indicates if the point must be
+     * considered or not. (Either true or a value different from 0 to keep the point, false or 0 to discard it).
+     * \param[in] Z_min The minimum depth to keep the point.
+     * \param[in] Z_max The maximum depth to keep the point.
+     *
+     * \sa To see how to use it in the context of color segmentation on a point-cloud , \ref tutorial-hsv-segmentation-pcl
+     */
     depthToPointCloud(const vpImage<uint16_t> &depth_raw,
                                  float depth_scale, const vpCameraParameters &cam_depth,
                                  pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud,
@@ -293,6 +308,23 @@ public:
   template <typename MaskType>
   static int
 #endif
+    /**
+     * \brief Convert a raw depth image in a textured pcl::PointCloud using a vpImage<RGBa> that is aligned with the
+     * raw depth image to get the texture.
+     *
+     * \param[in] color The color image that gives the texture of the points.
+     * \param[in] depth_raw Raw depth image.
+     * \param[in] depth_scale Depth scale to convert the raw depth image into meters.
+     * \param[in] cam_depth The depth camera parameters.
+     * \param[out] pointcloud A pointer towards the pcl::PointCloud that has no texture.
+     * \param[in] pointcloud_mutex Optional, if set a pointer towards the mutex that protects the point cloud.
+     * \param[in] depth_mask Optional, if set a pointer towards a binary image that indicates if the point must be
+     * considered or not. (Either true or a value different from 0 to keep the point, false or 0 to discard it).
+     * \param[in] Z_min The minimum depth to keep the point.
+     * \param[in] Z_max The maximum depth to keep the point.
+     *
+     * \sa To see how to use it in the context of color segmentation on a point-cloud , \ref tutorial-hsv-segmentation-pcl
+     */
     depthToPointCloud(const vpImage<vpRGBa> &color, const vpImage<uint16_t> &depth_raw,
                                  float depth_scale, const vpCameraParameters &cam_depth,
                                  pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud,

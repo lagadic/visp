@@ -466,6 +466,8 @@ void vpImageConvert::HSVToRGBa(const unsigned char *hue, const unsigned char *sa
  * \param[out] value : Array of value values converted from RGB color space in range [0 - 1].
  * This array of dimension `size` should be allocated prior to calling this function.
  * \param[in] size : The image size or the number of pixels corresponding to the image width * height.
+ *
+ * \sa To see how to use it can be used, you can have a look at \ref tutorial-hsv-segmentation-intro
  */
 void vpImageConvert::RGBaToHSV(const unsigned char *rgba, double *hue, double *saturation, double *value,
                                unsigned int size)
@@ -488,6 +490,7 @@ void vpImageConvert::RGBaToHSV(const unsigned char *rgba, double *hue, double *s
  * \param[in] size : The image size or the number of pixels corresponding to the image width * height.
  * \param[in] h_full : When true, hue range is in [0, 255]. When false, hue range is in [0, 180].
  *
+ * \sa To see how to use it can be used, you can have a look at \ref tutorial-hsv-segmentation-intro
  * \sa vpImageTools::inRange()
  */
 void vpImageConvert::RGBaToHSV(const unsigned char *rgba, unsigned char *hue, unsigned char *saturation,
