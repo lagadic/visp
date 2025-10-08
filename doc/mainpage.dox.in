@@ -667,6 +667,16 @@ in different ways. This will motivate us to continue the efforts.
   \ingroup group_robot_real
   \defgroup group_robot_real_arm Anthropomorphic arm
   Anthropomorphic arm interfaces.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in using different kind of anthropomorphic arm robots, you may have a look at:</span><br>
+
+  - \ref tutorial-franka-pbvs
+  - \ref tutorial-franka-ibvs
+  - \ref tutorial-flir-ptu-vs
+  - \ref tutorial-universal-robot-ibvs
+  - \ref tutorial-universal-robot-pbvs
 */
 /*!
   \ingroup group_robot_real
@@ -677,6 +687,13 @@ in different ways. This will motivate us to continue the efforts.
   \ingroup group_robot_real
   \defgroup group_robot_real_drone Drone
   Flying robot interfaces.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in using different kind of flying robots, you may have a look at:</span><br>
+
+  - \ref tutorial-bebop2-vs
+  - \ref tutorial-pixhawk-vs
 */
 
 /*!
@@ -896,4 +913,18 @@ in different ways. This will motivate us to continue the efforts.
   \ingroup module_vs
   \defgroup group_task Task and control laws
   Classes used to define task and control laws.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in visual servoing, you may have a look at
+
+  - \ref tutorial-ibvs
+  - \ref tutorial-simu-robot-pioneer
+  - \ref tutorial-boost-vs
+  - \ref tutorial-franka-ibvs
+  - \ref tutorial-franka-pbvs
+  - \ref tutorial-bebop2-vs
+  - \ref tutorial-flir-ptu-vs
+  - \ref tutorial-universal-robot-ibvs
+  - \ref tutorial-universal-robot-pbvs
 */
