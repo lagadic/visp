@@ -798,7 +798,6 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/win-64/liblzma-5.8.1-h2466b09_2.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libode-0.16.5-hef77347_0.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libogg-1.3.5-h2466b09_1.conda
-      - conda: https://conda.anaconda.org/conda-forge/win-64/libopenblas-0.3.30-pthreads_ha4fe6b2_2.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libopencv-4.11.0-qt6_py312h66aec5a_603.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libopenvino-2025.0.0-hb1d9b14_3.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libopenvino-auto-batch-plugin-2025.0.0-h04f32e0_3.conda
@@ -985,7 +984,6 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/win-64/liblzma-5.8.1-h2466b09_2.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libode-0.16.5-hef77347_0.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libogg-1.3.5-h2466b09_1.conda
-      - conda: https://conda.anaconda.org/conda-forge/win-64/libopenblas-0.3.30-pthreads_ha4fe6b2_2.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libopencv-4.11.0-qt6_py312h66aec5a_603.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libopenvino-2025.0.0-hb1d9b14_3.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libopenvino-auto-batch-plugin-2025.0.0-h04f32e0_3.conda
@@ -1172,7 +1170,6 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/win-64/liblzma-5.8.1-h2466b09_2.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libode-0.16.5-hef77347_0.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libogg-1.3.5-h2466b09_1.conda
-      - conda: https://conda.anaconda.org/conda-forge/win-64/libopenblas-0.3.30-pthreads_ha4fe6b2_2.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libopencv-4.11.0-qt6_py312h66aec5a_603.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libopenvino-2025.0.0-hb1d9b14_3.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libopenvino-auto-batch-plugin-2025.0.0-h04f32e0_3.conda
@@ -2067,7 +2064,6 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/win-64/liblzma-5.8.1-h2466b09_2.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libode-0.16.5-hef77347_0.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libogg-1.3.5-h2466b09_1.conda
-      - conda: https://conda.anaconda.org/conda-forge/win-64/libopenblas-0.3.30-pthreads_ha4fe6b2_2.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libopencv-4.11.0-qt6_py312h66aec5a_603.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libopenvino-2025.0.0-hb1d9b14_3.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libopenvino-auto-batch-plugin-2025.0.0-h04f32e0_3.conda
@@ -2882,7 +2878,6 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/win-64/liblzma-5.8.1-h2466b09_2.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libmpdec-4.0.0-h2466b09_0.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libogg-1.3.5-h2466b09_1.conda
-      - conda: https://conda.anaconda.org/conda-forge/win-64/libopenblas-0.3.30-pthreads_ha4fe6b2_2.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libopencv-4.12.0-qt6_py310h4aa2f69_605.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libopenvino-2025.2.0-hbf28c98_1.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libopenvino-auto-batch-plugin-2025.2.0-hdd9a157_1.conda
@@ -3746,7 +3741,6 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/win-64/liblzma-5.8.1-h2466b09_2.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libode-0.16.5-hef77347_0.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libogg-1.3.5-h2466b09_1.conda
-      - conda: https://conda.anaconda.org/conda-forge/win-64/libopenblas-0.3.30-pthreads_ha4fe6b2_2.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libopencv-4.11.0-qt6_py312h66aec5a_603.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libopenvino-2025.0.0-hb1d9b14_3.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libopenvino-auto-batch-plugin-2025.0.0-h04f32e0_3.conda
@@ -4637,7 +4631,6 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/win-64/liblzma-5.8.1-h2466b09_2.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libode-0.16.5-hef77347_0.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libogg-1.3.5-h2466b09_1.conda
-      - conda: https://conda.anaconda.org/conda-forge/win-64/libopenblas-0.3.30-pthreads_ha4fe6b2_2.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libopencv-4.11.0-qt6_py312h66aec5a_603.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libopenvino-2025.0.0-hb1d9b14_3.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libopenvino-auto-batch-plugin-2025.0.0-h04f32e0_3.conda
@@ -5482,7 +5475,6 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/win-64/liblzma-5.8.1-h2466b09_2.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libmpdec-4.0.0-h2466b09_0.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libogg-1.3.5-h2466b09_1.conda
-      - conda: https://conda.anaconda.org/conda-forge/win-64/libopenblas-0.3.30-pthreads_ha4fe6b2_2.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libopencv-4.12.0-qt6_py310hcab611a_604.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libopenvino-2025.2.0-hbf28c98_1.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libopenvino-auto-batch-plugin-2025.2.0-hdd9a157_1.conda
@@ -5640,7 +5632,6 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/win-64/liblzma-5.8.1-h2466b09_2.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libmpdec-4.0.0-h2466b09_0.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libogg-1.3.5-h2466b09_1.conda
-      - conda: https://conda.anaconda.org/conda-forge/win-64/libopenblas-0.3.30-pthreads_ha4fe6b2_2.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libopencv-4.12.0-qt6_py310hcab611a_604.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libopenvino-2025.2.0-hbf28c98_1.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/libopenvino-auto-batch-plugin-2025.2.0-hdd9a157_1.conda
@@ -12139,19 +12130,6 @@ packages:
   license_family: BSD
   size: 4284696
   timestamp: 1755471861128
-- conda: https://conda.anaconda.org/conda-forge/win-64/libopenblas-0.3.30-pthreads_ha4fe6b2_2.conda
-  sha256: c7f51a6c1691f28918069bd295900407d45156c3160275c7c3fb667f94aa57c2
-  md5: 4825b217f4d8f37ae2408bb65c8c9f50
-  depends:
-  - ucrt >=10.0.20348.0
-  - vc >=14.3,<15
-  - vc14_runtime >=14.44.35208
-  constrains:
-  - openblas >=0.3.30,<0.3.31.0a0
-  license: BSD-3-Clause
-  license_family: BSD
-  size: 3951501
-  timestamp: 1755474642184
 - conda: https://conda.anaconda.org/conda-forge/linux-64/libopencv-4.11.0-qt6_py312hffe3a38_603.conda
   sha256: 510eb8fd57662529412a199f8f806aa1a5cc1e380f643b626606c79a7cab8d7f
   md5: feea4b24f1473d5a3bf5d98d5eb8cb2c
