@@ -509,7 +509,7 @@ public:
 
 #ifdef VISP_HAVE_OGRE
   virtual void setGoodNbRayCastingAttemptsRatio(const double &ratio);
-  virtual void setNbRayCastingAttemptsForVisibility(const unsigned int &attempts);
+  virtual void setNbRayCastingAttemptsForVisibility(const unsigned int &attempts) VP_OVERRIDE;
 #endif
 
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
