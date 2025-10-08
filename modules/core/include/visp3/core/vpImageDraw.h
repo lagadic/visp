@@ -55,6 +55,13 @@ BEGIN_VISP_NAMESPACE
   \ingroup group_core_image
 
   \brief Drawing functions for image.
+
+  <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+
+  <b>Tutorials</b><br>
+  <span style="margin-left:2em"> If you are interested in inserting basic drawings in an image, you may have a look at:</span><br>
+
+  - \ref tutorial-basic-drawings
 */
 class VISP_EXPORT vpImageDraw
 {

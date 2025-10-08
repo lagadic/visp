@@ -202,6 +202,17 @@ in different ways. This will motivate us to continue the efforts.
   \ingroup module_core
   \defgroup group_core_image Image manipulation
   Image manipulation, including I/O from image files or videos.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in image manipulation, you may have a look at
+  - \ref tutorial-image-display
+  - \ref tutorial-image-display-overlay
+  - \ref tutorial-basic-drawings
+  - \ref tutorial-grabber
+  - \ref tutorial-image-filtering
+  - \ref tutorial-simu-image
+  - \ref tutorial-video-manipulation
 */
 /*!
   \ingroup module_core
@@ -241,7 +252,12 @@ in different ways. This will motivate us to continue the efforts.
 /*!
   \ingroup group_core_math
   \defgroup group_core_kalman Kalman filter
-  Kalman filter.
+  Kalman filters.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in Kalman filtering, you may have a look at
+  - \ref tutorial-ukf
 */
 /*!
   \ingroup module_core
