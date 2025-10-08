@@ -102,7 +102,11 @@ BEGIN_VISP_NAMESPACE
 
 */
 class VISP_EXPORT vpAROgre : public Ogre::FrameListener,
+#if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 11 <<8 | 0))
+  public OgreBites::WindowEventListener
+#else
   public Ogre::WindowEventListener
+#endif
 #ifdef VISP_HAVE_OIS
   ,
   public OIS::KeyListener
