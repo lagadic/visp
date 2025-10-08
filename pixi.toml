@@ -102,12 +102,32 @@ coverage = { cmd = [
   "--exclude", "apps",
   "--exclude", ".pixi",
   "--exclude", "3rdparty",
-  "--exclude", "modules/.*/test",
+  "--exclude", "modules/vs/test",
+  "--exclude", "modules/core/test",
+  "--exclude", "modules/visual_features/test",
+  "--exclude", "modules/python/test",
+  "--exclude", "modules/imgproc/test",
+  "--exclude", "modules/io/test",
+  "--exclude", "modules/tracker/mbt/test",
+  "--exclude", "modules/tracker/rbt/test",
+  "--exclude", "modules/tracker/me/test",
+  "--exclude", "modules/tracker/blob/test",
+  "--exclude", "modules/vision/test",
+  "--exclude", "modules/robot/test",
+  "--exclude", "modules/tracker/test",
+  "--exclude", "modules/sensor/test",
+  "--exclude", "modules/ar/test",
+  "--exclude", "modules/gui/test",
+  "--exclude", "modules/detection/test",
   "--exclude", "modules/robot",
   "--exclude", "modules/python",
   "--exclude", "modules/sensor",
   "--exclude", "modules/gui",
-  "--exclude", "modules/.*/private",
+  "--exclude", "modules/core/src/math/matrix/private",
+  "--exclude", "modules/core/src/image/private",
+  "--exclude", "modules/io/src/image/private",
+  "--exclude", "modules/vision/src/pose-estimation/private",
+  "--exclude", "modules/robot/src/real-robot/biclops/private",
   "--lcov", "$VISP_BUILD_DIR/visp-coverage.cleaned"
 ], depends-on = ["test"]}
 
@@ -141,9 +161,9 @@ configure = { cmd = [
 ] }
 build-base = { cmd = "cmake --build $VISP_BUILD_DIR --parallel $CPU_COUNT", depends-on = ["configure"] }
 build = { depends-on = ["build-base"]}
-install = { cmd = "cmake --build $VISP_BUILD_DIR --target install", depends-on = ["build-base"] }
+install = { cmd = "cmake --build $VISP_BUILD_DIR --target install --parallel $CPU_COUNT", depends-on = ["build-base"] }
 clean = { cmd = "rm -rf $VISP_BUILD_DIR" }
-test = { cmd = "ctest --test-dir $VISP_BUILD_DIR --output-on-failure", depends-on = ["install", "init-testing"] }
+test = { cmd = "ctest --test-dir $VISP_BUILD_DIR --output-on-failure --parallel $CPU_COUNT", depends-on = ["install", "init-testing"] }
 
 [environments]
 # Minimal set of features and python bindings
