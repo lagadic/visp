@@ -85,7 +85,7 @@ public:
   }
 
 protected:
-  void createScene()
+  void createScene() VP_OVERRIDE
   {
     mSceneMgr->setAmbientLight(Ogre::ColourValue(static_cast<float>(0.6), static_cast<float>(0.6), static_cast<float>(0.6))); // Default value of lightning
     Ogre::Light *light = mSceneMgr->createLight();
