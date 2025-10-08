@@ -124,9 +124,9 @@ configure = { cmd = [
 build-modules = { cmd = "cmake --build $VISP_BUILD_DIR --target visp_modules --parallel $CPU_COUNT", depends-on = ["configure"] }
 build-base = { cmd = "cmake --build $VISP_BUILD_DIR --parallel $CPU_COUNT", depends-on = ["build-modules"] }
 build = { depends-on = ["build-base"]}
-install = { cmd = "cmake --build $VISP_BUILD_DIR --target install", depends-on = ["build-base"] }
+install = { cmd = "cmake --build $VISP_BUILD_DIR --target install --parallel $CPU_COUNT", depends-on = ["build-base"] }
 clean = { cmd = "rm -rf $VISP_BUILD_DIR" }
-test = { cmd = "ctest --test-dir $VISP_BUILD_DIR --output-on-failure", depends-on = ["install", "init-testing"] }
+test = { cmd = "ctest --test-dir $VISP_BUILD_DIR --output-on-failure --parallel $CPU_COUNT", depends-on = ["install", "init-testing"] }
 
 [environments]
 # Minimal set of features and python bindings
