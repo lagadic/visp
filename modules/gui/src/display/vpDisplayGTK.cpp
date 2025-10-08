@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -467,12 +467,9 @@ public:
   bool getKeyboardEvent(std::string &key, bool blocking)
   {
     bool ret = false;
-    int cpt = 0;
     do {
       GdkEvent *ev = nullptr;
       while ((ev = gdk_event_get()) != nullptr) {
-        cpt++;
-
         if (ev->any.window == m_widget->window && ev->type == GDK_KEY_PRESS) {
           key = gdk_keyval_name(ev->key.keyval);
           ret = true;
