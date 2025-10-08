@@ -363,7 +363,7 @@ private:
 
   bool frameStarted(const Ogre::FrameEvent &evt) VP_OVERRIDE;
 
-  bool frameEnded(const Ogre::FrameEvent &evt);
+  bool frameEnded(const Ogre::FrameEvent &evt) VP_OVERRIDE;
 
   bool stopTest(const Ogre::FrameEvent &evt);
 
