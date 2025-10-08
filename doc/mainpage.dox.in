@@ -491,36 +491,85 @@ in different ways. This will motivate us to continue the efforts.
 /*!
   \defgroup module_detection detection: Detection module
   Detection module content.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in detection algorithms, you may have a look at
+
+  - \ref tutorial-matching
+  - \ref tutorial-detection-barcode
+  - \ref tutorial-detection-face
+  - \ref tutorial-detection-object
+  - \ref tutorial-detection-apriltag
+  - \ref tutorial-detection-dnn
+  - \ref tutorial-detection-tensorrt
 */
 /*!
   \ingroup module_detection
   \defgroup group_detection_barcode Bar code detection
   Bar code detection.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in bar code detection, you may have a look at
+
+  - \ref tutorial-detection-barcode
 */
 /*!
   \ingroup module_detection
   \defgroup group_detection_face Face detection
   Face detection.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in face detection, you may have a look at
+
+  - \ref tutorial-detection-face
 */
 /*!
   \ingroup module_detection
   \defgroup group_detection_tag Tag detection
   Tag detection.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in tag detection, you may have a look at
+
+  - \ref tutorial-detection-apriltag
 */
 /*!
   \ingroup module_detection
   \defgroup group_detection_keypoint Keypoint detection and matching
   Keypoint detection and matching.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in keypoints detection and matching, you may have a look at
+
+  - \ref tutorial-matching
 */
 /*!
   \ingroup module_detection
   \defgroup group_detection_mbt_object Model-based object detection
   Model-based object detection.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in model-based detection algorithms, you may have a look at
+
+  - \ref tutorial-detection-object
 */
 /*!
   \ingroup module_detection
   \defgroup group_detection_dnn Deep learning object detection
   Deep learning object detection.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in DNN-based detection algorithms, you may have a look at
+
+  - \ref tutorial-detection-dnn
+  - \ref tutorial-detection-tensorrt
 */
 /*******************************************
  * Module tracker

@@ -262,7 +262,12 @@ BEGIN_VISP_NAMESPACE
  * }
  * \endcode
  *
- * This class is also described in \ref tutorial-matching.
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> If you are interested in keypoints detection and matching, you may have a look at:</span><br>
+ *
+ * - \ref tutorial-matching.
 */
 class VISP_EXPORT vpKeyPoint : public vpBasicKeyPoint
 {
