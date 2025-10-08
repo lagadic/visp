@@ -206,6 +206,7 @@ in different ways. This will motivate us to continue the efforts.
   <h2 id="header-details" class="groupheader">Tutorials</h2>
 
   If you are interested in image manipulation, you may have a look at
+
   - \ref tutorial-image-display
   - \ref tutorial-image-display-overlay
   - \ref tutorial-basic-drawings
@@ -237,6 +238,7 @@ in different ways. This will motivate us to continue the efforts.
   <h2 id="header-details" class="groupheader">Tutorials</h2>
 
   If you are interested in linear algebra, you may have a look at
+
   - \ref tutorial-basic-linear-algebra
 */
 /*!
@@ -262,6 +264,7 @@ in different ways. This will motivate us to continue the efforts.
   <h2 id="header-details" class="groupheader">Tutorials</h2>
 
   If you are interested in Kalman filtering, you may have a look at
+
   - \ref tutorial-ukf
 */
 /*!
