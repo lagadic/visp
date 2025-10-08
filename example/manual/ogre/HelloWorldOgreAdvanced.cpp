@@ -126,7 +126,7 @@ protected:
     mAnimationState->setEnabled(true);
   }
 
-  bool customframeEnded(const Ogre::FrameEvent &evt)
+  bool customframeEnded(const Ogre::FrameEvent &evt) VP_OVERRIDE
   {
     // Update animation
     // To move, we add it the time since last frame
