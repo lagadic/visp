@@ -508,7 +508,7 @@ public:
   virtual void setGoodMovingEdgesRatioThreshold(double threshold);
 
 #ifdef VISP_HAVE_OGRE
-  virtual void setGoodNbRayCastingAttemptsRatio(const double &ratio);
+  virtual void setGoodNbRayCastingAttemptsRatio(const double &ratio) VP_OVERRIDE;
   virtual void setNbRayCastingAttemptsForVisibility(const unsigned int &attempts) VP_OVERRIDE;
 #endif
 
