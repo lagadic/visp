@@ -46,6 +46,11 @@
 #include <functional>
 
 BEGIN_VISP_NAMESPACE
+/**
+ * \brief Factory-type class that allows for the dynamic registration of subclasses
+ *
+ * \tparam T The subclass type
+*/
 template<typename T>
 class VISP_EXPORT vpDynamicFactory
 {

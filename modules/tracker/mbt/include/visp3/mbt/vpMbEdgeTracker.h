@@ -94,6 +94,19 @@ BEGIN_VISP_NAMESPACE
  * also use an xml file used to tune the behavior of the tracker and an init file
  * used to compute the pose at the very first image.
  *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> If you are interested in using a MBT tracker in your applications, you may have a look at:</span><br>
+ *
+ * - \ref tutorial-tracking-mb-generic
+ * - \ref tutorial-tracking-mb-generic-stereo
+ * - \ref tutorial-tracking-mb-generic-rgbd
+ * - \ref tutorial-tracking-mb-generic-apriltag-live
+ * - \ref tutorial-mb-generic-json
+ * - \ref tutorial-tracking-mb-generic-rgbd-Blender
+ *
+ * <b>Deprecated examples</b><br>
  * The following code shows the simplest way to use the tracker.
  *
  * \code

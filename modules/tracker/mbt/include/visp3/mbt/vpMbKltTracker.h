@@ -65,6 +65,19 @@ BEGIN_VISP_NAMESPACE
  *
  * \brief Model based tracker using only KLT.
  *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> If you are interested in using a MBT tracker in your applications, you may have a look at:</span><br>
+ *
+ * - \ref tutorial-tracking-mb-generic
+ * - \ref tutorial-tracking-mb-generic-stereo
+ * - \ref tutorial-tracking-mb-generic-rgbd
+ * - \ref tutorial-tracking-mb-generic-apriltag-live
+ * - \ref tutorial-mb-generic-json
+ * - \ref tutorial-tracking-mb-generic-rgbd-Blender
+ *
+ * <b>Derpecated tutorials</b><br>
  * The \ref tutorial-tracking-mb-deprecated is a good starting point to use this class.
  *
  * The tracker requires the knowledge of the 3D model that could be provided in

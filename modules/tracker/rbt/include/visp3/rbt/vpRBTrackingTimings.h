@@ -52,6 +52,13 @@ BEGIN_VISP_NAMESPACE
   \brief Information storage for render based tracking process.
 
   \ingroup group_rbt_core
+
+  <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+
+  <b>Tutorials</b><br>
+  <span style="margin-left:2em"> If you want to have an in-depth presentation of the Render-Based Tracker (RBT), you may have a look at:</span><br>
+
+  - \ref tutorial-tracking-rbt
 */
 
 class vpRBTrackingTimings;

@@ -67,6 +67,10 @@ BEGIN_VISP_NAMESPACE
  * <iframe width="560" height="315" src="https://www.youtube.com/embed/4FARYLYzNL8?si=ah3CjIW_MVV6lyEe" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
  * \endhtmlonly
  *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ *
  * The \ref tutorial-tracking-mb-generic is a good starting point to use this
  * class. If you want to track an object with a stereo camera refer to
  * \ref tutorial-tracking-mb-generic-stereo. If you want rather use a RGB-D camera and exploit
@@ -1060,7 +1064,7 @@ inline void from_json(const nlohmann::json &j, vpMbGenericTracker::TrackerWrappe
       t.setDepthDenseSamplingStep(sampling.at("x"), sampling.at("y"));
     }
   }
-}
+  }
 
 #endif
 

@@ -633,6 +633,24 @@ in different ways. This will motivate us to continue the efforts.
  /*!
    \defgroup module_tracker tracker: ViSP trackers
    ViSP trackers.
+
+   <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you want to have an in-depth presentation of the different trackers, you may have a look at
+
+  - \ref tutorial-tracking-blob
+  - \ref tutorial-tracking-keypoint
+  - \ref tutorial-tracking-me
+  - \ref tutorial-tracking-mb-generic
+  - \ref tutorial-tracking-mb-generic-stereo
+  - \ref tutorial-tracking-mb-generic-rgbd
+  - \ref tutorial-tracking-mb-generic-apriltag-live
+  - \ref tutorial-mb-generic-json
+  - \ref tutorial-tracking-mb-generic-rgbd-Blender
+  - \ref tutorial-tracking-tt
+  - \ref tutorial-tracking-megapose
+  - \ref tutorial-megapose-model
+  - \ref tutorial-tracking-rbt
  */
 
 /*******************************************
@@ -642,6 +660,17 @@ in different ways. This will motivate us to continue the efforts.
   \ingroup module_tracker
   \defgroup module_mbt mbt: Model-based tracker module
   Model-based tracker module content.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you want to have an in-depth presentation of the Model-Based Tracker (MBT), you may have a look at
+
+  - \ref tutorial-tracking-mb-generic
+  - \ref tutorial-tracking-mb-generic-stereo
+  - \ref tutorial-tracking-mb-generic-rgbd
+  - \ref tutorial-tracking-mb-generic-apriltag-live
+  - \ref tutorial-mb-generic-json
+  - \ref tutorial-tracking-mb-generic-rgbd-Blender
 */
 /*!
   \ingroup module_mbt
@@ -657,6 +686,17 @@ in different ways. This will motivate us to continue the efforts.
   - vpMbEdgeTracker
   - vpMbKltTracker
   - vpMbEdgeKltTracker
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you want to have an in-depth presentation of the Model-Based Tracker (MBT), you may have a look at
+
+  - \ref tutorial-tracking-mb-generic
+  - \ref tutorial-tracking-mb-generic-stereo
+  - \ref tutorial-tracking-mb-generic-rgbd
+  - \ref tutorial-tracking-mb-generic-apriltag-live
+  - \ref tutorial-mb-generic-json
+  - \ref tutorial-tracking-mb-generic-rgbd-Blender
 */
 /*!
   \ingroup module_mbt
@@ -682,6 +722,12 @@ in different ways. This will motivate us to continue the efforts.
   \ingroup module_tracker
   \defgroup module_rbt RBT: Render-Based Tracker module
   Render-Based Tracker module
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you want to have an in-depth presentation of the Render-Based Tracker (RBT), you may have a look at
+
+  - \ref tutorial-tracking-rbt
 */
 
 /*!
@@ -689,6 +735,12 @@ in different ways. This will motivate us to continue the efforts.
   \defgroup group_rbt_core Core Render-Based Tracking functionalities
 
   This group contains the core classes that make Render-Based tracking work. The main interface for Render-Based tracking is vpRBTracker.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you want to have an in-depth presentation of the Render-Based Tracker (RBT), you may have a look at
+
+  - \ref tutorial-tracking-rbt
 */
 
 /*!
@@ -697,6 +749,11 @@ in different ways. This will motivate us to continue the efforts.
 
   These classes represent features that can be tracked by the render-based tracker. All trackable features should inherit from vpRBFeatureTracker
 
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you want to have an in-depth presentation of the Render-Based Tracker (RBT), you may have a look at
+
+  - \ref tutorial-tracking-rbt
 */
 
 /*!
@@ -704,6 +761,12 @@ in different ways. This will motivate us to continue the efforts.
   \defgroup group_rbt_mask Object segmentation
 
   These classes allow to perform object segmentaiton from rendering information. This segmentation may be used downstream by feature trackers to filter features.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you want to have an in-depth presentation of the Render-Based Tracker (RBT), you may have a look at
+
+  - \ref tutorial-tracking-rbt
   */
 
 /*!
@@ -711,6 +774,12 @@ in different ways. This will motivate us to continue the efforts.
   \defgroup group_rbt_drift Drift and divergence detection
 
   These classes allow to detect tracking drift.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you want to have an in-depth presentation of the Render-Based Tracker (RBT), you may have a look at
+
+  - \ref tutorial-tracking-rbt
 */
 
 /*!
@@ -718,22 +787,12 @@ in different ways. This will motivate us to continue the efforts.
   \defgroup group_rbt_rendering Rendering
 
   This group contains additional rendering utilities.
-*/
 
-/*!
-  \ingroup module_mbt
-  \defgroup group_mbt_features Features
-  Model-based trackers features.
-*/
-/*!
-  \ingroup module_mbt
-  \defgroup group_mbt_faces Faces management
-  Faces management including visibility.
-*/
-/*!
-  \ingroup module_mbt
-  \defgroup group_mbt_xml_parser XML parsers
-  XML parsers dedicated to model-based trackers.
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you want to have an in-depth presentation of the Render-Based Tracker (RBT), you may have a look at
+
+  - \ref tutorial-tracking-rbt
 */
 
 /*******************************************
@@ -913,21 +972,45 @@ in different ways. This will motivate us to continue the efforts.
   \ingroup module_tracker
   \defgroup module_tt tt: Template tracker module
   Template tracker module content.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you want to have an in-depth presentation of the Template Tracker (TT), you may have a look at
+
+  - \ref tutorial-tracking-tt
 */
 /*!
   \ingroup module_tt
   \defgroup group_tt_tracker Trackers
   Classes dedicated to template tracking.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you want to have an in-depth presentation of the Template Tracker (TT), you may have a look at
+
+  - \ref tutorial-tracking-tt
 */
 /*!
   \ingroup module_tt
   \defgroup group_tt_warp Warping function
   Classes that implement warping functions that are estimated by the template trackers.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you want to have an in-depth presentation of the Template Tracker (TT), you may have a look at
+
+  - \ref tutorial-tracking-tt
 */
 /*!
   \ingroup module_tt
   \defgroup group_tt_tools Tools
   Tools used by template trackers.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you want to have an in-depth presentation of the Template Tracker (TT), you may have a look at
+
+  - \ref tutorial-tracking-tt
 */
 /*******************************************
  * Module tt_mi
@@ -937,11 +1020,23 @@ in different ways. This will motivate us to continue the efforts.
   \defgroup module_tt_mi tt_mi: Template tracker based on mutual information module
   Template tracker based on mutual information module content. This module is an
   extension of \ref module_tt where mutual information cost function is introduced.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you want to have an in-depth presentation of the Template Tracker based on Mutual Information (TT-MI), you may have a look at
+
+  - \ref tutorial-tracking-tt
 */
 /*!
   \ingroup module_tt_mi
   \defgroup group_tt_mi_tracker Trackers
   Classes dedicates to template tracking with mutual information cost function.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you want to have an in-depth presentation of the Template Tracker based on Mutual Information (TT-MI), you may have a look at
+
+  - \ref tutorial-tracking-tt
 */
 /*******************************************
  * Module me
@@ -950,6 +1045,12 @@ in different ways. This will motivate us to continue the efforts.
   \ingroup module_tracker
   \defgroup module_me me: Moving-edges tracker module
   Moving-edges tracker module.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you want to have an in-depth presentation of the Moving-Edges (ME) trackers, you may have a look at
+
+  - \ref tutorial-tracking-me
 */
 /*******************************************
  * Module blob
@@ -958,6 +1059,12 @@ in different ways. This will motivate us to continue the efforts.
   \ingroup module_tracker
   \defgroup module_blob blob: Blob tracker module
   Blob tracker module.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you want to have an in-depth presentation of the blob tracker, you may have a look at
+
+  - \ref tutorial-tracking-blob
 */
 /*******************************************
  * Module klt
@@ -966,14 +1073,27 @@ in different ways. This will motivate us to continue the efforts.
   \ingroup module_tracker
   \defgroup module_klt klt: Kanade Lucas tracker module
   Kanade Lucas tracker module.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you want to have an in-depth presentation of the Kanade Lucas Tracker (KLT), you may have a look at
+
+  - \ref tutorial-tracking-keypoint
 */
 /*******************************************
- * Module blob
+ * Module DNN tracker
  *******************************************/
  /*!
   \ingroup module_tracker
   \defgroup module_dnn_tracker dnn_tracker: Deep learning tracker module
   Deep learning tracker module.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you want to have an in-depth presentation of the different DNN-based trackers, you may have a look at
+
+  - \ref tutorial-tracking-megapose
+  - \ref tutorial-megapose-model
 */
 /*******************************************
  * Module vision

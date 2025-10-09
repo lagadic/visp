@@ -74,9 +74,14 @@ class vpRBVisualOdometry;
  *
  * The RBT can be extended and you can add your own features and other functionalities to the pipeline.
  *
- * For a detailed description of the tracker, how to use it and extend it, see \ref tutorial-tracking-rbt.
- *
  * \ingroup group_rbt_core
+ *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> For a detailed description of the tracker, how to use it and extend it, see:</span><br>
+ *
+ * - \ref tutorial-tracking-rbt
 */
 class VISP_EXPORT vpRBTracker
 {
