@@ -1,0 +1,17 @@
+[project]
+
+name='visp-stubs'
+version='@VISP_PYTHON_VERSION@'
+authors = [
+  { name = 'Samuel Felton', email = 'samuel.felton@irisa.fr' }
+]
+description='Python stubs for the ViSP wrapper'
+requires-python = ">= 3.8"
+
+[build-system]
+requires = [
+    "setuptools",
+    "mypy",
+    "visp @ file://@VISP_PYTHON_BINDINGS_BUILD_PATH@"
+]
+build-backend = "setuptools.build_meta"

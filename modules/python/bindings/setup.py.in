@@ -62,7 +62,7 @@ else:
 base_path = Path(__file__).parent.absolute()
 
 
-packages = ['', 'visp', 'visp.apps']
+packages = ['visp', 'visp.apps', 'visp.python']
 
 
 apps_folder = base_path / package_name / 'apps'

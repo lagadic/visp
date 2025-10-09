@@ -196,6 +196,10 @@ def get_enum_bindings(root_scope: NamespaceScope, mapping: Dict, submodule: Subm
   for enum_repr in final_reprs:
     name_segments = enum_repr.name.split('::')
     py_name = name_segments[-1].replace('vp', '')
+    # A name cannot start with a digit
+    # But we strip vp prefix from enum names, so we readd if required
+    if py_name[0].isdigit():
+      py_name = f'vp{py_name}'
     # If an owner class is ignored, don't export this enum
     parent_ignored = False
     ignored_parent_name = None
