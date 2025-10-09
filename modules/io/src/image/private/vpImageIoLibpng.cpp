@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -358,7 +358,7 @@ void readPNGLibpng(vpImage<unsigned char> &I, const std::string &filename)
 
   png_bytep *rowPtrs = new png_bytep[height];
 
-  unsigned int stride = png_get_rowbytes(png_ptr, info_ptr);
+  unsigned int stride = static_cast(png_ptr, info_ptr);
   unsigned char *data = new unsigned char[stride * height];
 
   for (unsigned int i = 0; i < height; ++i)
@@ -532,7 +532,7 @@ void readPNGLibpng(vpImage<vpRGBa> &I, const std::string &filename)
 
   png_bytep *rowPtrs = new png_bytep[height];
 
-  unsigned int stride = png_get_rowbytes(png_ptr, info_ptr);
+  unsigned int stride = static_cast<unsigned int>(png_get_rowbytes(png_ptr, info_ptr));
   unsigned char *data = new unsigned char[stride * height];
 
   for (unsigned int i = 0; i < height; ++i)
