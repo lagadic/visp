@@ -59,6 +59,13 @@ BEGIN_VISP_NAMESPACE
  * \ingroup group_vision_plane
  *
  * \note This class is only available with c++17 enabled.
+ *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> If you are interested in learning how to use this class, you may have a look at:</span><br>
+ *
+ * - \ref tutorial-planar-object-pose
 */
 class VISP_EXPORT vpPlaneEstimation
 {

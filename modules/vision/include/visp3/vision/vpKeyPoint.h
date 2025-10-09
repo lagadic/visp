@@ -267,7 +267,8 @@ BEGIN_VISP_NAMESPACE
  * <b>Tutorials</b><br>
  * <span style="margin-left:2em"> If you are interested in keypoints detection and matching, you may have a look at:</span><br>
  *
- * - \ref tutorial-matching.
+ * - \ref tutorial-matching
+ * - \ref tutorial-homography-ransac
 */
 class VISP_EXPORT vpKeyPoint : public vpBasicKeyPoint
 {

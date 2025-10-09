@@ -114,6 +114,7 @@ BEGIN_VISP_NAMESPACE
  * <span style="margin-left:2em"> If you are interested in QR code detection, you may have a look at:</span><br>
  *
  * - \ref tutorial-detection-barcode
+ * - \ref tutorial-pose-estimation-qrcode
 */
 class VISP_EXPORT vpDetectorQRCode : public vpDetectorBase
 {
