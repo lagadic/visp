@@ -24,6 +24,8 @@ libblas = "*"
 libcblas = "*"
 liblapack = "*"
 liblapacke = "*"
+coin3d = "*"
+nlohmann_json = "*"
 
 [target.unix.dependencies]
 xorg-libx11 = "*"
@@ -33,6 +35,10 @@ xorg-xorgproto = "*"
 libxml2 = "*"
 libdc1394 = ">=2.2.6"
 librealsense = "*"
+gsl = "*"
+gtk2 = "*"
+ogre = "*"
+zbar = "*"
 
 [target.linux-64.dependencies]
 mesa-libegl-cos7-x86_64 = "*"
@@ -45,6 +51,12 @@ scripts = ["development/scripts/pixi/activation.sh"]
 
 [target.win-64.activation]
 scripts = ["development/scripts/pixi/activation.bat"]
+
+[target.linux.activation.env]
+VISP_USE_GTK2 = "ON"
+
+[target.osx.activation.env]
+VISP_USE_GTK2 = "ON"
 
 # Use clang-cl on Windows
 # We must use scripts instead of env to setup CC and CXX
@@ -64,7 +76,7 @@ python-doc = { cmd = "cmake --build $VISP_BUILD_DIR --parallel $CPU_COUNT --targ
 view-python-doc = { cmd = "$BROWSER $VISP_BUILD_DIR/doc/python/index.html", env = { BROWSER = "firefox" } }
 
 [feature.rbt]
-dependencies = { nlohmann_json = "*", panda3d = { version = ">=1.10.15", channel = "panda3d-forge" } }
+dependencies = { panda3d = { version = ">=1.10.15", channel = "panda3d-forge" } }
 
 [feature.doc]
 dependencies = { doxygen = "*", mathjax = "*" }
@@ -106,13 +118,15 @@ configure = { cmd = [
   "-DBUILD_TUTORIALS=$VISP_BUILD_TUTORIALS",
   "-DBUILD_EXAMPLES=$VISP_BUILD_EXAMPLES",
   "-DUSE_MATHJAX=$VISP_USE_MATHJAX",
+  "-DUSE_GTK2=$VISP_USE_GTK2",
   "$VISP_EXTRA_CMAKE_ARGS"
 ] }
-build-base = { cmd = "cmake --build $VISP_BUILD_DIR --parallel $CPU_COUNT", depends-on = ["configure"] }
+build-modules = { cmd = "cmake --build $VISP_BUILD_DIR --target visp_modules --parallel $CPU_COUNT", depends-on = ["configure"] }
+build-base = { cmd = "cmake --build $VISP_BUILD_DIR --parallel $CPU_COUNT", depends-on = ["build-modules"] }
 build = { depends-on = ["build-base"]}
-install = { cmd = "cmake --build $VISP_BUILD_DIR --target install", depends-on = ["build-base"] }
+install = { cmd = "cmake --build $VISP_BUILD_DIR --target install --parallel $CPU_COUNT", depends-on = ["build-base"] }
 clean = { cmd = "rm -rf $VISP_BUILD_DIR" }
-test = { cmd = "ctest --test-dir $VISP_BUILD_DIR --output-on-failure", depends-on = ["install", "init-testing"] }
+test = { cmd = "ctest --test-dir $VISP_BUILD_DIR --output-on-failure --parallel $CPU_COUNT", depends-on = ["install", "init-testing"] }
 
 [environments]
 # Minimal set of features and python bindings
