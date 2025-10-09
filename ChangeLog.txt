@@ -150,6 +150,7 @@ ViSP 3.x.x (Version in development)
       third-party
     . [#1764] The default constructor of the vpQuaternion class lead to an incorrect rotation matrix
     . [#1765] Segfault when parsing .cao and/or .init files containing empty lines (MBT and RBT)
+    . [#1793] Segfault when saving depth with saveRealSenseData.cpp tool
 ----------------------------------------------
 ViSP 3.6.0 (released September 22, 2023)
   - Contributors:
