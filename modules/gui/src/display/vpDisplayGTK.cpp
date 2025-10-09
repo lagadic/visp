@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,7 +70,7 @@ public:
   Impl()
     : m_widget(nullptr), m_background(nullptr), m_gc(nullptr), m_blue(), m_red(), m_yellow(), m_green(), m_cyan(), m_orange(),
     m_white(), m_black(), m_gdkcolor(), m_lightBlue(), m_darkBlue(), m_lightRed(), m_darkRed(), m_lightGreen(),
-    m_darkGreen(), m_purple(), m_lightGray(), m_gray(), m_darkGray(), m_colormap(nullptr), m_font(nullptr), m_vectgtk(nullptr),
+    m_darkGreen(), m_purple(), m_lightGray(), m_gray(), m_darkGray(), m_colormap(nullptr), m_font(nullptr),
     m_col(nullptr)
   { }
 
@@ -467,12 +467,9 @@ public:
   bool getKeyboardEvent(std::string &key, bool blocking)
   {
     bool ret = false;
-    int cpt = 0;
     do {
       GdkEvent *ev = nullptr;
       while ((ev = gdk_event_get()) != nullptr) {
-        cpt++;
-
         if (ev->any.window == m_widget->window && ev->type == GDK_KEY_PRESS) {
           key = gdk_keyval_name(ev->key.keyval);
           ret = true;
@@ -547,7 +544,6 @@ private:
   GdkColormap *m_colormap;
 
   GdkFont *m_font;
-  guchar *m_vectgtk;
   GdkColor **m_col;
 };
 
