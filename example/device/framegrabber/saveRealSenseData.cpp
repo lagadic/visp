@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -451,8 +451,10 @@ public:
           }
 
           if (m_save_depth && ptr_depthImg) {
+            std::cout << "DEBUG FS on sauvegarde depth" << std::endl;
             if (m_save_force_binary_format) {
-              std::string filename_depth = vpIoTools::formatString("/depth_image_" + m_save_pattern + ".bin", m_cpt);
+
+              std::string filename_depth = vpIoTools::formatString(m_directory + "/depth_image_" + m_save_pattern + ".bin", m_cpt);
 
               std::ofstream file_depth(filename_depth.c_str(), std::ios::out | std::ios::binary);
               if (file_depth.is_open()) {
@@ -471,7 +473,7 @@ public:
             }
 #if defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
             else {
-              std::string filename_depth = vpIoTools::formatString("/depth_image_" + m_save_pattern + ".npz", m_cpt);
+              std::string filename_depth = vpIoTools::formatString(m_directory + "/depth_image_" + m_save_pattern + ".npz", m_cpt);
 
               // Write Npz headers
               std::vector<char> vec_filename(filename_depth.begin(), filename_depth.end());
