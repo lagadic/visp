@@ -198,6 +198,7 @@ public:
   static int
 #endif
     /**
+     * \ingroup group_core_bridges
      * \brief Convert a raw depth image into a pcl::PointCloud that has no texture.
      *
      * \param[in] depth_raw Raw depth image.
@@ -309,6 +310,7 @@ public:
   static int
 #endif
     /**
+     * \ingroup group_core_bridges
      * \brief Convert a raw depth image in a textured pcl::PointCloud using a vpImage<RGBa> that is aligned with the
      * raw depth image to get the texture.
      *

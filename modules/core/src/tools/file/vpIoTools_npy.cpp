@@ -266,6 +266,8 @@ visp::cnpy::NpyArray load_the_npz_array(FILE *fp, uint32_t compr_bytes, uint32_t
   \return A map of arrays data. The key represents the variable name, the value is an array of basic data type.
   \warning This function has only been tested on little endian platform.
   \note Original library: <a href="https://github.com/rogersce/cnpy">cnpy</a> with MIT license.
+
+  \sa To see how to use it, you may have a look at \ref tutorial-npz
  */
 visp::cnpy::npz_t visp::cnpy::npz_load(std::string fname)
 {
@@ -343,6 +345,8 @@ visp::cnpy::npz_t visp::cnpy::npz_load(std::string fname)
   \return An array of basic data type.
   \warning This function has only been tested on little endian platform.
   \note Original library: <a href="https://github.com/rogersce/cnpy">cnpy</a> with MIT license.
+
+  \sa To see how to use it, you may have a look at \ref tutorial-npz
  */
 visp::cnpy::NpyArray visp::cnpy::npz_load(std::string fname, std::string varname)
 {
