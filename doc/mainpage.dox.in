@@ -360,7 +360,17 @@ in different ways. This will motivate us to continue the efforts.
   \defgroup group_core_cpu_features CPU features
   CPU features.
 */
+/*!
+  \ingroup group_core_tools
+  \defgroup group_core_spc Statistical Process Control
+  Methods to perform Statistical Process Control (SPC).
 
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in using SPC in your application, you may have a look at:</span><br>
+
+  - \ref tutorial-spc
+*/
 /*******************************************
  * Module io
  *******************************************/
