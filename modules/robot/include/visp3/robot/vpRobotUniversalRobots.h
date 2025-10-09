@@ -53,8 +53,12 @@ BEGIN_VISP_NAMESPACE
 
   \ingroup group_robot_real_arm
 
-  \sa \ref tutorial-universal-robot-ibvs
-  \sa \ref tutorial-universal-robot-pbvs
+  <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+
+  <b>Tutorials</b><br>
+  <span style="margin-left:2em"> If you are interested in using performing visual servoing using a robot from Universal Robots, you may have a look at:</span><br>
+ * - \ref tutorial-universal-robot-ibvs
+  - \ref tutorial-universal-robot-pbvs
 */
 class VISP_EXPORT vpRobotUniversalRobots : public vpRobot
 {
