@@ -90,9 +90,11 @@ elseif(MSVC)
   # Add specific compilation flags for Windows Visual
   add_extra_compiler_option_enabling(/Wall               ACTIVATE_WARNING_ALL             OFF)
   add_extra_compiler_option_enabling(/fp:fast            ENABLE_FAST_MATH                 OFF)
-  if(MSVC80 OR MSVC90 OR MSVC10 OR MSVC11 OR MSVC14)
+  if(NOT " ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE} ${CMAKE_CXX_FLAGS_DEBUG}" MATCHES " /EH")
     # To avoid compiler warning (level 4) C4571, compile with /EHa if you still want
     # your catch(...) blocks to catch structured exceptions.
+    # But add only /EHa if not already enabled to avoid the following warning
+    # cl : Command line warning D9025 : overriding '/EHs' with '/EHa'
     add_extra_compiler_options("/EHa")
   endif()
 endif()
