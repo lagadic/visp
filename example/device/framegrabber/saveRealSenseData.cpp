@@ -451,7 +451,6 @@ public:
           }
 
           if (m_save_depth && ptr_depthImg) {
-            std::cout << "DEBUG FS on sauvegarde depth" << std::endl;
             if (m_save_force_binary_format) {
 
               std::string filename_depth = vpIoTools::formatString(m_directory + "/depth_image_" + m_save_pattern + ".bin", m_cpt);
