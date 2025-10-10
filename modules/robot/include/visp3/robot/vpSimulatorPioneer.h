@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,8 +97,12 @@ BEGIN_VISP_NAMESPACE
  * }
  * \endcode
  *
- * The usage of this class is also highlighted in \ref
- * tutorial-simu-robot-pioneer.
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> If you are interested in simulating a Pioneer robot, you may have a look at:</span><br>
+ *
+ * - \ref tutorial-simu-robot-pioneer
 */
 class VISP_EXPORT vpSimulatorPioneer : public vpPioneer, public vpRobotSimulator
 {

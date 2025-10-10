@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -179,7 +179,12 @@ BEGIN_VISP_NAMESPACE
  * }
  * \endcode
  *
- * An other fully explained example is given in the \ref tutorial-ibvs.
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> An other fully explained example is given in:</span><br>
+ *
+ * - \ref tutorial-ibvs.
 */
 class VISP_EXPORT vpFeaturePoint : public vpBasicFeature
 {

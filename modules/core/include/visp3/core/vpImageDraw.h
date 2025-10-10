@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,6 +55,13 @@ BEGIN_VISP_NAMESPACE
   \ingroup group_core_image
 
   \brief Drawing functions for image.
+
+  <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+
+  <b>Tutorials</b><br>
+  <span style="margin-left:2em"> If you are interested in inserting basic drawings in an image, you may have a look at:</span><br>
+
+  - \ref tutorial-basic-drawings
 */
 class VISP_EXPORT vpImageDraw
 {

@@ -57,6 +57,13 @@ BEGIN_VISP_NAMESPACE
  *
  * \see https://docs.panda3d.org/1.10/cpp/programming/render-attributes/lighting
  *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> If you are interested in using Panda3D in Augmented Reality applications, you may have a look at:</span><br>
+ *
+ * - \ref tutorial-panda3d
+ *
 */
 class VISP_EXPORT vpPanda3DLight
 {
@@ -107,6 +114,13 @@ protected:
  * They do not generate speculars or reflections.
  *
  * \see https://docs.panda3d.org/1.10/python/reference/panda3d.core.AmbientLight
+ *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> If you are interested in using Panda3D in Augmented Reality applications, you may have a look at:</span><br>
+ *
+ * - \ref tutorial-panda3d
  */
 class VISP_EXPORT vpPanda3DAmbientLight : public vpPanda3DLight
 {
@@ -131,6 +145,13 @@ public:
  *
  * Point lights emit light all around them, from a single point.
  * Their light can be subject to a distance-based attenuation.
+ *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> If you are interested in using Panda3D in Augmented Reality applications, you may have a look at:</span><br>
+ *
+ * - \ref tutorial-panda3d
  */
 class VISP_EXPORT vpPanda3DPointLight : public vpPanda3DLight
 {
@@ -188,6 +209,12 @@ private:
  *
  * A directional light has no origin nor falloff.
  *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> If you are interested in using Panda3D in Augmented Reality applications, you may have a look at:</span><br>
+ *
+ * - \ref tutorial-panda3d
  */
 class VISP_EXPORT vpPanda3DDirectionalLight : public vpPanda3DLight
 {
@@ -230,6 +257,12 @@ private:
  * \ingroup group_ar_renderer_panda3d_lighting
  * \brief Interface for objects, scenes or other Panda3D related data that can be lit by a vpPanda3DLight.
  *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> If you are interested in using Panda3D in Augmented Reality applications, you may have a look at:</span><br>
+ *
+ * - \ref tutorial-panda3d
  */
 class VISP_EXPORT vpPanda3DLightable
 {
@@ -247,6 +280,13 @@ public:
  * \brief Implementation of vpPanda3DLightable for a panda scene with a root node.
  *
  * The root node should be specified with setLightableScene by an inheriting implementation.
+ *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> If you are interested in using Panda3D in Augmented Reality applications, you may have a look at:</span><br>
+ *
+ * - \ref tutorial-panda3d
  */
 class VISP_EXPORT vpPanda3DLightableScene : public vpPanda3DLightable
 {

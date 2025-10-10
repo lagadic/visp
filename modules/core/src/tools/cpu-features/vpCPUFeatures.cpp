@@ -29,8 +29,7 @@
  *
  * Description:
  * CPU features (hardware capabilities).
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpConfig.h>
 #include "x86/cpu_x86.h"

@@ -97,6 +97,14 @@ BEGIN_VISP_NAMESPACE
   \f[
     \textbf{x}_{filtered} = wm(\textbf{w}, \textbf{x})
   \f]
+
+  <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+
+  <b>Tutorials</b><br>
+  <span style="margin-left:2em"> If you are interested in using a Particle Filter in your application, you may have a look at:</span><br>
+
+  - \ref tutorial-pf
+  - \ref tutorial-pf-curve-fitting
 */
 template <typename MeasurementsType>
 class vpParticleFilter

@@ -46,6 +46,8 @@
 
 BEGIN_VISP_NAMESPACE
 /*!
+  \ingroup group_core_bridges
+
   Convert a cv::Mat to a vpImage\<vpRGBa\>.
 
   A cv::Mat is an OpenCV image class.
@@ -171,6 +173,8 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<vpRGBa> &dest, bool fli
 }
 
 /*!
+  \ingroup group_core_bridges
+
   Convert a cv::Mat to a vpImage\<unsigned char\>.
 
   A cv::Mat is an OpenCV image class.
@@ -282,6 +286,7 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<unsigned char> &dest, b
 }
 
 /*!
+ * \ingroup group_core_bridges
  * Converts cv::Mat CV_32FC1 / CV_16SC1 format to ViSP vpImage<float>.
  *
  * \param[in] src : OpenCV image in CV_32FC1 / CV_16SC1 format.
@@ -324,6 +329,7 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<float> &dest, bool flip
 }
 
 /*!
+ * \ingroup group_core_bridges
  * Converts cv::Mat CV_32FC1 format to ViSP vpImage<double>.
  *
  * \param[in] src : OpenCV image in CV_32FC1 format.
@@ -345,6 +351,7 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<double> &dest, bool fli
 }
 
 /*!
+ * \ingroup group_core_bridges
  * Converts cv::Mat CV_16UC1 format to ViSP vpImage<uint16_t>.
  *
  * \param[in] src : OpenCV image in CV_16UC1 format.
@@ -380,6 +387,7 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<uint16_t> &dest, bool f
 }
 
 /*!
+ * \ingroup group_core_bridges
  * Converts cv::Mat CV_32FC3 format to ViSP vpImage<vpRGBf>.
  *
  * \param[in] src : OpenCV image in CV_32FC3 format.
@@ -417,6 +425,7 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<vpRGBf> &dest, bool fli
 }
 
 /*!
+  \ingroup group_core_bridges
   Convert a vpImage\<vpRGBa\> to a cv::Mat color image.
 
   A cv::Mat is an OpenCV image class. See http://opencv.willowgarage.com for
@@ -463,6 +472,8 @@ void vpImageConvert::convert(const vpImage<vpRGBa> &src, cv::Mat &dest)
 }
 
 /*!
+  \ingroup group_core_bridges
+
   Convert a vpImage\<unsigned char\> to a cv::Mat grey level image.
 
   A cv::Mat is an OpenCV image class. See http://opencv.willowgarage.com for
@@ -515,6 +526,15 @@ void vpImageConvert::convert(const vpImage<unsigned char> &src, cv::Mat &dest, b
   }
 }
 
+/**
+ * \ingroup group_core_bridges
+ * \brief Convert a float-32 ViSP image into a cv::Mat(CV_32FC1)
+ *
+ * \param[in] src A float-32 ViSP image.
+ * \param[in] dest A cv::Mat(CV_32FC1).
+ * \param[in] copyData If true, the image is copied and modification in one
+  object will not modified the other.
+ */
 void vpImageConvert::convert(const vpImage<float> &src, cv::Mat &dest, bool copyData)
 {
   if (copyData) {
@@ -526,6 +546,15 @@ void vpImageConvert::convert(const vpImage<float> &src, cv::Mat &dest, bool copy
   }
 }
 
+/**
+ * \ingroup group_core_bridges
+ * \brief Convert a float-64 ViSP image into a cv::Mat(CV_32FC1)
+ *
+ * \param[in] src A float-64 ViSP image.
+ * \param[in] dest A cv::Mat(CV_32FC1).
+ * \param[in] copyData If true, the image is copied and modification in one
+  object will not modified the other.
+ */
 void vpImageConvert::convert(const vpImage<double> &src, cv::Mat &dest, bool copyData)
 {
   unsigned int nbRows = src.getRows();
@@ -539,6 +568,15 @@ void vpImageConvert::convert(const vpImage<double> &src, cv::Mat &dest, bool cop
   convert(I_float, dest, copyData);
 }
 
+/**
+ * \ingroup group_core_bridges
+ * \brief Convert a vpRGBf ViSP image into a cv::Mat(CV_32FC3) that uses BGR format.
+ *
+ * \param[in] src A vpRGBf ViSP image.
+ * \param[in] dest A cv::Mat(CV_32FC3) that uses BGR format.
+ * \param[in] copyData If true, the image is copied and modification in one
+  object will not modified the other.
+ */
 void vpImageConvert::convert(const vpImage<vpRGBf> &src, cv::Mat &dest)
 {
   cv::Mat vpToMat(static_cast<int>(src.getRows()), static_cast<int>(src.getCols()), CV_32FC3, (void *)src.bitmap);

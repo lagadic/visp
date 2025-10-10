@@ -85,6 +85,10 @@ BEGIN_VISP_NAMESPACE
  *
  * \image html vpMeEllipse.gif
  *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ *
  * The example below available in tutorial-me-ellipse-tracker.cpp and described
  * in \ref tutorial-tracking-me, section \ref tracking_me_ellipse and section \ref tracking_me_circle shows how to
  * use this class.

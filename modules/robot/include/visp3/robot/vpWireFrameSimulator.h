@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Wire frame simulator
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpWireFrameSimulator.h
@@ -151,6 +149,14 @@ BEGIN_VISP_NAMESPACE
     return 0;
   }
   \endcode
+
+  <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+
+  <b>Tutorials</b><br>
+  <span style="margin-left:2em"> If you are interested in using this class to achieve a visual
+  servoing simulation, you may have a look at:</span><br>
+
+  - \ref tutorial-ibvs.
 */
 
 class VISP_EXPORT vpWireFrameSimulator

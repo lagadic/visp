@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +33,7 @@
  * Authors:
  * Amaury Dame
  * Aurelien Yol
- *
-*****************************************************************************/
+ */
 /*!
  \file vpTemplateTrackerHeader.h
  \brief
@@ -51,6 +49,13 @@ BEGIN_VISP_NAMESPACE
 /*!
   \struct vpTemplateTrackerZPoint
   \ingroup group_tt_tools
+
+  <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+
+  <b>Tutorials</b><br>
+  <span style="margin-left:2em"> If you are interested in the Template Tracker  (TT), you may have a look at:</span><br>
+
+  - \ref tutorial-tracking-tt
 */
 struct vpTemplateTrackerZPoint
 {
@@ -61,6 +66,13 @@ struct vpTemplateTrackerZPoint
 /*!
   \struct vpTemplateTrackerDPoint
   \ingroup group_tt_tools
+
+  <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+
+  <b>Tutorials</b><br>
+  <span style="margin-left:2em"> If you are interested in the Template Tracker  (TT), you may have a look at:</span><br>
+
+  - \ref tutorial-tracking-tt
 */
 struct vpTemplateTrackerDPoint
 {
@@ -71,6 +83,13 @@ struct vpTemplateTrackerDPoint
 /*!
   \struct vpTemplateTrackerPoint
   \ingroup group_tt_tools
+
+  <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+
+  <b>Tutorials</b><br>
+  <span style="margin-left:2em"> If you are interested in the Template Tracker  (TT), you may have a look at:</span><br>
+
+  - \ref tutorial-tracking-tt
 */
 struct vpTemplateTrackerPoint
 {
@@ -85,6 +104,13 @@ struct vpTemplateTrackerPoint
 /*!
   \struct vpTemplateTrackerPointCompo
   \ingroup group_tt_tools
+
+  <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+
+  <b>Tutorials</b><br>
+  <span style="margin-left:2em"> If you are interested in the Template Tracker  (TT), you may have a look at:</span><br>
+
+  - \ref tutorial-tracking-tt
 */
 struct vpTemplateTrackerPointCompo
 {

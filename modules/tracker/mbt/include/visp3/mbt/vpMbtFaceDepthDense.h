@@ -49,7 +49,23 @@
 #define DEBUG_DISPLAY_DEPTH_DENSE 0
 
 BEGIN_VISP_NAMESPACE
-class VISP_EXPORT vpMbtFaceDepthDense
+/**
+ * \ingroup group_mbt_faces
+ * \brief Manage depth dense features for a particular face.
+ *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> If you are interested in using a MBT tracker in your applications, you may have a look at:</span><br>
+ *
+ * - \ref tutorial-tracking-mb-generic
+ * - \ref tutorial-tracking-mb-generic-stereo
+ * - \ref tutorial-tracking-mb-generic-rgbd
+ * - \ref tutorial-tracking-mb-generic-apriltag-live
+ * - \ref tutorial-mb-generic-json
+ * - \ref tutorial-tracking-mb-generic-rgbd-Blender
+ */
+  class VISP_EXPORT vpMbtFaceDepthDense
 {
 public:
   enum vpDepthDenseFilteringType

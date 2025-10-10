@@ -250,8 +250,12 @@ BEGIN_VISP_NAMESPACE
  *   Pose: 0.08951250829  0.02243780207  0.306540622  1.998073197  2.061488008  -0.8699567948
  * \endcode
  *
- * Other examples are also provided in tutorial-apriltag-detector.cpp and
- * tutorial-apriltag-detector-live.cpp
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> If you want a detailed explanation on how to use this class, you may have a look at:</span><br>
+ *
+ * - \ref tutorial-detection-apriltag
 */
 class VISP_EXPORT vpDetectorAprilTag : public vpDetectorBase
 {

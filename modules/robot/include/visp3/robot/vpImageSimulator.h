@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +33,7 @@
  *
  * Authors:
  * Amaury Dame
- *
-*****************************************************************************/
+ */
 
 #ifndef vpImageSimulator_h
 #define vpImageSimulator_h
@@ -128,6 +126,12 @@
     return 0;
   }
   \endcode
+
+  <b>Tutorials</b><br>
+  <span style="margin-left:2em"> If you are interested in projecting an image in the 3D space and getting the
+  view of a virtual camera, you may have a look at:</span><br>
+
+  - \ref tutorial-simu-image
 */
 
 #include <visp3/core/vpCameraParameters.h>

@@ -131,6 +131,13 @@ BEGIN_VISP_NAMESPACE
  * {"maskSign":0,"maskSize":5,"minSampleStep":4.0,"mu":[0.5,0.5],"nMask":180,"ntotalSample":0,"pointsToTrack":200,
  *  "range":5,"sampleStep":10.0,"strip":2,"threshold":20.0,"thresholdMarginRatio":-1.0,"minThreshold":-1.0,"thresholdType":"normalized"}
  * \endcode
+ *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> If you are interested in using a ME tracker in your application, you may have a look at:</span><br>
+ *
+ * - \ref tutorial-tracking-me
 */
 class VISP_EXPORT vpMe
 {

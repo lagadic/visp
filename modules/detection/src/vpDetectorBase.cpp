@@ -29,8 +29,7 @@
  *
  * Description:
  * Base class for object detection.
- *
-*****************************************************************************/
+ */
 #include <visp3/core/vpConfig.h>
 
 #include <visp3/detection/vpDetectorBase.h>

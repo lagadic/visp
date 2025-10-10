@@ -4,31 +4,78 @@
 /*!
   \defgroup module_imgproc imgproc: Image processing module
   Image processing module content.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in image processing, you may have a look at
+
+  - \ref tutorial-imgproc-brightness
+  - \ref tutorial-imgproc-auto-gamma
+  - \ref tutorial-imgproc-contrast-sharpening
+  - \ref tutorial-imgproc-autothreshold
+  - \ref tutorial-imgproc-contour
+  - \ref tutorial-imgproc-connected-components
+  - \ref tutorial-imgproc-flood-fill
+  - \ref tutorial-imgproc-count-coins
+  - \ref tutorial-imgproc-cht
 */
 /*!
   \ingroup module_imgproc
   \defgroup group_imgproc_brightness Brightness and contrast adjustment
   Brightness and contrast adjustment.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in brightness manipulation, you may have a look at
+
+  - \ref tutorial-imgproc-brightness
+  - \ref tutorial-imgproc-contrast-sharpening
 */
 /*!
   \ingroup module_imgproc
   \defgroup group_imgproc_gamma Gamma correction
   Gamma correction.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in gamma correction techniques, you may have a look at
+
+  - \ref tutorial-imgproc-brightness
+  - \ref tutorial-imgproc-auto-gamma
 */
 /*!
   \ingroup module_imgproc
   \defgroup group_imgproc_histogram Histogram equalization
   Histogram equalization.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in histogram equalization techniques, you may have a look at
+
+  - \ref tutorial-imgproc-brightness
+  - \ref tutorial-imgproc-contrast-sharpening
 */
 /*!
   \ingroup module_imgproc
   \defgroup group_imgproc_contrast Contrast stretching
   Contrast stretching.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in contrast stretching, you may have a look at
+
+  - \ref tutorial-imgproc-contrast-sharpening
 */
 /*!
   \ingroup module_imgproc
   \defgroup group_imgproc_sharpening Image sharpening
   Image sharpening.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in image sharpening techniques, you may have a look at
+
+  - \ref tutorial-imgproc-contrast-sharpening
 */
 /*!
   \ingroup module_imgproc
@@ -43,21 +90,44 @@
   This method is based on the <a href="http://imagej.net/Retinex">Retinex ImageJ</a> plugin written by Francisco Jiménez Hernández,
   which is a modified implementation of the Retinex filter from the <a href="https://docs.gimp.org/en/plug-in-retinex.html">GIMP package</a>
   by Fabien Pelisson.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in the Retinex filtering, you may have a look at
+
+  - \ref tutorial-imgproc-brightness
 */
 /*!
   \ingroup module_imgproc
   \defgroup group_imgproc_connected_components Connected components
   Connected components.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in image processing, you may have a look at
+
+  - \ref tutorial-imgproc-connected-components
 */
 /*!
   \ingroup module_imgproc
   \defgroup group_imgproc_contours Contours extraction
   Contours extraction.
+
+  If you are interested in contours extraction, you may have a look at
+
+  - \ref tutorial-imgproc-contour
+  - \ref tutorial-imgproc-count-coins
 */
 /*!
   \ingroup module_imgproc
   \defgroup group_imgproc_morph Additional image morphology functions
   Additional image morphology functions.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested, you may have a look at
+
+  - \ref tutorial-imgproc-count-coins
 */
 /*!
   \ingroup module_imgproc
@@ -66,9 +136,21 @@
 
   \image html img-auto-threshold-grid36-03.png Input image.
   \image html img-auto-threshold-grid36-03-otsu.png Image automatically thresholded with the Otsu method.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in automatic thresholding, you may have a look at
+
+  - \ref tutorial-imgproc-autothreshold
+  - \ref tutorial-imgproc-contour
+  - \ref tutorial-imgproc-count-coins
 */
 /*!
   \ingroup module_imgproc
   \defgroup group_hough_transform Hough-transform-based image detection
   Detection of image features based on the Hough transform.
+
+  If you are interested in image processing, you may have a look at
+
+  - \ref tutorial-imgproc-cht
 */

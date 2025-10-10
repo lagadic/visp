@@ -34,7 +34,6 @@
 /*!
   \file vpImgproc.h
   \brief Basic image processing functions.
-
 */
 
 #ifndef VP_IMGPROC_H
@@ -47,7 +46,6 @@
 
 namespace VISP_NAMESPACE_NAME
 {
-
 #define USE_OLD_FILL_HOLE 0
 
 /*!
@@ -652,7 +650,6 @@ VISP_EXPORT void reconstruct(const VISP_NAMESPACE_ADDRESSING vpImage<unsigned ch
 VISP_EXPORT unsigned char autoThreshold(VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I, const vpAutoThresholdMethod &method,
                                         const unsigned char backgroundValue = 0,
                                         const unsigned char foregroundValue = 255);
-
 } // namespace
 
 #endif

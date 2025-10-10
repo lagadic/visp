@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,8 +32,7 @@
  *
  * This code was originally part of libfranka and adapted to use ViSP instead
  * of Eigen.
- *
-*****************************************************************************/
+ */
 #ifndef _vpJointPosTrajGenerator_impl_h_
 #define _vpJointPosTrajGenerator_impl_h_
 

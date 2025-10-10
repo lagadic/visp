@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Interface for Flir Ptu Cpi robot.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpRobotFlirPtu.h
@@ -89,7 +87,11 @@ BEGIN_VISP_NAMESPACE
   $ make -j4
   \endcode
 
-  \sa \ref tutorial-flir-ptu-vs
+  <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+
+  <b>Tutorials</b><br>
+  <span style="margin-left:2em"> If you are interested in using performing visual servoing using a FLIR pan-tilt unit, you may have a look at:</span><br>
+ * - \ref tutorial-flir-ptu-vs
 */
 class VISP_EXPORT vpRobotFlirPtu : public vpRobot
 {

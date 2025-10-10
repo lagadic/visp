@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Conversion between tracker and visual feature.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpFeatureBuilder.h
@@ -87,6 +85,15 @@ BEGIN_VISP_NAMESPACE
 
   \ingroup group_visual_features_builder
   \brief Class that defines conversion between trackers and visual features.
+
+  <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+
+  <b>Tutorials</b><br>
+  <span style="margin-left:2em"> If you are interested in how to use this class, you may have a look at:</span><br>
+
+  - \ref tutorial-ibvs
+  - \ref tutorial-simu-robot-pioneer
+  - \ref tutorial-franka-ibvs-eth
 */
 class VISP_EXPORT vpFeatureBuilder
 {

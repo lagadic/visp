@@ -60,6 +60,13 @@ BEGIN_VISP_NAMESPACE
   Transformation relies either on ViSP camera parameters implemented in vpCameraParameters or on OpenCV camera parameters
   that are set from a projection matrix and a distortion coefficients vector.
 
+  <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+
+  <b>Tutorials</b><br>
+  <span style="margin-left:2em"> To see how to use this class, you may have a look at:</span><br>
+
+  - \ref tutorial-pose-estimation
+
 */
 class VISP_EXPORT vpPixelMeterConversion
 {
