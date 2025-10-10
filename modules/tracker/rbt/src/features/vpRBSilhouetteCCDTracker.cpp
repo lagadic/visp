@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -225,14 +225,13 @@ void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &fr
       localControlPoints.push_back(std::move(pccd));
     }
 
-
     {
       pointsPerThread[threadIdx] = std::move(localControlPoints);
     }
   }
   unsigned int numElements = 0;
   for (const std::vector<vpRBSilhouetteControlPoint> &points: pointsPerThread) {
-    numElements += points.size();
+    numElements += static_cast<unsigned int>(points.size());
   }
 
   m_controlPoints.reserve(numElements);

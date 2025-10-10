@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +67,7 @@ vpImage<unsigned char> convertToDisplay(const vpImage<FilterType> &GI, const Fil
 {
   const unsigned int h = GI.getHeight(), w = GI.getWidth();
   const FilterType range = max - min;
-  const FilterType step = range / 256.;
+  const FilterType step = range / static_cast<FilterType>(256);
   vpImage<unsigned char> Idisp(h, w);
   for (unsigned int r = 0; r < h; ++r) {
     for (unsigned int c = 0; c < w; ++c) {
