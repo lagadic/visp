@@ -60,9 +60,8 @@ jobs:
           pixi run -e ${{ matrix.environment }} coverage
 
       - name: Export coverage file location [MacOS/Linux/Windows]
-        shell: bash -el {0}
+        shell: pixi run -e ${{ matrix.environment }} bash -el {0}
         run: |
-          pixi shell -e ${{ matrix.environment }}
           echo "VISP_COVERAGE_FILE=$VISP_BUILD_DIR/visp-coverage.cleaned" >> $GITHUB_ENV
 
       - name: Upload report to Codecov
