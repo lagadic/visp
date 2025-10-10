@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -34,22 +33,21 @@
  * Authors:
  * Amaury Dame
  * Aurelien Yol
- *
-*****************************************************************************/
+ */
 #include <visp3/tt/vpTemplateTrackerWarpAffine.h>
 
 BEGIN_VISP_NAMESPACE
 /*!
  * Construct a model with 6 affine parameters initialized to zero.
  */
-vpTemplateTrackerWarpAffine::vpTemplateTrackerWarpAffine() { nbParam = 6; }
+  vpTemplateTrackerWarpAffine::vpTemplateTrackerWarpAffine() { nbParam = 6; }
 
-/*!
- * Get the parameters of the warping function one level down
- * where image size is divided by two along the lines and the columns.
- * \param p : 6-dim vector that contains the current parameters of the warping function.
- * \param p_down : 6-dim vector that contains the resulting parameters one level down.
- */
+  /*!
+   * Get the parameters of the warping function one level down
+   * where image size is divided by two along the lines and the columns.
+   * \param p : 6-dim vector that contains the current parameters of the warping function.
+   * \param p_down : 6-dim vector that contains the resulting parameters one level down.
+   */
 void vpTemplateTrackerWarpAffine::getParamPyramidDown(const vpColVector &p, vpColVector &p_down)
 {
   p_down[0] = p[0];

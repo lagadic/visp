@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Pioneer mobile robot equipped with a pan head simulator without display.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpSimulatorPioneerPan.cpp

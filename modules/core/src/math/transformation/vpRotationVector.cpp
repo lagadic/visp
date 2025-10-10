@@ -29,8 +29,7 @@
  *
  * Description:
  * Generic rotation vector (cannot be used as is !).
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpRotationVector.cpp

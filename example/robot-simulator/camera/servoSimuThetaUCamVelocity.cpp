@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -34,8 +33,7 @@
  *   eye-in-hand control
  *   velocity computed in the camera frame
  *   using theta U visual feature
- *
-*****************************************************************************/
+ */
 
 /*!
   \example servoSimuThetaUCamVelocity.cpp

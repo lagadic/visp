@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -32,8 +31,7 @@
  *
  * Authors:
  * Wenfeng CAI
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpPylonGrabberUsb.cpp
@@ -53,7 +51,7 @@ BEGIN_VISP_NAMESPACE
    Default constructor that consider the first camera found on the bus as
    active.
  */
-vpPylonGrabberUsb::vpPylonGrabberUsb() : m_camera(), m_index(0), m_numCameras(0), m_connected(false)
+  vpPylonGrabberUsb::vpPylonGrabberUsb() : m_camera(), m_index(0), m_numCameras(0), m_connected(false)
 {
   getNumCameras();
 }

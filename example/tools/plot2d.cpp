@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -31,8 +30,7 @@
  * Description:
  * Example which describes how to use the vpPlot class
  *
- *
-*****************************************************************************/
+ */
 
 /*!
   \example plot2d.cpp
@@ -122,4 +120,4 @@ int main()
     << std::endl;
   return EXIT_SUCCESS;
 #endif
-  }
+}

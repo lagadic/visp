@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Test for Afma 4 dof robot.
- *
-*****************************************************************************/
+ */
 /*!
   \file moveAfma4.cpp
 

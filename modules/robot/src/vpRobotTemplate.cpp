@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Defines a robot just to show which function you must implement.
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpConfig.h>
 
@@ -49,7 +47,7 @@ BEGIN_VISP_NAMESPACE
 /*!
   Basic initialization.
  */
-void vpRobotTemplate::init()
+  void vpRobotTemplate::init()
 {
   // If you want to control the robot in Cartesian in a tool frame, set the corresponding transformation in m_eMc
   // that is set to identity by default in the constructor.

@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -32,8 +31,7 @@
  *   tests the control law
  *   eye-in-hand control
  *   velocity computed in articular
- *
-*****************************************************************************/
+ */
 
 /*!
   \file servoAfma4Point2DArtVelocity.cpp
@@ -309,7 +307,7 @@ int main()
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
     if (display != nullptr) {
       delete display;
-  }
+    }
 #endif
     return EXIT_FAILURE;
   }

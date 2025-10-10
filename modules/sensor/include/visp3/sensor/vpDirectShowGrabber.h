@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -34,8 +33,7 @@
  * Authors:
  * Bruno Renier
  * Anthony Saunier
- *
-*****************************************************************************/
+ */
 
 #ifndef vpDirectShowGrabber_hh
 #define vpDirectShowGrabber_hh

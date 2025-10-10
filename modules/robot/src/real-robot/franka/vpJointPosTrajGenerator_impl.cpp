@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -33,8 +32,7 @@
  *
  * This code was originally part of libfranka and adapted to use ViSP instead
  * of Eigen.
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpConfig.h>
 

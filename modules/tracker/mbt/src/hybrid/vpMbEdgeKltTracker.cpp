@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Hybrid tracker based on edges (vpMbt) and points of interests (KLT)
- *
-*****************************************************************************/
+ */
 
 //#define VP_DEBUG_MODE 1 // Activate debug level 1
 

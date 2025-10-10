@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Point and Rectangle structures for text drawing.
- *
-*****************************************************************************/
+ */
 // Contains code from:
 /*
  * Simd Library (http://ermig1979.github.io/Simd).

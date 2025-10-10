@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Example that shows how to send a pose from a motion capture system through masvsdk.
- *
-*****************************************************************************/
+ */
 
 /*!
  * @example sendMocapToPixhawk.cpp

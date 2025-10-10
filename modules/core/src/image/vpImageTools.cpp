@@ -29,8 +29,7 @@
  *
  * Description:
  * Image tools.
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpCPUFeatures.h>
 #include <visp3/core/vpImageConvert.h>

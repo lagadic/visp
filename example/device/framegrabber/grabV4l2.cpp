@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -31,8 +30,7 @@
  * Description:
  * Acquire images using 1394 device with cfox (MAC OSX) and display it
  * using GTK or GTK.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file grabV4l2.cpp

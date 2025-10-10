@@ -29,8 +29,7 @@
  *
  * Description:
  * Define a curve for the vpPlot class.
- *
-*****************************************************************************/
+ */
 #include <visp3/core/vpConfig.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

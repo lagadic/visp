@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -31,8 +30,7 @@
  * Description:
  * Interface for the Servolens lens attached to the camera fixed on the
  * Afma4 robot.
- *
-*****************************************************************************/
+ */
 
 /*!
 

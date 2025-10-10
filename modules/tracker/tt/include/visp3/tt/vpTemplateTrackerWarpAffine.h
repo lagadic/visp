@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -34,8 +33,7 @@
  * Authors:
  * Amaury Dame
  * Aurelien Yol
- *
-*****************************************************************************/
+ */
 /*!
  \file vpTemplateTrackerWarpAffine.h
  \brief Affine warping function: w(X)=AX+b with: A=[[1+p0, p2], [p1, 1+p3]]
