@@ -166,7 +166,7 @@ public:
     }
     void build(const std::vector<vpDepthPoint> &points)
     {
-      unsigned int numPoints = points.size();
+      unsigned int numPoints = static_cast<unsigned int>(points.size());
       std::vector<vpMatrix *> matrices = { &m_oXt, &m_oNt, &m_cXt, &m_cNt, &m_observations };
       for (vpMatrix *m: matrices) {
         m->resize(3, numPoints, false, false);

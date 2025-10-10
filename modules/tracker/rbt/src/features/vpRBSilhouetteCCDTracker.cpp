@@ -245,7 +245,7 @@ void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &fr
 
     std::vector<vpRBSilhouetteControlPoint> finalPoints;
     finalPoints.reserve(m_maxPoints);
-    for (unsigned int index : keptIndices) {
+    for (size_t index : keptIndices) {
       finalPoints.emplace_back(std::move(m_controlPoints[index]));
     }
     m_controlPoints = std::move(finalPoints);
@@ -260,8 +260,8 @@ void vpRBSilhouetteCCDTracker::initVVS(const vpRBFeatureTrackerInput &/*frame*/,
 
   m_vvsConverged = false;
 
-  unsigned int resolution = m_controlPoints.size();
-  int normal_points_number = floor(m_ccdParameters.h / m_ccdParameters.delta_h);
+  unsigned int resolution = static_cast<unsigned int>(m_controlPoints.size());
+  int normal_points_number = static_cast<int>(floor(m_ccdParameters.h / m_ccdParameters.delta_h));
   unsigned nerror_ccd = 2 * normal_points_number * 3 * resolution;
   m_numFeatures = nerror_ccd;
 
@@ -297,8 +297,8 @@ void vpRBSilhouetteCCDTracker::changeScale()
 {
   m_sigma = vpMatrix(m_ccdParameters.phi_dim, m_ccdParameters.phi_dim, 0.0);
   m_cov.resize(6, 6);
-  unsigned int resolution = m_controlPoints.size();
-  int normal_points_number = floor(m_ccdParameters.h / m_ccdParameters.delta_h);
+  unsigned int resolution = static_cast<unsigned int>(m_controlPoints.size());
+  int normal_points_number = static_cast<int>(floor(m_ccdParameters.h / m_ccdParameters.delta_h));
   unsigned nerror_ccd = 2 * normal_points_number * 3 * resolution;
   m_numFeatures = nerror_ccd;
 
@@ -334,7 +334,7 @@ void vpRBSilhouetteCCDTracker::computeVVSIter(const vpRBFeatureTrackerInput &fra
     return;
   }
 
-  vpColVector oldPoints(m_controlPoints.size() * 2);
+  vpColVector oldPoints(static_cast<unsigned int>(m_controlPoints.size()) * 2);
   for (unsigned int i = 0; i < m_controlPoints.size(); ++i) {
     oldPoints[i * 2] = m_controlPoints[i].icpoint.get_u();
     oldPoints[i * 2 + 1] = m_controlPoints[i].icpoint.get_v();
@@ -369,13 +369,13 @@ void vpRBSilhouetteCCDTracker::computeVVSIter(const vpRBFeatureTrackerInput &fra
 void vpRBSilhouetteCCDTracker::display(const vpCameraParameters &/*cam*/, const vpImage<unsigned char> &/*I*/,
                                        const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &/*depth*/) const
 {
-  unsigned normal_points_number = floor(m_ccdParameters.h / m_ccdParameters.delta_h);
+  unsigned normal_points_number = static_cast<unsigned int>(floor(m_ccdParameters.h / m_ccdParameters.delta_h));
   unsigned nerror_per_point = 2 * normal_points_number * 3;
   if (m_displayType == DT_SIMPLE) {
 
     for (unsigned int i = 0; i < m_controlPoints.size(); ++i) {
       const vpRBSilhouetteControlPoint &p = m_controlPoints[i];
-      vpDisplay::displayPoint(IRGB, p.icpoint.get_i(), p.icpoint.get_j(), vpColor::green, 2);
+      vpDisplay::displayPoint(IRGB, static_cast<int>(p.icpoint.get_i()), static_cast<int>(p.icpoint.get_j()), vpColor::green, 2);
     }
   }
   else if (m_displayType == DT_ERROR) {
@@ -646,7 +646,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
 
       // compute the mean value in the vicinity of a point
       // m_{ks} = I{k}^{s} = \sum_{l} w_{kls}{I_{kl}} : s = 1 or 2
-      const vpRGBa pixelRGBa = I(vic_k[0], vic_k[1]);
+      const vpRGBa pixelRGBa = I(static_cast<unsigned int>(vic_k[0]), static_cast<unsigned int>(vic_k[1]));
       double *pixel = pix_ptr + k * 3;
       pixel[0] = static_cast<double>(pixelRGBa.R);
       pixel[1] = static_cast<double>(pixelRGBa.G);
@@ -669,7 +669,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
         }
       }
       const double *vic_neg = vic_ptr + 10 * negative_normal;
-      const vpRGBa pixelNegRGBa = I(vic_neg[0], vic_neg[1]);
+      const vpRGBa pixelNegRGBa = I(static_cast<unsigned int>(vic_neg[0]), static_cast<unsigned int>(vic_neg[1]));
       double *pixelNeg = pix_ptr + negative_normal * 3;
 
       pixelNeg[0] = static_cast<double>(pixelNegRGBa.R);
@@ -721,7 +721,7 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
   const unsigned int nerror_ccd = 2 * normal_points_number * 3 * npointsccd;
   m_error.resize(nerror_ccd, false);
   m_weighted_error.resize(nerror_ccd, false);
-  vpColVector errorPerPoint(m_controlPoints.size(), 0.0);
+  vpColVector errorPerPoint(static_cast<unsigned int>(m_controlPoints.size()), 0.0);
   m_L.resize(nerror_ccd, 6, false, false);
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel
