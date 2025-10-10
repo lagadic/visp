@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Interface for the qb robotics devices.
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpConfig.h>
 #if defined(VISP_HAVE_QBDEVICE) && defined(VISP_HAVE_THREADS)
@@ -45,13 +43,13 @@ BEGIN_VISP_NAMESPACE
  * Default constructor that does nothing.
  * To connect to a device call init().
  */
-vpQbSoftHand::vpQbSoftHand() : vpQbDevice() { }
+  vpQbSoftHand::vpQbSoftHand() : vpQbDevice() { }
 
-/**
- * Retrieve the motor currents of the given device.
- * \param id The ID of the device of interest, in range [\p 1, \p 128].
- * \param[out] current The one-element device motor current vector, expressed in \em mA.
- */
+  /**
+   * Retrieve the motor currents of the given device.
+   * \param id The ID of the device of interest, in range [\p 1, \p 128].
+   * \param[out] current The one-element device motor current vector, expressed in \em mA.
+   */
 void vpQbSoftHand::getCurrent(vpColVector &current, const int &id)
 {
   if (!m_init_done) {

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,22 +33,21 @@
  * Authors:
  * Amaury Dame
  * Aurelien Yol
- *
-*****************************************************************************/
+ */
 #include <visp3/tt/vpTemplateTrackerWarpSRT.h>
 
 BEGIN_VISP_NAMESPACE
 /*!
  * Construct a model with 4 parameters for scale, rotation and translation initialized to zero.
  */
-vpTemplateTrackerWarpSRT::vpTemplateTrackerWarpSRT() { nbParam = 4; }
+  vpTemplateTrackerWarpSRT::vpTemplateTrackerWarpSRT() { nbParam = 4; }
 
-/*!
- * Get the parameters of the warping function one level down
- * where image size is divided by two along the lines and the columns.
- * \param p : 4-dim vector that contains the current parameters of the warping function.
- * \param p_down : 4-dim vector that contains the resulting parameters one level down.
- */
+  /*!
+   * Get the parameters of the warping function one level down
+   * where image size is divided by two along the lines and the columns.
+   * \param p : 4-dim vector that contains the current parameters of the warping function.
+   * \param p_down : 4-dim vector that contains the resulting parameters one level down.
+   */
 void vpTemplateTrackerWarpSRT::getParamPyramidDown(const vpColVector &p, vpColVector &p_down)
 {
   p_down[0] = p[0];
