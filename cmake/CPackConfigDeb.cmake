@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -175,4 +175,3 @@ SET(CPACK_DEBIAN_PACKAGE_DESCRIPTION "Visual Servoing Platform development files
 
 SET(CPACK_DEBIAN_PACKAGE_SECTION "libdevel")
 SET(CPACK_DEBIAN_PACKAGE_HOMEPAGE "http://www.irisa.fr/lagadic/visp")
-
