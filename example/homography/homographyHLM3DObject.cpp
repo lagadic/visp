@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Test the HLM (Malis) homography estimation algorithm with a 3D object.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file homographyHLM3DObject.cpp

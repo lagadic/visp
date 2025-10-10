@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Display information about a plugged RealSense sensor using librealsense2.
- *
-*****************************************************************************/
+ */
 
 /*!
   \example getRealSense2Info.cpp

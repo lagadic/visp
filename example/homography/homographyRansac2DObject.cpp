@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Example of the Ransac homography estimation algorithm.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file homographyRansac2DObject.cpp
@@ -240,4 +238,4 @@ int main(int argc, const char **argv)
   std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
   return EXIT_SUCCESS;
 #endif
-  }
+}

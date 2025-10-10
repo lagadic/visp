@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -31,8 +30,7 @@
  * Description:
  * Interface for the Irisa's Viper S850 robot controlled by an Adept
  *MotionBlox.
- *
-*****************************************************************************/
+ */
 
 #ifndef vpRobotViper850_h
 #define vpRobotViper850_h

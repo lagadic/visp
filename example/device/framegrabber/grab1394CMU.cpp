@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Video capture example based on CMU 1394 Digital Camera SDK.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file grab1394CMU.cpp

@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -32,8 +31,7 @@
  *
  * Authors:
  * Wenfeng CAI
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpPylonFactory.cpp
@@ -52,7 +50,7 @@ BEGIN_VISP_NAMESPACE
 /*!
   \brief Get the vpPylonFactory singleton.
  */
-vpPylonFactory &vpPylonFactory::instance()
+  vpPylonFactory &vpPylonFactory::instance()
 {
   static vpPylonFactory instance;
 

@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -32,8 +31,7 @@
  * Trajectory generator for torque control.
  *
  * Interface for the Franka robot.
- *
-*****************************************************************************/
+ */
 #ifndef _vpForceTorqueGenerator_impl_h_
 #define _vpForceTorqueGenerator_impl_h_
 

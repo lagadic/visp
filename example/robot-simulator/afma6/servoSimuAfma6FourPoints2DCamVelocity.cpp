@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -31,8 +30,7 @@
  * Description:
  * Simulation of a 2D visual servoing using 4 points with cartesian
  * coordinates as visual feature.
- *
-*****************************************************************************/
+ */
 
 /*!
   \example servoSimuAfma6FourPoints2DCamVelocity.cpp

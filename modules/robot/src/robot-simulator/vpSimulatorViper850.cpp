@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Class which provides a simulator for the robot Viper850.
- *
-*****************************************************************************/
+ */
 
 #include <visp3/robot/vpSimulatorViper850.h>
 
@@ -2145,11 +2143,6 @@ void vpSimulatorViper850::stopMotion()
   set_velocity(stop);
   vpRobot::setRobotState(vpRobot::STATE_STOP);
 }
-
-/**********************************************************************************/
-/**********************************************************************************/
-/**********************************************************************************/
-/**********************************************************************************/
 
 /*!
   Initialise the display of the robot's arms.

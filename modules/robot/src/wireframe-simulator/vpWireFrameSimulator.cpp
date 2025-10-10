@@ -159,8 +159,6 @@ void vpWireFrameSimulator::display_scene(Matrix mat, Bound_scene &sc, const vpIm
   }
 }
 
-/*************************************************************************************************************/
-
 /*!
   Basic constructor.
 

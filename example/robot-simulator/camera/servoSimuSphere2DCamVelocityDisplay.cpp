@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Simulation of a 2D visual servoing on a sphere.
- *
-*****************************************************************************/
+ */
 
 /*!
   \example servoSimuSphere2DCamVelocityDisplay.cpp
@@ -300,4 +298,4 @@ int main(int argc, const char **argv)
   std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
   return EXIT_SUCCESS;
 #endif
-    }
+}

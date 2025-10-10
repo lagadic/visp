@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -31,8 +30,7 @@
  * Description:
  * Acquisition of images, odometry and raw motion information with RealSense
  * T265 sensor and librealsense2.
- *
-*****************************************************************************/
+ */
 
 /*!
   \example grabRealSense2_T265.cpp

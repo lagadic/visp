@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Firewire cameras video capture based on CMU 1394 Digital Camera SDK.
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpConfig.h>
 

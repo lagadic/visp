@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -34,8 +33,7 @@
  *
  * Authors:
  * Jean-Luc CORRE
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpConfig.h>
 
@@ -58,7 +56,7 @@ BEGIN_VISP_NAMESPACE
  * Entree :
  * fp    Fichier en sortie.
  */
-void fprintf_rfstack(FILE *fp)
+  void fprintf_rfstack(FILE *fp)
 {
   int flg;
   flg = 0; /* nul si element unique  */

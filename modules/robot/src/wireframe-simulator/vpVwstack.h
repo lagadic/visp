@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -35,8 +34,7 @@
  *
  * Authors:
  * Jean-Luc CORRE
- *
-*****************************************************************************/
+ */
 
 #ifndef vpVwstack_H
 #define vpVwstack_H

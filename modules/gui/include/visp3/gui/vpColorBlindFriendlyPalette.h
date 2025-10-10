@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -31,8 +30,7 @@
  * Description:
  * Palette of colors that is said to be color-blind people friendly.
  * This palette has been found on https://jfly.uni-koeln.de/color/#see
- *
-*****************************************************************************/
+ */
 
 #ifndef _vpColorBlindFliendlyPalette_h_
 #define _vpColorBlindFliendlyPalette_h_

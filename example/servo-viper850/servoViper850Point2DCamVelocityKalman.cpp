@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -32,8 +31,7 @@
  *   tests the control law
  *   eye-in-hand control
  *   velocity computed in camera frame
- *
-*****************************************************************************/
+ */
 
 /*!
   \example servoViper850Point2DCamVelocityKalman.cpp

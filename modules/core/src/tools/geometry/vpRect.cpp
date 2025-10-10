@@ -30,8 +30,7 @@
  * Description:
  * Defines a rectangle in the plane.
  *
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpRect.cpp

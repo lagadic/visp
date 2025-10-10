@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description: Class which enables to project an image in the 3D space
  * and get the view of a virtual camera.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpFlyCaptureGrabber.h

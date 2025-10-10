@@ -54,8 +54,7 @@ BEGIN_VISP_NAMESPACE
 /******************************************************************************
  *
  *      CONSTRUCTORS AND DESTRUCTORS
- *
-*****************************************************************************/
+ */
 /*!
 
   Initialize the tracker with default parameters.
@@ -209,11 +208,6 @@ vpDot2 &vpDot2::operator=(const vpDot2 &twinDot)
 
   return (*this);
 }
-
-/******************************************************************************
- *
- *      PUBLIC METHODS
- *****************************************************************************/
 
 /*!
   Display in overlay the dot edges and center of gravity.
@@ -1237,19 +1231,10 @@ bool vpDot2::hasReverseLevel(const vpImage<unsigned char> &I, const unsigned int
   Should be used by child classed to return their own instance of vpDot2.
 
   \return An instance of vpDot2.
-
 */
 vpDot2 *vpDot2::getInstance() { return new vpDot2(); }
 
-
-/******************************************************************************
- *
- *      PRIVATE METHODS
- *
- ******************************************************************************/
-
 /*!
-
   Compute all the parameters of the dot (center, width, height, surface,
   inertia moments...).
 

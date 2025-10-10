@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Sick LD-MRS laser driver.
- *
-*****************************************************************************/
+ */
 
 /*!
   \example SickLDMRS-Acq.cpp
@@ -88,5 +86,5 @@ int main()
     << "since the Sick LD-MRS driver was not ported to Windows." << std::endl;
 
   return EXIT_SUCCESS;
-  }
+}
 #endif // #ifdef UNIX

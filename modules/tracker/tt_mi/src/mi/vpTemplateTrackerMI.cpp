@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -34,8 +33,7 @@
  * Authors:
  * Amaury Dame
  * Aurelien Yol
- *
-*****************************************************************************/
+ */
 #include <visp3/core/vpException.h>
 #include <visp3/tt_mi/vpTemplateTrackerMI.h>
 #include <visp3/tt_mi/vpTemplateTrackerMIBSpline.h>

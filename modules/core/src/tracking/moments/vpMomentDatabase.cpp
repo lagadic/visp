@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -33,8 +32,7 @@
  *
  * Authors:
  * Filip Novotny
- *
-*****************************************************************************/
+ */
 
 #include <iostream>
 #include <typeinfo>
@@ -51,7 +49,7 @@ BEGIN_VISP_NAMESPACE
  * \attention You cannot add two moments with the same name. The rules
  * for insertion are the same as those of std::map.
  */
-void vpMomentDatabase::add(vpMoment &moment, const std::string &name)
+  void vpMomentDatabase::add(vpMoment &moment, const std::string &name)
 {
   moments.insert(std::pair<const std::string, vpMoment *>(name, &moment));
 }
