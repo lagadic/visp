@@ -142,6 +142,7 @@ coverage = { cmd = [
   "--exclude", "modules/robot/src/real-robot/biclops/private",
   "--lcov", "$VISP_BUILD_DIR/visp-coverage.cleaned"
 ], depends-on = ["test"]}
+echo-coverage-path = { cmd = "echo $VISP_BUILD_DIR/visp-coverage.cleaned"}
 
 
 [feature.examples.activation.env]
