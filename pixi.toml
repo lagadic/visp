@@ -140,9 +140,9 @@ coverage = { cmd = [
   "--exclude", "modules/io/src/image/private",
   "--exclude", "modules/vision/src/pose-estimation/private",
   "--exclude", "modules/robot/src/real-robot/biclops/private",
-  "--lcov", "$VISP_BUILD_DIR/visp-coverage.cleaned"
+  "--cobertura", "$VISP_BUILD_DIR/visp-coverage.xml"
 ], depends-on = ["test"]}
-echo-coverage-path = { cmd = "echo $VISP_BUILD_DIR/visp-coverage.cleaned"}
+echo-coverage-path = { cmd = "echo $VISP_BUILD_DIR/visp-coverage.xml"}
 
 
 [feature.examples.activation.env]
