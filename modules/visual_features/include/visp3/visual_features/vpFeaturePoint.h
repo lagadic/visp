@@ -179,7 +179,12 @@ BEGIN_VISP_NAMESPACE
  * }
  * \endcode
  *
- * An other fully explained example is given in the \ref tutorial-ibvs.
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> An other fully explained example is given in:</span><br>
+ *
+ * - \ref tutorial-ibvs.
 */
 class VISP_EXPORT vpFeaturePoint : public vpBasicFeature
 {

@@ -197,11 +197,31 @@ in different ways. This will motivate us to continue the efforts.
   \ingroup module_core
   \defgroup group_core_camera Camera model
   Camera model.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in camera calibration, you may have a look at
+
+  - \ref tutorial-calibration-intrinsic
+  - \ref tutorial-calibration-extrinsic-eye-in-hand
+  - \ref tutorial-calibration-extrinsic-eye-to-hand
 */
 /*!
   \ingroup module_core
   \defgroup group_core_image Image manipulation
   Image manipulation, including I/O from image files or videos.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in image manipulation, you may have a look at
+
+  - \ref tutorial-image-display
+  - \ref tutorial-image-display-overlay
+  - \ref tutorial-basic-drawings
+  - \ref tutorial-grabber
+  - \ref tutorial-image-filtering
+  - \ref tutorial-simu-image
+  - \ref tutorial-video-manipulation
 */
 /*!
   \ingroup module_core
@@ -222,6 +242,12 @@ in different ways. This will motivate us to continue the efforts.
   \ingroup group_core_math
   \defgroup group_core_matrices Matrices and vectors
   Matrices and vectors.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in linear algebra, you may have a look at
+
+  - \ref tutorial-basic-linear-algebra
 */
 /*!
   \ingroup group_core_math
@@ -241,7 +267,13 @@ in different ways. This will motivate us to continue the efforts.
 /*!
   \ingroup group_core_math
   \defgroup group_core_kalman Kalman filter
-  Kalman filter.
+  Kalman filters.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in Kalman filtering, you may have a look at
+
+  - \ref tutorial-ukf
 */
 /*!
   \ingroup module_core
@@ -271,7 +303,7 @@ in different ways. This will motivate us to continue the efforts.
 /*!
   \ingroup group_core_tools
   \defgroup group_core_bridges Bridges over other frameworks
-  Conversion from/to OpenCV...
+  Conversion from/to OpenCV, NPY/NPZ, PCL ...
 */
 /*!
   \ingroup group_core_tools
@@ -328,7 +360,17 @@ in different ways. This will motivate us to continue the efforts.
   \defgroup group_core_cpu_features CPU features
   CPU features.
 */
+/*!
+  \ingroup group_core_tools
+  \defgroup group_core_spc Statistical Process Control
+  Methods to perform Statistical Process Control (SPC).
 
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in using SPC in your application, you may have a look at:</span><br>
+
+  - \ref tutorial-spc
+*/
 /*******************************************
  * Module io
  *******************************************/
@@ -373,11 +415,29 @@ in different ways. This will motivate us to continue the efforts.
   \ingroup module_visual_features
   \defgroup group_visual_features Visual features
   Visual features.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in how to understanding the different types of visual features, you may have a look at:</span><br>
+
+  - \ref tutorial-ibvs
+  - \ref tutorial-simu-robot-pioneer
+  - \ref tutorial-franka-ibvs-eth
+  - \ref tutorial-mbot-vs
+  - \ref tutorial-bebop2-vs
 */
 /*!
   \ingroup module_visual_features
   \defgroup group_visual_features_builder Visual features builder
   Visual features builder.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in how to build visual features, you may have a look at:</span><br>
+
+  - \ref tutorial-ibvs
+  - \ref tutorial-simu-robot-pioneer
+  - \ref tutorial-franka-ibvs-eth
 */
 
 /*******************************************
@@ -410,31 +470,69 @@ in different ways. This will motivate us to continue the efforts.
 /*!
   \defgroup module_ar ar: Augmented reality module
   Augmented reality module content.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in Augmented Reality, you may have a look at
+
+  - \ref tutorial-ogre
+  - \ref tutorial-panda3d
 */
 /*!
   \ingroup module_ar
   \defgroup group_ar_renderer Renderer
   Renderer interfaces.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in Augmented Reality, you may have a look at
+
+  - \ref tutorial-ogre
+  - \ref tutorial-panda3d
 */
 /*!
   \ingroup group_ar_renderer
   \defgroup group_ar_renderer_panda3d Panda3D Renderer
   Modular renderers based on the Panda3D framework.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in using Panda3D in Augmented Reality applications, you may have a look at
+
+  - \ref tutorial-panda3d
 */
 /*!
   \ingroup group_ar_renderer_panda3d
   \defgroup group_ar_renderer_panda3d_3d 3D scene renderers
   Classes that render a 3D scene.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in using Panda3D in Augmented Reality applications, you may have a look at
+
+  - \ref tutorial-panda3d
 */
 /*!
   \ingroup group_ar_renderer_panda3d
   \defgroup group_ar_renderer_panda3d_filters Image processing
   Shader-based image processing and filtering.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in using Panda3D in Augmented Reality applications, you may have a look at
+
+  - \ref tutorial-panda3d
 */
 /*!
   \ingroup group_ar_renderer_panda3d
   \defgroup group_ar_renderer_panda3d_lighting Lighting related classes
   Light and Lightable implementations.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in using Panda3D in Augmented Reality applications, you may have a look at
+
+  - \ref tutorial-panda3d
 */
 
 /*!
@@ -449,36 +547,85 @@ in different ways. This will motivate us to continue the efforts.
 /*!
   \defgroup module_detection detection: Detection module
   Detection module content.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in detection algorithms, you may have a look at
+
+  - \ref tutorial-matching
+  - \ref tutorial-detection-barcode
+  - \ref tutorial-detection-face
+  - \ref tutorial-detection-object
+  - \ref tutorial-detection-apriltag
+  - \ref tutorial-detection-dnn
+  - \ref tutorial-detection-tensorrt
 */
 /*!
   \ingroup module_detection
   \defgroup group_detection_barcode Bar code detection
   Bar code detection.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in bar code detection, you may have a look at
+
+  - \ref tutorial-detection-barcode
 */
 /*!
   \ingroup module_detection
   \defgroup group_detection_face Face detection
   Face detection.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in face detection, you may have a look at
+
+  - \ref tutorial-detection-face
 */
 /*!
   \ingroup module_detection
   \defgroup group_detection_tag Tag detection
   Tag detection.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in tag detection, you may have a look at
+
+  - \ref tutorial-detection-apriltag
 */
 /*!
   \ingroup module_detection
   \defgroup group_detection_keypoint Keypoint detection and matching
   Keypoint detection and matching.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in keypoints detection and matching, you may have a look at
+
+  - \ref tutorial-matching
 */
 /*!
   \ingroup module_detection
   \defgroup group_detection_mbt_object Model-based object detection
   Model-based object detection.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in model-based detection algorithms, you may have a look at
+
+  - \ref tutorial-detection-object
 */
 /*!
   \ingroup module_detection
   \defgroup group_detection_dnn Deep learning object detection
   Deep learning object detection.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in DNN-based detection algorithms, you may have a look at
+
+  - \ref tutorial-detection-dnn
+  - \ref tutorial-detection-tensorrt
 */
 /*******************************************
  * Module tracker
@@ -486,6 +633,24 @@ in different ways. This will motivate us to continue the efforts.
  /*!
    \defgroup module_tracker tracker: ViSP trackers
    ViSP trackers.
+
+   <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you want to have an in-depth presentation of the different trackers, you may have a look at
+
+  - \ref tutorial-tracking-blob
+  - \ref tutorial-tracking-keypoint
+  - \ref tutorial-tracking-me
+  - \ref tutorial-tracking-mb-generic
+  - \ref tutorial-tracking-mb-generic-stereo
+  - \ref tutorial-tracking-mb-generic-rgbd
+  - \ref tutorial-tracking-mb-generic-apriltag-live
+  - \ref tutorial-mb-generic-json
+  - \ref tutorial-tracking-mb-generic-rgbd-Blender
+  - \ref tutorial-tracking-tt
+  - \ref tutorial-tracking-megapose
+  - \ref tutorial-megapose-model
+  - \ref tutorial-tracking-rbt
  */
 
 /*******************************************
@@ -495,6 +660,17 @@ in different ways. This will motivate us to continue the efforts.
   \ingroup module_tracker
   \defgroup module_mbt mbt: Model-based tracker module
   Model-based tracker module content.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you want to have an in-depth presentation of the Model-Based Tracker (MBT), you may have a look at
+
+  - \ref tutorial-tracking-mb-generic
+  - \ref tutorial-tracking-mb-generic-stereo
+  - \ref tutorial-tracking-mb-generic-rgbd
+  - \ref tutorial-tracking-mb-generic-apriltag-live
+  - \ref tutorial-mb-generic-json
+  - \ref tutorial-tracking-mb-generic-rgbd-Blender
 */
 /*!
   \ingroup module_mbt
@@ -510,6 +686,17 @@ in different ways. This will motivate us to continue the efforts.
   - vpMbEdgeTracker
   - vpMbKltTracker
   - vpMbEdgeKltTracker
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you want to have an in-depth presentation of the Model-Based Tracker (MBT), you may have a look at
+
+  - \ref tutorial-tracking-mb-generic
+  - \ref tutorial-tracking-mb-generic-stereo
+  - \ref tutorial-tracking-mb-generic-rgbd
+  - \ref tutorial-tracking-mb-generic-apriltag-live
+  - \ref tutorial-mb-generic-json
+  - \ref tutorial-tracking-mb-generic-rgbd-Blender
 */
 /*!
   \ingroup module_mbt
@@ -535,6 +722,12 @@ in different ways. This will motivate us to continue the efforts.
   \ingroup module_tracker
   \defgroup module_rbt RBT: Render-Based Tracker module
   Render-Based Tracker module
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you want to have an in-depth presentation of the Render-Based Tracker (RBT), you may have a look at
+
+  - \ref tutorial-tracking-rbt
 */
 
 /*!
@@ -542,6 +735,12 @@ in different ways. This will motivate us to continue the efforts.
   \defgroup group_rbt_core Core Render-Based Tracking functionalities
 
   This group contains the core classes that make Render-Based tracking work. The main interface for Render-Based tracking is vpRBTracker.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you want to have an in-depth presentation of the Render-Based Tracker (RBT), you may have a look at
+
+  - \ref tutorial-tracking-rbt
 */
 
 /*!
@@ -550,6 +749,11 @@ in different ways. This will motivate us to continue the efforts.
 
   These classes represent features that can be tracked by the render-based tracker. All trackable features should inherit from vpRBFeatureTracker
 
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you want to have an in-depth presentation of the Render-Based Tracker (RBT), you may have a look at
+
+  - \ref tutorial-tracking-rbt
 */
 
 /*!
@@ -557,6 +761,12 @@ in different ways. This will motivate us to continue the efforts.
   \defgroup group_rbt_mask Object segmentation
 
   These classes allow to perform object segmentaiton from rendering information. This segmentation may be used downstream by feature trackers to filter features.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you want to have an in-depth presentation of the Render-Based Tracker (RBT), you may have a look at
+
+  - \ref tutorial-tracking-rbt
   */
 
 /*!
@@ -564,6 +774,12 @@ in different ways. This will motivate us to continue the efforts.
   \defgroup group_rbt_drift Drift and divergence detection
 
   These classes allow to detect tracking drift.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you want to have an in-depth presentation of the Render-Based Tracker (RBT), you may have a look at
+
+  - \ref tutorial-tracking-rbt
 */
 
 /*!
@@ -571,22 +787,12 @@ in different ways. This will motivate us to continue the efforts.
   \defgroup group_rbt_rendering Rendering
 
   This group contains additional rendering utilities.
-*/
 
-/*!
-  \ingroup module_mbt
-  \defgroup group_mbt_features Features
-  Model-based trackers features.
-*/
-/*!
-  \ingroup module_mbt
-  \defgroup group_mbt_faces Faces management
-  Faces management including visibility.
-*/
-/*!
-  \ingroup module_mbt
-  \defgroup group_mbt_xml_parser XML parsers
-  XML parsers dedicated to model-based trackers.
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you want to have an in-depth presentation of the Render-Based Tracker (RBT), you may have a look at
+
+  - \ref tutorial-tracking-rbt
 */
 
 /*******************************************
@@ -625,6 +831,16 @@ in different ways. This will motivate us to continue the efforts.
   \ingroup group_robot_real
   \defgroup group_robot_real_arm Anthropomorphic arm
   Anthropomorphic arm interfaces.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in using different kind of anthropomorphic arm robots, you may have a look at:</span><br>
+
+  - \ref tutorial-franka-pbvs
+  - \ref tutorial-franka-ibvs
+  - \ref tutorial-flir-ptu-vs
+  - \ref tutorial-universal-robot-ibvs
+  - \ref tutorial-universal-robot-pbvs
 */
 /*!
   \ingroup group_robot_real
@@ -635,6 +851,13 @@ in different ways. This will motivate us to continue the efforts.
   \ingroup group_robot_real
   \defgroup group_robot_real_drone Drone
   Flying robot interfaces.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in using different kind of flying robots, you may have a look at:</span><br>
+
+  - \ref tutorial-bebop2-vs
+  - \ref tutorial-pixhawk-vs
 */
 
 /*!
@@ -646,31 +869,68 @@ in different ways. This will motivate us to continue the efforts.
   \ingroup module_robot
   \defgroup group_robot_simu Robot simulation
   Simulated robots interfaces.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in simulating different kind of robots, you may have a look at:</span><br>
+
+  - \ref tutorial-ibvs
+  - \ref tutorial-simu-robot-pioneer
 */
 /*!
   \ingroup group_robot_simu
   \defgroup group_robot_simu_gantry Gantry robot simulation
   Gantry robot interfaces.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in simulating a Gantry robot, you may have a look at:</span><br>
+
+  - \ref tutorial-ibvs
 */
 /*!
   \ingroup group_robot_simu
   \defgroup group_robot_simu_arm Anthropomorphic arm simulation
   Anthropomorphic arm interfaces.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in simulating an anthropomorphic arm, you may have a look at:</span><br>
+
+  - \ref tutorial-ibvs
 */
 /*!
   \ingroup group_robot_simu
   \defgroup group_robot_simu_unicycle Unicycle robot simulation
   Pioneer P3DX unicycle robot interfaces.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in simulating a Pioneer P3DX unicycle robot, you may have a look at
+
+  - \ref tutorial-simu-robot-pioneer
 */
 /*!
   \ingroup group_robot_simu
   \defgroup group_robot_simu_camera Free flying camera simulation
   Free flying camera interfaces.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in simulating a free-flying camera, you may have a look at
+
+  - \ref tutorial-ibvs
 */
 /*!
   \ingroup module_robot
   \defgroup group_robot_image_simu Image simulation
   Image simulation.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in image simulation, you may have a look at
+
+  - \ref tutorial-simu-image
 */
 
 /*******************************************
@@ -712,21 +972,45 @@ in different ways. This will motivate us to continue the efforts.
   \ingroup module_tracker
   \defgroup module_tt tt: Template tracker module
   Template tracker module content.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you want to have an in-depth presentation of the Template Tracker (TT), you may have a look at
+
+  - \ref tutorial-tracking-tt
 */
 /*!
   \ingroup module_tt
   \defgroup group_tt_tracker Trackers
   Classes dedicated to template tracking.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you want to have an in-depth presentation of the Template Tracker (TT), you may have a look at
+
+  - \ref tutorial-tracking-tt
 */
 /*!
   \ingroup module_tt
   \defgroup group_tt_warp Warping function
   Classes that implement warping functions that are estimated by the template trackers.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you want to have an in-depth presentation of the Template Tracker (TT), you may have a look at
+
+  - \ref tutorial-tracking-tt
 */
 /*!
   \ingroup module_tt
   \defgroup group_tt_tools Tools
   Tools used by template trackers.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you want to have an in-depth presentation of the Template Tracker (TT), you may have a look at
+
+  - \ref tutorial-tracking-tt
 */
 /*******************************************
  * Module tt_mi
@@ -736,11 +1020,23 @@ in different ways. This will motivate us to continue the efforts.
   \defgroup module_tt_mi tt_mi: Template tracker based on mutual information module
   Template tracker based on mutual information module content. This module is an
   extension of \ref module_tt where mutual information cost function is introduced.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you want to have an in-depth presentation of the Template Tracker based on Mutual Information (TT-MI), you may have a look at
+
+  - \ref tutorial-tracking-tt
 */
 /*!
   \ingroup module_tt_mi
   \defgroup group_tt_mi_tracker Trackers
   Classes dedicates to template tracking with mutual information cost function.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you want to have an in-depth presentation of the Template Tracker based on Mutual Information (TT-MI), you may have a look at
+
+  - \ref tutorial-tracking-tt
 */
 /*******************************************
  * Module me
@@ -749,6 +1045,12 @@ in different ways. This will motivate us to continue the efforts.
   \ingroup module_tracker
   \defgroup module_me me: Moving-edges tracker module
   Moving-edges tracker module.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you want to have an in-depth presentation of the Moving-Edges (ME) trackers, you may have a look at
+
+  - \ref tutorial-tracking-me
 */
 /*******************************************
  * Module blob
@@ -757,6 +1059,12 @@ in different ways. This will motivate us to continue the efforts.
   \ingroup module_tracker
   \defgroup module_blob blob: Blob tracker module
   Blob tracker module.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you want to have an in-depth presentation of the blob tracker, you may have a look at
+
+  - \ref tutorial-tracking-blob
 */
 /*******************************************
  * Module klt
@@ -765,14 +1073,27 @@ in different ways. This will motivate us to continue the efforts.
   \ingroup module_tracker
   \defgroup module_klt klt: Kanade Lucas tracker module
   Kanade Lucas tracker module.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you want to have an in-depth presentation of the Kanade Lucas Tracker (KLT), you may have a look at
+
+  - \ref tutorial-tracking-keypoint
 */
 /*******************************************
- * Module blob
+ * Module DNN tracker
  *******************************************/
  /*!
   \ingroup module_tracker
   \defgroup module_dnn_tracker dnn_tracker: Deep learning tracker module
   Deep learning tracker module.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you want to have an in-depth presentation of the different DNN-based trackers, you may have a look at
+
+  - \ref tutorial-tracking-megapose
+  - \ref tutorial-megapose-model
 */
 /*******************************************
  * Module vision
@@ -817,4 +1138,18 @@ in different ways. This will motivate us to continue the efforts.
   \ingroup module_vs
   \defgroup group_task Task and control laws
   Classes used to define task and control laws.
+
+  <h2 id="header-details" class="groupheader">Tutorials</h2>
+
+  If you are interested in visual servoing, you may have a look at
+
+  - \ref tutorial-ibvs
+  - \ref tutorial-simu-robot-pioneer
+  - \ref tutorial-boost-vs
+  - \ref tutorial-franka-ibvs
+  - \ref tutorial-franka-pbvs
+  - \ref tutorial-bebop2-vs
+  - \ref tutorial-flir-ptu-vs
+  - \ref tutorial-universal-robot-ibvs
+  - \ref tutorial-universal-robot-pbvs
 */

@@ -55,7 +55,18 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 BEGIN_VISP_NAMESPACE
-class VISP_EXPORT vpTemplateTrackerMIBSpline
+/**
+ * \ingroup group_tt_mi_tracker
+ * \brief
+ *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+
+  <b>Tutorials</b><br>
+  <span style="margin-left:2em"> If you are interested in the Template Tracker based on Mutual Information (TT-MI), you may have a look at:</span><br>
+
+  - \ref tutorial-tracking-tt
+ */
+  class VISP_EXPORT vpTemplateTrackerMIBSpline
 {
 public:
   static void PutPVBsplineD(double *Prt, int cr, double er, int ct, double et, int Nc, double val, const int &degre);

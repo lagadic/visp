@@ -71,7 +71,12 @@ BEGIN_VISP_NAMESPACE
  * \note It is also possible to estimate a pose from other features using
  * vpPoseFeatures class.
  *
- * To see how to use this class you can follow the \ref tutorial-pose-estimation.
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+
+  <b>Tutorials</b><br>
+  <span style="margin-left:2em"> To see how to use this class, you may have a look at:</span><br>
+
+  - \ref tutorial-pose-estimation
 */
 class VISP_EXPORT vpPose
 {
@@ -696,6 +701,8 @@ public:
    * \param[in] enable_vvs : When true, refine estimated pose using a virtual visual servoing scheme.
    * \return Homogeneous matrix \f${^c}{\bf M}_o\f$ between camera frame and object frame when estimation succeed,
    * nullopt otherwise.
+   *
+   * \sa To see an example, you can have a look at \ref tutorial-planar-object-pose
    */
   template <typename DataId>
   static std::optional<vpHomogeneousMatrix> computePlanarObjectPoseWithAtLeast3Points(

@@ -54,6 +54,12 @@ BEGIN_VISP_NAMESPACE
   The algorithm implemented in this class is described in \cite Irani98a and
   \cite Marchand16a.
 
+  <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+
+  <b>Tutorials</b><br>
+  <span style="margin-left:2em"> If you are interested in the Template Tracker  (TT), you may have a look at:</span><br>
+
+  - \ref tutorial-tracking-tt
 */
 class VISP_EXPORT vpTemplateTrackerZNCCForwardAdditional : public vpTemplateTrackerZNCC
 {

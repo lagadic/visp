@@ -63,6 +63,13 @@ BEGIN_VISP_NAMESPACE
  *   amongst all edges found.
  *
  * - sample step.
+ *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> If you are interested in using a ME tracker in your application, you may have a look at:</span><br>
+ *
+ * - \ref tutorial-tracking-me
 */
 class VISP_EXPORT vpMeSite
 {

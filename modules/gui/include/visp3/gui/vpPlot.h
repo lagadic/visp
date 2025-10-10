@@ -59,10 +59,7 @@ BEGIN_VISP_NAMESPACE
  * (X11, GDI, GTK, OpenCV or Direct3D) is available. In visp3/core/vpConfig.h
  * header file, you should have VISP_HAVE_DISPLAY define.
  *
- * The example below shows how to use the vpPlot class. An other example
- * provided in tutorial-ibvs-plotter.cpp and described in \ref tutorial-plotter
- * shows how to use this class to plot in real-time some curves during an
- * image-based visual servo.
+ * The example below shows how to use the vpPlot class.
  *
  * \code
  * #include <visp3/gui/vpPlot.h>
@@ -107,6 +104,14 @@ BEGIN_VISP_NAMESPACE
  * #endif
  * }
  * \endcode
+ *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> Another example that shows how to use this class
+ * to plot in real-time some curves during an image-based visual servo is explained in:</span><br>
+ *
+ * - \ref tutorial-plotter
 */
 class VISP_EXPORT vpPlot
 {

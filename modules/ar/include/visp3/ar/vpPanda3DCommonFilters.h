@@ -45,6 +45,12 @@ class vpPanda3DRGBRenderer;
  * \ingroup group_ar_renderer_panda3d_filters
  * \brief Class that implements an RGB to grayscale conversion.
  *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> If you are interested in using Panda3D in Augmented Reality applications, you may have a look at:</span><br>
+ *
+ * - \ref tutorial-panda3d
  */
 class VISP_EXPORT vpPanda3DLuminanceFilter : public vpPanda3DPostProcessFilter
 {
@@ -63,6 +69,12 @@ private:
  * \brief Class that implements a gaussian filter on a grayscale image.
  * The grayscale image should be contained in the blue channel of the image.
  *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> If you are interested in using Panda3D in Augmented Reality applications, you may have a look at:</span><br>
+ *
+ * - \ref tutorial-panda3d
  */
 class VISP_EXPORT vpPanda3DGaussianBlur : public vpPanda3DPostProcessFilter
 {
@@ -84,6 +96,13 @@ private:
  * - In the red channel, the value of the convolution with the sobel horizontal kernel
  * - In the green channel, the value of the convolution with the sobel vertical kernel
  * - In the blue channel, the angle (in radians) of the edge normal.
+ *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> If you are interested in using Panda3D in Augmented Reality applications, you may have a look at:</span><br>
+ *
+ * - \ref tutorial-panda3d
  */
 class VISP_EXPORT vpPanda3DCanny : public vpPanda3DPostProcessFilter
 {

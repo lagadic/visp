@@ -131,6 +131,14 @@ struct UniformLawVariance<unsigned char, false>
  *
  * \tparam T The type of the channels. Either a floating point type (float, double) or unsigned char.
  * \tparam useFullScale True if vpHSV uses unsigned char and the full range [0; 255], false if vpHSV uses unsigned char and the limited range [0; maxHueUsingLimitedRange].
+ *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> If you are interested in how you can convert vpHSV to and from other type of data, or
+ * how to use it for color segmentation, you may have a look at:</span><br>
+
+ * - \ref tutorial-hsv-segmentation-intro
  */
 template<typename T, bool useFullScale>
 class vpHSV

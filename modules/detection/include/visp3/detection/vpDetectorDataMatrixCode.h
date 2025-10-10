@@ -108,8 +108,12 @@ BEGIN_VISP_NAMESPACE
  *   Message: "datamatrix 2"
  * \endcode
  *
- * Other examples are also provided in tutorial-barcode-detector.cpp and
- * tutorial-barcode-detector-live.cpp
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> If you are interested in multiple QR codes detection, you may have a look at:</span><br>
+ *
+ * - \ref tutorial-detection-barcode
  */
   class VISP_EXPORT vpDetectorDataMatrixCode : public vpDetectorBase
 {

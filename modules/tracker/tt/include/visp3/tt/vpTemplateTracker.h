@@ -59,6 +59,13 @@ BEGIN_VISP_NAMESPACE
 
   This class allows to instantiate a template tracker using image registration
   algorithms \cite Dame10c \cite Dame11c.
+
+  <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+
+  <b>Tutorials</b><br>
+  <span style="margin-left:2em"> If you are interested in the Template Tracker  (TT), you may have a look at:</span><br>
+
+  - \ref tutorial-tracking-tt
 */
 class VISP_EXPORT vpTemplateTracker
 {

@@ -89,7 +89,11 @@ BEGIN_VISP_NAMESPACE
   $ make -j4
   \endcode
 
-  \sa \ref tutorial-flir-ptu-vs
+  <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+
+  <b>Tutorials</b><br>
+  <span style="margin-left:2em"> If you are interested in using performing visual servoing using a FLIR pan-tilt unit, you may have a look at:</span><br>
+ * - \ref tutorial-flir-ptu-vs
 */
 class VISP_EXPORT vpRobotFlirPtu : public vpRobot
 {

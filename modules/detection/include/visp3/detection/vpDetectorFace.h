@@ -91,8 +91,12 @@ BEGIN_VISP_NAMESPACE
  * }
  * \endcode
  *
- * A more complete example that works with images acquired from a camera is
- * provided in tutorial-face-detector-live.cpp.
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> If you want a more complete example that works with images acquired from a camera, you may have a look at:</span><br>
+ *
+ * - \ref tutorial-detection-face
 */
 class VISP_EXPORT vpDetectorFace : public vpDetectorBase
 {

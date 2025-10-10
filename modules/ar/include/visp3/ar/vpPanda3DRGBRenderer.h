@@ -62,6 +62,12 @@ BEGIN_VISP_NAMESPACE
  *  - run gltf2bam path/to/yourObject.gltf path/to/yourObject.bam
  *  - then, in the code, use `renderer.addNodeToScene("/path/to/yourObject.bam");`
  *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> If you are interested in using Panda3D in Augmented Reality applications, you may have a look at:</span><br>
+ *
+ * - \ref tutorial-panda3d
 */
 class VISP_EXPORT vpPanda3DRGBRenderer : public vpPanda3DBaseRenderer, public vpPanda3DLightableScene
 {
