@@ -160,6 +160,13 @@ BEGIN_VISP_NAMESPACE
  *   s.error(s_star);
  * }
  * \endcode
+ *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> If you are interested in how to use this class, you may have a look at:</span><br>
+ *
+ * - \ref tutorial-simu-robot-pioneer
 */
 class VISP_EXPORT vpFeatureDepth : public vpBasicFeature
 {

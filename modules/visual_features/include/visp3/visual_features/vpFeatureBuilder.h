@@ -87,6 +87,15 @@ BEGIN_VISP_NAMESPACE
 
   \ingroup group_visual_features_builder
   \brief Class that defines conversion between trackers and visual features.
+
+  <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+
+  <b>Tutorials</b><br>
+  <span style="margin-left:2em"> If you are interested in how to use this class, you may have a look at:</span><br>
+
+  - \ref tutorial-ibvs
+  - \ref tutorial-simu-robot-pioneer
+  - \ref tutorial-franka-ibvs-eth
 */
 class VISP_EXPORT vpFeatureBuilder
 {

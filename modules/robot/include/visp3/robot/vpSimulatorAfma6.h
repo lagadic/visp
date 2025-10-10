@@ -174,8 +174,13 @@ BEGIN_VISP_NAMESPACE
  * positions from a position file with readPosFile() and savePosFile()
  * methods.
  *
- * To know how this class can be used to achieve a visual servoing simulation,
- * you can follow the \ref tutorial-ibvs.
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> To know how this class can be used to achieve a visual servoing simulation,
+ * you can follow the tutorial:</span><br>
+ *
+ * - \ref tutorial-ibvs.
 */
 class VISP_EXPORT vpSimulatorAfma6 : public vpRobotWireFrameSimulator, public vpAfma6
 {

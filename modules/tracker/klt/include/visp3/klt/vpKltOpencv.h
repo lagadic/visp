@@ -68,6 +68,10 @@ BEGIN_VISP_NAMESPACE
  * Installation instructions are provided here
  * https://visp.inria.fr/3rd_opencv.
  *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ *
  * The following example available in tutorial-klt-tracker.cpp shows how to use
  * the main functions of the class.
  *

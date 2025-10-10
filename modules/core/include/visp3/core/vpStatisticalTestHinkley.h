@@ -42,47 +42,54 @@
 
 BEGIN_VISP_NAMESPACE
 /**
- * \ingroup group_core_math_tools
+ * \ingroup group_core_spc
  * \brief This class implements the Hinkley's cumulative sum test.
  *
  * The Hinkley's cumulative sum test is designed to detect drift in the mean
-  of an observed signal \f$ s(t) \f$. It is known to be robust (by
-  taking into account all the past of the observed quantity),
-  efficient, and inducing a very low computational load. The other
-  attractive features of this test are two-fold. First, it can
-  straightforwardly and accurately provide the drift instant. Secondly,
-  due to its formulation (cumulative sum test), it can simultaneously
-  handle both very abrupt and important changes, and gradual smaller
-  ones without adapting the involved thresholds.
-
-  Two tests are performed in parallel to look for downwards or upwards
-  drifts in \f$ s(t) \f$, respectively defined by:
-
-  \f[ S_k = \sum_{t=0}^{k} (s(t) - m_0 + \frac{\delta}{2}) \f]
-  \f[ M_k = \max_{0 \leq i \leq k} S_i\f]
-  \f[ T_k = \sum_{t=0}^{k} (s(t) - m_0 - \frac{\delta}{2}) \f]
-  \f[ N_k = \min_{0 \leq i \leq k} T_i\f]
-
-  In which \f$m_o\f$ is computed on-line and corresponds to the mean
-  of the signal \f$ s(t) \f$ we want to detect a drift. \f$m_o\f$ is
-  re-initialized at zero after each drift detection. \f$\delta\f$
-  denotes the drift minimal magnitude that we want to detect and
-  \f$\alpha\f$ is a predefined threshold. These values are set by
-  default to 0.2 in the default constructor vpStatisticalTestHinkley(). To modify the
-  default values use setAlpha() and setDelta() or the
-  vpStatisticalTestHinkley(double alpha, double delta) constructor.
-
-  A downward drift is detected if \f$ M_k - S_k > \alpha \f$.
-  A upward drift is detected if \f$ T_k - N_k > \alpha \f$.
-
-  To detect only downward drifts in \f$ s(t) \f$ use
-  testDownwardMeanDrift().To detect only upward drifts in \f$ s(t) \f$ use
-  testUpwardMeanDrift(). To detect both, downward and upward drifts use
-  testDownUpwardMeanDrift().
-
-  If a drift is detected, the drift location is given by the last instant
-  \f$k^{'}\f$ when \f$ M_{k^{'}} - S_{k^{'}} = 0 \f$, or \f$ T_{k^{'}} -
-  N_{k^{'}} = 0 \f$.
+ * of an observed signal \f$ s(t) \f$. It is known to be robust (by
+ * taking into account all the past of the observed quantity),
+ * efficient, and inducing a very low computational load. The other
+ * attractive features of this test are two-fold. First, it can
+ * straightforwardly and accurately provide the drift instant. Secondly,
+ * due to its formulation (cumulative sum test), it can simultaneously
+ * handle both very abrupt and important changes, and gradual smaller
+ * ones without adapting the involved thresholds.
+ *
+ * Two tests are performed in parallel to look for downwards or upwards
+ * drifts in \f$ s(t) \f$, respectively defined by:
+ *
+ * \f[ S_k = \sum_{t=0}^{k} (s(t) - m_0 + \frac{\delta}{2}) \f]
+ * \f[ M_k = \max_{0 \leq i \leq k} S_i\f]
+ * \f[ T_k = \sum_{t=0}^{k} (s(t) - m_0 - \frac{\delta}{2}) \f]
+ * \f[ N_k = \min_{0 \leq i \leq k} T_i\f]
+ *
+ * In which \f$m_o\f$ is computed on-line and corresponds to the mean
+ * of the signal \f$ s(t) \f$ we want to detect a drift. \f$m_o\f$ is
+ * re-initialized at zero after each drift detection. \f$\delta\f$
+ * denotes the drift minimal magnitude that we want to detect and
+ * \f$\alpha\f$ is a predefined threshold. These values are set by
+ * default to 0.2 in the default constructor vpStatisticalTestHinkley(). To modify the
+ * default values use setAlpha() and setDelta() or the
+ * vpStatisticalTestHinkley(double alpha, double delta) constructor.
+ *
+ * A downward drift is detected if \f$ M_k - S_k > \alpha \f$.
+ * A upward drift is detected if \f$ T_k - N_k > \alpha \f$.
+ *
+ * To detect only downward drifts in \f$ s(t) \f$ use
+ * testDownwardMeanDrift().To detect only upward drifts in \f$ s(t) \f$ use
+ * testUpwardMeanDrift(). To detect both, downward and upward drifts use
+ * testDownUpwardMeanDrift().
+ *
+ * If a drift is detected, the drift location is given by the last instant
+ * \f$k^{'}\f$ when \f$ M_{k^{'}} - S_{k^{'}} = 0 \f$, or \f$ T_{k^{'}} -
+ * N_{k^{'}} = 0 \f$.
+ *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> If you are interested in using Statistical Process Control methods, you may have a look at:</span><br>
+ *
+ * - \ref tutorial-spc
 */
 class VISP_EXPORT vpStatisticalTestHinkley : public vpStatisticalTestAbstract
 {

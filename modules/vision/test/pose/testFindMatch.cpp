@@ -26,11 +26,6 @@
  *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
- * Description:
- * Compute the pose of a 3D object using the Dementhon method. Assuming that
- * the correspondence between 2D points and 3D points is not done, we use
- * the RANSAC algorithm to achieve this task
  */
 
 #include <visp3/core/vpHomogeneousMatrix.h>
@@ -46,8 +41,9 @@
 /*!
   \example testFindMatch.cpp
 
-  Find Matches using Ransac.
-
+  Compute the pose of a 3D object using the Dementhon method. Assuming that
+  the correspondence between 2D points and 3D points is not done, we use
+  the RANSAC algorithm to achieve this task
 */
 
 int main()

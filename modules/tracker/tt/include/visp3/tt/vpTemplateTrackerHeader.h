@@ -51,6 +51,13 @@ BEGIN_VISP_NAMESPACE
 /*!
   \struct vpTemplateTrackerZPoint
   \ingroup group_tt_tools
+
+  <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+
+  <b>Tutorials</b><br>
+  <span style="margin-left:2em"> If you are interested in the Template Tracker  (TT), you may have a look at:</span><br>
+
+  - \ref tutorial-tracking-tt
 */
 struct vpTemplateTrackerZPoint
 {
@@ -61,6 +68,13 @@ struct vpTemplateTrackerZPoint
 /*!
   \struct vpTemplateTrackerDPoint
   \ingroup group_tt_tools
+
+  <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+
+  <b>Tutorials</b><br>
+  <span style="margin-left:2em"> If you are interested in the Template Tracker  (TT), you may have a look at:</span><br>
+
+  - \ref tutorial-tracking-tt
 */
 struct vpTemplateTrackerDPoint
 {
@@ -71,6 +85,13 @@ struct vpTemplateTrackerDPoint
 /*!
   \struct vpTemplateTrackerPoint
   \ingroup group_tt_tools
+
+  <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+
+  <b>Tutorials</b><br>
+  <span style="margin-left:2em"> If you are interested in the Template Tracker  (TT), you may have a look at:</span><br>
+
+  - \ref tutorial-tracking-tt
 */
 struct vpTemplateTrackerPoint
 {
@@ -85,6 +106,13 @@ struct vpTemplateTrackerPoint
 /*!
   \struct vpTemplateTrackerPointCompo
   \ingroup group_tt_tools
+
+  <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+
+  <b>Tutorials</b><br>
+  <span style="margin-left:2em"> If you are interested in the Template Tracker  (TT), you may have a look at:</span><br>
+
+  - \ref tutorial-tracking-tt
 */
 struct vpTemplateTrackerPointCompo
 {

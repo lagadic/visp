@@ -86,9 +86,13 @@ BEGIN_VISP_NAMESPACE
  *    If you want to have a try you may see:
  *    - testPixhawkRoverVelocityControl.cpp
  *
- * \sa \ref tutorial-pixhawk-vs
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+
+  <b>Tutorials</b><br>
+  <span style="margin-left:2em"> If you are interested in using performing visual servoing such a drone, you may have a look at:</span><br>
+ * - \ref tutorial-pixhawk-vs
  */
-class VISP_EXPORT vpRobotMavsdk
+  class VISP_EXPORT vpRobotMavsdk
 {
 public:
   vpRobotMavsdk();

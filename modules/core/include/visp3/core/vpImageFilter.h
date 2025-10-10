@@ -79,6 +79,11 @@ BEGIN_VISP_NAMESPACE
  * \ingroup group_core_image
  *
  * \brief  Various image filter, convolution, etc...
+ *
+ * <b>Tutorials</b><br>
+  <span style="margin-left:2em"> If you are interested in applying various filters on an image, you may have a look at:</span><br>
+
+  - \ref tutorial-image-filtering
 */
 class VISP_EXPORT vpImageFilter
 {

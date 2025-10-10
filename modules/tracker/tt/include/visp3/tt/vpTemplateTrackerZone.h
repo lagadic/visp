@@ -59,6 +59,13 @@ BEGIN_VISP_NAMESPACE
   A zone can be initialized either by user interaction using mouse click in a
   display device throw initClick(), or by a list of points throw
   initFromPoints().
+
+  <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+
+  <b>Tutorials</b><br>
+  <span style="margin-left:2em"> If you are interested in the Template Tracker  (TT), you may have a look at:</span><br>
+
+  - \ref tutorial-tracking-tt
 */
 class VISP_EXPORT vpTemplateTrackerZone
 {

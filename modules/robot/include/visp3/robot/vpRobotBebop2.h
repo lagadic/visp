@@ -68,7 +68,11 @@ BEGIN_VISP_NAMESPACE
   Interface for Parrot ARSDK3, allowing to control the Bebop 2 drone and get images from the camera (if ViSP was built
   with FFMpeg support).
 
-  \sa \ref tutorial-bebop2-vs
+  <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+
+  <b>Tutorials</b><br>
+  <span style="margin-left:2em"> If you are interested in using performing visual servoing using a Bebop 2 drone, you may have a look at:</span><br>
+ * - \ref tutorial-bebop2-vs
 */
 class VISP_EXPORT vpRobotBebop2
 {

@@ -108,8 +108,13 @@ BEGIN_VISP_NAMESPACE
  *   Message: "qrcode 1"
  * \endcode
  *
- * Other examples are also provided in tutorial-barcode-detector.cpp and
- * tutorial-barcode-detector-live.cpp
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> If you are interested in QR code detection, you may have a look at:</span><br>
+ *
+ * - \ref tutorial-detection-barcode
+ * - \ref tutorial-pose-estimation-qrcode
 */
 class VISP_EXPORT vpDetectorQRCode : public vpDetectorBase
 {

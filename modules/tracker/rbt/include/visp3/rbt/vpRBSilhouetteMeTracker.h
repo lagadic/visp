@@ -44,6 +44,13 @@ BEGIN_VISP_NAMESPACE
  * \brief Moving edge feature tracking from depth-extracted object contours
  *
  * \ingroup group_rbt_trackers
+ *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> If you want to have an in-depth presentation of the Render-Based Tracker (RBT), you may have a look at:</span><br>
+ *
+ * - \ref tutorial-tracking-rbt
 */
 class VISP_EXPORT vpRBSilhouetteMeTracker : public vpRBFeatureTracker
 {

@@ -81,7 +81,7 @@ Estimation from homography: Point 3 in pixels in frame a: 353.8501593, 486.18518
 \endcode
 
 
-\section ransac Ransac or robust homography estimation
+\section tutorial-homography-ransac Ransac or robust homography estimation
 
 Note that all the material (source code) described in this tutorial is
 part of ViSP source code (in `tutorial/detection/matching` folder) and could be found in

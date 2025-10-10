@@ -128,6 +128,12 @@
     return 0;
   }
   \endcode
+
+  <b>Tutorials</b><br>
+  <span style="margin-left:2em"> If you are interested in projecting an image in the 3D space and getting the
+  view of a virtual camera, you may have a look at:</span><br>
+
+  - \ref tutorial-simu-image
 */
 
 #include <visp3/core/vpCameraParameters.h>
