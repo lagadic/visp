@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -168,7 +168,7 @@ double vpColorHistogram::jsd(const vpColorHistogram &other) const
   vpColorHistogram mixture(m_N);
 
   for (unsigned int i = 0; i < m_probas.size(); ++i) {
-    mixture.m_probas[i] = m_probas[i] * 0.5 + other.m_probas[i] * 0.5;
+    mixture.m_probas[i] = m_probas[i] * 0.5f + other.m_probas[i] * 0.5f;
   }
   // JSD = 0.5KL(P || M) + 0.5(Q||M) where M is the average mixture distrib of P and Q
   return (kl(mixture) + other.kl(mixture)) / 2.0;
@@ -191,7 +191,7 @@ void vpColorHistogram::computeSplitHistograms(const vpImage<vpRGBa> &image, cons
     throw vpException(vpException::badValue, "Histograms should have same number of bins");
   }
 
-  unsigned int bins = insideMask.m_probas.size();
+  unsigned int bins = static_cast<unsigned int>(insideMask.m_probas.size());
 
   std::vector<unsigned int> countsIn(bins, 0), countsOut(bins, 0);
 
@@ -201,8 +201,8 @@ void vpColorHistogram::computeSplitHistograms(const vpImage<vpRGBa> &image, cons
 //#pragma omp for schedule(static, 1024)
     for (unsigned int i = 0; i < image.getSize(); ++i) {
       unsigned int index = insideMask.colorToIndex(image.bitmap[i]);
-      localCountsIn[index] += mask.bitmap[i] > 0;
-      localCountsOut[index] += mask.bitmap[i] == 0;
+      localCountsIn[index] += (mask.bitmap[i] > 0);
+      localCountsOut[index] += (mask.bitmap[i] == 0);
     }
 //#pragma omp critical
     {
@@ -222,7 +222,7 @@ void vpColorHistogram::computeSplitHistograms(const vpImage<vpRGBa> &image, cons
     throw vpException(vpException::badValue, "Histograms should have same number of bins");
   }
 
-  const unsigned int bins = insideMask.m_probas.size();
+  const unsigned int bins = static_cast<unsigned int>(insideMask.m_probas.size());
 
   std::vector<unsigned int> countsIn(bins, 0), countsOut(bins, 0);
 

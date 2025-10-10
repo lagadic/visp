@@ -153,9 +153,9 @@ public:
    * \param[in] V_ The value of the Value channel.
    */
   explicit vpHSV(const double &H_ = 0., const double &S_ = 0., const double &V_ = 0.)
-    : H(H_)
-    , S(S_)
-    , V(V_)
+    : H(static_cast<T>(H_))
+    , S(static_cast<T>(S_))
+    , V(static_cast<T>(V_))
   { }
 
   /**
@@ -175,16 +175,16 @@ public:
   vpHSV(const vpHSV<T, useFullScale> &) = default;
 
 #ifndef VISP_PYTHON_PREPROCESSOR_RUNNING
-/**
- * \brief Construct a new vpHSV object using unsigned char channels and the full range [0; 255] from a vpHSV object
- * whose channels are in floating point format.
- *
- * \tparam U The format of the constructed object.
- * \tparam V The format of the base object.
- * \tparam type Enable the method only if the constructed object uses unsigned char format and uses the full range
- * [0; 255] and the object that is used as reference uses floating point format.
- * \param[in] other A floating point format vpHSV.
- */
+  /**
+   * \brief Construct a new vpHSV object using unsigned char channels and the full range [0; 255] from a vpHSV object
+   * whose channels are in floating point format.
+   *
+   * \tparam U The format of the constructed object.
+   * \tparam V The format of the base object.
+   * \tparam type Enable the method only if the constructed object uses unsigned char format and uses the full range
+   * [0; 255] and the object that is used as reference uses floating point format.
+   * \param[in] other A floating point format vpHSV.
+   */
   template<typename U = T, typename V, typename std::enable_if<std::is_same<T, unsigned char>::value &&std::is_floating_point<V>::value &&useFullScale, U>::type = 0 >
   vpHSV(const vpHSV<V> &other)
   {

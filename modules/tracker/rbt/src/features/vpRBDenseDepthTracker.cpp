@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -159,12 +159,12 @@ void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame
   m_depthPointSet.build(m_depthPoints);
 
   if (m_depthPoints.size() > 0) {
-    m_error.resize(m_depthPoints.size(), false);
-    m_weights.resize(m_depthPoints.size(), false);
-    m_weighted_error.resize(m_depthPoints.size(), false);
-    m_L.resize(m_depthPoints.size(), 6, false, false);
+    m_error.resize(static_cast<unsigned int>(m_depthPoints.size()), false);
+    m_weights.resize(static_cast<unsigned int>(m_depthPoints.size()), false);
+    m_weighted_error.resize(static_cast<unsigned int>(m_depthPoints.size()), false);
+    m_L.resize(static_cast<unsigned int>(m_depthPoints.size()), 6, false, false);
     m_cov.resize(6, 6, false, false);
-    m_covWeightDiag.resize(m_depthPoints.size(), false);
+    m_covWeightDiag.resize(static_cast<unsigned int>(m_depthPoints.size()), false);
     m_numFeatures = m_L.getRows();
   }
   else {
@@ -202,7 +202,7 @@ void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &/*fram
     std::cerr << "Normals camera" << std::endl;
     std::cerr << m_depthPointSet.getNormalsCamera() << std::endl;
     throw vpException(vpException::badValue, "Invalid values in depth tracker");
-}
+  }
 #endif
 
   //m_weights = 0.0;
@@ -237,7 +237,7 @@ void vpRBDenseDepthTracker::display(const vpCameraParameters &/*cam*/, const vpI
   {
     for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
       vpColor c(0, 255, 0);
-      vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos[0], m_depthPoints[i].pixelPos[1], c, 2);
+      vpDisplay::displayPoint(depth, static_cast<int>(m_depthPoints[i].pixelPos[0]), static_cast<int>(m_depthPoints[i].pixelPos[1]), c, 2);
     }
     break;
   }
@@ -245,15 +245,15 @@ void vpRBDenseDepthTracker::display(const vpCameraParameters &/*cam*/, const vpI
   {
     for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
       vpColor c(0, static_cast<unsigned char>(m_weights[i] * 255), 0);
-      vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos[0], m_depthPoints[i].pixelPos[1], c, 2);
+      vpDisplay::displayPoint(depth, static_cast<int>(m_depthPoints[i].pixelPos[0]), static_cast<int>(m_depthPoints[i].pixelPos[1]), c, 2);
     }
     break;
   }
   case DT_ERROR:
   {
     for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
-      vpColor c(m_error[i], 0, 0);
-      vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos[0], m_depthPoints[i].pixelPos[1], c, 2);
+      vpColor c(static_cast<unsigned char>(m_error[i]), 0, 0);
+      vpDisplay::displayPoint(depth, static_cast<int>(m_depthPoints[i].pixelPos[0]), static_cast<int>(m_depthPoints[i].pixelPos[1]), c, 2);
     }
     break;
   }
@@ -262,7 +262,7 @@ void vpRBDenseDepthTracker::display(const vpCameraParameters &/*cam*/, const vpI
     double maxError = m_error.getMaxValue();
     for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
       vpColor c(static_cast<unsigned int>((m_error[i] / maxError) * 255.0), static_cast<unsigned char>(m_weights[i] * 255), 0);
-      vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos[0], m_depthPoints[i].pixelPos[1], c, 2);
+      vpDisplay::displayPoint(depth, static_cast<int>(m_depthPoints[i].pixelPos[0]), static_cast<int>(m_depthPoints[i].pixelPos[1]), c, 2);
     }
     break;
   }

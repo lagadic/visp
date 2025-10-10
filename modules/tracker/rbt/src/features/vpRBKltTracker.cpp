@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -137,7 +137,7 @@ void vpRBKltTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const
     }
   }
 
-  cv::Rect roi(bb.getLeft(), bb.getTop(), bb.getWidth(), bb.getHeight());
+  cv::Rect roi(static_cast<int>(bb.getLeft()), static_cast<int>(bb.getTop()), static_cast<int>(bb.getWidth()), static_cast<int>(bb.getHeight()));
   cv::Mat maskRoi = mask(roi);
 
   if (m_Iprev.rows > 0) {
@@ -173,8 +173,8 @@ void vpRBKltTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const
         long id;
         kltTemp.getFeature(i, id, u, v);
         // Realign features from bounding box coordinates to image coordinates
-        u += bb.getLeft();
-        v += bb.getTop();
+        u += static_cast<float>(bb.getLeft());
+        v += static_cast<float>(bb.getTop());
         for (unsigned int j = 0; j < nbFeatures; ++j) {
           float uj, vj;
           long idj;
@@ -259,7 +259,7 @@ void vpRBKltTracker::trackFeatures(const vpRBFeatureTrackerInput &frame, const v
   }
 
   m_points = newPoints;
-  m_numFeatures = m_points.size() * 2;
+  m_numFeatures = static_cast<unsigned int>(m_points.size()) * 2;
 }
 
 void vpRBKltTracker::initVVS(const vpRBFeatureTrackerInput &/*frame*/, const vpRBFeatureTrackerInput &/*previousFrame*/, const vpHomogeneousMatrix & /*cMo*/)
@@ -316,7 +316,7 @@ void vpRBKltTracker::display(const vpCameraParameters &cam, const vpImage<unsign
   for (const std::pair<const long, vpTrackedKltPoint> &p : m_points) {
     double u = 0.0, v = 0.0;
     vpMeterPixelConversion::convertPoint(cam, p.second.currentPos.get_j(), p.second.currentPos.get_i(), u, v);
-    vpDisplay::displayPoint(I, v, u, vpColor::red, 2);
+    vpDisplay::displayPoint(I, static_cast<int>(v), static_cast<int>(u), vpColor::red, 2);
   }
 }
 

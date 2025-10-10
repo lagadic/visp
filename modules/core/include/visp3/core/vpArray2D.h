@@ -805,7 +805,7 @@ public:
 #else
         _snprintf_s(header, h.size() + 1, _TRUNCATE, "%s", h.c_str());
 #endif
-    }
+      }
 
       unsigned int rows, cols;
       file >> rows;
@@ -824,7 +824,7 @@ public:
           A[i][j] = value;
         }
       }
-  }
+    }
     else {
       char c = '0';
       std::string h;
@@ -840,7 +840,7 @@ public:
 #else
         _snprintf_s(header, h.size() + 1, _TRUNCATE, "%s", h.c_str());
 #endif
-    }
+      }
 
       unsigned int rows, cols;
       file.read(reinterpret_cast<char *>(&rows), sizeof(unsigned int));
@@ -854,7 +854,7 @@ public:
           A[i][j] = value;
         }
       }
-}
+    }
 
     file.close();
     return true;
@@ -926,7 +926,7 @@ public:
         std::stringstream ss(line.substr(lineStart, line.find("]") - lineStart));
         j = 0;
         while (getline(ss, subs, ',')) {
-          A[i][j++] = atof(subs.c_str());
+          A[i][j++] = static_cast<Type>(atof(subs.c_str()));
         }
         ++i;
       }

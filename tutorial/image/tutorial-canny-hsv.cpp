@@ -67,11 +67,11 @@ vpImage<unsigned char> convertToDisplay(const vpImage<FilterType> &GI, const Fil
 {
   const unsigned int h = GI.getHeight(), w = GI.getWidth();
   const FilterType range = max - min;
-  const FilterType step = range / 256.;
+  const FilterType step = range / static_cast<FilterType>(256);
   vpImage<unsigned char> Idisp(h, w);
   for (unsigned int r = 0; r < h; ++r) {
     for (unsigned int c = 0; c < w; ++c) {
-      Idisp[r][c] = std::floor((GI[r][c] - min) / step);
+      Idisp[r][c] = static_cast<unsigned char>(std::floor((GI[r][c] - min) / step));
     }
   }
   return Idisp;
