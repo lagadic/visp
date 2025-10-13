@@ -101,7 +101,7 @@ gcovr = "*"
 [feature.coverage.activation.env]
 VISP_BUILD_COVERAGE = "ON"
 VISP_BUILD_DEPRECATED_FUNCTIONS = "OFF"
-VISP_BUILD_TYPE = "Debug"
+VISP_BUILD_TYPE = "RelWithDebInfo"
 
 [feature.coverage.tasks]
 coverage = { cmd = [
