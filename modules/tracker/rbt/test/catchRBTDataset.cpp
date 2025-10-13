@@ -83,6 +83,8 @@ public:
   {
     m_path = path;
     loadCameraSettings();
+    std::cout << "Loaded camera settings!" << std::endl;
+    std::cout << m_cam << std::endl;
     loadFrames();
   }
 
@@ -117,6 +119,11 @@ public:
     return vpIoTools::createFilePath(m_path, colorName.str());
   }
 
+  void initTracker(vpRBTracker &tracker)
+  {
+    tracker.setCameraParameters(m_cam, m_h, m_w);
+  }
+
   void loadFrames()
   {
     unsigned int frameIndex = 0;
@@ -135,7 +142,7 @@ public:
 
 
       const std::string depthFramePath = getDepthFrame(frameIndex);
-      if (vpIoTools::checkFilename(colorFramePath)) {
+      if (vpIoTools::checkFilename(depthFramePath)) {
         visp::cnpy::NpyArray depth_data = visp::cnpy::npz_load(depthFramePath).find("data")->second;
         vpImage<uint16_t> depthRaw(depth_data.data<uint16_t>(), m_h, m_w, true);
         frame.depth.resize(m_h, m_w);
@@ -145,8 +152,17 @@ public:
       }
 
       m_frames.push_back(frame);
+      ++frameIndex;
     }
+  }
 
+  unsigned int numFrames() const
+  {
+    return m_frames.size();
+  }
+  SequenceFrame getFrame(unsigned int index) const
+  {
+    return m_frames[index];
   }
 
 private:
@@ -169,7 +185,57 @@ SCENARIO("Running tracker on static synthetic sequences", "[rbt]")
   else {
     const std::string datasetPath = vpIoTools::getViSPImagesDataPath();
     const std::string rbtDatasetPath = vpIoTools::createFilePath(datasetPath, "rbt");
+    const std::string sequencePath = vpIoTools::createFilePath(rbtDatasetPath, "sequence");
+    const std::string modelsPath = vpIoTools::createFilePath(rbtDatasetPath, "models");
+    const std::string configsPath = vpIoTools::createFilePath(rbtDatasetPath, "configs");
+    GIVEN("A sequence")
+    {
+      Sequence sequence(sequencePath);
+      std::cout << "Sequence with num frames = " << sequence.numFrames() << std::endl;
 
+      vpRBTracker tracker;
+
+      sequence.initTracker(tracker);
+
+      const std::vector<std::string> objectNames = { "dragon", "cube", "stomach", "lower_teeth" };
+
+      const std::map<std::string, std::vector<std::string>> configMap = {
+        { "dragon", { "denseDepth-me.json" } },
+        { "cube", { "denseDepth-me.json" } },
+        { "stomach", { "denseDepth-me.json" } },
+        { "lower_teeth", { "denseDepth-me.json" } },
+      };
+
+
+      for (const std::string &objectName: objectNames) {
+        GIVEN("An object")
+        {
+          const std::string modelPath = vpIoTools::createFilePath(modelsPath, objectName + ".obj");
+          tracker.setModelPath(modelPath);
+          const std::vector<std::string> configNames = (*configMap.find(objectName)).second;
+          for (const std::string &configName: configNames) {
+            tracker.reset();
+            GIVEN("A tracker configuration")
+            {
+              const std::string configPath = vpIoTools::createFilePath(configsPath, configName);
+              tracker.loadConfigurationFile(configPath);
+              tracker.startTracking();
+
+              // tracker.setPose(POSE_INIT);
+              std::vector<vpHomogeneousMatrix> poses;
+              for (unsigned int i = 0; i < sequence.numFrames(); ++i) {
+                SequenceFrame frame = sequence.getFrame(i);
+                vpRBTrackingResult result = tracker.track(frame.I, frame.IRGB, frame.depth);
+                vpHomogeneousMatrix cMo;
+                tracker.getPose(cMo);
+                std::cout << "Pose = " << vpPoseVector(cMo).t() << std::endl;
+                poses.push_back(cMo);
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }
 
