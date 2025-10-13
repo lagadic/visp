@@ -204,7 +204,7 @@ void convertDepthImageToDisplayImage(const vpImage<float> &Idepth, vpImage<unsig
 #pragma omp parallel for
 #endif
   for (int i = 0; i < size; ++i) {
-    Idisp.bitmap[i] = a * Idepth.bitmap[i] + b;
+    Idisp.bitmap[i] = static_cast<unsigned char>(a * Idepth.bitmap[i] + b);
   }
 }
 

@@ -2578,18 +2578,18 @@ private:
   {
     const unsigned int nbCols = I.getCols();
 
-    Idiff[0] = I.bitmap[1].V - I.bitmap[0].V;
+    Idiff[0] = static_cast<OutputType>(I.bitmap[1].V - I.bitmap[0].V);
 
     // Computing the difference and sign for row 1 column 0
-    Idiff[nbCols] = I.bitmap[nbCols + 1].V - I.bitmap[nbCols].V;
+    Idiff[nbCols] = static_cast<OutputType>(I.bitmap[nbCols + 1].V - I.bitmap[nbCols].V);
 
     for (unsigned int iter = 1; iter < nbCols - 1; ++iter) {
       // Computing the difference and sign for row 0
-      OutputType distanceRow0 = I.bitmap[iter + 1].V - I.bitmap[iter].V;
+      OutputType distanceRow0 = static_cast<OutputType>(I.bitmap[iter + 1].V - I.bitmap[iter].V);
       Idiff[iter] = distanceRow0;
 
       // Computing the difference and sign for row 1
-      OutputType distanceRow1 = I.bitmap[nbCols + iter + 1].V - I.bitmap[nbCols + iter].V;
+      OutputType distanceRow1 = static_cast<OutputType>(I.bitmap[nbCols + iter + 1].V - I.bitmap[nbCols + iter].V);
       Idiff[nbCols + iter] = distanceRow1;
     }
   }
@@ -2614,7 +2614,7 @@ private:
         // Computing the amplitude of the difference
         OutputType futureDiff = 0.;
         if (checkBooleanPatch(p_mask, iter + offsetIdiff, idCol, nbRows, nbCols, true)) {
-          futureDiff = I.bitmap[iter + nbCols +1].V - I.bitmap[iter + offsetIdiff].V;
+          futureDiff = static_cast<OutputType>(I.bitmap[iter + nbCols +1].V - I.bitmap[iter + offsetIdiff].V);
           Idiff[iter + offsetIdiff] = futureDiff;
         }
       }
@@ -2654,11 +2654,11 @@ private:
     const unsigned int nbCols = I.getCols();
     // Computing the sign and distance for the first row
     for (unsigned int iter = 0; iter < nbCols; ++iter) {
-      OutputType distance = I.bitmap[iter + nbCols].V - I.bitmap[iter].V;
+      OutputType distance = static_cast<OutputType>(I.bitmap[iter + nbCols].V - I.bitmap[iter].V);
       Idiff[iter] = distance;
     }
     // Computing the distance and sign for I[1][0]
-    OutputType distance = I.bitmap[nbCols + nbCols].V - I.bitmap[nbCols].V;
+    OutputType distance = static_cast<OutputType>(I.bitmap[nbCols + nbCols].V - I.bitmap[nbCols].V);
     Idiff[nbCols] = distance;
   }
 
@@ -2682,7 +2682,7 @@ private:
       OutputType futureDiff = 0.;
 
       if (checkBooleanPatch(p_mask, iter + offsetIdiff, iterSign, nbRows, nbCols, false)) {
-        futureDiff = I.bitmap[iter + nbCols +1].V - I.bitmap[iter + offsetIdiff].V;
+        futureDiff = static_cast<OutputType>(I.bitmap[iter + nbCols +1].V - I.bitmap[iter + offsetIdiff].V);
         Idiff[iter + offsetIdiff] = futureDiff;
       }
 
@@ -2721,21 +2721,21 @@ private:
     const int nbCols = I.getCols();
 
     if (iam > 0) {
-      Idiff[0] = I.bitmap[istart - nbCols + 1].V - I.bitmap[istart - nbCols].V;
+      Idiff[0] = static_cast<OutputType>(I.bitmap[istart - nbCols + 1].V - I.bitmap[istart - nbCols].V);
     }
 
     // Computing the difference and sign for row 1 column 0, which corresponds to the current row of the image
-    Idiff[nbCols] = I.bitmap[istart + 1].V - I.bitmap[istart].V;
+    Idiff[nbCols] = static_cast<OutputType>(I.bitmap[istart + 1].V - I.bitmap[istart].V);
 
     for (int iter = 1; iter < nbCols - 1; ++iter) {
       if (iam > 0) {
-      // Computing the difference and sign for row 0, which corresponds to the previous row of the image
-        OutputType distanceRow0 = I.bitmap[istart - nbCols + iter + 1].V - I.bitmap[istart - nbCols + iter].V;
+        // Computing the difference and sign for row 0, which corresponds to the previous row of the image
+        OutputType distanceRow0 = static_cast<OutputType>(I.bitmap[istart - nbCols + iter + 1].V - I.bitmap[istart - nbCols + iter].V);
         Idiff[iter] = distanceRow0;
       }
 
       // Computing the difference and sign for row 1, which corresponds to the current row of the image
-      OutputType distanceRow1 = I.bitmap[istart + iter + 1].V - I.bitmap[istart + iter].V;
+      OutputType distanceRow1 = static_cast<OutputType>(I.bitmap[istart + iter + 1].V - I.bitmap[istart + iter].V);
       Idiff[nbCols + iter] = distanceRow1;
     }
   }
@@ -2786,7 +2786,7 @@ private:
           // Computing the amplitude of the difference
           OutputType futureDiff = 0.;
           if (checkBooleanPatch(p_mask, iter + offsetIdiff, idCol, nbRows, nbCols, true)) {
-            futureDiff = I.bitmap[iter + nbCols +1].V - I.bitmap[iter + offsetIdiff].V;
+            futureDiff = static_cast<OutputType>(I.bitmap[iter + nbCols +1].V - I.bitmap[iter + offsetIdiff].V);
             Idiff[iter + 2 * offsetIdiff - istart] = futureDiff;
           }
         }
@@ -2833,12 +2833,12 @@ private:
     // Computing the sign and distance for the first row, which corresponds to the row above the beginning of the gradient computation in the thread
     int idDiff = 0;
     for (int iter = istart - nbCols; iter < istart; ++iter) {
-      OutputType distance = I.bitmap[iter + nbCols].V - I.bitmap[iter].V;
+      OutputType distance = static_cast<OutputType>(I.bitmap[iter + nbCols].V - I.bitmap[iter].V);
       Idiff[idDiff] = distance;
       ++idDiff;
     }
     // Computing the distance and sign for I[1][0]
-    OutputType distance = I.bitmap[nbCols + nbCols].V - I.bitmap[nbCols].V;
+    OutputType distance = static_cast<OutputType>(I.bitmap[nbCols + nbCols].V - I.bitmap[nbCols].V);
     Idiff[nbCols] = distance;
   }
 
@@ -2894,7 +2894,7 @@ private:
         OutputType futureDiff = 0.;
 
         if (checkBooleanPatch(p_mask, iter + offsetIdiff, iterSign, nbRows, nbCols, false)) {
-          futureDiff = I.bitmap[iter + nbCols +1].V - I.bitmap[iter + offsetIdiff].V;
+          futureDiff = static_cast<OutputType>(I.bitmap[iter + nbCols +1].V - I.bitmap[iter + offsetIdiff].V);
           Idiff[iter - istart + nbCols + offsetIdiff] = futureDiff;
         }
 
