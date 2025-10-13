@@ -100,7 +100,7 @@ void vpRBSilhouetteMeTracker::extractFeatures(const vpRBFeatureTrackerInput &fra
     }
   }
 
-  m_numFeatures = m_controlPoints.size();
+  m_numFeatures = static_cast<unsigned int>(m_controlPoints.size());
 
   m_robust.setMinMedianAbsoluteDeviation(m_robustMadMin / frame.cam.get_px());
 }
