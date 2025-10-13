@@ -61,9 +61,9 @@ BEGIN_VISP_NAMESPACE
   \warning If you face some runtime errors with the following class, please refer to the \ref pcl_viewer_known_issues
   section to see if it is a known problem.
 
-  \sa \ref tutorial-pcl-viewer
+  \sa \ref tutorial-display-pcl
 */
-class VISP_EXPORT vpPclViewer
+class VP_DEPRECATED vpPclViewer
 {
 public:
   typedef typename pcl::PointXYZRGB pclPointXYZRGB;

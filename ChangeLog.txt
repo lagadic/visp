@@ -223,7 +223,7 @@ ViSP 3.6.0 (released September 22, 2023)
     . New tutorial: Loading a model-based generic tracker from JSON
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-mb-generic-json.html
     . New tutorial: Threaded PCL viewer
-      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-pcl-viewer.html
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-display-pcl.html
     . New tutorial: Tracking with MegaPose
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-tracking-megapose.html
     . New tutorial: Exporting a 3D model to MegaPose after reconstruction with NeRF
