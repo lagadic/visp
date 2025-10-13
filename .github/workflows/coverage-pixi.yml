@@ -49,11 +49,6 @@ jobs:
         run: |
           pixi run -e ${{ matrix.environment }} build
 
-      - name: Run tests [MacOS/Linux/Windows]
-        shell: bash -el {0}
-        run: |
-          pixi run -e ${{ matrix.environment }} test
-
       - name: Generate coverage file [MacOS/Linux/Windows]
         shell: bash -el {0}
         run: |
