@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
 # Description:
-# Display helpers for ViSP
+# XFeat feature extractor
 #
 #############################################################################
 from typing import List, Optional, Tuple
@@ -40,7 +40,6 @@ import os
 from pathlib import Path
 import torch
 import torch.nn.functional as F
-
 
 from visp.core import ImageRGBa
 
@@ -68,7 +67,6 @@ class XFeatRepresentation():
     keypoints = np.concatenate((self.keypoints, r.keypoints), axis=0)
     descriptors = torch.concatenate((self.descriptors, r.descriptors), dim=0)
     return XFeatRepresentation(keypoints, descriptors)
-
 
 class XFeatStarRepresentation(XFeatRepresentation):
   def __init__(self, kps, descriptors, scales):
@@ -113,7 +111,6 @@ class XFeatBackend():
     self.min_cos = min_cos
     self.use_dense = use_dense
     self.scale_factor = scale_factor
-
 
   def load_settings(self, d: dict):
     self.k = d['numPoints']
@@ -171,7 +168,6 @@ class XFeatBackend():
       t1 = time.time()
       representation = self.xfeat.detectAndComputeDense(rgb, top_k = top_k, multiscale=True)
 
-
       kps = representation['keypoints'][0]
       if self.scale_factor != 1:
         kps /= self.scale_factor
@@ -182,12 +178,9 @@ class XFeatBackend():
       return XFeatStarRepresentation(*self.computeDense(IRGB, self.k))
     else:
       rgb = torch.from_numpy(IRGB.numpy()[None, ..., :3]).to(self.xfeat.dev).permute((0, 3, 1, 2)) / 255.0
-      # rgb = torch.from_numpy(IRGB.numpy()).to('cuda')
-      # rgb = self.xfeat.parse_input(IRGB.numpy())
 
       if self.scale_factor != 1:
         rgb = torch.nn.functional.interpolate(rgb, scale_factor=self.scale_factor, mode='nearest')
-      t1 = time.time()
       rep = self.xfeat.detectAndCompute(rgb, top_k = self.k)[0]
 
       kps = rep['keypoints'].cpu().numpy()

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +29,8 @@
  */
 
 /*!
-  \file vpColorHistogramMask.h
-  \brief Object mask estimation through global foreground/background color histogram representations
+  \file vpDepthMask.h
+  \brief Object mask segmentation based on comparing pixel depth values with object depth values.
 */
 #ifndef VP_DEPTH_MASK_H
 #define VP_DEPTH_MASK_H
@@ -50,7 +50,7 @@ BEGIN_VISP_NAMESPACE
 class vpRBFeatureTrackerInput;
 
 /**
- * \brief A mask computation algorithm based on depth values
+ * \brief A mask computation algorithm based on depth values.
  * \ingroup group_rbt_mask
 */
 class VISP_EXPORT vpDepthMask : public vpObjectMask
@@ -70,7 +70,8 @@ public:
    * \brief Retrieve the value of the minimum depth tolerated error.
    * It is expressed as a factor of the object's diameter.
    *
-   * By default, the accepted depth range  error when computing the mask is computed using the rendered object's clipping planes.
+   * By default, the accepted depth range  error when computing the mask is computed
+   * using the rendered object's clipping planes.
    * If these values are too close to the object's center
    *
    * \return double
@@ -80,7 +81,8 @@ public:
 
   /**
    * \brief Get the Falloff smoothing factor (of the depth range) strength of the depth probability distribution.
-   * It corresponds to the standard deviation of a gaussian distribution, which is used to compute the probability of a depth values when it is not in the accepted depth range.
+   * It corresponds to the standard deviation of a gaussian distribution,
+   * which is used to compute the probability of a depth values when it is not in the accepted depth range.
    * The accepted depth range is computed using the object radius and clipping planes.
    *
    * \return double
@@ -96,7 +98,6 @@ public:
 private:
   double m_minRadiusFactor;
   double m_falloffSmoothingFactor;
-
 };
 
 END_VISP_NAMESPACE

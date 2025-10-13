@@ -5,7 +5,6 @@
 #include <visp3/rbt/vpRBVisualOdometry.h>
 #include <pybind11/pybind11.h>
 
-
 class TrampolineRBVisualOdometry : public vpRBVisualOdometry
 {
 public:
@@ -33,6 +32,7 @@ public:
 
       );
   }
+
   virtual vpHomogeneousMatrix getCameraPose() const VP_OVERRIDE
   {
     PYBIND11_OVERRIDE_PURE(
@@ -51,7 +51,6 @@ public:
       reset,       /* Name of function in C++ (must match Python name) */
       );
   }
-
 };
 
 

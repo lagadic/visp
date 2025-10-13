@@ -79,7 +79,6 @@ public:
   virtual void initFromParent(PointerTo<WindowFramework> window);
   virtual void initFromParent(const vpPanda3DBaseRenderer &renderer);
 
-
   virtual void beforeFrameRendered() { }
   virtual void renderFrame();
   virtual void afterFrameRendered();

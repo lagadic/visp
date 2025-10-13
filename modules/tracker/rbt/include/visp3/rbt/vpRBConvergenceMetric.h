@@ -37,11 +37,9 @@
 #include <visp3/rbt/vpPointMap.h>
 #include <visp3/rbt/vpObjectCentricRenderer.h>
 
-
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include VISP_NLOHMANN_JSON(json_fwd.hpp)
 #endif
-
 
 BEGIN_VISP_NAMESPACE
 class VISP_EXPORT vpRBConvergenceMetric
@@ -80,13 +78,11 @@ protected:
   double m_convergedThreshold;
 };
 
-
 class VISP_EXPORT vpRBConvergenceADDMetric : public vpRBConvergenceMetric
 {
 public:
   vpRBConvergenceADDMetric(double renderThreshold, double convergedThreshold, unsigned int numPoints, unsigned int seed);
   double operator()(const vpCameraParameters & /*cam*/, const vpHomogeneousMatrix &cTo1, const vpHomogeneousMatrix &cTo2) VP_OVERRIDE;
-
 };
 
 class VISP_EXPORT vpRBConvergenceReprojectionMetric : public vpRBConvergenceMetric

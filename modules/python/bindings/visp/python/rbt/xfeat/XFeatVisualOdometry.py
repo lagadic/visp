@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -152,7 +152,6 @@ class XFeatVisualOdometry(RBVisualOdometry):
     self.backend.process_frame(frame, self.iter)
     self.current_representation = self.backend.get_current_environment_data()
 
-
     self.idx_curr_env_matched, self.idx_environment_map = None, None
     with torch.no_grad():
       if self.environment_map.has_points() and self.current_representation is not None:
@@ -165,7 +164,6 @@ class XFeatVisualOdometry(RBVisualOdometry):
           self.idx_curr_env_matched, self.idx_environment_map = self.backend.match(self.current_representation.descriptors, visible_env_descriptors)
           self.idx_curr_env_matched = self.idx_curr_env_matched.cpu().numpy()
           self.idx_environment_map = visible_indices[self.idx_environment_map.cpu().numpy()]
-
 
     self.numFeatures = 0
     self.iter += 1
@@ -186,9 +184,7 @@ class XFeatVisualOdometry(RBVisualOdometry):
 
       self.numFeatures = len(self.idx_curr_env_matched) * (2 if not self.use_3d else 3)
 
-
     self.optimize(frame)
-
 
   def optimize(self, frame: RBFeatureTrackerInput):
     self.previous_cTw = HomogeneousMatrix(self.cTw) # Calling constructor is important, we want to keep the value, not the reference as current cTw will be modified!
@@ -216,7 +212,6 @@ class XFeatVisualOdometry(RBVisualOdometry):
 
     self.cTw = c
     self.cnTc = self.cTw * self.previous_cTw.inverse()
-
 
   def reset(self):
     self.environment_map.reset()

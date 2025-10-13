@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,6 @@
 #include <visp3/ar/vpPanda3DRGBRenderer.h>
 #include <visp3/ar/vpPanda3DFrameworkManager.h>
 
-
 #include <visp3/rbt/vpRBFeatureTrackerFactory.h>
 #include <visp3/rbt/vpRBDriftDetectorFactory.h>
 #include <visp3/rbt/vpObjectMaskFactory.h>
@@ -52,8 +51,9 @@
 BEGIN_VISP_NAMESPACE
 
 vpRBTracker::vpRBTracker() :
-  m_firstIteration(true), m_trackers(0), m_lambda(1.0), m_vvsIterations(10), m_muInit(0.0), m_muIterFactor(0.5), m_scaleInvariantOptim(false),
-  m_renderer(m_rendererSettings), m_imageHeight(480), m_imageWidth(640), m_convergenceMetric(nullptr), m_displaySilhouette(false), m_modelChanged(true), m_rendererIsSetup(false)
+  m_firstIteration(true), m_trackers(0), m_modelChanged(true), m_lambda(1.0), m_vvsIterations(10), m_muInit(0.0),
+  m_muIterFactor(0.5), m_scaleInvariantOptim(false), m_renderer(m_rendererSettings), m_rendererIsSetup(false),
+  m_imageHeight(480), m_imageWidth(640), m_convergenceMetric(nullptr), m_displaySilhouette(false)
 {
   m_rendererSettings.setClippingDistance(0.01, 1.0);
   m_renderer.setRenderParameters(m_rendererSettings);
@@ -632,10 +632,10 @@ vpRBTracker::extractSilhouettePoints(const vpImage<vpRGBf> &Inorm, const vpImage
       vpRBSilhouettePoint p(n, m, norm, theta, Z);
       p.detectSilhouette(Idepth);
       points.push_back(p);
-      }
     }
-  return points;
   }
+  return points;
+}
 
 
 void vpRBTracker::addTracker(std::shared_ptr<vpRBFeatureTracker> tracker)
