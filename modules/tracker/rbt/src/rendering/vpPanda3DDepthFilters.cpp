@@ -39,7 +39,8 @@
 #include <visp3/gui/vpDisplayFactory.h>
 
 BEGIN_VISP_NAMESPACE
-#define MACRO_AS_STRING(s) #s
+#define STRINGIFY(x) #x
+#define TOSTRING(x) STRINGIFY(x)
 
 const std::string vpPanda3DDepthGaussianBlur::FRAGMENT_SHADER =
 "#version 330\n"
@@ -99,7 +100,7 @@ void vpPanda3DDepthGaussianBlur::getRender(vpImage<unsigned char> &I) const
 const std::string vpPanda3DDepthCannyFilter::FRAGMENT_SHADER =
 "#version 330\n"
 "#define PI"
-MACRO_AS_STRING(M_PI)
+TOSTRING(M_PI)
 "\n"
 "\n"
 "in vec2 texcoords;\n"
