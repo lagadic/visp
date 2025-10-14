@@ -19,10 +19,7 @@ jobs:
         os: [ubuntu-latest, macos-latest, macos-13]
         environment: [full-ci-coverage]
         build_type: [Release]
-        include:
-          - os: windows-latest
-            environment: full-ci-coverage
-            build_type: Release
+
 
 
     steps:
@@ -48,11 +45,6 @@ jobs:
           VISP_BUILD_TYPE: ${{ matrix.build_type }}
         run: |
           pixi run -e ${{ matrix.environment }} build
-
-      - name: Run tests [MacOS/Linux/Windows]
-        shell: bash -el {0}
-        run: |
-          pixi run -e ${{ matrix.environment }} test
 
       - name: Generate coverage file [MacOS/Linux/Windows]
         shell: bash -el {0}

@@ -280,7 +280,7 @@ vpMatrix &oXs, std::vector<int> &validCandidateIndices)
     }
   }
 
-  oXs.resize(validoXList.size(), 3, false, false);
+  oXs.resize(static_cast<unsigned int>(validoXList.size()), 3, false, false);
   unsigned int i = 0;
   for (const std::array<double, 3> &oX: validoXList) {
     oXs[i][0] = oX[0];
