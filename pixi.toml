@@ -107,6 +107,8 @@ VISP_BUILD_TYPE = "Debug"
 coverage = { cmd = [
   "gcovr", "-r", ".", "--object-directory", "$VISP_BUILD_DIR",
   "--gcov-ignore-errors=all", "--gcov-ignore-parse-errors=all",
+  " --exclude-function-lines", "--exclude-noncode-lines",
+  "--exclude-throw-branches", "--merge-lines",
   "--include", "modules",
   "--exclude", "tutorial",
   "--exclude", "example",
