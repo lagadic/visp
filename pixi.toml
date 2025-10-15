@@ -142,7 +142,8 @@ coverage = { cmd = [
   "--exclude", "modules/io/src/image/private",
   "--exclude", "modules/vision/src/pose-estimation/private",
   "--exclude", "modules/robot/src/real-robot/biclops/private",
-  "--cobertura", "$VISP_BUILD_DIR/visp-coverage.xml"
+  "--cobertura", "$VISP_BUILD_DIR/visp-coverage.xml",
+  "--txt"
 ], depends-on = ["test"]}
 echo-coverage-path = { cmd = "echo $VISP_BUILD_DIR/visp-coverage.xml"}
 
