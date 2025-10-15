@@ -196,4 +196,5 @@ all-clang-cl-with-tests = { features = ["rbt", "python-bindings", "doc", "clang-
 # Environments with all features + build of tests / tutorials / examples (mainly for CI)
 full-ci = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials"]}
 full-ci-coverage = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials", "coverage"]}
+full-ci-coverage-clang-cl = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials", "coverage", "clang-cl"]}
 full-ci-clang-cl = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials", "clang-cl"]}
