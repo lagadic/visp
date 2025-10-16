@@ -51,7 +51,7 @@ public:
   ~ClassUsingDisplayPCL();
 
   /**
-   * @brief Demonstration on how to use a \b vpPclViewer in threaded mode.
+   * @brief Demonstration on how to use a \b vpDisplayPCL in threaded mode.
    *
    * @param addedNoise Standard deviation of the noise added to the moved surface.
    * @param order  The order of the polynomial surface that is generated.
