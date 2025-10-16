@@ -85,7 +85,7 @@ public:
   }
 
 protected:
-  void createScene()
+  void createScene() VP_OVERRIDE
   {
     mSceneMgr->setAmbientLight(Ogre::ColourValue(static_cast<float>(0.6), static_cast<float>(0.6), static_cast<float>(0.6))); // Default value of lightning
     Ogre::Light *light = mSceneMgr->createLight();
@@ -126,7 +126,7 @@ protected:
     mAnimationState->setEnabled(true);
   }
 
-  bool customframeEnded(const Ogre::FrameEvent &evt)
+  bool customframeEnded(const Ogre::FrameEvent &evt) VP_OVERRIDE
   {
     // Update animation
     // To move, we add it the time since last frame

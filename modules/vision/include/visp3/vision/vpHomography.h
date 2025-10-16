@@ -169,6 +169,12 @@ BEGIN_VISP_NAMESPACE
   }
   \endcode
  *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> If you are interested in using this class, you may have a look at:</span><br>
+ *
+ * - \ref tutorial-homography
 */
 class VISP_EXPORT vpHomography : public vpArray2D<double>
 {

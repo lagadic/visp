@@ -130,10 +130,13 @@ public:
 
   /*!
   * Keep the part of an image that is in the mask.
+  *
   * \param[in] I : Input image.
   * \param[in] mask : Mask where pixels to consider have value equal to true.
   * \param[out] I_mask : Resulting image where pixels that are in the mask are kept.
   * \return The number of pixels that are in the mask.
+  *
+  * \sa To see how to use it to perform color segmentation on an image, \ref tutorial-hsv-segmentation-intro
   */
   inline static int inMask(const vpImage<vpRGBa> &I, const vpImage<bool> &mask, vpImage<vpRGBa> &I_mask)
   {
@@ -142,10 +145,13 @@ public:
 
   /*!
   * Keep the part of an image that is in the mask.
+  *
   * \param[in] I : Input image.
   * \param[in] mask : Mask where pixels to consider have values that differ from 0.
   * \param[out] I_mask : Resulting image where pixels that are in the mask are kept.
   * \return The number of pixels that are in the mask.
+  *
+  * \sa To see how to use it to perform color segmentation on an image, \ref tutorial-hsv-segmentation-intro
   */
   inline static int inMask(const vpImage<vpRGBa> &I, const vpImage<unsigned char> &mask, vpImage<vpRGBa> &I_mask)
   {
@@ -155,10 +161,13 @@ public:
 
   /*!
   * Keep the part of an image that is in the mask.
+  *
   * \param[in] I : Input image.
   * \param[in] mask : Mask where pixels to consider have value equal to true.
   * \param[out] I_mask : Resulting image where pixels that are in the mask are kept.
   * \return The number of pixels that are in the mask.
+  *
+  * \sa To see how to use it to perform color segmentation on an image, \ref tutorial-hsv-segmentation-intro
   */
   inline static int inMask(const vpImage<unsigned char> &I, const vpImage<bool> &mask, vpImage<unsigned char> &I_mask)
   {
@@ -167,10 +176,13 @@ public:
 
   /*!
   * Keep the part of an image that is in the mask.
+  *
   * \param[in] I : Input image.
   * \param[in] mask : Mask where pixels to consider have values that differ from 0.
   * \param[out] I_mask : Resulting image where pixels that are in the mask are kept.
   * \return The number of pixels that are in the mask.
+  *
+  * \sa To see how to use it to perform color segmentation on an image, \ref tutorial-hsv-segmentation-intro
   */
   inline static int inMask(const vpImage<unsigned char> &I, const vpImage<unsigned char> &mask, vpImage<unsigned char> &I_mask)
   {
@@ -181,10 +193,13 @@ public:
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 /*!
   * Keep the part of an image that is in the mask.
+  *
   * \param[in] I : Input image.
   * \param[in] mask : Mask where pixels to consider have value equal to true.
   * \param[out] I_mask : Resulting image where pixels that are in the mask are kept.
   * \return The number of pixels that are in the mask.
+  *
+  * \sa To see how to use it to perform color segmentation on an image, \ref tutorial-hsv-segmentation-intro
   */
   template <typename ArithmeticType, bool useFullScale>
   inline static int inMask(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, const vpImage<bool> &mask, vpImage<vpHSV<ArithmeticType, useFullScale>> &I_mask)
@@ -195,10 +210,13 @@ public:
 
   /*!
   * Keep the part of an image that is in the mask.
+  *
   * \param[in] I : Input image.
   * \param[in] mask : Mask where pixels to consider have values that differ from 0.
   * \param[out] I_mask : Resulting image where pixels that are in the mask are kept.
   * \return The number of pixels that are in the mask.
+  *
+  * \sa To see how to use it to perform color segmentation on an image, \ref tutorial-hsv-segmentation-intro
   */
   template <typename ArithmeticType, bool useFullScale>
   inline static int inMask(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, const vpImage<unsigned char> &mask, vpImage<vpHSV<ArithmeticType, useFullScale>> &I_mask)
@@ -229,6 +247,9 @@ public:
    * \param[in] out The output mask encoded as booleans. True means that the pixel is in range and false that it
    * is not in range.
    * \return int The number of pixels that are in the HSV range.
+   *
+   * \sa To see how to use it to perform color segmentation on an image, \ref tutorial-hsv-segmentation-intro or \ref tutorial-hsv-range-tuner
+   * \sa To see how to use it to perform color segmentation on a point-cloud , \ref tutorial-hsv-segmentation-pcl
    */
   template <typename ArithmeticType, bool useFullScale, typename RangeType>
   static int inRange(const vpImage<vpHSV<ArithmeticType, useFullScale>> &Iin,
@@ -252,6 +273,9 @@ public:
    * \param[in] out The output mask encoded as unsigned char. 255 means that the pixel is in range and 0 that it
    * is not in range.
    * \return int The number of pixels that are in the HSV range.
+   *
+   * \sa To see how to use it to perform color segmentation on an image, \ref tutorial-hsv-segmentation-intro or \ref tutorial-hsv-range-tuner
+   * \sa To see how to use it to perform color segmentation on a point-cloud , \ref tutorial-hsv-segmentation-pcl
    */
   template <typename ArithmeticType, bool useFullScale, typename RangeType>
   static int inRange(const vpImage<vpHSV<ArithmeticType, useFullScale>> &Iin,
@@ -275,6 +299,9 @@ public:
    * \param[in] out The output mask encoded as booleans. True means that the pixel is in range and false that it
    * is not in range.
    * \return int The number of pixels that are in the HSV range.
+   *
+   * \sa To see how to use it to perform color segmentation on an image, \ref tutorial-hsv-segmentation-intro or \ref tutorial-hsv-range-tuner
+   * \sa To see how to use it to perform color segmentation on a point-cloud , \ref tutorial-hsv-segmentation-pcl
    */
   template <typename ArithmeticType, bool useFullScale>
   static int inRange(const vpImage<vpHSV<ArithmeticType, useFullScale>> &Iin,
@@ -302,6 +329,9 @@ public:
    * \param[in] out The output mask encoded as unsigned char. 255 means that the pixel is in range and 0 that it
    * is not in range.
    * \return int The number of pixels that are in the HSV range.
+   *
+   * \sa To see how to use it to perform color segmentation on an image, \ref tutorial-hsv-segmentation-intro or \ref tutorial-hsv-range-tuner
+   * \sa To see how to use it to perform color segmentation on a point-cloud , \ref tutorial-hsv-segmentation-pcl
    */
   template <typename ArithmeticType, bool useFullScale>
   static int inRange(const vpImage<vpHSV<ArithmeticType, useFullScale>> &Iin,

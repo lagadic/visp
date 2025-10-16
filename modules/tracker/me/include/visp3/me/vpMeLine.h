@@ -87,6 +87,10 @@ BEGIN_VISP_NAMESPACE
  * The angle \f$\theta\f$ is computed thanks to the direction of the
  * arrow. The arrow points to the side of the line which is darker.
  *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ *
  * The example below available in tutorial-me-line-tracker.cpp and described
  * in \ref tutorial-tracking-me shows how to use this class.
  *

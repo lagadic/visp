@@ -41,9 +41,16 @@
 
 BEGIN_VISP_NAMESPACE
 /**
-*\brief A factory that can be used to create Object segmentation algorithms from JSON data.
-*
-*\ingroup group_rbt_mask
+ *\brief A factory that can be used to create Object segmentation algorithms from JSON data.
+ *
+ *\ingroup group_rbt_mask
+ *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> If you want to have an in-depth presentation of the Render-Based Tracker (RBT), you may have a look at:</span><br>
+ *
+ * - \ref tutorial-tracking-rbt
 */
 class VISP_EXPORT vpObjectMaskFactory : public vpDynamicFactory<vpObjectMask>
 {

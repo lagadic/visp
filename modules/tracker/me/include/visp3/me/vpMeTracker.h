@@ -57,6 +57,13 @@ BEGIN_VISP_NAMESPACE
  * \brief Contains abstract elements for a Distance to Feature type feature.
  *
  * 2D state = list of points, 3D state = feature
+ *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> If you are interested in using a ME tracker in your application, you may have a look at:</span><br>
+ *
+ * - \ref tutorial-tracking-me
 */
 class VISP_EXPORT vpMeTracker : public vpTracker
 {

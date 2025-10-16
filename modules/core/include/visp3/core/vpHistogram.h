@@ -289,7 +289,7 @@ public:
       m_total = 0;
       while (idCurrent < size_) {
         if (*ptrMaskCurrent) {
-          unsigned int id = std::floor((I.bitmap[idCurrent] - minVal)/widthBin);
+          unsigned int id = static_cast<unsigned int>(std::floor((I.bitmap[idCurrent] - minVal)/widthBin));
           ++m_histogram[id];
           ++m_total;
         }

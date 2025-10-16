@@ -53,6 +53,13 @@ BEGIN_VISP_NAMESPACE
  * that is placed perfectly in front of the camera.
  * - A shader (given as an argument to the constructor) is applied to this quad.
  * - The result is copied back to ram if required.
+ *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> If you are interested in using Panda3D in Augmented Reality applications, you may have a look at:</span><br>
+ *
+ * - \ref tutorial-panda3d
 */
 class VISP_EXPORT vpPanda3DPostProcessFilter : public vpPanda3DBaseRenderer
 {

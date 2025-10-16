@@ -29,8 +29,7 @@
  *
  * Description:
  * Forward projection.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpForwardProjection.cpp

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +33,7 @@
  * Authors:
  * Romain Tallonneau
  * Bertrand Delabarre
- *
-*****************************************************************************/
+ */
 
 /*!
  \file vpMbtDistanceCylinder.h
@@ -62,6 +60,18 @@ BEGIN_VISP_NAMESPACE
   \brief Manage a cylinder used in the model-based tracker.
 
   \ingroup group_mbt_features
+
+  <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+
+  <b>Tutorials</b><br>
+  <span style="margin-left:2em"> If you are interested in using a MBT tracker in your applications, you may have a look at:</span><br>
+
+  - \ref tutorial-tracking-mb-generic
+  - \ref tutorial-tracking-mb-generic-stereo
+  - \ref tutorial-tracking-mb-generic-rgbd
+  - \ref tutorial-tracking-mb-generic-apriltag-live
+  - \ref tutorial-mb-generic-json
+  - \ref tutorial-tracking-mb-generic-rgbd-Blender
 */
 class VISP_EXPORT vpMbtDistanceCylinder
 {

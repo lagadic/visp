@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Example with Kinova Jaco robot.
- *
-*****************************************************************************/
+ */
 
 /*!
   \example servoKinovaJacoJoint.cpp
@@ -167,7 +165,7 @@ int main(int argc, char *argv[])
   }
   catch (const vpException &e) {
     std::cout << "Catch exception: " << e.getStringMessage() << std::endl;
-}
+  }
 
   std::cout << "The end" << std::endl;
   return EXIT_SUCCESS;

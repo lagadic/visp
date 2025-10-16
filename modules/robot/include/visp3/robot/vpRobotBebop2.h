@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,8 +32,7 @@
  *
  * Authors:
  * Gatien Gaumerais
- *
-*****************************************************************************/
+ */
 
 #ifndef _vpRobotBebop2_h_
 #define _vpRobotBebop2_h_
@@ -68,7 +66,11 @@ BEGIN_VISP_NAMESPACE
   Interface for Parrot ARSDK3, allowing to control the Bebop 2 drone and get images from the camera (if ViSP was built
   with FFMpeg support).
 
-  \sa \ref tutorial-bebop2-vs
+  <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+
+  <b>Tutorials</b><br>
+  <span style="margin-left:2em"> If you are interested in using performing visual servoing using a Bebop 2 drone, you may have a look at:</span><br>
+ * - \ref tutorial-bebop2-vs
 */
 class VISP_EXPORT vpRobotBebop2
 {

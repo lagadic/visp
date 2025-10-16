@@ -29,8 +29,7 @@
  *
  * Description:
  * Define a graph for the vpPlot class.
- *
-*****************************************************************************/
+ */
 #define FLUSH_ON_PLOT
 
 #include <visp3/core/vpConfig.h>
@@ -577,8 +576,6 @@ void vpPlotGraph::resetPointList(unsigned int curveNum)
   (curveList + curveNum)->nbPoint = 0;
   firstPoint = true;
 }
-
-/************************************************************************************************/
 
 bool vpPlotGraph::check3Dline(vpImagePoint &iP1, vpImagePoint &iP2)
 {

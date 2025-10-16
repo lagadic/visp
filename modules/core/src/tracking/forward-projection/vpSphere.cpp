@@ -29,8 +29,7 @@
  *
  * Description:
  * Sphere feature.
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpFeatureDisplay.h>
 #include <visp3/core/vpSphere.h>

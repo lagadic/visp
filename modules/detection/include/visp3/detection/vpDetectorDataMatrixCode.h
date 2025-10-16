@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Base class for bar code detection.
- *
-*****************************************************************************/
+ */
 
 #ifndef _vpDetectorDataMatrixCode_h_
 #define _vpDetectorDataMatrixCode_h_
@@ -108,8 +106,12 @@ BEGIN_VISP_NAMESPACE
  *   Message: "datamatrix 2"
  * \endcode
  *
- * Other examples are also provided in tutorial-barcode-detector.cpp and
- * tutorial-barcode-detector-live.cpp
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> If you are interested in multiple QR codes detection, you may have a look at:</span><br>
+ *
+ * - \ref tutorial-detection-barcode
  */
   class VISP_EXPORT vpDetectorDataMatrixCode : public vpDetectorBase
 {

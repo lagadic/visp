@@ -102,24 +102,26 @@ BEGIN_VISP_NAMESPACE
  *   is used when there was a problem performing basic tracking of the dot, but
  *   can also be used to find a certain type of dots in the full image.
  *
- * The following sample code available in
- * tutorial-blob-tracker-live.cpp shows how to grab images from a
- * firewire camera, track a blob and display the tracking results.
+ * \sa vpDot
+ *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ *
+ * The following sample code, available in
+ * tutorial-blob-tracker-live.cpp and explained line-by-line in \ref tutorial-tracking-blob,
+ * shows how to grab images from a firewire camera, track a blob and display the tracking results.
  *
  * \include tutorial-blob-tracker-live.cpp
- * A line by line explanation of the previous example is provided in
- * \ref tutorial-tracking-blob.
  *
- * This other example available in tutorial-blob-auto-tracker.cpp shows firstly
- * how to detect in the first image all the blobs that match some
+ * This other example, available in tutorial-blob-auto-tracker.cpp
+ * and explained line-by-line in \ref tutorial-tracking-blob, section \ref tracking_blob_tracking,
+ * shows firstly how to detect in the first image all the blobs that match some
  * characteristics in terms of size, area, gray level. Secondly, it shows how
  * to track all the dots that are detected.
  *
  * \include tutorial-blob-auto-tracker.cpp
- * A line by line explanation of this last example is also provided in
- * \ref tutorial-tracking-blob, section \ref tracking_blob_tracking.
  *
- * \sa vpDot
 */
 class VISP_EXPORT vpDot2 : public vpTracker
 {
