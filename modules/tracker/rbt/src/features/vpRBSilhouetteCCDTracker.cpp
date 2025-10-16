@@ -365,7 +365,13 @@ void vpRBSilhouetteCCDTracker::computeVVSIter(const vpRBFeatureTrackerInput &fra
     }
   }
   computeLocalStatistics(frame.IRGB, m_stats);
-  computeErrorAndInteractionMatrix(); // Update interaction matrix, and gauss newton left and right side terms
+  // Update interaction matrix, and gauss newton left and right side terms
+  if (m_temporalSmoothingFac > 0.0) {
+    computeErrorAndInteractionMatrix<true>();
+  }
+  else {
+    computeErrorAndInteractionMatrix<false>();
+  }
 
   m_vvsConverged = false;
   if (iteration > 0 && tol < m_vvsConvergenceThreshold) {
@@ -604,7 +610,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
       vic_ptr[10 * negative_normal + 9] = exp(-dist2[0] * dist2[0] / (2 * sigma * sigma)) / (sqrt(2 * M_PI) * sigma);
       normalized_param[kk][1] += vic_ptr[10 * negative_normal + 7];
     }
-    }
+  }
 
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
@@ -719,8 +725,8 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
       cov_vic_ptr[9 + m * 3 + m] += m_ccdParameters.kappa;
     }
   }
-  }
-
+}
+template<bool hasTemporalSmoothing>
 void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
 {
   const unsigned int npointsccd = static_cast<unsigned int>(m_controlPoints.size());
@@ -785,17 +791,21 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
 
         for (unsigned n = 0; n < 9; ++n) {
           //double *tmp_cov_ptr = tmp_cov[m];
-          tmp_cov[n] = errf * cov_vic_ptr[n] + (1.0 - errf) * cov_vic_ptr[n + 9]
-            + smooth2 * (errf * cov_vic_ptr_prev[n] + (1.0 - errf) * cov_vic_ptr_prev[n + 9]);
+          tmp_cov[n] = errf * cov_vic_ptr[n] + (1.0 - errf) * cov_vic_ptr[n + 9];
+          if constexpr (hasTemporalSmoothing) {
+            tmp_cov[n] += smooth2 * (errf * cov_vic_ptr_prev[n] + (1.0 - errf) * cov_vic_ptr_prev[n + 9]);
+          }
         }
 
         tmp_cov.inverse(tmp_cov_inv);
 
         //compute the difference between I_{kl} and \hat{I_{kl}}
         for (int m = 0; m < 3; ++m) {
-          double err = (pix_j[m] - errf * mean_vic_ptr[m] - (1.0 - errf) * mean_vic_ptr[m + 3])
-            + m_temporalSmoothingFac * (pix_j[m] - errf * mean_vic_ptr_prev[m] - (1.0 - errf) * mean_vic_ptr_prev[m + 3]);
-            //error_ccd[i*2*normal_points_number*3 + j*3 + m] = img(vic_ptr[10*j+0], vic_ptr[10*j+1])[m]- errf * mean_vic_ptr[m]- (1-errf)* mean_vic_ptr[m+3];
+          double err = (pix_j[m] - errf * mean_vic_ptr[m] - (1.0 - errf) * mean_vic_ptr[m + 3]);
+          if constexpr (hasTemporalSmoothing) {
+            err += m_temporalSmoothingFac * (pix_j[m] - errf * mean_vic_ptr_prev[m] - (1.0 - errf) * mean_vic_ptr_prev[m + 3]);
+          }
+          //error_ccd[i*2*normal_points_number*3 + j*3 + m] = img(vic_ptr[10*j+0], vic_ptr[10*j+1])[m]- errf * mean_vic_ptr[m]- (1-errf)* mean_vic_ptr[m+3];
           tmp_pixel_diff[m] = err;
           error_ccd_j[m] = err;
           errorPerPoint[ui] += err;
@@ -805,9 +815,12 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
         //memset(tmp_jacobian.data, 0, 3 * m_ccdParameters.phi_dim * sizeof(double));
         for (unsigned int n = 0; n < 3; ++n) {
           const double f = -cam.get_px() * (vic_j[9] * (mean_vic_ptr[n] - mean_vic_ptr[n + 3]));
-          const double facPrev = -cam.get_px() * m_temporalSmoothingFac * (vic_j[9] * (mean_vic_ptr_prev[n] - mean_vic_ptr_prev[n + 3]));
+          const double facPrev = hasTemporalSmoothing ? -cam.get_px() * m_temporalSmoothingFac * (vic_j[9] * (mean_vic_ptr_prev[n] - mean_vic_ptr_prev[n + 3])) : 0.0;
           for (unsigned int dof = 0; dof < 6; ++dof) {
-            tmp_jacobian.data[dof * 3 + n] = f * Lnvp[dof] + facPrev * Lnvp[dof];
+            tmp_jacobian.data[dof * 3 + n] = f * Lnvp[dof];
+            if constexpr (hasTemporalSmoothing) {
+              tmp_jacobian.data[dof * 3 + n] += facPrev * Lnvp[dof];
+            }
           }
         }
 
@@ -883,7 +896,7 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
 
     gradientPerThread[threadIdx] = localGradient;
     hessianPerThread[threadIdx] = localHessian;
-    }
+  }
 
   for (unsigned int i = 0; i < gradientPerThread.size(); ++i) {
     m_gradient += gradientPerThread[i];
@@ -920,6 +933,6 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
 
     std::cerr << e.what() << std::endl;
   }
-  }
+}
 
 END_VISP_NAMESPACE
