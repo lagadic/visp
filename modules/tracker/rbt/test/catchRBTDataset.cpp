@@ -83,9 +83,28 @@ public:
   {
     m_path = path;
     loadCameraSettings();
-    std::cout << "Loaded camera settings!" << std::endl;
-    std::cout << m_cam << std::endl;
     loadFrames();
+    loadGroundTruth();
+  }
+
+  unsigned int getImageHeight() const { return m_h; }
+  unsigned int getImageWidth() const { return m_w; }
+  vpCameraParameters cam() const { return m_cam; }
+
+  void loadGroundTruth()
+  {
+    const std::string &groundTruthPath = vpIoTools::createFilePath(m_path, "apriltag_data.json");
+    std::ifstream f(groundTruthPath);
+    if (!f.good()) {
+      throw vpException(vpException::ioError, "Could not open ground truth file %s", groundTruthPath.c_str());
+    }
+    nlohmann::json j = nlohmann::json::parse(f);
+    m_cMg = j.at("grid");
+    std::cout << "Loaded ground truth data from apriltag grid: " << std::endl;
+    for (const vpHomogeneousMatrix &cMg: m_cMg) {
+      std::cout << vpPoseVector(cMg).t() << std::endl;
+    }
+    f.close();
   }
 
   void loadCameraSettings()
@@ -129,17 +148,12 @@ public:
     unsigned int frameIndex = 0;
     while (true) {
       SequenceFrame frame;
-      vpImage<vpRGBa> IRGB;
-      vpImage<unsigned char> I;
-      vpImage<float> depth;
-
       const std::string colorFramePath = getColorFrame(frameIndex);
       if (!vpIoTools::checkFilename(colorFramePath)) {
         break;
       }
       vpImageIo::read(frame.IRGB, colorFramePath);
       vpImageConvert::convert(frame.IRGB, frame.I);
-
 
       const std::string depthFramePath = getDepthFrame(frameIndex);
       if (vpIoTools::checkFilename(depthFramePath)) {
@@ -165,17 +179,54 @@ public:
     return m_frames[index];
   }
 
+  std::map<std::string, vpHomogeneousMatrix> getInitialPoses(vpRBTracker &tracker, const std::string &initsFolder, const std::string &objectsFolder, const std::vector<std::string> &objectNames)
+  {
+    std::map<std::string, vpHomogeneousMatrix> result;
+    for (const std::string &objectName: objectNames) {
+      const std::string objectInitFile = vpIoTools::createFilePath(initsFolder, objectName + ".json");
+      const std::string objectFolder = vpIoTools::createFilePath(objectsFolder, objectName);
+      const std::string objectClickInitFile = vpIoTools::createFilePath(objectFolder, objectName + ".init");
+
+      if (vpIoTools::checkFilename(objectInitFile)) {
+        std::ifstream f(objectInitFile);
+        if (f.good()) {
+          vpHomogeneousMatrix cMo = nlohmann::json::parse(f);
+          result[objectName] = cMo;
+        }
+        else {
+          throw vpException(vpException::ioError, "There was an issue opening init file %s", objectInitFile.c_str());
+        }
+        f.close();
+      }
+      else {
+        tracker.setModelPath(vpIoTools::createFilePath(objectFolder, objectName + ".obj"));
+        tracker.startTracking();
+        tracker.initClick(m_frames[0].IRGB, objectClickInitFile, true);
+        vpHomogeneousMatrix cMo;
+        tracker.getPose(cMo);
+        std::ofstream f(objectInitFile);
+        if (f.good()) {
+          nlohmann::json j = cMo;
+          f << j.dump(2);
+        }
+      }
+    }
+    return result;
+  }
+
+  vpHomogeneousMatrix getGroundTruthGridPose(unsigned int index) const
+  {
+    return m_cMg[index];
+  }
+
 private:
   std::string m_path;
   vpCameraParameters m_cam;
   float m_depthScale;
   unsigned int m_h, m_w;
   std::vector<SequenceFrame> m_frames;
-  std::map<std::string, vpHomogeneousMatrix> m_initcMos;
   std::vector<vpHomogeneousMatrix> m_cMg;
 };
-
-
 
 SCENARIO("Running tracker on static synthetic sequences", "[rbt]")
 {
@@ -185,55 +236,102 @@ SCENARIO("Running tracker on static synthetic sequences", "[rbt]")
   else {
     const std::string datasetPath = vpIoTools::getViSPImagesDataPath();
     const std::string rbtDatasetPath = vpIoTools::createFilePath(datasetPath, "rbt");
-    const std::string sequencePath = vpIoTools::createFilePath(rbtDatasetPath, "sequence");
+    const std::string sequencePath = vpIoTools::createFilePath(rbtDatasetPath, "sequence3");
+    const std::string initsFolder = vpIoTools::createFilePath(sequencePath, "init");
     const std::string modelsPath = vpIoTools::createFilePath(rbtDatasetPath, "models");
     const std::string configsPath = vpIoTools::createFilePath(rbtDatasetPath, "configs");
+
     GIVEN("A sequence")
     {
       Sequence sequence(sequencePath);
-      std::cout << "Sequence with num frames = " << sequence.numFrames() << std::endl;
-
       vpRBTracker tracker;
-
       sequence.initTracker(tracker);
+      unsigned int h = sequence.getImageHeight(), w = sequence.getImageWidth();
+
+      vpImage<unsigned char> displayI(h, w), displayDepth(h, w, 255), displayMask(h, w);
+      vpImage<vpRGBa> displayRGB(h, w);
+
+
+      std::vector<std::shared_ptr<vpDisplay>> displays = vpDisplayFactory::makeDisplayGrid(2, 2, 0, 0, 20, 20,
+        "Gray", displayI,
+        "Color", displayRGB,
+        "Depth", displayDepth,
+        "Mask", displayMask
+      );
 
       const std::vector<std::string> objectNames = { "dragon", "cube", "stomach", "lower_teeth" };
 
+      std::map<std::string, vpHomogeneousMatrix> init_cMos = sequence.getInitialPoses(tracker, initsFolder, modelsPath, objectNames);
+
       const std::map<std::string, std::vector<std::string>> configMap = {
-        { "dragon", { "denseDepth-me.json" } },
-        { "cube", { "denseDepth-me.json" } },
-        { "stomach", { "denseDepth-me.json" } },
-        { "lower_teeth", { "denseDepth-me.json" } },
+        { "dragon", { "denseDepth-me-single.json" } },
+        { "cube", { "denseDepth-me-single.json" } },
+        { "stomach", {"denseDepth-me-single.json"  } },
+        { "lower_teeth", {  } },
       };
 
-
       for (const std::string &objectName: objectNames) {
-        GIVEN("An object")
-        {
-          const std::string modelPath = vpIoTools::createFilePath(modelsPath, objectName + ".obj");
-          tracker.setModelPath(modelPath);
-          const std::vector<std::string> configNames = (*configMap.find(objectName)).second;
-          for (const std::string &configName: configNames) {
-            tracker.reset();
-            GIVEN("A tracker configuration")
-            {
-              const std::string configPath = vpIoTools::createFilePath(configsPath, configName);
-              tracker.loadConfigurationFile(configPath);
-              tracker.startTracking();
 
-              // tracker.setPose(POSE_INIT);
-              std::vector<vpHomogeneousMatrix> poses;
-              for (unsigned int i = 0; i < sequence.numFrames(); ++i) {
-                SequenceFrame frame = sequence.getFrame(i);
-                vpRBTrackingResult result = tracker.track(frame.I, frame.IRGB, frame.depth);
-                vpHomogeneousMatrix cMo;
-                tracker.getPose(cMo);
-                std::cout << "Pose = " << vpPoseVector(cMo).t() << std::endl;
-                poses.push_back(cMo);
-              }
+        const std::string modelFolder = vpIoTools::createFilePath(modelsPath, objectName);
+        const std::string modelPath = vpIoTools::createFilePath(modelFolder, objectName + ".obj");
+
+        tracker.setModelPath(modelPath);
+        const std::vector<std::string> configNames = configMap.find(objectName)->second;
+        for (const std::string &configName: configNames) {
+          std::cout << "Running tracker on object " <<  objectName << " with configuration " << configName << std::endl;
+          tracker.reset();
+
+          const std::string configPath = vpIoTools::createFilePath(configsPath, configName);
+          tracker.loadConfigurationFile(configPath);
+          tracker.startTracking();
+          tracker.setPose(init_cMos.find(objectName)->second);
+          std::vector<vpHomogeneousMatrix> poses;
+
+          for (unsigned int i = 0; i < sequence.numFrames(); ++i) {
+            SequenceFrame frame = sequence.getFrame(i);
+            vpRBTrackingResult result = tracker.track(frame.I, frame.IRGB, frame.depth);
+            vpHomogeneousMatrix cMo;
+            tracker.getPose(cMo);
+            poses.push_back(cMo);
+
+            displayI = frame.I;
+            displayRGB = frame.IRGB;
+            for (unsigned int j = 0; j < frame.depth.getSize(); ++j) {
+              displayDepth.bitmap[j] = static_cast<unsigned char>(std::min(frame.depth.bitmap[j], 1.f) * 255.f);
             }
+
+            vpDisplay::display(displayI); vpDisplay::display(displayRGB); vpDisplay::display(displayDepth);
+            tracker.display(displayI, displayRGB, displayDepth);
+            vpDisplay::displayFrame(displayI, cMo, sequence.cam(), 0.05, vpColor::none);
+            vpDisplay::displayFrame(displayI, sequence.getGroundTruthGridPose(i), sequence.cam(), 0.05, vpColor::yellow);
+
+            tracker.displayMask(displayMask);
+            vpDisplay::flush(displayI); vpDisplay::flush(displayRGB); vpDisplay::flush(displayDepth);
+            vpDisplay::flush(displayMask);
+          }
+          const vpHomogeneousMatrix init_cMo = init_cMos.find(objectName)->second;
+          const vpHomogeneousMatrix init_cMg = sequence.getGroundTruthGridPose(0);
+          std::vector<vpHomogeneousMatrix> first_gMos;
+          for (unsigned int i = 0; i < 10; ++i) {
+            first_gMos.push_back(sequence.getGroundTruthGridPose(0).inverse() * poses[i]);
+          }
+          const vpHomogeneousMatrix gMo = vpHomogeneousMatrix::mean(first_gMos);
+
+          for (unsigned int i = 0; i < sequence.numFrames(); ++i) {
+            // const vpHomogeneousMatrix giMg0 = sequence.getGroundTruthGridPose(i).inverse() * init_cMg;
+            // const vpHomogeneousMatrix gtcMo = init_cMo * giMg0.inverse();
+            // const vpHomogeneousMatrix error = poses[i].inverse() * gtcMo;
+            const vpHomogeneousMatrix cMo_star = sequence.getGroundTruthGridPose(i) * gMo;
+            const vpHomogeneousMatrix cMo = poses[i];
+
+            const vpHomogeneousMatrix error = cMo_star.inverse() * cMo;
+
+            const double errorT = error.getTranslationVector().frobeniusNorm();
+            const double errorR = vpMath::deg(error.getThetaUVector().getTheta());
+            std::cout << "error = " << errorT << "m, " << errorR << "°" << std::endl;
           }
         }
+
       }
     }
   }

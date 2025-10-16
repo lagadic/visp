@@ -354,6 +354,7 @@ public:
 protected:
   void updateCCDPoints(const vpHomogeneousMatrix &cMo);
   void computeLocalStatistics(const vpImage<vpRGBa> &I, vpCCDStatistics &stats);
+  template<bool hasTemporalSmoothing>
   void computeErrorAndInteractionMatrix();
 
   vpCCDParameters m_ccdParameters;
