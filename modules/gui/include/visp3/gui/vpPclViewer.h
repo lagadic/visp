@@ -63,7 +63,7 @@ BEGIN_VISP_NAMESPACE
 
   \sa \ref tutorial-display-pcl
 */
-class VP_DEPRECATED vpPclViewer
+class VISP_EXPORT VP_DEPRECATED vpPclViewer
 {
 public:
   typedef typename pcl::PointXYZRGB pclPointXYZRGB;
