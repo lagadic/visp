@@ -43,6 +43,24 @@ jobs:
         sudo apt-get install -y mesa-common-dev mesa-utils freeglut3-dev libflann-dev libboost-all-dev
         sudo apt-get install -y nlohmann-json3-dev libcjson-dev
 
+    - name: Install Ogre dependencies
+      run: |
+        sudo apt-get install -y libgles2-mesa-dev libvulkan-dev glslang-dev libxrandr-dev  libxaw7-dev libx11-dev libzzip-dev libsdl2-dev
+
+    - name: Build Ogre from source
+      run: |
+        pwd
+        GIT_ADDRESS="https://github.com/OGRECave/ogre"
+        LATEST_TAG=`eval ${FUNCTION_GET_LATEST}`
+        echo "Newest tag is ${LATEST_TAG}"
+        git clone --depth 1 --branch ${LATEST_TAG} ${GIT_ADDRESS} ${HOME}/ogre
+        cd ${HOME}/ogre
+        mkdir build && cd build && mkdir install
+        cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$(pwd)/install
+        make -j$(nproc) install
+        echo "OGRE_DIR=$(pwd)/install" >> $GITHUB_ENV
+        echo $OGRE_DIR
+
     - name: Build OpenBLAS from source
       run: |
         pwd
