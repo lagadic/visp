@@ -69,7 +69,7 @@ public:
     gamma_1(0.5), gamma_2(4), gamma_3(4), gamma_4(3),
     alpha(1.3), beta(0.06), kappa(0.5),
     covarianceIterDecreaseFactor(0.25),
-    h(40), delta_h(1), min_h(4), start_h(40), start_delta_h(1), phi_dim(6)
+    h(40), delta_h(1), min_h(4), start_h(40), start_delta_h(1), iters_since_scale_change(0), min_iters_before_scale_change(2), phi_dim(6)
   { }
 
   ~vpCCDParameters() = default;
@@ -128,6 +128,8 @@ public:
   int min_h;
   int start_h;
   int start_delta_h;
+  int iters_since_scale_change;
+  int min_iters_before_scale_change;
   /**
    * \brief Number of parameters estimated by CCD. Either 6 or 8.
    * Leave this fixed
@@ -176,7 +178,6 @@ public:
   vpMatrix cov_vic; //! Covariance
   vpMatrix nv; //! Normal vector
   vpMatrix imgPoints; //! Img pixels
-  vpMatrix weight; //! Whether this pixel is the object
 
   void reinit(int resolution, unsigned normalPointsNumber)
   {
@@ -185,7 +186,6 @@ public:
     cov_vic.resize(resolution, 18, false, false);
     vic.resize(resolution, 20 * normalPointsNumber, false, false);
     imgPoints.resize(resolution, 2 * 3 * normalPointsNumber, false, false);
-    weight.resize(resolution, 2 * normalPointsNumber, false, false);
   }
   void zero()
   {
@@ -194,7 +194,6 @@ public:
     cov_vic = 0.0;
     vic = 0.0;
     imgPoints = 0.0;
-    weight = 0.0;
   }
 };
 
@@ -293,8 +292,22 @@ public:
    * @}
    */
 
-  void onTrackingIterStart(const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE { }
+  void onTrackingIterStart(const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE;
   void onTrackingIterEnd(const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE { }
+  void reset() VP_OVERRIDE
+  {
+    m_stats.zero();
+    m_prevStats.zero();
+    m_previousFrame = nullptr;
+    m_controlPoints.clear();
+    m_gradientData.clear();
+    m_hessianData.clear();
+    m_hessian.clear();
+    m_gradients.clear();
+    m_error = 0.0;
+    m_random = vpUniRand(BASE_SEED);
+    m_vvsConverged = false;
+  }
 
   double getVVSTrackerWeight(double optimizationProgress) const VP_OVERRIDE
   {
@@ -383,7 +396,7 @@ protected:
   double m_minMaskConfidence;
 
   unsigned int m_maxPoints;
-
+  static const unsigned int BASE_SEED;
   vpUniRand m_random;
 
   vpDisplayType m_displayType;

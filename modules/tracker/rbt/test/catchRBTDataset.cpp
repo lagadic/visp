@@ -100,10 +100,10 @@ public:
     }
     nlohmann::json j = nlohmann::json::parse(f);
     m_cMg = j.at("grid");
-    std::cout << "Loaded ground truth data from apriltag grid: " << std::endl;
-    for (const vpHomogeneousMatrix &cMg: m_cMg) {
-      std::cout << vpPoseVector(cMg).t() << std::endl;
-    }
+    // std::cout << "Loaded ground truth data from apriltag grid: " << std::endl;
+    // for (const vpHomogeneousMatrix &cMg: m_cMg) {
+    //   std::cout << vpPoseVector(cMg).t() << std::endl;
+    // }
     f.close();
   }
 
@@ -228,7 +228,16 @@ private:
   std::vector<vpHomogeneousMatrix> m_cMg;
 };
 
-SCENARIO("Running tracker on static synthetic sequences", "[rbt]")
+struct RunData
+{
+  RunData(const std::string &config, double errorT, double errorR) : configName(config), medianErrorT(errorT), medianErrorR(errorR) { }
+  const std::string configName;
+  const double medianErrorT;
+  const double medianErrorR;
+
+};
+
+SCENARIO("Running tracker on sequences with ground truth", "[rbt]")
 {
   if (opt_no_display) {
     std::cout << "Display is disabled for tests, skipping..." << std::endl;
@@ -236,7 +245,7 @@ SCENARIO("Running tracker on static synthetic sequences", "[rbt]")
   else {
     const std::string datasetPath = vpIoTools::getViSPImagesDataPath();
     const std::string rbtDatasetPath = vpIoTools::createFilePath(datasetPath, "rbt");
-    const std::string sequencePath = vpIoTools::createFilePath(rbtDatasetPath, "sequence3");
+    const std::string sequencePath = vpIoTools::createFilePath(rbtDatasetPath, "sequence");
     const std::string initsFolder = vpIoTools::createFilePath(sequencePath, "init");
     const std::string modelsPath = vpIoTools::createFilePath(rbtDatasetPath, "models");
     const std::string configsPath = vpIoTools::createFilePath(rbtDatasetPath, "configs");
@@ -251,7 +260,6 @@ SCENARIO("Running tracker on static synthetic sequences", "[rbt]")
       vpImage<unsigned char> displayI(h, w), displayDepth(h, w, 255), displayMask(h, w);
       vpImage<vpRGBa> displayRGB(h, w);
 
-
       std::vector<std::shared_ptr<vpDisplay>> displays = vpDisplayFactory::makeDisplayGrid(2, 2, 0, 0, 20, 20,
         "Gray", displayI,
         "Color", displayRGB,
@@ -263,10 +271,43 @@ SCENARIO("Running tracker on static synthetic sequences", "[rbt]")
 
       std::map<std::string, vpHomogeneousMatrix> init_cMos = sequence.getInitialPoses(tracker, initsFolder, modelsPath, objectNames);
 
-      const std::map<std::string, std::vector<std::string>> configMap = {
-        { "dragon", { "denseDepth-me-single.json" } },
-        { "cube", { "denseDepth-me-single.json" } },
-        { "stomach", {"denseDepth-me-single.json"  } },
+      const std::map<std::string, std::vector<RunData>> configMap = {
+        { "dragon", {
+          RunData("ccd.json", 0.03, 10.0),
+          RunData("ccd.json", 0.03, 10.0),
+          RunData("ccd.json", 0.03, 10.0),
+
+          // RunData("ccd-temporal-smoothing.json", 0.03, 15.0),
+#ifdef VP_HAVE_RB_KLT_TRACKER
+          RunData("depth-klt.json", 0.02, 5.0),
+          // RunData("depth-klt.json", 0.02, 5.0),
+          // RunData("depth-klt.json", 0.02, 5.0),
+
+#endif
+          RunData("depth-ccd.json", 0.025, 5.0),
+          }
+        },
+        { "cube", {
+            RunData("ccd-temporal-smoothing.json", 0.03, 10.0),
+            RunData("ccd.json", 0.03, 10.0),
+#ifdef VP_HAVE_RB_KLT_TRACKER
+            RunData("depth-klt.json", 0.03, 10.0),
+#endif
+            RunData("depth-ccd.json", 0.025, 5.0),
+
+          }
+        },
+        { "stomach", {
+            RunData("ccd-temporal-smoothing.json", 0.02, 10.0),
+            RunData("ccd.json", 0.02, 3.0),
+            RunData("depth-ccd.json", 0.025, 5.0),
+#ifdef VP_HAVE_RB_KLT_TRACKER
+
+            RunData("depth-klt.json", 0.03, 3.0),
+#endif
+
+          }
+        },
         { "lower_teeth", {  } },
       };
 
@@ -276,13 +317,19 @@ SCENARIO("Running tracker on static synthetic sequences", "[rbt]")
         const std::string modelPath = vpIoTools::createFilePath(modelFolder, objectName + ".obj");
 
         tracker.setModelPath(modelPath);
-        const std::vector<std::string> configNames = configMap.find(objectName)->second;
-        for (const std::string &configName: configNames) {
+        const auto configsIt = configMap.find(objectName);
+        if (configsIt == configMap.end()) {
+          std::cout << "No config found for " << objectName << std::endl;
+          continue;
+        }
+        const std::vector<RunData> objectConfigs = configsIt->second;
+        for (const RunData &runConfig: objectConfigs) {
+          const std::string configName = runConfig.configName;
           std::cout << "Running tracker on object " <<  objectName << " with configuration " << configName << std::endl;
-          tracker.reset();
 
           const std::string configPath = vpIoTools::createFilePath(configsPath, configName);
           tracker.loadConfigurationFile(configPath);
+          tracker.reset();
           tracker.startTracking();
           tracker.setPose(init_cMos.find(objectName)->second);
           std::vector<vpHomogeneousMatrix> poses;
@@ -316,19 +363,29 @@ SCENARIO("Running tracker on static synthetic sequences", "[rbt]")
             first_gMos.push_back(sequence.getGroundTruthGridPose(0).inverse() * poses[i]);
           }
           const vpHomogeneousMatrix gMo = vpHomogeneousMatrix::mean(first_gMos);
-
+          std::vector<double> errorsT, errorsR;
           for (unsigned int i = 0; i < sequence.numFrames(); ++i) {
-            // const vpHomogeneousMatrix giMg0 = sequence.getGroundTruthGridPose(i).inverse() * init_cMg;
-            // const vpHomogeneousMatrix gtcMo = init_cMo * giMg0.inverse();
-            // const vpHomogeneousMatrix error = poses[i].inverse() * gtcMo;
             const vpHomogeneousMatrix cMo_star = sequence.getGroundTruthGridPose(i) * gMo;
             const vpHomogeneousMatrix cMo = poses[i];
-
             const vpHomogeneousMatrix error = cMo_star.inverse() * cMo;
-
             const double errorT = error.getTranslationVector().frobeniusNorm();
             const double errorR = vpMath::deg(error.getThetaUVector().getTheta());
-            std::cout << "error = " << errorT << "m, " << errorR << "°" << std::endl;
+            errorsT.push_back(errorT);
+            errorsR.push_back(errorR);
+          }
+          std::sort(errorsT.begin(), errorsT.end()); std::sort(errorsR.begin(), errorsR.end());
+          unsigned int index90p = static_cast<unsigned int>(round(0.9 * errorsT.size()));
+          double medErrorT = errorsT[index90p], medErrorR = errorsR[index90p];
+
+          std::cout << medErrorT << "m, " << medErrorR << "°" << std::endl;
+
+          if (medErrorT > runConfig.medianErrorT || medErrorR > runConfig.medianErrorR) {
+            std::stringstream ss;
+            ss << "Using object " << objectName << " with config " << configName << ":" << std::endl;
+            ss << "\tMaximum tolerated median error:\t" << runConfig.medianErrorT << "m, " << runConfig.medianErrorR << "°" << std::endl;
+            ss << "\tActual median error:\t\t\t" << medErrorT << "m, " << medErrorR << "°" << std::endl;
+
+            FAIL(ss.str());
           }
         }
 

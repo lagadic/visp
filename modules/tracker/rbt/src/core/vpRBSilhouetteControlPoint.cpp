@@ -118,6 +118,7 @@ vpRBSilhouetteControlPoint &vpRBSilhouetteControlPoint::operator=(const vpRBSilh
   m_lineFeature = std::move(other.m_lineFeature);
   m_line = std::move(other.m_line);
   m_valid = std::move(other.m_valid);
+  m_candidates = std::move(other.m_candidates);
   return *this;
 }
 
