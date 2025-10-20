@@ -256,9 +256,15 @@ class HeaderFile():
       '''
       Generate the bindings of a single class, handling a potential template specialization.
       '''
+
       python_ident = f'py{name_python}' if owner == 'submodule' else f'py{owner}{name_python}'
       name_cpp = get_typename(cls.class_decl.typename, owner_specs, header_env.mapping)
       class_doc = None
+
+      # A name cannot start with a digit
+      # But we strip vp prefix from class names, so we readd if required
+      if name_python[0].isdigit():
+        name_python = f'vp{name_python}'
 
       methods_dict: Dict[str, List[MethodBinding]] = {}
       def add_to_method_dict(key: str, value: MethodBinding):
