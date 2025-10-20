@@ -65,11 +65,6 @@ vpRBFeatureTrackerFactory::vpRBFeatureTrackerFactory()
     p->loadJsonConfiguration(j);
     return p;
   });
-  registerType("photometric", [](const nlohmann::json &j) {
-    std::shared_ptr<vpRBPhotometricTracker> p(new vpRBPhotometricTracker());
-    p->loadJsonConfiguration(j);
-    return p;
-  });
 #if defined(VP_HAVE_RB_KLT_TRACKER)
   registerType("klt", [](const nlohmann::json &j) {
     std::shared_ptr<vpRBKltTracker> p(new vpRBKltTracker());

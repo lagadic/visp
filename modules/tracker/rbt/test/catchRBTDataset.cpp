@@ -278,6 +278,7 @@ SCENARIO("Running tracker on sequences with ground truth", "[rbt]")
           RunData("depth-ccd-mask.json", 0.025, 5.0),
           RunData("depth-ccd.json", 0.025, 5.0),
 #ifdef VP_HAVE_RB_KLT_TRACKER
+          RunData("depth-klt-ccd-mask.json", 0.02, 5.0),
           RunData("depth-klt.json", 0.02, 5.0),
           RunData("depth-klt-me-multi.json", 0.02, 5.0),
           RunData("depth-klt-me-single.json", 0.025, 10.0),
@@ -291,6 +292,7 @@ SCENARIO("Running tracker on sequences with ground truth", "[rbt]")
             RunData("depth-ccd-mask.json", 0.03, 10.0),
 #ifdef VP_HAVE_RB_KLT_TRACKER
             RunData("depth-klt.json", 0.03, 10.0),
+            RunData("depth-klt-ccd-mask.json", 0.03, 5.0),
             RunData("depth-klt-me-multi.json", 0.03, 5.0),
             RunData("depth-klt-me-single.json", 0.03, 10.0),
 #endif
@@ -300,8 +302,9 @@ SCENARIO("Running tracker on sequences with ground truth", "[rbt]")
             RunData("ccd-temporal-smoothing.json", 0.02, 10.0),
             RunData("ccd.json", 0.02, 4.0),
             RunData("depth-ccd.json", 0.025, 5.0),
+            RunData("depth-ccd-mask.json", 0.03, 10.0),
 #ifdef VP_HAVE_RB_KLT_TRACKER
-
+            RunData("depth-klt-ccd-mask.json", 0.03, 5.0),
             RunData("depth-klt.json", 0.03, 3.0),
             RunData("depth-klt-me-multi.json", 0.03, 5.0),
             RunData("depth-klt-me-single.json", 0.03, 10.0),
