@@ -170,12 +170,12 @@ void vpRBSilhouetteCCDTracker::onTrackingIterStart(const vpHomogeneousMatrix & /
 void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput & /*previousFrame*/, const vpHomogeneousMatrix &/*cMo*/)
 {
 
+
   //m_controlPoints.reserve(frame.silhouettePoints.size());
   const vpHomogeneousMatrix cMo = frame.renders.cMo;
   const vpHomogeneousMatrix oMc = cMo.inverse();
 
   std::vector<std::vector<vpRBSilhouetteControlPoint>> pointsPerThread;
-
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel
 #endif

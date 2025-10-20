@@ -242,7 +242,6 @@ void vpPanda3DDepthCannyFilter::getRender(vpImage<float> &I, vpImage<unsigned ch
 
   I.resize(h, w, 0.f);
   valid.resize(I.getHeight(), I.getWidth(), 0);
-
   const unsigned top = static_cast<unsigned int>(std::max(0.0, bb.getTop()));
   const unsigned left = static_cast<unsigned int>(std::max(0.0, bb.getLeft()));
   const unsigned numComponents = m_texture->get_num_components();

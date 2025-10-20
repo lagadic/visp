@@ -273,37 +273,38 @@ SCENARIO("Running tracker on sequences with ground truth", "[rbt]")
 
       const std::map<std::string, std::vector<RunData>> configMap = {
         { "dragon", {
-          RunData("ccd.json", 0.03, 10.0),
-          RunData("ccd.json", 0.03, 10.0),
-          RunData("ccd.json", 0.03, 10.0),
-
+          // RunData("ccd.json", 0.03, 10.0),
           // RunData("ccd-temporal-smoothing.json", 0.03, 15.0),
+          RunData("depth-ccd-mask.json", 0.025, 5.0),
+          RunData("depth-ccd.json", 0.025, 5.0),
 #ifdef VP_HAVE_RB_KLT_TRACKER
           RunData("depth-klt.json", 0.02, 5.0),
-          // RunData("depth-klt.json", 0.02, 5.0),
-          // RunData("depth-klt.json", 0.02, 5.0),
-
+          RunData("depth-klt-me-multi.json", 0.02, 5.0),
+          RunData("depth-klt-me-single.json", 0.025, 10.0),
 #endif
-          RunData("depth-ccd.json", 0.025, 5.0),
           }
         },
         { "cube", {
             RunData("ccd-temporal-smoothing.json", 0.03, 10.0),
             RunData("ccd.json", 0.03, 10.0),
+            RunData("depth-ccd.json", 0.03, 10.0),
+            RunData("depth-ccd-mask.json", 0.03, 10.0),
 #ifdef VP_HAVE_RB_KLT_TRACKER
             RunData("depth-klt.json", 0.03, 10.0),
+            RunData("depth-klt-me-multi.json", 0.03, 5.0),
+            RunData("depth-klt-me-single.json", 0.03, 10.0),
 #endif
-            RunData("depth-ccd.json", 0.025, 5.0),
-
           }
         },
         { "stomach", {
             RunData("ccd-temporal-smoothing.json", 0.02, 10.0),
-            RunData("ccd.json", 0.02, 3.0),
+            RunData("ccd.json", 0.02, 4.0),
             RunData("depth-ccd.json", 0.025, 5.0),
 #ifdef VP_HAVE_RB_KLT_TRACKER
 
             RunData("depth-klt.json", 0.03, 3.0),
+            RunData("depth-klt-me-multi.json", 0.03, 5.0),
+            RunData("depth-klt-me-single.json", 0.03, 10.0),
 #endif
 
           }
@@ -315,7 +316,6 @@ SCENARIO("Running tracker on sequences with ground truth", "[rbt]")
 
         const std::string modelFolder = vpIoTools::createFilePath(modelsPath, objectName);
         const std::string modelPath = vpIoTools::createFilePath(modelFolder, objectName + ".obj");
-
         tracker.setModelPath(modelPath);
         const auto configsIt = configMap.find(objectName);
         if (configsIt == configMap.end()) {
@@ -323,6 +323,7 @@ SCENARIO("Running tracker on sequences with ground truth", "[rbt]")
           continue;
         }
         const std::vector<RunData> objectConfigs = configsIt->second;
+
         for (const RunData &runConfig: objectConfigs) {
           const std::string configName = runConfig.configName;
           std::cout << "Running tracker on object " <<  objectName << " with configuration " << configName << std::endl;

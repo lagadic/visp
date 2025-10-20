@@ -172,13 +172,13 @@ void vpRBTracker::setupRenderer(const std::string &file)
       break;
     }
   }
-  static int cannyId = 0;
   if (requiresSilhouetteShader && m_renderer.getRenderer<vpPanda3DDepthCannyFilter>() == nullptr) {
+    static int cannyId = 0;
 
     m_renderer.addSubRenderer(std::make_shared<vpPanda3DDepthCannyFilter>(
       "depthCanny" + std::to_string(cannyId), m_renderer.getRenderer<vpPanda3DGeometryRenderer>(), true, 0.0));
+    ++cannyId;
   }
-  ++cannyId;
   if (!m_rendererIsSetup) {
     m_renderer.initFramework();
   }
@@ -231,6 +231,9 @@ void vpRBTracker::startTracking()
   if (m_convergenceMetric) {
     m_convergenceMetric->sampleObject(m_renderer);
   }
+  vpRBFeatureTrackerInput f;
+  vpHomogeneousMatrix c(0, 0, 0.5, 0, 0, 0);
+  updateRender(f, c);
 }
 
 vpRBTrackingResult vpRBTracker::track(const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<float> &depth)

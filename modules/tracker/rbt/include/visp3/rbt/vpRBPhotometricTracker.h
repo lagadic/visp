@@ -188,7 +188,18 @@ public:
       }
     }
 
-    inline void update(const vpHomogeneousMatrix &cMo, const vpImage<float> &I, const vpCameraParameters &cam)
+    inline unsigned int getNumValidPoints() const
+    {
+      unsigned int res = 0;
+      for (unsigned int i = 0; i < m_valid.size(); ++i) {
+        if (m_valid[i]) {
+          ++res;
+        }
+      }
+      return res;
+    }
+
+    inline void update(const vpHomogeneousMatrix &cMo, const vpImage<unsigned char> &I, const vpCameraParameters &cam)
     {
       const vpRotationMatrix cRo = cMo.getRotationMatrix();
       const vpTranslationVector t = cMo.getTranslationVector();
@@ -203,7 +214,7 @@ public:
         m_xy[i][1] = m_cXt[1][i] / m_cXt[2][i];
         double u, v;
         vpMeterPixelConversion::convertPointWithoutDistortion(cam, m_xy[i][0], m_xy[i][1], u, v);
-        if (u < 3 || v < 3 || u >(I.getWidth() - 3) || v >(I.getHeight() - 3)) { // Check against border. If u or v is negative, we can't cast to uint!
+        if (u < 5 || v < 5 || u >(I.getWidth() - 5) || v >(I.getHeight() - 5)) { // Check against border. If u or v is negative, we can't cast to uint!
           m_valid[i] = false;
           continue;
         }
@@ -214,7 +225,6 @@ public:
         m_dI[i][0] = px * vpImageFilter::derivativeFilterX(I, vi, ui);
         m_dI[i][1] = py * vpImageFilter::derivativeFilterY(I, vi, ui);
       }
-
     }
 
     inline void errorAndInteraction(vpColVector &e, vpMatrix &L) const
@@ -231,7 +241,7 @@ public:
         const double Ix = m_dI[i][0], Iy = m_dI[i][1];
         const double x = m_xy[i][0], y = m_xy[i][1];
         if (m_valid[i]) {
-          e[i] = m_targetLuminance[i] - m_observations[i];
+          e[i] = m_observations[i] -  m_targetLuminance[i];
 
           L[i][0] = Ix * Zinv;
           L[i][1] = Iy * Zinv;

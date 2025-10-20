@@ -47,9 +47,9 @@ vpSilhouettePointsExtractionSettings::vpSilhouettePointsExtractionSettings()
   m_depthThreshold = 0.1;
   m_thresholdIsRelative = false;
   m_preferPreviousPoints = false;
-  m_sampleStep = 5;
+  m_sampleStep = 1;
   m_maxNumPoints = 0;
-  m_border = 10;
+  m_border = 2;
 }
 
 vpSilhouettePointsExtractionSettings::vpSilhouettePointsExtractionSettings(const vpSilhouettePointsExtractionSettings &rend)
@@ -81,6 +81,7 @@ std::vector<std::pair<unsigned int, unsigned int>> vpSilhouettePointsExtractionS
     finalCandidates.reserve(m_maxNumPoints);
     candidates.reserve(m_maxNumPoints);
   }
+
   if (m_preferPreviousPoints) {
     for (const vpRBSilhouettePoint &p: previousPoints) {
       double x = 0.0, y = 0.0;
@@ -109,7 +110,6 @@ std::vector<std::pair<unsigned int, unsigned int>> vpSilhouettePointsExtractionS
       }
     }
   }
-
   if (m_maxNumPoints > 0) {
     vpUniRand random(randomSeed);
     std::vector<size_t> indices(m_maxNumPoints - finalCandidates.size());

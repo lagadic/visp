@@ -285,7 +285,9 @@ void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals, vpImage<floa
   const unsigned rowIncrement = m_renderParameters.getImageWidth() * numComponents; // we ask for only 8 bits image, but we may get an rgb image
 
 
-  int image_width = static_cast<int>(m_renderParameters.getImageWidth());
+  int image_width = static_cast<int>(std::min(m_renderParameters.getImageWidth(), w - left));
+  int image_height = std::min(m_renderParameters.getImageHeight(), h - top);
+
   if (!m_fast) {
     const float *data = (float *)(&(m_normalDepthTexture->get_ram_image().front()));
     // Panda3D stores data upside down
@@ -299,7 +301,7 @@ void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals, vpImage<floa
 #if defined(VISP_HAVE_OPENMP)
 #pragma omp parallel for
 #endif
-    for (int i = 0; i < static_cast<int>(m_renderParameters.getImageHeight()); ++i) {
+    for (int i = 0; i < image_height; ++i) {
       const float *const rowData = data - i * rowIncrement;
       vpRGBf *normalRow = normals[top + i];
       float *depthRow = depth[top + i];
@@ -321,6 +323,7 @@ void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals, vpImage<floa
     const T *data = (T *)(&(m_normalDepthTexture->get_ram_image().front()));
     // Panda3D stores data upside down
     data += rowIncrement * (m_renderParameters.getImageHeight() - 1);
+
     if (numComponents != 4) {
       throw vpException(vpException::dimensionError, "Expected panda texture to have 4 components!");
     }
@@ -328,7 +331,7 @@ void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals, vpImage<floa
       throw vpException(vpException::badValue, "Unexpected data type in normals texture");
     }
 
-    for (unsigned int i = 0; i < m_renderParameters.getImageHeight(); ++i) {
+    for (unsigned int i = 0; i < image_height; ++i) {
       const T *const rowData = data - i * rowIncrement;
       vpRGBf *normalRow = normals[top + i];
       float *depthRow = depth[top + i];
@@ -340,7 +343,6 @@ void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals, vpImage<floa
         v[1] = (static_cast<float>(rowData[j_4 + 1]) / maxValue) * 2.f - 1.f;
         v[2] = (static_cast<float>(rowData[j_4 + 2]) / maxValue) * 2.f - 1.f;
         // const double norm = sqrtf(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
-
         normalRow[left_j].R = v[0];
         normalRow[left_j].G = v[1];
         normalRow[left_j].B = v[2];

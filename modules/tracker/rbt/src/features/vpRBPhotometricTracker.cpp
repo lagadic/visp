@@ -76,7 +76,7 @@ void vpRBPhotometricTracker::extractFeatures(const vpRBFeatureTrackerInput &fram
 #endif
 
 #ifdef VISP_HAVE_OPENMP
-#pragma omp for nowait
+#pragma omp for
 #endif
     for (auto i = static_cast<int>(bb.getTop()); i < static_cast<int>(bb.getBottom()); i += m_step) {
       for (auto j = static_cast<int>(bb.getLeft()); j < static_cast<int>(bb.getRight()); j += m_step) {
@@ -92,7 +92,7 @@ void vpRBPhotometricTracker::extractFeatures(const vpRBFeatureTrackerInput &fram
           //vpColVector objectNormal({ frame.renders.normals[i][j].R, frame.renders.normals[i][j].G, frame.renders.normals[i][j].B });
 
           fastProjectionSurfacePoint(oMc, x * Z, y * Z, Z, point.oX);
-          point.targetLuminance = 1.0;
+          point.targetLuminance = previousFrame.I[i][j];
           point.pixelPos[0] = i;
           point.pixelPos[1] = j;
 
@@ -127,6 +127,10 @@ void vpRBPhotometricTracker::extractFeatures(const vpRBFeatureTrackerInput &fram
 
 void vpRBPhotometricTracker::computeVVSIter(const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cMo, unsigned int iteration)
 {
+
+  m_surfacePointsSet.update(cMo, frame.I, frame.cam);
+
+  m_numFeatures = m_surfacePointsSet.getNumValidPoints();
   if (m_numFeatures == 0) {
     m_LTL = 0;
     m_LTR = 0;
@@ -137,9 +141,10 @@ void vpRBPhotometricTracker::computeVVSIter(const vpRBFeatureTrackerInput &frame
     m_covWeightDiag = 0.0;
     return;
   }
-  m_surfacePointsSet.update(cMo, frame.mask, frame.cam);
+
   m_surfacePointsSet.errorAndInteraction(m_error, m_L);
   //m_weights = 0.0;
+
   m_robust.setMinMedianAbsoluteDeviation(0.1);
   m_robust.MEstimator(vpRobust::TUKEY, m_error, m_weights);
 
@@ -160,9 +165,9 @@ void vpRBPhotometricTracker::computeVVSIter(const vpRBFeatureTrackerInput &frame
     regularization *= regularizationIterFactor;
   }
   m_LTL += eye * regularization;
-
-
+  std::cout << "THE END" << std::endl;
   computeJTR(m_L, m_weighted_error, m_LTR);
+  std::cout << m_LTL.sum() << "," << m_LTR.sum() << std::endl;
   m_vvsConverged = false;
 }
 
