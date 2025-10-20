@@ -19,10 +19,6 @@ jobs:
         os: [ubuntu-latest, macos-latest, macos-13]
         environment: [full-ci-coverage]
         build_type: [Release]
-        include:
-          - os: windows-latest
-            environment: full-ci-coverage-clang-cl
-            build_type: Release
 
     steps:
       - uses: actions/checkout@v4
