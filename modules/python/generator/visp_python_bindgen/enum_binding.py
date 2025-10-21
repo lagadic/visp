@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -196,6 +196,10 @@ def get_enum_bindings(root_scope: NamespaceScope, mapping: Dict, submodule: Subm
   for enum_repr in final_reprs:
     name_segments = enum_repr.name.split('::')
     py_name = name_segments[-1].replace('vp', '')
+    # A name cannot start with a digit
+    # But we strip vp prefix from enum names, so we readd if required
+    if py_name[0].isdigit():
+      py_name = f'vp{py_name}'
     # If an owner class is ignored, don't export this enum
     parent_ignored = False
     ignored_parent_name = None

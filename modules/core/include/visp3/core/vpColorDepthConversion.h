@@ -41,6 +41,16 @@
 #include "vpImage.h"
 
 BEGIN_VISP_NAMESPACE
+/**
+ * \brief Class that permits to project a color image into a depth frame.
+ *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> If you are interested in learning how to use this class, you may have a look at:</span><br>
+ *
+ * - \ref tutorial-planar-object-pose
+*/
 class VISP_EXPORT vpColorDepthConversion
 {
 public:

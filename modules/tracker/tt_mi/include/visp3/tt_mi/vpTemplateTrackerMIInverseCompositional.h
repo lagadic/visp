@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +33,7 @@
  * Authors:
  * Amaury Dame
  * Aurelien Yol
- *
-*****************************************************************************/
+ */
 #ifndef vpTemplateTrackerMIInverseCompositional_hh
 #define vpTemplateTrackerMIInverseCompositional_hh
 
@@ -54,6 +52,13 @@ BEGIN_VISP_NAMESPACE
   \ingroup group_tt_mi_tracker
   The algorithm implemented in this class is described in \cite Dame12a and
   \cite Marchand16a.
+
+  <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+
+  <b>Tutorials</b><br>
+  <span style="margin-left:2em"> If you are interested in the Template Tracker based on Mutual Information (TT-MI), you may have a look at:</span><br>
+
+  - \ref tutorial-tracking-tt
 */
 class VISP_EXPORT vpTemplateTrackerMIInverseCompositional : public vpTemplateTrackerMI
 {

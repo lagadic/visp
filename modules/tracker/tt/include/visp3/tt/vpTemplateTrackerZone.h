@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +33,7 @@
  * Authors:
  * Amaury Dame
  * Aurelien Yol
- *
-*****************************************************************************/
+ */
 #ifndef vpTemplateTrackerZone_hh
 #define vpTemplateTrackerZone_hh
 
@@ -59,6 +57,13 @@ BEGIN_VISP_NAMESPACE
   A zone can be initialized either by user interaction using mouse click in a
   display device throw initClick(), or by a list of points throw
   initFromPoints().
+
+  <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+
+  <b>Tutorials</b><br>
+  <span style="margin-left:2em"> If you are interested in the Template Tracker  (TT), you may have a look at:</span><br>
+
+  - \ref tutorial-tracking-tt
 */
 class VISP_EXPORT vpTemplateTrackerZone
 {

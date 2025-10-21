@@ -196,12 +196,12 @@ public:
     std::partial_sort_copy(
       idx.begin(), idx.end(),
       bestIndices.begin(), bestIndices.end(),
-      [*this](size_t i1, size_t i2) {return m_probas[i1] > m_probas[i2];}
+      [*this](size_t i1, size_t i2) {return m_probas[i1] > m_probas[i2]; }
     );
 
     std::vector<vpRGBa> colors(N);
     for (unsigned int i = 0; i < N; ++i) {
-      colors[i] = indexToColor(bestIndices[i]);
+      colors[i] = indexToColor(static_cast<unsigned int>(bestIndices[i]));
     }
     return colors;
   }

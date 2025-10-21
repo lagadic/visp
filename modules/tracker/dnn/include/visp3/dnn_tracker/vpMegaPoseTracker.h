@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Tracker based on MegaPose.
- *
-*****************************************************************************/
+ */
 
 #ifndef _vpMegaPoseTracker_h_
 #define _vpMegaPoseTracker_h_
@@ -98,7 +96,14 @@ BEGIN_VISP_NAMESPACE
  *   }
  * }
  * \endcode
- * For a more detailed usage see \ref tutorial-tracking-megapose.
+ *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> If you are interested in using tracking an object using Megapose, you may have a look at:</span><br>
+ *
+ * - \ref tutorial-tracking-megapose
+ * - \ref tutorial-megapose-model
 */
 class VISP_EXPORT vpMegaPoseTracker
 {

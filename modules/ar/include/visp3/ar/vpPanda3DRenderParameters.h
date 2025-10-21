@@ -46,6 +46,13 @@ BEGIN_VISP_NAMESPACE
  *  - Camera intrinsics
  *  - Image resolution
  *  - Clipping parameters
+ *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> If you are interested in using Panda3D in Augmented Reality applications, you may have a look at:</span><br>
+ *
+ * - \ref tutorial-panda3d
 */
 class VISP_EXPORT vpPanda3DRenderParameters
 {

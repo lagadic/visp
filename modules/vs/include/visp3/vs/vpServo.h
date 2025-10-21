@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -139,6 +139,21 @@ BEGIN_VISP_NAMESPACE
  *   } while (error > 0.0001); // Stop the task when current and desired visual features are close
  * }
  * \endcode
+ *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em">If you are interested in visual servoing, you may have a look at
+ *
+ * - \ref tutorial-ibvs
+ * - \ref tutorial-simu-robot-pioneer
+ * - \ref tutorial-boost-vs
+ * - \ref tutorial-franka-ibvs
+ * - \ref tutorial-franka-pbvs
+ * - \ref tutorial-bebop2-vs
+ * - \ref tutorial-flir-ptu-vs
+ * - \ref tutorial-universal-robot-ibvs
+ * - \ref tutorial-universal-robot-pbvs
 */
 class VISP_EXPORT vpServo
 {

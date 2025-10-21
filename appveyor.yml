@@ -15,7 +15,7 @@ environment:
   matrix:
     - TARGET: mingw
     # - TARGET: msvc
-    - TARGET: uwp
+    #- TARGET: uwp
     - TARGET: visp_sample
 
 # Scripts that are called at very beginning, before repo cloning

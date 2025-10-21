@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -218,8 +218,8 @@ vpCircleHoughTransform::computeCenterCandidates()
     size_t nbEdgePoints = edgePoints.size();
     m_edgePointsList.reserve(nbEdgePoints);
     for (size_t i = 0; i < nbEdgePoints; ++i) {
-      data.r = edgePoints[i].get_i();
-      data.c = edgePoints[i].get_j();
+      data.r = static_cast<unsigned int>(edgePoints[i].get_i());
+      data.c = static_cast<unsigned int>(edgePoints[i].get_j());
       workOnAccumulator(data, centersAccum);
     }
   }
@@ -473,7 +473,7 @@ vpCircleHoughTransform::filterCenterCandidates(const std::vector<vpCenterVotes> 
     auto sortingCenters = [](const vpCenterVotes &position_vote_a,
                              const vpCenterVotes &position_vote_b) {
                                return position_vote_a.m_votes > position_vote_b.m_votes;
-  };
+      };
 #endif
 
     std::sort(merged_peaks_position_votes.begin(), merged_peaks_position_votes.end(), sortingCenters);
@@ -485,7 +485,7 @@ vpCircleHoughTransform::filterCenterCandidates(const std::vector<vpCenterVotes> 
       m_centerCandidatesList.push_back(merged_peaks_position_votes[i].m_position);
       m_centerVotes.push_back(static_cast<int>(merged_peaks_position_votes[i].m_votes));
     }
-}
+  }
 }
 
 vpCircleHoughTransform::vpCentersBarycenter

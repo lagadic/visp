@@ -216,8 +216,12 @@ BEGIN_VISP_NAMESPACE
  * std::array<double, 16> pose = handler->readOnce().O_T_EE;
  * \endcode
  *
- * \sa \ref tutorial-franka-pbvs
- * \sa \ref tutorial-franka-ibvs
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+
+  <b>Tutorials</b><br>
+  <span style="margin-left:2em"> If you are interested in using performing visual servoing using a Franka robot, you may have a look at:</span><br>
+ * - \ref tutorial-franka-pbvs
+ * - \ref tutorial-franka-ibvs
 */
 class VISP_EXPORT vpRobotFranka : public vpRobot
 {

@@ -130,6 +130,15 @@ BEGIN_VISP_NAMESPACE
    \textbf{P} &=& \overline{\textbf{P}} - \textbf{K} \textbf{P}_z \textbf{K}^T
   \end{array}
   \f]
+
+
+  <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+
+  <b>Tutorials</b><br>
+  <span style="margin-left:2em"> If you are interested in Kalman filtering, you may have a look at:</span><br>
+
+  - \ref tutorial-ukf
+
 */
 class VISP_EXPORT vpUnscentedKalman
 {

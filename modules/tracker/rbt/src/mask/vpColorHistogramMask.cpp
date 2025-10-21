@@ -38,7 +38,6 @@
 
 BEGIN_VISP_NAMESPACE
 
-
 class vpProbaComputer
 {
 public:
@@ -83,7 +82,7 @@ private:
   std::vector<float> m_probas;
 };
 
-vpColorHistogramMask::vpColorHistogramMask() : m_depthErrorTolerance(0.01), m_objectUpdateRate(0.1), m_backgroundUpdateRate(0.1), m_threshold(2.f), m_computeOnBBOnly(false) { }
+vpColorHistogramMask::vpColorHistogramMask() : m_depthErrorTolerance(0.01f), m_objectUpdateRate(0.1f), m_backgroundUpdateRate(0.1f), m_threshold(2.f), m_computeOnBBOnly(false) { }
 
 void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
                                       const vpRBFeatureTrackerInput &previousFrame,

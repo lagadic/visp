@@ -30,8 +30,7 @@
  * Description:
  * Gray level histogram manipulation.
  *
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpHistogramPeak.cpp

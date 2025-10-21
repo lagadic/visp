@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,8 +36,7 @@
  *
  * Authors:
  * Jean-Luc CORRE
- *
-*****************************************************************************/
+ */
 
 #ifndef vpMyio_h
 #define vpMyio_h

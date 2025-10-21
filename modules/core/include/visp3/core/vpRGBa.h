@@ -197,7 +197,7 @@ public:
     buildFrom(const vpHSV<T, useFullScale> &hsv)
   {
     T hue = hsv.H, saturation = hsv.S, value = hsv.V;
-    T h = hue * 6.0;
+    T h = hue * static_cast<T>(6.0);
     T s = saturation;
     T v = value;
 

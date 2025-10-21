@@ -78,6 +78,17 @@ static inline unsigned long vp_mz_crc32(unsigned long crc, const unsigned char *
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
 #if defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
+/**
+ * \ingroup group_core_bridges
+ * \brief Helpers to convert NPY/NPZ format to/from ViSP format.
+ *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+
+  <b>Tutorials</b><br>
+  <span style="margin-left:2em"> If you are interested in converting NPY/NPZ format to/from ViSP format, you may have a look at:</span><br>
+
+  - \ref tutorial-npz
+ */
 namespace cnpy
 {
 // Copyright (C) 2011  Carl Rogers
@@ -231,6 +242,8 @@ template<typename T> void npy_save(std::string fname, const T *data, const std::
   \param[in] mode : Writing mode, i.e. overwrite (w) or append (a) to the file.
   \warning This function has only been tested on little endian platform.
   \note Original library: <a href="https://github.com/rogersce/cnpy">cnpy</a> with MIT license.
+
+  \sa To see how to use it, you may have a look at \ref tutorial-npz
  */
 template<typename T> void npz_save(std::string zipname, std::string fname, const T *data, const std::vector<size_t> &shape, std::string mode = "w")
 {
@@ -349,6 +362,8 @@ template<typename T> void npy_save(std::string fname, const std::vector<T> data,
   \param[in] mode : Writing mode, i.e. overwrite (w) or append (a) to the file.
   \warning This function has only been tested on little endian platform.
   \note Original library: <a href="https://github.com/rogersce/cnpy">cnpy</a> with MIT license.
+
+  \sa To see how to use it, you may have a look at \ref tutorial-npz
  */
 template<typename T> void npz_save(std::string zipname, std::string fname, const std::vector<T> data, std::string mode = "w")
 {

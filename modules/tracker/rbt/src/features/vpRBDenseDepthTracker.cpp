@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -159,12 +159,12 @@ void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame
   m_depthPointSet.build(m_depthPoints);
 
   if (m_depthPoints.size() > 0) {
-    m_error.resize(m_depthPoints.size(), false);
-    m_weights.resize(m_depthPoints.size(), false);
-    m_weighted_error.resize(m_depthPoints.size(), false);
-    m_L.resize(m_depthPoints.size(), 6, false, false);
+    m_error.resize(static_cast<unsigned int>(m_depthPoints.size()), false);
+    m_weights.resize(static_cast<unsigned int>(m_depthPoints.size()), false);
+    m_weighted_error.resize(static_cast<unsigned int>(m_depthPoints.size()), false);
+    m_L.resize(static_cast<unsigned int>(m_depthPoints.size()), 6, false, false);
     m_cov.resize(6, 6, false, false);
-    m_covWeightDiag.resize(m_depthPoints.size(), false);
+    m_covWeightDiag.resize(static_cast<unsigned int>(m_depthPoints.size()), false);
     m_numFeatures = m_L.getRows();
   }
   else {

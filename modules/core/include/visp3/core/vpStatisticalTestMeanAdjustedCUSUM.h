@@ -42,7 +42,7 @@
 
 BEGIN_VISP_NAMESPACE
 /**
- * \ingroup group_core_math_tools
+ * \ingroup group_core_spc
  * \brief Class that permits to perform a mean adjusted Cumulative Sum test.
  *
  * The mean adjusted CUSUM test is designed to detect drift in the mean \f$ \mu \f$
@@ -76,6 +76,13 @@ BEGIN_VISP_NAMESPACE
  * testDownwardMeanDrift().To detect only upward drifts in \f$ s(t) \f$ use
  * testUpwardMeanDrift(). To detect both, downward and upward drifts use
  * testDownUpwardMeanDrift().
+ *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> If you are interested in using Statistical Process Control methods, you may have a look at:</span><br>
+ *
+ * - \ref tutorial-spc
 */
 class VISP_EXPORT vpStatisticalTestMeanAdjustedCUSUM : public vpStatisticalTestAbstract
 {

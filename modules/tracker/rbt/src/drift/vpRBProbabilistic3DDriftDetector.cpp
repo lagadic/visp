@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -196,7 +196,7 @@ double vpRBProbabilistic3DDriftDetector::score(const vpRBFeatureTrackerInput &fr
 
         scoresLocal.push_back(proba); // Keep only the weight
         scoreLocal += proba * weight;
-        p->updateColor(averageColor, m_colorUpdateRate * probaDepth);
+        p->updateColor(averageColor, static_cast<float>(m_colorUpdateRate * probaDepth));
       }
 #ifdef VISP_HAVE_OPENMP
 #pragma omp critical
@@ -274,7 +274,7 @@ void vpRBProbabilistic3DDriftDetector::update(const vpRBFeatureTrackerInput &pre
         newPoint.X[1] = oX[1] / oX[3];
         newPoint.X[2] = oX[2] / oX[3];
         const vpRGBa &c = previousFrame.IRGB[prevI][prevJ];
-        const float colorVariance = std::pow(static_cast<float>(m_initialColorSigma), 2);
+        const float colorVariance = std::pow(static_cast<float>(m_initialColorSigma), 2.f);
         newPoint.stats.init(vpRGBf(c.R, c.G, c.B), vpRGBf(colorVariance));
         bool canAdd = true;
         for (const vpStored3DSurfaceColorPoint &p : m_points) {

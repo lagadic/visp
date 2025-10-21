@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,6 +63,19 @@ BEGIN_VISP_NAMESPACE
  * \brief Hybrid tracker based on moving-edges and keypoints tracked using KLT
  * tracker.
  *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> If you are interested in using a MBT tracker in your applications, you may have a look at:</span><br>
+ *
+ * - \ref tutorial-tracking-mb-generic
+ * - \ref tutorial-tracking-mb-generic-stereo
+ * - \ref tutorial-tracking-mb-generic-rgbd
+ * - \ref tutorial-tracking-mb-generic-apriltag-live
+ * - \ref tutorial-mb-generic-json
+ * - \ref tutorial-tracking-mb-generic-rgbd-Blender
+ *
+ * <b>Deprecated tutorials</b><br>
  * The \ref tutorial-tracking-mb-deprecated is a good starting point to use this class.
  *
  * The tracker requires the knowledge of the 3D model that could be provided in
@@ -207,6 +220,7 @@ BEGIN_VISP_NAMESPACE
  *   return 0;
  * }
  * \endcode
+ *
 */
 class VISP_EXPORT vpMbEdgeKltTracker :
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)

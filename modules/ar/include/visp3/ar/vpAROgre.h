@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,9 +100,20 @@ BEGIN_VISP_NAMESPACE
   application.  With that information and the image to be shown in background
   it will set up the 3D scene correspondingly.
 
+  <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+
+  <b>Tutorials</b><br>
+  <span style="margin-left:2em"> If you are interested in using Ogre3D in Augmented Reality applications, you may have a look at:</span><br>
+
+  - \ref tutorial-ogre
+
 */
 class VISP_EXPORT vpAROgre : public Ogre::FrameListener,
+#if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 11 <<8 | 0))
+  public OgreBites::WindowEventListener
+#else
   public Ogre::WindowEventListener
+#endif
 #ifdef VISP_HAVE_OIS
   ,
   public OIS::KeyListener
@@ -361,9 +372,9 @@ private:
   void createBackground(vpImage<unsigned char> &I);
   void createBackground(vpImage<vpRGBa> &I);
 
-  bool frameStarted(const Ogre::FrameEvent &evt);
+  bool frameStarted(const Ogre::FrameEvent &evt) VP_OVERRIDE;
 
-  bool frameEnded(const Ogre::FrameEvent &evt);
+  bool frameEnded(const Ogre::FrameEvent &evt) VP_OVERRIDE;
 
   bool stopTest(const Ogre::FrameEvent &evt);
 

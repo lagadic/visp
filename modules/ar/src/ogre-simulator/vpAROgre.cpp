@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -599,7 +599,7 @@ void vpAROgre::init(bool
     RTarget->getViewport(0)->setClearEveryFrame(true);
     RTarget->getViewport(0)->setOverlaysEnabled(false);
   }
-  catch (const Ogre::Exception &e) {
+  catch (const Ogre::Exception &) {
     std::cout << "Info: Texture rtf is already known by the resource manager." << std::endl;
   }
 
@@ -1011,7 +1011,7 @@ void vpAROgre::createBackground(vpImage<unsigned char> & /* I */)
         0,                 // num of mip maps
         Ogre::PF_BYTE_L, Ogre::TU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
     }
-    catch (const Ogre::Exception &e) {
+    catch (const Ogre::Exception &) {
       std::cout << "Info: Texture BackgroundTexture is already known by the resource manager." << std::endl;
     }
   }
@@ -1024,7 +1024,7 @@ void vpAROgre::createBackground(vpImage<unsigned char> & /* I */)
         0,                 // num of mip maps
         Ogre::PF_BYTE_L, Ogre::TU_DEFAULT);
     }
-    catch (const Ogre::Exception &e) {
+    catch (const Ogre::Exception &) {
       std::cout << "Info: Texture BackgroundTexture is already known by the resource manager." << std::endl;
     }
   }
@@ -1054,7 +1054,7 @@ void vpAROgre::createBackground(vpImage<unsigned char> & /* I */)
     mBackground->setMaterial("BackgroundMaterial");                  // Attach the material to the rectangle
 #endif
   }
-  catch (const Ogre::Exception &e) {
+  catch (const Ogre::Exception &) {
     std::cout << "Info: Material BackgroundMaterial is already known by the resource manager." << std::endl;
   }
 
@@ -1093,7 +1093,7 @@ void vpAROgre::createBackground(vpImage<vpRGBa> & /* I */)
         0,                 // num of mip maps
         Ogre::PF_BYTE_BGRA, Ogre::TU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
     }
-    catch (const Ogre::Exception &e) {
+    catch (const Ogre::Exception &) {
       std::cout << "Info: Texture BackgroundTexture is already known by the resource manager." << std::endl;
     }
   }
@@ -1107,7 +1107,7 @@ void vpAROgre::createBackground(vpImage<vpRGBa> & /* I */)
          0,                 // num of mip maps
          Ogre::PF_BYTE_BGRA, Ogre::TU_DEFAULT);
     }
-    catch (const Ogre::Exception &e) {
+    catch (const Ogre::Exception &) {
       std::cout << "Info: Texture BackgroundTexture is already known by the resource manager." << std::endl;
     }
   }
@@ -1140,7 +1140,7 @@ void vpAROgre::createBackground(vpImage<vpRGBa> & /* I */)
     mBackground->setMaterial("BackgroundMaterial");                  // Attach the material to the rectangle
 #endif
   }
-  catch (const Ogre::Exception &e) {
+  catch (const Ogre::Exception &) {
     std::cout << "Info: Material BackgroundMaterial is already known by the resource manager." << std::endl;
   }
   mBackground->setRenderQueueGroup(Ogre::RENDER_QUEUE_BACKGROUND); // To be rendered in Background

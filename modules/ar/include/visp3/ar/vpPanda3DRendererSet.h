@@ -63,6 +63,13 @@ BEGIN_VISP_NAMESPACE
  *     \endcode
  *     where `RendererType` is the relevant subclass of vpPanda3DBaseRenderer and `"MyRendererName"`
  *     its name (see vpPanda3DBaseRenderer::getName())
+ *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> If you are interested in using Panda3D in Augmented Reality applications, you may have a look at:</span><br>
+ *
+ * - \ref tutorial-panda3d
 */
 class VISP_EXPORT vpPanda3DRendererSet : public vpPanda3DBaseRenderer, public vpPanda3DLightable
 {

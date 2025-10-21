@@ -76,11 +76,17 @@ BEGIN_VISP_NAMESPACE
  * - Yolo v7, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_yolov7 network
  * - Yolo v8, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_yolov8 network
  * - Yolo v11, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_yolov11 network
+ * - Yolo v12, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_yolov12 network
  *
  * This class can be initialized from a JSON file if ViSP has been compiled with NLOHMANN JSON (see \ref soft_tool_json to see how to do it).
  * Examples of such JSON files can be found in the tutorial folder.
  *
- * \sa \ref tutorial-detection-dnn
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> If you want a detailed explanation on how to use this class, you may have a look at:</span><br>
+ *
+ * - \ref tutorial-detection-dnn
 */
 class VISP_EXPORT vpDetectorDNNOpenCV
 {

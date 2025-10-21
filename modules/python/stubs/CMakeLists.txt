@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,15 +33,11 @@
 #
 #############################################################################
 
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/setup.py.in" "${CMAKE_CURRENT_BINARY_DIR}/setup.py" @ONLY)
-# MANIFEST file is not really configured by CMAKE, but doing it like this ensures that the target will be regenerated if MANIFEST.in is modified
-#configure_file("${CMAKE_CURRENT_SOURCE_DIR}/MANIFEST.in" "${CMAKE_CURRENT_BINARY_DIR}/MANIFEST.in" COPYONLY)
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/setup.py" "${CMAKE_CURRENT_BINARY_DIR}/setup.py" COPYONLY)
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/pyproject.toml.in" "${CMAKE_CURRENT_BINARY_DIR}/pyproject.toml" @ONLY)
 
 add_custom_target( visp_python_bindings_stubs
-  COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/visp-stubs"
-  COMMAND ${PYTHON3_EXECUTABLE} -m pip install  ${_pip_args} pybind11-stubgen
-  COMMAND ${PYTHON3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/run_stub_generator.py --output-root ${CMAKE_CURRENT_BINARY_DIR}
   COMMAND ${PYTHON3_EXECUTABLE} -m pip install  ${_pip_args} "${CMAKE_CURRENT_BINARY_DIR}"
-  COMMENT "Generating Python stubs with pybind11-stubgen..."
+  COMMENT "Generating Python stubs..."
   DEPENDS visp_python_bindings_install
 )

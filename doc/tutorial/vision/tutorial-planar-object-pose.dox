@@ -19,7 +19,7 @@ expressed in the frame visible in the following image. This object is lying on a
 rectangle that corresponds to the Realsense cover box. The coordinates of the plane bounds are expressed in the same
 frame.
 \image html img-d435-box-pose-estimation.png
-HeTo resume:
+To resume:
 - The origin of the object frame is located at the top left corner of the D435 box.
 - The blue lines represent the box boundary that define the plane to which the object belongs.
 - The orange crosses represent some keypoints that define the object for which pose will be estimated.

@@ -57,6 +57,13 @@ template <typename T> class vpImage;
  * - use vpRBDriftDetector::hasDiverged to detect the drift, or vpRBDriftDetector::getScore to use the estimated tracking reliability.
  *
  * \ingroup group_rbt_drift
+ *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> If you want to have an in-depth presentation of the Render-Based Tracker (RBT), you may have a look at:</span><br>
+ *
+ * - \ref tutorial-tracking-rbt
 */
 class VISP_EXPORT vpRBDriftDetector
 {

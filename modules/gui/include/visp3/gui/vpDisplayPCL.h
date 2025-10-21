@@ -51,6 +51,13 @@ BEGIN_VISP_NAMESPACE
   \ingroup group_gui_plotter
   This class enables real time plotting of 3D point clouds. It relies on the PCL library.
   To see how to install PCL library, please refer to the \ref soft_tool_pcl section.
+
+  <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+
+  <b>Tutorials</b><br>
+  <span style="margin-left:2em"> If you want detailed explanation on how to use this class, you may have a look at:</span><br>
+
+  - \ref tutorial-hsv-segmentation-pcl
 */
 class VISP_EXPORT vpDisplayPCL
 {

@@ -189,7 +189,7 @@ void vpDiskGrabber::acquire(vpImage<float> &I)
 #if defined (VISP_HAVE_MINIZ) && (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98) && defined(VISP_HAVE_WORKING_REGEX)
     visp::cnpy::NpyArray array = visp::cnpy::npy_load(m_image_name);
     float *data = array.data<float>();
-    I.init(data, array.shape[0], array.shape[1], true);
+    I.init(data, static_cast<unsigned int>(array.shape[0]), static_cast<unsigned int>(array.shape[1]), true);
 #else
     throw(vpException(vpException::ioError, "Miniz is not installed, npy files cannot be read"));
 #endif

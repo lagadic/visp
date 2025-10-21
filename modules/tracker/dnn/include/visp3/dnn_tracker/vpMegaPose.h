@@ -60,6 +60,14 @@ BEGIN_VISP_NAMESPACE
  * This score is defined as 1 if the current pose is in the basin of attraction of the true pose
  * (whether the MegaPose refiner can converge to the true pose). As such, it should be used to detect divergence.
  * - The bounding box of the object in image space.
+ *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> If you are interested in using tracking an object using Megapose, you may have a look at:</span><br>
+ *
+ * - \ref tutorial-tracking-megapose
+ * - \ref tutorial-megapose-model
 */
 class vpMegaPoseEstimate
 {
@@ -130,7 +138,12 @@ inline void from_json(const nlohmann::json &j, vpMegaPoseEstimate &m)
   *
   * For more information on how the model works, see <a href="https://megapose6d.github.io/">The MegaPose Github page</a> or the paper \cite Labbe2022Megapose.
   *
-  * For instructions on how to install the Python server and an example usage, see \ref tutorial-tracking-megapose.
+  * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+  *
+  * <b>Tutorials</b><br>
+  * <span style="margin-left:2em"> For instructions on how to install the Python server and an example usage, have a look at:</span><br>
+  *
+  * - \ref tutorial-tracking-megapose
 */
 class VISP_EXPORT vpMegaPose
 {

@@ -66,6 +66,12 @@ BEGIN_VISP_NAMESPACE
  *
  * \ingroup group_rbt_trackers
  *
+ * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> If you want to have an in-depth presentation of the Render-Based Tracker (RBT), you may have a look at:</span><br>
+ *
+ * - \ref tutorial-tracking-rbt
 */
 class VISP_EXPORT vpRBDenseDepthTracker : public vpRBFeatureTracker
 {
@@ -168,7 +174,7 @@ public:
     }
     void build(const std::vector<vpDepthPoint> &points)
     {
-      unsigned int numPoints = points.size();
+      unsigned int numPoints = static_cast<unsigned int>(points.size());
       std::vector<vpMatrix *> matrices = { &m_oXt, &m_oNt, &m_cXt, &m_cNt, &m_observations };
       for (vpMatrix *m: matrices) {
         m->resize(3, numPoints, false, false);
