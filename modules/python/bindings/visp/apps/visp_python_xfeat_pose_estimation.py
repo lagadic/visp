@@ -268,6 +268,9 @@ def estimation_loop(object_path: Path, frame_source: RealSenseSource, pose_estim
 
     display_frames.flush()
 
+    from visp.ar import Panda3DFrameworkManager
+    Panda3DFrameworkManager.getInstance().exit()
+
 
 
 

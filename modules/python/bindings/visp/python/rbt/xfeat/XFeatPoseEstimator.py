@@ -52,99 +52,6 @@ from visp.rbt import RBVisualOdometryUtils, LevenbergMarquardtParameters
 from visp.python.vision.xfeat import XFeatBackend, XFeatRepresentation, XFeatStarRepresentation
 from visp.python.display_utils import get_display
 
-class XFeatPoseEstimator():
-  def __init__(self, backend: XFeatBackend, save_folder: Path):
-    self.xfeat_backend = backend
-    self.points_3d = None
-    self.descriptors = None
-    self.save_folder = save_folder
-    self.path_pts_3d = save_folder / 'xfeat_init_points3d.npy'
-    self.path_descriptors = save_folder / 'xfeat_init_descriptors.npy'
-    if self.path_pts_3d.exists() and self.path_descriptors.exists():
-      print('Loading keypoints database...')
-      self.points_3d = np.load(self.path_pts_3d)
-      self.descriptors = torch.tensor(np.load(self.path_descriptors)).cuda()
-
-    self.pose_estimator = Pose()
-    maxNbTrials = 500
-    threshold = 0.0001
-    numberOfInlierToReachAConsensus = 4
-    self.pose_estimator.setRansacFilterFlag(Pose.RANSAC_FILTER_FLAGS.PREFILTER_DEGENERATE_POINTS)
-    self.pose_estimator.setRansacMaxTrials(maxNbTrials)
-    self.pose_estimator.setRansacNbInliersToReachConsensus(numberOfInlierToReachAConsensus)
-    self.pose_estimator.setRansacThreshold(threshold)
-
-
-  def record(self, frame: RBFeatureTrackerInput, cTo: HomogeneousMatrix):
-    kps, descriptors = self.xfeat_backend.get_keypoints(frame.IRGB)
-    us, vs = kps[:, 0], kps[:, 1]
-    us, vs = np.rint(us).astype(np.int32), np.rint(vs).astype(np.int32)
-    is_object = frame.renders.depth.numpy()[vs, us] > 0.0
-    us, vs, descriptors = us[is_object], vs[is_object], descriptors[is_object]
-    Z = frame.renders.depth.numpy()[vs, us]
-    xs, ys = PixelMeterConversion.convertPoints(frame.cam, us, vs)
-    points_3d_cam = np.empty((len(xs), 4))
-    points_3d_cam[:, 0] = xs * Z
-    points_3d_cam[:, 1] = ys * Z
-    points_3d_cam[:, 2] = Z
-    points_3d_cam[:, 3] = 1.0
-
-    points_3d_object = cTo.inverse().numpy() @ points_3d_cam.T
-    points_3d_object = points_3d_object.T
-
-    if self.points_3d is None:
-      self.points_3d = points_3d_object
-      self.descriptors = descriptors
-    else:
-      self.points_3d = np.concatenate((self.points_3d, points_3d_object), axis=0)
-      self.descriptors = torch.concat((self.descriptors, descriptors), dim=0)
-
-  def estimate_pose(self, image: ImageRGBa, cam: CameraParameters) -> HomogeneousMatrix:
-    if self.points_3d is None:
-      raise RuntimeError('No 3D points were learned before trying to compute pose')
-    t1 = time.time()
-    kps, descriptors = self.xfeat_backend.get_keypoints(image)
-    t2 = time.time()
-    print(len(self.descriptors))
-    idx_curr_matches, idx_stored_matches = self.xfeat_backend.match(descriptors, self.descriptors, min_cos=0.0)
-    idx_curr_matches = idx_curr_matches.cpu().numpy()
-    idx_stored_matches = idx_stored_matches.cpu().numpy()
-    print(f'Matching took: {(time.time()  - t2) * 1000}')
-    pos_2d = kps[idx_curr_matches]
-    print(pos_2d)
-    xs, ys = PixelMeterConversion.convertPoints(cam, pos_2d[:, 0], pos_2d[:, 1])
-
-    pos_3d = self.points_3d[idx_stored_matches]
-    self.pose_estimator.clearPoint()
-    for x, y, X in zip(xs, ys, pos_3d):
-      p = Point()
-      p.set_x(x)
-      p.set_y(y)
-      p.set_oX(X[0])
-      p.set_oY(X[1])
-      p.set_oZ(X[2])
-      p.set_oW(X[3])
-
-      self.pose_estimator.addPoint(p)
-    t3 = time.time()
-    cTo = HomogeneousMatrix()
-    pose_ok = self.pose_estimator.computePose(Pose.RANSAC, cTo)
-    t4 = time.time()
-    print('extraction took: ', (t2 - t1) * 1000)
-    print('Problem formulation took: ', (t3 - t2) * 1000)
-    print('Resolution took: ', (t4 - t3) * 1000)
-    # pose_estimator.computePoseDementhonLagrangeVVS(cTo)
-    # pose_estimator.computePose(Pose.DEMENTHON_LAGRANGE_VIRTUAL_VS, cTo)
-    return cTo, pose_ok
-
-  def save(self):
-    print('Saving keypoints database...')
-    self.save_folder.mkdir(exist_ok=True)
-    np.save(self.path_pts_3d, self.points_3d)
-    np.save(self.path_descriptors, self.descriptors.cpu().numpy())
-
-
-
 class XFeatViewPointPoseEstimator():
   """Pose estimation based on XFeat keypoints and a PnP approach.
   This strategy first matches the current frame with viewpoints learned beforehand.
@@ -465,7 +372,7 @@ class XFeatViewPointPoseEstimator():
     for view in self.views:
       scores.append(view.match_and_score(cam, self.xfeat_backend, current_representation))
     views_enough_matches = list(filter(lambda x: x[1] > self.min_match_ratio, zip(self.views, scores)))
-    print(f'Found {len(views_enough_matches)} for pose optimization')
+    # print(f'Found {len(views_enough_matches)} for pose optimization')
 
     if len(views_enough_matches) == 0:
       return False, HomogeneousMatrix()
@@ -481,13 +388,13 @@ class XFeatViewPointPoseEstimator():
       final_views.append(view)
       poses.append(cMo)
       errors.append(view.error)
-      view.display_result(image, cMo, cam)
+      # view.display_result(image, cMo, cam)
 
     if len(poses) == 0:
       return False, HomogeneousMatrix()
 
 
-    print(f'Matching: {len(views_enough_matches)}, Geometric: {len(poses)}')
+    # print(f'Matching: {len(views_enough_matches)}, Geometric: {len(poses)}')
 
     pose_ok = len(errors) > 0
     best_view_index = np.argmin(errors)
