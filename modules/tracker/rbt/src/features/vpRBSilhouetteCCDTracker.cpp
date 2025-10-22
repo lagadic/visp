@@ -328,7 +328,7 @@ void vpRBSilhouetteCCDTracker::changeScale()
 #if defined(VISP_HAVE_OPENMP)
 #pragma omp parallel for
 #endif
-    for (unsigned int i = 0; i < m_gradients.size(); ++i) {
+    for (int i = 0; i < static_cast<int>(m_gradients.size()); ++i) {
       vpColVector::view(m_gradients[i], m_gradientData.data() + i * 6, 6);
       vpMatrix::view(m_hessians[i], m_hessianData.data() + i * 6 * 6, 6, 6);
     }
