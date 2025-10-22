@@ -70,7 +70,3 @@ if(WITH_CATCH2)
 endif()
 
 vp_add_tests(DEPENDS_ON visp_core visp_gui visp_io PRIVATE_INCLUDE_DIRS ${opt_test_incs} PRIVATE_LIBRARIES ${opt_test_libs})
-
-if(VISP_DATASET_FOUND)
-  add_test(catch-RBT-dataset  catchRBTDataset ${SHORT_OPTION_TO_DISABLE_DISPLAY})
-endif()

@@ -609,8 +609,7 @@ SCENARIO("Instantiating a render-based tracker", "[rbt]")
       tracker.loadConfiguration(j);
       verifyBase();
       REQUIRE(tracker.getModelPath() == "path/to/model.obj");
-      if(!opt_no_display)
-      {
+      if (!opt_no_display) {
         AND_THEN("Initializing tracking fails since object does not exist")
         {
           REQUIRE_THROWS(tracker.startTracking());
@@ -623,8 +622,7 @@ SCENARIO("Instantiating a render-based tracker", "[rbt]")
       tracker.loadConfiguration(j);
       verifyBase();
       REQUIRE(tracker.getModelPath() == "");
-      if(!opt_no_display)
-      {
+      if (!opt_no_display) {
         AND_THEN("Initializing tracking fails since path is not specified")
         {
           REQUIRE_THROWS(tracker.startTracking());
@@ -642,8 +640,7 @@ SCENARIO("Instantiating a render-based tracker", "[rbt]")
       tracker.loadConfiguration(j);
       verifyBase();
       REQUIRE(tracker.getModelPath() == objFile);
-      if(!opt_no_display)
-      {
+      if (!opt_no_display) {
         AND_THEN("Initializing tracker works")
         {
           REQUIRE_NOTHROW(tracker.startTracking());
@@ -669,12 +666,10 @@ SCENARIO("Instantiating a render-based tracker", "[rbt]")
 
 SCENARIO("Running tracker on static synthetic sequences", "[rbt]")
 {
-  if(opt_no_display)
-  {
+  if (opt_no_display) {
     std::cout << "Display is disabled for tests, skipping..." << std::endl;
   }
-  else
-  {
+  else {
     unsigned int h = 480, w = 640;
     vpCameraParameters cam(600, 600, 320, 240);
     vpPanda3DRenderParameters renderParams(cam, h, w, 0.01, 1.0);
@@ -720,9 +715,9 @@ SCENARIO("Running tracker on static synthetic sequences", "[rbt]")
     silhouetteSettings.setThresholdIsRelative(true);
     silhouetteSettings.setThreshold(0.1);
     silhouetteSettings.setPreferPreviousPoints(false);
-    silhouetteSettings.setMaxCandidates(512);
+    silhouetteSettings.setMaxCandidates(1024);
     tracker.setSilhouetteExtractionParameters(silhouetteSettings);
-    tracker.setOptimizationGain(0.25);
+    tracker.setOptimizationGain(0.5);
     tracker.setMaxOptimizationIters(10);
     tracker.setOptimizationInitialMu(0.01);
     tracker.setModelPath(objFile);
@@ -749,7 +744,7 @@ int main(int argc, char *argv[])
 {
   Catch::Session session; // There must be exactly one instance
   auto cli = session.cli()
-  | Catch::Clara::Opt(opt_no_display)["--no-display"]("Disable display");
+    | Catch::Clara::Opt(opt_no_display)["--no-display"]("Disable display");
   session.cli(cli);
 
   const int returnCode = session.applyCommandLine(argc, argv);

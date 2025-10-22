@@ -122,26 +122,6 @@ vpRBSilhouetteControlPoint &vpRBSilhouetteControlPoint::operator=(const vpRBSilh
   return *this;
 }
 
-int vpRBSilhouetteControlPoint::outOfImage(int i, int j, int half, int rows, int cols) const
-{
-  return (!((i> half+2) &&
-            (i< rows -(half+2)) &&
-            (j>half+2) &&
-            (j<cols-(half+2)))
-          );
-}
-
-int vpRBSilhouetteControlPoint::outOfImage(const vpImagePoint &iP, int half, int rows, int cols) const
-{
-  int i = vpMath::round(iP.get_i());
-  int j = vpMath::round(iP.get_j());
-  return (!((i> half+2) &&
-            (i< rows -(half+2)) &&
-            (j>half+2) &&
-            (j<cols-(half+2)))
-          );
-}
-
 void vpRBSilhouetteControlPoint::track(const vpImage<unsigned char> &I)
 {
 

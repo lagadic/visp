@@ -34,8 +34,6 @@
 #include <visp3/rbt/vpRBSilhouetteCCDTracker.h>
 #include <visp3/rbt/vpRBSilhouetteMeTracker.h>
 #include <visp3/rbt/vpRBDenseDepthTracker.h>
-#include <visp3/rbt/vpRBPhotometricTracker.h>
-
 
 BEGIN_VISP_NAMESPACE
 
