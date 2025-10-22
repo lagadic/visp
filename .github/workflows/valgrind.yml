@@ -52,4 +52,6 @@ jobs:
 
     - name: Run unit tests with Valgrind
       working-directory: build
-      run: ctest -j$(nproc) -T memcheck
+      run: |
+        ctest -j$(nproc) --output-on-failure -T memcheck
+        tail -v -n +1 Testing/Temporary/MemoryChecker*.log
