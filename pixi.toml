@@ -2,7 +2,7 @@
 authors = ["Olivier Roussel <olivier.roussel@inria.fr>"]
 channels = ["conda-forge", "panda3d-forge"]
 name = "visp"
-platforms = ["linux-64", "osx-64", "win-64", "osx-arm64"]
+platforms = ["linux-64", "linux-aarch64", "osx-64", "win-64", "osx-arm64"]
 version = "3.6.0"
 license = "GPL-2.0-only"
 license-file = "LICENSE.txt"
@@ -38,13 +38,14 @@ librealsense = "*"
 gsl = "*"
 gtk2 = "*"
 ogre = "*"
-zbar = "*"
 
 [target.linux-64.dependencies]
 mesa-libegl-cos7-x86_64 = "*"
+zbar = "*"
 
 [target.osx.dependencies]
 llvm-openmp = "*"
+zbar = "*"
 
 [activation]
 scripts = ["development/scripts/pixi/activation.sh"]
@@ -76,6 +77,8 @@ python-doc = { cmd = "cmake --build $VISP_BUILD_DIR --parallel $CPU_COUNT --targ
 view-python-doc = { cmd = "$BROWSER $VISP_BUILD_DIR/doc/python/index.html", env = { BROWSER = "firefox" } }
 
 [feature.rbt]
+# linux-aarch64 not supported yet (panda3d)
+platforms = ["linux-64", "osx-64", "win-64", "osx-arm64"]
 dependencies = { panda3d = { version = ">=1.10.15", channel = "panda3d-forge" } }
 
 [feature.doc]
