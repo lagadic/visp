@@ -258,6 +258,11 @@ public:
 
   bool hasDiverged() const VP_OVERRIDE;
 
+  void reset() VP_OVERRIDE
+  {
+    m_points.clear();
+  }
+
   void display(const vpImage<vpRGBa> &I) VP_OVERRIDE;
 
   /**

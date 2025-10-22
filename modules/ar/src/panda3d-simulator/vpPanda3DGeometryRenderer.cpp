@@ -83,6 +83,25 @@ const std::string SHADER_FRAG_NORMAL_AND_DEPTH =
 "  p3d_FragData.bgra = vec4(normalize(oNormal), distToCamera);\n"
 "}\n";
 
+
+const std::string SHADER_FRAG_NORMAL_AND_DEPTH_FAST =
+R"(#version 330
+in vec3 oNormal;
+in float distToCamera;
+out vec4 p3d_FragData;
+uniform float nearV;
+uniform float farV;
+void main()
+{
+  //float depthV = distToCamera <= nearV ? 0.0 : (distToCamera - nearV) / (farV - nearV);
+  float depthV = distToCamera / farV;
+  vec3 n = normalize(oNormal);
+  n = (n + 1.0) / 2.0;
+  p3d_FragData.bgra = vec4(n, depthV);
+}
+)";
+
+
 std::string renderTypeToName(vpPanda3DGeometryRenderer::vpRenderType type)
 {
   switch (type) {
@@ -95,7 +114,16 @@ std::string renderTypeToName(vpPanda3DGeometryRenderer::vpRenderType type)
   }
 }
 
-vpPanda3DGeometryRenderer::vpPanda3DGeometryRenderer(vpRenderType renderType) : vpPanda3DBaseRenderer(renderTypeToName(renderType)), m_renderType(renderType) { }
+void vpPanda3DGeometryRenderer::beforeFrameRendered()
+{
+  if (m_fast) {
+    m_renderRoot.set_shader_input("nearV", LVector2f(m_renderParameters.getNearClippingDistance()));
+    m_renderRoot.set_shader_input("farV", LVector2f(m_renderParameters.getFarClippingDistance()));
+  }
+
+}
+
+vpPanda3DGeometryRenderer::vpPanda3DGeometryRenderer(vpRenderType renderType, bool fast) : vpPanda3DBaseRenderer(renderTypeToName(renderType)), m_renderType(renderType), m_fast(fast) { }
 
 void vpPanda3DGeometryRenderer::setupScene()
 {
@@ -104,12 +132,12 @@ void vpPanda3DGeometryRenderer::setupScene()
   if (m_renderType == OBJECT_NORMALS) {
     shader = Shader::make(Shader::ShaderLanguage::SL_GLSL,
                           SHADER_VERT_NORMAL_AND_DEPTH_OBJECT,
-                          SHADER_FRAG_NORMAL_AND_DEPTH);
+                          m_fast ? SHADER_FRAG_NORMAL_AND_DEPTH_FAST : SHADER_FRAG_NORMAL_AND_DEPTH);
   }
   else if (m_renderType == CAMERA_NORMALS) {
     shader = Shader::make(Shader::ShaderLanguage::SL_GLSL,
                           SHADER_VERT_NORMAL_AND_DEPTH_CAMERA,
-                          SHADER_FRAG_NORMAL_AND_DEPTH);
+                          m_fast ? SHADER_FRAG_NORMAL_AND_DEPTH_FAST : SHADER_FRAG_NORMAL_AND_DEPTH);
   }
   m_renderRoot.set_shader(shader);
 }
@@ -120,11 +148,20 @@ void vpPanda3DGeometryRenderer::setupRenderTarget()
     throw vpException(vpException::fatalError, "Cannot setup render target when window is null");
   }
   FrameBufferProperties fbp;
-  fbp.set_rgb_color(true);
-  fbp.set_float_depth(false);
-  fbp.set_float_color(true);
-  fbp.set_depth_bits(16);
-  fbp.set_rgba_bits(32, 32, 32, 32);
+  if (!m_fast) {
+    fbp.set_rgb_color(true);
+    fbp.set_float_depth(false);
+    fbp.set_float_color(true);
+    fbp.set_depth_bits(16);
+    fbp.set_rgba_bits(32, 32, 32, 32);
+  }
+  else {
+    fbp.set_rgb_color(true);
+    fbp.set_float_depth(false);
+    fbp.set_float_color(false);
+    fbp.set_depth_bits(16);
+    fbp.set_rgba_bits(8, 8, 8, 8);
+  }
 
   WindowProperties win_prop;
   win_prop.set_size(m_renderParameters.getImageWidth(), m_renderParameters.getImageHeight());
@@ -147,8 +184,14 @@ void vpPanda3DGeometryRenderer::setupRenderTarget()
   // }
   m_buffers.push_back(m_normalDepthBuffer);
   m_normalDepthBuffer->set_inverted(windowOutput->get_gsg()->get_copy_texture_inverted());
-  fbp.setup_color_texture(m_normalDepthTexture);
-  m_normalDepthTexture->set_format(Texture::F_rgba32);
+  // fbp.setup_color_texture(m_normalDepthTexture);
+  if (!m_fast) {
+    m_normalDepthTexture->set_format(Texture::F_rgba32);
+  }
+  else {
+    m_normalDepthTexture->set_component_type(Texture::T_unsigned_byte);
+    m_normalDepthTexture->set_format(Texture::F_rgba);
+  }
   m_normalDepthBuffer->add_render_texture(m_normalDepthTexture, GraphicsOutput::RenderTextureMode::RTM_copy_texture, GraphicsOutput::RenderTexturePlane::RTP_color);
   m_normalDepthBuffer->set_clear_color(LColor(0.f));
   m_normalDepthBuffer->set_clear_color_active(true);
@@ -165,25 +208,67 @@ void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals, vpImage<floa
 {
   normals.resize(m_normalDepthTexture->get_y_size(), m_normalDepthTexture->get_x_size());
   depth.resize(m_normalDepthTexture->get_y_size(), m_normalDepthTexture->get_x_size());
-  if (m_normalDepthTexture->get_component_type() != Texture::T_float) {
-    throw vpException(vpException::badValue, "Unexpected data type in normals texture");
+
+  const unsigned numComponents = m_normalDepthTexture->get_num_components();
+  if (numComponents != 4) {
+    throw vpException(vpException::dimensionError, "Expected panda texture to have 4 components!");
   }
 
   int rowIncrement = normals.getWidth() * 4;
-  float *data = (float *)(&(m_normalDepthTexture->get_ram_image().front()));
-  data = data + rowIncrement * (normals.getHeight() - 1);
   rowIncrement = -rowIncrement;
+  if (!m_fast) {
+    using T = float;
+    T *data = (T *)(&(m_normalDepthTexture->get_ram_image().front()));
+    data = data + rowIncrement * (normals.getHeight() - 1);
+#if defined(VISP_HAVE_OPENMP)
+#pragma omp parallel for
+#endif
+    for (int i = 0; i < static_cast<int>(normals.getHeight()); ++i) {
+      const T *const rowData = data - i * rowIncrement;
 
-  for (unsigned int i = 0; i < normals.getHeight(); ++i) {
-    vpRGBf *normalRow = normals[i];
-    float *depthRow = depth[i];
-    for (unsigned int j = 0; j < normals.getWidth(); ++j) {
-      normalRow[j].R = (data[j * 4]);
-      normalRow[j].G = (data[j * 4 + 1]);
-      normalRow[j].B = (data[j * 4 + 2]);
-      depthRow[j] = (data[j * 4 + 3]);
+      vpRGBf *normalRow = normals[i];
+      float *depthRow = depth[i];
+      for (unsigned int j = 0; j < normals.getWidth(); ++j) {
+        normalRow[j].R = (rowData[j * 4]);
+        normalRow[j].G = (rowData[j * 4 + 1]);
+        normalRow[j].B = (rowData[j * 4 + 2]);
+        depthRow[j] = (rowData[j * 4 + 3]);
+      }
     }
-    data += rowIncrement;
+  }
+  else {
+    float farV = m_renderParameters.getFarClippingDistance();
+    using T = uint8_t;
+    Texture::ComponentType expectedComponent = Texture::T_unsigned_byte;
+    float maxValue = static_cast<float>(std::numeric_limits<T>::max());
+    const T *data = (T *)(&(m_normalDepthTexture->get_ram_image().front()));
+    // Panda3D stores data upside down
+    data += rowIncrement * (m_renderParameters.getImageHeight() - 1);
+
+    if (m_normalDepthTexture->get_component_type() != expectedComponent) {
+      throw vpException(vpException::badValue, "Unexpected data type in normals texture");
+    }
+#if defined(VISP_HAVE_OPENMP)
+#pragma omp parallel for
+#endif
+    for (int i = 0; i < static_cast<int>(normals.getHeight()); ++i) {
+      const T *const rowData = data - i * rowIncrement;
+      vpRGBf *normalRow = normals[i];
+      float *depthRow = depth[i];
+      std::array<float, 3> v;
+      for (int j = 0; j < static_cast<int>(normals.getWidth()); ++j) {
+        int j_4 = j * 4;
+        v[0] = (static_cast<float>(rowData[j_4]) / maxValue) * 2.f - 1.f;
+        v[1] = (static_cast<float>(rowData[j_4 + 1]) / maxValue) * 2.f - 1.f;
+        v[2] = (static_cast<float>(rowData[j_4 + 2]) / maxValue) * 2.f - 1.f;
+        // const double norm = sqrtf(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+
+        normalRow[j].R = v[0];
+        normalRow[j].G = v[1];
+        normalRow[j].B = v[2];
+        depthRow[j] = (static_cast<float>(rowData[j_4 + 3]) / maxValue) * farV;
+      }
+    }
   }
 }
 
@@ -198,76 +283,172 @@ void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals, vpImage<floa
   const unsigned left = static_cast<unsigned int>(std::max(0.0, bb.getLeft()));
   const unsigned numComponents = m_normalDepthTexture->get_num_components();
   const unsigned rowIncrement = m_renderParameters.getImageWidth() * numComponents; // we ask for only 8 bits image, but we may get an rgb image
-  const float *data = (float *)(&(m_normalDepthTexture->get_ram_image().front()));
-  // Panda3D stores data upside down
-  data += rowIncrement * (m_renderParameters.getImageHeight() - 1);
-  if (numComponents != 4) {
-    throw vpException(vpException::dimensionError, "Expected panda texture to have 4 components!");
-  }
-  if (m_normalDepthTexture->get_component_type() != Texture::T_float) {
-    throw vpException(vpException::badValue, "Unexpected data type in normals texture");
-  }
 
-  int image_width = static_cast<int>(m_renderParameters.getImageWidth());
-  for (unsigned int i = 0; i < m_renderParameters.getImageHeight(); ++i) {
-    const float *const rowData = data - i * rowIncrement;
-    vpRGBf *normalRow = normals[top + i];
-    float *depthRow = depth[top + i];
+
+  int image_width = static_cast<int>(std::min(m_renderParameters.getImageWidth(), w - left));
+  int image_height = std::min(m_renderParameters.getImageHeight(), h - top);
+
+  if (!m_fast) {
+    const float *data = (float *)(&(m_normalDepthTexture->get_ram_image().front()));
+    // Panda3D stores data upside down
+    data += rowIncrement * (m_renderParameters.getImageHeight() - 1);
+    if (numComponents != 4) {
+      throw vpException(vpException::dimensionError, "Expected panda texture to have 4 components!");
+    }
+    if (m_normalDepthTexture->get_component_type() != Texture::T_float) {
+      throw vpException(vpException::badValue, "Unexpected data type in normals texture");
+    }
 #if defined(VISP_HAVE_OPENMP)
 #pragma omp parallel for
 #endif
-    for (int j = 0; j < image_width; ++j) {
-      int left_j = left + j;
-      int j_4 = j * 4;
-      normalRow[left_j].R = (rowData[j_4]);
-      normalRow[left_j].G = (rowData[j_4 + 1]);
-      normalRow[left_j].B = (rowData[j_4 + 2]);
-      depthRow[left_j] = (rowData[j_4 + 3]);
+    for (int i = 0; i < image_height; ++i) {
+      const float *const rowData = data - i * rowIncrement;
+      vpRGBf *normalRow = normals[top + i];
+      float *depthRow = depth[top + i];
+      for (int j = 0; j < image_width; ++j) {
+        int left_j = left + j;
+        int j_4 = j * 4;
+        normalRow[left_j].R = (rowData[j_4]);
+        normalRow[left_j].G = (rowData[j_4 + 1]);
+        normalRow[left_j].B = (rowData[j_4 + 2]);
+        depthRow[left_j] = (rowData[j_4 + 3]);
+      }
     }
   }
+  else {
+    float farV = m_renderParameters.getFarClippingDistance();
+    using T = uint8_t;
+    Texture::ComponentType expectedComponent = Texture::T_unsigned_byte;
+    float maxValue = static_cast<float>(std::numeric_limits<T>::max());
+    const T *data = (T *)(&(m_normalDepthTexture->get_ram_image().front()));
+    // Panda3D stores data upside down
+    data += rowIncrement * (m_renderParameters.getImageHeight() - 1);
+
+    if (numComponents != 4) {
+      throw vpException(vpException::dimensionError, "Expected panda texture to have 4 components!");
+    }
+    if (m_normalDepthTexture->get_component_type() != expectedComponent) {
+      throw vpException(vpException::badValue, "Unexpected data type in normals texture");
+    }
+
+    for (unsigned int i = 0; i < image_height; ++i) {
+      const T *const rowData = data - i * rowIncrement;
+      vpRGBf *normalRow = normals[top + i];
+      float *depthRow = depth[top + i];
+      std::array<float, 3> v;
+      for (int j = 0; j < image_width; ++j) {
+        int left_j = left + j;
+        int j_4 = j * 4;
+        v[0] = (static_cast<float>(rowData[j_4]) / maxValue) * 2.f - 1.f;
+        v[1] = (static_cast<float>(rowData[j_4 + 1]) / maxValue) * 2.f - 1.f;
+        v[2] = (static_cast<float>(rowData[j_4 + 2]) / maxValue) * 2.f - 1.f;
+        // const double norm = sqrtf(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+        normalRow[left_j].R = v[0];
+        normalRow[left_j].G = v[1];
+        normalRow[left_j].B = v[2];
+        depthRow[left_j] = (static_cast<float>(rowData[j_4 + 3]) / maxValue) * farV;
+      }
+    }
+  }
+
 }
 
 void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals) const
 {
-  normals.resize(m_normalDepthTexture->get_y_size(), m_normalDepthTexture->get_x_size());
-  if (m_normalDepthTexture->get_component_type() != Texture::T_float) {
-    throw vpException(vpException::badValue, "Unexpected data type in normals texture");
-  }
 
+  normals.resize(m_normalDepthTexture->get_y_size(), m_normalDepthTexture->get_x_size());
   int rowIncrement = normals.getWidth() * 4;
-  float *data = (float *)(&(m_normalDepthTexture->get_ram_image().front()));
-  data = data + rowIncrement * (normals.getHeight() - 1);
-  rowIncrement = -rowIncrement;
-  for (unsigned int i = 0; i < normals.getHeight(); ++i) {
-    vpRGBf *normalRow = normals[i];
-    for (unsigned int j = 0; j < normals.getWidth(); ++j) {
-      normalRow[j].R = (data[j * 4]);
-      normalRow[j].G = (data[j * 4 + 1]);
-      normalRow[j].B = (data[j * 4 + 2]);
+  if (!m_fast) {
+    if (m_normalDepthTexture->get_component_type() != Texture::T_float) {
+      throw vpException(vpException::badValue, "Unexpected data type in normals texture");
     }
-    data += rowIncrement;
+
+    float *data = (float *)(&(m_normalDepthTexture->get_ram_image().front()));
+    data = data + rowIncrement * (normals.getHeight() - 1);
+    for (unsigned int i = 0; i < normals.getHeight(); ++i) {
+      const float *const rowData = data - i * rowIncrement;
+      vpRGBf *normalRow = normals[i];
+      for (unsigned int j = 0; j < normals.getWidth(); ++j) {
+        normalRow[j].R = (rowData[j * 4]);
+        normalRow[j].G = (rowData[j * 4 + 1]);
+        normalRow[j].B = (rowData[j * 4 + 2]);
+      }
+    }
+  }
+  else {
+    using T = uint8_t;
+    Texture::ComponentType expectedComponent = Texture::T_unsigned_byte;
+    float maxValue = static_cast<float>(std::numeric_limits<T>::max());
+    const T *data = (T *)(&(m_normalDepthTexture->get_ram_image().front()));
+    // Panda3D stores data upside down
+    data += rowIncrement * (m_renderParameters.getImageHeight() - 1);
+
+    if (m_normalDepthTexture->get_component_type() != expectedComponent) {
+      throw vpException(vpException::badValue, "Unexpected data type in normals texture");
+    }
+
+    for (unsigned int i = 0; i < normals.getHeight(); ++i) {
+      const T *const rowData = data - i * rowIncrement;
+      vpRGBf *normalRow = normals[i];
+      std::array<float, 3> v;
+      for (int j = 0; j < static_cast<int>(normals.getWidth()); ++j) {
+        int j_4 = j * 4;
+        v[0] = (static_cast<float>(rowData[j_4]) / maxValue) * 2.f - 1.f;
+        v[1] = (static_cast<float>(rowData[j_4 + 1]) / maxValue) * 2.f - 1.f;
+        v[2] = (static_cast<float>(rowData[j_4 + 2]) / maxValue) * 2.f - 1.f;
+        normalRow[j].R = v[0];
+        normalRow[j].G = v[1];
+        normalRow[j].B = v[2];
+      }
+    }
   }
 }
 
 void vpPanda3DGeometryRenderer::getRender(vpImage<float> &depth) const
 {
+
   depth.resize(m_normalDepthTexture->get_y_size(), m_normalDepthTexture->get_x_size());
-
-  if (m_normalDepthTexture->get_component_type() != Texture::T_float) {
-    throw vpException(vpException::badValue, "Unexpected data type in normals texture");
-  }
-
   int rowIncrement = depth.getWidth() * 4;
-  float *data = (float *)(&(m_normalDepthTexture->get_ram_image().front()));
-  data = data + rowIncrement * (depth.getHeight() - 1);
-  rowIncrement = -rowIncrement;
 
-  for (unsigned int i = 0; i < depth.getHeight(); ++i) {
-    float *depthRow = depth[i];
-    for (unsigned int j = 0; j < depth.getWidth(); ++j) {
-      depthRow[j] = (data[j * 4 + 3]);
+  if (!m_fast) {
+    if (m_normalDepthTexture->get_component_type() != Texture::T_float) {
+      throw vpException(vpException::badValue, "Unexpected data type in normals texture");
     }
-    data += rowIncrement;
+
+    float *data = (float *)(&(m_normalDepthTexture->get_ram_image().front()));
+    data = data + rowIncrement * (depth.getHeight() - 1);
+
+    for (unsigned int i = 0; i < depth.getHeight(); ++i) {
+      const float *const rowData = data - i * rowIncrement;
+      float *depthRow = depth[i];
+      for (unsigned int j = 0; j < depth.getWidth(); ++j) {
+        depthRow[j] = (rowData[j * 4 + 3]);
+      }
+    }
+
+  }
+  else {
+    float farV = m_renderParameters.getFarClippingDistance();
+    using T = uint8_t;
+    Texture::ComponentType expectedComponent = Texture::T_unsigned_byte;
+    float maxValue = static_cast<float>(std::numeric_limits<T>::max());
+    const T *data = (T *)(&(m_normalDepthTexture->get_ram_image().front()));
+    // Panda3D stores data upside down
+    data += rowIncrement * (m_renderParameters.getImageHeight() - 1);
+
+    if (m_normalDepthTexture->get_component_type() != expectedComponent) {
+      throw vpException(vpException::badValue, "Unexpected data type in normals texture");
+    }
+
+    for (unsigned int i = 0; i < depth.getHeight(); ++i) {
+      const T *const rowData = data - i * rowIncrement;
+      float *depthRow = depth[i];
+
+      for (int j = 0; j < static_cast<int>(depth.getWidth()); ++j) {
+        int j_4 = j * 4;
+        depthRow[j] = (static_cast<float>(rowData[j_4 + 3]) / maxValue) * farV;
+      }
+    }
   }
 }
 

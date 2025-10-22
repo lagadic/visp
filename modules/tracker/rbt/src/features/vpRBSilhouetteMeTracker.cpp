@@ -186,6 +186,10 @@ void vpRBSilhouetteMeTracker::computeVVSIter(const vpRBFeatureTrackerInput &fram
     }
   }
 
+  if (m_numFeatures == 0) {
+    return;
+  }
+
   m_robust.MEstimator(vpRobust::TUKEY, m_error, m_weights);
 
   for (unsigned int i = 0; i < m_error.size(); i++) {

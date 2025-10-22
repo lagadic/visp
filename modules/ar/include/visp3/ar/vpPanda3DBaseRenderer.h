@@ -105,6 +105,11 @@ public:
    */
   NodePath &getRenderRoot() { return m_renderRoot; }
 
+  virtual void clearScene()
+  {
+    m_renderRoot.node()->remove_all_children();
+  }
+
   /**
    * @brief Set new rendering parameters. If the scene has already been initialized, the renderer camera is updated.
    *
@@ -217,6 +222,14 @@ public:
   virtual void addNodeToScene(const NodePath &object);
 
   /**
+   * @brief Load and and an object to the scene
+   *
+   * @param name
+   * @param path
+   */
+  virtual void addObjectToScene(const std::string &name, const std::string &path);
+
+  /**
    * @brief set whether vertical sync is enabled.
    * When vertical sync is enabled, render speed will be limited by the display's refresh rate
    *
@@ -245,14 +258,16 @@ public:
 
   static const vpHomogeneousMatrix &vispToPanda();
 
+  PointerTo<WindowFramework> &getWindowFramework() { return m_window; }
+
 protected:
 
-  /**
-   * @brief Initialize the scene for this specific renderer.
-   *
-   * Creates a root scene for this node and applies shaders. that will be used for rendering
-   *
-   */
+/**
+ * @brief Initialize the scene for this specific renderer.
+ *
+ * Creates a root scene for this node and applies shaders. that will be used for rendering
+ *
+ */
   virtual void setupScene();
 
   /**

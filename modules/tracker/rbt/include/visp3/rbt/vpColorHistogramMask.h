@@ -152,6 +152,11 @@ public:
     }
   }
 
+  virtual void reset() VP_OVERRIDE
+  {
+    setBinNumber(m_histObject.getBinNumber());
+  }
+
 #if defined(VISP_HAVE_NLOHMANN_JSON)
   void loadJsonConfiguration(const nlohmann::json &json) VP_OVERRIDE;
 #endif

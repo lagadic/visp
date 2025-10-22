@@ -28,8 +28,8 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include <visp3/ar/vpPanda3DGeometryRenderer.h>
 #include <visp3/rbt/vpPanda3DDepthFilters.h>
-
 #if defined(VISP_HAVE_PANDA3D)
 
 #include "graphicsOutput.h"
@@ -39,6 +39,8 @@
 #include <visp3/gui/vpDisplayFactory.h>
 
 BEGIN_VISP_NAMESPACE
+#define VP_STRINGIFY(x) #x
+#define VP_TOSTRING(x) VP_STRINGIFY(x)
 
 const std::string vpPanda3DDepthGaussianBlur::FRAGMENT_SHADER =
 "#version 330\n"
@@ -97,6 +99,9 @@ void vpPanda3DDepthGaussianBlur::getRender(vpImage<unsigned char> &I) const
 
 const std::string vpPanda3DDepthCannyFilter::FRAGMENT_SHADER =
 "#version 330\n"
+"#define PI "
+VP_TOSTRING(M_PI)
+"\n"
 "\n"
 "in vec2 texcoords;\n"
 "\n"
@@ -130,11 +135,11 @@ const std::string vpPanda3DDepthCannyFilter::FRAGMENT_SHADER =
 "\n"
 "float textureValues[9];\n"
 "\n"
-"out vec4 p3d_FragData;\n"
+"out vec3 p3d_FragData;\n"
 "\n"
 "void main() {\n"
 "  if(texture(p3d_Texture0, texcoords).a == 0) {\n"
-"    p3d_FragData = vec4(0.f, 0.f, 0.f, 0.f);\n"
+"    p3d_FragData = vec3(0.f, 0.f, 0.f);\n"
 "  } else {\n"
 "    float sum = 0.f;\n"
 "    for(int i = 0; i < 9; ++i) {\n"
@@ -151,17 +156,17 @@ const std::string vpPanda3DDepthCannyFilter::FRAGMENT_SHADER =
 "        sum_h += pix * kernel_h[i];\n"
 "        sum_v += pix * kernel_v[i];\n"
 "      }\n"
-"      float norm = sqrt(sum_v * sum_v + sum_h * sum_h);\n"
 "      vec2 orientationAndValid = (sum_h != 0.f) ? vec2(atan(sum_v, -sum_h), 1.f) : vec2(0.f, 0.f);\n"
-"      p3d_FragData.bgra = vec4(sum_h, sum_v, orientationAndValid.x, orientationAndValid.y);\n"
+"      float orientation = (orientationAndValid.x + PI) / (PI * 2);\n"
+"      p3d_FragData = vec3(orientation, orientationAndValid.y, orientation);\n"
 "    } else {\n"
-"      p3d_FragData = vec4(0.f, 0.f, 0.f, 0.f);\n"
+"      p3d_FragData = vec3(0.f, 0.f, 0.f);\n"
 "    }\n"
 "  }\n"
 "}\n";
 
-vpPanda3DDepthCannyFilter::vpPanda3DDepthCannyFilter(const std::string &name, std::shared_ptr<vpPanda3DBaseRenderer> inputRenderer, bool isOutput, float edgeThreshold)
-  : vpPanda3DPostProcessFilter(name, inputRenderer, isOutput, vpPanda3DDepthCannyFilter::FRAGMENT_SHADER), m_edgeThreshold(edgeThreshold)
+vpPanda3DDepthCannyFilter::vpPanda3DDepthCannyFilter(const std::string &name, std::shared_ptr<vpPanda3DGeometryRenderer> inputRenderer, bool isOutput, float edgeThreshold)
+  : vpPanda3DPostProcessFilter(name, inputRenderer, isOutput, vpPanda3DDepthCannyFilter::FRAGMENT_SHADER), m_edgeThreshold(edgeThreshold), m_inputIsFast(inputRenderer->isFastAndApproximateRendering())
 { }
 
 void vpPanda3DDepthCannyFilter::setupScene()
@@ -172,20 +177,35 @@ void vpPanda3DDepthCannyFilter::setupScene()
 
 void vpPanda3DDepthCannyFilter::setEdgeThreshold(float edgeThreshold)
 {
+
   m_edgeThreshold = edgeThreshold;
-  m_renderRoot.set_shader_input("edgeThreshold", LVector2f(m_edgeThreshold));
+  float shaderValue = m_inputIsFast ? m_edgeThreshold / m_renderParameters.getFarClippingDistance() : m_edgeThreshold;
+  m_renderRoot.set_shader_input("edgeThreshold", LVector2f(shaderValue));
 }
 
 FrameBufferProperties vpPanda3DDepthCannyFilter::getBufferProperties() const
 {
   FrameBufferProperties fbp;
   fbp.set_depth_bits(0);
-  fbp.set_rgba_bits(32, 32, 32, 32);
-  fbp.set_float_color(true);
+  fbp.set_rgba_bits(8, 8, 8, 0);
+  fbp.set_alpha_bits(0);
+
+  fbp.set_rgb_color(false);
+
+  fbp.set_float_color(false);
   return fbp;
 }
 
-void vpPanda3DDepthCannyFilter::getRender(vpImage<vpRGBf> &I, vpImage<unsigned char> &valid) const
+PointerTo<Texture> vpPanda3DDepthCannyFilter::setupTexture(const FrameBufferProperties &fbp) const
+{
+  PointerTo<Texture> tex = new Texture();
+  fbp.setup_color_texture(tex);
+  tex->set_format(Texture::F_rgb);
+  tex->set_component_type(Texture::T_unsigned_byte);
+  return tex;
+}
+
+void vpPanda3DDepthCannyFilter::getRender(vpImage<float> &I, vpImage<unsigned char> &valid) const
 {
   if (!m_isOutput) {
     throw vpException(vpException::fatalError, "Tried to fetch output of a postprocessing filter that was configured as an intermediate output");
@@ -196,54 +216,49 @@ void vpPanda3DDepthCannyFilter::getRender(vpImage<vpRGBf> &I, vpImage<unsigned c
   valid.resize(I.getHeight(), I.getWidth());
   const unsigned numComponents = m_texture->get_num_components();
   int rowIncrement = I.getWidth() * numComponents; // we ask for only 8 bits image, but we may get an rgb image
-  float *data = (float *)(&(m_texture->get_ram_image().front()));
+  uint8_t *data = (uint8_t *)(&(m_texture->get_ram_image().front()));
   // Panda3D stores data upside down
   data += rowIncrement * (I.getHeight() - 1);
   rowIncrement = -rowIncrement;
-  if (numComponents != 4) {
+  if (numComponents != 3) {
     throw;
   }
   for (unsigned int i = 0; i < I.getHeight(); ++i) {
-    vpRGBf *colorRow = I[i];
+    float *colorRow = I[i];
     unsigned char *validRow = valid[i];
     for (unsigned int j = 0; j < I.getWidth(); ++j) {
-      colorRow[j].R = data[j * numComponents];
-      colorRow[j].G = data[j * numComponents + 1];
-      colorRow[j].B = data[j * numComponents + 2];
-      validRow[j] = static_cast<unsigned char>(data[j * numComponents + 3]);
+      colorRow[j] = static_cast<float>(data[j * numComponents]) / std::numeric_limits<uint8_t>::max() * M_PI * 2 - M_PI;
+      validRow[j] = static_cast<unsigned char>((data[j * numComponents + 1] > 0) * 255);
     }
     data += rowIncrement;
   }
 }
 
-void vpPanda3DDepthCannyFilter::getRender(vpImage<vpRGBf> &I, vpImage<unsigned char> &valid, const vpRect &bb, unsigned int h, unsigned w) const
+void vpPanda3DDepthCannyFilter::getRender(vpImage<float> &I, vpImage<unsigned char> &valid, const vpRect &bb, unsigned int h, unsigned w) const
 {
   if (!m_isOutput) {
     throw vpException(vpException::fatalError, "Tried to fetch output of a postprocessing filter that was configured as an intermediate output");
   }
 
-  I.resize(h, w, vpRGBf(0.f));
+  I.resize(h, w, 0.f);
   valid.resize(I.getHeight(), I.getWidth(), 0);
-
   const unsigned top = static_cast<unsigned int>(std::max(0.0, bb.getTop()));
   const unsigned left = static_cast<unsigned int>(std::max(0.0, bb.getLeft()));
   const unsigned numComponents = m_texture->get_num_components();
   const unsigned rowIncrement = m_renderParameters.getImageWidth() * numComponents;
 
-  const float *data = (float *)(&(m_texture->get_ram_image().front()));
+  const uint8_t *data = (uint8_t *)(&(m_texture->get_ram_image().front()));
   data += rowIncrement * (m_renderParameters.getImageHeight() - 1);
-  if (numComponents != 4) {
-    throw vpException(vpException::dimensionError, "Expected panda texture to have 4 components!");
+  if (numComponents != 3) {
+    throw vpException(vpException::dimensionError, "Expected panda texture to have 3 components!");
   }
   for (unsigned int i = 0; i < m_renderParameters.getImageHeight(); ++i) {
-    const float *rowData = data - i * rowIncrement;
-    vpRGBf *colorRow = I[top + i];
+    const uint8_t *rowData = data - i * rowIncrement;
+    float *colorRow = I[top + i];
     unsigned char *validRow = valid[top + i];
     for (unsigned int j = 0; j < m_renderParameters.getImageWidth(); ++j) {
-      colorRow[left + j].R = rowData[j * numComponents];
-      colorRow[left + j].G = rowData[j * numComponents + 1];
-      colorRow[left + j].B = rowData[j * numComponents + 2];
-      validRow[left + j] = static_cast<unsigned char>(rowData[j * numComponents + 3]);
+      colorRow[left + j] = static_cast<float>(rowData[j * numComponents]) / std::numeric_limits<uint8_t>::max() * M_PI * 2 - M_PI;
+      validRow[left + j] = static_cast<unsigned char>((rowData[j * numComponents + 1] > 0) * 255);
     }
   }
 }

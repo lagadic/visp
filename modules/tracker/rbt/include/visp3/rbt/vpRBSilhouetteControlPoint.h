@@ -159,8 +159,6 @@ public:
 private:
   bool isLineDegenerate() const;
 
-  int outOfImage(int i, int j, int half, int rows, int cols) const;
-  int outOfImage(const vpImagePoint &iP, int half, int rows, int cols) const;
   void buildPlane(const vpPoint &pointn, const vpColVector &normal, vpPlane &plane);
   void buildPLine(const vpHomogeneousMatrix &oMc);
 

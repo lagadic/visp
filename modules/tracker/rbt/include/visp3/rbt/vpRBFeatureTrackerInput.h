@@ -62,9 +62,12 @@ struct VISP_EXPORT vpRBRenderData
   vpImage<vpRGBf> normals; //! Image containing the per-pixel normal vector (RGB, in object space)
   vpImage<float> depth;
   vpImage<vpRGBa> color;
-  vpImage<vpRGBf> silhouetteCanny; //! Image containing the orientation of the gradients
+  vpImage<float> silhouetteCanny; //! Image containing the orientation of the gradients
   vpImage<unsigned char> isSilhouette; //! Binary image indicating whether a given pixel is part of the silhouette
   double zNear, zFar; // clipping values
+  double objectDiameter; // Object diameter
+  //! Center of the 3D bounding box of the object. Expressed in the object frame.
+  vpTranslationVector objectCenter;
   vpRect boundingBox;
   vpHomogeneousMatrix cMo; //! Pose of the object in the camera frame for which the renders were generated.
 
@@ -87,6 +90,8 @@ struct VISP_EXPORT vpRBRenderData
     color = o.color;
     silhouetteCanny = o.silhouetteCanny;
     isSilhouette = o.isSilhouette;
+    objectDiameter = o.objectDiameter;
+    objectCenter = o.objectCenter;
     zNear = o.zNear;
     zFar = o.zFar;
     boundingBox = o.boundingBox;
@@ -101,6 +106,8 @@ struct VISP_EXPORT vpRBRenderData
     color = std::move(o.color);
     silhouetteCanny = std::move(o.silhouetteCanny);
     isSilhouette = std::move(o.isSilhouette);
+    objectDiameter = std::move(o.objectDiameter);
+    objectCenter = std::move(o.objectCenter);
     zNear = std::move(o.zNear);
     zFar = std::move(o.zFar);
     boundingBox = std::move(o.boundingBox);

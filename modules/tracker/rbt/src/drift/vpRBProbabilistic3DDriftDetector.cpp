@@ -175,9 +175,9 @@ double vpRBProbabilistic3DDriftDetector::score(const vpRBFeatureTrackerInput &fr
 
         vpRGBf averageColor(0.f, 0.f, 0.f);
 
-        for (int i = -1; i < 2; ++i) {
-          for (int j = -1; j < 2; ++j) {
-            const vpRGBa currentColor = frame.IRGB[p->projCurrPx[1] + i][p->projCurrPx[0] + j];
+        for (int j = -1; j < 2; ++j) {
+          for (int k = -1; k < 2; ++k) {
+            const vpRGBa currentColor = frame.IRGB[p->projCurrPx[1] + j][p->projCurrPx[0] + k];
             averageColor.R += static_cast<float>(currentColor.R);
             averageColor.G += static_cast<float>(currentColor.G);
             averageColor.B += static_cast<float>(currentColor.B);
