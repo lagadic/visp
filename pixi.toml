@@ -1,4 +1,4 @@
-[project]
+[workspace]
 authors = ["Olivier Roussel <olivier.roussel@inria.fr>"]
 channels = ["conda-forge", "panda3d-forge"]
 name = "visp"
@@ -8,14 +8,12 @@ license = "GPL-2.0-only"
 license-file = "LICENSE.txt"
 
 # TODO: add ccache support
-[build-dependencies]
+[dependencies]
 cxx-compiler = ">=1.7.0"
 cmake = ">=3.22"
 ninja = ">=1.11"
 pkg-config = ">=0.29.2"
 git = ">=2.47.0"
-
-[dependencies]
 libopencv = "*"
 eigen = "*"
 libjpeg-turbo = "*"
