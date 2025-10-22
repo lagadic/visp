@@ -310,6 +310,7 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
     vpHomogeneousMatrix cnTc = m_odometry->getCameraMotion();
     m_cMo = cnTc * m_cMo;
     bool shouldRerender = true;
+
     if (m_cMo != cMo_beforeOdo && m_convergenceMetric) {
       const double metric = (*m_convergenceMetric)(m_cam, m_cMo, cMo_beforeOdo);
       shouldRerender = m_convergenceMetric && (metric > m_convergenceMetric->getUpdateRenderThreshold());
@@ -373,7 +374,6 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
     timer.startTimer();
     tracker->initVVS(input, m_previousFrame, m_cMo);
     timer.setInitVVSTime(id, timer.endTimer());
-    //std::cout << "Tracker " << id << " has " << tracker->getNumFeatures() << " features" << std::endl;
     id += 1;
   }
 
@@ -413,7 +413,6 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
         LTR += weight * tracker->getLTR();
         error += weight * (tracker->getWeightedError()).sumSquare();
 
-        //std::cout << "Error = " << (weight * tracker->getWeightedError()).sumSquare() << std::endl;
       }
     }
 
@@ -445,15 +444,15 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
 
       result.logFeatures(iter, m_vvsIterations, m_trackers);
 
-      double convergenceMetric = 0.0;
+      double convergenceMetricValue = 0.0;
       bool converged = false;
-      if (m_convergenceMetric) {
-        convergenceMetric = (*m_convergenceMetric)(m_cam, m_cMoPrevIter, m_cMo);
-        if (iter > 0 && convergenceMetric < m_convergenceMetric->getConvergenceThreshold()) {
+      if (m_convergenceMetric && iter > 0) {
+        convergenceMetricValue = (*m_convergenceMetric)(m_cam, m_cMoPrevIter, m_cMo);
+        if (convergenceMetricValue < m_convergenceMetric->getConvergenceThreshold()) {
           converged = true;
         }
       }
-      result.onEndIter(m_cMo, v, convergenceMetric, LTL, LTR, mu);
+      result.onEndIter(m_cMo, v, convergenceMetricValue, LTL, LTR, mu);
       if (converged) {
         result.setStoppingReason(vpRBTrackingStoppingReason::CONVERGENCE_CRITERION);
         break;

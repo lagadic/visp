@@ -129,6 +129,5 @@ double vpRBConvergenceReprojectionMetric::operator()(const vpCameraParameters &c
       error += d;
     }
   }
-
   return error / static_cast<double>(uv1.getRows());
 }
