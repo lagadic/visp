@@ -974,6 +974,10 @@ if(DOXYGEN_FOUND)
     set(DOXYGEN_USE_MATHJAX "NO")
   endif()
 
+  if(DOXYGEN_AWESOME_DIR)
+    set(DOXYGEN_HTML_EXTRA_STYLESHEET "${DOXYGEN_AWESOME_DIR}/doxygen-awesome.css ${VISP_SOURCE_DIR}/doc/doxygen-awesome.custom.css")
+  endif()
+
   # HTML version of the doc
   set(DOXYGEN_GENERATE_HTML "YES")
   set(DOXYGEN_GENERATE_XML "NO")

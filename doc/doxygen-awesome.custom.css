@@ -1,0 +1,15 @@
+@media (prefers-color-scheme: dark) {
+    html:not(.light-mode) {
+      --primary-color: #ef5552;
+      --primary-light-color:#e57171;
+      --primary-dark-color: #e53734;
+    }
+}
+
+
+html {
+  --content-maxwidth: 80%;
+  --primary-color: #ef5552;
+  --primary-light-color:#e57171;
+  --primary-dark-color: #e53734;
+}
