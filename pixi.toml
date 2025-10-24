@@ -77,8 +77,6 @@ python-doc = { cmd = "cmake --build $VISP_BUILD_DIR --parallel $CPU_COUNT --targ
 view-python-doc = { cmd = "$BROWSER $VISP_BUILD_DIR/doc/python/index.html", env = { BROWSER = "firefox" } }
 
 [feature.rbt]
-# linux-aarch64 not supported yet (panda3d)
-platforms = ["linux-64", "osx-64", "win-64", "osx-arm64"]
 dependencies = { panda3d = { version = ">=1.10.15", channel = "panda3d-forge" } }
 
 [feature.doc]
