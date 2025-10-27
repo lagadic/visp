@@ -160,6 +160,7 @@ VISP_BUILD_TUTORIALS = "ON"
 
 [tasks]
 init-testing = {}
+echo-env = { cmd = "env" }
 configure = { cmd = [
   "cmake",
   "-G",
@@ -180,7 +181,7 @@ configure = { cmd = [
   "-DBUILD_DEPRECATED_FUNCTIONS=$VISP_BUILD_DEPRECATED_FUNCTIONS",
   "-DUSE_GTK2=$VISP_USE_GTK2",
   "$VISP_EXTRA_CMAKE_ARGS"
-] }
+], depends-on = ["echo-env"] }
 build-modules = { cmd = "cmake --build $VISP_BUILD_DIR --target visp_modules --parallel $CPU_COUNT", depends-on = ["configure"] }
 build-base = { cmd = "cmake --build $VISP_BUILD_DIR --parallel $CPU_COUNT", depends-on = ["build-modules"] }
 build = { depends-on = ["build-base"]}
