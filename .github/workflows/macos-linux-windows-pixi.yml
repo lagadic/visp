@@ -10,21 +10,22 @@ concurrency:
 
 jobs:
   visp-pixi:
-    name: ${{ matrix.os }} - Env ${{ matrix.environment }} ${{ matrix.build_type }} ${{ matrix.compiler }}
+    name: ${{ matrix.os }} - Env ${{ matrix.environment }} ${{ matrix.build_type }}
     runs-on: ${{ matrix.os }}
 
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest, macos-13]
-        environment: [full-ci]
+        os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest, macos-15-intel, windows-latest]
+        # environment: [full-ci-py310, full-ci-py312, full-ci-py314]
+        environment: [full-ci-py310, full-ci-py312]
         build_type: [Release]
         include:
           - os: windows-latest
-            environment: full-ci
+            environment: full-ci-clang-cl-py310
             build_type: Release
           - os: windows-latest
-            environment: full-ci-clang-cl
+            environment: full-ci-clang-cl-py312
             build_type: Release
 
     steps:
