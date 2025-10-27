@@ -1,4 +1,4 @@
-[project]
+[workspace]
 authors = ["Olivier Roussel <olivier.roussel@inria.fr>"]
 channels = ["conda-forge", "panda3d-forge"]
 name = "visp"
@@ -8,14 +8,12 @@ license = "GPL-2.0-only"
 license-file = "LICENSE.txt"
 
 # TODO: add ccache support
-[build-dependencies]
+[dependencies]
 cxx-compiler = ">=1.7.0"
 cmake = ">=3.22"
 ninja = ">=1.11"
 pkg-config = ">=0.29.2"
 git = ">=2.47.0"
-
-[dependencies]
 libopencv = "*"
 eigen = "*"
 libjpeg-turbo = "*"
@@ -65,6 +63,13 @@ VISP_USE_GTK2 = "ON"
 platforms = ["win-64"]
 dependencies = { clang = "*", llvm-openmp = "*" }
 activation = { scripts = ["development/scripts/pixi/activation_clang_cl.bat"] }
+
+[feature.py310]
+dependencies = { python = "~=3.10" }
+[feature.py312]
+dependencies = { python = "~=3.12" }
+[feature.py314]
+dependencies = { python = "~=3.14" }
 
 [feature.python-bindings]
 dependencies = { python = ">=3.8", pybind11 = "*", pip = "*", doxygen = "*" }
@@ -147,7 +152,6 @@ coverage = { cmd = [
 ], depends-on = ["test"]}
 echo-coverage-path = { cmd = "echo $VISP_BUILD_DIR/visp-coverage.xml"}
 
-
 [feature.examples.activation.env]
 VISP_BUILD_EXAMPLES = "ON"
 
@@ -172,7 +176,8 @@ configure = { cmd = [
   "-DBUILD_TUTORIALS=$VISP_BUILD_TUTORIALS",
   "-DBUILD_EXAMPLES=$VISP_BUILD_EXAMPLES",
   "-DUSE_MATHJAX=$VISP_USE_MATHJAX",
-  "-DBUILD_COVERAGE=$VISP_BUILD_COVERAGE", "-DBUILD_DEPRECATED_FUNCTIONS=$VISP_BUILD_DEPRECATED_FUNCTIONS",
+  "-DBUILD_COVERAGE=$VISP_BUILD_COVERAGE",
+  "-DBUILD_DEPRECATED_FUNCTIONS=$VISP_BUILD_DEPRECATED_FUNCTIONS",
   "-DUSE_GTK2=$VISP_USE_GTK2",
   "$VISP_EXTRA_CMAKE_ARGS"
 ] }
@@ -195,7 +200,11 @@ all-clang-cl = { features = ["rbt", "python-bindings", "doc", "clang-cl"] }
 all-with-tests = { features = ["rbt", "python-bindings", "doc", "tests"] }
 all-clang-cl-with-tests = { features = ["rbt", "python-bindings", "doc", "clang-cl", "tests"] }
 # Environments with all features + build of tests / tutorials / examples (mainly for CI)
-full-ci = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials"]}
+full-ci-py310 = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials", "py310"]}
+full-ci-py312 = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials", "py312"]}
+# full-ci-py314 = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials", "py314"]}
 full-ci-coverage = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials", "coverage"]}
 full-ci-coverage-clang-cl = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials", "coverage", "clang-cl"]}
-full-ci-clang-cl = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials", "clang-cl"]}
+full-ci-clang-cl-py310 = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials", "clang-cl", "py310"]}
+full-ci-clang-cl-py312 = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials", "clang-cl", "py312"]}
+# full-ci-clang-cl-py314 = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials", "clang-cl", "py314"]}
