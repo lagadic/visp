@@ -61,7 +61,7 @@ VISP_USE_GTK2 = "ON"
 # to avoid cxx-compiler to overwrite them.
 [feature.clang-cl]
 platforms = ["win-64"]
-dependencies = { clang = "*", lld = "*", llvm-openmp = "*"}
+dependencies = { clangxx = "*", clangxx_win-64 = "*", lld = "*", compiler-rt = "*", llvm-openmp = "*"}
 activation = { scripts = ["development/scripts/pixi/activation_clang_cl.bat"] }
 
 [feature.py310]
