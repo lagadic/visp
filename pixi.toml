@@ -81,7 +81,7 @@ python-doc = { cmd = "cmake --build $VISP_BUILD_DIR --parallel $CPU_COUNT --targ
 view-python-doc = { cmd = "$BROWSER $VISP_BUILD_DIR/doc/python/index.html", env = { BROWSER = "firefox" } }
 
 [feature.rbt]
-dependencies = { panda3d = { version = ">=1.10.15", channel = "panda3d-forge" } }
+dependencies = { panda3d = { version = ">=1.10.15", build-number = ">=5", channel = "panda3d-forge" } }
 
 [feature.doc]
 dependencies = { doxygen = "*", mathjax = "*" }
