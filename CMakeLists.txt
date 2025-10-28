@@ -1945,6 +1945,11 @@ status("")
 status("  Documentation: ")
 status("    Use doxygen:"            DOXYGEN_FOUND    THEN "yes (ver ${DOXYGEN_VERSION})" ELSE "no")
 status("    \\- Use mathjax:"        USE_MATHJAX      THEN "yes" ELSE "no")
+if(DOXYGEN_AWESOME_DIR)
+  status("    \\- Use doxygen-awesome:" "yes")
+else()
+  status("    \\- Use doxygen-awesome:" "no")
+endif()
 
 # ========================== samples and tests ==========================
 status("")
