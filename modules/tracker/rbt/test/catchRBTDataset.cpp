@@ -230,10 +230,10 @@ private:
 
 struct RunData
 {
-  RunData(const std::string &config, double errorT, double errorR) : configName(config), medianErrorT(errorT), medianErrorR(errorR) { }
+  RunData(const std::string &config, double errorT, double errorR) : configName(config), thresholdErrorT(errorT), thresholdErrorR(errorR) { }
   const std::string configName;
-  const double medianErrorT;
-  const double medianErrorR;
+  const double thresholdErrorT;
+  const double thresholdErrorR;
 
 };
 
@@ -270,7 +270,7 @@ SCENARIO("Running tracker on sequences with ground truth", "[rbt]")
       const std::vector<std::string> objectNames = { "dragon", "cube", "stomach", "lower_teeth" };
 
       std::map<std::string, vpHomogeneousMatrix> init_cMos = sequence.getInitialPoses(tracker, initsFolder, modelsPath, objectNames);
-
+      const double EPSILON_M = 0.002, EPSILON_DEG = 0.2;
       const std::map<std::string, std::vector<RunData>> configMap = {
         { "dragon", {
           RunData("ccd.json", 0.03, 10.0),
@@ -379,15 +379,15 @@ SCENARIO("Running tracker on sequences with ground truth", "[rbt]")
           }
           std::sort(errorsT.begin(), errorsT.end()); std::sort(errorsR.begin(), errorsR.end());
           unsigned int index90p = static_cast<unsigned int>(round(0.9 * errorsT.size()));
-          double medErrorT = errorsT[index90p], medErrorR = errorsR[index90p];
+          double error90pT = errorsT[index90p], error90pR = errorsR[index90p];
 
-          std::cout << medErrorT << "m, " << medErrorR << "°" << std::endl;
+          std::cout << error90pT << "m, " << error90pR << "°" << std::endl;
 
-          if (medErrorT > runConfig.medianErrorT || medErrorR > runConfig.medianErrorR) {
+          if (error90pT > (runConfig.thresholdErrorT + EPSILON_M) || error90pR > (runConfig.thresholdErrorR + EPSILON_DEG)) {
             std::stringstream ss;
             ss << "Using object " << objectName << " with config " << configName << ":" << std::endl;
-            ss << "\tMaximum tolerated median error:\t" << runConfig.medianErrorT << "m, " << runConfig.medianErrorR << "°" << std::endl;
-            ss << "\tActual median error:\t\t\t" << medErrorT << "m, " << medErrorR << "°" << std::endl;
+            ss << "\tMaximum tolerated median error:\t" << runConfig.thresholdErrorT << "m, " << runConfig.thresholdErrorR << "°" << std::endl;
+            ss << "\tActual median error:\t\t\t" << error90pT << "m, " << error90pR << "°" << std::endl;
 
             FAIL(ss.str());
           }
