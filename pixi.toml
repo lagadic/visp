@@ -86,10 +86,12 @@ dependencies = { panda3d = { version = ">=1.10.15", build-number = ">=6", channe
 [feature.doc]
 dependencies = { doxygen = "*", mathjax = "*" }
 [feature.doc.tasks]
-doc = { cmd = "cmake --build $VISP_BUILD_DIR --target visp_doc", depends-on = ["configure"] }
+fetch-doxygen-awesome = { cmd = "git clone https://github.com/jothepro/doxygen-awesome-css.git $DOXYGEN_AWESOME_DIR", outputs = ["$DOXYGEN_AWESOME_DIR"]}
+doc = { cmd = "cmake --build $VISP_BUILD_DIR --target visp_doc", depends-on = ["configure", "fetch-doxygen-awesome"] }
 view-doc = { cmd = "$BROWSER $VISP_BUILD_DIR/doc/html/index.html", env = { BROWSER = "firefox" } }
 [feature.doc.activation.env]
 VISP_USE_MATHJAX = "ON"
+DOXYGEN_AWESOME_DIR="$CONDA_PREFIX/doxygen-awesome-css"
 
 [feature.tests.activation.env]
 VISP_BUILD_TESTS = "ON"
@@ -179,6 +181,8 @@ configure = { cmd = [
   "-DBUILD_COVERAGE=$VISP_BUILD_COVERAGE",
   "-DBUILD_DEPRECATED_FUNCTIONS=$VISP_BUILD_DEPRECATED_FUNCTIONS",
   "-DUSE_GTK2=$VISP_USE_GTK2",
+  "-DDOXYGEN_AWESOME_DIR=$DOXYGEN_AWESOME_DIR",
+
   "$VISP_EXTRA_CMAKE_ARGS"
 ] }
 build-modules = { cmd = "cmake --build $VISP_BUILD_DIR --target visp_modules --parallel $CPU_COUNT", depends-on = ["configure"] }
