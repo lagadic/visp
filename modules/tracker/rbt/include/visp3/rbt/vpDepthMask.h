@@ -56,7 +56,7 @@ class vpRBFeatureTrackerInput;
 class VISP_EXPORT vpDepthMask : public vpObjectMask
 {
 public:
-  vpDepthMask() : m_minRadiusFactor(0.0), m_falloffSmoothingFactor(0.5) { }
+  vpDepthMask() : m_minRadiusFactor(0.0), m_falloffSmoothingFactor(0.5), m_computeOnBBOnly(false) { }
   virtual ~vpDepthMask() = default;
 
   void updateMask(const vpRBFeatureTrackerInput &frame,
@@ -90,6 +90,12 @@ public:
   double getFalloffRadiusFactor() const { return m_falloffSmoothingFactor; }
   void setFalloffRadiusFactor(double factor) { m_falloffSmoothingFactor = factor; }
 
+  bool isComputedOnlyOnBoundingBox() const { return m_computeOnBBOnly; }
+  void setComputeOnlyOnBoundingBox(bool bbOnly)
+  {
+    m_computeOnBBOnly = bbOnly;
+  }
+
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
   void loadJsonConfiguration(const nlohmann::json &json) VP_OVERRIDE;
@@ -98,6 +104,7 @@ public:
 private:
   double m_minRadiusFactor;
   double m_falloffSmoothingFactor;
+  bool m_computeOnBBOnly;
 };
 
 END_VISP_NAMESPACE

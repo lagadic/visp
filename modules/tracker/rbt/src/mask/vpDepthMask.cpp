@@ -42,7 +42,11 @@ void vpDepthMask::updateMask(const vpRBFeatureTrackerInput &frame,
                              const vpRBFeatureTrackerInput &/* previousFrame */,
                              vpImage<float> &mask)
 {
-  mask.resize(frame.depth.getHeight(), frame.depth.getWidth());
+  if (!frame.hasDepth()) {
+    throw vpException(vpException::badValue, "This segmentation method requires a depth image");
+  }
+
+
   // const float radius = frame.renders.objectDiameter / 2.f;
 
   const double radius = std::max(m_minRadiusFactor * (frame.renders.objectDiameter / 2.f), (frame.renders.zFar - frame.renders.zNear) / 2.f);
@@ -52,32 +56,53 @@ void vpDepthMask::updateMask(const vpRBFeatureTrackerInput &frame,
   const float Zma = std::max(Zo + radius, frame.renders.zFar);
   const float tol = radius * m_falloffSmoothingFactor;
   const float fac = 1.f / (tol * sqrtf(2.f));
-#if defined(VISP_HAVE_OPENMP)
-#pragma omp parallel for
-#endif
-  for (int i = 0; i < static_cast<int>(frame.depth.getSize()); ++i) {
-    const float Z = frame.depth.bitmap[i];
-    // Consider that missing depth values are part of the object
+
+  const auto getProba = [Zmi, Zma, fac](double Z) -> float {
+    // Missing depth value => Consider likely
     if (Z == 0.f) {
-      mask.bitmap[i] = 1.f;
+      return 1.f;
     }
     else {
       // Depth values that are close enough to the object's center depth value are correct
       if (Z > Zmi && Z < Zma) {
-        mask.bitmap[i] = 1.f;
+        return 1.f;
       }
       // Otherwise, use a gradual fallof based on a Gaussian distribution with sigma based on tol
       else {
         if (Z <= Zmi) {
-          mask.bitmap[i] = erfc((Zmi - Z) * fac);
-
-
+          return erfc((Zmi - Z) * fac);
         }
         else {
-          mask.bitmap[i] = erfc((Z - Zma) * fac);
-
-
+          return erfc((Z - Zma) * fac);
         }
+      }
+    }};
+
+  if (!m_computeOnBBOnly) {
+    mask.resize(frame.depth.getHeight(), frame.depth.getWidth());
+#if defined(VISP_HAVE_OPENMP)
+#pragma omp parallel for
+#endif
+    for (int i = 0; i < static_cast<int>(frame.depth.getSize()); ++i) {
+      const float Z = frame.depth.bitmap[i];
+      getProba(Z);
+    }
+  }
+  else {
+    mask.resize(frame.depth.getHeight(), frame.depth.getWidth(), 0.f);
+    const vpRect renderBB = frame.renders.boundingBox;
+    const int top = static_cast<int>(renderBB.getTop());
+    const int left = static_cast<int>(renderBB.getLeft());
+    const int bottom = std::min(static_cast<int>(frame.depth.getHeight()) - 1, static_cast<int>(renderBB.getBottom()));
+    const int right = std::min(static_cast<int>(frame.depth.getWidth()) - 1, static_cast<int>(renderBB.getRight()));
+#ifdef VISP_HAVE_OPENMP
+#pragma omp parallel for
+#endif
+    for (int i = top; i <= bottom; ++i) {
+      float *const maskRow = mask[i];
+      const float *const depthRow = frame.depth[i];
+      for (unsigned int j = left; j <= static_cast<unsigned int>(right); ++j) {
+        maskRow[j] = getProba(depthRow[j]);
       }
     }
   }
@@ -88,7 +113,7 @@ void vpDepthMask::loadJsonConfiguration(const nlohmann::json &json)
 {
   m_minRadiusFactor = json.value("minRadiusFactor", m_minRadiusFactor);
   m_falloffSmoothingFactor = json.value("falloffRadiusFactor", m_falloffSmoothingFactor);
-
+  m_computeOnBBOnly = json.value("computeOnlyOnBoundingBox", m_computeOnBBOnly);
 }
 #endif
 
