@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, macos-15-intel, windows-latest]
+        os: [ubuntu-latest, macos-latest, macos-13, macos-15-intel, windows-latest]
         # environment: [full-ci-py310, full-ci-py312, full-ci-py314]
         environment: [full-ci-py310, full-ci-py312]
         build_type: [Release]
