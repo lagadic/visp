@@ -38,7 +38,6 @@ from setuptools import setup
 from setuptools.command.install import install
 import subprocess
 import os
-import sys
 from shutil import copy, copytree
 
 # Your custom post-install command
@@ -52,24 +51,16 @@ class StubsGenerator():
 
 
   def run(self):
-    self.test_import_package()
     self.generate_stubs()
     self.rearrange_stubs()
     self.build_package_data()
-
-  def test_import_package(self):
-    print('Trying to import visp package...')
-    res = subprocess.run([sys.executable, '-c', '\"import visp\"'], check=True)
-    res.check_returncode()
-
   def generate_stubs(self):
     '''
     Call Mypy's tool to generate stubs in an temporary folder.
     CPP stubs are first generated, then the python specific ones
     '''
-    options = ['--ignore-errors', '--include-docstrings', '--verbose']
-    subprocess.run(['stubgen',  '-o', str(self.output_root.absolute()), *options, '-p', 'visp._visp'], check=True)
-    subprocess.run(['stubgen',  '-o', str(self.output_root.absolute()), *options, '--parse-only', '-p', 'visp.python'], check=True)
+    subprocess.run(['stubgen',  '-o', str(self.output_root.absolute()), '--ignore-errors', '--include-docstrings', '-p', 'visp._visp'], check=True)
+    subprocess.run(['stubgen',  '-o', str(self.output_root.absolute()), '--ignore-errors', '--include-docstrings', '--parse-only', '-p', 'visp.python'], check=True)
 
   def rearrange_stubs(self):
 
