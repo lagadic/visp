@@ -72,7 +72,7 @@ dependencies = { python = "3.12.*" }
 # dependencies = { python = "3.14.*" }
 
 [feature.python-bindings]
-dependencies = { python = ">=3.8", pybind11 = "*", pip = "*", doxygen = "*" }
+dependencies = { python = ">=3.8.0", pybind11 = "*", pip = "*", doxygen = "*" }
 [feature.python-bindings.tasks]
 build = { cmd = "cmake --build $VISP_BUILD_DIR --parallel $CPU_COUNT --target visp_python_bindings", depends-on = ["install"] }
 python-test = { cmd = "cmake --build $VISP_BUILD_DIR --config Release --target visp_python_bindings_test", depends-on = ["build"] }
