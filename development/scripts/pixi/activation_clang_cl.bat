@@ -1,3 +1,4 @@
 :: Setup clang-cl compiler
-set CC=clang-cl
-set CXX=clang-cl
+:: Explicit path is necessary to avoid getting the clang-cl compiler installed on system
+set CC="%CONDA_PREFIX%\\Library\\bin\\clang-cl"
+set CXX="%CONDA_PREFIX%\\Library\\bin\\clang-cl"

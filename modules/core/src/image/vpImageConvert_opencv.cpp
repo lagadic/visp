@@ -574,8 +574,6 @@ void vpImageConvert::convert(const vpImage<double> &src, cv::Mat &dest, bool cop
  *
  * \param[in] src A vpRGBf ViSP image.
  * \param[in] dest A cv::Mat(CV_32FC3) that uses BGR format.
- * \param[in] copyData If true, the image is copied and modification in one
-  object will not modified the other.
  */
 void vpImageConvert::convert(const vpImage<vpRGBf> &src, cv::Mat &dest)
 {
