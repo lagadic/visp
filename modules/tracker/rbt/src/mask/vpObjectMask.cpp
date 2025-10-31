@@ -40,7 +40,9 @@ void vpObjectMask::display(const vpImage<float> &mask, vpImage<unsigned char> &I
     throw vpException(vpException::dimensionError, "Cannot convert float mask to unsigned char mask as they do not have the same size");
   }
 
+#ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
+#endif
   for (int i = 0; i < static_cast<int>(mask.getSize()); ++i) {
     Imask.bitmap[i] = static_cast<unsigned char>(mask.bitmap[i] * 255.f);
   }

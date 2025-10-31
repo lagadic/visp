@@ -52,7 +52,7 @@ void vpCombinedDepthAndColorMask::updateMask(const vpRBFeatureTrackerInput &fram
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-    for (unsigned int i = 0; i < m_color.getSize(); ++i) {
+    for (int i = 0; i < m_color.getSize(); ++i) {
       mask.bitmap[i] = std::min(m_color.bitmap[i], m_depth.bitmap[i]);
     }
   }

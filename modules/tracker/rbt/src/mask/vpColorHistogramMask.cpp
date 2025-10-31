@@ -143,7 +143,9 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
 
   if (m_computeOnBBOnly) {
     mask.resize(height, width, 0.f);
+#ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
+#endif
     for (int i = top; i <= bottom; ++i) {
       for (int j = left; j <= right; ++j) {
         unsigned int index = m_histObject.colorToIndex(frame.IRGB[i][j]);
@@ -154,8 +156,10 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
   }
   else {
     mask.resize(height, width);
+#ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
-    for (unsigned int i = 0; i < mask.getSize(); ++i) {
+#endif
+    for (int i = 0; i < mask.getSize(); ++i) {
       unsigned int index = m_histObject.colorToIndex(frame.IRGB.bitmap[i]);
       mask.bitmap[i] = probas(index);
     }
