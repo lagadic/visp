@@ -50,12 +50,13 @@ void vpDepthMask::updateMask(const vpRBFeatureTrackerInput &frame,
   // const float radius = frame.renders.objectDiameter / 2.f;
 
   const double radius = std::max(m_minRadiusFactor * (frame.renders.objectDiameter / 2.f), (frame.renders.zFar - frame.renders.zNear) / 2.f);
-  const double Zo = (frame.renders.cMo * frame.renders.objectCenter)[2];
-
+  const double Zo = (frame.renders.cMo)[2][3];
   const float Zmi = std::min(Zo - radius, frame.renders.zNear);
   const float Zma = std::max(Zo + radius, frame.renders.zFar);
+
   const float tol = radius * m_falloffSmoothingFactor;
   const float fac = 1.f / (tol * sqrtf(2.f));
+
 
   const auto getProba = [Zmi, Zma, fac](double Z) -> float {
     // Missing depth value => Consider likely
@@ -85,7 +86,7 @@ void vpDepthMask::updateMask(const vpRBFeatureTrackerInput &frame,
 #endif
     for (int i = 0; i < static_cast<int>(frame.depth.getSize()); ++i) {
       const float Z = frame.depth.bitmap[i];
-      getProba(Z);
+      mask.bitmap[i] = getProba(Z);
     }
   }
   else {
