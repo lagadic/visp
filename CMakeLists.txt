@@ -974,6 +974,10 @@ if(DOXYGEN_FOUND)
     set(DOXYGEN_USE_MATHJAX "NO")
   endif()
 
+  if(DOXYGEN_AWESOME_DIR)
+    set(DOXYGEN_HTML_EXTRA_STYLESHEET "${DOXYGEN_AWESOME_DIR}/doxygen-awesome.css ${VISP_SOURCE_DIR}/doc/doxygen-awesome.custom.css")
+  endif()
+
   # HTML version of the doc
   set(DOXYGEN_GENERATE_HTML "YES")
   set(DOXYGEN_GENERATE_XML "NO")
@@ -1941,6 +1945,11 @@ status("")
 status("  Documentation: ")
 status("    Use doxygen:"            DOXYGEN_FOUND    THEN "yes (ver ${DOXYGEN_VERSION})" ELSE "no")
 status("    \\- Use mathjax:"        USE_MATHJAX      THEN "yes" ELSE "no")
+if(DOXYGEN_AWESOME_DIR)
+  status("    \\- Use doxygen-awesome:" "yes")
+else()
+  status("    \\- Use doxygen-awesome:" "no")
+endif()
 
 # ========================== samples and tests ==========================
 status("")
