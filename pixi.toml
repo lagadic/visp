@@ -1,6 +1,6 @@
 [workspace]
 authors = ["Olivier Roussel <olivier.roussel@inria.fr>"]
-channels = ["conda-forge", "panda3d-forge"]
+channels = ["conda-forge", "https://prefix.dev/panda3d-forge"]
 name = "visp"
 platforms = ["linux-64", "linux-aarch64", "osx-64", "win-64", "osx-arm64"]
 version = "3.6.0"
@@ -62,18 +62,18 @@ VISP_USE_GTK2 = "ON"
 # to avoid cxx-compiler to overwrite them.
 [feature.clang-cl]
 platforms = ["win-64"]
-dependencies = { clang = "*", llvm-openmp = "*" }
+dependencies = { clangxx = "*", lld = "*", llvm-openmp = "*"}
 activation = { scripts = ["development/scripts/pixi/activation_clang_cl.bat"] }
 
 [feature.py310]
-dependencies = { python = "~=3.10" }
+dependencies = { python = "3.10.*" }
 [feature.py312]
-dependencies = { python = "~=3.12" }
-[feature.py314]
-dependencies = { python = "~=3.14" }
+dependencies = { python = "3.12.*" }
+# [feature.py314]
+# dependencies = { python = "3.14.*" }
 
 [feature.python-bindings]
-dependencies = { python = ">=3.8", pybind11 = "*", pip = "*", doxygen = "*" }
+dependencies = { python = ">=3.8.0", pybind11 = "*", pip = "*", doxygen = "*" }
 [feature.python-bindings.tasks]
 build = { cmd = "cmake --build $VISP_BUILD_DIR --parallel $CPU_COUNT --target visp_python_bindings", depends-on = ["install"] }
 python-test = { cmd = "cmake --build $VISP_BUILD_DIR --config Release --target visp_python_bindings_test", depends-on = ["build"] }
@@ -82,15 +82,17 @@ python-doc = { cmd = "cmake --build $VISP_BUILD_DIR --parallel $CPU_COUNT --targ
 view-python-doc = { cmd = "$BROWSER $VISP_BUILD_DIR/doc/python/index.html", env = { BROWSER = "firefox" } }
 
 [feature.rbt]
-dependencies = { panda3d = { version = ">=1.10.15", channel = "panda3d-forge" } }
+dependencies = { panda3d = { version = ">=1.10.15", channel = "https://prefix.dev/panda3d-forge" } }
 
 [feature.doc]
 dependencies = { doxygen = "*", mathjax = "*" }
 [feature.doc.tasks]
-doc = { cmd = "cmake --build $VISP_BUILD_DIR --target visp_doc", depends-on = ["configure"] }
+fetch-doxygen-awesome = { cmd = "git clone https://github.com/jothepro/doxygen-awesome-css.git $DOXYGEN_AWESOME_DIR", outputs = ["$DOXYGEN_AWESOME_DIR"]}
+doc = { cmd = "cmake --build $VISP_BUILD_DIR --target visp_doc", depends-on = ["configure", "fetch-doxygen-awesome"] }
 view-doc = { cmd = "$BROWSER $VISP_BUILD_DIR/doc/html/index.html", env = { BROWSER = "firefox" } }
 [feature.doc.activation.env]
 VISP_USE_MATHJAX = "ON"
+DOXYGEN_AWESOME_DIR="$CONDA_PREFIX/doxygen-awesome-css"
 
 [feature.tests.activation.env]
 VISP_BUILD_TESTS = "ON"
@@ -161,6 +163,7 @@ VISP_BUILD_TUTORIALS = "ON"
 
 [tasks]
 init-testing = {}
+echo-env = { cmd = "env" }
 configure = { cmd = [
   "cmake",
   "-G",
@@ -180,8 +183,10 @@ configure = { cmd = [
   "-DBUILD_COVERAGE=$VISP_BUILD_COVERAGE",
   "-DBUILD_DEPRECATED_FUNCTIONS=$VISP_BUILD_DEPRECATED_FUNCTIONS",
   "-DUSE_GTK2=$VISP_USE_GTK2",
+  "-DDOXYGEN_AWESOME_DIR=$DOXYGEN_AWESOME_DIR",
+
   "$VISP_EXTRA_CMAKE_ARGS"
-] }
+], depends-on = ["echo-env"] }
 build-modules = { cmd = "cmake --build $VISP_BUILD_DIR --target visp_modules --parallel $CPU_COUNT", depends-on = ["configure"] }
 build-base = { cmd = "cmake --build $VISP_BUILD_DIR --parallel $CPU_COUNT", depends-on = ["build-modules"] }
 build = { depends-on = ["build-base"]}

@@ -367,7 +367,7 @@ in different ways. This will motivate us to continue the efforts.
 
   <h2 id="header-details" class="groupheader">Tutorials</h2>
 
-  If you are interested in using SPC in your application, you may have a look at:</span><br>
+  If you are interested in using SPC in your application, you may have a look at:<br>
 
   - \ref tutorial-spc
 */
@@ -418,7 +418,7 @@ in different ways. This will motivate us to continue the efforts.
 
   <h2 id="header-details" class="groupheader">Tutorials</h2>
 
-  If you are interested in how to understanding the different types of visual features, you may have a look at:</span><br>
+  If you are interested in how to understanding the different types of visual features, you may have a look at:<br>
 
   - \ref tutorial-ibvs
   - \ref tutorial-simu-robot-pioneer
@@ -433,7 +433,7 @@ in different ways. This will motivate us to continue the efforts.
 
   <h2 id="header-details" class="groupheader">Tutorials</h2>
 
-  If you are interested in how to build visual features, you may have a look at:</span><br>
+  If you are interested in how to build visual features, you may have a look at:<br>
 
   - \ref tutorial-ibvs
   - \ref tutorial-simu-robot-pioneer
@@ -834,7 +834,7 @@ in different ways. This will motivate us to continue the efforts.
 
   <h2 id="header-details" class="groupheader">Tutorials</h2>
 
-  If you are interested in using different kind of anthropomorphic arm robots, you may have a look at:</span><br>
+  If you are interested in using different kind of anthropomorphic arm robots, you may have a look at:<br>
 
   - \ref tutorial-franka-pbvs
   - \ref tutorial-franka-ibvs
@@ -854,7 +854,7 @@ in different ways. This will motivate us to continue the efforts.
 
   <h2 id="header-details" class="groupheader">Tutorials</h2>
 
-  If you are interested in using different kind of flying robots, you may have a look at:</span><br>
+  If you are interested in using different kind of flying robots, you may have a look at:<br>
 
   - \ref tutorial-bebop2-vs
   - \ref tutorial-pixhawk-vs
@@ -872,7 +872,7 @@ in different ways. This will motivate us to continue the efforts.
 
   <h2 id="header-details" class="groupheader">Tutorials</h2>
 
-  If you are interested in simulating different kind of robots, you may have a look at:</span><br>
+  If you are interested in simulating different kind of robots, you may have a look at:<br>
 
   - \ref tutorial-ibvs
   - \ref tutorial-simu-robot-pioneer
@@ -884,7 +884,7 @@ in different ways. This will motivate us to continue the efforts.
 
   <h2 id="header-details" class="groupheader">Tutorials</h2>
 
-  If you are interested in simulating a Gantry robot, you may have a look at:</span><br>
+  If you are interested in simulating a Gantry robot, you may have a look at:<br>
 
   - \ref tutorial-ibvs
 */
@@ -895,7 +895,7 @@ in different ways. This will motivate us to continue the efforts.
 
   <h2 id="header-details" class="groupheader">Tutorials</h2>
 
-  If you are interested in simulating an anthropomorphic arm, you may have a look at:</span><br>
+  If you are interested in simulating an anthropomorphic arm, you may have a look at:<br>
 
   - \ref tutorial-ibvs
 */
