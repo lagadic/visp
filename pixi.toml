@@ -61,7 +61,7 @@ VISP_USE_GTK2 = "ON"
 # to avoid cxx-compiler to overwrite them.
 [feature.clang-cl]
 platforms = ["win-64"]
-dependencies = { clang = "*", llvm-openmp = "*" }
+dependencies = { clangxx = "*", lld = "*", llvm-openmp = "*"}
 activation = { scripts = ["development/scripts/pixi/activation_clang_cl.bat"] }
 
 [feature.py310]
@@ -162,6 +162,7 @@ VISP_BUILD_TUTORIALS = "ON"
 
 [tasks]
 init-testing = {}
+echo-env = { cmd = "env" }
 configure = { cmd = [
   "cmake",
   "-G",
@@ -184,7 +185,7 @@ configure = { cmd = [
   "-DDOXYGEN_AWESOME_DIR=$DOXYGEN_AWESOME_DIR",
 
   "$VISP_EXTRA_CMAKE_ARGS"
-] }
+], depends-on = ["echo-env"] }
 build-modules = { cmd = "cmake --build $VISP_BUILD_DIR --target visp_modules --parallel $CPU_COUNT", depends-on = ["configure"] }
 build-base = { cmd = "cmake --build $VISP_BUILD_DIR --parallel $CPU_COUNT", depends-on = ["build-modules"] }
 build = { depends-on = ["build-base"]}
