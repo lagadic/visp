@@ -29,8 +29,7 @@
  *
  * Description:
  * Interface with the image for feature display.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpProjectionDisplay.cpp

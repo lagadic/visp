@@ -1,5 +1,7 @@
 {
-  "ignored_headers": ["vpForceTorqueAtiNetFTSensor.h"],
+  "ignored_headers": [
+    "vpForceTorqueAtiNetFTSensor.h"
+  ],
   "classes": {
     "vp1394TwoGrabber": {
       "methods": [

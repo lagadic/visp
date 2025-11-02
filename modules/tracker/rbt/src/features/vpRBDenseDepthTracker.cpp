@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -159,12 +159,12 @@ void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame
   m_depthPointSet.build(m_depthPoints);
 
   if (m_depthPoints.size() > 0) {
-    m_error.resize(m_depthPoints.size(), false);
-    m_weights.resize(m_depthPoints.size(), false);
-    m_weighted_error.resize(m_depthPoints.size(), false);
-    m_L.resize(m_depthPoints.size(), 6, false, false);
+    m_error.resize(static_cast<unsigned int>(m_depthPoints.size()), false);
+    m_weights.resize(static_cast<unsigned int>(m_depthPoints.size()), false);
+    m_weighted_error.resize(static_cast<unsigned int>(m_depthPoints.size()), false);
+    m_L.resize(static_cast<unsigned int>(m_depthPoints.size()), 6, false, false);
     m_cov.resize(6, 6, false, false);
-    m_covWeightDiag.resize(m_depthPoints.size(), false);
+    m_covWeightDiag.resize(static_cast<unsigned int>(m_depthPoints.size()), false);
     m_numFeatures = m_L.getRows();
   }
   else {
@@ -172,7 +172,7 @@ void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame
   }
 }
 
-void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &/*frame*/, const vpHomogeneousMatrix &cMo, unsigned int /*iteration*/)
+void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cMo, unsigned int /*iteration*/)
 {
   if (m_numFeatures == 0) {
     m_LTL = 0;
@@ -184,37 +184,13 @@ void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &/*fram
     m_covWeightDiag = 0.0;
     return;
   }
-  m_depthPointSet.update(cMo);
-  m_depthPointSet.errorAndInteraction(m_error, m_L);
-#ifdef VISP_DEBUG_RB_DEPTH_DENSE_TRACKER
-  if (!vpArray2D<double>::isFinite(m_error) || !vpArray2D<double>::isFinite(m_L)) {
-    std::cerr << "Depth tracker has a non finite error!" << std::endl;
-    std::cerr << m_error << std::endl;
-    std::cerr << "Points object" << std::endl;
-    std::cerr << m_depthPointSet.getPointsObject() << std::endl;
 
-    std::cerr << "Normals object" << std::endl;
-    std::cerr << m_depthPointSet.getNormalsObject() << std::endl;
+  m_depthPointSet.updateAndErrorAndInteractionMatrix(frame.cam, cMo, frame.depth, m_error, m_L);
 
-    std::cerr << "Points camera" << std::endl;
-    std::cerr << m_depthPointSet.getPointsCamera() << std::endl;
-
-    std::cerr << "Normals camera" << std::endl;
-    std::cerr << m_depthPointSet.getNormalsCamera() << std::endl;
-    throw vpException(vpException::badValue, "Invalid values in depth tracker");
-}
-#endif
-
-  //m_weights = 0.0;
-  m_robust.setMinMedianAbsoluteDeviation(1e-3);
+  m_robust.setMinMedianAbsoluteDeviation((frame.renders.zFar - frame.renders.zNear) * 0.01);
   m_robust.MEstimator(vpRobust::TUKEY, m_error, m_weights);
 
-#ifdef VISP_DEBUG_RB_DEPTH_DENSE_TRACKER
-  if (!vpArray2D<double>::isFinite(m_weights)) {
-    std::cerr << "Depth tracker has invalid weights!" << std::endl;
-    throw vpException(vpException::badValue, "Invalid values in depth tracker");
-  }
-#endif
+
 
   for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
     m_weighted_error[i] = m_error[i] * m_weights[i];
@@ -237,7 +213,7 @@ void vpRBDenseDepthTracker::display(const vpCameraParameters &/*cam*/, const vpI
   {
     for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
       vpColor c(0, 255, 0);
-      vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos[0], m_depthPoints[i].pixelPos[1], c, 2);
+      vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos[0], m_depthPoints[i].pixelPos[1], c, 1);
     }
     break;
   }
@@ -245,15 +221,16 @@ void vpRBDenseDepthTracker::display(const vpCameraParameters &/*cam*/, const vpI
   {
     for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
       vpColor c(0, static_cast<unsigned char>(m_weights[i] * 255), 0);
-      vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos[0], m_depthPoints[i].pixelPos[1], c, 2);
+      vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos[0], m_depthPoints[i].pixelPos[1], c, 1);
     }
     break;
   }
   case DT_ERROR:
   {
+    double maxError = m_error.getMaxValue();
     for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
-      vpColor c(m_error[i], 0, 0);
-      vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos[0], m_depthPoints[i].pixelPos[1], c, 2);
+      vpColor c(static_cast<unsigned int>((m_error[i] / maxError) * 255), 0, 0);
+      vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos[0], m_depthPoints[i].pixelPos[1], c, 1);
     }
     break;
   }
@@ -262,7 +239,7 @@ void vpRBDenseDepthTracker::display(const vpCameraParameters &/*cam*/, const vpI
     double maxError = m_error.getMaxValue();
     for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
       vpColor c(static_cast<unsigned int>((m_error[i] / maxError) * 255.0), static_cast<unsigned char>(m_weights[i] * 255), 0);
-      vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos[0], m_depthPoints[i].pixelPos[1], c, 2);
+      vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos[0], m_depthPoints[i].pixelPos[1], c, 1);
     }
     break;
   }

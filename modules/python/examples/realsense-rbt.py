@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -42,19 +42,21 @@ import time
 import faulthandler
 faulthandler.enable()
 
-
 from visp.core import CameraParameters, HomogeneousMatrix
 from visp.core import Color, Display, ImageConvert
 from visp.core import ImageGray, ImageUInt16, ImageRGBa, ImageFloat
 from visp.io import ImageIo
-from visp.rbt import RBTracker, RBFeatureDisplayType, RBFeatureTracker, RBFeatureTrackerInput
-from visp.display_utils import get_display
+from visp.rbt import RBTracker, RBFeatureTracker, RBFeatureTrackerInput
+from visp.python.display_utils import get_display
+from visp.python.rbt import PythonRBExtensions
+
 import pyrealsense2 as rs
-
-
 import matplotlib.pyplot as plt
 
 class PyBaseFeatureTracker(RBFeatureTracker):
+  '''
+  The base structure that a class should have to implement a render based feature tracker
+  '''
   def __init__(self):
     RBFeatureTracker.__init__(self)
 
@@ -65,14 +67,13 @@ class PyBaseFeatureTracker(RBFeatureTracker):
   def requiresSilhouetteCandidates(self) -> bool:
     return False
 
-  def onTrackingIterStart(self):
+  def onTrackingIterStart(self, cMo: HomogeneousMatrix):
     self.cov.resize(6, 6)
     self.LTL.resize(6, 6)
     self.LTR.resize(6)
     self.numFeatures = 0
 
   def extractFeatures(self, frame: RBFeatureTrackerInput, previousFrame: RBFeatureTrackerInput, cMo: HomogeneousMatrix):
-    print(frame)
     pass
 
   def trackFeatures(self, frame: RBFeatureTrackerInput, previousFrame: RBFeatureTrackerInput, cMo: HomogeneousMatrix):
@@ -85,10 +86,10 @@ class PyBaseFeatureTracker(RBFeatureTracker):
   def computeVVSIter(self, frame: RBFeatureTrackerInput, cMo: HomogeneousMatrix, iteration: int):
     pass
 
-  def onTrackingIterEnd(self):
+  def onTrackingIterEnd(self, cMo: HomogeneousMatrix):
     pass
 
-  def display(self, cam: CameraParameters, I: ImageGray, IRGB: ImageRGBa, I_depth: ImageGray, type: RBFeatureDisplayType):
+  def display(self, cam: CameraParameters, I: ImageGray, IRGB: ImageRGBa, I_depth: ImageGray):
     pass
 
 @dataclass
@@ -150,6 +151,8 @@ if __name__ == '__main__':
   tracker = RBTracker()
 
   tracker.loadConfigurationFile(tracker_path)
+  extensions = PythonRBExtensions()
+  extensions.parse_python_extensions(tracker, Path(tracker_path))
   if model_path is not None:
     tracker.setModelPath(model_path)
 
@@ -208,17 +211,20 @@ if __name__ == '__main__':
     # if args.disable_depth:
     #   tracker.track(I=I, IRGB=IRGB)
     # else:
+    t1 = time.time()
     tracker.track(I=frame.I, IRGB=frame_data.IRGB, depth=frame_data.I_depth)
+    tracking_time = np.round((time.time() - t1) * 1000.0, 2)
+
+    Display.displayText(I, 60, 0, f'Tracking time: {tracking_time}', Color.red)
     cMo = HomogeneousMatrix()
     tracker.getPose(cMo)
 
-    tracker.display(I, IRGB, I_depth, RBFeatureDisplayType.SIMPLE)
+    tracker.display(I, IRGB, I_depth)
     Display.displayFrame(I, cMo, cam_color, 0.05, Color.none, 2)
+
 
     for display_image in displayed:
       Display.flush(display_image)
-
-
 
     event = Display.getClick(I, blocking=False)
     if event:

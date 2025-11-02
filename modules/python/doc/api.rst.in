@@ -11,7 +11,8 @@ Python specific API
   :recursive:
   :template: custom-module-template.rst
 
-  visp.display_utils
+  visp.python
+
 
 Modules API reference
 ------------------------

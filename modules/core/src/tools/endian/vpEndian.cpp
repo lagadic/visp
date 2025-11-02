@@ -29,8 +29,7 @@
  *
  * Description:
  * Functions for correct endianness handling.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpEndian.cpp

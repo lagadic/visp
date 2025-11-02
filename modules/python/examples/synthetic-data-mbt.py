@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ from visp.core import XmlParserCamera, CameraParameters, ColVector, HomogeneousM
 from visp.core import ImageGray, ImageUInt16
 from visp.io import ImageIo
 from visp.mbt import MbGenericTracker, MbTracker
-from visp.display_utils import get_display
+from visp.python.display_utils import get_display
 from visp.core import Color
 from visp.core import PixelMeterConversion
 

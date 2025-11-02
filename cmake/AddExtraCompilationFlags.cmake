@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -153,8 +153,14 @@ elseif((VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_17) AND CXX17_CXX_FLAGS)
 endif()
 
 if(BUILD_COVERAGE)
-  set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} gcov)
-  add_extra_compiler_options("-ftest-coverage -fprofile-arcs -lgcov")
+  if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+    set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} gcov)
+    add_extra_compiler_options("-ftest-coverage -fprofile-arcs -lgcov")
+  elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang") # Clang or AppleClang (see CMP0025)
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} --coverage")
+    add_extra_compiler_options("--coverage")
+  endif()
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX)

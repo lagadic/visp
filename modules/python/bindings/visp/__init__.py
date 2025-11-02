@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -56,8 +56,12 @@ except ImportError:
   else:
     raise ImportError('Could not import ViSP python bindings')
 
+
 # Fake module names
 for k in cpp_extension_dict:
   from types import ModuleType
   if isinstance(_visp.__dict__[k], ModuleType):
     sys.modules[f'{__name__}.{k}'] = _visp.__dict__[k]
+
+
+import visp.python

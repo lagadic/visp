@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +40,7 @@
 #include <visp3/ar/vpPanda3DRendererSet.h>
 #include <visp3/ar/vpPanda3DGeometryRenderer.h>
 #include <visp3/ar/vpPanda3DRGBRenderer.h>
+#include <visp3/ar/vpPanda3DFrameworkManager.h>
 
 #include <visp3/rbt/vpRBFeatureTrackerFactory.h>
 #include <visp3/rbt/vpRBDriftDetectorFactory.h>
@@ -50,8 +51,9 @@
 BEGIN_VISP_NAMESPACE
 
 vpRBTracker::vpRBTracker() :
-  m_firstIteration(true), m_trackers(0), m_lambda(1.0), m_vvsIterations(10), m_muInit(0.0), m_muIterFactor(0.5), m_scaleInvariantOptim(false),
-  m_renderer(m_rendererSettings), m_imageHeight(480), m_imageWidth(640), m_convergenceMetric(1024, 41), m_convergedMetricThreshold(0.0), m_updateRenderThreshold(0.0), m_displaySilhouette(false)
+  m_firstIteration(true), m_trackers(0), m_modelChanged(true), m_lambda(1.0), m_vvsIterations(10), m_muInit(0.0),
+  m_muIterFactor(0.5), m_scaleInvariantOptim(false), m_renderer(m_rendererSettings), m_rendererIsSetup(false),
+  m_imageHeight(480), m_imageWidth(640), m_convergenceMetric(nullptr), m_displaySilhouette(false)
 {
   m_rendererSettings.setClippingDistance(0.01, 1.0);
   m_renderer.setRenderParameters(m_rendererSettings);
@@ -125,25 +127,44 @@ void vpRBTracker::setSilhouetteExtractionParameters(const vpSilhouettePointsExtr
 
 void vpRBTracker::reset()
 {
+  m_previousFrame = vpRBFeatureTrackerInput();
+  m_currentFrame = vpRBFeatureTrackerInput();
   m_firstIteration = true;
+  m_cMoPrev = m_cMo;
+  for (std::shared_ptr<vpRBFeatureTracker> &tracker: m_trackers) {
+    tracker->reset();
+  }
+  if (m_odometry) {
+    m_odometry->reset();
+  }
+  if (m_mask) {
+    m_mask->reset();
+  }
+  if (m_driftDetector) {
+    m_driftDetector->reset();
+  }
 }
 
 void vpRBTracker::setModelPath(const std::string &path)
 {
   m_modelPath = path;
+  m_modelChanged = true;
 }
 
 void vpRBTracker::setupRenderer(const std::string &file)
 {
-  m_renderer = vpObjectCentricRenderer(m_rendererSettings);
+  if (!m_rendererIsSetup) {
+    m_renderer.setRenderParameters(m_rendererSettings);
+    const std::shared_ptr<vpPanda3DGeometryRenderer> geometryRenderer = std::make_shared<vpPanda3DGeometryRenderer>(
+      vpPanda3DGeometryRenderer::vpRenderType::OBJECT_NORMALS);
+    m_renderer.addSubRenderer(geometryRenderer);
+  }
   if (!vpIoTools::checkFilename(file)) {
     throw vpException(vpException::badValue, "3D model file %s could not be found", file.c_str());
   }
 
-  const std::shared_ptr<vpPanda3DGeometryRenderer> geometryRenderer = std::make_shared<vpPanda3DGeometryRenderer>(
-    vpPanda3DGeometryRenderer::vpRenderType::OBJECT_NORMALS);
-  m_renderer.addSubRenderer(geometryRenderer);
 
+  // Add silhouette extractor if required
   bool requiresSilhouetteShader = false;
   for (std::shared_ptr<vpRBFeatureTracker> &tracker: m_trackers) {
     if (tracker->requiresSilhouetteCandidates()) {
@@ -151,16 +172,27 @@ void vpRBTracker::setupRenderer(const std::string &file)
       break;
     }
   }
-  static int cannyId = 0;
-  if (requiresSilhouetteShader) {
+  if (requiresSilhouetteShader && m_renderer.getRenderer<vpPanda3DDepthCannyFilter>() == nullptr) {
+    static int cannyId = 0;
+
     m_renderer.addSubRenderer(std::make_shared<vpPanda3DDepthCannyFilter>(
-      "depthCanny" + std::to_string(cannyId), geometryRenderer, true, 0.0));
+      "depthCanny" + std::to_string(cannyId), m_renderer.getRenderer<vpPanda3DGeometryRenderer>(), true, 0.0));
+    ++cannyId;
   }
-  ++cannyId;
-  m_renderer.initFramework();
-  m_renderer.addLight(vpPanda3DAmbientLight("ambient", vpRGBf(0.4f)));
-  m_renderer.addNodeToScene(m_renderer.loadObject("object", file));
-  m_renderer.setFocusedObject("object");
+  if (!m_rendererIsSetup) {
+    m_renderer.initFramework();
+  }
+  else {
+    vpPanda3DFrameworkManager::getInstance().enableSingleRenderer(m_renderer);
+  }
+  if (m_modelChanged) {
+    m_renderer.clearScene();
+    m_renderer.addLight(vpPanda3DAmbientLight("ambient", vpRGBf(0.4f)));
+    m_renderer.addNodeToScene(m_renderer.loadObject("object", file));
+    m_renderer.setFocusedObject("object");
+    m_modelChanged = false;
+  }
+  m_rendererIsSetup = true;
 }
 
 vpRBTrackingResult vpRBTracker::track(const vpImage<unsigned char> &I)
@@ -196,7 +228,12 @@ vpRBTrackingResult vpRBTracker::track(const vpImage<unsigned char> &I, const vpI
 void vpRBTracker::startTracking()
 {
   setupRenderer(m_modelPath);
-  m_convergenceMetric.sampleObject(m_renderer);
+  if (m_convergenceMetric) {
+    m_convergenceMetric->sampleObject(m_renderer);
+  }
+  vpRBFeatureTrackerInput f;
+  vpHomogeneousMatrix c(0, 0, 0.5, 0, 0, 0);
+  updateRender(f, c);
 }
 
 vpRBTrackingResult vpRBTracker::track(const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<float> &depth)
@@ -220,7 +257,7 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
 
   // Render the object at the current pose
   timer.startTimer();
-  if (m_firstIteration || m_updateRenderThreshold <= 0.0 || m_convergenceMetric.ADDS(m_cMo, m_currentFrame.renders.cMo) > m_updateRenderThreshold) {
+  if (m_firstIteration || !m_convergenceMetric || m_convergenceMetric->shouldUpdateRender(m_cam, m_cMo, m_currentFrame.renders.cMo)) {
     updateRender(input);
   }
   else {
@@ -234,7 +271,7 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
     m_previousFrame.IRGB = input.IRGB;
   }
 
-  m_cMoPrev = m_cMo;
+
   // Compute the object segmentation mask that will be used by trackers to select features
   timer.startTimer();
   if (m_mask) {
@@ -261,6 +298,8 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
       return result;
     }
   }
+
+  m_cMoPrev = m_cMo;
   timer.setSilhouetteTime(timer.endTimer());
 
   // Perform odometry: estimate camera motion and potentially update render to match
@@ -271,10 +310,11 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
     vpHomogeneousMatrix cnTc = m_odometry->getCameraMotion();
     m_cMo = cnTc * m_cMo;
     bool shouldRerender = true;
-    if (m_convergedMetricThreshold > 0.0 && m_cMo != cMo_beforeOdo) {
-      const double adds = m_convergenceMetric.ADDS(m_cMo, cMo_beforeOdo);
-      shouldRerender = adds > m_updateRenderThreshold;
-      result.setOdometryMetricAndThreshold(adds, m_updateRenderThreshold);
+
+    if (m_cMo != cMo_beforeOdo && m_convergenceMetric) {
+      const double metric = (*m_convergenceMetric)(m_cam, m_cMo, cMo_beforeOdo);
+      shouldRerender = m_convergenceMetric && (metric > m_convergenceMetric->getUpdateRenderThreshold());
+      result.setOdometryMetricAndThreshold(metric, m_convergenceMetric->getUpdateRenderThreshold());
     }
     result.setOdometryMotion(cMo_beforeOdo, cnTc, m_cMo);
     if (shouldRerender) {
@@ -334,7 +374,6 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
     timer.startTimer();
     tracker->initVVS(input, m_previousFrame, m_cMo);
     timer.setInitVVSTime(id, timer.endTimer());
-    //std::cout << "Tracker " << id << " has " << tracker->getNumFeatures() << " features" << std::endl;
     id += 1;
   }
 
@@ -374,7 +413,6 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
         LTR += weight * tracker->getLTR();
         error += weight * (tracker->getWeightedError()).sumSquare();
 
-        //std::cout << "Error = " << (weight * tracker->getWeightedError()).sumSquare() << std::endl;
       }
     }
 
@@ -406,15 +444,15 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
 
       result.logFeatures(iter, m_vvsIterations, m_trackers);
 
-      double convergenceMetric = 0.0;
+      double convergenceMetricValue = 0.0;
       bool converged = false;
-      if (m_convergedMetricThreshold > 0) {
-        convergenceMetric = m_convergenceMetric.ADDS(m_cMoPrevIter, m_cMo);
-        if (iter > 0 && convergenceMetric < m_convergedMetricThreshold) {
+      if (m_convergenceMetric && iter > 0) {
+        convergenceMetricValue = (*m_convergenceMetric)(m_cam, m_cMoPrevIter, m_cMo);
+        if (convergenceMetricValue < m_convergenceMetric->getConvergenceThreshold()) {
           converged = true;
         }
       }
-      result.onEndIter(m_cMo, v, convergenceMetric, LTL, LTR, mu);
+      result.onEndIter(m_cMo, v, convergenceMetricValue, LTL, LTR, mu);
       if (converged) {
         result.setStoppingReason(vpRBTrackingStoppingReason::CONVERGENCE_CRITERION);
         break;
@@ -496,6 +534,16 @@ void vpRBTracker::updateRender(vpRBFeatureTrackerInput &frame, const vpHomogeneo
   m_renderer.computeClipping(clipNear, clipFar);
   frame.renders.zNear = std::max(0.001f, clipNear);
   frame.renders.zFar = clipFar;
+
+  {
+    vpTranslationVector tMin, tMax;
+    m_renderer.get3DExtents(tMin, tMax);
+    double diameter = (tMax - tMin).frobeniusNorm();
+    frame.renders.objectDiameter = diameter;
+
+    vpTranslationVector center((tMax - tMin) / 2.0);
+    frame.renders.objectCenter = center;
+  }
   m_rendererSettings.setClippingDistance(frame.renders.zNear, frame.renders.zFar);
   m_renderer.setRenderParameters(m_rendererSettings);
 
@@ -555,7 +603,7 @@ void vpRBTracker::updateRender(vpRBFeatureTrackerInput &frame, const vpHomogeneo
 
 std::vector<vpRBSilhouettePoint>
 vpRBTracker::extractSilhouettePoints(const vpImage<vpRGBf> &Inorm, const vpImage<float> &Idepth,
-                                     const vpImage<vpRGBf> &silhouetteCanny, const vpImage<unsigned char> &Ivalid,
+                                     const vpImage<float> &silhouetteCanny, const vpImage<unsigned char> &Ivalid,
                                      const vpCameraParameters &cam, const vpHomogeneousMatrix &cTcp)
 {
   std::vector<std::pair<unsigned int, unsigned int>> candidates =
@@ -566,7 +614,7 @@ vpRBTracker::extractSilhouettePoints(const vpImage<vpRGBf> &Inorm, const vpImage
 
   for (unsigned int i = 0; i < candidates.size(); ++i) {
     unsigned int n = candidates[i].first, m = candidates[i].second;
-    double theta = silhouetteCanny[n][m].B;
+    double theta = silhouetteCanny[n][m];
     if (std::isnan(theta)) {
       continue;
     }
@@ -654,9 +702,17 @@ void vpRBTracker::loadConfigurationFile(const std::string &filename)
 void vpRBTracker::loadConfiguration(const nlohmann::json &j)
 {
   m_firstIteration = true;
+  m_trackers.clear();
+  m_convergenceMetric = nullptr;
+  m_odometry = nullptr;
+  m_driftDetector = nullptr;
+  m_mask = nullptr;
 
   m_displaySilhouette = j.value("displaySilhouette", m_displaySilhouette);
-  m_updateRenderThreshold = j.value("updateRenderThreshold", m_updateRenderThreshold);
+
+  if (j.contains("metric")) {
+    m_convergenceMetric = vpRBConvergenceMetric::loadFromJSON(j.at("metric"));
+  }
 
   if (j.contains("camera")) {
     const nlohmann::json cameraSettings = j.at("camera");
@@ -676,8 +732,6 @@ void vpRBTracker::loadConfiguration(const nlohmann::json &j)
   setOptimizationInitialMu(vvsSettings.value("mu", m_muInit));
   setOptimizationMuIterFactor(vvsSettings.value("muIterFactor", m_muIterFactor));
   setScaleInvariantRegularization(vvsSettings.value("scaleInvariant", m_scaleInvariantOptim));
-  m_convergedMetricThreshold = (vvsSettings.value("convergenceMetricThreshold", m_convergedMetricThreshold));
-
 
   m_depthSilhouetteSettings = j.at("silhouetteExtractionSettings");
 

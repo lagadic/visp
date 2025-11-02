@@ -9,7 +9,7 @@ from visp.core import UnscentedKalman, UKSigmaDrawerMerwe
 from visp.visual_features import BasicFeature, FeaturePoint
 from visp.vs import Servo
 from visp.gui import ColorBlindFriendlyPalette
-from visp.display_utils import get_display
+from visp.python.display_utils import get_display
 from visp.robot import RobotAfma6, Robot
 
 from typing import List, Optional, Tuple

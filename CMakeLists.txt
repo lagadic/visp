@@ -482,7 +482,7 @@ VP_OPTION(BUILD_APPS "" "" "Build utility applications (used for example for cal
 VP_OPTION(BUILD_EXAMPLES  "" "" "Build ViSP examples" "" ON)
 # Build examples as an option.
 VP_OPTION(BUILD_TESTS  "" "" "Build ViSP tests" "" ON)
-VP_OPTION(BUILD_COVERAGE "" "" "Enables test coverage" "" OFF IF (BUILD_TESTS AND CMAKE_COMPILER_IS_GNUCXX))
+VP_OPTION(BUILD_COVERAGE "" "" "Enables test coverage" "" OFF IF (BUILD_TESTS AND (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANGCXX)))
 
 # Build java as an option
 VP_OPTION(BUILD_JAVA  "" "" "Enable Java support" "" (ANDROID OR NOT CMAKE_CROSSCOMPILING)  IF (ANDROID OR (NOT APPLE_FRAMEWORK AND NOT WINRT)) )
@@ -972,6 +972,10 @@ if(DOXYGEN_FOUND)
     set(DOXYGEN_USE_MATHJAX "YES")
   else()
     set(DOXYGEN_USE_MATHJAX "NO")
+  endif()
+
+  if(DOXYGEN_AWESOME_DIR)
+    set(DOXYGEN_HTML_EXTRA_STYLESHEET "${DOXYGEN_AWESOME_DIR}/doxygen-awesome.css ${VISP_SOURCE_DIR}/doc/doxygen-awesome.custom.css")
   endif()
 
   # HTML version of the doc
@@ -1941,6 +1945,11 @@ status("")
 status("  Documentation: ")
 status("    Use doxygen:"            DOXYGEN_FOUND    THEN "yes (ver ${DOXYGEN_VERSION})" ELSE "no")
 status("    \\- Use mathjax:"        USE_MATHJAX      THEN "yes" ELSE "no")
+if(DOXYGEN_AWESOME_DIR)
+  status("    \\- Use doxygen-awesome:" "yes")
+else()
+  status("    \\- Use doxygen-awesome:" "no")
+endif()
 
 # ========================== samples and tests ==========================
 status("")
