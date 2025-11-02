@@ -55,11 +55,11 @@ void vpObjectCentricRenderer::beforeFrameRendered()
   }
   m_bb = computeBoundingBox();
 
-  double delta = 0.0;
+  double delta = 3.0;
   m_bb.setTop(std::max(m_bb.getTop() - delta, 0.0));
   m_bb.setLeft(std::max(m_bb.getLeft() - delta, 0.0));
-  m_bb.setBottom(std::min(m_bb.getBottom() + delta, static_cast<double>(m_renderParameters.getImageHeight())));
-  m_bb.setRight(std::min(m_bb.getRight() + delta, static_cast<double>(m_renderParameters.getImageWidth())));
+  m_bb.setBottom(std::min(m_bb.getBottom() + delta, static_cast<double>(m_renderParameters.getImageHeight() - 1)));
+  m_bb.setRight(std::min(m_bb.getRight() + delta, static_cast<double>(m_renderParameters.getImageWidth() - 1)));
 
   if (m_enableCrop) {
     vpPanda3DRenderParameters subParams = m_renderParameters;
@@ -74,6 +74,7 @@ void vpObjectCentricRenderer::beforeFrameRendered()
       subrenderer->setRenderParameters(subParams);
     }
   }
+  vpPanda3DRendererSet::beforeFrameRendered();
 }
 
 void vpObjectCentricRenderer::computeBoundingBox3DPoints()

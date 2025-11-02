@@ -35,12 +35,12 @@ To successfully build the RBT module, you will need:
 
 - To compile using a minimum standard version of C++11 (defined in the `USE_CXX_STANDARD` CMake variable)
 - The Panda3D 3rd-party, which is used for 3D rendering. See \ref tutorial-panda3d-install for more information on how
-  to install Panda3D on your system. Panda3D is also available through Conda if you are compiling in a virtual
-  environment.
+ to install Panda3D on your system. Panda3D is also available through Conda if you are compiling in a virtual
+ environment.
 
 Additionally, Some optional dependencies are (strongly) recommended:
 - `nlohmann::json` (see \ref install_ubuntu_3rdparty_other for installation instructions) to load configuration files
-  and save your tracking results. Without it, the tracker setup will have to be done through code
+ and save your tracking results. Without it, the tracker setup will have to be done through code
 - OpenCV, if you wish to use the `vpRBKltTracker`, that uses KLT feature tracking for pose estimation.
 
 \subsection rbt_tracking_requirements_general 2.2. General requirements
@@ -48,15 +48,15 @@ Additionally, Some optional dependencies are (strongly) recommended:
 To use the RBT you will need several things:
 
 - An OpenGL or DirectX enabled device, capable of performing 3D rendering.
-  You can use software acceleration, although having a GPU is preferable for performance reasons
+ You can use software acceleration, although having a GPU is preferable for performance reasons
 - A camera with known intrinsic parameters. For calibration see \ref tutorial-calibration-intrinsic. \warning The camera
-  intrinsics should follow a model without distortion.
+ intrinsics should follow a model without distortion.
 - If you are using an RGB-D camera, the depth image should be aligned with the RGB image. Some SDKs provide this
-  functionality. For instance, the wrapper around the realsense SDK accepts an "align" parameter in the
-  vpRealSense2::acquire() function. When correctly set, the alignment will automatically be performed for you.
+ functionality. For instance, the wrapper around the realsense SDK accepts an "align" parameter in the
+ vpRealSense2::acquire() function. When correctly set, the alignment will automatically be performed for you.
 - A 3D model of the object, in a format that is supported by Panda3D (see \ref tutorial-panda3d-file-conversion).
-  If you have installed *libassimp-dev* or are using the conda package, Panda3D supports common formats such as
-  *.ply*, *.obj*. Otherwise, you will have to convert your mesh using the previously linked method.
+ If you have installed *libassimp-dev* or are using the conda package, Panda3D supports common formats such as
+ *.ply*, *.obj*. Otherwise, you will have to convert your mesh using the previously linked method.
 
 \subsection rbt_tracking_requirements_3d_model 2.3. 3D model considerations
 
@@ -119,7 +119,7 @@ vpMegaPose::estimatePoses() method) followed by a call to vpRBTracker::setPose()
 Roughly the algorithm works as follows:
 
 1. Given an initial pose of the object in the camera frame \f$^{c}\mathbf{T}_{o}\f$, generate a render of the object at
-   this pose.
+ this pose.
 2. Extract and process render data, and store it into a vpRBRenderData object.
 3. From the renders, seek features to match with in the current RGB and depth images.
 4. From the match between image and model features, formulate an error \f$\mathbf{e}\f$.
@@ -138,8 +138,8 @@ All the information derived from the render is stored into a vpRBRenderData, in 
 - The object silhouette (extracted using vpPanda3DDepthCannyFilter and vpRBTracker::extractSilhouettePoints)
 - The image area containing the object (represented by a vpRect)
 - The pose at which the object was rendered: When implementing new features or algorithms,
-  it is preferable to use this pose when extracting data from the render, instead of those provided in the functions
-  to redefine.
+ it is preferable to use this pose when extracting data from the render, instead of those provided in the functions
+ to redefine.
 
 \image html rbt-rendering.png Rendering is used to extract geometric information width=50%
 
@@ -166,32 +166,38 @@ vpRBTracker::getFeatureTrackers().
 
 \subsubsection rbt_tracking_available_features 3.2.1. Feature list
 
-| Feature | Class   | Required inputs | Note
-| :-----  | :-----  | :----:          | ----:
-| KLT 2D points              | vpRBKltTracker           | Grayscale image | Requires OpenCV
-| Silhouette moving edges    | vpRBSilhouetteMeTracker  | Grayscale image | -
-| Silhouette color edges     | vpRBSilhouetteCCDTracker | Color image     | More expensive than silhouette moving edge based tracker
-| Depth map (point-to-plane) | vpRBDenseDepthTracker    | Depth image     | -
+| Feature | Class | Required inputs | Note
+| :----- | :----- | :----: | ----:
+| KLT 2D points | vpRBKltTracker | Grayscale image | Requires OpenCV
+| Silhouette moving edges | vpRBSilhouetteMeTracker | Grayscale image | -
+| Silhouette color edges | vpRBSilhouetteCCDTracker | Color image | More expensive than silhouette moving edge based tracker
+| Depth map (point-to-plane) | vpRBDenseDepthTracker | Depth image | -
+| XFeat keypoints  | RBXFeatFeatureTracker | Color image | Only available in Python
+
 
 - **KLT points** Rely on the vpKltOpencv class to extract and track 2D KLT points from the current image, which are
-  then associated with points on the 3D model. The error to minimize is then the reprojection error between the 2D
-  points in the current image and the reprojection of their associated 3D points.
+ then associated with points on the 3D model. The error to minimize is then the reprojection error between the 2D
+ points in the current image and the reprojection of their associated 3D points.
 
 - **Silhouette moving edges** Rely on the rendering to first extract the object depth disparities, which are
-  hypothesized to create disparities in the luminance image as well. For each point of the depth contour, the most
-  likely edge in its neighborhood in the luminance map is detected using the moving edge framework.
+ hypothesized to create disparities in the luminance image as well. For each point of the depth contour, the most
+ likely edge in its neighborhood in the luminance map is detected using the moving edge framework.
 
 - **Silhouette Color edges** Similarly to the silhouette moving edges, the depth disparity is first used to extract
-  the outer silhouette contours. Then, based on the Contracting Curve Density algorithm, color statistics are computed
-  inside and outside the silhouette and a per pixel error is computed. This error is minimized when the difference
-  between the inner and outer color distributions are maximized (i.e, there is a clear difference between the object's
-  color and the environment). Unlike the moving edge approach, the error is not geometric in nature, but rather
-  photometric.
+ the outer silhouette contours. Then, based on the Contracting Curve Density algorithm, color statistics are computed
+ inside and outside the silhouette and a per pixel error is computed. This error is minimized when the difference
+ between the inner and outer color distributions are maximized (i.e, there is a clear difference between the object's
+ color and the environment). Unlike the moving edge approach, the error is not geometric in nature, but rather
+ photometric.
 
 - **Depth** The depth information can be used and compared to the rendered depth. With this feature, the error to
-  minimize is the point-to-plane distance. The point is sampled from the current depth map, while the plane is computed
-  from the rendered 3D model, using its distance to the camera and surface normal. The plane is continuously updated
-  to minimize the distance to the sample depth point.
+ minimize is the point-to-plane distance. The point is sampled from the current depth map, while the plane is computed
+ from the rendered 3D model, using its distance to the camera and surface normal. The plane is continuously updated
+ to minimize the distance to the sample depth point.
+
+- **XFeat keypoints** Robust, deep learning based keypoints. The error criterion is the same as the KLT points,
+but unlike KLT, XFeat relies on descriptors that are stored in a map in association to 3D points
+These points can be matched even in cases where there are large motions and across time.
 
 To define you own features (advanced), see \ref rbt_extension_features.
 
@@ -202,7 +208,7 @@ While you can use all the different features together here are some common rules
  If this model is even slightly incorrect, this will result in drift over time. This drift can be compensated by the other features that do not have this 2D-3D correspondence step.
 - Similarly, the depth features are ill-suited in two scenarios. First, when tracking an object where depth estimation is complex.
 This can be the case when using an infrared based depth camera and tracking a black object that reflects very little light.
-The second scenario is when tracking movements that are perpendicular to the camera plane with very low depth variation. An example of this is a cube that is fully facing the camera and that is  translated left to right.
+The second scenario is when tracking movements that are perpendicular to the camera plane with very low depth variation. An example of this is a cube that is fully facing the camera and that is translated left to right.
 In this case, depth information should be combined with other features to track.
 - Contour-based features are important for correct pose estimation. Color edges tend to recover from larger motions than the moving edge-based features, but may result in more jitter.
 In most cases, it is not interesting to combine the two. One case that can be of interest is to use the color silhouette for large motion, and use more point for moving edges to recover the finer motion.
@@ -219,7 +225,7 @@ comes with two mechanisms:
 
 - A masking/segmentation approach, that outputs a per-pixel probability map that a given pixel belongs to the object
 - Robust error criteria. Each feature defined above uses an M-Estimator (through vpRobust) to reweigh the errors to be
-  minimized and reduce the influence of outliers.
+ minimized and reduce the influence of outliers.
 
 While M-estimators are always used, the masking approach is entirely optional.
 To enable masking, you should call vpRBTracker::setObjectSegmentationMethod() with the method that you wish to use.
@@ -251,18 +257,18 @@ pose (the Jacobian).
 
 The tracking flow is as follows:
 - For each tracked feature type
-  - Extract features from the renders. Potentially use segmentation mask to reject unreliable data
-  - Match/track features in the image acquired by the camera.
+ - Extract features from the renders. Potentially use segmentation mask to reject unreliable data
+ - Match/track features in the image acquired by the camera.
 
 Then, optimization is an iterative process:
 - While optimization has not converged or maximum number of iterations has not been reached:
-  - For each feature
-    - Update feature representation (extracted from the model) with the new pose \f$^{c}\mathbf{M}_{o}\f$
-    - Compute feature error
-    - Compute feature Jacobian
-  - Compute pose displacement, by performing a weighted combination of the feature errors and Jacobians
-  - Update \f$^{c}\mathbf{M}_{o}\f$
-  - Check for convergence.
+ - For each feature
+ - Update feature representation (extracted from the model) with the new pose \f$^{c}\mathbf{M}_{o}\f$
+ - Compute feature error
+ - Compute feature Jacobian
+ - Compute pose displacement, by performing a weighted combination of the feature errors and Jacobians
+ - Update \f$^{c}\mathbf{M}_{o}\f$
+ - Check for convergence.
 
 To influence the importance of each feature type, the user can tweak its weight by calling
 vpRBFeatureTracker::setTrackerWeight().
@@ -321,8 +327,8 @@ This subsection details the parameters that you can tweak through JSON.
 
 \subsubsection rbt_tracking_config_json_general 4.2.1. General parameters
 
-| Field | Type    | Description
-| :----  | :----  | :----
+| Field | Type | Description
+| :---- | :---- | :----
 | model | string | Optional path to the 3D model of the object. If not present, it should be set using vpRBTracker::setModelPath() before calling vpRBTracker::startTracking()
 | displaySilhouette | Boolean | Whether to display the object silhouette from the last rendered frame when calling vpRBTracker::display(). Note that since this is the last rendered frame, it may appear laggy.
 | updateRenderThreshold | float | Optional. The motion threshold between the last render and the current object pose above which the object should be rerendered and the renders updated. By default, this metric is specified in meters. This threshold is also used when rerendering after odometry. Set this value to 0 to always perform rendering.
@@ -337,47 +343,47 @@ This subsection details the parameters that you can tweak through JSON.
 \subsubsection rbt_tracking_config_camera 4.2.2. Camera configuration
 
 
-| Field | Type    | Description
-| :----  | :----  | :----
+| Field | Type | Description
+| :---- | :---- | :----
 | width | int | Image width
 | height | int | Image Height
 | intrinsics | Dictionary | Camera intrinsics, as detailed below
 
 Intrinsics definition:
 
-| Field | Type    | Description
-| :----  | :----  | :----
+| Field | Type | Description
+| :---- | :---- | :----
 | px | double | Focal length to pixel width ratio
 | py | double | Focal length to pixel height ratio
 | u0 | double | Principal point pixel vertical location
 | v0 | double | Principal point pixel horizontal location
-| model | string | Should be set to  "perspectiveWithoutDistortion"
+| model | string | Should be set to "perspectiveWithoutDistortion"
 
 \subsubsection rbt_tracking_config_optimization 4.2.3. Optimization parameters
 
 Example configuration without defining a stopping criterion for optimization:
 \code{.json}
 "vvs": {
-  "gain": 1.0,
-  "maxIterations": 10,
-  "mu": 0.0,
-  "muIterFactor": 0.0
+ "gain": 1.0,
+ "maxIterations": 10,
+ "mu": 0.0,
+ "muIterFactor": 0.0
 }
 \endcode
 
 And with a criterion (stop if 3D motion is below 1/10th of a millimeter between two iterations)
 \code{.json}
 "vvs": {
-  "gain": 1.0,
-  "maxIterations": 10,
-  "mu": 0.0,
-  "muIterFactor": 0.0,
-  "convergenceThreshold": 0.0001
+ "gain": 1.0,
+ "maxIterations": 10,
+ "mu": 0.0,
+ "muIterFactor": 0.0,
+ "convergenceThreshold": 0.0001
 }
 \endcode
 
-| Field | Type    | Description
-| :----  | :----  | :----
+| Field | Type | Description
+| :---- | :---- | :----
 | gain | double | Optimization gain. A gain too small may lead to drift issues, while a gain too high may lead to instabilities in pose.
 | maxIterations | int | Maximum number of optimization iterations.
 | mu | double | Initial amount of regularization for the Levenberg-Marquardt optimizer.
@@ -389,15 +395,15 @@ And with a criterion (stop if 3D motion is below 1/10th of a millimeter between 
 Example configuration:
 \code{.json}
 "silhouetteExtractionSettings": {
-  "threshold": {
-    "type": "relative",
-    "value": 0.1
-  },
-  "sampling": {
-    "samplingRate": 1,
-    "numPoints": 512,
-    "reusePreviousPoints": true
-  }
+ "threshold": {
+ "type": "relative",
+ "value": 0.1
+ },
+ "sampling": {
+ "samplingRate": 1,
+ "numPoints": 512,
+ "reusePreviousPoints": true
+ }
 }
 \endcode
 
@@ -410,8 +416,8 @@ If there is a strong depth disparity, then a point is considered as belonging to
 The threshold can be either defined as an absolute value, or relatively to the object's "depth" size (the difference
 between the farthest and closest object points in the camera).
 
-| Field | Type    | Description
-| :----  | :----  | :----
+| Field | Type | Description
+| :---- | :---- | :----
 | type | string | Either "relative" or "absolute". If relative, specified as a fraction of the difference between the clipping planes. If absolute, specified in meters.
 | value | double | Value of the threshold.
 
@@ -420,8 +426,8 @@ silhouette may too cumbersome as there can thousands of contour pixels.
 Thus, we can sample the silhouette to obtain a subset of points. Sampling as a strong impact on the runtime performance
 of the tracker.
 
-| Field | Type    | Description
-| :----  | :----  | :----
+| Field | Type | Description
+| :---- | :---- | :----
 | samplingRate | int | This is the step (in pixels) that is used to sample the silhouette map. A value of 1 will examine every pixel. Higher values are susceptible to aliasing artifacts, but may provide more even sampling across the silhouette.
 | numPoints | int | Maximum number of points to keep. If set to 0, then all points are kept.
 | reusePreviousPoints | boolean | Whether to try and reuse the same silhouette points across tracking iterations. This may help improve stability and reduce jitter.
@@ -437,17 +443,17 @@ Which type of method is used depends on the value of the "type" key of the mask 
 Example configuration:
 \code{.json}
 {
-  "type": "histogram",
-  "bins": 32,
-  "objectUpdateRate": 0.1,
-  "backgroundUpdateRate": 0.1,
-  "maxDepthError": 0.01,
-  "computeOnlyOnBoundingBox": false
+ "type": "histogram",
+ "bins": 32,
+ "objectUpdateRate": 0.1,
+ "backgroundUpdateRate": 0.1,
+ "maxDepthError": 0.01,
+ "computeOnlyOnBoundingBox": false
 }
 \endcode
 
-| Field | Type    | Description
-| :----  | :----  | :----
+| Field | Type | Description
+| :---- | :---- | :----
 | type | string | Set to "histogram" to use this method.
 | bins | int | Should be a power of 2 (e.g, 16 or 32). Determines the number of bins used per color component for the object and background histograms. Less bins will lead to less noise in the pixel map, but may lead to a less confident map.
 | objectUpdateRate | float | Object histogram update rate. Should be between 0 and 1. A value of 1 means that only the last frame will be used in the histogram. Values below will keep a memory of the last seen frames.
@@ -461,19 +467,19 @@ Example configuration:
 Example configuration:
 \code{.json}
 {
-  "type": "probabilistic",
-  "colorUpdateRate": 0.25,
-  "initialColorSigma": 25.0,
-  "depthSigma": 0.025,
-  "filteringMaxDistance": 0.001,
-  "minDistanceNewPoints": 0.005
+ "type": "probabilistic",
+ "colorUpdateRate": 0.25,
+ "initialColorSigma": 25.0,
+ "depthSigma": 0.025,
+ "filteringMaxDistance": 0.001,
+ "minDistanceNewPoints": 0.005
 }
 \endcode
 
-| Field | Type    | Description
-| :----  | :----  | :----
+| Field | Type | Description
+| :---- | :---- | :----
 | type | string | Set to "probabilistic" to use this method.
-| colorUpdateRate | float |  Update rate for the color statistics of each point on the object's surface.
+| colorUpdateRate | float | Update rate for the color statistics of each point on the object's surface.
 | initialColorSigma | float | Standard deviation (R,G,B) used to compute the error function between the observed color and the estimated color distribution.
 | depthSigma | float | Standard deviation used to compute the error function between the observed pixel depth and rendered depth.
 | filteringMaxDistance | float | Minimum error between the rendered depth and the stored point's distance to the camera. This is used to check whether a 3D point is visible from the camera. This value is in meters, and should be left to a small value.
@@ -487,10 +493,65 @@ The "features" object of the main dictionary is a list, as multiple features can
 
 For each feature, these values can be defined:
 
-| Field | Type    | Description
-| :----  | :----  | :----
-| weight | float | The importance given by the user to this feature type.
+| Field | Type | Description
+| :---- | :---- | :----
+| weight | float or vpTemporalWeighting | The importance given by the user to this feature type.
 | display | boolean | Whether the features should be displayed when calling vpRBTracker::display().
+
+
+For weighting, it can be of interest for certain features to give them more importance at the end of optimization, when the pose should be close to the correct solution.
+Indeed, certain features such as Silhouette contours or depth features exhibit a limited convergence domain (depending on their settings) but do not suffer from modelling inaccuracies, like keypoints.
+As such, they are ideal to correct the small remaining error that cannot be removed by keypoints.
+
+To do so, you can use a sigmoid-like weighting scheme for such features. This scheme modifies the weight during the optimization (called every frame).
+The configuration is the following:
+| Field | Type | Description
+| :---- | :---- | :----
+| minWeight | float | The minimum weight given to the feature (either at the start or end of optimization, depending on the increasing flag)
+| maxWeight | float | The maximum weight given to the feature (either at the start or end of optimization, depending on the increasing flag)
+| midpointLocation | float | The optimization point where the weight reaches the halfpoint between minWeight and maxWeight. It is specified as a fraction of the number of iterations (between 0 and 1)
+| slopePower | int | How fast the weighting transitions from minWeight to maxWeight
+| increasing | boolean | Whether the weight should increase (go from minWeight to maxWeight) or decrease (maxWeight to minWeight)
+
+\image html rbt-temporal-weighting.png Different values for temporal weighting.
+
+Example configurations:
+
+For a features whose importance does not change during optimization
+\code{.json}
+{
+  "weight": 1.0,
+  "display": false
+}
+\endcode
+
+For a feature that is more important at the end of optimization (A feature that has a more local convergence domain)
+\code{.json}
+{
+  "weight": {
+    "minWeight": 0.0,
+    "maxWeight": 1.0,
+    "midpointLocation": 0.5,
+    "slopePower": 4,
+    "increasing": true
+  },
+  "display": false
+}
+\endcode
+
+And accordingly, a feature whose importance decreases (such as features that have a large convergence domain but that may be inaccurate):
+\code{.json}
+{
+  "weight": {
+    "minWeight": 0.0,
+    "maxWeight": 1.0,
+    "midpointLocation": 0.5,
+    "slopePower": 4,
+    "increasing": false
+  },
+  "display": false
+}
+\endcode
 
 \paragraph rbt_tracking_config_features_klt 4.2.7.1. vpRBKltTracker
 
@@ -501,33 +562,33 @@ unknown tracker.
 Example configuration:
 \code{.json}
 {
-  "type": "klt",
-  "weight": 1,
+ "type": "klt",
+ "weight": 1,
 
-  "useMask": true,
-  "minMaskConfidence": 0.5,
+ "useMask": true,
+ "minMaskConfidence": 0.5,
 
-  "maxReprojectionErrorPixels": 5.0,
-  "newPointsMinPixelDistance": 4,
-  "minimumNumPoints": 20,
+ "maxReprojectionErrorPixels": 5.0,
+ "newPointsMinPixelDistance": 4,
+ "minimumNumPoints": 20,
 
-  "blockSize": 5,
-  "useHarris": true,
-  "harris": 0.05,
-  "maxFeatures": 500,
-  "minDistance": 5.0,
-  "pyramidLevels": 3,
-  "quality": 0.01,
-  "windowSize": 5
+ "blockSize": 5,
+ "useHarris": true,
+ "harris": 0.05,
+ "maxFeatures": 500,
+ "minDistance": 5.0,
+ "pyramidLevels": 3,
+ "quality": 0.01,
+ "windowSize": 5
 }
 \endcode
 
-| Field | Type    | Description
-| :----  | :----  | :----
+| Field | Type | Description
+| :---- | :---- | :----
 | useMask | boolean | Whether, if available, the segmentation mask should be used to filter wrong features.
 | minMaskConfidence | float | If useMask is true, minimum confidence for a feature to be accepted.
 | maxReprojectionErrorPixels | float | Maximum reprojection error, above which a tracked KLT point is rejected for future tracking iterations.
-| newPointsMinPixelDistance | float | During KLT resampling, minimum euclidean distance  that a point should have with all other to be considered for tracking.
+| newPointsMinPixelDistance | float | During KLT resampling, minimum euclidean distance that a point should have with all other to be considered for tracking.
 | minimumNumPoints | int | Minimum number of points that should be tracked at a given timestep. If the number of points is below, then KLT tracking is fully reinitialized.
 
 \note For the other settings, see the vpKltOpenCV documentation.
@@ -537,32 +598,32 @@ Example configuration:
 Example configuration:
 \code{.json}
 {
-  "type": "silhouetteMe",
-  "weight": 1,
-  "numCandidates": 3,
+ "type": "silhouetteMe",
+ "weight": 1,
+ "numCandidates": 3,
 
-  "useMask": false,
-  "minMaskConfidence": 0.8,
+ "useMask": false,
+ "minMaskConfidence": 0.8,
 
-  "movingEdge": {
-    "maskSize": 7,
-    "minSampleStep": 1.0,
-    "mu": [
-      0.5,
-      0.5
-    ],
-    "nMask": 180,
-    "range": 16,
-    "sampleStep": 1.0,
-    "strip": 2,
-    "thresholdType": "normalized",
-    "threshold": 20
-  }
+ "movingEdge": {
+ "maskSize": 7,
+ "minSampleStep": 1.0,
+ "mu": [
+ 0.5,
+ 0.5
+ ],
+ "nMask": 180,
+ "range": 16,
+ "sampleStep": 1.0,
+ "strip": 2,
+ "thresholdType": "normalized",
+ "threshold": 20
+ }
 }
 \endcode
 
-| Field | Type    | Description
-| :----  | :----  | :----
+| Field | Type | Description
+| :---- | :---- | :----
 | numCandidates | int | Number of edge locations that are preserved as potential matches for a given silhouette point.
 | useMask | boolean | Whether, if available, the segmentation mask should be used to filter wrong features. Here, the segmentation mask is examined along the silhouette normal to find a disparity in the probability mask (marking a sharp distinction between object and background).
 | minMaskConfidence | float | If useMask is true, minimum confidence disparity for a feature to be accepted.
@@ -573,39 +634,39 @@ Example configuration:
 Example configuration for a case with small motions:
 \code{.json}
 {
-  "type": "silhouetteColor",
-  "weight": 0.1,
+ "type": "silhouetteColor",
+ "weight": 0.1,
 
-  "useMask": true,
-  "minMaskConfidence": 0.8,
+ "useMask": true,
+ "minMaskConfidence": 0.8,
 
-  "ccd": {
-    "h": 16,
-    "delta_h": 1,
-    "min_h": 16
-  }
+ "ccd": {
+ "h": 16,
+ "delta_h": 1,
+ "min_h": 16
+ }
 }
 \endcode
 
 Example configuration to handle larger motions:
 \code{.json}
 {
-  "type": "silhouetteColor",
-  "weight": 0.1,
+ "type": "silhouetteColor",
+ "weight": 0.1,
 
-  "useMask": true,
-  "minMaskConfidence": 0.8,
+ "useMask": true,
+ "minMaskConfidence": 0.8,
 
-  "ccd": {
-    "h": 64,
-    "delta_h": 4,
-    "min_h": 16
-  }
+ "ccd": {
+ "h": 64,
+ "delta_h": 4,
+ "min_h": 16
+ }
 }
 \endcode
 
-| Field | Type    | Description
-| :----  | :----  | :----
+| Field | Type | Description
+| :---- | :---- | :----
 | useMask | boolean | Whether, if available, the segmentation mask should be used to filter wrong features. Here, the segmentation mask is examined along the silhouette normal to find a disparity in the probability mask (marking a sharp distinction between object and background).
 | minMaskConfidence | float | If useMask is true, minimum confidence disparity for a feature to be accepted.
 | maxNumPoints | int | Resample number of points to use for this tracker. This allows to use many points for the ME-based tracker, while retaining fewer points for this tracker (it is more expensive). Leave to 0 to not perform resampling.
@@ -613,8 +674,8 @@ Example configuration to handle larger motions:
 | ccd | dictionary | Contracting curve density algorithm settings. See below.
 
 To configure the actual CCD parameters, you can modify:
-| Field | Type    | Description
-| :----  | :----  | :----
+| Field | Type | Description
+| :---- | :---- | :----
 | h | int | The initial contour search area. This size (in pixels) is used to define the normal size that is used to compute the color statistics and will strongly impact the convergence domain of the tracker.
 | delta_h | int | Subsampling step when examining the contour normal. This helps diminish the tracking time when `h` is large. Using a high value (comparatively to that of `h`) can lead to instabilities.
 | min_h | int | Parameter to set if you wish to use an adaptive scaling for the silhouette search area. If set, the initial search area will be set to `h`. Then, at each optimization iteration, if motion is smaller than a multiple of `h`, then `h` is halved, down to a minimum value of `min_h`. Note that if `delta_h` is set, then it is also halved in order to obtain more reliable statistics.
@@ -624,22 +685,151 @@ To configure the actual CCD parameters, you can modify:
 Example configuration:
 \code{.json}
 {
-  "type": "depth",
-  "weight": 1,
+ "type": "depth",
+ "weight": 1,
 
-  "useMask": true,
-  "minMaskConfidence": 0.5,
+ "useMask": true,
+ "minMaskConfidence": 0.5,
 
-  "step": 2,
-  "display": false
+ "step": 2,
+ "display": false
 },
 \endcode
 
-| Field | Type    | Description
-| :----  | :----  | :----
+| Field | Type | Description
+| :---- | :---- | :----
 | useMask | boolean | Whether, if available, the segmentation mask should be used to filter wrong features.
 | minMaskConfidence | float | If useMask is true, minimum confidence for a feature to be accepted.
 | step | int | Step in pixels to sample the render map. A low value for this parameter will lead to a larger number of depth features. As this step is used when iterating on rows and columns of the render images, the number of depth features will quickly decrease as the step grows.
+
+
+
+\subsection rbt_python_options 4.3 Python specific configuration
+
+\warning The features defined below are only available when using the Python bindings. To install and use the bindings see \ref tutorial-install-python-bindings.
+
+When using the Python bindings, more options are available. These are defined in `modules/python/bindings/visp/python/rbt`
+
+
+
+
+You can load Python features from a JSON configuration.
+To do so, you can place the Python configuration in a JSON object under the "python_ext" key.
+
+Your config file should look like:
+\code{.json}
+{
+ "features": [ // CPP features
+ ...
+ ],
+ ...,
+
+ "python_ext": {
+ "features": [
+ ...
+ ],
+ "odometry": {
+ ...
+ }
+ }
+}
+\endcode
+
+For more information see \ref modules/python/bindings/visp/python/rbt/PythonRBExtensions.py
+
+
+An example of RBT using Python is available under modules/python/examples/realsense-rbt.py
+
+\paragraph rbt_python_features 4.3.1. XFeat-based options
+
+We provide a wrapper around the XFeat keypoints. XFeat keypoints are robust, and allow for reliable matching,
+even in the presence of large motion blur and image difference. They are far more powerful than the KLT based features.
+
+XFeat keypoints are matched with 3D points that are stored in a map (see vpPointMap). This map either contains objects points (expressed in the object's frame)
+or in the environment frame. When a new image arrives, keypoints are extracted, then matched with the points in the map.
+The correspondences can then be used to minimize a visual error to estimate the object or camera motion. The visual error can be 2D (classical IBVS) or in 3D (Point minimisation in metric space)
+After minimization incorrect matches are detected and removed from the 3D point map. New points are added.
+\warning As XFeat is based on deep learning, having a GPU is preferable. Running XFeat on the CPU is still possible
+
+We run XFeat on the whole image, and the keypoints can be used both for the object tracking and camera motion estimation via visual odometry.
+To use XFeat-backed settings, the Python settings should contain the XFeat feature extraction settings.
+
+\code{.json}
+"xfeat": {
+ "numPoints": 8192,
+ "minCos": 0.95,
+ "useDense": false,
+ "onlyOnBB": false,
+ "minObjMaskValue": 0.5,
+ "minSilhouetteDistanceEnvPoint": 20.0,
+ "minSilhouetteDistanceObjectPoint": 1.0
+},
+\endcode
+| Field | Type | Description
+| :---- | :---- | :----
+| numPoints | int | The maximum number of points that are extracted in the frame
+| minCos | float | The minimum matching score for two keypoints to be matched (extract from two different images). Use a high value (e.g. 0.9) to minimize the number of matches.
+| useDense | boolean | Whether to use dense keypoint extraction and matching (Xfeat*)
+| onlyOnBB | boolean | Wheter to run keypoint extraction only in the object region in the image. Do not use this option if you wish to use odometry.
+| minObjMaskValue | float | Minimum mask value (if mask is enabled) for a keypoint to be considered as belonging to the object. If the mask value is below, it is considered an environment keypoints (that may be used for odometry).
+| minSilhouetteDistanceEnvPoint | float | Distance in pixels that an environment keypoint should have to the object's silhouette for it to be a valid keypoint , that can be used for odometry. Useful to reject keypoints that could potentially belong to the object in scenarios where large motions happen
+| minSilhouetteDistanceObjectPoint | float | Distance in pixels that an environment keypoint should have to the object's silhouette for it to be a valid keypoint, that can be used to estimate object motion. Useful to only consider keypoints that are in the texture part of the object and not its contour, where keypoints may rely on the background and thus provide unreliable matches.
+
+To enable XFeat feature for object tracking, you should add the following to the "python_ext" object configuration:
+\code{.json}
+"features": [
+ {
+ "type": "xfeat",
+ "weight": 1.0,
+ "use_3d": false,
+ "display": true,
+ "numPoints": 8192,
+ "reprojectionThreshold": 5,
+ "minDistNewPoint": 0.0,
+ "maxDepthErrorVisible": 0.01,
+ "maxDepthErrorCandidate": 0.005
+ }
+]
+\endcode
+| Field | Type | Description
+| :---- | :---- | :----
+| use_3d | boolean | Whether to use 2D error criterion or 3D (requires RGBD camera)
+| numPoints | int | The maximum number of 3D points to store in the object map. These points are those considered for matching with the current object keypoints.
+| reprojectionThreshold | float | The maximum reprojection error for a 3D keypoint at the end of a tracking iteration before it is considered as an outlier and it is removed from the map.
+| minDistNewPoint | float | Minimum distance (in meters) that a new point should have to all the point currently stored in the map for it to be considered as a valid candidate for addition.
+| maxDepthErrorVisible | float | Maximum depth error (in meters) between the rendered depth and the stored 3D point depth before this point is consdered as not visible from the current viewpoint. Mainly used to filter self occlusion.
+| maxDepthErrorCandidate | float | Maximum depth error (in meters) before a new keypoint addition is rejected. Used to filter points that do not belong to the object or for which the actual 3D error is too great.
+
+
+To perform odometry using XFeat, you can add these settings:
+\code{.json}
+"odometry": {
+  "type": "xfeat",
+  "use3d": false,
+  "numPoints": 8192,
+  "reprojectionThreshold": 10.0,
+  "minDistNewPoint": 0.0,
+  "maxDepthErrorVisible": 0.02,
+  "maxDepthErrorCandidate": 0.0,
+
+  "gain": 0.5,
+  "maxNumIters": 20,
+  "muInit": 0.0,
+  "muIterFactor": 0.1,
+  "minImprovementFactor": 0.001
+}
+\endcode
+| Field | Type | Description
+| :---- | :---- | :----
+| use_3d | boolean | Whether to use 2D error criterion or 3D
+| numPoints | int | The maximum number of 3D points to store in the object map. These points are those considered for matching with the current object keypoints.
+| reprojectionThreshold | float | The maximum reprojection error for a 3D keypoint at the end of a tracking iteration before it is considered as an outlier and it is removed from the map.
+| minDistNewPoint | float | Minimum distance (in meters) that a new point should have to all the point currently stored in the map for it to be considered as a valid candidate for addition.
+| maxDepthErrorVisible | float | Maximum depth error (in meters) between the actual camera depth and the stored 3D point depth before this point is consdered as not visible from the current viewpoint. Used to filter occlusions.
+| maxDepthErrorCandidate | float | Maximum depth error (in meters) before a new keypoint addition is rejected.
+
+\warning XFeat odometry requires an RGBD camera.
+
 
 \section rbt_tracking_usage 5. Tracker usage
 
@@ -689,98 +879,98 @@ Which outputs:
 \verbatim
 Program description: Tutorial showing the usage of the Render-Based tracker with a RealSense camera
 Arguments:
-	--config               Path to the JSON configuration file. Values in this files are loaded, and can be overridden by command line arguments.
-	                       Optional
+ --config Path to the JSON configuration file. Values in this files are loaded, and can be overridden by command line arguments.
+ Optional
 
-	--debug-display        Enable additional displays from the renderer
-	                       Default: false
+ --debug-display Enable additional displays from the renderer
+ Default: false
 
-	--fps                  Realsense requested framerate
-	                       Default: 60
-	                       Optional
+ --fps Realsense requested framerate
+ Default: 60
+ Optional
 
-	--height               Realsense requested image height
-	                       Default: 480
-	                       Optional
+ --height Realsense requested image height
+ Default: 480
+ Optional
 
-	--init-file            Path to the JSON file containing the 2D/3D correspondences for initialization by click
-	                       Default: ""
-	                       Optional
+ --init-file Path to the JSON file containing the 2D/3D correspondences for initialization by click
+ Default: ""
+ Optional
 
-	--max-depth-display    Maximum depth value, used to scale the depth display
-	                       Default: 1.0
-	                       Optional
+ --max-depth-display Maximum depth value, used to scale the depth display
+ Default: 1.0
+ Optional
 
-	--no-display           Disable display windows
-	                       Default: true
+ --no-display Disable display windows
+ Default: true
 
-	--object               Name of the object to track. Used to potentially fetch the init file
-	                       Default: ""
-	                       Optional
+ --object Name of the object to track. Used to potentially fetch the init file
+ Default: ""
+ Optional
 
-	--plot-cov             Plot the pose covariance trace for each feature
-	                       Default: false
+ --plot-cov Plot the pose covariance trace for each feature
+ Default: false
 
-	--plot-divergence      Plot the metrics associated to the divergence threshold computation
-	                       Default: false
+ --plot-divergence Plot the metrics associated to the divergence threshold computation
+ Default: false
 
-	--plot-pose            Plot the pose of the object in the camera frame
-	                       Default: false
+ --plot-pose Plot the pose of the object in the camera frame
+ Default: false
 
-	--plot-position        Plot the position of the object in a 3d figure
-	                       Default: false
+ --plot-position Plot the position of the object in a 3d figure
+ Default: false
 
-	--pose                 Initial pose of the object in the camera frame.
-	                       Default: []
-	                       Optional
+ --pose Initial pose of the object in the camera frame.
+ Default: []
+ Optional
 
-	--profile              Enable the use of Pstats to profile rendering times
-	                       Default: false
+ --profile Enable the use of Pstats to profile rendering times
+ Default: false
 
-	--save                 Whether to save experiment data
-	                       Default: false
+ --save Whether to save experiment data
+ Default: false
 
-	--save-path            Where to save the experiment log. The folder should not exist.
-	                       Default: ""
-	                       Optional
+ --save-path Where to save the experiment log. The folder should not exist.
+ Default: ""
+ Optional
 
-	--save-video           Whether to save the video
-	                       Default: false
+ --save-video Whether to save the video
+ Default: false
 
-	--tracker              Path to the JSON file containing the tracker
-	                       Default: ""
-	                       Optional
+ --tracker Path to the JSON file containing the tracker
+ Default: ""
+ Optional
 
-	--video-framerate      Output video framerate
-	                       Default: 30
-	                       Optional
+ --video-framerate Output video framerate
+ Default: 30
+ Optional
 
-	--width                Realsense requested image width
-	                       Default: 848
-	                       Optional
+ --width Realsense requested image width
+ Default: 848
+ Optional
 
 Example JSON configuration file:
 
 {
-  "--debug-display": false,
-  "--fps": 60,
-  "--height": 480,
-  "--init-file": "",
-  "--max-depth-display": 1.0,
-  "--no-display": true,
-  "--object": "",
-  "--plot-cov": false,
-  "--plot-divergence": false,
-  "--plot-pose": false,
-  "--plot-position": false,
-  "--pose": [],
-  "--profile": false,
-  "--save": false,
-  "--save-path": "",
-  "--save-video": false,
-  "--tracker": "",
-  "--video-framerate": 30,
-  "--width": 848
+ "--debug-display": false,
+ "--fps": 60,
+ "--height": 480,
+ "--init-file": "",
+ "--max-depth-display": 1.0,
+ "--no-display": true,
+ "--object": "",
+ "--plot-cov": false,
+ "--plot-divergence": false,
+ "--plot-pose": false,
+ "--plot-position": false,
+ "--pose": [],
+ "--profile": false,
+ "--save": false,
+ "--save-path": "",
+ "--save-video": false,
+ "--tracker": "",
+ "--video-framerate": 30,
+ "--width": 848
 }
 \endverbatim
 
@@ -793,9 +983,9 @@ Alternatively, it can be specified in the .json file.
 Here, we will run the tutorial with the following arguments
 \verbatim
 ~/visp-build/tutorial-tracking/render-based $ ./tutorial-rbt-realsense \
-    --tracker data/dragon/dragon_realsense.json \
-    --object data/dragon/dragon.bam             \
-    --init-file data/dragon/dragon.init
+ --tracker data/dragon/dragon_realsense.json \
+ --object data/dragon/dragon.bam \
+ --init-file data/dragon/dragon.init
 \endverbatim
 
 The file `dragon_realsense.json` contains the following configuration:
@@ -814,7 +1004,7 @@ render-based-tutorial-utils.h:
 We start by declaring an instance of the tracker and load the given JSON configuration file.
 \snippet tutorial-rbt-realsense.cpp Loading config
 
-Depending on the configuration, the call to  vpRBTracker::loadConfigurationFile() may raise an error.
+Depending on the configuration, the call to vpRBTracker::loadConfigurationFile() may raise an error.
 For instance, The KLT tracker requires OpenCV and if you did not compile ViSP with OpenCV as a third party,
 an error will be raised.
 
@@ -872,10 +1062,10 @@ In the following snippet:
 We use this information to check whether:
 - There was an exception
 - The object is present in the image (if not, no information can be extracted from the render): reinitialization
-  should be performed
+ should be performed
 - There are enough features to compute pose updates.
 - If the tracking has converged to a given pose (i.e., motion during optimization has become small enough to be
-  considered as noise).
+ considered as noise).
 - Or if the tracking has used the maximum allocated number of optimization iterations.
 
 In the first three cases, this means that tracking should be reinitialized.
@@ -896,7 +1086,7 @@ On the color image, you can see:
 
 The display also contains the depth image:
 - By default, depth display is disabled as it incurs a large performance penalty and may reduce framerate.
-  You can change the tracker configuration to enable by adding `"display": true` to the "depth" feature object.
+ You can change the tracker configuration to enable by adding `"display": true` to the "depth" feature object.
 
 Finally, you should also see a black and white image which is the pixel wise segmentation mask that is used to filter
 out the features. If no segmentation method is used, the image should be black.
@@ -938,7 +1128,7 @@ This error can appear when calling vpRBTracker::startTracking().
 It may be useful to check the backend used by Panda3D, which should be displayed when you start the tutorial:
 \verbatim
 Known pipe types:
-  glxGraphicsPipe
+ glxGraphicsPipe
 \endverbatim
 
 You can also additionally get more information bout your OpenGL support.
@@ -954,7 +1144,7 @@ OpenGL version string: 4.6.0 NVIDIA 550.144.03
 OpenGL shading language version string: 4.60 NVIDIA
 OpenGL ES profile version string: OpenGL ES 3.2 NVIDIA 550.144.03
 OpenGL ES profile shading language version string: OpenGL ES GLSL ES 3.20
-    GL_EXT_shader_group_vote, GL_EXT_shader_implicit_conversions,
+ GL_EXT_shader_group_vote, GL_EXT_shader_implicit_conversions,
 \endverbatim
 
 If you do not have something similar, it may be that your platform has no OpenGL support.
@@ -963,9 +1153,9 @@ If you do not have something similar, it may be that your platform has no OpenGL
 rendering without a screen plugged to the GPU.
 In this case, you should either try to use the **p3headlessgl** backend or use a virtual screen emulator.
 - To use **p3headlessgl**, you should first visit
-  [this Panda3D documentation link](https://docs.panda3d.org/1.10/python/programming/configuration/configuring-panda3d).
-  Then you should edit the **Config.prc** file to set "load-display" to "p3headlessgl". In Ubuntu, the Config.prc is
-  located in `/etc/Config.prc`. In Conda, it will be in `$CONDA_PREFIX/etc/Config.prc`.
+ [this Panda3D documentation link](https://docs.panda3d.org/1.10/python/programming/configuration/configuring-panda3d).
+ Then you should edit the **Config.prc** file to set "load-display" to "p3headlessgl". In Ubuntu, the Config.prc is
+ located in `/etc/Config.prc`. In Conda, it will be in `$CONDA_PREFIX/etc/Config.prc`.
 - In Linux distributions, you can use `xvfb` to emulate a x11 server to render to.
 
 \warning Note that the RBT uses shaders that are compiled for OpenGL core 3.3.
@@ -990,9 +1180,9 @@ how a JSON object can be used to configure an object from your type
 For instance, in the vpRBDriftDetectorFactory, an object of type vpRBProbabilistic3DDriftDetector is registered as:
 \code{.cpp}
 registerType("probabilistic", [](const nlohmann::json &j) {
-  std::shared_ptr<vpRBProbabilistic3DDriftDetector> p(new vpRBProbabilistic3DDriftDetector());
-  p->loadJsonConfiguration(j);
-  return p;
+ std::shared_ptr<vpRBProbabilistic3DDriftDetector> p(new vpRBProbabilistic3DDriftDetector());
+ p->loadJsonConfiguration(j);
+ return p;
 });
 \endcode
 

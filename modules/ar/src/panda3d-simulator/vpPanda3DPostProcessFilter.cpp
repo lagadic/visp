@@ -85,6 +85,13 @@ void vpPanda3DPostProcessFilter::setupCamera()
   m_camera->set_scene(m_renderRoot);
 }
 
+PointerTo<Texture> vpPanda3DPostProcessFilter::setupTexture(const FrameBufferProperties &fbp) const
+{
+  PointerTo<Texture> tex = new Texture();
+  fbp.setup_color_texture(tex);
+  return tex;
+}
+
 void vpPanda3DPostProcessFilter::setupRenderTarget()
 {
 
@@ -112,8 +119,9 @@ void vpPanda3DPostProcessFilter::setupRenderTarget()
   }
   m_buffers.push_back(m_buffer);
   //m_buffer->set_inverted(true);
-  m_texture = new Texture();
-  fbp.setup_color_texture(m_texture);
+  m_texture = setupTexture(fbp);
+
+
   m_buffer->add_render_texture(m_texture, m_isOutput ? GraphicsOutput::RenderTextureMode::RTM_copy_texture : GraphicsOutput::RenderTextureMode::RTM_bind_or_copy);
   m_buffer->set_clear_color(LColor(0.f));
   m_buffer->set_clear_color_active(true);

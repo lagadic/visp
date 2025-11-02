@@ -124,8 +124,9 @@ void vpColorHistogram::merge(const vpColorHistogram &other, float alpha)
 void vpColorHistogram::computeProbas(const vpImage<vpRGBa> &image, vpImage<float> &proba) const
 {
   proba.resize(image.getHeight(), image.getWidth());
-
-#pragma omp parallel for schedule(static)
+#ifdef VISP_HAVE_OPENMP
+#pragma omp parallel for
+#endif
   for (int i = 0; i < static_cast<int>(image.getSize()); ++i) {
     proba.bitmap[i] = m_probas[colorToIndex(image.bitmap[i])];
   }
@@ -139,7 +140,9 @@ void vpColorHistogram::computeProbas(const vpImage<vpRGBa> &image, vpImage<float
   const int left = static_cast<int>(bb.getLeft());
   const int bottom = std::min(h- 1, static_cast<int>(bb.getBottom()));
   const int right = std::min(w - 1, static_cast<int>(bb.getRight()));
+#ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
+#endif
   for (int i = top; i <= bottom; ++i) {
     const vpRGBa *colorRow = image[i];
     float *probaRow = proba[i];
@@ -228,21 +231,29 @@ void vpColorHistogram::computeSplitHistograms(const vpImage<vpRGBa> &image, cons
 
   const int beforeBBStart = static_cast<int>(bbInside.getTop()) * image.getWidth() + static_cast<int>(bbInside.getLeft());
   const int afterBBEnd = static_cast<int>(bbInside.getBottom()) * image.getWidth() + static_cast<int>(bbInside.getRight());
-
+#ifdef VISP_HAVE_OPENMP
 #pragma omp parallel
+#endif
   {
     std::vector<unsigned int>localCountsIn(bins, 0), localCountsOut(bins, 0);
-#pragma omp for schedule(static, 64)
+#ifdef VISP_HAVE_OPENMP
+#pragma omp for
+#endif
     for (int i = 0; i < beforeBBStart; ++i) {
       const unsigned int index = insideMask.colorToIndex(image.bitmap[i]);
       ++localCountsOut[index];
     }
-#pragma omp for schedule(static, 64)
+#ifdef VISP_HAVE_OPENMP
+#pragma omp for
+#endif
     for (int i = afterBBEnd; i < static_cast<int>(image.getSize()); ++i) {
       const unsigned int index = insideMask.colorToIndex(image.bitmap[i]);
       ++localCountsOut[index];
     }
-#pragma omp for schedule(static, 64)
+
+#ifdef VISP_HAVE_OPENMP
+#pragma omp for
+#endif
     for (int i = static_cast<int>(bbInside.getTop()); i < static_cast<int>(round(bbInside.getBottom())); ++i) {
       for (int j = static_cast<int>(bbInside.getLeft()); j < static_cast<int>(round(bbInside.getRight())); ++j) {
         const unsigned int bitmapIndex = i * image.getWidth() + j;
@@ -252,7 +263,9 @@ void vpColorHistogram::computeSplitHistograms(const vpImage<vpRGBa> &image, cons
         localCountsOut[index] += static_cast<unsigned int>(!pixelInMask);
       }
     }
+#ifdef VISP_HAVE_OPENMP
 #pragma omp critical
+#endif
     {
       for (unsigned int i = 0; i < bins; ++i) {
         countsIn[i] += localCountsIn[i];
@@ -262,7 +275,6 @@ void vpColorHistogram::computeSplitHistograms(const vpImage<vpRGBa> &image, cons
   }
   insideMask.build(countsIn);
   outsideMask.build(countsOut);
-
 }
 
 END_VISP_NAMESPACE

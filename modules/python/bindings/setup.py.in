@@ -58,28 +58,45 @@ if os.name == 'posix':
 else:
   package_data[''] = ['*.pyd', '*.dll', 'py.typed']
 
+# This creates a list which is empty but returns a length of 1.
+# Should make the wheel a binary distribution and platlib compliant.
+class EmptyListWithLength(list):
+  def __len__(self):
+    return 1
 
+# Add all Python files that are in the visp/apps folder as console scripts.
+# Console scripts can be started as if they were executables in the PATH
 base_path = Path(__file__).parent.absolute()
 
 
-packages = ['visp', 'visp.apps', 'visp.python']
 
+packages = ['visp', 'visp.apps', 'visp.python']
 
 apps_folder = base_path / package_name / 'apps'
 console_scripts = []
 
 base_app_package_name = f'{package_name}.apps'
 
+# Files cannot have "-" in their names. To stick with ViSP convention, we replace "_" with "-"
 for app_file in apps_folder.iterdir():
   if app_file.name.endswith('.py'):
     console_scripts.append(f'{app_file.stem.replace("_", "-")}={base_app_package_name}.{app_file.stem}:main')
 
+# Add all submodules as belonging to the package.
+# Without this, all the Python extensions are not added to the package
+# and are not visible when visp is installed in the site-packages
+base_name = 'visp.python'
+base_path = base_path / package_name
 
-# This creates a list which is empty but returns a length of 1.
-# Should make the wheel a binary distribution and platlib compliant.
-class EmptyListWithLength(list):
-  def __len__(self):
-    return 1
+def add_submodule_recursive(p: Path, base_name, package_list):
+  for subfolder in p.iterdir():
+    if subfolder.is_dir():
+      new_base = base_name + '.' + subfolder.name
+
+      package_list.append(new_base)
+      add_submodule_recursive(subfolder, new_base, package_list)
+
+add_submodule_recursive(base_path, 'visp', packages)
 
 setup(
   name=package_name,

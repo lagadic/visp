@@ -59,8 +59,8 @@ public:
   double Z; //! Point depth
   bool isSilhouette;
 
-  vpRBSilhouettePoint(unsigned int i, unsigned int j, const vpColVector &normal, double orientation, double Z) :
-    i(i), j(j), normal(normal), orientation(orientation), Z(Z)
+  vpRBSilhouettePoint(unsigned int a_i, unsigned int a_j, const vpColVector &a_normal, double a_orientation, double a_Z) :
+    i(a_i), j(a_j), normal(a_normal), orientation(a_orientation), Z(a_Z)
   { }
 
   void detectSilhouette(const vpImage<float> &I)
