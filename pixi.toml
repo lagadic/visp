@@ -2,7 +2,7 @@
 authors = ["Olivier Roussel <olivier.roussel@inria.fr>"]
 channels = ["conda-forge", "https://prefix.dev/panda3d-forge"]
 name = "visp"
-platforms = ["linux-64", "osx-64", "win-64", "osx-arm64"]
+platforms = ["linux-64", "linux-aarch64", "osx-64", "win-64", "osx-arm64"]
 version = "3.6.0"
 license = "GPL-2.0-only"
 license-file = "LICENSE.txt"
@@ -36,13 +36,14 @@ librealsense = "*"
 gsl = "*"
 gtk2 = "*"
 ogre = "*"
-zbar = "*"
 
 [target.linux-64.dependencies]
 mesa-libegl-cos7-x86_64 = "*"
+zbar = "*"
 
 [target.osx.dependencies]
 llvm-openmp = "*"
+zbar = "*"
 
 [activation]
 scripts = ["development/scripts/pixi/activation.sh"]
@@ -150,7 +151,11 @@ coverage = { cmd = [
   "--exclude", "modules/vision/src/pose-estimation/private",
   "--exclude", "modules/robot/src/real-robot/biclops/private",
   "--cobertura", "$VISP_BUILD_DIR/visp-coverage.xml",
-  "--txt"
+  "--txt",
+  "--html", "$VISP_BUILD_DIR/visp-coverage.html",
+  "--html-nested", "$VISP_BUILD_DIR/visp-coverage-nested.html",
+
+  "--html-theme", "github.dark-green"
 ], depends-on = ["test"]}
 echo-coverage-path = { cmd = "echo $VISP_BUILD_DIR/visp-coverage.xml"}
 

@@ -30,6 +30,10 @@
 
 #include <visp3/rbt/vpObjectMaskFactory.h>
 #include <visp3/rbt/vpColorHistogramMask.h>
+#include <visp3/rbt/vpDepthMask.h>
+#include <visp3/rbt/vpCombinedDepthAndColorMask.h>
+
+
 
 BEGIN_VISP_NAMESPACE
 
@@ -47,6 +51,16 @@ vpObjectMaskFactory::vpObjectMaskFactory()
 
   registerType("histogram", [](const nlohmann::json &j) {
     std::shared_ptr<vpColorHistogramMask> p(new vpColorHistogramMask());
+    p->loadJsonConfiguration(j);
+    return p;
+  });
+  registerType("depth", [](const nlohmann::json &j) {
+    std::shared_ptr<vpDepthMask> p(new vpDepthMask());
+    p->loadJsonConfiguration(j);
+    return p;
+  });
+  registerType("joint", [](const nlohmann::json &j) {
+    std::shared_ptr<vpCombinedDepthAndColorMask> p(new vpCombinedDepthAndColorMask());
     p->loadJsonConfiguration(j);
     return p;
   });

@@ -406,7 +406,7 @@ python_type_aliases = {
 autodoc_type_aliases = python_type_aliases
 
 autodoc_excludes = [
-'__weakref__',  '__doc__', '__module__', '__dict__',
+'__weakref__',  '__doc__', '__module__', '__dict__', '__annotations__',
 '__dir__', '__delattr__', '__format__', '__init_subclass__', '__new__',
 '__reduce__', '__reduce_ex__', '__repr__', '__setattr__',
 '__sizeof__', '__str__', '__subclasshook__', '__getattribute__', '__entries',

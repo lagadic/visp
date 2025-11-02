@@ -8,7 +8,7 @@ from visp.core import ImageRGBa
 from visp.robot import ImageSimulator
 from visp.visual_features import BasicFeature, FeaturePoint
 from visp.vs import Servo
-from visp.display_utils import get_display
+from visp.python.display_utils import get_display
 
 
 try:

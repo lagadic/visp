@@ -9,6 +9,10 @@
    :inherited-members: pybind11_builtins.pybind11_object, pybind11_object
    :special-members:
 
+   {% if docstring %}
+    {{ docstring }}
+   {% endif %}
+
    {% block methods %}
    {% if methods %}
    .. rubric:: {{ _('Methods') }}

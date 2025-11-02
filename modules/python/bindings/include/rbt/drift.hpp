@@ -54,6 +54,15 @@ public:
       );
   }
 
+  virtual void reset() VP_OVERRIDE
+  {
+    PYBIND11_OVERRIDE_PURE(
+      void,           /* Return type */
+      vpRBDriftDetector,     /* Parent class */
+      reset,       /* Name of function in C++ (must match Python name) */
+      );
+  }
+
   virtual void display(const vpImage<vpRGBa> &I) VP_OVERRIDE
   {
     PYBIND11_OVERRIDE_PURE(

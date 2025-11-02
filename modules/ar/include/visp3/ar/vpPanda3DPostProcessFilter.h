@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -99,6 +99,7 @@ protected:
   void getRenderBasic(vpImage<vpRGBf> &I) const;
 
   virtual FrameBufferProperties getBufferProperties() const = 0;
+  virtual PointerTo<Texture> setupTexture(const FrameBufferProperties &fbp) const;
 
   std::shared_ptr<vpPanda3DBaseRenderer> m_inputRenderer;
   bool m_isOutput; //! Whether this filter is an output to be used and should be copied to ram
