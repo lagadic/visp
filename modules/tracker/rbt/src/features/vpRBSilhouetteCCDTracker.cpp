@@ -495,8 +495,9 @@ void vpRBSilhouetteCCDTracker::display(const vpCameraParameters &/*cam*/, const 
 
 void vpRBSilhouetteCCDTracker::updateCCDPoints(const vpHomogeneousMatrix &cMo)
 {
+  const vpRowVector cameraRayObjectFrame = (cMo.getRotationMatrix().inverse() * vpColVector({ 0, 0, 1.0 })).t();
   for (vpRBSilhouetteControlPoint &p : m_controlPoints) {
-    p.updateSilhouettePoint(cMo);
+    p.updateSilhouettePoint(cMo, cameraRayObjectFrame);
   }
 }
 
@@ -699,9 +700,9 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
 #endif
       const vpRGBa pixelRGBa = I(static_cast<unsigned int>(vic_k[0]), static_cast<unsigned int>(vic_k[1]));
       double *pixel = pix_ptr + k * 3;
-      pixel[0] = static_cast<double>(pixelRGBa.R);
-      pixel[1] = static_cast<double>(pixelRGBa.G);
-      pixel[2] = static_cast<double>(pixelRGBa.B);
+      pixel[0] = static_cast<double>(pixelRGBa.R) / 255.0;
+      pixel[1] = static_cast<double>(pixelRGBa.G) / 255.0;
+      pixel[2] = static_cast<double>(pixelRGBa.B) / 255.0;
 
       m1[0] += wp1 * pixel[0];
       m1[1] += wp1 * pixel[1];
@@ -723,9 +724,9 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
       const vpRGBa pixelNegRGBa = I(static_cast<unsigned int>(vic_neg[0]), static_cast<unsigned int>(vic_neg[1]));
       double *pixelNeg = pix_ptr + negative_normal * 3;
 
-      pixelNeg[0] = static_cast<double>(pixelNegRGBa.R);
-      pixelNeg[1] = static_cast<double>(pixelNegRGBa.G);
-      pixelNeg[2] = static_cast<double>(pixelNegRGBa.B);
+      pixelNeg[0] = static_cast<double>(pixelNegRGBa.R) / 255.0;
+      pixelNeg[1] = static_cast<double>(pixelNegRGBa.G) / 255.0;
+      pixelNeg[2] = static_cast<double>(pixelNegRGBa.B) / 255.0;
       wp1 = (vic_neg[5] * vic_neg[7] / normalized_param[i][0]);
       wp2 = (vic_neg[6] * vic_neg[7] / normalized_param[i][1]);
       w1 += wp1;
