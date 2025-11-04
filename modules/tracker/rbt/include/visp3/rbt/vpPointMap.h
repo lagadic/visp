@@ -99,10 +99,10 @@ public:
 
   void selectValidNewCandidates(const vpCameraParameters &cam, const vpHomogeneousMatrix &cTw,
    const vpArray2D<int> &originalIndices, const vpMatrix &uvs,
-   const vpImage<float> &modelDepth, const vpImage<float> &depth,
-   vpMatrix &oXs, std::vector<int> &validCandidateIndices);
+   const vpImage<float> &modelDepth, const vpImage<float> &depth, const vpImage<vpRGBf> &normals,
+   vpMatrix &oXs, vpMatrix &oNs, std::vector<int> &validCandidateIndices);
 
-  void updatePoints(const vpArray2D<int> &indicesToRemove, const vpMatrix &pointsToAdd, std::vector<int> &removedIndices, unsigned int &numAddedPoints);
+  void updatePoints(const vpArray2D<int> &indicesToRemove, const vpMatrix &pointsToAdd, const vpMatrix &normalsToAdd, std::vector<int> &removedIndices, unsigned int &numAddedPoints);
   void updatePoint(unsigned int index, double X, double Y, double Z)
   {
     m_X[index][0] = X;
@@ -180,6 +180,8 @@ public:
 
 private:
   vpMatrix m_X; // N x 3, points expressed in world frame
+  vpMatrix m_normals; // N x 3, points expressed in world frame
+
   unsigned m_maxPoints;
   double m_minDistNewPoint;
   double m_maxDepthErrorVisible;

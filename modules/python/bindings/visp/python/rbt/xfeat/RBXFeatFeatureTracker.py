@@ -97,6 +97,7 @@ class RBXFeatFeatureTracker(RBFeatureTracker):
     self.use_3d = False
     self.last_cMo = None
     self.robust = Robust()
+    self.current_representation = None
     self.display_type = RBXFeatFeatureTracker.DisplayType.SIMPLE
 
   def requiresRGB(self) -> bool:
@@ -123,7 +124,16 @@ class RBXFeatFeatureTracker(RBFeatureTracker):
     self.frame = frame
     self.backend.process_frame(frame, self.iter)
 
-  def trackFeatures(self, frame: RBFeatureTrackerInput, previousFrame: RBFeatureTrackerInput, _cMo: HomogeneousMatrix):
+  def trackFeatures(self, frame: RBFeatureTrackerInput, previousFrame: RBFeatureTrackerInput, cMo: HomogeneousMatrix):
+    # Update map
+    if self.current_representation is not None:
+      self.removed_indices = self.object_map.update(self.frame, cMo,
+                                                    self.frame.renders.depth,
+                                                    self.frame.depth,
+                                                    self.idx_curr_obj_matched,
+                                                    self.idx_object_map_matched,
+                                                    self.current_representation.keypoints,
+                                                    self.current_representation.descriptors)
 
     self.current_representation = self.backend.get_current_object_data()
     self.idx_curr_obj_matched, self.idx_object_map_matched = None, None
@@ -228,15 +238,7 @@ class RBXFeatFeatureTracker(RBFeatureTracker):
       map_indices = ArrayInt2D.view(np.ascontiguousarray(self.idx_object_map_matched[:, None]).astype(np.int32))
       self.object_map.point_map.project(self.frame.cam, map_indices, cMo, cX, xs, uvs)
       self.pixel_pos_visible = uvs.numpy().copy()
-    # Update map
-    if self.current_representation is not None:
-      self.removed_indices = self.object_map.update(self.frame, cMo,
-                                                    self.frame.renders.depth,
-                                                    self.frame.depth,
-                                                    self.idx_curr_obj_matched,
-                                                    self.idx_object_map_matched,
-                                                    self.current_representation.keypoints,
-                                                    self.current_representation.descriptors)
+
 
     self.frame = None
     self.iter += 1

@@ -34,6 +34,8 @@
 #include <omp.h>
 #endif
 
+#define VP_RB_POINT_MAP_DEBUG 0
+
 BEGIN_VISP_NAMESPACE
 
 void vpPointMap::getPoints(const vpArray2D<int> &indices, vpMatrix &X)
@@ -128,7 +130,12 @@ void vpPointMap::getVisiblePoints(const unsigned int h, const unsigned int w, co
   const vpRotationMatrix cRw = cTw.getRotationMatrix();
   const vpTranslationVector t = cTw.getTranslationVector();
   vpMatrix cX(m_X.getRows(), m_X.getCols());
+  vpMatrix cN(m_normals.getRows(), m_normals.getCols());
+
+  const vpColVector cameraRayObjectFrame = (cRw.inverse() * vpColVector({ 0.0, 0.0, 1.0 }));
+
   vpMatrix::mult2Matrices(m_X, cRw.t(), cX);
+
 
   std::vector<std::vector<int>> indicesPerThread;
 
@@ -163,6 +170,15 @@ void vpPointMap::getVisiblePoints(const unsigned int h, const unsigned int w, co
 #pragma omp for nowait
 #endif
     for (int i = 0; i < static_cast<int>(m_X.getRows()); ++i) {
+
+      if (m_normals.getRows() > 0) {
+        double dotProd = m_normals[i][0] * cameraRayObjectFrame[0] + m_normals[i][1] * cameraRayObjectFrame[1] + m_normals[i][2] * cameraRayObjectFrame[2];
+        double angle = acos(dotProd);
+        if (angle < vpMath::rad(89)) {
+          continue;
+        }
+      }
+
       const double Z = cX[i][2] + t[2];
 
       if (Z <= 0.0) {
@@ -203,8 +219,8 @@ void vpPointMap::getOutliers(const vpArray2D<int> &originalIndices, const vpMatr
 }
 
 void vpPointMap::selectValidNewCandidates(const vpCameraParameters &cam, const vpHomogeneousMatrix &cTw, const vpArray2D<int> &originalIndices,
-const vpMatrix &uvs, const vpImage<float> &modelDepth, const vpImage<float> &depth,
-vpMatrix &oXs, std::vector<int> &validCandidateIndices)
+const vpMatrix &uvs, const vpImage<float> &modelDepth, const vpImage<float> &depth, const vpImage<vpRGBf> &normals,
+vpMatrix &oXs, vpMatrix &oNs, std::vector<int> &validCandidateIndices)
 {
   if (originalIndices.getRows() != uvs.getRows()) {
     throw vpException(vpException::dimensionError, "Indices and keypoint locations should have the same dimensions");
@@ -219,7 +235,12 @@ vpMatrix &oXs, std::vector<int> &validCandidateIndices)
   double farEnoughThresholdSq = m_minDistNewPoint * m_minDistNewPoint;
 
   std::vector<std::array<double, 3>> validoXList;
+  std::vector<std::array<double, 3>> validoNList;
+
   validoXList.reserve(uvs.getRows());
+  if (normals.getSize() > 0) {
+    validoNList.reserve(uvs.getRows());
+  }
 
   for (unsigned int i = 0; i < uvs.getRows(); ++i) {
     double u = uvs[i][0], v = uvs[i][1];
@@ -277,16 +298,28 @@ vpMatrix &oXs, std::vector<int> &validCandidateIndices)
     if (isFarEnoughFromOtherPoints) {
       validoXList.push_back({ oX[0], oX[1], oX[2] });
       validCandidateIndices.push_back(originalIndices[i][0]);
+      if (normals.getSize() > 0) {
+        vpRGBf n = normals[vint][uint];
+        validoNList.push_back({ n.R, n.G, n.B });
+      }
     }
   }
 
   oXs.resize(static_cast<unsigned int>(validoXList.size()), 3, false, false);
+  oNs.resize(static_cast<unsigned int>(validoNList.size()), 3, false, false);
+
   unsigned int i = 0;
   for (const std::array<double, 3> &oX: validoXList) {
     oXs[i][0] = oX[0];
     oXs[i][1] = oX[1];
     oXs[i][2] = oX[2];
-
+    ++i;
+  }
+  i = 0;
+  for (const std::array<double, 3> &oN: validoNList) {
+    oNs[i][0] = oN[0];
+    oNs[i][1] = oN[1];
+    oNs[i][2] = oN[2];
     ++i;
   }
 }
@@ -294,12 +327,49 @@ vpMatrix &oXs, std::vector<int> &validCandidateIndices)
 void vpPointMap::clear()
 {
   m_X = vpMatrix();
+  m_normals = vpMatrix();
 }
 
-void vpPointMap::updatePoints(const vpArray2D<int> &indicesToRemove, const vpMatrix &pointsToAdd,
+vpMatrix removeAndAdd(const vpMatrix &oldArray, unsigned int newSize, const std::vector<int> &removedIndices, const vpMatrix &rowsToAdd, unsigned int &numAddedPoints)
+{
+  unsigned int numCols = 3;
+  vpMatrix newX(newSize, numCols);
+  unsigned int newXIndex = 0;
+  unsigned int oldXIndex = 0;
+
+  // Copy between removed rows
+  for (int removedRow : removedIndices) {
+#if VP_RB_POINT_MAP_DEBUG
+    if (removedRow >= static_cast<int>(oldArray.getRows())) {
+      throw vpException(vpException::dimensionError, "Removed row is out of bounds");
+    }
+#endif
+    unsigned int copiedRows = removedRow - oldXIndex;
+    if (copiedRows > 0) {
+      memcpy(newX[newXIndex], oldArray[oldXIndex], copiedRows * numCols * sizeof(double));
+      newXIndex += copiedRows;
+    }
+    oldXIndex = removedRow + 1;
+  }
+  // Copy from last removed row to the end of the array
+  unsigned int copiedRows = oldArray.getRows() - oldXIndex;
+  if (copiedRows > 0) {
+    memcpy(newX[newXIndex], oldArray[oldXIndex], copiedRows * numCols * sizeof(double));
+    newXIndex += copiedRows;
+  }
+
+  numAddedPoints = std::min(rowsToAdd.getRows(), static_cast<unsigned int>(newSize) - newXIndex);
+  memcpy(newX[newXIndex], rowsToAdd[0], numAddedPoints * numCols *sizeof(double));
+  return newX;
+}
+
+void vpPointMap::updatePoints(const vpArray2D<int> &indicesToRemove, const vpMatrix &pointsToAdd, const vpMatrix &normalsToAdd,
                               std::vector<int> &removedIndices, unsigned int &numAddedPoints)
 {
   removedIndices.clear();
+  if (normalsToAdd.getRows() > 0 && normalsToAdd.getRows() != pointsToAdd.getRows()) {
+    throw vpException(vpException::dimensionError, "Adding normal data to point map, but number of points and normals do not match");
+  }
   int newSize = m_X.getRows() - indicesToRemove.getRows() + pointsToAdd.getRows();
   for (unsigned int i = 0; i < indicesToRemove.getRows(); ++i) {
     removedIndices.push_back(indicesToRemove[i][0]);
@@ -317,7 +387,6 @@ void vpPointMap::updatePoints(const vpArray2D<int> &indicesToRemove, const vpMat
     int i = 0;
     int n_rows = static_cast<int>(m_X.getRows());
     while ((startingIndices.size() < static_cast<size_t>(shouldBeRemoved)) && (i < n_rows)) {
-
       if (removedIt == removedIndices.end() || i < (*removedIt)) {
         startingIndices.push_back(i);
       }
@@ -330,30 +399,18 @@ void vpPointMap::updatePoints(const vpArray2D<int> &indicesToRemove, const vpMat
     removedIndices.insert(removedIndices.begin(), startingIndices.begin(), startingIndices.end());
     std::sort(removedIndices.begin(), removedIndices.end());
   }
-  vpMatrix newX(newSize, 3);
 
-  unsigned int newXIndex = 0;
-  unsigned int oldXIndex = 0;
-  // Copy between removed rows
-  for (int removedRow : removedIndices) {
-    unsigned int copiedRows = removedRow - oldXIndex;
-    if (copiedRows > 0) {
-      memcpy(newX[newXIndex], m_X[oldXIndex], copiedRows * 3 * sizeof(double));
-      newXIndex += copiedRows;
-    }
-    oldXIndex = removedRow + 1;
+  m_X = removeAndAdd(m_X, newSize, removedIndices, pointsToAdd, numAddedPoints);
+  if (normalsToAdd.getRows() > 0 || m_normals.getRows() > 0) {
+    m_normals = removeAndAdd(m_normals, newSize, removedIndices, normalsToAdd, numAddedPoints);
   }
-  // Copy from last removed row to the end of the array
-  unsigned int copiedRows = m_X.getRows() - oldXIndex;
-  if (copiedRows > 0) {
-    memcpy(newX[newXIndex], m_X[oldXIndex], copiedRows * 3 * sizeof(double));
-    newXIndex += copiedRows;
+#if VP_RB_POINT_MAP_DEBUG
+  if (m_normals.getRows() > 0 && m_X.size() != m_normals.size()) {
+    std::cout << "m_X rows = " << m_X.getRows() << ", mnormals = " << m_normals.getRows() << std::endl;
+    throw vpException(vpException::dimensionError, "Mismatch between number of points and normals");
   }
+#endif
 
-  numAddedPoints = std::min(pointsToAdd.getRows(), static_cast<unsigned int>(newSize) - newXIndex);
-  memcpy(newX[newXIndex], pointsToAdd[0], numAddedPoints * 3 * sizeof(double));
-
-  m_X = std::move(newX);
 }
 
 END_VISP_NAMESPACE
