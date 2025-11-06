@@ -71,7 +71,7 @@ int main()
     if (npz_data.find(identifier) != npz_data.end()) {
       visp::cnpy::NpyArray arr_string_data = npz_data[identifier];
       std::vector<char> vec_arr_string_data = arr_string_data.as_vec<char>();
-      const std::string read_string = std::string(vec_arr_string_data.begin(), vec_arr_string_data.end());
+      const std::string read_string(vec_arr_string_data.begin(), vec_arr_string_data.end());
       std::cout << "Read string: " << read_string << std::endl;
     }
     //! [Read_string]

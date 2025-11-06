@@ -49,6 +49,7 @@
 #include <vector>
 #include <numeric>
 #include <visp3/core/vpColor.h>
+#include <visp3/core/vpEndian.h>
 
 #include <memory>
 #include <map>
@@ -96,8 +97,8 @@ namespace cnpy
 // license available in LICENSE file, or at http://www.opensource.org/licenses/mit-license.php
 struct NpyArray
 {
-  NpyArray(const std::vector<size_t> &_shape, size_t _word_size, bool _fortran_order) :
-    shape(_shape), word_size(_word_size), fortran_order(_fortran_order)
+  NpyArray(const std::vector<size_t> &_shape, size_t _word_size, bool _fortran_order, char _data_type) :
+    shape(_shape), word_size(_word_size), fortran_order(_fortran_order), data_type(_data_type)
   {
     num_vals = 1;
     for (size_t i = 0; i < shape.size(); ++i) num_vals *= shape[i];
@@ -136,18 +137,19 @@ struct NpyArray
   size_t word_size;
   bool fortran_order;
   size_t num_vals;
+  char data_type;
 };
 
 using npz_t = std::map<std::string, NpyArray>;
-VISP_EXPORT npz_t npz_load(std::string fname);
+VISP_EXPORT npz_t npz_load(const std::string &fname);
 VISP_EXPORT char BigEndianTest();
 VISP_EXPORT char map_type(const std::type_info &t);
 template<typename T> std::vector<char> create_npy_header(const std::vector<size_t> &shape);
-VISP_EXPORT void parse_npy_header(FILE *fp, size_t &word_size, std::vector<size_t> &shape, bool &fortran_order);
-VISP_EXPORT void parse_npy_header(unsigned char *buffer, size_t &word_size, std::vector<size_t> &shape, bool &fortran_order);
+VISP_EXPORT void parse_npy_header(FILE *fp, size_t &word_size, std::vector<size_t> &shape, bool &fortran_order, bool &little_endian, char &data_type);
+VISP_EXPORT void parse_npy_header(unsigned char *buffer, size_t &word_size, std::vector<size_t> &shape, bool &fortran_order, bool &little_endian, char &data_type);
 VISP_EXPORT void parse_zip_footer(FILE *fp, uint16_t &nrecs, size_t &global_header_size, size_t &global_header_offset);
-VISP_EXPORT NpyArray npz_load(std::string fname, std::string varname);
-VISP_EXPORT NpyArray npy_load(std::string fname);
+VISP_EXPORT NpyArray npz_load(const std::string &fname, const std::string &varname);
+VISP_EXPORT NpyArray npy_load(const std::string &fname);
 
 template<typename T> std::vector<char> &operator+=(std::vector<char> &lhs, const T rhs)
 {
@@ -167,7 +169,7 @@ template<> inline std::vector<char> &operator+=(std::vector<char> &lhs, const st
 
 template<> inline std::vector<char> &operator+=(std::vector<char> &lhs, const char *rhs)
 {
-//write in little endian
+  //write in little endian
   size_t len = strlen(rhs);
   lhs.reserve(len);
   for (size_t byte = 0; byte < len; ++byte) {
@@ -183,10 +185,10 @@ template<> inline std::vector<char> &operator+=(std::vector<char> &lhs, const ch
   \param[in] data : Pointer to an array of basic datatype (int, float, double, std::complex<double>, ...).
   \param[in] shape : Shape of the array, e.g. Nz x Ny x Nx.
   \param[in] mode : Writing mode, i.e. overwrite (w) or append (a) to the file.
-  \warning This function has only been tested on little endian platform.
+  \warning This function should also work on big-endian platform, without guarantee since it has not been tested extensively.
   \note Original library: <a href="https://github.com/rogersce/cnpy">cnpy</a> with MIT license.
  */
-template<typename T> void npy_save(std::string fname, const T *data, const std::vector<size_t> shape, std::string mode = "w")
+template<typename T> void npy_save(const std::string &fname, const T *data, const std::vector<size_t> shape, const std::string &mode = "w")
 {
   FILE *fp = NULL;
   std::vector<size_t> true_data_shape; //if appending, the shape of existing + new data
@@ -196,22 +198,23 @@ template<typename T> void npy_save(std::string fname, const T *data, const std::
   if (fp) {
     //file exists. we need to append to it. read the header, modify the array size
     size_t word_size;
-    bool fortran_order;
-    parse_npy_header(fp, word_size, true_data_shape, fortran_order);
+    bool fortran_order, little_endian;
+    char data_type = 'i';
+    parse_npy_header(fp, word_size, true_data_shape, fortran_order, little_endian, data_type);
     assert(!fortran_order);
 
     if (word_size != sizeof(T)) {
-      std::cout<<"libnpy error: "<<fname<<" has word size "<<word_size<<" but npy_save appending data sized "<<sizeof(T)<<"\n";
+      std::cerr << "libnpy error: " << fname << " has word size " << word_size << " but npy_save appending data sized " << sizeof(T) << "\n";
       assert(word_size == sizeof(T));
     }
     if (true_data_shape.size() != shape.size()) {
-      std::cout<<"libnpy error: npy_save attempting to append misdimensioned data to "<<fname<<"\n";
+      std::cerr << "libnpy error: npy_save attempting to append misdimensioned data to " << fname << "\n";
       assert(true_data_shape.size() != shape.size());
     }
 
     for (size_t i = 1; i < shape.size(); ++i) {
       if (shape[i] != true_data_shape[i]) {
-        std::cout<<"libnpy error: npy_save attempting to append misshaped data to "<<fname<<"\n";
+        std::cerr << "libnpy error: npy_save attempting to append misshaped data to " << fname << "\n";
         assert(shape[i] == true_data_shape[i]);
       }
     }
@@ -223,12 +226,18 @@ template<typename T> void npy_save(std::string fname, const T *data, const std::
   }
 
   std::vector<char> header = create_npy_header<T>(true_data_shape);
-  size_t nels = std::accumulate(shape.begin(), shape.end(), 1, std::multiplies<size_t>());
+  // https://github.com/rogersce/cnpy/pull/58/files
+  size_t nels = std::accumulate(shape.begin(), shape.end(), static_cast<size_t>(1), std::multiplies<size_t>());
 
   fseek(fp, 0, SEEK_SET);
   fwrite(&header[0], sizeof(char), header.size(), fp);
   fseek(fp, 0, SEEK_END);
+#ifdef VISP_BIG_ENDIAN
+  static_assert(sizeof(nels) == 8);
+  fwrite(data, sizeof(T), vpEndian::swap64bits(nels), fp);
+#else
   fwrite(data, sizeof(T), nels, fp);
+#endif
   fclose(fp);
 }
 
@@ -240,7 +249,7 @@ template<typename T> void npy_save(std::string fname, const T *data, const std::
   \param[in] data : Pointer to an array of basic datatype (int, float, double, std::complex<double>, ...).
   \param[in] shape : Shape of the array, e.g. Nz x Ny x Nx.
   \param[in] mode : Writing mode, i.e. overwrite (w) or append (a) to the file.
-  \warning This function has only been tested on little endian platform.
+  \warning This function should also work on big-endian platform, without guarantee since it has not been tested extensively.
   \note Original library: <a href="https://github.com/rogersce/cnpy">cnpy</a> with MIT license.
 
   \sa To see how to use it, you may have a look at \ref tutorial-npz
@@ -279,16 +288,32 @@ template<typename T> void npz_save(std::string zipname, std::string fname, const
 
   std::vector<char> npy_header = create_npy_header<T>(shape);
 
+  // https://github.com/rogersce/cnpy/pull/58/files
   size_t nels = std::accumulate(shape.begin(), shape.end(), static_cast<size_t>(1), std::multiplies<size_t>());
   size_t nbytes = nels*sizeof(T) + npy_header.size();
 
   //get the CRC of the data to be added
   uint32_t crc = vp_mz_crc32(0L, (uint8_t *)&npy_header[0], npy_header.size());
-  crc = vp_mz_crc32(crc, (uint8_t *)data, nels*sizeof(T));
+  if (nels > 0) {
+    crc = vp_mz_crc32(crc, (uint8_t *)data, nels*sizeof(T));
+  }
 
   //build the local header
   std::vector<char> local_header;
   local_header += "PK"; //first part of sig
+#ifdef VISP_BIG_ENDIAN
+  local_header += vpEndian::swap16bits(static_cast<uint16_t>(0x0403)); //second part of sig
+  local_header += vpEndian::swap16bits(static_cast<uint16_t>(20)); //min version to extract
+  local_header += vpEndian::swap16bits(static_cast<uint16_t>(0)); //general purpose bit flag
+  local_header += vpEndian::swap16bits(static_cast<uint16_t>(0)); //compression method
+  local_header += vpEndian::swap16bits(static_cast<uint16_t>(0)); //file last mod time
+  local_header += vpEndian::swap16bits(static_cast<uint16_t>(0));     //file last mod date
+  local_header += vpEndian::swap32bits(static_cast<uint32_t>(crc)); //crc
+  local_header += vpEndian::swap32bits(static_cast<uint32_t>(nbytes)); //compressed size
+  local_header += vpEndian::swap32bits(static_cast<uint32_t>(nbytes)); //uncompressed size
+  local_header += vpEndian::swap16bits(static_cast<uint16_t>(fname.size())); //fname length
+  local_header += vpEndian::swap16bits(static_cast<uint16_t>(0)); //extra field length
+#else
   local_header += static_cast<uint16_t>(0x0403); //second part of sig
   local_header += static_cast<uint16_t>(20); //min version to extract
   local_header += static_cast<uint16_t>(0); //general purpose bit flag
@@ -300,10 +325,21 @@ template<typename T> void npz_save(std::string zipname, std::string fname, const
   local_header += static_cast<uint32_t>(nbytes); //uncompressed size
   local_header += static_cast<uint16_t>(fname.size()); //fname length
   local_header += static_cast<uint16_t>(0); //extra field length
+#endif
   local_header += fname;
 
   //build global header
   global_header += "PK"; //first part of sig
+#ifdef VISP_BIG_ENDIAN
+  global_header += vpEndian::swap16bits(static_cast<uint16_t>(0x0201)); //second part of sig
+  global_header += vpEndian::swap16bits(static_cast<uint16_t>(20)); //version made by
+  global_header.insert(global_header.end(), local_header.begin()+4, local_header.begin()+30);
+  global_header += static_cast<uint16_t>(0); //file comment length
+  global_header += static_cast<uint16_t>(0); //disk number where file starts
+  global_header += static_cast<uint16_t>(0); //internal file attributes
+  global_header += static_cast<uint32_t>(0); //external file attributes
+  global_header += vpEndian::swap32bits(static_cast<uint32_t>(global_header_offset)); //relative offset of local file header, since it begins where the global header used to begin
+#else
   global_header += static_cast<uint16_t>(0x0201); //second part of sig
   global_header += static_cast<uint16_t>(20); //version made by
   global_header.insert(global_header.end(), local_header.begin()+4, local_header.begin()+30);
@@ -312,11 +348,21 @@ template<typename T> void npz_save(std::string zipname, std::string fname, const
   global_header += static_cast<uint16_t>(0); //internal file attributes
   global_header += static_cast<uint32_t>(0); //external file attributes
   global_header += static_cast<uint32_t>(global_header_offset); //relative offset of local file header, since it begins where the global header used to begin
+#endif
   global_header += fname;
 
   //build footer
   std::vector<char> footer;
   footer += "PK"; //first part of sig
+#ifdef VISP_BIG_ENDIAN
+  footer += vpEndian::swap16bits(static_cast<uint16_t>(0x0605)); //second part of sig
+  footer += static_cast<uint16_t>(0); //number of this disk
+  footer += static_cast<uint16_t>(0); //disk where footer starts
+  footer += vpEndian::swap16bits(static_cast<uint16_t>(nrecs+1)); //number of records on this disk
+  footer += vpEndian::swap16bits(static_cast<uint16_t>(nrecs+1)); //total number of records
+  footer += vpEndian::swap32bits(static_cast<uint32_t>(global_header.size())); //nbytes of global headers
+  footer += vpEndian::swap32bits(static_cast<uint32_t>(global_header_offset + nbytes + local_header.size())); //offset of start of global headers, since global header now starts after newly written array
+#else
   footer += static_cast<uint16_t>(0x0605); //second part of sig
   footer += static_cast<uint16_t>(0); //number of this disk
   footer += static_cast<uint16_t>(0); //disk where footer starts
@@ -324,6 +370,7 @@ template<typename T> void npz_save(std::string zipname, std::string fname, const
   footer += static_cast<uint16_t>(nrecs+1); //total number of records
   footer += static_cast<uint32_t>(global_header.size()); //nbytes of global headers
   footer += static_cast<uint32_t>(global_header_offset + nbytes + local_header.size()); //offset of start of global headers, since global header now starts after newly written array
+#endif
   footer += static_cast<uint16_t>(0); //zip file comment length
 
   //write everything
@@ -343,10 +390,10 @@ template<typename T> void npz_save(std::string zipname, std::string fname, const
   \param[in] fname : Path to the npy file.
   \param[in] data : Pointer to a 1-D array of basic datatype (int, float, double, std::complex<double>, ...).
   \param[in] mode : Writing mode, i.e. overwrite (w) or append (a) to the file.
-  \warning This function has only been tested on little endian platform.
+  \warning This function should also work on big-endian platform, without guarantee since it has not been tested extensively.
   \note Original library: <a href="https://github.com/rogersce/cnpy">cnpy</a> with MIT license.
  */
-template<typename T> void npy_save(std::string fname, const std::vector<T> data, std::string mode = "w")
+template<typename T> void npy_save(const std::string &fname, const std::vector<T> data, const std::string &mode = "w")
 {
   std::vector<size_t> shape;
   shape.push_back(data.size());
@@ -360,12 +407,12 @@ template<typename T> void npy_save(std::string fname, const std::vector<T> data,
   \param[in] fname : Identifier for the corresponding array of data.
   \param[in] data : Pointer to a 1-D array of basic datatype (int, float, double, std::complex<double>, ...).
   \param[in] mode : Writing mode, i.e. overwrite (w) or append (a) to the file.
-  \warning This function has only been tested on little endian platform.
+  \warning This function should also work on big-endian platform, without guarantee since it has not been tested extensively.
   \note Original library: <a href="https://github.com/rogersce/cnpy">cnpy</a> with MIT license.
 
   \sa To see how to use it, you may have a look at \ref tutorial-npz
  */
-template<typename T> void npz_save(std::string zipname, std::string fname, const std::vector<T> data, std::string mode = "w")
+template<typename T> void npz_save(const std::string &zipname, const std::string &fname, const std::vector<T> data, const std::string &mode = "w")
 {
   std::vector<size_t> shape;
   shape.push_back(data.size());
@@ -397,7 +444,11 @@ template<typename T> std::vector<char> create_npy_header(const std::vector<size_
   header += "NUMPY";
   header += static_cast<char>(0x01); //major version of numpy format
   header += static_cast<char>(0x00); //minor version of numpy format
+#ifdef VISP_BIG_ENDIAN
+  header += vpEndian::swap16bits(static_cast<uint16_t>(dict.size()));
+#else
   header += static_cast<uint16_t>(dict.size());
+#endif
   header.insert(header.end(), dict.begin(), dict.end());
 
   return header;
