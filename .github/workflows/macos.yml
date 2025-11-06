@@ -38,6 +38,12 @@ jobs:
       run: |
         brew install libpng libjpeg-turbo libdc1394 opencv pcl librealsense zbar pkg-config nlohmann-json
 
+    - name: Debug Eigen before upgrade
+      if: matrix.os == 'macos-14'
+      run: |
+        ls /opt/homebrew/share/eigen3/cmake/
+        cat /opt/homebrew/share/eigen3/cmake/Eigen3Config.cmake
+
     - name: Install dependencies on macos-14
       # XXX Testing this on macos-14
       # ----------------
@@ -62,6 +68,12 @@ jobs:
         brew upgrade || true
         brew install libpng libjpeg-turbo libdc1394 pcl librealsense zbar pkg-config nlohmann-json
         brew install opencv
+
+    - name: Debug Eigen after upgrade
+      if: matrix.os == 'macos-14'
+      run: |
+        ls /opt/homebrew/share/eigen3/cmake/
+        cat /opt/homebrew/share/eigen3/cmake/Eigen3Config.cmake
 
     - name: Install java dependencies
       run: |
