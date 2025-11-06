@@ -1886,6 +1886,7 @@ function(vp_find_dataset found location version major minor patch)
 
   # Check version
   if(_found)
+    # TODO: add version check after https://github.com/lagadic/visp/pull/1814/files
     if(EXISTS "${_location}/video/cube.mp4")
       set(_major "3")
       set(_minor "7")
