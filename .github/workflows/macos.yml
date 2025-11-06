@@ -67,7 +67,7 @@ jobs:
         brew update
         brew upgrade || true
         brew install libpng libjpeg-turbo libdc1394 pcl librealsense zbar pkg-config nlohmann-json
-        brew install opencv
+        brew install opencv eigen
 
     - name: Debug Eigen after upgrade
       if: matrix.os == 'macos-14'
