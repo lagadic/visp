@@ -60,8 +60,7 @@ jobs:
       run: |
         brew update
         brew upgrade || true
-        brew install libpng libjpeg-turbo libdc1394 pcl librealsense zbar pkg-config nlohmann-json
-        brew install opencv
+        brew install libpng libjpeg-turbo libdc1394 opencv pcl librealsense zbar pkg-config nlohmann-json eigen
 
     - name: Install java dependencies
       run: |
