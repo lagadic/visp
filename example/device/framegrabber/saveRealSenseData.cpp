@@ -505,7 +505,7 @@ public:
 
           if (m_save_pointcloud && ptr_pointCloud) {
             std::string pcl_extension = m_save_force_binary_format ? ".bin" : (m_save_pcl_npz_format ? ".npz" : ".pcd");
-            std::string filename_point_cloud = vpIoTools::formatString("/point_cloud_" + m_save_pattern + pcl_extension, m_cpt);
+            std::string filename_point_cloud = vpIoTools::formatString(m_directory + "/point_cloud_" + m_save_pattern + pcl_extension, m_cpt);
 
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
             uint32_t width = ptr_pointCloud->width;
@@ -611,7 +611,7 @@ public:
           }
 
           if (m_save_infrared && ptr_infraredImg) {
-            std::string filename_infrared = vpIoTools::formatString("/infrared_image_" + m_save_pattern + image_filename_ext, m_cpt);
+            std::string filename_infrared = vpIoTools::formatString(m_directory + "/infrared_image_" + m_save_pattern + image_filename_ext, m_cpt);
 
             vpImageIo::write(*ptr_infraredImg, filename_infrared);
           }
@@ -734,15 +734,44 @@ int main(int argc, const char *argv[])
 #endif
   d1->init(I_color, 0, 0, "RealSense color stream");
   d2->init(I_depth, I_color.getWidth() + 80, 0, "RealSense depth stream");
-  d3->init(I_infrared, I_color.getWidth() + 80, I_color.getHeight() + 70, "RealSense infrared stream");
 
-  while (true) {
+#ifdef USE_REALSENSE2
+  rs2::align align_to(RS2_STREAM_COLOR);
+  if (use_aligned_stream && save_infrared) {
+    std::cerr << "Cannot use aligned streams with infrared acquisition currently."
+      << "\nInfrared stream acquisition is disabled!"
+      << std::endl;
+    save_infrared = false;
+  }
+  if (save_infrared) {
+    d3->init(I_infrared, I_color.getWidth() + 80, I_color.getHeight() + 70, "RealSense infrared stream");
+  }
+#endif
+
+  // If PCL is available, always use PCL datatype even if we will save in NPZ or BIN file format
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
+  pcl::PointCloud<pcl::PointXYZ>::Ptr pointCloud(new pcl::PointCloud<pcl::PointXYZ>);
+#else
+  std::vector<vpColVector> pointCloud;
+#endif
+
+  bool quit = false;
+  while (!quit) {
     double start = vpTime::measureTimeMs();
-    realsense.acquire((unsigned char *)I_color.bitmap, (unsigned char *)I_depth_raw.bitmap, nullptr, nullptr);
+    if (use_aligned_stream) {
+      realsense.acquire((unsigned char *)I_color.bitmap, (unsigned char *)I_depth_raw.bitmap, nullptr, nullptr, &align_to);
+    }
+    else {
+      realsense.acquire((unsigned char *)I_color.bitmap, (unsigned char *)I_depth_raw.bitmap, nullptr, pointCloud,
+                        (unsigned char *)I_infrared.bitmap);
+    }
     vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
 
     vpDisplay::display(I_color);
     vpDisplay::display(I_depth);
+    if (save_infrared) {
+      vpDisplay::display(I_infrared);
+    }
 
     double delta_time = vpTime::measureTimeMs() - start;
     std::ostringstream oss_time;
@@ -752,9 +781,12 @@ int main(int argc, const char *argv[])
 
     vpDisplay::flush(I_color);
     vpDisplay::flush(I_depth);
+    if (save_infrared) {
+      vpDisplay::flush(I_infrared);
+    }
 
     if (vpDisplay::getClick(I_color, false)) {
-      break;
+      quit = true;
     }
   }
 
@@ -820,23 +852,8 @@ int main(int argc, const char *argv[])
     save_pointcloud, save_infrared, save_pcl_npz_format, save_force_binary_format, save_jpeg, width, height);
   std::thread storage_thread(&vpStorageWorker::run, &storage);
 
-#ifdef USE_REALSENSE2
-  rs2::align align_to(RS2_STREAM_COLOR);
-  if (use_aligned_stream && save_infrared) {
-    std::cerr << "Cannot use aligned streams with infrared acquisition currently."
-      << "\nInfrared stream acquisition is disabled!"
-      << std::endl;
-  }
-#endif
-
   int nb_saves = 0;
-  bool quit = false;
-  // If PCL is available, always use PCL datatype even if we will save in NPZ or BIN file format
-#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
-  pcl::PointCloud<pcl::PointXYZ>::Ptr pointCloud(new pcl::PointCloud<pcl::PointXYZ>);
-#else
-  std::vector<vpColVector> pointCloud;
-#endif
+  quit = false;
 
   std::unique_ptr<vpImage<vpRGBa>> ptr_colorImg;
   std::unique_ptr<vpImage<uint16_t>> ptr_depthImg;
