@@ -1886,7 +1886,11 @@ function(vp_find_dataset found location version major minor patch)
 
   # Check version
   if(_found)
-    if(EXISTS "${_location}/video/cube.mp4")
+    if(EXISTS "${_location}/rbt/configs/depth-klt-ccd-mask.json")
+      set(_major "3")
+      set(_minor "7")
+      set(_patch "3")
+    elseif(EXISTS "${_location}/video/cube.mp4")
       set(_major "3")
       set(_minor "7")
       set(_patch "2")
