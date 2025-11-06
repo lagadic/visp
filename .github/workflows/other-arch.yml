@@ -58,14 +58,16 @@ jobs:
         distro: none
         base_image: "--platform=linux/${{ matrix.arch }} ${{ matrix.distro }}"
 
+        install: |
+          apt-get update && apt-get install -y  lsb-release git build-essential cmake
+          apt-get update && apt-get install -y libx11-dev libdc1394-dev libv4l-dev gfortran liblapack-dev libopenblas-dev libeigen3-dev libopencv-dev
+          apt-get update && apt-get install -y libssl-dev libusb-1.0-0-dev pkg-config libgtk-3-dev libglfw3-dev libgl1-mesa-dev libglu1-mesa-dev
+
         run: |
           lscpu
 
-          apt-get update && apt-get install -y  lsb-release git build-essential cmake
           lsb_release -a
-
-          apt-get update && apt-get install -y libx11-dev libdc1394-dev libv4l-dev gfortran liblapack-dev libopenblas-dev libeigen3-dev libopencv-dev
-          apt-get update && apt-get install -y libssl-dev libusb-1.0-0-dev pkg-config libgtk-3-dev libglfw3-dev libgl1-mesa-dev libglu1-mesa-dev
+          dpkg --list | grep compiler
 
           git clone --depth 1 https://github.com/lagadic/visp-images ${HOME}/visp-images
           export VISP_INPUT_IMAGE_PATH=$HOME/visp-images
