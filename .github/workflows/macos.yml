@@ -41,6 +41,7 @@ jobs:
     - name: Debug Eigen before upgrade
       if: matrix.os == 'macos-14'
       run: |
+        sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.locate.plist
         locate "Eigen/Core"
         locate "Eigen3Config.cmake"
       #ls /opt/homebrew/share/eigen3/cmake/
@@ -74,6 +75,7 @@ jobs:
     - name: Debug Eigen after upgrade
       if: matrix.os == 'macos-14'
       run: |
+        sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.locate.plist
         locate "Eigen/Core"
         locate "Eigen3Config.cmake"
       #  ls /opt/homebrew/share/eigen3/cmake/
