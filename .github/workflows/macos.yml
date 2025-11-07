@@ -38,15 +38,6 @@ jobs:
       run: |
         brew install libpng libjpeg-turbo libdc1394 opencv pcl librealsense zbar pkg-config nlohmann-json
 
-    - name: Debug Eigen before upgrade
-      run: |
-        ls /opt/homebrew/Cellar
-        sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.locate.plist
-        locate "Eigen/Core"
-        locate "Eigen3Config.cmake"
-      #ls /opt/homebrew/share/eigen3/cmake/
-      #cat /opt/homebrew/share/eigen3/cmake/Eigen3Config.cmake
-
     - name: Install dependencies on macos-14
       # XXX Testing this on macos-14
       # ----------------
@@ -67,17 +58,18 @@ jobs:
       # TODO Might be merged with macos-latest deps installation if succeed
       if: matrix.os == 'macos-14'
       run: |
-        brew update
-        brew upgrade || true
-        brew install libpng libjpeg-turbo libdc1394 pcl librealsense zbar pkg-config nlohmann-json
-        brew install opencv eigen
+        brew install libpng libjpeg-turbo libdc1394 opencv pcl librealsense zbar pkg-config nlohmann-json
+      #  brew update
+      #  brew upgrade || true
+      #  brew install libpng libjpeg-turbo libdc1394 pcl librealsense zbar pkg-config nlohmann-json
+      #  brew install opencv eigen
 
     - name: Debug Eigen after upgrade
       run: |
         ls /opt/homebrew/Cellar
-        sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.locate.plist
-        locate "Eigen/Core"
-        locate "Eigen3Config.cmake"
+      #  sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.locate.plist
+      #  locate "Eigen/Core"
+      #  locate "Eigen3Config.cmake"
       #  ls /opt/homebrew/share/eigen3/cmake/
       #  cat /opt/homebrew/share/eigen3/cmake/Eigen3Config.cmake
 
