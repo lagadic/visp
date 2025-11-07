@@ -41,8 +41,10 @@ jobs:
     - name: Debug Eigen before upgrade
       if: matrix.os == 'macos-14'
       run: |
-        ls /opt/homebrew/share/eigen3/cmake/
-        cat /opt/homebrew/share/eigen3/cmake/Eigen3Config.cmake
+        locate "Eigen/Core"
+        locate "Eigen3Config.cmake"
+      #ls /opt/homebrew/share/eigen3/cmake/
+      #cat /opt/homebrew/share/eigen3/cmake/Eigen3Config.cmake
 
     - name: Install dependencies on macos-14
       # XXX Testing this on macos-14
@@ -72,8 +74,10 @@ jobs:
     - name: Debug Eigen after upgrade
       if: matrix.os == 'macos-14'
       run: |
-        ls /opt/homebrew/share/eigen3/cmake/
-        cat /opt/homebrew/share/eigen3/cmake/Eigen3Config.cmake
+        locate "Eigen/Core"
+        locate "Eigen3Config.cmake"
+      #  ls /opt/homebrew/share/eigen3/cmake/
+      #  cat /opt/homebrew/share/eigen3/cmake/Eigen3Config.cmake
 
     - name: Install java dependencies
       run: |
