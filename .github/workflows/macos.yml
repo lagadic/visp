@@ -72,6 +72,18 @@ jobs:
       run: |
         ls -als /opt/homebrew/share/
 
+    - name: Debug Eigen after upgrade 3
+      run: |
+        ls -als /opt/homebrew/share/eigen3/
+
+    - name: Debug Eigen after upgrade 4
+      run: |
+        ls -als /opt/homebrew/share/eigen3/cmake
+
+    - name: Debug Eigen after upgrade 5
+      run: |
+        cat /opt/homebrew/share/eigen3/cmake/Eigen3Config.cmake
+
       #  sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.locate.plist
       #  locate "Eigen/Core"
       #  locate "Eigen3Config.cmake"
