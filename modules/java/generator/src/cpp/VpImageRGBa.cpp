@@ -42,7 +42,7 @@ extern "C" {
                                                                                 jchar R, jchar G, jchar B, jchar A)
   {
     (void)env;
-    vpRGBa val(R, G, B, A);
+    vpRGBa val(static_cast<unsigned char>(R), static_cast<unsigned char>(G), static_cast<unsigned char>(B), static_cast<unsigned char>(A));
     return (jlong) new vpImage<vpRGBa>(r, c, val);
   }
 
