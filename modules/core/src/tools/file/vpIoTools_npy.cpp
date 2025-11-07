@@ -58,6 +58,10 @@ using namespace buminiz;
 // anonymous namespace
 namespace
 {
+#if defined(ENABLE_VISP_NAMESPACE)
+using namespace VISP_NAMESPACE_NAME; // for vpEndian calls
+#endif
+
 void reverse_data(std::shared_ptr<std::vector<char> > &data_holder, const std::vector<size_t> &shape,
   size_t word_size, char data_type)
 {

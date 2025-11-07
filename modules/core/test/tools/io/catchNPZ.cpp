@@ -406,7 +406,7 @@ TEMPLATE_LIST_TEST_CASE("Test visp::cnpy::npy_load/npz_save", "[BasicTypes][list
   REQUIRE(!vpIoTools::checkDirectory(directory_filename));
 }
 
-#if defined(VISP_HAVE_DATASET) && (VISP_HAVE_DATASET_VERSION >= 0x030704)
+#if defined(VISP_HAVE_DATASET) && (VISP_HAVE_DATASET_VERSION >= 0x030702)
 namespace
 {
 void loadData(const std::string &npz_filename,
