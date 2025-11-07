@@ -330,7 +330,7 @@ void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals, vpImage<floa
       throw vpException(vpException::badValue, "Unexpected data type in normals texture");
     }
 
-    for (unsigned int i = 0; i < image_height; ++i) {
+    for (int i = 0; i < image_height; ++i) {
       const T *const rowData = data - i * rowIncrement;
       vpRGBf *normalRow = normals[top + i];
       float *depthRow = depth[top + i];
