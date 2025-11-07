@@ -64,9 +64,14 @@ jobs:
       #  brew install libpng libjpeg-turbo libdc1394 pcl librealsense zbar pkg-config nlohmann-json
       #  brew install opencv eigen
 
-    - name: Debug Eigen after upgrade
+    - name: Debug Eigen after upgrade 1
       run: |
-        ls /opt/homebrew/Cellar
+        ls /opt/homebrew/Cellar/eigen/
+
+    - name: Debug Eigen after upgrade 2
+      run: |
+        ls -als /opt/homebrew/share/
+
       #  sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.locate.plist
       #  locate "Eigen/Core"
       #  locate "Eigen3Config.cmake"
