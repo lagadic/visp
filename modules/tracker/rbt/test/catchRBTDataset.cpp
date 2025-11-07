@@ -39,7 +39,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_CATCH2) && defined(VISP_HAVE_DATASET) && (VISP_HAVE_DATASET_VERSION >= 0x030703)
+#if defined(VISP_HAVE_CATCH2) && defined(VISP_HAVE_DATASET) && (VISP_HAVE_DATASET_VERSION >= 0x030702)
 
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpImageConvert.h>

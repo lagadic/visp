@@ -1886,11 +1886,11 @@ function(vp_find_dataset found location version major minor patch)
 
   # Check version
   if(_found)
-    if(EXISTS "${_location}/rbt/configs/depth-klt-ccd-mask.json")
-      set(_major "3")
-      set(_minor "7")
-      set(_patch "3")
-    elseif(EXISTS "${_location}/video/cube.mp4")
+    # visp-images 3.7.2 additions
+    # - video/cube.mp4 (PR #28 and #29)
+    # - rbt folder (PR #30)
+    # - npz/numpy/visp_npz_test_data_numpy_BE.npz (PR #31)
+    if(EXISTS "${_location}/npz/numpy/visp_npz_test_data_numpy_BE.npz")
       set(_major "3")
       set(_minor "7")
       set(_patch "2")
