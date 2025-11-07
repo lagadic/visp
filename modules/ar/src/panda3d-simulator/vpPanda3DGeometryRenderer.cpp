@@ -85,21 +85,20 @@ const std::string SHADER_FRAG_NORMAL_AND_DEPTH =
 
 
 const std::string SHADER_FRAG_NORMAL_AND_DEPTH_FAST =
-R"(#version 330
-in vec3 oNormal;
-in float distToCamera;
-out vec4 p3d_FragData;
-uniform float nearV;
-uniform float farV;
-void main()
-{
-  //float depthV = distToCamera <= nearV ? 0.0 : (distToCamera - nearV) / (farV - nearV);
-  float depthV = distToCamera / farV;
-  vec3 n = normalize(oNormal);
-  n = (n + 1.0) / 2.0;
-  p3d_FragData.bgra = vec4(n, depthV);
-}
-)";
+"#version 330\n"
+"in vec3 oNormal;\n"
+"in float distToCamera;\n"
+"out vec4 p3d_FragData;\n"
+"uniform float nearV;\n"
+"uniform float farV;\n"
+"void main()\n"
+"{\n"
+"  //float depthV = distToCamera <= nearV ? 0.0 : (distToCamera - nearV) / (farV - nearV);\n"
+"  float depthV = distToCamera / farV;\n"
+"  vec3 n = normalize(oNormal);\n"
+"  n = (n + 1.0) / 2.0;\n"
+"  p3d_FragData.bgra = vec4(n, depthV);\n"
+"}\n";
 
 
 std::string renderTypeToName(vpPanda3DGeometryRenderer::vpRenderType type)
@@ -331,7 +330,7 @@ void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals, vpImage<floa
       throw vpException(vpException::badValue, "Unexpected data type in normals texture");
     }
 
-    for (unsigned int i = 0; i < image_height; ++i) {
+    for (int i = 0; i < image_height; ++i) {
       const T *const rowData = data - i * rowIncrement;
       vpRGBf *normalRow = normals[top + i];
       float *depthRow = depth[top + i];
