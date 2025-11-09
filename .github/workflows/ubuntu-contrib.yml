@@ -26,6 +26,12 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v5
 
+    - name: ccache
+      uses: hendrikmuhs/ccache-action@v1.2.19
+      with:
+        key: ${{ github.job }}-${{ matrix.os }}
+        verbose: 2
+
     - name: Print system information
       run: lscpu
 
@@ -50,12 +56,15 @@ jobs:
         CXX=${{ matrix.compiler.CXX }}
         echo "CC: $CC"
         echo "CXX: $CXX"
-        cmake .. -DVISP_CONTRIB_MODULES_PATH=${HOME}/visp_contrib/modules -DCMAKE_C_COMPILER="${CC}" -DCMAKE_CXX_COMPILER="${CXX}" -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=OFF -DBUILD_DEMOS=OFF -DBUILD_TUTORIALS=OFF -DBUILD_TESTS=OFF -DCMAKE_INSTALL_PREFIX=/tmp/usr/local
+        cmake .. -DVISP_CONTRIB_MODULES_PATH=${HOME}/visp_contrib/modules -DCMAKE_C_COMPILER="${CC}" -DCMAKE_CXX_COMPILER="${CXX}" \
+            -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=OFF -DBUILD_DEMOS=OFF -DBUILD_TUTORIALS=OFF -DBUILD_TESTS=OFF -DCMAKE_INSTALL_PREFIX=/tmp/usr/local \
+            -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
         cat ViSP-third-party.txt
 
     - name: Compile and install ViSP
       working-directory: build
       run: |
+        export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
         make -j$(nproc) install
 
     - name: Run unit tests

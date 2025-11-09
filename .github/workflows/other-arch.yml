@@ -47,6 +47,12 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v5
 
+    - name: ccache
+      uses: hendrikmuhs/ccache-action@v1.2.19
+      with:
+        key: ${{ github.job }}-${{ matrix.arch }}-${{ matrix.distro }}
+        verbose: 2
+
     - name: Run on arch
       uses: uraimo/run-on-arch-action@v3
       # See issue https://github.com/uraimo/run-on-arch-action/issues/155 for the explanation on the weird use of the arch and distro
@@ -75,7 +81,8 @@ jobs:
 
           pwd
           mkdir build && cd build
-          cmake .. -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TUTORIALS=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java=OFF -DBUILD_MODULE_visp_java_binding=OFF
+          cmake .. -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TUTORIALS=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java=OFF -DBUILD_MODULE_visp_java_binding=OFF \
+              -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
           cat ViSP-third-party.txt
 
           if [[ $(nproc) -gt 2 ]]
@@ -85,6 +92,7 @@ jobs:
             NB_PROC_TO_USE=1
           fi
           echo "NB_PROC_TO_USE = ${NB_PROC_TO_USE}"
+          export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
           make -j${NB_PROC_TO_USE}
 
           # increase default 1500 timeout on QEMU based CI tests
