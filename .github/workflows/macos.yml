@@ -58,9 +58,37 @@ jobs:
       # TODO Might be merged with macos-latest deps installation if succeed
       if: matrix.os == 'macos-14'
       run: |
-        brew update
-        brew upgrade || true
-        brew install libpng libjpeg-turbo libdc1394 opencv pcl librealsense zbar pkg-config nlohmann-json eigen
+        brew install libpng libjpeg-turbo libdc1394 opencv pcl librealsense zbar pkg-config nlohmann-json
+      #  brew update
+      #  brew upgrade || true
+      #  brew install libpng libjpeg-turbo libdc1394 pcl librealsense zbar pkg-config nlohmann-json
+      #  brew install opencv eigen
+
+    - name: Debug Eigen after upgrade 1
+      run: |
+        ls /opt/homebrew/Cellar/eigen/
+
+    - name: Debug Eigen after upgrade 2
+      run: |
+        ls -als /opt/homebrew/share/
+
+    - name: Debug Eigen after upgrade 3
+      run: |
+        ls -als /opt/homebrew/share/eigen3/
+
+    - name: Debug Eigen after upgrade 4
+      run: |
+        ls -als /opt/homebrew/share/eigen3/cmake
+
+    - name: Debug Eigen after upgrade 5
+      run: |
+        cat /opt/homebrew/share/eigen3/cmake/Eigen3Config.cmake
+
+      #  sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.locate.plist
+      #  locate "Eigen/Core"
+      #  locate "Eigen3Config.cmake"
+      #  ls /opt/homebrew/share/eigen3/cmake/
+      #  cat /opt/homebrew/share/eigen3/cmake/Eigen3Config.cmake
 
     - name: Install java dependencies
       run: |

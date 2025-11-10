@@ -83,7 +83,6 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries pcl_dep
     endif()
   endforeach()
   vp_list_unique(${pcl_deps_compile_options})
-
   # On macOS with PCL 1.14.3 or 1.15.0 PCLConfig.cmake propagates '-ffloat-store' in INTERFACE_COMPILE_OPTIONS
   # that lead to clang++: warning: optimization flag '-ffloat-store' is not supported [-Wignored-optimization-argument]
   # That's why here, we add the additional flag '-Wno-ignored-optimization-argument' to mute this warning
@@ -121,7 +120,17 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries pcl_dep
       endif()
     endif()
   endforeach()
+
+  # On macOS when calling find_package(VTK) with vtk 9.5.2_1 and eigen 5.0.0, Eigen3_VERSION var is erased
+  # The following hack, creates a backup of Eigen3_VERSION var
+  if(Eigen3_VERSION)
+    set(Eigen3_VERSION_BACKUP ${Eigen3_VERSION})
+  endif()
   find_package(VTK QUIET)
+  if(Eigen3_VERSION_BACKUP)
+    set(Eigen3_VERSION ${Eigen3_VERSION_BACKUP})
+  endif()
+
   if (VTK_FOUND AND NOT ANDROID)
     # Fix for Ubuntu 16.04 to add vtkFiltering as dependency. Note that vtkFiltering doesn't exists on OSX
     list(FIND VTK_LIBRARIES "vtkFiltering" vtkFiltering_exists_)
