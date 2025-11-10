@@ -171,6 +171,8 @@ endif()
 #----------------------------------------------------------------------
 # PCL tools
 include(cmake/PCLTools.cmake)
+# Eigen3 tools
+include(cmake/Eigen3Tools.cmake)
 
 #----------------------------------------------------------------------
 # Platform specific
@@ -675,6 +677,12 @@ VP_OPTION(USE_PCL         PCL          QUIET "Include Point Cloud Library suppor
 VP_OPTION(USE_TENSORRT    TensorRT     ""    "Include TensorRT support"     "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_NLOHMANN_JSON nlohmann_json QUIET "Include nlohmann json support" "" ON)
 
+if(USE_EIGEN3)
+  # Since Eigen 5.0.0, EIGEN3_INCLUDE_DIRS is not defined anymore.
+  # We need to get the include dir from the imported target Eigen3::Eigen.
+  vp_find_eigen3(EIGEN3_INCLUDE_DIRS Eigen3_VERSION)
+endif()
+
 if(USE_PCL)
   # PCL is used in modules gui, sensor and mbt.
   # In these modules we cannot directly use PCL_INCLUDE_DIRS and PCL_LIBRARIES using:
@@ -763,6 +771,12 @@ if(VISP_CXX_STANDARD LESS VISP_CXX_STANDARD_17)
     unset(USE_MAVSDK)
     set(USE_MAVSDK OFF CACHE BOOL "Include mavsdk support for mavlink compatible devices" FORCE)
   endif()
+  if(USE_PCL AND (PCL_VERSION VERSION_GREATER_EQUAL 1.15.0))
+    # pcl >= 1.15.0 requires c++17
+    message(WARNING "pcl 3rd party was detected and needs at least c++17 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable pcl usage turning USE_PCL=OFF.")
+    unset(USE_PCL)
+    set(USE_PCL OFF CACHE BOOL "Include pcl support" FORCE)
+  endif()
 endif()
 
 if(VISP_CXX_STANDARD LESS VISP_CXX_STANDARD_14)
@@ -770,6 +784,12 @@ if(VISP_CXX_STANDARD LESS VISP_CXX_STANDARD_14)
     message(WARNING "IIT force-torque SDK 3rd party was detected and needs at least c++14 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable IIT force-torque usage turning USE_FTIITSDK=OFF.")
     unset(USE_FTIITSDK)
     set(USE_FTIITSDK OFF CACHE BOOL "Include IIT force-torque SDK support" FORCE)
+  endif()
+  if(USE_EIGEN3 AND (Eigen3_VERSION VERSION_GREATER_EQUAL 5.0.0))
+    # Eigen >= 5.0.0 requires c++14
+    message(WARNING "Eigen3 3rd party was detected and needs at least c++14 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable Eigen3 usage turning USE_EIGEN3=OFF.")
+    unset(USE_EIGEN3)
+    set(USE_EIGEN3 OFF CACHE BOOL "Include Eigen3 support" FORCE)
   endif()
   if(USE_PCL AND (PCL_VERSION VERSION_GREATER 1.9.1))
     # pcl > 1.9.1 requires c++14
@@ -1502,16 +1522,6 @@ if(USE_JPEG)
     endif()
   endif()
 endif()
-if(USE_EIGEN3)
-  # Additional check to be sure that Eigen3 include dir os well detected
-  if(NOT EXISTS ${EIGEN3_INCLUDE_DIR})
-    message(WARNING "Eigen3 config file is detected in ${Eigen3_DIR}. Using ${Eigen3_DIR}/Eigen3Config.cmake doesn't allow to use a valid Eigen3 include dir: ${EIGEN3_INCLUDE_DIR}. Modify Eigen3_DIR to point to Eigen3Config.cmake file located in Eigen3 installation folder or turn USE_EIGEN3 OFF.")
-  endif()
-  if(NOT EIGEN3_VERSION_STRING)
-    vp_parse_header("${EIGEN3_INCLUDE_DIR}/Eigen/src/Core/util/Macros.h" EIGEN3_VERSION_LINES EIGEN_WORLD_VERSION EIGEN_MAJOR_VERSION EIGEN_MINOR_VERSION)
-    set(EIGEN3_VERSION_STRING "${EIGEN_WORLD_VERSION}.${EIGEN_MAJOR_VERSION}.${EIGEN_MINOR_VERSION}")
-  endif()
-endif()
 if(USE_COIN3D)
   vp_parse_header("${COIN3D_INCLUDE_DIRS}/Inventor/C/basic.h" COIN_VERSION_LINES COIN_MAJOR_VERSION COIN_MINOR_VERSION COIN_MICRO_VERSION)
   set(COIN3D_VERSION "${COIN_MAJOR_VERSION}.${COIN_MINOR_VERSION}.${COIN_MICRO_VERSION}")
@@ -1807,7 +1817,7 @@ status("    \\- Use Atlas:"          USE_ATLAS          THEN "yes" ELSE "no")
 status("    \\- Use Netlib:"         USE_NETLIB         THEN "yes (ver ${NETLIB_VERSION})" ELSE "no")
 status("    \\- Use GSL:"            USE_GSL            THEN "yes (ver ${GSL_VERSION})" ELSE "no")
 status("    \\- Use Lapack (built-in):" WITH_LAPACK     THEN "yes (ver ${LAPACK_VERSION})" ELSE "no")
-status("    Use Eigen3:"             USE_EIGEN3         THEN "yes (ver ${EIGEN3_VERSION_STRING})" ELSE "no")
+status("    Use Eigen3:"             USE_EIGEN3         THEN "yes (ver ${Eigen3_VERSION})" ELSE "no")
 status("    Use OpenCV:"             USE_OPENCV         THEN "yes (ver ${OpenCV_VERSION})" ELSE "no")
 status("")
 status("  Simulator: ")
