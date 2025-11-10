@@ -53,6 +53,7 @@ ViSP 3.x.x (Version in development)
       allows to detect objects
     . Introduce compat with Ogre 1.12.0 version
     . Compat with mavsdk 3.0.0
+    . Compat with Eigen3 5.0.0
     . Introduce material to build and install ViSP from source with Pixi
   - Applications
     . Migrate eye-to-hand tutorials in apps
@@ -151,6 +152,8 @@ ViSP 3.x.x (Version in development)
     . [#1764] The default constructor of the vpQuaternion class lead to an incorrect rotation matrix
     . [#1765] Segfault when parsing .cao and/or .init files containing empty lines (MBT and RBT)
     . [#1793] Segfault when saving depth with saveRealSenseData.cpp tool
+    . [#1818] Unable to build with Eigen3 5.0.0 release
+    . [#1819] Unable to build with PCL 1.15 and cxx14 standard
 ----------------------------------------------
 ViSP 3.6.0 (released September 22, 2023)
   - Contributors:
