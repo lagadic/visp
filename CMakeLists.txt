@@ -771,6 +771,12 @@ if(VISP_CXX_STANDARD LESS VISP_CXX_STANDARD_17)
     unset(USE_MAVSDK)
     set(USE_MAVSDK OFF CACHE BOOL "Include mavsdk support for mavlink compatible devices" FORCE)
   endif()
+  if(USE_PCL AND (PCL_VERSION VERSION_GREATER_EQUAL 1.15.0))
+    # pcl >= 1.15.0 requires c++17
+    message(WARNING "pcl 3rd party was detected and needs at least c++17 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable pcl usage turning USE_PCL=OFF.")
+    unset(USE_PCL)
+    set(USE_PCL OFF CACHE BOOL "Include pcl support" FORCE)
+  endif()
 endif()
 
 if(VISP_CXX_STANDARD LESS VISP_CXX_STANDARD_14)

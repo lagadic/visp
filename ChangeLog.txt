@@ -153,6 +153,7 @@ ViSP 3.x.x (Version in development)
     . [#1765] Segfault when parsing .cao and/or .init files containing empty lines (MBT and RBT)
     . [#1793] Segfault when saving depth with saveRealSenseData.cpp tool
     . [#1818] Unable to build with Eigen3 5.0.0 release
+    . [#1819] Unable to build with PCL 1.15 and cxx14 standard
 ----------------------------------------------
 ViSP 3.6.0 (released September 22, 2023)
   - Contributors:
