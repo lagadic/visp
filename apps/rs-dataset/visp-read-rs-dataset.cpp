@@ -29,9 +29,9 @@
  */
 
 /*!
-  \example readRealSenseData.cpp
+  \example visp-read-rs-dataset.cpp
 
-  \brief App that allows to replay realsense data saved with saveRealSenseData.cpp
+  \brief App that allows to replay realsense data saved with visp-save-rs-dataset.cpp
 */
 
 #include <iostream>
@@ -76,11 +76,11 @@ void usage(const char *argv[], int error)
   std::cout << "\nNAME " << std::endl
     << "  " << vpIoTools::getName(argv[0])
     << " - Replay data (color, depth, infrared, point cloud) acquired" << std::endl
-    << "  with a Realsense device using saveRealSenseData app." << std::endl;
+    << "  with a Realsense device using visp-save-rs-dataset app." << std::endl;
 
   std::cout << "\nDESCRIPTION " << std::endl
     << "  This app allows to replay a dataset (color, depth, infrared, point cloud)" << std::endl
-    << "  acquired with a Realsense device using saveRealSenseData app." << std::endl;
+    << "  acquired with a Realsense device using visp-save-rs-dataset app." << std::endl;
 
   std::cout << "\nSYNOPSIS " << std::endl
     << "  " << vpIoTools::getName(argv[0])

@@ -3,8 +3,7 @@
   \page tutorial-grabber Tutorial: Image frame grabbing
   \tableofcontents
 
-
-\section grabber-into Introduction
+\section grabber-into 1. Introduction
 
 In this tutorial you will learn how to grab images with ViSP, either from cameras or from a video stream.
 
@@ -16,7 +15,7 @@ install these 3rd parties.
 Note that all the material (source code and videos) described in this tutorial is part of ViSP source code
 (in `tutorial/grabber` folder) and could be found in https://github.com/lagadic/visp/tree/master/tutorial/grabber.
 
-\section grabber-camera-flycap Frame grabbing using FlyCapture SDK
+\section grabber-camera-flycap 2. Using FlyCapture SDK
 
 After ViSP 3.0.0, we introduce vpFlyCaptureGrabber class, a wrapper over PointGrey FlyCapture SDK that allows to grab
 images from any PointGrey camera. This grabber was tested under Ubuntu and Windows with the following cameras:
@@ -30,7 +29,7 @@ The following example also available in tutorial-grabber-flycapture.cpp shows ho
 grey level images from a PointGrey camera under Ubuntu or Windows. The following example suppose that a window renderer
 (libX11 on Ubuntu or GDI on Windows) and FlyCapture SDK 3rd party are available throw VISP.
 
-\subsection grabber-camera-flycap-src Source code explained
+\subsection grabber-camera-flycap-src 2.1. Source code explained
 \include tutorial-grabber-flycapture.cpp
 
 Here after we explain the source code.
@@ -58,7 +57,7 @@ Depending on the command line options we are recording a sequence of images, or 
 for a non blocking mouse event to quit the while loop.
 \snippet tutorial-grabber-flycapture.cpp vpFlyCaptureGrabber click to exit
 
-\subsection grabber-camera-flycap-use How to acquire images
+\subsection grabber-camera-flycap-use 2.2. How to acquire images
 
 Once tutorial-grabber-flycapture.cpp is built, the binary usage is given by:
 \code
@@ -77,13 +76,13 @@ To grab a sequence of images, you may rather use:
 ./tutorial-grabber-flycapture --seqname I%04d.pgm --record 0
 \endcode
 
-\section grabber-camera-dc1394 Frame grabbing using libdc1394 SDK
+\section grabber-camera-dc1394 3. Using libdc1394 SDK
 
 The next example also available in tutorial-grabber-1394.cpp shows how to use a framegrabber to acquire color images
 from a firewire or USB3 camera under Unix. The following example suppose that libX11 and libdc1394-2 3rd party are
 available.
 
-\subsection grabber-camera-dc1394-src Source code explained
+\subsection grabber-camera-dc1394-src 3.1. Source code explained
 
 The source code is the following:
 \include tutorial-grabber-1394.cpp
@@ -118,7 +117,7 @@ images. We are also waiting for a non blocking mouse event to quit the while loo
 In the previous example we use vp1394TwoGrabber class that works for firewire cameras under Unix. If you are under
 Windows, you may use vp1394CMUGrabber class. A similar example is provided in tutorial-grabber-CMU1394.cpp.
 
-\subsection grabber-camera-dc1394-use How to acquire images
+\subsection grabber-camera-dc1394-use 3.2. How to acquire images
 
 Once tutorial-grabber-1394.cpp is built, the binary usage is given by:
 \code
@@ -137,12 +136,12 @@ To grab a sequence of images, you may rather use:
 ./tutorial-grabber-1394 --seqname I%04d.pgm --record 0
 \endcode
 
-\section grabber-camera-v4l2 Frame grabbing using libv4l2 SDK
+\section grabber-camera-v4l2 4. Using libv4l2 (Video4Linux2) SDK
 
 If you want to grab images from an usb camera under Unix, you may use vpV4l2Grabber class that is a wrapper over Video
 For Linux SDK. To this end libv4l should be installed. An example is provided in tutorial-grabber-v4l2.cpp.
 
-\subsection grabber-camera-v4l2-use How to acquire images
+\subsection grabber-camera-v4l2-use 4.1. How to acquire images
 
 Once tutorial-grabber-v4l2.cpp is built, the binary usage is given by:
 \code
@@ -161,12 +160,12 @@ To grab a sequence of images, you may rather use:
 ./tutorial-grabber-v4l2 --seqname I%04d.pgm --record 0
 \endcode
 
-\section grabber-camera-pylon Frame grabbing using Pylon SDK
+\section grabber-camera-pylon 5. Using Pylon SDK
 
 It is also possible to grab images using Pylon, the SDK for Basler cameras. You may find an example in
 tutorial-grabber-basler-pylon.cpp.
 
-\subsection grabber-camera-pylon-use How to acquire images
+\subsection grabber-camera-pylon-use 5.1. How to acquire images
 
 Once tutorial-grabber-basler-pylon.cpp is built, the binary usage is given by:
 \code
@@ -185,12 +184,12 @@ To grab a sequence of images, you may rather use:
 ./tutorial-grabber-basler-pylon --seqname I%04d.pgm --record 0
 \endcode
 
-\section grabber-camera-realsense Frame grabbing using Realsense SDK
+\section grabber-camera-realsense 6. Using Realsense SDK
 
 It is also possible to grab images using librealsense, the SDK provided for Intel Realsense RDB-D cameras. You may
 find an example in tutorial-grabber-realsense.cpp.
 
-\subsection grabber-camera-realsense-use How to acquire images
+\subsection grabber-camera-realsense-use 6.1. How to acquire images
 
 Once tutorial-grabber-realsense.cpp is built, the binary usage is given by:
 \code
@@ -209,7 +208,7 @@ To grab a sequence of images, you may rather use:
 ./tutorial-grabber-realsense --seqname I%04d.pgm --record 0
 \endcode
 
-\subsection tutorial-grabber-multiple-realsense-use How to acquire images from 2 Realsense devices
+\subsection tutorial-grabber-multiple-realsense-use 6.2. How to acquire images from 2 Realsense devices
 
 Once tutorial-grabber-multiple-realsense.cpp is built, the binary usage is given by:
 \code
@@ -241,13 +240,19 @@ Intel RealSense T265          11622110409         0.2.0.951
     Product Line                  : 	T200
 \endverbatim
 
-\section grabber-camera-structure Frame grabbing using Occipital Structure SDK
+\subsection tutorial-grabber-rs-dataset 6.3. How to acquire full dataset
+
+There is also the possibility to acquire color, depth, infrared images and point cloud using visp-save-rs-dataset.cpp app.
+
+To know more about this app see \ref tutorial-read-write-NPZ-format-examples-realsense.
+
+\section grabber-camera-structure 7. Using Occipital Structure SDK
 
 If you have a Structure Core RGB-D camera, it is also possible to grab images using `libStructure` the cross-platform
 library that comes with Occipital Structure SDK. You may find an example in tutorial-grabber-structure-core.cpp. It
 allows to save visible and depth images.
 
-\subsection grabber-camera-structure-use How to acquire images
+\subsection grabber-camera-structure-use 7.1. How to acquire images
 
 Once tutorial-grabber-structure-core.cpp is built, the binary usage is given by:
 \code
@@ -266,7 +271,7 @@ To grab a sequence of images, you may rather use:
 ./tutorial-grabber-structure-core --record 0
 \endcode
 
-\section grabber-rgbd-D435-structurecore RGBD frame grabbing from RealSense D435 and Structure Core
+\section grabber-rgbd-D435-structurecore 8. Using RealSense and Structure Core SDKs together
 
 If you have both Intel RealSense D435 and Occipital Structure Core, you can acquire color and depth frames
 simultaneously from both sensors.
@@ -284,11 +289,11 @@ You should see something similar to the following:
 </p>
 \endhtmlonly
 
-\section grabber-camera-opencv Frame grabbing using OpenCV
+\section grabber-camera-opencv 9. Using OpenCV
 
 It is also possible to grab images using OpenCV. You may find an example in tutorial-grabber-opencv.cpp.
 
-\subsection grabber-camera-opencv-use How to acquire images
+\subsection grabber-camera-opencv-use 9.1. How to acquire images
 
 Once tutorial-grabber-opencv.cpp is built, the binary usage is given by:
 \code
@@ -307,18 +312,18 @@ To grab a sequence of images, you may rather use:
 ./tutorial-grabber-opencv --seqname I%04d.pgm --record 0
 \endcode
 
-\section grabber-camera-cmu1394 Frame grabbing using CMU1394 SDK
+\section grabber-camera-cmu1394 10. Using CMU1394 SDK
 
 It is also possible to grab images using CMU1394 SDK if you want to use a firewire camera under Windows. You may find
 an example in tutorial-grabber-CMU1394.cpp.
 
-\section grabber-bebop2 Frame grabbing using Parrot Bebop 2 drone
+\section grabber-bebop2 11. Using Parrot Bebop 2 drone
 
 It is also possible to grab images using a Parrot Bebop 2 drone. You may find an example in tutorial-grabber-bebop2.cpp.
 
 \warning Image grabbing with Bebop 2 drone only works if ViSP was built with Parrot ARSDK3 and OpenCV support.
 
-\subsection grabber-bebop2-use How to acquire images
+\subsection grabber-bebop2-use 10.1. How to acquire images
 
 Once tutorial-grabber-bebop2.cpp is built, the binary usage is given by:
 \code
@@ -341,7 +346,7 @@ You can chose to record HD 720p pictures from the drone (instead of default 480p
 ./tutorial-grabber-bebop2 --seqname I%04d.pgm --record 0 --hd_resolution
 \endcode
 
-\section grabber-video-stream Images from a video stream
+\section grabber-video-stream 12. Images from a video stream
 
 With ViSP it also possible to get images from an input video stream. Supported formats are *.avi, *.mp4, *.mov, *.ogv,
 *.flv and many others... To this end we exploit OpenCV 3rd party.
@@ -350,7 +355,7 @@ The example below available in tutorial-video-reader.cpp shows how to consider a
 
 \warning We recall that this example only works if ViSP was built with OpenCV support.
 
-\subsection grabber-video-stream-src Source code explained
+\subsection grabber-video-stream-src 12.1. Source code explained
 
 The source code is the following:
 \include tutorial-video-reader.cpp
@@ -406,7 +411,7 @@ The synchronization is done by waiting from the beginning of the iteration the c
 milliseconds by using:
 \snippet tutorial-video-reader.cpp vpVideoReader loop rate
 
-\subsection grabber-video-stream-use How to acquire images
+\subsection grabber-video-stream-use 12.2. How to acquire images
 
 Once tutorial-video-reader.cpp is built, the binary usage is given by:
 \code
@@ -421,7 +426,7 @@ To read an other video, let say my-video.mpg, you may use:
 ./tutorial-grabber-realsense --name my-video.mpg
 \endcode
 
-\section grabber-next Next tutorial
+\section grabber-next 13. Next tutorial
 
 You are now ready to see how to continue with:
 - a simple image processing that shows how to track blobs explained in \ref tutorial-tracking-blob.

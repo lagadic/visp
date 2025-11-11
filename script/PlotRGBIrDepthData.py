@@ -75,7 +75,7 @@ def load_data(iter, input_color_filenames, input_infrared_filenames, input_depth
     return color, infrared, depth, pointcloud
 
 def main():
-    parser = argparse.ArgumentParser(description='Plot color/IR/depth (in npz fileformat) data stored with saveRealSenseData.cpp file.',
+    parser = argparse.ArgumentParser(description='Plot color/IR/depth (in npz fileformat) data stored with visp-save-rs-dataset.cpp file.',
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-i', '--input', type=str, default="",
                         help='Input data folder.')

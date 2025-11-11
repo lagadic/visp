@@ -82,30 +82,30 @@ if __name__ == '__main__':
 
 \subsection tutorial-read-write-NPZ-format-examples-realsense Demo: read and display data from RealSense sensors
 
-In this demo, we will first use \ref example/device/framegrabber/saveRealSenseData.cpp "saveRealSenseData.cpp" to
-save data on disk:
+In this demo, we will first use visp-save-rs-dataset.cpp to save data on disk.
   - save "[-s]" color "[-c]" infrared "[-i]" depth "[-d]" and pointcloud "[-p]" data on disk:
-    - \code ./saveRealSenseData -s -c -i -d -p \endcode
+    - \code{.sh} ./visp-save-rs-dataset -s -c -i -d -p \endcode
   - use "[-e <pattern>]" to specify the filename pattern:
-    - \code ./saveRealSenseData -s -c -i -d -p -e %06d \endcode
+    - \code{.sh} ./visp-save-rs-dataset -s -c -i -d -p -e %06d \endcode
   - use "[-o <output folder>]" to specify the output folder, a folder with the current timestamp will be
 automatically created inside it:
-    - \code ./saveRealSenseData -s -c -i -d -p -o output_dir \endcode
+    - \code{.sh} ./visp-save-rs-dataset -s -c -i -d -p -o output_dir \endcode
   - use "[-C]" to save data on user click:
-    - \code ./saveRealSenseData -s -c -i -d -p -C \endcode
+    - \code{.sh} ./visp-save-rs-dataset -s -c -i -d -p -C \endcode
   - use "[-f <fps>]" to specify the acquisition framerate:
-    - \code ./saveRealSenseData -s -c -i -d -p -f 60 \endcode
-  - use "[-b]" to force depth and pointcloud data to be saved in little-endian binary format:
-    - \code ./saveRealSenseData -s -c -i -d -p -b \endcode
-  - use "[-z]" to save pointcloud data in NumPy NPZ format (if this option is not passed and ViSP is not built with
-the PCL library as dependency, the NPZ format is used by default, unless the "[-b]" option is passed):
-    - \code ./saveRealSenseData -s -c -i -d -p -z \endcode
+    - \code{.sh} ./visp-save-rs-dataset -s -c -i -d -p -f 60 \endcode
+  - use "[-depth-bin]" and "[-pcl-bin]" to force depth and pointcloud data to be saved in little-endian binary format:
+    - \code{.sh} ./visp-save-rs-dataset -s -c -i -d -p -depth-bin -pcl-bin \endcode
+  - use "[-pcl-npz]" to save pointcloud data in NumPy NPZ format (if this option is not passed and ViSP is not
+    built with the PCL third-party library as dependency, the NPZ format is used by default, unless the "[-depth-bin]"
+    and "[-pcl-bin]" options are passed):
+    - \code{.sh} ./visp-save-rs-dataset -s -c -i -d -p -pcl-npz \endcode
 
 \note
 Saving pointcloud data is very time consuming. If you need acquisition data to be as close as possible to the camera
 framerate, you can save instead the depth data and compute the 3D pointcloud later using the stereo-camera parameters.
 
 Then, you can use the PlotRGBIrDepthData.py Python script to display the data:
-  - \code python3 PlotRGBIrDepthData.py -i <folder> \endcode
+  - \code{.sh} python3 PlotRGBIrDepthData.py -i <folder> \endcode
 
 */

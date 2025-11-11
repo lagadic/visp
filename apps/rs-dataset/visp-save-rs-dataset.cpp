@@ -29,10 +29,10 @@
  */
 
  /*!
-   \example saveRealSenseData.cpp
+   \example visp-save-rs-dataset.cpp
 
    \brief App that allows to record data (color, depth, infrared, point cloud) from a Realsense device.
-   Recorded data can be replayed with readRealSenseData app.
+   Recorded data can be replayed with visp-read-rs-dataset.cpp app.
  */
 
 #include <iostream>
@@ -81,26 +81,25 @@ void usage(const char *argv[], int error, int stream_width, int stream_height, i
 
   std::cout << "\nDESCRIPTION " << std::endl
     << "  This app allows to record a dataset (color, depth, infrared, point cloud) acquired" << std::endl
-    << "  with a Realsense device. Once acquired, the dataset can be visualized using readRealSenseData app." << std::endl;
+    << "  with a Realsense device. Once acquired, the dataset can be visualized using visp-read-rs-dataset.cpp app."
+    << std::endl;
 
   std::cout << "\nSYNOPSIS " << std::endl
     << "  " << vpIoTools::getName(argv[0])
     << " [--save,-s]"
     << " [--output-folder,-o <output folder>]"
     << " [--pattern,-e <filename numbering pattern (e.g. %06d)>]"
-    << " [--step-by-step,-s]"
+    << " [--step-by-step,-C]"
     << " [--aligned,-a]"
     << " [--save-color,-c]"
     << " [--save-depth,-d]"
     << " [--save-infrared,-i]"
     << " [--save-pcl,-p]"
     << " [--img-in-jpeg-fmt,-j]"
+    << " [--depth-in-bin-fmt,-depth-bin]"
+    << " [--pcl-in-bin-fmt,-pcl-bin]"
 #if defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
-    << " [--depth-in-npz-fmt,-depth-npz]"
     << " [--pcl-in-npz-fmt,-pcl-npz]"
-#endif
-#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_IO) && defined(VISP_HAVE_PCL_COMMON)
-    << " [--pcl-in-pcd-fmt,-pcl-pcd]"
 #endif
     << " [--stream-width,-sw <stream width>]"
     << " [--stream-height,-sh <stream height>]"
@@ -120,7 +119,7 @@ void usage(const char *argv[], int error, int stream_width, int stream_height, i
     << "    created with the current date in the following format" << std::endl
     << "    YYYY_MM_DD_HH:MM:SS, for example 2025_11_07_15:44:34." << std::endl
     << std::endl
-    << "  --step-by-step,-s" << std::endl
+    << "  --step-by-step,-C" << std::endl
     << "    Trigger one shot data saver after each user click." << std::endl
     << std::endl
     << "  --pattern,-e <filename numbering pattern (e.g. %06d)>" << std::endl
@@ -136,10 +135,8 @@ void usage(const char *argv[], int error, int stream_width, int stream_height, i
     << std::endl
     << "  --save-depth,-d" << std::endl
     << "    Add depth stream to saved data when --save option is enabled." << std::endl
-    << "    By default, depth images are saved in binary format." << std::endl
-#if defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
-    << "    To save in NumPy format use --depth-in-npz-fmt flag." << std::endl
-#endif
+    << "    By default, depth images are saved in NumPy (.npz) format." << std::endl
+    << "    To save in little-endian binary format use --depth-in-bin-fmt flag." << std::endl
     << std::endl
     << "  --save-infrared" << std::endl
     << "    Add infrared stream to saved data when --save option is enabled." << std::endl
@@ -148,34 +145,46 @@ void usage(const char *argv[], int error, int stream_width, int stream_height, i
     << std::endl
     << "  --save-pcl,-p" << std::endl
     << "    Add point cloud stream to saved data when --save option is enabled." << std::endl
-    << "    By default, the point cloud is saved in little-endian binary format" << std::endl
-    << "    (.bin extension file)." << std::endl
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_IO) && defined(VISP_HAVE_PCL_COMMON)
+    << "    Since PCL library is available, by default the point cloud is saved in" << std::endl
+    << "    Point Cloud Data file format (.pcd extension file)." << std::endl
+#endif
 #if defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
     << "    There is also the possibility to save the point cloud in NumPy" << std::endl
-    << "    format (.npy extension file) enabling --pcl-in-npz-fmt option." << std::endl
-#endif
-#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_IO) && defined(VISP_HAVE_PCL_COMMON)
-    << "    Since PCL library is available, the point cloud could also be saved in" << std::endl
-    << "    Point Cloud Data file format (.pcd extension file) enabling" << std::endl
-    << "    --pcl-in-pcd-fmt option." << std::endl
+    << "    format (.npy extension file) enabling --pcl-in-npz-fmt option" << std::endl
+    << "    or in little-endian binary format enabling --pcl-in-bin-fmt option." << std::endl
+#else
+    << "    Point clould could be saved in little-endian binary format enabling" << std::endl
+    << "    --pcl-in-bin-fmt option." << std::endl
 #endif
     << std::endl
     << "  --img-in-jpeg-fmt,-j" << std::endl
     << "    Save image data using jpeg format (otherwise PNG is used)." << std::endl
     << std::endl
+    << "  --depth-in-bin-fmt,-depth-bin" << std::endl
+    << "    When this flag is enabled, depth is saved in little-endian binary format." << std::endl
+    << "    By default, depth is saved in NumPy (.npz) format." << std::endl
+    << std::endl
+    << "  --pcl-in-bin-fmt,-pcl-bin" << std::endl
+    << "    When this flag is enabled, point cloud is saved in little-endian binary format." << std::endl
 #if defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
-    << "  --depth-in-npz-fmt,-depth-npz" << std::endl
-    << "    Depth is saved in npz (NumPy) format." << std::endl
-    << std::endl
-    << "  --pcl-in-npz-fmt,-pcl-npz" << std::endl
-    << "    Point cloud is saved in npz (NumPy) format." << std::endl
-    << std::endl
+    << "    There is also the possibility to save the point cloud in NumPy (npz) format" << std::endl
+    << "    using --pcl-in-npz-fmt flag." << std::endl
 #endif
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_IO) && defined(VISP_HAVE_PCL_COMMON)
-    << "  --pcl-in-pcd-fmt,-pcl-pcd" << std::endl
-    << "    Point cloud is saved in pcd format using PCL 3rd-party library." << std::endl
-    << std::endl
+    << "    By default, point cloud is saved in pcd format using PCL 3rd-party library." << std::endl
 #endif
+    << std::endl
+#if defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
+    << "  --pcl-in-npz-fmt,-pcl-npz" << std::endl
+    << "    When this flag is enabled, point cloud is saved in NumPy (npz) format." << std::endl
+    << "    There is also the possibility to save the point cloud in little-endian binary format" << std::endl
+    << "    using --pcl-in-bin-fmt flag." << std::endl
+#endif
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_IO) && defined(VISP_HAVE_PCL_COMMON)
+    << "    By default, point cloud is saved in pcd format using PCL 3rd-party library." << std::endl
+#endif
+    << std::endl
     << "  --stream-width,-sw <stream width>" << std::endl
     << "    Set camera image width resolution." << std::endl
     << "    Default: " << stream_width << std::endl
@@ -198,8 +207,8 @@ void usage(const char *argv[], int error, int stream_width, int stream_height, i
   std::cout << "EXAMPLE " << std::endl
     << "- Save aligned color + depth + point cloud in data folder" << std::endl
     << "  " << argv[0] << " --save --save-color --save-depth --save-pcl --display-colored-depth --output-folder data --aligned" << std::endl
-    << "- Save color + infrared + depth + point cloud in NPZ format in data folder" << std::endl
-    << "  " << argv[0] << " --save --save-color --save-depth --save-infrared --save-pcl --display-colored-depth --depth-in-npz-fmt --pcl-in-npz-fmt --output-folder data" << std::endl
+    << "- Save color + infrared + depth + point cloud in bin format in data folder" << std::endl
+    << "  " << argv[0] << " --save --save-color --save-depth --save-infrared --save-pcl --display-colored-depth --depth-in-bin-fmt --pcl-in-bin-fmt --output-folder data" << std::endl
     << std::endl;
 
   if (error) {
@@ -212,7 +221,7 @@ void usage(const char *argv[], int error, int stream_width, int stream_height, i
 bool getOptions(int argc, const char *argv[], bool &save, std::string &numbering_pattern, std::string &output_folder,
                 bool &use_aligned_stream, bool &save_color, bool &save_depth, bool &save_pcl,
                 bool &save_infrared, bool &step_by_step, int &stream_width, int &stream_height, int &stream_fps,
-                bool &depth_npz_fmt, bool &pcl_npz_fmt, bool &pcl_pcd_fmt, bool &img_jpeg_fmt,
+                bool &depth_bin_fmt, bool &pcl_bin_fmt, bool &pcl_npz_fmt, bool &img_jpeg_fmt,
                 bool &display_colored_depth)
 {
   for (int i = 1; i < argc; i++) {
@@ -243,20 +252,18 @@ bool getOptions(int argc, const char *argv[], bool &save, std::string &numbering
     else if ((std::string(argv[i]) == "--img-in-jpeg-fmt") || (std::string(argv[i]) == "-j")) {
       img_jpeg_fmt = true;
     }
-#if defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
-    else if ((std::string(argv[i]) == "--depth-in-npz-fmt") || (std::string(argv[i]) == "-depth-npz")) {
-      depth_npz_fmt = true;
+    else if ((std::string(argv[i]) == "--depth-in-bin-fmt") || (std::string(argv[i]) == "-depth-bin")) {
+      depth_bin_fmt = true;
     }
+    else if ((std::string(argv[i]) == "--pcl-in-bin-fmt") || (std::string(argv[i]) == "-pcl-bin")) {
+      pcl_bin_fmt = true;
+    }
+#if defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
     else if ((std::string(argv[i]) == "--pcl-in-npz-fmt") || (std::string(argv[i]) == "-pcl-npz")) {
       pcl_npz_fmt = true;
     }
 #endif
-#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_IO) && defined(VISP_HAVE_PCL_COMMON)
-    else if ((std::string(argv[i]) == "--pcl-in-pcd-fmt") || (std::string(argv[i]) == "-pcl-pcd")) {
-      pcl_pcd_fmt = true;
-    }
-#endif
-    else if ((std::string(argv[i]) == "--click") || (std::string(argv[i]) == "-c")) {
+    else if ((std::string(argv[i]) == "--step-by-step") || (std::string(argv[i]) == "-C")) {
       step_by_step = true;
     }
     else if (((std::string(argv[i]) == "--stream-width") || (std::string(argv[i]) == "-sw")) && (i + 1 < argc)) {
@@ -281,12 +288,31 @@ bool getOptions(int argc, const char *argv[], bool &save, std::string &numbering
     }
   }
 
-#if !(defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX))
-  (void)depth_npz_fmt;
-  (void)pcl_npz_fmt;
-#endif
+  // If unable to save point cloud in pcd format, and in NumPy format switch to bin format
 #if !(defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_IO) && defined(VISP_HAVE_PCL_COMMON))
-  (void)pcl_pcd_fmt;
+#if !(defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX))
+  pcl_bin_fmt = true;
+#else
+  if (!pcl_bin_fmt) {
+    pcl_npz_fmt = true;
+  }
+#endif
+#endif
+
+  if (pcl_npz_fmt && pcl_bin_fmt) {
+    std::cout << "\nError: Cannot save point clound in NumPy (npz) and in little-endian binary format (bin) simultaneously." << std::endl;
+    std::cout << "Command line options --pcl-in-bin-fmt and --pcl-in-npz-fmt are exclusive." << std::endl;
+    std::cout << "Use only one of these two options." << std::endl;
+    return false;
+  }
+
+  // If unable to save depth in NumPy format, force binary format
+#if !(defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX))
+  depth_bin_format = true;
+#endif
+
+#if !(defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX))
+  (void)pcl_npz_fmt;
 #endif
 
   return true;
@@ -444,8 +470,8 @@ class vpStorageWorker
 {
 public:
   vpStorageWorker(vpFrameQueue &queue, const std::string &output_pattern, const std::string &directory, bool save_color,
-                  bool save_depth, bool save_pcl, bool save_infrared, bool depth_npz_fmt,
-                  bool pcl_npz_fmt, bool pcl_pcd_fmt, bool img_jpeg_fmt,
+                  bool save_depth, bool save_pcl, bool save_infrared, bool depth_bin_fmt,
+                  bool pcl_bin_fmt, bool pcl_npz_fmt, bool img_jpeg_fmt,
                 int
 #ifndef VISP_HAVE_PCL
                     width
@@ -457,8 +483,8 @@ public:
 #endif
   )
     : m_queue(queue), m_output_pattern(output_pattern), m_directory(directory), m_cpt(0), m_save_color(save_color), m_save_depth(save_depth),
-    m_save_pcl(save_pcl), m_save_infrared(save_infrared), m_depth_npz_fmt(depth_npz_fmt),
-    m_pcl_npz_fmt(pcl_npz_fmt), m_pcl_pcd_fmt(pcl_pcd_fmt),
+    m_save_pcl(save_pcl), m_save_infrared(save_infrared), m_depth_bin_fmt(depth_bin_fmt),
+    m_pcl_bin_fmt(pcl_bin_fmt), m_pcl_npz_fmt(pcl_npz_fmt),
     m_img_jpeg_fmt(img_jpeg_fmt)
 #ifndef VISP_HAVE_PCL
     ,
@@ -494,7 +520,7 @@ public:
           }
 
           if (m_save_depth && ptr_depthImg) {
-            if (!m_depth_npz_fmt) { // Use binary format
+            if (m_depth_bin_fmt) { // Use binary format
 
               std::string filename_depth = vpIoTools::formatString(m_directory + "/depth_image_" + m_output_pattern + ".bin", m_cpt);
 
@@ -603,15 +629,7 @@ public:
               throw(vpIoException(vpIoException::fatalError, "Cannot save in npz format when npz I/O functions are disabled."));
 #endif
             }
-            else if (m_pcl_pcd_fmt) {
-#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_IO) && defined(VISP_HAVE_PCL_COMMON)
-              std::string filename_pcl = vpIoTools::formatString(m_directory + "/point_cloud_" + m_output_pattern + ".pcd", m_cpt);
-              pcl::io::savePCDFileBinary(filename_pcl, *ptr_pointCloud);
-#else
-              std::cout << "Error: unable to save point cloud in pcd format. PCL io module not available." << std::endl;
-#endif
-            }
-            else {
+            else if (m_pcl_bin_fmt) {
               std::string filename_pcl = vpIoTools::formatString(m_directory + "/point_cloud_" + m_output_pattern + ".bin", m_cpt);
 
               std::ofstream file_pointcloud(filename_pcl.c_str(), std::ios::out | std::ios::binary);
@@ -656,6 +674,14 @@ public:
 #endif
               }
             }
+            else {
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_IO) && defined(VISP_HAVE_PCL_COMMON)
+              std::string filename_pcl = vpIoTools::formatString(m_directory + "/point_cloud_" + m_output_pattern + ".pcd", m_cpt);
+              pcl::io::savePCDFileBinary(filename_pcl, *ptr_pointCloud);
+#else
+              std::cout << "Error: unable to save point cloud in pcd format. PCL io module not available." << std::endl;
+#endif
+            }
           }
 
           if (m_save_infrared && ptr_infraredImg) {
@@ -682,9 +708,9 @@ private:
   bool m_save_depth;
   bool m_save_pcl;
   bool m_save_infrared;
-  bool m_depth_npz_fmt;
+  bool m_depth_bin_fmt;
+  bool m_pcl_bin_fmt;
   bool m_pcl_npz_fmt;
-  bool m_pcl_pcd_fmt;
   bool m_img_jpeg_fmt;
 #ifndef VISP_HAVE_PCL
   int m_size_height;
@@ -710,16 +736,16 @@ int main(int argc, const char *argv[])
   int  stream_width = 640;
   int  stream_height = 480;
   int  stream_fps = 30;
-  bool depth_npz_fmt = false;
-  bool pcl_npz_fmt = false;
-  bool pcl_pcd_fmt = false;
+  bool depth_bin_fmt = false; // By default depth in npz format, when true save depth in bin format
+  bool pcl_bin_fmt = false;   // By default, pcl in pcd format, when true save to bin format
+  bool pcl_npz_fmt = false;   // By default, pcl in pcd format, when true save to npz format
   bool img_jpeg_fmt = false;
   bool display_colored_depth = false;
 
   // Read the command line options
   if (!getOptions(argc, argv, save, output_pattern, output_folder_custom, use_aligned_stream, save_color, save_depth,
-                  save_pcl, save_infrared, step_by_step, stream_width, stream_height, stream_fps, depth_npz_fmt, pcl_npz_fmt,
-                  pcl_pcd_fmt, img_jpeg_fmt, display_colored_depth)) {
+                  save_pcl, save_infrared, step_by_step, stream_width, stream_height, stream_fps,
+                  depth_bin_fmt, pcl_bin_fmt, pcl_npz_fmt, img_jpeg_fmt, display_colored_depth)) {
     return EXIT_FAILURE;
   }
 
@@ -746,9 +772,9 @@ int main(int argc, const char *argv[])
     std::cout << "    Output folder          : " << output_folder << std::endl;
     std::cout << "    File numbering pattern : " << output_pattern << std::endl;
     std::cout << "    Color images format    : " << (save_color ? (img_jpeg_fmt ? "jpeg" : "png") : "N/A") << std::endl;
-    std::cout << "    Depth images format    : " << (save_depth ? (depth_npz_fmt ? "npy" : "bin") : "N/A") << std::endl;
+    std::cout << "    Depth images format    : " << (save_depth ? (depth_bin_fmt ? "bin" : "npz") : "N/A") << std::endl;
     std::cout << "    Infrared images format : " << (save_infrared ? (img_jpeg_fmt ? "jpeg" : "png") : "N/A") << std::endl;
-    std::cout << "    Point cloud format     : " << (save_pcl ? (pcl_npz_fmt ? "npy" : (pcl_pcd_fmt ? "pcd" : "bin")) : "N/A") << std::endl;
+    std::cout << "    Point cloud format     : " << (save_pcl ? (pcl_npz_fmt ? "npz" : (pcl_bin_fmt ? "bin" : "pcd")) : "N/A") << std::endl;
     std::cout << "    Save after each click  : " << (step_by_step ? "yes" : "no") << std::endl << std::endl;
   }
 
@@ -902,7 +928,7 @@ int main(int argc, const char *argv[])
 
     vpFrameQueue save_queue;
     vpStorageWorker storage(std::ref(save_queue), output_pattern, std::cref(output_folder), save_color, save_depth,
-      save_pcl, save_infrared, depth_npz_fmt, pcl_npz_fmt, pcl_pcd_fmt, img_jpeg_fmt, stream_width, stream_height);
+      save_pcl, save_infrared, depth_bin_fmt, pcl_bin_fmt, pcl_npz_fmt, img_jpeg_fmt, stream_width, stream_height);
     std::thread storage_thread(&vpStorageWorker::run, &storage);
 
     int nb_saves = 0;
