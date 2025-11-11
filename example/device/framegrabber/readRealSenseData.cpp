@@ -270,25 +270,32 @@ void checkData(unsigned int cpt_frame, const std::string &input_folder, const st
   }
 }
 
+/*!
+ * Read color, depth and infrared data from dataset.
+ * Point cloud is only read when PCL 3rd party is available. This 3rd party is then used to visualize
+ * the point cloud in the main() function.
+ */
 bool readData(int cpt, const std::string &input_folder, const std::string &input_pattern,
               bool color_found, std::string color_ext,
               bool depth_found, std::string depth_ext,
               bool infra_found, std::string infra_ext,
-              bool pcl_found, std::string pcl_ext,
               vpImage<vpRGBa> &I_color, vpImage<uint16_t> &I_depth_raw, vpImage<unsigned char> &I_infra,
               std::string &filename_color, std::string &filename_depth, std::string &filename_infra
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
-              , pcl::PointCloud<pcl::PointXYZ>::Ptr point_cloud, std::string &filename_pcl
+              , bool pcl_found, std::string pcl_ext, std::string &filename_pcl
+              , pcl::PointCloud<pcl::PointXYZ>::Ptr point_cloud
 #endif
 )
 {
   filename_color = vpIoTools::formatString(input_folder + "/color_image_" + input_pattern + color_ext, cpt);
   filename_depth = vpIoTools::formatString(input_folder + "/depth_image_" + input_pattern + depth_ext, cpt);
   filename_infra = vpIoTools::formatString(input_folder + "/infrared_image_" + input_pattern + infra_ext, cpt);
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
   filename_pcl = vpIoTools::formatString(input_folder + "/point_cloud_" + input_pattern + pcl_ext, cpt);
+#endif
 
   if (!vpIoTools::checkFilename(filename_color) && !vpIoTools::checkFilename(filename_depth) &&
-      !vpIoTools::checkFilename(filename_pcl)) {
+      !vpIoTools::checkFilename(filename_infra)) {
     std::cerr << "End of sequence." << std::endl;
     return false;
   }
@@ -354,6 +361,7 @@ bool readData(int cpt, const std::string &input_folder, const std::string &input
   }
 
   // Read pointcloud
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
   if (pcl_found) {
     if (vpIoTools::checkFilename(filename_pcl)) {
       if (pcl_ext == ".npz") {
@@ -388,7 +396,7 @@ bool readData(int cpt, const std::string &input_folder, const std::string &input
 #endif
       }
       else if (pcl_ext == ".pcd") {
-#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_IO) && defined(VISP_HAVE_PCL_COMMON)
+#if defined(VISP_HAVE_PCL_IO)
         if (pcl::io::loadPCDFile<pcl::PointXYZ>(filename_pcl, *point_cloud) == -1) {
           std::cerr << "Cannot read PCD: " << filename_pcl << std::endl;
         }
@@ -428,6 +436,8 @@ bool readData(int cpt, const std::string &input_folder, const std::string &input
       }
     }
   }
+#endif
+
   return true;
 }
 } // Namespace
@@ -506,14 +516,18 @@ int main(int argc, const char *argv[])
 
 
   std::cout << "Options summary" << std::endl;
-  std::cout << "  Data visualization         " << std::endl;
-  std::cout << "    Colored depth          : " << (opt_display_colored_depth ? "yes" : "no") << std::endl;
-  std::cout << "    Frame per seconds      : " << opt_fps << std::endl;
-  std::cout << "  Save dataset             : " << (opt_save_video ? "yes" : "no") << std::endl;
+  std::cout << "  Data visualization   " << std::endl;
+  std::cout << "    Colored depth    : " << (opt_display_colored_depth ? "yes" : "no") << std::endl;
+  std::cout << "    Frame per seconds: " << opt_fps << std::endl;
+  std::cout << "  Save dataset       : " << (opt_save_video ? "yes" : "no") << std::endl;
   if (opt_save_video) {
-    std::cout << "    Output folder          : " << output_folder << std::endl;
+    std::cout << "    Output folder    : " << output_folder << std::endl;
   }
 
+  if (!color_found && !depth_found && !infra_found && !pcl_found) {
+    std::cout << "\nError: No data found in " << opt_input_folder << " folder" << std::endl;
+    return EXIT_FAILURE;
+  }
   bool quit = false;
   std::string filename_color, filename_depth, filename_infra, filename_pcl;
 
@@ -526,16 +540,15 @@ int main(int argc, const char *argv[])
                        color_found, color_ext,
                        depth_found, depth_ext,
                        infra_found, infra_ext,
-                       pcl_found, pcl_ext,
                        I_color, I_depth_raw, I_infra,
                        filename_color, filename_depth, filename_infra,
-                       pointcloud, filename_pcl);
+                       pcl_found, pcl_ext, filename_pcl, pointcloud);
     }
 #else
     quit = !readData(cpt_frame, opt_input_folder, opt_input_pattern,
                      color_found, color_ext,
                      depth_found, depth_ext,
-                     pcl_found, pcl_ext
+                     infra_found, infra_ext,
                      I_color, I_depth_raw, I_infra,
                      filename_color, filename_depth, filename_infra);
 #endif
@@ -576,6 +589,14 @@ int main(int argc, const char *argv[])
 
     vpDisplay::display(I_color);
     vpDisplay::setTitle(I_color, "Color image: " + vpIoTools::getName(filename_color));
+    if (opt_step_by_step) {
+      vpDisplay::displayText(I_color, 15, 15, "Left click to view next data", vpColor::red);
+      vpDisplay::displayText(I_color, 30, 15, "Right click to switch to continuous mode", vpColor::red);
+    }
+    else {
+      vpDisplay::displayText(I_color, 15, 15, "Left click to quit", vpColor::red);
+      vpDisplay::displayText(I_color, 30, 15, "Right click to switch to step-by-step mode", vpColor::red);
+    }
     if (opt_display_colored_depth) {
       vpDisplay::display(I_depth_color);
       vpDisplay::setTitle(I_depth_color, "Colored depth image: " + vpIoTools::getName(filename_depth));
