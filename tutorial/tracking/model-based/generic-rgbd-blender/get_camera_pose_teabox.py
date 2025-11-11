@@ -108,8 +108,6 @@ def save_color_camera_pose(prefix, scene, camera_name, object_name):
 
 def get_intrinsics(camera_name):
   """! Save camera intrinsics in xml.
-  @param[in] prefix String corresponding to the folder name that will contain the intrinsics xml file.
-  @param[in] scene Scene handler.
   @param[in] camera_name String corresponding to the name of the camera to consider.
   """
   cam_data = bpy.data.objects[camera_name].data
@@ -146,7 +144,8 @@ def get_intrinsics(camera_name):
 def save_intrinsics(filename, camera_name, w, h, p_x, p_y, u_0, v_0):
   """! Save camera intrinsics in xml.
   @param[in] filename Name of the file that will contain the intrinsics in xml format.
-  #param w, h  Image size.
+  @param[in] camera_name Camera name.
+  @param[in] w, h  Image size.
   @param[in] p_x, p_y  Ratio between the focal length and the size of the pixel.
   @param[in] u_0, v_0  Coordinates of the principal point.
   """
