@@ -35,7 +35,7 @@
 
 cmake_minimum_required(VERSION 3.10)
 
-project(ViSP-apps)
+project(ViSP-apps-calib)
 
 find_package(VISP)
 
