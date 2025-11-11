@@ -52,12 +52,6 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v5
 
-    - name: ccache
-      uses: hendrikmuhs/ccache-action@v1.2.19
-      with:
-        key: ${{ github.job }}-${{ matrix.arch }}-${{ matrix.distro }}
-        verbose: 2
-
     - name: Run on arch
       uses: uraimo/run-on-arch-action@v3
       # See issue https://github.com/uraimo/run-on-arch-action/issues/155 for the explanation on the weird use of the arch and distro
@@ -70,7 +64,7 @@ jobs:
         base_image: "--platform=linux/${{ matrix.arch }} ${{ matrix.distro }}"
 
         install: |
-          apt-get update && apt-get install -y lsb-release git build-essential cmake
+          apt-get update && apt-get install -y lsb-release git build-essential cmake ccache
 
         run: |
           lscpu
@@ -108,3 +102,6 @@ jobs:
 
           # increase default 1500 timeout on QEMU based CI tests
           ctest -j${NB_PROC_TO_USE} --output-on-failure --timeout $TIMEOUT
+
+          # ccache stats
+          /usr/bin/ccache -s -vv
