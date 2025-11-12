@@ -411,8 +411,8 @@ namespace
 {
 void loadData(const std::string &npz_filename,
     bool &false_data, bool &true_data, uint32_t &uint32_data, int64_t &int64_data,
-    float &float_data, double &double_data, std::complex<double> &complex_data,
-    std::vector<int> &vec_int, std::vector<float> &vec_flt,
+    float &float_data, double &double_data, std::string &string_data, std::complex<double> &complex_data,
+    std::vector<int> &vec_int, std::vector<float> &vec_flt, std::vector<std::string> &vec_string,
     std::vector<std::complex<float>> &vec_complex, bool has_complex)
 {
   const std::string bool_false_identifier = "My bool false data";
@@ -421,9 +421,11 @@ void loadData(const std::string &npz_filename,
   const std::string int64_identifier = "My int64 data";
   const std::string float_identifier = "My float data";
   const std::string double_identifier = "My double data";
+  const std::string string_identifier = "My string data";
   const std::string complex_identifier = "My complex data";
   const std::string matrix_int_identifier = "My int matrix data";
   const std::string matrix_flt_identifier = "My float matrix data";
+  const std::string matrix_string_identifier = "My string matrix data";
   const std::string vec_complex_identifier = "My complex vector data";
 
   visp::cnpy::npz_t npz_data = visp::cnpy::npz_load(npz_filename);
@@ -433,8 +435,10 @@ void loadData(const std::string &npz_filename,
   visp::cnpy::npz_t::iterator it_int64 = npz_data.find(int64_identifier);
   visp::cnpy::npz_t::iterator it_float = npz_data.find(float_identifier);
   visp::cnpy::npz_t::iterator it_double = npz_data.find(double_identifier);
+  visp::cnpy::npz_t::iterator it_string = npz_data.find(string_identifier);
   visp::cnpy::npz_t::iterator it_matrix_int = npz_data.find(matrix_int_identifier);
   visp::cnpy::npz_t::iterator it_matrix_flt = npz_data.find(matrix_flt_identifier);
+  visp::cnpy::npz_t::iterator it_matrix_string = npz_data.find(matrix_string_identifier);
 
   REQUIRE(it_bool_false != npz_data.end());
   REQUIRE(it_bool_true != npz_data.end());
@@ -442,8 +446,10 @@ void loadData(const std::string &npz_filename,
   REQUIRE(it_int64 != npz_data.end());
   REQUIRE(it_float != npz_data.end());
   REQUIRE(it_double != npz_data.end());
+  REQUIRE(it_string != npz_data.end());
   REQUIRE(it_matrix_int != npz_data.end());
   REQUIRE(it_matrix_flt != npz_data.end());
+  REQUIRE(it_matrix_string != npz_data.end());
 
   visp::cnpy::NpyArray arr_data_bool_false = it_bool_false->second;
   visp::cnpy::NpyArray arr_data_bool_true = it_bool_true->second;
@@ -451,8 +457,10 @@ void loadData(const std::string &npz_filename,
   visp::cnpy::NpyArray arr_data_int64 = it_int64->second;
   visp::cnpy::NpyArray arr_data_float = it_float->second;
   visp::cnpy::NpyArray arr_data_double = it_double->second;
+  visp::cnpy::NpyArray arr_data_string = it_string->second;
   visp::cnpy::NpyArray arr_data_matrix_int = it_matrix_int->second;
   visp::cnpy::NpyArray arr_data_matrix_flt = it_matrix_flt->second;
+  visp::cnpy::NpyArray arr_data_matrix_string = it_matrix_string->second;
 
   false_data = *arr_data_bool_false.data<bool>();
   true_data = *arr_data_bool_true.data<bool>();
@@ -460,8 +468,11 @@ void loadData(const std::string &npz_filename,
   int64_data = *arr_data_int64.data<int64_t>();
   float_data = *arr_data_float.data<float>();
   double_data = *arr_data_double.data<double>();
+  assert(!arr_data_string.as_utf8_string_vec().empty());
+  string_data = arr_data_string.as_utf8_string_vec()[0];
   vec_int = arr_data_matrix_int.as_vec<int>();
   vec_flt = arr_data_matrix_flt.as_vec<float>();
+  vec_string = arr_data_matrix_string.as_utf8_string_vec();
 
   if (has_complex) {
     visp::cnpy::npz_t::iterator it_complex = npz_data.find(complex_identifier);
@@ -477,8 +488,9 @@ void loadData(const std::string &npz_filename,
 }
 
 void getNpzGroundTruth(bool &gt_bool_false, bool &gt_bool_true, uint32_t &gt_uint32_data, int64_t &gt_int64_data,
-    float &gt_float_data, double &gt_double_data, std::complex<double> &gt_complex_data,
-    std::vector<int> &gt_vec_int, std::vector<float> &gt_vec_flt, std::vector<std::complex<float>> &gt_vec_complex_data)
+    float &gt_float_data, double &gt_double_data, std::string &gt_string_data, std::complex<double> &gt_complex_data,
+    std::vector<int> &gt_vec_int, std::vector<float> &gt_vec_flt, std::vector<std::string> &gt_vec_string,
+    std::vector<std::complex<float>> &gt_vec_complex_data)
 {
   // ground-truth values
   gt_bool_false = false;
@@ -487,6 +499,7 @@ void getNpzGroundTruth(bool &gt_bool_false, bool &gt_bool_true, uint32_t &gt_uin
   gt_int64_data = -123456;
   gt_float_data = -456.51f;
   gt_double_data = 3.14;
+  gt_string_data = "ViSP: Open source Visual Servoing Platform";
 
   gt_complex_data = std::complex<double>(gt_float_data, gt_double_data);
   const size_t height = 5, width = 7, channels = 3;
@@ -494,6 +507,13 @@ void getNpzGroundTruth(bool &gt_bool_false, bool &gt_bool_true, uint32_t &gt_uin
     gt_vec_int.push_back(i);
     gt_vec_flt.push_back(i);
   }
+
+  gt_vec_string.push_back("ViSP ");
+  gt_vec_string.push_back("for ");
+  gt_vec_string.push_back("visual servoing: ");
+  gt_vec_string.push_back("a generic software platform ");
+  gt_vec_string.push_back("with a wide class of ");
+  gt_vec_string.push_back("robot control skills");
 
   for (int i = 0; i < 3; i++) {
     gt_vec_complex_data.push_back(std::complex<float>(gt_complex_data.real()*(i+1), gt_complex_data.imag()*2*(i+1)));
@@ -515,12 +535,14 @@ TEST_CASE("Test little-endian / big-endian npz loading", "[visp::cnpy I/O]")
     int64_t gt_int64_data;
     float gt_float_data;
     double gt_double_data;
+    std::string gt_string_data;
     std::complex<double> gt_complex_data;
     std::vector<int> gt_vec_int;
     std::vector<float> gt_vec_flt;
+    std::vector<std::string> gt_vec_string;
     std::vector<std::complex<float>> gt_vec_complex_data;
     getNpzGroundTruth(gt_bool_false, gt_bool_true, gt_uint32_data, gt_int64_data, gt_float_data, gt_double_data,
-      gt_complex_data, gt_vec_int, gt_vec_flt, gt_vec_complex_data);
+      gt_string_data, gt_complex_data, gt_vec_int, gt_vec_flt, gt_vec_string, gt_vec_complex_data);
 
     // Load data
     bool b_false = false, b_true = false;
@@ -528,12 +550,14 @@ TEST_CASE("Test little-endian / big-endian npz loading", "[visp::cnpy I/O]")
     int64_t int64_data = 0;
     float float_data = 0;
     double double_data = 0;
+    std::string string_data = "";
     std::complex<double> complex_data;
     std::vector<int> vec_int;
     std::vector<float> vec_flt;
+    std::vector<std::string> vec_string;
     std::vector<std::complex<float>> vec_complex_data;
-    loadData(npz_filename, b_false, b_true, uint32_data, int64_data, float_data, double_data, complex_data, vec_int,
-      vec_flt, vec_complex_data, has_complex);
+    loadData(npz_filename, b_false, b_true, uint32_data, int64_data, float_data, double_data, string_data,
+      complex_data, vec_int, vec_flt, vec_string, vec_complex_data, has_complex);
 
     CHECK(b_false == gt_bool_false);
     CHECK(b_true == gt_bool_true);
@@ -541,6 +565,7 @@ TEST_CASE("Test little-endian / big-endian npz loading", "[visp::cnpy I/O]")
     CHECK(int64_data == gt_int64_data);
     CHECK(float_data == gt_float_data);
     CHECK(double_data == gt_double_data);
+    CHECK(string_data == gt_string_data);
     CHECK(complex_data.real() == gt_complex_data.real());
     CHECK(complex_data.imag() == gt_complex_data.imag());
 
@@ -550,6 +575,11 @@ TEST_CASE("Test little-endian / big-endian npz loading", "[visp::cnpy I/O]")
     for (size_t i = 0; i < gt_vec_int.size(); i++) {
       REQUIRE(gt_vec_int[i] == vec_int[i]);
       REQUIRE(gt_vec_flt[i] == vec_flt[i]);
+    }
+
+    REQUIRE(gt_vec_string.size() == vec_string.size());
+    for (size_t i = 0; i < gt_vec_string.size(); i++) {
+      REQUIRE(gt_vec_string[i] == vec_string[i]);
     }
 
     REQUIRE(gt_vec_complex_data.size() == vec_complex_data.size());
@@ -575,16 +605,18 @@ TEST_CASE("Test little-endian / big-endian npz loading", "[visp::cnpy I/O]")
     int64_t int64_data_LE, int64_data_BE;
     float float_data_LE, float_data_BE;
     double double_data_LE, double_data_BE;
+    std::string string_data_LE, string_data_BE;
     std::complex<double> complex_data_LE, complex_data_BE;
     std::vector<int> vec_int_LE, vec_int_BE;
     std::vector<float> vec_flt_LE, vec_flt_BE;
+    std::vector<std::string> vec_string_LE, vec_string_BE;
     std::vector<std::complex<float>> vec_complex_data_LE, vec_complex_data_BE;
 
     loadData(npz_filename_LE, b_data_false_LE, b_data_true_LE, uint32_data_LE, int64_data_LE, float_data_LE,
-      double_data_LE, complex_data_LE, vec_int_LE, vec_flt_LE, vec_complex_data_LE, has_complex);
+      double_data_LE, string_data_LE, complex_data_LE, vec_int_LE, vec_flt_LE, vec_string_LE, vec_complex_data_LE, has_complex);
 
     loadData(npz_filename_BE, b_data_false_BE, b_data_true_BE, uint32_data_BE, int64_data_BE, float_data_BE,
-      double_data_BE, complex_data_BE, vec_int_BE, vec_flt_BE, vec_complex_data_BE, has_complex);
+      double_data_BE, string_data_BE, complex_data_BE, vec_int_BE, vec_flt_BE, vec_string_BE, vec_complex_data_BE, has_complex);
 
     CHECK(b_data_false_LE == b_data_false_BE);
     CHECK(b_data_true_LE == b_data_true_BE);
@@ -592,6 +624,7 @@ TEST_CASE("Test little-endian / big-endian npz loading", "[visp::cnpy I/O]")
     CHECK(int64_data_LE == int64_data_BE);
     CHECK(float_data_LE == float_data_BE);
     CHECK(double_data_LE == double_data_BE);
+    CHECK(string_data_LE == string_data_BE);
     CHECK(complex_data_LE.real() == complex_data_BE.real());
     CHECK(complex_data_LE.imag() == complex_data_BE.imag());
 
@@ -601,6 +634,11 @@ TEST_CASE("Test little-endian / big-endian npz loading", "[visp::cnpy I/O]")
     for (size_t i = 0; i < vec_int_LE.size(); i++) {
       CHECK(vec_int_LE[i] == vec_int_BE[i]);
       CHECK(vec_flt_LE[i] == vec_flt_BE[i]);
+    }
+
+    REQUIRE(vec_string_LE.size() == vec_string_BE.size());
+    for (size_t i = 0; i < vec_string_LE.size(); i++) {
+      CHECK(vec_string_LE[i] == vec_string_BE[i]);
     }
 
     REQUIRE(vec_complex_data_LE.size() == vec_complex_data_BE.size());
@@ -621,12 +659,14 @@ TEST_CASE("Test loading correctness wrt. NumPy generated npz", "[visp::cnpy I/O]
   int64_t gt_int64_data;
   float gt_float_data;
   double gt_double_data;
+  std::string gt_string_data;
   std::complex<double> gt_complex_data;
   std::vector<int> gt_vec_int;
   std::vector<float> gt_vec_flt;
+  std::vector<std::string> gt_vec_string;
   std::vector<std::complex<float>> gt_vec_complex_data;
   getNpzGroundTruth(gt_bool_false, gt_bool_true, gt_uint32_data, gt_int64_data, gt_float_data, gt_double_data,
-    gt_complex_data, gt_vec_int, gt_vec_flt, gt_vec_complex_data);
+    gt_string_data, gt_complex_data, gt_vec_int, gt_vec_flt, gt_vec_string, gt_vec_complex_data);
 
   SECTION("Check little-endian correctness")
   {
@@ -638,13 +678,15 @@ TEST_CASE("Test loading correctness wrt. NumPy generated npz", "[visp::cnpy I/O]
     int64_t int64_data = 0;
     float float_data;
     double double_data;
+    std::string string_data;
     std::complex<double> complex_data;
     std::vector<int> vec_int;
     std::vector<float> vec_flt;
+    std::vector<std::string> vec_string;
     std::vector<std::complex<float>> vec_complex_data;
 
-    loadData(npz_filename, bool_false, bool_true, uint32_data, int64_data, float_data, double_data, complex_data,
-      vec_int, vec_flt, vec_complex_data, has_complex);
+    loadData(npz_filename, bool_false, bool_true, uint32_data, int64_data, float_data, double_data, string_data,
+      complex_data, vec_int, vec_flt, vec_string, vec_complex_data, has_complex);
 
     CHECK(bool_false == gt_bool_false);
     CHECK(bool_true == gt_bool_true);
@@ -652,6 +694,7 @@ TEST_CASE("Test loading correctness wrt. NumPy generated npz", "[visp::cnpy I/O]
     CHECK(int64_data == gt_int64_data);
     CHECK(float_data == gt_float_data);
     CHECK(double_data == gt_double_data);
+    CHECK(string_data == gt_string_data);
 
     REQUIRE(gt_vec_int.size() == gt_vec_flt.size());
     REQUIRE(gt_vec_int.size() == vec_int.size());
@@ -659,6 +702,10 @@ TEST_CASE("Test loading correctness wrt. NumPy generated npz", "[visp::cnpy I/O]
     for (size_t i = 0; i < gt_vec_int.size(); i++) {
       CHECK(gt_vec_int[i] == vec_int[i]);
       CHECK(gt_vec_flt[i] == vec_flt[i]);
+    }
+    REQUIRE(gt_vec_string.size() == vec_string.size());
+    for (size_t i = 0; i < gt_vec_string.size(); i++) {
+      CHECK(gt_vec_string[i] == vec_string[i]);
     }
   }
 
@@ -672,13 +719,15 @@ TEST_CASE("Test loading correctness wrt. NumPy generated npz", "[visp::cnpy I/O]
     int64_t int64_data = 0;
     float float_data;
     double double_data;
+    std::string string_data;
     std::complex<double> complex_data;
     std::vector<int> vec_int;
     std::vector<float> vec_flt;
+    std::vector<std::string> vec_string;
     std::vector<std::complex<float>> vec_complex_data;
 
-    loadData(npz_filename, bool_false, bool_true, uint32_data, int64_data, float_data, double_data, complex_data,
-      vec_int, vec_flt, vec_complex_data, has_complex);
+    loadData(npz_filename, bool_false, bool_true, uint32_data, int64_data, float_data, double_data, string_data,
+      complex_data, vec_int, vec_flt, vec_string, vec_complex_data, has_complex);
 
     CHECK(bool_false == gt_bool_false);
     CHECK(bool_true == gt_bool_true);
@@ -686,6 +735,7 @@ TEST_CASE("Test loading correctness wrt. NumPy generated npz", "[visp::cnpy I/O]
     CHECK(int64_data == gt_int64_data);
     CHECK(float_data == gt_float_data);
     CHECK(double_data == gt_double_data);
+    CHECK(string_data == gt_string_data);
 
     REQUIRE(gt_vec_int.size() == gt_vec_flt.size());
     REQUIRE(gt_vec_int.size() == vec_int.size());
@@ -693,6 +743,11 @@ TEST_CASE("Test loading correctness wrt. NumPy generated npz", "[visp::cnpy I/O]
     for (size_t i = 0; i < gt_vec_int.size(); i++) {
       CHECK(gt_vec_int[i] == vec_int[i]);
       CHECK(gt_vec_flt[i] == vec_flt[i]);
+    }
+
+    REQUIRE(gt_vec_string.size() == vec_string.size());
+    for (size_t i = 0; i < gt_vec_string.size(); i++) {
+      CHECK(gt_vec_string[i] == vec_string[i]);
     }
   }
 }

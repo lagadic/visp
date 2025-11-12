@@ -727,26 +727,14 @@ std::vector<char> create_npy_header_string(const std::vector<size_t> &shape, con
 std::vector<char> utf8_to_utf32_vec_pad(const std::string &utf8, const std::size_t &max_size)
 {
   std::vector<char> utf32Vector;
-  utf32Vector.reserve(4*max_size);
+  utf32Vector.resize(4*max_size, 0);
 
-  for (const auto &ch : utf8) {
+  for (size_t i = 0, idx = 0; i < utf8.length(); i++, idx += 4) {
 #ifdef VISP_BIG_ENDIAN
-    utf32Vector.push_back(0);
-    utf32Vector.push_back(0);
-    utf32Vector.push_back(0);
-    utf32Vector.push_back(ch);
+    utf32Vector[idx+3] = utf8[i];
 #else
-    utf32Vector.push_back(ch);
-    utf32Vector.push_back(0);
-    utf32Vector.push_back(0);
-    utf32Vector.push_back(0);
+    utf32Vector[idx] = utf8[i];
 #endif
-  }
-
-  // padding
-  size_t cur_size = utf32Vector.size();
-  for (size_t i = cur_size; i < 4*max_size; i++) {
-    utf32Vector.push_back(0);
   }
 
   return utf32Vector;

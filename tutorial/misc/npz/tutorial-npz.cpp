@@ -60,12 +60,18 @@ int main()
     const std::string identifier = "My string data";
     visp::cnpy::npz_save(npz_filename, identifier, &vec_save_string[0], { vec_save_string.size() }, "w");
     //! [Save_string_save]
+
+    //! [Save_string_save2]
+    const std::string identifier2 = "My string data 2";
+    visp::cnpy::npz_save(npz_filename, identifier2, save_string, "a");
+    //! [Save_string_save2]
   }
   {
     //! [Read_string_load]
     const std::string npz_filename = "tutorial_npz_read_write.npz";
     visp::cnpy::npz_t npz_data = visp::cnpy::npz_load(npz_filename);
     //! [Read_string_load]
+
     //! [Read_string]
     const std::string identifier = "My string data";
     if (npz_data.find(identifier) != npz_data.end()) {
@@ -75,6 +81,15 @@ int main()
       std::cout << "Read string: " << read_string << std::endl;
     }
     //! [Read_string]
+
+    //! [Read_string2]
+    const std::string identifier2 = "My string data 2";
+    if (npz_data.find(identifier2) != npz_data.end()) {
+      visp::cnpy::NpyArray arr_string_data = npz_data[identifier2];
+      const std::string read_string2 = arr_string_data.as_utf8_string_vec()[0];
+      std::cout << "Read string 2: " << read_string2 << std::endl;
+    }
+    //! [Read_string2]
   }
 
   {
