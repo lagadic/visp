@@ -64,7 +64,7 @@ jobs:
         base_image: "--platform=linux/${{ matrix.arch }} ${{ matrix.distro }}"
 
         install: |
-          apt-get update && apt-get install -y lsb-release git build-essential cmake ccache
+          apt-get update && apt-get install -y lsb-release git build-essential cmake
 
         run: |
           lscpu
@@ -75,8 +75,7 @@ jobs:
           pwd
           mkdir build && cd build
           cmake .. -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TUTORIALS=OFF -DBUILD_JAVA=OFF \
-                   -DUSE_JPEG=OFF -DUSE_PNG=OFF -DUSE_X11=OFF -DUSE_XML2=OFF -DBUILD_JAVA=OFF -DUSE_BLAS/LAPACK=OFF \
-                   -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+                   -DUSE_JPEG=OFF -DUSE_PNG=OFF -DUSE_X11=OFF -DUSE_XML2=OFF -DBUILD_JAVA=OFF -DUSE_BLAS/LAPACK=OFF
           cat ViSP-third-party.txt
 
           ARCHI=`uname -m`
@@ -97,11 +96,7 @@ jobs:
           fi
 
           echo "NB_PROC_TO_USE = ${NB_PROC_TO_USE}"
-          export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
           make -j${NB_PROC_TO_USE}
 
           # increase default 1500 timeout on QEMU based CI tests
           ctest -j${NB_PROC_TO_USE} --output-on-failure --timeout $TIMEOUT
-
-          # ccache stats
-          /usr/bin/ccache -s -vv

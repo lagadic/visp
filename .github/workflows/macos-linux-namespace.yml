@@ -24,12 +24,6 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v5
 
-    - name: ccache
-      uses: hendrikmuhs/ccache-action@v1.2.19
-      with:
-        key: ${{ github.job }}-${{ matrix.os }}
-        verbose: 2
-
     - name: Install dependencies on macos-latest
       if: matrix.os == 'macos-latest'
       run: |
@@ -54,8 +48,7 @@ jobs:
       run: |
         mkdir build
         cd build
-        cmake .. -DUSE_BLAS/LAPACK=Netlib -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/tmp/usr/local -DCMAKE_VERBOSE_MAKEFILE=ON \
-            -DENABLE_VISP_NAMESPACE=ON -DENABLE_EXPLICIT_KEYWORD=ON -DBUILD_DEPRECATED_FUNCTIONS=OFF -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+        cmake .. -DUSE_BLAS/LAPACK=Netlib -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/tmp/usr/local -DCMAKE_VERBOSE_MAKEFILE=ON -DENABLE_VISP_NAMESPACE=ON -DENABLE_EXPLICIT_KEYWORD=ON -DBUILD_DEPRECATED_FUNCTIONS=OFF
         cat ViSP-third-party.txt
 
     - name: Configure CMake
@@ -63,8 +56,7 @@ jobs:
       run: |
         mkdir build
         cd build
-        cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/tmp/usr/local -DCMAKE_VERBOSE_MAKEFILE=ON -DENABLE_VISP_NAMESPACE=ON \
-            -DENABLE_EXPLICIT_KEYWORD=ON -DBUILD_DEPRECATED_FUNCTIONS=OFF -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+        cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/tmp/usr/local -DCMAKE_VERBOSE_MAKEFILE=ON -DENABLE_VISP_NAMESPACE=ON -DENABLE_EXPLICIT_KEYWORD=ON -DBUILD_DEPRECATED_FUNCTIONS=OFF
         cat ViSP-third-party.txt
 
     - name: Determine number of processor on Ubuntu
@@ -79,9 +71,7 @@ jobs:
 
     - name: Compile
       working-directory: build
-      run: |
-        export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
-        make -j${NPROC} install
+      run: make -j${NPROC} install
 
     - name: Run unit tests
       working-directory: build
