@@ -59,7 +59,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_VIPER650) && defined(VISP_HAVE_REALSENSE) && defined(VISP_HAVE_X11)
+#if defined(VISP_HAVE_VIPER650) && defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_X11)
 
 #include <visp3/blob/vpDot2.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
@@ -67,7 +67,7 @@
 #include <visp3/core/vpPoint.h>
 #include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/robot/vpRobotViper650.h>
-#include <visp3/sensor/vpRealSense.h>
+#include <visp3/sensor/vpRealSense.h2>
 #include <visp3/vision/vpPose.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/visual_features/vpFeaturePoint.h>
@@ -175,15 +175,13 @@ int main()
 
     vpImage<unsigned char> I;
 
-    vpRealSense g;
-    // Enable the RealSense device to acquire only color images with size
-    // 640x480
-    g.setEnableStream(rs::stream::color, true);
-    g.setEnableStream(rs::stream::depth, false);
-    g.setEnableStream(rs::stream::infrared, false);
-    g.setEnableStream(rs::stream::infrared2, false);
-    g.setStreamSettings(rs::stream::color, vpRealSense::vpRsStreamParams(640, 480, rs::format::rgba8, 30));
-    g.open();
+    // Enable the RealSense device to acquire only color images with size 640x480
+    vpRealSense2 g;
+    rs2::config config;
+    config.disable_stream(RS2_STREAM_DEPTH);
+    config.disable_stream(RS2_STREAM_INFRARED);
+    config.enable_stream(RS2_STREAM_COLOR, 640, 480, RS2_FORMAT_RGBA8, 30);
+    g.open(config);
 
     // Update camera parameters
     vpCameraParameters cam =
