@@ -29,6 +29,12 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v5
 
+    - name: ccache
+      uses: hendrikmuhs/ccache-action@v1.2.19
+      with:
+        key: ${{ github.job }}-${{ matrix.os }}
+        verbose: 2
+
     - name: Print system information
       run: lscpu
 
@@ -41,7 +47,7 @@ jobs:
         sudo apt-get install -y libx11-dev libdc1394-dev libv4l-dev gfortran liblapack-dev libeigen3-dev
         sudo apt-get install -y libssl-dev libusb-1.0-0-dev pkg-config libgtk-3-dev libglfw3-dev libgl1-mesa-dev libglu1-mesa-dev
         sudo apt-get install -y mesa-common-dev mesa-utils freeglut3-dev libflann-dev libboost-all-dev
-        sudo apt-get install -y nlohmann-json3-dev libcjson-dev
+        sudo apt-get install -y nlohmann-json3-dev libcjson-dev gdb
 
     - name: Install Ogre dependencies
       run: |
@@ -56,7 +62,8 @@ jobs:
         git clone --depth 1 --branch ${LATEST_TAG} ${GIT_ADDRESS} ${HOME}/ogre
         cd ${HOME}/ogre
         mkdir build && cd build && mkdir install
-        cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$(pwd)/install
+        cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$(pwd)/install -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+        export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
         make -j$(nproc) install
         echo "OGRE_DIR=$(pwd)/install" >> $GITHUB_ENV
         echo $OGRE_DIR
@@ -71,6 +78,7 @@ jobs:
         git clone --depth 1 --branch ${LATEST_TAG} ${GIT_ADDRESS} ${HOME}/OpenBLAS
         cd ${HOME}/OpenBLAS
         mkdir install
+        export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
         make -j$(nproc)
         make -j$(nproc) install PREFIX=$(pwd)/install
         echo "OpenBLAS_HOME=$(pwd)/install" >> $GITHUB_ENV
@@ -90,7 +98,9 @@ jobs:
         cd ${HOME}/VTK
         mkdir build && cd build && mkdir install
         cmake .. -DVTK_ANDROID_BUILD=OFF -DVTK_BUILD_DOCUMENTATION=OFF -DVTK_BUILD_EXAMPLES=OFF -DVTK_BUILD_EXAMPLES=OFF -DCMAKE_BUILD_TYPE=Release \
-          -DVTK_GROUP_ENABLE_Imaging=DONT_WANT -DVTK_GROUP_ENABLE_MPI=DONT_WANT -DVTK_GROUP_ENABLE_Web=DONT_WANT -DCMAKE_INSTALL_PREFIX=$(pwd)/install
+          -DVTK_GROUP_ENABLE_Imaging=DONT_WANT -DVTK_GROUP_ENABLE_MPI=DONT_WANT -DVTK_GROUP_ENABLE_Web=DONT_WANT -DCMAKE_INSTALL_PREFIX=$(pwd)/install \
+          -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+        export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
         make -j$(nproc) install
         echo "VTK_DIR=$(pwd)/install" >> $GITHUB_ENV
         echo $VTK_DIR
@@ -104,7 +114,9 @@ jobs:
         git clone --depth 1 --branch ${LATEST_TAG} ${GIT_ADDRESS} ${HOME}/opencv
         cd ${HOME}/opencv
         mkdir build && cd build && mkdir install
-        cmake .. -DBUILD_EXAMPLES=OFF -DBUILD_PERF_TESTS=OFF -DBUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$(pwd)/install
+        cmake .. -DBUILD_EXAMPLES=OFF -DBUILD_PERF_TESTS=OFF -DBUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$(pwd)/install \
+            -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+        export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
         make -j$(nproc) install
         echo "OpenCV_DIR=$(pwd)/install" >> $GITHUB_ENV
         echo $OpenCV_DIR
@@ -118,7 +130,9 @@ jobs:
         git clone --depth 1 --branch ${LATEST_TAG} ${GIT_ADDRESS} ${HOME}/librealsense
         cd ${HOME}/librealsense
         mkdir build && cd build && mkdir install
-        cmake .. -DBUILD_EXAMPLES=OFF -DBUILD_GRAPHICAL_EXAMPLES=OFF -DBUILD_TOOLS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$(pwd)/install
+        cmake .. -DBUILD_EXAMPLES=OFF -DBUILD_GRAPHICAL_EXAMPLES=OFF -DBUILD_TOOLS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$(pwd)/install \
+            -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+        export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
         make -j$(nproc) install
         echo "REALSENSE2_DIR=$(pwd)/install" >> $GITHUB_ENV
         echo $REALSENSE2_DIR
@@ -132,7 +146,9 @@ jobs:
         git clone --depth 1 --branch ${LATEST_TAG} ${GIT_ADDRESS} ${HOME}/pcl
         cd ${HOME}/pcl
         mkdir build && cd build && mkdir install
-        cmake .. -DBUILD_tools=OFF -DBUILD_global_tests=OFF -DPCL_DISABLE_GPU_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$(pwd)/install
+        cmake .. -DBUILD_tools=OFF -DBUILD_global_tests=OFF -DPCL_DISABLE_GPU_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$(pwd)/install \
+            -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+        export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
         make -j$(nproc) install
         echo "PCL_DIR=$(pwd)/install" >> $GITHUB_ENV
         echo $PCL_DIR
@@ -144,7 +160,8 @@ jobs:
         cd ${HOME}/qualisys_cpp_sdk
         mkdir build && cd build && mkdir install
         cmake .. qualisys_cpp_sdk_BUILD_EXAMPLE=OFF qualisys_cpp_sdk_BUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-fPIC \
-            -DCMAKE_INSTALL_PREFIX=$(pwd)/install
+            -DCMAKE_INSTALL_PREFIX=$(pwd)/install -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+        export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
         make -j$(nproc) install
         echo "QUALISYS_DIR=$(pwd)/install" >> $GITHUB_ENV
         echo $QUALISYS_DIR
@@ -168,7 +185,8 @@ jobs:
         cd ${HOME}/libfranka
         mkdir build && cd build && mkdir install
         cmake .. -DCMAKE_PREFIX_PATH=/opt/openrobots/lib/cmake -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_INSTALL_PREFIX=$(pwd)/install
+            -DCMAKE_INSTALL_PREFIX=$(pwd)/install -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+        export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
         make -j$(nproc) install
         echo "Franka_DIR=$(pwd)/install" >> $GITHUB_ENV
         echo $Franka_DIR
@@ -181,6 +199,7 @@ jobs:
         git clone https://gitlab.inria.fr/adept_robots/viper650 ${HOME}/viper650
         git clone https://gitlab.inria.fr/adept_robots/viper850 ${HOME}/viper850
         cd ${HOME}/cerebellum/CALinux
+        export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
         make -j$(nproc)
         sudo make install
         cd ${HOME}/cerebellum/Irisa
@@ -205,7 +224,9 @@ jobs:
         git clone --depth 1 --branch ${LATEST_TAG} ${GIT_ADDRESS} ${HOME}/ur_rtde
         cd ${HOME}/ur_rtde
         mkdir build && cd build && mkdir install
-        cmake .. -DCMAKE_BUILD_TYPE=Release -DPYTHON_BINDINGS=OFF -DCMAKE_INSTALL_PREFIX=$(pwd)/install
+        cmake .. -DCMAKE_BUILD_TYPE=Release -DPYTHON_BINDINGS=OFF -DCMAKE_INSTALL_PREFIX=$(pwd)/install \
+            -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+        export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
         make -j$(nproc) install
         echo "ur_rtde_DIR=$(pwd)/install" >> $GITHUB_ENV
         echo $ur_rtde_DIR
@@ -223,7 +244,7 @@ jobs:
       run: |
         pwd
         mkdir build && cd build && mkdir install
-        cmake .. -DCMAKE_INSTALL_PREFIX=$(pwd)/install
+        cmake .. -DCMAKE_INSTALL_PREFIX=$(pwd)/install -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
         cat ViSP-third-party.txt
 
     - name: Build visp-config script
@@ -238,6 +259,7 @@ jobs:
         LD_LIBRARY_PATH: /opt/openrobots/lib
       working-directory: build
       run: |
+        export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
         make -j$(nproc) install
         echo "VISP_DIR=$(pwd)/install" >> $GITHUB_ENV
         echo $VISP_DIR
@@ -246,32 +268,8 @@ jobs:
       env:
         LD_LIBRARY_PATH: /opt/openrobots/lib
       working-directory: build
-      run: ctest -j$(nproc) --output-on-failure
-
-    - name: Clone camera_localization
       run: |
-        git clone --depth 1 https://github.com/lagadic/camera_localization ${HOME}/camera_localization
-
-    - name: Build camera_localization with ViSP as 3rdparty
-      env:
-        LD_LIBRARY_PATH: /opt/openrobots/lib
-      run: |
-        cd ${HOME}/camera_localization
-        mkdir camera_localization-build
-        cd camera_localization-build
-        cmake ..
-        make -j$(nproc)
-
-    - name: Clone visp_started
-      run: |
-        git clone --depth 1 https://github.com/lagadic/visp_started ${HOME}/visp_started
-
-    - name: Build visp_started with ViSP as 3rdparty
-      env:
-        LD_LIBRARY_PATH: /opt/openrobots/lib
-      run: |
-        cd ${HOME}/visp_started
-        mkdir visp_started-build
-        cd visp_started-build
-        cmake ..
-        make -j$(nproc)
+        ctest -j$(nproc) --output-on-failure
+        gdb -batch -ex=r -ex "set logging enabled" -ex continue -ex "bt full" -ex quit ./modules/core/catchJsonCamera
+        gdb -batch -ex=r -ex "set logging enabled" -ex continue -ex "bt full" -ex quit ./modules/core/catchColorConversion
+        gdb -batch -ex=r -ex "set logging enabled" -ex continue -ex "bt full" -ex quit ./modules/core/catchJsonArrayConversion
