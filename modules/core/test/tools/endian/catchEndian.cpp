@@ -70,6 +70,74 @@ TEST_CASE("Test bitwise shift operators and zero fill", "[vpEndian_test]")
   }
 }
 
+TEST_CASE("Test endianness conversion", "[vpEndian_test]")
+{
+  SECTION("LE --> BE --> LE / BE --> LE --> BE")
+  {
+    SECTION("uint16_t")
+    {
+      uint16_t val_LE = 123;
+      uint16_t val_LE_2_BE = vpEndian::swap16bits(val_LE);
+      CHECK(val_LE == vpEndian::swap16bits(val_LE_2_BE));
+    }
+    SECTION("int16_t")
+    {
+      int16_t val_LE = -123;
+      int16_t val_LE_2_BE = static_cast<int16_t>(vpEndian::swap16bits(static_cast<uint16_t>(val_LE)));
+      CHECK(val_LE == static_cast<int16_t>(vpEndian::swap16bits(static_cast<uint16_t>(val_LE_2_BE))));
+    }
+
+    SECTION("uint32_t")
+    {
+      uint32_t val_LE = 123456;
+      uint32_t val_LE_2_BE = vpEndian::swap32bits(val_LE);
+      CHECK(val_LE == vpEndian::swap32bits(val_LE_2_BE));
+    }
+    SECTION("int32_t")
+    {
+      int32_t val_LE = -123456;
+      int32_t val_LE_2_BE = static_cast<int32_t>(vpEndian::swap32bits(static_cast<uint32_t>(val_LE)));
+      CHECK(val_LE == static_cast<int32_t>(vpEndian::swap32bits(static_cast<uint32_t>(val_LE_2_BE))));
+    }
+
+    SECTION("uint64_t")
+    {
+      uint64_t val_LE = 12345678900;
+      uint64_t val_LE_2_BE = vpEndian::swap64bits(val_LE);
+      CHECK(val_LE == vpEndian::swap64bits(val_LE_2_BE));
+    }
+    SECTION("int64_t")
+    {
+      int64_t val_LE = -12345678900;
+      int64_t val_LE_2_BE = static_cast<int64_t>(vpEndian::swap64bits(static_cast<uint64_t>(val_LE)));
+      CHECK(val_LE == static_cast<int64_t>(vpEndian::swap64bits(static_cast<uint64_t>(val_LE_2_BE))));
+    }
+
+    SECTION("float")
+    {
+      float val_LE = 3.14f;
+      float val_LE_2_BE = vpEndian::swapFloat(val_LE);
+      CHECK(val_LE == Catch::Approx((vpEndian::swapFloat(val_LE_2_BE))).epsilon(std::numeric_limits<float>::epsilon()));
+    }
+    SECTION("double")
+    {
+      double val_LE = 3.14;
+      double val_LE_2_BE = vpEndian::swapDouble(val_LE);
+      CHECK(val_LE == Catch::Approx((vpEndian::swapDouble(val_LE_2_BE))).epsilon(std::numeric_limits<double>::epsilon()));
+    }
+  }
+}
+
+TEST_CASE("Test endianness detection", "[vpEndian_test]")
+{
+  bool is_big_endian = vpEndian::isBigEndian();
+#ifdef VISP_BIG_ENDIAN
+  CHECK(is_big_endian);
+#else
+  CHECK_FALSE(is_big_endian);
+#endif
+}
+
 int main(int argc, char *argv[])
 {
 #if defined(VISP_LITTLE_ENDIAN)

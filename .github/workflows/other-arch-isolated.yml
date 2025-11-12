@@ -50,7 +50,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: Run on arch
       uses: uraimo/run-on-arch-action@v3
@@ -63,10 +63,12 @@ jobs:
         distro: none
         base_image: "--platform=linux/${{ matrix.arch }} ${{ matrix.distro }}"
 
+        install: |
+          apt-get update && apt-get install -y lsb-release git build-essential cmake
+
         run: |
           lscpu
 
-          apt-get update && apt-get install -y lsb-release git build-essential cmake
           lsb_release -a
           dpkg --list | grep compiler
 
