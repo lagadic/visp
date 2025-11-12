@@ -106,7 +106,7 @@ struct NpyArray
         new std::vector<char>(num_vals * word_size));
   }
 
-  NpyArray() : shape(0), word_size(0), fortran_order(0), num_vals(0) { }
+  NpyArray() : shape(0), word_size(0), fortran_order(0), num_vals(0), data_type(0) { }
 
   template<typename T>
   T *data()
@@ -124,7 +124,41 @@ struct NpyArray
   std::vector<T> as_vec() const
   {
     const T *p = data<T>();
-    return std::vector<T>(p, p+num_vals);
+    if (data_type == 'U') {
+      if (!std::is_same<T, char>::value) {
+        throw std::runtime_error("NpyArray.as_vec(): datatype contains string data but as_vec() is not templated as <char>");
+      }
+      return std::vector<T>(p, p+(num_vals*word_size));
+    }
+    else {
+      return std::vector<T>(p, p+num_vals);
+    }
+  }
+
+  std::vector<std::string> as_utf8_string_vec() const
+  {
+    if (data_type != 'U') {
+      throw std::runtime_error("NpyArray.as_utf8_string_vec(): not a string data");
+    }
+
+    std::vector<std::string> vec_string;
+    vec_string.reserve(num_vals);
+
+    for (size_t i = 0; i < num_vals; i++) {
+      std::string str;
+
+      for (size_t idx = i*word_size; idx < (i+1)*word_size; idx += 4) {
+        if ((*data_holder)[idx] == 0) {
+          // \0 char
+          break;
+        }
+        str += (*data_holder)[idx];
+      }
+
+      vec_string.push_back(str);
+    }
+
+    return vec_string;
   }
 
   size_t num_bytes() const
@@ -150,6 +184,9 @@ VISP_EXPORT void parse_npy_header(unsigned char *buffer, size_t &word_size, std:
 VISP_EXPORT void parse_zip_footer(FILE *fp, uint16_t &nrecs, size_t &global_header_size, size_t &global_header_offset);
 VISP_EXPORT NpyArray npz_load(const std::string &fname, const std::string &varname);
 VISP_EXPORT NpyArray npy_load(const std::string &fname);
+// Dedicated functions for saving std::string data
+VISP_EXPORT void npz_save(const std::string &zipname, std::string fname, const std::vector<std::string> &data_vec, const std::vector<size_t> &shape, const std::string &mode = "w");
+VISP_EXPORT void npz_save(const std::string &zipname, const std::string &fname, const std::string &data, const std::string &mode = "w");
 
 template<typename T> std::vector<char> &operator+=(std::vector<char> &lhs, const T rhs)
 {
@@ -188,7 +225,7 @@ template<> inline std::vector<char> &operator+=(std::vector<char> &lhs, const ch
   \warning This function should also work on big-endian platform, without guarantee since it has not been tested extensively.
   \note Original library: <a href="https://github.com/rogersce/cnpy">cnpy</a> with MIT license.
  */
-template<typename T> void npy_save(const std::string &fname, const T *data, const std::vector<size_t> shape, const std::string &mode = "w")
+template<typename T> void npy_save(const std::string &fname, const T *data, const std::vector<size_t> &shape, const std::string &mode = "w")
 {
   FILE *fp = NULL;
   std::vector<size_t> true_data_shape; //if appending, the shape of existing + new data
@@ -232,12 +269,9 @@ template<typename T> void npy_save(const std::string &fname, const T *data, cons
   fseek(fp, 0, SEEK_SET);
   fwrite(&header[0], sizeof(char), header.size(), fp);
   fseek(fp, 0, SEEK_END);
-#ifdef VISP_BIG_ENDIAN
-  static_assert(sizeof(nels) == 8);
-  fwrite(data, sizeof(T), vpEndian::swap64bits(nels), fp);
-#else
-  fwrite(data, sizeof(T), nels, fp);
-#endif
+  if (data != nullptr) {
+    fwrite(&data[0], sizeof(T), nels, fp);
+  }
   fclose(fp);
 }
 
@@ -254,7 +288,7 @@ template<typename T> void npy_save(const std::string &fname, const T *data, cons
 
   \sa To see how to use it, you may have a look at \ref tutorial-npz
  */
-template<typename T> void npz_save(std::string zipname, std::string fname, const T *data, const std::vector<size_t> &shape, std::string mode = "w")
+template<typename T> void npz_save(const std::string &zipname, std::string fname, const T *data, const std::vector<size_t> &shape, const std::string &mode = "w")
 {
   //first, append a .npy to the fname
   fname += ".npy";
@@ -393,7 +427,7 @@ template<typename T> void npz_save(std::string zipname, std::string fname, const
   \warning This function should also work on big-endian platform, without guarantee since it has not been tested extensively.
   \note Original library: <a href="https://github.com/rogersce/cnpy">cnpy</a> with MIT license.
  */
-template<typename T> void npy_save(const std::string &fname, const std::vector<T> data, const std::string &mode = "w")
+template<typename T> void npy_save(const std::string &fname, const std::vector<T> &data, const std::string &mode = "w")
 {
   std::vector<size_t> shape;
   shape.push_back(data.size());
@@ -412,7 +446,7 @@ template<typename T> void npy_save(const std::string &fname, const std::vector<T
 
   \sa To see how to use it, you may have a look at \ref tutorial-npz
  */
-template<typename T> void npz_save(const std::string &zipname, const std::string &fname, const std::vector<T> data, const std::string &mode = "w")
+template<typename T> void npz_save(const std::string &zipname, const std::string &fname, const std::vector<T> &data, const std::string &mode = "w")
 {
   std::vector<size_t> shape;
   shape.push_back(data.size());
