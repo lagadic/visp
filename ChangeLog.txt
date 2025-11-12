@@ -22,7 +22,7 @@ ViSP 3.x.x (Version in development)
     . End of supporting Ubuntu 12.04
     . vpDisplay::displayCharString() is marked deprecated. Use vpDisplay::displayText() instead
     . vpHinkley class is deprecated, in favor of vpStatisticalTestHinkley
-    . vpRealSense class that was an interface with librealsense1 is removed. Use vpRealSense2 instead
+    . vpRealSense class that was an interface over librealsense1 is removed. Use vpRealSense2 instead
   - New features and improvements
     . Introduce Python bindings for most of ViSP modules and classes (see corresponding tutorial)
     . New specific documentation for Python bindings in https://visp-doc.inria.fr/doxygen/visp-python-daily/
