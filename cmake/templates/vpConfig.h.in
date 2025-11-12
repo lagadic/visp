@@ -355,9 +355,6 @@ namespace vp = VISP_NAMESPACE_NAME;
 // Defined if libusb-1.0 library available.
 #cmakedefine VISP_HAVE_LIBUSB_1
 
-// Defined if librealSense library is available.
-#cmakedefine VISP_HAVE_REALSENSE
-
 // Defined if librealSense2 library is available.
 #cmakedefine VISP_HAVE_REALSENSE2
 

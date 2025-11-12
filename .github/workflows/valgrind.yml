@@ -52,6 +52,9 @@ jobs:
 
     - name: Run unit tests with Valgrind
       working-directory: build
+      # Increase timeout to avoid the following error
+      # 290/308 MemCheck #181: photometricMappingDCTVisualServoing ...............................***Timeout 1500.01 sec
       run: |
-        ctest -j$(nproc) --output-on-failure -T memcheck
+        TIMEOUT=2000
+        ctest -j$(nproc) --output-on-failure -T memcheck --timeout $TIMEOUT
         tail -v -n +1 Testing/Temporary/MemoryChecker*.log
