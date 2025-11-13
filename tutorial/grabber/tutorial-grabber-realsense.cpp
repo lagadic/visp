@@ -47,7 +47,6 @@ void usage(const char *argv[], int error)
     << "    Disable displaying captured images." << std::endl
     << "    When used and sequence name specified, record mode is internally set to 1 (continuous mode)."
     << std::endl
-    << std::endl
     << "  --help, -h" << std::endl
     << "    Print this helper message." << std::endl
     << std::endl;

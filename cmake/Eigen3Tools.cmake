@@ -29,36 +29,24 @@
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
 # Description:
-# ViSP overall configuration file.
+# ViSP configuration file.
 #
 #############################################################################
 
-cmake_minimum_required(VERSION 3.10)
-
-project(ViSP-apps-calib)
-
-find_package(VISP)
-
-if(MSVC)
-  if(NOT VISP_SHARED)
-    foreach(flag_var
-            CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE
-            CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELWITHDEBINFO
-            CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
-            CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
-      if(${flag_var} MATCHES "/MD")
-        string(REGEX REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")
+# Since Eigen 5.0.0, EIGEN3_INCLUDE_DIRS is not defined anymore.
+# We need to get the include dir from the imported target Eigen3::Eigen.
+macro(vp_find_eigen3 eigen3_include_dirs eigen3_version)
+  if (Eigen3_FOUND)
+    # Additional check to be sure that Eigen3 include dir is well detected
+    if(NOT ${eigen3_include_dirs})
+      get_target_property(imported_incs_ Eigen3::Eigen INTERFACE_INCLUDE_DIRECTORIES)
+      if(imported_incs_)
+        set(${eigen3_include_dirs} ${imported_incs_})
       endif()
-      if(${flag_var} MATCHES "/MDd")
-        string(REGEX REPLACE "/MDd" "/MTd" ${flag_var} "${${flag_var}}")
-      endif()
-    endforeach(flag_var)
-
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:atlthunk.lib /NODEFAULTLIB:msvcrt.lib /NODEFAULTLIB:msvcrtd.lib")
-    set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} /NODEFAULTLIB:libcmt.lib")
-    set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} /NODEFAULTLIB:libcmtd.lib")
+    endif()
+    if(NOT ${eigen3_version})
+      vp_parse_header("${${eigen3_include_dirs}}/Eigen/src/Core/util/Macros.h" EIGEN3_VERSION_LINES EIGEN_WORLD_VERSION EIGEN_MAJOR_VERSION EIGEN_MINOR_VERSION)
+      set(${eigen3_version} "${EIGEN_WORLD_VERSION}.${EIGEN_MAJOR_VERSION}.${EIGEN_MINOR_VERSION}")
+    endif()
   endif()
-endif()
-
-visp_add_subdirectory(hand-eye REQUIRED_DEPS visp_core visp_gui visp_io visp_robot visp_sensor visp_vision)
-visp_add_subdirectory(intrinsic REQUIRED_DEPS visp_core visp_gui visp_io visp_vision)
+endmacro()
