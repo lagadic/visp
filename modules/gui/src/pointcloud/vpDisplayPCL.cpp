@@ -79,13 +79,6 @@ vpDisplayPCL::~vpDisplayPCL()
 void vpDisplayPCL::run()
 {
   pcl::PointCloud<pcl::PointXYZ>::Ptr local_pointcloud(new pcl::PointCloud<pcl::PointXYZ>());
-  m_viewer = pcl::visualization::PCLVisualizer::Ptr(new pcl::visualization::PCLVisualizer());
-  m_viewer->setBackgroundColor(0, 0, 0);
-  m_viewer->initCameraParameters();
-  m_viewer->setPosition(m_posx, m_posy);
-  m_viewer->setCameraPosition(0, 0, -0.25, 0, -1, 0);
-  m_viewer->setSize(m_width, m_height);
-  m_viewer->setWindowName(m_window_name);
 
   auto insertLegend = [this](const size_t &id) {
     std::string text = this->mv_xyz_pcl[id].second.m_name;
@@ -136,13 +129,6 @@ void vpDisplayPCL::run()
 void vpDisplayPCL::run_color()
 {
   pcl::PointCloud<pcl::PointXYZRGB>::Ptr local_pointcloud(new pcl::PointCloud<pcl::PointXYZRGB>());
-  m_viewer = pcl::visualization::PCLVisualizer::Ptr(new pcl::visualization::PCLVisualizer());
-  m_viewer->setBackgroundColor(0, 0, 0);
-  m_viewer->initCameraParameters();
-  m_viewer->setPosition(m_posx, m_posy);
-  m_viewer->setCameraPosition(0, 0, -0.25, 0, -1, 0);
-  m_viewer->setSize(m_width, m_height);
-  m_viewer->setWindowName(m_window_name);
   size_t nb_pcls;
   while (!m_stop) {
     {
@@ -181,6 +167,17 @@ void vpDisplayPCL::run_color()
  */
 void vpDisplayPCL::startThread(const bool &colorThread)
 {
+  // Creating the window in this method for 2 reasons:
+  // 1) It is the same code for the two "run" methods
+  // 2) To avoid MacOS error "NSInternalInconsistencyException', reason: 'NSWindow should only be instantiated on the main thread!'"
+  m_viewer = pcl::visualization::PCLVisualizer::Ptr(new pcl::visualization::PCLVisualizer());
+  m_viewer->setBackgroundColor(0, 0, 0);
+  m_viewer->initCameraParameters();
+  m_viewer->setPosition(m_posx, m_posy);
+  m_viewer->setCameraPosition(0, 0, -0.25, 0, -1, 0);
+  m_viewer->setSize(m_width, m_height);
+  m_viewer->setWindowName(m_window_name);
+
   if (colorThread) {
     m_thread = std::thread(&vpDisplayPCL::run_color, this);
   }
