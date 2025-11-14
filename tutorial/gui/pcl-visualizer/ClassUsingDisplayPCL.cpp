@@ -108,7 +108,7 @@ void ClassUsingDisplayPCL::generateControlPoints(const double &addedNoise, const
 }
 //! [Surface generator]
 
-void ClassUsingDisplayPCL::threadedMode(const double &addedNoise, const unsigned int &order)
+void ClassUsingDisplayPCL::runDemo(const double &addedNoise, const unsigned int &order, const bool &useMonothread)
 {
   // Create control points
   pcl::PointCloud<PointType>::Ptr base, rotated;
@@ -126,15 +126,18 @@ void ClassUsingDisplayPCL::threadedMode(const double &addedNoise, const unsigned
   m_visualizer.addPointCloud(mutex_rotated, rotated, "RotatedWithNoise", color.to_vpColor());
   //! [Inserting point clouds]
 
-  //! [Starting display thread]
-  m_visualizer.startThread(false);
-  //! [Starting display thread]
+  if (!useMonothread) {
+    //! [Starting display thread]
+    m_visualizer.startThread(false);
+    //! [Starting display thread]
+  }
 
-  vpKeyboard keyboard;
   bool wantToStop = false;
   double t;
 
   std::cout << "Press any key in the console to stop the program." << std::endl;
+  // vpKeyboard keyboard;
+  uint16_t count = 0;
   while (!wantToStop) {
     t = vpTime::measureTimeMs();
 
@@ -146,12 +149,22 @@ void ClassUsingDisplayPCL::threadedMode(const double &addedNoise, const unsigned
     }
     //! [Updating point clouds used by display thread]
 
-    if (keyboard.kbhit()) {
+    if (useMonothread) {
+      m_visualizer.display();
+    }
+
+    // if (keyboard.kbhit()) {
+    //   // keyboard.getchar();
+    //   wantToStop = true;
+    // }
+
+    ++count;
+    if (count >= 100) {
       wantToStop = true;
     }
+
     vpTime::wait(t, 40);
   }
-
 }
 #else
 void dummy_class_using_pcl_visualizer()

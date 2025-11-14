@@ -46,7 +46,7 @@ unsigned int vpDisplayPCL::PointCloudHandling::s_nb = 0;
  * By default, viewer size is set to 640 x 480.
  */
 vpDisplayPCL::vpDisplayPCL(int posx, int posy, const std::string &window_name)
-  : m_stop(false), m_verbose(false), m_width(640), m_height(480), m_posx(posx), m_posy(posy),
+  : m_stop(false), m_thread_running(false), m_verbose(false), m_width(640), m_height(480), m_posx(posx), m_posy(posy),
   m_window_name(window_name), m_viewer(nullptr)
 { }
 
@@ -59,7 +59,7 @@ vpDisplayPCL::vpDisplayPCL(int posx, int posy, const std::string &window_name)
  * \param[in] window_name : Window name.
  */
 vpDisplayPCL::vpDisplayPCL(unsigned int width, unsigned int height, int posx, int posy, const std::string &window_name)
-  : m_stop(false), m_verbose(false), m_width(width), m_height(height), m_posx(posx), m_posy(posy),
+  : m_stop(false), m_thread_running(false), m_verbose(false), m_width(width), m_height(height), m_posx(posx), m_posy(posy),
   m_window_name(window_name), m_viewer(nullptr)
 { }
 
@@ -70,7 +70,107 @@ vpDisplayPCL::vpDisplayPCL(unsigned int width, unsigned int height, int posx, in
  */
 vpDisplayPCL::~vpDisplayPCL()
 {
+  std::cout << "[dtor] Calling stop ...\n" << std::flush;
   stop();
+  std::cout << "[dtor] Done\n" << std::flush;
+}
+
+/**
+ * \brief Create the viewer.
+ */
+void vpDisplayPCL::createViewer()
+{
+  m_viewer = pcl::visualization::PCLVisualizer::Ptr(new pcl::visualization::PCLVisualizer());
+  m_viewer->setBackgroundColor(0, 0, 0);
+  m_viewer->initCameraParameters();
+  m_viewer->setPosition(m_posx, m_posy);
+  m_viewer->setCameraPosition(0, 0, -0.25, 0, -1, 0);
+  m_viewer->setSize(m_width, m_height);
+  m_viewer->setWindowName(m_window_name);
+}
+
+/**
+ * \brief Insert a legend in the viewer for non-textured point-clouds.
+ *
+ * \param[in] id The ID of the point-cloud for which we need to add a legend.
+ */
+void vpDisplayPCL::insertLegend(const size_t &id)
+{
+  std::string text = this->mv_xyz_pcl[id].second.m_name;
+  unsigned int posU = 10;
+  unsigned int size = 16;
+  unsigned int posV = 10 + id * size;
+  double rRatio = this->mv_xyz_pcl[id].second.m_color.R / 255.0;
+  double gRatio = this->mv_xyz_pcl[id].second.m_color.G / 255.0;
+  double bRatio = this->mv_xyz_pcl[id].second.m_color.B / 255.0;
+
+  this->m_viewer->addText(text, posU, posV, rRatio, gRatio, bRatio);
+};
+
+/**
+ * \brief Monothread display method. MacOS currently can only use this monothread
+ * method, otherwise they get the error `uncaught exception 'NSInternalInconsistencyException', reason: 'NSWindow should only be instantiated on the main thread!'`
+ * \warning Because pcl::visualization::PCLVisualizer is not multi-thread friendly,
+ * calling this method stops the display thread if it was running.
+ */
+void vpDisplayPCL::display()
+{
+  std::cout << "[display] Checking if threaded\n" << std::flush;
+  if (m_thread_running) {
+    std::cout << "[display] Stopping thread\n" << std::flush;
+    stop();
+
+    std::cout << "[display] Resetting xyz pcl state\n" << std::flush;
+    // Reset the fact that the point-clouds must be first inserted before being updated
+    // as the viewer will be an entirely new one
+    size_t nb_pcls = mv_xyz_pcl.size();
+    for (size_t id = 0; id < nb_pcls; ++id) {
+      mv_xyz_pcl[id].second.m_do_init = true;
+    }
+
+    std::cout << "[display] Resetting RGB pcl state\n" << std::flush;
+    nb_pcls = mv_colored_pcl.size();
+    for (size_t id = 0; id < nb_pcls; ++id) {
+      mv_colored_pcl[id].second.m_do_init = true;
+    }
+  }
+
+  std::cout << "[display] Checking if viewer\n" << std::flush;
+  if (!m_viewer) {
+    std::cout << "[display] Creating viewer\n" << std::flush;
+    createViewer();
+  }
+
+  std::cout << "[display] XYZ loop\n" << std::flush;
+  size_t nb_pcls = mv_xyz_pcl.size();
+  for (size_t id = 0; id < nb_pcls; ++id) {
+    if (mv_xyz_pcl[id].second.m_do_init) {
+      m_viewer->addPointCloud<pcl::PointXYZ>(mv_xyz_pcl[id].second.m_pcl, mv_xyz_handlers[id], mv_xyz_pcl[id].second.m_name);
+      m_viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, mv_xyz_pcl[id].second.m_name);
+      insertLegend(id);
+      mv_xyz_pcl[id].second.m_do_init = false;
+    }
+    else {
+      m_viewer->updatePointCloud<pcl::PointXYZ>(mv_xyz_pcl[id].second.m_pcl, mv_xyz_handlers[id], mv_xyz_pcl[id].second.m_name);
+    }
+  }
+
+  std::cout << "[display] RGB loop\n" << std::flush;
+  nb_pcls = mv_colored_pcl.size();
+  for (size_t id = 0; id < nb_pcls; ++id) {
+    if (mv_colored_pcl[id].second.m_do_init) {
+      m_viewer->addPointCloud<pcl::PointXYZRGB>(mv_colored_pcl[id].second.m_pcl, mv_color_handlers[id], mv_colored_pcl[id].second.m_name);
+      m_viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, mv_colored_pcl[id].second.m_name);
+
+      mv_colored_pcl[id].second.m_do_init = false;
+    }
+    else {
+      m_viewer->updatePointCloud<pcl::PointXYZRGB>(mv_colored_pcl[id].second.m_pcl, mv_color_handlers[id], mv_colored_pcl[id].second.m_name);
+    }
+  }
+
+  std::cout << "[display] Spinning\n" << std::flush;
+  m_viewer->spinOnce(10);
 }
 
 /*!
@@ -78,19 +178,38 @@ vpDisplayPCL::~vpDisplayPCL()
  */
 void vpDisplayPCL::run()
 {
+  // Creating the window in this method for 2 reasons:
+  // 1) It is the same code whichever startThread method is called
+  // 2) According to the pcl documentation, a PCLVisualizer `can NOT be used across multiple threads. Only call functions of objects of this class from the same thread that they were created in!`
+  if (m_viewer) {
+    // m_viewer->close();
+    m_viewer.reset();
+
+    // Reset the fact that the point-clouds must be first inserted before being updated
+    // as the viewer will be an entirely new one
+    size_t nb_pcls;
+    {
+      std::lock_guard<std::mutex> lock(m_mutex_vector);
+      nb_pcls = mv_xyz_pcl.size();
+    }
+    for (size_t id = 0; id < nb_pcls; ++id) {
+      std::lock_guard<std::mutex> lock(mv_xyz_pcl[id].first);
+      mv_xyz_pcl[id].second.m_do_init = true;
+    }
+
+    {
+      std::lock_guard<std::mutex> lock(m_mutex_vector);
+      nb_pcls = mv_colored_pcl.size();
+    }
+
+    for (size_t id = 0; id < nb_pcls; ++id) {
+      std::lock_guard<std::mutex> lock(mv_colored_pcl[id].first);
+      mv_colored_pcl[id].second.m_do_init = true;
+    }
+  }
+
+  createViewer();
   pcl::PointCloud<pcl::PointXYZ>::Ptr local_pointcloud(new pcl::PointCloud<pcl::PointXYZ>());
-
-  auto insertLegend = [this](const size_t &id) {
-    std::string text = this->mv_xyz_pcl[id].second.m_name;
-    unsigned int posU = 10;
-    unsigned int size = 16;
-    unsigned int posV = 10 + id * size;
-    double rRatio = this->mv_xyz_pcl[id].second.m_color.R / 255.0;
-    double gRatio = this->mv_xyz_pcl[id].second.m_color.G / 255.0;
-    double bRatio = this->mv_xyz_pcl[id].second.m_color.B / 255.0;
-
-    this->m_viewer->addText(text, posU, posV, rRatio, gRatio, bRatio);
-    };
 
   size_t nb_pcls;
   while (!m_stop) {
@@ -121,13 +240,47 @@ void vpDisplayPCL::run()
   if (m_verbose) {
     std::cout << "End of point cloud display thread" << std::endl;
   }
+
+  // m_viewer->close();
+  m_viewer.reset(); // Mandatory because a viewer can only be used in the thread it was created in
 }
 
 /*!
  * Loop that does the display of the textured point clouds.
  */
-void vpDisplayPCL::run_color()
+void vpDisplayPCL::runColor()
 {
+  // Creating the window in this method for 2 reasons:
+  // 1) It is the same code for the two "run" methods
+  // 2) To avoid MacOS error "NSInternalInconsistencyException', reason: 'NSWindow should only be instantiated on the main thread!'"
+  if (m_viewer) {
+    // m_viewer->close();
+    m_viewer.reset();
+
+    // Reset the fact that the point-clouds must be first inserted before being updated
+    // as the viewer will be an entirely new one
+    size_t nb_pcls;
+    {
+      std::lock_guard<std::mutex> lock(m_mutex_vector);
+      nb_pcls = mv_xyz_pcl.size();
+    }
+    for (size_t id = 0; id < nb_pcls; ++id) {
+      std::lock_guard<std::mutex> lock(mv_xyz_pcl[id].first);
+      mv_xyz_pcl[id].second.m_do_init = true;
+    }
+
+    {
+      std::lock_guard<std::mutex> lock(m_mutex_vector);
+      nb_pcls = mv_colored_pcl.size();
+    }
+
+    for (size_t id = 0; id < nb_pcls; ++id) {
+      std::lock_guard<std::mutex> lock(mv_colored_pcl[id].first);
+      mv_colored_pcl[id].second.m_do_init = true;
+    }
+  }
+  createViewer();
+
   pcl::PointCloud<pcl::PointXYZRGB>::Ptr local_pointcloud(new pcl::PointCloud<pcl::PointXYZRGB>());
   size_t nb_pcls;
   while (!m_stop) {
@@ -160,6 +313,9 @@ void vpDisplayPCL::run_color()
   if (m_verbose) {
     std::cout << "End of point cloud display thread" << std::endl;
   }
+
+  // m_viewer->close();
+  m_viewer.reset(); // Mandatory because a viewer can only be used in the thread it was created in
 }
 
 /*!
@@ -167,22 +323,18 @@ void vpDisplayPCL::run_color()
  */
 void vpDisplayPCL::startThread(const bool &colorThread)
 {
-  // Creating the window in this method for 2 reasons:
-  // 1) It is the same code for the two "run" methods
-  // 2) To avoid MacOS error "NSInternalInconsistencyException', reason: 'NSWindow should only be instantiated on the main thread!'"
-  m_viewer = pcl::visualization::PCLVisualizer::Ptr(new pcl::visualization::PCLVisualizer());
-  m_viewer->setBackgroundColor(0, 0, 0);
-  m_viewer->initCameraParameters();
-  m_viewer->setPosition(m_posx, m_posy);
-  m_viewer->setCameraPosition(0, 0, -0.25, 0, -1, 0);
-  m_viewer->setSize(m_width, m_height);
-  m_viewer->setWindowName(m_window_name);
-
-  if (colorThread) {
-    m_thread = std::thread(&vpDisplayPCL::run_color, this);
+  if (!m_thread_running) {
+    m_stop = false;
+    if (colorThread) {
+      m_thread = std::thread(&vpDisplayPCL::runColor, this);
+    }
+    else {
+      m_thread = std::thread(&vpDisplayPCL::run, this);
+    }
+    m_thread_running = true;
   }
   else {
-    m_thread = std::thread(&vpDisplayPCL::run, this);
+    throw(vpException(vpException::fatalError, "A viewer thread is already running."));
   }
 }
 
@@ -194,9 +346,16 @@ void vpDisplayPCL::startThread(const bool &colorThread)
  */
 void vpDisplayPCL::startThread(std::mutex &mutex, pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud, const std::string &name, const vpColor &color)
 {
-  mv_xyz_pcl.emplace_back(std::pair<std::mutex &, XYZPointCloudHandling>(std::ref(mutex), XYZPointCloudHandling(pointcloud, name, color)));
-  mv_xyz_handlers.push_back(pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZ>(pointcloud, color.R, color.G, color.B));
-  m_thread = std::thread(&vpDisplayPCL::run, this);
+  if (!m_thread_running) {
+    m_stop = false;
+    mv_xyz_pcl.emplace_back(std::pair<std::mutex &, XYZPointCloudHandling>(std::ref(mutex), XYZPointCloudHandling(pointcloud, name, color)));
+    mv_xyz_handlers.push_back(pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZ>(pointcloud, color.R, color.G, color.B));
+    m_thread = std::thread(&vpDisplayPCL::run, this);
+    m_thread_running = true;
+  }
+  else {
+    throw(vpException(vpException::fatalError, "A viewer thread is already running."));
+  }
 }
 
 /*!
@@ -208,9 +367,16 @@ void vpDisplayPCL::startThread(std::mutex &mutex, pcl::PointCloud<pcl::PointXYZ>
  */
 void vpDisplayPCL::startThread(std::mutex &mutex, pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud_color)
 {
-  mv_colored_pcl.emplace_back(std::pair<std::mutex &, ColoredPointCloudHandling>(std::ref(mutex), ColoredPointCloudHandling(pointcloud_color)));
-  mv_color_handlers.push_back(pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB>(pointcloud_color));
-  m_thread = std::thread(&vpDisplayPCL::run_color, this);
+  if (!m_thread_running) {
+    m_stop = false;
+    mv_colored_pcl.emplace_back(std::pair<std::mutex &, ColoredPointCloudHandling>(std::ref(mutex), ColoredPointCloudHandling(pointcloud_color)));
+    mv_color_handlers.push_back(pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB>(pointcloud_color));
+    m_thread = std::thread(&vpDisplayPCL::runColor, this);
+    m_thread_running = true;
+  }
+  else {
+    throw(vpException(vpException::fatalError, "A viewer thread is already running."));
+  }
 }
 
 /*!
@@ -272,12 +438,15 @@ void vpDisplayPCL::setWindowName(const std::string &window_name)
  */
 void vpDisplayPCL::stop()
 {
-  if (!m_stop) {
-    m_stop = true;
+  if (m_thread_running) {
+    if (!m_stop) {
+      m_stop = true;
 
-    if (m_thread.joinable()) {
-      m_thread.join();
+      if (m_thread.joinable()) {
+        m_thread.join();
+      }
     }
+    m_thread_running = false;
   }
 }
 

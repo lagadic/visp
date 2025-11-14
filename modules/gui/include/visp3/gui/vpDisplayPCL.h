@@ -54,6 +54,9 @@ BEGIN_VISP_NAMESPACE
   This class enables real time plotting of 3D point clouds. It relies on the PCL library.
   To see how to install PCL library, please refer to the \ref soft_tool_pcl section.
 
+  \warning MacOS currently can only use the monothread method `display`, otherwise they get
+  the error `uncaught exception 'NSInternalInconsistencyException', reason: 'NSWindow should only be instantiated on the main thread!'`
+
   <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
 
   <b>Tutorials</b><br>
@@ -70,6 +73,7 @@ public:
   ~vpDisplayPCL();
 
   void setVerbose(bool verbose);
+  void display();
   void startThread(const bool &colorThread = false);
   void startThread(std::mutex &mutex, pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud, const std::string &name = "", const vpColor &color = vpColor::red);
   void startThread(std::mutex &mutex, pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud);
@@ -80,7 +84,9 @@ public:
   void stop();
 private:
   void run();
-  void run_color();
+  void runColor();
+  void createViewer();
+  void insertLegend(const size_t &id);
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 /**
@@ -213,6 +219,7 @@ private:
 #endif
 
   bool m_stop;
+  bool m_thread_running; //!< Set to true once the startThread method is called.
   bool m_verbose;
   std::thread m_thread; //!< Non-blocking display thread.
   std::mutex m_mutex_vector; //!< Mutex to protect the vectors of point clouds

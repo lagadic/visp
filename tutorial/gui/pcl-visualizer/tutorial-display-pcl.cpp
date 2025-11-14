@@ -18,6 +18,85 @@
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
+//! [Enum for mode choice]
+/**
+ * @brief Enumeration permitting to choose between running the blocking-mode display
+ * example, the threaded-mode or both mode consecutively.
+ */
+typedef enum DisplayMode
+{
+  MONOTHREAD = 0, /*!< Only the monothread-mode display example will be run.*/
+  THREADED = 1, /*!< Only the threaded-mode display example will be run.*/
+  BOTH = 2, /*!< First the blocking-mode display example will be run and then the threaded-mode one.*/
+  MODE_COUNT = 3
+} DisplayMode;
+
+/**
+ * @brief Cast a \b DisplayMode enum value into a \b std::stirng.
+ *
+ * @param mode The display mode we want to cast into a string.
+ * @return std::string The name of the \b DisplayMode enum value.
+ */
+std::string displayModeToString(const DisplayMode &mode)
+{
+  switch (mode) {
+  case MONOTHREAD:
+    return "monothread";
+  case THREADED:
+    return "threaded";
+  case BOTH:
+    return "both";
+  default:
+    break;
+  }
+  return "unknown";
+}
+
+/**
+ * @brief Cast a string into a \b DisplayMode enum value.
+ * If \b name is not found, return \b DisplayMode::MODE_COUNT .
+ *
+ * @param name The name of the display mode.
+ * @return DisplayMode The corresponding \b DisplayMode enum value, or \b DisplayMode::MODE_COUNT if not found.
+ */
+DisplayMode displayModeFromString(const std::string &name)
+{
+  DisplayMode res = DisplayMode::MODE_COUNT;
+  bool wasFound = false;
+  std::string lowerCaseName = vpIoTools::toLowerCase(name);
+  unsigned int i = 0;
+  while ((i < DisplayMode::MODE_COUNT) && (!wasFound)) {
+    DisplayMode candidate = (DisplayMode)i;
+    if (lowerCaseName == displayModeToString(candidate)) {
+      res = candidate;
+      wasFound = true;
+    }
+    ++i;
+  }
+  return res;
+}
+
+/**
+ * @brief Create a string that lists the different \b DisplayMode available.
+ *
+ * @param prefix The string that must prefix the list of modes.
+ * @param sep The separator between the different modes.
+ * @param suffix The string that must suffix the list of modes.
+ * @return std::string The list containing the different modes.
+ */
+std::string getAvailableDisplayMode(const std::string &prefix = "< ", const std::string &sep = " , ", const std::string &suffix = " >")
+{
+  std::string modes(prefix);
+  for (unsigned int i = 0; i < DisplayMode::MODE_COUNT - 1; ++i) {
+    DisplayMode candidate = (DisplayMode)i;
+    modes += displayModeToString(candidate) + sep;
+  }
+  DisplayMode candidate = (DisplayMode)(DisplayMode::MODE_COUNT - 1);
+  modes += displayModeToString(candidate) + suffix;
+  return modes;
+}
+//! [Enum for mode choice]
+
 int main(int argc, char *argv[])
 {
   //! [Default arguments values]
@@ -26,6 +105,7 @@ int main(int argc, char *argv[])
   const std::pair<double, double> def_xlim = std::pair<double, double>(-2.5, 2.5); // Min and max X-axis coordinates.
   const std::pair<double, double> def_ylim = std::pair<double, double>(-2.5, 2.5); // Min and max Y-axis coordinates.
   const std::pair<unsigned int, unsigned int> def_reso = std::pair<unsigned int, unsigned int>(50, 50); // Number of points along the X-axis and Y-axis reciprocally.
+  const DisplayMode def_mode = DisplayMode::MONOTHREAD; // Display mode that should be used.
   //! [Default arguments values]
 
   //! [Arguments parser]
@@ -34,6 +114,7 @@ int main(int argc, char *argv[])
   std::pair<double, double> opt_xlim = def_xlim;
   std::pair<double, double> opt_ylim = def_ylim;
   std::pair<unsigned int, unsigned int> opt_reso = def_reso;
+  DisplayMode opt_mode = def_mode;
 
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--noise" && i + 1 < argc) {
@@ -59,6 +140,10 @@ int main(int argc, char *argv[])
       opt_reso.second = atoi(argv[i + 2]);
       i += 2;
     }
+    else if (std::string(argv[i]) == "--display-mode" && i + 1 < argc) {
+      opt_mode = displayModeFromString(std::string(argv[i + 1]));
+      i++;
+    }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       //! [Arguments of the program]
       std::cout << "NAME" << std::endl;
@@ -71,10 +156,15 @@ int main(int argc, char *argv[])
         << "\t[--x-lim <xmin xmax>](default: [" + std::to_string(def_xlim.first) + ";" + std::to_string(def_xlim.second) << "])\n"
         << "\t[--y-lim <ymin ymax>](default: [" + std::to_string(def_ylim.first) + ";" + std::to_string(def_ylim.second) << "])\n"
         << "\t[--reso <x_resolution y_resolution>](default: [" + std::to_string(def_reso.first) + ";" + std::to_string(def_reso.second) << "])\n"
+        << "\t[--display-mode " << getAvailableDisplayMode() << "](default: " << displayModeToString(def_mode) << ")\n"
         << "\t[--help] [-h]" << std::endl
         << std::endl;
       //! [Arguments of the program]
       return EXIT_SUCCESS;
+    }
+    else {
+      std::cerr << "Option '" << argv[i] << "' is not known. Please run '" << argv[0] << " --help' to have the list of options." << std::endl;
+      return EXIT_FAILURE;
     }
   }
   //! [Arguments parser]
@@ -85,11 +175,30 @@ int main(int argc, char *argv[])
   std::cout << "\tY-axis limits: [" << opt_ylim.first << " ; " << opt_ylim.first << "]" << std::endl;
   std::cout << "\tGrid resolution: [" << opt_reso.first << " x " << opt_reso.first << "]" << std::endl;
   std::cout << "\tNoise standard deviation: " << opt_addedNoise << std::endl;
+  std::cout << "\tDisplay mode: " << displayModeToString(opt_mode) << std::endl;
 
-  //! [Running threaded mode]
-  ClassUsingDisplayPCL demo(opt_xlim, opt_ylim, opt_reso);
-  demo.threadedMode(opt_addedNoise, opt_order);
-  //! [Running threaded mode]
+  bool useMonothread;
+
+  if ((opt_mode == DisplayMode::THREADED) || (opt_mode == DisplayMode::BOTH)) {
+    useMonothread = false;
+    //! [Running threaded mode]
+    ClassUsingDisplayPCL demo(opt_xlim, opt_ylim, opt_reso);
+    demo.runDemo(opt_addedNoise, opt_order, useMonothread);
+
+    ClassUsingDisplayPCL demo2(opt_xlim, opt_ylim, opt_reso);
+    demo2.runDemo(opt_addedNoise, opt_order, useMonothread);
+    //! [Running threaded mode]
+  }
+
+  std::cout << "[main] Launching monothread...\n" << std::flush;
+
+  if ((opt_mode == DisplayMode::MONOTHREAD) || (opt_mode == DisplayMode::BOTH)) {
+    useMonothread = true;
+    //! [Running threaded mode]
+    ClassUsingDisplayPCL demo(opt_xlim, opt_ylim, opt_reso);
+    demo.runDemo(opt_addedNoise, opt_order, useMonothread);
+    //! [Running threaded mode]
+  }
 
   return 0;
 }

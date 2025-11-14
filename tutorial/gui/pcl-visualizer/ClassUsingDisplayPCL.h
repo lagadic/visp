@@ -55,8 +55,9 @@ public:
    *
    * @param addedNoise Standard deviation of the noise added to the moved surface.
    * @param order  The order of the polynomial surface that is generated.
+   * @param useMonothread If true, use the monothread version of the viewer.
    */
-  void threadedMode(const double &addedNoise, const unsigned int &order);
+  void runDemo(const double &addedNoise, const unsigned int &order, const bool &useMonothread);
 };
 #endif
 #endif
