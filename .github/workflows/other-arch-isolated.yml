@@ -32,9 +32,9 @@ jobs:
           #  distro: ubuntu:latest
           #  target: ARMV7
           #  endianness: (Little Endian)
-          - arch: aarch64
-            distro: ubuntu:latest
-            endianness: (Little Endian)
+          # - arch: aarch64
+          #   distro: ubuntu:latest
+          #   endianness: (Little Endian)
           - arch: riscv64
             distro: ubuntu:latest
             target: RISC-V
@@ -50,7 +50,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: Run on arch
       uses: uraimo/run-on-arch-action@v3

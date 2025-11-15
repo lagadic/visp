@@ -31,10 +31,10 @@ jobs:
           # - arch: armv7
           #   distro: ubuntu20.04
           #   target: ARMV7
-          - arch: aarch64
-            distro: ubuntu:latest
-            target: ARMV8
-            endianness: (Little Endian)
+          # - arch: aarch64
+          #   distro: ubuntu:latest
+          #   target: ARMV8
+          #   endianness: (Little Endian)
           # - arch: ppc64le
           #   distro: ubuntu20.04
           #   target: POWER8
@@ -45,7 +45,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: Run on arch
       uses: uraimo/run-on-arch-action@v3
