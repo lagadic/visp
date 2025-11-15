@@ -14,8 +14,30 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # https://github.com/orgs/community/discussions/28474#discussioncomment-3350256
+  check_skip_flags:
+    name: Check skip flags
+    runs-on: ubuntu-latest
+    outputs:
+      head-commit-message: ${{ steps.get_head_commit_message.outputs.headCommitMsg }}
+    steps:
+      - name: Get repo
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Print head git commit message
+        id: get_head_commit_message
+        run: echo "headCommitMsg=$(git show -s --format=%s)" >> $GITHUB_OUTPUT
+
   build-ubuntu-dep-apt:
     runs-on: ${{ matrix.os }}
+    needs: check_skip_flags
+    if: >-
+      ${{
+        (!contains(needs.check_skip_flags.outputs.head-commit-message, '[SKIP-CI ALL]') &&
+        !contains(needs.check_skip_flags.outputs.head-commit-message, '[SKIP-CI UBUNTU-DEP-APT]')) ||
+        contains(needs.check_skip_flags.outputs.head-commit-message, '[ENABLE-CI UBUNTU-DEP-APT]')
+      }}
     strategy:
       fail-fast: false
       matrix:
@@ -26,7 +48,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: Print system information
       run: lscpu
@@ -81,7 +103,8 @@ jobs:
         echo "CC: $CC"
         echo "CXX: $CXX"
         echo "Standard: $CXX_STANDARD"
-        cmake .. -DCMAKE_C_COMPILER="${CC}" -DCMAKE_CXX_COMPILER="${CXX}" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/tmp/usr/local -DCMAKE_VERBOSE_MAKEFILE=ON -DUSE_CXX_STANDARD=$CXX_STANDARD
+        cmake .. -DCMAKE_C_COMPILER="${CC}" -DCMAKE_CXX_COMPILER="${CXX}" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/tmp/usr/local \
+          -DCMAKE_VERBOSE_MAKEFILE=ON -DUSE_CXX_STANDARD=$CXX_STANDARD
         cat ViSP-third-party.txt
 
     - name: Compile
