@@ -58,6 +58,7 @@ jobs:
       uses: hendrikmuhs/ccache-action@v1.2.19
       with:
         key: ${{ github.job }}-${{ matrix.os }}
+        append-timestamp: false
         verbose: 2
 
     - name: Print ccache-action key
