@@ -67,7 +67,7 @@
 #include <visp3/core/vpPoint.h>
 #include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/robot/vpRobotViper650.h>
-#include <visp3/sensor/vpRealSense.h2>
+#include <visp3/sensor/vpRealSense2.h>
 #include <visp3/vision/vpPose.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/visual_features/vpFeaturePoint.h>
