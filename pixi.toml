@@ -25,6 +25,16 @@ liblapacke = "*"
 coin3d = "*"
 nlohmann_json = "*"
 
+# We have to disable ogre on osx intel due to broken opencv package 4.12.0 build-number <607
+# (wrong osx SDK version). This has been fixed since opencv 4.12.0 build 607 but is incompatible
+# with ogre (freeimage lacks rebuilds: https://github.com/conda-forge/freeimage-feedstock/pull/55
+# and https://github.com/conda-forge/freeimage-feedstock/pull/54)
+[target.linux.dependencies]
+ogre = "*"
+
+[target.osx-arm64.dependencies]
+ogre = "*"
+
 [target.unix.dependencies]
 xorg-libx11 = "*"
 xorg-libxfixes = "*"
@@ -35,7 +45,6 @@ libdc1394 = ">=2.2.6"
 librealsense = "*"
 gsl = "*"
 gtk2 = "*"
-ogre = "*"
 
 [target.linux-64.dependencies]
 mesa-libegl-cos7-x86_64 = "*"
