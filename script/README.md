@@ -222,7 +222,7 @@ Following video shows the camera poses outputed by the ViSP model-based tracker 
 ## PlotRGBIrDepthData.py
 
 This Python script allows displaying RGB/Infrared/Depth/Pointcloud data saved using the
-`example/device/framegrabber/saveRealSenseData.cpp` sample.
+`apps/rs-dataset/visp-save-rs-dataset.cpp` app.
 It contains sample code to learn how to manipulate NumPy NPZ format, such as multi-dimensional array and display them with Matplotlib.
 
 Simply run the following command with the correct folder path:

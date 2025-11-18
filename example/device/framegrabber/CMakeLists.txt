@@ -52,8 +52,6 @@ set(example_cpp
   grabRealSense2.cpp
   grabRealSense2_T265.cpp
   grabV4l2MultiCpp11Thread.cpp
-  readRealSenseData.cpp
-  saveRealSenseData.cpp
 )
 
 foreach(cpp ${example_cpp})
