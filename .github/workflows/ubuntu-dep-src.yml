@@ -18,8 +18,32 @@ env:
   FUNCTION_GET_LATEST: 'git -c "versionsort.suffix=-" ls-remote --exit-code --refs --sort="version:refname" --tags ${GIT_ADDRESS} "*.*.*" | cut --delimiter="/" --fields=3 | grep -v -e pr | tail --lines=1'
 
 jobs:
+  # https://github.com/orgs/community/discussions/28474#discussioncomment-3350256
+  check_skip_flags:
+    name: Check skip flags
+    runs-on: ubuntu-latest
+    outputs:
+      head-commit-message: ${{ steps.get_head_commit_message.outputs.headCommitMsg }}
+    steps:
+      - name: Get repo
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Print head git commit message
+        id: get_head_commit_message
+        run: |
+          echo "headCommitMsg: $(git show -s --format=%s)"
+          echo "headCommitMsg=$(git show -s --format=%s)" >> $GITHUB_OUTPUT
+
   build-ubuntu-dep-src:
     runs-on: ${{ matrix.os }}
+    needs: check_skip_flags
+    if: >-
+      ${{
+        (!contains(needs.check_skip_flags.outputs.head-commit-message, '[SKIP-CI ALL]') &&
+        !contains(needs.check_skip_flags.outputs.head-commit-message, '[SKIP-CI UBUNTU-DEP-SRC]')) ||
+        contains(needs.check_skip_flags.outputs.head-commit-message, '[ENABLE-CI UBUNTU-DEP-SRC]')
+      }}
     strategy:
       fail-fast: false
       matrix:
@@ -27,7 +51,18 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
+
+    # https://github.com/hendrikmuhs/ccache-action
+    - name: ccache
+      uses: hendrikmuhs/ccache-action@v1.2.19
+      with:
+        key: ${{ github.job }}-${{ matrix.os }}
+        append-timestamp: false
+        verbose: 2
+
+    - name: Print ccache-action key
+      run: echo "key=${{ github.job }}-${{ matrix.os }}"
 
     - name: Print system information
       run: lscpu
@@ -56,7 +91,7 @@ jobs:
         git clone --depth 1 --branch ${LATEST_TAG} ${GIT_ADDRESS} ${HOME}/ogre
         cd ${HOME}/ogre
         mkdir build && cd build && mkdir install
-        cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$(pwd)/install
+        cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$(pwd)/install -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
         make -j$(nproc) install
         echo "OGRE_DIR=$(pwd)/install" >> $GITHUB_ENV
         echo $OGRE_DIR
@@ -90,7 +125,8 @@ jobs:
         cd ${HOME}/VTK
         mkdir build && cd build && mkdir install
         cmake .. -DVTK_ANDROID_BUILD=OFF -DVTK_BUILD_DOCUMENTATION=OFF -DVTK_BUILD_EXAMPLES=OFF -DVTK_BUILD_EXAMPLES=OFF -DCMAKE_BUILD_TYPE=Release \
-          -DVTK_GROUP_ENABLE_Imaging=DONT_WANT -DVTK_GROUP_ENABLE_MPI=DONT_WANT -DVTK_GROUP_ENABLE_Web=DONT_WANT -DCMAKE_INSTALL_PREFIX=$(pwd)/install
+          -DVTK_GROUP_ENABLE_Imaging=DONT_WANT -DVTK_GROUP_ENABLE_MPI=DONT_WANT -DVTK_GROUP_ENABLE_Web=DONT_WANT -DCMAKE_INSTALL_PREFIX=$(pwd)/install \
+          -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
         make -j$(nproc) install
         echo "VTK_DIR=$(pwd)/install" >> $GITHUB_ENV
         echo $VTK_DIR
@@ -104,7 +140,8 @@ jobs:
         git clone --depth 1 --branch ${LATEST_TAG} ${GIT_ADDRESS} ${HOME}/opencv
         cd ${HOME}/opencv
         mkdir build && cd build && mkdir install
-        cmake .. -DBUILD_EXAMPLES=OFF -DBUILD_PERF_TESTS=OFF -DBUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$(pwd)/install
+        cmake .. -DBUILD_EXAMPLES=OFF -DBUILD_PERF_TESTS=OFF -DBUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$(pwd)/install \
+          -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
         make -j$(nproc) install
         echo "OpenCV_DIR=$(pwd)/install" >> $GITHUB_ENV
         echo $OpenCV_DIR
@@ -118,7 +155,8 @@ jobs:
         git clone --depth 1 --branch ${LATEST_TAG} ${GIT_ADDRESS} ${HOME}/librealsense
         cd ${HOME}/librealsense
         mkdir build && cd build && mkdir install
-        cmake .. -DBUILD_EXAMPLES=OFF -DBUILD_GRAPHICAL_EXAMPLES=OFF -DBUILD_TOOLS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$(pwd)/install
+        cmake .. -DBUILD_EXAMPLES=OFF -DBUILD_GRAPHICAL_EXAMPLES=OFF -DBUILD_TOOLS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$(pwd)/install \
+          -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
         make -j$(nproc) install
         echo "REALSENSE2_DIR=$(pwd)/install" >> $GITHUB_ENV
         echo $REALSENSE2_DIR
@@ -132,7 +170,11 @@ jobs:
         git clone --depth 1 --branch ${LATEST_TAG} ${GIT_ADDRESS} ${HOME}/pcl
         cd ${HOME}/pcl
         mkdir build && cd build && mkdir install
-        cmake .. -DBUILD_tools=OFF -DBUILD_global_tests=OFF -DPCL_DISABLE_GPU_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$(pwd)/install
+        # By default PCL is built with march=native
+        # https://github.com/PointCloudLibrary/pcl/blob/e5ce18fab8d4ff175eb44cc09ae24ae1a0a2e8eb/cmake/pcl_find_avx.cmake#L11
+        # Disable AVX512 to avoid issue with GHA and ccache action across possible different hardware specs runner
+        cmake .. -DBUILD_tools=OFF -DBUILD_global_tests=OFF -DPCL_DISABLE_GPU_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$(pwd)/install \
+          -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_FLAGS=-mno-avx512f -DCMAKE_C_FLAGS=-mno-avx512f
         make -j$(nproc) install
         echo "PCL_DIR=$(pwd)/install" >> $GITHUB_ENV
         echo $PCL_DIR
@@ -143,7 +185,8 @@ jobs:
         git clone https://github.com/qualisys/qualisys_cpp_sdk.git ${HOME}/qualisys_cpp_sdk
         cd ${HOME}/qualisys_cpp_sdk
         mkdir build && cd build && mkdir install
-        cmake .. qualisys_cpp_sdk_BUILD_EXAMPLE=OFF qualisys_cpp_sdk_BUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-fPIC -DCMAKE_INSTALL_PREFIX=$(pwd)/install
+        cmake .. qualisys_cpp_sdk_BUILD_EXAMPLE=OFF qualisys_cpp_sdk_BUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-fPIC \
+          -DCMAKE_INSTALL_PREFIX=$(pwd)/install -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
         make -j$(nproc) install
         echo "QUALISYS_DIR=$(pwd)/install" >> $GITHUB_ENV
         echo $QUALISYS_DIR
@@ -166,7 +209,8 @@ jobs:
         git clone --recursive --branch ${LATEST_TAG} ${GIT_ADDRESS} ${HOME}/libfranka
         cd ${HOME}/libfranka
         mkdir build && cd build && mkdir install
-        cmake .. -DCMAKE_PREFIX_PATH=/opt/openrobots/lib/cmake -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$(pwd)/install
+        cmake .. -DCMAKE_PREFIX_PATH=/opt/openrobots/lib/cmake -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_INSTALL_PREFIX=$(pwd)/install -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
         make -j$(nproc) install
         echo "Franka_DIR=$(pwd)/install" >> $GITHUB_ENV
         echo $Franka_DIR
@@ -203,7 +247,8 @@ jobs:
         git clone --depth 1 --branch ${LATEST_TAG} ${GIT_ADDRESS} ${HOME}/ur_rtde
         cd ${HOME}/ur_rtde
         mkdir build && cd build && mkdir install
-        cmake .. -DCMAKE_BUILD_TYPE=Release -DPYTHON_BINDINGS=OFF -DCMAKE_INSTALL_PREFIX=$(pwd)/install
+        cmake .. -DCMAKE_BUILD_TYPE=Release -DPYTHON_BINDINGS=OFF -DCMAKE_INSTALL_PREFIX=$(pwd)/install \
+          -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
         make -j$(nproc) install
         echo "ur_rtde_DIR=$(pwd)/install" >> $GITHUB_ENV
         echo $ur_rtde_DIR
