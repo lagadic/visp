@@ -54,6 +54,30 @@ double dotProd3(const vpColVector &a, const std::array<double, 3> &b)
 }
 
 
+std::pair<unsigned int, unsigned int> computeSteps(const vpRBFeatureTrackerInput &frame, unsigned int target)
+{
+  vpRect bb = frame.renders.boundingBox;
+  double width = bb.getWidth(), height = bb.getHeight();
+  int stepH = 1, stepW = 1;
+  double bestSol = width * height - target;
+  while (true) {
+    double wSol = abs((width / (stepW + 1)) * (height / stepH) - static_cast<int>(target));
+    double hSol = abs((width / stepW) * (height / (stepH + 1)) - static_cast<int>(target));
+    if (wSol >= bestSol && hSol >= bestSol) {
+      break;
+    }
+    if (wSol < hSol) {
+      bestSol = wSol;
+      stepW++;
+    }
+    else if (hSol <= wSol) {
+      bestSol = hSol;
+      stepH++;
+    }
+  }
+  return std::make_pair(stepH, stepW);
+}
+
 void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &/*previousFrame*/, const vpHomogeneousMatrix &/*cMo*/)
 {
   const vpImage<float> &depthMap = frame.depth;
@@ -64,6 +88,10 @@ void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame
   const vpHomogeneousMatrix oMc = cMo.inverse();
   const vpTranslationVector co = oMc.getTranslationVector(); // Position of the camera in object frame
   const bool useMask = m_useMask && frame.hasMask();
+
+
+  std::pair<unsigned int, unsigned int> steps = m_targetNumFeatures > 0 ? computeSteps(frame, m_targetNumFeatures) : std::make_pair(m_step, m_step);
+
   m_depthPoints.clear();
   m_depthPoints.reserve(static_cast<size_t>(bb.getArea() / (m_step * m_step * 2)));
 
@@ -103,8 +131,8 @@ void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame
 #ifdef VISP_HAVE_OPENMP
 #pragma omp for nowait
 #endif
-    for (auto i = static_cast<int>(bb.getTop()); i < static_cast<int>(bb.getBottom()); i += m_step) {
-      for (auto j = static_cast<int>(bb.getLeft()); j < static_cast<int>(bb.getRight()); j += m_step) {
+    for (auto i = static_cast<int>(bb.getTop()); i < static_cast<int>(bb.getBottom()); i += steps.first) {
+      for (auto j = static_cast<int>(bb.getLeft()); j < static_cast<int>(bb.getRight()); j += steps.second) {
         const double Z = renderDepth[i][j];
         const double currZ = depthMap[i][j];
 
@@ -190,19 +218,7 @@ void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &frame,
   m_robust.setMinMedianAbsoluteDeviation((frame.renders.zFar - frame.renders.zNear) * 0.01);
   m_robust.MEstimator(vpRobust::TUKEY, m_error, m_weights);
 
-
-
-  for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
-    m_weighted_error[i] = m_error[i] * m_weights[i];
-    m_covWeightDiag[i] = m_weights[i] * m_weights[i];
-    for (unsigned int dof = 0; dof < 6; ++dof) {
-      m_L[i][dof] *= m_weights[i];
-    }
-  }
-
-  m_LTL = m_L.AtA();
-  computeJTR(m_L, m_weighted_error, m_LTR);
-  m_vvsConverged = false;
+  updateOptimizerTerms(cMo);
 }
 
 void vpRBDenseDepthTracker::display(const vpCameraParameters &/*cam*/, const vpImage<unsigned char> &/*I*/,

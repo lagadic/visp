@@ -299,7 +299,7 @@ public:
    * @}
    */
 
-  void onTrackingIterStart(const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE;
+  void onTrackingIterStart(const vpRBFeatureTrackerInput & /*frame*/, const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE;
   void onTrackingIterEnd(const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE { }
   void reset() VP_OVERRIDE
   {
@@ -375,7 +375,7 @@ protected:
   void updateCCDPoints(const vpHomogeneousMatrix &cMo);
   void computeLocalStatistics(const vpImage<vpRGBa> &I, vpCCDStatistics &stats);
   template<bool hasTemporalSmoothing>
-  void computeErrorAndInteractionMatrix();
+  void computeErrorAndInteractionMatrix(const vpHomogeneousMatrix &cMo);
 
   vpCCDParameters m_ccdParameters;
 

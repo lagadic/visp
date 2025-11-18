@@ -293,7 +293,7 @@ vpRBSilhouetteControlPoint::update(const vpHomogeneousMatrix &_cMo)
 }
 
 void
-vpRBSilhouetteControlPoint::updateSilhouettePoint(const vpHomogeneousMatrix &cMo, const vpRowVector &cameraRayObject)
+vpRBSilhouetteControlPoint::updateSilhouettePoint(const vpHomogeneousMatrix &cMo, const vpRotationMatrix &cRo)
 {
   cpointo.changeFrame(cMo);
   cpointo.projection();
@@ -307,8 +307,10 @@ vpRBSilhouetteControlPoint::updateSilhouettePoint(const vpHomogeneousMatrix &cMo
   xs = cpointo.get_x();
   ys = cpointo.get_y();
   Zs = cpointo.get_Z();
-
-  if (acos(cameraRayObject * m_normalO) < vpMath::rad(85.0)) {
+  m_normal = cRo * m_normalO;
+  vpColVector cameraRayObject({ cpointo.get_X(), cpointo.get_Y(), cpointo.get_Z() });
+  cameraRayObject.normalize();
+  if (acos(cameraRayObject * m_normal) < vpMath::rad(85.0)) {
     m_valid = false;
   }
 

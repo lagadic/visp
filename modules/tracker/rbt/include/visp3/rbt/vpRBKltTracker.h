@@ -81,7 +81,7 @@ public:
 
   bool requiresSilhouetteCandidates() const VP_OVERRIDE { return false; }
 
-  void onTrackingIterStart(const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE { }
+  void onTrackingIterStart(const vpRBFeatureTrackerInput &/*frame*/, const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE { }
 
   void onTrackingIterEnd(const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE { }
 

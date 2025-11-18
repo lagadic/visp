@@ -42,6 +42,7 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpRect.h>
+#include <visp3/visual_features/vpFeatureThetaU.h>
 
 #include <visp3/rbt/vpRBFeatureTrackerInput.h>
 #include <visp3/rbt/vpRBSilhouettePoint.h>
@@ -120,7 +121,7 @@ public:
   * \brief Method called when starting a tracking iteration
   *
   */
-  virtual void onTrackingIterStart(const vpHomogeneousMatrix &cMo) = 0;
+  virtual void onTrackingIterStart(const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cMo) = 0;
 
   /**
    * \brief Method called after the tracking iteration has finished
@@ -206,8 +207,6 @@ public:
   void setTrackerWeight(double weight) { m_weighting = std::make_shared<vpFixedTemporalWeighting>(weight); }
   void setTrackerWeight(const std::shared_ptr<vpTemporalWeighting> &weight) { m_weighting = weight; }
 
-
-
   /**
    * \brief Get the left-side term of the Gauss-Newton optimization term
    */
@@ -229,13 +228,70 @@ public:
   {
     m_weighting = vpTemporalWeighting::parseTemporalWeighting(j.at("weight"));
     m_enableDisplay = j.value("display", m_enableDisplay);
+    const std::array<bool, 6> allDofs { true, true, true, true, true, true };
+    setEstimatedDofs(j.value("dofs", allDofs));
   }
 #endif
+
+  void setComputeJacobianObjectSpace(bool inObjectSpace)
+  {
+    m_jacobianInObjectSpace = inObjectSpace;
+  }
 
   static void computeJTR(const vpMatrix &interaction, const vpColVector &error, vpColVector &JTR);
   static vpMatrix computeCovarianceMatrix(const vpMatrix &A, const vpColVector &b, const vpMatrix &W);
 
+  bool hasIgnoredDofs() const
+  {
+    for (unsigned int i = 0; i < m_estimatedDofs.size(); ++i) {
+      if (!m_estimatedDofs[i]) {
+        return true;
+      }
+    }
+    return false;
+  }
+  void setEstimatedDofs(const std::array<bool, 6> &dofs)
+  {
+    m_estimatedDofs = dofs;
+    m_oJo = computeoJo();
+  }
+
+
+  void updateOptimizerTerms(const vpHomogeneousMatrix &cMo)
+  {
+
+    for (unsigned int i = 0; i < m_L.getRows(); ++i) {
+      m_weighted_error[i] = m_error[i] * m_weights[i];
+      m_covWeightDiag[i] = m_weights[i] * m_weights[i];
+      for (unsigned int dof = 0; dof < 6; ++dof) {
+        m_L[i][dof] *= m_weights[i];
+      }
+    }
+    if (m_jacobianInObjectSpace) {
+      vpVelocityTwistMatrix cVo(cMo);
+      vpMatrix cVooJo = cVo * m_oJo;
+      m_L = m_L * cVooJo;
+    }
+
+    m_LTL = m_L.AtA();
+    computeJTR(m_L, m_weighted_error, m_LTR);
+  }
+
 protected:
+
+  vpMatrix computeoJo() const
+  {
+    vpMatrix oJo(6, 6, 0);
+    for (unsigned int i = 0; i < 6; ++i) {
+      if (m_estimatedDofs[i]) {
+        oJo[i][i] = 1;
+      }
+    }
+    return oJo;
+  }
+
+
+
 
   vpMatrix m_L; //! Error jacobian (In VS terms, the interaction matrix)
   vpMatrix m_LTL;  //! Left side of the Gauss newton minimization
@@ -254,6 +310,9 @@ protected:
   bool m_vvsConverged; //! Whether VVS has converged, should be updated every VVS iteration
 
   bool m_enableDisplay; //! Whether the tracked features should be displayed.
+  std::array<bool, 6> m_estimatedDofs;
+  vpMatrix m_oJo; //! Matrix representation of the estimated DOFS
+  bool m_jacobianInObjectSpace;
 };
 
 END_VISP_NAMESPACE

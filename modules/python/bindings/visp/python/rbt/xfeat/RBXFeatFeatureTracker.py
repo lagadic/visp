@@ -114,26 +114,19 @@ class RBXFeatFeatureTracker(RBFeatureTracker):
     self.setFeaturesShouldBeDisplayed(dict_rep.get('display', False))
     self.object_map.parse_settings(dict_rep)
 
-  def onTrackingIterStart(self, cMo: HomogeneousMatrix):
+  def onTrackingIterStart(self, frame: RBFeatureTrackerInput, cMo: HomogeneousMatrix):
     self.cov.resize(6, 6)
     self.LTL.resize(6, 6)
     self.LTR.resize(6)
     self.numFeatures = 0
 
-  def extractFeatures(self, frame: RBFeatureTrackerInput, previousFrame: RBFeatureTrackerInput, _cMo: HomogeneousMatrix):
+
+  def extractFeatures(self, frame: RBFeatureTrackerInput, previousFrame: RBFeatureTrackerInput, cMo: HomogeneousMatrix):
     self.frame = frame
     self.backend.process_frame(frame, self.iter)
 
   def trackFeatures(self, frame: RBFeatureTrackerInput, previousFrame: RBFeatureTrackerInput, cMo: HomogeneousMatrix):
-    # Update map
-    if self.current_representation is not None:
-      self.removed_indices = self.object_map.update(self.frame, cMo,
-                                                    self.frame.renders.depth,
-                                                    self.frame.depth,
-                                                    self.idx_curr_obj_matched,
-                                                    self.idx_object_map_matched,
-                                                    self.current_representation.keypoints,
-                                                    self.current_representation.descriptors)
+
 
     self.current_representation = self.backend.get_current_object_data()
     self.idx_curr_obj_matched, self.idx_object_map_matched = None, None
@@ -142,7 +135,7 @@ class RBXFeatFeatureTracker(RBFeatureTracker):
       if self.object_map.has_points() and self.current_representation is not None:
         h, w = frame.I.getRows(), frame.I.getCols()
         depth_map = frame.renders.depth
-
+        import time
         visible_indices = np.ascontiguousarray(self.object_map.point_map.getVisiblePoints(h, w, frame.cam, frame.renders.cMo, depth_map))
         if len(visible_indices) > 0:
           visible_object_descriptors = self.object_map.descriptors[visible_indices]
@@ -192,7 +185,8 @@ class RBXFeatFeatureTracker(RBFeatureTracker):
     self.weight_per_point = ColVector(self.error_per_point.getCols())
 
   def computeVVSIter(self, frame: RBFeatureTrackerInput, cMo: HomogeneousMatrix, iteration: int):
-    if self.numFeatures == 0:
+    if self.numFeatures < 8 * (3 if self.use_3d else 2):
+      self.numFeatures = 0
       return
     # Error and Jacobian computation
     if not self.use_3d:
@@ -221,17 +215,10 @@ class RBXFeatFeatureTracker(RBFeatureTracker):
 
     # Compute optimizer quantities
     self.weights[:] = np.repeat(self.weight_per_point, 2 if not self.use_3d else 3)
-
-    self.weighted_error = ColVector.hadamard(self.error, self.weights)
-
-    Lnp = self.L.numpy()
-    Lnp *= self.weights.numpy()[:, None]
-
-    self.covWeightDiag[:] = self.weights.numpy() * self.weights.numpy()
-    self.LTL = self.L.AtA()
-    RBFeatureTracker.computeJTR(self.L, self.weighted_error, self.LTR)
+    self.updateOptimizerTerms(cMo)
 
   def onTrackingIterEnd(self, cMo: HomogeneousMatrix):
+
     # Update displayed points before removing them from map
     if self.idx_curr_obj_matched is not None and self.numFeatures > 0 and self.idx_object_map_matched is not None:
       cX, xs, uvs = Matrix(), Matrix(), Matrix()
@@ -239,7 +226,15 @@ class RBXFeatFeatureTracker(RBFeatureTracker):
       self.object_map.point_map.project(self.frame.cam, map_indices, cMo, cX, xs, uvs)
       self.pixel_pos_visible = uvs.numpy().copy()
 
-
+    # Update map
+    if self.current_representation is not None:
+      self.removed_indices = self.object_map.update(self.frame, cMo,
+                                                    self.frame.renders.depth,
+                                                    self.frame.depth,
+                                                    self.idx_curr_obj_matched,
+                                                    self.idx_object_map_matched,
+                                                    self.current_representation.keypoints,
+                                                    self.current_representation.descriptors)
     self.frame = None
     self.iter += 1
 

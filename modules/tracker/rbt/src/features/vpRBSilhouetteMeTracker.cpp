@@ -192,18 +192,7 @@ void vpRBSilhouetteMeTracker::computeVVSIter(const vpRBFeatureTrackerInput &fram
 
   m_robust.MEstimator(vpRobust::TUKEY, m_error, m_weights);
 
-  for (unsigned int i = 0; i < m_error.size(); i++) {
-    const double wi = m_weights[i] * factor[i];
-    const double eri = m_error[i];
-    m_covWeightDiag[i] = wi * wi;
-    m_weighted_error[i] = wi * eri;
-    for (unsigned int j = 0; j < 6; j++) {
-      m_L[i][j] = wi * m_L[i][j];
-    }
-  }
-
-  m_LTL = m_L.AtA();
-  computeJTR(m_L, m_weighted_error, m_LTR);
+  updateOptimizerTerms(cMo);
 
 #if VISP_DEBUG_ME_TRACKER
   for (unsigned int i = 0; i < 6; ++i) {

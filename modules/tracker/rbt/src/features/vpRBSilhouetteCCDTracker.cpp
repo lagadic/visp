@@ -159,7 +159,7 @@ vpRBSilhouetteCCDTracker::vpRBSilhouetteCCDTracker() : vpRBFeatureTracker(), m_v
 m_temporalSmoothingFac(0.0), m_useMask(false), m_minMaskConfidence(0.0), m_maxPoints(0), m_random(vpRBSilhouetteCCDTracker::BASE_SEED), m_displayType(DT_SIMPLE)
 { }
 
-void vpRBSilhouetteCCDTracker::onTrackingIterStart(const vpHomogeneousMatrix & /*cMo*/)
+void vpRBSilhouetteCCDTracker::onTrackingIterStart(const vpRBFeatureTrackerInput & /*frame*/, const vpHomogeneousMatrix & /*cMo*/)
 {
   m_ccdParameters.h = m_ccdParameters.start_h;
   m_ccdParameters.delta_h = m_ccdParameters.start_delta_h;
@@ -380,10 +380,10 @@ void vpRBSilhouetteCCDTracker::computeVVSIter(const vpRBFeatureTrackerInput &fra
   computeLocalStatistics(frame.IRGB, m_stats);
   // Update interaction matrix, and gauss newton left and right side terms
   if (m_temporalSmoothingFac > 0.0) {
-    computeErrorAndInteractionMatrix<true>();
+    computeErrorAndInteractionMatrix<true>(cMo);
   }
   else {
-    computeErrorAndInteractionMatrix<false>();
+    computeErrorAndInteractionMatrix<false>(cMo);
   }
 
   m_vvsConverged = false;
@@ -495,9 +495,9 @@ void vpRBSilhouetteCCDTracker::display(const vpCameraParameters &/*cam*/, const 
 
 void vpRBSilhouetteCCDTracker::updateCCDPoints(const vpHomogeneousMatrix &cMo)
 {
-  const vpRowVector cameraRayObjectFrame = (cMo.getRotationMatrix().inverse() * vpColVector({ 0, 0, 1.0 })).t();
+  const vpRotationMatrix cRo = cMo.getRotationMatrix();
   for (vpRBSilhouetteControlPoint &p : m_controlPoints) {
-    p.updateSilhouettePoint(cMo, cameraRayObjectFrame);
+    p.updateSilhouettePoint(cMo, cRo);
   }
 }
 
@@ -700,9 +700,9 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
 #endif
       const vpRGBa pixelRGBa = I(static_cast<unsigned int>(vic_k[0]), static_cast<unsigned int>(vic_k[1]));
       double *pixel = pix_ptr + k * 3;
-      pixel[0] = static_cast<double>(pixelRGBa.R) / 255.0;
-      pixel[1] = static_cast<double>(pixelRGBa.G) / 255.0;
-      pixel[2] = static_cast<double>(pixelRGBa.B) / 255.0;
+      pixel[0] = static_cast<double>(pixelRGBa.R);
+      pixel[1] = static_cast<double>(pixelRGBa.G);
+      pixel[2] = static_cast<double>(pixelRGBa.B);
 
       m1[0] += wp1 * pixel[0];
       m1[1] += wp1 * pixel[1];
@@ -724,9 +724,9 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
       const vpRGBa pixelNegRGBa = I(static_cast<unsigned int>(vic_neg[0]), static_cast<unsigned int>(vic_neg[1]));
       double *pixelNeg = pix_ptr + negative_normal * 3;
 
-      pixelNeg[0] = static_cast<double>(pixelNegRGBa.R) / 255.0;
-      pixelNeg[1] = static_cast<double>(pixelNegRGBa.G) / 255.0;
-      pixelNeg[2] = static_cast<double>(pixelNegRGBa.B) / 255.0;
+      pixelNeg[0] = static_cast<double>(pixelNegRGBa.R);
+      pixelNeg[1] = static_cast<double>(pixelNegRGBa.G);
+      pixelNeg[2] = static_cast<double>(pixelNegRGBa.B);
       wp1 = (vic_neg[5] * vic_neg[7] / normalized_param[i][0]);
       wp2 = (vic_neg[6] * vic_neg[7] / normalized_param[i][1]);
       w1 += wp1;
@@ -766,7 +766,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
   }
 }
 template<bool hasTemporalSmoothing>
-void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
+void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix(const vpHomogeneousMatrix &cMo)
 {
   const unsigned int npointsccd = static_cast<unsigned int>(m_controlPoints.size());
   const unsigned int normal_points_number = static_cast<unsigned int>(floor(m_ccdParameters.h / m_ccdParameters.delta_h));
@@ -785,7 +785,13 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
     FastMat63<double> tmp_jacobian;
     FastMat63<double> tmp_jacobian_x_tmp_cov_inv;
     FastVec3<double> tmp_pixel_diff;
-    double Lnvp[6];
+    vpMatrix Lnvp(1, 6);
+
+    vpMatrix objectFrameProj(6, 6);
+    if (m_jacobianInObjectSpace) {
+      vpVelocityTwistMatrix cVo(cMo);
+      objectFrameProj = cVo * m_oJo;
+    }
 
 #ifdef VISP_HAVE_OPENMP
 #pragma omp for
@@ -814,12 +820,17 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
 
       const vpCameraParameters &cam = p.getCameraParameters();
 
-      Lnvp[0] = (-nv_ptr[0] / p.Zs);
-      Lnvp[1] = (-nv_ptr[1] / p.Zs);
-      Lnvp[2] = ((nv_ptr[0] * p.xs + nv_ptr[1] * p.ys) / p.Zs);
-      Lnvp[3] = (nv_ptr[0] * p.xs * p.ys + nv_ptr[1] * (1.0 + p.ys * p.ys));
-      Lnvp[4] = (-nv_ptr[1] * p.xs * p.ys - nv_ptr[0] * (1.0 + p.xs * p.xs));
-      Lnvp[5] = (nv_ptr[0] * p.ys - nv_ptr[1] * p.xs);
+      Lnvp[0][0] = (-nv_ptr[0] / p.Zs);
+      Lnvp[0][1] = (-nv_ptr[1] / p.Zs);
+      Lnvp[0][2] = ((nv_ptr[0] * p.xs + nv_ptr[1] * p.ys) / p.Zs);
+      Lnvp[0][3] = (nv_ptr[0] * p.xs * p.ys + nv_ptr[1] * (1.0 + p.ys * p.ys));
+      Lnvp[0][4] = (-nv_ptr[1] * p.xs * p.ys - nv_ptr[0] * (1.0 + p.xs * p.xs));
+      Lnvp[0][5] = (nv_ptr[0] * p.ys - nv_ptr[1] * p.xs);
+      if (m_jacobianInObjectSpace) {
+        Lnvp = Lnvp * objectFrameProj;
+      }
+
+
 
       for (unsigned int j = 0; j < 2 * normal_points_number; ++j) {
         const double *vic_j = vic_ptr + 10 * j;
@@ -856,9 +867,9 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
           const double f = -cam.get_px() * (vic_j[9] * (mean_vic_ptr[n] - mean_vic_ptr[n + 3]));
           const double facPrev = hasTemporalSmoothing ? -cam.get_px() * m_temporalSmoothingFac * (vic_j[9] * (mean_vic_ptr_prev[n] - mean_vic_ptr_prev[n + 3])) : 0.0;
           for (unsigned int dof = 0; dof < 6; ++dof) {
-            tmp_jacobian.data[dof * 3 + n] = f * Lnvp[dof];
+            tmp_jacobian.data[dof * 3 + n] = f * Lnvp[0][dof];
             if constexpr (hasTemporalSmoothing) {
-              tmp_jacobian.data[dof * 3 + n] += facPrev * Lnvp[dof];
+              tmp_jacobian.data[dof * 3 + n] += facPrev * Lnvp[0][dof];
             }
           }
         }
@@ -953,32 +964,18 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
   m_LTR = -m_gradient;
 
   try {
-    vpMatrix hessian_E_inv = m_hessian.inverseByCholesky();
+    vpMatrix hessian_E_inv(6, 6);
+    if (hasIgnoredDofs()) {
+      hessian_E_inv = m_hessian.pseudoInverse();
+    }
+    else {
+      hessian_E_inv = m_hessian.inverseByCholesky();
+    }
     //m_sigma = /*m_sigma +*/ 2*hessian_E_inv;
     m_sigma = m_ccdParameters.covarianceIterDecreaseFactor * m_sigma + 2.0 * (1.0 - m_ccdParameters.covarianceIterDecreaseFactor) * hessian_E_inv;
   }
   catch (vpException &e) {
-    std::cerr << "Inversion issues in CCD tracker" << std::endl;
-    unsigned int nanGradients = 0, nanHessians = 0;
-    for (unsigned int i = 0; i < m_gradients.size(); ++i) {
-      nanGradients += static_cast<unsigned int>(!vpArray2D<double>::isFinite(m_gradients[i]));
-      nanHessians += static_cast<unsigned int>(!vpArray2D<double>::isFinite(m_hessians[i]));
 
-    }
-    std::cerr << "Nan gradients: " << nanGradients << std::endl;
-    std::cerr << "Nan hessians: " << nanHessians << std::endl;
-    std::cerr << vpArray2D<double>::isFinite(m_hessian) << std::endl;
-    std::cerr << vpArray2D<double>::isFinite(m_gradient) << std::endl;
-    std::cerr << vpArray2D<double>::isFinite(m_error) << std::endl;
-    std::cerr << vpArray2D<double>::isFinite(m_weights) << std::endl;
-
-
-    m_numFeatures = 0;
-    m_weighted_error = 0;
-    m_LTL = 0;
-    m_LTR = 0;
-
-    std::cerr << e.what() << std::endl;
   }
 }
 

@@ -263,7 +263,7 @@ class XFeatVisualOdometry(RBVisualOdometry):
     uvs = np.rint(uvs).astype(np.int32)
 
     if self.display_type == XFeatVisualOdometry.DisplayType.SIMPLE:
-      Display.displayCrosses(IRGB, ps[:, 1], ps[:, 0], 8, Color.green, 1)
+      Display.displayCrosses(IRGB, ps[:, 1], ps[:, 0], 8, Color.blue, 1)
 
     elif self.display_type == XFeatVisualOdometry.DisplayType.SIMPLE_MODEL_AND_PROJ:
       Display.displayCrosses(IRGB, ps[:, 1], ps[:, 0], 8, Color.blue, 1)

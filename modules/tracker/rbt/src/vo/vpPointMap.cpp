@@ -131,11 +131,14 @@ void vpPointMap::getVisiblePoints(const unsigned int h, const unsigned int w, co
   const vpTranslationVector t = cTw.getTranslationVector();
   vpMatrix cX(m_X.getRows(), m_X.getCols());
   vpMatrix cN(m_normals.getRows(), m_normals.getCols());
+  const vpColVector co = cTw.getTranslationVector();
 
   const vpColVector cameraRayObjectFrame = (cRw.inverse() * vpColVector({ 0.0, 0.0, 1.0 }));
 
   vpMatrix::mult2Matrices(m_X, cRw.t(), cX);
-
+  if (m_normals.getRows() > 0) {
+    vpMatrix::mult2Matrices(m_normals, cRw.t(), cN);
+  }
 
   std::vector<std::vector<int>> indicesPerThread;
 
@@ -144,7 +147,7 @@ void vpPointMap::getVisiblePoints(const unsigned int h, const unsigned int w, co
 #pragma omp parallel
 #endif
   {
-
+    vpColVector cameraRay(3);
 #ifdef VISP_HAVE_OPENMP
 #pragma omp single
     {
@@ -171,26 +174,34 @@ void vpPointMap::getVisiblePoints(const unsigned int h, const unsigned int w, co
 #endif
     for (int i = 0; i < static_cast<int>(m_X.getRows()); ++i) {
 
-      if (m_normals.getRows() > 0) {
-        double dotProd = m_normals[i][0] * cameraRayObjectFrame[0] + m_normals[i][1] * cameraRayObjectFrame[1] + m_normals[i][2] * cameraRayObjectFrame[2];
-        double angle = acos(dotProd);
-        if (angle < vpMath::rad(89)) {
-          continue;
-        }
-      }
 
+      // Filter points that are behind the camera
       const double Z = cX[i][2] + t[2];
-
       if (Z <= 0.0) {
         continue;
       }
       const double X = cX[i][0] + t[0], Y = cX[i][1] + t[1];
+
+      // Filter points that are on the other side of the object
+      if (m_normals.getRows() > 0) {
+        cameraRay = { X, Y, Z };
+        cameraRay.normalize();
+        double dotProd = cN[i][0] * cameraRay[0] + cN[i][1] * cameraRay[1] + cN[i][2] * cameraRay[2];
+        double angle = acos(dotProd);
+        if (angle < vpMath::rad(80)) {
+          continue;
+        }
+      }
       const double x = X / Z, y = Y / Z;
       vpMeterPixelConversion::convertPointWithoutDistortion(cam, x, y, u, v);
+      // Filter points outside of the image
       if (u < 0 || v < 0 || u >= w || v >= h) {
         continue;
       }
+
       unsigned int uint = static_cast<unsigned int>(u), vint = static_cast<unsigned int>(v);
+      // Filter points whose reprojection does not match the depth map: self occlusion when rendered depth map,
+      // occlusion or noise in the case of a true depth image
       if (fabs(Z - depth[vint][uint]) > m_maxDepthErrorVisible) {
         continue;
       }
