@@ -184,8 +184,7 @@ int main()
     g.open(config);
 
     // Update camera parameters
-    vpCameraParameters cam =
-      g.getCameraParameters(rs::stream::color, vpCameraParameters::perspectiveProjWithDistortion);
+    vpCameraParameters cam = g.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithDistortion);
     std::cout << "Camera intrinsic parameters: \n" << cam << std::endl;
 
     g.acquire(I);
