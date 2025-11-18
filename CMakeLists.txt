@@ -593,7 +593,6 @@ find_host_program(XRANDR xrandr)
 
 VP_CHECK_PACKAGE(C99)
 
-VP_OPTION(USE_AFMA4       ""          ""    "Include Afma4 robot support"      "" ON IF (RAW1394_FOUND AND RT_FOUND AND CALINUX_FOUND AND IRISA_FOUND AND NOT WINRT AND NOT IOS))
 VP_OPTION(USE_AFMA6       ""          ""    "Include Afma6 robot support"      "" ON IF (RAW1394_FOUND AND RT_FOUND AND CALINUX_FOUND AND IRISA_FOUND AND NOT WINRT AND NOT IOS))
 VP_OPTION(USE_VIPER650    ""          ""    "Include Viper s650 robot support" "" ON IF (RAW1394_FOUND AND RT_FOUND AND CALINUX_FOUND AND IRISA_FOUND AND NOT WINRT AND NOT IOS))
 VP_OPTION(USE_VIPER850    ""          ""    "Include Viper s850 robot support" "" ON IF (RAW1394_FOUND AND RT_FOUND AND CALINUX_FOUND AND IRISA_FOUND AND NOT WINRT AND NOT IOS))
@@ -1200,7 +1199,6 @@ VP_SET(VISP_HAVE_PANDA3D     TRUE IF (BUILD_MODULE_visp_ar AND USE_PANDA3D))
 VP_SET(VISP_HAVE_ZBAR        TRUE IF (BUILD_MODULE_visp_detection AND USE_ZBAR))
 VP_SET(VISP_HAVE_DMTX        TRUE IF (BUILD_MODULE_visp_detection AND USE_DMTX))
 
-VP_SET(VISP_HAVE_AFMA4       TRUE IF (BUILD_MODULE_visp_robot AND USE_AFMA4))
 VP_SET(VISP_HAVE_AFMA6       TRUE IF (BUILD_MODULE_visp_robot AND USE_AFMA6))
 VP_SET(VISP_HAVE_VIPER650    TRUE IF (BUILD_MODULE_visp_robot AND USE_VIPER650))
 VP_SET(VISP_HAVE_VIPER850    TRUE IF (BUILD_MODULE_visp_robot AND USE_VIPER850))
@@ -1850,7 +1848,6 @@ status("    Use simdlib (built-in):" WITH_SIMDLIB     THEN "yes (ver ${SIMD_VERS
 status("    Use npz I/O (built-in):" WITH_MINIZ       THEN "yes" ELSE "no")
 status("")
 status("  Real robots: ")
-status("    Use Afma4:"              USE_AFMA4        THEN "yes" ELSE "no")
 status("    Use Afma6:"              USE_AFMA6        THEN "yes" ELSE "no")
 if(USE_AFMA6)
 status("    \\- Data:"               AFMA6_DATA_FOUND THEN "yes (in ${AFMA6_DATA_PATH})" ELSE "no")

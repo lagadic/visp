@@ -247,7 +247,6 @@ General configuration information for ViSP 3.6.0
     Use TinyEXR (built-in):      yes (ver 1.0.2)
 
   Real robots:
-    Use Afma4:                   no
     Use Afma6:                   no
     Use Franka:                  no
     Use Viper650:                no
@@ -441,7 +440,6 @@ General configuration information for ViSP 3.6.0
     Use TinyEXR (built-in):      yes (ver 1.0.2)
 
   Real robots:
-    Use Afma4:                   no
     Use Afma6:                   no
     Use Franka:                  no
     Use Viper650:                no
@@ -637,7 +635,6 @@ General configuration information for ViSP 3.6.0
     Use TinyEXR (built-in):      yes (ver 1.0.2)
 
   Real robots:
-    Use Afma4:                   no
     Use Afma6:                   no
     Use Franka:                  no
     Use Viper650:                no

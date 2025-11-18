@@ -419,9 +419,6 @@ namespace vp = VISP_NAMESPACE_NAME;
 // Defined if Vicon SDK is available for mocap.
 #cmakedefine VISP_HAVE_VICON
 
-// Defined if Irisa's Afma4 robot available.
-#cmakedefine VISP_HAVE_AFMA4
-
 // Defined if Irisa's Afma6 robot available.
 #cmakedefine VISP_HAVE_AFMA6
 
