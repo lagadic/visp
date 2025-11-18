@@ -55,6 +55,6 @@ jobs:
       # Increase timeout to avoid the following error
       # 290/308 MemCheck #181: photometricMappingDCTVisualServoing ...............................***Timeout 1500.01 sec
       run: |
-        TIMEOUT=2000
+        TIMEOUT=2500
         ctest -j$(nproc) --output-on-failure -T memcheck --timeout $TIMEOUT
         tail -v -n +1 Testing/Temporary/MemoryChecker*.log
