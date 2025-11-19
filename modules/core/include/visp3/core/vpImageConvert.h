@@ -368,7 +368,7 @@ public:
 #if defined(VISP_HAVE_OPENMP)
                 std::lock_guard<std::mutex> lock(mutex);
 #endif
-#if PCL_VERSION_COMPARE(>=,1,14,1)
+#if (VISP_HAVE_PCL_VERSION >= 0x010E01) // 1.14.1
                 pointcloud->push_back(pcl::PointXYZRGB(point_3D[index_0], point_3D[index_1], point_3D[index_2],
                                                        color.bitmap[p].R, color.bitmap[p].G, color.bitmap[p].B));
 #else
@@ -411,7 +411,7 @@ public:
 #if defined(VISP_HAVE_OPENMP)
               std::lock_guard<std::mutex> lock(mutex);
 #endif
-#if PCL_VERSION_COMPARE(>=,1,14,1)
+#if (VISP_HAVE_PCL_VERSION >= 0x010E01) // 1.14.1
               pointcloud->push_back(pcl::PointXYZRGB(point_3D[index_0], point_3D[index_1], point_3D[index_2],
                                                      color.bitmap[p].R, color.bitmap[p].G, color.bitmap[p].B));
 #else

@@ -381,7 +381,7 @@ void vp_rs_get_pointcloud_impl(const rs::device *m_device, const std::map<rs::st
 // For out of bounds color data, default to a shade of blue in order to
 // visually distinguish holes. This color value is same as the librealsense
 // out of bounds color value.
-#if PCL_VERSION_COMPARE(<, 1, 1, 0)
+#if (VISP_HAVE_PCL_VERSION < 0x010100) // 1.1.0
               unsigned int r = 96, g = 157, b = 198;
               uint32_t rgb =
                 (static_cast<uint32_t>(r) << 16 | static_cast<uint32_t>(g) << 8 | static_cast<uint32_t>(b));
@@ -397,7 +397,7 @@ void vp_rs_get_pointcloud_impl(const rs::device *m_device, const std::map<rs::st
               unsigned int i_ = static_cast<unsigned int>(color_pixel.y);
               unsigned int j_ = static_cast<unsigned int>(color_pixel.x);
 
-#if PCL_VERSION_COMPARE(<, 1, 1, 0)
+#if (VISP_HAVE_PCL_VERSION < 0x010100) // 1.1.0
               uint32_t rgb = 0;
               if (swap_rgb) {
                 rgb = (static_cast<uint32_t>(color[(i_ * static_cast<unsigned int>(color_width) + j_) * nb_color_pixel]) |

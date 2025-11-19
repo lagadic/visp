@@ -2521,6 +2521,7 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_PANDA3D \
                          VISP_HAVE_PARPORT \
                          VISP_HAVE_PCL \
+                         VISP_HAVE_PCL_VERSION=0x010E00 \
                          VISP_HAVE_PCL_COMMON \
                          VISP_HAVE_PCL_FILTERS \
                          VISP_HAVE_PCL_IO \
