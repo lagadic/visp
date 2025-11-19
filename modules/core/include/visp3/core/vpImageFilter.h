@@ -1102,16 +1102,16 @@ public:
   static void filterX(const vpImage<ImageType> &I, vpImage<OutputType> &dIx, const FilterType *filter, unsigned int size,
                       const vpImage<bool> *p_mask = nullptr)
   {
-    const unsigned int height = I.getHeight();
-    const unsigned int width = I.getWidth();
-    const unsigned int stop1J = (size - 1) / 2;
-    const unsigned int stop2J = width - ((size - 1) / 2);
+    const int height = static_cast<int>(I.getHeight());
+    const int width = static_cast<int>(I.getWidth());
+    const int stop1J = static_cast<int>((size - 1) / 2);
+    const int stop2J = static_cast<int>(width - ((size - 1) / 2));
     resizeAndInitializeIfNeeded(p_mask, height, width, dIx);
 
-    unsigned int istart = 0;
-    unsigned int istop = height;
+    int istart = 0;
+    int istop = height;
 #ifdef VISP_HAVE_OPENMP
-    unsigned int iam, nt, ipoints, npoints(height);
+    int iam, nt, ipoints, npoints(height);
 #pragma omp parallel default(shared) private(iam, nt, ipoints, istart, istop)
     {
       iam = omp_get_thread_num();
@@ -1125,8 +1125,8 @@ public:
       }
       istop = istart + ipoints;
 #endif
-      for (unsigned int i = istart; i < istop; ++i) {
-        for (unsigned int j = 0; j < stop1J; ++j) {
+      for (int i = istart; i < istop; ++i) {
+        for (int j = 0; j < stop1J; ++j) {
           // We have to compute the value for each pixel if we don't have a mask or for
           // pixels for which the mask is true otherwise
           bool computeVal = checkBooleanMask(p_mask, i, j);
@@ -1135,7 +1135,7 @@ public:
           }
         }
 
-        for (unsigned int j = stop1J; j < stop2J; ++j) {
+        for (int j = stop1J; j < stop2J; ++j) {
           // We have to compute the value for each pixel if we don't have a mask or for
           // pixels for which the mask is true otherwise
           bool computeVal = checkBooleanMask(p_mask, i, j);
@@ -1143,7 +1143,7 @@ public:
             vpImageFilter::filterX(I, dIx[i][j], i, j, filter, size);
           }
         }
-        for (unsigned int j = stop2J; j < width; ++j) {
+        for (int j = stop2J; j < width; ++j) {
           // We have to compute the value for each pixel if we don't have a mask or for
           // pixels for which the mask is true otherwise
           bool computeVal = checkBooleanMask(p_mask, i, j);
