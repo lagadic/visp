@@ -354,9 +354,9 @@ public:
                                             const vpCannyFilteringAndGradientType &filteringType = CANNY_GBLUR_SOBEL_FILTERING,
                                             const vpImage<bool> *p_mask = nullptr)
   {
-    const int w = I.getWidth();
-    const int h = I.getHeight();
-    const int size = I.getSize();
+    const unsigned int w = I.getWidth();
+    const unsigned int h = I.getHeight();
+    const int size = static_cast<int>(I.getSize());
 
     if ((lowerThresholdRatio <= 0.f) || (lowerThresholdRatio >= 1.f)) {
       std::stringstream errMsg;
@@ -1547,7 +1547,7 @@ public:
 #ifdef VISP_HAVE_OPENMP
       }
 #endif
-    }
+      }
   }
 
   /**
