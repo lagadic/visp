@@ -415,8 +415,7 @@ vpCannyEdgeDetection::getInterpolWeightsAndOffsets(const float &gradientOrientat
  * If one of the index is outside the limits of the image, return 0.
  * @param dIx : Gradient along the horizontal axis.
  * @param dIy : Gradient along the vertical axis.
- * @param row : Index along the vertical axis.
- * @param col : Index along the horizontal axis.
+ * @param iter : Pixel position to consider in the bitmap. Values are between 0 and the size of the bitmap (rows * cols).
  * @return float grad = abs(dIx) + abs(dIy) if row and col are valid, 0 otherwise.
  */
 float
@@ -437,8 +436,7 @@ vpCannyEdgeDetection::getManhattanGradient(const vpImage<float> &dIx, const vpIm
  *
  * @param dIx : Gradient along the horizontal axis.
  * @param dIy : Gradient along the vertical axis.
- * @param row : Index along the vertical axis.
- * @param col : Index along the horizontal axis.
+ * @param iter : Pixel position to consider in the bitmap. Values are between 0 and the size of the bitmap (rows * cols).
  * @return float The positive value of the gradient orientation, expressed in radians.
  */
 float
