@@ -2452,7 +2452,6 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          HAVE_OPENCV_HIGHGUI \
                          HAVE_OPENCV_IMGPROC \
                          HAVE_OPENCV_3D \
-                         VISP_HAVE_AFMA4 \
                          VISP_HAVE_AFMA6 \
                          VISP_HAVE_AFMA6_DATA \
                          VISP_HAVE_APRILTAG \
