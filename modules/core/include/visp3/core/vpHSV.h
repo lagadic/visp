@@ -234,6 +234,15 @@ public:
   }
 
   /**
+   * Default destructor.
+   */
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+  virtual ~vpHSV() = default;
+#else
+  virtual ~vpHSV() { }
+#endif
+
+  /**
    * \brief Modify the object to be the result of the conversion of the vpRGBa object into HSV format.
    *
    * \param[in] rgba The vpRGBa object that serves as model/
