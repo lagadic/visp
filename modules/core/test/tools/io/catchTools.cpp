@@ -28,7 +28,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Test visp::cnpy::npz_load() / visp::cnpy::npy_save() functions.
+ * Test vpIoTools::formatString() function.
  */
 
 /*!

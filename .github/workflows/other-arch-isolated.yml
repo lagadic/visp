@@ -85,10 +85,12 @@ jobs:
         distro: none
         base_image: "--platform=linux/${{ matrix.arch }} ${{ matrix.distro }}"
 
+        install: |
+          apt-get update && apt-get install -y lsb-release git build-essential cmake
+
         run: |
           lscpu
 
-          apt-get update && apt-get install -y lsb-release git build-essential cmake
           lsb_release -a
           dpkg --list | grep compiler
 

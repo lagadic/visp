@@ -475,7 +475,7 @@ void vpImageConvert::RGBToGrey(unsigned char *rgb, unsigned char *grey, unsigned
 void vpImageConvert::RGBaToGrey(unsigned char *rgba, unsigned char *grey, unsigned int width, unsigned int height,
                                 unsigned int nThreads)
 {
-#if !defined(_OPENMP)
+#if !defined(_OPENMP) || !defined(VISP_HAVE_SIMDLIB)
   (void)nThreads;
 #endif
 #if defined(VISP_HAVE_SIMDLIB)
@@ -740,7 +740,7 @@ void vpImageConvert::BGRaToRGBa(unsigned char *bgra, unsigned char *rgba, unsign
 void vpImageConvert::BGRToGrey(unsigned char *bgr, unsigned char *grey, unsigned int width, unsigned int height,
                                bool flip, unsigned int nThreads)
 {
-#if !defined(_OPENMP)
+#if !defined(_OPENMP) || !defined(VISP_HAVE_SIMDLIB)
   (void)nThreads;
 #endif
 #if defined(VISP_HAVE_SIMDLIB)
@@ -801,7 +801,7 @@ void vpImageConvert::BGRToGrey(unsigned char *bgr, unsigned char *grey, unsigned
 void vpImageConvert::BGRaToGrey(unsigned char *bgra, unsigned char *grey, unsigned int width, unsigned int height,
                                 bool flip, unsigned int nThreads)
 {
-#if !defined(_OPENMP)
+#if !defined(_OPENMP) || !defined(VISP_HAVE_SIMDLIB)
   (void)nThreads;
 #endif
 #if defined(VISP_HAVE_SIMDLIB)
