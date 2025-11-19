@@ -323,7 +323,7 @@ unsigned int vpPclViewer::addSurface(const pclPointCloudPointXYZRGB::Ptr &surfac
   return id;
 }
 
-void vpPclViewer::display()
+void vpPclViewer::display(const bool &blocking)
 {
   stopThread(); // We have to stop the thread to manipulate the viewer with a blocking waiting
   if (!mp_viewer) {
@@ -340,7 +340,12 @@ void vpPclViewer::display()
       mp_viewer->addText(m_vlegends[id].m_text, m_vlegends[id].m_posU, m_vlegends[id].m_posV, m_vlegends[id].m_rRatio, m_vlegends[id].m_gRatio, m_vlegends[id].m_bRatio);
     }
   }
-  mp_viewer->spin();
+  if (blocking) {
+    mp_viewer->spin();
+  }
+  else {
+    mp_viewer->spinOnce(10);
+  }
 }
 
 void vpPclViewer::refresh(const int &timeout, const bool &waitForDrawing)
@@ -420,7 +425,7 @@ void vpPclViewer::loopThread()
 
       m_vpmutex[id]->unlock();
     }
-    mp_viewer->spinOnce(100, true);
+    mp_viewer->spinOnce(10, true);
 
     iter++;
   }

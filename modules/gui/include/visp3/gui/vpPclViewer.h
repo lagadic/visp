@@ -162,8 +162,10 @@ public:
 
   /**
    * @brief Blocking-mode display of the viewer.
+   *
+   * @param blocking: True if we must wait for the user to press 'Q' to leave the method, false otherwise.
    */
-  void display();
+  void display(const bool &blocking = false);
 
   /**
    * @brief Refresh the display.
