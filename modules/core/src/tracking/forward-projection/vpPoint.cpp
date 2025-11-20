@@ -474,5 +474,11 @@ void vpPoint::set_y(double y) { const unsigned int index_1 = 1; p[index_1] = y; 
 //! Set the point w coordinate in the image plane.
 void vpPoint::set_w(double w) { const unsigned int index_2 = 2; p[index_2] = w; }
 
-VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpPoint & /* vpp */) { return (os << "vpPoint"); }
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpPoint &vpp)
+{
+  os << "oP=(" << vpp.get_oX() << ", " << vpp.get_oY() << ", " << vpp.get_oZ() << ", " << vpp.get_oW() << ")\n";
+  os << "cP=(" << vpp.get_X() << ", " << vpp.get_Y() << ", " << vpp.get_Z() << ", " << vpp.get_W() << ")\n";
+  os << "ip=(" << vpp.get_x() << ", " << vpp.get_y() << ", " << vpp.get_w()<< ")";
+  return os;
+}
 END_VISP_NAMESPACE
