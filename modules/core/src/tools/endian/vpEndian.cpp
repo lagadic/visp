@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -177,7 +177,7 @@ bool isBigEndian()
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   // https://github.com/mreininghaus/cnpypp/blob/c6cd4e2078e4f39e862720b66fb211c45577c510/src/cnpy%2B%2B.cpp#L29-L37
   // https://stackoverflow.com/questions/1001307/detecting-endianness-programmatically-in-a-c-program
-  static_assert(sizeof(uint32_t) == 4);
+  static_assert(sizeof(uint32_t) == 4, "uint32_t must be 4 bytes");
 
   union
   {
