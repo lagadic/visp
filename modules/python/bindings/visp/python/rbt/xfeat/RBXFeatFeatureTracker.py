@@ -100,6 +100,7 @@ class RBXFeatFeatureTracker(RBFeatureTracker):
     self.current_representation = None
     self.display_type = RBXFeatFeatureTracker.DisplayType.SIMPLE
 
+
   def requiresRGB(self) -> bool:
     return True
   def requiresDepth(self) -> bool:
@@ -115,10 +116,19 @@ class RBXFeatFeatureTracker(RBFeatureTracker):
     self.object_map.parse_settings(dict_rep)
 
   def onTrackingIterStart(self, frame: RBFeatureTrackerInput, cMo: HomogeneousMatrix):
-    self.cov.resize(6, 6)
-    self.LTL.resize(6, 6)
-    self.LTR.resize(6)
+    self.cov.resize(6, 6, 0)
+    self.LTL.resize(6, 6, 0)
+    self.LTR.resize(6, 0)
     self.numFeatures = 0
+    # Update map
+    if self.current_representation is not None:
+      self.removed_indices = self.object_map.update(frame, cMo,
+                                                    frame.renders.depth,
+                                                    frame.depth,
+                                                    self.idx_curr_obj_matched,
+                                                    self.idx_object_map_matched,
+                                                    self.current_representation.keypoints,
+                                                    self.current_representation.descriptors)
 
 
   def extractFeatures(self, frame: RBFeatureTrackerInput, previousFrame: RBFeatureTrackerInput, cMo: HomogeneousMatrix):
@@ -140,6 +150,9 @@ class RBXFeatFeatureTracker(RBFeatureTracker):
         if len(visible_indices) > 0:
           visible_object_descriptors = self.object_map.descriptors[visible_indices]
           self.idx_curr_obj_matched, self.idx_object_map_matched = self.backend.match(self.current_representation.descriptors, visible_object_descriptors)
+          # else:
+          #   self.idx_curr_obj_matched, self.idx_object_map_matched, self.matching_weight = self.backend.match_unidirectional(self.current_representation.descriptors, visible_object_descriptors)
+          #   self.matching_weight = self.matching_weight.cpu().numpy()
           self.idx_curr_obj_matched = self.idx_curr_obj_matched.cpu().numpy()
           self.idx_object_map_matched = visible_indices[self.idx_object_map_matched.cpu().numpy()]
 
@@ -185,6 +198,7 @@ class RBXFeatFeatureTracker(RBFeatureTracker):
     self.weight_per_point = ColVector(self.error_per_point.getCols())
 
   def computeVVSIter(self, frame: RBFeatureTrackerInput, cMo: HomogeneousMatrix, iteration: int):
+
     if self.numFeatures < 8 * (3 if self.use_3d else 2):
       self.numFeatures = 0
       return
@@ -215,6 +229,8 @@ class RBXFeatFeatureTracker(RBFeatureTracker):
 
     # Compute optimizer quantities
     self.weights[:] = np.repeat(self.weight_per_point, 2 if not self.use_3d else 3)
+    # else:
+    #   self.weights[:] = np.repeat(self.weight_per_point.numpy() * self.matching_weight, 2 if not self.use_3d else 3)
     self.updateOptimizerTerms(cMo)
 
   def onTrackingIterEnd(self, cMo: HomogeneousMatrix):
@@ -226,20 +242,18 @@ class RBXFeatFeatureTracker(RBFeatureTracker):
       self.object_map.point_map.project(self.frame.cam, map_indices, cMo, cX, xs, uvs)
       self.pixel_pos_visible = uvs.numpy().copy()
 
-    # Update map
-    if self.current_representation is not None:
-      self.removed_indices = self.object_map.update(self.frame, cMo,
-                                                    self.frame.renders.depth,
-                                                    self.frame.depth,
-                                                    self.idx_curr_obj_matched,
-                                                    self.idx_object_map_matched,
-                                                    self.current_representation.keypoints,
-                                                    self.current_representation.descriptors)
+
     self.frame = None
     self.iter += 1
 
   def reset(self):
     self.object_map.reset()
+    self.current_representation = None
+    self.current_xy_obj = None
+    self.numFeatures = 0
+    self.frame = None
+    self.idx_curr_obj_matched = None
+    self.idx_object_map_matched = None
 
   def display(self, cam: CameraParameters, I: ImageGray, IRGB: ImageRGBa, I_depth: ImageGray):
     if self.idx_curr_obj_matched is None or self.numFeatures == 0:
