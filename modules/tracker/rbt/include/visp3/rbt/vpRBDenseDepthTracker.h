@@ -86,7 +86,7 @@ public:
     DT_INVALID = 4
   };
 
-  vpRBDenseDepthTracker() : vpRBFeatureTracker(), m_step(2), m_targetNumFeatures(0), m_useMask(false), m_minMaskConfidence(0.f), m_displayType(vpDisplayType::DT_SIMPLE) { }
+  vpRBDenseDepthTracker() : vpRBFeatureTracker(), m_step(2), m_maxFeatures(0), m_useMask(false), m_minMaskConfidence(0.f), m_displayType(vpDisplayType::DT_SIMPLE) { }
 
   virtual ~vpRBDenseDepthTracker() = default;
 
@@ -101,14 +101,14 @@ public:
   unsigned int getStep() const { return m_step; }
   void setStep(unsigned int step)
   {
-    if (step == 0 && m_targetNumFeatures == 0) {
-      throw vpException(vpException::badValue, "Step should be greater than 0 if target num features is not enabled");
+    if (step == 0) {
+      throw vpException(vpException::badValue, "Step should be greater than 0");
     }
     m_step = step;
   }
 
-  unsigned int getTargetNumFeatures() const { return m_targetNumFeatures; }
-  void setTargetNumFeatures(unsigned int num)
+  unsigned int getMaxNumFeatures() const { return m_maxFeatures; }
+  void setMaxNumFeatures(unsigned int num)
   {
     m_numFeatures = num;
   }
@@ -315,7 +315,7 @@ public:
   virtual void loadJsonConfiguration(const nlohmann::json &j) VP_OVERRIDE
   {
     vpRBFeatureTracker::loadJsonConfiguration(j);
-    setTargetNumFeatures(j.value("targetNumFeatures", m_targetNumFeatures));
+    setMaxNumFeatures(j.value("maxNumFeatures", m_maxFeatures));
     setStep(j.value("step", m_step));
 
     setShouldUseMask(j.value("useMask", m_useMask));
@@ -335,7 +335,7 @@ protected:
   vpDepthPointSet m_depthPointSet;
   vpRobust m_robust;
   unsigned int m_step;
-  unsigned int m_targetNumFeatures;
+  unsigned int m_maxFeatures;
   bool m_useMask;
   float m_minMaskConfidence;
   vpDisplayType m_displayType;
