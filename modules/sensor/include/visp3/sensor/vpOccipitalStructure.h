@@ -93,7 +93,7 @@ BEGIN_VISP_NAMESPACE
 
   To acquire images from the Structure Core color camera and convert them into grey
   level images, a good starting is to use the following code that corresponds to
-  the content of ``sample-structure-core.cpp`:
+  the content of `sample-structure-core.cpp`:
 
   \code
   #include <visp3/gui/vpDisplayGDI.h>
@@ -195,7 +195,7 @@ BEGIN_VISP_NAMESPACE
   \endcode
 
   References to `ST::CaptureSession` and `ST::CaptureSessionSettings` can be retrieved
-  with (`sc.open() must be called before`):
+  but `sc.open()` must be called before:
   \code
   ST::CaptureSession &getCaptureSession();
   ST::CaptureSessionSettings &getCaptureSessionSettings();
