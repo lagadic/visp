@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -474,5 +474,36 @@ void vpPoint::set_y(double y) { const unsigned int index_1 = 1; p[index_1] = y; 
 //! Set the point w coordinate in the image plane.
 void vpPoint::set_w(double w) { const unsigned int index_2 = 2; p[index_2] = w; }
 
-VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpPoint & /* vpp */) { return (os << "vpPoint"); }
+/**
+ * Overload of the stream operator for vpPoint.
+ * \param os : The output stream that will contain the vpPoint information:
+ * - oP : the normalized 3D point coordinates in the object frame,
+ * - cP : the normalized 3D point coordinates in the camera frame,
+ * - ip : the normalized 2D point coordinates in the image plane.
+ * \param vpp : The vpPoint to output.
+ *
+ * The following code snippet shows how to use this operator.
+ * \code{cpp}
+ * #include <visp3/core/vpPoint.h>
+ *
+ * int main() {
+ *   vpPoint obj0(-0.1, -0.1, 0);
+ *   std::cout << "obj0:\n" << obj0 << std::endl;
+ * }
+ * \endcode
+ * It produces the following output:
+ * \code{.unparsed}
+ * obj0:
+ * oP=(-0.1, -0.1, 0, 1)
+ * cP=(0, 0, 0, 1)
+ * ip=(0, 0, 1)
+ * \endcode
+ */
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpPoint &vpp)
+{
+  os << "oP=(" << vpp.get_oX() << ", " << vpp.get_oY() << ", " << vpp.get_oZ() << ", " << vpp.get_oW() << ")\n";
+  os << "cP=(" << vpp.get_X() << ", " << vpp.get_Y() << ", " << vpp.get_Z() << ", " << vpp.get_W() << ")\n";
+  os << "ip=(" << vpp.get_x() << ", " << vpp.get_y() << ", " << vpp.get_w()<< ")";
+  return os;
+}
 END_VISP_NAMESPACE
