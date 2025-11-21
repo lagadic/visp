@@ -277,7 +277,7 @@ public:
       for (int p = 0; p < size; ++p) {
         if (static_cast<int>(depth_raw.bitmap[p])) {
           float Z = static_cast<float>(depth_raw.bitmap[p]) * depth_scale;
-          if (Z < 2.5) {
+          if (Z < Z_max) {
             double x = 0;
             double y = 0;
             unsigned int j = p % width;
@@ -400,7 +400,7 @@ public:
       for (int p = 0; p < size; ++p) {
         if (static_cast<int>(depth_raw.bitmap[p])) {
           float Z = static_cast<float>(depth_raw.bitmap[p]) * depth_scale;
-          if (Z < 2.5) {
+          if (Z < Z_max) {
             double x = 0;
             double y = 0;
             unsigned int j = p % width;

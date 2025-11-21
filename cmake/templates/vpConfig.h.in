@@ -355,9 +355,6 @@ namespace vp = VISP_NAMESPACE_NAME;
 // Defined if libusb-1.0 library available.
 #cmakedefine VISP_HAVE_LIBUSB_1
 
-// Defined if librealSense library is available.
-#cmakedefine VISP_HAVE_REALSENSE
-
 // Defined if librealSense2 library is available.
 #cmakedefine VISP_HAVE_REALSENSE2
 
@@ -418,9 +415,6 @@ namespace vp = VISP_NAMESPACE_NAME;
 
 // Defined if Vicon SDK is available for mocap.
 #cmakedefine VISP_HAVE_VICON
-
-// Defined if Irisa's Afma4 robot available.
-#cmakedefine VISP_HAVE_AFMA4
 
 // Defined if Irisa's Afma6 robot available.
 #cmakedefine VISP_HAVE_AFMA6

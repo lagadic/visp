@@ -2452,7 +2452,6 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          HAVE_OPENCV_HIGHGUI \
                          HAVE_OPENCV_IMGPROC \
                          HAVE_OPENCV_3D \
-                         VISP_HAVE_AFMA4 \
                          VISP_HAVE_AFMA6 \
                          VISP_HAVE_AFMA6_DATA \
                          VISP_HAVE_APRILTAG \
@@ -2537,8 +2536,6 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_QBDEVICE \
                          VISP_HAVE_QT \
                          VISP_HAVE_QUALISYS \
-                         VISP_HAVE_REALSENSE \
-                         VISP_HAVE_REALSENSE_VERSION=0x020000 \
                          VISP_HAVE_REALSENSE2 \
                          VISP_HAVE_SIMDLIB \
                          VISP_HAVE_SOWIN \

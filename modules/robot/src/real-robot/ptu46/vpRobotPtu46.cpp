@@ -434,8 +434,8 @@ void vpRobotPtu46::getPosition(const vpRobot::vpControlFrameType frame, vpColVec
   double artpos[2];
 
   if (0 != ptu.getCurrentPosition(artpos)) {
-    vpERROR_TRACE("Error when calling  recup_posit_Afma4.");
-    throw vpRobotException(vpRobotException::lowLevelError, "Error when calling  recup_posit_Afma4.");
+    vpERROR_TRACE("Error when calling vpRobotPtu46::getPosition()");
+    throw vpRobotException(vpRobotException::lowLevelError, "Error when calling vpRobotPtu46::getPosition().");
   }
 
   q.resize(vpPtu46::ndof);

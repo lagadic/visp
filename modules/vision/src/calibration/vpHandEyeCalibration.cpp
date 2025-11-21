@@ -195,9 +195,10 @@ int vpHandEyeCalibration::calibrationRotationProcrustes(const std::vector<vpHomo
   A = Et.t() * Ct;
   vpMatrix M, U, V;
   vpColVector sv;
-  int rank = A.pseudoInverse(M, sv, 1e-6, U, V);
-  if (rank != 3)
+  unsigned int rank = A.pseudoInverse(M, sv, 1e-6, U, V);
+  if (rank != 3) {
     return -1;
+  }
   A = U * V.t();
   eRc = vpRotationMatrix(A);
 
@@ -263,7 +264,7 @@ int vpHandEyeCalibration::calibrationRotationTsai(const std::vector<vpHomogeneou
 
         As = vpColVector::skew(vpColVector(ejPei) + vpColVector(cjPci));
 
-        b = (vpColVector)cjPci - (vpColVector)ejPei; // A.40
+        b = static_cast<vpColVector>(cjPci) - static_cast<vpColVector>(ejPei); // A.40
 
         if (k == 0) {
           A = As;
@@ -288,9 +289,10 @@ int vpHandEyeCalibration::calibrationRotationTsai(const std::vector<vpHomogeneou
   // the linear system A x = B is solved
   // using x = A^+ B
 
-  int rank = A.pseudoInverse(Ap);
-  if (rank != 3)
+  unsigned int rank = A.pseudoInverse(Ap);
+  if (rank != 3) {
     return -1;
+  }
 
   vpColVector x = Ap * B;
 
@@ -393,7 +395,7 @@ int vpHandEyeCalibration::calibrationRotationTsaiOld(const std::vector<vpHomogen
 
         As = vpColVector::skew(vpColVector(rPeij) + vpColVector(cijPo));
 
-        b = (vpColVector)cijPo - (vpColVector)rPeij; // A.40
+        b = static_cast<vpColVector>(cijPo) - static_cast<vpColVector>(rPeij); // A.40
 
         if (k == 0) {
           A = As;
@@ -416,9 +418,10 @@ int vpHandEyeCalibration::calibrationRotationTsaiOld(const std::vector<vpHomogen
   vpMatrix AtA = A.AtA();
 
   vpMatrix Ap;
-  int rank = AtA.pseudoInverse(Ap, 1e-6);
-  if (rank != 3)
+  unsigned int rank = AtA.pseudoInverse(Ap, 1e-6);
+  if (rank != 3) {
     return -1;
+  }
 
   x = Ap * A.t() * B;
   vpColVector x2 = x; // For residual computation
@@ -520,12 +523,13 @@ int vpHandEyeCalibration::calibrationTranslation(const std::vector<vpHomogeneous
   // the linear system A x = B is solved
   // using x = A^+ B
   vpMatrix Ap;
-  int rank = A.pseudoInverse(Ap);
-  if (rank != 3)
+  unsigned int rank = A.pseudoInverse(Ap);
+  if (rank != 3) {
     return -1;
+  }
 
   vpColVector x = Ap * B;
-  eTc = (vpTranslationVector)x;
+  eTc = static_cast<vpTranslationVector>(x);
 
 #if DEBUG_LEVEL2
   {
@@ -615,13 +619,13 @@ int vpHandEyeCalibration::calibrationTranslationOld(const std::vector<vpHomogene
   vpMatrix AtA = A.AtA();
   vpMatrix Ap;
   vpColVector AeTc;
-  int rank = AtA.pseudoInverse(Ap, 1e-6);
+  unsigned int rank = AtA.pseudoInverse(Ap, 1e-6);
   if (rank != 3) {
     return -1;
   }
 
   AeTc = Ap * A.t() * B;
-  eTc = (vpTranslationVector)AeTc;
+  eTc = static_cast<vpTranslationVector>(AeTc);
 
 #if DEBUG_LEVEL2
   {
@@ -652,7 +656,7 @@ int vpHandEyeCalibration::calibrationTranslationOld(const std::vector<vpHomogene
  * between the effector (where the camera is fixed) and the reference
  * coordinates (base of the manipulator). Must be the same size as cMo.
  * \param[in] eMc : Homogeneous matrix between the effector and the camera.
- * \param[out] err : Set of errors minimized by VVS (3 for rotation, 3 for translation, etc).
+ * \param[out] errVVS : Set of errors minimized by VVS (3 for rotation, 3 for translation, etc).
  */
 double vpHandEyeCalibration::calibrationErrVVS(const std::vector<vpHomogeneousMatrix> &cMo,
                                                const std::vector<vpHomogeneousMatrix> &rMe,
@@ -808,9 +812,10 @@ int vpHandEyeCalibration::calibrationVVS(const std::vector<vpHomogeneousMatrix> 
     }     // end for i
     double lambda = 0.9;
     vpMatrix Lp;
-    int rank = L.pseudoInverse(Lp);
-    if (rank != 6)
+    unsigned int rank = L.pseudoInverse(Lp);
+    if (rank != 6) {
       return -1;
+    }
 
     vpColVector e = Lp * err;
     vpColVector v = -e * lambda;
@@ -853,6 +858,7 @@ int vpHandEyeCalibration::calibrate(const std::vector<vpHomogeneousMatrix> &cMo,
   return err;
 }
 
+#if DEBUG_LEVEL1
 #define HE_I 0
 #define HE_TSAI_OROT 1
 #define HE_TSAI_ORNT 2
@@ -860,6 +866,7 @@ int vpHandEyeCalibration::calibrate(const std::vector<vpHomogeneousMatrix> &cMo,
 #define HE_TSAI_NRNT 4
 #define HE_PROCRUSTES_OT 5
 #define HE_PROCRUSTES_NT 6
+#endif
 
 int vpHandEyeCalibration::calibrate(const std::vector<vpHomogeneousMatrix> &cMo,
                                     const std::vector<vpHomogeneousMatrix> &rMe,
