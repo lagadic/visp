@@ -39,21 +39,6 @@
 
 BEGIN_VISP_NAMESPACE
 
-void sampleWithoutReplacement(size_t count, size_t vectorSize, std::vector<size_t> &indices, vpUniRand &random)
-{
-  count = std::min(count, vectorSize);
-  indices.resize(count);
-  size_t added = 0;
-  for (size_t i = 0; i < vectorSize; ++i) {
-    double randomVal = random.uniform(0.0, 1.0);
-    if ((vectorSize - i) * randomVal < (count - added)) {
-      indices[added++] = i;
-    }
-    if (added == count) {
-      break;
-    }
-  }
-}
 
 template <class T> class FastMat33
 {
@@ -245,8 +230,7 @@ void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &fr
   }
 
   if (m_maxPoints > 0 && m_controlPoints.size() > m_maxPoints) {
-    std::vector<size_t> keptIndices(m_maxPoints);
-    sampleWithoutReplacement(m_maxPoints, m_controlPoints.size(), keptIndices, m_random);
+    std::vector<size_t> keptIndices = m_random.sampleWithoutReplacement(m_maxPoints, m_controlPoints.size());
 
     std::vector<vpRBSilhouetteControlPoint> finalPoints;
     finalPoints.reserve(m_maxPoints);

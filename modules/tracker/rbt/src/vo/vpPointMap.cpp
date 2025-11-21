@@ -285,7 +285,7 @@ vpMatrix &oXs, vpMatrix &oNs, std::vector<int> &validCandidateIndices)
     oX = wRc * cX;
     oX += t;
 
-    // Filter candidates that are too close to already existing points in the map
+    // Filter candidates that are too close to already existing points in the map and other points
     bool isFarEnoughFromOtherPoints = true;
     if (m_minDistNewPoint > 0.0) {
       for (unsigned int j = 0; j < m_X.getRows(); ++j) {
