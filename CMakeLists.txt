@@ -1299,6 +1299,11 @@ if(USE_OPENCV)
   set(VISP_HAVE_OPENCV_VERSION "(${OpenCV_VERSION_MAJOR}<<16 | ${OpenCV_VERSION_MINOR}<<8 | ${OpenCV_VERSION_PATCH})") # for vpConfig.h
 endif()
 
+# PCL version
+if(USE_PCL)
+  set(VISP_HAVE_PCL_VERSION "(${PCL_VERSION_MAJOR}<<16 | ${PCL_VERSION_MINOR}<<8 | ${PCL_VERSION_PATCH})") # for vpConfig.h
+endif()
+
 # coin and gui
 if(USE_SOWIN OR USE_SOXT OR (USE_SOQT AND SoQt_FOUND) OR (USE_SOQT AND USE_QT))
   set(VISP_HAVE_COIN3D_AND_GUI TRUE)         # for header vpConfig.h

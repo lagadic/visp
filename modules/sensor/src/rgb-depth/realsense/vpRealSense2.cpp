@@ -1009,7 +1009,7 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, const rs2:
         // For out of bounds color data, default to a shade of blue in order to
         // visually distinguish holes. This color value is same as the librealsense
         // out of bounds color value.
-#if PCL_VERSION_COMPARE(<, 1, 1, 0)
+#if (VISP_HAVE_PCL_VERSION < 0x010100) // 1.1.0
         unsigned int r = 96, g = 157, b = 198;
         uint32_t rgb = (static_cast<uint32_t>(r) << 16 | static_cast<uint32_t>(g) << 8 | static_cast<uint32_t>(b));
 
@@ -1048,7 +1048,7 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, const rs2:
           // For out of bounds color data, default to a shade of blue in order to
           // visually distinguish holes. This color value is same as the librealsense
           // out of bounds color value.
-#if PCL_VERSION_COMPARE(<, 1, 1, 0)
+#if (VISP_HAVE_PCL_VERSION < 0x010100) // 1.1.0
           unsigned int r = 96, g = 157, b = 198;
           uint32_t rgb = (static_cast<uint32_t>(r) << 16 | static_cast<uint32_t>(g) << 8 | static_cast<uint32_t>(b));
 
@@ -1063,7 +1063,7 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, const rs2:
           unsigned int i_ = static_cast<unsigned int>(color_pixel[1]);
           unsigned int j_ = static_cast<unsigned int>(color_pixel[0]);
 
-#if PCL_VERSION_COMPARE(<, 1, 1, 0)
+#if (VISP_HAVE_PCL_VERSION < 0x010100) // 1.1.0
           uint32_t rgb = 0;
           if (swap_rb) {
             rgb =
@@ -1101,7 +1101,7 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, const rs2:
         }
       }
       else {
-#if PCL_VERSION_COMPARE(<, 1, 1, 0)
+#if (VISP_HAVE_PCL_VERSION < 0x010100) // 1.1.0
         uint32_t rgb = 0;
         if (swap_rb) {
           rgb = (static_cast<uint32_t>(p_color_frame[(i * static_cast<unsigned int>(color_width) + j) * nb_color_pixel]) |
