@@ -734,6 +734,9 @@ bool vpMbtFaceDepthNormal::computeDesiredFeaturesPCL(const pcl::PointCloud<pcl::
       return false;
     }
 #else
+    (void)desired_features;
+    (void)desired_normal;
+    (void)centroid_point;
     std::cerr << "Cannot compute centroid using PCL " << PCL_VERSION_PRETTY << "!" << std::endl;
     return false;
 #endif
