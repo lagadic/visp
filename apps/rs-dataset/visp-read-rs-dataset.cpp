@@ -139,7 +139,7 @@ void usage(const char *argv[], int error)
 }
 
 bool getOptions(int argc, const char *argv[], std::string &input_folder, std::string &numbering_pattern,
-                bool &step_by_step, bool &save_video, bool &display_colored_depth, bool &loop, float &fps)
+                bool &step_by_step, bool &save_video, bool &display_colored_depth, bool &loop, double &fps)
 {
   for (int i = 1; i < argc; i++) {
     if (((std::string(argv[i]) == "--input-folder") || (std::string(argv[i]) == "-i")) && (i + 1 < argc)) {
@@ -450,7 +450,7 @@ int main(int argc, const char *argv[])
   bool opt_save_video = false;
   bool opt_display_colored_depth = false;
   bool opt_loop = false;
-  float opt_fps = 30.f; // Hz
+  double opt_fps = 30.0; // Hz
 
   // Read the command line options
   if (!getOptions(argc, argv, opt_input_folder, opt_input_pattern, opt_step_by_step,
@@ -648,7 +648,7 @@ int main(int argc, const char *argv[])
       }
     }
 
-    vpTime::wait(t, 1000.f / opt_fps);
+    vpTime::wait(t, 1000. / opt_fps);
     cpt_frame++;
     if (opt_loop) {
       if (cpt_frame == frame_last) {
