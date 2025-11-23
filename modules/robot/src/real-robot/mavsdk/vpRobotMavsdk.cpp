@@ -423,6 +423,7 @@ public:
       gps_global_origin.longitude = longitude * 1E7;               // [deg] Longitude (WGS84)
       gps_global_origin.altitude = altitude * 1000;                // [mm] Altitude (MSL). Positive for up
       gps_global_origin.target_system = m_system->get_system_id(); // System ID
+      gps_global_origin.time_usec = 0;
       mavlink_msg_set_gps_global_origin_encode(
           mavlink_address.system_id,
           mavlink_address.component_id,
