@@ -133,6 +133,8 @@ $ sudo apt-get install libogre-1.9-dev libois-dev
 \code{.sh}
 $ su -c "yum install ogre-devel ogre-samples ois-devel"
 \endcode
+- <b>Windows SDK (MSVC)</b><br>
+  See \ref tutorial-ogre-install-windows instructions.
 
 \subsection soft_ar_Panda3D Panda3D
 
