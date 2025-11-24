@@ -65,6 +65,10 @@ extern "C" {
 #include <tagAruco6x6_100.h>
 #include <tagAruco6x6_250.h>
 #include <tagAruco6x6_1000.h>
+#include <tagAruco7x7_50.h>
+#include <tagAruco7x7_100.h>
+#include <tagAruco7x7_250.h>
+#include <tagAruco7x7_1000.h>
 #include <tagAruco_MIP_36h12.h>
 #ifdef __cplusplus
 }
@@ -185,6 +189,22 @@ public:
 
     case TAG_ARUCO_6x6_1000:
       m_tf = tagAruco6x6_1000_create();
+      break;
+
+    case TAG_ARUCO_7x7_50:
+      m_tf = tagAruco7x7_50_create();
+      break;
+
+    case TAG_ARUCO_7x7_100:
+      m_tf = tagAruco7x7_100_create();
+      break;
+
+    case TAG_ARUCO_7x7_250:
+      m_tf = tagAruco7x7_250_create();
+      break;
+
+    case TAG_ARUCO_7x7_1000:
+      m_tf = tagAruco7x7_1000_create();
       break;
 
     case TAG_ARUCO_MIP_36h12:
@@ -309,6 +329,22 @@ public:
 
     case TAG_ARUCO_6x6_1000:
       m_tf = tagAruco6x6_1000_create();
+      break;
+
+    case TAG_ARUCO_7x7_50:
+      m_tf = tagAruco7x7_50_create();
+      break;
+
+    case TAG_ARUCO_7x7_100:
+      m_tf = tagAruco7x7_100_create();
+      break;
+
+    case TAG_ARUCO_7x7_250:
+      m_tf = tagAruco7x7_250_create();
+      break;
+
+    case TAG_ARUCO_7x7_1000:
+      m_tf = tagAruco7x7_1000_create();
       break;
 
     case TAG_ARUCO_MIP_36h12:
@@ -438,6 +474,22 @@ public:
 
       case TAG_ARUCO_6x6_1000:
         tagAruco6x6_1000_destroy(m_tf);
+        break;
+
+      case TAG_ARUCO_7x7_50:
+        tagAruco7x7_50_destroy(m_tf);
+        break;
+
+      case TAG_ARUCO_7x7_100:
+        tagAruco7x7_100_destroy(m_tf);
+        break;
+
+      case TAG_ARUCO_7x7_250:
+        tagAruco7x7_250_destroy(m_tf);
+        break;
+
+      case TAG_ARUCO_7x7_1000:
+        tagAruco7x7_1000_destroy(m_tf);
         break;
 
       case TAG_ARUCO_MIP_36h12:
@@ -1470,13 +1522,13 @@ void vpDetectorAprilTag::setAprilTagDecodeSharpening(double decodeSharpening)
     > gotten a good detection.)
 
   It has been experimentally observed that using the AprilTag detection and decoding pipeline,
-  lots of false positives arise with 16h5, 4x4, 5x5 and 6x6 ArUco dictionnaries.
+  lots of false positives arise with 16h5, 4x4, 5x5, 6x6 and 7x7 ArUco dictionnaries.
   A decision margin threshold can be used to filter these detections.
 
   \param[in] decisionMarginThreshold : Decision margin threshold used to filter false positive detections.
   - When this threshold is set to -1, the decision margin threshold is not used to eliminate detections whose detection
     margin is lower than this threshold.
-  - When set, we recommand a value of 100 that makes especially 16h5, 4x4, 5x5 and 6x6 ArUco families detection more
+  - When set, we recommand a value of 100 that makes especially 16h5, 4x4, 5x5, 6x6 and 7x7 ArUco families detection more
     reliable.
   - Default value is set to -1.
 
@@ -1495,7 +1547,7 @@ void vpDetectorAprilTag::setAprilTagDecisionMarginThreshold(float decisionMargin
     > a hamming distance greater than 2.
 
   It has been experimentally observed that using the AprilTag detection and decoding pipeline,
-  lots of false positives arise with 16h5, 4x4, 5x5 and 6x6 ArUco dictionnaries. Their hamming distance is than
+  lots of false positives arise with 16h5, 4x4, 5x5, 6x6 and 7x7 ArUco dictionnaries. Their hamming distance is than
   usually set to 2.
   A hamming distance threshold can be used to filter these detections using setAprilTagHammingDistanceThreshold().
 

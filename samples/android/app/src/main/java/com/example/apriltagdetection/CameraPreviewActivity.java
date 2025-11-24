@@ -179,7 +179,7 @@ public class CameraPreviewActivity extends MainActivity  {
         mSpinner = findViewById(R.id.spinner);
         String[] items = {
                 "TAG_36h11", "TAG_25h9", "TAG_25h7", "TAG_16h5", "TAG_CIRCLE21h7",
-                "TAG_ARUCO_4x4", "TAG_ARUCO_5x5", "TAG_ARUCO_6x6", "TAG_ARUCO_MIP_36h12"
+                "TAG_ARUCO_4x4", "TAG_ARUCO_5x5", "TAG_ARUCO_6x6", "TAG_ARUCO_7x7", "TAG_ARUCO_MIP_36h12"
         };
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, items);

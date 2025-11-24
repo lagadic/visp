@@ -70,6 +70,7 @@ BEGIN_VISP_NAMESPACE
  * - ArUco 4x4
  * - ArUco 5x5
  * - ArUco 6x6
+ * - ArUco 7x7
  * - ArUco MIP_36h12
  * \image html img-apriltag-supported-tags.jpg Supported tags with id 0.
  *
@@ -321,6 +322,22 @@ public:
                             This tag family can produce lots of false detections which can be filtered by setting an
                             appropriate decision margin, using setAprilTagDecisionMarginThreshold() or
                             getTagsDecisionMargin(). See \ref apriltag_detection_tips_filter section for more details. */
+    TAG_ARUCO_7x7_50,  /*!< ArUco 7x7 pattern: 7x7 bits, minimum hamming distance between any two codes = 19, 50 codes.\n
+                            This tag family can produce lots of false detections which can be filtered by setting an
+                            appropriate decision margin, using setAprilTagDecisionMarginThreshold() or
+                            getTagsDecisionMargin(). See \ref apriltag_detection_tips_filter section for more details. */
+    TAG_ARUCO_7x7_100,  /*!< ArUco 7x7 pattern: 7x7 bits, minimum hamming distance between any two codes = 18, 100 codes.\n
+                            This tag family can produce lots of false detections which can be filtered by setting an
+                            appropriate decision margin, using setAprilTagDecisionMarginThreshold() or
+                            getTagsDecisionMargin(). See \ref apriltag_detection_tips_filter section for more details. */
+    TAG_ARUCO_7x7_250,  /*!< ArUco 7x7 pattern: 7x7 bits, minimum hamming distance between any two codes = 17, 250 codes.\n
+                            This tag family can produce lots of false detections which can be filtered by setting an
+                            appropriate decision margin, using setAprilTagDecisionMarginThreshold() or
+                            getTagsDecisionMargin(). See \ref apriltag_detection_tips_filter section for more details. */
+    TAG_ARUCO_7x7_1000,  /*!< ArUco 7x7 pattern: 7x7 bits, minimum hamming distance between any two codes = 14, 1000 codes.\n
+                            This tag family can produce lots of false detections which can be filtered by setting an
+                            appropriate decision margin, using setAprilTagDecisionMarginThreshold() or
+                            getTagsDecisionMargin(). See \ref apriltag_detection_tips_filter section for more details. */
     TAG_ARUCO_MIP_36h12  /*!< ArUco 6x6 pattern: 6x6 bits, minimum hamming distance between any two codes = 12, 250 codes.\n
                             This is the recommended ArUco tag family by the main ArUco developer,
                             <a href="https://stackoverflow.com/a/51511558">see this link</a> */
@@ -564,6 +581,22 @@ inline std::ostream &operator<<(std::ostream &os, const vpDetectorAprilTag::vpAp
 
   case vpDetectorAprilTag::TAG_ARUCO_6x6_1000:
     os << "TAG_ARUCO_6x6_1000";
+    break;
+
+  case vpDetectorAprilTag::TAG_ARUCO_7x7_50:
+    os << "TAG_ARUCO_7x7_50";
+    break;
+
+  case vpDetectorAprilTag::TAG_ARUCO_7x7_100:
+    os << "TAG_ARUCO_7x7_100";
+    break;
+
+  case vpDetectorAprilTag::TAG_ARUCO_7x7_250:
+    os << "TAG_ARUCO_7x7_250";
+    break;
+
+  case vpDetectorAprilTag::TAG_ARUCO_7x7_1000:
+    os << "TAG_ARUCO_7x7_1000";
     break;
 
   case vpDetectorAprilTag::TAG_ARUCO_MIP_36h12:
