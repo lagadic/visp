@@ -38,15 +38,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest, macos-13, windows-latest]
-        environment: [full-ci-py310, full-ci-py312]
+        os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest, macos-15-intel, windows-latest]
+        environment: [full-ci-python-oldest, full-ci-python-supported]
         build_type: [Release]
         include:
           - os: windows-latest
-            environment: full-ci-clang-cl-py310
+            environment: full-ci-clang-cl-python-oldest
             build_type: Release
           - os: windows-latest
-            environment: full-ci-clang-cl-py312
+            environment: full-ci-clang-cl-python-supported
             build_type: Release
 
     steps:
