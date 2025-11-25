@@ -27,8 +27,7 @@ typedef enum DisplayMode
 {
   MONOTHREAD = 0, /*!< Only the monothread-mode display example will be run.*/
   THREADED = 1, /*!< Only the threaded-mode display example will be run.*/
-  BOTH = 2, /*!< First the blocking-mode display example will be run and then the threaded-mode one.*/
-  MODE_COUNT = 3
+  MODE_COUNT = 2
 } DisplayMode;
 
 /**
@@ -44,8 +43,6 @@ std::string displayModeToString(const DisplayMode &mode)
     return "monothread";
   case THREADED:
     return "threaded";
-  case BOTH:
-    return "both";
   default:
     break;
   }
@@ -179,20 +176,15 @@ int main(int argc, char *argv[])
 
   bool useMonothread;
 
-  if ((opt_mode == DisplayMode::THREADED) || (opt_mode == DisplayMode::BOTH)) {
+  if (opt_mode == DisplayMode::THREADED) {
     useMonothread = false;
     //! [Running threaded mode]
     ClassUsingDisplayPCL demo(opt_xlim, opt_ylim, opt_reso);
     demo.runDemo(opt_addedNoise, opt_order, useMonothread);
-
-    ClassUsingDisplayPCL demo2(opt_xlim, opt_ylim, opt_reso);
-    demo2.runDemo(opt_addedNoise, opt_order, useMonothread);
     //! [Running threaded mode]
   }
 
-  std::cout << "[main] Launching monothread...\n" << std::flush;
-
-  if ((opt_mode == DisplayMode::MONOTHREAD) || (opt_mode == DisplayMode::BOTH)) {
+  if (opt_mode == DisplayMode::MONOTHREAD) {
     useMonothread = true;
     //! [Running threaded mode]
     ClassUsingDisplayPCL demo(opt_xlim, opt_ylim, opt_reso);

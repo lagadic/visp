@@ -7,12 +7,23 @@
 
 This tutorial shows how to use the `vpDisplayPCL` class.
 
+<<<<<<< HEAD
 In the next section you will find an example that shows how to use a threaded display to display two point clouds,
 with one suffering some noise.
 
 The program first generate a polynomial surface, whose coordinates are expressed in the object frame.
 Then, a second surface is generated. It corresponds to the first surface, moved in another coordinates frame.
 Some noise is added to this second surface, to simulate sensor innacuracy. Finally, the point clouds are displayed using the `vpDisplayPCL`.
+=======
+In the next section you will find an example that shows how to display two point clouds, with one having attached
+confidence weights, either in blocking-mode or threaded-mode display.
+
+The program first generate a polynomial surface, whose coordinates are expressed in the object frame.
+Then, a second surface is generated. It corresponds to the first surface, moved in another coordinates frame.
+Some noise is added to this second surface, to simulate sensor innacuracy. Then, M-estimation based
+on Tukey M-estimator is performed using the `vpRobust` class in order not to display the noisy points
+in the viewer. Finally, the point clouds are displayed using the `vpPclViewer`.
+>>>>>>> tmp_pcl_viewer
 
 \section pcl_viewer_requirements Requirements
 
@@ -30,7 +41,11 @@ $ ./tutorial-pcl-visualizer -h
 You should see a new windows that shows something similar to. It shows
 our two point clouds.
 
+<<<<<<< HEAD
 \image html img-tutorial-display-pcl.png
+=======
+\image html img-tutorial-pcl-viewer.png
+>>>>>>> tmp_pcl_viewer
 
 To run the program without adding noise to the second point cloud, you can run:
 ```
@@ -40,7 +55,11 @@ To stop the program, please click in the viewer window and press the `q` key.
 
 \section pcl_viewer_example Point clouds visualization example explained
 
+<<<<<<< HEAD
 For this tutorial, we use the main program tutorial-display-pcl.cpp.
+=======
+For this tutorial, we use the main program tutorial-pcl-viewer.cpp.
+>>>>>>> tmp_pcl_viewer
 
 It uses the following class, which generates 3D coordinates and relies on the `vpDisplayPCL` to visualize data.
 
@@ -52,7 +71,16 @@ Let us first have a look at the main program.
 
 First, we include the class that uses the `vpDisplayPCL` object to display different point clouds:
 
+<<<<<<< HEAD
 \snippet tutorial-display-pcl.cpp Class include
+=======
+\snippet tutorial-pcl-viewer.cpp Class include
+
+Then, we define a C++ enum in order to permit to the user to chose between the blocking-mode display or the threaded-mode
+display.
+
+\snippet tutorial-pcl-viewer.cpp Enum for mode choice
+>>>>>>> tmp_pcl_viewer
 
 Then, we define the default value of the program arguments.
 
@@ -68,11 +96,27 @@ Let us look with more details into these arguments:
 - `order` represents the order of the polynomial surface the user wants to use running the demo.
 - `x-lim` and `y-lim` represents reciproquely the X-axis and Y-axis minimum and maximum values of the polynomial surface, expressed in the object frame.
 - `reso` represents the number of points along the X-axis and Y-axis, expressed in the object frame, are used to generate the first surface.
+<<<<<<< HEAD
+=======
+- `display-mode` represents which mode of display the user wants to use: blocking-mode or threaded-mode.
+>>>>>>> tmp_pcl_viewer
 
 Then, we parse the program arguments that permit to the user to change part of the behavior
 of the program.
 
+<<<<<<< HEAD
 \snippet tutorial-display-pcl.cpp Arguments parser
+=======
+\snippet tutorial-pcl-viewer.cpp Arguments parser
+
+Then, the blocking-mode example is run if the user chose to run it.
+
+\snippet tutorial-pcl-viewer.cpp Running blocking mode
+
+Finally, the threaded-mode example is run if the user chose to run it.
+
+\snippet tutorial-pcl-viewer.cpp Running threaded mode
+>>>>>>> tmp_pcl_viewer
 
 \subsection pcl_viewer_class Code of the example class explained
 
@@ -85,20 +129,37 @@ is computed from the X and Y coordinates thanks to the following method.
 
 The constructor initializes the minimum and maximum X and Y coordinates of the polynomial
 surface, along with the number of points in each direction it contains. It also constructs
+<<<<<<< HEAD
 the vpDisplayPCL object, naming the window that will open.
+=======
+the vpPclViewer object, naming the window that will open.
+>>>>>>> tmp_pcl_viewer
 
 \snippet ClassUsingDisplayPCL.cpp Constructor
 
 The following method generate two polynomial surface. If the user asked to, noise will be added
+<<<<<<< HEAD
 to the displaced surface.
+=======
+to the displaced surface. The confidence weights are estimated thanks to Tukey M-estimator
+from the difference between the noise-free position of the point and the actual one. In an actual
+situation, it could for instance correspond to the distance between a model of an object surface and the observed
+points thanks to a depth sensor.
+>>>>>>> tmp_pcl_viewer
 
 \snippet ClassUsingDisplayPCL.cpp Surface generator
 
 \subsubsection pcl_viewer_class_usage How to use the vpDisplayPCL class to display the point clouds
 
+<<<<<<< HEAD
 To use the `vpDisplayPCL` class, you must first add the surfaces you want to display. For a textureless point cloud,
 you can either choose the color to use to render it
 or you can use the default color. Please refer to \ref vpDisplayPCL::addPointCloud for more information.
+=======
+To use the vpPclViewer class, you must first add the surfaces you want to display.
+You can do it by adding a surface for which you do not particularly care of the color and thus
+decide to use a generated one :
+>>>>>>> tmp_pcl_viewer
 
 \snippet ClassUsingDisplayPCL.cpp Inserting point clouds
 
@@ -119,7 +180,11 @@ tutorial-display-pcl *** Terminating app due to uncaught exception 'NSInternalIn
 libc++abi: terminating due to uncaught exception of type NSException
 \endcode
 This problem seems to be due to VTK library that does not like to be run in a non-main thread on MacOS.
+<<<<<<< HEAD
 You can use the vpDisplayPCL class in blocking mode using the method vpDisplayPCL::display. See the
+=======
+You can use the vpPclViewer class in blocking mode using the method vpPclViewer::display. See the
+>>>>>>> tmp_pcl_viewer
 [PCL issue](https://github.com/PointCloudLibrary/pcl/issues/253#issuecomment-29716100) for more details.
 
 \subsection pcl_viewer_issues_ubuntu Known issue on Ubuntu 22.04
@@ -138,4 +203,22 @@ This is a [known compatibility issue](https://github.com/PointCloudLibrary/pcl/i
 
 The vpDisplayPCL can be used in blocking mode, or you may try to install PCL from source and then recompile
 ViSP.
+
+\subsection pcl_viewer_issues_xserver Known issue when using VTK and the server X backends
+
+When the PCL library relies on the VTK library and X11 library as backends for the viewer, you
+may face the following error if you create either two viewers in threaded mode or one viewer in
+threaded mode and another one in the main thread:
+
+\code
+X Error of failed request:  BadAccess (attempt to access private resource denied)
+  Major opcode of failed request:  152 (GLX)
+  Minor opcode of failed request:  5 (X_GLXMakeCurrent)
+  Serial number of failed request:  407
+  Current serial number in output stream:  407
+\endcode
+
+Another error that can occur in a similar situation is a SIGSEGV error in the `XPending()` method.
+This is a [known problem](https://github.com/PointCloudLibrary/pcl/issues/6290) in the PCL library, that should have been addressed but seems to persist.
+
 */

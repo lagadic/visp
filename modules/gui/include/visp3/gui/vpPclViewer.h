@@ -162,8 +162,10 @@ public:
 
   /**
    * @brief Blocking-mode display of the viewer.
+   *
+   * @param blocking: True if we must wait for the user to press 'Q' to leave the method, false otherwise.
    */
-  void display();
+  void display(const bool &blocking = false);
 
   /**
    * @brief Refresh the display.
@@ -238,13 +240,13 @@ protected:
   void loopThread();
 
   std::vector<pclPointCloudPointXYZRGB::Ptr> m_vPointClouds; /*!< The list of point clouds known by the viewer.*/
-  static pcl::visualization::PCLVisualizer::Ptr sp_viewer; /*!< The PCL viewer permitting the display.*/
-  static std::vector<std::vector<double>> s_vhandler; /*!< The list of color handlers.*/
-  static int s_width; /*!< The width of the window.*/
-  static int s_height; /*!< The height of the window.*/
-  static int s_posU; /*!< The position along the horizontal axis of the screen of the window.*/
-  static int s_posV; /*!< The position along the vertical axis of the screen of the window.*/
-  static double s_ignoreThresh; /*!< The minimum value of the confidence weight of a point to allow it to be displayed.*/
+  std::vector<std::vector<double>> m_vhandler; /*!< The list of color handlers.*/
+  pcl::visualization::PCLVisualizer::Ptr mp_viewer; /*!< The PCL viewer permitting the display.*/
+  int m_width; /*!< The width of the window.*/
+  int m_height; /*!< The height of the window.*/
+  int m_posU; /*!< The position along the horizontal axis of the screen of the window.*/
+  int m_posV; /*!< The position along the vertical axis of the screen of the window.*/
+  double m_ignoreThresh; /*!< The minimum value of the confidence weight of a point to allow it to be displayed.*/
   std::vector<std::string> m_vmeshid; /*!< The list of the point cloud names, for the legend.*/
   std::vector<legendParams> m_vlegends; /*!< The list of the legend items.*/
   std::vector<std::mutex *> m_vpmutex; /*!< The list of mutexes protecting the point clouds from data race when using the drawing thread.*/
