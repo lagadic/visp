@@ -35,6 +35,7 @@ libdc1394 = ">=2.2.6"
 librealsense = "*"
 gsl = "*"
 gtk2 = "*"
+glib = "*"
 
 [target.linux-64.dependencies]
 mesa-libegl-cos7-x86_64 = "*"
@@ -50,10 +51,7 @@ scripts = ["development/scripts/pixi/activation.sh"]
 [target.win-64.activation]
 scripts = ["development/scripts/pixi/activation.bat"]
 
-[target.linux.activation.env]
-VISP_USE_GTK2 = "ON"
-
-[target.osx.activation.env]
+[target.unix.activation.env]
 VISP_USE_GTK2 = "ON"
 
 # Use clang-cl on Windows
