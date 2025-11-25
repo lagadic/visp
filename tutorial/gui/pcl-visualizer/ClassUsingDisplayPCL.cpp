@@ -148,9 +148,12 @@ void ClassUsingDisplayPCL::runDemo(const double &addedNoise, const unsigned int 
     }
     //! [Updating point clouds used by display thread]
 
+    //! [Display monothread]
     if (useMonothread) {
-      m_visualizer.display(false);
+      const bool blocking_mode = false;
+      m_visualizer.display(blocking_mode);
     }
+    //! [Display monothread]
 
     if (keyboard.kbhit()) {
       keyboard.getchar();

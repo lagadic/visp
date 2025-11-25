@@ -57,6 +57,34 @@ BEGIN_VISP_NAMESPACE
   \warning MacOS currently can only use the monothread method `display`, otherwise they get
   the error `uncaught exception 'NSInternalInconsistencyException', reason: 'NSWindow should only be instantiated on the main thread!'`
 
+  \warning On Ubuntu 22.04 and 24.04, you can face the following error:
+  ```
+    Thread 2 "tutorial-pcl-vi" received signal SIGSEGV, Segmentation fault.
+    0x00007ffff7304b10 in _XEventsQueued () from /lib/x86_64-linux-gnu/libX11.so.6
+    0x00007ffff7304b10 in _XEventsQueued () at /lib/x86_64-linux-gnu/libX11.so.6
+    0x00007ffff72f11a1 in XPending () at /lib/x86_64-linux-gnu/libX11.so.6
+    0x00007fffecf65b8f in vtkXRenderWindowInteractor::StartEventLoop() () at /lib/x86_64-linux-gnu/libvtkRenderingUI-9.1.so.1
+    0x00007ffff6ee3f8c in pcl::visualization::PCLVisualizer::spinOnce(int, bool) () at /lib/x86_64-linux-gnu/libpcl_visualization.so.1.12
+    0x00007ffff7fa5c49 in vpPclVisualizer::loopThread() (this=0x7fffffffd720) at /usr/include/c++/11/bits/shared_ptr_base.h:1295
+  ```
+  This is a [known compatibility issue](https://github.com/PointCloudLibrary/pcl/issues/5237) between PCL library and VTK library.
+
+  The vpDisplayPCL can be used in monothread mode, or you may try to install PCL from source and then recompile
+  ViSP.
+
+  \warning When the PCL library relies on the VTK library and X11 library as backends for the viewer, you
+  may face the following error if you create either two viewers in threaded mode or one viewer in
+  threaded mode and another one in the main thread:
+  ```
+    X Error of failed request:  BadAccess (attempt to access private resource denied)
+      Major opcode of failed request:  152 (GLX)
+      Minor opcode of failed request:  5 (X_GLXMakeCurrent)
+      Serial number of failed request:  407
+      Current serial number in output stream:  407
+  ```
+  It seems to be due to the fact that the X server resources are reserved by one thread, preventing any other thread to
+  access them.
+
   <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
 
   <b>Tutorials</b><br>

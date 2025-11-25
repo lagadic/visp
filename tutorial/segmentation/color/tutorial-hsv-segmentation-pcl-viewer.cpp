@@ -301,10 +301,12 @@ int main(int argc, const char *argv[])
       quit = true;
     }
 
+    //! [Refresh monothread viewer]
     if (opt_mode ==  DisplayMode::MONOTHREAD) {
       const bool blocking_mode = false;
       pcl_viewer.display(blocking_mode);
     }
+    //! [Refresh monothread viewer]
 
     vpDisplay::flush(I);
     vpDisplay::flush(I_segmented);
