@@ -1342,10 +1342,10 @@ protected:
   void updateAccumAlongGradientDir(const vpDataForAccumLoop &data, float &sx, float &sy, vpImage<float> &centersAccum);
 
   /**
-   * \brief
+   * \brief Voting for points in both direction of the gradient.
    *
-   * \param[in] data
-   * \param[in] centersAccum
+   * \param[in] data The data required for the algorithm.
+   * \param[in] centersAccum The center candidates accumulator.
    */
   virtual void workOnAccumulator(vpDataForAccumLoop &data, vpImage<float> &centersAccum);
 

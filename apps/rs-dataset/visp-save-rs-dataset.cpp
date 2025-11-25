@@ -38,7 +38,7 @@
 #include <iostream>
 
 #include <visp3/core/vpConfig.h>
-#if (defined(VISP_HAVE_REALSENSE) || defined(VISP_HAVE_REALSENSE2)) && defined(VISP_HAVE_THREADS) \
+#if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_THREADS) \
   && defined(VISP_HAVE_DISPLAY) && defined(VISP_HAVE_PUGIXML) \
   && ((__cplusplus >= 201402L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201402L)))
 

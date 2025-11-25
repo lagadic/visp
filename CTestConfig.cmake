@@ -108,11 +108,6 @@ if(CMAKE_BUILD_TYPE)
 endif()
 
 #---- Robots ----
-# Add specific Afma4 robots
-if(VISP_HAVE_AFMA4)
-  set(BUILDNAME "${BUILDNAME}-Afma4")
-endif()
-
 # Add specific Afma6 robots
 if(VISP_HAVE_AFMA6)
   set(BUILDNAME "${BUILDNAME}-Afma6")
@@ -157,7 +152,7 @@ endif()
 if(VISP_HAVE_LIBFREENECT)
   set(BUILDNAME "${BUILDNAME}-freenect")
 endif()
-if(VISP_HAVE_REALSENSE)
+if(VISP_HAVE_REALSENSE2)
   set(BUILDNAME "${BUILDNAME}-rs")
 endif()
 if(VISP_HAVE_PCL)

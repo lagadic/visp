@@ -14,7 +14,7 @@ cmake = ">=3.22"
 ninja = ">=1.11"
 pkg-config = ">=0.29.2"
 git = ">=2.47.0"
-libopencv = "*"
+libopencv = ">=4.12.0"
 eigen = "*"
 libjpeg-turbo = "*"
 libpng = "*"
@@ -24,6 +24,7 @@ liblapack = "*"
 liblapacke = "*"
 coin3d = "*"
 nlohmann_json = "*"
+ogre = ">=14.4.1"
 
 [target.unix.dependencies]
 xorg-libx11 = "*"
@@ -35,7 +36,6 @@ libdc1394 = ">=2.2.6"
 librealsense = "*"
 gsl = "*"
 gtk2 = "*"
-ogre = "*"
 
 [target.linux-64.dependencies]
 mesa-libegl-cos7-x86_64 = "*"
@@ -65,11 +65,11 @@ platforms = ["win-64"]
 dependencies = { clangxx = "*", lld = "*", llvm-openmp = "*"}
 activation = { scripts = ["development/scripts/pixi/activation_clang_cl.bat"] }
 
-[feature.py310]
-dependencies = { python = "3.10.*" }
-[feature.py312]
+[feature.python-oldest]
+dependencies = { python = "3.11.*" }
+[feature.python-supported]
 dependencies = { python = "3.12.*" }
-# [feature.py314]
+# [feature.python-newest]
 # dependencies = { python = "3.14.*" }
 
 [feature.python-bindings]
@@ -210,11 +210,11 @@ all-clang-cl = { features = ["rbt", "python-bindings", "doc", "clang-cl"] }
 all-with-tests = { features = ["rbt", "python-bindings", "doc", "tests"] }
 all-clang-cl-with-tests = { features = ["rbt", "python-bindings", "doc", "clang-cl", "tests"] }
 # Environments with all features + build of tests / tutorials / examples (mainly for CI)
-full-ci-py310 = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials", "py310"]}
-full-ci-py312 = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials", "py312"]}
-# full-ci-py314 = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials", "py314"]}
+full-ci-python-oldest = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials", "python-oldest"]}
+full-ci-python-supported = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials", "python-supported"]}
+# full-ci-python-newest = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials", "python-newest"]}
 full-ci-coverage = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials", "coverage"]}
 full-ci-coverage-clang-cl = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials", "coverage", "clang-cl"]}
-full-ci-clang-cl-py310 = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials", "clang-cl", "py310"]}
-full-ci-clang-cl-py312 = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials", "clang-cl", "py312"]}
-# full-ci-clang-cl-py314 = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials", "clang-cl", "py314"]}
+full-ci-clang-cl-python-oldest = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials", "clang-cl", "python-oldest"]}
+full-ci-clang-cl-python-supported = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials", "clang-cl", "python-supported"]}
+# full-ci-clang-cl-python-newest = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials", "clang-cl", "python-newest"]}

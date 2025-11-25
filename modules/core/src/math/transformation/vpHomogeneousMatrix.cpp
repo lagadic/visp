@@ -691,10 +691,10 @@ vpPoint vpHomogeneousMatrix::operator*(const vpPoint &bP) const
   v[index_2] = bP.get_Z();
   v[index_3] = bP.get_W();
 
-  v1[index_0] = ((*this)[index_0][0] * v[0]) + ((*this)[index_0][1] * v[1]) + ((*this)[index_0][index_2] * v[index_2]) + ((*this)[index_0][index_3] * v[index_3]);
-  v1[index_1] = ((*this)[index_1][0] * v[0]) + ((*this)[index_1][1] * v[1]) + ((*this)[index_1][index_2] * v[index_2]) + ((*this)[index_1][index_3] * v[index_3]);
-  v1[index_2] = ((*this)[index_2][0] * v[0]) + ((*this)[index_2][1] * v[1]) + ((*this)[index_2][index_2] * v[index_2]) + ((*this)[index_2][index_3] * v[index_3]);
-  v1[index_3] = ((*this)[index_3][0] * v[0]) + ((*this)[index_3][1] * v[1]) + ((*this)[index_3][index_2] * v[index_2]) + ((*this)[index_3][index_3] * v[index_3]);
+  v1[index_0] = ((*this)[index_0][index_0] * v[index_0]) + ((*this)[index_0][index_1] * v[index_1]) + ((*this)[index_0][index_2] * v[index_2]) + ((*this)[index_0][index_3] * v[index_3]);
+  v1[index_1] = ((*this)[index_1][index_0] * v[index_0]) + ((*this)[index_1][index_1] * v[index_1]) + ((*this)[index_1][index_2] * v[index_2]) + ((*this)[index_1][index_3] * v[index_3]);
+  v1[index_2] = ((*this)[index_2][index_0] * v[index_0]) + ((*this)[index_2][index_1] * v[index_1]) + ((*this)[index_2][index_2] * v[index_2]) + ((*this)[index_2][index_3] * v[index_3]);
+  v1[index_3] = ((*this)[index_3][index_0] * v[index_0]) + ((*this)[index_3][index_1] * v[index_1]) + ((*this)[index_3][index_2] * v[index_2]) + ((*this)[index_3][index_3] * v[index_3]);
 
   v1 /= v1[index_3];
 

@@ -26,7 +26,7 @@ arrays of data,
 
 In contrary, the main disadvantages are:
   - it is a non-human readable format,
-  - it is meant to be use with arrays of basic data type, hierarchical structures of data are not suitables for instance.
+  - it is meant to be used with arrays of basic data type, hierarchical structures of data are not suitables for instance.
 
 \note
 You can refer to this Wikipedia page for an exhaustive comparison of

@@ -76,7 +76,7 @@ $ cd $VISP_WS/3rdparty
 $ git clone --branch 0.9.2 --recursive https://github.com/frankaemika/libfranka libfranka-0.9.2
 $ cd libfranka-0.9.2
 $ mkdir build && cd build
-$ cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=OFF
+$ cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=OFF -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 $ make -j$(nproc)
 $ sudo make install
 \endcode

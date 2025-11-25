@@ -1084,7 +1084,7 @@ void vpOccipitalStructure::getColoredPointcloud(pcl::PointCloud<pcl::PointXYZRGB
         pointcloud->points[static_cast<size_t>(depth_pixel_index)].z = m_invalidDepthValue;
 
         // For out of bounds color data, default to black.
-#if PCL_VERSION_COMPARE(<, 1, 1, 0)
+#if (VISP_HAVE_PCL_VERSION < 0x010100) // 1.1.0
         unsigned int r = 0, g = 0, b = 0;
         uint32_t rgb = (static_cast<uint32_t>(r) << 16 | static_cast<uint32_t>(g) << 8 | static_cast<uint32_t>(b));
 
@@ -1127,9 +1127,8 @@ void vpOccipitalStructure::getColoredPointcloud(pcl::PointCloud<pcl::PointXYZRGB
         }
 
         if (color_pixel.y < 0 || color_pixel.y >= color_height || color_pixel.x < 0 || color_pixel.x >= color_width) {
-          // For out of bounds color data, default to a shade of blue in order to
-          // visually distinguish holes.
-#if PCL_VERSION_COMPARE(<, 1, 1, 0)
+          // For out of bounds color data, default to a shade of blue in order to visually distinguish holes.
+#if (VISP_HAVE_PCL_VERSION < 0x010100) // 1.1.0
           unsigned int r = 0, g = 0, b = 0;
           uint32_t rgb = (static_cast<uint32_t>(r) << 16 | static_cast<uint32_t>(g) << 8 | static_cast<uint32_t>(b));
 
@@ -1144,7 +1143,7 @@ void vpOccipitalStructure::getColoredPointcloud(pcl::PointCloud<pcl::PointXYZRGB
           unsigned int i_ = static_cast<unsigned int>(color_pixel.x);
           unsigned int j_ = static_cast<unsigned int>(color_pixel.y);
 
-#if PCL_VERSION_COMPARE(<, 1, 1, 0)
+#if (VISP_HAVE_PCL_VERSION < 0x010100) // 1.1.0
           uint32_t rgb = 0;
           if (swap_rb) {
             rgb =
@@ -1182,7 +1181,7 @@ void vpOccipitalStructure::getColoredPointcloud(pcl::PointCloud<pcl::PointXYZRGB
         }
       }
       else {
-#if PCL_VERSION_COMPARE(<, 1, 1, 0)
+#if (VISP_HAVE_PCL_VERSION < 0x010100) // 1.1.0
         uint32_t rgb = 0;
         if (swap_rb) {
           rgb = (static_cast<uint32_t>(p_color_frame[(i * static_cast<unsigned int>(color_width) + j) * nb_color_pixel]) |
