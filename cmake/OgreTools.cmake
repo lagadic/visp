@@ -411,6 +411,73 @@ function(vp_set_ogre_media)
   endif()
 endfunction()
 
+# If OGRE_CONFIG_DIR/plugins.cfg exists create a copy in data/ogre-simulator/plugins.cfg
+# with PluginFolder=@OGRE_PLUGIN_DIR@
+macro(vp_set_ogre_plugin)
+  if(EXISTS "${OGRE_CONFIG_DIR}/plugins.cfg")
+    # Get all the lines that contains "Plugin="
+    file(STRINGS "${OGRE_CONFIG_DIR}/plugins.cfg" OGRE_PLUGIN_LINES REGEX "^[ \t]*#?[ \t]*Plugin=")
+
+    string(REPLACE ";" "\n" OGRE_PLUGIN_LINES "${OGRE_PLUGIN_LINES}")
+
+    set(OGRE_DATA_ROOT_DIR "${VISP_BINARY_DIR}/data/ogre-simulator")
+
+    configure_file(
+      "cmake/templates/plugins.cfg.in"
+      "${OGRE_DATA_ROOT_DIR}/plugins.cfg"
+      @ONLY
+    )
+
+    install(FILES
+      "${OGRE_DATA_ROOT_DIR}/plugins.cfg"
+      DESTINATION ${VISP_INSTALL_DATAROOTDIR}/data/ogre-simulator
+      PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
+      COMPONENT dev
+    )
+
+    # For vpConfig.h
+    set(VISP_HAVE_OGRE_PLUGINS_PATH "${VISP_BINARY_DIR}/data/ogre-simulator" CACHE INTERNAL "Ogre plugins.cfg location")
+  endif()
+endmacro()
+
+# If OGRE_CONFIG_DIR/resources.cfg exists create a copy in data/ogre-simulator/resources.cfg
+# with an updated path to media dir
+macro(vp_set_ogre_resources)
+  if(EXISTS "${OGRE_CONFIG_DIR}/resources.cfg")
+    file(STRINGS "${OGRE_CONFIG_DIR}/resources.cfg" RESOURCE_LINES)
+
+    set(OGRE_RESOURCE_LINES "")
+
+    foreach(line ${RESOURCE_LINES})
+      string(REPLACE "=../Media" "=${OGRE_MEDIA_DIR}" line "${line}")
+      string(REPLACE "=../Tests/Media" "=${OGRE_MEDIA_DIR}" line "${line}")
+      string(REPLACE "=./Media" "=${OGRE_MEDIA_DIR}" line "${line}")
+      string(REPLACE "=./Tests/Media" "=${OGRE_MEDIA_DIR}" line "${line}")
+      list(APPEND OGRE_RESOURCE_LINES ${line})
+    endforeach()
+
+    string(REPLACE ";" "\n" OGRE_RESOURCE_LINES "${OGRE_RESOURCE_LINES}")
+
+    set(OGRE_DATA_ROOT_DIR "${VISP_BINARY_DIR}/data/ogre-simulator")
+
+    configure_file(
+      "cmake/templates/resources.cfg.in"
+      "${OGRE_DATA_ROOT_DIR}/resources.cfg"
+      @ONLY
+    )
+
+    install(FILES
+      "${OGRE_DATA_ROOT_DIR}/resources.cfg"
+      DESTINATION ${VISP_INSTALL_DATAROOTDIR}/data/ogre-simulator
+      PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
+      COMPONENT dev
+    )
+
+    # For vpConfig.h
+    set(VISP_HAVE_OGRE_RESOURCES_PATH "${VISP_BINARY_DIR}/data/ogre-simulator" CACHE INTERNAL "Ogre resources.cfg location")
+  endif()
+endmacro()
+
 macro(vp_set_ogre_advanced_var)
   set(ogre_components_ Paging Terrain Plugin_BSPSceneManager Plugin_CgProgramManager Plugin_OctreeSceneManager)
   list(APPEND ogre_components_ Plugin_OctreeZone Plugin_PCZSceneManager Plugin_ParticleFX RenderSystem_Direct3D11)
