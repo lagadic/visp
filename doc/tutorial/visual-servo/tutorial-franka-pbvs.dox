@@ -277,7 +277,7 @@ C:\\> cmake ..\visp -G "Visual Studio 17 2022" -A x64 -DFranka_DIR=%VISP_WS%\3rd
 \code{.sh}
 C:\\> cmake --build . --config Release
 \endcode
-- Now to help finding ViSP DLLs, add `%VISP_WS%\visp-build-vc17\x64\vc17\bin\Release` folder to the `Path` environment
+- Now to help finding ViSP DLLs, add `%%VISP_WS%\visp-build-vc17\x64\vc17\bin\Release` folder to the `Path` environment
   variable.
 
 \subsection franka_configure_ethernet 2.8. Configure Ethernet
