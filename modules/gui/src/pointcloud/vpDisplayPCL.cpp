@@ -70,9 +70,7 @@ vpDisplayPCL::vpDisplayPCL(unsigned int width, unsigned int height, int posx, in
  */
 vpDisplayPCL::~vpDisplayPCL()
 {
-  std::cout << "[dtor] Calling stop ...\n" << std::flush;
   stop();
-  std::cout << "[dtor] Done\n" << std::flush;
 }
 
 /**
@@ -80,13 +78,12 @@ vpDisplayPCL::~vpDisplayPCL()
  */
 void vpDisplayPCL::createViewer()
 {
-  m_viewer = pcl::visualization::PCLVisualizer::Ptr(new pcl::visualization::PCLVisualizer());
+  m_viewer = pcl::visualization::PCLVisualizer::Ptr(new pcl::visualization::PCLVisualizer(m_window_name));
   m_viewer->setBackgroundColor(0, 0, 0);
   m_viewer->initCameraParameters();
   m_viewer->setPosition(m_posx, m_posy);
   m_viewer->setCameraPosition(0, 0, -0.25, 0, -1, 0);
   m_viewer->setSize(m_width, m_height);
-  m_viewer->setWindowName(m_window_name);
 }
 
 /**
@@ -113,14 +110,11 @@ void vpDisplayPCL::insertLegend(const size_t &id)
  * \warning Because pcl::visualization::PCLVisualizer is not multi-thread friendly,
  * calling this method stops the display thread if it was running.
  */
-void vpDisplayPCL::display()
+void vpDisplayPCL::display(const bool &blocking)
 {
-  std::cout << "[display] Checking if threaded\n" << std::flush;
   if (m_thread_running) {
-    std::cout << "[display] Stopping thread\n" << std::flush;
     stop();
 
-    std::cout << "[display] Resetting xyz pcl state\n" << std::flush;
     // Reset the fact that the point-clouds must be first inserted before being updated
     // as the viewer will be an entirely new one
     size_t nb_pcls = mv_xyz_pcl.size();
@@ -128,20 +122,16 @@ void vpDisplayPCL::display()
       mv_xyz_pcl[id].second.m_do_init = true;
     }
 
-    std::cout << "[display] Resetting RGB pcl state\n" << std::flush;
     nb_pcls = mv_colored_pcl.size();
     for (size_t id = 0; id < nb_pcls; ++id) {
       mv_colored_pcl[id].second.m_do_init = true;
     }
   }
 
-  std::cout << "[display] Checking if viewer\n" << std::flush;
   if (!m_viewer) {
-    std::cout << "[display] Creating viewer\n" << std::flush;
     createViewer();
   }
 
-  std::cout << "[display] XYZ loop\n" << std::flush;
   size_t nb_pcls = mv_xyz_pcl.size();
   for (size_t id = 0; id < nb_pcls; ++id) {
     if (mv_xyz_pcl[id].second.m_do_init) {
@@ -155,7 +145,6 @@ void vpDisplayPCL::display()
     }
   }
 
-  std::cout << "[display] RGB loop\n" << std::flush;
   nb_pcls = mv_colored_pcl.size();
   for (size_t id = 0; id < nb_pcls; ++id) {
     if (mv_colored_pcl[id].second.m_do_init) {
@@ -169,8 +158,12 @@ void vpDisplayPCL::display()
     }
   }
 
-  std::cout << "[display] Spinning\n" << std::flush;
-  m_viewer->spinOnce(10);
+  if (blocking) {
+    m_viewer->spin();
+  }
+  else {
+    m_viewer->spinOnce(10);
+  }
 }
 
 /*!

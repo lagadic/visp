@@ -73,7 +73,7 @@ public:
   ~vpDisplayPCL();
 
   void setVerbose(bool verbose);
-  void display();
+  void display(const bool &blocking = false);
   void startThread(const bool &colorThread = false);
   void startThread(std::mutex &mutex, pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud, const std::string &name = "", const vpColor &color = vpColor::red);
   void startThread(std::mutex &mutex, pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud);

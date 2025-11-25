@@ -136,8 +136,7 @@ void ClassUsingDisplayPCL::runDemo(const double &addedNoise, const unsigned int 
   double t;
 
   std::cout << "Press any key in the console to stop the program." << std::endl;
-  // vpKeyboard keyboard;
-  uint16_t count = 0;
+  vpKeyboard keyboard;
   while (!wantToStop) {
     t = vpTime::measureTimeMs();
 
@@ -150,16 +149,11 @@ void ClassUsingDisplayPCL::runDemo(const double &addedNoise, const unsigned int 
     //! [Updating point clouds used by display thread]
 
     if (useMonothread) {
-      m_visualizer.display();
+      m_visualizer.display(false);
     }
 
-    // if (keyboard.kbhit()) {
-    //   // keyboard.getchar();
-    //   wantToStop = true;
-    // }
-
-    ++count;
-    if (count >= 100) {
+    if (keyboard.kbhit()) {
+      keyboard.getchar();
       wantToStop = true;
     }
 

@@ -168,14 +168,6 @@ public:
   void display(const bool &blocking = false);
 
   /**
-   * @brief Refresh the display.
-   *
-   * @param timeout Duration allowed for the drawing.
-   * @param waitForDrawing If true, will wait until the drawing is done. Otherwise, might return without doing nothing.
-   */
-  void refresh(const int &timeout = 100, const bool &waitForDrawing = true);
-
-  /**
    * @brief Start the drawing thread that permits to have a non-blocking display.
    */
   void launchThread();

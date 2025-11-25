@@ -10,11 +10,88 @@
 #include <visp3/core/vpImageTools.h>
 #include <visp3/core/vpPixelMeterConversion.h>
 #include <visp3/core/vpColorDepthConversion.h>
+#include <visp3/core/vpIoTools.h>
 #include <visp3/gui/vpDisplayFactory.h>
 //! [Include vpDisplayPCL header]
 #include <visp3/gui/vpDisplayPCL.h>
 //! [Include vpDisplayPCL header]
 #include <visp3/sensor/vpRealSense2.h>
+
+//! [Enum for mode choice]
+/**
+ * @brief Enumeration permitting to choose between running the blocking-mode display
+ * example, the threaded-mode or both mode consecutively.
+ */
+typedef enum DisplayMode
+{
+  MONOTHREAD = 0, /*!< Only the monothread-mode display example will be run.*/
+  THREADED = 1, /*!< Only the threaded-mode display example will be run.*/
+  MODE_COUNT = 2
+} DisplayMode;
+
+/**
+ * @brief Cast a \b DisplayMode enum value into a \b std::stirng.
+ *
+ * @param mode The display mode we want to cast into a string.
+ * @return std::string The name of the \b DisplayMode enum value.
+ */
+std::string displayModeToString(const DisplayMode &mode)
+{
+  switch (mode) {
+  case MONOTHREAD:
+    return "monothread";
+  case THREADED:
+    return "threaded";
+  default:
+    break;
+  }
+  return "unknown";
+}
+
+/**
+ * @brief Cast a string into a \b DisplayMode enum value.
+ * If \b name is not found, return \b DisplayMode::MODE_COUNT .
+ *
+ * @param name The name of the display mode.
+ * @return DisplayMode The corresponding \b DisplayMode enum value, or \b DisplayMode::MODE_COUNT if not found.
+ */
+DisplayMode displayModeFromString(const std::string &name)
+{
+  DisplayMode res = DisplayMode::MODE_COUNT;
+  bool wasFound = false;
+  std::string lowerCaseName = vpIoTools::toLowerCase(name);
+  unsigned int i = 0;
+  while ((i < DisplayMode::MODE_COUNT) && (!wasFound)) {
+    DisplayMode candidate = (DisplayMode)i;
+    if (lowerCaseName == displayModeToString(candidate)) {
+      res = candidate;
+      wasFound = true;
+    }
+    ++i;
+  }
+  return res;
+}
+
+/**
+ * @brief Create a string that lists the different \b DisplayMode available.
+ *
+ * @param prefix The string that must prefix the list of modes.
+ * @param sep The separator between the different modes.
+ * @param suffix The string that must suffix the list of modes.
+ * @return std::string The list containing the different modes.
+ */
+std::string getAvailableDisplayMode(const std::string &prefix = "< ", const std::string &sep = " , ", const std::string &suffix = " >")
+{
+  std::string modes(prefix);
+  for (unsigned int i = 0; i < DisplayMode::MODE_COUNT - 1; ++i) {
+    DisplayMode candidate = (DisplayMode)i;
+    modes += displayModeToString(candidate) + sep;
+  }
+  DisplayMode candidate = (DisplayMode)(DisplayMode::MODE_COUNT - 1);
+  modes += displayModeToString(candidate) + suffix;
+  return modes;
+}
+//! [Enum for mode choice]
 
 int main(int argc, const char *argv[])
 {
@@ -28,13 +105,19 @@ int main(int argc, const char *argv[])
   int opt_width = 848;
   int opt_height = 480;
   int opt_fps = 60;
+  DisplayMode opt_mode = DisplayMode::MONOTHREAD;
 
-  for (int i = 1; i < argc; i++) {
+  int i = 1;
+  while (i < argc) {
     if (((std::string(argv[i]) == "--width") || (std::string(argv[i]) == "-v")) && ((i+1) < argc)) {
       opt_width = std::atoi(argv[++i]);
     }
     else if (((std::string(argv[i]) == "--height") || (std::string(argv[i]) == "-h")) && ((i+1) < argc)) {
       opt_height = std::atoi(argv[++i]);
+    }
+    else if (std::string(argv[i]) == "--display-mode" && i + 1 < argc) {
+      opt_mode = displayModeFromString(std::string(argv[i + 1]));
+      ++i;
     }
     else if ((std::string(argv[i]) == "--fps") && ((i+1) < argc)) {
       opt_fps = std::atoi(argv[++i]);
@@ -96,6 +179,7 @@ int main(int argc, const char *argv[])
         << std::endl;
       return EXIT_SUCCESS;
     }
+    ++i;
   }
 
   vpColVector hsv_values;
@@ -155,13 +239,23 @@ int main(int argc, const char *argv[])
   //! [Create pcl viewer object]
   std::mutex pointcloud_mutex;
   vpDisplayPCL pcl_viewer(opt_width, opt_height);
-  if (opt_pcl_textured) {
-    pcl_viewer.startThread(std::ref(pointcloud_mutex), pointcloud_color);
+  if (opt_mode == DisplayMode::THREADED) {
+    if (opt_pcl_textured) {
+      pcl_viewer.startThread(std::ref(pointcloud_mutex), pointcloud_color);
+    }
+    else {
+      pcl_viewer.startThread(std::ref(pointcloud_mutex), pointcloud);
+    }
   }
   else {
-    pcl_viewer.startThread(std::ref(pointcloud_mutex), pointcloud);
+    if (opt_pcl_textured) {
+      pcl_viewer.addPointCloud(std::ref(pointcloud_mutex), pointcloud_color);
+    }
+    else {
+      pcl_viewer.addPointCloud(std::ref(pointcloud_mutex), pointcloud);
+    }
   }
-  //! [Create pcl viewer object]
+ //! [Create pcl viewer object]
 
   while (!quit) {
     double t = vpTime::measureTimeMs();
@@ -205,6 +299,11 @@ int main(int argc, const char *argv[])
 
     if (vpDisplay::getClick(I, false)) {
       quit = true;
+    }
+
+    if (opt_mode ==  DisplayMode::MONOTHREAD) {
+      const bool blocking_mode = false;
+      pcl_viewer.display(blocking_mode);
     }
 
     vpDisplay::flush(I);

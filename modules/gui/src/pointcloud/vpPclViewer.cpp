@@ -348,11 +348,6 @@ void vpPclViewer::display(const bool &blocking)
   }
 }
 
-void vpPclViewer::refresh(const int &timeout, const bool &waitForDrawing)
-{
-  mp_viewer->spinOnce(timeout, waitForDrawing);
-}
-
 void vpPclViewer::launchThread()
 {
   // Check if the visualization thread is already started
