@@ -24,15 +24,14 @@ liblapacke = "*"
 coin3d = "*"
 nlohmann_json = "*"
 ogre = ">=14.4.1"
+libxml2-devel = "*"
+librealsense = "*"
 
 [target.unix.dependencies]
 xorg-libx11 = "*"
 xorg-libxfixes = "*"
 xorg-xorgproto = "*"
-# TODO: activate on windows as well
-libxml2-devel = "*"
 libdc1394 = ">=2.2.6"
-librealsense = "*"
 gsl = "*"
 gtk2 = "*"
 glib = "*"
