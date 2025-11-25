@@ -693,7 +693,7 @@ C:\visp-ws\3rdparty\opencv-4.7.0\sources\modules\videoio\src\cap_obsensor\obsens
 The workaround is to configure OpenCV using `cmake -DWITH_OBSENSOR=OFF` like:
 \verbatim
 C:\> cd %VISP_WS%\opencv-4.7.0\build-mingw
-C:\> C:\> cmake -G "MinGW Makefiles" ..\sources -DCMAKE_INSTALL_PREFIX=%VISP_WS%\3rdparty\opencv-4.7.0\build -DBUILD_TESTS=OFF -DBUILD_PERF_TESTS=OFF -DWITH_OBSENSOR=OFF
+C:\> cmake -G "MinGW Makefiles" ..\sources -DCMAKE_INSTALL_PREFIX=%VISP_WS%\3rdparty\opencv-4.7.0\build -DBUILD_TESTS=OFF -DBUILD_PERF_TESTS=OFF -DWITH_OBSENSOR=OFF
 C:\> cmake --build . --config Release --target install -j4
 \endverbatim
 

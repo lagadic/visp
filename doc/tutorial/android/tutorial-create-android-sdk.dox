@@ -172,15 +172,15 @@ C:\> git clone https://github.com/nagayasu-shinya/ccache-win64.git
 - At the time this tutorial was written, on Windows 11 we got Android Studio Ladybug 2024.2.2.13, NDK 28.0
   (see \ref android_sdk_ndk_version) and the following other tools versions:
 \code{.sh}
-C:\>java -version
+C:\> java -version
 java version 23.0.2 2025-01-21
-C:\>python --version
+C:\> python --version
 Python 3.13.2
-C:\>cmake -version
+C:\> cmake -version
 cmake version 4.0.0-rc1
-C:\>ninja --version
+C:\> ninja --version
 1.12.1
-C:\>ccache --version
+C:\> ccache --version
 ccache version 3.7.4
 \endcode
 
