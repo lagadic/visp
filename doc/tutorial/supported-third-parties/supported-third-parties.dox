@@ -178,10 +178,15 @@ and \ref tutorial-universal-robot-pbvs.
 
 \subsection soft_robots_libfranka libfranka
 
-[libfranka](https://frankaemika.github.io/docs/libfranka.html) is the SDK that allows to control the Franka Emika Panda
-robot in its research configuration. Installing this third-party allows to control a Panda robot thanks to vpRobotFranka class.
+[libfranka](https://frankaemika.github.io/docs/libfranka.html) is the SDK that allows to control the Franka Panda
+robot in its research configuration. Installing this third-party allows to control a Panda robot thanks to
+vpRobotFranka class.
 
-Installation instructions are provided in \ref franka_prereq_libfranka section.
+- <b>Ubuntu installation</b><br>
+  Installation instructions are provided in \ref franka_prereq_libfranka section.
+- <b>Windows installation</b><br>
+  There is also the possibility to install `libfranka` under Windows following \ref franka_prereq_libfranka_0_9_2_win
+  installation instructions.
 
 There are also 2 tutorials that may be useful to start with this robot in ViSP: \ref tutorial-franka-ibvs
 and \ref tutorial-franka-pbvs. If you want to simulate this robot using ViSP and ROS
