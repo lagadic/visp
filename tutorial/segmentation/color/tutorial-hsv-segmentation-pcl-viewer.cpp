@@ -17,6 +17,10 @@
 //! [Include vpDisplayPCL header]
 #include <visp3/sensor/vpRealSense2.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 //! [Enum for mode choice]
 /**
  * @brief Enumeration permitting to choose between running the blocking-mode display
@@ -95,10 +99,6 @@ std::string getAvailableDisplayMode(const std::string &prefix = "< ", const std:
 
 int main(int argc, const char *argv[])
 {
-#ifdef ENABLE_VISP_NAMESPACE
-  using namespace VISP_NAMESPACE_NAME;
-#endif
-
   std::string opt_hsv_filename = "calib/hsv-thresholds.yml";
   bool opt_pcl_textured = false;
   bool opt_verbose = false;
