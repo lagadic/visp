@@ -412,12 +412,51 @@ function(vp_set_ogre_media)
 endfunction()
 
 # If OGRE_CONFIG_DIR/plugins.cfg exists create a copy in data/ogre-simulator/plugins.cfg
-# with PluginFolder=@OGRE_PLUGIN_DIR@
+# with PluginFolder=@VISP_OGRE_PLUGIN_DIR@
+# - on unix, VISP_OGRE_PLUGIN_DIR=OGRE_PLUGIN_DIR
+# - on windws, VISP_OGRE_PLUGIN_DIR=OGRE_PLUGIN_DIR with "/" replaced with "\"
 macro(vp_set_ogre_plugin)
   if(EXISTS "${OGRE_CONFIG_DIR}/plugins.cfg")
+    # Prepare var used in plugind.cfg
+    set(VISP_OGRE_PLUGIN_DIR ${OGRE_PLUGIN_DIR})
+
     # Get all the lines that contains "Plugin="
     file(STRINGS "${OGRE_CONFIG_DIR}/plugins.cfg" OGRE_PLUGIN_LINES REGEX "^[ \t]*#?[ \t]*Plugin=")
 
+    if (WIN32)
+      # Replace / with \
+      string(REPLACE "/" "\\" VISP_OGRE_PLUGIN_DIR "${VISP_OGRE_PLUGIN_DIR}")
+
+      # Remove Rendering Systems under Windows that are known to be not installed with Ogre 14.4.1 SDK
+      set(RENDERING_SYSTEMS_TO_REMOVE "RenderSystem_Direct3D9" "Plugin_CgProgramManager")
+
+      # Process OGRE_PLUGIN_LINES to add # if needed
+      set(MODIFIED_PLUGIN_LINES "")
+      foreach(line ${OGRE_PLUGIN_LINES})
+        set(should_comment FALSE)
+
+        # Check if this line contains any plugin to remove
+        foreach(plugin_to_remove ${RENDERING_SYSTEMS_TO_REMOVE})
+          if(line MATCHES "${plugin_to_remove}")
+            set(should_comment TRUE)
+            break()
+          endif()
+        endforeach()
+
+        # Add # if needed and line is not already commented
+        if(should_comment AND NOT line MATCHES "^[ \t]*#")
+          string(REGEX REPLACE "^([ \t]*)" "\\1# " modified_line "${line}")
+          list(APPEND MODIFIED_PLUGIN_LINES "${modified_line}")
+        else()
+          list(APPEND MODIFIED_PLUGIN_LINES "${line}")
+        endif()
+      endforeach()
+
+      # Replace original variable with modified one
+      set(OGRE_PLUGIN_LINES "${MODIFIED_PLUGIN_LINES}")
+    endif()
+
+    # Convert list to newline-separated string
     string(REPLACE ";" "\n" OGRE_PLUGIN_LINES "${OGRE_PLUGIN_LINES}")
 
     set(OGRE_DATA_ROOT_DIR "${VISP_BINARY_DIR}/data/ogre-simulator")
