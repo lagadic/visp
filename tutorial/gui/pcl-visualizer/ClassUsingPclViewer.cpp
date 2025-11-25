@@ -150,7 +150,7 @@ void ClassUsingPclViewer::blockingMode(const double &addedNoise, const unsigned 
 
   std::cout << "Press \"q\" while selecting the viewer window to stop the program." << std::endl;
   //! [Displaying point clouds blocking mode]
-  m_visualizer.display();
+  m_visualizer.display(true);
   //! [Displaying point clouds blocking mode]
 
   (void)id_ctrlPts;

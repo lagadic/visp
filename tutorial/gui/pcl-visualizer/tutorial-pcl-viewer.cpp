@@ -27,8 +27,7 @@ typedef enum DisplayMode
 {
   BLOCKING = 0, /*!< Only the blocking-mode display example will be run.*/
   THREADED = 1, /*!< Only the threaded-mode display example will be run.*/
-  BOTH = 2, /*!< First the blocking-mode display example will be run and then the threaded-mode one.*/
-  MODE_COUNT = 3
+  MODE_COUNT = 2
 } DisplayMode;
 
 /**
@@ -44,8 +43,6 @@ std::string displayModeToString(const DisplayMode &mode)
     return "blocking";
   case THREADED:
     return "threaded";
-  case BOTH:
-    return "both";
   default:
     break;
   }
@@ -171,20 +168,19 @@ int main(int argc, char *argv[])
   std::cout << "\tNoise standard deviation: " << opt_addedNoise << std::endl;
   std::cout << "\tDisplay mode: " << displayModeToString(opt_mode) << std::endl;
 
-  //! [Running blocking mode]
-  if (opt_mode == DisplayMode::BLOCKING || opt_mode == DisplayMode::BOTH) {
-    ClassUsingPclViewer demo(opt_xlim, opt_ylim, opt_reso);
-    demo.blockingMode(opt_addedNoise, opt_order);
-  }
-  //! [Running blocking mode]
-
   //! [Running threaded mode]
-  if (opt_mode == DisplayMode::THREADED || opt_mode == DisplayMode::BOTH) {
+  if (opt_mode == DisplayMode::THREADED) {
     ClassUsingPclViewer demo(opt_xlim, opt_ylim, opt_reso);
     demo.threadedMode(opt_addedNoise, opt_order);
   }
   //! [Running threaded mode]
 
+  //! [Running blocking mode]
+  if (opt_mode == DisplayMode::BLOCKING) {
+    ClassUsingPclViewer demo(opt_xlim, opt_ylim, opt_reso);
+    demo.blockingMode(opt_addedNoise, opt_order);
+  }
+  //! [Running blocking mode]
   return 0;
 }
 #else
