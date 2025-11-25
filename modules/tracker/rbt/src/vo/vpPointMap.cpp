@@ -141,7 +141,7 @@ void vpPointMap::getVisiblePoints(const unsigned int h, const unsigned int w, co
   }
 
   std::vector<std::vector<int>> indicesPerThread;
-
+  const double normalThreshold = vpMath::rad(180 - m_normalThresholdVisible);
 
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel
@@ -188,7 +188,7 @@ void vpPointMap::getVisiblePoints(const unsigned int h, const unsigned int w, co
         cameraRay.normalize();
         double dotProd = cN[i][0] * cameraRay[0] + cN[i][1] * cameraRay[1] + cN[i][2] * cameraRay[2];
         double angle = acos(dotProd);
-        if (angle < vpMath::rad(80)) {
+        if (angle < normalThreshold) {
           continue;
         }
       }

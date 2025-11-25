@@ -127,6 +127,12 @@ class XFeatVisualOdometry(RBVisualOdometry):
     self.optim_params.minImprovementFactor = 1e-3
 
 
+  def compute_weights(self, obj_descriptors: torch.Tensor):
+    Id = torch.eye(obj_descriptors.size(), device=obj_descriptors.device)
+    cos = obj_descriptors @ obj_descriptors.t()
+    w = 1.0 - (torch.max(cos - Id, dim=-1))
+    return w
+
   def load_settings(self, d):
     """Update the VO parameters from a dictionary.
 
@@ -215,6 +221,7 @@ class XFeatVisualOdometry(RBVisualOdometry):
 
   def reset(self):
     self.environment_map.reset()
+    self.iter = 0
     self.current_representation = None
     self.previous_cTw = HomogeneousMatrix()
     self.cTw = HomogeneousMatrix()

@@ -251,6 +251,7 @@ class RBXFeatFeatureTracker(RBFeatureTracker):
     self.current_representation = None
     self.current_xy_obj = None
     self.numFeatures = 0
+    self.iter = 0
     self.frame = None
     self.idx_curr_obj_matched = None
     self.idx_object_map_matched = None

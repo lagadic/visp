@@ -72,6 +72,8 @@ class TrackedDescriptorMap():
 
   def reset(self):
     self.descriptors = None
+    self.data_for_update = None
+    self.indices_removal = None
     self.point_map.clear()
 
   def parse_settings(self, d: Dict[str, Any]):
@@ -85,12 +87,14 @@ class TrackedDescriptorMap():
     self.min_dist_new_point = d['minDistNewPoint']
     self.max_depth_error_visible = d['maxDepthErrorVisible']
     self.max_depth_error_candidates = d['maxDepthErrorCandidate']
+    self.max_normal_deg = d.get('maxNormalThresholdVisible', 180)
 
     self.point_map.setOutlierReprojectionErrorThreshold(self.reprojection_threshold)
     self.point_map.setNumMaxPoints(self.num_points)
     self.point_map.setMinDistanceAddNewPoints(self.min_dist_new_point)
     self.point_map.setMaxDepthErrorVisibilityCriterion(self.max_depth_error_visible)
     self.point_map.setMaxDepthErrorCandidate(self.max_depth_error_candidates)
+    self.point_map.setThresholdNormalVisibiltyCriterion(self.max_normal_deg)
 
   def has_points(self) -> bool:
     """Returns whether this map stores any points.

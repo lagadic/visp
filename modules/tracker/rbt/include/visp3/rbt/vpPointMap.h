@@ -52,6 +52,7 @@ public:
     m_maxDepthErrorVisible = maxDepthErrorVisibility;
     m_maxDepthErrorCandidate = maxDepthErrorCandidate;
     m_outlierThreshold = outlierThreshold;
+    m_normalThresholdVisible = 0.0;
   }
   /**
    * \name Settings
@@ -69,6 +70,9 @@ public:
 
   double getMaxDepthErrorVisibilityCriterion() const { return m_maxDepthErrorVisible; }
   void setMaxDepthErrorVisibilityCriterion(double depthError) { m_maxDepthErrorVisible = depthError; }
+
+  double getThresholdNormalVisibiltyCriterion() const { return m_normalThresholdVisible; }
+  void setThresholdNormalVisibiltyCriterion(double normalDegThreshold) { m_normalThresholdVisible = normalDegThreshold; }
 
   double getMaxDepthErrorCandidate() const { return m_maxDepthErrorCandidate; }
   void setMaxDepthErrorCandidate(double depthError) { m_maxDepthErrorCandidate = depthError; }
@@ -185,8 +189,10 @@ private:
   unsigned m_maxPoints;
   double m_minDistNewPoint;
   double m_maxDepthErrorVisible;
+  double m_normalThresholdVisible;
   double m_maxDepthErrorCandidate;
   double m_outlierThreshold;
+
 };
 
 END_VISP_NAMESPACE
