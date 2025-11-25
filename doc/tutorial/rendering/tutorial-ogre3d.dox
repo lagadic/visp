@@ -60,10 +60,10 @@ There is also the optional [OIS](https://github.com/wgois/OIS) library that can 
 
 - Download [Pre-built SDK](https://www.ogre3d.org/download/sdk/sdk-ogre#) for Windows (MSVC). At the time this tutorial
   was written, we downloaded `ogre-sdk-v14.4.1-msvc142-x64.zip` file.
-- Unzip the Pre-built SDK in `C:\visp-ws\3rdparty\ogre-sdk-v14.4.1-msvc142-x64`
+- Unzip the Pre-built SDK in `%%VISP_WS%\3rdparty\ogre-sdk-v14.4.1-msvc142-x64`
 - Set `OGRE_DIR` environment var with the location of the SDK uding a Command (`cmd`) line terminal
 \code{.sh}
-C:\> setx OGRE_DIR C:\visp-ws\3rdparty\ogre-sdk-v14.4.1-msvc142-x64
+C:\> setx OGRE_DIR %VISP_WS%\3rdparty\ogre-sdk-v14.4.1-msvc142-x64
 \endcode
 - Modify `Path` environment variable to add the path to Ogre dlls. In our case we added `%%OGRE_DIR%\bin`.
 - Close all the Command line terminals to ensure that both environment variables are taken into account.
