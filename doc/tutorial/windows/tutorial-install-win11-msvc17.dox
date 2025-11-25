@@ -190,10 +190,10 @@ vpRealSense2 class. Otherwise you can skip this section.
 <b>4.1.3.1. Install Realsense SDK 2.0</b>
 
 Realsense SDK 2.0 contains librealsense. To install this SDK:
-- Go to https://github.com/IntelRealSense/librealsense/releases
-- Download `Intel.RealSense.SDK-WIN10-<version>.exe` corresponding to the last Realsense SDK 2.0 release.
+- Go to https://github.com/realsenseai/librealsense/releases
+- Download `RealSense.SDK-WIN10-<version>.exe` corresponding to the last Realsense SDK 2.0 release.
   At the time this tutorial was written, we downloaded `RealSense.SDK-WIN10-2.57.3.9476.exe`.
-- Execute `Intel.RealSense.SDK-WIN10-<version>.exe`, set destination folder to `%%VISP_WS%\3rdparty\RealSense SDK 2.0`
+- Execute `RealSense.SDK-WIN10-<version>.exe`, then set destination folder to `%%VISP_WS%\3rdparty\RealSense SDK 2.0`
   and follow default installation steps.
 
 <b>4.1.3.2. Complete Realsense SDK 2.0 installation</b>

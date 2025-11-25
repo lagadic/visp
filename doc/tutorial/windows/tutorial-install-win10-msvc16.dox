@@ -511,7 +511,7 @@ C:\> exit
 \endverbatim
 - You have also to add the location of Vicon Datastream SDK libraries corresponding in the Path environment variable.
   Open the "Edit environment variable" UI, and modify Path to add a new line with
-  `%VISP_WS%\Program Files\Vicon\DataStream SDK\Win64\CPP`.
+  `%%VISP_WS%\Program Files\Vicon\DataStream SDK\Win64\CPP`.
 
 \subsection install_win10_msvc16_get_source 4.2. Get ViSP source code
 

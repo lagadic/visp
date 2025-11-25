@@ -21,7 +21,7 @@ and \ref tutorial-universal-robot-pbvs.
 
 \subsection material_robots_franka Franka Emika Panda
 
-The Franka Emika Panda robot in its research configuration is interfaced in vpRobotFranka class, a wrapper over
+The Franka Panda robot in its research configuration is interfaced in vpRobotFranka class, a wrapper over
 [Franka Control Interface](https://frankaemika.github.io/docs/libfranka.html) 3rd party.
 
 See \ref soft_robots_libfranka section to know how to install the corresponding optional 3rd party.
