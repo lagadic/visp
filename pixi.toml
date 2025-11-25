@@ -30,7 +30,7 @@ xorg-libx11 = "*"
 xorg-libxfixes = "*"
 xorg-xorgproto = "*"
 # TODO: activate on windows as well
-libxml2 = "*"
+libxml2-devel = "*"
 libdc1394 = ">=2.2.6"
 librealsense = "*"
 gsl = "*"
