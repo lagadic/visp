@@ -415,15 +415,28 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
     for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
       tracker->setComputeJacobianObjectSpace(shouldComputeVelocityInObjectFrame);
     }
-
+    id = 0;
     for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
       if (tracker->getNumFeatures() > 0) {
         numFeatures += tracker->getNumFeatures();
         const double weight = tracker->getVVSTrackerWeight(static_cast<double>(iter) / static_cast<double>(m_vvsIterations));
-        LTL += weight * tracker->getLTL();
-        LTR += weight * tracker->getLTR();
-        error += weight * (tracker->getWeightedError()).sumSquare();
+        bool validQuantities = vpArray2D<double>::isFinite(tracker->getLTL()) && vpArray2D<double>::isFinite(tracker->getLTR()) && vpMath::isFinite(weight);
+        if (validQuantities) {
+          LTL += weight * tracker->getLTL();
+          LTR += weight * tracker->getLTR();
+          error += weight * (tracker->getWeightedError()).sumSquare();
+        }
+        else {
+          std::cerr << std::endl;
+          std::cerr << "There were NaN values in tracker " << id << std::endl;
+          std::cerr << "LTL = " << tracker->getLTL() << std::endl;
+          std::cerr << "LTR = " << tracker->getLTR().t() << std::endl;
+          std::cerr << "Weight = " << weight << std::endl;
+          std::cerr << "This tracker was ignored." << std::endl;
+
+        }
       }
+      id += 1;
     }
 
     if (numFeatures >= 6) {
