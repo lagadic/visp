@@ -36,9 +36,16 @@ with floating-point numbers),
   - large arrays of data can be easily appended, with support for multi-dimensional arrays.
 
 On the other hand, the main disadvantages are:
-  - it is a non-human readable format, suitable for saving large arrays of data, but not for easy debugging,
-  - saving `string` data is not direct, since it must be treated as vector of `char` data,
-  - the current implementation only works on little-endian platform (which is the major endianness nowadays).
+  - it is a non-human readable format, suitable for saving large arrays of data, but not for easy debugging or
+hierarchical information,
+  - compatibility is limited to the Python/NumPy world contrary to other formats such as XML, JSON, etc,
+  - file compression
+(<a href="https://numpy.org/devdocs/reference/generated/numpy.savez_compressed.html">numpy.savez_compressed</a>)
+is not supported.
+
+\note
+The current implementation works also on big-endian platforms, but without much guarantee (little-endian is the
+primary endianness architecture nowadays).
 
 You can refer to this Wikipedia page for an exhaustive comparison of
 <a href="https://en.wikipedia.org/wiki/Comparison_of_data-serialization_formats">data-serialization formats</a>.
@@ -71,6 +78,34 @@ Additional information can be found <a href="https://stackoverflow.com/a/4549165
 The other approach would consist to
   - append the null character "\0" to the vector: "vec_save_string.push_back(`\0`);"
   - and uses the constructor that accepts a pointer of data: "std::string read_string(arr_string_data.data<char>());"
+
+\warning
+The previous approach is efficient in terms of memory storage but is not compatible with NumPy.
+We describe another approach if you want a compatibilty with NumPy `np.load` function.
+
+The NumPy library saves string data as UTF-32 format where each character is stored using 4 bytes (instead of 1 with
+the previous approach):
+  - <a href="https://github.com/numpy/numpy/issues/15347">"numpy strings use too much memory #15347"</a>
+  - <a href="https://numpy.org/devdocs/user/basics.strings.html#variable-width-strings">Working with Arrays of Strings And Bytes</a>
+for additional information about arrays of strings handling in NumPy and "Variable-width strings" in NumPy v2
+
+The following code shows how to save `std::string` object with compatibility with NumPy:
+
+\snippet tutorial-npz.cpp Save_string_save2
+
+Reading back the value with:
+
+\snippet tutorial-npz.cpp Read_string2
+
+\note
+For simplicity, ViSP saves `std::string` with each character taking 4 bytes to be compatible with NumPy.
+When reading back the data, @ref visp::cnpy::NpyArray::as_utf8_string_vec() will only retrieve 1 byte and ignore the rest.
+Dealing with UTF-8, UTF-16, UTF-32 and extended `std::string` such as `std::wstring` is much more complex in C++.
+
+\note
+Array of string data can also be saved using @ref visp::cnpy::npz_save() function which takes in parameter:
+  - a vector of string objects: `std::vector<std::string>`
+  - the shape of the array: `std::vector<size_t>`
 
 
 \subsection tuto-npz-hands-on-save-basic How to save basic data types

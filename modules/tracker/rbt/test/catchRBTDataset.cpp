@@ -311,7 +311,6 @@ SCENARIO("Running tracker on sequences with ground truth", "[rbt]")
 
           }
         },
-        { "lower_teeth", {  } },
       };
 
       for (const std::string &objectName: objectNames) {

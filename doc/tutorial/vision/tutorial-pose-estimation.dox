@@ -96,7 +96,7 @@ In the infinite loop, at each iteration we read a new image (in this example it 
 in the window, track each blob and update the coordinates of the center of gravity in `ip` vector.
 \snippet tutorial-pose-from-points-image.cpp Tracking
 
-Then we call the pose estimation function `computePose() presented previously. It uses the 3D coordinates of the points
+Then we call the pose estimation function `computePose()` presented previously. It uses the 3D coordinates of the points
 defined as our model in the object frame, and their corresponding 2D positions in the image obtained by the blob tracker
 to estimate the pose \c cMo. This homogeneous transformation gives the position of the object frame in the camera frame.
 \snippet tutorial-pose-from-points-image.cpp Pose estimation

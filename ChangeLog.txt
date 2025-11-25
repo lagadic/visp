@@ -23,14 +23,14 @@ ViSP 3.x.x (Version in development)
     . vpDisplay::displayCharString() is marked deprecated. Use vpDisplay::displayText() instead
     . vpHinkley class is deprecated, in favor of vpStatisticalTestHinkley
     . vpPclViewer is deprecated. You should use vpDisplayPcl instead
+    . vpRealSense class that was an interface over librealsense1 is removed. Use vpRealSense2 instead
   - New features and improvements
     . Introduce Python bindings for most of ViSP modules and classes (see corresponding tutorial)
     . New specific documentation for Python bindings in https://visp-doc.inria.fr/doxygen/visp-python-daily/
     . Updated Dockerfile in ci/docker folder for Ubuntu 18.04, 20.04, 22.04 and 24.04. Corresponding images are also
       available ready to use on DockerHub https://hub.docker.com/repository/docker/vispci/vispci/general
     . OpenCV 2.4.8 is the minimal supported version
-    . Introduce camera intrinsics calibration and eye-in-hand or eye-to-hand calibration tools in apps folder, a
-      collection of useful tools that have a dependency to the install target
+    .
     . Speed up build by including only opencv2/opencv_modules.hpp instead of opencv2/opencv.hpp header in vpConfig.h
     . In imgproc module, implementation of automatic gamma factor computation methods for gamma correction.
     . Eliminate the use of pthread in favour of std::thread
@@ -57,7 +57,10 @@ ViSP 3.x.x (Version in development)
     . Compat with Eigen3 5.0.0
     . Introduce material to build and install ViSP from source with Pixi
   - Applications
-    . Migrate eye-to-hand tutorials in apps
+    . Introduce camera intrinsics calibration and eye-in-hand or eye-to-hand calibration tools in apps folder, a
+      collection of useful tools for camera calibration
+    . Introduce Realsense tools in apps folder for acquiring and reading data sets (colour, depth, infrared,
+      point cloud).
   - Tutorials
     . Update tutorial: How to use Blender to generate simulated data for model-based tracking
       experiments with step by step detailed explanations

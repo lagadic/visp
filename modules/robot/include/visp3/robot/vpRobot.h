@@ -48,8 +48,7 @@
 BEGIN_VISP_NAMESPACE
 /*!
   \class vpRobot
-  \ingroup group_robot_real_gantry group_robot_real_cylindrical
-  group_robot_real_arm group_robot_real_ptu group_robot_real_unicycle
+  \ingroup group_robot_real_gantry group_robot_real_arm group_robot_real_ptu group_robot_real_unicycle
   group_robot_real_template
   \brief Class that defines a generic virtual robot.
 */

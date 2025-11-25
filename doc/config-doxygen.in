@@ -1051,7 +1051,8 @@ EXCLUDE                = "@VISP_SOURCE_DIR@/tutorial/ios/StartedImageProc/Starte
                          "@VISP_SOURCE_DIR@/tutorial/ios/StartedImageProc/StartedImageProc/ViewController.h" \
                          "@VISP_SOURCE_DIR@/tutorial/ios/AprilTagLiveCamera/AprilTagLiveCamera/VispDetector.h" \
                          "@VISP_SOURCE_DIR@/tutorial/ios/AprilTagLiveCamera/AprilTagLiveCamera/VispDetector.mm" \
-                         "@VISP_SOURCE_DIR@/tutorial/ios/AprilTagLiveCamera/VispHelper/ImageDisplayWithContext.h"
+                         "@VISP_SOURCE_DIR@/tutorial/ios/AprilTagLiveCamera/VispHelper/ImageDisplayWithContext.h" \
+                         "@VISP_SOURCE_DIR@/modules/python/generator/visp_python_bindgen
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
@@ -1825,7 +1826,7 @@ USE_MATHJAX            = @DOXYGEN_USE_MATHJAX@
 # The default value is: MathJax_2.
 # This tag requires that the tag USE_MATHJAX is set to YES.
 
-MATHJAX_VERSION        = MathJax_2
+MATHJAX_VERSION        = MathJax_3
 
 # When MathJax is enabled you can set the default output format to be used for
 # the MathJax output. For more details about the output format see MathJax
@@ -1856,7 +1857,7 @@ MATHJAX_FORMAT         = HTML-CSS
 # - in case of MathJax version 3: https://cdn.jsdelivr.net/npm/mathjax@3
 # This tag requires that the tag USE_MATHJAX is set to YES.
 
-MATHJAX_RELPATH        = http://cdn.mathjax.org/mathjax/latest
+MATHJAX_RELPATH        =
 
 # The MATHJAX_EXTENSIONS tag can be used to specify one or more MathJax
 # extension names that should be enabled during MathJax rendering. For example
@@ -2452,7 +2453,6 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          HAVE_OPENCV_HIGHGUI \
                          HAVE_OPENCV_IMGPROC \
                          HAVE_OPENCV_3D \
-                         VISP_HAVE_AFMA4 \
                          VISP_HAVE_AFMA6 \
                          VISP_HAVE_AFMA6_DATA \
                          VISP_HAVE_APRILTAG \
@@ -2521,6 +2521,7 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_PANDA3D \
                          VISP_HAVE_PARPORT \
                          VISP_HAVE_PCL \
+                         VISP_HAVE_PCL_VERSION=0x010E00 \
                          VISP_HAVE_PCL_COMMON \
                          VISP_HAVE_PCL_FILTERS \
                          VISP_HAVE_PCL_IO \
@@ -2536,8 +2537,6 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_QBDEVICE \
                          VISP_HAVE_QT \
                          VISP_HAVE_QUALISYS \
-                         VISP_HAVE_REALSENSE \
-                         VISP_HAVE_REALSENSE_VERSION=0x020000 \
                          VISP_HAVE_REALSENSE2 \
                          VISP_HAVE_SIMDLIB \
                          VISP_HAVE_SOWIN \

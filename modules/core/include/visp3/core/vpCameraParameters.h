@@ -334,7 +334,7 @@ public:
 
   void init();
   void init(const vpCameraParameters &c);
-  void initFromCalibrationMatrix(const vpMatrix &_K);
+  void initFromCalibrationMatrix(const vpMatrix &K);
   void initFromFov(const unsigned int &w, const unsigned int &h, const double &hfov, const double &vfov);
   void initPersProjWithoutDistortion(double px, double py, double u0, double v0);
   void initPersProjWithDistortion(double px, double py, double u0, double v0, double kud, double kdu);
