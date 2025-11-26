@@ -43,7 +43,7 @@
 #include <stdlib.h>
 #include <visp3/core/vpConfig.h>
 
-#if defined(HAVE_OPENCV_HIGHGUI)
+#if defined(HAVE_OPENCV_HIGHGUI) && !defined(VISP_HAVE_OPENCV_HEADLESS)
 
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpImage.h>

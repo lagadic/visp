@@ -329,7 +329,7 @@ int main(int argc, const char *argv[])
 #ifdef VISP_HAVE_X11
     display.push_back("X");
 #endif
-#ifdef VISP_HAVE_OPENCV
+#ifdef VISP_HAVE_OPENCV && !defined(VISP_HAVE_OPENCV_HEADLESS)
     display.push_back("OpenCV");
 #endif
 #ifdef VISP_HAVE_D3D9
