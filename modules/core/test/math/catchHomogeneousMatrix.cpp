@@ -38,6 +38,8 @@
  */
 #include <visp3/core/vpConfig.h>
 
+#include <visp3/core/vpUniRand.h>
+
 #if defined(VISP_HAVE_CATCH2)
 #include <visp3/core/vpHomogeneousMatrix.h>
 
@@ -222,6 +224,67 @@ TEST_CASE("vpHomogenousMatrix * vpRotationMatrix", "[operator*]")
   bool success = test_matrix_equal(_1_M_3_, _1_M_3_truth);
   std::cout << "Test vpHomogeneousMatrix vpHomogeneousMatrix::operator*(vpRotationMatrix) " << (success ? "succeed" : "failed") << std::endl;
   CHECK(success);
+}
+
+TEST_CASE("Point projection", "project")
+{
+  std::vector<unsigned int> NS = { 1, 10, 100, 1000, 10000 };
+  for (unsigned int N : NS) {
+    std::cout << "Running for N = " << N << std::endl;
+    std::vector<double> timeProject, timeMult, timeNaive;
+    vpUniRand r(42);
+    for (unsigned int trial = 0; trial < 100000; ++trial) {
+      vpHomogeneousMatrix M;
+      vpMatrix input(N, 3);
+      for (unsigned int i = 0; i< N; ++i) {
+        input[i][0] = r.uniform(0.0, 1.0);
+        input[i][1] = r.uniform(0.0, 1.0);
+        input[i][2] = r.uniform(0.0, 1.0);
+      }
+      vpMatrix output(N, 3);
+
+      double t1 = vpTime::measureTimeMs();
+      M.project(input, output);
+      double t2 = vpTime::measureTimeMs();
+      timeProject.push_back(t2 - t1);
+
+
+      vpColVector x(4, 1);
+
+      vpMatrix outputR(N, 3);
+      double t1r = vpTime::measureTimeMs();
+
+      for (unsigned int i = 0; i < input.getRows(); ++i) {
+        x[0] = input[i][0];
+        x[1] = input[i][1];
+        x[2] = input[i][2];
+
+        vpColVector res = M * x;
+        outputR[i][0] = res[0];
+        outputR[i][1] = res[1];
+        outputR[i][2] = res[2];
+      }
+      double t2r = vpTime::measureTimeMs();
+      timeNaive.push_back(t2r - t1r);
+
+
+      vpMatrix input4(4, N);
+      vpMatrix output4(4, N);
+      double t14 = vpTime::measureTimeMs();
+
+      vpMatrix::mult2Matrices((vpMatrix)M, input4, output4);
+      double t24 = vpTime::measureTimeMs();
+      timeMult.push_back(t24 - t14);
+
+      CHECK((outputR == output));
+    }
+    std::cout << "Optimized version took: " << vpMath::getMean(timeProject) << " +-" << vpMath::getStdev(timeProject) <<  "ms" << std::endl;
+    std::cout << "Mult  version took: " << vpMath::getMean(timeMult) << " +-" << vpMath::getStdev(timeMult) << "ms" << std::endl;
+    std::cout << "Naive version took: " << vpMath::getMean(timeNaive) << " +-" << vpMath::getStdev(timeNaive) <<  "ms" << std::endl;
+    std::cout << "Speedup: " << vpMath::minimum(vpMath::getMean(timeNaive), vpMath::getMean(timeMult)) / vpMath::getMean(timeProject) << std::endl;
+
+  }
+
 }
 
 int main(int argc, char *argv[])

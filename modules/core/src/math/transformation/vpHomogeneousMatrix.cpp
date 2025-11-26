@@ -43,8 +43,130 @@
 #include <visp3/core/vpPoint.h>
 #include <visp3/core/vpQuaternionVector.h>
 
+
+
+
+#if defined __SSE2__ || defined _M_X64 || (defined _M_IX86_FP && _M_IX86_FP >= 2)
+#include <emmintrin.h>
+#include <immintrin.h>
+
+#define VISP_HAVE_SSE2 1
+#endif
+
+// https://stackoverflow.com/a/40765925
+#if !defined(__FMA__) && defined(__AVX2__)
+#define __FMA__ 1
+#endif
+
+#if defined _WIN32 && defined(_M_ARM64)
+#define _ARM64_DISTINCT_NEON_TYPES
+#include <Intrin.h>
+#include <arm_neon.h>
+#define VISP_HAVE_NEON 1
+#elif (defined(__ARM_NEON__) || defined (__ARM_NEON)) && defined(__aarch64__)
+#include <arm_neon.h>
+#define VISP_HAVE_NEON 1
+#else
+#define VISP_HAVE_NEON 0
+#endif
+
+#define USE_SIMD_CODE 1
+
+#if VISP_HAVE_SSE2 && USE_SIMD_CODE
+#define USE_SSE 1
+#else
+#define USE_SSE 0
+#endif
+
+#if VISP_HAVE_NEON && USE_SIMD_CODE
+#define USE_NEON 1
+#else
+#define USE_NEON 0
+#endif
+
+
+
+
 BEGIN_VISP_NAMESPACE
 const unsigned int vpHomogeneousMatrix::constr_value_4 = 4;
+
+#if defined(__AVX__)
+inline
+double hsum_double_avx(__m256d v)
+{
+  __m128d vlow = _mm256_castpd256_pd128(v);
+  __m128d vhigh = _mm256_extractf128_pd(v, 1); // high 128
+  vlow = _mm_add_pd(vlow, vhigh);     // reduce down to 128
+  __m128d high64 = _mm_unpackhi_pd(vlow, vlow);
+  return  _mm_cvtsd_f64(_mm_add_sd(vlow, high64));  // reduce to scalar
+}
+#endif
+
+void vpHomogeneousMatrix::project(const vpMatrix &input, vpMatrix &output) const
+{
+  output.resize(input.getRows(), input.getCols(), false);
+  if (input.getCols() != 3) {
+    throw vpException(vpException::dimensionError, "Input matrix should have 3 columns");
+  }
+  double *inputData = input.data;
+  double *outputData = output.data;
+#if (USE_SSE)
+  __m128d rows[] = {
+    _mm_loadu_pd(rowPtrs[0]), _mm_loadu_pd(rowPtrs[0] + 2),
+    _mm_loadu_pd(rowPtrs[1]), _mm_loadu_pd(rowPtrs[1] + 2),
+    _mm_loadu_pd(rowPtrs[2]), _mm_loadu_pd(rowPtrs[2] + 2)
+  };
+  for (unsigned int i = 0; i < input.getRows(); ++i) {
+
+    __m128d r1 = _mm_set_pd(inputData[1], inputData[0]);
+    __m128d r2 = _mm_set_pd(1.0, inputData[2]);
+
+    for (unsigned int j = 0; j < 3; ++j) {
+      __m128d m1 = _mm_mul_pd(r1, rows[j * 2]);
+#if !defined(__FMA__)
+      __m128d m2 = _mm_mul_pd(r2, rows[j * 2 + 1]);
+      __m128d add = _mm_add_pd(m1, m2);
+#else
+      __m128d add = _mm_fmadd_pd(r2, rows[j * 2 + 1], m1);
+#endif
+      __m128d sum = _mm_hadd_pd(add, add);
+      outputData[j] = _mm_cvtsd_f64(sum);
+    }
+    inputData += 3;
+    outputData += 3;
+  }
+
+#elif defined(__AVX__)
+  __m256d rows[] = {
+    _mm256_loadu_pd(rowPtrs[0]),
+    _mm256_loadu_pd(rowPtrs[1]),
+    _mm256_loadu_pd(rowPtrs[2])
+  };
+
+  for (unsigned int i = 0; i < input.getRows(); ++i) {
+    __m256d r = _mm256_set_pd(1.0, inputData[2], inputData[1], inputData[0]);
+    for (unsigned int j = 0; j < 3; ++j) {
+      __m256d mulres = _mm256_mul_pd(rows[j], r);
+      output[i][j] = hsum_double_avx(mulres);
+    }
+    inputData += 3;
+  }
+
+#else
+  double *r0 = rowPtrs[0];
+  double *r1 = rowPtrs[1];
+  double *r2 = rowPtrs[2];
+
+  for (unsigned int i = 0; i < input.getRows(); ++i) {
+    output[i][0] = r0[0] * inputData[0] + r0[1] * inputData[1] + r0[2] * inputData[2] + r0[3];
+    output[i][1] = r1[0] * inputData[0] + r1[1] * inputData[1] + r1[2] * inputData[2] + r1[3];
+    output[i][2] = r2[0] * inputData[0] + r2[1] * inputData[1] + r2[2] * inputData[2] + r2[3];
+    inputData += 3;
+  }
+#endif
+}
+
+
 /*!
   Construct an homogeneous matrix from a translation vector and quaternion
   rotation vector.
@@ -651,16 +773,41 @@ vpColVector vpHomogeneousMatrix::operator*(const vpColVector &v) const
                       "(%dx1) column vector",
                       v.getRows()));
   }
-  vpColVector p(rowNum);
+  vpColVector p(rowNum, 0.0);
 
-  p = 0.0;
+#if USE_SSE
+  __m128d rows[] = {
+    _mm_loadu_pd(rowPtrs[0]), _mm_loadu_pd(rowPtrs[0] + 2),
+    _mm_loadu_pd(rowPtrs[1]), _mm_loadu_pd(rowPtrs[1] + 2),
+    _mm_loadu_pd(rowPtrs[2]), _mm_loadu_pd(rowPtrs[2] + 2),
+    _mm_loadu_pd(rowPtrs[3]), _mm_loadu_pd(rowPtrs[3] + 2)
+
+  };
+
+  __m128d r1 = _mm_loadu_pd(v.data);
+  __m128d r2 = _mm_loadu_pd(v.data + 2);
+
+  for (unsigned int j = 0; j < 4; ++j) {
+    __m128d m1 = _mm_mul_pd(r1, rows[j * 2]);
+#if !defined(__FMA__)
+    __m128d m2 = _mm_mul_pd(r2, rows[j * 2 + 1]);
+    __m128d add = _mm_add_pd(m1, m2);
+#else
+    __m128d add = _mm_fmadd_pd(r2, rows[j * 2 + 1], m1);
+#endif
+    __m128d sum = _mm_hadd_pd(add, add);
+    p[j] = _mm_cvtsd_f64(sum);
+  }
+
+
+#else
 
   for (unsigned int j = 0; j < val_4; ++j) {
     for (unsigned int i = 0; i < val_4; ++i) {
       p[i] += rowPtrs[i][j] * v[j];
     }
   }
-
+#endif
   return p;
 }
 
