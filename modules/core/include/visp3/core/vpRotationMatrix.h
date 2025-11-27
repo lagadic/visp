@@ -190,6 +190,8 @@ public:
 
   void printVector();
 
+  void rotateVectors(const vpMatrix &inputs, vpMatrix &outputs) const;
+
   /*!
     This function is not applicable to a rotation matrix that is always a
     3-by-3 matrix.

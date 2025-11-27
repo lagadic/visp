@@ -49,7 +49,116 @@
 // Debug trace
 #include <math.h>
 
+
+#if defined __SSE2__ || defined _M_X64 || (defined _M_IX86_FP && _M_IX86_FP >= 2)
+#include <emmintrin.h>
+#include <immintrin.h>
+#include <smmintrin.h>
+
+
+#define VISP_HAVE_SSE2 1
+#endif
+
+// https://stackoverflow.com/a/40765925
+#if !defined(__FMA__) && defined(__AVX2__)
+#define __FMA__ 1
+#endif
+
+#if defined _WIN32 && defined(_M_ARM64)
+#define _ARM64_DISTINCT_NEON_TYPES
+#include <Intrin.h>
+#include <arm_neon.h>
+#define VISP_HAVE_NEON 1
+#elif (defined(__ARM_NEON__) || defined (__ARM_NEON)) && defined(__aarch64__)
+#include <arm_neon.h>
+#define VISP_HAVE_NEON 1
+#else
+#define VISP_HAVE_NEON 0
+#endif
+
+#define USE_SIMD_CODE 1
+
+#if VISP_HAVE_SSE2 && USE_SIMD_CODE
+#define USE_SSE 1
+#else
+#define USE_SSE 0
+#endif
+
+#if VISP_HAVE_NEON && USE_SIMD_CODE
+#define USE_NEON 1
+#else
+#define USE_NEON 0
+#endif
+
+
 BEGIN_VISP_NAMESPACE
+
+
+void vpRotationMatrix::rotateVectors(const vpMatrix &input, vpMatrix &output) const
+{
+
+
+
+  output.resize(input.getRows(), input.getCols(), false, false);
+  if (input.getCols() != 3) {
+    throw vpException(vpException::dimensionError, "Input matrix should have 3 columns");
+  }
+  double *inputData = input.data;
+  double *outputData = output.data;
+
+#if USE_SSE
+  __m128d rowStarts[] = {
+    _mm_loadu_pd(rowPtrs[0]),
+    _mm_loadu_pd(rowPtrs[1]),
+    _mm_loadu_pd(rowPtrs[2])
+  };
+
+  __m128d lastColStart = _mm_set_pd(rowPtrs[1][2], rowPtrs[0][2]);
+  __m128d lastColEnd = _mm_set_pd(rowPtrs[2][2], rowPtrs[2][2]);
+
+  const int dotProdFullMask = 0x33; // 0x3: use both input floats, 0x2: store into lane 1
+  const int dotProdFirstElemMask = 0x11;
+
+  for (unsigned int i = 0; i < input.getRows(); ++i) {
+    __m128d xy = _mm_loadu_pd(inputData);
+    __m128d zz = _mm_set_pd(inputData[2], inputData[2]);
+    // Perform dot products with the two first elements of each row
+    __m128d r1 = _mm_dp_pd(xy, rowStarts[0], dotProdFullMask);
+    __m128d r2 = _mm_dp_pd(xy, rowStarts[1], dotProdFullMask);
+    __m128d r3 = _mm_dp_pd(xy, rowStarts[2], dotProdFullMask);
+
+    __m128d r12xy = _mm_shuffle_pd(r1, r2, 0x2);
+
+    // Dot product between last columns of the rows and Z
+    __m128d lastColxy = _mm_dp_pd(zz, lastColStart, dotProdFullMask); // First two cols
+    __m128d lastColz = _mm_dp_pd(zz, lastColEnd, dotProdFirstElemMask); // Last one
+
+    __m128d r3z = _mm_add_pd(r3, lastColz);
+
+    _mm_storeu_pd(outputData, _mm_add_pd(r12xy, lastColxy));
+
+    outputData[2] = _mm_cvtsd_f64(r3z);
+    inputData += 3;
+    outputData += 3;
+  }
+
+
+#else
+  double *r0 = rowPtrs[0];
+  double *r1 = rowPtrs[1];
+  double *r2 = rowPtrs[2];
+
+  for (unsigned int i = 0; i < input.getRows(); ++i) {
+    outputData[0] = r0[0] * inputData[0] + r0[1] * inputData[1] + r0[2] * inputData[2];
+    outputData[1] = r1[0] * inputData[0] + r1[1] * inputData[1] + r1[2] * inputData[2];
+    outputData[2] = r2[0] * inputData[0] + r2[1] * inputData[1] + r2[2] * inputData[2];
+    inputData += 3;
+    outputData += 3;
+  }
+#endif
+}
+
+
 const unsigned int vpRotationMatrix::constr_val_3 = 3;
 /*!
   Initialize the rotation matrix as identity.

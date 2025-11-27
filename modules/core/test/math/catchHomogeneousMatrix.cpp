@@ -250,6 +250,7 @@ TEST_CASE("Point projection", "project")
 
 
       vpColVector x(4, 1);
+      vpColVector res(4);
 
       vpMatrix outputR(N, 3);
       double t1r = vpTime::measureTimeMs();

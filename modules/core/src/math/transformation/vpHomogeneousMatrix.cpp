@@ -104,7 +104,7 @@ double hsum_double_avx(__m256d v)
 
 void vpHomogeneousMatrix::project(const vpMatrix &input, vpMatrix &output) const
 {
-  output.resize(input.getRows(), input.getCols(), false);
+  output.resize(input.getRows(), input.getCols(), false, false);
   if (input.getCols() != 3) {
     throw vpException(vpException::dimensionError, "Input matrix should have 3 columns");
   }
