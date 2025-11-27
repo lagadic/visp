@@ -14,7 +14,6 @@ cmake = ">=3.22"
 ninja = ">=1.11"
 pkg-config = ">=0.29.2"
 git = ">=2.47.0"
-libopencv = ">=4.12.0"
 eigen = "*"
 libjpeg-turbo = "*"
 libpng = "*"
@@ -25,20 +24,19 @@ liblapacke = "*"
 coin3d = "*"
 nlohmann_json = "*"
 ogre = ">=14.4.1"
+libxml2-devel = "*"
+librealsense = "*"
 
 [target.unix.dependencies]
 xorg-libx11 = "*"
 xorg-libxfixes = "*"
 xorg-xorgproto = "*"
-# TODO: activate on windows as well
-libxml2 = "*"
 libdc1394 = ">=2.2.6"
-librealsense = "*"
 gsl = "*"
 gtk2 = "*"
+glib = "*"
 
 [target.linux-64.dependencies]
-mesa-libegl-cos7-x86_64 = "*"
 zbar = "*"
 
 [target.osx.dependencies]
@@ -51,10 +49,7 @@ scripts = ["development/scripts/pixi/activation.sh"]
 [target.win-64.activation]
 scripts = ["development/scripts/pixi/activation.bat"]
 
-[target.linux.activation.env]
-VISP_USE_GTK2 = "ON"
-
-[target.osx.activation.env]
+[target.unix.activation.env]
 VISP_USE_GTK2 = "ON"
 
 # Use clang-cl on Windows
@@ -81,6 +76,22 @@ view-python-logs = { cmd = "$IDE $VISP_BUILD_DIR/modules/python/bindings/logs", 
 python-doc = { cmd = "cmake --build $VISP_BUILD_DIR --parallel $CPU_COUNT --target visp_python_bindings_doc", depends-on = ["build"] }
 view-python-doc = { cmd = "$BROWSER $VISP_BUILD_DIR/doc/python/index.html", env = { BROWSER = "firefox" } }
 
+# For OpenCV support we can either use package built for Qt for full highgui support,
+# or headless one (typically for CI). Not both.
+[feature.opencv-with-qt.dependencies]
+libopencv = { version = ">=4.12.0", build = "qt*" }
+
+[feature.headless.dependencies]
+libopencv = { version = ">=4.12.0", build = "headless*" }
+[feature.headless.activation.env]
+VISP_HAVE_OPENCV_HEADLESS = "ON"
+# Tests that require display / rendering are only supported on linux based CI
+[feature.headless.target.linux.activation.env]
+DISPLAY = ":99"
+VISP_ENABLE_TEST_WITHOUT_DISPLAY = "OFF"
+[feature.headless.target.linux.tasks]
+init-testing = { cmd = "bash ./development/scripts/pixi/xvfb.sh" }
+
 [feature.rbt]
 dependencies = { panda3d = { version = ">=1.10.15", channel = "https://prefix.dev/panda3d-forge" } }
 
@@ -96,12 +107,6 @@ DOXYGEN_AWESOME_DIR="$CONDA_PREFIX/doxygen-awesome-css"
 
 [feature.tests.activation.env]
 VISP_BUILD_TESTS = "ON"
-# Tests that require display / rendering are only supported on linux based CI
-[feature.tests.target.linux.activation.env]
-DISPLAY = ":99"
-VISP_ENABLE_TEST_WITHOUT_DISPLAY = "OFF"
-[feature.tests.target.linux.tasks]
-init-testing = { cmd = "bash ./development/scripts/pixi/xvfb.sh" }
 
 [feature.coverage.dependencies]
 gcovr = "*"
@@ -187,6 +192,7 @@ configure = { cmd = [
   "-DBUILD_COVERAGE=$VISP_BUILD_COVERAGE",
   "-DBUILD_DEPRECATED_FUNCTIONS=$VISP_BUILD_DEPRECATED_FUNCTIONS",
   "-DUSE_GTK2=$VISP_USE_GTK2",
+  "-DVISP_HAVE_OPENCV_HEADLESS=$VISP_HAVE_OPENCV_HEADLESS",
   "-DDOXYGEN_AWESOME_DIR=$DOXYGEN_AWESOME_DIR",
 
   "$VISP_EXTRA_CMAKE_ARGS"
@@ -200,21 +206,21 @@ test = { cmd = "ctest --test-dir $VISP_BUILD_DIR --output-on-failure --parallel 
 
 [environments]
 # Minimal set of features and python bindings
-with-python = { features = ["python-bindings", "doc"] }
+with-python = { features = ["python-bindings", "opencv-with-qt", "doc"] }
 # All <environment-name>-clang-cl variants are for building under Clang-cl compiler under windows instead of MSVC CL
-with-python-clang-cl = { features = ["python-bindings", "doc", "clang-cl"] }
+with-python-clang-cl = { features = ["python-bindings", "opencv-with-qt", "doc", "clang-cl"] }
 # All ViSP features including python bindings
-all = { features = ["rbt", "python-bindings", "doc"] }
-all-clang-cl = { features = ["rbt", "python-bindings", "doc", "clang-cl"] }
+all = { features = ["rbt", "python-bindings", "opencv-with-qt", "doc"] }
+all-clang-cl = { features = ["rbt", "python-bindings", "opencv-with-qt", "doc", "clang-cl"] }
 # All ViSP features (incl. python bindings) + tests
-all-with-tests = { features = ["rbt", "python-bindings", "doc", "tests"] }
-all-clang-cl-with-tests = { features = ["rbt", "python-bindings", "doc", "clang-cl", "tests"] }
-# Environments with all features + build of tests / tutorials / examples (mainly for CI)
-full-ci-python-oldest = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials", "python-oldest"]}
-full-ci-python-supported = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials", "python-supported"]}
-# full-ci-python-newest = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials", "python-newest"]}
-full-ci-coverage = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials", "coverage"]}
-full-ci-coverage-clang-cl = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials", "coverage", "clang-cl"]}
-full-ci-clang-cl-python-oldest = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials", "clang-cl", "python-oldest"]}
-full-ci-clang-cl-python-supported = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials", "clang-cl", "python-supported"]}
-# full-ci-clang-cl-python-newest = { features = ["rbt", "python-bindings", "tests", "examples", "tutorials", "clang-cl", "python-newest"]}
+all-with-tests = { features = ["rbt", "python-bindings", "opencv-with-qt", "doc", "tests"] }
+all-clang-cl-with-tests = { features = ["rbt", "python-bindings", "opencv-with-qt", "doc", "clang-cl", "tests"] }
+# Environments dedicated for CI (headless)
+full-ci-python-oldest = { features = ["rbt", "python-bindings", "headless", "tests", "examples", "tutorials", "python-oldest"]}
+full-ci-python-supported = { features = ["rbt", "python-bindings", "headless", "tests", "examples", "tutorials", "python-supported"]}
+# full-ci-python-newest = { features = ["rbt", "python-bindings", "headless", "tests", "examples", "tutorials", "python-newest"]}
+full-ci-coverage = { features = ["rbt", "python-bindings", "headless", "tests", "examples", "tutorials", "coverage"]}
+full-ci-coverage-clang-cl = { features = ["rbt", "python-bindings", "headless", "tests", "examples", "tutorials", "coverage", "clang-cl"]}
+full-ci-clang-cl-python-oldest = { features = ["rbt", "python-bindings", "headless", "tests", "examples", "tutorials", "clang-cl", "python-oldest"]}
+full-ci-clang-cl-python-supported = { features = ["rbt", "python-bindings", "headless", "tests", "examples", "tutorials", "clang-cl", "python-supported"]}
+# full-ci-clang-cl-python-newest = { features = ["rbt", "python-bindings", "headless", "tests", "examples", "tutorials", "clang-cl", "python-newest"]}
