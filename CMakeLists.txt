@@ -1057,7 +1057,8 @@ include(cmake/VISPExtraTargets.cmake)
 # Ogre plugins and resources
 include(cmake/OgreTools.cmake)
 if(USE_OGRE)
-  vp_set_ogre_media()
+  vp_set_ogre_plugin()
+  vp_set_ogre_resources()
   set(VISP_HAVE_OGRE_VERSION "(${OGRE_VERSION_MAJOR}<<16 | ${OGRE_VERSION_MINOR}<<8 | ${OGRE_VERSION_PATCH})") # for vpConfig.h
 endif()
 
