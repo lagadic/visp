@@ -22,6 +22,7 @@ ViSP 3.x.x (Version in development)
     . End of supporting Ubuntu 12.04
     . vpDisplay::displayCharString() is marked deprecated. Use vpDisplay::displayText() instead
     . vpHinkley class is deprecated, in favor of vpStatisticalTestHinkley
+    . vpPclViewer is deprecated. You should use vpDisplayPcl instead
     . vpRealSense class that was an interface over librealsense1 is removed. Use vpRealSense2 instead
   - New features and improvements
     . Introduce Python bindings for most of ViSP modules and classes (see corresponding tutorial)
@@ -229,7 +230,7 @@ ViSP 3.6.0 (released September 22, 2023)
     . New tutorial: Loading a model-based generic tracker from JSON
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-mb-generic-json.html
     . New tutorial: Threaded PCL viewer
-      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-pcl-viewer.html
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-display-pcl.html
     . New tutorial: Tracking with MegaPose
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-tracking-megapose.html
     . New tutorial: Exporting a 3D model to MegaPose after reconstruction with NeRF
