@@ -354,16 +354,22 @@ else() # DEFINED CMAKE_HELPER_SCRIPT
     # Updates VISP_SCRIPT_PC_LIBS (for visp.pc used by pkg-config)
     #----------------------------------------------------------------------
     set(exec_prefix "\${prefix}")
+
     if(IS_ABSOLUTE ${VISP_INC_INSTALL_PATH})
       set(includedir  "${VISP_INC_INSTALL_PATH}")
     else()
       set(includedir  "\${prefix}/${VISP_INC_INSTALL_PATH}")
     endif()
+
     if(IS_ABSOLUTE ${VISP_LIB_INSTALL_PATH})
       set(libdir      "${VISP_LIB_INSTALL_PATH}")
     else()
-      set(libdir      "\${prefix}/${VISP_LIB_INSTALL_PATH}")
+      set(libdir      "\${exec_prefix}/${VISP_LIB_INSTALL_PATH}")
     endif()
+    set(VISP_SCRIPT_PC_LIBS
+        "-Wl,-rpath,\${libdir} -L\${libdir}"
+        "${_modules}"
+      )
 
     # prepend with ViSP own include dir
     set(VISP_SCRIPT_PC_CFLAGS
@@ -374,18 +380,6 @@ else() # DEFINED CMAKE_HELPER_SCRIPT
     # Format the string to suppress CMake separators ";"
     vp_list_remove_separator(VISP_SCRIPT_PC_CFLAGS)
 
-    # prepend with ViSP own modules first
-    if(IS_ABSOLUTE ${VISP_LIB_INSTALL_PATH})
-      set(VISP_SCRIPT_PC_LIBS
-        "-L${VISP_LIB_INSTALL_PATH}"
-        "${_modules}"
-      )
-    else()
-      set(VISP_SCRIPT_PC_LIBS
-        "-L\${exec_prefix}/${VISP_LIB_INSTALL_PATH}"
-        "${_modules}"
-      )
-    endif()
     if(BUILD_SHARED_LIBS)
       set(VISP_SCRIPT_PC_LIBS_PRIVATE "${_extra_opt}")
     else()
