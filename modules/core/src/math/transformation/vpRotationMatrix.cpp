@@ -55,7 +55,6 @@
 #include <immintrin.h>
 #include <smmintrin.h>
 
-
 #define VISP_HAVE_SSE2 1
 #endif
 
@@ -96,9 +95,6 @@ BEGIN_VISP_NAMESPACE
 
 void vpRotationMatrix::rotateVectors(const vpMatrix &input, vpMatrix &output) const
 {
-
-
-
   output.resize(input.getRows(), input.getCols(), false, false);
   if (input.getCols() != 3) {
     throw vpException(vpException::dimensionError, "Input matrix should have 3 columns");
@@ -106,7 +102,42 @@ void vpRotationMatrix::rotateVectors(const vpMatrix &input, vpMatrix &output) co
   double *inputData = input.data;
   double *outputData = output.data;
 
-#if USE_SSE
+#if defined(__AVX__)
+  __m256d rows[] = {
+    _mm256_set_pd(0.0, rowPtrs[2][0], rowPtrs[1][0], rowPtrs[0][0]),
+    _mm256_set_pd(0.0, rowPtrs[2][1], rowPtrs[1][1], rowPtrs[0][1]),
+    _mm256_set_pd(0.0, rowPtrs[2][2], rowPtrs[1][2], rowPtrs[0][2]),
+  };
+
+  double result[4];
+
+  for (unsigned int i = 0; i < input.getRows(); ++i) {
+    const __m256d xyz = _mm256_set_pd(0.0, inputData[2], inputData[1], inputData[0]);
+
+#if defined(__FMA__)
+    __m256d dp = _mm256_mul_pd(rows[0], xyz);
+    dp = _mm256_fmadd_pd(rows[1], xyz, dp);
+    dp = _mm256_fmadd_pd(rows[2], xyz, dp);
+#else
+    __m256d col1 = _mm256_mul_pd(rows[0], xyz);
+    __m256d col2 = _mm256_mul_pd(rows[1], xyz);
+    __m256d col3 = _mm256_mul_pd(rows[2], xyz);
+
+    __m256d dp = _mm256_add_pd(col1, col2);
+    dp = _mm256_add_pd(dp, col3);
+#endif
+
+    _mm256_storeu_pd(result, dp);
+
+    outputData[0] = result[0];
+    outputData[1] = result[1];
+    outputData[2] = result[2];
+
+    inputData += 3;
+    outputData += 3;
+  }
+
+#elif USE_SSE
   __m128d rowStarts[] = {
     _mm_loadu_pd(rowPtrs[0]),
     _mm_loadu_pd(rowPtrs[1]),
