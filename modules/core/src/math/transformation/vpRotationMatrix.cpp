@@ -102,7 +102,7 @@ void vpRotationMatrix::rotateVectors(const vpMatrix &input, vpMatrix &output) co
   double *inputData = input.data;
   double *outputData = output.data;
 
-#if defined(__AVX__)
+#if defined(__AVX__) && 0 == 1
   __m256d rows[] = {
     _mm256_set_pd(0.0, rowPtrs[2][0], rowPtrs[1][0], rowPtrs[0][0]),
     _mm256_set_pd(0.0, rowPtrs[2][1], rowPtrs[1][1], rowPtrs[0][1]),
@@ -138,40 +138,75 @@ void vpRotationMatrix::rotateVectors(const vpMatrix &input, vpMatrix &output) co
   }
 
 #elif USE_SSE
-  __m128d rowStarts[] = {
-    _mm_loadu_pd(rowPtrs[0]),
-    _mm_loadu_pd(rowPtrs[1]),
-    _mm_loadu_pd(rowPtrs[2])
-  };
 
-  __m128d lastColStart = _mm_set_pd(rowPtrs[1][2], rowPtrs[0][2]);
-  __m128d lastColEnd = _mm_set_pd(rowPtrs[2][2], rowPtrs[2][2]);
 
-  const int dotProdFullMask = 0x33; // 0x3: use both input floats, 0x2: store into lane 1
-  const int dotProdFirstElemMask = 0x11;
+  __m128d row01_lo = _mm_loadu_pd(rowPtrs[0]);
+  __m128d row01_hi = _mm_loadu_pd(rowPtrs[1]);
+  __m128d row2_xy = _mm_loadu_pd(rowPtrs[2]);
 
-  for (unsigned int i = 0; i < input.getRows(); ++i) {
-    __m128d xy = _mm_loadu_pd(inputData);
-    __m128d zz = _mm_set_pd(inputData[2], inputData[2]);
-    // Perform dot products with the two first elements of each row
-    __m128d r1 = _mm_dp_pd(xy, rowStarts[0], dotProdFullMask);
-    __m128d r2 = _mm_dp_pd(xy, rowStarts[1], dotProdFullMask);
-    __m128d r3 = _mm_dp_pd(xy, rowStarts[2], dotProdFullMask);
+  // Preload third column as scalars
+  double c0 = rowPtrs[0][2];
+  double c1 = rowPtrs[1][2];
+  double c2 = rowPtrs[2][2];
 
-    __m128d r12xy = _mm_shuffle_pd(r1, r2, 0x2);
+  for (unsigned i = 0; i < input.getRows(); ++i) {
 
-    // Dot product between last columns of the rows and Z
-    __m128d lastColxy = _mm_dp_pd(zz, lastColStart, dotProdFullMask); // First two cols
-    __m128d lastColz = _mm_dp_pd(zz, lastColEnd, dotProdFirstElemMask); // Last one
+    const __m128d xy = _mm_loadu_pd(inputData);
 
-    __m128d r3z = _mm_add_pd(r3, lastColz);
+    const double z = inputData[2];
+    // const __m128d zz = _mm_set_pd(z, z);
 
-    _mm_storeu_pd(outputData, _mm_add_pd(r12xy, lastColxy));
+    __m128d mul0 = _mm_mul_pd(row01_lo, xy);
+    __m128d mul1 = _mm_mul_pd(row01_hi, xy);
+    __m128d r01 = _mm_hadd_pd(mul0, mul1);
+    __m128d mul2 = _mm_mul_pd(row2_xy, xy);
 
-    outputData[2] = _mm_cvtsd_f64(r3z);
+    // Adding scalars at the end without using simd is faster
+    // __m128d mulzz = _mm_mul_pd(row01_z, zz);
+    // r01 = _mm_add_pd(r01, mulzz);
+
+    // store result
+    outputData[0] = _mm_cvtsd_f64(r01) + c0 * z;
+    outputData[1] = _mm_cvtsd_f64(_mm_unpackhi_pd(r01, r01)) + c1 * z;
+    outputData[2] = _mm_cvtsd_f64(_mm_hadd_pd(mul2, mul2)) + c2 * z;
+
     inputData += 3;
     outputData += 3;
   }
+    // __m128d rowStarts[] = {
+    //   _mm_loadu_pd(rowPtrs[0]),
+    //   _mm_loadu_pd(rowPtrs[1]),
+    //   _mm_loadu_pd(rowPtrs[2])
+    // };
+
+    // __m128d lastColStart = _mm_set_pd(rowPtrs[1][2], rowPtrs[0][2]);
+    // __m128d lastColEnd = _mm_set_pd(rowPtrs[2][2], rowPtrs[2][2]);
+
+    // const int dotProdFullMask = 0x33; // 0x3: use both input floats, 0x2: store into lane 1
+    // const int dotProdFirstElemMask = 0x11;
+
+    // for (unsigned int i = 0; i < input.getRows(); ++i) {
+    //   __m128d xy = _mm_loadu_pd(inputData);
+    //   __m128d zz = _mm_set_pd(inputData[2], inputData[2]);
+    //   // Perform dot products with the two first elements of each row
+    //   __m128d r1 = _mm_dp_pd(xy, rowStarts[0], dotProdFullMask);
+    //   __m128d r2 = _mm_dp_pd(xy, rowStarts[1], dotProdFullMask);
+    //   __m128d r3 = _mm_dp_pd(xy, rowStarts[2], dotProdFullMask);
+
+    //   __m128d r12xy = _mm_shuffle_pd(r1, r2, 0x2);
+
+    //   // Dot product between last columns of the rows and Z
+    //   __m128d lastColxy = _mm_dp_pd(zz, lastColStart, dotProdFullMask); // First two cols
+    //   __m128d lastColz = _mm_dp_pd(zz, lastColEnd, dotProdFirstElemMask); // Last one
+
+    //   __m128d r3z = _mm_add_pd(r3, lastColz);
+
+    //   _mm_storeu_pd(outputData, _mm_add_pd(r12xy, lastColxy));
+
+    //   outputData[2] = _mm_cvtsd_f64(r3z);
+    //   inputData += 3;
+    //   outputData += 3;
+    // }
 
 
 #else
