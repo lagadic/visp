@@ -193,8 +193,10 @@ jobs:
 
     - name: Build libfranka from source
       # Since libfranka version 0.14.0 or later, you will need to install pinocchio and some more dependencies
+      # libfranka 0.18.1 doesn't build on ubuntu-22.04 (see issue https://github.com/frankarobotics/libfranka/issues/215)
       env:
         LD_LIBRARY_PATH: /opt/openrobots/lib
+      if: matrix.os == 'ubuntu-latest'
       run: |
         sudo apt-get install -y lsb-release curl
         sudo mkdir -p /etc/apt/keyrings
