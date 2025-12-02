@@ -295,7 +295,11 @@ bool readData(int cpt, const std::string &input_folder, const std::string &input
 #endif
 
   if (!vpIoTools::checkFilename(filename_color) && !vpIoTools::checkFilename(filename_depth) &&
-      !vpIoTools::checkFilename(filename_infra)) {
+      !vpIoTools::checkFilename(filename_infra)
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
+    && !vpIoTools::checkFilename(filename_pcl)
+#endif
+    ) {
     std::cerr << "End of sequence." << std::endl;
     return false;
   }
