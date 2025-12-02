@@ -335,6 +335,8 @@ void vpDisplayPCL::startThread(const bool &colorThread)
  * Start the viewer thread able to display a point cloud.
  * @param[inout] mutex : Shared mutex.
  * @param[in] pointcloud : Point cloud to display.
+ * @param[in] name The name of the point cloud to be displayed in the legend.
+ * @param[in] color The color in which you want the point cloud to be displayed.
  * \sa stop()
  */
 void vpDisplayPCL::startThread(std::mutex &mutex, pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud, const std::string &name, const vpColor &color)
@@ -376,7 +378,9 @@ void vpDisplayPCL::startThread(std::mutex &mutex, pcl::PointCloud<pcl::PointXYZR
  * @brief Insert a point cloud to display.
  *
  * @param[in] mutex Mutex that protects the point-cloud.
- * @param[in] pointcloud The point-cloud to displaY
+ * @param[in] pointcloud The point-cloud to display.
+ * @param[in] name The name of the point cloud to be displayed in the legend.
+ * @param[in] color The color in which you want the point cloud to be displayed.
  */
 void vpDisplayPCL::addPointCloud(std::mutex &mutex, pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud, const std::string &name, const vpColor &color)
 {
