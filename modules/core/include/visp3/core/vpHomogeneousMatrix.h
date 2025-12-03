@@ -381,7 +381,7 @@ public:
   vpHomogeneousMatrix &operator<<(double val);
   vpHomogeneousMatrix &operator,(double val);
 
-  void project(const vpMatrix &inputPoints, vpMatrix &outputPoints) const;
+  void project(const vpMatrix &inputPoints, vpMatrix &outputPoints, bool isTransposed) const;
 
   void orthogonalizeRotation();
 

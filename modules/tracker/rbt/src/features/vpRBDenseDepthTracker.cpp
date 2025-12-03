@@ -30,6 +30,7 @@
 
 #include <visp3/rbt/vpRBDenseDepthTracker.h>
 #include <visp3/core/vpMeterPixelConversion.h>
+#include <visp3/core/vpSIMDUtils.h>
 #include <visp3/core/vpDisplay.h>
 
 #ifdef VISP_HAVE_OPENMP
@@ -185,7 +186,12 @@ void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &frame,
     return;
   }
 
-  m_depthPointSet.updateAndErrorAndInteractionMatrix(frame.cam, cMo, frame.depth, m_error, m_L);
+  double t1 = vpTime::measureTimeMs();
+  m_depthPointSet.updateAndErrorAndInteractionMatrix(frame.cam, cMo, frame.depth, m_error, m_Lt);
+  m_L = m_Lt.t();
+
+  double t2 = vpTime::measureTimeMs();
+  std::cout << "Update took: " << (t2 - t1) << std::endl;
 
   m_robust.setMinMedianAbsoluteDeviation((frame.renders.zFar - frame.renders.zNear) * 0.01);
   m_robust.MEstimator(vpRobust::TUKEY, m_error, m_weights);
@@ -199,53 +205,243 @@ void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &frame,
       m_L[i][dof] *= m_weights[i];
     }
   }
-
   m_LTL = m_L.AtA();
   computeJTR(m_L, m_weighted_error, m_LTR);
   m_vvsConverged = false;
 }
 
-void vpRBDenseDepthTracker::display(const vpCameraParameters &/*cam*/, const vpImage<unsigned char> &/*I*/,
-                                    const vpImage<vpRGBa> &/*IRGB*/, const vpImage<unsigned char> &depth) const
+void errorAndInteractionMatrixBase(const vpMatrix &cXt, const vpMatrix &cNt, const vpMatrix &obsT, vpColVector &e, vpMatrix &Lt, unsigned int start, unsigned int end)
 {
-  switch (m_displayType) {
-  case DT_SIMPLE:
-  {
-    for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
-      vpColor c(0, 255, 0);
-      vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos[0], m_depthPoints[i].pixelPos[1], c, 1);
-    }
-    break;
+#if defined(VISP_HAVE_OPENMP)
+#pragma omp parallel for
+#endif
+  for (unsigned int i = start; i < end; ++i) {
+    const double X = cXt[0][i], Y = cXt[1][i], Z = cXt[2][i];
+    const double nX = cNt[0][i], nY = cNt[1][i], nZ = cNt[2][i];
+
+    const double D = -((nX * X) + (nY  * Y) + (nZ * Z));
+    const double projNormal = nX * obsT[0][i] + nY  * obsT[1][i] + nZ * obsT[2][i];
+
+    e[i] = D + projNormal;
+
+    Lt[0][i] = nX;
+    Lt[1][i] = nY;
+    Lt[2][i] = nZ;
+    Lt[3][i] = nZ * Y - nY * Z;
+    Lt[4][i] = nX * Z - nZ * X;
+    Lt[5][i] = nY * X - nX * Y;
   }
-  case DT_WEIGHT:
-  {
-    for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
-      vpColor c(0, static_cast<unsigned char>(m_weights[i] * 255), 0);
-      vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos[0], m_depthPoints[i].pixelPos[1], c, 1);
-    }
-    break;
-  }
-  case DT_ERROR:
-  {
-    double maxError = m_error.getMaxValue();
-    for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
-      vpColor c(static_cast<unsigned int>((m_error[i] / maxError) * 255), 0, 0);
-      vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos[0], m_depthPoints[i].pixelPos[1], c, 1);
-    }
-    break;
-  }
-  case DT_WEIGHT_AND_ERROR:
-  {
-    double maxError = m_error.getMaxValue();
-    for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
-      vpColor c(static_cast<unsigned int>((m_error[i] / maxError) * 255.0), static_cast<unsigned char>(m_weights[i] * 255), 0);
-      vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos[0], m_depthPoints[i].pixelPos[1], c, 1);
-    }
-    break;
-  }
-  default:
-    throw vpException(vpException::notImplementedError, "Depth tracker display type is invalid or not implemented");
-  }
+
 }
 
-END_VISP_NAMESPACE
+
+#if defined(VISP_HAVE_AVX2) || defined(VISP_HAVE_AVX) || defined(VISP_HAVE_SSE2)
+void errorAndInteractionMatrixSIMD(const vpMatrix &cXt, const  vpMatrix &cNt, const  vpMatrix &obsT, vpColVector &e, vpMatrix &Lt)
+{
+
+#if defined(VISP_HAVE_AVX2)
+
+  using Register = __m512d;
+  constexpr int numLanes = 8;
+  constexpr auto &loadu = _mm512_loadu_pd;
+  constexpr auto &mul = _mm512_mul_pd;
+  constexpr auto &sub = _mm512_sub_pd;
+  constexpr auto &storeu = _mm512_storeu_pd;
+#if defined(VISP_HAVE_FMA)
+  constexpr auto &fma = _mm512_fmadd_pd;
+#else
+  constexpr auto &add = _mm512_add_pd;
+#endif
+#elif defined(VISP_HAVE_AVX)
+  using Register = __m256d;
+  constexpr int numLanes = 4;
+
+  constexpr auto &loadu = _mm256_loadu_pd;
+  constexpr auto &mul = _mm256_mul_pd;
+  constexpr auto &sub = _mm256_sub_pd;
+
+  constexpr auto &storeu = _mm256_storeu_pd;
+#if defined(VISP_HAVE_FMA)
+  constexpr auto &fma = _mm256_fmadd_pd;
+#else
+  constexpr auto &add = _mm256_add_pd;
+#endif
+#elif VISP_HAVE_SSE2
+  using Register = __m128d;
+  constexpr int numLanes = 2;
+
+  constexpr auto &loadu = _mm_loadu_pd;
+  constexpr auto &mul = _mm_mul_pd;
+  constexpr auto &sub = _mm_sub_pd;
+
+  constexpr auto &storeu = _mm_storeu_pd;
+#if defined(VISP_HAVE_FMA)
+  constexpr auto &fma = _mm_fmadd_pd;
+#else
+  constexpr auto &add = _mm_add_pd;
+#endif
+#endif
+
+  for (int i = 0; i <= static_cast<int>(cXt.getCols()) - numLanes; i += numLanes) {
+    const Register X = loadu(cXt[0] + i), Y = loadu(cXt[1] + i), Z = loadu(cXt[2] + i);
+    const Register nX = loadu(cNt[0] + i), nY = loadu(cNt[1] + i), nZ = loadu(cNt[2] + i);
+    const Register obsX = loadu(obsT[0] + i), obsY = loadu(obsT[1] + i), obsZ = loadu(obsT[2] + i);
+
+    Register D = mul(nX, X);
+    Register projNormal = mul(obsX, X);
+#if defined(VISP_HAVE_FMA)
+    D = fma(nY, Y, D);
+    D = fma(nZ, Z, D);
+
+    projNormal = fma(nY, obsY, projNormal);
+    projNormal = fma(nZ, obsZ, projNormal);
+#else
+    D = add(mul(nY, Y), D);
+    D = add(mul(nZ, Z), D);
+
+    projNormal = add(mul(nY, obsY), projNormal);
+    projNormal = add(mul(nZ, obsZ), projNormal);
+#endif
+    storeu(e.data + i, sub(projNormal, D));
+
+    storeu(Lt[0] + i, nX);
+    storeu(Lt[1] + i, nY);
+    storeu(Lt[2] + i, nZ);
+
+    storeu(Lt[3] + i, sub(mul(nZ, Y), mul(nY, Z)));
+    storeu(Lt[4] + i, sub(mul(nX, Z), mul(nZ, X)));
+    storeu(Lt[5] + i, sub(mul(nY, X), mul(nX, Y)));
+  }
+  errorAndInteractionMatrixBase(cXt, cNt, obsT, e, Lt, (cXt.getCols() / numLanes) * numLanes, cXt.getCols());
+}
+#endif
+
+
+
+void vpRBDenseDepthTracker::vpDepthPointSet::updateAndErrorAndInteractionMatrix(
+  const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo,
+  const vpImage<float> &depth, vpColVector &e, vpMatrix &Lt)
+{
+  const vpRotationMatrix cRo = cMo.getRotationMatrix();
+  cMo.project(m_oXt, m_cXt, false);
+  cRo.rotateVectors(m_oNt, m_cNt, false);
+
+  m_invalid.clear();
+
+  const unsigned int numPoints = m_oXt.getCols();
+  e.resize(numPoints, false);
+  Lt.resize(6, numPoints, false, false);
+
+#if defined(VISP_HAVE_OPENMP)
+#pragma omp parallel
+  {
+#endif
+    std::vector<unsigned int> localInvalid;
+#if defined(VISP_HAVE_OPENMP)
+#pragma omp for
+#endif
+
+    for (int i = 0; i < static_cast<int>(numPoints); ++i) {
+      //Step 1: update and filter out points that are no longer valid
+      {
+        // Plane points away from the camera: this surface is no longer visible due to rotation
+        if (m_cNt[2][i] >= 0.0) {
+          localInvalid.push_back(i);
+          continue;
+        }
+        double x, y, u, v;
+        x = m_cXt[0][i] / m_cXt[2][i];
+        y = m_cXt[1][i] / m_cXt[2][i];
+
+        vpMeterPixelConversion::convertPointWithoutDistortion(cam, x, y, u, v);
+        // Point is no longer in image: depth value cannot be sampled
+        if (u < 0 || v < 0 || u >= depth.getWidth() || v >= depth.getHeight()) {
+          localInvalid.push_back(i);
+          continue;
+        }
+        const double Z = depth[static_cast<unsigned int>(v)][static_cast<unsigned int>(u)];
+        // Z value in the depth image from the camera is invalid
+        if (Z <= 0.0) {
+          localInvalid.push_back(i);
+          continue;
+        }
+
+        m_observations[0][i] = x * Z;
+        m_observations[1][i] = y * Z;
+        m_observations[2][i] = Z;
+      }
+    }
+#if defined(VISP_HAVE_OPENMP)
+#pragma omp critical
+    {
+      m_invalid.insert(m_invalid.end(), localInvalid.begin(), localInvalid.end());
+    }
+  }
+#else
+    m_invalid = std::move(localInvalid);
+#endif
+
+
+#if defined(VISP_HAVE_AVX2) || defined(VISP_HAVE_AVX) || defined(VISP_HAVE_SSE2)
+    errorAndInteractionMatrixSIMD(m_cXt, m_cNt, m_observations, e, Lt);
+#else
+    errorAndInteractionMatrixBase(m_cXt, m_cNt, m_observations, e, Lt, 0, numPoints);
+#endif
+
+  // Disable invalid points
+    for (unsigned int i : m_invalid) {
+      e[i] = 0.0;
+
+      Lt[0][i] = 0;
+      Lt[1][i] = 0;
+      Lt[2][i] = 0;
+      Lt[3][i] = 0;
+      Lt[4][i] = 0;
+      Lt[5][i] = 0;
+    }
+}
+
+  void vpRBDenseDepthTracker::display(const vpCameraParameters &/*cam*/, const vpImage<unsigned char> &/*I*/,
+                                      const vpImage<vpRGBa> &/*IRGB*/, const vpImage<unsigned char> &depth) const
+  {
+    switch (m_displayType) {
+    case DT_SIMPLE:
+    {
+      for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
+        vpColor c(0, 255, 0);
+        vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos[0], m_depthPoints[i].pixelPos[1], c, 1);
+      }
+      break;
+    }
+    case DT_WEIGHT:
+    {
+      for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
+        vpColor c(0, static_cast<unsigned char>(m_weights[i] * 255), 0);
+        vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos[0], m_depthPoints[i].pixelPos[1], c, 1);
+      }
+      break;
+    }
+    case DT_ERROR:
+    {
+      double maxError = m_error.getMaxValue();
+      for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
+        vpColor c(static_cast<unsigned int>((m_error[i] / maxError) * 255), 0, 0);
+        vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos[0], m_depthPoints[i].pixelPos[1], c, 1);
+      }
+      break;
+    }
+    case DT_WEIGHT_AND_ERROR:
+    {
+      double maxError = m_error.getMaxValue();
+      for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
+        vpColor c(static_cast<unsigned int>((m_error[i] / maxError) * 255.0), static_cast<unsigned char>(m_weights[i] * 255), 0);
+        vpDisplay::displayPoint(depth, m_depthPoints[i].pixelPos[0], m_depthPoints[i].pixelPos[1], c, 1);
+      }
+      break;
+    }
+    default:
+      throw vpException(vpException::notImplementedError, "Depth tracker display type is invalid or not implemented");
+    }
+  }
+
+  END_VISP_NAMESPACE
