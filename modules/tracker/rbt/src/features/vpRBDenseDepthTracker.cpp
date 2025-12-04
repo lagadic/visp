@@ -193,11 +193,16 @@ void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &frame,
   double t2 = vpTime::measureTimeMs();
   std::cout << "Update took: " << (t2 - t1) << std::endl;
 
+  t1 = vpTime::measureTimeMs();
   m_robust.setMinMedianAbsoluteDeviation((frame.renders.zFar - frame.renders.zNear) * 0.01);
+
   m_robust.MEstimator(vpRobust::TUKEY, m_error, m_weights);
+  t2 = vpTime::measureTimeMs();
+  std::cout << "M estimator took: " << (t2 - t1) << std::endl;
 
+  t1 = vpTime::measureTimeMs();
 
-
+#pragma omp parallel for
   for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
     m_weighted_error[i] = m_error[i] * m_weights[i];
     m_covWeightDiag[i] = m_weights[i] * m_weights[i];
@@ -205,15 +210,26 @@ void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &frame,
       m_L[i][dof] *= m_weights[i];
     }
   }
-  m_LTL = m_L.AtA();
+  t2 = vpTime::measureTimeMs();
+  std::cout << "weight mult took: " << (t2 - t1) << std::endl;
+  t1 = vpTime::measureTimeMs();
+  m_LTL.resize(6, 6);
+  m_L.AtA(m_LTL);
+  t2 = vpTime::measureTimeMs();
+  std::cout << "LTL took: " << (t2 - t1) << std::endl;
+  // m_LTR = m_Lt * m_weighted_error;
+  t1 = vpTime::measureTimeMs();
   computeJTR(m_L, m_weighted_error, m_LTR);
+  t2 = vpTime::measureTimeMs();
+  std::cout << "LTR took: " << (t2 - t1) << std::endl;
+  std::cout << std::endl;
   m_vvsConverged = false;
 }
 
 void errorAndInteractionMatrixBase(const vpMatrix &cXt, const vpMatrix &cNt, const vpMatrix &obsT, vpColVector &e, vpMatrix &Lt, unsigned int start, unsigned int end)
 {
 #if defined(VISP_HAVE_OPENMP)
-#pragma omp parallel for
+#pragma omp parallel for schedule(static, 2048)
 #endif
   for (unsigned int i = start; i < end; ++i) {
     const double X = cXt[0][i], Y = cXt[1][i], Z = cXt[2][i];
@@ -231,7 +247,6 @@ void errorAndInteractionMatrixBase(const vpMatrix &cXt, const vpMatrix &cNt, con
     Lt[4][i] = nX * Z - nZ * X;
     Lt[5][i] = nY * X - nX * Y;
   }
-
 }
 
 
@@ -239,49 +254,11 @@ void errorAndInteractionMatrixBase(const vpMatrix &cXt, const vpMatrix &cNt, con
 void errorAndInteractionMatrixSIMD(const vpMatrix &cXt, const  vpMatrix &cNt, const  vpMatrix &obsT, vpColVector &e, vpMatrix &Lt)
 {
 
-#if defined(VISP_HAVE_AVX2)
+  using namespace vpSIMD;
 
-  using Register = __m512d;
-  constexpr int numLanes = 8;
-  constexpr auto &loadu = _mm512_loadu_pd;
-  constexpr auto &mul = _mm512_mul_pd;
-  constexpr auto &sub = _mm512_sub_pd;
-  constexpr auto &storeu = _mm512_storeu_pd;
-#if defined(VISP_HAVE_FMA)
-  constexpr auto &fma = _mm512_fmadd_pd;
-#else
-  constexpr auto &add = _mm512_add_pd;
+#if defined(VISP_HAVE_OPENMP)
+#pragma omp parallel for
 #endif
-#elif defined(VISP_HAVE_AVX)
-  using Register = __m256d;
-  constexpr int numLanes = 4;
-
-  constexpr auto &loadu = _mm256_loadu_pd;
-  constexpr auto &mul = _mm256_mul_pd;
-  constexpr auto &sub = _mm256_sub_pd;
-
-  constexpr auto &storeu = _mm256_storeu_pd;
-#if defined(VISP_HAVE_FMA)
-  constexpr auto &fma = _mm256_fmadd_pd;
-#else
-  constexpr auto &add = _mm256_add_pd;
-#endif
-#elif VISP_HAVE_SSE2
-  using Register = __m128d;
-  constexpr int numLanes = 2;
-
-  constexpr auto &loadu = _mm_loadu_pd;
-  constexpr auto &mul = _mm_mul_pd;
-  constexpr auto &sub = _mm_sub_pd;
-
-  constexpr auto &storeu = _mm_storeu_pd;
-#if defined(VISP_HAVE_FMA)
-  constexpr auto &fma = _mm_fmadd_pd;
-#else
-  constexpr auto &add = _mm_add_pd;
-#endif
-#endif
-
   for (int i = 0; i <= static_cast<int>(cXt.getCols()) - numLanes; i += numLanes) {
     const Register X = loadu(cXt[0] + i), Y = loadu(cXt[1] + i), Z = loadu(cXt[2] + i);
     const Register nX = loadu(cNt[0] + i), nY = loadu(cNt[1] + i), nZ = loadu(cNt[2] + i);
@@ -289,19 +266,12 @@ void errorAndInteractionMatrixSIMD(const vpMatrix &cXt, const  vpMatrix &cNt, co
 
     Register D = mul(nX, X);
     Register projNormal = mul(obsX, X);
-#if defined(VISP_HAVE_FMA)
-    D = fma(nY, Y, D);
-    D = fma(nZ, Z, D);
+    D = vpSIMD::fma(nY, Y, D);
+    D = vpSIMD::fma(nZ, Z, D);
 
-    projNormal = fma(nY, obsY, projNormal);
-    projNormal = fma(nZ, obsZ, projNormal);
-#else
-    D = add(mul(nY, Y), D);
-    D = add(mul(nZ, Z), D);
+    projNormal = vpSIMD::fma(nY, obsY, projNormal);
+    projNormal = vpSIMD::fma(nZ, obsZ, projNormal);
 
-    projNormal = add(mul(nY, obsY), projNormal);
-    projNormal = add(mul(nZ, obsZ), projNormal);
-#endif
     storeu(e.data + i, sub(projNormal, D));
 
     storeu(Lt[0] + i, nX);

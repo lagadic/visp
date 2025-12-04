@@ -150,43 +150,7 @@ void vpHomogeneousMatrix::project(const vpMatrix &input, vpMatrix &output, bool 
 
 #if defined(VISP_HAVE_AVX2) || defined(VISP_HAVE_AVX) || defined(VISP_HAVE_SSE2)
 
-#if defined(VISP_HAVE_AVX2)
-
-    using Register = __m512d;
-    constexpr int numLanes = 8;
-    constexpr auto &set1 = _mm512_set1_pd;
-    constexpr auto &loadu = _mm512_loadu_pd;
-    constexpr auto &mul = _mm512_mul_pd;
-    constexpr auto &add = _mm512_add_pd;
-    constexpr auto &storeu = _mm512_storeu_pd;
-#if defined(VISP_HAVE_FMA)
-    constexpr auto &fma = _mm512_fmadd_pd;
-#endif
-#elif defined(VISP_HAVE_AVX)
-    using Register = __m256d;
-    constexpr int numLanes = 4;
-
-    constexpr auto &set1 = _mm256_set1_pd;
-    constexpr auto &loadu = _mm256_loadu_pd;
-    constexpr auto &mul = _mm256_mul_pd;
-    constexpr auto &add = _mm256_add_pd;
-    constexpr auto &storeu = _mm256_storeu_pd;
-#if defined(VISP_HAVE_FMA)
-    constexpr auto &fma = _mm256_fmadd_pd;
-#endif
-#elif VISP_HAVE_SSE2
-    using Register = __m128d;
-    constexpr int numLanes = 2;
-
-    constexpr auto &set1 = _mm_set1_pd;
-    constexpr auto &loadu = _mm_loadu_pd;
-    constexpr auto &mul = _mm_mul_pd;
-    constexpr auto &add = _mm_add_pd;
-    constexpr auto &storeu = _mm_storeu_pd;
-#if defined(VISP_HAVE_FMA)
-    constexpr auto &fma = _mm_fmadd_pd;
-#endif
-#endif
+    using namespace vpSIMD;
 
     Register elems[12];
     for (unsigned int i = 0; i < 12; ++i) {
@@ -198,51 +162,25 @@ void vpHomogeneousMatrix::project(const vpMatrix &input, vpMatrix &output, bool 
       const Register y4 = loadu(inputY);
       const Register z4 = loadu(inputZ);
 
-#if defined(VISP_HAVE_FMA)
       Register dp1 = mul(x4, elems[0]);
-      dp1 = fma(y4, elems[1], dp1);
-      dp1 = fma(z4, elems[2], dp1);
+      dp1 = vpSIMD::fma(y4, elems[1], dp1);
+      dp1 = vpSIMD::fma(z4, elems[2], dp1);
       dp1 = add(elems[3], dp1);
 
       Register dp2 = mul(x4, elems[4]);
-      dp2 = fma(y4, elems[5], dp2);
-      dp2 = fma(z4, elems[6], dp2);
+      dp2 = vpSIMD::fma(y4, elems[5], dp2);
+      dp2 = vpSIMD::fma(z4, elems[6], dp2);
       dp2 = add(elems[7], dp2);
 
       Register dp3 = mul(x4, elems[8]);
-      dp3 = fma(y4, elems[9], dp3);
-      dp3 = fma(z4, elems[10], dp3);
+      dp3 = vpSIMD::fma(y4, elems[9], dp3);
+      dp3 = vpSIMD::fma(z4, elems[10], dp3);
       dp3 = add(elems[11], dp3);
 
-
-#else
-      const Register muls[] = {
-        mul(x4, elems[0]),
-        mul(y4, elems[1]),
-        mul(z4, elems[2]),
-
-        mul(x4, elems[4]),
-        mul(y4, elems[5]),
-        mul(z4, elems[6]),
-
-        mul(x4, elems[8]),
-        mul(y4, elems[9]),
-        mul(z4, elems[10]),
-      };
-
-      Register dp1 = add(add(muls[0], muls[1]), muls[2]);
-      Register dp2 = add(add(muls[3], muls[4]), muls[5]);
-      Register dp3 = add(add(muls[6], muls[7]), muls[8]);
-
-      dp1 = add(dp1, elems[3]);
-      dp2 = add(dp2, elems[7]);
-      dp3 = add(dp3, elems[11]);
-#endif
 
       storeu(outputX, dp1);
       storeu(outputY, dp2);
       storeu(outputZ, dp3);
-
 
       inputX += numLanes; inputY += numLanes; inputZ += numLanes;
       outputX += numLanes; outputY += numLanes; outputZ += numLanes;
