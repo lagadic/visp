@@ -66,10 +66,6 @@ BEGIN_VISP_NAMESPACE
 class VISP_EXPORT VP_DEPRECATED vpPclViewer
 {
 public:
-  typedef typename pcl::PointXYZRGB pclPointXYZRGB;
-  typedef typename pcl::PointCloud<pclPointXYZRGB> pclPointCloudPointXYZRGB;
-  typedef typename pclPointCloudPointXYZRGB::Ptr pclPointCloudPointXYZRGBPtr;
-
   /**
    * @brief Structure that contains all the required parameters to display a legend on the viewer.
    */
@@ -127,7 +123,8 @@ public:
    * @param v_color A vector containing the 3 RGB values.
    * @return unsigned int The ID by which is known the point cloud by the viewer.
    */
-  unsigned int addSurface(const pclPointCloudPointXYZRGB::Ptr &surface, const std::string &name = "", const std::vector<unsigned char> &v_color = std::vector<unsigned char>());
+  unsigned int addSurface(const pcl::PointCloud<pcl::PointXYZRGB>::Ptr &surface, const std::string &name = "",
+                          const std::vector<unsigned char> &v_color = std::vector<unsigned char>());
 
   /**
    * @brief Add a surface to the list of point clouds known by the viewer.
@@ -139,7 +136,9 @@ public:
    * @param v_color A vector containing the 3 RGB values.
    * @return unsigned int The ID by which is known the point cloud by the viewer.
    */
-  unsigned int addSurface(const pclPointCloudPointXYZRGB::Ptr &surface, const vpColVector &weights, const std::string &name = "", const std::vector<unsigned char> &v_color = std::vector<unsigned char>());
+  unsigned int addSurface(const pcl::PointCloud<pcl::PointXYZRGB>::Ptr &surface, const vpColVector &weights,
+                          const std::string &name = "",
+                          const std::vector<unsigned char> &v_color = std::vector<unsigned char>());
 
   /**
    * @brief Update the surface known by \b id by the viewer.
@@ -148,7 +147,8 @@ public:
    * @param id The ID of the surface that must be updated.
    * @param hasToKeepColor If true, will be displayed in its original color. Otherwise, will be displayed in its default color.
    */
-  void updateSurface(const pclPointCloudPointXYZRGB::Ptr &surface, const unsigned int &id, const bool &hasToKeepColor = false);
+  void updateSurface(const pcl::PointCloud<pcl::PointXYZRGB>::Ptr &surface, const unsigned int &id,
+                     const bool &hasToKeepColor = false);
 
   /**
    * @brief Update the surface known by \b id by the viewer.
@@ -158,7 +158,8 @@ public:
    * @param weights The confidence weights of each points.
    * @param hasToKeepColor If true, will be displayed in its original color. Otherwise, will be displayed in its default color.
    */
-  void updateSurface(const pclPointCloudPointXYZRGB::Ptr &surface, const unsigned int &id, const vpColVector &weights, const bool &hasToKeepColor = false);
+  void updateSurface(const pcl::PointCloud<pcl::PointXYZRGB>::Ptr &surface, const unsigned int &id,
+                     const vpColVector &weights, const bool &hasToKeepColor = false);
 
   /**
    * @brief Blocking-mode display of the viewer.
@@ -185,7 +186,7 @@ protected:
    * @param surface The updated surface.
    * @param id The ID of the point cloud that must be updated.
    */
-  void threadUpdateSurface(const pclPointCloudPointXYZRGB::Ptr &surface, const unsigned int &id);
+  void threadUpdateSurface(const pcl::PointCloud<pcl::PointXYZRGB>::Ptr &surface, const unsigned int &id);
 
   /**
    * @brief Method to update a point cloud known by the viewer when the drawing thread is running.
@@ -194,7 +195,7 @@ protected:
    * @param surface The updated surface.
    * @param id The ID of the point cloud that must be updated.
    */
-  void threadUpdateSurfaceOriginalColor(const pclPointCloudPointXYZRGB::Ptr &surface, const unsigned int &id);
+  void threadUpdateSurfaceOriginalColor(const pcl::PointCloud<pcl::PointXYZRGB>::Ptr &surface, const unsigned int &id);
 
   /**
    * @brief Method to update a point cloud known by the viewer when the drawing thread is running.
@@ -204,7 +205,8 @@ protected:
    * @param id The ID of the point cloud that must be updated.
    * @param weights The confidence weights of each point. Must be between 0 and 1.
    */
-  void threadUpdateSurface(const pclPointCloudPointXYZRGB::Ptr &surface, const unsigned int &id, const vpColVector &weights);
+  void threadUpdateSurface(const pcl::PointCloud<pcl::PointXYZRGB>::Ptr &surface, const unsigned int &id,
+                           const vpColVector &weights);
 
   /**
    * @brief Method to update a point cloud known by the viewer when the drawing thread is running.
@@ -214,7 +216,8 @@ protected:
    * @param id The ID of the point cloud that must be updated.
    * @param weights The confidence weights of each point. Must be between 0 and 1.
    */
-  void threadUpdateSurfaceOriginalColor(const pclPointCloudPointXYZRGB::Ptr &surface, const unsigned int &id, const vpColVector &weights);
+  void threadUpdateSurfaceOriginalColor(const pcl::PointCloud<pcl::PointXYZRGB>::Ptr &surface, const unsigned int &id,
+                                        const vpColVector &weights);
 
 
   /**
@@ -231,7 +234,7 @@ protected:
    */
   void loopThread();
 
-  std::vector<pclPointCloudPointXYZRGB::Ptr> m_vPointClouds; /*!< The list of point clouds known by the viewer.*/
+  std::vector<pcl::PointCloud<pcl::PointXYZRGB>::Ptr> m_vPointClouds; /*!< The list of point clouds known by the viewer.*/
   std::vector<std::vector<double>> m_vhandler; /*!< The list of color handlers.*/
   pcl::visualization::PCLVisualizer::Ptr mp_viewer; /*!< The PCL viewer permitting the display.*/
   int m_width; /*!< The width of the window.*/
