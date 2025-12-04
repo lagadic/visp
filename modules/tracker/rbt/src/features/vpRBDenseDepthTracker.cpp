@@ -190,19 +190,12 @@ void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &frame,
   m_depthPointSet.updateAndErrorAndInteractionMatrix(frame.cam, cMo, frame.depth, m_error, m_Lt);
   m_L = m_Lt.t();
 
-  double t2 = vpTime::measureTimeMs();
-  std::cout << "Update took: " << (t2 - t1) << std::endl;
-
   t1 = vpTime::measureTimeMs();
   m_robust.setMinMedianAbsoluteDeviation((frame.renders.zFar - frame.renders.zNear) * 0.01);
-
   m_robust.MEstimator(vpRobust::TUKEY, m_error, m_weights);
-  t2 = vpTime::measureTimeMs();
-  std::cout << "M estimator took: " << (t2 - t1) << std::endl;
-
-  t1 = vpTime::measureTimeMs();
-
+#if defined(VISP_HAVE_OPENMP)
 #pragma omp parallel for
+#endif
   for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
     m_weighted_error[i] = m_error[i] * m_weights[i];
     m_covWeightDiag[i] = m_weights[i] * m_weights[i];
@@ -210,19 +203,9 @@ void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &frame,
       m_L[i][dof] *= m_weights[i];
     }
   }
-  t2 = vpTime::measureTimeMs();
-  std::cout << "weight mult took: " << (t2 - t1) << std::endl;
-  t1 = vpTime::measureTimeMs();
   m_LTL.resize(6, 6);
   m_L.AtA(m_LTL);
-  t2 = vpTime::measureTimeMs();
-  std::cout << "LTL took: " << (t2 - t1) << std::endl;
-  // m_LTR = m_Lt * m_weighted_error;
-  t1 = vpTime::measureTimeMs();
   computeJTR(m_L, m_weighted_error, m_LTR);
-  t2 = vpTime::measureTimeMs();
-  std::cout << "LTR took: " << (t2 - t1) << std::endl;
-  std::cout << std::endl;
   m_vvsConverged = false;
 }
 
