@@ -381,6 +381,9 @@ VP_OPTION(ENABLE_SSSE3 "" "" "Enable SSSE3 instructions" "" ON IF ((MSVC OR CMAK
 if(X86_64)
   VP_OPTION(ENABLE_AVX   "" "" "Enable AVX instructions"   "" OFF) # should be explicitly enabled, used in matrix transpose code
 endif()
+if(CMAKE_COMPILER_IS_GNUCXX)
+  VP_OPTION(ENABLE_NATIVE_ARCH  "" "" "Enable all available CPU instruction sets"   "" OFF)
+endif()
 
 #----------------------------------------------------------------------
 # BLAS / LAPACK
