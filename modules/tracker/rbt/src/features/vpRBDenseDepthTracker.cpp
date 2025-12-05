@@ -32,7 +32,6 @@
 #include <visp3/core/vpMeterPixelConversion.h>
 #include <visp3/core/vpSIMDUtils.h>
 #include <visp3/core/vpDisplay.h>
-#include <visp3/mbt/vpMbtTukeyEstimator.h>
 
 #ifdef VISP_HAVE_OPENMP
 #include <omp.h>
@@ -154,7 +153,7 @@ void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame
     }
 
     pointsPerThread[threadIdx] = std::move(localPoints);
-  }
+    }
   for (const std::vector<vpDepthPoint> &points: pointsPerThread) {
     m_depthPoints.insert(m_depthPoints.end(), std::make_move_iterator(points.begin()), std::make_move_iterator(points.end()));
   }
@@ -172,7 +171,7 @@ void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame
   else {
     m_numFeatures = 0;
   }
-}
+  }
 
 void vpRBDenseDepthTracker::initVVS(const vpRBFeatureTrackerInput &/*frame*/, const vpRBFeatureTrackerInput &/*previousFrame*/, const vpHomogeneousMatrix &/*cMo*/)
 {
@@ -201,16 +200,10 @@ void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &frame,
   double t1 = vpTime::measureTimeMs();
   m_depthPointSet.updateAndErrorAndInteractionMatrix(frame.cam, cMo, frame.depth, m_error, m_Lt);
   m_Lt.transpose(m_L);
-  std::cout << "Update took: " << (vpTime::measureTimeMs() - t1) << std::endl;
 
   t1 = vpTime::measureTimeMs();
-  // m_robust.setMinMedianAbsoluteDeviation((frame.renders.zFar - frame.renders.zNear) * 0.01);
-  // m_robust.MEstimator(vpRobust::TUKEY, m_error, m_weights);
-
-  vpMbtTukeyEstimator<double> robust;
-  // m_robust.setMinMedianAbsoluteDeviation();
-  robust.MEstimator(m_error, m_weights, (frame.renders.zFar - frame.renders.zNear) * 0.01);
-  std::cout << "MEstimator took: " << (vpTime::measureTimeMs() - t1) << std::endl;
+  m_robust.setMinMedianAbsoluteDeviation((frame.renders.zFar - frame.renders.zNear) * 0.01);
+  m_robust.MEstimator(vpRobust::TUKEY, m_error, m_weights);
 
 // #if defined(VISP_HAVE_OPENMP)
 // #pragma omp parallel for
@@ -231,7 +224,7 @@ void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &frame,
 void errorAndInteractionMatrixBase(const vpMatrix &cXt, const vpMatrix &cNt, const vpMatrix &obsT, vpColVector &e, vpMatrix &Lt, unsigned int start, unsigned int end)
 {
 #if defined(VISP_HAVE_OPENMP)
-#pragma omp parallel for schedule(static, 2048)
+#pragma omp parallel for
 #endif
   for (unsigned int i = start; i < end; ++i) {
     const double X = cXt[0][i], Y = cXt[1][i], Z = cXt[2][i];
@@ -297,7 +290,6 @@ void vpRBDenseDepthTracker::vpDepthPointSet::updateAndErrorAndInteractionMatrix(
   const vpRotationMatrix cRo = cMo.getRotationMatrix();
   cMo.project(m_oXt, m_cXt, false);
   cRo.rotateVectors(m_oNt, m_cNt, false);
-
   m_invalid.clear();
 
   const unsigned int numPoints = m_oXt.getCols();
@@ -323,7 +315,6 @@ void vpRBDenseDepthTracker::vpDepthPointSet::updateAndErrorAndInteractionMatrix(
         double x, y, u, v;
         x = m_cXt[0][i] / m_cXt[2][i];
         y = m_cXt[1][i] / m_cXt[2][i];
-
         vpMeterPixelConversion::convertPointWithoutDistortion(cam, x, y, u, v);
         // Point is no longer in image: depth value cannot be sampled
         if (u < 0 || v < 0 || u >= depth.getWidth() || v >= depth.getHeight()) {
@@ -336,7 +327,6 @@ void vpRBDenseDepthTracker::vpDepthPointSet::updateAndErrorAndInteractionMatrix(
           localInvalid.push_back(i);
           continue;
         }
-
         m_observations[0][i] = x * Z;
         m_observations[1][i] = y * Z;
         m_observations[2][i] = Z;
@@ -368,7 +358,6 @@ void vpRBDenseDepthTracker::vpDepthPointSet::updateAndErrorAndInteractionMatrix(
     Lt[4][i] = 0;
     Lt[5][i] = 0;
   }
-
 }
 
 void vpRBDenseDepthTracker::display(const vpCameraParameters &/*cam*/, const vpImage<unsigned char> &/*I*/,

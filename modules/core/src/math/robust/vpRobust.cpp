@@ -107,12 +107,13 @@ vpRobust &vpRobust::operator=(const vpRobust &&other)
 void vpRobust::resize(unsigned int n_data)
 {
   if (n_data != m_size) {
-    m_normres.resize(n_data);
-    m_sorted_normres.resize(n_data);
-    m_sorted_residues.resize(n_data);
+    m_normres.resize(n_data, false);
+    m_sorted_normres.resize(n_data, false);
+    m_sorted_residues.resize(n_data, false);
     m_size = n_data;
   }
 }
+
 
 // ===================================================================
 /*!
@@ -143,6 +144,8 @@ void vpRobust::MEstimator(const vpRobustEstimatorType method, const vpColVector 
 
   // Calculate median
   med = select(m_sorted_residues, 0, n_data - 1, ind_med);
+
+  // med = select(m_sorted_residues, 0, n_data - 1, ind_med);
   // --comment: residualMedian = med
 
   // Normalize residues
@@ -153,6 +156,7 @@ void vpRobust::MEstimator(const vpRobustEstimatorType method, const vpColVector 
 
   // Calculate MAD
   normmedian = select(m_sorted_normres, 0, n_data - 1, ind_med);
+
   // normalizedResidualMedian = normmedian ;
   // 1.48 keeps scale estimate consistent for a normal probability dist.
   m_mad = 1.4826 * normmedian; // median Absolute Deviation
@@ -534,7 +538,7 @@ double vpRobust::constrainedChi(vpRobustEstimatorType method, double x)
   default: {
     throw(vpException(vpException::fatalError, "Unsupported robust estimator type in vpRobust::constrainedChi()"));
   }
-  }
+}
 
   return -1;
 }

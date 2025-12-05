@@ -157,6 +157,7 @@ void vpRotationMatrix::rotateVectors(const vpMatrix &input, vpMatrix &output, bo
 
 
   else { // 3xN matrix
+    using namespace vpSIMD;
     if (input.getRows() != 3) {
       throw vpException(vpException::dimensionError, "Expected input to have 3 rows");
     }
@@ -168,64 +169,43 @@ void vpRotationMatrix::rotateVectors(const vpMatrix &input, vpMatrix &output, bo
     double *outputZ = output[2];
 
 
-#if defined(VISP_HAVE_AVX)
+#if defined(VISP_HAVE_AVX) || defined(VISP_HAVE_SSE2) || defined(VISP_HAVE_AVX2)
 
-    __m256d elems[9];
+    Register elems[9];
     for (unsigned int i = 0; i < 9; ++i) {
-      elems[i] = _mm256_set1_pd(data[i]);
+      elems[i] = set1(data[i]);
     }
-    for (int i = 0; i <= static_cast<int>(input.getCols()) - 4; i += 4) {
-      const __m256d x4 = _mm256_loadu_pd(inputX);
-      const __m256d y4 = _mm256_loadu_pd(inputY);
-      const __m256d z4 = _mm256_loadu_pd(inputZ);
+    for (int i = 0; i <= static_cast<int>(input.getCols()) - vpSIMD::numLanes; i += vpSIMD::numLanes) {
+      const Register x4 = loadu(inputX);
+      const Register y4 = loadu(inputY);
+      const Register z4 = loadu(inputZ);
 
-#if defined(VISP_HAVE_FMA)
-      __m256d dp1 = _mm256_mul_pd(x4, elems[0]);
-      dp1 = _mm256_fmadd_pd(y4, elems[1], dp1);
-      dp1 = _mm256_fmadd_pd(z4, elems[2], dp1);
-      __m256d dp2 = _mm256_mul_pd(x4, elems[3]);
-      dp2 = _mm256_fmadd_pd(y4, elems[4], dp2);
-      dp2 = _mm256_fmadd_pd(z4, elems[5], dp2);
-      __m256d dp3 = _mm256_mul_pd(x4, elems[6]);
-      dp3 = _mm256_fmadd_pd(y4, elems[7], dp3);
-      dp3 = _mm256_fmadd_pd(z4, elems[8], dp3);
-
-#else
-      const __m256d muls = {
-        _mm256_mul_pd(x4, elems[0]),
-        _mm256_mul_pd(y4, elems[1]),
-        _mm256_mul_pd(z4, elems[2]),
-
-        _mm256_mul_pd(x4, elems[3]),
-        _mm256_mul_pd(y4, elems[4]),
-        _mm256_mul_pd(z4, elems[5]),
-
-        _mm256_mul_pd(x4, elems[6]),
-        _mm256_mul_pd(y4, elems[7]),
-        _mm256_mul_pd(z4, elems[8]),
-      }
-
-      __m256d dp1 = _mm256_add_pd(_mm256_add_pd(muls[0], muls[1]), muls[2]);
-      __m256d dp2 = _mm256_add_pd(_mm256_add_pd(muls[3], muls[4]), muls[5]);
-      __m256d dp3 = _mm256_add_pd(_mm256_add_pd(muls[6], muls[7]), muls[8]);
+      Register dp1 = mul(x4, elems[0]);
+      dp1 = vpSIMD::fma(y4, elems[1], dp1);
+      dp1 = vpSIMD::fma(z4, elems[2], dp1);
+      Register dp2 = mul(x4, elems[3]);
+      dp2 = vpSIMD::fma(y4, elems[4], dp2);
+      dp2 = vpSIMD::fma(z4, elems[5], dp2);
+      Register dp3 = mul(x4, elems[6]);
+      dp3 = vpSIMD::fma(y4, elems[7], dp3);
+      dp3 = vpSIMD::fma(z4, elems[8], dp3);
 
 
-#endif
 
-      _mm256_storeu_pd(outputX, dp1);
-      _mm256_storeu_pd(outputY, dp2);
-      _mm256_storeu_pd(outputZ, dp3);
+      storeu(outputX, dp1);
+      storeu(outputY, dp2);
+      storeu(outputZ, dp3);
 
 
-      inputX += 4; inputY += 4; inputZ += 4;
-      outputX += 4; outputY += 4; outputZ += 4;
+      inputX += vpSIMD::numLanes; inputY += vpSIMD::numLanes; inputZ += vpSIMD::numLanes;
+      outputX += vpSIMD::numLanes; outputY += vpSIMD::numLanes; outputZ += vpSIMD::numLanes;
 
     }
     double *r0 = rowPtrs[0];
     double *r1 = rowPtrs[1];
     double *r2 = rowPtrs[2];
 
-    for (unsigned int i = (input.getCols() / 4) * 4; i < input.getCols(); ++i) {
+    for (unsigned int i = (input.getCols() / vpSIMD::numLanes) * vpSIMD::numLanes; i < input.getCols(); ++i) {
       // std::cout << "i = " << i << std::endl;
       double X = *inputX, Y = *inputY, Z = *inputZ;
       *outputX = r0[0] * X + r0[1] * Y + r0[2] * Z;

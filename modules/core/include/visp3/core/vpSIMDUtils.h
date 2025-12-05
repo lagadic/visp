@@ -96,8 +96,8 @@ namespace vpSIMD
 #if defined(VISP_HAVE_AVX2)
 using Register = __m512d;
 
-inline const int numLanes = 8;
-inline Register add(const Register a, const Register b)
+inline constexpr int numLanes = 8;
+inline const Register add(const Register a, const Register b)
 {
   return _mm512_add_pd(a, b);
 }
