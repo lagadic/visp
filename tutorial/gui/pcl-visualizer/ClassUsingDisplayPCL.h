@@ -1,16 +1,18 @@
 #ifndef _ClassUsingPclVisualizer_h_
 #define _ClassUsingPclVisualizer_h_
 
-//! \example ClassUsingPclViewer.h
+//! \example ClassUsingDisplayPCL.h
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_VISUALIZATION) && defined(VISP_HAVE_PCL_IO)
 
 #include<visp3/core/vpColVector.h>
-#include<visp3/gui/vpPclViewer.h>
+#include<visp3/gui/vpDisplayPCL.h>
 
-class ClassUsingPclViewer
+class ClassUsingDisplayPCL
 {
+public:
+  using PointType = pcl::PointXYZ;
 private:
   VISP_NAMESPACE_ADDRESSING vpTranslationVector m_t; /*!< The translation between the noise-free point cloud and the possibly noisy, translated + rotated one*/
   VISP_NAMESPACE_ADDRESSING vpRotationMatrix m_R; /*!< The rotation between the noise-free point cloud and the possibly noisy, translated + rotated one*/
@@ -25,16 +27,17 @@ private:
   unsigned int m_m;  /*!< Number of points along the Y-axis.*/
   double m_dY; // m_dY = (m_maxY - m_minY)/(m_m-1)
 
-  VISP_NAMESPACE_ADDRESSING vpPclViewer m_visualizer; /*!< The PCL-based visualizer.*/
+  VISP_NAMESPACE_ADDRESSING vpDisplayPCL m_visualizer; /*!< The PCL-based visualizer.*/
 
   /**
    * @brief Generate a noise-free grid of point, and a possibly noisy one, which is translated and rotated with regarded to the noise-free one.
    *
    * @param addedNoise Standard deviation of the noise.
    * @param order The order of the polynomial surface that is generated.
-   * @return std::pair<vpPclViewer::pclPointCloudPointXYZRGBPtr, vpPclViewer::pclPointCloudPointXYZRGBPtr>
+   * @param base The original point cloud, without rotation
+   * @param rotated The rotated point cloud, with noise
    */
-  std::pair<VISP_NAMESPACE_ADDRESSING vpPclViewer::pclPointCloudPointXYZRGBPtr, VISP_NAMESPACE_ADDRESSING vpPclViewer::pclPointCloudPointXYZRGBPtr> generateControlPoints(const double &addedNoise, const unsigned int &order, VISP_NAMESPACE_ADDRESSING vpColVector &confidenceWeights);
+  void generateControlPoints(const double &addedNoise, const unsigned int &order, pcl::PointCloud<PointType>::Ptr &base, pcl::PointCloud<PointType>::Ptr &rotated);
 public:
   /**
    * @brief Construct a new object.
@@ -43,26 +46,18 @@ public:
    * @param ylimits A pair defining the <min, max> values of Y-coordinates of the generated surface.
    * @param nbPoints The number of points along the <X-axis, Y-axis> that will be generated.
    */
-  ClassUsingPclViewer(std::pair<double, double> xlimits = { -2.5,2.5 }, std::pair<double, double> ylimits = { -2.5,2.5 }, std::pair<unsigned int, unsigned int> nbPoints = { 50,50 });
+  ClassUsingDisplayPCL(std::pair<double, double> xlimits = { -2.5,2.5 }, std::pair<double, double> ylimits = { -2.5,2.5 }, std::pair<unsigned int, unsigned int> nbPoints = { 50,50 });
 
-  ~ClassUsingPclViewer();
-
-  /**
-   * @brief Demonstration on how to use a \b vpPclViewer in blocking mode, i.e.
-   * we expect an input from the user after call to \b vpPclViewer::display
-   * to go forward in the code.
-   * @param addedNoise Standard deviation of the noise added to the moved surface.
-   * @param order  The order of the polynomial surface that is generated.
-   */
-  void blockingMode(const double &addedNoise, const unsigned int &order);
+  ~ClassUsingDisplayPCL();
 
   /**
-   * @brief Demonstration on how to use a \b vpPclViewer in threaded mode.
+   * @brief Demonstration on how to use a \b vpDisplayPCL in threaded mode.
    *
    * @param addedNoise Standard deviation of the noise added to the moved surface.
    * @param order  The order of the polynomial surface that is generated.
+   * @param useMonothread If true, use the monothread version of the viewer.
    */
-  void threadedMode(const double &addedNoise, const unsigned int &order);
+  void runDemo(const double &addedNoise, const unsigned int &order, const bool &useMonothread);
 };
 #endif
 #endif

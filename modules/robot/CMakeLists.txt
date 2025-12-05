@@ -65,7 +65,7 @@ if(USE_VIRTUOSE)
   endif()
 endif()
 
-if(USE_AFMA4 OR USE_AFMA6 OR USE_VIPER650 OR USE_VIPER850)
+if(USE_AFMA6 OR USE_VIPER650 OR USE_VIPER850)
   list(APPEND opt_system_incs ${RAW1394_INCLUDE_DIRS})
   list(APPEND opt_system_incs ${CALINUX_INCLUDE_DIRS})
   list(APPEND opt_system_incs ${IRISA_INCLUDE_DIRS})
@@ -191,6 +191,6 @@ vp_add_tests(
   DEPENDS_ON
     visp_sensor visp_vision visp_blob visp_gui
   CTEST_EXCLUDE_PATH
-    bebop2 qbdevice servo-afma4 servo-afma6 servo-franka servo-pixhawk servo-pololu servo-universal-robots
+    bebop2 qbdevice servo-afma6 servo-franka servo-pixhawk servo-pololu servo-universal-robots
     servo-viper virtuose
 )

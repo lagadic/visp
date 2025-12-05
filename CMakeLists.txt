@@ -171,6 +171,8 @@ endif()
 #----------------------------------------------------------------------
 # PCL tools
 include(cmake/PCLTools.cmake)
+# Eigen3 tools
+include(cmake/Eigen3Tools.cmake)
 
 #----------------------------------------------------------------------
 # Platform specific
@@ -591,7 +593,6 @@ find_host_program(XRANDR xrandr)
 
 VP_CHECK_PACKAGE(C99)
 
-VP_OPTION(USE_AFMA4       ""          ""    "Include Afma4 robot support"      "" ON IF (RAW1394_FOUND AND RT_FOUND AND CALINUX_FOUND AND IRISA_FOUND AND NOT WINRT AND NOT IOS))
 VP_OPTION(USE_AFMA6       ""          ""    "Include Afma6 robot support"      "" ON IF (RAW1394_FOUND AND RT_FOUND AND CALINUX_FOUND AND IRISA_FOUND AND NOT WINRT AND NOT IOS))
 VP_OPTION(USE_VIPER650    ""          ""    "Include Viper s650 robot support" "" ON IF (RAW1394_FOUND AND RT_FOUND AND CALINUX_FOUND AND IRISA_FOUND AND NOT WINRT AND NOT IOS))
 VP_OPTION(USE_VIPER850    ""          ""    "Include Viper s850 robot support" "" ON IF (RAW1394_FOUND AND RT_FOUND AND CALINUX_FOUND AND IRISA_FOUND AND NOT WINRT AND NOT IOS))
@@ -632,7 +633,6 @@ VP_OPTION(USE_OGRE        OGRE        QUIET "Include Ogre3D support"           "
 VP_OPTION(USE_OIS         OIS         QUIET "Include Ogre3D/ois support"       "OIS_DIR"  ON IF USE_OGRE AND NOT WINRT AND NOT IOS)
 VP_OPTION(USE_LIBFREENECT LIBFREENECT ""    "Include libfreenect support"      "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_LIBUSB_1    LIBUSB_1    ""    "Include libusb-1 support"         "" ON IF NOT WINRT AND NOT IOS)
-VP_OPTION(USE_REALSENSE   RealSense   ""    "Include RealSense SDK support"    "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_REALSENSE2  RealSense2  ""    "Include RealSense2 SDK support"   "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_OCCIPITAL_STRUCTURE   Occipital_Structure   ""    "Include Occipital Structure SDK support" "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_SOWIN       SOWIN       ""    "Include Coin/SoWin support"   "" OFF IF (WIN32 AND USE_COIN3D) AND NOT WINRT AND NOT IOS)
@@ -674,6 +674,12 @@ VP_OPTION(USE_DMTX        DMTX         ""    "Include dmtx support"         "" O
 VP_OPTION(USE_PCL         PCL          QUIET "Include Point Cloud Library support" "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_TENSORRT    TensorRT     ""    "Include TensorRT support"     "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_NLOHMANN_JSON nlohmann_json QUIET "Include nlohmann json support" "" ON)
+
+if(USE_EIGEN3)
+  # Since Eigen 5.0.0, EIGEN3_INCLUDE_DIRS is not defined anymore.
+  # We need to get the include dir from the imported target Eigen3::Eigen.
+  vp_find_eigen3(EIGEN3_INCLUDE_DIRS Eigen3_VERSION)
+endif()
 
 if(USE_PCL)
   # PCL is used in modules gui, sensor and mbt.
@@ -763,6 +769,12 @@ if(VISP_CXX_STANDARD LESS VISP_CXX_STANDARD_17)
     unset(USE_MAVSDK)
     set(USE_MAVSDK OFF CACHE BOOL "Include mavsdk support for mavlink compatible devices" FORCE)
   endif()
+  if(USE_PCL AND (PCL_VERSION VERSION_GREATER_EQUAL 1.15.0))
+    # pcl >= 1.15.0 requires c++17
+    message(WARNING "pcl 3rd party was detected and needs at least c++17 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable pcl usage turning USE_PCL=OFF.")
+    unset(USE_PCL)
+    set(USE_PCL OFF CACHE BOOL "Include pcl support" FORCE)
+  endif()
 endif()
 
 if(VISP_CXX_STANDARD LESS VISP_CXX_STANDARD_14)
@@ -770,6 +782,12 @@ if(VISP_CXX_STANDARD LESS VISP_CXX_STANDARD_14)
     message(WARNING "IIT force-torque SDK 3rd party was detected and needs at least c++14 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable IIT force-torque usage turning USE_FTIITSDK=OFF.")
     unset(USE_FTIITSDK)
     set(USE_FTIITSDK OFF CACHE BOOL "Include IIT force-torque SDK support" FORCE)
+  endif()
+  if(USE_EIGEN3 AND (Eigen3_VERSION VERSION_GREATER_EQUAL 5.0.0))
+    # Eigen >= 5.0.0 requires c++14
+    message(WARNING "Eigen3 3rd party was detected and needs at least c++14 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable Eigen3 usage turning USE_EIGEN3=OFF.")
+    unset(USE_EIGEN3)
+    set(USE_EIGEN3 OFF CACHE BOOL "Include Eigen3 support" FORCE)
   endif()
   if(USE_PCL AND (PCL_VERSION VERSION_GREATER 1.9.1))
     # pcl > 1.9.1 requires c++14
@@ -1039,7 +1057,8 @@ include(cmake/VISPExtraTargets.cmake)
 # Ogre plugins and resources
 include(cmake/OgreTools.cmake)
 if(USE_OGRE)
-  vp_set_ogre_media()
+  vp_set_ogre_plugin()
+  vp_set_ogre_resources()
   set(VISP_HAVE_OGRE_VERSION "(${OGRE_VERSION_MAJOR}<<16 | ${OGRE_VERSION_MINOR}<<8 | ${OGRE_VERSION_PATCH})") # for vpConfig.h
 endif()
 
@@ -1180,7 +1199,6 @@ VP_SET(VISP_HAVE_PANDA3D     TRUE IF (BUILD_MODULE_visp_ar AND USE_PANDA3D))
 VP_SET(VISP_HAVE_ZBAR        TRUE IF (BUILD_MODULE_visp_detection AND USE_ZBAR))
 VP_SET(VISP_HAVE_DMTX        TRUE IF (BUILD_MODULE_visp_detection AND USE_DMTX))
 
-VP_SET(VISP_HAVE_AFMA4       TRUE IF (BUILD_MODULE_visp_robot AND USE_AFMA4))
 VP_SET(VISP_HAVE_AFMA6       TRUE IF (BUILD_MODULE_visp_robot AND USE_AFMA6))
 VP_SET(VISP_HAVE_VIPER650    TRUE IF (BUILD_MODULE_visp_robot AND USE_VIPER650))
 VP_SET(VISP_HAVE_VIPER850    TRUE IF (BUILD_MODULE_visp_robot AND USE_VIPER850))
@@ -1217,7 +1235,6 @@ VP_SET(VISP_HAVE_CMU1394     TRUE IF (BUILD_MODULE_visp_sensor AND USE_CMU1394))
 VP_SET(VISP_HAVE_DIRECTSHOW  TRUE IF (BUILD_MODULE_visp_sensor AND USE_DIRECTSHOW))
 VP_SET(VISP_HAVE_LIBFREENECT TRUE IF (BUILD_MODULE_visp_sensor AND USE_LIBFREENECT))
 VP_SET(VISP_HAVE_LIBUSB_1    TRUE IF (BUILD_MODULE_visp_sensor AND USE_LIBUSB_1))
-VP_SET(VISP_HAVE_REALSENSE   TRUE IF (BUILD_MODULE_visp_sensor AND USE_REALSENSE))
 VP_SET(VISP_HAVE_REALSENSE2  TRUE IF (BUILD_MODULE_visp_sensor AND USE_REALSENSE2))
 VP_SET(VISP_HAVE_OCCIPITAL_STRUCTURE   TRUE IF (BUILD_MODULE_visp_sensor AND USE_OCCIPITAL_STRUCTURE))
 VP_SET(VISP_HAVE_FLYCAPTURE  TRUE IF (BUILD_MODULE_visp_sensor AND USE_FLYCAPTURE))
@@ -1281,6 +1298,11 @@ endif()
 # OpenCV version
 if(USE_OPENCV)
   set(VISP_HAVE_OPENCV_VERSION "(${OpenCV_VERSION_MAJOR}<<16 | ${OpenCV_VERSION_MINOR}<<8 | ${OpenCV_VERSION_PATCH})") # for vpConfig.h
+endif()
+
+# PCL version
+if(USE_PCL)
+  set(VISP_HAVE_PCL_VERSION "(${PCL_VERSION_MAJOR}<<16 | ${PCL_VERSION_MINOR}<<8 | ${PCL_VERSION_PATCH})") # for vpConfig.h
 endif()
 
 # coin and gui
@@ -1500,16 +1522,6 @@ if(USE_JPEG)
         vp_parse_header("${JPEG_INCLUDE_DIR}/jconfig-64.h" JPEG_LIB_VERSION JPEG_LIB_VERSION)
       endif()
     endif()
-  endif()
-endif()
-if(USE_EIGEN3)
-  # Additional check to be sure that Eigen3 include dir os well detected
-  if(NOT EXISTS ${EIGEN3_INCLUDE_DIR})
-    message(WARNING "Eigen3 config file is detected in ${Eigen3_DIR}. Using ${Eigen3_DIR}/Eigen3Config.cmake doesn't allow to use a valid Eigen3 include dir: ${EIGEN3_INCLUDE_DIR}. Modify Eigen3_DIR to point to Eigen3Config.cmake file located in Eigen3 installation folder or turn USE_EIGEN3 OFF.")
-  endif()
-  if(NOT EIGEN3_VERSION_STRING)
-    vp_parse_header("${EIGEN3_INCLUDE_DIR}/Eigen/src/Core/util/Macros.h" EIGEN3_VERSION_LINES EIGEN_WORLD_VERSION EIGEN_MAJOR_VERSION EIGEN_MINOR_VERSION)
-    set(EIGEN3_VERSION_STRING "${EIGEN_WORLD_VERSION}.${EIGEN_MAJOR_VERSION}.${EIGEN_MINOR_VERSION}")
   endif()
 endif()
 if(USE_COIN3D)
@@ -1807,7 +1819,7 @@ status("    \\- Use Atlas:"          USE_ATLAS          THEN "yes" ELSE "no")
 status("    \\- Use Netlib:"         USE_NETLIB         THEN "yes (ver ${NETLIB_VERSION})" ELSE "no")
 status("    \\- Use GSL:"            USE_GSL            THEN "yes (ver ${GSL_VERSION})" ELSE "no")
 status("    \\- Use Lapack (built-in):" WITH_LAPACK     THEN "yes (ver ${LAPACK_VERSION})" ELSE "no")
-status("    Use Eigen3:"             USE_EIGEN3         THEN "yes (ver ${EIGEN3_VERSION_STRING})" ELSE "no")
+status("    Use Eigen3:"             USE_EIGEN3         THEN "yes (ver ${Eigen3_VERSION})" ELSE "no")
 status("    Use OpenCV:"             USE_OPENCV         THEN "yes (ver ${OpenCV_VERSION})" ELSE "no")
 status("")
 status("  Simulator: ")
@@ -1840,7 +1852,6 @@ status("    Use simdlib (built-in):" WITH_SIMDLIB     THEN "yes (ver ${SIMD_VERS
 status("    Use npz I/O (built-in):" WITH_MINIZ       THEN "yes" ELSE "no")
 status("")
 status("  Real robots: ")
-status("    Use Afma4:"              USE_AFMA4        THEN "yes" ELSE "no")
 status("    Use Afma6:"              USE_AFMA6        THEN "yes" ELSE "no")
 if(USE_AFMA6)
 status("    \\- Data:"               AFMA6_DATA_FOUND THEN "yes (in ${AFMA6_DATA_PATH})" ELSE "no")
@@ -1892,7 +1903,6 @@ status("    Use Basler Pylon:"       USE_PYLON        THEN "yes (ver ${PYLON_VER
 status("    Use IDS uEye:"           USE_UEYE         THEN "yes (ver ${UEYE_VERSION})" ELSE "no")
 status("")
 status("  RGB-D sensors: ")
-status("    Use Realsense:"          USE_REALSENSE    THEN "yes (ver ${REALSENSE_VERSION})" ELSE "no")
 status("    Use Realsense2:"         USE_REALSENSE2   THEN "yes (ver ${REALSENSE2_VERSION})" ELSE "no")
 status("    Use Occipital Structure:"          USE_OCCIPITAL_STRUCTURE    THEN "yes" ELSE "no")
 status("    Use Kinect:"             USE_LIBFREENECT AND USE_LIBUSB_1 AND USE_THREADS THEN "yes" ELSE "no")

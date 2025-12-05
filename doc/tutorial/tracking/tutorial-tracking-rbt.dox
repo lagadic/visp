@@ -740,7 +740,7 @@ For more information see \ref modules/python/bindings/visp/python/rbt/PythonRBEx
 
 An example of RBT using Python is available under modules/python/examples/realsense-rbt.py
 
-\paragraph rbt_python_features 4.3.1. XFeat-based options
+\subsubsection rbt_python_features 4.3.1. XFeat-based options
 
 We provide a wrapper around the XFeat keypoints. XFeat keypoints are robust, and allow for reliable matching,
 even in the presence of large motion blur and image difference. They are far more powerful than the KLT based features.

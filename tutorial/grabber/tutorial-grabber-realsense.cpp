@@ -4,7 +4,6 @@
 #include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageStorageWorker.h>
-#include <visp3/sensor/vpRealSense.h>
 #include <visp3/sensor/vpRealSense2.h>
 
 void usage(const char *argv[], int error)
@@ -47,7 +46,6 @@ void usage(const char *argv[], int error)
     << "    Disable displaying captured images." << std::endl
     << "    When used and sequence name specified, record mode is internally set to 1 (continuous mode)."
     << std::endl
-    << std::endl
     << "  --help, -h" << std::endl
     << "    Print this helper message." << std::endl
     << std::endl;
@@ -79,7 +77,7 @@ void usage(const char *argv[], int error)
  */
 int main(int argc, const char *argv[])
 {
-#if (defined(VISP_HAVE_REALSENSE) || defined(VISP_HAVE_REALSENSE2)) && defined(VISP_HAVE_THREADS)
+#if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_THREADS)
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
 #endif
@@ -150,7 +148,6 @@ int main(int argc, const char *argv[])
     }
     vpImage<vpRGBa> I;
 
-#ifdef VISP_HAVE_REALSENSE2
     std::cout << "SDK        : Realsense 2" << std::endl;
     vpRealSense2 g;
     rs2::config config;
@@ -158,12 +155,7 @@ int main(int argc, const char *argv[])
     config.disable_stream(RS2_STREAM_INFRARED);
     config.enable_stream(RS2_STREAM_COLOR, opt_width, opt_height, RS2_FORMAT_RGBA8, opt_fps);
     g.open(config);
-#else
-    std::cout << "SDK        : Realsense 1" << std::endl;
-    vpRealSense g;
-    g.setStreamSettings(rs::stream::color, vpRealSense::vpRsStreamParams(opt_width, opt_height, rs::format::rgba8, 60));
-    g.open();
-#endif
+
     g.acquire(I);
 
     std::cout << "Image size : " << I.getWidth() << " " << I.getHeight() << std::endl;
@@ -242,7 +234,7 @@ int main(int argc, const char *argv[])
 #else
   (void)argc;
   (void)argv;
-#if !(defined(VISP_HAVE_REALSENSE) || defined(VISP_HAVE_REALSENSE2))
+#if !defined(VISP_HAVE_REALSENSE2)
   std::cout << "Install librealsense version > 2.31.0, configure and build ViSP again to use this example" << std::endl;
 #endif
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)

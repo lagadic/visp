@@ -1,0 +1,7 @@
+# Defines plugins to load
+
+# Define plugin folder
+PluginFolder=@VISP_OGRE_PLUGIN_DIR@
+
+# Define plugins
+@OGRE_PLUGIN_LINES@

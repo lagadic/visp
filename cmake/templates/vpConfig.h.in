@@ -180,6 +180,9 @@ namespace vp = VISP_NAMESPACE_NAME;
 // Defined if OpenCV available.
 #cmakedefine VISP_HAVE_OPENCV
 
+// Defined if using a headless version of OpenCV
+#cmakedefine VISP_HAVE_OPENCV_HEADLESS
+
 // OpenCV version in hexadecimal (for example 2.1.0 gives 0x020100).
 #ifdef VISP_HAVE_OPENCV
 #  define VISP_HAVE_OPENCV_VERSION ${VISP_HAVE_OPENCV_VERSION}
@@ -355,9 +358,6 @@ namespace vp = VISP_NAMESPACE_NAME;
 // Defined if libusb-1.0 library available.
 #cmakedefine VISP_HAVE_LIBUSB_1
 
-// Defined if librealSense library is available.
-#cmakedefine VISP_HAVE_REALSENSE
-
 // Defined if librealSense2 library is available.
 #cmakedefine VISP_HAVE_REALSENSE2
 
@@ -418,9 +418,6 @@ namespace vp = VISP_NAMESPACE_NAME;
 
 // Defined if Vicon SDK is available for mocap.
 #cmakedefine VISP_HAVE_VICON
-
-// Defined if Irisa's Afma4 robot available.
-#cmakedefine VISP_HAVE_AFMA4
 
 // Defined if Irisa's Afma6 robot available.
 #cmakedefine VISP_HAVE_AFMA6
@@ -508,6 +505,8 @@ namespace vp = VISP_NAMESPACE_NAME;
 
 // Defined if required PCL components are found
 #if defined(VISP_HAVE_PCL)
+// PCL version in hexadecimal (for example 1.15.1 gives 0x010F01).
+#define VISP_HAVE_PCL_VERSION ${VISP_HAVE_PCL_VERSION}
 #cmakedefine VISP_HAVE_PCL_COMMON
 #cmakedefine VISP_HAVE_PCL_FILTERS
 #cmakedefine VISP_HAVE_PCL_IO

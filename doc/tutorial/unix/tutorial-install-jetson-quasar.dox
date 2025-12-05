@@ -545,7 +545,6 @@ General configuration information for ViSP 3.4.1
     Use stb_image (built-in):    no
 
   Real robots:
-    Use Afma4:                   no
     Use Afma6:                   no
     Use Franka:                  no
     Use Viper650:                no

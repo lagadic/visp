@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_CATCH2)
+#if defined(VISP_HAVE_CATCH2) && defined(VISP_HAVE_DATASET) && (VISP_HAVE_DATASET_VERSION >= 0x030702)
 
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpImageConvert.h>
@@ -65,7 +65,6 @@
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
-#if defined(VISP_HAVE_DATASET)
 bool opt_no_display = false; // If true, disable display or tests requiring display
 
 struct SequenceFrame
@@ -260,7 +259,7 @@ SCENARIO("Running tracker on sequences with ground truth", "[rbt]")
       vpImage<unsigned char> displayI(h, w), displayDepth(h, w, 255), displayMask(h, w);
       vpImage<vpRGBa> displayRGB(h, w);
 
-      std::vector<std::shared_ptr<vpDisplay>> displays = vpDisplayFactory::makeDisplayGrid(2, 2, 0, 0, 20, 20,
+      std::vector<std::shared_ptr<vpDisplay>> displays = vpDisplayFactory::makeDisplayGrid(2, 2, 0, 0, 70, 70,
         "Gray", displayI,
         "Color", displayRGB,
         "Depth", displayDepth,
@@ -312,7 +311,6 @@ SCENARIO("Running tracker on sequences with ground truth", "[rbt]")
 
           }
         },
-        { "lower_teeth", {  } },
       };
 
       for (const std::string &objectName: objectNames) {
@@ -357,7 +355,9 @@ SCENARIO("Running tracker on sequences with ground truth", "[rbt]")
             vpDisplay::displayFrame(displayI, sequence.getGroundTruthGridPose(i), sequence.cam(), 0.05, vpColor::yellow);
 
             tracker.displayMask(displayMask);
-            vpDisplay::flush(displayI); vpDisplay::flush(displayRGB); vpDisplay::flush(displayDepth);
+            vpDisplay::flush(displayI);
+            vpDisplay::flush(displayRGB);
+            vpDisplay::flush(displayDepth);
             vpDisplay::flush(displayMask);
           }
           const vpHomogeneousMatrix init_cMo = init_cMos.find(objectName)->second;
@@ -392,7 +392,6 @@ SCENARIO("Running tracker on sequences with ground truth", "[rbt]")
             FAIL(ss.str());
           }
         }
-
       }
     }
   }
@@ -421,7 +420,5 @@ int main()
 {
   return EXIT_SUCCESS;
 }
-
-#endif
 
 #endif

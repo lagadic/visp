@@ -152,7 +152,7 @@ $ ccmake ../visp
 The following image shows that this command allows to configure (just by pressing [c] key) the build in a more advanced
 way where some options could be easily turned ON/OFF. It allows also to see which are the 3rd parties that will be used.
 To generate the makefiles, just press [g] key in the ccmake gui.
-\image html img-ccmake-centos-all.jpg Snapshot of the `ccmake ../visp command used to configure ViSP.
+\image html img-ccmake-centos-all.jpg Snapshot of the `ccmake ../visp` command used to configure ViSP.
 
 \subsection install_centos_build 4.4. Build ViSP libraries
 
@@ -306,10 +306,11 @@ $ make -j4
 $ sudo make install
 \endverbatim
 
-\note If you proceed to ViSP installation in a system folder like `/usr` or `/usr/local` there is no need to
-\ref install_centos_visp_dir that helps CMake to find ViSP libraries in an external project that uses ViSP as a 3rd
-party. If you rather install ViSP in a non "standard" folder, let say `/my/install/folder`, you have to set `VISP_DIR`
-to `/my/install/folder/lib/cmake/visp` that contains the `VISPConfig.cmake` file:
+\note If you proceed to ViSP installation in a system folder like `/usr` or `/usr/local` there is no need to set
+`VISP_DIR` environment variable (see \ref install_centos_visp_dir) that helps CMake to find ViSP libraries in an
+external project that uses ViSP as a 3rd party. If you rather install ViSP in a non "standard" folder, let say
+`/my/install/folder`, you have to set `VISP_DIR` to `/my/install/folder/lib/cmake/visp` that contains the
+`VISPConfig.cmake` file:
 \verbatim
 $ cd $VISP_WS/visp-build
 $ cmake ../visp -DCMAKE_INSTALL_PREFIX=/my/install/folder
@@ -379,12 +380,12 @@ $ make help | grep visp
 ... visp_tt_mi
 \endverbatim
 
-\subsection install_centos_tips_3rd_party 6.7. Which are the 3rd party libraries that are used in ViSP ?
+\subsection install_centos_tips_3rd_party 6.7. Which are the 3rd party libraries that are used in ViSP?
 
 To see which are the optional 3rd parties that are found during the configuration stage and that will be used by ViSP
 during the build you can have a look to the text file named `ViSP-third-party.txt` and located in `$VISP_WS/visp-build`.
 We provide hereafter an example of a possible content of this file:
-\verbatim
+\code
 ==========================================================
 General configuration information for ViSP 3.3.0
 
@@ -456,7 +457,6 @@ General configuration information for ViSP 3.3.0
     Use stb_image (built-in):    no
 
   Real robots:
-    Use Afma4:                   no
     Use Afma6:                   no
     Use Franka:                  no
     Use Viper650:                no
@@ -531,7 +531,7 @@ General configuration information for ViSP 3.3.0
   Install path:                  /usr/local
 
 ==========================================================
-\endverbatim
+\endcode
 
 \section install_centos_issues 7. Known issues
 \subsection install_centos_issues_pthread 7.1. libpthread may be hidden by files in //lib64

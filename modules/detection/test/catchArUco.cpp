@@ -80,6 +80,11 @@ TEST_CASE("ArUco detection test", "[aruco_detection_test]")
     {vpDetectorAprilTag::TAG_ARUCO_6x6_250, 250},
     {vpDetectorAprilTag::TAG_ARUCO_6x6_1000, 1000},
 
+    {vpDetectorAprilTag::TAG_ARUCO_7x7_50, 50},
+    {vpDetectorAprilTag::TAG_ARUCO_7x7_100, 100},
+    {vpDetectorAprilTag::TAG_ARUCO_7x7_250, 250},
+    {vpDetectorAprilTag::TAG_ARUCO_7x7_1000, 1000},
+
     {vpDetectorAprilTag::TAG_ARUCO_MIP_36h12, 250}
   };
 
@@ -227,6 +232,7 @@ TEST_CASE("ArUco pose computation test", "[aruco_detection_test]")
     {vpDetectorAprilTag::TAG_ARUCO_4x4_50, aruco::PredefinedDictionaryType::DICT_4X4_50},
     {vpDetectorAprilTag::TAG_ARUCO_5x5_50, aruco::PredefinedDictionaryType::DICT_5X5_50},
     {vpDetectorAprilTag::TAG_ARUCO_6x6_50, aruco::PredefinedDictionaryType::DICT_6X6_50},
+    {vpDetectorAprilTag::TAG_ARUCO_7x7_50, aruco::PredefinedDictionaryType::DICT_7X7_50},
     {vpDetectorAprilTag::TAG_ARUCO_MIP_36h12, aruco::PredefinedDictionaryType::DICT_ARUCO_MIP_36h12}
   };
 

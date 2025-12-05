@@ -33,22 +33,20 @@
 #
 #############################################################################
 
-cmake_minimum_required(VERSION 3.10)
-
-project(example-servo-afma4)
-
-find_package(VISP REQUIRED visp_core visp_blob visp_vs visp_robot visp_sensor visp_gui)
-
-set(example_cpp
-  moveAfma4.cpp
-  servoAfma4Point2DArtVelocity.cpp
-  servoAfma4Point2DCamVelocity.cpp
-  servoAfma4Point2DCamVelocityKalman.cpp
-)
-
-foreach(cpp ${example_cpp})
-  visp_add_target(${cpp})
-  if(COMMAND visp_add_dependency)
-    visp_add_dependency(${cpp} "examples")
+# Since Eigen 5.0.0, EIGEN3_INCLUDE_DIRS is not defined anymore.
+# We need to get the include dir from the imported target Eigen3::Eigen.
+macro(vp_find_eigen3 eigen3_include_dirs eigen3_version)
+  if (Eigen3_FOUND)
+    # Additional check to be sure that Eigen3 include dir is well detected
+    if(NOT ${eigen3_include_dirs})
+      get_target_property(imported_incs_ Eigen3::Eigen INTERFACE_INCLUDE_DIRECTORIES)
+      if(imported_incs_)
+        set(${eigen3_include_dirs} ${imported_incs_})
+      endif()
+    endif()
+    if(NOT ${eigen3_version})
+      vp_parse_header("${${eigen3_include_dirs}}/Eigen/src/Core/util/Macros.h" EIGEN3_VERSION_LINES EIGEN_WORLD_VERSION EIGEN_MAJOR_VERSION EIGEN_MINOR_VERSION)
+      set(${eigen3_version} "${EIGEN_WORLD_VERSION}.${EIGEN_MAJOR_VERSION}.${EIGEN_MINOR_VERSION}")
+    endif()
   endif()
-endforeach()
+endmacro()

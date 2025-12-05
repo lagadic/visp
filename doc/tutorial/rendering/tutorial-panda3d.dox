@@ -2,7 +2,7 @@
 \page tutorial-panda3d Rendering a 3D scene with Panda3D
 \tableofcontents
 
-\section tutorial-panda3d-intro Introduction
+\section tutorial-panda3d-intro 1. Introduction
 
 In the context of providing a render-based tracker, this tutorial introduces a new, easy to use renderer based on
 Panda3D.
@@ -27,8 +27,8 @@ renders and synchronizes changes to objects and the camera. Each Sub renderer im
 geometric (vpPanda3DGeometryRenderer) or color-based (vpPanda3DRGBRenderer) etc. They all inherit from
 vpPanda3DBaseRenderer, which implements basic functions for a panda renderer.
 
-\section tutorial-panda3d-install Panda3D installation
-\subsection tutorial-panda3d-install-ubuntu Installation on Ubuntu
+\section tutorial-panda3d-install 2. Panda3D installation
+\subsection tutorial-panda3d-install-ubuntu 2.1 Installation on Ubuntu
 
 - It is recommended to install the assimp package before installing Panda3D. This will allow you to load .obj files,
   which are a common and easily exportable format.
@@ -97,7 +97,7 @@ vpPanda3DBaseRenderer, which implements basic functions for a panda renderer.
       $ make -j$(nproc)
       \endcode
 
-\subsection tutorial-panda3d-install-macos Installation on macOS
+\subsection tutorial-panda3d-install-macos 2.2 Installation on macOS
 
 - Installer are available for macOS browsing the [download](https://www.panda3d.org/download/) page.
 \note For the latest Panda3D 1.10.15 SDK there is an `Installer for macOS X 10.9+` that is only compatible with
@@ -189,11 +189,11 @@ vpPanda3DBaseRenderer, which implements basic functions for a panda renderer.
     $ make -j$(sysctl -n hw.logicalcpu)
     \endcode
 
-\subsection tutorial-panda3d-install-windows Installation on Windows
+\subsection tutorial-panda3d-install-windows 2.3 Installation on Windows
 
 - Installer are available for Windows browsing the [download](https://www.panda3d.org/download/) page.
 
-\section tutorial-panda3d-file-conversion Converting a mesh to Panda's file format
+\section tutorial-panda3d-file-conversion 3. Converting a mesh to Panda's file format
 
 If you did not install assimp before installing Panda, you are fairly restricted in what mesh format you can load with
 Panda.
@@ -209,7 +209,7 @@ If you have Python, you can easily convert your model to a .bam file by doing th
    \endcode
 4. If you encounter issues, check the tool's settings with `gltf2bam -h`
 
-\section tutorial-panda3d-usage Using Panda3D for rendering
+\section tutorial-panda3d-usage 4. Using Panda3D for rendering
 
 An example that shows how to exploit Panda3D in ViSP to render a color image with support for textures and lighting, a
 depth image, normals in object space and in camera space is given in tutorial-panda3d-renderer.cpp.
@@ -289,12 +289,12 @@ Finally, we use the snippet below to move the object, updating the scene.
 To have a constant velocity, we multiply the displacement by the time that has elapsed between the frame's start and end.
 \snippet tutorial-panda3d-renderer.cpp Move object
 
-\section tutorial-panda3d-full-code Tutorial full code
+\section tutorial-panda3d-full-code 5. Tutorial full code
 
 The full code of tutorial-panda3d-renderer.cpp is given below.
 \include tutorial-panda3d-renderer.cpp
 
-\section tutorial-panda3d-run Running the tutorial
+\section tutorial-panda3d-run 6. Running the tutorial
 
 - Once ViSP is built, you may run the tutorial by:
   \code{.sh}
@@ -307,8 +307,8 @@ The full code of tutorial-panda3d-renderer.cpp is given below.
 <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/oqRuPwzXlD4?si=eYYta_eGWN3AbR51" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 \endhtmlonly
 
-\section tutorial-panda3d-issue Known issues
-\subsection tutorial-panda3d-issue-library-macOS Library not loaded: libpanda.1.11.dylib
+\section tutorial-panda3d-issue 7. Known issues
+\subsection tutorial-panda3d-issue-library-macOS 7.1 Library not loaded: libpanda.1.11.dylib
 
 This error occurs on macOS.
 
@@ -328,7 +328,7 @@ A quick fix is to add the path to the library in `DYLD_LIBRARY_PATH` env var:
 $ export DYLD_LIBRARY_PATH=/Library/Developer/Panda3D/lib:$DYLD_LIBRARY_PATH
 \endcode
 
-\subsection tutorial-panda3d-issue-segfault-macOS Segfault: :framework(error): Unable to create window
+\subsection tutorial-panda3d-issue-segfault-macOS 7.2 Segfault: :framework(error): Unable to create window
 
 This error occurs on macOS.
 
@@ -395,7 +395,7 @@ $ cmake ../visp -DUSE_PCL=OFF
 $ make -j$(sysctl -n hw.logicalcpu)
 \endcode
 
-\subsection tutorial-panda3d-issue-MacOSX-sdk-not-found Couldn't find any suitable MacOSX SDK!
+\subsection tutorial-panda3d-issue-MacOSX-sdk-not-found 7.3 Couldn't find any suitable MacOSX SDK!
 
 The following error may occur when building Panda3D from source on macOS Sequoia 15.3.1.
 \code{.sh}

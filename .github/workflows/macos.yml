@@ -14,8 +14,30 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # https://github.com/orgs/community/discussions/28474#discussioncomment-3350256
+  check_skip_flags:
+    name: Check skip flags
+    runs-on: macos-latest
+    outputs:
+      head-commit-message: ${{ steps.get_head_commit_message.outputs.headCommitMsg }}
+    steps:
+      - name: Get repo
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Print head git commit message
+        id: get_head_commit_message
+        run: echo "headCommitMsg=$(git show -s --format=%s)" >> $GITHUB_OUTPUT
+
   build-macos:
     runs-on: ${{ matrix.os }}
+    needs: check_skip_flags
+    if: >-
+      ${{
+        (!contains(needs.check_skip_flags.outputs.head-commit-message, '[SKIP-CI ALL]') &&
+        !contains(needs.check_skip_flags.outputs.head-commit-message, '[SKIP-CI MACOS]')) ||
+        contains(needs.check_skip_flags.outputs.head-commit-message, '[ENABLE-CI MACOS]')
+      }}
     strategy:
       fail-fast: false
       matrix:
@@ -23,7 +45,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: Print system information
       run: |
@@ -58,10 +80,37 @@ jobs:
       # TODO Might be merged with macos-latest deps installation if succeed
       if: matrix.os == 'macos-14'
       run: |
-        brew update
-        brew upgrade || true
-        brew install libpng libjpeg-turbo libdc1394 pcl librealsense zbar pkg-config nlohmann-json
-        brew install opencv
+        brew install libpng libjpeg-turbo libdc1394 opencv pcl librealsense zbar pkg-config nlohmann-json
+      #  brew update
+      #  brew upgrade || true
+      #  brew install libpng libjpeg-turbo libdc1394 pcl librealsense zbar pkg-config nlohmann-json
+      #  brew install opencv eigen
+
+    - name: Debug Eigen after upgrade 1
+      run: |
+        ls /opt/homebrew/Cellar/eigen/
+
+    - name: Debug Eigen after upgrade 2
+      run: |
+        ls -als /opt/homebrew/share/
+
+    - name: Debug Eigen after upgrade 3
+      run: |
+        ls -als /opt/homebrew/share/eigen3/
+
+    - name: Debug Eigen after upgrade 4
+      run: |
+        ls -als /opt/homebrew/share/eigen3/cmake
+
+    - name: Debug Eigen after upgrade 5
+      run: |
+        cat /opt/homebrew/share/eigen3/cmake/Eigen3Config.cmake
+
+      #  sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.locate.plist
+      #  locate "Eigen/Core"
+      #  locate "Eigen3Config.cmake"
+      #  ls /opt/homebrew/share/eigen3/cmake/
+      #  cat /opt/homebrew/share/eigen3/cmake/Eigen3Config.cmake
 
     - name: Install java dependencies
       run: |

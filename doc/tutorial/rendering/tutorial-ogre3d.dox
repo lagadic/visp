@@ -2,7 +2,7 @@
 \page tutorial-ogre Rendering a 3D scene with Ogre
 \tableofcontents
 
-\section tutorial-ogre-intro Introduction
+\section tutorial-ogre-intro 1. Introduction
 
 [Ogre](https://www.ogre3d.org/) is a cross-platform 3D rendering library. It is open-source and hosted on [github](https://github.com/OGRECave).
 
@@ -11,8 +11,8 @@ This renderer can output a color image, with support for textures and lighting.
 It can also be used in the Model-Based Tracker to check the visibility of the object (see \ref mbdep_settings_visibility_ogre).
 There is also the optional [OIS](https://github.com/wgois/OIS) library that can be used to animate the rendered object using the keyboard.
 
-\section tutorial-ogre-install Ogre installation
-\subsection tutorial-ogre-install-ubuntu Installation on Ubuntu
+\section tutorial-ogre-install 2. Ogre installation
+\subsection tutorial-ogre-install-ubuntu 2.1. Installation on Ubuntu
 
 - It is recommended to install Ogre and OIS from the apt packages.
 
@@ -56,13 +56,25 @@ There is also the optional [OIS](https://github.com/wgois/OIS) library that can 
   $ make -j$(nproc)
   \endcode
 
-\subsection tutorial-ogre-install-otherplatforms Installation on other platforms
+\subsection tutorial-ogre-install-windows 2.2. Installation on Windows (MSVC)
+
+- Download [Pre-built SDK](https://www.ogre3d.org/download/sdk/sdk-ogre#) for Windows (MSVC). At the time this tutorial
+  was written, we downloaded `ogre-sdk-v14.4.1-msvc142-x64.zip` file.
+- Unzip the Pre-built SDK in `%%VISP_WS%\3rdparty\ogre-sdk-v14.4.1-msvc142-x64`
+- Set `OGRE_DIR` environment var with the location of the SDK uding a Command (`cmd`) line terminal
+\code{.sh}
+C:\> setx OGRE_DIR %VISP_WS%\3rdparty\ogre-sdk-v14.4.1-msvc142-x64
+\endcode
+- Modify `Path` environment variable to add the path to Ogre dlls. In our case we added `%%OGRE_DIR%\bin`.
+- Close all the Command line terminals to ensure that both environment variables are taken into account.
+
+\subsection tutorial-ogre-install-otherplatforms 2.3.Installation on other platforms
 
 - See [Ogre download section](https://www.ogre.org/download/sdk/sdk-ogre) to see the available binaries
   or the [Ogre building guide](https://ogrecave.github.io/ogre/api/latest/building-ogre.html) to see how to compile
   it from sources.
 
-\section tutorial-ogre-usage Using Ogre for rendering
+\section tutorial-ogre-usage 3.Using Ogre for rendering
 
 An example that shows how to exploit Ogre in ViSP to render a color image with support for textures and lighting in
 camera space is given in AROgre.cpp.
@@ -74,7 +86,7 @@ of the sequence in the background, augmented by a grass plate and an animated ro
 To be able to run the program, you need to have downloaded [ViSP dataset](https://github.com/lagadic/visp-images) and
 correctly made ViSP detect this dataset (following e.g. \ref install_brew_dataset \ref install_win10_mingw_dataset or \ref install_ubuntu_dataset)
 
-\subsection tutorial-ogre-usage-inheriting-class Inheriting from vpAROgre to extend its functionalities.
+\subsection tutorial-ogre-usage-inheriting-class 3.1 Inheriting from vpAROgre to extend its functionalities.
 
 In order to extend the default behavior, we will write a class `vpAROgreExample` that inherits from the `vpAROgre` class.
 A class inheriting from the `vpAROgre` class should be instanciated with the camera parameters that must be used to
@@ -111,7 +123,7 @@ To make it less weird, we will add a plane on which the robot will stand:
 Finally, a method to manage keyboard events is written in case of the OIS library is installed:
 \snippet AROgre.cpp Listening for keyboard events
 
-\subsection tutorial-ogre-usage-rendering-loop Rendering loop
+\subsection tutorial-ogre-usage-rendering-loop 3.2. Rendering loop
 
 The rendering loop is given below:
 \snippet AROgre.cpp Rendering loop
@@ -126,12 +138,12 @@ This pose is then used by the renderer in order to display the virtual object at
 location in the image:
 \snippet AROgre.cpp Rendering
 
-\section tutorial-ogre-full-code Tutorial full code
+\section tutorial-ogre-full-code 4. Tutorial full code
 
 The full code of AROgre.cpp is given below.
 \include AROgre.cpp
 
-\section tutorial-ogre-run Running the tutorial
+\section tutorial-ogre-run 5.Running the tutorial
 
 Once ViSP is built, you may run the tutorial by:
 \code{.sh}
@@ -153,13 +165,13 @@ enabled, this robot can be animated using keyboard arrows.
 
 \image html img-ogre-robot.jpg Robot added in augmented reality.
 
-\section tutorial-ogre-issue Known issues
-\subsection tutorial-ogre-issue-library-texture Texture not displayed
+\section tutorial-ogre-issue 6. Known issues
+\subsection tutorial-ogre-issue-library-texture 6.1. Texture not displayed
 
 When running the example, the texture of the robot can not be displayed properly.
 Changing the rendering subsystem should fix the issue.
 
-\subsection tutorial-ogre-issue-display Problem of display with OpenGL ES renderer
+\subsection tutorial-ogre-issue-display 6.2. Problem of display with OpenGL ES renderer
 
 When using `OpenGL ES renderer`, the window might appear entirely black.
 Chosing another renderer subsystem like `OpenGL Rendering SubSystem` should fix the issue.

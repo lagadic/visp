@@ -50,7 +50,8 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         14, // TAG_ARUCO_4x4_1000
         18, // TAG_ARUCO_5x5_1000
         22, // TAG_ARUCO_6x6_1000
-        23, // TAG_ARUCO_MIP_36h12
+        26, // TAG_ARUCO_7x7_1000
+        27, // TAG_ARUCO_MIP_36h12
     };
     private int mMethod;
     private boolean mDisplayTagFrame;

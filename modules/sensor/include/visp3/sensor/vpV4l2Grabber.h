@@ -290,7 +290,7 @@ public:
   inline void setDevice(const std::string &devname) { device = devname; }
   /*!
 
-  Set the pixel format for capture.`If the specified pixel format is
+  Set the pixel format for capture. If the specified pixel format is
   out of range, we set the V4L2_RGB24_FORMAT.
 
   \param pixelformat : Camera pixel format coding.

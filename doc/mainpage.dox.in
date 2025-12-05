@@ -814,11 +814,6 @@ in different ways. This will motivate us to continue the efforts.
 */
 /*!
   \ingroup group_robot_real
-  \defgroup group_robot_real_cylindrical Cylindrical robot
-  Afma4 cylindrical robot interfaces.
-*/
-/*!
-  \ingroup group_robot_real
   \defgroup group_robot_real_unicycle Unicycle robot
   Pioneer P3DX unicycle robot interfaces.
 */

@@ -213,7 +213,7 @@ vpColVector vpMatrix::solveBySVD(const vpColVector &B) const
 
   \param V : Matrix \f$ V \f$.
 
-  The matrix object `(*this) is updated with \f$ U \f$.
+  The matrix object `(*this)` is updated with \f$ U \f$.
 
   \note The singular values are ordered in decreasing
   fashion in \e w. It means that the highest singular value is in \e w[0].

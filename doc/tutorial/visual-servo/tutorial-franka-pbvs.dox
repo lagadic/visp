@@ -60,7 +60,7 @@ Our robot is a Franka Research (FR1 or Panda) robot with a system firmware 4.2.2
 libfranka 0.9.2. Note that ViSP is known to be compatible with Franka Research 3 (FR3) robot. In that case, you may
 install `libfranka` latest release.
 
-\subsubsection franka_prereq_libfranka_0_9_2 2.3.1. libfranka 0.9.2
+\subsubsection franka_prereq_libfranka_0_9_2 2.3.1. libfranka 0.9.2 (Ubuntu)
 
 To install `libfranka 0.9.2` compatible with Franka Research (FR1 or Panda) robot, proceed with:
 
@@ -74,14 +74,73 @@ $ sudo apt install -y build-essential cmake git libpoco-dev libeigen3-dev
 \code{.sh}
 $ cd $VISP_WS/3rdparty
 $ git clone --branch 0.9.2 --recursive https://github.com/frankaemika/libfranka libfranka-0.9.2
-$ cd libfranka-0.9.2
-$ mkdir build && cd build
-$ cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=OFF
+$ mkdir libfranka-0.9.2/build && cd libfranka-0.9.2/build
+$ cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=OFF -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 $ make -j$(nproc)
 $ sudo make install
 \endcode
 
-\subsubsection franka_prereq_libfranka_latest 2.3.2. libfranka latest
+\subsubsection franka_prereq_libfranka_0_9_2_win 2.3.2. libfranka 0.9.2 (Windows)
+
+1. Install [vcpkg](https://github.com/microsoft/vcpkg) the C++ Library Manager for Windows.
+  - Install `vcpkg` in `%%VISP_WS%/3rdparty` folder by clone from github repository or ensure to have the latest
+    version with `git pull`.
+    To this end open a Command (`cmd`) line terminal and run:
+\code{.sh}
+C:\\> cd %VISP_WS%\3rdparty
+C:\\> git clone https://github.com/microsoft/vcpkg
+\endcode
+    or if already cloned:
+\code{.sh}
+C:\\> cd %VISP_WS%\3rdparty\vcpkg
+C:\\> git pull
+\endcode
+  - Boostrap `vcpkg`
+\code{.sh}
+C:\\> cd %VISP_WS%\3rdparty\vcpkg
+C:\\> bootstrap-vcpkg.bat
+\endcode
+  - Set `VCPKG_ROOT` environment var accordingly to the path to `vcpkg` folder using a Command (`cmd`) line terminal.
+    In our case we set this var using:
+\code{.sh}
+C:\\> setx  VCPKG_ROOT "%VISP_WS%\3rdparty\vcpkg"
+\endcode
+  - To help finding `vcpkg` executable, add `%%VCPKG_ROOT%` to the Path environment variable.
+    It could be added in a Command (`cmd`) line terminal with:
+\code{.sh}
+C:\\> setx Path "%Path%;%VCPKG_ROOT%"
+\endcode
+  - Close all the Command line terminals to ensure that `VCPKG_ROOT` and `Path` environment variables are taken
+    into account.
+
+2. Install dependencies
+  - Open a new Command (`cmd`) line terminal and install `libfranka` dependencies using `vcpkg`:
+\code{.sh}
+C:\> vcpkg install poco[net]:x64-windows eigen3
+\endcode
+
+3. Clone and build the repository
+\code{.sh}
+C:\\> cd %VISP_WS%\3rdparty
+C:\\> git clone --branch 0.9.2 --recursive https://github.com/frankaemika/libfranka libfranka-0.9.2
+C:\\> mkdir libfranka-0.9.2\build && cd libfranka-0.9.2\build
+C:\\> cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=OFF -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_TOOLCHAIN_FILE=%VCPKG_ROOT%\scripts\buildsystems\vcpkg.cmake -DCMAKE_INSTALL_PREFIX=install
+C:\\> cmake --build . --config Release --target install
+\endcode
+
+4. Help finding `libfranka` dll files<br>
+  To help finding `libfranka.dll`, `PocoNet.dll` and `PocoFoundation.dll`, you may update `Path` environment var with
+  the following line (we recommand to use the "system settings" pannel):
+\code{.sh}
+%VISP_WS%\3rdparty\libfranka-0.9.2\build\install\bin;%VCPKG_ROOT%\installed\x64-windows\bin"
+\endcode
+  The previous line could also be added in a Command (`cmd`) line terminal:
+\code{.sh}
+C:\\> setx Path "%Path%;%VISP_WS%\3rdparty\libfranka-0.9.2\build\install\bin;%VCPKG_ROOT%\installed\x64-windows\bin"
+\endcode
+  At this point, be careful since `setx` truncate the `Path` string to 1024 characters.
+
+\subsubsection franka_prereq_libfranka_latest 2.3.3. libfranka latest (Ubuntu)
 
 As described [here](https://github.com/frankaemika/libfranka/blob/main/README.md),
 to install the latest libfranka version, compatible with Franka Research 3 (FR3) robot follow the steps:
@@ -107,8 +166,7 @@ $ sudo apt-get install -y robotpkg-pinocchio
 \code{.sh}
 $ cd $VISP_WS/3rdparty
 $ git clone --recursive https://github.com/frankaemika/libfranka
-$ cd libfranka
-$ mkdir build && cd build
+$ mkdir libfranka/build && cd libfranka/build
 $ cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/opt/openrobots/lib/cmake -DBUILD_TESTS=OFF
 $ make -j$(nproc)
 $ sudo make install
@@ -179,10 +237,48 @@ camera transformation. This step is mandatory to control the robot in cartesian 
 \subsection franka_prereq_visp_build 2.7. Configure and build ViSP
 
 Since you installed new `libfranka` and `librealsense` 3rd parties, you need to configure again ViSP with cmake in
-order that ViSP is able to use these libraries. To this end follow \ref install_ubuntu_visp_config. At this step you
-should see new `USE_FRANKA` and `USE_LIBREALSENSE2` cmake vars appearing in the CMake GUI.
+order that ViSP is able to use these libraries.
 
-Now follow the instructions for \ref install_ubuntu_visp_build.
+\subsubsection franka_prereq_visp_build_ubuntu 2.7.1. Ubuntu
+
+- We recap hereafter the steps to configure and build ViSP with `libfranka` and `librealsense` on Ubuntu following
+  \ref install_ubuntu_visp_config and \ref install_ubuntu_visp_build instructions.
+- To configure ViSP with `libfranka` and `librealsense` using CMake, follow the steps:
+\code{.sh}
+$ cd $VISP_WS
+$ git clone https://github.com/lagadic/visp
+$ mkdir visp-build && cd visp-build
+$ cmake ../visp
+\endcode
+- Scroll in the terminal to check that both `Franka` and `Realsense2` are found.
+- Then build ViSP using:
+\code{.sh}
+$ cmake --build . --config Release
+\endcode
+
+\subsubsection franka_prereq_visp_build_win 2.7.2. Windows
+
+- To configure ViSP with `libfranka` and `librealsense` using CMake for Windows, follow the steps:
+\code{.sh}
+C:\\> cd %VISP_WS%
+C:\\> git clone https://github.com/lagadic/visp
+C:\\> mkdir visp-build-vc17 && cd visp-build-vc17
+C:\\> cmake ..\visp -G "Visual Studio 17 2022" -A x64 -DFranka_DIR=%VISP_WS%\3rdparty\libfranka\libfranka-0.9.2\build\install\lib\cmake\Franka -DEigen3_DIR=%VCPKG_ROOT%\installed\x64-windows\share\eigen3
+\endcode
+- Scroll in the terminal to check that both `Franka` and `Realsense2` are found. You should find lines like
+\code{.txt}
+--     Use Eigen3:                  yes (ver 3.4.1)
+--     Use Franka:                  yes (ver 0.9.2)
+--     Use Realsense2:              yes (ver 2.57.3)
+
+--     Eigen3 dir:                  C:\visp-ws\3rdparty\vcpkg\installed\x64-windows\share\eigen3
+\endcode
+- Then build ViSP using:
+\code{.sh}
+C:\\> cmake --build . --config Release
+\endcode
+- Now to help finding ViSP DLLs, add `%%VISP_WS%\visp-build-vc17\x64\vc17\bin\Release` folder to the `Path` environment
+  variable.
 
 \subsection franka_configure_ethernet 2.8. Configure Ethernet
 

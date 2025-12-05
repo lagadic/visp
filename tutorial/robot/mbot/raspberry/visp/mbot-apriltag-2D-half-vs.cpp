@@ -73,7 +73,11 @@ void usage(const char **argv, int error)
     << "      20: TAG_ARUCO_6x6_100" << std::endl
     << "      21: TAG_ARUCO_6x6_250" << std::endl
     << "      22: TAG_ARUCO_6x6_1000" << std::endl
-    << "      23: TAG_ARUCO_MIP_36h12" << std::endl
+    << "      23: TAG_ARUCO_7x7_50" << std::endl
+    << "      24: TAG_ARUCO_7x7_100" << std::endl
+    << "      25: TAG_ARUCO_7x7_250" << std::endl
+    << "      26: TAG_ARUCO_7x7_1000" << std::endl
+    << "      27: TAG_ARUCO_MIP_36h12" << std::endl
     << "    Default: 0 (36h11)" << std::endl
     << std::endl
     << "  --tag-decision-margin-threshold <threshold>" << std::endl

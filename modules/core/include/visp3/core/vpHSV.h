@@ -62,9 +62,9 @@ namespace
  * \brief Structure that gives the variance of the different channels of a HSV pixel assuming that
  * each channel follows a continuous uniform law defined on the intervall [0.; 1.].
  *
- * \tparam T The type used to encode the channels.
- * \tparam otherUseFullScale Unused
- * \tparam type Enable this structure only for floating point types.
+ * \tparam T : The type used to encode the channels.
+ * \tparam otherUseFullScale : Unused.
+ * \tparam EnableIf : Enable this structure only for floating point types.
  */
 template <typename T, bool otherUseFullScale, typename EnableIf = void>
 struct UniformLawVariance;
@@ -73,9 +73,9 @@ struct UniformLawVariance;
  * \brief Structure that gives the variance of the different channels of a HSV pixel assuming that
  * each channel follows a continuous uniform law defined on the intervall [0.; 1.].
  *
- * \tparam T The type used to encode the channels.
- * \tparam useFullScale Unused
- * \tparam std::enable_if<std::is_floating_point<U>::value, true>::type Enable this structure only for floating point types.
+ * \tparam T : The type used to encode the channels.
+ * \tparam useFullScale : Unused.
+ * \tparam std::enable_if<std::is_floating_point<U>::value, true>::type : Enable this structure only for floating point types.
  */
 template <typename T, bool useFullScale>
 struct UniformLawVariance<T, useFullScale, typename std::enable_if<std::is_floating_point<T>::value>::type>
@@ -89,11 +89,6 @@ struct UniformLawVariance<T, useFullScale, typename std::enable_if<std::is_float
 /**
  * \brief Structure that gives the variance of the different channels of a HSV pixel assuming that
  * each channel follows a discrete uniform law defined on the intervall {0; 1; ...; 255}.
- *
- * \tparam U Unsigned char.
- * \tparam otherUseFullScale true to make the Hue channel encoded on the intervall {0; 1; ... ; 255}.
- * \tparam std::enable_if<std::is_same<U, unsigned char>::value &&otherUseFullScale, U>::type Enable this structure
- * only for unsigned char and Hue encoded on the full range.
  */
 template <>
 struct UniformLawVariance<unsigned char, true>
@@ -108,11 +103,6 @@ struct UniformLawVariance<unsigned char, true>
  * \brief Structure that gives the variance of the different channels of a HSV pixel assuming that
  * each channel follows a discrete uniform law defined on the intervall {0; 1; ...; 255} for the Saturation and
  * Value channels and {0; 1; ...; maxHueUsingLimitedRange} for the Hue channel.
- *
- * \tparam U Unsigned char.
- * \tparam otherUseFullScale false to make the Hue channel encoded on the intervall {0; 1; ... ; maxHueUsingLimitedRange}.
- * \tparam std::enable_if<std::is_same<U, unsigned char>::value && !otherUseFullScale, U>::type Enable this structure
- * only for unsigned char and Hue encoded on the limited range.
  */
 template <>
 struct UniformLawVariance<unsigned char, false>
@@ -232,6 +222,15 @@ public:
   {
     buildFrom(rgba);
   }
+
+  /**
+   * Default destructor.
+   */
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+  virtual ~vpHSV() = default;
+#else
+  virtual ~vpHSV() { }
+#endif
 
   /**
    * \brief Modify the object to be the result of the conversion of the vpRGBa object into HSV format.
