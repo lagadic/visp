@@ -40,6 +40,8 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpMatrix.h>
 
+#include <visp3/core/vpSIMDUtils.h>
+
 // Rotation classes
 #include <visp3/core/vpRotationMatrix.h>
 
@@ -50,6 +52,210 @@
 #include <math.h>
 
 BEGIN_VISP_NAMESPACE
+
+
+void vpRotationMatrix::rotateVectors(const vpMatrix &input, vpMatrix &output, bool isTransposed) const
+{
+  output.resize(input.getRows(), input.getCols(), false, false);
+  if (isTransposed) {
+    if (input.getCols() != 3) {
+      throw vpException(vpException::dimensionError, "Input matrix should have 3 columns");
+    }
+    double *inputData = input.data;
+    double *outputData = output.data;
+#if defined(VISP_HAVE_AVX)
+    __m256d rows[] = {
+      _mm256_setr_pd(rowPtrs[0][0], rowPtrs[0][1], rowPtrs[0][2], 0.0),
+      _mm256_setr_pd(rowPtrs[1][0], rowPtrs[1][1], rowPtrs[1][2], 0.0),
+      _mm256_setr_pd(rowPtrs[2][0], rowPtrs[2][1], rowPtrs[2][2], 0.0),
+    };
+
+    double result[4];
+
+    for (unsigned int i = 0; i < input.getRows(); ++i) {
+      const __m256d xyzw = _mm256_setr_pd(inputData[0], inputData[1], inputData[2], 0.0);
+
+      const __m256d rs[] = {
+        _mm256_mul_pd(rows[0], xyzw),
+        _mm256_mul_pd(rows[1], xyzw),
+        _mm256_mul_pd(rows[2], xyzw),
+      };
+
+      __m256d rs_half_sum1 = _mm256_hadd_pd(rs[0], rs[1]);
+
+
+      _mm256_storeu_pd(result, rs_half_sum1);
+      __m128d hi = _mm256_extractf128_pd(rs[2], 1);   // [A3, A2]
+      __m128d lo = _mm256_castpd256_pd128(rs[2]);     // [A1, A0]
+
+      __m128d sum2 = _mm_add_pd(lo, hi);          // [A3+A1, A2+A0]
+      __m128d sum1 = _mm_hadd_pd(sum2, sum2);     // [total, total]
+      double total = _mm_cvtsd_f64(sum1);
+
+
+      outputData[0] = result[0] + result[2];
+      outputData[1] = result[1] + result[3];
+      outputData[2] = total;
+
+      inputData += 3;
+      outputData += 3;
+    }
+
+#elif VISP_HAVE_SSE2
+
+
+    __m128d row01_lo = _mm_loadu_pd(rowPtrs[0]);
+    __m128d row01_hi = _mm_loadu_pd(rowPtrs[1]);
+    __m128d row2_xy = _mm_loadu_pd(rowPtrs[2]);
+
+    // Preload third column as scalars
+    double c0 = rowPtrs[0][2];
+    double c1 = rowPtrs[1][2];
+    double c2 = rowPtrs[2][2];
+
+
+    for (unsigned i = 0; i < input.getRows(); ++i) {
+
+      const __m128d xy = _mm_loadu_pd(inputData);
+
+      const double z = inputData[2];
+      // const __m128d zz = _mm_set_pd(z, z);
+
+      __m128d mul0 = _mm_mul_pd(row01_lo, xy);
+      __m128d mul1 = _mm_mul_pd(row01_hi, xy);
+      __m128d r01 = _mm_hadd_pd(mul0, mul1);
+      __m128d mul2 = _mm_mul_pd(row2_xy, xy);
+
+      // Adding scalars at the end without using simd is faster
+      // __m128d mulzz = _mm_mul_pd(row01_z, zz);
+      // r01 = _mm_add_pd(r01, mulzz);
+
+      // store result
+      outputData[0] = _mm_cvtsd_f64(r01) + c0 * z;
+      outputData[1] = _mm_cvtsd_f64(_mm_unpackhi_pd(r01, r01)) + c1 * z;
+      outputData[2] = _mm_cvtsd_f64(_mm_hadd_pd(mul2, mul2)) + c2 * z;
+
+      inputData += 3;
+      outputData += 3;
+    }
+
+#else
+    double *r0 = rowPtrs[0];
+    double *r1 = rowPtrs[1];
+    double *r2 = rowPtrs[2];
+
+    for (unsigned int i = 0; i < input.getRows(); ++i) {
+      outputData[0] = r0[0] * inputData[0] + r0[1] * inputData[1] + r0[2] * inputData[2];
+      outputData[1] = r1[0] * inputData[0] + r1[1] * inputData[1] + r1[2] * inputData[2];
+      outputData[2] = r2[0] * inputData[0] + r2[1] * inputData[1] + r2[2] * inputData[2];
+      inputData += 3;
+      outputData += 3;
+    }
+#endif
+  }
+
+
+
+  else { // 3xN matrix
+    if (input.getRows() != 3) {
+      throw vpException(vpException::dimensionError, "Expected input to have 3 rows");
+    }
+    double *inputX = input[0];
+    double *inputY = input[1];
+    double *inputZ = input[2];
+    double *outputX = output[0];
+    double *outputY = output[1];
+    double *outputZ = output[2];
+
+
+#if defined(VISP_HAVE_AVX)
+
+    __m256d elems[9];
+    for (unsigned int i = 0; i < 9; ++i) {
+      elems[i] = _mm256_set1_pd(data[i]);
+    }
+    for (int i = 0; i <= static_cast<int>(input.getCols()) - 4; i += 4) {
+      const __m256d x4 = _mm256_loadu_pd(inputX);
+      const __m256d y4 = _mm256_loadu_pd(inputY);
+      const __m256d z4 = _mm256_loadu_pd(inputZ);
+
+#if defined(VISP_HAVE_FMA)
+      __m256d dp1 = _mm256_mul_pd(x4, elems[0]);
+      dp1 = _mm256_fmadd_pd(y4, elems[1], dp1);
+      dp1 = _mm256_fmadd_pd(z4, elems[2], dp1);
+      __m256d dp2 = _mm256_mul_pd(x4, elems[3]);
+      dp2 = _mm256_fmadd_pd(y4, elems[4], dp2);
+      dp2 = _mm256_fmadd_pd(z4, elems[5], dp2);
+      __m256d dp3 = _mm256_mul_pd(x4, elems[6]);
+      dp3 = _mm256_fmadd_pd(y4, elems[7], dp3);
+      dp3 = _mm256_fmadd_pd(z4, elems[8], dp3);
+
+#else
+      const __m256d muls = {
+        _mm256_mul_pd(x4, elems[0]),
+        _mm256_mul_pd(y4, elems[1]),
+        _mm256_mul_pd(z4, elems[2]),
+
+        _mm256_mul_pd(x4, elems[3]),
+        _mm256_mul_pd(y4, elems[4]),
+        _mm256_mul_pd(z4, elems[5]),
+
+        _mm256_mul_pd(x4, elems[6]),
+        _mm256_mul_pd(y4, elems[7]),
+        _mm256_mul_pd(z4, elems[8]),
+      }
+
+      __m256d dp1 = _mm256_add_pd(_mm256_add_pd(muls[0], muls[1]), muls[2]);
+      __m256d dp2 = _mm256_add_pd(_mm256_add_pd(muls[3], muls[4]), muls[5]);
+      __m256d dp3 = _mm256_add_pd(_mm256_add_pd(muls[6], muls[7]), muls[8]);
+
+
+#endif
+
+      _mm256_storeu_pd(outputX, dp1);
+      _mm256_storeu_pd(outputY, dp2);
+      _mm256_storeu_pd(outputZ, dp3);
+
+
+      inputX += 4; inputY += 4; inputZ += 4;
+      outputX += 4; outputY += 4; outputZ += 4;
+
+    }
+    double *r0 = rowPtrs[0];
+    double *r1 = rowPtrs[1];
+    double *r2 = rowPtrs[2];
+
+    for (unsigned int i = (input.getCols() / 4) * 4; i < input.getCols(); ++i) {
+      // std::cout << "i = " << i << std::endl;
+      double X = *inputX, Y = *inputY, Z = *inputZ;
+      *outputX = r0[0] * X + r0[1] * Y + r0[2] * Z;
+      *outputY = r1[0] * X + r1[1] * Y + r1[2] * Z;
+      *outputZ = r2[0] * X + r2[1] * Y + r2[2] * Z;
+      ++inputX; ++inputY; ++inputZ;
+      ++outputX; ++outputY; ++outputZ;
+    }
+
+#else
+    double *r0 = rowPtrs[0];
+    double *r1 = rowPtrs[1];
+    double *r2 = rowPtrs[2];
+
+    for (unsigned int i = 0; i < input.getRows(); ++i) {
+      double X = *inputX, Y = *inputY, Z = *inputZ;
+      *outputX = r0[0] * X + r0[1] * Y + r0[2] * Z;
+      *outputY = r1[0] * X + r1[1] * Y + r1[2] * Z;
+      *outputZ = r2[0] * X + r2[1] * Y + r2[2] * Z;
+      ++inputX; ++inputY; ++inputZ;
+      ++outputX; ++outputY; ++outputZ;
+    }
+#endif
+  }
+
+
+
+}
+
+
 const unsigned int vpRotationMatrix::constr_val_3 = 3;
 /*!
   Initialize the rotation matrix as identity.

@@ -559,6 +559,87 @@ TEST_CASE("Default constructor", "[rotation matrix]")
 #endif
 }
 
+
+
+TEST_CASE("Vector rotation", "project")
+{
+  std::vector<unsigned int> NS = { 1, 10, 100, 1000, 10000 };
+  for (unsigned int N : NS) {
+    std::cout << "Running for N = " << N << std::endl;
+    std::vector<double> timeProjectTransposed, timeProject, timeMult, timeNaive;
+    vpUniRand r(42);
+    for (unsigned int trial = 0; trial < 100000; ++trial) {
+      vpRotationMatrix M(r.uniform(0.0, M_PI), r.uniform(0.0, M_PI), r.uniform(0.0, M_PI));
+      vpMatrix inputT(N, 3);
+
+      for (unsigned int i = 0; i< N; ++i) {
+        inputT[i][0] = r.uniform(0.0, 1.0);
+        inputT[i][1] = r.uniform(0.0, 1.0);
+        inputT[i][2] = r.uniform(0.0, 1.0);
+      }
+      vpMatrix input = inputT.t();
+      vpMatrix outputT(N, 3);
+      vpMatrix output(3, N);
+      double t1 = vpTime::measureTimeMs();
+      M.rotateVectors(inputT, outputT, true);
+      double t2 = vpTime::measureTimeMs();
+      timeProjectTransposed.push_back(t2 - t1);
+      t1 = vpTime::measureTimeMs();
+      M.rotateVectors(input, output, false);
+      t2 = vpTime::measureTimeMs();
+      timeProject.push_back(t2 - t1);
+
+
+      vpColVector x(3, 1);
+      vpColVector res(3);
+      vpMatrix outputR(N, 3);
+      double t1r = vpTime::measureTimeMs();
+
+      for (unsigned int i = 0; i < inputT.getRows(); ++i) {
+        x[0] = inputT[i][0];
+        x[1] = inputT[i][1];
+        x[2] = inputT[i][2];
+
+        res = M * x;
+        outputR[i][0] = res[0];
+        outputR[i][1] = res[1];
+        outputR[i][2] = res[2];
+      }
+      double t2r = vpTime::measureTimeMs();
+      timeNaive.push_back(t2r - t1r);
+
+      vpMatrix outputMM(3, N);
+      double t14 = vpTime::measureTimeMs();
+
+      vpMatrix::mult2Matrices((vpMatrix)M, input, outputMM);
+      double t24 = vpTime::measureTimeMs();
+      timeMult.push_back(t24 - t14);
+
+      double errorT = (outputR - outputT).frobeniusNorm() / N;
+      double error = (outputR - output.t()).frobeniusNorm() / N;
+
+      if (errorT > 1e-10) {
+        std::cerr << "Transposed version failed" << std::endl;
+        FAIL();
+      }
+
+      if (error > 1e-10) {
+        std::cerr << "Optimized 3xN version failed" << std::endl;
+        FAIL();
+      }
+
+
+
+    }
+    std::cout << "Optimized (transposed) version took: " << vpMath::getMean(timeProjectTransposed) << " +- " << vpMath::getStdev(timeProjectTransposed) <<  "ms" << std::endl;
+    std::cout << "Optimized version took: " << vpMath::getMean(timeProject) << " +- " << vpMath::getStdev(timeProject) <<  "ms" << std::endl;
+    std::cout << "Mult  version took: " << vpMath::getMean(timeMult) << " +- " << vpMath::getStdev(timeMult) << "ms" << std::endl;
+    std::cout << "Naive version took: " << vpMath::getMean(timeNaive) << " +- " << vpMath::getStdev(timeNaive) <<  "ms" << std::endl;
+    std::cout << "Speedup: " << vpMath::minimum(vpMath::getMean(timeNaive), vpMath::getMean(timeMult)) / vpMath::minimum(vpMath::getMean(timeProjectTransposed), vpMath::getMean(timeProject)) << std::endl;
+
+  }
+}
+
 int main(int argc, char *argv[])
 {
   Catch::Session session;

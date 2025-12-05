@@ -42,9 +42,183 @@
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpPoint.h>
 #include <visp3/core/vpQuaternionVector.h>
+#include <visp3/core/vpSIMDUtils.h>
+
 
 BEGIN_VISP_NAMESPACE
 const unsigned int vpHomogeneousMatrix::constr_value_4 = 4;
+
+void vpHomogeneousMatrix::project(const vpMatrix &input, vpMatrix &output, bool transposed) const
+{
+  output.resize(input.getRows(), input.getCols(), false, false);
+  if (transposed) {
+
+    if (input.getCols() != 3) {
+      throw vpException(vpException::dimensionError, "Input matrix should have 3 columns");
+    }
+    double *inputData = input.data;
+    double *outputData = output.data;
+#if defined(VISP_HAVE_AVX)
+    __m256d rows[] = {
+      _mm256_loadu_pd(rowPtrs[0]),
+      _mm256_loadu_pd(rowPtrs[1]),
+      _mm256_loadu_pd(rowPtrs[2]),
+      _mm256_loadu_pd(rowPtrs[3]),
+
+    };
+
+
+    double result[4];
+
+    for (unsigned int i = 0; i < input.getRows(); ++i) {
+      const __m256d xyzw = _mm256_setr_pd(inputData[0], inputData[1], inputData[2], 1.0);
+
+      const __m256d rs[] = {
+        _mm256_mul_pd(rows[0], xyzw),
+        _mm256_mul_pd(rows[1], xyzw),
+        _mm256_mul_pd(rows[2], xyzw),
+      };
+
+      __m256d rs_half_sum1 = _mm256_hadd_pd(rs[0], rs[1]);
+
+
+      _mm256_storeu_pd(result, rs_half_sum1);
+      __m128d hi = _mm256_extractf128_pd(rs[2], 1);   // [A3, A2]
+      __m128d lo = _mm256_castpd256_pd128(rs[2]);     // [A1, A0]
+
+      __m128d sum2 = _mm_add_pd(lo, hi);          // [A3+A1, A2+A0]
+      __m128d sum1 = _mm_hadd_pd(sum2, sum2);     // [total, total]
+      double total = _mm_cvtsd_f64(sum1);
+
+
+      outputData[0] = result[0] + result[2];
+      outputData[1] = result[1] + result[3];
+      outputData[2] = total;
+
+      inputData += 3;
+      outputData += 3;
+    }
+
+#elif (VISP_HAVE_SSE2)
+    __m128d rows[] = {
+      _mm_loadu_pd(rowPtrs[0]), _mm_loadu_pd(rowPtrs[0] + 2),
+      _mm_loadu_pd(rowPtrs[1]), _mm_loadu_pd(rowPtrs[1] + 2),
+      _mm_loadu_pd(rowPtrs[2]), _mm_loadu_pd(rowPtrs[2] + 2)
+    };
+    for (unsigned int i = 0; i < input.getRows(); ++i) {
+
+      __m128d r1 = _mm_set_pd(inputData[1], inputData[0]);
+      __m128d r2 = _mm_set_pd(1.0, inputData[2]);
+
+      for (unsigned int j = 0; j < 3; ++j) {
+        __m128d m1 = _mm_mul_pd(r1, rows[j * 2]);
+#if !defined(VISP_HAVE_FMA)
+        __m128d m2 = _mm_mul_pd(r2, rows[j * 2 + 1]);
+        __m128d add = _mm_add_pd(m1, m2);
+#else
+        __m128d add = _mm_fmadd_pd(r2, rows[j * 2 + 1], m1);
+#endif
+        __m128d sum = _mm_hadd_pd(add, add);
+        outputData[j] = _mm_cvtsd_f64(sum);
+      }
+      inputData += 3;
+      outputData += 3;
+    }
+#else
+    double *r0 = rowPtrs[0];
+    double *r1 = rowPtrs[1];
+    double *r2 = rowPtrs[2];
+
+    for (unsigned int i = 0; i < input.getRows(); ++i) {
+      output[i][0] = r0[0] * inputData[0] + r0[1] * inputData[1] + r0[2] * inputData[2] + r0[3];
+      output[i][1] = r1[0] * inputData[0] + r1[1] * inputData[1] + r1[2] * inputData[2] + r1[3];
+      output[i][2] = r2[0] * inputData[0] + r2[1] * inputData[1] + r2[2] * inputData[2] + r2[3];
+      inputData += 3;
+    }
+#endif
+  }
+  else {
+    if (input.getRows() != 3) {
+      throw vpException(vpException::dimensionError, "Expected input to have 3 rows");
+    }
+    double *inputX = input[0];
+    double *inputY = input[1];
+    double *inputZ = input[2];
+    double *outputX = output[0];
+    double *outputY = output[1];
+    double *outputZ = output[2];
+
+#if defined(VISP_HAVE_AVX2) || defined(VISP_HAVE_AVX) || defined(VISP_HAVE_SSE2)
+
+    using namespace vpSIMD;
+
+    Register elems[12];
+    for (unsigned int i = 0; i < 12; ++i) {
+      elems[i] = set1(data[i]);
+    }
+
+    for (int i = 0; i <= static_cast<int>(input.getCols()) - numLanes; i += numLanes) {
+      const Register x4 = loadu(inputX);
+      const Register y4 = loadu(inputY);
+      const Register z4 = loadu(inputZ);
+
+      Register dp1 = mul(x4, elems[0]);
+      dp1 = vpSIMD::fma(y4, elems[1], dp1);
+      dp1 = vpSIMD::fma(z4, elems[2], dp1);
+      dp1 = add(elems[3], dp1);
+
+      Register dp2 = mul(x4, elems[4]);
+      dp2 = vpSIMD::fma(y4, elems[5], dp2);
+      dp2 = vpSIMD::fma(z4, elems[6], dp2);
+      dp2 = add(elems[7], dp2);
+
+      Register dp3 = mul(x4, elems[8]);
+      dp3 = vpSIMD::fma(y4, elems[9], dp3);
+      dp3 = vpSIMD::fma(z4, elems[10], dp3);
+      dp3 = add(elems[11], dp3);
+
+
+      storeu(outputX, dp1);
+      storeu(outputY, dp2);
+      storeu(outputZ, dp3);
+
+      inputX += numLanes; inputY += numLanes; inputZ += numLanes;
+      outputX += numLanes; outputY += numLanes; outputZ += numLanes;
+
+    }
+    double *r0 = rowPtrs[0];
+    double *r1 = rowPtrs[1];
+    double *r2 = rowPtrs[2];
+
+    for (unsigned int i = (input.getCols() / numLanes) * numLanes; i < input.getCols(); ++i) {
+      // std::cout << "i = " << i << std::endl;
+      double X = *inputX, Y = *inputY, Z = *inputZ;
+      *outputX = r0[0] * X + r0[1] * Y + r0[2] * Z + r0[3];
+      *outputY = r1[0] * X + r1[1] * Y + r1[2] * Z + r1[3];
+      *outputZ = r2[0] * X + r2[1] * Y + r2[2] * Z + r2[3];
+      ++inputX; ++inputY; ++inputZ;
+      ++outputX; ++outputY; ++outputZ;
+    }
+
+#else
+    double *r0 = rowPtrs[0];
+    double *r1 = rowPtrs[1];
+    double *r2 = rowPtrs[2];
+
+    for (unsigned int i = 0; i < input.getRows(); ++i) {
+      double X = *inputX, Y = *inputY, Z = *inputZ;
+      *outputX = r0[0] * X + r0[1] * Y + r0[2] * Z + r0[3];
+      *outputY = r1[0] * X + r1[1] * Y + r1[2] * Z + r1[3];
+      *outputZ = r2[0] * X + r2[1] * Y + r2[2] * Z + r2[3];
+      ++inputX; ++inputY; ++inputZ;
+      ++outputX; ++outputY; ++outputZ;
+    }
+#endif
+
+  }
+}
+
+
 /*!
   Construct an homogeneous matrix from a translation vector and quaternion
   rotation vector.
@@ -651,16 +825,41 @@ vpColVector vpHomogeneousMatrix::operator*(const vpColVector &v) const
                       "(%dx1) column vector",
                       v.getRows()));
   }
-  vpColVector p(rowNum);
+  vpColVector p(rowNum, 0.0);
 
-  p = 0.0;
+// #if USE_SSE
+//   __m128d rows[] = {
+//     _mm_loadu_pd(rowPtrs[0]), _mm_loadu_pd(rowPtrs[0] + 2),
+//     _mm_loadu_pd(rowPtrs[1]), _mm_loadu_pd(rowPtrs[1] + 2),
+//     _mm_loadu_pd(rowPtrs[2]), _mm_loadu_pd(rowPtrs[2] + 2),
+//     _mm_loadu_pd(rowPtrs[3]), _mm_loadu_pd(rowPtrs[3] + 2)
+
+//   };
+
+//   __m128d r1 = _mm_loadu_pd(v.data);
+//   __m128d r2 = _mm_loadu_pd(v.data + 2);
+
+//   for (unsigned int j = 0; j < 4; ++j) {
+//     __m128d m1 = _mm_mul_pd(r1, rows[j * 2]);
+// #if !defined(__FMA__)
+//     __m128d m2 = _mm_mul_pd(r2, rows[j * 2 + 1]);
+//     __m128d add = _mm_add_pd(m1, m2);
+// #else
+//     __m128d add = _mm_fmadd_pd(r2, rows[j * 2 + 1], m1);
+// #endif
+//     __m128d sum = _mm_hadd_pd(add, add);
+//     p[j] = _mm_cvtsd_f64(sum);
+//   }
+
+
+// #else
 
   for (unsigned int j = 0; j < val_4; ++j) {
     for (unsigned int i = 0; i < val_4; ++i) {
       p[i] += rowPtrs[i][j] * v[j];
     }
   }
-
+// #endif
   return p;
 }
 
