@@ -99,7 +99,7 @@ void vpHomogeneousMatrix::project(const vpMatrix &input, vpMatrix &output, bool 
       outputData += 3;
     }
 
-#elif (VISP_HAVE_SSE2)
+#elif (VISP_HAVE_SSE3)
     __m128d rows[] = {
       _mm_loadu_pd(rowPtrs[0]), _mm_loadu_pd(rowPtrs[0] + 2),
       _mm_loadu_pd(rowPtrs[1]), _mm_loadu_pd(rowPtrs[1] + 2),
