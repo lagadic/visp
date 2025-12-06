@@ -20,7 +20,7 @@ Note that we do not consider deformable objects, only non-articulated rigid obje
 Similar to the MBT, tracking is framed as an optimization problem, where the difference between the features
 (geometric or photometric) extracted from a 3D model and those observed in the image must be minimized.
 
-The RBT is built as a modular pipeline (\ref rbt_tracking_overview). In practice, this means:
+The RBT is built as a modular pipeline, see \ref rbt_tracking_overview. In practice, this means:
 
 - It can leverage both RGB and depth information (see \ref rbt_tracking_requirements)
 - It features a complete configuration for every part of the tracking pipeline (see \ref rbt_tracking_config)
