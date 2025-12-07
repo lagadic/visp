@@ -63,6 +63,7 @@ bool test_matrix_equal(const vpHomogeneousMatrix &M1, const vpHomogeneousMatrix 
 
 TEST_CASE("vpHomogeneousMatrix re-orthogonalize rotation matrix", "[vpHomogeneousMatrix]")
 {
+  std::cout << "\n== Test vpHomogeneousMatrix re-orthogonalize rotation matrix ==" << std::endl;
   CHECK_NOTHROW([]() {
     vpHomogeneousMatrix M { 0.9835,  -0.0581, 0.1716, 0.0072, -0.0489, -0.9972,
                           -0.0571, 0.0352,  0.1744, 0.0478, -0.9835, 0.9470 };
@@ -122,6 +123,7 @@ TEST_CASE("vpHomogeneousMatrix re-orthogonalize rotation matrix", "[vpHomogeneou
 
 TEST_CASE("vpRotationMatrix re-orthogonalize rotation matrix", "[vpRotationMatrix]")
 {
+  std::cout << "\n== Test vpRotationMatrix re-orthogonalize rotation matrix ==" << std::endl;
   CHECK_NOTHROW(
       []() { vpRotationMatrix R { 0.9835, -0.0581, 0.1716, -0.0489, -0.9972, -0.0571, 0.1744, 0.0478, -0.9835 }; }());
 
@@ -165,6 +167,7 @@ TEST_CASE("vpRotationMatrix re-orthogonalize rotation matrix", "[vpRotationMatri
 
 TEST_CASE("ENU to NED conversion", "[enu2ned]")
 {
+  std::cout << "\n== Test ENU to NED conversion ==" << std::endl;
   vpHomogeneousMatrix enu_M_flu { 0, -1, 0, 0.2, 1, 0, 0, 1., 0, 0, 1, 0.3 };
   std::cout << "enu_M_flu:\n" << enu_M_flu << std::endl;
 
@@ -206,6 +209,7 @@ TEST_CASE("ENU to NED conversion", "[enu2ned]")
 
 TEST_CASE("vpHomogenousMatrix * vpRotationMatrix", "[operator*]")
 {
+  std::cout << "\n== Test vpHomogenousMatrix * vpRotationMatrix ==" << std::endl;
   // Test rotation_matrix * homogeneous_matrix
   vpHomogeneousMatrix _1_M_2_ {
        0.9835, -0.0581,  0.1716, 0.0072,
@@ -228,7 +232,12 @@ TEST_CASE("vpHomogenousMatrix * vpRotationMatrix", "[operator*]")
 
 TEST_CASE("Point projection", "project")
 {
+  std::cout << "\n== Test point projection ==" << std::endl;
+#if defined(VISP_HAVE_AVX) || defined(VISP_HAVE_SSE3) // Should be adapted to future evolution of vpHomogeneousMatrix::project()
   std::vector<unsigned int> NS = { 1, 10, 100, 1000, 10000 };
+#else
+  std::vector<unsigned int> NS = { 1, 10 };
+#endif
   for (unsigned int N : NS) {
     std::cout << "Running for N = " << N << std::endl;
     std::vector<double> timeProjectTransposed, timeProject, timeMult, timeNaive;
@@ -286,7 +295,7 @@ TEST_CASE("Point projection", "project")
       vpMatrix output4(4, N);
       double t14 = vpTime::measureTimeMs();
 
-      vpMatrix::mult2Matrices((vpMatrix)M, input4, output4);
+      vpMatrix::mult2Matrices(static_cast<vpMatrix>(M), input4, output4);
       double t24 = vpTime::measureTimeMs();
       timeMult.push_back(t24 - t14);
 
@@ -295,14 +304,12 @@ TEST_CASE("Point projection", "project")
 
       if (errorT > 1e-10 || error > 1e-10) {
         std::cout << "M = " << M << std::endl;
-        std::cerr << "Naive outputT = "  << std::endl << outputR << std::endl;
-        std::cerr << "Mult outputT = "  << std::endl << output4.t() << std::endl;
-        std::cerr << "Project output transposed version = "  << std::endl << outputT << std::endl;
-        std::cerr << "Project output = "  << std::endl << outputT<< std::endl;
-
-
-        std::cerr << "diff transposed = "  << std::endl << outputR - outputT;
-        std::cerr << "diff = "  << std::endl << outputR - output.t();
+        std::cerr << "Naive outputT = " << outputR << std::endl;
+        std::cerr << "Mult outputT = " << output4.t() << std::endl;
+        std::cerr << "Project output transposed version = " << outputT << std::endl;
+        std::cerr << "Project output = " << outputT << std::endl;
+        std::cerr << "Diff transposed = " << outputR - outputT << std::endl;
+        std::cerr << "Diff = " << outputR - output.t() << std::endl;
 
         FAIL();
       }
