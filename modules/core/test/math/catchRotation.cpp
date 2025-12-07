@@ -559,8 +559,6 @@ TEST_CASE("Default constructor", "[rotation matrix]")
 #endif
 }
 
-
-
 TEST_CASE("Vector rotation", "project")
 {
   std::vector<unsigned int> NS = { 1, 10, 100, 1000, 10000 };
@@ -627,16 +625,12 @@ TEST_CASE("Vector rotation", "project")
         std::cerr << "Optimized 3xN version failed" << std::endl;
         FAIL();
       }
-
-
-
     }
     std::cout << "Optimized (transposed) version took: " << vpMath::getMean(timeProjectTransposed) << " +- " << vpMath::getStdev(timeProjectTransposed) <<  "ms" << std::endl;
     std::cout << "Optimized version took: " << vpMath::getMean(timeProject) << " +- " << vpMath::getStdev(timeProject) <<  "ms" << std::endl;
     std::cout << "Mult  version took: " << vpMath::getMean(timeMult) << " +- " << vpMath::getStdev(timeMult) << "ms" << std::endl;
     std::cout << "Naive version took: " << vpMath::getMean(timeNaive) << " +- " << vpMath::getStdev(timeNaive) <<  "ms" << std::endl;
     std::cout << "Speedup: " << vpMath::minimum(vpMath::getMean(timeNaive), vpMath::getMean(timeMult)) / vpMath::minimum(vpMath::getMean(timeProjectTransposed), vpMath::getMean(timeProject)) << std::endl;
-
   }
 }
 

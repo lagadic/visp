@@ -67,7 +67,6 @@ void vpHomogeneousMatrix::project(const vpMatrix &input, vpMatrix &output, bool 
 
     };
 
-
     double result[4];
 
     for (unsigned int i = 0; i < input.getRows(); ++i) {
@@ -89,7 +88,6 @@ void vpHomogeneousMatrix::project(const vpMatrix &input, vpMatrix &output, bool 
       __m128d sum2 = _mm_add_pd(lo, hi);          // [A3+A1, A2+A0]
       __m128d sum1 = _mm_hadd_pd(sum2, sum2);     // [total, total]
       double total = _mm_cvtsd_f64(sum1);
-
 
       outputData[0] = result[0] + result[2];
       outputData[1] = result[1] + result[3];
@@ -124,7 +122,7 @@ void vpHomogeneousMatrix::project(const vpMatrix &input, vpMatrix &output, bool 
       }
       inputData += 3;
       outputData += 3;
-  }
+    }
 #else
     double *r0 = rowPtrs[0];
     double *r1 = rowPtrs[1];
@@ -137,7 +135,7 @@ void vpHomogeneousMatrix::project(const vpMatrix &input, vpMatrix &output, bool 
       inputData += 3;
     }
 #endif
-}
+    }
   else {
     if (input.getRows() != 3) {
       throw vpException(vpException::dimensionError, "Expected input to have 3 rows");
@@ -178,7 +176,6 @@ void vpHomogeneousMatrix::project(const vpMatrix &input, vpMatrix &output, bool 
       dp3 = vpSIMD::fma(z4, elems[10], dp3);
       dp3 = add(elems[11], dp3);
 
-
       storeu(outputX, dp1);
       storeu(outputY, dp2);
       storeu(outputZ, dp3);
@@ -200,7 +197,6 @@ void vpHomogeneousMatrix::project(const vpMatrix &input, vpMatrix &output, bool 
       ++inputX; ++inputY; ++inputZ;
       ++outputX; ++outputY; ++outputZ;
     }
-
 #else
     double *r0 = rowPtrs[0];
     double *r1 = rowPtrs[1];
@@ -215,15 +211,14 @@ void vpHomogeneousMatrix::project(const vpMatrix &input, vpMatrix &output, bool 
       ++outputX; ++outputY; ++outputZ;
     }
 #endif
-
   }
-}
+  }
 
 
-/*!
-  Construct an homogeneous matrix from a translation vector and quaternion
-  rotation vector.
- */
+  /*!
+    Construct an homogeneous matrix from a translation vector and quaternion
+    rotation vector.
+   */
 vpHomogeneousMatrix::vpHomogeneousMatrix(const vpTranslationVector &t, const vpQuaternionVector &q)
   : vpArray2D<double>(constr_value_4, constr_value_4)
 {
@@ -1578,8 +1573,8 @@ void vpHomogeneousMatrix::parse_json(const nlohmann::json &j)
     const bool converted = convertFromTypeAndBuildFrom<vpHomogeneousMatrix, vpPoseVector>(j, *this);
     if (!converted) {
       from_json(j, *asArray);
-    }
   }
+}
   else { // Generic 2D array conversion
     from_json(j, *asArray);
   }

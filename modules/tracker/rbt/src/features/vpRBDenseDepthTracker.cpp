@@ -153,7 +153,7 @@ void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame
     }
 
     pointsPerThread[threadIdx] = std::move(localPoints);
-    }
+  }
   for (const std::vector<vpDepthPoint> &points: pointsPerThread) {
     m_depthPoints.insert(m_depthPoints.end(), std::make_move_iterator(points.begin()), std::make_move_iterator(points.end()));
   }
@@ -171,7 +171,7 @@ void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame
   else {
     m_numFeatures = 0;
   }
-  }
+}
 
 void vpRBDenseDepthTracker::initVVS(const vpRBFeatureTrackerInput &/*frame*/, const vpRBFeatureTrackerInput &/*previousFrame*/, const vpHomogeneousMatrix &/*cMo*/)
 {
@@ -244,11 +244,9 @@ void errorAndInteractionMatrixBase(const vpMatrix &cXt, const vpMatrix &cNt, con
   }
 }
 
-
 #if defined(VISP_HAVE_AVX2) || defined(VISP_HAVE_AVX) || defined(VISP_HAVE_SSE2)
 void errorAndInteractionMatrixSIMD(const vpMatrix &cXt, const  vpMatrix &cNt, const  vpMatrix &obsT, vpColVector &e, vpMatrix &Lt)
 {
-
   using namespace vpSIMD;
 
 #if defined(VISP_HAVE_OPENMP)
@@ -280,8 +278,6 @@ void errorAndInteractionMatrixSIMD(const vpMatrix &cXt, const  vpMatrix &cNt, co
   errorAndInteractionMatrixBase(cXt, cNt, obsT, e, Lt, (cXt.getCols() / numLanes) * numLanes, cXt.getCols());
 }
 #endif
-
-
 
 void vpRBDenseDepthTracker::vpDepthPointSet::updateAndErrorAndInteractionMatrix(
   const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo,

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,6 @@
 
 BEGIN_VISP_NAMESPACE
 
-
 void vpRotationMatrix::rotateVectors(const vpMatrix &input, vpMatrix &output, bool isTransposed) const
 {
   output.resize(input.getRows(), input.getCols(), false, false);
@@ -92,7 +91,6 @@ void vpRotationMatrix::rotateVectors(const vpMatrix &input, vpMatrix &output, bo
       __m128d sum1 = _mm_hadd_pd(sum2, sum2);     // [total, total]
       double total = _mm_cvtsd_f64(sum1);
 
-
       outputData[0] = result[0] + result[2];
       outputData[1] = result[1] + result[3];
       outputData[2] = total;
@@ -102,8 +100,6 @@ void vpRotationMatrix::rotateVectors(const vpMatrix &input, vpMatrix &output, bo
     }
 
 #elif VISP_HAVE_SSE2
-
-
     __m128d row01_lo = _mm_loadu_pd(rowPtrs[0]);
     __m128d row01_hi = _mm_loadu_pd(rowPtrs[1]);
     __m128d row2_xy = _mm_loadu_pd(rowPtrs[2]);
@@ -112,7 +108,6 @@ void vpRotationMatrix::rotateVectors(const vpMatrix &input, vpMatrix &output, bo
     double c0 = rowPtrs[0][2];
     double c1 = rowPtrs[1][2];
     double c2 = rowPtrs[2][2];
-
 
     for (unsigned i = 0; i < input.getRows(); ++i) {
 
@@ -138,7 +133,6 @@ void vpRotationMatrix::rotateVectors(const vpMatrix &input, vpMatrix &output, bo
       inputData += 3;
       outputData += 3;
     }
-
 #else
     double *r0 = rowPtrs[0];
     double *r1 = rowPtrs[1];
@@ -153,9 +147,6 @@ void vpRotationMatrix::rotateVectors(const vpMatrix &input, vpMatrix &output, bo
     }
 #endif
   }
-
-
-
   else { // 3xN matrix
     using namespace vpSIMD;
     if (input.getRows() != 3) {
@@ -167,7 +158,6 @@ void vpRotationMatrix::rotateVectors(const vpMatrix &input, vpMatrix &output, bo
     double *outputX = output[0];
     double *outputY = output[1];
     double *outputZ = output[2];
-
 
 #if defined(VISP_HAVE_AVX) || defined(VISP_HAVE_SSE2) || defined(VISP_HAVE_AVX2)
 
@@ -190,16 +180,12 @@ void vpRotationMatrix::rotateVectors(const vpMatrix &input, vpMatrix &output, bo
       dp3 = vpSIMD::fma(y4, elems[7], dp3);
       dp3 = vpSIMD::fma(z4, elems[8], dp3);
 
-
-
       storeu(outputX, dp1);
       storeu(outputY, dp2);
       storeu(outputZ, dp3);
 
-
       inputX += vpSIMD::numLanes; inputY += vpSIMD::numLanes; inputZ += vpSIMD::numLanes;
       outputX += vpSIMD::numLanes; outputY += vpSIMD::numLanes; outputZ += vpSIMD::numLanes;
-
     }
     double *r0 = rowPtrs[0];
     double *r1 = rowPtrs[1];
@@ -214,7 +200,6 @@ void vpRotationMatrix::rotateVectors(const vpMatrix &input, vpMatrix &output, bo
       ++inputX; ++inputY; ++inputZ;
       ++outputX; ++outputY; ++outputZ;
     }
-
 #else
     double *r0 = rowPtrs[0];
     double *r1 = rowPtrs[1];
@@ -230,11 +215,7 @@ void vpRotationMatrix::rotateVectors(const vpMatrix &input, vpMatrix &output, bo
     }
 #endif
   }
-
-
-
 }
-
 
 const unsigned int vpRotationMatrix::constr_val_3 = 3;
 /*!

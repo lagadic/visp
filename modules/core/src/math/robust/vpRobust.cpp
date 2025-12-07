@@ -114,7 +114,6 @@ void vpRobust::resize(unsigned int n_data)
   }
 }
 
-
 // ===================================================================
 /*!
 
@@ -538,7 +537,7 @@ double vpRobust::constrainedChi(vpRobustEstimatorType method, double x)
   default: {
     throw(vpException(vpException::fatalError, "Unsupported robust estimator type in vpRobust::constrainedChi()"));
   }
-}
+  }
 
   return -1;
 }

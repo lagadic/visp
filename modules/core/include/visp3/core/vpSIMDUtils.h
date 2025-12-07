@@ -78,7 +78,6 @@
 #define VISP_HAVE_NEON 0
 #endif
 
-
 #if VISP_HAVE_SSE2 && USE_SIMD_CODE
 #define USE_SSE 1
 #else
@@ -112,7 +111,6 @@ inline Register mul(const Register a, const Register b)
   return _mm512_mul_pd(a, b);
 }
 
-
 inline Register fma(const Register a, const Register b, const Register c)
 {
 #if defined(VISP_HAVE_FMA)
@@ -126,7 +124,6 @@ inline Register loadu(const double *const data)
 {
   return _mm512_loadu_pd(data);
 }
-
 
 inline Register set1(double v)
 {
@@ -157,7 +154,6 @@ inline Register mul(const Register a, const Register b)
   return _mm256_mul_pd(a, b);
 }
 
-
 inline Register fma(const Register a, const Register b, const Register c)
 {
 #if defined(VISP_HAVE_FMA)
@@ -171,7 +167,6 @@ inline Register loadu(const double *const data)
 {
   return _mm256_loadu_pd(data);
 }
-
 
 inline Register set1(double v)
 {
@@ -201,7 +196,6 @@ inline Register mul(const Register a, const Register b)
 {
   return _mm_mul_pd(a, b);
 }
-
 
 inline Register fma(const Register a, const Register b, const Register c)
 {

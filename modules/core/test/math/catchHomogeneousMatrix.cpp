@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -247,7 +247,6 @@ TEST_CASE("Point projection", "project")
       vpMatrix outputT(N, 3);
       vpMatrix output(3, N);
 
-
       double t1 = vpTime::measureTimeMs();
       M.project(inputT, outputT, true);
       double t2 = vpTime::measureTimeMs();
@@ -276,7 +275,6 @@ TEST_CASE("Point projection", "project")
       }
       double t2r = vpTime::measureTimeMs();
       timeNaive.push_back(t2r - t1r);
-
 
       vpMatrix input4(4, N);
       for (unsigned int i = 0; i < inputT.getRows(); ++i) {
@@ -317,7 +315,6 @@ TEST_CASE("Point projection", "project")
     std::cout << "Speedup: " << vpMath::minimum(vpMath::getMean(timeNaive), vpMath::getMean(timeMult)) / vpMath::minimum(vpMath::getMean(timeProjectTransposed), vpMath::getMean(timeProject)) << std::endl;
 
   }
-
 }
 
 int main(int argc, char *argv[])
