@@ -805,12 +805,9 @@ void visp::cnpy::npz_save(const std::string &zipname, std::string fname, const s
 
   std::vector<char> data_str_utf32_LE;
   data_str_utf32_LE.reserve(max_length*4); // NumPy stores string as UTF-32: https://github.com/numpy/numpy/issues/15347
-  size_t sub_idx = 0;
   for (size_t i = 0; i < lengths.size(); i++) {
     std::vector<char> substr_utf32 = utf8_to_utf32_vec_pad(data_vec[i], max_length);
     data_str_utf32_LE.insert(data_str_utf32_LE.end(), substr_utf32.begin(), substr_utf32.end());
-
-    sub_idx += lengths[i];
   }
 
   // https://github.com/rogersce/cnpy/pull/58/files
