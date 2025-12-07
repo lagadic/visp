@@ -57,8 +57,8 @@ void vpHomogeneousMatrix::project(const vpMatrix &input, vpMatrix &output, bool 
       throw vpException(vpException::dimensionError, "Input matrix should have 3 columns");
     }
     double *inputData = input.data;
-    double *outputData = output.data;
 #if defined(VISP_HAVE_AVX)
+    double *outputData = output.data;
     __m256d rows[] = {
       _mm256_loadu_pd(rowPtrs[0]),
       _mm256_loadu_pd(rowPtrs[1]),
@@ -100,6 +100,7 @@ void vpHomogeneousMatrix::project(const vpMatrix &input, vpMatrix &output, bool 
     }
 
 #elif (VISP_HAVE_SSE3)
+    double *outputData = output.data;
     __m128d rows[] = {
       _mm_loadu_pd(rowPtrs[0]), _mm_loadu_pd(rowPtrs[0] + 2),
       _mm_loadu_pd(rowPtrs[1]), _mm_loadu_pd(rowPtrs[1] + 2),
@@ -123,7 +124,7 @@ void vpHomogeneousMatrix::project(const vpMatrix &input, vpMatrix &output, bool 
       }
       inputData += 3;
       outputData += 3;
-    }
+  }
 #else
     double *r0 = rowPtrs[0];
     double *r1 = rowPtrs[1];
@@ -136,7 +137,7 @@ void vpHomogeneousMatrix::project(const vpMatrix &input, vpMatrix &output, bool 
       inputData += 3;
     }
 #endif
-  }
+}
   else {
     if (input.getRows() != 3) {
       throw vpException(vpException::dimensionError, "Expected input to have 3 rows");
