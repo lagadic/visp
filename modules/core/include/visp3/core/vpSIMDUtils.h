@@ -40,6 +40,8 @@
 #define VP_SIMD_UTILS_H
 #include <visp3/core/vpConfig.h>
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #if defined __SSE2__ || defined _M_X64 || (defined _M_IX86_FP && _M_IX86_FP >= 2)
 #include <emmintrin.h>
 #include <immintrin.h>
@@ -225,4 +227,5 @@ inline void storeu(double *data, const Register a)
 
 }
 
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 #endif // VP_SIMD_UTILS_H
