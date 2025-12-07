@@ -53,6 +53,13 @@
 
 BEGIN_VISP_NAMESPACE
 
+/*!
+ * Rotate a set of vectors by this rotation matrix.
+ * \param input : Input matrix containing vectors to rotate. By default, each column is a 3D vector with 3 rows.
+ * When `isTransposed` is true, each row is a 3D vector with 3 columns.
+ * \param output : Output matrix containing rotated vectors. Has the same layout and size as the input matrix.
+ * \param isTransposed : If true, input matrix is transposed (each row is a 3D vector).
+**/
 void vpRotationMatrix::rotateVectors(const vpMatrix &input, vpMatrix &output, bool isTransposed) const
 {
   output.resize(input.getRows(), input.getCols(), false, false);
@@ -205,7 +212,7 @@ void vpRotationMatrix::rotateVectors(const vpMatrix &input, vpMatrix &output, bo
     double *r1 = rowPtrs[1];
     double *r2 = rowPtrs[2];
 
-    for (unsigned int i = 0; i < input.getRows(); ++i) {
+    for (unsigned int i = 0; i < input.getCols(); ++i) {
       double X = *inputX, Y = *inputY, Z = *inputZ;
       *outputX = r0[0] * X + r0[1] * Y + r0[2] * Z;
       *outputY = r1[0] * X + r1[1] * Y + r1[2] * Z;
