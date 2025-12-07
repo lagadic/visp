@@ -70,13 +70,19 @@ To add the point cloud viewer feature:
 \snippet tutorial-hsv-segmentation-pcl-viewer.cpp Include vpDisplayPCL header
 - Then, we declare two pcl objects for textured and untextured point clouds respectively
 \snippet tutorial-hsv-segmentation-pcl-viewer.cpp Create point cloud
-- Since the point cloud viewer will run in a separate thread, to avoid concurrent access to `pointcloud` or
+- You can either run the point cloud viewer in a separate thread or in a the main thread (for instance for MacOS users, see `vpDisplayPCL` documentation).
+  When running in a separate thread, to avoid concurrent access to `pointcloud` or
   `pointcloud_color` objects, we introduce a mutex, declare the PCL viewer object and launch the viewer thread, either
-  for textured or untextured point clouds
+  for textured or untextured point clouds. When running in the main thread, we have to add the point clouds to the list
+  of known point-clouds.
 \snippet tutorial-hsv-segmentation-pcl-viewer.cpp Create pcl viewer object
 - In the `while()` loop we update the point cloud using the mutex shared with the pcl viewer
 \snippet tutorial-hsv-segmentation-pcl-viewer.cpp Update point cloud with mutex protection
 .
+- Finally, when running the point cloud viewer in the main thread, we call the `vpDisplayPCL::display()` method
+  in a non-blocking mode.
+  \snippet tutorial-hsv-segmentation-pcl-viewer.cpp Refresh monothread viewer
+
 To run this tutorial
 - Learn the color of the object from which you want to extract the corresponding point cloud
 \verbatim
@@ -132,6 +138,31 @@ $ mkdir visp-build && cd visp-build
 $ cmake ../visp
 $ make -j$(nproc)
 \endverbatim
+
+\subsection hsv_pcl_issue_MacOs Known issue on MacOS
+
+On MacOS, you can face the following error:
+\code
+tutorial-display-pcl *** Terminating app due to uncaught exception 'NSInternalInconsistencyException', reason: 'NSWindow drag regions should only be invalidated on the Main Thread!'
+libc++abi: terminating due to uncaught exception of type NSException
+\endcode
+This problem seems to be due to VTK library that does not like to be run in a non-main thread on MacOS.
+You can use the vpDisplayPCL class in monothread mode using the method vpDisplayPCL::display. See the
+[PCL issue](https://github.com/PointCloudLibrary/pcl/issues/253#issuecomment-29716100) for more details.
+
+\subsection hsv_pcl_issue_xserver Known issue when using VTK and the server X backends
+
+When the PCL library relies on the VTK library and X11 library as backends for the viewer, you
+may face the following error if you create either two viewers in threaded mode or one viewer in
+threaded mode and another one in the main thread:
+
+\code
+X Error of failed request:  BadAccess (attempt to access private resource denied)
+  Major opcode of failed request:  152 (GLX)
+  Minor opcode of failed request:  5 (X_GLXMakeCurrent)
+  Serial number of failed request:  407
+  Current serial number in output stream:  407
+\endcode
 
 \section hsv_pcl_next Next tutorial
 

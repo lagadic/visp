@@ -42,6 +42,8 @@
 #include <thread>
 #include <string>
 
+#include <visp3/core/vpColor.h>
+
 #include <pcl/visualization/cloud_viewer.h>
 #include <pcl/visualization/pcl_visualizer.h>
 
@@ -52,11 +54,43 @@ BEGIN_VISP_NAMESPACE
   This class enables real time plotting of 3D point clouds. It relies on the PCL library.
   To see how to install PCL library, please refer to the \ref soft_tool_pcl section.
 
+  \warning MacOS currently can only use the monothread method `display`, otherwise they get
+  the error `uncaught exception 'NSInternalInconsistencyException', reason: 'NSWindow should only be instantiated on the main thread!'`
+
+  \warning On Ubuntu 22.04 and 24.04, you can face the following error:
+  ```
+    Thread 2 "tutorial-pcl-vi" received signal SIGSEGV, Segmentation fault.
+    0x00007ffff7304b10 in _XEventsQueued () from /lib/x86_64-linux-gnu/libX11.so.6
+    0x00007ffff7304b10 in _XEventsQueued () at /lib/x86_64-linux-gnu/libX11.so.6
+    0x00007ffff72f11a1 in XPending () at /lib/x86_64-linux-gnu/libX11.so.6
+    0x00007fffecf65b8f in vtkXRenderWindowInteractor::StartEventLoop() () at /lib/x86_64-linux-gnu/libvtkRenderingUI-9.1.so.1
+    0x00007ffff6ee3f8c in pcl::visualization::PCLVisualizer::spinOnce(int, bool) () at /lib/x86_64-linux-gnu/libpcl_visualization.so.1.12
+    0x00007ffff7fa5c49 in vpPclVisualizer::loopThread() (this=0x7fffffffd720) at /usr/include/c++/11/bits/shared_ptr_base.h:1295
+  ```
+  This is a [known compatibility issue](https://github.com/PointCloudLibrary/pcl/issues/5237) between PCL library and VTK library.
+
+  The vpDisplayPCL can be used in monothread mode, or you may try to install PCL from source and then recompile
+  ViSP.
+
+  \warning When the PCL library relies on the VTK library and X11 library as backends for the viewer, you
+  may face the following error if you create either two viewers in threaded mode or one viewer in
+  threaded mode and another one in the main thread:
+  ```
+    X Error of failed request:  BadAccess (attempt to access private resource denied)
+      Major opcode of failed request:  152 (GLX)
+      Minor opcode of failed request:  5 (X_GLXMakeCurrent)
+      Serial number of failed request:  407
+      Current serial number in output stream:  407
+  ```
+  It seems to be due to the fact that the X server resources are reserved by one thread, preventing any other thread to
+  access them.
+
   <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
 
   <b>Tutorials</b><br>
   <span style="margin-left:2em"> If you want detailed explanation on how to use this class, you may have a look at:</span><br>
 
+  - \ref tutorial-display-pcl
   - \ref tutorial-hsv-segmentation-pcl
 */
 class VISP_EXPORT vpDisplayPCL
@@ -67,20 +101,160 @@ public:
   ~vpDisplayPCL();
 
   void setVerbose(bool verbose);
-  void startThread(std::mutex &mutex, pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud);
+  void display(const bool &blocking = false);
+  void startThread(const bool &colorThread = false);
+  void startThread(std::mutex &mutex, pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud, const std::string &name = "", const vpColor &color = vpColor::red);
   void startThread(std::mutex &mutex, pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud);
+  void addPointCloud(std::mutex &mutex, pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud, const std::string &name = "", const vpColor &color = vpColor::red);
+  void addPointCloud(std::mutex &mutex, pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud);
   void setPosition(int posx, int posy);
   void setWindowName(const std::string &window_name);
   void stop();
-
 private:
-  void run(std::mutex &mutex, pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud);
-  void run_color(std::mutex &mutex, pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud);
+  void run();
+  void runColor();
+  void createViewer();
+  void insertLegend(const size_t &id);
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+/**
+ * \brief Basic structure to handle the point clouds to display.
+ */
+  typedef struct PointCloudHandling
+  {
+    bool m_do_init; //!< Managed internally. True to insert for the first time the point cloud in the viewer, false to update the point cloud instead.
+    std::string m_name; //!< The name of the handled point cloud. It is used both by the viewer as unique identifier and in the legend.
+    static unsigned int s_nb; //!< The number of point clouds that are handled.
+
+    /**
+     * \brief Create a unique name for the point cloud.
+     *
+     * \return std::string The unique name.
+     */
+    std::string createName()
+    {
+      std::stringstream ss;
+      ss << "Point cloud " << s_nb;
+      return ss.str();
+    }
+
+    /**
+     * \brief Initializes the point cloud handler
+     *
+     * \param[in] name Its name, used as ID and potentially in the legend.
+     * If empty, it will be automatically generated.
+     */
+    void init(const std::string &name)
+    {
+      if (name.empty()) {
+        m_name = createName();
+      }
+      else {
+        m_name = name;
+      }
+      m_do_init = true;
+      ++s_nb;
+    }
+
+    /**
+     * \brief Initialize the point cloud handler.
+     * Its name, used as ID and potentially in the legend, will be automatically generated.
+     */
+    void init()
+    {
+      init(createName());
+    }
+
+    /**
+     * \brief Construct a new Point Cloud Handling object.
+     * Its name, used as ID and potentially in the legend, will be automatically generated.
+     */
+    PointCloudHandling()
+    {
+      init();
+    }
+
+    /**
+     * \brief Construct a new Point Cloud Handling object
+     *
+     * \param[in] name Name used as ID and potentially in the legend.
+     */
+    PointCloudHandling(const std::string &name)
+    {
+      init(name);
+    }
+  } PointCloudHandling;
+
+  typedef struct XYZPointCloudHandling : public PointCloudHandling
+  {
+    pcl::PointCloud<pcl::PointXYZ>::Ptr m_pcl; //!< Pointer towards the textureless point cloud.
+    vpColor m_color; //!< Monochromic color to render the point cloud.
+
+    /**
+     * \brief Construct a new XYZPointCloudHandling object
+     *
+     * \param[in] pcl Pointer towards the textureless point cloud.
+     * \param[in] color Monochromic color to render the point cloud.
+     */
+    XYZPointCloudHandling(pcl::PointCloud<pcl::PointXYZ>::Ptr pcl, const vpColor &color)
+      : PointCloudHandling()
+      , m_pcl(pcl)
+      , m_color(color)
+    { }
+
+    /**
+     * \brief Construct a new XYZPointCloudHandling object
+     *
+     * \param[in] pcl Pointer towards the textureless point cloud.
+     * \param[in] name Name of the point cloud, used as ID by the viewer and inserted in the legend.
+     * \param[in] color Monochromic color to render the point cloud.
+     */
+    XYZPointCloudHandling(pcl::PointCloud<pcl::PointXYZ>::Ptr pcl, const std::string &name, const vpColor &color)
+      : PointCloudHandling(name)
+      , m_pcl(pcl)
+      , m_color(color)
+    { }
+  } XYZPointCloudHandling;
+
+  /**
+   * \brief Structure that handles textured point cloud.
+   */
+  typedef struct ColoredPointCloudHandling : public PointCloudHandling
+  {
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr m_pcl; //!< Pointer towards the textured point cloud
+
+    /**
+     * \brief Construct a new Colored Point Cloud Handling object
+     *
+     * \param[in] pcl Pointer towards the textured point cloud
+     */
+    ColoredPointCloudHandling(pcl::PointCloud<pcl::PointXYZRGB>::Ptr pcl)
+      : PointCloudHandling()
+      , m_pcl(pcl)
+    { }
+
+    /**
+     * \brief Construct a new Colored Point Cloud Handling object
+     *
+     * \param[in] pcl Pointer towards the textured point cloud
+     * \param[in] name Name of the point cloud, used as ID by the viewer.
+     */
+    ColoredPointCloudHandling(pcl::PointCloud<pcl::PointXYZRGB>::Ptr pcl, const std::string &name)
+      : PointCloudHandling(name)
+      , m_pcl(pcl)
+    { }
+  } ColoredPointCloudHandling;
+#endif
 
   bool m_stop;
+  bool m_thread_running; //!< Set to true once the startThread method is called.
   bool m_verbose;
   std::thread m_thread; //!< Non-blocking display thread.
-  std::mutex m_mutex;
+  std::mutex m_mutex_vector; //!< Mutex to protect the vectors of point clouds
+  std::vector<std::pair<std::mutex &, XYZPointCloudHandling>> mv_xyz_pcl; //!< Storage for textureless point clouds + associated mutex
+  std::vector<pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZ>> mv_xyz_handlers; //!< Mono-color handlers for textureless point clouds
+  std::vector<std::pair<std::mutex &, ColoredPointCloudHandling>> mv_colored_pcl; //!< Storage for textured point clouds + associated mutex
+  std::vector<pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB>> mv_color_handlers; //!< Color handlers for textured point clouds
   unsigned int m_width;
   unsigned int m_height;
   int m_posx;

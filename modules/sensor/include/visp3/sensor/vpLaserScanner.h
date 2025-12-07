@@ -38,10 +38,10 @@
   \brief Implements a generic laser scanner.
  */
 
-#ifndef vpLaserScanner_h
-#define vpLaserScanner_h
+#ifndef VP_LASER_SCANNER_H
+#define VP_LASER_SCANNER_H
 
-#include "visp3/core/vpConfig.h"
+#include <visp3/core/vpConfig.h>
 
 BEGIN_VISP_NAMESPACE
 /*!

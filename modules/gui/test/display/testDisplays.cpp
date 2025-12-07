@@ -44,7 +44,7 @@
 #include <stdlib.h>
 #include <string>
 
-#if defined(VISP_HAVE_GTK) || defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_OPENCV)
+#if defined(VISP_HAVE_GTK) || defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9) || (defined(VISP_HAVE_OPENCV) && !defined(VISP_HAVE_OPENCV_HEADLESS))
 
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpIoTools.h>
@@ -297,7 +297,7 @@ static void runTest(bool opt_display, bool opt_click_allowed)
   }
 #endif
 
-#if defined(HAVE_OPENCV_HIGHGUI)
+#if defined(HAVE_OPENCV_HIGHGUI) && !defined(VISP_HAVE_OPENCV_HEADLESS)
   vpDisplayOpenCV *displayCv = new vpDisplayOpenCV;
   Icv.init(480, 640, Type(255));
   if (opt_display) {
@@ -358,7 +358,7 @@ static void runTest(bool opt_display, bool opt_click_allowed)
   delete displayGtk;
 #endif
 
-#if defined(HAVE_OPENCV_HIGHGUI)
+#if defined(HAVE_OPENCV_HIGHGUI) && !defined(VISP_HAVE_OPENCV_HEADLESS)
   delete displayCv;
 #endif
 
@@ -405,7 +405,7 @@ int main(int argc, const char **argv)
       std::cout << "  D3D\n";
       nbDevices++;
 #endif
-#if defined VISP_HAVE_OPENCV
+#if defined(VISP_HAVE_OPENCV) && !defined(VISP_HAVE_OPENCV_HEADLESS)
       std::cout << "  OpenCV\n";
       nbDevices++;
 #endif

@@ -1,4 +1,4 @@
-//! \example tutorial-pcl-viewer.cpp
+//! \example tutorial-display-pcl.cpp
 #include <visp3/core/vpConfig.h>
 
 // System include
@@ -11,7 +11,7 @@
 
 //! [Class include]
 // Tutorial include
-#include "ClassUsingPclViewer.h"
+#include "ClassUsingDisplayPCL.h"
 //! [Class include]
 
 #ifdef ENABLE_VISP_NAMESPACE
@@ -25,10 +25,9 @@ using namespace VISP_NAMESPACE_NAME;
  */
 typedef enum DisplayMode
 {
-  BLOCKING = 0, /*!< Only the blocking-mode display example will be run.*/
+  MONOTHREAD = 0, /*!< Only the monothread-mode display example will be run.*/
   THREADED = 1, /*!< Only the threaded-mode display example will be run.*/
-  BOTH = 2, /*!< First the blocking-mode display example will be run and then the threaded-mode one.*/
-  MODE_COUNT = 3
+  MODE_COUNT = 2
 } DisplayMode;
 
 /**
@@ -40,12 +39,10 @@ typedef enum DisplayMode
 std::string displayModeToString(const DisplayMode &mode)
 {
   switch (mode) {
-  case BLOCKING:
-    return "blocking";
+  case MONOTHREAD:
+    return "monothread";
   case THREADED:
     return "threaded";
-  case BOTH:
-    return "both";
   default:
     break;
   }
@@ -64,12 +61,14 @@ DisplayMode displayModeFromString(const std::string &name)
   DisplayMode res = DisplayMode::MODE_COUNT;
   bool wasFound = false;
   std::string lowerCaseName = vpIoTools::toLowerCase(name);
-  for (unsigned int i = 0; i < DisplayMode::MODE_COUNT && !wasFound; i++) {
+  unsigned int i = 0;
+  while ((i < DisplayMode::MODE_COUNT) && (!wasFound)) {
     DisplayMode candidate = (DisplayMode)i;
     if (lowerCaseName == displayModeToString(candidate)) {
       res = candidate;
       wasFound = true;
     }
+    ++i;
   }
   return res;
 }
@@ -85,7 +84,7 @@ DisplayMode displayModeFromString(const std::string &name)
 std::string getAvailableDisplayMode(const std::string &prefix = "< ", const std::string &sep = " , ", const std::string &suffix = " >")
 {
   std::string modes(prefix);
-  for (unsigned int i = 0; i < DisplayMode::MODE_COUNT - 1; i++) {
+  for (unsigned int i = 0; i < DisplayMode::MODE_COUNT - 1; ++i) {
     DisplayMode candidate = (DisplayMode)i;
     modes += displayModeToString(candidate) + sep;
   }
@@ -103,7 +102,7 @@ int main(int argc, char *argv[])
   const std::pair<double, double> def_xlim = std::pair<double, double>(-2.5, 2.5); // Min and max X-axis coordinates.
   const std::pair<double, double> def_ylim = std::pair<double, double>(-2.5, 2.5); // Min and max Y-axis coordinates.
   const std::pair<unsigned int, unsigned int> def_reso = std::pair<unsigned int, unsigned int>(50, 50); // Number of points along the X-axis and Y-axis reciprocally.
-  const DisplayMode def_mode = DisplayMode::BLOCKING; // Display mode that should be used.
+  const DisplayMode def_mode = DisplayMode::MONOTHREAD; // Display mode that should be used.
   //! [Default arguments values]
 
   //! [Arguments parser]
@@ -160,6 +159,10 @@ int main(int argc, char *argv[])
       //! [Arguments of the program]
       return EXIT_SUCCESS;
     }
+    else {
+      std::cerr << "Option '" << argv[i] << "' is not known. Please run '" << argv[0] << " --help' to have the list of options." << std::endl;
+      return EXIT_FAILURE;
+    }
   }
   //! [Arguments parser]
 
@@ -171,19 +174,23 @@ int main(int argc, char *argv[])
   std::cout << "\tNoise standard deviation: " << opt_addedNoise << std::endl;
   std::cout << "\tDisplay mode: " << displayModeToString(opt_mode) << std::endl;
 
-  //! [Running blocking mode]
-  if (opt_mode == DisplayMode::BLOCKING || opt_mode == DisplayMode::BOTH) {
-    ClassUsingPclViewer demo(opt_xlim, opt_ylim, opt_reso);
-    demo.blockingMode(opt_addedNoise, opt_order);
-  }
-  //! [Running blocking mode]
+  bool useMonothread;
 
-  //! [Running threaded mode]
-  if (opt_mode == DisplayMode::THREADED || opt_mode == DisplayMode::BOTH) {
-    ClassUsingPclViewer demo(opt_xlim, opt_ylim, opt_reso);
-    demo.threadedMode(opt_addedNoise, opt_order);
+  if (opt_mode == DisplayMode::THREADED) {
+    useMonothread = false;
+    //! [Running threaded mode]
+    ClassUsingDisplayPCL demo(opt_xlim, opt_ylim, opt_reso);
+    demo.runDemo(opt_addedNoise, opt_order, useMonothread);
+    //! [Running threaded mode]
   }
-  //! [Running threaded mode]
+
+  if (opt_mode == DisplayMode::MONOTHREAD) {
+    useMonothread = true;
+    //! [Running threaded mode]
+    ClassUsingDisplayPCL demo(opt_xlim, opt_ylim, opt_reso);
+    demo.runDemo(opt_addedNoise, opt_order, useMonothread);
+    //! [Running threaded mode]
+  }
 
   return 0;
 }
