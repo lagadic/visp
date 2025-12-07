@@ -574,7 +574,7 @@ TEST_CASE("Default constructor", "[rotation matrix]")
 TEST_CASE("Vector rotation", "project")
 {
   std::cout << "\n== Test rotation of vectors ==" << std::endl;
-#if defined(VISP_HAVE_AVX) || defined(VISP_HAVE_SSE2) // Should be adapted to future evolution of vpRotationMatrix::rotateVectors()
+#if defined(VISP_HAVE_AVX) || defined(VISP_HAVE_SSE3) // Should be adapted to future evolution of vpRotationMatrix::rotateVectors()
   std::vector<unsigned int> NS = { 1, 10, 100, 1000, 10000 };
 #else
   std::vector<unsigned int> NS = { 1, 10 };

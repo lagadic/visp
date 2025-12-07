@@ -106,7 +106,7 @@ void vpRotationMatrix::rotateVectors(const vpMatrix &input, vpMatrix &output, bo
       outputData += 3;
     }
 
-#elif VISP_HAVE_SSE2
+#elif VISP_HAVE_SSE3
     __m128d row01_lo = _mm_loadu_pd(rowPtrs[0]);
     __m128d row01_hi = _mm_loadu_pd(rowPtrs[1]);
     __m128d row2_xy = _mm_loadu_pd(rowPtrs[2]);
