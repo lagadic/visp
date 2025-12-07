@@ -48,6 +48,14 @@
 BEGIN_VISP_NAMESPACE
 const unsigned int vpHomogeneousMatrix::constr_value_4 = 4;
 
+/**
+ * Project a set of 3D points using the homogeneous matrix.
+ * The input points can be stored either by row or by column.
+ * \param input : Input matrix containing 3D points to project. By default, each column is a 3D point with 3 rows.
+ * When `transposed` is true, each row is a 3D point with 3 columns.
+ * \param output : Output matrix containing projected points. Has the same layout and size as the input matrix.
+ * \param transposed : If true, input matrix is transposed (each row is a 3D point).
+ */
 void vpHomogeneousMatrix::project(const vpMatrix &input, vpMatrix &output, bool transposed) const
 {
   output.resize(input.getRows(), input.getCols(), false, false);
@@ -135,7 +143,7 @@ void vpHomogeneousMatrix::project(const vpMatrix &input, vpMatrix &output, bool 
       inputData += 3;
     }
 #endif
-    }
+  }
   else {
     if (input.getRows() != 3) {
       throw vpException(vpException::dimensionError, "Expected input to have 3 rows");
@@ -202,7 +210,7 @@ void vpHomogeneousMatrix::project(const vpMatrix &input, vpMatrix &output, bool 
     double *r1 = rowPtrs[1];
     double *r2 = rowPtrs[2];
 
-    for (unsigned int i = 0; i < input.getRows(); ++i) {
+    for (unsigned int i = 0; i < input.getCols(); ++i) {
       double X = *inputX, Y = *inputY, Z = *inputZ;
       *outputX = r0[0] * X + r0[1] * Y + r0[2] * Z + r0[3];
       *outputY = r1[0] * X + r1[1] * Y + r1[2] * Z + r1[3];
@@ -212,13 +220,13 @@ void vpHomogeneousMatrix::project(const vpMatrix &input, vpMatrix &output, bool 
     }
 #endif
   }
-  }
+}
 
 
-  /*!
-    Construct an homogeneous matrix from a translation vector and quaternion
-    rotation vector.
-   */
+/*!
+  Construct an homogeneous matrix from a translation vector and quaternion
+  rotation vector.
+ */
 vpHomogeneousMatrix::vpHomogeneousMatrix(const vpTranslationVector &t, const vpQuaternionVector &q)
   : vpArray2D<double>(constr_value_4, constr_value_4)
 {
@@ -1573,8 +1581,8 @@ void vpHomogeneousMatrix::parse_json(const nlohmann::json &j)
     const bool converted = convertFromTypeAndBuildFrom<vpHomogeneousMatrix, vpPoseVector>(j, *this);
     if (!converted) {
       from_json(j, *asArray);
+    }
   }
-}
   else { // Generic 2D array conversion
     from_json(j, *asArray);
   }
