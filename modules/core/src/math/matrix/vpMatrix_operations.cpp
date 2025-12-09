@@ -112,18 +112,23 @@ void vpMatrix::multMatrixVector(const vpMatrix &A, const vpColVector &v, vpColVe
 
   // If available use Lapack only for large matrices
   bool useLapack = ((A.rowNum > vpMatrix::m_lapack_min_size) || (A.colNum > vpMatrix::m_lapack_min_size));
-#if !(defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN) && !defined(VISP_HAVE_GSL))
+#if !defined(VISP_HAVE_LAPACK)
   useLapack = false;
 #endif
 
   if (useLapack) {
-#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN) && !defined(VISP_HAVE_GSL)
+#if defined(VISP_HAVE_LAPACK)
     double alpha = 1.0;
     double beta = 0.0;
-    char trans = 't';
     int incr = 1;
 
+#ifdef VISP_HAVE_GSL // GSL matrix is row major
+    const char trans = 'n';
+    vpMatrix::blas_dgemv(trans, A.rowNum, A.colNum, alpha, A.data, A.colNum, v.data, incr, beta, w.data, incr);
+#else // BLAS matrix is column major
+    const char trans = 't';
     vpMatrix::blas_dgemv(trans, A.colNum, A.rowNum, alpha, A.data, A.colNum, v.data, incr, beta, w.data, incr);
+#endif
 #endif
   }
   else {
@@ -164,21 +169,26 @@ void vpMatrix::mult2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
   // If available use Lapack only for large matrices
   bool useLapack = ((A.getRows() > vpMatrix::m_lapack_min_size) || (A.getCols() > vpMatrix::m_lapack_min_size) ||
                     (B.getCols() > vpMatrix::m_lapack_min_size));
-#if !(defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN) && !defined(VISP_HAVE_GSL))
+#if !defined(VISP_HAVE_LAPACK)
   useLapack = false;
 #endif
 
   if (useLapack) {
-#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN) && !defined(VISP_HAVE_GSL)
+#if defined(VISP_HAVE_LAPACK)
     const double alpha = 1.0;
     const double beta = 0.0;
     const char trans = 'n';
+
+#if defined(VISP_HAVE_GSL) // GSL matrix is row major
+    vpMatrix::blas_dgemm(trans, trans, A.getRows(), B.getCols(), A.getCols(), alpha, A.data, A.getCols(), B.data, B.getCols(), beta,
+                         C.data, B.getCols());
+#else
     vpMatrix::blas_dgemm(trans, trans, B.getCols(), A.getRows(), A.getCols(), alpha, B.data, B.getCols(), A.data, A.getCols(), beta,
                          C.data, B.getCols());
 #endif
+#endif
   }
   else {
-    // 5/12/06 some "very" simple optimization to avoid indexation
     const unsigned int BcolNum = B.getCols();
     const unsigned int BrowNum = B.getRows();
     double **BrowPtrs = B.rowPtrs;
@@ -219,17 +229,23 @@ void vpMatrix::mult2Matrices(const vpMatrix &A, const vpRotationMatrix &B, vpMat
   // If available use Lapack only for large matrices
   bool useLapack = ((A.getRows() > vpMatrix::m_lapack_min_size) || (A.getCols() > vpMatrix::m_lapack_min_size) ||
                     (B.getCols() > vpMatrix::m_lapack_min_size));
-#if !(defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN) && !defined(VISP_HAVE_GSL))
+#if !defined(VISP_HAVE_LAPACK)
   useLapack = false;
 #endif
 
   if (useLapack) {
-#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN) && !defined(VISP_HAVE_GSL)
+#if defined(VISP_HAVE_LAPACK)
     const double alpha = 1.0;
     const double beta = 0.0;
     const char trans = 'n';
+
+#if defined(VISP_HAVE_GSL) // GSL matrix is row major
+    vpMatrix::blas_dgemm(trans, trans, A.getRows(), B.getCols(), A.getCols(), alpha, A.data, A.getCols(), B.data, B.getCols(), beta,
+                         C.data, B.getCols());
+#else
     vpMatrix::blas_dgemm(trans, trans, B.getCols(), A.getRows(), A.getCols(), alpha, B.data, B.getCols(), A.data, A.getCols(), beta,
                          C.data, B.getCols());
+#endif
 #endif
   }
   else {
@@ -272,17 +288,23 @@ void vpMatrix::mult2Matrices(const vpRotationMatrix &A, const vpMatrix &B, vpMat
   // If available use Lapack only for large matrices
   bool useLapack = ((A.getRows() > vpMatrix::m_lapack_min_size) || (A.getCols() > vpMatrix::m_lapack_min_size) ||
                     (B.colNum > vpMatrix::m_lapack_min_size));
-#if !(defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN) && !defined(VISP_HAVE_GSL))
+#if !defined(VISP_HAVE_LAPACK)
   useLapack = false;
 #endif
 
   if (useLapack) {
-#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN) && !defined(VISP_HAVE_GSL)
+#if defined(VISP_HAVE_LAPACK)
     const double alpha = 1.0;
     const double beta = 0.0;
     const char trans = 'n';
-    vpMatrix::blas_dgemm(trans, trans, B.colNum, A.getRows(), A.getCols(), alpha, B.data, B.colNum, A.data, A.getCols(), beta,
-                         C.data, B.colNum);
+
+#if defined(VISP_HAVE_GSL) // GSL matrix is row major
+    vpMatrix::blas_dgemm(trans, trans, A.getRows(), B.getCols(), A.getCols(), alpha, A.data, A.getCols(), B.data, B.getCols(), beta,
+                         C.data, B.getCols());
+#else
+    vpMatrix::blas_dgemm(trans, trans, B.getCols(), A.getRows(), A.getCols(), alpha, B.data, B.getCols(), A.data, A.getCols(), beta,
+                         C.data, B.getCols());
+#endif
 #endif
   }
   else {
@@ -358,28 +380,30 @@ void vpMatrix::mult2Matrices(const vpMatrix &A, const vpMatrix &B, vpHomogeneous
   const unsigned int val_4 = 4;
   if ((A.colNum != val_4) || (A.rowNum != val_4) || (B.colNum != val_4) || (B.rowNum != val_4)) {
     throw(vpException(vpException::dimensionError,
-                      "Cannot multiply (%dx%d) matrix by (%dx%d) matrix as a "
-                      "rotation matrix",
+                      "Cannot multiply (%dx%d) matrix by (%dx%d) matrix as a homogeneous matrix",
                       A.getRows(), A.getCols(), B.getRows(), B.getCols()));
   }
-  // Considering perfMatrixMultiplication.cpp benchmark,
-  // using either MKL, OpenBLAS, or Netlib can slow down this function with respect to the naive code.
-  // Lapack usage needs to be validated again.
-  // If available use Lapack only for large matrices.
-  // Using SSE2 doesn't speed up.
+
+  // If available use Lapack only for large matrices
   bool useLapack = ((A.rowNum > vpMatrix::m_lapack_min_size) || (A.colNum > vpMatrix::m_lapack_min_size) ||
                     (B.colNum > vpMatrix::m_lapack_min_size));
-#if !(defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN) && !defined(VISP_HAVE_GSL))
+#if !defined(VISP_HAVE_LAPACK)
   useLapack = false;
 #endif
 
   if (useLapack) {
-#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN) && !defined(VISP_HAVE_GSL)
+#if defined(VISP_HAVE_LAPACK)
     const double alpha = 1.0;
     const double beta = 0.0;
     const char trans = 'n';
-    vpMatrix::blas_dgemm(trans, trans, B.colNum, A.rowNum, A.colNum, alpha, B.data, B.colNum, A.data, A.colNum, beta,
-                         C.data, B.colNum);
+
+#if defined(VISP_HAVE_GSL) // GSL matrix is row major
+    vpMatrix::blas_dgemm(trans, trans, A.getRows(), B.getCols(), A.getCols(), alpha, A.data, A.getCols(), B.data, B.getCols(), beta,
+                         C.data, B.getCols());
+#else
+    vpMatrix::blas_dgemm(trans, trans, B.getCols(), A.getRows(), A.getCols(), alpha, B.data, B.getCols(), A.data, A.getCols(), beta,
+                         C.data, B.getCols());
+#endif
 #endif
   }
   else {
@@ -645,19 +669,24 @@ void vpMatrix::AAt(vpMatrix &B) const
 
   // If available use Lapack only for large matrices
   bool useLapack = ((rowNum > vpMatrix::m_lapack_min_size) || (colNum > vpMatrix::m_lapack_min_size));
-#if !(defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN) && !defined(VISP_HAVE_GSL))
+#if !defined(VISP_HAVE_LAPACK)
   useLapack = false;
 #endif
 
   if (useLapack) {
-#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN) && !defined(VISP_HAVE_GSL)
+#if defined(VISP_HAVE_LAPACK)
     const double alpha = 1.0;
     const double beta = 0.0;
+
+#if defined(VISP_HAVE_GSL) // GSL matrix is row major
+    const char transa = 'n';
+    const char transb = 't';
+#else
     const char transa = 't';
     const char transb = 'n';
+#endif
 
-    vpMatrix::blas_dgemm(transa, transb, rowNum, rowNum, colNum, alpha, data, colNum, data, colNum, beta, B.data,
-                         rowNum);
+    vpMatrix::blas_dgemm(transa, transb, rowNum, rowNum, colNum, alpha, data, colNum, data, colNum, beta, B.data, rowNum);
 #endif
   }
   else {
@@ -703,19 +732,25 @@ void vpMatrix::AtA(vpMatrix &B) const
 
   // If available use Lapack only for large matrices
   bool useLapack = ((rowNum > vpMatrix::m_lapack_min_size) || (colNum > vpMatrix::m_lapack_min_size));
-#if !(defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN) && !defined(VISP_HAVE_GSL))
+#if !defined(VISP_HAVE_LAPACK)
   useLapack = false;
 #endif
 
   if (useLapack) {
-#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN) && !defined(VISP_HAVE_GSL)
+#if defined(VISP_HAVE_LAPACK)
     const double alpha = 1.0;
     const double beta = 0.0;
+
+#if defined(VISP_HAVE_GSL) // GSL matrix is row major
+    const char transa = 't';
+    const char transb = 'n';
+    vpMatrix::blas_dgemm(transa, transb, colNum, colNum, rowNum, alpha, data, colNum, data, colNum, beta, B.data, colNum);
+#else
     const char transa = 'n';
     const char transb = 't';
 
-    vpMatrix::blas_dgemm(transa, transb, colNum, colNum, rowNum, alpha, data, colNum, data, colNum, beta, B.data,
-                         colNum);
+    vpMatrix::blas_dgemm(transa, transb, colNum, colNum, rowNum, alpha, data, colNum, data, colNum, beta, B.data, colNum);
+#endif
 #endif
   }
   else {
