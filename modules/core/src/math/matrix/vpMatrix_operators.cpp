@@ -567,8 +567,13 @@ vpMatrix vpMatrix::operator*(const vpForceTwistMatrix &V) const
     const double alpha = 1.0;
     const double beta = 0.0;
     const char trans = 'n';
-    vpMatrix::blas_dgemm(trans, trans, V.getCols(), rowNum, colNum, alpha, V.data, V.getCols(), data, colNum, beta,
-                         M.data, M.colNum);
+#if defined(VISP_HAVE_GSL) // GSL matrix is row major
+    vpMatrix::blas_dgemm(trans, trans, rowNum, V.getCols(), colNum, alpha, data, colNum, V.data, V.getCols(), beta, M.data,
+                         M.colNum);
+#else
+    vpMatrix::blas_dgemm(trans, trans, V.getCols(), rowNum, colNum, alpha, V.data, V.getCols(), data, colNum, beta, M.data,
+                         M.colNum);
+#endif
 #endif
   }
   else {
