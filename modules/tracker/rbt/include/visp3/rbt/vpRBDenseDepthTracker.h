@@ -110,7 +110,7 @@ public:
   unsigned int getMaxNumFeatures() const { return m_maxFeatures; }
   void setMaxNumFeatures(unsigned int num)
   {
-    m_numFeatures = num;
+    m_maxFeatures = num;
   }
 
   /**
