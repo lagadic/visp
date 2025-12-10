@@ -497,24 +497,25 @@ vpMatrix vpMatrix::operator*(const vpVelocityTwistMatrix &V) const
   const unsigned int val_6 = 6;
   M.resize(rowNum, val_6, false, false);
 
-  // Considering perfMatrixMultiplication.cpp benchmark,
-  // using either MKL, OpenBLAS, or Netlib can slow down this function with respect to the naive code.
-  // Lapack usage needs to be validated again.
-  // If available use Lapack only for large matrices.
-  // Speed up obtained using SSE2.
+  // If available use Lapack only for large matrices
   bool useLapack = ((rowNum > vpMatrix::m_lapack_min_size) || (colNum > vpMatrix::m_lapack_min_size) ||
                     (V.colNum > vpMatrix::m_lapack_min_size));
-#if !(defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN) && !defined(VISP_HAVE_GSL))
+#if !defined(VISP_HAVE_LAPACK)
   useLapack = false;
 #endif
 
   if (useLapack) {
-#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN) && !defined(VISP_HAVE_GSL)
+#if defined(VISP_HAVE_LAPACK)
     const double alpha = 1.0;
     const double beta = 0.0;
     const char trans = 'n';
+#if defined(VISP_HAVE_GSL) // GSL matrix is row major
+    vpMatrix::blas_dgemm(trans, trans, rowNum, V.colNum, colNum, alpha, data, colNum, V.data, V.colNum, beta, M.data,
+                         M.colNum);
+#else
     vpMatrix::blas_dgemm(trans, trans, V.colNum, rowNum, colNum, alpha, V.data, V.colNum, data, colNum, beta, M.data,
                          M.colNum);
+#endif
 #endif
   }
   else {
@@ -554,24 +555,25 @@ vpMatrix vpMatrix::operator*(const vpForceTwistMatrix &V) const
   const unsigned int val_6 = 6;
   M.resize(rowNum, val_6, false, false);
 
-  // Considering perfMatrixMultiplication.cpp benchmark,
-  // using either MKL, OpenBLAS, or Netlib can slow down this function with respect to the naive code.
-  // Lapack usage needs to be validated again.
-  // If available use Lapack only for large matrices.
-  // Speed up obtained using SSE2.
+  // If available use Lapack only for large matrices
   bool useLapack = ((rowNum > vpMatrix::m_lapack_min_size) || (colNum > vpMatrix::m_lapack_min_size) ||
                     (V.getCols() > vpMatrix::m_lapack_min_size));
-#if !(defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN) && !defined(VISP_HAVE_GSL))
+#if !defined(VISP_HAVE_LAPACK)
   useLapack = false;
 #endif
 
   if (useLapack) {
-#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN) && !defined(VISP_HAVE_GSL)
+#if defined(VISP_HAVE_LAPACK)
     const double alpha = 1.0;
     const double beta = 0.0;
     const char trans = 'n';
-    vpMatrix::blas_dgemm(trans, trans, V.getCols(), rowNum, colNum, alpha, V.data, V.getCols(), data, colNum, beta,
-                         M.data, M.colNum);
+#if defined(VISP_HAVE_GSL) // GSL matrix is row major
+    vpMatrix::blas_dgemm(trans, trans, rowNum, V.getCols(), colNum, alpha, data, colNum, V.data, V.getCols(), beta, M.data,
+                         M.colNum);
+#else
+    vpMatrix::blas_dgemm(trans, trans, V.getCols(), rowNum, colNum, alpha, V.data, V.getCols(), data, colNum, beta, M.data,
+                         M.colNum);
+#endif
 #endif
   }
   else {
