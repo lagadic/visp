@@ -157,7 +157,6 @@ void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame
   for (const std::vector<vpDepthPoint> &points: pointsPerThread) {
     m_depthPoints.insert(m_depthPoints.end(), std::make_move_iterator(points.begin()), std::make_move_iterator(points.end()));
   }
-
   if (m_maxFeatures > 0 && m_depthPoints.size() > m_maxFeatures) {
     vpUniRand rand(421);
     std::vector<size_t> indices = rand.sampleWithoutReplacement(m_maxFeatures, m_depthPoints.size());
@@ -186,7 +185,12 @@ void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame
 
 void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cMo, unsigned int /*iteration*/)
 {
-  if (m_numFeatures == 0) {
+  const unsigned int minBBSamples = (frame.renders.boundingBox.getArea() / (m_step * m_step));
+
+  const unsigned int minNumFeatures = m_maxFeatures > 0 ? std::min(m_maxFeatures * 0.05, minBBSamples * 0.05) : minBBSamples * 0.05;
+
+  if (m_numFeatures < minNumFeatures) {
+    m_numFeatures = 0;
     m_LTL = 0;
     m_LTR = 0;
     m_error = 0;

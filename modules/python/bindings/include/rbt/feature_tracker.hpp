@@ -75,8 +75,8 @@ public:
       void,           /* Return type */
       vpRBFeatureTracker,     /* Parent class */
       onTrackingIterStart,        /* Name of function in C++ (must match Python name) */
-      frame,
-      cMo
+      &frame,
+      &cMo
     );
   }
 
