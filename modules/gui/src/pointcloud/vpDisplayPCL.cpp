@@ -39,7 +39,9 @@
 
 BEGIN_VISP_NAMESPACE
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 unsigned int vpDisplayPCL::PointCloudHandling::s_nb = 0;
+#endif
 
 /*!
  * Default constructor.
