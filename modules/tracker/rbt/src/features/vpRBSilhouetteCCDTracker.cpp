@@ -266,8 +266,8 @@ void vpRBSilhouetteCCDTracker::initVVS(const vpRBFeatureTrackerInput &/*frame*/,
       m_gradientData.resize(m_controlPoints.size() * 2 * normal_points_number * 6);
       m_hessianData.resize(m_controlPoints.size() * 2 * normal_points_number * 6 * 6);
     }
-    m_gradients.clear();
-    m_hessians.clear();
+    // m_gradients.clear();
+    // m_hessians.clear();
     m_gradients.resize(m_controlPoints.size() * 2 * normal_points_number);
     m_hessians.resize(m_controlPoints.size() * 2 * normal_points_number);
 #if defined(VISP_HAVE_OPENMP)
@@ -281,9 +281,6 @@ void vpRBSilhouetteCCDTracker::initVVS(const vpRBFeatureTrackerInput &/*frame*/,
   m_weights.resize(m_numFeatures, false);
   if (m_temporalSmoothingFac > 0.0) {
     computeLocalStatistics(previousFrame.IRGB, m_prevStats);
-  }
-  else {
-    m_prevStats.zero();
   }
   m_previousFrame = &previousFrame;
 }
@@ -369,7 +366,6 @@ void vpRBSilhouetteCCDTracker::computeVVSIter(const vpRBFeatureTrackerInput &fra
   else {
     computeErrorAndInteractionMatrix<false>(cMo);
   }
-
   m_vvsConverged = false;
   if (iteration > 0 && tol < m_vvsConvergenceThreshold) {
     m_vvsConverged = true;
@@ -749,6 +745,74 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
     }
   }
 }
+
+
+
+void sumGradientsAndHessians(const std::vector<vpColVector> &gradients, const std::vector<vpMatrix> &hessians, const vpColVector &weights, vpColVector &gradient, vpMatrix &hessian, vpMatrix &L)
+{
+  std::vector<vpColVector> gradientPerThread;
+  std::vector<vpMatrix> hessianPerThread;
+  gradient = 0.0;
+  hessian = 0.0;
+#ifdef VISP_HAVE_OPENMP
+#pragma omp parallel
+#endif
+  {
+#ifdef VISP_HAVE_OPENMP
+#pragma omp single
+    {
+      unsigned int numThreads = omp_get_num_threads();
+      gradientPerThread.resize(numThreads);
+      hessianPerThread.resize(numThreads);
+    }
+#else
+    {
+      gradientPerThread.resize(1);
+      hessianPerThread.resize(1);
+    }
+#endif
+
+#ifdef VISP_HAVE_OPENMP
+    unsigned int threadIdx = omp_get_thread_num();
+#else
+    unsigned int threadIdx = 0;
+#endif
+    vpColVector localGradient(gradient.getRows(), 0.0);
+    vpMatrix localHessian(hessian.getRows(), hessian.getCols(), 0.0);
+
+#ifdef VISP_HAVE_OPENMP
+#pragma omp for
+#endif
+    for (int ii = 0; ii < static_cast<int>(gradients.size()); ++ii) {
+      const unsigned int i = static_cast<unsigned int>(ii);
+      const double *g = gradients[i].data;
+      const double *h = hessians[i].data;
+      double *Ldata = L[i];
+      double w = weights[i];
+
+      for (unsigned int j = 0; j < 6; ++j) {
+        Ldata[j] *= w;
+        localGradient[j] += g[j] * w;
+        const double *hj = h + j* 6;
+        for (unsigned int k = 0; k < 6; ++k) {
+
+          localHessian[j][k] += hj[k] * w;
+        }
+      }
+
+    }
+    {
+      gradientPerThread[threadIdx] = localGradient;
+      hessianPerThread[threadIdx] = localHessian;
+    }
+  }
+
+  for (unsigned int i = 0; i < gradientPerThread.size(); ++i) {
+    gradient += gradientPerThread[i];
+    hessian += hessianPerThread[i];
+  }
+}
+
 template<bool hasTemporalSmoothing>
 void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix(const vpHomogeneousMatrix &cMo)
 {
@@ -814,8 +878,6 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix(const vpHomogene
         Lnvp = Lnvp * objectFrameProj;
       }
 
-
-
       for (unsigned int j = 0; j < 2 * normal_points_number; ++j) {
         const double *vic_j = vic_ptr + 10 * j;
         const double *pix_j = pix_ptr + j * 3;
@@ -870,7 +932,6 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix(const vpHomogene
 
   //m_robust.setMinMedianAbsoluteDeviation(1.0);
   vpColVector weightPerPoint(errorPerPoint.getRows());
-
   m_robust.MEstimator(vpRobust::vpRobustEstimatorType::TUKEY, errorPerPoint, weightPerPoint);
   for (unsigned int i = 0; i < m_controlPoints.size(); ++i) {
     double w = m_controlPoints[i].isValid() ? weightPerPoint[i] : 0.0;
@@ -878,72 +939,7 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix(const vpHomogene
       m_weights[i * 2 * normal_points_number * 3 + j] = w;
     }
   }
-  std::vector<vpColVector> gradientPerThread;
-  std::vector<vpMatrix> hessianPerThread;
-  m_gradient = 0.0;
-  m_hessian = 0.0;
-#ifdef VISP_HAVE_OPENMP
-#pragma omp parallel
-#endif
-  {
-#ifdef VISP_HAVE_OPENMP
-#pragma omp single
-    {
-      unsigned int numThreads = omp_get_num_threads();
-      gradientPerThread.resize(numThreads);
-      hessianPerThread.resize(numThreads);
-    }
-#else
-    {
-      gradientPerThread.resize(1);
-      hessianPerThread.resize(1);
-    }
-#endif
-
-#ifdef VISP_HAVE_OPENMP
-    unsigned int threadIdx = omp_get_thread_num();
-#else
-    unsigned int threadIdx = 0;
-#endif
-    vpColVector localGradient(m_gradient.getRows(), 0.0);
-    vpMatrix localHessian(m_hessian.getRows(), m_hessian.getCols(), 0.0);
-
-#ifdef VISP_HAVE_OPENMP
-#pragma omp for
-#endif
-    for (int ii = 0; ii < static_cast<int>(m_gradients.size()); ++ii) {
-      const unsigned int i = static_cast<unsigned int>(ii);
-      vpColVector &g = m_gradients[i];
-      vpMatrix &h = m_hessians[i];
-      double w = m_weights[i];
-      if (w == 0.0) {
-        for (unsigned int j = 0; j < 6; ++j) {
-          m_L[i][j] = 0;
-        }
-      }
-      else {
-        for (unsigned int j = 0; j < 6; ++j) {
-          g[j] *= w;
-          m_L[i][j] *= w;
-          localGradient[j] += g[j];
-          for (unsigned int k = 0; k < 6; ++k) {
-            h[j][k] *= w;
-            localHessian[j][k] += h[j][k];
-          }
-        }
-      }
-    }
-    {
-      gradientPerThread[threadIdx] = localGradient;
-      hessianPerThread[threadIdx] = localHessian;
-    }
-  }
-
-  for (unsigned int i = 0; i < gradientPerThread.size(); ++i) {
-    m_gradient += gradientPerThread[i];
-    m_hessian += hessianPerThread[i];
-  }
-
+  sumGradientsAndHessians(m_gradients, m_hessians, m_weights, m_gradient, m_hessian, m_L);
   m_LTL = m_hessian;
   m_LTR = -m_gradient;
 
@@ -962,5 +958,6 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix(const vpHomogene
 
   }
 }
+
 
 END_VISP_NAMESPACE
