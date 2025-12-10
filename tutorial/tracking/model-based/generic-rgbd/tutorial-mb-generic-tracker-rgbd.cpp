@@ -21,6 +21,67 @@ using namespace VISP_NAMESPACE_NAME;
 
 namespace
 {
+typedef enum  DepthType
+{
+  DEPTH_UNUSED = 0,
+  DEPTH_DENSE = 1,
+  DEPTH_NORMAL = 2,
+  DEPTH_COUNT = 3
+}DepthType;
+
+std::string depthTypeToString(const DepthType &type)
+{
+  std::string name;
+  switch (type) {
+  case DEPTH_UNUSED:
+    name = "unused";
+    break;
+  case DEPTH_DENSE:
+    name = "dense";
+    break;
+  case DEPTH_NORMAL:
+    name = "normals";
+    break;
+  case DEPTH_COUNT:
+  default:
+    name = "unknown";
+    break;
+  }
+  return name;
+}
+
+DepthType depthTypeFromString(const std::string &name)
+{
+  DepthType type(DEPTH_COUNT);
+  unsigned int i = 0;
+  bool notFound = true;
+  while ((i < static_cast<unsigned int>(DEPTH_COUNT)) && notFound) {
+    DepthType candidate = static_cast<DepthType>(i);
+    if (vpIoTools::toLowerCase(name) == depthTypeToString(candidate)) {
+      notFound = false;
+      type = candidate;
+    }
+    ++i;
+  }
+  return type;
+}
+
+std::string getDepthTypeList(const std::string &prefix = "<", const std::string &sep = " , ", const std::string &suffix = ">")
+{
+  std::string list(prefix);
+  unsigned int i = 0;
+  while (i < static_cast<unsigned int>(DEPTH_COUNT - 1)) {
+    DepthType type = static_cast<DepthType>(i);
+    std::string name = depthTypeToString(type);
+    list += name + sep;
+    ++i;
+  }
+  DepthType type = static_cast<DepthType>(DEPTH_COUNT - 1);
+  std::string name = depthTypeToString(type);
+  list += name + suffix;
+  return list;
+}
+
 struct vpRealsenseIntrinsics_t
 {
   float ppx;       /**< Horizontal coordinate of the principal point of the image,
@@ -128,7 +189,7 @@ int main(int argc, char *argv[])
   std::string model_color = "model/cube/cube.cao", model_depth = "model/cube/cube.cao";
   std::string init_file = "model/cube/cube.init";
   unsigned int frame_cpt = 0;
-  bool disable_depth = false;
+  DepthType use_depth = DEPTH_DENSE;
 
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--input_directory" && i + 1 < argc) {
@@ -149,20 +210,20 @@ int main(int argc, char *argv[])
     else if (std::string(argv[i]) == "--init_file" && i + 1 < argc) {
       init_file = std::string(argv[i + 1]);
     }
-    else if (std::string(argv[i]) == "--disable_depth") {
-      disable_depth = true;
+    else if (std::string(argv[i]) == "--use_depth"  && i + 1 < argc) {
+      use_depth = depthTypeFromString(std::string(argv[i + 1]));
     }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "Usage: \n"
         << argv[0]
         << " --input_directory <data directory> --config_color <object.xml> --config_depth <object.xml>"
-        " --model_color <object.cao> --model_depth <object.cao> --init_file <object.init> --disable_depth"
+        " --model_color <object.cao> --model_depth <object.cao> --init_file <object.init> --use_depth " << getDepthTypeList()
         << std::endl;
       std::cout
         << "\nExample:\n"
         << argv[0]
         << " --config_color model/cube/cube.xml --config_depth model/cube/cube.xml"
-        " --model_color model/cube/cube.cao --model_depth model/cube/cube.cao --init_file model/cube/cube.init\n"
+        " --model_color model/cube/cube.cao --model_depth model/cube/cube.cao --init_file model/cube/cube.init --use_depth "<< depthTypeToString(use_depth) <<"\n"
         << std::endl;
       return EXIT_SUCCESS;
     }
@@ -176,7 +237,7 @@ int main(int argc, char *argv[])
 #else
   std::cout << "  Use klt     : 0" << std::endl;
 #endif
-  std::cout << "  Use depth   : " << !disable_depth << std::endl;
+  std::cout << "  Use depth   : " << depthTypeToString(use_depth) << std::endl;
 #else
   std::cout << "  Use edges   : 1" << std::endl;
   std::cout << "  Use klt     : 0" << std::endl;
@@ -235,7 +296,12 @@ int main(int argc, char *argv[])
 #else
   trackerTypes.push_back(vpMbGenericTracker::EDGE_TRACKER);
 #endif
-  trackerTypes.push_back(vpMbGenericTracker::DEPTH_DENSE_TRACKER);
+  if (use_depth == DEPTH_DENSE) {
+    trackerTypes.push_back(vpMbGenericTracker::DEPTH_DENSE_TRACKER);
+  }
+  else if (use_depth == DEPTH_NORMAL) {
+    trackerTypes.push_back(vpMbGenericTracker::DEPTH_NORMAL_TRACKER);
+  }
   vpMbGenericTracker tracker(trackerTypes);
   //! [Constructor]
 #if defined(VISP_HAVE_PUGIXML)
@@ -348,10 +414,12 @@ int main(int argc, char *argv[])
 
       mapOfImages["Camera1"] = &I_gray;
       std::map<std::string, pcl::PointCloud<pcl::PointXYZ>::ConstPtr> mapOfPointclouds;
-      if (disable_depth)
+      if (use_depth == DEPTH_UNUSED) {
         mapOfPointclouds["Camera2"] = empty_pointcloud;
-      else
+      }
+      else {
         mapOfPointclouds["Camera2"] = pointcloud;
+      }
 
       //! [Track]
       tracker.track(mapOfImages, mapOfPointclouds);

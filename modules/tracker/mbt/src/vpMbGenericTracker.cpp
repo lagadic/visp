@@ -2952,6 +2952,7 @@ void vpMbGenericTracker::loadConfigFileJSON(const std::string &settingsFile, boo
 
   //Find camera that are already present in the tracker but not in the config file: they will be removed
   std::vector<std::string> unusedCameraNames = getCameraNames();
+  std::map<std::string, std::string> map_models;
 
   bool refCameraFound = false;
   //Foreach camera
@@ -2966,6 +2967,11 @@ void vpMbGenericTracker::loadConfigFileJSON(const std::string &settingsFile, boo
     }
     else if (cameraName != m_referenceCameraName) { // No transformation to reference and its not the reference itself
       throw vpException(vpException::notInitialized, "Camera " + cameraName + " has no transformation to the reference camera");
+    }
+    if (trackerJson.contains("model")) {
+      std::string model_filename = trackerJson["model"].get<std::string>();
+      map_models[cameraName] = model_filename;
+      std::cout << "Set the model to '" << model_filename << "' for camera '" << cameraName << "'" << std::endl;
     }
     if (verbose) {
       std::cout << "Loading tracker " << cameraName << std::endl << " with settings: " << std::endl << trackerJson.dump(2);
@@ -2991,7 +2997,7 @@ void vpMbGenericTracker::loadConfigFileJSON(const std::string &settingsFile, boo
     throw vpException(vpException::badValue, "Reference camera not found in trackers");
   }
 
-  // All camerasthat were defined in the tracker but not in the config file are removed
+  // All cameras that were defined in the tracker but not in the config file are removed
   for (const std::string &oldCameraName : unusedCameraNames) {
     m_mapOfCameraTransformationMatrix.erase(oldCameraName);
     TrackerWrapper *tw = m_mapOfTrackers[oldCameraName];
@@ -3028,8 +3034,25 @@ void vpMbGenericTracker::loadConfigFileJSON(const std::string &settingsFile, boo
   }
 
   //If a 3D model is defined, load it
-  if (settings.contains("model")) {
+  if (settings.contains("model") && (map_models.size() == 0)) {
     loadModel(settings.at("model").get<std::string>(), verbose);
+  }
+  else if (map_models.size() != 0) {
+    if (settings.contains("model")) {
+      std::stringstream ss;
+      ss << "Both a model common to all the cameras and at least one model for a dedicated camera has been set." << std::endl;
+      ss << "Please either set a model for each camera or a single model common to each camera";
+      throw(vpException(vpException::ioError, ss.str()));
+    }
+    else if (map_models.size() == trackersJson.size()) {
+      loadModel(map_models, verbose);
+    }
+    else {
+      std::stringstream ss;
+      ss << "The model has not been defined for each camera individually" << std::endl;
+      ss << "Please either set a model for each camera or a single model common to each camera";
+      throw(vpException(vpException::ioError, ss.str()));
+    }
   }
 }
 
@@ -7283,8 +7306,8 @@ void vpMbGenericTracker::TrackerWrapper::setPose(const vpImage<unsigned char> *c
         downScale(i);
         vpMbEdgeTracker::initMovingEdge(*Ipyramid[i], cMo);
         upScale(i);
-      }
-    } while (i != 0);
+  }
+} while (i != 0);
 
     cleanPyramid(Ipyramid);
   }
