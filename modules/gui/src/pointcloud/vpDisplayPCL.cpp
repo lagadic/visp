@@ -44,6 +44,10 @@ unsigned int vpDisplayPCL::PointCloudHandling::s_nb = 0;
 /*!
  * Default constructor.
  * By default, viewer size is set to 640 x 480.
+ *
+ * \param[in] posx Horizontal position of the viewer on screen.
+ * \param[in] posy Vertical position of the viewer on screen.
+ * \param[in] window_name Name of the viewer window.
  */
 vpDisplayPCL::vpDisplayPCL(int posx, int posy, const std::string &window_name)
   : m_stop(false), m_thread_running(false), m_verbose(false), m_width(640), m_height(480), m_posx(posx), m_posy(posy),
@@ -105,10 +109,15 @@ void vpDisplayPCL::insertLegend(const size_t &id)
 };
 
 /**
- * \brief Monothread display method. MacOS currently can only use this monothread
+ * \brief Monothread display method.
+ *
+ * \warning MacOS currently can only use this monothread
  * method, otherwise they get the error `uncaught exception 'NSInternalInconsistencyException', reason: 'NSWindow should only be instantiated on the main thread!'`
  * \warning Because pcl::visualization::PCLVisualizer is not multi-thread friendly,
  * calling this method stops the display thread if it was running.
+ *
+ * \param[in] blocking If true, the program execution will be stopped until a key is pressed. If false, will
+ * refresh the display and then the program execution will automatically resume.
  */
 void vpDisplayPCL::display(const bool &blocking)
 {
@@ -313,6 +322,10 @@ void vpDisplayPCL::runColor()
 
 /*!
  * Start the viewer thread able to display a point cloud.
+
+ * \param[in] colorThread If true, assumes that the point clouds contain RGB information.
+ * If false, assumes that the point clouds contain only XYZ information and display them
+ * along with a legend using monochromic colors.
  */
 void vpDisplayPCL::startThread(const bool &colorThread)
 {
