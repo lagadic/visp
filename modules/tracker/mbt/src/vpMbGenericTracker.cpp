@@ -490,7 +490,6 @@ void vpMbGenericTracker::computeVVS(std::map<std::string, const vpImage<unsigned
         tracker->ctTc0 = c_curr_tTc_curr0;
       }
 #endif
-
       // Update cMo
       for (std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.begin();
         it != m_mapOfTrackers.end(); ++it) {
@@ -585,10 +584,12 @@ void vpMbGenericTracker::computeVVSInteractionMatrixAndResidu(
 
     tracker->computeVVSInteractionMatrixAndResidu(mapOfImages[it->first]);
 
-    m_L.insert(tracker->m_L * mapOfVelocityTwist[it->first], start_index, 0);
-    m_error.insert(start_index, tracker->m_error);
+    if (tracker->m_L.getRows() > 0) {
+      m_L.insert(tracker->m_L * mapOfVelocityTwist[it->first], start_index, 0);
+      m_error.insert(start_index, tracker->m_error);
 
-    start_index += tracker->m_error.getRows();
+      start_index += tracker->m_error.getRows();
+    }
   }
 }
 
@@ -7306,8 +7307,8 @@ void vpMbGenericTracker::TrackerWrapper::setPose(const vpImage<unsigned char> *c
         downScale(i);
         vpMbEdgeTracker::initMovingEdge(*Ipyramid[i], cMo);
         upScale(i);
-  }
-} while (i != 0);
+      }
+    } while (i != 0);
 
     cleanPyramid(Ipyramid);
   }
