@@ -14,12 +14,75 @@
 #include <visp3/sensor/vpRealSense2.h>
 #include <visp3/vision/vpKeyPoint.h>
 
-int main(int argc, char *argv[])
-{
 #ifdef ENABLE_VISP_NAMESPACE
-  using namespace VISP_NAMESPACE_NAME;
+using namespace VISP_NAMESPACE_NAME;
 #endif
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+typedef enum  DepthType
+{
+  DEPTH_UNUSED = 0,
+  DEPTH_DENSE = 1,
+  DEPTH_NORMAL = 2,
+  DEPTH_COUNT = 3
+}DepthType;
+
+std::string depthTypeToString(const DepthType &type)
+{
+  std::string name;
+  switch (type) {
+  case DEPTH_UNUSED:
+    name = "unused";
+    break;
+  case DEPTH_DENSE:
+    name = "dense";
+    break;
+  case DEPTH_NORMAL:
+    name = "normals";
+    break;
+  case DEPTH_COUNT:
+  default:
+    name = "unknown";
+    break;
+  }
+  return name;
+}
+
+DepthType depthTypeFromString(const std::string &name)
+{
+  DepthType type(DEPTH_COUNT);
+  unsigned int i = 0;
+  bool notFound = true;
+  while ((i < static_cast<unsigned int>(DEPTH_COUNT)) && notFound) {
+    DepthType candidate = static_cast<DepthType>(i);
+    if (vpIoTools::toLowerCase(name) == depthTypeToString(candidate)) {
+      notFound = false;
+      type = candidate;
+    }
+    ++i;
+  }
+  return type;
+}
+
+std::string getDepthTypeList(const std::string &prefix = "<", const std::string &sep = " , ", const std::string &suffix = ">")
+{
+  std::string list(prefix);
+  unsigned int i = 0;
+  while (i < static_cast<unsigned int>(DEPTH_COUNT - 1)) {
+    DepthType type = static_cast<DepthType>(i);
+    std::string name = depthTypeToString(type);
+    list += name + sep;
+    ++i;
+  }
+  DepthType type = static_cast<DepthType>(DEPTH_COUNT - 1);
+  std::string name = depthTypeToString(type);
+  list += name + suffix;
+  return list;
+}
+#endif
+
+int main(int argc, char *argv[])
+{
   std::string config_color = "", config_depth = "";
   std::string model_color = "", model_depth = "";
   std::string init_file = "";
@@ -27,7 +90,7 @@ int main(int argc, char *argv[])
   bool use_scanline = false;
   bool use_edges = true;
   bool use_klt = true;
-  bool use_depth = true;
+  DepthType use_depth = DepthType::DEPTH_UNUSED;
   bool learn = false;
   bool auto_init = false;
   double proj_error_threshold = 25;
@@ -66,7 +129,7 @@ int main(int argc, char *argv[])
       use_klt = (std::atoi(argv[i + 1]) == 0 ? false : true);
     }
     else if (std::string(argv[i]) == "--use_depth" && i + 1 < argc) {
-      use_depth = (std::atoi(argv[i + 1]) == 0 ? false : true);
+      use_depth = depthTypeFromString(std::string(argv[i + 1]));
     }
     else if (std::string(argv[i]) == "--learn") {
       learn = true;
@@ -89,18 +152,18 @@ int main(int argc, char *argv[])
         " [--proj_error_threshold <threshold between 0 and 90> (default: "
         << proj_error_threshold
         << ")]"
-        " [--use_edges <0|1> (default: 1)] [--use_klt <0|1> (default: 1)] [--use_depth <0|1> (default: 1)]"
+        " [--use_edges <0|1> (default: 1)] [--use_klt <0|1> (default: 1)] [--use_depth " + getDepthTypeList() +" (default: " + depthTypeToString(use_depth) + ")]"
         " [--learn] [--auto_init] [--learning_data <path to .bin> (default: learning/data-learned.bin)]"
         " [--display_proj_error]"
         << std::endl;
 
       std::cout << "\n** How to track a 4.2 cm width cube with manual initialization:\n"
-        << argv[0] << " --model_color model/cube/cube.cao --use_edges 1 --use_klt 1 --use_depth 1" << std::endl;
+        << argv[0] << " --model_color model/cube/cube.cao --use_edges 1 --use_klt 1 --use_depth " + depthTypeToString(DEPTH_DENSE) << std::endl;
       std::cout << "\n** How to learn the cube and create a learning database:\n"
-        << argv[0] << " --model_color model/cube/cube.cao --use_edges 1 --use_klt 1 --use_depth 1 --learn"
+        << argv[0] << " --model_color model/cube/cube.cao --use_edges 1 --use_klt 1 --use_depth " + depthTypeToString(DEPTH_DENSE) + " --learn"
         << std::endl;
       std::cout << "\n** How to track the cube with initialization from learning database:\n"
-        << argv[0] << " --model_color model/cube/cube.cao --use_edges 1 --use_klt 1 --use_depth 1 --auto_init"
+        << argv[0] << " --model_color model/cube/cube.cao --use_edges 1 --use_klt 1 --use_depth " + depthTypeToString(DEPTH_DENSE) + " --auto_init"
         << std::endl;
 
       return EXIT_SUCCESS;
@@ -123,7 +186,7 @@ int main(int argc, char *argv[])
   std::cout << "Tracked features: " << std::endl;
   std::cout << "  Use edges   : " << use_edges << std::endl;
   std::cout << "  Use klt     : " << use_klt << std::endl;
-  std::cout << "  Use depth   : " << use_depth << std::endl;
+  std::cout << "  Use depth   : " << depthTypeToString(use_depth) << std::endl;
   std::cout << "Tracker options: " << std::endl;
   std::cout << "  Use ogre    : " << use_ogre << std::endl;
   std::cout << "  Use scanline: " << use_scanline << std::endl;
@@ -145,7 +208,7 @@ int main(int argc, char *argv[])
   std::cout << "  Auto init   : " << auto_init << std::endl;
   std::cout << "  Learning data: " << learning_data << std::endl;
 
-  if (!use_edges && !use_klt && !use_depth) {
+  if ((!use_edges) && (!use_klt) && (use_depth == DEPTH_UNUSED)) {
     std::cout << "You must choose at least one visual features between edge, KLT and depth." << std::endl;
     return EXIT_FAILURE;
   }
@@ -198,7 +261,7 @@ int main(int argc, char *argv[])
 #endif
   if (use_edges || use_klt)
     display1->init(I_gray, _posx, _posy, "Color stream");
-  if (use_depth)
+  if (use_depth != DEPTH_UNUSED)
     display2->init(I_depth, _posx + I_gray.getWidth() + 10, _posy, "Depth stream");
 #endif
 
@@ -215,7 +278,7 @@ int main(int argc, char *argv[])
         break;
       }
     }
-    if (use_depth) {
+    if (use_depth != DEPTH_UNUSED) {
       vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
 
       vpDisplay::display(I_depth);
@@ -236,8 +299,12 @@ int main(int argc, char *argv[])
   else if (use_klt)
     trackerTypes.push_back(vpMbGenericTracker::KLT_TRACKER);
 
-  if (use_depth)
+  if (use_depth == DEPTH_NORMAL) {
+    trackerTypes.push_back(vpMbGenericTracker::DEPTH_NORMAL_TRACKER);
+  }
+  else if (use_depth == DEPTH_DENSE) {
     trackerTypes.push_back(vpMbGenericTracker::DEPTH_DENSE_TRACKER);
+  }
 
   vpHomogeneousMatrix depth_M_color = realsense.getTransformation(RS2_STREAM_COLOR, RS2_STREAM_DEPTH);
   std::map<std::string, vpHomogeneousMatrix> mapOfCameraTransformations;
@@ -251,7 +318,7 @@ int main(int argc, char *argv[])
 
   vpMbGenericTracker tracker(trackerTypes);
 
-  if ((use_edges || use_klt) && use_depth) {
+  if ((use_edges || use_klt) && (use_depth != DEPTH_UNUSED)) {
     tracker.loadConfigFile(config_color, config_depth);
     tracker.loadModel(model_color, model_depth);
     std::cout << "Sensor internal depth_M_color: \n" << depth_M_color << std::endl;
@@ -267,7 +334,7 @@ int main(int argc, char *argv[])
     tracker.loadModel(model_color);
     tracker.setCameraParameters(cam_color);
   }
-  else if (use_depth) {
+  else if (use_depth != DEPTH_UNUSED) {
     tracker.loadConfigFile(config_depth);
     tracker.loadModel(model_depth);
     tracker.setCameraParameters(cam_depth);
@@ -309,12 +376,15 @@ int main(int argc, char *argv[])
     keypoint.loadLearningData(learning_data, true);
   }
   else {
-    if ((use_edges || use_klt) && use_depth)
+    if ((use_edges || use_klt) && (use_depth != DEPTH_UNUSED)) {
       tracker.initClick(mapOfImages, mapOfInitFiles, true);
-    else if (use_edges || use_klt)
+    }
+    else if (use_edges || use_klt) {
       tracker.initClick(I_gray, init_file, true);
-    else if (use_depth)
+    }
+    else if (use_depth != DEPTH_UNUSED) {
       tracker.initClick(I_depth, init_file, true);
+    }
 
     if (learn)
       vpIoTools::makeDirectory(vpIoTools::getParent(learning_data));
@@ -345,12 +415,12 @@ int main(int argc, char *argv[])
         vpImageConvert::convert(I_color, I_gray);
         vpDisplay::display(I_gray);
       }
-      if (use_depth) {
+      if (use_depth != DEPTH_UNUSED) {
         vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
         vpDisplay::display(I_depth);
       }
 
-      if ((use_edges || use_klt) && use_depth) {
+      if ((use_edges || use_klt) && (use_depth != DEPTH_UNUSED)) {
         mapOfImages["Camera1"] = &I_gray;
         mapOfPointclouds["Camera2"] = &pointcloud;
         mapOfWidths["Camera2"] = width;
@@ -359,7 +429,7 @@ int main(int argc, char *argv[])
       else if (use_edges || use_klt) {
         mapOfImages["Camera"] = &I_gray;
       }
-      else if (use_depth) {
+      else if (use_depth != DEPTH_UNUSED) {
         mapOfPointclouds["Camera"] = &pointcloud;
         mapOfWidths["Camera"] = width;
         mapOfHeights["Camera"] = height;
@@ -369,7 +439,7 @@ int main(int argc, char *argv[])
       if (run_auto_init) {
         if (keypoint.matchPoint(I_gray, cam_color, cMo)) {
           std::cout << "Auto init succeed" << std::endl;
-          if ((use_edges || use_klt) && use_depth) {
+          if ((use_edges || use_klt) && (use_depth != DEPTH_UNUSED)) {
             mapOfCameraPoses["Camera1"] = cMo;
             mapOfCameraPoses["Camera2"] = depth_M_color * cMo;
             tracker.initFromPose(mapOfImages, mapOfCameraPoses);
@@ -377,7 +447,7 @@ int main(int argc, char *argv[])
           else if (use_edges || use_klt) {
             tracker.initFromPose(I_gray, cMo);
           }
-          else if (use_depth) {
+          else if (use_depth != DEPTH_UNUSED) {
             tracker.initFromPose(I_depth, depth_M_color * cMo);
           }
         }
@@ -385,7 +455,7 @@ int main(int argc, char *argv[])
           if (use_edges || use_klt) {
             vpDisplay::flush(I_gray);
           }
-          if (use_depth) {
+          if (use_depth != DEPTH_UNUSED) {
             vpDisplay::flush(I_depth);
           }
           continue;
@@ -400,13 +470,13 @@ int main(int argc, char *argv[])
 
           run_auto_init = false;
         }
-        if ((use_edges || use_klt) && use_depth) {
+        if ((use_edges || use_klt) && (use_depth != DEPTH_UNUSED)) {
           tracker.track(mapOfImages, mapOfPointclouds, mapOfWidths, mapOfHeights);
         }
         else if (use_edges || use_klt) {
           tracker.track(I_gray);
         }
-        else if (use_depth) {
+        else if (use_depth != DEPTH_UNUSED) {
           tracker.track(mapOfImages, mapOfPointclouds, mapOfWidths, mapOfHeights);
         }
       }
@@ -443,7 +513,7 @@ int main(int argc, char *argv[])
         // Turn display features on
         tracker.setDisplayFeatures(true);
 
-        if ((use_edges || use_klt) && use_depth) {
+        if ((use_edges || use_klt) && (use_depth != DEPTH_UNUSED)) {
           tracker.display(I_gray, I_depth, cMo, depth_M_color * cMo, cam_color, cam_depth, vpColor::red, 3);
           vpDisplay::displayFrame(I_gray, cMo, cam_color, 0.05, vpColor::none, 3);
           vpDisplay::displayFrame(I_depth, depth_M_color * cMo, cam_depth, 0.05, vpColor::none, 3);
@@ -452,7 +522,7 @@ int main(int argc, char *argv[])
           tracker.display(I_gray, cMo, cam_color, vpColor::red, 3);
           vpDisplay::displayFrame(I_gray, cMo, cam_color, 0.05, vpColor::none, 3);
         }
-        else if (use_depth) {
+        else if (use_depth != DEPTH_UNUSED) {
           tracker.display(I_depth, cMo, cam_depth, vpColor::red, 3);
           vpDisplay::displayFrame(I_depth, cMo, cam_depth, 0.05, vpColor::none, 3);
         }
@@ -497,7 +567,7 @@ int main(int argc, char *argv[])
           }
         }
       }
-      if (use_depth) {
+      if (use_depth != DEPTH_UNUSED) {
         vpDisplay::displayText(I_depth, 20, 20, ss.str(), vpColor::red);
         vpDisplay::displayText(I_depth, 40, 20, "Click to quit", vpColor::red);
         vpDisplay::flush(I_depth);

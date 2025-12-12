@@ -7,7 +7,7 @@ from visp.core import CameraParameters, HomogeneousMatrix, ImageGray, ImageConve
 from visp.detection import DetectorAprilTag
 from visp.core import Display
 
-from visp.display_utils import get_display
+from visp.python.display_utils import get_display
 
 import numpy as np
 from typing import Generator, List

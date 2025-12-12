@@ -119,6 +119,9 @@ int main(int argc, char *argv[])
     if (j.contains("model")) {
       model = j["model"];
     }
+    else if (j.at("trackers").begin()->contains("model")) {
+      model = (*j["trackers"].begin())["model"];
+    }
     else {
       std::cerr << "No model was provided in either JSON file or arguments" << std::endl;
       return EXIT_FAILURE;

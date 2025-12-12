@@ -11,6 +11,12 @@
           ]
         },
         {
+          "python_name": "ArrayFloat2D",
+          "arguments": [
+            "float"
+          ]
+        },
+        {
           "python_name": "ArrayInt2D",
           "arguments": [
             "int"
