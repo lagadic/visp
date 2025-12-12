@@ -155,7 +155,6 @@ void vpRotationMatrix::rotateVectors(const vpMatrix &input, vpMatrix &output, bo
 #endif
   }
   else { // 3xN matrix
-    using namespace vpSIMD;
     if (input.getRows() != 3) {
       throw vpException(vpException::dimensionError, "Expected input to have 3 rows");
     }
@@ -168,28 +167,28 @@ void vpRotationMatrix::rotateVectors(const vpMatrix &input, vpMatrix &output, bo
 
 #if defined(VISP_HAVE_AVX) || defined(VISP_HAVE_SSE2) || defined(VISP_HAVE_AVX2)
 
-    Register elems[9];
+    vpSIMD::Register elems[9];
     for (unsigned int i = 0; i < 9; ++i) {
-      elems[i] = set1(data[i]);
+      elems[i] = vpSIMD::set1(data[i]);
     }
     for (int i = 0; i <= static_cast<int>(input.getCols()) - vpSIMD::numLanes; i += vpSIMD::numLanes) {
-      const Register x4 = loadu(inputX);
-      const Register y4 = loadu(inputY);
-      const Register z4 = loadu(inputZ);
+      const vpSIMD::Register x4 = vpSIMD::loadu(inputX);
+      const vpSIMD::Register y4 = vpSIMD::loadu(inputY);
+      const vpSIMD::Register z4 = vpSIMD::loadu(inputZ);
 
-      Register dp1 = mul(x4, elems[0]);
+      vpSIMD::Register dp1 = vpSIMD::mul(x4, elems[0]);
       dp1 = vpSIMD::fma(y4, elems[1], dp1);
       dp1 = vpSIMD::fma(z4, elems[2], dp1);
-      Register dp2 = mul(x4, elems[3]);
+      vpSIMD::Register dp2 = vpSIMD::mul(x4, elems[3]);
       dp2 = vpSIMD::fma(y4, elems[4], dp2);
       dp2 = vpSIMD::fma(z4, elems[5], dp2);
-      Register dp3 = mul(x4, elems[6]);
+      vpSIMD::Register dp3 = vpSIMD::mul(x4, elems[6]);
       dp3 = vpSIMD::fma(y4, elems[7], dp3);
       dp3 = vpSIMD::fma(z4, elems[8], dp3);
 
-      storeu(outputX, dp1);
-      storeu(outputY, dp2);
-      storeu(outputZ, dp3);
+      vpSIMD::storeu(outputX, dp1);
+      vpSIMD::storeu(outputY, dp2);
+      vpSIMD::storeu(outputZ, dp3);
 
       inputX += vpSIMD::numLanes; inputY += vpSIMD::numLanes; inputZ += vpSIMD::numLanes;
       outputX += vpSIMD::numLanes; outputY += vpSIMD::numLanes; outputZ += vpSIMD::numLanes;

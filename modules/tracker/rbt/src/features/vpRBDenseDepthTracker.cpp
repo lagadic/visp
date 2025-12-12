@@ -246,35 +246,33 @@ void errorAndInteractionMatrixBase(const vpMatrix &cXt, const vpMatrix &cNt, con
 #if defined(VISP_HAVE_AVX2) || defined(VISP_HAVE_AVX) || defined(VISP_HAVE_SSE2)
 void errorAndInteractionMatrixSIMD(const vpMatrix &cXt, const  vpMatrix &cNt, const  vpMatrix &obsT, vpColVector &e, vpMatrix &Lt)
 {
-  using namespace vpSIMD;
-
 #if defined(VISP_HAVE_OPENMP)
 #pragma omp parallel for schedule(static, 1024)
 #endif
-  for (int i = 0; i <= static_cast<int>(cXt.getCols()) - numLanes; i += numLanes) {
-    const Register X = loadu(cXt[0] + i), Y = loadu(cXt[1] + i), Z = loadu(cXt[2] + i);
-    const Register nX = loadu(cNt[0] + i), nY = loadu(cNt[1] + i), nZ = loadu(cNt[2] + i);
-    const Register obsX = loadu(obsT[0] + i), obsY = loadu(obsT[1] + i), obsZ = loadu(obsT[2] + i);
+  for (int i = 0; i <= static_cast<int>(cXt.getCols()) - vpSIMD::numLanes; i += vpSIMD::numLanes) {
+    const vpSIMD::Register X = vpSIMD::loadu(cXt[0] + i), Y = vpSIMD::loadu(cXt[1] + i), Z = vpSIMD::loadu(cXt[2] + i);
+    const vpSIMD::Register nX = vpSIMD::loadu(cNt[0] + i), nY = vpSIMD::loadu(cNt[1] + i), nZ = vpSIMD::loadu(cNt[2] + i);
+    const vpSIMD::Register obsX = vpSIMD::loadu(obsT[0] + i), obsY = vpSIMD::loadu(obsT[1] + i), obsZ = vpSIMD::loadu(obsT[2] + i);
 
-    Register D = mul(nX, X);
-    Register projNormal = mul(obsX, X);
+    vpSIMD::Register D = vpSIMD::mul(nX, X);
+    vpSIMD::Register projNormal = vpSIMD::mul(obsX, X);
     D = vpSIMD::fma(nY, Y, D);
     D = vpSIMD::fma(nZ, Z, D);
 
     projNormal = vpSIMD::fma(nY, obsY, projNormal);
     projNormal = vpSIMD::fma(nZ, obsZ, projNormal);
 
-    storeu(e.data + i, sub(projNormal, D));
+    vpSIMD::storeu(e.data + i, vpSIMD::sub(projNormal, D));
 
-    storeu(Lt[0] + i, nX);
-    storeu(Lt[1] + i, nY);
-    storeu(Lt[2] + i, nZ);
+    vpSIMD::storeu(Lt[0] + i, nX);
+    vpSIMD::storeu(Lt[1] + i, nY);
+    vpSIMD::storeu(Lt[2] + i, nZ);
 
-    storeu(Lt[3] + i, sub(mul(nZ, Y), mul(nY, Z)));
-    storeu(Lt[4] + i, sub(mul(nX, Z), mul(nZ, X)));
-    storeu(Lt[5] + i, sub(mul(nY, X), mul(nX, Y)));
+    vpSIMD::storeu(Lt[3] + i, vpSIMD::sub(vpSIMD::mul(nZ, Y), vpSIMD::mul(nY, Z)));
+    vpSIMD::storeu(Lt[4] + i, vpSIMD::sub(vpSIMD::mul(nX, Z), vpSIMD::mul(nZ, X)));
+    vpSIMD::storeu(Lt[5] + i, vpSIMD::sub(vpSIMD::mul(nY, X), vpSIMD::mul(nX, Y)));
   }
-  errorAndInteractionMatrixBase(cXt, cNt, obsT, e, Lt, (cXt.getCols() / numLanes) * numLanes, cXt.getCols());
+  errorAndInteractionMatrixBase(cXt, cNt, obsT, e, Lt, (cXt.getCols() / vpSIMD::numLanes) * vpSIMD::numLanes, cXt.getCols());
 }
 #endif
 

@@ -157,47 +157,44 @@ void vpHomogeneousMatrix::project(const vpMatrix &input, vpMatrix &output, bool 
     double *outputZ = output[2];
 
 #if defined(VISP_HAVE_AVX2) || defined(VISP_HAVE_AVX) || defined(VISP_HAVE_SSE2)
-
-    using namespace vpSIMD;
-
-    Register elems[12];
+    vpSIMD::Register elems[12];
     for (unsigned int i = 0; i < 12; ++i) {
-      elems[i] = set1(data[i]);
+      elems[i] = vpSIMD::set1(data[i]);
     }
 
-    for (int i = 0; i <= static_cast<int>(input.getCols()) - numLanes; i += numLanes) {
-      const Register x4 = loadu(inputX);
-      const Register y4 = loadu(inputY);
-      const Register z4 = loadu(inputZ);
+    for (int i = 0; i <= static_cast<int>(input.getCols()) - vpSIMD::numLanes; i += vpSIMD::numLanes) {
+      const vpSIMD::Register x4 = vpSIMD::loadu(inputX);
+      const vpSIMD::Register y4 = vpSIMD::loadu(inputY);
+      const vpSIMD::Register z4 = vpSIMD::loadu(inputZ);
 
-      Register dp1 = mul(x4, elems[0]);
+      vpSIMD::Register dp1 = vpSIMD::mul(x4, elems[0]);
       dp1 = vpSIMD::fma(y4, elems[1], dp1);
       dp1 = vpSIMD::fma(z4, elems[2], dp1);
-      dp1 = add(elems[3], dp1);
+      dp1 = vpSIMD::add(elems[3], dp1);
 
-      Register dp2 = mul(x4, elems[4]);
+      vpSIMD::Register dp2 = vpSIMD::mul(x4, elems[4]);
       dp2 = vpSIMD::fma(y4, elems[5], dp2);
       dp2 = vpSIMD::fma(z4, elems[6], dp2);
-      dp2 = add(elems[7], dp2);
+      dp2 = vpSIMD::add(elems[7], dp2);
 
-      Register dp3 = mul(x4, elems[8]);
+      vpSIMD::Register dp3 = vpSIMD::mul(x4, elems[8]);
       dp3 = vpSIMD::fma(y4, elems[9], dp3);
       dp3 = vpSIMD::fma(z4, elems[10], dp3);
-      dp3 = add(elems[11], dp3);
+      dp3 = vpSIMD::add(elems[11], dp3);
 
-      storeu(outputX, dp1);
-      storeu(outputY, dp2);
-      storeu(outputZ, dp3);
+      vpSIMD::storeu(outputX, dp1);
+      vpSIMD::storeu(outputY, dp2);
+      vpSIMD::storeu(outputZ, dp3);
 
-      inputX += numLanes; inputY += numLanes; inputZ += numLanes;
-      outputX += numLanes; outputY += numLanes; outputZ += numLanes;
+      inputX += vpSIMD::numLanes; inputY += vpSIMD::numLanes; inputZ += vpSIMD::numLanes;
+      outputX += vpSIMD::numLanes; outputY += vpSIMD::numLanes; outputZ += vpSIMD::numLanes;
 
     }
     double *r0 = rowPtrs[0];
     double *r1 = rowPtrs[1];
     double *r2 = rowPtrs[2];
 
-    for (unsigned int i = (input.getCols() / numLanes) * numLanes; i < input.getCols(); ++i) {
+    for (unsigned int i = (input.getCols() / vpSIMD::numLanes) * vpSIMD::numLanes; i < input.getCols(); ++i) {
       // std::cout << "i = " << i << std::endl;
       double X = *inputX, Y = *inputY, Z = *inputZ;
       *outputX = r0[0] * X + r0[1] * Y + r0[2] * Z + r0[3];
