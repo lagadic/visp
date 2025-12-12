@@ -214,7 +214,7 @@ void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals, vpImage<floa
   }
 
   int rowIncrement = normals.getWidth() * 4;
-  // rowIncrement = -rowIncrement;
+
   if (!m_fast) {
     using T = float;
     T *data = (T *)(&(m_normalDepthTexture->get_ram_image().front()));
