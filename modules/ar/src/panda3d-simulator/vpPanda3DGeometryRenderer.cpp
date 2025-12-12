@@ -247,9 +247,9 @@ void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals, vpImage<floa
     if (m_normalDepthTexture->get_component_type() != expectedComponent) {
       throw vpException(vpException::badValue, "Unexpected data type in normals texture");
     }
-// #if defined(VISP_HAVE_OPENMP)
-// #pragma omp parallel for
-// #endif
+#if defined(VISP_HAVE_OPENMP)
+#pragma omp parallel for
+#endif
     for (int i = 0; i < static_cast<int>(normals.getHeight()); ++i) {
       const T *const rowData = data - i * rowIncrement;
       vpRGBf *normalRow = normals[i];
