@@ -1,6 +1,6 @@
 /**
 
-\page tutorial-install-python-bindings Tutorial: Installing ViSP Python bindings
+\page tutorial-install-python-bindings Tutorial: Building ViSP Python bindings from source
 \tableofcontents
 
 \section py_bindings_intro 1. Introduction
