@@ -40,7 +40,7 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpMatrix.h>
 
-#include <visp3/core/vpSIMDUtils.h>
+#include "../matrix/private/vpSIMDUtils.h"
 
 // Rotation classes
 #include <visp3/core/vpRotationMatrix.h>

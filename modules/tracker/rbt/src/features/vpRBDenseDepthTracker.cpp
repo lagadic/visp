@@ -30,8 +30,9 @@
 
 #include <visp3/rbt/vpRBDenseDepthTracker.h>
 #include <visp3/core/vpMeterPixelConversion.h>
-#include <visp3/core/vpSIMDUtils.h>
 #include <visp3/core/vpDisplay.h>
+
+#include "../core/private/vpSIMDUtils.h"
 
 #ifdef VISP_HAVE_OPENMP
 #include <omp.h>

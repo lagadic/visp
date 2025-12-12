@@ -42,7 +42,8 @@
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpPoint.h>
 #include <visp3/core/vpQuaternionVector.h>
-#include <visp3/core/vpSIMDUtils.h>
+
+#include "../matrix/private/vpSIMDUtils.h"
 
 
 BEGIN_VISP_NAMESPACE
