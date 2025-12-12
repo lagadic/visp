@@ -574,27 +574,24 @@ TEST_CASE("Default constructor", "[rotation matrix]")
 TEST_CASE("Vector rotation", "project")
 {
   std::cout << "\n== Test rotation of vectors ==" << std::endl;
-#if defined(VISP_HAVE_AVX) || defined(VISP_HAVE_SSE3) // Should be adapted to future evolution of vpRotationMatrix::rotateVectors()
-  std::vector<unsigned int> NS = { 1, 10, 100, 1000, 10000 };
-#else
-  std::vector<unsigned int> NS = { 1, 10 };
-#endif
-  for (unsigned int N : NS) {
-    std::cout << "** Running for N = " << N << std::endl;
+  std::map<unsigned int, unsigned int> map_vecsize_trials = { {1, 100000}, {10, 10000}, {100, 1000}, {1000, 1000}, { 10000, 100} };
+
+  for (const auto &[vecsize, trials] : map_vecsize_trials) {
+    std::cout << "** Running for vector size = " << vecsize << std::endl;
     std::vector<double> timeProjectTransposed, timeProject, timeMult, timeNaive;
     vpUniRand r(42);
-    for (unsigned int trial = 0; trial < 100000; ++trial) {
+    for (unsigned int trial = 0; trial < trials; ++trial) {
       vpRotationMatrix M(r.uniform(0.0, M_PI), r.uniform(0.0, M_PI), r.uniform(0.0, M_PI));
-      vpMatrix inputT(N, 3);
+      vpMatrix inputT(vecsize, 3);
 
-      for (unsigned int i = 0; i< N; ++i) {
+      for (unsigned int i = 0; i< vecsize; ++i) {
         inputT[i][0] = r.uniform(0.0, 1.0);
         inputT[i][1] = r.uniform(0.0, 1.0);
         inputT[i][2] = r.uniform(0.0, 1.0);
       }
       vpMatrix input = inputT.t();
-      vpMatrix outputT(N, 3);
-      vpMatrix output(3, N);
+      vpMatrix outputT(vecsize, 3);
+      vpMatrix output(3, vecsize);
       double t1 = vpTime::measureTimeMs();
       M.rotateVectors(inputT, outputT, true);
       double t2 = vpTime::measureTimeMs();
@@ -606,7 +603,7 @@ TEST_CASE("Vector rotation", "project")
 
       vpColVector x(3, 1);
       vpColVector res(3);
-      vpMatrix outputR(N, 3);
+      vpMatrix outputR(vecsize, 3);
       double t1r = vpTime::measureTimeMs();
 
       for (unsigned int i = 0; i < inputT.getRows(); ++i) {
@@ -622,15 +619,15 @@ TEST_CASE("Vector rotation", "project")
       double t2r = vpTime::measureTimeMs();
       timeNaive.push_back(t2r - t1r);
 
-      vpMatrix outputMM(3, N);
+      vpMatrix outputMM(3, vecsize);
       double t14 = vpTime::measureTimeMs();
 
       vpMatrix::mult2Matrices((vpMatrix)M, input, outputMM);
       double t24 = vpTime::measureTimeMs();
       timeMult.push_back(t24 - t14);
 
-      double errorT = (outputR - outputT).frobeniusNorm() / N;
-      double error = (outputR - output.t()).frobeniusNorm() / N;
+      double errorT = (outputR - outputT).frobeniusNorm() / vecsize;
+      double error = (outputR - output.t()).frobeniusNorm() / vecsize;
 
       if (errorT > 1e-10) {
         std::cerr << "Transposed version failed" << std::endl;
