@@ -155,8 +155,6 @@ void vpRBSilhouetteCCDTracker::onTrackingIterStart(const vpRBFeatureTrackerInput
 void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput & /*previousFrame*/, const vpHomogeneousMatrix &/*cMo*/)
 {
 
-
-  //m_controlPoints.reserve(frame.silhouettePoints.size());
   const vpHomogeneousMatrix cMo = frame.renders.cMo;
   const vpHomogeneousMatrix oMc = cMo.inverse();
 
@@ -189,10 +187,12 @@ void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &fr
       const vpRBSilhouettePoint sp = frame.silhouettePoints[i];
       int ii = sp.i, jj = sp.j;
 
+      //  We only care about outer object contours, not depth disparity that still lie in the object
       if (!sp.isSilhouette) {
         continue;
       }
 
+      // Filter points for which the normal vector may go outside the image
       if (ii <= m_ccdParameters.h || jj <= m_ccdParameters.h ||
         static_cast<unsigned int>(ii) >= frame.I.getHeight() - m_ccdParameters.h ||
         static_cast<unsigned int>(jj) >= frame.I.getWidth() - m_ccdParameters.h) {
@@ -205,7 +205,7 @@ void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &fr
       if (std::isnan(sp.orientation) || !pccd.isValid()) {
         continue;
       }
-
+      // Check whether we should add point according to the mask
       if (frame.hasMask() && m_useMask) {
         double maskGradValue = pccd.getMaxMaskGradientAlongLine(frame.mask, m_ccdParameters.h);
         if (maskGradValue < m_minMaskConfidence) {
@@ -228,7 +228,7 @@ void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &fr
   for (const std::vector<vpRBSilhouetteControlPoint> &points: pointsPerThread) {
     m_controlPoints.insert(m_controlPoints.end(), std::make_move_iterator(points.begin()), std::make_move_iterator(points.end()));
   }
-
+  // Resample if maximum number of points is specified
   if (m_maxPoints > 0 && m_controlPoints.size() > m_maxPoints) {
     std::vector<size_t> keptIndices = m_random.sampleWithoutReplacement(m_maxPoints, m_controlPoints.size());
 
@@ -241,6 +241,29 @@ void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &fr
   }
 }
 
+void vpRBSilhouetteCCDTracker::buildGradientAndHessianStorageViews(unsigned int normalsPerPoint)
+{
+  unsigned int numPoints = m_controlPoints.size();
+  unsigned int numNormalPoints = numPoints * 2 * normalsPerPoint;
+  if (m_gradients.size() != numNormalPoints) {
+    // Resize only if we need additional data
+    if (m_gradientData.size() <  numNormalPoints * 6) {
+      m_gradientData.resize(numNormalPoints * 6);
+      m_hessianData.resize(numNormalPoints * 6 * 6);
+    }
+    m_gradients.resize(numNormalPoints * normalsPerPoint);
+    m_hessians.resize(numNormalPoints * 2 * normalsPerPoint);
+#if defined(VISP_HAVE_OPENMP)
+#pragma omp parallel for
+#endif
+    for (int i = 0; i < static_cast<int>(m_gradients.size()); ++i) {
+      vpColVector::view(m_gradients[i], m_gradientData.data() + i * 6, 6);
+      vpMatrix::view(m_hessians[i], m_hessianData.data() + i * 6 * 6, 6, 6);
+    }
+  }
+
+}
+
 void vpRBSilhouetteCCDTracker::initVVS(const vpRBFeatureTrackerInput &/*frame*/, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix & /*cMo*/)
 {
   // Reinit all variables
@@ -251,33 +274,14 @@ void vpRBSilhouetteCCDTracker::initVVS(const vpRBFeatureTrackerInput &/*frame*/,
 
   unsigned int resolution = static_cast<unsigned int>(m_controlPoints.size());
   int normal_points_number = static_cast<int>(floor(m_ccdParameters.h / m_ccdParameters.delta_h));
-  unsigned nerror_ccd = 2 * normal_points_number * 3 * resolution;
-  m_numFeatures = nerror_ccd;
+  m_numFeatures = 2 * normal_points_number * 3 * resolution;
 
   m_stats.reinit(resolution, normal_points_number);
   m_prevStats.reinit(resolution, normal_points_number);
   m_gradient = vpMatrix(m_ccdParameters.phi_dim, 1, 0.0);
   m_hessian = vpMatrix(m_ccdParameters.phi_dim, m_ccdParameters.phi_dim, 0.0);
-  // m_gradientData.clear();
-  // m_hessianData.clear();
-  if (m_gradients.size() != m_controlPoints.size() * 2 * normal_points_number) {
-    // Resize only if we need additional data
-    if (m_gradientData.size() <  m_controlPoints.size() * 2 * normal_points_number * 6) {
-      m_gradientData.resize(m_controlPoints.size() * 2 * normal_points_number * 6);
-      m_hessianData.resize(m_controlPoints.size() * 2 * normal_points_number * 6 * 6);
-    }
-    // m_gradients.clear();
-    // m_hessians.clear();
-    m_gradients.resize(m_controlPoints.size() * 2 * normal_points_number);
-    m_hessians.resize(m_controlPoints.size() * 2 * normal_points_number);
-#if defined(VISP_HAVE_OPENMP)
-#pragma omp parallel for
-#endif
-    for (int i = 0; i < static_cast<int>(m_gradients.size()); ++i) {
-      vpColVector::view(m_gradients[i], m_gradientData.data() + i * 6, 6);
-      vpMatrix::view(m_hessians[i], m_hessianData.data() + i * 6 * 6, 6, 6);
-    }
-  }
+  buildGradientAndHessianStorageViews(normal_points_number);
+
   m_weights.resize(m_numFeatures, false);
   if (m_temporalSmoothingFac > 0.0) {
     computeLocalStatistics(previousFrame.IRGB, m_prevStats);
@@ -291,29 +295,11 @@ void vpRBSilhouetteCCDTracker::changeScale()
   m_cov.resize(6, 6);
   unsigned int resolution = static_cast<unsigned int>(m_controlPoints.size());
   int normal_points_number = static_cast<int>(floor(m_ccdParameters.h / m_ccdParameters.delta_h));
-  unsigned nerror_ccd = 2 * normal_points_number * 3 * resolution;
-  m_numFeatures = nerror_ccd;
+  m_numFeatures = 2 * normal_points_number * 3 * resolution;
 
   m_prevStats.reinit(resolution, normal_points_number);
   m_stats.reinit(resolution, normal_points_number);
-
-  if (m_gradientData.size() != m_controlPoints.size() * 2 * normal_points_number * 6) {
-    if (m_gradientData.size() <  m_controlPoints.size() * 2 * normal_points_number * 6) {
-      m_gradientData.resize(m_controlPoints.size() * 2 * normal_points_number * 6);
-      m_hessianData.resize(m_controlPoints.size() * 2 * normal_points_number * 6 * 6);
-    }
-    m_gradients.clear();
-    m_hessians.clear();
-    m_gradients.resize(m_controlPoints.size() * 2 * normal_points_number);
-    m_hessians.resize(m_controlPoints.size() * 2 * normal_points_number);
-#if defined(VISP_HAVE_OPENMP)
-#pragma omp parallel for
-#endif
-    for (int i = 0; i < static_cast<int>(m_gradients.size()); ++i) {
-      vpColVector::view(m_gradients[i], m_gradientData.data() + i * 6, 6);
-      vpMatrix::view(m_hessians[i], m_hessianData.data() + i * 6 * 6, 6, 6);
-    }
-  }
+  buildGradientAndHessianStorageViews(normal_points_number);
   m_weights.resize(m_numFeatures, false);
   if (m_temporalSmoothingFac > 0.0) {
     computeLocalStatistics(m_previousFrame->IRGB, m_prevStats);
@@ -345,6 +331,7 @@ void vpRBSilhouetteCCDTracker::computeVVSIter(const vpRBFeatureTrackerInput &fra
     tol += abs(oldPoints[i * 2 + 1] - m_controlPoints[i].icpoint.get_v());
   }
   tol /= m_controlPoints.size();
+
   // If enabled and if motion between consecutive frame is small enough, halve contour size
   if (m_ccdParameters.iters_since_scale_change > m_ccdParameters.min_iters_before_scale_change && tol < sqrt(static_cast<double>(m_ccdParameters.h) / 8.0)) {
     int previousH = m_ccdParameters.h;
@@ -358,7 +345,10 @@ void vpRBSilhouetteCCDTracker::computeVVSIter(const vpRBFeatureTrackerInput &fra
   else {
     ++m_ccdParameters.iters_since_scale_change;
   }
+
+  //Update local statistics
   computeLocalStatistics(frame.IRGB, m_stats);
+
   // Update interaction matrix, and gauss newton left and right side terms
   if (m_temporalSmoothingFac > 0.0) {
     computeErrorAndInteractionMatrix<true>(cMo);
@@ -366,6 +356,7 @@ void vpRBSilhouetteCCDTracker::computeVVSIter(const vpRBFeatureTrackerInput &fra
   else {
     computeErrorAndInteractionMatrix<false>(cMo);
   }
+
   m_vvsConverged = false;
   if (iteration > 0 && tol < m_vvsConvergenceThreshold) {
     m_vvsConverged = true;
@@ -547,7 +538,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
 #if VISP_DEBUG_CCD_TRACKER
     if (std::isnan(nv_ptr[0]) || std::isnan(nv_ptr[1])) {
       throw vpException(vpException::fatalError, "x: %f, theta = %f", p.xs, p.getTheta());
-    }
+  }
 #endif
 
     int k = 0;
@@ -624,7 +615,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
       vic_ptr[10 * negative_normal + 9] = exp(-dist2[0] * dist2[0] / (2 * sigma * sigma)) / (sqrt(2 * M_PI) * sigma);
       normalized_param[kk][1] += vic_ptr[10 * negative_normal + 7];
     }
-  }
+}
 
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
@@ -676,7 +667,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
 #if VISP_DEBUG_CCD_TRACKER
       if (vic_k[0] >= I.getHeight() || vic_k[1] >= I.getWidth()) {
         throw vpException(vpException::badValue, "Reading out of image");
-      }
+    }
 #endif
       const vpRGBa pixelRGBa = I(static_cast<unsigned int>(vic_k[0]), static_cast<unsigned int>(vic_k[1]));
       double *pixel = pix_ptr + k * 3;
@@ -726,7 +717,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
           m2_o2[m * 3 + n] += wp2 * pixelNeg[m] * pixelNeg[n];
         }
       }
-    }
+  }
     mean_vic_ptr[0] = m1[0] / w1;
     mean_vic_ptr[1] = m1[1] / w1;
     mean_vic_ptr[2] = m1[2] / w1;
@@ -743,8 +734,8 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
       cov_vic_ptr[m * 3 + m] += m_ccdParameters.kappa;
       cov_vic_ptr[9 + m * 3 + m] += m_ccdParameters.kappa;
     }
+    }
   }
-}
 
 
 
@@ -769,7 +760,7 @@ void sumGradientsAndHessians(const std::vector<vpColVector> &gradients, const st
     {
       gradientPerThread.resize(1);
       hessianPerThread.resize(1);
-    }
+  }
 #endif
 
 #ifdef VISP_HAVE_OPENMP
@@ -805,13 +796,13 @@ void sumGradientsAndHessians(const std::vector<vpColVector> &gradients, const st
       gradientPerThread[threadIdx] = localGradient;
       hessianPerThread[threadIdx] = localHessian;
     }
-  }
+}
 
   for (unsigned int i = 0; i < gradientPerThread.size(); ++i) {
     gradient += gradientPerThread[i];
     hessian += hessianPerThread[i];
   }
-}
+  }
 
 template<bool hasTemporalSmoothing>
 void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix(const vpHomogeneousMatrix &cMo)
