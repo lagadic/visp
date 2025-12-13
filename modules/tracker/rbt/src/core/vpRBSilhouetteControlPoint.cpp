@@ -310,7 +310,7 @@ vpRBSilhouetteControlPoint::updateSilhouettePoint(const vpHomogeneousMatrix &cMo
   m_normal = cRo * m_normalO;
   vpColVector cameraRayObject({ cpointo.get_X(), cpointo.get_Y(), cpointo.get_Z() });
   cameraRayObject.normalize();
-  if (acos(cameraRayObject * m_normal) < vpMath::rad(85.0)) {
+  if (acos(cameraRayObject * m_normal) < vpMath::rad(75.0)) {
     m_valid = false;
   }
 
