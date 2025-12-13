@@ -57,6 +57,7 @@ ViSP 3.x.x (Version in development)
     . Compat with Eigen3 5.0.0
     . Introduce material to build and install ViSP from source with Pixi
     . In the visp.pc file, add an rpath to avoid setting the LD_LIBRARY_PATH variable when ViSP is used with pkg-config
+    . Add compat with Visual Studio 18 2026
   - Applications
     . Introduce camera intrinsics calibration and eye-in-hand or eye-to-hand calibration tools in apps folder, a
       collection of useful tools for camera calibration

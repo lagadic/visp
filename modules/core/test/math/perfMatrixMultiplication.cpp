@@ -393,6 +393,99 @@ TEST_CASE("Benchmark matrix-rotation matrix multiplication", "[benchmark]")
   }
 }
 
+TEST_CASE("Benchmark rotation matrix-matrix multiplication", "[benchmark]")
+{
+  if (runBenchmark || runBenchmarkAll) {
+    std::vector<std::pair<int, int> > sizes = { {3, 3} };
+
+    for (auto sz : sizes) {
+      vpRotationMatrix A(vpMath::deg(getRandomValues(0, 360)), vpMath::deg(getRandomValues(0, 360)),
+                         vpMath::deg(getRandomValues(0, 360)));
+      vpMatrix B = generateRandomMatrix(sz.first, sz.second);
+
+      std::ostringstream oss;
+      oss << "(" << A.getRows() << "x" << A.getCols() << ")x(" << B.getRows() << "x" << B.getCols() << ") - Naive code";
+      vpMatrix AB, AB_true;
+      BENCHMARK(oss.str().c_str())
+      {
+        AB_true = dgemm_regular(static_cast<vpMatrix>(A), B);
+        return AB_true;
+      };
+
+      oss.str("");
+      oss << "(" << A.getRows() << "x" << A.getCols() << ")x(" << B.getRows() << "x" << B.getCols() << ") - ViSP";
+      BENCHMARK(oss.str().c_str())
+      {
+        AB = A * B;
+        return AB;
+      };
+      REQUIRE(equalMatrix(AB, AB_true));
+
+      if (runBenchmarkAll) {
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+        cv::Mat matA(3, 3, CV_64FC1);
+        cv::Mat matB(sz.first, sz.second, CV_64FC1);
+
+        for (unsigned int i = 0; i < A.getRows(); i++) {
+          for (unsigned int j = 0; j < A.getCols(); j++) {
+            matA.at<double>(i, j) = A[i][j];
+          }
+        }
+        for (unsigned int i = 0; i < B.getRows(); i++) {
+          for (unsigned int j = 0; j < B.getCols(); j++) {
+            matB.at<double>(j, i) = B[j][i];
+          }
+        }
+
+        oss.str("");
+        oss << "(" << matA.rows << "x" << matA.cols << ")x(" << matB.rows << "x" << matB.cols << ") - OpenCV";
+        BENCHMARK(oss.str().c_str())
+        {
+          cv::Mat matC = matA * matB;
+          return matC;
+        };
+#endif
+
+#ifdef VISP_HAVE_EIGEN3
+        Eigen::MatrixXd eigenA(3, 3);
+        Eigen::MatrixXd eigenB(sz.first, sz.second);
+
+        for (unsigned int i = 0; i < A.getRows(); i++) {
+          for (unsigned int j = 0; j < A.getCols(); j++) {
+            eigenA(i, j) = A[i][j];
+          }
+        }
+        for (unsigned int i = 0; i < B.getRows(); i++) {
+          for (unsigned int j = 0; j < B.getCols(); j++) {
+            eigenB(j, i) = B[j][i];
+          }
+        }
+
+        oss.str("");
+        oss << "(" << eigenA.rows() << "x" << eigenA.cols() << ")x(" << eigenB.rows() << "x" << eigenB.cols()
+          << ") - Eigen";
+        BENCHMARK(oss.str().c_str())
+        {
+          Eigen::MatrixXd eigenC = eigenA * eigenB;
+          return eigenC;
+        };
+#endif
+      }
+    }
+  }
+
+  {
+    const unsigned int rows = 3, cols = 3;
+    vpRotationMatrix A(vpMath::deg(getRandomValues(0, 360)), vpMath::deg(getRandomValues(0, 360)),
+                       vpMath::deg(getRandomValues(0, 360)));
+    vpMatrix B = generateRandomMatrix(rows, cols);
+
+    vpMatrix AB_true = dgemm_regular(static_cast<vpMatrix>(A), B);
+    vpMatrix AB = A * B;
+    REQUIRE(equalMatrix(AB, AB_true));
+  }
+}
+
 TEST_CASE("Benchmark matrix-homogeneous matrix multiplication", "[benchmark]")
 {
   if (runBenchmark || runBenchmarkAll) {

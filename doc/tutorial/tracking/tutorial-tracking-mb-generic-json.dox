@@ -17,7 +17,10 @@ Loading the configuration for each camera is already possible with XML (already 
 This however, does not load the full state of the tracker but rather the configuration of each camera and combining everything is left to the user.
 
 With JSON serialization, a single file stores the full configuration of the generic tracker, containing the configuration of each camera, their associated name as well as their transformation with respect to the reference camera.
-Moreover, the path to the 3D model can be given in the JSON file and the model will be directly loaded.
+Moreover, the path to the 3D model can be given in the JSON file and the model will be directly loaded. Two options are
+possible: either setting a model common to all the cameras by putting the `model` attribute at the same level than the
+`trackers` attribute, or setting one model for each camera by setting the `model` attribute inside the description of
+each camera.
 
 \section tutorial-mb-generic-json-structure JSON file structure
 Let us first examine the structure of a JSON file used to load a vpMbGenericTracker, given below:
@@ -47,6 +50,8 @@ Let us first examine the global settings (located at the root of the JSON struct
 \endcode
 
 If they are defined globally, they will take precedence over the values defined per tracker.
+Note that if you define the `model` setting at the global level, you cannot set it individually
+for each tracker.
 Some settings such as the "vvs" options, are only defined globally
 
 <table>
@@ -72,7 +77,8 @@ Some settings such as the "vvs" options, are only defined globally
 <tr>
     <td colspan="2">model</td>
     <td>String</td>
-    <td>The path to a .cao model file, describing the object to track. See vpMbGenericTracker::loadModel()</td>
+    <td>The path to a .cao model file, describing the object to track. By setting this attribute at the global level,
+    the same model will be used by all the trackers. See vpMbGenericTracker::loadModel()</td>
     <td>Yes</td>
 </tr>
 <tr>
@@ -207,6 +213,14 @@ Other common settings include:
     <td>float</td>
     <td>Minimum polygon area to be considered as visible in LOD. </td>
     <td>vpMbTracker::setMinPolygonAreaThresh()</td>
+    <td>Yes</td>
+</tr>
+<tr>
+    <td colspan="2">model</td>
+    <td>String</td>
+    <td>The path to a .cao model file, describing the object to track. By setting this attribute at the tracker level,
+    each tracker can use a different model if needed. However, by setting it at the tracker level, you have to
+    do so for each tracker and cannot set it at the global level. See vpMbGenericTracker::loadModel()</td>
     <td>Yes</td>
 </tr>
 <tr><th colspan="5">display (optional)</th></tr>
