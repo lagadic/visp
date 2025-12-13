@@ -298,16 +298,8 @@ void vpRBKltTracker::computeVVSIter(const vpRBFeatureTrackerInput &/*frame*/, co
 
   //m_robust.setMinMedianAbsoluteDeviation(2.0 / frame.cam.get_px());
   m_robust.MEstimator(vpRobust::TUKEY, m_error, m_weights);
-  for (unsigned int i = 0; i < m_error.getRows(); ++i) {
-    m_weighted_error[i] = m_error[i] * m_weights[i];
-    m_covWeightDiag[i] = m_weights[i] * m_weights[i];
-    for (unsigned int dof = 0; dof < 6; ++dof) {
-      m_L[i][dof] *= m_weights[i];
-    }
-  }
 
-  m_LTL = m_L.AtA();
-  computeJTR(m_L, m_weighted_error, m_LTR);
+  updateOptimizerTerms(cMo);
 }
 
 void vpRBKltTracker::display(const vpCameraParameters &cam, const vpImage<unsigned char> &I,

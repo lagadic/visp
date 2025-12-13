@@ -67,6 +67,21 @@ class XFeatTrackingBackend(XFeatBackend):
     self.min_obj_distance = d['minSilhouetteDistanceObjectPoint']
     self.min_obj_mask_value = d['minObjMaskValue']
 
+  def match_unidirectional(self, feats_current: torch.Tensor, feats_map: torch.Tensor):
+    min_cossim = self.min_cos
+    cossim = feats_current @ feats_map.t()
+    best_cossim, match12 = cossim.max(dim=1)
+
+    w = torch.exp(best_cossim) / torch.sum(torch.exp(cossim), dim=-1)
+
+    idx0 = torch.arange(len(match12), device=match12.device)
+    good = best_cossim > min_cossim
+    idx0 = idx0[good]
+    idx1 = match12[good]
+    w = w[good]
+    assert len(idx0) == len(idx1) == len(w)
+    return idx0, idx1, w
+
   def process_frame(self, frame: RBFeatureTrackerInput, iteration: int):
     if self.last_iter > 0 and self.last_iter == iteration:
       return # Frame was already processed
@@ -101,8 +116,17 @@ class XFeatTrackingBackend(XFeatBackend):
     self.current_representation_object, self.current_representation_environment = representation.split(obj_indices, env_indices)
 
   def get_current_object_data(self) -> XFeatRepresentation:
-    return self.current_representation_object
+    if self.current_representation_object is not None:
+      return self.current_representation_object.copy()
+    else:
+      return None
   def get_previous_object_data(self) -> XFeatRepresentation:
-    return self.previous_representation_object
+    if self.previous_representation_object is not None:
+      return self.previous_representation_object.copy()
+    else:
+      return None
   def get_current_environment_data(self) -> XFeatRepresentation:
-    return self.current_representation_environment
+    if self.current_representation_environment is not None:
+      return self.current_representation_environment.copy()
+    else:
+      return None

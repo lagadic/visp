@@ -71,7 +71,7 @@ public:
 
   void setMovingEdge(const vpMe &me) { m_me = me; }
 
-  void onTrackingIterStart(const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE
+  void onTrackingIterStart(const vpRBFeatureTrackerInput &/*frame*/, const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE
   {
     m_controlPoints.clear();
   }

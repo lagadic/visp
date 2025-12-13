@@ -342,15 +342,17 @@
         },
         {
           "static": false,
-          "signature": "void updatePoints(const vpArray2D<int>&, const vpMatrix&, std::vector<int>&, unsigned int&)",
+          "signature": "void updatePoints(const vpArray2D<int>&, const vpMatrix&, const vpMatrix&, std::vector<int>&, unsigned int&)",
           "use_default_param_policy": false,
           "param_is_input": [
+            true,
             true,
             true,
             false,
             false
           ],
           "param_is_output": [
+            false,
             false,
             false,
             true,
@@ -359,9 +361,11 @@
         },
         {
           "static": false,
-          "signature": "void selectValidNewCandidates(const vpCameraParameters&, const vpHomogeneousMatrix&, const vpArray2D<int>&, const vpMatrix&,  const vpImage<float>&, const vpImage<float>&, vpMatrix&, std::vector<int>&)",
+          "signature": "void selectValidNewCandidates(const vpCameraParameters&, const vpHomogeneousMatrix&, const vpArray2D<int>&, const vpMatrix&,  const vpImage<float>&, const vpImage<float>&, const vpImage<vpRGBf> &, vpMatrix&,  vpMatrix&, std::vector<int>&)",
           "use_default_param_policy": false,
           "param_is_input": [
+            true,
+            true,
             true,
             true,
             true,
@@ -372,6 +376,8 @@
             false
           ],
           "param_is_output": [
+            false,
+            false,
             false,
             false,
             false,

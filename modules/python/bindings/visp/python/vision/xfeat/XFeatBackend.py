@@ -45,7 +45,7 @@ from visp.core import ImageRGBa
 
 class XFeatRepresentation():
   def __init__(self, kps, descriptors):
-    assert isinstance(kps, np.ndarray) and len(kps.shape) == 2 and kps.shape[1] == 2
+    assert len(kps) == 0 or isinstance(kps, np.ndarray) and len(kps.shape) == 2 and kps.shape[1] == 2
     assert len(kps) == len(descriptors)
     self.keypoints: np.ndarray = kps
     self.descriptors: torch.Tensor = descriptors
@@ -62,6 +62,9 @@ class XFeatRepresentation():
       r2 = XFeatRepresentation(kps, descriptors)
 
     return r1, r2
+
+  def copy(self) -> 'XFeatRepresentation':
+    return XFeatRepresentation(self.keypoints.copy(), self.descriptors.clone())
 
   def merged_with(self, r: 'XFeatRepresentation') -> 'XFeatRepresentation':
     keypoints = np.concatenate((self.keypoints, r.keypoints), axis=0)
@@ -181,8 +184,14 @@ class XFeatBackend():
 
       if self.scale_factor != 1:
         rgb = torch.nn.functional.interpolate(rgb, scale_factor=self.scale_factor, mode='nearest')
-      rep = self.xfeat.detectAndCompute(rgb, top_k = self.k)[0]
-
+      rep = None
+      try:
+        rep = self.xfeat.detectAndCompute(rgb, top_k = self.k)[0]
+      except:
+        rep = {
+          'keypoints': torch.empty((0,)),
+          'descriptors': torch.empty((0,))
+        }
       kps = rep['keypoints'].cpu().numpy()
       if self.scale_factor != 1:
         kps /= self.scale_factor

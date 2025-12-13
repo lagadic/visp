@@ -209,4 +209,23 @@ void vpUniRand::setSeed(uint64_t initstate, uint64_t initseq)
   m_rng.state += initstate;
   next();
 }
+
+
+std::vector<size_t> vpUniRand::sampleWithoutReplacement(size_t count, size_t vectorSize)
+{
+  count = std::min(count, vectorSize);
+  std::vector<size_t> indices(count);
+  size_t added = 0;
+  for (size_t i = 0; i < vectorSize; ++i) {
+    double randomVal = uniform(0.0, 1.0);
+    if ((vectorSize - i) * randomVal < (count - added)) {
+      indices[added++] = i;
+    }
+    if (added == count) {
+      break;
+    }
+  }
+  return indices;
+}
+
 END_VISP_NAMESPACE

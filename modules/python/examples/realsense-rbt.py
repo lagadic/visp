@@ -67,7 +67,7 @@ class PyBaseFeatureTracker(RBFeatureTracker):
   def requiresSilhouetteCandidates(self) -> bool:
     return False
 
-  def onTrackingIterStart(self, cMo: HomogeneousMatrix):
+  def onTrackingIterStart(self, frame: RBFeatureTrackerInput, cMo: HomogeneousMatrix):
     self.cov.resize(6, 6)
     self.LTL.resize(6, 6)
     self.LTR.resize(6)

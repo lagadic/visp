@@ -79,7 +79,8 @@ void vpRBConvergenceMetric::sampleObject(vpObjectCentricRenderer &renderer)
   vpArray2D<int> empty;
   std::vector<int> removed;
   unsigned int added;
-  m_map.updatePoints(empty, oX, removed, added);
+  vpMatrix normals;
+  m_map.updatePoints(empty, oX, normals, removed, added);
   if (added != m_map.getNumMaxPoints()) {
     throw vpException(vpException::dimensionError, "Something went wrong when inserting bb points into the map");
   }

@@ -31,6 +31,7 @@
 #include <visp3/rbt/vpCombinedDepthAndColorMask.h>
 
 #include <visp3/rbt/vpRBFeatureTrackerInput.h>
+#include <visp3/core/vpImageFilter.h>
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
 #include VISP_NLOHMANN_JSON(json.hpp)
@@ -46,7 +47,6 @@ void vpCombinedDepthAndColorMask::updateMask(const vpRBFeatureTrackerInput &fram
   m_depthMask.updateMask(frame, previousFrame, m_depth);
 
   bool computeOnlyOnBB = m_colorMask.isComputedOnlyOnBoundingBox() && m_depthMask.isComputedOnlyOnBoundingBox();
-
   if (!computeOnlyOnBB) {
     mask.resize(m_color.getHeight(), m_color.getWidth());
 #ifdef VISP_HAVE_OPENMP
@@ -58,6 +58,7 @@ void vpCombinedDepthAndColorMask::updateMask(const vpRBFeatureTrackerInput &fram
   }
   else {
     mask.resize(m_color.getHeight(), m_color.getWidth(), 0.f);
+
     const vpRect renderBB = frame.renders.boundingBox;
     const int top = static_cast<int>(renderBB.getTop());
     const int left = static_cast<int>(renderBB.getLeft());

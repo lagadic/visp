@@ -156,7 +156,7 @@ void vpRBTracker::setupRenderer(const std::string &file)
   if (!m_rendererIsSetup) {
     m_renderer.setRenderParameters(m_rendererSettings);
     const std::shared_ptr<vpPanda3DGeometryRenderer> geometryRenderer = std::make_shared<vpPanda3DGeometryRenderer>(
-      vpPanda3DGeometryRenderer::vpRenderType::OBJECT_NORMALS);
+      vpPanda3DGeometryRenderer::vpRenderType::OBJECT_NORMALS, true);
     m_renderer.addSubRenderer(geometryRenderer);
   }
   if (!vpIoTools::checkFilename(file)) {
@@ -298,10 +298,18 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
       return result;
     }
   }
-
-  m_cMoPrev = m_cMo;
   timer.setSilhouetteTime(timer.endTimer());
 
+  int id = 0;
+  for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
+    timer.startTimer();
+    tracker->onTrackingIterStart(input, m_cMo);
+    timer.setTrackerIterStartTime(id, timer.endTimer());
+    id += 1;
+  }
+
+
+  m_cMoPrev = m_cMo;
   // Perform odometry: estimate camera motion and potentially update render to match
   if (m_odometry) {
     timer.startTimer();
@@ -330,16 +338,9 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
 
     }
     timer.setOdometryTime(timer.endTimer());
-
   }
 
-  int id = 0;
-  for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
-    timer.startTimer();
-    tracker->onTrackingIterStart(m_cMo);
-    timer.setTrackerIterStartTime(id, timer.endTimer());
-    id += 1;
-  }
+
   id = 0;
   for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
 
@@ -370,7 +371,6 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
 
   id = 0;
   for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
-
     timer.startTimer();
     tracker->initVVS(input, m_previousFrame, m_cMo);
     timer.setInitVVSTime(id, timer.endTimer());
@@ -382,7 +382,6 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
   vpHomogeneousMatrix m_cMoPrevIter = m_cMo;
   vpHomogeneousMatrix best_cMo = m_cMo;
   double mu = m_muInit;
-  vpColVector firstMotion(6, 0.0);
   unsigned int iter = 0;
   result.beforeIter(m_cMo);
   for (iter = 0; iter < m_vvsIterations; ++iter) {
@@ -405,15 +404,39 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
     double error = 0.f;
     unsigned int numFeatures = 0;
 
+    bool shouldComputeVelocityInObjectFrame = false;
+    for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
+      if (tracker->hasIgnoredDofs()) {
+        shouldComputeVelocityInObjectFrame = true;
+        break;
+      }
+    }
+
+    for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
+      tracker->setComputeJacobianObjectSpace(shouldComputeVelocityInObjectFrame);
+    }
+    id = 0;
     for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
       if (tracker->getNumFeatures() > 0) {
         numFeatures += tracker->getNumFeatures();
         const double weight = tracker->getVVSTrackerWeight(static_cast<double>(iter) / static_cast<double>(m_vvsIterations));
-        LTL += weight * tracker->getLTL();
-        LTR += weight * tracker->getLTR();
-        error += weight * (tracker->getWeightedError()).sumSquare();
+        bool validQuantities = vpArray2D<double>::isFinite(tracker->getLTL()) && vpArray2D<double>::isFinite(tracker->getLTR()) && vpMath::isFinite(weight);
+        if (validQuantities) {
+          LTL += weight * tracker->getLTL();
+          LTR += weight * tracker->getLTR();
+          error += weight * (tracker->getWeightedError()).sumSquare();
+        }
+        else {
+          std::cerr << std::endl;
+          std::cerr << "There were NaN values in tracker " << id << std::endl;
+          std::cerr << "LTL = " << tracker->getLTL() << std::endl;
+          std::cerr << "LTR = " << tracker->getLTR().t() << std::endl;
+          std::cerr << "Weight = " << weight << std::endl;
+          std::cerr << "This tracker was ignored." << std::endl;
 
+        }
       }
+      id += 1;
     }
 
     if (numFeatures >= 6) {
@@ -434,6 +457,12 @@ vpRBTrackingResult vpRBTracker::track(vpRBFeatureTrackerInput &input)
       vpColVector v;
       try {
         v = -m_lambda * ((LTL + mu * H).pseudoInverse(LTL.getRows() * std::numeric_limits<double>::epsilon()) * LTR);
+
+        if (shouldComputeVelocityInObjectFrame) {
+          vpVelocityTwistMatrix cVo(m_cMo);
+          v = cVo * v;
+        }
+
         m_cMo = vpExponentialMap::direct(v).inverse() * m_cMo;
       }
       catch (vpException &) {
@@ -522,6 +551,7 @@ void vpRBTracker::updateRender(vpRBFeatureTrackerInput &frame)
 void vpRBTracker::updateRender(vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cMo)
 {
   m_renderer.setCameraPose(cMo.inverse());
+
 
   frame.renders.cMo = cMo;
 
