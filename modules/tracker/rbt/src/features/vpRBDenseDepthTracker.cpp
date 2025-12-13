@@ -32,6 +32,8 @@
 #include <visp3/core/vpMeterPixelConversion.h>
 #include <visp3/core/vpDisplay.h>
 
+#include "../core/private/vpSIMDUtils.h"
+
 #ifdef VISP_HAVE_OPENMP
 #include <omp.h>
 #endif
@@ -172,6 +174,17 @@ void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame
   }
 }
 
+void vpRBDenseDepthTracker::initVVS(const vpRBFeatureTrackerInput &/*frame*/, const vpRBFeatureTrackerInput &/*previousFrame*/, const vpHomogeneousMatrix &/*cMo*/)
+{
+  m_LTL.resize(6, 6, false, false);
+  m_LTR.resize(6, false);
+  m_L.resize(m_numFeatures, 6, false, false);
+  m_Lt.resize(6, m_numFeatures, false, false);
+  m_error.resize(m_numFeatures, false);
+  m_weighted_error.resize(m_numFeatures, false);
+  m_weights.resize(m_numFeatures, false);
+}
+
 void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cMo, unsigned int /*iteration*/)
 {
   if (m_numFeatures == 0) {
@@ -185,13 +198,15 @@ void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &frame,
     return;
   }
 
-  m_depthPointSet.updateAndErrorAndInteractionMatrix(frame.cam, cMo, frame.depth, m_error, m_L);
+  m_depthPointSet.updateAndErrorAndInteractionMatrix(frame.cam, cMo, frame.depth, m_error, m_Lt);
+  m_Lt.transpose(m_L);
 
   m_robust.setMinMedianAbsoluteDeviation((frame.renders.zFar - frame.renders.zNear) * 0.01);
   m_robust.MEstimator(vpRobust::TUKEY, m_error, m_weights);
 
-
-
+// #if defined(VISP_HAVE_OPENMP)
+// #pragma omp parallel for
+// #endif
   for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
     m_weighted_error[i] = m_error[i] * m_weights[i];
     m_covWeightDiag[i] = m_weights[i] * m_weights[i];
@@ -199,10 +214,143 @@ void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &frame,
       m_L[i][dof] *= m_weights[i];
     }
   }
-
-  m_LTL = m_L.AtA();
+  m_LTL.resize(6, 6);
+  m_L.AtA(m_LTL);
   computeJTR(m_L, m_weighted_error, m_LTR);
   m_vvsConverged = false;
+}
+
+void errorAndInteractionMatrixBase(const vpMatrix &cXt, const vpMatrix &cNt, const vpMatrix &obsT, vpColVector &e, vpMatrix &Lt, unsigned int start, unsigned int end)
+{
+#if defined(VISP_HAVE_OPENMP)
+#pragma omp parallel for
+#endif
+  for (unsigned int i = start; i < end; ++i) {
+    const double X = cXt[0][i], Y = cXt[1][i], Z = cXt[2][i];
+    const double nX = cNt[0][i], nY = cNt[1][i], nZ = cNt[2][i];
+
+    const double D = -((nX * X) + (nY  * Y) + (nZ * Z));
+    const double projNormal = nX * obsT[0][i] + nY  * obsT[1][i] + nZ * obsT[2][i];
+
+    e[i] = D + projNormal;
+
+    Lt[0][i] = nX;
+    Lt[1][i] = nY;
+    Lt[2][i] = nZ;
+    Lt[3][i] = nZ * Y - nY * Z;
+    Lt[4][i] = nX * Z - nZ * X;
+    Lt[5][i] = nY * X - nX * Y;
+  }
+}
+
+#if defined(VISP_HAVE_AVX2) || defined(VISP_HAVE_AVX) || defined(VISP_HAVE_SSE2)
+void errorAndInteractionMatrixSIMD(const vpMatrix &cXt, const  vpMatrix &cNt, const  vpMatrix &obsT, vpColVector &e, vpMatrix &Lt)
+{
+#if defined(VISP_HAVE_OPENMP)
+#pragma omp parallel for schedule(static, 1024)
+#endif
+  for (int i = 0; i <= static_cast<int>(cXt.getCols()) - vpSIMD::numLanes; i += vpSIMD::numLanes) {
+    const vpSIMD::Register X = vpSIMD::loadu(cXt[0] + i), Y = vpSIMD::loadu(cXt[1] + i), Z = vpSIMD::loadu(cXt[2] + i);
+    const vpSIMD::Register nX = vpSIMD::loadu(cNt[0] + i), nY = vpSIMD::loadu(cNt[1] + i), nZ = vpSIMD::loadu(cNt[2] + i);
+    const vpSIMD::Register obsX = vpSIMD::loadu(obsT[0] + i), obsY = vpSIMD::loadu(obsT[1] + i), obsZ = vpSIMD::loadu(obsT[2] + i);
+
+    vpSIMD::Register D = vpSIMD::mul(nX, X);
+    vpSIMD::Register projNormal = vpSIMD::mul(obsX, X);
+    D = vpSIMD::fma(nY, Y, D);
+    D = vpSIMD::fma(nZ, Z, D);
+
+    projNormal = vpSIMD::fma(nY, obsY, projNormal);
+    projNormal = vpSIMD::fma(nZ, obsZ, projNormal);
+
+    vpSIMD::storeu(e.data + i, vpSIMD::sub(projNormal, D));
+
+    vpSIMD::storeu(Lt[0] + i, nX);
+    vpSIMD::storeu(Lt[1] + i, nY);
+    vpSIMD::storeu(Lt[2] + i, nZ);
+
+    vpSIMD::storeu(Lt[3] + i, vpSIMD::sub(vpSIMD::mul(nZ, Y), vpSIMD::mul(nY, Z)));
+    vpSIMD::storeu(Lt[4] + i, vpSIMD::sub(vpSIMD::mul(nX, Z), vpSIMD::mul(nZ, X)));
+    vpSIMD::storeu(Lt[5] + i, vpSIMD::sub(vpSIMD::mul(nY, X), vpSIMD::mul(nX, Y)));
+  }
+  errorAndInteractionMatrixBase(cXt, cNt, obsT, e, Lt, (cXt.getCols() / vpSIMD::numLanes) * vpSIMD::numLanes, cXt.getCols());
+}
+#endif
+
+void vpRBDenseDepthTracker::vpDepthPointSet::updateAndErrorAndInteractionMatrix(
+  const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo,
+  const vpImage<float> &depth, vpColVector &e, vpMatrix &Lt)
+{
+  const vpRotationMatrix cRo = cMo.getRotationMatrix();
+  cMo.project(m_oXt, m_cXt, false);
+  cRo.rotateVectors(m_oNt, m_cNt, false);
+  m_invalid.clear();
+
+  const unsigned int numPoints = m_oXt.getCols();
+  e.resize(numPoints, false);
+  Lt.resize(6, numPoints, false, false);
+#if defined(VISP_HAVE_OPENMP)
+#pragma omp parallel
+#endif
+  {
+    std::vector<unsigned int> localInvalid;
+#if defined(VISP_HAVE_OPENMP)
+#pragma omp for
+#endif
+
+    for (int i = 0; i < static_cast<int>(numPoints); ++i) {
+      //Step 1: update and filter out points that are no longer valid
+      {
+        // Plane points away from the camera: this surface is no longer visible due to rotation
+        if (m_cNt[2][i] >= 0.0) {
+          localInvalid.push_back(i);
+          continue;
+        }
+        double x, y, u, v;
+        x = m_cXt[0][i] / m_cXt[2][i];
+        y = m_cXt[1][i] / m_cXt[2][i];
+        vpMeterPixelConversion::convertPointWithoutDistortion(cam, x, y, u, v);
+        // Point is no longer in image: depth value cannot be sampled
+        if (u < 0 || v < 0 || u >= depth.getWidth() || v >= depth.getHeight()) {
+          localInvalid.push_back(i);
+          continue;
+        }
+        const double Z = depth[static_cast<unsigned int>(v)][static_cast<unsigned int>(u)];
+        // Z value in the depth image from the camera is invalid
+        if (Z <= 0.0) {
+          localInvalid.push_back(i);
+          continue;
+        }
+        m_observations[0][i] = x * Z;
+        m_observations[1][i] = y * Z;
+        m_observations[2][i] = Z;
+      }
+    }
+#if defined(VISP_HAVE_OPENMP)
+#pragma omp critical
+    {
+      m_invalid.insert(m_invalid.end(), localInvalid.begin(), localInvalid.end());
+    }
+#else
+    m_invalid = std::move(localInvalid);
+#endif
+  }
+
+#if defined(VISP_HAVE_AVX2) || defined(VISP_HAVE_AVX) || defined(VISP_HAVE_SSE2)
+  errorAndInteractionMatrixSIMD(m_cXt, m_cNt, m_observations, e, Lt);
+#else
+  errorAndInteractionMatrixBase(m_cXt, m_cNt, m_observations, e, Lt, 0, numPoints);
+#endif
+  // Disable invalid points
+  for (unsigned int i : m_invalid) {
+    e[i] = 0.0;
+
+    Lt[0][i] = 0;
+    Lt[1][i] = 0;
+    Lt[2][i] = 0;
+    Lt[3][i] = 0;
+    Lt[4][i] = 0;
+    Lt[5][i] = 0;
+  }
 }
 
 void vpRBDenseDepthTracker::display(const vpCameraParameters &/*cam*/, const vpImage<unsigned char> &/*I*/,
