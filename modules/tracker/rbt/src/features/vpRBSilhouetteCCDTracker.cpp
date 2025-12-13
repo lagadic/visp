@@ -251,8 +251,10 @@ void vpRBSilhouetteCCDTracker::buildGradientAndHessianStorageViews(unsigned int 
       m_gradientData.resize(numNormalPoints * 6);
       m_hessianData.resize(numNormalPoints * 6 * 6);
     }
-    m_gradients.resize(numNormalPoints * normalsPerPoint);
-    m_hessians.resize(numNormalPoints * 2 * normalsPerPoint);
+
+    m_gradients.resize(numNormalPoints);
+    m_hessians.resize(numNormalPoints);
+
 #if defined(VISP_HAVE_OPENMP)
 #pragma omp parallel for
 #endif
@@ -538,7 +540,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
 #if VISP_DEBUG_CCD_TRACKER
     if (std::isnan(nv_ptr[0]) || std::isnan(nv_ptr[1])) {
       throw vpException(vpException::fatalError, "x: %f, theta = %f", p.xs, p.getTheta());
-  }
+    }
 #endif
 
     int k = 0;
@@ -615,7 +617,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
       vic_ptr[10 * negative_normal + 9] = exp(-dist2[0] * dist2[0] / (2 * sigma * sigma)) / (sqrt(2 * M_PI) * sigma);
       normalized_param[kk][1] += vic_ptr[10 * negative_normal + 7];
     }
-}
+  }
 
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
@@ -667,7 +669,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
 #if VISP_DEBUG_CCD_TRACKER
       if (vic_k[0] >= I.getHeight() || vic_k[1] >= I.getWidth()) {
         throw vpException(vpException::badValue, "Reading out of image");
-    }
+      }
 #endif
       const vpRGBa pixelRGBa = I(static_cast<unsigned int>(vic_k[0]), static_cast<unsigned int>(vic_k[1]));
       double *pixel = pix_ptr + k * 3;
@@ -717,7 +719,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
           m2_o2[m * 3 + n] += wp2 * pixelNeg[m] * pixelNeg[n];
         }
       }
-  }
+    }
     mean_vic_ptr[0] = m1[0] / w1;
     mean_vic_ptr[1] = m1[1] / w1;
     mean_vic_ptr[2] = m1[2] / w1;
@@ -734,8 +736,8 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
       cov_vic_ptr[m * 3 + m] += m_ccdParameters.kappa;
       cov_vic_ptr[9 + m * 3 + m] += m_ccdParameters.kappa;
     }
-    }
   }
+}
 
 
 
@@ -760,7 +762,7 @@ void sumGradientsAndHessians(const std::vector<vpColVector> &gradients, const st
     {
       gradientPerThread.resize(1);
       hessianPerThread.resize(1);
-  }
+    }
 #endif
 
 #ifdef VISP_HAVE_OPENMP
@@ -796,13 +798,13 @@ void sumGradientsAndHessians(const std::vector<vpColVector> &gradients, const st
       gradientPerThread[threadIdx] = localGradient;
       hessianPerThread[threadIdx] = localHessian;
     }
-}
+  }
 
   for (unsigned int i = 0; i < gradientPerThread.size(); ++i) {
     gradient += gradientPerThread[i];
     hessian += hessianPerThread[i];
   }
-  }
+}
 
 template<bool hasTemporalSmoothing>
 void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix(const vpHomogeneousMatrix &cMo)
