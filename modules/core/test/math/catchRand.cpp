@@ -370,6 +370,27 @@ TEST_CASE("Check uniform draw independance", "[visp_rand]")
   }
 }
 
+TEST_CASE("Check sample without replacement correct", "[visp_rand]")
+{
+
+  for (unsigned int i = 0; i < 100; ++i) {
+    unsigned int N = 10;
+    unsigned int count = 5;
+    vpUniRand rand(i);
+    std::vector<size_t> res = rand.sampleWithoutReplacement(count, N);
+    REQUIRE(res.size() == count);
+
+    for (unsigned int j = 0; j < count - 1; ++j) {
+      REQUIRE(res[j] < N);
+      for (unsigned int k = j + 1; k < count; ++k) {
+        REQUIRE(res[j] != res[k]);
+      }
+    }
+
+  }
+
+}
+
 int main(int argc, char *argv[])
 {
   Catch::Session session;
