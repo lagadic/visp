@@ -788,15 +788,116 @@ SCENARIO("Checking ADD convergence metric", "[rbt]")
       REQUIRE(!metric.hasConverged(cam, cTo1, cTo2Render));
       REQUIRE(metric.shouldUpdateRender(cam, cTo1, cTo2Render));
     }
-
-
-
   }
-
-
-
 }
 
+SCENARIO("Testing point map", "[rbt]")
+{
+  vpPointMap map(512, 0.0, 0.001, 0.02, 2.0);
+  map.setThresholdNormalVisibiltyCriterion(45.0);
+  REQUIRE(map.getNumMaxPoints() == 512);
+  REQUIRE(vpMath::equal(map.getMinDistanceAddNewPoints(), 0.0, 1e-6));
+  REQUIRE(vpMath::equal(map.getOutlierReprojectionErrorThreshold(), 2.0, 1e-6));
+  REQUIRE(vpMath::equal(map.getMaxDepthErrorCandidate(), 0.02, 1e-6));
+  REQUIRE(vpMath::equal(map.getThresholdNormalVisibiltyCriterion(), 45.0, 1e-6));
+  REQUIRE(map.getPoints().getRows() == 0);
+
+  unsigned int h = 480, w = 640;
+  vpCameraParameters cam(800, 800, w / 2, h / 2);
+
+  std::vector<int> removedIndices;
+  vpArray2D<int> indicesToRemove;
+
+  vpMatrix pointsToAdd;
+  vpMatrix normalsToAdd;
+
+  vpHomogeneousMatrix cTo(0, 0, 0.5, 0.0, 0.0, 0.0);
+  unsigned int N = 10;
+
+  vpMatrix baseUV(N, 2);
+  vpMatrix baseXY(N, 2);
+  vpMatrix cX(N, 3), cN(N, 3);
+
+  vpMatrix oX(N, 3), oN(N, 3);
+
+  vpUniRand random(421);
+
+  vpImage<float> depthImage(h, w, 0.0);
+
+  for (unsigned int i = 0; i < N; i++) {
+    bool good = false; // Ensure two points do no lie in same image pixel
+    double Z;
+    while (!good) {
+      baseUV[i][0] = random.uniform(1, w - 2);
+      baseUV[i][1] = random.uniform(1, h - 2);
+      unsigned uu = static_cast<unsigned int>(baseUV[i][0]), vu = static_cast<unsigned int>(baseUV[i][1]);
+      if (depthImage[vu][uu] > 0.0) {
+        good = false;
+      }
+      else {
+        Z = 0.5 + random.uniform(-0.05, 0.05);
+        // Set Z in a neighbourhood to ensure that reprojection and aliasing artifacts don't impact results
+        // True depth data is far more continuous
+        for (int i = -1; i < 2; ++i) {
+          for (int j = -1; j < 2; ++j) {
+            depthImage[vu + i][uu + j] = Z;
+          }
+        }
+
+        good = true;
+      }
+    }
+    vpPixelMeterConversion::convertPoint(cam, baseUV[i][0], baseUV[i][1], baseXY[i][0], baseXY[i][1]);
+    cX[i][0] = baseXY[i][0] * Z, cX[i][1] = baseXY[i][1] * Z, cX[i][2] = Z;
+    cN[i][0] = 0.0, cN[i][1] = 0.0, cN[i][2] = -1.0;
+
+    vpColVector c(4, 1.0);
+    c[0] = cX[i][0], c[1] = cX[i][1], c[2] = cX[i][2];
+
+    const vpColVector ox = cTo.inverse() * c;
+    oX[i][0] = ox[0] / ox[3], oX[i][1] = ox[1] / ox[3], oX[i][2] = ox[2] / ox[3];
+    const vpColVector on = cTo.inverse().getRotationMatrix() * cN.getRow(i).t();
+    oN[i][0] = on[0], oN[i][1] = on[1], oN[i][2] = on[2];
+  }
+  std::cout << oN << std::endl;
+  unsigned int numAddedPoints;
+  map.updatePoints(indicesToRemove, oX, oN, removedIndices, numAddedPoints);
+  REQUIRE(numAddedPoints == N);
+
+  vpMatrix reprojcX, reprojXY, reprojUV;
+  vpArray2D<int> allPoints(N, 1);
+  for (unsigned int i = 0; i < N; ++i) {
+    allPoints[i][0] = i;
+  }
+  map.project(cam, allPoints, cTo, reprojcX, reprojXY, reprojUV);
+
+  REQUIRE(((baseUV - reprojUV).frobeniusNorm() / (N * 2)) < 1e-3);
+  REQUIRE(((baseXY - reprojXY).frobeniusNorm() / (N * 2)) < 1e-3);
+  REQUIRE(((cX - reprojcX).frobeniusNorm() / (N * 3)) < 1e-3);
+
+  std::vector<int> visibleIndices;
+  map.getVisiblePoints(h, w, cam, cTo, depthImage, visibleIndices);
+  REQUIRE(visibleIndices.size() == N); // All points should be visible when seen at pose where they were added
+
+  // Test that points are no longer visible (keeping the old depth map)
+  map.getVisiblePoints(h, w, cam, cTo * vpHomogeneousMatrix(0.0, 0.0, map.getMaxDepthErrorVisibilityCriterion() + 0.01, 0.0, 0.0, 0.0), depthImage, visibleIndices);
+  REQUIRE(visibleIndices.size() == 0);
+
+  map.getVisiblePoints(h, w, cam, vpHomogeneousMatrix(0.0, 0.0, map.getMaxDepthErrorVisibilityCriterion() * 0.9, 0.0, 0.0, 0.0) * cTo, depthImage, visibleIndices);
+  REQUIRE(visibleIndices.size() == N);
+
+  map.setMaxDepthErrorVisibilityCriterion(10);
+
+  map.getVisiblePoints(h, w, cam, cTo * vpHomogeneousMatrix(0.0, 0.0, 0.0, 0.0, vpMath::rad(map.getThresholdNormalVisibiltyCriterion() + 10), 0.0), depthImage, visibleIndices);
+  REQUIRE(visibleIndices.size() == 0);
+  std::cout << map.getThresholdNormalVisibiltyCriterion() << std::endl;
+  map.getVisiblePoints(h, w, cam, cTo * vpHomogeneousMatrix(0.0, 0.0, 0.0, 0.0, vpMath::rad(map.getThresholdNormalVisibiltyCriterion() - 10), 0.0), depthImage, visibleIndices);
+  REQUIRE(visibleIndices.size() == N);
+
+  map.setThresholdNormalVisibiltyCriterion(0); // Disable threshold
+  map.getVisiblePoints(h, w, cam, cTo * vpHomogeneousMatrix(0.0, 0.0, 0.0, 0.0, vpMath::rad(map.getThresholdNormalVisibiltyCriterion() + 10), 0.0), depthImage, visibleIndices);
+  REQUIRE(visibleIndices.size() == N);
+}
 int main(int argc, char *argv[])
 {
   Catch::Session session; // There must be exactly one instance

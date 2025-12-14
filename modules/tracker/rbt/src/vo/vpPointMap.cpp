@@ -415,12 +415,9 @@ void vpPointMap::updatePoints(const vpArray2D<int> &indicesToRemove, const vpMat
   if (normalsToAdd.getRows() > 0 || m_normals.getRows() > 0) {
     m_normals = removeAndAdd(m_normals, newSize, removedIndices, normalsToAdd, numAddedPoints);
   }
-#if VP_RB_POINT_MAP_DEBUG
   if (m_normals.getRows() > 0 && m_X.size() != m_normals.size()) {
-    std::cout << "m_X rows = " << m_X.getRows() << ", mnormals = " << m_normals.getRows() << std::endl;
     throw vpException(vpException::dimensionError, "Mismatch between number of points and normals");
   }
-#endif
 
 }
 
