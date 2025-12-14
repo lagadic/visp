@@ -349,6 +349,7 @@ SCENARIO("Running tracker on sequences with ground truth", "[rbt]")
               displayDepth.bitmap[j] = static_cast<unsigned char>(std::min(frame.depth.bitmap[j], 1.f) * 255.f);
             }
 
+
             vpDisplay::display(displayI); vpDisplay::display(displayRGB); vpDisplay::display(displayDepth);
             tracker.display(displayI, displayRGB, displayDepth);
             vpDisplay::displayFrame(displayI, cMo, sequence.cam(), 0.05, vpColor::none);

@@ -110,6 +110,18 @@ const std::string objCube =
 
 bool opt_no_display = false; // If true, disable display or tests requiring display
 
+std::string createObjFile()
+{
+  const std::string tempDir = vpIoTools::makeTempDirectory("visp_test_rbt_obj");
+  const std::string objFile = vpIoTools::createFilePath(tempDir, "cube.obj");
+  std::ofstream f(objFile);
+  f << objCube;
+  f.close();
+
+  return objFile;
+}
+
+
 SCENARIO("Instantiating a silhouette me tracker", "[rbt]")
 {
   GIVEN("A base me tracker")
@@ -631,11 +643,7 @@ SCENARIO("Instantiating a render-based tracker", "[rbt]")
     }
     THEN("Loading configuration with real 3D model also works")
     {
-      const std::string tempDir = vpIoTools::makeTempDirectory("visp_test_rbt_obj");
-      const std::string objFile = vpIoTools::createFilePath(tempDir, "cube.obj");
-      std::ofstream f(objFile);
-      f << objCube;
-      f.close();
+      std::string objFile = createObjFile();
       j["model"] = objFile;
       tracker.loadConfiguration(j);
       verifyBase();
@@ -674,14 +682,7 @@ SCENARIO("Running tracker on static synthetic sequences", "[rbt]")
     vpCameraParameters cam(600, 600, 320, 240);
     vpPanda3DRenderParameters renderParams(cam, h, w, 0.01, 1.0);
 
-    const std::string tempDir = vpIoTools::makeTempDirectory("visp_test_rbt_obj");
-    std::cout << tempDir << std::endl;
-    const std::string objFile = vpIoTools::getAbsolutePathname(vpIoTools::createFilePath(tempDir, "cube.obj"));
-
-    std::ofstream f(objFile);
-    f << objCube;
-    f.close();
-
+    std::string objFile = createObjFile();
     const auto setupScene = [&objFile](vpPanda3DRendererSet &renderer) {
       renderer.addNodeToScene(renderer.loadObject("object", objFile));
       renderer.addLight(vpPanda3DAmbientLight("ambient", vpRGBf(1.f)));
@@ -702,7 +703,7 @@ SCENARIO("Running tracker on static synthetic sequences", "[rbt]")
     std::shared_ptr<vpRBSilhouetteCCDTracker> silTracker = std::make_shared<vpRBSilhouetteCCDTracker>();
     silTracker->setTemporalSmoothingFactor(0.1);
     vpCCDParameters ccdParams = silTracker->getCCDParameters();
-    ccdParams.h = 8;
+    ccdParams.h = 16;
     silTracker->setCCDParameters(ccdParams);
 
     tracker.addTracker(silTracker);
@@ -738,6 +739,62 @@ SCENARIO("Running tracker on static synthetic sequences", "[rbt]")
       REQUIRE((errorT < 0.005 && errorR < vpMath::deg(2.1)));
     }
   }
+}
+
+SCENARIO("Checking ADD convergence metric", "[rbt]")
+{
+  if (opt_no_display) {
+    std::cout << "Display is disabled for tests, skipping..." << std::endl;
+    return;
+  }
+
+  GIVEN("A renderer and a convergence metric")
+  {
+    vpCameraParameters cam(800, 800, 320, 240);
+    vpPanda3DRenderParameters params(cam, 480, 640, 0.01, 1.0);
+    vpObjectCentricRenderer renderer(params);
+    renderer.addSubRenderer(std::make_shared<vpPanda3DGeometryRenderer>(vpPanda3DGeometryRenderer::OBJECT_NORMALS, true));
+    renderer.initFramework();
+    renderer.addObjectToScene("obj", createObjFile());
+    renderer.setFocusedObject("obj");
+    renderer.setCameraPose(vpHomogeneousMatrix(0, 0, -0.5, 0, 0, 0));
+    vpRBConvergenceADDMetric metric(0.01, 0.001, 512, 213);
+
+    vpHomogeneousMatrix cTo1(0, 0, 0.2, 0, 0, 0);
+    vpHomogeneousMatrix cTo2Conv(0, 0, 0.2001, 0, 0, 0);
+    vpHomogeneousMatrix cTo2NotConv(0, 0, 0.205, 0, 0, 0);
+    vpHomogeneousMatrix cTo2Render(0, 0, 0.22, 0, 0, 0);
+    THEN("Trying to compute metric without sampling fails")
+    {
+      REQUIRE_THROWS(metric(cam, cTo1, cTo2NotConv));
+    }
+
+    THEN("Sampling and testing against various threshold works")
+    {
+      metric.sampleObject(renderer);
+      double metricValue = metric(cam, cTo1, cTo2NotConv);
+      REQUIRE(fabs(metricValue - 0.005)  < 1e-4);
+      REQUIRE(!metric.hasConverged(cam, cTo1, cTo2NotConv));
+      REQUIRE(!metric.shouldUpdateRender(cam, cTo1, cTo2NotConv));
+
+
+      metricValue = metric(cam, cTo1, cTo2Conv);
+      REQUIRE(fabs(metricValue - 0.0001)  < 1e-4);
+      REQUIRE(metric.hasConverged(cam, cTo1, cTo2Conv));
+      REQUIRE(!metric.shouldUpdateRender(cam, cTo1, cTo2Conv));
+
+      metricValue = metric(cam, cTo1, cTo2Render);
+      REQUIRE(fabs(metricValue - 0.02)  < 1e-4);
+      REQUIRE(!metric.hasConverged(cam, cTo1, cTo2Render));
+      REQUIRE(metric.shouldUpdateRender(cam, cTo1, cTo2Render));
+    }
+
+
+
+  }
+
+
+
 }
 
 int main(int argc, char *argv[])

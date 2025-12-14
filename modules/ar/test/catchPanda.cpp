@@ -218,6 +218,10 @@ SCENARIO("Using multiple panda3d renderers in parallel", "[Panda3D]")
 
 TEST_CASE("Testing Geometry renderer", "[panda3D]")
 {
+  if (opt_no_display) {
+    std::cout << "Display is disabled for tests, skipping..." << std::endl;
+    return;
+  }
   vpPanda3DGeometryRenderer r1(vpPanda3DGeometryRenderer::CAMERA_NORMALS, false), r2(vpPanda3DGeometryRenderer::CAMERA_NORMALS, true);
   vpPanda3DGeometryRenderer r3(vpPanda3DGeometryRenderer::OBJECT_NORMALS, false), r4(vpPanda3DGeometryRenderer::OBJECT_NORMALS, true);
 
