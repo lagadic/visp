@@ -812,7 +812,7 @@ SCENARIO("Testing point map", "[rbt]")
   vpMatrix normalsToAdd;
 
   vpHomogeneousMatrix cTo(0, 0, 0.5, 0.0, 0.0, 0.0);
-  unsigned int N = 10;
+  unsigned int N = 100;
 
   vpMatrix baseUV(N, 2);
   vpMatrix baseXY(N, 2);
@@ -828,8 +828,8 @@ SCENARIO("Testing point map", "[rbt]")
     bool good = false; // Ensure two points do no lie in same image pixel
     double Z;
     while (!good) {
-      baseUV[i][0] = random.uniform(1, w - 2);
-      baseUV[i][1] = random.uniform(1, h - 2);
+      baseUV[i][0] = random.uniform(static_cast<double>(w)  / 5 * 2, static_cast<double>(w) / 5 * 3);
+      baseUV[i][1] = random.uniform(static_cast<double>(h)  / 5 * 2, static_cast<double>(h) / 5 * 3);
       unsigned uu = static_cast<unsigned int>(baseUV[i][0]), vu = static_cast<unsigned int>(baseUV[i][1]);
       if (depthImage[vu][uu] > 0.0) {
         good = false;
@@ -894,9 +894,11 @@ SCENARIO("Testing point map", "[rbt]")
   map.getVisiblePoints(h, w, cam, cTo * vpHomogeneousMatrix(0.0, 0.0, 0.0, 0.0, vpMath::rad(map.getThresholdNormalVisibiltyCriterion() - 10), 0.0), depthImage, visibleIndices);
   REQUIRE(visibleIndices.size() == N);
 
-  map.setThresholdNormalVisibiltyCriterion(0); // Disable threshold
+  map.setThresholdNormalVisibiltyCriterion(180); // Disable threshold
   map.getVisiblePoints(h, w, cam, cTo * vpHomogeneousMatrix(0.0, 0.0, 0.0, 0.0, vpMath::rad(map.getThresholdNormalVisibiltyCriterion() + 10), 0.0), depthImage, visibleIndices);
   REQUIRE(visibleIndices.size() == N);
+
+
 }
 int main(int argc, char *argv[])
 {
