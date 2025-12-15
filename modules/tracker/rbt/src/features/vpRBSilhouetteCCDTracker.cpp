@@ -241,7 +241,7 @@ void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &fr
   }
 }
 
-void vpRBSilhouetteCCDTracker::buildGradientAndHessianStorageViews(unsigned int normalsPerPoint)
+void vpRBSilhouetteCCDTracker::buildGradientAndHessianStorageViews(unsigned int normalsPerPoint, bool clear)
 {
   unsigned int numPoints = m_controlPoints.size();
   unsigned int numNormalPoints = numPoints * 2 * normalsPerPoint;
@@ -251,7 +251,10 @@ void vpRBSilhouetteCCDTracker::buildGradientAndHessianStorageViews(unsigned int 
       m_gradientData.resize(numNormalPoints * 6);
       m_hessianData.resize(numNormalPoints * 6 * 6);
     }
-
+    if (clear) {
+	m_gradients.clear();
+	m_hessians.clear();
+    }
     m_gradients.resize(numNormalPoints);
     m_hessians.resize(numNormalPoints);
 
@@ -282,7 +285,7 @@ void vpRBSilhouetteCCDTracker::initVVS(const vpRBFeatureTrackerInput &/*frame*/,
   m_prevStats.reinit(resolution, normal_points_number);
   m_gradient = vpMatrix(m_ccdParameters.phi_dim, 1, 0.0);
   m_hessian = vpMatrix(m_ccdParameters.phi_dim, m_ccdParameters.phi_dim, 0.0);
-  buildGradientAndHessianStorageViews(normal_points_number);
+  buildGradientAndHessianStorageViews(normal_points_number, true);
 
   m_weights.resize(m_numFeatures, false);
   if (m_temporalSmoothingFac > 0.0) {
@@ -301,7 +304,7 @@ void vpRBSilhouetteCCDTracker::changeScale()
 
   m_prevStats.reinit(resolution, normal_points_number);
   m_stats.reinit(resolution, normal_points_number);
-  buildGradientAndHessianStorageViews(normal_points_number);
+  buildGradientAndHessianStorageViews(normal_points_number, false);
   m_weights.resize(m_numFeatures, false);
   if (m_temporalSmoothingFac > 0.0) {
     computeLocalStatistics(m_previousFrame->IRGB, m_prevStats);

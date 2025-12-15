@@ -335,7 +335,7 @@ public:
    * Reserve new memory if required and ensure that gradients and hessians point on correct memory.
    * \param normalsPerPoint the size of the normal vector (one side)
    */
-  void buildGradientAndHessianStorageViews(unsigned int normalsPerPoint);
+  void buildGradientAndHessianStorageViews(unsigned int normalsPerPoint, bool clear);
   /**
    * \brief To be called when the scale of the normal vectors is changed
    */
