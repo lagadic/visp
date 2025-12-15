@@ -938,7 +938,7 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix(const vpHomogene
 
   try {
     vpMatrix hessian_E_inv(6, 6);
-    if (hasIgnoredDofs()) {
+    if (hasIgnoredDofs() || m_hessian.det() < 1e-6) {
       hessian_E_inv = m_hessian.pseudoInverse();
     }
     else {
