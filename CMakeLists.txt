@@ -275,7 +275,7 @@ else()
 endif()
 
 # --- Python Support ---
-if(NOT IOS)
+if(NOT IOS AND NOT VISP_PYTHON_SKIP_DETECTION)
   # Make sure to refresh the python interpreter every time we rerun cmake
   # If we don't do this, we may use an old or invalid python when installing the bindings
   # that was cached by a previous attempt at building
