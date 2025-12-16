@@ -160,6 +160,10 @@ ViSP 3.x.x (Version in development)
     . [#1793] Segfault when saving depth with saveRealSenseData.cpp tool
     . [#1818] Unable to build with Eigen3 5.0.0 release
     . [#1819] Unable to build with PCL 1.15 and cxx14 standard
+    . [#1822] Equations in documentation are not displayed in web browser
+    . [#1839] MBT configuration through JSON does not handle multi CAO models
+    . [#1856] Unable to build Python bindings on macOS
+    . [#1861] Non deterministic ViSP Canny results with multithreading
 ----------------------------------------------
 ViSP 3.6.0 (released September 22, 2023)
   - Contributors:
