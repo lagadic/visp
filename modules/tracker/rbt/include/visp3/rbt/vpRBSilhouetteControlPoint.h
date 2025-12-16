@@ -131,7 +131,7 @@ public:
   void buildSilhouettePoint(int n, int m, const double &Z, double orient, const vpColVector &normo, const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &oMc, const vpCameraParameters &cam);
 
   void update(const vpHomogeneousMatrix &_cMo);
-  void updateSilhouettePoint(const vpHomogeneousMatrix &_cMo);
+  void updateSilhouettePoint(const vpHomogeneousMatrix &_cMo, const vpRotationMatrix &cRo);
 
   /**
    * @brief Track the moving edge at this point retaining only the hypothesis with the highest likelihood.

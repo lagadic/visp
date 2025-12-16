@@ -86,7 +86,7 @@ public:
     DT_INVALID = 4
   };
 
-  vpRBDenseDepthTracker() : vpRBFeatureTracker(), m_step(2), m_useMask(false), m_minMaskConfidence(0.f), m_displayType(vpDisplayType::DT_SIMPLE) { }
+  vpRBDenseDepthTracker() : vpRBFeatureTracker(), m_step(2), m_maxFeatures(0), m_useMask(false), m_minMaskConfidence(0.f), m_displayType(vpDisplayType::DT_SIMPLE) { }
 
   virtual ~vpRBDenseDepthTracker() = default;
 
@@ -105,6 +105,12 @@ public:
       throw vpException(vpException::badValue, "Step should be greater than 0");
     }
     m_step = step;
+  }
+
+  unsigned int getMaxNumFeatures() const { return m_maxFeatures; }
+  void setMaxNumFeatures(unsigned int num)
+  {
+    m_maxFeatures = num;
   }
 
   /**
@@ -146,7 +152,7 @@ public:
   /**
    * @brief Method called when starting a tracking iteration
    */
-  void onTrackingIterStart(const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE { }
+  void onTrackingIterStart(const vpRBFeatureTrackerInput &, const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE { }
   void onTrackingIterEnd(const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE { }
 
   void extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix &cMo) VP_OVERRIDE;
@@ -309,7 +315,9 @@ public:
   virtual void loadJsonConfiguration(const nlohmann::json &j) VP_OVERRIDE
   {
     vpRBFeatureTracker::loadJsonConfiguration(j);
+    setMaxNumFeatures(j.value("maxNumFeatures", m_maxFeatures));
     setStep(j.value("step", m_step));
+
     setShouldUseMask(j.value("useMask", m_useMask));
     setMinimumMaskConfidence(j.value("minMaskConfidence", m_minMaskConfidence));
     setDisplayType(j.value("displayType", m_displayType));
@@ -327,6 +335,7 @@ protected:
   vpDepthPointSet m_depthPointSet;
   vpRobust m_robust;
   unsigned int m_step;
+  unsigned int m_maxFeatures;
   bool m_useMask;
   float m_minMaskConfidence;
   vpDisplayType m_displayType;

@@ -299,7 +299,7 @@ public:
    * @}
    */
 
-  void onTrackingIterStart(const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE;
+  void onTrackingIterStart(const vpRBFeatureTrackerInput & /*frame*/, const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE;
   void onTrackingIterEnd(const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE { }
   void reset() VP_OVERRIDE
   {
@@ -330,7 +330,15 @@ public:
   {
     m_cov = m_sigma;
   }
-
+  /**
+   * \brief Update the gradient and hessian storage views.
+   * Reserve new memory if required and ensure that gradients and hessians point on correct memory.
+   * \param normalsPerPoint the size of the normal vector (one side)
+   */
+  void buildGradientAndHessianStorageViews(unsigned int normalsPerPoint, bool clear);
+  /**
+   * \brief To be called when the scale of the normal vectors is changed
+   */
   void changeScale();
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth) const VP_OVERRIDE;
@@ -375,7 +383,7 @@ protected:
   void updateCCDPoints(const vpHomogeneousMatrix &cMo);
   void computeLocalStatistics(const vpImage<vpRGBa> &I, vpCCDStatistics &stats);
   template<bool hasTemporalSmoothing>
-  void computeErrorAndInteractionMatrix();
+  void computeErrorAndInteractionMatrix(const vpHomogeneousMatrix &cMo);
 
   vpCCDParameters m_ccdParameters;
 

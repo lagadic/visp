@@ -33,7 +33,7 @@
 #include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/core/vpRobust.h>
 
-#define VISP_DEBUG_RB_CONTROL_POINT 1
+#define VISP_DEBUG_RB_CONTROL_POINT 0
 #define DEGENERATE_LINE_THRESHOLD 1e-7
 
 BEGIN_VISP_NAMESPACE
@@ -293,7 +293,7 @@ vpRBSilhouetteControlPoint::update(const vpHomogeneousMatrix &_cMo)
 }
 
 void
-vpRBSilhouetteControlPoint::updateSilhouettePoint(const vpHomogeneousMatrix &cMo)
+vpRBSilhouetteControlPoint::updateSilhouettePoint(const vpHomogeneousMatrix &cMo, const vpRotationMatrix &cRo)
 {
   cpointo.changeFrame(cMo);
   cpointo.projection();
@@ -307,6 +307,13 @@ vpRBSilhouetteControlPoint::updateSilhouettePoint(const vpHomogeneousMatrix &cMo
   xs = cpointo.get_x();
   ys = cpointo.get_y();
   Zs = cpointo.get_Z();
+  m_normal = cRo * m_normalO;
+  vpColVector cameraRayObject({ cpointo.get_X(), cpointo.get_Y(), cpointo.get_Z() });
+  cameraRayObject.normalize();
+  if (acos(cameraRayObject * m_normal) < vpMath::rad(75.0)) {
+    m_valid = false;
+  }
+
   if (m_valid) {
     try {
       m_line.changeFrame(cMo);

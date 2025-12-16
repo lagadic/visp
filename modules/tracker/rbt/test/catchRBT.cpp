@@ -110,6 +110,18 @@ const std::string objCube =
 
 bool opt_no_display = false; // If true, disable display or tests requiring display
 
+std::string createObjFile()
+{
+  const std::string tempDir = vpIoTools::makeTempDirectory("visp_test_rbt_obj");
+  const std::string objFile = vpIoTools::createFilePath(tempDir, "cube.obj");
+  std::ofstream f(objFile);
+  f << objCube;
+  f.close();
+
+  return objFile;
+}
+
+
 SCENARIO("Instantiating a silhouette me tracker", "[rbt]")
 {
   GIVEN("A base me tracker")
@@ -631,11 +643,7 @@ SCENARIO("Instantiating a render-based tracker", "[rbt]")
     }
     THEN("Loading configuration with real 3D model also works")
     {
-      const std::string tempDir = vpIoTools::makeTempDirectory("visp_test_rbt_obj");
-      const std::string objFile = vpIoTools::createFilePath(tempDir, "cube.obj");
-      std::ofstream f(objFile);
-      f << objCube;
-      f.close();
+      std::string objFile = createObjFile();
       j["model"] = objFile;
       tracker.loadConfiguration(j);
       verifyBase();
@@ -674,14 +682,7 @@ SCENARIO("Running tracker on static synthetic sequences", "[rbt]")
     vpCameraParameters cam(600, 600, 320, 240);
     vpPanda3DRenderParameters renderParams(cam, h, w, 0.01, 1.0);
 
-    const std::string tempDir = vpIoTools::makeTempDirectory("visp_test_rbt_obj");
-    std::cout << tempDir << std::endl;
-    const std::string objFile = vpIoTools::getAbsolutePathname(vpIoTools::createFilePath(tempDir, "cube.obj"));
-
-    std::ofstream f(objFile);
-    f << objCube;
-    f.close();
-
+    std::string objFile = createObjFile();
     const auto setupScene = [&objFile](vpPanda3DRendererSet &renderer) {
       renderer.addNodeToScene(renderer.loadObject("object", objFile));
       renderer.addLight(vpPanda3DAmbientLight("ambient", vpRGBf(1.f)));
@@ -702,7 +703,7 @@ SCENARIO("Running tracker on static synthetic sequences", "[rbt]")
     std::shared_ptr<vpRBSilhouetteCCDTracker> silTracker = std::make_shared<vpRBSilhouetteCCDTracker>();
     silTracker->setTemporalSmoothingFactor(0.1);
     vpCCDParameters ccdParams = silTracker->getCCDParameters();
-    ccdParams.h = 8;
+    ccdParams.h = 16;
     silTracker->setCCDParameters(ccdParams);
 
     tracker.addTracker(silTracker);
@@ -740,6 +741,165 @@ SCENARIO("Running tracker on static synthetic sequences", "[rbt]")
   }
 }
 
+SCENARIO("Checking ADD convergence metric", "[rbt]")
+{
+  if (opt_no_display) {
+    std::cout << "Display is disabled for tests, skipping..." << std::endl;
+    return;
+  }
+
+  GIVEN("A renderer and a convergence metric")
+  {
+    vpCameraParameters cam(800, 800, 320, 240);
+    vpPanda3DRenderParameters params(cam, 480, 640, 0.01, 1.0);
+    vpObjectCentricRenderer renderer(params);
+    renderer.addSubRenderer(std::make_shared<vpPanda3DGeometryRenderer>(vpPanda3DGeometryRenderer::OBJECT_NORMALS, true));
+    renderer.initFramework();
+    renderer.addObjectToScene("obj", createObjFile());
+    renderer.setFocusedObject("obj");
+    renderer.setCameraPose(vpHomogeneousMatrix(0, 0, -0.5, 0, 0, 0));
+    vpRBConvergenceADDMetric metric(0.01, 0.001, 512, 213);
+
+    vpHomogeneousMatrix cTo1(0, 0, 0.2, 0, 0, 0);
+    vpHomogeneousMatrix cTo2Conv(0, 0, 0.2001, 0, 0, 0);
+    vpHomogeneousMatrix cTo2NotConv(0, 0, 0.205, 0, 0, 0);
+    vpHomogeneousMatrix cTo2Render(0, 0, 0.22, 0, 0, 0);
+    THEN("Trying to compute metric without sampling fails")
+    {
+      REQUIRE_THROWS(metric(cam, cTo1, cTo2NotConv));
+    }
+
+    THEN("Sampling and testing against various threshold works")
+    {
+      metric.sampleObject(renderer);
+      double metricValue = metric(cam, cTo1, cTo2NotConv);
+      REQUIRE(fabs(metricValue - 0.005)  < 1e-4);
+      REQUIRE(!metric.hasConverged(cam, cTo1, cTo2NotConv));
+      REQUIRE(!metric.shouldUpdateRender(cam, cTo1, cTo2NotConv));
+
+
+      metricValue = metric(cam, cTo1, cTo2Conv);
+      REQUIRE(fabs(metricValue - 0.0001)  < 1e-4);
+      REQUIRE(metric.hasConverged(cam, cTo1, cTo2Conv));
+      REQUIRE(!metric.shouldUpdateRender(cam, cTo1, cTo2Conv));
+
+      metricValue = metric(cam, cTo1, cTo2Render);
+      REQUIRE(fabs(metricValue - 0.02)  < 1e-4);
+      REQUIRE(!metric.hasConverged(cam, cTo1, cTo2Render));
+      REQUIRE(metric.shouldUpdateRender(cam, cTo1, cTo2Render));
+    }
+  }
+}
+
+SCENARIO("Testing point map", "[rbt]")
+{
+  vpPointMap map(512, 0.0, 0.001, 0.02, 2.0);
+  map.setThresholdNormalVisibiltyCriterion(45.0);
+  REQUIRE(map.getNumMaxPoints() == 512);
+  REQUIRE(vpMath::equal(map.getMinDistanceAddNewPoints(), 0.0, 1e-6));
+  REQUIRE(vpMath::equal(map.getOutlierReprojectionErrorThreshold(), 2.0, 1e-6));
+  REQUIRE(vpMath::equal(map.getMaxDepthErrorCandidate(), 0.02, 1e-6));
+  REQUIRE(vpMath::equal(map.getThresholdNormalVisibiltyCriterion(), 45.0, 1e-6));
+  REQUIRE(map.getPoints().getRows() == 0);
+
+  unsigned int h = 480, w = 640;
+  vpCameraParameters cam(800, 800, w / 2, h / 2);
+
+  std::vector<int> removedIndices;
+  vpArray2D<int> indicesToRemove;
+
+  vpMatrix pointsToAdd;
+  vpMatrix normalsToAdd;
+
+  vpHomogeneousMatrix cTo(0, 0, 0.5, 0.0, 0.0, 0.0);
+  unsigned int N = 100;
+
+  vpMatrix baseUV(N, 2);
+  vpMatrix baseXY(N, 2);
+  vpMatrix cX(N, 3), cN(N, 3);
+
+  vpMatrix oX(N, 3), oN(N, 3);
+
+  vpUniRand random(421);
+
+  vpImage<float> depthImage(h, w, 0.0);
+
+  for (unsigned int i = 0; i < N; i++) {
+    bool good = false; // Ensure two points do no lie in same image pixel
+    double Z;
+    while (!good) {
+      baseUV[i][0] = random.uniform(static_cast<double>(w)  / 5 * 2, static_cast<double>(w) / 5 * 3);
+      baseUV[i][1] = random.uniform(static_cast<double>(h)  / 5 * 2, static_cast<double>(h) / 5 * 3);
+      unsigned uu = static_cast<unsigned int>(baseUV[i][0]), vu = static_cast<unsigned int>(baseUV[i][1]);
+      if (depthImage[vu][uu] > 0.0) {
+        good = false;
+      }
+      else {
+        Z = 0.5 + random.uniform(-0.05, 0.05);
+        // Set Z in a neighbourhood to ensure that reprojection and aliasing artifacts don't impact results
+        // True depth data is far more continuous
+        for (int i = -1; i < 2; ++i) {
+          for (int j = -1; j < 2; ++j) {
+            depthImage[vu + i][uu + j] = Z;
+          }
+        }
+
+        good = true;
+      }
+    }
+    vpPixelMeterConversion::convertPoint(cam, baseUV[i][0], baseUV[i][1], baseXY[i][0], baseXY[i][1]);
+    cX[i][0] = baseXY[i][0] * Z, cX[i][1] = baseXY[i][1] * Z, cX[i][2] = Z;
+    cN[i][0] = 0.0, cN[i][1] = 0.0, cN[i][2] = -1.0;
+
+    vpColVector c(4, 1.0);
+    c[0] = cX[i][0], c[1] = cX[i][1], c[2] = cX[i][2];
+
+    const vpColVector ox = cTo.inverse() * c;
+    oX[i][0] = ox[0] / ox[3], oX[i][1] = ox[1] / ox[3], oX[i][2] = ox[2] / ox[3];
+    const vpColVector on = cTo.inverse().getRotationMatrix() * cN.getRow(i).t();
+    oN[i][0] = on[0], oN[i][1] = on[1], oN[i][2] = on[2];
+  }
+  std::cout << oN << std::endl;
+  unsigned int numAddedPoints;
+  map.updatePoints(indicesToRemove, oX, oN, removedIndices, numAddedPoints);
+  REQUIRE(numAddedPoints == N);
+
+  vpMatrix reprojcX, reprojXY, reprojUV;
+  vpArray2D<int> allPoints(N, 1);
+  for (unsigned int i = 0; i < N; ++i) {
+    allPoints[i][0] = i;
+  }
+  map.project(cam, allPoints, cTo, reprojcX, reprojXY, reprojUV);
+
+  REQUIRE(((baseUV - reprojUV).frobeniusNorm() / (N * 2)) < 1e-3);
+  REQUIRE(((baseXY - reprojXY).frobeniusNorm() / (N * 2)) < 1e-3);
+  REQUIRE(((cX - reprojcX).frobeniusNorm() / (N * 3)) < 1e-3);
+
+  std::vector<int> visibleIndices;
+  map.getVisiblePoints(h, w, cam, cTo, depthImage, visibleIndices);
+  REQUIRE(visibleIndices.size() == N); // All points should be visible when seen at pose where they were added
+
+  // Test that points are no longer visible (keeping the old depth map)
+  map.getVisiblePoints(h, w, cam, cTo * vpHomogeneousMatrix(0.0, 0.0, map.getMaxDepthErrorVisibilityCriterion() + 0.01, 0.0, 0.0, 0.0), depthImage, visibleIndices);
+  REQUIRE(visibleIndices.size() == 0);
+
+  map.getVisiblePoints(h, w, cam, vpHomogeneousMatrix(0.0, 0.0, map.getMaxDepthErrorVisibilityCriterion() * 0.9, 0.0, 0.0, 0.0) * cTo, depthImage, visibleIndices);
+  REQUIRE(visibleIndices.size() == N);
+
+  map.setMaxDepthErrorVisibilityCriterion(10);
+
+  map.getVisiblePoints(h, w, cam, cTo * vpHomogeneousMatrix(0.0, 0.0, 0.0, 0.0, vpMath::rad(map.getThresholdNormalVisibiltyCriterion() + 10), 0.0), depthImage, visibleIndices);
+  REQUIRE(visibleIndices.size() == 0);
+  std::cout << map.getThresholdNormalVisibiltyCriterion() << std::endl;
+  map.getVisiblePoints(h, w, cam, cTo * vpHomogeneousMatrix(0.0, 0.0, 0.0, 0.0, vpMath::rad(map.getThresholdNormalVisibiltyCriterion() - 10), 0.0), depthImage, visibleIndices);
+  REQUIRE(visibleIndices.size() == N);
+
+  map.setThresholdNormalVisibiltyCriterion(180); // Disable threshold
+  map.getVisiblePoints(h, w, cam, cTo * vpHomogeneousMatrix(0.0, 0.0, 0.0, 0.0, vpMath::rad(map.getThresholdNormalVisibiltyCriterion() + 10), 0.0), depthImage, visibleIndices);
+  REQUIRE(visibleIndices.size() == N);
+
+
+}
 int main(int argc, char *argv[])
 {
   Catch::Session session; // There must be exactly one instance

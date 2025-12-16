@@ -137,6 +137,9 @@ public:
   double uniform(double a, double b);
   void setSeed(uint64_t initstate, uint64_t initseq);
 
+
+  std::vector<size_t> sampleWithoutReplacement(size_t count, size_t vectorSize);
+
   /**
    * @brief Create a new vector that is a shuffled version of the \b inputVector.
    *

@@ -69,13 +69,14 @@ public:
       );
   }
 
-  virtual void onTrackingIterStart(const vpHomogeneousMatrix &cMo) VP_OVERRIDE
+  virtual void onTrackingIterStart(const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cMo) VP_OVERRIDE
   {
     PYBIND11_OVERRIDE_PURE(
       void,           /* Return type */
       vpRBFeatureTracker,     /* Parent class */
       onTrackingIterStart,        /* Name of function in C++ (must match Python name) */
-      cMo
+      &frame,
+      &cMo
     );
   }
 

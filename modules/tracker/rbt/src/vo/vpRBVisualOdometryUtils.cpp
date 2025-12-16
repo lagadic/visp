@@ -29,6 +29,7 @@
  */
 
 #include <visp3/rbt/vpRBVisualOdometryUtils.h>
+#include <visp3/core/vpImageFilter.h>
 
 #include <visp3/core/vpMatrix.h>
 #include <visp3/rbt/vpRBFeatureTrackerInput.h>
@@ -75,22 +76,32 @@ vpRBVisualOdometryUtils::computeIndicesObjectAndEnvironment(const vpMatrix &keyp
 
   for (unsigned int i = 0; i < keypoints.getRows(); ++i) {
     double u = keypoints[i][0], v = keypoints[i][1];
-    if (u < 0.0 || v < 0.0 || u >= w || v >= h) {
+    if (u < 2.0 || v < 2.0 || u >= w - 2 || v >= h - 2) {
       continue;
     }
     const unsigned int ui = static_cast<unsigned int>(u), vi = static_cast<unsigned int>(v);
     const double Z = static_cast<double>(renderDepth[vi][ui]);
 
     if (Z > 0.0) { // Potential object candidate
-      if (!useMask || frame.mask[vi][ui] > minMaskConfidence) {
-        bool notTooCloseToEdge = testDistanceEdge(u, v, thresholdObject);
+      double maskValue = 1.f;
+      if (useMask) {
+        maskValue = 0.f;
+        for (int ki = -1; ki <= 1; ++ki) {
+          for (int kj = -1; kj <= 1; ++kj) {
+            maskValue += frame.mask[vi + ki][ui + kj];
+          }
+        }
+        maskValue /= 9.f;
+      }
+      if (!useMask || maskValue >= minMaskConfidence) {
+        bool notTooCloseToEdge = thresholdObject <= 0 || testDistanceEdge(u, v, thresholdObject);
         if (notTooCloseToEdge) {
           objIndices.push_back(i);
         }
       }
     }
     else { // Env candidate
-      bool notTooCloseToEdge = testDistanceEdge(u, v, thresholdEnv);
+      bool notTooCloseToEdge = thresholdEnv <= 0 || testDistanceEdge(u, v, thresholdEnv);
       if (notTooCloseToEdge) {
         envIndices.push_back(i);
       }
