@@ -65,8 +65,6 @@ static void scaleFilter(
 BEGIN_VISP_NAMESPACE
 // // Initialization methods
 
-vpImage<vpCannyEdgeDetection::EdgeType> vpCannyEdgeDetection::m_edgePointsCandidates;
-
 vpCannyEdgeDetection::vpCannyEdgeDetection()
   : m_filteringAndGradientType(vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING)
   , m_nbThread(-1)
