@@ -3,7 +3,7 @@
 \page tutorial-install-docker Tutorial: Installation from Docker images
 \tableofcontents
 
-\section install_docker_intro Introduction
+\section install_docker_intro 1. Introduction
 
 Even with the detailed and tested \ref tutorial_install_src tutorials, sometimes it is tough for people to get a system
 up and running with ViSP. That's why in this tutorial we explain how to get ready to use Docker images that contains
@@ -12,9 +12,9 @@ ViSP source code with already build tests, examples and tutorials that you may j
 Our Docker images available on [Docker Hub](https://hub.docker.com/repository/docker/vispci/vispci) are around 1 GB in
 size (compressed size) and contain minimal things to discover and start to play with ViSP.
 
-\section install_docker_engine Prerequisites: Install Docker Engine
+\section install_docker_engine 2. Prerequisites: Install Docker Engine
 
-\subsection install_docker_engine_ubuntu On Ubuntu host
+\subsection install_docker_engine_ubuntu 2.1. On Ubuntu host
 
 As mentioned [here](https://docs.docker.com/engine/install/ubuntu/), to install Docker Engine on Ubuntu host using the
 repository, follow the instructions:
@@ -50,7 +50,7 @@ $ sudo apt-get update
 $ sudo apt-get install docker-ce docker-ce-cli containerd.io
 \endverbatim
 
-\subsection install_docker_engine_mac On MacOS host
+\subsection install_docker_engine_mac 2.2. On MacOS host
 
 - To install Docker Engine on MacOS host, first go to the
   [Docker Store](https://hub.docker.com/editions/community/docker-ce-desktop-mac) and download Docker Desktop for Mac.
@@ -71,67 +71,67 @@ $ sudo apt-get install docker-ce docker-ce-cli containerd.io
     it in your containers.
   - Restart X11 server or reboot your Mac to take into account previous changes
 
-\section docker_visp_pull Pull existing docker image
+\section docker_visp_pull 3. Pull existing docker image
 
 In [Docker Hub](https://hub.docker.com/repository/docker/vispci/vispci), we provide several ready-to-use Docker
 images that can be used on an Ubuntu or macOS host with ViSP already built. Instead, there is also the possibility to
 build docker images from a `Dockerfile` following instruction given in \ref docker_visp_build section.
 
-\subsection docker_visp_pull_ubuntu_22_04 Pull Ubuntu 22.04 image
+\subsection docker_visp_pull_ubuntu_22_04 3.1. Pull Ubuntu 22.04 image
 
 \verbatim
 $ docker pull vispci/vispci:ubuntu-22.04
 \endverbatim
 
-\subsection docker_visp_pull_ubuntu_20_04 Pull Ubuntu 20.04 image
+\subsection docker_visp_pull_ubuntu_20_04 3.2. Pull Ubuntu 20.04 image
 
 \verbatim
 $ docker pull vispci/vispci:ubuntu-20.04
 \endverbatim
 
-\subsection docker_visp_pull_ubuntu_18_04 Pull Ubuntu 18.04 image
+\subsection docker_visp_pull_ubuntu_18_04 3.3. Pull Ubuntu 18.04 image
 
 \verbatim
 $ docker pull vispci/vispci:ubuntu-18.04
 \endverbatim
 
-\section docker_visp_build Build docker image from Dockerfile
+\section docker_visp_build 4. Build docker image from Dockerfile
 
 We suppose here that you cloned ViSP from github in your workspace.
 
 Change directory to access the `Dockerfile` and build the corresponding docker image
 
-\subsection docker_visp_build_ubuntu_24_04 Build Ubuntu 24.04 image
+\subsection docker_visp_build_ubuntu_24_04 4.1. Build Ubuntu 24.04 image
 
 \verbatim
 $ cd $VISP_WS/visp/docker/ubuntu-24.04
 $ docker build -t vispci/vispci:ubuntu-24.04 .
 \endverbatim
 
-\subsection docker_visp_build_ubuntu_22_04 Build Ubuntu 22.04 image
+\subsection docker_visp_build_ubuntu_22_04 4.2. Build Ubuntu 22.04 image
 
 \verbatim
 $ cd $VISP_WS/visp/docker/ubuntu-22.04
 $ docker build -t vispci/vispci:ubuntu-22.04 .
 \endverbatim
 
-\subsection docker_visp_build_ubuntu_20_04 Build Ubuntu 20.04 image
+\subsection docker_visp_build_ubuntu_20_04 4.3. Build Ubuntu 20.04 image
 
 \verbatim
 $ cd $VISP_WS/visp/docker/ubuntu-20.04
 $ docker build -t vispci/vispci:ubuntu-20.04 .
 \endverbatim
 
-\subsection docker_visp_build_ubuntu_18_04 Build Ubuntu 18.04 image
+\subsection docker_visp_build_ubuntu_18_04 4.4. Build Ubuntu 18.04 image
 
 \verbatim
 $ cd $VISP_WS/visp/docker/ubuntu-18.04
 $ docker build -t vispci/vispci:ubuntu-18.04 .
 \endverbatim
 
-\section docker_visp_start Start ViSP container
+\section docker_visp_start 5. Start ViSP container
 
-\subsection docker_visp_start_ubuntu On Ubuntu host
+\subsection docker_visp_start_ubuntu 5.1. On Ubuntu host
 
 - On your computer running Ubuntu, allow access to the X11 server
 
@@ -150,8 +150,7 @@ $ docker build -t vispci/vispci:ubuntu-18.04 .
       vispci@6c8d67579659:~$ pwd
       /home/vispci
 
-
-\subsection docker_visp_start_macos On MacOS host
+\subsection docker_visp_start_macos 5.2. On MacOS host
 
 - Get your MacOS computer IP address
 
@@ -176,7 +175,7 @@ $ docker build -t vispci/vispci:ubuntu-18.04 .
       vispci@6c8d67579659:~$ pwd
       /home/vispci
 
-\section docker_visp_usage How to use ViSP container
+\section docker_visp_usage 6. How to use ViSP container
 
 - We suppose here that you successfully \ref docker_visp_start using one of the previous command:
 
@@ -222,7 +221,7 @@ $ docker build -t vispci/vispci:ubuntu-18.04 .
       Use device : 0
       Recording  : disabled
 
-\section install_docker_next Next tutorial
+\section install_docker_next 7. Next tutorial
 
 You are now ready to see the next \ref tutorial-getting-started that will show you how to use ViSP as a 3rd party to
 build your own project.
