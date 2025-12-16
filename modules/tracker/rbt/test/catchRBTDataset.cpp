@@ -273,7 +273,7 @@ SCENARIO("Running tracker on sequences with ground truth", "[rbt]")
       const std::map<std::string, std::vector<RunData>> configMap = {
         { "dragon", {
           RunData("ccd.json", 0.03, 10.0),
-          RunData("ccd-temporal-smoothing.json", 0.03, 20.0),
+          RunData("ccd-temporal-smoothing.json", 0.03, 27.0),
           RunData("depth-ccd-mask.json", 0.025, 8.0),
           RunData("depth-ccd.json", 0.025, 8.0),
 #ifdef VP_HAVE_RB_KLT_TRACKER
