@@ -35,6 +35,8 @@
 #ifndef VP_RB_FEATURE_TRACKER_H
 #define VP_RB_FEATURE_TRACKER_H
 
+#include <array>
+
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpColVector.h>
