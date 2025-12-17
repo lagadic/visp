@@ -93,6 +93,7 @@ add_custom_command(
   OUTPUT ${python_bindings_cpp_src}
   COMMAND ${PYTHON3_EXECUTABLE} -m pip install  ${_pip_args} ${bindgen_package_location}
   COMMAND ${PYTHON3_EXECUTABLE} -m visp_python_bindgen.generator --config "${CMAKE_CURRENT_SOURCE_DIR}/config" --build-folder ${bindings_gen_location} --main-config "${json_config_file_path}"
+  COMMAND ${PYTHON3_EXECUTABLE} -m pip uninstall -y visp_python_bindgen
   DEPENDS ${bindings_dependencies}
   COMMENT "Installing the python bindings generator and running it..."
 )
