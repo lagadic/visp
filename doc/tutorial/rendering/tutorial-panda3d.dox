@@ -31,7 +31,7 @@ vpPanda3DBaseRenderer, which implements basic functions for a panda renderer.
 \subsection tutorial-panda3d-install-ubuntu 2.1 Installation on Ubuntu
 
 - It is recommended to install the assimp package before installing Panda3D. This will allow you to load .obj files,
-  which are a common and easily exportable format.
+  which is a common and easily exportable format.
   Without it, you will be restricted to .bam files, which is a panda specific format. To convert to a .bam file,
   see \ref tutorial-panda3d-file-conversion.
 
@@ -40,14 +40,14 @@ vpPanda3DBaseRenderer, which implements basic functions for a panda renderer.
   $ sudo apt install libassimp-dev
   \endcode
 
-- There are two different ways to install Panda3D.
+- There are three different ways to install Panda3D.
   1. The easiest way is to download an installer available for Ubuntu browsing the
      [download](https://www.panda3d.org/download/) page. At the time this tutorial was written, the last Panda3D
      release was 1.10.15 version. Once downloaded you can install Panda with something similar to:
       \code{.sh}
       $ sudo apt install ./Downloads/panda3d1.10_1.10.15~noble_amd64.deb
       \endcode
-  2. The second way is to install Panda3D from source running:
+  2. The second way is to install Panda3D from source using `makepanda.py`:
       \code{.sh}
       $ sudo apt install python3-pip
       $ mkdir -p $VISP_WS/3rdparty/panda3d
@@ -72,6 +72,36 @@ vpPanda3DBaseRenderer, which implements basic functions for a panda renderer.
         $ ./tutorial-panda3d-renderer
         ./tutorial-panda3d-renderer: error while loading shared libraries: libp3dtoolconfig.so.1.11: cannot open shared object file: No such file or directory
         \endcode
+  3. The other way is to install Panda3D from source using `cmake`:
+      \code{.sh}
+      $ mkdir -p $VISP_WS/3rdparty/panda3d
+      $ cd $VISP_WS/3rdparty/panda3d
+      $ git clone https://github.com/panda3d/panda3d
+      $ cd panda3d
+      \endcode
+      At this point you need to patch Panda3D source code to ensure Panda3D is build with `-frtti` compiler flag as
+      described in \ref tutorial-panda3d-issue-typeinfo section. This could be done by modifying
+      `dtool/CompilerFlags.cmake` file replacing:
+      \code{.sh}
+      add_compile_options(
+        "$<${cxx_rtti_property}:${cxx_rtti_on}>"
+        "$<$<NOT:${cxx_rtti_property}>:${cxx_rtti_off}>")
+      \endcode
+      with:
+      \code{.sh}
+      add_compile_options(
+        "$<${cxx_rtti_property}:${cxx_rtti_on}>"
+        "$<$<NOT:${cxx_rtti_property}>:${cxx_rtti_on}>")
+      \endcode
+      Then build and install Panda3D
+      \code{.sh}
+      $ mkdir build && cd build
+      $ cmake .. -DCMAKE_BUILD_TYPE=Release -DHAVE_AUDIO=OFF
+      $ make -j$(nproc)
+      $ sudo make install
+      \endcode
+      By default, Panda3D is installed in `/usr/local/`. ViSP is then able to detect Panda3D by using
+      `/usr/local/lib/cmake/Panda3D/Panda3DConfig.cmake` file.
 
 - Depending on how you installed Panda3D, building ViSP may differ:
   1. If you install Panda3D using a `.deb` file as described in 1. or 2.a sections, you may notice that there is nothing
@@ -96,19 +126,27 @@ vpPanda3DBaseRenderer, which implements basic functions for a panda renderer.
       $ cmake ../visp
       $ make -j$(nproc)
       \endcode
+  3. If you build Panda from source using `cmake`, just run `cmake` as usual:
+      \code{.sh}
+      $ cd $VISP_WS/visp-build
+      $ cmake ../visp
+      $ make -j$(nproc)
+      \endcode
 
 \subsection tutorial-panda3d-install-macos 2.2 Installation on macOS
 
-- Installer are available for macOS browsing the [download](https://www.panda3d.org/download/) page.
-\note For the latest Panda3D 1.10.15 SDK there is an `Installer for macOS X 10.9+` that is only compatible with
-  architecture `x86_64`. If you are using a Mac M1 or M2, there is no Panda3D SDK available yet for `arm64`
+There are three different ways to install Panda3D.
+
+1. Installers are available for macOS by browsing the [download](https://www.panda3d.org/download/) page.
+\note For the latest Panda3D 1.10.15 SDK, there is an `Installer for macOS X 10.9+` that is only compatible with
+  the `x86_64` architecture. If you are using a Mac M1 or M2, there is no Panda3D SDK available yet for `arm64`
   architecture. The solution is to build Panda3D from source.
 
-- Hereafter you will find the instructions to build Panda3D from source on macOS.
+2. Hereafter you will find the instructions to build Panda3D from source on macOS with `makepanda.py`.
 
-  - It is recommended to install the assimp package before installing Panda3D. This will allow you to load .obj files,
-    which are a common and easily exportable format.
-    Without it, you will be restricted to .bam files, which is a panda specific format. To convert to a .bam file,
+  - It is recommended to install the assimp package before installing Panda3D. This will allow you to load `.obj` files,
+    which is a common and easily exportable format.
+    Without it, you will be restricted to `.bam` files, which is a panda specific format. To convert to a `.bam` file,
     see \ref tutorial-panda3d-file-conversion.
     To install assimp, run:
     \code{.sh}
@@ -191,7 +229,7 @@ vpPanda3DBaseRenderer, which implements basic functions for a panda renderer.
 
 \subsection tutorial-panda3d-install-windows 2.3 Installation on Windows
 
-- Installer are available for Windows browsing the [download](https://www.panda3d.org/download/) page.
+- Installers are available for Windows browsing the [download](https://www.panda3d.org/download/) page.
 
 \section tutorial-panda3d-file-conversion 3. Converting a mesh to Panda's file format
 
@@ -431,4 +469,36 @@ Now you should be able to build Panda3D with:
 ...
 created: $VISP_WS/3rdparty/panda3d/panda3d/Panda3D-1.11.0.dmg
 \endcode
+
+\subsection tutorial-panda3d-issue-typeinfo 7.4 Link issue: undefined reference to typeinfo
+
+The following linking issue can occur when you mix `-fno-rtti` and `-frtti` compiler flags.
+\code{.sh}
+[100%] Linking CXX executable catchPanda
+/usr/bin/ld: ../../lib/libvisp_ar.so.3.6.1: undefined reference to `typeinfo for GraphicsOutput'
+/usr/bin/ld: ../../lib/libvisp_ar.so.3.6.1: undefined reference to `typeinfo for GraphicsBuffer'
+/usr/bin/ld: ../../lib/libvisp_ar.so.3.6.1: undefined reference to `typeinfo for TypedObject'
+collect2: error: ld returned 1 exit status
+\endcode
+
+ViSP needs to be built with `-frtti` to avoid build issues in vpIoTools.cpp, while
+Panda3D enables `-frtti` when built in `Debug` mode and enables `-fno-rtti` otherwise.
+We cannot have one library built with `-frtti` and another one with the `-fno-rtti` flag.
+The solution here is to patch Panda3D's source code to always enable the `-frtti` flag.
+This can be achieved by modifying the `dtool/CompilerFlags.cmake` file:
+\code{.sh}
+diff --git a/dtool/CompilerFlags.cmake b/dtool/CompilerFlags.cmake
+index 31d96279e3..4321872323 100644
+--- a/dtool/CompilerFlags.cmake
++++ b/dtool/CompilerFlags.cmake
+@@ -215,7 +215,7 @@ if(NOT ANDROID)
+ endif()
+ add_compile_options(
+   "$<${cxx_rtti_property}:${cxx_rtti_on}>"
+-  "$<$<NOT:${cxx_rtti_property}>:${cxx_rtti_off}>")
++  "$<$<NOT:${cxx_rtti_property}>:${cxx_rtti_on}>")
+ set_property(DIRECTORY "${PROJECT_SOURCE_DIR}" APPEND PROPERTY
+   COMPILE_DEFINITIONS "$<${cxx_rtti_property}:HAVE_RTTI>")
+\endcode
+
 */
