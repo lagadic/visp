@@ -97,7 +97,7 @@ std::string vpJsonArgumentParser::help() const
 vpJsonArgumentParser &vpJsonArgumentParser::addFlag(const std::string &name, bool &parameter, const std::string &help)
 {
   m_argumentType[name] = FLAG;
-  const auto getter = [name, this](nlohmann::json &j, bool create) -> nlohmann::json *{
+  const auto getter = [name, this](nlohmann::json &j, bool create) -> nlohmann::json * {
     size_t pos = 0;
     nlohmann::json *f = &j;
     std::string token;
@@ -151,7 +151,7 @@ vpJsonArgumentParser &vpJsonArgumentParser::addFlag(const std::string &name, boo
   return *this;
 }
 
-void vpJsonArgumentParser::parse(int argc, const char *argv[])
+bool vpJsonArgumentParser::parse(int argc, const char *argv[])
 {
   json j;
   const std::vector<std::string> arguments(argv + 1, argv + argc);
@@ -185,7 +185,7 @@ void vpJsonArgumentParser::parse(int argc, const char *argv[])
     if (!stop_for_loop) {
       if (arg == "-h" || arg == "--help") {
         std::cout << help() << std::endl;
-        exit(1);
+        return false;
       }
 
       if (m_parsers.find(arg) != m_parsers.end()) {
@@ -214,6 +214,8 @@ void vpJsonArgumentParser::parse(int argc, const char *argv[])
   for (const auto &parser : m_parsers) {
     parser.second(j);
   }
+
+  return true;
 }
 
 END_VISP_NAMESPACE
