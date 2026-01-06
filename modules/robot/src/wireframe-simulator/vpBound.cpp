@@ -205,7 +205,7 @@ void malloc_Bound_scene(Bound_scene *bsp, const char *name, Index bn)
 
   if ((bsp->name = (char *)malloc((strlen(name) + 1) * sizeof(char))) == NULL) {
     perror(proc_name);
-    exit(1);
+    throw vpException(vpException::fatalError, "Error in malloc_Bound_scene");
   }
   if ((bsp->bound.nbr = bn) == 0)
     bsp->bound.ptr = NULL;
