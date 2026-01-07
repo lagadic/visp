@@ -333,7 +333,8 @@ public:
   /**
    * \brief Update the gradient and hessian storage views.
    * Reserve new memory if required and ensure that gradients and hessians point on correct memory.
-   * \param normalsPerPoint the size of the normal vector (one side)
+   * \param normalsPerPoint The size of the normal vector (one side).
+   * \param clear Whether to clear the data.
    */
   void buildGradientAndHessianStorageViews(unsigned int normalsPerPoint, bool clear);
   /**
