@@ -18,7 +18,7 @@ Note that all the material (source code and Xcode project) described in this tut
 (in `tutorial/ios/GettingStarted` folder) and could be found in
 https://github.com/lagadic/visp/tree/master/tutorial/ios/GettingStarted.
 
-\section getting-started-iOS-create Create a new Xcode project
+\section getting-started-iOS-create 1. Create a new Xcode project
 
 - Launch Xcode
 - Follow `"File > New > Project"` menu and create a new iOS `"App"`
@@ -34,7 +34,7 @@ Now you should have something similar to:
 
 \image html img-getting-started-iOS-new.jpg
 
-\section getting-started-iOS-link-visp Linking ViSP framework
+\section getting-started-iOS-link-visp 2. Linking ViSP framework
 
 Now we need to link `visp3.framework` with the Xcode project.
 
@@ -54,7 +54,7 @@ headers location addition to the build options
 - Click on `"Finish"`. You should now get something similar to the following image
 \image html img-getting-started-iOS-link-visp.jpg
 
-\section getting-started-iOS-app Writing a ViSP iOS application
+\section getting-started-iOS-app 3. Writing a ViSP iOS application
 
 - Because we will mix Objective-C and ViSP C++ Code, rename `ViewController.m` file into `ViewController.mm`
 \image html img-getting-started-iOS-rename.jpg
@@ -78,8 +78,8 @@ executing code). You should obtain these logs showing that visp code was correct
 - if you don't see the output (1) presented in the red rectangle in the previous image, you may click on icon (2) to
 display `All Output`.
 
-\section getting-started-ios-issues Known issues
-\subsection getting-started-ios-issue-libxml iOS error: libxml/parser.h not found
+\section getting-started-ios-issues 4. Known issues
+\subsection getting-started-ios-issue-libxml 4.1. iOS error: libxml/parser.h not found
 
 If you encounter the following issue `iOS error: libxml/parser.h not found`
 \image html img-getting-started-iOS-issue-libxml.jpg
@@ -97,7 +97,7 @@ the solution to this problem is to add libxml path. To this end, as shown in the
 \endcode
 - Then clean and build again. Issue should be fixed.
 
-\section getting-started-iOS-next Next tutorial
+\section getting-started-iOS-next 5. Next tutorial
 
 You are now ready to see the \ref tutorial-image-ios.
 

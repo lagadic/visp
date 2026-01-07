@@ -7,13 +7,13 @@ In this tutorial you will learn how to build ViSP framework from source on OSX i
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 
-\section install_iOS_required Install required software
+\section install_iOS_required 1. Install required software
 
 - CMake gui for OSX that could be download at : http://www.cmake.org or installed using `brew install cmake`
 - Xcode
 - Python 2.7 or Python 3 installed using `brew install python`
 
-\section install_iOS_opencv Getting OpenCV framework (optional)
+\section install_iOS_opencv 2. Getting OpenCV framework (optional)
 
 We suggest to follow these steps in order to install OpenCV framework in such a way that the resulting ViSP framework builds with OpenCV as 3rd party. This could be useful for users who want to use ViSP and OpenCV together. It will also allow to exploit keypoints throw ViSP classes (vpKltOpencv, vpKeyPoint) or the model-based tracker in his hybrid version (vpMbKltTracker). If you are not interested in capabilities leveraged by using OpenCV as 3rd party, just skip this section.
 
@@ -43,7 +43,7 @@ $ sudo ln -s ~/framework/ios/opencv2.framework
 
 \note If you encounter an error with `xcrun`, check \ref install_iOS_know_issue_xcrun
 
-\section install_iOS_get_source Getting ViSP source code
+\section install_iOS_get_source 3. Getting ViSP source code
 
 \note The following steps are only working with ViSP 3.0.1 or higher.
 
@@ -75,7 +75,7 @@ $ ls $HOME/framework
 ios  visp
 \endverbatim
 
-\section install_iOS_build Building ViSP framework
+\section install_iOS_build 4. Building ViSP framework
 
 - Build ViSP framework
 \verbatim
@@ -97,8 +97,8 @@ $ python3 visp/platforms/ios/build_framework.py ios --iphoneos_deployment_target
 
 \note ViSP framework is build with capabilities that enables the usage of the following 3rd parties: XML, OpenCV, pthread, apriltag, lapack.
 
-\section install_iOS_know_issue Known issues
-\subsection install_iOS_know_issue_xcrun xcrun: error: SDK cannot be located
+\section install_iOS_know_issue 5. Known issues
+\subsection install_iOS_know_issue_xcrun 5.1. xcrun: error: SDK cannot be located
 
 If you encounter the following issue:
 \verbatim
@@ -114,7 +114,7 @@ Launch `Xcode` and go to Preferences, then Locations, and make sure the command 
 
 \image html img-xcode-cmdline-tools.jpg
 
-\section install_iOS_next Next tutorial
+\section install_iOS_next 6. Next tutorial
 
 You are now ready to see the next \ref tutorial-getting-started-iOS that shows how to use ViSP as a 3rd party to build your own project for iOS devices.
 
