@@ -109,7 +109,7 @@ void emergencyStopViper650(int signo)
   fprintf(stdout, "Application ");
   fflush(stdout);
   kill(getpid(), SIGKILL);
-  exit(1);
+  std::exit(EXIT_FAILURE);
 }
 
 /* ---------------------------------------------------------------------- */
