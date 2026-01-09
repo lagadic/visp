@@ -47,7 +47,7 @@
 #include VISP_NLOHMANN_JSON(json.hpp)
 #endif
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L))) // Check if cxx17 or higher
 #include <optional>
 #endif
 
@@ -744,16 +744,79 @@ public:
    * \param[out] mask Optional mask where pixels to exclude have a value set to false.
    * \param[out] opt_votingPoints Optional vector of pairs of pixel coordinates that voted for the \b detections.
    */
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
-  void computeVotingMask(const vpImage<unsigned char> &I, const std::vector<vpImageCircle> &detections,
-                         std::optional< vpImage<bool> > &mask, std::optional<std::vector<std::vector<std::pair<unsigned int, unsigned int>>>> &opt_votingPoints) const;
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L))) // Check if cxx17 or higher
+  inline void computeVotingMask(const vpImage<unsigned char> &I, const std::vector<vpImageCircle> &detections,
+                                std::optional< vpImage<bool> > &mask,
+                                std::optional<std::vector<std::vector<std::pair<unsigned int, unsigned int>>>> &opt_votingPoints) const
 #else
-  void computeVotingMask(const vpImage<unsigned char> &I, const std::vector<vpImageCircle> &detections,
-                         vpImage<bool> **mask, std::vector<std::vector<std::pair<unsigned int, unsigned int> > > **opt_votingPoints) const;
+  inline void computeVotingMask(const vpImage<unsigned char> &I, const std::vector<vpImageCircle> &detections,
+                                vpImage<bool> **mask,
+                                std::vector<std::vector<std::pair<unsigned int, unsigned int> > > **opt_votingPoints) const
+#endif
+  {
+    if (!m_algoParams.m_recordVotingPoints) {
+      // We weren't asked to remember the voting points
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L))) // Check if cxx17 or higher
+      mask = std::nullopt;
+      opt_votingPoints = std::nullopt;
+#else
+      *mask = nullptr;
+      *opt_votingPoints = nullptr;
+#endif
+      return;
+    }
+
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L))) // Check if cxx17 or higher
+    mask = vpImage<bool>(I.getHeight(), I.getWidth(), false);
+    opt_votingPoints = std::vector<std::vector<std::pair<unsigned int, unsigned int>>>();
+#else
+    *mask = new vpImage<bool>(I.getHeight(), I.getWidth(), false);
+    *opt_votingPoints = new std::vector<std::vector<std::pair<unsigned int, unsigned int> > >();
 #endif
 
-/** @name  Configuration from files */
-//@{
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L))) // Check if cxx17 or higher
+    for (const auto &detection : detections)
+#else
+    const size_t nbDetections = detections.size();
+    for (size_t i = 0; i < nbDetections; ++i)
+#endif
+    {
+      bool hasFoundSimilarCircle = false;
+      unsigned int nbPreviouslyDetected = static_cast<unsigned int>(m_finalCircles.size());
+      unsigned int id = 0;
+      // Looking for a circle that was detected and is similar to the one given to the function
+      while ((id < nbPreviouslyDetected) && (!hasFoundSimilarCircle)) {
+        const vpImageCircle previouslyDetected = m_finalCircles[id];
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L))) // Check if cxx17 or higher
+        if (previouslyDetected == detection)
+#else
+        if (previouslyDetected == detections[i])
+#endif
+        {
+          hasFoundSimilarCircle = true;
+          // We found a circle that is similar to the one given to the function => updating the mask
+          const unsigned int nbVotingPoints = static_cast<unsigned int>(m_finalCirclesVotingPoints[id].size());
+          for (unsigned int idPoint = 0; idPoint < nbVotingPoints; ++idPoint) {
+            const std::pair<unsigned int, unsigned int> &votingPoint = m_finalCirclesVotingPoints[id][idPoint];
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L))) // Check if cxx17 or higher
+            (*mask)[votingPoint.first][votingPoint.second] = true;
+#else
+            (**mask)[votingPoint.first][votingPoint.second] = true;
+#endif
+          }
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L))) // Check if cxx17 or higher
+          opt_votingPoints->push_back(m_finalCirclesVotingPoints[id]);
+#else
+          (**opt_votingPoints).push_back(m_finalCirclesVotingPoints[id]);
+#endif
+        }
+        ++id;
+      }
+    }
+  }
+
+  /** @name  Configuration from files */
+  //@{
 #ifdef VISP_HAVE_NLOHMANN_JSON
   /**
    * \brief Construct a new vpCircleHoughTransform object configured according to
