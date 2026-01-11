@@ -11,7 +11,7 @@ You'll need the following to run these steps:
 You can then run build_xcframework.py, as below:
 ```
 cd ~/<my_working_directory>
-python opencv/platforms/apple/build_xcframework.py --out ./build_xcframework
+python visp/platforms/apple/build_xcframework.py --out ./build_xcframework
 ```
 
 Grab a coffee, because you'll be here for a while. By default this builds OpenCV for 8 architectures across 4 platforms:
@@ -21,7 +21,7 @@ Grab a coffee, because you'll be here for a while. By default this builds OpenCV
 - macOS (`--macos_archs`): x86_64, arm64
 - Mac Catalyst (`--catalyst_archs`): x86_64, arm64
 
-If everything's fine, you will eventually get `opencv2.xcframework` in the output directory.
+If everything's fine, you will eventually get `visp3.xcframework` in the output directory.
 
 The script has some configuration options to exclude platforms and architectures you don't want to build for. Use the `--help` flag for more information.
 
@@ -48,9 +48,9 @@ If you want to build only for certain platforms, you can supply the `--build_onl
 python build_xcframework.py --out somedir --catalyst_archs x86_64,arm64 --build_only_specified_archs
 ```
 
-You can also build without OpenCV functionality you don't need. You can do this by using the `--without` flag, which you use once per item you want to go without. For example, if you wanted to compile without `video` or `objc`, you'd can do this:
+You can also build without OpenCV functionality you don't need. You can do this by using the `--without` flag, which you use once per item you want to go without. For example, if you wanted to compile without `robot` or `sensor`, you'd can do this:
 
 ```
-python build_xcframework.py --out somedir --without video --without objc
+python build_xcframework.py --out somedir --without robot --without sensor
 ```
-(if you have issues with this, try using `=`, e.g. `--without=video --without=objc`, and file an issue on GitHub.)
+(if you have issues with this, try using `=`, e.g. `--without=robot --without=sensor`, and file an issue on GitHub.)
