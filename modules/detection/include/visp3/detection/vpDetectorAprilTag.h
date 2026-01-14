@@ -263,7 +263,7 @@ class VISP_EXPORT vpDetectorAprilTag : public vpDetectorBase
 public:
   enum vpAprilTagFamily
   {
-    TAG_36h11,           ///< AprilTag 36h11 pattern (recommended)
+    TAG_36h11 = 0,           ///< AprilTag 36h11 pattern (recommended)
     TAG_36h10,           ///< DEPRECATED
     TAG_36ARTOOLKIT,     ///< DEPRECATED AND WILL NOT DETECT ARTOOLKIT TAGS
     TAG_25h9,            ///< AprilTag 25h9 pattern
@@ -338,14 +338,15 @@ public:
                             This tag family can produce lots of false detections which can be filtered by setting an
                             appropriate decision margin, using setAprilTagDecisionMarginThreshold() or
                             getTagsDecisionMargin(). See \ref apriltag_detection_tips_filter section for more details. */
-    TAG_ARUCO_MIP_36h12  /*!< ArUco 6x6 pattern: 6x6 bits, minimum hamming distance between any two codes = 12, 250 codes.\n
+    TAG_ARUCO_MIP_36h12,  /*!< ArUco 6x6 pattern: 6x6 bits, minimum hamming distance between any two codes = 12, 250 codes.\n
                             This is the recommended ArUco tag family by the main ArUco developer,
                             <a href="https://stackoverflow.com/a/51511558">see this link</a> */
+    TAG_COUNT /*!To stop iterating when parsing from/to string*/
   };
 
   enum vpPoseEstimationMethod
   {
-    HOMOGRAPHY,                     /*!< Pose from homography */
+    HOMOGRAPHY = 0,                     /*!< Pose from homography */
     HOMOGRAPHY_VIRTUAL_VS,          /*!< Non linear virtual visual servoing approach
                                       initialized by the homography approach */
     DEMENTHON_VIRTUAL_VS,           /*!< Non linear virtual visual servoing approach
@@ -355,8 +356,63 @@ public:
     BEST_RESIDUAL_VIRTUAL_VS,       /*!< Non linear virtual visual servoing approach
                                       initialized by the approach that gives the
                                       lowest residual */
-    HOMOGRAPHY_ORTHOGONAL_ITERATION /*!< Pose from homography followed by a refinement by Orthogonal Iteration */
+    HOMOGRAPHY_ORTHOGONAL_ITERATION, /*!< Pose from homography followed by a refinement by Orthogonal Iteration */
+    POSE_COUNT /*!To stop iterating when parsing from/to string*/
   };
+
+  /**
+   * @brief Cast a \b vpDetectorAprilTag::vpAprilTagFamily enum value into a \b std::stirng.
+   *
+   * @param family The type of 2D features we want to cast into a string.
+   * @return std::string The name of the \b vpDetectorAprilTag::vpAprilTagFamily enum value.
+   */
+  static std::string tagFamilyToString(const vpAprilTagFamily &family);
+
+  /**
+   * @brief Cast a string into a \b vpDetectorAprilTag::vpAprilTagFamily enum value.
+   * If \b name is not found, throw an error .
+   *
+   * @param name The name of the display mode.
+   * @return DisplayMode The corresponding \b TagType enum value, or throw an error if not found.
+   */
+  static vpAprilTagFamily tagFamilyFromString(const std::string &name);
+
+  /**
+   * @brief Create a string that lists the different \b vpDetectorAprilTag::vpAprilTagFamily available.
+   *
+   * @param prefix The string that must prefix the list of modes.
+   * @param sep The separator between the different modes.
+   * @param suffix The string that must suffix the list of modes.
+   * @return std::string The list containing the different modes.
+   */
+  static std::string getAvailableTagFamily(const std::string &prefix = "< ", const std::string &sep = " , ", const std::string &suffix = " >");
+
+  /**
+   * @brief Cast a \b vpDetectorAprilTag::vpPoseEstimationMethod enum value into a \b std::stirng.
+   *
+   * @param method The type of 2D features we want to cast into a string.
+   * @return std::string The name of the \b vpDetectorAprilTag::vpPoseEstimationMethod enum value.
+   */
+  static std::string poseMethodToString(const vpPoseEstimationMethod &method);
+
+  /**
+   * @brief Cast a string into a \b vpDetectorAprilTag::vpPoseEstimationMethod enum value.
+   * If \b name is not found, throw an error .
+   *
+   * @param name The name of the display mode.
+   * @return DisplayMode The corresponding \b TagType enum value, or throw an error if not found.
+   */
+  static vpPoseEstimationMethod poseMethodFromString(const std::string &name);
+
+  /**
+   * @brief Create a string that lists the different \b vpDetectorAprilTag::vpPoseEstimationMethod available.
+   *
+   * @param prefix The string that must prefix the list of modes.
+   * @param sep The separator between the different modes.
+   * @param suffix The string that must suffix the list of modes.
+   * @return std::string The list containing the different modes.
+   */
+  static std::string getAvailablePoseMethod(const std::string &prefix = "< ", const std::string &sep = " , ", const std::string &suffix = " >");
 
   vpDetectorAprilTag(const vpAprilTagFamily &tagFamily = TAG_36h11,
                      const vpPoseEstimationMethod &poseEstimationMethod = HOMOGRAPHY_VIRTUAL_VS);
