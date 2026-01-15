@@ -1783,6 +1783,33 @@ void vpDetectorAprilTag::setAprilTagDecodeSharpening(double decodeSharpening)
   return m_impl->setAprilTagDecodeSharpening(decodeSharpening);
 }
 
+void vpDetectorAprilTag::loadConfigFile(const std::string &configFile)
+{
+#ifdef VISP_HAVE_NLOHMANN_JSON
+  //Read file
+  std::ifstream jsonFile(configFile);
+  if (!jsonFile.good()) {
+    throw vpException(vpException::ioError, "Could not read from settings file " + configFile + " to initialise the vpDetectorAprilTag");
+  }
+  nlohmann::json settings;
+  try {
+    settings = nlohmann::json::parse(jsonFile);
+  }
+  catch (nlohmann::json::parse_error &e) {
+    std::stringstream msg;
+    msg << "Could not parse JSON file : \n";
+
+    msg << e.what() << std::endl;
+    msg << "Byte position of error: " << e.byte;
+    throw vpException(vpException::ioError, msg.str());
+  }
+  jsonFile.close();
+  from_json(settings, *this);
+#else
+  throw(vpException(vpException::ioError, "Due to the fact that ViSP has not been compiled with nhlohmann-json, the initialization of the vpDetectorAprilTag is not possible"));
+#endif
+}
+
 /*!
   See the AprilTag documentation:
     > A measure of the quality of the binary decoding process: the

@@ -177,6 +177,11 @@ if(USE_OPENCV)
   endif()
 endif(USE_OPENCV)
 
+if(USE_NLOHMANN_JSON AND NOT VISP_HAVE_NLOHMANN_JSON_FROM_VTK)
+  get_target_property(_inc_dirs "nlohmann_json::nlohmann_json" INTERFACE_INCLUDE_DIRECTORIES)
+  list(APPEND opt_system_incs ${_inc_dirs})
+endif()
+
 vp_add_module(detection visp_core visp_vision PRIVATE_OPTIONAL ${opt_libs_private} WRAP java)
 vp_glob_module_sources()
 vp_module_include_directories(${opt_incs} SYSTEM ${opt_system_incs})

@@ -266,8 +266,8 @@ class VISP_EXPORT vpDetectorAprilTag : public vpDetectorBase
 {
 public:
 #ifdef VISP_HAVE_NLOHMANN_JSON
-  friend void to_json(nlohmann::json &j, const vpDetectorAprilTag &detector);
-  friend void from_json(const nlohmann::json &j, vpDetectorAprilTag &detector);
+  friend VISP_EXPORT void to_json(nlohmann::json &j, const vpDetectorAprilTag &detector);
+  friend VISP_EXPORT void from_json(const nlohmann::json &j, vpDetectorAprilTag &detector);
 #endif
 
   enum vpAprilTagFamily
@@ -463,6 +463,8 @@ public:
                                                      const std::map<int, double> &tagsSize) const;
 
   bool isZAlignedWithCameraAxis() const;
+
+  void loadConfigFile(const std::string &configFile);
 
   void setAprilTagDebugOption(bool flag);
   void setAprilTagDecisionMarginThreshold(float decisionMarginThreshold);
