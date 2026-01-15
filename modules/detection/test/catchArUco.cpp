@@ -53,6 +53,10 @@
 using namespace cv;
 #endif
 
+#ifdef VISP_HAVE_NLOHMANN_JSON
+#include VISP_NLOHMANN_JSON(json.hpp)
+#endif
+
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;
 #endif
@@ -223,6 +227,78 @@ TEST_CASE("ArUco detection test", "[aruco_detection_test]")
       }
     }
   }
+
+#ifdef VISP_HAVE_NLOHMANN_JSON
+  SECTION("From_to_JSON")
+  {
+    for (const auto &kv : apriltagMap) {
+      vpDetectorAprilTag detector(kv.first);
+      int hamming_dist_ref = 0;
+      float decision_margin = 50.0f;
+      detector.setAprilTagHammingDistanceThreshold(hamming_dist_ref);
+      detector.setAprilTagDecisionMarginThreshold(decision_margin);
+
+      nlohmann::json origSettings;
+      to_json(origSettings, detector);
+
+      vpDetectorAprilTag detectorCpy;
+      from_json(origSettings, detectorCpy);
+
+      CHECK(detectorCpy.getAprilTagHammingDistanceThreshold() == hamming_dist_ref);
+      CHECK(detectorCpy.getAprilTagDecisionMarginThreshold() == decision_margin);
+
+      for (int id = 0; id < kv.second; id += kv.second/nb_tests) {
+        vpImage<unsigned char> tag_img;
+        detector.getTagImage(tag_img, id);
+
+        vpImage<unsigned char> tag_img_big(tag_img.getHeight()*20, tag_img.getWidth()*20);
+        vpImageTools::resize(tag_img, tag_img_big, vpImageTools::INTERPOLATION_NEAREST);
+
+        bool detect = detector.detect(tag_img_big);
+        bool detectCpy = detectorCpy.detect(tag_img_big);
+        CHECK(detect == true);
+        CHECK(detectCpy == true);
+        if (detect) {
+          std::vector<int> tagsId = detector.getTagsId();
+          std::vector<float> tagsDecisionMargin = detector.getTagsDecisionMargin();
+          std::vector<int> tagsHammingDistance = detector.getTagsHammingDistance();
+          CHECK(tagsId.size() == tagsDecisionMargin.size());
+          CHECK(tagsId.size() == tagsHammingDistance.size());
+          CHECK(tagsId.size() == detector.getNbObjects());
+
+          std::vector<int> tagsIdCpy = detectorCpy.getTagsId();
+          CHECK(tagsId.size() == tagsIdCpy.size());
+
+          // Use directly the getter
+          bool found_id = false;
+          for (auto tag_id : tagsId) {
+            if (g_debug_print) {
+              WARN("tag_dict=" << kv.first << " ; tag_id=" << tag_id << " ; tag_ref=" << id);
+            }
+            if (tag_id == id) {
+              found_id = true;
+              break;
+            }
+          }
+          CHECK(found_id == true);
+
+          // Use directly the getter
+          found_id = false;
+          for (auto tag_id : tagsIdCpy) {
+            if (g_debug_print) {
+              WARN("tag_dict=" << kv.first << " ; tag_id=" << tag_id << " ; tag_ref=" << id);
+            }
+            if (tag_id == id) {
+              found_id = true;
+              break;
+            }
+          }
+          CHECK(found_id == true);
+        }
+      }
+    }
+  }
+#endif
 }
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x040800)
