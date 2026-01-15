@@ -298,6 +298,32 @@ public:
    \param i : color indice
    */
   static inline vpColor getColor(const unsigned int &i) { return vpColor::allColors[i % vpColor::nbColors]; }
+
+  /**
+   * \brief Convert a predefined vpColor into its corresponding name.
+   *
+   * \param[in] name The predefined color.
+   * \return vpColor The corresponding color name.
+   */
+  static std::string colorToString(const vpColor &color);
+
+  /**
+   * \brief Convert a predefined color name into a vpColor.
+   *
+   * \param[in] name The color name.
+   * \return vpColor The corresponding predefined color.
+   */
+  static vpColor colorFromString(const std::string &name);
+
+  /**
+   * \brief Get the list of names of the available predefined colors .
+   *
+   * \param[in] prefix The prefix for the list.
+   * \param[in] sep The separator for the list.
+   * \param[in] suffix The suffix for the list.
+   * \return std::string The list of names.
+   */
+  static std::string getColorsNames(const std::string &prefix = "< ", const std::string &sep = " , ", const std::string &suffix = " >");
 };
 
 // In this file if windows

@@ -1031,6 +1031,15 @@ public:
     return false;
   }
 
+  bool getDebugFlag(bool &debug) const
+  {
+    if (m_td) {
+      debug = m_td->debug;
+      return true;
+    }
+    return false;
+  }
+
   bool getNbThreads(int &nThreads) const
   {
     if (m_td) {
@@ -1352,6 +1361,82 @@ std::string vpDetectorAprilTag::getAvailablePoseMethod(const std::string &prefix
   modes += poseMethodToString(candidate) + suffix;
   return modes;
 }
+
+#ifdef VISP_HAVE_NLOHMANN_JSON
+void to_json(nlohmann::json &j, const vpDetectorAprilTag &detector)
+{
+  j["tag_family"] = vpDetectorAprilTag::tagFamilyToString(detector.m_tagFamily);
+  bool debug = false;
+  double decodeSharpening = 0.;
+  bool hasTagDetector = detector.m_impl->getDebugFlag(debug);
+  int nThreads = 1;
+  float quadDecimate = 1.f;
+  float quadSigma = 0.f;
+  bool refineEdges = true;
+  bool zAxis = detector.m_impl->getZAlignedWithCameraAxis();
+  if (hasTagDetector) {
+    detector.m_impl->getAprilTagDecodeSharpening(decodeSharpening);
+    detector.m_impl->getNbThreads(nThreads);
+    detector.m_impl->getQuadDecimate(quadDecimate);
+    detector.m_impl->getQuadSigma(quadSigma);
+    detector.m_impl->getRefineEdges(refineEdges);
+  }
+  j["debug"] = debug;
+  j["detection_margin_thresh"] = detector.getAprilTagDecisionMarginThreshold();
+  j["decode_sharpening"] = decodeSharpening;
+  j["hamming_distance_threshold"] = detector.getAprilTagHammingDistanceThreshold();
+  j["nb_threads"] = nThreads;
+  j["pose_estimation_method"] = vpDetectorAprilTag::poseMethodToString(detector.getPoseEstimationMethod());
+  j["quad_decimate"] = quadDecimate;
+  j["quad_sigma"] = quadSigma;
+  j["refine_edges"] = refineEdges;
+  nlohmann::json displayTagParams;
+  displayTagParams["status"] = detector.m_displayTag;
+  displayTagParams["color"] = vpColor::colorToString(detector.m_displayTagColor);
+  displayTagParams["thickness"] = detector.m_displayTagThickness;
+  j["display_tag"] = displayTagParams;
+  j["timeout"] = detector.m_timeout_ms;
+  j["z_aligned_with_camera_axis"] = zAxis;
+}
+
+void from_json(const nlohmann::json &j, vpDetectorAprilTag &detector)
+{
+  detector.setAprilTagFamily(vpDetectorAprilTag::tagFamilyFromString(j.value("tag_family", vpDetectorAprilTag::tagFamilyToString(detector.m_tagFamily)))); // First raw because it allocates m_impl
+  bool debug = false;
+  double decodeSharpening = 0.;
+  bool hasTagDetector = detector.m_impl->getDebugFlag(debug);
+  int nThreads = 1;
+  float quadDecimate = 1.f;
+  float quadSigma = 0.f;
+  bool refineEdges = true;
+  bool zAxis = detector.m_impl->getZAlignedWithCameraAxis();
+  if (hasTagDetector) {
+    detector.m_impl->getAprilTagDecodeSharpening(decodeSharpening);
+    detector.m_impl->getNbThreads(nThreads);
+    detector.m_impl->getQuadDecimate(quadDecimate);
+    detector.m_impl->getQuadSigma(quadSigma);
+    detector.m_impl->getRefineEdges(refineEdges);
+  }
+  detector.setAprilTagDebugOption(j.value("debug", debug));
+  detector.setAprilTagDecisionMarginThreshold(j.value("detection_margin_thresh", detector.getAprilTagDecisionMarginThreshold()));
+  detector.setAprilTagDecodeSharpening(j.value("decode_sharpening", decodeSharpening));
+  detector.setAprilTagHammingDistanceThreshold(j.value("hamming_distance_threshold", detector.getAprilTagHammingDistanceThreshold()));
+  detector.setAprilTagNbThreads(j.value("nb_threads", nThreads));
+  detector.setAprilTagPoseEstimationMethod(vpDetectorAprilTag::poseMethodFromString(j.value("pose_estimation_method", vpDetectorAprilTag::poseMethodToString(detector.getPoseEstimationMethod()))));
+  detector.setAprilTagQuadDecimate(j.value("quad_decimate", quadDecimate));
+  detector.setAprilTagQuadSigma(j.value("quad_sigma", quadSigma));
+  detector.setAprilTagRefineEdges(j.value("refine_edges", refineEdges));
+  if (j.contains("display_tag")) {
+    nlohmann::json displayTagParams = j.at("display_tag");
+    bool displayTag = displayTagParams.value("status", detector.m_displayTag);
+    vpColor color = vpColor::colorFromString(displayTagParams.value("color", vpColor::colorToString(detector.m_displayTagColor)));
+    auto thickness = displayTagParams.value("thickness", detector.m_displayTagThickness);
+    detector.setDisplayTag(displayTag, color, thickness);
+  }
+  detector.setTimeout(j.value("timeout", detector.m_timeout_ms));
+  detector.setZAlignedWithCameraAxis(j.value("z_aligned_with_camera_axis", zAxis));
+}
+#endif
 
 vpDetectorAprilTag::vpDetectorAprilTag(const vpAprilTagFamily &tagFamily,
                                        const vpPoseEstimationMethod &poseEstimationMethod)

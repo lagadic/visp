@@ -44,6 +44,10 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/detection/vpDetectorBase.h>
 
+#ifdef VISP_HAVE_NLOHMANN_JSON
+#include VISP_NLOHMANN_JSON(json.hpp)
+#endif
+
 BEGIN_VISP_NAMESPACE
 /*!
  * \class vpDetectorAprilTag
@@ -261,6 +265,11 @@ BEGIN_VISP_NAMESPACE
 class VISP_EXPORT vpDetectorAprilTag : public vpDetectorBase
 {
 public:
+#ifdef VISP_HAVE_NLOHMANN_JSON
+  friend void to_json(nlohmann::json &j, const vpDetectorAprilTag &detector);
+  friend void from_json(const nlohmann::json &j, vpDetectorAprilTag &detector);
+#endif
+
   enum vpAprilTagFamily
   {
     TAG_36h11 = 0,           ///< AprilTag 36h11 pattern (recommended)
@@ -511,162 +520,16 @@ private:
 
 inline std::ostream &operator<<(std::ostream &os, const vpDetectorAprilTag::vpPoseEstimationMethod &method)
 {
-  switch (method) {
-  case vpDetectorAprilTag::HOMOGRAPHY:
-    os << "HOMOGRAPHY";
-    break;
-
-  case vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS:
-    os << "HOMOGRAPHY_VIRTUAL_VS";
-    break;
-
-  case vpDetectorAprilTag::DEMENTHON_VIRTUAL_VS:
-    os << "DEMENTHON_VIRTUAL_VS";
-    break;
-
-  case vpDetectorAprilTag::LAGRANGE_VIRTUAL_VS:
-    os << "LAGRANGE_VIRTUAL_VS";
-    break;
-
-  case vpDetectorAprilTag::BEST_RESIDUAL_VIRTUAL_VS:
-    os << "BEST_RESIDUAL_VIRTUAL_VS";
-    break;
-
-  case vpDetectorAprilTag::HOMOGRAPHY_ORTHOGONAL_ITERATION:
-    os << "HOMOGRAPHY_ORTHOGONAL_ITERATION";
-    break;
-
-  default:
-    os << "ERROR_UNKNOWN_POSE_METHOD!";
-    break;
-  }
+  os << vpDetectorAprilTag::poseMethodToString(method);
 
   return os;
 }
 
 inline std::ostream &operator<<(std::ostream &os, const vpDetectorAprilTag::vpAprilTagFamily &tagFamily)
 {
-  switch (tagFamily) {
-  case vpDetectorAprilTag::TAG_36h11:
-    os << "36h11";
-    break;
-
-  case vpDetectorAprilTag::TAG_36h10:
-    os << "36h10";
-    break;
-
-  case vpDetectorAprilTag::TAG_36ARTOOLKIT:
-    os << "36artoolkit";
-    break;
-
-  case vpDetectorAprilTag::TAG_25h9:
-    os << "25h9";
-    break;
-
-  case vpDetectorAprilTag::TAG_25h7:
-    os << "25h7";
-    break;
-
-  case vpDetectorAprilTag::TAG_16h5:
-    os << "16h5";
-    break;
-
-  case vpDetectorAprilTag::TAG_CIRCLE21h7:
-    os << "CIRCLE21h7";
-    break;
-
-  case vpDetectorAprilTag::TAG_CIRCLE49h12:
-    os << "CIRCLE49h12";
-    break;
-
-  case vpDetectorAprilTag::TAG_CUSTOM48h12:
-    os << "CUSTOM48h12";
-    break;
-
-  case vpDetectorAprilTag::TAG_STANDARD52h13:
-    os << "STANDARD52h13";
-    break;
-
-  case vpDetectorAprilTag::TAG_STANDARD41h12:
-    os << "STANDARD41h12";
-    break;
-
-  case vpDetectorAprilTag::TAG_ARUCO_4x4_50:
-    os << "TAG_ARUCO_4x4_50";
-    break;
-
-  case vpDetectorAprilTag::TAG_ARUCO_4x4_100:
-    os << "TAG_ARUCO_4x4_100";
-    break;
-
-  case vpDetectorAprilTag::TAG_ARUCO_4x4_250:
-    os << "TAG_ARUCO_4x4_250";
-    break;
-
-  case vpDetectorAprilTag::TAG_ARUCO_4x4_1000:
-    os << "TAG_ARUCO_4x4_1000";
-    break;
-
-  case vpDetectorAprilTag::TAG_ARUCO_5x5_50:
-    os << "TAG_ARUCO_5x5_50";
-    break;
-
-  case vpDetectorAprilTag::TAG_ARUCO_5x5_100:
-    os << "TAG_ARUCO_5x5_100";
-    break;
-
-  case vpDetectorAprilTag::TAG_ARUCO_5x5_250:
-    os << "TAG_ARUCO_5x5_250";
-    break;
-
-  case vpDetectorAprilTag::TAG_ARUCO_5x5_1000:
-    os << "TAG_ARUCO_5x5_1000";
-    break;
-
-  case vpDetectorAprilTag::TAG_ARUCO_6x6_50:
-    os << "TAG_ARUCO_6x6_50";
-    break;
-
-  case vpDetectorAprilTag::TAG_ARUCO_6x6_100:
-    os << "TAG_ARUCO_6x6_100";
-    break;
-
-  case vpDetectorAprilTag::TAG_ARUCO_6x6_250:
-    os << "TAG_ARUCO_6x6_250";
-    break;
-
-  case vpDetectorAprilTag::TAG_ARUCO_6x6_1000:
-    os << "TAG_ARUCO_6x6_1000";
-    break;
-
-  case vpDetectorAprilTag::TAG_ARUCO_7x7_50:
-    os << "TAG_ARUCO_7x7_50";
-    break;
-
-  case vpDetectorAprilTag::TAG_ARUCO_7x7_100:
-    os << "TAG_ARUCO_7x7_100";
-    break;
-
-  case vpDetectorAprilTag::TAG_ARUCO_7x7_250:
-    os << "TAG_ARUCO_7x7_250";
-    break;
-
-  case vpDetectorAprilTag::TAG_ARUCO_7x7_1000:
-    os << "TAG_ARUCO_7x7_1000";
-    break;
-
-  case vpDetectorAprilTag::TAG_ARUCO_MIP_36h12:
-    os << "TAG_ARUCO_MIP_36h12";
-    break;
-
-  default:
-    os << "UNKNOWN";
-    break;
-  }
-
+  os << vpDetectorAprilTag::tagFamilyToString(tagFamily);
   return os;
 }
-
 END_VISP_NAMESPACE
 
 #endif
