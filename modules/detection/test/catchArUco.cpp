@@ -417,6 +417,54 @@ TEST_CASE("ArUco pose computation test", "[aruco_detection_test]")
 }
 #endif
 
+TEST_CASE("ArUco/AprilTag Hamming test", "[aruco_detection_test]")
+{
+  std::vector<std::pair<vpDetectorAprilTag::vpAprilTagFamily, std::string>> markersType = {
+    // {vpDetectorAprilTag::TAG_ARUCO_4x4_50, "TAG_ARUCO_4x4_50"}, // not enough bits for this family
+    {vpDetectorAprilTag::TAG_ARUCO_5x5_50, "TAG_ARUCO_5x5_50"},
+    {vpDetectorAprilTag::TAG_ARUCO_6x6_50, "TAG_ARUCO_6x6_50"},
+    {vpDetectorAprilTag::TAG_ARUCO_7x7_50, "TAG_ARUCO_7x7_50"},
+    {vpDetectorAprilTag::TAG_ARUCO_MIP_36h12, "TAG_ARUCO_MIP_36h12"},
+    {vpDetectorAprilTag::TAG_25h9, "TAG_25h9"},
+    {vpDetectorAprilTag::TAG_36h11, "TAG_36h11"}
+  };
+
+  for (const auto &markerType : markersType) {
+    SECTION(markerType.second)
+    {
+      vpDetectorAprilTag detector(markerType.first);
+
+      const int nb_tags = 35; // max nb of tags which corresponds to TAG_25h9
+      const unsigned int tag_size = 50;
+      vpImage<unsigned char> tag_img, tag_img_resize(tag_size, tag_size);
+
+      for (int tag_id = 0; tag_id < nb_tags; tag_id++) {
+        std::ostringstream oss;
+        oss << tag_id;
+        SECTION(oss.str())
+        {
+          detector.getTagImage(tag_img, tag_id);
+
+          // Arbitrary change 2 bit values in the tag image
+          // Default max nb of bits correction is 2:
+          // https://github.com/AprilRobotics/apriltag/blob/31b29af3cd594f5952e3f4c294aeaacfec34ffca/apriltag.h#L236-L246
+          tag_img[2][2] = (tag_img[2][2] > 127) ? 0 : 255;
+          tag_img[3][3] = (tag_img[3][3] > 127) ? 0 : 255;
+
+          vpImageTools::resize(tag_img, tag_img_resize, vpImageTools::INTERPOLATION_NEAREST);
+          bool found_tag = detector.detect(tag_img_resize);
+          CHECK(found_tag == true);
+          CHECK(detector.getTagsId().size() == 1);
+
+          if (found_tag) {
+            CHECK(detector.getTagsId().front() == tag_id);
+          }
+        }
+      }
+    }
+  }
+}
+
 int main(int argc, const char *argv[])
 {
   Catch::Session session;
