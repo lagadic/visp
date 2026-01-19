@@ -218,7 +218,13 @@ public:
 
     if ((m_tagFamily != TAG_36ARTOOLKIT) && m_tf) {
       m_td = apriltag_detector_create();
-      int bits_corrected = (m_tagFamily == TAG_ARUCO_4x4_1000) ? 1 : 2;
+      int bits_corrected = 2;
+      if (m_tagFamily == TAG_ARUCO_4x4_50 ||
+        m_tagFamily == TAG_ARUCO_4x4_100 ||
+        m_tagFamily == TAG_ARUCO_4x4_250 ||
+        m_tagFamily == TAG_ARUCO_4x4_1000) {
+        bits_corrected = 1;
+      }
       apriltag_detector_add_family(m_td, m_tf, bits_corrected);
     }
 
