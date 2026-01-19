@@ -447,6 +447,8 @@ if __name__ == "__main__":
     if args.cmake_framework_path:
         cmake_framework_path = str(args.cmake_framework_path).replace(",", ";")
         print('Using CMake Framework Path=' + str(cmake_framework_path))
+    else:
+        cmake_framework_path = None
 
     # Prevent the build from happening if the same architecture is specified for multiple platforms.
     # When `lipo` is run to stitch the frameworks together into a fat framework, it'll fail, so it's
