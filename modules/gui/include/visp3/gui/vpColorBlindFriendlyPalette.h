@@ -68,14 +68,14 @@ public:
   static std::vector<std::string> s_paletteNames; /*!< Vector that lists the names of the different available colors.*/
 
   /**
-   * \brief Construct a new vp Color Blind Friendly Palette.
+   * \brief Construct a new vpColor Blind Friendly Palette.
    * The default value \b vpColorBlindFriendlyPalette::Palette::COUNT is affected.
    *
    */
   vpColorBlindFriendlyPalette();
 
   /**
-   * \brief Construct a new vp Color Blind Friendly Palette object.
+   * \brief Construct a new vpColor Blind Friendly Palette object.
    *
    * \param colorID \b vpColorBlindFriendlyPalette::Palette that permits to determine the RGB values
    * that we must affect to it.
@@ -83,10 +83,11 @@ public:
   vpColorBlindFriendlyPalette(const Palette &colorID);
 
   /**
-   * \brief Construct a new vp Color Blind Friendly Palette object from the name of the color.
+   * \brief Construct a new vpColor Blind Friendly Palette object from the name of the color.
    * \b WARNING: if the color is not found, it will be set to \b vpColorBlindFriendlyPalette::Palette::COUNT.
    *
-   * \param nameColor
+   * \param nameColor String that contains the name of the color we want to set. Admissible names are:
+   * "black", "orange", "sky-blue", "green",  "yellow", "blue", "vermillon", "purple".
    */
   vpColorBlindFriendlyPalette(const std::string &nameColor);
 
@@ -128,7 +129,8 @@ public:
   /**
    * \brief Set the fromString object
    *
-   * \param nameColor
+   * \param nameColor String that contains the name of the color we want to set. Admissible names are:
+   * "black", "orange", "sky-blue", "green",  "yellow", "blue", "vermillon", "purple".
    * \return true if a match was found and it was possible to set \b _colorID correctly.
    * \return false if the input string \b nameColor did not match any known names.
    */
