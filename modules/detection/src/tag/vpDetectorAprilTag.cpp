@@ -1806,6 +1806,7 @@ void vpDetectorAprilTag::loadConfigFile(const std::string &configFile)
   jsonFile.close();
   from_json(settings, *this);
 #else
+  (void)configFile;
   throw(vpException(vpException::ioError, "Due to the fact that ViSP has not been compiled with nhlohmann-json, the initialization of the vpDetectorAprilTag is not possible"));
 #endif
 }
