@@ -14,6 +14,8 @@ ViSP 3.7.1 (current version)
   - Applications
   - Tutorials
   - Bug fixed
+    . [#1876] Unable to build ViSP framework from source for iOS
+    . [#1878] Unable to build ViSP framework from source for iOS with OpenCV support
 ----------------------------------------------
 ViSP 3.7.0 (released December 19, 2025)
   - Contributors:
