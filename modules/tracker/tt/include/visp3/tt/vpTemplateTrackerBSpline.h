@@ -50,7 +50,6 @@
 BEGIN_VISP_NAMESPACE
 /**
   \ingroup group_tt_tracker
-  \brief
 
   <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
 

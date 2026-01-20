@@ -42,7 +42,7 @@
 #define vpLaserScan_h
 
 #include <visp3/core/vpConfig.h>
-#include "visp3/sensor/vpScanPoint.h"
+#include <visp3/sensor/vpScanPoint.h>
 
 #include <vector>
 

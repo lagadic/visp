@@ -44,7 +44,7 @@ BEGIN_VISP_NAMESPACE
 /**
  * \brief Tukey M-estimator.
  *
- * \tparam T
+ * \tparam T Template type: float or double.
  *
  * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
  *

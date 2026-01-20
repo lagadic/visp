@@ -94,8 +94,8 @@ public:
   /**
    * \brief Reconstruct \p I from a representation \p s
    *
-   * @param s the representation
-   * @param I Output lossy reconstruction
+   * @param s The representation.
+   * @param I Output lossy reconstruction.
    */
   virtual void inverse(const vpColVector &s, vpImage<unsigned char> &I) = 0;
 
@@ -117,7 +117,7 @@ public:
    * \brief Set the number of pixels that are removed by the photometric VS computation
    * This function should be called by vpFeatureLuminanceMapping
    *
-   * @param border
+   * @param border The border size where pixels are removed on each side of the image.
    */
   void setBorder(unsigned border) { m_border = border; }
 
@@ -160,9 +160,9 @@ public:
   /**
    * \brief Build a new PCA object
    *
-   * @param basis \f$ \mathbf{U}^\top \f$ a k x dim(I) matrix
-   * @param mean  \f$ vec(\mathbf{\bar I}) \f$ the mean image represented as a vector
-   * @param explainedVariance The explained variance for each of the k vectors.
+   * @param basis Basis matrix \f$ \mathbf{U}^\top \f$ a k x dim(I) matrix.
+   * @param mean Mean image \f$ vec(\mathbf{\bar I}) \f$ represented as a vector.
+   * @param variance Explained variance vector for each of the k vectors.
    */
   vpLuminancePCA(const std::shared_ptr<vpMatrix> &basis, const std::shared_ptr<vpColVector> &mean, const vpColVector &explainedVariance);
 
@@ -174,12 +174,12 @@ public:
   vpLuminancePCA &operator=(const vpLuminancePCA &other);
 
   /**
-   * \brief Initialize the PCA object with a basis, mean and explained variance vector
+   * \brief Initialize the PCA object with a basis, mean and explained variance vector.
    *
    * \sa vpLuminancePCA()
-   * @param basis
-   * @param mean
-   * @param variance
+   * @param basis Basis matrix \f$ \mathbf{U}^\top \f$ a k x dim(I) matrix.
+   * @param mean Mean image \f$ vec(\mathbf{\bar I}) \f$ represented as a vector.
+   * @param variance Explained variance vector for each of the k vectors.
    */
   void init(const std::shared_ptr<vpMatrix> &basis, const std::shared_ptr<vpColVector> &mean, const vpColVector &variance);
 
@@ -330,7 +330,7 @@ public:
   /**
    * \brief Build a new DCT object
    *
-   * @param k the number of components to keep from the DCT matrix and use as servoing features
+   * @param k The number of components to keep from the DCT matrix and use as servoing features
    */
   vpLuminanceDCT(const unsigned int k) : vpLuminanceMapping(k)
   {

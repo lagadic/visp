@@ -551,8 +551,8 @@ private:
   unsigned int, vpImage<Type> &)
 */
 template <class Type>
-void vpImageTools::createSubImage(const vpImage<Type> &I, unsigned int roi_top, unsigned int roi_left,
-                                  unsigned int roi_height, unsigned int roi_width, vpImage<Type> &crop)
+VP_DEPRECATED void vpImageTools::createSubImage(const vpImage<Type> &I, unsigned int roi_top, unsigned int roi_left,
+                                                unsigned int roi_height, unsigned int roi_width, vpImage<Type> &crop)
 {
   vpImageTools::crop(I, roi_top, roi_left, roi_height, roi_width, crop);
 }
@@ -572,7 +572,8 @@ void vpImageTools::createSubImage(const vpImage<Type> &I, unsigned int roi_top, 
 
   \sa crop(const vpImage<Type> &, const vpRect &, vpImage<Type> &)
 */
-template <class Type> void vpImageTools::createSubImage(const vpImage<Type> &I, const vpRect &roi, vpImage<Type> &crop)
+template <class Type>
+VP_DEPRECATED void vpImageTools::createSubImage(const vpImage<Type> &I, const vpRect &roi, vpImage<Type> &crop)
 {
   vpImageTools::crop(I, roi, crop);
 }
