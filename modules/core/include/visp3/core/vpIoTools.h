@@ -185,8 +185,10 @@ VISP_EXPORT void parse_zip_footer(FILE *fp, uint16_t &nrecs, size_t &global_head
 VISP_EXPORT NpyArray npz_load(const std::string &fname, const std::string &varname);
 VISP_EXPORT NpyArray npy_load(const std::string &fname);
 // Dedicated functions for saving std::string data
-VISP_EXPORT void npz_save(const std::string &zipname, std::string fname, const std::vector<std::string> &data_vec, const std::vector<size_t> &shape, const std::string &mode = "w");
-VISP_EXPORT void npz_save(const std::string &zipname, const std::string &fname, const std::string &data, const std::string &mode = "w");
+VISP_EXPORT void npz_save_str(const std::string &zipname, std::string fname, const std::vector<std::string> &data_vec,
+  const std::vector<size_t> &shape, const std::string &mode = "w", bool compress_data = false);
+VISP_EXPORT void npz_save_str(const std::string &zipname, const std::string &fname, const std::string &data,
+  const std::string &mode = "w", bool compress_data = false);
 
 template<typename T> std::vector<char> &operator+=(std::vector<char> &lhs, const T rhs)
 {
@@ -275,6 +277,9 @@ template<typename T> void npy_save(const std::string &fname, const T *data, cons
   fclose(fp);
 }
 
+VISP_EXPORT void compressData(size_t nbytes_uncompressed, std::vector<uint8_t> &uncompressed,
+  std::vector<uint8_t> &buffer_compressed, size_t &nbytes_on_disk, FILE *fp);
+
 /*!
   Save the specified \p fname array of data (\p data) into the \p zipname npz file. This function is similar to the
   <a href="https://numpy.org/doc/stable/reference/generated/numpy.savez.html">numpy.savez</a> function.
@@ -283,12 +288,14 @@ template<typename T> void npy_save(const std::string &fname, const T *data, cons
   \param[in] data : Pointer to an array of basic datatype (int, float, double, std::complex<double>, ...).
   \param[in] shape : Shape of the array, e.g. Nz x Ny x Nx.
   \param[in] mode : Writing mode, i.e. overwrite (w) or append (a) to the file.
+  \param[in] compress_data : Flag to indicate if the data should be compressed or not.
   \warning This function should also work on big-endian platform, without guarantee since it has not been tested extensively.
   \note Original library: <a href="https://github.com/rogersce/cnpy">cnpy</a> with MIT license.
 
   \sa To see how to use it, you may have a look at \ref tutorial-npz
  */
-template<typename T> void npz_save(const std::string &zipname, std::string fname, const T *data, const std::vector<size_t> &shape, const std::string &mode = "w")
+template<typename T> void npz_save(const std::string &zipname, std::string fname, const T *data, const std::vector<size_t> &shape,
+    const std::string &mode = "w", bool compress_data = false)
 {
   //first, append a .npy to the fname
   fname += ".npy";
@@ -324,12 +331,34 @@ template<typename T> void npz_save(const std::string &zipname, std::string fname
 
   // https://github.com/rogersce/cnpy/pull/58/files
   size_t nels = std::accumulate(shape.begin(), shape.end(), static_cast<size_t>(1), std::multiplies<size_t>());
-  size_t nbytes = nels*sizeof(T) + npy_header.size();
+  size_t nbytes_uncompressed = nels*sizeof(T) + npy_header.size();
 
-  //get the CRC of the data to be added
-  uint32_t crc = vp_mz_crc32(0L, (uint8_t *)&npy_header[0], npy_header.size());
-  if (nels > 0) {
-    crc = vp_mz_crc32(crc, (uint8_t *)data, nels*sizeof(T));
+  // Prepare data and compression parameters
+  std::vector<uint8_t> buffer_compressed;
+  size_t nbytes_on_disk;
+  uint16_t compression_method;
+  uint32_t crc;
+
+  if (compress_data && nels > 0) {
+    // Create uncompressed buffer (header + data)
+    std::vector<uint8_t> uncompressed(nbytes_uncompressed);
+    memcpy(&uncompressed[0], &npy_header[0], npy_header.size());
+    memcpy(&uncompressed[npy_header.size()], data, nels*sizeof(T));
+
+    // Get CRC of uncompressed data
+    crc = vp_mz_crc32(0L, &uncompressed[0], nbytes_uncompressed);
+
+    compressData(nbytes_uncompressed, uncompressed, buffer_compressed, nbytes_on_disk, fp);
+    compression_method = 8; // deflate
+  }
+  else {
+    // No compression - CRC computed in two parts
+    crc = vp_mz_crc32(0L, (uint8_t *)&npy_header[0], npy_header.size());
+    if (nels > 0) {
+      crc = vp_mz_crc32(crc, (uint8_t *)data, nels*sizeof(T));
+    }
+    nbytes_on_disk = nbytes_uncompressed;
+    compression_method = 0; // store
   }
 
   //build the local header
@@ -339,24 +368,24 @@ template<typename T> void npz_save(const std::string &zipname, std::string fname
   local_header += vpEndian::swap16bits(static_cast<uint16_t>(0x0403)); //second part of sig
   local_header += vpEndian::swap16bits(static_cast<uint16_t>(20)); //min version to extract
   local_header += vpEndian::swap16bits(static_cast<uint16_t>(0)); //general purpose bit flag
-  local_header += vpEndian::swap16bits(static_cast<uint16_t>(0)); //compression method
+  local_header += vpEndian::swap16bits(static_cast<uint16_t>(compression_method)); //compression method
   local_header += vpEndian::swap16bits(static_cast<uint16_t>(0)); //file last mod time
   local_header += vpEndian::swap16bits(static_cast<uint16_t>(0));     //file last mod date
   local_header += vpEndian::swap32bits(static_cast<uint32_t>(crc)); //crc
-  local_header += vpEndian::swap32bits(static_cast<uint32_t>(nbytes)); //compressed size
-  local_header += vpEndian::swap32bits(static_cast<uint32_t>(nbytes)); //uncompressed size
+  local_header += vpEndian::swap32bits(static_cast<uint32_t>(nbytes_on_disk)); //compressed size
+  local_header += vpEndian::swap32bits(static_cast<uint32_t>(nbytes_uncompressed)); //uncompressed size
   local_header += vpEndian::swap16bits(static_cast<uint16_t>(fname.size())); //fname length
   local_header += vpEndian::swap16bits(static_cast<uint16_t>(0)); //extra field length
 #else
   local_header += static_cast<uint16_t>(0x0403); //second part of sig
   local_header += static_cast<uint16_t>(20); //min version to extract
   local_header += static_cast<uint16_t>(0); //general purpose bit flag
-  local_header += static_cast<uint16_t>(0); //compression method
+  local_header += static_cast<uint16_t>(compression_method); //compression method
   local_header += static_cast<uint16_t>(0); //file last mod time
   local_header += static_cast<uint16_t>(0);     //file last mod date
   local_header += static_cast<uint32_t>(crc); //crc
-  local_header += static_cast<uint32_t>(nbytes); //compressed size
-  local_header += static_cast<uint32_t>(nbytes); //uncompressed size
+  local_header += static_cast<uint32_t>(nbytes_on_disk); //compressed size
+  local_header += static_cast<uint32_t>(nbytes_uncompressed); //uncompressed size
   local_header += static_cast<uint16_t>(fname.size()); //fname length
   local_header += static_cast<uint16_t>(0); //extra field length
 #endif
@@ -395,7 +424,7 @@ template<typename T> void npz_save(const std::string &zipname, std::string fname
   footer += vpEndian::swap16bits(static_cast<uint16_t>(nrecs+1)); //number of records on this disk
   footer += vpEndian::swap16bits(static_cast<uint16_t>(nrecs+1)); //total number of records
   footer += vpEndian::swap32bits(static_cast<uint32_t>(global_header.size())); //nbytes of global headers
-  footer += vpEndian::swap32bits(static_cast<uint32_t>(global_header_offset + nbytes + local_header.size())); //offset of start of global headers, since global header now starts after newly written array
+  footer += vpEndian::swap32bits(static_cast<uint32_t>(global_header_offset + nbytes_on_disk + local_header.size())); //offset of start of global headers, since global header now starts after newly written array
 #else
   footer += static_cast<uint16_t>(0x0605); //second part of sig
   footer += static_cast<uint16_t>(0); //number of this disk
@@ -403,15 +432,20 @@ template<typename T> void npz_save(const std::string &zipname, std::string fname
   footer += static_cast<uint16_t>(nrecs+1); //number of records on this disk
   footer += static_cast<uint16_t>(nrecs+1); //total number of records
   footer += static_cast<uint32_t>(global_header.size()); //nbytes of global headers
-  footer += static_cast<uint32_t>(global_header_offset + nbytes + local_header.size()); //offset of start of global headers, since global header now starts after newly written array
+  footer += static_cast<uint32_t>(global_header_offset + nbytes_on_disk + local_header.size()); //offset of start of global headers, since global header now starts after newly written array
 #endif
   footer += static_cast<uint16_t>(0); //zip file comment length
 
   //write everything
   fwrite(&local_header[0], sizeof(char), local_header.size(), fp);
-  fwrite(&npy_header[0], sizeof(char), npy_header.size(), fp);
-  if (data != nullptr) {
-    fwrite(&data[0], sizeof(T), nels, fp);
+  if (compress_data) {
+    fwrite(&buffer_compressed[0], sizeof(char), nbytes_on_disk, fp);
+  }
+  else {
+    fwrite(&npy_header[0], sizeof(char), npy_header.size(), fp);
+    if (data != nullptr) {
+      fwrite(&data[0], sizeof(T), nels, fp);
+    }
   }
   fwrite(&global_header[0], sizeof(char), global_header.size(), fp);
   fwrite(&footer[0], sizeof(char), footer.size(), fp);
@@ -441,16 +475,18 @@ template<typename T> void npy_save(const std::string &fname, const std::vector<T
   \param[in] fname : Identifier for the corresponding array of data.
   \param[in] data : Pointer to a 1-D array of basic datatype (int, float, double, std::complex<double>, ...).
   \param[in] mode : Writing mode, i.e. overwrite (w) or append (a) to the file.
+  \param[in] compress_data : Flag to indicate if the data should be compressed or not.
   \warning This function should also work on big-endian platform, without guarantee since it has not been tested extensively.
   \note Original library: <a href="https://github.com/rogersce/cnpy">cnpy</a> with MIT license.
 
   \sa To see how to use it, you may have a look at \ref tutorial-npz
  */
-template<typename T> void npz_save(const std::string &zipname, const std::string &fname, const std::vector<T> &data, const std::string &mode = "w")
+template<typename T> void npz_save(const std::string &zipname, const std::string &fname, const std::vector<T> &data,
+    const std::string &mode = "w", bool compress_data = false)
 {
   std::vector<size_t> shape;
   shape.push_back(data.size());
-  npz_save(zipname, fname, &data[0], shape, mode);
+  npz_save(zipname, fname, &data[0], shape, mode, compress_data);
 }
 
 template<typename T> std::vector<char> create_npy_header(const std::vector<size_t> &shape)

@@ -140,6 +140,26 @@ struct AutoCloser
     }
   }
 };
+
+// https://github.com/francescopace/cnpy/blob/4170b94634e5ff5b6925708f450480a9601627a9/cnpy.cpp#L191-L207
+// Helper function to parse ZIP64 extended info from extra field
+void parse_zip64_sizes(const std::vector<char> &extra_field, uint32_t &compr_bytes, uint32_t &uncompr_bytes)
+{
+  if (extra_field.size() >= 4 && (compr_bytes == 0xFFFFFFFF || uncompr_bytes == 0xFFFFFFFF)) {
+    uint16_t extra_id = *reinterpret_cast<const uint16_t *>(&extra_field[0]);
+    uint16_t extra_size = *reinterpret_cast<const uint16_t *>(&extra_field[2]);
+    if (extra_id == 0x0001 && extra_size >= 16) { // ZIP64 extended info
+      size_t offset = 4;
+      if (uncompr_bytes == 0xFFFFFFFF) {
+        uncompr_bytes = static_cast<uint32_t>(*reinterpret_cast<const uint64_t *>(&extra_field[offset]));
+        offset += 8;
+      }
+      if (compr_bytes == 0xFFFFFFFF) {
+        compr_bytes = static_cast<uint32_t>(*reinterpret_cast<const uint64_t *>(&extra_field[offset]));
+      }
+    }
+  }
+}
 } // anonymous namespace
 
 char visp::cnpy::BigEndianTest()
@@ -370,7 +390,7 @@ visp::cnpy::NpyArray load_the_npz_array(FILE *fp, uint32_t compr_bytes, uint32_t
   d_stream.next_out = &buffer_uncompr[0];
 
   err = inflate(&d_stream, Z_FINISH);
-  if (err != Z_OK) {
+  if (err != Z_STREAM_END && err != Z_OK) {
     std::ostringstream oss;
     oss << "load_the_npz_array: zlib inflate failed ; err=" << err;
     throw std::runtime_error(oss.str());
@@ -405,6 +425,40 @@ visp::cnpy::NpyArray load_the_npz_array(FILE *fp, uint32_t compr_bytes, uint32_t
 #endif
 
   return array;
+}
+
+// https://github.com/francescopace/cnpy/blob/4170b94634e5ff5b6925708f450480a9601627a9/cnpy.h#L187-L214
+void visp::cnpy::compressData(size_t nbytes_uncompressed, std::vector<uint8_t> &uncompressed,
+  std::vector<uint8_t> &buffer_compressed, size_t &nbytes_on_disk, FILE *fp)
+{
+  // Compress using zlib deflate (raw deflate, no zlib/gzip header)
+  uLongf max_compressed_size = compressBound(nbytes_uncompressed);
+  buffer_compressed.resize(max_compressed_size);
+
+  z_stream strm;
+  strm.zalloc = Z_NULL;
+  strm.zfree = Z_NULL;
+  strm.opaque = Z_NULL;
+  int ret = deflateInit2(&strm, Z_DEFAULT_COMPRESSION, Z_DEFLATED, -MAX_WBITS, 8, Z_DEFAULT_STRATEGY);
+  if (ret != Z_OK) {
+    fclose(fp);
+    throw std::runtime_error("compressData(): deflateInit2 failed");
+  }
+
+  strm.avail_in = nbytes_uncompressed;
+  strm.next_in = &uncompressed[0];
+  strm.avail_out = max_compressed_size;
+  strm.next_out = &buffer_compressed[0];
+
+  ret = deflate(&strm, Z_FINISH);
+  if (ret != Z_STREAM_END) {
+    deflateEnd(&strm);
+    fclose(fp);
+    throw std::runtime_error("compressData(): deflate failed");
+  }
+
+  nbytes_on_disk = strm.total_out;
+  deflateEnd(&strm);
 }
 
 /*!
@@ -473,9 +527,10 @@ visp::cnpy::npz_t visp::cnpy::npz_load(const std::string &fname)
 
       //read in the extra field
       uint16_t extra_field_len = swap16bits_if(*(uint16_t *)&local_header[index_28], !same_endianness);
+      std::vector<char> extra_field(extra_field_len);
       if (extra_field_len > 0) {
         std::vector<char> buff(extra_field_len);
-        size_t efield_res = fread(&buff[0], sizeof(char), extra_field_len, closer.fp);
+        size_t efield_res = fread(&extra_field[0], sizeof(char), extra_field_len, closer.fp);
         if (efield_res != extra_field_len) {
           throw std::runtime_error("npz_load: failed fread 3");
         }
@@ -484,6 +539,9 @@ visp::cnpy::npz_t visp::cnpy::npz_load(const std::string &fname)
       uint16_t compr_method = swap16bits_if(*reinterpret_cast<uint16_t *>(&local_header[0] + val_8), !same_endianness);
       uint32_t compr_bytes = swap32bits_if(*reinterpret_cast<uint32_t *>(&local_header[0] + val_18), !same_endianness);
       uint32_t uncompr_bytes = swap32bits_if(*reinterpret_cast<uint32_t *>(&local_header[0] + val_22), !same_endianness);
+
+      // ZIP64 support: if sizes are 0xFFFFFFFF, read from extra field
+      parse_zip64_sizes(extra_field, compr_bytes, uncompr_bytes);
 
       if (compr_method == 0) {
         arrays[varname] = load_the_npy_file(closer.fp);
@@ -563,18 +621,27 @@ visp::cnpy::NpyArray visp::cnpy::npz_load(const std::string &fname, const std::s
       uint16_t extra_field_len = swap16bits_if(*(uint16_t *)&local_header[index_28], !same_endianness);
       fseek(closer.fp, extra_field_len, SEEK_CUR); //skip past the extra field
 
+      std::vector<char> extra_field(extra_field_len);
+      if (extra_field_len > 0) {
+        size_t efield_res = fread(&extra_field[0], sizeof(char), extra_field_len, closer.fp);
+        if (efield_res != extra_field_len)
+          throw std::runtime_error("npz_load 2: failed fread");
+      }
+
       uint16_t compr_method = swap16bits_if(*reinterpret_cast<uint16_t *>(&local_header[0] + val_8), !same_endianness);
       uint32_t compr_bytes = swap32bits_if(*reinterpret_cast<uint32_t *>(&local_header[0] + val_18), !same_endianness);
       uint32_t uncompr_bytes = swap32bits_if(*reinterpret_cast<uint32_t *>(&local_header[0] + val_22), !same_endianness);
+
+      // ZIP64 support: if sizes are 0xFFFFFFFF, read from extra field
+      parse_zip64_sizes(extra_field, compr_bytes, uncompr_bytes);
 
       if (vname == varname) {
         NpyArray array = (compr_method == 0) ? load_the_npy_file(closer.fp) : load_the_npz_array(closer.fp, compr_bytes, uncompr_bytes);
         return array;
       }
       else {
-        //skip past the data
-        uint32_t size = swap32bits_if(*(uint32_t *)&local_header[22], !same_endianness);
-        fseek(closer.fp, size, SEEK_CUR);
+        //skip past the data (use compr_bytes for compressed data)
+        fseek(closer.fp, compr_bytes, SEEK_CUR);
       }
     }
   }
@@ -755,7 +822,8 @@ std::vector<char> utf8_to_utf32_vec_pad(const std::string &utf8, const std::size
 
   \sa To see how to use it, you may have a look at \ref tutorial-npz
  */
-void visp::cnpy::npz_save(const std::string &zipname, std::string fname, const std::vector<std::string> &data_vec, const std::vector<size_t> &shape, const std::string &mode)
+void visp::cnpy::npz_save_str(const std::string &zipname, std::string fname, const std::vector<std::string> &data_vec,
+    const std::vector<size_t> &shape, const std::string &mode, bool compress_data)
 {
   if (data_vec.empty()) {
     vpException(vpException::badValue, "Input string data is empty.");
@@ -812,12 +880,34 @@ void visp::cnpy::npz_save(const std::string &zipname, std::string fname, const s
 
   // https://github.com/rogersce/cnpy/pull/58/files
   size_t nels = data_str_utf32_LE.size();
-  size_t nbytes = nels*sizeof(char) + npy_header.size();
+  size_t nbytes_uncompressed = nels*sizeof(char) + npy_header.size();
 
-  //get the CRC of the data to be added
-  uint32_t crc = vp_mz_crc32(0L, (uint8_t *)&npy_header[0], npy_header.size());
-  if (nels > 0) {
-    crc = vp_mz_crc32(crc, (uint8_t *)&data_str_utf32_LE[0], nels*sizeof(uint8_t));
+  // Prepare data and compression parameters
+  std::vector<uint8_t> buffer_compressed;
+  size_t nbytes_on_disk;
+  uint16_t compression_method;
+  uint32_t crc;
+
+  if (compress_data && nels > 0) {
+    // Create uncompressed buffer (header + data)
+    std::vector<uint8_t> uncompressed(nbytes_uncompressed);
+    memcpy(&uncompressed[0], &npy_header[0], npy_header.size());
+    memcpy(&uncompressed[npy_header.size()], &data_str_utf32_LE[0], nels*sizeof(char));
+
+    // Get CRC of uncompressed data
+    crc = vp_mz_crc32(0L, &uncompressed[0], nbytes_uncompressed);
+
+    compressData(nbytes_uncompressed, uncompressed, buffer_compressed, nbytes_on_disk, fp);
+    compression_method = 8; // deflate
+  }
+  else {
+    // No compression - CRC computed in two parts
+    crc = vp_mz_crc32(0L, (uint8_t *)&npy_header[0], npy_header.size());
+    if (nels > 0) {
+      crc = vp_mz_crc32(crc, (uint8_t *)&data_str_utf32_LE[0], nels*sizeof(uint8_t));
+    }
+    nbytes_on_disk = nbytes_uncompressed;
+    compression_method = 0; // store
   }
 
   //build the local header
@@ -827,24 +917,24 @@ void visp::cnpy::npz_save(const std::string &zipname, std::string fname, const s
   local_header += vpEndian::swap16bits(static_cast<uint16_t>(0x0403)); //second part of sig
   local_header += vpEndian::swap16bits(static_cast<uint16_t>(20)); //min version to extract
   local_header += vpEndian::swap16bits(static_cast<uint16_t>(0)); //general purpose bit flag
-  local_header += vpEndian::swap16bits(static_cast<uint16_t>(0)); //compression method
+  local_header += vpEndian::swap16bits(static_cast<uint16_t>(compression_method)); //compression method
   local_header += vpEndian::swap16bits(static_cast<uint16_t>(0)); //file last mod time
   local_header += vpEndian::swap16bits(static_cast<uint16_t>(0));     //file last mod date
   local_header += vpEndian::swap32bits(static_cast<uint32_t>(crc)); //crc
-  local_header += vpEndian::swap32bits(static_cast<uint32_t>(nbytes)); //compressed size
-  local_header += vpEndian::swap32bits(static_cast<uint32_t>(nbytes)); //uncompressed size
+  local_header += vpEndian::swap32bits(static_cast<uint32_t>(nbytes_on_disk)); //compressed size
+  local_header += vpEndian::swap32bits(static_cast<uint32_t>(nbytes_uncompressed)); //uncompressed size
   local_header += vpEndian::swap16bits(static_cast<uint16_t>(fname.size())); //fname length
   local_header += vpEndian::swap16bits(static_cast<uint16_t>(0)); //extra field length
 #else
   local_header += static_cast<uint16_t>(0x0403); //second part of sig
   local_header += static_cast<uint16_t>(20); //min version to extract
   local_header += static_cast<uint16_t>(0); //general purpose bit flag
-  local_header += static_cast<uint16_t>(0); //compression method
+  local_header += static_cast<uint16_t>(compression_method); //compression method
   local_header += static_cast<uint16_t>(0); //file last mod time
   local_header += static_cast<uint16_t>(0);     //file last mod date
   local_header += static_cast<uint32_t>(crc); //crc
-  local_header += static_cast<uint32_t>(nbytes); //compressed size
-  local_header += static_cast<uint32_t>(nbytes); //uncompressed size
+  local_header += static_cast<uint32_t>(nbytes_on_disk); //compressed size
+  local_header += static_cast<uint32_t>(nbytes_uncompressed); //uncompressed size
   local_header += static_cast<uint16_t>(fname.size()); //fname length
   local_header += static_cast<uint16_t>(0); //extra field length
 #endif
@@ -883,7 +973,7 @@ void visp::cnpy::npz_save(const std::string &zipname, std::string fname, const s
   footer += vpEndian::swap16bits(static_cast<uint16_t>(nrecs+1)); //number of records on this disk
   footer += vpEndian::swap16bits(static_cast<uint16_t>(nrecs+1)); //total number of records
   footer += vpEndian::swap32bits(static_cast<uint32_t>(global_header.size())); //nbytes of global headers
-  footer += vpEndian::swap32bits(static_cast<uint32_t>(global_header_offset + nbytes + local_header.size())); //offset of start of global headers, since global header now starts after newly written array
+  footer += vpEndian::swap32bits(static_cast<uint32_t>(global_header_offset + nbytes_on_disk + local_header.size())); //offset of start of global headers, since global header now starts after newly written array
 #else
   footer += static_cast<uint16_t>(0x0605); //second part of sig
   footer += static_cast<uint16_t>(0); //number of this disk
@@ -891,14 +981,19 @@ void visp::cnpy::npz_save(const std::string &zipname, std::string fname, const s
   footer += static_cast<uint16_t>(nrecs+1); //number of records on this disk
   footer += static_cast<uint16_t>(nrecs+1); //total number of records
   footer += static_cast<uint32_t>(global_header.size()); //nbytes of global headers
-  footer += static_cast<uint32_t>(global_header_offset + nbytes + local_header.size()); //offset of start of global headers, since global header now starts after newly written array
+  footer += static_cast<uint32_t>(global_header_offset + nbytes_on_disk + local_header.size()); //offset of start of global headers, since global header now starts after newly written array
 #endif
   footer += static_cast<uint16_t>(0); //zip file comment length
 
   //write everything
   fwrite(&local_header[0], sizeof(char), local_header.size(), fp);
-  fwrite(&npy_header[0], sizeof(char), npy_header.size(), fp);
-  fwrite(&data_str_utf32_LE[0], sizeof(char), nels, fp);
+  if (compress_data) {
+    fwrite(&buffer_compressed[0], sizeof(char), nbytes_on_disk, fp);
+  }
+  else {
+    fwrite(&npy_header[0], sizeof(char), npy_header.size(), fp);
+    fwrite(&data_str_utf32_LE[0], sizeof(char), nels, fp);
+  }
   fwrite(&global_header[0], sizeof(char), global_header.size(), fp);
   fwrite(&footer[0], sizeof(char), footer.size(), fp);
   fclose(fp);
@@ -916,12 +1011,13 @@ void visp::cnpy::npz_save(const std::string &zipname, std::string fname, const s
 
   \sa To see how to use it, you may have a look at \ref tutorial-npz
  */
-void visp::cnpy::npz_save(const std::string &zipname, const std::string &fname, const std::string &data_str, const std::string &mode)
+void visp::cnpy::npz_save_str(const std::string &zipname, const std::string &fname, const std::string &data_str,
+  const std::string &mode, bool compress_data)
 {
   std::vector<std::string> data_vec;
   data_vec.push_back(data_str);
   std::vector<size_t> shape { 1 };
-  npz_save(zipname, fname, data_vec, shape, mode);
+  npz_save_str(zipname, fname, data_vec, shape, mode, compress_data);
 }
 
 #endif
