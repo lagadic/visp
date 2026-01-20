@@ -46,7 +46,7 @@ def get_xcode_version():
 
 def get_xcode_setting(var, projectdir):
     ret = check_output(["xcodebuild", "-showBuildSettings"], cwd = projectdir).decode('utf-8')
-    m = re.search("\s" + var + " = (.*)", ret)
+    m = re.search(r"\s" + var + r" = (.*)", ret)
     if m:
         return m.group(1)
     else:

@@ -3,119 +3,230 @@
 \page tutorial-install-iOS Tutorial: Installation from source for iOS devices
 \tableofcontents
 
-In this tutorial you will learn how to build ViSP framework from source on OSX in order to use it for iOS developments. These steps have been tested on macOS Big Sur 11.6.2, with CMake 3.22.1, Xcode 13.2.1 and Python 2.7.16 or Python 3.9.9.
+In this tutorial you will learn how to build ViSP framework from source on OSX in order to use it for iOS developments.
+These steps have been tested on macOS Sequoia 15.7.3 and Tahoe 26.2, with CMake 4.2.1, Xcode 26.2 and Python 3.14.2.
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 
-\section install_iOS_required Install required software
+\section install_iOS_required 1. Install required softwares
 
-- CMake gui for OSX that could be download at : http://www.cmake.org or installed using `brew install cmake`
+- CMake gui for OSX that could be download at http://www.cmake.org or installed using
+\code{.sh}
+$ brew install cmake
+\endcode
+- Python 2.7 or Python 3 installed using
+\code{.sh}
+$ brew install python
+\endcode
 - Xcode
-- Python 2.7 or Python 3 installed using `brew install python`
+- iOS component part of Xcode installation. To check if you have iOS component installed,
+  launch Xcode and go to `Xcode > Preferences... > Components` tab. If not installed, install the
+  latest iOS simulator available.
+\image html img-xcode-ios-component.jpg
 
-\section install_iOS_opencv Getting OpenCV framework (optional)
+\section install_iOS_3rdparties 2. Install optional third-parties
+\subsection install_iOS_opencv 2.1. OpenCV framework for iOS
+\subsubsection install_iOS_opencv_prebuilt 2.1.1. Getting prebuilt OpenCV framework for iOS
 
-We suggest to follow these steps in order to install OpenCV framework in such a way that the resulting ViSP framework builds with OpenCV as 3rd party. This could be useful for users who want to use ViSP and OpenCV together. It will also allow to exploit keypoints throw ViSP classes (vpKltOpencv, vpKeyPoint) or the model-based tracker in his hybrid version (vpMbKltTracker). If you are not interested in capabilities leveraged by using OpenCV as 3rd party, just skip this section.
+We suggest to follow these steps in order to install OpenCV framework in such a way that the resulting ViSP framework
+builds with OpenCV as 3rd party. This could be useful for users who want to use ViSP and OpenCV together.
+It will also allow to exploit keypoints throw ViSP classes (vpKltOpencv, vpKeyPoint) or the model-based tracker in
+his hybrid version (vpMbKltTracker). If you are not interested in capabilities leveraged by using OpenCV as 3rd party,
+just skip this section.
 
-- Download the latest <a href="https://opencv.org/releases">OpenCV for iOS</a> like `opencv-4.5.5-ios-framework.zip`
-- Unzip the archive in a directory denoted `<framework_dir>/ios`. If `<framework_dir>` is for example the following folder `$HOME/framework` just do the following:
-\verbatim
+- Download the latest <a href="https://opencv.org/releases">OpenCV for iOS</a> like `opencv-4.12.0-ios-framework.zip`
+- Unzip the archive in a directory denoted `<framework_dir>/ios`. If `<framework_dir>` is for example the following
+  folder `$HOME/framework` just do the following:
+\code{.sh}
 $ mkdir -p $HOME/framework/ios
-\endverbatim
+\endcode
 If the download was performed with Safari, do the following
-\verbatim
+\code{.sh}
 $ mv $HOME/Downloads/opencv2.framework $HOME/framework/ios/
-\endverbatim
+\endcode
 or if the download was either performed with Firefox, do the following
-\verbatim
-$ unzip $HOME/Downloads/opencv-4.5.5-ios-framework.zip -d $HOME/framework/ios
-\endverbatim
-- Add `opencv2.framework` to iPhoneOS existing frameworks
-\verbatim
-$ cd `xcrun --sdk iphoneos --show-sdk-platform-path`/Developer/Library/Frameworks
-$ sudo ln -s ~/framework/ios/opencv2.framework
-\endverbatim
-- Add `opencv2.framework` to iPhoneSimulator existing frameworks
-\verbatim
-$ cd `xcrun --sdk iphonesimulator --show-sdk-platform-path`/Developer/Library/Frameworks
-$ sudo ln -s ~/framework/ios/opencv2.framework
-\endverbatim
+\code{.sh}
+$ unzip $HOME/Downloads/opencv-4.12.0-ios-framework.zip -d $HOME/framework/ios
+\endcode
+- We suppose now that `opencv2.framework` is available in `$HOME/framework/ios` folder.
+\code{.sh}
+$ ls $HOME/framework/ios
+opencv2.framework
+\endcode
+- You can now use this OpenCV framework to build ViSP with OpenCV as 3rd party.
 
-\note If you encounter an error with `xcrun`, check \ref install_iOS_know_issue_xcrun
+\subsubsection install_iOS_opencv_build 2.1.2. Building OpenCV framework for iOS
 
-\section install_iOS_get_source Getting ViSP source code
+If you want rather build OpenCV framework for iOS from source, you can follow the instructions:
 
-\note The following steps are only working with ViSP 3.0.1 or higher.
+- Get OpenCV source code and build ios framework
+\code{.sh}
+$ cd $HOME/framework
+$ git clone https://github.com/opencv/opencv.git
+$ python3 opencv/platforms/apple/build_xcframework.py \
+    --iphoneos_archs arm64 \
+    --iphonesimulator_archs arm64,x86_64 \
+    --iphoneos_deployment_target 14.0 \
+    --build_only_specified_archs True \
+    --out ios
+\endcode
+- If the build was successful, you should have `opencv2.xcframework` available in `$HOME/framework/ios` folder.
+\code{.sh}
+$ ls $HOME/framework/ios
+iphoneos		iphonesimulator		opencv2.xcframework
+\endcode
+and `opencv2.framework` available in both `iphoneos` and `iphonesimulator` folders:
+\code{.sh}
+$ ls $HOME/framework/ios/iphoneos
+opencv2.framework
+$ ls $HOME/framework/ios/iphonesimulator
+opencv2.framework
+\endcode
+- You can now use these OpenCV frameworks to build ViSP with OpenCV as 3rd party.
 
-Here the goal is to get ViSP source code in a directory denoted `<framework_dir>`. If `<framework_dir>` is for example the following folder `$HOME/framework` there are different ways to get ViSP:
+\section install_iOS_visp 3. Building ViSP framework for iOS
+\subsection install_iOS_get_source 3.1. Getting ViSP source code
 
-- You can get the cutting-edge ViSP from <a href="https://github.com/lagadic/visp">GitHub repository</a> using the following command
-\verbatim
+Here the goal is to get ViSP source code in a directory denoted `<framework_dir>`. If `<framework_dir>`
+is for example the following folder `$HOME/framework` there are different ways to get ViSP:
+
+- You can get the cutting-edge ViSP from <a href="https://github.com/lagadic/visp">GitHub repository</a> using
+  the following command
+\code{.sh}
 $ cd $HOME/framework
 $ git clone https://github.com/lagadic/visp.git
-\endverbatim
+\endcode
 
-- You can also download a <a href="https://visp.inria.fr/download#snapshot">daily snapshot</a>. Once downloaded, uncompress the file using
-\verbatim
+- You can also download a <a href="https://visp.inria.fr/download#snapshot">daily snapshot</a>.
+  Once downloaded, uncompress the file using
+\code{.sh}
 $ tar xvzf visp-snapshot-yyyy-mm-dd.tar.gz -C $HOME/framework
-\endverbatim
+\endcode
 
-- Or you can download the <a href="https://visp.inria.fr/download">latest release</a> as a zip or a tarball. Once downloaded, uncompress the file using either
-\verbatim
+- Or you can download the <a href="https://visp.inria.fr/download">latest release</a> as a zip or a tarball.
+  Once downloaded, uncompress the file using either
+\code{.sh}
 $ tar xvzf visp-x.y.z.tar.gz -C $HOME/framework
-\endverbatim
+\endcode
 or
-\verbatim
+\code{.sh}
 $ unzip visp-x.y.z.zip -d $HOME/framework
-\endverbatim
+\endcode
 
 - We suppose now that ViSP source is in a directory denoted `<framework_dir>` besides ios folder.
-\verbatim
+\code{.sh}
 $ ls $HOME/framework
 ios  visp
-\endverbatim
+\endcode
 
-\section install_iOS_build Building ViSP framework
+\subsection install_iOS_build 3.2. Building ViSP framework for iOS devices
+\subsubsection install_iOS_build_without_opencv 3.2.1. Without OpenCV as 3rd party
 
-- Build ViSP framework
-\verbatim
+- Build ViSP framework for iOS devices using the following command:
+\code{.sh}
 $ cd $HOME/framework
-$ python3 visp/platforms/ios/build_framework.py ios
-\endverbatim
+$ python3 visp/platforms/apple/build_xcframework.py \
+    --iphoneos_archs arm64 \
+    --iphonesimulator_archs arm64,x86_64 \
+    --iphoneos_deployment_target 14.0 \
+    --build_only_specified_archs True \
+    --out ios
+\endcode
+  Below is a breakdown of the above commands.
+  - `python3 visp/platforms/apple/build_xcframework.py`: Runs the ViSP Python script that produces the final framework.
+  - `--iphoneos_archs arm64`: Specifies the target architecture for iOS. All iPhone and iPad devices come
+    with 64-bit ARM chipsets.
+  - `--iphonesimulator_archs arm64,x86_64`: Specifies the target architecture of the iOS simulator.
+    M1 Macs have 64-bit ARM simulators, while Intel Macs have 64-bit x86 simulators.
+  - `--iphoneos_deployment_target 14.0`: Specifies the minimum supported iOS version. In our case, it’s iOS 14.0.
+  - `--out ios`: Specifies the output directory where the results of the scripts will be stored. In our case,
+    the directory is named “build_all”. Feel free to use a name of your choice.
+  - `--build_only_specified_archs True`: Instructs the script to build only the specified architectures and ignore any
+    other configurations.
+\note You have to know that `arm64` works on all 64-bit iPhones (since iPhone 5s, 2013) and that `arm64e` limits
+compatibility to recent devices only.
 
-- Once build, you will have `$HOME/framework/ios/visp3.framework` that could be added to a Xcode project for iOS devices. If you follow \ref install_iOS_opencv you have also `$HOME/framework/ios/opencv2.framework` that should also be added to the Xcode project.
-\verbatim
+- Once build, you will have `$HOME/framework/ios/visp3.xcframework` that could be added to a Xcode project for iOS
+  devices. You can check the content of `ios` folder:
+\code{.sh}
 $ ls $HOME/framework/ios
-build			opencv2.framework	visp3.framework
-\endverbatim
+iphoneos		iphonesimulator		visp3.xcframework
+\endcode
+\note ViSP framework is build with capabilities that enables the usage of the following 3rd parties:
+XML, threads, apriltag, lapack.
 
-- There is also the possibility to build ViSP framework specifying the deployment target and the arch
-\verbatim
+\subsubsection install_iOS_build_with_opencv 3.2.1. With OpenCV as 3rd party
+- If you want to build ViSP framework for iOS devices with OpenCV as 3rd party, you have to provide the path
+  to the OpenCV framework(s) using the `--cmake_framework_path` option as follows:
+\code{.sh}
 $ cd $HOME/framework
-$ python3 visp/platforms/ios/build_framework.py ios --iphoneos_deployment_target 11.0 --iphoneos_archs arm64 --build_only_specified_archs True
-\endverbatim
+$ python3 visp/platforms/apple/build_xcframework.py \
+    --iphoneos_archs arm64 \
+    --iphonesimulator_archs arm64,x86_64 \
+    --iphoneos_deployment_target 14.0 \
+    --build_only_specified_archs True \
+    --cmake_framework_path $HOME/framework/ios \
+    --out ios
+\endcode
+  Where `$HOME/framework/ios` is the folder that contains `opencv2.framework` (if you got the prebuilt framework as
+  described in section \ref install_iOS_opencv_prebuilt)
+  or `opencv2.xcframework` (if you built OpenCV from source as described in section \ref install_iOS_opencv_build).
+- Once build, you will have `$HOME/framework/ios/visp3.xcframework` that could be added to a Xcode project for iOS
+  devices. You can check the content of `ios` folder:
+\code{.sh}
+$ ls $HOME/framework/ios
+iphoneos        iphonesimulator     opencv2.framework     visp3.xcframework
+\endcode
+\note ViSP framework is build with capabilities that enables the usage of the following 3rd parties:
+XML, threads, apriltag, lapack, OpenCV.
 
-\note ViSP framework is build with capabilities that enables the usage of the following 3rd parties: XML, OpenCV, pthread, apriltag, lapack.
-
-\section install_iOS_know_issue Known issues
-\subsection install_iOS_know_issue_xcrun xcrun: error: SDK cannot be located
+\section install_iOS_know_issue 4. Known issues
+\subsection install_iOS_know_issue_xcrun 4.1. xcrun: error: SDK cannot be located
 
 If you encounter the following issue:
-\verbatim
+\code{.sh}
 $ cd `xcrun --sdk iphoneos --show-sdk-platform-path`/Developer/Library/Frameworks
 xcrun: error: SDK "iphoneos" cannot be located
 xcrun: error: SDK "iphoneos" cannot be located
 xcrun: error: unable to lookup item 'PlatformPath' in SDK 'iphoneos'
 -bash: cd: /Developer/Library/Frameworks: No such file or directory
-\endverbatim
+\endcode
 It means that the Xcode command line tools are not installed.
 
-Launch `Xcode` and go to Preferences, then Locations, and make sure the command line tools is set to the version of Xcode you’re using.
+Launch `Xcode` and go to Preferences, then Locations, and make sure the command line tools is set to the version of
+Xcode you’re using.
 
 \image html img-xcode-cmdline-tools.jpg
 
-\section install_iOS_next Next tutorial
+\subsection install_iOS_know_issue_xcodebuild 4.2. error: tool 'xcodebuild' requires Xcode
 
-You are now ready to see the next \ref tutorial-getting-started-iOS that shows how to use ViSP as a 3rd party to build your own project for iOS devices.
+If you encounter the following issue:
+\code{.sh}
+% xcodebuild -version
+xcode-select: error: tool 'xcodebuild' requires Xcode, but active developer directory '/Library/Developer/CommandLineTools' is a command line tools instance
+\endcode
+It means that the Xcode command line tools are not properly set.
+
+First check where `xcode-select` is pointing:
+\code{.sh}
+$ xcode-select --print-path
+\endcode
+
+Then run the following commands to set Xcode as the default developer directory:
+\code{.sh}
+$ sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
+\endcode
+
+Finally check that `xcodebuild` is now working:
+\code{.sh}
+% xcodebuild -version
+Xcode 26.2
+Build version 17C52
+\endcode
+
+\section install_iOS_next 5. Next tutorial
+
+You are now ready to see the next \ref tutorial-getting-started-iOS that shows how to use ViSP as a 3rd party to
+build your own project for iOS devices.
 
 */

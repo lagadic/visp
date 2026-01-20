@@ -92,7 +92,7 @@ public:
 
   static std::string vpWecoRulesAlarmToString(const vpWecoRulesAlarm &alarm);
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L))) // Check if cxx17 or higher
   VP_ATTRIBUTE_NO_DESTROY static inline const std::vector<bool> CONST_ALL_WECO_ACTIVATED = std::vector<bool>(COUNT_WECO -1, true);
 #else
   VP_ATTRIBUTE_NO_DESTROY static const std::vector<bool> CONST_ALL_WECO_ACTIVATED;

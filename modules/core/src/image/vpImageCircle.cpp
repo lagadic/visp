@@ -1208,4 +1208,17 @@ float vpImageCircle::get_n11() const
 {
   return 0.;
 }
+
+bool operator==(const vpImageCircle &a, const vpImageCircle &b)
+{
+  bool sameCenter = (a.getCenter() == b.getCenter());
+  bool sameRadius = std::abs(a.getRadius() - b.getRadius()) < 1e-6;
+
+  return (sameCenter && sameRadius);
+}
+
+bool operator!=(const vpImageCircle &a, const vpImageCircle &b)
+{
+  return !(a == b);
+}
 END_VISP_NAMESPACE
