@@ -157,7 +157,7 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
       THEN("Calling the parser with only the JSON file works")
       {
         const int argc = 3;
-        bool ret;
+        bool ret = false;
         const char *argv[] = {
           "program",
           "--config",
@@ -361,7 +361,7 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
       }
       THEN("Calling the parser with --help argument works")
       {
-        bool ret;
+        bool ret = true;
         const int argc = 2;
         const char *argv[] = {
           "ProgramString",
@@ -373,7 +373,7 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
       }
       THEN("Calling the parser with -h argument works")
       {
-        bool ret;
+        bool ret = true;
         const int argc = 2;
         const char *argv[] = {
           "ProgramString",
