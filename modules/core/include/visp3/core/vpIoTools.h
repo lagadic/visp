@@ -62,13 +62,17 @@ namespace visp
 {
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 // https://github.com/BinomialLLC/basis_universal/blob/ad9386a4a1cf2a248f7bbd45f543a7448db15267/encoder/basisu_miniz.h#L665
-static inline unsigned long vp_mz_crc32(unsigned long crc, const unsigned char *ptr, size_t buf_len)
+//
+// stb crc32 implementation:
+// https://github.com/nothings/stb/blob/f1c79c02822848a9bed4315b12c8c8f3761e1296/stb_image_write.h#L1024-L1071
+static inline uint32_t vp_mz_crc32(uint32_t crc, const unsigned char *ptr, size_t buf_len)
 {
-  static const unsigned int s_crc32[16] = { 0, 0x1db71064, 0x3b6e20c8, 0x26d930ac, 0x76dc4190, 0x6b6b51f4, 0x4db26158, 0x5005713c,
+  static const uint32_t s_crc32[16] = { 0, 0x1db71064, 0x3b6e20c8, 0x26d930ac, 0x76dc4190, 0x6b6b51f4, 0x4db26158, 0x5005713c,
     0xedb88320, 0xf00f9344, 0xd6d6a3e8, 0xcb61b38c, 0x9b64c2b0, 0x86d3d2d4, 0xa00ae278, 0xbdbdf21c };
-  unsigned int crcu32 = static_cast<unsigned int>(crc);
-  if (!ptr) return 0;
-  crcu32 = ~crcu32;
+  if (!ptr) {
+    return 0;
+  }
+  uint32_t crcu32 = ~crc;
   while (buf_len--) {
     unsigned char b = *ptr++;
     crcu32 = (crcu32 >> 4) ^ s_crc32[(crcu32 & 0xF) ^ (b & 0xF)];
@@ -346,14 +350,14 @@ template<typename T> void npz_save(const std::string &zipname, std::string fname
     memcpy(&uncompressed[npy_header.size()], data, nels*sizeof(T));
 
     // Get CRC of uncompressed data
-    crc = vp_mz_crc32(0L, &uncompressed[0], nbytes_uncompressed);
+    crc = vp_mz_crc32(0, &uncompressed[0], nbytes_uncompressed);
 
     compressData(nbytes_uncompressed, uncompressed, buffer_compressed, nbytes_on_disk, fp);
     compression_method = 8; // deflate
   }
   else {
     // No compression - CRC computed in two parts
-    crc = vp_mz_crc32(0L, (uint8_t *)&npy_header[0], npy_header.size());
+    crc = vp_mz_crc32(0, (uint8_t *)&npy_header[0], npy_header.size());
     if (nels > 0) {
       crc = vp_mz_crc32(crc, (uint8_t *)data, nels*sizeof(T));
     }

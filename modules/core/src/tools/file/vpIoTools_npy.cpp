@@ -895,14 +895,14 @@ void visp::cnpy::npz_save_str(const std::string &zipname, std::string fname, con
     memcpy(&uncompressed[npy_header.size()], &data_str_utf32_LE[0], nels*sizeof(char));
 
     // Get CRC of uncompressed data
-    crc = vp_mz_crc32(0L, &uncompressed[0], nbytes_uncompressed);
+    crc = vp_mz_crc32(0, &uncompressed[0], nbytes_uncompressed);
 
     compressData(nbytes_uncompressed, uncompressed, buffer_compressed, nbytes_on_disk, fp);
     compression_method = 8; // deflate
   }
   else {
     // No compression - CRC computed in two parts
-    crc = vp_mz_crc32(0L, (uint8_t *)&npy_header[0], npy_header.size());
+    crc = vp_mz_crc32(0, (uint8_t *)&npy_header[0], npy_header.size());
     if (nels > 0) {
       crc = vp_mz_crc32(crc, (uint8_t *)&data_str_utf32_LE[0], nels*sizeof(uint8_t));
     }
