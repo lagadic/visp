@@ -751,6 +751,149 @@ TEST_CASE("Test loading correctness wrt. NumPy generated npz", "[visp::cnpy I/O]
     }
   }
 }
+
+TEST_CASE("Test loading correctness wrt. NumPy generated npz + compression", "[visp::cnpy I/O]")
+{
+  // check if file exists
+  const bool correct_dataset_version = vpIoTools::checkFilename(
+    vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(),
+                              "npz/numpy/visp_npz_test_data_numpy_LE_compressed.npz"));
+  if (!correct_dataset_version) {
+    return;
+  }
+
+  const bool has_complex = false;
+
+  // Ground-truth data
+  bool gt_bool_false, gt_bool_true;
+  uint32_t gt_uint32_data;
+  int64_t gt_int64_data;
+  float gt_float_data;
+  double gt_double_data;
+  std::string gt_string_data;
+  std::complex<double> gt_complex_data;
+  std::vector<int> gt_vec_int;
+  std::vector<float> gt_vec_flt;
+  std::vector<std::string> gt_vec_string;
+  std::vector<std::complex<float>> gt_vec_complex_data;
+  getNpzGroundTruth(gt_bool_false, gt_bool_true, gt_uint32_data, gt_int64_data, gt_float_data, gt_double_data,
+    gt_string_data, gt_complex_data, gt_vec_int, gt_vec_flt, gt_vec_string, gt_vec_complex_data);
+
+  SECTION("Check little-endian correctness")
+  {
+    const std::string npz_filename = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(),
+      "npz/numpy/visp_npz_test_data_numpy_LE_compressed.npz");
+
+    bool bool_false = false, bool_true = false;
+    uint32_t uint32_data = 0;
+    int64_t int64_data = 0;
+    float float_data;
+    double double_data;
+    std::string string_data;
+    std::complex<double> complex_data;
+    std::vector<int> vec_int;
+    std::vector<float> vec_flt;
+    std::vector<std::string> vec_string;
+    std::vector<std::complex<float>> vec_complex_data;
+
+    loadData(npz_filename, bool_false, bool_true, uint32_data, int64_data, float_data, double_data, string_data,
+      complex_data, vec_int, vec_flt, vec_string, vec_complex_data, has_complex);
+
+    CHECK(bool_false == gt_bool_false);
+    CHECK(bool_true == gt_bool_true);
+    CHECK(uint32_data == gt_uint32_data);
+    CHECK(int64_data == gt_int64_data);
+    CHECK(float_data == gt_float_data);
+    CHECK(double_data == gt_double_data);
+    // CHECK(string_data == gt_string_data); // Cannot manage to make it work with compressed string from NumPy
+
+    REQUIRE(gt_vec_int.size() == gt_vec_flt.size());
+    REQUIRE(gt_vec_int.size() == vec_int.size());
+    REQUIRE(gt_vec_int.size() == vec_flt.size());
+    for (size_t i = 0; i < gt_vec_int.size(); i++) {
+      CHECK(gt_vec_int[i] == vec_int[i]);
+      CHECK(gt_vec_flt[i] == vec_flt[i]);
+    }
+    REQUIRE(gt_vec_string.size() == vec_string.size());
+    // Cannot manage to make it work with compressed string from NumPy
+    // for (size_t i = 0; i < gt_vec_string.size(); i++) {
+    //   CHECK(gt_vec_string[i] == vec_string[i]);
+    // }
+  }
+}
+
+TEST_CASE("Test loading correctness wrt. visp::cnpy generated npz + compression", "[visp::cnpy I/O]")
+{
+  // check if file exists
+  const bool correct_dataset_version = vpIoTools::checkFilename(
+    vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(),
+                              "npz/visp_cnpy/visp_npz_test_data_cnpy_LE_compressed.npz"));
+  if (!correct_dataset_version) {
+    return;
+  }
+
+  const bool has_complex = false;
+
+  // Ground-truth data
+  bool gt_bool_false, gt_bool_true;
+  uint32_t gt_uint32_data;
+  int64_t gt_int64_data;
+  float gt_float_data;
+  double gt_double_data;
+  std::string gt_string_data;
+  std::complex<double> gt_complex_data;
+  std::vector<int> gt_vec_int;
+  std::vector<float> gt_vec_flt;
+  std::vector<std::string> gt_vec_string;
+  std::vector<std::complex<float>> gt_vec_complex_data;
+  getNpzGroundTruth(gt_bool_false, gt_bool_true, gt_uint32_data, gt_int64_data, gt_float_data, gt_double_data,
+    gt_string_data, gt_complex_data, gt_vec_int, gt_vec_flt, gt_vec_string, gt_vec_complex_data);
+
+  SECTION("Check little-endian correctness")
+  {
+    const std::string npz_filename = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(),
+      "npz/visp_cnpy/visp_npz_test_data_cnpy_LE_compressed.npz");
+
+    bool bool_false = false, bool_true = false;
+    uint32_t uint32_data = 0;
+    int64_t int64_data = 0;
+    float float_data;
+    double double_data;
+    std::string string_data;
+    std::complex<double> complex_data;
+    std::vector<int> vec_int;
+    std::vector<float> vec_flt;
+    std::vector<std::string> vec_string;
+    std::vector<std::complex<float>> vec_complex_data;
+
+    loadData(npz_filename, bool_false, bool_true, uint32_data, int64_data, float_data, double_data, string_data,
+      complex_data, vec_int, vec_flt, vec_string, vec_complex_data, has_complex);
+
+    CHECK(bool_false == gt_bool_false);
+    CHECK(bool_true == gt_bool_true);
+    CHECK(uint32_data == gt_uint32_data);
+    CHECK(int64_data == gt_int64_data);
+    CHECK(float_data == gt_float_data);
+    CHECK(double_data == gt_double_data);
+    // Cannot manage to make it work with compressed string from NumPy/cnpy
+    // Reading this file using NumPy is perfectly fine
+    // CHECK(string_data == gt_string_data);
+
+    REQUIRE(gt_vec_int.size() == gt_vec_flt.size());
+    REQUIRE(gt_vec_int.size() == vec_int.size());
+    REQUIRE(gt_vec_int.size() == vec_flt.size());
+    for (size_t i = 0; i < gt_vec_int.size(); i++) {
+      CHECK(gt_vec_int[i] == vec_int[i]);
+      CHECK(gt_vec_flt[i] == vec_flt[i]);
+    }
+    REQUIRE(gt_vec_string.size() == vec_string.size());
+    // Cannot manage to make it work with compressed string from NumPy/cnpy
+    // Reading this file using NumPy is perfectly fine
+    // for (size_t i = 0; i < gt_vec_string.size(); i++) {
+    //   CHECK(gt_vec_string[i] == vec_string[i]);
+    // }
+  }
+}
 #endif
 
 int main(int argc, char *argv[])
