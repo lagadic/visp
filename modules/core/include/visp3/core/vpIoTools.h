@@ -62,9 +62,15 @@ namespace visp
 {
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 // https://github.com/BinomialLLC/basis_universal/blob/ad9386a4a1cf2a248f7bbd45f543a7448db15267/encoder/basisu_miniz.h#L665
+// Karl Malbrain's compact CRC-32. See: "A compact CCITT crc16 and crc32 C implementation that balances processor
+// cache usage against speed": http://www.geocities.com/malbrain/
+// https://www.geocities.ws/malbrain/crc_c.html
 //
+// Other code:
 // stb crc32 implementation:
 // https://github.com/nothings/stb/blob/f1c79c02822848a9bed4315b12c8c8f3761e1296/stb_image_write.h#L1024-L1071
+//
+// https://github.com/cesanta/mongoose-os/blob/3d8bf2c1445389a710158353bf23be943ca3034d/src/common/cs_crc32.c#L20-L41
 static inline uint32_t vp_mz_crc32(uint32_t crc, const unsigned char *ptr, size_t buf_len)
 {
   static const uint32_t s_crc32[16] = { 0, 0x1db71064, 0x3b6e20c8, 0x26d930ac, 0x76dc4190, 0x6b6b51f4, 0x4db26158, 0x5005713c,
