@@ -237,7 +237,7 @@ Its main objective is to compare the time performances and robustness against no
 The ratio of noise can be set using the Command Line Interface using the --noise option. For instance,
 
 \code
-$ ./tutorial-pf-curve-fitting-all --video data/color_image_0%03d.png --noise <ratio in the intervall [0.; 1.[>
+$ ./tutorial-pf-curve-fitting-all --video data/color_image_0%03d.png --noise <ratio in the interval [0.; 1.[>
 \endcode
 
 will add 50% of noisy pixels to the skeletonized image.

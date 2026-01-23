@@ -162,9 +162,10 @@ public:
    *
    * @param basis Basis matrix \f$ \mathbf{U}^\top \f$ a k x dim(I) matrix.
    * @param mean Mean image \f$ vec(\mathbf{\bar I}) \f$ represented as a vector.
-   * @param variance Explained variance vector for each of the k vectors.
+   * @param explainedVariance Explained variance vector for each of the k vectors.
    */
-  vpLuminancePCA(const std::shared_ptr<vpMatrix> &basis, const std::shared_ptr<vpColVector> &mean, const vpColVector &explainedVariance);
+  vpLuminancePCA(const std::shared_ptr<vpMatrix> &basis, const std::shared_ptr<vpColVector> &mean,
+                 const vpColVector &explainedVariance);
 
   /**
    * \brief Copy constructor: does not make a deep copy of the basis and mean
