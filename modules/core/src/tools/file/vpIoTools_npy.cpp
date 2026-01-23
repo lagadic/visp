@@ -429,7 +429,7 @@ visp::cnpy::NpyArray load_the_npz_array(FILE *fp, uint32_t compr_bytes, uint32_t
 
 // https://github.com/francescopace/cnpy/blob/4170b94634e5ff5b6925708f450480a9601627a9/cnpy.h#L187-L214
 void visp::cnpy::compressData(size_t nbytes_uncompressed, std::vector<uint8_t> &uncompressed,
-  std::vector<uint8_t> &buffer_compressed, size_t &nbytes_on_disk, FILE *fp)
+                              std::vector<uint8_t> &buffer_compressed, size_t &nbytes_on_disk, FILE *fp)
 {
   // Compress using zlib deflate (raw deflate, no zlib/gzip header)
   uLongf max_compressed_size = compressBound(nbytes_uncompressed);
@@ -817,13 +817,14 @@ std::vector<char> utf8_to_utf32_vec_pad(const std::string &utf8, const std::size
   \param[in] data_vec : Vector of std::string.
   \param[in] shape : Shape of the array, e.g. Nz x Ny x Nx.
   \param[in] mode : Writing mode, i.e. overwrite (w) or append (a) to the file.
+  \param[in] compress_data : If true, the data is compressed using the DEFLATE algorithm.
   \warning This function should also work on big-endian platform, without guarantee since it has not been tested extensively.
   \note Original library: <a href="https://github.com/rogersce/cnpy">cnpy</a> with MIT license.
 
   \sa To see how to use it, you may have a look at \ref tutorial-npz
  */
 void visp::cnpy::npz_save_str(const std::string &zipname, std::string fname, const std::vector<std::string> &data_vec,
-    const std::vector<size_t> &shape, const std::string &mode, bool compress_data)
+                              const std::vector<size_t> &shape, const std::string &mode, bool compress_data)
 {
   if (data_vec.empty()) {
     vpException(vpException::badValue, "Input string data is empty.");
@@ -1006,13 +1007,14 @@ void visp::cnpy::npz_save_str(const std::string &zipname, std::string fname, con
   \param[in] fname : Identifier for the corresponding array of data.
   \param[in] data_str : C++ std::string data.
   \param[in] mode : Writing mode, i.e. overwrite (w) or append (a) to the file.
+  \param[in] compress_data : If true, the data is compressed using the DEFLATE algorithm.
   \warning This function should also work on big-endian platform, without guarantee since it has not been tested extensively.
   \note Original library: <a href="https://github.com/rogersce/cnpy">cnpy</a> with MIT license.
 
   \sa To see how to use it, you may have a look at \ref tutorial-npz
  */
 void visp::cnpy::npz_save_str(const std::string &zipname, const std::string &fname, const std::string &data_str,
-  const std::string &mode, bool compress_data)
+                              const std::string &mode, bool compress_data)
 {
   std::vector<std::string> data_vec;
   data_vec.push_back(data_str);
