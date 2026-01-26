@@ -75,6 +75,7 @@ extern "C" {
 #endif
 
 #include <visp3/core/vpDisplay.h>
+#include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpPixelMeterConversion.h>
 #include <visp3/core/vpPoint.h>
 #include <visp3/detection/vpDetectorAprilTag.h>
@@ -217,7 +218,13 @@ public:
 
     if ((m_tagFamily != TAG_36ARTOOLKIT) && m_tf) {
       m_td = apriltag_detector_create();
-      int bits_corrected = (m_tagFamily == TAG_ARUCO_4x4_1000) ? 1 : 2;
+      int bits_corrected = 2;
+      if (m_tagFamily == TAG_ARUCO_4x4_50 ||
+        m_tagFamily == TAG_ARUCO_4x4_100 ||
+        m_tagFamily == TAG_ARUCO_4x4_250 ||
+        m_tagFamily == TAG_ARUCO_4x4_1000) {
+        bits_corrected = 1;
+      }
       apriltag_detector_add_family(m_td, m_tf, bits_corrected);
     }
 
@@ -1030,6 +1037,15 @@ public:
     return false;
   }
 
+  bool getDebugFlag(bool &debug) const
+  {
+    if (m_td) {
+      debug = m_td->debug;
+      return true;
+    }
+    return false;
+  }
+
   bool getNbThreads(int &nThreads) const
   {
     if (m_td) {
@@ -1165,6 +1181,268 @@ namespace
 const unsigned int def_tagThickness = 2;
 }
 #endif // DOXYGEN_SHOULD_SKIP_THIS
+
+std::string vpDetectorAprilTag::tagFamilyToString(const vpDetectorAprilTag::vpAprilTagFamily &type)
+{
+  std::string name;
+  switch (type) {
+  case vpDetectorAprilTag::TAG_36h11:
+    name = "36h11";
+    break;
+  case vpDetectorAprilTag::TAG_36h10:
+    name = "36h10";
+    break;
+  case vpDetectorAprilTag::TAG_36ARTOOLKIT:
+    name = "36artoolkit";
+    break;
+  case vpDetectorAprilTag::TAG_25h9:
+    name = "25h9";
+    break;
+  case vpDetectorAprilTag::TAG_25h7:
+    name = "25h7";
+    break;
+  case vpDetectorAprilTag::TAG_16h5:
+    name = "16h5";
+    break;
+  case vpDetectorAprilTag::TAG_CIRCLE21h7:
+    name = "circle21h7";
+    break;
+  case vpDetectorAprilTag::TAG_CIRCLE49h12:
+    name = "circle49h12";
+    break;
+  case vpDetectorAprilTag::TAG_CUSTOM48h12:
+    name = "custom48h12";
+    break;
+  case vpDetectorAprilTag::TAG_STANDARD41h12:
+    name = "standard41h12";
+    break;
+  case vpDetectorAprilTag::TAG_STANDARD52h13:
+    name = "standard52h13";
+    break;
+  case vpDetectorAprilTag::TAG_ARUCO_4x4_50:
+    name = "aruco_4x4_50";
+    break;
+  case vpDetectorAprilTag::TAG_ARUCO_4x4_100:
+    name = "aruco_4x4_100";
+    break;
+  case vpDetectorAprilTag::TAG_ARUCO_4x4_250:
+    name = "aruco_4x4_250";
+    break;
+  case vpDetectorAprilTag::TAG_ARUCO_4x4_1000:
+    name = "aruco_4x4_1000";
+    break;
+  case vpDetectorAprilTag::TAG_ARUCO_5x5_50:
+    name = "aruco_5x5_50";
+    break;
+  case vpDetectorAprilTag::TAG_ARUCO_5x5_100:
+    name = "aruco_5x5_100";
+    break;
+  case vpDetectorAprilTag::TAG_ARUCO_5x5_250:
+    name = "aruco_5x5_250";
+    break;
+  case vpDetectorAprilTag::TAG_ARUCO_5x5_1000:
+    name = "aruco_5x5_1000";
+    break;
+  case vpDetectorAprilTag::TAG_ARUCO_6x6_50:
+    name = "aruco_6x6_50";
+    break;
+  case vpDetectorAprilTag::TAG_ARUCO_6x6_100:
+    name = "aruco_6x6_100";
+    break;
+  case vpDetectorAprilTag::TAG_ARUCO_6x6_250:
+    name = "aruco_6x6_250";
+    break;
+  case vpDetectorAprilTag::TAG_ARUCO_6x6_1000:
+    name = "aruco_6x6_1000";
+    break;
+  case vpDetectorAprilTag::TAG_ARUCO_7x7_50:
+    name = "aruco_7x7_50";
+    break;
+  case vpDetectorAprilTag::TAG_ARUCO_7x7_100:
+    name = "aruco_7x7_100";
+    break;
+  case vpDetectorAprilTag::TAG_ARUCO_7x7_250:
+    name = "aruco_7x7_250";
+    break;
+  case vpDetectorAprilTag::TAG_ARUCO_7x7_1000:
+    name = "aruco_7x7_1000";
+    break;
+  case vpDetectorAprilTag::TAG_ARUCO_MIP_36h12:
+    name = "aruco_mip_36h12";
+    break;
+  default:
+    name = "unknown";
+  }
+  return name;
+}
+
+vpDetectorAprilTag::vpAprilTagFamily vpDetectorAprilTag::tagFamilyFromString(const std::string &name)
+{
+  vpDetectorAprilTag::vpAprilTagFamily res = vpDetectorAprilTag::vpAprilTagFamily::TAG_COUNT;
+  bool wasFound = false;
+  std::string lowerCaseName = vpIoTools::toLowerCase(name);
+  unsigned int i = 0;
+  while ((i < vpDetectorAprilTag::vpAprilTagFamily::TAG_COUNT) && (!wasFound)) {
+    vpDetectorAprilTag::vpAprilTagFamily candidate = static_cast<vpDetectorAprilTag::vpAprilTagFamily>(i);
+    if (lowerCaseName == tagFamilyToString(candidate)) {
+      res = candidate;
+      wasFound = true;
+    }
+    ++i;
+  }
+  if (!wasFound) {
+    throw(vpException(vpException::badValue, "Could not find a tag family that corresponds to the name '%s'", name.c_str()));
+  }
+  return res;
+}
+
+std::string vpDetectorAprilTag::getAvailableTagFamily(const std::string &prefix, const std::string &sep, const std::string &suffix)
+{
+  std::string modes(prefix);
+  for (unsigned int i = 0; i < vpDetectorAprilTag::vpAprilTagFamily::TAG_COUNT - 1; ++i) {
+    vpDetectorAprilTag::vpAprilTagFamily candidate = static_cast<vpDetectorAprilTag::vpAprilTagFamily>(i);
+    modes += tagFamilyToString(candidate) + sep;
+  }
+  vpDetectorAprilTag::vpAprilTagFamily candidate = static_cast<vpDetectorAprilTag::vpAprilTagFamily>(vpDetectorAprilTag::vpAprilTagFamily::TAG_COUNT - 1);
+  modes += tagFamilyToString(candidate) + suffix;
+  return modes;
+}
+
+std::string vpDetectorAprilTag::poseMethodToString(const vpDetectorAprilTag::vpPoseEstimationMethod &method)
+{
+  std::string name;
+  switch (method) {
+  case vpDetectorAprilTag::HOMOGRAPHY:
+    name = "homography";
+    break;
+  case vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS:
+    name = "homography_virtual_vs";
+    break;
+  case vpDetectorAprilTag::DEMENTHON_VIRTUAL_VS:
+    name = "dementhon_virtual_vs";
+    break;
+  case vpDetectorAprilTag::LAGRANGE_VIRTUAL_VS:
+    name = "lagrange_virtual_vs";
+    break;
+  case vpDetectorAprilTag::BEST_RESIDUAL_VIRTUAL_VS:
+    name = "best_residual_virtual_vs";
+    break;
+  case vpDetectorAprilTag::HOMOGRAPHY_ORTHOGONAL_ITERATION:
+    name = "homography_orthogonal_iteration";
+    break;
+  default:
+    name = "unknown";
+  }
+  return name;
+}
+
+vpDetectorAprilTag::vpPoseEstimationMethod vpDetectorAprilTag::poseMethodFromString(const std::string &name)
+{
+  vpDetectorAprilTag::vpPoseEstimationMethod res = vpDetectorAprilTag::vpPoseEstimationMethod::POSE_COUNT;
+  bool wasFound = false;
+  std::string lowerCaseName = vpIoTools::toLowerCase(name);
+  unsigned int i = 0;
+  while ((i < vpDetectorAprilTag::vpPoseEstimationMethod::POSE_COUNT) && (!wasFound)) {
+    vpDetectorAprilTag::vpPoseEstimationMethod candidate = static_cast<vpDetectorAprilTag::vpPoseEstimationMethod>(i);
+    if (lowerCaseName == poseMethodToString(candidate)) {
+      res = candidate;
+      wasFound = true;
+    }
+    ++i;
+  }
+  if (!wasFound) {
+    throw(vpException(vpException::badValue, "Could not find a pose estimation method that corresponds to the name '%s'", name.c_str()));
+  }
+  return res;
+}
+
+std::string vpDetectorAprilTag::getAvailablePoseMethod(const std::string &prefix, const std::string &sep, const std::string &suffix)
+{
+  std::string modes(prefix);
+  for (unsigned int i = 0; i < vpDetectorAprilTag::vpPoseEstimationMethod::POSE_COUNT - 1; ++i) {
+    vpDetectorAprilTag::vpPoseEstimationMethod candidate = static_cast<vpDetectorAprilTag::vpPoseEstimationMethod>(i);
+    modes += poseMethodToString(candidate) + sep;
+  }
+  vpDetectorAprilTag::vpPoseEstimationMethod candidate = static_cast<vpDetectorAprilTag::vpPoseEstimationMethod>(vpDetectorAprilTag::vpPoseEstimationMethod::POSE_COUNT - 1);
+  modes += poseMethodToString(candidate) + suffix;
+  return modes;
+}
+
+#ifdef VISP_HAVE_NLOHMANN_JSON
+void to_json(nlohmann::json &j, const vpDetectorAprilTag &detector)
+{
+  j["tag_family"] = vpDetectorAprilTag::tagFamilyToString(detector.m_tagFamily);
+  bool debug = false;
+  double decodeSharpening = 0.;
+  bool hasTagDetector = detector.m_impl->getDebugFlag(debug);
+  int nThreads = 1;
+  float quadDecimate = 1.f;
+  float quadSigma = 0.f;
+  bool refineEdges = true;
+  bool zAxis = detector.m_impl->getZAlignedWithCameraAxis();
+  if (hasTagDetector) {
+    detector.m_impl->getAprilTagDecodeSharpening(decodeSharpening);
+    detector.m_impl->getNbThreads(nThreads);
+    detector.m_impl->getQuadDecimate(quadDecimate);
+    detector.m_impl->getQuadSigma(quadSigma);
+    detector.m_impl->getRefineEdges(refineEdges);
+  }
+  j["debug"] = debug;
+  j["detection_margin_thresh"] = detector.getAprilTagDecisionMarginThreshold();
+  j["decode_sharpening"] = decodeSharpening;
+  j["hamming_distance_threshold"] = detector.getAprilTagHammingDistanceThreshold();
+  j["nb_threads"] = nThreads;
+  j["pose_estimation_method"] = vpDetectorAprilTag::poseMethodToString(detector.getPoseEstimationMethod());
+  j["quad_decimate"] = quadDecimate;
+  j["quad_sigma"] = quadSigma;
+  j["refine_edges"] = refineEdges;
+  nlohmann::json displayTagParams;
+  displayTagParams["status"] = detector.m_displayTag;
+  displayTagParams["color"] = vpColor::colorToString(detector.m_displayTagColor);
+  displayTagParams["thickness"] = detector.m_displayTagThickness;
+  j["display_tag"] = displayTagParams;
+  j["timeout"] = detector.m_timeout_ms;
+  j["z_aligned_with_camera_axis"] = zAxis;
+}
+
+void from_json(const nlohmann::json &j, vpDetectorAprilTag &detector)
+{
+  detector.setAprilTagFamily(vpDetectorAprilTag::tagFamilyFromString(j.value("tag_family", vpDetectorAprilTag::tagFamilyToString(detector.m_tagFamily)))); // First raw because it allocates m_impl
+  bool debug = false;
+  double decodeSharpening = 0.;
+  bool hasTagDetector = detector.m_impl->getDebugFlag(debug);
+  int nThreads = 1;
+  float quadDecimate = 1.f;
+  float quadSigma = 0.f;
+  bool refineEdges = true;
+  bool zAxis = detector.m_impl->getZAlignedWithCameraAxis();
+  if (hasTagDetector) {
+    detector.m_impl->getAprilTagDecodeSharpening(decodeSharpening);
+    detector.m_impl->getNbThreads(nThreads);
+    detector.m_impl->getQuadDecimate(quadDecimate);
+    detector.m_impl->getQuadSigma(quadSigma);
+    detector.m_impl->getRefineEdges(refineEdges);
+  }
+  detector.setAprilTagDebugOption(j.value("debug", debug));
+  detector.setAprilTagDecisionMarginThreshold(j.value("detection_margin_thresh", detector.getAprilTagDecisionMarginThreshold()));
+  detector.setAprilTagDecodeSharpening(j.value("decode_sharpening", decodeSharpening));
+  detector.setAprilTagHammingDistanceThreshold(j.value("hamming_distance_threshold", detector.getAprilTagHammingDistanceThreshold()));
+  detector.setAprilTagNbThreads(j.value("nb_threads", nThreads));
+  detector.setAprilTagPoseEstimationMethod(vpDetectorAprilTag::poseMethodFromString(j.value("pose_estimation_method", vpDetectorAprilTag::poseMethodToString(detector.getPoseEstimationMethod()))));
+  detector.setAprilTagQuadDecimate(j.value("quad_decimate", quadDecimate));
+  detector.setAprilTagQuadSigma(j.value("quad_sigma", quadSigma));
+  detector.setAprilTagRefineEdges(j.value("refine_edges", refineEdges));
+  if (j.contains("display_tag")) {
+    nlohmann::json displayTagParams = j.at("display_tag");
+    bool displayTag = displayTagParams.value("status", detector.m_displayTag);
+    vpColor color = vpColor::colorFromString(displayTagParams.value("color", vpColor::colorToString(detector.m_displayTagColor)));
+    auto thickness = displayTagParams.value("thickness", detector.m_displayTagThickness);
+    detector.setDisplayTag(displayTag, color, thickness);
+  }
+  detector.setTimeout(j.value("timeout", detector.m_timeout_ms));
+  detector.setZAlignedWithCameraAxis(j.value("z_aligned_with_camera_axis", zAxis));
+}
+#endif
 
 vpDetectorAprilTag::vpDetectorAprilTag(const vpAprilTagFamily &tagFamily,
                                        const vpPoseEstimationMethod &poseEstimationMethod)
@@ -1509,6 +1787,34 @@ std::vector<int> vpDetectorAprilTag::getTagsId() const { return m_impl->getTagsI
 void vpDetectorAprilTag::setAprilTagDecodeSharpening(double decodeSharpening)
 {
   return m_impl->setAprilTagDecodeSharpening(decodeSharpening);
+}
+
+void vpDetectorAprilTag::loadConfigFile(const std::string &configFile)
+{
+#ifdef VISP_HAVE_NLOHMANN_JSON
+  //Read file
+  std::ifstream jsonFile(configFile);
+  if (!jsonFile.good()) {
+    throw vpException(vpException::ioError, "Could not read from settings file " + configFile + " to initialise the vpDetectorAprilTag");
+  }
+  nlohmann::json settings;
+  try {
+    settings = nlohmann::json::parse(jsonFile);
+  }
+  catch (nlohmann::json::parse_error &e) {
+    std::stringstream msg;
+    msg << "Could not parse JSON file : \n";
+
+    msg << e.what() << std::endl;
+    msg << "Byte position of error: " << e.byte;
+    throw vpException(vpException::ioError, msg.str());
+  }
+  jsonFile.close();
+  from_json(settings, *this);
+#else
+  (void)configFile;
+  throw(vpException(vpException::ioError, "Due to the fact that ViSP has not been compiled with nhlohmann-json, the initialization of the vpDetectorAprilTag is not possible"));
+#endif
 }
 
 /*!

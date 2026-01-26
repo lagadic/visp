@@ -5,7 +5,7 @@
 
 This tutorial supposes that you have followed the \ref tutorial-getting-started-iOS.
 
-\section image_ios_intro Introduction
+\section image_ios_intro 1. Introduction
 
 In this tutorial you will learn how to do simple image processing on iOS devices with ViSP. This application loads a
 color image
@@ -21,7 +21,7 @@ Note that all the material (source code and image) described in this tutorial is
 (in `tutorial/ios/StartedImageProc` folder) and could be found in
 https://github.com/lagadic/visp/tree/master/tutorial/ios/StartedImageProc.
 
-\section image_ios_app StartedImageProc application
+\section image_ios_app 2. StartedImageProc application
 
 Let us consider the Xcode project named `StartedImageProc` that is part of ViSP source code and located in
 `$VISP_WS/tutorial/ios/StartedImageProc`. This project is a Xcode `"Single view application"` where we renamed
@@ -57,38 +57,38 @@ project.
 
 Now you should be able to build and run your application.
 
-\section image_ios_convert Image conversion functions
+\section image_ios_convert 3. Image conversion functions
 
 The Xcode project `StartedImageProc` contains `ImageConversion.h` and `ImageConversion.mm` files that implement the
 functions to convert UIImage to ViSP vpImage and vice versa.
-\subsection image_ios_convert_uiimage_vpimage_color UIImage to color vpImage
+\subsection image_ios_convert_uiimage_vpimage_color 3.1. UIImage to color vpImage
 
 The following function implemented in \c ImageConversion.mm show how to convert an `UIImage` into a `vpImage<vpRGBa>`
 instantiated as a color image.
 
 \snippet tutorial/ios/StartedImageProc/StartedImageProc/ImageConversion.mm vpImageColorFromUIImage
 
-\subsection image_ios_convert_uiimage_vpimage_gray UIImage to gray vpImage
+\subsection image_ios_convert_uiimage_vpimage_gray 3.2. UIImage to gray vpImage
 
 The following function implemented in `ImageConversion.mm` show how to convert an `UIImage` into a
 `vpImage<unsigned char>` instantiated as a grey level image.
 
 \snippet tutorial/ios/StartedImageProc/StartedImageProc/ImageConversion.mm vpImageGrayFromUIImage
 
-\subsection image_ios_convert_vpimage_color_uiimage Color vpImage to UIImage
+\subsection image_ios_convert_vpimage_color_uiimage 3.3. Color vpImage to UIImage
 
 The following function implemented in `ImageConversion.mm` show how to convert a gray level `vpImage<unsigned char>`
 into an UIImage.
 
 \snippet tutorial/ios/StartedImageProc/StartedImageProc/ImageConversion.mm UIImageFromVpImageColor
 
-\subsection image_ios_convert_vpimage_gray_uiimage Gray vpImage to UIImage
+\subsection image_ios_convert_vpimage_gray_uiimage 3.4. Gray vpImage to UIImage
 
 The following function implemented in `ImageConversion.mm` show how to convert a color `vpImage<vpRGBa>` into an `UIImage`.
 
 \snippet tutorial/ios/StartedImageProc/StartedImageProc/ImageConversion.mm UIImageFromVpImageGray
 
-\section image_ios_output Application output
+\section image_ios_output 4. Application output
 
 - Now we are ready to build `"StartedImageProc"` application using Xcode `"Product > Build"` menu.
 \note Here it may be possible that you get a build issue \ref image_ios-issue-libxml. Just follow the link to see how
@@ -106,12 +106,12 @@ to fix this issue.
 - Pressing `"canny detector"` button gives the following result:
 \image html img-started-imgproc-ios-output-canny.jpg
 
-\section image_ios-issues Known issues
-\subsection image_ios-issue-libxml iOS error: libxml/parser.h not found
+\section image_ios-issues 5. Known issues
+\subsection image_ios-issue-libxml 5.1. iOS error: libxml/parser.h not found
 
 Follow \ref getting-started-ios-issue-libxml link if you get this issue.
 
-\section image_ios_next Next tutorial
+\section image_ios_next 6. Next tutorial
 
 You are now ready to see the \ref tutorial-detection-apriltag-ios.
 

@@ -2,9 +2,21 @@
                                               Visual Servoing Platform
                                               Resume of the change log
 
-                              Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+                              Copyright (C) 2005 - 2026 by Inria. All rights reserved.
                                                 https://visp.inria.fr
 
+ViSP 3.7.1 (current version)
+  - Contributors:
+    . Fabien Spindler, Romain Lagneau, Olivier Roussel
+  - New classes
+  - Deprecated
+  - New features and improvements
+  - Applications
+  - Tutorials
+  - Bug fixed
+    . [#1876] Unable to build ViSP framework from source for iOS
+    . [#1878] Unable to build ViSP framework from source for iOS with OpenCV support
+----------------------------------------------
 ViSP 3.7.0 (released December 19, 2025)
   - Contributors:
     . Fabien Spindler, Samuel Felton, Romain Lagneau, Olivier Roussel, Souriya Trinh, François Chaumette,

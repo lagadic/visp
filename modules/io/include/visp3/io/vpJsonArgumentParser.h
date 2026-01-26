@@ -266,12 +266,12 @@ public:
   vpJsonArgumentParser &addFlag(const std::string &name, bool &parameter, const std::string &help = "No description");
 
   /**
-   * @brief Parse the arguments.
-   *
-   * @param argc Number of arguments (including program name)
-   * @param argv Arguments
+   * @brief Parse command line arguments and load values into the provided parameters.
+   * @param argc Number of arguments (including program name).
+   * @param argv Arguments.
+   * @return true if parsing was successful, false if help was requested.
    */
-  void parse(int argc, const char *argv[]);
+  bool parse(int argc, const char *argv[]);
 
 private:
   std::string m_description; // Program description

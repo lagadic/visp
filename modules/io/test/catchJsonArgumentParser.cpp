@@ -157,12 +157,14 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
       THEN("Calling the parser with only the JSON file works")
       {
         const int argc = 3;
+        bool ret = false;
         const char *argv[] = {
           "program",
           "--config",
           jsonPath.c_str()
         };
-        REQUIRE_NOTHROW(parser.parse(argc, argv));
+        REQUIRE_NOTHROW(ret = parser.parse(argc, argv));
+        REQUIRE(ret == true);
         REQUIRE(a == j["a"]);
         REQUIRE(b == j["b"]);
         REQUIRE(c == j["c"]);
@@ -273,7 +275,6 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
       }
       THEN("Calling the parser with a missing argument value throws an error")
       {
-
         std::vector<std::string> args = {
           "program",
           "--config", jsonPath,
@@ -311,7 +312,6 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
 
       REQUIRE_NOTHROW(parser.parse(argc, argv));
       REQUIRE(b == bcopy);
-
     }
   }
   WHEN("Instantiating a parser with nested parameters")
@@ -330,11 +330,8 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
 
       REQUIRE_NOTHROW(parser.parse(argc, argv));
       REQUIRE(b == bcopy);
-
     }
   }
-
-
   WHEN("Instantiating a parser with some documentation")
   {
     const std::string programString = "ProgramString";
@@ -362,9 +359,31 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
           REQUIRE(help.find(required) < help.size());
         }
       }
+      THEN("Calling the parser with --help argument works")
+      {
+        bool ret = true;
+        const int argc = 2;
+        const char *argv[] = {
+          "ProgramString",
+          "--help"
+        };
+
+        REQUIRE_NOTHROW(ret = parser.parse(argc, argv));
+        REQUIRE(ret == false); // Detect that help was requested
+      }
+      THEN("Calling the parser with -h argument works")
+      {
+        bool ret = true;
+        const int argc = 2;
+        const char *argv[] = {
+          "ProgramString",
+          "-h"
+        };
+
+        REQUIRE_NOTHROW(ret = parser.parse(argc, argv));
+        REQUIRE(ret == false); // Detect that help was requested
+      }
     }
-
-
   }
 }
 

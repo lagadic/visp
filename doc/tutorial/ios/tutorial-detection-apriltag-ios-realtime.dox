@@ -3,7 +3,7 @@
 \page tutorial-detection-apriltag-ios-realtime Tutorial: AprilTag marker real-time detection on iOS
 \tableofcontents
 
-\section intro_apriltag_ios_realtime Introduction
+\section intro_apriltag_ios_realtime 1. Introduction
 
 This tutorial follows \ref tutorial-detection-apriltag-ios and shows how to detect AprilTag markers in real time.
 
@@ -15,7 +15,7 @@ https://github.com/lagadic/visp/tree/master/tutorial/ios/AprilTagLiveCamera.
 
 Once downloaded, you have just to drag & drop ViSP and OpenCV frameworks available following \ref tutorial-install-ios-package.
 
-\section videocapture_for_realtime VideoCapture for real time detection
+\section videocapture_for_realtime 2. VideoCapture for real time detection
 
 Real-time capture of video can be achieved with AVFundation framework. You just apply the detection process you learned from the previous tutorial to each captured image.
 
@@ -37,7 +37,7 @@ The intrinsic parameters that represent camera features can generally be represe
 The documentation for Swift is [here](https://developer.apple.com/documentation/avfoundation/avcameracalibrationdata/2881135-intrinsicmatrix).
 Since the principal point almost coincides with the image center, this tutorial uses only the focal length.
 
-\section call_objectivec_swift Call Objective-C class from Swift
+\section call_objectivec_swift 3. Call Objective-C class from Swift
 
 Let us consider the Xcode project named `AprilTagLiveCamera` that is part of ViSP source code and located in `$VISP_WS/tutorial/ios/AprilTagLiveCamera`.
 
@@ -69,7 +69,7 @@ The content of `VispDetector.h` is the following:
 and in `ViewController.swift` you have the following code:
 \include AprilTagLiveCamera/ViewController.swift
 
-\section distance_from_camera Distance from camera
+\section distance_from_camera 4. Distance from camera
 
 Detection and drawing processing is processed in `VispDetector.mm`.
 For details on the detection process, see \ref tutorial-detection-apriltag and on how to draw the pose of a tag, see the previous \ref tutorial-detection-apriltag-ios.
@@ -89,7 +89,7 @@ for(int i=0; i < NumberOfTags; i++){
 }
 \endcode
 
-\section apriltag_ios_realtime_output Application output
+\section apriltag_ios_realtime_output 5. Application output
 
 Like this image below, you can see the tag id, posture and position from the camera in real time with the video captured image.
 \image html img-detection-apriltag-realtime-ios-output.jpg

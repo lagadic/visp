@@ -36,8 +36,8 @@
   \brief class that defines the simplest robot : a free flying camera
 */
 
-#ifndef vpRobotCamera_H
-#define vpRobotCamera_H
+#ifndef VP_ROBOT_CAMERA_H
+#define VP_ROBOT_CAMERA_H
 
 #include <visp3/core/vpConfig.h>
 
@@ -107,7 +107,7 @@ BEGIN_VISP_NAMESPACE
   \endcode
 
 */
-class VISP_EXPORT vpRobotCamera : public vpRobotSimulator
+class VP_DEPRECATED VISP_EXPORT vpRobotCamera : public vpRobotSimulator
 {
 protected:
   vpHomogeneousMatrix cMw_; // camera to world

@@ -11,7 +11,7 @@ of a color are both analyzed on a scale of 0 to 100 percent.
 Hue, Saturation, and Value are the main color properties that allow us to distinguish between different colors. This
 format is implemented in the vpHSV class as long as you use C++11 or higher. It is a templated class that permits to
 choose the arithmetic representation of the channels. You can either choose:
-- double or float: the range of value will be in the intervall [0; 1]
+- double or float: the range of value will be in the interval [0; 1]
 - unsigned char: the second template parameter `useFullScale` will determine the range for the Hue channel, while the
 Saturation and Value channel will be encoded in the range [0; 255]. Please refer to the vpHSV documentation for more
 information.

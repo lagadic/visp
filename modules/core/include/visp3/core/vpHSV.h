@@ -60,7 +60,7 @@ namespace
 {
 /**
  * \brief Structure that gives the variance of the different channels of a HSV pixel assuming that
- * each channel follows a continuous uniform law defined on the intervall [0.; 1.].
+ * each channel follows a continuous uniform law defined on the interval [0.; 1.].
  *
  * \tparam T : The type used to encode the channels.
  * \tparam otherUseFullScale : Unused.
@@ -71,16 +71,15 @@ struct UniformLawVariance;
 
 /**
  * \brief Structure that gives the variance of the different channels of a HSV pixel assuming that
- * each channel follows a continuous uniform law defined on the intervall [0.; 1.].
- *
+ * each channel follows a continuous uniform law defined on the interval [0.; 1.].
+ * Enable this structure only for floating point types.
  * \tparam T : The type used to encode the channels.
  * \tparam useFullScale : Unused.
- * \tparam std::enable_if<std::is_floating_point<U>::value, true>::type : Enable this structure only for floating point types.
  */
 template <typename T, bool useFullScale>
 struct UniformLawVariance<T, useFullScale, typename std::enable_if<std::is_floating_point<T>::value>::type>
 {
-  // Variance of a continuous uniform law defined on the intervall [a; b] = (b - a)^2 / 12
+  // Variance of a continuous uniform law defined on the interval [a; b] = (b - a)^2 / 12
   // Here, a = 0, b = 1
   static constexpr float hueVariance = 1.f/12.f;
   static constexpr float otherChannelsVariance = 1.f/12.f;
@@ -88,12 +87,12 @@ struct UniformLawVariance<T, useFullScale, typename std::enable_if<std::is_float
 
 /**
  * \brief Structure that gives the variance of the different channels of a HSV pixel assuming that
- * each channel follows a discrete uniform law defined on the intervall {0; 1; ...; 255}.
+ * each channel follows a discrete uniform law defined on the interval {0; 1; ...; 255}.
  */
 template <>
 struct UniformLawVariance<unsigned char, true>
 {
-  // Variance of a discrete uniform law defined on the intervall {a; a + 1; ... b} = ((b - a + 1)^2 - 1)/ 12
+  // Variance of a discrete uniform law defined on the interval {a; a + 1; ... b} = ((b - a + 1)^2 - 1)/ 12
   // Here, a = 0, b = 255
   static constexpr float hueVariance = (256.f * 256.f - 1.f)/12.f;
   static constexpr float otherChannelsVariance = (256.f * 256.f - 1.f)/12.f;
@@ -101,13 +100,13 @@ struct UniformLawVariance<unsigned char, true>
 
 /**
  * \brief Structure that gives the variance of the different channels of a HSV pixel assuming that
- * each channel follows a discrete uniform law defined on the intervall {0; 1; ...; 255} for the Saturation and
+ * each channel follows a discrete uniform law defined on the interval {0; 1; ...; 255} for the Saturation and
  * Value channels and {0; 1; ...; maxHueUsingLimitedRange} for the Hue channel.
  */
 template <>
 struct UniformLawVariance<unsigned char, false>
 {
-  // Variance of a discrete uniform law defined on the intervall {a; a + 1; ... b} = ((b - a + 1)^2 - 1)/ 12
+  // Variance of a discrete uniform law defined on the interval {a; a + 1; ... b} = ((b - a + 1)^2 - 1)/ 12
   // Here, a = 0, b = 255 for the Saturation and Value channels
   // and {0; 1; ...; maxHueUsingLimitedRange} for the Hue channel.
   static constexpr float hueVariance = (180.f * 180.f - 1.f)/12.f;
@@ -137,7 +136,6 @@ public:
   /**
    * \brief Construct a new vpHSV object using floating point channels.
    *
-   * \tparam U The type of the channels of the vpHSV pixels.
    * \param[in] H_ The value of the Hue channel.
    * \param[in] S_ The value of the Saturation channel.
    * \param[in] V_ The value of the Value channel.
@@ -169,10 +167,11 @@ public:
    * \brief Construct a new vpHSV object using unsigned char channels and the full range [0; 255] from a vpHSV object
    * whose channels are in floating point format.
    *
+   * Enable the method only if the constructed object uses unsigned char format and uses the full range
+   * [0; 255] and the object that is used as reference uses floating point format.
+   *
    * \tparam U The format of the constructed object.
    * \tparam V The format of the base object.
-   * \tparam type Enable the method only if the constructed object uses unsigned char format and uses the full range
-   * [0; 255] and the object that is used as reference uses floating point format.
    * \param[in] other A floating point format vpHSV.
    */
   template<typename U = T, typename V, typename std::enable_if<std::is_same<T, unsigned char>::value &&std::is_floating_point<V>::value &&useFullScale, U>::type = 0 >
@@ -185,10 +184,11 @@ public:
    * \brief Construct a new vpHSV object using unsigned char channels and the limited range [0; maxHueUsingLimitedRange]
    * from a vpHSV object whose channels are in floating point format.
    *
+   * Enable the method only if the constructed object uses unsigned char format and uses the limited range
+   * [0; maxHueUsingLimitedRange] and the object that is used as reference uses floating point format.
+   *
    * \tparam U The format of the constructed object.
    * \tparam V The format of the base object.
-   * \tparam type Enable the method only if the constructed object uses unsigned char format and uses the limited range
-   * [0; maxHueUsingLimitedRange] and the object that is used as reference uses floating point format.
    * \param[in] other A floating point format vpHSV.
    */
   template<typename U = T, typename V, typename std::enable_if<std::is_same<T, unsigned char>::value &&std::is_floating_point<V>::value && !useFullScale, U>::type = 0 >
@@ -200,10 +200,11 @@ public:
   /**
    * \brief Construct a new floating point vpHSV object from an unsigned char vpHSV object.
    *
+   * Enable the method only if the constructed object uses the floating point format for its channels.
+   *
    * \tparam U The type of the channels of the constructed vpHSV pixels.
    * \tparam otherUseFullScale True if the reference object uses unsigned char and the full range [0; 255], false if it
    * uses unsigned char and the limited range [0; maxHueUsingLimitedRange].
-   * \tparam type Enable the method only if the constructed object uses the floating point format for its channels.
    * \param[in] other The reference object.
    */
   template<typename U = T, bool otherUseFullScale, typename std::enable_if<std::is_floating_point<U>::value>::type...>
@@ -242,11 +243,9 @@ public:
 
   /**
    * \brief Convert a floating point HSV into a unsigned char HSV using the full range [0; 255].
-   *
-   * \tparam U The type of the channels of the vpHSV pixels that is modified.
-   * \tparam V The type of the channels of the vpHSV pixels that serves as reference.
-   * \tparam type Enable the method only if the modified object uses unsigned char and full range [0; 255] and the base
+   * Enable the method only if the modified object uses unsigned char and full range [0; 255] and the base
    * object uses a floating point format.
+   * \tparam V The type of the channels of the vpHSV pixels that serves as reference.
    * \param[in] other The floating point HSV.
    * \return Reference to the modified object.
    */
@@ -262,11 +261,10 @@ public:
 
   /**
    * \brief Convert a floating point HSV into a unsigned char HSV using the limited range [0; maxHueUsingLimitedRange].
-   *
+   * Enable the method only if the modified object uses unsigned char and limited range
+   * [0; maxHueUsingLimitedRange] and the base object uses a floating point format.
    * \tparam U The type of the channels of the vpHSV pixels that is modified.
    * \tparam V The type of the channels of the vpHSV pixels that serves as reference.
-   * \tparam type Enable the method only if the modified object uses unsigned char and limited range
-   * [0; maxHueUsingLimitedRange] and the base object uses a floating point format.
    * \param[in] other The floating point HSV.
    * \return Reference to the modified object.
    */
@@ -283,10 +281,11 @@ public:
   /**
    * \brief Convert a vpHSV that uses unsigned char for its channels into a vpHSV that uses floating point for its channels.
    *
+   * Enable the method only if the modified object uses floating point format.
+   *
    * \tparam U The type of the channels of the vpHSV pixels.
-   * \tparam otherUseFullScale
-   * \tparam type Enable the method only if the modified object uses
-   * floating point format.
+   * \tparam otherUseFullScale True if the reference object uses unsigned char and the full range [0; 255], false if it
+   * uses unsigned char and the limited range [0; maxHueUsingLimitedRange].
    * \param[in] other The unsigned char vpHSV.
    * \return Reference to the modified object.
    */
@@ -307,14 +306,14 @@ public:
 
   /**
    * \brief Convert a floating point HSV into another floating point type HSV.
-   *
+   * Enable the method only if the modified object uses is a floating point format, the base object too
+   * but the formats are different. The type "int" is not used, it is here only because float and doubles are
+   * "not [a] valid type for a template non-type parameter"
    * \tparam U The type of the channels of the vpHSV pixels that is modified.
    * \tparam V The type of the channels of the vpHSV pixels that serves as reference.
    * \tparam otherUseFullScale To avoid problem if one was created with true and the other false (even it is not used for
    * floating point types).
-   * \tparam type Enable the method only if the modified object uses is a floating point format, the base object too
-   * but the formats are different. The type "int" is not used, it is here only because float and doubles are
-   * "not [a] valid type for a template non-type parameter"
+
    * \param[in] other The floating point HSV.
    * \return vpHSV<T, useFullScale>& Reference to the modified object.
    */
@@ -553,10 +552,7 @@ private:
    * \brief Permit to initialize a vpHSV object using a vector.
    *
    * \tparam Tp The type of the channels of the vpHSV pixels.
-   * \tparam VectorType The type of the vector.
    * \param[in] v A vector whose size must be equal to 3.
-   * \param[in] limMin The lower limit of the acceptable range of values.
-   * \param[in] limMax The upper limit of the acceptable range of values.
    */
   template<typename Tp = T>
   inline

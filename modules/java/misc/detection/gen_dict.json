@@ -1,6 +1,87 @@
 {
+  "module_imports": [
+    "java.lang.String"
+  ],
   "ManualFuncs": {
     "VpDetectorAprilTag": {
+      "getAvailableTagFamily": {
+        "j_code": [
+          "//",
+          "// manual port",
+          "// C++: std::string getAvailableTagFamily(const std::string &prefix, const std::string &sep, const std::string &suffix)",
+          "//",
+          "//javadoc: VpMbGenericTracker::getAvailableTagFamily()\n",
+          "public String getAvailableTagFamily()",
+          "{",
+          "   return getAvailableTagFamily(nativeObj);",
+          "}"
+        ],
+        "cpp_code": [
+          "//",
+          "// manual port",
+          "// std::string getAvailableTagFamily(const std::string &prefix, const std::string &sep, const std::string &suffix)",
+          "//\n",
+          "JNIEXPORT jstring JNICALL Java_org_visp_detection_VpDetectorAprilTag_getAvailableTagFamily (JNIEnv*, jclass, jlong);\n",
+          "JNIEXPORT jstring JNICALL Java_org_visp_detection_VpDetectorAprilTag_getAvailableTagFamily",
+          "  (JNIEnv* env, jclass , jlong address)",
+          "{",
+          "  (void)address;",
+          "  static const char method_name[] = \"vpDetectorAprilTag::getAvailableTagFamily()\";",
+          "  try {",
+          "   LOGD(\"%s\", method_name);",
+          "   return convertTo(env, vpDetectorAprilTag::getAvailableTagFamily());",
+          "  } catch(const std::exception &e) {",
+          "   throwJavaException(env, &e, method_name);",
+          "  } catch (...) {",
+          "   throwJavaException(env, 0, method_name);",
+          "  }",
+          "  return 0;",
+          "}"
+        ],
+        "jn_code": [
+          "// C++: std::string getAvailableTagFamily()",
+          "private static native String getAvailableTagFamily(long address);"
+        ]
+      },
+      "getAvailablePoseMethod": {
+        "j_code": [
+          "//",
+          "// manual port",
+          "// C++: std::string getAvailablePoseMethod(const std::string &prefix, const std::string &sep, const std::string &suffix)",
+          "//",
+          "//javadoc: VpMbGenericTracker::getAvailablePoseMethod()\n",
+          "public String getAvailablePoseMethod()",
+          "{",
+          "   return getAvailablePoseMethod(nativeObj);",
+          "}"
+        ],
+        "cpp_code": [
+          "//",
+          "// manual port",
+          "// std::string getAvailablePoseMethod(const std::string &prefix, const std::string &sep, const std::string &suffix)",
+          "//\n",
+          "JNIEXPORT jstring JNICALL Java_org_visp_detection_VpDetectorAprilTag_getAvailablePoseMethod(JNIEnv*, jclass, jlong);\n",
+          "JNIEXPORT jstring JNICALL Java_org_visp_detection_VpDetectorAprilTag_getAvailablePoseMethod",
+          "  (JNIEnv* env, jclass , jlong address)",
+          "{",
+          "  (void)address;",
+          "  static const char method_name[] = \"vpDetectorAprilTag::getAvailablePoseMethod()\";",
+          "  try {",
+          "   LOGD(\"%s\", method_name);",
+          "   return convertTo(env, vpDetectorAprilTag::getAvailablePoseMethod());",
+          "  } catch(const std::exception &e) {",
+          "   throwJavaException(env, &e, method_name);",
+          "  } catch (...) {",
+          "   throwJavaException(env, 0, method_name);",
+          "  }",
+          "  return 0;",
+          "}"
+        ],
+        "jn_code": [
+          "// C++: std::string getAvailablePoseMethod()",
+          "private static native String getAvailablePoseMethod(long address);"
+        ]
+      },
       "detect": {
         "j_code": [
           "//",
@@ -433,6 +514,15 @@
       "jni_type": "jfloatArray",
       "jni_var": "std::vector<float> %(n)s",
       "suffix": "[F"
+    },
+    "string": {
+      "j_type": "String",
+      "jn_type": "String",
+      "jni_name": "n_%(n)s",
+      "jni_type": "jstring",
+      "jni_var": "const char* utf_%(n)s = env->GetStringUTFChars(%(n)s, 0); string n_%(n)s( utf_%(n)s ? utf_%(n)s : \"\" ); env->ReleaseStringUTFChars(%(n)s, utf_%(n)s)",
+      "suffix": "Ljava_lang_String_2",
+      "j_import": "java.lang.String"
     }
   }
 }

@@ -34,10 +34,8 @@
 		3040DA5E221F99DC00C72347 /* ImageConversion.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ImageConversion.mm; sourceTree = "<group>"; };
 		3040DA5F221F99DC00C72347 /* ImageDisplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageDisplay.h; sourceTree = "<group>"; };
 		3040DA60221F99DC00C72347 /* ImageDisplay.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ImageDisplay.mm; sourceTree = "<group>"; };
-		3040DA64221F9A3000C72347 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = opencv2.framework; path = "../../../../Library/visp/visp-3.1.0.framework/opencv2.framework"; sourceTree = "<group>"; };
-		3040DA65221F9A3000C72347 /* visp3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = visp3.framework; path = "../../../../Library/visp/visp-3.1.0.framework/visp3.framework"; sourceTree = "<group>"; };
-		30E9DA36222E16B50044ACD3 /* ImageDisplayWithContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ImageDisplayWithContext.h"; sourceTree = "<group>"; };
-		30E9DA37222E16B50044ACD3 /* ImageDisplayWithContext.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "ImageDisplayWithContext.mm"; sourceTree = "<group>"; };
+		30E9DA36222E16B50044ACD3 /* ImageDisplayWithContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageDisplayWithContext.h; sourceTree = "<group>"; };
+		30E9DA37222E16B50044ACD3 /* ImageDisplayWithContext.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ImageDisplayWithContext.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,8 +107,6 @@
 		3040DA63221F9A3000C72347 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				3040DA64221F9A3000C72347 /* opencv2.framework */,
-				3040DA65221F9A3000C72347 /* visp3.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

@@ -3,35 +3,48 @@
 \page tutorial-mbot-vs Tutorial: Visual-servoing with mBot Ranger educational robot kit
 \tableofcontents
 
-\section mbot_intro Introduction
+\section mbot_intro 1. Introduction
 
-This tutorial explains how to do a position-based visual-servoing with the mBot Ranger educational robot kit equipped with a Raspberry Pi 3 board connected to a camera.
+This tutorial explains how to do a position-based visual-servoing with the mBot Ranger educational robot kit equipped
+with a Raspberry Pi 3 board connected to a camera.
 
 \image html img-mbot-robot.jpg
 
 The following material is requested:
-- mBot Ranger educational Kit and especially the pre-set <a href="http://www.makeblock.com/steam-kits/mbot-ranger/">Dashing Raptor</a> form that has a [Me Auriga](http://store.makeblock.com/maker-kits-STEM/me-auriga) board
+- mBot Ranger educational Kit and especially the pre-set
+  <a href="http://www.makeblock.com/steam-kits/mbot-ranger/">Dashing Raptor</a> form that has a
+  [Me Auriga](http://store.makeblock.com/maker-kits-STEM/me-auriga) board
 - Makeblock <a href="https://makeblockshop.eu/products/me-shield-for-raspberry-pi">Me Shield</a> for Raspberry Pi
 - 1 RJ25 cable between the Me Shield and the Me Auriga port 5
-- we recommend the usage of <a href="https://www.raspberrypi.org/products/raspberry-pi-3-model-b/">Raspebby Pi 3</a> Model B or Model B+ even if the tutorial is also compatible with a Raspberry Pi 2.
+- we recommend the usage of <a href="https://www.raspberrypi.org/products/raspberry-pi-3-model-b/">Raspebby Pi 3</a>
+  Model B or Model B+ even if the tutorial is also compatible with a Raspberry Pi 2.
 - Raspberry Pi <a href="https://www.raspberrypi.org/products/camera-module-v2/">camera module V2</a>
 - an AprilTag that will serve as target for the visual servoing. \ref franka_prereq_target.
 
-The communication between Raspberry Pi and mBot Auriga board is achieved via a [serial link](http://learn.makeblock.com/me-shield-for-raspberry-pi/). Images acquired on the Raspberry Pi are processed in order to detect the AprilTag pose. From this pose a visual-servoing computes the velocities that have to be send to the Me Auriga. On the Me Auriga there is an infinite loop that is waiting for velocities that have to be applied to the Dashing Raptor wheels. A watch dog ensure the mobile robot stops when nothing is sent throw the serial link after 1 second.
+The communication between Raspberry Pi and mBot Auriga board is achieved via a
+[serial link](http://learn.makeblock.com/me-shield-for-raspberry-pi/). Images acquired on the Raspberry Pi are
+processed in order to detect the AprilTag pose. From this pose a visual-servoing computes the velocities that have to
+be send to the Me Auriga. On the Me Auriga there is an infinite loop that is waiting for velocities that have to be
+applied to the Dashing Raptor wheels. A watch dog ensure the mobile robot stops when nothing is sent throw the serial
+link after 1 second.
 
-The following video shows the result of this tutorial; the mBot Ranger follows the AprilTag target in order to maintain a given distance between the tag and the camera.
+The following video shows the result of this tutorial; the mBot Ranger follows the AprilTag target in order to maintain
+a given distance between the tag and the camera.
 \htmlonly
 <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/n50CFukmEYs" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe></p>
 \endhtmlonly
 
-\note Before continuing we recommend that you succeed to follow \ref tutorial-install-raspberry and \ref tutorial-detection-apriltag.
+\note Before continuing we recommend that you succeed to follow \ref tutorial-install-raspberry and
+\ref tutorial-detection-apriltag.
 
-\section mbot_mounting Build the robot
+\section mbot_mounting 2. Build the robot
 
 The following image shows the material that we use to build the robot:
 \image html img-mbot-material.jpg
 
-First you need to follow these [instructions](http://download.makeblock.com/ranger/resource/mBot-Ranger_Blue_STD_EN_D2.1.3_7.40.3703_Edit-1.pdf) to mount the Dashing Raptor.
+First you need to follow these
+[instructions](http://download.makeblock.com/ranger/resource/mBot-Ranger_Blue_STD_EN_D2.1.3_7.40.3703_Edit-1.pdf)
+to mount the Dashing Raptor.
 
 <b>Mount the camera on the plexiglass support</b>
 
@@ -56,9 +69,9 @@ Mount the Me Auriga over the Raspberry Pi
 Plug the cable between Me Shield and Me Auriga port 5
 \image html img-mbot-cable-mounted.jpg
 
-\section mbot_ranger mBot Ranger setup
+\section mbot_ranger 3. mBot Ranger setup
 
-\subsection mbot_ranger_mblock_install Install mBlock
+\subsection mbot_ranger_mblock_install 3.1. Install mBlock
 
 mBlock is a graphical programming software which is designed based on Scratch and compatible with Arduino boards such
 as Makeblock board like the Me Auriga. Visit the following URL for more details:
@@ -75,7 +88,7 @@ These are the steps to work on Windows, with mBlock:
 - After few seconds, a new serial port should appear in `Connect > Serial Port` menu (in our case COM4)
 - Connect to Auriga: `Connect > Serial Port > COM4`. You should hear a new beep
 
-\subsection mbot_ranger_arduino Install Arduino library
+\subsection mbot_ranger_arduino 3.2. Install Arduino library
 
 Install Arduino Library for Makeblock Electronic Modules as described in
 https://github.com/Makeblock-official/Makeblock-Libraries.
@@ -88,7 +101,7 @@ To resume:
 Then copy `C:\temp\Makeblock-Libraries\makeblock` into `C:\Program Files (x86)\mBlock\Arduino\libraries`. This
 copy requires administration rights.
 
-\subsection mbot_ranger_mblock_test Test mBlock
+\subsection mbot_ranger_mblock_test 3.3.Test mBlock
 
 In ViSP we provide in `tutorial/robot/mbot/mblock/test-ring-led.sb2` an mBlock test that is be useful to check if the
 ME Auriga board is working as expected. This file can also be downloaded from
@@ -103,7 +116,7 @@ should hear a beep
 - In mBlock click on the green flag.
 - You should see the Me Auriga ring led successively red, then green, then blue for 1 sec.
 
-\subsection mbot_ranger_arduino_controller Upload the controller
+\subsection mbot_ranger_arduino_controller 3.4. Upload the controller
 
 We provide `mbot-serial-controller.ino` file that contains our controller written in Arduino. It has to be compiled
 and uploaded on Me Auriga board. This file is part of ViSP and located in
@@ -139,12 +152,12 @@ six 1.5 Volt batteries.
 - Plug the external power supply to the Me Auriga board, and press the button located on the led ring. This action
 allows to turn Me Auriga on.
 
-\section mbot_rpi_install Raspberry Pi setup
+\section mbot_rpi_install 4. Raspberry Pi setup
 
 In this section we will see how to configure the serial port on Raspberry Pi in order to use the serial port
 `/dev/ttyAMA0` to communicate. Depending on your Raspebrry Pi version this is slightly different.
 
-\subsection mbot_rpi_install_serial_pi3 Configure RPi 3 serial port
+\subsection mbot_rpi_install_serial_pi3 4.1. Configure RPi 3 serial port
 
 This section is inspired from this
 [tutorial](https://spellfoundry.com/2016/05/29/configuring-gpio-serial-port-raspbian-jessie-including-pi-3/).
@@ -196,7 +209,7 @@ and you’ll see something like this:
     lrwxrwxrwx 1 root root 7 Mar 10 22:00 /dev/serial0 -> ttyAMA0
     lrwxrwxrwx 1 root root 5 Mar 10 22:00 /dev/serial1 -> ttyS0
 
-\subsection mbot_rpi_install_serial_pi2 Configure RPi 1 or 2 serial port
+\subsection mbot_rpi_install_serial_pi2 4.2. Configure RPi 1 or 2 serial port
 
 We provide hereafter the instructions to configure the serial port on Raspberry Pi 1 or 2 if you don't have a Pi 3
 under the hand.
@@ -224,7 +237,7 @@ Output is now as expected:
     [    0.135617] 20201000.uart: ttyAMA0 at MMIO 0x20201000 (irq = 83, base_baud = 0) is a PL011 rev2
 
 
-\subsection mbot_rpi_config Configure RPi camera
+\subsection mbot_rpi_config 4.3. Configure RPi camera
 
 First of all, with the Pi switched off, you’ll need to connect the Camera Module to the Raspberry Pi’s camera port,
 then start up the Pi and ensure the software is enabled.
@@ -233,9 +246,9 @@ This could be achieved following this
 [tutorial](https://projects.raspberrypi.org/en/projects/getting-started-with-picamera/4) or this
 [tutorial](http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-raspberry.html#install_raspberry_camera).
 
-\section mbot_test Testing the setup
+\section mbot_test 5. Testing the setup
 
-\subsection mbot_rpi_test_serial Test serial port on RPi
+\subsection mbot_rpi_test_serial 5.1. Test serial port on RPi
 
 Here we use our Raspberry Pi 3 connected to an external power supply, a RS232/TTL 3-5,5V adapter and a home made
 adapter that is used to connect the RS232/TTL 3-5,5V adapter to the Raspberry Pi
@@ -284,7 +297,7 @@ and on the Raspberry Pi
 
 After running `test-serial-write.py` you should see lines like `Got 5: data: <non alpha characters>` on the laptop side.
 
-\subsection mbot_rpi_test_tag_detection Testing Apriltag detection
+\subsection mbot_rpi_test_tag_detection 5.2. Testing Apriltag detection
 
 To test if you are able to acquire images from your RPi camera and detect your Apriltag, you may run
 tutorial-apriltag-detector-live.cpp. If you build ViSP from source as explained in \ref tutorial-install-raspberry the
@@ -296,7 +309,7 @@ To run this test on the Raspberry Pi:
     $ ./tutorial-apriltag-detector-live
 
 
-\subsection mbot_test_motor Testing mBot Ranger control
+\subsection mbot_test_motor 5.3. Testing mBot Ranger control
 
 We suppose here that you have \ref mbot_ranger_arduino_controller. The communication between the uploaded mBot
 controller and Raspberry Pi is achieved by a serial link using RPi `/dev/ttyAMA0` port configured with the
@@ -338,7 +351,12 @@ Run first this test on the Raspberry Pi with `--help` option:
     $ cd /home/pi/visp-ws/visp/robot/mbot/raspberry/visp
     $ ./test-serial-mbot --help
     Usage:
-    ./test-serial-mbot --vx <linear velocity in m/s> --wz <rotational velocity in deg/s> --rpm-l <motor left RPM> --rpm-r <motor right RPM> --t <duration of the command in second> --help
+    ./test-serial-mbot --vx <linear velocity in m/s> \
+                       --wz <rotational velocity in deg/s> \
+                       --rpm-l <motor left RPM> \
+                       --rpm-r <motor right RPM> \
+                       --t <duration of the command in second> \
+                       --help
 
     Example:
     ./test-serial-mbot --vx 0.05 --wz 0 --t 4
@@ -350,8 +368,8 @@ You can now try to send a linear velocity of 5 cm/s during 4 sec to the robot us
     Motor left vel: -1.53846 motor right vel: 1.53846 (rad/s)
     Send: MOTOR_RPM=-14,14
 
-\section mbot_pi_vs Visual-servoing
-\subsection mbot_pi_ibvs Image-based visual-servoing
+\section mbot_pi_vs 6. Visual-servoing
+\subsection mbot_pi_ibvs 6.1. Image-based visual-servoing
 
 The next step is now to run the image-based visual servoing example implemented in mbot-apriltag-ibvs.cpp. In this
 example we use two image moments as visual features and especially
@@ -373,7 +391,7 @@ and features that are used:
 \image html img-mbot-ibvs-features.png
 Since using this option could introduce a lag due to the network connection, we recommend to use it only for curiosity.
 
-\subsection mbot_pi_2Dhalf_vs 2D-half visual-servoing
+\subsection mbot_pi_2Dhalf_vs 6.2. 2D-half visual-servoing
 
 We provide also a 2D half visual servoing example implemented in mbot-apriltag-2D-half-vs.cpp. This example uses a mix
 between 2D and 3D visual features and especially the 2D \f$ x \f$ coordinate of the target cog implemented in
@@ -392,7 +410,7 @@ and features that are used:
 \image html img-mbot-2D-half-vs-features.png
 Since using this option could introduce a lag due to the network connection, we recommend to use it only for curiosity.
 
-\subsection mbot_pi_pbvs Position-based visual-servoing
+\subsection mbot_pi_pbvs 6.3. Position-based visual-servoing
 
 We provide also a position-based visual servoing example implemented in mbot-apriltag-pbvs.cpp. Here we use pure 3D
 visual features implemented in vpFeaturePoint3D and especially X and Z values obtained from the pose of the tag.
@@ -407,7 +425,7 @@ allows to display images like the following that shows the result of the image p
 \image html img-mbot-pbvs-features.png
 Since using this option could introduce a lag due to the network connection, we recommend to use it only for curiosity.
 
-\section mbot_pi_service Howto launch the demo once mBot powered on
+\section mbot_pi_service 7. Howto launch the demo once mBot powered on
 
 It is possible to transform the `mbot-apriltag-2D-half-vs` demo into a service on the Raspberry Pi in order to start
 the binary when raspberry has booted. To this end, we need to install a daemon. This example uses a 3D visual features
