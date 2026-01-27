@@ -55,14 +55,14 @@
 BEGIN_VISP_NAMESPACE
 /**
  * \ingroup group_tt_mi_tracker
- * \brief
+ * \brief Template Tracker based on Mutual Information (TT-MI) using B-Spline model.
  *
  * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
-
-  <b>Tutorials</b><br>
-  <span style="margin-left:2em"> If you are interested in the Template Tracker based on Mutual Information (TT-MI), you may have a look at:</span><br>
-
-  - \ref tutorial-tracking-tt
+ *
+ * <b>Tutorials</b><br>
+ * <span style="margin-left:2em"> If you are interested in the Template Tracker based on Mutual Information (TT-MI), you may have a look at:</span><br>
+ *
+ * - \ref tutorial-tracking-tt
  */
   class VISP_EXPORT vpTemplateTrackerMIBSpline
 {

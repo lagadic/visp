@@ -397,13 +397,50 @@ public:
     @name Deprecated functions
   */
   //@{
-  template <class Type>
-  VP_DEPRECATED static void createSubImage(const vpImage<Type> &I, unsigned int i_sub, unsigned int j_sub,
-                                           unsigned int nrow_sub, unsigned int ncol_sub, vpImage<Type> &S);
+  /*!
+    Crop a region of interest (ROI) in an image.
 
+    This function is deprecated. You should rather use
+    crop(const vpImage<Type> &, unsigned int, unsigned int, unsigned int, unsigned int, vpImage<Type> &).
+
+    \param I : Input image from which a sub image will be extracted.
+    \param roi_top : ROI vertical position of the upper/left corner in the input image.
+    \param roi_left : ROI  horizontal position of the upper/left corner in the input image.
+    \param roi_height : Cropped image height corresponding to the ROI height.
+    \param roi_width : Cropped image width corresponding to the ROI height.
+    \param crop : Cropped image.
+
+    \sa crop(const vpImage<Type> &, unsigned int, unsigned int, unsigned int, unsigned int, vpImage<Type> &)
+  */
   template <class Type>
-  VP_DEPRECATED static void createSubImage(const vpImage<Type> &I, const vpRect &rect, vpImage<Type> &S);
-  //@}
+  VP_DEPRECATED
+    static void createSubImage(const vpImage<Type> &I, unsigned int roi_top, unsigned int roi_left,
+                               unsigned int roi_height, unsigned int roi_width, vpImage<Type> &crop)
+  {
+    vpImageTools::crop(I, roi_top, roi_left, roi_height, roi_width, crop);
+  }
+
+  /*!
+    Crop an image region of interest.
+
+    This function is deprecated.
+    You should rather use crop(const vpImage<Type> &, const vpRect &, vpImage<Type> &).
+
+    \param I : Input image from which a sub image will be extracted.
+
+    \param roi : Region of interest in image \e I corresponding to the cropped part of the image.
+
+    \param crop : Cropped image.
+
+    \sa crop(const vpImage<Type> &, const vpRect &, vpImage<Type> &)
+  */
+  template <class Type>
+  VP_DEPRECATED
+    void createSubImage(const vpImage<Type> &I, const vpRect &roi, vpImage<Type> &crop)
+  {
+    vpImageTools::crop(I, roi, crop);
+  }
+    //@}
 #endif
 
 private:
@@ -529,55 +566,6 @@ private:
   }
 #endif
 };
-
-#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-/*!
-  Crop a region of interest (ROI) in an image.
-
-  \deprecated This function is deprecated. You should rather use
-  crop(const vpImage<Type> &, unsigned int, unsigned int, unsigned int,
-  unsigned int, vpImage<Type> &).
-
-  \param I : Input image from which a sub image will be extracted.
-  \param roi_top : ROI vertical position of the upper/left corner in the input
-  image.
-  \param roi_left : ROI  horizontal position of the upper/left corner
-  in the input image.
-  \param roi_height : Cropped image height corresponding to the ROI height.
-  \param roi_width : Cropped image width corresponding to the ROI height.
-  \param crop : Cropped image.
-
-  \sa crop(const vpImage<Type> &, unsigned int, unsigned int, unsigned int,
-  unsigned int, vpImage<Type> &)
-*/
-template <class Type>
-void vpImageTools::createSubImage(const vpImage<Type> &I, unsigned int roi_top, unsigned int roi_left,
-                                  unsigned int roi_height, unsigned int roi_width, vpImage<Type> &crop)
-{
-  vpImageTools::crop(I, roi_top, roi_left, roi_height, roi_width, crop);
-}
-
-/*!
-  Crop an image region of interest.
-
-  \deprecated This function is deprecated. You should rather use
-  crop(const vpImage<Type> &, const vpRect &, vpImage<Type> &).
-
-  \param I : Input image from which a sub image will be extracted.
-
-  \param roi : Region of interest in image \e I corresponding to the
-  cropped part of the image.
-
-  \param crop : Cropped image.
-
-  \sa crop(const vpImage<Type> &, const vpRect &, vpImage<Type> &)
-*/
-template <class Type> void vpImageTools::createSubImage(const vpImage<Type> &I, const vpRect &roi, vpImage<Type> &crop)
-{
-  vpImageTools::crop(I, roi, crop);
-}
-
-#endif // #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
 
 /*!
   Crop a region of interest (ROI) in an image. The ROI coordinates and

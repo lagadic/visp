@@ -154,7 +154,11 @@ macro(_find_package_naoqi_internal module)
 endmacro()
 
 if(APPLE_FRAMEWORK)
-  find_library(OpenCV_FRAMEWORK opencv2)
+  find_library(OpenCV_FRAMEWORK
+               NAMES opencv2
+               PATHS ${CMAKE_FRAMEWORK_PATH}
+               NO_DEFAULT_PATH
+               NO_CMAKE_FIND_ROOT_PATH)
 
   if(OpenCV_FRAMEWORK)
     set(OpenCV_FOUND TRUE)
@@ -166,6 +170,7 @@ if(APPLE_FRAMEWORK)
     vp_get_opencv_version_from_hpp(${opencv_version_file} "CV_VERSION_MINOR" OpenCV_VERSION_MINOR)
     vp_get_opencv_version_from_hpp(${opencv_version_file} "CV_VERSION_REVISION" OpenCV_VERSION_PATCH)
     set(OpenCV_VERSION "${OpenCV_VERSION_MAJOR}.${OpenCV_VERSION_MINOR}.${OpenCV_VERSION_PATCH}")
+    set(OpenCV_FRAMEWORK_DIR ${OpenCV_FRAMEWORK})
   else()
     set(OpenCV_FOUND FALSE)
   endif()

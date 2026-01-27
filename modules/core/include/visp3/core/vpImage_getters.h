@@ -766,6 +766,51 @@ void vpImage<Type>::getMinMaxLoc(vpImagePoint *minLoc, vpImagePoint *maxLoc, Typ
  * considered, if set to true.
  * \param[out] nbValidPoints Optional parameter. When different from nullptr contains the number of points that are
  * valid according to the boolean mask or image size when `p_mask` is set to nullptr.
+ *
+ * The following sample code shows how to use \b vpImage::getMeanValue():
+ * \code
+ * #include <visp3/core/vpImage.h>
+ *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
+ * int main()
+ * {
+ *   // gray
+ *   {
+ *     vpImage<unsigned char> I(1, 2);
+ *     I[0][0] = 1;
+ *     I[0][1] = 2;
+ *
+ *     std::cout << "Gray image mean value: " << I.getMeanValue() << std::endl;
+ *     std::cout << "Gray image global mean value: " << I.getMeanValue() << std::endl; // nchannels = 1
+ *   }
+ *   // color
+ *   {
+ *     vpImage<vpRGBa> I(1, 2);
+ *     I[0][0].R = 1;
+ *     I[0][0].G = 2;
+ *     I[0][0].B = 3;
+ *     I[0][1].R = 4;
+ *     I[0][1].G = 5;
+ *     I[0][1].B = 6;
+ *
+ *     int nchannels = 3;
+ *     std::cout << "RGBa color image mean value: " << I.getMeanValue() << std::endl;
+ *     std::cout << "RGBa color image global mean value: " << I.getMeanValue() / nchannels << std::endl;
+ *   }
+ *
+ *   return EXIT_SUCCESS;
+ * }
+ * \endcode
+ * It produces the following output:
+ * \code{.sh}
+ * Gray image mean value: 1.5
+ * Gray image global mean value: 1.5
+ * RGBa color image mean value: 10.5
+ * RGBa color image global mean value: 3.5
+ * \endcode
  */
 template <class Type> double vpImage<Type>::getMeanValue(const vpImage<bool> *p_mask, unsigned int *nbValidPoints) const
 {

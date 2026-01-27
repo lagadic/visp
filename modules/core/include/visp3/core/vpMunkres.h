@@ -44,7 +44,7 @@
 #include <tuple>
 
 // Internal
-#include "vpMath.h"
+#include <visp3/core/vpMath.h>
 
 BEGIN_VISP_NAMESPACE
 /*!

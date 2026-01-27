@@ -295,14 +295,14 @@ public:
 
    Get a predefined color
 
-   \param i : color indice
+   \param i : Color index
    */
   static inline vpColor getColor(const unsigned int &i) { return vpColor::allColors[i % vpColor::nbColors]; }
 
   /**
    * \brief Convert a predefined vpColor into its corresponding name.
    *
-   * \param[in] name The predefined color.
+   * \param[in] color The predefined color.
    * \return vpColor The corresponding color name.
    */
   static std::string colorToString(const vpColor &color);
