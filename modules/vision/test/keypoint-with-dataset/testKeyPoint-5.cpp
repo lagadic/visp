@@ -49,7 +49,9 @@
 
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpIoTools.h>
+#if defined(VISP_HAVE_MODULE_GUI)
 #include <visp3/gui/vpDisplayFactory.h>
+#endif
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/vision/vpKeyPoint.h>
@@ -158,7 +160,7 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
   vpDisplay *display = nullptr;
 
   if (opt_display) {
-#ifdef VISP_HAVE_DISPLAY
+#if defined(VISP_HAVE_DISPLAY) && defined(VISP_HAVE_MODULE_GUI)
     display = vpDisplayFactory::allocateDisplay(I, 0, 0, "KeyPoints detection.");
 #else
     std::cout << "No image viewer is available..." << std::endl;

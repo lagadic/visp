@@ -259,12 +259,14 @@ SCENARIO("Running tracker on sequences with ground truth", "[rbt]")
       vpImage<unsigned char> displayI(h, w), displayDepth(h, w, 255), displayMask(h, w);
       vpImage<vpRGBa> displayRGB(h, w);
 
+#ifdef VISP_HAVE_MODULE_GUI
       std::vector<std::shared_ptr<vpDisplay>> displays = vpDisplayFactory::makeDisplayGrid(2, 2, 0, 0, 70, 70,
         "Gray", displayI,
         "Color", displayRGB,
         "Depth", displayDepth,
         "Mask", displayMask
       );
+#endif
 
       const std::vector<std::string> objectNames = { "dragon", "cube", "stomach", "lower_teeth" };
 
