@@ -47,7 +47,9 @@
 
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpIoTools.h>
+#ifdef VISP_HAVE_MODULE_GUI
 #include <visp3/gui/vpDisplayFactory.h>
+#endif
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/io/vpVideoReader.h>
@@ -174,7 +176,7 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
   vpDisplay *display = nullptr;
 
   if (opt_display) {
-#ifdef VISP_HAVE_DISPLAY
+#if defined(VISP_HAVE_DISPLAY) && defined(VISP_HAVE_MODULE_GUI)
     display = vpDisplayFactory::allocateDisplay(I, 0, 0, "ORB keypoints matching and pose estimation");
     display->setDownScalingFactor(vpDisplay::SCALE_AUTO);
 #else
@@ -324,7 +326,7 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
   keypoints.createImageMatching(I, IMatching);
 
   if (opt_display) {
-#ifdef VISP_HAVE_DISPLAY
+#if defined(VISP_HAVE_DISPLAY) && defined(VISP_HAVE_MODULE_GUI)
     display2 = vpDisplayFactory::allocateDisplay(IMatching, 0, static_cast<int>(I.getHeight()) / vpDisplay::getDownScalingFactor(I) + 30, "IMatching");
     display2->setDownScalingFactor(vpDisplay::SCALE_AUTO);
 #endif

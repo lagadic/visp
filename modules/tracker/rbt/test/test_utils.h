@@ -5,7 +5,9 @@
 #include <visp3/ar/vpPanda3DGeometryRenderer.h>
 #include <visp3/ar/vpPanda3DRGBRenderer.h>
 
+#ifdef VISP_HAVE_MODULE_GUI
 #include <visp3/gui/vpDisplayFactory.h>
+#endif
 
 #include <vector>
 

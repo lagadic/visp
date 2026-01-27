@@ -36,8 +36,6 @@
 #include "graphicsEngine.h"
 #include "windowFramework.h"
 
-#include <visp3/gui/vpDisplayFactory.h>
-
 BEGIN_VISP_NAMESPACE
 #define VP_STRINGIFY(x) #x
 #define VP_TOSTRING(x) VP_STRINGIFY(x)
