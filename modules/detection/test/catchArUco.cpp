@@ -148,6 +148,17 @@ TEST_CASE("ArUco detection test", "[aruco_detection_test]")
   {
     for (const auto &kv : apriltagMap) {
       vpDetectorAprilTag detector(kv.first);
+      int hamming_dist_ref = 0;
+      float decision_margin = 50.0f;
+      detector.setAprilTagHammingDistanceThreshold(hamming_dist_ref);
+      detector.setAprilTagDecisionMarginThreshold(decision_margin);
+      detector.setAprilTagPoseEstimationMethod(vpDetectorAprilTag::DEMENTHON_VIRTUAL_VS);
+
+      vpDetectorAprilTag detectorCpy(detector);
+
+      CHECK(detectorCpy.getAprilTagHammingDistanceThreshold() == hamming_dist_ref);
+      CHECK(detectorCpy.getAprilTagDecisionMarginThreshold() == decision_margin);
+      CHECK(detectorCpy.getPoseEstimationMethod() == detector.getPoseEstimationMethod());
 
       for (int id = 0; id < kv.second; id += kv.second/nb_tests) {
         vpImage<unsigned char> tag_img;
@@ -157,7 +168,9 @@ TEST_CASE("ArUco detection test", "[aruco_detection_test]")
         vpImageTools::resize(tag_img, tag_img_big, vpImageTools::INTERPOLATION_NEAREST);
 
         bool detect = detector.detect(tag_img_big);
+        bool detectCpy = detectorCpy.detect(tag_img_big);
         CHECK(detect == true);
+        CHECK(detectCpy == true);
         if (detect) {
           std::vector<int> tagsId = detector.getTagsId();
           std::vector<float> tagsDecisionMargin = detector.getTagsDecisionMargin();
@@ -166,18 +179,22 @@ TEST_CASE("ArUco detection test", "[aruco_detection_test]")
           CHECK(tagsId.size() == tagsHammingDistance.size());
           CHECK(tagsId.size() == detector.getNbObjects());
 
-          // Use directly the getter
-          bool found_id = false;
+          std::vector<int> tagsIdCpy = detectorCpy.getTagsId();
+          std::vector<float> tagsDecisionMarginCpy = detectorCpy.getTagsDecisionMargin();
+          std::vector<int> tagsHammingDistanceCpy = detectorCpy.getTagsHammingDistance();
+          CHECK(tagsId.size() == tagsIdCpy.size());
+          CHECK(tagsHammingDistance.size() == tagsHammingDistanceCpy.size());
+          CHECK(tagsDecisionMargin.size() == tagsDecisionMarginCpy.size());
+
+          // Check that the same detections occured
           for (auto tag_id : tagsId) {
+            bool found_id = false;
             if (g_debug_print) {
               WARN("tag_dict=" << kv.first << " ; tag_id=" << tag_id << " ; tag_ref=" << id);
             }
-            if (tag_id == id) {
-              found_id = true;
-              break;
-            }
+            found_id = (std::find(tagsIdCpy.begin(), tagsIdCpy.end(), tag_id) != tagsIdCpy.end());
+            CHECK(found_id == true);
           }
-          CHECK(found_id == true);
         }
       }
     }
