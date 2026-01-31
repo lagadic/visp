@@ -188,14 +188,14 @@ using npz_t = std::map<std::string, NpyArray>;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 // Do not export the following symbols
-char BigEndianTest();
-void compressData(size_t nbytes_uncompressed, std::vector<uint8_t> &uncompressed,
+VISP_EXPORT char BigEndianTest();
+VISP_EXPORT void compressData(size_t nbytes_uncompressed, std::vector<uint8_t> &uncompressed,
                   std::vector<uint8_t> &buffer_compressed, size_t &nbytes_on_disk, FILE *fp);
-char map_type(const std::type_info &t);
+VISP_EXPORT char map_type(const std::type_info &t);
 template<typename T> std::vector<char> create_npy_header(const std::vector<size_t> &shape);
-void parse_npy_header(FILE *fp, size_t &word_size, std::vector<size_t> &shape, bool &fortran_order, bool &little_endian, char &data_type);
-void parse_npy_header(unsigned char *buffer, size_t &word_size, std::vector<size_t> &shape, bool &fortran_order, bool &little_endian, char &data_type);
-void parse_zip_footer(FILE *fp, uint16_t &nrecs, size_t &global_header_size, size_t &global_header_offset);
+VISP_EXPORT void parse_npy_header(FILE *fp, size_t &word_size, std::vector<size_t> &shape, bool &fortran_order, bool &little_endian, char &data_type);
+VISP_EXPORT void parse_npy_header(unsigned char *buffer, size_t &word_size, std::vector<size_t> &shape, bool &fortran_order, bool &little_endian, char &data_type);
+VISP_EXPORT void parse_zip_footer(FILE *fp, uint16_t &nrecs, size_t &global_header_size, size_t &global_header_offset);
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
 VISP_EXPORT npz_t npz_load(const std::string &fname);
