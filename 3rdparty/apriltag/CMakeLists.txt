@@ -135,3 +135,9 @@ else()
     vp_set_source_file_compile_flag(${f} -O0)
   endforeach()
 endif()
+
+set_target_properties(${APRILTAG_LIBRARY} PROPERTIES
+  CXX_VISIBILITY_PRESET hidden
+  VISIBILITY_INLINES_HIDDEN ON
+  C_VISIBILITY_PRESET hidden
+)
