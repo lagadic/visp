@@ -17,6 +17,10 @@ ViSP 3.7.1 (current version)
     . [#1876] Unable to build ViSP framework from source for iOS
     . [#1878] Unable to build ViSP framework from source for iOS with OpenCV support
     . [#1896] When installed visp_core.h contains headers that exist only at build time
+    . [#1898] ViSP shared libraries export symbols from embedded third-parties
+    . [#1899] Installed headers are arch specific
+    . [#1901] The app visp-calibrate-camera references default-chessboard.cfg and
+              default-circles.cfg config files that are missing from installation
 ----------------------------------------------
 ViSP 3.7.0 (released December 19, 2025)
   - Contributors:
