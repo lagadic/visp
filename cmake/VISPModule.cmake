@@ -781,7 +781,8 @@ macro(vp_create_global_module_header module)
   endif()
 
   foreach(h ${VISP_MODULE_${module}_HEADERS})
-    string(REGEX REPLACE "^.*/include/visp3" "visp3" h "${h}")
+    # Keep only part of the header starting from visp3/...
+    string(REGEX REPLACE "^.*(visp3/.*)" "\\1" h "${h}")
     set(VISP_HEADER_CONTENT_CONFIGMAKE "${VISP_HEADER_CONTENT_CONFIGMAKE}\n#include <${h}>")
   endforeach()
 
@@ -1186,7 +1187,9 @@ macro(vp_add_config_file)
   endif()
 
   foreach(h ${VISP_MODULE_${the_module}_HEADERS})
-    string(REGEX REPLACE "^.*/include/visp3" "visp3" h "${h}")
+    # Keep only part of the header starting from visp3/...
+    string(REGEX REPLACE "^.*(visp3/.*)" "\\1" h "${h}")
+    set(h "toto")
     set(__header_content "${__header_content}\n#include <${h}>")
   endforeach()
 
