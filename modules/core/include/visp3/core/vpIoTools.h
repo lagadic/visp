@@ -185,13 +185,20 @@ struct NpyArray
 };
 
 using npz_t = std::map<std::string, NpyArray>;
-VISP_EXPORT npz_t npz_load(const std::string &fname);
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+// Do not export the following symbols
 VISP_EXPORT char BigEndianTest();
+VISP_EXPORT void compressData(size_t nbytes_uncompressed, std::vector<uint8_t> &uncompressed,
+                  std::vector<uint8_t> &buffer_compressed, size_t &nbytes_on_disk, FILE *fp);
 VISP_EXPORT char map_type(const std::type_info &t);
 template<typename T> std::vector<char> create_npy_header(const std::vector<size_t> &shape);
 VISP_EXPORT void parse_npy_header(FILE *fp, size_t &word_size, std::vector<size_t> &shape, bool &fortran_order, bool &little_endian, char &data_type);
 VISP_EXPORT void parse_npy_header(unsigned char *buffer, size_t &word_size, std::vector<size_t> &shape, bool &fortran_order, bool &little_endian, char &data_type);
 VISP_EXPORT void parse_zip_footer(FILE *fp, uint16_t &nrecs, size_t &global_header_size, size_t &global_header_offset);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
+
+VISP_EXPORT npz_t npz_load(const std::string &fname);
 VISP_EXPORT NpyArray npz_load(const std::string &fname, const std::string &varname);
 VISP_EXPORT NpyArray npy_load(const std::string &fname);
 // Dedicated functions for saving std::string data
@@ -286,9 +293,6 @@ template<typename T> void npy_save(const std::string &fname, const T *data, cons
   }
   fclose(fp);
 }
-
-VISP_EXPORT void compressData(size_t nbytes_uncompressed, std::vector<uint8_t> &uncompressed,
-  std::vector<uint8_t> &buffer_compressed, size_t &nbytes_on_disk, FILE *fp);
 
 /*!
   Save the specified \p fname array of data (\p data) into the \p zipname npz file. This function is similar to the
@@ -499,6 +503,7 @@ template<typename T> void npz_save(const std::string &zipname, const std::string
   npz_save(zipname, fname, &data[0], shape, mode, compress_data);
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 template<typename T> std::vector<char> create_npy_header(const std::vector<size_t> &shape)
 {
   std::vector<char> dict;
@@ -533,6 +538,7 @@ template<typename T> std::vector<char> create_npy_header(const std::vector<size_
 
   return header;
 }
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 } // namespace cnpy
 #endif

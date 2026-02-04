@@ -24,24 +24,30 @@
 #include "Simd/SimdMemory.h"
 #include "Simd/SimdMath.h"
 
+#if defined(HAVE_VISIBILITY_HIDDEN)
+#  define VISIBILITY_HIDDEN __attribute__((visibility ("hidden")))
+#else
+#  define VISIBILITY_HIDDEN
+#endif
+
 namespace Simd
 {
     namespace Base
     {
         template <size_t channelCount> void ReduceColor2x2(const uint8_t * src0, const uint8_t * src1, uint8_t * dst);
 
-        template <> void ReduceColor2x2<1>(const uint8_t * src0, const uint8_t * src1, uint8_t * dst)
+        template <> VISIBILITY_HIDDEN void ReduceColor2x2<1>(const uint8_t * src0, const uint8_t * src1, uint8_t * dst)
         {
             dst[0] = Average(src0[0], src0[1], src1[0], src1[1]);
         }
 
-        template <> void ReduceColor2x2<2>(const uint8_t * src0, const uint8_t * src1, uint8_t * dst)
+        template <> VISIBILITY_HIDDEN void ReduceColor2x2<2>(const uint8_t * src0, const uint8_t * src1, uint8_t * dst)
         {
             dst[0] = Average(src0[0], src0[2], src1[0], src1[2]);
             dst[1] = Average(src0[1], src0[3], src1[1], src1[3]);
         }
 
-        template <> void ReduceColor2x2<3>(const uint8_t * src0, const uint8_t * src1, uint8_t * dst)
+        template <> VISIBILITY_HIDDEN void ReduceColor2x2<3>(const uint8_t * src0, const uint8_t * src1, uint8_t * dst)
         {
             dst[0] = Average(src0[0], src0[3], src1[0], src1[3]);
             dst[1] = Average(src0[1], src0[4], src1[1], src1[4]);
@@ -49,7 +55,7 @@ namespace Simd
         }
 
 
-        template <> void ReduceColor2x2<4>(const uint8_t * src0, const uint8_t * src1, uint8_t * dst)
+        template <> VISIBILITY_HIDDEN void ReduceColor2x2<4>(const uint8_t * src0, const uint8_t * src1, uint8_t * dst)
         {
             dst[0] = Average(src0[0], src0[4], src1[0], src1[4]);
             dst[1] = Average(src0[1], src0[5], src1[1], src1[5]);

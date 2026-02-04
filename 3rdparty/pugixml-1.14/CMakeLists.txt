@@ -34,3 +34,8 @@ if(NOT BUILD_SHARED_LIBS)
 endif()
 
 #vp_set_source_file_compile_flag(clipper.cpp -Wno-float-equal)
+
+set_target_properties(${PUGIXML_LIBRARY} PROPERTIES
+  CXX_VISIBILITY_PRESET hidden
+  VISIBILITY_INLINES_HIDDEN ON
+)
