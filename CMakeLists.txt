@@ -243,7 +243,7 @@ else() # UNIX
   # The location where includes and libraries will be installed
   if(ENABLE_MULTIARCH)
     # The 2 following lines should be used to enable multi-arch support.
-    vp_update(VISP_INC_INSTALL_PATH       "${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_LIBRARY_ARCHITECTURE}")
+    vp_update(VISP_INC_INSTALL_PATH       "${CMAKE_INSTALL_INCLUDEDIR}") # Headers are arch independant
     vp_update(VISP_LIB_INSTALL_PATH       "${CMAKE_INSTALL_LIBDIR}/${CMAKE_LIBRARY_ARCHITECTURE}")
   else()
     # catkin doesn't support multi-arch; use rather the next 2 lines
