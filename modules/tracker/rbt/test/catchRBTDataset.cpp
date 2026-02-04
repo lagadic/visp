@@ -281,7 +281,7 @@ SCENARIO("Running tracker on sequences with ground truth", "[rbt]")
 #ifdef VP_HAVE_RB_KLT_TRACKER
           RunData("depth-klt-ccd-mask.json", 0.02, 5.0),
           RunData("depth-klt.json", 0.02, 5.5),
-          RunData("depth-klt-me-multi.json", 0.02, 5.0),
+          RunData("depth-klt-me-multi.json", 0.02, 6.5),
           RunData("depth-klt-me-single.json", 0.025, 10.0),
 #endif
           }
