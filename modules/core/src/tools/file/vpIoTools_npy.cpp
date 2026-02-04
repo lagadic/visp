@@ -162,6 +162,7 @@ void parse_zip64_sizes(const std::vector<char> &extra_field, uint32_t &compr_byt
 }
 } // anonymous namespace
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 char visp::cnpy::BigEndianTest()
 {
   int x = 1;
@@ -461,6 +462,8 @@ void visp::cnpy::compressData(size_t nbytes_uncompressed, std::vector<uint8_t> &
   deflateEnd(&strm);
 }
 
+#endif // DOXYGEN_SHOULD_SKIP_THIS
+
 /*!
   Load the specified \p fname filepath as arrays of data. This function is similar to the
   <a href="https://numpy.org/doc/stable/reference/generated/numpy.load.html">numpy.load</a> function.
@@ -680,6 +683,7 @@ namespace visp
 {
 namespace cnpy
 {
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 // 000000e0  ff ff 12 00 14 00 4d 79  20 73 74 72 69 6e 67 20  |......My string |
 // 000000f0  64 61 74 61 2e 6e 70 79  01 00 10 00 8c 00 00 00  |data.npy........|
 // 00000100  00 00 00 00 8c 00 00 00  00 00 00 00 93 4e 55 4d  |.............NUM|
@@ -806,6 +810,7 @@ std::vector<char> utf8_to_utf32_vec_pad(const std::string &utf8, const std::size
 
   return utf32Vector;
 }
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 } // cnpy
 } // visp
 
