@@ -59,3 +59,16 @@ endforeach()
 
 visp_copy_dir(visp-calibrate-camera.cpp "${CMAKE_CURRENT_SOURCE_DIR}" data-chessboard)
 visp_copy_dir(visp-calibrate-camera.cpp "${CMAKE_CURRENT_SOURCE_DIR}" data-circles)
+
+# Define data folder for installation
+set(VISP_DATA_INSTALL_PATH "share/visp-${VISP_VERSION_MAJOR}.${VISP_VERSION_MINOR}.${VISP_VERSION_PATCH}/data")
+
+# Configuration files installation
+install(FILES "default-chessboard.cfg" "default-circles.cfg"
+  DESTINATION "${VISP_DATA_INSTALL_PATH}/calibration"
+)
+
+# Data installation
+install(DIRECTORY data-chessboard data-circles
+  DESTINATION "${VISP_DATA_INSTALL_PATH}/calibration"
+)
