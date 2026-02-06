@@ -47,7 +47,7 @@
 
 #if defined(VISP_HAVE_LAPACK) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 
-#include <visp3/core/vpQuadProg.h>
+#include <visp3/core/vpQuadProgNative.h>
 #include <visp3/core/vpTime.h>
 
 #include "qp_plot.h"
@@ -116,7 +116,7 @@ int main(int argc, char **argv)
     d[i] += (5. * rand()) / RAND_MAX;
 
   // solver with warm start
-  vpQuadProg qp_WS;
+  vpQuadProgNative qp_WS;
 
   // timing
   int total = 100;
@@ -143,7 +143,7 @@ int main(int argc, char **argv)
     d += eps * randV(p);
 
     // solver without warm start
-    vpQuadProg qp;
+    vpQuadProgNative qp;
     x = 0;
     double t = vpTime::measureTimeMs();
     qp.solveQP(Q, r, A, b, C, d, x);

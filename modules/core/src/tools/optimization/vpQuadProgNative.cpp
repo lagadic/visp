@@ -33,7 +33,7 @@
 
 #include <algorithm>
 #include <visp3/core/vpMatrixException.h>
-#include <visp3/core/vpQuadProg.h>
+#include <visp3/core/vpQuadProgNative.h>
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 BEGIN_VISP_NAMESPACE
@@ -74,32 +74,32 @@ BEGIN_VISP_NAMESPACE
   int main()
   {
     vpMatrix H(2,2), A(1,2);
-    vpColVector c(2), b(1);
+    vpColVector g(2), b(1);
 
     H[0][0] = 4;
     H[0][1] = H[1][0] = 1;
     H[1][1] = 2;
-    c[0] = c[1] = 1;
+    g[0] = g[1] = 1;
     A[0][0] = A[0][1] = 1;
     b[0] = 1;
 
     vpMatrix Q;vpColVector r;
-    vpQuadProg::fromCanonicalCost(H, c, Q, r);
+    vpQuadProgNative::fromCanonicalCost(H, g, Q, r);
 
     vpColVector x;
-    vpQuadProg::solveQPe(Q, r, A, b, x);
+    vpQuadProgNative::solveQPe(Q, r, A, b, x);
     std::cout << x.t() << std::endl;  // prints (0.25 0.75)
   }
   \endcode
 */
-void vpQuadProg::fromCanonicalCost(const vpMatrix &H, const vpColVector &c, vpMatrix &Q, vpColVector &r,
+void vpQuadProgNative::fromCanonicalCost(const vpMatrix &H, const vpColVector &g, vpMatrix &Q, vpColVector &r,
                                    const double &tol)
 {
 #if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV)
   unsigned int n = H.getCols();
-  if (H.getRows() != n || c.getRows() != n) {
+  if (H.getRows() != n || g.getRows() != n) {
     throw(vpException(vpMatrixException::dimensionError,
-                      "vpQuadProg::fromCanonicalCost: H is not square or not the same dimension as c"));
+                      "vpQuadProgNative::fromCanonicalCost: H is not square or not the same dimension as g"));
   }
 
   vpColVector d(n);
@@ -112,7 +112,7 @@ void vpQuadProg::fromCanonicalCost(const vpMatrix &H, const vpColVector &c, vpMa
     if (d[i] > tol)
       d[i] = sqrt(d[i]);
     else if (d[i] < tol)
-      throw(vpException(vpMatrixException::matrixError, "vpQuadProg::fromCanonicalCost: H is not positive"));
+      throw(vpException(vpMatrixException::matrixError, "vpQuadProgNative::fromCanonicalCost: H is not positive"));
     else
       k = i + 1;
   }
@@ -124,7 +124,7 @@ void vpQuadProg::fromCanonicalCost(const vpMatrix &H, const vpColVector &c, vpMa
     P[i][k + i] = 1;
 
   Q = D * P * V.transpose();
-  r = -Q.t().pseudoInverse() * c;
+  r = -Q.t().pseudoInverse() * g;
 #else
   throw(vpException(vpException::functionNotImplementedError, "Symmetric matrix decomposition is not implemented. You "
                     "should install Lapack, Eigen3 or OpenCV 3rd party"));
@@ -144,14 +144,14 @@ void vpQuadProg::fromCanonicalCost(const vpMatrix &H, const vpColVector &c, vpMa
 
   \sa solveQPi(), solveQP()
 */
-bool vpQuadProg::setEqualityConstraint(const vpMatrix &A, const vpColVector &b, const double &tol)
+bool vpQuadProgNative::setEqualityConstraint(const vpMatrix &A, const vpColVector &b, const double &tol)
 {
   x1 = b;
   Z = A;
   if (A.getRows() == b.getRows() && vpLinProg::colReduction(Z, x1, false, tol))
     return true;
 
-  std::cout << "vpQuadProg::setEqualityConstraint: equality constraint infeasible" << std::endl;
+  std::cout << "vpQuadProgNative::setEqualityConstraint: equality constraint infeasible" << std::endl;
   return false;
 }
 
@@ -173,7 +173,7 @@ bool vpQuadProg::setEqualityConstraint(const vpMatrix &A, const vpColVector &b, 
 
   This function is for internal use, no dimension check is performed and A and b may be modified.
 */
-bool vpQuadProg::solveByProjection(const vpMatrix &Q, const vpColVector &r, vpMatrix &A, vpColVector &b, vpColVector &x,
+bool vpQuadProgNative::solveByProjection(const vpMatrix &Q, const vpColVector &r, vpMatrix &A, vpColVector &b, vpColVector &x,
                                    const double &tol)
 {
   if (A.getRows()) {
@@ -228,7 +228,7 @@ bool vpQuadProg::solveByProjection(const vpMatrix &Q, const vpColVector &r, vpMa
     Q[0][0] = Q[1][1] = 1;
     A[0][0] = A[0][1] = b[0] = 1;
 
-    vpQuadProg qp;
+    vpQuadProgNative qp;
     qp.setEqualityConstraint(A, b);
     vpColVector x;
 
@@ -245,11 +245,11 @@ bool vpQuadProg::solveByProjection(const vpMatrix &Q, const vpColVector &r, vpMa
 
   \sa setEqualityConstraint(), solveQPe()
 */
-bool vpQuadProg::solveQPe(const vpMatrix &Q, const vpColVector &r, vpColVector &x, const double &tol) const
+bool vpQuadProgNative::solveQPe(const vpMatrix &Q, const vpColVector &r, vpColVector &x, const double &tol) const
 {
   unsigned int n = Q.getCols();
   if (Q.getRows() != r.getRows() || Z.getRows() != n || x1.getRows() != n) {
-    std::cout << "vpQuadProg::solveQPe: wrong dimension\n"
+    std::cout << "vpQuadProgNative::solveQPe: wrong dimension\n"
       << "Q: " << Q.getRows() << "x" << Q.getCols() << " - r: " << r.getRows() << std::endl;
     std::cout << "Z: " << Z.getRows() << "x" << Z.getCols() << " - x1: " << x1.getRows() << std::endl;
     throw vpMatrixException::dimensionError;
@@ -307,20 +307,20 @@ bool vpQuadProg::solveQPe(const vpMatrix &Q, const vpColVector &r, vpColVector &
 
     vpColVector x;
 
-    vpQuadProg::solveQPe(Q, r, A, b, x);
+    vpQuadProgNative::solveQPe_static(Q, r, A, b, x);
     std::cout << x.t() << std::endl;  // prints (1 0)
   }
   \endcode
 
   \sa setEqualityConstraint(), solveQP(), solveQPi()
 */
-bool vpQuadProg::solveQPe(const vpMatrix &Q, const vpColVector &r, vpMatrix A, vpColVector b, vpColVector &x,
+bool vpQuadProgNative::solveQPe_static(const vpMatrix &Q, const vpColVector &r, vpMatrix A, vpColVector b, vpColVector &x,
                           const double &tol)
 {
   checkDimensions(Q, r, &A, &b, nullptr, nullptr, "solveQPe");
 
   if (!solveByProjection(Q, r, A, b, x, tol)) {
-    std::cout << "vpQuadProg::solveQPe: equality constraint infeasible" << std::endl;
+    std::cout << "vpQuadProgNative::solveQPe: equality constraint infeasible" << std::endl;
     return false;
   }
   return true;
@@ -372,7 +372,7 @@ bool vpQuadProg::solveQPe(const vpMatrix &Q, const vpColVector &r, vpMatrix A, v
     C[0][1] = -1; d[0] = -1;
 
     vpColVector x;
-    vpQuadProg qp;
+    vpQuadProgNative qp;
 
     qp.solveQP(Q, r, A, b, C, d, x);
     std::cout << x.t() << std::endl;  // prints (0 1)
@@ -381,7 +381,7 @@ bool vpQuadProg::solveQPe(const vpMatrix &Q, const vpColVector &r, vpMatrix A, v
 
   \sa resetActiveSet()
 */
-bool vpQuadProg::solveQP(const vpMatrix &Q, const vpColVector &r, vpMatrix A, vpColVector b, const vpMatrix &C,
+bool vpQuadProgNative::solveQP(const vpMatrix &Q, const vpColVector &r, vpMatrix A, vpColVector b, const vpMatrix &C,
                          const vpColVector &d, vpColVector &x, const double &tol)
 {
   if (A.getRows() == 0)
@@ -390,7 +390,7 @@ bool vpQuadProg::solveQP(const vpMatrix &Q, const vpColVector &r, vpMatrix A, vp
   checkDimensions(Q, r, &A, &b, &C, &d, "solveQP");
 
   if (!vpLinProg::colReduction(A, b, false, tol)) {
-    std::cout << "vpQuadProg::solveQP: equality constraint infeasible" << std::endl;
+    std::cout << "vpQuadProgNative::solveQP: equality constraint infeasible" << std::endl;
     return false;
   }
 
@@ -403,8 +403,18 @@ bool vpQuadProg::solveQP(const vpMatrix &Q, const vpColVector &r, vpMatrix A, vp
     x = b;
     return true;
   }
-  std::cout << "vpQuadProg::solveQP: inequality constraint infeasible" << std::endl;
+  std::cout << "vpQuadProgNative::solveQP: inequality constraint infeasible" << std::endl;
   return false;
+}
+
+bool vpQuadProgNative::solveQPCanonicalCost(const vpMatrix &H, const vpColVector &g, vpMatrix A, vpColVector b, const vpMatrix &C,
+                          const vpColVector &d, vpColVector &x, const double &tol)
+{
+  vpMatrix Q;
+  vpColVector r;
+  fromCanonicalCost(H, g, Q, r, tol);
+
+  return solveQP(Q, r, A, b, C, d, x, tol);
 }
 
 /*!
@@ -448,14 +458,14 @@ bool vpQuadProg::solveQP(const vpMatrix &Q, const vpColVector &r, vpMatrix A, vp
     C[1][0] = C[2][1] = -1;
 
     vpColVector x;
-    vpQuadProg qp;
+    vpQuadProgNative qp;
 
     qp.solveQPi(Q, r, C, d, x);
     std::cout << x.t() << std::endl;  // prints (1 0)
   }
   \endcode
 */
-bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r, const vpMatrix &C, const vpColVector &d,
+bool vpQuadProgNative::solveQPi(const vpMatrix &Q, const vpColVector &r, const vpMatrix &C, const vpColVector &d,
                           vpColVector &x, bool use_equality, const double &tol)
 {
   unsigned int n = checkDimensions(Q, r, nullptr, nullptr, &C, &d, "solveQPi");
@@ -471,11 +481,11 @@ bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r, const vpMatri
         x = x1;
         return true;
       }
-      std::cout << "vpQuadProg::solveQPi: inequality constraint infeasible" << std::endl;
+      std::cout << "vpQuadProgNative::solveQPi: inequality constraint infeasible" << std::endl;
       return false;
     }
     else
-      std::cout << "vpQuadProg::solveQPi: use_equality before setEqualityConstraint" << std::endl;
+      std::cout << "vpQuadProgNative::solveQPi: use_equality before setEqualityConstraint" << std::endl;
   }
 
   const unsigned int p = C.getRows();
@@ -495,7 +505,7 @@ bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r, const vpMatri
   for (auto v : active) {
     if (v >= p) {
       active.clear();
-      std::cout << "vpQuadProg::solveQPi: some constraints have been removed since last call\n";
+      std::cout << "vpQuadProgNative::solveQPi: some constraints have been removed since last call\n";
       break;
     }
   }
@@ -557,7 +567,7 @@ bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r, const vpMatri
 
     // r-part should be 0
     if (!vpLinProg::allLesser(xc.extract(2 * n + p, k), tol)) {
-      std::cout << "vpQuadProg::solveQPi: inequality constraints not feasible" << std::endl;
+      std::cout << "vpQuadProgNative::solveQPi: inequality constraints not feasible" << std::endl;
       return false;
     }
 
@@ -605,7 +615,7 @@ bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r, const vpMatri
       Ap = A.pseudoInverse(); // to get Lagrange multipliers if needed
 
     if (!solveByProjection(Q, g, A, b, u, tol)) {
-      std::cout << "vpQuadProg::solveQPi: QP seems infeasible, too many constraints activated\n";
+      std::cout << "vpQuadProgNative::solveQPi: QP seems infeasible, too many constraints activated\n";
       return false;
     }
 
@@ -683,7 +693,7 @@ bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r, const vpMatri
 
   \return least-norm solution to \f$\arg\min||\mathbf{A}\mathbf{x} - \mathbf{b}||\f$
 */
-vpColVector vpQuadProg::solveSVDorQR(const vpMatrix &A, const vpColVector &b)
+vpColVector vpQuadProgNative::solveSVDorQR(const vpMatrix &A, const vpColVector &b)
 {
   // assume A is full rank
   if (A.getRows() > A.getCols())
@@ -692,5 +702,5 @@ vpColVector vpQuadProg::solveSVDorQR(const vpMatrix &A, const vpColVector &b)
 }
 END_VISP_NAMESPACE
 #else
-void dummy_vpQuadProg() { }
+void dummy_vpQuadProgNative() { }
 #endif

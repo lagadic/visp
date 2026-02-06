@@ -32,20 +32,20 @@
  */
 
 /*!
- * \file vpQuadProg.h
+ * \file vpQuadProgProxQP.h
  * \brief Implementation of Quadratic Program with Active Sets.
  */
 
-#ifndef _vpQuadProg_h_
-#define _vpQuadProg_h_
+#ifndef _vpQuadProgProxQP_h_
+#define _vpQuadProgProxQP_h_
 
-#include <vector>
+#include <stdlib.h>
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpMatrix.h>
+#include <visp3/core/vpQuadProg.h>
 
 BEGIN_VISP_NAMESPACE
 /*!
- * \class vpQuadProg
+ * \class vpQuadProgProxQP
  * \ingroup group_core_optim
  * \brief This class provides a solver for Quadratic Programs.
  *
@@ -61,22 +61,24 @@ BEGIN_VISP_NAMESPACE
  * In order to be used sequentially, the decomposition of the equality constraint may be stored.
  * The last active set is always stored and used to warm start the next call.
  *
- * \warning The solvers are only available if c++11 or higher is activated during build.
- * Configure ViSP using cmake -DUSE_CXX_STANDARD=11.
+ * \warning The solvers are only available if c++14 or higher is activated during build.
+ * Configure ViSP using cmake -DUSE_CXX_STANDARD=14.
 */
-class VISP_EXPORT vpQuadProg
+class VISP_EXPORT vpQuadProgProxQP : public vpQuadProg
 {
 public:
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  /** @name Instantiated solvers  */
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_14)
+  /** @name Interface implementation */
   //@{
   virtual bool solveQP(const vpMatrix &Q, const vpColVector &r, vpMatrix A, vpColVector b, const vpMatrix &C,
-               const vpColVector &d, vpColVector &x, const double &tol = 1e-6) = 0;
+               const vpColVector &d, vpColVector &x, const double &tol = 1e-6) override;
 
   virtual bool solveQPCanonicalCost(const vpMatrix &H, const vpColVector &g, vpMatrix A, vpColVector b, const vpMatrix &C,
-                            const vpColVector &d, vpColVector &x, const double &tol = 1e-6) = 0;
+                            const vpColVector &d, vpColVector &x, const double &tol = 1e-6) override;
   //@}
 
+protected:
+  // TODO store solver for re-use if warm start
 #endif
 };
 END_VISP_NAMESPACE

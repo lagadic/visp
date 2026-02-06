@@ -49,7 +49,7 @@
 #if defined(VISP_HAVE_LAPACK) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 
 #include "qp_plot.h"
-#include <visp3/core/vpQuadProg.h>
+#include <visp3/core/vpQuadProgNative.h>
 #include <visp3/core/vpTime.h>
 
 int main(int argc, char **argv)
@@ -117,10 +117,10 @@ int main(int argc, char **argv)
     d[i] += (5. * rand()) / RAND_MAX;
 
   // solver with stored equality and warm start
-  vpQuadProg qp_WS;
+  vpQuadProgNative qp_WS;
   qp_WS.setEqualityConstraint(A, b);
 
-  vpQuadProg qp_ineq_WS;
+  vpQuadProgNative qp_ineq_WS;
   qp_ineq_WS.setEqualityConstraint(A, b);
 
   // timing
@@ -146,7 +146,7 @@ int main(int argc, char **argv)
     // without warm start
     x = 0;
     double t = vpTime::measureTimeMs();
-    vpQuadProg::solveQPe(Q, r, A, b, x);
+    vpQuadProgNative::solveQPe(Q, r, A, b, x);
 
     t_noWS += vpTime::measureTimeMs() - t;
 #ifdef VISP_HAVE_DISPLAY
@@ -168,7 +168,7 @@ int main(int argc, char **argv)
     // with inequalities
     // without warm start
     x = 0;
-    vpQuadProg qp;
+    vpQuadProgNative qp;
     t = vpTime::measureTimeMs();
     qp.solveQP(Q, r, A, b, C, d, x);
 
