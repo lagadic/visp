@@ -9,7 +9,6 @@ license-file = "LICENSE.txt"
 
 # TODO: add ccache support
 [dependencies]
-cxx-compiler = ">=1.7.0"
 cmake = ">=3.22"
 ninja = ">=1.11"
 pkg-config = ">=0.29.2"
@@ -51,6 +50,10 @@ scripts = ["development/scripts/pixi/activation.bat"]
 
 [target.unix.activation.env]
 VISP_USE_GTK2 = "ON"
+
+# Use default compiler pinned on conda-forge
+[feature.default-compiler]
+dependencies = { cxx-compiler = ">=1.7.0" }
 
 # Use clang-cl on Windows
 # We must use scripts instead of env to setup CC and CXX
@@ -206,21 +209,19 @@ test = { cmd = "ctest --test-dir $VISP_BUILD_DIR --output-on-failure --parallel 
 
 [environments]
 # Minimal set of features and python bindings
-with-python = { features = ["python-bindings", "opencv-with-qt", "doc"] }
+with-python = { features = ["default-compiler", "python-bindings", "opencv-with-qt", "doc"] }
 # All <environment-name>-clang-cl variants are for building under Clang-cl compiler under windows instead of MSVC CL
-with-python-clang-cl = { features = ["python-bindings", "opencv-with-qt", "doc", "clang-cl"] }
+with-python-clang-cl = { features = ["clang-cl", "python-bindings", "opencv-with-qt", "doc"] }
 # All ViSP features including python bindings
-all = { features = ["rbt", "python-bindings", "opencv-with-qt", "doc"] }
-all-clang-cl = { features = ["rbt", "python-bindings", "opencv-with-qt", "doc", "clang-cl"] }
+all = { features = ["default-compiler", "rbt", "python-bindings", "opencv-with-qt", "doc"] }
+all-clang-cl = { features = ["clang-cl", "rbt", "python-bindings", "opencv-with-qt", "doc"] }
 # All ViSP features (incl. python bindings) + tests
-all-with-tests = { features = ["rbt", "python-bindings", "opencv-with-qt", "doc", "tests"] }
-all-clang-cl-with-tests = { features = ["rbt", "python-bindings", "opencv-with-qt", "doc", "clang-cl", "tests"] }
+all-with-tests = { features = ["default-compiler", "rbt", "python-bindings", "opencv-with-qt", "doc", "tests"] }
+all-clang-cl-with-tests = { features = ["clang-cl", "rbt", "python-bindings", "opencv-with-qt", "doc", "tests"] }
 # Environments dedicated for CI (headless)
-full-ci-python-oldest = { features = ["rbt", "python-bindings", "headless", "tests", "examples", "tutorials", "python-oldest"]}
-full-ci-python-supported = { features = ["rbt", "python-bindings", "headless", "tests", "examples", "tutorials", "python-supported"]}
-# full-ci-python-newest = { features = ["rbt", "python-bindings", "headless", "tests", "examples", "tutorials", "python-newest"]}
-full-ci-coverage = { features = ["rbt", "python-bindings", "headless", "tests", "examples", "tutorials", "coverage"]}
-full-ci-coverage-clang-cl = { features = ["rbt", "python-bindings", "headless", "tests", "examples", "tutorials", "coverage", "clang-cl"]}
-full-ci-clang-cl-python-oldest = { features = ["rbt", "python-bindings", "headless", "tests", "examples", "tutorials", "clang-cl", "python-oldest"]}
-full-ci-clang-cl-python-supported = { features = ["rbt", "python-bindings", "headless", "tests", "examples", "tutorials", "clang-cl", "python-supported"]}
-# full-ci-clang-cl-python-newest = { features = ["rbt", "python-bindings", "headless", "tests", "examples", "tutorials", "clang-cl", "python-newest"]}
+full-ci-python-oldest = { features = ["default-compiler", "rbt", "python-bindings", "headless", "tests", "examples", "tutorials", "python-oldest"]}
+full-ci-python-supported = { features = ["default-compiler", "rbt", "python-bindings", "headless", "tests", "examples", "tutorials", "python-supported"]}
+full-ci-coverage = { features = ["default-compiler", "rbt", "python-bindings", "headless", "tests", "examples", "tutorials", "coverage"]}
+full-ci-coverage-clang-cl = { features = ["clang-cl", "rbt", "python-bindings", "headless", "tests", "examples", "tutorials", "coverage"]}
+full-ci-clang-cl-python-oldest = { features = ["clang-cl", "rbt", "python-bindings", "headless", "tests", "examples", "tutorials", "python-oldest"]}
+full-ci-clang-cl-python-supported = { features = ["clang-cl", "rbt", "python-bindings", "headless", "tests", "examples", "tutorials", "python-supported"]}
