@@ -36,7 +36,7 @@
  */
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_CATCH2)
+#if defined(VISP_HAVE_CATCH2) and defined(VISP_HAVE_APRILTAG)
 
 #include <catch_amalgamated.hpp>
 
