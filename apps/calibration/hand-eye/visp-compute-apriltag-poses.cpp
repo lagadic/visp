@@ -36,7 +36,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_PUGIXML)
+#if defined(VISP_HAVE_PUGIXML) and defined(VISP_HAVE_APRILTAG)
 
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpXmlParserCamera.h>
