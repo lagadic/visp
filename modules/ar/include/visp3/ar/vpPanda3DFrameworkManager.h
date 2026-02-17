@@ -47,7 +47,7 @@ BEGIN_VISP_NAMESPACE
  * \brief Base class for a panda3D renderer. This class handles basic functionalities,
  * such as loading object, changing camera parameters.
  *
- * For a subclass to have a novel behaviour (e.g, display something else) These methods should be overriden:
+ * For a subclass to have a novel behaviour (e.g, display something else) These methods should be overridden:
  *
  * - setupScene: This is where you should apply your shaders.
  * - setupCamera: This is where cameras are created and intrinsics parameters are applied

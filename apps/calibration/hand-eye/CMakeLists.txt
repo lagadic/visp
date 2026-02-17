@@ -37,10 +37,9 @@ cmake_minimum_required(VERSION 3.10)
 
 project(apps-calibration-hand-eye)
 
-find_package(VISP REQUIRED visp_vision visp_io OPTIONAL_COMPONENTS visp_gui visp_robot visp_sensor)
+find_package(VISP REQUIRED visp_vision visp_io OPTIONAL_COMPONENTS visp_detection visp_gui visp_robot visp_sensor)
 
 set(apps_cpp
-  visp-compute-apriltag-poses.cpp
   visp-compute-chessboard-poses.cpp
   visp-compute-eye-in-hand-calibration.cpp
   visp-compute-eye-to-hand-calibration.cpp
@@ -57,6 +56,10 @@ endif()
 foreach(cpp ${apps_cpp})
   visp_add_app(${cpp})
 endforeach()
+
+if(VISP_DETECTION_FOUND)
+  visp_add_app(visp-compute-apriltag-poses.cpp)
+endif()
 
 # Copy the data folder to the same location than the target
 visp_copy_dir(visp-compute-eye-in-hand-calibration.cpp "${CMAKE_CURRENT_SOURCE_DIR}" data-eye-in-hand)

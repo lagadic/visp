@@ -407,7 +407,7 @@ macro(visp_add_app file_cpp)
   target_link_libraries(${target} ${VISP_LIBRARIES})
   install(TARGETS ${target} DESTINATION ${VISP_BIN_INSTALL_PATH} CONFIGURATIONS Release COMPONENT dev)
   if(COMMAND visp_add_dependency)
-    visp_add_dependency(${cpp} "apps")
+    visp_add_dependency(${file_cpp} "apps")
   endif()
   if(POLICY CMP0020)
     cmake_policy(POP) #cmake_policy(SET CMP0020 NEW) # For UsTK: Qt5
