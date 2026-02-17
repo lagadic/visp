@@ -103,7 +103,7 @@ and if you want to hide the rendering window.
 The creation and initialization of the `vpAROgreExample` object can be found below:
 \snippet AROgre.cpp Ogre initialization
 
-It will call the overriden vpAROgre::createScene() method that creates the different components needed in the scene.
+It will call the overridden vpAROgre::createScene() method that creates the different components needed in the scene.
 
 A light must be added in the scene for the rendering. The Ogre API must be used to do so:
 \snippet AROgre.cpp Light creation
