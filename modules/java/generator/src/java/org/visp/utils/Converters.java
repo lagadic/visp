@@ -7,6 +7,7 @@ import org.visp.core.VpColVector;
 import org.visp.core.VpHomogeneousMatrix;
 import org.visp.core.VpImagePoint;
 import org.visp.core.VpImageUChar;
+import org.visp.core.VpImageRGBa;
 import org.visp.core.VpCameraParameters;
 
 public class Converters {
@@ -50,6 +51,14 @@ public class Converters {
   }
 
   public static long[] array_vpImageUChar_to_array_native(VpImageUChar[] images) {
+    long[] native_images = new long[images.length];
+    for(int i = 0; i < images.length; i++) {
+      native_images[i] = images[i].nativeObj;
+    }
+    return native_images;
+  }
+
+  public static long[]array_vpImageRGBa_to_array_native(VpImageRGBa[] images) {
     long[] native_images = new long[images.length];
     for(int i = 0; i < images.length; i++) {
       native_images[i] = images[i].nativeObj;
