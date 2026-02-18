@@ -74,6 +74,15 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v5
 
+    # Ajout de Swap pour éviter l'erreur "Cannot allocate memory" lors du linking sur RISC-V
+    - name: Set up Swap Space
+      run: |
+        sudo fallocate -l 4G /swapfile
+        sudo chmod 600 /swapfile
+        sudo mkswap /swapfile
+        sudo swapon /swapfile
+        sudo swapon --show
+
     - name: Run on arch
       uses: uraimo/run-on-arch-action@v3
       # See issue https://github.com/uraimo/run-on-arch-action/issues/155 for the explanation on the weird use of the arch and distro
@@ -97,7 +106,7 @@ jobs:
           pwd
           mkdir build && cd build
           cmake .. -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TUTORIALS=OFF -DBUILD_JAVA=OFF \
-                   -DUSE_JPEG=OFF -DUSE_PNG=OFF -DUSE_X11=OFF -DUSE_XML2=OFF -DBUILD_JAVA=OFF -DUSE_BLAS/LAPACK=OFF
+                   -DUSE_JPEG=OFF -DUSE_PNG=OFF -DUSE_X11=OFF -DUSE_XML2=OFF -DBUILD_JAVA=OFF -DUSE_BLAS/LAPACK=OFF -DCMAKE_EXE_LINKER_FLAGS="-Wl,--no-keep-memory"
           cat ViSP-third-party.txt
 
           ARCHI=`uname -m`
