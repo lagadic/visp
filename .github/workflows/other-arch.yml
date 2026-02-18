@@ -71,12 +71,11 @@ jobs:
 
     # Ajout de Swap pour éviter l'erreur "Cannot allocate memory" lors du linking sur RISC-V
     - name: Set up Swap Space
-      run: |
-        sudo fallocate -l 4G /swapfile
-        sudo chmod 600 /swapfile
-        sudo mkswap /swapfile
-        sudo swapon /swapfile
-        sudo swapon --show
+      uses: thejerrybao/setup-swap-space@v1
+      with:
+        swap-space-path: /swapfile
+        swap-size-gb: 4
+        remove-existing-swap-files: true
 
     - name: Run on arch
       uses: uraimo/run-on-arch-action@v3
