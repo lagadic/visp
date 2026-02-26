@@ -714,8 +714,16 @@ static inline void ptsort(struct pt *pts, int sz)
 #undef MAYBE_SWAP
 
     // a merge sort with temp storage.
-
-    struct pt *tmp = malloc(sizeof(struct pt) * sz);
+    // Use stack allocation for small arrays to avoid malloc overhead
+    #define STACK_BUFFER_SIZE 256
+    struct pt stack_buffer[STACK_BUFFER_SIZE];
+    struct pt *tmp;
+    const bool use_heap = sz > STACK_BUFFER_SIZE;
+    if (use_heap) {
+        tmp = malloc(sizeof(struct pt) * sz);
+    } else {
+        tmp = stack_buffer;
+    }
 
     memcpy(tmp, pts, sizeof(struct pt) * sz);
 
@@ -749,7 +757,9 @@ static inline void ptsort(struct pt *pts, int sz)
     if (bpos < bsz)
         memcpy(&pts[outpos], &bs[bpos], (bsz-bpos)*sizeof(struct pt));
 
-    free(tmp);
+    if (use_heap) {
+        free(tmp);
+    }
 
 #undef MERGE
 }
@@ -963,7 +973,12 @@ int fit_quad(
             double dy1 = quad->p[i1][1] - quad->p[i0][1];
             double dx2 = quad->p[i2][0] - quad->p[i1][0];
             double dy2 = quad->p[i2][1] - quad->p[i1][1];
-            double cos_dtheta = (dx1*dx2 + dy1*dy2)/sqrt((dx1*dx1 + dy1*dy1)*(dx2*dx2 + dy2*dy2));
+            double denominator = sqrt((dx1*dx1 + dy1*dy1)*(dx2*dx2 + dy2*dy2));
+            if (denominator == 0) {
+                res = 0;
+                goto finish;
+            }
+            double cos_dtheta = (dx1*dx2 + dy1*dy2) / denominator;
 
             if ((cos_dtheta > td->qtp.cos_critical_rad || cos_dtheta < -td->qtp.cos_critical_rad) || dx1*dy2 < dy1*dx2) {
                 res = 0;
