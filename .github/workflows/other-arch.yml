@@ -69,6 +69,14 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v5
 
+    # Ajout de Swap pour éviter l'erreur "Cannot allocate memory" lors du linking sur RISC-V
+    - name: Set up Swap Space
+      uses: thejerrybao/setup-swap-space@v1
+      with:
+        swap-space-path: /swapfile
+        swap-size-gb: 4
+        remove-existing-swap-files: true
+
     - name: Run on arch
       uses: uraimo/run-on-arch-action@v3
       # See issue https://github.com/uraimo/run-on-arch-action/issues/155 for the explanation on the weird use of the arch and distro
@@ -97,12 +105,12 @@ jobs:
 
           pwd
           mkdir build && cd build
-          cmake .. -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TUTORIALS=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java=OFF -DBUILD_MODULE_visp_java_binding=OFF
+          cmake .. -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TUTORIALS=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java=OFF -DBUILD_MODULE_visp_java_binding=OFF -DCMAKE_EXE_LINKER_FLAGS="-Wl,--no-keep-memory"
           cat ViSP-third-party.txt
 
-          if [[ $(nproc) -gt 2 ]]
+          if [[ $(nproc) -gt 3 ]]
           then
-            NB_PROC_TO_USE=`expr  $(nproc) - 1`
+            NB_PROC_TO_USE=`expr  $(nproc) - 2`
           else
             NB_PROC_TO_USE=1
           fi
