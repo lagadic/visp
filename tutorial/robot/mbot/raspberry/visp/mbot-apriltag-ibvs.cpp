@@ -58,33 +58,32 @@ void usage(const char **argv, int error)
     << "  --tag-family <family>" << std::endl
     << "    Apriltag family. Supported values are:" << std::endl
     << "       0: TAG_36h11" << std::endl
-    << "       1: TAG_36h10 (DEPRECATED)" << std::endl
-    << "       2: TAG_36ARTOOLKIT (DEPRECATED)" << std::endl
-    << "       3: TAG_25h9" << std::endl
-    << "       4: TAG_25h7 (DEPRECATED)" << std::endl
-    << "       5: TAG_16h5" << std::endl
-    << "       6: TAG_CIRCLE21h7" << std::endl
-    << "       7: TAG_CIRCLE49h12" << std::endl
-    << "       8: TAG_CUSTOM48h12" << std::endl
-    << "       9: TAG_STANDARD41h12" << std::endl
-    << "      10: TAG_STANDARD52h13" << std::endl
-    << "      11: TAG_ARUCO_4x4_50" << std::endl
-    << "      12: TAG_ARUCO_4x4_100" << std::endl
-    << "      13: TAG_ARUCO_4x4_250" << std::endl
-    << "      14: TAG_ARUCO_4x4_1000" << std::endl
-    << "      15: TAG_ARUCO_5x5_50" << std::endl
-    << "      16: TAG_ARUCO_5x5_100" << std::endl
-    << "      17: TAG_ARUCO_5x5_250" << std::endl
-    << "      18: TAG_ARUCO_5x5_1000" << std::endl
-    << "      19: TAG_ARUCO_6x6_50" << std::endl
-    << "      20: TAG_ARUCO_6x6_100" << std::endl
-    << "      21: TAG_ARUCO_6x6_250" << std::endl
-    << "      22: TAG_ARUCO_6x6_1000" << std::endl
-    << "      23: TAG_ARUCO_7x7_50" << std::endl
-    << "      24: TAG_ARUCO_7x7_100" << std::endl
-    << "      25: TAG_ARUCO_7x7_250" << std::endl
-    << "      26: TAG_ARUCO_7x7_1000" << std::endl
-    << "      27: TAG_ARUCO_MIP_36h12" << std::endl
+    << "       1: TAG_25h9" << std::endl
+    << "       2: TAG_16h5" << std::endl
+    << "       3: TAG_CIRCLE21h7" << std::endl
+    << "       4: TAG_CIRCLE49h12" << std::endl
+    << "       5: TAG_CUSTOM48h12" << std::endl
+    << "       6: TAG_STANDARD41h12" << std::endl
+    << "       7: TAG_STANDARD52h13" << std::endl
+#if defined(VISP_HAVE_APRILTAG_ARUCO)
+    << "       8: TAG_ARUCO_4x4_50" << std::endl
+    << "       9: TAG_ARUCO_4x4_100" << std::endl
+    << "      10: TAG_ARUCO_4x4_250" << std::endl
+    << "      11: TAG_ARUCO_4x4_1000" << std::endl
+    << "      12: TAG_ARUCO_5x5_50" << std::endl
+    << "      13: TAG_ARUCO_5x5_100" << std::endl
+    << "      14: TAG_ARUCO_5x5_250" << std::endl
+    << "      15: TAG_ARUCO_5x5_1000" << std::endl
+    << "      16: TAG_ARUCO_6x6_50" << std::endl
+    << "      17: TAG_ARUCO_6x6_100" << std::endl
+    << "      18: TAG_ARUCO_6x6_250" << std::endl
+    << "      19: TAG_ARUCO_6x6_1000" << std::endl
+    << "      20: TAG_ARUCO_7x7_50" << std::endl
+    << "      21: TAG_ARUCO_7x7_100" << std::endl
+    << "      22: TAG_ARUCO_7x7_250" << std::endl
+    << "      23: TAG_ARUCO_7x7_1000" << std::endl
+    << "      24: TAG_ARUCO_MIP_36h12" << std::endl
+#endif
     << "    Default: 0 (36h11)" << std::endl
     << std::endl
     << "  --tag-decision-margin-threshold <threshold>" << std::endl
