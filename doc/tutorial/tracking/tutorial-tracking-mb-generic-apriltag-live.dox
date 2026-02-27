@@ -141,18 +141,15 @@ $ ./tutorial-mb-generic-tracker-apriltag-webcam --tag-n-threads 2
 - The AprilTag default tag family is 36h11. It is possible to use other tags specifying the tag id. Supported family ids
   are the following:
   - 0: TAG_36h11
-  - 1: TAG_36h10 (DEPRECATED)
-  - 2: TAG_36ARTOOLKIT (DEPRECATED)
-  - 3: TAG_25h9
-  - 4: TAG_25h7 (DEPRECATED)
-  - 5: TAG_16h5
-  - 6: TAG_CIRCLE21h7
-  - 7: TAG_CIRCLE49h12
-  - 8: TAG_CUSTOM48h12
-  - 9: TAG_STANDARD41h12
-  - 10: TAG_STANDARD52h13
+  - 2: TAG_25h9
+  - 3: TAG_16h5
+  - 4: TAG_CIRCLE21h7
+  - 5: TAG_CIRCLE49h12
+  - 6: TAG_CUSTOM48h12
+  - 7: TAG_STANDARD41h12
+  - 8: TAG_STANDARD52h13
   .
-  To use tag family 36h10, run:
+  To use tag family 25h9, run:
 \code{.sh}
 $ ./tutorial-mb-generic-tracker-apriltag-webcam --tag-family 1
 \endcode
@@ -251,18 +248,15 @@ $ ./tutorial-mb-generic-tracker-apriltag-rs2 --tag-n-threads 2
 - The AprilTag default tag family is 36h11. It is possible to use other tags specifying the tag id. Supported family ids
   are the following:
   - 0: TAG_36h11
-  - 1: TAG_36h10 (DEPRECATED)
-  - 2: TAG_36ARTOOLKIT (DEPRECATED)
-  - 3: TAG_25h9
-  - 4: TAG_25h7 (DEPRECATED)
-  - 5: TAG_16h5
-  - 6: TAG_CIRCLE21h7
-  - 7: TAG_CIRCLE49h12
-  - 8: TAG_CUSTOM48h12
-  - 9: TAG_STANDARD41h12
-  - 10: TAG_STANDARD52h13
+  - 1: TAG_25h9
+  - 2: TAG_16h5
+  - 3: TAG_CIRCLE21h7
+  - 4: TAG_CIRCLE49h12
+  - 5: TAG_CUSTOM48h12
+  - 6: TAG_STANDARD41h12
+  - 7: TAG_STANDARD52h13
   .
-  To use tag family 36h10, run:
+  To use tag family 25h9, run:
 \code{.sh}
 $ ./tutorial-mb-generic-tracker-apriltag-rs2 --tag-family 1
 \endcode
