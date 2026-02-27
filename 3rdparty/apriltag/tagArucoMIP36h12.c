@@ -43,7 +43,7 @@ limitations under the License.
 */
 
 #include <stdlib.h>
-#include "tagAruco_MIP_36h12.h"
+#include "tagArucoMIP36h12.h"
 
 static uint64_t codedata[250] = {
     0x0000000d2a2af057UL,
@@ -297,98 +297,98 @@ static uint64_t codedata[250] = {
     0x0000000713b480ceUL,
     0x00000004d79815adUL,
 };
-apriltag_family_t *tagArucoMIP_36h12_create()
+apriltag_family_t *tagArucoMIP36h12_create()
 {
-   apriltag_family_t *tf = calloc(1, sizeof(apriltag_family_t));
-   tf->name = strdup("tagArucoMIP_36h12");
-   tf->h = 12;
-   tf->ncodes = 250;
-   tf->codes = codedata;
-   tf->nbits = 36;
-   tf->bit_x = calloc(36, sizeof(uint32_t));
-   tf->bit_y = calloc(36, sizeof(uint32_t));
-   tf->bit_x[0] = 1;
-   tf->bit_y[0] = 1;
-   tf->bit_x[1] = 2;
-   tf->bit_y[1] = 1;
-   tf->bit_x[2] = 3;
-   tf->bit_y[2] = 1;
-   tf->bit_x[3] = 4;
-   tf->bit_y[3] = 1;
-   tf->bit_x[4] = 5;
-   tf->bit_y[4] = 1;
-   tf->bit_x[5] = 2;
-   tf->bit_y[5] = 2;
-   tf->bit_x[6] = 3;
-   tf->bit_y[6] = 2;
-   tf->bit_x[7] = 4;
-   tf->bit_y[7] = 2;
-   tf->bit_x[8] = 3;
-   tf->bit_y[8] = 3;
-   tf->bit_x[9] = 6;
-   tf->bit_y[9] = 1;
-   tf->bit_x[10] = 6;
-   tf->bit_y[10] = 2;
-   tf->bit_x[11] = 6;
-   tf->bit_y[11] = 3;
-   tf->bit_x[12] = 6;
-   tf->bit_y[12] = 4;
-   tf->bit_x[13] = 6;
-   tf->bit_y[13] = 5;
-   tf->bit_x[14] = 5;
-   tf->bit_y[14] = 2;
-   tf->bit_x[15] = 5;
-   tf->bit_y[15] = 3;
-   tf->bit_x[16] = 5;
-   tf->bit_y[16] = 4;
-   tf->bit_x[17] = 4;
-   tf->bit_y[17] = 3;
-   tf->bit_x[18] = 6;
-   tf->bit_y[18] = 6;
-   tf->bit_x[19] = 5;
-   tf->bit_y[19] = 6;
-   tf->bit_x[20] = 4;
-   tf->bit_y[20] = 6;
-   tf->bit_x[21] = 3;
-   tf->bit_y[21] = 6;
-   tf->bit_x[22] = 2;
-   tf->bit_y[22] = 6;
-   tf->bit_x[23] = 5;
-   tf->bit_y[23] = 5;
-   tf->bit_x[24] = 4;
-   tf->bit_y[24] = 5;
-   tf->bit_x[25] = 3;
-   tf->bit_y[25] = 5;
-   tf->bit_x[26] = 4;
-   tf->bit_y[26] = 4;
-   tf->bit_x[27] = 1;
-   tf->bit_y[27] = 6;
-   tf->bit_x[28] = 1;
-   tf->bit_y[28] = 5;
-   tf->bit_x[29] = 1;
-   tf->bit_y[29] = 4;
-   tf->bit_x[30] = 1;
-   tf->bit_y[30] = 3;
-   tf->bit_x[31] = 1;
-   tf->bit_y[31] = 2;
-   tf->bit_x[32] = 2;
-   tf->bit_y[32] = 5;
-   tf->bit_x[33] = 2;
-   tf->bit_y[33] = 4;
-   tf->bit_x[34] = 2;
-   tf->bit_y[34] = 3;
-   tf->bit_x[35] = 3;
-   tf->bit_y[35] = 4;
-   tf->width_at_border = 8;
-   tf->total_width = 10;
-   tf->reversed_border = false;
-   return tf;
+  apriltag_family_t *tf = calloc(1, sizeof(apriltag_family_t));
+  tf->name = strdup("tagArucoMIP_36h12");
+  tf->h = 12;
+  tf->ncodes = 250;
+  tf->codes = codedata;
+  tf->nbits = 36;
+  tf->bit_x = calloc(36, sizeof(uint32_t));
+  tf->bit_y = calloc(36, sizeof(uint32_t));
+  tf->bit_x[0] = 1;
+  tf->bit_y[0] = 1;
+  tf->bit_x[1] = 2;
+  tf->bit_y[1] = 1;
+  tf->bit_x[2] = 3;
+  tf->bit_y[2] = 1;
+  tf->bit_x[3] = 4;
+  tf->bit_y[3] = 1;
+  tf->bit_x[4] = 5;
+  tf->bit_y[4] = 1;
+  tf->bit_x[5] = 2;
+  tf->bit_y[5] = 2;
+  tf->bit_x[6] = 3;
+  tf->bit_y[6] = 2;
+  tf->bit_x[7] = 4;
+  tf->bit_y[7] = 2;
+  tf->bit_x[8] = 3;
+  tf->bit_y[8] = 3;
+  tf->bit_x[9] = 6;
+  tf->bit_y[9] = 1;
+  tf->bit_x[10] = 6;
+  tf->bit_y[10] = 2;
+  tf->bit_x[11] = 6;
+  tf->bit_y[11] = 3;
+  tf->bit_x[12] = 6;
+  tf->bit_y[12] = 4;
+  tf->bit_x[13] = 6;
+  tf->bit_y[13] = 5;
+  tf->bit_x[14] = 5;
+  tf->bit_y[14] = 2;
+  tf->bit_x[15] = 5;
+  tf->bit_y[15] = 3;
+  tf->bit_x[16] = 5;
+  tf->bit_y[16] = 4;
+  tf->bit_x[17] = 4;
+  tf->bit_y[17] = 3;
+  tf->bit_x[18] = 6;
+  tf->bit_y[18] = 6;
+  tf->bit_x[19] = 5;
+  tf->bit_y[19] = 6;
+  tf->bit_x[20] = 4;
+  tf->bit_y[20] = 6;
+  tf->bit_x[21] = 3;
+  tf->bit_y[21] = 6;
+  tf->bit_x[22] = 2;
+  tf->bit_y[22] = 6;
+  tf->bit_x[23] = 5;
+  tf->bit_y[23] = 5;
+  tf->bit_x[24] = 4;
+  tf->bit_y[24] = 5;
+  tf->bit_x[25] = 3;
+  tf->bit_y[25] = 5;
+  tf->bit_x[26] = 4;
+  tf->bit_y[26] = 4;
+  tf->bit_x[27] = 1;
+  tf->bit_y[27] = 6;
+  tf->bit_x[28] = 1;
+  tf->bit_y[28] = 5;
+  tf->bit_x[29] = 1;
+  tf->bit_y[29] = 4;
+  tf->bit_x[30] = 1;
+  tf->bit_y[30] = 3;
+  tf->bit_x[31] = 1;
+  tf->bit_y[31] = 2;
+  tf->bit_x[32] = 2;
+  tf->bit_y[32] = 5;
+  tf->bit_x[33] = 2;
+  tf->bit_y[33] = 4;
+  tf->bit_x[34] = 2;
+  tf->bit_y[34] = 3;
+  tf->bit_x[35] = 3;
+  tf->bit_y[35] = 4;
+  tf->width_at_border = 8;
+  tf->total_width = 10;
+  tf->reversed_border = false;
+  return tf;
 }
 
-void tagArucoMIP_36h12_destroy(apriltag_family_t *tf)
+void tagArucoMIP36h12_destroy(apriltag_family_t *tf)
 {
-   free(tf->bit_x);
-   free(tf->bit_y);
-   free(tf->name);
-   free(tf);
+  free(tf->bit_x);
+  free(tf->bit_y);
+  free(tf->name);
+  free(tf);
 }

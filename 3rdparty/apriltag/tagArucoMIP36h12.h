@@ -51,8 +51,8 @@ limitations under the License.
 extern "C" {
 #endif
 
-apriltag_family_t *tagArucoMIP_36h12_create();
-void tagArucoMIP_36h12_destroy(apriltag_family_t *tf);
+  apriltag_family_t *tagArucoMIP36h12_create();
+  void tagArucoMIP36h12_destroy(apriltag_family_t *tf);
 
 #ifdef __cplusplus
 }
