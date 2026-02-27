@@ -81,6 +81,7 @@ void usage(const char *argv[], int error)
     << " [--init-from-xml <camera-init.xml>]"
     << " [--camera-name <name>]"
     << " [--aspect-ratio <ratio>]"
+    << " [--save]"
     << " [--output <file.xml>]"
     << " [--help, -h]" << std::endl
     << std::endl;
@@ -98,8 +99,11 @@ void usage(const char *argv[], int error)
     << std::endl
     << "  --aspect-ratio <ratio>" << std::endl
     << "    Pixel aspect ratio. To estimate px = py, use \"--aspect-ratio 1\" option. Set to -1" << std::endl
-    << "    to unset any constraint for px and py parameters. " << std::endl
+    << "    to unset any constraint for px and py parameters." << std::endl
     << "    Default: -1." << std::endl
+    << std::endl
+    << "  --save" << std::endl
+    << "    Flag to automatically save the image processing results in a new directory." << std::endl
     << std::endl
     << "  --output <file.xml>" << std::endl
     << "    XML file containing estimated camera parameters." << std::endl
@@ -136,6 +140,7 @@ int main(int argc, const char *argv[])
     std::string opt_init_camera_xml_file;
     std::string opt_camera_name = "Camera";
     double opt_aspect_ratio = -1; // Not used
+    bool save_results = false;
 
     for (int i = 2; i < argc; i++) {
       if (std::string(argv[i]) == "--init-from-xml" && i + 1 < argc) {
@@ -149,6 +154,9 @@ int main(int argc, const char *argv[])
       }
       else if (std::string(argv[i]) == "--aspect-ratio" && i + 1 < argc) {
         opt_aspect_ratio = std::atof(argv[++i]);
+      }
+      else if (std::string(argv[i]) == "--save") {
+        save_results = true;
       }
       else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
         usage(argv, 0);
@@ -265,6 +273,15 @@ int main(int argc, const char *argv[])
 
     map_cam_sorted.insert(std::make_pair(1000, cam_init));
 
+    std::string save_results_folder = "";
+    vpImage<vpRGBa> I_save_results;
+    if (save_results) {
+      save_results_folder = vpTime::getDateTime("calib_results_%Y-%m-%d_%H.%M.%S");
+      std::cout << "Create output results folder: " << save_results_folder << std::endl;
+      vpIoTools::makeDirectory(save_results_folder);
+    }
+
+    double start_time = vpTime::measureTimeMs();
     do {
       reader.acquire(I);
       long frame_index = reader.getFrameIndex();
@@ -335,7 +352,7 @@ int main(int argc, const char *argv[])
                                "Image processing succeed", vpColor::green);
       else
         vpDisplay::displayText(I, 15 * vpDisplay::getDownScalingFactor(I), 15 * vpDisplay::getDownScalingFactor(I),
-                               "Image processing failed", vpColor::green);
+                               "Image processing failed", vpColor::red);
 
       if (s.tempo > 10.f) {
         vpDisplay::displayText(I, 35 * vpDisplay::getDownScalingFactor(I), 15 * vpDisplay::getDownScalingFactor(I),
@@ -346,6 +363,13 @@ int main(int argc, const char *argv[])
       else {
         vpDisplay::flush(I);
         vpTime::wait(s.tempo * 1000);
+      }
+
+      if (save_results) {
+        vpDisplay::getImage(I, I_save_results);
+        std::ostringstream oss;
+        oss << save_results_folder << "/" << vpIoTools::getNameWE(reader.getFrameName()) << ".png";
+        vpImageIo::write(I_save_results, oss.str());
       }
     } while (!reader.end());
 
@@ -401,6 +425,14 @@ int main(int argc, const char *argv[])
     else {
       vpDisplay::flush(I_color);
       vpTime::wait(s.tempo * 1000);
+    }
+
+    std::vector<vpImage<vpRGBa>> list_img_reproj, list_img_reproj_dist, list_img_undist;
+    if (save_results) {
+      vpDisplay::getImage(I_color, I_save_results);
+      std::ostringstream oss;
+      oss << save_results_folder << "/calibration_pattern_occupancy.png";
+      vpImageIo::write(I_save_results, oss.str());
     }
 
     d->close(I_color);
@@ -479,6 +511,15 @@ int main(int argc, const char *argv[])
         else {
           vpDisplay::flush(I);
           vpTime::wait(s.tempo * 1000);
+        }
+
+        if (save_results) {
+          vpDisplay::getImage(I, I_save_results);
+          list_img_reproj.push_back(I_save_results);
+          std::ostringstream oss;
+          oss << save_results_folder << "/reproj_err_without_dist_" << vpIoTools::getNameWE(calib.m_frame_name)
+            << ".png";
+          vpImageIo::write(I_save_results, oss.str());
         }
       }
 
@@ -559,12 +600,20 @@ int main(int argc, const char *argv[])
           vpDisplay::flush(I);
           vpTime::wait(s.tempo * 1000);
         }
+
+        if (save_results) {
+          vpDisplay::getImage(I, I_save_results);
+          list_img_reproj_dist.push_back(I_save_results);
+          std::ostringstream oss;
+          oss << save_results_folder << "/reproj_err_with_dist_" << vpIoTools::getNameWE(calib.m_frame_name) << ".png";
+          vpImageIo::write(I_save_results, oss.str());
+        }
       }
       std::cout << "\nGlobal reprojection error: " << error << std::endl;
       ss_additional_info << "<global_reprojection_error>" << error << "</global_reprojection_error>";
-
       ss_additional_info << "</with_distortion></reprojection_error>";
 
+      // Display side-by-side original and undistorted images, draw lines from start and end calib pattern points
       vpImage<unsigned char> I_undist;
       vpImage<unsigned char> I_dist_undist(I.getHeight(), 2 * I.getWidth());
       d->close(I);
@@ -607,8 +656,7 @@ int main(int argc, const char *argv[])
         }
 
         std::cout << "\nThis tool computes the line fitting error (mean distance error) on image points extracted from "
-          "the undistorted image"
-          << " (vpImageTools::undistort())." << std::endl;
+          "the undistorted image" << " (vpImageTools::undistort())." << std::endl;
         cv::Mat cvI;
         std::vector<cv::Point2f> pointBuf;
         vpImageConvert::convert(I_undist, cvI);
@@ -643,10 +691,10 @@ int main(int argc, const char *argv[])
           std::cout << msg << std::endl;
           std::cout << "Check that the grid is not too close to the image edges" << std::endl;
           vpDisplay::displayText(I_dist_undist, 15 * vpDisplay::getDownScalingFactor(I_dist_undist),
-                                 15 * vpDisplay::getDownScalingFactor(I_dist_undist),
+                                 I.getWidth() + 15 * vpDisplay::getDownScalingFactor(I_dist_undist),
                                  calib_info[idx].m_frame_name + std::string(" undistorted"), vpColor::red);
           vpDisplay::displayText(I_dist_undist, 30 * vpDisplay::getDownScalingFactor(I_dist_undist),
-                                 15 * vpDisplay::getDownScalingFactor(I_dist_undist), msg, vpColor::red);
+                                 I.getWidth() + 15 * vpDisplay::getDownScalingFactor(I_dist_undist), msg, vpColor::red);
         }
 
         if (s.tempo > 10.f) {
@@ -660,9 +708,96 @@ int main(int argc, const char *argv[])
           vpDisplay::flush(I_dist_undist);
           vpTime::wait(s.tempo * 1000);
         }
+
+        if (save_results) {
+          vpDisplay::getImage(I_dist_undist, I_save_results);
+          std::ostringstream oss;
+          oss << save_results_folder << "/dist_vs_undist_" << vpIoTools::getNameWE(calib_info[idx].m_frame_name)
+            << ".png";
+          vpImage<vpRGBa> I_right;
+          vpImageTools::crop(I_save_results, vpRect(I_save_results.getWidth()/2, 0,
+                                                    I_save_results.getWidth()/2, I_save_results.getHeight()), I_right);
+          list_img_undist.push_back(I_right);
+          vpImageIo::write(I_save_results, oss.str());
+        }
+      }
+      std::cout << std::endl;
+
+      // Display pseudo distortion displacement map
+      d->close(I_dist_undist);
+      vpImage<vpRGBa> I_dist_map(I.getHeight(), I.getWidth());
+      d->init(I_dist_map, 0, 0, "Distortion displacement map");
+      calib_helper::computeDistortionDisplacementMap(cam, I_dist_map);
+      d->display(I_dist_map);
+
+      const float ref_img_width = 640;
+      const unsigned int step = std::max(20u, static_cast<unsigned int>((I_dist_undist.getWidth()/ref_img_width)*20));
+      for (unsigned int i = 0; i < I_dist_map.getHeight(); i += step) {
+        for (unsigned int j = 0; j < I_dist_map.getWidth(); j += step) {
+          vpImagePoint imPt(i, j);
+          double x = 0, y = 0;
+          vpPixelMeterConversion::convertPointWithoutDistortion(cam, imPt, x, y);
+          vpImagePoint imPt_dist;
+          vpMeterPixelConversion::convertPoint(cam, x, y, imPt_dist);
+
+          vpDisplay::displayArrow(I_dist_map, imPt, imPt_dist, vpColor::red, 2);
+        }
       }
 
-      std::cout << std::endl;
+      if (s.tempo > 10.f) {
+        vpDisplay::displayText(
+            I_dist_map, I_dist_map.getHeight() - 20 * vpDisplay::getDownScalingFactor(I_dist_map),
+            15 * vpDisplay::getDownScalingFactor(I_dist_map), "Click to continue...", vpColor::red);
+        vpDisplay::flush(I_dist_map);
+        vpDisplay::getClick(I_dist_map);
+      }
+      else {
+        vpDisplay::flush(I_dist_map);
+        vpTime::wait(s.tempo * 1000);
+      }
+
+      if (save_results) {
+        vpDisplay::getImage(I_dist_map, I_save_results);
+        std::ostringstream oss;
+        oss << save_results_folder << "/distortion_displacement_map.png";
+        vpImageIo::write(I_save_results, oss.str());
+
+        // Save mosaic images
+        {
+          std::vector<vpImage<vpRGBa>> mosaics;
+          createMosaic(list_img_reproj, mosaics);
+          for (size_t i = 0; i < mosaics.size(); i++) {
+            oss.str("");
+            oss << save_results_folder << "/mosaics_reproj_err_without_dist_%04d.png";
+            char name[FILENAME_MAX];
+            snprintf(name, FILENAME_MAX, oss.str().c_str(), i);
+            vpImageIo::write(mosaics[i], name);
+          }
+        }
+        {
+          std::vector<vpImage<vpRGBa>> mosaics;
+          createMosaic(list_img_reproj_dist, mosaics);
+          for (size_t i = 0; i < mosaics.size(); i++) {
+            oss.str("");
+            oss << save_results_folder << "/mosaics_reproj_err_with_dist_%04d.png";
+            char name[FILENAME_MAX];
+            snprintf(name, FILENAME_MAX, oss.str().c_str(), i);
+            vpImageIo::write(mosaics[i], name);
+          }
+        }
+        {
+          std::vector<vpImage<vpRGBa>> mosaics;
+          createMosaic(list_img_undist, mosaics);
+          for (size_t i = 0; i < mosaics.size(); i++) {
+            oss.str("");
+            oss << save_results_folder << "/mosaics_undist_%04d.png";
+            char name[FILENAME_MAX];
+            snprintf(name, FILENAME_MAX, oss.str().c_str(), i);
+            vpImageIo::write(mosaics[i], name);
+          }
+        }
+      }
+
       vpXmlParserCamera xml;
 
       // Camera poses
@@ -706,7 +841,16 @@ int main(int argc, const char *argv[])
       return EXIT_FAILURE;
     }
 
-    std::cout << "\nCamera calibration succeeded. Results are saved in " << "\"" << opt_output_file_name << "\"" << std::endl;
+    double end_time = vpTime::measureTimeMs();
+    int milli = (end_time-start_time);
+    int seconds = milli / 1000;
+    milli %= 1000;
+
+    int minutes = seconds / 60;
+    seconds %= 60;
+
+    std::cout << "\nCamera calibration succeeded. Results are saved in " << "\"" << opt_output_file_name
+      << "\". Total time: " << minutes << " min " << seconds << " sec " << milli << " ms." << std::endl;
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
     if (display != nullptr) {
       delete display;

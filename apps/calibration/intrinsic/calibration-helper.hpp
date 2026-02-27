@@ -42,6 +42,7 @@
 #include <visp3/core/vpPixelMeterConversion.h>
 #include <visp3/core/vpPoint.h>
 #include <visp3/core/vpPolygon.h>
+#include <visp3/core/vpColormap.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -222,6 +223,70 @@ bool extractCalibrationPoints(const Settings &s, const cv::Mat &cvI, std::vector
   }
 
   return found;
+}
+
+void computeDistortionDisplacementMap(const vpCameraParameters &cam_dist, vpImage<vpRGBa> &I_color)
+{
+  vpImage<double> displacement_map(I_color.getHeight(), I_color.getWidth());
+
+  double min_displ = 1e12, max_displ = 0;
+  for (unsigned int i = 0; i < I_color.getHeight(); i++) {
+    for (unsigned int j = 0; j < I_color.getWidth(); j++) {
+      double x = 0, y = 0, id = 0, jd = 0;
+      vpPixelMeterConversion::convertPointWithoutDistortion(cam_dist, j, i, x, y);
+      vpMeterPixelConversion::convertPoint(cam_dist, x, y, jd, id);
+
+      double erri = id - i;
+      double errj = jd - j;
+      double displ = std::sqrt(erri*erri + errj*errj);
+      displacement_map[i][j] = displ;
+      min_displ = displ < min_displ ? displ : min_displ;
+      max_displ = displ > max_displ ? displ : max_displ;
+    }
+  }
+
+  double a = 255 / (max_displ - min_displ);
+  double b = (-255 * min_displ) / (max_displ - min_displ);
+
+  vpImage<unsigned char> I_gray(I_color.getHeight(), I_color.getWidth());
+  for (unsigned int i = 0; i < displacement_map.getHeight(); i++) {
+    for (unsigned int j = 0; j < displacement_map.getWidth(); j++) {
+      I_gray[i][j] = static_cast<unsigned char>(vpMath::clamp(a * displacement_map[i][j] + b, 0.0, 255.0));
+    }
+  }
+
+  vpColormap colormap(vpColormap::COLORMAP_TURBO);
+  colormap.convert(I_gray, I_color);
+}
+
+void createMosaic(const std::vector<vpImage<vpRGBa>> &list_imgs, std::vector<vpImage<vpRGBa>> &list_mosaics)
+{
+  const unsigned int nb_rows = 4, nb_cols = 6;
+  const unsigned int nb_totals = nb_rows*nb_cols;
+  if (list_imgs.empty()) {
+    return;
+  }
+
+  const unsigned int img_h = list_imgs[0].getHeight();
+  const unsigned int img_w = list_imgs[0].getWidth();
+  vpImage<vpRGBa> mosaic(img_h*nb_rows, img_w*nb_cols);
+  for (size_t i = 0; i < list_imgs.size(); i += nb_totals) {
+    mosaic = vpRGBa(0, 0, 0);
+
+    for (size_t j = 0; j < nb_totals; j++) {
+      const size_t idx = i + j;
+      const unsigned int pos_mod = idx % nb_totals;
+      if (idx >= list_imgs.size()) {
+        break;
+      }
+
+      const unsigned int pos_row = pos_mod / nb_cols;
+      vpImagePoint top_left(pos_row*img_h, (pos_mod - pos_row*nb_cols)*img_w);
+      mosaic.insert(list_imgs[idx], top_left);
+    }
+
+    list_mosaics.push_back(mosaic);
+  }
 }
 
 } // namespace calib_helper
