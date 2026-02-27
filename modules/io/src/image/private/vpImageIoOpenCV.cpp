@@ -197,39 +197,53 @@ void readPNGfromMemOpenCV(const std::vector<unsigned char> &buffer, vpImage<vpRG
 }
 
 /*!
-  Write the content of the image bitmap in the file which name is given by \e
-  filename. This function writes a JPEG file.
+  Write the content of the image bitmap in the file which name is given by \e filename.
 
-  \param I : Image to save as a JPEG file.
+  \param I : Image to save.
   \param filename : Name of the file containing the image.
+  \param quality : If > 0, it corresponds to the OpenCV IMWRITE_JPEG_QUALITY parameter.
 */
 void writeOpenCV(const vpImage<unsigned char> &I, const std::string &filename, int quality)
 {
   cv::Mat Ip;
   vpImageConvert::convert(I, Ip);
 
-  std::vector<int> compression_params;
-  compression_params.push_back(cv::IMWRITE_JPEG_QUALITY);
-  compression_params.push_back(quality);
-  cv::imwrite(filename.c_str(), Ip, compression_params);
+  // Compression setting is currently only available with jpeg
+  // Same thing could be done with png format (cv::IMWRITE_PNG_COMPRESSION) and by updating the writeOpenCV() signature
+  if (quality > 0) {
+    std::vector<int> compression_params;
+    compression_params.push_back(cv::IMWRITE_JPEG_QUALITY);
+    compression_params.push_back(quality);
+    cv::imwrite(filename.c_str(), Ip, compression_params);
+  }
+  else {
+    cv::imwrite(filename.c_str(), Ip);
+  }
 }
 
 /*!
-  Write the content of the image bitmap in the file which name is given by \e
-  filename. This function writes a JPEG file.
+  Write the content of the image bitmap in the file which name is given by \e filename.
 
-  \param I : Image to save as a JPEG file.
+  \param I : Image to save.
   \param filename : Name of the file containing the image.
+  \param quality : If > 0, it corresponds to the OpenCV IMWRITE_JPEG_QUALITY parameter.
 */
 void writeOpenCV(const vpImage<vpRGBa> &I, const std::string &filename, int quality)
 {
   cv::Mat Ip;
   vpImageConvert::convert(I, Ip);
 
-  std::vector<int> compression_params;
-  compression_params.push_back(cv::IMWRITE_JPEG_QUALITY);
-  compression_params.push_back(quality);
-  cv::imwrite(filename.c_str(), Ip, compression_params);
+  // Compression setting is currently only available with jpeg
+  // Same thing could be done with png format (cv::IMWRITE_PNG_COMPRESSION) and by updating the writeOpenCV() signature
+  if (quality > 0) {
+    std::vector<int> compression_params;
+    compression_params.push_back(cv::IMWRITE_JPEG_QUALITY);
+    compression_params.push_back(quality);
+    cv::imwrite(filename.c_str(), Ip, compression_params);
+  }
+  else {
+    cv::imwrite(filename.c_str(), Ip);
+  }
 }
 
 void writeOpenCV(const vpImage<float> &I, const std::string &filename)
