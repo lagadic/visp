@@ -202,9 +202,9 @@ int main(int argc, const char *argv[])
     }
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-    std::shared_ptr<vpDisplay> d = vpDisplayFactory::createDisplay(I, vpDisplay::SCALE_AUTO);
+    std::shared_ptr<vpDisplay> d = vpDisplayFactory::createDisplay(I, -1, -1, "", vpDisplay::SCALE_AUTO);
 #else
-    d = vpDisplayFactory::allocateDisplay(I, vpDisplay::SCALE_AUTO);
+    d = vpDisplayFactory::allocateDisplay(I, -1, -1, "", vpDisplay::SCALE_AUTO);
 #endif
 
     vpCameraParameters cam_init;
