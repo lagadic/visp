@@ -60,13 +60,23 @@ set(MyApriltag_LIBRARIES_SEARCH_PATHS
   /usr/lib/x86_64-linux-gnu
 )
 
+set(MyApriltag_CMAKE_CONFIG_SEARCH_PATHS
+  $ENV{apriltag_DIR}/share
+  ${apriltag_DIR}/share
+  /usr/share
+  /usr/local/share
+  ${MyApriltag_LIBRARIES_SEARCH_PATHS}
+)
+
 find_path(MyApriltag_INCLUDE_DIRS apriltag.h PATHS ${MyApriltag_INCLUDE_SEARCH_PATHS} PATH_SUFFIXES apriltag)
 
 find_library(MyApriltag_LIBRARIES NAMES "apriltag" PATHS ${MyApriltag_LIBRARIES_SEARCH_PATHS})
 
 if(MyApriltag_LIBRARIES)
   # try to detect version
-  find_path(MyApriltagConfigVersion_DIR apriltagConfigVersion.cmake PATHS ${MyApriltag_LIBRARIES_SEARCH_PATHS} PATH_SUFFIXES cmake/apriltag)
+  find_path(MyApriltagConfigVersion_DIR apriltagConfigVersion.cmake
+    PATHS ${MyApriltag_CMAKE_CONFIG_SEARCH_PATHS}
+    PATH_SUFFIXES "cmake/apriltag" "apriltag/cmake")
   if(MyApriltagConfigVersion_DIR)
     set(MyApriltagConfigVersion_FILE "${MyApriltagConfigVersion_DIR}/apriltagConfigVersion.cmake")
     if(EXISTS ${MyApriltagConfigVersion_FILE})
