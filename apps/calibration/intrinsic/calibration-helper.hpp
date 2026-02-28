@@ -42,8 +42,13 @@
 #include <visp3/core/vpPixelMeterConversion.h>
 #include <visp3/core/vpPoint.h>
 #include <visp3/core/vpPolygon.h>
+#include <visp3/core/vpColormap.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+
+#if defined(ENABLE_VISP_NAMESPACE)
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 namespace calib_helper
 {
@@ -65,14 +70,14 @@ public:
   bool read(const std::string &filename) // Read the parameters
   {
     // reading configuration file
-    if (!VISP_NAMESPACE_ADDRESSING vpIoTools::loadConfigFile(filename))
+    if (!vpIoTools::loadConfigFile(filename))
       return false;
-    VISP_NAMESPACE_ADDRESSING vpIoTools::readConfigVar("BoardSize_Width:", boardSize.width);
-    VISP_NAMESPACE_ADDRESSING vpIoTools::readConfigVar("BoardSize_Height:", boardSize.height);
-    VISP_NAMESPACE_ADDRESSING vpIoTools::readConfigVar("Square_Size:", squareSize);
-    VISP_NAMESPACE_ADDRESSING vpIoTools::readConfigVar("Calibrate_Pattern:", patternToUse);
-    VISP_NAMESPACE_ADDRESSING vpIoTools::readConfigVar("Input:", input);
-    VISP_NAMESPACE_ADDRESSING vpIoTools::readConfigVar("Tempo:", tempo);
+    vpIoTools::readConfigVar("BoardSize_Width:", boardSize.width);
+    vpIoTools::readConfigVar("BoardSize_Height:", boardSize.height);
+    vpIoTools::readConfigVar("Square_Size:", squareSize);
+    vpIoTools::readConfigVar("Calibrate_Pattern:", patternToUse);
+    vpIoTools::readConfigVar("Input:", input);
+    vpIoTools::readConfigVar("Tempo:", tempo);
 
     std::cout << "grid width : " << boardSize.width << std::endl;
     std::cout << "grid height: " << boardSize.height << std::endl;
@@ -128,35 +133,34 @@ private:
 
 struct CalibInfo
 {
-  CalibInfo(const VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &img, const std::vector<VISP_NAMESPACE_ADDRESSING vpPoint> &points,
-            const std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> &imPts, const std::string &frame_name)
+  CalibInfo(const vpImage<unsigned char> &img, const std::vector<vpPoint> &points,
+            const std::vector<vpImagePoint> &imPts, const std::string &frame_name)
     : m_img(img), m_points(points), m_imPts(imPts), m_frame_name(frame_name)
   { }
 
-  VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> m_img;
-  std::vector<VISP_NAMESPACE_ADDRESSING vpPoint> m_points;
-  std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> m_imPts;
+  vpImage<unsigned char> m_img;
+  std::vector<vpPoint> m_points;
+  std::vector<vpImagePoint> m_imPts;
   std::string m_frame_name;
 };
 
-void drawCalibrationOccupancy(VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I, const std::vector<CalibInfo> &calib_info,
-                              unsigned int patternW)
+void drawCalibrationOccupancy(vpImage<unsigned char> &I, const std::vector<CalibInfo> &calib_info, unsigned int patternW)
 {
   I = 0u;
   unsigned char pixel_value = static_cast<unsigned char>(255.0 / calib_info.size());
   for (size_t idx = 0; idx < calib_info.size(); idx++) {
     const CalibInfo &calib = calib_info[idx];
 
-    std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> corners;
+    std::vector<vpImagePoint> corners;
     corners.push_back(calib.m_imPts.front());
     corners.push_back(*(calib.m_imPts.begin() + patternW - 1));
     corners.push_back(calib.m_imPts.back());
     corners.push_back(*(calib.m_imPts.end() - patternW));
-    VISP_NAMESPACE_ADDRESSING vpPolygon poly(corners);
+    vpPolygon poly(corners);
 
     for (unsigned int i = 0; i < I.getHeight(); i++) {
       for (unsigned int j = 0; j < I.getWidth(); j++) {
-        if (poly.isInside(VISP_NAMESPACE_ADDRESSING vpImagePoint(i, j))) {
+        if (poly.isInside(vpImagePoint(i, j))) {
           I[i][j] += pixel_value;
         }
       }
@@ -164,17 +168,17 @@ void drawCalibrationOccupancy(VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &
   }
 }
 
-std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> undistort(const VISP_NAMESPACE_ADDRESSING vpCameraParameters &cam_dist, const std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> &imPts)
+std::vector<vpImagePoint> undistort(const vpCameraParameters &cam_dist, const std::vector<vpImagePoint> &imPts)
 {
-  std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> imPts_undist;
+  std::vector<vpImagePoint> imPts_undist;
 
-  VISP_NAMESPACE_ADDRESSING vpCameraParameters cam(cam_dist.get_px(), cam_dist.get_py(), cam_dist.get_u0(), cam_dist.get_v0());
+  vpCameraParameters cam(cam_dist.get_px(), cam_dist.get_py(), cam_dist.get_u0(), cam_dist.get_v0());
   for (size_t i = 0; i < imPts.size(); i++) {
     double x = 0, y = 0;
-    VISP_NAMESPACE_ADDRESSING vpPixelMeterConversion::convertPoint(cam_dist, imPts[i], x, y);
+    vpPixelMeterConversion::convertPoint(cam_dist, imPts[i], x, y);
 
-    VISP_NAMESPACE_ADDRESSING vpImagePoint imPt;
-    VISP_NAMESPACE_ADDRESSING vpMeterPixelConversion::convertPoint(cam, x, y, imPt);
+    vpImagePoint imPt;
+    vpMeterPixelConversion::convertPoint(cam, x, y, imPt);
     imPts_undist.push_back(imPt);
   }
 
@@ -205,7 +209,7 @@ bool extractCalibrationPoints(const Settings &s, const cv::Mat &cvI, std::vector
 
   if (found) // If done with success,
   {
-    std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> data;
+    std::vector<vpImagePoint> data;
 
     if (s.calibrationPattern == Settings::CHESSBOARD) {
       // improve the found corners' coordinate accuracy for chessboard
@@ -219,6 +223,70 @@ bool extractCalibrationPoints(const Settings &s, const cv::Mat &cvI, std::vector
   }
 
   return found;
+}
+
+void computeDistortionDisplacementMap(const vpCameraParameters &cam_dist, vpImage<vpRGBa> &I_color)
+{
+  vpImage<double> displacement_map(I_color.getHeight(), I_color.getWidth());
+
+  double min_displ = 1e12, max_displ = 0;
+  for (unsigned int i = 0; i < I_color.getHeight(); i++) {
+    for (unsigned int j = 0; j < I_color.getWidth(); j++) {
+      double x = 0, y = 0, id = 0, jd = 0;
+      vpPixelMeterConversion::convertPointWithoutDistortion(cam_dist, j, i, x, y);
+      vpMeterPixelConversion::convertPoint(cam_dist, x, y, jd, id);
+
+      double erri = id - i;
+      double errj = jd - j;
+      double displ = std::sqrt(erri*erri + errj*errj);
+      displacement_map[i][j] = displ;
+      min_displ = displ < min_displ ? displ : min_displ;
+      max_displ = displ > max_displ ? displ : max_displ;
+    }
+  }
+
+  double a = 255 / (max_displ - min_displ);
+  double b = (-255 * min_displ) / (max_displ - min_displ);
+
+  vpImage<unsigned char> I_gray(I_color.getHeight(), I_color.getWidth());
+  for (unsigned int i = 0; i < displacement_map.getHeight(); i++) {
+    for (unsigned int j = 0; j < displacement_map.getWidth(); j++) {
+      I_gray[i][j] = static_cast<unsigned char>(vpMath::clamp(a * displacement_map[i][j] + b, 0.0, 255.0));
+    }
+  }
+
+  vpColormap colormap(vpColormap::COLORMAP_TURBO);
+  colormap.convert(I_gray, I_color);
+}
+
+void createMosaic(const std::vector<vpImage<vpRGBa>> &list_imgs, std::vector<vpImage<vpRGBa>> &list_mosaics)
+{
+  const unsigned int nb_rows = 4, nb_cols = 6;
+  const unsigned int nb_totals = nb_rows*nb_cols;
+  if (list_imgs.empty()) {
+    return;
+  }
+
+  const unsigned int img_h = list_imgs[0].getHeight();
+  const unsigned int img_w = list_imgs[0].getWidth();
+  vpImage<vpRGBa> mosaic(img_h*nb_rows, img_w*nb_cols);
+  for (size_t i = 0; i < list_imgs.size(); i += nb_totals) {
+    mosaic = vpRGBa(0, 0, 0);
+
+    for (size_t j = 0; j < nb_totals; j++) {
+      const size_t idx = i + j;
+      const unsigned int pos_mod = idx % nb_totals;
+      if (idx >= list_imgs.size()) {
+        break;
+      }
+
+      const unsigned int pos_row = pos_mod / nb_cols;
+      vpImagePoint top_left(pos_row*img_h, (pos_mod - pos_row*nb_cols)*img_w);
+      mosaic.insert(list_imgs[idx], top_left);
+    }
+
+    list_mosaics.push_back(mosaic);
+  }
 }
 
 } // namespace calib_helper
