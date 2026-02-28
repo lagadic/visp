@@ -742,6 +742,44 @@ int main(int argc, const char *argv[])
 
           vpDisplay::displayArrow(I_dist_map, imPt, imPt_dist, vpColor::red, 2);
         }
+
+        unsigned int remainder_col = (I_dist_map.getWidth()-1) - (I_dist_map.getWidth() / step)*step;
+        if (remainder_col >= step/2) {
+          unsigned int j = I_dist_map.getWidth() - 1;
+          vpImagePoint imPt(i, j);
+          double x = 0, y = 0;
+          vpPixelMeterConversion::convertPointWithoutDistortion(cam, imPt, x, y);
+          vpImagePoint imPt_dist;
+          vpMeterPixelConversion::convertPoint(cam, x, y, imPt_dist);
+
+          vpDisplay::displayArrow(I_dist_map, imPt, imPt_dist, vpColor::red, 2);
+        }
+      }
+      unsigned int remainder_row = (I_dist_map.getHeight()-1) - (I_dist_map.getHeight() / step)*step;
+      if (remainder_row >= step/2) {
+        unsigned int i = I_dist_map.getHeight() - 1;
+
+        for (unsigned int j = 0; j < I_dist_map.getWidth(); j += step) {
+          vpImagePoint imPt(i, j);
+          double x = 0, y = 0;
+          vpPixelMeterConversion::convertPointWithoutDistortion(cam, imPt, x, y);
+          vpImagePoint imPt_dist;
+          vpMeterPixelConversion::convertPoint(cam, x, y, imPt_dist);
+
+          vpDisplay::displayArrow(I_dist_map, imPt, imPt_dist, vpColor::red, 2);
+        }
+
+        unsigned int remainder_col = (I_dist_map.getWidth()-1) - (I_dist_map.getWidth() / step)*step;
+        if (remainder_col >= step/2) {
+          unsigned int j = I_dist_map.getWidth() - 1;
+          vpImagePoint imPt(i, j);
+          double x = 0, y = 0;
+          vpPixelMeterConversion::convertPointWithoutDistortion(cam, imPt, x, y);
+          vpImagePoint imPt_dist;
+          vpMeterPixelConversion::convertPoint(cam, x, y, imPt_dist);
+
+          vpDisplay::displayArrow(I_dist_map, imPt, imPt_dist, vpColor::red, 2);
+        }
       }
 
       if (s.tempo > 10.f) {
