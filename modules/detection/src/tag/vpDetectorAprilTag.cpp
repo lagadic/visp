@@ -216,18 +216,6 @@ static inline zarray_t *my_zarray_create(size_t el_sz)
 }
 
 /**
- * Retrieves the number of elements currently being contained by the passed
- * array, which may be different from its capacity. The index of the last element
- * in the array will be one less than the returned value.
- */
-static inline int my_zarray_size(const zarray_t *za)
-{
-  assert(za != NULL);
-
-  return za->size;
-}
-
-/**
  * Retrieves the element from the supplied array located at the zero-based
  * index of 'idx' and copies its value into the variable pointed to by the pointer
  * 'p'.
