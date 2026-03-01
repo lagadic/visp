@@ -366,7 +366,7 @@ void vpImageIo::write(const vpImage<unsigned char> &I, const std::string &filena
 #if defined(VISP_HAVE_OPENCV) && \
     (((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || \
      ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC)))
-    writeOpenCV(I, filename, 90);
+    writeOpenCV(I, filename, -1); // last parameter corresponds to cv::IMWRITE_JPEG_QUALITY, -1 to ignore it
 #else
     const std::string message = "Cannot write file \"" + filename + "\": No backend able to support this image format";
     throw(vpImageException(vpImageException::ioError, message));
@@ -429,7 +429,7 @@ void vpImageIo::write(const vpImage<vpRGBa> &I, const std::string &filename, int
 #if defined(VISP_HAVE_OPENCV) && \
     (((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || \
      ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC)))
-    writeOpenCV(I, filename, 90);
+    writeOpenCV(I, filename, -1); // last parameter corresponds to cv::IMWRITE_JPEG_QUALITY, -1 to ignore it
 #else
     const std::string message = "Cannot write file \"" + filename + "\": No backend able to support this image format";
     throw(vpImageException(vpImageException::ioError, message));
@@ -1136,7 +1136,7 @@ void vpImageIo::writePNG(const vpImage<unsigned char> &I, const std::string &fil
 #if defined(VISP_HAVE_OPENCV) && \
     (((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || \
      ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC)))
-    writeOpenCV(I, filename, 90);
+    writeOpenCV(I, filename, -1); // last parameter corresponds to cv::IMWRITE_JPEG_QUALITY, -1 to ignore it
 #else
     (void)I;
     (void)filename;
@@ -1231,7 +1231,7 @@ void vpImageIo::writePNG(const vpImage<vpRGBa> &I, const std::string &filename, 
 #if defined(VISP_HAVE_OPENCV) && \
     (((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || \
      ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC)))
-    writeOpenCV(I, filename, 90);
+    writeOpenCV(I, filename, -1); // last parameter corresponds to cv::IMWRITE_JPEG_QUALITY, -1 to ignore it
 #else
     (void)I;
     (void)filename;
