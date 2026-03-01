@@ -63,6 +63,8 @@ set(MyApriltag_LIBRARIES_SEARCH_PATHS
 set(MyApriltag_CMAKE_CONFIG_SEARCH_PATHS
   $ENV{apriltag_DIR}/share
   ${apriltag_DIR}/share
+  $ENV{CONDA_PREFIX}/lib
+  $ENV{CONDA_PREFIX}/share
   /usr/share
   /usr/local/share
   ${MyApriltag_LIBRARIES_SEARCH_PATHS}

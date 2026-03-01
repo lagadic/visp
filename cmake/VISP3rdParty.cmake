@@ -32,7 +32,7 @@ if(USE_APRILTAG)
     vp_clear_vars(apriltag_FOUND MyApriltag_FOUND)
   else()
     find_package(MyApriltag QUIET) # Trick to overcome issue in apriltagTargets.cmake occuring with version 3.3.0
-    if((NOT MyApriltag_FOUND) OR (MyApriltag_VERSION VERSION_GREATER "3.3.0"))
+    if((NOT MyApriltag_FOUND) OR (MyApriltag_VERSION VERSION_GREATER "3.3.0") OR (MyApriltag_VERSION STREQUAL "n/a"))
       find_package(apriltag QUIET)
     endif()
   endif()
