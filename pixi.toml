@@ -26,7 +26,6 @@ nlohmann_json = "*"
 ogre = ">=14.4.1"
 libxml2-devel = "*"
 librealsense = "*"
-apriltag = "*"
 
 [target.unix.dependencies]
 xorg-libx11 = "*"
@@ -39,10 +38,17 @@ glib = "*"
 
 [target.linux-64.dependencies]
 zbar = "*"
+apriltag = "*"
 
 [target.osx.dependencies]
 llvm-openmp = "*"
 zbar = "*"
+
+[target.osx-64.dependencies]
+apriltag = "*"
+
+[target.win-64.dependencies]
+apriltag = "*"
 
 [activation]
 scripts = ["development/scripts/pixi/activation.sh"]
