@@ -42,9 +42,7 @@ extern "C" {
 #include <apriltag_pose.h>
 #include <common/homography.h>
 #include <tag16h5.h>
-#include <tag25h7.h>
 #include <tag25h9.h>
-#include <tag36h10.h>
 #include <tag36h11.h>
 #include <tagCircle21h7.h>
 #if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
@@ -53,6 +51,7 @@ extern "C" {
 #include <tagStandard41h12.h>
 #include <tagStandard52h13.h>
 #endif
+#if defined(VISP_HAVE_APRILTAG_ARUCO)
 #include <tagAruco4x4_50.h>
 #include <tagAruco4x4_100.h>
 #include <tagAruco4x4_250.h>
@@ -69,7 +68,8 @@ extern "C" {
 #include <tagAruco7x7_100.h>
 #include <tagAruco7x7_250.h>
 #include <tagAruco7x7_1000.h>
-#include <tagAruco_MIP_36h12.h>
+#include <tagArucoMIP36h12.h>
+#endif
 #ifdef __cplusplus
 }
 #endif
@@ -80,6 +80,232 @@ extern "C" {
 #include <visp3/core/vpPoint.h>
 #include <visp3/detection/vpDetectorAprilTag.h>
 #include <visp3/vision/vpPose.h>
+
+namespace
+{
+void my_matd_destroy(matd_t *m)
+{
+  if (!m)
+    return;
+
+  assert(m->data != NULL);
+  // - In libapriltag < 3.4.3 the matd_t structure (see below) is designed to be allocated in a single
+  //   contiguous block (the structure + the data). Freeing the pointer m automatically frees the data that follows it.
+  //     typedef struct {
+  //       unsigned int nrows, ncols;
+  //       double data[]; // instead of double *data; implemented since 3.4.3
+  //     } matd_t;
+  // - Since libapriltag 3.4.3, the structure is not allocated in a single continuous block,
+  //   that's why we need to free the structure and the data.
+#if (VISP_HAVE_APRILTAG_VERSION >= 0x030403)
+  free(m->data);
+#endif
+  free(m);
+}
+
+// to ease creating mati, matf, etc. in the future.
+#define TYPE double
+
+/**
+ * Determines whether the supplied matrix 'a' is a scalar (positive return) or
+ * not (zero return, indicating a matrix of dimensions at least 1x1).
+ */
+static inline int my_matd_is_scalar(const matd_t *a)
+{
+  assert(a != NULL);
+  return a->ncols <= 1 && a->nrows <= 1;
+}
+
+matd_t *my_matd_create_scalar(TYPE v)
+{
+#if (VISP_HAVE_APRILTAG_VERSION >= 0x030403)
+  matd_t *m = (matd_t *)calloc(1, sizeof(matd_t));
+  m->data = (double *)calloc(1, sizeof(double));
+#else
+  matd_t *m = (matd_t *)calloc(1, sizeof(matd_t) + sizeof(double));
+#endif
+  m->nrows = 0;
+  m->ncols = 0;
+  m->data[0] = v;
+
+  return m;
+}
+
+matd_t *my_matd_create(int rows, int cols)
+{
+  assert(rows >= 0);
+  assert(cols >= 0);
+
+  if (rows == 0 || cols == 0)
+    return my_matd_create_scalar(0);
+
+#if (VISP_HAVE_APRILTAG_VERSION >= 0x030403)
+  matd_t *m = (matd_t *)calloc(1, sizeof(matd_t));
+  m->data = (double *)calloc(rows * cols, sizeof(double));
+#else
+  size_t n_elements = (size_t)rows * (size_t)cols;
+  matd_t *m = (matd_t *)calloc(1, sizeof(matd_t) + (n_elements * sizeof(double)));
+#endif
+
+  m->nrows = rows;
+  m->ncols = cols;
+
+  return m;
+}
+
+matd_t *my_matd_copy(const matd_t *m)
+{
+  assert(m != NULL);
+
+  matd_t *x = my_matd_create(m->nrows, m->ncols);
+  if (my_matd_is_scalar(m))
+    x->data[0] = m->data[0];
+  else
+    memcpy(x->data, m->data, sizeof(TYPE)*m->ncols*m->nrows);
+
+  return x;
+}
+
+void my_image_u8_destroy(image_u8_t *im)
+{
+  if (!im)
+    return;
+
+  free(im->buf);
+  free(im);
+}
+
+apriltag_detector_t *my_apriltag_detector_copy(apriltag_detector_t *td)
+{
+  apriltag_detector_t *td_copy = apriltag_detector_create();
+
+  td_copy->nthreads = td->nthreads;
+  td_copy->quad_decimate = td->quad_decimate;
+  td_copy->quad_sigma = td->quad_sigma;
+
+  td_copy->qtp.max_nmaxima = td->qtp.max_nmaxima;
+  td_copy->qtp.min_cluster_pixels = td->qtp.min_cluster_pixels;
+
+  td_copy->qtp.max_line_fit_mse = td->qtp.max_line_fit_mse;
+  td_copy->qtp.cos_critical_rad = td->qtp.cos_critical_rad;
+  td_copy->qtp.deglitch = td->qtp.deglitch;
+  td_copy->qtp.min_white_black_diff = td->qtp.min_white_black_diff;
+
+  //td->tag_families = zarray_create(sizeof(apriltag_family_t *));
+  //td->tp = timeprofile_create();
+
+  td_copy->refine_edges = td->refine_edges;
+  td_copy->decode_sharpening = td->decode_sharpening;
+  td_copy->debug = td->debug;
+
+  return td_copy;
+}
+
+/**
+ * Creates and returns a variable array structure capable of holding elements of
+ * the specified size. It is the caller's responsibility to call zarray_destroy()
+ * on the returned array when it is no longer needed.
+ */
+static inline zarray_t *my_zarray_create(size_t el_sz)
+{
+  assert(el_sz > 0);
+
+  zarray_t *za = (zarray_t *)calloc(1, sizeof(zarray_t));
+  za->el_sz = el_sz;
+  return za;
+}
+
+/**
+ * Retrieves the element from the supplied array located at the zero-based
+ * index of 'idx' and copies its value into the variable pointed to by the pointer
+ * 'p'.
+ */
+static inline void my_zarray_get(const zarray_t *za, int idx, void *p)
+{
+  assert(za != NULL);
+  assert(p != NULL);
+  assert(idx >= 0);
+  assert(idx < za->size);
+
+  memcpy(p, &za->data[idx*za->el_sz], za->el_sz);
+}
+
+/**
+ * Allocates enough internal storage in the supplied variable array structure to
+ * guarantee that the supplied number of elements (capacity) can be safely stored.
+ */
+static inline void my_zarray_ensure_capacity(zarray_t *za, int capacity)
+{
+  assert(za != NULL);
+
+  if (capacity <= za->alloc)
+    return;
+
+  while (za->alloc < capacity) {
+    za->alloc *= 2;
+    if (za->alloc < 8)
+      za->alloc = 8;
+  }
+
+  za->data = (char *)realloc(za->data, za->alloc * za->el_sz);
+}
+
+/**
+ * Adds a new element to the end of the supplied array, and sets its value
+ * (by copying) from the data pointed to by the supplied pointer 'p'.
+ * Automatically ensures that enough storage space is available for the new element.
+ */
+static inline void my_zarray_add(zarray_t *za, const void *p)
+{
+  assert(za != NULL);
+  assert(p != NULL);
+
+  my_zarray_ensure_capacity(za, za->size + 1);
+
+  memcpy(&za->data[za->size*za->el_sz], p, za->el_sz);
+  za->size++;
+}
+
+void my_apriltag_detection_copy(apriltag_detection_t *src, apriltag_detection_t *dst)
+{
+  assert(src != NULL);
+  assert(dst != NULL);
+
+  if (dst->H) {
+    my_matd_destroy(dst->H);
+  }
+  dst->H = my_matd_copy(src->H);
+
+  dst->c[0] = src->c[0];
+  dst->c[1] = src->c[1];
+
+  for (int i = 0; i < 4; i++) {
+    for (int j = 0; j < 2; j++) {
+      dst->p[i][j] = src->p[i][j];
+    }
+  }
+
+  dst->id = src->id;
+  dst->family = src->family;
+  dst->hamming = src->hamming;
+  dst->decision_margin = src->decision_margin;
+}
+
+zarray_t *my_apriltag_detections_copy(zarray_t *detections)
+{
+  zarray_t *detections_copy = my_zarray_create(sizeof(apriltag_detection_t *));
+  for (int i = 0; i < zarray_size(detections); i++) {
+    apriltag_detection_t *det;
+    my_zarray_get(detections, i, &det);
+
+    apriltag_detection_t *det_copy = (apriltag_detection_t *)calloc(1, sizeof(apriltag_detection_t));
+    my_apriltag_detection_copy(det, det_copy);
+    my_zarray_add(detections_copy, &det_copy);
+  }
+
+  return detections_copy;
+}
+};
 
 BEGIN_VISP_NAMESPACE
 
@@ -97,19 +323,8 @@ public:
       m_tf = tag36h11_create();
       break;
 
-    case TAG_36h10:
-      m_tf = tag36h10_create();
-      break;
-
-    case TAG_36ARTOOLKIT:
-      break;
-
     case TAG_25h9:
       m_tf = tag25h9_create();
-      break;
-
-    case TAG_25h7:
-      m_tf = tag25h7_create();
       break;
 
     case TAG_16h5:
@@ -144,6 +359,7 @@ public:
 #endif
       break;
 
+#if defined(VISP_HAVE_APRILTAG_ARUCO)
     case TAG_ARUCO_4x4_50:
       m_tf = tagAruco4x4_50_create();
       break;
@@ -209,23 +425,27 @@ public:
       break;
 
     case TAG_ARUCO_MIP_36h12:
-      m_tf = tagArucoMIP_36h12_create();
+      m_tf = tagArucoMIP36h12_create();
       break;
+#endif
 
     default:
       throw vpException(vpException::fatalError, "Unknown Tag family!");
     }
 
-    if ((m_tagFamily != TAG_36ARTOOLKIT) && m_tf) {
+    if (m_tf) {
       m_td = apriltag_detector_create();
       int bits_corrected = 2;
+
+#if defined(VISP_HAVE_APRILTAG_ARUCO)
       if (m_tagFamily == TAG_ARUCO_4x4_50 ||
         m_tagFamily == TAG_ARUCO_4x4_100 ||
         m_tagFamily == TAG_ARUCO_4x4_250 ||
         m_tagFamily == TAG_ARUCO_4x4_1000) {
         bits_corrected = 1;
       }
-      apriltag_detector_add_family(m_td, m_tf, bits_corrected);
+#endif
+      apriltag_detector_add_family_bits(m_td, m_tf, bits_corrected);
     }
 
     m_mapOfCorrespondingPoseMethods[DEMENTHON_VIRTUAL_VS] = vpPose::DEMENTHON;
@@ -243,19 +463,8 @@ public:
       m_tf = tag36h11_create();
       break;
 
-    case TAG_36h10:
-      m_tf = tag36h10_create();
-      break;
-
-    case TAG_36ARTOOLKIT:
-      break;
-
     case TAG_25h9:
       m_tf = tag25h9_create();
-      break;
-
-    case TAG_25h7:
-      m_tf = tag25h7_create();
       break;
 
     case TAG_16h5:
@@ -290,6 +499,7 @@ public:
 #endif
       break;
 
+#if defined(VISP_HAVE_APRILTAG_ARUCO)
     case TAG_ARUCO_4x4_50:
       m_tf = tagAruco4x4_50_create();
       break;
@@ -355,24 +565,29 @@ public:
       break;
 
     case TAG_ARUCO_MIP_36h12:
-      m_tf = tagArucoMIP_36h12_create();
+      m_tf = tagArucoMIP36h12_create();
       break;
+#endif
 
     default:
       throw vpException(vpException::fatalError, "Unknown Tag family!");
     }
 
-    if ((m_tagFamily != TAG_36ARTOOLKIT) && m_tf) {
-      m_td = apriltag_detector_copy(o.m_td);
+    if (m_tf) {
+      m_td = my_apriltag_detector_copy(o.m_td);
+#if defined(VISP_HAVE_APRILTAG_ARUCO)
       int bits_corrected = (m_tagFamily == TAG_ARUCO_4x4_1000) ? 1 : 2;
-      apriltag_detector_add_family(m_td, m_tf, bits_corrected);
+#else
+      int bits_corrected = 2;
+#endif
+      apriltag_detector_add_family_bits(m_td, m_tf, bits_corrected);
     }
 
     m_mapOfCorrespondingPoseMethods[DEMENTHON_VIRTUAL_VS] = vpPose::DEMENTHON;
     m_mapOfCorrespondingPoseMethods[LAGRANGE_VIRTUAL_VS] = vpPose::LAGRANGE;
 
     if (o.m_detections != nullptr) {
-      m_detections = apriltag_detections_copy(o.m_detections);
+      m_detections = my_apriltag_detections_copy(o.m_detections);
     }
   }
 
@@ -388,19 +603,8 @@ public:
         tag36h11_destroy(m_tf);
         break;
 
-      case TAG_36h10:
-        tag36h10_destroy(m_tf);
-        break;
-
-      case TAG_36ARTOOLKIT:
-        break;
-
       case TAG_25h9:
         tag25h9_destroy(m_tf);
-        break;
-
-      case TAG_25h7:
-        tag25h7_destroy(m_tf);
         break;
 
       case TAG_16h5:
@@ -435,6 +639,7 @@ public:
 #endif
         break;
 
+#if defined(VISP_HAVE_APRILTAG_ARUCO)
       case TAG_ARUCO_4x4_50:
         tagAruco4x4_50_destroy(m_tf);
         break;
@@ -500,8 +705,9 @@ public:
         break;
 
       case TAG_ARUCO_MIP_36h12:
-        tagArucoMIP_36h12_destroy(m_tf);
+        tagArucoMIP36h12_destroy(m_tf);
         break;
+#endif
 
       default:
         break;
@@ -531,11 +737,6 @@ public:
               std::vector<vpHomogeneousMatrix> *cMo_vec2, std::vector<double> *projErrors,
               std::vector<double> *projErrors2)
   {
-    if (m_tagFamily == TAG_36ARTOOLKIT) {
-      // TAG_36ARTOOLKIT is not available anymore
-      std::cerr << "TAG_36ARTOOLKIT detector is not available anymore." << std::endl;
-      return false;
-    }
 #if !defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
     if ((m_tagFamily == TAG_CIRCLE49h12) || (m_tagFamily == TAG_CUSTOM48h12) || (m_tagFamily == TAG_STANDARD41h12) ||
         (m_tagFamily == TAG_STANDARD52h13)) {
@@ -739,7 +940,7 @@ public:
       }
     }
 
-    image_u8_destroy(img_8u);
+    my_image_u8_destroy(img_8u);
     return true;
   }
 
@@ -748,11 +949,6 @@ public:
   {
     if (m_detections == nullptr) {
       throw(vpException(vpException::fatalError, "Cannot get tag index=%d pose: detection empty", tagIndex));
-    }
-    if (m_tagFamily == TAG_36ARTOOLKIT) {
-      // TAG_36ARTOOLKIT is not available anymore
-      std::cerr << "TAG_36ARTOOLKIT detector is not available anymore." << std::endl;
-      return false;
     }
 #if !defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
     if ((m_tagFamily == TAG_CIRCLE49h12) || (m_tagFamily == TAG_CUSTOM48h12) || (m_tagFamily == TAG_STANDARD41h12) ||
@@ -777,6 +973,7 @@ public:
     // To keep compatibility, we maintain the same convention than before and there is setZAlignedWithCameraAxis().
     // Under the hood, we use aligned frames everywhere and transform the pose according to the option.
 
+#if defined(VISP_HAVE_APRILTAG_EXTENDED_API)
     vpHomogeneousMatrix cMo_homography_ortho_iter;
     if ((m_poseEstimationMethod == HOMOGRAPHY_ORTHOGONAL_ITERATION) ||
         (m_poseEstimationMethod == BEST_RESIDUAL_VIRTUAL_VS)) {
@@ -811,14 +1008,17 @@ public:
       info.cy = cy;
 
       apriltag_pose_t pose;
+
       estimate_pose_for_tag_homography(&info, &pose);
       convertHomogeneousMatrix(pose, cMo);
 
-      matd_destroy(pose.R);
-      matd_destroy(pose.t);
+      // Since matd_destroy() symbol is not exported in libapriltag we are using my_matd_destroy()
+      my_matd_destroy(pose.R);
+      my_matd_destroy(pose.t);
 
       cMo_homography = cMo;
     }
+#endif
 
     // Add marker object points
     vpPose pose;
@@ -859,15 +1059,18 @@ public:
 
     pose.addPoints(pts);
 
-    if ((m_poseEstimationMethod != HOMOGRAPHY) && (m_poseEstimationMethod != HOMOGRAPHY_VIRTUAL_VS) &&
-        (m_poseEstimationMethod != HOMOGRAPHY_ORTHOGONAL_ITERATION)) {
+    if ((m_poseEstimationMethod == DEMENTHON_VIRTUAL_VS)
+       || (m_poseEstimationMethod == LAGRANGE_VIRTUAL_VS)
+       || (m_poseEstimationMethod == BEST_RESIDUAL_VIRTUAL_VS)) {
       if (m_poseEstimationMethod == BEST_RESIDUAL_VIRTUAL_VS) {
         vpHomogeneousMatrix cMo_dementhon, cMo_lagrange;
 
         double residual_dementhon = std::numeric_limits<double>::max(),
           residual_lagrange = std::numeric_limits<double>::max();
+#if defined(VISP_HAVE_APRILTAG_EXTENDED_API)
         double residual_homography = pose.computeResidual(cMo_homography);
         double residual_homography_ortho_iter = pose.computeResidual(cMo_homography_ortho_iter);
+#endif
 
         if (pose.computePose(vpPose::DEMENTHON, cMo_dementhon)) {
           residual_dementhon = pose.computeResidual(cMo_dementhon);
@@ -880,13 +1083,18 @@ public:
         std::vector<double> residuals;
         residuals.push_back(residual_dementhon);
         residuals.push_back(residual_lagrange);
+#if defined(VISP_HAVE_APRILTAG_EXTENDED_API)
         residuals.push_back(residual_homography);
         residuals.push_back(residual_homography_ortho_iter);
+#endif
         std::vector<vpHomogeneousMatrix> poses;
         poses.push_back(cMo_dementhon);
         poses.push_back(cMo_lagrange);
+
+#if defined(VISP_HAVE_APRILTAG_EXTENDED_API)
         poses.push_back(cMo_homography);
         poses.push_back(cMo_homography_ortho_iter);
+#endif
 
         std::ptrdiff_t minIndex = std::min_element(residuals.begin(), residuals.end()) - residuals.begin();
         cMo = *(poses.begin() + minIndex);
@@ -896,11 +1104,19 @@ public:
       }
     }
 
-    if ((m_poseEstimationMethod != HOMOGRAPHY) && (m_poseEstimationMethod != HOMOGRAPHY_ORTHOGONAL_ITERATION)) {
+    //if ((m_poseEstimationMethod != HOMOGRAPHY) && (m_poseEstimationMethod != HOMOGRAPHY_ORTHOGONAL_ITERATION)) {
+    if ((m_poseEstimationMethod == DEMENTHON_VIRTUAL_VS)
+        || (m_poseEstimationMethod == LAGRANGE_VIRTUAL_VS)
+        || (m_poseEstimationMethod == BEST_RESIDUAL_VIRTUAL_VS)
+#if defined(VISP_HAVE_APRILTAG_EXTENDED_API)
+        || (m_poseEstimationMethod == HOMOGRAPHY_VIRTUAL_VS)
+#endif
+      ) {
       // Compute final pose using VVS
       pose.computePose(vpPose::VIRTUAL_VS, cMo);
     }
 
+#if defined(VISP_HAVE_APRILTAG_EXTENDED_API)
     // Only with HOMOGRAPHY_ORTHOGONAL_ITERATION we can directly get two solutions
     if (m_poseEstimationMethod != HOMOGRAPHY_ORTHOGONAL_ITERATION) {
       if (cMo2) {
@@ -912,7 +1128,7 @@ public:
         const unsigned int nbPoints = 4;
         const int nbRows = 3;
         matd_t *p[nbPoints] = { matd_create_data(nbRows, 1, data_p0), matd_create_data(nbRows, 1, data_p1),
-                        matd_create_data(nbRows, 1, data_p2), matd_create_data(nbRows, 1, data_p3) };
+                                matd_create_data(nbRows, 1, data_p2), matd_create_data(nbRows, 1, data_p3) };
         matd_t *v[nbPoints];
         for (unsigned int i = 0; i < nbPoints; ++i) {
           double data_v[] = { (det->p[i][0] - cam.get_u0()) / cam.get_px(), (det->p[i][1] - cam.get_v0()) / cam.get_py(),
@@ -930,21 +1146,22 @@ public:
         get_second_solution(v, p, &solution1, &solution2, nIters, &err2);
 
         for (unsigned int i = 0; i < nbPoints; ++i) {
-          matd_destroy(p[i]);
-          matd_destroy(v[i]);
+          // Since matd_destroy() symbol is not exported in libapriltag we are using my_matd_destroy()
+          my_matd_destroy(p[i]);
+          my_matd_destroy(v[i]);
         }
 
         if (solution2.R) {
           convertHomogeneousMatrix(solution2, *cMo2);
-
-          matd_destroy(solution2.R);
-          matd_destroy(solution2.t);
+          my_matd_destroy(solution2.R);
+          my_matd_destroy(solution2.t);
         }
 
-        matd_destroy(solution1.R);
-        matd_destroy(solution1.t);
+        my_matd_destroy(solution1.R);
+        my_matd_destroy(solution1.t);
       }
     }
+#endif
 
     // Compute projection error with vpPose::computeResidual() for consistency
     if (projErrors) {
@@ -976,6 +1193,7 @@ public:
     return true;
   }
 
+#if defined(VISP_HAVE_APRILTAG_EXTENDED_API)
   void getPoseWithOrthogonalMethod(apriltag_detection_info_t &info, vpHomogeneousMatrix &cMo1,
                                    vpHomogeneousMatrix *cMo2, double *err1, double *err2)
   {
@@ -983,6 +1201,7 @@ public:
     double err_1, err_2;
     const unsigned int nbIters = 50;
     estimate_tag_pose_orthogonal_iteration(&info, &err_1, &pose1, &err_2, &pose2, nbIters);
+
     if (err_1 <= err_2) {
       convertHomogeneousMatrix(pose1, cMo1);
       if (cMo2) {
@@ -1001,12 +1220,12 @@ public:
       }
     }
 
-    matd_destroy(pose1.R);
-    matd_destroy(pose1.t);
+    my_matd_destroy(pose1.R);
+    my_matd_destroy(pose1.t);
     if (pose2.R) {
-      matd_destroy(pose2.t);
+      my_matd_destroy(pose2.t);
     }
-    matd_destroy(pose2.R);
+    my_matd_destroy(pose2.R);
 
     if (err1) {
       *err1 = err_1;
@@ -1015,6 +1234,7 @@ public:
       *err2 = err_2;
     }
   }
+#endif
 
   bool getZAlignedWithCameraAxis() { return m_zAlignedWithCameraFrame; }
 
@@ -1189,17 +1409,8 @@ std::string vpDetectorAprilTag::tagFamilyToString(const vpDetectorAprilTag::vpAp
   case vpDetectorAprilTag::TAG_36h11:
     name = "36h11";
     break;
-  case vpDetectorAprilTag::TAG_36h10:
-    name = "36h10";
-    break;
-  case vpDetectorAprilTag::TAG_36ARTOOLKIT:
-    name = "36artoolkit";
-    break;
   case vpDetectorAprilTag::TAG_25h9:
     name = "25h9";
-    break;
-  case vpDetectorAprilTag::TAG_25h7:
-    name = "25h7";
     break;
   case vpDetectorAprilTag::TAG_16h5:
     name = "16h5";
@@ -1219,6 +1430,8 @@ std::string vpDetectorAprilTag::tagFamilyToString(const vpDetectorAprilTag::vpAp
   case vpDetectorAprilTag::TAG_STANDARD52h13:
     name = "standard52h13";
     break;
+
+#if defined(VISP_HAVE_APRILTAG_ARUCO)
   case vpDetectorAprilTag::TAG_ARUCO_4x4_50:
     name = "aruco_4x4_50";
     break;
@@ -1270,6 +1483,8 @@ std::string vpDetectorAprilTag::tagFamilyToString(const vpDetectorAprilTag::vpAp
   case vpDetectorAprilTag::TAG_ARUCO_MIP_36h12:
     name = "aruco_mip_36h12";
     break;
+#endif
+
   default:
     name = "unknown";
   }
@@ -1312,12 +1527,14 @@ std::string vpDetectorAprilTag::poseMethodToString(const vpDetectorAprilTag::vpP
 {
   std::string name;
   switch (method) {
+#if defined(VISP_HAVE_APRILTAG_EXTENDED_API)
   case vpDetectorAprilTag::HOMOGRAPHY:
     name = "homography";
     break;
   case vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS:
     name = "homography_virtual_vs";
     break;
+#endif
   case vpDetectorAprilTag::DEMENTHON_VIRTUAL_VS:
     name = "dementhon_virtual_vs";
     break;
@@ -1327,9 +1544,11 @@ std::string vpDetectorAprilTag::poseMethodToString(const vpDetectorAprilTag::vpP
   case vpDetectorAprilTag::BEST_RESIDUAL_VIRTUAL_VS:
     name = "best_residual_virtual_vs";
     break;
+#if defined(VISP_HAVE_APRILTAG_EXTENDED_API)
   case vpDetectorAprilTag::HOMOGRAPHY_ORTHOGONAL_ITERATION:
     name = "homography_orthogonal_iteration";
     break;
+#endif
   default:
     name = "unknown";
   }

@@ -1,8 +1,12 @@
-project(${APRILTAG_LIBRARY} LANGUAGES C)
+set(APRILTAG_LIBRARY_NAME visp_apriltag)
 
-set(APRILTAG_MAJOR_VERSION 3 PARENT_SCOPE)
-set(APRILTAG_MINOR_VERSION 4 PARENT_SCOPE)
-set(APRILTAG_PATCH_VERSION 2 PARENT_SCOPE)
+project(${APRILTAG_LIBRARY_NAME} LANGUAGES C)
+
+set(APRILTAG_VERSION_MAJOR 3)
+set(APRILTAG_VERSION_MINOR 4)
+set(APRILTAG_VERSION_PATCH 2)
+
+set(APRILTAG_VERSION "${APRILTAG_VERSION_MAJOR}.${APRILTAG_VERSION_MINOR}.${APRILTAG_VERSION_PATCH}")
 
 vp_include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -12,7 +16,7 @@ file(GLOB lib_hdrs *.h common/*.h common/sys/*.h)
 
 vp_list_filterout(lib_srcs common/unionfind.c) # has no symbols
 
-if(NOT WITH_APRILTAG_BIG_FAMILY)
+if(NOT USE_APRILTAG_BIG_FAMILY)
   vp_list_filterout(lib_srcs tagCircle49h12.c)
   vp_list_filterout(lib_hdrs tagCircle49h12.h)
   vp_list_filterout(lib_srcs tagCustom48h12.c)
@@ -33,10 +37,12 @@ if(UNIX)
   endif()
 endif()
 
-add_library(${APRILTAG_LIBRARY} STATIC ${lib_srcs} ${lib_hdrs})
+add_library(${APRILTAG_LIBRARY_NAME} STATIC ${lib_srcs} ${lib_hdrs})
 
 if(ENABLE_SOLUTION_FOLDERS)
-  set_target_properties(${APRILTAG_LIBRARY} PROPERTIES FOLDER "3rdparty")
+  set_target_properties(${APRILTAG_LIBRARY_NAME}
+    PROPERTIES
+      FOLDER "3rdparty")
 endif()
 
 if(VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_98)
@@ -49,16 +55,18 @@ if(VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_98)
   endif()
 endif()
 
-set_target_properties(${APRILTAG_LIBRARY}
-  PROPERTIES OUTPUT_NAME ${APRILTAG_LIBRARY}
-  DEBUG_POSTFIX "${VISP_DEBUG_POSTFIX}"
-  COMPILE_PDB_NAME ${APRILTAG_LIBRARY}
-  COMPILE_PDB_NAME_DEBUG "${APRILTAG_LIBRARY}${VISP_DEBUG_POSTFIX}"
-  ARCHIVE_OUTPUT_DIRECTORY ${VISP_3P_LIBRARY_OUTPUT_PATH}
+set_target_properties(${APRILTAG_LIBRARY_NAME}
+  PROPERTIES
+    OUTPUT_NAME ${APRILTAG_LIBRARY_NAME}
+    DEBUG_POSTFIX "${VISP_DEBUG_POSTFIX}"
+    COMPILE_PDB_NAME ${APRILTAG_LIBRARY_NAME}
+    COMPILE_PDB_NAME_DEBUG "${APRILTAG_LIBRARY_NAME}${VISP_DEBUG_POSTFIX}"
+    ARCHIVE_OUTPUT_DIRECTORY ${VISP_3P_LIBRARY_OUTPUT_PATH}
+    VERSION  "${APRILTAG_VERSION}"
   )
 
 if(NOT BUILD_SHARED_LIBS)
-  vp_install_target(${APRILTAG_LIBRARY} EXPORT VISPModules ARCHIVE DESTINATION ${VISP_3P_LIB_INSTALL_PATH} COMPONENT dev)
+  vp_install_target(${APRILTAG_LIBRARY_NAME} EXPORT VISPModules ARCHIVE DESTINATION ${VISP_3P_LIB_INSTALL_PATH} COMPONENT dev)
 endif()
 
 if(MSVC AND (CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
@@ -89,9 +97,7 @@ elseif(MSVC)
     vp_set_source_file_compile_flag(apriltag_pose.c /wd4244)
     vp_set_source_file_compile_flag(apriltag_quad_thresh.c /wd4244)
     vp_set_source_file_compile_flag(tag16h5.c /wd4996 /wd4244)
-    vp_set_source_file_compile_flag(tag25h7.c /wd4996 /wd4244)
     vp_set_source_file_compile_flag(tag25h9.c /wd4996 /wd4244)
-    vp_set_source_file_compile_flag(tag36h10.c /wd4996 /wd4244)
     vp_set_source_file_compile_flag(tag36h11.c /wd4996 /wd4244)
     vp_set_source_file_compile_flag(tagCircle21h7.c /wd4996 /wd4244)
     vp_set_source_file_compile_flag(tagAruco4x4_50.c /wd4996 /wd4244)
@@ -110,7 +116,7 @@ elseif(MSVC)
     vp_set_source_file_compile_flag(tagAruco7x7_100.c /wd4996 /wd4244)
     vp_set_source_file_compile_flag(tagAruco7x7_250.c /wd4996 /wd4244)
     vp_set_source_file_compile_flag(tagAruco7x7_1000.c /wd4996 /wd4244)
-    vp_set_source_file_compile_flag(tagAruco_MIP_36h12.c /wd4996 /wd4244)
+    vp_set_source_file_compile_flag(tagArucoMIP36h12.c /wd4996 /wd4244)
     # disable optimization
     foreach(f ${tag_srcs})
       vp_set_source_file_compile_flag(${f} /O0)
@@ -141,3 +147,11 @@ set_target_properties(${APRILTAG_LIBRARY} PROPERTIES
   VISIBILITY_INLINES_HIDDEN ON
   C_VISIBILITY_PRESET hidden
 )
+
+# Setting all necessary variables
+set(APRILTAG_LIBRARIES     ${APRILTAG_LIBRARY_NAME}  PARENT_SCOPE)
+set(APRILTAG_VERSION       ${APRILTAG_VERSION}       PARENT_SCOPE)
+set(APRILTAG_MAJOR_VERSION ${APRILTAG_VERSION_MAJOR} PARENT_SCOPE)
+set(APRILTAG_MINOR_VERSION ${APRILTAG_VERSION_MINOR} PARENT_SCOPE)
+set(APRILTAG_PATCH_VERSION ${APRILTAG_VERSION_PATCH} PARENT_SCOPE)
+set(APRILTAG_INCLUDE_DIRS  ${CMAKE_CURRENT_SOURCE_DIR} PARENT_SCOPE)

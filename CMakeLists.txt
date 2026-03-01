@@ -532,6 +532,7 @@ VP_OPTION(BUILD_WITH_STATIC_CRT  "" "" "Enables use of staticaly linked CRT for 
 # ----------------------------------------------------------------------------
 # Build options
 # ----------------------------------------------------------------------------
+VISP_OPTION(ENABLE_CONFIG_VERIFICATION "Fail build if actual configuration doesn't match requested (WITH_XXX != HAVE_XXX)" OFF)
 VP_OPTION(ENABLE_SOLUTION_FOLDERS "" "" "Solution folder in Visual Studio or in other IDEs" "" (MSVC_IDE OR CMAKE_GENERATOR MATCHES Xcode))
 # Note that it is better to set ENABLE_MOMENTS_COMBINE_MATRICES to OFF
 VP_OPTION(ENABLE_MOMENTS_COMBINE_MATRICES  "" "" "Use linear combination of matrices instead of linear combination of moments to compute interaction matrices." "" OFF)
@@ -869,9 +870,14 @@ endif()
 # ----------------------------------------------------------------------------
 # Build-in 3rd parties. Should be after c++ standard potential modification
 # ----------------------------------------------------------------------------
-# Since C99 is not supported by MSVC 2010 or prior, we disable apriltag if MSVC < 2012
-VP_OPTION(WITH_APRILTAG   ""           ""    "Use AprilTag as built-in library"  "" ON IF (USE_THREADS OR USE_PTHREAD) AND (NOT WINRT) AND (NOT MSVC_VERSION LESS 1700))
-VP_OPTION(WITH_APRILTAG_BIG_FAMILY ""  ""    "Use AprilTag big family (41h12, 48h12, 49h12, 52h13)" "" OFF IF WITH_APRILTAG)
+VISP_OPTION(BUILD_APRILTAG "Build apriltag from source" VISP_FORCE_3RDPARTY_BUILD)
+VISP_OPTION(USE_APRILTAG "Include apriltag support" ON
+  VISIBLE_IF TRUE
+  VERIFY VISP_HAVE_APRILTAG)
+VISP_OPTION(USE_APRILTAG_BIG_FAMILY "Include apriltag big family (41h12, 48h12, 49h12, 52h13) support" OFF IF USE_APRILTAG)
+
+#VP_OPTION(WITH_APRILTAG   ""           ""    "Use AprilTag as built-in library"  "" ON IF (USE_THREADS OR USE_PTHREAD) AND (NOT WINRT))
+#VP_OPTION(WITH_APRILTAG_BIG_FAMILY ""  ""    "Use AprilTag big family (41h12, 48h12, 49h12, 52h13)" "" OFF IF WITH_APRILTAG)
 VP_OPTION(WITH_MINIZ      ""           ""    "Use npz related I/O as built-in functions"   "" ON)
 VP_OPTION(WITH_ATIDAQ     ""           ""    "Use atidaq-c as built-in library"  "" ON IF USE_COMEDI AND NOT WINRT)
 VP_OPTION(WITH_CLIPPER    ""           ""    "Use clipper as built-in library"   "" ON IF USE_OPENCV)
@@ -1245,8 +1251,9 @@ VP_SET(VISP_HAVE_COMEDI      TRUE IF (BUILD_MODULE_visp_sensor AND USE_COMEDI))
 VP_SET(VISP_HAVE_ATIDAQ      TRUE IF (BUILD_MODULE_visp_sensor AND WITH_ATIDAQ))
 VP_SET(VISP_HAVE_FT_IIT_SDK  TRUE IF (BUILD_MODULE_visp_sensor AND USE_FTIITSDK))
 VP_SET(VISP_HAVE_CLIPPER     TRUE IF (BUILD_MODULE_visp_mbt AND BUILD_MODULE_visp_klt AND WITH_CLIPPER))
-VP_SET(VISP_HAVE_APRILTAG    TRUE IF (BUILD_MODULE_visp_detection AND WITH_APRILTAG))
-VP_SET(VISP_HAVE_APRILTAG_BIG_FAMILY TRUE IF (BUILD_MODULE_visp_detection AND WITH_APRILTAG AND WITH_APRILTAG_BIG_FAMILY))
+#VP_SET(VISP_HAVE_APRILTAG    TRUE IF (BUILD_MODULE_visp_detection AND WITH_APRILTAG))
+#VP_SET(VISP_HAVE_APRILTAG_BIG_FAMILY TRUE IF (BUILD_MODULE_visp_detection AND WITH_APRILTAG AND WITH_APRILTAG_BIG_FAMILY))
+VP_SET(VISP_HAVE_APRILTAG_BIG_FAMILY TRUE IF (USE_APRILTAG AND USE_APRILTAG_BIG_FAMILY))
 VP_SET(VISP_HAVE_QBDEVICE    TRUE IF (BUILD_MODULE_visp_robot AND WITH_QBDEVICE))
 VP_SET(VISP_HAVE_TAKKTILE2   TRUE IF (BUILD_MODULE_visp_robot AND WITH_TAKKTILE2))
 VP_SET(VISP_HAVE_POLOLU      TRUE IF (BUILD_MODULE_visp_robot AND WITH_POLOLU))
@@ -1929,8 +1936,17 @@ status("")
 status("  Detection: ")
 status("    Use zbar:"                    USE_ZBAR                  THEN "yes (ver ${ZBAR_VERSION})" ELSE "no")
 status("    Use dmtx:"                    USE_DMTX                  THEN "yes (ver ${DMTX_VERSION})" ELSE "no")
-status("    Use AprilTag (built-in):"     WITH_APRILTAG             THEN "yes (ver ${APRILTAG_VERSION})" ELSE "no")
-status("    \\- Use AprilTag big family:" WITH_APRILTAG_BIG_FAMILY  THEN "yes" ELSE "no")
+
+if(VISP_HAVE_APRILTAG)
+  status("    Use AprilTag:"     (apriltag_FOUND OR MyApriltag_FOUND)
+    THEN "yes (ver ${APRILTAG_VERSION})"
+    ELSE "build (ver ${APRILTAG_VERSION})")
+  status("    \\- Use big family:"   USE_APRILTAG_BIG_FAMILY         THEN "yes" ELSE "no")
+  status("    \\- Use extended api:" VISP_HAVE_APRILTAG_EXTENDED_API THEN "yes" ELSE "no")
+  status("    \\- Use aruco:"        VISP_HAVE_APRILTAG_ARUCO        THEN "yes" ELSE "no")
+else()
+  status("    Use AprilTag:" "no")
+endif()
 status("")
 status("  Misc: ")
 status("    Use Clipper (built-in):"  WITH_CLIPPER     THEN "yes (ver ${CLIPPER_VERSION})" ELSE "no")
@@ -2033,3 +2049,7 @@ status("")
 status("==========================================================")
 
 vp_finalize_status()
+
+if(ENABLE_CONFIG_VERIFICATION)
+  vp_verify_config()
+endif()

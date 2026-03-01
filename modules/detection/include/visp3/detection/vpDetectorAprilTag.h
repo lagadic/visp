@@ -64,13 +64,12 @@ BEGIN_VISP_NAMESPACE
  * Supported tag families are the following:
  * - AprilTag 16h5
  * - AprilTag 25h9
- * - AprilTag 36h10 (deprecated)
  * - AprilTag 36h11
  * - AprilTag Circle_21h7 (AprilTag 3)
- * - AprilTag Circle_49h12 (AprilTag 3, CMake WITH_APRILTAG_BIG_FAMILY var must be set to true)
- * - AprilTag Custom_48h12 (AprilTag 3, CMake WITH_APRILTAG_BIG_FAMILY var must be set to true)
- * - AprilTag Standard_41h12 (AprilTag 3, CMake WITH_APRILTAG_BIG_FAMILY var must be set to true)
- * - AprilTag Standard_52h13 (AprilTag 3, CMake WITH_APRILTAG_BIG_FAMILY var must be set to true)
+ * - AprilTag Circle_49h12 (AprilTag 3, CMake USE_APRILTAG_BIG_FAMILY var must be set to true)
+ * - AprilTag Custom_48h12 (AprilTag 3, CMake USE_APRILTAG_BIG_FAMILY var must be set to true)
+ * - AprilTag Standard_41h12 (AprilTag 3, CMake USE_APRILTAG_BIG_FAMILY var must be set to true)
+ * - AprilTag Standard_52h13 (AprilTag 3, CMake USE_APRILTAG_BIG_FAMILY var must be set to true)
  * - ArUco 4x4
  * - ArUco 5x5
  * - ArUco 6x6
@@ -272,17 +271,15 @@ public:
 
   enum vpAprilTagFamily
   {
-    TAG_36h11 = 0,           ///< AprilTag 36h11 pattern (recommended)
-    TAG_36h10,           ///< DEPRECATED
-    TAG_36ARTOOLKIT,     ///< DEPRECATED AND WILL NOT DETECT ARTOOLKIT TAGS
+    TAG_36h11 = 0,       ///< AprilTag 36h11 pattern (recommended)
     TAG_25h9,            ///< AprilTag 25h9 pattern
-    TAG_25h7,            ///< DEPRECATED AND POOR DETECTION PERFORMANCE
     TAG_16h5,            ///< AprilTag 16h5 pattern
     TAG_CIRCLE21h7,      ///< AprilTag Circle21h7 pattern
     TAG_CIRCLE49h12,     ///< AprilTag Circle49h12 pattern
     TAG_CUSTOM48h12,     ///< AprilTag Custom48h12 pattern
     TAG_STANDARD41h12,   ///< AprilTag Standard41h12 pattern
     TAG_STANDARD52h13,   ///< AprilTag Standard52h13 pattern
+#if defined(VISP_HAVE_APRILTAG_ARUCO)
     TAG_ARUCO_4x4_50,    /*!< ArUco 4x4 pattern: 4x4 bits, minimum hamming distance between any two codes = 4, 50 codes.\n
                             This tag family can produce lots of false detections which can be filtered by setting an
                             appropriate decision margin, using setAprilTagDecisionMarginThreshold() or
@@ -350,23 +347,23 @@ public:
     TAG_ARUCO_MIP_36h12,  /*!< ArUco 6x6 pattern: 6x6 bits, minimum hamming distance between any two codes = 12, 250 codes.\n
                             This is the recommended ArUco tag family by the main ArUco developer,
                             <a href="https://stackoverflow.com/a/51511558">see this link</a> */
+#endif
     TAG_COUNT /*!To stop iterating when parsing from/to string*/
   };
 
   enum vpPoseEstimationMethod
   {
-    HOMOGRAPHY = 0,                     /*!< Pose from homography */
-    HOMOGRAPHY_VIRTUAL_VS,          /*!< Non linear virtual visual servoing approach
-                                      initialized by the homography approach */
-    DEMENTHON_VIRTUAL_VS,           /*!< Non linear virtual visual servoing approach
-                                      initialized by the Dementhon approach */
-    LAGRANGE_VIRTUAL_VS,            /*!< Non linear virtual visual servoing approach
-                                      initialized by the Lagrange approach */
-    BEST_RESIDUAL_VIRTUAL_VS,       /*!< Non linear virtual visual servoing approach
-                                      initialized by the approach that gives the
-                                      lowest residual */
-    HOMOGRAPHY_ORTHOGONAL_ITERATION, /*!< Pose from homography followed by a refinement by Orthogonal Iteration */
-    POSE_COUNT /*!To stop iterating when parsing from/to string*/
+#if defined(VISP_HAVE_APRILTAG_EXTENDED_API)
+    HOMOGRAPHY,                      /*!< Pose from homography. */
+    HOMOGRAPHY_VIRTUAL_VS,           /*!< Non-linear virtual visual servoing approach initialized by the homography approach. */
+#endif
+    DEMENTHON_VIRTUAL_VS,            /*!< Non-linear virtual visual servoing approach initialized by the Dementhon approach. */
+    LAGRANGE_VIRTUAL_VS,             /*!< Non-linear virtual visual servoing approach initialized by the Lagrange approach. */
+    BEST_RESIDUAL_VIRTUAL_VS,        /*!< Non-linear virtual visual servoing approach initialized by the approach that gives the lowest residual. */
+#if defined(VISP_HAVE_APRILTAG_EXTENDED_API)
+    HOMOGRAPHY_ORTHOGONAL_ITERATION, /*!< Pose from homography followed by a refinement by Orthogonal Iteration. */
+#endif
+    POSE_COUNT                       /*!< Number of methods; used to stop iterating when parsing from/to string. */
   };
 
   /**
@@ -424,7 +421,13 @@ public:
   static std::string getAvailablePoseMethod(const std::string &prefix = "< ", const std::string &sep = " , ", const std::string &suffix = " >");
 
   vpDetectorAprilTag(const vpAprilTagFamily &tagFamily = TAG_36h11,
-                     const vpPoseEstimationMethod &poseEstimationMethod = HOMOGRAPHY_VIRTUAL_VS);
+                     const vpPoseEstimationMethod &poseEstimationMethod =
+#if defined(VISP_HAVE_APRILTAG_EXTENDED_API)
+                     HOMOGRAPHY_VIRTUAL_VS
+#else
+                     BEST_RESIDUAL_VIRTUAL_VS
+#endif
+  );
   vpDetectorAprilTag(const vpDetectorAprilTag &o);
   vpDetectorAprilTag &operator=(vpDetectorAprilTag o);
   virtual ~vpDetectorAprilTag() VP_OVERRIDE;

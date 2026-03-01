@@ -69,6 +69,7 @@ public class ApriltagDetection extends JFrame {
     private static String[] tagFamilyNames = {"TAG_36h11", "TAG_25h9", "TAG_16h5", "TAG_CIRCLE21h7",
             "TAG_CIRCLE49h12", "TAG_CUSTOM48h12", "TAG_STANDARD41h12", "TAG_STANDARD52h13"};
     private static int[] tagFamilies = {0, 3, 5, 6, 7, 8, 9, 10};
+    // Note that HOMOGRAPHY_* pose methods are only available with apriltag buidin or libapriltag >= 3.4.6)
     private static String[] poseEstimationMethodNames = {"HOMOGRAPHY", "HOMOGRAPHY_VIRTUAL_VS", "DEMENTHON_VIRTUAL_VS",
             "LAGRANGE_VIRTUAL_VS", "BEST_RESIDUAL_VIRTUAL_VS", "HOMOGRAPHY_ORTHOGONAL_ITERATION"};
     @SuppressWarnings("deprecation")

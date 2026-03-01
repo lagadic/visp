@@ -7,10 +7,15 @@
 
 ViSP 3.7.1 (current version)
   - Contributors:
-    . Fabien Spindler, Romain Lagneau, Olivier Roussel
+    . Fabien Spindler, Romain Lagneau, Olivier Roussel, Souriya Trinh
   - New classes
   - Deprecated
+    . In vpDetectorAprilTag remove support for deprecated 36h10 and 25h7 families
   - New features and improvements
+    . The AprilTag 3rd-party integration has been completely redesigned. It now supports three flexible usage modes:
+      - System Package: Use the library installed via your package manager (e.g., apt install libapriltag-dev),
+      - External Installation: Detect an existing installation built from the official repository,
+      - Embedded Build: Fall back to the built-in version available directly in the 3rdparty/apriltag folder.
   - Applications
   - Tutorials
   - Bug fixed

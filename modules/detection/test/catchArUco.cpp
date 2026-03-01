@@ -66,6 +66,7 @@ static bool g_debug_print = false;
 
 bool opt_no_display = false; // If true, disable display or tests requiring display
 
+#if defined(VISP_HAVE_APRILTAG_ARUCO) && defined(VISP_HAVE_APRILTAG_EXTENDED_API)
 TEST_CASE("ArUco detection test", "[aruco_detection_test]")
 {
   std::map<vpDetectorAprilTag::vpAprilTagFamily, int> apriltagMap = {
@@ -318,7 +319,7 @@ TEST_CASE("ArUco detection test", "[aruco_detection_test]")
 #endif
 }
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x040800)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x040800) && defined(VISP_HAVE_APRILTAG_ARUCO)
 TEST_CASE("ArUco pose computation test", "[aruco_detection_test]")
 {
   std::map<vpDetectorAprilTag::vpAprilTagFamily, aruco::PredefinedDictionaryType> apriltagMap = {
@@ -433,16 +434,19 @@ TEST_CASE("ArUco pose computation test", "[aruco_detection_test]")
   }
 }
 #endif
+#endif
 
 TEST_CASE("ArUco/AprilTag Hamming test", "[aruco_detection_test]")
 {
   std::vector<std::pair<vpDetectorAprilTag::vpAprilTagFamily, std::string>> markersType = {
+#if defined(VISP_HAVE_APRILTAG_ARUCO)
     {vpDetectorAprilTag::TAG_ARUCO_4x4_50, "TAG_ARUCO_4x4_50"}, // only 1-bit correction
     // {vpDetectorAprilTag::TAG_ARUCO_4x4_1000, "TAG_ARUCO_4x4_1000"}, // too poor accuracy even with only 1-bit change
     {vpDetectorAprilTag::TAG_ARUCO_5x5_50, "TAG_ARUCO_5x5_50"},
     {vpDetectorAprilTag::TAG_ARUCO_6x6_50, "TAG_ARUCO_6x6_50"},
     {vpDetectorAprilTag::TAG_ARUCO_7x7_50, "TAG_ARUCO_7x7_50"},
     {vpDetectorAprilTag::TAG_ARUCO_MIP_36h12, "TAG_ARUCO_MIP_36h12"},
+#endif
     {vpDetectorAprilTag::TAG_25h9, "TAG_25h9"},
     {vpDetectorAprilTag::TAG_36h11, "TAG_36h11"}
   };
@@ -467,9 +471,14 @@ TEST_CASE("ArUco/AprilTag Hamming test", "[aruco_detection_test]")
           // Default max nb of bits correction is 2:
           // https://github.com/AprilRobotics/apriltag/blob/31b29af3cd594f5952e3f4c294aeaacfec34ffca/apriltag.h#L236-L246
           tag_img[2][2] = (tag_img[2][2] > 127) ? 0 : 255;
+
+#if defined(VISP_HAVE_APRILTAG_ARUCO)
           if (markerType.first != vpDetectorAprilTag::TAG_ARUCO_4x4_50) {
             tag_img[3][3] = (tag_img[3][3] > 127) ? 0 : 255;
           }
+#else
+          tag_img[3][3] = (tag_img[3][3] > 127) ? 0 : 255;
+#endif
 
           vpImageTools::resize(tag_img, tag_img_resize, vpImageTools::INTERPOLATION_NEAREST);
           bool found_tag = detector.detect(tag_img_resize);

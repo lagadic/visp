@@ -28,7 +28,7 @@ It means that detecting ArUco markers will benefit from the corners location ext
 computation time cost and narrower detection range compared to ArUco method.
 
 \note You can use the vpDetectorAprilTag::vpAprilTagFamily::TAG_CUSTOM48h12 (you will need to enable the
-`WITH_APRILTAG_BIG_FAMILY` CMake variable) for recursive tags, that is a tag inside another one.
+`USE_APRILTAG_BIG_FAMILY` CMake variable) for recursive tags, that is a tag inside another one.
 This would allow you for instance to detect a marker at a great distance and be able to servo your robot until a
 close range.
 

@@ -149,12 +149,18 @@ namespace vp = VISP_NAMESPACE_NAME;
 // Defined if Clipper is build and available.
 #cmakedefine VISP_HAVE_CLIPPER
 
-// Defined if AprilTag is build and available.
+// Defined if AprilTag is available.
 #cmakedefine VISP_HAVE_APRILTAG
 
+// Apriltag version, extended api, Aruco, big family
+#ifdef VISP_HAVE_APRILTAG
+#  define VISP_HAVE_APRILTAG_VERSION ${VISP_HAVE_APRILTAG_VERSION}
+#  cmakedefine VISP_HAVE_APRILTAG_EXTENDED_API
+#  cmakedefine VISP_HAVE_APRILTAG_ARUCO
 // Defined if AprilTag big family (41h12, 48h12, 49h12, 52h13) known to produce long build time issue
 // with gcc < 5.5 in RelWithDebInfo and Visual Studio 12 2013 in Release are available
-#cmakedefine VISP_HAVE_APRILTAG_BIG_FAMILY
+#  cmakedefine VISP_HAVE_APRILTAG_BIG_FAMILY
+#endif
 
 // Defined if X11 library available.
 #cmakedefine VISP_HAVE_X11

@@ -43,15 +43,15 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     private VpImageUChar mImageUChar;
     private static int[] mMethods = {
         0, // TAG_36h11
-        3, // TAG_25h9
-        4, // TAG_25h7
-        5, // TAG_16h5
-        6, // TAG_CIRCLE21h7
-        14, // TAG_ARUCO_4x4_1000
-        18, // TAG_ARUCO_5x5_1000
-        22, // TAG_ARUCO_6x6_1000
-        26, // TAG_ARUCO_7x7_1000
-        27, // TAG_ARUCO_MIP_36h12
+        1, // TAG_25h9
+        2, // TAG_16h5
+        3, // TAG_CIRCLE21h7
+        // Aruco tags are only available when apriltag is build or when using libapriltag 3.4.6 or more recent
+        11, // TAG_ARUCO_4x4_1000
+        15, // TAG_ARUCO_5x5_1000
+        19, // TAG_ARUCO_6x6_1000
+        23, // TAG_ARUCO_7x7_1000
+        24, // TAG_ARUCO_MIP_36h12
     };
     private int mMethod;
     private boolean mDisplayTagFrame;
