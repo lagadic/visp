@@ -52,11 +52,35 @@ using namespace VISP_NAMESPACE_NAME;
 
 namespace calib_helper
 {
+
+// Adapted from:
+// https://stackoverflow.com/questions/58881746/c-how-to-cout-and-write-at-the-same-time/58881939#58881939
+class Tee
+{
+private:
+  std::ostream &os;
+  std::ofstream &file;
+
+public:
+  Tee(std::ostream &os_, std::ofstream &file_) : os(os_), file(file_) { }
+
+  template <typename T>
+  Tee &operator<<(const T &thing)
+  {
+    os << thing;
+    if (file.is_open()) {
+      file << thing;
+    }
+    return *this;
+  }
+};
+
 class Settings
 {
 public:
-  Settings()
-    : boardSize(), calibrationPattern(UNDEFINED), squareSize(0.), input(), tempo(0.), goodInput(false), patternToUse()
+  Settings(Tee &tee_)
+    : boardSize(), calibrationPattern(UNDEFINED), squareSize(0.), input(), tempo(0.), goodInput(false), patternToUse(),
+    tee(tee_)
   {
     boardSize = cv::Size(0, 0);
     calibrationPattern = UNDEFINED;
@@ -79,12 +103,12 @@ public:
     vpIoTools::readConfigVar("Input:", input);
     vpIoTools::readConfigVar("Tempo:", tempo);
 
-    std::cout << "grid width : " << boardSize.width << std::endl;
-    std::cout << "grid height: " << boardSize.height << std::endl;
-    std::cout << "square size: " << squareSize << std::endl;
-    std::cout << "pattern    : " << patternToUse << std::endl;
-    std::cout << "input seq  : " << input << std::endl;
-    std::cout << "tempo      : " << tempo << std::endl;
+    tee << "grid width : " << boardSize.width << "\n";
+    tee << "grid height: " << boardSize.height << "\n";
+    tee << "square size: " << squareSize << "\n";
+    tee << "pattern    : " << patternToUse << "\n";
+    tee << "input seq  : " << input << "\n";
+    tee << "tempo      : " << tempo << "\n";
     interprate();
     return true;
   }
@@ -93,11 +117,11 @@ public:
   {
     goodInput = true;
     if (boardSize.width <= 0 || boardSize.height <= 0) {
-      std::cerr << "Invalid Board size: " << boardSize.width << " " << boardSize.height << std::endl;
+      tee << "Invalid Board size: " << boardSize.width << " " << boardSize.height << "\n";
       goodInput = false;
     }
     if (squareSize <= 10e-6) {
-      std::cerr << "Invalid square size " << squareSize << std::endl;
+      tee << "Invalid square size " << squareSize << "\n";
       goodInput = false;
     }
 
@@ -110,7 +134,7 @@ public:
     else if (patternToUse.compare("CIRCLES_GRID") == 0)
       calibrationPattern = CIRCLES_GRID;
     if (calibrationPattern == UNDEFINED) {
-      std::cerr << " Inexistent camera calibration mode: " << patternToUse << std::endl;
+      tee << " Inexistent camera calibration mode: " << patternToUse << "\n";
       goodInput = false;
     }
   }
@@ -129,6 +153,7 @@ public:
 
 private:
   std::string patternToUse;
+  Tee &tee;
 };
 
 struct CalibInfo

@@ -135,7 +135,6 @@ int main(int argc, const char *argv[])
       return EXIT_SUCCESS;
     }
     std::string opt_output_file_name = "camera.xml";
-    Settings s;
     const std::string opt_inputSettingsFile = argc > 1 ? argv[1] : "default.cfg";
     std::string opt_init_camera_xml_file;
     std::string opt_camera_name = "Camera";
@@ -168,30 +167,46 @@ int main(int argc, const char *argv[])
       }
     }
 
-    std::cout << "Settings from config file: " << argv[1] << std::endl;
+    // Results folder + log file
+    std::string save_results_folder = "";
+    vpImage<vpRGBa> I_save_results;
+    std::ofstream log_file;
+    Tee tee(std::cout, log_file);
+    if (save_results) {
+      save_results_folder = vpTime::getDateTime("calib_results_%Y-%m-%d_%H.%M.%S");
+      vpIoTools::makeDirectory(save_results_folder);
+
+      std::string output_log_file_name = vpIoTools::createFilePath(save_results_folder, "calibration_log.txt");
+      log_file.open(output_log_file_name);
+      tee << "Create output results folder: " << save_results_folder << "\n";
+      tee << "Save calibration log into: " << output_log_file_name << "\n";
+    }
+
+    tee << "Settings from config file: " << argv[1] << "\n";
+    Settings s(tee);
     if (!s.read(opt_inputSettingsFile)) {
-      std::cout << "Could not open the configuration file: \"" << opt_inputSettingsFile << "\"" << std::endl;
+      tee << "Could not open the configuration file: \"" << opt_inputSettingsFile << "\"\n";
       usage(argv, 0);
       return EXIT_FAILURE;
     }
 
     if (!s.goodInput) {
-      std::cout << "Invalid input detected. Application stopping. " << std::endl;
+      tee << "Invalid input detected. Application stopping. " << "\n";
       return EXIT_FAILURE;
     }
 
-    std::cout << "\nSettings from command line options: " << std::endl;
+    tee << "\nSettings from command line options: " << "\n";
     if (!opt_init_camera_xml_file.empty()) {
-      std::cout << "Init parameters: " << opt_init_camera_xml_file << std::endl;
+      tee << "Init parameters: " << opt_init_camera_xml_file << "\n";
     }
-    std::cout << "Ouput xml file : " << opt_output_file_name << std::endl;
-    std::cout << "Camera name    : " << opt_camera_name << std::endl;
+    tee << "Ouput xml file : " << opt_output_file_name << "\n";
+    tee << "Camera name    : " << opt_camera_name << "\n";
 
     // Check if output file name exists
     if (vpIoTools::checkFilename(opt_output_file_name)) {
-      std::cout << "\nOutput file name " << opt_output_file_name << " already exists." << std::endl;
-      std::cout << "Remove this file or change output file name using [--output <file.xml>] command line option."
-        << std::endl;
+      tee << "\nOutput file name " << opt_output_file_name << " already exists." << "\n";
+      tee << "Remove this file or change output file name using [--output <file.xml>] command line option."
+        << "\n";
       return EXIT_SUCCESS;
     }
 
@@ -203,9 +218,9 @@ int main(int argc, const char *argv[])
       reader.open(I);
     }
     catch (const vpException &e) {
-      std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
-      std::cout << "Check if input images name \"" << s.input << "\" set in " << opt_inputSettingsFile
-        << " config file is correct..." << std::endl;
+      tee << "Catch an exception: " << e.getStringMessage() << "\n";
+      tee << "Check if input images name \"" << s.input << "\" set in " << opt_inputSettingsFile
+        << " config file is correct..." << "\n";
       return EXIT_FAILURE;
     }
 
@@ -219,8 +234,8 @@ int main(int argc, const char *argv[])
     bool init_from_xml = false;
     if (!opt_init_camera_xml_file.empty()) {
       if (!vpIoTools::checkFilename(opt_init_camera_xml_file)) {
-        std::cout << "Input camera file \"" << opt_init_camera_xml_file << "\" doesn't exist!" << std::endl;
-        std::cout << "Modify [--init-from-xml <camera-init.xml>] option value" << std::endl;
+        tee << "Input camera file \"" << opt_init_camera_xml_file << "\" doesn't exist!" << "\n";
+        tee << "Modify [--init-from-xml <camera-init.xml>] option value" << "\n";
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
         if (display != nullptr) {
           delete display;
@@ -231,13 +246,13 @@ int main(int argc, const char *argv[])
       init_from_xml = true;
     }
     if (init_from_xml) {
-      std::cout << "Initialize camera parameters from xml file: " << opt_init_camera_xml_file << std::endl;
+      tee << "Initialize camera parameters from xml file: " << opt_init_camera_xml_file << "\n";
       vpXmlParserCamera parser;
       if (parser.parse(cam_init, opt_init_camera_xml_file, opt_camera_name,
                        vpCameraParameters::perspectiveProjWithoutDistortion) != vpXmlParserCamera::SEQUENCE_OK) {
-        std::cout << "Unable to find camera with name \"" << opt_camera_name
-          << "\" in file: " << opt_init_camera_xml_file << std::endl;
-        std::cout << "Modify [--camera-name <name>] option value" << std::endl;
+        tee << "Unable to find camera with name \"" << opt_camera_name
+          << "\" in file: " << opt_init_camera_xml_file << "\n";
+        tee << "Modify [--camera-name <name>] option value" << "\n";
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
         if (display != nullptr) {
           delete display;
@@ -247,7 +262,7 @@ int main(int argc, const char *argv[])
       }
     }
     else {
-      std::cout << "Initialize camera parameters with default values " << std::endl;
+      tee << "Initialize camera parameters with default values " << "\n";
       // Initialize camera parameters
       double px = cam_init.get_px();
       double py = cam_init.get_py();
@@ -257,7 +272,7 @@ int main(int argc, const char *argv[])
       cam_init.initPersProjWithoutDistortion(px, py, u0, v0);
     }
 
-    std::cout << "Camera parameters used for initialization:\n" << cam_init << std::endl;
+    tee << "Camera parameters used for initialization:\n" << cam_init << "\n";
 
     std::vector<vpPoint> model;
     std::vector<vpCalibration> calibrator;
@@ -273,14 +288,6 @@ int main(int argc, const char *argv[])
 
     map_cam_sorted.insert(std::make_pair(1000, cam_init));
 
-    std::string save_results_folder = "";
-    vpImage<vpRGBa> I_save_results;
-    if (save_results) {
-      save_results_folder = vpTime::getDateTime("calib_results_%Y-%m-%d_%H.%M.%S");
-      std::cout << "Create output results folder: " << save_results_folder << std::endl;
-      vpIoTools::makeDirectory(save_results_folder);
-    }
-
     double start_time = vpTime::measureTimeMs();
     do {
       reader.acquire(I);
@@ -294,14 +301,14 @@ int main(int argc, const char *argv[])
       std::vector<cv::Point2f> pointBuf;
       vpImageConvert::convert(I, cvI);
 
-      std::cout << "Process frame: " << frame_name << std::flush;
+      tee << "Process frame: " << frame_name;
       bool found = extractCalibrationPoints(s, cvI, pointBuf);
 
-      std::cout << ", grid detection status: " << found;
+      tee << ", grid detection status: " << found;
       if (!found)
-        std::cout << ", image rejected" << std::endl;
+        tee << ", image rejected" << "\n";
       else
-        std::cout << ", image used as input data" << std::endl;
+        tee << ", image used as input data" << "\n";
 
       if (found) { // If image processing done with success
         vpDisplay::setTitle(I, frame_name);
@@ -341,8 +348,7 @@ int main(int argc, const char *argv[])
           }
         }
         if (!calib_status) {
-          std::cout << "frame: " << frame_name << ", unable to calibrate from single image, image rejected"
-            << std::endl;
+          tee << "frame: " << frame_name << ", unable to calibrate from single image, image rejected" << "\n";
           found = false;
         }
       }
@@ -376,7 +382,7 @@ int main(int argc, const char *argv[])
     // Now we consider the multi image calibration
     // Calibrate by a non linear method based on virtual visual servoing
     if (calibrator.empty()) {
-      std::cerr << "Unable to calibrate. Image processing failed !" << std::endl;
+      tee << "Unable to calibrate. Image processing failed !" << "\n";
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
       if (display != nullptr) {
         delete display;
@@ -463,10 +469,10 @@ int main(int argc, const char *argv[])
     double error;
     // Initialize with camera parameter that has the lowest residual
     vpCameraParameters cam = map_cam_sorted.begin()->second;
-    std::cout << "\nCalibration without distortion in progress on " << calibrator.size() << " images..." << std::endl;
+    tee << "\nCalibration without distortion in progress on " << calibrator.size() << " images..." << "\n";
     if (vpCalibration::computeCalibrationMulti(vpCalibration::CALIB_VIRTUAL_VS, calibrator, cam, error, false) ==
         EXIT_SUCCESS) {
-      std::cout << cam << std::endl;
+      tee << cam << "\n";
 
       d->init(I);
       vpDisplay::setTitle(I, "Without distortion results");
@@ -475,7 +481,7 @@ int main(int argc, const char *argv[])
         double reproj_error = sqrt(calibrator[i].getResidual() / calibrator[i].get_npt());
 
         const CalibInfo &calib = calib_info[i];
-        std::cout << "Image " << calib.m_frame_name << " reprojection error: " << reproj_error << std::endl;
+        tee << "Image " << calib.m_frame_name << " reprojection error: " << reproj_error << "\n";
 
         ss_additional_info << "<image>" << reproj_error << "</image>";
         I = calib.m_img;
@@ -523,7 +529,7 @@ int main(int argc, const char *argv[])
         }
       }
 
-      std::cout << "\nGlobal reprojection error: " << error << std::endl;
+      tee << "\nGlobal reprojection error: " << error << "\n";
       ss_additional_info << "<global_reprojection_error>" << error << "</global_reprojection_error>";
 
       ss_additional_info << "</without_distortion>";
@@ -531,18 +537,18 @@ int main(int argc, const char *argv[])
 
       if (xml.save(cam, opt_output_file_name.c_str(), opt_camera_name, I.getWidth(), I.getHeight()) ==
           vpXmlParserCamera::SEQUENCE_OK)
-        std::cout << "Camera parameters without distortion successfully saved in \"" << opt_output_file_name << "\""
-        << std::endl;
+        tee << "Camera parameters without distortion successfully saved in \"" << opt_output_file_name << "\""
+        << "\n";
       else {
-        std::cout << "Failed to save the camera parameters without distortion in \"" << opt_output_file_name << "\""
-          << std::endl;
-        std::cout << "A file with the same name exists. Remove it to be able "
+        tee << "Failed to save the camera parameters without distortion in \"" << opt_output_file_name << "\""
+          << "\n";
+        tee << "A file with the same name exists. Remove it to be able "
           "to save the parameters..."
-          << std::endl;
+          << "\n";
       }
     }
     else {
-      std::cout << "Calibration without distortion failed." << std::endl;
+      tee << "Calibration without distortion failed." << "\n";
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
       if (display != nullptr) {
         delete display;
@@ -553,10 +559,10 @@ int main(int argc, const char *argv[])
     vpCameraParameters cam_without_dist = cam;
     std::vector<vpCalibration> calibrator_without_dist = calibrator;
 
-    std::cout << "\n\nCalibration with distortion in progress on " << calibrator.size() << " images..." << std::endl;
+    tee << "\n\nCalibration with distortion in progress on " << calibrator.size() << " images..." << "\n";
     if (vpCalibration::computeCalibrationMulti(vpCalibration::CALIB_VIRTUAL_VS_DIST, calibrator, cam, error, false) ==
         EXIT_SUCCESS) {
-      std::cout << cam << std::endl;
+      tee << cam << "\n";
       vpDisplay::setTitle(I, "With distortion results");
 
       ss_additional_info << "<with_distortion>";
@@ -564,7 +570,7 @@ int main(int argc, const char *argv[])
         double reproj_error = sqrt(calibrator[i].getResidual_dist() / calibrator[i].get_npt());
 
         const CalibInfo &calib = calib_info[i];
-        std::cout << "Image " << calib.m_frame_name << " reprojection error: " << reproj_error << std::endl;
+        tee << "Image " << calib.m_frame_name << " reprojection error: " << reproj_error << "\n";
         ss_additional_info << "<image>" << reproj_error << "</image>";
         I = calib.m_img;
         vpDisplay::display(I);
@@ -609,7 +615,7 @@ int main(int argc, const char *argv[])
           vpImageIo::write(I_save_results, oss.str());
         }
       }
-      std::cout << "\nGlobal reprojection error: " << error << std::endl;
+      tee << "\nGlobal reprojection error: " << error << "\n";
       ss_additional_info << "<global_reprojection_error>" << error << "</global_reprojection_error>";
       ss_additional_info << "</with_distortion></reprojection_error>";
 
@@ -620,9 +626,9 @@ int main(int argc, const char *argv[])
       d->init(I_dist_undist, 0, 0, "Straight lines have to be straight - distorted image / undistorted image");
 
       for (size_t idx = 0; idx < calib_info.size(); idx++) {
-        std::cout << "\nThis tool computes the line fitting error (mean distance error) on image points extracted from "
+        tee << "\nThis tool computes the line fitting error (mean distance error) on image points extracted from "
           "the raw distorted image."
-          << std::endl;
+          << "\n";
 
         I = calib_info[idx].m_img;
         vpImageTools::undistort(I, cam, I_undist);
@@ -646,17 +652,17 @@ int main(int argc, const char *argv[])
           double a = 0, b = 0, c = 0;
           double line_fitting_error = vpMath::lineFitting(current_line, a, b, c);
           double line_fitting_error_undist = vpMath::lineFitting(current_line_undist, a, b, c);
-          std::cout << calib_info[idx].m_frame_name << " line " << i + 1
+          tee << calib_info[idx].m_frame_name << " line " << i + 1
             << " fitting error on distorted points: " << line_fitting_error
-            << " ; on undistorted points: " << line_fitting_error_undist << std::endl;
+            << " ; on undistorted points: " << line_fitting_error_undist << "\n";
 
           vpImagePoint ip1 = current_line.front();
           vpImagePoint ip2 = current_line.back();
           vpDisplay::displayLine(I_dist_undist, ip1, ip2, vpColor::red);
         }
 
-        std::cout << "\nThis tool computes the line fitting error (mean distance error) on image points extracted from "
-          "the undistorted image" << " (vpImageTools::undistort())." << std::endl;
+        tee << "\nThis tool computes the line fitting error (mean distance error) on image points extracted from "
+          "the undistorted image" << " (vpImageTools::undistort())." << "\n";
         cv::Mat cvI;
         std::vector<cv::Point2f> pointBuf;
         vpImageConvert::convert(I_undist, cvI);
@@ -678,8 +684,8 @@ int main(int argc, const char *argv[])
 
             double a = 0, b = 0, c = 0;
             double line_fitting_error = vpMath::lineFitting(current_line, a, b, c);
-            std::cout << calib_info[idx].m_frame_name << " undistorted image, line " << i + 1
-              << " fitting error: " << line_fitting_error << std::endl;
+            tee << calib_info[idx].m_frame_name << " undistorted image, line " << i + 1
+              << " fitting error: " << line_fitting_error << "\n";
 
             vpImagePoint ip1 = current_line.front() + vpImagePoint(0, I.getWidth());
             vpImagePoint ip2 = current_line.back() + vpImagePoint(0, I.getWidth());
@@ -688,8 +694,8 @@ int main(int argc, const char *argv[])
         }
         else {
           std::string msg("Unable to detect grid on undistorted image");
-          std::cout << msg << std::endl;
-          std::cout << "Check that the grid is not too close to the image edges" << std::endl;
+          tee << msg << "\n";
+          tee << "Check that the grid is not too close to the image edges" << "\n";
           vpDisplay::displayText(I_dist_undist, 15 * vpDisplay::getDownScalingFactor(I_dist_undist),
                                  I.getWidth() + 15 * vpDisplay::getDownScalingFactor(I_dist_undist),
                                  calib_info[idx].m_frame_name + std::string(" undistorted"), vpColor::red);
@@ -721,7 +727,7 @@ int main(int argc, const char *argv[])
           vpImageIo::write(I_save_results, oss.str());
         }
       }
-      std::cout << std::endl;
+      tee << "\n";
 
       // Display pseudo distortion displacement map
       d->close(I_dist_undist);
@@ -755,6 +761,8 @@ int main(int argc, const char *argv[])
           vpDisplay::displayArrow(I_dist_map, imPt, imPt_dist, vpColor::red, 2);
         }
       }
+
+      // Last row / column
       unsigned int remainder_row = (I_dist_map.getHeight()-1) - (I_dist_map.getHeight() / step)*step;
       if (remainder_row >= step/2) {
         unsigned int i = I_dist_map.getHeight() - 1;
@@ -781,6 +789,12 @@ int main(int argc, const char *argv[])
           vpDisplay::displayArrow(I_dist_map, imPt, imPt_dist, vpColor::red, 2);
         }
       }
+
+      // Image center and camera principal point
+      vpDisplay::displayCross(I_dist_map, vpImagePoint((I_dist_map.getHeight()-1)/2, (I_dist_map.getWidth()-1)/2),
+        10*vpDisplay::getDownScalingFactor(I_dist_map), vpColor::green, 2);
+      vpDisplay::displayCircle(I_dist_map, vpImagePoint(cam.get_v0(), cam.get_u0()),
+        8*vpDisplay::getDownScalingFactor(I_dist_map), vpColor::red);
 
       if (s.tempo > 10.f) {
         vpDisplay::displayText(
@@ -852,25 +866,25 @@ int main(int argc, const char *argv[])
 
       if (xml.save(cam, opt_output_file_name.c_str(), opt_camera_name, I.getWidth(), I.getHeight(),
                    ss_additional_info.str()) == vpXmlParserCamera::SEQUENCE_OK)
-        std::cout << "Camera parameters without distortion successfully saved in \"" << opt_output_file_name << "\""
-        << std::endl;
+        tee << "Camera parameters without distortion successfully saved in \"" << opt_output_file_name << "\""
+        << "\n";
       else {
-        std::cout << "Failed to save the camera parameters without distortion in \"" << opt_output_file_name << "\""
-          << std::endl;
-        std::cout << "A file with the same name exists. Remove it to be able "
+        tee << "Failed to save the camera parameters without distortion in \"" << opt_output_file_name << "\""
+          << "\n";
+        tee << "A file with the same name exists. Remove it to be able "
           "to save the parameters..."
-          << std::endl;
+          << "\n";
       }
-      std::cout << std::endl;
-      std::cout << "Estimated pose using vpPoseVector format: [tx ty tz tux tuy tuz] with translation in meter and "
+      tee << "\n";
+      tee << "Estimated pose using vpPoseVector format: [tx ty tz tux tuy tuz] with translation in meter and "
         "rotation in rad"
-        << std::endl;
+        << "\n";
       for (unsigned int i = 0; i < calibrator.size(); i++)
-        std::cout << "Estimated pose on input data extracted from " << calib_info[i].m_frame_name << ": "
-        << vpPoseVector(calibrator[i].cMo_dist).t() << std::endl;
+        tee << "Estimated pose on input data extracted from " << calib_info[i].m_frame_name << ": "
+        << vpPoseVector(calibrator[i].cMo_dist).t() << "\n";
     }
     else {
-      std::cout << "Calibration with distortion failed." << std::endl;
+      tee << "Calibration with distortion failed." << "\n";
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
       if (display != nullptr) {
         delete display;
@@ -887,8 +901,8 @@ int main(int argc, const char *argv[])
     int minutes = seconds / 60;
     seconds %= 60;
 
-    std::cout << "\nCamera calibration succeeded. Results are saved in " << "\"" << opt_output_file_name
-      << "\". Total time: " << minutes << " min " << seconds << " sec " << milli << " ms." << std::endl;
+    tee << "\nCamera calibration succeeded. Results are saved in " << "\"" << opt_output_file_name
+      << "\". Total time: " << minutes << " min " << seconds << " sec " << milli << " ms." << "\n";
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
     if (display != nullptr) {
       delete display;
