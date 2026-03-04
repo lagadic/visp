@@ -102,8 +102,16 @@ void usage(const char *argv[], int error)
     << "    to unset any constraint for px and py parameters." << std::endl
     << "    Default: -1." << std::endl
     << std::endl
+    << "  --init-focal" << std::endl
+    << "    By default, the initial camera focal length is computed such as:" << std::endl
+    << "    (image_width / 640) x 600." << std::endl
+    << "    The user can instead supply a desired camera focal length using this parameter." << std::endl
+    << std::endl
     << "  --save" << std::endl
     << "    Flag to automatically save the image processing results in a new directory." << std::endl
+    << std::endl
+    << "  --save-jpg" << std::endl
+    << "    Flag to save image results in jpeg instead of png format." << std::endl
     << std::endl
     << "  --output <file.xml>" << std::endl
     << "    XML file containing estimated camera parameters." << std::endl
@@ -139,7 +147,10 @@ int main(int argc, const char *argv[])
     std::string opt_init_camera_xml_file;
     std::string opt_camera_name = "Camera";
     double opt_aspect_ratio = -1; // Not used
-    bool save_results = false;
+    bool opt_use_focal_cmd_line = false;
+    double opt_init_focal = 600.0;
+    std::string opt_img_ext = ".png";
+    bool opt_save_results = false;
 
     for (int i = 2; i < argc; i++) {
       if (std::string(argv[i]) == "--init-from-xml" && i + 1 < argc) {
@@ -154,8 +165,15 @@ int main(int argc, const char *argv[])
       else if (std::string(argv[i]) == "--aspect-ratio" && i + 1 < argc) {
         opt_aspect_ratio = std::atof(argv[++i]);
       }
+      else if (std::string(argv[i]) == "--init-focal" && i + 1 < argc) {
+        opt_use_focal_cmd_line = true;
+        opt_init_focal = std::atof(argv[++i]);
+      }
       else if (std::string(argv[i]) == "--save") {
-        save_results = true;
+        opt_save_results = true;
+      }
+      else if (std::string(argv[i]) == "--save-jpg") {
+        opt_img_ext = ".jpg";
       }
       else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
         usage(argv, 0);
@@ -172,7 +190,7 @@ int main(int argc, const char *argv[])
     vpImage<vpRGBa> I_save_results;
     std::ofstream log_file;
     Tee tee(std::cout, log_file);
-    if (save_results) {
+    if (opt_save_results) {
       save_results_folder = vpTime::getDateTime("calib_results_%Y-%m-%d_%H.%M.%S");
       vpIoTools::makeDirectory(save_results_folder);
 
@@ -264,8 +282,9 @@ int main(int argc, const char *argv[])
     else {
       tee << "Initialize camera parameters with default values " << "\n";
       // Initialize camera parameters
-      double px = cam_init.get_px();
-      double py = cam_init.get_py();
+      double scale = I.getWidth() / 640.0;
+      double px = opt_use_focal_cmd_line ? opt_init_focal : scale * cam_init.get_px();
+      double py = opt_use_focal_cmd_line ? opt_init_focal : scale * cam_init.get_py();
       // Set (u0,v0) in the middle of the image
       double u0 = I.getWidth() / 2;
       double v0 = I.getHeight() / 2;
@@ -337,14 +356,19 @@ int main(int argc, const char *argv[])
         std::multimap<double, vpCameraParameters>::const_iterator it_cam;
         for (it_cam = map_cam_sorted.begin(); it_cam != map_cam_sorted.end(); ++it_cam) {
           vpCameraParameters cam = it_cam->second;
-          if (calib.computeCalibration(vpCalibration::CALIB_VIRTUAL_VS, cMo, cam, false) == EXIT_SUCCESS) {
-            calibrator.push_back(calib);
-            // Add calibration info
-            calib_info.push_back(CalibInfo(I, calib_points, data, frame_name));
-            calib_status = true;
-            double residual = calib.getResidual();
-            map_cam_sorted.insert(std::make_pair(residual, cam));
-            break;
+          try {
+            if (calib.computeCalibration(vpCalibration::CALIB_VIRTUAL_VS, cMo, cam, false) == EXIT_SUCCESS) {
+              calibrator.push_back(calib);
+              // Add calibration info
+              calib_info.push_back(CalibInfo(I, calib_points, data, frame_name));
+              calib_status = true;
+              double residual = calib.getResidual();
+              map_cam_sorted.insert(std::make_pair(residual, cam));
+              break;
+            }
+          }
+          catch (const vpException &e) {
+            tee << "Catch a ViSP exception when doing computeCalibration(): " << e.what() << "\n";
           }
         }
         if (!calib_status) {
@@ -371,10 +395,10 @@ int main(int argc, const char *argv[])
         vpTime::wait(s.tempo * 1000);
       }
 
-      if (save_results) {
+      if (opt_save_results) {
         vpDisplay::getImage(I, I_save_results);
         std::ostringstream oss;
-        oss << save_results_folder << "/" << vpIoTools::getNameWE(reader.getFrameName()) << ".png";
+        oss << save_results_folder << "/" << vpIoTools::getNameWE(reader.getFrameName()) << opt_img_ext;
         vpImageIo::write(I_save_results, oss.str());
       }
     } while (!reader.end());
@@ -434,10 +458,10 @@ int main(int argc, const char *argv[])
     }
 
     std::vector<vpImage<vpRGBa>> list_img_reproj, list_img_reproj_dist, list_img_undist;
-    if (save_results) {
+    if (opt_save_results) {
       vpDisplay::getImage(I_color, I_save_results);
       std::ostringstream oss;
-      oss << save_results_folder << "/calibration_pattern_occupancy.png";
+      oss << save_results_folder << "/calibration_pattern_occupancy" << opt_img_ext;
       vpImageIo::write(I_save_results, oss.str());
     }
 
@@ -519,12 +543,12 @@ int main(int argc, const char *argv[])
           vpTime::wait(s.tempo * 1000);
         }
 
-        if (save_results) {
+        if (opt_save_results) {
           vpDisplay::getImage(I, I_save_results);
           list_img_reproj.push_back(I_save_results);
           std::ostringstream oss;
           oss << save_results_folder << "/reproj_err_without_dist_" << vpIoTools::getNameWE(calib.m_frame_name)
-            << ".png";
+            << opt_img_ext;
           vpImageIo::write(I_save_results, oss.str());
         }
       }
@@ -607,11 +631,12 @@ int main(int argc, const char *argv[])
           vpTime::wait(s.tempo * 1000);
         }
 
-        if (save_results) {
+        if (opt_save_results) {
           vpDisplay::getImage(I, I_save_results);
           list_img_reproj_dist.push_back(I_save_results);
           std::ostringstream oss;
-          oss << save_results_folder << "/reproj_err_with_dist_" << vpIoTools::getNameWE(calib.m_frame_name) << ".png";
+          oss << save_results_folder << "/reproj_err_with_dist_" << vpIoTools::getNameWE(calib.m_frame_name)
+            << opt_img_ext;
           vpImageIo::write(I_save_results, oss.str());
         }
       }
@@ -715,11 +740,11 @@ int main(int argc, const char *argv[])
           vpTime::wait(s.tempo * 1000);
         }
 
-        if (save_results) {
+        if (opt_save_results) {
           vpDisplay::getImage(I_dist_undist, I_save_results);
           std::ostringstream oss;
           oss << save_results_folder << "/dist_vs_undist_" << vpIoTools::getNameWE(calib_info[idx].m_frame_name)
-            << ".png";
+            << opt_img_ext;
           vpImage<vpRGBa> I_right;
           vpImageTools::crop(I_save_results, vpRect(I_save_results.getWidth()/2, 0,
                                                     I_save_results.getWidth()/2, I_save_results.getHeight()), I_right);
@@ -808,10 +833,10 @@ int main(int argc, const char *argv[])
         vpTime::wait(s.tempo * 1000);
       }
 
-      if (save_results) {
+      if (opt_save_results) {
         vpDisplay::getImage(I_dist_map, I_save_results);
         std::ostringstream oss;
-        oss << save_results_folder << "/distortion_displacement_map.png";
+        oss << save_results_folder << "/distortion_displacement_map" << opt_img_ext;
         vpImageIo::write(I_save_results, oss.str());
 
         // Save mosaic images
@@ -820,7 +845,7 @@ int main(int argc, const char *argv[])
           createMosaic(list_img_reproj, mosaics);
           for (size_t i = 0; i < mosaics.size(); i++) {
             oss.str("");
-            oss << save_results_folder << "/mosaics_reproj_err_without_dist_%04d.png";
+            oss << save_results_folder << "/mosaics_reproj_err_without_dist_%04d" << opt_img_ext;
             char name[FILENAME_MAX];
             snprintf(name, FILENAME_MAX, oss.str().c_str(), i);
             vpImageIo::write(mosaics[i], name);
@@ -831,7 +856,7 @@ int main(int argc, const char *argv[])
           createMosaic(list_img_reproj_dist, mosaics);
           for (size_t i = 0; i < mosaics.size(); i++) {
             oss.str("");
-            oss << save_results_folder << "/mosaics_reproj_err_with_dist_%04d.png";
+            oss << save_results_folder << "/mosaics_reproj_err_with_dist_%04d" << opt_img_ext;
             char name[FILENAME_MAX];
             snprintf(name, FILENAME_MAX, oss.str().c_str(), i);
             vpImageIo::write(mosaics[i], name);
@@ -842,7 +867,7 @@ int main(int argc, const char *argv[])
           createMosaic(list_img_undist, mosaics);
           for (size_t i = 0; i < mosaics.size(); i++) {
             oss.str("");
-            oss << save_results_folder << "/mosaics_undist_%04d.png";
+            oss << save_results_folder << "/mosaics_undist_%04d" << opt_img_ext;
             char name[FILENAME_MAX];
             snprintf(name, FILENAME_MAX, oss.str().c_str(), i);
             vpImageIo::write(mosaics[i], name);
