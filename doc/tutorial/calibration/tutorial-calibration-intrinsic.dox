@@ -133,8 +133,9 @@ $ ./tutorial-grabber-opencv --seqname chessboard-%02d.jpg --record 1
 \section calibration 4. Calibration
 \subsection calibration_source_code 4.1. Source code
 
-Note that all the material (source code) described in this tutorial is part of ViSP source code
-(in `example/calibration` folder) and could be found in https://github.com/lagadic/visp/tree/master/example/calibration.
+Note that all the material (source code) described in this tutorial is part of the ViSP source code
+(in the `apps/calibration/intrinsic` folder) and could also be found on Github at
+https://github.com/lagadic/visp/tree/master/apps/calibration/intrinsic url.
 
 The calibration tool is available in `visp-calibrate-camera.cpp` located in `apps/calibration/intrinsic` folder.
 
@@ -144,7 +145,7 @@ We will not describe in detail the source, but just mention that:
 - the calibration tool takes as input a configuration file that allows to precise the kind of pattern used in the
   images (chessboard or circles grid), and the location of the images used as input. If `libjpeg` and `libpng` 3rd
   party libraries are installed and detected during ViSP configuration, you may consider .pgm, .ppm, .jpg, .png images.
-  Default configuration files are provided in \c example/calibration folder;
+  Default configuration files are provided in \c apps/calibration/intrinsic folder;
 - the resulting parameters are saved in \c camera.xml file.
 
 \subsection calibration_chessboard 4.2. With a chessboard
@@ -465,7 +466,16 @@ chessboard-03.jpg undistorted image, line 5 fitting error: 0.08680507551
 chessboard-03.jpg undistorted image, line 6 fitting error: 0.06309999164
 \endcode
 
-\subsubsection calibration_tools_poses 4.4.4. Camera poses
+\subsubsection calibration_tools_poses 4.4.4. Camera lens distortion
+A pseudo "distortion displacement map" is also displayed:
+
+\image html img-chessboard-distortion-displacement-map.jpg
+
+The effect of the lens distortion is visible with hot colors corresponding to much stronger effect of the distortion
+compared to cold colors (typically in the center of the image). With barrel distortion, this effect tends to "push" the
+pixels at the extremities to the image toward the center of the image.
+
+\subsubsection calibration_tools_poses 4.4.5. Camera poses
 There is `camera_calibration_show_extrinsics.py` script that allows to display camera poses. Prior to use that script,
 you need to install `scipy`:
 \code{.sh}
