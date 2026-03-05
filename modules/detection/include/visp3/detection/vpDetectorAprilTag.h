@@ -64,6 +64,7 @@ BEGIN_VISP_NAMESPACE
  * Supported tag families are the following:
  * - AprilTag 16h5
  * - AprilTag 25h9
+ * - AprilTag 36h10
  * - AprilTag 36h11
  * - AprilTag Circle_21h7 (AprilTag 3)
  * - AprilTag Circle_49h12 (AprilTag 3, CMake USE_APRILTAG_BIG_FAMILY var must be set to true)
@@ -272,6 +273,7 @@ public:
   enum vpAprilTagFamily
   {
     TAG_36h11 = 0,       ///< AprilTag 36h11 pattern (recommended)
+    TAG_36h10,           ///< AprilTag 36h10 pattern
     TAG_25h9,            ///< AprilTag 25h9 pattern
     TAG_16h5,            ///< AprilTag 16h5 pattern
     TAG_CIRCLE21h7,      ///< AprilTag Circle21h7 pattern

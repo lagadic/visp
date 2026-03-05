@@ -10,7 +10,7 @@ ViSP 3.7.1 (current version)
     . Fabien Spindler, Romain Lagneau, Olivier Roussel, Souriya Trinh
   - New classes
   - Deprecated
-    . In vpDetectorAprilTag remove support for deprecated 36h10 and 25h7 families
+    . In vpDetectorAprilTag remove support for deprecated 25h7 family
   - New features and improvements
     . The AprilTag 3rd-party integration has been completely redesigned. It now supports three flexible usage modes:
       - System Package: Use the library installed via your package manager (e.g., apt install libapriltag-dev),
@@ -18,6 +18,8 @@ ViSP 3.7.1 (current version)
       - Embedded Build: Fall back to the built-in version available directly in the 3rdparty/apriltag folder.
   - Applications
   - Tutorials
+    . New tutorial: Installation from source for Windows 11 with Visual C++ 2026 (vc18)
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-win11-msvc18.html
   - Bug fixed
     . [#1876] Unable to build ViSP framework from source for iOS
     . [#1878] Unable to build ViSP framework from source for iOS with OpenCV support

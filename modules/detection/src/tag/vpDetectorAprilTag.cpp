@@ -43,6 +43,7 @@ extern "C" {
 #include <common/homography.h>
 #include <tag16h5.h>
 #include <tag25h9.h>
+#include <tag36h10.h>
 #include <tag36h11.h>
 #include <tagCircle21h7.h>
 #if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
@@ -155,13 +156,21 @@ matd_t *my_matd_create(int rows, int cols)
 
 matd_t *my_matd_copy(const matd_t *m)
 {
+  if (m == NULL)
+    return nullptr;
+
   assert(m != NULL);
 
   matd_t *x = my_matd_create(m->nrows, m->ncols);
-  if (my_matd_is_scalar(m))
+  if (my_matd_is_scalar(m)) {
     x->data[0] = m->data[0];
-  else
-    memcpy(x->data, m->data, sizeof(TYPE)*m->ncols*m->nrows);
+  }
+  else if (m->nrows > 0 && m->ncols > 0) {
+    // Vérification explicite avant memcpy
+    assert(m->data != NULL);
+    assert(x->data != NULL);
+    memcpy(x->data, m->data, sizeof(double) * m->ncols * m->nrows);
+  }
 
   return x;
 }
@@ -175,30 +184,18 @@ void my_image_u8_destroy(image_u8_t *im)
   free(im);
 }
 
-apriltag_detector_t *my_apriltag_detector_copy(apriltag_detector_t *td)
+apriltag_detector_t *my_apriltag_detector_copy(apriltag_detector_t *src)
 {
-  apriltag_detector_t *td_copy = apriltag_detector_create();
+  apriltag_detector_t *dst = (apriltag_detector_t *)malloc(sizeof(apriltag_detector_t));
+  // Shallow copy of all scalar fields
+  *dst = *src;
 
-  td_copy->nthreads = td->nthreads;
-  td_copy->quad_decimate = td->quad_decimate;
-  td_copy->quad_sigma = td->quad_sigma;
+  // Reinitialize pointer fields to independent default values to avoid shared ownership and double-free issues
+  dst->tag_families = zarray_create(sizeof(apriltag_family_t *));
+  dst->tp = timeprofile_create();
+  dst->wp = workerpool_create(src->nthreads);
 
-  td_copy->qtp.max_nmaxima = td->qtp.max_nmaxima;
-  td_copy->qtp.min_cluster_pixels = td->qtp.min_cluster_pixels;
-
-  td_copy->qtp.max_line_fit_mse = td->qtp.max_line_fit_mse;
-  td_copy->qtp.cos_critical_rad = td->qtp.cos_critical_rad;
-  td_copy->qtp.deglitch = td->qtp.deglitch;
-  td_copy->qtp.min_white_black_diff = td->qtp.min_white_black_diff;
-
-  //td->tag_families = zarray_create(sizeof(apriltag_family_t *));
-  //td->tp = timeprofile_create();
-
-  td_copy->refine_edges = td->refine_edges;
-  td_copy->decode_sharpening = td->decode_sharpening;
-  td_copy->debug = td->debug;
-
-  return td_copy;
+  return dst;
 }
 
 /**
@@ -273,6 +270,7 @@ void my_apriltag_detection_copy(apriltag_detection_t *src, apriltag_detection_t 
 
   if (dst->H) {
     my_matd_destroy(dst->H);
+    dst->H = NULL;
   }
   dst->H = my_matd_copy(src->H);
 
@@ -319,6 +317,10 @@ public:
     m_detections(nullptr), m_decisionMarginThreshold(-1), m_hammingDistanceThreshold(2), m_zAlignedWithCameraFrame(false)
   {
     switch (m_tagFamily) {
+    case TAG_36h10:
+      m_tf = tag36h10_create();
+      break;
+
     case TAG_36h11:
       m_tf = tag36h11_create();
       break;
@@ -459,6 +461,10 @@ public:
     m_hammingDistanceThreshold(o.m_hammingDistanceThreshold), m_zAlignedWithCameraFrame(o.m_zAlignedWithCameraFrame)
   {
     switch (m_tagFamily) {
+    case TAG_36h10:
+      m_tf = tag36h10_create();
+      break;
+
     case TAG_36h11:
       m_tf = tag36h11_create();
       break;
@@ -599,6 +605,10 @@ public:
 
     if (m_tf) {
       switch (m_tagFamily) {
+      case TAG_36h10:
+        tag36h10_destroy(m_tf);
+        break;
+
       case TAG_36h11:
         tag36h11_destroy(m_tf);
         break;
@@ -1406,6 +1416,9 @@ std::string vpDetectorAprilTag::tagFamilyToString(const vpDetectorAprilTag::vpAp
 {
   std::string name;
   switch (type) {
+  case vpDetectorAprilTag::TAG_36h10:
+    name = "36h10";
+    break;
   case vpDetectorAprilTag::TAG_36h11:
     name = "36h11";
     break;

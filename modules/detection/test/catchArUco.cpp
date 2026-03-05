@@ -448,6 +448,7 @@ TEST_CASE("ArUco/AprilTag Hamming test", "[aruco_detection_test]")
     {vpDetectorAprilTag::TAG_ARUCO_MIP_36h12, "TAG_ARUCO_MIP_36h12"},
 #endif
     {vpDetectorAprilTag::TAG_25h9, "TAG_25h9"},
+    {vpDetectorAprilTag::TAG_36h10, "TAG_36h10"},
     {vpDetectorAprilTag::TAG_36h11, "TAG_36h11"}
   };
 
