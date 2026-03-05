@@ -48,12 +48,12 @@
 
 namespace py = pybind11;
 
-void bindings_vpDetectorAprilTag(py::class_<VISP_NAMESPACE_ADDRESSING vpDetectorAprilTag, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpDetectorAprilTag>, VISP_NAMESPACE_ADDRESSING vpDetectorBase> &pyAprilTag)
-{
-#ifdef ENABLE_VISP_NAMESPACE
-  using namespace VISP_NAMESPACE_NAME;
+#if defined(ENABLE_VISP_NAMESPACE)
+using namespace VISP_NAMESPACE_NAME;
 #endif
 
+void bindings_vpDetectorAprilTag(py::class_<vpDetectorAprilTag, std::shared_ptr<vpDetectorAprilTag>, vpDetectorBase> &pyAprilTag)
+{
   pyAprilTag.def("detect",
    [](vpDetectorAprilTag &self, const vpImage<unsigned char> &I, double tagSize, const vpCameraParameters &cam) -> std::tuple<bool, std::vector<vpHomogeneousMatrix>> {
      std::vector<vpHomogeneousMatrix> cMos;

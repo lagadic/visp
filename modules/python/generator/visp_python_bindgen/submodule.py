@@ -175,6 +175,10 @@ class Submodule():
 
 namespace py = pybind11;
 
+#if defined(ENABLE_VISP_NAMESPACE)
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
 {publicists}
 
 void {self.generation_function_name()}(py::module_ &m) {{

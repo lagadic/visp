@@ -45,6 +45,10 @@
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /*
  * Array2D and its children.
  */
@@ -421,9 +425,6 @@ const char *numpy_fn_doc_nonwritable = R"doc(
 template<typename T>
 void bindings_vpArray2D(py::class_<VISP_NAMESPACE_ADDRESSING vpArray2D<T>, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpArray2D<T>>> &pyArray2D)
 {
-#ifdef ENABLE_VISP_NAMESPACE
-  using namespace VISP_NAMESPACE_NAME;
-#endif
   pyArray2D.def_buffer(&get_buffer_info<T, vpArray2D>);
 
   pyArray2D.def("numpy", [](vpArray2D<T> &self) -> np_array_cf<T> {
@@ -463,9 +464,6 @@ It cannot be resized.
 
 void bindings_vpMatrix(py::class_<VISP_NAMESPACE_ADDRESSING vpMatrix, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpMatrix>, VISP_NAMESPACE_ADDRESSING vpArray2D<double>> &pyMatrix)
 {
-#ifdef ENABLE_VISP_NAMESPACE
-  using namespace VISP_NAMESPACE_NAME;
-#endif
   pyMatrix.def_buffer(&get_buffer_info< vpMatrix>);
 
   pyMatrix.def("numpy", [](vpMatrix &self) -> np_array_cf<double> {
@@ -510,9 +508,6 @@ It cannot be resized.
 
 void bindings_vpRotationMatrix(py::class_<VISP_NAMESPACE_ADDRESSING vpRotationMatrix, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpRotationMatrix>, VISP_NAMESPACE_ADDRESSING vpArray2D<double>> &pyRotationMatrix)
 {
-#ifdef ENABLE_VISP_NAMESPACE
-  using namespace VISP_NAMESPACE_NAME;
-#endif
   pyRotationMatrix.def_buffer(&get_buffer_info< vpRotationMatrix>);
   pyRotationMatrix.def("numpy", [](vpRotationMatrix &self) -> np_array_cf<double> {
     return py::cast(self).cast<np_array_cf<double>>();
@@ -544,9 +539,6 @@ If it is not a rotation matrix, an exception will be raised.
 
 void bindings_vpHomogeneousMatrix(py::class_<VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix>, VISP_NAMESPACE_ADDRESSING vpArray2D<double>> &pyHomogeneousMatrix)
 {
-#ifdef ENABLE_VISP_NAMESPACE
-  using namespace VISP_NAMESPACE_NAME;
-#endif
   pyHomogeneousMatrix.def_buffer(get_buffer_info< vpHomogeneousMatrix>);
   pyHomogeneousMatrix.def("numpy", [](vpHomogeneousMatrix &self) -> np_array_cf<double> {
     return py::cast(self).cast<np_array_cf<double>>();
@@ -581,9 +573,6 @@ If it is not a homogeneous matrix, an exception will be raised.
 
 void bindings_vpTranslationVector(py::class_<VISP_NAMESPACE_ADDRESSING vpTranslationVector, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpTranslationVector>, VISP_NAMESPACE_ADDRESSING vpArray2D<double>> &pyTranslationVector)
 {
-#ifdef ENABLE_VISP_NAMESPACE
-  using namespace VISP_NAMESPACE_NAME;
-#endif
   pyTranslationVector.def_buffer(&get_buffer_info< vpTranslationVector>);
 
   pyTranslationVector.def("numpy", [](vpTranslationVector &self) -> np_array_cf<double> {
@@ -610,9 +599,6 @@ Construct a Translation vector by **copying** a 1D numpy array of size 3.
 
 void bindings_vpColVector(py::class_<VISP_NAMESPACE_ADDRESSING vpColVector, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpColVector>, VISP_NAMESPACE_ADDRESSING vpArray2D<double>> &pyColVector)
 {
-#ifdef ENABLE_VISP_NAMESPACE
-  using namespace VISP_NAMESPACE_NAME;
-#endif
   pyColVector.def_buffer(&get_buffer_info< vpColVector>);
 
   pyColVector.def("numpy", [](vpColVector &self) -> np_array_cf<double> {
@@ -657,9 +643,6 @@ It cannot be resized.
 
 void bindings_vpRowVector(py::class_<VISP_NAMESPACE_ADDRESSING vpRowVector, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpRowVector>, VISP_NAMESPACE_ADDRESSING vpArray2D<double>> &pyRowVector)
 {
-#ifdef ENABLE_VISP_NAMESPACE
-  using namespace VISP_NAMESPACE_NAME;
-#endif
   pyRowVector.def_buffer(&get_buffer_info< vpRowVector>);
   pyRowVector.def("numpy", [](vpRowVector &self) -> np_array_cf<double> {
     return np_array_cf<double>(get_buffer_info< vpRowVector>(self), py::cast(self));
@@ -701,9 +684,6 @@ It cannot be resized.
 
 void bindings_vpPoseVector(py::class_<VISP_NAMESPACE_ADDRESSING vpPoseVector, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpPoseVector>, VISP_NAMESPACE_ADDRESSING vpArray2D<double>> &pyPoseVector)
 {
-#ifdef ENABLE_VISP_NAMESPACE
-  using namespace VISP_NAMESPACE_NAME;
-#endif
   pyPoseVector.def_buffer(&get_buffer_info< vpPoseVector>);
 
   pyPoseVector.def("numpy", [](vpPoseVector &self) -> np_array_cf<double> {
@@ -728,10 +708,6 @@ Construct a pose vector by **copying** a 1D numpy array.
 
 void bindings_vpRotationVector(py::class_<VISP_NAMESPACE_ADDRESSING vpRotationVector, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpRotationVector>, VISP_NAMESPACE_ADDRESSING vpArray2D<double>> &pyRotationVector)
 {
-#ifdef ENABLE_VISP_NAMESPACE
-  using namespace VISP_NAMESPACE_NAME;
-#endif
-
   pyRotationVector.def_buffer(&get_buffer_info<vpRotationVector>);
 
   pyRotationVector.def("numpy", [](vpRotationVector &self) -> np_array_cf<double> {

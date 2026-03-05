@@ -43,6 +43,10 @@
 
 namespace py = pybind11;
 
+#if defined(ENABLE_VISP_NAMESPACE)
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 template<typename Item>
 using np_array_cf = py::array_t<Item, py::array::c_style | py::array::forcecast>;
 
