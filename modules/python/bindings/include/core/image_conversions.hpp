@@ -40,6 +40,9 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImageConvert.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 namespace
 {
@@ -409,9 +412,6 @@ void add_demosaic_to_rgba_fn(py::class_<VISP_NAMESPACE_ADDRESSING vpImageConvert
 
 void bindings_vpImageConvert(py::class_<VISP_NAMESPACE_ADDRESSING vpImageConvert, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpImageConvert>> &pyImageConvert)
 {
-#ifdef ENABLE_VISP_NAMESPACE
-  using namespace VISP_NAMESPACE_NAME;
-#endif
   // Simple conversions where the size input is a single argument
   {
     std::vector<SimpleConversionStruct<ConversionFunction1D>> conversions = {

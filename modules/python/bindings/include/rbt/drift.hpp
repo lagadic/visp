@@ -5,6 +5,9 @@
 #include <visp3/rbt/vpRBDriftDetector.h>
 #include <pybind11/pybind11.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 class TrampolineRBDriftDetector : public VISP_NAMESPACE_ADDRESSING vpRBDriftDetector
 {

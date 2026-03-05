@@ -43,11 +43,12 @@
 
 namespace py = pybind11;
 
-void bindings_vpDisplay(py::class_<VISP_NAMESPACE_ADDRESSING vpDisplay, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpDisplay>> &pyDisplay)
-{
-#ifdef ENABLE_VISP_NAMESPACE
-  using namespace VISP_NAMESPACE_NAME;
+#if defined(ENABLE_VISP_NAMESPACE)
+using namespace VISP_NAMESPACE_NAME;
 #endif
+
+void bindings_vpDisplay(py::class_<vpDisplay, std::shared_ptr<vpDisplay>> &pyDisplay)
+{
   pyDisplay.def_static("displayCrosses",
   [](const vpImage<vpRGBa> &I,
      const py::array_t<int, py::array::c_style> &is,
