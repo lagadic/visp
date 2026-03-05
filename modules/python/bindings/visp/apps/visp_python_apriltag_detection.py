@@ -18,6 +18,7 @@ from typing import Generator, List
 family_mapping = {
   '16h5': DetectorAprilTag.AprilTagFamily.TAG_16h5,
   '25h9': DetectorAprilTag.AprilTagFamily.TAG_25h9,
+  '36h10': DetectorAprilTag.AprilTagFamily.TAG_36h10,
   '36h11': DetectorAprilTag.AprilTagFamily.TAG_36h11,
 }
 
