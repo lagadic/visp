@@ -174,6 +174,9 @@ class Submodule():
 {includes_str}
 
 namespace py = pybind11;
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 {publicists}
 

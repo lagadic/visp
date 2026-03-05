@@ -78,6 +78,9 @@ def main_str(submodule_fn_declarations, submodule_fn_calls):
 #include <visp3/core/vpConfig.h>
 #include <pybind11/pybind11.h>
 namespace py = pybind11;
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 {submodule_fn_declarations}
 
 PYBIND11_MODULE(_visp, m)
