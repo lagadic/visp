@@ -44,9 +44,9 @@ void estimate_pose_for_tag_homography(
  * used to find a potential second local minima and Orthogonal Iteration is
  * used to refine this second estimate.
  *
- * [1]: E. Olson, “Apriltag: A robust and flexible visual fiducial system,” in
+ * [1]: E. Olson, "Apriltag: A robust and flexible visual fiducial system," in
  *      2011 IEEE International Conference on Robotics and Automation,
- *      May 2011, pp. 3400–3407.
+ *      May 2011, pp. 3400-3407.
  * [2]: Lu, G. D. Hager and E. Mjolsness, "Fast and globally convergent pose
  *      estimation from video images," in IEEE Transactions on Pattern Analysis
  *      and Machine Intelligence, vol. 22, no. 6, pp. 610-622, June 2000.
@@ -79,4 +79,3 @@ void get_second_solution(matd_t* v[4], matd_t* p[4], apriltag_pose_t* solution1,
 #ifdef __cplusplus
 }
 #endif
-

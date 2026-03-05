@@ -546,7 +546,7 @@ double estimate_tag_pose(apriltag_detection_info_t* info, apriltag_pose_t* pose)
     }
 }
 
-void get_second_solution(matd_t* v[4], matd_t* p[4], apriltag_pose_t* solution1, apriltag_pose_t* solution2, int nIters, double* err2) 
+void get_second_solution(matd_t* v[4], matd_t* p[4], apriltag_pose_t* solution1, apriltag_pose_t* solution2, int nIters, double* err2)
 {
     solution2->R = fix_pose_ambiguities(v, p, solution1->t, solution1->R, 4);
     if (solution2->R) {

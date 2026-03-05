@@ -4,7 +4,7 @@ project(${APRILTAG_LIBRARY_NAME} LANGUAGES C)
 
 set(APRILTAG_VERSION_MAJOR 3)
 set(APRILTAG_VERSION_MINOR 4)
-set(APRILTAG_VERSION_PATCH 2)
+set(APRILTAG_VERSION_PATCH 5)
 
 set(APRILTAG_VERSION "${APRILTAG_VERSION_MAJOR}.${APRILTAG_VERSION_MINOR}.${APRILTAG_VERSION_PATCH}")
 
@@ -14,7 +14,13 @@ file(GLOB tag_srcs tag*.c)
 file(GLOB lib_srcs *.c common/*.c)
 file(GLOB lib_hdrs *.h common/*.h common/sys/*.h)
 
-vp_list_filterout(lib_srcs common/unionfind.c) # has no symbols
+vp_list_filterout(lib_srcs apriltag_pywrap.c)   # useless
+vp_list_filterout(lib_srcs common/pjpeg.c)      # useless
+vp_list_filterout(lib_srcs common/pjpeg.h)      # useless
+vp_list_filterout(lib_srcs common/pjpeg-idct.c) # useless
+vp_list_filterout(lib_srcs common/unionfind.c)  # has no symbols
+vp_list_filterout(lib_srcs common/zhash.c)      # useless
+vp_list_filterout(lib_srcs common/zhash.h)      # useless
 
 if(NOT USE_APRILTAG_BIG_FAMILY)
   vp_list_filterout(lib_srcs tagCircle49h12.c)

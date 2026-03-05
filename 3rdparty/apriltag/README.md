@@ -1,106 +1,170 @@
 AprilTag 3
 ==========
-AprilTag is a visual fiducial system popular in robotics research. This repository contains the most recent version of AprilTag, AprilTag 3, which includes a faster (>2x) detector, improved detection rate on small tags, flexible tag layouts, and pose estimation. AprilTag consists of a small C library with minimal dependencies. Officially only linux operating systems are supported.
+AprilTag is a visual fiducial system popular in robotics research. This repository contains the most recent version of AprilTag, AprilTag 3, which includes a faster (>2x) detector, improved detection rate on small tags, flexible tag layouts, and pose estimation. AprilTag consists of a small C library with minimal dependencies.
 
 You can find tag images for the pre-generated layouts [here](https://github.com/AprilRobotics/apriltag-imgs). We recommend using the tagStandard41h12 layout.
 
-[![Build Status](https://travis-ci.org/AprilRobotics/apriltag.svg?branch=master)](https://travis-ci.org/AprilRobotics/apriltag)
+Table of Contents
+=================
+- [Papers](#papers)
+- [Install](#install)
+- [Usage](#usage)
+  - [Choosing a Tag Family](#choosing-a-tag-family)
+  - [Getting Started with the Detector](#getting-started-with-the-detector)
+    - [Python](#python)
+    - [C](#c)
+    - [Matlab](#matlab)
+    - [Julia](#julia)
+  - [Upgrading from AprilTag 2](#upgrading-from-aprilTag-2)
+  - [OpenCV Integration](#opencv-integration)
+  - [Tuning the Detector Parameters](#tuning-the-detector-parameters)
+    - [Increasing speed.](#increasing-speed)
+    - [Increasing detection distance.](#increasing-detection-distance)
+  - [Pose Estimation.](#pose-estimation)
+- [Debugging](#debugging)
+- [Flexible Layouts](#flexible-layouts)
+- [Support](#support)
+
+Papers
+======
+AprilTag is the subject of the following papers.
+
+[AprilTag: A robust and flexible visual fiducial system](https://april.eecs.umich.edu/papers/details.php?name=olson2011tags)
+
+[AprilTag 2: Efficient and robust fiducial detection](https://april.eecs.umich.edu/papers/details.php?name=wang2016iros)
+
+[Flexible Layouts for Fiducial Tags](https://april.eecs.umich.edu/papers/details.php?name=krogius2019iros)
 
 Install
 =======
 
-The default installation will place headers in /usr/local/include and
-shared library in /usr/local/lib. It also installs a pkg-config script
-into /usr/local/lib/pkgconfig. Be aware that there are some larger tag families which may take a long time to build. If you do not want to use these tag families then you can speed up the installation by deleting the files tagCircle49h12.c, tagCircle49h12.h, tagCustom48h12.c, tagCustom48h12.h, tagStandard52h13.c, and tagStandard52h13.h before installing.
+Officially only Linux operating systems are supported, although users have had success installing on Windows too.
 
-If you have CMake installed or it is not difficult to install, then do:
+The default installation will place headers in /usr/local/include and shared library in /usr/local/lib. It also installs a pkg-config script into /usr/local/lib/pkgconfig and will install a python wrapper if python3 is installed.
 
-    $ cmake .
-    $ sudo make install
+```
+cmake -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build --target install
+```
+This will build shared (\*.so) libraries by default. If you need static (\*.a) libraries set `BUILD_SHARED_LIBS` to `OFF`:
+```
+cmake -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF
+cmake --build build --target install
+```
 
-Otherwise, we have a handwritten makefile you can use (be warned it will do slightly different things):
+If you have Ninja (`sudo apt install ninja-build`) installed, you can use:
+```
+cmake -B build -GNinja -DCMAKE_BUILD_TYPE=Release
+cmake --build build --target install
+```
+to generate and compile via the ninja build script. It will be much faster than with cmake's default Makefile generator.
 
-    $ make
-    $ sudo make install
-
-To install to a different directory than /usr/local:
-
-    $ PREFIX=/some/path sudo make install
+You can omit `--target install` if you only want to use this locally without installing.
 
 
 Usage
 =====
 
-We recommend using the tagStandard41h12 family for all new application.
+## Choosing a Tag Family
+For the vast majority of applications, the tagStandard41h12 family will be the correct choice. You can find the images for the tags in the [apriltag-imgs repo](https://github.com/AprilRobotics/apriltag-imgs). Scale up the images in your favorite editor and print them out.
 
-A basic AprilTag application can be seen in example/apriltag_demo.c.
+Some heuristics for when to choose other tag families:
+1. If you need more tags, use tagStandard52h13
+2. If you need to maximize the use of space on a small circular object, use tagCircle49h12 (or tagCircle21h7).
+3. If you want to make a recursive tag use tagCustom48h12.
+4. If you need ArUco support, use the native ArUco families (e.g., `tagAruco4x4_50`, `tagAruco5x5_100`, `tagAruco6x6_250`, `tagAruco7x7_1000`, etc.). These are now fully integrated and optimized.
+4. If you want compatibility with the legacy ArUco detector use tag36h11
 
+If none of these fit your needs, generate your own custom tag family [here](https://github.com/AprilRobotics/apriltag-generation).
 
-Initialization: instantiate a detector and at least one tag family.
+## Getting Started with the Detector
+### Python
 
+    import cv2
+    import numpy as np
+    from apriltag import apriltag
+
+    imagepath = 'test.jpg'
+    image = cv2.imread(imagepath, cv2.IMREAD_GRAYSCALE)
+    detector = apriltag("tagStandard41h12")
+
+    detections = detector.detect(image)
+
+Alternately you can use the AprilTag python bindings created by [duckietown](https://github.com/duckietown/lib-dt-apriltags).
+
+### C
+
+    image_u8_t* im = image_u8_create_from_pnm("test.pnm");
+    if (im == NULL) {
+        fprintf(stderr, "Failed to load pnm image.\n");
+        exit(1);
+    }
     apriltag_detector_t *td = apriltag_detector_create();
-    apriltag_family_t *tf = tag36h11_create();
+    apriltag_family_t *tf = tagStandard41h12_create();
     apriltag_detector_add_family(td, tf);
-
-Some tag detector parameters can be set at this time.
-The default parameters are the recommended starting point.
-
-    td->quad_decimate = 2.0;
-    td->quad_sigma = 0.0;
-    td->refine_edges = true;
-    td->decode_sharpening = 0.25;
-
-Increase the image decimation if faster processing is required; the
-trade-off is a slight decrease in detection range. A factor of 1.0
-means the full-size input image is used.
-
-Some Gaussian blur (quad_sigma) may help with noisy input images.
-
-
-Detection: a single one-line call will process an input image
-and return a list of detections.
-
     zarray_t *detections = apriltag_detector_detect(td, im);
 
     for (int i = 0; i < zarray_size(detections); i++) {
         apriltag_detection_t *det;
         zarray_get(detections, i, &det);
 
-        // Do something with det here
+        // Do stuff with detections here.
     }
-
+    // Cleanup.
     apriltag_detections_destroy(detections);
-
-zarray is a container class which is included with apriltag.
-To process through the list of detections, use zarray_get,
-as illustrated above.
-
-The caller is responsible for freeing detections by calling
-apriltag_detections_destroy().
-
-
-Cleanup: free the detector and tag family when done.
-
+    tagStandard41h12_destroy(tf);
     apriltag_detector_destroy(td);
-    tag36h11_destroy(tf);
 
-Support
-=======
-Please create an issue on this github for any questions instead of sending a private message. This allows other people with the same question to find your answer.
+### Matlab
 
-Flexible Layouts
-================
-AprilTag 3 supports a wide variety of possible tag layouts in addition to the classic layout supported in AprilTag 2. The tag's data bits can now go outside of the tag border, and it is also possible to define layouts with "holes" inside of the tag border where there are no data bits. In this repo we have included:
+Provided by third-party [here](https://github.com/alddiaz/MATLAB_AprilTag3).
 
-* Two families of the new standard layout. This layout adds a layer of data bits around the outside of the tag border, increasing data density, and the number of possible tags, at the cost of a slight decrease in detection distance.
-* Two families of circular tags.
-* One family which has a hole in the middle. This could be used for example for drone applications by placing different sized tags inside of each other to allow detection over a wide range of distances.
+### Julia
 
-You can generate your own tag families using our other repo, [AprilTag-Generation](https://github.com/AprilRobotics/apriltag-generation).
+Provided by third-party [here](https://github.com/JuliaRobotics/AprilTags.jl)
 
-Pose Estimation
-===============
-We have added methods to estimate the 3d pose of the AprilTag given camera parameters and the size of the tag. Sample code is as follows:
+
+## Upgrading from AprilTag 2
+For most use-cases this should be a drop in replacement.
+
+* The options refine_decode, refine_pose, and black_border have been removed.
+* If you have generated your own families, you will need to regenerate the c code for those families. The java code however does not need to be regenerated so this should be quick and easy.
+
+
+## OpenCV Integration
+
+Note that this library has no external dependencies. Most applications
+will require, at minimum, a method for acquiring images.
+
+See example/opencv_demo.cc for an example of using AprilTag in C++ with OpenCV.
+After building the repository you can run the example opencv application with:
+
+    $ ./build/opencv_demo
+
+Image data in a cv::Mat object can be passed to AprilTag without creating
+a deep copy. Simply create an image_u8_t header for the cv::Mat data buffer:
+
+    cv::Mat img;
+
+    image_u8_t img_header = { .width = img.cols,
+        .height = img.rows,
+        .stride = img.cols,
+        .buf = img.data
+    };
+
+
+
+## Tuning the Detector Parameters
+### Increasing speed.
+Increasing the quad_decimate parameter will increase the speed of the detector at the cost of detection distance.  If you have extra cpu cores to throw at the problem then you can increase nthreads. If your image is somewhat noisy, increasing the quad_sigma parameter can increase speed.
+
+### Increasing detection distance.
+First choose an example image and run the detector with debug=1 to generate the debug images. These show the detector's output at each step in the detection pipeline.
+If the border of your tag is not being detected as a quadrilateral, decrease quad_decimate (all the way to 1 if necessary).
+If the border of the tag is detected then experiment with changing decode_sharpening.
+
+## Pose Estimation.
+We provide a method for computing the pose of the tag as follows (alternately use OpenCv's Pnp solver with SOLVEPNP_IPPE_SQUARE). You will need to include the apriltag_pose.h header file and then call the estimate_tag_pose function as follows:
 
     // First create an apriltag_detection_info_t struct using your known parameters.
     apriltag_detection_info_t info;
@@ -114,50 +178,69 @@ We have added methods to estimate the 3d pose of the AprilTag given camera param
     // Then call estimate_tag_pose.
     apriltag_pose_t pose;
     double err = estimate_tag_pose(&info, &pose);
-
     // Do something with pose.
     ...
 
-You can also call <code>estimate_tag_pose_orthogonal_iteration</code> which allows the user to specify the number of iterations used and also returns both possible solutions for the tag pose along with their errors.
+where the parameters are as follows:
+* `det`: The tag detection struct (april_detection_t).
+* `tagsize`: The size of the tag in meters. Each tag design has a black border and a white border, but some designs have the white border on the inside and some have the black border on the inside. The tagsize is thus measured from where the two borders meet, see the figure below for an example.
+* `fx`, `fy`: The camera's focal length (in pixels). For most cameras `fx` and `fy` will be equal or nearly so.
+* `cx`, `cy`: The camera's focal center (in pixels). For most cameras this will be approximately the same as the image center.
+
+Note: The tag size should not be measured from the outside of the tag. The tag size is defined as the distance between the detection corners, or alternately, the length of the edge between the white border and the black border. The following illustration marks the detection corners with red Xs and the tag size with a red arrow for a tag from the 48h12Custom tag family.
+
+ ![The tag size is the width of the edge between the white and black borders.](tag_size_48h12.png)
+
+### Coordinate System
+The coordinate system has the origin at the camera center. The z-axis points from the camera center out the camera lens. The x-axis is to the right in the image taken by the camera, and y is down. The tag's coordinate frame is centered at the center of the tag. From the viewer's perspective, the x-axis is to the right, y-axis down, and z-axis is into the tag.
+
+### Handling Pose Ambiguity
+Planar targets often result in two possible pose solutions with similar errors (the "ambiguity" problem). To retrieve the alternative solution, you can use:
+
+```c
+apriltag_pose_t pose1, pose2;
+double err1 = estimate_tag_pose(&info, &pose1);
+double err2;
+
+// v and p are the object and image points used during the iteration
+get_second_solution(v, p, &pose1, &pose2, nIters, &err2);
+```
+
+This is particularly useful when temporal filtering or additional constraints are used to disambiguate the tag's orientation.
+
+Utility Functions
+=================
+AprilTag 3 now includes helper functions for deep-copying structures, which is essential for multi-threaded applications or when you need to store detections beyond the detector's lifecycle.
+
+* `apriltag_detector_copy(td)`: Creates a clone of the detector configuration.
+* `apriltag_detections_copy(detections)`: Returns a new `zarray_t` with deep copies of all `apriltag_detection_t` objects.
+* `apriltag_detection_copy(src, dst)`: Performs a deep copy of a single detection into an existing structure.
+
+Debugging
+=========
+
+You can enable [AddressSanitizer](https://clang.llvm.org/docs/AddressSanitizer.html) to debug memory issues for Debug builds by setting the `ASAN` option:
+```
+cmake -B build -GNinja -DCMAKE_BUILD_TYPE=Debug -DASAN=ON
+cmake --build build
+```
+
+Mostly you can then run your executables as usual and inspect the sanitiser output. If you get a message like `ASan runtime does not come first in initial library list; you should either link runtime to your application or manually preload it with LD_PRELOAD.` you have to preload the corresponding `libasan.so.5` like this:
+```
+LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libasan.so.5 ./build/opencv_demo
+```
+
+Flexible Layouts
+================
+AprilTag 3 supports a wide variety of possible tag layouts in addition to the classic layout supported in AprilTag 2. The tag's data bits can now go outside of the tag border, and it is also possible to define layouts with "holes" inside of the tag border where there are no data bits. In this repo we have included:
+
+* Two families of the new standard layout. This layout adds a layer of data bits around the outside of the tag border, increasing data density, and the number of possible tags, at the cost of a slight decrease in detection distance.
+* Two families of circular tags.
+* One family which has a hole in the middle. This could be used for example for drone applications by placing different sized tags inside of each other to allow detection over a wide range of distances.
+
+You can generate your own tag families using our other repo, [AprilTag-Generation](https://github.com/AprilRobotics/apriltag-generation).
 
 
-Upgrading from AprilTag 2
-=========================
-For most use-cases this should be a drop in replacement.
-
-* The options refine_decode, refine_pose, and black_border have been removed.
-* If you have generated your own families, you will need to regenerate the c code for those families. The java code however does not need to be regenerated so this should be quick and easy.
-
-
-
-
-OpenCV Integration
-==================
-
-Note that this library has no external dependencies. Most applications
-will require, at minimum, a method for acquiring images.
-
-See example/opencv_demo.cc for an example of using AprilTag in C++ with OpenCV.
-This example application can be built by executing the following:
-
-    $ cd examples
-    $ make opencv_demo
-
-Image data in a cv::Mat object can be passed to AprilTag without creating
-a deep copy. Simply create an image_u8_t header for the cv::Mat data buffer:
-
-    cv::Mat img;
-
-    image_u8_t img_header = { .width = img.cols,
-        .height = img.rows,
-        .stride = img.cols,
-        .buf = img.data
-    };
-
-Wrappers
-========
-Third-party wrappers of the apriltag code for other languages.
-
-[Python](https://github.com/duckietown/apriltags3-py)
-
-[Matlab](https://github.com/alddiaz/MATLAB_AprilTag3)
+Support
+=======
+Please create an issue on this GitHub for any questions instead of sending a private message. This allows other people with the same question to find your answer.
