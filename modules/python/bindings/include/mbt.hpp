@@ -42,12 +42,12 @@
 
 namespace py = pybind11;
 
-#if defined(ENABLE_VISP_NAMESPACE)
-using namespace VISP_NAMESPACE_NAME;
+void bindings_vpMbGenericTracker(py::class_<VISP_NAMESPACE_ADDRESSING vpMbGenericTracker, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpMbGenericTracker>, VISP_NAMESPACE_ADDRESSING vpMbTracker> &pyMbGenericTracker)
+{
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
 #endif
 
-void bindings_vpMbGenericTracker(py::class_<vpMbGenericTracker, std::shared_ptr<vpMbGenericTracker>, vpMbTracker> &pyMbGenericTracker)
-{
   pyMbGenericTracker.def("track", [](vpMbGenericTracker &self, std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
                                      std::map<std::string, py::array_t<double, py::array::c_style>> &mapOfPointClouds) {
                                        std::map<std::string, unsigned int> mapOfWidths, mapOfHeights;
@@ -74,7 +74,7 @@ void bindings_vpMbGenericTracker(py::class_<vpMbGenericTracker, std::shared_ptr<
                                          mapOfVectorPtrs[p.first] = &(p.second);
                                        }
                                        self.track(mapOfImages, mapOfVectorPtrs, mapOfWidths, mapOfHeights);
-}, R"doc(
+  }, R"doc(
 Perform tracking, with point clouds being represented as numpy arrays
 
 :param mapOfImages: Dictionary mapping from a camera name to a grayscale image

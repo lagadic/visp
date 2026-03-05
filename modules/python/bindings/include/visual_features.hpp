@@ -38,9 +38,6 @@
 
 #include <pybind11/pybind11.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-using namespace VISP_NAMESPACE_NAME;
-#endif
 
 class TrampolineBasicFeature : public VISP_NAMESPACE_ADDRESSING vpBasicFeature
 {

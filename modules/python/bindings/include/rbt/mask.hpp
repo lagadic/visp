@@ -6,9 +6,6 @@
 #include <visp3/core/vpImage.h>
 #include <pybind11/pybind11.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-using namespace VISP_NAMESPACE_NAME;
-#endif
 
 class TrampolineObjectMask : public VISP_NAMESPACE_ADDRESSING vpObjectMask
 {

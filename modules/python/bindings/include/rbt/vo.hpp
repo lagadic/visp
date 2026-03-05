@@ -5,11 +5,7 @@
 #include <visp3/rbt/vpRBVisualOdometry.h>
 #include <pybind11/pybind11.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-using namespace VISP_NAMESPACE_NAME;
-#endif
-
-class TrampolineRBVisualOdometry : public vpRBVisualOdometry
+class TrampolineRBVisualOdometry : public VISP_NAMESPACE_ADDRESSING vpRBVisualOdometry
 {
 public:
   using vpRBVisualOdometry::vpRBVisualOdometry;

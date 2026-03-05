@@ -34,9 +34,6 @@
 #include <visp3/rbt/vpRBFeatureTracker.h>
 #include <pybind11/pybind11.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-using namespace VISP_NAMESPACE_NAME;
-#endif
 
 class TrampolineRBFeatureTracker : public VISP_NAMESPACE_ADDRESSING vpRBFeatureTracker
 {

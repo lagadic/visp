@@ -44,16 +44,16 @@
 
 namespace py = pybind11;
 
-#if defined(ENABLE_VISP_NAMESPACE)
-using namespace VISP_NAMESPACE_NAME;
+void bindings_vpPose(py::class_<VISP_NAMESPACE_ADDRESSING vpPose, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpPose>> &pyPose)
+{
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
 #endif
 
-void bindings_vpPose(py::class_<vpPose, std::shared_ptr<vpPose>> &pyPose)
-{
   pyPose.def("computePose",
    [](vpPose &self, vpPose::vpPoseMethodType method, vpHomogeneousMatrix &cMo) -> bool {
      return self.computePose(method, cMo);
-});
+  });
 
   pyPose.def_static("computePlanarObjectPoseFromRGBD",
    [](const vpImage<float> &depthMap, const std::vector<vpImagePoint> &corners,
