@@ -876,8 +876,6 @@ VISP_OPTION(USE_APRILTAG "Include apriltag support" ON
   VISIBLE_IF TRUE
   VERIFY VISP_HAVE_APRILTAG)
 
-#VP_OPTION(WITH_APRILTAG   ""           ""    "Use AprilTag as built-in library"  "" ON IF (USE_THREADS OR USE_PTHREAD) AND (NOT WINRT))
-#VP_OPTION(WITH_APRILTAG_BIG_FAMILY ""  ""    "Use AprilTag big family (41h12, 48h12, 49h12, 52h13)" "" OFF IF WITH_APRILTAG)
 VP_OPTION(WITH_MINIZ      ""           ""    "Use npz related I/O as built-in functions"   "" ON)
 VP_OPTION(WITH_ATIDAQ     ""           ""    "Use atidaq-c as built-in library"  "" ON IF USE_COMEDI AND NOT WINRT)
 VP_OPTION(WITH_CLIPPER    ""           ""    "Use clipper as built-in library"   "" ON IF USE_OPENCV)
