@@ -208,9 +208,11 @@ TEST_CASE("Apriltag pose estimation test", "[apriltag_pose_estimation_test]")
       FailedTestCase(vpDetectorAprilTag::TAG_STANDARD41h12, vpDetectorAprilTag::LAGRANGE_VIRTUAL_VS, 3),
       FailedTestCase(vpDetectorAprilTag::TAG_STANDARD41h12, vpDetectorAprilTag::LAGRANGE_VIRTUAL_VS, 4),
       FailedTestCase(vpDetectorAprilTag::TAG_CIRCLE21h7, vpDetectorAprilTag::LAGRANGE_VIRTUAL_VS, 3),
+#if defined(VISP_HAVE_APRILTAG_EXTENDED_API)
       FailedTestCase(vpDetectorAprilTag::TAG_CIRCLE49h12, vpDetectorAprilTag::HOMOGRAPHY, 0),
       FailedTestCase(vpDetectorAprilTag::TAG_CIRCLE49h12, vpDetectorAprilTag::HOMOGRAPHY, 1),
       FailedTestCase(vpDetectorAprilTag::TAG_CIRCLE49h12, vpDetectorAprilTag::HOMOGRAPHY, 4),
+#endif
       FailedTestCase(vpDetectorAprilTag::TAG_CIRCLE49h12, vpDetectorAprilTag::LAGRANGE_VIRTUAL_VS, 3) };
 
   vpCameraParameters cam;
