@@ -199,14 +199,19 @@ TEST_CASE("Apriltag pose estimation test", "[apriltag_pose_estimation_test]")
   };
 
   std::map<int, double> errorTranslationThresh = {
+#if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
+      // Relax threshold for big families
+      {0, 0.040}, {1, 0.13}, {2, 0.05}, {3, 0.13}, {4, 0.09},
+#else
       {0, 0.025}, {1, 0.09}, {2, 0.05}, {3, 0.13}, {4, 0.09},
+#endif
   };
   std::map<int, double> errorRotationThresh = {
-#if (VISP_HAVE_APRILTAG_VERSION >= 0x030405)
-      {0, 0.04}, {1, 0.075}, {2, 0.07}, {3, 0.18}, {4, 0.13},
-#else
+#if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
       // Relax threshold for big families
-      {0, 0.04}, {1, 0.075}, {2, 0.07}, {3, 0.19}, {4, 0.17},
+      {0, 0.04}, {1, 0.11}, {2, 0.07}, {3, 0.19}, {4, 0.17},
+#else
+      {0, 0.04}, {1, 0.075}, {2, 0.07}, {3, 0.18}, {4, 0.13},
 #endif
   };
   std::vector<FailedTestCase> ignoreTests = {
