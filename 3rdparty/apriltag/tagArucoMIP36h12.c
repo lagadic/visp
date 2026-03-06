@@ -43,7 +43,7 @@ limitations under the License.
 */
 
 #include <stdlib.h>
-#include "tagAruco_MIP_36h12.h"
+#include "tagArucoMIP36h12.h"
 
 static uint64_t codedata[250] = {
     0x0000000d2a2af057UL,
@@ -297,7 +297,7 @@ static uint64_t codedata[250] = {
     0x0000000713b480ceUL,
     0x00000004d79815adUL,
 };
-apriltag_family_t *tagArucoMIP_36h12_create()
+apriltag_family_t *tagArucoMIP36h12_create()
 {
    apriltag_family_t *tf = calloc(1, sizeof(apriltag_family_t));
    tf->name = strdup("tagArucoMIP_36h12");
@@ -385,7 +385,7 @@ apriltag_family_t *tagArucoMIP_36h12_create()
    return tf;
 }
 
-void tagArucoMIP_36h12_destroy(apriltag_family_t *tf)
+void tagArucoMIP36h12_destroy(apriltag_family_t *tf)
 {
    free(tf->bit_x);
    free(tf->bit_y);

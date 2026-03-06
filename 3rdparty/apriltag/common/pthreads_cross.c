@@ -22,8 +22,7 @@ SOFTWARE.
 
 #include "common/pthreads_cross.h"
 
-//#ifdef _WIN32
-#if defined(_WIN32) && !defined(__MINGW32__)
+#ifdef _WIN32
 
 typedef struct {
     SRWLOCK lock;
@@ -45,10 +44,10 @@ int pthread_create(pthread_t *thread, pthread_attr_t *attr, void *(*start_routin
     if (thread == NULL || start_routine == NULL)
         return 1;
 
-//#pragma GCC diagnostic push
-//#pragma GCC diagnostic ignored "-Wcast-function-type"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wcast-function-type"
     *thread = (HANDLE) CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)start_routine, arg, 0, NULL);
-//#pragma GCC diagnostic pop
+#pragma GCC diagnostic pop
     if (*thread == NULL)
         return 1;
     return 0;
@@ -247,11 +246,11 @@ unsigned int pcthread_get_num_procs()
     return sysinfo.dwNumberOfProcessors;
 }
 
-//#else
+#else
 
-//#include <unistd.h>
-//unsigned int pcthread_get_num_procs()
-//{
-//    return (unsigned int)sysconf(_SC_NPROCESSORS_ONLN);
-//}
+#include <unistd.h>
+unsigned int pcthread_get_num_procs()
+{
+    return (unsigned int)sysconf(_SC_NPROCESSORS_ONLN);
+}
 #endif
