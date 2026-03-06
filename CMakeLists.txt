@@ -874,7 +874,6 @@ VISP_OPTION(BUILD_APRILTAG "Build apriltag from source" VISP_FORCE_3RDPARTY_BUIL
 VISP_OPTION(USE_APRILTAG "Include apriltag support" ON
   VISIBLE_IF TRUE
   VERIFY VISP_HAVE_APRILTAG)
-VISP_OPTION(USE_APRILTAG_BIG_FAMILY "Include apriltag big family (41h12, 48h12, 49h12, 52h13) support" OFF IF USE_APRILTAG)
 
 #VP_OPTION(WITH_APRILTAG   ""           ""    "Use AprilTag as built-in library"  "" ON IF (USE_THREADS OR USE_PTHREAD) AND (NOT WINRT))
 #VP_OPTION(WITH_APRILTAG_BIG_FAMILY ""  ""    "Use AprilTag big family (41h12, 48h12, 49h12, 52h13)" "" OFF IF WITH_APRILTAG)
@@ -1119,6 +1118,15 @@ endif()
 # Add 3rd-party libraries
 #----------------------------------------------------------------------
 include(cmake/VISP3rdParty.cmake)
+
+# Conditional options depending on 3rd parties version
+if(USE_APRILTAG)
+  if (APRILTAG_VERSION VERSION_LESS_EQUAL "3.4.5")
+    VISP_OPTION(USE_APRILTAG_BIG_FAMILY "Include apriltag big family (41h12, 48h12, 49h12, 52h13) support" OFF)
+  else()
+    set(USE_APRILTAG_BIG_FAMILY ON)
+  endif()
+endif()
 
 # --- Java Support ---
 if(BUILD_JAVA)
