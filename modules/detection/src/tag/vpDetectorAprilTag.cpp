@@ -186,6 +186,7 @@ void my_image_u8_destroy(image_u8_t *im)
 
 apriltag_detector_t *my_apriltag_detector_copy(apriltag_detector_t *src)
 {
+#if 0 // This version is not compatible with apriltag system where workerpool_create() is not a public symbol
   apriltag_detector_t *dst = (apriltag_detector_t *)malloc(sizeof(apriltag_detector_t));
   // Shallow copy of all scalar fields
   *dst = *src;
@@ -194,6 +195,27 @@ apriltag_detector_t *my_apriltag_detector_copy(apriltag_detector_t *src)
   dst->tag_families = zarray_create(sizeof(apriltag_family_t *));
   dst->tp = timeprofile_create();
   dst->wp = workerpool_create(src->nthreads);
+#else
+  apriltag_detector_t *dst = apriltag_detector_create();
+
+  dst->nthreads = src->nthreads;
+  dst->quad_decimate = src->quad_decimate;
+  dst->quad_sigma = src->quad_sigma;
+
+  dst->qtp.max_nmaxima = src->qtp.max_nmaxima;
+  dst->qtp.min_cluster_pixels = src->qtp.min_cluster_pixels;
+
+  dst->qtp.max_line_fit_mse = src->qtp.max_line_fit_mse;
+  dst->qtp.cos_critical_rad = src->qtp.cos_critical_rad;
+  dst->qtp.deglitch = src->qtp.deglitch;
+  dst->qtp.min_white_black_diff = src->qtp.min_white_black_diff;
+
+  dst->refine_edges = src->refine_edges;
+  dst->decode_sharpening = src->decode_sharpening;
+  dst->debug = src->debug;
+
+  return dst;
+#endif
 
   return dst;
 }
