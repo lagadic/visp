@@ -54,7 +54,7 @@ if(USE_APRILTAG)
 
     message(STATUS "Found system apriltag: ${APRILTAG_LIBRARIES} "
             "(found version \"${APRILTAG_VERSION}\")")
-  else()
+  elseif(NOT WINRT AND NOT MINGW)
     vp_clear_vars(APRILTAG_MAJOR_VERSION APRILTAG_MINOR_VERSION APRILTAG_PATCH_VERSION APRILTAG_LIBRARIES APRILTAG_INCLUDE_DIRS)
     message(STATUS "Could NOT find apriltag system library. It will be built from sources")
     add_subdirectory("${VISP_SOURCE_DIR}/3rdparty/apriltag")

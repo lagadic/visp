@@ -870,7 +870,8 @@ endif()
 # ----------------------------------------------------------------------------
 # Build-in 3rd parties. Should be after c++ standard potential modification
 # ----------------------------------------------------------------------------
-VISP_OPTION(BUILD_APRILTAG "Build apriltag from source" VISP_FORCE_3RDPARTY_BUILD)
+VISP_OPTION(BUILD_APRILTAG "Build apriltag from source" VISP_FORCE_3RDPARTY_BUILD
+  VISIBLE_IF NOT WINRT AND NOT MINGW)
 VISP_OPTION(USE_APRILTAG "Include apriltag support" ON
   VISIBLE_IF TRUE
   VERIFY VISP_HAVE_APRILTAG)
