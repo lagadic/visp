@@ -22,17 +22,6 @@ vp_list_filterout(lib_srcs common/unionfind.c)  # has no symbols
 vp_list_filterout(lib_srcs common/zhash.c)      # useless
 vp_list_filterout(lib_srcs common/zhash.h)      # useless
 
-if(NOT USE_APRILTAG_BIG_FAMILY)
-  vp_list_filterout(lib_srcs tagCircle49h12.c)
-  vp_list_filterout(lib_hdrs tagCircle49h12.h)
-  vp_list_filterout(lib_srcs tagCustom48h12.c)
-  vp_list_filterout(lib_hdrs tagCustom48h12.h)
-  vp_list_filterout(lib_srcs tagStandard41h12.c)
-  vp_list_filterout(lib_hdrs tagStandard41h12.h)
-  vp_list_filterout(lib_srcs tagStandard52h13.c)
-  vp_list_filterout(lib_hdrs tagStandard52h13.h)
-endif()
-
 if(NOT (WIN32 AND NOT MINGW))
   vp_list_filterout(lib_srcs pthreads_cross.c)
 endif()
