@@ -466,7 +466,7 @@ chessboard-03.jpg undistorted image, line 5 fitting error: 0.08680507551
 chessboard-03.jpg undistorted image, line 6 fitting error: 0.06309999164
 \endcode
 
-\subsubsection calibration_tools_poses 4.4.4. Camera lens distortion
+\subsubsection calibration_tools_lens_distortion 4.4.4. Camera lens distortion
 A pseudo "distortion displacement map" is also displayed:
 
 \image html img-chessboard-distortion-displacement-map.jpg
