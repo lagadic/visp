@@ -49,10 +49,19 @@ if(USE_DMTX)
   list(APPEND opt_libs ${DMTX_LIBRARIES})
 endif()
 
-if(WITH_APRILTAG)
-  # April Tag is private
-  include_directories(SYSTEM ${APRILTAG_INCLUDE_DIRS})
-  set(opt_libs_private ${APRILTAG_LIBRARIES})
+if(USE_APRILTAG)
+  # Apriltag is private
+  if(BUILD_APRILTAG)
+    include_directories(SYSTEM ${APRILTAG_INCLUDE_DIRS})
+    set(opt_libs_private ${APRILTAG_LIBRARIES})
+  else()
+    set(_inc_dirs "")
+    set(_lnk_libs "")
+    vp_get_interface_include_dirs(APRILTAG_LIBRARIES _inc_dirs)
+    vp_get_interface_link_libraries(APRILTAG_LIBRARIES _lnk_libs)
+    list(APPEND opt_system_incs ${_inc_dirs})
+    list(APPEND opt_libs ${_lnk_libs})
+  endif()
 endif()
 
 # TensorRT
