@@ -40,7 +40,8 @@
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_HIGHGUI) &&  defined(HAVE_OPENCV_IMGPROC) && defined(VISP_HAVE_PUGIXML) \
-  && (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D)))
+  && (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D))) \
+  && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 
 #include <map>
 
@@ -131,10 +132,6 @@ int main(int argc, const char *argv[])
 {
 #if defined(ENABLE_VISP_NAMESPACE)
   using namespace VISP_NAMESPACE_NAME;
-#endif
-
-#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-  vpDisplay *d = nullptr;
 #endif
 
   try {
@@ -242,11 +239,7 @@ int main(int argc, const char *argv[])
       return EXIT_FAILURE;
     }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     std::shared_ptr<vpDisplay> d = vpDisplayFactory::createDisplay(I, -1, -1, "", vpDisplay::SCALE_AUTO);
-#else
-    d = vpDisplayFactory::allocateDisplay(I, -1, -1, "", vpDisplay::SCALE_AUTO);
-#endif
 
     vpCameraParameters cam_init;
     bool init_from_xml = false;
@@ -254,11 +247,6 @@ int main(int argc, const char *argv[])
       if (!vpIoTools::checkFilename(opt_init_camera_xml_file)) {
         tee << "Input camera file \"" << opt_init_camera_xml_file << "\" doesn't exist!" << "\n";
         tee << "Modify [--init-from-xml <camera-init.xml>] option value" << "\n";
-#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-        if (display != nullptr) {
-          delete display;
-        }
-#endif
         return EXIT_FAILURE;
       }
       init_from_xml = true;
@@ -271,11 +259,6 @@ int main(int argc, const char *argv[])
         tee << "Unable to find camera with name \"" << opt_camera_name
           << "\" in file: " << opt_init_camera_xml_file << "\n";
         tee << "Modify [--camera-name <name>] option value" << "\n";
-#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-        if (display != nullptr) {
-          delete display;
-        }
-#endif
         return EXIT_FAILURE;
       }
     }
@@ -407,11 +390,6 @@ int main(int argc, const char *argv[])
     // Calibrate by a non linear method based on virtual visual servoing
     if (calibrator.empty()) {
       tee << "Unable to calibrate. Image processing failed !" << "\n";
-#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-      if (display != nullptr) {
-        delete display;
-      }
-#endif
       return EXIT_FAILURE;
     }
 
@@ -573,11 +551,6 @@ int main(int argc, const char *argv[])
     }
     else {
       tee << "Calibration without distortion failed." << "\n";
-#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-      if (display != nullptr) {
-        delete display;
-      }
-#endif
       return EXIT_FAILURE;
     }
     vpCameraParameters cam_without_dist = cam;
@@ -910,11 +883,6 @@ int main(int argc, const char *argv[])
     }
     else {
       tee << "Calibration with distortion failed." << "\n";
-#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-      if (display != nullptr) {
-        delete display;
-      }
-#endif
       return EXIT_FAILURE;
     }
 
@@ -928,20 +896,10 @@ int main(int argc, const char *argv[])
 
     tee << "\nCamera calibration succeeded. Results are saved in " << "\"" << opt_output_file_name
       << "\". Total time: " << minutes << " min " << seconds << " sec " << milli << " ms." << "\n";
-#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-    if (display != nullptr) {
-      delete display;
-    }
-#endif
     return EXIT_SUCCESS;
   }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-    if (display != nullptr) {
-      delete display;
-    }
-#endif
     return EXIT_FAILURE;
   }
 }
@@ -961,7 +919,10 @@ int main()
   std::cout << "This example requires OpenCV 3d module." << std::endl;
 #endif
 #if !defined(VISP_HAVE_PUGIXML)
-  std::cout << "pugixml built-in 3rdparty is requested to run the calibration." << std::endl;
+  std::cout << "pugixml built-in 3rdparty is required to run the calibration." << std::endl;
+#endif
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  std::cout << "Compiler with C++11 support is required." << std::endl;
 #endif
   return EXIT_SUCCESS;
 }
