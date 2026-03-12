@@ -475,7 +475,24 @@ The effect of the lens distortion is visible with hot colors corresponding to mu
 compared to cold colors (typically in the center of the image). With barrel distortion, this effect tends to "push" the
 pixels at the extremities to the image toward the center of the image.
 
-\subsubsection calibration_tools_poses 4.4.5. Camera poses
+\subsubsection calibration_tools_reproj_graph 4.4.5. Reprojection errors graph
+The reprojection errors in the uv-coordinates is also displayed for the calibration without (in red) and with distortion (in blue) support:
+
+\image html img-reproj-error-graph.jpg
+
+For each calibration image, the same graph is also displayed, with the current reprojection errors visible in green:
+
+\image html img-reproj-err-graph-chessboard-05.jpg
+
+This should help to analyse if a calibration image is appropriated or if it needs to be discarded, in addition to the total reprojection error metric.
+
+\subsubsection calibration_tools_log 4.4.6. Calibration results log
+You can use the following command line arguments to:
+- `--save` to automatically create a folder with the current datetime with the result images saved on disk, plus a log text file containing the terminal output
+- `--save-jpg` to save the images in jpeg format instead of png one
+- `--help` flag will print a short description of the different command line flags
+
+\subsubsection calibration_tools_poses 4.4.7. Camera poses
 There is `camera_calibration_show_extrinsics.py` script that allows to display camera poses. Prior to use that script,
 you need to install `scipy`:
 \code{.sh}
