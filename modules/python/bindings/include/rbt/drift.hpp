@@ -6,14 +6,14 @@
 #include <pybind11/pybind11.h>
 
 
-class TrampolineRBDriftDetector : public vpRBDriftDetector
+class TrampolineRBDriftDetector : public VISP_NAMESPACE_ADDRESSING vpRBDriftDetector
 {
 public:
   using vpRBDriftDetector::vpRBDriftDetector;
 
   TrampolineRBDriftDetector() : vpRBDriftDetector() { }
 
-  virtual void update(const vpRBFeatureTrackerInput &previousFrame, const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cTo, const vpHomogeneousMatrix &cprevTo) VP_OVERRIDE
+  virtual void update(const VISP_NAMESPACE_ADDRESSING vpRBFeatureTrackerInput &previousFrame, const VISP_NAMESPACE_ADDRESSING vpRBFeatureTrackerInput &frame, const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &cTo, const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &cprevTo) VP_OVERRIDE
   {
     pybind11::gil_scoped_acquire gil;  // Acquire the GIL while in this scope.
     // Try to look up the overridden method on the Python side.
@@ -24,7 +24,7 @@ public:
     }
   }
 
-  virtual double score(const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cTo) VP_OVERRIDE
+  virtual double score(const VISP_NAMESPACE_ADDRESSING vpRBFeatureTrackerInput &frame, const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &cTo) VP_OVERRIDE
   {
     pybind11::gil_scoped_acquire gil;  // Acquire the GIL while in this scope.
     // Try to look up the overridden method on the Python side.
@@ -63,11 +63,11 @@ public:
       );
   }
 
-  virtual void display(const vpImage<vpRGBa> &I) VP_OVERRIDE
+  virtual void display(const VISP_NAMESPACE_ADDRESSING vpImage<VISP_NAMESPACE_ADDRESSING vpRGBa> &I) VP_OVERRIDE
   {
     PYBIND11_OVERRIDE_PURE(
       void,                   /* Return type */
-      vpRBDriftDetector,      /* Parent class */
+      VISP_NAMESPACE_ADDRESSING vpRBDriftDetector,      /* Parent class */
       display,                /* Name of function in C++ (must match Python name) */
       I
     );

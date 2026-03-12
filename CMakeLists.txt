@@ -540,7 +540,7 @@ VP_OPTION(ENABLE_TEST_WITHOUT_DISPLAY      "" "" "Don't use display feature when
 VP_OPTION(ENABLE_FULL_DOC      "" "" "Build doc with internal classes that are by default not part of the doc" "" OFF)
 
 # Allow introduction of "visp" namespace. By default disabled to keep compat with previous versions
-VP_OPTION(ENABLE_VISP_NAMESPACE "" "" "Enable visp namespace" "" OFF)
+VP_OPTION(ENABLE_VISP_NAMESPACE "" "" "Enable visp namespace" "" ON)
 # Allow introduction of "explicit" keyword. By default disabled to keep compat with previous versions
 VP_OPTION(ENABLE_EXPLICIT_KEYWORD "" "" "Enable c++ explicit keyword" "" OFF)
 # Enable the vpImageTools::warp() methods

@@ -69,8 +69,9 @@ public:
   static std::vector<std::pair<unsigned int, unsigned int> > run(std::vector<std::vector<Type> > costs);
 
 private:
-  enum ZERO_T : unsigned int;
-  enum STEP_T : unsigned int;
+  enum ZERO_T : unsigned int { NA = 0, STARRED = 1, PRIMED = 2 };
+
+  enum STEP_T : unsigned int { ENTRY = 0, ONE = 1, TWO = 2, THREE = 3, FOUR = 4, FIVE = 5, SIX = 6, DONE };
 
   // Init
   template <typename Type> static void padCostMatrix(std::vector<std::vector<Type> > &costs);
@@ -115,10 +116,6 @@ private:
 private:
   static constexpr auto ZeroEpsilon { 1e-6 };
 };
-
-enum vpMunkres::ZERO_T : unsigned int { NA = 0, STARRED = 1, PRIMED = 2 };
-
-enum vpMunkres::STEP_T : unsigned int { ENTRY = 0, ONE = 1, TWO = 2, THREE = 3, FOUR = 4, FIVE = 5, SIX = 6, DONE };
 
 /*!
  * Ensure that the cost matrix is square by the addition of dummy rows/columns.
