@@ -141,6 +141,7 @@ $ ./tutorial-mb-generic-tracker-apriltag-webcam --tag-n-threads 2
 - The AprilTag default tag family is 36h11. It is possible to use other tags specifying the tag id. Supported family ids
   are the following:
   - 0: TAG_36h11
+  - 1: TAG_36h10
   - 2: TAG_25h9
   - 3: TAG_16h5
   - 4: TAG_CIRCLE21h7
@@ -248,6 +249,7 @@ $ ./tutorial-mb-generic-tracker-apriltag-rs2 --tag-n-threads 2
 - The AprilTag default tag family is 36h11. It is possible to use other tags specifying the tag id. Supported family ids
   are the following:
   - 0: TAG_36h11
+  - 1: TAG_36h10
   - 1: TAG_25h9
   - 2: TAG_16h5
   - 3: TAG_CIRCLE21h7
