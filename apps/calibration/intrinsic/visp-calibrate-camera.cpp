@@ -287,8 +287,9 @@ int main(int argc, const char *argv[])
 
     std::vector<CalibInfo> calib_info;
     std::multimap<double, vpCameraParameters, std::less<double> > map_cam_sorted; // Sorted by residual
-
     map_cam_sorted.insert(std::make_pair(1000, cam_init));
+    std::vector<vpPoint> calib_points_all;
+    calib_points_all.reserve(model.size()*20);
 
     double start_time = vpTime::measureTimeMs();
     do {
@@ -332,6 +333,7 @@ int main(int argc, const char *argv[])
           calib_points.push_back(vpPoint(model[i].get_oX(), model[i].get_oY(), model[i].get_oZ()));
           calib_points.back().set_x(data[i].get_u());
           calib_points.back().set_y(data[i].get_v());
+          calib_points_all.push_back(calib_points.back());
         }
 
         vpHomogeneousMatrix cMo;
@@ -362,7 +364,7 @@ int main(int argc, const char *argv[])
 
       if (found)
         vpDisplay::displayText(I, 15 * vpDisplay::getDownScalingFactor(I), 15 * vpDisplay::getDownScalingFactor(I),
-                               "Image processing succeed", vpColor::green);
+                               "Image processing succeeded", vpColor::green);
       else
         vpDisplay::displayText(I, 15 * vpDisplay::getDownScalingFactor(I), 15 * vpDisplay::getDownScalingFactor(I),
                                "Image processing failed", vpColor::red);
@@ -553,8 +555,6 @@ int main(int argc, const char *argv[])
       tee << "Calibration without distortion failed." << "\n";
       return EXIT_FAILURE;
     }
-    vpCameraParameters cam_without_dist = cam;
-    std::vector<vpCalibration> calibrator_without_dist = calibrator;
 
     tee << "\n\nCalibration with distortion in progress on " << calibrator.size() << " images..." << "\n";
     if (vpCalibration::computeCalibrationMulti(vpCalibration::CALIB_VIRTUAL_VS_DIST, calibrator, cam, error, false) ==
@@ -848,8 +848,119 @@ int main(int argc, const char *argv[])
         }
       }
 
-      vpXmlParserCamera xml;
+      d->close(I_dist_map);
 
+      // Display reprojection error graph for all the images
+      unsigned int disp_size = 600;
+      vpImage<unsigned char> I_err_imPt(disp_size, 2*disp_size);
+      std::shared_ptr<vpDisplay> d2 = vpDisplayFactory::createDisplay(I_err_imPt, 0, 0,
+        "Reprojection error in the image plane for all the images");
+      vpDisplay::display(I_err_imPt);
+
+      // no distortion
+      std::vector<std::vector<vpImagePoint>> err_imPt_imgs_no_dist;
+      err_imPt_imgs_no_dist.reserve(calibrator.size());
+      std::vector<vpImagePoint> err_imPt_no_dist;
+      err_imPt_no_dist.reserve(calib_points_all.size());
+      double max_scale_uv_no_dist = getProjectionErrorUV(calibrator, calib_info, err_imPt_imgs_no_dist,
+        err_imPt_no_dist, false);
+      {
+        bool with_dist = false;
+        displayProjectionErrorUV(I_err_imPt, err_imPt_no_dist, max_scale_uv_no_dist, with_dist,
+          vpColor::red, 0, vpColor::red);
+      }
+      // distortion
+      std::vector<std::vector<vpImagePoint>> err_imPt_imgs_dist;
+      err_imPt_imgs_dist.reserve(calibrator.size());
+      std::vector<vpImagePoint> err_imPt_dist;
+      err_imPt_dist.reserve(calib_points_all.size());
+      double max_scale_uv_dist = getProjectionErrorUV(calibrator, calib_info, err_imPt_imgs_dist, err_imPt_dist, true);
+      {
+        bool with_dist = true;
+        displayProjectionErrorUV(I_err_imPt, err_imPt_dist, max_scale_uv_dist, with_dist,
+          vpColor::blue, 0, vpColor::blue);
+      }
+
+      if (s.tempo > 10.f) {
+        vpDisplay::displayText(I_err_imPt, I_err_imPt.getHeight() - 20 * vpDisplay::getDownScalingFactor(I_err_imPt),
+                              15 * vpDisplay::getDownScalingFactor(I_err_imPt), "Click to continue...", vpColor::red);
+        vpDisplay::flush(I_err_imPt);
+        vpDisplay::getClick(I_err_imPt);
+      }
+      else {
+        vpDisplay::flush(I_err_imPt);
+        vpTime::wait(s.tempo * 1000);
+      }
+
+      if (opt_save_results) {
+        vpDisplay::getImage(I_err_imPt, I_save_results);
+        std::ostringstream oss;
+        oss << save_results_folder << "/reprojection_error_graph" << opt_img_ext;
+        vpImageIo::write(I_save_results, oss.str());
+      }
+
+      // Display reprojection error graph for each images
+      std::vector<vpImage<vpRGBa>> list_img_reproj_graph;
+      for (size_t i = 0; i < err_imPt_imgs_no_dist.size(); i++) {
+        std::ostringstream oss_title;
+        oss_title << "Reprojection error in the image plane for: " << vpIoTools::getNameWE(calib_info[i].m_frame_name);
+        d2->setTitle(oss_title.str());
+        vpDisplay::display(I_err_imPt);
+
+        // no distortion
+        displayProjectionErrorUV(I_err_imPt, err_imPt_no_dist, max_scale_uv_no_dist, false,
+          vpColor::red, 0, vpColor::red);
+        displayProjectionErrorUV(I_err_imPt, err_imPt_imgs_no_dist[i], max_scale_uv_no_dist, false,
+          vpColor::green, 35, vpColor::green);
+        // distortion
+        displayProjectionErrorUV(I_err_imPt, err_imPt_dist, max_scale_uv_dist, true,
+          vpColor::blue, 0, vpColor::blue);
+        displayProjectionErrorUV(I_err_imPt, err_imPt_imgs_dist[i], max_scale_uv_dist, true,
+          vpColor::green, 35, vpColor::green);
+
+        oss_title.str("");
+        oss_title << vpIoTools::getNameWE(calib_info[i].m_frame_name) << " without / with dist";
+        vpDisplay::displayText(I_err_imPt, 20 * vpDisplay::getDownScalingFactor(I_err_imPt),
+                              15 * vpDisplay::getDownScalingFactor(I_err_imPt),
+                              oss_title.str(), vpColor::white);
+
+        if (s.tempo > 10.f) {
+          vpDisplay::displayText(I_err_imPt, I_err_imPt.getHeight() - 20 * vpDisplay::getDownScalingFactor(I_err_imPt),
+                                15 * vpDisplay::getDownScalingFactor(I_err_imPt), "Click to continue...", vpColor::red);
+          vpDisplay::flush(I_err_imPt);
+          vpDisplay::getClick(I_err_imPt);
+        }
+        else {
+          vpDisplay::flush(I_err_imPt);
+          vpTime::wait(s.tempo * 1000);
+        }
+
+        if (opt_save_results) {
+          vpDisplay::getImage(I_err_imPt, I_save_results);
+          list_img_reproj_graph.push_back(I_save_results);
+
+          std::ostringstream oss;
+          oss << save_results_folder << "/reproj_err_graph_" << vpIoTools::getNameWE(calib_info[i].m_frame_name)
+            << opt_img_ext;
+          vpImageIo::write(I_save_results, oss.str());
+        }
+      }
+
+      if (opt_save_results) {
+        // Save mosaic images
+        std::ostringstream oss;
+        std::vector<vpImage<vpRGBa>> mosaics;
+        createMosaic(list_img_reproj_graph, mosaics, 4, 3);
+        for (size_t i = 0; i < mosaics.size(); i++) {
+          oss.str("");
+          oss << save_results_folder << "/mosaics_reproj_err_graph_%04d" << opt_img_ext;
+          char name[FILENAME_MAX];
+          snprintf(name, FILENAME_MAX, oss.str().c_str(), i);
+          vpImageIo::write(mosaics[i], name);
+        }
+      }
+
+      vpXmlParserCamera xml;
       // Camera poses
       ss_additional_info << "<camera_poses>";
       for (size_t i = 0; i < calibrator.size(); i++) {
@@ -864,10 +975,10 @@ int main(int argc, const char *argv[])
 
       if (xml.save(cam, opt_output_file_name.c_str(), opt_camera_name, I.getWidth(), I.getHeight(),
                    ss_additional_info.str()) == vpXmlParserCamera::SEQUENCE_OK)
-        tee << "Camera parameters without distortion successfully saved in \"" << opt_output_file_name << "\""
+        tee << "Camera parameters with distortion successfully saved in \"" << opt_output_file_name << "\""
         << "\n";
       else {
-        tee << "Failed to save the camera parameters without distortion in \"" << opt_output_file_name << "\""
+        tee << "Failed to save the camera parameters with distortion in \"" << opt_output_file_name << "\""
           << "\n";
         tee << "A file with the same name exists. Remove it to be able "
           "to save the parameters..."
@@ -877,9 +988,10 @@ int main(int argc, const char *argv[])
       tee << "Estimated pose using vpPoseVector format: [tx ty tz tux tuy tuz] with translation in meter and "
         "rotation in rad"
         << "\n";
-      for (unsigned int i = 0; i < calibrator.size(); i++)
+      for (size_t i = 0; i < calibrator.size(); i++) {
         tee << "Estimated pose on input data extracted from " << calib_info[i].m_frame_name << ": "
-        << vpPoseVector(calibrator[i].cMo_dist).t() << "\n";
+          << vpPoseVector(calibrator[i].cMo_dist).t() << "\n";
+      }
     }
     else {
       tee << "Calibration with distortion failed." << "\n";

@@ -284,9 +284,9 @@ void computeDistortionDisplacementMap(const vpCameraParameters &cam_dist, vpImag
   colormap.convert(I_gray, I_color);
 }
 
-void createMosaic(const std::vector<vpImage<vpRGBa>> &list_imgs, std::vector<vpImage<vpRGBa>> &list_mosaics)
+void createMosaic(const std::vector<vpImage<vpRGBa>> &list_imgs, std::vector<vpImage<vpRGBa>> &list_mosaics,
+  unsigned int nb_rows = 4, unsigned int nb_cols = 6)
 {
-  const unsigned int nb_rows = 4, nb_cols = 6;
   const unsigned int nb_totals = nb_rows*nb_cols;
   if (list_imgs.empty()) {
     return;
@@ -312,6 +312,124 @@ void createMosaic(const std::vector<vpImage<vpRGBa>> &list_imgs, std::vector<vpI
 
     list_mosaics.push_back(mosaic);
   }
+}
+
+double getProjectionErrorUV(const std::vector<vpCalibration> &calibrator, const std::vector<CalibInfo> &calib_info,
+    std::vector<std::vector<vpImagePoint>> &err_imPt_imgs, std::vector<vpImagePoint> &err_imPt, bool with_dist)
+{
+  double max_scale_uv = -1e6;
+
+  for (size_t i = 0; i < calibrator.size(); i++) {
+    const vpCalibration &calib = calibrator[i];
+    const CalibInfo &calib_info_cur = calib_info[i];
+    std::vector<vpImagePoint> err_imPt_per_img;
+
+    for (size_t j = 0; j < calib_info_cur.m_points.size(); j++) {
+      vpPoint pt_3d = calib_info_cur.m_points[j];
+      vpImagePoint pt_proj;
+      if (with_dist) {
+        pt_3d.project(calib.cMo_dist);
+        vpMeterPixelConversion::convertPoint(calib.cam_dist, pt_3d.get_x(), pt_3d.get_y(), pt_proj);
+      }
+      else {
+        pt_3d.project(calib.cMo);
+        vpMeterPixelConversion::convertPoint(calib.cam, pt_3d.get_x(), pt_3d.get_y(), pt_proj);
+      }
+      err_imPt_per_img.push_back(calib_info_cur.m_imPts[j] - pt_proj);
+      err_imPt.push_back(calib_info_cur.m_imPts[j] - pt_proj);
+
+      double err_u = std::fabs(err_imPt_per_img.back().get_u());
+      double err_v = std::fabs(err_imPt_per_img.back().get_v());
+      max_scale_uv = err_u > max_scale_uv ? err_u : max_scale_uv;
+      max_scale_uv = err_v > max_scale_uv ? err_v : max_scale_uv;
+    }
+    err_imPt_imgs.push_back(err_imPt_per_img);
+  }
+
+  return max_scale_uv;
+}
+
+void displayProjectionErrorUV(const vpImage<unsigned char> &I_err_imPt, const std::vector<vpImagePoint> &err_imPt,
+  double max_scale_uv, bool with_dist, const vpColor &color, unsigned int offset_text, const vpColor &color_text)
+{
+  unsigned int disp_size = 600, offset = 50;
+  unsigned int graph_size = disp_size - offset;
+  unsigned int tick_size = 10;
+  unsigned int graph_offset = with_dist ? disp_size : 0;
+
+  // axis arrows
+  // left
+  vpDisplay::displayArrow(I_err_imPt, vpImagePoint(disp_size/2, graph_offset+disp_size/2),
+    vpImagePoint(disp_size/2, graph_offset+25), vpColor::white, 2);
+  // right
+  vpDisplay::displayArrow(I_err_imPt, vpImagePoint(disp_size/2, graph_offset+disp_size/2),
+    vpImagePoint(disp_size/2, graph_offset+disp_size-25), vpColor::white, 2);
+  // up
+  vpDisplay::displayArrow(I_err_imPt, vpImagePoint(disp_size/2, graph_offset+disp_size/2),
+    vpImagePoint(25, graph_offset+disp_size/2), vpColor::white, 2);
+  // down
+  vpDisplay::displayArrow(I_err_imPt, vpImagePoint(disp_size/2, graph_offset+disp_size/2),
+    vpImagePoint(disp_size-25, graph_offset+disp_size/2), vpColor::white, 2);
+
+  // outermost tick
+  // left
+  vpDisplay::displayLine(I_err_imPt, vpImagePoint(disp_size/2-tick_size, graph_offset+offset),
+    vpImagePoint(disp_size/2+tick_size, graph_offset+offset), vpColor::white);
+  // right
+  vpDisplay::displayLine(I_err_imPt, vpImagePoint(disp_size/2-tick_size, graph_offset+disp_size-offset),
+    vpImagePoint(disp_size/2+tick_size, graph_offset+disp_size-offset), vpColor::white);
+  // up
+  vpDisplay::displayLine(I_err_imPt, vpImagePoint(offset, graph_offset+disp_size/2-tick_size),
+    vpImagePoint(offset, graph_offset+disp_size/2+tick_size), vpColor::white);
+  // down
+  vpDisplay::displayLine(I_err_imPt, vpImagePoint(disp_size-offset, graph_offset+disp_size/2-tick_size),
+    vpImagePoint(disp_size-offset, graph_offset+disp_size/2+tick_size), vpColor::white);
+  // label
+  std::ostringstream oss_max;
+  oss_max << std::fixed << std::setprecision(2) << max_scale_uv << " px";
+  std::string max_val = oss_max.str();
+  vpDisplay::displayText(I_err_imPt, vpImagePoint(disp_size/2 + 30, graph_offset+disp_size-50), max_val, vpColor::white);
+
+  // half tick
+  unsigned int half_tick_pos = (disp_size/2-offset)/2;
+  // left
+  vpDisplay::displayLine(I_err_imPt, vpImagePoint(disp_size/2-tick_size, graph_offset+offset+half_tick_pos),
+    vpImagePoint(disp_size/2+tick_size, graph_offset+offset+half_tick_pos), vpColor::white);
+  // right
+  vpDisplay::displayLine(I_err_imPt, vpImagePoint(disp_size/2-tick_size, graph_offset+disp_size/2+half_tick_pos),
+    vpImagePoint(disp_size/2+tick_size, graph_offset+disp_size/2+half_tick_pos), vpColor::white);
+  // up
+  vpDisplay::displayLine(I_err_imPt, vpImagePoint(offset+half_tick_pos, graph_offset+disp_size/2-tick_size),
+    vpImagePoint(offset+half_tick_pos, graph_offset+disp_size/2+tick_size), vpColor::white);
+  // down
+  vpDisplay::displayLine(I_err_imPt, vpImagePoint(disp_size/2+half_tick_pos, graph_offset+disp_size/2-tick_size),
+    vpImagePoint(disp_size/2+half_tick_pos, graph_offset+disp_size/2+tick_size), vpColor::white);
+
+  std::vector<double> u_vec, v_vec;
+  u_vec.reserve(err_imPt.size());
+  v_vec.reserve(err_imPt.size());
+
+  double disp_scale_imPt = graph_size / (2*max_scale_uv);
+  for (size_t i = 0; i < err_imPt.size(); i++) {
+    vpImagePoint display_imPt(I_err_imPt.getHeight()/2.0 + disp_scale_imPt*err_imPt[i].get_i(),
+      graph_offset + I_err_imPt.getWidth()/4.0 + disp_scale_imPt*err_imPt[i].get_j());
+    vpDisplay::displayCross(I_err_imPt, display_imPt, 8, color);
+
+    u_vec.push_back(err_imPt[i].get_j());
+    v_vec.push_back(err_imPt[i].get_v());
+  }
+
+  double u_err_mean = vpMath::getMean(u_vec), u_err_med = vpMath::getMedian(u_vec), u_err_std = vpMath::getStdev(u_vec);
+  double v_err_mean = vpMath::getMean(v_vec), v_err_med = vpMath::getMedian(v_vec), v_err_std = vpMath::getStdev(v_vec);
+
+  std::ostringstream oss;
+  oss << std::fixed << std::setprecision(3) << "u error: " << u_err_mean << " (mean) " << u_err_med
+    << " (median) " << u_err_std << " (std)";
+  vpDisplay::displayText(I_err_imPt, 40+offset_text, graph_offset+20, oss.str(), color_text);
+  oss.str("");
+  oss << std::fixed << std::setprecision(3) << "v error: " << v_err_mean << " (mean) " << v_err_med
+    << " (median) " << v_err_std << " (std)";
+  vpDisplay::displayText(I_err_imPt, 55+offset_text, graph_offset+20, oss.str(), color_text);
 }
 
 } // namespace calib_helper
