@@ -66,7 +66,7 @@ public class ApriltagDetection extends JFrame {
     private VpDetectorAprilTag detector;
     private BufferedImage canvas;
     private VpCameraParameters cam = new VpCameraParameters(615.1674805, 615.1675415, 312.1889954, 243.4373779);
-    private static String[] tagFamilyNames = {"TAG_36h11", "TAG_25h9", "TAG_16h5", "TAG_CIRCLE21h7",
+    private static String[] tagFamilyNames = {"TAG_36h11", "TAG_36h10", "TAG_25h9", "TAG_16h5", "TAG_CIRCLE21h7",
             "TAG_CIRCLE49h12", "TAG_CUSTOM48h12", "TAG_STANDARD41h12", "TAG_STANDARD52h13"};
     private static int[] tagFamilies = {0, 3, 5, 6, 7, 8, 9, 10};
     // Note that HOMOGRAPHY_* pose methods are only available with apriltag buidin or libapriltag >= 3.4.6)
