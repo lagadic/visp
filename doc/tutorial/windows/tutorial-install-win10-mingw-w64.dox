@@ -381,11 +381,11 @@ We give hereafter the two ways to get this data set:
 \subsection install_win10_mingw_dataset_release 5.1. Get data set release
 
 - Download the latest dataset release from https://visp.inria.fr/download and uncompress it in your workspace
-  `%%VISP_WS%`. At the time this tutorial was written, the latest release was `visp-images-3.73zip`.
+  `%%VISP_WS%`. At the time this tutorial was written, the latest release was `visp-images-3.7.3.zip`.
 \image html  img-win-visp-images-git.jpg
 - Once downloaded, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples
 and tests to detect automatically the location of the requested data. In our case, this variable should
-be set to `%%VISP_WS%\visp-images-3.7.3. Open a `cmd` Command Prompt and run
+be set to `%%VISP_WS%\visp-images-3.7.3`. Open a `cmd` Command Prompt and run
 \code{.sh}
 C:\\> setx VISP_INPUT_IMAGE_PATH %VISP_WS%\visp-images-3.7.3
 C:\\> exit
