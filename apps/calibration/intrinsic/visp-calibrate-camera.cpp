@@ -851,7 +851,7 @@ int main(int argc, const char *argv[])
       d->close(I_dist_map);
 
       // Display reprojection error graph for all the images
-      unsigned int disp_size = 600;
+      const unsigned int disp_size = 650;
       vpImage<unsigned char> I_err_imPt(disp_size, 2*disp_size);
       std::shared_ptr<vpDisplay> d2 = vpDisplayFactory::createDisplay(I_err_imPt, 0, 0,
         "Reprojection error in the image plane for all the images");
@@ -866,8 +866,8 @@ int main(int argc, const char *argv[])
         err_imPt_no_dist, false);
       {
         bool with_dist = false;
-        displayProjectionErrorUV(I_err_imPt, err_imPt_no_dist, max_scale_uv_no_dist, with_dist,
-          vpColor::red, 0, vpColor::red);
+        displayProjectionErrorUV(I_err_imPt, err_imPt_no_dist, disp_size, max_scale_uv_no_dist, with_dist,
+          vpColor::red, 20, vpColor::red);
       }
       // distortion
       std::vector<std::vector<vpImagePoint>> err_imPt_imgs_dist;
@@ -877,8 +877,8 @@ int main(int argc, const char *argv[])
       double max_scale_uv_dist = getProjectionErrorUV(calibrator, calib_info, err_imPt_imgs_dist, err_imPt_dist, true);
       {
         bool with_dist = true;
-        displayProjectionErrorUV(I_err_imPt, err_imPt_dist, max_scale_uv_dist, with_dist,
-          vpColor::blue, 0, vpColor::blue);
+        displayProjectionErrorUV(I_err_imPt, err_imPt_dist, disp_size, max_scale_uv_dist, with_dist,
+          vpColor::blue, 20, vpColor::blue);
       }
 
       if (s.tempo > 10.f) {
@@ -908,15 +908,15 @@ int main(int argc, const char *argv[])
         vpDisplay::display(I_err_imPt);
 
         // no distortion
-        displayProjectionErrorUV(I_err_imPt, err_imPt_no_dist, max_scale_uv_no_dist, false,
-          vpColor::red, 0, vpColor::red);
-        displayProjectionErrorUV(I_err_imPt, err_imPt_imgs_no_dist[i], max_scale_uv_no_dist, false,
-          vpColor::green, 35, vpColor::green);
+        displayProjectionErrorUV(I_err_imPt, err_imPt_no_dist, disp_size, max_scale_uv_no_dist, false,
+          vpColor::red, 40, vpColor::red);
+        displayProjectionErrorUV(I_err_imPt, err_imPt_imgs_no_dist[i], disp_size, max_scale_uv_no_dist, false,
+          vpColor::green, disp_size-60, vpColor::green);
         // distortion
-        displayProjectionErrorUV(I_err_imPt, err_imPt_dist, max_scale_uv_dist, true,
-          vpColor::blue, 0, vpColor::blue);
-        displayProjectionErrorUV(I_err_imPt, err_imPt_imgs_dist[i], max_scale_uv_dist, true,
-          vpColor::green, 35, vpColor::green);
+        displayProjectionErrorUV(I_err_imPt, err_imPt_dist, disp_size, max_scale_uv_dist, true,
+          vpColor::blue, 40, vpColor::blue);
+        displayProjectionErrorUV(I_err_imPt, err_imPt_imgs_dist[i], disp_size, max_scale_uv_dist, true,
+          vpColor::green, disp_size-60, vpColor::green);
 
         oss_title.str("");
         oss_title << vpIoTools::getNameWE(calib_info[i].m_frame_name) << " without / with dist";
