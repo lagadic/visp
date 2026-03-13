@@ -30,7 +30,6 @@
  */
 
 #include <iostream>
-#include <memory>
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMath.h>
@@ -52,14 +51,9 @@ int main(int, const char **)
 {
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
   std::cout << "Compiler with C++11 support is required." << std::endl;
+#else
+  std::cout << "(VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)" << std::endl;
 #endif
-
-  const int val = 5;
-  std::unique_ptr<int> ptr(new int(val));
-  std::cout << "ptr=" << *ptr << std::endl;
-
-  std::cout << "C++11 code in vpMath::isInf())" << std::endl;
-  vpMath::isInf(10.0);
 
   return EXIT_SUCCESS;
 }

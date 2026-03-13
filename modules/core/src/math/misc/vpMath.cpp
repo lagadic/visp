@@ -43,7 +43,6 @@
 #include <stdint.h>
 #include <cassert>
 #include <ctype.h>
-#include <memory>
 
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpMath.h>
@@ -151,11 +150,6 @@ bool vpMath::isNaN(float value)
  */
 bool vpMath::isInf(double value)
 {
-  const int val = 50;
-  std::unique_ptr<int> ptr(new int(val));
-  std::cout << "ptr=" << *ptr << std::endl;
-
-
 #if defined(VISP_HAVE_FAST_MATH)
   emitWarning("isInf: You are testing whether a double value is infinite, but are compiling with fast math options enabled. This function may return an incorrect result.");
 #endif
