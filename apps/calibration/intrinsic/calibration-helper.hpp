@@ -42,16 +42,45 @@
 #include <visp3/core/vpPixelMeterConversion.h>
 #include <visp3/core/vpPoint.h>
 #include <visp3/core/vpPolygon.h>
+#include <visp3/core/vpColormap.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+#if defined(ENABLE_VISP_NAMESPACE)
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 namespace calib_helper
 {
+
+// Adapted from:
+// https://stackoverflow.com/questions/58881746/c-how-to-cout-and-write-at-the-same-time/58881939#58881939
+class Tee
+{
+private:
+  std::ostream &os;
+  std::ofstream &file;
+
+public:
+  Tee(std::ostream &os_, std::ofstream &file_) : os(os_), file(file_) { }
+
+  template <typename T>
+  Tee &operator<<(const T &thing)
+  {
+    os << thing;
+    if (file.is_open()) {
+      file << thing;
+    }
+    return *this;
+  }
+};
+
 class Settings
 {
 public:
-  Settings()
-    : boardSize(), calibrationPattern(UNDEFINED), squareSize(0.), input(), tempo(0.), goodInput(false), patternToUse()
+  Settings(Tee &tee_)
+    : boardSize(), calibrationPattern(UNDEFINED), squareSize(0.), input(), tempo(0.), goodInput(false), patternToUse(),
+    tee(tee_)
   {
     boardSize = cv::Size(0, 0);
     calibrationPattern = UNDEFINED;
@@ -65,21 +94,21 @@ public:
   bool read(const std::string &filename) // Read the parameters
   {
     // reading configuration file
-    if (!VISP_NAMESPACE_ADDRESSING vpIoTools::loadConfigFile(filename))
+    if (!vpIoTools::loadConfigFile(filename))
       return false;
-    VISP_NAMESPACE_ADDRESSING vpIoTools::readConfigVar("BoardSize_Width:", boardSize.width);
-    VISP_NAMESPACE_ADDRESSING vpIoTools::readConfigVar("BoardSize_Height:", boardSize.height);
-    VISP_NAMESPACE_ADDRESSING vpIoTools::readConfigVar("Square_Size:", squareSize);
-    VISP_NAMESPACE_ADDRESSING vpIoTools::readConfigVar("Calibrate_Pattern:", patternToUse);
-    VISP_NAMESPACE_ADDRESSING vpIoTools::readConfigVar("Input:", input);
-    VISP_NAMESPACE_ADDRESSING vpIoTools::readConfigVar("Tempo:", tempo);
+    vpIoTools::readConfigVar("BoardSize_Width:", boardSize.width);
+    vpIoTools::readConfigVar("BoardSize_Height:", boardSize.height);
+    vpIoTools::readConfigVar("Square_Size:", squareSize);
+    vpIoTools::readConfigVar("Calibrate_Pattern:", patternToUse);
+    vpIoTools::readConfigVar("Input:", input);
+    vpIoTools::readConfigVar("Tempo:", tempo);
 
-    std::cout << "grid width : " << boardSize.width << std::endl;
-    std::cout << "grid height: " << boardSize.height << std::endl;
-    std::cout << "square size: " << squareSize << std::endl;
-    std::cout << "pattern    : " << patternToUse << std::endl;
-    std::cout << "input seq  : " << input << std::endl;
-    std::cout << "tempo      : " << tempo << std::endl;
+    tee << "grid width : " << boardSize.width << "\n";
+    tee << "grid height: " << boardSize.height << "\n";
+    tee << "square size: " << squareSize << "\n";
+    tee << "pattern    : " << patternToUse << "\n";
+    tee << "input seq  : " << input << "\n";
+    tee << "tempo      : " << tempo << "\n";
     interprate();
     return true;
   }
@@ -88,11 +117,11 @@ public:
   {
     goodInput = true;
     if (boardSize.width <= 0 || boardSize.height <= 0) {
-      std::cerr << "Invalid Board size: " << boardSize.width << " " << boardSize.height << std::endl;
+      tee << "Invalid Board size: " << boardSize.width << " " << boardSize.height << "\n";
       goodInput = false;
     }
     if (squareSize <= 10e-6) {
-      std::cerr << "Invalid square size " << squareSize << std::endl;
+      tee << "Invalid square size " << squareSize << "\n";
       goodInput = false;
     }
 
@@ -105,7 +134,7 @@ public:
     else if (patternToUse.compare("CIRCLES_GRID") == 0)
       calibrationPattern = CIRCLES_GRID;
     if (calibrationPattern == UNDEFINED) {
-      std::cerr << " Inexistent camera calibration mode: " << patternToUse << std::endl;
+      tee << " Inexistent camera calibration mode: " << patternToUse << "\n";
       goodInput = false;
     }
   }
@@ -124,39 +153,39 @@ public:
 
 private:
   std::string patternToUse;
+  Tee &tee;
 };
 
 struct CalibInfo
 {
-  CalibInfo(const VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &img, const std::vector<VISP_NAMESPACE_ADDRESSING vpPoint> &points,
-            const std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> &imPts, const std::string &frame_name)
+  CalibInfo(const vpImage<unsigned char> &img, const std::vector<vpPoint> &points,
+            const std::vector<vpImagePoint> &imPts, const std::string &frame_name)
     : m_img(img), m_points(points), m_imPts(imPts), m_frame_name(frame_name)
   { }
 
-  VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> m_img;
-  std::vector<VISP_NAMESPACE_ADDRESSING vpPoint> m_points;
-  std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> m_imPts;
+  vpImage<unsigned char> m_img;
+  std::vector<vpPoint> m_points;
+  std::vector<vpImagePoint> m_imPts;
   std::string m_frame_name;
 };
 
-void drawCalibrationOccupancy(VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I, const std::vector<CalibInfo> &calib_info,
-                              unsigned int patternW)
+void drawCalibrationOccupancy(vpImage<unsigned char> &I, const std::vector<CalibInfo> &calib_info, unsigned int patternW)
 {
   I = 0u;
   unsigned char pixel_value = static_cast<unsigned char>(255.0 / calib_info.size());
   for (size_t idx = 0; idx < calib_info.size(); idx++) {
     const CalibInfo &calib = calib_info[idx];
 
-    std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> corners;
+    std::vector<vpImagePoint> corners;
     corners.push_back(calib.m_imPts.front());
     corners.push_back(*(calib.m_imPts.begin() + patternW - 1));
     corners.push_back(calib.m_imPts.back());
     corners.push_back(*(calib.m_imPts.end() - patternW));
-    VISP_NAMESPACE_ADDRESSING vpPolygon poly(corners);
+    vpPolygon poly(corners);
 
     for (unsigned int i = 0; i < I.getHeight(); i++) {
       for (unsigned int j = 0; j < I.getWidth(); j++) {
-        if (poly.isInside(VISP_NAMESPACE_ADDRESSING vpImagePoint(i, j))) {
+        if (poly.isInside(vpImagePoint(i, j))) {
           I[i][j] += pixel_value;
         }
       }
@@ -164,17 +193,17 @@ void drawCalibrationOccupancy(VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &
   }
 }
 
-std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> undistort(const VISP_NAMESPACE_ADDRESSING vpCameraParameters &cam_dist, const std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> &imPts)
+std::vector<vpImagePoint> undistort(const vpCameraParameters &cam_dist, const std::vector<vpImagePoint> &imPts)
 {
-  std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> imPts_undist;
+  std::vector<vpImagePoint> imPts_undist;
 
-  VISP_NAMESPACE_ADDRESSING vpCameraParameters cam(cam_dist.get_px(), cam_dist.get_py(), cam_dist.get_u0(), cam_dist.get_v0());
+  vpCameraParameters cam(cam_dist.get_px(), cam_dist.get_py(), cam_dist.get_u0(), cam_dist.get_v0());
   for (size_t i = 0; i < imPts.size(); i++) {
     double x = 0, y = 0;
-    VISP_NAMESPACE_ADDRESSING vpPixelMeterConversion::convertPoint(cam_dist, imPts[i], x, y);
+    vpPixelMeterConversion::convertPoint(cam_dist, imPts[i], x, y);
 
-    VISP_NAMESPACE_ADDRESSING vpImagePoint imPt;
-    VISP_NAMESPACE_ADDRESSING vpMeterPixelConversion::convertPoint(cam, x, y, imPt);
+    vpImagePoint imPt;
+    vpMeterPixelConversion::convertPoint(cam, x, y, imPt);
     imPts_undist.push_back(imPt);
   }
 
@@ -205,7 +234,7 @@ bool extractCalibrationPoints(const Settings &s, const cv::Mat &cvI, std::vector
 
   if (found) // If done with success,
   {
-    std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> data;
+    std::vector<vpImagePoint> data;
 
     if (s.calibrationPattern == Settings::CHESSBOARD) {
       // improve the found corners' coordinate accuracy for chessboard
@@ -219,6 +248,202 @@ bool extractCalibrationPoints(const Settings &s, const cv::Mat &cvI, std::vector
   }
 
   return found;
+}
+
+void computeDistortionDisplacementMap(const vpCameraParameters &cam_dist, vpImage<vpRGBa> &I_color)
+{
+  vpImage<double> displacement_map(I_color.getHeight(), I_color.getWidth());
+
+  double min_displ = 1e12, max_displ = 0;
+  for (unsigned int i = 0; i < I_color.getHeight(); i++) {
+    for (unsigned int j = 0; j < I_color.getWidth(); j++) {
+      double x = 0, y = 0, id = 0, jd = 0;
+      vpPixelMeterConversion::convertPointWithoutDistortion(cam_dist, j, i, x, y);
+      vpMeterPixelConversion::convertPoint(cam_dist, x, y, jd, id);
+
+      double erri = id - i;
+      double errj = jd - j;
+      double displ = std::sqrt(erri*erri + errj*errj);
+      displacement_map[i][j] = displ;
+      min_displ = displ < min_displ ? displ : min_displ;
+      max_displ = displ > max_displ ? displ : max_displ;
+    }
+  }
+
+  double a = 255 / (max_displ - min_displ);
+  double b = (-255 * min_displ) / (max_displ - min_displ);
+
+  vpImage<unsigned char> I_gray(I_color.getHeight(), I_color.getWidth());
+  for (unsigned int i = 0; i < displacement_map.getHeight(); i++) {
+    for (unsigned int j = 0; j < displacement_map.getWidth(); j++) {
+      I_gray[i][j] = static_cast<unsigned char>(vpMath::clamp(a * displacement_map[i][j] + b, 0.0, 255.0));
+    }
+  }
+
+  vpColormap colormap(vpColormap::COLORMAP_TURBO);
+  colormap.convert(I_gray, I_color);
+}
+
+void createMosaic(const std::vector<vpImage<vpRGBa>> &list_imgs, std::vector<vpImage<vpRGBa>> &list_mosaics,
+  unsigned int nb_rows = 4, unsigned int nb_cols = 6)
+{
+  const unsigned int nb_totals = nb_rows*nb_cols;
+  if (list_imgs.empty()) {
+    return;
+  }
+
+  const unsigned int img_h = list_imgs[0].getHeight();
+  const unsigned int img_w = list_imgs[0].getWidth();
+  vpImage<vpRGBa> mosaic(img_h*nb_rows, img_w*nb_cols);
+  for (size_t i = 0; i < list_imgs.size(); i += nb_totals) {
+    mosaic = vpRGBa(0, 0, 0);
+
+    for (size_t j = 0; j < nb_totals; j++) {
+      const size_t idx = i + j;
+      const unsigned int pos_mod = idx % nb_totals;
+      if (idx >= list_imgs.size()) {
+        break;
+      }
+
+      const unsigned int pos_row = pos_mod / nb_cols;
+      vpImagePoint top_left(pos_row*img_h, (pos_mod - pos_row*nb_cols)*img_w);
+      mosaic.insert(list_imgs[idx], top_left);
+    }
+
+    list_mosaics.push_back(mosaic);
+  }
+}
+
+double getProjectionErrorUV(const std::vector<vpCalibration> &calibrator, const std::vector<CalibInfo> &calib_info,
+    std::vector<std::vector<vpImagePoint>> &err_imPt_imgs, std::vector<vpImagePoint> &err_imPt, bool with_dist)
+{
+  double max_scale_uv = -1e6;
+
+  for (size_t i = 0; i < calibrator.size(); i++) {
+    const vpCalibration &calib = calibrator[i];
+    const CalibInfo &calib_info_cur = calib_info[i];
+    std::vector<vpImagePoint> err_imPt_per_img;
+
+    for (size_t j = 0; j < calib_info_cur.m_points.size(); j++) {
+      vpPoint pt_3d = calib_info_cur.m_points[j];
+      vpImagePoint pt_proj;
+      if (with_dist) {
+        pt_3d.project(calib.cMo_dist);
+        vpMeterPixelConversion::convertPoint(calib.cam_dist, pt_3d.get_x(), pt_3d.get_y(), pt_proj);
+      }
+      else {
+        pt_3d.project(calib.cMo);
+        vpMeterPixelConversion::convertPoint(calib.cam, pt_3d.get_x(), pt_3d.get_y(), pt_proj);
+      }
+      err_imPt_per_img.push_back(calib_info_cur.m_imPts[j] - pt_proj);
+      err_imPt.push_back(calib_info_cur.m_imPts[j] - pt_proj);
+
+      double err_u = std::fabs(err_imPt_per_img.back().get_u());
+      double err_v = std::fabs(err_imPt_per_img.back().get_v());
+      max_scale_uv = err_u > max_scale_uv ? err_u : max_scale_uv;
+      max_scale_uv = err_v > max_scale_uv ? err_v : max_scale_uv;
+    }
+    err_imPt_imgs.push_back(err_imPt_per_img);
+  }
+
+  return max_scale_uv;
+}
+
+void displayProjectionErrorUV(const vpImage<unsigned char> &I_err_imPt, const std::vector<vpImagePoint> &err_imPt,
+  unsigned int disp_size, double max_scale_uv, bool with_dist, const vpColor &color, unsigned int offset_text,
+  const vpColor &color_text, unsigned int offset_text_incr = 15)
+{
+  const unsigned int margin = 25;
+  const unsigned int margin_2 = margin/2;
+  const unsigned int graph_size = disp_size - 2*margin;
+  const unsigned int tick_size = 10;
+  const unsigned int graph_offset = with_dist ? disp_size : 0;
+
+  // axis arrows
+  // left
+  vpDisplay::displayArrow(I_err_imPt, vpImagePoint(disp_size/2, graph_offset+disp_size/2),
+    vpImagePoint(disp_size/2, graph_offset+margin_2), vpColor::white, 2);
+  // right
+  vpDisplay::displayArrow(I_err_imPt, vpImagePoint(disp_size/2, graph_offset+disp_size/2),
+    vpImagePoint(disp_size/2, graph_offset+disp_size-margin_2), vpColor::white, 2);
+  // up
+  vpDisplay::displayArrow(I_err_imPt, vpImagePoint(disp_size/2, graph_offset+disp_size/2),
+    vpImagePoint(margin_2, graph_offset+disp_size/2), vpColor::white, 2);
+  // down
+  vpDisplay::displayArrow(I_err_imPt, vpImagePoint(disp_size/2, graph_offset+disp_size/2),
+    vpImagePoint(disp_size-margin_2, graph_offset+disp_size/2), vpColor::white, 2);
+
+  // outermost tick
+  // left
+  vpDisplay::displayLine(I_err_imPt, vpImagePoint(disp_size/2-tick_size, graph_offset+margin),
+    vpImagePoint(disp_size/2+tick_size, graph_offset+margin), vpColor::white);
+  // right
+  vpDisplay::displayLine(I_err_imPt, vpImagePoint(disp_size/2-tick_size, graph_offset+disp_size-margin),
+    vpImagePoint(disp_size/2+tick_size, graph_offset+disp_size-margin), vpColor::white);
+  // up
+  vpDisplay::displayLine(I_err_imPt, vpImagePoint(margin, graph_offset+disp_size/2-tick_size),
+    vpImagePoint(margin, graph_offset+disp_size/2+tick_size), vpColor::white);
+  // down
+  vpDisplay::displayLine(I_err_imPt, vpImagePoint(disp_size-margin, graph_offset+disp_size/2-tick_size),
+    vpImagePoint(disp_size-margin, graph_offset+disp_size/2+tick_size), vpColor::white);
+  // label
+  std::ostringstream oss_max;
+  oss_max << std::fixed << std::setprecision(2) << max_scale_uv << " px";
+  std::string max_val = oss_max.str();
+  vpDisplay::displayText(I_err_imPt, vpImagePoint(disp_size/2 + 30, graph_offset+disp_size-50), max_val, vpColor::white);
+
+  // half tick
+  const unsigned int half_tick_pos = graph_size/4;
+  // left
+  vpDisplay::displayLine(I_err_imPt, vpImagePoint(disp_size/2-tick_size, graph_offset+margin+half_tick_pos),
+    vpImagePoint(disp_size/2+tick_size, graph_offset+margin+half_tick_pos), vpColor::white);
+  // right
+  vpDisplay::displayLine(I_err_imPt, vpImagePoint(disp_size/2-tick_size, graph_offset+disp_size/2+half_tick_pos),
+    vpImagePoint(disp_size/2+tick_size, graph_offset+disp_size/2+half_tick_pos), vpColor::white);
+  // up
+  vpDisplay::displayLine(I_err_imPt, vpImagePoint(margin+half_tick_pos, graph_offset+disp_size/2-tick_size),
+    vpImagePoint(margin+half_tick_pos, graph_offset+disp_size/2+tick_size), vpColor::white);
+  // down
+  vpDisplay::displayLine(I_err_imPt, vpImagePoint(disp_size/2+half_tick_pos, graph_offset+disp_size/2-tick_size),
+    vpImagePoint(disp_size/2+half_tick_pos, graph_offset+disp_size/2+tick_size), vpColor::white);
+
+  std::vector<double> u_vec, v_vec;
+  u_vec.reserve(err_imPt.size());
+  v_vec.reserve(err_imPt.size());
+
+  double disp_scale_imPt = graph_size / (2*max_scale_uv);
+  for (size_t i = 0; i < err_imPt.size(); i++) {
+    vpImagePoint display_imPt(I_err_imPt.getHeight()/2.0 + disp_scale_imPt*err_imPt[i].get_i(),
+      graph_offset + I_err_imPt.getWidth()/4.0 + disp_scale_imPt*err_imPt[i].get_j());
+    vpDisplay::displayCross(I_err_imPt, display_imPt, 8, color);
+
+    u_vec.push_back(err_imPt[i].get_j());
+    v_vec.push_back(err_imPt[i].get_v());
+  }
+
+  double reproj_error = 0;
+  for (size_t i = 0; i < err_imPt.size(); i++) {
+    reproj_error += err_imPt[i].get_i()*err_imPt[i].get_i() + err_imPt[i].get_j()*err_imPt[i].get_j();
+  }
+  reproj_error = std::sqrt(reproj_error / err_imPt.size());
+
+  double u_err_mean = vpMath::getMean(u_vec), u_err_med = vpMath::getMedian(u_vec), u_err_std = vpMath::getStdev(u_vec);
+  double v_err_mean = vpMath::getMean(v_vec), v_err_med = vpMath::getMedian(v_vec), v_err_std = vpMath::getStdev(v_vec);
+
+  std::ostringstream oss;
+  oss << std::fixed << std::setprecision(3) << "Reprojection error"
+    << (with_dist ? " (with dist): " : " (without dist): ") << reproj_error << " (" << err_imPt.size() << " pts)";
+  vpDisplay::displayText(I_err_imPt, offset_text, graph_offset+20, oss.str(), color_text);
+
+  oss.str("");
+  oss << std::fixed << std::setprecision(3) << "u error: " << u_err_mean << " (mean) " << u_err_med
+    << " (median) " << u_err_std << " (std)";
+  vpDisplay::displayText(I_err_imPt, offset_text+offset_text_incr, graph_offset+20, oss.str(), color_text);
+
+  oss.str("");
+  oss << std::fixed << std::setprecision(3) << "v error: " << v_err_mean << " (mean) " << v_err_med
+    << " (median) " << v_err_std << " (std)";
+  vpDisplay::displayText(I_err_imPt, offset_text+2*offset_text_incr, graph_offset+20, oss.str(), color_text);
 }
 
 } // namespace calib_helper
