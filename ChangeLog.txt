@@ -29,6 +29,8 @@ ViSP 3.7.1 (current version)
     . [#1901] The app visp-calibrate-camera references default-chessboard.cfg and
               default-circles.cfg config files that are missing from installation
     . [#1909] Fix build failure when apriltag is deactivated
+    . [#1929] Support for the C++98 standard is not properly implemented
+    . [#1930] Build issue in vpMocapVicon.cpp when c++98 enabled
 ----------------------------------------------
 ViSP 3.7.0 (released December 19, 2025)
   - Contributors:
