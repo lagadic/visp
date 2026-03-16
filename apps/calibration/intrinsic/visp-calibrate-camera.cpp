@@ -74,7 +74,7 @@
 
 using namespace calib_helper;
 
-void usage(const char *argv[], int error)
+static void usage(const char *argv[], int error)
 {
   std::cout << "Synopsis" << std::endl
     << "  " << argv[0]
@@ -107,6 +107,9 @@ void usage(const char *argv[], int error)
     << "    By default, the initial camera focal length is computed such as:" << std::endl
     << "    (image_width / 640) x 600." << std::endl
     << "    The user can instead supply a desired camera focal length using this parameter." << std::endl
+    << std::endl
+    << "  --opencv-calib" << std::endl
+    << "    Flag to also perform the calibration using the OpenCV calibration pipeline." << std::endl
     << std::endl
     << "  --save" << std::endl
     << "    Flag to automatically save the image processing results in a new directory." << std::endl
@@ -148,6 +151,7 @@ int main(int argc, const char *argv[])
     double opt_init_focal = 600.0;
     std::string opt_img_ext = ".png";
     bool opt_save_results = false;
+    bool perform_opencv_calib = false;
 
     for (int i = 2; i < argc; i++) {
       if (std::string(argv[i]) == "--init-from-xml" && i + 1 < argc) {
@@ -165,6 +169,9 @@ int main(int argc, const char *argv[])
       else if (std::string(argv[i]) == "--init-focal" && i + 1 < argc) {
         opt_use_focal_cmd_line = true;
         opt_init_focal = std::atof(argv[++i]);
+      }
+      else if (std::string(argv[i]) == "--opencv-calib") {
+        perform_opencv_calib = true;
       }
       else if (std::string(argv[i]) == "--save") {
         opt_save_results = true;
@@ -617,7 +624,9 @@ int main(int argc, const char *argv[])
       ss_additional_info << "<global_reprojection_error>" << error << "</global_reprojection_error>";
       ss_additional_info << "</with_distortion></reprojection_error>";
 
+      //
       // Display side-by-side original and undistorted images, draw lines from start and end calib pattern points
+      //
       vpImage<unsigned char> I_undist;
       vpImage<unsigned char> I_dist_undist(I.getHeight(), 2 * I.getWidth());
       d->close(I);
@@ -727,7 +736,9 @@ int main(int argc, const char *argv[])
       }
       tee << "\n";
 
+      //
       // Display pseudo distortion displacement map
+      //
       d->close(I_dist_undist);
       vpImage<vpRGBa> I_dist_map(I.getHeight(), I.getWidth());
       d->init(I_dist_map, 0, 0, "Distortion displacement map");
@@ -850,7 +861,9 @@ int main(int argc, const char *argv[])
 
       d->close(I_dist_map);
 
+      //
       // Display reprojection error graph for all the images
+      //
       const unsigned int disp_size = 650;
       vpImage<unsigned char> I_err_imPt(disp_size, 2*disp_size);
       std::shared_ptr<vpDisplay> d2 = vpDisplayFactory::createDisplay(I_err_imPt, 0, 0,
@@ -867,7 +880,7 @@ int main(int argc, const char *argv[])
       {
         bool with_dist = false;
         displayProjectionErrorUV(I_err_imPt, err_imPt_no_dist, disp_size, max_scale_uv_no_dist, with_dist,
-          vpColor::red, 20, vpColor::red);
+          vpColor::red, 20, vpColor::red, false);
       }
       // distortion
       std::vector<std::vector<vpImagePoint>> err_imPt_imgs_dist;
@@ -878,7 +891,7 @@ int main(int argc, const char *argv[])
       {
         bool with_dist = true;
         displayProjectionErrorUV(I_err_imPt, err_imPt_dist, disp_size, max_scale_uv_dist, with_dist,
-          vpColor::blue, 20, vpColor::blue);
+          vpColor::blue, 20, vpColor::blue, false);
       }
 
       if (s.tempo > 10.f) {
@@ -909,14 +922,14 @@ int main(int argc, const char *argv[])
 
         // no distortion
         displayProjectionErrorUV(I_err_imPt, err_imPt_no_dist, disp_size, max_scale_uv_no_dist, false,
-          vpColor::red, 40, vpColor::red);
+          vpColor::red, 40, vpColor::red, false);
         displayProjectionErrorUV(I_err_imPt, err_imPt_imgs_no_dist[i], disp_size, max_scale_uv_no_dist, false,
-          vpColor::green, disp_size-60, vpColor::green);
+          vpColor::green, disp_size-60, vpColor::green, false);
         // distortion
         displayProjectionErrorUV(I_err_imPt, err_imPt_dist, disp_size, max_scale_uv_dist, true,
-          vpColor::blue, 40, vpColor::blue);
+          vpColor::blue, 40, vpColor::blue, false);
         displayProjectionErrorUV(I_err_imPt, err_imPt_imgs_dist[i], disp_size, max_scale_uv_dist, true,
-          vpColor::green, disp_size-60, vpColor::green);
+          vpColor::green, disp_size-60, vpColor::green, false);
 
         oss_title.str("");
         oss_title << vpIoTools::getNameWE(calib_info[i].m_frame_name) << " without / with dist";
@@ -997,6 +1010,453 @@ int main(int argc, const char *argv[])
       tee << "Calibration with distortion failed." << "\n";
       return EXIT_FAILURE;
     }
+
+    //
+    // OpenCV calibration
+    //
+    if (perform_opencv_calib) {
+      tee << "\n\n========================================\n";
+      tee << "===Now perform OpenCV calibration===\n";
+      tee << "========================================\n";
+
+      std::string opt_output_file_name_parent = vpIoTools::getParent(opt_output_file_name);
+      std::string cv_calib_output_file = (opt_output_file_name_parent.empty() ? "" :
+          opt_output_file_name_parent + vpIoTools::separator) +
+        vpIoTools::getNameWE(opt_output_file_name) + "_opencv.yml";
+
+      std::vector<std::vector<cv::Point2f>> cv_imagePoints;
+      cv_imagePoints.reserve(calib_info.size());
+      for (const auto &calib_info_cur : calib_info) {
+        std::vector<cv::Point2f> cv_imagePoints_cur_img;
+        for (const auto &img_pts_cur : calib_info_cur.m_imPts) {
+          cv_imagePoints_cur_img.push_back(cv::Point2f(
+            static_cast<float>(img_pts_cur.get_u()),
+            static_cast<float>(img_pts_cur.get_v())
+          ));
+        }
+
+        cv_imagePoints.push_back(cv_imagePoints_cur_img);
+      }
+
+      cv::Size cv_imageSize(I.getWidth(), I.getHeight());
+      cv::Size cv_boardSize = s.boardSize;
+      CvPattern cv_patternType = (s.calibrationPattern == Settings::CHESSBOARD) ? CV_CHESSBOARD : CV_CIRCLES_GRID;
+      float cv_squareSize = s.squareSize;
+      float cv_grid_width = cv_squareSize *
+        (cv_patternType != CV_CHARUCOBOARD ? (cv_boardSize.width - 1) : (cv_boardSize.width - 2));
+      bool cv_release_object = false;
+      float cv_aspectRatio = 1;
+      int cv_flags = 0;
+      cv_flags |= cv::CALIB_USE_INTRINSIC_GUESS;
+      cv::Matx33d cv_cameraMatrix_ = cv::Matx33d::eye();
+      cv_cameraMatrix_(0, 0) = cam.get_px();  cv_cameraMatrix_(0, 2) = cam.get_u0();
+      cv_cameraMatrix_(1, 1) = cam.get_py();  cv_cameraMatrix_(1, 2) = cam.get_v0();
+      cv::Mat cv_cameraMatrix(cv_cameraMatrix_);
+      cv::Mat cv_distCoeffs;
+      bool cv_writeExtrinsics = true, cv_writePoints = true, cv_writeGrid = true;
+
+      std::vector<std::vector<cv::Point2f>> cv_imagePoints_proj;
+      std::vector<float> cv_reprojErrs;
+      std::vector<cv::Mat> rvecs, tvecs;
+      bool cv_calib_status = runAndSave(
+        cv_calib_output_file, cv_imagePoints, cv_imagePoints_proj, cv_imageSize, cv_boardSize, cv_patternType,
+        cv_squareSize, cv_grid_width, cv_release_object, cv_aspectRatio, cv_flags, cv_cameraMatrix, cv_distCoeffs,
+        cv_reprojErrs, cv_writeExtrinsics, cv_writePoints, cv_writeGrid, rvecs, tvecs, tee
+      );
+      tee << "OpenCV calibration status: " << cv_calib_status << "\n";
+      if (cv_calib_status) {
+        tee << "Calibration matrix:\n" << cv_cameraMatrix << "\n";
+        tee << "Distortion coefficients: " << cv_distCoeffs.t() << "\n";
+        tee << "Save OpenCV calibration file to: " << cv_calib_output_file << "\n";
+
+        //
+        // OpenCV Display reprojected image points
+        //
+        tee << "\n";
+        assert(calibrator.size() == cv_reprojErrs.size());
+        assert(calibrator.size() == cv_imagePoints_proj.size());
+
+        std::string cv_save_results_folder = save_results_folder + vpIoTools::separator + "opencv";
+        vpIoTools::makeDirectory(cv_save_results_folder);
+
+        d->init(I, 0, 0, "OpenCV calibration results");
+        vpImage<vpRGBa> I_save_results;
+        std::vector<vpImage<vpRGBa>> cv_list_img_reproj_dist, cv_list_img_undist;
+        cv_list_img_reproj_dist.reserve(calibrator.size());
+
+        for (size_t i = 0; i < calibrator.size(); i++) {
+          double reproj_error = cv_reprojErrs[i];
+
+          const CalibInfo &calib = calib_info[i];
+          tee << "Image " << calib.m_frame_name << " OpenCV reprojection error: " << reproj_error << "\n";
+          I = calib.m_img;
+          vpDisplay::display(I);
+
+          std::ostringstream ss;
+          ss << "Reprojection error: " << reproj_error;
+          vpDisplay::displayText(I, 15 * vpDisplay::getDownScalingFactor(I), 15 * vpDisplay::getDownScalingFactor(I),
+                                calib.m_frame_name, vpColor::red);
+          vpDisplay::displayText(I, 30 * vpDisplay::getDownScalingFactor(I), 15 * vpDisplay::getDownScalingFactor(I),
+                                ss.str(), vpColor::red);
+          vpDisplay::displayText(I, 45 * vpDisplay::getDownScalingFactor(I), 15 * vpDisplay::getDownScalingFactor(I),
+                                "Extracted points", vpColor::red);
+          vpDisplay::displayText(I, 60 * vpDisplay::getDownScalingFactor(I), 15 * vpDisplay::getDownScalingFactor(I),
+                                "Projected points", vpColor::green);
+
+          for (size_t idx = 0; idx < calib.m_points.size(); idx++) {
+            vpDisplay::displayCross(I, calib.m_imPts[idx], 12 * vpDisplay::getDownScalingFactor(I), vpColor::red);
+            vpImagePoint imPt(cv_imagePoints_proj[i][idx].y, cv_imagePoints_proj[i][idx].x);
+            vpDisplay::displayCross(I, imPt, 12 * vpDisplay::getDownScalingFactor(I), vpColor::green);
+          }
+
+          if (s.tempo > 10.f) {
+            vpDisplay::displayText(I, I.getHeight() - 20 * vpDisplay::getDownScalingFactor(I),
+                                15 * vpDisplay::getDownScalingFactor(I), "Click to continue...", vpColor::red);
+            vpDisplay::flush(I);
+            vpDisplay::getClick(I);
+          }
+          else {
+            vpDisplay::flush(I);
+            vpTime::wait(s.tempo * 1000);
+          }
+
+          if (opt_save_results) {
+            vpDisplay::getImage(I, I_save_results);
+            cv_list_img_reproj_dist.push_back(I_save_results);
+            std::ostringstream oss;
+            oss << cv_save_results_folder << "/reproj_err_with_dist_" << vpIoTools::getNameWE(calib.m_frame_name)
+              << opt_img_ext;
+            vpImageIo::write(I_save_results, oss.str());
+          }
+        }
+
+        //
+        // OpenCV Display side-by-side original and undistorted images, draw lines from start and end calib pattern pts
+        //
+        cv::Mat1b cv_img, cv_img_undist;
+        d->close(I);
+        vpImage<unsigned char> I_undist;
+        vpImage<unsigned char> I_dist_undist(I.getHeight(), 2 * I.getWidth());
+        d->init(I_dist_undist, 0, 0, "(OpenCV) Straight lines have to be straight - distorted image / undistorted image");
+
+        for (size_t idx = 0; idx < calib_info.size(); idx++) {
+          tee << "\n(OpenCV) This tool computes the line fitting error (mean distance error) on image points"
+            " extracted from the raw distorted image." << "\n";
+
+          I = calib_info[idx].m_img;
+          vpImageConvert::convert(I, cv_img);
+          cv::undistort(cv_img, cv_img_undist, cv_cameraMatrix, cv_distCoeffs);
+          vpImageConvert::convert(cv_img_undist, I_undist);
+
+          I_dist_undist.insert(I, vpImagePoint(0, 0));
+          I_dist_undist.insert(I_undist, vpImagePoint(0, I.getWidth()));
+          vpDisplay::display(I_dist_undist);
+
+          vpDisplay::displayText(I_dist_undist, 15 * vpDisplay::getDownScalingFactor(I_dist_undist),
+                                 15 * vpDisplay::getDownScalingFactor(I_dist_undist),
+                                 calib_info[idx].m_frame_name + std::string(" distorted"), vpColor::red);
+          vpDisplay::displayText(I_dist_undist, 30 * vpDisplay::getDownScalingFactor(I_dist_undist),
+                                 15 * vpDisplay::getDownScalingFactor(I_dist_undist),
+                                 "Draw lines from first / last points.", vpColor::red);
+          std::vector<vpImagePoint> grid_points = calib_info[idx].m_imPts;
+          for (int i = 0; i < s.boardSize.height; i++) {
+            std::vector<vpImagePoint> current_line(grid_points.begin() + i * s.boardSize.width,
+                                                   grid_points.begin() + (i + 1) * s.boardSize.width);
+
+            std::vector<vpImagePoint> current_line_undist = cv_undistort(cv_cameraMatrix, cv_distCoeffs, current_line);
+            double a = 0, b = 0, c = 0;
+            double line_fitting_error = vpMath::lineFitting(current_line, a, b, c);
+            double line_fitting_error_undist = vpMath::lineFitting(current_line_undist, a, b, c);
+            tee << calib_info[idx].m_frame_name << " line " << i + 1
+              << " fitting error on distorted points: " << line_fitting_error
+              << " ; on undistorted points: " << line_fitting_error_undist << "\n";
+
+            vpImagePoint ip1 = current_line.front();
+            vpImagePoint ip2 = current_line.back();
+            vpDisplay::displayLine(I_dist_undist, ip1, ip2, vpColor::red);
+          }
+
+          tee << "\n(OpenCV) This tool computes the line fitting error (mean distance error) on image points"
+            " extracted from the undistorted image" << " (cv::undistort)." << "\n";
+          cv::Mat cvI;
+          std::vector<cv::Point2f> pointBuf;
+          vpImageConvert::convert(I_undist, cvI);
+
+          bool found = extractCalibrationPoints(s, cvI, pointBuf);
+          if (found) {
+            std::vector<vpImagePoint> found_grid_points;
+            for (unsigned int i = 0; i < pointBuf.size(); i++) {
+              vpImagePoint ip(pointBuf[i].y, pointBuf[i].x);
+              found_grid_points.push_back(ip);
+            }
+
+            vpDisplay::displayText(I_dist_undist, 15 * vpDisplay::getDownScalingFactor(I_dist_undist),
+                                   I.getWidth() + 15 * vpDisplay::getDownScalingFactor(I_dist_undist),
+                                   calib_info[idx].m_frame_name + std::string(" undistorted"), vpColor::red);
+            for (int i = 0; i < s.boardSize.height; i++) {
+              std::vector<vpImagePoint> current_line(found_grid_points.begin() + i * s.boardSize.width,
+                                                     found_grid_points.begin() + (i + 1) * s.boardSize.width);
+
+              double a = 0, b = 0, c = 0;
+              double line_fitting_error = vpMath::lineFitting(current_line, a, b, c);
+              tee << calib_info[idx].m_frame_name << " undistorted image, line " << i + 1
+                << " fitting error: " << line_fitting_error << "\n";
+
+              vpImagePoint ip1 = current_line.front() + vpImagePoint(0, I.getWidth());
+              vpImagePoint ip2 = current_line.back() + vpImagePoint(0, I.getWidth());
+              vpDisplay::displayLine(I_dist_undist, ip1, ip2, vpColor::red);
+            }
+          }
+          else {
+            std::string msg("Unable to detect grid on undistorted image");
+            tee << msg << "\n";
+            tee << "Check that the grid is not too close to the image edges" << "\n";
+            vpDisplay::displayText(I_dist_undist, 15 * vpDisplay::getDownScalingFactor(I_dist_undist),
+                                   I.getWidth() + 15 * vpDisplay::getDownScalingFactor(I_dist_undist),
+                                   calib_info[idx].m_frame_name + std::string(" undistorted"), vpColor::red);
+            vpDisplay::displayText(I_dist_undist, 30 * vpDisplay::getDownScalingFactor(I_dist_undist),
+                                   I.getWidth() + 15 * vpDisplay::getDownScalingFactor(I_dist_undist), msg, vpColor::red);
+          }
+
+          if (s.tempo > 10.f) {
+            vpDisplay::displayText(
+                I_dist_undist, I_dist_undist.getHeight() - 20 * vpDisplay::getDownScalingFactor(I_dist_undist),
+                15 * vpDisplay::getDownScalingFactor(I_dist_undist), "Click to continue...", vpColor::red);
+            vpDisplay::flush(I_dist_undist);
+            vpDisplay::getClick(I_dist_undist);
+          }
+          else {
+            vpDisplay::flush(I_dist_undist);
+            vpTime::wait(s.tempo * 1000);
+          }
+
+          if (opt_save_results) {
+            vpDisplay::getImage(I_dist_undist, I_save_results);
+            std::ostringstream oss;
+            oss << cv_save_results_folder << "/dist_vs_undist_" << vpIoTools::getNameWE(calib_info[idx].m_frame_name)
+              << opt_img_ext;
+            vpImage<vpRGBa> I_right;
+            vpImageTools::crop(I_save_results, vpRect(I_save_results.getWidth()/2, 0,
+                                                      I_save_results.getWidth()/2, I_save_results.getHeight()),
+                                                      I_right);
+            cv_list_img_undist.push_back(I_right);
+            vpImageIo::write(I_save_results, oss.str());
+          }
+        }
+
+        //
+        // (OpenCV) Display pseudo distortion displacement map
+        //
+        d->close(I_dist_undist);
+        vpImage<vpRGBa> I_dist_map(I.getHeight(), I.getWidth());
+        d->init(I_dist_map, 0, 0, "(OpenCV) Distortion displacement map");
+        calib_helper::computeDistortionDisplacementMap(cv_cameraMatrix, cv_distCoeffs, I_dist_map);
+        d->display(I_dist_map);
+
+        const float ref_img_width = 640;
+        const unsigned int step = std::max(20u, static_cast<unsigned int>((I_dist_undist.getWidth()/ref_img_width)*20));
+        for (unsigned int i = 0; i < I_dist_map.getHeight(); i += step) {
+          for (unsigned int j = 0; j < I_dist_map.getWidth(); j += step) {
+            vpImagePoint imPt(i, j);
+            double jd = 0, id = 0;
+            undistortDistort(cv_cameraMatrix, cv_distCoeffs, j, i, jd, id);
+            vpImagePoint imPt_dist(id, jd);
+
+            vpDisplay::displayArrow(I_dist_map, imPt, imPt_dist, vpColor::red, 2);
+          }
+
+          unsigned int remainder_col = (I_dist_map.getWidth()-1) - (I_dist_map.getWidth() / step)*step;
+          if (remainder_col >= step/2) {
+            unsigned int j = I_dist_map.getWidth() - 1;
+
+            vpImagePoint imPt(i, j);
+            double jd = 0, id = 0;
+            undistortDistort(cv_cameraMatrix, cv_distCoeffs, j, i, jd, id);
+            vpImagePoint imPt_dist(id, jd);
+
+            vpDisplay::displayArrow(I_dist_map, imPt, imPt_dist, vpColor::red, 2);
+          }
+        }
+
+        // Last row / column
+        unsigned int remainder_row = (I_dist_map.getHeight()-1) - (I_dist_map.getHeight() / step)*step;
+        if (remainder_row >= step/2) {
+          unsigned int i = I_dist_map.getHeight() - 1;
+
+          for (unsigned int j = 0; j < I_dist_map.getWidth(); j += step) {
+            vpImagePoint imPt(i, j);
+            double jd = 0, id = 0;
+            undistortDistort(cv_cameraMatrix, cv_distCoeffs, j, i, jd, id);
+            vpImagePoint imPt_dist(id, jd);
+
+            vpDisplay::displayArrow(I_dist_map, imPt, imPt_dist, vpColor::red, 2);
+          }
+
+          unsigned int remainder_col = (I_dist_map.getWidth()-1) - (I_dist_map.getWidth() / step)*step;
+          if (remainder_col >= step/2) {
+            unsigned int j = I_dist_map.getWidth() - 1;
+            vpImagePoint imPt(i, j);
+            double jd = 0, id = 0;
+            undistortDistort(cv_cameraMatrix, cv_distCoeffs, j, i, jd, id);
+            vpImagePoint imPt_dist(id, jd);
+
+            vpDisplay::displayArrow(I_dist_map, imPt, imPt_dist, vpColor::red, 2);
+          }
+        }
+
+        // Image center and camera principal point
+        vpDisplay::displayCross(I_dist_map, vpImagePoint((I_dist_map.getHeight()-1)/2, (I_dist_map.getWidth()-1)/2),
+          10*vpDisplay::getDownScalingFactor(I_dist_map), vpColor::green, 2);
+        vpDisplay::displayCircle(I_dist_map, vpImagePoint(cam.get_v0(), cam.get_u0()),
+          8*vpDisplay::getDownScalingFactor(I_dist_map), vpColor::red);
+
+        if (s.tempo > 10.f) {
+          vpDisplay::displayText(
+              I_dist_map, I_dist_map.getHeight() - 20 * vpDisplay::getDownScalingFactor(I_dist_map),
+              15 * vpDisplay::getDownScalingFactor(I_dist_map), "Click to continue...", vpColor::red);
+          vpDisplay::flush(I_dist_map);
+          vpDisplay::getClick(I_dist_map);
+        }
+        else {
+          vpDisplay::flush(I_dist_map);
+          vpTime::wait(s.tempo * 1000);
+        }
+
+        if (opt_save_results) {
+          vpDisplay::getImage(I_dist_map, I_save_results);
+          std::ostringstream oss;
+          oss << cv_save_results_folder << "/distortion_displacement_map" << opt_img_ext;
+          vpImageIo::write(I_save_results, oss.str());
+
+          // Save mosaic images
+          {
+            std::vector<vpImage<vpRGBa>> mosaics;
+            createMosaic(cv_list_img_reproj_dist, mosaics);
+            for (size_t i = 0; i < mosaics.size(); i++) {
+              oss.str("");
+              oss << cv_save_results_folder << "/mosaics_reproj_err_with_dist_%04d" << opt_img_ext;
+              char name[FILENAME_MAX];
+              snprintf(name, FILENAME_MAX, oss.str().c_str(), i);
+              vpImageIo::write(mosaics[i], name);
+            }
+          }
+          {
+            std::vector<vpImage<vpRGBa>> mosaics;
+            createMosaic(cv_list_img_undist, mosaics);
+            for (size_t i = 0; i < mosaics.size(); i++) {
+              oss.str("");
+              oss << cv_save_results_folder << "/mosaics_undist_%04d" << opt_img_ext;
+              char name[FILENAME_MAX];
+              snprintf(name, FILENAME_MAX, oss.str().c_str(), i);
+              vpImageIo::write(mosaics[i], name);
+            }
+          }
+        }
+
+        d->close(I_dist_map);
+
+        //
+        // OpenCV Display reprojection error graph for all the images
+        //
+        const unsigned int disp_size = 650;
+        vpImage<unsigned char> I_err_imPt(disp_size, disp_size);
+        std::shared_ptr<vpDisplay> d2 = vpDisplayFactory::createDisplay(I_err_imPt, 0, 0,
+          "(OpenCV) Reprojection error in the image plane for all the images");
+        vpDisplay::display(I_err_imPt);
+
+        // distortion
+        std::vector<std::vector<vpImagePoint>> err_imPt_imgs_dist;
+        err_imPt_imgs_dist.reserve(calibrator.size());
+        std::vector<vpImagePoint> err_imPt_dist;
+        err_imPt_dist.reserve(calib_points_all.size());
+        double max_scale_uv_dist = getProjectionErrorUV(cv_cameraMatrix, cv_distCoeffs, calib_info, rvecs, tvecs,
+          err_imPt_imgs_dist, err_imPt_dist, true);
+        {
+          displayProjectionErrorUV(I_err_imPt, err_imPt_dist, disp_size, max_scale_uv_dist, true,
+            vpColor::blue, 20, vpColor::blue, true);
+        }
+
+        if (s.tempo > 10.f) {
+          vpDisplay::displayText(I_err_imPt, I_err_imPt.getHeight() - 20 * vpDisplay::getDownScalingFactor(I_err_imPt),
+                                15 * vpDisplay::getDownScalingFactor(I_err_imPt), "Click to continue...", vpColor::red);
+          vpDisplay::flush(I_err_imPt);
+          vpDisplay::getClick(I_err_imPt);
+        }
+        else {
+          vpDisplay::flush(I_err_imPt);
+          vpTime::wait(s.tempo * 1000);
+        }
+
+        if (opt_save_results) {
+          vpDisplay::getImage(I_err_imPt, I_save_results);
+          std::ostringstream oss;
+          oss << cv_save_results_folder << "/reprojection_error_graph" << opt_img_ext;
+          vpImageIo::write(I_save_results, oss.str());
+        }
+
+        //
+        // OpenCV Display reprojection error graph for each images
+        //
+        std::vector<vpImage<vpRGBa>> list_img_reproj_graph;
+        for (size_t i = 0; i < err_imPt_imgs_dist.size(); i++) {
+          std::ostringstream oss_title;
+          oss_title << "(OpenCV) Reprojection error in the image plane for: " <<
+            vpIoTools::getNameWE(calib_info[i].m_frame_name);
+          d2->setTitle(oss_title.str());
+          vpDisplay::display(I_err_imPt);
+
+          // distortion
+          displayProjectionErrorUV(I_err_imPt, err_imPt_dist, disp_size, max_scale_uv_dist, true,
+            vpColor::blue, 40, vpColor::blue, true);
+          displayProjectionErrorUV(I_err_imPt, err_imPt_imgs_dist[i], disp_size, max_scale_uv_dist, true,
+            vpColor::green, disp_size-60, vpColor::green, true);
+
+          oss_title.str("");
+          oss_title << vpIoTools::getNameWE(calib_info[i].m_frame_name);
+          vpDisplay::displayText(I_err_imPt, 20 * vpDisplay::getDownScalingFactor(I_err_imPt),
+                                15 * vpDisplay::getDownScalingFactor(I_err_imPt),
+                                oss_title.str(), vpColor::white);
+
+          if (s.tempo > 10.f) {
+            vpDisplay::displayText(I_err_imPt, I_err_imPt.getHeight() - 20 * vpDisplay::getDownScalingFactor(I_err_imPt),
+                                  15 * vpDisplay::getDownScalingFactor(I_err_imPt), "Click to continue...", vpColor::red);
+            vpDisplay::flush(I_err_imPt);
+            vpDisplay::getClick(I_err_imPt);
+          }
+          else {
+            vpDisplay::flush(I_err_imPt);
+            vpTime::wait(s.tempo * 1000);
+          }
+
+          if (opt_save_results) {
+            vpDisplay::getImage(I_err_imPt, I_save_results);
+            list_img_reproj_graph.push_back(I_save_results);
+
+            std::ostringstream oss;
+            oss << cv_save_results_folder << "/reproj_err_graph_" << vpIoTools::getNameWE(calib_info[i].m_frame_name)
+              << opt_img_ext;
+            vpImageIo::write(I_save_results, oss.str());
+          }
+        }
+
+        if (opt_save_results) {
+          // Save mosaic images
+          std::ostringstream oss;
+          std::vector<vpImage<vpRGBa>> mosaics;
+          createMosaic(list_img_reproj_graph, mosaics, 4, 3);
+          for (size_t i = 0; i < mosaics.size(); i++) {
+            oss.str("");
+            oss << cv_save_results_folder << "/mosaics_reproj_err_graph_%04d" << opt_img_ext;
+            char name[FILENAME_MAX];
+            snprintf(name, FILENAME_MAX, oss.str().c_str(), i);
+            vpImageIo::write(mosaics[i], name);
+          }
+        }
+
+        tee << "\n";
+      } // if (cv_calib_status)
+    } // if (perform_opencv_calib)
+
 
     double end_time = vpTime::measureTimeMs();
     int milli = (end_time-start_time);
