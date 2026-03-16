@@ -1693,7 +1693,14 @@ void to_json(nlohmann::json &j, const vpDetectorAprilTag &detector)
 
 void from_json(const nlohmann::json &j, vpDetectorAprilTag &detector)
 {
-  detector.setAprilTagFamily(vpDetectorAprilTag::tagFamilyFromString(j.value("tag_family", vpDetectorAprilTag::tagFamilyToString(detector.m_tagFamily)))); // First raw because it allocates m_impl
+  std::string curr_family = vpDetectorAprilTag::tagFamilyToString(detector.m_tagFamily);
+  if (j.contains("tag_family")) {
+    std::string conf_family = j.at("tag_family");
+    detector.setAprilTagFamily(vpDetectorAprilTag::tagFamilyFromString(conf_family)); // First raw because it allocates m_impl
+  }
+  else {
+    detector.setAprilTagFamily(vpDetectorAprilTag::tagFamilyFromString(curr_family)); // First raw because it allocates m_impl
+  }
   bool debug = false;
   double decodeSharpening = 0.;
   bool hasTagDetector = detector.m_impl->getDebugFlag(debug);
@@ -2174,6 +2181,7 @@ void vpDetectorAprilTag::setAprilTagFamily(const vpAprilTagFamily &tagFamily)
   bool zAxis = m_impl->getZAlignedWithCameraAxis();
 
   delete m_impl;
+  m_tagFamily = tagFamily;
   m_impl = new Impl(tagFamily, m_poseEstimationMethod);
   m_impl->setAprilTagDecodeSharpening(decodeSharpening);
   m_impl->setNbThreads(nThreads);
