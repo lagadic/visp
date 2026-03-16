@@ -450,6 +450,11 @@ public:
                    const vpColor &color = vpColor::none, unsigned int thickness = 1) const;
 
   float getAprilTagDecisionMarginThreshold() const;
+  inline vpAprilTagFamily getAprilTagFamily() const
+  {
+    return m_tagFamily;
+  }
+
   int getAprilTagHammingDistanceThreshold() const;
   bool getPose(size_t tagIndex, double tagSize, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
                vpHomogeneousMatrix *cMo2 = nullptr, double *projError = nullptr, double *projError2 = nullptr);
