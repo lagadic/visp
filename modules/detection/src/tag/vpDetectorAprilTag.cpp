@@ -1528,11 +1528,19 @@ std::string vpDetectorAprilTag::tagFamilyToString(const vpDetectorAprilTag::vpAp
 
 vpDetectorAprilTag::vpAprilTagFamily vpDetectorAprilTag::tagFamilyFromString(const std::string &name)
 {
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  vpDetectorAprilTag::vpAprilTagFamily res = vpDetectorAprilTag::TAG_COUNT;
+#else
   vpDetectorAprilTag::vpAprilTagFamily res = vpDetectorAprilTag::vpAprilTagFamily::TAG_COUNT;
+#endif
   bool wasFound = false;
   std::string lowerCaseName = vpIoTools::toLowerCase(name);
   unsigned int i = 0;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  while ((i < vpDetectorAprilTag::TAG_COUNT) && (!wasFound)) {
+#else
   while ((i < vpDetectorAprilTag::vpAprilTagFamily::TAG_COUNT) && (!wasFound)) {
+#endif
     vpDetectorAprilTag::vpAprilTagFamily candidate = static_cast<vpDetectorAprilTag::vpAprilTagFamily>(i);
     if (lowerCaseName == tagFamilyToString(candidate)) {
       res = candidate;
@@ -1544,19 +1552,27 @@ vpDetectorAprilTag::vpAprilTagFamily vpDetectorAprilTag::tagFamilyFromString(con
     throw(vpException(vpException::badValue, "Could not find a tag family that corresponds to the name '%s'", name.c_str()));
   }
   return res;
-}
+  }
 
 std::string vpDetectorAprilTag::getAvailableTagFamily(const std::string &prefix, const std::string &sep, const std::string &suffix)
 {
   std::string modes(prefix);
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  for (unsigned int i = 0; i < vpDetectorAprilTag::TAG_COUNT - 1; ++i) {
+#else
   for (unsigned int i = 0; i < vpDetectorAprilTag::vpAprilTagFamily::TAG_COUNT - 1; ++i) {
+#endif
     vpDetectorAprilTag::vpAprilTagFamily candidate = static_cast<vpDetectorAprilTag::vpAprilTagFamily>(i);
     modes += tagFamilyToString(candidate) + sep;
   }
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  vpDetectorAprilTag::vpAprilTagFamily candidate = static_cast<vpDetectorAprilTag::vpAprilTagFamily>(vpDetectorAprilTag::TAG_COUNT - 1);
+#else
   vpDetectorAprilTag::vpAprilTagFamily candidate = static_cast<vpDetectorAprilTag::vpAprilTagFamily>(vpDetectorAprilTag::vpAprilTagFamily::TAG_COUNT - 1);
+#endif
   modes += tagFamilyToString(candidate) + suffix;
   return modes;
-}
+  }
 
 std::string vpDetectorAprilTag::poseMethodToString(const vpDetectorAprilTag::vpPoseEstimationMethod &method)
 {
@@ -1592,11 +1608,19 @@ std::string vpDetectorAprilTag::poseMethodToString(const vpDetectorAprilTag::vpP
 
 vpDetectorAprilTag::vpPoseEstimationMethod vpDetectorAprilTag::poseMethodFromString(const std::string &name)
 {
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  vpDetectorAprilTag::vpPoseEstimationMethod res = vpDetectorAprilTag::POSE_COUNT;
+#else
   vpDetectorAprilTag::vpPoseEstimationMethod res = vpDetectorAprilTag::vpPoseEstimationMethod::POSE_COUNT;
+#endif
   bool wasFound = false;
   std::string lowerCaseName = vpIoTools::toLowerCase(name);
   unsigned int i = 0;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  while ((i < vpDetectorAprilTag::POSE_COUNT) && (!wasFound)) {
+#else
   while ((i < vpDetectorAprilTag::vpPoseEstimationMethod::POSE_COUNT) && (!wasFound)) {
+#endif
     vpDetectorAprilTag::vpPoseEstimationMethod candidate = static_cast<vpDetectorAprilTag::vpPoseEstimationMethod>(i);
     if (lowerCaseName == poseMethodToString(candidate)) {
       res = candidate;
@@ -1608,19 +1632,27 @@ vpDetectorAprilTag::vpPoseEstimationMethod vpDetectorAprilTag::poseMethodFromStr
     throw(vpException(vpException::badValue, "Could not find a pose estimation method that corresponds to the name '%s'", name.c_str()));
   }
   return res;
-}
+  }
 
 std::string vpDetectorAprilTag::getAvailablePoseMethod(const std::string &prefix, const std::string &sep, const std::string &suffix)
 {
   std::string modes(prefix);
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  for (unsigned int i = 0; i < vpDetectorAprilTag::POSE_COUNT - 1; ++i) {
+#else
   for (unsigned int i = 0; i < vpDetectorAprilTag::vpPoseEstimationMethod::POSE_COUNT - 1; ++i) {
+#endif
     vpDetectorAprilTag::vpPoseEstimationMethod candidate = static_cast<vpDetectorAprilTag::vpPoseEstimationMethod>(i);
     modes += poseMethodToString(candidate) + sep;
   }
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  vpDetectorAprilTag::vpPoseEstimationMethod candidate = static_cast<vpDetectorAprilTag::vpPoseEstimationMethod>(vpDetectorAprilTag::POSE_COUNT - 1);
+#else
   vpDetectorAprilTag::vpPoseEstimationMethod candidate = static_cast<vpDetectorAprilTag::vpPoseEstimationMethod>(vpDetectorAprilTag::vpPoseEstimationMethod::POSE_COUNT - 1);
+#endif
   modes += poseMethodToString(candidate) + suffix;
   return modes;
-}
+  }
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
 void to_json(nlohmann::json &j, const vpDetectorAprilTag &detector)
