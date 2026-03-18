@@ -69,9 +69,9 @@ How to improve calibration accuracy:
 
 - Download and print, one of the following calibration grid:
   - a black and white chessboard
-    [<a href="http://visp-doc.inria.fr/download/calib-grid/OpenCV_Chessboard.pdf" target="_blank">OpenCV_Chessboard.pdf</a>] (recommended);
+    [<a href="https://visp-doc.inria.fr/download/calib-grid/OpenCV_Chessboard.pdf" target="_blank">OpenCV_Chessboard.pdf</a>] (recommended);
   - a symmetrical circle pattern
-    [<a href="http://visp-doc.inria.fr/download/calib-grid/grid2d.pdf" target="_blank">grid2d.pdf</a>].
+    [<a href="https://visp-doc.inria.fr/download/calib-grid/grid2d.pdf" target="_blank">grid2d.pdf</a>].
 
 - Then stick the printed grid on a rigid support.
 
@@ -370,7 +370,7 @@ Since ViSP 3.3.1 we provide a set of tools to analyse calibration results.
 \subsubsection calibration_tools_patterns 4.4.1. Grid patterns
 
 Running `visp-calibrate-camera` binary allows to visualize the locations of the calibration patterns in the image:
-\image html img-grid-patterns.png
+\image html img-grid-patterns.png Colormap representing the calibration pattern occupancy, hot colors show pixels location with high board density ; black squares represent the corners locations used as input to the calibration pipeline.
 
 A good calibration is obtained when the patterns cover most part of the image.
 
@@ -378,7 +378,7 @@ A good calibration is obtained when the patterns cover most part of the image.
 
 Reprojection error could be seen in the next image. It shows the current reprojection error, the extracted points and
 the projected points using the estimated `cMo` camera pose and camera parameters:
-\image html img-calib-reprojection-error.jpg
+\image html img-calib-reprojection-error.jpg Red crosses represent the extracted chessboard corners and the green crosses the projected 3D chessboard corners using the estimated camera intrinsic parameters and the camera poses.
 
 On the console, the global reprojection error is also given for the model without distortion parameters:
 \code{.sh}
@@ -441,7 +441,7 @@ To get an idea on how much there is distortion, `visp-calibrate-camera` binary g
 - right image: image is undistorted, chessboard points are extracted and lines starting from the first and last points
   are drawn
 
-\image html img-calib-line-fitting.jpg
+\image html img-calib-line-fitting.jpg Comparison between extracted lines from the input distorted and undistorted images.
 
 On the console, mean distance errors for line fitting for points extracted from distorted image and after using
 vpPixelMeterConversion::convertPoint() is given:
@@ -469,7 +469,7 @@ chessboard-03.jpg undistorted image, line 6 fitting error: 0.06309999164
 \subsubsection calibration_tools_lens_distortion 4.4.4. Camera lens distortion
 A pseudo "distortion displacement map" is also displayed:
 
-\image html img-chessboard-distortion-displacement-map.jpg
+\image html img-chessboard-distortion-displacement-map.jpg Distortion displacement map: hot colors representing large pixels displacement induced by the camera lens distortion model ; the red arrows representing the direction and the amount of displacement.
 
 The effect of the lens distortion is visible with hot colors corresponding to much stronger effect of the distortion
 compared to cold colors (typically in the center of the image). With barrel distortion, this effect tends to "push" the
@@ -478,11 +478,11 @@ pixels at the extremities to the image toward the center of the image.
 \subsubsection calibration_tools_reproj_graph 4.4.5. Reprojection errors graph
 The reprojection errors in the uv-coordinates is also displayed for the calibration without (in red) and with distortion (in blue) support:
 
-\image html img-reproj-error-graph.jpg
+\image html img-reproj-error-graph.jpg Visualisation of the reprojection errors for all the extracted corners in the uv-plane, without and with taking into account a camera model lens distortion.
 
 For each calibration image, the same graph is also displayed, with the current reprojection errors visible in green:
 
-\image html img-reproj-err-graph-chessboard-05.jpg
+\image html img-reproj-err-graph-chessboard-05.jpg Visualisation of the reprojection errors for all the extracted corners in the uv-plane, in green those for the current image.
 
 This should help to analyse if a calibration image is appropriated or if it needs to be discarded, in addition to the total reprojection error metric.
 
@@ -492,7 +492,103 @@ You can use the following command line arguments to:
 - `--save-jpg` to save the images in jpeg format instead of png one
 - `--help` flag will print a short description of the different command line flags
 
-\subsubsection calibration_tools_poses 4.4.7. Camera poses
+\subsubsection calibration_tools_opencv 4.4.7. Calibration using OpenCV
+A basic support of the OpenCV camera calibration is possible using the `--opencv-calib` flag.
+Passing this flag allows to both calibrate using the ViSP and the OpenCV camera calibration pipeline.
+
+This is a rough support of the OpenCV calibration pipeline with the following limitations:
+  - calibration with ChArUco calibration boards is experimental and has not been fully tested
+  - the full ChArUco board must be totally visible in the image
+  - some customisation of the [`cv::calibrateCameraRO()`](https://docs.opencv.org/4.x/d9/d0c/group__calib3d.html#gacb6b35670216b24b67c70fcd21519ead)
+  function is possible, but not complete
+  - the following OpenCV calibration flags are currently supported:
+    - `CALIB_USE_INTRINSIC_GUESS`
+    - `CALIB_FIX_ASPECT_RATIO`
+    - `CALIB_FIX_PRINCIPAL_POINT`
+    - `CALIB_ZERO_TANGENT_DIST`
+    - `CALIB_FIX_FOCAL_LENGTH`
+    - `CALIB_FIX_K1`
+    - `CALIB_FIX_K2`
+    - `CALIB_FIX_K3`
+    - `CALIB_USE_QR`
+    - `CALIB_USE_LU`
+  - with by default `cv::CALIB_USE_INTRINSIC_GUESS | cv::CALIB_USE_LU` being used, and the intrinsic parameters initialised using the ViSP calibration results.
+
+An example for a ViSP config file for ChArUco board:
+\code{.sh}
+# Number of inner corners per a item row and column. (square, circle)
+BoardSize_Width: 18
+BoardSize_Height: 9
+
+# The size of a square in meters
+Square_Size: 0.02
+
+# The type of pattern used for camera calibration.
+# One of: CHESSBOARD, CIRCLES_GRID or CHARUCOBOARD
+Calibrate_Pattern: CHARUCOBOARD
+
+# The input image sequence to use for calibration
+Input: pycalib/data/charuco/%08d.jpg
+
+# Tempo in seconds between two images. If > 10 wait a click to continue
+Tempo: 1
+
+# ChArUco
+Charuco_Marker_Size: 0.015
+Charuco_Dictionary: DICT_4X4_250
+Charuco_Legacy_Pattern: 0
+\endcode
+
+Nevertheless, the benefit of using a camera lens model with higher polynomial order can be directly seen with a with wide-angle camera lens.
+As an example, we will perform the calibration of a GoPro Hero 4 camera using this dataset:
+- https://github.com/jhbrito/CameraCalibrationDataset/tree/main/GoPro%20Hero%204 ; MIT License / Copyright (c) 2021 jhbrito
+
+The model of the distortion and the calibration pipeline used in ViSP is composed of only one term, which is not enough to accurately model wide-ange lens.
+
+\image html img-calib-dist-vs_undist-GOPR0262-ViSP.jpg Visualisation of an undistorted image from a wide-angle camera lens (ViSP model).
+
+On the previous image, we have drawn a straight line for each row of the chessboard using the first and last extracted corner location.
+The barrel distortion effect is clearly noticeable, and a consequence of using a wide-angle camera lens.
+On the right side, we have undistorted the original image using the estimated one term distortion coefficient. Similarly,
+a straight line is drawn from the extracted chessboard corner locations. The distortion effect is reduced but using a distortion model with
+only one term is not enough to accurately model the distortion effect at the border of the image.
+
+\image html img-calib-dist-vs_undist-GOPR0262-OpenCV.jpg Visualisation of an undistorted image from a wide-angle camera lens (OpenCV model).
+
+The same operation is performed using this time a camera lens distortion with \f$ (k_1, k_2, k_3) \f$ coefficients for the radial distortion and
+\f$ (p_1, p_2) \f$ coefficients for the tangential distortion model.
+Taking into account higher order coefficients for the polynomial radial distortion allows better modelling of the radial distortion,
+as it can be seen in the previous image, the tangential distortion is often negligeable with correct camera lens (\cite Tsai87 \cite devernay:hal-00821474)
+
+For camera lens which does not exhibit a high amount of distortion, modelling the radial distortion with only one term can bring sufficient precision
+(\cite devernay:hal-00821474) and has the advantage that computing the undistorted coordinates has a closed-form solution while a solver such as a
+Newton-Raphson method needs to be used with a higher order distortion model (e.g. \cite KannalaBrandt).
+
+The following mosaic shows the original GoPro images used for the calibration and is generated when using the `--save` command line:
+
+\image html img-calib-GoPro-mosaics.jpg Images mosaic corresponding to the original calibration images.
+
+The following mosaic shows the undistorted images when using the ViSP calibration result:
+
+\image html img-calib-GoPro-mosaics-undist-ViSP.jpg Images mosaic corresponding to undistorted images using the ViSP calibration result and distortion model.
+
+The following mosaic shows the undistorted images when using the OpenCV calibration result:
+
+\image html img-calib-GoPro-mosaics-undist-OpenCV.jpg Images mosaic corresponding to undistorted images using the OpenCV calibration result and distortion model.
+
+Finally, we can also plot the reprojection errors in the uv-image plane, without and with using a distortion model with ViSP:
+
+\image html img-calib-GoPro-reprojection-error-graph-ViSP.jpg Reprojection errors in the uv-image plane for all the extracted chessboard corners without and with taking into account a distortion model with ViSP.
+
+And with OpenCV:
+
+\image html img-calib-GoPro-reprojection-error-graph-OpenCV.jpg Reprojection errors in the uv-image plane for all the extracted chessboard corners with OpenCV.
+
+The choice of a distortion model is dependent on the type of camera lens and also a tradeoff between accuracy and computation time.
+For instance, it can be cheaper to perform the undistortion directly on the image coordinates or it can be necessary to first compute the uv-distortion map and
+then undistort the whole image for certain types of machine vision application.
+
+\subsubsection calibration_tools_poses 4.4.8. Camera poses
 There is `camera_calibration_show_extrinsics.py` script that allows to display camera poses. Prior to use that script,
 you need to install `scipy`:
 \code{.sh}
@@ -506,7 +602,7 @@ $ python camera_calibration_show_extrinsics.py --calibration camera.xml --scale_
 \endcode
 It reads the camera poses saved in `camera.xml` file and display them with respect to the calibration grid considered
 as static.
-\image html img-calib-script-extrinsic.jpg
+\image html img-calib-script-extrinsic.jpg 3D visualisation of the different (estimated) camera poses corresponding to the different captured viewpoints for camera calibration.
 
 \subsection calibration_init 4.5. How to get over calibration error
 
@@ -635,7 +731,7 @@ Results are shown in the next images:
 - right image is the resulting `chessboard-undistort.jpg` image where distortion is removed thanks to the camera
   intrinsic parameters. Here you can see that chessboard lines are straight.
 
-\image html img-chessboard-undistort.jpg
+\image html img-chessboard-undistort.jpg Original distorted image and undistorted image using the estimated distortion coefficient from camera calibration.
 
 \subsection calibration_undistort_multi 5.2. Undistort a sequence of images
 

@@ -41,15 +41,22 @@
 
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_HIGHGUI) &&  defined(HAVE_OPENCV_IMGPROC) && defined(VISP_HAVE_PUGIXML) \
   && (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D))) \
+  && ((VISP_HAVE_OPENCV_VERSION >= 0x040700) && defined(HAVE_OPENCV_OBJDETECT)) \
   && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 
 #include <map>
+
+#if defined(HAVE_OPENCV_3D)
+#include <opencv2/3d.hpp>
+#endif
 
 #if defined(HAVE_OPENCV_CALIB3D)
 #include <opencv2/calib3d/calib3d.hpp>
 #elif defined(HAVE_OPENCV_CALIB)
 #include <opencv2/calib.hpp>
 #endif
+
+#include <opencv2/objdetect/charuco_detector.hpp>
 
 #if defined(HAVE_OPENCV_CONTRIB)
 #include <opencv2/contrib/contrib.hpp> // Needed on Ubuntu 16.04 with OpenCV 2.4.9.1
@@ -111,6 +118,22 @@ static void usage(const char *argv[], int error)
     << "  --opencv-calib" << std::endl
     << "    Flag to also perform the calibration using the OpenCV calibration pipeline." << std::endl
     << std::endl
+    << "  --opencv-calib-flags" << std::endl
+    << "    Flags to be passed to the calibrateCameraRO() function." << std::endl
+    << "    By default it corresponds to: CALIB_USE_INTRINSIC_GUESS+CALIB_USE_LU." << std::endl
+    << "    Concatenation is possible, e.g.: CALIB_USE_INTRINSIC_GUESS+CALIB_FIX_PRINCIPAL_POINT." << std::endl
+    << "    Supported flags are:" << std::endl
+    << "        - CALIB_USE_INTRINSIC_GUESS" << std::endl
+    << "        - CALIB_FIX_ASPECT_RATIO" << std::endl
+    << "        - CALIB_FIX_PRINCIPAL_POINT" << std::endl
+    << "        - CALIB_ZERO_TANGENT_DIST" << std::endl
+    << "        - CALIB_FIX_FOCAL_LENGTH" << std::endl
+    << "        - CALIB_FIX_K1" << std::endl
+    << "        - CALIB_FIX_K2" << std::endl
+    << "        - CALIB_FIX_K3" << std::endl
+    << "        - CALIB_USE_QR" << std::endl
+    << "        - CALIB_USE_LU" << std::endl
+    << std::endl
     << "  --save" << std::endl
     << "    Flag to automatically save the image processing results in a new directory." << std::endl
     << std::endl
@@ -152,6 +175,8 @@ int main(int argc, const char *argv[])
     std::string opt_img_ext = ".png";
     bool opt_save_results = false;
     bool perform_opencv_calib = false;
+    int cv_flags = 0;
+    std::string cv_flags_str = "CALIB_USE_INTRINSIC_GUESS+CALIB_USE_LU";
 
     for (int i = 2; i < argc; i++) {
       if (std::string(argv[i]) == "--init-from-xml" && i + 1 < argc) {
@@ -172,6 +197,9 @@ int main(int argc, const char *argv[])
       }
       else if (std::string(argv[i]) == "--opencv-calib") {
         perform_opencv_calib = true;
+      }
+      else if (std::string(argv[i]) == "--opencv-calib-flags" && i + 1 < argc) {
+        cv_flags_str = std::string(argv[++i]);
       }
       else if (std::string(argv[i]) == "--save") {
         opt_save_results = true;
@@ -286,10 +314,37 @@ int main(int argc, const char *argv[])
     std::vector<vpPoint> model;
     std::vector<vpCalibration> calibrator;
 
-    for (int i = 0; i < s.boardSize.height; i++) {
-      for (int j = 0; j < s.boardSize.width; j++) {
-        model.push_back(vpPoint(j * s.squareSize, i * s.squareSize, 0));
+    // Create board 3D object points
+    if (s.calibrationPattern == Settings::CHARUCOBOARD) {
+      for (int i = 0; i < s.boardSize.height-1; i++) {
+        for (int j = 0; j < s.boardSize.width-1; j++) {
+          model.push_back(vpPoint(j * s.squareSize, i * s.squareSize, 0));
+        }
       }
+    }
+    else {
+      for (int i = 0; i < s.boardSize.height; i++) {
+        for (int j = 0; j < s.boardSize.width; j++) {
+          model.push_back(vpPoint(j * s.squareSize, i * s.squareSize, 0));
+        }
+      }
+    }
+
+    tee << "Calibration pattern 3D object points:" << "\n";
+    for (size_t i = 0; i < model.size(); i++) {
+      tee << "obj_" << i << ": " << model[i].get_oX() << ", " << model[i].get_oY() << ", " << model[i].get_oZ() << "\n";
+    }
+    tee << "\n";
+
+    // ChArUco
+    cv::Ptr<cv::aruco::CharucoBoard> ch_board;
+    std::vector<int> markerIds;
+    cv::Ptr<cv::aruco::CharucoDetector> ch_detector;
+    if (s.calibrationPattern == Settings::CHARUCOBOARD) {
+      cv::aruco::Dictionary dictionary = cv::aruco::getPredefinedDictionary(getArUcoDict(s.dictionnary));
+      ch_board = cv::makePtr<cv::aruco::CharucoBoard>(s.boardSize, s.squareSize, s.markerSize, dictionary);
+      ch_board->setLegacyPattern(s.legacyPattern);
+      ch_detector = cv::makePtr<cv::aruco::CharucoDetector>(cv::aruco::CharucoDetector(*ch_board));
     }
 
     std::vector<CalibInfo> calib_info;
@@ -312,7 +367,7 @@ int main(int argc, const char *argv[])
       vpImageConvert::convert(I, cvI);
 
       tee << "Process frame: " << frame_name;
-      bool found = extractCalibrationPoints(s, cvI, pointBuf);
+      bool found = extractCalibrationPoints(s, cvI, ch_detector, pointBuf);
 
       tee << ", grid detection status: " << found;
       if (!found)
@@ -398,12 +453,12 @@ int main(int argc, const char *argv[])
     // Now we consider the multi image calibration
     // Calibrate by a non linear method based on virtual visual servoing
     if (calibrator.empty()) {
-      tee << "Unable to calibrate. Image processing failed !" << "\n";
+      tee << "Unable to calibrate. Image processing failed!" << "\n";
       return EXIT_FAILURE;
     }
 
     // Display calibration pattern occupancy
-    drawCalibrationOccupancy(I, calib_info, s.boardSize.width);
+    drawCalibrationOccupancy(I, calib_info, s.boardSize.width, s.calibrationPattern == Settings::CHARUCOBOARD);
 
     cv::Mat1b img(I.getHeight(), I.getWidth());
     vpImageConvert::convert(I, img);
@@ -651,9 +706,10 @@ int main(int argc, const char *argv[])
                                15 * vpDisplay::getDownScalingFactor(I_dist_undist),
                                "Draw lines from first / last points.", vpColor::red);
         std::vector<vpImagePoint> grid_points = calib_info[idx].m_imPts;
-        for (int i = 0; i < s.boardSize.height; i++) {
-          std::vector<vpImagePoint> current_line(grid_points.begin() + i * s.boardSize.width,
-                                                 grid_points.begin() + (i + 1) * s.boardSize.width);
+        const int offset = (s.calibrationPattern == Settings::CHARUCOBOARD) ? -1 : 0;
+        for (int i = 0; i < s.boardSize.height+offset; i++) {
+          std::vector<vpImagePoint> current_line(grid_points.begin() + i * (s.boardSize.width+offset),
+                                                 grid_points.begin() + (i + 1) * (s.boardSize.width+offset));
 
           std::vector<vpImagePoint> current_line_undist = undistort(cam, current_line);
           double a = 0, b = 0, c = 0;
@@ -674,7 +730,7 @@ int main(int argc, const char *argv[])
         std::vector<cv::Point2f> pointBuf;
         vpImageConvert::convert(I_undist, cvI);
 
-        bool found = extractCalibrationPoints(s, cvI, pointBuf);
+        bool found = extractCalibrationPoints(s, cvI, ch_detector, pointBuf);
         if (found) {
           std::vector<vpImagePoint> found_grid_points;
           for (unsigned int i = 0; i < pointBuf.size(); i++) {
@@ -685,9 +741,9 @@ int main(int argc, const char *argv[])
           vpDisplay::displayText(I_dist_undist, 15 * vpDisplay::getDownScalingFactor(I_dist_undist),
                                  I.getWidth() + 15 * vpDisplay::getDownScalingFactor(I_dist_undist),
                                  calib_info[idx].m_frame_name + std::string(" undistorted"), vpColor::red);
-          for (int i = 0; i < s.boardSize.height; i++) {
-            std::vector<vpImagePoint> current_line(found_grid_points.begin() + i * s.boardSize.width,
-                                                   found_grid_points.begin() + (i + 1) * s.boardSize.width);
+          for (int i = 0; i < s.boardSize.height+offset; i++) {
+            std::vector<vpImagePoint> current_line(found_grid_points.begin() + i * (s.boardSize.width+offset),
+                                                   found_grid_points.begin() + (i + 1) * (s.boardSize.width+offset));
 
             double a = 0, b = 0, c = 0;
             double line_fitting_error = vpMath::lineFitting(current_line, a, b, c);
@@ -742,7 +798,7 @@ int main(int argc, const char *argv[])
       d->close(I_dist_undist);
       vpImage<vpRGBa> I_dist_map(I.getHeight(), I.getWidth());
       d->init(I_dist_map, 0, 0, "Distortion displacement map");
-      calib_helper::computeDistortionDisplacementMap(cam, I_dist_map);
+      computeDistortionDisplacementMap(cam, I_dist_map);
       d->display(I_dist_map);
 
       const float ref_img_width = 640;
@@ -987,9 +1043,9 @@ int main(int argc, const char *argv[])
       ss_additional_info << "</camera_poses>";
 
       if (xml.save(cam, opt_output_file_name.c_str(), opt_camera_name, I.getWidth(), I.getHeight(),
-                   ss_additional_info.str()) == vpXmlParserCamera::SEQUENCE_OK)
-        tee << "Camera parameters with distortion successfully saved in \"" << opt_output_file_name << "\""
-        << "\n";
+                   ss_additional_info.str()) == vpXmlParserCamera::SEQUENCE_OK) {
+        tee << "Camera parameters with distortion successfully saved in \"" << opt_output_file_name << "\"" << "\n";
+      }
       else {
         tee << "Failed to save the camera parameters with distortion in \"" << opt_output_file_name << "\""
           << "\n";
@@ -1040,20 +1096,36 @@ int main(int argc, const char *argv[])
 
       cv::Size cv_imageSize(I.getWidth(), I.getHeight());
       cv::Size cv_boardSize = s.boardSize;
-      CvPattern cv_patternType = (s.calibrationPattern == Settings::CHESSBOARD) ? CV_CHESSBOARD : CV_CIRCLES_GRID;
+      CvPattern cv_patternType = CV_CHESSBOARD;
+      switch (s.calibrationPattern) {
+      case Settings::CHESSBOARD:
+        cv_patternType = CV_CHESSBOARD;
+        break;
+      case Settings::CIRCLES_GRID:
+        cv_patternType = CV_CIRCLES_GRID;
+        break;
+      case Settings::CHARUCOBOARD:
+        cv_patternType = CV_CHARUCOBOARD;
+        break;
+      default:
+        tee << "Unsupported calibration pattern type between ViSP (" << s.calibrationPattern << ") and OpenCV." << "\n";
+        throw vpException(vpException::badValue, "Unsupported calibration pattern type between ViSP and OpenCV.");
+      }
       float cv_squareSize = s.squareSize;
       float cv_grid_width = cv_squareSize *
         (cv_patternType != CV_CHARUCOBOARD ? (cv_boardSize.width - 1) : (cv_boardSize.width - 2));
       bool cv_release_object = false;
       float cv_aspectRatio = 1;
-      int cv_flags = 0;
-      cv_flags |= cv::CALIB_USE_INTRINSIC_GUESS;
       cv::Matx33d cv_cameraMatrix_ = cv::Matx33d::eye();
       cv_cameraMatrix_(0, 0) = cam.get_px();  cv_cameraMatrix_(0, 2) = cam.get_u0();
       cv_cameraMatrix_(1, 1) = cam.get_py();  cv_cameraMatrix_(1, 2) = cam.get_v0();
       cv::Mat cv_cameraMatrix(cv_cameraMatrix_);
       cv::Mat cv_distCoeffs;
       bool cv_writeExtrinsics = true, cv_writePoints = true, cv_writeGrid = true;
+
+      tee << "OpenCV calibration flag:" << "\n";
+      parseOpenCVCalibFlags(cv_flags_str, cv_flags, tee);
+      tee << "OpenCV calibration flag: " << cv_flags << " (int)" << "\n";
 
       std::vector<std::vector<cv::Point2f>> cv_imagePoints_proj;
       std::vector<float> cv_reprojErrs;
@@ -1159,9 +1231,10 @@ int main(int argc, const char *argv[])
                                  15 * vpDisplay::getDownScalingFactor(I_dist_undist),
                                  "Draw lines from first / last points.", vpColor::red);
           std::vector<vpImagePoint> grid_points = calib_info[idx].m_imPts;
+          const int offset = (s.calibrationPattern == Settings::CHARUCOBOARD) ? -1 : 0;
           for (int i = 0; i < s.boardSize.height; i++) {
-            std::vector<vpImagePoint> current_line(grid_points.begin() + i * s.boardSize.width,
-                                                   grid_points.begin() + (i + 1) * s.boardSize.width);
+            std::vector<vpImagePoint> current_line(grid_points.begin() + i * (s.boardSize.width+offset),
+                                                   grid_points.begin() + (i + 1) * (s.boardSize.width+offset));
 
             std::vector<vpImagePoint> current_line_undist = cv_undistort(cv_cameraMatrix, cv_distCoeffs, current_line);
             double a = 0, b = 0, c = 0;
@@ -1182,7 +1255,7 @@ int main(int argc, const char *argv[])
           std::vector<cv::Point2f> pointBuf;
           vpImageConvert::convert(I_undist, cvI);
 
-          bool found = extractCalibrationPoints(s, cvI, pointBuf);
+          bool found = extractCalibrationPoints(s, cvI, ch_detector, pointBuf);
           if (found) {
             std::vector<vpImagePoint> found_grid_points;
             for (unsigned int i = 0; i < pointBuf.size(); i++) {
@@ -1193,9 +1266,9 @@ int main(int argc, const char *argv[])
             vpDisplay::displayText(I_dist_undist, 15 * vpDisplay::getDownScalingFactor(I_dist_undist),
                                    I.getWidth() + 15 * vpDisplay::getDownScalingFactor(I_dist_undist),
                                    calib_info[idx].m_frame_name + std::string(" undistorted"), vpColor::red);
-            for (int i = 0; i < s.boardSize.height; i++) {
-              std::vector<vpImagePoint> current_line(found_grid_points.begin() + i * s.boardSize.width,
-                                                     found_grid_points.begin() + (i + 1) * s.boardSize.width);
+            for (int i = 0; i < s.boardSize.height+offset; i++) {
+              std::vector<vpImagePoint> current_line(found_grid_points.begin() + i * (s.boardSize.width+offset),
+                                                     found_grid_points.begin() + (i + 1) * (s.boardSize.width+offset));
 
               double a = 0, b = 0, c = 0;
               double line_fitting_error = vpMath::lineFitting(current_line, a, b, c);
@@ -1250,7 +1323,7 @@ int main(int argc, const char *argv[])
         d->close(I_dist_undist);
         vpImage<vpRGBa> I_dist_map(I.getHeight(), I.getWidth());
         d->init(I_dist_map, 0, 0, "(OpenCV) Distortion displacement map");
-        calib_helper::computeDistortionDisplacementMap(cv_cameraMatrix, cv_distCoeffs, I_dist_map);
+        computeDistortionDisplacementMap(cv_cameraMatrix, cv_distCoeffs, I_dist_map);
         d->display(I_dist_map);
 
         const float ref_img_width = 640;
@@ -1439,6 +1512,18 @@ int main(int argc, const char *argv[])
           }
         }
 
+        tee << "\n";
+        tee << "(OpenCV) Estimated pose using vpPoseVector format: [tx ty tz tux tuy tuz] with translation in meter and "
+          "rotation in rad"
+          << "\n";
+        for (size_t i = 0; i < rvecs.size(); i++) {
+          tee << "Estimated pose on input data extracted from " << calib_info[i].m_frame_name << ": "
+            << vpPoseVector(
+              tvecs[i].at<double>(0), tvecs[i].at<double>(1), tvecs[i].at<double>(2),
+              rvecs[i].at<double>(0), rvecs[i].at<double>(1), rvecs[i].at<double>(2)
+            ).t() << "\n";
+        }
+
         if (opt_save_results) {
           // Save mosaic images
           std::ostringstream oss;
@@ -1453,7 +1538,6 @@ int main(int argc, const char *argv[])
           }
         }
 
-        tee << "\n";
       } // if (cv_calib_status)
     } // if (perform_opencv_calib)
 
@@ -1484,10 +1568,10 @@ int main()
 #if !defined(HAVE_OPENCV_HIGHGUI)
   std::cout << "This example requires OpenCV highgui module." << std::endl;
 #endif
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION < 0x050000) && !defined(HAVE_OPENCV_CALIB3D)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION < 0x050000) && !(defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_OBJDETECT))
   std::cout << "This example requires OpenCV calib3d module." << std::endl;
 #endif
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x050000) && !defined(HAVE_OPENCV_3D)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x050000) && !(defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_OBJDETECT))
   std::cout << "This example requires OpenCV 3d module." << std::endl;
 #endif
 #if !defined(VISP_HAVE_PUGIXML)

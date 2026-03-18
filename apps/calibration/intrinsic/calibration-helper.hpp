@@ -89,7 +89,7 @@ public:
     tempo = 1.f;
   }
 
-  enum Pattern { UNDEFINED, CHESSBOARD, CIRCLES_GRID };
+  enum Pattern { UNDEFINED, CHESSBOARD, CIRCLES_GRID, CHARUCOBOARD };
 
   bool read(const std::string &filename) // Read the parameters
   {
@@ -107,6 +107,15 @@ public:
     tee << "grid height: " << boardSize.height << "\n";
     tee << "square size: " << squareSize << "\n";
     tee << "pattern    : " << patternToUse << "\n";
+    if (patternToUse.compare("CHARUCOBOARD") == 0) {
+      vpIoTools::readConfigVar("Charuco_Marker_Size:", markerSize);
+      vpIoTools::readConfigVar("Charuco_Dictionary:", dictionnary);
+      vpIoTools::readConfigVar("Charuco_Legacy_Pattern:", legacyPattern);
+
+      tee << "  - ChArUco marker size: " << markerSize << "\n";
+      tee << "  - ChArUco dictionnary: " << dictionnary << "\n";
+      tee << "  - ChArUco legacy pattern?: " << legacyPattern << "\n";
+    }
     tee << "input seq  : " << input << "\n";
     tee << "tempo      : " << tempo << "\n";
     interprate();
@@ -133,6 +142,18 @@ public:
       calibrationPattern = CHESSBOARD;
     else if (patternToUse.compare("CIRCLES_GRID") == 0)
       calibrationPattern = CIRCLES_GRID;
+    else if (patternToUse.compare("CHARUCOBOARD") == 0) {
+      calibrationPattern = CHARUCOBOARD;
+
+      if (markerSize <= 10e-6) {
+        tee << "Invalid ArUco size " << markerSize << "\n";
+        goodInput = false;
+      }
+      if (markerSize >= squareSize) {
+        tee << "ArUco size (" << markerSize << ") is greater than square size(" << squareSize << ")" << "\n";
+        goodInput = false;
+      }
+    }
     if (calibrationPattern == UNDEFINED) {
       tee << " Inexistent camera calibration mode: " << patternToUse << "\n";
       goodInput = false;
@@ -149,6 +170,9 @@ public:
   std::string input;          // The input image sequence
   float tempo;                // Tempo in seconds between two images. If > 10 wait a click to
                               // continue
+  float markerSize;           // ArUco marker length in the case of ChArUco board.
+  std::string dictionnary;    // ArUco dictionnary in the case of ChArUco board.
+  bool legacyPattern;         // See OpenCV "setLegacyPattern()" doc and https://github.com/opencv/opencv/issues/23152
   bool goodInput;
 
 private:
@@ -169,8 +193,11 @@ struct CalibInfo
   std::string m_frame_name;
 };
 
-void drawCalibrationOccupancy(vpImage<unsigned char> &I, const std::vector<CalibInfo> &calib_info, unsigned int patternW)
+void drawCalibrationOccupancy(vpImage<unsigned char> &I, const std::vector<CalibInfo> &calib_info,
+  unsigned int patternW, bool charuco)
 {
+  int shift1 = charuco ? -2 : -1;
+  int shift2 = charuco ? -1 : 0;
   I = 0u;
   unsigned char pixel_value = static_cast<unsigned char>(255.0 / calib_info.size());
   for (size_t idx = 0; idx < calib_info.size(); idx++) {
@@ -178,9 +205,9 @@ void drawCalibrationOccupancy(vpImage<unsigned char> &I, const std::vector<Calib
 
     std::vector<vpImagePoint> corners;
     corners.push_back(calib.m_imPts.front());
-    corners.push_back(*(calib.m_imPts.begin() + patternW - 1));
+    corners.push_back(*(calib.m_imPts.begin() + patternW + shift1));
     corners.push_back(calib.m_imPts.back());
-    corners.push_back(*(calib.m_imPts.end() - patternW));
+    corners.push_back(*(calib.m_imPts.end() - (patternW + shift2)));
     vpPolygon poly(corners);
 
     for (unsigned int i = 0; i < I.getHeight(); i++) {
@@ -210,9 +237,12 @@ std::vector<vpImagePoint> undistort(const vpCameraParameters &cam_dist, const st
   return imPts_undist;
 }
 
-bool extractCalibrationPoints(const Settings &s, const cv::Mat &cvI, std::vector<cv::Point2f> &pointBuf)
+bool extractCalibrationPoints(const Settings &s, const cv::Mat &cvI,
+  const cv::Ptr<cv::aruco::CharucoDetector> &ch_detector, std::vector<cv::Point2f> &pointBuf)
 {
+  std::vector<int> markerIds;
   bool found = false;
+
   switch (s.calibrationPattern) // Find feature points on the input format
   {
   case Settings::CHESSBOARD:
@@ -226,6 +256,10 @@ bool extractCalibrationPoints(const Settings &s, const cv::Mat &cvI, std::vector
     break;
   case Settings::CIRCLES_GRID:
     found = findCirclesGrid(cvI, s.boardSize, pointBuf, cv::CALIB_CB_SYMMETRIC_GRID);
+    break;
+  case Settings::CHARUCOBOARD:
+    ch_detector->detectBoard(cvI, pointBuf, markerIds);
+    found = pointBuf.size() == (size_t)(s.boardSize.width-1)*(s.boardSize.height-1);
     break;
   case Settings::UNDEFINED:
   default:
@@ -476,7 +510,7 @@ double computeReprojectionErrors(
   perViewErrors.resize(objectPoints.size());
 
   for (int i = 0; i < (int)objectPoints.size(); i++) {
-    projectPoints(cv::Mat(objectPoints[i]), rvecs[i], tvecs[i],
+    cv::projectPoints(cv::Mat(objectPoints[i]), rvecs[i], tvecs[i],
                   cameraMatrix, distCoeffs, imagePoints2);
     err = cv::norm(cv::Mat(imagePoints[i]), cv::Mat(imagePoints2), cv::NORM_L2);
     int n = (int)objectPoints[i].size();
@@ -639,9 +673,8 @@ bool runCalibration(const std::vector<std::vector<cv::Point2f>> &imagePoints,
   int iFixedPoint = -1;
   if (release_object)
     iFixedPoint = boardSize.width - 1;
-  rms = calibrateCameraRO(objectPoints, imagePoints, imageSize, iFixedPoint,
-                          cameraMatrix, distCoeffs, rvecs, tvecs, newObjPoints,
-                          flags | cv::CALIB_USE_LU);
+  rms = cv::calibrateCameraRO(objectPoints, imagePoints, imageSize, iFixedPoint,
+                          cameraMatrix, distCoeffs, rvecs, tvecs, newObjPoints, flags);
   // printf("RMS error reported by calibrateCamera: %g\n", rms);
   tee << "RMS error reported by OpenCV calibrateCameraRO(): " << rms << "\n";
 
@@ -813,6 +846,151 @@ double getProjectionErrorUV(const cv::Mat &cam, const cv::Mat &dist, const std::
   }
 
   return max_scale_uv;
+}
+
+void parseOpenCVCalibFlags(const std::string &str, int &cv_flags, Tee &tee)
+{
+  if (str.find("CALIB_USE_INTRINSIC_GUESS") != std::string::npos) {
+    cv_flags |= cv::CALIB_USE_INTRINSIC_GUESS;
+    tee << "CALIB_USE_INTRINSIC_GUESS" << "\n";
+  }
+  if (str.find("CALIB_FIX_ASPECT_RATIO") != std::string::npos) {
+    cv_flags |= cv::CALIB_FIX_ASPECT_RATIO;
+    tee << "CALIB_FIX_ASPECT_RATIO" << "\n";
+  }
+  if (str.find("CALIB_FIX_PRINCIPAL_POINT") != std::string::npos) {
+    cv_flags |= cv::CALIB_FIX_PRINCIPAL_POINT;
+    tee << "CALIB_FIX_PRINCIPAL_POINT" << "\n";
+  }
+  if (str.find("CALIB_ZERO_TANGENT_DIST") != std::string::npos) {
+    cv_flags |= cv::CALIB_ZERO_TANGENT_DIST;
+    tee << "CALIB_ZERO_TANGENT_DIST" << "\n";
+  }
+  if (str.find("CALIB_FIX_FOCAL_LENGTH") != std::string::npos) {
+    cv_flags |= cv::CALIB_FIX_FOCAL_LENGTH;
+    tee << "CALIB_FIX_FOCAL_LENGTH" << "\n";
+  }
+  if (str.find("CALIB_FIX_K1") != std::string::npos) {
+    cv_flags |= cv::CALIB_FIX_K1;
+    tee << "CALIB_FIX_K1" << "\n";
+  }
+  if (str.find("CALIB_FIX_K2") != std::string::npos) {
+    cv_flags |= cv::CALIB_FIX_K2;
+    tee << "CALIB_FIX_K2" << "\n";
+  }
+  if (str.find("CALIB_FIX_K3") != std::string::npos) {
+    cv_flags |= cv::CALIB_FIX_K3;
+    tee << "CALIB_FIX_K3" << "\n";
+  }
+  if (str.find("CALIB_USE_QR") != std::string::npos) {
+    cv_flags |= cv::CALIB_USE_QR;
+    tee << "CALIB_USE_QR" << "\n";
+  }
+  if (str.find("CALIB_USE_LU") != std::string::npos) {
+    cv_flags |= cv::CALIB_USE_LU;
+    tee << "CALIB_USE_LU" << "\n";
+  }
+}
+namespace calib_helper_compat
+{
+enum PredefinedDictionaryType
+{
+  DICT_4X4_50 = 0,        ///< 4x4 bits, minimum hamming distance between any two codes = 4, 50 codes
+  DICT_4X4_100,           ///< 4x4 bits, minimum hamming distance between any two codes = 3, 100 codes
+  DICT_4X4_250,           ///< 4x4 bits, minimum hamming distance between any two codes = 3, 250 codes
+  DICT_4X4_1000,          ///< 4x4 bits, minimum hamming distance between any two codes = 2, 1000 codes
+  DICT_5X5_50,            ///< 5x5 bits, minimum hamming distance between any two codes = 8, 50 codes
+  DICT_5X5_100,           ///< 5x5 bits, minimum hamming distance between any two codes = 7, 100 codes
+  DICT_5X5_250,           ///< 5x5 bits, minimum hamming distance between any two codes = 6, 250 codes
+  DICT_5X5_1000,          ///< 5x5 bits, minimum hamming distance between any two codes = 5, 1000 codes
+  DICT_6X6_50,            ///< 6x6 bits, minimum hamming distance between any two codes = 13, 50 codes
+  DICT_6X6_100,           ///< 6x6 bits, minimum hamming distance between any two codes = 12, 100 codes
+  DICT_6X6_250,           ///< 6x6 bits, minimum hamming distance between any two codes = 11, 250 codes
+  DICT_6X6_1000,          ///< 6x6 bits, minimum hamming distance between any two codes = 9, 1000 codes
+  DICT_7X7_50,            ///< 7x7 bits, minimum hamming distance between any two codes = 19, 50 codes
+  DICT_7X7_100,           ///< 7x7 bits, minimum hamming distance between any two codes = 18, 100 codes
+  DICT_7X7_250,           ///< 7x7 bits, minimum hamming distance between any two codes = 17, 250 codes
+  DICT_7X7_1000,          ///< 7x7 bits, minimum hamming distance between any two codes = 14, 1000 codes
+  DICT_ARUCO_ORIGINAL,    ///< 6x6 bits, minimum hamming distance between any two codes = 3, 1024 codes
+  DICT_APRILTAG_16h5,     ///< 4x4 bits, minimum hamming distance between any two codes = 5, 30 codes
+  DICT_APRILTAG_25h9,     ///< 5x5 bits, minimum hamming distance between any two codes = 9, 35 codes
+  DICT_APRILTAG_36h10,    ///< 6x6 bits, minimum hamming distance between any two codes = 10, 2320 codes
+  DICT_APRILTAG_36h11,     ///< 6x6 bits, minimum hamming distance between any two codes = 11, 587 codes
+  DICT_ARUCO_MIP_36h12     ///< 6x6 bits, minimum hamming distance between any two codes = 12, 250 codes
+};
+}
+
+int getArUcoDict(const std::string &name)
+{
+  if (name == "DICT_4X4_50") {
+    return calib_helper_compat::DICT_4X4_50;
+  }
+  else  if (name == "DICT_4X4_100") {
+    return calib_helper_compat::DICT_4X4_100;
+  }
+  else  if (name == "DICT_4X4_250") {
+    return calib_helper_compat::DICT_4X4_250;
+  }
+  else  if (name == "DICT_4X4_1000") {
+    return calib_helper_compat::DICT_4X4_1000;
+  }
+  else if (name == "DICT_5X5_50") {
+    return calib_helper_compat::DICT_5X5_50;
+  }
+  else  if (name == "DICT_5X5_100") {
+    return calib_helper_compat::DICT_5X5_100;
+  }
+  else  if (name == "DICT_5X5_250") {
+    return calib_helper_compat::DICT_5X5_250;
+  }
+  else  if (name == "DICT_5X5_1000") {
+    return calib_helper_compat::DICT_5X5_1000;
+  }
+  else if (name == "DICT_6X6_50") {
+    return calib_helper_compat::DICT_6X6_50;
+  }
+  else  if (name == "DICT_6X6_100") {
+    return calib_helper_compat::DICT_6X6_100;
+  }
+  else  if (name == "DICT_6X6_250") {
+    return calib_helper_compat::DICT_6X6_250;
+  }
+  else  if (name == "DICT_6X6_1000") {
+    return calib_helper_compat::DICT_6X6_1000;
+  }
+  else if (name == "DICT_7X7_50") {
+    return calib_helper_compat::DICT_7X7_50;
+  }
+  else  if (name == "DICT_7X7_100") {
+    return calib_helper_compat::DICT_7X7_100;
+  }
+  else  if (name == "DICT_7X7_250") {
+    return calib_helper_compat::DICT_7X7_250;
+  }
+  else  if (name == "DICT_7X7_1000") {
+    return calib_helper_compat::DICT_7X7_1000;
+  }
+  else if (name == "DICT_ARUCO_ORIGINAL") {
+    return calib_helper_compat::DICT_ARUCO_ORIGINAL;
+  }
+  else  if (name == "DICT_APRILTAG_16h5") {
+    return calib_helper_compat::DICT_APRILTAG_16h5;
+  }
+  else  if (name == "DICT_APRILTAG_25h9") {
+    return calib_helper_compat::DICT_APRILTAG_25h9;
+  }
+  else  if (name == "DICT_APRILTAG_36h10") {
+    return calib_helper_compat::DICT_APRILTAG_36h10;
+  }
+  else  if (name == "DICT_APRILTAG_36h11") {
+    return calib_helper_compat::DICT_APRILTAG_36h11;
+  }
+  else  if (name == "DICT_ARUCO_MIP_36h12") {
+    return calib_helper_compat::DICT_ARUCO_MIP_36h12;
+  }
+  else {
+    throw vpException(vpException::badValue, "Invalid ArUco dictionnary name.");
+  }
 }
 
 } // namespace calib_helper
