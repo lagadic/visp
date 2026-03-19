@@ -880,6 +880,10 @@ VISP_OPTION(BUILD_APRILTAG "Build apriltag from source" VISP_FORCE_3RDPARTY_BUIL
 VISP_OPTION(USE_APRILTAG "Include apriltag support" ON
   VISIBLE_IF TRUE
   VERIFY VISP_HAVE_APRILTAG)
+VISP_OPTION(BUILD_CATCH2 "Build Catch2 from source" VISP_FORCE_3RDPARTY_BUILD)
+VISP_OPTION(USE_CATCH2 "Include Catch2 support" ON
+  VISIBLE_IF TRUE
+  VERIFY VISP_HAVE_CATCH2)
 
 VP_OPTION(WITH_MINIZ      ""           ""    "Use npz related I/O as built-in functions"   "" ON)
 VP_OPTION(WITH_ATIDAQ     ""           ""    "Use atidaq-c as built-in library"  "" ON IF USE_COMEDI AND NOT WINRT)
@@ -887,7 +891,6 @@ VP_OPTION(WITH_CLIPPER    ""           ""    "Use clipper as built-in library"  
 VP_OPTION(WITH_LAPACK     ""           ""    "Use lapack as built-in library"    "" ON IF NOT USE_LAPACK)
 VP_OPTION(WITH_QBDEVICE   ""           ""    "Use qbdevice-api as built-in library" "" ON IF (NOT WINRT) AND (NOT IOS))
 VP_OPTION(WITH_TAKKTILE2  ""           ""    "Use Right Hand takktile2 driver as built-in library"   "" ON IF (NOT WIN32) AND (NOT WINRT) AND (NOT IOS) AND (NOT ANDROID))
-VP_OPTION(WITH_CATCH2     ""           ""    "Use catch2 built-in library" "" ON)
 VP_OPTION(WITH_POLOLU     ""           ""    "Use rapa pololu as built-in library" "" ON IF (NOT WINRT) AND (NOT IOS) AND (NOT ANDROID))
 VP_OPTION(WITH_PUGIXML    ""           ""    "Use pugixml built-in third-party" "" ON)
 VP_OPTION(WITH_SIMDLIB    ""           ""    "Use simdlib built-in third-party" "" ON)
@@ -913,10 +916,10 @@ if(VISP_CXX_STANDARD LESS VISP_CXX_STANDARD_11)
 endif()
 
 if(VISP_CXX_STANDARD LESS VISP_CXX_STANDARD_14)
-  if(WITH_CATCH2)
-    message(WARNING "catch2 3rd party needs at least c++14 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable catch2 usage turning WITH_CATCH2=OFF.")
-    unset(WITH_CATCH2)
-    set(WITH_CATCH2 OFF CACHE BOOL "Use catch2 built-in library" FORCE)
+  if(USE_CATCH2)
+    message(WARNING "Catch2 3rd party needs at least c++14 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable Catch2 usage turning USE_CATCH2=OFF.")
+    unset(USE_CATCH2)
+    set(USE_CATCH2 OFF CACHE BOOL "Use Catch2 library" FORCE)
   endif()
 endif()
 
@@ -1263,8 +1266,6 @@ VP_SET(VISP_HAVE_COMEDI      TRUE IF (BUILD_MODULE_visp_sensor AND USE_COMEDI))
 VP_SET(VISP_HAVE_ATIDAQ      TRUE IF (BUILD_MODULE_visp_sensor AND WITH_ATIDAQ))
 VP_SET(VISP_HAVE_FT_IIT_SDK  TRUE IF (BUILD_MODULE_visp_sensor AND USE_FTIITSDK))
 VP_SET(VISP_HAVE_CLIPPER     TRUE IF (BUILD_MODULE_visp_mbt AND BUILD_MODULE_visp_klt AND WITH_CLIPPER))
-#VP_SET(VISP_HAVE_APRILTAG    TRUE IF (BUILD_MODULE_visp_detection AND WITH_APRILTAG))
-#VP_SET(VISP_HAVE_APRILTAG_BIG_FAMILY TRUE IF (BUILD_MODULE_visp_detection AND WITH_APRILTAG AND WITH_APRILTAG_BIG_FAMILY))
 VP_SET(VISP_HAVE_APRILTAG_BIG_FAMILY TRUE IF (USE_APRILTAG AND USE_APRILTAG_BIG_FAMILY))
 VP_SET(VISP_HAVE_QBDEVICE    TRUE IF (BUILD_MODULE_visp_robot AND WITH_QBDEVICE))
 VP_SET(VISP_HAVE_TAKKTILE2   TRUE IF (BUILD_MODULE_visp_robot AND WITH_TAKKTILE2))
@@ -1997,7 +1998,9 @@ endif()
 # ========================== samples and tests ==========================
 status("")
 status("  Tests and samples:")
-status("    Use catch2 (built-in):"  WITH_CATCH2        THEN "yes (ver ${CATCH2_VERSION})" ELSE "no")
+status("    Use Catch2:"     Catch2_FOUND
+  THEN "yes (ver ${CATCH2_VERSION})"
+  ELSE "build (ver ${CATCH2_VERSION})")
 status("    Tests:"                  BUILD_TESTS        THEN "yes" ELSE "no")
 status("    Apps:"                   BUILD_APPS         THEN "yes" ELSE "no")
 status("    Demos:"                  BUILD_DEMOS        THEN "yes" ELSE "no")
