@@ -43,7 +43,11 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMath.h>
 
+#if defined(VISP_BUILD_CATCH2)
 #include <catch_amalgamated.hpp>
+#else
+#include <catch2/catch_all.hpp>
+#endif
 
 // #define VERBOSE
 // #define DEBUG

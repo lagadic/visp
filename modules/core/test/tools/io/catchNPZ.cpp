@@ -42,7 +42,11 @@
   (defined(_WIN32) || (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))) && \
   defined(VISP_LITTLE_ENDIAN) && defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
 
+#if defined(VISP_BUILD_CATCH2)
 #include <catch_amalgamated.hpp>
+#else
+#include <catch2/catch_all.hpp>
+#endif
 
 #include <type_traits>
 #include <complex>

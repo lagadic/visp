@@ -44,7 +44,11 @@
 
 #include <visp3/core/vpPoseVector.h>
 
+#if defined(VISP_BUILD_CATCH2)
 #include <catch_amalgamated.hpp>
+#else
+#include <catch2/catch_all.hpp>
+#endif
 
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;

@@ -46,7 +46,11 @@
 #include <visp3/core/vpExponentialMap.h>
 #include <visp3/vision/vpHandEyeCalibration.h>
 
+#if defined(VISP_BUILD_CATCH2)
 #include <catch_amalgamated.hpp>
+#else
+#include <catch2/catch_all.hpp>
+#endif
 
 #if defined(ENABLE_VISP_NAMESPACE)
 using namespace VISP_NAMESPACE_NAME;

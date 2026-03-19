@@ -38,7 +38,11 @@
 
 #if defined(VISP_HAVE_CATCH2) && defined(VISP_HAVE_THREADS)
 
+#if defined(VISP_BUILD_CATCH2)
 #include <catch_amalgamated.hpp>
+#else
+#include <catch2/catch_all.hpp>
+#endif
 
 #include "common.hpp"
 #include <thread>

@@ -41,7 +41,11 @@
 
 #if defined(VISP_HAVE_CATCH2)
 
+#if defined(VISP_BUILD_CATCH2)
 #include <catch_amalgamated.hpp>
+#else
+#include <catch2/catch_all.hpp>
+#endif
 #include <cmath>
 #include <limits>
 #include <vector>

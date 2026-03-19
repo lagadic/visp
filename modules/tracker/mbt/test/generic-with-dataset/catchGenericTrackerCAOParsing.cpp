@@ -42,7 +42,11 @@
 #include <visp3/core/vpIoTools.h>
 #include <visp3/mbt/vpMbGenericTracker.h>
 
+#if defined(VISP_BUILD_CATCH2)
 #include <catch_amalgamated.hpp>
+#else
+#include <catch2/catch_all.hpp>
+#endif
 
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;

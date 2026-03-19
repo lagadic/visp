@@ -42,7 +42,11 @@
 #if defined(VISP_HAVE_CATCH2)
 
 #include "common.hpp"
+#if defined(VISP_BUILD_CATCH2)
 #include <catch_amalgamated.hpp>
+#else
+#include <catch2/catch_all.hpp>
+#endif
 #include <visp3/core/vpImageTools.h>
 
 static unsigned int g_input_width = 7;
