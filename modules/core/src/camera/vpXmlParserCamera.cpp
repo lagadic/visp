@@ -736,13 +736,17 @@ public:  /* --- XML Code--------------------------------------------------------
           subsampling_height_tmp = node.text().as_uint();
           break;
 
+        case CODE_XML_MODEL:
+          break;
+
         case CODE_XML_ADDITIONAL_INFO:
+          break;
+
         case CODE_XML_BAD:
         case CODE_XML_OTHER:
         case CODE_XML_CAMERA:
         case CODE_XML_FULL_HEIGHT:
         case CODE_XML_FULL_WIDTH:
-        case CODE_XML_MODEL:
         case CODE_XML_MODEL_TYPE:
         case CODE_XML_U0:
         case CODE_XML_V0:
