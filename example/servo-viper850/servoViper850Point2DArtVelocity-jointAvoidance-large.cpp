@@ -128,7 +128,7 @@ int main()
     // The first graphic contains 12 data to plot: q(t), Low Limits, Upper
     // Limits, ql0min, ql1min, ql0max and ql1max
     plot.initGraph(0, 12);
-    // The second graphic contains the values of the secondaty task velocities
+    // The second graphic contains the values of the secondary task velocities
     plot.initGraph(1, 6);
 
     // For the first graphic :
