@@ -46,7 +46,9 @@
 
 #if defined(VISP_BUILD_CATCH2)
 #include <catch_amalgamated.hpp>
-#else
+#elif (VISP_HAVE_CATCH2_VERSION < 0x030101) // Catch2 v3.1.1
+#include <catch2/catch.hpp>
+#else // Since v3.1.1
 #include <catch2/catch_all.hpp>
 #endif
 
