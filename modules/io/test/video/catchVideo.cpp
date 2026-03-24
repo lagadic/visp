@@ -80,6 +80,7 @@ bool test_createSequence(vpImage<Type> &I, const std::string &videoname, unsigne
     return true;
   }
   catch (...) {
+    std::cout << "Error while creating sequence of images: " << videoname << std::endl;
     return false;
   }
 }
@@ -120,15 +121,12 @@ bool test_readSequence(vpImage<Type> &I, const std::string &videoname, long firs
   return true;
 }
 
-TEST_CASE("Test saving sequence of uchar images with step 2", "[grey]")
+TEST_CASE("Test saving sequence of gray images with step 2", "[gray]")
 {
   std::cout << "** Create sequence of uchar images with step " << frame_step << std::endl;
   vpImage<unsigned char> I(2, 4, 0);
   CHECK(test_createSequence(I, videoname_grey, first_frame, frame_step, nframes));
-}
 
-TEST_CASE("Test reading a sequence of grey images", "[grey]")
-{
   SECTION("Read sequence of uchar images with step 1")
   {
     int step = 1;
@@ -149,10 +147,7 @@ TEST_CASE("Test saving sequence of color images with step 2", "[color]")
   std::cout << "** Create sequence of color images with step " << frame_step << std::endl;
   vpImage<vpRGBa> I(2, 4);
   CHECK(test_createSequence(I, videoname_color, first_frame, frame_step, nframes));
-}
 
-TEST_CASE("Test reading a sequence of color images", "[color]")
-{
   SECTION("Read sequence of color images with step 1")
   {
     int step = 1;
