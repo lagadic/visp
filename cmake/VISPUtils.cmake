@@ -227,7 +227,8 @@ endfunction()
 # clears all passed variables
 macro(vp_clear_vars)
   foreach(_var ${ARGN})
-    unset(${_var} CACHE)
+    unset(${_var})       # Remove local var
+    unset(${_var} CACHE) # Remove var from cache
   endforeach()
 endmacro()
 
