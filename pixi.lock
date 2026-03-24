@@ -295,6 +295,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/_openmp_mutex-4.5-20_gnu.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/alsa-lib-1.2.15.3-he30d5cf_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/aom-3.9.1-hcccb83c_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/apriltag-3.4.5-py314ha3940a1_2.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/assimp-6.0.3-he8c3857_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/atk-1.0-2.38.0-hedc4a1f_2.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/attr-2.5.1-h4e544f5_1.tar.bz2
@@ -805,6 +806,7 @@ environments:
       osx-arm64:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/_openmp_mutex-4.5-7_kmp_llvm.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/aom-3.9.1-h7bae524_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/apriltag-3.4.5-py314h5313954_2.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/assimp-6.0.3-h1b182a0_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/atk-1.0-2.38.0-hd03087b_2.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/blosc-1.21.6-h7dd00d9_1.conda
@@ -1913,6 +1915,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/_openmp_mutex-4.5-20_gnu.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/alsa-lib-1.2.15.3-he30d5cf_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/aom-3.9.1-hcccb83c_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/apriltag-3.4.5-py314ha3940a1_2.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/assimp-6.0.3-he8c3857_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/atk-1.0-2.38.0-hedc4a1f_2.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/attr-2.5.1-h4e544f5_1.tar.bz2
@@ -2423,6 +2426,7 @@ environments:
       osx-arm64:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/_openmp_mutex-4.5-7_kmp_llvm.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/aom-3.9.1-h7bae524_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/apriltag-3.4.5-py314h5313954_2.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/assimp-6.0.3-h1b182a0_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/atk-1.0-2.38.0-hd03087b_2.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/blosc-1.21.6-h7dd00d9_1.conda
@@ -3036,6 +3040,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/linux-64/zziplib-0.13.69-he45264a_2.conda
       linux-aarch64:
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/_openmp_mutex-4.5-20_gnu.conda
+      - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/apriltag-3.4.5-py314ha3940a1_2.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/assimp-6.0.3-he8c3857_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/atk-1.0-2.38.0-hedc4a1f_2.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/attr-2.5.1-h4e544f5_1.tar.bz2
@@ -3379,6 +3384,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-64/zziplib-0.13.69-h97fe558_2.conda
       osx-arm64:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/_openmp_mutex-4.5-7_kmp_llvm.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/apriltag-3.4.5-py314h5313954_2.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/assimp-6.0.3-h1b182a0_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/atk-1.0-2.38.0-hd03087b_2.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/bullet-cpp-3.25-py314ha3d490a_5.conda
@@ -4299,6 +4305,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/_openmp_mutex-4.5-20_gnu.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/alsa-lib-1.2.15.3-he30d5cf_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/aom-3.9.1-hcccb83c_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/apriltag-3.4.5-py314ha3940a1_2.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/assimp-6.0.3-he8c3857_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/atk-1.0-2.38.0-hedc4a1f_2.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/attr-2.5.1-h4e544f5_1.tar.bz2
@@ -4799,6 +4806,7 @@ environments:
       osx-arm64:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/_openmp_mutex-4.5-7_kmp_llvm.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/aom-3.9.1-h7bae524_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/apriltag-3.4.5-py314h5313954_2.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/assimp-6.0.3-h1b182a0_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/atk-1.0-2.38.0-hd03087b_2.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/blosc-1.21.6-h7dd00d9_1.conda
@@ -5702,6 +5710,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/_openmp_mutex-4.5-20_gnu.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/alsa-lib-1.2.15.3-he30d5cf_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/aom-3.9.1-hcccb83c_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/apriltag-3.4.5-py311h87ac78a_2.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/assimp-6.0.3-he8c3857_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/atk-1.0-2.38.0-hedc4a1f_2.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/attr-2.5.1-h4e544f5_1.tar.bz2
@@ -6193,6 +6202,7 @@ environments:
       osx-arm64:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/_openmp_mutex-4.5-7_kmp_llvm.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/aom-3.9.1-h7bae524_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/apriltag-3.4.5-py311hfe73000_2.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/assimp-6.0.3-h1b182a0_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/atk-1.0-2.38.0-hd03087b_2.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/blosc-1.21.6-h7dd00d9_1.conda
@@ -6886,6 +6896,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/_openmp_mutex-4.5-20_gnu.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/alsa-lib-1.2.15.3-he30d5cf_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/aom-3.9.1-hcccb83c_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/apriltag-3.4.5-py312hd4ef8b2_2.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/assimp-6.0.3-he8c3857_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/atk-1.0-2.38.0-hedc4a1f_2.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/attr-2.5.1-h4e544f5_1.tar.bz2
@@ -7377,6 +7388,7 @@ environments:
       osx-arm64:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/_openmp_mutex-4.5-7_kmp_llvm.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/aom-3.9.1-h7bae524_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/apriltag-3.4.5-py312hf79b3b1_2.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/assimp-6.0.3-h1b182a0_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/atk-1.0-2.38.0-hd03087b_2.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/blosc-1.21.6-h7dd00d9_1.conda
@@ -8057,6 +8069,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/_openmp_mutex-4.5-20_gnu.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/alsa-lib-1.2.15.3-he30d5cf_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/aom-3.9.1-hcccb83c_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/apriltag-3.4.5-py314ha3940a1_2.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/assimp-6.0.3-he8c3857_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/atk-1.0-2.38.0-hedc4a1f_2.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/attr-2.5.1-h4e544f5_1.tar.bz2
@@ -8521,6 +8534,7 @@ environments:
       osx-arm64:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/_openmp_mutex-4.5-7_kmp_llvm.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/aom-3.9.1-h7bae524_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/apriltag-3.4.5-py314h5313954_2.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/assimp-6.0.3-h1b182a0_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/atk-1.0-2.38.0-hd03087b_2.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/bullet-cpp-3.25-py314ha3d490a_5.conda
@@ -9222,6 +9236,39 @@ packages:
   license: BSD-2-Clause-Views
   size: 1165104
   timestamp: 1773299527822
+- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/apriltag-3.4.5-py311h87ac78a_2.conda
+  sha256: ec90b8f840daf7a9d18a5a260c924d77e9aa80cf6b407d8a18b47e0dec746d92
+  md5: 2da47a2da83457e5f945b8bf33111472
+  depends:
+  - libgcc >=14
+  - numpy >=1.23,<3
+  - python >=3.11,<3.12.0a0
+  - python_abi 3.11.* *_cp311
+  license: BSD-2-Clause-Views
+  size: 1162819
+  timestamp: 1773300999462
+- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/apriltag-3.4.5-py312hd4ef8b2_2.conda
+  sha256: e523b5378cbe597f355b74939d8fac055f20b11617b57c858a2b55a0c0f1c5b4
+  md5: 12b2dc84d96c957d1e619c1d5a27ef2b
+  depends:
+  - libgcc >=14
+  - numpy >=1.23,<3
+  - python >=3.12,<3.13.0a0
+  - python_abi 3.12.* *_cp312
+  license: BSD-2-Clause-Views
+  size: 1162896
+  timestamp: 1773300945645
+- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/apriltag-3.4.5-py314ha3940a1_2.conda
+  sha256: 7dea896a08d8029e13f30e7cd729b65f8cbbc9a0af0c0e48fdc513037a4c504f
+  md5: 089c1d347cbdaf6df8afe5ae2d0b30be
+  depends:
+  - libgcc >=14
+  - numpy >=1.23,<3
+  - python >=3.14,<3.15.0a0
+  - python_abi 3.14.* *_cp314
+  license: BSD-2-Clause-Views
+  size: 1162764
+  timestamp: 1773301007101
 - conda: https://conda.anaconda.org/conda-forge/osx-64/apriltag-3.4.5-py311h28f00fc_2.conda
   sha256: 65d3558875e3dca2d44057f6db8cc68d4a433ff863cffcde4931b03da18a8862
   md5: cfa47bf4a2554991f6f412474a3d3396
@@ -9255,6 +9302,39 @@ packages:
   license: BSD-2-Clause-Views
   size: 1151705
   timestamp: 1773299951615
+- conda: https://conda.anaconda.org/conda-forge/osx-arm64/apriltag-3.4.5-py311hfe73000_2.conda
+  sha256: a2e2f015a19516b96c7cebeefe301ac19359e275618437cc09a3f0eadfc8f443
+  md5: 792fc730a2fb817ff01bf253d66afa29
+  depends:
+  - __osx >=11.0
+  - numpy >=1.23,<3
+  - python >=3.11,<3.12.0a0
+  - python_abi 3.11.* *_cp311
+  license: BSD-2-Clause-Views
+  size: 1151168
+  timestamp: 1773299480759
+- conda: https://conda.anaconda.org/conda-forge/osx-arm64/apriltag-3.4.5-py312hf79b3b1_2.conda
+  sha256: aeaf3b1e0dc537bb93019fb601fb9752c8b2404bc61c545adf2dd696b6a037d7
+  md5: fd111c40b749b69bb34a07c2e99f46b1
+  depends:
+  - __osx >=11.0
+  - numpy >=1.23,<3
+  - python >=3.12,<3.13.0a0
+  - python_abi 3.12.* *_cp312
+  license: BSD-2-Clause-Views
+  size: 1148636
+  timestamp: 1773299495267
+- conda: https://conda.anaconda.org/conda-forge/osx-arm64/apriltag-3.4.5-py314h5313954_2.conda
+  sha256: b59dda43c0bd19c177bd44053324a2d64fa0f3376aed64c3230122890dc7a57e
+  md5: e2a628bab477873d5aea15511563b73e
+  depends:
+  - __osx >=11.0
+  - numpy >=1.23,<3
+  - python >=3.14,<3.15.0a0
+  - python_abi 3.14.* *_cp314
+  license: BSD-2-Clause-Views
+  size: 1149276
+  timestamp: 1773299489932
 - conda: https://conda.anaconda.org/conda-forge/win-64/apriltag-3.4.5-py311h17033d2_2.conda
   sha256: 68cda0324358a8b54008921ac6dd1e9bd6fb6adb7fcce7af3460942f0c4a7c78
   md5: 992ef9cded8ff9799f4991242154ba9c
