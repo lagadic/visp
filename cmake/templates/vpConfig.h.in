@@ -220,6 +220,9 @@ namespace vp = VISP_NAMESPACE_NAME;
 
 // Defined if Catch2 library available
 #cmakedefine VISP_HAVE_CATCH2
+#ifdef VISP_HAVE_CATCH2
+#  define VISP_HAVE_CATCH2_VERSION ${VISP_HAVE_CATCH2_VERSION}
+#endif
 
 // Defined if simdlib library available
 #cmakedefine VISP_HAVE_SIMDLIB

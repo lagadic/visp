@@ -197,12 +197,37 @@ if(WITH_TINYEXR)
   set(TINYEXR_VERSION ${TINYEXR_MAJOR_VERSION}.${TINYEXR_MINOR_VERSION}.${TINYEXR_PATCH_VERSION})
 endif()
 
-if(WITH_CATCH2)
-  set(CATCH2_LIBRARY visp_catch2)
-  add_subdirectory("${VISP_SOURCE_DIR}/3rdparty/catch2")
-  set(CATCH2_INCLUDE_DIRS "${VISP_SOURCE_DIR}/3rdparty/catch2")
-  set(CATCH2_LIBRARIES ${CATCH2_LIBRARY})
-  set(CATCH2_VERSION ${CATCH2_MAJOR_VERSION}.${CATCH2_MINOR_VERSION}.${CATCH2_PATCH_VERSION})
+if(USE_CATCH2)
+  if(BUILD_CATCH2)
+    vp_clear_vars(Catch2_FOUND)
+  else()
+    find_package(Catch2 QUIET)
+  endif()
+
+  if(Catch2_FOUND AND (Catch2_VERSION VERSION_GREATER_EQUAL 3.1.1))
+    set(VISP_HAVE_CATCH2 YES)
+    set(CATCH2_VERSION "${Catch2_VERSION}")
+    set(CATCH2_LIBRARIES "Catch2::Catch2")
+    set(VISP_HAVE_CATCH2_VERSION "(${Catch2_VERSION_MAJOR}<<16 | ${Catch2_VERSION_MINOR}<<8 | ${Catch2_VERSION_PATCH})") # for vpConfig.h
+
+    message(STATUS "Found system Catch2: ${CATCH2_LIBRARIES} "
+            "(found version \"${CATCH2_VERSION}\")")
+  else()
+    if(Catch2_FOUND)
+      message(STATUS "Catch2 ${Catch2_VERSION} system library found but too old. It will be built from sources")
+    else()
+      message(STATUS "Could NOT find Catch2 system library. It will be built from sources")
+    endif()
+    vp_clear_vars(Catch2_FOUND Catch2_VERSION_MAJOR Catch2_VERSION_MINOR Catch2_VERSION_PATCH Catch2_LIBRARIES Catch2_INCLUDE_DIRS)
+    add_subdirectory("${VISP_SOURCE_DIR}/3rdparty/catch2")
+    set(BUILD_CATCH2 TRUE)
+    set(VISP_HAVE_CATCH2 YES)
+    add_definitions("-DVISP_BUILD_CATCH2")
+    message(STATUS "Catch2 library will be built from sources: ${CATCH2_LIBRARIES} "
+            "(version \"${CATCH2_VERSION}\")")
+
+    set(VISP_HAVE_CATCH2_VERSION "(${CATCH2_VERSION_MAJOR}<<16 | ${CATCH2_VERSION_MINOR}<<8 | ${CATCH2_VERSION_PATCH})") # for vpConfig.h
+  endif()
 endif()
 
 if(WITH_POLOLU)
