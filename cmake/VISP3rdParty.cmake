@@ -72,7 +72,6 @@ if(USE_APRILTAG)
   # - void apriltag_detection_copy(apriltag_detection_t* src, apriltag_detection_t* dst);
   # - zarray_t* apriltag_detections_copy(zarray_t* detections);
   # - apriltag_detector_t *apriltag_detector_copy(apriltag_detector_t *td);
-  # - void get_second_solution(matd_t* v[4], matd_t* p[4], apriltag_pose_t* solution1, apriltag_pose_t* solution2, int nIters, double* err2);
   if(apriltag_FOUND OR MyApriltag_FOUND)
     cmake_push_check_state()
     if(APRILTAG_INCLUDE_DIRS)
@@ -89,7 +88,6 @@ if(USE_APRILTAG)
       #include <apriltag_pose.h>
 
       int main() {
-        // Test des fonctions de apriltag.h
         apriltag_detection_t *det_src = 0;
         apriltag_detection_t *det_dst = 0;
         apriltag_detection_copy(det_src, det_dst);
@@ -99,14 +97,6 @@ if(USE_APRILTAG)
 
         apriltag_detector_t *td = 0;
         apriltag_detector_t *td_copy = apriltag_detector_copy(td);
-
-        // Test de la fonction de apriltag_pose.h
-        matd_t* v[4];
-        matd_t* p[4];
-        apriltag_pose_t *s1 = 0;
-        apriltag_pose_t *s2 = 0;
-        double err2 = 0;
-        get_second_solution(v, p, s1, s2, 10, &err2);
 
         return 0;
       }

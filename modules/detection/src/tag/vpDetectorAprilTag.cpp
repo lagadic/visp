@@ -75,6 +75,7 @@ extern "C" {
 }
 #endif
 
+#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpPixelMeterConversion.h>
@@ -1148,52 +1149,17 @@ public:
       pose.computePose(vpPose::VIRTUAL_VS, cMo);
     }
 
-#if defined(VISP_HAVE_APRILTAG_EXTENDED_API)
     // Only with HOMOGRAPHY_ORTHOGONAL_ITERATION we can directly get two solutions
     if (m_poseEstimationMethod != HOMOGRAPHY_ORTHOGONAL_ITERATION) {
       if (cMo2) {
-        double scale = tagSize / 2.0;
-        double data_p0[] = { -scale, scale, 0 };
-        double data_p1[] = { scale, scale, 0 };
-        double data_p2[] = { scale, -scale, 0 };
-        double data_p3[] = { -scale, -scale, 0 };
-        const unsigned int nbPoints = 4;
-        const int nbRows = 3;
-        matd_t *p[nbPoints] = { matd_create_data(nbRows, 1, data_p0), matd_create_data(nbRows, 1, data_p1),
-                                matd_create_data(nbRows, 1, data_p2), matd_create_data(nbRows, 1, data_p3) };
-        matd_t *v[nbPoints];
-        for (unsigned int i = 0; i < nbPoints; ++i) {
-          double data_v[] = { (det->p[i][0] - cam.get_u0()) / cam.get_px(), (det->p[i][1] - cam.get_v0()) / cam.get_py(),
-                             1 };
-          v[i] = matd_create_data(nbRows, 1, data_v);
+        // Fallback: set default cMo2 to identity and set error to an invalid value
+        cMo2->eye();
+        if (projErrors2) {
+          *projErrors2 = -1.0;
         }
-
-        apriltag_pose_t solution1, solution2;
-        const int nIters = 50;
-        const int nbCols = 3;
-        solution1.R = matd_create_data(nbRows, nbCols, cMo.getRotationMatrix().data);
-        solution1.t = matd_create_data(nbRows, 1, cMo.getTranslationVector().data);
-
-        double err2;
-        get_second_solution(v, p, &solution1, &solution2, nIters, &err2);
-
-        for (unsigned int i = 0; i < nbPoints; ++i) {
-          // Since matd_destroy() symbol is not exported in libapriltag we are using my_matd_destroy()
-          my_matd_destroy(p[i]);
-          my_matd_destroy(v[i]);
-        }
-
-        if (solution2.R) {
-          convertHomogeneousMatrix(solution2, *cMo2);
-          my_matd_destroy(solution2.R);
-          my_matd_destroy(solution2.t);
-        }
-
-        my_matd_destroy(solution1.R);
-        my_matd_destroy(solution1.t);
+        vpTRACE("Second solution is only computed for HOMOGRAPHY_ORTHOGONAL_ITERATION");
       }
     }
-#endif
 
     // Compute projection error with vpPose::computeResidual() for consistency
     if (projErrors) {
@@ -1790,7 +1756,10 @@ bool vpDetectorAprilTag::detect(const vpImage<unsigned char> &I)
   \param[in] tagSize : Tag size in meter corresponding to the external width of the pattern.
   \param[in] cam : Camera intrinsic parameters.
   \param[out] cMo_vec : List of tag poses.
-  \param[out] cMo_vec2 : Optional second list of tag poses, since there are 2 solutions for planar pose estimation.
+  \param[out] cMo_vec2 : Optional second list of tag poses.
+  \note This second solution is only computed when the pose estimation method
+  is set to HOMOGRAPHY_ORTHOGONAL_ITERATION. For other methods, this vector
+  will contain identity matrices and projection error `projError2` will be set to -1.
   \param[out] projErrors : Optional (sum of squared) projection errors in the normalized camera frame.
   \param[out] projErrors2 : Optional (sum of squared) projection errors for the 2nd solution in the normalized camera
   frame. \return true if at least one tag is detected.
@@ -1887,10 +1856,14 @@ void vpDetectorAprilTag::displayTags(const vpImage<vpRGBa> &I, const std::vector
   \param[in] tagSize : Tag size in meter corresponding to the external width of the pattern.
   \param[in] cam : Camera intrinsic parameters.
   \param[out] cMo : Pose of the tag.
-  \param[out] cMo2 : Optional second pose of the tag.
+  \param[out] cMo2 : Optional second list of tag poses.
+  \note This second solution is only computed when the pose estimation method
+  is set to HOMOGRAPHY_ORTHOGONAL_ITERATION. For other methods, this vector
+  will contain identity matrices and projection error `projError2` will be set to -1.
   \param[out] projError : Optional (sum of squared) projection errors in the normalized camera frame.
   \param[out] projError2 : Optional (sum of squared) projection errors for the 2nd solution in the normalized camera
-  frame. \return true if success, false otherwise.
+  frame.
+  \return true if success, false otherwise.
 
   The following code shows how to use this function:
   \code
