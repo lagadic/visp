@@ -72,9 +72,9 @@ public:
                                        distortion. */
     CALIB_VIRTUAL_VS,               /*!< Virtual visual servoing approach without estimation
                                        of the distortion (results are similar to Lowe
-                                       approach). */
+                                       approach) @cite marchand:inria-00072535. */
     CALIB_VIRTUAL_VS_DIST,          /*!< Virtual visual servoing approach with
-                                       estimation of the distortion. */
+                                       estimation of the distortion @cite marchand:inria-00072535.*/
     CALIB_LAGRANGE_VIRTUAL_VS,      /*!< Lagrange approach first, than virtual
                                        visual servoing approach,  without
                                        estimation of the distortion. */
