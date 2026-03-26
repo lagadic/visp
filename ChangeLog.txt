@@ -25,6 +25,8 @@ ViSP 3.7.1 (current version)
       - Embedded Build: Fall back to the built-in version available directly in the 3rdparty/catch2 folder. This
         version was upgraded to Catch2 3.13.0
   - Applications
+    . Camera intrinsic calibration app: visp-calibrate-camera.cpp
+      - Add lens distortion displacement map visualization
   - Tutorials
     . New tutorial: Installation from source for Windows 11 with Visual C++ 2026 (vc18)
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-win11-msvc18.html
