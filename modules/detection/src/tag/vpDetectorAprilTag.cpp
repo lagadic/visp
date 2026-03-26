@@ -83,6 +83,7 @@ extern "C" {
 #include <visp3/detection/vpDetectorAprilTag.h>
 #include <visp3/vision/vpPose.h>
 
+
 namespace
 {
 void my_matd_destroy(matd_t *m)
@@ -104,6 +105,17 @@ void my_matd_destroy(matd_t *m)
 #endif
   free(m);
 }
+
+void my_image_u8_destroy(image_u8_t *im)
+{
+  if (!im)
+    return;
+
+  free(im->buf);
+  free(im);
+}
+
+#if !defined(VISP_HAVE_APRILTAG_EXTENDED_API)
 
 // to ease creating mati, matf, etc. in the future.
 #define TYPE double
@@ -174,15 +186,6 @@ matd_t *my_matd_copy(const matd_t *m)
   }
 
   return x;
-}
-
-void my_image_u8_destroy(image_u8_t *im)
-{
-  if (!im)
-    return;
-
-  free(im->buf);
-  free(im);
 }
 
 apriltag_detector_t *my_apriltag_detector_copy(apriltag_detector_t *src)
@@ -326,6 +329,7 @@ zarray_t *my_apriltag_detections_copy(zarray_t *detections)
 
   return detections_copy;
 }
+#endif // !defined(VISP_HAVE_APRILTAG_EXTENDED_API)
 };
 
 BEGIN_VISP_NAMESPACE
@@ -603,7 +607,11 @@ public:
     }
 
     if (m_tf) {
+#if defined(VISP_HAVE_APRILTAG_EXTENDED_API)
+      m_td = apriltag_detector_copy(o.m_td);
+#else
       m_td = my_apriltag_detector_copy(o.m_td);
+#endif
 #if defined(VISP_HAVE_APRILTAG_ARUCO)
       int bits_corrected = (m_tagFamily == TAG_ARUCO_4x4_1000) ? 1 : 2;
 #else
@@ -616,7 +624,11 @@ public:
     m_mapOfCorrespondingPoseMethods[LAGRANGE_VIRTUAL_VS] = vpPose::LAGRANGE;
 
     if (o.m_detections != nullptr) {
+#if defined(VISP_HAVE_APRILTAG_EXTENDED_API)
+      m_detections = apriltag_detections_copy(o.m_detections);
+#else
       m_detections = my_apriltag_detections_copy(o.m_detections);
+#endif
     }
   }
 
@@ -1005,8 +1017,6 @@ public:
     // Before the release of AprilTag3, convention used was to define the z-axis of the tag going upward.
     // To keep compatibility, we maintain the same convention than before and there is setZAlignedWithCameraAxis().
     // Under the hood, we use aligned frames everywhere and transform the pose according to the option.
-
-#if defined(VISP_HAVE_APRILTAG_EXTENDED_API)
     vpHomogeneousMatrix cMo_homography_ortho_iter;
     if ((m_poseEstimationMethod == HOMOGRAPHY_ORTHOGONAL_ITERATION) ||
         (m_poseEstimationMethod == BEST_RESIDUAL_VIRTUAL_VS)) {
@@ -1051,7 +1061,6 @@ public:
 
       cMo_homography = cMo;
     }
-#endif
 
     // Add marker object points
     vpPose pose;
@@ -1100,10 +1109,8 @@ public:
 
         double residual_dementhon = std::numeric_limits<double>::max(),
           residual_lagrange = std::numeric_limits<double>::max();
-#if defined(VISP_HAVE_APRILTAG_EXTENDED_API)
         double residual_homography = pose.computeResidual(cMo_homography);
         double residual_homography_ortho_iter = pose.computeResidual(cMo_homography_ortho_iter);
-#endif
 
         if (pose.computePose(vpPose::DEMENTHON, cMo_dementhon)) {
           residual_dementhon = pose.computeResidual(cMo_dementhon);
@@ -1116,18 +1123,13 @@ public:
         std::vector<double> residuals;
         residuals.push_back(residual_dementhon);
         residuals.push_back(residual_lagrange);
-#if defined(VISP_HAVE_APRILTAG_EXTENDED_API)
         residuals.push_back(residual_homography);
         residuals.push_back(residual_homography_ortho_iter);
-#endif
         std::vector<vpHomogeneousMatrix> poses;
         poses.push_back(cMo_dementhon);
         poses.push_back(cMo_lagrange);
-
-#if defined(VISP_HAVE_APRILTAG_EXTENDED_API)
         poses.push_back(cMo_homography);
         poses.push_back(cMo_homography_ortho_iter);
-#endif
 
         std::ptrdiff_t minIndex = std::min_element(residuals.begin(), residuals.end()) - residuals.begin();
         cMo = *(poses.begin() + minIndex);
@@ -1141,9 +1143,7 @@ public:
     if ((m_poseEstimationMethod == DEMENTHON_VIRTUAL_VS)
         || (m_poseEstimationMethod == LAGRANGE_VIRTUAL_VS)
         || (m_poseEstimationMethod == BEST_RESIDUAL_VIRTUAL_VS)
-#if defined(VISP_HAVE_APRILTAG_EXTENDED_API)
         || (m_poseEstimationMethod == HOMOGRAPHY_VIRTUAL_VS)
-#endif
       ) {
       // Compute final pose using VVS
       pose.computePose(vpPose::VIRTUAL_VS, cMo);
@@ -1191,7 +1191,6 @@ public:
     return true;
   }
 
-#if defined(VISP_HAVE_APRILTAG_EXTENDED_API)
   void getPoseWithOrthogonalMethod(apriltag_detection_info_t &info, vpHomogeneousMatrix &cMo1,
                                    vpHomogeneousMatrix *cMo2, double *err1, double *err2)
   {
@@ -1232,7 +1231,6 @@ public:
       *err2 = err_2;
     }
   }
-#endif
 
   bool getZAlignedWithCameraAxis() { return m_zAlignedWithCameraFrame; }
 
@@ -1544,14 +1542,12 @@ std::string vpDetectorAprilTag::poseMethodToString(const vpDetectorAprilTag::vpP
 {
   std::string name;
   switch (method) {
-#if defined(VISP_HAVE_APRILTAG_EXTENDED_API)
   case vpDetectorAprilTag::HOMOGRAPHY:
     name = "homography";
     break;
   case vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS:
     name = "homography_virtual_vs";
     break;
-#endif
   case vpDetectorAprilTag::DEMENTHON_VIRTUAL_VS:
     name = "dementhon_virtual_vs";
     break;
@@ -1561,11 +1557,9 @@ std::string vpDetectorAprilTag::poseMethodToString(const vpDetectorAprilTag::vpP
   case vpDetectorAprilTag::BEST_RESIDUAL_VIRTUAL_VS:
     name = "best_residual_virtual_vs";
     break;
-#if defined(VISP_HAVE_APRILTAG_EXTENDED_API)
   case vpDetectorAprilTag::HOMOGRAPHY_ORTHOGONAL_ITERATION:
     name = "homography_orthogonal_iteration";
     break;
-#endif
   default:
     name = "unknown";
   }

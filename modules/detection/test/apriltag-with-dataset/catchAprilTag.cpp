@@ -168,28 +168,20 @@ TEST_CASE("Apriltag pose estimation test", "[apriltag_pose_estimation_test]")
   };
 
   std::vector<vpDetectorAprilTag::vpPoseEstimationMethod> poseMethods = {
-#if defined(VISP_HAVE_APRILTAG_EXTENDED_API)
     vpDetectorAprilTag::HOMOGRAPHY,
     vpDetectorAprilTag::HOMOGRAPHY_ORTHOGONAL_ITERATION,
-#endif
 #if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_EIGEN3)
-#if defined(VISP_HAVE_APRILTAG_EXTENDED_API)
     vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS,
-#endif
     vpDetectorAprilTag::DEMENTHON_VIRTUAL_VS,
     vpDetectorAprilTag::LAGRANGE_VIRTUAL_VS,
     vpDetectorAprilTag::BEST_RESIDUAL_VIRTUAL_VS
 #endif
   };
   std::map<vpDetectorAprilTag::vpPoseEstimationMethod, std::string> methodNames = {
-#if defined(VISP_HAVE_APRILTAG_EXTENDED_API)
     {vpDetectorAprilTag::HOMOGRAPHY, "HOMOGRAPHY"},
     {vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS, "HOMOGRAPHY_VIRTUAL_VS"},
-#endif
 #if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_EIGEN3)
-#if defined(VISP_HAVE_APRILTAG_EXTENDED_API)
     {vpDetectorAprilTag::HOMOGRAPHY_ORTHOGONAL_ITERATION, "HOMOGRAPHY_ORTHOGONAL_ITERATION"},
-#endif
     {vpDetectorAprilTag::DEMENTHON_VIRTUAL_VS, "DEMENTHON_VIRTUAL_VS"},
     {vpDetectorAprilTag::LAGRANGE_VIRTUAL_VS, "LAGRANGE_VIRTUAL_VS"},
     {vpDetectorAprilTag::BEST_RESIDUAL_VIRTUAL_VS, "BEST_RESIDUAL_VIRTUAL_VS"}
@@ -212,11 +204,9 @@ TEST_CASE("Apriltag pose estimation test", "[apriltag_pose_estimation_test]")
       FailedTestCase(vpDetectorAprilTag::TAG_STANDARD41h12, vpDetectorAprilTag::LAGRANGE_VIRTUAL_VS, 3),
       FailedTestCase(vpDetectorAprilTag::TAG_STANDARD41h12, vpDetectorAprilTag::LAGRANGE_VIRTUAL_VS, 4),
       FailedTestCase(vpDetectorAprilTag::TAG_CIRCLE21h7, vpDetectorAprilTag::LAGRANGE_VIRTUAL_VS, 3),
-#if defined(VISP_HAVE_APRILTAG_EXTENDED_API)
       FailedTestCase(vpDetectorAprilTag::TAG_CIRCLE49h12, vpDetectorAprilTag::HOMOGRAPHY, 0),
       FailedTestCase(vpDetectorAprilTag::TAG_CIRCLE49h12, vpDetectorAprilTag::HOMOGRAPHY, 1),
       FailedTestCase(vpDetectorAprilTag::TAG_CIRCLE49h12, vpDetectorAprilTag::HOMOGRAPHY, 4),
-#endif
       FailedTestCase(vpDetectorAprilTag::TAG_CIRCLE49h12, vpDetectorAprilTag::LAGRANGE_VIRTUAL_VS, 3) };
 
   vpCameraParameters cam;
@@ -471,11 +461,8 @@ TEST_CASE("Apriltag regression test", "[apriltag_regression_test]")
   REQUIRE(I.getSize() == 640 * 480);
 
   vpDetectorAprilTag::vpAprilTagFamily tagFamily = vpDetectorAprilTag::TAG_36h11;
-#if defined(VISP_HAVE_APRILTAG_EXTENDED_API)
   vpDetectorAprilTag::vpPoseEstimationMethod poseEstimationMethod = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
-#else
-  vpDetectorAprilTag::vpPoseEstimationMethod poseEstimationMethod = vpDetectorAprilTag::BEST_RESIDUAL_VIRTUAL_VS;
-#endif
+
   const double tagSize = 0.053;
   const float quad_decimate = 1.0;
   vpDetectorBase *detector = new vpDetectorAprilTag(tagFamily);

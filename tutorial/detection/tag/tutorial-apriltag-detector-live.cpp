@@ -152,7 +152,6 @@ void usage(const char **argv, int error)
     << "  --tag-pose-method <method>" << std::endl
     << "    Algorithm used to compute the tag pose from its 4 corners." << std::endl
     << "    Possible values are:" << std::endl
-#if defined(VISP_HAVE_APRILTAG_EXTENDED_API)
     << "       0: HOMOGRAPHY" << std::endl
     << "       1: HOMOGRAPHY_VIRTUAL_VS" << std::endl
     << "       2: DEMENTHON_VIRTUAL_VS" << std::endl
@@ -160,12 +159,6 @@ void usage(const char **argv, int error)
     << "       4: BEST_RESIDUAL_VIRTUAL_VS" << std::endl
     << "       5: HOMOGRAPHY_ORTHOGONAL_ITERATION" << std::endl
     << "    Default: 4 (BEST_RESIDUAL_VIRTUAL_VS)" << std::endl
-#else
-    << "       0: DEMENTHON_VIRTUAL_VS" << std::endl
-    << "       1: LAGRANGE_VIRTUAL_VS" << std::endl
-    << "       2: BEST_RESIDUAL_VIRTUAL_VS" << std::endl
-    << "    Default: 2 (BEST_RESIDUAL_VIRTUAL_VS)" << std::endl
-#endif
     << std::endl
 #if defined(VISP_HAVE_PUGIXML)
     << "  --intrinsic <xmlfile>" << std::endl
