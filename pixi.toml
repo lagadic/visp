@@ -94,7 +94,7 @@ VISP_ENABLE_TEST_WITHOUT_DISPLAY = "OFF"
 init-testing = { cmd = "bash ./development/scripts/pixi/xvfb.sh" }
 
 [feature.rbt]
-dependencies = { panda3d = ">=1.10.15" }
+dependencies = { panda3d = ">=1.10.16" }
 
 [feature.doc]
 dependencies = { doxygen = "*", mathjax = "*" }
