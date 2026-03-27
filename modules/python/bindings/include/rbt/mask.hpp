@@ -7,16 +7,16 @@
 #include <pybind11/pybind11.h>
 
 
-class TrampolineObjectMask : public vpObjectMask
+class TrampolineObjectMask : public VISP_NAMESPACE_ADDRESSING vpObjectMask
 {
 public:
   using vpObjectMask::vpObjectMask;
 
   TrampolineObjectMask() : vpObjectMask() { }
 
-  virtual void updateMask(const vpRBFeatureTrackerInput &frame,
-                          const vpRBFeatureTrackerInput &previousFrame,
-                          vpImage<float> &mask) VP_OVERRIDE
+  virtual void updateMask(const VISP_NAMESPACE_ADDRESSING vpRBFeatureTrackerInput &frame,
+                          const VISP_NAMESPACE_ADDRESSING vpRBFeatureTrackerInput &previousFrame,
+                          VISP_NAMESPACE_ADDRESSING vpImage<float> &mask) VP_OVERRIDE
   {
     pybind11::gil_scoped_acquire gil;  // Acquire the GIL while in this scope.
     // Try to look up the overridden method on the Python side.
@@ -26,7 +26,7 @@ public:
     }
   }
 
-  virtual void display(const vpImage<float> &mask, vpImage<unsigned char> &Imask) const VP_OVERRIDE
+  virtual void display(const VISP_NAMESPACE_ADDRESSING vpImage<float> &mask, VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &Imask) const VP_OVERRIDE
   {
     PYBIND11_OVERRIDE(
       void,             /* Return type */

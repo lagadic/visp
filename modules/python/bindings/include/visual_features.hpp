@@ -39,7 +39,7 @@
 #include <pybind11/pybind11.h>
 
 
-class TrampolineBasicFeature : public vpBasicFeature
+class TrampolineBasicFeature : public VISP_NAMESPACE_ADDRESSING vpBasicFeature
 {
 public:
   using vpBasicFeature::vpBasicFeature;
@@ -48,8 +48,8 @@ public:
   TrampolineBasicFeature(const vpBasicFeature &f) : vpBasicFeature(f) { }
 
 
-  virtual void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I,
-                         const vpColor &color = vpColor::green, unsigned int thickness = 1) const VP_OVERRIDE
+  virtual void display(const VISP_NAMESPACE_ADDRESSING vpCameraParameters &cam, const VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I,
+                         const VISP_NAMESPACE_ADDRESSING vpColor &color = VISP_NAMESPACE_ADDRESSING vpColor::green, unsigned int thickness = 1) const VP_OVERRIDE
   {
     PYBIND11_OVERRIDE_PURE(
       void,           /* Return type */
@@ -58,7 +58,7 @@ public:
       cam, I, color, thickness
     );
   }
-  virtual void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color = vpColor::green,
+  virtual void display(const VISP_NAMESPACE_ADDRESSING vpCameraParameters &cam, const VISP_NAMESPACE_ADDRESSING vpImage<VISP_NAMESPACE_ADDRESSING vpRGBa> &I, const VISP_NAMESPACE_ADDRESSING vpColor &color = VISP_NAMESPACE_ADDRESSING vpColor::green,
                        unsigned int thickness = 1) const VP_OVERRIDE
   {
     PYBIND11_OVERRIDE_PURE(
@@ -78,10 +78,10 @@ public:
       );
   }
 
-  virtual vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) VP_OVERRIDE
+  virtual VISP_NAMESPACE_ADDRESSING vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) VP_OVERRIDE
   {
     PYBIND11_OVERRIDE(
-      vpColVector,           /* Return type */
+      VISP_NAMESPACE_ADDRESSING vpColVector,           /* Return type */
       vpBasicFeature,     /* Parent class */
       error,        /* Name of function in C++ (must match Python name) */
       s_star,              /* Argument(s) */
@@ -90,10 +90,10 @@ public:
   }
 
 
-  virtual vpMatrix interaction(unsigned int select = FEATURE_ALL) VP_OVERRIDE
+  virtual VISP_NAMESPACE_ADDRESSING vpMatrix interaction(unsigned int select = FEATURE_ALL) VP_OVERRIDE
   {
     PYBIND11_OVERRIDE_PURE(
-      vpMatrix,           /* Return type */
+      VISP_NAMESPACE_ADDRESSING vpMatrix,           /* Return type */
       vpBasicFeature,     /* Parent class */
       interaction,        /* Name of function in C++ (must match Python name) */
       select              /* Argument(s) */
