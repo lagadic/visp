@@ -355,12 +355,14 @@ public:
 
   enum vpPoseEstimationMethod
   {
-    HOMOGRAPHY,                      /*!< Pose from homography. */
-    HOMOGRAPHY_VIRTUAL_VS,           /*!< Non-linear virtual visual servoing approach initialized by the homography approach. */
     DEMENTHON_VIRTUAL_VS,            /*!< Non-linear virtual visual servoing approach initialized by the Dementhon approach. */
     LAGRANGE_VIRTUAL_VS,             /*!< Non-linear virtual visual servoing approach initialized by the Lagrange approach. */
     BEST_RESIDUAL_VIRTUAL_VS,        /*!< Non-linear virtual visual servoing approach initialized by the approach that gives the lowest residual. */
+#if defined(VISP_HAVE_APRILTAG_POSE_FCT)
+    HOMOGRAPHY,                      /*!< Pose from homography. */
+    HOMOGRAPHY_VIRTUAL_VS,           /*!< Non-linear virtual visual servoing approach initialized by the homography approach. */
     HOMOGRAPHY_ORTHOGONAL_ITERATION, /*!< Pose from homography followed by a refinement by Orthogonal Iteration. */
+#endif
     POSE_COUNT                       /*!< Number of methods; used to stop iterating when parsing from/to string. */
   };
 
@@ -418,8 +420,13 @@ public:
    */
   static std::string getAvailablePoseMethod(const std::string &prefix = "< ", const std::string &sep = " , ", const std::string &suffix = " >");
 
+#if defined(VISP_HAVE_APRILTAG_POSE_FCT)
   vpDetectorAprilTag(const vpAprilTagFamily &tagFamily = TAG_36h11,
                      const vpPoseEstimationMethod &poseEstimationMethod = HOMOGRAPHY_VIRTUAL_VS);
+#else
+  vpDetectorAprilTag(const vpAprilTagFamily &tagFamily = TAG_36h11,
+                     const vpPoseEstimationMethod &poseEstimationMethod = BEST_RESIDUAL_VIRTUAL_VS);
+#endif
   vpDetectorAprilTag(const vpDetectorAprilTag &o);
   vpDetectorAprilTag &operator=(vpDetectorAprilTag o);
   virtual ~vpDetectorAprilTag() VP_OVERRIDE;

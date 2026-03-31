@@ -354,7 +354,11 @@ int main(int argc, char **argv)
 
   // Setup Apriltag detector
   vpDetectorAprilTag::vpAprilTagFamily tagFamily = vpDetectorAprilTag::TAG_36h11;
+#if defined(VISP_HAVE_APRILTAG_POSE_FCT)
   vpDetectorAprilTag::vpPoseEstimationMethod pose_estimation_method = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
+#else
+  vpDetectorAprilTag::vpPoseEstimationMethod pose_estimation_method = vpDetectorAprilTag::BEST_RESIDUAL_VIRTUAL_VS;
+#endif
   vpDetectorAprilTag detector(tagFamily);
   detector.setAprilTagPoseEstimationMethod(pose_estimation_method);
   detector.setDisplayTag(display_tag);
