@@ -40,7 +40,11 @@
 
   // Detect AprilTag
   vpDetectorAprilTag::vpAprilTagFamily tag_family = vpDetectorAprilTag::TAG_36h11;
+#if defined(VISP_HAVE_APRILTAG_POSE_FCT)
   vpDetectorAprilTag::vpPoseEstimationMethod tag_pose_estimation_method = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
+#else
+  vpDetectorAprilTag::vpPoseEstimationMethod tag_pose_estimation_method = vpDetectorAprilTag::BEST_RESIDUAL_VIRTUAL_VS;
+#endif
   double tag_size = 0.053;
   float tag_quad_decimate = 3.0;
   int tag_nThreads = 1;

@@ -24,6 +24,7 @@ family_mapping = {
 
 method_mapping = {
   'homography_vvs': DetectorAprilTag.PoseEstimationMethod.HOMOGRAPHY_VIRTUAL_VS,
+  'best_vvs': DetectorAprilTag.PoseEstimationMethod.BEST_RESIDUAL_VIRTUAL_VS,
   'dementhon_vvs': DetectorAprilTag.PoseEstimationMethod.DEMENTHON_VIRTUAL_VS,
   'lagrange_vvs': DetectorAprilTag.PoseEstimationMethod.LAGRANGE_VIRTUAL_VS
 }
@@ -146,7 +147,7 @@ def main():
   tag_parser = parser.add_argument_group('AprilTag options')
   tag_parser.add_argument('--tag-family', choices=family_mapping.keys(), default='36h11', help='The family of apriltags to detect')
   tag_parser.add_argument('--tag-size', type=float, default=0.053, help='The size of the tags to detect, in meters')
-  tag_parser.add_argument('--tag-pose-method', choices=method_mapping.keys(), default='homography_vvs', help='The method used to estimated the 6D pose of the tags')
+  tag_parser.add_argument('--tag-pose-method', choices=method_mapping.keys(), default='best_vvs', help='The method used to estimated the 6D pose of the tags')
   tag_parser.add_argument('--tag-decimate', type=float, required=False, default=1.0)
   tag_parser.add_argument('--tag-decision-margin', type=float, required=False, default=2.0)
   tag_parser.add_argument('--tag-hamming-distance', type=int, required=False, default=50)

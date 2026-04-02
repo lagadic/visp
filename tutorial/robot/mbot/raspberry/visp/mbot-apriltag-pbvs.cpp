@@ -145,7 +145,7 @@ int main(int argc, const char **argv)
 
   int device = 0;
   vpDetectorAprilTag::vpAprilTagFamily opt_tag_family = vpDetectorAprilTag::TAG_36h11;
-#if defined(VISP_HAVE_APRILTAG_EXTENDED_API)
+#if defined(VISP_HAVE_APRILTAG_POSE_FCT)
   vpDetectorAprilTag::vpPoseEstimationMethod opt_tag_pose_estimation_method = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
 #else
   vpDetectorAprilTag::vpPoseEstimationMethod opt_tag_pose_estimation_method = vpDetectorAprilTag::BEST_RESIDUAL_VIRTUAL_VS;

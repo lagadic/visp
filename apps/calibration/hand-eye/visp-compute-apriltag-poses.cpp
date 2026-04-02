@@ -124,7 +124,8 @@ int main(int argc, const char **argv)
   bool opt_interactive = true;
 
   vpDetectorAprilTag::vpAprilTagFamily tag_family = vpDetectorAprilTag::TAG_36h11;
-#if defined(VISP_HAVE_APRILTAG_EXTENDED_API)
+
+#if defined(VISP_HAVE_APRILTAG_POSE_FCT)
   vpDetectorAprilTag::vpPoseEstimationMethod pose_estimation_method = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
 #else
   vpDetectorAprilTag::vpPoseEstimationMethod pose_estimation_method = vpDetectorAprilTag::BEST_RESIDUAL_VIRTUAL_VS;

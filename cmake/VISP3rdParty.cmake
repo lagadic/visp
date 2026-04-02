@@ -60,7 +60,8 @@ if(USE_APRILTAG)
     add_subdirectory("${VISP_SOURCE_DIR}/3rdparty/apriltag")
     set(BUILD_APRILTAG TRUE)
     set(VISP_HAVE_APRILTAG YES)
-    set(VISP_HAVE_APRILTAG_EXTENDED_API YES)
+    set(VISP_HAVE_APRILTAG_COPY_FCT YES)
+    set(VISP_HAVE_APRILTAG_POSE_FCT YES)
     set(VISP_HAVE_APRILTAG_ARUCO YES)
     message(STATUS "apriltag library will be built from sources: ${APRILTAG_LIBRARIES} "
             "(version \"${APRILTAG_VERSION}\")")
@@ -72,7 +73,6 @@ if(USE_APRILTAG)
   # - void apriltag_detection_copy(apriltag_detection_t* src, apriltag_detection_t* dst);
   # - zarray_t* apriltag_detections_copy(zarray_t* detections);
   # - apriltag_detector_t *apriltag_detector_copy(apriltag_detector_t *td);
-  # - void get_second_solution(matd_t* v[4], matd_t* p[4], apriltag_pose_t* solution1, apriltag_pose_t* solution2, int nIters, double* err2);
   if(apriltag_FOUND OR MyApriltag_FOUND)
     cmake_push_check_state()
     if(APRILTAG_INCLUDE_DIRS)
@@ -84,12 +84,11 @@ if(USE_APRILTAG)
 
     set(CMAKE_REQUIRED_LIBRARIES ${APRILTAG_LIBRARIES})
 
-    set(CHECK_APRILTAG_EXTENDED_API_SOURCE "
+    set(CHECK_APRILTAG_COPY_FCT "
       #include <apriltag.h>
       #include <apriltag_pose.h>
 
       int main() {
-        // Test des fonctions de apriltag.h
         apriltag_detection_t *det_src = 0;
         apriltag_detection_t *det_dst = 0;
         apriltag_detection_copy(det_src, det_dst);
@@ -100,19 +99,28 @@ if(USE_APRILTAG)
         apriltag_detector_t *td = 0;
         apriltag_detector_t *td_copy = apriltag_detector_copy(td);
 
-        // Test de la fonction de apriltag_pose.h
-        matd_t* v[4];
-        matd_t* p[4];
-        apriltag_pose_t *s1 = 0;
-        apriltag_pose_t *s2 = 0;
-        double err2 = 0;
-        get_second_solution(v, p, s1, s2, 10, &err2);
-
         return 0;
       }
     ")
 
-    check_c_source_compiles("${CHECK_APRILTAG_EXTENDED_API_SOURCE}" APRILTAG_HAVE_EXTENDED_API)
+    check_c_source_compiles("${CHECK_APRILTAG_COPY_FCT}" APRILTAG_HAVE_COPY_FCT)
+
+    set(CHECK_APRILTAG_POSE_FCT "
+      #include <apriltag.h>
+      #include <apriltag_pose.h>
+
+      int main() {
+        apriltag_detection_info_t info;
+        apriltag_pose_t pose1, pose2;
+        double err1, err2;
+
+        estimate_pose_for_tag_homography(&info, &pose1);
+        estimate_tag_pose_orthogonal_iteration(&info, &err1, &pose1, &err2, &pose2, 50);
+
+        return 0;
+      }
+    ")
+    check_c_source_compiles("${CHECK_APRILTAG_POSE_FCT}" APRILTAG_HAVE_POSE_FCT)
 
     set(ARUCO_HEADERS
       tagAruco4x4_50.h  tagAruco4x4_100.h  tagAruco4x4_250.h  tagAruco4x4_1000.h
@@ -132,19 +140,27 @@ if(USE_APRILTAG)
 
     cmake_pop_check_state()
 
-    if(APRILTAG_HAVE_EXTENDED_API)
-      message(STATUS "Apriltag: extended api is available")
-      set(VISP_HAVE_APRILTAG_EXTENDED_API YES)
+    if(APRILTAG_HAVE_COPY_FCT)
+      message(STATUS "Apriltag: copy fct is available")
+      set(VISP_HAVE_APRILTAG_COPY_FCT YES)
     else()
-      message(STATUS "Apriltag: extended api is NOT available")
-      set(VISP_HAVE_APRILTAG_EXTENDED_API NO)
+      message(STATUS "Apriltag: copy fct is NOT available")
+      set(VISP_HAVE_APRILTAG_COPY_FCT NO)
+    endif()
+
+    if(APRILTAG_HAVE_POSE_FCT)
+      message(STATUS "Apriltag: pose fct is available")
+      set(VISP_HAVE_APRILTAG_POSE_FCT YES)
+    else()
+      message(STATUS "Apriltag: pose fct is NOT available")
+      set(VISP_HAVE_APRILTAG_POSE_FCT NO)
     endif()
 
     if(APRILTAG_HAVE_ARUCO_HEADERS)
-      message(STATUS "Apriltag: ArUco headers found")
+      message(STATUS "Apriltag: ArUco support found")
       set(VISP_HAVE_APRILTAG_ARUCO YES)
     else()
-      message(STATUS "Apriltag: ArUco headers NOT found")
+      message(STATUS "Apriltag: ArUco support NOT found")
       set(VISP_HAVE_APRILTAG_ARUCO NO)
     endif()
   endif()

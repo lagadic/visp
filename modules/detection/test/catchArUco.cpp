@@ -70,7 +70,7 @@ static bool g_debug_print = false;
 
 bool opt_no_display = false; // If true, disable display or tests requiring display
 
-#if defined(VISP_HAVE_APRILTAG_ARUCO) && defined(VISP_HAVE_APRILTAG_EXTENDED_API)
+#if defined(VISP_HAVE_APRILTAG_ARUCO)
 TEST_CASE("ArUco detection test", "[aruco_detection_test]")
 {
   std::map<vpDetectorAprilTag::vpAprilTagFamily, int> apriltagMap = {

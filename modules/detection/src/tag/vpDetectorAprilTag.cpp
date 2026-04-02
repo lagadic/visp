@@ -75,12 +75,14 @@ extern "C" {
 }
 #endif
 
+#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpPixelMeterConversion.h>
 #include <visp3/core/vpPoint.h>
 #include <visp3/detection/vpDetectorAprilTag.h>
 #include <visp3/vision/vpPose.h>
+
 
 namespace
 {
@@ -103,6 +105,17 @@ void my_matd_destroy(matd_t *m)
 #endif
   free(m);
 }
+
+void my_image_u8_destroy(image_u8_t *im)
+{
+  if (!im)
+    return;
+
+  free(im->buf);
+  free(im);
+}
+
+#if !defined(VISP_HAVE_APRILTAG_COPY_FCT)
 
 // to ease creating mati, matf, etc. in the future.
 #define TYPE double
@@ -173,15 +186,6 @@ matd_t *my_matd_copy(const matd_t *m)
   }
 
   return x;
-}
-
-void my_image_u8_destroy(image_u8_t *im)
-{
-  if (!im)
-    return;
-
-  free(im->buf);
-  free(im);
 }
 
 apriltag_detector_t *my_apriltag_detector_copy(apriltag_detector_t *src)
@@ -325,6 +329,7 @@ zarray_t *my_apriltag_detections_copy(zarray_t *detections)
 
   return detections_copy;
 }
+#endif // !defined(VISP_HAVE_APRILTAG_COPY_FCT)
 };
 
 BEGIN_VISP_NAMESPACE
@@ -602,7 +607,11 @@ public:
     }
 
     if (m_tf) {
+#if defined(VISP_HAVE_APRILTAG_COPY_FCT)
+      m_td = apriltag_detector_copy(o.m_td);
+#else
       m_td = my_apriltag_detector_copy(o.m_td);
+#endif
 #if defined(VISP_HAVE_APRILTAG_ARUCO)
       int bits_corrected = (m_tagFamily == TAG_ARUCO_4x4_1000) ? 1 : 2;
 #else
@@ -615,7 +624,11 @@ public:
     m_mapOfCorrespondingPoseMethods[LAGRANGE_VIRTUAL_VS] = vpPose::LAGRANGE;
 
     if (o.m_detections != nullptr) {
+#if defined(VISP_HAVE_APRILTAG_COPY_FCT)
+      m_detections = apriltag_detections_copy(o.m_detections);
+#else
       m_detections = my_apriltag_detections_copy(o.m_detections);
+#endif
     }
   }
 
@@ -999,13 +1012,12 @@ public:
       return false;
     }
 
+#if defined(VISP_HAVE_APRILTAG_POSE_FCT)
     // In AprilTag3, estimate_pose_for_tag_homography() and estimate_tag_pose() have been added.
     // They use a tag frame aligned with the camera frame
     // Before the release of AprilTag3, convention used was to define the z-axis of the tag going upward.
     // To keep compatibility, we maintain the same convention than before and there is setZAlignedWithCameraAxis().
     // Under the hood, we use aligned frames everywhere and transform the pose according to the option.
-
-#if defined(VISP_HAVE_APRILTAG_EXTENDED_API)
     vpHomogeneousMatrix cMo_homography_ortho_iter;
     if ((m_poseEstimationMethod == HOMOGRAPHY_ORTHOGONAL_ITERATION) ||
         (m_poseEstimationMethod == BEST_RESIDUAL_VIRTUAL_VS)) {
@@ -1097,9 +1109,9 @@ public:
       if (m_poseEstimationMethod == BEST_RESIDUAL_VIRTUAL_VS) {
         vpHomogeneousMatrix cMo_dementhon, cMo_lagrange;
 
-        double residual_dementhon = std::numeric_limits<double>::max(),
-          residual_lagrange = std::numeric_limits<double>::max();
-#if defined(VISP_HAVE_APRILTAG_EXTENDED_API)
+        double residual_dementhon = std::numeric_limits<double>::max();
+        double residual_lagrange = std::numeric_limits<double>::max();
+#if defined(VISP_HAVE_APRILTAG_POSE_FCT)
         double residual_homography = pose.computeResidual(cMo_homography);
         double residual_homography_ortho_iter = pose.computeResidual(cMo_homography_ortho_iter);
 #endif
@@ -1115,19 +1127,17 @@ public:
         std::vector<double> residuals;
         residuals.push_back(residual_dementhon);
         residuals.push_back(residual_lagrange);
-#if defined(VISP_HAVE_APRILTAG_EXTENDED_API)
+#if defined(VISP_HAVE_APRILTAG_POSE_FCT)
         residuals.push_back(residual_homography);
         residuals.push_back(residual_homography_ortho_iter);
 #endif
         std::vector<vpHomogeneousMatrix> poses;
         poses.push_back(cMo_dementhon);
         poses.push_back(cMo_lagrange);
-
-#if defined(VISP_HAVE_APRILTAG_EXTENDED_API)
+#if defined(VISP_HAVE_APRILTAG_POSE_FCT)
         poses.push_back(cMo_homography);
         poses.push_back(cMo_homography_ortho_iter);
 #endif
-
         std::ptrdiff_t minIndex = std::min_element(residuals.begin(), residuals.end()) - residuals.begin();
         cMo = *(poses.begin() + minIndex);
       }
@@ -1140,7 +1150,7 @@ public:
     if ((m_poseEstimationMethod == DEMENTHON_VIRTUAL_VS)
         || (m_poseEstimationMethod == LAGRANGE_VIRTUAL_VS)
         || (m_poseEstimationMethod == BEST_RESIDUAL_VIRTUAL_VS)
-#if defined(VISP_HAVE_APRILTAG_EXTENDED_API)
+#if defined(VISP_HAVE_APRILTAG_POSE_FCT)
         || (m_poseEstimationMethod == HOMOGRAPHY_VIRTUAL_VS)
 #endif
       ) {
@@ -1148,52 +1158,25 @@ public:
       pose.computePose(vpPose::VIRTUAL_VS, cMo);
     }
 
-#if defined(VISP_HAVE_APRILTAG_EXTENDED_API)
+    bool fallback_2nd_solution = false;
+#if defined(VISP_HAVE_APRILTAG_POSE_FCT)
     // Only with HOMOGRAPHY_ORTHOGONAL_ITERATION we can directly get two solutions
     if (m_poseEstimationMethod != HOMOGRAPHY_ORTHOGONAL_ITERATION) {
+      fallback_2nd_solution = true;
+    }
+#else
+    fallback_2nd_solution = true;
+#endif
+    if (fallback_2nd_solution) {
       if (cMo2) {
-        double scale = tagSize / 2.0;
-        double data_p0[] = { -scale, scale, 0 };
-        double data_p1[] = { scale, scale, 0 };
-        double data_p2[] = { scale, -scale, 0 };
-        double data_p3[] = { -scale, -scale, 0 };
-        const unsigned int nbPoints = 4;
-        const int nbRows = 3;
-        matd_t *p[nbPoints] = { matd_create_data(nbRows, 1, data_p0), matd_create_data(nbRows, 1, data_p1),
-                                matd_create_data(nbRows, 1, data_p2), matd_create_data(nbRows, 1, data_p3) };
-        matd_t *v[nbPoints];
-        for (unsigned int i = 0; i < nbPoints; ++i) {
-          double data_v[] = { (det->p[i][0] - cam.get_u0()) / cam.get_px(), (det->p[i][1] - cam.get_v0()) / cam.get_py(),
-                             1 };
-          v[i] = matd_create_data(nbRows, 1, data_v);
+        // Fallback: set default cMo2 to identity and set error to an invalid value
+        cMo2->eye();
+        if (projErrors2) {
+          *projErrors2 = -1.0;
         }
-
-        apriltag_pose_t solution1, solution2;
-        const int nIters = 50;
-        const int nbCols = 3;
-        solution1.R = matd_create_data(nbRows, nbCols, cMo.getRotationMatrix().data);
-        solution1.t = matd_create_data(nbRows, 1, cMo.getTranslationVector().data);
-
-        double err2;
-        get_second_solution(v, p, &solution1, &solution2, nIters, &err2);
-
-        for (unsigned int i = 0; i < nbPoints; ++i) {
-          // Since matd_destroy() symbol is not exported in libapriltag we are using my_matd_destroy()
-          my_matd_destroy(p[i]);
-          my_matd_destroy(v[i]);
-        }
-
-        if (solution2.R) {
-          convertHomogeneousMatrix(solution2, *cMo2);
-          my_matd_destroy(solution2.R);
-          my_matd_destroy(solution2.t);
-        }
-
-        my_matd_destroy(solution1.R);
-        my_matd_destroy(solution1.t);
+        vpTRACE("Second solution is only computed for HOMOGRAPHY_ORTHOGONAL_ITERATION");
       }
     }
-#endif
 
     // Compute projection error with vpPose::computeResidual() for consistency
     if (projErrors) {
@@ -1225,7 +1208,7 @@ public:
     return true;
   }
 
-#if defined(VISP_HAVE_APRILTAG_EXTENDED_API)
+#if defined(VISP_HAVE_APRILTAG_POSE_FCT)
   void getPoseWithOrthogonalMethod(apriltag_detection_info_t &info, vpHomogeneousMatrix &cMo1,
                                    vpHomogeneousMatrix *cMo2, double *err1, double *err2)
   {
@@ -1578,14 +1561,6 @@ std::string vpDetectorAprilTag::poseMethodToString(const vpDetectorAprilTag::vpP
 {
   std::string name;
   switch (method) {
-#if defined(VISP_HAVE_APRILTAG_EXTENDED_API)
-  case vpDetectorAprilTag::HOMOGRAPHY:
-    name = "homography";
-    break;
-  case vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS:
-    name = "homography_virtual_vs";
-    break;
-#endif
   case vpDetectorAprilTag::DEMENTHON_VIRTUAL_VS:
     name = "dementhon_virtual_vs";
     break;
@@ -1595,7 +1570,13 @@ std::string vpDetectorAprilTag::poseMethodToString(const vpDetectorAprilTag::vpP
   case vpDetectorAprilTag::BEST_RESIDUAL_VIRTUAL_VS:
     name = "best_residual_virtual_vs";
     break;
-#if defined(VISP_HAVE_APRILTAG_EXTENDED_API)
+#if defined(VISP_HAVE_APRILTAG_POSE_FCT)
+  case vpDetectorAprilTag::HOMOGRAPHY:
+    name = "homography";
+    break;
+  case vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS:
+    name = "homography_virtual_vs";
+    break;
   case vpDetectorAprilTag::HOMOGRAPHY_ORTHOGONAL_ITERATION:
     name = "homography_orthogonal_iteration";
     break;
@@ -1790,7 +1771,10 @@ bool vpDetectorAprilTag::detect(const vpImage<unsigned char> &I)
   \param[in] tagSize : Tag size in meter corresponding to the external width of the pattern.
   \param[in] cam : Camera intrinsic parameters.
   \param[out] cMo_vec : List of tag poses.
-  \param[out] cMo_vec2 : Optional second list of tag poses, since there are 2 solutions for planar pose estimation.
+  \param[out] cMo_vec2 : Optional second list of tag poses.
+  \note This second solution is only computed when the pose estimation method
+  is set to HOMOGRAPHY_ORTHOGONAL_ITERATION. For other methods, this vector
+  will contain identity matrices and projection error `projError2` will be set to -1.
   \param[out] projErrors : Optional (sum of squared) projection errors in the normalized camera frame.
   \param[out] projErrors2 : Optional (sum of squared) projection errors for the 2nd solution in the normalized camera
   frame. \return true if at least one tag is detected.
@@ -1887,10 +1871,14 @@ void vpDetectorAprilTag::displayTags(const vpImage<vpRGBa> &I, const std::vector
   \param[in] tagSize : Tag size in meter corresponding to the external width of the pattern.
   \param[in] cam : Camera intrinsic parameters.
   \param[out] cMo : Pose of the tag.
-  \param[out] cMo2 : Optional second pose of the tag.
+  \param[out] cMo2 : Optional second list of tag poses.
+  \note This second solution is only computed when the pose estimation method
+  is set to HOMOGRAPHY_ORTHOGONAL_ITERATION. For other methods, this vector
+  will contain identity matrices and projection error `projError2` will be set to -1.
   \param[out] projError : Optional (sum of squared) projection errors in the normalized camera frame.
   \param[out] projError2 : Optional (sum of squared) projection errors for the 2nd solution in the normalized camera
-  frame. \return true if success, false otherwise.
+  frame.
+  \return true if success, false otherwise.
 
   The following code shows how to use this function:
   \code

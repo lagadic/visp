@@ -200,7 +200,11 @@ int main(int argc, char **argv)
 #endif
 
     vpDetectorAprilTag detector(vpDetectorAprilTag::TAG_36h11);
+#if defined(VISP_HAVE_APRILTAG_POSE_FCT)
     detector.setAprilTagPoseEstimationMethod(vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS);
+#else
+    detector.setAprilTagPoseEstimationMethod(vpDetectorAprilTag::BEST_RESIDUAL_VIRTUAL_VS;
+#endif
     detector.setDisplayTag(true);
     detector.setAprilTagQuadDecimate(2);
 

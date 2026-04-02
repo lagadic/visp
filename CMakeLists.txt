@@ -875,7 +875,7 @@ endif()
 # ----------------------------------------------------------------------------
 # Build-in 3rd parties. Should be after c++ standard potential modification
 # ----------------------------------------------------------------------------
-VISP_OPTION(BUILD_APRILTAG "Build apriltag from source" VISP_FORCE_3RDPARTY_BUILD
+VISP_OPTION(BUILD_APRILTAG "Build apriltag from source" ON
   VISIBLE_IF NOT WINRT AND NOT MINGW)
 VISP_OPTION(USE_APRILTAG "Include apriltag support" ON
   VISIBLE_IF TRUE
@@ -1955,7 +1955,8 @@ if(VISP_HAVE_APRILTAG)
     THEN "yes (ver ${APRILTAG_VERSION})"
     ELSE "build (ver ${APRILTAG_VERSION})")
   status("    \\- Use big family:"   USE_APRILTAG_BIG_FAMILY         THEN "yes" ELSE "no")
-  status("    \\- Use extended api:" VISP_HAVE_APRILTAG_EXTENDED_API THEN "yes" ELSE "no")
+  status("    \\- Use copy fct:"     VISP_HAVE_APRILTAG_COPY_FCT THEN "yes" ELSE "no")
+  status("    \\- Use pose fct:"     VISP_HAVE_APRILTAG_POSE_FCT THEN "yes" ELSE "no")
   status("    \\- Use aruco:"        VISP_HAVE_APRILTAG_ARUCO        THEN "yes" ELSE "no")
 else()
   status("    Use AprilTag:" "no")
