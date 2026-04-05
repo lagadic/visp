@@ -304,6 +304,9 @@ int vpPose::calculArbreDementhon(vpMatrix &Ap, vpColVector &U, vpHomogeneousMatr
     J04 = Ap * yprim;
 
     calculTwoSolutionsDementhonPlan(I04, J04, U, cMo1, cMo2);
+    vpPose pose_vvs = *this;
+    pose_vvs.computePose(vpPose::VIRTUAL_VS, cMo1);
+    pose_vvs.computePose(vpPose::VIRTUAL_VS, cMo2);
 
     // test if all points are in front of the camera for cMo1 and cMo2
     int erreur1 = 0;
@@ -454,6 +457,9 @@ void vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
 
   vpHomogeneousMatrix cMo1, cMo2;
   calculTwoSolutionsDementhonPlan(I04, J04, U, cMo1, cMo2);
+  vpPose pose_vvs = *this;
+  pose_vvs.computePose(vpPose::VIRTUAL_VS, cMo1);
+  pose_vvs.computePose(vpPose::VIRTUAL_VS, cMo2);
 
   int erreur1 = calculArbreDementhon(Ap, U, cMo1);
   int erreur2 = calculArbreDementhon(Ap, U, cMo2);
