@@ -123,11 +123,11 @@ if(USE_APRILTAG)
     check_c_source_compiles("${CHECK_APRILTAG_POSE_FCT}" APRILTAG_HAVE_POSE_FCT)
 
     set(ARUCO_HEADERS
-      tagAruco4x4_50.h  tagAruco4x4_100.h  tagAruco4x4_250.h  tagAruco4x4_1000.h
-      tagAruco5x5_50.h  tagAruco5x5_100.h  tagAruco5x5_250.h  tagAruco5x5_1000.h
-      tagAruco6x6_50.h  tagAruco6x6_100.h  tagAruco6x6_250.h  tagAruco6x6_1000.h
-      tagAruco7x7_50.h  tagAruco7x7_100.h  tagAruco7x7_250.h  tagAruco7x7_1000.h
-      tagArucoMIP36h12.h
+      aruco/tagAruco4x4_50.h  aruco/tagAruco4x4_100.h  aruco/tagAruco4x4_250.h  aruco/tagAruco4x4_1000.h
+      aruco/tagAruco5x5_50.h  aruco/tagAruco5x5_100.h  aruco/tagAruco5x5_250.h  aruco/tagAruco5x5_1000.h
+      aruco/tagAruco6x6_50.h  aruco/tagAruco6x6_100.h  aruco/tagAruco6x6_250.h  aruco/tagAruco6x6_1000.h
+      aruco/tagAruco7x7_50.h  aruco/tagAruco7x7_100.h  aruco/tagAruco7x7_250.h  aruco/tagAruco7x7_1000.h
+      aruco/tagArucoMIP36h12.h
     )
 
     set(CHECK_ARUCO_HEADERS_SOURCE "#include <apriltag.h>\n")

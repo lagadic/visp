@@ -53,23 +53,23 @@ extern "C" {
 #include <tagStandard52h13.h>
 #endif
 #if defined(VISP_HAVE_APRILTAG_ARUCO)
-#include <tagAruco4x4_50.h>
-#include <tagAruco4x4_100.h>
-#include <tagAruco4x4_250.h>
-#include <tagAruco4x4_1000.h>
-#include <tagAruco5x5_50.h>
-#include <tagAruco5x5_100.h>
-#include <tagAruco5x5_250.h>
-#include <tagAruco5x5_1000.h>
-#include <tagAruco6x6_50.h>
-#include <tagAruco6x6_100.h>
-#include <tagAruco6x6_250.h>
-#include <tagAruco6x6_1000.h>
-#include <tagAruco7x7_50.h>
-#include <tagAruco7x7_100.h>
-#include <tagAruco7x7_250.h>
-#include <tagAruco7x7_1000.h>
-#include <tagArucoMIP36h12.h>
+#include <aruco/tagAruco4x4_50.h>
+#include <aruco/tagAruco4x4_100.h>
+#include <aruco/tagAruco4x4_250.h>
+#include <aruco/tagAruco4x4_1000.h>
+#include <aruco/tagAruco5x5_50.h>
+#include <aruco/tagAruco5x5_100.h>
+#include <aruco/tagAruco5x5_250.h>
+#include <aruco/tagAruco5x5_1000.h>
+#include <aruco/tagAruco6x6_50.h>
+#include <aruco/tagAruco6x6_100.h>
+#include <aruco/tagAruco6x6_250.h>
+#include <aruco/tagAruco6x6_1000.h>
+#include <aruco/tagAruco7x7_50.h>
+#include <aruco/tagAruco7x7_100.h>
+#include <aruco/tagAruco7x7_250.h>
+#include <aruco/tagAruco7x7_1000.h>
+#include <aruco/tagArucoMIP36h12.h>
 #endif
 #ifdef __cplusplus
 }
@@ -1370,7 +1370,7 @@ public:
     }
   }
 
-  void setRefineDecode(bool) { }
+  void setRefineDecode(bool) {}
 
   void setRefineEdges(bool refineEdges)
   {
@@ -1379,7 +1379,7 @@ public:
     }
   }
 
-  void setRefinePose(bool) { }
+  void setRefinePose(bool) {}
 
   void setPoseEstimationMethod(const vpPoseEstimationMethod &method)
   {
@@ -1723,13 +1723,13 @@ vpDetectorAprilTag::vpDetectorAprilTag(const vpAprilTagFamily &tagFamily,
   : m_displayTag(false), m_displayTagColor(vpColor::none), m_displayTagThickness(def_tagThickness),
   m_poseEstimationMethod(poseEstimationMethod), m_tagFamily(tagFamily), m_defaultCam(),
   m_impl(new Impl(tagFamily, poseEstimationMethod))
-{ }
+{}
 
 vpDetectorAprilTag::vpDetectorAprilTag(const vpDetectorAprilTag &o)
   : vpDetectorBase(o), m_displayTag(false), m_displayTagColor(vpColor::none), m_displayTagThickness(def_tagThickness),
   m_poseEstimationMethod(o.m_poseEstimationMethod), m_tagFamily(o.m_tagFamily), m_defaultCam(),
   m_impl(new Impl(*o.m_impl))
-{ }
+{}
 
 vpDetectorAprilTag &vpDetectorAprilTag::operator=(vpDetectorAprilTag o)
 {
@@ -2289,5 +2289,5 @@ END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpDetectorAprilTag.cpp.o) has
 // no symbols
-void dummy_vpDetectorAprilTag() { }
+void dummy_vpDetectorAprilTag() {}
 #endif
