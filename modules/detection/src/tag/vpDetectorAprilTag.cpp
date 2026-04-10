@@ -1172,7 +1172,7 @@ public:
         // Fallback: set default cMo2 to identity and set error to an invalid value
         cMo2->eye();
         if (projErrors2) {
-          *projErrors2 = -1.0;
+          *projErrors2 = HUGE_VAL;
         }
         vpTRACE("Second solution is only computed for HOMOGRAPHY_ORTHOGONAL_ITERATION");
       }
@@ -1774,10 +1774,11 @@ bool vpDetectorAprilTag::detect(const vpImage<unsigned char> &I)
   \param[out] cMo_vec2 : Optional second list of tag poses.
   \note This second solution is only computed when the pose estimation method
   is set to HOMOGRAPHY_ORTHOGONAL_ITERATION. For other methods, this vector
-  will contain identity matrices and projection error `projError2` will be set to -1.
+  will contain identity matrices and projection error `projError2` will be set to `HUGE_VAL`.
   \param[out] projErrors : Optional (sum of squared) projection errors in the normalized camera frame.
   \param[out] projErrors2 : Optional (sum of squared) projection errors for the 2nd solution in the normalized camera
-  frame. \return true if at least one tag is detected.
+  frame.
+  \return true if at least one tag is detected.
 
   \sa getPose()
 */
@@ -1874,7 +1875,7 @@ void vpDetectorAprilTag::displayTags(const vpImage<vpRGBa> &I, const std::vector
   \param[out] cMo2 : Optional second list of tag poses.
   \note This second solution is only computed when the pose estimation method
   is set to HOMOGRAPHY_ORTHOGONAL_ITERATION. For other methods, this vector
-  will contain identity matrices and projection error `projError2` will be set to -1.
+  will contain identity matrices and projection error `projError2` will be set to `HUGE_VAL`.
   \param[out] projError : Optional (sum of squared) projection errors in the normalized camera frame.
   \param[out] projError2 : Optional (sum of squared) projection errors for the 2nd solution in the normalized camera
   frame.
