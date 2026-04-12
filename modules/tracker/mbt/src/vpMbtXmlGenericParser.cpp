@@ -33,14 +33,15 @@
 
 #include <visp3/core/vpConfig.h>
 
+#if defined(VISP_HAVE_PUGIXML)
 #include <clocale>
 #include <iostream>
 #include <map>
+#include <mutex>
+
+#include <pugixml.hpp>
 
 #include <visp3/mbt/vpMbtXmlGenericParser.h>
-
-#if defined(VISP_HAVE_PUGIXML)
-#include <pugixml.hpp>
 
 BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -73,9 +74,13 @@ public:
     m_projectionErrorMe(), m_projectionErrorKernelSize(2), // 5x5
     m_nodeMap(), m_verbose(true)
   {
-    // std::setlocale() is not thread safe and need to be called once
+    // std::setlocale() is not thread safe and need to be called once.
     // https://stackoverflow.com/questions/41117179/undefined-behavior-with-setlocale-and-multithreading
-    if (m_call_setlocale) {
+    // std::call_once + std::once_flag guarantee that the callable is executed
+    // exactly once even when multiple threads construct an Impl concurrently,
+    // eliminating the data race on the former static bool flag reported by
+    // ThreadSanitizer.
+    std::call_once(m_setlocale_flag, []() {
       // https://pugixml.org/docs/manual.html#access.attrdata
       // https://en.cppreference.com/w/cpp/locale/setlocale
       // When called from Java binding, the locale seems to be changed to the default system locale
@@ -83,8 +88,7 @@ public:
       if (std::setlocale(LC_ALL, "C") == nullptr) {
         std::cerr << "Cannot set locale to C" << std::endl;
       }
-      m_call_setlocale = false;
-    }
+    });
     init();
   }
 
@@ -1585,15 +1589,15 @@ protected:
   }
 
 private:
-  static bool m_call_setlocale;
+  static std::once_flag m_setlocale_flag;
 };
 
-bool vpMbtXmlGenericParser::Impl::m_call_setlocale = true;
+std::once_flag vpMbtXmlGenericParser::Impl::m_setlocale_flag;
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
 vpMbtXmlGenericParser::vpMbtXmlGenericParser(int type) : m_impl(new Impl(type))
-{ }
+{}
 
 vpMbtXmlGenericParser::~vpMbtXmlGenericParser() { delete m_impl; }
 
@@ -1978,6 +1982,6 @@ void vpMbtXmlGenericParser::setVerbose(bool verbose) { m_impl->setVerbose(verbos
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpMbtXmlGenericParser.cpp.o) has no symbols
-void dummy_vpMbtXmlGenericParser() { }
+void dummy_vpMbtXmlGenericParser() {}
 
 #endif

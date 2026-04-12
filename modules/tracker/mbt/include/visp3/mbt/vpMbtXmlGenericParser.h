@@ -37,8 +37,8 @@
  * object.
  */
 
-#ifndef _vpMbtXmlGenericParser_h_
-#define _vpMbtXmlGenericParser_h_
+#ifndef VP_MBT_XML_GENERIC_PARSER_H
+#define VP_MBT_XML_GENERIC_PARSER_H
 
 #include <visp3/core/vpConfig.h>
 
