@@ -48,8 +48,12 @@
 #include <catch2/catch_all.hpp>
 #endif
 
+#include <future>
+#include <thread>
+
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpMath.h>
+#include <visp3/mbt/vpMbtFaceDepthNormal.h>
 #include <visp3/mbt/vpMbtXmlGenericParser.h>
 
 #ifdef ENABLE_VISP_NAMESPACE
@@ -207,6 +211,309 @@ TEST_CASE("vpMbtXmlGenericParser - Depth Normal and Dense parsing (chateau_depth
     CHECK(xml.getFovClipping());
   }
 }
+
+// ---------------------------------------------------------------------------
+// Setter / getter round-trip: ensure every set* is reflected by its get*
+// without any XML file involved.
+// ---------------------------------------------------------------------------
+TEST_CASE("vpMbtXmlGenericParser - Setter/getter round-trip (no XML)", "[MbtXmlGenericParser]")
+{
+  const double eps = std::numeric_limits<double>::epsilon();
+
+  SECTION("Edge parser setters")
+  {
+    vpMbtXmlGenericParser xml(vpMbtXmlGenericParser::EDGE_PARSER);
+
+    vpMe me;
+    me.setMaskSize(7);
+    me.setMaskNumber(360);
+    me.setRange(10);
+    me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
+    me.setThreshold(20.0);
+    me.setMu1(0.3);
+    me.setMu2(0.7);
+    me.setSampleStep(6);
+    xml.setEdgeMe(me);
+
+    vpMe me_out;
+    xml.getEdgeMe(me_out);
+    CHECK(me_out.getMaskSize() == 7u);
+    CHECK(me_out.getMaskNumber() == 360u);
+    CHECK(me_out.getRange() == 10u);
+    CHECK(vpMath::equal(me_out.getThreshold(), 20.0, eps));
+    CHECK(vpMath::equal(me_out.getMu1(), 0.3, eps));
+    CHECK(vpMath::equal(me_out.getMu2(), 0.7, eps));
+    CHECK(vpMath::equal(me_out.getSampleStep(), 6.0, eps));
+  }
+
+  SECTION("KLT parser setters")
+  {
+    vpMbtXmlGenericParser xml(vpMbtXmlGenericParser::KLT_PARSER);
+    xml.setKltMaskBorder(8);
+    xml.setKltMaxFeatures(500);
+    xml.setKltWindowSize(7);
+    xml.setKltQuality(0.05);
+    xml.setKltMinDistance(10.0);
+    xml.setKltHarrisParam(0.03);
+    xml.setKltBlockSize(5);
+    xml.setKltPyramidLevels(4);
+
+    CHECK(xml.getKltMaskBorder() == 8u);
+    CHECK(xml.getKltMaxFeatures() == 500u);
+    CHECK(xml.getKltWindowSize() == 7u);
+    CHECK(vpMath::equal(xml.getKltQuality(), 0.05, eps));
+    CHECK(vpMath::equal(xml.getKltMinDistance(), 10.0, eps));
+    CHECK(vpMath::equal(xml.getKltHarrisParam(), 0.03, eps));
+    CHECK(xml.getKltBlockSize() == 5u);
+    CHECK(xml.getKltPyramidLevels() == 4u);
+  }
+
+  SECTION("Camera, angle and clipping setters")
+  {
+    vpMbtXmlGenericParser xml(vpMbtXmlGenericParser::EDGE_PARSER);
+
+    vpCameraParameters cam_in;
+    cam_in.initPersProjWithoutDistortion(600.0, 601.0, 320.0, 240.0);
+    xml.setCameraParameters(cam_in);
+    vpCameraParameters cam_out;
+    xml.getCameraParameters(cam_out);
+    CHECK(cam_out == cam_in);
+
+    xml.setAngleAppear(50.0);
+    xml.setAngleDisappear(60.0);
+    CHECK(vpMath::equal(xml.getAngleAppear(), 50.0, eps));
+    CHECK(vpMath::equal(xml.getAngleDisappear(), 60.0, eps));
+
+    xml.setNearClippingDistance(0.05);
+    xml.setFarClippingDistance(1.5);
+    CHECK(vpMath::equal(xml.getNearClippingDistance(), 0.05, eps));
+    CHECK(vpMath::equal(xml.getFarClippingDistance(), 1.5, eps));
+  }
+
+  SECTION("Depth normal setters")
+  {
+    vpMbtXmlGenericParser xml(vpMbtXmlGenericParser::DEPTH_NORMAL_PARSER);
+    xml.setDepthNormalFeatureEstimationMethod(vpMbtFaceDepthNormal::ROBUST_FEATURE_ESTIMATION);
+    xml.setDepthNormalPclPlaneEstimationMethod(1);
+    xml.setDepthNormalPclPlaneEstimationRansacMaxIter(100);
+    xml.setDepthNormalPclPlaneEstimationRansacThreshold(0.005);
+    xml.setDepthNormalSamplingStepX(4);
+    xml.setDepthNormalSamplingStepY(4);
+
+    CHECK(xml.getDepthNormalFeatureEstimationMethod() == vpMbtFaceDepthNormal::ROBUST_FEATURE_ESTIMATION);
+    CHECK(xml.getDepthNormalPclPlaneEstimationMethod() == 1);
+    CHECK(xml.getDepthNormalPclPlaneEstimationRansacMaxIter() == 100);
+    CHECK(vpMath::equal(xml.getDepthNormalPclPlaneEstimationRansacThreshold(), 0.005, eps));
+    CHECK(xml.getDepthNormalSamplingStepX() == 4u);
+    CHECK(xml.getDepthNormalSamplingStepY() == 4u);
+  }
+
+  SECTION("Depth dense setters")
+  {
+    vpMbtXmlGenericParser xml(vpMbtXmlGenericParser::DEPTH_DENSE_PARSER);
+    xml.setDepthDenseSamplingStepX(8);
+    xml.setDepthDenseSamplingStepY(6);
+    CHECK(xml.getDepthDenseSamplingStepX() == 8u);
+    CHECK(xml.getDepthDenseSamplingStepY() == 6u);
+  }
+
+  SECTION("Projection error setters")
+  {
+    vpMbtXmlGenericParser xml(vpMbtXmlGenericParser::PROJECTION_ERROR_PARSER);
+
+    vpMe me;
+    me.setSampleStep(8.0);
+    xml.setProjectionErrorMe(me);
+    xml.setProjectionErrorKernelSize(4);
+
+    vpMe me_out;
+    xml.getProjectionErrorMe(me_out);
+    CHECK(vpMath::equal(me_out.getSampleStep(), 8.0, eps));
+    CHECK(xml.getProjectionErrorKernelSize() == 4u);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// LOD getters: exercise getLodState / getLodMinLine / getLodMinPolygon
+// which are never reached by the XML-based tests above.
+// ---------------------------------------------------------------------------
+TEST_CASE("vpMbtXmlGenericParser - LOD getters default values", "[MbtXmlGenericParser]")
+{
+  vpMbtXmlGenericParser xml(vpMbtXmlGenericParser::EDGE_PARSER);
+  // Default values set in Impl constructor
+  CHECK(xml.getLodState() == false);
+  CHECK(xml.getLodMinLineLengthThreshold() > 0.0);
+  CHECK(xml.getLodMinPolygonAreaThreshold() > 0.0);
+}
+
+// ---------------------------------------------------------------------------
+// hasFarClippingDistance / hasNearClippingDistance:
+// Only set to true after read_face() parses the corresponding XML nodes.
+// Without parsing, defaults are false.
+// ---------------------------------------------------------------------------
+TEST_CASE("vpMbtXmlGenericParser - Clipping distance flags default to false", "[MbtXmlGenericParser]")
+{
+  vpMbtXmlGenericParser xml(vpMbtXmlGenericParser::EDGE_PARSER);
+  CHECK(xml.hasFarClippingDistance() == false);
+  CHECK(xml.hasNearClippingDistance() == false);
+}
+
+TEST_CASE("vpMbtXmlGenericParser - Clipping distance flags set after XML parsing (chateau.xml)", "[MbtXmlGenericParser]")
+{
+  if (!vpIoTools::checkDirectory(g_visp_images_dir + "/xml")) {
+    std::cout << "Skipping test: " << g_visp_images_dir << "/xml not found" << std::endl;
+    return;
+  }
+  const std::string filename = g_visp_images_dir + "/xml/chateau.xml";
+  vpMbtXmlGenericParser xml(vpMbtXmlGenericParser::EDGE_PARSER);
+  xml.parse(filename);
+  // chateau.xml defines near and far clipping — flags must be true
+  CHECK(xml.hasNearClippingDistance() == true);
+  CHECK(xml.hasFarClippingDistance() == true);
+}
+
+// ---------------------------------------------------------------------------
+// setVerbose(false): exercises the verbose=false branches inside all
+// read_* methods (lines currently missed because m_verbose defaults to true).
+// ---------------------------------------------------------------------------
+TEST_CASE("vpMbtXmlGenericParser - Parse with verbose disabled", "[MbtXmlGenericParser]")
+{
+  if (!vpIoTools::checkDirectory(g_visp_images_dir + "/xml")) {
+    std::cout << "Skipping test: " << g_visp_images_dir << "/xml not found" << std::endl;
+    return;
+  }
+
+  const double eps = std::numeric_limits<double>::epsilon();
+
+  SECTION("Edge + KLT parser, verbose off (chateau.xml)")
+  {
+    const std::string filename = g_visp_images_dir + "/xml/chateau.xml";
+    vpMbtXmlGenericParser xml(vpMbtXmlGenericParser::EDGE_PARSER | vpMbtXmlGenericParser::KLT_PARSER);
+    xml.setVerbose(false);
+    REQUIRE_NOTHROW(xml.parse(filename));
+    // Spot-check a value to confirm parsing still worked
+    CHECK(vpMath::equal(xml.getAngleAppear(), 70.0, eps));
+    CHECK(xml.getKltMaskBorder() == 5u);
+  }
+
+  SECTION("Depth parser, verbose off (chateau_depth.xml)")
+  {
+    const std::string filename = g_visp_images_dir + "/xml/chateau_depth.xml";
+    vpMbtXmlGenericParser xml(vpMbtXmlGenericParser::DEPTH_NORMAL_PARSER | vpMbtXmlGenericParser::DEPTH_DENSE_PARSER);
+    xml.setVerbose(false);
+    REQUIRE_NOTHROW(xml.parse(filename));
+    CHECK(xml.getDepthDenseSamplingStepX() == 4u);
+  }
+
+  SECTION("Projection error parser, verbose off (chateau.xml)")
+  {
+    const std::string filename = g_visp_images_dir + "/xml/chateau.xml";
+    vpMbtXmlGenericParser xml(vpMbtXmlGenericParser::PROJECTION_ERROR_PARSER);
+    xml.setVerbose(false);
+    REQUIRE_NOTHROW(xml.parse(filename));
+    CHECK(xml.getProjectionErrorKernelSize() == 3u);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Single-feature parser types: cover branches where only one feature type
+// flag is set (EDGE only, KLT only, DEPTH_NORMAL only, DEPTH_DENSE only).
+// ---------------------------------------------------------------------------
+TEST_CASE("vpMbtXmlGenericParser - Single parser type (chateau.xml)", "[MbtXmlGenericParser]")
+{
+  if (!vpIoTools::checkDirectory(g_visp_images_dir + "/xml")) {
+    std::cout << "Skipping test: " << g_visp_images_dir << "/xml not found" << std::endl;
+    return;
+  }
+
+  const std::string filename = g_visp_images_dir + "/xml/chateau.xml";
+
+  SECTION("EDGE_PARSER only")
+  {
+    vpMbtXmlGenericParser xml(vpMbtXmlGenericParser::EDGE_PARSER);
+    REQUIRE_NOTHROW(xml.parse(filename));
+    vpMe me;
+    xml.getEdgeMe(me);
+    CHECK(me.getMaskSize() == 5u);
+  }
+
+  SECTION("KLT_PARSER only")
+  {
+    vpMbtXmlGenericParser xml(vpMbtXmlGenericParser::KLT_PARSER);
+    REQUIRE_NOTHROW(xml.parse(filename));
+    CHECK(xml.getKltMaskBorder() == 5u);
+  }
+}
+
+TEST_CASE("vpMbtXmlGenericParser - Single parser type (chateau_depth.xml)", "[MbtXmlGenericParser]")
+{
+  if (!vpIoTools::checkDirectory(g_visp_images_dir + "/xml")) {
+    std::cout << "Skipping test: " << g_visp_images_dir << "/xml not found" << std::endl;
+    return;
+  }
+
+  const std::string filename = g_visp_images_dir + "/xml/chateau_depth.xml";
+
+  SECTION("DEPTH_NORMAL_PARSER only")
+  {
+    vpMbtXmlGenericParser xml(vpMbtXmlGenericParser::DEPTH_NORMAL_PARSER);
+    REQUIRE_NOTHROW(xml.parse(filename));
+    CHECK(xml.getDepthNormalSamplingStepX() == 2u);
+    CHECK(xml.getDepthNormalSamplingStepY() == 2u);
+  }
+
+  SECTION("DEPTH_DENSE_PARSER only")
+  {
+    vpMbtXmlGenericParser xml(vpMbtXmlGenericParser::DEPTH_DENSE_PARSER);
+    REQUIRE_NOTHROW(xml.parse(filename));
+    CHECK(xml.getDepthDenseSamplingStepX() == 4u);
+    CHECK(xml.getDepthDenseSamplingStepY() == 4u);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Error path: parse() on a non-existent file must throw vpException.
+// ---------------------------------------------------------------------------
+TEST_CASE("vpMbtXmlGenericParser - Parse non-existent file throws", "[MbtXmlGenericParser]")
+{
+  vpMbtXmlGenericParser xml(vpMbtXmlGenericParser::EDGE_PARSER);
+  CHECK_THROWS_AS(xml.parse("/non/existent/path/file.xml"), vpException);
+}
+
+// ---------------------------------------------------------------------------
+// Concurrency: two parsers constructed and used simultaneously must not
+// produce a data race (exercises the std::call_once fix on m_setlocale_flag).
+// Each instance parses independently and must return consistent values.
+// ---------------------------------------------------------------------------
+#if defined(VISP_HAVE_THREADS)
+TEST_CASE("vpMbtXmlGenericParser - Concurrent construction and parsing", "[MbtXmlGenericParser]")
+{
+  if (!vpIoTools::checkDirectory(g_visp_images_dir + "/xml")) {
+    std::cout << "Skipping test: " << g_visp_images_dir << "/xml not found" << std::endl;
+    return;
+  }
+
+  const std::string filename = g_visp_images_dir + "/xml/chateau.xml";
+  const double eps = std::numeric_limits<double>::epsilon();
+
+  auto parse_and_get_angle = [&filename]() {
+    vpMbtXmlGenericParser xml(vpMbtXmlGenericParser::EDGE_PARSER);
+    xml.setVerbose(false);
+    xml.parse(filename);
+    return xml.getAngleAppear();
+    };
+
+  std::future<double> f1 = std::async(std::launch::async, parse_and_get_angle);
+  std::future<double> f2 = std::async(std::launch::async, parse_and_get_angle);
+
+  double angle1 = f1.get();
+  double angle2 = f2.get();
+
+  // Both threads must read the same value from the same XML file
+  CHECK(vpMath::equal(angle1, 70.0, eps));
+  CHECK(vpMath::equal(angle2, 70.0, eps));
+}
+#endif
 
 int main(int argc, char *argv[])
 {
