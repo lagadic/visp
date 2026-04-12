@@ -37,7 +37,9 @@
 #include <clocale>
 #include <iostream>
 #include <map>
+#if defined(VISP_HAVE_THREADS)
 #include <mutex>
+#endif
 
 #include <pugixml.hpp>
 
@@ -76,10 +78,11 @@ public:
   {
     // std::setlocale() is not thread safe and need to be called once.
     // https://stackoverflow.com/questions/41117179/undefined-behavior-with-setlocale-and-multithreading
-    // std::call_once + std::once_flag guarantee that the callable is executed
-    // exactly once even when multiple threads construct an Impl concurrently,
-    // eliminating the data race on the former static bool flag reported by
-    // ThreadSanitizer.
+    // When threads are available (C++11), std::call_once + std::once_flag guarantee that the callable
+    // is executed exactly once across all threads without data race (ThreadSanitizer-clean).
+    // Without thread support (C++98 build), concurrent construction cannot occur, so a plain
+    // static bool is sufficient and avoids any C++11 dependency.
+#if defined(VISP_HAVE_THREADS)
     std::call_once(m_setlocale_flag, []() {
       // https://pugixml.org/docs/manual.html#access.attrdata
       // https://en.cppreference.com/w/cpp/locale/setlocale
@@ -89,6 +92,18 @@ public:
         std::cerr << "Cannot set locale to C" << std::endl;
       }
     });
+#else
+    if (m_call_setlocale) {
+      // https://pugixml.org/docs/manual.html#access.attrdata
+      // https://en.cppreference.com/w/cpp/locale/setlocale
+      // When called from Java binding, the locale seems to be changed to the default system locale
+      // It thus mess with the parsing of numbers with pugixml and comma decimal separator environment
+      if (std::setlocale(LC_ALL, "C") == nullptr) {
+        std::cerr << "Cannot set locale to C" << std::endl;
+      }
+      m_call_setlocale = false;
+    }
+#endif
     init();
   }
 
@@ -1589,10 +1604,18 @@ protected:
   }
 
 private:
+#if defined(VISP_HAVE_THREADS)
   static std::once_flag m_setlocale_flag;
+#else
+  static bool m_call_setlocale;
+#endif
 };
 
+#if defined(VISP_HAVE_THREADS)
 std::once_flag vpMbtXmlGenericParser::Impl::m_setlocale_flag;
+#else
+bool vpMbtXmlGenericParser::Impl::m_call_setlocale = true;
+#endif
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
