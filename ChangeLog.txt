@@ -41,6 +41,7 @@ ViSP 3.7.1 (current version)
     . [#1909] Fix build failure when apriltag is deactivated
     . [#1929] Support for the C++98 standard is not properly implemented
     . [#1930] Build issue in vpMocapVicon.cpp when c++98 enabled
+    . [#1943] Data race on std::setlocale in vpMbtXmlGenericParser
 ----------------------------------------------
 ViSP 3.7.0 (released December 19, 2025)
   - Contributors:
