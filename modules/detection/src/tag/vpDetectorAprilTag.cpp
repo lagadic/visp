@@ -53,23 +53,23 @@ extern "C" {
 #include <tagStandard52h13.h>
 #endif
 #if defined(VISP_HAVE_APRILTAG_ARUCO)
-#include <tagAruco4x4_50.h>
-#include <tagAruco4x4_100.h>
-#include <tagAruco4x4_250.h>
-#include <tagAruco4x4_1000.h>
-#include <tagAruco5x5_50.h>
-#include <tagAruco5x5_100.h>
-#include <tagAruco5x5_250.h>
-#include <tagAruco5x5_1000.h>
-#include <tagAruco6x6_50.h>
-#include <tagAruco6x6_100.h>
-#include <tagAruco6x6_250.h>
-#include <tagAruco6x6_1000.h>
-#include <tagAruco7x7_50.h>
-#include <tagAruco7x7_100.h>
-#include <tagAruco7x7_250.h>
-#include <tagAruco7x7_1000.h>
-#include <tagArucoMIP36h12.h>
+#include <aruco/tagAruco4x4_50.h>
+#include <aruco/tagAruco4x4_100.h>
+#include <aruco/tagAruco4x4_250.h>
+#include <aruco/tagAruco4x4_1000.h>
+#include <aruco/tagAruco5x5_50.h>
+#include <aruco/tagAruco5x5_100.h>
+#include <aruco/tagAruco5x5_250.h>
+#include <aruco/tagAruco5x5_1000.h>
+#include <aruco/tagAruco6x6_50.h>
+#include <aruco/tagAruco6x6_100.h>
+#include <aruco/tagAruco6x6_250.h>
+#include <aruco/tagAruco6x6_1000.h>
+#include <aruco/tagAruco7x7_50.h>
+#include <aruco/tagAruco7x7_100.h>
+#include <aruco/tagAruco7x7_250.h>
+#include <aruco/tagAruco7x7_1000.h>
+#include <aruco/tagArucoMIP36h12.h>
 #endif
 #ifdef __cplusplus
 }
@@ -1172,7 +1172,7 @@ public:
         // Fallback: set default cMo2 to identity and set error to an invalid value
         cMo2->eye();
         if (projErrors2) {
-          *projErrors2 = -1.0;
+          *projErrors2 = HUGE_VAL;
         }
         vpTRACE("Second solution is only computed for HOMOGRAPHY_ORTHOGONAL_ITERATION");
       }
@@ -1370,7 +1370,7 @@ public:
     }
   }
 
-  void setRefineDecode(bool) { }
+  void setRefineDecode(bool) {}
 
   void setRefineEdges(bool refineEdges)
   {
@@ -1379,7 +1379,7 @@ public:
     }
   }
 
-  void setRefinePose(bool) { }
+  void setRefinePose(bool) {}
 
   void setPoseEstimationMethod(const vpPoseEstimationMethod &method)
   {
@@ -1723,13 +1723,13 @@ vpDetectorAprilTag::vpDetectorAprilTag(const vpAprilTagFamily &tagFamily,
   : m_displayTag(false), m_displayTagColor(vpColor::none), m_displayTagThickness(def_tagThickness),
   m_poseEstimationMethod(poseEstimationMethod), m_tagFamily(tagFamily), m_defaultCam(),
   m_impl(new Impl(tagFamily, poseEstimationMethod))
-{ }
+{}
 
 vpDetectorAprilTag::vpDetectorAprilTag(const vpDetectorAprilTag &o)
   : vpDetectorBase(o), m_displayTag(false), m_displayTagColor(vpColor::none), m_displayTagThickness(def_tagThickness),
   m_poseEstimationMethod(o.m_poseEstimationMethod), m_tagFamily(o.m_tagFamily), m_defaultCam(),
   m_impl(new Impl(*o.m_impl))
-{ }
+{}
 
 vpDetectorAprilTag &vpDetectorAprilTag::operator=(vpDetectorAprilTag o)
 {
@@ -1774,10 +1774,11 @@ bool vpDetectorAprilTag::detect(const vpImage<unsigned char> &I)
   \param[out] cMo_vec2 : Optional second list of tag poses.
   \note This second solution is only computed when the pose estimation method
   is set to HOMOGRAPHY_ORTHOGONAL_ITERATION. For other methods, this vector
-  will contain identity matrices and projection error `projError2` will be set to -1.
+  will contain identity matrices and projection error `projError2` will be set to `HUGE_VAL`.
   \param[out] projErrors : Optional (sum of squared) projection errors in the normalized camera frame.
   \param[out] projErrors2 : Optional (sum of squared) projection errors for the 2nd solution in the normalized camera
-  frame. \return true if at least one tag is detected.
+  frame.
+  \return true if at least one tag is detected.
 
   \sa getPose()
 */
@@ -1874,7 +1875,7 @@ void vpDetectorAprilTag::displayTags(const vpImage<vpRGBa> &I, const std::vector
   \param[out] cMo2 : Optional second list of tag poses.
   \note This second solution is only computed when the pose estimation method
   is set to HOMOGRAPHY_ORTHOGONAL_ITERATION. For other methods, this vector
-  will contain identity matrices and projection error `projError2` will be set to -1.
+  will contain identity matrices and projection error `projError2` will be set to `HUGE_VAL`.
   \param[out] projError : Optional (sum of squared) projection errors in the normalized camera frame.
   \param[out] projError2 : Optional (sum of squared) projection errors for the 2nd solution in the normalized camera
   frame.
@@ -2289,5 +2290,5 @@ END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpDetectorAprilTag.cpp.o) has
 // no symbols
-void dummy_vpDetectorAprilTag() { }
+void dummy_vpDetectorAprilTag() {}
 #endif

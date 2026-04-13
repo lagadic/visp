@@ -109,12 +109,4 @@ find_package_handle_standard_args(MyApriltag
   FOUND_VAR MyApriltag_FOUND
 )
 
-if(MyApriltag_FOUND AND NOT TARGET apriltag::apriltag)
-  add_library(apriltag::apriltag UNKNOWN IMPORTED)
-  set_target_properties(apriltag::apriltag PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES "${MyApriltag_INCLUDE_DIRS}"
-    IMPORTED_LOCATION "${MyApriltag_LIBRARIES}"
-  )
-endif()
-
 mark_as_advanced(MyApriltag_INCLUDE_DIRS MyApriltag_LIBRARIES MyApriltag_VERSION)
