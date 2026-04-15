@@ -144,6 +144,8 @@ endmacro()
 
 # If OGRE_CONFIG_DIR/resources.cfg exists create a copy in data/ogre-simulator/resources.cfg
 # with an updated path to media dir
+# Additional path set in OGRE_RESOURCE_LINES_BUILD and OGRE_RESOURCE_LINES_INSTALL differ when
+# usage from build directory or from install one
 macro(vp_set_ogre_resources)
   if(EXISTS "${OGRE_CONFIG_DIR}/resources.cfg")
     file(STRINGS "${OGRE_CONFIG_DIR}/resources.cfg" RESOURCE_LINES)
@@ -162,16 +164,50 @@ macro(vp_set_ogre_resources)
 
     set(OGRE_DATA_ROOT_DIR "${VISP_BINARY_DIR}/data/ogre-simulator")
 
+    set(OGRE_RESOURCE_LINES_BUILD)
+    set(OGRE_RESOURCE_LINES_INSTALL)
+    list(APPEND OGRE_RESOURCE_LINES_BUILD "# Material for ViSP examples")
+    list(APPEND OGRE_RESOURCE_LINES_BUILD "FileSystem=${VISP_BINARY_DIR}/data/ogre-simulator/media/models")
+    list(APPEND OGRE_RESOURCE_LINES_BUILD "FileSystem=${VISP_BINARY_DIR}/data/ogre-simulator/media/materials/scripts")
+    list(APPEND OGRE_RESOURCE_LINES_BUILD "FileSystem=${VISP_BINARY_DIR}/data/ogre-simulator/media/materials/textures")
+    string(REPLACE ";" "\n" OGRE_RESOURCE_LINES_BUILD "${OGRE_RESOURCE_LINES_BUILD}")
+
     configure_file(
       "cmake/templates/resources.cfg.in"
       "${OGRE_DATA_ROOT_DIR}/resources.cfg"
       @ONLY
     )
 
+    set(OGRE_RESOURCE_LINES_BUILD)
+    set(OGRE_RESOURCE_LINES_INSTALL)
+    list(APPEND OGRE_RESOURCE_LINES_INSTALL "# Material for ViSP examples")
+    list(APPEND OGRE_RESOURCE_LINES_INSTALL "FileSystem=${CMAKE_INSTALL_PREFIX}/${VISP_OGRE_DATA_INSTALL_PATH}/data/ogre-simulator/media/models")
+    list(APPEND OGRE_RESOURCE_LINES_INSTALL "FileSystem=${CMAKE_INSTALL_PREFIX}/${VISP_OGRE_DATA_INSTALL_PATH}/data/ogre-simulator/media/materials/scripts")
+    list(APPEND OGRE_RESOURCE_LINES_INSTALL "FileSystem=${CMAKE_INSTALL_PREFIX}/${VISP_OGRE_DATA_INSTALL_PATH}/data/ogre-simulator/media/materials/textures")
+    string(REPLACE ";" "\n" OGRE_RESOURCE_LINES_INSTALL "${OGRE_RESOURCE_LINES_INSTALL}")
+
+    configure_file(
+      "cmake/templates/resources.cfg.in"
+      "${VISP_BINARY_DIR}/ogre-install/resources.cfg"
+      @ONLY
+    )
+
+    file(COPY "${VISP_SOURCE_DIR}/modules/ar/data/ogre-simulator/media"
+        DESTINATION "${VISP_BINARY_DIR}/data/ogre-simulator"
+    )
+
     install(FILES
       "${OGRE_DATA_ROOT_DIR}/resources.cfg"
       DESTINATION ${VISP_INSTALL_DATAROOTDIR}/data/ogre-simulator
       PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
+      COMPONENT dev
+    )
+
+    install(DIRECTORY
+      "${VISP_SOURCE_DIR}/modules/ar/data/ogre-simulator/media"
+      DESTINATION ${VISP_OGRE_DATA_INSTALL_PATH}/data/ogre-simulator
+      FILE_PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
+      DIRECTORY_PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE OWNER_EXECUTE
       COMPONENT dev
     )
 
