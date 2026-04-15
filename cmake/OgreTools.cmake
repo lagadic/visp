@@ -132,7 +132,7 @@ macro(vp_set_ogre_plugin)
 
     install(FILES
       "${OGRE_DATA_ROOT_DIR}/plugins.cfg"
-      DESTINATION ${VISP_INSTALL_DATAROOTDIR}/data/ogre-simulator
+      DESTINATION ${VISP_OGRE_DATA_INSTALL_PATH}/data/ogre-simulator
       PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
       COMPONENT dev
     )
