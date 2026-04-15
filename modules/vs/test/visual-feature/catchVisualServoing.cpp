@@ -61,13 +61,12 @@ TEST_CASE("Feature point")
   feat_p_2d_des.set_y(0);
   feat_p_2d_des.set_Z(1);
 
-  vpServo task;
-  task.setServo(vpServo::EYEINHAND_CAMERA);
-  task.setInteractionMatrixType(vpServo::CURRENT);
-  task.setLambda(0.5);
-
   SECTION("Feature point 2D (x,y)")
   {
+    vpServo task;
+    task.setServo(vpServo::EYEINHAND_CAMERA);
+    task.setInteractionMatrixType(vpServo::CURRENT);
+    task.setLambda(0.5);
     task.addFeature(feat_p_2d, feat_p_2d_des);
     REQUIRE(task.computeControlLaw().size() == 6);
     REQUIRE(task.getDimension() == 2);
@@ -77,6 +76,10 @@ TEST_CASE("Feature point")
   }
   SECTION("Feature point 2D (x)")
   {
+    vpServo task;
+    task.setServo(vpServo::EYEINHAND_CAMERA);
+    task.setInteractionMatrixType(vpServo::CURRENT);
+    task.setLambda(0.5);
     task.addFeature(feat_p_2d, feat_p_2d_des, vpFeaturePoint::selectX());
     REQUIRE(task.computeControlLaw().size() == 6);
     REQUIRE(task.getDimension() == 1);
@@ -86,6 +89,10 @@ TEST_CASE("Feature point")
   }
   SECTION("Feature point 2D (y)")
   {
+    vpServo task;
+    task.setServo(vpServo::EYEINHAND_CAMERA);
+    task.setInteractionMatrixType(vpServo::CURRENT);
+    task.setLambda(0.5);
     task.addFeature(feat_p_2d, feat_p_2d_des, vpFeaturePoint::selectY());
     REQUIRE(task.computeControlLaw().size() == 6);
     REQUIRE(task.getDimension() == 1);
@@ -95,6 +102,10 @@ TEST_CASE("Feature point")
   }
   SECTION("Feature point 2D (x,y) + depth (log(Z/Z*))")
   {
+    vpServo task;
+    task.setServo(vpServo::EYEINHAND_CAMERA);
+    task.setInteractionMatrixType(vpServo::DESIRED);
+    task.setLambda(0.5);
     vpFeatureDepth feat_depth, feat_depth_des;
     feat_depth.buildFrom(feat_p_2d.get_x(), feat_p_2d.get_y(), feat_p_2d.get_Z(), log(feat_p_2d.get_Z() / feat_p_2d_des.get_Z()));
     feat_depth_des.buildFrom(feat_p_2d_des.get_x(), feat_p_2d_des.get_y(), feat_p_2d_des.get_Z(), 0);
