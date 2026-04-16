@@ -181,9 +181,9 @@ macro(vp_set_ogre_resources)
     set(OGRE_RESOURCE_LINES_BUILD)
     set(OGRE_RESOURCE_LINES_INSTALL)
     list(APPEND OGRE_RESOURCE_LINES_INSTALL "# Material for ViSP examples")
-    list(APPEND OGRE_RESOURCE_LINES_INSTALL "FileSystem=${CMAKE_INSTALL_PREFIX}/${VISP_OGRE_DATA_INSTALL_PATH}/data/ogre-simulator/media/models")
-    list(APPEND OGRE_RESOURCE_LINES_INSTALL "FileSystem=${CMAKE_INSTALL_PREFIX}/${VISP_OGRE_DATA_INSTALL_PATH}/data/ogre-simulator/media/materials/scripts")
-    list(APPEND OGRE_RESOURCE_LINES_INSTALL "FileSystem=${CMAKE_INSTALL_PREFIX}/${VISP_OGRE_DATA_INSTALL_PATH}/data/ogre-simulator/media/materials/textures")
+    list(APPEND OGRE_RESOURCE_LINES_INSTALL "FileSystem=${CMAKE_INSTALL_PREFIX}/${VISP_INSTALL_DATAROOTDIR}/data/ogre-simulator/media/models")
+    list(APPEND OGRE_RESOURCE_LINES_INSTALL "FileSystem=${CMAKE_INSTALL_PREFIX}/${VISP_INSTALL_DATAROOTDIR}/data/ogre-simulator/media/materials/scripts")
+    list(APPEND OGRE_RESOURCE_LINES_INSTALL "FileSystem=${CMAKE_INSTALL_PREFIX}/${VISP_INSTALL_DATAROOTDIR}/data/ogre-simulator/media/materials/textures")
     string(REPLACE ";" "\n" OGRE_RESOURCE_LINES_INSTALL "${OGRE_RESOURCE_LINES_INSTALL}")
 
     configure_file(
@@ -197,7 +197,7 @@ macro(vp_set_ogre_resources)
     )
 
     install(FILES
-      "${OGRE_DATA_ROOT_DIR}/resources.cfg"
+      "${VISP_BINARY_DIR}/ogre-install/resources.cfg"
       DESTINATION ${VISP_INSTALL_DATAROOTDIR}/data/ogre-simulator
       PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
       COMPONENT dev
@@ -205,7 +205,7 @@ macro(vp_set_ogre_resources)
 
     install(DIRECTORY
       "${VISP_SOURCE_DIR}/modules/ar/data/ogre-simulator/media"
-      DESTINATION ${VISP_OGRE_DATA_INSTALL_PATH}/data/ogre-simulator
+      DESTINATION ${VISP_INSTALL_DATAROOTDIR}/data/ogre-simulator
       FILE_PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
       DIRECTORY_PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE OWNER_EXECUTE
       COMPONENT dev
