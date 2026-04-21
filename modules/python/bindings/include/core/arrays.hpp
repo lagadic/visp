@@ -55,50 +55,50 @@
 template<typename T> py::buffer_info get_buffer_info(T &) = delete;
 template<typename T,
   template <typename> class Array,
-  typename std::enable_if<std::is_same<vpArray2D<T>, Array<T>>::value, bool>::type = true>
+  typename std::enable_if<std::is_same<VISP_NAMESPACE_ADDRESSING vpArray2D<T>, Array<T>>::value, bool>::type = true>
 py::buffer_info get_buffer_info(Array<T> &array)
 {
   return make_array_buffer<T, 2>(array.data, { array.getRows(), array.getCols() }, false);
 }
 
 template<>
-py::buffer_info get_buffer_info(vpMatrix &array)
+py::buffer_info get_buffer_info(VISP_NAMESPACE_ADDRESSING vpMatrix &array)
 {
   return make_array_buffer<double, 2>(array.data, { array.getRows(), array.getCols() }, false);
 }
 
 template<>
-py::buffer_info get_buffer_info(vpColVector &array)
+py::buffer_info get_buffer_info(VISP_NAMESPACE_ADDRESSING vpColVector &array)
 {
   return make_array_buffer<double, 1>(array.data, { array.getRows() }, false);
 }
 template<>
-py::buffer_info get_buffer_info(vpRowVector &array)
+py::buffer_info get_buffer_info(VISP_NAMESPACE_ADDRESSING vpRowVector &array)
 {
   return make_array_buffer<double, 1>(array.data, { array.getCols() }, false);
 }
 template<>
-py::buffer_info get_buffer_info(vpTranslationVector &array)
+py::buffer_info get_buffer_info(VISP_NAMESPACE_ADDRESSING vpTranslationVector &array)
 {
   return make_array_buffer<double, 1>(array.data, { 3 }, false);
 }
 template<>
-py::buffer_info get_buffer_info(vpPoseVector &array)
+py::buffer_info get_buffer_info(VISP_NAMESPACE_ADDRESSING vpPoseVector &array)
 {
   return make_array_buffer<double, 1>(array.data, { 6 }, false);
 }
 template<>
-py::buffer_info get_buffer_info(vpRotationVector &array)
+py::buffer_info get_buffer_info(VISP_NAMESPACE_ADDRESSING vpRotationVector &array)
 {
   return make_array_buffer<double, 1>(array.data, { array.getRows() }, false);
 }
 template<>
-py::buffer_info get_buffer_info(vpRotationMatrix &array)
+py::buffer_info get_buffer_info(VISP_NAMESPACE_ADDRESSING vpRotationMatrix &array)
 {
   return make_array_buffer<double, 2>(array.data, { array.getRows(), array.getCols() }, true);
 }
 template<>
-py::buffer_info get_buffer_info(vpHomogeneousMatrix &array)
+py::buffer_info get_buffer_info(VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &array)
 {
   return make_array_buffer<double, 2>(array.data, { array.getRows(), array.getCols() }, true);
 }
@@ -419,8 +419,11 @@ const char *numpy_fn_doc_nonwritable = R"doc(
 )doc";
 
 template<typename T>
-void bindings_vpArray2D(py::class_<vpArray2D<T>, std::shared_ptr<vpArray2D<T>>> &pyArray2D)
+void bindings_vpArray2D(py::class_<VISP_NAMESPACE_ADDRESSING vpArray2D<T>, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpArray2D<T>>> &pyArray2D)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   pyArray2D.def_buffer(&get_buffer_info<T, vpArray2D>);
 
   pyArray2D.def("numpy", [](vpArray2D<T> &self) -> np_array_cf<T> {
@@ -453,14 +456,17 @@ It cannot be resized.
 
 )doc", py::arg("np_array"), py::keep_alive<0, 1>());
 
-  define_get_item_2d_array<py::class_<vpArray2D<T>, std::shared_ptr<vpArray2D<T>>>, vpArray2D<T>, T>(pyArray2D);
-  define_set_item_2d_array<py::class_<vpArray2D<T>, std::shared_ptr<vpArray2D<T>>>, vpArray2D<T>, T>(pyArray2D);
+  define_get_item_2d_array<py::class_< vpArray2D<T>, std::shared_ptr< vpArray2D<T>>>, vpArray2D<T>, T>(pyArray2D);
+  define_set_item_2d_array<py::class_< vpArray2D<T>, std::shared_ptr< vpArray2D<T>>>, vpArray2D<T>, T>(pyArray2D);
 
 }
 
-void bindings_vpMatrix(py::class_<vpMatrix, std::shared_ptr<vpMatrix>, vpArray2D<double>> &pyMatrix)
+void bindings_vpMatrix(py::class_<VISP_NAMESPACE_ADDRESSING vpMatrix, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpMatrix>, VISP_NAMESPACE_ADDRESSING vpArray2D<double>> &pyMatrix)
 {
-  pyMatrix.def_buffer(&get_buffer_info<vpMatrix>);
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+  pyMatrix.def_buffer(&get_buffer_info< vpMatrix>);
 
   pyMatrix.def("numpy", [](vpMatrix &self) -> np_array_cf<double> {
     return py::cast(self).cast<np_array_cf<double>>();
@@ -497,15 +503,17 @@ It cannot be resized.
   add_print_helper(pyMatrix, &vpMatrix::matlabPrint, "strMatlab", matlab_str_help);
   add_cpp_print_helper(pyMatrix, &vpMatrix::cppPrint);
 
-  define_get_item_2d_array<py::class_<vpMatrix, std::shared_ptr<vpMatrix>, vpArray2D<double>>, vpMatrix, double>(pyMatrix);
-  define_set_item_2d_array<py::class_<vpMatrix, std::shared_ptr<vpMatrix>, vpArray2D<double>>, vpMatrix, double>(pyMatrix);
+  define_get_item_2d_array<py::class_< vpMatrix, std::shared_ptr< vpMatrix>, vpArray2D<double>>, vpMatrix, double>(pyMatrix);
+  define_set_item_2d_array<py::class_< vpMatrix, std::shared_ptr< vpMatrix>, vpArray2D<double>>, vpMatrix, double>(pyMatrix);
 }
 
 
-void bindings_vpRotationMatrix(py::class_<vpRotationMatrix, std::shared_ptr<vpRotationMatrix>, vpArray2D<double>> &pyRotationMatrix)
+void bindings_vpRotationMatrix(py::class_<VISP_NAMESPACE_ADDRESSING vpRotationMatrix, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpRotationMatrix>, VISP_NAMESPACE_ADDRESSING vpArray2D<double>> &pyRotationMatrix)
 {
-
-  pyRotationMatrix.def_buffer(&get_buffer_info<vpRotationMatrix>);
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+  pyRotationMatrix.def_buffer(&get_buffer_info< vpRotationMatrix>);
   pyRotationMatrix.def("numpy", [](vpRotationMatrix &self) -> np_array_cf<double> {
     return py::cast(self).cast<np_array_cf<double>>();
   }, numpy_fn_doc_nonwritable, py::keep_alive<0, 1>());
@@ -531,12 +539,15 @@ If it is not a rotation matrix, an exception will be raised.
 :param np_array: The numpy 1D array to copy.
 
 )doc", py::arg("np_array"));
-  define_get_item_2d_array<py::class_<vpRotationMatrix, std::shared_ptr<vpRotationMatrix>, vpArray2D<double>>, vpRotationMatrix, double>(pyRotationMatrix);
+  define_get_item_2d_array<py::class_< vpRotationMatrix, std::shared_ptr< vpRotationMatrix>, vpArray2D<double>>, vpRotationMatrix, double>(pyRotationMatrix);
 }
 
-void bindings_vpHomogeneousMatrix(py::class_<vpHomogeneousMatrix, std::shared_ptr<vpHomogeneousMatrix>, vpArray2D<double>> &pyHomogeneousMatrix)
+void bindings_vpHomogeneousMatrix(py::class_<VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix>, VISP_NAMESPACE_ADDRESSING vpArray2D<double>> &pyHomogeneousMatrix)
 {
-  pyHomogeneousMatrix.def_buffer(get_buffer_info<vpHomogeneousMatrix>);
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+  pyHomogeneousMatrix.def_buffer(get_buffer_info< vpHomogeneousMatrix>);
   pyHomogeneousMatrix.def("numpy", [](vpHomogeneousMatrix &self) -> np_array_cf<double> {
     return py::cast(self).cast<np_array_cf<double>>();
   }, numpy_fn_doc_nonwritable, py::keep_alive<0, 1>());
@@ -563,14 +574,17 @@ If it is not a homogeneous matrix, an exception will be raised.
 :param np_array: The numpy 1D array to copy.
 
 )doc", py::arg("np_array"));
-  define_get_item_2d_array<py::class_<vpHomogeneousMatrix, std::shared_ptr<vpHomogeneousMatrix>, vpArray2D<double>>, vpHomogeneousMatrix, double>(pyHomogeneousMatrix);
+  define_get_item_2d_array<py::class_< vpHomogeneousMatrix, std::shared_ptr< vpHomogeneousMatrix>, vpArray2D<double>>, vpHomogeneousMatrix, double>(pyHomogeneousMatrix);
 }
 
 
 
-void bindings_vpTranslationVector(py::class_<vpTranslationVector, std::shared_ptr<vpTranslationVector>, vpArray2D<double>> &pyTranslationVector)
+void bindings_vpTranslationVector(py::class_<VISP_NAMESPACE_ADDRESSING vpTranslationVector, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpTranslationVector>, VISP_NAMESPACE_ADDRESSING vpArray2D<double>> &pyTranslationVector)
 {
-  pyTranslationVector.def_buffer(&get_buffer_info<vpTranslationVector>);
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+  pyTranslationVector.def_buffer(&get_buffer_info< vpTranslationVector>);
 
   pyTranslationVector.def("numpy", [](vpTranslationVector &self) -> np_array_cf<double> {
     return py::cast(self).cast<np_array_cf<double>>();
@@ -589,14 +603,17 @@ Construct a Translation vector by **copying** a 1D numpy array of size 3.
 :param np_array: The numpy 1D array to copy.
 
 )doc", py::arg("np_array"));
-  define_get_item_1d_array<py::class_<vpTranslationVector, std::shared_ptr<vpTranslationVector>, vpArray2D<double>>, vpTranslationVector, double>(pyTranslationVector);
-  define_set_item_1d_array<py::class_<vpTranslationVector, std::shared_ptr<vpTranslationVector>, vpArray2D<double>>, vpTranslationVector, double>(pyTranslationVector);
+  define_get_item_1d_array<py::class_< vpTranslationVector, std::shared_ptr< vpTranslationVector>, vpArray2D<double>>, vpTranslationVector, double>(pyTranslationVector);
+  define_set_item_1d_array<py::class_< vpTranslationVector, std::shared_ptr< vpTranslationVector>, vpArray2D<double>>, vpTranslationVector, double>(pyTranslationVector);
 }
 
 
-void bindings_vpColVector(py::class_<vpColVector, std::shared_ptr<vpColVector>, vpArray2D<double>> &pyColVector)
+void bindings_vpColVector(py::class_<VISP_NAMESPACE_ADDRESSING vpColVector, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpColVector>, VISP_NAMESPACE_ADDRESSING vpArray2D<double>> &pyColVector)
 {
-  pyColVector.def_buffer(&get_buffer_info<vpColVector>);
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+  pyColVector.def_buffer(&get_buffer_info< vpColVector>);
 
   pyColVector.def("numpy", [](vpColVector &self) -> np_array_cf<double> {
     return py::cast(self).cast<np_array_cf<double>>();
@@ -628,8 +645,8 @@ It cannot be resized.
 
 )doc", py::arg("np_array"), py::keep_alive<0, 1>());
 
-  define_get_item_1d_array<py::class_<vpColVector, std::shared_ptr<vpColVector>, vpArray2D<double>>, vpColVector, double>(pyColVector);
-  define_set_item_1d_array<py::class_<vpColVector, std::shared_ptr<vpColVector>, vpArray2D<double>>, vpColVector, double>(pyColVector);
+  define_get_item_1d_array<py::class_< vpColVector, std::shared_ptr< vpColVector>, vpArray2D<double>>, vpColVector, double>(pyColVector);
+  define_set_item_1d_array<py::class_< vpColVector, std::shared_ptr< vpColVector>, vpArray2D<double>>, vpColVector, double>(pyColVector);
 
   add_print_helper(pyColVector, &vpColVector::csvPrint, "strCsv", csv_str_help);
   add_print_helper(pyColVector, &vpColVector::maplePrint, "strMaple", maple_str_help);
@@ -638,11 +655,14 @@ It cannot be resized.
 
 }
 
-void bindings_vpRowVector(py::class_<vpRowVector, std::shared_ptr<vpRowVector>, vpArray2D<double>> &pyRowVector)
+void bindings_vpRowVector(py::class_<VISP_NAMESPACE_ADDRESSING vpRowVector, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpRowVector>, VISP_NAMESPACE_ADDRESSING vpArray2D<double>> &pyRowVector)
 {
-  pyRowVector.def_buffer(&get_buffer_info<vpRowVector>);
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+  pyRowVector.def_buffer(&get_buffer_info< vpRowVector>);
   pyRowVector.def("numpy", [](vpRowVector &self) -> np_array_cf<double> {
-    return np_array_cf<double>(get_buffer_info<vpRowVector>(self), py::cast(self));
+    return np_array_cf<double>(get_buffer_info< vpRowVector>(self), py::cast(self));
   }, numpy_fn_doc_writable, py::keep_alive<0, 1>());
   pyRowVector.def(py::init([](np_array_cf<double> np_array) {
     verify_array_shape_and_dims(np_array, 1, "ViSP row vector");
@@ -670,8 +690,8 @@ It cannot be resized.
 
 )doc", py::arg("np_array"), py::keep_alive<0, 1>());
 
-  define_get_item_1d_array<py::class_<vpRowVector, std::shared_ptr<vpRowVector>, vpArray2D<double>>, vpRowVector, double>(pyRowVector);
-  define_set_item_1d_array<py::class_<vpRowVector, std::shared_ptr<vpRowVector>, vpArray2D<double>>, vpRowVector, double>(pyRowVector);
+  define_get_item_1d_array<py::class_< vpRowVector, std::shared_ptr< vpRowVector>, vpArray2D<double>>, vpRowVector, double>(pyRowVector);
+  define_set_item_1d_array<py::class_< vpRowVector, std::shared_ptr< vpRowVector>, vpArray2D<double>>, vpRowVector, double>(pyRowVector);
 
   add_print_helper(pyRowVector, &vpRowVector::csvPrint, "strCsv", csv_str_help);
   add_print_helper(pyRowVector, &vpRowVector::maplePrint, "strMaple", maple_str_help);
@@ -679,9 +699,12 @@ It cannot be resized.
   add_cpp_print_helper(pyRowVector, &vpRowVector::cppPrint);
 }
 
-void bindings_vpPoseVector(py::class_<vpPoseVector, std::shared_ptr<vpPoseVector>, vpArray2D<double>> &pyPoseVector)
+void bindings_vpPoseVector(py::class_<VISP_NAMESPACE_ADDRESSING vpPoseVector, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpPoseVector>, VISP_NAMESPACE_ADDRESSING vpArray2D<double>> &pyPoseVector)
 {
-  pyPoseVector.def_buffer(&get_buffer_info<vpPoseVector>);
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+  pyPoseVector.def_buffer(&get_buffer_info< vpPoseVector>);
 
   pyPoseVector.def("numpy", [](vpPoseVector &self) -> np_array_cf<double> {
     return py::cast(self).cast<np_array_cf<double>>();
@@ -699,12 +722,16 @@ Construct a pose vector by **copying** a 1D numpy array.
 :param np_array: The numpy 1D array to copy.
 
 )doc", py::arg("np_array"));
-  define_get_item_1d_array<py::class_<vpPoseVector, std::shared_ptr<vpPoseVector>, vpArray2D<double>>, vpPoseVector, double>(pyPoseVector);
-  define_set_item_1d_array<py::class_<vpPoseVector, std::shared_ptr<vpPoseVector>, vpArray2D<double>>, vpPoseVector, double>(pyPoseVector);
+  define_get_item_1d_array<py::class_< vpPoseVector, std::shared_ptr< vpPoseVector>, vpArray2D<double>>, vpPoseVector, double>(pyPoseVector);
+  define_set_item_1d_array<py::class_< vpPoseVector, std::shared_ptr< vpPoseVector>, vpArray2D<double>>, vpPoseVector, double>(pyPoseVector);
 }
 
-void bindings_vpRotationVector(py::class_<vpRotationVector, std::shared_ptr<vpRotationVector>, vpArray2D<double>> &pyRotationVector)
+void bindings_vpRotationVector(py::class_<VISP_NAMESPACE_ADDRESSING vpRotationVector, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpRotationVector>, VISP_NAMESPACE_ADDRESSING vpArray2D<double>> &pyRotationVector)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   pyRotationVector.def_buffer(&get_buffer_info<vpRotationVector>);
 
   pyRotationVector.def("numpy", [](vpRotationVector &self) -> np_array_cf<double> {
@@ -723,8 +750,8 @@ Construct a rotaiton vector by **copying** a 1D numpy array.
 :param np_array: The numpy 1D array to copy.
 
 )doc", py::arg("np_array"));
-  define_get_item_1d_array<py::class_<vpRotationVector, std::shared_ptr<vpRotationVector>, vpArray2D<double>>, vpPoseVector, double>(pyRotationVector);
-  define_set_item_1d_array<py::class_<vpRotationVector, std::shared_ptr<vpRotationVector>, vpArray2D<double>>, vpPoseVector, double>(pyRotationVector);
+  define_get_item_1d_array<py::class_< vpRotationVector, std::shared_ptr< vpRotationVector>, vpArray2D<double>>, vpPoseVector, double>(pyRotationVector);
+  define_set_item_1d_array<py::class_< vpRotationVector, std::shared_ptr< vpRotationVector>, vpArray2D<double>>, vpPoseVector, double>(pyRotationVector);
 }
 
 
