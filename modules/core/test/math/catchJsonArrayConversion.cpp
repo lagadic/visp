@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +69,7 @@ class vpExceptionMatcher : public Catch::Matchers::MatcherBase<vpException>
 public:
   vpExceptionMatcher(vpException::generalExceptionEnum type, const StringMatcherBase &messageMatcher)
     : m_type(type), m_messageMatcher(messageMatcher)
-  { }
+  {}
 
   bool match(vpException const &in) const VP_OVERRIDE
   {
@@ -232,10 +232,10 @@ SCENARIO("Recovering a vpArray2D from a JSON array", "[json]")
   {
     vpArray2D<double> array = GENERATE(take(10, randomArray(50.0, 2, 10)));
     json j;
-    for (unsigned i = 0; i < array.getRows(); ++i) {
+    for (unsigned ii = 0; ii < array.getRows(); ++ii) {
       json jRow;
-      for (unsigned j = 0; j < array.getCols(); ++j) {
-        jRow.push_back(array[i][j]);
+      for (unsigned jj = 0; jj < array.getCols(); ++jj) {
+        jRow.push_back(array[ii][jj]);
       }
       j.push_back(jRow);
     }
