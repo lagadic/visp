@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -216,12 +216,12 @@ void vpMeEllipse::leastSquareRobustCircle(const double &um, const double &vm, un
 
     vpColVector residu(k); // near to geometric distance in pixel
     for (unsigned int i = 0; i < k; ++i) {
-      double x = xp[i];
-      double y = yp[i];
-      double sign = (m_K[index_0] * x * x) + (m_K[index_1] * y * y) + (2. * m_K[index_2] * x * y)
-        + (2. * m_K[index_3] * x) + (2. * m_K[index_4] * y) + m_K[index_5];
+      double xx = xp[i];
+      double yy = yp[i];
+      double sign = (m_K[index_0] * xx * xx) + (m_K[index_1] * yy * yy) + (2. * m_K[index_2] * xx * yy)
+        + (2. * m_K[index_3] * xx) + (2. * m_K[index_4] * yy) + m_K[index_5];
       vpImagePoint ip1, ip2;
-      ip1.set_uv(x, y);
+      ip1.set_uv(xx, yy);
       double ang = computeAngleOnEllipse(ip1);
       computePointOnEllipse(ang, ip2);
       // residu = 0 if point is exactly on the ellipse, not otherwise
