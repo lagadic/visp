@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -160,7 +160,7 @@ std::vector<float> createTransfer(const std::vector<int> &hist, int limit, std::
   }
   int cdf = 0;
   int hist_size = static_cast<int>(hist.size());
-  for (int i = hMin; i < hist_size; ++i) {
+  for (i = hMin; i < hist_size; ++i) {
     cdf += cdfs[i];
     cdfs[i] = cdf;
   }
@@ -170,7 +170,7 @@ std::vector<float> createTransfer(const std::vector<int> &hist, int limit, std::
 
   std::vector<float> transfer(hist.size());
   int transfer_size = static_cast<int>(transfer.size());
-  for (int i = 0; i < transfer_size; ++i) {
+  for (i = 0; i < transfer_size; ++i) {
     transfer[i] = (cdfs[i] - cdfMin) / static_cast<float>(cdfMax - cdfMin);
   }
 
@@ -193,12 +193,12 @@ float transferValue(int v, std::vector<int> &clippedHist)
   }
 
   int cdf = 0;
-  for (int i = hMin; i <= v; ++i) {
+  for (i = hMin; i <= v; ++i) {
     cdf += clippedHist[i];
   }
 
   int cdfMax = cdf;
-  for (int i = v + 1; i < clippedHistLength; ++i) {
+  for (i = v + 1; i < clippedHistLength; ++i) {
     cdfMax += clippedHist[i];
   }
 
