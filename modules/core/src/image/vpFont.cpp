@@ -350,12 +350,12 @@ public:
         for (int y = d_y; y < d_y + d_h; y++) {
           int dstY = static_cast<int>(position.get_v() + y - _bb.getTop()) % canvas.getHeight();
 
-          for (int x = d_x; x < d_x + d_w; x++) {
-            unsigned int dstX = static_cast<unsigned int>(position.get_u() + x - _bb.getLeft()) % canvas.getWidth();
+          for (int px = d_x; px < d_x + d_w; ++px) {
+            unsigned int dstX = static_cast<unsigned int>(position.get_u() + px - _bb.getLeft()) % canvas.getWidth();
 
-            int coeff = 255 - _fontBuffer[y][x];
+            int coeff = 255 - _fontBuffer[y][px];
             unsigned char gray =
-              static_cast<unsigned char>((color * _fontBuffer[y][x] + coeff * canvas[dstY][dstX]) / 255);
+              static_cast<unsigned char>((color * _fontBuffer[y][px] + coeff * canvas[dstY][dstX]) / 255);
             canvas[dstY][dstX] = gray;
           }
         }
@@ -464,13 +464,13 @@ public:
         for (int y = d_y; y < d_y + d_h; y++) {
           int dstY = static_cast<int>(position.get_v() + y - _bb.getTop()) % canvas.getHeight();
 
-          for (int x = d_x; x < d_x + d_w; x++) {
-            unsigned int dstX = static_cast<unsigned int>(position.get_u() + x - _bb.getLeft()) % canvas.getWidth();
+          for (int px = d_x; px < d_x + d_w; ++px) {
+            unsigned int dstX = static_cast<unsigned int>(position.get_u() + px - _bb.getLeft()) % canvas.getWidth();
 
-            int coeff = 255 - _fontBuffer[y][x];
-            int R = (color.R * _fontBuffer[y][x] + coeff * canvas[dstY][dstX].R) / 255;
-            int G = (color.G * _fontBuffer[y][x] + coeff * canvas[dstY][dstX].G) / 255;
-            int B = (color.B * _fontBuffer[y][x] + coeff * canvas[dstY][dstX].B) / 255;
+            int coeff = 255 - _fontBuffer[y][px];
+            int R = (color.R * _fontBuffer[y][px] + coeff * canvas[dstY][dstX].R) / 255;
+            int G = (color.G * _fontBuffer[y][px] + coeff * canvas[dstY][dstX].G) / 255;
+            int B = (color.B * _fontBuffer[y][px] + coeff * canvas[dstY][dstX].B) / 255;
             canvas[dstY][dstX] =
               vpRGBa(static_cast<unsigned char>(R), static_cast<unsigned char>(G), static_cast<unsigned char>(B));
           }
