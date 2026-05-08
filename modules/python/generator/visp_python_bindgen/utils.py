@@ -37,6 +37,7 @@ from typing import List, Optional, Set, Tuple, Dict, Union
 import copy
 from enum import Enum
 from dataclasses import dataclass
+import logging
 
 from cxxheaderparser.tokfmt import tokfmt
 from cxxheaderparser import types
@@ -222,6 +223,12 @@ def get_typename(typename: types.PQName, owner_specs, header_env_mapping) -> str
       final_segment_reprs.insert(len(final_segment_reprs) - 1, segment_reprs[i])
     else:
       break
+
+  final_segment_reprs = list(map(lambda s: s.removeprefix('visp::'), final_segment_reprs))
+
+  if final_segment_reprs[0] == 'visp':
+    final_segment_reprs.pop(0)
+
 
   return '::'.join(final_segment_reprs)
 
@@ -459,8 +466,11 @@ def method_matches_config(method: types.Method, config: Dict, owner_specs, heade
   if config['static'] != method.static:
     return False
   params_strs = [get_type(param.type, owner_specs, header_mapping) or '<unparsed>' for param in method.parameters]
+  params_strs = list(map(lambda s: s.replace('visp::', ''), params_strs))
   signature = get_method_signature(get_name(method.name), get_type(method.return_type, owner_specs, header_mapping) or '', params_strs)
   config_signature = config['signature']
+  signature = signature.replace('visp::', '')
+  logging.info(f'Checking whether method with signature {signature} matches config signature {config_signature}')
   for template in owner_specs:
     config_signature = config_signature.replace(f'<{template}>', f'<{owner_specs[template]}>')
 

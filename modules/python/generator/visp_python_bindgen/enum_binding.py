@@ -209,7 +209,10 @@ def get_enum_bindings(root_scope: NamespaceScope, mapping: Dict, submodule: Subm
 
     for segment in name_segments[:-1]:
       full_segment_name = mapping.get(segment)
-      if full_segment_name is not None and submodule.class_should_be_ignored(full_segment_name):
+      if full_segment_name is None:
+        continue
+      full_segment_name = full_segment_name.replace('visp::', '')
+      if submodule.class_should_be_ignored(full_segment_name):
         parent_ignored = True
         ignored_parent_name = full_segment_name
         break
