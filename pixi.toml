@@ -26,6 +26,7 @@ nlohmann_json = "*"
 ogre = ">=14.4.1"
 libxml2-devel = "*"
 librealsense = "*"
+apriltag = "*"
 
 [target.unix.dependencies]
 xorg-libx11 = "*"
@@ -93,7 +94,7 @@ VISP_ENABLE_TEST_WITHOUT_DISPLAY = "OFF"
 init-testing = { cmd = "bash ./development/scripts/pixi/xvfb.sh" }
 
 [feature.rbt]
-dependencies = { panda3d = ">=1.10.15" }
+dependencies = { panda3d = ">=1.10.16" }
 
 [feature.doc]
 dependencies = { doxygen = "*", mathjax = "*" }

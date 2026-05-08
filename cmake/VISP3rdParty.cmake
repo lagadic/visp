@@ -1,6 +1,8 @@
 #----------------------------------------------------------------------
 # Add 3rd-party libraries build as static libs
 #----------------------------------------------------------------------
+include(CheckCSourceCompiles)
+include(CMakePushCheckState)
 
 if(WITH_ATIDAQ)
   set(ATIDAQ_LIBRARY visp_atidaq)
@@ -25,12 +27,145 @@ if(WITH_LAPACK)
   set(LAPACK_VERSION ${LAPACK_MAJOR_VERSION}.${LAPACK_MINOR_VERSION}.${LAPACK_PATCH_VERSION})
 endif()
 
-if(WITH_APRILTAG)
-  set(APRILTAG_LIBRARY visp_apriltag)
-  add_subdirectory("${VISP_SOURCE_DIR}/3rdparty/apriltag")
-  set(APRILTAG_INCLUDE_DIRS "${${APRILTAG_LIBRARY}_SOURCE_DIR}" "${${APRILTAG_LIBRARY}_BINARY_DIR}")
-  set(APRILTAG_LIBRARIES ${APRILTAG_LIBRARY})
-  set(APRILTAG_VERSION ${APRILTAG_MAJOR_VERSION}.${APRILTAG_MINOR_VERSION}.${APRILTAG_PATCH_VERSION})
+if(USE_APRILTAG)
+  if(BUILD_APRILTAG)
+    vp_clear_vars(apriltag_FOUND MyApriltag_FOUND)
+  else()
+    find_package(MyApriltag QUIET) # Trick to overcome issue in apriltagTargets.cmake occuring with version 3.3.0
+    if((NOT MyApriltag_FOUND) OR (MyApriltag_VERSION VERSION_GREATER "3.3.0") OR (MyApriltag_VERSION STREQUAL "n/a"))
+      find_package(apriltag QUIET)
+    endif()
+  endif()
+
+  if(apriltag_FOUND)
+    set(VISP_HAVE_APRILTAG YES)
+    set(APRILTAG_VERSION "${apriltag_VERSION_MAJOR}.${apriltag_VERSION_MINOR}.${apriltag_VERSION_PATCH}")
+    set(APRILTAG_LIBRARIES "apriltag::apriltag")
+    set(VISP_HAVE_APRILTAG_VERSION "(${apriltag_VERSION_MAJOR}<<16 | ${apriltag_VERSION_MINOR}<<8 | ${apriltag_VERSION_PATCH})") # for vpConfig.h
+
+    message(STATUS "Found system apriltag: ${APRILTAG_LIBRARIES} "
+            "(found version \"${APRILTAG_VERSION}\")")
+  elseif(MyApriltag_FOUND)
+    set(VISP_HAVE_APRILTAG YES)
+    set(APRILTAG_VERSION "${MyApriltag_VERSION}")
+    set(APRILTAG_INCLUDE_DIRS ${MyApriltag_INCLUDE_DIRS})
+    set(APRILTAG_LIBRARIES "apriltag::apriltag")
+    set(VISP_HAVE_APRILTAG_VERSION "(${MyApriltag_VERSION_MAJOR}<<16 | ${MyApriltag_VERSION_MINOR}<<8 | ${MyApriltag_VERSION_PATCH})") # for vpConfig.h
+
+    message(STATUS "Found system apriltag: ${APRILTAG_LIBRARIES} "
+            "(found version \"${APRILTAG_VERSION}\")")
+  elseif(NOT WINRT AND NOT MINGW)
+    vp_clear_vars(APRILTAG_MAJOR_VERSION APRILTAG_MINOR_VERSION APRILTAG_PATCH_VERSION APRILTAG_LIBRARIES APRILTAG_INCLUDE_DIRS)
+    message(STATUS "Could NOT find apriltag system library. It will be built from sources")
+    add_subdirectory("${VISP_SOURCE_DIR}/3rdparty/apriltag")
+    set(BUILD_APRILTAG TRUE)
+    set(VISP_HAVE_APRILTAG YES)
+    set(VISP_HAVE_APRILTAG_COPY_FCT YES)
+    set(VISP_HAVE_APRILTAG_POSE_FCT YES)
+    set(VISP_HAVE_APRILTAG_ARUCO YES)
+    message(STATUS "apriltag library will be built from sources: ${APRILTAG_LIBRARIES} "
+            "(version \"${APRILTAG_VERSION}\")")
+
+    set(VISP_HAVE_APRILTAG_VERSION "(${APRILTAG_MAJOR_VERSION}<<16 | ${APRILTAG_MINOR_VERSION}<<8 | ${APRILTAG_PATCH_VERSION})") # for vpConfig.h
+  endif()
+
+  # Detect if additional functionalities are available
+  # - void apriltag_detection_copy(apriltag_detection_t* src, apriltag_detection_t* dst);
+  # - zarray_t* apriltag_detections_copy(zarray_t* detections);
+  # - apriltag_detector_t *apriltag_detector_copy(apriltag_detector_t *td);
+  if(apriltag_FOUND OR MyApriltag_FOUND)
+    cmake_push_check_state()
+    if(APRILTAG_INCLUDE_DIRS)
+      set(CMAKE_REQUIRED_INCLUDES ${APRILTAG_INCLUDE_DIRS})
+    elseif(TARGET apriltag::apriltag)
+      get_target_property(_inc_dirs apriltag::apriltag INTERFACE_INCLUDE_DIRECTORIES)
+      set(CMAKE_REQUIRED_INCLUDES ${_inc_dirs})
+    endif()
+
+    set(CMAKE_REQUIRED_LIBRARIES ${APRILTAG_LIBRARIES})
+
+    set(CHECK_APRILTAG_COPY_FCT "
+      #include <apriltag.h>
+      #include <apriltag_pose.h>
+
+      int main() {
+        apriltag_detection_t *det_src = 0;
+        apriltag_detection_t *det_dst = 0;
+        apriltag_detection_copy(det_src, det_dst);
+
+        zarray_t* detections = 0;
+        zarray_t* detections_copy = apriltag_detections_copy(detections);
+
+        apriltag_detector_t *td = 0;
+        apriltag_detector_t *td_copy = apriltag_detector_copy(td);
+
+        return 0;
+      }
+    ")
+
+    check_c_source_compiles("${CHECK_APRILTAG_COPY_FCT}" APRILTAG_HAVE_COPY_FCT)
+
+    set(CHECK_APRILTAG_POSE_FCT "
+      #include <apriltag.h>
+      #include <apriltag_pose.h>
+
+      int main() {
+        apriltag_detection_info_t info;
+        apriltag_pose_t pose1, pose2;
+        double err1, err2;
+
+        estimate_pose_for_tag_homography(&info, &pose1);
+        estimate_tag_pose_orthogonal_iteration(&info, &err1, &pose1, &err2, &pose2, 50);
+
+        return 0;
+      }
+    ")
+    check_c_source_compiles("${CHECK_APRILTAG_POSE_FCT}" APRILTAG_HAVE_POSE_FCT)
+
+    set(ARUCO_HEADERS
+      aruco/tagAruco4x4_50.h  aruco/tagAruco4x4_100.h  aruco/tagAruco4x4_250.h  aruco/tagAruco4x4_1000.h
+      aruco/tagAruco5x5_50.h  aruco/tagAruco5x5_100.h  aruco/tagAruco5x5_250.h  aruco/tagAruco5x5_1000.h
+      aruco/tagAruco6x6_50.h  aruco/tagAruco6x6_100.h  aruco/tagAruco6x6_250.h  aruco/tagAruco6x6_1000.h
+      aruco/tagAruco7x7_50.h  aruco/tagAruco7x7_100.h  aruco/tagAruco7x7_250.h  aruco/tagAruco7x7_1000.h
+      aruco/tagArucoMIP36h12.h
+    )
+
+    set(CHECK_ARUCO_HEADERS_SOURCE "#include <apriltag.h>\n")
+    foreach(h ${ARUCO_HEADERS})
+      string(APPEND CHECK_ARUCO_HEADERS_SOURCE "#include <${h}>\n")
+    endforeach()
+    string(APPEND CHECK_ARUCO_HEADERS_SOURCE "int main() { return 0; }")
+
+    check_c_source_compiles("${CHECK_ARUCO_HEADERS_SOURCE}" APRILTAG_HAVE_ARUCO_HEADERS)
+
+    cmake_pop_check_state()
+
+    if(APRILTAG_HAVE_COPY_FCT)
+      message(STATUS "Apriltag: copy fct is available")
+      set(VISP_HAVE_APRILTAG_COPY_FCT YES)
+    else()
+      message(STATUS "Apriltag: copy fct is NOT available")
+      set(VISP_HAVE_APRILTAG_COPY_FCT NO)
+    endif()
+
+    if(APRILTAG_HAVE_POSE_FCT)
+      message(STATUS "Apriltag: pose fct is available")
+      set(VISP_HAVE_APRILTAG_POSE_FCT YES)
+    else()
+      message(STATUS "Apriltag: pose fct is NOT available")
+      set(VISP_HAVE_APRILTAG_POSE_FCT NO)
+    endif()
+
+    if(APRILTAG_HAVE_ARUCO_HEADERS)
+      message(STATUS "Apriltag: ArUco support found")
+      set(VISP_HAVE_APRILTAG_ARUCO YES)
+    else()
+      message(STATUS "Apriltag: ArUco support NOT found")
+      set(VISP_HAVE_APRILTAG_ARUCO NO)
+    endif()
+  endif()
+
+  mark_as_advanced(apriltag_DIR)
 endif()
 
 if(WITH_QBDEVICE)
@@ -78,12 +213,37 @@ if(WITH_TINYEXR)
   set(TINYEXR_VERSION ${TINYEXR_MAJOR_VERSION}.${TINYEXR_MINOR_VERSION}.${TINYEXR_PATCH_VERSION})
 endif()
 
-if(WITH_CATCH2)
-  set(CATCH2_LIBRARY visp_catch2)
-  add_subdirectory("${VISP_SOURCE_DIR}/3rdparty/catch2")
-  set(CATCH2_INCLUDE_DIRS "${VISP_SOURCE_DIR}/3rdparty/catch2")
-  set(CATCH2_LIBRARIES ${CATCH2_LIBRARY})
-  set(CATCH2_VERSION ${CATCH2_MAJOR_VERSION}.${CATCH2_MINOR_VERSION}.${CATCH2_PATCH_VERSION})
+if(USE_CATCH2)
+  if(BUILD_CATCH2)
+    vp_clear_vars(Catch2_FOUND)
+  else()
+    find_package(Catch2 QUIET)
+  endif()
+
+  if(Catch2_FOUND AND (Catch2_VERSION VERSION_GREATER_EQUAL 3.1.1))
+    set(VISP_HAVE_CATCH2 YES)
+    set(CATCH2_VERSION "${Catch2_VERSION}")
+    set(CATCH2_LIBRARIES "Catch2::Catch2")
+    set(VISP_HAVE_CATCH2_VERSION "(${Catch2_VERSION_MAJOR}<<16 | ${Catch2_VERSION_MINOR}<<8 | ${Catch2_VERSION_PATCH})") # for vpConfig.h
+
+    message(STATUS "Found system Catch2: ${CATCH2_LIBRARIES} "
+            "(found version \"${CATCH2_VERSION}\")")
+  else()
+    if(Catch2_FOUND)
+      message(STATUS "Catch2 ${Catch2_VERSION} system library found but too old. It will be built from sources")
+    else()
+      message(STATUS "Could NOT find Catch2 system library. It will be built from sources")
+    endif()
+    vp_clear_vars(Catch2_FOUND Catch2_VERSION_MAJOR Catch2_VERSION_MINOR Catch2_VERSION_PATCH Catch2_LIBRARIES Catch2_INCLUDE_DIRS)
+    add_subdirectory("${VISP_SOURCE_DIR}/3rdparty/catch2")
+    set(BUILD_CATCH2 TRUE)
+    set(VISP_HAVE_CATCH2 YES)
+    add_definitions("-DVISP_BUILD_CATCH2")
+    message(STATUS "Catch2 library will be built from sources: ${CATCH2_LIBRARIES} "
+            "(version \"${CATCH2_VERSION}\")")
+
+    set(VISP_HAVE_CATCH2_VERSION "(${CATCH2_VERSION_MAJOR}<<16 | ${CATCH2_VERSION_MINOR}<<8 | ${CATCH2_VERSION_PATCH})") # for vpConfig.h
+  endif()
 endif()
 
 if(WITH_POLOLU)

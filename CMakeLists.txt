@@ -200,6 +200,7 @@ if(ANDROID)
   vp_update(VISP_INC_INSTALL_PATH         "sdk/native/jni/include")
   vp_update(VISP_SAMPLES_SRC_INSTALL_PATH "samples/native")
   vp_update(VISP_INSTALL_DATAROOTDIR      "sdk/etc")
+  vp_update(VISP_OGRE_DATA_INSTALL_PATH   "${VISP_INSTALL_DATAROOTDIR}")
 
 elseif(WIN32 AND CMAKE_HOST_SYSTEM_NAME MATCHES Windows)
   # Where to build modules
@@ -225,6 +226,7 @@ elseif(WIN32 AND CMAKE_HOST_SYSTEM_NAME MATCHES Windows)
   vp_update(VISP_INC_INSTALL_PATH         "${CMAKE_INSTALL_INCLUDEDIR}")
   vp_update(VISP_BIN_INSTALL_PATH         "${VISP_INSTALL_BINARIES_PREFIX}bin")
   vp_update(VISP_INSTALL_DATAROOTDIR      "${CMAKE_INSTALL_DATAROOTDIR}/visp-${VISP_VERSION}")
+  vp_update(VISP_OGRE_DATA_INSTALL_PATH   "${VISP_INSTALL_DATAROOTDIR}")
   vp_update(VISP_CONFIG_INSTALL_PATH      ".")
 
 else() # UNIX
@@ -240,18 +242,20 @@ else() # UNIX
   #----------------------------------------------------------------------
   VP_OPTION(ENABLE_MULTIARCH  "" "" "Enable multi-arch support"  "" OFF IF (NOT APPLE))
 
+  vp_update(VISP_INSTALL_DATAROOTDIR      "${CMAKE_INSTALL_DATAROOTDIR}/visp-${VISP_VERSION}")
   # The location where includes and libraries will be installed
   if(ENABLE_MULTIARCH)
     # The 2 following lines should be used to enable multi-arch support.
     vp_update(VISP_INC_INSTALL_PATH       "${CMAKE_INSTALL_INCLUDEDIR}") # Headers are arch independant
     vp_update(VISP_LIB_INSTALL_PATH       "${CMAKE_INSTALL_LIBDIR}/${CMAKE_LIBRARY_ARCHITECTURE}")
+    vp_update(VISP_OGRE_DATA_INSTALL_PATH "${CMAKE_INSTALL_LIBDIR}/${CMAKE_LIBRARY_ARCHITECTURE}/visp-${VISP_VERSION}")
   else()
     # catkin doesn't support multi-arch; use rather the next 2 lines
     vp_update(VISP_INC_INSTALL_PATH       "${CMAKE_INSTALL_INCLUDEDIR}")
     vp_update(VISP_LIB_INSTALL_PATH       "${CMAKE_INSTALL_LIBDIR}")
+    vp_update(VISP_OGRE_DATA_INSTALL_PATH "${VISP_INSTALL_DATAROOTDIR}")
   endif()
   vp_update(VISP_BIN_INSTALL_PATH         "${CMAKE_INSTALL_BINDIR}")
-  vp_update(VISP_INSTALL_DATAROOTDIR      "${CMAKE_INSTALL_DATAROOTDIR}/visp-${VISP_VERSION}")
   vp_update(VISP_3P_LIB_INSTALL_PATH      "${VISP_LIB_INSTALL_PATH}/visp/3rdparty")
   vp_update(VISP_SAMPLES_SRC_INSTALL_PATH "${VISP_INSTALL_DATAROOTDIR}/samples")
   vp_update(VISP_JAR_INSTALL_PATH         "${VISP_INSTALL_DATAROOTDIR}/java")
@@ -487,7 +491,7 @@ VP_OPTION(BUILD_TESTS  "" "" "Build ViSP tests" "" ON)
 VP_OPTION(BUILD_COVERAGE "" "" "Enables test coverage" "" OFF IF (BUILD_TESTS AND (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANGCXX)))
 
 # Build java as an option
-VP_OPTION(BUILD_JAVA  "" "" "Enable Java support" "" (ANDROID OR NOT CMAKE_CROSSCOMPILING)  IF (ANDROID OR (NOT APPLE_FRAMEWORK AND NOT WINRT)) )
+VP_OPTION(BUILD_JAVA  "" "" "Enable Java support" "" (ANDROID OR NOT CMAKE_CROSSCOMPILING)  IF (ANDROID OR ((NOT APPLE_FRAMEWORK AND NOT WINRT)) AND NOT (VISP_CXX_STANDARD LESS VISP_CXX_STANDARD_11)) )
 VP_OPTION(BUILD_FAT_JAVA_LIB  "" "" "Create Java wrapper exporting all functions of ViSP library (requires static build of ViSP modules)" "" ANDROID IF NOT BUILD_SHARED_LIBS)
 VP_OPTION(BUILD_ANDROID_SERVICE   "" "" "Build ViSP Manager for Google Play"          "" OFF IF ANDROID )
 VP_OPTION(BUILD_ANDROID_PROJECTS  "" "" "Build Android projects providing .apk files" "" ON  IF ANDROID )
@@ -532,6 +536,7 @@ VP_OPTION(BUILD_WITH_STATIC_CRT  "" "" "Enables use of staticaly linked CRT for 
 # ----------------------------------------------------------------------------
 # Build options
 # ----------------------------------------------------------------------------
+VISP_OPTION(ENABLE_CONFIG_VERIFICATION "Fail build if actual configuration doesn't match requested (WITH_XXX != HAVE_XXX)" OFF)
 VP_OPTION(ENABLE_SOLUTION_FOLDERS "" "" "Solution folder in Visual Studio or in other IDEs" "" (MSVC_IDE OR CMAKE_GENERATOR MATCHES Xcode))
 # Note that it is better to set ENABLE_MOMENTS_COMBINE_MATRICES to OFF
 VP_OPTION(ENABLE_MOMENTS_COMBINE_MATRICES  "" "" "Use linear combination of matrices instead of linear combination of moments to compute interaction matrices." "" OFF)
@@ -597,7 +602,7 @@ VP_CHECK_PACKAGE(C99)
 VP_OPTION(USE_AFMA6       ""          ""    "Include Afma6 robot support"      "" ON IF (RAW1394_FOUND AND RT_FOUND AND CALINUX_FOUND AND IRISA_FOUND AND NOT WINRT AND NOT IOS))
 VP_OPTION(USE_VIPER650    ""          ""    "Include Viper s650 robot support" "" ON IF (RAW1394_FOUND AND RT_FOUND AND CALINUX_FOUND AND IRISA_FOUND AND NOT WINRT AND NOT IOS))
 VP_OPTION(USE_VIPER850    ""          ""    "Include Viper s850 robot support" "" ON IF (RAW1394_FOUND AND RT_FOUND AND CALINUX_FOUND AND IRISA_FOUND AND NOT WINRT AND NOT IOS))
-VP_OPTION(USE_UR_RTDE     ur_rtde     QUIET "Include Universal Robot RTDE C++ interface support for UR robots" "" ON IF NOT WINRT AND NOT IOS)
+VP_OPTION(USE_UR_RTDE     ur_rtde     QUIET "Include Universal Robot RTDE C++ interface support for UR robots" "" ON IF NOT WINRT AND NOT IOS AND NOT (USE_CXX_STANDARD STREQUAL "98"))
 VP_OPTION(USE_VIRTUOSE    Virtuose    ""    "Include Virtuose SDK support for Haption devices" "" ON IF NOT WINRT)
 VP_OPTION(USE_ARSDK       ARSDK       QUIET "Include Parrot ARSDK support"     "" ON IF NOT WINRT AND NOT IOS)
 if(USE_ARSDK)
@@ -819,6 +824,11 @@ if(VISP_CXX_STANDARD LESS VISP_CXX_STANDARD_11)
     unset(USE_XML2)
     set(USE_XML2 OFF CACHE BOOL "Include libxml2 support" FORCE)
   endif()
+  if(USE_VICON)
+    message(WARNING "Vicon SDK 3rd party was detected and needs at least c++11 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable vicon usage turning USE_VICON=OFF.")
+    unset(USE_VICON)
+    set(USE_VICON OFF CACHE BOOL "Include Vicon SDK support" FORCE)
+  endif()
   if(USE_QUALISYS)
     message(WARNING "Qualisys SDK 3rd party was detected and needs at least c++11 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable qualisys usage turning USE_QUALISYS=OFF.")
     unset(USE_QUALISYS)
@@ -869,16 +879,22 @@ endif()
 # ----------------------------------------------------------------------------
 # Build-in 3rd parties. Should be after c++ standard potential modification
 # ----------------------------------------------------------------------------
-# Since C99 is not supported by MSVC 2010 or prior, we disable apriltag if MSVC < 2012
-VP_OPTION(WITH_APRILTAG   ""           ""    "Use AprilTag as built-in library"  "" ON IF (USE_THREADS OR USE_PTHREAD) AND (NOT WINRT) AND (NOT MSVC_VERSION LESS 1700))
-VP_OPTION(WITH_APRILTAG_BIG_FAMILY ""  ""    "Use AprilTag big family (41h12, 48h12, 49h12, 52h13)" "" OFF IF WITH_APRILTAG)
+VISP_OPTION(BUILD_APRILTAG "Build apriltag from source" ON
+  VISIBLE_IF NOT WINRT AND NOT MINGW)
+VISP_OPTION(USE_APRILTAG "Include apriltag support" ON
+  VISIBLE_IF TRUE
+  VERIFY VISP_HAVE_APRILTAG)
+VISP_OPTION(BUILD_CATCH2 "Build Catch2 from source" VISP_FORCE_3RDPARTY_BUILD)
+VISP_OPTION(USE_CATCH2 "Include Catch2 support" ON
+  VISIBLE_IF TRUE
+  VERIFY VISP_HAVE_CATCH2)
+
 VP_OPTION(WITH_MINIZ      ""           ""    "Use npz related I/O as built-in functions"   "" ON)
 VP_OPTION(WITH_ATIDAQ     ""           ""    "Use atidaq-c as built-in library"  "" ON IF USE_COMEDI AND NOT WINRT)
 VP_OPTION(WITH_CLIPPER    ""           ""    "Use clipper as built-in library"   "" ON IF USE_OPENCV)
 VP_OPTION(WITH_LAPACK     ""           ""    "Use lapack as built-in library"    "" ON IF NOT USE_LAPACK)
 VP_OPTION(WITH_QBDEVICE   ""           ""    "Use qbdevice-api as built-in library" "" ON IF (NOT WINRT) AND (NOT IOS))
 VP_OPTION(WITH_TAKKTILE2  ""           ""    "Use Right Hand takktile2 driver as built-in library"   "" ON IF (NOT WIN32) AND (NOT WINRT) AND (NOT IOS) AND (NOT ANDROID))
-VP_OPTION(WITH_CATCH2     ""           ""    "Use catch2 built-in library" "" ON)
 VP_OPTION(WITH_POLOLU     ""           ""    "Use rapa pololu as built-in library" "" ON IF (NOT WINRT) AND (NOT IOS) AND (NOT ANDROID))
 VP_OPTION(WITH_PUGIXML    ""           ""    "Use pugixml built-in third-party" "" ON)
 VP_OPTION(WITH_SIMDLIB    ""           ""    "Use simdlib built-in third-party" "" ON)
@@ -904,10 +920,10 @@ if(VISP_CXX_STANDARD LESS VISP_CXX_STANDARD_11)
 endif()
 
 if(VISP_CXX_STANDARD LESS VISP_CXX_STANDARD_14)
-  if(WITH_CATCH2)
-    message(WARNING "catch2 3rd party needs at least c++14 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable catch2 usage turning WITH_CATCH2=OFF.")
-    unset(WITH_CATCH2)
-    set(WITH_CATCH2 OFF CACHE BOOL "Use catch2 built-in library" FORCE)
+  if(USE_CATCH2)
+    message(WARNING "Catch2 3rd party needs at least c++14 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable Catch2 usage turning USE_CATCH2=OFF.")
+    unset(USE_CATCH2)
+    set(USE_CATCH2 OFF CACHE BOOL "Use Catch2 library" FORCE)
   endif()
 endif()
 
@@ -1114,6 +1130,15 @@ endif()
 #----------------------------------------------------------------------
 include(cmake/VISP3rdParty.cmake)
 
+# Conditional options depending on 3rd parties version
+if(USE_APRILTAG)
+  if (APRILTAG_VERSION VERSION_LESS_EQUAL "3.4.5")
+    VISP_OPTION(USE_APRILTAG_BIG_FAMILY "Include apriltag big family (41h12, 48h12, 49h12, 52h13) support" OFF)
+  else()
+    set(USE_APRILTAG_BIG_FAMILY ON)
+  endif()
+endif()
+
 # --- Java Support ---
 if(BUILD_JAVA)
   if(ANDROID)
@@ -1245,8 +1270,7 @@ VP_SET(VISP_HAVE_COMEDI      TRUE IF (BUILD_MODULE_visp_sensor AND USE_COMEDI))
 VP_SET(VISP_HAVE_ATIDAQ      TRUE IF (BUILD_MODULE_visp_sensor AND WITH_ATIDAQ))
 VP_SET(VISP_HAVE_FT_IIT_SDK  TRUE IF (BUILD_MODULE_visp_sensor AND USE_FTIITSDK))
 VP_SET(VISP_HAVE_CLIPPER     TRUE IF (BUILD_MODULE_visp_mbt AND BUILD_MODULE_visp_klt AND WITH_CLIPPER))
-VP_SET(VISP_HAVE_APRILTAG    TRUE IF (BUILD_MODULE_visp_detection AND WITH_APRILTAG))
-VP_SET(VISP_HAVE_APRILTAG_BIG_FAMILY TRUE IF (BUILD_MODULE_visp_detection AND WITH_APRILTAG AND WITH_APRILTAG_BIG_FAMILY))
+VP_SET(VISP_HAVE_APRILTAG_BIG_FAMILY TRUE IF (USE_APRILTAG AND USE_APRILTAG_BIG_FAMILY))
 VP_SET(VISP_HAVE_QBDEVICE    TRUE IF (BUILD_MODULE_visp_robot AND WITH_QBDEVICE))
 VP_SET(VISP_HAVE_TAKKTILE2   TRUE IF (BUILD_MODULE_visp_robot AND WITH_TAKKTILE2))
 VP_SET(VISP_HAVE_POLOLU      TRUE IF (BUILD_MODULE_visp_robot AND WITH_POLOLU))
@@ -1929,8 +1953,18 @@ status("")
 status("  Detection: ")
 status("    Use zbar:"                    USE_ZBAR                  THEN "yes (ver ${ZBAR_VERSION})" ELSE "no")
 status("    Use dmtx:"                    USE_DMTX                  THEN "yes (ver ${DMTX_VERSION})" ELSE "no")
-status("    Use AprilTag (built-in):"     WITH_APRILTAG             THEN "yes (ver ${APRILTAG_VERSION})" ELSE "no")
-status("    \\- Use AprilTag big family:" WITH_APRILTAG_BIG_FAMILY  THEN "yes" ELSE "no")
+
+if(VISP_HAVE_APRILTAG)
+  status("    Use AprilTag:"     (apriltag_FOUND OR MyApriltag_FOUND)
+    THEN "yes (ver ${APRILTAG_VERSION})"
+    ELSE "build (ver ${APRILTAG_VERSION})")
+  status("    \\- Use big family:"   USE_APRILTAG_BIG_FAMILY         THEN "yes" ELSE "no")
+  status("    \\- Use copy fct:"     VISP_HAVE_APRILTAG_COPY_FCT THEN "yes" ELSE "no")
+  status("    \\- Use pose fct:"     VISP_HAVE_APRILTAG_POSE_FCT THEN "yes" ELSE "no")
+  status("    \\- Use aruco:"        VISP_HAVE_APRILTAG_ARUCO        THEN "yes" ELSE "no")
+else()
+  status("    Use AprilTag:" "no")
+endif()
 status("")
 status("  Misc: ")
 status("    Use Clipper (built-in):"  WITH_CLIPPER     THEN "yes (ver ${CLIPPER_VERSION})" ELSE "no")
@@ -1969,7 +2003,9 @@ endif()
 # ========================== samples and tests ==========================
 status("")
 status("  Tests and samples:")
-status("    Use catch2 (built-in):"  WITH_CATCH2        THEN "yes (ver ${CATCH2_VERSION})" ELSE "no")
+status("    Use Catch2:"     Catch2_FOUND
+  THEN "yes (ver ${CATCH2_VERSION})"
+  ELSE "build (ver ${CATCH2_VERSION})")
 status("    Tests:"                  BUILD_TESTS        THEN "yes" ELSE "no")
 status("    Apps:"                   BUILD_APPS         THEN "yes" ELSE "no")
 status("    Demos:"                  BUILD_DEMOS        THEN "yes" ELSE "no")
@@ -2033,3 +2069,7 @@ status("")
 status("==========================================================")
 
 vp_finalize_status()
+
+if(ENABLE_CONFIG_VERIFICATION)
+  vp_verify_config()
+endif()

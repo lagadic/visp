@@ -104,28 +104,28 @@ Change directory to access the `Dockerfile` and build the corresponding docker i
 \subsection docker_visp_build_ubuntu_24_04 4.1. Build Ubuntu 24.04 image
 
 \verbatim
-$ cd $VISP_WS/visp/docker/ubuntu-24.04
+$ cd $VISP_WS/visp/ci/docker/ubuntu-24.04
 $ docker build -t vispci/vispci:ubuntu-24.04 .
 \endverbatim
 
 \subsection docker_visp_build_ubuntu_22_04 4.2. Build Ubuntu 22.04 image
 
 \verbatim
-$ cd $VISP_WS/visp/docker/ubuntu-22.04
+$ cd $VISP_WS/visp/ci/docker/ubuntu-22.04
 $ docker build -t vispci/vispci:ubuntu-22.04 .
 \endverbatim
 
 \subsection docker_visp_build_ubuntu_20_04 4.3. Build Ubuntu 20.04 image
 
 \verbatim
-$ cd $VISP_WS/visp/docker/ubuntu-20.04
+$ cd $VISP_WS/visp/ci/docker/ubuntu-20.04
 $ docker build -t vispci/vispci:ubuntu-20.04 .
 \endverbatim
 
 \subsection docker_visp_build_ubuntu_18_04 4.4. Build Ubuntu 18.04 image
 
 \verbatim
-$ cd $VISP_WS/visp/docker/ubuntu-18.04
+$ cd $VISP_WS/visp/ci/docker/ubuntu-18.04
 $ docker build -t vispci/vispci:ubuntu-18.04 .
 \endverbatim
 

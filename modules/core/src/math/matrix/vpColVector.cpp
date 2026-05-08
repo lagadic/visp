@@ -493,14 +493,19 @@ vpColVector &vpColVector::operator=(vpColVector &&other)
 }
 
 /**
- * @brief Create a column vector view of a raw data array.
- * The view can modify the contents of the raw data array,
- * but may not resize it and does not own it: the memory is not released by the vector
- * and it should be freed by the user after the view is released.
- *
- * @param[in] raw_data The raw data.
- * @param[in] nrows : Number of rows of the raw data.
- * @return The column vector view.
+ * \brief Creates a column vector that acts as a view over an existing raw data array.
+ * This factory method wraps an external buffer into a vpColVector object.
+ * Modifications made through the returned vector will directly affect the original
+ * buffer.
+ * \warning
+ * - The vector **does not own** the memory.
+ * - The user is responsible for ensuring the `raw_data` pointer remains valid
+ * as long as the view is in use.
+ * - The memory must be manually freed by the user after the view is destroyed.
+ * - The vector cannot be resized.
+ * \param[in] raw_data  Pointer to the external double array.
+ * \param[in] nrows     Number of elements (rows) in the array.
+ * \return A vpColVector mapping the provided memory buffer.
  */
 vpColVector vpColVector::view(double *raw_data, unsigned int nrows)
 {
@@ -509,13 +514,20 @@ vpColVector vpColVector::view(double *raw_data, unsigned int nrows)
   return v;
 }
 
-
-void vpColVector::view(vpColVector &v, double *data, unsigned int rows)
+/**
+ * \brief Maps an existing vpColVector instance to a raw data array.
+ * Similar to the static factory method, this version configures a pre-existing
+ * vector object to point to the external `raw_data`.
+ * \note This is more memory-efficient if you already have a vector object allocated
+ * on the stack, as it avoids a return-by-value.
+ * \param[out] v        The vector to be configured as a view.
+ * \param[in]  raw_data Pointer to the external double array.
+ * \param[in]  rows     Number of elements (rows) in the array.
+ */
+void vpColVector::view(vpColVector &v, double *raw_data, unsigned int rows)
 {
-  vpArray2D<double>::view(v, data, rows, 1);
+  vpArray2D<double>::view(v, raw_data, rows, 1);
 }
-
-
 
 vpColVector &vpColVector::operator=(const std::initializer_list<double> &list)
 {
@@ -971,7 +983,7 @@ vpColVector vpColVector::hadamard(const vpColVector &v) const
   }
 #endif
   return out;
-  }
+}
 
 double vpColVector::infinityNorm() const
 {

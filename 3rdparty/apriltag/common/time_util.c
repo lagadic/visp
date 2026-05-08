@@ -68,7 +68,7 @@ void timeutil_rest_destroy(timeutil_rest_t *rest)
 int64_t utime_now() // blacklist-ignore
 {
     #ifdef _MSC_VER
-
+    
     // initialize profiler (will only run once and block for all threads)
     InitOnceExecuteOnce(&profiler_initd, profiler_init, NULL, NULL);
 

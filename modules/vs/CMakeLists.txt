@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2026 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,9 +33,24 @@
 #
 #############################################################################
 
+# Catch2 for testing
+if(USE_CATCH2)
+  if(BUILD_CATCH2)
+    list(APPEND opt_test_incs ${CATCH2_INCLUDE_DIRS})
+    list(APPEND opt_test_libs ${CATCH2_LIBRARIES})
+  else()
+    set(_inc_dirs "")
+    set(_lnk_libs "")
+    vp_get_interface_include_dirs(CATCH2_LIBRARIES _inc_dirs)
+    vp_get_interface_link_libraries(CATCH2_LIBRARIES _lnk_libs)
+    list(APPEND opt_test_incs ${_inc_dirs})
+    list(APPEND opt_test_libs ${_lnk_libs})
+  endif()
+endif()
+
 # visp_robot is optional to run testFeatureSegment.cpp
 vp_add_module(vs visp_core visp_visual_features)
 vp_glob_module_sources()
 vp_module_include_directories()
 vp_create_module()
-vp_add_tests(DEPENDS_ON visp_blob visp_io visp_gui visp_robot)
+vp_add_tests(DEPENDS_ON visp_blob visp_io visp_gui visp_robot visp_visual_features PRIVATE_INCLUDE_DIRS ${opt_test_incs} PRIVATE_LIBRARIES ${opt_test_libs})

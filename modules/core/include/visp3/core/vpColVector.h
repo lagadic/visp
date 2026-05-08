@@ -698,10 +698,14 @@ public:
    */
   vpColVector &operator=(vpColVector &&v);
 
-  /*!
-   * Set vector elements and size from a list of values.
-   * \param list : List of double. Vector size matches the number of elements.
-   * \return The modified vector.
+  /**
+   * \brief Assigns a list of values to the vector using an initializer list.
+   * This operator allows for easy vector population using the curly brace syntax.
+   * The vector is automatically resized to match the size of the provided list.
+   *
+   * \param[in] list A {value1, value2, ...} list of doubles.
+   * \return A reference to the modified vpColVector (*this).
+   *
    * \code
    * #include <visp3/core/vpColVector.h>
    *
@@ -711,17 +715,17 @@ public:
    *
    * int main()
    * {
-   *   vpColVector c;
-   *   c = { 0, -1, -2 };
-   *   std::cout << "c:\n" << c << std::endl;
+   *   vpColVector v;
+   *   v = { 0.1, -1.1, -2.2 }; // Vector is resized to 3 and filled
+   *   std::cout << "v:\n" << v << std::endl;
    * }
    * \endcode
    * It produces the following printings:
    * \code
-   * c:
-   * 0
-   * -1
-   * -2
+   * v:
+   * 0.1
+   * -1.1
+   * -2.2
    * \endcode
    * \sa operator<<()
    */

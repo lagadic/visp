@@ -7,12 +7,29 @@
 
 ViSP 3.7.1 (current version)
   - Contributors:
-    . Fabien Spindler, Romain Lagneau, Olivier Roussel
+    . Fabien Spindler, Romain Lagneau, Olivier Roussel, Souriya Trinh
   - New classes
   - Deprecated
+    . In vpDetectorAprilTag remove support for deprecated 25h7 family
   - New features and improvements
+    . The AprilTag 3rd-party integration has been completely redesigned. It now supports three flexible usage modes:
+      - System Package: Use the library installed via your package manager (e.g., apt install libapriltag-dev),
+      - External Installation: Detect an existing installation built from the official repository,
+      - Embedded Build: Fall back to the built-in version available directly in the 3rdparty/apriltag folder.
+        This version was upgraded to libapriltag 3.4.6 with additional features for ArUco support and for handling pose
+        ambiguity
+    . The Catch2 3rd-party integration has also been completely redesigned. It now supports three flexible usage modes:
+      - System Package: Use the library installed via your package manager (e.g., apt install catch2,
+        brew install catch2),
+      - External Installation: Detect an existing installation built from the official repository,
+      - Embedded Build: Fall back to the built-in version available directly in the 3rdparty/catch2 folder. This
+        version was upgraded to Catch2 3.13.0
   - Applications
+    . Camera intrinsic calibration app: visp-calibrate-camera.cpp
+      - Add lens distortion displacement map visualization
   - Tutorials
+    . New tutorial: Installation from source for Windows 11 with Visual C++ 2026 (vc18)
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-win11-msvc18.html
   - Bug fixed
     . [#1876] Unable to build ViSP framework from source for iOS
     . [#1878] Unable to build ViSP framework from source for iOS with OpenCV support
@@ -22,6 +39,16 @@ ViSP 3.7.1 (current version)
     . [#1901] The app visp-calibrate-camera references default-chessboard.cfg and
               default-circles.cfg config files that are missing from installation
     . [#1909] Fix build failure when apriltag is deactivated
+    . [#1929] Support for the C++98 standard is not properly implemented
+    . [#1930] Build issue in vpMocapVicon.cpp when c++98 enabled
+<<<<<<< fix_various_ogre
+    . [#1943] Data race on std::setlocale in vpMbtXmlGenericParserr
+    . [#1946] Joint position exceeds q_l1 threshold in secondaryTaskJointLimitAvoidance()
+    . [#1947] Ogre3D examples are crashing due to a missing robot.mesh resource
+=======
+    . [#1943] Data race on std::setlocale in vpMbtXmlGenericParser
+    . [#1946] Joint position exceeds q_l1 threshold in secondaryTaskJointLimitAvoidance()
+>>>>>>> master
 ----------------------------------------------
 ViSP 3.7.0 (released December 19, 2025)
   - Contributors:

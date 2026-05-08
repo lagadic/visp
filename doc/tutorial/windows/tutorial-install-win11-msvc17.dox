@@ -32,7 +32,7 @@ if "Windows 11 SDK" is enabled like in the following image
 \subsection install_win11_msvc17_3rd_cmake 1.2. CMake
 
 CMake could be download from http://www.cmake.org. Download the latest release for Windows win64-x64
-platform (at the time this tutorial was written it was the file `cmake-3.24.2-windows-arm64.msi`).
+platform (at the time this tutorial was written it was the file `cmake-3.24.2-windows-x86_64.msi`).
 To install just double click on the msi file.
 
 \subsection install_win11_msvc17_3rd_git 1.3. Git
@@ -48,15 +48,15 @@ If not already done, create a workspace that will contain all ViSP source, build
 To create the workspace, open a `cmd` Command Prompt (a fast way to launch this window is to press the
 Win + R keys on your keyboard. Then, type `cmd` or `cmd.exe` and press Enter or click/tap OK) and run
 the following to create a workspace environment var named `VISP_WS`:
-\verbatim
-C:\> setx VISP_WS "C:\visp-ws"
-C:\> exit
-\endverbatim
+\code{.sh}
+C:\\> setx VISP_WS "C:\visp-ws"
+C:\\> exit
+\endcode
 Open a new `cmd` Command Prompt and create the corresponding folder
-\verbatim
-C:\> mkdir %VISP_WS%
-C:\> exit
-\endverbatim
+\code{.sh}
+C:\\> mkdir %VISP_WS%
+C:\\> exit
+\endcode
 
 \section install_win11_msvc17_quick 3. Quick ViSP installation
 
@@ -64,23 +64,23 @@ In this section, we give minimal instructions to build ViSP from source just to 
 in \ref install_win11_msvc17_advanced.
 
 - Open a new `cmd` Command Prompt and get ViSP source code in the workspace
-\verbatim
-C:\> cd %VISP_WS%
-C:\> git clone https://github.com/lagadic/visp.git
-\endverbatim
+\code{.sh}
+C:\\> cd %VISP_WS%
+C:\\> git clone https://github.com/lagadic/visp.git
+\endcode
 - Create a build directory
-\verbatim
-C:\> mkdir visp-build-vc17
-C:\> cd visp-build-vc17
-\endverbatim
+\code{.sh}
+C:\\> mkdir visp-build-vc17
+C:\\> cd visp-build-vc17
+\endcode
 - Run CMake in build directory (here the generator is chosen for Visual Studio 17 2022):
-\verbatim
-C:\> cmake -G "Visual Studio 17 2022" -A "x64" ..\visp
-\endverbatim
+\code{.sh}
+C:\\> cmake -G "Visual Studio 17 2022" -A "x64" ..\visp
+\endcode
 - Build and install ViSP (installation doesn't need administrator privileges)
-\verbatim
-C:\> cmake --build . --config Release --target install
-\endverbatim
+\code{.sh}
+C:\\> cmake --build . --config Release --target install
+\endcode
 - ViSP is now installed in `%%VISP_WS%\visp-build-vc17\install` folder
 - Modify the `Path` var to add `%%VISP_WS%\visp-build-vc17\install\x64\vc17\bin` corresponding to the
 path to ViSP libraries. To modify `Path` environment variable do the following:
@@ -91,10 +91,10 @@ path to ViSP libraries. To modify `Path` environment variable do the following:
   - Click "New" button to add a new line with `%%VISP_WS%\visp-build-vc17\install\x64\vc17\bin`
 
 - Set `VISP_DIR` var to help CMake to find ViSP as a 3rd party
-\verbatim
-C:\> setx VISP_DIR "%VISP_WS%\visp-build-vc17\install"
-C:\> exit
-\endverbatim
+\code{.sh}
+C:\\> setx VISP_DIR "%VISP_WS%\visp-build-vc17\install"
+C:\\> exit
+\endcode
 
 To have a trial, just jump to \ref install_win11_msvc17_dataset before running some binaries that you
 just build or jump to \ref install_win11_msvc17_next. You can later come back to the
@@ -128,10 +128,10 @@ First you have to get OpenCV:
 Now you have to complete OpenCV installation setting some environment vars:
 - In order that ViSP detects OpenCV you have to set `OpenCV_DIR` environment variable. Start up a `cmd`
 Command Prompt and enter:
-\verbatim
-C:\> setx OpenCV_DIR "%VISP_WS%\3rdparty\opencv-4.12.0\build"
-C:\> exit
-\endverbatim
+\code{.sh}
+C:\\> setx OpenCV_DIR "%VISP_WS%\3rdparty\opencv-4.12.0\build"
+C:\\> exit
+\endcode
 where `%%VISP_WS%\3rdparty\opencv-4.12.0\build` is where you have installed OpenCV. Inside this folder you should
 have a file named `OpenCVConfig.cmake`.
 
@@ -153,19 +153,19 @@ written we downloaded `eigen-3.4.0.zip` archive corresponding to Eigen 3.4.0.
 <b>4.1.2.2. Build and install Eigen3 from source</b>
 
 - Create a build directory
-\verbatim
-C:\> cd %VISP_WS%\3rdparty\eigen-3.4.0
-C:\> mkdir build-vc17 && cd build-vc17
-\endverbatim
+\code{.sh}
+C:\\> cd %VISP_WS%\3rdparty\eigen-3.4.0
+C:\\> mkdir build-vc17 && cd build-vc17
+\endcode
 - Run CMake in build directory (here the generator is chosen for Visual Studio 17 2022 and installation folder is set
  to `%%VISP_WS%\3rdparty\eigen-3.4.0\build-vc17\install` folder):
-\verbatim
-C:\> cmake -G "Visual Studio 17 2022" -A "x64" .. -DCMAKE_INSTALL_PREFIX=%VISP_WS%\3rdparty\eigen-3.4.0\build-vc17\install
-\endverbatim
+\code{.sh}
+C:\\> cmake -G "Visual Studio 17 2022" -A "x64" .. -DCMAKE_INSTALL_PREFIX=%VISP_WS%\3rdparty\eigen-3.4.0\build-vc17\install
+\endcode
 - Build and install Eigen3 (installation doesn't need administrator privileges)
-\verbatim
-C:\> cmake --build . --config Release --target install
-\endverbatim
+\code{.sh}
+C:\\> cmake --build . --config Release --target install
+\endcode
 - Eigen3 is now installed in `%%VISP_WS%\3rdparty\eigen-3.4.0\build-vc17\install` folder
 
 <b>4.1.2.3. Complete Eigen3 installation</b>
@@ -173,10 +173,10 @@ C:\> cmake --build . --config Release --target install
 Now you have to complete Eigen3 installation setting some environment vars:
 - In order that ViSP detects Eigen3 you have to set `EIGEN_DIR` environment variable. Start up a `cmd`
 Command Prompt and enter:
-\verbatim
-C:\> setx Eigen3_DIR "%VISP_WS%\3rdparty\eigen-3.4.0\build-vc17\install\share\eigen3\cmake"
-C:\> exit
-\endverbatim
+\code{.sh}
+C:\\> setx Eigen3_DIR "%VISP_WS%\3rdparty\eigen-3.4.0\build-vc17\install\share\eigen3\cmake"
+C:\\> exit
+\endcode
 where `%%VISP_WS%\3rdparty\eigen-3.4.0\build-vc17\install` is where you have installed Eigen3.
 Inside the folder `%%VISP_WS%\3rdparty\eigen-3.4.0\build-vc17\install\share\eigen3\cmake` you should have a file
 named `Eigen3Config.cmake`.
@@ -201,10 +201,10 @@ Realsense SDK 2.0 contains librealsense. To install this SDK:
 Now you have to complete Realsense SDK installation setting some environment vars:
 - In order that ViSP detects Realsense SDK you have to set `REALSENSE2_DIR` environment variable. Start up a `cmd`
 Command Prompt and enter:
-\verbatim
-C:\> setx REALSENSE2_DIR "%VISP_WS%\3rdparty\RealSense SDK 2.0"
-C:\> exit
-\endverbatim
+\code{.sh}
+C:\\> setx REALSENSE2_DIR "%VISP_WS%\3rdparty\RealSense SDK 2.0"
+C:\\> exit
+\endcode
 where `%%VISP_WS%\3rdparty\RealSense SDK 2.0` is where you have installed Realsense SDK 2.0. Inside this folder you
 should find Realsense library in `lib/x64/`.
 
@@ -217,20 +217,20 @@ should find Realsense library in `lib/x64/`.
 <a href="https://json.nlohmann.me/">JSON for modern C++</a> installation, can either be done from source
 or from a package manager
   - To install from source with Visual Studio
-\verbatim
-C:\> cd %VISP_WS%\3rdparty
-C:\> git clone https://github.com/nlohmann/json.git
-C:\> cd json && mkdir build-vc17 && cd build-vc17
-C:\> cmake -G "Visual Studio 17 2022" -A "x64" .. -DCMAKE_INSTALL_PREFIX=%VISP_WS%\3rdparty\json\build-vc17\install -DJSON_BuildTests=OFF
-C:\> cmake --build . --config Release --target install
-\endverbatim
+\code{.sh}
+C:\\> cd %VISP_WS%\3rdparty
+C:\\> git clone https://github.com/nlohmann/json.git
+C:\\> cd json && mkdir build-vc17 && cd build-vc17
+C:\\> cmake -G "Visual Studio 17 2022" -A "x64" .. -DCMAKE_INSTALL_PREFIX=%VISP_WS%\3rdparty\json\build-vc17\install -DJSON_BuildTests=OFF
+C:\\> cmake --build . --config Release --target install
+\endcode
   JSON is now installed in `%%VISP_WS%\3rdparty\json\build-vc17\install` folder.
   Now in order that ViSP detects JSON you have to set `nlohmann_json_DIR` environment variable.
   Start up a `cmd` Command Prompt and enter:
-\verbatim
-C:\> setx nlohmann_json_DIR "%VISP_WS%\3rdparty\json\build-vc17\install\share\cmake\nlohmann_json"
-C:\> exit
-\endverbatim
+\code{.sh}
+C:\\> setx nlohmann_json_DIR "%VISP_WS%\3rdparty\json\build-vc17\install\share\cmake\nlohmann_json"
+C:\\> exit
+\endcode
 where `%%VISP_WS%\3rdparty\json\build-vc17\install` is where you have installed JSON.
 Inside the folder `%%VISP_WS%\3rdparty\json\build-vc17\install\share\cmake\nlohmann_json` you should have a file
 named `nlohmann_jsonConfig.cmake`.
@@ -252,10 +252,10 @@ There are different ways to get ViSP source code.
 
 - Or you get the cutting-edge ViSP from <a href="https://github.com/lagadic/visp">GitHub repository</a>
   using the `git` command line tool:
-\verbatim
-C:\> cd %VISP_WS%
-C:\> git clone https://github.com/lagadic/visp.git
-\endverbatim
+\code{.sh}
+C:\\> cd %VISP_WS%
+C:\\> git clone https://github.com/lagadic/visp.git
+\endcode
 
 We suppose now that ViSP source is in `%%VISP_WS%\visp`.
 
@@ -278,14 +278,14 @@ will be located in `%%VISP_WS%/visp-build-vc17`.
 installation folder to `C:\Program Files (x86)\ViSP`, make sure that you have administrator privileges
 to write in that folder before modifying `CMAKE_INSTALL_PREFIX`.
 \warning If you forgot to set `Eigen3_DIR` environment var, you will get the following warning in `cmake_gui`:
-\verbatim
+\code{.sh}
 CMake Warning at CMakeLists.txt:1156 (message):
   Eigen3 config file is detected in C:/visp-ws/3rdparty/eigen-3.4.0/build-vc17.  Using
   C:/visp-ws/3rdparty/eigen-3.4.0/build-vc17/Eigen3Config.cmake doesn't allow to use a
   valid Eigen3 include dir: C://include/eigen3.  Modify Eigen3_DIR to point
   to Eigen3Config.cmake file located in Eigen3 installation folder or turn
   USE_EIGEN3 OFF.
-\endverbatim
+\endcode
 We strongly recommend to fix this warning. To this end:
   - close `cmake-gui`
   - set `Eigen3_DIR` environment var running
@@ -340,17 +340,17 @@ To build ViSP documentation, you have first to install [Doxygen](http://www.doxy
 was written, we downloaded `doxygen-1.9.4-setup.exe`
 - Run the installer following default options
 - Open a new `cmd` Command Prompt and enter build directory
-\verbatim
-C:\> cd %VISP_WS%\visp-build-vc17
-\endverbatim
+\code{.sh}
+C:\\> cd %VISP_WS%\visp-build-vc17
+\endcode
 - Run CMake in build directory:
-\verbatim
-C:\> cmake -G "Visual Studio 17 2022" -A "x64" %VISP_WS%\visp
-\endverbatim
+\code{.sh}
+C:\\> cmake -G "Visual Studio 17 2022" -A "x64" %VISP_WS%\visp
+\endcode
 - Build documentation using:
-\verbatim
-C:\> cmake --build . --config Release --target visp_doc
-\endverbatim
+\code{.sh}
+C:\\> cmake --build . --config Release --target visp_doc
+\endcode
 
 The generated documentation is then available in `$VISP_WS/visp-build-vc17/doc/html/index.html`
 
@@ -358,18 +358,18 @@ The generated documentation is then available in `$VISP_WS/visp-build-vc17/doc/h
 - To speed up generating online doc, particularly around formula rendering, you can use
 [MatJax](https://www.mathjax.org). To this end, install first `npm` LTS version following these
 [instructions](https://www.npmjs.com/get-npm), then install MathJax and build doc using:
-\verbatim
-C:\> npm install mathjax
-C:\> cmake -G "Visual Studio 17 2022" -A "x64" %VISP_WS%\visp -DUSE_MATHJAX=ON
-C:\> cmake --build . --config Release --target visp_doc
-\endverbatim
+\code{.sh}
+C:\\> npm install mathjax
+C:\\> cmake -G "Visual Studio 17 2022" -A "x64" %VISP_WS%\visp -DUSE_MATHJAX=ON
+C:\\> cmake --build . --config Release --target visp_doc
+\endcode
 
 - It is also possible to generate a more complete documentation that includes also all the
 internal classes. This could be achieved setting CMake var `ENABLE_FULL_DOC` to `ON` like:
-\verbatim
-C:\> cmake -G "Visual Studio 17 2022" -A "x64" %VISP_WS%\visp -DENABLE_FULL_DOC=ON
-C:\> cmake --build . --config Release --target visp_doc
-\endverbatim
+\code{.sh}
+C:\\> cmake -G "Visual Studio 17 2022" -A "x64" %VISP_WS%\visp -DENABLE_FULL_DOC=ON
+C:\\> cmake --build . --config Release --target visp_doc
+\endcode
 
 \subsection install_win11_msvc17_env_var 4.6. Set Path environment var
 
@@ -381,10 +381,10 @@ and modify `Path` to add a new line with `%%VISP_WS%\visp-build-vc17\install\x64
 In order to ease ViSP detection by CMake when ViSP is used as a 3rd party in an external project, like the one
 described in the \ref tutorial-getting-started, you may set `VISP_DIR` environment variable with the path
 to the `VISPConfig.cmake` file:
-\verbatim
-C:\> setx VISP_DIR "%VISP_WS%\visp-build-vc17\install"
-C:\> exit
-\endverbatim
+\code{.sh}
+C:\\> setx VISP_DIR "%VISP_WS%\visp-build-vc17\install"
+C:\\> exit
+\endcode
 
 \section install_win11_msvc17_dataset 5. Install ViSP data set
 
@@ -402,36 +402,36 @@ We give hereafter the two ways to get this data set:
 \image html img-win-visp-images-last-release.jpg
 - Once downloaded, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples
 and tests to detect automatically the location of the requested data. In our case, this variable should
-be set to `%%VISP_WS%\visp-images-3.6.0`. Open a `cmd` Command Prompt and run
-\verbatim
-C:\> setx VISP_INPUT_IMAGE_PATH %VISP_WS%\visp-images-3.6.0
-C:\> exit
-\endverbatim
+be set to `%%VISP_WS%\visp-images-3.7.3`. Open a `cmd` Command Prompt and run
+\code{.sh}
+C:\\> setx VISP_INPUT_IMAGE_PATH %VISP_WS%\visp-images-3.7.3
+C:\\> exit
+\endcode
 
 \subsection install_win11_msvc17_dataset_github 5.2. Get data set from github
 
 - Use git to get the data set latest version:
-\verbatim
-C:\> cd %VISP_WS%
-C:\> git clone https://github.com/lagadic/visp-images.git
-\endverbatim
+\code{.sh}
+C:\\> cd %VISP_WS%
+C:\\> git clone https://github.com/lagadic/visp-images.git
+\endcode
 \image html img-win-visp-images-git.jpg
 - Once cloned, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples and tests
 to detect automatically the location of the requested data. In our case, this variable should be set to
 `%%VISP_WS%\visp-images`. Open a `cmd` Command Prompt and run
-\verbatim
-C:\> setx VISP_INPUT_IMAGE_PATH %VISP_WS%\visp-images
-C:\> exit
-\endverbatim
+\code{.sh}
+C:\\> setx VISP_INPUT_IMAGE_PATH %VISP_WS%\visp-images
+C:\\> exit
+\endcode
 
 \subsection install_win11_msvc17_dataset_test 5.3. Test data set usage
 
 From now, you can try to run ViSP examples and tests. For example, if you want to run
 `%%VISP_WS%\visp-build-vc17\example\device\display\Release\displayGDI.exe`, open a `cmd` Command Prompt,
 enter in the right folder and run:
-\verbatim
-C:\> cd %VISP_WS%\visp-build-vc17\example\device\display\Release
-C:\> displayGDI.exe
+\code{.sh}
+C:\\> cd %VISP_WS%\visp-build-vc17\example\device\display\Release
+C:\\> displayGDI.exe
 
 A click to close the windows...
 
@@ -440,7 +440,7 @@ Cross position: 392, 306
 
 A click to exit the program...
 Bye
-\endverbatim
+\endcode
 
 \note At this point, if it opens a popup saying that `libvisp_io.dll` was not found like in the following
 image it means either that you didn't add the location of ViSP dll libraries in the path environment variable
@@ -460,47 +460,47 @@ Since all 3rd parties are optional you may have started to install only some of 
 installed a new third-party, or that you upgraded the version of this 3rd party. The next step is to go back
 to the build folder, configure ViSP with CMake to detect the newly installed third-party library and build
 again ViSP. This could be achieved with:
-\verbatim
-C:\> cd $VISP_WS/visp-build-msvc17
-C:\> cmake ../visp
-\endverbatim
+\code{.sh}
+C:\\> cd $VISP_WS/visp-build-vc17
+C:\\> cmake ../visp
+\endcode
 
 Here you can check the content of the `ViSP-third-party.txt` file and see if the newly installed 3rd party
 is well detected.
 
 Finally, you need to rebuild and install ViSP with:
-\verbatim
-C:\> cmake --build . --config Release --target install
-\endverbatim
+\code{.sh}
+C:\\> cmake --build . --config Release --target install
+\endcode
 
 \subsection install_win11_msvc17_tips_uninstall 6.2. How to uninstall ViSP
 After ViSP installation, you can remove installed material using:
-\verbatim
-C:\> cd $VISP_WS/visp-build-msvc17
-C:\> cmake --build . --config Release --target uninstall
-\endverbatim
+\code{.sh}
+C:\\> cd $VISP_WS/visp-build-vc17
+C:\\> cmake --build . --config Release --target uninstall
+\endcode
 
 \subsection install_win11_msvc17_tips_modules 6.3. How to build only ViSP libraries
 
 If you want to build only ViSP modules libraries, nor the examples, tutorials and tests:
-\verbatim
-C:\> cd $VISP_WS/visp-build-msvc17
-C:\> cmake --build . --config Release --target visp_modules
-\endverbatim
+\code{.sh}
+C:\\> cd $VISP_WS/visp-build-vc17
+C:\\> cmake --build . --config Release --target visp_modules
+\endcode
 
 \subsection install_win11_msvc17_tips_module_once 6.4. How to build a ViSP specific module
 
 If you want to build a given module and all the dependencies:
-\verbatim
-C:\> cd $VISP_WS/visp-build-msvc17
-C:\> cmake --build . --config Release --target visp_<module_name>
-\endverbatim
+\code{.sh}
+C:\\> cd $VISP_WS/visp-build-vc17
+C:\\> cmake --build . --config Release --target visp_<module_name>
+\endcode
 
 For example to build the model-based tracker module named mbt, run:
-\verbatim
-C:\> cd $VISP_WS/visp-build-msvc17
-C:\> cmake --build . --config Release --target visp_mbt
-\endverbatim
+\code{.sh}
+C:\\> cd $VISP_WS/visp-build-vc17
+C:\\> cmake --build . --config Release --target visp_mbt
+\endcode
 
 \subsection install_win11_msvc17_tips_3rd_party 6.5. Which are the 3rd party libraries that are used in ViSP ?
 
@@ -508,8 +508,8 @@ To see which are the optional 3rd parties that are found during the configuratio
 be used by ViSP during the build you can have a look to the text file named `ViSP-third-party.txt` and
 located in `$VISP_WS/visp-build-vc17`. We provide hereafter an example of a possible content of this file
 that contains also build info.
-\verbatim
-C:\> type $VISP_WS/visp-build-vc17/ViSP-third-party.txt
+\code{.sh}
+C:\\> type %VISP_WS%\visp-build-vc17\ViSP-third-party.txt
 ==========================================================
 General configuration information for ViSP 3.5.1
 
@@ -687,7 +687,7 @@ General configuration information for ViSP 3.5.1
   Install path:                  C:/visp-ws/visp-build-vc17/install
 
 ==========================================================
-\endverbatim
+\endcode
 
 \section install_win11_msvc17_next 7. Next tutorial
 

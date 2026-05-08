@@ -8,7 +8,11 @@
 #import "ImageConversion.h"
 #import "ImageDisplayWithContext.h"
 
+#if defined(VISP_HAVE_APRILTAG_POSE_FCT)
 vpDetectorAprilTag detector(vpDetectorAprilTag::TAG_36h11, vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS);
+#else
+vpDetectorAprilTag detector(vpDetectorAprilTag::TAG_36h11, vpDetectorAprilTag::BEST_RESIDUAL_VIRTUAL_VS);
+#endif
 
 @implementation VispDetector
 

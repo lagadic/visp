@@ -1,0 +1,974 @@
+/**
+
+\page tutorial-install-win11-msvc18 Tutorial: Installation from source for Windows 11 with Visual C++ 2026 (vc18)
+\tableofcontents
+
+In this tutorial you will learn how to install ViSP from source on Windows 11 with Visual C++.
+These steps have been tested on Windows 11 (64 bit), with CMake 4.2.3 and Visual Studio Community 2026.
+
+\note Concerning ViSP installation, we provide also other \ref tutorial.
+
+\section install_win11_msvc18_required 1. Install prerequisites
+
+\subsection install_win11_msvc18_3rd_msvc 1.1. Visual Studio
+
+Visual Studio Community 2026 could be downloaded from https://www.visualstudio.com/downloads/. During
+a fresh installation enable "Desktop development with C++" workload (see image below).
+
+If you already have Visual Studio Community 2026, you can check if "Desktop Development with C++"
+workload is activated following instructions given
+<a href="https://docs.microsoft.com/en-us/visualstudio/install/modify-visual-studio?view=vs-2026">here</a>
+that we resume:
+
+1. Find the Visual Studio Installer on your computer.
+Select Start, and then scroll to the letter V, where it's listed as Visual Studio Installer
+2. Click or tap to start the installer, and then choose "Modify"
+3. From the Workloads screen, check if "Desktop Development with C++" workload is activated and
+if "Windows 11 SDK" is enabled like in the following image
+\image html img-win11-msvc18-config.jpg
+4. Choose Modify again.
+5. After the new workloads and components are installed, choose Launch.
+
+\subsection install_win11_msvc18_3rd_cmake 1.2. CMake
+
+CMake could be download from http://www.cmake.org. Download the latest release for Windows win64-x64
+platform (at the time this tutorial was written it was the file `cmake-4.2.3-windows-x86_64.msi`).
+To install just double click on the msi file.
+
+\subsection install_win11_msvc18_3rd_git 1.3. Git
+
+Install Git for Windows from https://git-for-windows.github.io/. This installation allows then to use git
+in a `cmd` Command Prompt.
+
+\section install_win11_msvc18_ws 2. Create a workspace
+
+If not already done, create a workspace that will contain all ViSP source, build, data set and optional
+3rd parties. This workspace is here set to `C:\visp-ws` folder, but it could be set to any other location.
+
+To create the workspace, open a `cmd` Command Prompt (a fast way to launch this window is to press the
+Win + R keys on your keyboard. Then, type `cmd` or `cmd.exe` and press Enter or click/tap OK) and run
+the following to create a workspace environment var named `VISP_WS`:
+\code{.sh}
+C:\\> setx VISP_WS "C:\visp-ws"
+C:\\> exit
+\endcode
+Open a new `cmd` Command Prompt and create the corresponding folder
+\code{.sh}
+C:\\> mkdir %VISP_WS%
+C:\\> exit
+\endcode
+
+\section install_win11_msvc18_quick 3. Quick ViSP installation
+
+In this section, we give minimal instructions to build ViSP from source just to try ViSP without entering
+in \ref install_win11_msvc18_advanced.
+
+- Open a new `cmd` Command Prompt and get ViSP source code in the workspace
+\code{.sh}
+C:\\> cd %VISP_WS%
+C:\\> git clone https://github.com/lagadic/visp.git
+\endcode
+- Create a build directory
+\code{.sh}
+C:\\> mkdir visp-build-vc18
+C:\\> cd visp-build-vc18
+\endcode
+- Run CMake in build directory (here the generator is chosen for Visual Studio 18 2026):
+\code{.sh}
+C:\\> cmake -G "Visual Studio 18 2026" -A "x64" ..\visp
+\endcode
+- Build and install ViSP (installation doesn't need administrator privileges)
+\code{.sh}
+C:\\> cmake --build . --config Release --target install
+\endcode
+- ViSP is now installed in `%%VISP_WS%\visp-build-vc18\install` folder
+- Modify the `Path` var to add `%%VISP_WS%\visp-build-vc18\install\x64\vc18\bin` corresponding to the
+path to ViSP libraries. To modify `Path` environment variable do the following:
+  - Open the Start Search, type in "env", and choose "Edit environment variables for your account"
+  - Click the "Environment Variables..." button
+  - Under the "User Variables" section (the upper half), find the row with "Path" in the first column, and click edit
+  - The "Edit environment variable" UI will appear.
+  - Click "New" button to add a new line with `%%VISP_WS%\visp-build-vc18\install\x64\vc18\bin`
+
+- Set `VISP_DIR` var to help CMake to find ViSP as a 3rd party
+\code{.sh}
+C:\\> setx VISP_DIR "%VISP_WS%\visp-build-vc18\install"
+C:\\> exit
+\endcode
+
+To have a trial, just jump to \ref install_win11_msvc18_dataset before running some binaries that you
+just build or jump to \ref install_win11_msvc18_next. You can later come back to the
+\ref install_win11_msvc18_advanced.
+
+\section install_win11_msvc18_advanced 4. Advanced ViSP installation
+
+\subsection install_win11_msvc18_3rdparty 4.1. Install 3rd parties
+
+ViSP is interfaced with several 3rd party libraries.
+Follow the link to see the complete list of \ref supported-third-parties.
+We recommend first to install \ref install_win11_msvc18_3rdparty_opencv in the workspace.
+Then to use optimized matrix operations you may install \ref install_win11_msvc18_3rdparty_eigen.
+Other 3rd parties are optional and should be considered only by expert developers.
+
+\subsubsection install_win11_msvc18_3rdparty_opencv 4.1.1. OpenCV
+
+<b>4.1.1.1. Get OpenCV</b>
+
+First you have to get OpenCV:
+- From https://opencv.org/releases/ download the latest OpenCV for Windows. In our case we got
+`opencv-4.12.0-windows.exe` Win pack installer.
+- Extract the content of the archive in your workspace `%%VISP_WS%/3rdparty`.
+\image html img-win-extract-opencv.jpg
+- The installer extract all the material in `%%VISP_WS%\3rdparty\opencv`.
+- We strongly recommend to rename this folder to a name that contain OpenCV version like
+  `%%VISP_WS%\3rdparty\opencv-4.12.0`.
+
+<b>4.1.1.2. Complete OpenCV installation</b>
+
+Now you have to complete OpenCV installation setting some environment vars:
+- In order that ViSP detects OpenCV you have to set `OpenCV_DIR` environment variable. Start up a `cmd`
+Command Prompt and enter:
+\code{.sh}
+C:\\> setx OpenCV_DIR "%VISP_WS%\3rdparty\opencv-4.12.0\build"
+C:\\> exit
+\endcode
+where `%%VISP_WS%\3rdparty\opencv-4.12.0\build` is where you have installed OpenCV. Inside this folder you should
+have a file named `OpenCVConfig.cmake`.
+
+- You have also to add the location of OpenCV libraries in the `Path` environment variable. Open the
+  "Edit environment variable" UI, and modify `Path` to add a new line with
+  `%%VISP_WS%\3rdparty\opencv-4.12.0\build\x64\vc16\bin`.
+
+There is also an issue in `%%VISP_WS%\3rdparty\opencv-4.12.0\build\OpenCVConfig.cmake` file that doesn't allow CMake
+to find OpenCV when Visual Studio 18 2026 is used. Below we propose to patch this file around line 154 with the
+following content:
+\code{.cmake}
+  elseif(MSVC_VERSION MATCHES "^19[34][0-9]$")
+    set(OpenCV_RUNTIME vc17)
+    check_one_config(has_VS2022)
+    if(NOT has_VS2022)
+     set(OpenCV_RUNTIME vc16)
+     check_one_config(has_VS2019)
+     if(NOT has_VS2019)
+       set(OpenCV_RUNTIME vc15) # selecting previous compatible runtime version
+       check_one_config(has_VS2017)
+       if(NOT has_VS2017)
+         set(OpenCV_RUNTIME vc14) # selecting previous compatible runtime version
+       endif()
+     endif()
+    endif()
+  # Begin patch for Visual Studio 18 2026
+  elseif(MSVC_VERSION MATCHES "^195[0-9]$")
+    set(OpenCV_RUNTIME vc18)
+    check_one_config(has_VS2026)
+    if(NOT has_VS2026)
+      set(OpenCV_RUNTIME vc17) # selecting previous compatible runtime version
+      check_one_config(has_VS2022)
+      if(NOT has_VS2022)
+        set(OpenCV_RUNTIME vc16) # selecting previous compatible runtime version
+        check_one_config(has_VS2019)
+        if(NOT has_VS2019)
+          set(OpenCV_RUNTIME vc15) # selecting previous compatible runtime version
+          check_one_config(has_VS2017)
+          if(NOT has_VS2017)
+             set(OpenCV_RUNTIME vc14) # selecting previous compatible runtime version
+          endif()
+        endif()
+      endif()
+    endif()
+  # End patch for Visual Studio 18 2026
+  endif()
+elseif(MINGW)
+\endcode
+
+\subsubsection install_win11_msvc18_3rdparty_eigen 4.1.2. Eigen3
+
+Even if Eigen3 is designed as a template we recommend to install the library with Visual Studio.
+
+<b>4.1.2.1. Get Eigen3</b>
+
+- Download the latest Eigen3 release from http://eigen.tuxfamily.org. At the time this tutorial was
+written we downloaded `eigen-5.0.1.zip` archive corresponding to Eigen 5.0.1.
+- Extract the content of the archive in `%%VISP_WS%\3rdparty`.
+- Once unzipped, you should have Eigen in `%%VISP_WS%\3rdparty\eigen-5.0.1`
+
+<b>4.1.2.2. Build and install Eigen3 from source</b>
+
+- Create a build directory
+\code{.sh}
+C:\\> cd %VISP_WS%\3rdparty\eigen-5.0.1
+C:\\> mkdir build-vc18 && cd build-vc18
+\endcode
+- Run CMake in build directory (here the generator is chosen for Visual Studio 18 2026 and installation folder is set
+ to `%%VISP_WS%\3rdparty\eigen-5.0.1\build-vc18\install` folder):
+\code{.sh}
+C:\\> cmake -G "Visual Studio 18 2026" -A "x64" .. -DCMAKE_INSTALL_PREFIX=%VISP_WS%\3rdparty\eigen-5.0.1\build-vc18\install
+\endcode
+- Build and install Eigen3 (installation doesn't need administrator privileges)
+\code{.sh}
+C:\\> cmake --build . --config Release --target install
+\endcode
+- Eigen3 is now installed in `%%VISP_WS%\3rdparty\eigen-5.0.1\build-vc18\install` folder
+
+<b>4.1.2.3. Complete Eigen3 installation</b>
+
+Now you have to complete Eigen3 installation setting some environment vars:
+- In order that ViSP detects Eigen3 you have to set `EIGEN_DIR` environment variable. Start up a `cmd`
+Command Prompt and enter:
+\code{.sh}
+C:\\> setx Eigen3_DIR "%VISP_WS%\3rdparty\eigen-5.0.1\build-vc18\install\share\eigen3\cmake"
+C:\\> exit
+\endcode
+where `%%VISP_WS%\3rdparty\eigen-5.0.1\build-vc18\install` is where you have installed Eigen3.
+Inside the folder `%%VISP_WS%\3rdparty\eigen-5.0.1\build-vc18\install\share\eigen3\cmake` you should have a file
+named `Eigen3Config.cmake`.
+- There is no need to set `Path` environment var since Eigen3 is a template that has no library.
+
+\subsubsection install_win11_msvc18_3rdparty_realsense 4.1.3. librealsense
+
+If you have an RealSense Depth camera (SR300 or D400 series), you may install librealsense 2.x in order to use
+vpRealSense2 class. Otherwise you can skip this section.
+
+<b>4.1.3.1. Install Realsense SDK 2.0</b>
+
+Realsense SDK 2.0 contains librealsense. To install this SDK:
+- Go to https://github.com/realsenseai/librealsense/releases
+- Download `RealSense.SDK-WIN10-<version>.exe` corresponding to the last Realsense SDK 2.0 release.
+  At the time this tutorial was written, we downloaded `RealSense.SDK-WIN10-2.57.6.10171.exe`.
+- Execute `RealSense.SDK-WIN10-<version>.exe`, then set destination folder to `%%VISP_WS%\3rdparty\RealSense SDK 2.0`
+  and follow default installation steps.
+  \image html img-win11-realsense-installer.jpg
+
+<b>4.1.3.2. Complete Realsense SDK 2.0 installation</b>
+
+Now you have to complete Realsense SDK installation setting some environment vars:
+- In order that ViSP detects Realsense SDK you have to set `REALSENSE2_DIR` environment variable. Start up a `cmd`
+Command Prompt and enter:
+\code{.sh}
+C:\\> setx REALSENSE2_DIR "%VISP_WS%\3rdparty\RealSense SDK 2.0"
+C:\\> exit
+\endcode
+where `%%VISP_WS%\3rdparty\RealSense SDK 2.0` is where you have installed Realsense SDK 2.0. Inside this folder you
+should find Realsense library in `lib/x64/`.
+
+- You have also to add the location of `realsense2.dll` library in the `Path` environment variable. Open the
+  "Edit environment variable" UI, and modify `Path` to add a new line with
+  `%%VISP_WS%\3rdparty\RealSense SDK 2.0\bin\x64`.
+
+\subsubsection install_win11_msvc18_3rdparty_json 4.1.4. Nlohmann JSON
+
+<a href="https://json.nlohmann.me/">JSON for modern C++</a> installation, can either be done from source
+or from a package manager
+  - To install from source with Visual Studio
+\code{.sh}
+C:\\> cd %VISP_WS%\3rdparty
+C:\\> git clone https://github.com/nlohmann/json.git
+C:\\> cd json && mkdir build-vc18 && cd build-vc18
+C:\\> cmake -G "Visual Studio 18 2026" -A "x64" .. ^
+           -DCMAKE_INSTALL_PREFIX=%VISP_WS%\3rdparty\json\build-vc18\install ^
+           -DJSON_BuildTests=OFF
+C:\\> cmake --build . --config Release --target install
+\endcode
+  JSON is now installed in `%%VISP_WS%\3rdparty\json\build-vc18\install` folder.
+  Now in order that ViSP detects JSON you have to set `nlohmann_json_DIR` environment variable.
+  Start up a `cmd` Command Prompt and enter:
+\code{.sh}
+C:\\> setx nlohmann_json_DIR "%VISP_WS%\3rdparty\json\build-vc18\install\share\cmake\nlohmann_json"
+C:\\> exit
+\endcode
+where `%%VISP_WS%\3rdparty\json\build-vc18\install` is where you have installed JSON.
+Inside the folder `%%VISP_WS%\3rdparty\json\build-vc18\install\share\cmake\nlohmann_json` you should have a file
+named `nlohmann_jsonConfig.cmake`.
+There is no need to set `Path` environment var since JSON has only a header and no library.
+
+  - To install from a package manager, e.g., vcpkg, see: <a href="https://json.nlohmann.me/integration/package_managers/#embedded">https://json.nlohmann.me/integration/package_managers/#embedded</a>
+
+\subsection install_win11_msvc18_get_source 4.2. Get ViSP source code
+
+There are different ways to get ViSP source code.
+
+- You can download the <a href="https://visp.inria.fr/download">latest release</a> as a zip or a tarball.
+  Once `visp-x.y.z.tar.gz` or `visp-x.y.z.zip` is downloaded, uncompress the file in `%%VISP_WS%\visp\visp-x.y.z`
+  using for example <a href="http://www.win-rar.com">WinRAR</a>.
+
+- You can also download a <a href="https://visp.inria.fr/download#snapshot">daily snapshot</a>.
+  Once `visp-snapshot-yyyy-mm-dd.tar.gz` is downloaded, uncompress the file in `%%VISP_WS%\visp\visp-x.y.z`
+  using for example <a href="http://www.win-rar.com">WinRAR</a>.
+
+- Or you get the cutting-edge ViSP from <a href="https://github.com/lagadic/visp">GitHub repository</a>
+  using the `git` command line tool:
+\code{.sh}
+C:\\> cd %VISP_WS%
+C:\\> git clone https://github.com/lagadic/visp.git
+\endcode
+
+We suppose now that ViSP source is in `%%VISP_WS%\visp`.
+
+\subsection install_win11_msvc18_config 4.3. Configure ViSP from source
+
+- Create a build folder and run cmake configuration:
+\code{.sh}
+C:\\> mkdir %VISP_WS%\visp-build-vc18 && cd %VISP_WS%\visp-build-vc18
+C:\\> cmake -G "Visual Studio 18 2026" -A "x64" ..\visp
+\endcode
+
+- This will start CMake configuration. As shown below, Eigen3, GDI (Graphical
+  Device Interface), OpenCV, OpenMP, Realsense2 and json (nlohmann) 3rd parties are automatically detected.
+\code{.sh}
+-- ==========================================================
+-- General configuration information for ViSP 3.7.1
+--
+--   Version control:               v3.7.0-134-g10e981c2f
+--
+--   Platform:
+--     Timestamp:                   2026-03-11T07:44:03Z
+--     Host:                        Windows 10.0.26100 AMD64
+--     CMake:                       4.2.3
+--     CMake generator:             Visual Studio 18 2026
+--     CMake build tool:            C:/Program Files/Microsoft Visual Studio/18/Community/MSBuild/Current/Bin/amd64/MSBuild.exe
+--     MSVC:                        1950
+--
+--   System information:
+--     Number of CPU logical cores: 8
+--     Number of CPU physical cores: 4
+--     Total physical memory (in MiB): 32641
+--     OS name:                     Windows
+--     OS release:                  10.0.26100
+--     OS version:                  Windows 10
+--     OS platform:                 AMD64
+--     CPU name:                    Unknown P6 family
+--     CPU description:             4 core 2112 MHz GenuineIntel Unknown P6 family
+--     Is the CPU 64-bit?           yes
+--     Does the CPU have FPU?       yes
+--     CPU optimization:            SSE2 SSE3 SSSE3 SSE4_1 SSE4_2
+--     CPU endianness:              little-endian
+--
+--   C/C++:
+--     Built as dynamic libs?:      yes
+--     C++ Compiler:                C:/Program Files/Microsoft Visual Studio/18/Community/VC/Tools/MSVC/14.50.35717/bin/Hostx64/x64/cl.exe  (ver 19.50.35725.0)
+--     C++ flags (Release):         /DWIN32 /D_WINDOWS /W3 /GR /EHsc   -openmp /Gy /bigobj /MD /O2 /Ob2 /DNDEBUG
+--     C++ flags (Debug):           /DWIN32 /D_WINDOWS /W3 /GR /EHsc   -openmp /Gy /bigobj /MDd /Zi /Ob0 /Od /RTC1
+--     C Compiler:                  C:/Program Files/Microsoft Visual Studio/18/Community/VC/Tools/MSVC/14.50.35717/bin/Hostx64/x64/cl.exe
+--     C flags (Release):           /DWIN32 /D_WINDOWS /W3   -openmp /MD /O2 /Ob2 /DNDEBUG
+--     C flags (Debug):             /DWIN32 /D_WINDOWS /W3   -openmp /MDd /Zi /Ob0 /Od /RTC1
+--     Linker flags (Release):      /machine:x64 /INCREMENTAL:NO
+--     Linker flags (Debug):        /machine:x64 /debug /INCREMENTAL /ignore:4099
+--     Use cxx standard:            17
+--
+--   ViSP modules:
+--     To be built:                 core dnn_tracker gui imgproc io java_bindings_generator klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi java
+--     Disabled:                    -
+--     Disabled by dependency:      -
+--     Unavailable:                 -
+--     Enable visp namespace:       no
+--     Enable explicit keyword:     no
+--
+--   Windows RT support:            no
+--
+--   Python 3:
+--     Interpreter:                 C:/Users/user/AppData/Local/Programs/Python/Python313/python.exe (ver 3.13.2)
+--
+--   Java:
+--     ant:                         C:/Users/user/apache-ant-1.10.15/bin/ant.bat (ver 1.10.15)
+--     Java:                        no
+--     JNI:                         C:/Program Files/Java/jdk-23/include C:/Program Files/Java/jdk-23/include/win32 C:/Program Files/Java/jdk-23/include
+--     Java wrappers:               yes (ANT)
+--
+--   Python3 bindings:              no
+--     Requirements:
+--       Python version > 3.7.0:    ok (ver 3.13.2)
+--       Python in virtual env. or conda (or system with override):
+--                                  ok
+--       Pybind11 found:            failed
+--       CMake > 3.19.0:            ok (4.2.3)
+--       C++ standard > 201703L:    ok (201703L)
+--
+--   Build options:
+--     Build deprecated:            yes
+--     Build with moment combine:   no
+--
+--   OpenCV:
+--     Version:                     4.12.0
+--     Modules:                     calib3d core dnn features2d flann gapi highgui imgcodecs imgproc ml objdetect photo stitching video videoio world
+--     OpenCV dir:                  C:/visp-ws/3rdparty/opencv-4.12.0/build
+--
+--   YARP:
+--     Version:                     n/a
+--
+--   Mathematics:
+--     Blas/Lapack:                 yes
+--     \- Use MKL:                  no
+--     \- Use OpenBLAS:             no
+--     \- Use Atlas:                no
+--     \- Use Netlib:               no
+--     \- Use GSL:                  no
+--     \- Use Lapack (built-in):    yes (ver 3.2.1)
+--     Use Eigen3:                  yes (ver 5.0.1)
+--     Use OpenCV:                  yes (ver 4.12.0)
+--
+--   Simulator:
+--     Ogre simulator:
+--     \- Use Ogre3D:               no
+--     \- Use OIS:                  no
+--     Coin simulator:
+--     \- Use Coin3D:               no
+--     \- Use SoWin:                no
+--     \- Use SoXt:                 no
+--     \- Use SoQt:                 no
+--     \- Use Qt5:                  no
+--     \- Use Qt4:                  no
+--     \- Use Qt3:                  no
+--     Panda3D:                     no
+--
+--   Media I/O:
+--     Use JPEG:                    no
+--     Use PNG:                     no
+--     \- Use ZLIB:                 no
+--     Use OpenCV:                  yes (ver 4.12.0)
+--     Use stb_image (built-in):    yes (ver 2.30.0)
+--     Use TinyEXR (built-in):      yes (ver 1.0.9)
+--     Use simdlib (built-in):      yes (ver 4.9.109)
+--     Use npz I/O (built-in):      yes
+--
+--   Real robots:
+--     Use Afma6:                   no
+--     Use Franka:                  no
+--     Use Viper650:                no
+--     Use Viper850:                no
+--     Use ur_rtde:                 no
+--     Use Kinova Jaco:             no
+--     Use aria (Pioneer):          no
+--     Use PTU46:                   no
+--     Use Biclops PTU:             no
+--     Use Flir PTU SDK:            no
+--     Use MAVSDK:                  no
+--     Use Parrot ARSDK:            no
+--     \- Use ffmpeg:               no
+--     Use Virtuose:                no
+--     Use qbdevice (built-in):     yes (ver 2.6.0)
+--     Use takktile2 (built-in):    no
+--     Use pololu (built-in):       yes (ver 1.0.0)
+--
+--   GUI:
+--     Use X11:                     no
+--     Use GTK2:                    no
+--     Use OpenCV:                  yes (ver 4.12.0)
+--     Use GDI:                     yes
+--     Use Direct3D:                no
+--
+--   Cameras:
+--     Use DC1394-2.x:              no
+--     Use CMU 1394:                no
+--     Use V4L2:                    no
+--     Use directshow:              no
+--     Use OpenCV:                  yes (ver 4.12.0)
+--     Use FLIR Flycapture:         no
+--     Use Basler Pylon:            no
+--     Use IDS uEye:                no
+--
+--   RGB-D sensors:
+--     Use Realsense2:              yes (ver 2.57.6)
+--     Use Occipital Structure:     no
+--     Use Kinect:                  no
+--     \- Use libfreenect:          no
+--     \- Use libusb-1:             no
+--     \- Use std::thread:          yes
+--     Use PCL:                     no
+--     \- Use VTK:                  no
+--
+--   F/T sensors:
+--     Use atidaq (built-in):       no
+--     Use comedi:                  no
+--     Use IIT SDK:                 no
+--
+--   Mocap:
+--     Use Qualisys:                no
+--     Use Vicon:                   no
+--
+--   Detection:
+--     Use zbar:                    no
+--     Use dmtx:                    no
+--     Use AprilTag (built-in):     yes (ver 3.4.2)
+--     \- Use AprilTag big family:  no
+--
+--   Misc:
+--     Use Clipper (built-in):      yes (ver 6.4.2)
+--     Use pugixml (built-in):      yes (ver 1.14.0)
+--     Use libxml2:                 no
+--     \- Use Iconv:                no
+--     Use json (nlohmann system):  yes (ver 3.12.0)
+--
+--   Optimization:
+--     Use OpenMP:                  yes (ver 2.0)
+--     Use std::thread:             yes
+--     Use pthread:                 no
+--     Use simdlib (built-in):      yes (ver 4.9.109)
+--
+--   DNN:
+--     Use CUDA Toolkit:            no
+--     Use TensorRT:                no
+--
+--   Documentation:
+--     Use doxygen:                 yes (ver 1.13.2)
+--     \- Use mathjax:              no
+--     \- Use doxygen-awesome:      no
+--
+--   Tests and samples:
+--     Use catch2 (built-in):       yes (ver 3.7.1)
+--     Tests:                       yes
+--     Apps:                        yes
+--     Demos:                       yes
+--     Examples:                    yes
+--     Tutorials:                   yes
+--     Dataset found:               yes (ver 3.7.3 in C:\visp-ws\visp-images)
+--
+--   Library dirs:
+--     Eigen3 dir:                  C:/visp-ws/3rdparty/eigen-5.0.1/build-vc18/install/share/eigen3/cmake
+--     OpenCV dir:                  C:/visp-ws/3rdparty/opencv-4.12.0/build
+--
+--   Install path:                  C:/visp-ws/visp-build-vc18/install
+--
+-- ==========================================================
+-- Configuring done (45.3s)
+-- Generating done (11.2s)
+-- Build files have been written to: C:/visp-ws/visp-build-vc18
+\endcode
+
+- Once the generation is done, in `%%VISP_WS%/visp-build-vc18` folder you have the Visual Studio
+  `VISP.sln` generated solution file.
+
+\note 1. Installation folder is set to `%%VISP_WS%/visp-build-vc18/install`. If you want to change the
+installation folder to `C:\Program Files (x86)\ViSP`, make sure that you have administrator privileges
+to write in that folder before modifying `CMAKE_INSTALL_PREFIX`.
+
+\note 2. If OpenCV is not found, it means probably that you forgot to patch
+`%%VISP_WS%\3rdparty\opencv-4.12.0\build\OpenCVConfig.cmake` file as described in section
+\ref install_win11_msvc18_3rdparty_opencv.
+
+\warning If you forgot to set `Eigen3_DIR` environment var, you will get the following warning:
+\code{.sh}
+CMake Warning at CMakeLists.txt:1156 (message):
+  Eigen3 config file is detected in C:/visp-ws/3rdparty/eigen-5.0.1/build-vc18.  Using
+  C:/visp-ws/3rdparty/eigen-5.0.1/build-vc18/Eigen3Config.cmake doesn't allow to use a
+  valid Eigen3 include dir: C://include/eigen3.  Modify Eigen3_DIR to point
+  to Eigen3Config.cmake file located in Eigen3 installation folder or turn
+  USE_EIGEN3 OFF.
+\endcode
+We strongly recommend to fix this warning. To this end:
+  - set `Eigen3_DIR` environment var running
+    `setx Eigen3_DIR "%VISP_WS%\3rdparty\eigen-5.0.1\build-vc18\install\share\eigen3\cmake"`
+  - delete the CMakeCache file
+  - and configure again ViSP.
+  .
+
+\subsection install_win11_msvc18_build 4.4. Build and install ViSP
+
+- To build ViSP just run:
+\code{.sh}
+C:\\> cmake --build . --config Release --target ALL_BUILD
+\endcode
+
+- If you want to install ViSP (installation doesn't need administrator privileges), run:
+\code{.sh}
+C:\\> cmake --build . --config Release --target install
+\endcode
+
+\subsection install_win11_msvc18_build_visp_doc 4.5. Build ViSP documentation
+
+To build ViSP documentation, you have first to install [Doxygen](http://www.doxygen.nl):
+- [Download](http://www.doxygen.nl/download.html) binary distribution for Windows. At the time this tutorial
+  was written, we downloaded `doxygen-1.9.4-setup.exe`
+- Run the installer following default options
+- Open a new `cmd` Command Prompt and enter build directory
+\code{.sh}
+C:\\> cd %VISP_WS%\visp-build-vc18
+\endcode
+- Run CMake in build directory:
+\code{.sh}
+C:\\> cmake -G "Visual Studio 18 2026" -A "x64" %VISP_WS%\visp
+\endcode
+- Build documentation using:
+\code{.sh}
+C:\\> cmake --build . --config Release --target visp_doc
+\endcode
+
+The generated documentation is then available in `$VISP_WS/visp-build-vc18/doc/html/index.html`
+
+\note
+- To speed up generating online doc, particularly around formula rendering, you can use
+[MatJax](https://www.mathjax.org). To this end, install first `npm` LTS version following these
+[instructions](https://www.npmjs.com/get-npm), then install MathJax and build doc using:
+\code{.sh}
+C:\\> npm install mathjax
+C:\\> cmake -G "Visual Studio 18 2026" -A "x64" %VISP_WS%\visp -DUSE_MATHJAX=ON
+C:\\> cmake --build . --config Release --target visp_doc
+\endcode
+
+- It is also possible to generate a more complete documentation that includes also all the
+internal classes. This could be achieved setting CMake var `ENABLE_FULL_DOC` to `ON` like:
+\code{.sh}
+C:\\> cmake -G "Visual Studio 18 2026" -A "x64" %VISP_WS%\visp -DENABLE_FULL_DOC=ON
+C:\\> cmake --build . --config Release --target visp_doc
+\endcode
+
+\subsection install_win11_msvc18_env_var 4.6. Set Path environment var
+
+Modify the `Path` var to add the path to ViSP dll libraries. To this end open the "Edit environment variable" UI,
+and modify `Path` to add a new line with `%%VISP_WS%\visp-build-vc18\install\x64\vc18\bin`.
+
+\subsection install_win11_msvc18_visp_dir 4.7. Set VISP_DIR environment var
+
+In order to ease ViSP detection by CMake when ViSP is used as a 3rd party in an external project, like the one
+described in the \ref tutorial-getting-started, you may set `VISP_DIR` environment variable with the path
+to the `VISPConfig.cmake` file:
+\code{.sh}
+C:\\> setx VISP_DIR "%VISP_WS%\visp-build-vc18\install"
+C:\\> exit
+\endcode
+
+\section install_win11_msvc18_dataset 5. Install ViSP data set
+
+Some ViSP examples and tests require a data set that contains images, video, models that is not part of
+ViSP source code. This data set is available in Github (https://github.com/lagadic/visp-images) or as a
+release in a separate archive named `visp-images-x.y.z.zip`. This archive could be downloaded from
+https://visp.inria.fr/download page. Note that ViSP tutorials are not using ViSP data set.
+
+We give hereafter the two ways to get this data set:
+
+\subsection install_win11_msvc18_dataset_release 5.1. Get data set release
+
+- Download the latest `visp-images-3.x.y.zip` from https://visp.inria.fr/download and uncompress it in your workspace
+`%%VISP_WS%`.
+\image html img-win-visp-images-last-release.jpg
+- Once downloaded, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples
+and tests to detect automatically the location of the requested data. In our case, this variable should
+be set to `%%VISP_WS%\visp-images-3.7.3`. Open a `cmd` Command Prompt and run
+\code{.sh}
+C:\\> setx VISP_INPUT_IMAGE_PATH %VISP_WS%\visp-images-3.7.3
+C:\\> exit
+\endcode
+
+\subsection install_win11_msvc18_dataset_github 5.2. Get data set from github
+
+- Use git to get the data set latest version:
+\code{.sh}
+C:\\> cd %VISP_WS%
+C:\\> git clone https://github.com/lagadic/visp-images.git
+\endcode
+\image html img-win-visp-images-git.jpg
+- Once cloned, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples and tests
+to detect automatically the location of the requested data. In our case, this variable should be set to
+`%%VISP_WS%\visp-images`. Open a `cmd` Command Prompt and run
+\code{.sh}
+C:\\> setx VISP_INPUT_IMAGE_PATH %VISP_WS%\visp-images
+C:\\> exit
+\endcode
+
+\subsection install_win11_msvc18_dataset_test 5.3. Test data set usage
+
+From now, you can try to run ViSP examples and tests. For example, if you want to run
+`%%VISP_WS%\visp-build-vc18\example\device\display\Release\displayGDI.exe`, open a `cmd` Command Prompt,
+enter in the right folder and run:
+\code{.sh}
+C:\\> cd %VISP_WS%\visp-build-vc18\example\device\display\Release
+C:\\> displayGDI.exe
+
+A click to close the windows...
+
+A click to display a cross...
+Cross position: 392, 306
+
+A click to exit the program...
+Bye
+\endcode
+
+\note At this point, if it opens a popup saying that `libvisp_io.dll` was not found like in the following
+image it means either that you didn't add the location of ViSP dll libraries in the path environment variable
+(see \ref install_win11_msvc18_env_var section), or that the path that you added is wrong.
+\image html img-win11-error-displayGDI-visp-path.jpg
+
+\note At this point, if it opens a popup saying that `libopencv_core.dll` was not found like in the following
+image it means either that you didn't add the location of OpenCV dll libraries in the path environment variable
+(see \ref install_win11_msvc18_3rdparty_opencv section), or that the path that you added is wrong.
+\image html img-win11-error-displayGDI-opencv-path.jpg
+
+\section install_win11_msvc18_tips 6. Tips and tricks
+
+\subsection install_win11_msvc18_tips_new_3rdparty 6.1. How to take into account a newly installed 3rd party
+
+Since all 3rd parties are optional you may have started to install only some of them. Imagine that you just
+installed a new third-party, or that you upgraded the version of this 3rd party. The next step is to go back
+to the build folder, configure ViSP with CMake to detect the newly installed third-party library and build
+again ViSP. This could be achieved with:
+\code{.sh}
+C:\\> cd $VISP_WS/visp-build-vc18
+C:\\> cmake ../visp
+\endcode
+
+Here you can check the content of the `ViSP-third-party.txt` file and see if the newly installed 3rd party
+is well detected.
+
+Finally, you need to rebuild and install ViSP with:
+\code{.sh}
+C:\\> cmake --build . --config Release --target install
+\endcode
+
+\subsection install_win11_msvc18_tips_uninstall 6.2. How to uninstall ViSP
+After ViSP installation, you can remove installed material using:
+\code{.sh}
+C:\\> cd $VISP_WS/visp-build-vc18
+C:\\> cmake --build . --config Release --target uninstall
+\endcode
+
+\subsection install_win11_msvc18_tips_modules 6.3. How to build only ViSP libraries
+
+If you want to build only ViSP modules libraries, nor the examples, tutorials and tests:
+\code{.sh}
+C:\\> cd $VISP_WS/visp-build-vc18
+C:\\> cmake --build . --config Release --target visp_modules
+\endcode
+
+\subsection install_win11_msvc18_tips_module_once 6.4. How to build a ViSP specific module
+
+If you want to build a given module and all the dependencies:
+\code{.sh}
+C:\\> cd $VISP_WS/visp-build-vc18
+C:\\> cmake --build . --config Release --target visp_<module_name>
+\endcode
+
+For example to build the model-based tracker module named mbt, run:
+\code{.sh}
+C:\\> cd $VISP_WS/visp-build-vc18
+C:\\> cmake --build . --config Release --target visp_mbt
+\endcode
+
+\subsection install_win11_msvc18_tips_3rd_party 6.5. Which are the 3rd party libraries that are used in ViSP ?
+
+To see which are the optional 3rd parties that are found during the configuration stage and that will
+be used by ViSP during the build you can have a look to the text file named `ViSP-third-party.txt` and
+located in `%VISP_WS%visp-build-vc18`. We provide hereafter an example of a possible content of this file
+that contains also build info.
+\code{.sh}
+C:\\> type %VISP_WS%\visp-build-vc18\ViSP-third-party.txt
+==========================================================
+General configuration information for ViSP 3.7.1
+
+  Version control:               v3.7.0-134-g10e981c2f
+
+  Platform:
+    Timestamp:                   2026-03-11T07:44:03Z
+    Host:                        Windows 10.0.26100 AMD64
+    CMake:                       4.2.3
+    CMake generator:             Visual Studio 18 2026
+    CMake build tool:            C:/Program Files/Microsoft Visual Studio/18/Community/MSBuild/Current/Bin/amd64/MSBuild.exe
+    MSVC:                        1950
+
+  System information:
+    Number of CPU logical cores: 8
+    Number of CPU physical cores: 4
+    Total physical memory (in MiB): 32641
+    OS name:                     Windows
+    OS release:                  10.0.26100
+    OS version:                  Windows 10
+    OS platform:                 AMD64
+    CPU name:                    Unknown P6 family
+    CPU description:             4 core 2112 MHz GenuineIntel Unknown P6 family
+    Is the CPU 64-bit?           yes
+    Does the CPU have FPU?       yes
+    CPU optimization:            SSE2 SSE3 SSSE3 SSE4_1 SSE4_2
+    CPU endianness:              little-endian
+
+  C/C++:
+    Built as dynamic libs?:      yes
+    C++ Compiler:                C:/Program Files/Microsoft Visual Studio/18/Community/VC/Tools/MSVC/14.50.35717/bin/Hostx64/x64/cl.exe  (ver 19.50.35725.0)
+    C++ flags (Release):         /DWIN32 /D_WINDOWS /W3 /GR /EHsc   -openmp /Gy /bigobj /MD /O2 /Ob2 /DNDEBUG
+    C++ flags (Debug):           /DWIN32 /D_WINDOWS /W3 /GR /EHsc   -openmp /Gy /bigobj /MDd /Zi /Ob0 /Od /RTC1
+    C Compiler:                  C:/Program Files/Microsoft Visual Studio/18/Community/VC/Tools/MSVC/14.50.35717/bin/Hostx64/x64/cl.exe
+    C flags (Release):           /DWIN32 /D_WINDOWS /W3   -openmp /MD /O2 /Ob2 /DNDEBUG
+    C flags (Debug):             /DWIN32 /D_WINDOWS /W3   -openmp /MDd /Zi /Ob0 /Od /RTC1
+    Linker flags (Release):      /machine:x64 /INCREMENTAL:NO
+    Linker flags (Debug):        /machine:x64 /debug /INCREMENTAL /ignore:4099
+    Use cxx standard:            17
+
+  ViSP modules:
+    To be built:                 core dnn_tracker gui imgproc io java_bindings_generator klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi java
+    Disabled:                    -
+    Disabled by dependency:      -
+    Unavailable:                 -
+    Enable visp namespace:       no
+    Enable explicit keyword:     no
+
+  Windows RT support:            no
+
+  Python 3:
+    Interpreter:                 C:/Users/fspindle/AppData/Local/Programs/Python/Python313/python.exe (ver 3.13.2)
+
+  Java:
+    ant:                         C:/Users/fspindle/apache-ant-1.10.15/bin/ant.bat (ver 1.10.15)
+    Java:                        no
+    JNI:                         C:/Program Files/Java/jdk-23/include C:/Program Files/Java/jdk-23/include/win32 C:/Program Files/Java/jdk-23/include
+    Java wrappers:               yes (ANT)
+
+  Python3 bindings:              no
+    Requirements:
+      Python version > 3.7.0:    ok (ver 3.13.2)
+      Python in virtual env. or conda (or system with override):
+                                 ok
+      Pybind11 found:            failed
+      CMake > 3.19.0:            ok (4.2.3)
+      C++ standard > 201703L:    ok (201703L)
+
+  Build options:
+    Build deprecated:            yes
+    Build with moment combine:   no
+
+  OpenCV:
+    Version:                     4.12.0
+    Modules:                     calib3d core dnn features2d flann gapi highgui imgcodecs imgproc ml objdetect photo stitching video videoio world
+    OpenCV dir:                  C:/visp-ws/3rdparty/opencv-4.12.0/build
+
+  YARP:
+    Version:                     n/a
+
+  Mathematics:
+    Blas/Lapack:                 yes
+    \- Use MKL:                  no
+    \- Use OpenBLAS:             no
+    \- Use Atlas:                no
+    \- Use Netlib:               no
+    \- Use GSL:                  no
+    \- Use Lapack (built-in):    yes (ver 3.2.1)
+    Use Eigen3:                  yes (ver 5.0.1)
+    Use OpenCV:                  yes (ver 4.12.0)
+
+  Simulator:
+    Ogre simulator:
+    \- Use Ogre3D:               no
+    \- Use OIS:                  no
+    Coin simulator:
+    \- Use Coin3D:               no
+    \- Use SoWin:                no
+    \- Use SoXt:                 no
+    \- Use SoQt:                 no
+    \- Use Qt5:                  no
+    \- Use Qt4:                  no
+    \- Use Qt3:                  no
+    Panda3D:                     no
+
+  Media I/O:
+    Use JPEG:                    no
+    Use PNG:                     no
+    \- Use ZLIB:                 no
+    Use OpenCV:                  yes (ver 4.12.0)
+    Use stb_image (built-in):    yes (ver 2.30.0)
+    Use TinyEXR (built-in):      yes (ver 1.0.9)
+    Use simdlib (built-in):      yes (ver 4.9.109)
+    Use npz I/O (built-in):      yes
+
+  Real robots:
+    Use Afma6:                   no
+    Use Franka:                  no
+    Use Viper650:                no
+    Use Viper850:                no
+    Use ur_rtde:                 no
+    Use Kinova Jaco:             no
+    Use aria (Pioneer):          no
+    Use PTU46:                   no
+    Use Biclops PTU:             no
+    Use Flir PTU SDK:            no
+    Use MAVSDK:                  no
+    Use Parrot ARSDK:            no
+    \- Use ffmpeg:               no
+    Use Virtuose:                no
+    Use qbdevice (built-in):     yes (ver 2.6.0)
+    Use takktile2 (built-in):    no
+    Use pololu (built-in):       yes (ver 1.0.0)
+
+  GUI:
+    Use X11:                     no
+    Use GTK2:                    no
+    Use OpenCV:                  yes (ver 4.12.0)
+    Use GDI:                     yes
+    Use Direct3D:                no
+
+  Cameras:
+    Use DC1394-2.x:              no
+    Use CMU 1394:                no
+    Use V4L2:                    no
+    Use directshow:              no
+    Use OpenCV:                  yes (ver 4.12.0)
+    Use FLIR Flycapture:         no
+    Use Basler Pylon:            no
+    Use IDS uEye:                no
+
+  RGB-D sensors:
+    Use Realsense2:              yes (ver 2.57.6)
+    Use Occipital Structure:     no
+    Use Kinect:                  no
+    \- Use libfreenect:          no
+    \- Use libusb-1:             no
+    \- Use std::thread:          yes
+    Use PCL:                     no
+    \- Use VTK:                  no
+
+  F/T sensors:
+    Use atidaq (built-in):       no
+    Use comedi:                  no
+    Use IIT SDK:                 no
+
+  Mocap:
+    Use Qualisys:                no
+    Use Vicon:                   no
+
+  Detection:
+    Use zbar:                    no
+    Use dmtx:                    no
+    Use AprilTag (built-in):     yes (ver 3.4.2)
+    \- Use AprilTag big family:  no
+
+  Misc:
+    Use Clipper (built-in):      yes (ver 6.4.2)
+    Use pugixml (built-in):      yes (ver 1.14.0)
+    Use libxml2:                 no
+    \- Use Iconv:                no
+    Use json (nlohmann system):  yes (ver 3.12.0)
+
+  Optimization:
+    Use OpenMP:                  yes (ver 2.0)
+    Use std::thread:             yes
+    Use pthread:                 no
+    Use simdlib (built-in):      yes (ver 4.9.109)
+
+  DNN:
+    Use CUDA Toolkit:            no
+    Use TensorRT:                no
+
+  Documentation:
+    Use doxygen:                 yes (ver 1.13.2)
+    \- Use mathjax:              no
+    \- Use doxygen-awesome:      no
+
+  Tests and samples:
+    Use catch2 (built-in):       yes (ver 3.7.1)
+    Tests:                       yes
+    Apps:                        yes
+    Demos:                       yes
+    Examples:                    yes
+    Tutorials:                   yes
+    Dataset found:               yes (ver 3.7.3 in C:\visp-ws\visp-images)
+
+  Library dirs:
+    Eigen3 dir:                  C:/visp-ws/3rdparty/eigen-5.0.1/build-vc18/install/share/eigen3/cmake
+    OpenCV dir:                  C:/visp-ws/3rdparty/opencv-4.12.0/build
+
+  Install path:                  C:/visp-ws/visp/visp-build-vc18/install
+
+==========================================================
+\endcode
+
+\section install_win11_msvc18_next 7. Next tutorial
+
+You are now ready to see the next \ref tutorial-getting-started that will show you how to use ViSP as a
+3rd party to build your own project.
+
+*/

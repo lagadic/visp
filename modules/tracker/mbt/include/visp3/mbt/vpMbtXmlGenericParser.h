@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,8 +37,8 @@
  * object.
  */
 
-#ifndef _vpMbtXmlGenericParser_h_
-#define _vpMbtXmlGenericParser_h_
+#ifndef VP_MBT_XML_GENERIC_PARSER_H
+#define VP_MBT_XML_GENERIC_PARSER_H
 
 #include <visp3/core/vpConfig.h>
 

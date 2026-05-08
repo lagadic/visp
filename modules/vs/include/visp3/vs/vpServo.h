@@ -867,45 +867,121 @@ public:
 
   /*!
    * Compute and return the secondary task vector for joint limit avoidance
-   * \cite Marey:2010b using the new large projection operator (see equation(24)
-   * in the paper \cite Marey:2010). The robot avoids the joint limits very
-   * smoothly even when the main task constrains all the robot degrees of freedom.
+   * \cite Marey:2010b using the new large projection operator (see equation (24)
+   * in \cite Marey:2010). The robot avoids the joint limits smoothly even when
+   * the main task constrains all the robot degrees of freedom.
    *
-   * \param q : Actual joint positions vector
+   * For each joint \f$j_i\f$, two pairs of thresholds are defined from the
+   * hardware limits \f$q_i^{min}\f$ and \f$q_i^{max}\f$:
+   * - Inner thresholds \f$q_{l_0}^{min}\f$ and \f$q_{l_0}^{max}\f$: when the
+   *   joint crosses one of these boundaries, the secondary task is activated
+   *   gradually via a sigmoid tuning function \f$\lambda_{\ell_i}(q_i)\f$.
+   * - Outer thresholds \f$q_{l_1}^{min}\f$ and \f$q_{l_1}^{max}\f$: beyond
+   *   these boundaries the secondary task is fully activated with its maximum
+   *   gain, guaranteeing that the avoidance velocity component always dominates
+   *   the corresponding component of the primary task (see Section III-B.3 in
+   *   \cite Marey:2010b).
    *
-   * \param dq : Actual joint velocities vector
+   * These thresholds are computed as follows:
+   * \f[
+   *   q_{l_0}^{min} = q_i^{min} + \rho \,\Delta q_i, \quad
+   *   q_{l_0}^{max} = q_i^{max} - \rho \,\Delta q_i
+   * \f]
+   * \f[
+   *   q_{l_1}^{min} = q_{l_0}^{min} - \rho \,\rho_1 \,\Delta q_i, \quad
+   *   q_{l_1}^{max} = q_{l_0}^{max} + \rho \,\rho_1 \,\Delta q_i
+   * \f]
+   * where \f$\Delta q_i = q_i^{max} - q_i^{min}\f$.
    *
-   * \param qmin : Vector containing the low limit value of each joint in the chain.
-   * \param qmax : Vector containing the high limit value of each joint in the chain.
+   * Three zones drive the behavior of the avoidance task for joint \f$j_i\f$:
+   * - **Safe zone** \f$q_{l_0}^{min} < q_i < q_{l_0}^{max}\f$: no avoidance
+   *   task is applied.
+   * - **Transition zone** \f$[q_{l_1}^{min}, q_{l_0}^{min}]\f$ or
+   *   \f$[q_{l_0}^{max}, q_{l_1}^{max}]\f$: the avoidance task is gradually
+   *   injected via the sigmoid function \f$\lambda_{\ell_i}\f$, and the
+   *   adaptive gain \f$b_i\f$ is clamped to 1 to prevent destabilizing
+   *   coupling effects on other joints through the projection operator.
+   * - **Critical zone** \f$q_i < q_{l_1}^{min}\f$ or \f$q_i > q_{l_1}^{max}\f$:
+   *   the avoidance task is fully activated and the adaptive gain \f$b_i\f$ is
+   *   applied without clamping, ensuring \f$|\dot{q}_2[i]| \geq |\dot{q}_1[i]|\f$
+   *   regardless of the primary task velocity.
    *
-   * \param rho : tuning parameter  \f${\left [ 0,\frac{1}{2} \right]}\f$
-   * used to define the safe configuration for the joint. When the joint
-   * angle value cross the max or min boundaries (\f${ q_{l_{0}}^{max} }\f$ and
-   * \f${q_{l_{0}}^{min}}\f$) the secondary task is activated gradually.
+   * \warning For joints whose limits should not be enforced (like unmeasured
+   * mobile base degrees of freedom), \f$q_i^{min}\f$ and \f$q_i^{max}\f$ must be set
+   * to \f$-\infty\f$ and \f$+\infty\f$ respectively — or equivalently to
+   * `std::numeric_limits<double>::lowest()` and
+   * `std::numeric_limits<double>::max()` — so that \f$q_i\f$ always lies in
+   * the safe zone and no avoidance is activated for those joints. Note that
+   * `std::numeric_limits<double>::min()` must **not** be used, as it returns
+   * the smallest **positive** normalized double (~2.2e-308), not the most
+   * negative value.
    *
-   * \param rho1 : tuning parameter \f${\left ] 0,1 \right ]}\f$ to compute the external
-   * boundaries (\f${q_{l_{1}}^{max}}\f$ and \f${q_{l_{1}}^{min}}\f$) for the joint
-   * limits. Here the secondary task it completely activated with the highest gain.
+   * \warning The vector `dq` must contain the joint velocity vector \f$\dot{q}_1\f$
+   * due to the primary task only (i.e., the output of computeControlLaw()),
+   * not the total commanded velocity nor the measured joint velocity. This is
+   * required by the adaptive gain formula (equation (16) in \cite Marey:2010b):
+   * \f[
+   *   \lambda_{sec_i} = (1 + \lambda_i) \frac{|\dot{q}_1[i]|}{|(\mathbf{P}\,\mathbf{g}_i^\ell)[i]|}
+   * \f]
+   * If additional secondary tasks (e.g., obstacle avoidance) also contribute
+   * to the velocity of a joint approaching its limit, their contribution should
+   * be added to `dq` before calling this function, following equation (21) in
+   * \cite Marey:2010b.
    *
-   * \param lambda_tune : value \f${\left [ 0,1 \right ]}\f$ used to tune the
-   * difference in magnitude between the absolute value of the elements of the
-   * primary task and the elements of the secondary task. (See equation (17)
-   * \cite Marey:2010b )
+   * \param q : Vector of current joint positions (size \f$n\f$, same ordering
+   * as `qmin` and `qmax`).
+   *
+   * \param dq : Vector of joint velocities due to the primary task \f$\dot{q}_1\f$
+   * (output of computeControlLaw()), used to scale the adaptive gain of the
+   * avoidance task (size \f$n\f$).
+   *
+   * \param qmin : Vector of lower hardware joint limits (size \f$n\f$). For
+   * joints that should not be limited (e.g., mobile base DOFs), set the corresponding
+   * entry to `std::numeric_limits<double>::lowest()`.
+   *
+   * \param qmax : Vector of upper hardware joint limits (size \f$n\f$). For
+   * joints that should not be limited (e.g., mobile base DOFs), set the corresponding
+   * entry to `std::numeric_limits<double>::max()`.
+   *
+   * \param rho : Tuning parameter \f$\rho \in \left[0, \frac{1}{2}\right]\f$
+   * controlling the width of the safe zone. Typically \f$\rho = 0.1\f$.
+   * Larger values shrink the safe zone and activate avoidance earlier.
+   *
+   * \param rho1 : Tuning parameter \f$\rho_1 \in \left]0, 1\right]\f$
+   * controlling the width of the transition zone between \f$q_{l_0}\f$ and
+   * \f$q_{l_1}\f$. Larger values widen the transition zone, giving more room
+   * for the sigmoid to ramp up before the critical zone is reached.
+   *
+   * \param lambda_tune : Parameter \f$\lambda_i \geq 0\f$ tuning the excess
+   * magnitude of the avoidance task over the primary task in the critical zone.
+   * With \f$\lambda_i = 0\f$, \f$|\dot{q}_2[i]| = |\dot{q}_1[i]|\f$ at
+   * \f$q_{l_1}\f$; with \f$\lambda_i = 1\f$,
+   * \f$|\dot{q}_2[i]| = 2|\dot{q}_1[i]|\f$ (see Figure 2 in \cite Marey:2010b).
+   *
+   * \return Secondary task joint velocity vector \f$\dot{q}_2\f$ (size \f$n\f$)
+   * to be added to the primary task output:
+   * \f[
+   *   \dot{q} = \dot{q}_1 + \dot{q}_2
+   * \f]
    *
    * \code
    * vpServo task;
-   * vpColVector qmin;
-   * vpColVector qmax;
-   * vpColVector q;
-   * vpColVector dq;
-   * // Fill vector qmin and qmax with min and max limits of the joints (same joint order than vector q).
-   * // Update vector of joint position q and velocities dq;
-   * ...
-   * // Compute the velocity corresponding to the visual servoing
-   * vpColVector  v = task.computeControlLaw();
-   * // Compute and add the secondary task for the joint limit avoidance
-   * // using the large projection operator
-   * v += task.secondaryTaskJointLimitAvoidance(q, dq, qmin, qmax)
+   * vpColVector qmin, qmax, q, dq;
+   *
+   * // Set hardware joint limits (size = nb of controlled DOFs).
+   * // For uncontrolled or unmeasured DOFs (e.g., mobile base), use:
+   * //   qmin[i] = std::numeric_limits<double>::lowest();
+   * //   qmax[i] = std::numeric_limits<double>::max();
+   *
+   * // Update q and dq at each control iteration.
+   * // ...
+   *
+   * // Compute primary task velocity.
+   * vpColVector v = task.computeControlLaw();
+   *
+   * // Add secondary task for joint limit avoidance.
+   * // dq must be the primary task output v, not the measured joint velocity.
+   * v += task.secondaryTaskJointLimitAvoidance(q, v, qmin, qmax, rho, rho1, lambda_tune);
    * \endcode
    */
   vpColVector secondaryTaskJointLimitAvoidance(const vpColVector &q, const vpColVector &dq, const vpColVector &qmin,
