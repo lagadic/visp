@@ -397,9 +397,10 @@ int testOnSynthetic(const TutorialMeanDrift::TypeTest &type, const TutorialMeanD
 
   //! [Test_Init]
   // Initial computation of the mean and stdev of the input signal
+  float signal;
   for (unsigned int i = 0; i < parameters.m_test_nbsamples; ++i) {
     vpGaussRand rndGen(stdev, mean, static_cast<long>(idFrame * dt));
-    float signal = static_cast<float>(rndGen());
+    signal = static_cast<float>(rndGen());
     p_test->testDownUpwardMeanDrift(signal);
     ++idFrame;
   }
@@ -414,7 +415,7 @@ int testOnSynthetic(const TutorialMeanDrift::TypeTest &type, const TutorialMeanD
   vpStatisticalTestAbstract::vpMeanDriftType drift_type = vpStatisticalTestAbstract::MEAN_DRIFT_NONE;
   while (hasToRun) {
     vpGaussRand rndGen(stdev, mean_eff, static_cast<long>(idFrame * dt));
-    float signal = static_cast<float>(rndGen());
+    signal = static_cast<float>(rndGen());
     plotter.plot(0, 0, idFrame - parameters.m_test_nbsamples, signal);
     drift_type = p_test->testDownUpwardMeanDrift(signal);
     if ((drift_type != vpStatisticalTestAbstract::MEAN_DRIFT_NONE) && (parameters.m_test_activatedalarms[drift_type])) {
