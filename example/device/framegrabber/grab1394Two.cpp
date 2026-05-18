@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -482,7 +482,7 @@ int main(int argc, const char **argv)
               for (it_lcoding = lcoding.begin(); it_lcoding != lcoding.end(); ++it_lcoding) {
                 vp1394TwoGrabber::vp1394TwoColorCodingType supcoding;
                 supcoding = *it_lcoding;
-                std::stringstream ss;
+                std::stringstream sss;
                 ss << static_cast<int>(supcoding);
                 if ((curmode == supmode) && (supcoding == curcoding))
                   std::cout << "    * " << vp1394TwoGrabber::colorCoding2string(supcoding) << " (-g " << ss.str()
@@ -498,7 +498,7 @@ int main(int argc, const char **argv)
               g.getFramerateSupported(supmode, lfps);
               for (it_lfps = lfps.begin(); it_lfps != lfps.end(); ++it_lfps) {
                 vp1394TwoGrabber::vp1394TwoFramerateType supfps = *it_lfps;
-                std::stringstream ss;
+                std::stringstream sss;
                 ss << static_cast<int>(supfps);
                 if ((curmode == supmode) && (supfps == curfps))
                   std::cout << "    * " << vp1394TwoGrabber::framerate2string(supfps) << " (-f " << ss.str() << ")"
