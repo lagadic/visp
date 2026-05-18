@@ -215,7 +215,7 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap, con
     double normalized_weights = 0;
     estimatePlaneEquationSVD(points_3d, plane_equation, centroid, normalized_weights);
 
-    size_t corners_size = corners.size();
+    corners_size = corners.size();
     for (size_t j = 0; j < corners_size; ++j) {
       const vpImagePoint &imPt = corners[j];
       double x = 0, y = 0;
@@ -230,7 +230,6 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap, con
       pose_points[j].set_y(y);
     }
 
-    size_t point3d_size = point3d.size();
     for (size_t i = 0; i < point3d_size; ++i) {
       q.push_back(point3d[i]);
     }
