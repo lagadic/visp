@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -285,7 +285,6 @@ TEST_CASE("Benchmark generic tracker", "[benchmark]")
         tracker.resetTracker();
         tracker.setTrackerType(mapOfTrackerTypes[idx]);
 
-        const bool verbose = false;
 #if defined(VISP_HAVE_PUGIXML)
         tracker.loadConfigFile(configFileCam1, configFileCam2, verbose);
 #else
