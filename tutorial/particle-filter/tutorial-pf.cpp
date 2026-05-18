@@ -1,7 +1,7 @@
 /*
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -159,7 +159,7 @@ public:
     , m_phi(phi)
     , m_wZ(wZ)
     , m_rng(stdevRng, 0.)
-  { }
+  {}
 
   /**
    * \brief Move the object to its new position, expressed in the world frame.
@@ -379,7 +379,7 @@ struct SoftwareArguments
     , m_ampliMaxOmega(0.02)
     , m_seedPF(4224)
     , m_nbThreads(1)
-  { }
+  {}
 
   int parseArgs(const int argc, const char *argv[])
   {
@@ -748,9 +748,9 @@ int main(const int argc, const char *argv[])
     vpColVector cX_GT = cMw * object_pos;
     vpColVector wX_UKF(4, 1.);
     vpColVector wX_PF(4, 1.);
-    for (unsigned int i = 0; i < 3; ++i) {
-      wX_PF[i] = XestPF[i];
-      wX_UKF[i] = XestUKF[i];
+    for (unsigned int ii = 0; ii < 3; ++ii) {
+      wX_PF[ii] = XestPF[ii];
+      wX_UKF[ii] = XestUKF[ii];
     }
     vpColVector cX_PF = cMw * wX_PF;
     vpColVector cX_UKF = cMw * wX_UKF;
