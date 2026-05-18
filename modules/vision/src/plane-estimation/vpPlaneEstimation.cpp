@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,7 +81,7 @@ vpPlane estimatePlaneEquationSVD(const std::vector<double> &point_cloud, vpColVe
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for num_threads(num_procs) reduction(+ : total_w, cent_x, cent_y, cent_z)
 #endif
-    for (i = 0; i < static_cast<int>(weights.size()); i++) {
+    for (i = 0; i < static_cast<int>(weights.size()); ++i) {
       const auto pt_cloud_start_idx = 3 * i;
 
       cent_x += weights[i] * point_cloud[pt_cloud_start_idx + 0];
@@ -130,7 +130,7 @@ vpPlane estimatePlaneEquationSVD(const std::vector<double> &point_cloud, vpColVe
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for num_threads(num_procs)
 #endif
-    for (i = 0; i < static_cast<int>(nPoints); i++) {
+    for (i = 0; i < static_cast<int>(nPoints); ++i) {
       const auto pt_cloud_start_idx = 3 * i;
 
       M[i][0] = weights[i] * (point_cloud[pt_cloud_start_idx + 0] - centroid[0]);
@@ -145,7 +145,7 @@ vpPlane estimatePlaneEquationSVD(const std::vector<double> &point_cloud, vpColVe
 
     auto smallestSv = W[0];
     auto indexSmallestSv = 0u;
-    for (auto i = 1u; i < W.size(); i++) {
+    for (auto i = 1u; i < W.size(); ++i) {
       if (W[i] < smallestSv) {
         smallestSv = W[i];
         indexSmallestSv = i;
@@ -166,7 +166,7 @@ vpPlane estimatePlaneEquationSVD(const std::vector<double> &point_cloud, vpColVe
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for num_threads(num_procs) reduction(+ : error)
 #endif
-    for (i = 0; i < static_cast<int>(nPoints); i++) {
+    for (i = 0; i < static_cast<int>(nPoints); ++i) {
       const auto pt_cloud_start_idx = 3 * i;
 
       residues[i] = std::fabs(A * point_cloud[pt_cloud_start_idx + 0] + B * point_cloud[pt_cloud_start_idx + 1] +
@@ -264,7 +264,7 @@ std::optional<vpPlane> estimatePlaneEquation(const std::vector<double> &pt_cloud
 
     heat_map->get() = vpImage<vpRGBa> { height, width, vpColor::black };
 
-    for (auto i = 0u; i < weights.size(); i++) {
+    for (auto i = 0u; i < weights.size(); ++i) {
       const auto X { pt_cloud[3 * i + 0] }, Y { pt_cloud[3 * i + 1] }, Z { pt_cloud[3 * i + 2] };
 
       vpImagePoint ip {};
