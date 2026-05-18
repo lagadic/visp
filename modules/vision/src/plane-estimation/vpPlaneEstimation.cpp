@@ -145,10 +145,10 @@ vpPlane estimatePlaneEquationSVD(const std::vector<double> &point_cloud, vpColVe
 
     auto smallestSv = W[0];
     auto indexSmallestSv = 0u;
-    for (auto i = 1u; i < W.size(); ++i) {
-      if (W[i] < smallestSv) {
-        smallestSv = W[i];
-        indexSmallestSv = i;
+    for (auto ii = 1u; ii < W.size(); ++ii) {
+      if (W[ii] < smallestSv) {
+        smallestSv = W[ii];
+        indexSmallestSv = ii;
       }
     }
 
