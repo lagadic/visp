@@ -458,29 +458,29 @@ int main(int argc, char **argv)
         vpDisplay::displayText(I, 60 * display->getDownScalingFactor(), 10 * display->getDownScalingFactor(), "Left click to process next image", vpColor::red);
       }
       {
-        std::stringstream ss;
-        ss << "Features";
+        std::stringstream sss;
+        sss << "Features";
         if (tracker.getTrackerType() & vpMbGenericTracker::EDGE_TRACKER) {
-          ss << " edge: " << tracker.getNbFeaturesEdge();
+          sss << " edge: " << tracker.getNbFeaturesEdge();
         }
 #if defined(VISP_HAVE_MODULE_KLT) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
         if (tracker.getTrackerType() & vpMbGenericTracker::KLT_TRACKER) {
-          ss << " klt: " << tracker.getNbFeaturesKlt();
+          sss << " klt: " << tracker.getNbFeaturesKlt();
         }
 #endif
-        vpDisplay::displayText(I, 60 * display->getDownScalingFactor(), (I.getWidth() - right_display_offset) * display->getDownScalingFactor(), ss.str(), vpColor::red);
+        vpDisplay::displayText(I, 60 * display->getDownScalingFactor(), (I.getWidth() - right_display_offset) * display->getDownScalingFactor(), sss.str(), vpColor::red);
         if (opt_verbose) {
-          std::cout << ss.str() << std::endl;
+          std::cout << sss.str() << std::endl;
           std::cout << "cMo:\n" << cMo << std::endl;
         }
       }
       {
         double proj_error = tracker.computeCurrentProjectionError(I, cMo, cam);
-        std::stringstream ss;
-        ss << "Projection error: " << std::setprecision(2) << proj_error << " deg";
-        vpDisplay::displayText(I, 80 * display->getDownScalingFactor(), (I.getWidth() - right_display_offset) * display->getDownScalingFactor(), ss.str(), vpColor::red);
+        std::stringstream sss;
+        sss << "Projection error: " << std::setprecision(2) << proj_error << " deg";
+        vpDisplay::displayText(I, 80 * display->getDownScalingFactor(), (I.getWidth() - right_display_offset) * display->getDownScalingFactor(), sss.str(), vpColor::red);
         if (opt_verbose) {
-          std::cout << ss.str() << std::endl;
+          std::cout << sss.str() << std::endl;
         }
       }
 
@@ -510,9 +510,9 @@ int main(int argc, char **argv)
       }
 
       {
-        std::stringstream ss;
-        ss << "Loop time: " << std::fixed << std::setprecision(0) << vpTime::measureTimeMs() - time_start << " ms";
-        vpDisplay::displayText(I, (I.getHeight() - 20) * display->getDownScalingFactor(), (I.getWidth() - right_display_offset) * display->getDownScalingFactor(), ss.str(), vpColor::red);
+        std::stringstream sss;
+        sss << "Loop time: " << std::fixed << std::setprecision(0) << vpTime::measureTimeMs() - time_start << " ms";
+        vpDisplay::displayText(I, (I.getHeight() - 20) * display->getDownScalingFactor(), (I.getWidth() - right_display_offset) * display->getDownScalingFactor(), sss.str(), vpColor::red);
       }
       vpDisplay::flush(I);
 
