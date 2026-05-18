@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,7 +106,7 @@ std::mutex g_mutex_cout;
  */
 struct SegmentInfo
 {
-  SegmentInfo() : extremities(), name(), useLod(false), minLineLengthThresh(0.) { }
+  SegmentInfo() : extremities(), name(), useLod(false), minLineLengthThresh(0.) {}
 
   std::vector<vpPoint> extremities;
   std::string name;
@@ -122,7 +122,7 @@ struct PolygonFaceInfo
 {
   PolygonFaceInfo(double dist, const vpPolygon &poly, const std::vector<vpPoint> &corners)
     : distanceToCamera(dist), polygon(poly), faceCorners(corners)
-  { }
+  {}
 
   bool operator<(const PolygonFaceInfo &pfi) const { return distanceToCamera < pfi.distanceToCamera; }
 
@@ -185,7 +185,8 @@ vpMbTracker::vpMbTracker()
   computeCovariance(false), covarianceMatrix(), computeProjError(false), projectionError(90.0),
   displayFeatures(false), m_optimizationMethod(vpMbTracker::GAUSS_NEWTON_OPT), faces(), angleAppears(vpMath::rad(89)),
   angleDisappears(vpMath::rad(89)), distNearClip(0.001), distFarClip(100), clippingFlag(vpPolygon3D::NO_CLIPPING),
-  useOgre(false), ogreShowConfigDialog(false), useScanLine(false), nbPoints(0), nbLines(0), nbPolygonLines(0),
+  useOgre(false), ogreShowConfigDialog(false), useScanLine(false), m_nbInitPoints(0), m_maxInitPoints(1000),
+  nbPoints(0), nbLines(0), nbPolygonLines(0),
   nbPolygonPoints(0), nbCylinders(0), nbCircles(0), useLodGeneral(false), applyLodSettingInConfig(false),
   minLineLengthThresholdGeneral(50.0), minPolygonAreaThresholdGeneral(2500.0), mapOfParameterNames(),
   m_computeInteraction(true), m_lambda(1.0), m_maxIter(30), m_stopCriteriaEpsilon(1e-8), m_initialMu(0.01),
@@ -619,7 +620,6 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
 void vpMbTracker::loadInitFile(const std::string &init_file, std::vector<std::string> &vectorOfInitFilename,
                                bool parent, const vpHomogeneousMatrix &od_M_o, std::vector<vpPoint> &points_3D)
 {
-  const unsigned int m_maxInitPoints = 100; // arbitrary value
   std::ifstream finit;
   std::cout << "Load 3D points from: " << init_file << std::endl;
 
