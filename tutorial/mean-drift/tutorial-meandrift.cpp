@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -395,13 +395,11 @@ int testOnSynthetic(const TutorialMeanDrift::TypeTest &type, const TutorialMeanD
   }
   //! [Test_Creat]
 
-  float signal;
-
   //! [Test_Init]
   // Initial computation of the mean and stdev of the input signal
   for (unsigned int i = 0; i < parameters.m_test_nbsamples; ++i) {
     vpGaussRand rndGen(stdev, mean, static_cast<long>(idFrame * dt));
-    signal = static_cast<float>(rndGen());
+    float signal = static_cast<float>(rndGen());
     p_test->testDownUpwardMeanDrift(signal);
     ++idFrame;
   }
@@ -416,7 +414,7 @@ int testOnSynthetic(const TutorialMeanDrift::TypeTest &type, const TutorialMeanD
   vpStatisticalTestAbstract::vpMeanDriftType drift_type = vpStatisticalTestAbstract::MEAN_DRIFT_NONE;
   while (hasToRun) {
     vpGaussRand rndGen(stdev, mean_eff, static_cast<long>(idFrame * dt));
-    signal = static_cast<float>(rndGen());
+    float signal = static_cast<float>(rndGen());
     plotter.plot(0, 0, idFrame - parameters.m_test_nbsamples, signal);
     drift_type = p_test->testDownUpwardMeanDrift(signal);
     if ((drift_type != vpStatisticalTestAbstract::MEAN_DRIFT_NONE) && (parameters.m_test_activatedalarms[drift_type])) {
