@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -233,18 +233,19 @@ int main()
     vpFeaturePoint pd[4];
     // Compute the desired position of the features from the desired pose
     for (int i = 0; i < 4; i++) {
-      vpColVector cP, p;
+      vpColVector cP, pp;
       point[i].changeFrame(cMo_d, cP);
-      point[i].projection(cP, p);
+      point[i].projection(cP, pp);
 
-      pd[i].set_x(p[0]);
-      pd[i].set_y(p[1]);
+      pd[i].set_x(pp[0]);
+      pd[i].set_y(pp[1]);
       pd[i].set_Z(cP[2]);
     }
 
     // We want to see a point on a point
-    for (size_t i = 0; i < dot.size(); i++)
+    for (size_t i = 0; i < dot.size(); i++) {
       task.addFeature(p[i], pd[i]);
+    }
 
     // Set the proportional gain
     task.setLambda(0.3);
