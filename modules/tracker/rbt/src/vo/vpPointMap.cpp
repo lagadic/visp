@@ -320,17 +320,17 @@ vpMatrix &oXs, vpMatrix &oNs, std::vector<int> &validCandidateIndices)
   oNs.resize(static_cast<unsigned int>(validoNList.size()), 3, false, false);
 
   unsigned int i = 0;
-  for (const std::array<double, 3> &oX: validoXList) {
-    oXs[i][0] = oX[0];
-    oXs[i][1] = oX[1];
-    oXs[i][2] = oX[2];
+  for (const std::array<double, 3> &valid_oX: validoXList) {
+    oXs[i][0] = valid_oX[0];
+    oXs[i][1] = valid_oX[1];
+    oXs[i][2] = valid_oX[2];
     ++i;
   }
   i = 0;
-  for (const std::array<double, 3> &oN: validoNList) {
-    oNs[i][0] = oN[0];
-    oNs[i][1] = oN[1];
-    oNs[i][2] = oN[2];
+  for (const std::array<double, 3> &valid_oN: validoNList) {
+    oNs[i][0] = valid_oN[0];
+    oNs[i][1] = valid_oN[1];
+    oNs[i][2] = valid_oN[2];
     ++i;
   }
 }
