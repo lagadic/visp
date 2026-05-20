@@ -219,7 +219,7 @@ void getHelpers(const vpPolygon &roi, const unsigned int &height, const unsigned
                            static_cast<double>(height) };
     for (const auto &roi_corner : roi.getCorners()) {
       if (img_bound.isInside(roi_corner)) {
-        isInside = [](const vpImagePoint &ip, const vpPolygon &roi) { return roi.isInside(ip); };
+        isInside = [](const vpImagePoint &ip, const vpPolygon &roi_) { return roi_.isInside(ip); };
         break;
       }
     }
@@ -232,7 +232,7 @@ void getHelpers(const vpPolygon &roi, const unsigned int &height, const unsigned
          !roi.isInside(img_bound.getBottomRight()))
     // clang-format on
     {
-      isInside = [](const vpImagePoint &ip, const vpPolygon &roi) { return roi.isInside(ip); };
+      isInside = [](const vpImagePoint &ip, const vpPolygon &roi_) { return roi_.isInside(ip); };
     }
   }
 
