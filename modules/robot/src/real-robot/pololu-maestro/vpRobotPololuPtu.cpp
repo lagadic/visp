@@ -70,12 +70,12 @@ void vpRobotPololuPtu::get_eJe(vpMatrix &eJe_)
   get_eJe(q, eJe_);
 }
 
-void vpRobotPololuPtu::get_fJe(vpMatrix &fJe)
+void vpRobotPololuPtu::get_fJe(vpMatrix &fJe_)
 {
   vpColVector q(nDof);
   getPosition(vpRobot::JOINT_STATE, q);
 
-  get_fJe(q, fJe);
+  get_fJe(q, fJe_);
 }
 
 void vpRobotPololuPtu::get_eJe(const vpColVector &q, vpMatrix &eJe) const
