@@ -74,7 +74,7 @@ vpPlane estimatePlaneEquationSVD(const std::vector<double> &point_cloud, vpColVe
   omp_set_num_threads(num_procs);
 #endif
 
-  auto compute_centroid = [=](const std::vector<double> &point_cloud, const vpColVector &w) {
+  auto compute_centroid = [=](const std::vector<double> &pc, const vpColVector &w) {
     double cent_x { 0. }, cent_y { 0. }, cent_z { 0. }, total_w { 0. };
 
     int i = 0;
@@ -84,9 +84,9 @@ vpPlane estimatePlaneEquationSVD(const std::vector<double> &point_cloud, vpColVe
     for (i = 0; i < static_cast<int>(w.size()); ++i) {
       const auto pt_cloud_start_idx = 3 * i;
 
-      cent_x += w[i] * point_cloud[pt_cloud_start_idx + 0];
-      cent_y += w[i] * point_cloud[pt_cloud_start_idx + 1];
-      cent_z += w[i] * point_cloud[pt_cloud_start_idx + 2];
+      cent_x += w[i] * pc[pt_cloud_start_idx + 0];
+      cent_y += w[i] * pc[pt_cloud_start_idx + 1];
+      cent_z += w[i] * pc[pt_cloud_start_idx + 2];
 
       total_w += w[i];
     }
