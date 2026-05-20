@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,32 +72,32 @@ void vpPanda3DRendererSet::initFramework()
   }
 
   m_window->set_background_type(WindowFramework::BackgroundType::BT_black);
-  for (std::shared_ptr<vpPanda3DBaseRenderer> &renderer: m_subRenderers) {
-    renderer->initFromParent(*this);
+  for (std::shared_ptr<vpPanda3DBaseRenderer> &subRenderer: m_subRenderers) {
+    subRenderer->initFromParent(*this);
   }
 }
 
 void vpPanda3DRendererSet::initFromParent(PointerTo<WindowFramework> window)
 {
   vpPanda3DBaseRenderer::initFromParent(window);
-  for (std::shared_ptr<vpPanda3DBaseRenderer> &renderer: m_subRenderers) {
-    renderer->initFromParent(m_window);
+  for (std::shared_ptr<vpPanda3DBaseRenderer> &subRenderer: m_subRenderers) {
+    subRenderer->initFromParent(m_window);
   }
 }
 
 void vpPanda3DRendererSet::initFromParent(const vpPanda3DBaseRenderer &renderer)
 {
   vpPanda3DBaseRenderer::initFromParent(renderer);
-  for (std::shared_ptr<vpPanda3DBaseRenderer> &renderer: m_subRenderers) {
-    renderer->initFromParent(*this);
+  for (std::shared_ptr<vpPanda3DBaseRenderer> &subRenderer: m_subRenderers) {
+    subRenderer->initFromParent(*this);
   }
 }
 
 void vpPanda3DRendererSet::setCameraPose(const vpHomogeneousMatrix &wTc)
 {
-  for (std::shared_ptr<vpPanda3DBaseRenderer> &renderer: m_subRenderers) {
-    if (renderer->isRendering3DScene()) {
-      renderer->setCameraPose(wTc);
+  for (std::shared_ptr<vpPanda3DBaseRenderer> &subRenderer: m_subRenderers) {
+    if (subRenderer->isRendering3DScene()) {
+      subRenderer->setCameraPose(wTc);
     }
   }
 }
@@ -115,9 +115,9 @@ vpHomogeneousMatrix vpPanda3DRendererSet::getCameraPose()
 
 void vpPanda3DRendererSet::setNodePose(const std::string &name, const vpHomogeneousMatrix &wTo)
 {
-  for (std::shared_ptr<vpPanda3DBaseRenderer> &renderer: m_subRenderers) {
-    if (renderer->isRendering3DScene()) {
-      renderer->setNodePose(name, wTo);
+  for (std::shared_ptr<vpPanda3DBaseRenderer> &subRenderer: m_subRenderers) {
+    if (subRenderer->isRendering3DScene()) {
+      subRenderer->setNodePose(name, wTo);
     }
   }
 }
@@ -145,9 +145,9 @@ vpHomogeneousMatrix vpPanda3DRendererSet::getNodePose(NodePath &)
 
 void vpPanda3DRendererSet::addNodeToScene(const NodePath &object)
 {
-  for (std::shared_ptr<vpPanda3DBaseRenderer> &renderer: m_subRenderers) {
-    if (renderer->isRendering3DScene()) {
-      renderer->addNodeToScene(object);
+  for (std::shared_ptr<vpPanda3DBaseRenderer> &subRenderer: m_subRenderers) {
+    if (subRenderer->isRendering3DScene()) {
+      subRenderer->addNodeToScene(object);
     }
   }
 }
@@ -155,15 +155,15 @@ void vpPanda3DRendererSet::addNodeToScene(const NodePath &object)
 void vpPanda3DRendererSet::setRenderParameters(const vpPanda3DRenderParameters &params)
 {
   m_renderParameters = params;
-  for (std::shared_ptr<vpPanda3DBaseRenderer> &renderer: m_subRenderers) {
-    renderer->setRenderParameters(m_renderParameters);
+  for (std::shared_ptr<vpPanda3DBaseRenderer> &subRenderer: m_subRenderers) {
+    subRenderer->setRenderParameters(m_renderParameters);
   }
 }
 
 void vpPanda3DRendererSet::addLight(const vpPanda3DLight &light)
 {
-  for (std::shared_ptr<vpPanda3DBaseRenderer> &renderer: m_subRenderers) {
-    vpPanda3DLightable *lightable = dynamic_cast<vpPanda3DLightable *>(renderer.get());
+  for (std::shared_ptr<vpPanda3DBaseRenderer> &subRenderer: m_subRenderers) {
+    vpPanda3DLightable *lightable = dynamic_cast<vpPanda3DLightable *>(subRenderer.get());
     if (lightable != nullptr) {
       lightable->addLight(light);
     }
@@ -172,8 +172,8 @@ void vpPanda3DRendererSet::addLight(const vpPanda3DLight &light)
 
 void vpPanda3DRendererSet::addSubRenderer(std::shared_ptr<vpPanda3DBaseRenderer> renderer)
 {
-  for (std::shared_ptr<vpPanda3DBaseRenderer> &otherRenderer: m_subRenderers) {
-    if (renderer->getName() == otherRenderer->getName()) {
+  for (std::shared_ptr<vpPanda3DBaseRenderer> &subRenderer: m_subRenderers) {
+    if (renderer->getName() == subRenderer->getName()) {
       throw vpException(vpException::badValue, "Cannot have two subrenderers with the same name");
     }
   }
@@ -206,6 +206,6 @@ END_VISP_NAMESPACE
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_ar.a(vpPanda3DRendererSet.cpp.o) has no symbols
-void dummy_vpPanda3DRendererSet() { }
+void dummy_vpPanda3DRendererSet() {}
 
 #endif
