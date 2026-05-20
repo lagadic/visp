@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2331,5 +2331,5 @@ bool vpRobotAfma6::checkJointLimits(vpColVector &jointsStatus)
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpRobotAfma6.cpp.o) has no symbols
-void dummy_vpRobotAfma6() { }
+void dummy_vpRobotAfma6() {}
 #endif
