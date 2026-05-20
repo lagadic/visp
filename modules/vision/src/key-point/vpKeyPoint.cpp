@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3366,7 +3366,7 @@ bool vpKeyPoint::matchPoint(const vpImage<vpRGBa> &I_color, const vpCameraParame
 bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &boundingBox,
                                      vpImagePoint &centerOfGravity, const bool isPlanarObject,
                                      std::vector<vpImagePoint> *imPts1, std::vector<vpImagePoint> *imPts2,
-                                     double *meanDescriptorDistance, double *detectionScore, const vpRect &rectangle)
+                                     double *meanDescriptorDistance, double *detection_score, const vpRect &rectangle)
 {
   if (imPts1 != nullptr && imPts2 != nullptr) {
     imPts1->clear();
@@ -3386,8 +3386,8 @@ bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &bo
   if (meanDescriptorDistance != nullptr) {
     *meanDescriptorDistance = meanDescriptorDistanceTmp;
   }
-  if (detectionScore != nullptr) {
-    *detectionScore = score;
+  if (detection_score != nullptr) {
+    *detection_score = score;
   }
 
   if (m_filteredMatches.size() >= 4) {
@@ -4051,7 +4051,7 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
 // From OpenCV 2.4.11 source code.
 struct KeypointResponseGreaterThanThreshold
 {
-  KeypointResponseGreaterThanThreshold(float _value) : value(_value) { }
+  KeypointResponseGreaterThanThreshold(float _value) : value(_value) {}
   inline bool operator()(const cv::KeyPoint &kpt) const { return kpt.response >= value; }
   float value;
 };
@@ -4088,7 +4088,7 @@ void vpKeyPoint::KeyPointsFilter::retainBest(std::vector<cv::KeyPoint> &keypoint
 
 struct RoiPredicate
 {
-  RoiPredicate(const cv::Rect &_r) : r(_r) { }
+  RoiPredicate(const cv::Rect &_r) : r(_r) {}
 
   bool operator()(const cv::KeyPoint &keyPt) const { return !r.contains(keyPt.pt); }
 
@@ -4112,7 +4112,7 @@ void vpKeyPoint::KeyPointsFilter::runByImageBorder(std::vector<cv::KeyPoint> &ke
 
 struct SizePredicate
 {
-  SizePredicate(float _minSize, float _maxSize) : minSize(_minSize), maxSize(_maxSize) { }
+  SizePredicate(float _minSize, float _maxSize) : minSize(_minSize), maxSize(_maxSize) {}
 
   bool operator()(const cv::KeyPoint &keyPt) const
   {
@@ -4135,7 +4135,7 @@ void vpKeyPoint::KeyPointsFilter::runByKeypointSize(std::vector<cv::KeyPoint> &k
 class MaskPredicate
 {
 public:
-  MaskPredicate(const cv::Mat &_mask) : mask(_mask) { }
+  MaskPredicate(const cv::Mat &_mask) : mask(_mask) {}
   bool operator()(const cv::KeyPoint &key_pt) const
   {
     return mask.at<uchar>(static_cast<int>(key_pt.pt.y + 0.5f), static_cast<int>(key_pt.pt.x + 0.5f)) == 0;
@@ -4155,7 +4155,7 @@ void vpKeyPoint::KeyPointsFilter::runByPixelsMask(std::vector<cv::KeyPoint> &key
 
 struct KeyPoint_LessThan
 {
-  KeyPoint_LessThan(const std::vector<cv::KeyPoint> &_kp) : kp(&_kp) { }
+  KeyPoint_LessThan(const std::vector<cv::KeyPoint> &_kp) : kp(&_kp) {}
   bool operator()(/*int i, int j*/ size_t i, size_t j) const
   {
     const cv::KeyPoint &kp1 = (*kp)[i];
@@ -4246,7 +4246,7 @@ void vpKeyPoint::KeyPointsFilter::removeDuplicated(std::vector<cv::KeyPoint> &ke
 vpKeyPoint::PyramidAdaptedFeatureDetector::PyramidAdaptedFeatureDetector(const cv::Ptr<cv::FeatureDetector> &detector,
                                                                          int maxLevel)
   : m_detector(detector), m_maxLevel(maxLevel)
-{ }
+{}
 
 bool vpKeyPoint::PyramidAdaptedFeatureDetector::empty() const
 {
@@ -4311,5 +4311,5 @@ END_VISP_NAMESPACE
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_vision.a(vpKeyPoint.cpp.o) has no symbols
-void dummy_vpKeyPoint() { }
+void dummy_vpKeyPoint() {}
 #endif
