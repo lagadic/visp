@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -501,8 +501,8 @@ void vpRobotFranka::getPosition(const vpRobot::vpControlFrameType frame, vpPoseV
 
 /*!
  * Gets the robot Jacobian in the end-effector frame relative to the end-effector frame represented as a 6x7 matrix in
- * row-major format and computed from the robot current joint position. \param[out] eJe_ : Body Jacobian expressed in
- * the end-effector frame.
+ * row-major format and computed from the robot current joint position.
+ * \param[out] eJe_ : Body Jacobian expressed in the end-effector frame.
  */
 void vpRobotFranka::get_eJe(vpMatrix &eJe_)
 {
@@ -524,8 +524,9 @@ void vpRobotFranka::get_eJe(vpMatrix &eJe_)
 
 /*!
  * Gets the robot Jacobian in the end-effector frame relative to the end-effector frame represented as a 6x7 matrix in
- * row-major format and computed from the robot current joint position. \param[in] q : 7-dim vector corresponding to the
- * robot joint position [rad]. \param[out] eJe_ : Body Jacobian expressed in the end-effector frame.
+ * row-major format and computed from the robot current joint position.
+ * \param[in] q : 7-dim vector corresponding to the robot joint position [rad].
+ * \param[out] eJe_ : Body Jacobian expressed in the end-effector frame.
  */
 void vpRobotFranka::get_eJe(const vpColVector &q, vpMatrix &eJe_)
 {
@@ -552,8 +553,8 @@ void vpRobotFranka::get_eJe(const vpColVector &q, vpMatrix &eJe_)
 
 /*!
  * Gets the robot Jacobian in the end-effector frame relative to the base frame represented as a 6x7 matrix in row-major
- * format and computed from the robot current joint position. \param[out] fJe_ : Zero Jacobian expressed in the base
- * frame.
+ * format and computed from the robot current joint position.
+ * \param[out] fJe_ : Zero Jacobian expressed in the base frame.
  */
 void vpRobotFranka::get_fJe(vpMatrix &fJe_)
 {
@@ -575,8 +576,9 @@ void vpRobotFranka::get_fJe(vpMatrix &fJe_)
 
 /*!
  * Gets the robot Jacobian in the end-effector frame relative to the base frame represented as a 6x7 matrix in row-major
- * format and computed from the robot joint position given as input. \param[in] q : 7-dim vector corresponding to the
- * robot joint position [rad]. \param[out] fJe_ : Zero Jacobian expressed in the base frame.
+ * format and computed from the robot joint position given as input.
+ * \param[in] q : 7-dim vector corresponding to the robot joint position [rad].
+ * \param[out] fJe_ : Zero Jacobian expressed in the base frame.
  */
 void vpRobotFranka::get_fJe(const vpColVector &q, vpMatrix &fJe_)
 {
@@ -687,8 +689,7 @@ void vpRobotFranka::setPosition(const vpRobot::vpControlFrameType frame, const v
 
   Set the maximal velocity percentage to use for a position control.
 
-  \param[in] velocity : Percentage of the maximal velocity. Values should
-  be in ]0:100].
+  \param[in] velocity : Percentage of the maximal velocity. Values should be in ]0:100].
 
 */
 void vpRobotFranka::setPositioningVelocity(double velocity) { m_positioningVelocity = velocity; }
@@ -908,7 +909,7 @@ void vpRobotFranka::setVelocity(const vpRobot::vpControlFrameType frame, const v
   }
 }
 
-/*
+/*!
   Apply a force/torque to the robot.
 
   \param[in] frame : Control frame in which the force/torque is applied.
@@ -1094,13 +1095,13 @@ R: 0.1 0.3 -0.25 -80.5 80 0 0
   The code below shows how to read a position from a file and move the robot to
   this position.
   \code
-vpRobotFranka robot;
-vpColVector q;        // Joint position
-robot.readPosFile("myposition.pos", q); // Set the joint position from the file
-robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
+  vpRobotFranka robot;
+  vpColVector q;        // Joint position
+  robot.readPosFile("myposition.pos", q); // Set the joint position from the file
+  robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
 
-robot.setPositioningVelocity(5); // Positioning velocity set to 5%
-robot.setPosition(vpRobot::ARTICULAR_FRAME, q); // Move to the joint position
+  robot.setPositioningVelocity(5); // Positioning velocity set to 5%
+  robot.setPosition(vpRobot::ARTICULAR_FRAME, q); // Move to the joint position
   \endcode
 
   \sa savePosFile(), move()
@@ -1384,5 +1385,5 @@ END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpRobotFranka.cpp.o) has
 // no symbols
-void dummy_vpRobotFranka() { }
+void dummy_vpRobotFranka() {}
 #endif
