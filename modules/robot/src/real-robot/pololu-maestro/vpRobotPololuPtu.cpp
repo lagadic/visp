@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,12 +62,12 @@ vpRobotPololuPtu::~vpRobotPololuPtu()
   m_tilt.stopVelocityCmd();
 }
 
-void vpRobotPololuPtu::get_eJe(vpMatrix &eJe)
+void vpRobotPololuPtu::get_eJe(vpMatrix &eJe_)
 {
   vpColVector q(nDof);
   getPosition(vpRobot::JOINT_STATE, q);
 
-  get_eJe(q, eJe);
+  get_eJe(q, eJe_);
 }
 
 void vpRobotPololuPtu::get_fJe(vpMatrix &fJe)
@@ -285,5 +285,5 @@ void vpRobotPololuPtu::getPosition(const vpRobot::vpControlFrameType frame, vpCo
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpRobotPololuPtu.cpp.o) has no symbols
-void dummy_vpRobotPololuPtu() { }
+void dummy_vpRobotPololuPtu() {}
 #endif
