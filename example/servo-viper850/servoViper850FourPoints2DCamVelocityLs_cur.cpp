@@ -243,12 +243,12 @@ int main()
     vpFeaturePoint pd[4];
     // Compute the desired position of the features from the desired pose
     for (int i = 0; i < 4; ++i) {
-      vpColVector cP, p;
+      vpColVector cP, pp;
       point[i].changeFrame(cMo, cP);
-      point[i].projection(cP, p);
+      point[i].projection(cP, pp);
 
-      pd[i].set_x(p[0]);
-      pd[i].set_y(p[1]);
+      pd[i].set_x(pp[0]);
+      pd[i].set_y(pp[1]);
       pd[i].set_Z(cP[2]);
     }
 
