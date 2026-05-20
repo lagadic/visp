@@ -119,27 +119,27 @@ nframes, opath.c_str());
 */
 bool getOptions(int argc, const char **argv, bool &display, unsigned &nframes, bool &save, std::string &opath)
 {
-  const char *optarg;
+  const char *optarg_;
   int c;
-  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
     case 'd':
       display = false;
       break;
     case 'n':
-      nframes = atoi(optarg);
+      nframes = atoi(optarg_);
       break;
     case 'o':
       save = true;
-      opath = optarg;
+      opath = optarg_;
       break;
     case 'h':
       usage(argv[0], nullptr, nframes, opath);
       return false;
 
     default:
-      usage(argv[0], optarg, nframes, opath);
+      usage(argv[0], optarg_, nframes, opath);
       return false;
     }
   }
@@ -148,7 +148,7 @@ bool getOptions(int argc, const char **argv, bool &display, unsigned &nframes, b
     // standalone param or error
     usage(argv[0], nullptr, nframes, opath);
     std::cerr << "ERROR: " << std::endl;
-    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
+    std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
   }
 

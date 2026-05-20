@@ -127,27 +127,27 @@ OPTIONS:                                               Default\n\
 */
 bool getOptions(int argc, const char **argv, bool &on, int &nsec, double &nmsec)
 {
-  const char *optarg;
+  const char *optarg_;
   int c;
 
-  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
     case 'n':
-      nsec = atoi(optarg);
+      nsec = atoi(optarg_);
       break;
     case 'o':
       on = true;
       break;
     case 't':
-      nmsec = atof(optarg);
+      nmsec = atof(optarg_);
       break;
     case 'h':
       usage(argv[0], nullptr, nsec, nmsec);
       return false;
 
     default:
-      usage(argv[0], optarg, nsec, nmsec);
+      usage(argv[0], optarg_, nsec, nmsec);
       return false;
     }
   }
@@ -156,7 +156,7 @@ bool getOptions(int argc, const char **argv, bool &on, int &nsec, double &nmsec)
     // standalone param or error
     usage(argv[0], nullptr, nsec, nmsec);
     std::cerr << "ERROR: " << std::endl;
-    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
+    std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
   }
 
