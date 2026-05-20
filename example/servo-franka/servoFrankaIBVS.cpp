@@ -440,12 +440,12 @@ int main(int argc, char **argv)
 
           // Compute the desired position of the features from the desired pose
           for (size_t i = 0; i < point.size(); ++i) {
-            vpColVector c_P, p;
+            vpColVector c_P, pp;
             point[i].changeFrame(cd_M_o * o_M_o, c_P);
-            point[i].projection(c_P, p);
+            point[i].projection(c_P, pp);
 
-            pd[i].set_x(p[0]);
-            pd[i].set_y(p[1]);
+            pd[i].set_x(pp[0]);
+            pd[i].set_y(pp[1]);
             pd[i].set_Z(c_P[2]);
           }
         }
