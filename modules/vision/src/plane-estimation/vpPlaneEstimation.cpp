@@ -74,21 +74,21 @@ vpPlane estimatePlaneEquationSVD(const std::vector<double> &point_cloud, vpColVe
   omp_set_num_threads(num_procs);
 #endif
 
-  auto compute_centroid = [=](const std::vector<double> &point_cloud, const vpColVector &weights) {
+  auto compute_centroid = [=](const std::vector<double> &point_cloud, const vpColVector &w) {
     double cent_x { 0. }, cent_y { 0. }, cent_z { 0. }, total_w { 0. };
 
     int i = 0;
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for num_threads(num_procs) reduction(+ : total_w, cent_x, cent_y, cent_z)
 #endif
-    for (i = 0; i < static_cast<int>(weights.size()); ++i) {
+    for (i = 0; i < static_cast<int>(w.size()); ++i) {
       const auto pt_cloud_start_idx = 3 * i;
 
-      cent_x += weights[i] * point_cloud[pt_cloud_start_idx + 0];
-      cent_y += weights[i] * point_cloud[pt_cloud_start_idx + 1];
-      cent_z += weights[i] * point_cloud[pt_cloud_start_idx + 2];
+      cent_x += w[i] * point_cloud[pt_cloud_start_idx + 0];
+      cent_y += w[i] * point_cloud[pt_cloud_start_idx + 1];
+      cent_z += w[i] * point_cloud[pt_cloud_start_idx + 2];
 
-      total_w += weights[i];
+      total_w += w[i];
     }
 
     return std::make_tuple(vpColVector { cent_x, cent_y, cent_z }, total_w);
