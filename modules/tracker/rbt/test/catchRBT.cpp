@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -842,9 +842,9 @@ SCENARIO("Testing point map", "[rbt]")
         Z = 0.5 + random.uniform(-0.05, 0.05);
         // Set Z in a neighbourhood to ensure that reprojection and aliasing artifacts don't impact results
         // True depth data is far more continuous
-        for (int i = -1; i < 2; ++i) {
-          for (int j = -1; j < 2; ++j) {
-            depthImage[vu + i][uu + j] = Z;
+        for (int ii = -1; ii < 2; ++ii) {
+          for (int jj = -1; jj < 2; ++jj) {
+            depthImage[vu + ii][uu + jj] = Z;
           }
         }
 
