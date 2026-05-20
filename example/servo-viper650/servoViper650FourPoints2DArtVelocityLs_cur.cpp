@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -189,8 +189,6 @@ int main()
     vpDisplay::flush(I);
 
     std::vector<vpDot2> dot(4);
-
-    vpImagePoint cog;
 
     std::cout << "Click on the 4 dots clockwise starting from upper/left dot..." << std::endl;
 
