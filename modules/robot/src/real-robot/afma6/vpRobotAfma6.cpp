@@ -828,10 +828,10 @@ void vpRobotAfma6::get_cMe(vpHomogeneousMatrix &cMe) const { vpAfma6::get_cMe(cM
   To compute eJe, we communicate with the low level controller to get
   the articular joint position of the robot.
 
-  \param eJe : Robot jacobian expressed in the end-effector frame.
+  \param eJe_ : Robot jacobian expressed in the end-effector frame.
 
 */
-void vpRobotAfma6::get_eJe(vpMatrix &eJe)
+void vpRobotAfma6::get_eJe(vpMatrix &eJe_)
 {
 
   double position[6];
@@ -846,7 +846,7 @@ void vpRobotAfma6::get_eJe(vpMatrix &eJe)
     q[i] = position[i];
 
   try {
-    vpAfma6::get_eJe(q, eJe);
+    vpAfma6::get_eJe(q, eJe_);
   }
   catch (...) {
     vpERROR_TRACE("catch exception ");
