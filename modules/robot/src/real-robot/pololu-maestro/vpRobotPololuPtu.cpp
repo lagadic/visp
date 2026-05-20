@@ -78,9 +78,9 @@ void vpRobotPololuPtu::get_fJe(vpMatrix &fJe_)
   get_fJe(q, fJe_);
 }
 
-void vpRobotPololuPtu::get_eJe(const vpColVector &q, vpMatrix &eJe) const
+void vpRobotPololuPtu::get_eJe(const vpColVector &q, vpMatrix &eJe_) const
 {
-  eJe.resize(6, nDof);
+  eJe_.resize(6, nDof);
 
   if (q.size() != static_cast<unsigned int>(nDof)) {
     throw(vpException(vpException::dimensionError, "Bad dimension for Pololu PTU joint position vector"));
@@ -91,9 +91,9 @@ void vpRobotPololuPtu::get_eJe(const vpColVector &q, vpMatrix &eJe) const
 
   eJe = 0;
 
-  eJe[3][0] = -c2;
-  eJe[4][1] = -1;
-  eJe[5][0] = s2;
+  eJe_[3][0] = -c2;
+  eJe_[4][1] = -1;
+  eJe_[5][0] = s2;
 }
 
 void vpRobotPololuPtu::get_fJe(const vpColVector &q, vpMatrix &fJe) const
