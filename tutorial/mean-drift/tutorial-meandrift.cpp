@@ -443,11 +443,11 @@ int testOnSynthetic(const TutorialMeanDrift::TypeTest &type, const TutorialMeanD
   }
   else if (type==TutorialMeanDrift::SHEWHART_TYPE_TEST) {
     vpStatisticalTestShewhart *p_testShewhart = dynamic_cast<vpStatisticalTestShewhart *>(p_test);
-    std::vector<float> signal = p_testShewhart->getSignals();
-    size_t nbSignal = signal.size();
+    std::vector<float> signals = p_testShewhart->getSignals();
+    size_t nbSignal = signals.size();
     std::cout << "Signal history = [ ";
     for (size_t i = 0; i < nbSignal; ++i) {
-      std::cout << signal[i] << " ";
+      std::cout << signals[i] << " ";
     }
     std::cout << "]" << std::endl;
     std::cout << "\tWECO alarm type = " << vpStatisticalTestShewhart::vpWecoRulesAlarmToString(p_testShewhart->getAlarm()) << std::endl;
