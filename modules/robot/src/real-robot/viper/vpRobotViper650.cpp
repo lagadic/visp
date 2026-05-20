@@ -943,11 +943,11 @@ void vpRobotViper650::get_cMe(vpHomogeneousMatrix &cMe) const { vpViper650::get_
   To compute \f$^e{\bf J}_e\f$, we communicate with the low level
   controller to get the joint position of the robot.
 
-  \param eJe : Robot jacobian \f$^e{\bf J}_e\f$ expressed in the
+  \param eJe_ : Robot jacobian \f$^e{\bf J}_e\f$ expressed in the
   end-effector frame.
 
 */
-void vpRobotViper650::get_eJe(vpMatrix &eJe)
+void vpRobotViper650::get_eJe(vpMatrix &eJe_)
 {
 
   double position[6];
@@ -962,7 +962,7 @@ void vpRobotViper650::get_eJe(vpMatrix &eJe)
     q[i] = vpMath::rad(position[i]);
 
   try {
-    vpViper650::get_eJe(q, eJe);
+    vpViper650::get_eJe(q, eJe_);
   }
   catch (...) {
     vpERROR_TRACE("catch exception ");
