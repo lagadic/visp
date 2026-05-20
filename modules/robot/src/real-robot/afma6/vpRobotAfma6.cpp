@@ -873,10 +873,10 @@ void vpRobotAfma6::get_eJe(vpMatrix &eJe_)
   \right)
   \f]
 
-  \param fJe : Robot jacobian expressed in the reference frame.
+  \param fJe_ : Robot jacobian expressed in the reference frame.
 */
 
-void vpRobotAfma6::get_fJe(vpMatrix &fJe)
+void vpRobotAfma6::get_fJe(vpMatrix &fJe_)
 {
 
   double position[6];
@@ -891,7 +891,7 @@ void vpRobotAfma6::get_fJe(vpMatrix &fJe)
     q[i] = position[i];
 
   try {
-    vpAfma6::get_fJe(q, fJe);
+    vpAfma6::get_fJe(q, fJe_);
   }
   catch (...) {
     vpERROR_TRACE("Error caught");
