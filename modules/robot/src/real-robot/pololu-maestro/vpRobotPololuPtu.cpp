@@ -89,29 +89,29 @@ void vpRobotPololuPtu::get_eJe(const vpColVector &q, vpMatrix &eJe_) const
   double s2 = sin(q[1]);
   double c2 = cos(q[1]);
 
-  eJe = 0;
+  eJe_ = 0;
 
   eJe_[3][0] = -c2;
   eJe_[4][1] = -1;
   eJe_[5][0] = s2;
 }
 
-void vpRobotPololuPtu::get_fJe(const vpColVector &q, vpMatrix &fJe) const
+void vpRobotPololuPtu::get_fJe(const vpColVector &q, vpMatrix &fJe_) const
 {
   if (q.size() != static_cast<unsigned int>(nDof)) {
     throw(vpException(vpException::dimensionError, "Bad dimension for Pololu PTU joint position vector"));
   }
 
-  fJe.resize(6, nDof);
+  fJe_.resize(6, nDof);
 
   double s1 = sin(q[0]);
   double c1 = cos(q[0]);
 
-  fJe = 0;
+  fJe_ = 0;
 
-  fJe[3][1] = s1;
-  fJe[4][1] = -c1;
-  fJe[5][0] = 1;
+  fJe_[3][1] = s1;
+  fJe_[4][1] = -c1;
+  fJe_[5][0] = 1;
 }
 
 float vpRobotPololuPtu::getAngularVelocityResolution() const
