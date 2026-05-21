@@ -56,6 +56,9 @@ jobs:
         cmake .. -DCMAKE_C_COMPILER="${CC}" \
                  -DCMAKE_CXX_COMPILER="${CXX}" \
                  -DUSE_CXX_STANDARD=$CXX_STANDARD \
+                 -DBUILD_JAVA=OFF \
+                 -DBUILD_MODULE_visp_java=OFF \
+                 -DBUILD_MODULE_visp_java_binding=OFF \
                  -DACTIVATE_WARNING_ALL=ON \
                  -DACTIVATE_WARNING_EXTRA=ON \
                  -DACTIVATE_WARNING_SHADOW=ON \
