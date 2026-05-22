@@ -164,6 +164,13 @@ install(FILES "${VISP_INCLUDE_DIR}/visp3/visp.h"
 #  install old headers to keep compat with dev based on ViSP 2.x releases
 # ----------------------------------------------------------------------------
 file(GLOB old_hdrs "${VISP_INCLUDE_DIR}/visp/*.h")
+if(ENABLE_MULTIARCH)
+  list(REMOVE_ITEM old_hdrs "${VISP_INCLUDE_DIR}/visp/vpConfig.h")
+  install(FILES "${VISP_INCLUDE_DIR}/visp/vpConfig.h"
+    DESTINATION ${VISP_INC_INSTALL_PATH}/${CMAKE_LIBRARY_ARCHITECTURE}/visp
+    COMPONENT dev
+  )
+endif()
 install(FILES ${old_hdrs}
   DESTINATION ${VISP_INC_INSTALL_PATH}/visp
   COMPONENT dev
