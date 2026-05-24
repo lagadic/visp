@@ -112,17 +112,17 @@ BEGIN_VISP_NAMESPACE
     std::string s_val;
 
     // Parse the command line to set the variables
-    const char *optarg;
+    const char *optarg_;
     int c;
-    while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+    while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
       switch (c) {
       case 'b': b_val = true; break;
-      case 'i': i_val = atoi(optarg); break;
-      case 'l': l_val = atol(optarg); break;
-      case 'f': f_val = static_cast<float>(atof(optarg)); break;
-      case 'd': d_val = atof(optarg); break;
-      case 's': s_val = std::string(optarg); break;
+      case 'i': i_val = atoi(optarg_); break;
+      case 'l': l_val = atol(optarg_); break;
+      case 'f': f_val = static_cast<float>(atof(optarg_)); break;
+      case 'd': d_val = atof(optarg_); break;
+      case 's': s_val = std::string(optarg_); break;
       case 'h': printf("Usage: ...\n"); return EXIT_SUCCESS; break;
 
       default:

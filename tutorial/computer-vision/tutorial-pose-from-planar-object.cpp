@@ -316,9 +316,9 @@ std::map<Model::Id, vpImagePoint> getKeypointsFromUser(vpImage<vpRGBa> color_img
     vpDisplay::displayText(color_img, 15 * ++disp_lane, 15, "Click to select a point", vpColor::green);
 
     // Display already selected points
-    for (const auto &[id, keypoint] : keypoints) {
+    for (const auto &[selected_id, keypoint] : keypoints) {
       vpDisplay::displayCross(color_img, keypoint, 15, vpColor::green);
-      vpDisplay::displayText(color_img, keypoint + vpImagePoint(10, 10), Model::to_string(id), vpColor::green);
+      vpDisplay::displayText(color_img, keypoint + vpImagePoint(10, 10), Model::to_string(selected_id), vpColor::green);
     }
     disp_color.flush(color_img);
 

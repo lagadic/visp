@@ -204,10 +204,8 @@ int main(int argc, const char **argv)
       continue;
     }
 
-    vpImage<vpRGBa> I_color_gamma_correction;
     VISP_NAMESPACE_NAME::gammaCorrection(I_color, I_color_gamma_correction, static_cast<float>(gamma), colorHandling,
       gamma_method);
-    vpImage<unsigned char> I_gray_gamma_correction;
     VISP_NAMESPACE_NAME::gammaCorrection(I_gray, I_gray_gamma_correction, static_cast<float>(gamma), gamma_method);
 
     const std::string gamma_name = VISP_NAMESPACE_NAME::vpGammaMethodToString(gamma_method);

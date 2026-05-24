@@ -172,23 +172,23 @@ void read_options(int argc, const char **argv, bool &multi, unsigned int &camera
                   bool &verbose_info, bool &verbose_settings, bool &mediatype_is_set, unsigned int &mediatypeID,
                   bool &framerate_is_set, double &framerate, bool &display, bool &save, std::string &opath)
 {
-  const char *optarg;
+  const char *optarg_;
   int c;
   /*
    * Lecture des options.
    */
 
-  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
     switch (c) {
     case 'c':
-      camera = atoi(optarg);
+      camera = atoi(optarg_);
       break;
     case 'd':
       display = false;
       break;
     case 'f':
       framerate_is_set = true;
-      framerate = atoi(optarg);
+      framerate = atoi(optarg_);
       break;
     case 'i':
       verbose_info = true;
@@ -197,18 +197,18 @@ void read_options(int argc, const char **argv, bool &multi, unsigned int &camera
       multi = true;
       break;
     case 'n':
-      nframes = atoi(optarg);
+      nframes = atoi(optarg_);
       break;
     case 'o':
       save = true;
-      opath = optarg;
+      opath = optarg_;
       break;
     case 's':
       verbose_settings = true;
       break;
     case 't':
       mediatype_is_set = true;
-      mediatypeID = atoi(optarg);
+      mediatypeID = atoi(optarg_);
       break;
     default:
       usage(argv[0], nullptr, camera, nframes, opath);
@@ -220,7 +220,7 @@ void read_options(int argc, const char **argv, bool &multi, unsigned int &camera
     // standalone param or error
     usage(argv[0], nullptr, camera, nframes, opath);
     std::cerr << "ERROR: " << std::endl;
-    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
+    std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
   }
 }
 

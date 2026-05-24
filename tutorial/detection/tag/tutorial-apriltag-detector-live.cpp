@@ -449,9 +449,9 @@ int main(int argc, const char **argv)
       //! [Display id for each tag]
       std::vector<int> tags_id = detector.getTagsId();
       for (size_t i = 0; i < tags_id.size(); ++i) {
-        std::stringstream ss;
-        ss << "id=" << tags_id[i];
-        vpDisplay::displayText(I, detector.getCog(i) + vpImagePoint(-10, 10), ss.str(), vpColor::blue);
+        std::stringstream sss;
+        sss << "id=" << tags_id[i];
+        vpDisplay::displayText(I, detector.getCog(i) + vpImagePoint(-10, 10), sss.str(), vpColor::blue);
       }
       //! [Display id for each tag]
       vpDisplay::displayText(I, 20, 20, "Click to quit.", vpColor::red);
@@ -465,12 +465,12 @@ int main(int argc, const char **argv)
         std::vector<int> tag_hamming_distances = detector.getTagsHammingDistance();
         for (size_t i = 0; i < tags_id.size(); ++i) {
           std::string message = detector.getMessage(i);
-          std::stringstream ss;
-          ss << "Found " << message << std::endl
+          std::stringstream sss;
+          sss << "Found " << message << std::endl
             << "- with decision margin: " << tag_decision_margins[i]
             << " and hamming distance: " << tag_hamming_distances[i] << std::endl
             << "- and cMo:\n" << cMo_vec[i] << std::endl;
-          std::cout << ss.str() << std::endl;
+          std::cout << sss.str() << std::endl;
         }
       }
     }

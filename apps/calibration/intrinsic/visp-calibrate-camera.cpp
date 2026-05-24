@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1167,7 +1167,6 @@ int main(int argc, const char *argv[])
         }
 
         d->init(I, 0, 0, "OpenCV calibration results");
-        vpImage<vpRGBa> I_save_results;
         std::vector<vpImage<vpRGBa>> cv_list_img_reproj_dist, cv_list_img_undist;
         cv_list_img_reproj_dist.reserve(calibrator.size());
 

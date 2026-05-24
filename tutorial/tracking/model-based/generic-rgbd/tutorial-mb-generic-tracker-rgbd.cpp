@@ -444,15 +444,15 @@ int main(int argc, char *argv[])
       ss << "Computation time: " << t << " ms";
       vpDisplay::displayText(I_gray, 20, 20, ss.str(), vpColor::red);
       {
-        std::stringstream ss;
-        ss << "Nb features: " << tracker.getError().size();
-        vpDisplay::displayText(I_gray, I_gray.getHeight() - 50, 20, ss.str(), vpColor::red);
+        std::stringstream sss;
+        sss << "Nb features: " << tracker.getError().size();
+        vpDisplay::displayText(I_gray, I_gray.getHeight() - 50, 20, sss.str(), vpColor::red);
       }
       {
-        std::stringstream ss;
-        ss << "Features: edges " << tracker.getNbFeaturesEdge() << ", klt " << tracker.getNbFeaturesKlt() << ", depth "
+        std::stringstream sss;
+        sss << "Features: edges " << tracker.getNbFeaturesEdge() << ", klt " << tracker.getNbFeaturesKlt() << ", depth "
           << tracker.getNbFeaturesDepthDense();
-        vpDisplay::displayText(I_gray, I_gray.getHeight() - 30, 20, ss.str(), vpColor::red);
+        vpDisplay::displayText(I_gray, I_gray.getHeight() - 30, 20, sss.str(), vpColor::red);
       }
 
       vpDisplay::flush(I_gray);

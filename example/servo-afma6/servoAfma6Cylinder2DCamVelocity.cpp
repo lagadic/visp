@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -273,12 +273,6 @@ int main(int argc, char **argv)
   // Load the end-effector to camera frame transformation obtained
   // using a camera intrinsic model with distortion
   robot.init(vpAfma6::TOOL_INTEL_D435_CAMERA, projModel);
-
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  std::shared_ptr<vpDisplay> display;
-#else
-  vpDisplay *display = nullptr;
-#endif
 
   try {
     std::cout << "WARNING: This example will move the robot! "

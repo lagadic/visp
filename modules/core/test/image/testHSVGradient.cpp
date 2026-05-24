@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,7 +87,8 @@ static bool checkBooleanMask(const vpImage<bool> *p_mask, const unsigned int &r,
 }
 
 template <typename ArithmeticType, typename FilterType, bool useFullScale>
-void gradientFilterX(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpImage<FilterType> &GIx, const vpImage<bool> *p_mask, const vpImageFilter::vpCannyFilteringAndGradientType &type)
+void gradientFilterX(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpImage<FilterType> &GIx,
+                     const vpImage<bool> *p_mask, const vpImageFilter::vpCannyFilteringAndGradientType &type)
 {
   const unsigned int nbRows = I.getRows(), nbCols = I.getCols();
   GIx.resize(nbRows, nbCols, 0.);
@@ -113,28 +114,28 @@ void gradientFilterX(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpIm
     filter[i] = filter[i] / scale;
   }
 
-  auto checkBooleanPatch = [](const vpImage<bool> *p_mask, const unsigned int &r, const unsigned int &c, const unsigned int &h, const unsigned int &w)
+  auto checkBooleanPatch = [](const vpImage<bool> *mask, const unsigned int &r, const unsigned int &c, const unsigned int &h, const unsigned int &w)
     {
-      if (!p_mask) {
+      if (!mask) {
         return true;
       }
-      bool hasToCompute = (*p_mask)[r][c];
+      bool hasToCompute = (*mask)[r][c];
 
       if (c < w - 1) { // We do not compute gradient on the last column
-        hasToCompute |= (*p_mask)[r][c + 1];
+        hasToCompute |= (*mask)[r][c + 1];
         if (r < h - 1) { // We do not compute gradient on the last row
-          hasToCompute |= (*p_mask)[r + 1][c + 1];
+          hasToCompute |= (*mask)[r + 1][c + 1];
         }
       }
 
       if (r < h - 1) { // We do not compute gradient on the last row
-        hasToCompute |= (*p_mask)[r + 1][c];
+        hasToCompute |= (*mask)[r + 1][c];
       }
 
       if (r > 1) { // We do not compute gradient on the first row
-        hasToCompute |= (*p_mask)[r - 1][c];
+        hasToCompute |= (*mask)[r - 1][c];
         if (c < w - 1) { // We do not compute gradient on the last column
-          hasToCompute |= (*p_mask)[r - 1][c + 1];
+          hasToCompute |= (*mask)[r - 1][c + 1];
         }
       }
       return hasToCompute;
@@ -172,7 +173,8 @@ void gradientFilterX(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpIm
 }
 
 template <typename ArithmeticType, typename FilterType, bool useFullScale>
-void gradientFilterY(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpImage<FilterType> &GIy, const vpImage<bool> *p_mask, const vpImageFilter::vpCannyFilteringAndGradientType &type)
+void gradientFilterY(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpImage<FilterType> &GIy,
+                     const vpImage<bool> *p_mask, const vpImageFilter::vpCannyFilteringAndGradientType &type)
 {
   const unsigned int nbRows = I.getRows(), nbCols = I.getCols();
   std::vector<FilterType> filter(3);
@@ -196,28 +198,28 @@ void gradientFilterY(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpIm
   const unsigned int rStop = nbRows - 1, cStop = nbCols - 1;
   vpImage<double> IabsDiff(nbRows, nbCols);
 
-  auto checkBooleanPatch = [](const vpImage<bool> *p_mask, const unsigned int &r, const unsigned int &c, const unsigned int &h, const unsigned int &w)
+  auto checkBooleanPatch = [](const vpImage<bool> *mask, const unsigned int &r, const unsigned int &c, const unsigned int &h, const unsigned int &w)
     {
-      if (!p_mask) {
+      if (!mask) {
         return true;
       }
 
-      bool hasToCompute = (*p_mask)[r][c];
+      bool hasToCompute = (*mask)[r][c];
       if (c < w - 1) { // We do not compute gradient on the last column
-        hasToCompute |= (*p_mask)[r][c + 1];
+        hasToCompute |= (*mask)[r][c + 1];
         if (r < h - 1) { // We do not compute gradient on the last row
-          hasToCompute |= (*p_mask)[r + 1][c + 1];
+          hasToCompute |= (*mask)[r + 1][c + 1];
         }
       }
 
       if (r < h - 1) { // We do not compute gradient on the last row
-        hasToCompute |= (*p_mask)[r + 1][c];
+        hasToCompute |= (*mask)[r + 1][c];
       }
 
       if (c > 1) { // We do not compute gradient on the first column
-        hasToCompute |= (*p_mask)[r][c - 1];
+        hasToCompute |= (*mask)[r][c - 1];
         if (r < h - 1) { // We do not compute gradient on the last row
-          hasToCompute |= (*p_mask)[r + 1][c - 1];
+          hasToCompute |= (*mask)[r + 1][c - 1];
         }
       }
       return hasToCompute;

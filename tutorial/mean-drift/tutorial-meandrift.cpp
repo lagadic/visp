@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -395,10 +395,9 @@ int testOnSynthetic(const TutorialMeanDrift::TypeTest &type, const TutorialMeanD
   }
   //! [Test_Creat]
 
-  float signal;
-
   //! [Test_Init]
   // Initial computation of the mean and stdev of the input signal
+  float signal;
   for (unsigned int i = 0; i < parameters.m_test_nbsamples; ++i) {
     vpGaussRand rndGen(stdev, mean, static_cast<long>(idFrame * dt));
     signal = static_cast<float>(rndGen());
@@ -444,11 +443,11 @@ int testOnSynthetic(const TutorialMeanDrift::TypeTest &type, const TutorialMeanD
   }
   else if (type==TutorialMeanDrift::SHEWHART_TYPE_TEST) {
     vpStatisticalTestShewhart *p_testShewhart = dynamic_cast<vpStatisticalTestShewhart *>(p_test);
-    std::vector<float> signal = p_testShewhart->getSignals();
-    size_t nbSignal = signal.size();
+    std::vector<float> signals = p_testShewhart->getSignals();
+    size_t nbSignal = signals.size();
     std::cout << "Signal history = [ ";
     for (size_t i = 0; i < nbSignal; ++i) {
-      std::cout << signal[i] << " ";
+      std::cout << signals[i] << " ";
     }
     std::cout << "]" << std::endl;
     std::cout << "\tWECO alarm type = " << vpStatisticalTestShewhart::vpWecoRulesAlarmToString(p_testShewhart->getAlarm()) << std::endl;

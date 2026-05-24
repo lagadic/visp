@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,12 +62,12 @@ public:
    *
    * @param mappingSize The size of the space that this transformation maps to.
    */
-  vpLuminanceMapping(unsigned int mappingSize) : m_mappingSize(mappingSize) { }
+  vpLuminanceMapping(unsigned int mappingSize) : m_mappingSize(mappingSize) {}
 
   /**
    * Destructor.
    */
-  virtual ~vpLuminanceMapping() { }
+  virtual ~vpLuminanceMapping() {}
 
   /**
    * \brief Map an image \p I to a representation \p s.
@@ -150,12 +150,12 @@ protected:
 class VISP_EXPORT vpLuminancePCA : public vpLuminanceMapping
 {
 public:
-  vpLuminancePCA() : vpLuminanceMapping(0), m_basis(nullptr), m_mean(nullptr), m_Ivec(0), m_Ih(0), m_Iw(0) { }
+  vpLuminancePCA() : vpLuminanceMapping(0), m_basis(nullptr), m_mean(nullptr), m_Ivec(0), m_Ih(0), m_Iw(0) {}
 
   /**
    * Destructor.
    */
-  virtual ~vpLuminancePCA() { }
+  virtual ~vpLuminancePCA() {}
 
   /**
    * \brief Build a new PCA object
@@ -404,10 +404,10 @@ public:
 
   void display(const vpCameraParameters &, const vpImage<unsigned char> &, const vpColor & = vpColor::green,
                unsigned int = 1) const VP_OVERRIDE
-  { }
+  {}
   void display(const vpCameraParameters &, const vpImage<vpRGBa> &, const vpColor & = vpColor::green,
                unsigned int = 1) const VP_OVERRIDE
-  { }
+  {}
 
   vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) VP_OVERRIDE;
   void error(const vpBasicFeature &s_star, vpColVector &e);
@@ -424,7 +424,7 @@ private:
   std::shared_ptr<vpLuminanceMapping> m_mapping;
   vpFeatureLuminance m_featI;
   vpMatrix m_LI; //! Photometric interaction matrix
-  vpImage<unsigned char> I;
+  vpImage<unsigned char> m_I;
 };
 END_VISP_NAMESPACE
 #endif

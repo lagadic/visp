@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,21 +74,21 @@ vpPlane estimatePlaneEquationSVD(const std::vector<double> &point_cloud, vpColVe
   omp_set_num_threads(num_procs);
 #endif
 
-  auto compute_centroid = [=](const std::vector<double> &point_cloud, const vpColVector &weights) {
+  auto compute_centroid = [=](const std::vector<double> &pc, const vpColVector &w) {
     double cent_x { 0. }, cent_y { 0. }, cent_z { 0. }, total_w { 0. };
 
     int i = 0;
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for num_threads(num_procs) reduction(+ : total_w, cent_x, cent_y, cent_z)
 #endif
-    for (i = 0; i < static_cast<int>(weights.size()); i++) {
+    for (i = 0; i < static_cast<int>(w.size()); ++i) {
       const auto pt_cloud_start_idx = 3 * i;
 
-      cent_x += weights[i] * point_cloud[pt_cloud_start_idx + 0];
-      cent_y += weights[i] * point_cloud[pt_cloud_start_idx + 1];
-      cent_z += weights[i] * point_cloud[pt_cloud_start_idx + 2];
+      cent_x += w[i] * pc[pt_cloud_start_idx + 0];
+      cent_y += w[i] * pc[pt_cloud_start_idx + 1];
+      cent_z += w[i] * pc[pt_cloud_start_idx + 2];
 
-      total_w += weights[i];
+      total_w += w[i];
     }
 
     return std::make_tuple(vpColVector { cent_x, cent_y, cent_z }, total_w);
@@ -130,7 +130,7 @@ vpPlane estimatePlaneEquationSVD(const std::vector<double> &point_cloud, vpColVe
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for num_threads(num_procs)
 #endif
-    for (i = 0; i < static_cast<int>(nPoints); i++) {
+    for (i = 0; i < static_cast<int>(nPoints); ++i) {
       const auto pt_cloud_start_idx = 3 * i;
 
       M[i][0] = weights[i] * (point_cloud[pt_cloud_start_idx + 0] - centroid[0]);
@@ -145,10 +145,10 @@ vpPlane estimatePlaneEquationSVD(const std::vector<double> &point_cloud, vpColVe
 
     auto smallestSv = W[0];
     auto indexSmallestSv = 0u;
-    for (auto i = 1u; i < W.size(); i++) {
-      if (W[i] < smallestSv) {
-        smallestSv = W[i];
-        indexSmallestSv = i;
+    for (auto ii = 1u; ii < W.size(); ++ii) {
+      if (W[ii] < smallestSv) {
+        smallestSv = W[ii];
+        indexSmallestSv = ii;
       }
     }
 
@@ -166,7 +166,7 @@ vpPlane estimatePlaneEquationSVD(const std::vector<double> &point_cloud, vpColVe
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for num_threads(num_procs) reduction(+ : error)
 #endif
-    for (i = 0; i < static_cast<int>(nPoints); i++) {
+    for (i = 0; i < static_cast<int>(nPoints); ++i) {
       const auto pt_cloud_start_idx = 3 * i;
 
       residues[i] = std::fabs(A * point_cloud[pt_cloud_start_idx + 0] + B * point_cloud[pt_cloud_start_idx + 1] +
@@ -219,7 +219,7 @@ void getHelpers(const vpPolygon &roi, const unsigned int &height, const unsigned
                            static_cast<double>(height) };
     for (const auto &roi_corner : roi.getCorners()) {
       if (img_bound.isInside(roi_corner)) {
-        isInside = [](const vpImagePoint &ip, const vpPolygon &roi) { return roi.isInside(ip); };
+        isInside = [](const vpImagePoint &ip, const vpPolygon &roi_) { return roi_.isInside(ip); };
         break;
       }
     }
@@ -232,7 +232,7 @@ void getHelpers(const vpPolygon &roi, const unsigned int &height, const unsigned
          !roi.isInside(img_bound.getBottomRight()))
     // clang-format on
     {
-      isInside = [](const vpImagePoint &ip, const vpPolygon &roi) { return roi.isInside(ip); };
+      isInside = [](const vpImagePoint &ip, const vpPolygon &roi_) { return roi_.isInside(ip); };
     }
   }
 
@@ -264,7 +264,7 @@ std::optional<vpPlane> estimatePlaneEquation(const std::vector<double> &pt_cloud
 
     heat_map->get() = vpImage<vpRGBa> { height, width, vpColor::black };
 
-    for (auto i = 0u; i < weights.size(); i++) {
+    for (auto i = 0u; i < weights.size(); ++i) {
       const auto X { pt_cloud[3 * i + 0] }, Y { pt_cloud[3 * i + 1] }, Z { pt_cloud[3 * i + 2] };
 
       vpImagePoint ip {};

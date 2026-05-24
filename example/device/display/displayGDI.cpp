@@ -146,9 +146,9 @@ OPTIONS:                                               Default\n\
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &opath, bool &click_allowed,
                 const std::string &user, bool &display)
 {
-  const char *optarg;
+  const char *optarg_;
   int c;
-  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
     case 'c':
@@ -158,17 +158,17 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
       display = false;
       break;
     case 'i':
-      ipath = optarg;
+      ipath = optarg_;
       break;
     case 'o':
-      opath = optarg;
+      opath = optarg_;
       break;
     case 'h':
       usage(argv[0], nullptr, ipath, opath, user);
       return false;
 
     default:
-      usage(argv[0], optarg, ipath, opath, user);
+      usage(argv[0], optarg_, ipath, opath, user);
       return false;
     }
   }
@@ -177,7 +177,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
     // standalone param or error
     usage(argv[0], nullptr, ipath, opath, user);
     std::cerr << "ERROR: " << std::endl;
-    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
+    std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
   }
 

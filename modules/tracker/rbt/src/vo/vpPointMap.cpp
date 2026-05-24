@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -199,10 +199,10 @@ void vpPointMap::getVisiblePoints(const unsigned int h, const unsigned int w, co
         continue;
       }
 
-      unsigned int uint = static_cast<unsigned int>(u), vint = static_cast<unsigned int>(v);
+      unsigned int u_uint = static_cast<unsigned int>(u), v_uint = static_cast<unsigned int>(v);
       // Filter points whose reprojection does not match the depth map: self occlusion when rendered depth map,
       // occlusion or noise in the case of a true depth image
-      if (fabs(Z - depth[vint][uint]) > m_maxDepthErrorVisible) {
+      if (fabs(Z - depth[v_uint][u_uint]) > m_maxDepthErrorVisible) {
         continue;
       }
       localIndices.push_back(i);
@@ -255,21 +255,21 @@ vpMatrix &oXs, vpMatrix &oNs, std::vector<int> &validCandidateIndices)
 
   for (unsigned int i = 0; i < uvs.getRows(); ++i) {
     double u = uvs[i][0], v = uvs[i][1];
-    unsigned int uint = static_cast<unsigned int>(u), vint = static_cast<unsigned int>(v);
+    unsigned int u_uint = static_cast<unsigned int>(u), v_uint = static_cast<unsigned int>(v);
     double Z;
     if (modelDepth.getSize() == 0) { // We are performing odometry or do not have a depth oracle
-      Z = static_cast<double>(depth[vint][uint]);
+      Z = static_cast<double>(depth[v_uint][u_uint]);
       if (Z <= 0.0) {
         continue;
       }
     }
     else {
-      double renderZ = modelDepth[vint][uint];
+      double renderZ = modelDepth[v_uint][u_uint];
       if (renderZ <= 0.f) {
         continue;
       }
-      if (depth.getSize() > 0 && depth[vint][uint] > 0.f) { // Depth information from camera is available
-        Z = depth[vint][uint];
+      if (depth.getSize() > 0 && depth[v_uint][u_uint] > 0.f) { // Depth information from camera is available
+        Z = depth[v_uint][u_uint];
         // Check if depth from model and camera match
         if (m_maxDepthErrorCandidate > 0.0 && fabs(renderZ - Z) >=  m_maxDepthErrorCandidate) {
           continue;
@@ -310,7 +310,7 @@ vpMatrix &oXs, vpMatrix &oNs, std::vector<int> &validCandidateIndices)
       validoXList.push_back({ oX[0], oX[1], oX[2] });
       validCandidateIndices.push_back(originalIndices[i][0]);
       if (normals.getSize() > 0) {
-        vpRGBf n = normals[vint][uint];
+        vpRGBf n = normals[v_uint][u_uint];
         validoNList.push_back({ n.R, n.G, n.B });
       }
     }
@@ -320,17 +320,17 @@ vpMatrix &oXs, vpMatrix &oNs, std::vector<int> &validCandidateIndices)
   oNs.resize(static_cast<unsigned int>(validoNList.size()), 3, false, false);
 
   unsigned int i = 0;
-  for (const std::array<double, 3> &oX: validoXList) {
-    oXs[i][0] = oX[0];
-    oXs[i][1] = oX[1];
-    oXs[i][2] = oX[2];
+  for (const std::array<double, 3> &valid_oX: validoXList) {
+    oXs[i][0] = valid_oX[0];
+    oXs[i][1] = valid_oX[1];
+    oXs[i][2] = valid_oX[2];
     ++i;
   }
   i = 0;
-  for (const std::array<double, 3> &oN: validoNList) {
-    oNs[i][0] = oN[0];
-    oNs[i][1] = oN[1];
-    oNs[i][2] = oN[2];
+  for (const std::array<double, 3> &valid_oN: validoNList) {
+    oNs[i][0] = valid_oN[0];
+    oNs[i][1] = valid_oN[1];
+    oNs[i][2] = valid_oN[2];
     ++i;
   }
 }

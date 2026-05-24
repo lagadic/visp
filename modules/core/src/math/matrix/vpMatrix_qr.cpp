@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -512,10 +512,10 @@ unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, dou
     //    std::cout << "gsl_R:\n "; display_gsl(gsl_R);
 
     unsigned int Qtda = static_cast<unsigned int>(gsl_Q->tda);
-    size_t len = sizeof(double) * Q.colNum;
+    size_t Clen = sizeof(double) * Q.colNum;
     for (unsigned int i = 0; i < Q.rowNum; ++i) {
       unsigned int k = i * Qtda;
-      memcpy(Q[i], &gsl_Q->data[k], len);
+      memcpy(Q[i], &gsl_Q->data[k], Clen);
       //      for(unsigned int j = 0; j < Q.colNum; ++j) {
       //        Q[i][j] = gsl_Q->data[k + j];
       //      }

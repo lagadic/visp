@@ -136,7 +136,7 @@ public:
 public:
   vpAfma6();
   /*! Destructor that does nothing. */
-  virtual ~vpAfma6() { }
+  virtual ~vpAfma6() {}
 
   /** @name Inherited functionalities from vpAfma6 */
   //@{
@@ -145,9 +145,8 @@ public:
   void init(const std::string &camera_extrinsic_parameters, const std::string &camera_intrinsic_parameters);
   void init(vpAfma6::vpAfma6ToolType tool, const std::string &filename);
   void init(vpAfma6::vpAfma6ToolType tool, const vpHomogeneousMatrix &eMc_);
-  void
-    init(vpAfma6::vpAfma6ToolType tool,
-         vpCameraParameters::vpCameraParametersProjType projModel = vpCameraParameters::perspectiveProjWithoutDistortion);
+  void init(vpAfma6::vpAfma6ToolType tool,
+            vpCameraParameters::vpCameraParametersProjType projModel = vpCameraParameters::perspectiveProjWithoutDistortion);
 
   vpHomogeneousMatrix getForwardKinematics(const vpColVector &q) const;
   int getInverseKinematics(const vpHomogeneousMatrix &fMc, vpColVector &q, const bool &nearest = true,
@@ -166,7 +165,7 @@ public:
   //! Get the current tool type
   vpAfma6ToolType getToolType() const { return tool_current; }
   //! Get the current camera model projection type
-  vpCameraParameters::vpCameraParametersProjType getCameraParametersProjType() const { return projModel; }
+  vpCameraParameters::vpCameraParametersProjType getCameraParametersProjType() const { return m_projModel; }
 
   void getCameraParameters(vpCameraParameters &cam, const unsigned int &image_width,
                            const unsigned int &image_height) const;
@@ -210,7 +209,7 @@ protected:
   //! Current tool in use
   vpAfma6ToolType tool_current;
   // Used projection model
-  vpCameraParameters::vpCameraParametersProjType projModel;
+  vpCameraParameters::vpCameraParametersProjType m_projModel;
 };
 END_VISP_NAMESPACE
 #endif

@@ -116,7 +116,7 @@ const unsigned int vpAfma6::njoint = 6;
 */
 vpAfma6::vpAfma6()
   : _coupl_56(0), _long_56(0), _etc(), _erc(), _eMc(), tool_current(vpAfma6::defaultTool),
-  projModel(vpCameraParameters::perspectiveProjWithoutDistortion)
+  m_projModel(vpCameraParameters::perspectiveProjWithoutDistortion)
 {
   // Set the default parameters in case of the config files are not available.
 
@@ -268,14 +268,14 @@ void vpAfma6::init(vpAfma6::vpAfma6ToolType tool, const vpHomogeneousMatrix &eMc
 void vpAfma6::init(vpAfma6::vpAfma6ToolType tool, vpCameraParameters::vpCameraParametersProjType proj_model)
 {
 
-  this->projModel = proj_model;
+  m_projModel = proj_model;
 
 #ifdef VISP_HAVE_AFMA6_DATA
   // Read the robot parameters from files
   std::string filename_eMc;
   switch (tool) {
   case vpAfma6::TOOL_CCMOP: {
-    switch (projModel) {
+    switch (m_projModel) {
     case vpCameraParameters::perspectiveProjWithoutDistortion:
       filename_eMc = CONST_EMC_CCMOP_WITHOUT_DISTORTION_FILENAME;
       break;
@@ -290,7 +290,7 @@ void vpAfma6::init(vpAfma6::vpAfma6ToolType tool, vpCameraParameters::vpCameraPa
     break;
   }
   case vpAfma6::TOOL_GRIPPER: {
-    switch (projModel) {
+    switch (m_projModel) {
     case vpCameraParameters::perspectiveProjWithoutDistortion:
       filename_eMc = CONST_EMC_GRIPPER_WITHOUT_DISTORTION_FILENAME;
       break;
@@ -305,7 +305,7 @@ void vpAfma6::init(vpAfma6::vpAfma6ToolType tool, vpCameraParameters::vpCameraPa
     break;
   }
   case vpAfma6::TOOL_VACUUM: {
-    switch (projModel) {
+    switch (m_projModel) {
     case vpCameraParameters::perspectiveProjWithoutDistortion:
       filename_eMc = CONST_EMC_VACUUM_WITHOUT_DISTORTION_FILENAME;
       break;
@@ -320,7 +320,7 @@ void vpAfma6::init(vpAfma6::vpAfma6ToolType tool, vpCameraParameters::vpCameraPa
     break;
   }
   case vpAfma6::TOOL_INTEL_D435_CAMERA: {
-    switch (projModel) {
+    switch (m_projModel) {
     case vpCameraParameters::perspectiveProjWithoutDistortion:
       filename_eMc = CONST_EMC_INTEL_D435_WITHOUT_DISTORTION_FILENAME;
       break;
@@ -335,7 +335,7 @@ void vpAfma6::init(vpAfma6::vpAfma6ToolType tool, vpCameraParameters::vpCameraPa
     break;
   }
   case vpAfma6::TOOL_GENERIC_CAMERA: {
-    switch (projModel) {
+    switch (m_projModel) {
     case vpCameraParameters::perspectiveProjWithoutDistortion:
       filename_eMc = CONST_EMC_GENERIC_WITHOUT_DISTORTION_FILENAME;
       break;
@@ -362,7 +362,7 @@ void vpAfma6::init(vpAfma6::vpAfma6ToolType tool, vpCameraParameters::vpCameraPa
   // Use here default values of the robot constant parameters.
   switch (tool) {
   case vpAfma6::TOOL_CCMOP: {
-    switch (projModel) {
+    switch (m_projModel) {
     case vpCameraParameters::perspectiveProjWithoutDistortion:
       _erc[0] = vpMath::rad(164.35); // rx
       _erc[1] = vpMath::rad(89.64);  // ry
@@ -386,7 +386,7 @@ void vpAfma6::init(vpAfma6::vpAfma6ToolType tool, vpCameraParameters::vpCameraPa
     break;
   }
   case vpAfma6::TOOL_GRIPPER: {
-    switch (projModel) {
+    switch (m_projModel) {
     case vpCameraParameters::perspectiveProjWithoutDistortion:
       _erc[0] = vpMath::rad(88.33); // rx
       _erc[1] = vpMath::rad(72.07); // ry
@@ -410,7 +410,7 @@ void vpAfma6::init(vpAfma6::vpAfma6ToolType tool, vpCameraParameters::vpCameraPa
     break;
   }
   case vpAfma6::TOOL_VACUUM: {
-    switch (projModel) {
+    switch (m_projModel) {
     case vpCameraParameters::perspectiveProjWithoutDistortion:
       _erc[0] = vpMath::rad(90.40); // rx
       _erc[1] = vpMath::rad(75.11); // ry
@@ -434,7 +434,7 @@ void vpAfma6::init(vpAfma6::vpAfma6ToolType tool, vpCameraParameters::vpCameraPa
     break;
   }
   case vpAfma6::TOOL_INTEL_D435_CAMERA: {
-    switch (projModel) {
+    switch (m_projModel) {
     case vpCameraParameters::perspectiveProjWithoutDistortion:
       _erc[0] = vpMath::rad(-71.41); // rx
       _erc[1] = vpMath::rad(89.49);  // ry
@@ -459,7 +459,7 @@ void vpAfma6::init(vpAfma6::vpAfma6ToolType tool, vpCameraParameters::vpCameraPa
   }
   case vpAfma6::TOOL_CUSTOM:
   case vpAfma6::TOOL_GENERIC_CAMERA: {
-    switch (projModel) {
+    switch (m_projModel) {
     case vpCameraParameters::perspectiveProjWithoutDistortion:
     case vpCameraParameters::perspectiveProjWithDistortion:
       // set eMc to identity
@@ -1268,7 +1268,7 @@ void vpAfma6::getCameraParameters(vpCameraParameters &cam, const unsigned int &i
   case vpAfma6::TOOL_CCMOP: {
     std::cout << "Get camera parameters for camera \"" << vpAfma6::CONST_CCMOP_CAMERA_NAME << "\"" << std::endl
       << "from the XML file: \"" << vpAfma6::CONST_CAMERA_AFMA6_FILENAME << "\"" << std::endl;
-    if (parser.parse(cam, vpAfma6::CONST_CAMERA_AFMA6_FILENAME, vpAfma6::CONST_CCMOP_CAMERA_NAME, projModel,
+    if (parser.parse(cam, vpAfma6::CONST_CAMERA_AFMA6_FILENAME, vpAfma6::CONST_CCMOP_CAMERA_NAME, m_projModel,
                      image_width, image_height) != vpXmlParserCamera::SEQUENCE_OK) {
       throw vpRobotException(vpRobotException::readingParametersError, "Impossible to read the camera parameters.");
     }
@@ -1277,7 +1277,7 @@ void vpAfma6::getCameraParameters(vpCameraParameters &cam, const unsigned int &i
   case vpAfma6::TOOL_GRIPPER: {
     std::cout << "Get camera parameters for camera \"" << vpAfma6::CONST_GRIPPER_CAMERA_NAME << "\"" << std::endl
       << "from the XML file: \"" << vpAfma6::CONST_CAMERA_AFMA6_FILENAME << "\"" << std::endl;
-    if (parser.parse(cam, vpAfma6::CONST_CAMERA_AFMA6_FILENAME, vpAfma6::CONST_GRIPPER_CAMERA_NAME, projModel,
+    if (parser.parse(cam, vpAfma6::CONST_CAMERA_AFMA6_FILENAME, vpAfma6::CONST_GRIPPER_CAMERA_NAME, m_projModel,
                      image_width, image_height) != vpXmlParserCamera::SEQUENCE_OK) {
       throw vpRobotException(vpRobotException::readingParametersError, "Impossible to read the camera parameters.");
     }
@@ -1286,7 +1286,7 @@ void vpAfma6::getCameraParameters(vpCameraParameters &cam, const unsigned int &i
   case vpAfma6::TOOL_VACUUM: {
     std::cout << "Get camera parameters for camera \"" << vpAfma6::CONST_VACUUM_CAMERA_NAME << "\"" << std::endl
       << "from the XML file: \"" << vpAfma6::CONST_CAMERA_AFMA6_FILENAME << "\"" << std::endl;
-    if (parser.parse(cam, vpAfma6::CONST_CAMERA_AFMA6_FILENAME, vpAfma6::CONST_VACUUM_CAMERA_NAME, projModel,
+    if (parser.parse(cam, vpAfma6::CONST_CAMERA_AFMA6_FILENAME, vpAfma6::CONST_VACUUM_CAMERA_NAME, m_projModel,
                      image_width, image_height) != vpXmlParserCamera::SEQUENCE_OK) {
       throw vpRobotException(vpRobotException::readingParametersError, "Impossible to read the camera parameters.");
     }
@@ -1295,7 +1295,7 @@ void vpAfma6::getCameraParameters(vpCameraParameters &cam, const unsigned int &i
   case vpAfma6::TOOL_INTEL_D435_CAMERA: {
     std::cout << "Get camera parameters for camera \"" << vpAfma6::CONST_INTEL_D435_CAMERA_NAME << "\"" << std::endl
       << "from the XML file: \"" << vpAfma6::CONST_CAMERA_AFMA6_FILENAME << "\"" << std::endl;
-    if (parser.parse(cam, vpAfma6::CONST_CAMERA_AFMA6_FILENAME, vpAfma6::CONST_INTEL_D435_CAMERA_NAME, projModel,
+    if (parser.parse(cam, vpAfma6::CONST_CAMERA_AFMA6_FILENAME, vpAfma6::CONST_INTEL_D435_CAMERA_NAME, m_projModel,
                      image_width, image_height) != vpXmlParserCamera::SEQUENCE_OK) {
       throw vpRobotException(vpRobotException::readingParametersError, "Impossible to read the camera parameters.");
     }
@@ -1304,7 +1304,7 @@ void vpAfma6::getCameraParameters(vpCameraParameters &cam, const unsigned int &i
   case vpAfma6::TOOL_GENERIC_CAMERA: {
     std::cout << "Get camera parameters for camera \"" << vpAfma6::CONST_GENERIC_CAMERA_NAME << "\"" << std::endl
       << "from the XML file: \"" << vpAfma6::CONST_CAMERA_AFMA6_FILENAME << "\"" << std::endl;
-    if (parser.parse(cam, vpAfma6::CONST_CAMERA_AFMA6_FILENAME, vpAfma6::CONST_GENERIC_CAMERA_NAME, projModel,
+    if (parser.parse(cam, vpAfma6::CONST_CAMERA_AFMA6_FILENAME, vpAfma6::CONST_GENERIC_CAMERA_NAME, m_projModel,
                      image_width, image_height) != vpXmlParserCamera::SEQUENCE_OK) {
       throw vpRobotException(vpRobotException::readingParametersError, "Impossible to read the camera parameters.");
     }
@@ -1331,7 +1331,7 @@ void vpAfma6::getCameraParameters(vpCameraParameters &cam, const unsigned int &i
     if (image_width == 640 && image_height == 480) {
       std::cout << "Get default camera parameters for camera \"" << vpAfma6::CONST_CCMOP_CAMERA_NAME << "\""
         << std::endl;
-      switch (this->projModel) {
+      switch (m_projModel) {
       case vpCameraParameters::perspectiveProjWithoutDistortion:
         cam.initPersProjWithoutDistortion(1108.0, 1110.0, 314.5, 243.2);
         break;
@@ -1355,7 +1355,7 @@ void vpAfma6::getCameraParameters(vpCameraParameters &cam, const unsigned int &i
     if (image_width == 640 && image_height == 480) {
       std::cout << "Get default camera parameters for camera \"" << vpAfma6::CONST_GRIPPER_CAMERA_NAME << "\""
         << std::endl;
-      switch (this->projModel) {
+      switch (m_projModel) {
       case vpCameraParameters::perspectiveProjWithoutDistortion:
         cam.initPersProjWithoutDistortion(850.9, 853.0, 311.1, 243.6);
         break;
@@ -1379,7 +1379,7 @@ void vpAfma6::getCameraParameters(vpCameraParameters &cam, const unsigned int &i
     if (image_width == 640 && image_height == 480) {
       std::cout << "Get default camera parameters for camera \"" << vpAfma6::CONST_VACUUM_CAMERA_NAME << "\""
         << std::endl;
-      switch (this->projModel) {
+      switch (m_projModel) {
       case vpCameraParameters::perspectiveProjWithoutDistortion:
         cam.initPersProjWithoutDistortion(853.5, 856.0, 307.8, 236.8);
         break;
@@ -1403,7 +1403,7 @@ void vpAfma6::getCameraParameters(vpCameraParameters &cam, const unsigned int &i
     if (image_width == 640 && image_height == 480) {
       std::cout << "Get default camera parameters for camera \"" << vpAfma6::CONST_INTEL_D435_CAMERA_NAME << "\""
         << std::endl;
-      switch (this->projModel) {
+      switch (m_projModel) {
       case vpCameraParameters::perspectiveProjWithoutDistortion:
         cam.initPersProjWithoutDistortion(605.4, 605.6, 328.6, 241.0);
         break;
@@ -1427,7 +1427,7 @@ void vpAfma6::getCameraParameters(vpCameraParameters &cam, const unsigned int &i
     if (image_width == 640 && image_height == 480) {
       std::cout << "Get default camera parameters for camera \"" << vpAfma6::CONST_GENERIC_CAMERA_NAME << "\""
         << std::endl;
-      switch (this->projModel) {
+      switch (m_projModel) {
       case vpCameraParameters::perspectiveProjWithoutDistortion:
         cam.initPersProjWithoutDistortion(853.5, 856.0, 307.8, 236.8);
         break;

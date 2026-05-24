@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -159,7 +159,6 @@ SCENARIO("Sequentially instanciating and destroying Panda3D renderers", "[Panda3
       vpPanda3DGeometryRenderer r2(vpPanda3DGeometryRenderer::CAMERA_NORMALS);
       r2.setRenderParameters(defaultRenderParams());
       r2.initFramework();
-      vpImage<float> depth;
       r2.renderFrame();
       r2.getRender(depth);
 

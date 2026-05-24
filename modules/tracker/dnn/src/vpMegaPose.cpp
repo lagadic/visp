@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -183,7 +183,7 @@ void encode(std::vector<uint8_t> &buffer, const vpHomogeneousMatrix &object)
 /*Decode elements (passed as references), given a buffer of bytes and an index (modified)*/
 
 void decode(const std::vector<uint8_t> &, unsigned int &)
-{ }
+{}
 
 /*
   Modify an object, given a byte array and an index reading into the byte array.
@@ -569,9 +569,9 @@ vpImage<vpRGBa> vpMegaPose::viewObjects(const std::vector<std::string>&objectNam
   j["labels"] = objectNames;
   json cToJson = json::array();
   for (const vpHomogeneousMatrix &cTo : poses) {
-    json j;
-    to_megapose_json(j, cTo);
-    cToJson.push_back(j);
+    json jj;
+    to_megapose_json(jj, cTo);
+    cToJson.push_back(jj);
   }
   j["poses"] = cToJson;
   j["type"] = viewType;
@@ -634,12 +634,12 @@ END_VISP_NAMESPACE
 class VISP_EXPORT dummy_vpMegaPose
 {
 public:
-  dummy_vpMegaPose() { }
+  dummy_vpMegaPose() {}
 };
 
 #if !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_dnn_tracker.a(vpMegaPose.cpp.o) has no symbols
-void dummy_vpMegaPose_fct() { }
+void dummy_vpMegaPose_fct() {}
 #endif
 
 #endif

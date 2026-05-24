@@ -72,12 +72,12 @@ int main(int argc, char *argv[])
   vpRealSense2 realsense;
   int width = 640, height = 480;
   int fps = 30;
-  rs2::config config;
-  config.enable_stream(RS2_STREAM_COLOR, width, height, RS2_FORMAT_RGBA8, fps);
-  config.enable_stream(RS2_STREAM_DEPTH, width, height, RS2_FORMAT_Z16, fps);
+  rs2::config rs_config;
+  rs_config.enable_stream(RS2_STREAM_COLOR, width, height, RS2_FORMAT_RGBA8, fps);
+  rs_config.enable_stream(RS2_STREAM_DEPTH, width, height, RS2_FORMAT_Z16, fps);
 
   try {
-    realsense.open(config);
+    realsense.open(rs_config);
   }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.what() << std::endl;

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,8 +83,8 @@ public:
     const double u0 = m_dist(m_rand);
     const double v0 = m_dist(m_rand);
 
-    const int type = m_type_dist(m_rand);
-    switch (type) {
+    const int type_dist = m_type_dist(m_rand);
+    switch (type_dist) {
     case 0: {
       current.initPersProjWithoutDistortion(px, py, u0, v0);
       break;
