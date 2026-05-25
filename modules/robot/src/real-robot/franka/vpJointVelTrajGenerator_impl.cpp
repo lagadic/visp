@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +39,7 @@
 #include <algorithm>
 #include <cmath>
 #include <iomanip>
+#include <limits>
 
 #include <franka/exception.h>
 #include <franka/model.h>
@@ -114,7 +115,7 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot, std::atomic_b
 
     static vpJointVelTrajGenerator joint_vel_traj_generator;
 
-    if (time == 0.0) {
+    if (std::abs(time) <= std::numeric_limits<double>::epsilon()) {
       if (!log_folder.empty()) {
         log_time.open(log_folder + "/time.log");
         log_q_mes.open(log_folder + "/q-mes.log");
@@ -206,7 +207,7 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot, std::atomic_b
 
               static vpJointVelTrajGenerator joint_vel_traj_generator;
 
-              if (time == 0.0) {
+              if (std::abs(time) <= std::numeric_limits<double>::epsilon()) {
                 if (!log_folder.empty()) {
                   log_time.open(log_folder + "/time.log");
                   log_q_mes.open(log_folder + "/q-mes.log");
@@ -426,7 +427,7 @@ void vpJointVelTrajGenerator::applyVel(const std::array<double, 7> &dq_des, std:
   for (size_t i = 0; i < m_njoints; i++) {
     m_dq_des[i] = dq_des[i];
 
-    if (m_dq_des[i] != m_dq_des_prev[i]) {
+    if (std::abs(m_dq_des[i] - m_dq_des_prev[i]) > std::numeric_limits<double>::epsilon()) {
 
       m_flagJointLimit = false;
 
@@ -625,5 +626,5 @@ std::array<double, 7> vpJointVelTrajGenerator::limitRate(const std::array<double
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpJointVelTrajGenerator.cpp.o) has no symbols
-void dummy_vpJointVelTrajGenerator() { }
+void dummy_vpJointVelTrajGenerator() {}
 #endif // VISP_HAVE_FRANKA
