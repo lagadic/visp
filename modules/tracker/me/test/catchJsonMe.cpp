@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,9 +58,28 @@ using json = nlohmann::json; //! json namespace shortcut
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
+namespace
+{
+  // Comparison for non floating-point types (ie: int, bool)
+template <typename T>
+typename std::enable_if<!std::is_floating_point<T>::value, bool>::type
+is_equal(T a, T b)
+{
+  return a == b;
+}
+
+// Comparison for floating-point types (ie: double, float)
+template <typename T>
+typename std::enable_if<std::is_floating_point<T>::value, bool>::type
+is_equal(T a, T b)
+{
+  return std::fabs(a - b) <= std::numeric_limits<T>::epsilon();
+}
+}
+
 template <typename T, typename C> void checkProperties(const T &t1, const T &t2, C fn, const std::string &message)
 {
-  THEN(message) { REQUIRE((t1.*fn)() == (t2.*fn)()); }
+  THEN(message) { REQUIRE(is_equal((t1.*fn)(), (t2.*fn)())); }
 }
 
 template <typename T, typename C, typename... Fns>
@@ -86,7 +105,7 @@ void testOptionalProperty(json &j, const std::vector<std::string> &keys, vpMe &m
       j.erase(k);
     }
     from_json(j, me);
-    REQUIRE(getter(&me) == v);
+    REQUIRE(is_equal(getter(&me), v));
   }
 }
 
