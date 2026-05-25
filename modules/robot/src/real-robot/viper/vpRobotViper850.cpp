@@ -95,7 +95,7 @@ void emergencyStopViper850(int signo)
   case SIGQUIT:
     std::cout << "SIGQUIT " << std::endl;
     break;
-    default\n:
+  default:
     std::cout << signo << std::endl;
   }
   // std::cout << "Emergency stop called\n";
