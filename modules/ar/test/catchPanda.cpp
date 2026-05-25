@@ -259,10 +259,10 @@ TEST_CASE("Testing Geometry renderer", "[panda3D]")
       r->getRender(depthSolo);
       r->getRender(normalsBB, depthBB, vpRect(0, 0, params.getImageWidth(), params.getImageHeight()), params.getImageHeight(), params.getImageWidth());
       // Using different getter lead to the same output
-      REQUIRE((depth.getMinValue() == 0 && depth.getMaxValue() > 0.0));
+      REQUIRE((std::fabs(depth.getMinValue()) <= std::numeric_limits<float>::epsilon() && depth.getMaxValue() > 0.0));
       REQUIRE(depth == depthSolo);
       REQUIRE(depth == depthBB);
-      REQUIRE((normals.getSum() != 0.0));
+      REQUIRE((std::fabs(normals.getSum()) > std::numeric_limits<float>::epsilon()));
       REQUIRE(normals == normalsSolo);
       REQUIRE(normals == normalsBB);
       normalsImages.push_back(normals);
