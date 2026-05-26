@@ -389,7 +389,7 @@ std::optional<vpPlane> vpPlaneEstimation::estimatePlane(const vpImage<float> &I_
   for (int i = roi_top; i < roi_bottom; i = i + subsample_factor) {
     for (int j = roi_left; j < roi_right; j = j + subsample_factor) {
       const auto pixel = vpImagePoint { static_cast<double>(i), static_cast<double>(j) };
-      if ((I_depth[i][j] != 0) && isInside(pixel, roi) && isValid(pixel)) {
+      if ((I_depth[i][j] > 0.0f) && isInside(pixel, roi) && isValid(pixel)) {
         double x { 0. }, y { 0. };
         vpPixelMeterConversion::convertPoint(depth_intrinsics, pixel, x, y);
         const double Z = I_depth[i][j];
