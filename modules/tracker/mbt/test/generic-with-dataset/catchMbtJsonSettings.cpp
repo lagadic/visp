@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -337,8 +337,8 @@ SCENARIO("MBT JSON Serialization", "[json]")
           });
           REQUIRE_NOTHROW(t2.loadConfigFile(jsonPath, false));
           REQUIRE(t2.getClipping() == clipping);
-          REQUIRE(t2.getNearClippingDistance() == clipping_near);
-          REQUIRE(t2.getFarClippingDistance() == clipping_far);
+          REQUIRE(t2.getNearClippingDistance() == Catch::Approx(clipping_near));
+          REQUIRE(t2.getFarClippingDistance() == Catch::Approx(clipping_far));
         }
 
         THEN("Each clipping param is optional on its own")
@@ -358,8 +358,8 @@ SCENARIO("MBT JSON Serialization", "[json]")
               }
             });
             t2.loadConfigFile(jsonPath);
-            REQUIRE(t2.getNearClippingDistance() == clipping_near);
-            REQUIRE(t2.getFarClippingDistance() == t1.getFarClippingDistance());
+            REQUIRE(t2.getNearClippingDistance() == Catch::Approx(clipping_near));
+            REQUIRE(t2.getFarClippingDistance() == Catch::Approx(t1.getFarClippingDistance()));
             REQUIRE(t2.getClipping() == t1.getClipping());
           }
           THEN("Far clipping is optional")
@@ -370,8 +370,8 @@ SCENARIO("MBT JSON Serialization", "[json]")
               }
             });
             t2.loadConfigFile(jsonPath);
-            REQUIRE(t2.getNearClippingDistance() == t1.getNearClippingDistance());
-            REQUIRE(t2.getFarClippingDistance() == clipping_far);
+            REQUIRE(t2.getNearClippingDistance() == Catch::Approx(t1.getNearClippingDistance()));
+            REQUIRE(t2.getFarClippingDistance() == Catch::Approx(clipping_far));
             REQUIRE(t2.getClipping() == t1.getClipping());
           }
           THEN("Clipping flags are optional")
@@ -382,8 +382,8 @@ SCENARIO("MBT JSON Serialization", "[json]")
               }
             });
             t2.loadConfigFile(jsonPath);
-            REQUIRE(t2.getNearClippingDistance() == t1.getNearClippingDistance());
-            REQUIRE(t2.getFarClippingDistance() == t1.getFarClippingDistance());
+            REQUIRE(t2.getNearClippingDistance() == Catch::Approx(t1.getNearClippingDistance()));
+            REQUIRE(t2.getFarClippingDistance() == Catch::Approx(t1.getFarClippingDistance()));
             REQUIRE(t2.getClipping() & clipping);
           }
         }
