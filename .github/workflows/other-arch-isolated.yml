@@ -57,10 +57,10 @@ jobs:
           # - arch: aarch64
           #   distro: ubuntu:latest
           #   endianness: (Little Endian)
-          - arch: riscv64
-            distro: ubuntu:latest
-            target: RISC-V
-            endianness: (Little Endian)
+          #- arch: riscv64
+          #  distro: ubuntu:latest
+          #  target: RISC-V
+          #  endianness: (Little Endian)
           - arch: ppc64le
             distro: ubuntu:latest
             target: POWER8
