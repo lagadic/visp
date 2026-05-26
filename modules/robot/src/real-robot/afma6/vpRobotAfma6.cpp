@@ -105,11 +105,13 @@ void emergencyStopAfma6(int signo)
 
   // Free allocated resources
   //  ShutDownConnection(); // Some times cannot exit here when Ctrl-C
-
-  fprintf(stdout, "Application ");
+  fprintf(stdout, "Application terminated.\n");
   fflush(stdout);
-  kill(getpid(), SIGKILL);
-  std::exit(EXIT_FAILURE);
+
+  // Reset the signal to its default behavior (which is to crash/exit)
+  signal(signo, SIG_DFL);
+  // Re-raise the signal to the current process for a clean termination by the OS
+  raise(signo);
 }
 
 /* ---------------------------------------------------------------------- */
