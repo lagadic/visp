@@ -50,6 +50,8 @@ using json = nlohmann::json; //! json namespace shortcut
 #include <catch2/catch_all.hpp>
 #endif
 
+#include <type_traits>
+
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;
 #endif
@@ -94,12 +96,30 @@ vpMbGenericTracker baseTrackerConstructor()
   return t;
 }
 
+// 1. Case for floating-point types (double, float)
+template<typename T, typename Obj, typename R>
+typename std::enable_if<std::is_floating_point<R>::value>::type
+checkPropertyEq(const T &t1, const T &t2, R(Obj:: *fn)() const)
+{
+  REQUIRE((t1.*fn)() == Catch::Approx((t2.*fn)()));
+}
+
+// 2. Case for other types (int, unsigned int, etc.)
+template<typename T, typename Obj, typename R>
+typename std::enable_if<!std::is_floating_point<R>::value>::type
+checkPropertyEq(const T &t1, const T &t2, R(Obj:: *fn)() const)
+{
+  REQUIRE((t1.*fn)() == (t2.*fn)());
+}
+
+// 3. The original checkProperties function, which routes to the correct behavior
+//    based on the return type of the member function pointer
 template<typename T, typename C>
 void checkProperties(const T &t1, const T &t2, C fn, const std::string &message)
 {
   THEN(message)
   {
-    REQUIRE((t1.*fn)() == (t2.*fn)());
+    checkPropertyEq(t1, t2, fn);
   }
 }
 
