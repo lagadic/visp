@@ -1153,7 +1153,13 @@ void vpRobotBebop2::sighandler(int signo)
   if (m_deviceController != nullptr) {
     m_deviceController->aRDrone3->sendPilotingLanding(m_deviceController->aRDrone3);
   }
-  std::exit(EXIT_FAILURE);
+  fprintf(stdout, "Application terminated.\n");
+  fflush(stdout);
+
+  // Reset the signal to its default behavior (which is to crash/exit)
+  signal(signo, SIG_DFL);
+  // Re-raise the signal to the current process for a clean termination by the OS
+  raise(signo);
 }
 
 /*!
@@ -2009,5 +2015,5 @@ END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpRobotBebop2.cpp.o) has
 // no symbols
-void dummy_vpRobotBebop2() { }
+void dummy_vpRobotBebop2() {}
 #endif // VISP_HAVE_ARSDK
