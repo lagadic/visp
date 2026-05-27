@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ public:
           c.B = b;
           const float pbg = bg.probability(c);
           const float pObject = object.probability(c);
-          if (pbg == 0.f) {
+          if (pbg <= 0.f) { // We suppose that a probability cannot be negative
             m_probas[index] = pObject > 0.f ? 1.f : 0.f;
           }
           else {
@@ -82,7 +82,7 @@ private:
   std::vector<float> m_probas;
 };
 
-vpColorHistogramMask::vpColorHistogramMask() : m_depthErrorTolerance(0.01f), m_objectUpdateRate(0.1f), m_backgroundUpdateRate(0.1f), m_threshold(2.f), m_computeOnBBOnly(false) { }
+vpColorHistogramMask::vpColorHistogramMask() : m_depthErrorTolerance(0.01f), m_objectUpdateRate(0.1f), m_backgroundUpdateRate(0.1f), m_threshold(2.f), m_computeOnBBOnly(false) {}
 
 void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
                                       const vpRBFeatureTrackerInput &previousFrame,
@@ -128,13 +128,15 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
   const float pObject = static_cast<float>(m_histObjectFrame.getNumPixels()) / numPxTotal;
   const float pBackground = static_cast<float>(m_histBackgroundFrame.getNumPixels()) / numPxTotal;
   {
+    // We wish to merge the object’s histogram only if we have detected pixels belonging to that object
+    // (i.e. if the proportion is strictly greater than 0).
     {
-      if (pObject != 0.f) {
+      if (pObject > 0.f) {
         m_histObject.merge(m_histObjectFrame, m_objectUpdateRate);
       }
     }
     {
-      if (pBackground != 0.f) {
+      if (pBackground > 0.f) {
         m_histBackground.merge(m_histBackgroundFrame, m_backgroundUpdateRate);
       }
     }
