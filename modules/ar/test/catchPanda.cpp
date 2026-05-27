@@ -236,7 +236,7 @@ TEST_CASE("Testing Geometry renderer", "[panda3D]")
     vpHomogeneousMatrix(0.0, 0.0, 0.5, 0.0, vpMath::rad(15), 0.0),
     vpHomogeneousMatrix(0.05, 0.0, 0.4, vpMath::rad(5), 0.0, 0.0),
   };
-
+  float eps = 1e-6f;
   for (const vpHomogeneousMatrix &p: cameraPoses) {
     std::vector<vpImage<vpRGBf>> normalsImages;
     std::vector<vpImage<float>> depthImages;
@@ -262,7 +262,7 @@ TEST_CASE("Testing Geometry renderer", "[panda3D]")
       REQUIRE((std::fabs(depth.getMinValue()) <= std::numeric_limits<float>::epsilon() && depth.getMaxValue() > 0.0));
       REQUIRE(depth == depthSolo);
       REQUIRE(depth == depthBB);
-      REQUIRE((std::fabs(normals.getSum()) > std::numeric_limits<float>::epsilon()));
+      REQUIRE(std::fabs(normals.getSum()) > eps);
       REQUIRE(normals == normalsSolo);
       REQUIRE(normals == normalsBB);
       normalsImages.push_back(normals);
