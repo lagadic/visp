@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ void vpDepthMask::updateMask(const vpRBFeatureTrackerInput &frame,
 
   const auto getProba = [Zmi, Zma, fac](double Z) -> float {
     // Missing depth value => Consider likely
-    if (Z == 0.f) {
+    if (std::fabs(Z) <= std::numeric_limits<double>::epsilon()) {
       return 1.f;
     }
     else {
