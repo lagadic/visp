@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,7 +77,7 @@ inline void vpRBKltTracker::tryAddNewPoint(
 vpRBKltTracker::vpRBKltTracker() :
   vpRBFeatureTracker(), m_numPointsReinit(20), m_newPointsDistanceThreshold(5.0), m_border(5),
   m_maxErrorOutliersPixels(10.0), m_useMask(false), m_minMaskConfidence(0.0)
-{ }
+{}
 
 void vpRBKltTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput & /*previousFrame*/, const vpHomogeneousMatrix &/*cMo*/)
 {
@@ -168,7 +168,7 @@ void vpRBKltTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const
       const unsigned int nbFeatures = static_cast<unsigned int>(m_klt.getNbFeatures());
       for (unsigned int i = 0; i < nbFeaturesTemp; ++i) {
         double threshold = vpMath::sqr(m_newPointsDistanceThreshold); // distance threshold, in squared pixels
-        double tooClose = false;
+        bool tooClose = false;
         float u, v;
         long id;
         kltTemp.getFeature(i, id, u, v);
