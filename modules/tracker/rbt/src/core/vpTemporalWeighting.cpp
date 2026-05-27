@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,7 +78,7 @@ double vpFixedTemporalWeighting::weight(const double /*progress*/) const
 double vpSigmoidTemporalWeighting::weight(const double progress) const
 {
   double w = 1.0;
-  if (progress == 0.0 || m_location == 1.0) {
+  if (progress <= 0.0 || m_location >= 1.0) { // equivalent to progress = 0.0 or m_location = 1.0)
     if (m_power > 0.0) {
       w = 0.0;
     }
