@@ -142,11 +142,11 @@ SCENARIO("Instantiating a silhouette me tracker", "[rbt]")
       THEN("Changing mask min confidence with a correct value is Ok")
       {
         tracker.setMinimumMaskConfidence(0.0);
-        REQUIRE(tracker.getMinimumMaskConfidence() == 0.0);
+        REQUIRE(tracker.getMinimumMaskConfidence() == Catch::Approx(0.0));
         tracker.setMinimumMaskConfidence(1.0);
-        REQUIRE(tracker.getMinimumMaskConfidence() == 1.0);
+        REQUIRE(tracker.getMinimumMaskConfidence() == Catch::Approx(1.0));
         tracker.setMinimumMaskConfidence(0.5);
-        REQUIRE(tracker.getMinimumMaskConfidence() == 0.5);
+        REQUIRE(tracker.getMinimumMaskConfidence() == Catch::Approx(0.5));
       }
       THEN("Setting incorrect mask confidence value fails")
       {
@@ -158,7 +158,7 @@ SCENARIO("Instantiating a silhouette me tracker", "[rbt]")
       THEN("Setting correct value works")
       {
         tracker.setMinRobustThreshold(0.5);
-        REQUIRE(tracker.getMinRobustThreshold() == 0.5);
+        REQUIRE(tracker.getMinRobustThreshold() == Catch::Approx(0.5));
       }
       THEN("Setting negative value throws")
       {
@@ -182,7 +182,7 @@ SCENARIO("Instantiating a silhouette me tracker", "[rbt]")
       THEN("Setting correct single point value works")
       {
         tracker.setSinglePointConvergenceThreshold(1.0);
-        REQUIRE(tracker.getSinglePointConvergenceThreshold() == 1.0);
+        REQUIRE(tracker.getSinglePointConvergenceThreshold() == Catch::Approx(1.0));
       }
       THEN("Setting incorrect single point value throws")
       {
@@ -191,11 +191,11 @@ SCENARIO("Instantiating a silhouette me tracker", "[rbt]")
       THEN("Setting correct global value works")
       {
         tracker.setGlobalConvergenceMinimumRatio(0.0);
-        REQUIRE(tracker.getGlobalConvergenceMinimumRatio() == 0.0);
+        REQUIRE(tracker.getGlobalConvergenceMinimumRatio() == Catch::Approx(0.0));
         tracker.setGlobalConvergenceMinimumRatio(1.0);
-        REQUIRE(tracker.getGlobalConvergenceMinimumRatio() == 1.0);
+        REQUIRE(tracker.getGlobalConvergenceMinimumRatio() == Catch::Approx(1.0));
         tracker.setGlobalConvergenceMinimumRatio(0.5);
-        REQUIRE(tracker.getGlobalConvergenceMinimumRatio() == 0.5);
+        REQUIRE(tracker.getGlobalConvergenceMinimumRatio() == Catch::Approx(0.5));
       }
     }
 #if defined(VISP_HAVE_NLOHMANN_JSON)
@@ -229,9 +229,9 @@ SCENARIO("Instantiating a silhouette me tracker", "[rbt]")
         tracker.loadJsonConfiguration(j);
         REQUIRE(tracker.getNumCandidates() == 1);
         REQUIRE(tracker.shouldUseMask() == true);
-        REQUIRE(tracker.getMinimumMaskConfidence() == 0.5);
+        REQUIRE(tracker.getMinimumMaskConfidence() == Catch::Approx(0.5));
         REQUIRE(tracker.getMe().getMaskNumber() == 90);
-        REQUIRE(tracker.getMe().getThreshold() == 20.0);
+        REQUIRE(tracker.getMe().getThreshold() == Catch::Approx(20.0));
       }
       THEN("Setting incorrect candidate number throws")
       {
@@ -268,7 +268,7 @@ SCENARIO("Instantiating a silhouette CCD tracker", "[rbt]")
       THEN("Setting value above 0 works")
       {
         tracker.setTemporalSmoothingFactor(0.5);
-        REQUIRE(tracker.getTemporalSmoothingFactor() == 0.5);
+        REQUIRE(tracker.getTemporalSmoothingFactor() == Catch::Approx(0.5));
       }
       THEN("Setting value below 0 throws")
       {
@@ -305,11 +305,14 @@ SCENARIO("Instantiating a silhouette CCD tracker", "[rbt]")
       THEN("Loading correct json works")
       {
         tracker.loadJsonConfiguration(j);
-        REQUIRE(tracker.getTemporalSmoothingFactor() == 0.1);
+        REQUIRE(tracker.getTemporalSmoothingFactor() == Catch::Approx(0.1));
         vpCCDParameters ccd = tracker.getCCDParameters();
         REQUIRE(ccd.h == 64);
         REQUIRE(ccd.delta_h == 16);
-        REQUIRE((ccd.gamma_1 == 0.1 && ccd.gamma_2 == 0.2 && ccd.gamma_3 == 0.3 && ccd.gamma_4 == 0.4));
+        REQUIRE((ccd.gamma_1 == Catch::Approx(0.1)
+                 && ccd.gamma_2 == Catch::Approx(0.2)
+                 && ccd.gamma_3 == Catch::Approx(0.3)
+                 && ccd.gamma_4 == Catch::Approx(0.4)));
       }
       THEN("Loading invalid temporal smoothing factor throws")
       {
@@ -341,11 +344,11 @@ SCENARIO("Instantiating KLT tracker")
     THEN("Every change is visible")
     {
       REQUIRE(tracker.getFilteringBorderSize() == 2);
-      REQUIRE(tracker.getFilteringMaxReprojectionError() == 0.024);
-      REQUIRE(tracker.getMinimumDistanceNewPoints() == 0.005);
+      REQUIRE(tracker.getFilteringMaxReprojectionError() == Catch::Approx(0.024));
+      REQUIRE(tracker.getMinimumDistanceNewPoints() == Catch::Approx(0.005));
       REQUIRE(tracker.getMinimumNumberOfPoints() == 20);
       REQUIRE(tracker.shouldUseMask());
-      REQUIRE(tracker.getMinimumMaskConfidence() == 0.5);
+      REQUIRE(tracker.getMinimumMaskConfidence() == Catch::Approx(0.5));
     }
     THEN("Setting incorrect Mask confidence throws")
     {
@@ -372,12 +375,12 @@ SCENARIO("Instantiating KLT tracker")
     {
       tracker.loadJsonConfiguration(j);
       REQUIRE(tracker.getMinimumNumberOfPoints() == 25);
-      REQUIRE(tracker.getMinimumDistanceNewPoints() == 5);
-      REQUIRE(tracker.getFilteringMaxReprojectionError() == 0.01);
+      REQUIRE(tracker.getMinimumDistanceNewPoints() == Catch::Approx(5));
+      REQUIRE(tracker.getFilteringMaxReprojectionError() == Catch::Approx(0.01));
       REQUIRE(tracker.shouldUseMask() == true);
-      REQUIRE(tracker.getMinimumMaskConfidence() == 0.1f);
+      REQUIRE(tracker.getMinimumMaskConfidence() == Catch::Approx(0.1f));
       REQUIRE(tracker.getKltTracker().getWindowSize() == 7);
-      REQUIRE(tracker.getKltTracker().getQuality() == 0.01);
+      REQUIRE(tracker.getKltTracker().getQuality() == Catch::Approx(0.01));
       REQUIRE(tracker.getKltTracker().getMaxFeatures() == 500);
     }
     THEN("Loading invalid mask confidence throws")
@@ -414,7 +417,7 @@ SCENARIO("Instantiating depth tracker", "[rbt]")
     THEN("Setting correct mask confidence value")
     {
       tracker.setMinimumMaskConfidence(0.8);
-      REQUIRE(tracker.getMinimumMaskConfidence() == 0.8f);
+      REQUIRE(tracker.getMinimumMaskConfidence() == Catch::Approx(0.8f));
     }
     THEN("Toggling mask works")
     {
@@ -437,7 +440,7 @@ SCENARIO("Instantiating depth tracker", "[rbt]")
       tracker.loadJsonConfiguration(j);
       REQUIRE(tracker.getStep() == 16);
       REQUIRE(tracker.shouldUseMask());
-      REQUIRE(tracker.getMinimumMaskConfidence() == 0.1f);
+      REQUIRE(tracker.getMinimumMaskConfidence() == Catch::Approx(0.1f));
     }
     THEN("Loading invalid mask confidence throws")
     {
@@ -475,7 +478,7 @@ SCENARIO("Instantiating a render-based tracker", "[rbt]")
     THEN("Positive gain is ok")
     {
       tracker.setOptimizationGain(0.5);
-      REQUIRE(tracker.getOptimizationGain() == 0.5);
+      REQUIRE(tracker.getOptimizationGain() == Catch::Approx(0.5));
     }
     THEN("Initial mu cannot be negative")
     {
@@ -484,12 +487,12 @@ SCENARIO("Instantiating a render-based tracker", "[rbt]")
     THEN("Initial mu can be zero (gauss newton)")
     {
       tracker.setOptimizationInitialMu(0.0);
-      REQUIRE(tracker.getOptimizationInitialMu() == 0.0);
+      REQUIRE(tracker.getOptimizationInitialMu() == Catch::Approx(0.0));
     }
     THEN("Initial mu can be above zero")
     {
       tracker.setOptimizationInitialMu(0.1);
-      REQUIRE(tracker.getOptimizationInitialMu() == 0.1);
+      REQUIRE(tracker.getOptimizationInitialMu() == Catch::Approx(0.1));
     }
 
     THEN("Mu factor cannot be negative")
@@ -499,12 +502,12 @@ SCENARIO("Instantiating a render-based tracker", "[rbt]")
     THEN("Mu factor can be zero")
     {
       tracker.setOptimizationMuIterFactor(0.0);
-      REQUIRE(tracker.getOptimizationMuIterFactor() == 0.0);
+      REQUIRE(tracker.getOptimizationMuIterFactor() == Catch::Approx(0.0));
     }
     THEN("Mu factor can be positive")
     {
       tracker.setOptimizationMuIterFactor(0.1);
-      REQUIRE(tracker.getOptimizationMuIterFactor() == 0.1);
+      REQUIRE(tracker.getOptimizationMuIterFactor() == Catch::Approx(0.1));
     }
   }
 
@@ -610,14 +613,14 @@ SCENARIO("Instantiating a render-based tracker", "[rbt]")
     })JSON";
     const auto verifyBase = [&tracker]() {
       REQUIRE((tracker.getImageHeight() == 240 && tracker.getImageWidth() == 320));
-      REQUIRE((tracker.getOptimizationGain() == 1.0 && tracker.getMaxOptimizationIters() == 10));
+      REQUIRE((tracker.getOptimizationGain() == Catch::Approx(1.0) && tracker.getMaxOptimizationIters() == 10));
       vpSilhouettePointsExtractionSettings silset = tracker.getSilhouetteExtractionParameters();
-      REQUIRE((silset.thresholdIsRelative() && silset.getThreshold() == 0.1));
+      REQUIRE((silset.thresholdIsRelative() && silset.getThreshold() == Catch::Approx(0.1)));
       REQUIRE((silset.getSampleStep() == 2 && silset.getMaxCandidates() == 128));
       REQUIRE((silset.preferPreviousPoints()));
 
-      REQUIRE((tracker.getOptimizationGain() == 1.0 && tracker.getMaxOptimizationIters() == 10));
-      REQUIRE((tracker.getOptimizationInitialMu() == 0.5 && tracker.getOptimizationMuIterFactor() == 0.1));
+      REQUIRE((tracker.getOptimizationGain() == Catch::Approx(1.0) && tracker.getMaxOptimizationIters() == 10));
+      REQUIRE((tracker.getOptimizationInitialMu() == Catch::Approx(0.5) && tracker.getOptimizationMuIterFactor() == Catch::Approx(0.1)));
       };
     nlohmann::json j = nlohmann::json::parse(jsonLiteral);
     THEN("Loading configuration with trackers")
