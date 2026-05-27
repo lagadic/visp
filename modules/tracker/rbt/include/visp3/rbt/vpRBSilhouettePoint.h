@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ public:
 
   vpRBSilhouettePoint(unsigned int a_i, unsigned int a_j, const vpColVector &a_normal, double a_orientation, double a_Z) :
     i(a_i), j(a_j), normal(a_normal), orientation(a_orientation), Z(a_Z)
-  { }
+  {}
 
   void detectSilhouette(const vpImage<float> &I)
   {
@@ -74,10 +74,11 @@ public:
     }
     double c = cos(orientation);
     double s = sin(orientation);
+    float eps = 1e-6f;
     for (int n = -range; n <= range; n++) {
       unsigned int ii = static_cast<unsigned int>(round(i + s * n));
       unsigned int jj = static_cast<unsigned int>(round(j + c * n));
-      unsigned int isBg = static_cast<unsigned int>(I[ii][jj] == 0.f);
+      unsigned int isBg = static_cast<unsigned int>(std::fabs(I[ii][jj]) < eps);
       k += isBg;
     }
     isSilhouette = k > 2;
