@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -127,12 +127,7 @@ void vpRBSilhouetteControlPoint::track(const vpImage<unsigned char> &I)
 
   if (m_site.getState() == vpMeSite::NO_SUPPRESSION) {
     try {
-      if (m_site.m_convlt == 0) {
-        m_site.track(I, m_me, false);
-      }
-      else {
-        m_site.track(I, m_me, false);
-      }
+      m_site.track(I, m_me, false);
     }
     catch (vpTrackingException &) {
       vpERROR_TRACE("caught a tracking exception, ignoring me point...");
