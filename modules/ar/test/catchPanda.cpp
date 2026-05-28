@@ -62,27 +62,32 @@ using namespace VISP_NAMESPACE_NAME;
 
 const std::string objCube =
 "o Cube\n"
-"v -0.050000 -0.050000 0.050000\n"
-"v -0.050000 0.050000 0.050000\n"
+"v -0.050000 -0.050000  0.050000\n"
+"v -0.050000  0.050000  0.050000\n"
 "v -0.050000 -0.050000 -0.050000\n"
-"v -0.050000 0.050000 -0.050000\n"
-"v 0.050000 -0.050000 0.050000\n"
-"v 0.050000 0.050000 0.050000\n"
-"v 0.050000 -0.050000 -0.050000\n"
-"v 0.050000 0.050000 -0.050000\n"
-"f 2/4/1 3/8/1 1/1/1\n"
-"f 4/9/2 7/13/2 3/8/2\n"
-"f 8/14/3 5/11/3 7/13/3\n"
-"f 6/12/4 1/2/4 5/11/4\n"
-"f 7/13/5 1/3/5 3/7/5\n"
-"f 4/10/6 6/12/6 8/14/6\n"
-"f 2/4/1 4/9/1 3/8/1\n"
-"f 4/9/2 8/14/2 7/13/2\n"
-"f 8/14/3 6/12/3 5/11/3\n"
-"f 6/12/4 2/5/4 1/2/4\n"
-"f 7/13/5 5/11/5 1/3/5\n"
-"f 4/10/6 2/6/6 6/12/6\n";
-
+"v -0.050000  0.050000 -0.050000\n"
+"v  0.050000 -0.050000  0.050000\n"
+"v  0.050000  0.050000  0.050000\n"
+"v  0.050000 -0.050000 -0.050000\n"
+"v  0.050000  0.050000 -0.050000\n"
+"vn -1.0000  0.0000  0.0000\n"  // face -X
+"vn  0.0000  0.0000 -1.0000\n"  // face -Z
+"vn  1.0000  0.0000  0.0000\n"  // face +X
+"vn  0.0000  0.0000  1.0000\n"  // face +Z
+"vn  0.0000 -1.0000  0.0000\n"  // face -Y
+"vn  0.0000  1.0000  0.0000\n"  // face +Y
+"f 2//1 3//1 1//1\n"
+"f 4//2 7//2 3//2\n"
+"f 8//3 5//3 7//3\n"
+"f 6//4 1//4 5//4\n"
+"f 7//5 1//5 3//5\n"
+"f 4//6 6//6 8//6\n"
+"f 2//1 4//1 3//1\n"
+"f 4//2 8//2 7//2\n"
+"f 8//3 6//3 5//3\n"
+"f 6//4 2//4 1//4\n"
+"f 7//5 5//5 1//5\n"
+"f 4//6 2//6 6//6\n";
 
 std::string createObjFile()
 {
@@ -229,7 +234,6 @@ TEST_CASE("Testing Geometry renderer", "[panda3D]")
   vpPanda3DGeometryRenderer r1(vpPanda3DGeometryRenderer::CAMERA_NORMALS, false), r2(vpPanda3DGeometryRenderer::CAMERA_NORMALS, true);
   vpPanda3DGeometryRenderer r3(vpPanda3DGeometryRenderer::OBJECT_NORMALS, false), r4(vpPanda3DGeometryRenderer::OBJECT_NORMALS, true);
 
-
   std::vector<vpPanda3DGeometryRenderer *> renderers = { &r1, &r2, &r3, &r4 };
 
   std::vector<vpHomogeneousMatrix> cameraPoses = {
@@ -246,6 +250,7 @@ TEST_CASE("Testing Geometry renderer", "[panda3D]")
     for (const auto r: renderers) {
       r->setRenderParameters(params);
       r->initFramework();
+
       r->addNodeToScene(r->loadObject(objId, createObjFile()));
       r->setNodePose(objId, vpHomogeneousMatrix(0, 0, 0, 0, 0, 0));
       r->setCameraPose(p.inverse());
