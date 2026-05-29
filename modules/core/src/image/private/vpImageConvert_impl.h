@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,23 +71,27 @@ void vp_createDepthHistogram(const vpImage<float> &src_depth, vpImage<unsigned c
 
 #if defined(VISP_HAVE_OPENMP) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   int nThreads = omp_get_max_threads();
-  std::vector<std::array<uint32_t, 0x10000> > histograms(nThreads);
+  std::vector<std::array<uint32_t, 0x10000> > histograms(static_cast<std::size_t>(nThreads));
   for (int i = 0; i < nThreads; ++i) {
-    histograms[i].fill(0);
+    histograms[static_cast<std::size_t>(i)].fill(0);
   }
 
 #pragma omp parallel for num_threads(nThreads)
 
   for (int i = 0; i < src_depth_size; ++i) {
     if (!vpMath::isNaN(src_depth.bitmap[i])) {
-      ++(histograms[omp_get_thread_num()][static_cast<uint32_t>(src_depth.bitmap[i])]);
+      std::size_t thread_idx = static_cast<std::size_t>(omp_get_thread_num());
+      std::size_t pixel_val = static_cast<std::size_t>(src_depth.bitmap[i]);
+      ++(histograms[thread_idx][pixel_val]);
     }
   }
 
 #pragma omp parallel for
   for (int i = 0; i < 0x10000; ++i) {
     for (int j = 0; j < nThreads; ++j) {
-      histogram[i] += histograms[j][i];
+      std::size_t idx_j = static_cast<std::size_t>(j);
+      std::size_t idx_i = static_cast<std::size_t>(i);
+      histogram[idx_i] += histograms[idx_j][idx_i];
     }
   }
 #else
