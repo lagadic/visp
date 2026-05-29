@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,7 +75,7 @@ bool cancelled = false, update_pointcloud = false;
 class ViewerWorker
 {
 public:
-  explicit ViewerWorker(bool color_mode, std::mutex &mutex) : m_colorMode(color_mode), m_mutex(mutex) { }
+  explicit ViewerWorker(bool color_mode, std::mutex &mutex) : m_colorMode(color_mode), m_mutex(mutex) {}
 
   void run()
   {
@@ -161,7 +161,7 @@ void getPointcloud(const rs2::depth_frame &depth_frame, std::vector<vpColVector>
   auto vertices = points.get_vertices();
   vpColVector v(4);
   for (size_t i = 0; i < points.size(); i++) {
-    if (vertices[i].z) {
+    if (std::fabs(vertices[i].z) > std::numeric_limits<float>::epsilon()) {
       v[0] = vertices[i].x;
       v[1] = vertices[i].y;
       v[2] = vertices[i].z;

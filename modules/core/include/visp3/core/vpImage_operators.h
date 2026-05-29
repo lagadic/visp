@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,59 @@
 
 #ifndef VP_IMAGE_OPERATOR_H
 #define VP_IMAGE_OPERATOR_H
+
+#include <visp3/core/vpConfig.h>
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#include <cmath>
+#include <limits>
+#include <type_traits>
+
+namespace vp_internal
+{
+// Version for C++11 and + : for non floating-point types (ie: int, char)
+template <typename T>
+inline typename std::enable_if<!std::is_floating_point<T>::value, bool>::type
+is_not_equal(const T &a, const T &b)
+{
+  return a != b;
+}
+
+// Version for C++11 and + : for floating-point types (float, double)
+template <typename T>
+inline typename std::enable_if<std::is_floating_point<T>::value, bool>::type
+is_not_equal(const T &a, const T &b)
+{
+  return std::fabs(a - b) > std::numeric_limits<T>::epsilon();
+}
+}
+#else // cxx98
+#include <cmath>
+#include <limits>
+
+namespace vp_internal
+{
+// Version for C++98 : Default generic comparison
+template <typename T> inline bool is_not_equal(const T &a, const T &b)
+{
+  return a != b;
+}
+
+// Version for C++98 : explicit comparison for float
+template <> inline bool is_not_equal<float>(const float &a, const float &b)
+{
+// Le cast en double garantit qu'il n'y aura pas d'erreur de compilation,
+// car std::fabs(float) n'était pas standardisé avant C++11
+  return std::fabs(static_cast<double>(a - b)) > std::numeric_limits<float>::epsilon();
+}
+
+// Version for C++98 : explicit comparison for double
+template <> inline bool is_not_equal<double>(const double &a, const double &b)
+{
+  return std::fabs(a - b) > std::numeric_limits<double>::epsilon();
+}
+}
+#endif
 
 // Warning: this file shouldn't be included by the user. Internal usage only to reduce length of vpImage.h
 
@@ -282,7 +335,7 @@ template <class Type> bool vpImage<Type>::operator==(const vpImage<Type> &I) con
   //  I.bitmap);
   */
   for (unsigned int i = 0; i < npixels; ++i) {
-    if (bitmap[i] != I.bitmap[i]) {
+    if (vp_internal::is_not_equal(bitmap[i], I.bitmap[i])) {
       /*
       //      std::cout << "differ for pixel " << i << " (" << i%this->height
       //      << ", " << i - i%this->height << ")" << std::endl;

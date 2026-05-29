@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,7 +87,7 @@ double vpRBProbabilistic3DDriftDetector::score(const vpRBFeatureTrackerInput &fr
 
       float ZrenderMap = frame.renders.depth[p.projRenderPx[1]][p.projRenderPx[0]];
       // Version 2: compare previous projection with render, this does not filter occlusions
-      if (ZrenderMap == 0.f || fabs(p.renderX[2] - ZrenderMap) > m_maxError3D) {
+      if (ZrenderMap <= 0.0f || std::fabs(p.renderX[2] - ZrenderMap) > m_maxError3D) {
         p.visible = false;
         continue;
       }

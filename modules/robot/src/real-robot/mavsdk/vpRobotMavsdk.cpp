@@ -914,12 +914,13 @@ public:
 
   bool setPosition(const vpHomogeneousMatrix &M, bool absolute, int timeout_sec)
   {
+    double eps = 1e-6;
     auto XYZvec = vpRxyzVector(M.getRotationMatrix());
-    if (XYZvec[0] != 0.0) {
+    if (std::fabs(XYZvec[0]) > eps) {
       std::cerr << "ERROR : Can't move, rotation around X axis should be 0." << std::endl;
       return false;
     }
-    if (XYZvec[1] != 0.0) {
+    if (std::fabs(XYZvec[1]) > eps) {
       std::cerr << "ERROR : Can't move, rotation around Y axis should be 0." << std::endl;
       return false;
     }
@@ -930,11 +931,12 @@ public:
   bool setPositionRelative(const vpHomogeneousMatrix &M, bool blocking, int timeout_sec)
   {
     auto XYZvec = vpRxyzVector(M.getRotationMatrix());
-    if (XYZvec[0] != 0.0) {
+    double eps = 1e-6;
+    if (std::fabs(XYZvec[0]) > eps) {
       std::cerr << "ERROR : Can't move, rotation around X axis should be 0." << std::endl;
       return false;
     }
-    if (XYZvec[1] != 0.0) {
+    if (std::fabs(XYZvec[1]) > eps) {
       std::cerr << "ERROR : Can't move, rotation around Y axis should be 0." << std::endl;
       return false;
     }

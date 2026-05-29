@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -242,7 +242,7 @@ void vpDetectorDNNOpenCV::saveConfigurationInJSON(const std::string &jsonPath) c
 /**
  * \brief Destroy the \b vpDetectorDNNOpenCV object
  */
-vpDetectorDNNOpenCV::~vpDetectorDNNOpenCV() { }
+vpDetectorDNNOpenCV::~vpDetectorDNNOpenCV() {}
 
 /**
  * \brief Object detection using OpenCV DNN module.
@@ -1156,7 +1156,9 @@ void vpDetectorDNNOpenCV::setPreferableTarget(const int &targetId) { m_net.setPr
 void vpDetectorDNNOpenCV::setScaleFactor(const double &scaleFactor)
 {
   m_netConfig.m_scaleFactor = scaleFactor;
-  if ((m_netConfig.m_parsingMethodType == YOLO_V7 || m_netConfig.m_parsingMethodType == YOLO_V8 || m_netConfig.m_parsingMethodType == YOLO_V11 || m_netConfig.m_parsingMethodType == YOLO_V12) && m_netConfig.m_scaleFactor != 1 / 255.) {
+  if ((m_netConfig.m_parsingMethodType == YOLO_V7 || m_netConfig.m_parsingMethodType == YOLO_V8
+       || m_netConfig.m_parsingMethodType == YOLO_V11 || m_netConfig.m_parsingMethodType == YOLO_V12)
+    && std::abs(m_netConfig.m_scaleFactor - (1.0 / 255.0)) > std::numeric_limits<double>::epsilon()) {
     std::cout << "[vpDetectorDNNOpenCV::setParsingMethod] WARNING: scale factor should be 1/255. to normalize pixels value." << std::endl;
   }
 }
@@ -1179,7 +1181,9 @@ void vpDetectorDNNOpenCV::setParsingMethod(const DNNResultsParsingType &typePars
 {
   m_netConfig.m_parsingMethodType = typeParsingMethod;
   m_parsingMethod = parsingMethod;
-  if ((m_netConfig.m_parsingMethodType == YOLO_V7 || m_netConfig.m_parsingMethodType == YOLO_V8 || m_netConfig.m_parsingMethodType == YOLO_V11 || m_netConfig.m_parsingMethodType == YOLO_V12) && m_netConfig.m_scaleFactor != 1 / 255.) {
+  if ((m_netConfig.m_parsingMethodType == YOLO_V7 || m_netConfig.m_parsingMethodType == YOLO_V8
+       || m_netConfig.m_parsingMethodType == YOLO_V11 || m_netConfig.m_parsingMethodType == YOLO_V12)
+    && std::abs(m_netConfig.m_scaleFactor - (1.0 / 255.0)) > std::numeric_limits<double>::epsilon()) {
     m_netConfig.m_scaleFactor = 1 / 255.;
     std::cout << "[vpDetectorDNNOpenCV::setParsingMethod] NB: scale factor changed to 1/255. to normalize pixels value." << std::endl;
   }
@@ -1196,5 +1200,5 @@ void vpDetectorDNNOpenCV::setParsingMethod(const DNNResultsParsingType &typePars
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpDetectorDNNOpenCV.cpp.o) has no symbols
-void dummy_vpDetectorDNN() { }
+void dummy_vpDetectorDNN() {}
 #endif

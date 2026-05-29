@@ -72,7 +72,7 @@ BEGIN_VISP_NAMESPACE
   vpRealSense2::vpRealSense2()
   : m_depthScale(0.0f), m_invalidDepthValue(0.0f), m_max_Z(8.0f), m_pipe(), m_pipelineProfile(), m_pointcloud(),
   m_points(), m_pos(), m_quat(), m_rot(), m_product_line(), m_init(false)
-{ }
+{}
 
 /*!
  * Default destructor that stops the streaming.
@@ -1525,9 +1525,14 @@ void safe_get_intrinsics(const rs2::video_stream_profile &profile, rs2_intrinsic
 
 bool operator==(const rs2_intrinsics &lhs, const rs2_intrinsics &rhs)
 {
-  return lhs.width == rhs.width && lhs.height == rhs.height && lhs.ppx == rhs.ppx && lhs.ppy == rhs.ppy &&
-    lhs.fx == rhs.fx && lhs.fy == rhs.fy && lhs.model == rhs.model &&
-    !std::memcmp(lhs.coeffs, rhs.coeffs, sizeof(rhs.coeffs));
+  return (lhs.width == rhs.width &&
+         lhs.height == rhs.height &&
+         std::fabs(lhs.ppx - rhs.ppx) <= std::numeric_limits<float>::epsilon() &&
+         std::fabs(lhs.ppy - rhs.ppy) <= std::numeric_limits<float>::epsilon() &&
+         std::fabs(lhs.fx - rhs.fx) <= std::numeric_limits<float>::epsilon() &&
+         std::fabs(lhs.fy - rhs.fy) <= std::numeric_limits<float>::epsilon() &&
+         lhs.model == rhs.model &&
+         !std::memcmp(lhs.coeffs, rhs.coeffs, sizeof(rhs.coeffs)));
 }
 
 std::string get_str_formats(const std::set<rs2_format> &formats)
@@ -1707,5 +1712,5 @@ std::ostream &operator<<(std::ostream &os, const vpRealSense2 &rs)
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_sensor.a(vpRealSense2.cpp.o) has  symbols
-void dummy_vpRealSense2() { }
+void dummy_vpRealSense2() {}
 #endif

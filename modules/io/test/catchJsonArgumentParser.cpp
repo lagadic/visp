@@ -248,7 +248,7 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
         std::tie(argc, argv) = convertToArgcAndArgv(args);
         REQUIRE_NOTHROW(parser.parse(argc, (const char **)(&argv[0])));
         REQUIRE(a == newa);
-        REQUIRE(b == newb);
+        REQUIRE(b == Catch::Approx(newb));
         REQUIRE(c == newc);
         REQUIRE(d == newd);
         REQUIRE(ea == newea);
@@ -271,7 +271,7 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
         std::tie(argc, argv) = convertToArgcAndArgv(args);
         REQUIRE_NOTHROW(parser.parse(argc, (const char **)(&argv[0])));
         REQUIRE(a == newa);
-        REQUIRE(b == newb);
+        REQUIRE(b == Catch::Approx(newb));
         REQUIRE(c == j["c"]);
         REQUIRE(d == j["d"]);
         REQUIRE(ea == j["e"]["a"]);
@@ -315,7 +315,7 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
       };
 
       REQUIRE_NOTHROW(parser.parse(argc, argv));
-      REQUIRE(b == bcopy);
+      REQUIRE(b == Catch::Approx(bcopy));
     }
   }
   WHEN("Instantiating a parser with nested parameters")
@@ -333,7 +333,7 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
       };
 
       REQUIRE_NOTHROW(parser.parse(argc, argv));
-      REQUIRE(b == bcopy);
+      REQUIRE(b == Catch::Approx(bcopy));
     }
   }
   WHEN("Instantiating a parser with some documentation")

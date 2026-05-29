@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -162,7 +162,7 @@ TEST_CASE("ArUco detection test", "[aruco_detection_test]")
       vpDetectorAprilTag detectorCpy(detector);
 
       CHECK(detectorCpy.getAprilTagHammingDistanceThreshold() == hamming_dist_ref);
-      CHECK(detectorCpy.getAprilTagDecisionMarginThreshold() == decision_margin);
+      CHECK(detectorCpy.getAprilTagDecisionMarginThreshold() == Catch::Approx(decision_margin));
       CHECK(detectorCpy.getPoseEstimationMethod() == detector.getPoseEstimationMethod());
 
       for (int id = 0; id < kv.second; id += kv.second/nb_tests) {
@@ -214,7 +214,7 @@ TEST_CASE("ArUco detection test", "[aruco_detection_test]")
       detector.setAprilTagHammingDistanceThreshold(hamming_dist_ref);
       detector.setAprilTagDecisionMarginThreshold(decision_margin);
       CHECK(detector.getAprilTagHammingDistanceThreshold() == hamming_dist_ref);
-      CHECK(detector.getAprilTagDecisionMarginThreshold() == decision_margin);
+      CHECK(detector.getAprilTagDecisionMarginThreshold() == Catch::Approx(decision_margin));
 
       for (int id = 0; id < kv.second; id += kv.second/nb_tests) {
         vpImage<unsigned char> tag_img;
@@ -267,7 +267,7 @@ TEST_CASE("ArUco detection test", "[aruco_detection_test]")
       from_json(origSettings, detectorCpy);
 
       CHECK(detectorCpy.getAprilTagHammingDistanceThreshold() == hamming_dist_ref);
-      CHECK(detectorCpy.getAprilTagDecisionMarginThreshold() == decision_margin);
+      CHECK(detectorCpy.getAprilTagDecisionMarginThreshold() == Catch::Approx(decision_margin));
 
       for (int id = 0; id < kv.second; id += kv.second/nb_tests) {
         vpImage<unsigned char> tag_img;
