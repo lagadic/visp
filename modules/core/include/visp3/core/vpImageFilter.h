@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -515,7 +515,7 @@ public:
     float dIMin = std::numeric_limits<OutType>::max();
     int iter, istart = 0, istop = size;
 #ifdef VISP_HAVE_OPENMP
-    int iam, nt, ipoints, npoints(size);
+    int iam, nt, ipoints, npoints(static_cast<int>(size));
 #pragma omp parallel default(shared) private(iter, iam, nt, ipoints, istart, istop)
     {
       iam = omp_get_thread_num();
@@ -1102,16 +1102,16 @@ public:
   static void filterX(const vpImage<ImageType> &I, vpImage<OutputType> &dIx, const FilterType *filter, unsigned int size,
                       const vpImage<bool> *p_mask = nullptr)
   {
-    const int height = static_cast<int>(I.getHeight());
-    const int width = static_cast<int>(I.getWidth());
+    const unsigned int height = I.getHeight();
+    const unsigned int width = I.getWidth();
     const int stop1J = static_cast<int>((size - 1) / 2);
     const int stop2J = static_cast<int>(width - ((size - 1) / 2));
     resizeAndInitializeIfNeeded(p_mask, height, width, dIx);
 
     int istart = 0;
-    int istop = height;
+    int istop = static_cast<int>(height);
 #ifdef VISP_HAVE_OPENMP
-    int iam, nt, ipoints, npoints(height);
+    int iam, nt, ipoints, npoints(static_cast<int>(height));
 #pragma omp parallel default(shared) private(iam, nt, ipoints, istart, istop)
     {
       iam = omp_get_thread_num();
@@ -1129,26 +1129,28 @@ public:
         for (int j = 0; j < stop1J; ++j) {
           // We have to compute the value for each pixel if we don't have a mask or for
           // pixels for which the mask is true otherwise
-          bool computeVal = checkBooleanMask(p_mask, i, j);
+          bool computeVal = checkBooleanMask(p_mask, static_cast<unsigned int>(i), static_cast<unsigned int>(j));
           if (computeVal) {
-            vpImageFilter::filterXLeftBorder(I, dIx[i][j], i, j, filter, size);
+            vpImageFilter::filterXLeftBorder(I, dIx[static_cast<unsigned int>(i)][static_cast<unsigned int>(j)],
+                                             static_cast<unsigned int>(i), static_cast<unsigned int>(j), filter, size);
           }
         }
 
         for (int j = stop1J; j < stop2J; ++j) {
           // We have to compute the value for each pixel if we don't have a mask or for
           // pixels for which the mask is true otherwise
-          bool computeVal = checkBooleanMask(p_mask, i, j);
+          bool computeVal = checkBooleanMask(p_mask, static_cast<unsigned int>(i), static_cast<unsigned int>(j));
           if (computeVal) {
-            vpImageFilter::filterX(I, dIx[i][j], i, j, filter, size);
+            vpImageFilter::filterX(I, dIx[i][j], static_cast<unsigned int>(i), static_cast<unsigned int>(j), filter, size);
           }
         }
-        for (int j = stop2J; j < width; ++j) {
+        for (int j = stop2J; j < static_cast<int>(width); ++j) {
           // We have to compute the value for each pixel if we don't have a mask or for
           // pixels for which the mask is true otherwise
-          bool computeVal = checkBooleanMask(p_mask, i, j);
+          bool computeVal = checkBooleanMask(p_mask, static_cast<unsigned int>(i), static_cast<unsigned int>(j));
           if (computeVal) {
-            vpImageFilter::filterXRightBorder(I, dIx[i][j], i, j, filter, size);
+            vpImageFilter::filterXRightBorder(I, dIx[static_cast<unsigned int>(i)][static_cast<unsigned int>(j)],
+                                              static_cast<unsigned int>(i), static_cast<unsigned int>(j), filter, size);
           }
         }
       }
@@ -1504,8 +1506,8 @@ public:
     unsigned int iam, nt, jpoints, npoints(width);
 #pragma omp parallel default(shared) private(iam, nt, jpoints, jstart, jstop)
     {
-      iam = omp_get_thread_num();
-      nt = omp_get_num_threads();
+      iam = static_cast<unsigned int>(omp_get_thread_num());
+      nt = static_cast<unsigned int>(omp_get_num_threads());
       jpoints = npoints / nt;
       // size of partition
       jstart = iam * jpoints; // starting array index
@@ -1547,7 +1549,7 @@ public:
 #ifdef VISP_HAVE_OPENMP
       }
 #endif
-      }
+    }
   }
 
   /**
