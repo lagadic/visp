@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -143,7 +143,7 @@ private:
   class vpPixelOperation
   {
   public:
-    vpPixelOperation() { }
+    vpPixelOperation() {}
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     virtual ~vpPixelOperation() = default;
@@ -156,7 +156,7 @@ private:
   class vpPixelOperationMax : public vpPixelOperation<T>
   {
   public:
-    vpPixelOperationMax() { }
+    vpPixelOperationMax() {}
 
     virtual T operator()(const T &a, const T &b) VP_OVERRIDE
     {
@@ -168,7 +168,7 @@ private:
   class vpPixelOperationMin : public vpPixelOperation<T>
   {
   public:
-    vpPixelOperationMin() { }
+    vpPixelOperationMin() {}
 
     T operator()(const T &a, const T &b) VP_OVERRIDE
     {
@@ -474,8 +474,8 @@ void vpImageMorphology::imageOperation(vpImage<T> &I, vpPixelOperation<T> *opera
     throw(vpException(vpException::badValue, "Dilatation/erosion kernel must be odd."));
   }
 
-  const int width_in = I.getWidth();
-  const int height_in = I.getHeight();
+  const int width_in = static_cast<int>(I.getWidth());
+  const int height_in = static_cast<int>(I.getHeight());
   int halfKernelSize = size / 2;
   vpImage<T> J = I;
 
