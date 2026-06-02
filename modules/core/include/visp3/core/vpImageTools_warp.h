@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -270,9 +270,9 @@ void vpImageTools::warpLinear(const vpImage<Type> &src, const vpMatrix &T, vpIma
             const int64_t yi_lower = yi_ & (~0xFFFF);
 
             const int64_t t = yi_ - yi_lower;
-            const int64_t t_1 = precision - t;
+            const int64_t t_1 = static_cast<int64_t>(precision) - static_cast<int64_t>(t);
             const int64_t s = xi_ - xi_lower;
-            const int64_t s_1 = precision - s;
+            const int64_t s_1 = static_cast<int64_t>(precision) - static_cast<int64_t>(s);
 
             const int x_ = static_cast<int>(xi_ >> nbits);
             const int y_ = static_cast<int>(yi_ >> nbits);
