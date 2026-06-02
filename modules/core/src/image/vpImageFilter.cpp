@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -563,7 +563,8 @@ std::vector<float> vpImageFilter::median(const vpImage<vpRGBa> &Isrc)
   const int orderCvChannels[] = { 0, 1, 2 }; // Because the order of the cv::Mat is B, G, R
   const unsigned int val_3 = 3;
   for (unsigned int i = 0; i < val_3; ++i) {
-    meds[orderMeds[i]] = median(channels[orderCvChannels[i]]);
+    meds[static_cast<unsigned int>(orderMeds[static_cast<unsigned int>(i)])] =
+      median(channels[static_cast<unsigned int>(orderCvChannels[static_cast<unsigned int>(i)])]);
   }
   return meds;
 }
@@ -596,7 +597,7 @@ void vpImageFilter::computePartialDerivatives(const cv::Mat &cv_I,
       || (filteringType == vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING)) {
     cv::Mat img_blur;
     // Apply Gaussian blur to the image
-    cv::Size gsz(gaussianKernelSize, gaussianKernelSize);
+    cv::Size gsz(static_cast<int>(gaussianKernelSize), static_cast<int>(gaussianKernelSize));
     cv::GaussianBlur(cv_I, img_blur, gsz, gaussianStdev);
 
     // Compute the gradient of the blurred image
@@ -609,10 +610,10 @@ void vpImageFilter::computePartialDerivatives(const cv::Mat &cv_I,
         }
       }
       if (computeDx) {
-        cv::Sobel(img_blur, cv_dIx, CV_16S, 1, 0, apertureGradient, scale, 0., cv::BORDER_REPLICATE);
+        cv::Sobel(img_blur, cv_dIx, CV_16S, 1, 0, static_cast<int>(apertureGradient), scale, 0., cv::BORDER_REPLICATE);
       }
       if (computeDy) {
-        cv::Sobel(img_blur, cv_dIy, CV_16S, 0, 1, apertureGradient, scale, 0., cv::BORDER_REPLICATE);
+        cv::Sobel(img_blur, cv_dIy, CV_16S, 0, 1, static_cast<int>(apertureGradient), scale, 0., cv::BORDER_REPLICATE);
       }
     }
     else if (filteringType == vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING) {
