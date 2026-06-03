@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -516,7 +516,7 @@ vpMatrix vpMatrix::inverseByLUOpenCV() const
     throw(vpException(vpException::fatalError, "Cannot inverse a non square matrix (%ux%u) by LU", rowNum, colNum));
   }
 
-  cv::Mat M(rowNum, colNum, CV_64F, this->data);
+  cv::Mat M(static_cast<int>(rowNum), static_cast<int>(colNum), CV_64F, this->data);
 
   cv::Mat Minv = M.inv(cv::DECOMP_LU);
 
@@ -564,7 +564,7 @@ double vpMatrix::detByLUOpenCV() const
                       rowNum, colNum));
   }
 
-  cv::Mat M(rowNum, colNum, CV_64F, this->data);
+  cv::Mat M(static_cast<int>(rowNum), static_cast<int>(colNum), CV_64F, this->data);
   det = cv::determinant(M);
 
   return (det);
