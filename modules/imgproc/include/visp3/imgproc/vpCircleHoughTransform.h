@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -194,7 +194,7 @@ public:
       , m_recordVotingPoints(recordVotingPoints)
       , m_centerMinDist(centerMinDistThresh)
       , m_mergingRadiusDiffThresh(mergingRadiusDiffThresh)
-    { }
+    {}
 
     /**
      * \brief Get the size of the Gaussian filter kernel used to smooth the input image.
@@ -903,7 +903,10 @@ public:
     m_algoParams.m_gaussianStdev = stdev;
 
     const unsigned int checkEvenModulo = 2;
-    if ((m_algoParams.m_gaussianKernelSize % checkEvenModulo) != 1) {
+    if ((static_cast<unsigned int>(m_algoParams.m_gaussianKernelSize) % checkEvenModulo) != 1) {
+      throw vpException(vpException::badValue, "Gaussian Kernel size should be odd.");
+    }
+    if ((static_cast<unsigned int>(m_algoParams.m_gaussianKernelSize) % checkEvenModulo) != 1) {
       throw vpException(vpException::badValue, "Gaussian Kernel size should be odd.");
     }
 
@@ -921,10 +924,10 @@ public:
    */
   inline void setGradientFilterAperture(const unsigned int &apertureSize)
   {
-    m_algoParams.m_gradientFilterKernelSize = apertureSize;
+    m_algoParams.m_gradientFilterKernelSize = static_cast<int>(apertureSize);
 
     const unsigned int checkEvenModulo = 2;
-    if ((m_algoParams.m_gradientFilterKernelSize % checkEvenModulo) != 1) {
+    if ((static_cast<unsigned int>(m_algoParams.m_gradientFilterKernelSize) % checkEvenModulo) != 1) {
       throw vpException(vpException::badValue, "Gradient filter (Sobel or Scharr) Kernel size should be odd.");
     }
 
@@ -1064,7 +1067,7 @@ public:
     if (m_algoParams.m_dilatationKernelSize < minDilatationKernel) {
       throw vpException(vpException::badValue, "Dilatation kernel size for center detection must be greater or equal to 3.");
     }
-    else if ((m_algoParams.m_dilatationKernelSize % checkEvenModulo) == 0) {
+    else if ((static_cast<unsigned int>(m_algoParams.m_dilatationKernelSize) % checkEvenModulo) == 0) {
       throw vpException(vpException::badValue, "Dilatation kernel size for center detection must be odd.");
     }
 
@@ -1072,7 +1075,7 @@ public:
       throw vpException(vpException::badValue, "Votes thresholds for center detection must be positive.");
     }
 
-    if ((m_algoParams.m_averagingWindowSize <= 0) || ((m_algoParams.m_averagingWindowSize % checkEvenModulo) == 0)) {
+    if ((m_algoParams.m_averagingWindowSize <= 0) || ((static_cast<unsigned int>(m_algoParams.m_averagingWindowSize) % checkEvenModulo) == 0)) {
       throw vpException(vpException::badValue, "Averaging window size must be positive and odd.");
     }
   }
