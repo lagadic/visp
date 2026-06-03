@@ -104,23 +104,23 @@ void clipHistogram(const std::vector<int> &hist, std::vector<int> &clippedHist, 
     clippedEntriesBefore = clippedEntries;
     clippedEntries = 0;
     for (int i = 0; i < histlength; ++i) {
-      int d = clippedHist[i] - limit;
+      int d = clippedHist[static_cast<std::size_t>(i)] - limit;
       if (d > 0) {
         clippedEntries += d;
-        clippedHist[i] = limit;
+        clippedHist[static_cast<std::size_t>(i)] = static_cast<int>(limit);
       }
     }
 
     int d = clippedEntries / histlength;
     int m = clippedEntries % histlength;
     for (int i = 0; i < histlength; ++i) {
-      clippedHist[i] += d;
+      clippedHist[static_cast<std::size_t>(i)] += d;
     }
 
     if (m != 0) {
       int s = (histlength - 1) / m;
       for (int i = s / 2; i < histlength; i += s) {
-        ++(clippedHist[i]);
+        ++(clippedHist[static_cast<std::size_t>(i)]);
       }
     }
   } while (clippedEntries != clippedEntriesBefore);
@@ -138,7 +138,7 @@ void createHistogram(int blockRadius, int bins, int blockXCenter, int blockYCent
 
   for (int y = yMin; y < yMax; ++y) {
     for (int x = xMin; x < xMax; ++x) {
-      ++hist[fastRound((I[y][x] / 255.0f) * bins)];
+      ++hist[static_cast<std::size_t>(fastRound((I[y][x] / 255.0f) * bins))];
     }
   }
 }
@@ -152,7 +152,7 @@ std::vector<float> createTransfer(const std::vector<int> &hist, int limit, std::
   bool hasNotFoundFirstNotZero = true;
   int i = 0;
   while ((i < stopIdx) && hasNotFoundFirstNotZero) {
-    if (cdfs[i] != 0) {
+    if (cdfs[static_cast<std::size_t>(i)] != 0) {
       hMin = i;
       hasNotFoundFirstNotZero = false;
     }
@@ -161,17 +161,17 @@ std::vector<float> createTransfer(const std::vector<int> &hist, int limit, std::
   int cdf = 0;
   int hist_size = static_cast<int>(hist.size());
   for (i = hMin; i < hist_size; ++i) {
-    cdf += cdfs[i];
-    cdfs[i] = cdf;
+    cdf += cdfs[static_cast<std::size_t>(i)];
+    cdfs[static_cast<std::size_t>(i)] = cdf;
   }
 
-  int cdfMin = cdfs[hMin];
+  int cdfMin = cdfs[static_cast<std::size_t>(hMin)];
   int cdfMax = cdfs[hist.size() - 1];
 
   std::vector<float> transfer(hist.size());
   int transfer_size = static_cast<int>(transfer.size());
   for (i = 0; i < transfer_size; ++i) {
-    transfer[i] = (cdfs[i] - cdfMin) / static_cast<float>(cdfMax - cdfMin);
+    transfer[static_cast<std::size_t>(i)] = (cdfs[static_cast<std::size_t>(i)] - cdfMin) / static_cast<float>(cdfMax - cdfMin);
   }
 
   return transfer;
@@ -185,7 +185,7 @@ float transferValue(int v, std::vector<int> &clippedHist)
   int i = 0;
   bool hasNotFoundFirstNotZero = true;
   while ((i<idxStop) && hasNotFoundFirstNotZero) {
-    if (clippedHist[i] != 0) {
+    if (clippedHist[static_cast<std::size_t>(i)] != 0) {
       hMin = i;
       hasNotFoundFirstNotZero = false;
     }
@@ -194,15 +194,15 @@ float transferValue(int v, std::vector<int> &clippedHist)
 
   int cdf = 0;
   for (i = hMin; i <= v; ++i) {
-    cdf += clippedHist[i];
+    cdf += clippedHist[static_cast<std::size_t>(i)];
   }
 
   int cdfMax = cdf;
   for (i = v + 1; i < clippedHistLength; ++i) {
-    cdfMax += clippedHist[i];
+    cdfMax += clippedHist[static_cast<std::size_t>(i)];
   }
 
-  int cdfMin = clippedHist[hMin];
+  int cdfMin = clippedHist[static_cast<std::size_t>(hMin)];
   return (cdf - cdfMin) / static_cast<float>(cdfMax - cdfMin);
 }
 
@@ -246,57 +246,57 @@ void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blo
     int blockSize = (val_2 * blockRadius) + 1;
     int limit = static_cast<int>(((slope * blockSize * blockSize) / bins) + 0.5);
     /* div */
-    int nc = I1.getWidth() / blockSize;
-    int nr = I1.getHeight() / blockSize;
+    unsigned int nc = I1.getWidth() / static_cast<unsigned int>(blockSize);
+    unsigned int nr = I1.getHeight() / static_cast<unsigned int>(blockSize);
     /* % */
-    int cm = I1.getWidth() - (nc * blockSize);
+    int cm = static_cast<int>(I1.getWidth()) - (static_cast<int>(nc) * blockSize);
     std::vector<int> cs;
     switch (cm) {
     case 0:
-      cs.resize(nc);
-      for (int i = 0; i < nc; ++i) {
-        cs[i] = (i * blockSize) + blockRadius + 1;
+      cs.resize(static_cast<std::size_t>(nc));
+      for (int i = 0; i < static_cast<int>(nc); ++i) {
+        cs[static_cast<std::size_t>(i)] = (i * blockSize) + blockRadius + 1;
       }
       break;
     case 1:
-      cs.resize(nc + 1);
-      for (int i = 0; i < nc; ++i) {
-        cs[i] = (i * blockSize) + blockRadius + 1;
+      cs.resize(static_cast<std::size_t>(nc + 1));
+      for (int i = 0; i < static_cast<int>(nc); ++i) {
+        cs[static_cast<std::size_t>(i)] = (i * blockSize) + blockRadius + 1;
       }
-      cs[nc] = I1.getWidth() - blockRadius - 1;
+      cs[nc] = static_cast<int>(I1.getWidth()) - blockRadius - 1;
       break;
     default:
       cs.resize(nc + val_2);
       cs[0] = blockRadius + 1;
-      for (int i = 0; i < nc; ++i) {
-        cs[i + 1] = (i * blockSize) + blockRadius + 1 + (cm / val_2);
+      for (int i = 0; i < static_cast<int>(nc); ++i) {
+        cs[static_cast<std::size_t>(i + 1)] = (i * blockSize) + blockRadius + 1 + (cm / val_2);
       }
-      cs[nc + 1] = I1.getWidth() - blockRadius - 1;
+      cs[nc + 1] = static_cast<int>(I1.getWidth()) - blockRadius - 1;
     }
 
-    int rm = I1.getHeight() - (nr * blockSize);
+    int rm = static_cast<int>(I1.getHeight()) - (static_cast<int>(nr) * blockSize);
     std::vector<int> rs;
     switch (rm) {
     case 0:
       rs.resize(static_cast<size_t>(nr));
-      for (int i = 0; i < nr; ++i) {
-        rs[i] = (i * blockSize) + blockRadius + 1;
+      for (int i = 0; i < static_cast<int>(nr); ++i) {
+        rs[static_cast<std::size_t>(i)] = (i * blockSize) + blockRadius + 1;
       }
       break;
     case 1:
       rs.resize(static_cast<size_t>(nr + 1));
-      for (int i = 0; i < nr; ++i) {
-        rs[i] = (i * blockSize) + blockRadius + 1;
+      for (int i = 0; i < static_cast<int>(nr); ++i) {
+        rs[static_cast<std::size_t>(i)] = (i * blockSize) + blockRadius + 1;
       }
-      rs[nr] = I1.getHeight() - blockRadius - 1;
+      rs[static_cast<std::size_t>(nr)] = static_cast<int>(I1.getHeight()) - blockRadius - 1;
       break;
     default:
       rs.resize(static_cast<size_t>(nr + val_2));
       rs[0] = blockRadius + 1;
-      for (int i = 0; i < nr; ++i) {
-        rs[i + 1] = (i * blockSize) + blockRadius + 1 + (rm / val_2);
+      for (int i = 0; i < static_cast<int>(nr); ++i) {
+        rs[static_cast<std::size_t>(i + 1)] = (i * blockSize) + blockRadius + 1 + (rm / val_2);
       }
-      rs[nr + 1] = I1.getHeight() - blockRadius - 1;
+      rs[static_cast<std::size_t>(nr + 1)] = static_cast<int>(I1.getHeight()) - blockRadius - 1;
     }
 
     std::vector<int> hist(static_cast<size_t>(bins + 1)), cdfs(static_cast<size_t>(bins + 1));
@@ -305,49 +305,49 @@ void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blo
     for (int r = 0; r <= rs_size; ++r) {
       int r0 = std::max<int>(0, r - 1);
       int r1 = std::min<int>(static_cast<int>(rs.size()) - 1, r);
-      int dr = rs[r1] - rs[r0];
-      createHistogram(blockRadius, bins, cs[0], rs[r0], I1, hist);
+      int dr = rs[static_cast<std::size_t>(r1)] - rs[static_cast<std::size_t>(r0)];
+      createHistogram(blockRadius, bins, cs[0], rs[static_cast<std::size_t>(r0)], I1, hist);
       tr = createTransfer(hist, limit, cdfs);
       if (r0 == r1) {
         br = tr;
       }
       else {
-        createHistogram(blockRadius, bins, cs[0], rs[r1], I1, hist);
+        createHistogram(blockRadius, bins, cs[0], rs[static_cast<std::size_t>(r1)], I1, hist);
         br = createTransfer(hist, limit, cdfs);
       }
 
-      int yMin = (r == 0 ? 0 : rs[r0]);
-      int yMax = (r < static_cast<int>(rs.size()) ? rs[r1] : I1.getHeight());
+      int yMin = (r == 0 ? 0 : rs[static_cast<std::size_t>(r0)]);
+      int yMax = (r < static_cast<int>(rs.size()) ? static_cast<int>(rs[static_cast<std::size_t>(r1)]) : static_cast<int>(I1.getHeight()));
       int cs_size = static_cast<int>(cs.size());
       for (int c = 0; c <= cs_size; ++c) {
         int c0 = std::max<int>(0, c - 1);
         int c1 = std::min<int>(static_cast<int>(cs.size()) - 1, c);
-        int dc = cs[c1] - cs[c0];
+        int dc = cs[static_cast<std::size_t>(c1)] - cs[static_cast<std::size_t>(c0)];
         tl = tr;
         bl = br;
         if (c0 != c1) {
-          createHistogram(blockRadius, bins, cs[c1], rs[r0], I1, hist);
+          createHistogram(blockRadius, bins, cs[static_cast<std::size_t>(c1)], rs[static_cast<std::size_t>(r0)], I1, hist);
           tr = createTransfer(hist, limit, cdfs);
           if (r0 == r1) {
             br = tr;
           }
           else {
-            createHistogram(blockRadius, bins, cs[c1], rs[r1], I1, hist);
+            createHistogram(blockRadius, bins, cs[static_cast<std::size_t>(c1)], rs[static_cast<std::size_t>(r1)], I1, hist);
             br = createTransfer(hist, limit, cdfs);
           }
         }
 
-        int xMin = (c == 0 ? 0 : cs[c0]);
-        int xMax = (c < static_cast<int>(cs.size()) ? cs[c1] : I1.getWidth());
+        int xMin = (c == 0 ? 0 : cs[static_cast<std::size_t>(c0)]);
+        int xMax = (c < static_cast<int>(cs.size()) ? static_cast<int>(cs[static_cast<std::size_t>(c1)]) : static_cast<int>(I1.getWidth()));
         for (int y = yMin; y < yMax; ++y) {
-          float wy = static_cast<float>(rs[r1] - y) / dr;
+          float wy = static_cast<float>(rs[static_cast<std::size_t>(r1)] - y) / dr;
           for (int x = xMin; x < xMax; ++x) {
-            float wx = static_cast<float>(cs[c1] - x) / dc;
+            float wx = static_cast<float>(cs[static_cast<std::size_t>(c1)] - x) / dc;
             int v = fastRound((I1[y][x] / 255.0f) * bins);
-            float t00 = tl[v];
-            float t01 = tr[v];
-            float t10 = bl[v];
-            float t11 = br[v];
+            float t00 = tl[static_cast<std::size_t>(v)];
+            float t01 = tr[static_cast<std::size_t>(v)];
+            float t10 = bl[static_cast<std::size_t>(v)];
+            float t11 = br[static_cast<std::size_t>(v)];
             float t0 = (c0 == c1) ? t00 : ((wx * t00) + ((1.0f - wx) * t01));
             float t1 = (c0 == c1) ? t10 : ((wx * t10) + ((1.0f - wx) * t11));
             float t = (r0 == r1) ? t0 : ((wy * t0) + ((1.0f - wy) * t1));
@@ -359,7 +359,9 @@ void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blo
     }
   }
   else {
-    std::vector<int> hist(bins + 1), prev_hist(bins + 1), clippedHist(bins + 1);
+    std::vector<int> hist(static_cast<std::size_t>(bins + 1)),
+      prev_hist(static_cast<std::size_t>(bins + 1)),
+      clippedHist(static_cast<std::size_t>(bins + 1));
     bool first = true;
     int xMin0 = 0;
     int xMax0 = std::min<int>(static_cast<int>(I1.getWidth()), blockRadius);
@@ -374,7 +376,7 @@ void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blo
         // Compute histogram for the block at (0,0)
         for (int yi = yMin; yi < yMax; ++yi) {
           for (int xi = xMin0; xi < xMax0; ++xi) {
-            ++hist[fastRound((I1[yi][xi] / 255.0f) * bins)];
+            ++hist[static_cast<std::size_t>(fastRound((I1[yi][xi] / 255.0f) * bins))];
           }
         }
       }
@@ -385,7 +387,7 @@ void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blo
           int yMin1 = yMin - 1;
           // Sliding histogram, remove top
           for (int xi = xMin0; xi < xMax0; ++xi) {
-            --hist[fastRound((I1[yMin1][xi] / 255.0f) * bins)];
+            --hist[static_cast<std::size_t>(fastRound((I1[yMin1][xi] / 255.0f) * bins))];
           }
         }
 
@@ -393,7 +395,7 @@ void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blo
           int yMax1 = yMax - 1;
           // Sliding histogram, add bottom
           for (int xi = xMin0; xi < xMax0; ++xi) {
-            ++hist[fastRound((I1[yMax1][xi] / 255.0f) * bins)];
+            ++hist[static_cast<std::size_t>(fastRound((I1[yMax1][xi] / 255.0f) * bins))];
           }
         }
       }
@@ -408,7 +410,7 @@ void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blo
           int xMin1 = xMin - 1;
           // Sliding histogram, remove left
           for (int yi = yMin; yi < yMax; ++yi) {
-            --hist[fastRound((I1[yi][xMin1] / 255.0f) * bins)];
+            --hist[static_cast<std::size_t>(fastRound((I1[yi][xMin1] / 255.0f) * bins))];
           }
         }
 
@@ -416,7 +418,7 @@ void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blo
           int xMax1 = xMax - 1;
           // Sliding histogram, add right
           for (int yi = yMin; yi < yMax; ++yi) {
-            ++hist[fastRound((I1[yi][xMax1] / 255.0f) * bins)];
+            ++hist[static_cast<std::size_t>(fastRound((I1[yi][xMax1] / 255.0f) * bins))];
           }
         }
 
