@@ -138,22 +138,26 @@ void vp_createDepthHistogram(const vpImage<uint16_t> &src_depth, vpImage<unsigne
 
 #if defined(VISP_HAVE_OPENMP) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   int nThreads = omp_get_max_threads();
-  std::vector<std::array<uint32_t, 0x10000> > histograms(nThreads);
+  std::vector<std::array<uint32_t, 0x10000> > histograms(static_cast<std::size_t>(nThreads));
   for (int i = 0; i < nThreads; ++i) {
-    histograms[i].fill(0);
+    histograms[static_cast<std::size_t>(i)].fill(0);
   }
 
 #pragma omp parallel for num_threads(nThreads)
   for (int i = 0; i < src_depth_size; ++i) {
-    ++(histograms[omp_get_thread_num()][static_cast<uint32_t>(src_depth.bitmap[i])]);
+    std::size_t thread_id = static_cast<std::size_t>(omp_get_thread_num());
+    std::size_t pixel_val = static_cast<std::size_t>(src_depth.bitmap[i]);
+    ++(histograms[thread_id][pixel_val]);
   }
 
 #pragma omp parallel for
   for (int i = 0; i < 0x10000; ++i) {
     for (int j = 0; j < nThreads; ++j) {
-      histogram[i] += histograms[j][i];
+      std::size_t idx_j = static_cast<std::size_t>(j);
+      std::size_t idx_i = static_cast<std::size_t>(i);
+      histogram[idx_i] += histograms[idx_j][idx_i];
     }
-  }
+}
 #else
   for (int i = 0; i < src_depth_size; ++i) {
     ++histogram[static_cast<uint32_t>(src_depth.bitmap[i])];
