@@ -344,7 +344,7 @@ public:
   void init(const unsigned int k)
   {
     m_mappingSize = k;
-    m_border = vpFeatureLuminance::DEFAULT_BORDER;
+    m_border = static_cast<unsigned int>(vpFeatureLuminance::DEFAULT_BORDER);
     m_Ih = m_Iw = 0;
   }
 
