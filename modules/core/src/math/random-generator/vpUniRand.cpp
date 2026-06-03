@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,7 +71,7 @@
 BEGIN_VISP_NAMESPACE
 vpUniRand::vpUniRand()
   : m_maxInvDbl(1.0 / static_cast<double>(UINT32_MAX)), m_maxInvFlt(1.0f / static_cast<float>(UINT32_MAX)), m_rng()
-{ }
+{}
 
 /*!
   Create a pseudorandom number generator with uniform distribution.
@@ -163,7 +163,7 @@ int vpUniRand::uniform(int a, int b)
   if (a == b) {
     return a;
   }
-  return boundedRand(b - a) + a;
+  return static_cast<int>(boundedRand(static_cast<uint32_t>(b - a))) + a;
 }
 
 /*!
