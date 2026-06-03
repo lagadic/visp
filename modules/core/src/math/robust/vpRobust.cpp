@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ vpRobust::vpRobust()
   m_iter(0),
 #endif
   m_size(0), m_mad(0)
-{ }
+{}
 
 /*!
   Copy constructor.
@@ -142,7 +142,7 @@ void vpRobust::MEstimator(const vpRobustEstimatorType method, const vpColVector 
   unsigned int ind_med = static_cast<unsigned int>(ceil(n_data / 2.0)) - 1;
 
   // Calculate median
-  med = select(m_sorted_residues, 0, n_data - 1, ind_med);
+  med = select(m_sorted_residues, 0, static_cast<int>(n_data) - 1, static_cast<int>(ind_med));
   // --comment: residualMedian = med
 
   // Normalize residues
@@ -152,7 +152,7 @@ void vpRobust::MEstimator(const vpRobustEstimatorType method, const vpColVector 
   }
 
   // Calculate MAD
-  normmedian = select(m_sorted_normres, 0, n_data - 1, ind_med);
+  normmedian = select(m_sorted_normres, 0, static_cast<int>(n_data) - 1, static_cast<int>(ind_med));
   // normalizedResidualMedian = normmedian ;
   // 1.48 keeps scale estimate consistent for a normal probability dist.
   m_mad = 1.4826 * normmedian; // median Absolute Deviation
@@ -262,12 +262,12 @@ int vpRobust::partition(vpColVector &a, int l, int r)
 {
   int i = l - 1;
   int j = r;
-  double v = a[r];
+  double v = a[static_cast<std::size_t>(r)];
 
   for (;;) {
-    while (a[++i] < v) { }
+    while (a[static_cast<std::size_t>(++i)] < v) { }
 
-    while (v < a[--j]) {
+    while (v < a[static_cast<std::size_t>(--j)]) {
       if (j == l) {
         break;
       }
@@ -275,9 +275,9 @@ int vpRobust::partition(vpColVector &a, int l, int r)
     if (i >= j) {
       break;
     }
-    std::swap(a[i], a[j]);
+    std::swap(a[static_cast<std::size_t>(i)], a[static_cast<std::size_t>(j)]);
   }
-  std::swap(a[i], a[r]);
+  std::swap(a[static_cast<std::size_t>(i)], a[static_cast<std::size_t>(r)]);
   return i;
 }
 
@@ -299,7 +299,7 @@ double vpRobust::select(vpColVector &a, int l, int r, int k)
       l = i + 1;
     }
   }
-  return a[k];
+  return a[static_cast<std::size_t>(k)];
 }
 
 /**********************
@@ -396,7 +396,7 @@ double vpRobust::computeNormalizedMedian(vpColVector &all_normres, const vpColVe
   // calculation.
 
   unsigned int ind_med = static_cast<unsigned int>(ceil(n_data / 2.0)) - 1;
-  med = select(m_sorted_residues, 0, n_data - 1, ind_med);
+  med = select(m_sorted_residues, 0, static_cast<int>(n_data) - 1, static_cast<int>(ind_med));
 
   // Normalize residues
   for (unsigned int i = 0; i < n_all_data; ++i) {
@@ -407,7 +407,7 @@ double vpRobust::computeNormalizedMedian(vpColVector &all_normres, const vpColVe
     m_sorted_normres[i] = (fabs(m_sorted_residues[i] - med));
   }
   // MAD calculated only on first iteration
-  normmedian = select(m_sorted_normres, 0, n_data - 1, ind_med);
+  normmedian = select(m_sorted_normres, 0, static_cast<int>(n_data) - 1, static_cast<int>(ind_med));
 
   return normmedian;
 }
@@ -428,7 +428,7 @@ vpColVector vpRobust::simultMEstimator(vpColVector &residues)
 
   // Calculate Median
   unsigned int ind_med = static_cast<unsigned int>(ceil(n_data / 2.0)) - 1;
-  med = select(residues, 0, n_data - 1, ind_med);
+  med = select(residues, 0, static_cast<int>(n_data) - 1, static_cast<int>(ind_med));
 
   // Normalize residues
   for (unsigned int i = 0; i < n_data; ++i)
@@ -438,7 +438,7 @@ vpColVector vpRobust::simultMEstimator(vpColVector &residues)
   // For Huber compute Simultaneous scale estimate
   // For Others use MAD calculated on first iteration
   if (m_iter == 0) {
-    double normmedian = select(norm_res, 0, n_data - 1, ind_med); // Normalized Median
+    double normmedian = select(norm_res, 0, static_cast<int>(n_data) - 1, static_cast<int>(ind_med)); // Normalized Median
     // 1.48 keeps scale estimate consistent for a normal probability dist.
     m_mad = 1.4826 * normmedian; // Median Absolute Deviation
   }
