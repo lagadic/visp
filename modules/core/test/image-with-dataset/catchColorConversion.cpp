@@ -805,7 +805,8 @@ TEST_CASE("OpenCV Mat <==> vpImage conversion", "[image_conversion]")
     common_tools::fill(img);
 
     vpImage<vpRGBa> rgba_ref(height, width);
-    common_tools::BGRToRGBaRef(img.data, reinterpret_cast<unsigned char *>(rgba_ref.bitmap), img.cols, img.rows, false);
+    common_tools::BGRToRGBaRef(img.data, reinterpret_cast<unsigned char *>(rgba_ref.bitmap),
+                           static_cast<unsigned int>(img.cols), static_cast<unsigned int>(img.rows), false);
 
     vpImage<vpRGBa> rgba;
     vpImageConvert::convert(img, rgba);
@@ -818,7 +819,8 @@ TEST_CASE("OpenCV Mat <==> vpImage conversion", "[image_conversion]")
     common_tools::fill(img);
 
     vpImage<vpRGBa> rgba_ref(height, width);
-    common_tools::grayToRGBaRef(img.data, reinterpret_cast<unsigned char *>(rgba_ref.bitmap), height * width);
+    common_tools::grayToRGBaRef(img.data, reinterpret_cast<unsigned char *>(rgba_ref.bitmap),
+                                static_cast<unsigned int>(height) * static_cast<unsigned int>(width));
 
     vpImage<vpRGBa> rgba;
     vpImageConvert::convert(img, rgba);
@@ -831,7 +833,8 @@ TEST_CASE("OpenCV Mat <==> vpImage conversion", "[image_conversion]")
     common_tools::fill(img);
 
     vpImage<unsigned char> gray_ref(height, width);
-    common_tools::BGRToGrayRef(img.data, gray_ref.bitmap, img.cols, img.rows, false);
+    common_tools::BGRToGrayRef(img.data, gray_ref.bitmap,
+      static_cast<unsigned int>(img.cols), static_cast<unsigned int>(img.rows), false);
 
     vpImage<unsigned char> gray;
     vpImageConvert::convert(img, gray);
@@ -862,7 +865,7 @@ TEST_CASE("OpenCV Mat <==> vpImage conversion", "[image_conversion]")
   {
     // Test when data in cv::Mat is continuous
     unsigned int w = 3, h = 3;
-    cv::Mat img = (cv::Mat_<uint16_t>(h, w) << 65, 650, 6500, 65000, 60000, 6000, 600, 60, 6);
+    cv::Mat img = (cv::Mat_<uint16_t>(static_cast<int>(h), static_cast<int>(w)) << 65, 650, 6500, 65000, 60000, 6000, 600, 60, 6);
     vpImage<uint16_t> gray16;
     vpImageConvert::convert(img, gray16);
 
@@ -981,12 +984,13 @@ TEST_CASE("Bayer conversion", "[image_conversion]")
   vpImageIo::read(I_RGBA_8U_ref, vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Klimt/Klimt.ppm"));
 
   vpImage<vpRGBa> I_RGBA_8U(I_RGBA_8U_ref.getHeight(), I_RGBA_8U_ref.getWidth());
-  int img_height = I_RGBA_8U_ref.getHeight(), img_width = I_RGBA_8U_ref.getWidth();
+  unsigned int img_height = I_RGBA_8U_ref.getHeight();
+  unsigned int img_width = I_RGBA_8U_ref.getWidth();
   const double min_PSNR_bilinear = 21, min_PSNR_Malvar = 24;
 
   SECTION("16-bit")
   {
-    std::vector<uint16_t> buffer(img_height * img_width);
+    std::vector<uint16_t> buffer(static_cast<std::size_t>(img_height) * static_cast<std::size_t>(img_width));
     vpImage<uint16_t> I_Bayer_16U(img_height, img_width);
     vpImage<uint16_t> I_RGBA_16U(1, I_Bayer_16U.getHeight() * I_Bayer_16U.getWidth() * 4);
 
