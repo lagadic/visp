@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ BEGIN_VISP_NAMESPACE
   vpForceTorqueAtiNetFTSensor::vpForceTorqueAtiNetFTSensor()
   : vpUDPClient(), m_counts_per_force(1000000), m_counts_per_torque(1000000000), m_scaling_factor(1), m_ft_bias(6, 0),
   m_data_count(0), m_data_count_prev(0), m_ft(6, 0), m_is_streaming_started(false)
-{ }
+{}
 
 /*!
  * Constructor that initializes an Eternet UDP connection to a given hostname and port.
@@ -73,7 +73,7 @@ BEGIN_VISP_NAMESPACE
 vpForceTorqueAtiNetFTSensor::vpForceTorqueAtiNetFTSensor(const std::string &hostname, int port)
   : vpUDPClient(hostname, port), m_counts_per_force(1000000), m_counts_per_torque(1000000000), m_scaling_factor(1),
   m_ft_bias(6, 0), m_data_count(0), m_data_count_prev(0), m_ft(6, 0), m_is_streaming_started(false)
-{ }
+{}
 
 /*!
  * Start high-speed real-time Net F/T streaming.
@@ -101,7 +101,7 @@ bool vpForceTorqueAtiNetFTSensor::startStreaming()
     memcpy(&request[4], &val3, sizeof(val3));
 
     // Send start stream
-    if (send(request, len) != len) {
+    if (send(request, static_cast<size_t>(len)) != len) {
       throw(vpException(vpException::notInitialized, "UDP client is not initialized"));
     }
     std::cout << "wait: " << i << std::endl;
@@ -138,7 +138,7 @@ void vpForceTorqueAtiNetFTSensor::stopStreaming()
   memcpy(&request[4], &val3, sizeof(val3));
 
   // Send start stream
-  if (send(request, len) != len) {
+  if (send(request, static_cast<size_t>(len)) != len) {
     throw(vpException(vpException::notInitialized, "Cannot stop streaming"));
   }
 
@@ -255,7 +255,7 @@ bool vpForceTorqueAtiNetFTSensor::waitForNewData(unsigned int timeout)
       for (int i = 0; i < 6; i++) {
         int32_t resp4;
         memcpy(&resp4, &response[12 + i * 4], sizeof(int32_t));
-        resp.FTData[i] = ntohl(resp4);
+        resp.FTData[i] = static_cast<int32_t>(ntohl(resp4));
       }
       // Output the response data.
       if (resp.status) {
@@ -265,10 +265,10 @@ bool vpForceTorqueAtiNetFTSensor::waitForNewData(unsigned int timeout)
       double force_factor = static_cast<double>(m_scaling_factor) / static_cast<double>(m_counts_per_force);
       double torque_factor = static_cast<double>(m_scaling_factor) / static_cast<double>(m_counts_per_torque);
       for (int i = 0; i < 3; i++) {
-        m_ft[i] = resp.FTData[i] * force_factor;
+        m_ft[static_cast<unsigned int>(i)] = resp.FTData[i] * force_factor;
       }
       for (int i = 3; i < 6; i++) {
-        m_ft[i] = resp.FTData[i] * torque_factor;
+        m_ft[static_cast<unsigned int>(i)] = resp.FTData[i] * torque_factor;
       }
       // Consider bias
       m_ft -= m_ft_bias;
