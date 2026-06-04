@@ -41,7 +41,7 @@ std::vector<vpHomogeneousMatrix> List_to_vector_vpHomogeneousMatrix(JNIEnv *env,
   jlong *body = env->GetLongArrayElements(arr, 0);
   int len = env->GetArrayLength(arr);
 
-  std::vector<vpHomogeneousMatrix> V(len);
+  std::vector<vpHomogeneousMatrix> V(static_cast<size_t>(len));
   for (int i = 0; i < len; i++) {
     vpHomogeneousMatrix *temp = (vpHomogeneousMatrix *)body[i];
     V[i] = *temp;
@@ -56,10 +56,10 @@ std::vector<vpCameraParameters> List_to_vector_vpCameraParameters(JNIEnv *env, j
   jlong *body = env->GetLongArrayElements(arr, 0);
   int len = env->GetArrayLength(arr);
 
-  std::vector<vpCameraParameters> V(len);
+  std::vector<vpCameraParameters> V(static_cast<size_t>(len));
   for (int i = 0; i < len; i++) {
     vpCameraParameters *temp = (vpCameraParameters *)body[i];
-    V[i] = *temp;
+    V[static_cast<size_t>(i)] = *temp;
   }
 
   env->ReleaseLongArrayElements(arr, body, 0);
@@ -71,9 +71,9 @@ std::vector<int> List_to_vector_int(JNIEnv *env, jintArray arr)
   jint *body = env->GetIntArrayElements(arr, 0);
   int len = env->GetArrayLength(arr);
 
-  std::vector<int> V(len);
+  std::vector<int> V(static_cast<size_t>(len));
   for (int i = 0; i < len; i++) {
-    V[i] = body[i];
+    V[static_cast<size_t>(i)] = body[i];
   }
 
   env->ReleaseIntArrayElements(arr, body, 0);
@@ -85,9 +85,9 @@ std::vector<float> List_to_vector_float(JNIEnv *env, jfloatArray arr)
   jfloat *body = env->GetFloatArrayElements(arr, 0);
   int len = env->GetArrayLength(arr);
 
-  std::vector<float> V(len);
+  std::vector<float> V(static_cast<size_t>(len));
   for (int i = 0; i < len; i++) {
-    V[i] = body[i];
+    V[static_cast<size_t>(i)] = body[i];
   }
 
   env->ReleaseFloatArrayElements(arr, body, 0);
@@ -99,9 +99,9 @@ std::vector<double> List_to_vector_double(JNIEnv *env, jdoubleArray arr)
   jdouble *body = env->GetDoubleArrayElements(arr, 0);
   int len = env->GetArrayLength(arr);
 
-  std::vector<double> V(len);
+  std::vector<double> V(static_cast<size_t>(len));
   for (int i = 0; i < len; i++) {
-    V[i] = body[i];
+    V[static_cast<size_t>(i)] = body[i];
   }
 
   env->ReleaseDoubleArrayElements(arr, body, 0);
@@ -118,12 +118,12 @@ jobjectArray vector_vector_vpImagePoint_to_List(JNIEnv *env, const std::vector<s
   jobjectArray outerArray = env->NewObjectArray(outerSize, env->FindClass("java/lang/Object"), nullptr);
 
   for (int i = 0; i < env->GetArrayLength(outerArray); i++) {
-    size_t innerSize = V[i].size();
+    size_t innerSize = V[static_cast<size_t>(i)].size();
     jlongArray longArray = env->NewLongArray(innerSize);
     jlong *longArrayElements = env->GetLongArrayElements(longArray, 0);
 
     for (int j = 0; j < env->GetArrayLength(longArray); j++) {
-      longArrayElements[j] = (jlong) new vpImagePoint(V[i][j]);
+      longArrayElements[j] = (jlong) new vpImagePoint(V[static_cast<size_t>(i)][static_cast<size_t>(j)]);
     }
 
     env->ReleaseLongArrayElements(longArray, longArrayElements, 0);
@@ -148,7 +148,7 @@ jobjectArray vector_vector_double_to_List(JNIEnv *env, const std::vector<std::ve
     jdouble *doubleArrayElements = env->GetDoubleArrayElements(doubleArray, 0);
 
     for (int j = 0; j < env->GetArrayLength(doubleArray); j++) {
-      doubleArrayElements[j] = (jdouble)V[i][j];
+      doubleArrayElements[j] = (jdouble)V[static_cast<size_t>(i)][static_cast<size_t>(j)];
     }
 
     env->ReleaseDoubleArrayElements(doubleArray, doubleArrayElements, 0);
@@ -187,12 +187,12 @@ map_string_vector_vector_double_to_array_native(JNIEnv *env,
     jobjectArray outerArray = env->NewObjectArray(outerSize, env->FindClass("java/lang/Object"), nullptr);
 
     for (int i = 0; i < env->GetArrayLength(outerArray); i++) {
-      size_t innerSize = it->second[i].size();
+      size_t innerSize = it->second[static_cast<size_t>(i)].size();
       jdoubleArray doubleArray = env->NewDoubleArray(innerSize);
       jdouble *doubleArrayElements = env->GetDoubleArrayElements(doubleArray, 0);
 
       for (int j = 0; j < env->GetArrayLength(doubleArray); j++) {
-        doubleArrayElements[j] = (jdouble)it->second[i][j];
+        doubleArrayElements[j] = (jdouble)it->second[static_cast<size_t>(i)][static_cast<size_t>(j)];
       }
 
       env->ReleaseDoubleArrayElements(doubleArray, doubleArrayElements, 0);
@@ -224,9 +224,9 @@ std::vector<std::string> array_string_to_vector(JNIEnv *env, jobjectArray arr)
 {
   int size = env->GetArrayLength(arr);
 
-  std::vector<std::string> vec(size);
+  std::vector<std::string> vec(static_cast<size_t>(size));
   for (int i = 0; i < size; i++) {
-    vec[i] = convertTo(env, (jstring)env->GetObjectArrayElement(arr, i));
+    vec[static_cast<size_t>(i)] = convertTo(env, (jstring)env->GetObjectArrayElement(arr, i));
   }
 
   return vec;
