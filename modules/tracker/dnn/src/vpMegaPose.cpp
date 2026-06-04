@@ -134,9 +134,9 @@ void encode(std::vector<uint8_t> &buffer, const T &object, const Rest& ...rest)
 template<>
 void encode(std::vector<uint8_t> &buffer, const vpImage<vpRGBa> &object)
 {
-  const int height = object.getHeight(), width = object.getWidth();
+  const int height = static_cast<int>(object.getHeight()), width = static_cast<int>(object.getWidth());
   encode(buffer, height, width, 4);
-  const uint32_t sentSize = height * width * 4;
+  const uint32_t sentSize = static_cast<uint32_t>(height) * static_cast<uint32_t>(width) * 4;
 
   buffer.reserve(buffer.size() + sentSize); // Avoid resizing multiple times as we iterate on pixels
   const uint8_t *const bitmap = (uint8_t *)object.bitmap;
@@ -147,13 +147,13 @@ void encode(std::vector<uint8_t> &buffer, const vpImage<vpRGBa> &object)
 template<>
 void encode(std::vector<uint8_t> &buffer, const vpImage<uint16_t> &object)
 {
-  const int height = object.getHeight(), width = object.getWidth();
+  const int height = static_cast<int>(object.getHeight()), width = static_cast<int>(object.getWidth());
   encode(buffer, height, width);
   //test endianness
   const uint16_t hostTest = 1;
   const uint16_t netTest = htons(hostTest); // network is big endian
   const uint8_t endianness = hostTest == netTest ? '>' : '<';
-  const uint32_t sentSize = height * width * 2;
+  const uint32_t sentSize = static_cast<uint32_t>(height) * static_cast<uint32_t>(width) * 2;
 
   buffer.reserve(buffer.size() + sentSize + 1);
   buffer.push_back(endianness);
@@ -199,7 +199,7 @@ template<>
 void decode(const std::vector<uint8_t> &buffer, unsigned int &index, int &value)
 {
   const uint8_t *ptr = &buffer[index];
-  value = ntohl(*((uint32_t *)ptr)); // Convert from network (big endian) representation to this machine's representation.
+  value = static_cast<int>(ntohl(*((uint32_t *)ptr))); // Convert from network (big endian) representation to this machine's representation.
   index += sizeof(int);
 }
 template<>
@@ -215,9 +215,9 @@ void decode(const std::vector<uint8_t> &buffer, unsigned int &index, std::string
 {
   int size;
   decode(buffer, index, size);
-  value.resize(size);
-  value.replace(0, size, (char *)&buffer[index], size);
-  index += size;
+  value.resize(static_cast<std::size_t>(size));
+  value.replace(0, static_cast<std::size_t>(size), (char *)&buffer[index], static_cast<std::size_t>(size));
+  index += static_cast<unsigned int>(size);
 }
 
 template<typename T>
@@ -225,11 +225,11 @@ void decode(const std::vector<uint8_t> &buffer, unsigned int &index, std::vector
 {
   int size;
   decode(buffer, index, size);
-  value.resize(size);
+  value.resize(static_cast<std::size_t>(size));
   for (int i = 0; i < size; ++i) {
     T t;
     decode(buffer, index, t);
-    value[i] = t;
+    value[static_cast<std::size_t>(i)] = t;
   }
 }
 
@@ -240,7 +240,7 @@ void decode(const std::vector<uint8_t> &buffer, unsigned int &index, vpHomogeneo
   decode(buffer, index, values);
   assert(values.size() == 16);
   for (int i = 0; i < 16; ++i) {
-    value.data[i] = values[i];
+    value.data[i] = values[static_cast<std::size_t>(i)];
   }
 }
 
@@ -260,7 +260,7 @@ void decode(const std::vector<uint8_t> &buffer, unsigned int &index, vpImage<vpR
 {
   int height, width, channels;
   decode(buffer, index, height, width, channels);
-  value.resize(height, width);
+  value.resize(static_cast<unsigned int>(height), static_cast<unsigned int>(width));
   if (channels == 3) {
     for (int i = 0; i < height; ++i) {
       for (int j = 0; j < width; ++j) {
@@ -270,7 +270,7 @@ void decode(const std::vector<uint8_t> &buffer, unsigned int &index, vpImage<vpR
     }
   }
   else if (channels == 4) { // Despite having 4 channels, this is faster
-    const unsigned copySize = height * width * channels;
+    const unsigned int copySize = static_cast<unsigned int>(height * width * channels);
     memcpy((uint8_t *)value.bitmap, &buffer[index], copySize);
     index += copySize;
   }
@@ -338,7 +338,7 @@ std::pair<vpMegaPose::ServerMessage, std::vector<uint8_t>> vpMegaPose::readMessa
 {
   uint32_t size;
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  size_t readCount = read(m_serverSocket, &size, sizeof(uint32_t));
+  size_t readCount = static_cast<size_t>(read(m_serverSocket, &size, sizeof(uint32_t)));
 #else
   size_t readCount = recv(m_serverSocket, reinterpret_cast<char *>(&size), sizeof(uint32_t), 0);
 #endif
@@ -349,7 +349,7 @@ std::pair<vpMegaPose::ServerMessage, std::vector<uint8_t>> vpMegaPose::readMessa
 
   unsigned char code[MEGAPOSE_CODE_SIZE];
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  readCount = read(m_serverSocket, code, MEGAPOSE_CODE_SIZE);
+  readCount = static_cast<size_t>(read(m_serverSocket, code, MEGAPOSE_CODE_SIZE));
 #else
   readCount = recv(m_serverSocket, reinterpret_cast<char *>(code), MEGAPOSE_CODE_SIZE, 0);
 #endif
@@ -359,8 +359,8 @@ std::pair<vpMegaPose::ServerMessage, std::vector<uint8_t>> vpMegaPose::readMessa
 
   std::vector<uint8_t> data;
   data.resize(size);
-  unsigned read_size = 4096;
-  unsigned read_total = 0;
+  unsigned int read_size = 4096;
+  unsigned int read_total = 0;
   while (read_total < size) {
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     int actually_read = read(m_serverSocket, &data[read_total], read_size);
@@ -370,7 +370,7 @@ std::pair<vpMegaPose::ServerMessage, std::vector<uint8_t>> vpMegaPose::readMessa
     if (actually_read <= 0) {
       throw vpException(vpException::ioError, "MegaPose: Error while reading data from socket");
     }
-    read_total += actually_read;
+    read_total += static_cast<unsigned int>(actually_read);
   }
   std::string codeStr(code, code + MEGAPOSE_CODE_SIZE);
   vpMegaPose::ServerMessage c = stringToMessage(codeStr);
@@ -410,7 +410,7 @@ vpMegaPose::~vpMegaPose()
 {
   std::vector<uint8_t> data;
   makeMessage(ServerMessage::EXIT, data);
-  send(m_serverSocket, reinterpret_cast<const char *>(data.data()), static_cast<int>(data.size()), 0);
+  send(m_serverSocket, reinterpret_cast<const char *>(data.data()), static_cast<size_t>(data.size()), 0);
 
 #if defined(_WIN32)
   WSACleanup();
@@ -478,7 +478,7 @@ vpMegaPose::estimatePoses(const vpImage<vpRGBa>&image, const std::vector<std::st
     encode(data, *depth);
   }
   makeMessage(ServerMessage::GET_POSE, data);
-  send(m_serverSocket, reinterpret_cast<const char *>(data.data()), static_cast<int>(data.size()), 0);
+  send(m_serverSocket, reinterpret_cast<const char *>(data.data()), static_cast<size_t>(data.size()), 0);
   //std::cout<< "Encoding time = " << (vpTime::measureTimeMs() - beforeEncoding) << std::endl;
 
   ServerMessage code;
@@ -517,7 +517,7 @@ std::vector<double> vpMegaPose::scorePoses(const vpImage<vpRGBa>&image,
 
   encode(data, parametersJson.dump());
   makeMessage(ServerMessage::GET_SCORE, data);
-  send(m_serverSocket, reinterpret_cast<const char *>(data.data()), static_cast<int>(data.size()), 0);
+  send(m_serverSocket, reinterpret_cast<const char *>(data.data()), static_cast<size_t>(data.size()), 0);
 
   ServerMessage code;
   std::vector<uint8_t> data_result;
@@ -551,7 +551,7 @@ void vpMegaPose::setIntrinsics(const vpCameraParameters& cam, unsigned height, u
   encode(data, message.dump());
   makeMessage(ServerMessage::SET_INTR, data);
 
-  send(m_serverSocket, reinterpret_cast<const char *>(data.data()), static_cast<int>(data.size()), 0);
+  send(m_serverSocket, reinterpret_cast<const char *>(data.data()), static_cast<size_t>(data.size()), 0);
   ServerMessage code;
   std::vector<uint8_t> data_result;
   std::tie(code, data_result) = readMessage();
@@ -577,7 +577,7 @@ vpImage<vpRGBa> vpMegaPose::viewObjects(const std::vector<std::string>&objectNam
   j["type"] = viewType;
   encode(data, j.dump());
   makeMessage(ServerMessage::GET_VIZ, data);
-  send(m_serverSocket, reinterpret_cast<const char *>(data.data()), static_cast<int>(data.size()), 0);
+  send(m_serverSocket, reinterpret_cast<const char *>(data.data()), static_cast<size_t>(data.size()), 0);
   ServerMessage code;
   std::vector<uint8_t> data_result;
   std::tie(code, data_result) = readMessage();
@@ -599,7 +599,7 @@ void vpMegaPose::setCoarseNumSamples(const unsigned num)
   j["so3_grid_size"] = num;
   encode(data, j.dump());
   makeMessage(ServerMessage::SET_SO3_GRID_SIZE, data);
-  send(m_serverSocket, reinterpret_cast<const char *>(data.data()), static_cast<int>(data.size()), 0);
+  send(m_serverSocket, reinterpret_cast<const char *>(data.data()), static_cast<size_t>(data.size()), 0);
   ServerMessage code;
   std::vector<uint8_t> data_result;
   std::tie(code, data_result) = readMessage();
@@ -613,7 +613,7 @@ std::vector<std::string> vpMegaPose::getObjectNames()
   const std::lock_guard<std::mutex> lock(m_mutex);
   std::vector<uint8_t> data;
   makeMessage(ServerMessage::GET_LIST_OBJECTS, data);
-  send(m_serverSocket, reinterpret_cast<const char *>(data.data()), static_cast<int>(data.size()), 0);
+  send(m_serverSocket, reinterpret_cast<const char *>(data.data()), static_cast<size_t>(data.size()), 0);
   ServerMessage code;
   std::vector<uint8_t> data_result;
   std::tie(code, data_result) = readMessage();
