@@ -44,7 +44,7 @@ std::vector<vpHomogeneousMatrix> List_to_vector_vpHomogeneousMatrix(JNIEnv *env,
   std::vector<vpHomogeneousMatrix> V(static_cast<size_t>(len));
   for (int i = 0; i < len; i++) {
     vpHomogeneousMatrix *temp = (vpHomogeneousMatrix *)body[i];
-    V[i] = *temp;
+    V[static_cast<size_t>(i)] = *temp;
   }
 
   env->ReleaseLongArrayElements(arr, body, 0);
@@ -143,7 +143,7 @@ jobjectArray vector_vector_double_to_List(JNIEnv *env, const std::vector<std::ve
   jobjectArray outerArray = env->NewObjectArray(outerSize, env->FindClass("java/lang/Object"), nullptr);
 
   for (int i = 0; i < env->GetArrayLength(outerArray); i++) {
-    size_t innerSize = V[i].size();
+    size_t innerSize = V[static_cast<size_t>(i)].size();
     jdoubleArray doubleArray = env->NewDoubleArray(innerSize);
     jdouble *doubleArrayElements = env->GetDoubleArrayElements(doubleArray, 0);
 
