@@ -2,6 +2,11 @@
 // This file is auto-generated. Please don't modify it!
 //
 
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wsign-conversion"
+#endif
+
 #include "common.h"
 $includes
 using namespace std;
@@ -47,3 +52,7 @@ extern "C" {
 $code
 
 } // extern "C"
+
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
