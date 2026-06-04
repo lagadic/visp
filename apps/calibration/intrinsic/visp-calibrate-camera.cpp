@@ -429,14 +429,14 @@ int main(int argc, const char *argv[])
       }
 
       if (found)
-        vpDisplay::displayText(I, 15 * vpDisplay::getDownScalingFactor(I), 15 * vpDisplay::getDownScalingFactor(I),
+        vpDisplay::displayText(I, 15 * static_cast<int>(vpDisplay::getDownScalingFactor(I)), 15 * static_cast<int>(vpDisplay::getDownScalingFactor(I)),
                                "Image processing succeeded", vpColor::green);
       else
-        vpDisplay::displayText(I, 15 * vpDisplay::getDownScalingFactor(I), 15 * vpDisplay::getDownScalingFactor(I),
+        vpDisplay::displayText(I, 15 * static_cast<int>(vpDisplay::getDownScalingFactor(I)), 15 * static_cast<int>(vpDisplay::getDownScalingFactor(I)),
                                "Image processing failed", vpColor::red);
 
       if (s.tempo > 10.f) {
-        vpDisplay::displayText(I, 35 * vpDisplay::getDownScalingFactor(I), 15 * vpDisplay::getDownScalingFactor(I),
+        vpDisplay::displayText(I, 35 * static_cast<int>(vpDisplay::getDownScalingFactor(I)), 15 * static_cast<int>(vpDisplay::getDownScalingFactor(I)),
                                "A click to process the next image", vpColor::green);
         vpDisplay::flush(I);
         vpDisplay::getClick(I);
@@ -462,11 +462,13 @@ int main(int argc, const char *argv[])
     }
 
     // Display calibration pattern occupancy
-    drawCalibrationOccupancy(I, calib_info, s.boardSize.width, s.calibrationPattern == Settings::CHARUCOBOARD);
+    drawCalibrationOccupancy(I, calib_info,
+                             static_cast<unsigned int>(s.boardSize.width),
+                             s.calibrationPattern == Settings::CHARUCOBOARD);
 
-    cv::Mat1b img(I.getHeight(), I.getWidth());
+    cv::Mat1b img(static_cast<int>(I.getHeight()), static_cast<int>(I.getWidth()));
     vpImageConvert::convert(I, img);
-    cv::Mat3b imgColor(I.getHeight(), I.getWidth());
+    cv::Mat3b imgColor(static_cast<int>(I.getHeight()), static_cast<int>(I.getWidth()));
     cv::applyColorMap(img, imgColor, cv::COLORMAP_JET);
 
     // Draw calibration board corners
@@ -477,7 +479,8 @@ int main(int argc, const char *argv[])
         const vpImagePoint &imPt = calib.m_imPts[idx2];
         cv::rectangle(imgColor,
                       cv::Rect(static_cast<int>(imPt.get_u() - 2), static_cast<int>(imPt.get_v() - 2),
-                               4 * vpDisplay::getDownScalingFactor(I), 4 * vpDisplay::getDownScalingFactor(I)),
+                               4 * static_cast<int>(vpDisplay::getDownScalingFactor(I)),
+                               4 * static_cast<int>(vpDisplay::getDownScalingFactor(I))),
                       cv::Scalar(0, 0, 0), -1);
       }
     }
@@ -488,13 +491,15 @@ int main(int argc, const char *argv[])
     d->init(I_color, 0, 0, "Calibration pattern occupancy");
 
     vpDisplay::display(I_color);
-    vpDisplay::displayText(I_color, 15 * vpDisplay::getDownScalingFactor(I_color),
-                           15 * vpDisplay::getDownScalingFactor(I_color), "Calibration pattern occupancy in the image",
+    vpDisplay::displayText(I_color, 15 * static_cast<int>(vpDisplay::getDownScalingFactor(I_color)),
+                           15 * static_cast<int>(vpDisplay::getDownScalingFactor(I_color)),
+                           "Calibration pattern occupancy in the image",
                            vpColor::red);
 
     if (s.tempo > 10.f) {
-      vpDisplay::displayText(I_color, I_color.getHeight() - 20 * vpDisplay::getDownScalingFactor(I_color),
-                            15 * vpDisplay::getDownScalingFactor(I_color), "Click to continue...", vpColor::red);
+      vpDisplay::displayText(I_color, static_cast<int>(I_color.getHeight()) - 20 * static_cast<int>(vpDisplay::getDownScalingFactor(I_color)),
+                            15 * static_cast<int>(vpDisplay::getDownScalingFactor(I_color)),
+                            "Click to continue...", vpColor::red);
       vpDisplay::flush(I_color);
       vpDisplay::getClick(I_color);
     }
@@ -563,28 +568,28 @@ int main(int argc, const char *argv[])
 
         std::ostringstream ss;
         ss << "Reprojection error: " << reproj_error;
-        vpDisplay::displayText(I, 15 * vpDisplay::getDownScalingFactor(I), 15 * vpDisplay::getDownScalingFactor(I),
+        vpDisplay::displayText(I, 15 * static_cast<int>(vpDisplay::getDownScalingFactor(I)), 15 * static_cast<int>(vpDisplay::getDownScalingFactor(I)),
                                calib.m_frame_name, vpColor::red);
-        vpDisplay::displayText(I, 30 * vpDisplay::getDownScalingFactor(I), 15 * vpDisplay::getDownScalingFactor(I),
+        vpDisplay::displayText(I, 30 * static_cast<int>(vpDisplay::getDownScalingFactor(I)), 15 * static_cast<int>(vpDisplay::getDownScalingFactor(I)),
                                ss.str(), vpColor::red);
-        vpDisplay::displayText(I, 45 * vpDisplay::getDownScalingFactor(I), 15 * vpDisplay::getDownScalingFactor(I),
+        vpDisplay::displayText(I, 45 * static_cast<int>(vpDisplay::getDownScalingFactor(I)), 15 * static_cast<int>(vpDisplay::getDownScalingFactor(I)),
                                "Extracted points", vpColor::red);
-        vpDisplay::displayText(I, 60 * vpDisplay::getDownScalingFactor(I), 15 * vpDisplay::getDownScalingFactor(I),
+        vpDisplay::displayText(I, 60 * static_cast<int>(vpDisplay::getDownScalingFactor(I)), 15 * static_cast<int>(vpDisplay::getDownScalingFactor(I)),
                                "Projected points", vpColor::green);
 
         for (size_t idx = 0; idx < calib.m_points.size(); idx++) {
-          vpDisplay::displayCross(I, calib.m_imPts[idx], 12 * vpDisplay::getDownScalingFactor(I), vpColor::red);
+          vpDisplay::displayCross(I, calib.m_imPts[idx], 12 * static_cast<unsigned int>(vpDisplay::getDownScalingFactor(I)), vpColor::red);
 
           vpPoint pt = calib.m_points[idx];
           pt.project(calibrator[i].cMo);
           vpImagePoint imPt;
           vpMeterPixelConversion::convertPoint(cam, pt.get_x(), pt.get_y(), imPt);
-          vpDisplay::displayCross(I, imPt, 12 * vpDisplay::getDownScalingFactor(I), vpColor::green);
+          vpDisplay::displayCross(I, imPt, 12 * static_cast<unsigned int>(vpDisplay::getDownScalingFactor(I)), vpColor::green);
         }
 
         if (s.tempo > 10.f) {
-          vpDisplay::displayText(I, I.getHeight() - 20 * vpDisplay::getDownScalingFactor(I),
-                               15 * vpDisplay::getDownScalingFactor(I), "Click to continue...", vpColor::red);
+          vpDisplay::displayText(I, static_cast<int>(I.getHeight()) - 20 * static_cast<int>(vpDisplay::getDownScalingFactor(I)),
+                                 15 * static_cast<int>(vpDisplay::getDownScalingFactor(I)), "Click to continue...", vpColor::red);
           vpDisplay::flush(I);
           vpDisplay::getClick(I);
         }
@@ -644,28 +649,28 @@ int main(int argc, const char *argv[])
 
         std::ostringstream ss;
         ss << "Reprojection error: " << reproj_error;
-        vpDisplay::displayText(I, 15 * vpDisplay::getDownScalingFactor(I), 15 * vpDisplay::getDownScalingFactor(I),
+        vpDisplay::displayText(I, 15 * static_cast<int>(vpDisplay::getDownScalingFactor(I)), 15 * static_cast<int>(vpDisplay::getDownScalingFactor(I)),
                                calib.m_frame_name, vpColor::red);
-        vpDisplay::displayText(I, 30 * vpDisplay::getDownScalingFactor(I), 15 * vpDisplay::getDownScalingFactor(I),
+        vpDisplay::displayText(I, 30 * static_cast<int>(vpDisplay::getDownScalingFactor(I)), 15 * static_cast<int>(vpDisplay::getDownScalingFactor(I)),
                                ss.str(), vpColor::red);
-        vpDisplay::displayText(I, 45 * vpDisplay::getDownScalingFactor(I), 15 * vpDisplay::getDownScalingFactor(I),
+        vpDisplay::displayText(I, 45 * static_cast<int>(vpDisplay::getDownScalingFactor(I)), 15 * static_cast<int>(vpDisplay::getDownScalingFactor(I)),
                                "Extracted points", vpColor::red);
-        vpDisplay::displayText(I, 60 * vpDisplay::getDownScalingFactor(I), 15 * vpDisplay::getDownScalingFactor(I),
+        vpDisplay::displayText(I, 60 * static_cast<int>(vpDisplay::getDownScalingFactor(I)), 15 * static_cast<int>(vpDisplay::getDownScalingFactor(I)),
                                "Projected points", vpColor::green);
 
         for (size_t idx = 0; idx < calib.m_points.size(); idx++) {
-          vpDisplay::displayCross(I, calib.m_imPts[idx], 12 * vpDisplay::getDownScalingFactor(I), vpColor::red);
+          vpDisplay::displayCross(I, calib.m_imPts[idx], 12 * static_cast<unsigned int>(vpDisplay::getDownScalingFactor(I)), vpColor::red);
 
           vpPoint pt = calib.m_points[idx];
           pt.project(calibrator[i].cMo_dist);
           vpImagePoint imPt;
           vpMeterPixelConversion::convertPoint(cam, pt.get_x(), pt.get_y(), imPt);
-          vpDisplay::displayCross(I, imPt, 12 * vpDisplay::getDownScalingFactor(I), vpColor::green);
+          vpDisplay::displayCross(I, imPt, 12 * static_cast<unsigned int>(vpDisplay::getDownScalingFactor(I)), vpColor::green);
         }
 
         if (s.tempo > 10.f) {
-          vpDisplay::displayText(I, I.getHeight() - 20 * vpDisplay::getDownScalingFactor(I),
-                               15 * vpDisplay::getDownScalingFactor(I), "Click to continue...", vpColor::red);
+          vpDisplay::displayText(I, static_cast<int>(I.getHeight()) - 20 * static_cast<int>(vpDisplay::getDownScalingFactor(I)),
+                                 15 * static_cast<int>(vpDisplay::getDownScalingFactor(I)), "Click to continue...", vpColor::red);
           vpDisplay::flush(I);
           vpDisplay::getClick(I);
         }
@@ -708,11 +713,11 @@ int main(int argc, const char *argv[])
           I_dist_undist.insert(I_undist, vpImagePoint(0, I.getWidth()));
           vpDisplay::display(I_dist_undist);
 
-          vpDisplay::displayText(I_dist_undist, 15 * vpDisplay::getDownScalingFactor(I_dist_undist),
-                                 15 * vpDisplay::getDownScalingFactor(I_dist_undist),
+          vpDisplay::displayText(I_dist_undist, 15 * static_cast<int>(vpDisplay::getDownScalingFactor(I_dist_undist)),
+                                 15 * static_cast<int>(vpDisplay::getDownScalingFactor(I_dist_undist)),
                                  calib_info[idx].m_frame_name + std::string(" distorted"), vpColor::red);
-          vpDisplay::displayText(I_dist_undist, 30 * vpDisplay::getDownScalingFactor(I_dist_undist),
-                                 15 * vpDisplay::getDownScalingFactor(I_dist_undist),
+          vpDisplay::displayText(I_dist_undist, 30 * static_cast<int>(vpDisplay::getDownScalingFactor(I_dist_undist)),
+                                 15 * static_cast<int>(vpDisplay::getDownScalingFactor(I_dist_undist)),
                                  "Draw lines from first / last points.", vpColor::red);
           std::vector<vpImagePoint> grid_points = calib_info[idx].m_imPts;
           const int offset = (s.calibrationPattern == Settings::CHARUCOBOARD) ? -1 : 0;
@@ -747,8 +752,8 @@ int main(int argc, const char *argv[])
               found_grid_points.push_back(ip);
             }
 
-            vpDisplay::displayText(I_dist_undist, 15 * vpDisplay::getDownScalingFactor(I_dist_undist),
-                                   I.getWidth() + 15 * vpDisplay::getDownScalingFactor(I_dist_undist),
+            vpDisplay::displayText(I_dist_undist, 15 * static_cast<int>(vpDisplay::getDownScalingFactor(I_dist_undist)),
+                                   static_cast<int>(I.getWidth()) + 15 * static_cast<int>(vpDisplay::getDownScalingFactor(I_dist_undist)),
                                    calib_info[idx].m_frame_name + std::string(" undistorted"), vpColor::red);
             for (int i = 0; i < s.boardSize.height+offset; i++) {
               std::vector<vpImagePoint> current_line(found_grid_points.begin() + i * (s.boardSize.width+offset),
@@ -768,17 +773,17 @@ int main(int argc, const char *argv[])
             std::string msg("Unable to detect grid on undistorted image");
             tee << msg << "\n";
             tee << "Check that the grid is not too close to the image edges" << "\n";
-            vpDisplay::displayText(I_dist_undist, 15 * vpDisplay::getDownScalingFactor(I_dist_undist),
-                                   I.getWidth() + 15 * vpDisplay::getDownScalingFactor(I_dist_undist),
+            vpDisplay::displayText(I_dist_undist, 15 * static_cast<int>(vpDisplay::getDownScalingFactor(I_dist_undist)),
+                                   static_cast<int>(I.getWidth()) + 15 * static_cast<int>(vpDisplay::getDownScalingFactor(I_dist_undist)),
                                    calib_info[idx].m_frame_name + std::string(" undistorted"), vpColor::red);
-            vpDisplay::displayText(I_dist_undist, 30 * vpDisplay::getDownScalingFactor(I_dist_undist),
-                                   I.getWidth() + 15 * vpDisplay::getDownScalingFactor(I_dist_undist), msg, vpColor::red);
+            vpDisplay::displayText(I_dist_undist, 30 * static_cast<int>(vpDisplay::getDownScalingFactor(I_dist_undist)),
+                                   static_cast<int>(I.getWidth()) + 15 * static_cast<int>(vpDisplay::getDownScalingFactor(I_dist_undist)), msg, vpColor::red);
           }
 
           if (s.tempo > 10.f) {
-            vpDisplay::displayText(
-                I_dist_undist, I_dist_undist.getHeight() - 20 * vpDisplay::getDownScalingFactor(I_dist_undist),
-                15 * vpDisplay::getDownScalingFactor(I_dist_undist), "Click to continue...", vpColor::red);
+            vpDisplay::displayText(I_dist_undist,
+                                   static_cast<int>(I_dist_undist.getHeight()) - 20 * static_cast<int>(vpDisplay::getDownScalingFactor(I_dist_undist)),
+                                   15 * static_cast<int>(vpDisplay::getDownScalingFactor(I_dist_undist)), "Click to continue...", vpColor::red);
             vpDisplay::flush(I_dist_undist);
             vpDisplay::getClick(I_dist_undist);
           }
@@ -867,14 +872,15 @@ int main(int argc, const char *argv[])
 
       // Image center and camera principal point
       vpDisplay::displayCross(I_dist_map, vpImagePoint((I_dist_map.getHeight()-1)/2, (I_dist_map.getWidth()-1)/2),
-        10*vpDisplay::getDownScalingFactor(I_dist_map), vpColor::green, 2);
+                              10*static_cast<unsigned int>(vpDisplay::getDownScalingFactor(I_dist_map)), vpColor::green, 2);
       vpDisplay::displayCircle(I_dist_map, vpImagePoint(cam.get_v0(), cam.get_u0()),
-        8*vpDisplay::getDownScalingFactor(I_dist_map), vpColor::red);
+                               8*static_cast<unsigned int>(vpDisplay::getDownScalingFactor(I_dist_map)), vpColor::red);
 
       if (s.tempo > 10.f) {
-        vpDisplay::displayText(
-            I_dist_map, I_dist_map.getHeight() - 20 * vpDisplay::getDownScalingFactor(I_dist_map),
-            15 * vpDisplay::getDownScalingFactor(I_dist_map), "Click to continue...", vpColor::red);
+        vpDisplay::displayText(I_dist_map,
+                               static_cast<int>(I_dist_map.getHeight()) - 20 * static_cast<int>(vpDisplay::getDownScalingFactor(I_dist_map)),
+                               15 * static_cast<int>(vpDisplay::getDownScalingFactor(I_dist_map)),
+                               "Click to continue...", vpColor::red);
         vpDisplay::flush(I_dist_map);
         vpDisplay::getClick(I_dist_map);
       }
@@ -961,8 +967,8 @@ int main(int argc, const char *argv[])
       }
 
       if (s.tempo > 10.f) {
-        vpDisplay::displayText(I_err_imPt, I_err_imPt.getHeight() - 20 * vpDisplay::getDownScalingFactor(I_err_imPt),
-                              15 * vpDisplay::getDownScalingFactor(I_err_imPt), "Click to continue...", vpColor::red);
+        vpDisplay::displayText(I_err_imPt, static_cast<int>(I_err_imPt.getHeight()) - 20 * static_cast<int>(vpDisplay::getDownScalingFactor(I_err_imPt)),
+                              15 * static_cast<int>(vpDisplay::getDownScalingFactor(I_err_imPt)), "Click to continue...", vpColor::red);
         vpDisplay::flush(I_err_imPt);
         vpDisplay::getClick(I_err_imPt);
       }
@@ -1000,13 +1006,13 @@ int main(int argc, const char *argv[])
 
           oss_title.str("");
           oss_title << vpIoTools::getNameWE(calib_info[i].m_frame_name) << " without / with dist";
-          vpDisplay::displayText(I_err_imPt, 20 * vpDisplay::getDownScalingFactor(I_err_imPt),
-                                15 * vpDisplay::getDownScalingFactor(I_err_imPt),
+          vpDisplay::displayText(I_err_imPt, 20 * static_cast<int>(vpDisplay::getDownScalingFactor(I_err_imPt)),
+                                15 * static_cast<int>(vpDisplay::getDownScalingFactor(I_err_imPt)),
                                 oss_title.str(), vpColor::white);
 
           if (s.tempo > 10.f) {
-            vpDisplay::displayText(I_err_imPt, I_err_imPt.getHeight() - 20 * vpDisplay::getDownScalingFactor(I_err_imPt),
-                                  15 * vpDisplay::getDownScalingFactor(I_err_imPt), "Click to continue...", vpColor::red);
+            vpDisplay::displayText(I_err_imPt, static_cast<int>(I_err_imPt.getHeight()) - 20 * static_cast<int>(vpDisplay::getDownScalingFactor(I_err_imPt)),
+                                  15 * static_cast<int>(vpDisplay::getDownScalingFactor(I_err_imPt)), "Click to continue...", vpColor::red);
             vpDisplay::flush(I_err_imPt);
             vpDisplay::getClick(I_err_imPt);
           }
@@ -1106,7 +1112,7 @@ int main(int argc, const char *argv[])
         cv_imagePoints.push_back(cv_imagePoints_cur_img);
       }
 
-      cv::Size cv_imageSize(I.getWidth(), I.getHeight());
+      cv::Size cv_imageSize(static_cast<int>(I.getWidth()), static_cast<int>(I.getHeight()));
       cv::Size cv_boardSize = s.boardSize;
       CvPattern cv_patternType = CV_CHESSBOARD;
       switch (s.calibrationPattern) {
@@ -1180,24 +1186,24 @@ int main(int argc, const char *argv[])
 
           std::ostringstream ss;
           ss << "Reprojection error: " << reproj_error;
-          vpDisplay::displayText(I, 15 * vpDisplay::getDownScalingFactor(I), 15 * vpDisplay::getDownScalingFactor(I),
+          vpDisplay::displayText(I, 15 * static_cast<int>(vpDisplay::getDownScalingFactor(I)), 15 * static_cast<int>(vpDisplay::getDownScalingFactor(I)),
                                 calib.m_frame_name, vpColor::red);
-          vpDisplay::displayText(I, 30 * vpDisplay::getDownScalingFactor(I), 15 * vpDisplay::getDownScalingFactor(I),
+          vpDisplay::displayText(I, 30 * static_cast<int>(vpDisplay::getDownScalingFactor(I)), 15 * static_cast<int>(vpDisplay::getDownScalingFactor(I)),
                                 ss.str(), vpColor::red);
-          vpDisplay::displayText(I, 45 * vpDisplay::getDownScalingFactor(I), 15 * vpDisplay::getDownScalingFactor(I),
+          vpDisplay::displayText(I, 45 * static_cast<int>(vpDisplay::getDownScalingFactor(I)), 15 * static_cast<int>(vpDisplay::getDownScalingFactor(I)),
                                 "Extracted points", vpColor::red);
-          vpDisplay::displayText(I, 60 * vpDisplay::getDownScalingFactor(I), 15 * vpDisplay::getDownScalingFactor(I),
+          vpDisplay::displayText(I, 60 * static_cast<int>(vpDisplay::getDownScalingFactor(I)), 15 * static_cast<int>(vpDisplay::getDownScalingFactor(I)),
                                 "Projected points", vpColor::green);
 
           for (size_t idx = 0; idx < calib.m_points.size(); idx++) {
-            vpDisplay::displayCross(I, calib.m_imPts[idx], 12 * vpDisplay::getDownScalingFactor(I), vpColor::red);
+            vpDisplay::displayCross(I, calib.m_imPts[idx], 12 * static_cast<unsigned int>(vpDisplay::getDownScalingFactor(I)), vpColor::red);
             vpImagePoint imPt(cv_imagePoints_proj[i][idx].y, cv_imagePoints_proj[i][idx].x);
-            vpDisplay::displayCross(I, imPt, 12 * vpDisplay::getDownScalingFactor(I), vpColor::green);
+            vpDisplay::displayCross(I, imPt, 12 * static_cast<unsigned int>(vpDisplay::getDownScalingFactor(I)), vpColor::green);
           }
 
           if (s.tempo > 10.f) {
-            vpDisplay::displayText(I, I.getHeight() - 20 * vpDisplay::getDownScalingFactor(I),
-                                15 * vpDisplay::getDownScalingFactor(I), "Click to continue...", vpColor::red);
+            vpDisplay::displayText(I, static_cast<int>(I.getHeight()) - 20 * static_cast<int>(vpDisplay::getDownScalingFactor(I)),
+                                15 * static_cast<int>(vpDisplay::getDownScalingFactor(I)), "Click to continue...", vpColor::red);
             vpDisplay::flush(I);
             vpDisplay::getClick(I);
           }
@@ -1239,11 +1245,11 @@ int main(int argc, const char *argv[])
             I_dist_undist.insert(I_undist, vpImagePoint(0, I.getWidth()));
             vpDisplay::display(I_dist_undist);
 
-            vpDisplay::displayText(I_dist_undist, 15 * vpDisplay::getDownScalingFactor(I_dist_undist),
-                                   15 * vpDisplay::getDownScalingFactor(I_dist_undist),
+            vpDisplay::displayText(I_dist_undist, 15 * static_cast<int>(vpDisplay::getDownScalingFactor(I_dist_undist)),
+                                   15 * static_cast<int>(vpDisplay::getDownScalingFactor(I_dist_undist)),
                                    calib_info[idx].m_frame_name + std::string(" distorted"), vpColor::red);
-            vpDisplay::displayText(I_dist_undist, 30 * vpDisplay::getDownScalingFactor(I_dist_undist),
-                                   15 * vpDisplay::getDownScalingFactor(I_dist_undist),
+            vpDisplay::displayText(I_dist_undist, 30 * static_cast<int>(vpDisplay::getDownScalingFactor(I_dist_undist)),
+                                   15 * static_cast<int>(vpDisplay::getDownScalingFactor(I_dist_undist)),
                                    "Draw lines from first / last points.", vpColor::red);
             std::vector<vpImagePoint> grid_points = calib_info[idx].m_imPts;
             const int offset = (s.calibrationPattern == Settings::CHARUCOBOARD) ? -1 : 0;
@@ -1278,8 +1284,9 @@ int main(int argc, const char *argv[])
                 found_grid_points.push_back(ip);
               }
 
-              vpDisplay::displayText(I_dist_undist, 15 * vpDisplay::getDownScalingFactor(I_dist_undist),
-                                     I.getWidth() + 15 * vpDisplay::getDownScalingFactor(I_dist_undist),
+              vpDisplay::displayText(I_dist_undist,
+                                     15 * static_cast<int>(vpDisplay::getDownScalingFactor(I_dist_undist)),
+                                     static_cast<int>(I.getWidth()) + 15 * static_cast<int>(vpDisplay::getDownScalingFactor(I_dist_undist)),
                                      calib_info[idx].m_frame_name + std::string(" undistorted"), vpColor::red);
               for (int i = 0; i < s.boardSize.height+offset; i++) {
                 std::vector<vpImagePoint> current_line(found_grid_points.begin() + i * (s.boardSize.width+offset),
@@ -1290,8 +1297,8 @@ int main(int argc, const char *argv[])
                 tee << calib_info[idx].m_frame_name << " undistorted image, line " << i + 1
                   << " fitting error: " << line_fitting_error << "\n";
 
-                vpImagePoint ip1 = current_line.front() + vpImagePoint(0, I.getWidth());
-                vpImagePoint ip2 = current_line.back() + vpImagePoint(0, I.getWidth());
+                vpImagePoint ip1 = current_line.front() + vpImagePoint(0, static_cast<int>(I.getWidth()));
+                vpImagePoint ip2 = current_line.back() + vpImagePoint(0, static_cast<int>(I.getWidth()));
                 vpDisplay::displayLine(I_dist_undist, ip1, ip2, vpColor::red);
               }
             }
@@ -1299,17 +1306,17 @@ int main(int argc, const char *argv[])
               std::string msg("Unable to detect grid on undistorted image");
               tee << msg << "\n";
               tee << "Check that the grid is not too close to the image edges" << "\n";
-              vpDisplay::displayText(I_dist_undist, 15 * vpDisplay::getDownScalingFactor(I_dist_undist),
-                                     I.getWidth() + 15 * vpDisplay::getDownScalingFactor(I_dist_undist),
+              vpDisplay::displayText(I_dist_undist, 15 * static_cast<int>(vpDisplay::getDownScalingFactor(I_dist_undist)),
+                                     static_cast<int>(I.getWidth()) + 15 * static_cast<int>(vpDisplay::getDownScalingFactor(I_dist_undist)),
                                      calib_info[idx].m_frame_name + std::string(" undistorted"), vpColor::red);
-              vpDisplay::displayText(I_dist_undist, 30 * vpDisplay::getDownScalingFactor(I_dist_undist),
-                                     I.getWidth() + 15 * vpDisplay::getDownScalingFactor(I_dist_undist), msg, vpColor::red);
+              vpDisplay::displayText(I_dist_undist, 30 * static_cast<int>(vpDisplay::getDownScalingFactor(I_dist_undist)),
+                                     static_cast<int>(I.getWidth()) + 15 * static_cast<int>(vpDisplay::getDownScalingFactor(I_dist_undist)), msg, vpColor::red);
             }
 
             if (s.tempo > 10.f) {
-              vpDisplay::displayText(
-                  I_dist_undist, I_dist_undist.getHeight() - 20 * vpDisplay::getDownScalingFactor(I_dist_undist),
-                  15 * vpDisplay::getDownScalingFactor(I_dist_undist), "Click to continue...", vpColor::red);
+              vpDisplay::displayText(I_dist_undist,
+                                     static_cast<int>(I_dist_undist.getHeight()) - 20 * static_cast<int>(vpDisplay::getDownScalingFactor(I_dist_undist)),
+                                     15 * static_cast<int>(vpDisplay::getDownScalingFactor(I_dist_undist)), "Click to continue...", vpColor::red);
               vpDisplay::flush(I_dist_undist);
               vpDisplay::getClick(I_dist_undist);
             }
@@ -1394,15 +1401,17 @@ int main(int argc, const char *argv[])
         }
 
         // Image center and camera principal point
-        vpDisplay::displayCross(I_dist_map, vpImagePoint((I_dist_map.getHeight()-1)/2, (I_dist_map.getWidth()-1)/2),
-          10*vpDisplay::getDownScalingFactor(I_dist_map), vpColor::green, 2);
+        vpDisplay::displayCross(I_dist_map, vpImagePoint((I_dist_map.getHeight()-1)/2,
+                                                         static_cast<int>(I_dist_map.getWidth()-1)/2),
+                                10*static_cast<unsigned int>(vpDisplay::getDownScalingFactor(I_dist_map)), vpColor::green, 2);
         vpDisplay::displayCircle(I_dist_map, vpImagePoint(cam.get_v0(), cam.get_u0()),
-          8*vpDisplay::getDownScalingFactor(I_dist_map), vpColor::red);
+                                 8*static_cast<unsigned int>(vpDisplay::getDownScalingFactor(I_dist_map)), vpColor::red);
 
         if (s.tempo > 10.f) {
-          vpDisplay::displayText(
-              I_dist_map, I_dist_map.getHeight() - 20 * vpDisplay::getDownScalingFactor(I_dist_map),
-              15 * vpDisplay::getDownScalingFactor(I_dist_map), "Click to continue...", vpColor::red);
+          vpDisplay::displayText(I_dist_map,
+                                 static_cast<int>(I_dist_map.getHeight()) - 20 * static_cast<int>(vpDisplay::getDownScalingFactor(I_dist_map)),
+                                 15 * static_cast<int>(vpDisplay::getDownScalingFactor(I_dist_map)),
+                                 "Click to continue...", vpColor::red);
           vpDisplay::flush(I_dist_map);
           vpDisplay::getClick(I_dist_map);
         }
@@ -1466,8 +1475,10 @@ int main(int argc, const char *argv[])
         }
 
         if (s.tempo > 10.f) {
-          vpDisplay::displayText(I_err_imPt, I_err_imPt.getHeight() - 20 * vpDisplay::getDownScalingFactor(I_err_imPt),
-                                15 * vpDisplay::getDownScalingFactor(I_err_imPt), "Click to continue...", vpColor::red);
+          vpDisplay::displayText(I_err_imPt,
+                                 static_cast<int>(I_err_imPt.getHeight()) - 20 * static_cast<int>(vpDisplay::getDownScalingFactor(I_err_imPt)),
+                                 15 * static_cast<int>(vpDisplay::getDownScalingFactor(I_err_imPt)),
+                                 "Click to continue...", vpColor::red);
           vpDisplay::flush(I_err_imPt);
           vpDisplay::getClick(I_err_imPt);
         }
@@ -1503,13 +1514,15 @@ int main(int argc, const char *argv[])
 
             oss_title.str("");
             oss_title << vpIoTools::getNameWE(calib_info[i].m_frame_name);
-            vpDisplay::displayText(I_err_imPt, 20 * vpDisplay::getDownScalingFactor(I_err_imPt),
-                                  15 * vpDisplay::getDownScalingFactor(I_err_imPt),
-                                  oss_title.str(), vpColor::white);
+            vpDisplay::displayText(I_err_imPt, 20 * static_cast<int>(vpDisplay::getDownScalingFactor(I_err_imPt)),
+                                   15 * static_cast<int>(vpDisplay::getDownScalingFactor(I_err_imPt)),
+                                   oss_title.str(), vpColor::white);
 
             if (s.tempo > 10.f) {
-              vpDisplay::displayText(I_err_imPt, I_err_imPt.getHeight() - 20 * vpDisplay::getDownScalingFactor(I_err_imPt),
-                                    15 * vpDisplay::getDownScalingFactor(I_err_imPt), "Click to continue...", vpColor::red);
+              vpDisplay::displayText(I_err_imPt,
+                                     static_cast<int>(I_err_imPt.getHeight()) - 20 * static_cast<int>(vpDisplay::getDownScalingFactor(I_err_imPt)),
+                                     15 * static_cast<int>(vpDisplay::getDownScalingFactor(I_err_imPt)),
+                                     "Click to continue...", vpColor::red);
               vpDisplay::flush(I_err_imPt);
               vpDisplay::getClick(I_err_imPt);
             }
