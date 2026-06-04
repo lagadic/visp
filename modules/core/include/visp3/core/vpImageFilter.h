@@ -2602,8 +2602,8 @@ private:
     const vpImage<bool> *p_mask = nullptr
   )
   {
-    const int nbRows = I.getRows(), nbCols = I.getCols();
-    const int size = I.getSize();
+    const int nbRows = static_cast<int>(I.getRows()), nbCols = static_cast<int>(I.getCols());
+    const int size = static_cast<int>(I.getSize());
     const int offsetIdiff = nbCols;
 
     std::vector<OutputType> Idiff(size);
