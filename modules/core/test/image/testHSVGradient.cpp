@@ -114,31 +114,30 @@ void gradientFilterX(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpIm
     filter[i] = filter[i] / scale;
   }
 
-  auto checkBooleanPatch = [](const vpImage<bool> *mask, const unsigned int &r, const unsigned int &c, const unsigned int &h, const unsigned int &w)
-    {
-      if (!mask) {
-        return true;
-      }
-      bool hasToCompute = (*mask)[r][c];
+  auto checkBooleanPatch = [](const vpImage<bool> *mask, const unsigned int &r, const unsigned int &c, const unsigned int &h, const unsigned int &w) {
+    if (!mask) {
+      return true;
+    }
+    bool hasToCompute = (*mask)[r][c];
 
-      if (c < w - 1) { // We do not compute gradient on the last column
-        hasToCompute |= (*mask)[r][c + 1];
-        if (r < h - 1) { // We do not compute gradient on the last row
-          hasToCompute |= (*mask)[r + 1][c + 1];
-        }
-      }
-
+    if (c < w - 1) { // We do not compute gradient on the last column
+      hasToCompute |= (*mask)[r][c + 1];
       if (r < h - 1) { // We do not compute gradient on the last row
-        hasToCompute |= (*mask)[r + 1][c];
+        hasToCompute |= (*mask)[r + 1][c + 1];
       }
+    }
 
-      if (r > 1) { // We do not compute gradient on the first row
-        hasToCompute |= (*mask)[r - 1][c];
-        if (c < w - 1) { // We do not compute gradient on the last column
-          hasToCompute |= (*mask)[r - 1][c + 1];
-        }
+    if (r < h - 1) { // We do not compute gradient on the last row
+      hasToCompute |= (*mask)[r + 1][c];
+    }
+
+    if (r > 1) { // We do not compute gradient on the first row
+      hasToCompute |= (*mask)[r - 1][c];
+      if (c < w - 1) { // We do not compute gradient on the last column
+        hasToCompute |= (*mask)[r - 1][c + 1];
       }
-      return hasToCompute;
+    }
+    return hasToCompute;
     };
 
   const unsigned int rStop = nbRows - 1, cStop = nbCols - 1;
@@ -160,12 +159,12 @@ void gradientFilterX(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpIm
     }
   }
 
-  for (unsigned int r = 1; r < rStop; ++r) {
-    for (unsigned int c = 1; c < cStop; ++c) {
-      if (checkBooleanMask(p_mask, r, c)) {
+  for (int r = 1; r < static_cast<int>(rStop); ++r) {
+    for (int c = 1; c < static_cast<int>(cStop); ++c) {
+      if (checkBooleanMask(p_mask, static_cast<unsigned int>(r), static_cast<unsigned int>(c))) {
         GIx[r][c] = 0.;
         for (int dr = -1; dr <= 1; ++dr) {
-          GIx[r][c] += filter[dr + 1] * (IabsDiff[r + dr][c - 1] +  IabsDiff[r + dr][c]);
+          GIx[r][c] += filter[static_cast<size_t>(dr + 1)] * (IabsDiff[r + dr][c - 1] +  IabsDiff[static_cast<unsigned int>(r + dr)][c]);
         }
       }
     }
@@ -198,31 +197,30 @@ void gradientFilterY(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpIm
   const unsigned int rStop = nbRows - 1, cStop = nbCols - 1;
   vpImage<double> IabsDiff(nbRows, nbCols);
 
-  auto checkBooleanPatch = [](const vpImage<bool> *mask, const unsigned int &r, const unsigned int &c, const unsigned int &h, const unsigned int &w)
-    {
-      if (!mask) {
-        return true;
-      }
+  auto checkBooleanPatch = [](const vpImage<bool> *mask, const unsigned int &r, const unsigned int &c, const unsigned int &h, const unsigned int &w) {
+    if (!mask) {
+      return true;
+    }
 
-      bool hasToCompute = (*mask)[r][c];
-      if (c < w - 1) { // We do not compute gradient on the last column
-        hasToCompute |= (*mask)[r][c + 1];
-        if (r < h - 1) { // We do not compute gradient on the last row
-          hasToCompute |= (*mask)[r + 1][c + 1];
-        }
-      }
-
+    bool hasToCompute = (*mask)[r][c];
+    if (c < w - 1) { // We do not compute gradient on the last column
+      hasToCompute |= (*mask)[r][c + 1];
       if (r < h - 1) { // We do not compute gradient on the last row
-        hasToCompute |= (*mask)[r + 1][c];
+        hasToCompute |= (*mask)[r + 1][c + 1];
       }
+    }
 
-      if (c > 1) { // We do not compute gradient on the first column
-        hasToCompute |= (*mask)[r][c - 1];
-        if (r < h - 1) { // We do not compute gradient on the last row
-          hasToCompute |= (*mask)[r + 1][c - 1];
-        }
+    if (r < h - 1) { // We do not compute gradient on the last row
+      hasToCompute |= (*mask)[r + 1][c];
+    }
+
+    if (c > 1) { // We do not compute gradient on the first column
+      hasToCompute |= (*mask)[r][c - 1];
+      if (r < h - 1) { // We do not compute gradient on the last row
+        hasToCompute |= (*mask)[r + 1][c - 1];
       }
-      return hasToCompute;
+    }
+    return hasToCompute;
     };
 
   // Computation for the first row
@@ -233,22 +231,22 @@ void gradientFilterY(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpIm
   }
 
   // Computation for the rest of the image of d and sign
-  for (unsigned int r = 1; r < rStop; ++r) {
-    for (unsigned int c = 0; c < nbCols; ++c) {
+  for (int r = 1; r < static_cast<int>(rStop); ++r) {
+    for (int c = 0; c < static_cast<int>(nbCols); ++c) {
       // Of the absolute value of the distance
-      if (checkBooleanPatch(p_mask, r, c, nbRows, nbCols)) {
+      if (checkBooleanPatch(p_mask, static_cast<unsigned int>(r), static_cast<unsigned int>(c), nbRows, nbCols)) {
         IabsDiff[r][c] = I[r + 1][c].V - I[r][c].V;
       }
     }
   }
 
   // Computation of the gradient
-  for (unsigned int r = 1; r < rStop; ++r) {
-    for (unsigned int c = 1; c < cStop; ++c) {
-      if (checkBooleanMask(p_mask, r, c)) {
+  for (int r = 1; r < static_cast<int>(rStop); ++r) {
+    for (int c = 1; c < static_cast<int>(cStop); ++c) {
+      if (checkBooleanMask(p_mask, static_cast<unsigned int>(r), static_cast<unsigned int>(c))) {
         GIy[r][c] = 0.;
         for (int dc = -1; dc <= 1; ++dc) {
-          GIy[r][c] += filter[dc + 1] * (IabsDiff[r - 1][c + dc] + IabsDiff[r][c + dc]);
+          GIy[r][c] += filter[static_cast<size_t>(dc + 1)] * (IabsDiff[r - 1][static_cast<unsigned int>(c + dc)] + IabsDiff[r][static_cast<unsigned int>(c + dc)]);
         }
       }
     }
