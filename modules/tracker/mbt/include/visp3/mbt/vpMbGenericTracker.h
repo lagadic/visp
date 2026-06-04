@@ -995,7 +995,9 @@ inline void from_json(const nlohmann::json &j, vpMbGenericTracker::TrackerWrappe
     t.setNearClippingDistance(clipping.value("near", t.getNearClippingDistance()));
     t.setFarClippingDistance(clipping.value("far", t.getFarClippingDistance()));
     if (clipping.contains("flags")) {
-      t.setClipping(flagsFromJSON<vpPolygon3D::vpPolygon3DClippingType>(clipping.at("flags")));
+      t.setClipping(static_cast<vpPolygon3D::vpPolygon3DClippingType>(
+        flagsFromJSON<unsigned int>(clipping.at("flags"))
+        ));
     }
   }
   if (j.contains("lod")) {
