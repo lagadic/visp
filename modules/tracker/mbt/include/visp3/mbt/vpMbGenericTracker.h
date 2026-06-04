@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -899,7 +899,7 @@ inline void to_json(nlohmann::json &j, const vpMbGenericTracker::TrackerWrapper 
   };
   j = nlohmann::json {
     {"camera", t.m_cam},
-    {"type", flagsToJSON(t.m_trackerType, trackerTypes)},
+    {"type", flagsToJSON(static_cast<unsigned int>(t.m_trackerType), trackerTypes)},
     {"angleAppear", vpMath::deg(t.getAngleAppear())},
     {"angleDisappear", vpMath::deg(t.getAngleDisappear())},
     {"lod", {
@@ -1064,7 +1064,7 @@ inline void from_json(const nlohmann::json &j, vpMbGenericTracker::TrackerWrappe
       t.setDepthDenseSamplingStep(sampling.at("x"), sampling.at("y"));
     }
   }
-  }
+}
 
 #endif
 
