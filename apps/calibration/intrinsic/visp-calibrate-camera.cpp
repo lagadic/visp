@@ -40,14 +40,14 @@
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_HIGHGUI) &&  defined(HAVE_OPENCV_IMGPROC) && defined(VISP_HAVE_PUGIXML) \
-  && (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D))) \
+  && (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_GEOMETRY))) \
   && ((VISP_HAVE_OPENCV_VERSION >= 0x040700) && defined(HAVE_OPENCV_OBJDETECT)) \
   && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 
 #include <map>
 
-#if defined(HAVE_OPENCV_3D)
-#include <opencv2/3d.hpp>
+#if defined(HAVE_OPENCV_GEOMETRY)
+#include <opencv2/geometry/3d.hpp>
 #endif
 
 #if defined(HAVE_OPENCV_CALIB3D)
