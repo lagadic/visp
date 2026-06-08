@@ -34,6 +34,9 @@
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x050000)
+#include <opencv2/geometry/2d.hpp>
+#endif
 #include <opencv2/imgproc/imgproc.hpp>
 #endif
 
