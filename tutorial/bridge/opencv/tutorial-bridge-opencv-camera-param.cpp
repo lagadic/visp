@@ -4,7 +4,7 @@
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) \
-  && (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D)))
+  && (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_GEOMETRY)))
 
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpImageConvert.h>
@@ -12,8 +12,8 @@
 
 #if defined(HAVE_OPENCV_CALIB3D)
 #include <opencv2/calib3d/calib3d.hpp>
-#elif defined(HAVE_OPENCV_3D)
-#include <opencv2/3d.hpp>
+#elif defined(HAVE_OPENCV_GEOMETRY)
+#include <opencv2/geometry/3d.hpp>
 #endif
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -34,8 +34,17 @@ int main()
   //! [Set ViSP camera parameters]
 
   //! [Set OpenCV camera parameters]
+#if (VISP_HAVE_OPENCV_VERSION >= 0x050000)
+  cv::Mat K = cv::Mat_<double>(3, 3);
+  K.at<double>(0, 0) = cam.get_px();K.at<double>(0, 1) = 0; K.at<double>(0, 2) = cam.get_u0();
+  K.at<double>(1, 0) = 0.;K.at<double>(1, 1) = cam.get_py();K.at<double>(1, 2) = cam.get_v0();
+  K.at<double>(2, 0) = 0; K.at<double>(2, 1) = 0; K.at<double>(2, 2) = 1;
+  cv::Mat D = cv::Mat_<double>(4, 1, 0.);
+  D.at<double>(0, 0) = cam.get_kud();
+#else
   cv::Mat K = (cv::Mat_<double>(3, 3) << cam.get_px(), 0, cam.get_u0(), 0, cam.get_py(), cam.get_v0(), 0, 0, 1);
   cv::Mat D = (cv::Mat_<double>(4, 1) << cam.get_kud(), 0, 0, 0);
+#endif
   //! [Set OpenCV camera parameters]
 
   //! [Load ViSP image]
@@ -76,7 +85,7 @@ int main()
 #if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION < 0x050000) && !defined(HAVE_OPENCV_CALIB3D)
   std::cout << "This tutorial requires OpenCV calib3d module." << std::endl;
 #endif
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x050000) && !defined(HAVE_OPENCV_3D)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x050000) && !defined(HAVE_OPENCV_GEOMETRY)
   std::cout << "This tutorial requires OpenCV 3d module." << std::endl;
 #endif
   return EXIT_SUCCESS;
