@@ -41,7 +41,7 @@
 #include <visp3/core/vpPixelMeterConversion.h>
 
 #if defined(HAVE_OPENCV_IMGPROC) && \
-  (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_CALIB) && defined(HAVE_OPENCV_3D)))
+  (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_CALIB) && defined(HAVE_OPENCV_GEOMETRY)))
 
 #if (VISP_HAVE_OPENCV_VERSION < 0x050000)
 #include <opencv2/calib3d/calib3d.hpp>
@@ -49,7 +49,7 @@
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x050000)
 #include <opencv2/calib.hpp>
-#include <opencv2/3d.hpp>
+#include <opencv2/geometry/3d.hpp>
 #endif
 
 #include <opencv2/imgproc/imgproc.hpp>
@@ -191,7 +191,7 @@ void vpPixelMeterConversion::convertMoment(const vpCameraParameters &cam, unsign
 }
 
 #if defined(HAVE_OPENCV_IMGPROC) && \
-  (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_CALIB) && defined(HAVE_OPENCV_3D)))
+  (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_CALIB) && defined(HAVE_OPENCV_GEOMETRY)))
 /*!
  * Convert ellipse parameters (ie ellipse center and normalized centered moments)
  * from pixels \f$(u_c, v_c, n_{{20}_p}, n_{{11}_p}, n_{{02}_p})\f$
