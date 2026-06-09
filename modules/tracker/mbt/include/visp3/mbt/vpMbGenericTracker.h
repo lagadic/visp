@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -995,9 +995,7 @@ inline void from_json(const nlohmann::json &j, vpMbGenericTracker::TrackerWrappe
     t.setNearClippingDistance(clipping.value("near", t.getNearClippingDistance()));
     t.setFarClippingDistance(clipping.value("far", t.getFarClippingDistance()));
     if (clipping.contains("flags")) {
-      t.setClipping(static_cast<vpPolygon3D::vpPolygon3DClippingType>(
-        flagsFromJSON<unsigned int>(clipping.at("flags"))
-        ));
+      t.setClipping(static_cast<unsigned int>(flagsFromJSON<vpPolygon3D::vpPolygon3DClippingType>(clipping.at("flags"))));
     }
   }
   if (j.contains("lod")) {
