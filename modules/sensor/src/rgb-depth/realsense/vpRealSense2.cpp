@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -810,7 +810,7 @@ void vpRealSense2::getGreyFrame(const rs2::frame &frame, vpImage<unsigned char> 
 void vpRealSense2::getNativeFrameData(const rs2::frame &frame, unsigned char *const data)
 {
   auto vf = frame.as<rs2::video_frame>();
-  int size = vf.get_width() * vf.get_height();
+  size_t size = static_cast<size_t>(vf.get_width()) * static_cast<size_t>(vf.get_height());
 
   switch (frame.get_profile().format()) {
   case RS2_FORMAT_RGB8:
@@ -1118,19 +1118,19 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, const rs2:
 #else
         if (swap_rb) {
           pointcloud->points[static_cast<size_t>(depth_pixel_index)].b =
-            p_color_frame[(i * static_cast<unsigned int>(color_width) + j) * nb_color_pixel];
+            p_color_frame[(static_cast<unsigned int>(i) * static_cast<unsigned int>(color_width) + static_cast<unsigned int>(j)) * nb_color_pixel];
           pointcloud->points[static_cast<size_t>(depth_pixel_index)].g =
-            p_color_frame[(i * static_cast<unsigned int>(color_width) + j) * nb_color_pixel + 1];
+            p_color_frame[(static_cast<unsigned int>(i) * static_cast<unsigned int>(color_width) + static_cast<unsigned int>(j)) * nb_color_pixel + 1];
           pointcloud->points[static_cast<size_t>(depth_pixel_index)].r =
-            p_color_frame[(i * static_cast<unsigned int>(color_width) + j) * nb_color_pixel + 2];
+            p_color_frame[(static_cast<unsigned int>(i) * static_cast<unsigned int>(color_width) + static_cast<unsigned int>(j)) * nb_color_pixel + 2];
         }
         else {
           pointcloud->points[static_cast<size_t>(depth_pixel_index)].r =
-            p_color_frame[(i * static_cast<unsigned int>(color_width) + j) * nb_color_pixel];
+            p_color_frame[(static_cast<unsigned int>(i) * static_cast<unsigned int>(color_width) + static_cast<unsigned int>(j)) * nb_color_pixel];
           pointcloud->points[static_cast<size_t>(depth_pixel_index)].g =
-            p_color_frame[(i * static_cast<unsigned int>(color_width) + j) * nb_color_pixel + 1];
+            p_color_frame[(static_cast<unsigned int>(i) * static_cast<unsigned int>(color_width) + static_cast<unsigned int>(j)) * nb_color_pixel + 1];
           pointcloud->points[static_cast<size_t>(depth_pixel_index)].b =
-            p_color_frame[(i * static_cast<unsigned int>(color_width) + j) * nb_color_pixel + 2];
+            p_color_frame[(static_cast<unsigned int>(i) * static_cast<unsigned int>(color_width) + static_cast<unsigned int>(j)) * nb_color_pixel + 2];
         }
 #endif
       }
