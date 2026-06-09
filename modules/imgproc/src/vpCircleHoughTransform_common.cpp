@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,7 +85,7 @@ vpCircleHoughTransform::init(const vpCircleHoughTransformParams &algoParams)
 }
 
 vpCircleHoughTransform::~vpCircleHoughTransform()
-{ }
+{}
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
 using json = nlohmann::json;
@@ -134,8 +134,8 @@ void
 vpCircleHoughTransform::initGaussianFilters()
 {
   const int filterHalfSize = (m_algoParams.m_gaussianKernelSize + 1) / 2;
-  m_fg.resize(1, filterHalfSize);
-  vpImageFilter::getGaussianKernel(m_fg.data, m_algoParams.m_gaussianKernelSize, m_algoParams.m_gaussianStdev, true);
+  m_fg.resize(1, static_cast<unsigned int>(filterHalfSize));
+  vpImageFilter::getGaussianKernel(m_fg.data, static_cast<unsigned int>(m_algoParams.m_gaussianKernelSize), m_algoParams.m_gaussianStdev, true);
   m_cannyVisp.setGaussianFilterParameters(m_algoParams.m_gaussianKernelSize, m_algoParams.m_gaussianStdev);
 }
 
@@ -159,13 +159,13 @@ vpCircleHoughTransform::initGradientFilters()
   if ((m_algoParams.m_gradientFilterKernelSize % moduloCheckForOddity) != 1) {
     throw vpException(vpException::badValue, "Gradient filters Kernel size should be odd.");
   }
-  m_gradientFilterX.resize(m_algoParams.m_gradientFilterKernelSize, m_algoParams.m_gradientFilterKernelSize);
-  m_gradientFilterY.resize(m_algoParams.m_gradientFilterKernelSize, m_algoParams.m_gradientFilterKernelSize);
-  m_cannyVisp.setGradientFilterAperture(m_algoParams.m_gradientFilterKernelSize);
+  m_gradientFilterX.resize(static_cast<unsigned int>(m_algoParams.m_gradientFilterKernelSize), static_cast<unsigned int>(m_algoParams.m_gradientFilterKernelSize));
+  m_gradientFilterY.resize(static_cast<unsigned int>(m_algoParams.m_gradientFilterKernelSize), static_cast<unsigned int>(m_algoParams.m_gradientFilterKernelSize));
+  m_cannyVisp.setGradientFilterAperture(static_cast<unsigned int>(m_algoParams.m_gradientFilterKernelSize));
 
   float scaleX = 1.f;
   float scaleY = 1.f;
-  unsigned int filterHalfSize = (m_algoParams.m_gradientFilterKernelSize - 1) / 2;
+  unsigned int filterHalfSize = (static_cast<unsigned int>(m_algoParams.m_gradientFilterKernelSize) - 1) / 2;
 
   if (m_algoParams.m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING) {
     // Compute the Sobel filters
