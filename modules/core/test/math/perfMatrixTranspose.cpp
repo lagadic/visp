@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ namespace
 {
 
 bool g_runBenchmark = false;
-int g_tileSize = 16;
+unsigned int g_tileSize = 16;
 
 vpMatrix generateMatrix(unsigned int sz1, unsigned int sz2)
 {
@@ -140,35 +140,35 @@ vpMatrix transposeTilingSO(const vpMatrix &A, unsigned int tileSize = 16)
   return At;
 }
 
-vpMatrix transposeTiling(const vpMatrix &A, int tileSize = 16)
+vpMatrix transposeTiling(const vpMatrix &A, unsigned int tileSize = 16)
 {
   vpMatrix At;
 
   At.resize(A.getCols(), A.getRows(), false, false);
 
-  const int nrows = static_cast<int>(A.getRows());
-  const int ncols = static_cast<int>(A.getCols());
+  const unsigned int nrows = A.getRows();
+  const unsigned int ncols = A.getCols();
 
-  for (int i = 0; i < nrows;) {
+  for (unsigned int i = 0; i < nrows;) {
     for (; i <= nrows - tileSize; i += tileSize) {
-      int j = 0;
+      unsigned int j = 0;
       for (; j <= ncols - tileSize; j += tileSize) {
-        for (int k = i; k < i + tileSize; k++) {
-          for (int l = j; l < j + tileSize; l++) {
+        for (unsigned int k = i; k < i + tileSize; k++) {
+          for (unsigned int l = j; l < j + tileSize; l++) {
             At[l][k] = A[k][l];
           }
         }
       }
 
-      for (int k = i; k < i + tileSize; k++) {
-        for (int l = j; l < ncols; l++) {
+      for (unsigned int k = i; k < i + tileSize; k++) {
+        for (unsigned int l = j; l < ncols; l++) {
           At[l][k] = A[k][l];
         }
       }
     }
 
     for (; i < nrows; i++) {
-      for (int j = 0; j < ncols; j++) {
+      for (unsigned int j = 0; j < ncols; j++) {
         At[j][i] = A[i][j];
       }
     }
@@ -188,8 +188,8 @@ TEST_CASE("Benchmark vpMatrix transpose", "[benchmark]")
         {6, 1000},   {6, 1500},   {6, 2000},    {640, 1000},  {800, 640},   {640, 500}, {500, 640}, {640, 837} };
 
     for (auto sz : sizes) {
-      vpMatrix M = generateMatrix(sz.first, sz.second);
-      vpMatrix Mt_true = generateMatrixTranspose(sz.first, sz.second);
+      vpMatrix M = generateMatrix(static_cast<unsigned int>(sz.first), static_cast<unsigned int>(sz.second));
+      vpMatrix Mt_true = generateMatrixTranspose(static_cast<unsigned int>(sz.first), static_cast<unsigned int>(sz.second));
 
       std::ostringstream oss;
       oss << sz.first << "x" << sz.second;
@@ -246,7 +246,7 @@ TEST_CASE("Benchmark vpMatrix transpose", "[benchmark]")
 
       for (unsigned int i = 0; i < M.getRows(); i++) {
         for (unsigned int j = 0; j < M.getCols(); j++) {
-          matM.at<double>(i, j) = M[i][j];
+          matM.at<double>(static_cast<int>(i), static_cast<int>(j)) = M[i][j];
         }
       }
 
