@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -227,8 +227,8 @@ TEST_CASE("Benchmark matrix-matrix multiplication", "[benchmark]")
                                                {200, 6}, {207, 119}, {83, 201}, {600, 400}, {400, 600} };
 
     for (auto sz : sizes) {
-      vpMatrix A = generateRandomMatrix(sz.first, sz.second);
-      vpMatrix B = generateRandomMatrix(sz.second, sz.first);
+      vpMatrix A = generateRandomMatrix(static_cast<unsigned int>(sz.first), static_cast<unsigned int>(sz.second));
+      vpMatrix B = generateRandomMatrix(static_cast<unsigned int>(sz.second), static_cast<unsigned int>(sz.first));
 
       std::ostringstream oss;
       oss << "(" << A.getRows() << "x" << A.getCols() << ")x(" << B.getRows() << "x" << B.getCols() << ") - Naive code";
@@ -255,8 +255,8 @@ TEST_CASE("Benchmark matrix-matrix multiplication", "[benchmark]")
 
         for (unsigned int i = 0; i < A.getRows(); i++) {
           for (unsigned int j = 0; j < A.getCols(); j++) {
-            matA.at<double>(i, j) = A[i][j];
-            matB.at<double>(j, i) = B[j][i];
+            matA.at<double>(static_cast<int>(i), static_cast<int>(j)) = A[i][j];
+            matB.at<double>(static_cast<int>(j), static_cast<int>(i)) = B[j][i];
           }
         }
 
@@ -310,7 +310,7 @@ TEST_CASE("Benchmark matrix-rotation matrix multiplication", "[benchmark]")
     std::vector<std::pair<int, int> > sizes = { {3, 3} };
 
     for (auto sz : sizes) {
-      vpMatrix A = generateRandomMatrix(sz.first, sz.second);
+      vpMatrix A = generateRandomMatrix(static_cast<unsigned int>(sz.first), static_cast<unsigned int>(sz.second));
       vpRotationMatrix B(vpMath::deg(getRandomValues(0, 360)), vpMath::deg(getRandomValues(0, 360)),
                          vpMath::deg(getRandomValues(0, 360)));
 
@@ -339,12 +339,12 @@ TEST_CASE("Benchmark matrix-rotation matrix multiplication", "[benchmark]")
 
         for (unsigned int i = 0; i < A.getRows(); i++) {
           for (unsigned int j = 0; j < A.getCols(); j++) {
-            matA.at<double>(i, j) = A[i][j];
+            matA.at<double>(static_cast<int>(i), static_cast<int>(j)) = A[i][j];
           }
         }
         for (unsigned int i = 0; i < B.getRows(); i++) {
           for (unsigned int j = 0; j < B.getCols(); j++) {
-            matB.at<double>(j, i) = B[j][i];
+            matB.at<double>(static_cast<int>(j), static_cast<int>(i)) = B[j][i];
           }
         }
 
@@ -405,7 +405,7 @@ TEST_CASE("Benchmark rotation matrix-matrix multiplication", "[benchmark]")
     for (auto sz : sizes) {
       vpRotationMatrix A(vpMath::deg(getRandomValues(0, 360)), vpMath::deg(getRandomValues(0, 360)),
                          vpMath::deg(getRandomValues(0, 360)));
-      vpMatrix B = generateRandomMatrix(sz.first, sz.second);
+      vpMatrix B = generateRandomMatrix(static_cast<unsigned int>(sz.first), static_cast<unsigned int>(sz.second));
 
       std::ostringstream oss;
       oss << "(" << A.getRows() << "x" << A.getCols() << ")x(" << B.getRows() << "x" << B.getCols() << ") - Naive code";
@@ -432,12 +432,12 @@ TEST_CASE("Benchmark rotation matrix-matrix multiplication", "[benchmark]")
 
         for (unsigned int i = 0; i < A.getRows(); i++) {
           for (unsigned int j = 0; j < A.getCols(); j++) {
-            matA.at<double>(i, j) = A[i][j];
+            matA.at<double>(static_cast<int>(i), static_cast<int>(j)) = A[i][j];
           }
         }
         for (unsigned int i = 0; i < B.getRows(); i++) {
           for (unsigned int j = 0; j < B.getCols(); j++) {
-            matB.at<double>(j, i) = B[j][i];
+            matB.at<double>(static_cast<int>(j), static_cast<int>(i)) = B[j][i];
           }
         }
 
@@ -482,7 +482,7 @@ TEST_CASE("Benchmark rotation matrix-matrix multiplication", "[benchmark]")
     const unsigned int rows = 3, cols = 3;
     vpRotationMatrix A(vpMath::deg(getRandomValues(0, 360)), vpMath::deg(getRandomValues(0, 360)),
                        vpMath::deg(getRandomValues(0, 360)));
-    vpMatrix B = generateRandomMatrix(rows, cols);
+    vpMatrix B = generateRandomMatrix(static_cast<unsigned int>(rows), static_cast<unsigned int>(cols));
 
     vpMatrix AB_true = dgemm_regular(static_cast<vpMatrix>(A), B);
     vpMatrix AB = A * B;
@@ -496,7 +496,7 @@ TEST_CASE("Benchmark matrix-homogeneous matrix multiplication", "[benchmark]")
     std::vector<std::pair<int, int> > sizes = { {4, 4} };
 
     for (auto sz : sizes) {
-      vpMatrix A = generateRandomMatrix(sz.first, sz.second);
+      vpMatrix A = generateRandomMatrix(static_cast<unsigned int>(sz.first), static_cast<unsigned int>(sz.second));
       vpHomogeneousMatrix B(getRandomValues(0, 1), getRandomValues(0, 1), getRandomValues(0, 1),
                             vpMath::deg(getRandomValues(0, 360)), vpMath::deg(getRandomValues(0, 360)),
                             vpMath::deg(getRandomValues(0, 360)));
@@ -526,12 +526,12 @@ TEST_CASE("Benchmark matrix-homogeneous matrix multiplication", "[benchmark]")
 
         for (unsigned int i = 0; i < A.getRows(); i++) {
           for (unsigned int j = 0; j < A.getCols(); j++) {
-            matA.at<double>(i, j) = A[i][j];
+            matA.at<double>(static_cast<int>(i), static_cast<int>(j)) = A[i][j];
           }
         }
         for (unsigned int i = 0; i < B.getRows(); i++) {
           for (unsigned int j = 0; j < B.getCols(); j++) {
-            matB.at<double>(j, i) = B[j][i];
+            matB.at<double>(static_cast<int>(j), static_cast<int>(i)) = B[j][i];
           }
         }
 
@@ -574,7 +574,7 @@ TEST_CASE("Benchmark matrix-homogeneous matrix multiplication", "[benchmark]")
 
   {
     const unsigned int rows = 4, cols = 4;
-    vpMatrix A = generateRandomMatrix(rows, cols);
+    vpMatrix A = generateRandomMatrix(static_cast<unsigned int>(rows), static_cast<unsigned int>(cols));
     vpHomogeneousMatrix B(getRandomValues(0, 1), getRandomValues(0, 1), getRandomValues(0, 1),
                           vpMath::deg(getRandomValues(0, 360)), vpMath::deg(getRandomValues(0, 360)),
                           vpMath::deg(getRandomValues(0, 360)));
@@ -593,8 +593,8 @@ TEST_CASE("Benchmark matrix-vector multiplication", "[benchmark]")
                                                {200, 6}, {207, 119}, {83, 201}, {600, 400}, {400, 600} };
 
     for (auto sz : sizes) {
-      vpMatrix A = generateRandomMatrix(sz.first, sz.second);
-      vpColVector B = generateRandomVector(sz.second);
+      vpMatrix A = generateRandomMatrix(static_cast<unsigned int>(sz.first), static_cast<unsigned int>(sz.second));
+      vpColVector B = generateRandomVector(static_cast<unsigned int>(sz.second));
 
       std::ostringstream oss;
       oss << "(" << A.getRows() << "x" << A.getCols() << ")x(" << B.getRows() << "x" << B.getCols() << ") - Naive code";
@@ -621,9 +621,9 @@ TEST_CASE("Benchmark matrix-vector multiplication", "[benchmark]")
 
         for (unsigned int i = 0; i < A.getRows(); i++) {
           for (unsigned int j = 0; j < A.getCols(); j++) {
-            matA.at<double>(i, j) = A[i][j];
+            matA.at<double>(static_cast<int>(i), static_cast<int>(j)) = A[i][j];
             if (i == 0) {
-              matB.at<double>(j, 0) = B[j];
+              matB.at<double>(static_cast<int>(j), 0) = B[j];
             }
           }
         }
@@ -665,8 +665,8 @@ TEST_CASE("Benchmark matrix-vector multiplication", "[benchmark]")
 
   {
     const unsigned int rows = 47, cols = 63;
-    vpMatrix A = generateRandomMatrix(rows, cols);
-    vpColVector B = generateRandomVector(cols);
+    vpMatrix A = generateRandomMatrix(static_cast<unsigned int>(rows), static_cast<unsigned int>(cols));
+    vpColVector B = generateRandomVector(static_cast<unsigned int>(cols));
 
     vpColVector C_true = dgemv_regular(A, B);
     vpColVector C = A * B;
@@ -681,7 +681,7 @@ TEST_CASE("Benchmark AtA", "[benchmark]")
                                                {200, 6}, {207, 119}, {83, 201}, {600, 400}, {400, 600} };
 
     for (auto sz : sizes) {
-      vpMatrix A = generateRandomMatrix(sz.first, sz.second);
+      vpMatrix A = generateRandomMatrix(static_cast<unsigned int>(sz.first), static_cast<unsigned int>(sz.second));
 
       std::ostringstream oss;
       oss << "(" << A.getRows() << "x" << A.getCols() << ") - Naive code";
@@ -707,7 +707,7 @@ TEST_CASE("Benchmark AtA", "[benchmark]")
 
         for (unsigned int i = 0; i < A.getRows(); i++) {
           for (unsigned int j = 0; j < A.getCols(); j++) {
-            matA.at<double>(i, j) = A[i][j];
+            matA.at<double>(static_cast<int>(i), static_cast<int>(j)) = A[i][j];
           }
         }
 
@@ -743,7 +743,7 @@ TEST_CASE("Benchmark AtA", "[benchmark]")
 
   {
     const unsigned int rows = 47, cols = 63;
-    vpMatrix A = generateRandomMatrix(rows, cols);
+    vpMatrix A = generateRandomMatrix(static_cast<unsigned int>(rows), static_cast<unsigned int>(cols));
 
     vpMatrix AtA_true = AtA_regular(A);
     vpMatrix AtA = A.AtA();
@@ -759,7 +759,7 @@ TEST_CASE("Benchmark AAt", "[benchmark]")
         {20, 20}, {6, 200}, {200, 6} }; //, {207, 119}, {83, 201}, {600, 400}, {400, 600} };
 
     for (auto sz : sizes) {
-      vpMatrix A = generateRandomMatrix(sz.first, sz.second);
+      vpMatrix A = generateRandomMatrix(static_cast<unsigned int>(sz.first), static_cast<unsigned int>(sz.second));
 
       std::ostringstream oss;
       oss << "(" << A.getRows() << "x" << A.getCols() << ") - Naive code";
@@ -785,7 +785,7 @@ TEST_CASE("Benchmark AAt", "[benchmark]")
 
         for (unsigned int i = 0; i < A.getRows(); i++) {
           for (unsigned int j = 0; j < A.getCols(); j++) {
-            matA.at<double>(i, j) = A[i][j];
+            matA.at<double>(static_cast<int>(i), static_cast<int>(j)) = A[i][j];
           }
         }
 
@@ -821,7 +821,7 @@ TEST_CASE("Benchmark AAt", "[benchmark]")
 
   {
     const unsigned int rows = 47, cols = 63;
-    vpMatrix A = generateRandomMatrix(rows, cols);
+    vpMatrix A = generateRandomMatrix(static_cast<unsigned int>(rows), static_cast<unsigned int>(cols));
 
     vpMatrix AAt_true = AAt_regular(A);
     vpMatrix AAt = A.AAt();
@@ -835,7 +835,7 @@ TEST_CASE("Benchmark matrix-velocity twist multiplication", "[benchmark]")
     std::vector<std::pair<int, int> > sizes = { {6, 6}, {20, 6}, {207, 6}, {600, 6}, {1201, 6} };
 
     for (auto sz : sizes) {
-      vpMatrix A = generateRandomMatrix(sz.first, sz.second);
+      vpMatrix A = generateRandomMatrix(static_cast<unsigned int>(sz.first), static_cast<unsigned int>(sz.second));
       vpVelocityTwistMatrix V(vpTranslationVector(0.1, -0.4, 1.5), vpThetaUVector(0.4, -0.1, 0.7));
 
       std::ostringstream oss;
@@ -863,12 +863,12 @@ TEST_CASE("Benchmark matrix-velocity twist multiplication", "[benchmark]")
 
         for (unsigned int i = 0; i < A.getRows(); i++) {
           for (unsigned int j = 0; j < A.getCols(); j++) {
-            matA.at<double>(i, j) = A[i][j];
+            matA.at<double>(static_cast<int>(i), static_cast<int>(j)) = A[i][j];
           }
         }
         for (unsigned int i = 0; i < V.getRows(); i++) {
           for (unsigned int j = 0; j < V.getCols(); j++) {
-            matV.at<double>(i, j) = V[i][j];
+            matV.at<double>(static_cast<int>(i), static_cast<int>(j)) = V[i][j];
           }
         }
 
@@ -910,7 +910,7 @@ TEST_CASE("Benchmark matrix-velocity twist multiplication", "[benchmark]")
 
   {
     const unsigned int rows = 47, cols = 6;
-    vpMatrix A = generateRandomMatrix(rows, cols);
+    vpMatrix A = generateRandomMatrix(static_cast<unsigned int>(rows), static_cast<unsigned int>(cols));
     vpVelocityTwistMatrix V(vpTranslationVector(0.1, -0.4, 1.5), vpThetaUVector(0.4, -0.1, 0.7));
 
     vpMatrix AV_true = dgemm_regular(A, static_cast<vpMatrix>(V));
@@ -925,7 +925,7 @@ TEST_CASE("Benchmark matrix-force twist multiplication", "[benchmark]")
     std::vector<std::pair<int, int> > sizes = { {6, 6}, {20, 6}, {207, 6}, {600, 6}, {1201, 6} };
 
     for (auto sz : sizes) {
-      vpMatrix A = generateRandomMatrix(sz.first, sz.second);
+      vpMatrix A = generateRandomMatrix(static_cast<unsigned int>(sz.first), static_cast<unsigned int>(sz.second));
       vpForceTwistMatrix V(vpTranslationVector(0.1, -0.4, 1.5), vpThetaUVector(0.4, -0.1, 0.7));
 
       std::ostringstream oss;
@@ -953,12 +953,12 @@ TEST_CASE("Benchmark matrix-force twist multiplication", "[benchmark]")
 
         for (unsigned int i = 0; i < A.getRows(); i++) {
           for (unsigned int j = 0; j < A.getCols(); j++) {
-            matA.at<double>(i, j) = A[i][j];
+            matA.at<double>(static_cast<int>(i), static_cast<int>(j)) = A[i][j];
           }
         }
         for (unsigned int i = 0; i < V.getRows(); i++) {
           for (unsigned int j = 0; j < V.getCols(); j++) {
-            matV.at<double>(i, j) = V[i][j];
+            matV.at<double>(static_cast<int>(i), static_cast<int>(j)) = V[i][j];
           }
         }
 
@@ -1000,7 +1000,7 @@ TEST_CASE("Benchmark matrix-force twist multiplication", "[benchmark]")
 
   {
     const unsigned int rows = 47, cols = 6;
-    vpMatrix A = generateRandomMatrix(rows, cols);
+    vpMatrix A = generateRandomMatrix(static_cast<unsigned int>(rows), static_cast<unsigned int>(cols));
     vpForceTwistMatrix V(vpTranslationVector(0.1, -0.4, 1.5), vpThetaUVector(0.4, -0.1, 0.7));
 
     vpMatrix AV_true = dgemm_regular(A, static_cast<vpMatrix>(V));
