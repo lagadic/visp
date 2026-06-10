@@ -36,6 +36,12 @@
 
 #if defined(VISP_HAVE_OPENCV)
 #include <opencv2/core/core.hpp>
+#if defined(HAVE_OPENCV_CALIB3D)
+#include <opencv2/calib3d/calib3d.hpp>
+#elif defined(HAVE_OPENCV_CALIB)
+#include <opencv2/calib.hpp>
+#include <opencv2/objdetect.hpp>
+#endif
 
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpMeterPixelConversion.h>

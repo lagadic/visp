@@ -2452,7 +2452,7 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          HAVE_OPENCV_DNN \
                          HAVE_OPENCV_HIGHGUI \
                          HAVE_OPENCV_IMGPROC \
-                         HAVE_OPENCV_3D \
+                         HAVE_OPENCV_GEOMETRY \
                          VISP_HAVE_AFMA6 \
                          VISP_HAVE_AFMA6_DATA \
                          VISP_HAVE_APRILTAG \
@@ -2506,7 +2506,7 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_OIS \
                          VISP_HAVE_OPENCV \
                          VISP_HAVE_OPENCV_VERSION=0x030403 \
-                         HAVE_OPENCV_3D \
+                         HAVE_OPENCV_GEOMETRY \
                          HAVE_OPENCV_CALIB \
                          HAVE_OPENCV_CALIB3D \
                          HAVE_OPENCV_DNN \

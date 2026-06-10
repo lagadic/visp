@@ -124,7 +124,15 @@ int main()
 
     {
       std::cout << "* Compare ViSP and OpenCV point pixel meter conversion without distortion" << std::endl;
+#if (VISP_HAVE_OPENCV_VERSION >= 0x050000)
+      cv::Mat cameraMatrix = cv::Mat_<double>(3, 3);
+      cameraMatrix.at<double>(0, 0) = px;cameraMatrix.at<double>(0, 1) = 0; cameraMatrix.at<double>(0, 2) = u0;
+      cameraMatrix.at<double>(1, 0) = 0.; cameraMatrix.at<double>(1, 1) = py; cameraMatrix.at<double>(1, 2) = v0;
+      cameraMatrix.at<double>(2, 0) = 0; cameraMatrix.at<double>(2, 1) = 0; cameraMatrix.at<double>(2, 2) = 1;
+#else
       cv::Mat cameraMatrix = (cv::Mat_<double>(3, 3) << px, 0, u0, 0, py, v0, 0, 0, 1);
+#endif
+
       cv::Mat distCoeffs = cv::Mat::zeros(5, 1, CV_64FC1);
       double x2, y2;
 
@@ -166,7 +174,14 @@ int main()
 
     {
       std::cout << "* Compare ViSP and OpenCV point pixel meter conversion with distortion" << std::endl;
+#if (VISP_HAVE_OPENCV_VERSION >= 0x050000)
+      cv::Mat cameraMatrix = cv::Mat_<double>(3, 3);
+      cameraMatrix.at<double>(0, 0) = px_dist;cameraMatrix.at<double>(0, 1) = 0; cameraMatrix.at<double>(0, 2) = u0_dist;
+      cameraMatrix.at<double>(1, 0) = 0.; cameraMatrix.at<double>(1, 1) = py_dist; cameraMatrix.at<double>(1, 2) = v0_dist;
+      cameraMatrix.at<double>(2, 0) = 0; cameraMatrix.at<double>(2, 1) = 0; cameraMatrix.at<double>(2, 2) = 1;
+#else
       cv::Mat cameraMatrix = (cv::Mat_<double>(3, 3) << px_dist, 0, u0_dist, 0, py_dist, v0_dist, 0, 0, 1);
+#endif
       cv::Mat distCoeffs = cv::Mat::zeros(5, 1, CV_64FC1);
       distCoeffs.at<double>(0, 0) = kdu_dist;
       double x2, y2;
@@ -192,7 +207,14 @@ int main()
 
     {
       std::cout << "* Compare ViSP and OpenCV line pixel meter conversion without distortion" << std::endl;
+#if (VISP_HAVE_OPENCV_VERSION >= 0x050000)
+      cv::Mat cameraMatrix = cv::Mat_<double>(3, 3);
+      cameraMatrix.at<double>(0, 0) = px;cameraMatrix.at<double>(0, 1) = 0; cameraMatrix.at<double>(0, 2) = u0;
+      cameraMatrix.at<double>(1, 0) = 0.; cameraMatrix.at<double>(1, 1) = py; cameraMatrix.at<double>(1, 2) = v0;
+      cameraMatrix.at<double>(2, 0) = 0; cameraMatrix.at<double>(2, 1) = 0; cameraMatrix.at<double>(2, 2) = 1;
+#else
       cv::Mat cameraMatrix = (cv::Mat_<double>(3, 3) << px, 0, u0, 0, py, v0, 0, 0, 1);
+#endif
       double rho_p = 100, theta_p = vpMath::rad(45);
       double rho_m1, theta_m1, rho_m2, theta_m2;
 
@@ -217,7 +239,14 @@ int main()
 
     {
       std::cout << "* Compare ViSP and OpenCV moments pixel meter conversion without distortion" << std::endl;
+#if (VISP_HAVE_OPENCV_VERSION >= 0x050000)
+      cv::Mat cameraMatrix = cv::Mat_<double>(3, 3);
+      cameraMatrix.at<double>(0, 0) = px;cameraMatrix.at<double>(0, 1) = 0; cameraMatrix.at<double>(0, 2) = u0;
+      cameraMatrix.at<double>(1, 0) = 0.; cameraMatrix.at<double>(1, 1) = py; cameraMatrix.at<double>(1, 2) = v0;
+      cameraMatrix.at<double>(2, 0) = 0; cameraMatrix.at<double>(2, 1) = 0; cameraMatrix.at<double>(2, 2) = 1;
+#else
       cv::Mat cameraMatrix = (cv::Mat_<double>(3, 3) << px, 0, u0, 0, py, v0, 0, 0, 1);
+#endif
       unsigned int order = 3;
       double m00 = 2442, m10 = 414992, m01 = 470311, m11 = 7.99558e+07, m02 = 9.09603e+07, m20 = 7.11158e+07;
 
@@ -248,7 +277,14 @@ int main()
     {
       std::cout << "* Compare ViSP and OpenCV ellipse from circle meter pixel conversion without distortion"
         << std::endl;
+#if (VISP_HAVE_OPENCV_VERSION >= 0x050000)
+      cv::Mat cameraMatrix = cv::Mat_<double>(3, 3);
+      cameraMatrix.at<double>(0, 0) = px;cameraMatrix.at<double>(0, 1) = 0; cameraMatrix.at<double>(0, 2) = u0;
+      cameraMatrix.at<double>(1, 0) = 0.; cameraMatrix.at<double>(1, 1) = py; cameraMatrix.at<double>(1, 2) = v0;
+      cameraMatrix.at<double>(2, 0) = 0; cameraMatrix.at<double>(2, 1) = 0; cameraMatrix.at<double>(2, 2) = 1;
+#else
       cv::Mat cameraMatrix = (cv::Mat_<double>(3, 3) << px, 0, u0, 0, py, v0, 0, 0, 1);
+#endif
       vpCircle circle;
       circle.setWorldCoordinates(0, 0, 1, 0, 0, 0, 0.1); // plane:(Z=0),X0=0,Y0=0,Z=0,R=0.1
       vpHomogeneousMatrix cMo(0.1, 0.2, 0.5, vpMath::rad(10), vpMath::rad(5), vpMath::rad(45));

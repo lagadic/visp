@@ -36,7 +36,7 @@
 // opencv_xfeatures2d and opencv_nonfree are optional
 #if defined(VISP_HAVE_OPENCV) && \
     (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_FEATURES2D)) || \
-     ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D) && defined(HAVE_OPENCV_FEATURES)))
+     ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_GEOMETRY) && defined(HAVE_OPENCV_FEATURES)))
 
 #include <iomanip>
 #include <limits>
@@ -45,7 +45,7 @@
 #include <visp3/vision/vpKeyPoint.h>
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x050000)
-#include <opencv2/3d.hpp>
+#include <opencv2/geometry.hpp>
 #include <opencv2/features.hpp>
 #endif
 
@@ -175,9 +175,15 @@ void vpKeyPoint::affineSkew(double tilt, double phi, cv::Mat &img, cv::Mat &mask
     double s = sin(phi);
     double c = cos(phi);
 
-    A = (cv::Mat_<float>(2, 2) << c, -s, s, c);
+    A = cv::Mat_<float>(2, 2);
+    A.at<float>(0, 0) = c; A.at<float>(0, 1) = -s;
+    A.at<float>(1, 0) = s; A.at<float>(1, 1) = c;
 
-    cv::Mat corners = (cv::Mat_<float>(4, 2) << 0, 0, w, 0, w, h, 0, h);
+    cv::Mat corners = cv::Mat_<float>(4, 2);
+    corners.at<float>(0, 0) = 0.f; corners.at<float>(0, 1) = 0.f;
+    corners.at<float>(1, 0) = w; corners.at<float>(1, 1) = 0.f;
+    corners.at<float>(2, 0) = w; corners.at<float>(2, 1) = h;
+    corners.at<float>(3, 0) = 0.f; corners.at<float>(3, 1) = h;
     cv::Mat tcorners = corners * A.t();
     cv::Mat tcorners_x, tcorners_y;
     tcorners.col(0).copyTo(tcorners_x);
@@ -188,7 +194,9 @@ void vpKeyPoint::affineSkew(double tilt, double phi, cv::Mat &img, cv::Mat &mask
     cv::merge(channels, tcorners);
 
     cv::Rect rect = cv::boundingRect(tcorners);
-    A = (cv::Mat_<float>(2, 3) << c, -s, -rect.x, s, c, -rect.y);
+    A = cv::Mat_<float>(2, 3);
+    A.at<float>(0, 0) = c; A.at<float>(0, 1) = -s; A.at<float>(0, 2) = -rect.x;
+    A.at<float>(1, 0) = s; A.at<float>(1, 1) = c; A.at<float>(1, 2) = -rect.y;
 
     cv::warpAffine(img, img, A, cv::Size(rect.width, rect.height), cv::INTER_LINEAR, cv::BORDER_REPLICATE);
   }
@@ -703,8 +711,10 @@ bool vpKeyPoint::computePose(const std::vector<cv::Point2f> &imagePoints, const 
     return false;
   }
 
-  cv::Mat cameraMatrix =
-    (cv::Mat_<double>(3, 3) << cam.get_px(), 0, cam.get_u0(), 0, cam.get_py(), cam.get_v0(), 0, 0, 1);
+  cv::Mat cameraMatrix = cv::Mat_<double>(3, 3);
+  cameraMatrix.at<double>(0, 0) = cam.get_px(); cameraMatrix.at<double>(0, 1) = 0; cameraMatrix.at<double>(0, 2) = cam.get_u0();
+  cameraMatrix.at<double>(1, 0) = 0; cameraMatrix.at<double>(1, 1) = cam.get_py(); cameraMatrix.at<double>(1, 2) = cam.get_v0();
+  cameraMatrix.at<double>(2, 0) = 0; cameraMatrix.at<double>(2, 1) = 0; cameraMatrix.at<double>(2, 2) = 1;
   cv::Mat rvec, tvec;
 
   // Bug with OpenCV < 2.4.0 when zero distortion is provided by an empty
@@ -4051,7 +4061,7 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
 // From OpenCV 2.4.11 source code.
 struct KeypointResponseGreaterThanThreshold
 {
-  KeypointResponseGreaterThanThreshold(float _value) : value(_value) {}
+  KeypointResponseGreaterThanThreshold(float _value) : value(_value) { }
   inline bool operator()(const cv::KeyPoint &kpt) const { return kpt.response >= value; }
   float value;
 };
@@ -4088,7 +4098,7 @@ void vpKeyPoint::KeyPointsFilter::retainBest(std::vector<cv::KeyPoint> &keypoint
 
 struct RoiPredicate
 {
-  RoiPredicate(const cv::Rect &_r) : r(_r) {}
+  RoiPredicate(const cv::Rect &_r) : r(_r) { }
 
   bool operator()(const cv::KeyPoint &keyPt) const { return !r.contains(keyPt.pt); }
 
@@ -4112,7 +4122,7 @@ void vpKeyPoint::KeyPointsFilter::runByImageBorder(std::vector<cv::KeyPoint> &ke
 
 struct SizePredicate
 {
-  SizePredicate(float _minSize, float _maxSize) : minSize(_minSize), maxSize(_maxSize) {}
+  SizePredicate(float _minSize, float _maxSize) : minSize(_minSize), maxSize(_maxSize) { }
 
   bool operator()(const cv::KeyPoint &keyPt) const
   {
@@ -4135,7 +4145,7 @@ void vpKeyPoint::KeyPointsFilter::runByKeypointSize(std::vector<cv::KeyPoint> &k
 class MaskPredicate
 {
 public:
-  MaskPredicate(const cv::Mat &_mask) : mask(_mask) {}
+  MaskPredicate(const cv::Mat &_mask) : mask(_mask) { }
   bool operator()(const cv::KeyPoint &key_pt) const
   {
     return mask.at<uchar>(static_cast<int>(key_pt.pt.y + 0.5f), static_cast<int>(key_pt.pt.x + 0.5f)) == 0;
@@ -4155,7 +4165,7 @@ void vpKeyPoint::KeyPointsFilter::runByPixelsMask(std::vector<cv::KeyPoint> &key
 
 struct KeyPoint_LessThan
 {
-  KeyPoint_LessThan(const std::vector<cv::KeyPoint> &_kp) : kp(&_kp) {}
+  KeyPoint_LessThan(const std::vector<cv::KeyPoint> &_kp) : kp(&_kp) { }
   bool operator()(/*int i, int j*/ size_t i, size_t j) const
   {
     const cv::KeyPoint &kp1 = (*kp)[i];
@@ -4246,7 +4256,7 @@ void vpKeyPoint::KeyPointsFilter::removeDuplicated(std::vector<cv::KeyPoint> &ke
 vpKeyPoint::PyramidAdaptedFeatureDetector::PyramidAdaptedFeatureDetector(const cv::Ptr<cv::FeatureDetector> &detector,
                                                                          int maxLevel)
   : m_detector(detector), m_maxLevel(maxLevel)
-{}
+{ }
 
 bool vpKeyPoint::PyramidAdaptedFeatureDetector::empty() const
 {
@@ -4311,5 +4321,5 @@ END_VISP_NAMESPACE
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_vision.a(vpKeyPoint.cpp.o) has no symbols
-void dummy_vpKeyPoint() {}
+void dummy_vpKeyPoint() { }
 #endif

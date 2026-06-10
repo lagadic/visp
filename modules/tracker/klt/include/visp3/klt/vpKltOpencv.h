@@ -49,6 +49,9 @@
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpImage.h>
 
+#if (VISP_HAVE_OPENCV_VERSION >= 0x050000)
+#include <opencv2/features/features.hpp>
+#endif
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/video/tracking.hpp>
