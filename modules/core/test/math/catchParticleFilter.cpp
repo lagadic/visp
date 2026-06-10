@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,7 +80,7 @@ public:
     , m_height(height)
     , m_width(width)
     , m_coeffs(degree + 1, 0.)
-  { }
+  {}
 
   /**
    * \brief Construct a new vpParabolaModel object
@@ -95,7 +95,7 @@ public:
     , m_height(height)
     , m_width(width)
     , m_coeffs(coeffs)
-  { }
+  {}
 
   /**
    * \brief Construct a new vpParabolaModel object
@@ -110,7 +110,7 @@ public:
     , m_height(height)
     , m_width(width)
     , m_coeffs(coeffs.getCol(0))
-  { }
+  {}
 
   inline vpParabolaModel(const vpParabolaModel &other)
   {
@@ -206,11 +206,11 @@ public:
   void display(const vpImage<T> &I, const vpColor &color, const std::string &legend,
                const unsigned int &vertPosLegend, const unsigned int &horPosLegend)
   {
-    unsigned int width = I.getWidth();
-    for (unsigned int u = 0; u < width; ++u) {
+    int width = static_cast<int>(I.getWidth());
+    for (int u = 0; u < width; ++u) {
       int v = static_cast<int>(eval(u));
       vpDisplay::displayPoint(I, v, u, color, 1);
-      vpDisplay::displayText(I, vertPosLegend, horPosLegend, legend, color);
+      vpDisplay::displayText(I, static_cast<int>(vertPosLegend), static_cast<int>(horPosLegend), legend, color);
     }
   }
 
@@ -312,7 +312,7 @@ void displayGeneratedImage(const vpImage<T> &I, const std::vector<vpImagePoint> 
   for (unsigned int i = 1; i < nbPts; ++i) {
     vpDisplay::displayPoint(I, pts[i], color, 1);
   }
-  vpDisplay::displayText(I, vertOffset, horOffset, legend, color);
+  vpDisplay::displayText(I, static_cast<int>(vertOffset), static_cast<int>(horOffset), legend, color);
 }
 #endif
 
@@ -382,7 +382,7 @@ public:
     : m_degree(degree)
     , m_height(height)
     , m_width(width)
-  { }
+  {}
 
   vpColVector averagePolynomials(const std::vector<vpColVector> &particles, const std::vector<double> &weights, const vpParticleFilter<std::vector<vpImagePoint>>::vpStateAddFunction &/**/)
   {
