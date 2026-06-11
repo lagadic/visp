@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -976,9 +976,9 @@ public:
       std::cerr << "Cannot get tag image with id " << id << " for family " << m_tagFamily << std::endl;
       return false;
     }
-    image_u8_t *img_8u = apriltag_to_image(m_tf, id);
+    image_u8_t *img_8u = apriltag_to_image(m_tf, static_cast<uint32_t>(id));
 
-    I.init(img_8u->height, img_8u->width);
+    I.init(static_cast<unsigned int>(img_8u->height), static_cast<unsigned int>(img_8u->width));
     for (int i = 0; i < img_8u->height; i++) {
       for (int j = 0; j < img_8u->width; j++) {
         I[i][j] = img_8u->buf[i*img_8u->stride + j];
