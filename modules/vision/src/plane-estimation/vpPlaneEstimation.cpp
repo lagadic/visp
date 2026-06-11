@@ -77,16 +77,16 @@ vpPlane estimatePlaneEquationSVD(const std::vector<double> &point_cloud, vpColVe
   auto compute_centroid = [=](const std::vector<double> &pc, const vpColVector &w) {
     double cent_x { 0. }, cent_y { 0. }, cent_z { 0. }, total_w { 0. };
 
-    int i = 0;
+    unsigned int i = 0;
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for num_threads(num_procs) reduction(+ : total_w, cent_x, cent_y, cent_z)
 #endif
-    for (i = 0; i < static_cast<int>(w.size()); ++i) {
+    for (i = 0; i < w.size(); ++i) {
       const auto pt_cloud_start_idx = 3 * i;
 
-      cent_x += w[i] * pc[pt_cloud_start_idx + 0];
-      cent_y += w[i] * pc[pt_cloud_start_idx + 1];
-      cent_z += w[i] * pc[pt_cloud_start_idx + 2];
+      cent_x += w[i] * pc[static_cast<size_t>(pt_cloud_start_idx + 0)];
+      cent_y += w[i] * pc[static_cast<size_t>(pt_cloud_start_idx + 1)];
+      cent_z += w[i] * pc[static_cast<size_t>(pt_cloud_start_idx + 2)];
 
       total_w += w[i];
     }
@@ -126,11 +126,11 @@ vpPlane estimatePlaneEquationSVD(const std::vector<double> &point_cloud, vpColVe
     centroid /= total_w;
 
     // Minimization
-    int i = 0;
+    unsigned int i = 0;
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for num_threads(num_procs)
 #endif
-    for (i = 0; i < static_cast<int>(nPoints); ++i) {
+    for (i = 0; i < nPoints; ++i) {
       const auto pt_cloud_start_idx = 3 * i;
 
       M[i][0] = weights[i] * (point_cloud[pt_cloud_start_idx + 0] - centroid[0]);
@@ -166,7 +166,7 @@ vpPlane estimatePlaneEquationSVD(const std::vector<double> &point_cloud, vpColVe
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for num_threads(num_procs) reduction(+ : error)
 #endif
-    for (i = 0; i < static_cast<int>(nPoints); ++i) {
+    for (i = 0; i < nPoints; ++i) {
       const auto pt_cloud_start_idx = 3 * i;
 
       residues[i] = std::fabs(A * point_cloud[pt_cloud_start_idx + 0] + B * point_cloud[pt_cloud_start_idx + 1] +
@@ -245,7 +245,7 @@ void getHelpers(const vpPolygon &roi, const unsigned int &height, const unsigned
 
   // Reduce computation time by using subsample factor
   subsample_factor =
-    static_cast<int>(sqrt(((roi_right - roi_left) * (roi_bottom - roi_top)) / avg_nb_of_pts_to_estimate));
+    static_cast<unsigned int>(sqrt(static_cast<unsigned int>((roi_right - roi_left) * (roi_bottom - roi_top)) / avg_nb_of_pts_to_estimate));
   subsample_factor = vpMath::clamp(subsample_factor, 1u, MaxSubSampFactorToEstimatePlane);
 }
 
@@ -331,8 +331,8 @@ vpPlaneEstimation::estimatePlane(const vpImage<uint16_t> &I_depth_raw, double de
 #pragma omp declare reduction (merge : std::vector<double> : omp_out.insert( end( omp_out ), std::make_move_iterator( begin( omp_in ) ), std::make_move_iterator( end( omp_in ) ) ))
 #pragma omp parallel for num_threads(num_procs) collapse(2) reduction(merge : pt_cloud)
 #endif
-  for (int i = roi_top; i < roi_bottom; i = i + subsample_factor) {
-    for (int j = roi_left; j < roi_right; j = j + subsample_factor) {
+  for (int i = roi_top; i < roi_bottom; i = i + static_cast<int>(subsample_factor)) {
+    for (int j = roi_left; j < roi_right; j = j + static_cast<int>(subsample_factor)) {
       const auto pixel = vpImagePoint { static_cast<double>(i), static_cast<double>(j) };
       if ((I_depth_raw[i][j] != 0) && isInside(pixel, roi) && isValid(pixel)) {
         double x { 0. }, y { 0. };
@@ -386,8 +386,8 @@ std::optional<vpPlane> vpPlaneEstimation::estimatePlane(const vpImage<float> &I_
 #pragma omp declare reduction (merge : std::vector<double> : omp_out.insert( end( omp_out ), std::make_move_iterator( begin( omp_in ) ), std::make_move_iterator( end( omp_in ) ) ))
 #pragma omp parallel for num_threads(num_procs) collapse(2) reduction(merge : pt_cloud)
 #endif
-  for (int i = roi_top; i < roi_bottom; i = i + subsample_factor) {
-    for (int j = roi_left; j < roi_right; j = j + subsample_factor) {
+  for (int i = roi_top; i < roi_bottom; i = i + static_cast<int>(subsample_factor)) {
+    for (int j = roi_left; j < roi_right; j = j + static_cast<int>(subsample_factor)) {
       const auto pixel = vpImagePoint { static_cast<double>(i), static_cast<double>(j) };
       if ((I_depth[i][j] > 0.0f) && isInside(pixel, roi) && isValid(pixel)) {
         double x { 0. }, y { 0. };
