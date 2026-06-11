@@ -2640,7 +2640,7 @@ void vpKeyPoint::loadLearningData(const std::string &filename, bool binaryMode, 
       // Will contain the path to the training images
       char *path = new char[static_cast<size_t>(length) + 1]; // char path[length + 1];
 
-      for (int cpt = 0; cpt < length; cpt++) {
+      for (int cpt = 0; cpt < length; ++cpt) {
         char c;
         file.read((char *)(&c), sizeof(c));
         path[cpt] = c;
