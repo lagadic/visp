@@ -399,7 +399,7 @@ int main(int argc, char *argv[])
   rs.open(config);
 
   color_profile = profile.get_stream(RS2_STREAM_COLOR).as<rs2::video_stream_profile>();
-  color.init(static_cast<unsigned int>(color_profile.height()), static_cast<unsigned int>(color_profile.width()));
+  color.init(static_cast<unsigned int>(static_cast<int>(color_profile.height())), static_cast<unsigned int>(static_cast<int>(color_profile.width())));
 
   depth_profile = profile.get_stream(RS2_STREAM_DEPTH).as<rs2::video_stream_profile>();
   depth_color.init(static_cast<unsigned int>(depth_profile.height()), static_cast<unsigned int>(depth_profile.width()));
