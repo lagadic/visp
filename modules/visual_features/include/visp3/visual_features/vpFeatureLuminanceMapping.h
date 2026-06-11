@@ -301,7 +301,7 @@ public:
      * @param rows the matrix's number of rows
      * @param cols the matrix's number of cols
      */
-    void init(unsigned rows, unsigned cols);
+    void init(unsigned int rows, unsigned int cols);
     /**
      * \brief Fill the vector s with (end - start) values, according to the zigzag matrix indexing strategy
      *
