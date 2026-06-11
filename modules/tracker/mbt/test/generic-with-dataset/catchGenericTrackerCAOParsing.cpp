@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,7 +121,7 @@ TEST_CASE("vpMbGenericTracker load CAO model [lines]", "[vpMbGenericTracker CAO 
   tracker.getLline(lines);
   REQUIRE(lines.size() == 2);
 
-  int idx = 0;
+  size_t idx = 0;
   std::vector<std::string> line_names = { "line_0", "line_1" };
   for (auto line : lines) {
     CHECK_THAT(line->p1->get_oX(), Catch::Matchers::WithinAbs(idx*3 + 0, margin));
@@ -274,7 +274,7 @@ TEST_CASE("vpMbGenericTracker load CAO model [hierarchical]", "[vpMbGenericTrack
     REQUIRE(lines.size() == 2);
     std::vector<std::string> line_names = { "line_0", "line_1" };
 
-    int idx = 0;
+    size_t idx = 0;
     for (auto line : lines) {
       CHECK_THAT(line->p1->get_oX(), Catch::Matchers::WithinAbs(idx*3 + 0, margin));
       CHECK_THAT(line->p1->get_oY(), Catch::Matchers::WithinAbs(idx*3 + 1, margin));
