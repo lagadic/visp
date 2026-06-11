@@ -41,7 +41,7 @@
 #include <visp3/robot/vpRobotPololuPtu.h>
 
 BEGIN_VISP_NAMESPACE
-vpRobotPololuPtu::vpRobotPololuPtu(const std::string &device, int baudrate, bool verbose)
+vpRobotPololuPtu::vpRobotPololuPtu(const std::string &device, unsigned int baudrate, bool verbose)
   : m_verbose(verbose)
 {
   nDof = 2;
@@ -64,7 +64,7 @@ vpRobotPololuPtu::~vpRobotPololuPtu()
 
 void vpRobotPololuPtu::get_eJe(vpMatrix &eJe_)
 {
-  vpColVector q(nDof);
+  vpColVector q(static_cast<unsigned int>(nDof));
   getPosition(vpRobot::JOINT_STATE, q);
 
   get_eJe(q, eJe_);
@@ -72,7 +72,7 @@ void vpRobotPololuPtu::get_eJe(vpMatrix &eJe_)
 
 void vpRobotPololuPtu::get_fJe(vpMatrix &fJe_)
 {
-  vpColVector q(nDof);
+  vpColVector q(static_cast<unsigned int>(nDof));
   getPosition(vpRobot::JOINT_STATE, q);
 
   get_fJe(q, fJe_);
@@ -80,7 +80,7 @@ void vpRobotPololuPtu::get_fJe(vpMatrix &fJe_)
 
 void vpRobotPololuPtu::get_eJe(const vpColVector &q, vpMatrix &eJe_) const
 {
-  eJe_.resize(6, nDof);
+  eJe_.resize(6, static_cast<unsigned int>(nDof));
 
   if (q.size() != static_cast<unsigned int>(nDof)) {
     throw(vpException(vpException::dimensionError, "Bad dimension for Pololu PTU joint position vector"));
@@ -102,7 +102,7 @@ void vpRobotPololuPtu::get_fJe(const vpColVector &q, vpMatrix &fJe_) const
     throw(vpException(vpException::dimensionError, "Bad dimension for Pololu PTU joint position vector"));
   }
 
-  fJe_.resize(6, nDof);
+  fJe_.resize(6, static_cast<unsigned int>(nDof));
 
   double s1 = sin(q[0]);
   double c1 = cos(q[0]);
@@ -201,7 +201,7 @@ void vpRobotPololuPtu::setVelocity(const vpRobot::vpControlFrameType frame, cons
 
   // Saturate joint speed
   double max = getMaxRotationVelocity();
-  vpColVector q_dot_sat(nDof);
+  vpColVector q_dot_sat(static_cast<unsigned int>(nDof));
 
   // Init q_dot_saturated
   q_dot_sat = q_dot;
@@ -278,7 +278,7 @@ void vpRobotPololuPtu::getPosition(const vpRobot::vpControlFrameType frame, vpCo
     break;
   }
 
-  q.resize(nDof);
+  q.resize(static_cast<unsigned int>(nDof));
   q[0] = m_pan.getAngularPosition();
   q[1] = m_tilt.getAngularPosition();
 }

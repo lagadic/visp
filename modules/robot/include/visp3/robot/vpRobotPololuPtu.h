@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +31,8 @@
  * Common features for Pololu Maestro PanTiltUnit.
  */
 
-#ifndef _vpRobotPololuPtu_h_
-#define _vpRobotPololuPtu_h_
+#ifndef VP_ROBOT_POLOLU_PTU_H
+#define VP_ROBOT_POLOLU_PTU_H
 
 #include <visp3/core/vpConfig.h>
 
@@ -70,7 +70,7 @@ public:
    * \param[in] baudrate : Baudrate used for the serial communication. Note that this parameter is only used on Windows.
    * \param[in] verbose : When true, enable verbose mode.
    */
-  vpRobotPololuPtu(const std::string &device = "/dev/ttyACM0", int baudrate = 9600, bool verbose = false);
+  vpRobotPololuPtu(const std::string &device = "/dev/ttyACM0", unsigned int baudrate = 9600, bool verbose = false);
 
   /*!
    * Destructor that stops the movements.
@@ -234,7 +234,7 @@ private:
    * \exception vpRobotException::constructionError If the config file cannot be
    * opened.
    */
-  void init() VP_OVERRIDE { }
+  void init() VP_OVERRIDE {}
 
   /*!
    * Get the robot displacement since the last call of this method.
