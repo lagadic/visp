@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,8 +49,8 @@ struct vpDataType_t
   double double_val;
   int int_val;
 
-  vpDataType_t() : double_val(0.0), int_val(0) { }
-  vpDataType_t(double dbl, int i) : double_val(dbl), int_val(i) { }
+  vpDataType_t() : double_val(0.0), int_val(0) {}
+  vpDataType_t(double dbl, int i) : double_val(dbl), int_val(i) {}
 };
 } // namespace
 
@@ -75,7 +75,7 @@ int main(int argc, char **argv)
       }
     }
 
-    unsigned int port = 50037;
+    int port = 50037;
     vpUDPClient client(servername, port);
 
     // Send custom data type
