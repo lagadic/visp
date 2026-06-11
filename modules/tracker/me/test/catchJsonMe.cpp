@@ -130,13 +130,13 @@ public:
   bool next() VP_OVERRIDE
   {
     current.setThreshold(m_dist(m_rand) * 255);
-    current.setMaskNumber(m_int_dist(m_rand) * 10);
+    current.setMaskNumber(static_cast<unsigned int>(m_int_dist(m_rand)) * 10);
     current.setMaskSign(m_int_dist(m_rand) > 5 ? 1 : 0);
     current.setMu1(m_dist(m_rand));
     current.setMu2(current.getMu1() + m_dist(m_rand));
     current.setNbTotalSample(m_int_dist(m_rand) * 2);
     current.setPointsToTrack(m_int_dist(m_rand));
-    current.setRange(m_int_dist(m_rand));
+    current.setRange(static_cast<unsigned int>(m_int_dist(m_rand)));
     current.setStrip(m_int_dist(m_rand));
     return true;
   }
