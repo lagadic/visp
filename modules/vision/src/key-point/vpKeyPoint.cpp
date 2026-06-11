@@ -809,7 +809,7 @@ bool vpKeyPoint::computePose(const std::vector<vpPoint> &objectVpPoints, vpHomog
 
   pose.setRansacFilterFlag(m_ransacFilterFlag);
   pose.setUseParallelRansac(m_ransacParallel);
-  pose.setNbParallelRansacThreads(m_ransacParallelNbThreads);
+  pose.setNbParallelRansacThreads(static_cast<int>(m_ransacParallelNbThreads));
   pose.setRansacNbInliersToReachConsensus(nbInlierToReachConsensus);
   pose.setRansacThreshold(m_ransacThreshold);
   pose.setRansacMaxTrials(m_nbRansacIterations);
@@ -2638,7 +2638,7 @@ void vpKeyPoint::loadLearningData(const std::string &filename, bool binaryMode, 
       int length = 0;
       vpIoTools::readBinaryValueLE(file, length);
       // Will contain the path to the training images
-      char *path = new char[length + 1]; // char path[length + 1];
+      char *path = new char[static_cast<size_t>(length) + 1]; // char path[length + 1];
 
       for (int cpt = 0; cpt < length; cpt++) {
         char c;
