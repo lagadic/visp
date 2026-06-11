@@ -51,7 +51,7 @@
 
 BEGIN_VISP_NAMESPACE
 
-const int vpFeatureLuminance::DEFAULT_BORDER = 10;
+const unsigned int vpFeatureLuminance::DEFAULT_BORDER = 10;
 
 /*!
   Initialize the memory space requested for vpFeatureLuminance visual feature.

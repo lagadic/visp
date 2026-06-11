@@ -119,14 +119,14 @@ public:
    *
    * @param border The border size where pixels are removed on each side of the image.
    */
-  void setBorder(unsigned border) { m_border = border; }
+  void setBorder(unsigned int border) { m_border = border; }
 
   static void imageAsVector(const vpImage<unsigned char> &I, vpColVector &Ivec, unsigned border);
   static void imageAsMatrix(const vpImage<unsigned char> &I, vpMatrix &Imat, unsigned border);
 
 protected:
-  unsigned m_mappingSize; //! Final vector size
-  unsigned m_border; //! Borders that were removed during raw photometric VS computation
+  unsigned int m_mappingSize; //! Final vector size
+  unsigned int m_border; //! Borders that were removed during raw photometric VS computation
 };
 
 /**
@@ -344,7 +344,7 @@ public:
   void init(const unsigned int k)
   {
     m_mappingSize = k;
-    m_border = static_cast<unsigned int>(vpFeatureLuminance::DEFAULT_BORDER);
+    m_border = vpFeatureLuminance::DEFAULT_BORDER;
     m_Ih = m_Iw = 0;
   }
 

@@ -219,8 +219,8 @@ int main(int argc, const char **argv)
 
 
     const double Z = 0.8;
-    const unsigned ih = 240;
-    const unsigned iw = 320;
+    const unsigned int ih = 240;
+    const unsigned int iw = 320;
     const double scenew = 0.6;
     const double sceneh = 0.42;
 
