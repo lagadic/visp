@@ -56,7 +56,7 @@ vpPololu::vpPololu(bool verbose)
   m_vel_speed(1), m_vel_target_position(0), m_vel_speed_prev(1), m_vel_target_position_prev(0), m_mutex_velocity_cmd(), m_verbose(verbose)
 {}
 
-vpPololu::vpPololu(const std::string &device, int baudrate, int channel, bool verbose)
+vpPololu::vpPololu(const std::string &device, unsigned int baudrate, int channel, bool verbose)
   : m_channel(channel), m_apply_velocity_cmd(false), m_stop_velocity_cmd_thread(false),
   m_vel_speed(1), m_vel_target_position(0), m_vel_speed_prev(1), m_vel_target_position_prev(0), m_mutex_velocity_cmd(), m_verbose(verbose)
 {

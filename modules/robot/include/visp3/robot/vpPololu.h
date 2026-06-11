@@ -94,7 +94,7 @@ public:
    * \param[in] channel : Channel to which the servo is connected to the Pololu board.
    * \param[in] verbose : When true enable verbose mode.
    */
-  vpPololu(const std::string &device, int baudrate = 38400, int channel = 0, bool verbose = false);
+  vpPololu(const std::string &device, unsigned int baudrate = 38400, int channel = 0, bool verbose = false);
 
   /*!
    * Destructor.
