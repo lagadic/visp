@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -201,9 +201,10 @@ bool read_data(const std::string &input_directory, int cpt, const vpCameraParame
   // We suppose that the user will download a recent dataset
   std::string ext("png");
 #endif
-  std::string image_filename = vpIoTools::formatString(input_directory + "/Images/Image_%04d." + ext, cpt);
-  std::string depth_filename = vpIoTools::formatString(input_directory + "/Depth/Depth_%04d.bin", cpt);
-  std::string pose_filename = vpIoTools::formatString(input_directory + "/CameraPose/Camera_%03d.txt", cpt);
+  unsigned int cpt_ = static_cast<unsigned int>(cpt);
+  std::string image_filename = vpIoTools::formatString(input_directory + "/Images/Image_%04d." + ext, cpt_);
+  std::string depth_filename = vpIoTools::formatString(input_directory + "/Depth/Depth_%04d.bin", cpt_);
+  std::string pose_filename = vpIoTools::formatString(input_directory + "/CameraPose/Camera_%03d.txt", cpt_);
 
   if (!vpIoTools::checkFilename(image_filename) || !vpIoTools::checkFilename(depth_filename) ||
     !vpIoTools::checkFilename(pose_filename))
@@ -609,7 +610,7 @@ bool run(const std::string &input_directory, bool opt_click_allowed, bool opt_di
       //! [Save drawings]
       results.insert(resultsColor, vpImagePoint());
       results.insert(resultsDepth, vpImagePoint(0, resultsColor.getWidth()));
-      std::string filename = vpIoTools::formatString("results/image_%04d.png", cpt_frame);
+      std::string filename = vpIoTools::formatString("results/image_%04d.png", static_cast<unsigned int>(cpt_frame));
       vpImageIo::write(results, filename);
       //! [Save drawings]
     }
