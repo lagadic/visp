@@ -767,7 +767,7 @@ int main(int argc, const char **argv)
             sss << "Features: edges " << dynamic_cast<vpMbGenericTracker *>(tracker)->getNbFeaturesEdge() << ", klt "
               << dynamic_cast<vpMbGenericTracker *>(tracker)->getNbFeaturesKlt() << ", depth "
               << dynamic_cast<vpMbGenericTracker *>(tracker)->getNbFeaturesDepthDense();
-            vpDisplay::displayText(I, static_cast<int>(statI.getHeight()) - 30, 20, sss.str(), vpColor::red);
+            vpDisplay::displayText(I, static_cast<int>(static_cast<int>(I.getHeight()) - 30), 20, sss.str(), vpColor::red);
           }
         }
       }
