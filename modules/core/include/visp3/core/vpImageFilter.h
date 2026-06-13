@@ -473,7 +473,7 @@ public:
   {
     const unsigned int w = I.getWidth();
     const unsigned int h = I.getHeight();
-    const int size = I.getSize();
+    const int size = static_cast<int>(I.getSize());
 
     if ((lowerThresholdRatio <= 0.f) || (lowerThresholdRatio >= 1.f)) {
       std::stringstream errMsg;
@@ -566,7 +566,7 @@ public:
     vpHistogram hist(nbBins);
     hist.setMask(p_mask);
     OutType step = 0.;
-    hist.calculate<OutType>(dI, dIMin, dIMax, step, nbBins, nbThread);
+    hist.calculate<OutType>(dI, dIMin, dIMax, step, nbBins, static_cast<unsigned int>(nbThread));
     float totalNbPixels = static_cast<float>(hist.getTotal());
     float accu = 0;
     float t = upperThresholdRatio * totalNbPixels;
@@ -1549,7 +1549,7 @@ public:
 #ifdef VISP_HAVE_OPENMP
       }
 #endif
-      }
+    }
   }
 
   /**
