@@ -397,7 +397,7 @@ int main(int argc, const char **argv)
     detector.setAprilTagQuadDecimate(opt_tag_quad_decimate);
     detector.setAprilTagPoseEstimationMethod(opt_tag_pose_estimation_method);
     detector.setAprilTagNbThreads(opt_tag_nThreads);
-    detector.setDisplayTag(opt_display_tag, opt_color_id < 0 ? vpColor::none : vpColor::getColor(opt_color_id), thickness);
+    detector.setDisplayTag(opt_display_tag, opt_color_id < 0 ? vpColor::none : vpColor::getColor(static_cast<unsigned int>(opt_color_id)), static_cast<unsigned int>(opt_thickness));
     detector.setZAlignedWithCameraAxis(opt_tag_z_align_frame);
     detector.setAprilTagDecisionMarginThreshold(opt_tag_decision_margin_threshold);
     detector.setAprilTagHammingDistanceThreshold(opt_tag_hamming_distance_threshold);
