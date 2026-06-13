@@ -174,7 +174,7 @@ int main(int argc, const char *argv[])
 
       std::stringstream ss;
       ss << "Acquisition time: " << std::setprecision(3) << vpTime::measureTimeMs() - t << " ms";
-      vpDisplay::displayText(I, I.getHeight() - 20, 10, ss.str(), vpColor::red);
+      vpDisplay::displayText(I, static_cast<int>(I.getHeight()) - 20, 10, ss.str(), vpColor::red);
       vpDisplay::flush(I);
     }
     image_queue.cancel();
