@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,14 +54,14 @@ void performSegmentationHSV(vpTutoCommonData &data)
 
 std::vector< VISP_NAMESPACE_ADDRESSING vpImagePoint > extractSkeleton(vpTutoCommonData &data)
 {
-  const int height = data.m_mask.getHeight();
-  const int width = data.m_mask.getWidth();
+  const unsigned int height = data.m_mask.getHeight();
+  const unsigned int width = data.m_mask.getWidth();
   data.m_Iskeleton.resize(height, width, 0);
   std::vector<vpImagePoint> points;
   // Edge thinning along the horizontal direction
-  for (int y = 0; y < height; ++y) {
+  for (int y = 0; y < static_cast<int>(height); ++y) {
     int left = -1;
-    for (int x = 0; x < width - 1; ++x) {
+    for (int x = 0; x < static_cast<int>(width) - 1; ++x) {
       if ((data.m_mask[y][x] > 0) && (data.m_mask[y][x + 1] > 0)) {
         if (left < 0) {
           left = x;
@@ -82,9 +82,9 @@ std::vector< VISP_NAMESPACE_ADDRESSING vpImagePoint > extractSkeleton(vpTutoComm
   }
 
   // Edge thinning along the vertical direction
-  for (int x = 0; x < width; ++x) {
+  for (int x = 0; x < static_cast<int>(width); ++x) {
     int top = -1;
-    for (int y = 0; y < height - 1; ++y) {
+    for (int y = 0; y < static_cast<int>(height) - 1; ++y) {
       if ((data.m_mask[y][x] > 0) && (data.m_mask[y + 1][x] > 0)) {
         if (top < 0) {
           top = y;
@@ -114,8 +114,8 @@ std::vector< vpImagePoint > addSaltAndPepperNoise(const std::vector< vpImagePoin
   const double width = data.m_Iskeleton.getWidth();
   const double height = data.m_Iskeleton.getHeight();
   data.m_IskeletonNoisy = data.m_Iskeleton;
-  vpGaussRand rngX(0.1666, 0.5, static_cast<long>(vpTime::measureTimeMicros()));
-  vpGaussRand rngY(0.1666, 0.5, static_cast<long>(vpTime::measureTimeMicros() + 4224));
+  vpGaussRand rngX(0.1666, 0.5, static_cast<uint64_t>(vpTime::measureTimeMicros()));
+  vpGaussRand rngY(0.1666, 0.5, static_cast<uint64_t>(vpTime::measureTimeMicros() + 4224));
   std::vector<vpImagePoint> noisyPts = noisefreePts;
   for (unsigned int i = 0; i < nbPtsToAdd + 1; ++i) {
     double uNormalized = rngX();
@@ -138,5 +138,5 @@ std::vector< vpImagePoint > addSaltAndPepperNoise(const std::vector< vpImagePoin
 }
 #endif
 #else
-void dummy_vpTutoSegmentation() { }
+void dummy_vpTutoSegmentation() {}
 #endif
