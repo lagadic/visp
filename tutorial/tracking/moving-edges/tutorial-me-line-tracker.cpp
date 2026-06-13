@@ -70,14 +70,14 @@ int main(int argc, char **argv)
   vpDisplay *display = nullptr;
 #endif
   //! [me default options]
-  int opt_me_range = 10;
+  unsigned int opt_me_range = 10;
   int opt_me_sample_step = 5;
   int opt_me_threshold = 20; // Value in [0 ; 255]
   //! [me default options]
 
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--me-range" && i + 1 < argc) {
-      opt_me_range = std::atoi(argv[++i]);
+      opt_me_range = static_cast<unsigned int>(std::atoi(argv[++i]));
     }
     else if (std::string(argv[i]) == "--me-sample-step" && i + 1 < argc) {
       opt_me_sample_step = std::atoi(argv[++i]);
