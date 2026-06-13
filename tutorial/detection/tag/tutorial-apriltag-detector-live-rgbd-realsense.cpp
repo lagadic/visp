@@ -282,12 +282,12 @@ int main(int argc, const char **argv)
     if (!opt_display_off) {
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
       d1 = vpDisplayFactory::createDisplay(I_color, 100, 30, "Pose from Homography");
-      d2 = vpDisplayFactory::createDisplay(I_color2, I_color.getWidth() + 120, 30, "Pose from RGBD fusion");
-      d3 = vpDisplayFactory::createDisplay(I_depth, 100, I_color.getHeight() + 70, "Depth");
+      d2 = vpDisplayFactory::createDisplay(I_color2, static_cast<int>(I_color.getWidth()) + 120, 30, "Pose from RGBD fusion");
+      d3 = vpDisplayFactory::createDisplay(I_depth, 100, static_cast<int>(I_color.getHeight()) + 70, "Depth");
 #else
       d1 = vpDisplayFactory::allocateDisplay(I_color, 100, 30, "Pose from Homography");
-      d2 = vpDisplayFactory::allocateDisplay(I_color2, I_color.getWidth() + 120, 30, "Pose from RGBD fusion");
-      d3 = vpDisplayFactory::allocateDisplay(I_depth, 100, I_color.getHeight() + 70, "Depth");
+      d2 = vpDisplayFactory::allocateDisplay(I_color2, static_cast<int>(I_color.getWidth()) + 120, 30, "Pose from RGBD fusion");
+      d3 = vpDisplayFactory::allocateDisplay(I_depth, 100, static_cast<int>(I_color.getHeight()) + 70, "Depth");
 #endif
     }
 
@@ -299,7 +299,7 @@ int main(int argc, const char **argv)
     detector.setAprilTagQuadDecimate(opt_tag_quad_decimate);
     detector.setAprilTagPoseEstimationMethod(opt_tag_pose_estimation_method);
     detector.setAprilTagNbThreads(opt_tag_nThreads);
-    detector.setDisplayTag(opt_display_tag, opt_color_id < 0 ? vpColor::none : vpColor::getColor(opt_color_id), opt_thickness);
+    detector.setDisplayTag(opt_display_tag, opt_color_id < 0 ? vpColor::none : vpColor::getColor(static_cast<unsigned int>(opt_color_id)), static_cast<unsigned int>(opt_thickness));
     detector.setZAlignedWithCameraAxis(opt_tag_z_align_frame);
     detector.setAprilTagDecisionMarginThreshold(opt_tag_decision_margin_threshold);
     detector.setAprilTagHammingDistanceThreshold(opt_tag_hamming_distance_threshold);
