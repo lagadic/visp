@@ -399,7 +399,7 @@ int testOnSynthetic(const TutorialMeanDrift::TypeTest &type, const TutorialMeanD
   // Initial computation of the mean and stdev of the input signal
   float signal;
   for (unsigned int i = 0; i < parameters.m_test_nbsamples; ++i) {
-    vpGaussRand rndGen(stdev, mean, static_cast<long>(idFrame * dt));
+    vpGaussRand rndGen(stdev, mean, static_cast<uint64_t>(idFrame * dt));
     signal = static_cast<float>(rndGen());
     p_test->testDownUpwardMeanDrift(signal);
     ++idFrame;
@@ -414,7 +414,7 @@ int testOnSynthetic(const TutorialMeanDrift::TypeTest &type, const TutorialMeanD
   bool hasToRun = true;
   vpStatisticalTestAbstract::vpMeanDriftType drift_type = vpStatisticalTestAbstract::MEAN_DRIFT_NONE;
   while (hasToRun) {
-    vpGaussRand rndGen(stdev, mean_eff, static_cast<long>(idFrame * dt));
+    vpGaussRand rndGen(stdev, mean_eff, static_cast<uint64_t>(idFrame * dt));
     signal = static_cast<float>(rndGen());
     plotter.plot(0, 0, idFrame - parameters.m_test_nbsamples, signal);
     drift_type = p_test->testDownUpwardMeanDrift(signal);
@@ -487,7 +487,7 @@ int main(int argc, char *argv[])
       ++i;
     }
     else if ((std::string(argv[i]) == "--nb-samples") && ((i + 1) < argc)) {
-      parameters.m_test_nbsamples = std::atoi(argv[i + 1]);
+      parameters.m_test_nbsamples = static_cast<unsigned int>(std::atoi(argv[i + 1]));
       ++i;
     }
     else if ((std::string(argv[i]) == "--mean") && ((i + 1) < argc)) {
@@ -554,8 +554,8 @@ int main(int argc, char *argv[])
       ++i;
     }
     else if ((std::string(argv[i]) == "--shewhart-rules") && (i + vpStatisticalTestShewhart::COUNT_WECO - 1 < argc)) {
-      for (int j = 0; j < vpStatisticalTestShewhart::COUNT_WECO - 1; ++j) {
-        std::string argument = std::string(argv[i + 1 + j]);
+      for (size_t j = 0; j < static_cast<size_t>(vpStatisticalTestShewhart::COUNT_WECO - 1); ++j) {
+        std::string argument = std::string(argv[static_cast<size_t>(i) + 1 + j]);
         if ((argument.find("on") != std::string::npos) || (argument.find("ON") != std::string::npos)) {
           parameters.m_shewhart_rules[j] = true;
         }
