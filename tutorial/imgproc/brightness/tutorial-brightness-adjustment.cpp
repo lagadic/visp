@@ -44,8 +44,8 @@ void display(vpImage<vpRGBa> &I_display, vpImage<vpRGBa> &I_color_res, const vpI
   vpDisplay::display(I_display);
   vpDisplay::displayText(I_display, 20, 20, title, vpColor::red);
   if (!title_2.empty()) {
-    vpDisplay::displayText(I_display, 40, static_cast<unsigned int>(I_color_adjust.getWidth()*0.85),
-      title_2, vpColor::green);
+    vpDisplay::displayText(I_display, 40, static_cast<int>(I_color_adjust.getWidth()*0.85),
+                           title_2, vpColor::green);
   }
   vpDisplay::flush(I_display);
   vpDisplay::getClick(I_display);
