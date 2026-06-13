@@ -125,10 +125,10 @@ int main(int argc, const char *argv[])
 #else
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
       display_left = vpDisplayFactory::createDisplay(I_left, 10, 10, "Left image");
-      display_right = vpDisplayFactory::createDisplay(I_right, I_left.getWidth(), 10, "Right image");
+      display_right = vpDisplayFactory::createDisplay(I_right, static_cast<int>(I_left.getWidth()), 10, "Right image");
 #else
       display_left = vpDisplayFactory::allocateDisplay(I_left, 10, 10, "Left image");
-      display_right = vpDisplayFactory::allocateDisplay(I_right, I_left.getWidth(), 10, "Right image");
+      display_right = vpDisplayFactory::allocateDisplay(I_right, static_cast<int>(I_left.getWidth()), 10, "Right image");
 #endif
 #endif
     }
@@ -154,7 +154,7 @@ int main(int argc, const char *argv[])
 
       std::stringstream ss;
       ss << "Acquisition time: " << std::setprecision(3) << vpTime::measureTimeMs() - t << " ms";
-      vpDisplay::displayText(I_left, I_left.getHeight() - 20, 10, ss.str(), vpColor::red);
+      vpDisplay::displayText(I_left, static_cast<int>(I_left.getHeight()) - 20, 10, ss.str(), vpColor::red);
       vpDisplay::flush(I_left);
       vpDisplay::flush(I_right);
     }
