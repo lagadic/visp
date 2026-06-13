@@ -227,7 +227,7 @@ int main(int argc, const char **argv)
   std::string camera_name = "";
   bool opt_display_tag = false;
   int opt_color_id = -1;
-  unsigned int thickness = 2;
+  unsigned int opt_thickness = 2;
   bool opt_tag_z_align_frame = false;
   bool opt_verbose = false;
 
@@ -287,7 +287,7 @@ int main(int argc, const char **argv)
       opt_color_id = atoi(argv[++i]);
     }
     else if (std::string(argv[i]) == "--thickness" && i + 1 < argc) {
-      thickness = static_cast<unsigned int>(atoi(argv[++i]));
+      opt_thickness = static_cast<unsigned int>(atoi(argv[++i]));
     }
 #endif
     else if (std::string(argv[i]) == "--verbose" || std::string(argv[i]) == "-v") {
