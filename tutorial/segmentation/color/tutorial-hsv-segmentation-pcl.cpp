@@ -63,11 +63,12 @@ int main(int argc, const char *argv[])
   }
 
   //! [Config RS2 RGB and depth]
-  int width = 848, height = 480, fps = 60;
+  unsigned int width = 848, height = 480;
+  int fps = 60;
   vpRealSense2 rs;
   rs2::config config;
-  config.enable_stream(RS2_STREAM_COLOR, width, height, RS2_FORMAT_RGBA8, fps);
-  config.enable_stream(RS2_STREAM_DEPTH, width, height, RS2_FORMAT_Z16, fps);
+  config.enable_stream(RS2_STREAM_COLOR, static_cast<int>(width), static_cast<int>(height), RS2_FORMAT_RGBA8, fps);
+  config.enable_stream(RS2_STREAM_DEPTH, static_cast<int>(width), static_cast<int>(height), RS2_FORMAT_Z16, fps);
   config.disable_stream(RS2_STREAM_INFRARED, 1);
   config.disable_stream(RS2_STREAM_INFRARED, 2);
   rs2::align align_to(RS2_STREAM_COLOR);
@@ -90,14 +91,14 @@ int main(int argc, const char *argv[])
   vpImage<vpHSV<unsigned char, true>> Ihsv;
 
   std::shared_ptr<vpDisplay> d_I = vpDisplayFactory::createDisplay(I, 0, 0, "Current frame");
-  std::shared_ptr<vpDisplay> d_I_segmented = vpDisplayFactory::createDisplay(I_segmented, I.getWidth()+75, 0, "HSV segmented frame");
+  std::shared_ptr<vpDisplay> d_I_segmented = vpDisplayFactory::createDisplay(I_segmented, static_cast<int>(I.getWidth())+75, 0, "HSV segmented frame");
 #else
   vpImage<unsigned char> H(height, width);
   vpImage<unsigned char> S(height, width);
   vpImage<unsigned char> V(height, width);
 
   vpDisplay *d_I = vpDisplayFactory::allocateDisplay(I, 0, 0, "Current frame");
-  vpDisplay *d_I_segmented = vpDisplayFactory::allocateDisplay(I_segmented, I.getWidth()+75, 0, "HSV segmented frame");
+  vpDisplay *d_I_segmented = vpDisplayFactory::allocateDisplay(I_segmented, static_cast<int>(I.getWidth())+75, 0, "HSV segmented frame");
 #endif
 
   bool quit = false;
