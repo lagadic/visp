@@ -493,10 +493,10 @@ int main(const int argc, const char *argv[])
   if (returnCode != tutorial::vpTutoCommonData::SOFTWARE_CONTINUE) {
     return returnCode;
   }
-  const unsigned int vertOffset = static_cast<unsigned int>(data.m_legendOffset.get_i());
-  const unsigned int horOffset = static_cast<unsigned int>(data.m_ipLegend.get_j());
-  const int legendPFVert = static_cast<int>(data.m_I_orig.getHeight() - 2 * vertOffset);
-  const int legendPFHor = static_cast<int>(horOffset);
+  const int vertOffset = static_cast<int>(data.m_legendOffset.get_i());
+  const int horOffset = static_cast<int>(data.m_ipLegend.get_j());
+  const int legendPFVert = static_cast<int>(data.m_I_orig.getHeight()) - 2 * vertOffset;
+  const int legendPFHor = horOffset;
 
   // Initialize the attributes of the PF
   //! [Initial_estimates]
