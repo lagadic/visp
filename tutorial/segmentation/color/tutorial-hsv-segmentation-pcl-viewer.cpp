@@ -102,18 +102,18 @@ int main(int argc, const char *argv[])
   std::string opt_hsv_filename = "calib/hsv-thresholds.yml";
   bool opt_pcl_textured = false;
   bool opt_verbose = false;
-  int opt_width = 848;
-  int opt_height = 480;
+  unsigned int opt_width = 848;
+  unsigned int opt_height = 480;
   int opt_fps = 60;
   DisplayMode opt_mode = DisplayMode::MONOTHREAD;
 
   int i = 1;
   while (i < argc) {
     if (((std::string(argv[i]) == "--width") || (std::string(argv[i]) == "-v")) && ((i+1) < argc)) {
-      opt_width = std::atoi(argv[++i]);
+      opt_width = static_cast<unsigned int>(std::atoi(argv[++i]));
     }
     else if (((std::string(argv[i]) == "--height") || (std::string(argv[i]) == "-h")) && ((i+1) < argc)) {
-      opt_height = std::atoi(argv[++i]);
+      opt_height = static_cast<unsigned int>(std::atoi(argv[++i]));
     }
     else if (std::string(argv[i]) == "--display-mode" && i + 1 < argc) {
       opt_mode = displayModeFromString(std::string(argv[i + 1]));
@@ -194,8 +194,8 @@ int main(int argc, const char *argv[])
 
   vpRealSense2 rs;
   rs2::config config;
-  config.enable_stream(RS2_STREAM_COLOR, opt_width, opt_height, RS2_FORMAT_RGBA8, opt_fps);
-  config.enable_stream(RS2_STREAM_DEPTH, opt_width, opt_height, RS2_FORMAT_Z16, opt_fps);
+  config.enable_stream(RS2_STREAM_COLOR, static_cast<int>(opt_width), static_cast<int>(opt_height), RS2_FORMAT_RGBA8, opt_fps);
+  config.enable_stream(RS2_STREAM_DEPTH, static_cast<int>(opt_width), static_cast<int>(opt_height), RS2_FORMAT_Z16, opt_fps);
   config.disable_stream(RS2_STREAM_INFRARED, 1);
   config.disable_stream(RS2_STREAM_INFRARED, 2);
   rs2::align align_to(RS2_STREAM_COLOR);
@@ -215,14 +215,14 @@ int main(int argc, const char *argv[])
   vpImage<vpHSV<unsigned char, true>> Ihsv;
 
   std::shared_ptr<vpDisplay> d_I = vpDisplayFactory::createDisplay(I, 0, 0, "Current frame");
-  std::shared_ptr<vpDisplay> d_I_segmented = vpDisplayFactory::createDisplay(I_segmented, I.getWidth()+75, 0, "HSV segmented frame");
+  std::shared_ptr<vpDisplay> d_I_segmented = vpDisplayFactory::createDisplay(I_segmented, static_cast<int>(I.getWidth())+75, 0, "HSV segmented frame");
 #else
   vpImage<unsigned char> H(opt_height, opt_width);
   vpImage<unsigned char> S(opt_height, opt_width);
   vpImage<unsigned char> V(opt_height, opt_width);
 
   vpDisplay *d_I = vpDisplayFactory::allocateDisplay(I, 0, 0, "Current frame");
-  vpDisplay *d_I_segmented = vpDisplayFactory::allocateDisplay(I_segmented, I.getWidth()+75, 0, "HSV segmented frame");
+  vpDisplay *d_I_segmented = vpDisplayFactory::allocateDisplay(I_segmented, static_cast<int>(I.getWidth())+75, 0, "HSV segmented frame");
 #endif
 
   bool quit = false;
