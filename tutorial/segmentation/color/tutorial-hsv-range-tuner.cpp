@@ -217,7 +217,7 @@ int main(int argc, const char *argv[])
   vpImage<unsigned char> S(height, width);
   vpImage<unsigned char> V(height, width);
   vpDisplay *d_I = vpDisplayFactory::allocateDisplay(I, 0, 0, "Current frame");
-  vpDisplay *d_I_segmented = vpDisplayFactory::allocateDisplay(I_segmented, I.getWidth()+75, 0, "Segmented frame");
+  vpDisplay *d_I_segmented = vpDisplayFactory::allocateDisplay(I_segmented, static_cast<int>(I.getWidth())+75, 0, "Segmented frame");
 #endif
   bool quit = false;
 
