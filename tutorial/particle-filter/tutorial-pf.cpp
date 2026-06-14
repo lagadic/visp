@@ -206,7 +206,7 @@ public:
    * 3. * likelihood_stdev further than the measurements will have a weight of 0.
    */
   vpMarkersMeasurements(const vpCameraParameters &cam, const vpHomogeneousMatrix &cMw, const vpRotationMatrix &wRo,
-                        const std::vector<vpColVector> &markers, const double &noise_stdev, const long &seed,
+                        const std::vector<vpColVector> &markers, const double &noise_stdev, const uint64_t &seed,
                         const double &likelihood_stdev)
     : m_cam(cam)
     , m_cMw(cMw)
@@ -387,11 +387,11 @@ struct SoftwareArguments
     while (i < argc) {
       std::string arg(argv[i]);
       if ((arg == "--nb-steps-main") && ((i+1) < argc)) {
-        m_nbSteps = std::atoi(argv[i + 1]);
+        m_nbSteps = static_cast<unsigned int>(std::atoi(argv[i + 1]));
         ++i;
       }
       else if ((arg == "--nb-steps-warmup") && ((i+1) < argc)) {
-        m_nbStepsWarmUp = std::atoi(argv[i + 1]);
+        m_nbStepsWarmUp = static_cast<unsigned int>(std::atoi(argv[i + 1]));
         ++i;
       }
       else if ((arg == "--max-distance-likelihood") && ((i+1) < argc)) {
@@ -399,11 +399,11 @@ struct SoftwareArguments
         ++i;
       }
       else if (((arg == "-N") || (arg == "--nb-particles")) && ((i+1) < argc)) {
-        m_N = std::atoi(argv[i + 1]);
+        m_N = static_cast<unsigned int>(std::atoi(argv[i + 1]));
         ++i;
       }
       else if ((arg == "--seed") && ((i+1) < argc)) {
-        m_seedPF = std::atoi(argv[i + 1]);
+        m_seedPF = static_cast<long>(std::atoi(argv[i + 1]));
         ++i;
       }
       else if ((arg == "--nb-threads") && ((i+1) < argc)) {
