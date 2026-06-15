@@ -89,7 +89,7 @@ void encode(std::vector<uint8_t> &buffer, const T &object) = delete;
 template<>
 void encode(std::vector<uint8_t> &buffer, const int &object)
 {
-  const uint32_t v = htonl(object);
+  const uint32_t v = htonl(static_cast<uint32_t>(object));
   const uint8_t *varr = (uint8_t *)&v;
   buffer.insert(buffer.end(), varr, varr + 4);
 }
