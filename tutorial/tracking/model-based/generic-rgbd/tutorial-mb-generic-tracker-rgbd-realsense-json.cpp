@@ -70,11 +70,11 @@ int main(int argc, char *argv[])
   }
   //! [Init]
   vpRealSense2 realsense;
-  int width = 640, height = 480;
+  unsigned int width = 640, height = 480;
   int fps = 30;
   rs2::config rs_config;
-  rs_config.enable_stream(RS2_STREAM_COLOR, width, height, RS2_FORMAT_RGBA8, fps);
-  rs_config.enable_stream(RS2_STREAM_DEPTH, width, height, RS2_FORMAT_Z16, fps);
+  rs_config.enable_stream(RS2_STREAM_COLOR, static_cast<int>(width), static_cast<int>(height), RS2_FORMAT_RGBA8, fps);
+  rs_config.enable_stream(RS2_STREAM_DEPTH, static_cast<int>(width), static_cast<int>(height), RS2_FORMAT_Z16, fps);
 
   try {
     realsense.open(rs_config);
@@ -172,7 +172,7 @@ int main(int argc, char *argv[])
     tracker.setCameraTransformationMatrix(mapOfCameraTransformations);
   }
   //! [Update params]
-  unsigned int _posx = 100, _posy = 50;
+  int _posx = 100, _posy = 50;
 
 #if defined(VISP_HAVE_DISPLAY)
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
@@ -185,7 +185,7 @@ int main(int argc, char *argv[])
   if (use_color)
     display1->init(I_gray, _posx, _posy, "Color stream");
   if (use_depth)
-    display2->init(I_depth, _posx + I_gray.getWidth() + 10, _posy, "Depth stream");
+    display2->init(I_depth, _posx + static_cast<int>(I_gray.getWidth()) + 10, _posy, "Depth stream");
 #endif
 
   while (true) {
@@ -310,13 +310,13 @@ int main(int argc, char *argv[])
         { // Display total number of features
           std::stringstream ss;
           ss << "Nb features: " << tracker.getError().size();
-          vpDisplay::displayText(I_gray, I_gray.getHeight() - 50, 20, ss.str(), vpColor::red);
+          vpDisplay::displayText(I_gray, static_cast<int>(I_gray.getHeight()) - 50, 20, ss.str(), vpColor::red);
         }
         { // Display number of feature per type
           std::stringstream ss;
           ss << "Features: edges " << tracker.getNbFeaturesEdge() << ", klt " << tracker.getNbFeaturesKlt()
             << ", depth dense " << tracker.getNbFeaturesDepthDense() << ", depth normal" << tracker.getNbFeaturesDepthNormal();
-          vpDisplay::displayText(I_gray, I_gray.getHeight() - 30, 20, ss.str(), vpColor::red);
+          vpDisplay::displayText(I_gray, static_cast<int>(I_gray.getHeight()) - 30, 20, ss.str(), vpColor::red);
         }
       }
 
