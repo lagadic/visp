@@ -345,8 +345,8 @@ int main(int argc, char *argv[])
     {
       std::lock_guard<std::mutex> lock(mutex);
 
-      pointcloud->width = static_cast<size_t>(depth_profile.width());
-      pointcloud->height = static_cast<size_t>(depth_profile.height());
+      pointcloud->width = static_cast<uint32_t>(depth_profile.width());
+      pointcloud->height = static_cast<uint32_t>(depth_profile.height());
       pointcloud->points.resize(pointcloud_colvector.size());
       for (size_t i = 0; i < pointcloud_colvector.size(); i++) {
         pointcloud->points[static_cast<size_t>(i)].x = pointcloud_colvector[i][0];
