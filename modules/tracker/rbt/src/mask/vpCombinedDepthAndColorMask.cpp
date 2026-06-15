@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,8 +71,9 @@ void vpCombinedDepthAndColorMask::updateMask(const vpRBFeatureTrackerInput &fram
       const float *const colorProbaRow = m_color[i];
       const float *const depthProbaRow = m_depth[i];
       float *const maskRow = mask[i];
-      for (unsigned int j = left; j <= static_cast<unsigned int>(right); ++j) {
-        maskRow[j] = std::min(colorProbaRow[j], depthProbaRow[j]);
+      for (int j = left; j <= right; ++j) {
+        unsigned int j_ = static_cast<unsigned int>(j);
+        maskRow[j_] = std::min(colorProbaRow[j_], depthProbaRow[j]);
       }
     }
   }
