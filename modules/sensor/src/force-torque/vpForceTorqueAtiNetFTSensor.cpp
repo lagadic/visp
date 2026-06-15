@@ -255,7 +255,7 @@ bool vpForceTorqueAtiNetFTSensor::waitForNewData(unsigned int timeout)
       for (int i = 0; i < 6; i++) {
         int32_t resp4;
         memcpy(&resp4, &response[12 + i * 4], sizeof(int32_t));
-        resp.FTData[i] = static_cast<int32_t>(ntohl(resp4));
+        resp.FTData[i] = static_cast<int32_t>(ntohl(static_cast<uint32_t>(resp4)));
       }
       // Output the response data.
       if (resp.status) {
