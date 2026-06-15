@@ -731,7 +731,7 @@ void vpParticleFilter<MeasurementsType>::updateMultithread(const MeasurementsTyp
       // last thread may do more
       ipoints = npoints - istart;
     }
-    tempSums[static_cast<std::size_t>(iam)] = threadLikelihood<MeasurementsType>(m_likelihood, m_particles, z, m_w, istart, ipoints);
+    tempSums[static_cast<unsigned int>(iam)] = threadLikelihood<MeasurementsType>(m_likelihood, m_particles, z, m_w, istart, ipoints);
   }
   sumWeights = tempSums.sum();
 
