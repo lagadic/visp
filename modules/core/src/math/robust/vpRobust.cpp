@@ -262,12 +262,12 @@ int vpRobust::partition(vpColVector &a, int l, int r)
 {
   int i = l - 1;
   int j = r;
-  double v = a[static_cast<std::size_t>(r)];
+  double v = a[static_cast<unsigned int>(r)];
 
   for (;;) {
-    while (a[static_cast<std::size_t>(++i)] < v) { }
+    while (a[static_cast<unsigned int>(++i)] < v) { }
 
-    while (v < a[static_cast<std::size_t>(--j)]) {
+    while (v < a[static_cast<unsigned int>(--j)]) {
       if (j == l) {
         break;
       }
@@ -275,9 +275,9 @@ int vpRobust::partition(vpColVector &a, int l, int r)
     if (i >= j) {
       break;
     }
-    std::swap(a[static_cast<std::size_t>(i)], a[static_cast<std::size_t>(j)]);
+    std::swap(a[static_cast<unsigned int>(i)], a[static_cast<unsigned int>(j)]);
   }
-  std::swap(a[static_cast<std::size_t>(i)], a[static_cast<std::size_t>(r)]);
+  std::swap(a[static_cast<unsigned int>(i)], a[static_cast<unsigned int>(r)]);
   return i;
 }
 
@@ -299,7 +299,7 @@ double vpRobust::select(vpColVector &a, int l, int r, int k)
       l = i + 1;
     }
   }
-  return a[static_cast<std::size_t>(k)];
+  return a[static_cast<unsigned int>(k)];
 }
 
 /**********************
