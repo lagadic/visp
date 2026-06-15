@@ -303,7 +303,7 @@ void writePNGtoMemOpenCV(const vpImage<vpRGBa> &I_color, std::vector<unsigned ch
     }
   }
   else {
-    unsigned char *bitmap = new unsigned char[static_cast<size_t>(height * width * channels)];
+    unsigned char *bitmap = new unsigned char[static_cast<unsigned int>(height * width * channels)];
     vpImageConvert::RGBaToRGB(reinterpret_cast<unsigned char *>(I_color.bitmap), bitmap, static_cast<unsigned int>(height*width));
 
     cv::Mat3b img(static_cast<int>(height), static_cast<int>(width), reinterpret_cast<cv::Vec3b *>(bitmap));
