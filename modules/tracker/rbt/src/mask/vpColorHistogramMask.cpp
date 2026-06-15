@@ -93,7 +93,7 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
   const vpImage<vpRGBa> &rgb = previousFrame.IRGB.getSize() == 0 ? frame.IRGB : previousFrame.IRGB;
 
   const int height = static_cast<int>(rgb.getHeight()), width = static_cast<int>(rgb.getWidth());
-  m_mask.resize(height, width, false);
+  m_mask.resize(static_cast<unsigned int>(height), static_cast<unsigned int>(width), false);
   const vpRect renderBB = frame.renders.boundingBox;
   const int top = static_cast<int>(renderBB.getTop());
   const int left = static_cast<int>(renderBB.getLeft());
@@ -107,8 +107,10 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
 #pragma omp parallel for
 #endif
     for (int i = top; i <= bottom; ++i) {
-      for (unsigned int j = left; j <= static_cast<unsigned int>(right); ++j) {
-        m_mask[i][j] = renderDepth[i][j] > 0.f && (depth[i][j] > 0.f && fabs(renderDepth[i][j] - depth[i][j]) <= m_depthErrorTolerance);
+      for (int j = left; j <= right; ++j) {
+        unsigned int i_ = static_cast<unsigned int>(i);
+        unsigned int j_ = static_cast<unsigned int>(j);
+        m_mask[i_][j_] = renderDepth[i_][j_] > 0.f && (depth[i_][j_] > 0.f && fabs(renderDepth[i_][j_] - depth[i_][j_]) <= m_depthErrorTolerance);
       }
     }
   }
@@ -117,8 +119,10 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
 #pragma omp parallel for
 #endif
     for (int i = top; i <= bottom; ++i) {
-      for (unsigned int j = left; j <= static_cast<unsigned int>(right); ++j) {
-        m_mask[i][j] = renderDepth[i][j] > 0.f;
+      for (int j = left; j <= right; ++j) {
+        unsigned int i_ = static_cast<unsigned int>(i);
+        unsigned int j_ = static_cast<unsigned int>(j);
+        m_mask[i_][j_] = renderDepth[i_][j_] > 0.f;
       }
     }
   }
@@ -144,7 +148,7 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
   vpProbaComputer probas(m_histObject, m_histBackground);
 
   if (m_computeOnBBOnly) {
-    mask.resize(height, width, 0.f);
+    mask.resize(static_cast<unsigned int>(height), static_cast<unsigned int>(width), 0.f);
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
@@ -157,7 +161,7 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
 
   }
   else {
-    mask.resize(height, width);
+    mask.resize(static_cast<unsigned int>(height), static_cast<unsigned int>(width));
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
