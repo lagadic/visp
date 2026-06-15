@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,7 +77,7 @@ void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame
 #ifdef VISP_HAVE_OPENMP
 #pragma omp single
     {
-      unsigned int numThreads = omp_get_num_threads();
+      unsigned int numThreads = static_cast<unsigned int>(omp_get_num_threads());
       pointsPerThread.resize(numThreads);
     }
 #else
@@ -87,7 +87,7 @@ void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame
 #endif
 
 #ifdef VISP_HAVE_OPENMP
-    unsigned int threadIdx = omp_get_thread_num();
+    unsigned int threadIdx = static_cast<unsigned int>(omp_get_thread_num());
 #else
     unsigned int threadIdx = 0;
 #endif
@@ -95,7 +95,7 @@ void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame
     vpColVector cameraRay(3);
 #ifdef VISP_HAVE_OPENMP
     std::vector<vpDepthPoint> localPoints;
-    localPoints.reserve(m_depthPoints.capacity() / omp_get_num_threads());
+    localPoints.reserve(m_depthPoints.capacity() / static_cast<unsigned int>(omp_get_num_threads()));
 #else
     // Just reference the global vector, no need to add to it later on
     std::vector<vpDepthPoint> &localPoints = m_depthPoints;
@@ -104,8 +104,8 @@ void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame
 #ifdef VISP_HAVE_OPENMP
 #pragma omp for
 #endif
-    for (auto i = static_cast<int>(bb.getTop()); i < static_cast<int>(bb.getBottom()); i += m_step) {
-      for (auto j = static_cast<int>(bb.getLeft()); j < static_cast<int>(bb.getRight()); j += m_step) {
+    for (int i = static_cast<int>(bb.getTop()); i < static_cast<int>(bb.getBottom()); i += static_cast<int>(m_step)) {
+      for (int j = static_cast<int>(bb.getLeft()); j < static_cast<int>(bb.getRight()); j += static_cast<int>(m_step)) {
         const double Z = renderDepth[i][j];
         const double currZ = depthMap[i][j];
 
