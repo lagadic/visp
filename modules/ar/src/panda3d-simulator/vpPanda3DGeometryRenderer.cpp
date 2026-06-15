@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -122,7 +122,7 @@ void vpPanda3DGeometryRenderer::beforeFrameRendered()
 
 }
 
-vpPanda3DGeometryRenderer::vpPanda3DGeometryRenderer(vpRenderType renderType, bool fast) : vpPanda3DBaseRenderer(renderTypeToName(renderType)), m_renderType(renderType), m_fast(fast) { }
+vpPanda3DGeometryRenderer::vpPanda3DGeometryRenderer(vpRenderType renderType, bool fast) : vpPanda3DBaseRenderer(renderTypeToName(renderType)), m_renderType(renderType), m_fast(fast) {}
 
 void vpPanda3DGeometryRenderer::setupScene()
 {
@@ -163,7 +163,8 @@ void vpPanda3DGeometryRenderer::setupRenderTarget()
   }
 
   WindowProperties win_prop;
-  win_prop.set_size(m_renderParameters.getImageWidth(), m_renderParameters.getImageHeight());
+  win_prop.set_size(static_cast<int>(m_renderParameters.getImageWidth()),
+                    static_cast<int>(m_renderParameters.getImageHeight()));
   // Don't open a window - force it to be an offscreen buffer.
   int flags = GraphicsPipe::BF_refuse_window  | GraphicsPipe::BF_resizeable;
   GraphicsOutput *windowOutput = m_window->get_graphics_output();
@@ -205,20 +206,20 @@ void vpPanda3DGeometryRenderer::setupRenderTarget()
 
 void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals, vpImage<float> &depth) const
 {
-  normals.resize(m_normalDepthTexture->get_y_size(), m_normalDepthTexture->get_x_size());
-  depth.resize(m_normalDepthTexture->get_y_size(), m_normalDepthTexture->get_x_size());
+  normals.resize(static_cast<unsigned int>(m_normalDepthTexture->get_y_size()), static_cast<unsigned int>(m_normalDepthTexture->get_x_size()));
+  depth.resize(static_cast<unsigned int>(m_normalDepthTexture->get_y_size()), static_cast<unsigned int>(m_normalDepthTexture->get_x_size()));
 
-  const unsigned numComponents = m_normalDepthTexture->get_num_components();
+  const unsigned int numComponents = static_cast<unsigned int>(m_normalDepthTexture->get_num_components());
   if (numComponents != 4) {
     throw vpException(vpException::dimensionError, "Expected panda texture to have 4 components!");
   }
 
-  int rowIncrement = normals.getWidth() * 4;
+  int rowIncrement = static_cast<int>(normals.getWidth()) * 4;
 
   if (!m_fast) {
     using T = float;
     T *data = (T *)(&(m_normalDepthTexture->get_ram_image().front()));
-    data = data + rowIncrement * (normals.getHeight() - 1);
+    data = data + rowIncrement * static_cast<int>((normals.getHeight() - 1));
 #if defined(VISP_HAVE_OPENMP)
 #pragma omp parallel for
 #endif
@@ -242,7 +243,7 @@ void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals, vpImage<floa
     float maxValue = static_cast<float>(std::numeric_limits<T>::max());
     const T *data = (T *)(&(m_normalDepthTexture->get_ram_image().front()));
     // Panda3D stores data upside down
-    data += rowIncrement * (m_renderParameters.getImageHeight() - 1);
+    data += rowIncrement * static_cast<int>((m_renderParameters.getImageHeight() - 1));
 
     if (m_normalDepthTexture->get_component_type() != expectedComponent) {
       throw vpException(vpException::badValue, "Unexpected data type in normals texture");
@@ -278,19 +279,19 @@ void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals, vpImage<floa
   depth.resize(normals.getHeight(), normals.getWidth(), 0.f);
   // memset(depth.bitmap, 0, normals.getSize());
 
-  const unsigned top = static_cast<unsigned int>(std::max(0.0, bb.getTop()));
-  const unsigned left = static_cast<unsigned int>(std::max(0.0, bb.getLeft()));
-  const unsigned numComponents = m_normalDepthTexture->get_num_components();
-  const unsigned rowIncrement = m_renderParameters.getImageWidth() * numComponents; // we ask for only 8 bits image, but we may get an rgb image
+  const int top = std::max(0.0, bb.getTop());
+  const int left = std::max(0.0, bb.getLeft());
+  const int numComponents = m_normalDepthTexture->get_num_components();
+  const int rowIncrement = static_cast<int>(m_renderParameters.getImageWidth()) * numComponents; // we ask for only 8 bits image, but we may get an rgb image
 
 
-  int image_width = static_cast<int>(std::min(m_renderParameters.getImageWidth(), w - left));
-  int image_height = std::min(m_renderParameters.getImageHeight(), h - top);
+  int image_width = std::min(static_cast<int>(m_renderParameters.getImageWidth()), static_cast<int>(w) - left);
+  int image_height = std::min(static_cast<int>(m_renderParameters.getImageHeight()), static_cast<int>(h) - top);
 
   if (!m_fast) {
     const float *data = (float *)(&(m_normalDepthTexture->get_ram_image().front()));
     // Panda3D stores data upside down
-    data += rowIncrement * (m_renderParameters.getImageHeight() - 1);
+    data += static_cast<unsigned int>(rowIncrement) * (m_renderParameters.getImageHeight() - 1);
     if (numComponents != 4) {
       throw vpException(vpException::dimensionError, "Expected panda texture to have 4 components!");
     }
@@ -321,7 +322,7 @@ void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals, vpImage<floa
     float maxValue = static_cast<float>(std::numeric_limits<T>::max());
     const T *data = (T *)(&(m_normalDepthTexture->get_ram_image().front()));
     // Panda3D stores data upside down
-    data += rowIncrement * (m_renderParameters.getImageHeight() - 1);
+    data += static_cast<unsigned int>(rowIncrement) * (m_renderParameters.getImageHeight() - 1);
 
     if (numComponents != 4) {
       throw vpException(vpException::dimensionError, "Expected panda texture to have 4 components!");
@@ -355,8 +356,8 @@ void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals, vpImage<floa
 void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals) const
 {
 
-  normals.resize(m_normalDepthTexture->get_y_size(), m_normalDepthTexture->get_x_size());
-  int rowIncrement = normals.getWidth() * 4;
+  normals.resize(static_cast<unsigned int>(m_normalDepthTexture->get_y_size()), static_cast<unsigned int>(m_normalDepthTexture->get_x_size()));
+  unsigned int rowIncrement = normals.getWidth() * 4;
   if (!m_fast) {
     if (m_normalDepthTexture->get_component_type() != Texture::T_float) {
       throw vpException(vpException::badValue, "Unexpected data type in normals texture");
@@ -406,8 +407,8 @@ void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals) const
 void vpPanda3DGeometryRenderer::getRender(vpImage<float> &depth) const
 {
 
-  depth.resize(m_normalDepthTexture->get_y_size(), m_normalDepthTexture->get_x_size());
-  int rowIncrement = depth.getWidth() * 4;
+  depth.resize(static_cast<unsigned int>(m_normalDepthTexture->get_y_size()), static_cast<unsigned int>(m_normalDepthTexture->get_x_size()));
+  unsigned int rowIncrement = depth.getWidth() * 4;
 
   if (!m_fast) {
     if (m_normalDepthTexture->get_component_type() != Texture::T_float) {
@@ -455,6 +456,6 @@ END_VISP_NAMESPACE
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_ar.a(vpPanda3DGeometryRenderer.cpp.o) has no symbols
-void dummy_vpPanda3DGeometryRenderer() { }
+void dummy_vpPanda3DGeometryRenderer() {}
 
 #endif
