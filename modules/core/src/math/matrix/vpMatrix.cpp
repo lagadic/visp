@@ -1255,12 +1255,12 @@ vpColVector vpMatrix::eigenValues() const
     const char uplo = 'U';
     vpMatrix A = (*this);
     vpColVector WORK;
-    unsigned int lwork = -1;
+    int lwork = -1;
     int info = 0;
     double wkopt;
     vpMatrix::blas_dsyev(jobz, uplo, rowNum, A.data, colNum, evalue.data, &wkopt, lwork, info);
     lwork = static_cast<int>(wkopt);
-    WORK.resize(lwork);
+    WORK.resize(static_cast<unsigned int>(lwork));
     vpMatrix::blas_dsyev(jobz, uplo, rowNum, A.data, colNum, evalue.data, WORK.data, lwork, info);
   }
 #endif
@@ -1387,12 +1387,12 @@ void vpMatrix::eigenValues(vpColVector &evalue, vpMatrix &evector) const
     const char uplo = 'U';
     vpMatrix A = (*this);
     vpColVector WORK;
-    unsigned int lwork = -1;
+    int lwork = -1;
     int info = 0;
     double wkopt;
     vpMatrix::blas_dsyev(jobz, uplo, rowNum, A.data, colNum, evalue.data, &wkopt, lwork, info);
     lwork = static_cast<int>(wkopt);
-    WORK.resize(lwork);
+    WORK.resize(static_cast<unsigned int>(lwork));
     vpMatrix::blas_dsyev(jobz, uplo, rowNum, A.data, colNum, evalue.data, WORK.data, lwork, info);
     evector = A.t();
   }
