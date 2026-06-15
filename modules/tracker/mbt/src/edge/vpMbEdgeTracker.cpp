@@ -993,7 +993,7 @@ void vpMbEdgeTracker::testTracking()
        it != circles[scaleLevel].end(); ++it) {
     vpMbtDistanceCircle *ci = *it;
     if (ci->isVisible() && ci->isTracked() && ci->meEllipse != nullptr) {
-      nbExpectedPoint += static_cast<unsigned int>(ci->meEllipse->getExpectedDensity());
+      nbExpectedPoint += static_cast<int>(ci->meEllipse->getExpectedDensity());
       for (std::list<vpMeSite>::const_iterator itme = ci->meEllipse->getMeList().begin();
            itme != ci->meEllipse->getMeList().end(); ++itme) {
         vpMeSite pix = *itme;
