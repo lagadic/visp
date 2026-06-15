@@ -837,7 +837,7 @@ SCENARIO("Testing point map", "[rbt]")
     while (!good) {
       baseUV[i][0] = random.uniform(static_cast<double>(w)  / 5 * 2, static_cast<double>(w) / 5 * 3);
       baseUV[i][1] = random.uniform(static_cast<double>(h)  / 5 * 2, static_cast<double>(h) / 5 * 3);
-      unsigned uu = static_cast<unsigned int>(baseUV[i][0]), vu = static_cast<unsigned int>(baseUV[i][1]);
+      int uu = static_cast<int>(baseUV[i][0]), vu = static_cast<int>(baseUV[i][1]);
       if (depthImage[vu][uu] > 0.0) {
         good = false;
       }
@@ -847,7 +847,7 @@ SCENARIO("Testing point map", "[rbt]")
         // True depth data is far more continuous
         for (int ii = -1; ii < 2; ++ii) {
           for (int jj = -1; jj < 2; ++jj) {
-            depthImage[vu + ii][uu + jj] = Z;
+            depthImage[static_cast<unsigned int>(vu + ii)][static_cast<unsigned int>(uu + jj)] = Z;
           }
         }
 
@@ -874,7 +874,7 @@ SCENARIO("Testing point map", "[rbt]")
   vpMatrix reprojcX, reprojXY, reprojUV;
   vpArray2D<int> allPoints(N, 1);
   for (unsigned int i = 0; i < N; ++i) {
-    allPoints[i][0] = i;
+    allPoints[i][0] = static_cast<int>(i);
   }
   map.project(cam, allPoints, cTo, reprojcX, reprojXY, reprojUV);
 
