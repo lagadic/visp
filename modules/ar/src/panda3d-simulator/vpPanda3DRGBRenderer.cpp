@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -198,7 +198,7 @@ void vpPanda3DRGBRenderer::addNodeToScene(const NodePath &object)
     std::vector<std::string> fallbackNames { "pbr-fallback", "normal-fallback", "emission-fallback" };
     unsigned int numMatches = 0;
     for (const std::string &fallbackName: fallbackNames) {
-      numMatches += static_cast<int>(txs.find_texture(fallbackName) != nullptr);
+      numMatches += static_cast<unsigned int>(txs.find_texture(fallbackName) != nullptr);
     }
     hasTexture = (static_cast<unsigned int>(txs.size()) > numMatches); // Some textures are not fallback textures
   }
@@ -240,9 +240,9 @@ void vpPanda3DRGBRenderer::setBackgroundImage(const vpImage<vpRGBa> &background)
     m_backgroundTexture = new Texture();
   }
   m_backgroundImage.set_texture(m_backgroundTexture);
-  m_backgroundTexture->setup_2d_texture(background.getWidth(), background.getHeight(),
-                                    Texture::ComponentType::T_unsigned_byte,
-                                    Texture::Format::F_rgba8);
+  m_backgroundTexture->setup_2d_texture(static_cast<int>(background.getWidth()), static_cast<int>(background.getHeight()),
+                                        Texture::ComponentType::T_unsigned_byte,
+                                        Texture::Format::F_rgba8);
 
   unsigned char *data = (unsigned char *)m_backgroundTexture->modify_ram_image();
 
@@ -255,9 +255,9 @@ void vpPanda3DRGBRenderer::setBackgroundImage(const vpImage<vpRGBa> &background)
 
 void vpPanda3DRGBRenderer::getRender(vpImage<vpRGBa> &I) const
 {
-  I.resize(m_colorTexture->get_y_size(), m_colorTexture->get_x_size());
+  I.resize(static_cast<unsigned int>(m_colorTexture->get_y_size()), static_cast<unsigned int>(m_colorTexture->get_x_size()));
   unsigned char *data = (unsigned char *)(&(m_colorTexture->get_ram_image().front()));
-  int rowIncrement = I.getWidth() * 4;
+  unsigned int rowIncrement = I.getWidth() * 4;
   // Panda3D stores the image using the OpenGL convention (origin is bottom left),
   // while we store data with origin as upper left. We copy with a flip
   data = data + rowIncrement * (I.getHeight() - 1);
@@ -299,7 +299,7 @@ void vpPanda3DRGBRenderer::setupRenderTarget()
   fbp.set_srgb_color(true);
 
   WindowProperties win_prop;
-  win_prop.set_size(m_renderParameters.getImageWidth(), m_renderParameters.getImageHeight());
+  win_prop.set_size(static_cast<int>(m_renderParameters.getImageWidth()), static_cast<int>(m_renderParameters.getImageHeight()));
 
   // Don't open a window - force it to be an offscreen buffer.
   int flags = GraphicsPipe::BF_refuse_window | GraphicsPipe::BF_resizeable;
@@ -335,6 +335,6 @@ END_VISP_NAMESPACE
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_ar.a(vpPanda3DRGBRenderer.cpp.o) has no symbols
-void dummy_vpPanda3DRGBRenderer() { }
+void dummy_vpPanda3DRGBRenderer() {}
 
 #endif
