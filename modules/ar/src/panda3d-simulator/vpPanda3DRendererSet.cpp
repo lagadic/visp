@@ -60,7 +60,7 @@ void vpPanda3DRendererSet::initFramework()
   }
 
   WindowProperties winProps;
-  winProps.set_size(LVecBase2i(m_renderParameters.getImageWidth(), m_renderParameters.getImageHeight()));
+  winProps.set_size(LVecBase2i(static_cast<int>(m_renderParameters.getImageWidth()), static_cast<int>(m_renderParameters.getImageHeight())));
   int flags = GraphicsPipe::BF_refuse_window;
   m_window = framework.open_window(winProps, flags);
   if (m_window == nullptr) {
