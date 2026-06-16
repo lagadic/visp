@@ -22,7 +22,7 @@ int main()
 
   vpDisplay::display(I);
   //! [Circle]
-  vpDisplay::displayCircle(I, I.getHeight() / 2, I.getWidth() / 2, 200, vpColor::red, true);
+  vpDisplay::displayCircle(I, static_cast<int>(I.getHeight()) / 2, static_cast<int>(I.getWidth()) / 2, 200, vpColor::red, true);
   //! [Circle]
   vpDisplay::flush(I);
   std::cout << "A click to quit..." << std::endl;
