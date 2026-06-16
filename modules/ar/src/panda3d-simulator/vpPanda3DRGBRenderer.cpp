@@ -261,7 +261,6 @@ void vpPanda3DRGBRenderer::getRender(vpImage<vpRGBa> &I) const
   // Panda3D stores the image using the OpenGL convention (origin is bottom left),
   // while we store data with origin as upper left. We copy with a flip
   data = data + rowIncrement * (I.getHeight() - 1);
-  rowIncrement = -rowIncrement;
 
   for (unsigned int i = 0; i < I.getHeight(); ++i) {
     vpRGBa *colorRow = I[i];
@@ -274,7 +273,7 @@ void vpPanda3DRGBRenderer::getRender(vpImage<vpRGBa> &I) const
     //   colorRow[j].B = data[j * 4 + 2];
     //   colorRow[j].A = data[j * 4 + 3];
     // }
-    data += rowIncrement;
+    data -= rowIncrement;
   }
 }
 
@@ -335,6 +334,6 @@ END_VISP_NAMESPACE
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_ar.a(vpPanda3DRGBRenderer.cpp.o) has no symbols
-void dummy_vpPanda3DRGBRenderer() {}
+void dummy_vpPanda3DRGBRenderer() { }
 
 #endif
