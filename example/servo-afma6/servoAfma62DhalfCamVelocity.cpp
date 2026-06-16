@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,7 +76,7 @@ int main()
   try {
     vpRealSense2 rs;
     rs2::config config;
-    unsigned int width = 640, height = 480, fps = 60;
+    int width = 640, height = 480, fps = 60;
     config.enable_stream(RS2_STREAM_COLOR, width, height, RS2_FORMAT_RGBA8, fps);
     config.enable_stream(RS2_STREAM_DEPTH, width, height, RS2_FORMAT_Z16, fps);
     config.enable_stream(RS2_STREAM_INFRARED, width, height, RS2_FORMAT_Y8, fps);
@@ -112,8 +112,8 @@ int main()
     std::cout << " task : servo a line " << std::endl;
     std::cout << "-------------------------------------------------------" << std::endl;
 
-    int nbline = 4;
-    int nbpoint = 4;
+    unsigned int nbline = 4;
+    unsigned int nbpoint = 4;
 
     vpTRACE("sets the desired position of the visual feature ");
     vpPoint pointd[nbpoint]; // position of the fours corners
@@ -153,7 +153,7 @@ int main()
     me.setSampleStep(10);
 
     // Initialize the tracking. Define the four lines to track
-    for (int i = 0; i < nbline; ++i) {
+    for (unsigned int i = 0; i < nbline; ++i) {
       line[i].setMe(&me);
 
       line[i].initTracking(I);
@@ -162,7 +162,7 @@ int main()
 
     // Compute the position of the four corners. The goal is to compute the pose
     vpImagePoint ip;
-    for (int i = 0; i < nbline; ++i) {
+    for (unsigned int i = 0; i < nbline; ++i) {
       double x = 0, y = 0;
 
       if (!vpMeLine::intersection(line[i % nbline], line[(i + 1) % nbline], ip)) {
@@ -185,7 +185,7 @@ int main()
     point[2].setWorldCoordinates(-L, +L, 0);
     point[3].setWorldCoordinates(-L, -L, 0);
 
-    for (int i = 0; i < nbline; ++i) {
+    for (unsigned int i = 0; i < nbline; ++i) {
       pose.addPoint(point[i]); // and added to the pose computation point list
     }
 
@@ -246,7 +246,7 @@ int main()
       pose.clearPoint();
 
       // Track the lines and find the current position of the corners
-      for (int i = 0; i < nbline; ++i) {
+      for (unsigned int i = 0; i < nbline; ++i) {
         line[i].track(I);
 
         line[i].display(I, vpColor::green);
@@ -279,7 +279,7 @@ int main()
       // square  Print the desired position of the four corners
       s_p.display(cam, I, vpColor::green);
       s_pd.display(cam, I, vpColor::red);
-      for (int i = 0; i < nbpoint; ++i) {
+      for (unsigned int i = 0; i < nbpoint; ++i) {
         pointd[i].display(I, cam, vpColor::red);
       }
 
