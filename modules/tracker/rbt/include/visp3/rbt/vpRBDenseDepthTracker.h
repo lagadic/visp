@@ -210,7 +210,7 @@ public:
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-      for (unsigned int i = 0; i < numPoints; ++i) {
+      for (int i = 0; i < static_cast<int>(numPoints); ++i) {
 
         //Step 1: update and filter out points that are no longer valid
         {
