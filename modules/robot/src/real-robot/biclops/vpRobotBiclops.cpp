@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -437,20 +437,20 @@ void vpRobotBiclops::get_cVe(vpVelocityTwistMatrix &cVe) const
 
 void vpRobotBiclops::get_cMe(vpHomogeneousMatrix &cMe) const { cMe = vpBiclops::get_cMe(); }
 
-void vpRobotBiclops::get_eJe(vpMatrix &eJe)
+void vpRobotBiclops::get_eJe(vpMatrix &e_J_e)
 {
   vpColVector q(2);
   getPosition(vpRobot::JOINT_STATE, q);
 
-  vpBiclops::get_eJe(q, eJe);
+  vpBiclops::get_eJe(q, e_J_e);
 }
 
-void vpRobotBiclops::get_fJe(vpMatrix &fJe)
+void vpRobotBiclops::get_fJe(vpMatrix &f_J_e)
 {
   vpColVector q(2);
   getPosition(vpRobot::JOINT_STATE, q);
 
-  vpBiclops::get_fJe(q, fJe);
+  vpBiclops::get_fJe(q, f_J_e);
 }
 
 void vpRobotBiclops::setPositioningVelocity(double velocity)
@@ -856,5 +856,5 @@ void vpRobotBiclops::getDisplacement(vpRobot::vpControlFrameType frame, vpColVec
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpRobotBiclops.cpp.o) has no symbols
-void dummy_vpRobotBiclops() { }
+void dummy_vpRobotBiclops() {}
 #endif
