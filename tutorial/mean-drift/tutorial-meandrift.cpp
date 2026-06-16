@@ -503,7 +503,7 @@ int main(int argc, char *argv[])
       ++i;
     }
     else if ((std::string(argv[i]) == "--alarms")) {
-      unsigned int nbArguments = 0;
+      int nbArguments = 0;
       std::vector<std::string> alarmNames;
       bool hasNotFoundNextParams = true;
       for (int j = 1; ((i + j) < argc) && hasNotFoundNextParams; ++j) {
