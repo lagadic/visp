@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,7 +75,7 @@ using namespace VISP_NAMESPACE_NAME;
 */
 struct BaseArguments
 {
-  BaseArguments() : trackerConfiguration(""), maxDepthDisplay(1.f), verbose(false), display(true), debugDisplay(false), enableRenderProfiling(false) { }
+  BaseArguments() : trackerConfiguration(""), maxDepthDisplay(1.f), verbose(false), display(true), debugDisplay(false), enableRenderProfiling(false) {}
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
   void registerArguments(vpJsonArgumentParser &parser)
@@ -155,7 +155,7 @@ class vpRBExperimentLogger
 {
 public:
   vpRBExperimentLogger() : enabled(false), videoEnabled(false), framerate(30)
-  { }
+  {}
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
   void registerArguments(vpJsonArgumentParser &parser)
@@ -207,7 +207,7 @@ public:
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-      for (int i = 0; i < static_cast<int>(IRGB.getHeight()); ++i) {
+      for (unsigned int i = 0; i < IRGB.getHeight(); ++i) {
         memcpy(Iout[i], IgrayOverlay[i], IRGB.getWidth() * sizeof(vpRGBa));
         memcpy(Iout[i] + IRGB.getWidth(), IColOverlay[i], IRGB.getWidth() * sizeof(vpRGBa));
         memcpy(Iout[i + IRGB.getHeight()], IdepthOverlay[i], IRGB.getWidth() * sizeof(vpRGBa));
@@ -271,7 +271,7 @@ class vpRBExperimentPlotter
 {
 public:
 
-  vpRBExperimentPlotter() : enabled(false), plotPose(false), plotPose3d(false), plotDivergenceMetrics(false), plotCovariance(false) { }
+  vpRBExperimentPlotter() : enabled(false), plotPose(false), plotPose3d(false), plotDivergenceMetrics(false), plotCovariance(false) {}
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
   void registerArguments(vpJsonArgumentParser &parser)
@@ -303,7 +303,8 @@ public:
       xpos = std::max(xpos, display->getWindowXPosition() + static_cast<int>(display->getWidth()));
     }
 
-    numPlots = static_cast<int>(plotPose) + static_cast<int>(plotDivergenceMetrics) + static_cast<int>(plotPose3d) + static_cast<int>(plotCovariance);
+    numPlots = static_cast<unsigned int>(plotPose) + static_cast<unsigned int>(plotDivergenceMetrics)
+      + static_cast<unsigned int>(plotPose3d) + static_cast<unsigned int>(plotCovariance);
     plotter.init(numPlots, 600, 800, xpos, ypos, "Plot");
     unsigned int plotIndex = 0;
     if (plotPose) {
@@ -388,7 +389,7 @@ private:
   bool plotPose3d;
   bool plotDivergenceMetrics;
   bool plotCovariance;
-  int numPlots;
+  unsigned int numPlots;
   vpPlot plotter;
 };
 
@@ -489,12 +490,12 @@ void displayCanny(const vpImage<float> &cannyRawData,
   }
 
   vpDisplay::display(canny);
-  for (unsigned int i = 0; i < canny.getHeight(); i += 4) {
-    for (unsigned int j = 0; j < canny.getWidth(); j += 4) {
+  for (int i = 0; i < static_cast<int>(canny.getHeight()); i += 4) {
+    for (int j = 0; j < static_cast<int>(canny.getWidth()); j += 4) {
       if (!valid[i][j]) continue;
       float angle = cannyRawData[i][j];
-      unsigned x = j + 10 * cos(angle);
-      unsigned y = i + 10 * sin(angle);
+      int x = j + 10 * cos(angle);
+      int y = i + 10 * sin(angle);
       vpDisplay::displayArrow(canny, i, j, y, x, vpColor::green);
     }
   }
