@@ -154,16 +154,16 @@ struct BaseArguments
 class vpRBExperimentLogger
 {
 public:
-  vpRBExperimentLogger() : enabled(false), videoEnabled(false), framerate(30)
+  vpRBExperimentLogger() : m_enabled(false), videom_enabled(false), framerate(30)
   {}
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
   void registerArguments(vpJsonArgumentParser &parser)
   {
     parser
-      .addFlag("--save", enabled, "Whether to save experiment data")
+      .addFlag("--save", m_enabled, "Whether to save experiment data")
       .addArgument("--save-path", folder, false, "Where to save the experiment log. The folder should not exist.")
-      .addFlag("--save-video", videoEnabled, "Whether to save the video")
+      .addFlag("--save-video", videom_enabled, "Whether to save the video")
       .addArgument("--video-framerate", framerate, false, "Output video framerate");
   }
 
@@ -171,12 +171,12 @@ public:
 
   void startLog()
   {
-    if (enabled) {
+    if (m_enabled) {
       if (folder.empty()) {
-        throw vpException(vpException::badValue, "Experiment logging enabled but folder not specified");
+        throw vpException(vpException::badValue, "Experiment logging m_enabled but folder not specified");
       }
       vpIoTools::makeDirectory(folder);
-      if (videoEnabled) {
+      if (videom_enabled) {
 #ifdef VISP_HAVE_OPENCV
         videoWriter.setFramerate(framerate);
         videoWriter.setCodec(cv::VideoWriter::fourcc('P', 'I', 'M', '1'));
@@ -193,11 +193,11 @@ public:
                 , unsigned int iter, const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB,
                 const vpImage<unsigned char> &Idepth, const vpImage<unsigned char> &Imask)
   {
-    if (!enabled) {
+    if (!m_enabled) {
       return;
     }
 
-    if (videoEnabled) {
+    if (videom_enabled) {
       Iout.resize(IRGB.getHeight() * 2, IRGB.getWidth() * 2);
 
       vpDisplay::getImage(I, IgrayOverlay);
@@ -233,7 +233,7 @@ public:
 
   void close()
   {
-    if (videoEnabled) {
+    if (videom_enabled) {
       videoWriter.close();
     }
 
@@ -245,7 +245,7 @@ public:
   }
 
 private:
-  bool enabled;
+  bool m_enabled;
   std::string folder;
 
   vpImage<vpRGBa> IColOverlay;
@@ -254,7 +254,7 @@ private:
   vpImage<vpRGBa> ImaskOverlay;
   vpImage<vpRGBa> Iout;
 
-  bool videoEnabled;
+  bool videom_enabled;
   unsigned int framerate;
   vpVideoWriter videoWriter;
 
@@ -271,30 +271,30 @@ class vpRBExperimentPlotter
 {
 public:
 
-  vpRBExperimentPlotter() : enabled(false), plotPose(false), plotPose3d(false), plotDivergenceMetrics(false), plotCovariance(false) {}
+  vpRBExperimentPlotter() : m_enabled(false), m_plotPose(false), m_plotPose3d(false), m_plotDivergenceMetrics(false), m_plotCovariance(false) {}
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
   void registerArguments(vpJsonArgumentParser &parser)
   {
     parser
-      .addFlag("--plot-pose", plotPose, "Plot the pose of the object in the camera frame")
-      .addFlag("--plot-position", plotPose3d, "Plot the position of the object in a 3d figure")
-      .addFlag("--plot-divergence", plotDivergenceMetrics, "Plot the metrics associated to the divergence threshold computation")
-      .addFlag("--plot-cov", plotCovariance, "Plot the pose covariance trace for each feature");
+      .addFlag("--plot-pose", m_plotPose, "Plot the pose of the object in the camera frame")
+      .addFlag("--plot-position", m_plotPose3d, "Plot the position of the object in a 3d figure")
+      .addFlag("--plot-divergence", m_plotDivergenceMetrics, "Plot the metrics associated to the divergence threshold computation")
+      .addFlag("--plot-cov", m_plotCovariance, "Plot the pose covariance trace for each feature");
   }
 #endif
 
-  void postProcessArguments(bool displayEnabled)
+  void postProcessArguments(bool displaym_enabled)
   {
-    enabled = plotPose || plotDivergenceMetrics || plotPose3d || plotCovariance;
-    if (enabled && !displayEnabled) {
+    m_enabled = m_plotPose || m_plotDivergenceMetrics || m_plotPose3d || m_plotCovariance;
+    if (m_enabled && !displaym_enabled) {
       throw vpException(vpException::badValue, "Tried to plot data, but display is disabled");
     }
   }
 
   void init(std::vector<std::shared_ptr<vpDisplay>> &displays)
   {
-    if (!enabled) {
+    if (!m_enabled) {
       return;
     }
     int ypos = 0, xpos = 0;
@@ -303,71 +303,71 @@ public:
       xpos = std::max(xpos, display->getWindowXPosition() + static_cast<int>(display->getWidth()));
     }
 
-    numPlots = static_cast<unsigned int>(plotPose) + static_cast<unsigned int>(plotDivergenceMetrics)
-      + static_cast<unsigned int>(plotPose3d) + static_cast<unsigned int>(plotCovariance);
-    plotter.init(numPlots, 600, 800, xpos, ypos, "Plot");
+    m_numPlots = static_cast<unsigned int>(m_plotPose) + static_cast<unsigned int>(m_plotDivergenceMetrics)
+      + static_cast<unsigned int>(m_plotPose3d) + static_cast<unsigned int>(m_plotCovariance);
+    m_plotter.init(m_numPlots, 600, 800, xpos, ypos, "Plot");
     unsigned int plotIndex = 0;
-    if (plotPose) {
-      plotter.initGraph(plotIndex, 6);
-      plotter.setTitle(plotIndex, "cMo");
+    if (m_plotPose) {
+      m_plotter.initGraph(plotIndex, 6);
+      m_plotter.setTitle(plotIndex, "cMo");
       std::vector<std::string> legends = {
         "tx", "ty", "tz", "tux", "tuy", "tuz"
       };
       for (unsigned int i = 0; i < 6; ++i) {
-        plotter.setLegend(plotIndex, i, legends[i]);
+        m_plotter.setLegend(plotIndex, i, legends[i]);
       }
-      plotter.setGraphThickness(plotIndex, 2);
+      m_plotter.setGraphThickness(plotIndex, 2);
       ++plotIndex;
     }
-    if (plotPose3d) {
-      plotter.initGraph(plotIndex, 1);
-      plotter.setTitle(plotIndex, "3D object position");
-      plotter.setGraphThickness(plotIndex, 2);
+    if (m_plotPose3d) {
+      m_plotter.initGraph(plotIndex, 1);
+      m_plotter.setTitle(plotIndex, "3D object position");
+      m_plotter.setGraphThickness(plotIndex, 2);
       ++plotIndex;
     }
 
-    if (plotDivergenceMetrics) {
-      plotter.initGraph(plotIndex, 1);
-      plotter.initRange(plotIndex, 0.0, 1.0, 0.0, 1.0);
-      plotter.setTitle(plotIndex, "Divergence");
+    if (m_plotDivergenceMetrics) {
+      m_plotter.initGraph(plotIndex, 1);
+      m_plotter.initRange(plotIndex, 0.0, 1.0, 0.0, 1.0);
+      m_plotter.setTitle(plotIndex, "Divergence");
       ++plotIndex;
     }
-    if (plotCovariance) {
-      plotter.initGraph(plotIndex, 2);
-      plotter.setLegend(plotIndex, 0, "Translation trace standard deviation (cm)");
-      plotter.setLegend(plotIndex, 1, "Rotation trace standard deviation (deg)");
+    if (m_plotCovariance) {
+      m_plotter.initGraph(plotIndex, 2);
+      m_plotter.setLegend(plotIndex, 0, "Translation trace standard deviation (cm)");
+      m_plotter.setLegend(plotIndex, 1, "Rotation trace standard deviation (deg)");
 
-      plotter.setTitle(plotIndex, "Covariance");
+      m_plotter.setTitle(plotIndex, "Covariance");
       ++plotIndex;
     }
   }
 
   void plot(const vpRBTracker &tracker, double time)
   {
-    if (!enabled) {
+    if (!m_enabled) {
       return;
     }
     unsigned int plotIndex = 0;
-    if (plotPose) {
+    if (m_plotPose) {
       vpHomogeneousMatrix cMo;
       tracker.getPose(cMo);
-      plotter.plot(plotIndex, time, vpPoseVector(cMo));
+      m_plotter.plot(plotIndex, time, vpPoseVector(cMo));
       ++plotIndex;
     }
-    if (plotPose3d) {
+    if (m_plotPose3d) {
       vpHomogeneousMatrix cMo;
       tracker.getPose(cMo);
       vpTranslationVector t = cMo.getTranslationVector();
-      plotter.plot(plotIndex, 0, t[0], t[1], t[2]);
+      m_plotter.plot(plotIndex, 0, t[0], t[1], t[2]);
       ++plotIndex;
     }
-    if (plotDivergenceMetrics) {
+    if (m_plotDivergenceMetrics) {
       const std::shared_ptr<const vpRBDriftDetector> driftDetector = tracker.getDriftDetector();
       double metric = driftDetector ? driftDetector->getScore() : 0.0;
-      plotter.plot(plotIndex, 0, time, metric);
+      m_plotter.plot(plotIndex, 0, time, metric);
       ++plotIndex;
     }
-    if (plotCovariance) {
+    if (m_plotCovariance) {
       vpMatrix cov = tracker.getCovariance();
       double traceTranslation = 0.0, traceRotation = 0.0;
       for (unsigned int i = 0; i < 3; ++i) {
@@ -377,20 +377,20 @@ public:
       traceTranslation = sqrt(traceTranslation) * 100;
       traceRotation = vpMath::deg(sqrt(traceRotation));
 
-      plotter.plot(plotIndex, 0, time, traceTranslation);
-      plotter.plot(plotIndex, 1, time, traceRotation);
+      m_plotter.plot(plotIndex, 0, time, traceTranslation);
+      m_plotter.plot(plotIndex, 1, time, traceRotation);
 
       ++plotIndex;
     }
   }
 private:
-  bool enabled;
-  bool plotPose;
-  bool plotPose3d;
-  bool plotDivergenceMetrics;
-  bool plotCovariance;
-  unsigned int numPlots;
-  vpPlot plotter;
+  bool m_enabled;
+  bool m_plotPose;
+  bool m_plotPose3d;
+  bool m_plotDivergenceMetrics;
+  bool m_plotCovariance;
+  unsigned int m_numPlots;
+  vpPlot m_plotter;
 };
 
 
