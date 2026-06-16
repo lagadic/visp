@@ -259,10 +259,10 @@ int main(int argc, const char *argv[])
   }
 
   vpImage<bool> mask(Iload.getRows(), Iload.getCols(), false);
-  int height = Iload.getRows()/4;
-  int width = Iload.getCols()/4;
-  int midHeight = Iload.getRows()/2;
-  int midWidth = Iload.getCols()/2;
+  int height = static_cast<int>(Iload.getRows())/4;
+  int width = static_cast<int>(Iload.getCols())/4;
+  int midHeight = static_cast<int>(Iload.getRows())/2;
+  int midWidth = static_cast<int>(Iload.getCols())/2;
   for (int r = 0; r < height; ++r) {
     for (int c = 0; c < width; ++c) {
       mask[midHeight - r][midWidth - c] = true;
