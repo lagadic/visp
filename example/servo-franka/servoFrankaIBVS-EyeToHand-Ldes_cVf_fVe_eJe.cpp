@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -565,7 +565,7 @@ int main(int argc, char **argv)
         vpDisplay::displayText(I, 20, 20, ss.str(), vpColor::red);
       }
 
-      vpColVector qdot(robot.getNDof());
+      vpColVector qdot(static_cast<unsigned int>(robot.getNDof()));
 
       // Only one tag is detected
       if (ret && detector.getNbObjects() == 1) {
