@@ -208,10 +208,11 @@ public:
 #pragma omp parallel for
 #endif
       for (int i = 0; i < static_cast<int>(IRGB.getHeight()); ++i) {
-        memcpy(Iout[i], IgrayOverlay[i], IRGB.getWidth() * sizeof(vpRGBa));
-        memcpy(Iout[i] + IRGB.getWidth(), IColOverlay[i], IRGB.getWidth() * sizeof(vpRGBa));
-        memcpy(Iout[i + IRGB.getHeight()], IdepthOverlay[i], IRGB.getWidth() * sizeof(vpRGBa));
-        memcpy(Iout[i + IRGB.getHeight()] + IRGB.getWidth(), ImaskOverlay[i], IRGB.getWidth() * sizeof(vpRGBa));
+        const unsigned int i_ = static_cast<unsigned int>(i);
+        memcpy(Iout[i_], IgrayOverlay[i], IRGB.getWidth() * sizeof(vpRGBa));
+        memcpy(Iout[i_] + IRGB.getWidth(), IColOverlay[i], IRGB.getWidth() * sizeof(vpRGBa));
+        memcpy(Iout[i_ + IRGB.getHeight()], IdepthOverlay[i], IRGB.getWidth() * sizeof(vpRGBa));
+        memcpy(Iout[i_ + IRGB.getHeight()] + IRGB.getWidth(), ImaskOverlay[i], IRGB.getWidth() * sizeof(vpRGBa));
       }
 
       if (iter == 1) {
