@@ -57,7 +57,8 @@ double vpRBProbabilistic3DDriftDetector::score(const vpRBFeatureTrackerInput &fr
 #pragma omp parallel for
 #endif
   for (int i = 0; i < nbPoints; ++i) {
-    vpStored3DSurfaceColorPoint &p = m_points[i];
+    const unsigned int i_ = static_cast<unsigned int>(i);
+    vpStored3DSurfaceColorPoint &p = m_points[i_];
     p.update(cTo, frame.renders.cMo, frame.cam);
   }
 
@@ -69,7 +70,6 @@ double vpRBProbabilistic3DDriftDetector::score(const vpRBFeatureTrackerInput &fr
 #endif
   {
     std::vector<vpStored3DSurfaceColorPoint *> visiblePointsLocal;
-    int nbPoints = static_cast<int>(m_points.size()); // int because OpenMP on Windows does not support uint
 #ifdef VISP_HAVE_OPENMP
 #pragma omp for
 #endif
