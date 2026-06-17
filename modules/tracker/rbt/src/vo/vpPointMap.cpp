@@ -42,7 +42,7 @@ void vpPointMap::getPoints(const vpArray2D<int> &indices, vpMatrix &X)
 {
   X.resize(indices.getRows(), 3, false, false);
   for (unsigned int i = 0; i < indices.getRows(); ++i) {
-    unsigned idx = indices[i][0];
+    unsigned int idx = static_cast<unsigned int>(indices[i][0]);
     X[i][0] = m_X[idx][0];
     X[i][1] = m_X[idx][1];
     X[i][2] = m_X[idx][2];
@@ -68,7 +68,7 @@ void vpPointMap::project(const vpArray2D<int> &indices, const vpHomogeneousMatri
 {
   vpMatrix X(indices.getRows(), 3);
   for (unsigned int i = 0; i < indices.getRows(); ++i) {
-    unsigned idx = indices[i][0];
+    unsigned int idx = static_cast<unsigned int>(indices[i][0]);
     X[i][0] = m_X[idx][0];
     X[i][1] = m_X[idx][1];
     X[i][2] = m_X[idx][2];
@@ -120,7 +120,7 @@ void vpPointMap::getVisiblePoints(const unsigned int h, const unsigned int w, co
     if (fabs(Z - expectedZ[i]) > m_maxDepthErrorVisible) {
       continue;
     }
-    indices.push_back(i);
+    indices.push_back(static_cast<int>(i));
   }
 }
 
@@ -151,7 +151,7 @@ void vpPointMap::getVisiblePoints(const unsigned int h, const unsigned int w, co
 #ifdef VISP_HAVE_OPENMP
 #pragma omp single
     {
-      unsigned int numThreads = omp_get_num_threads();
+      unsigned int numThreads = static_cast<unsigned int>(omp_get_num_threads());
       indicesPerThread.resize(numThreads);
     }
 #else
@@ -161,7 +161,7 @@ void vpPointMap::getVisiblePoints(const unsigned int h, const unsigned int w, co
 #endif
 
 #ifdef VISP_HAVE_OPENMP
-    unsigned int threadIdx = omp_get_thread_num();
+    unsigned int threadIdx = static_cast<unsigned int>(omp_get_thread_num());
 #else
     unsigned int threadIdx = 0;
 #endif
@@ -169,24 +169,24 @@ void vpPointMap::getVisiblePoints(const unsigned int h, const unsigned int w, co
     double u, v;
 
 #ifdef VISP_HAVE_OPENMP
-    localIndices.reserve(m_X.getRows() / omp_get_num_threads());
+    localIndices.reserve(m_X.getRows() / static_cast<unsigned int>(omp_get_num_threads()));
 #pragma omp for nowait
 #endif
     for (int i = 0; i < static_cast<int>(m_X.getRows()); ++i) {
-
+      unsigned int i_ = static_cast<unsigned int>(i);
 
       // Filter points that are behind the camera
-      const double Z = cX[i][2] + t[2];
+      const double Z = cX[i_][2] + t[2];
       if (Z <= 0.0) {
         continue;
       }
-      const double X = cX[i][0] + t[0], Y = cX[i][1] + t[1];
+      const double X = cX[i_][0] + t[0], Y = cX[i_][1] + t[1];
 
       // Filter points that are on the other side of the object
       if (m_normals.getRows() > 0) {
         cameraRay = { X, Y, Z };
         cameraRay.normalize();
-        double dotProd = cN[i][0] * cameraRay[0] + cN[i][1] * cameraRay[1] + cN[i][2] * cameraRay[2];
+        double dotProd = cN[i_][0] * cameraRay[0] + cN[i_][1] * cameraRay[1] + cN[i_][2] * cameraRay[2];
         double angle = acos(dotProd);
         if (angle < normalThreshold) {
           continue;
@@ -355,12 +355,12 @@ vpMatrix removeAndAdd(const vpMatrix &oldArray, unsigned int newSize, const std:
       throw vpException(vpException::dimensionError, "Removed row is out of bounds");
     }
 #endif
-    unsigned int copiedRows = removedRow - oldXIndex;
+    unsigned int copiedRows = static_cast<unsigned int>(removedRow) - oldXIndex;
     if (copiedRows > 0) {
       memcpy(newX[newXIndex], oldArray[oldXIndex], copiedRows * numCols * sizeof(double));
       newXIndex += copiedRows;
     }
-    oldXIndex = removedRow + 1;
+    oldXIndex = static_cast<unsigned int>(removedRow) + 1;
   }
   // Copy from last removed row to the end of the array
   unsigned int copiedRows = oldArray.getRows() - oldXIndex;
@@ -381,15 +381,15 @@ void vpPointMap::updatePoints(const vpArray2D<int> &indicesToRemove, const vpMat
   if (normalsToAdd.getRows() > 0 && normalsToAdd.getRows() != pointsToAdd.getRows()) {
     throw vpException(vpException::dimensionError, "Adding normal data to point map, but number of points and normals do not match");
   }
-  int newSize = m_X.getRows() - indicesToRemove.getRows() + pointsToAdd.getRows();
+  unsigned int newSize = m_X.getRows() - indicesToRemove.getRows() + pointsToAdd.getRows();
   for (unsigned int i = 0; i < indicesToRemove.getRows(); ++i) {
     removedIndices.push_back(indicesToRemove[i][0]);
   }
 
-  int maxPoints = static_cast<int>(m_maxPoints);
+  unsigned int maxPoints = m_maxPoints;
   std::sort(removedIndices.begin(), removedIndices.end());
   if (newSize > maxPoints) {
-    int shouldBeRemoved = newSize - maxPoints;
+    unsigned int shouldBeRemoved = newSize - maxPoints;
     newSize = maxPoints;
 
     // If the first values are filtered by indicesToRemove, we need to further increment the start index

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -179,7 +179,7 @@ void readPNGfromMemOpenCV(const std::vector<unsigned char> &buffer, vpImage<unsi
 {
   cv::Mat1b buf(static_cast<int>(buffer.size()), 1, const_cast<unsigned char *>(buffer.data()));
   cv::Mat1b img = cv::imdecode(buf, cv::IMREAD_GRAYSCALE);
-  I.resize(img.rows, img.cols);
+  I.resize(static_cast<unsigned int>(img.rows), static_cast<unsigned int>(img.cols));
   std::copy(img.begin(), img.end(), I.bitmap);
 }
 
@@ -270,7 +270,7 @@ void writeOpenCV(const vpImage<vpRGBf> &I, const std::string &filename)
 */
 void writePNGtoMemOpenCV(const vpImage<unsigned char> &I, std::vector<unsigned char> &buffer)
 {
-  cv::Mat1b img(I.getRows(), I.getCols(), I.bitmap);
+  cv::Mat1b img(static_cast<int>(I.getRows()), static_cast<int>(I.getCols()), I.bitmap);
   bool result = cv::imencode(".png", img, buffer);
 
   if (!result) {
@@ -288,12 +288,12 @@ void writePNGtoMemOpenCV(const vpImage<unsigned char> &I, std::vector<unsigned c
 */
 void writePNGtoMemOpenCV(const vpImage<vpRGBa> &I_color, std::vector<unsigned char> &buffer, bool saveAlpha)
 {
-  const int height = I_color.getRows();
-  const int width = I_color.getCols();
+  const int height = static_cast<int>(I_color.getRows());
+  const int width = static_cast<int>(I_color.getCols());
   const int channels = saveAlpha ? 4 : 3;
 
   if (saveAlpha) {
-    cv::Mat4b img(height, width, reinterpret_cast<cv::Vec4b *>(I_color.bitmap));
+    cv::Mat4b img(static_cast<int>(height), static_cast<int>(width), reinterpret_cast<cv::Vec4b *>(I_color.bitmap));
     // No need to perform RGB to BGR conversion
     bool result = cv::imencode(".png", img, buffer);
 
@@ -303,10 +303,10 @@ void writePNGtoMemOpenCV(const vpImage<vpRGBa> &I_color, std::vector<unsigned ch
     }
   }
   else {
-    unsigned char *bitmap = new unsigned char[height * width * channels];
-    vpImageConvert::RGBaToRGB(reinterpret_cast<unsigned char *>(I_color.bitmap), bitmap, height*width);
+    unsigned char *bitmap = new unsigned char[static_cast<unsigned int>(height * width * channels)];
+    vpImageConvert::RGBaToRGB(reinterpret_cast<unsigned char *>(I_color.bitmap), bitmap, static_cast<unsigned int>(height*width));
 
-    cv::Mat3b img(height, width, reinterpret_cast<cv::Vec3b *>(bitmap));
+    cv::Mat3b img(static_cast<int>(height), static_cast<int>(width), reinterpret_cast<cv::Vec3b *>(bitmap));
     // No need to perform RGB to BGR conversion
     bool result = cv::imencode(".png", img, buffer);
     delete[] bitmap;

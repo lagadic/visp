@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,7 +101,7 @@ void readEXRTiny(vpImage<float> &I, const std::string &filename)
   // `exr_image.tiled` will be filled when EXR is tiled format.
   if (exr_image.images) {
     I.resize(static_cast<unsigned int>(exr_image.height), static_cast<unsigned int>(exr_image.width));
-    memcpy(I.bitmap, exr_image.images[0], exr_image.height*exr_image.width*sizeof(float));
+    memcpy(I.bitmap, exr_image.images[0], static_cast<size_t>(exr_image.height) * static_cast<size_t>(exr_image.width) * sizeof(float));
   }
   else if (exr_image.tiles) {
     I.resize(static_cast<unsigned int>(exr_image.height), static_cast<unsigned int>(exr_image.width));
@@ -116,7 +116,7 @@ void readEXRTiny(vpImage<float> &I, const std::string &filename)
       for (unsigned int y = 0; y < static_cast<unsigned int>(ey - sy); ++y) {
         for (unsigned int x = 0; x < static_cast<unsigned int>(ex - sx); ++x) {
           const float *src_image = reinterpret_cast<const float *>(exr_image.tiles[tile_idx].images[0]);
-          I.bitmap[(y + sy) * data_width + (x + sx)] = src_image[y * exr_header.tile_size_x + x];
+          I.bitmap[(y + static_cast<unsigned int>(sy)) * data_width + (x + static_cast<unsigned int>(sx))] = src_image[y * static_cast<size_t>(exr_header.tile_size_x) + x];
         }
       }
     }
@@ -183,7 +183,7 @@ void readEXRTiny(vpImage<vpRGBf> &I, const std::string &filename)
     }
   }
   else if (exr_image.tiles) {
-    I.resize(exr_image.height, exr_image.width);
+    I.resize(static_cast<unsigned int>(exr_image.height), static_cast<unsigned int>(exr_image.width));
     size_t data_width = static_cast<size_t>(exr_header.data_window.max_x - exr_header.data_window.min_x + 1);
 
     for (int tile_idx = 0; tile_idx < exr_image.num_tiles; ++tile_idx) {
@@ -205,7 +205,7 @@ void readEXRTiny(vpImage<vpRGBf> &I, const std::string &filename)
         for (unsigned int x = 0; x < static_cast<unsigned int>(ex - sx); ++x) {
           for (unsigned int c = 0; c < 3; ++c) {
             const float *src_image = reinterpret_cast<const float *>(exr_image.tiles[tile_idx].images[c]);
-            reinterpret_cast<float *>(I.bitmap)[(y + sy) * data_width * 3 + (x + sx) * 3 + c] = src_image[y * exr_header.tile_size_x + x];
+            reinterpret_cast<float *>(I.bitmap)[(y + static_cast<unsigned int>(sy)) * data_width * 3 + (x + static_cast<unsigned int>(sx)) * 3 + c] = src_image[y * static_cast<size_t>(exr_header.tile_size_x) + x];
           }
         }
       }
@@ -227,16 +227,16 @@ void writeEXRTiny(const vpImage<float> &I, const std::string &filename)
   image.num_channels = 1;
 
   image.images = (unsigned char **)&I.bitmap;
-  image.width = I.getWidth();
-  image.height = I.getHeight();
+  image.width = static_cast<int>(I.getWidth());
+  image.height = static_cast<int>(I.getHeight());
 
   header.num_channels = 1;
-  header.channels = (EXRChannelInfo *)malloc(sizeof(EXRChannelInfo) * header.num_channels);
+  header.channels = (EXRChannelInfo *)malloc(sizeof(EXRChannelInfo) * static_cast<size_t>(header.num_channels));
   // Must be (A)BGR order, since most of EXR viewers expect this channel order.
   strncpy(header.channels[0].name, "Y", 255); header.channels[0].name[strlen("Y")] = '\0';
 
-  header.pixel_types = (int *)malloc(sizeof(int) * header.num_channels);
-  header.requested_pixel_types = (int *)malloc(sizeof(int) * header.num_channels);
+  header.pixel_types = (int *)malloc(sizeof(int) * static_cast<size_t>(header.num_channels));
+  header.requested_pixel_types = (int *)malloc(sizeof(int) * static_cast<size_t>(header.num_channels));
   header.compression_type = TINYEXR_COMPRESSIONTYPE_ZIP;
   for (int i = 0; i < header.num_channels; ++i) {
     header.pixel_types[i] = TINYEXR_PIXELTYPE_FLOAT;          // pixel type of input image
@@ -287,18 +287,18 @@ void writeEXRTiny(const vpImage<vpRGBf> &I, const std::string &filename)
   image_ptr[2] = &(images[0].at(0)); // R
 
   image.images = (unsigned char **)image_ptr;
-  image.width = I.getWidth();
-  image.height = I.getHeight();
+  image.width = static_cast<int>(I.getWidth());
+  image.height = static_cast<int>(I.getHeight());
 
   header.num_channels = 3;
-  header.channels = (EXRChannelInfo *)malloc(sizeof(EXRChannelInfo) * header.num_channels);
+  header.channels = (EXRChannelInfo *)malloc(sizeof(EXRChannelInfo) * static_cast<size_t>(header.num_channels));
   // Must be (A)BGR order, since most of EXR viewers expect this channel order.
   strncpy(header.channels[0].name, "B", 255); header.channels[0].name[strlen("B")] = '\0';
   strncpy(header.channels[1].name, "G", 255); header.channels[1].name[strlen("G")] = '\0';
   strncpy(header.channels[2].name, "R", 255); header.channels[2].name[strlen("R")] = '\0';
 
-  header.pixel_types = (int *)malloc(sizeof(int) * header.num_channels);
-  header.requested_pixel_types = (int *)malloc(sizeof(int) * header.num_channels);
+  header.pixel_types = (int *)malloc(sizeof(int) * static_cast<size_t>(header.num_channels));
+  header.requested_pixel_types = (int *)malloc(sizeof(int) * static_cast<size_t>(header.num_channels));
   header.compression_type = TINYEXR_COMPRESSIONTYPE_ZIP;
   for (int i = 0; i < header.num_channels; ++i) {
     header.pixel_types[i] = TINYEXR_PIXELTYPE_FLOAT;            // pixel type of input image

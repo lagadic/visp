@@ -96,8 +96,8 @@ int main(int argc, char **argv)
   cMo[2][0] = -0.7635445096; cMo[2][1] = 0.4810195286; cMo[2][2] = -0.4308363901; cMo[2][3] = 0.4510066725;
   tracker.initFromPose(I, cMo);
 
-  const int height = I.getRows();
-  const int width = I.getCols();
+  const unsigned int height = I.getRows();
+  const unsigned int width = I.getCols();
   int channel = 1;
   if (color_mode) {
     channel = save_alpha ? 4 : 3;
@@ -124,12 +124,12 @@ int main(int argc, char **argv)
   visp::cnpy::npz_save(npz_filename, "cam_v0", &cam_v0, { 1 }, "a");
 
   std::vector<double> vec_poses;
-  vec_poses.reserve(g.getLastFrameIndex() * 6);
+  vec_poses.reserve(static_cast<size_t>(g.getLastFrameIndex()) * 6);
 
   std::vector<int> vec_img_data_size;
-  vec_img_data_size.reserve(g.getLastFrameIndex());
+  vec_img_data_size.reserve(static_cast<size_t>(g.getLastFrameIndex()));
   std::vector<unsigned char> vec_img_data;
-  vec_img_data.reserve(g.getLastFrameIndex() * height * width);
+  vec_img_data.reserve(static_cast<size_t>(g.getLastFrameIndex()) * height * width);
 
   std::vector<double> times;
   size_t iter = 0;
@@ -169,7 +169,7 @@ int main(int argc, char **argv)
     tracker.getModelForDisplay(mapOfModels, mapOfW, mapOfH, mapOfcMos, mapOfCams);
 
     std::vector<std::vector<double>> model = mapOfModels[camera_name];
-    const std::string model_iter = vpIoTools::formatString("model_%06zu", static_cast<int>(iter));
+    const std::string model_iter = vpIoTools::formatString("model_%06zu", static_cast<unsigned int>(iter));
     const std::string model_iter_sz = model_iter + "_sz";
 
     const size_t model_size = model.size();

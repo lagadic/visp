@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +68,7 @@ private:
   std::ofstream &file;
 
 public:
-  Tee(std::ostream &os_, std::ofstream &file_) : os(os_), file(file_) { }
+  Tee(std::ostream &os_, std::ofstream &file_) : os(os_), file(file_) {}
 
   template <typename T>
   Tee &operator<<(const T &thing)
@@ -191,7 +191,7 @@ struct CalibInfo
   CalibInfo(const vpImage<unsigned char> &img, const std::vector<vpPoint> &points,
             const std::vector<vpImagePoint> &imPts, const std::string &frame_name)
     : m_img(img), m_points(points), m_imPts(imPts), m_frame_name(frame_name)
-  { }
+  {}
 
   vpImage<unsigned char> m_img;
   std::vector<vpPoint> m_points;
@@ -211,9 +211,9 @@ void drawCalibrationOccupancy(vpImage<unsigned char> &I, const std::vector<Calib
 
     std::vector<vpImagePoint> corners;
     corners.push_back(calib.m_imPts.front());
-    corners.push_back(*(calib.m_imPts.begin() + patternW + shift1));
+    corners.push_back(*(calib.m_imPts.begin() + static_cast<std::ptrdiff_t>(patternW + static_cast<unsigned int>(shift1))));
     corners.push_back(calib.m_imPts.back());
-    corners.push_back(*(calib.m_imPts.end() - (patternW + shift2)));
+    corners.push_back(*(calib.m_imPts.end() - static_cast<std::ptrdiff_t>(patternW + static_cast<unsigned int>(shift2))));
     vpPolygon poly(corners);
 
     for (unsigned int i = 0; i < I.getHeight(); i++) {
@@ -265,7 +265,7 @@ bool extractCalibrationPoints(const Settings &s, const cv::Mat &cvI,
     break;
   case Settings::CHARUCOBOARD:
     ch_detector->detectBoard(cvI, pointBuf, markerIds);
-    found = pointBuf.size() == (size_t)(s.boardSize.width-1)*(s.boardSize.height-1);
+    found = pointBuf.size() == static_cast<std::size_t>(s.boardSize.width - 1) * static_cast<std::size_t>(s.boardSize.height - 1);
     break;
   case Settings::UNDEFINED:
   default:
@@ -478,23 +478,39 @@ void displayProjectionErrorUV(const vpImage<unsigned char> &I_err_imPt, const st
   if (!cv_calib) {
     oss << std::fixed << std::setprecision(3) << "Reprojection error"
       << (with_dist ? " (with dist): " : " (without dist): ") << reproj_error << " (" << err_imPt.size() << " pts)";
-    vpDisplay::displayText(I_err_imPt, offset_text, graph_offset+20, oss.str(), color_text);
+    vpDisplay::displayText(I_err_imPt,
+                           static_cast<int>(offset_text),
+                           static_cast<int>(graph_offset + 20),
+                           oss.str(),
+                           color_text);
   }
   else {
     oss << std::fixed << std::setprecision(3) << "Reprojection error: " << reproj_error
       << " (" << err_imPt.size() << " pts)";
-    vpDisplay::displayText(I_err_imPt, offset_text, graph_offset+20, oss.str(), color_text);
+    vpDisplay::displayText(I_err_imPt,
+                           static_cast<int>(offset_text),
+                           static_cast<int>(graph_offset + 20),
+                           oss.str(),
+                           color_text);
   }
 
   oss.str("");
   oss << std::fixed << std::setprecision(3) << "u error: " << u_err_mean << " (mean) " << u_err_med
     << " (median) " << u_err_std << " (std)";
-  vpDisplay::displayText(I_err_imPt, offset_text+offset_text_incr, graph_offset+20, oss.str(), color_text);
+  vpDisplay::displayText(I_err_imPt,
+                         static_cast<int>(offset_text+offset_text_incr),
+                         static_cast<int>(graph_offset+20),
+                         oss.str(),
+                         color_text);
 
   oss.str("");
   oss << std::fixed << std::setprecision(3) << "v error: " << v_err_mean << " (mean) " << v_err_med
     << " (median) " << v_err_std << " (std)";
-  vpDisplay::displayText(I_err_imPt, offset_text+2*offset_text_incr, graph_offset+20, oss.str(), color_text);
+  vpDisplay::displayText(I_err_imPt,
+                         static_cast<int>(offset_text+2*offset_text_incr),
+                         static_cast<int>(graph_offset+20),
+                         oss.str(),
+                         color_text);
 }
 
 //
@@ -515,11 +531,13 @@ double computeReprojectionErrors(
   double totalErr = 0, err = 0;
   perViewErrors.resize(objectPoints.size());
 
-  for (int i = 0; i < (int)objectPoints.size(); i++) {
-    cv::projectPoints(cv::Mat(objectPoints[i]), rvecs[i], tvecs[i],
-                  cameraMatrix, distCoeffs, imagePoints2);
+  for (size_t i = 0; i < objectPoints.size(); i++) {
+    cv::projectPoints(cv::Mat(objectPoints[static_cast<std::size_t>(i)]),
+                              rvecs[static_cast<std::size_t>(i)],
+                              tvecs[static_cast<std::size_t>(i)],
+                              cameraMatrix, distCoeffs, imagePoints2);
     err = cv::norm(cv::Mat(imagePoints[i]), cv::Mat(imagePoints2), cv::NORM_L2);
-    int n = (int)objectPoints[i].size();
+    int n = static_cast<int>(objectPoints[i].size());
     perViewErrors[i] = (float)std::sqrt(err*err/n);
     totalErr += err*err;
     totalPoints += n;
@@ -581,8 +599,9 @@ void saveCameraParams(const std::string &filename,
 
   fs << "calibration_time" << buf;
 
-  if (!rvecs.empty() || !reprojErrs.empty())
-    fs << "nframes" << (int)std::max(rvecs.size(), reprojErrs.size());
+  if (!rvecs.empty() || !reprojErrs.empty()) {
+    fs << "nframes" << static_cast<int>(std::max(rvecs.size(), reprojErrs.size()));
+  }
   fs << "image_width" << imageSize.width;
   fs << "image_height" << imageSize.height;
   fs << "board_width" << boardSize.width;
@@ -612,24 +631,24 @@ void saveCameraParams(const std::string &filename,
 
   if (!rvecs.empty() && !tvecs.empty()) {
     CV_Assert(rvecs[0].type() == tvecs[0].type());
-    cv::Mat bigmat((int)rvecs.size(), 6, rvecs[0].type());
-    for (int i = 0; i < (int)rvecs.size(); i++) {
+    cv::Mat bigmat(rvecs.size(), 6, rvecs[0].type());
+    for (size_t i = 0; i < rvecs.size(); i++) {
       cv::Mat r = bigmat(cv::Range(i, i+1), cv::Range(0, 3));
       cv::Mat t = bigmat(cv::Range(i, i+1), cv::Range(3, 6));
 
-      CV_Assert(rvecs[i].rows == 3 && rvecs[i].cols == 1);
-      CV_Assert(tvecs[i].rows == 3 && tvecs[i].cols == 1);
+      CV_Assert(rvecs[static_cast<std::size_t>(i)].rows == 3 && rvecs[static_cast<std::size_t>(i)].cols == 1);
+      CV_Assert(tvecs[static_cast<std::size_t>(i)].rows == 3 && tvecs[static_cast<std::size_t>(i)].cols == 1);
       //*.t() is MatExpr (not Mat) so we can use assignment operator
-      r = rvecs[i].t();
-      t = tvecs[i].t();
+      r = rvecs[static_cast<std::size_t>(i)].t();
+      t = tvecs[static_cast<std::size_t>(i)].t();
     }
     //cvWriteComment( *fs, "a set of 6-tuples (rotation vector + translation vector) for each view", 0 );
     fs << "extrinsic_parameters" << bigmat;
   }
 
   if (!imagePoints.empty()) {
-    cv::Mat imagePtMat((int)imagePoints.size(), (int)imagePoints[0].size(), CV_32FC2);
-    for (int i = 0; i < (int)imagePoints.size(); i++) {
+    cv::Mat imagePtMat(imagePoints.size(), imagePoints[0].size(), CV_32FC2);
+    for (size_t i = 0; i < imagePoints.size(); i++) {
       cv::Mat r = imagePtMat.row(i).reshape(2, imagePtMat.cols);
       cv::Mat imgpti(imagePoints[i]);
       imgpti.copyTo(r);
@@ -664,11 +683,11 @@ bool runCalibration(const std::vector<std::vector<cv::Point2f>> &imagePoints,
   // The correction does not make sense for asymmetric and assymetric circles grids
   if (patternType == CV_CHESSBOARD) {
     int offset = boardSize.width - 1;
-    objectPoints[0][offset].x = objectPoints[0][0].x + grid_width;
+    objectPoints[0][static_cast<std::size_t>(offset)].x = objectPoints[0][0].x + grid_width;
   }
   else if (patternType == CV_CHARUCOBOARD) {
     int offset = boardSize.width - 2;
-    objectPoints[0][offset].x = objectPoints[0][0].x + grid_width;
+    objectPoints[0][static_cast<std::size_t>(offset)].x = objectPoints[0][0].x + grid_width;
   }
 
   newObjPoints = objectPoints[0];
@@ -689,8 +708,8 @@ bool runCalibration(const std::vector<std::vector<cv::Point2f>> &imagePoints,
   if (release_object) {
     tee << "New board corners: " << "\n";
     tee << newObjPoints[0] << "\n";
-    tee << newObjPoints[boardSize.width - 1] << "\n";
-    tee << newObjPoints[boardSize.width * (boardSize.height - 1)] << "\n";
+    tee << newObjPoints[static_cast<std::size_t>(boardSize.width - 1)] << "\n";
+    tee << newObjPoints[static_cast<std::size_t>(boardSize.width * (boardSize.height - 1))] << "\n";
     tee << newObjPoints.back() << "\n";
   }
 

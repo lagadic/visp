@@ -104,11 +104,11 @@ public:
   vpArray2D<double> const &get() const VP_OVERRIDE { return current; }
   bool next() VP_OVERRIDE
   {
-    const unsigned nCols = m_dim_dist(m_rand);
-    const unsigned nRows = m_dim_dist(m_rand);
+    const unsigned int nCols = static_cast<unsigned int>(m_dim_dist(m_rand));
+    const unsigned int nRows = static_cast<unsigned int>(m_dim_dist(m_rand));
     current.resize(nRows, nCols);
-    for (unsigned i = 0; i < nRows; ++i) {
-      for (unsigned j = 0; j < nCols; ++j) {
+    for (unsigned int i = 0; i < nRows; ++i) {
+      for (unsigned int j = 0; j < nCols; ++j) {
         current[i][j] = m_val_dist(m_rand);
       }
     }
@@ -135,7 +135,7 @@ public:
   const vpColVector &get() const VP_OVERRIDE { return current; }
   bool next() VP_OVERRIDE
   {
-    const unsigned nRows = m_dim_dist(m_rand);
+    const unsigned int nRows = static_cast<unsigned int>(m_dim_dist(m_rand));
     current.resize(nRows);
     for (unsigned i = 0; i < nRows; ++i) {
       current[i] = m_val_dist(m_rand);

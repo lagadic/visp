@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,16 +61,20 @@ void vpTemplateTrackerMI::setBspline(const vpBsplineType &newbs)
   if (PrtTout)
     delete[] PrtTout;
 
-  Pt = new double[Ncb];
-  Pr = new double[Ncb];
+  size_t Ncb_ = static_cast<size_t>(Ncb);
+  size_t Nc_ = static_cast<size_t>(Nc);
+  size_t influBspline_ = static_cast<size_t>(influBspline);
 
-  Prt = new double[Ncb * Ncb];
-  dPrt = new double[Ncb * Ncb * static_cast<int>(nbParam)];
-  d2Prt = new double[Ncb * Ncb * static_cast<int>(nbParam * nbParam)];
+  Pt = new double[Ncb_];
+  Pr = new double[Ncb_];
 
-  PrtD = new double[Nc * Nc * influBspline];
-  dPrtD = new double[Nc * Nc * static_cast<int>(nbParam)*influBspline];
-  PrtTout = new double[Nc * Nc * influBspline * (1 + static_cast<int>(nbParam + nbParam * nbParam))];
+  Prt = new double[Ncb_ * Ncb_];
+  dPrt = new double[Ncb_ * Ncb_ * nbParam];
+  d2Prt = new double[Ncb_ * Ncb_ * nbParam * nbParam];
+
+  PrtD = new double[Nc_ * Nc_ * influBspline_];
+  dPrtD = new double[Nc_ * Nc_ * nbParam * influBspline_];
+  PrtTout = new double[Nc_ * Nc_ * influBspline_ * (1 + nbParam + nbParam * nbParam)];
 
   hessianComputation = USE_HESSIEN_DESIRE;
 }
@@ -96,16 +100,20 @@ vpTemplateTrackerMI::vpTemplateTrackerMI(vpTemplateTrackerWarp *_warp)
   X1.resize(2);
   X2.resize(2);
 
-  PrtD = new double[Nc * Nc * influBspline]; //(r,t)
-  dPrtD = new double[Nc * Nc * static_cast<int>(nbParam)*influBspline];
+  size_t Ncb_ = static_cast<size_t>(Ncb);
+  size_t Nc_ = static_cast<size_t>(Nc);
+  size_t influBspline_ = static_cast<size_t>(influBspline);
 
-  Prt = new double[Ncb * Ncb]; //(r,t)
-  Pt = new double[Ncb];
-  Pr = new double[Ncb];
-  dPrt = new double[Ncb * Ncb * static_cast<int>(nbParam)];
-  d2Prt = new double[Ncb * Ncb * static_cast<int>(nbParam * nbParam)];
+  PrtD = new double[Nc_ * Nc_ * influBspline_]; //(r,t)
+  dPrtD = new double[Nc_ * Nc_ * nbParam * influBspline_];
 
-  PrtTout = new double[Nc * Nc * influBspline * (1 + static_cast<int>(nbParam + nbParam * nbParam))];
+  Prt = new double[Ncb_ * Ncb_]; //(r,t)
+  Pt = new double[Ncb_];
+  Pr = new double[Ncb_];
+  dPrt = new double[Ncb_ * Ncb_ * nbParam];
+  d2Prt = new double[Ncb_ * Ncb_ * nbParam * nbParam];
+
+  PrtTout = new double[Nc_ * Nc_ * influBspline_ * (1 + (nbParam + nbParam * nbParam))];
 
   lambda = lambdaDep;
 }
@@ -132,14 +140,19 @@ void vpTemplateTrackerMI::setNc(int nc)
   if (PrtTout)
     delete[] PrtTout;
 
-  PrtD = new double[Nc * Nc * influBspline]; //(r,t)
-  dPrtD = new double[Nc * Nc * static_cast<int>(nbParam)*influBspline];
-  Prt = new double[Ncb * Ncb]; //(r,t)
-  dPrt = new double[Ncb * Ncb * static_cast<int>(nbParam)];
-  Pt = new double[Ncb];
-  Pr = new double[Ncb];
-  d2Prt = new double[Ncb * Ncb * static_cast<int>(nbParam * nbParam)]; //(r,t)
-  PrtTout = new double[Nc * Nc * influBspline * (1 + static_cast<int>(nbParam + nbParam * nbParam))];
+
+  size_t Ncb_ = static_cast<size_t>(Ncb);
+  size_t Nc_ = static_cast<size_t>(Nc);
+  size_t influBspline_ = static_cast<size_t>(influBspline);
+
+  PrtD = new double[Nc_ * Nc_ * influBspline_]; //(r,t)
+  dPrtD = new double[Nc_ * Nc_ * nbParam * influBspline_];
+  Prt = new double[Ncb_ * Ncb_]; //(r,t)
+  dPrt = new double[Ncb_ * Ncb_ * nbParam];
+  Pt = new double[Ncb_];
+  Pr = new double[Ncb_];
+  d2Prt = new double[Ncb_ * Ncb_ * nbParam * nbParam]; //(r,t)
+  PrtTout = new double[Nc_ * Nc_ * influBspline_ * (1 + (nbParam + nbParam * nbParam))];
 }
 
 double vpTemplateTrackerMI::getCost(const vpImage<unsigned char> &I, const vpColVector &tp)

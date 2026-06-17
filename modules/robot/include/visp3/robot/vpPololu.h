@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,7 +94,7 @@ public:
    * \param[in] channel : Channel to which the servo is connected to the Pololu board.
    * \param[in] verbose : When true enable verbose mode.
    */
-  vpPololu(const std::string &device, int baudrate = 38400, int channel = 0, bool verbose = false);
+  vpPololu(const std::string &device, unsigned int baudrate = 38400, int channel = 0, bool verbose = false);
 
   /*!
    * Destructor.
@@ -117,7 +117,7 @@ public:
    * \param[in] baudrate : Baudrate used to dial with Pololu board. Note that this parameter is only used on Windows.
    * \param[in] channel : Channel to which the servo is connected to the Pololu board.
    */
-  void connect(const std::string &device, int baudrate, int channel);
+  void connect(const std::string &device, unsigned int baudrate, int channel);
 
   /*!
    * Check if the serial connection is still up.

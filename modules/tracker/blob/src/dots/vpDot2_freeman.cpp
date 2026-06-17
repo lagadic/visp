@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -314,7 +314,7 @@ void vpDot2::computeFreemanParameters(const int &u_p, const int &v_p, unsigned i
     dMu = 0.0;
     dMv = static_cast<float>(0.5 * v_p * v_p);
     if (m_compute_moment) {
-      dMuv = static_cast<float>(0.25 * v_p * v_p * ((val_2 * u_p) + 1));
+      dMuv = static_cast<float>(0.25 * v_p * v_p * ((val_2 * static_cast<unsigned int>(u_p)) + 1));
       dMu2 = 0;
       dMv2 = static_cast<float>((1.0 / 3.) * v_p * v_p * v_p);
     }
@@ -360,7 +360,7 @@ void vpDot2::computeFreemanParameters(const int &u_p, const int &v_p, unsigned i
     dMv = static_cast<float>(-0.5 * v_p * v_p);
     dMu = 0.0;
     if (m_compute_moment) {
-      dMuv = static_cast<float>(-0.25 * v_p * v_p * ((val_2 * u_p) - 1));
+      dMuv = static_cast<float>(-0.25 * v_p * v_p * ((val_2 * static_cast<unsigned int>(u_p)) - 1));
       dMu2 = 0;
       dMv2 = static_cast<float>((-1.0 / 3.) * v_p * v_p * v_p);
     }

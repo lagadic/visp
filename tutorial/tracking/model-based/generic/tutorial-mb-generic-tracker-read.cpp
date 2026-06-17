@@ -59,8 +59,8 @@ int main(int argc, char *argv[])
   visp::cnpy::NpyArray arr_height = npz_data["height"];
   visp::cnpy::NpyArray arr_width = npz_data["width"];
   visp::cnpy::NpyArray arr_channel = npz_data["channel"];
-  int height = *arr_height.data<int>();
-  int width = *arr_width.data<int>();
+  unsigned int height = *arr_height.data<unsigned int>();
+  unsigned int width = *arr_width.data<unsigned int>();
   int channel = *arr_channel.data<int>();
   std::cout << "height: " << height << std::endl;
   std::cout << "width: " << width << std::endl;
@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
   visp::cnpy::NpyArray arr_vec_img = npz_data["vec_img"];
   unsigned char *vec_img_ptr = arr_vec_img.data<unsigned char>();
   std::vector<unsigned char> vec_img;
-  size_t img_data_offset = 0;
+  int img_data_offset = 0;
 
   // Load all the poses
   visp::cnpy::NpyArray arr_vec_poses = npz_data["vec_poses"];
@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
 
   std::vector<double> times;
 
-  for (int iter = 0; iter < nb_data; iter++) {
+  for (size_t iter = 0; iter < static_cast<size_t>(nb_data); ++iter) {
     // std::copy(vec_img_ptr + img_data_offset, vec_img_ptr + img_data_offset + vec_img_data_size_ptr[iter],
     //     std::back_inserter(vec_img));
     vec_img = std::vector<unsigned char>(vec_img_ptr + img_data_offset, vec_img_ptr + img_data_offset + vec_img_data_size_ptr[iter]);
@@ -136,7 +136,7 @@ int main(int argc, char *argv[])
 
     for (size_t i = 0; i < model_sz; i++) {
       char buffer[100];
-      int res = snprintf(buffer, 100, "model_%06d_%06zu", iter, i);
+      int res = snprintf(buffer, 100, "model_%06d_%06zu", static_cast<int>(iter), i);
       if (res > 0 && res < 100) {
         std::string str_model_iter_data = buffer;
         visp::cnpy::NpyArray arr_model_iter_data = npz_data[str_model_iter_data];

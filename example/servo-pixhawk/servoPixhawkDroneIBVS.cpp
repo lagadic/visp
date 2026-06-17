@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -218,7 +218,8 @@ int main(int argc, char **argv)
       drone.takeOff();    // Take off
 #endif
 
-      vpImage<unsigned char> I(rs.getIntrinsics(RS2_STREAM_COLOR).height, rs.getIntrinsics(RS2_STREAM_COLOR).width);
+      vpImage<unsigned char> I(static_cast<unsigned int>(rs.getIntrinsics(RS2_STREAM_COLOR).height),
+                               static_cast<unsigned int>(rs.getIntrinsics(RS2_STREAM_COLOR).width));
 
       int orig_displayX = 100;
       int orig_displayY = 100;

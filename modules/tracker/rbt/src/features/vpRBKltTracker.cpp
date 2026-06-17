@@ -90,7 +90,7 @@ void vpRBKltTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const
     const unsigned int nbFeatures = static_cast<unsigned int>(m_klt.getNbFeatures());
     std::vector<unsigned> kltIndicesToRemove;
     // Detect outliers
-    for (unsigned int i = 0; i < nbFeatures; ++i) {
+    for (int i = 0; i < static_cast<int>(nbFeatures); ++i) {
       long id = 0;
       float u = 0.f, v = 0.f;
       m_klt.getFeature(i, id, u, v);
@@ -120,12 +120,12 @@ void vpRBKltTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const
       vpColVector oX = p.oX.get_oP();
       if (distancePx > distanceThresholdPxSquare) {
         m_points.erase(id);
-        kltIndicesToRemove.push_back(i);
+        kltIndicesToRemove.push_back(static_cast<unsigned int>(i));
       }
     }
     // Remove tracking from klt: iterate in reverse order to invalidate iterator i (shifting in the klt list)
     for (int i = static_cast<int>(kltIndicesToRemove.size()) - 1; i >= 0; --i) {
-      m_klt.suppressFeature(kltIndicesToRemove[i]);
+      m_klt.suppressFeature(static_cast<int>(kltIndicesToRemove[static_cast<unsigned int>(i)]));
     }
   }
 
@@ -133,7 +133,7 @@ void vpRBKltTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const
   const vpRect bb = frame.renders.boundingBox;
   for (unsigned int i = static_cast<unsigned int>(bb.getTop()); i < static_cast<unsigned int>(bb.getBottom()); ++i) {
     for (unsigned int j = static_cast<unsigned int>(bb.getLeft()); j < static_cast<unsigned int>(bb.getRight()); ++j) {
-      mask.at<unsigned char>(i, j) = (frame.renders.depth[i][j] > 0.f) * 255;
+      mask.at<unsigned char>(static_cast<int>(i), static_cast<int>(j)) = (frame.renders.depth[i][j] > 0.f) * 255;
     }
   }
 
@@ -145,9 +145,9 @@ void vpRBKltTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const
     if (m_points.size() < m_numPointsReinit) {
       cv::Mat IprevRoi = m_Iprev(roi);
       m_klt.initTracking(m_Iprev, mask);
-      const unsigned int nbFeatures = static_cast<unsigned int>(m_klt.getNbFeatures());
+      const int nbFeatures = m_klt.getNbFeatures();
       m_points.clear();
-      for (unsigned int i = 0; i < nbFeatures; ++i) {
+      for (int i = 0; i < nbFeatures; ++i) {
         long id;
         float u, v;
         m_klt.getFeature(i, id, u, v);
@@ -164,9 +164,9 @@ void vpRBKltTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const
       kltTemp.setBlockSize(m_klt.getBlockSize());
       kltTemp.setPyramidLevels(m_klt.getPyramidLevels());
       kltTemp.initTracking(m_Iprev(roi), maskRoi);
-      const unsigned int nbFeaturesTemp = static_cast<unsigned int>(kltTemp.getNbFeatures());
-      const unsigned int nbFeatures = static_cast<unsigned int>(m_klt.getNbFeatures());
-      for (unsigned int i = 0; i < nbFeaturesTemp; ++i) {
+      const int nbFeaturesTemp = kltTemp.getNbFeatures();
+      const int nbFeatures = m_klt.getNbFeatures();
+      for (int i = 0; i < nbFeaturesTemp; ++i) {
         double threshold = vpMath::sqr(m_newPointsDistanceThreshold); // distance threshold, in squared pixels
         bool tooClose = false;
         float u, v;
@@ -175,7 +175,7 @@ void vpRBKltTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const
         // Realign features from bounding box coordinates to image coordinates
         u += static_cast<float>(bb.getLeft());
         v += static_cast<float>(bb.getTop());
-        for (unsigned int j = 0; j < nbFeatures; ++j) {
+        for (int j = 0; j < nbFeatures; ++j) {
           float uj, vj;
           long idj;
           m_klt.getFeature(j, idj, uj, vj);
@@ -198,8 +198,8 @@ void vpRBKltTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const
   else {
     m_klt.initTracking(m_I, mask);
     m_points.clear();
-    const unsigned int nbFeatures = static_cast<unsigned int>(m_klt.getNbFeatures());
-    for (unsigned int i = 0; i < nbFeatures; ++i) {
+    const int nbFeatures = m_klt.getNbFeatures();
+    for (int i = 0; i < nbFeatures; ++i) {
       long id;
       float u, v;
       m_klt.getFeature(i, id, u, v);
@@ -210,7 +210,7 @@ void vpRBKltTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const
 
 void vpRBKltTracker::trackFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &/*previousFrame*/, const vpHomogeneousMatrix &cMo)
 {
-  unsigned int nbKltFeatures = static_cast<unsigned int>(m_klt.getNbFeatures());
+  int nbKltFeatures = m_klt.getNbFeatures();
   if (nbKltFeatures > 0) {
     m_klt.track(m_I);
   }
@@ -218,9 +218,9 @@ void vpRBKltTracker::trackFeatures(const vpRBFeatureTrackerInput &frame, const v
   const vpHomogeneousMatrix oMc = cMo.inverse();
 
   bool testMask = m_useMask && frame.hasMask();
-  nbKltFeatures = static_cast<unsigned int>(m_klt.getNbFeatures());
+  nbKltFeatures = m_klt.getNbFeatures();
   std::vector<unsigned> kltIndicesToRemove;
-  for (unsigned int i = 0; i < nbKltFeatures; ++i) {
+  for (int i = 0; i < nbKltFeatures; ++i) {
     long id = 0;
     float u = 0.f, v = 0.f;
     double x = 0.0, y = 0.0;
@@ -249,13 +249,13 @@ void vpRBKltTracker::trackFeatures(const vpRBFeatureTrackerInput &frame, const v
       newPoints[id] = p;
     }
     else {
-      kltIndicesToRemove.push_back(i);
+      kltIndicesToRemove.push_back(static_cast<unsigned int>(i));
     }
   }
 
   // Remove tracking from klt: iterate in reverse order to invalidate iterator i (shifting in the klt list)
   for (int i = static_cast<int>(kltIndicesToRemove.size()) - 1; i >= 0; --i) {
-    m_klt.suppressFeature(kltIndicesToRemove[i]);
+    m_klt.suppressFeature(static_cast<int>(kltIndicesToRemove[static_cast<unsigned int>(i)]));
   }
 
   m_points = newPoints;

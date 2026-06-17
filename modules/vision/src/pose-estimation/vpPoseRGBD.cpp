@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -352,7 +352,7 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap,
     if (coplanar_points) {
       // If all objects are coplanar, use points insides tag_points_3d to estimate the plane
       estimatePlaneEquationSVD(tag_points_3d, plane_equation, centroid, normalized_weights);
-      int count = 0;
+      size_t count = 0;
       for (size_t j = 0; j < nbCorners; ++j) {
         std::vector<vpImagePoint> tag_corner = corners[j];
         size_t tag_corner_size = tag_corner.size();

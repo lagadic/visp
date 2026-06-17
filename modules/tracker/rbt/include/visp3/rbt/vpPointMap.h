@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -125,7 +125,7 @@ public:
     const vpRotationMatrix cRw = cTw.getRotationMatrix();
     const vpTranslationVector t = cTw.getTranslationVector();
     for (unsigned int i = 0; i < indices.getRows(); ++i) {
-      const unsigned int pointIndex = indices[i][0];
+      const unsigned int pointIndex = static_cast<unsigned int>(indices[i][0]);
       const double *p = m_X[pointIndex];
       wX[0] = p[0]; wX[1] = p[1]; wX[2] = p[2];
       cX = cRw * wX;
@@ -155,7 +155,7 @@ public:
     const vpRotationMatrix cRw = cTw.getRotationMatrix();
     const vpTranslationVector t = cTw.getTranslationVector();
     for (unsigned int i = 0; i < indices.getRows(); ++i) {
-      const unsigned int pointIndex = indices[i][0];
+      const unsigned int pointIndex = static_cast<unsigned int>(indices[i][0]);
       const double *p = m_X[pointIndex];
       wX[0] = p[0]; wX[1] = p[1]; wX[2] = p[2];
       cX = cRw * wX;

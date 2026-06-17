@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,12 +61,12 @@ void createDepthHist(std::vector<uint32_t> &histogram2, const pcl::PointCloud<pc
 
   for (uint32_t i = 0; i < pointcloud->height; i++) {
     for (uint32_t j = 0; j < pointcloud->width; j++) {
-      const pcl::PointXYZ &pcl_pt = pointcloud->at(j, i);
+      const pcl::PointXYZ &pcl_pt = pointcloud->at(static_cast<int>(j), static_cast<int>(i));
       ++histogram2[static_cast<uint32_t>(pcl_pt.z * depth_scale)];
     }
   }
 
-  for (int i = 2; i < 0x10000; i++)
+  for (size_t i = 2; i < 0x10000; i++)
     histogram2[i] += histogram2[i - 1]; // Build a cumulative histogram for
                                         // the indices in [1,0xFFFF]
 }
@@ -80,7 +80,7 @@ void createDepthHist(std::vector<uint32_t> &histogram2, const std::vector<vpColV
     ++histogram2[static_cast<uint32_t>(pt[2] * depth_scale)];
   }
 
-  for (int i = 2; i < 0x10000; i++)
+  for (size_t i = 2; i < 0x10000; i++)
     histogram2[i] += histogram2[i - 1]; // Build a cumulative histogram for
                                         // the indices in [1,0xFFFF]
 }
@@ -167,7 +167,7 @@ int main(int argc, char *argv[])
     if (color_pointcloud) {
       for (uint32_t i = 0; i < pointcloud_color->height; i++) {
         for (uint32_t j = 0; j < pointcloud_color->width; j++) {
-          const pcl::PointXYZRGB &pcl_pt = pointcloud_color->at(j, i);
+          const pcl::PointXYZRGB &pcl_pt = pointcloud_color->at(static_cast<int>(j), static_cast<int>(i));
           double Z = pcl_pt.z;
           if (Z > 1e-2) {
             double x = pcl_pt.x / Z;
@@ -189,7 +189,7 @@ int main(int argc, char *argv[])
 
       for (uint32_t i = 0; i < pointcloud->height; i++) {
         for (uint32_t j = 0; j < pointcloud->width; j++) {
-          const pcl::PointXYZ &pcl_pt = pointcloud->at(j, i);
+          const pcl::PointXYZ &pcl_pt = pointcloud->at(static_cast<int>(j), static_cast<int>(i));
           double Z = pcl_pt.z;
           if (Z > 1e-2) {
             double x = pcl_pt.x / Z;
@@ -244,9 +244,9 @@ int main(int argc, char *argv[])
     const int nb_lines = 5;
     for (int i = 1; i < nb_lines; i++) {
       const int col_idx = i * (width / nb_lines);
-      vpDisplay::displayLine(I_display, 0, col_idx, I_display.getRows() - 1, col_idx, vpColor::green, 2);
-      vpDisplay::displayLine(I_display2, 0, col_idx, I_display.getRows() - 1, col_idx, vpColor::green, 2);
-      vpDisplay::displayLine(I_display3, 0, col_idx, I_display.getRows() - 1, col_idx, vpColor::green, 2);
+      vpDisplay::displayLine(I_display, 0, col_idx, static_cast<int>(I_display.getRows()) - 1, col_idx, vpColor::green, 2);
+      vpDisplay::displayLine(I_display2, 0, col_idx, static_cast<int>(I_display.getRows()) - 1, col_idx, vpColor::green, 2);
+      vpDisplay::displayLine(I_display3, 0, col_idx, static_cast<int>(I_display.getRows()) - 1, col_idx, vpColor::green, 2);
     }
 
     vpDisplay::flush(I_display);

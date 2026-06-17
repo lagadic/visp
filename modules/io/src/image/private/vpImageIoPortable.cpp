@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -513,8 +513,8 @@ void vp_readPFM_HDR(vpImage<float> &I, const std::string &filename)
 #else
   bool swapEndianness = littleEndian;
 #endif
-  for (int i = I.getHeight() - 1; i >= 0; i--) {
-    fd.read((char *)I[i], sizeof(float) * w * channels);
+  for (int i = static_cast<int>(I.getHeight()) - 1; i >= 0; i--) {
+    fd.read((char *)I[i], static_cast<unsigned int>(sizeof(float) * w * channels));
     if (swapEndianness) {
       for (unsigned int j = 0; j < w * channels; ++j) {
         I[i][j] = vpEndian::swapFloat(I[i][j]);
@@ -588,8 +588,8 @@ void vp_readPFM_HDR(vpImage<vpRGBf> &I, const std::string &filename)
 #else
   bool swapEndianness = littleEndian;
 #endif
-  for (int i = I.getHeight() - 1; i >= 0; i--) {
-    fd.read((char *)I[i], sizeof(float) * w * channels);
+  for (int i = static_cast<int>(I.getHeight()) - 1; i >= 0; i--) {
+    fd.read((char *)I[i], static_cast<unsigned int>(sizeof(float) * w * channels));
     if (swapEndianness) {
       for (unsigned int j = 0; j < w; ++j) {
         I[i][j].R = vpEndian::swapFloat(I[i][j].R);

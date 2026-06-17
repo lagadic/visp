@@ -102,7 +102,7 @@ void vpDepthMask::updateMask(const vpRBFeatureTrackerInput &frame,
     for (int i = top; i <= bottom; ++i) {
       float *const maskRow = mask[i];
       const float *const depthRow = frame.depth[i];
-      for (unsigned int j = left; j <= static_cast<unsigned int>(right); ++j) {
+      for (int j = left; j <= right; ++j) {
         maskRow[j] = getProba(depthRow[j]);
       }
     }

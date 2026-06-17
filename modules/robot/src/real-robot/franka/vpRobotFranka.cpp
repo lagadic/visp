@@ -212,7 +212,7 @@ void vpRobotFranka::getPosition(const vpRobot::vpControlFrameType frame, vpColVe
 
   franka::RobotState robot_state = getRobotInternalState();
   vpColVector q(7);
-  for (int i = 0; i < 7; i++) {
+  for (unsigned int i = 0; i < 7; ++i) {
     q[i] = robot_state.q[i];
   }
 
@@ -225,7 +225,7 @@ void vpRobotFranka::getPosition(const vpRobot::vpControlFrameType frame, vpColVe
     position.resize(6);
     vpHomogeneousMatrix fMe = get_fMe(q);
     vpPoseVector fPe(fMe);
-    for (size_t i = 0; i < 6; i++) {
+    for (unsigned int i = 0; i < 6; ++i) {
       position[i] = fPe[i];
     }
     break;
@@ -234,7 +234,7 @@ void vpRobotFranka::getPosition(const vpRobot::vpControlFrameType frame, vpColVe
     position.resize(6);
     vpHomogeneousMatrix fMc = get_fMc(q);
     vpPoseVector fPc(fMc);
-    for (size_t i = 0; i < 6; i++) {
+    for (unsigned int i = 0; i < 6; ++i) {
       position[i] = fPc[i];
     }
     break;
@@ -266,22 +266,25 @@ void vpRobotFranka::getForceTorque(const vpRobot::vpControlFrameType frame, vpCo
   switch (frame) {
   case JOINT_STATE: {
     force.resize(7);
-    for (int i = 0; i < 7; i++)
+    for (unsigned int i = 0; i < 7; ++i) {
       force[i] = robot_state.tau_J[i];
+    }
 
     break;
   }
   case END_EFFECTOR_FRAME: {
     force.resize(6);
-    for (int i = 0; i < 6; i++)
+    for (unsigned int i = 0; i < 6; ++i) {
       force[i] = robot_state.K_F_ext_hat_K[i];
+    }
     break;
   }
   case TOOL_FRAME: {
     // end-effector frame
     vpColVector eFe(6);
-    for (int i = 0; i < 6; i++)
+    for (unsigned int i = 0; i < 6; ++i) {
       eFe[i] = robot_state.K_F_ext_hat_K[i];
+    }
 
     // Transform in tool frame
     vpHomogeneousMatrix cMe = get_eMc().inverse();
@@ -321,7 +324,7 @@ void vpRobotFranka::getVelocity(const vpRobot::vpControlFrameType frame, vpColVe
 
   case JOINT_STATE: {
     d_position.resize(7);
-    for (int i = 0; i < 7; i++) {
+    for (unsigned int i = 0; i < 7; ++i) {
       d_position[i] = robot_state.dq[i];
     }
     break;
@@ -351,7 +354,7 @@ void vpRobotFranka::getCoriolis(vpColVector &coriolis)
   coriolis_ = m_model->coriolis(robot_state);
 
   coriolis.resize(7);
-  for (int i = 0; i < 7; i++) {
+  for (unsigned int i = 0; i < 7; ++i) {
     coriolis[i] = coriolis_[i];
   }
 }
@@ -373,7 +376,7 @@ void vpRobotFranka::getGravity(vpColVector &gravity)
   gravity_ = m_model->gravity(robot_state);
 
   gravity.resize(7);
-  for (int i = 0; i < 7; i++) {
+  for (unsigned int i = 0; i < 7; ++i) {
     gravity[i] = gravity_[i];
   }
 }
@@ -395,8 +398,8 @@ void vpRobotFranka::getMass(vpMatrix &mass)
   mass_ = m_model->mass(robot_state); // column-major
 
   mass.resize(7, 7); // row-major
-  for (size_t i = 0; i < 7; i++) {
-    for (size_t j = 0; j < 7; j++) {
+  for (unsigned int i = 0; i < 7; ++i) {
+    for (unsigned int j = 0; j < 7; ++j) {
       mass[i][j] = mass_[j * 7 + i];
     }
   }
@@ -419,16 +422,17 @@ vpHomogeneousMatrix vpRobotFranka::get_fMe(const vpColVector &q)
   }
 
   std::array<double, 7> q_array;
-  for (size_t i = 0; i < 7; i++)
+  for (unsigned int i = 0; i < 7; ++i) {
     q_array[i] = q[i];
+  }
 
   franka::RobotState robot_state = getRobotInternalState();
 
   std::array<double, 16> pose_array =
     m_model->pose(franka::Frame::kEndEffector, q_array, robot_state.F_T_EE, robot_state.EE_T_K);
   vpHomogeneousMatrix fMe;
-  for (unsigned int i = 0; i < 4; i++) {
-    for (unsigned int j = 0; j < 4; j++) {
+  for (unsigned int i = 0; i < 4; ++i) {
+    for (unsigned int j = 0; j < 4; ++j) {
       fMe[i][j] = pose_array[j * 4 + i];
     }
   }
@@ -478,8 +482,8 @@ void vpRobotFranka::getPosition(const vpRobot::vpControlFrameType frame, vpPoseV
 
   std::array<double, 16> pose_array = robot_state.O_T_EE;
   vpHomogeneousMatrix fMe;
-  for (unsigned int i = 0; i < 4; i++) {
-    for (unsigned int j = 0; j < 4; j++) {
+  for (unsigned int i = 0; i < 4; ++i) {
+    for (unsigned int j = 0; j < 4; ++j) {
       fMe[i][j] = pose_array[j * 4 + i];
     }
   }
@@ -514,8 +518,8 @@ void vpRobotFranka::get_eJe(vpMatrix &eJe_)
 
   std::array<double, 42> jacobian = m_model->bodyJacobian(franka::Frame::kEndEffector, robot_state); // column-major
   eJe_.resize(6, 7);                                                                                 // row-major
-  for (size_t i = 0; i < 6; i++) {
-    for (size_t j = 0; j < 7; j++) {
+  for (unsigned int i = 0; i < 6; ++i) {
+    for (unsigned int j = 0; j < 7; ++j) {
       eJe_[i][j] = jacobian[j * 6 + i];
     }
   }
@@ -537,14 +541,15 @@ void vpRobotFranka::get_eJe(const vpColVector &q, vpMatrix &eJe_)
   franka::RobotState robot_state = getRobotInternalState();
 
   std::array<double, 7> q_array;
-  for (size_t i = 0; i < 7; i++)
+  for (unsigned int i = 0; i < 7; ++i) {
     q_array[i] = q[i];
+  }
 
   std::array<double, 42> jacobian = m_model->bodyJacobian(franka::Frame::kEndEffector, q_array, robot_state.F_T_EE,
                                                           robot_state.EE_T_K); // column-major
   eJe_.resize(6, 7);                                                           // row-major
-  for (size_t i = 0; i < 6; i++) {
-    for (size_t j = 0; j < 7; j++) {
+  for (unsigned int i = 0; i < 6; ++i) {
+    for (unsigned int j = 0; j < 7; ++j) {
       eJe_[i][j] = jacobian[j * 6 + i];
     }
   }
@@ -566,8 +571,8 @@ void vpRobotFranka::get_fJe(vpMatrix &fJe_)
 
   std::array<double, 42> jacobian = m_model->zeroJacobian(franka::Frame::kEndEffector, robot_state); // column-major
   fJe_.resize(6, 7);                                                                                 // row-major
-  for (size_t i = 0; i < 6; i++) {
-    for (size_t j = 0; j < 7; j++) {
+  for (unsigned int i = 0; i < 6; ++i) {
+    for (unsigned int j = 0; j < 7; ++j) {
       fJe_[i][j] = jacobian[j * 6 + i];
     }
   }
@@ -595,14 +600,15 @@ void vpRobotFranka::get_fJe(const vpColVector &q, vpMatrix &fJe_)
   franka::RobotState robot_state = getRobotInternalState();
 
   std::array<double, 7> q_array;
-  for (size_t i = 0; i < 7; i++)
+  for (unsigned int i = 0; i < 7; ++i) {
     q_array[i] = q[i];
+  }
 
   std::array<double, 42> jacobian = m_model->zeroJacobian(franka::Frame::kEndEffector, q_array, robot_state.F_T_EE,
                                                           robot_state.EE_T_K); // column-major
   fJe_.resize(6, 7);                                                           // row-major
-  for (size_t i = 0; i < 6; i++) {
-    for (size_t j = 0; j < 7; j++) {
+  for (unsigned int i = 0; i < 6; ++i) {
+    for (unsigned int j = 0; j < 7; ++j) {
       fJe_[i][j] = jacobian[j * 6 + i];
     }
   }
@@ -659,7 +665,7 @@ void vpRobotFranka::setPosition(const vpRobot::vpControlFrameType frame, const v
     double speed_factor = m_positioningVelocity / 100.;
 
     std::array<double, 7> q_goal;
-    for (size_t i = 0; i < 7; i++) {
+    for (unsigned int i = 0; i < 7; ++i) {
       q_goal[i] = position[i];
     }
 
@@ -867,7 +873,7 @@ void vpRobotFranka::setVelocity(const vpRobot::vpControlFrameType frame, const v
 
     vpColVector vel_sat = vpRobot::saturateVelocities(vel, vel_max, true);
 
-    for (size_t i = 0; i < m_dq_des.size(); i++) { // TODO create a function to convert
+    for (unsigned int i = 0; i < m_dq_des.size(); ++i) { // TODO create a function to convert
       m_dq_des[i] = vel_sat[i];
     }
 
@@ -884,10 +890,12 @@ void vpRobotFranka::setVelocity(const vpRobot::vpControlFrameType frame, const v
     }
     vpColVector vel_max(6);
 
-    for (unsigned int i = 0; i < 3; i++)
+    for (unsigned int i = 0; i < 3; ++i) {
       vel_max[i] = getMaxTranslationVelocity();
-    for (unsigned int i = 3; i < 6; i++)
+    }
+    for (unsigned int i = 3; i < 6; ++i) {
       vel_max[i] = getMaxRotationVelocity();
+    }
 
     m_v_cart_des = vpRobot::saturateVelocities(vel, vel_max, true);
 
@@ -932,7 +940,7 @@ void vpRobotFranka::setForceTorque(const vpRobot::vpControlFrameType frame, cons
                              ft.size());
     }
 
-    for (size_t i = 0; i < m_tau_J_des.size(); i++) { // TODO create a function to convert
+    for (unsigned int i = 0; i < m_tau_J_des.size(); ++i) { // TODO create a function to convert
       m_tau_J_des[i] = ft[i];
     }
     // TODO: Introduce force/torque saturation
@@ -999,8 +1007,9 @@ franka::RobotState vpRobotFranka::getRobotInternalState()
 vpColVector vpRobotFranka::getJointMin() const
 {
   vpColVector q_min(m_q_min.size());
-  for (size_t i = 0; i < m_q_min.size(); i++)
+  for (unsigned int i = 0; i < m_q_min.size(); ++i) {
     q_min[i] = m_q_min[i];
+  }
 
   return q_min;
 }
@@ -1012,8 +1021,9 @@ vpColVector vpRobotFranka::getJointMin() const
 vpColVector vpRobotFranka::getJointMax() const
 {
   vpColVector q_max(m_q_max.size());
-  for (size_t i = 0; i < m_q_max.size(); i++)
+  for (unsigned int i = 0; i < m_q_max.size(); ++i) {
     q_max[i] = m_q_max[i];
+  }
 
   return q_max;
 }
@@ -1146,15 +1156,16 @@ bool vpRobotFranka::readPosFile(const std::string &filename, vpColVector &q)
       std::istringstream ss(line);
       std::string key_;
       ss >> key_;
-      for (unsigned int i = 0; i < njoints; i++)
+      for (unsigned int i = 0; i < njoints; ++i) {
         ss >> q[i];
+      }
       pos_found = true;
       break;
     }
   }
 
   // converts rotations from degrees into radians
-  for (unsigned int i = 0; i < njoints; i++) {
+  for (unsigned int i = 0; i < njoints; ++i) {
     q[i] = vpMath::rad(q[i]);
   }
 

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -184,7 +184,7 @@ public:
     // // Step 1 and 2: filter the image and compute the gradient, if not given by the user
     if (!m_areGradientAvailable) {
       vpImage<vpHSV<ArithmeticType, useFullScale>> Iblur;
-      vpImageFilter::gaussianBlur(Ihsv, Iblur, m_gaussianKernelSize, m_gaussianStdev, true, mp_mask);
+      vpImageFilter::gaussianBlur(Ihsv, Iblur, static_cast<unsigned int>(m_gaussianKernelSize), m_gaussianStdev, true, mp_mask);
       vpImageFilter::gradientFilter(Iblur, m_dIx, m_dIy, m_nbThread, mp_mask, m_filteringAndGradientType);
     }
     m_areGradientAvailable = false; // Reset for next call
@@ -193,7 +193,7 @@ public:
     float upperThreshold = m_upperThreshold;
     float lowerThreshold = m_lowerThreshold;
     if (upperThreshold < 0) {
-      upperThreshold = vpImageFilter::computeCannyThreshold(Ihsv, lowerThreshold, &m_dIx, &m_dIy, m_gaussianKernelSize,
+      upperThreshold = vpImageFilter::computeCannyThreshold(Ihsv, lowerThreshold, &m_dIx, &m_dIy, static_cast<unsigned int>(m_gaussianKernelSize),
                                                             m_gaussianStdev, m_lowerThresholdRatio,
                                                             m_upperThresholdRatio, m_filteringAndGradientType, mp_mask);
     }

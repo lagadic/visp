@@ -91,8 +91,8 @@ int main(int argc, const char *argv[])
     int opt_record_mode = 0;
     int opt_fps = 30;
     bool opt_display = true;
-    unsigned int opt_width = 640;
-    unsigned int opt_height = 480;
+    int opt_width = 640;
+    int opt_height = 480;
     bool save_distortion = false;
 
     for (int i = 1; i < argc; i++) {
@@ -217,7 +217,7 @@ int main(int argc, const char *argv[])
 
       std::stringstream ss;
       ss << "Acquisition time: " << std::setprecision(3) << vpTime::measureTimeMs() - t << " ms";
-      vpDisplay::displayText(I, I.getHeight() - 20, 10, ss.str(), vpColor::red);
+      vpDisplay::displayText(I, static_cast<int>(I.getHeight()) - 20, 10, ss.str(), vpColor::red);
       vpDisplay::flush(I);
     }
     image_queue.cancel();

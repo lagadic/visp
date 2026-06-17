@@ -339,8 +339,8 @@ TEST_CASE("Test visp::cnpy::npy_load/npz_save", "[visp::cnpy I/O]")
       REQUIRE(vec_cMo_save_copy.size() == arr_vec_data.shape[0]);
 
       for (size_t i = 0; i < arr_vec_data.shape[0]; i++) {
-        std::vector<double>::const_iterator first = vec_cMo_read.begin() + i*arr_vec_data.shape[1];
-        std::vector<double>::const_iterator last = first + arr_vec_data.shape[1];
+        std::vector<double>::const_iterator first = vec_cMo_read.begin() + static_cast<std::ptrdiff_t>(i * arr_vec_data.shape[1]);
+        std::vector<double>::const_iterator last = first + static_cast<std::ptrdiff_t>(arr_vec_data.shape[1]);
         std::vector<double> subvec_cMo_read(first, last);
         vpHomogeneousMatrix cMo_read(subvec_cMo_read);
         // std::cout << "cMo_read:\n" << cMo_read << std::endl;
@@ -354,8 +354,8 @@ TEST_CASE("Test visp::cnpy::npy_load/npz_save", "[visp::cnpy I/O]")
       REQUIRE(arr_vec_data_direct.shape[0] == arr_vec_data.shape[0]);
 
       for (size_t i = 0; i < arr_vec_data_direct.shape[0]; i++) {
-        std::vector<double>::const_iterator first = vec_cMo_read_direct.begin() + i*arr_vec_data_direct.shape[1];
-        std::vector<double>::const_iterator last = first + arr_vec_data_direct.shape[1];
+        std::vector<double>::const_iterator first = vec_cMo_read_direct.begin() + static_cast<std::ptrdiff_t>(i * arr_vec_data_direct.shape[1]);
+        std::vector<double>::const_iterator last = first + static_cast<std::ptrdiff_t>(arr_vec_data_direct.shape[1]);
         std::vector<double> subvec_cMo_read_direct(first, last);
         vpHomogeneousMatrix cMo_read_direct(subvec_cMo_read_direct);
         // std::cout << "cMo_read:\n" << cMo_read << std::endl;

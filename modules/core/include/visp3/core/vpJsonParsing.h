@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,7 +81,7 @@ nlohmann::json flagsToJSON(const unsigned int flags, const std::vector<E> &optio
 {
   nlohmann::json j = nlohmann::json::array();
   for (const E option : options) {
-    if (flags & option) {
+    if (static_cast<E>(flags) & option) {
       j.push_back(option);
     }
   }

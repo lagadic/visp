@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,7 +93,8 @@ void vpPanda3DBaseRenderer::initFramework()
   m_isWindowOwner = true;
 
   WindowProperties winProps;
-  winProps.set_size(LVecBase2i(m_renderParameters.getImageWidth(), m_renderParameters.getImageHeight()));
+  winProps.set_size(LVecBase2i(static_cast<int>(m_renderParameters.getImageWidth()),
+                               static_cast<int>(m_renderParameters.getImageHeight())));
   int flags = GraphicsPipe::BF_refuse_window;
   m_window = framework.open_window(winProps, flags, nullptr, nullptr);
   // try and reopen with visible window
@@ -176,7 +177,8 @@ void vpPanda3DBaseRenderer::setRenderParameters(const vpPanda3DRenderParameters 
         throw vpException(vpException::fatalError, "Panda3D: could not cast to GraphicsBuffer when rendering.");
       }
       else {
-        buf->set_size(m_renderParameters.getImageWidth(), m_renderParameters.getImageHeight());
+        buf->set_size(static_cast<int>(m_renderParameters.getImageWidth()),
+                      static_cast<int>(m_renderParameters.getImageHeight()));
       }
     }
   }
@@ -253,7 +255,7 @@ void vpPanda3DBaseRenderer::computeNearAndFarPlanesFromNode(const std::string &n
     const vpHomogeneousMatrix wTcam = getCameraPose();
     const vpHomogeneousMatrix wTobj = getNodePose(name) * vpPanda3DBaseRenderer::PANDA_T_VISP;
     const vpHomogeneousMatrix camTobj = wTcam.inverse() * wTobj;
-    for (unsigned int i = 0; i < 8; ++i) {
+    for (int i = 0; i < 8; ++i) {
       const LPoint3 p = box.get_point(i);
       const vpColVector pv = vpColVector({ p.get_x(), -p.get_z(), p.get_y(), 1.0 });
       vpColVector cpV = camTobj * pv;
@@ -286,7 +288,7 @@ void vpPanda3DBaseRenderer::computeNearAndFarPlanesFromNode(const std::string &n
       const BoundingBox *box = (const BoundingBox *)volume;
       double minZ = std::numeric_limits<double>::max(), maxZ = 0.0;
 
-      for (unsigned int i = 0; i < 8; ++i) {
+      for (int i = 0; i < 8; ++i) {
         const LPoint3 p = box->get_point(i);
         vpColVector cp = camTobj * vpColVector({ p.get_x(), -p.get_z(), p.get_y(), 1.0 });
         double Z = cp[2] / cp[3];
@@ -405,6 +407,6 @@ END_VISP_NAMESPACE
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_ar.a(vpPanda3DBaseRenderer.cpp.o) has no symbols
-void dummy_vpPanda3DBaseRenderer() { }
+void dummy_vpPanda3DBaseRenderer() {}
 
 #endif

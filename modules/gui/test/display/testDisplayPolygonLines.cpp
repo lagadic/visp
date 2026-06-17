@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -182,7 +182,7 @@ int main(int argc, const char **argv)
     vpDisplay::flush(I);
     vpDisplay::getClick(I);
 
-    d2->init(I_color, I.getWidth(), 0, "Color image");
+    d2->init(I_color, static_cast<int>(I_color.getWidth()), 0, "Color image");
     // Create colormap
     for (unsigned int i = 0; i < I_color.getHeight(); i++) {
       double hue = i / static_cast<double>(I_color.getHeight()), saturation = 1.0, value = 1.0;

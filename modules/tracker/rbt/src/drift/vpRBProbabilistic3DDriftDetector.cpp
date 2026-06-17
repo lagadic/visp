@@ -51,16 +51,16 @@ double vpRBProbabilistic3DDriftDetector::score(const vpRBFeatureTrackerInput &fr
     return 1.0;
   }
     // Step 0: project all points
+
+  int nbPoints = static_cast<int>(m_points.size()); // int because OpenMP on Windows does not support uint
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-  for (int i = 0; i < static_cast<int>(m_points.size()); ++i) {
-    vpStored3DSurfaceColorPoint &p = m_points[i];
+  for (int i = 0; i < nbPoints; ++i) {
+    const unsigned int i_ = static_cast<unsigned int>(i);
+    vpStored3DSurfaceColorPoint &p = m_points[i_];
     p.update(cTo, frame.renders.cMo, frame.cam);
   }
-
-
-
 
   // Step 1: gather points visible in both images and in render
 
@@ -73,8 +73,8 @@ double vpRBProbabilistic3DDriftDetector::score(const vpRBFeatureTrackerInput &fr
 #ifdef VISP_HAVE_OPENMP
 #pragma omp for
 #endif
-    for (int i = 0; i < static_cast<int>(m_points.size()); ++i) {
-      vpStored3DSurfaceColorPoint &p = m_points[i];
+    for (int i = 0; i < nbPoints; ++i) {
+      vpStored3DSurfaceColorPoint &p = m_points[static_cast<unsigned int>(i)];
       p.visible = true;
       if (
         p.projRenderPx[0] < 2 || static_cast<unsigned int>(p.projRenderPx[0]) >= frame.IRGB.getWidth() - 2
@@ -154,11 +154,12 @@ double vpRBProbabilistic3DDriftDetector::score(const vpRBFeatureTrackerInput &fr
       std::vector<double> scoresLocal;
       double weightSumLocal = 0.0;
       double scoreLocal = 0.0;
+      int nbVisiblePoints = static_cast<int>(visiblePoints.size()); // int because OpenMP on Windows does not support uint
 #ifdef VISP_HAVE_OPENMP
 #pragma omp for
 #endif
-      for (int i = 0; i < static_cast<int>(visiblePoints.size()); ++i) {
-        vpStored3DSurfaceColorPoint *p = visiblePoints[i];
+      for (int i = 0; i < nbVisiblePoints; ++i) {
+        vpStored3DSurfaceColorPoint *p = visiblePoints[static_cast<unsigned int>(i)];
 
         const bool hasCorrectDepth = frame.hasDepth() && frame.depth[p->projCurrPx[1]][p->projCurrPx[0]] > 0.f;
         const double Z = hasCorrectDepth ? frame.depth[p->projCurrPx[1]][p->projCurrPx[0]] : 0.0;

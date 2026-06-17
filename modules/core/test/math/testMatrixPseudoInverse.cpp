@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -405,8 +405,8 @@ int test_pseudo_inverse_default(bool verbose, const std::vector<vpMatrix> &bench
   // test 7
   t = vpTime::measureTimeMs();
   for (unsigned int i = 0; i < bench.size(); i++) {
-    unsigned int rank_bench = std::min(bench[i].getRows(), bench[i].getCols());
-    unsigned int rank = bench[i].pseudoInverse(PI[i], static_cast<int>(rank_bench));
+    int rank_bench = std::min(static_cast<int>(bench[i].getRows()), static_cast<int>(bench[i].getCols()));
+    int rank = bench[i].pseudoInverse(PI[i], static_cast<int>(rank_bench));
     if (rank != rank_bench) {
       if (verbose) {
         std::cout << "  Error in the rank (" << rank << ")" << " while expected rank is " << rank_bench << std::endl;
@@ -422,8 +422,8 @@ int test_pseudo_inverse_default(bool verbose, const std::vector<vpMatrix> &bench
   // test 8
   t = vpTime::measureTimeMs();
   for (unsigned int i = 0; i < bench.size(); i++) {
-    unsigned int rank_bench = std::min(bench[i].getRows(), bench[i].getCols());
-    unsigned int rank = bench[i].pseudoInverse(PI[i], sv[i], static_cast<int>(rank_bench));
+    int rank_bench = std::min(static_cast<int>(bench[i].getRows()), static_cast<int>(bench[i].getCols()));
+    int rank = bench[i].pseudoInverse(PI[i], sv[i], rank_bench);
     if (rank != rank_bench) {
       if (verbose) {
         std::cout << "  Error in the rank (" << rank << ")" << " while expected rank is " << rank_bench << std::endl;
@@ -439,8 +439,8 @@ int test_pseudo_inverse_default(bool verbose, const std::vector<vpMatrix> &bench
   // test 9
   t = vpTime::measureTimeMs();
   for (unsigned int i = 0; i < bench.size(); i++) {
-    unsigned int rank_bench = std::min(bench[i].getRows(), bench[i].getCols());
-    unsigned int rank = bench[i].pseudoInverse(PI[i], sv[i], static_cast<int>(rank_bench), imA[i], imAt[i]);
+    int rank_bench = std::min(static_cast<int>(bench[i].getRows()), static_cast<int>(bench[i].getCols()));
+    int rank = bench[i].pseudoInverse(PI[i], sv[i], rank_bench, imA[i], imAt[i]);
     if (rank != rank_bench) {
       if (verbose) {
         std::cout << "  Error in the rank (" << rank << ")" << " while expected rank is " << rank_bench << std::endl;
@@ -456,8 +456,8 @@ int test_pseudo_inverse_default(bool verbose, const std::vector<vpMatrix> &bench
   // test 10
   t = vpTime::measureTimeMs();
   for (unsigned int i = 0; i < bench.size(); i++) {
-    unsigned int rank_bench = std::min(bench[i].getRows(), bench[i].getCols());
-    unsigned int rank = bench[i].pseudoInverse(PI[i], sv[i], static_cast<int>(rank_bench), imA[i], imAt[i], kerAt[i]);
+    int rank_bench = std::min(static_cast<int>(bench[i].getRows()), static_cast<int>(bench[i].getCols()));
+    int rank = bench[i].pseudoInverse(PI[i], sv[i], rank_bench, imA[i], imAt[i], kerAt[i]);
     if (rank != rank_bench) {
       if (verbose) {
         std::cout << "  Error in the rank (" << rank << ")" << " while expected rank is " << rank_bench << std::endl;
@@ -564,8 +564,8 @@ int test_pseudo_inverse_eigen3(bool verbose, const std::vector<vpMatrix> &bench,
   // test 6
   t = vpTime::measureTimeMs();
   for (unsigned int i = 0; i < bench.size(); i++) {
-    unsigned int rank_bench = std::min(bench[i].getRows(), bench[i].getCols());
-    unsigned int rank = bench[i].pseudoInverseEigen3(PI[i], static_cast<int>(rank_bench));
+    int rank_bench = std::min(static_cast<int>(bench[i].getRows()), static_cast<int>(bench[i].getCols()));
+    int rank = bench[i].pseudoInverseEigen3(PI[i], static_cast<int>(rank_bench));
     if (rank != rank_bench) {
       if (verbose) {
         std::cout << "  Error in the rank (" << rank << ")" << " while expected rank is " << rank_bench << std::endl;
@@ -581,8 +581,8 @@ int test_pseudo_inverse_eigen3(bool verbose, const std::vector<vpMatrix> &bench,
   // test 7
   t = vpTime::measureTimeMs();
   for (unsigned int i = 0; i < bench.size(); i++) {
-    unsigned int rank_bench = std::min(bench[i].getRows(), bench[i].getCols());
-    unsigned int rank = bench[i].pseudoInverseEigen3(PI[i], sv[i], static_cast<int>(rank_bench));
+    int rank_bench = std::min(static_cast<int>(bench[i].getRows()), static_cast<int>(bench[i].getCols()));
+    int rank = bench[i].pseudoInverseEigen3(PI[i], sv[i], rank_bench);
     if (rank != rank_bench) {
       if (verbose) {
         std::cout << "  Error in the rank (" << rank << ")" << " while expected rank is " << rank_bench << std::endl;
@@ -598,8 +598,8 @@ int test_pseudo_inverse_eigen3(bool verbose, const std::vector<vpMatrix> &bench,
   // test 8
   t = vpTime::measureTimeMs();
   for (unsigned int i = 0; i < bench.size(); i++) {
-    unsigned int rank_bench = std::min(bench[i].getRows(), bench[i].getCols());
-    unsigned int rank = bench[i].pseudoInverseEigen3(PI[i], sv[i], static_cast<int>(rank_bench), imA[i], imAt[i], kerAt[i]);
+    int rank_bench = std::min(static_cast<int>(bench[i].getRows()), static_cast<int>(bench[i].getCols()));
+    int rank = bench[i].pseudoInverseEigen3(PI[i], sv[i], rank_bench, imA[i], imAt[i], kerAt[i]);
     if (rank != rank_bench) {
       if (verbose) {
         std::cout << "  Error in the rank (" << rank << ")" << " while expected rank is " << rank_bench << std::endl;
@@ -644,8 +644,8 @@ int test_pseudo_inverse_lapack(bool verbose, const std::vector<vpMatrix> &bench,
   // test 2
   t = vpTime::measureTimeMs();
   for (unsigned int i = 0; i < bench.size(); i++) {
-    unsigned int rank_bench = std::min(bench[i].getRows(), bench[i].getCols());
-    unsigned int rank = bench[i].pseudoInverseLapack(PI[i]);
+    int rank_bench = std::min(static_cast<int>(bench[i].getRows()), static_cast<int>(bench[i].getCols()));
+    int rank = static_cast<int>(bench[i].pseudoInverseLapack(PI[i]));
     if (rank != rank_bench) {
       if (verbose) {
         std::cout << "  Error in the rank (" << rank << ")" << " while expected rank is " << rank_bench << std::endl;
@@ -661,8 +661,8 @@ int test_pseudo_inverse_lapack(bool verbose, const std::vector<vpMatrix> &bench,
   // test 3
   t = vpTime::measureTimeMs();
   for (unsigned int i = 0; i < bench.size(); i++) {
-    unsigned int rank_bench = std::min(bench[i].getRows(), bench[i].getCols());
-    unsigned int rank = bench[i].pseudoInverseLapack(PI[i], sv[i]);
+    int rank_bench = std::min(static_cast<int>(bench[i].getRows()), static_cast<int>(bench[i].getCols()));
+    int rank = static_cast<int>(bench[i].pseudoInverseLapack(PI[i], sv[i]));
     if (rank != rank_bench) {
       if (verbose) {
         std::cout << "  Error in the rank (" << rank << ")" << " while expected rank is " << rank_bench << std::endl;
@@ -678,8 +678,8 @@ int test_pseudo_inverse_lapack(bool verbose, const std::vector<vpMatrix> &bench,
   // test 4
   t = vpTime::measureTimeMs();
   for (unsigned int i = 0; i < bench.size(); i++) {
-    unsigned int rank_bench = std::min(bench[i].getRows(), bench[i].getCols());
-    unsigned int rank = bench[i].pseudoInverseLapack(PI[i], sv[i], 1e-6, imA[i], imAt[i], kerAt[i]);
+    int rank_bench = std::min(static_cast<int>(bench[i].getRows()), static_cast<int>(bench[i].getCols()));
+    int rank = static_cast<int>(bench[i].pseudoInverseLapack(PI[i], sv[i], 1e-6, imA[i], imAt[i], kerAt[i]));
     if (rank != rank_bench) {
       if (verbose) {
         std::cout << "  Error in the rank (" << rank << ")" << " while expected rank is " << rank_bench << std::endl;
@@ -697,8 +697,8 @@ int test_pseudo_inverse_lapack(bool verbose, const std::vector<vpMatrix> &bench,
   // test 5
   t = vpTime::measureTimeMs();
   for (unsigned int i = 0; i < bench.size(); i++) {
-    unsigned int rank_bench = std::min(bench[i].getRows(), bench[i].getCols());
-    PI[i] = bench[i].pseudoInverseLapack(static_cast<int>(rank_bench));
+    int rank_bench = std::min(static_cast<int>(bench[i].getRows()), static_cast<int>(bench[i].getCols()));
+    PI[i] = bench[i].pseudoInverseLapack(rank_bench);
   }
   time.push_back(vpTime::measureTimeMs() - t);
   for (unsigned int i = 0; i < time.size(); i++) {
@@ -708,8 +708,8 @@ int test_pseudo_inverse_lapack(bool verbose, const std::vector<vpMatrix> &bench,
   // test 6
   t = vpTime::measureTimeMs();
   for (unsigned int i = 0; i < bench.size(); i++) {
-    unsigned int rank_bench = std::min(bench[i].getRows(), bench[i].getCols());
-    unsigned int rank = bench[i].pseudoInverseLapack(PI[i], static_cast<int>(rank_bench));
+    int rank_bench = std::min(static_cast<int>(bench[i].getRows()), static_cast<int>(bench[i].getCols()));
+    int rank = bench[i].pseudoInverseLapack(PI[i], static_cast<int>(rank_bench));
     if (rank != rank_bench) {
       if (verbose) {
         std::cout << "  Error in the rank (" << rank << ")" << " while expected rank is " << rank_bench << std::endl;
@@ -725,8 +725,8 @@ int test_pseudo_inverse_lapack(bool verbose, const std::vector<vpMatrix> &bench,
   // test 7
   t = vpTime::measureTimeMs();
   for (unsigned int i = 0; i < bench.size(); i++) {
-    unsigned int rank_bench = std::min(bench[i].getRows(), bench[i].getCols());
-    unsigned int rank = bench[i].pseudoInverseLapack(PI[i], sv[i], static_cast<int>(rank_bench));
+    int rank_bench = std::min(static_cast<int>(bench[i].getRows()), static_cast<int>(bench[i].getCols()));
+    int rank = bench[i].pseudoInverseLapack(PI[i], sv[i], static_cast<int>(rank_bench));
     if (rank != rank_bench) {
       if (verbose) {
         std::cout << "  Error in the rank (" << rank << ")" << " while expected rank is " << rank_bench << std::endl;
@@ -742,8 +742,8 @@ int test_pseudo_inverse_lapack(bool verbose, const std::vector<vpMatrix> &bench,
   // test 8
   t = vpTime::measureTimeMs();
   for (unsigned int i = 0; i < bench.size(); i++) {
-    unsigned int rank_bench = std::min(bench[i].getRows(), bench[i].getCols());
-    unsigned int rank = bench[i].pseudoInverseLapack(PI[i], sv[i], static_cast<int>(rank_bench), imA[i], imAt[i], kerAt[i]);
+    int rank_bench = std::min(static_cast<int>(bench[i].getRows()), static_cast<int>(bench[i].getCols()));
+    int rank = bench[i].pseudoInverseLapack(PI[i], sv[i], static_cast<int>(rank_bench), imA[i], imAt[i], kerAt[i]);
     if (rank != rank_bench) {
       if (verbose) {
         std::cout << "  Error in the rank (" << rank << ")" << " while expected rank is " << rank_bench << std::endl;
@@ -840,8 +840,8 @@ int test_pseudo_inverse_opencv(bool verbose, const std::vector<vpMatrix> &bench,
   // test 5
   t = vpTime::measureTimeMs();
   for (unsigned int i = 0; i < bench.size(); i++) {
-    unsigned int rank_bench = std::min(bench[i].getRows(), bench[i].getCols());
-    PI[i] = bench[i].pseudoInverseOpenCV(static_cast<int>(rank_bench));
+    int rank_bench = std::min(static_cast<int>(bench[i].getRows()), static_cast<int>(bench[i].getCols()));
+    PI[i] = bench[i].pseudoInverseOpenCV(rank_bench);
   }
   time.push_back(vpTime::measureTimeMs() - t);
   for (unsigned int i = 0; i < time.size(); i++) {
@@ -851,8 +851,8 @@ int test_pseudo_inverse_opencv(bool verbose, const std::vector<vpMatrix> &bench,
   // test 6
   t = vpTime::measureTimeMs();
   for (unsigned int i = 0; i < bench.size(); i++) {
-    unsigned int rank_bench = std::min(bench[i].getRows(), bench[i].getCols());
-    unsigned int rank = bench[i].pseudoInverseOpenCV(PI[i], static_cast<int>(rank_bench));
+    int rank_bench = std::min(static_cast<int>(bench[i].getRows()), static_cast<int>(bench[i].getCols()));
+    int rank = bench[i].pseudoInverseOpenCV(PI[i], static_cast<int>(rank_bench));
     if (rank != rank_bench) {
       if (verbose) {
         std::cout << "  Error in the rank (" << rank << ")" << " while expected rank is " << rank_bench << std::endl;
@@ -868,8 +868,8 @@ int test_pseudo_inverse_opencv(bool verbose, const std::vector<vpMatrix> &bench,
   // test 7
   t = vpTime::measureTimeMs();
   for (unsigned int i = 0; i < bench.size(); i++) {
-    unsigned int rank_bench = std::min(bench[i].getRows(), bench[i].getCols());
-    unsigned int rank = bench[i].pseudoInverseOpenCV(PI[i], sv[i], static_cast<int>(rank_bench));
+    int rank_bench = std::min(static_cast<int>(bench[i].getRows()), static_cast<int>(bench[i].getCols()));
+    int rank = bench[i].pseudoInverseOpenCV(PI[i], sv[i], rank_bench);
     if (rank != rank_bench) {
       if (verbose) {
         std::cout << "  Error in the rank (" << rank << ")" << " while expected rank is " << rank_bench << std::endl;
@@ -885,8 +885,8 @@ int test_pseudo_inverse_opencv(bool verbose, const std::vector<vpMatrix> &bench,
   // test 8
   t = vpTime::measureTimeMs();
   for (unsigned int i = 0; i < bench.size(); i++) {
-    unsigned int rank_bench = std::min(bench[i].getRows(), bench[i].getCols());
-    unsigned int rank = bench[i].pseudoInverseOpenCV(PI[i], sv[i], static_cast<int>(rank_bench), imA[i], imAt[i], kerAt[i]);
+    int rank_bench = std::min(static_cast<int>(bench[i].getRows()), static_cast<int>(bench[i].getCols()));
+    int rank = bench[i].pseudoInverseOpenCV(PI[i], sv[i], rank_bench, imA[i], imAt[i], kerAt[i]);
     if (rank != rank_bench) {
       if (verbose) {
         std::cout << "  Error in the rank (" << rank << ")" << " while expected rank is " << rank_bench << std::endl;

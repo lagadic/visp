@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -273,7 +273,7 @@ TEST_CASE("Nearest Neighbor image resize (OpenCV)", "[benchmark]")
 
     BENCHMARK("Benchmark Nearest Neighbor uchar image resize (OpenCV)")
     {
-      cv::resize(img, img_resize, cv::Size(g_resize_width, g_resize_height), 0, 0, cv::INTER_NEAREST);
+      cv::resize(img, img_resize, cv::Size(static_cast<int>(g_resize_width), static_cast<int>(g_resize_height)), 0, 0, cv::INTER_NEAREST);
       return img_resize;
     };
   }
@@ -285,7 +285,7 @@ TEST_CASE("Nearest Neighbor image resize (OpenCV)", "[benchmark]")
 
     BENCHMARK("Benchmark Nearest Neighbor BGR image resize (OpenCV)")
     {
-      cv::resize(img, img_resize, cv::Size(g_resize_width, g_resize_height), 0, 0, cv::INTER_NEAREST);
+      cv::resize(img, img_resize, cv::Size(static_cast<int>(g_resize_width), static_cast<int>(g_resize_height)), 0, 0, cv::INTER_NEAREST);
       return img_resize;
     };
   }
@@ -300,7 +300,7 @@ TEST_CASE("Bilinear image resize (OpenCV)", "[benchmark]")
 
     BENCHMARK("Benchmark Bilinear uchar image resize (OpenCV)")
     {
-      cv::resize(img, img_resize, cv::Size(g_resize_width, g_resize_height), 0, 0, cv::INTER_LINEAR);
+      cv::resize(img, img_resize, cv::Size(static_cast<int>(g_resize_width), static_cast<int>(g_resize_height)), 0, 0, cv::INTER_LINEAR);
       return img_resize;
     };
   }
@@ -312,7 +312,7 @@ TEST_CASE("Bilinear image resize (OpenCV)", "[benchmark]")
 
     BENCHMARK("Benchmark Bilinear BGR image resize (OpenCV)")
     {
-      cv::resize(img, img_resize, cv::Size(g_resize_width, g_resize_height), 0, 0, cv::INTER_LINEAR);
+      cv::resize(img, img_resize, cv::Size(static_cast<int>(g_resize_width), static_cast<int>(g_resize_height)), 0, 0, cv::INTER_LINEAR);
       return img_resize;
     };
   }
@@ -327,7 +327,7 @@ TEST_CASE("Area image resize (OpenCV)", "[benchmark]")
 
     BENCHMARK("Benchmark Area uchar image resize (OpenCV)")
     {
-      cv::resize(img, img_resize, cv::Size(g_resize_width, g_resize_height), 0, 0, cv::INTER_AREA);
+      cv::resize(img, img_resize, cv::Size(static_cast<int>(g_resize_width), static_cast<int>(g_resize_height)), 0, 0, cv::INTER_AREA);
       return img_resize;
     };
   }
@@ -339,7 +339,7 @@ TEST_CASE("Area image resize (OpenCV)", "[benchmark]")
 
     BENCHMARK("Benchmark Area BGR image resize (OpenCV)")
     {
-      cv::resize(img, img_resize, cv::Size(g_resize_width, g_resize_height), 0, 0, cv::INTER_AREA);
+      cv::resize(img, img_resize, cv::Size(static_cast<int>(g_resize_width), static_cast<int>(g_resize_height)), 0, 0, cv::INTER_AREA);
       return img_resize;
     };
   }
@@ -354,7 +354,7 @@ TEST_CASE("Bicubic image resize (OpenCV)", "[benchmark]")
 
     BENCHMARK("Benchmark Bicubic uchar image resize (OpenCV)")
     {
-      cv::resize(img, img_resize, cv::Size(g_resize_width, g_resize_height), 0, 0, cv::INTER_CUBIC);
+      cv::resize(img, img_resize, cv::Size(static_cast<int>(g_resize_width), static_cast<int>(g_resize_height)), 0, 0, cv::INTER_CUBIC);
       return img_resize;
     };
   }
@@ -366,7 +366,7 @@ TEST_CASE("Bicubic image resize (OpenCV)", "[benchmark]")
 
     BENCHMARK("Benchmark Bicubic BGR image resize (OpenCV)")
     {
-      cv::resize(img, img_resize, cv::Size(g_resize_width, g_resize_height), 0, 0, cv::INTER_CUBIC);
+      cv::resize(img, img_resize, cv::Size(static_cast<int>(g_resize_width), static_cast<int>(g_resize_height)), 0, 0, cv::INTER_CUBIC);
       return img_resize;
     };
   }

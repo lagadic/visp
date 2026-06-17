@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -199,7 +199,7 @@ void convertDepthImageToDisplayImage(const vpImage<float> &Idepth, vpImage<unsig
   Idisp.resize(Idepth.getHeight(), Idepth.getWidth());
   float a = 255.f / (min - max);
   float b = 255.f - a * min;
-  int size = Idepth.getSize();
+  int size = static_cast<int>(Idepth.getSize());
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif

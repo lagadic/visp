@@ -272,7 +272,7 @@ vpLuminancePCA vpLuminancePCA::learn(const vpMatrix &images, const unsigned int 
 //vpMatrixZigZagIndex
 vpLuminanceDCT::vpMatrixZigZagIndex::vpMatrixZigZagIndex() {}
 
-void vpLuminanceDCT::vpMatrixZigZagIndex::init(unsigned rows, unsigned cols)
+void vpLuminanceDCT::vpMatrixZigZagIndex::init(unsigned int rows, unsigned int cols)
 {
   // Adapted from  https://www.geeksforgeeks.org/print-matrix-in-zig-zag-fashion/
   m_colIndex.resize(rows * cols);
@@ -290,8 +290,8 @@ void vpLuminanceDCT::vpMatrixZigZagIndex::init(unsigned rows, unsigned cols)
   int mindim = std::min(rowCount, colCount);
   for (int len = 1; len <= mindim; ++len) {
     for (int i = 0; i < len; ++i) {
-      m_rowIndex[index] = row;
-      m_colIndex[index] = col;
+      m_rowIndex[index] = static_cast<unsigned int>(row);
+      m_colIndex[index] = static_cast<unsigned int>(col);
       ++index;
       if (i + 1 == len) {
         break;
@@ -349,8 +349,8 @@ void vpLuminanceDCT::vpMatrixZigZagIndex::init(unsigned rows, unsigned cols)
     }
 
     for (int i = 0; i < len; ++i) {
-      m_rowIndex[index] = row;
-      m_colIndex[index] = col;
+      m_rowIndex[index] = static_cast<unsigned int>(row);
+      m_colIndex[index] = static_cast<unsigned int>(col);
       ++index;
 
       if (i + 1 == len) {

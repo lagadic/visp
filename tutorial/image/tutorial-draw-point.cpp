@@ -19,7 +19,7 @@ int main()
 
   vpDisplay::display(I);
   //! [Point]
-  vpDisplay::displayPoint(I, I.getHeight() / 2, I.getWidth() / 2, vpColor::red, 2);
+  vpDisplay::displayPoint(I, static_cast<int>(I.getHeight()) / 2, static_cast<int>(I.getWidth()) / 2, vpColor::red, 2);
   //! [Point]
   vpDisplay::flush(I);
   std::cout << "A click to quit..." << std::endl;

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -525,9 +525,9 @@ void vpMbKltTracker::setPose(const vpImage<unsigned char> *const I, const vpImag
           cv::Point2f p(static_cast<float>(cdp[0]), static_cast<float>(cdp[1]));
           init_pts.push_back(p);
 #ifdef TARGET_OS_IPHONE
-          init_ids.push_back(static_cast<size_t>(kltpoly->getCurrentPointsInd()[static_cast<int>(iter->first)]));
+          init_ids.push_back(static_cast<long>(kltpoly->getCurrentPointsInd()[static_cast<int>(iter->first)]));
 #else
-          init_ids.push_back(static_cast<size_t>(kltpoly->getCurrentPointsInd()[static_cast<size_t>(iter->first)]));
+          init_ids.push_back(static_cast<long>(kltpoly->getCurrentPointsInd()[static_cast<size_t>(iter->first)]));
 #endif
 
           double p_mu_t_2 = cdp[0] * cdGc[2][0] + cdp[1] * cdGc[2][1] + cdGc[2][2];
@@ -1470,5 +1470,5 @@ void vpMbKltTracker::setUseKltTracking(const std::string &name, const bool &useK
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_mbt.a(vpMbKltTracker.cpp.o) has no symbols
-void dummy_vpMbKltTracker() { }
+void dummy_vpMbKltTracker() {}
 #endif // VISP_HAVE_OPENCV

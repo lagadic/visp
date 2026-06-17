@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,10 +83,10 @@ typedef struct SoftwareArguments
     , m_backend(vpImageFilter::CANNY_VISP_BACKEND)
 #endif
     , m_nbThread(-1)
-  { }
+  {}
 } SoftwareArguments;
 
-void setGradientOutsideClass(const vpImage<unsigned char> &I, const int &gaussianKernelSize, const float &gaussianStdev,
+void setGradientOutsideClass(const vpImage<unsigned char> &I, const unsigned int &gaussianKernelSize, const float &gaussianStdev,
                              vpCannyEdgeDetection &cannyDetector, const unsigned int apertureSize,
                              const vpImageFilter::vpCannyFilteringAndGradientType &filteringType,
                              vpImage<unsigned char> &dIx_uchar, vpImage<unsigned char> &dIy_uchar);
@@ -119,7 +119,7 @@ void computeMeanMaxStdev(const vpImage<T> &I, float &mean, float &max, float &st
   stdev = std::sqrt(stdev);
 }
 
-void setGradientOutsideClass(const vpImage<unsigned char> &I, const int &gaussianKernelSize, const float &gaussianStdev,
+void setGradientOutsideClass(const vpImage<unsigned char> &I, const unsigned int &gaussianKernelSize, const float &gaussianStdev,
                              vpCannyEdgeDetection &cannyDetector, const unsigned int apertureSize,
                              const vpImageFilter::vpCannyFilteringAndGradientType &filteringType,
                              vpImage<unsigned char> &dIx_uchar, vpImage<unsigned char> &dIy_uchar)
@@ -367,9 +367,10 @@ int main(int argc, const char *argv[])
 #endif
   std::cout << configAsTxt << std::endl;
 
-  vpCannyEdgeDetection cannyDetector(options.m_gaussianKernelSize, options.m_gaussianStdev, options.m_apertureSize,
-                                     options.m_lowerThresh, options.m_upperThresh, options.m_lowerThreshRatio, options.m_upperThreshRatio,
-                                     options.m_filteringType, options.m_saveEdgeList);
+  vpCannyEdgeDetection cannyDetector(options.m_gaussianKernelSize, options.m_gaussianStdev,
+                                     static_cast<unsigned int>(options.m_apertureSize),
+                                     options.m_lowerThresh, options.m_upperThresh, options.m_lowerThreshRatio,
+                                     options.m_upperThreshRatio, options.m_filteringType, options.m_saveEdgeList);
   cannyDetector.setNbThread(options.m_nbThread);
   vpImage<unsigned char> I_canny_input, I_canny_visp, dIx_uchar, dIy_uchar, I_canny_imgFilter;
   if (!options.m_img.empty()) {
@@ -402,7 +403,7 @@ int main(int argc, const char *argv[])
 
   // Computing the gradient outside the vpCannyEdgeDetection class if asked
   if (options.m_gradientOutsideClass) {
-    setGradientOutsideClass(I_canny_input, options.m_gaussianKernelSize, options.m_gaussianStdev, cannyDetector, options.m_apertureSize,
+    setGradientOutsideClass(I_canny_input, static_cast<unsigned int>(options.m_gaussianKernelSize), options.m_gaussianStdev, cannyDetector, static_cast<unsigned int>(options.m_apertureSize),
                             options.m_filteringType, dIx_uchar, dIy_uchar);
   }
   double tStart = vpTime::measureTimeMicros();
@@ -431,8 +432,8 @@ int main(int argc, const char *argv[])
   if (options.m_useVpImageFilterCanny) {
     float cannyThresh = options.m_upperThresh;
     float lowerThresh(options.m_lowerThresh);
-    vpImageFilter::canny(I_canny_input, I_canny_imgFilter, options.m_gaussianKernelSize, lowerThresh, cannyThresh,
-                         options.m_apertureSize, options.m_gaussianStdev, options.m_lowerThreshRatio, options.m_upperThreshRatio, true,
+    vpImageFilter::canny(I_canny_input, I_canny_imgFilter, static_cast<unsigned int>(options.m_gaussianKernelSize), lowerThresh, cannyThresh,
+                         static_cast<unsigned int>(options.m_apertureSize), options.m_gaussianStdev, options.m_lowerThreshRatio, options.m_upperThreshRatio, true,
                          options.m_backend, options.m_filteringType);
     drawingHelpers::display(I_canny_imgFilter, "Canny results with \"" + vpImageFilter::vpCannyBackendTypeToString(options.m_backend) + "\" backend");
   }

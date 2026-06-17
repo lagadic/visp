@@ -79,10 +79,10 @@ void vpForceTorqueGenerator::control_thread(franka::Robot *robot, std::atomic_bo
 
   franka::Torques zero_torques { {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0} };
   Eigen::VectorXd tau_joint_d(7), tau_cart_d(6);
-  for (size_t i = 0; i < 7; i++) {
+  for (Eigen::Index i = 0; i < 7; i++) {
     tau_joint_d[i] = 0;
   }
-  for (size_t i = 0; i < 6; i++) {
+  for (Eigen::Index i = 0; i < 6; i++) {
     tau_cart_d[i] = 0;
   }
 
@@ -167,8 +167,8 @@ void vpForceTorqueGenerator::control_thread(franka::Robot *robot, std::atomic_bo
     tau_error_integral += period.toSec() * (tau_joint_d - tau_ext);
 
     // Smoothly update the mass to reach the desired target value
-    for (size_t i = 0; i < 7; i++) {
-      tau_joint_d[i] = filter_gain * tau_J_des[i] + (1 - filter_gain) * tau_joint_d[i];
+    for (Eigen::Index i = 0; i < 7; i++) {
+      tau_joint_d[i] = filter_gain * tau_J_des[static_cast<size_t>(i)] + (1 - filter_gain) * tau_joint_d[i];
     }
 
     // FF + PI control
@@ -241,7 +241,7 @@ void vpForceTorqueGenerator::control_thread(franka::Robot *robot, std::atomic_bo
                     tau_error_integral += period.toSec() * (tau_d - tau_ext);
 
                     // Apply force with gradually increasing the force
-                    for (size_t i = 0; i < 7; i++) {
+                    for (Eigen::Index i = 0; i < 7; i++) {
                       tau_cart_d[i] = filter_gain * ft_cart_des[i] + (1 - filter_gain) * tau_cart_d[i];
                     }
 
@@ -262,7 +262,7 @@ void vpForceTorqueGenerator::control_thread(franka::Robot *robot, std::atomic_bo
                       log_tau_mes << std::fixed << std::setprecision(8) << tau_ext[0] << " " << tau_ext[1] << " " << tau_ext[2] << " "
                         << tau_ext[3] << " " << tau_ext[4] << " " << tau_ext[5] << " " << tau_ext[6] << std::endl;
                       log_tau_diff << std::fixed << std::setprecision(8);
-                      for (size_t i = 0; i < ft_cart_des.size(); i++) {
+                      for (Eigen::Index i = 0; i < ft_cart_des.size(); i++) {
                         log_tau_diff << ft_cart_des[i] - tau_cart_d[i] << " ";
                       }
                       log_tau_diff << std::endl;

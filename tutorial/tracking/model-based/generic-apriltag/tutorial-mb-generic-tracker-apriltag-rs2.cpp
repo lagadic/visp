@@ -360,9 +360,10 @@ int main(int argc, const char **argv)
     //! [Construct grabber]
     vpRealSense2 realsense;
     rs2::config config;
-    int width = 640, height = 480, stream_fps = 30;
-    config.enable_stream(RS2_STREAM_COLOR, width, height, RS2_FORMAT_RGBA8, stream_fps);
-    config.enable_stream(RS2_STREAM_DEPTH, width, height, RS2_FORMAT_Z16, stream_fps);
+    unsigned int width = 640, height = 480;
+    int stream_fps = 30;
+    config.enable_stream(RS2_STREAM_COLOR, static_cast<int>(width), static_cast<int>(height), RS2_FORMAT_RGBA8, stream_fps);
+    config.enable_stream(RS2_STREAM_DEPTH, static_cast<int>(width), static_cast<int>(height), RS2_FORMAT_Z16, stream_fps);
     config.disable_stream(RS2_STREAM_INFRARED);
     realsense.open(config);
 
@@ -419,11 +420,11 @@ int main(int argc, const char **argv)
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
       d_gray = vpDisplayFactory::createDisplay(I_gray, 50, 50, "Color stream");
       if (opt_use_depth)
-        d_depth = vpDisplayFactory::createDisplay(I_depth, 80 + I_gray.getWidth(), 50, "Depth stream");
+        d_depth = vpDisplayFactory::createDisplay(I_depth, 80 + static_cast<int>(I_gray.getWidth()), 50, "Depth stream");
 #else
       d_gray = vpDisplayFactory::allocateDisplay(I_gray, 50, 50, "Color stream");
       if (opt_use_depth)
-        d_depth = vpDisplayFactory::allocateDisplay(I_depth, 80 + I_gray.getWidth(), 50, "Depth stream");
+        d_depth = vpDisplayFactory::allocateDisplay(I_depth, 80 + static_cast<int>(I_gray.getWidth()), 50, "Depth stream");
 #endif
     }
 
@@ -561,7 +562,7 @@ int main(int argc, const char **argv)
           std::stringstream ss;
           ss << "Features: edges " << tracker.getNbFeaturesEdge() << ", klt " << tracker.getNbFeaturesKlt()
             << ", depth " << tracker.getNbFeaturesDepthDense();
-          vpDisplay::displayText(I_gray, I_gray.getHeight() - 30, 20, ss.str(), vpColor::red);
+          vpDisplay::displayText(I_gray, static_cast<int>(I_gray.getHeight()) - 30, 20, ss.str(), vpColor::red);
         }
       }
 

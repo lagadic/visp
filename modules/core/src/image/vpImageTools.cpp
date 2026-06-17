@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -633,12 +633,12 @@ double interpolationNearest(const vpImage<unsigned char> &I, const vpImagePoint 
   int y2 = static_cast<int>(ceil(point.get_j()));
   double v1, v2;
   if (x1 == x2) {
-    v1 = I(x1, y1);
-    v2 = I(x1, y2);
+    v1 = I(static_cast<unsigned int>(x1), static_cast<unsigned int>(y1));
+    v2 = I(static_cast<unsigned int>(x1), static_cast<unsigned int>(y2));
   }
   else {
-    v1 = ((x2 - point.get_i()) * I(x1, y1)) + ((point.get_i() - x1) * I(x2, y1));
-    v2 = ((x2 - point.get_i()) * I(x1, y2)) + ((point.get_i() - x1) * I(x2, y2));
+    v1 = ((x2 - point.get_i()) * I(static_cast<unsigned int>(x1), static_cast<unsigned int>(y1))) + ((point.get_i() - x1) * I(static_cast<unsigned int>(x2), static_cast<unsigned int>(y1)));
+    v2 = ((x2 - point.get_i()) * I(static_cast<unsigned int>(x1), static_cast<unsigned int>(y2))) + ((point.get_i() - x1) * I(static_cast<unsigned int>(x2), static_cast<unsigned int>(y2)));
   }
   if (y1 == y2) {
     return v1;
@@ -659,7 +659,8 @@ double vpImageTools::interpolate(const vpImage<unsigned char> &I, const vpImageP
 {
   switch (method) {
   case INTERPOLATION_NEAREST:
-    return I(vpMath::round(point.get_i()), vpMath::round(point.get_j()));
+    return I(static_cast<unsigned int>(vpMath::round(point.get_i())),
+             static_cast<unsigned int>(vpMath::round(point.get_j())));
   case INTERPOLATION_LINEAR: {
     return interpolationNearest(I, point);
   }
@@ -681,8 +682,8 @@ double vpImageTools::interpolate(const vpImage<unsigned char> &I, const vpImageP
 */
 void vpImageTools::extract(const vpImage<unsigned char> &src, vpImage<unsigned char> &dst, const vpRectOriented &r)
 {
-  unsigned int x_d = vpMath::round(r.getHeight());
-  unsigned int y_d = vpMath::round(r.getWidth());
+  unsigned int x_d = static_cast<unsigned int>(vpMath::round(r.getHeight()));
+  unsigned int y_d = static_cast<unsigned int>(vpMath::round(r.getWidth()));
   double x1 = r.getTopLeft().get_i();
   double y1 = r.getTopLeft().get_j();
   double t = r.getOrientation();
@@ -708,8 +709,8 @@ void vpImageTools::extract(const vpImage<unsigned char> &src, vpImage<unsigned c
 */
 void vpImageTools::extract(const vpImage<unsigned char> &src, vpImage<double> &dst, const vpRectOriented &r)
 {
-  unsigned int x_d = vpMath::round(r.getHeight());
-  unsigned int y_d = vpMath::round(r.getWidth());
+  unsigned int x_d = static_cast<unsigned int>(vpMath::round(r.getHeight()));
+  unsigned int y_d = static_cast<unsigned int>(vpMath::round(r.getWidth()));
   double x1 = r.getTopLeft().get_i();
   double y1 = r.getTopLeft().get_j();
   double t = r.getOrientation();
@@ -950,7 +951,8 @@ void vpImageTools::remap(const vpImage<vpRGBa> &I, const vpArray2D<int> &mapU, c
 #endif
   for (int i = 0; i < I_height; ++i) {
 #if defined(VISP_HAVE_SIMDLIB)
-    SimdRemap(reinterpret_cast<unsigned char *>(I.bitmap), 4, I.getWidth(), I.getHeight(), i * I.getWidth(), mapU.data,
+    SimdRemap(reinterpret_cast<unsigned char *>(I.bitmap), 4, I.getWidth(), I.getHeight(),
+              static_cast<size_t>(i) * static_cast<size_t>(I.getWidth()), mapU.data,
               mapV.data, mapDu.data, mapDv.data, reinterpret_cast<unsigned char *>(Iundist.bitmap));
 #else
     const unsigned int i_ = static_cast<unsigned int>(i);

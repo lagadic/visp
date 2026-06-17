@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -168,8 +168,8 @@ int main()
       vpPoseVector cpo_ref = vpPoseVector(-0.01, -0.02, 0.3, vpMath::rad(20), vpMath::rad(-20), vpMath::rad(10));
       vpHomogeneousMatrix cMo_ref(cpo_ref);
 
-      int npt = 4;
-      std::vector<vpPoint> P(npt); //  Point to be tracked
+      size_t npt = 4;
+      std::vector<vpPoint> P(static_cast<size_t>(npt)); //  Point to be tracked
       double Z = 0.05;             // FS: Dementhon estimation is not good when Z=0.3
 
       P[0].setWorldCoordinates(-L, -L, Z);
@@ -179,7 +179,7 @@ int main()
 
       vpPose pose;
 
-      for (int i = 0; i < npt; i++) {
+      for (size_t i = 0; i < npt; i++) {
         P[i].project(cMo_ref);
         // P[i].print();
         pose.addPoint(P[i]); // and added to the pose computation class
@@ -268,8 +268,8 @@ int main()
       vpPoseVector cpo_ref = vpPoseVector(0.01, 0.02, 0.25, vpMath::rad(5), 0, vpMath::rad(10));
       vpHomogeneousMatrix cMo_ref(cpo_ref);
 
-      int npt = 6;
-      std::vector<vpPoint> P(npt);         //  Point to be tracked
+      size_t npt = 6;
+      std::vector<vpPoint> P(static_cast<size_t>(npt));         //  Point to be tracked
       P[0].setWorldCoordinates(-L, -L, 0); // Lagrange not accurate...
       P[0].setWorldCoordinates(-L, -L, -0.02);
       P[1].setWorldCoordinates(L, -L, 0);
@@ -280,7 +280,7 @@ int main()
 
       vpPose pose;
 
-      for (int i = 0; i < npt; i++) {
+      for (size_t i = 0; i < npt; i++) {
         P[i].project(cMo_ref);
         // P[i].print();
         pose.addPoint(P[i]); // and added to the pose computation class
@@ -365,7 +365,7 @@ int main()
     std::cout << "=======================================================" << std::endl;
 
     {
-      int npt = 4;
+      size_t npt = 4;
       std::vector<vpPoint> P(npt); //  Point to be tracked
       P[0].setWorldCoordinates(-L2, -L2, 0);
       P[1].setWorldCoordinates(L2, -L2, 0.2);
@@ -377,7 +377,7 @@ int main()
       vpPoseVector cpo_ref = vpPoseVector(-0.1, -0.2, 0.8, vpMath::rad(10), vpMath::rad(-10), vpMath::rad(25));
       vpHomogeneousMatrix cMo_ref(cpo_ref);
 
-      for (int i = 0; i < npt; i++) {
+      for (size_t i = 0; i < npt; i++) {
         P[i].project(cMo_ref);
         //  P[i].print(); printf("\n");
         pose.addPoint(P[i]); // and added to the pose computation class
@@ -445,19 +445,19 @@ int main()
       vpPoseVector cpo_ref = vpPoseVector(-0.01, -0.02, 0.3, vpMath::rad(20), vpMath::rad(-20), vpMath::rad(10));
       vpHomogeneousMatrix cMo_ref(cpo_ref);
 
-      int npt = 4;
+      size_t npt = 4;
       std::vector<vpPoint> P(npt); //  Point to be tracked
       double Z = 0.05;             // FS: Dementhon estimation is not good when Z=0.3
 
       P[0].setWorldCoordinates(-L, -L, Z);
-      P[1].setWorldCoordinates(L, -L, Z);
-      P[2].setWorldCoordinates(L, L, Z);
-      P[3].setWorldCoordinates(-L, L, Z);
+      P[1].setWorldCoordinates(+L, -L, Z);
+      P[2].setWorldCoordinates(+L, +L, Z);
+      P[3].setWorldCoordinates(-L, +L, Z);
 
       vpPose pose;
       vpGaussRand random(0.08, 0., 42); // Gaussian noise of mean = 0. and sigma = 1.
 
-      for (int i = 0; i < npt; i++) {
+      for (size_t i = 0; i < npt; i++) {
         // Projecting point in camera frame
         P[i].project(cMo_ref);
 
@@ -575,7 +575,7 @@ int main()
       vpPoseVector cpo_ref = vpPoseVector(0.01, 0.02, 0.25, vpMath::rad(5), 0, vpMath::rad(10));
       vpHomogeneousMatrix cMo_ref(cpo_ref);
 
-      int npt = 6;
+      size_t npt = 6;
       std::vector<vpPoint> P(npt);         //  Point to be tracked
       P[0].setWorldCoordinates(-L, -L, 0); // Lagrange not accurate...
       P[0].setWorldCoordinates(-L, -L, -0.02);
@@ -588,7 +588,7 @@ int main()
       vpPose pose;
       vpGaussRand random(0.08, 0., 42); // Gaussian noise of mean = 0. and sigma = 1.
 
-      for (int i = 0; i < npt; i++) {
+      for (size_t i = 0; i < npt; i++) {
         // Projecting point in camera frame
         P[i].project(cMo_ref);
 
@@ -704,12 +704,12 @@ int main()
     std::cout << "=======================================================" << std::endl;
 
     {
-      int npt = 4;
+      size_t npt = 4;
       std::vector<vpPoint> P(npt); //  Point to be tracked
       P[0].setWorldCoordinates(-L2, -L2, 0.2);
-      P[1].setWorldCoordinates(L2, -L2, 0.4);
-      P[2].setWorldCoordinates(L2, L2, 0.1);
-      P[3].setWorldCoordinates(-L2, L2, 0.4);
+      P[1].setWorldCoordinates(+L2, -L2, 0.4);
+      P[2].setWorldCoordinates(+L2, +L2, 0.1);
+      P[3].setWorldCoordinates(-L2, +L2, 0.4);
 
       vpPose pose;
 
@@ -718,7 +718,7 @@ int main()
 
       vpGaussRand random(0.08, 0., 42); // Gaussian noise of mean = 0. and sigma = 1.
 
-      for (int i = 0; i < npt; i++) {
+      for (size_t i = 0; i < npt; i++) {
         // Projecting point in camera frame
         P[i].project(cMo_ref);
 

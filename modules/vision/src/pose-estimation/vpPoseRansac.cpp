@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -144,7 +144,7 @@ struct CompareImagePointDegenerate
 // std::find_if
 struct FindDegeneratePoint
 {
-  explicit FindDegeneratePoint(const vpPoint &pt) : m_pt(pt) { }
+  explicit FindDegeneratePoint(const vpPoint &pt) : m_pt(pt) {}
 
   bool operator()(const vpPoint &pt)
   {
@@ -164,7 +164,7 @@ struct FindDegeneratePoint
 
 bool vpPose::vpRansacFunctor::poseRansacImpl()
 {
-  const unsigned int size = static_cast<unsigned int>(m_listOfUniquePoints.size());
+  const int size = static_cast<int>(m_listOfUniquePoints.size());
   const unsigned int nbMinRandom = 4;
   int nbTrials = 0;
 
@@ -190,7 +190,7 @@ bool vpPose::vpRansacFunctor::poseRansacImpl()
     vpHomogeneousMatrix cMo_tmp;
 
     // Vector of used points, initialized at false for all points
-    std::vector<bool> usedPt(size, false);
+    std::vector<bool> usedPt(static_cast<size_t>(size), false);
 
     vpPose poseMin;
     unsigned int i = 0;
@@ -202,11 +202,11 @@ bool vpPose::vpRansacFunctor::poseRansacImpl()
       }
       if (!stop_loop) {
         // Pick a point randomly
-        unsigned int r_ = m_uniRand.uniform(0, size);
+        size_t r_ = static_cast<size_t>(m_uniRand.uniform(0, size));
 
         while (usedPt[r_]) {
           // If already picked, pick another point randomly
-          r_ = m_uniRand.uniform(0, size);
+          r_ = static_cast<size_t>(m_uniRand.uniform(0, size));
         }
         // Mark this point as already picked
         usedPt[r_] = true;
@@ -399,7 +399,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, FuncCheckValidityPose func)
   }
 
 #if defined(VISP_HAVE_THREADS)
-  unsigned int nbThreads = 1;
+  int nbThreads = 1;
   bool executeParallelVersion = useParallelRansac;
 #else
   bool executeParallelVersion = false;
@@ -409,7 +409,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, FuncCheckValidityPose func)
 #if defined(VISP_HAVE_THREADS)
     if (nbParallelRansacThreads <= 0) {
       // Get number of CPU threads
-      nbThreads = std::thread::hardware_concurrency();
+      nbThreads = static_cast<int>(std::thread::hardware_concurrency());
       if (nbThreads <= 1) {
         nbThreads = 1;
         executeParallelVersion = false;
@@ -597,7 +597,7 @@ void vpPose::findMatch(std::vector<vpPoint> &p2D, std::vector<vpPoint> &p3D,
   }
   else {
     pose.setUseParallelRansac(useParallelRansac);
-    pose.setNbParallelRansacThreads(nthreads);
+    pose.setNbParallelRansacThreads(static_cast<int>(nthreads));
     // Since we add duplicate points, we need to check for degenerate configuration
     pose.setRansacFilterFlag(vpPose::CHECK_DEGENERATE_POINTS);
     pose.setRansacMaxTrials(maxNbTrials);

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ using namespace VISP_NAMESPACE_NAME;
 
 
 void usage(const char *name, const char *badparam, const std::string &video_in_ipath, const std::string &video_in_ppath,
-           unsigned video_in_first, int video_in_last, int video_in_step, int me_range, int me_sample_step,
+           int video_in_first, int video_in_last, int video_in_step, int me_range, int me_sample_step,
            int me_threshold, unsigned int &sleep_ms);
 bool getOptions(int argc, const char **argv, std::string &video_in_ipath, std::string &video_in_ppath,
                 int &video_in_first, int &video_in_last, int &video_in_step,
@@ -86,7 +86,7 @@ bool getOptions(int argc, const char **argv, std::string &video_in_ipath, std::s
   \param sleep_ms : Sleep time in ms.
 */
 void usage(const char *name, const char *badparam, const std::string &video_in_ipath, const std::string &video_in_ppath,
-           unsigned video_in_first, int video_in_last, int video_in_step, int me_range, int me_sample_step,
+           int video_in_first, int video_in_last, int video_in_step, int me_range, int me_sample_step,
            int me_threshold, unsigned int &sleep_ms)
 {
 #if defined(VISP_HAVE_DATASET)
@@ -271,7 +271,7 @@ bool getOptions(int argc, const char **argv, std::string &video_in_ipath, std::s
       me_threshold = atoi(optarg_);
       break;
     case 'T':
-      sleep_ms = atoi(optarg_);
+      sleep_ms = static_cast<unsigned int>(atoi(optarg_));
       break;
     case 'w':
       video_out_save = std::string(optarg_);
@@ -456,7 +456,7 @@ int main(int argc, const char **argv)
 
     vpMe me;
     if (opt_me_range > 0) {
-      me.setRange(opt_me_range);
+      me.setRange(static_cast<unsigned int>(opt_me_range));
     }
     if (opt_me_sample_step > 0) {
       me.setSampleStep(opt_me_sample_step);
@@ -532,8 +532,8 @@ int main(int argc, const char **argv)
         vpDisplay::display(I);
         vpDisplay::setTitle(I, ss.str());
         if (opt_click_allowed) {
-          vpDisplay::displayText(I, 20, I.getWidth() - 150, std::string("Mode: ") + (opt_step_by_step ? std::string("step-by-step") : std::string("continuous")), vpColor::red);
-          vpDisplay::displayText(I, 40, I.getWidth() - 150, ss.str(), vpColor::red);
+          vpDisplay::displayText(I, 20, static_cast<int>(I.getWidth()) - 150, std::string("Mode: ") + (opt_step_by_step ? std::string("step-by-step") : std::string("continuous")), vpColor::red);
+          vpDisplay::displayText(I, 40, static_cast<int>(I.getWidth()) - 150, ss.str(), vpColor::red);
           vpDisplay::displayText(I, 20, 10, "Right click to exit", vpColor::red);
           vpDisplay::displayText(I, 40, 10, "Middle click to change mode", vpColor::red);
           if (opt_step_by_step) {

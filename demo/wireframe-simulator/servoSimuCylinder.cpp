@@ -168,7 +168,7 @@ int main(int argc, const char **argv)
     display[i] = vpDisplayFactory::allocateDisplay();
   }
 #endif
-  unsigned int exit_status = EXIT_SUCCESS;
+  int exit_status = EXIT_SUCCESS;
 
   try {
     bool opt_display = true;

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -327,7 +327,7 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
 
   if (opt_display) {
 #if defined(VISP_HAVE_DISPLAY) && defined(VISP_HAVE_MODULE_GUI)
-    display2 = vpDisplayFactory::allocateDisplay(IMatching, 0, static_cast<int>(I.getHeight()) / vpDisplay::getDownScalingFactor(I) + 30, "IMatching");
+    display2 = vpDisplayFactory::allocateDisplay(IMatching, 0, static_cast<int>(I.getHeight() / vpDisplay::getDownScalingFactor(I) + 30), "IMatching");
     display2->setDownScalingFactor(vpDisplay::SCALE_AUTO);
 #endif
   }

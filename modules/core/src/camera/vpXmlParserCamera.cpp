@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -115,7 +115,7 @@ public:  /* --- XML Code--------------------------------------------------------
   Impl()
     : camera(), camera_name(), image_width(0), image_height(0), subsampling_width(0), subsampling_height(0),
     full_width(0), full_height(0)
-  { }
+  {}
 
   int parse(vpCameraParameters &cam, const std::string &filename, const std::string &cam_name,
             const vpCameraParameters::vpCameraParametersProjType &projModel, unsigned int im_width,
@@ -499,7 +499,7 @@ public:  /* --- XML Code--------------------------------------------------------
         //                  -- ---
         // If we divide by 32 (>> 2^5 : 5 remaining least significant bits), we will have to check 5 bits only
         const int dividerForBitCheck = 32;
-        int check = validation / dividerForBitCheck;
+        int check = static_cast<int>(validation) / dividerForBitCheck;
         unsigned int j = 0;
 
         const int nbRemainingBits = 5;
@@ -1182,7 +1182,7 @@ private:
 };
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
-vpXmlParserCamera::vpXmlParserCamera() : m_impl(new Impl()) { }
+vpXmlParserCamera::vpXmlParserCamera() : m_impl(new Impl()) {}
 
 vpXmlParserCamera::~vpXmlParserCamera() { delete m_impl; }
 
@@ -1286,6 +1286,6 @@ void vpXmlParserCamera::setWidth(unsigned int width) { m_impl->setWidth(width); 
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpXmlParserCamera.cpp.o) has no symbols
-void dummy_vpXmlParserCamera() { }
+void dummy_vpXmlParserCamera() {}
 
 #endif

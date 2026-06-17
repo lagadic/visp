@@ -482,10 +482,10 @@ vpRBSilhouetteControlPoint::computeMeInteractionMatrixErrorMH(const vpHomogeneou
 
 double vpRBSilhouetteControlPoint::getMaxMaskGradientAlongLine(const vpImage<float> &mask, int searchSize) const
 {
-  std::vector<float> maskValues(searchSize * 2 + 1);
+  std::vector<float> maskValues(static_cast<unsigned int>(searchSize * 2 + 1));
   double c = cos(theta);
   double s = sin(theta);
-  int index = 0;
+  unsigned int index = 0;
   for (int n = -searchSize + 1; n < searchSize; ++n) {
     unsigned int ii = static_cast<unsigned int>(round(icpoint.get_i() + s * n));
     unsigned int jj = static_cast<unsigned int>(round(icpoint.get_j() + c * n));

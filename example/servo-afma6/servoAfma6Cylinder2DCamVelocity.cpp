@@ -282,7 +282,7 @@ int main(int argc, char **argv)
 
     vpRealSense2 rs;
     rs2::config config;
-    unsigned int width = 640, height = 480, fps = 60;
+    int width = 640, height = 480, fps = 60;
     config.enable_stream(RS2_STREAM_COLOR, width, height, RS2_FORMAT_RGBA8, fps);
     config.enable_stream(RS2_STREAM_DEPTH, width, height, RS2_FORMAT_Z16, fps);
     config.enable_stream(RS2_STREAM_INFRARED, width, height, RS2_FORMAT_Y8, fps);
@@ -302,7 +302,7 @@ int main(int argc, char **argv)
     vpDisplay::display(I);
     vpDisplay::flush(I);
 
-    int nblines = 2;
+    unsigned int nblines = 2;
     std::vector<vpMeLine> line(nblines);
 
     vpMe me;
@@ -313,7 +313,7 @@ int main(int argc, char **argv)
     me.setSampleStep(10);
 
     // Initialize the tracking of the two edges of the cylinder
-    for (int i = 0; i < nblines; ++i) {
+    for (unsigned int i = 0; i < nblines; ++i) {
       line[i].setDisplay(vpMeSite::RANGE_RESULT);
       line[i].setMe(&me);
 
@@ -329,7 +329,7 @@ int main(int argc, char **argv)
 
     // Sets the current position of the visual feature ");
     std::vector<vpFeatureLine> s_line(nblines);
-    for (int i = 0; i < nblines; ++i) {
+    for (unsigned int i = 0; i < nblines; ++i) {
       vpFeatureBuilder::create(s_line[i], cam, line[i]);
     }
 
@@ -367,7 +367,7 @@ int main(int argc, char **argv)
     task.setServo(vpServo::EYEINHAND_CAMERA);
     task.setInteractionMatrixType(vpServo::DESIRED, vpServo::PSEUDO_INVERSE);
     // - we want to see a two lines on two lines
-    for (int i = 0; i < nblines; ++i) {
+    for (unsigned int i = 0; i < nblines; ++i) {
       task.addFeature(s_line[i], s_line_d[i]);
     }
 
@@ -399,7 +399,7 @@ int main(int argc, char **argv)
       vpDisplay::displayText(I, 20, 20, ss.str(), vpColor::red);
 
       // Track the two edges and update the features
-      for (int i = 0; i < nblines; ++i) {
+      for (unsigned int i = 0; i < nblines; ++i) {
         line[i].track(I);
         line[i].display(I, vpColor::red);
 

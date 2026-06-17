@@ -34,7 +34,7 @@ int main(int argc, char **argv)
   std::string opt_modelname = "model/teabox/teabox.cao";
   int opt_tracker = 0;
   int opt_video_first_frame = -1;
-  int opt_downscale_img = 1;
+  unsigned int opt_downscale_img = 1;
   bool opt_verbose = false;
   bool opt_plot = true;
   bool opt_display_scale_auto = false;
@@ -51,7 +51,7 @@ int main(int argc, char **argv)
   std::shared_ptr<vpPlot> plot;
   std::shared_ptr<vpVideoWriter> writer;
 
-  unsigned int right_display_offset = 170;
+  int right_display_offset = 170;
 
   try {
     for (int i = 1; i < argc; i++) {
@@ -68,7 +68,7 @@ int main(int argc, char **argv)
         opt_tracker = atoi(argv[++i]);
       }
       else if (std::string(argv[i]) == "--downscale-img" && i + 1 < argc) {
-        opt_downscale_img = std::atoi(argv[++i]);
+        opt_downscale_img = static_cast<unsigned int>(std::atoi(argv[++i]));
       }
       else if (std::string(argv[i]) == "--save" && i + 1 < argc) {
         opt_save = std::string(argv[++i]);
@@ -82,7 +82,7 @@ int main(int argc, char **argv)
         opt_plot = true;
       }
       else if (std::string(argv[i]) == "--dof" && i + 6 < argc) {
-        for (int j = 0; j < 6; j++) {
+        for (unsigned int j = 0; j < 6; j++) {
           int val = std::atoi(argv[++i]);
           if (val == 0 || val == 1) {
             opt_dof_to_estimate[j] = val;
@@ -263,7 +263,7 @@ int main(int argc, char **argv)
     display->init(I, 100, 100, "Model-based tracker");
 
     if (opt_plot) {
-      plot = std::make_shared<vpPlot>(2, 700, 700, display->getWindowXPosition() + I.getWidth() / display->getDownScalingFactor() + 30,
+      plot = std::make_shared<vpPlot>(2, 700, 700, static_cast<unsigned int>(display->getWindowXPosition()) + I.getWidth() / display->getDownScalingFactor() + 30,
                                       display->getWindowYPosition(), "Estimated pose");
       plot->initGraph(0, 3); // Translation
       plot->setTitle(0, "Translation [m]");
@@ -450,12 +450,12 @@ int main(int argc, char **argv)
       tracker.display(I, cMo, cam, vpColor::red, thickness);
       //! [Display]
       vpDisplay::displayFrame(I, cMo, cam, 0.025, vpColor::none, thickness);
-      vpDisplay::displayText(I, 20 * display->getDownScalingFactor(), 10 * display->getDownScalingFactor(), "Right click to exit...", vpColor::red);
-      vpDisplay::displayText(I, 40 * display->getDownScalingFactor(), 10 * display->getDownScalingFactor(), "Middle click to change mode", vpColor::red);
-      vpDisplay::displayText(I, 20 * display->getDownScalingFactor(), (I.getWidth() - right_display_offset) * display->getDownScalingFactor(), std::string("Mode: ") + (opt_step_by_step ? std::string("step-by-step") : std::string("continuous")), vpColor::red);
-      vpDisplay::displayText(I, 40 * display->getDownScalingFactor(), (I.getWidth() - right_display_offset) * display->getDownScalingFactor(), ss.str(), vpColor::red);
+      vpDisplay::displayText(I, 20 * static_cast<int>(display->getDownScalingFactor()), 10 * static_cast<int>(display->getDownScalingFactor()), "Right click to exit...", vpColor::red);
+      vpDisplay::displayText(I, 40 * static_cast<int>(display->getDownScalingFactor()), 10 * static_cast<int>(display->getDownScalingFactor()), "Middle click to change mode", vpColor::red);
+      vpDisplay::displayText(I, 20 * static_cast<int>(display->getDownScalingFactor()), (static_cast<int>(I.getWidth()) - right_display_offset) * static_cast<int>(display->getDownScalingFactor()), std::string("Mode: ") + (opt_step_by_step ? std::string("step-by-step") : std::string("continuous")), vpColor::red);
+      vpDisplay::displayText(I, 40 * static_cast<int>(display->getDownScalingFactor()), (static_cast<int>(I.getWidth()) - right_display_offset) * static_cast<int>(display->getDownScalingFactor()), ss.str(), vpColor::red);
       if (opt_step_by_step) {
-        vpDisplay::displayText(I, 60 * display->getDownScalingFactor(), 10 * display->getDownScalingFactor(), "Left click to process next image", vpColor::red);
+        vpDisplay::displayText(I, 60 * static_cast<int>(display->getDownScalingFactor()), 10 * static_cast<int>(display->getDownScalingFactor()), "Left click to process next image", vpColor::red);
       }
       {
         std::stringstream sss;
@@ -468,7 +468,7 @@ int main(int argc, char **argv)
           sss << " klt: " << tracker.getNbFeaturesKlt();
         }
 #endif
-        vpDisplay::displayText(I, 60 * display->getDownScalingFactor(), (I.getWidth() - right_display_offset) * display->getDownScalingFactor(), sss.str(), vpColor::red);
+        vpDisplay::displayText(I, 60 * static_cast<int>(display->getDownScalingFactor()), (static_cast<int>(I.getWidth()) - right_display_offset) * static_cast<int>(display->getDownScalingFactor()), sss.str(), vpColor::red);
         if (opt_verbose) {
           std::cout << sss.str() << std::endl;
           std::cout << "cMo:\n" << cMo << std::endl;
@@ -478,7 +478,7 @@ int main(int argc, char **argv)
         double proj_error = tracker.computeCurrentProjectionError(I, cMo, cam);
         std::stringstream sss;
         sss << "Projection error: " << std::setprecision(2) << proj_error << " deg";
-        vpDisplay::displayText(I, 80 * display->getDownScalingFactor(), (I.getWidth() - right_display_offset) * display->getDownScalingFactor(), sss.str(), vpColor::red);
+        vpDisplay::displayText(I, 80 * static_cast<int>(display->getDownScalingFactor()), (static_cast<int>(I.getWidth()) - right_display_offset) * static_cast<int>(display->getDownScalingFactor()), sss.str(), vpColor::red);
         if (opt_verbose) {
           std::cout << sss.str() << std::endl;
         }
@@ -512,7 +512,7 @@ int main(int argc, char **argv)
       {
         std::stringstream sss;
         sss << "Loop time: " << std::fixed << std::setprecision(0) << vpTime::measureTimeMs() - time_start << " ms";
-        vpDisplay::displayText(I, (I.getHeight() - 20) * display->getDownScalingFactor(), (I.getWidth() - right_display_offset) * display->getDownScalingFactor(), sss.str(), vpColor::red);
+        vpDisplay::displayText(I, (static_cast<int>(I.getHeight()) - 20) * static_cast<int>(display->getDownScalingFactor()), (static_cast<int>(I.getWidth()) - right_display_offset) * static_cast<int>(display->getDownScalingFactor()), sss.str(), vpColor::red);
       }
       vpDisplay::flush(I);
 

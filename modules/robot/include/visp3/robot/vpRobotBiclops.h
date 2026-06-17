@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +31,8 @@
  * Interface for the Biclops robot.
  */
 
-#ifndef _vpRobotBiclops_h_
-#define _vpRobotBiclops_h_
+#ifndef VP_ROBOT_BICLOPS
+#define VP_ROBOT_BICLOPS
 
 #include <visp3/core/vpConfig.h>
 
@@ -207,7 +207,7 @@ public:
    * \param eJe : Jacobian between end effector frame and end effector frame (on
    * tilt axis).
    */
-  void get_eJe(vpMatrix &eJe) VP_OVERRIDE;
+  void get_eJe(vpMatrix &e_J_e) VP_OVERRIDE;
 
   /*!
    * Get the robot jacobian expressed in the robot reference frame
@@ -215,7 +215,7 @@ public:
    * \param fJe : Jacobian between reference frame (or fix frame) and end
    * effector frame (on tilt axis).
    */
-  void get_fJe(vpMatrix &fJe) VP_OVERRIDE;
+  void get_fJe(vpMatrix &f_J_e) VP_OVERRIDE;
 
   /*!
    * Get the robot displacement since the last call of this method.

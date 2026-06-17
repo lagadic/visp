@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,10 +53,10 @@
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
-void usage(const char **argv, int error, const std::string &device, int baudrate, int channel,
+void usage(const char **argv, int error, const std::string &device, unsigned int baudrate, int channel,
            unsigned short pwm_min, unsigned short pwm_max, float angle_min, float angle_max);
 
-void usage(const char **argv, int error, const std::string &device, int baudrate, int channel,
+void usage(const char **argv, int error, const std::string &device, unsigned int baudrate, int channel,
            unsigned short pwm_min, unsigned short pwm_max, float angle_min, float angle_max)
 {
   std::cout << "Synopsis" << std::endl
@@ -105,7 +105,7 @@ int main(int argc, const char **argv)
   //std::string opt_device = "/dev/cu.usbmodem00031501";
 #endif
   int opt_channel = 0;
-  int opt_baudrate = 38400;
+  unsigned int opt_baudrate = 38400;
   bool opt_verbose = false;
   bool opt_calibrate = false;
   unsigned short opt_pwm_min = 4000;
@@ -122,7 +122,7 @@ int main(int argc, const char **argv)
       i++;
     }
     else if (std::string(argv[i]) == "--baud" && i + 1 < argc) {
-      opt_baudrate = std::atoi(argv[i + 1]);
+      opt_baudrate = static_cast<unsigned int>(std::atoi(argv[i + 1]));
       i++;
     }
     else if (std::string(argv[i]) == "--channel" && i + 1 < argc) {

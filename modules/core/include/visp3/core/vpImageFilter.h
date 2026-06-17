@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -473,7 +473,7 @@ public:
   {
     const unsigned int w = I.getWidth();
     const unsigned int h = I.getHeight();
-    const int size = I.getSize();
+    const int size = static_cast<int>(I.getSize());
 
     if ((lowerThresholdRatio <= 0.f) || (lowerThresholdRatio >= 1.f)) {
       std::stringstream errMsg;
@@ -515,7 +515,7 @@ public:
     float dIMin = std::numeric_limits<OutType>::max();
     int iter, istart = 0, istop = size;
 #ifdef VISP_HAVE_OPENMP
-    int iam, nt, ipoints, npoints(size);
+    int iam, nt, ipoints, npoints(static_cast<int>(size));
 #pragma omp parallel default(shared) private(iter, iam, nt, ipoints, istart, istop)
     {
       iam = omp_get_thread_num();
@@ -566,7 +566,7 @@ public:
     vpHistogram hist(nbBins);
     hist.setMask(p_mask);
     OutType step = 0.;
-    hist.calculate<OutType>(dI, dIMin, dIMax, step, nbBins, nbThread);
+    hist.calculate<OutType>(dI, dIMin, dIMax, step, nbBins, static_cast<unsigned int>(nbThread));
     float totalNbPixels = static_cast<float>(hist.getTotal());
     float accu = 0;
     float t = upperThresholdRatio * totalNbPixels;
@@ -1102,16 +1102,16 @@ public:
   static void filterX(const vpImage<ImageType> &I, vpImage<OutputType> &dIx, const FilterType *filter, unsigned int size,
                       const vpImage<bool> *p_mask = nullptr)
   {
-    const int height = static_cast<int>(I.getHeight());
-    const int width = static_cast<int>(I.getWidth());
+    const unsigned int height = I.getHeight();
+    const unsigned int width = I.getWidth();
     const int stop1J = static_cast<int>((size - 1) / 2);
     const int stop2J = static_cast<int>(width - ((size - 1) / 2));
     resizeAndInitializeIfNeeded(p_mask, height, width, dIx);
 
     int istart = 0;
-    int istop = height;
+    int istop = static_cast<int>(height);
 #ifdef VISP_HAVE_OPENMP
-    int iam, nt, ipoints, npoints(height);
+    int iam, nt, ipoints, npoints(static_cast<int>(height));
 #pragma omp parallel default(shared) private(iam, nt, ipoints, istart, istop)
     {
       iam = omp_get_thread_num();
@@ -1129,26 +1129,28 @@ public:
         for (int j = 0; j < stop1J; ++j) {
           // We have to compute the value for each pixel if we don't have a mask or for
           // pixels for which the mask is true otherwise
-          bool computeVal = checkBooleanMask(p_mask, i, j);
+          bool computeVal = checkBooleanMask(p_mask, static_cast<unsigned int>(i), static_cast<unsigned int>(j));
           if (computeVal) {
-            vpImageFilter::filterXLeftBorder(I, dIx[i][j], i, j, filter, size);
+            vpImageFilter::filterXLeftBorder(I, dIx[static_cast<unsigned int>(i)][static_cast<unsigned int>(j)],
+                                             static_cast<unsigned int>(i), static_cast<unsigned int>(j), filter, size);
           }
         }
 
         for (int j = stop1J; j < stop2J; ++j) {
           // We have to compute the value for each pixel if we don't have a mask or for
           // pixels for which the mask is true otherwise
-          bool computeVal = checkBooleanMask(p_mask, i, j);
+          bool computeVal = checkBooleanMask(p_mask, static_cast<unsigned int>(i), static_cast<unsigned int>(j));
           if (computeVal) {
-            vpImageFilter::filterX(I, dIx[i][j], i, j, filter, size);
+            vpImageFilter::filterX(I, dIx[i][j], static_cast<unsigned int>(i), static_cast<unsigned int>(j), filter, size);
           }
         }
-        for (int j = stop2J; j < width; ++j) {
+        for (int j = stop2J; j < static_cast<int>(width); ++j) {
           // We have to compute the value for each pixel if we don't have a mask or for
           // pixels for which the mask is true otherwise
-          bool computeVal = checkBooleanMask(p_mask, i, j);
+          bool computeVal = checkBooleanMask(p_mask, static_cast<unsigned int>(i), static_cast<unsigned int>(j));
           if (computeVal) {
-            vpImageFilter::filterXRightBorder(I, dIx[i][j], i, j, filter, size);
+            vpImageFilter::filterXRightBorder(I, dIx[static_cast<unsigned int>(i)][static_cast<unsigned int>(j)],
+                                              static_cast<unsigned int>(i), static_cast<unsigned int>(j), filter, size);
           }
         }
       }
@@ -1504,8 +1506,8 @@ public:
     unsigned int iam, nt, jpoints, npoints(width);
 #pragma omp parallel default(shared) private(iam, nt, jpoints, jstart, jstop)
     {
-      iam = omp_get_thread_num();
-      nt = omp_get_num_threads();
+      iam = static_cast<unsigned int>(omp_get_thread_num());
+      nt = static_cast<unsigned int>(omp_get_num_threads());
       jpoints = npoints / nt;
       // size of partition
       jstart = iam * jpoints; // starting array index
@@ -1547,7 +1549,7 @@ public:
 #ifdef VISP_HAVE_OPENMP
       }
 #endif
-      }
+    }
   }
 
   /**
@@ -2600,11 +2602,11 @@ private:
     const vpImage<bool> *p_mask = nullptr
   )
   {
-    const int nbRows = I.getRows(), nbCols = I.getCols();
-    const int size = I.getSize();
+    const int nbRows = static_cast<int>(I.getRows()), nbCols = static_cast<int>(I.getCols());
+    const int size = static_cast<int>(I.getSize());
     const int offsetIdiff = nbCols;
 
-    std::vector<OutputType> Idiff(size);
+    std::vector<OutputType> Idiff(static_cast<size_t>(size));
     initGradientFilterDifferenceImageX(I, Idiff);
     const int resetCounter = nbCols - 1;
     const int stopIter = size - (nbCols + 1);
@@ -2614,8 +2616,8 @@ private:
         // Computing the amplitude of the difference
         OutputType futureDiff = 0.;
         if (checkBooleanPatch(p_mask, iter + offsetIdiff, idCol, nbRows, nbCols, true)) {
-          futureDiff = static_cast<OutputType>(I.bitmap[iter + nbCols +1].V - I.bitmap[iter + offsetIdiff].V);
-          Idiff[iter + offsetIdiff] = futureDiff;
+          futureDiff = static_cast<OutputType>(I.bitmap[static_cast<size_t>(iter + nbCols +1)].V - I.bitmap[static_cast<size_t>(iter + offsetIdiff)].V);
+          Idiff[static_cast<size_t>(iter + offsetIdiff)] = futureDiff;
         }
       }
       if (counter) {
@@ -2625,7 +2627,7 @@ private:
             int offset = iter - nbCols; // Looking in the row above first
             for (int i = -1; i <= 1; ++i) {
               // Kind of  +/- (I[r + i][c + 1] - I[r + i][c]) +/- (I[r + i][c] - I[r + i][c - 1])
-              gradient += filter[i + 1] * (Idiff[offset] + Idiff[offset - 1]);
+              gradient += filter[static_cast<size_t>(i + 1)] * (Idiff[static_cast<size_t>(offset)] + Idiff[static_cast<size_t>(offset - 1)]);
               offset += nbCols; // Preparing to look in the next row
             }
             GI.bitmap[iter] = gradient;
@@ -2668,11 +2670,11 @@ private:
     const vpImage<bool> *p_mask = nullptr
   )
   {
-    const int nbRows = I.getRows(), nbCols = I.getCols();
-    const int size = I.getSize();
+    const int nbRows = static_cast<int>(I.getRows()), nbCols = static_cast<int>(I.getCols());
+    const int size = static_cast<int>(I.getSize());
     const int offsetIdiff = 1;
 
-    std::vector<OutputType> Idiff(size);
+    std::vector<OutputType> Idiff(static_cast<size_t>(size));
     initGradientFilterDifferenceImageY(I, Idiff);
     const int resetCounter = nbCols - 1;
     const int stopIter = size - (nbCols + 1);
@@ -2682,8 +2684,8 @@ private:
       OutputType futureDiff = 0.;
 
       if (checkBooleanPatch(p_mask, iter + offsetIdiff, iterSign, nbRows, nbCols, false)) {
-        futureDiff = static_cast<OutputType>(I.bitmap[iter + nbCols +1].V - I.bitmap[iter + offsetIdiff].V);
-        Idiff[iter + offsetIdiff] = futureDiff;
+        futureDiff = static_cast<OutputType>(I.bitmap[static_cast<size_t>(iter + nbCols +1)].V - I.bitmap[static_cast<size_t>(iter + offsetIdiff)].V);
+        Idiff[static_cast<size_t>(iter + offsetIdiff)] = futureDiff;
       }
 
       if (counter) {
@@ -2692,7 +2694,7 @@ private:
             OutputType gradient = 0.;
             for (int i = -1; i <= 1; ++i) {
               // Kind of +/- (I[r + 1][c + i] - I[r][c + 1]) +/- (I[r][c + i] - I[r - 1][c + 1])
-              gradient += filter[i + 1] * (Idiff[iter + i] + Idiff[iter - nbCols + i]);
+              gradient += filter[static_cast<size_t>(i + 1)] * (Idiff[static_cast<size_t>(iter + i)] + Idiff[static_cast<size_t>(iter - nbCols + i)]);
             }
             GI.bitmap[iter] = gradient;
           }
@@ -2718,25 +2720,25 @@ private:
     const int &istart, const int &iam
   )
   {
-    const int nbCols = I.getCols();
+    const int nbCols = static_cast<int>(I.getCols());
 
     if (iam > 0) {
       Idiff[0] = static_cast<OutputType>(I.bitmap[istart - nbCols + 1].V - I.bitmap[istart - nbCols].V);
     }
 
     // Computing the difference and sign for row 1 column 0, which corresponds to the current row of the image
-    Idiff[nbCols] = static_cast<OutputType>(I.bitmap[istart + 1].V - I.bitmap[istart].V);
+    Idiff[static_cast<size_t>(nbCols)] = static_cast<OutputType>(I.bitmap[istart + 1].V - I.bitmap[istart].V);
 
     for (int iter = 1; iter < nbCols - 1; ++iter) {
       if (iam > 0) {
         // Computing the difference and sign for row 0, which corresponds to the previous row of the image
         OutputType distanceRow0 = static_cast<OutputType>(I.bitmap[istart - nbCols + iter + 1].V - I.bitmap[istart - nbCols + iter].V);
-        Idiff[iter] = distanceRow0;
+        Idiff[static_cast<size_t>(iter)] = distanceRow0;
       }
 
       // Computing the difference and sign for row 1, which corresponds to the current row of the image
       OutputType distanceRow1 = static_cast<OutputType>(I.bitmap[istart + iter + 1].V - I.bitmap[istart + iter].V);
-      Idiff[nbCols + iter] = distanceRow1;
+      Idiff[static_cast<size_t>(nbCols + iter)] = distanceRow1;
     }
   }
 
@@ -2745,7 +2747,7 @@ private:
     const vpImage<vpHSV<HSVType, useFullScale>> &I, vpImage<OutputType> &GI, const std::vector<OutputType> &filter,
     const int &maxNbThread, const vpImage<bool> *p_mask = nullptr)
   {
-    const int nbRows = I.getRows(), nbCols = I.getCols();
+    const int nbRows = static_cast<int>(I.getRows()), nbCols = static_cast<int>(I.getCols());
     const int offsetIdiff = nbCols;
     const int resetCounter = nbCols - 1;
     const int nrows(nbRows - 1);
@@ -2775,8 +2777,8 @@ private:
       }
       istop = istart + irows * nbCols;
 
-      std::vector<OutputType> Idiff((irows + 2) * nbCols);
-      std::vector<OutputType> GItemp(irows * nbCols);
+      std::vector<OutputType> Idiff(static_cast<size_t>((irows + 2) * nbCols));
+      std::vector<OutputType> GItemp(static_cast<size_t>(irows * nbCols));
       initGradientFilterDifferenceImageX(I, Idiff, istart, iam);
 
       int counter = resetCounter, idCol = 0;
@@ -2786,8 +2788,8 @@ private:
           // Computing the amplitude of the difference
           OutputType futureDiff = 0.;
           if (checkBooleanPatch(p_mask, iter + offsetIdiff, idCol, nbRows, nbCols, true)) {
-            futureDiff = static_cast<OutputType>(I.bitmap[iter + nbCols +1].V - I.bitmap[iter + offsetIdiff].V);
-            Idiff[iter + 2 * offsetIdiff - istart] = futureDiff;
+            futureDiff = static_cast<OutputType>(I.bitmap[static_cast<size_t>(iter + nbCols +1)].V - I.bitmap[static_cast<size_t>(iter + offsetIdiff)].V);
+            Idiff[static_cast<size_t>(iter + 2 * offsetIdiff - istart)] = futureDiff;
           }
         }
         if (counter) {
@@ -2797,10 +2799,10 @@ private:
               int offset = iter - istart; // Looking in the row above first
               for (int i = -1; i <= 1; ++i) {
                 // Kind of  +/- (I[r + i][c + 1] - I[r + i][c]) +/- (I[r + i][c] - I[r + i][c - 1])
-                gradient += filter[i + 1] * (Idiff[offset] + Idiff[offset - 1]);
+                gradient += filter[static_cast<size_t>(i + 1)] * (Idiff[static_cast<size_t>(offset)] + Idiff[static_cast<size_t>(offset - 1)]);
                 offset += nbCols; // Preparing to look in the next row
               }
-              GItemp[iter - istart] = gradient;
+              GItemp[static_cast<size_t>(iter - istart)] = gradient;
             }
           }
           --counter;
@@ -2829,17 +2831,17 @@ private:
     const int &istart
   )
   {
-    const int nbCols = I.getCols();
+    const int nbCols = static_cast<int>(I.getCols());
     // Computing the sign and distance for the first row, which corresponds to the row above the beginning of the gradient computation in the thread
     int idDiff = 0;
     for (int iter = istart - nbCols; iter < istart; ++iter) {
       OutputType distance = static_cast<OutputType>(I.bitmap[iter + nbCols].V - I.bitmap[iter].V);
-      Idiff[idDiff] = distance;
+      Idiff[static_cast<size_t>(idDiff)] = distance;
       ++idDiff;
     }
     // Computing the distance and sign for I[1][0]
-    OutputType distance = static_cast<OutputType>(I.bitmap[nbCols + nbCols].V - I.bitmap[nbCols].V);
-    Idiff[nbCols] = distance;
+    OutputType distance = static_cast<OutputType>(I.bitmap[static_cast<size_t>(nbCols + nbCols)].V - I.bitmap[static_cast<size_t>(nbCols)].V);
+    Idiff[static_cast<size_t>(nbCols)] = distance;
   }
 
   template <typename HSVType, bool useFullScale, typename OutputType>
@@ -2847,7 +2849,7 @@ private:
     const vpImage<vpHSV<HSVType, useFullScale>> &I, vpImage<OutputType> &GI, const std::vector<OutputType> &filter,
     const int &maxNbThread, const vpImage<bool> *p_mask = nullptr)
   {
-    const int nbRows = I.getRows(), nbCols = I.getCols();
+    const int nbRows = static_cast<int>(I.getRows()), nbCols = static_cast<int>(I.getCols());
     const int offsetIdiff = 1;
     const int resetCounter = nbCols - 1;
     const int nrows(nbRows - 1);
@@ -2877,8 +2879,8 @@ private:
       }
       istop = istart + irows * nbCols;
 
-      std::vector<OutputType> Idiff((irows + 2) * nbCols);
-      std::vector<OutputType> GItemp(irows * nbCols);
+      std::vector<OutputType> Idiff(static_cast<size_t>((irows + 2) * nbCols));
+      std::vector<OutputType> GItemp(static_cast<size_t>(irows * nbCols));
 
       if (iam == 0) {
         initGradientFilterDifferenceImageY(I, Idiff);
@@ -2894,8 +2896,8 @@ private:
         OutputType futureDiff = 0.;
 
         if (checkBooleanPatch(p_mask, iter + offsetIdiff, iterSign, nbRows, nbCols, false)) {
-          futureDiff = static_cast<OutputType>(I.bitmap[iter + nbCols +1].V - I.bitmap[iter + offsetIdiff].V);
-          Idiff[iter - istart + nbCols + offsetIdiff] = futureDiff;
+          futureDiff = static_cast<OutputType>(I.bitmap[static_cast<size_t>(iter + nbCols +1)].V - I.bitmap[static_cast<size_t>(iter + offsetIdiff)].V);
+          Idiff[static_cast<size_t>(iter - istart + nbCols + offsetIdiff)] = futureDiff;
         }
 
         if (counter) {
@@ -2904,9 +2906,9 @@ private:
               OutputType gradient = 0.;
               for (int i = -1; i <= 1; ++i) {
                 // Kind of +/- (I[r + 1][c + i] - I[r][c + 1]) +/- (I[r][c + i] - I[r - 1][c + 1])
-                gradient += filter[i + 1] * (Idiff[iter - istart + nbCols + i] + Idiff[iter - istart + i]);
+                gradient += filter[static_cast<size_t>(i + 1)] * (Idiff[static_cast<size_t>(iter - istart + nbCols + i)] + Idiff[static_cast<size_t>(iter - istart + i)]);
               }
-              GItemp[iter - istart] = gradient;
+              GItemp[static_cast<size_t>(iter - istart)] = gradient;
             }
           }
           --counter;

@@ -279,9 +279,9 @@ int main(int argc, char *argv[])
   vpDisplay *display1 = vpDisplayFactory::allocateDisplay();
   vpDisplay *display2 = vpDisplayFactory::allocateDisplay();
 #endif
-  unsigned int _posx = 100, _posy = 50, _posdx = 10;
+  int _posx = 100, _posy = 50, _posdx = 10;
   display1->init(I_gray, _posx, _posy, "Color stream");
-  display2->init(I_depth, _posx + I_gray.getWidth() + _posdx, _posy, "Depth stream");
+  display2->init(I_depth, _posx + static_cast<int>(I_gray.getWidth()) + _posdx, _posy, "Depth stream");
 #endif
 
   vpDisplay::display(I_gray);
@@ -442,17 +442,17 @@ int main(int argc, char *argv[])
 
       std::stringstream ss;
       ss << "Computation time: " << t << " ms";
-      vpDisplay::displayText(I_gray, 20, 20, ss.str(), vpColor::red);
+      vpDisplay::displayText(I_gray, static_cast<int>(I_gray.getHeight()) - 20, 20, ss.str(), vpColor::red);
       {
         std::stringstream sss;
         sss << "Nb features: " << tracker.getError().size();
-        vpDisplay::displayText(I_gray, I_gray.getHeight() - 50, 20, sss.str(), vpColor::red);
+        vpDisplay::displayText(I_gray, static_cast<int>(I_gray.getHeight()) - 50, 20, sss.str(), vpColor::red);
       }
       {
         std::stringstream sss;
         sss << "Features: edges " << tracker.getNbFeaturesEdge() << ", klt " << tracker.getNbFeaturesKlt() << ", depth "
           << tracker.getNbFeaturesDepthDense();
-        vpDisplay::displayText(I_gray, I_gray.getHeight() - 30, 20, sss.str(), vpColor::red);
+        vpDisplay::displayText(I_gray, static_cast<int>(I_gray.getHeight()) - 30, 20, sss.str(), vpColor::red);
       }
 
       vpDisplay::flush(I_gray);

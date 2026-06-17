@@ -371,7 +371,7 @@ int main(int argc, const char **argv)
         vpDisplay::displayFrame(I, cdMo, cam, opt_tag_size / 3, vpColor::red, 3);
         vpDisplay::displayCross(I, detector.getCog(0), 15, vpColor::green,
                                 3); // Current polygon used to compure an moment
-        vpDisplay::displayLine(I, 0, cam.get_u0(), I.getHeight() - 1, cam.get_u0(), vpColor::red,
+        vpDisplay::displayLine(I, 0, cam.get_u0(), static_cast<int>(I.getHeight()) - 1, cam.get_u0(), vpColor::red,
                                3); // Vertical line as desired x position
         if (use_pose) {
           // Display visual features

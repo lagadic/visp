@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,7 +98,7 @@ int main()
     std::mutex mutex;
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud_color(new pcl::PointCloud<pcl::PointXYZRGB>());
 #if defined(VISP_HAVE_PCL_VISUALIZATION)
-    vpDisplayPCL pcl_viewer(color.getWidth() + 80, color.getHeight() + 70, "3D viewer " + vpTime::getDateTime());
+    vpDisplayPCL pcl_viewer(static_cast<int>(color.getWidth()) + 80, static_cast<int>(color.getHeight()) + 70, "3D viewer " + vpTime::getDateTime());
     pcl_viewer.startThread(std::ref(mutex), pointcloud_color);
 #endif
 #endif

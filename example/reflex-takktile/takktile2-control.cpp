@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -170,7 +170,7 @@ int main(int argc, char *argv[])
   vpColVector mixed_speeds = { 0.5, 1.0, 1.5, 0.0 };
   reflex.setPositioningVelocity(mixed_speeds);
 
-  for (int i = 0; i < 5; i++) {
+  for (size_t i = 0; i < 5; i++) {
     reflex.setPosition(finger_positions[i]);
     reflex.wait(500);
   }

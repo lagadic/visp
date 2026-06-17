@@ -211,7 +211,8 @@ int main(int argc, const char *argv[])
   std::string videoDevice = "0";
   std::string megaposeAddress = "127.0.0.1";
   unsigned megaposePort = 5555;
-  int refinerIterations = 1, coarseNumSamples = 576;
+  int refinerIterations = 1;
+  unsigned int coarseNumSamples = 576;
   double reinitThreshold = 0.2;
 
   DetectionMethod detectionMethod = DetectionMethod::UNKNOWN;
@@ -295,7 +296,7 @@ int main(int argc, const char *argv[])
   vpDetectorDNNOpenCV::DNNResultsParsingType detectorType =
     vpDetectorDNNOpenCV::dnnResultsParsingTypeFromString(detectorTypeString);
   vpDetectorDNNOpenCV::NetConfig netConfig(detectorConfidenceThreshold, detectorNmsThreshold, labels,
-    cv::Size(width, height), detectorFilterThreshold);
+                                           cv::Size(static_cast<int>(width), static_cast<int>(height)), detectorFilterThreshold);
   vpDetectorDNNOpenCV dnn(netConfig, detectorType);
   if (detectionMethod == DetectionMethod::DNN) {
     dnn.readNet(detectorModelPath, detectorConfig, detectorFramework);

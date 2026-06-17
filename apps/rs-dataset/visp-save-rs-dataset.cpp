@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,7 +73,7 @@ using namespace VISP_NAMESPACE_NAME;
 
 namespace
 {
-void usage(const char *argv[], int error, int stream_width, int stream_height, int stream_fps)
+void usage(const char *argv[], int error, unsigned int stream_width, unsigned int stream_height, int stream_fps)
 {
   std::cout << "\nNAME " << std::endl
     << "  " << vpIoTools::getName(argv[0])
@@ -220,8 +220,8 @@ void usage(const char *argv[], int error, int stream_width, int stream_height, i
 
 bool getOptions(int argc, const char *argv[], bool &save, std::string &numbering_pattern, std::string &output_folder,
                 bool &use_aligned_stream, bool &save_color, bool &save_depth, bool &save_pcl,
-                bool &save_infrared, bool &step_by_step, int &stream_width, int &stream_height, int &stream_fps,
-                bool &depth_bin_fmt, bool &pcl_bin_fmt, bool &pcl_npz_fmt, bool &img_jpeg_fmt,
+                bool &save_infrared, bool &step_by_step, unsigned int &stream_width, unsigned int &stream_height,
+                int &stream_fps, bool &depth_bin_fmt, bool &pcl_bin_fmt, bool &pcl_npz_fmt, bool &img_jpeg_fmt,
                 bool &display_colored_depth)
 {
   for (int i = 1; i < argc; i++) {
@@ -267,10 +267,10 @@ bool getOptions(int argc, const char *argv[], bool &save, std::string &numbering
       step_by_step = true;
     }
     else if (((std::string(argv[i]) == "--stream-width") || (std::string(argv[i]) == "-sw")) && (i + 1 < argc)) {
-      stream_width = std::atoi(argv[++i]);
+      stream_width = static_cast<unsigned int>(std::atoi(argv[++i]));
     }
     else if (((std::string(argv[i]) == "--stream-height") || (std::string(argv[i]) == "-sh")) && (i + 1 < argc)) {
-      stream_height = std::atoi(argv[++i]);
+      stream_height = static_cast<unsigned int>(std::atoi(argv[++i]));
     }
     else if (((std::string(argv[i]) == "--stream-fps") || (std::string(argv[i]) == "-f")) && (i + 1 < argc)) {
       stream_fps = std::atoi(argv[++i]);
@@ -325,12 +325,12 @@ class vpFrameQueue
 {
 public:
   struct vpCancelled_t
-  { };
+  {};
 
   vpFrameQueue()
     : m_cancelled(false), m_cond(), m_queueColor(), m_queueDepth(), m_queuePointCloud(), m_queueInfrared(),
     m_maxQueueSize(1024 * 8), m_mutex()
-  { }
+  {}
 
   void cancel()
   {
@@ -472,12 +472,12 @@ public:
   vpStorageWorker(vpFrameQueue &queue, const std::string &output_pattern, const std::string &directory, bool save_color,
                   bool save_depth, bool save_pcl, bool save_infrared, bool depth_bin_fmt,
                   bool pcl_bin_fmt, bool pcl_npz_fmt, bool img_jpeg_fmt,
-                int
+                  unsigned int
 #ifndef VISP_HAVE_PCL
                     width
 #endif
-                ,
-                int
+                  ,
+                  unsigned int
 #ifndef VISP_HAVE_PCL
                     height
 #endif
@@ -490,7 +490,7 @@ public:
     ,
     m_size_height(height), m_size_width(width)
 #endif
-  { }
+  {}
 
   // Thread main loop
   void run()
@@ -733,8 +733,8 @@ int main(int argc, const char *argv[])
   bool save_pcl = false;
   bool save_infrared = false;
   bool step_by_step = false;
-  int  stream_width = 640;
-  int  stream_height = 480;
+  unsigned int  stream_width = 640;
+  unsigned int  stream_height = 480;
   int  stream_fps = 30;
   bool depth_bin_fmt = false; // By default depth in npz format, when true save depth in bin format
   bool pcl_bin_fmt = false;   // By default, pcl in pcd format, when true save to bin format
@@ -781,9 +781,9 @@ int main(int argc, const char *argv[])
   vpRealSense2 realsense;
 
   rs2::config config;
-  config.enable_stream(RS2_STREAM_COLOR, stream_width, stream_height, RS2_FORMAT_RGBA8, stream_fps);
-  config.enable_stream(RS2_STREAM_DEPTH, stream_width, stream_height, RS2_FORMAT_Z16, stream_fps);
-  config.enable_stream(RS2_STREAM_INFRARED, stream_width, stream_height, RS2_FORMAT_Y8, stream_fps);
+  config.enable_stream(RS2_STREAM_COLOR, static_cast<int>(stream_width), static_cast<int>(stream_height), RS2_FORMAT_RGBA8, stream_fps);
+  config.enable_stream(RS2_STREAM_DEPTH, static_cast<int>(stream_width), static_cast<int>(stream_height), RS2_FORMAT_Z16, stream_fps);
+  config.enable_stream(RS2_STREAM_INFRARED, static_cast<int>(stream_width), static_cast<int>(stream_height), RS2_FORMAT_Y8, stream_fps);
   realsense.open(config);
 
   vpImage<vpRGBa> I_color(stream_height, stream_width);
@@ -803,10 +803,10 @@ int main(int argc, const char *argv[])
 #endif
   d1->init(I_color, 0, 0, "RealSense color stream");
   if (display_colored_depth) {
-    d2->init(I_depth_color, I_color.getWidth() + 80, 0, "RealSense depth stream");
+    d2->init(I_depth_color, static_cast<int>(I_color.getWidth()) + 80, 0, "RealSense depth stream");
   }
   else {
-    d2->init(I_depth_gray, I_color.getWidth() + 80, 0, "RealSense depth stream");
+    d2->init(I_depth_gray, static_cast<int>(I_color.getWidth()) + 80, 0, "RealSense depth stream");
   }
 
   rs2::align align_to(RS2_STREAM_COLOR);
@@ -817,7 +817,7 @@ int main(int argc, const char *argv[])
     save_infrared = false;
   }
   if (save_infrared) {
-    d3->init(I_infrared, I_color.getWidth() + 80, I_color.getHeight() + 70, "RealSense infrared stream");
+    d3->init(I_infrared, static_cast<int>(I_color.getWidth()) + 80, static_cast<int>(I_color.getHeight()) + 70, "RealSense infrared stream");
   }
 
   // If PCL is available, always use PCL datatype even if we will save in NPZ or BIN file format
