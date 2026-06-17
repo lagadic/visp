@@ -188,7 +188,7 @@ public:
     Basic constructor of a matrix of double. Number of columns and rows are
     zero.
   */
-  vpMatrix() : vpArray2D<double>(0, 0) { }
+  vpMatrix() : vpArray2D<double>(0, 0) {}
 
   /*!
     Constructor that initialize a matrix of double with 0.
@@ -196,7 +196,7 @@ public:
     \param r : Matrix number of rows.
     \param c : Matrix number of columns.
   */
-  vpMatrix(unsigned int r, unsigned int c) : vpArray2D<double>(r, c) { }
+  vpMatrix(unsigned int r, unsigned int c) : vpArray2D<double>(r, c) {}
 
   /*!
     Constructor that initialize a matrix of double with \e val.
@@ -205,7 +205,7 @@ public:
     \param c : Matrix number of columns.
     \param val : Each element of the matrix is set to \e val.
   */
-  vpMatrix(unsigned int r, unsigned int c, double val) : vpArray2D<double>(r, c, val) { }
+  vpMatrix(unsigned int r, unsigned int c, double val) : vpArray2D<double>(r, c, val) {}
   vpMatrix(const vpMatrix &M, unsigned int r, unsigned int c, unsigned int nrows, unsigned int ncols);
 
   /*!
@@ -220,8 +220,8 @@ public:
     vpMatrix M(R);
     \endcode
    */
-  VP_EXPLICIT vpMatrix(const vpArray2D<double> &A) : vpArray2D<double>(A) { }
-  vpMatrix(const vpMatrix &A) : vpArray2D<double>(A) { }
+  VP_EXPLICIT vpMatrix(const vpArray2D<double> &A) : vpArray2D<double>(A) {}
+  vpMatrix(const vpMatrix &A) : vpArray2D<double>(A) {}
   VP_EXPLICIT vpMatrix(const vpHomogeneousMatrix &R);
   VP_EXPLICIT vpMatrix(const vpRotationMatrix &R);
   VP_EXPLICIT vpMatrix(const vpVelocityTwistMatrix &V);
@@ -410,7 +410,7 @@ public:
   static void conv2(const vpMatrix &M, const vpMatrix &kernel, vpMatrix &res, const std::string &mode);
 
   /**
-   * \brief Compute the trace of the matrix, i.e. the sum of its diagonal elements \f$ tr(M) \sum_i M[i][i] \f$.
+   * \brief Compute the trace of the matrix, i.e. the sum of its diagonal elements \f$ tr(M) = \sum_i M[i][i] \f$.
    * \warning It works only for square matrix.
    *
    * \return double The trace of the matrix.
@@ -1099,7 +1099,7 @@ public:
      \deprecated Only provided for compatibility with ViSP previous releases.
      This function does nothing.
    */
-  VP_DEPRECATED void init() { }
+  VP_DEPRECATED void init() {}
 
   /*!
      \deprecated You should rather use stack(const vpMatrix &A)
