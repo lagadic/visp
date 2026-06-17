@@ -409,6 +409,14 @@ public:
   */
   static void conv2(const vpMatrix &M, const vpMatrix &kernel, vpMatrix &res, const std::string &mode);
 
+  /**
+   * \brief Compute the trace of the matrix, i.e. the sum of its diagonal elements \f$ tr(M) \sum_i M[i][i] \f$.
+   * \warning It works only for square matrix.
+   *
+   * \return double The trace of the matrix.
+   *
+  */
+  double trace() const;
   // return the determinant of the matrix.
   double det(vpDetMethod method = LU_DECOMPOSITION) const;
   double detByLU() const;
