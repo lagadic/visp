@@ -77,19 +77,19 @@ vpPlane estimatePlaneEquationSVD(const std::vector<double> &point_cloud, vpColVe
   auto compute_centroid = [=](const std::vector<double> &pc, const vpColVector &w) {
     double cent_x { 0. }, cent_y { 0. }, cent_z { 0. }, total_w { 0. };
 
-    int i = 0;
     int w_size = static_cast<int>(w.size()); // Needed because currently OpenMP on Windows does not support unsigned
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for num_threads(num_procs) reduction(+ : total_w, cent_x, cent_y, cent_z)
 #endif
-    for (i = 0; i < w_size; ++i) {
+    for (int i = 0; i < w_size; ++i) {
       const auto pt_cloud_start_idx = 3 * i;
+      const unsigned int i_ = static_cast<unsigned int>(i);
 
-      cent_x += w[i] * pc[static_cast<size_t>(pt_cloud_start_idx + 0)];
-      cent_y += w[i] * pc[static_cast<size_t>(pt_cloud_start_idx + 1)];
-      cent_z += w[i] * pc[static_cast<size_t>(pt_cloud_start_idx + 2)];
+      cent_x += w[i_] * pc[static_cast<size_t>(pt_cloud_start_idx + 0)];
+      cent_y += w[i_] * pc[static_cast<size_t>(pt_cloud_start_idx + 1)];
+      cent_z += w[i_] * pc[static_cast<size_t>(pt_cloud_start_idx + 2)];
 
-      total_w += w[i];
+      total_w += w[i_];
     }
 
     return std::make_tuple(vpColVector { cent_x, cent_y, cent_z }, total_w);
@@ -127,17 +127,17 @@ vpPlane estimatePlaneEquationSVD(const std::vector<double> &point_cloud, vpColVe
     centroid /= total_w;
 
     // Minimization
-    int i = 0;
     int nbPoints = static_cast<int>(nPoints); // Needed because currently OpenMP on Windows does not support unsigned
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for num_threads(num_procs)
 #endif
-    for (i = 0; i < nbPoints; ++i) {
-      const auto pt_cloud_start_idx = 3 * i;
+    for (int i = 0; i < nbPoints; ++i) {
+      const unsigned int i_ = static_cast<unsigned int>(i);
+      const unsigned int pt_cloud_start_idx = 3 * i_;
 
-      M[i][0] = weights[i] * (point_cloud[pt_cloud_start_idx + 0] - centroid[0]);
-      M[i][1] = weights[i] * (point_cloud[pt_cloud_start_idx + 1] - centroid[1]);
-      M[i][2] = weights[i] * (point_cloud[pt_cloud_start_idx + 2] - centroid[2]);
+      M[i_][0] = weights[i_] * (point_cloud[pt_cloud_start_idx + 0] - centroid[0]);
+      M[i_][1] = weights[i_] * (point_cloud[pt_cloud_start_idx + 1] - centroid[1]);
+      M[i_][2] = weights[i_] * (point_cloud[pt_cloud_start_idx + 2] - centroid[2]);
     }
 
     vpColVector W {};
@@ -168,14 +168,15 @@ vpPlane estimatePlaneEquationSVD(const std::vector<double> &point_cloud, vpColVe
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for num_threads(num_procs) reduction(+ : error)
 #endif
-    for (i = 0; i < nbPoints; ++i) {
-      const auto pt_cloud_start_idx = 3 * i;
+    for (int i = 0; i < nbPoints; ++i) {
+      const unsigned int i_ = static_cast<unsigned int>(i);
+      const unsigned int pt_cloud_start_idx = 3 * i_;
 
-      residues[i] = std::fabs(A * point_cloud[pt_cloud_start_idx + 0] + B * point_cloud[pt_cloud_start_idx + 1] +
-                              C * point_cloud[pt_cloud_start_idx + 2] + D) /
+      residues[i_] = std::fabs(A * point_cloud[pt_cloud_start_idx + 0] + B * point_cloud[pt_cloud_start_idx + 1] +
+                               C * point_cloud[pt_cloud_start_idx + 2] + D) /
         smth;
 
-      error += weights[i] * residues[i];
+      error += weights[i_] * residues[i_];
     }
 
     error /= total_w;
