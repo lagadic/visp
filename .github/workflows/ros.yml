@@ -32,7 +32,6 @@ jobs:
 
   # build on Ubuntu docker images
   build_linux:
-    name: "${{ matrix.docker_image }} (${{ matrix.ros_distribution }})"
     needs: check_skip_flags
     if: >-
       ${{

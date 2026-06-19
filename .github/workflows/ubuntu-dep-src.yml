@@ -295,11 +295,13 @@ jobs:
         echo "Warnings logged to warnings.log"
 
     - name: Show build logs
+      working-directory: build
       run: |
         echo "=== Buils logs ==="
         cat make_install.log
 
     - name: Show warnings
+      working-directory: build
       run: |
         echo "=== WARNINGS ==="
         cat warnings.log
