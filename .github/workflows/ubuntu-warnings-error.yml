@@ -63,6 +63,7 @@ jobs:
                  -DACTIVATE_WARNING_EXTRA=ON \
                  -DACTIVATE_WARNING_SHADOW=ON \
                  -DACTIVATE_WARNING_FLOAT_EQUAL=ON \
+                 -DACTIVATE_WARNING_SIGN_CONVERSION=ON \
                  -DCMAKE_CXX_FLAGS=-Werror
         cat ViSP-third-party.txt
 

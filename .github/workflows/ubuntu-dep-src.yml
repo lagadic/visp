@@ -268,7 +268,10 @@ jobs:
       run: |
         pwd
         mkdir build && cd build && mkdir install
-        cmake .. -DCMAKE_INSTALL_PREFIX=$(pwd)/install
+        cmake .. -DCMAKE_INSTALL_PREFIX=$(pwd)/install \
+                 -DACTIVATE_WARNING_SHADOW=ON \
+                 -DACTIVATE_WARNING_FLOAT_EQUAL=ON \
+                 -DACTIVATE_WARNING_SIGN_CONVERSION=ON
         cat ViSP-third-party.txt
 
     - name: Build visp-config script
@@ -283,9 +286,23 @@ jobs:
         LD_LIBRARY_PATH: /opt/openrobots/lib
       working-directory: build
       run: |
-        make -j$(nproc) install
+        make -j$(nproc) install > make_install.log 2>&1
         echo "VISP_DIR=$(pwd)/install" >> $GITHUB_ENV
         echo $VISP_DIR
+        # Filter and group warnings into a separate file
+        grep -i "warning: " make_install.log > warnings.log
+        echo "Build output logged to make_install.log"
+        echo "Warnings logged to warnings.log"
+
+    - name: Show build logs
+      run: |
+        echo "=== Buils logs ==="
+        cat make_install.log
+
+    - name: Show warnings
+      run: |
+        echo "=== WARNINGS ==="
+        cat warnings.log
 
     - name: Run unit tests
       env:
