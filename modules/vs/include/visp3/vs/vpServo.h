@@ -40,7 +40,6 @@
 #define VP_SERVO_H
 
 #include <list>
-#include <vector>
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMatrix.h>
@@ -865,82 +864,6 @@ public:
    */
   vpColVector secondaryTask(const vpColVector &e2, const vpColVector &de2dt,
                             const bool &useLargeProjectionOperator = false);
-
-  /*!
-   * Compute and return the contribution of an arbitrary number of secondary
-   * tasks \f${\bf e}_2 \ldots {\bf e}_n\f$, stacked on top of the primary
-   * task \f${\bf e}_1\f$ handled by computeControlLaw(), using the recursive
-   * task-priority formalism with optimal (least-squares) handling of the
-   * redundancy, as described by equations (3.16)-(3.17):
-   *
-   * \f[
-   * \left\{
-   * \begin{array}{l}
-   * {\bf \dot q}_0 = {\bf 0} \\
-   * {\bf \dot q}_i = {\bf \dot q}_{i-1} + \widetilde{\bf J}_i^+ \widetilde{\bf
-   * \dot e}_i^*, \quad i = 1 \ldots n
-   * \end{array}
-   * \right.
-   * \f]
-   *
-   * where \f$\widetilde{\bf J}_i = {\bf J}_i {\bf P}^{\bf A}_{i-1}\f$,
-   * \f$\widetilde{\bf \dot e}_i^* = {\bf \dot e}_i^* - {\bf J}_i {\bf \dot
-   * q}_{i-1}\f$, and \f${\bf P}^{\bf A}_i\f$ is the projector on the null
-   * space of the stacked Jacobian of the \f$i\f$ first tasks, computed
-   * recursively by:
-   *
-   * \f[
-   * \left\{
-   * \begin{array}{l}
-   * {\bf P}^{\bf A}_0 = {\bf I} \\
-   * {\bf P}^{\bf A}_i = {\bf P}^{\bf A}_{i-1} - \widetilde{\bf J}_i^+
-   * \widetilde{\bf J}_i
-   * \end{array}
-   * \right.
-   * \f]
-   *
-   * The primary task handled by computeControlLaw() corresponds to the
-   * \f$i=0\f$ (initialization: \f${\bf \dot q}_0 = {\bf 0}\f$, \f${\bf
-   * P}^{\bf A}_0 = {\bf I}\f$) and \f$i=1\f$ steps of this same recurrence:
-   * \f${\bf \dot q}_1\f$ is the velocity vector returned by
-   * computeControlLaw(), and \f${\bf P}^{\bf A}_1\f$ is the classical
-   * projection operator \f${\bf I - W^+W}\f$ already used by the other
-   * secondaryTask() overloads.
-   *
-   * This function therefore restarts the recurrence at \f$i=2\f$ from the
-   * internal state left by computeControlLaw() and applies it for every
-   * additional task described by \p dedt_i and \p J_i, in order (the task at
-   * index \p k of these vectors is applied at priority level \f$i = k+2\f$,
-   * i.e. just after the primary task).
-   *
-   * \param dedt_i : Vector containing, for each additional task (from the
-   * highest to the lowest priority), the desired task velocity \f${\bf \dot
-   * e}_i^*\f$.
-   * \param J_i : Vector containing, for each additional task, its
-   * Jacobian \f${\bf J}_i\f$. Must have the same size as \p dedt_i, and
-   * \p J_i[k] must have as many columns as the primary task Jacobian and as
-   * many rows as \p dedt_i[k].
-   *
-   * \return The contribution \f${\bf \dot q}_n - {\bf \dot q}_1\f$ of the
-   * additional tasks only, meant to be added to the velocity returned by
-   * computeControlLaw(), exactly as the other secondaryTask() overloads:
-   *
-   * \code
-   * vpColVector v;
-   * std::vector<vpColVector> dedt_i; // de2dt, de3dt, ...
-   * std::vector<vpMatrix> J_i;       // J2, J3, ...
-   * ...
-   * v  = task.computeControlLaw();      // i = 0,1: primary task
-   * v += task.secondaryTask(dedt_i, J_i); // i = 2..n: stack of secondary tasks
-   * \endcode
-   *
-   * \warning computeControlLaw() must be called prior to this function since
-   * it updates the projection operator and the primary task velocity that
-   * are used to initialize the recurrence.
-   *
-   * \sa computeControlLaw()
-   */
-  vpColVector secondaryTask(const std::vector<vpColVector> &dedt_i, const std::vector<vpMatrix> &J_i);
 
   /*!
    * Compute and return the secondary task vector for joint limit avoidance
