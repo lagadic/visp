@@ -140,7 +140,10 @@ jobs:
         cd visp_sample-build
         CC=${{ matrix.compiler.CC }}
         CXX=${{ matrix.compiler.CXX }}
-        cmake .. -DCMAKE_C_COMPILER="${CC}" -DCMAKE_CXX_COMPILER="${CXX}" -DVISP_DIR=/tmp/usr/local/lib/cmake/visp -DCMAKE_VERBOSE_MAKEFILE=ON
+        cmake .. -DCMAKE_C_COMPILER="${CC}" \
+                 -DCMAKE_CXX_COMPILER="${CXX}" \
+                 -DVISP_DIR=/tmp/usr/local/lib/cmake/visp \
+                 -DCMAKE_VERBOSE_MAKEFILE=ON
         make -j$(nproc)
 
     - name: ViSP as 3rdparty with visp.pc and pkg-config
@@ -175,7 +178,9 @@ jobs:
         CXX=${{ matrix.compiler.CXX }}
         echo "CC: $CC"
         echo "CXX: $CXX"
-        cmake ../ -DCMAKE_C_COMPILER="${CC}" -DCMAKE_CXX_COMPILER="${CXX}" -DVISP_DIR=/tmp/usr/local/lib/cmake/visp
+        cmake ../ -DCMAKE_C_COMPILER="${CC}" \
+                  -DCMAKE_CXX_COMPILER="${CXX}" \
+                  -DVISP_DIR=/tmp/usr/local/lib/cmake/visp
         make -j$(nproc)
 
     - name: Build visp_started with ViSP as 3rdparty
@@ -187,5 +192,7 @@ jobs:
         CXX=${{ matrix.compiler.CXX }}
         echo "CC: $CC"
         echo "CXX: $CXX"
-        cmake ../ -DCMAKE_C_COMPILER="${CC}" -DCMAKE_CXX_COMPILER="${CXX}" -DVISP_DIR=/tmp/usr/local/lib/cmake/visp
+        cmake ../ -DCMAKE_C_COMPILER="${CC}" \
+                  -DCMAKE_CXX_COMPILER="${CXX}" \
+                  -DVISP_DIR=/tmp/usr/local/lib/cmake/visp
         make -j$(nproc)
