@@ -286,7 +286,7 @@ jobs:
         LD_LIBRARY_PATH: /opt/openrobots/lib
       working-directory: build
       run: |
-        make -j$(nproc) install > make_install.log 2>&1
+        make -j$(nproc) install 2>&1 | tee make_install.log
         echo "VISP_DIR=$(pwd)/install" >> $GITHUB_ENV
         echo $VISP_DIR
         # Filter and group warnings into a separate file
@@ -295,11 +295,15 @@ jobs:
         echo "Warnings logged to warnings.log"
 
     - name: Show build logs
+      if: always()
+      working-directory: build
       run: |
         echo "=== Buils logs ==="
         cat make_install.log
 
     - name: Show warnings
+      if: always()
+      working-directory: build
       run: |
         echo "=== WARNINGS ==="
         cat warnings.log

@@ -753,6 +753,18 @@ vpColVector vpServo::computeControlLaw()
   // handle the eye-in-hand eye-to-hand case
   J1 *= signInteractionMatrix;
 
+  // The primary task corresponds to the initialization (i=0) and first step
+  // (i=1) of the recursive task-priority law given by equations (3.16)-(3.17):
+  //   q_dot_0 = 0 ;  P_0^A = I
+  //   J_tilde_1 = J1 * P_0^A = J1                     (since P_0^A = I)
+  //   e_dot_tilde_1* = error - J1 * q_dot_0 = error    (since q_dot_0 = 0)
+  //   q_dot_1 = q_dot_0 + J_tilde_1^+ * e_dot_tilde_1* = J1^+ * error
+  //   P_1^A   = P_0^A - J_tilde_1^+ * J_tilde_1 = I - J1^+ * J1
+  // J1p below plays the role of J_tilde_1^+ = J1^+, e1 plays the role of
+  // q_dot_1, and I_WpW (computed at the end of this function) plays the
+  // role of P_1^A. They are kept available as object members so that
+  // secondaryTask(dedt_i, J_i) can restart the recurrence at i=2.
+
   // pseudo inverse of the task Jacobian
   // and rank of the task Jacobian
   // the image of J1 is also computed to allows the computation
@@ -772,7 +784,7 @@ vpColVector vpServo::computeControlLaw()
     /* if no degrees of freedom remains (rank J1 = ndof)
        WpW = I, multiply by WpW is useless
     */
-    e1 = J1p * error; // primary task
+    e1 = J1p * error; // primary task, i.e. q_dot_1 = J_tilde_1^+ * e_dot_tilde_1*
 
     WpW.eye(J1.getCols(), J1.getCols());
   }
@@ -794,13 +806,15 @@ vpColVector vpServo::computeControlLaw()
     J1.print(std::cout, 10, "J1");
     J1p.print(std::cout, 10, "J1p");
 #endif
-    e1 = WpW * J1p * error;
+    e1 = WpW * J1p * error; // q_dot_1, with the rank-deficient least-squares correction WpW
   }
   e = -lambda(e1) * e1;
 
   I.eye(J1.getCols());
 
-  // Compute classical projection operator
+  // Compute classical projection operator, i.e. P_1^A = I - J1^+ J1, used
+  // both by the classical secondaryTask() overloads and as the i=1
+  // projector for secondaryTask(dedt_i, J_i).
   I_WpW = (I - WpW);
 
   m_first_iteration = false;
@@ -1144,6 +1158,73 @@ vpColVector vpServo::secondaryTask(const vpColVector &e2, const vpColVector &de2
   }
 
   return sec;
+}
+
+vpColVector vpServo::secondaryTask(const std::vector<vpColVector> &dedt_i, const std::vector<vpMatrix> &J_i)
+{
+  if (dedt_i.size() != J_i.size()) {
+    std::stringstream msg;
+    msg << "dedt_i (" << dedt_i.size() << " elements) and J_i (" << J_i.size()
+      << " elements) must have the same size";
+    throw(vpServoException(vpServoException::dimensionError, msg.str()));
+  }
+
+  if (rankJ1 == J1.getCols()) {
+    vpERROR_TRACE("no degree of freedom is free, cannot use secondary task");
+    throw(vpServoException(vpServoException::noDofFree, "no degree of freedom is free, cannot use secondary task"));
+  }
+
+  unsigned int const n = J1.getCols();
+
+  // Restart the recurrence (3.16)-(3.17) at i = 2, using the state left by
+  // computeControlLaw() for i = 1:
+  //   q_dot_1 = e   (primary task velocity)
+  //   P_1^A   = I_WpW = I - J1^+ J1
+  vpColVector q_dot_prev = e;
+  vpMatrix PA_prev = I_WpW;
+
+  for (size_t k = 0; k < J_i.size(); ++k) {
+    unsigned int const i = static_cast<unsigned int>(k) + 2; // priority level, for error messages
+
+    const vpMatrix &Jk = J_i[k];
+    const vpColVector &dedtk = dedt_i[k];
+
+    if (Jk.getCols() != n) {
+      std::stringstream msg;
+      msg << "J_i[" << k << "] (task i=" << i << ") has " << Jk.getCols() << " columns, expected " << n;
+      throw(vpServoException(vpServoException::dimensionError, msg.str()));
+    }
+    if (dedtk.size() != Jk.getRows()) {
+      std::stringstream msg;
+      msg << "dedt_i[" << k << "] (task i=" << i << ") has " << dedtk.size() << " rows, but J_i[" << k
+        << "] has " << Jk.getRows() << " rows";
+      throw(vpServoException(vpServoException::dimensionError, msg.str()));
+    }
+
+    // J_tilde_i = J_i * P_{i-1}^A
+    vpMatrix Jtilde = Jk * PA_prev;
+
+    // e_dot_tilde_i* = e_dot_i* - J_i * q_dot_{i-1}
+    vpColVector dedt_tilde = dedtk - Jk * q_dot_prev;
+
+    // pseudo-inverse of J_tilde_i
+    vpMatrix Jtilde_p;
+    Jtilde.pseudoInverse(Jtilde_p, m_pseudo_inverse_threshold);
+
+    // q_dot_i = q_dot_{i-1} + J_tilde_i^+ * e_dot_tilde_i*
+    vpColVector q_dot_cur = q_dot_prev + Jtilde_p * dedt_tilde;
+
+    // P_i^A = P_{i-1}^A - J_tilde_i^+ * J_tilde_i
+    vpMatrix PA_cur = PA_prev - Jtilde_p * Jtilde;
+
+    q_dot_prev = q_dot_cur;
+    PA_prev = PA_cur;
+  }
+
+  // Only the contribution of the secondary tasks is returned: the caller is
+  // expected to add it to the velocity already returned by
+  // computeControlLaw() (which is q_dot_1, i.e. e).
+  return (q_dot_prev - e);
 }
 
 vpColVector vpServo::secondaryTaskJointLimitAvoidance(const vpColVector &q, const vpColVector &dq,
