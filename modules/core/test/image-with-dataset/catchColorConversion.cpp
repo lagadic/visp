@@ -864,8 +864,10 @@ TEST_CASE("OpenCV Mat <==> vpImage conversion", "[image_conversion]")
   SECTION("CV_16UC1 to uint16_t")
   {
     // Test when data in cv::Mat is continuous
-    unsigned int w = 3, h = 3;
-    cv::Mat img = (cv::Mat_<uint16_t>(static_cast<int>(h), static_cast<int>(w)) << 65, 650, 6500, 65000, 60000, 6000, 600, 60, 6);
+    int w = 3, h = 3;
+    uint16_t data[] = { 65, 650, 6500, 65000, 60000, 6000, 600, 60, 6 };
+    cv::Mat img(h, w, CV_16UC1, data);
+
     vpImage<uint16_t> gray16;
     vpImageConvert::convert(img, gray16);
 
