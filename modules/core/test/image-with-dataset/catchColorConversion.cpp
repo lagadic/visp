@@ -871,8 +871,8 @@ TEST_CASE("OpenCV Mat <==> vpImage conversion", "[image_conversion]")
     vpImage<uint16_t> gray16;
     vpImageConvert::convert(img, gray16);
 
-    REQUIRE(gray16.getHeight() == h);
-    REQUIRE(gray16.getWidth() == w);
+    REQUIRE(gray16.getHeight() == static_cast<unsigned int>(h));
+    REQUIRE(gray16.getWidth() == static_cast<unsigned int>(w));
 
     for (int i = 0; i < img.rows; i++) {
       for (int j = 0; j < img.cols; j++) {
@@ -885,7 +885,7 @@ TEST_CASE("OpenCV Mat <==> vpImage conversion", "[image_conversion]")
     vpImage<uint16_t> gray16_col1;
     vpImageConvert::convert(img_col1, gray16_col1);
 
-    REQUIRE(gray16_col1.getHeight() == h);
+    REQUIRE(gray16_col1.getHeight() == static_cast<unsigned int>(h));
     REQUIRE(gray16_col1.getWidth() == 1);
 
     for (int i = 0; i < img_col1.rows; i++) {
