@@ -864,13 +864,15 @@ TEST_CASE("OpenCV Mat <==> vpImage conversion", "[image_conversion]")
   SECTION("CV_16UC1 to uint16_t")
   {
     // Test when data in cv::Mat is continuous
-    unsigned int w = 3, h = 3;
-    cv::Mat img = (cv::Mat_<uint16_t>(static_cast<int>(h), static_cast<int>(w)) << 65, 650, 6500, 65000, 60000, 6000, 600, 60, 6);
+    int w = 3, h = 3;
+    uint16_t data[] = { 65, 650, 6500, 65000, 60000, 6000, 600, 60, 6 };
+    cv::Mat img(h, w, CV_16UC1, data);
+
     vpImage<uint16_t> gray16;
     vpImageConvert::convert(img, gray16);
 
-    REQUIRE(gray16.getHeight() == h);
-    REQUIRE(gray16.getWidth() == w);
+    REQUIRE(gray16.getHeight() == static_cast<unsigned int>(h));
+    REQUIRE(gray16.getWidth() == static_cast<unsigned int>(w));
 
     for (int i = 0; i < img.rows; i++) {
       for (int j = 0; j < img.cols; j++) {
@@ -883,7 +885,7 @@ TEST_CASE("OpenCV Mat <==> vpImage conversion", "[image_conversion]")
     vpImage<uint16_t> gray16_col1;
     vpImageConvert::convert(img_col1, gray16_col1);
 
-    REQUIRE(gray16_col1.getHeight() == h);
+    REQUIRE(gray16_col1.getHeight() == static_cast<unsigned int>(h));
     REQUIRE(gray16_col1.getWidth() == 1);
 
     for (int i = 0; i < img_col1.rows; i++) {

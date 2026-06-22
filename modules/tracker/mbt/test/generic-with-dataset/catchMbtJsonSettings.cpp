@@ -404,7 +404,7 @@ SCENARIO("MBT JSON Serialization", "[json]")
             t2.loadConfigFile(jsonPath);
             REQUIRE(t2.getNearClippingDistance() == Catch::Approx(t1.getNearClippingDistance()));
             REQUIRE(t2.getFarClippingDistance() == Catch::Approx(t1.getFarClippingDistance()));
-            REQUIRE(t2.getClipping() & clipping);
+            REQUIRE((t2.getClipping() & static_cast<unsigned int>(clipping)) != 0);
           }
         }
       }
