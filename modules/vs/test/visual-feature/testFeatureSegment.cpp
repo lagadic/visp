@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -200,7 +200,9 @@ int main(int argc, const char **argv)
     robot.setMaxRotationVelocity(vpMath::rad(90.));
     wMc = wMo * cMo.inverse();
     robot.setPosition(wMc);
+#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
     int iter = 0;
+#endif
 
     do {
       double t = vpTime::measureTimeMs();
@@ -230,11 +232,11 @@ int main(int argc, const char **argv)
       if (opt_curves) {
         graph->plot(0, iter, v);               // plot velocities applied to the robot
         graph->plot(1, iter, task.getError()); // plot error vector
+        iter++;
       }
 #endif
 
       vpTime::wait(t, sampling_time * 1000); // Wait 10 ms
-      iter++;
 
     } while ((task.getError()).sumSquare() > 0.0005);
 
