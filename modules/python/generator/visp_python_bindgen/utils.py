@@ -182,7 +182,7 @@ def typedef_is_anonymous(type: types.DecoratedType) -> bool:
 def name_is_anonymous(name: types.PQName) -> bool:
   return any(isinstance(s, types.AnonymousName) for s in name.segments)
 
-def get_typename(typename: types.PQName, owner_specs, header_env_mapping) -> str:
+def get_typename(typename: types.PQName, owner_specs, header_env_mapping, keep_visp_namespace=False) -> str:
   '''Resolve the string representation of a raw type, resolving template specializations and using complete typenames
   (aliases, shortened names when in same namescope).
   This does not include constness, whether it is a pointer or a ref etc.
@@ -226,9 +226,8 @@ def get_typename(typename: types.PQName, owner_specs, header_env_mapping) -> str
 
   final_segment_reprs = list(map(lambda s: s.removeprefix('visp::'), final_segment_reprs))
 
-  if final_segment_reprs[0] == 'visp':
+  if not keep_visp_namespace and final_segment_reprs[0] == 'visp':
     final_segment_reprs.pop(0)
-
 
   return '::'.join(final_segment_reprs)
 
