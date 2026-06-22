@@ -22,7 +22,7 @@ jobs:
       head-commit-message: ${{ steps.get_head_commit_message.outputs.headCommitMsg }}
     steps:
       - name: Get repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.head.sha }}
       - name: Print head git commit message
@@ -48,7 +48,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v5
+      uses: actions/checkout@v7
 
     - name: Print system information
       run: lscpu
@@ -93,6 +93,18 @@ jobs:
       run: |
         git clone --depth 1 https://github.com/lagadic/visp_sample ${HOME}/visp_sample
 
+    - name: Clone visp_contrib
+      run: |
+        git clone --depth 1 https://github.com/lagadic/visp_contrib ${HOME}/visp_contrib
+
+    - name: Clone camera_localization
+      run: |
+        git clone --depth 1 https://github.com/lagadic/camera_localization ${HOME}/camera_localization
+
+    - name: Clone visp_started
+      run: |
+        git clone --depth 1 https://github.com/lagadic/visp_started ${HOME}/visp_started
+
     - name: Configure CMake
       run: |
         mkdir build
@@ -103,8 +115,13 @@ jobs:
         echo "CC: $CC"
         echo "CXX: $CXX"
         echo "Standard: $CXX_STANDARD"
-        cmake .. -DCMAKE_C_COMPILER="${CC}" -DCMAKE_CXX_COMPILER="${CXX}" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/tmp/usr/local \
-          -DCMAKE_VERBOSE_MAKEFILE=ON -DUSE_CXX_STANDARD=$CXX_STANDARD
+        cmake .. -DVISP_CONTRIB_MODULES_PATH=${HOME}/visp_contrib/modules \
+                 -DCMAKE_C_COMPILER="${CC}" \
+                 -DCMAKE_CXX_COMPILER="${CXX}" \
+                 -DCMAKE_BUILD_TYPE=Release \
+                 -DCMAKE_INSTALL_PREFIX=/tmp/usr/local \
+                 -DCMAKE_VERBOSE_MAKEFILE=ON \
+                 -DUSE_CXX_STANDARD=$CXX_STANDARD
         cat ViSP-third-party.txt
 
     - name: Compile
@@ -123,7 +140,10 @@ jobs:
         cd visp_sample-build
         CC=${{ matrix.compiler.CC }}
         CXX=${{ matrix.compiler.CXX }}
-        cmake .. -DCMAKE_C_COMPILER="${CC}" -DCMAKE_CXX_COMPILER="${CXX}" -DVISP_DIR=/tmp/usr/local/lib/cmake/visp -DCMAKE_VERBOSE_MAKEFILE=ON
+        cmake .. -DCMAKE_C_COMPILER="${CC}" \
+                 -DCMAKE_CXX_COMPILER="${CXX}" \
+                 -DVISP_DIR=/tmp/usr/local/lib/cmake/visp \
+                 -DCMAKE_VERBOSE_MAKEFILE=ON
         make -j$(nproc)
 
     - name: ViSP as 3rdparty with visp.pc and pkg-config
@@ -148,3 +168,31 @@ jobs:
         $VISP_INSTALL_PREFIX/bin/visp-config --libs
         make CXX=${{ matrix.compiler.CXX }} -j$(nproc) -f Makefile.visp-config
         make CXX=${{ matrix.compiler.CXX }} -j$(nproc) -f Makefile.visp-config clean
+
+    - name: Build camera_localization with ViSP as 3rdparty
+      run: |
+        cd ${HOME}/camera_localization
+        mkdir camera_localization-build
+        cd camera_localization-build
+        CC=${{ matrix.compiler.CC }}
+        CXX=${{ matrix.compiler.CXX }}
+        echo "CC: $CC"
+        echo "CXX: $CXX"
+        cmake ../ -DCMAKE_C_COMPILER="${CC}" \
+                  -DCMAKE_CXX_COMPILER="${CXX}" \
+                  -DVISP_DIR=/tmp/usr/local/lib/cmake/visp
+        make -j$(nproc)
+
+    - name: Build visp_started with ViSP as 3rdparty
+      run: |
+        cd ${HOME}/visp_started
+        mkdir visp_started-build
+        cd visp_started-build
+        CC=${{ matrix.compiler.CC }}
+        CXX=${{ matrix.compiler.CXX }}
+        echo "CC: $CC"
+        echo "CXX: $CXX"
+        cmake ../ -DCMAKE_C_COMPILER="${CC}" \
+                  -DCMAKE_CXX_COMPILER="${CXX}" \
+                  -DVISP_DIR=/tmp/usr/local/lib/cmake/visp
+        make -j$(nproc)
