@@ -23,7 +23,7 @@ jobs:
       head-commit-message: ${{ steps.get_head_commit_message.outputs.headCommitMsg }}
     steps:
       - name: Get repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.head.sha }}
       - name: Print head git commit message
@@ -57,10 +57,10 @@ jobs:
           # - arch: aarch64
           #   distro: ubuntu:latest
           #   endianness: (Little Endian)
-          - arch: riscv64
-            distro: ubuntu:latest
-            target: RISC-V
-            endianness: (Little Endian)
+          #- arch: riscv64
+          #  distro: ubuntu:latest
+          #  target: RISC-V
+          #  endianness: (Little Endian)
           - arch: ppc64le
             distro: ubuntu:latest
             target: POWER8
@@ -72,7 +72,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v5
+      uses: actions/checkout@v7
 
     # Ajout de Swap pour éviter l'erreur "Cannot allocate memory" lors du linking sur RISC-V
     - name: Set up Swap Space

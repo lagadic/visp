@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,7 +80,7 @@ vpUDPClient::vpUDPClient()
   ,
   m_wsa()
 #endif
-{ }
+{}
 
 vpUDPClient::vpUDPClient(const vpUDPClient &client)
 {
@@ -241,13 +241,13 @@ int vpUDPClient::receive(std::string &msg, int timeoutMs)
 
   if (retval > 0) {
     /* recvfrom: receive a UDP datagram from the server */
-    int length = static_cast<int>(recvfrom(m_socketFileDescriptor, m_buf, sizeof(m_buf), 0,
+    int length = static_cast<int>(recvfrom(m_socketFileDescriptor, (char *)m_buf, static_cast<size_t>(sizeof(m_buf)), 0,
                                            (struct sockaddr *)&m_serverAddress, (socklen_t *)&m_serverLength));
     if (length <= 0) {
       return length < 0 ? -1 : 0;
     }
 
-    msg = std::string(m_buf, length);
+    msg = std::string(m_buf, static_cast<std::size_t>(length));
     return length;
   }
 
@@ -287,7 +287,7 @@ int vpUDPClient::receive(void *msg, size_t len, int timeoutMs)
 
   if (retval > 0) {
     /* recvfrom: receive a UDP datagram from the server */
-    int length = static_cast<int>(recvfrom(m_socketFileDescriptor, (char *)msg, static_cast<int>(len), 0,
+    int length = static_cast<int>(recvfrom(m_socketFileDescriptor, (char *)msg, static_cast<size_t>(len), 0,
                                            (struct sockaddr *)&m_serverAddress, (socklen_t *)&m_serverLength));
     if (length <= 0) {
       return length < 0 ? -1 : 0;
@@ -338,7 +338,8 @@ int vpUDPClient::send(const std::string &msg)
 /* send the message to the server */
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   return static_cast<int>(
-      sendto(m_socketFileDescriptor, msg.c_str(), msg.size(), 0, (struct sockaddr *)&m_serverAddress, m_serverLength));
+      sendto(m_socketFileDescriptor, msg.c_str(), msg.size(), 0, (struct sockaddr *)&m_serverAddress,
+             static_cast<socklen_t>(m_serverLength)));
 #else
   return sendto(m_socketFileDescriptor, msg.c_str(), static_cast<int>(msg.size()), 0, (struct sockaddr *)&m_serverAddress,
                 m_serverLength);
@@ -367,7 +368,7 @@ int vpUDPClient::send(const void *msg, size_t len)
 /* send the message to the server */
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   return static_cast<int>(
-      sendto(m_socketFileDescriptor, msg, len, 0, (struct sockaddr *)&m_serverAddress, m_serverLength));
+      sendto(m_socketFileDescriptor, msg, len, 0, (struct sockaddr *)&m_serverAddress, static_cast<socklen_t>(m_serverLength)));
 #else
   return sendto(m_socketFileDescriptor, (char *)msg, static_cast<int>(len), 0, (struct sockaddr *)&m_serverAddress, m_serverLength);
 #endif
@@ -375,5 +376,5 @@ int vpUDPClient::send(const void *msg, size_t len)
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpUDPClient.cpp.o) has no symbols
-void dummy_vpUDPClient() { }
+void dummy_vpUDPClient() {}
 #endif

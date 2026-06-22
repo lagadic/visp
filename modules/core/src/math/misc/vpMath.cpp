@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -350,14 +350,14 @@ double vpMath::getMedian(const std::vector<double> &v)
   size_t size = v_copy.size();
 
   size_t n = size / 2;
-  std::nth_element(v_copy.begin(), v_copy.begin() + n, v_copy.end());
+  std::nth_element(v_copy.begin(), v_copy.begin() + static_cast<std::ptrdiff_t>(n), v_copy.end());
   double val_n = v_copy[n];
 
   if ((size % val_2) == 1) {
     return val_n;
   }
   else {
-    std::nth_element(v_copy.begin(), v_copy.begin() + (n - 1), v_copy.end());
+    std::nth_element(v_copy.begin(), v_copy.begin() + static_cast<std::ptrdiff_t>(n - 1), v_copy.end());
     return 0.5 * (val_n + v_copy[n - 1]);
   }
 }

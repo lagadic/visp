@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -575,7 +575,7 @@ int main(int argc, const char **argv)
       }
 
       if (opt_click_allowed && opt_display) {
-        vpDisplay::displayText(I, 20, I.getWidth() - 150, std::string("Mode: ") + (opt_step_by_step ? std::string("step-by-step") : std::string("continuous")), vpColor::red);
+        vpDisplay::displayText(I, 20, static_cast<int>(I.getWidth()) - 150, std::string("Mode: ") + (opt_step_by_step ? std::string("step-by-step") : std::string("continuous")), vpColor::red);
         vpDisplay::displayText(I, 20, 10, "Right click to exit", vpColor::red);
         vpDisplay::displayText(I, 40, 10, "Middle click to change mode", vpColor::red);
         if (opt_step_by_step) {

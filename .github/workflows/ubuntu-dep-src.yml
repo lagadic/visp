@@ -26,7 +26,7 @@ jobs:
       head-commit-message: ${{ steps.get_head_commit_message.outputs.headCommitMsg }}
     steps:
       - name: Get repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.head.sha }}
       - name: Print head git commit message
@@ -51,7 +51,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v5
+      uses: actions/checkout@v7
 
     # https://github.com/hendrikmuhs/ccache-action
     - name: ccache
@@ -268,7 +268,10 @@ jobs:
       run: |
         pwd
         mkdir build && cd build && mkdir install
-        cmake .. -DCMAKE_INSTALL_PREFIX=$(pwd)/install
+        cmake .. -DCMAKE_INSTALL_PREFIX=$(pwd)/install \
+                 -DACTIVATE_WARNING_SHADOW=ON \
+                 -DACTIVATE_WARNING_FLOAT_EQUAL=ON \
+                 -DACTIVATE_WARNING_SIGN_CONVERSION=ON
         cat ViSP-third-party.txt
 
     - name: Build visp-config script
@@ -283,9 +286,32 @@ jobs:
         LD_LIBRARY_PATH: /opt/openrobots/lib
       working-directory: build
       run: |
-        make -j$(nproc) install
+        make -j$(nproc) install 2>&1 | tee make_install.log
         echo "VISP_DIR=$(pwd)/install" >> $GITHUB_ENV
         echo $VISP_DIR
+        # Filter and group warnings into a separate file
+        # grep exits with status 1 when no match is found: don't let that fail the step
+        grep -i "warning: " make_install.log > warnings.log || true
+        echo "Build output logged to make_install.log"
+        echo "Warnings logged to warnings.log"
+
+    - name: Show build logs
+      if: always()
+      working-directory: build
+      run: |
+        echo "=== Build logs ==="
+        cat make_install.log
+
+    - name: Show warnings
+      if: always()
+      working-directory: build
+      run: |
+        echo "=== WARNINGS ==="
+        if [ -f warnings.log ]; then
+          cat warnings.log
+        else
+          echo "warnings.log not found (build likely failed before it could be generated)"
+        fi
 
     - name: Run unit tests
       env:

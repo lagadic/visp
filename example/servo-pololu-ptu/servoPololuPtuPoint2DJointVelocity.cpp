@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,7 +64,7 @@
 #include <visp3/vs/vpAdaptiveGain.h>
 #include <visp3/vs/vpServoDisplay.h>
 
-void usage(const char **argv, int error, const std::string &device, int baudrate)
+void usage(const char **argv, int error, const std::string &device, unsigned int baudrate)
 {
   std::cout << "Name" << std::endl
     << "  Example of eye-in-hand control law. We control here a real robot, a pan-tilt unit" << std::endl
@@ -107,7 +107,7 @@ int main(int argc, const char **argv)
   // Example for Mac OS, the Maestro creates two devices, use the one with the lowest number (the command port)
   //std::string opt_device = "/dev/cu.usbmodem00031501";
 #endif
-  int opt_baudrate = 38400;
+  unsigned int opt_baudrate = 38400;
   bool opt_verbose = false;
 
   for (int i = 1; i < argc; i++) {
@@ -179,7 +179,7 @@ int main(int argc, const char **argv)
     // Velocity twist transformation to express a velocity from end-effector to camera frame
     vpVelocityTwistMatrix cVe(cMe);
 
-    vpColVector q(robot.getNDof());
+    vpColVector q(static_cast<unsigned int>(robot.getNDof()));
     q = 0;
     std::cout << "Move PT to initial position: " << q.t() << std::endl;
     robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
@@ -261,7 +261,7 @@ int main(int argc, const char **argv)
 
     bool quit = false;
     bool send_velocities = false;
-    vpColVector q_dot(robot.getNDof());
+    vpColVector q_dot(static_cast<unsigned int>(robot.getNDof()));
     double min_pix_error = 10; // In pixels
     double min_error = vpMath::sqr(min_pix_error / cam.get_px());
 

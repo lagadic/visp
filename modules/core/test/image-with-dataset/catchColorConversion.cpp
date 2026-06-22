@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -805,7 +805,8 @@ TEST_CASE("OpenCV Mat <==> vpImage conversion", "[image_conversion]")
     common_tools::fill(img);
 
     vpImage<vpRGBa> rgba_ref(height, width);
-    common_tools::BGRToRGBaRef(img.data, reinterpret_cast<unsigned char *>(rgba_ref.bitmap), img.cols, img.rows, false);
+    common_tools::BGRToRGBaRef(img.data, reinterpret_cast<unsigned char *>(rgba_ref.bitmap),
+                           static_cast<unsigned int>(img.cols), static_cast<unsigned int>(img.rows), false);
 
     vpImage<vpRGBa> rgba;
     vpImageConvert::convert(img, rgba);
@@ -818,7 +819,8 @@ TEST_CASE("OpenCV Mat <==> vpImage conversion", "[image_conversion]")
     common_tools::fill(img);
 
     vpImage<vpRGBa> rgba_ref(height, width);
-    common_tools::grayToRGBaRef(img.data, reinterpret_cast<unsigned char *>(rgba_ref.bitmap), height * width);
+    common_tools::grayToRGBaRef(img.data, reinterpret_cast<unsigned char *>(rgba_ref.bitmap),
+                                static_cast<unsigned int>(height) * static_cast<unsigned int>(width));
 
     vpImage<vpRGBa> rgba;
     vpImageConvert::convert(img, rgba);
@@ -831,7 +833,8 @@ TEST_CASE("OpenCV Mat <==> vpImage conversion", "[image_conversion]")
     common_tools::fill(img);
 
     vpImage<unsigned char> gray_ref(height, width);
-    common_tools::BGRToGrayRef(img.data, gray_ref.bitmap, img.cols, img.rows, false);
+    common_tools::BGRToGrayRef(img.data, gray_ref.bitmap,
+      static_cast<unsigned int>(img.cols), static_cast<unsigned int>(img.rows), false);
 
     vpImage<unsigned char> gray;
     vpImageConvert::convert(img, gray);
@@ -861,13 +864,15 @@ TEST_CASE("OpenCV Mat <==> vpImage conversion", "[image_conversion]")
   SECTION("CV_16UC1 to uint16_t")
   {
     // Test when data in cv::Mat is continuous
-    unsigned int w = 3, h = 3;
-    cv::Mat img = (cv::Mat_<uint16_t>(h, w) << 65, 650, 6500, 65000, 60000, 6000, 600, 60, 6);
+    int w = 3, h = 3;
+    uint16_t data[] = { 65, 650, 6500, 65000, 60000, 6000, 600, 60, 6 };
+    cv::Mat img(h, w, CV_16UC1, data);
+
     vpImage<uint16_t> gray16;
     vpImageConvert::convert(img, gray16);
 
-    REQUIRE(gray16.getHeight() == h);
-    REQUIRE(gray16.getWidth() == w);
+    REQUIRE(gray16.getHeight() == static_cast<unsigned int>(h));
+    REQUIRE(gray16.getWidth() == static_cast<unsigned int>(w));
 
     for (int i = 0; i < img.rows; i++) {
       for (int j = 0; j < img.cols; j++) {
@@ -880,7 +885,7 @@ TEST_CASE("OpenCV Mat <==> vpImage conversion", "[image_conversion]")
     vpImage<uint16_t> gray16_col1;
     vpImageConvert::convert(img_col1, gray16_col1);
 
-    REQUIRE(gray16_col1.getHeight() == h);
+    REQUIRE(gray16_col1.getHeight() == static_cast<unsigned int>(h));
     REQUIRE(gray16_col1.getWidth() == 1);
 
     for (int i = 0; i < img_col1.rows; i++) {
@@ -981,13 +986,14 @@ TEST_CASE("Bayer conversion", "[image_conversion]")
   vpImageIo::read(I_RGBA_8U_ref, vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Klimt/Klimt.ppm"));
 
   vpImage<vpRGBa> I_RGBA_8U(I_RGBA_8U_ref.getHeight(), I_RGBA_8U_ref.getWidth());
-  int height = I_RGBA_8U_ref.getHeight(), width = I_RGBA_8U_ref.getWidth();
+  unsigned int img_height = I_RGBA_8U_ref.getHeight();
+  unsigned int img_width = I_RGBA_8U_ref.getWidth();
   const double min_PSNR_bilinear = 21, min_PSNR_Malvar = 24;
 
   SECTION("16-bit")
   {
-    std::vector<uint16_t> buffer(height * width);
-    vpImage<uint16_t> I_Bayer_16U(height, width);
+    std::vector<uint16_t> buffer(static_cast<std::size_t>(img_height) * static_cast<std::size_t>(img_width));
+    vpImage<uint16_t> I_Bayer_16U(img_height, img_width);
     vpImage<uint16_t> I_RGBA_16U(1, I_Bayer_16U.getHeight() * I_Bayer_16U.getWidth() * 4);
 
     SECTION("BGGR")
@@ -1117,9 +1123,9 @@ TEST_CASE("Bayer conversion", "[image_conversion]")
 
   SECTION("8-bit")
   {
-    std::vector<uint8_t> buffer(height * width);
-    vpImage<uint8_t> I_Bayer_8U(height, width);
-    vpImage<vpRGBa> I_RGBA_8U(I_Bayer_8U.getHeight(), I_Bayer_8U.getWidth());
+    std::vector<uint8_t> buffer(img_height * img_width);
+    vpImage<uint8_t> I_Bayer_8bit(img_height, img_width);
+    vpImage<vpRGBa> I_RGBA_8bit(img_height, img_width);
 
     SECTION("BGGR")
     {
@@ -1127,24 +1133,24 @@ TEST_CASE("Bayer conversion", "[image_conversion]")
         vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_BGGR_08bits.raw");
 
       if (readBinaryFile(filename, buffer)) {
-        col2im(buffer, I_Bayer_8U);
+        col2im(buffer, I_Bayer_8bit);
 
         SECTION("Bilinear")
         {
-          vpImageConvert::demosaicBGGRToRGBaBilinear(I_Bayer_8U.bitmap, reinterpret_cast<uint8_t *>(I_RGBA_8U.bitmap),
-                                                    I_Bayer_8U.getWidth(), I_Bayer_8U.getHeight());
+          vpImageConvert::demosaicBGGRToRGBaBilinear(I_Bayer_8bit.bitmap, reinterpret_cast<uint8_t *>(I_RGBA_8bit.bitmap),
+                                                    I_Bayer_8bit.getWidth(), I_Bayer_8bit.getHeight());
 
-          double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
+          double PSNR = computePSNR(I_RGBA_8bit, I_RGBA_8U_ref);
           std::cout << "8-bit - BGGR - Bilinear - PSNR: " << PSNR <<" min required: " << min_PSNR_bilinear <<  std::endl;
           CHECK(PSNR >= min_PSNR_bilinear);
         }
 
         SECTION("Malvar")
         {
-          vpImageConvert::demosaicBGGRToRGBaMalvar(I_Bayer_8U.bitmap, reinterpret_cast<uint8_t *>(I_RGBA_8U.bitmap),
-                                                  I_Bayer_8U.getWidth(), I_Bayer_8U.getHeight());
+          vpImageConvert::demosaicBGGRToRGBaMalvar(I_Bayer_8bit.bitmap, reinterpret_cast<uint8_t *>(I_RGBA_8bit.bitmap),
+                                                  I_Bayer_8bit.getWidth(), I_Bayer_8bit.getHeight());
 
-          double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
+          double PSNR = computePSNR(I_RGBA_8bit, I_RGBA_8U_ref);
           std::cout << "8-bit - BGGR - Malvar - PSNR: " << PSNR << " min required: " << min_PSNR_Malvar << std::endl;
           CHECK(PSNR >= min_PSNR_Malvar);
         }
@@ -1157,24 +1163,24 @@ TEST_CASE("Bayer conversion", "[image_conversion]")
         vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_GBRG_08bits.raw");
 
       if (readBinaryFile(filename, buffer)) {
-        col2im(buffer, I_Bayer_8U);
+        col2im(buffer, I_Bayer_8bit);
 
         SECTION("Bilinear")
         {
-          vpImageConvert::demosaicGBRGToRGBaBilinear(I_Bayer_8U.bitmap, reinterpret_cast<uint8_t *>(I_RGBA_8U.bitmap),
-                                                    I_Bayer_8U.getWidth(), I_Bayer_8U.getHeight());
+          vpImageConvert::demosaicGBRGToRGBaBilinear(I_Bayer_8bit.bitmap, reinterpret_cast<uint8_t *>(I_RGBA_8bit.bitmap),
+                                                    I_Bayer_8bit.getWidth(), I_Bayer_8bit.getHeight());
 
-          double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
+          double PSNR = computePSNR(I_RGBA_8bit, I_RGBA_8U_ref);
           std::cout << "8-bit - GBRG - Bilinear - PSNR: " << PSNR << " min required: " << min_PSNR_bilinear << std::endl;
           CHECK(PSNR >= min_PSNR_bilinear);
         }
 
         SECTION("Malvar")
         {
-          vpImageConvert::demosaicGBRGToRGBaMalvar(I_Bayer_8U.bitmap, reinterpret_cast<uint8_t *>(I_RGBA_8U.bitmap),
-                                                  I_Bayer_8U.getWidth(), I_Bayer_8U.getHeight());
+          vpImageConvert::demosaicGBRGToRGBaMalvar(I_Bayer_8bit.bitmap, reinterpret_cast<uint8_t *>(I_RGBA_8bit.bitmap),
+                                                  I_Bayer_8bit.getWidth(), I_Bayer_8bit.getHeight());
 
-          double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
+          double PSNR = computePSNR(I_RGBA_8bit, I_RGBA_8U_ref);
           std::cout << "8-bit - GBRG - Malvar - PSNR: " << PSNR << " min required: " << min_PSNR_Malvar << std::endl;
           CHECK(PSNR >= min_PSNR_Malvar);
         }
@@ -1187,24 +1193,24 @@ TEST_CASE("Bayer conversion", "[image_conversion]")
         vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_GRBG_08bits.raw");
 
       if (readBinaryFile(filename, buffer)) {
-        col2im(buffer, I_Bayer_8U);
+        col2im(buffer, I_Bayer_8bit);
 
         SECTION("Bilinear")
         {
-          vpImageConvert::demosaicGRBGToRGBaBilinear(I_Bayer_8U.bitmap, reinterpret_cast<uint8_t *>(I_RGBA_8U.bitmap),
-                                                    I_Bayer_8U.getWidth(), I_Bayer_8U.getHeight());
+          vpImageConvert::demosaicGRBGToRGBaBilinear(I_Bayer_8bit.bitmap, reinterpret_cast<uint8_t *>(I_RGBA_8bit.bitmap),
+                                                    I_Bayer_8bit.getWidth(), I_Bayer_8bit.getHeight());
 
-          double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
+          double PSNR = computePSNR(I_RGBA_8bit, I_RGBA_8U_ref);
           std::cout << "8-bit - GRBG - Bilinear - PSNR: " << PSNR << " min required: " << min_PSNR_bilinear << std::endl;
           CHECK(PSNR >= min_PSNR_bilinear);
         }
 
         SECTION("Malvar")
         {
-          vpImageConvert::demosaicGRBGToRGBaMalvar(I_Bayer_8U.bitmap, reinterpret_cast<uint8_t *>(I_RGBA_8U.bitmap),
-                                                  I_Bayer_8U.getWidth(), I_Bayer_8U.getHeight());
+          vpImageConvert::demosaicGRBGToRGBaMalvar(I_Bayer_8bit.bitmap, reinterpret_cast<uint8_t *>(I_RGBA_8bit.bitmap),
+                                                  I_Bayer_8bit.getWidth(), I_Bayer_8bit.getHeight());
 
-          double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
+          double PSNR = computePSNR(I_RGBA_8bit, I_RGBA_8U_ref);
           std::cout << "8-bit - GRBG - Malvar - PSNR: " << PSNR << " min required: " << min_PSNR_Malvar << std::endl;
           CHECK(PSNR >= min_PSNR_Malvar);
         }
@@ -1217,24 +1223,24 @@ TEST_CASE("Bayer conversion", "[image_conversion]")
         vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_RGGB_08bits.raw");
 
       if (readBinaryFile(filename, buffer)) {
-        col2im(buffer, I_Bayer_8U);
+        col2im(buffer, I_Bayer_8bit);
 
         SECTION("Bilinear")
         {
-          vpImageConvert::demosaicRGGBToRGBaBilinear(I_Bayer_8U.bitmap, reinterpret_cast<uint8_t *>(I_RGBA_8U.bitmap),
-                                                    I_Bayer_8U.getWidth(), I_Bayer_8U.getHeight());
+          vpImageConvert::demosaicRGGBToRGBaBilinear(I_Bayer_8bit.bitmap, reinterpret_cast<uint8_t *>(I_RGBA_8bit.bitmap),
+                                                    I_Bayer_8bit.getWidth(), I_Bayer_8bit.getHeight());
 
-          double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
+          double PSNR = computePSNR(I_RGBA_8bit, I_RGBA_8U_ref);
           std::cout << "8-bit - RGGB - Bilinear - PSNR: " << PSNR << " min required: " << min_PSNR_bilinear << std::endl;
           CHECK(PSNR >= min_PSNR_bilinear);
         }
 
         SECTION("Malvar")
         {
-          vpImageConvert::demosaicRGGBToRGBaMalvar(I_Bayer_8U.bitmap, reinterpret_cast<uint8_t *>(I_RGBA_8U.bitmap),
-                                                  I_Bayer_8U.getWidth(), I_Bayer_8U.getHeight());
+          vpImageConvert::demosaicRGGBToRGBaMalvar(I_Bayer_8bit.bitmap, reinterpret_cast<uint8_t *>(I_RGBA_8bit.bitmap),
+                                                  I_Bayer_8bit.getWidth(), I_Bayer_8bit.getHeight());
 
-          double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
+          double PSNR = computePSNR(I_RGBA_8bit, I_RGBA_8U_ref);
           std::cout << "8-bit - RGGB - Malvar - PSNR: " << PSNR << " min required: " << min_PSNR_Malvar << std::endl;
           CHECK(PSNR >= min_PSNR_Malvar);
         }

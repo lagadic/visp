@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@
 // opencv_xfeatures2d and opencv_nonfree are optional
 #if defined(VISP_HAVE_OPENCV) && \
     (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_FEATURES2D)) || \
-     ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D) && defined(HAVE_OPENCV_FEATURES)))
+     ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_GEOMETRY) && defined(HAVE_OPENCV_FEATURES)))
 
 #include <iomanip>
 #include <limits>
@@ -45,7 +45,7 @@
 #include <visp3/vision/vpKeyPoint.h>
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x050000)
-#include <opencv2/3d.hpp>
+#include <opencv2/geometry.hpp>
 #include <opencv2/features.hpp>
 #endif
 
@@ -175,9 +175,15 @@ void vpKeyPoint::affineSkew(double tilt, double phi, cv::Mat &img, cv::Mat &mask
     double s = sin(phi);
     double c = cos(phi);
 
-    A = (cv::Mat_<float>(2, 2) << c, -s, s, c);
+    A = cv::Mat_<float>(2, 2);
+    A.at<float>(0, 0) = c; A.at<float>(0, 1) = -s;
+    A.at<float>(1, 0) = s; A.at<float>(1, 1) = c;
 
-    cv::Mat corners = (cv::Mat_<float>(4, 2) << 0, 0, w, 0, w, h, 0, h);
+    cv::Mat corners = cv::Mat_<float>(4, 2);
+    corners.at<float>(0, 0) = 0.f; corners.at<float>(0, 1) = 0.f;
+    corners.at<float>(1, 0) = w; corners.at<float>(1, 1) = 0.f;
+    corners.at<float>(2, 0) = w; corners.at<float>(2, 1) = h;
+    corners.at<float>(3, 0) = 0.f; corners.at<float>(3, 1) = h;
     cv::Mat tcorners = corners * A.t();
     cv::Mat tcorners_x, tcorners_y;
     tcorners.col(0).copyTo(tcorners_x);
@@ -188,7 +194,9 @@ void vpKeyPoint::affineSkew(double tilt, double phi, cv::Mat &img, cv::Mat &mask
     cv::merge(channels, tcorners);
 
     cv::Rect rect = cv::boundingRect(tcorners);
-    A = (cv::Mat_<float>(2, 3) << c, -s, -rect.x, s, c, -rect.y);
+    A = cv::Mat_<float>(2, 3);
+    A.at<float>(0, 0) = c; A.at<float>(0, 1) = -s; A.at<float>(0, 2) = -rect.x;
+    A.at<float>(1, 0) = s; A.at<float>(1, 1) = c; A.at<float>(1, 2) = -rect.y;
 
     cv::warpAffine(img, img, A, cv::Size(rect.width, rect.height), cv::INTER_LINEAR, cv::BORDER_REPLICATE);
   }
@@ -703,8 +711,10 @@ bool vpKeyPoint::computePose(const std::vector<cv::Point2f> &imagePoints, const 
     return false;
   }
 
-  cv::Mat cameraMatrix =
-    (cv::Mat_<double>(3, 3) << cam.get_px(), 0, cam.get_u0(), 0, cam.get_py(), cam.get_v0(), 0, 0, 1);
+  cv::Mat cameraMatrix = cv::Mat_<double>(3, 3);
+  cameraMatrix.at<double>(0, 0) = cam.get_px(); cameraMatrix.at<double>(0, 1) = 0; cameraMatrix.at<double>(0, 2) = cam.get_u0();
+  cameraMatrix.at<double>(1, 0) = 0; cameraMatrix.at<double>(1, 1) = cam.get_py(); cameraMatrix.at<double>(1, 2) = cam.get_v0();
+  cameraMatrix.at<double>(2, 0) = 0; cameraMatrix.at<double>(2, 1) = 0; cameraMatrix.at<double>(2, 2) = 1;
   cv::Mat rvec, tvec;
 
   // Bug with OpenCV < 2.4.0 when zero distortion is provided by an empty
@@ -809,7 +819,7 @@ bool vpKeyPoint::computePose(const std::vector<vpPoint> &objectVpPoints, vpHomog
 
   pose.setRansacFilterFlag(m_ransacFilterFlag);
   pose.setUseParallelRansac(m_ransacParallel);
-  pose.setNbParallelRansacThreads(m_ransacParallelNbThreads);
+  pose.setNbParallelRansacThreads(static_cast<int>(m_ransacParallelNbThreads));
   pose.setRansacNbInliersToReachConsensus(nbInlierToReachConsensus);
   pose.setRansacThreshold(m_ransacThreshold);
   pose.setRansacMaxTrials(m_nbRansacIterations);
@@ -2638,9 +2648,9 @@ void vpKeyPoint::loadLearningData(const std::string &filename, bool binaryMode, 
       int length = 0;
       vpIoTools::readBinaryValueLE(file, length);
       // Will contain the path to the training images
-      char *path = new char[length + 1]; // char path[length + 1];
+      char *path = new char[static_cast<size_t>(length) + 1]; // char path[length + 1];
 
-      for (int cpt = 0; cpt < length; cpt++) {
+      for (int cpt = 0; cpt < length; ++cpt) {
         char c;
         file.read((char *)(&c), sizeof(c));
         path[cpt] = c;
@@ -3366,7 +3376,7 @@ bool vpKeyPoint::matchPoint(const vpImage<vpRGBa> &I_color, const vpCameraParame
 bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &boundingBox,
                                      vpImagePoint &centerOfGravity, const bool isPlanarObject,
                                      std::vector<vpImagePoint> *imPts1, std::vector<vpImagePoint> *imPts2,
-                                     double *meanDescriptorDistance, double *detectionScore, const vpRect &rectangle)
+                                     double *meanDescriptorDistance, double *detection_score, const vpRect &rectangle)
 {
   if (imPts1 != nullptr && imPts2 != nullptr) {
     imPts1->clear();
@@ -3386,8 +3396,8 @@ bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &bo
   if (meanDescriptorDistance != nullptr) {
     *meanDescriptorDistance = meanDescriptorDistanceTmp;
   }
-  if (detectionScore != nullptr) {
-    *detectionScore = score;
+  if (detection_score != nullptr) {
+    *detection_score = score;
   }
 
   if (m_filteredMatches.size() >= 4) {

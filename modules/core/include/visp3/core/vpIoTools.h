@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -116,7 +116,7 @@ struct NpyArray
         new std::vector<char>(num_vals * word_size));
   }
 
-  NpyArray() : shape(0), word_size(0), fortran_order(0), num_vals(0), data_type(0) { }
+  NpyArray() : shape(0), word_size(0), fortran_order(0), num_vals(0), data_type(0) {}
 
   template<typename T>
   T *data()
@@ -520,7 +520,8 @@ template<typename T> std::vector<char> create_npy_header(const std::vector<size_
   if (shape.size() == 1) dict += ",";
   dict += "), }";
   //pad with spaces so that preamble+dict is modulo 16 bytes. preamble is 10 bytes. dict needs to end with \n
-  int remainder = 16 - (10 + dict.size()) % 16;
+  const size_t preamble_plus_dict_size = 10 + dict.size();
+  const size_t remainder = 16 - (preamble_plus_dict_size % 16);
   dict.insert(dict.end(), remainder, ' ');
   dict.back() = '\n';
 

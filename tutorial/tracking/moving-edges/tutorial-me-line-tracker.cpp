@@ -34,7 +34,7 @@
    (((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || \
     ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))) && \
     ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_FEATURES2D)) || \
-    ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D) && defined(HAVE_OPENCV_FEATURES)))
+    ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_GEOMETRY) && defined(HAVE_OPENCV_FEATURES)))
 //! [Ensure that a grabber is available]
 
 #ifdef VISP_HAVE_MODULE_SENSOR
@@ -70,14 +70,14 @@ int main(int argc, char **argv)
   vpDisplay *display = nullptr;
 #endif
   //! [me default options]
-  int opt_me_range = 10;
+  unsigned int opt_me_range = 10;
   int opt_me_sample_step = 5;
   int opt_me_threshold = 20; // Value in [0 ; 255]
   //! [me default options]
 
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--me-range" && i + 1 < argc) {
-      opt_me_range = std::atoi(argv[++i]);
+      opt_me_range = static_cast<unsigned int>(std::atoi(argv[++i]));
     }
     else if (std::string(argv[i]) == "--me-sample-step" && i + 1 < argc) {
       opt_me_sample_step = std::atoi(argv[++i]);

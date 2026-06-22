@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ template <class T> class FastMat33
 public:
   std::array<T, 9> data;
 
-  FastMat33() { }
+  FastMat33() {}
 
   inline T operator[](const size_t i) const { return data[i]; }
 
@@ -85,7 +85,7 @@ template <class T> class FastMat63
 public:
   std::array<T, 18> data;
 
-  FastMat63() { }
+  FastMat63() {}
 
   inline T operator[](const size_t i) const { return data[i]; }
 
@@ -142,7 +142,7 @@ const unsigned int vpRBSilhouetteCCDTracker::BASE_SEED = 421;
 
 vpRBSilhouetteCCDTracker::vpRBSilhouetteCCDTracker() : vpRBFeatureTracker(), m_vvsConvergenceThreshold(0.0),
 m_temporalSmoothingFac(0.0), m_useMask(false), m_minMaskConfidence(0.0), m_maxPoints(0), m_random(vpRBSilhouetteCCDTracker::BASE_SEED), m_displayType(DT_SIMPLE)
-{ }
+{}
 
 void vpRBSilhouetteCCDTracker::onTrackingIterStart(const vpRBFeatureTrackerInput & /*frame*/, const vpHomogeneousMatrix & /*cMo*/)
 {
@@ -166,7 +166,7 @@ void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &fr
 #ifdef VISP_HAVE_OPENMP
 #pragma omp single
     {
-      unsigned int numThreads = omp_get_num_threads();
+      unsigned int numThreads = static_cast<unsigned int>(omp_get_num_threads());
       pointsPerThread.resize(numThreads);
     }
 #else
@@ -175,7 +175,7 @@ void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &fr
     }
 #endif
 #ifdef VISP_HAVE_OPENMP
-    unsigned int threadIdx = omp_get_thread_num();
+    unsigned int threadIdx = static_cast<unsigned int>(omp_get_thread_num());
 #else
     unsigned int threadIdx = 0;
 #endif
@@ -184,8 +184,8 @@ void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &fr
 #pragma omp for
 #endif
     for (int i = 0; i < static_cast<int>(frame.silhouettePoints.size()); ++i) {
-      const vpRBSilhouettePoint sp = frame.silhouettePoints[i];
-      int ii = sp.i, jj = sp.j;
+      const vpRBSilhouettePoint sp = frame.silhouettePoints[static_cast<unsigned int>(i)];
+      int ii = static_cast<int>(sp.i), jj = static_cast<int>(sp.j);
 
       //  We only care about outer object contours, not depth disparity that still lie in the object
       if (!sp.isSilhouette) {
@@ -194,8 +194,8 @@ void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &fr
 
       // Filter points for which the normal vector may go outside the image
       if (ii <= m_ccdParameters.h || jj <= m_ccdParameters.h ||
-        static_cast<unsigned int>(ii) >= frame.I.getHeight() - m_ccdParameters.h ||
-        static_cast<unsigned int>(jj) >= frame.I.getWidth() - m_ccdParameters.h) {
+        static_cast<unsigned int>(ii) >= frame.I.getHeight() - static_cast<unsigned int>(m_ccdParameters.h) ||
+        static_cast<unsigned int>(jj) >= frame.I.getWidth() - static_cast<unsigned int>(m_ccdParameters.h)) {
         continue;
       }
       vpRBSilhouetteControlPoint pccd;
@@ -252,8 +252,8 @@ void vpRBSilhouetteCCDTracker::buildGradientAndHessianStorageViews(unsigned int 
       m_hessianData.resize(numNormalPoints * 6 * 6);
     }
     if (clear) {
-	m_gradients.clear();
-	m_hessians.clear();
+      m_gradients.clear();
+      m_hessians.clear();
     }
     m_gradients.resize(numNormalPoints);
     m_hessians.resize(numNormalPoints);
@@ -262,8 +262,9 @@ void vpRBSilhouetteCCDTracker::buildGradientAndHessianStorageViews(unsigned int 
 #pragma omp parallel for
 #endif
     for (int i = 0; i < static_cast<int>(m_gradients.size()); ++i) {
-      vpColVector::view(m_gradients[i], m_gradientData.data() + i * 6, 6);
-      vpMatrix::view(m_hessians[i], m_hessianData.data() + i * 6 * 6, 6, 6);
+      unsigned int i_ = static_cast<unsigned int>(i);
+      vpColVector::view(m_gradients[i_], m_gradientData.data() + i * 6, 6);
+      vpMatrix::view(m_hessians[i_], m_hessianData.data() + i * 6 * 6, 6, 6);
     }
   }
 
@@ -272,19 +273,19 @@ void vpRBSilhouetteCCDTracker::buildGradientAndHessianStorageViews(unsigned int 
 void vpRBSilhouetteCCDTracker::initVVS(const vpRBFeatureTrackerInput &/*frame*/, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix & /*cMo*/)
 {
   // Reinit all variables
-  m_sigma = vpMatrix(m_ccdParameters.phi_dim, m_ccdParameters.phi_dim, 0.0);
+  m_sigma = vpMatrix(static_cast<unsigned int>(m_ccdParameters.phi_dim), static_cast<unsigned int>(m_ccdParameters.phi_dim), 0.0);
   m_cov.resize(6, 6);
 
   m_vvsConverged = false;
 
   unsigned int resolution = static_cast<unsigned int>(m_controlPoints.size());
-  int normal_points_number = static_cast<int>(floor(m_ccdParameters.h / m_ccdParameters.delta_h));
+  unsigned int normal_points_number = static_cast<unsigned int>(floor(m_ccdParameters.h / m_ccdParameters.delta_h));
   m_numFeatures = 2 * normal_points_number * 3 * resolution;
 
   m_stats.reinit(resolution, normal_points_number);
   m_prevStats.reinit(resolution, normal_points_number);
-  m_gradient = vpMatrix(m_ccdParameters.phi_dim, 1, 0.0);
-  m_hessian = vpMatrix(m_ccdParameters.phi_dim, m_ccdParameters.phi_dim, 0.0);
+  m_gradient = vpMatrix(static_cast<unsigned int>(m_ccdParameters.phi_dim), 1, 0.0);
+  m_hessian = vpMatrix(static_cast<unsigned int>(m_ccdParameters.phi_dim), static_cast<unsigned int>(m_ccdParameters.phi_dim), 0.0);
   buildGradientAndHessianStorageViews(normal_points_number, true);
 
   m_weights.resize(m_numFeatures, false);
@@ -296,10 +297,10 @@ void vpRBSilhouetteCCDTracker::initVVS(const vpRBFeatureTrackerInput &/*frame*/,
 
 void vpRBSilhouetteCCDTracker::changeScale()
 {
-  m_sigma = vpMatrix(m_ccdParameters.phi_dim, m_ccdParameters.phi_dim, 0.0);
+  m_sigma = vpMatrix(static_cast<unsigned int>(m_ccdParameters.phi_dim), static_cast<unsigned int>(m_ccdParameters.phi_dim), 0.0);
   m_cov.resize(6, 6);
   unsigned int resolution = static_cast<unsigned int>(m_controlPoints.size());
-  int normal_points_number = static_cast<int>(floor(m_ccdParameters.h / m_ccdParameters.delta_h));
+  unsigned int normal_points_number = static_cast<unsigned int>(floor(m_ccdParameters.h / m_ccdParameters.delta_h));
   m_numFeatures = 2 * normal_points_number * 3 * resolution;
 
   m_prevStats.reinit(resolution, normal_points_number);
@@ -518,6 +519,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
 #pragma omp parallel for
 #endif
   for (int kk = 0; kk < static_cast<int>(m_controlPoints.size()); kk++) {
+    unsigned int kk_ = static_cast<unsigned int>(kk);
     // temporary points used to store those points in the
     // normal direction as well as negative normal direction
     std::array<double, 2> pt1, pt2;
@@ -526,13 +528,13 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
     // to the point on the curve
     std::array<double, 2> dist1, dist2;
 
-    vpRBSilhouetteControlPoint &p = m_controlPoints[kk];
+    vpRBSilhouetteControlPoint &p = m_controlPoints[kk_];
 
-    double *nv_ptr = stats.nv[kk];
+    double *nv_ptr = stats.nv[kk_];
     nv_ptr[0] = p.nxs;
     nv_ptr[1] = p.nys;
 
-    int ccdh = m_ccdParameters.h;
+    unsigned int ccdh = static_cast<unsigned int>(m_ccdParameters.h);
     if (extremitiesOutsideOfImage(static_cast<int>(I.getHeight()), static_cast<int>(I.getWidth()), ccdh, nv_ptr, p.icpoint.get_i(), p.icpoint.get_j())) {
       p.setValid(false); // invalidate points that are too close to image border
     }
@@ -548,7 +550,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
 
     int k = 0;
     double alpha = 0.5;
-    double *vic_ptr = stats.vic[kk];
+    double *vic_ptr = stats.vic[kk_];
     for (int j = m_ccdParameters.delta_h; j <= m_ccdParameters.h; j += m_ccdParameters.delta_h, k++) {
       ///////////////////////////////////////////////////////////////////////////////////////////
       // calculate in the direction +n: (n_x, n_y)
@@ -590,7 +592,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
 
 
       // calculate the normalization parameter c
-      normalized_param[kk][0] += vic_ptr[10 * k + 7];
+      normalized_param[kk_][0] += vic_ptr[10 * k + 7];
 
       ///////////////////////////////////////////////////////////////////////////////////////////
       // calculate in the direction -n: (-n_x, -n_y)
@@ -618,7 +620,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
       vic_ptr[10 * negative_normal + 7] = std::max((exp(-0.5 * dist2[0] * dist2[0] / (sigma_hat * sigma_hat)) - minus_exp_gamma2), 0.0);
       vic_ptr[10 * negative_normal + 8] = 0.5 * exp(-abs(dist2[0]) / alpha) / alpha;
       vic_ptr[10 * negative_normal + 9] = exp(-dist2[0] * dist2[0] / (2 * sigma * sigma)) / (sqrt(2 * M_PI) * sigma);
-      normalized_param[kk][1] += vic_ptr[10 * negative_normal + 7];
+      normalized_param[kk_][1] += vic_ptr[10 * negative_normal + 7];
     }
   }
 
@@ -626,7 +628,8 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
 #pragma omp parallel for
 #endif
   for (int i = 0; i < static_cast<int>(resolution); ++i) {
-    if (!m_controlPoints[i].isValid()) {
+    unsigned int i_ = static_cast<unsigned int>(i);
+    if (!m_controlPoints[i_].isValid()) {
       continue;
     }
 
@@ -646,10 +649,10 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
     // start search the points in the +n direction as well as -n direction
     double wp1 = 0.0, wp2 = 0.0;
 
-    double *vic_ptr = stats.vic[i];
-    double *mean_vic_ptr = stats.mean_vic[i];
-    double *cov_vic_ptr = stats.cov_vic[i];
-    double *pix_ptr = stats.imgPoints[i];
+    double *vic_ptr = stats.vic[i_];
+    double *mean_vic_ptr = stats.mean_vic[i_];
+    double *cov_vic_ptr = stats.cov_vic[i_];
+    double *pix_ptr = stats.imgPoints[i_];
 
     for (int j = m_ccdParameters.delta_h; j <= m_ccdParameters.h; j += m_ccdParameters.delta_h, k++) {
       wp1 = 0.0, wp2 = 0.0;
@@ -657,10 +660,10 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
       const double *vic_k = vic_ptr + 10 * k;
 
       // wp1 = w(a_{k,l})*w(d_{k,l})*w(d)
-      wp1 = (vic_k[5] * vic_k[7] / normalized_param[i][0]);
+      wp1 = (vic_k[5] * vic_k[7] / normalized_param[i_][0]);
 
       // wp2 = w(a_{k,l})*w(d_{k,l})*w(d)
-      wp2 = (vic_k[6] * vic_k[7] / normalized_param[i][1]);
+      wp2 = (vic_k[6] * vic_k[7] / normalized_param[i_][1]);
       //w1 = \sum{wp1}
       w1 += wp1;
 
@@ -703,8 +706,8 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
       pixelNeg[0] = static_cast<double>(pixelNegRGBa.R);
       pixelNeg[1] = static_cast<double>(pixelNegRGBa.G);
       pixelNeg[2] = static_cast<double>(pixelNegRGBa.B);
-      wp1 = (vic_neg[5] * vic_neg[7] / normalized_param[i][0]);
-      wp2 = (vic_neg[6] * vic_neg[7] / normalized_param[i][1]);
+      wp1 = (vic_neg[5] * vic_neg[7] / normalized_param[i_][0]);
+      wp2 = (vic_neg[6] * vic_neg[7] / normalized_param[i_][1]);
       w1 += wp1;
       w2 += wp2;
 
@@ -757,7 +760,7 @@ void sumGradientsAndHessians(const std::vector<vpColVector> &gradients, const st
 #ifdef VISP_HAVE_OPENMP
 #pragma omp single
     {
-      unsigned int numThreads = omp_get_num_threads();
+      unsigned int numThreads = static_cast<unsigned int>(omp_get_num_threads());
       gradientPerThread.resize(numThreads);
       hessianPerThread.resize(numThreads);
     }
@@ -769,7 +772,7 @@ void sumGradientsAndHessians(const std::vector<vpColVector> &gradients, const st
 #endif
 
 #ifdef VISP_HAVE_OPENMP
-    unsigned int threadIdx = omp_get_thread_num();
+    unsigned int threadIdx = static_cast<unsigned int>(omp_get_thread_num());
 #else
     unsigned int threadIdx = 0;
 #endif
@@ -879,7 +882,7 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix(const vpHomogene
         const double *pix_j = pix_ptr + j * 3;
         const double errf = vic_j[4];
         const double smooth2 = m_temporalSmoothingFac * m_temporalSmoothingFac;
-        double *error_ccd_j = m_error.data + i * 2 * normal_points_number * 3 + j * 3;
+        double *error_ccd_j = m_error.data + ui * 2 * normal_points_number * 3 + j * 3;
 
         for (unsigned n = 0; n < 9; ++n) {
           //double *tmp_cov_ptr = tmp_cov[m];
@@ -892,7 +895,7 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix(const vpHomogene
         tmp_cov.inverse(tmp_cov_inv);
 
         //compute the difference between I_{kl} and \hat{I_{kl}}
-        for (int m = 0; m < 3; ++m) {
+        for (unsigned int m = 0; m < 3; ++m) {
           double err = (pix_j[m] - errf * mean_vic_ptr[m] - (1.0 - errf) * mean_vic_ptr[m + 3]);
           if constexpr (hasTemporalSmoothing) {
             err += m_temporalSmoothingFac * (pix_j[m] - errf * mean_vic_ptr_prev[m] - (1.0 - errf) * mean_vic_ptr_prev[m + 3]);

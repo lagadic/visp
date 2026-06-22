@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -116,7 +116,8 @@ int main(const int argc, const char *argv[])
 
 #ifdef VISP_HAVE_DISPLAY
     // Update image overlay
-    lmsFitter.display<unsigned char>(data.m_IskeletonNoisy, vpColor::gray, legendLmsVert, legendLmsHor);
+    lmsFitter.display<unsigned char>(data.m_IskeletonNoisy, vpColor::gray,
+                                     static_cast<int>(legendLmsVert), static_cast<int>(legendLmsHor));
 
     // Update plot
     plot.plot(0, 0, nbIter, lmsRootMeanSquareError);

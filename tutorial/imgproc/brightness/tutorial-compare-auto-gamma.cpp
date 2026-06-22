@@ -48,12 +48,12 @@ void computeMeanMaxStdev(const vpImage<T> &I, float &mean, float &max, float &st
 }
 
 void computeCanny(const vpImage<unsigned char> &I, vpCannyEdgeDetection &cannyDetector, int gaussianKernelSize,
-                  float gaussianStdev, int apertureSize, vpImageFilter::vpCannyFilteringAndGradientType filteringType,
+                  float gaussianStdev, unsigned int apertureSize, vpImageFilter::vpCannyFilteringAndGradientType filteringType,
                   vpImage<unsigned char> &dIxy_uchar, vpImage<unsigned char> &I_canny_visp)
 {
   vpImage<float> dIx, dIy, dIxy(I.getHeight(), I.getWidth());
-  vpImageFilter::computePartialDerivatives(I, dIx, dIy, true, true, true, gaussianKernelSize, gaussianStdev,
-      apertureSize, filteringType);
+  vpImageFilter::computePartialDerivatives(I, dIx, dIy, true, true, true, static_cast<unsigned int>(gaussianKernelSize),
+                                           gaussianStdev, apertureSize, filteringType);
 
   for (unsigned int i = 0; i < dIx.getHeight(); i++) {
     for (unsigned int j = 0; j < dIx.getWidth(); j++) {
@@ -77,7 +77,7 @@ double computeImageEntropy(const vpImage<unsigned char> &I)
   std::vector<int> hist(256, 0);
   for (unsigned int i = 0; i < I.getHeight(); i++) {
     for (unsigned int j = 0; j < I.getWidth(); j++) {
-      int bin = I[i][j];
+      size_t bin = static_cast<size_t>(I[i][j]);
       hist[bin]++;
     }
   }
@@ -102,7 +102,7 @@ int main(int argc, const char **argv)
   std::string output = "Results";
   int gaussianKernelSize = 3;
   float gaussianStdev = 1.0f;
-  int apertureSize = 3;
+  unsigned int apertureSize = 3;
   unsigned int max_resolution = 800;
   vpImageFilter::vpCannyFilteringAndGradientType filteringType = vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING;
   VISP_NAMESPACE_NAME::vpGammaColorHandling gamma_colorspace = VISP_NAMESPACE_NAME::GAMMA_HSV;
@@ -114,7 +114,7 @@ int main(int argc, const char **argv)
     }
     else if (std::string(argv[i]) == "--max-resolution" && i + 1 < argc) {
       ++i;
-      max_resolution = std::atoi(argv[i]);
+      max_resolution = static_cast<unsigned int>(std::atoi(argv[i]));
     }
     else if (std::string(argv[i]) == "--gaussian-kernel-size" && i + 1 < argc) {
       ++i;
@@ -126,7 +126,7 @@ int main(int argc, const char **argv)
     }
     else if (std::string(argv[i]) == "--aperture-size" && i + 1 < argc) {
       ++i;
-      apertureSize = std::atoi(argv[i]);
+      apertureSize = static_cast<unsigned int>(std::atoi(argv[i]));
     }
     else if (std::string(argv[i]) == "--canny-filtering-type" && i + 1 < argc) {
       ++i;
@@ -189,11 +189,11 @@ int main(int argc, const char **argv)
   if (I_color_ori.getWidth() > max_resolution || I_color_ori.getHeight() > max_resolution) {
     float factor_w = I_color_ori.getWidth() / static_cast<float>(max_resolution);
     float factor_h = I_color_ori.getHeight() / static_cast<float>(max_resolution);
-    int resize_factor_w = static_cast<int>(factor_w);
-    int resize_factor_h = static_cast<int>(factor_h);
-    int resize_factor = std::max(resize_factor_w, resize_factor_h);
+    unsigned int resize_factor_w = static_cast<unsigned int>(factor_w);
+    unsigned int resize_factor_h = static_cast<unsigned int>(factor_h);
+    unsigned int resize_factor = std::max(resize_factor_w, resize_factor_h);
     vpImageTools::resize(I_color_ori, I_color, I_color_ori.getWidth()/resize_factor, I_color_ori.getHeight()/resize_factor,
-      vpImageTools::INTERPOLATION_AREA);
+                         vpImageTools::INTERPOLATION_AREA);
   }
   else {
     I_color = I_color_ori;
@@ -218,11 +218,11 @@ int main(int argc, const char **argv)
     if (I_color_ori.getWidth() > max_resolution || I_color_ori.getHeight() > max_resolution) {
       float factor_w = I_color_ori.getWidth() / static_cast<float>(max_resolution);
       float factor_h = I_color_ori.getHeight() / static_cast<float>(max_resolution);
-      int resize_factor_w = static_cast<int>(factor_w);
-      int resize_factor_h = static_cast<int>(factor_h);
-      int resize_factor = std::max(resize_factor_w, resize_factor_h);
+      unsigned int resize_factor_w = static_cast<unsigned int>(factor_w);
+      unsigned int resize_factor_h = static_cast<unsigned int>(factor_h);
+      unsigned int resize_factor = std::max(resize_factor_w, resize_factor_h);
       vpImageTools::resize(I_color_ori, I_color, I_color_ori.getWidth()/resize_factor, I_color_ori.getHeight()/resize_factor,
-        vpImageTools::INTERPOLATION_AREA);
+                           vpImageTools::INTERPOLATION_AREA);
     }
     else {
       I_color = I_color_ori;
@@ -235,9 +235,9 @@ int main(int argc, const char **argv)
     I_canny_visp.init(I_color.getHeight(), I_color.getWidth());
 
     // Output results
-    int offset_text_start_y = 25;
-    int text_h = 40;
-    int offset_idx = 0;
+    unsigned int offset_text_start_y = 25;
+    unsigned int text_h = 40;
+    unsigned int offset_idx = 0;
     double offset_text1 = 0.01;
     double offset_text2 = 0.26;
     double start_time = 0, end_time = 0;
@@ -289,7 +289,7 @@ int main(int argc, const char **argv)
       vpImageConvert::convert(I_color_gamma_correction, I_gray_gamma_correction);
       const double img_corrected_entropy = computeImageEntropy(I_gray_gamma_correction);
       computeCanny(I_gray_gamma_correction, cannyDetector, gaussianKernelSize, gaussianStdev, apertureSize,
-        filteringType, dIxy_uchar, I_canny_visp);
+                   filteringType, dIxy_uchar, I_canny_visp);
       vpImageConvert::convert(dIxy_uchar, dIxy_uchar_color);
       vpImageConvert::convert(I_canny_visp, I_canny_visp_color);
       I_res_stack.insert(I_color, vpImagePoint(offset_idx*I_color.getHeight(), 0));
@@ -336,7 +336,7 @@ int main(int argc, const char **argv)
   std::cout << "\nStats:" << std::endl;
   std::cout << "Nb images: " << nb_images << std::endl;
 
-  for (int gamma_idx = 1; gamma_idx < VISP_NAMESPACE_NAME::GAMMA_METHOD_COUNT; ++gamma_idx) {
+  for (size_t gamma_idx = 1; gamma_idx < static_cast<size_t>(VISP_NAMESPACE_NAME::GAMMA_METHOD_COUNT); ++gamma_idx) {
     VISP_NAMESPACE_NAME::vpGammaMethod gamma_method = static_cast<VISP_NAMESPACE_NAME::vpGammaMethod>(gamma_idx);
     if (gamma_method == VISP_NAMESPACE_NAME::GAMMA_MANUAL) {
       continue;

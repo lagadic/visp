@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ int main()
 
     std::cout << "Product line: " << product << std::endl;
 
-    if (rs.getDepthScale() != 0) // If it has depth sensor
+    if (rs.getDepthScale() > 0) // If it has depth sensor
       std::cout << "Depth scale: " << std::setprecision(std::numeric_limits<float>::max_digits10) << rs.getDepthScale()
       << std::endl;
 

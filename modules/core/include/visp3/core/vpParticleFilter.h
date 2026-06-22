@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -186,7 +186,7 @@ public:
    */
   VP_EXPLICIT vpParticleFilter(const unsigned int &N, const std::vector<double> &stdev, const long &seed = -1, const int &nbThreads = -1);
 
-  inline virtual ~vpParticleFilter() { }
+  inline virtual ~vpParticleFilter() {}
 
   /**
    * \brief Set the guess of the initial state.
@@ -445,16 +445,16 @@ vpParticleFilter<MeasurementsType>::vpParticleFilter(const unsigned int &N, cons
 #else
   int maxThreads = omp_get_max_threads();
   if (nbThreads <= 0) {
-    m_nbMaxThreads = maxThreads;
+    m_nbMaxThreads = static_cast<unsigned int>(maxThreads);
   }
   else if (nbThreads > maxThreads) {
-    m_nbMaxThreads = maxThreads;
+    m_nbMaxThreads = static_cast<unsigned int>(maxThreads);
     std::cout << "[vpParticleFilter::vpParticleFilter] WARNING: maximum number of threads to use clamped to "
       << maxThreads << " instead of " << nbThreads << " due to OpenMP restrictions." << std::endl;
     std::cout << "[vpParticleFilter::vpParticleFilter] If you want more, consider to use omp_set_num_threads before." << std::endl;
   }
   else {
-    m_nbMaxThreads = nbThreads;
+    m_nbMaxThreads = static_cast<unsigned int>(maxThreads);
   }
 #endif
   // Generating the random generators
@@ -462,20 +462,20 @@ vpParticleFilter<MeasurementsType>::vpParticleFilter(const unsigned int &N, cons
   m_noiseGenerators.resize(m_nbMaxThreads);
   unsigned long long seedForGenerator;
   if (seed > 0) {
-    seedForGenerator = seed;
+    seedForGenerator = static_cast<unsigned long long>(seed);
   }
   else {
     seedForGenerator = static_cast<unsigned long long>(vpTime::measureTimeMicros());
   }
 
   // Sampler for the simpleImportanceResampling method
-  sampler.setSeed(seed, 0x123465789ULL);
-  samplerRandomIdx.setSeed(seed + 4224, 0x123465789ULL);
+  sampler.setSeed(static_cast<uint64_t>(seed), 0x123465789ULL);
+  samplerRandomIdx.setSeed(static_cast<uint64_t>(seed + 4224), 0x123465789ULL);
 
   vpUniRand seedGenerator(seedForGenerator);
   for (unsigned int threadId = 0; threadId < m_nbMaxThreads; ++threadId) {
     for (unsigned int stateId = 0; stateId < sizeState; ++stateId) {
-      m_noiseGenerators[threadId].push_back(vpGaussRand(stdev[stateId], 0., static_cast<long>(seedGenerator.uniform(0., 1e9))));
+      m_noiseGenerators[threadId].push_back(vpGaussRand(stdev[stateId], 0., static_cast<uint64_t>(seedGenerator.uniform(0., 1e9))));
     }
   }
 }
@@ -610,10 +610,10 @@ typename vpParticleFilter<MeasurementsType>::vpParticlesWithWeights vpParticleFi
   for (unsigned int i = 0; i < nbParticles; ++i) {
     x = sampler();
     sumWeights = 0.0;
-    int index = samplerRandomIdx.uniform(0, nbParticles); // In case all the weights are null
+    int index = static_cast<int>(samplerRandomIdx.uniform(0, static_cast<int>(nbParticles)));
     for (unsigned int j = 0; j < nbParticles; ++j) {
       if (x < sumWeights + weights[j]) {
-        index = j;
+        index = static_cast<int>(j);
         break;
       }
       sumWeights += weights[j];
@@ -625,7 +625,7 @@ typename vpParticleFilter<MeasurementsType>::vpParticlesWithWeights vpParticleFi
   vpParticlesWithWeights newParticlesWeights;
   newParticlesWeights.m_particles.resize(nbParticles);
   for (unsigned int i = 0; i < nbParticles; ++i) {
-    newParticlesWeights.m_particles[i] = particles[idx[i]];
+    newParticlesWeights.m_particles[static_cast<std::size_t>(i)] = particles[static_cast<std::size_t>(idx[static_cast<std::size_t>(i)])];
   }
 
   // Reinitialize the weights
@@ -665,7 +665,7 @@ void vpParticleFilter<MeasurementsType>::initParticles(const vpColVector &x0)
 template <typename MeasurementsType>
 void vpParticleFilter<MeasurementsType>::predictMultithread(const double &dt, const vpColVector &u)
 {
-  int iam, nt, ipoints, istart, npoints(m_N);
+  int iam, nt, ipoints, istart, npoints(static_cast<int>(m_N));
   unsigned int sizeState = m_particles[0].size();
 
 #pragma omp parallel default(shared) private(iam, nt, ipoints, istart) num_threads(m_nbMaxThreads)
@@ -683,20 +683,20 @@ void vpParticleFilter<MeasurementsType>::predictMultithread(const double &dt, co
     for (int i = istart; i< istart + ipoints; ++i) {
       // Updating the particles following the process (or command) function
       if (m_useCommandStateFunction) {
-        m_particles[i] = m_bx(u, m_particles[i], dt);
+        m_particles[static_cast<std::size_t>(i)] = m_bx(u, m_particles[static_cast<std::size_t>(i)], dt);
       }
       else if (m_useProcessFunction) {
-        m_particles[i] = m_f(m_particles[i], dt);
+        m_particles[static_cast<std::size_t>(i)] = m_f(m_particles[static_cast<std::size_t>(i)], dt);
       }
 
       // Generating noise to add to the particle
       vpColVector noise(sizeState);
       for (unsigned int j = 0; j < sizeState; ++j) {
-        noise[j] = m_noiseGenerators[iam][j]();
+        noise[static_cast<std::size_t>(j)] = m_noiseGenerators[static_cast<std::size_t>(iam)][static_cast<std::size_t>(j)]();
       }
 
       // Adding the noise to the particle
-      m_particles[i] = m_stateAdd(m_particles[i], noise);
+      m_particles[static_cast<std::size_t>(i)] = m_stateAdd(m_particles[static_cast<std::size_t>(i)], noise);
     }
   }
 }
@@ -707,8 +707,8 @@ double threadLikelihood(const typename vpParticleFilter<MeasurementsType>::vpLik
 {
   double sum(0.0);
   for (int i = istart; i< istart + ipoints; ++i) {
-    w[i] = w[i] * likelihood(v_particles[i], z);
-    sum += w[i];
+    w[static_cast<std::size_t>(i)] = w[static_cast<std::size_t>(i)] * likelihood(v_particles[static_cast<std::size_t>(i)], z);
+    sum += w[static_cast<std::size_t>(i)];
   }
   return sum;
 }
@@ -717,8 +717,8 @@ template <typename MeasurementsType>
 void vpParticleFilter<MeasurementsType>::updateMultithread(const MeasurementsType &z)
 {
   double sumWeights = 0.0;
-  int iam, nt, ipoints, istart, npoints(m_N);
-  vpColVector tempSums(m_nbMaxThreads, 0.0);
+  int iam, nt, ipoints, istart, npoints(static_cast<int>(m_N));
+  vpColVector tempSums(static_cast<std::size_t>(m_nbMaxThreads), 0.0);
   // Compute the weights depending on the likelihood of a particle with regard to the measurements
 #pragma omp parallel default(shared) private(iam, nt, ipoints, istart) num_threads(m_nbMaxThreads)
   {
@@ -731,7 +731,7 @@ void vpParticleFilter<MeasurementsType>::updateMultithread(const MeasurementsTyp
       // last thread may do more
       ipoints = npoints - istart;
     }
-    tempSums[iam] = threadLikelihood<MeasurementsType>(m_likelihood, m_particles, z, m_w, istart, ipoints);
+    tempSums[static_cast<unsigned int>(iam)] = threadLikelihood<MeasurementsType>(m_likelihood, m_particles, z, m_w, istart, ipoints);
   }
   sumWeights = tempSums.sum();
 
@@ -750,7 +750,7 @@ void vpParticleFilter<MeasurementsType>::updateMultithread(const MeasurementsTyp
 
       // Normalize the weights
       for (int i = istart; i < istart + ipoints; ++i) {
-        m_w[i] = m_w[i] / sumWeights;
+        m_w[static_cast<std::size_t>(i)] = m_w[static_cast<std::size_t>(i)] / sumWeights;
       }
     }
   }
@@ -764,10 +764,10 @@ void vpParticleFilter<MeasurementsType>::predictMonothread(const double &dt, con
   for (unsigned int i = 0; i < m_N; ++i) {
     // Updating the particle following the process (or command) function
     if (m_useCommandStateFunction) {
-      m_particles[i] = m_bx(u, m_particles[i], dt);
+      m_particles[static_cast<std::size_t>(i)] = m_bx(u, m_particles[static_cast<std::size_t>(i)], dt);
     }
     else if (m_useProcessFunction) {
-      m_particles[i] = m_f(m_particles[i], dt);
+      m_particles[static_cast<std::size_t>(i)] = m_f(m_particles[static_cast<std::size_t>(i)], dt);
     }
     else {
       throw(vpException(vpException::notInitialized, "vpParticleFilter has not been initialized before calling predict"));
@@ -780,7 +780,7 @@ void vpParticleFilter<MeasurementsType>::predictMonothread(const double &dt, con
     }
 
     // Adding the noise to the particle
-    m_particles[i] = m_stateAdd(m_particles[i], noise);
+    m_particles[static_cast<std::size_t>(i)] = m_stateAdd(m_particles[static_cast<std::size_t>(i)], noise);
   }
 }
 
@@ -790,7 +790,7 @@ void vpParticleFilter<MeasurementsType>::updateMonothread(const MeasurementsType
   double sumWeights = 0.;
   // Compute the weights depending on the likelihood of a particle with regard to the measurements
   for (unsigned int i = 0; i < m_N; ++i) {
-    m_w[i] = m_w[i] * m_likelihood(m_particles[i], z);
+    m_w[static_cast<std::size_t>(i)] = m_w[static_cast<std::size_t>(i)] * m_likelihood(m_particles[static_cast<std::size_t>(i)], z);
     sumWeights += m_w[i];
   }
 

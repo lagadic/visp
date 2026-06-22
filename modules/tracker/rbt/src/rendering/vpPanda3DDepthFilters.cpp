@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,7 +79,7 @@ const std::string vpPanda3DDepthGaussianBlur::FRAGMENT_SHADER =
 
 vpPanda3DDepthGaussianBlur::vpPanda3DDepthGaussianBlur(const std::string &name, std::shared_ptr<vpPanda3DBaseRenderer> inputRenderer, bool isOutput)
   : vpPanda3DPostProcessFilter(name, inputRenderer, isOutput, vpPanda3DDepthGaussianBlur::FRAGMENT_SHADER)
-{ }
+{}
 
 FrameBufferProperties vpPanda3DDepthGaussianBlur::getBufferProperties() const
 {
@@ -165,7 +165,7 @@ VP_TOSTRING(M_PI)
 
 vpPanda3DDepthCannyFilter::vpPanda3DDepthCannyFilter(const std::string &name, std::shared_ptr<vpPanda3DGeometryRenderer> inputRenderer, bool isOutput, float edgeThreshold)
   : vpPanda3DPostProcessFilter(name, inputRenderer, isOutput, vpPanda3DDepthCannyFilter::FRAGMENT_SHADER), m_edgeThreshold(edgeThreshold), m_inputIsFast(inputRenderer->isFastAndApproximateRendering())
-{ }
+{}
 
 void vpPanda3DDepthCannyFilter::setupScene()
 {
@@ -212,11 +212,11 @@ void vpPanda3DDepthCannyFilter::getRender(vpImage<float> &I, vpImage<unsigned ch
   I.resize(m_renderParameters.getImageHeight(), m_renderParameters.getImageWidth());
 
   valid.resize(I.getHeight(), I.getWidth());
-  const unsigned numComponents = m_texture->get_num_components();
-  int rowIncrement = I.getWidth() * numComponents; // we ask for only 8 bits image, but we may get an rgb image
+  const unsigned int numComponents = static_cast<unsigned int>(m_texture->get_num_components());
+  int rowIncrement = static_cast<int>(I.getWidth() * numComponents); // we ask for only 8 bits image, but we may get an rgb image
   uint8_t *data = (uint8_t *)(&(m_texture->get_ram_image().front()));
   // Panda3D stores data upside down
-  data += rowIncrement * (I.getHeight() - 1);
+  data += static_cast<unsigned int>(rowIncrement) * (I.getHeight() - 1);
   rowIncrement = -rowIncrement;
   if (numComponents != 3) {
     throw;
@@ -240,10 +240,10 @@ void vpPanda3DDepthCannyFilter::getRender(vpImage<float> &I, vpImage<unsigned ch
 
   I.resize(h, w, 0.f);
   valid.resize(I.getHeight(), I.getWidth(), 0);
-  const unsigned top = static_cast<unsigned int>(std::max(0.0, bb.getTop()));
-  const unsigned left = static_cast<unsigned int>(std::max(0.0, bb.getLeft()));
-  const unsigned numComponents = m_texture->get_num_components();
-  const unsigned rowIncrement = m_renderParameters.getImageWidth() * numComponents;
+  const unsigned int top = static_cast<unsigned int>(std::max(0.0, bb.getTop()));
+  const unsigned int left = static_cast<unsigned int>(std::max(0.0, bb.getLeft()));
+  const unsigned int numComponents = static_cast<unsigned int>(m_texture->get_num_components());
+  const unsigned int rowIncrement = m_renderParameters.getImageWidth() * numComponents;
 
   const uint8_t *data = (uint8_t *)(&(m_texture->get_ram_image().front()));
   data += rowIncrement * (m_renderParameters.getImageHeight() - 1);

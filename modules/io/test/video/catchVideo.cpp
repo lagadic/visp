@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,17 +63,17 @@ VP_ATTRIBUTE_NO_DESTROY static std::string videoname_grey;
 VP_ATTRIBUTE_NO_DESTROY static std::string videoname_color;
 
 template <class Type>
-bool test_createSequence(vpImage<Type> &I, const std::string &videoname, unsigned int first_frame, int frame_step,
-                         unsigned int nframes)
+bool test_createSequence(vpImage<Type> &I, const std::string &videoname, unsigned int p_first_frame, int p_frame_step,
+                         unsigned int p_nframes)
 {
   try {
     vpVideoWriter writer;
     writer.setFileName(videoname);
-    writer.setFirstFrameIndex(static_cast<int>(first_frame));
-    writer.setFrameStep(frame_step);
+    writer.setFirstFrameIndex(static_cast<int>(p_first_frame));
+    writer.setFrameStep(p_frame_step);
     writer.open(I);
 
-    for (unsigned int i = 0; i < nframes; i++) {
+    for (unsigned int i = 0; i < p_nframes; ++i) {
       writer.saveFrame(I);
       std::cout << "Frame saved in: " << writer.getFrameName() << std::endl;
     }
@@ -86,8 +86,8 @@ bool test_createSequence(vpImage<Type> &I, const std::string &videoname, unsigne
 }
 
 template <class Type>
-bool test_readSequence(vpImage<Type> &I, const std::string &videoname, long first_frame, int frame_step, int step,
-                       long last_frame)
+bool test_readSequence(vpImage<Type> &I, const std::string &videoname, long p_first_frame, int p_frame_step, int step,
+                       long p_last_frame)
 {
   vpVideoReader reader;
   reader.setFileName(videoname);
@@ -96,13 +96,13 @@ bool test_readSequence(vpImage<Type> &I, const std::string &videoname, long firs
 
   long frame = reader.getFirstFrameIndex();
   std::cout << "First frame: " << frame << std::endl;
-  if (frame != first_frame) {
+  if (frame != p_first_frame) {
     std::cout << "Wrong first frame" << std::endl;
     return false;
   }
   frame = reader.getLastFrameIndex();
   std::cout << "Last frame: " << frame << std::endl;
-  if (frame != last_frame) {
+  if (frame != p_last_frame) {
     std::cout << "Wrong last frame" << std::endl;
     return false;
   }
@@ -112,7 +112,7 @@ bool test_readSequence(vpImage<Type> &I, const std::string &videoname, long firs
     reader.acquire(I);
     long index = reader.getFrameIndex();
     std::cout << "Read frame with index " << index << " from: " << reader.getFrameName() << std::endl;
-    if (index != first_frame + cpt * frame_step) {
+    if (index != p_first_frame + cpt * p_frame_step) {
       std::cout << "Read wrong frame index" << std::endl;
       return false;
     }
@@ -130,15 +130,15 @@ TEST_CASE("Test saving sequence of gray images with step 2", "[gray]")
   SECTION("Read sequence of uchar images with step 1")
   {
     int step = 1;
-    vpImage<unsigned char> I;
-    CHECK(test_readSequence(I, videoname_grey, first_frame, frame_step, step, last_frame));
+    vpImage<unsigned char> Isection;
+    CHECK(test_readSequence(Isection, videoname_grey, first_frame, frame_step, step, last_frame));
   }
 
   SECTION("Read sequence of uchar images with step 2")
   {
     int step = frame_step;
-    vpImage<unsigned char> I;
-    CHECK(test_readSequence(I, videoname_grey, first_frame, frame_step, step, last_frame));
+    vpImage<unsigned char> Isection;
+    CHECK(test_readSequence(Isection, videoname_grey, first_frame, frame_step, step, last_frame));
   }
 }
 
@@ -151,15 +151,15 @@ TEST_CASE("Test saving sequence of color images with step 2", "[color]")
   SECTION("Read sequence of color images with step 1")
   {
     int step = 1;
-    vpImage<vpRGBa> I;
-    CHECK(test_readSequence(I, videoname_color, first_frame, frame_step, step, last_frame));
+    vpImage<vpRGBa> Isection;
+    CHECK(test_readSequence(Isection, videoname_color, first_frame, frame_step, step, last_frame));
   }
 
   SECTION("Read sequence of color images with step 2")
   {
     int step = frame_step;
-    vpImage<vpRGBa> I;
-    CHECK(test_readSequence(I, videoname_color, first_frame, frame_step, step, last_frame));
+    vpImage<vpRGBa> Isection;
+    CHECK(test_readSequence(Isection, videoname_color, first_frame, frame_step, step, last_frame));
   }
 }
 
@@ -170,7 +170,7 @@ int main(int argc, char *argv[])
   // Let Catch (using Clara) parse the command line
   session.applyCommandLine(argc, argv);
 
-  std::string tmp = vpIoTools::makeTempDirectory("./");
+  tmp = vpIoTools::makeTempDirectory("./");
 
   std::string username = vpIoTools::getUserName();
 

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,8 +55,8 @@ namespace
 struct float3
 {
   float x, y, z;
-  float3() : x(0), y(0), z(0) { }
-  float3(float x_, float y_, float z_) : x(x_), y(y_), z(z_) { }
+  float3() : x(0), y(0), z(0) {}
+  float3(float x_, float y_, float z_) : x(x_), y(y_), z(z_) {}
 };
 
 void getPointcloud(const rs2::depth_frame &depth_frame, std::vector<float3> &pointcloud)
@@ -90,7 +90,7 @@ void createDepthHist(std::vector<uint32_t> &histogram, const std::vector<float3>
     ++histogram[static_cast<uint32_t>(pt.z * depth_scale)];
   }
 
-  for (int i = 2; i < 0x10000; i++)
+  for (size_t i = 2; i < 0x10000; i++)
     histogram[i] += histogram[i - 1]; // Build a cumulative histogram for
                                       // the indices in [1,0xFFFF]
 }
@@ -104,9 +104,9 @@ unsigned char getDepthColor(const std::vector<uint32_t> &histogram, float z, flo
 void frame_to_mat(const rs2::frame &f, cv::Mat &img)
 {
   auto vf = f.as<rs2::video_frame>();
-  const int w = vf.get_width();
-  const int h = vf.get_height();
-  const int size = w * h;
+  const size_t w = static_cast<size_t>(vf.get_width());
+  const size_t h = static_cast<size_t>(vf.get_height());
+  const size_t size = w * h;
 
   if (f.get_profile().format() == RS2_FORMAT_BGR8) {
     memcpy(static_cast<void *>(img.ptr<cv::Vec3b>()), f.get_data(), size * 3);

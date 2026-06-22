@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ BEGIN_VISP_NAMESPACE
 class vpRobotMavsdk::vpRobotMavsdkImpl
 {
 public:
-  vpRobotMavsdkImpl() : m_takeoffAlt(1.0) { }
+  vpRobotMavsdkImpl() : m_takeoffAlt(1.0) {}
   vpRobotMavsdkImpl(const std::string &connection_info) : m_takeoffAlt(1.0) { connect(connection_info); }
 
   virtual ~vpRobotMavsdkImpl()
@@ -612,8 +612,8 @@ public:
 
 #if (VISP_HAVE_MAVSDK_VERSION > 0x010412)
         mavsdk::Telemetry::OdometryHandle handle_odom = m_telemetry.get()->subscribe_odometry(
-            [this, &takeoff_finished_promise, &handle, &Z_init, &handle_odom](mavsdk::Telemetry::Odometry odom) {
-              if (odom.position_body.z_m < 0.90 * (Z_init - m_takeoffAlt) + m_position_incertitude) {
+            [this, &takeoff_finished_promise, &handle, &Z_init, &handle_odom](mavsdk::Telemetry::Odometry current_odom) {
+              if (current_odom.position_body.z_m < 0.90 * (Z_init - m_takeoffAlt) + m_position_incertitude) {
                 std::cout << "Takeoff altitude reached\n.";
                 m_telemetry.get()->unsubscribe_odometry(handle_odom);
                 takeoff_finished_promise.set_value();
@@ -621,8 +621,8 @@ public:
             });
 #else
         m_telemetry.get()->subscribe_odometry(
-            [this, &takeoff_finished_promise, &Z_init](mavsdk::Telemetry::Odometry odom) {
-              if (odom.position_body.z_m < 0.90 * (Z_init - m_takeoffAlt) + m_position_incertitude) {
+            [this, &takeoff_finished_promise, &Z_init](mavsdk::Telemetry::Odometry current_odom) {
+              if (current_odom.position_body.z_m < 0.90 * (Z_init - m_takeoffAlt) + m_position_incertitude) {
                 std::cout << "Takeoff altitude reached\n.";
                 m_telemetry.get()->subscribe_odometry(nullptr);
                 takeoff_finished_promise.set_value();
@@ -687,8 +687,8 @@ public:
 
 #if (VISP_HAVE_MAVSDK_VERSION > 0x010412)
         mavsdk::Telemetry::OdometryHandle handle_odom = m_telemetry.get()->subscribe_odometry(
-            [this, &takeoff_finished_promise, &handle, &Z_init, &handle_odom](mavsdk::Telemetry::Odometry odom) {
-              if (odom.position_body.z_m < 0.90 * (Z_init - m_takeoffAlt) + m_position_incertitude) {
+            [this, &takeoff_finished_promise, &handle, &Z_init, &handle_odom](mavsdk::Telemetry::Odometry current_odom) {
+              if (current_odom.position_body.z_m < 0.90 * (Z_init - m_takeoffAlt) + m_position_incertitude) {
                 std::cout << "Takeoff altitude reached\n.";
                 m_telemetry.get()->unsubscribe_odometry(handle_odom);
                 takeoff_finished_promise.set_value();
@@ -696,8 +696,8 @@ public:
             });
 #else
         m_telemetry.get()->subscribe_odometry(
-            [this, &takeoff_finished_promise, &Z_init](mavsdk::Telemetry::Odometry odom) {
-              if (odom.position_body.z_m < 0.90 * (Z_init - m_takeoffAlt) + m_position_incertitude) {
+            [this, &takeoff_finished_promise, &Z_init](mavsdk::Telemetry::Odometry current_odom) {
+              if (current_odom.position_body.z_m < 0.90 * (Z_init - m_takeoffAlt) + m_position_incertitude) {
                 std::cout << "Takeoff altitude reached\n.";
                 m_telemetry.get()->subscribe_odometry(nullptr);
                 takeoff_finished_promise.set_value();
@@ -762,8 +762,8 @@ public:
 
 #if (VISP_HAVE_MAVSDK_VERSION > 0x010412)
       mavsdk::Telemetry::OdometryHandle handle_odom = m_telemetry.get()->subscribe_odometry(
-          [this, &landing_finished_promise, &success, &handle_odom](mavsdk::Telemetry::Odometry odom) {
-            if (odom.position_body.z_m > -0.15) {
+          [this, &landing_finished_promise, &success, &handle_odom](mavsdk::Telemetry::Odometry current_odom) {
+            if (current_odom.position_body.z_m > -0.15) {
               std::cout << "Landing altitude reached \n.";
 
               success = true;
@@ -773,8 +773,8 @@ public:
           });
 #else
       m_telemetry.get()->subscribe_odometry(
-          [this, &landing_finished_promise, &success](mavsdk::Telemetry::Odometry odom) {
-            if (odom.position_body.z_m > -0.15) {
+          [this, &landing_finished_promise, &success](mavsdk::Telemetry::Odometry current_odom) {
+            if (current_odom.position_body.z_m > -0.15) {
               std::cout << "Landing altitude reached\n.";
 
               success = true;
@@ -844,16 +844,16 @@ public:
 
 #if (VISP_HAVE_MAVSDK_VERSION > 0x010412)
       mavsdk::Telemetry::OdometryHandle handle_odom = m_telemetry.get()->subscribe_odometry(
-          [this, &position_reached_promise, &handle_odom, &position_target](mavsdk::Telemetry::Odometry odom) {
-            vpQuaternionVector q { odom.q.x, odom.q.y, odom.q.z, odom.q.w };
+          [this, &position_reached_promise, &handle_odom, &position_target](mavsdk::Telemetry::Odometry current_odom) {
+            vpQuaternionVector q { current_odom.q.x, current_odom.q.y, current_odom.q.z, current_odom.q.w };
             vpRotationMatrix R(q);
             vpRxyzVector rxyz(R);
-            double odom_yaw = vpMath::deg(rxyz[2]);
-            double distance_to_target = std::sqrt(vpMath::sqr(odom.position_body.x_m - position_target.north_m) +
-                                                  vpMath::sqr(odom.position_body.y_m - position_target.east_m) +
-                                                  vpMath::sqr(odom.position_body.z_m - position_target.down_m));
+            double current_odom_yaw = vpMath::deg(rxyz[2]);
+            double distance_to_target = std::sqrt(vpMath::sqr(current_odom.position_body.x_m - position_target.north_m) +
+                                                  vpMath::sqr(current_odom.position_body.y_m - position_target.east_m) +
+                                                  vpMath::sqr(current_odom.position_body.z_m - position_target.down_m));
             if (distance_to_target < m_position_incertitude &&
-                std::fabs(odom_yaw - position_target.yaw_deg) < m_yaw_incertitude) {
+                std::fabs(current_odom_yaw - position_target.yaw_deg) < m_yaw_incertitude) {
               std::cout << "Position reached\n.";
               m_telemetry.get()->unsubscribe_odometry(handle_odom);
               position_reached_promise.set_value();
@@ -861,16 +861,16 @@ public:
           });
 #else
       m_telemetry.get()->subscribe_odometry(
-          [this, &position_reached_promise, &position_target](mavsdk::Telemetry::Odometry odom) {
-            vpQuaternionVector q { odom.q.x, odom.q.y, odom.q.z, odom.q.w };
+          [this, &position_reached_promise, &position_target](mavsdk::Telemetry::Odometry current_odom) {
+            vpQuaternionVector q { current_odom.q.x, current_odom.q.y, current_odom.q.z, current_odom.q.w };
             vpRotationMatrix R(q);
             vpRxyzVector rxyz(R);
-            double odom_yaw = vpMath::deg(rxyz[2]);
-            double distance_to_target = std::sqrt(vpMath::sqr(odom.position_body.x_m - position_target.north_m) +
-                                                  vpMath::sqr(odom.position_body.y_m - position_target.east_m) +
-                                                  vpMath::sqr(odom.position_body.z_m - position_target.down_m));
+            double current_odom_yaw = vpMath::deg(rxyz[2]);
+            double distance_to_target = std::sqrt(vpMath::sqr(current_odom.position_body.x_m - position_target.north_m) +
+                                                  vpMath::sqr(current_odom.position_body.y_m - position_target.east_m) +
+                                                  vpMath::sqr(current_odom.position_body.z_m - position_target.down_m));
             if (distance_to_target < m_position_incertitude &&
-                std::fabs(odom_yaw - position_target.yaw_deg) < m_yaw_incertitude) {
+                std::fabs(current_odom_yaw - position_target.yaw_deg) < m_yaw_incertitude) {
               std::cout << "Position reached\n.";
               m_telemetry.get()->subscribe_odometry(nullptr);
               position_reached_promise.set_value();
@@ -914,12 +914,13 @@ public:
 
   bool setPosition(const vpHomogeneousMatrix &M, bool absolute, int timeout_sec)
   {
+    double eps = 1e-6;
     auto XYZvec = vpRxyzVector(M.getRotationMatrix());
-    if (XYZvec[0] != 0.0) {
+    if (std::fabs(XYZvec[0]) > eps) {
       std::cerr << "ERROR : Can't move, rotation around X axis should be 0." << std::endl;
       return false;
     }
-    if (XYZvec[1] != 0.0) {
+    if (std::fabs(XYZvec[1]) > eps) {
       std::cerr << "ERROR : Can't move, rotation around Y axis should be 0." << std::endl;
       return false;
     }
@@ -930,11 +931,12 @@ public:
   bool setPositionRelative(const vpHomogeneousMatrix &M, bool blocking, int timeout_sec)
   {
     auto XYZvec = vpRxyzVector(M.getRotationMatrix());
-    if (XYZvec[0] != 0.0) {
+    double eps = 1e-6;
+    if (std::fabs(XYZvec[0]) > eps) {
       std::cerr << "ERROR : Can't move, rotation around X axis should be 0." << std::endl;
       return false;
     }
-    if (XYZvec[1] != 0.0) {
+    if (std::fabs(XYZvec[1]) > eps) {
       std::cerr << "ERROR : Can't move, rotation around Y axis should be 0." << std::endl;
       return false;
     }
@@ -1290,7 +1292,7 @@ std::tuple<float, float> vpRobotMavsdk::getHome() const { return m_impl->getHome
  *
  * \warning Should be executed only when the vehicle is on a flat surface.
  */
-void vpRobotMavsdk::doFlatTrim() { }
+void vpRobotMavsdk::doFlatTrim() {}
 
 /*!
  * Sets the take off altitude.
@@ -1605,5 +1607,5 @@ bool vpRobotMavsdk::hasFlyingCapability() { return m_impl->getFlyingCapability()
 #endif
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpRobotMavsdk.cpp.o) has no symbols
-void dummy_vpRobotMavsdk() { }
+void dummy_vpRobotMavsdk() {}
 #endif

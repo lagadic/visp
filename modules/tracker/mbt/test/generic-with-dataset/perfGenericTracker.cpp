@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,9 +77,10 @@ bool read_data(const std::string &input_directory, int cpt, const vpCameraParame
   // We suppose that the user will download a recent dataset
   std::string ext("png");
 #endif
-  std::string image_filename = vpIoTools::formatString(input_directory + "/Images/Image_%04d." + ext, cpt);
-  std::string depth_filename = vpIoTools::formatString(input_directory + "/Depth/Depth_%04d.bin", cpt);
-  std::string pose_filename = vpIoTools::formatString(input_directory + "/CameraPose/Camera_%03d.txt", cpt);
+  unsigned int cpt_ = static_cast<unsigned int>(cpt);
+  std::string image_filename = vpIoTools::formatString(input_directory + "/Images/Image_%04d." + ext, cpt_);
+  std::string depth_filename = vpIoTools::formatString(input_directory + "/Depth/Depth_%04d.bin", cpt_);
+  std::string pose_filename = vpIoTools::formatString(input_directory + "/CameraPose/Camera_%03d.txt", cpt_);
 
   if (!vpIoTools::checkFilename(image_filename) || !vpIoTools::checkFilename(depth_filename) ||
       !vpIoTools::checkFilename(pose_filename))
@@ -285,7 +286,6 @@ TEST_CASE("Benchmark generic tracker", "[benchmark]")
         tracker.resetTracker();
         tracker.setTrackerType(mapOfTrackerTypes[idx]);
 
-        const bool verbose = false;
 #if defined(VISP_HAVE_PUGIXML)
         tracker.loadConfigFile(configFileCam1, configFileCam2, verbose);
 #else

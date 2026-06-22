@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +67,7 @@ vpMbtDistanceCylinder::vpMbtDistanceCylinder()
   meline1(nullptr), meline2(nullptr), cercle1(nullptr), cercle2(nullptr), radius(0), p1(nullptr), p2(nullptr), L(), error(),
   nbFeature(0), nbFeaturel1(0), nbFeaturel2(0), Reinit(false), c(nullptr), hiddenface(nullptr), index_polygon(-1),
   isvisible(false)
-{ }
+{}
 
 /*!
   Basic destructor useful to deallocate the memory.
@@ -222,15 +222,15 @@ bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, cons
     meline2->setMe(me);
 
     //    meline->setDisplay(vpMeSite::RANGE_RESULT);
-    unsigned int initRange_;
+    int initRange_;
     if (initRange < 0) {
       initRange_ = defaultRange;
     }
     else {
-      initRange_ = static_cast<unsigned int>(initRange);
+      initRange_ = initRange;
     }
     int oldInitRange = me->getInitRange();
-    me->setInitRange(initRange_);
+    me->setInitRange(static_cast<int>(initRange_));
 
     // Conversion meter to pixels
     vpMeterPixelConversion::convertLine(cam, c->getRho1(), c->getTheta1(), rho1, theta1);

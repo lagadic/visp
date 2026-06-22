@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -145,7 +145,7 @@ static int hashpjw(const char *str)
   for (; *str != '\0'; str++) {
     unsigned g;
     h = (h << 4) + static_cast<unsigned int>(*str);
-    if ((g = h & ~0xfffffff) != 0) {
+    if ((g = h & ~0xfffffffU) != 0) {
       h ^= g >> 24;
       h ^= g;
     }
@@ -206,7 +206,7 @@ Index get_symbol(char *ident, int length)
     for (; len != 0; idn++, len--) {
       unsigned g;
       h = (h << 4) + static_cast<unsigned int>(*idn);
-      if ((g = h & ~0xfffffff) != 0) {
+      if ((g = h & ~0xfffffffU) != 0) {
         h ^= g >> 24;
         h ^= g;
       }

@@ -44,8 +44,11 @@
 
 // Local helper
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
-
+#if (VISP_HAVE_OPENCV_VERSION >= 0x050000)
+#include <opencv2/geometry/2d.hpp>
+#else
 #include <opencv2/imgproc/imgproc.hpp>
+#endif
 
 
 /*!

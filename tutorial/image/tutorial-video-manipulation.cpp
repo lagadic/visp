@@ -214,7 +214,7 @@ int main(int argc, const char *argv[])
 #else
     std::cout << "No image viewer is available..." << std::endl;
 #endif
-    int scale = vpDisplay::getDownScalingFactor(I);
+    int scale = static_cast<int>(vpDisplay::getDownScalingFactor(I));
     int cpt_stride = 1;
 
     while (!g.end()) {

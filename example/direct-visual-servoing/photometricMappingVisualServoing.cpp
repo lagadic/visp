@@ -140,7 +140,7 @@ OPTIONS:                                               Default\n\
 
 */
 bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_allowed, bool &display,
-                 int &niter, std::string &method, unsigned &numDbImages, unsigned &numComponents, double &lambda)
+                 int &niter, std::string &method, unsigned int &numDbImages, unsigned int &numComponents, double &lambda)
 {
   const char *optarg_;
   int c;
@@ -160,10 +160,10 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_all
       method = std::string(optarg_);
       break;
     case 'p':
-      numDbImages = atoi(optarg_);
+      numDbImages = static_cast<unsigned int>(atoi(optarg_));
       break;
     case 'k':
-      numComponents = atoi(optarg_);
+      numComponents = static_cast<unsigned int>(atoi(optarg_));
       break;
     case 'n':
       niter = atoi(optarg_);
@@ -219,8 +219,8 @@ int main(int argc, const char **argv)
 
 
     const double Z = 0.8;
-    const unsigned ih = 240;
-    const unsigned iw = 320;
+    const unsigned int ih = 240;
+    const unsigned int iw = 320;
     const double scenew = 0.6;
     const double sceneh = 0.42;
 

@@ -222,7 +222,7 @@ void vpSimulatorAfma6::initDisplay()
 */
 void vpSimulatorAfma6::init(vpAfma6::vpAfma6ToolType tool, vpCameraParameters::vpCameraParametersProjType proj_model)
 {
-  this->projModel = proj_model;
+  m_projModel = proj_model;
   unsigned int name_length = 30; // the size of this kind of string "/afma6_tool_vacuum.bnd"
   if (arm_dir.size() > FILENAME_MAX)
     throw vpException(vpException::dimensionError, "Cannot initialize Afma6 simulator");
@@ -2491,5 +2491,5 @@ END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpSimulatorAfma6.cpp.o) has
 // no symbols
-void dummy_vpSimulatorAfma6() { }
+void dummy_vpSimulatorAfma6() {}
 #endif

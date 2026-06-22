@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +44,7 @@
 #include <array>
 #include <cmath>
 #include <iostream>
+#include <limits>
 
 #include <franka/exception.h>
 #include <franka/robot.h>
@@ -156,7 +157,7 @@ franka::JointPositions vpJointPosTrajGenerator::operator()(const franka::RobotSt
 {
   m_time += period.toSec();
 
-  if (m_time == 0.0) {
+  if (std::abs(m_time) <= std::numeric_limits<double>::epsilon()) {
     for (size_t i = 0; i < 7; i++) {
       m_q_start[i] = robot_state.q_d[i];
     }
@@ -180,5 +181,5 @@ franka::JointPositions vpJointPosTrajGenerator::operator()(const franka::RobotSt
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpJointPosTrajGenerator.cpp.o) has no symbols
-void dummy_vpJointPosTrajGenerator() { }
+void dummy_vpJointPosTrajGenerator() {}
 #endif

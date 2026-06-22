@@ -1,4 +1,5 @@
-name: Ubuntu-contrib
+# Isolated = build without 3rdparty and visp-images
+name: Ubuntu-warnings-error
 
 # https://www.jeffgeerling.com/blog/2020/running-github-actions-workflow-on-schedule-and-other-events
 on:
@@ -14,17 +15,24 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-ubuntu-dep-apt-contrib:
+  build-ubuntu-dep-apt-isolated:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, ubuntu-latest]
-        compiler: [ {CC: /usr/bin/gcc, CXX: /usr/bin/g++}, {CC: /usr/bin/clang, CXX: /usr/bin/clang++} ]
+        os: [ubuntu-latest]
+        compiler: [ {CC: /usr/bin/gcc, CXX: /usr/bin/g++} ]
+        standard: [ 17 ]
 
     steps:
+      # Install OpenCV
+    - name: Install OpenCV
+      run: |
+        sudo apt-get update
+        sudo apt-get install libopencv-dev
+
     - name: Checkout repository
-      uses: actions/checkout@v5
+      uses: actions/checkout@v7
 
     - name: Print system information
       run: lscpu
@@ -35,29 +43,31 @@ jobs:
     - name: Print compiler information
       run: dpkg --list | grep compiler
 
-    - name: Install dependencies
-      run: sudo apt-get update && sudo apt-get install -y libx11-dev libdc1394-dev libv4l-dev liblapack-dev libopenblas-dev libeigen3-dev libopencv-dev nlohmann-json3-dev
-
-    - name: Clone visp_contrib
-      run: |
-        git clone --depth 1 https://github.com/lagadic/visp_contrib ${HOME}/visp_contrib
-
-    - name: Configure ViSP and visp_contrib with cmake
+    - name: Configure CMake
       run: |
         mkdir build
         cd build
         CC=${{ matrix.compiler.CC }}
         CXX=${{ matrix.compiler.CXX }}
+        CXX_STANDARD=${{ matrix.standard }}
         echo "CC: $CC"
         echo "CXX: $CXX"
-        cmake .. -DVISP_CONTRIB_MODULES_PATH=${HOME}/visp_contrib/modules -DCMAKE_C_COMPILER="${CC}" -DCMAKE_CXX_COMPILER="${CXX}" -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=OFF -DBUILD_DEMOS=OFF -DBUILD_TUTORIALS=OFF -DBUILD_TESTS=OFF -DCMAKE_INSTALL_PREFIX=/tmp/usr/local
+        echo "Standard: $CXX_STANDARD"
+        cmake .. -DCMAKE_C_COMPILER="${CC}" \
+                 -DCMAKE_CXX_COMPILER="${CXX}" \
+                 -DUSE_CXX_STANDARD=$CXX_STANDARD \
+                 -DBUILD_JAVA=OFF \
+                 -DBUILD_MODULE_visp_java=OFF \
+                 -DBUILD_MODULE_visp_java_binding=OFF \
+                 -DACTIVATE_WARNING_ALL=ON \
+                 -DACTIVATE_WARNING_EXTRA=ON \
+                 -DACTIVATE_WARNING_SHADOW=ON \
+                 -DACTIVATE_WARNING_FLOAT_EQUAL=ON \
+                 -DACTIVATE_WARNING_SIGN_CONVERSION=ON \
+                 -DCMAKE_CXX_FLAGS=-Werror
         cat ViSP-third-party.txt
 
-    - name: Compile and install ViSP
+    - name: Compile
       working-directory: build
       run: |
-        make -j$(nproc) install
-
-    - name: Run unit tests
-      working-directory: build
-      run: ctest -j$(nproc) --output-on-failure
+        make -j$(nproc)

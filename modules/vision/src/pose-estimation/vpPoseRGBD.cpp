@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -163,17 +163,18 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap, con
                                              const std::vector<vpPoint> &point3d, vpHomogeneousMatrix &cMo,
                                              double *confidence_index)
 {
-  if (corners.size() != point3d.size()) {
+  size_t corners_size = corners.size();
+  size_t point3d_size = point3d.size();
+  if (corners_size != point3d_size) {
     throw(vpException(vpException::fatalError,
                       "Cannot compute pose from RGBD, 3D (%d) and 2D (%d) data doesn't have the same size",
-                      point3d.size(), corners.size()));
+                      point3d_size, corners_size));
   }
   std::vector<vpPoint> pose_points;
   if (confidence_index != nullptr) {
     *confidence_index = 0.0;
   }
 
-  size_t point3d_size = point3d.size();
   for (size_t i = 0; i < point3d_size; ++i) {
     pose_points.push_back(point3d[i]);
   }
@@ -215,7 +216,6 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap, con
     double normalized_weights = 0;
     estimatePlaneEquationSVD(points_3d, plane_equation, centroid, normalized_weights);
 
-    size_t corners_size = corners.size();
     for (size_t j = 0; j < corners_size; ++j) {
       const vpImagePoint &imPt = corners[j];
       double x = 0, y = 0;
@@ -230,7 +230,6 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap, con
       pose_points[j].set_y(y);
     }
 
-    size_t point3d_size = point3d.size();
     for (size_t i = 0; i < point3d_size; ++i) {
       q.push_back(point3d[i]);
     }
@@ -353,7 +352,7 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap,
     if (coplanar_points) {
       // If all objects are coplanar, use points insides tag_points_3d to estimate the plane
       estimatePlaneEquationSVD(tag_points_3d, plane_equation, centroid, normalized_weights);
-      int count = 0;
+      size_t count = 0;
       for (size_t j = 0; j < nbCorners; ++j) {
         std::vector<vpImagePoint> tag_corner = corners[j];
         size_t tag_corner_size = tag_corner.size();

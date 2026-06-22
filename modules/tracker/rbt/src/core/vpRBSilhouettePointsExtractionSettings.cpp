@@ -1,7 +1,7 @@
 
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,8 +78,8 @@ std::vector<std::pair<unsigned int, unsigned int>> vpSilhouettePointsExtractionS
   std::vector<std::pair<unsigned int, unsigned int>> finalCandidates;
   std::vector<std::pair<unsigned int, unsigned int>> candidates;
   if (m_maxNumPoints) {
-    finalCandidates.reserve(m_maxNumPoints);
-    candidates.reserve(m_maxNumPoints);
+    finalCandidates.reserve(static_cast<unsigned int>(m_maxNumPoints));
+    candidates.reserve(static_cast<unsigned int>(m_maxNumPoints));
   }
 
   if (m_preferPreviousPoints) {
@@ -111,8 +111,8 @@ std::vector<std::pair<unsigned int, unsigned int>> vpSilhouettePointsExtractionS
     }
   }
   if (m_maxNumPoints > 0) {
-    vpUniRand random(randomSeed);
-    std::vector<size_t> indices(m_maxNumPoints - finalCandidates.size());
+    vpUniRand random(static_cast<uint64_t>(randomSeed));
+    std::vector<size_t> indices(static_cast<size_t>(m_maxNumPoints) - finalCandidates.size());
     sampleWithoutReplacement(static_cast<size_t>(m_maxNumPoints) - finalCandidates.size(), candidates.size(), indices, random);
     for (unsigned int i = 0; i < indices.size(); ++i) {
       finalCandidates.push_back(candidates[indices[i]]);

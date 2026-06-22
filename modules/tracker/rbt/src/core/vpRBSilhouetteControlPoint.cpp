@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -127,12 +127,7 @@ void vpRBSilhouetteControlPoint::track(const vpImage<unsigned char> &I)
 
   if (m_site.getState() == vpMeSite::NO_SUPPRESSION) {
     try {
-      if (m_site.m_convlt == 0) {
-        m_site.track(I, m_me, false);
-      }
-      else {
-        m_site.track(I, m_me, false);
-      }
+      m_site.track(I, m_me, false);
     }
     catch (vpTrackingException &) {
       vpERROR_TRACE("caught a tracking exception, ignoring me point...");
@@ -487,10 +482,10 @@ vpRBSilhouetteControlPoint::computeMeInteractionMatrixErrorMH(const vpHomogeneou
 
 double vpRBSilhouetteControlPoint::getMaxMaskGradientAlongLine(const vpImage<float> &mask, int searchSize) const
 {
-  std::vector<float> maskValues(searchSize * 2 + 1);
+  std::vector<float> maskValues(static_cast<unsigned int>(searchSize * 2 + 1));
   double c = cos(theta);
   double s = sin(theta);
-  int index = 0;
+  unsigned int index = 0;
   for (int n = -searchSize + 1; n < searchSize; ++n) {
     unsigned int ii = static_cast<unsigned int>(round(icpoint.get_i() + s * n));
     unsigned int jj = static_cast<unsigned int>(round(icpoint.get_j() + c * n));

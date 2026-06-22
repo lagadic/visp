@@ -83,13 +83,13 @@ void displayCanny(const vpImage<vpRGBf> &cannyRawData,
   }
 
   vpDisplay::display(canny);
-  for (unsigned int i = 0; i < canny.getHeight(); i += 8) {
-    for (unsigned int j = 0; j < canny.getWidth(); j += 8) {
+  for (int i = 0; i < static_cast<int>(canny.getHeight()); i += 8) {
+    for (int j = 0; j < static_cast<int>(canny.getWidth()); j += 8) {
       bool valid = (pow(cannyRawData[i][j].R, 2.f) + pow(cannyRawData[i][j].G, 2.f)) > 0;
       if (!valid) continue;
       float angle = cannyRawData[i][j].B;
-      unsigned x = j + 10 * cos(angle);
-      unsigned y = i + 10 * sin(angle);
+      int x = j + 10 * cos(angle);
+      int y = i + 10 * sin(angle);
       vpDisplay::displayArrow(canny, i, j, y, x, vpColor::green);
     }
   }
@@ -158,8 +158,9 @@ int main(int argc, const char **argv)
 
   //! [Renderer set]
   double factor = 1.0;
-  vpPanda3DRenderParameters renderParams(vpCameraParameters(600 * factor, 600 * factor, 320 * factor, 240 * factor), int(480 * factor), int(640 * factor), 0.01, 10.0);
-  unsigned h = renderParams.getImageHeight(), w = renderParams.getImageWidth();
+  vpPanda3DRenderParameters renderParams(vpCameraParameters(600 * factor, 600 * factor, 320 * factor, 240 * factor),
+                                                            480 * factor, 640 * factor, 0.01, 10.0);
+  unsigned int h = renderParams.getImageHeight(), w = renderParams.getImageWidth();
   vpPanda3DRendererSet renderer;
   renderer.setRenderParameters(renderParams);
   renderer.setVerticalSyncEnabled(false);
@@ -244,17 +245,17 @@ int main(int argc, const char **argv)
 #endif
   unsigned int padding = 80;
   DisplayCls dNormals(normalDisplayImage, 0, 0, "normals in object space");
-  DisplayCls dNormalsCamera(cameraNormalDisplayImage, 0, h + padding, "normals in camera space");
-  DisplayCls dDepth(depthDisplayImage, w + padding, 0, "depth");
-  DisplayCls dColor(colorImage, w + padding, h + padding, "color");
+  DisplayCls dNormalsCamera(cameraNormalDisplayImage, 0, static_cast<int>(h + padding), "normals in camera space");
+  DisplayCls dDepth(depthDisplayImage, static_cast<int>(w + padding), 0, "depth");
+  DisplayCls dColor(colorImage, static_cast<int>(w + padding), static_cast<int>(h + padding), "color");
 
   DisplayCls dImageDiff;
   if (showLightContrib) {
-    dImageDiff.init(lightDifference, w * 2 + padding, 0, "Specular/reflectance contribution");
+    dImageDiff.init(lightDifference, static_cast<int>(w * 2 + padding), 0, "Specular/reflectance contribution");
   }
   DisplayCls dCanny;
   if (showCanny) {
-    dCanny.init(cannyImage, w * 2 + padding, h + padding, "Canny");
+    dCanny.init(cannyImage, static_cast<int>(w * 2 + padding), static_cast<int>(h + padding), "Canny");
   }
   renderer.renderFrame();
   bool end = false;

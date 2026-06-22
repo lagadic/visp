@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,8 +39,8 @@ std::shared_ptr<vpRBConvergenceMetric> vpRBConvergenceMetric::loadFromJSON(const
   const std::string key = j.at("type");
   double renderThreshold = j.value("renderThreshold", 0.0);
   double convergenceThreshold = j.value("convergenceThreshold", 0.0);
-  unsigned int numPoints = j.value("samples", 0);
-  unsigned int seed = j.value("seed", 42);
+  unsigned int numPoints = static_cast<unsigned int>(j.value("samples", 0));
+  unsigned int seed = static_cast<unsigned int>(j.value("seed", 42));
 
   if (key == "reprojection") {
     return std::make_shared<vpRBConvergenceReprojectionMetric>(renderThreshold, convergenceThreshold, numPoints, seed);
@@ -63,7 +63,7 @@ vpRBConvergenceMetric::vpRBConvergenceMetric(double renderThreshold, double conv
 {
   m_indices.resize(numPoints, 1);
   for (unsigned int i = 0; i < numPoints; ++i) {
-    m_indices[i][0] = i;
+    m_indices[i][0] = static_cast<int>(i);
   }
 }
 
@@ -90,10 +90,10 @@ void vpRBConvergenceMetric::sampleObject(vpObjectCentricRenderer &renderer)
 }
 
 vpRBConvergenceADDMetric::vpRBConvergenceADDMetric(double renderThreshold, double convergedThreshold, unsigned int numPoints, unsigned int seed) : vpRBConvergenceMetric(renderThreshold, convergedThreshold, numPoints, seed)
-{ }
+{}
 
 vpRBConvergenceReprojectionMetric::vpRBConvergenceReprojectionMetric(double renderThreshold, double convergedThreshold, unsigned int numPoints, unsigned int seed) : vpRBConvergenceMetric(renderThreshold, convergedThreshold, numPoints, seed)
-{ }
+{}
 
 double vpRBConvergenceADDMetric::operator()(const vpCameraParameters & /*cam*/, const vpHomogeneousMatrix &cTo1, const vpHomogeneousMatrix &cTo2)
 {

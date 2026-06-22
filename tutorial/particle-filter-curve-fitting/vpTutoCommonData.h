@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,7 +108,7 @@ typedef struct vpTutoCommonData
     , m_pfRatiosAmpliMax({ 0.25, 0.25, 0.25 })
     , m_pfSeed(4221)
     , m_pfNbThreads(-1)
-  { }
+  {}
 
   /**
    * \brief Print the help about the program optional parameters.
@@ -201,7 +201,7 @@ typedef struct vpTutoCommonData
       }
       else if ((argname == std::string("--degree")) && ((i + 1) < argc)) {
         ++i;
-        m_degree = std::atoi(argv[i]);
+        m_degree = static_cast<unsigned int>(std::atoi(argv[i]));
       }
       else if ((argname == "--max-distance-likelihood") && ((i+1) < argc)) {
         ++i;
@@ -209,7 +209,7 @@ typedef struct vpTutoCommonData
       }
       else if (((argname == "-N") || (argname == "--nb-particles")) && ((i+1) < argc)) {
         ++i;
-        m_pfN = std::atoi(argv[i]);
+        m_pfN = static_cast<unsigned int>(std::atoi(argv[i]));
       }
       else if ((argname == "--seed") && ((i+1) < argc)) {
         ++i;
@@ -270,8 +270,8 @@ typedef struct vpTutoCommonData
     skeletonTitle += (VISP_NAMESPACE_ADDRESSING vpMath::equal(m_ratioSaltPepperNoise, 0.) ? "without" : std::to_string(static_cast<unsigned int>(m_ratioSaltPepperNoise * 100.)) + "%");
     skeletonTitle += " noise)";
     m_displayOrig = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::createDisplay(m_I_orig, horOffset, vertOffset, "Original image");
-    m_displaySegmented = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::createDisplay(m_I_segmented, 2 * horOffset + m_I_orig.getWidth(), vertOffset, "Segmented image");
-    m_displayNoisy = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::createDisplay(m_IskeletonNoisy, 2 * horOffset + m_I_orig.getWidth(), 2 * vertOffset + m_I_orig.getHeight(), skeletonTitle);
+    m_displaySegmented = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::createDisplay(m_I_segmented, 2 * horOffset + static_cast<int>(m_I_orig.getWidth()), vertOffset, "Segmented image");
+    m_displayNoisy = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::createDisplay(m_IskeletonNoisy, 2 * horOffset + static_cast<int>(m_I_orig.getWidth()), 2 * vertOffset + static_cast<int>(m_I_orig.getHeight()), skeletonTitle);
 #endif
     return SOFTWARE_CONTINUE;
   }

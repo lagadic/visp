@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -242,7 +242,7 @@ void vpDetectorDNNOpenCV::saveConfigurationInJSON(const std::string &jsonPath) c
 /**
  * \brief Destroy the \b vpDetectorDNNOpenCV object
  */
-vpDetectorDNNOpenCV::~vpDetectorDNNOpenCV() { }
+vpDetectorDNNOpenCV::~vpDetectorDNNOpenCV() {}
 
 /**
  * \brief Object detection using OpenCV DNN module.
@@ -372,11 +372,11 @@ bool vpDetectorDNNOpenCV::detect(const cv::Mat &I, std::vector<DetectedFeatures2
   postProcess(proposals);
   size_t nbClassNames = m_netConfig.m_classNames.size();
   for (size_t i = 0; i < m_indices.size(); ++i) {
-    int idx = m_indices[i];
+    size_t idx = static_cast<size_t>(m_indices[i]);
     cv::Rect box = proposals.m_boxes[idx];
     std::optional<std::string> classname_opt;
     if (nbClassNames > 0) {
-      classname_opt = m_netConfig.m_classNames[proposals.m_classIds[idx]];
+      classname_opt = m_netConfig.m_classNames[static_cast<size_t>(proposals.m_classIds[idx])];
     }
     output.emplace_back(box.x, box.x + box.width, box.y, box.y + box.height
       , proposals.m_classIds[idx], proposals.m_confidences[idx]
@@ -425,11 +425,11 @@ bool vpDetectorDNNOpenCV::detect(const cv::Mat &I, std::map< std::string, std::v
   postProcess(proposals);
   size_t nbClassNames = m_netConfig.m_classNames.size();
   for (size_t i = 0; i < m_indices.size(); ++i) {
-    int idx = m_indices[i];
+    size_t idx = static_cast<size_t>(m_indices[i]);
     cv::Rect box = proposals.m_boxes[idx];
     std::string classname;
     if (nbClassNames > 0) {
-      classname = m_netConfig.m_classNames[proposals.m_classIds[idx]];
+      classname = m_netConfig.m_classNames[static_cast<size_t>(proposals.m_classIds[idx])];
     }
     else {
       classname = std::to_string(proposals.m_classIds[idx]);
@@ -634,7 +634,7 @@ vpDetectorDNNOpenCV::filterDetectionMultiClassInput(const std::vector<DetectedFe
      */
     void operator()(const DetectedFeatures2D &feature)
     {
-      int class_id = feature.getClassId();
+      int class_id = static_cast<int>(feature.getClassId());
       double area = feature.getBoundingBox().getArea();
       if (m_map_id_pairOccurrencesAreas.find(class_id) == m_map_id_pairOccurrencesAreas.end()) {
         m_map_id_pairOccurrencesAreas[class_id] = std::pair<int, double>(1, area);
@@ -655,7 +655,7 @@ vpDetectorDNNOpenCV::filterDetectionMultiClassInput(const std::vector<DetectedFe
   // Keeping only the detections that respect the area criterion
   std::vector<DetectedFeatures2D> filtered_features;
   for (DetectedFeatures2D feature : detected_features) {
-    double meanArea = meanComputer.getMean(feature.getClassId());
+    double meanArea = meanComputer.getMean(static_cast<int>(feature.getClassId()));
     if (feature.m_bbox.getArea() >= minRatioOfAreaOk * meanArea
       && feature.m_bbox.getArea() < meanArea / minRatioOfAreaOk) {
       filtered_features.push_back(feature);
@@ -937,20 +937,21 @@ void vpDetectorDNNOpenCV::postProcess_SSD_MobileNet(DetectionCandidates &proposa
   // - 'boxes'  with dimensions 1xNx4
   // where `N` is a number of detections and `C` is the number of classes (with `BACKGROUND` as classId = 0).
 
-  int scores_index = m_outNames[0] == "scores" ? 0 : 1; // scores output index.
-  int boxes_index = m_outNames[0] == "boxes" ? 0 : 1;   // boxes output index.
+  size_t scores_index = m_outNames[0] == "scores" ? 0 : 1; // scores output index.
+  size_t boxes_index = m_outNames[0] == "boxes" ? 0 : 1;   // boxes output index.
 
-  int N = dnnRes[scores_index].size[1], C = dnnRes[scores_index].size[2];
+  uint32_t N = static_cast<uint32_t>(dnnRes[scores_index].size[1]);
+  uint32_t C = static_cast<uint32_t>(dnnRes[scores_index].size[2]);
 
   float *confidence = (float *)dnnRes[scores_index].data;
   float *bbox = (float *)dnnRes[boxes_index].data;
 
   // Loop over all guesses on the output of the network.
-  for (int i = 0; i < N; i++) {
+  for (uint32_t i = 0; i < N; i++) {
     uint32_t maxClass = 0;
     float maxScore = -1000.0f;
 
-    for (int j = 1; j < C; j++) // ignore background (classId = 0).
+    for (uint32_t j = 1; j < C; j++) // ignore background (classId = 0).
     {
       const float score = confidence[i * C + j];
 
@@ -971,7 +972,7 @@ void vpDetectorDNNOpenCV::postProcess_SSD_MobileNet(DetectionCandidates &proposa
       int width = right - left + 1;
       int height = bottom - top + 1;
 
-      int classId = maxClass;
+      int classId = static_cast<int>(maxClass);
       proposals.m_confidences.push_back(maxScore);
       proposals.m_boxes.push_back(cv::Rect(left, top, width, height));
       proposals.m_classIds.push_back(classId);
@@ -1156,7 +1157,9 @@ void vpDetectorDNNOpenCV::setPreferableTarget(const int &targetId) { m_net.setPr
 void vpDetectorDNNOpenCV::setScaleFactor(const double &scaleFactor)
 {
   m_netConfig.m_scaleFactor = scaleFactor;
-  if ((m_netConfig.m_parsingMethodType == YOLO_V7 || m_netConfig.m_parsingMethodType == YOLO_V8 || m_netConfig.m_parsingMethodType == YOLO_V11 || m_netConfig.m_parsingMethodType == YOLO_V12) && m_netConfig.m_scaleFactor != 1 / 255.) {
+  if ((m_netConfig.m_parsingMethodType == YOLO_V7 || m_netConfig.m_parsingMethodType == YOLO_V8
+       || m_netConfig.m_parsingMethodType == YOLO_V11 || m_netConfig.m_parsingMethodType == YOLO_V12)
+    && std::abs(m_netConfig.m_scaleFactor - (1.0 / 255.0)) > std::numeric_limits<double>::epsilon()) {
     std::cout << "[vpDetectorDNNOpenCV::setParsingMethod] WARNING: scale factor should be 1/255. to normalize pixels value." << std::endl;
   }
 }
@@ -1179,7 +1182,9 @@ void vpDetectorDNNOpenCV::setParsingMethod(const DNNResultsParsingType &typePars
 {
   m_netConfig.m_parsingMethodType = typeParsingMethod;
   m_parsingMethod = parsingMethod;
-  if ((m_netConfig.m_parsingMethodType == YOLO_V7 || m_netConfig.m_parsingMethodType == YOLO_V8 || m_netConfig.m_parsingMethodType == YOLO_V11 || m_netConfig.m_parsingMethodType == YOLO_V12) && m_netConfig.m_scaleFactor != 1 / 255.) {
+  if ((m_netConfig.m_parsingMethodType == YOLO_V7 || m_netConfig.m_parsingMethodType == YOLO_V8
+       || m_netConfig.m_parsingMethodType == YOLO_V11 || m_netConfig.m_parsingMethodType == YOLO_V12)
+    && std::abs(m_netConfig.m_scaleFactor - (1.0 / 255.0)) > std::numeric_limits<double>::epsilon()) {
     m_netConfig.m_scaleFactor = 1 / 255.;
     std::cout << "[vpDetectorDNNOpenCV::setParsingMethod] NB: scale factor changed to 1/255. to normalize pixels value." << std::endl;
   }
@@ -1196,5 +1201,5 @@ void vpDetectorDNNOpenCV::setParsingMethod(const DNNResultsParsingType &typePars
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpDetectorDNNOpenCV.cpp.o) has no symbols
-void dummy_vpDetectorDNN() { }
+void dummy_vpDetectorDNN() {}
 #endif

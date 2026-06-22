@@ -85,7 +85,7 @@ TEST_CASE("Benchmark rgba to grayscale (ViSP)", "[benchmark]")
 
   BENCHMARK("Benchmark rgba to grayscale (ViSP)")
   {
-    vpImageConvert::convert(I, I_gray, nThreads);
+    vpImageConvert::convert(I, I_gray, static_cast<unsigned int>(nThreads));
     return I_gray;
   };
 }
@@ -177,7 +177,7 @@ TEST_CASE("Benchmark bgr to grayscale (ViSP)", "[benchmark]")
 
   BENCHMARK("Benchmark bgr to grayscale (ViSP)")
   {
-    vpImageConvert::BGRToGrey(bgr.data(), I_gray.bitmap, I.getWidth(), I.getHeight(), false, nThreads);
+    vpImageConvert::BGRToGrey(bgr.data(), I_gray.bitmap, I.getWidth(), I.getHeight(), false, static_cast<unsigned int>(nThreads));
     return I_gray;
   };
 
@@ -190,7 +190,7 @@ TEST_CASE("Benchmark bgr to grayscale (ViSP)", "[benchmark]")
 
     BENCHMARK("Benchmark bgr to grayscale (ViSP + OpenCV Mat type)")
     {
-      vpImageConvert::convert(img, I_gray, false, nThreads);
+      vpImageConvert::convert(img, I_gray, false, static_cast<unsigned int>(nThreads));
       return I_gray;
     };
   }

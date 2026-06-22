@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -112,8 +112,9 @@ int main(int argc, char **argv)
     // make sure Cx <= d has a solution within Ax = b
   vpColVector x = A.solveBySVD(b);
   d = C * x;
-  for (int i = 0; i < p; ++i)
+  for (unsigned int i = 0; i < p; ++i) {
     d[i] += (5. * rand()) / RAND_MAX;
+  }
 
   // solver with warm start
   vpQuadProg qp_WS;

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -436,16 +436,16 @@ void vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
   }
   // calcul de U
   vpColVector U(sizeHomogeneous);
-  for (unsigned int i = 0; i < sizeHomogeneous; ++i) {
-    U[i] = kAt[0][i];
+  for (unsigned int ii = 0; ii < sizeHomogeneous; ++ii) {
+    U[ii] = kAt[0][ii];
   }
 
   vpColVector xi(npt);
   vpColVector yi(npt);
 
-  for (unsigned int i = 0; i < npt; ++i) {
-    xi[i] = c3d[i].get_x();
-    yi[i] = c3d[i].get_y();
+  for (unsigned int ii = 0; ii < npt; ++ii) {
+    xi[ii] = c3d[ii].get_x();
+    yi[ii] = c3d[ii].get_y();
   }
 
   vpColVector I04(sizeHomogeneous), J04(sizeHomogeneous);

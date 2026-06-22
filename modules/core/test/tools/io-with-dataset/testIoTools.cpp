@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -738,7 +738,7 @@ int main(int argc, const char **argv)
   std::cout << "Test vpIoTools::isSamePathname (Unix platform) - passed: " << nbOk << "/" << (nbOk + nbFail)
     << std::endl;
 
-// Delete test directory
+  // Delete test directory
   if (!vpIoTools::remove("/tmp/" + username + "/test")) {
     std::cerr << "Cannot remove directory: "
       << "/tmp/" << username << "/test" << std::endl;
@@ -824,8 +824,8 @@ int main(int argc, const char **argv)
 
   // Test vpIoTools::toLowerCase
   {
-    int nbFail = 0;
-    int nbOk = 0;
+    nbFail = 0;
+    nbOk = 0;
     std::string testString = std::string("Yolo-V3");
     std::string expectedLower = std::string("yolo-v3");
     std::string expectedUpper = std::string("YOLO-V3");

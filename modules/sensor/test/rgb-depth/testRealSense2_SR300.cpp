@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,7 +75,7 @@ bool cancelled = false, update_pointcloud = false;
 class ViewerWorker
 {
 public:
-  explicit ViewerWorker(bool color_mode, std::mutex &mutex) : m_colorMode(color_mode), m_mutex(mutex) { }
+  explicit ViewerWorker(bool color_mode, std::mutex &mutex) : m_colorMode(color_mode), m_mutex(mutex) {}
 
   void run()
   {
@@ -161,7 +161,7 @@ void getPointcloud(const rs2::depth_frame &depth_frame, std::vector<vpColVector>
   auto vertices = points.get_vertices();
   vpColVector v(4);
   for (size_t i = 0; i < points.size(); i++) {
-    if (vertices[i].z) {
+    if (std::fabs(vertices[i].z) > std::numeric_limits<float>::epsilon()) {
       v[0] = vertices[i].x;
       v[1] = vertices[i].y;
       v[2] = vertices[i].z;
@@ -182,7 +182,7 @@ void getPointcloud(const rs2::depth_frame &depth_frame, std::vector<vpColVector>
 void getNativeFrame(const rs2::frame &frame, unsigned char *const data)
 {
   auto vf = frame.as<rs2::video_frame>();
-  int size = vf.get_width() * vf.get_height();
+  size_t size = static_cast<size_t>(vf.get_width()) * static_cast<size_t>(vf.get_height());
 
   switch (frame.get_profile().format()) {
   case RS2_FORMAT_RGB8:
@@ -213,9 +213,9 @@ void getNativeFrame(const rs2::frame &frame, unsigned char *const data)
 void frame_to_mat(const rs2::frame &f, cv::Mat &img)
 {
   auto vf = f.as<rs2::video_frame>();
-  const int w = vf.get_width();
-  const int h = vf.get_height();
-  const int size = w * h;
+  const size_t w = static_cast<size_t>(vf.get_width());
+  const size_t h = static_cast<size_t>(vf.get_height());
+  const size_t size = w * h;
 
   if (f.get_profile().format() == RS2_FORMAT_BGR8) {
     memcpy(static_cast<void *>(img.ptr<cv::Vec3b>()), f.get_data(), size * 3);
@@ -290,8 +290,8 @@ int main(int argc, char *argv[])
   vpDisplayGDI d1, d2, d3;
 #endif
   d1.init(color, 0, 0, "Color");
-  d2.init(depth_color, color.getWidth(), 0, "Depth");
-  d3.init(infrared, 0, color.getHeight() + 100, "Infrared");
+  d2.init(depth_color, static_cast<int>(color.getWidth()), 0, "Depth");
+  d3.init(infrared, 0, static_cast<int>(color.getHeight()) + 100, "Infrared");
 
   std::vector<vpColVector> pointcloud_colvector;
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_VISUALIZATION)
@@ -345,8 +345,8 @@ int main(int argc, char *argv[])
     {
       std::lock_guard<std::mutex> lock(mutex);
 
-      pointcloud->width = depth_profile.width();
-      pointcloud->height = depth_profile.height();
+      pointcloud->width = static_cast<uint32_t>(depth_profile.width());
+      pointcloud->height = static_cast<uint32_t>(depth_profile.height());
       pointcloud->points.resize(pointcloud_colvector.size());
       for (size_t i = 0; i < pointcloud_colvector.size(); i++) {
         pointcloud->points[static_cast<size_t>(i)].x = pointcloud_colvector[i][0];
@@ -399,7 +399,7 @@ int main(int argc, char *argv[])
   rs.open(config);
 
   color_profile = profile.get_stream(RS2_STREAM_COLOR).as<rs2::video_stream_profile>();
-  color.init(static_cast<unsigned int>(color_profile.height()), static_cast<unsigned int>(color_profile.width()));
+  color.init(static_cast<unsigned int>(static_cast<int>(color_profile.height())), static_cast<unsigned int>(static_cast<int>(color_profile.width())));
 
   depth_profile = profile.get_stream(RS2_STREAM_DEPTH).as<rs2::video_stream_profile>();
   depth_color.init(static_cast<unsigned int>(depth_profile.height()), static_cast<unsigned int>(depth_profile.width()));
@@ -409,8 +409,8 @@ int main(int argc, char *argv[])
   infrared.init(static_cast<unsigned int>(infrared_profile.height()), static_cast<unsigned int>(infrared_profile.width()));
 
   d1.init(color, 0, 0, "Color");
-  d2.init(depth_color, color.getWidth(), 0, "Depth");
-  d3.init(infrared, 0, color.getHeight() + 100, "Infrared");
+  d2.init(depth_color, static_cast<int>(color.getWidth()), 0, "Depth");
+  d3.init(infrared, 0, static_cast<int>(color.getHeight()) + 100, "Infrared");
 
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_VISUALIZATION)
   cancelled = false;

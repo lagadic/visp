@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -105,11 +105,13 @@ void emergencyStopAfma6(int signo)
 
   // Free allocated resources
   //  ShutDownConnection(); // Some times cannot exit here when Ctrl-C
-
-  fprintf(stdout, "Application ");
+  fprintf(stdout, "Application terminated.\n");
   fflush(stdout);
-  kill(getpid(), SIGKILL);
-  std::exit(EXIT_FAILURE);
+
+  // Reset the signal to its default behavior (which is to crash/exit)
+  signal(signo, SIG_DFL);
+  // Re-raise the signal to the current process for a clean termination by the OS
+  raise(signo);
 }
 
 /* ---------------------------------------------------------------------- */
@@ -828,10 +830,10 @@ void vpRobotAfma6::get_cMe(vpHomogeneousMatrix &cMe) const { vpAfma6::get_cMe(cM
   To compute eJe, we communicate with the low level controller to get
   the articular joint position of the robot.
 
-  \param eJe : Robot jacobian expressed in the end-effector frame.
+  \param eJe_ : Robot jacobian expressed in the end-effector frame.
 
 */
-void vpRobotAfma6::get_eJe(vpMatrix &eJe)
+void vpRobotAfma6::get_eJe(vpMatrix &eJe_)
 {
 
   double position[6];
@@ -846,7 +848,7 @@ void vpRobotAfma6::get_eJe(vpMatrix &eJe)
     q[i] = position[i];
 
   try {
-    vpAfma6::get_eJe(q, eJe);
+    vpAfma6::get_eJe(q, eJe_);
   }
   catch (...) {
     vpERROR_TRACE("catch exception ");
@@ -873,10 +875,10 @@ void vpRobotAfma6::get_eJe(vpMatrix &eJe)
   \right)
   \f]
 
-  \param fJe : Robot jacobian expressed in the reference frame.
+  \param fJe_ : Robot jacobian expressed in the reference frame.
 */
 
-void vpRobotAfma6::get_fJe(vpMatrix &fJe)
+void vpRobotAfma6::get_fJe(vpMatrix &fJe_)
 {
 
   double position[6];
@@ -891,7 +893,7 @@ void vpRobotAfma6::get_fJe(vpMatrix &fJe)
     q[i] = position[i];
 
   try {
-    vpAfma6::get_fJe(q, fJe);
+    vpAfma6::get_fJe(q, fJe_);
   }
   catch (...) {
     vpERROR_TRACE("Error caught");
@@ -2331,5 +2333,5 @@ bool vpRobotAfma6::checkJointLimits(vpColVector &jointsStatus)
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpRobotAfma6.cpp.o) has no symbols
-void dummy_vpRobotAfma6() { }
+void dummy_vpRobotAfma6() {}
 #endif

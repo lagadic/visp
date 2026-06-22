@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -993,7 +993,7 @@ void vpMbEdgeTracker::testTracking()
        it != circles[scaleLevel].end(); ++it) {
     vpMbtDistanceCircle *ci = *it;
     if (ci->isVisible() && ci->isTracked() && ci->meEllipse != nullptr) {
-      nbExpectedPoint += ci->meEllipse->getExpectedDensity();
+      nbExpectedPoint += static_cast<int>(ci->meEllipse->getExpectedDensity());
       for (std::list<vpMeSite>::const_iterator itme = ci->meEllipse->getMeList().begin();
            itme != ci->meEllipse->getMeList().end(); ++itme) {
         vpMeSite pix = *itme;

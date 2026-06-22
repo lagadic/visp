@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -270,9 +270,9 @@ vpLuminancePCA vpLuminancePCA::learn(const vpMatrix &images, const unsigned int 
 }
 
 //vpMatrixZigZagIndex
-vpLuminanceDCT::vpMatrixZigZagIndex::vpMatrixZigZagIndex() { }
+vpLuminanceDCT::vpMatrixZigZagIndex::vpMatrixZigZagIndex() {}
 
-void vpLuminanceDCT::vpMatrixZigZagIndex::init(unsigned rows, unsigned cols)
+void vpLuminanceDCT::vpMatrixZigZagIndex::init(unsigned int rows, unsigned int cols)
 {
   // Adapted from  https://www.geeksforgeeks.org/print-matrix-in-zig-zag-fashion/
   m_colIndex.resize(rows * cols);
@@ -290,8 +290,8 @@ void vpLuminanceDCT::vpMatrixZigZagIndex::init(unsigned rows, unsigned cols)
   int mindim = std::min(rowCount, colCount);
   for (int len = 1; len <= mindim; ++len) {
     for (int i = 0; i < len; ++i) {
-      m_rowIndex[index] = row;
-      m_colIndex[index] = col;
+      m_rowIndex[index] = static_cast<unsigned int>(row);
+      m_colIndex[index] = static_cast<unsigned int>(col);
       ++index;
       if (i + 1 == len) {
         break;
@@ -349,8 +349,8 @@ void vpLuminanceDCT::vpMatrixZigZagIndex::init(unsigned rows, unsigned cols)
     }
 
     for (int i = 0; i < len; ++i) {
-      m_rowIndex[index] = row;
-      m_colIndex[index] = col;
+      m_rowIndex[index] = static_cast<unsigned int>(row);
+      m_colIndex[index] = static_cast<unsigned int>(col);
       ++index;
 
       if (i + 1 == len) {
@@ -590,7 +590,7 @@ void vpFeatureLuminanceMapping::interaction(vpMatrix &L)
 {
   L.resize(dim_s, 6, false, false);
   m_featI.interaction(m_LI);
-  m_mapping->interaction(I, m_LI, s, L);
+  m_mapping->interaction(m_I, m_LI, s, L);
 }
 
 void vpFeatureLuminanceMapping::print(unsigned int /*select*/) const

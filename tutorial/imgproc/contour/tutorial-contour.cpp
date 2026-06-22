@@ -92,10 +92,10 @@ int main(int argc, const char **argv)
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   std::shared_ptr<vpDisplay> display = vpDisplayFactory::createDisplay(I_bin, 0, 0, "After binarisation");
-  std::shared_ptr<vpDisplay> display2 = vpDisplayFactory::createDisplay(I_draw_contours, I_bin.getWidth(), 10, "Contours");
+  std::shared_ptr<vpDisplay> display2 = vpDisplayFactory::createDisplay(I_draw_contours, static_cast<int>(I_bin.getWidth()), 10, "Contours");
 #else
   vpDisplay *display = vpDisplayFactory::allocateDisplay(I_bin, 0, 0, "After binarisation");
-  vpDisplay *display2 = vpDisplayFactory::allocateDisplay(I_draw_contours, I_bin.getWidth(), 10, "Contours");
+  vpDisplay *display2 = vpDisplayFactory::allocateDisplay(I_draw_contours, static_cast<int>(I_bin.getWidth()), 10, "Contours");
 #endif
 
   //! [Otsu]
@@ -131,8 +131,8 @@ int main(int argc, const char **argv)
   vpDisplay::display(I_bin);
   vpDisplay::display(I_draw_contours);
   vpDisplay::displayText(I_draw_contours, 20, 20, "Click to quit.", vpColor::red);
-  vpDisplay::displayText(I_draw_contours, 20, I_draw_contours.getWidth() - 200, "Outer contour", vpColor::red);
-  vpDisplay::displayText(I_draw_contours, 20, I_draw_contours.getWidth() - 100, "Hole contour", vpColor::green);
+  vpDisplay::displayText(I_draw_contours, 20, static_cast<int>(I_draw_contours.getWidth()) - 200, "Outer contour", vpColor::red);
+  vpDisplay::displayText(I_draw_contours, 20, static_cast<int>(I_draw_contours.getWidth()) - 100, "Hole contour", vpColor::green);
   vpDisplay::flush(I_bin);
   vpDisplay::flush(I_draw_contours);
   vpDisplay::getClick(I_draw_contours);

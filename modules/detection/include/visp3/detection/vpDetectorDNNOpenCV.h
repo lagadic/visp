@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -229,8 +229,8 @@ public:
       config.m_classNames = j.value("classNames", config.m_classNames);
 
       std::pair<unsigned int, unsigned int> resolution = j.value("resolution", std::pair<unsigned int, unsigned int>(config.m_inputSize.width, config.m_inputSize.height));
-      config.m_inputSize.width = resolution.first;
-      config.m_inputSize.height = resolution.second;
+      config.m_inputSize.width = static_cast<int>(resolution.first);
+      config.m_inputSize.height = static_cast<int>(resolution.second);
 
       std::vector<double> v_mean = j.value("mean", std::vector<double>({ config.m_mean[0], config.m_mean[1], config.m_mean[2] }));
       if (v_mean.size() != 3) {
@@ -395,7 +395,7 @@ public:
       , m_modelFilename(modelFilename)
       , m_modelConfigFilename(configFilename)
       , m_framework(framework)
-    { }
+    {}
 
     /**
      * \brief Construct a new Net Config object

@@ -5,7 +5,7 @@
 
 #if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_PUGIXML) && defined(VISP_HAVE_OPENCV) && \
   (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_FEATURES2D)) || \
-   ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D) && defined(HAVE_OPENCV_FEATURES)))
+   ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_GEOMETRY) && defined(HAVE_OPENCV_FEATURES)))
 
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpIoTools.h>
@@ -221,11 +221,11 @@ int main(int argc, char *argv[])
   }
 
   vpRealSense2 realsense;
-  int width = 640, height = 480;
+  unsigned int width = 640, height = 480;
   int fps = 30;
   rs2::config config;
-  config.enable_stream(RS2_STREAM_COLOR, width, height, RS2_FORMAT_RGBA8, fps);
-  config.enable_stream(RS2_STREAM_DEPTH, width, height, RS2_FORMAT_Z16, fps);
+  config.enable_stream(RS2_STREAM_COLOR, static_cast<int>(width), static_cast<int>(height), RS2_FORMAT_RGBA8, fps);
+  config.enable_stream(RS2_STREAM_DEPTH, static_cast<int>(width), static_cast<int>(height), RS2_FORMAT_Z16, fps);
 
   try {
     realsense.open(config);
@@ -249,7 +249,7 @@ int main(int argc, char *argv[])
   vpImage<unsigned char> I_depth(height, width);
   vpImage<uint16_t> I_depth_raw(height, width);
 
-  unsigned int _posx = 100, _posy = 50;
+  int _posx = 100, _posy = 50;
 
 #ifdef VISP_HAVE_DISPLAY
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
@@ -262,7 +262,7 @@ int main(int argc, char *argv[])
   if (use_edges || use_klt)
     display1->init(I_gray, _posx, _posy, "Color stream");
   if (use_depth != DEPTH_UNUSED)
-    display2->init(I_depth, _posx + I_gray.getWidth() + 10, _posy, "Depth stream");
+    display2->init(I_depth, _posx + static_cast<int>(I_gray.getWidth()) + 10, _posy, "Depth stream");
 #endif
 
   while (true) {
@@ -530,13 +530,13 @@ int main(int argc, char *argv[])
         {
           std::stringstream ss;
           ss << "Nb features: " << tracker.getError().size();
-          vpDisplay::displayText(I_gray, I_gray.getHeight() - 50, 20, ss.str(), vpColor::red);
+          vpDisplay::displayText(I_gray, static_cast<int>(I_gray.getHeight()) - 50, 20, ss.str(), vpColor::red);
         }
         {
           std::stringstream ss;
           ss << "Features: edges " << tracker.getNbFeaturesEdge() << ", klt " << tracker.getNbFeaturesKlt()
             << ", depth " << tracker.getNbFeaturesDepthDense();
-          vpDisplay::displayText(I_gray, I_gray.getHeight() - 30, 20, ss.str(), vpColor::red);
+          vpDisplay::displayText(I_gray, static_cast<int>(I_gray.getHeight()) - 30, 20, ss.str(), vpColor::red);
         }
       }
 

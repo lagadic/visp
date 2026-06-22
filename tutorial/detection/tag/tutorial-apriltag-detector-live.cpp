@@ -227,7 +227,7 @@ int main(int argc, const char **argv)
   std::string camera_name = "";
   bool opt_display_tag = false;
   int opt_color_id = -1;
-  unsigned int thickness = 2;
+  unsigned int opt_thickness = 2;
   bool opt_tag_z_align_frame = false;
   bool opt_verbose = false;
 
@@ -287,7 +287,7 @@ int main(int argc, const char **argv)
       opt_color_id = atoi(argv[++i]);
     }
     else if (std::string(argv[i]) == "--thickness" && i + 1 < argc) {
-      thickness = static_cast<unsigned int>(atoi(argv[++i]));
+      opt_thickness = static_cast<unsigned int>(atoi(argv[++i]));
     }
 #endif
     else if (std::string(argv[i]) == "--verbose" || std::string(argv[i]) == "-v") {
@@ -397,7 +397,7 @@ int main(int argc, const char **argv)
     detector.setAprilTagQuadDecimate(opt_tag_quad_decimate);
     detector.setAprilTagPoseEstimationMethod(opt_tag_pose_estimation_method);
     detector.setAprilTagNbThreads(opt_tag_nThreads);
-    detector.setDisplayTag(opt_display_tag, opt_color_id < 0 ? vpColor::none : vpColor::getColor(opt_color_id), thickness);
+    detector.setDisplayTag(opt_display_tag, opt_color_id < 0 ? vpColor::none : vpColor::getColor(static_cast<unsigned int>(opt_color_id)), static_cast<unsigned int>(opt_thickness));
     detector.setZAlignedWithCameraAxis(opt_tag_z_align_frame);
     detector.setAprilTagDecisionMarginThreshold(opt_tag_decision_margin_threshold);
     detector.setAprilTagHammingDistanceThreshold(opt_tag_hamming_distance_threshold);
@@ -449,9 +449,9 @@ int main(int argc, const char **argv)
       //! [Display id for each tag]
       std::vector<int> tags_id = detector.getTagsId();
       for (size_t i = 0; i < tags_id.size(); ++i) {
-        std::stringstream ss;
-        ss << "id=" << tags_id[i];
-        vpDisplay::displayText(I, detector.getCog(i) + vpImagePoint(-10, 10), ss.str(), vpColor::blue);
+        std::stringstream sss;
+        sss << "id=" << tags_id[i];
+        vpDisplay::displayText(I, detector.getCog(i) + vpImagePoint(-10, 10), sss.str(), vpColor::blue);
       }
       //! [Display id for each tag]
       vpDisplay::displayText(I, 20, 20, "Click to quit.", vpColor::red);
@@ -465,12 +465,12 @@ int main(int argc, const char **argv)
         std::vector<int> tag_hamming_distances = detector.getTagsHammingDistance();
         for (size_t i = 0; i < tags_id.size(); ++i) {
           std::string message = detector.getMessage(i);
-          std::stringstream ss;
-          ss << "Found " << message << std::endl
+          std::stringstream sss;
+          sss << "Found " << message << std::endl
             << "- with decision margin: " << tag_decision_margins[i]
             << " and hamming distance: " << tag_hamming_distances[i] << std::endl
             << "- and cMo:\n" << cMo_vec[i] << std::endl;
-          std::cout << ss.str() << std::endl;
+          std::cout << sss.str() << std::endl;
         }
       }
     }

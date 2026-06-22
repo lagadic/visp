@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ void vpRBSilhouetteMeTracker::extractFeatures(const vpRBFeatureTrackerInput &fra
 #pragma omp for nowait
 #endif
     for (int i = 0; i < static_cast<int>(frame.silhouettePoints.size()); ++i) {
-      const vpRBSilhouettePoint &sp = frame.silhouettePoints[i];
+      const vpRBSilhouettePoint &sp = frame.silhouettePoints[static_cast<unsigned int>(i)];
       // float angle = vpMath::deg(acos(sp.normal * oC));
       // if (angle > 89.0) {
       //   continue;
@@ -71,13 +71,13 @@ void vpRBSilhouetteMeTracker::extractFeatures(const vpRBFeatureTrackerInput &fra
 #endif
       vpRBSilhouetteControlPoint p;
       p.buildPoint(static_cast<int>(sp.i), static_cast<int>(sp.j), sp.Z, sp.orientation, sp.normal, cMo, oMc, frame.cam, m_me, sp.isSilhouette);
-      if (p.tooCloseToBorder(frame.I.getHeight(), frame.I.getWidth(), m_me.getRange())) {
+      if (p.tooCloseToBorder(frame.I.getHeight(), frame.I.getWidth(), static_cast<int>(m_me.getRange()))) {
         continue;
       }
       if (m_useMask && frame.hasMask()) {
         double maxMaskGradient;
         if (p.isSilhouette()) { // If it is a silhouette point, we check that the mask actually considers it an object border
-          maxMaskGradient = p.getMaxMaskGradientAlongLine(frame.mask, m_me.getRange());
+          maxMaskGradient = p.getMaxMaskGradientAlongLine(frame.mask, static_cast<int>(m_me.getRange()));
         }
         else { // Otherwise, we just check that the site is considered as belonging to the object
           maxMaskGradient = frame.mask[sp.i][sp.j];
@@ -112,7 +112,7 @@ void vpRBSilhouetteMeTracker::trackFeatures(const vpRBFeatureTrackerInput &frame
 #pragma omp parallel for
 #endif
     for (int i = 0; i < static_cast<int>(m_controlPoints.size()); ++i) {
-      m_controlPoints[i].track(frame.I);
+      m_controlPoints[static_cast<unsigned int>(i)].track(frame.I);
     }
   }
   else {
@@ -120,7 +120,7 @@ void vpRBSilhouetteMeTracker::trackFeatures(const vpRBFeatureTrackerInput &frame
 #pragma omp parallel for
 #endif
     for (int i = 0; i < static_cast<int>(m_controlPoints.size()); ++i) {
-      m_controlPoints[i].trackMultipleHypotheses(frame.I);
+      m_controlPoints[static_cast<unsigned int>(i)].trackMultipleHypotheses(frame.I);
     }
   }
 }

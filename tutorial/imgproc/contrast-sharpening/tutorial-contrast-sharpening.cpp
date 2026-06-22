@@ -78,9 +78,9 @@ int main(int argc, const char **argv)
   VISP_NAMESPACE_NAME::stretchContrast(I_color, I_stretch);
   //! [Stretch contrast]
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  std::shared_ptr<vpDisplay> display2 = vpDisplayFactory::createDisplay(I_stretch, I_color.getWidth(), 10, "Stretch contrast");
+  std::shared_ptr<vpDisplay> display2 = vpDisplayFactory::createDisplay(I_stretch, static_cast<int>(I_color.getWidth()), 10, "Stretch contrast");
 #else
-  vpDisplay *display2 = vpDisplayFactory::allocateDisplay(I_stretch, I_color.getWidth(), 10, "Stretch contrast");
+  vpDisplay *display2 = vpDisplayFactory::allocateDisplay(I_stretch, static_cast<int>(I_color.getWidth()), 10, "Stretch contrast");
 #endif
 
   //! [Stretch contrast HSV]
@@ -88,9 +88,9 @@ int main(int argc, const char **argv)
   VISP_NAMESPACE_NAME::stretchContrastHSV(I_color, I_stretch_hsv);
   //! [Stretch contrast HSV]
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  std::shared_ptr<vpDisplay> display3 = vpDisplayFactory::createDisplay(I_stretch_hsv, 0, I_color.getHeight() + 80, "Stretch contrast HSV");
+  std::shared_ptr<vpDisplay> display3 = vpDisplayFactory::createDisplay(I_stretch_hsv, 0, static_cast<int>(I_color.getHeight()) + 80, "Stretch contrast HSV");
 #else
-  vpDisplay *display3 = vpDisplayFactory::allocateDisplay(I_stretch_hsv, 0, I_color.getHeight() + 80, "Stretch contrast HSV");
+  vpDisplay *display3 = vpDisplayFactory::allocateDisplay(I_stretch_hsv, 0, static_cast<int>(I_color.getHeight()) + 80, "Stretch contrast HSV");
 #endif
 
   //! [Histogram equalization]
@@ -98,9 +98,9 @@ int main(int argc, const char **argv)
   VISP_NAMESPACE_NAME::equalizeHistogram(I_color, I_hist_eq);
   //! [Histogram equalization]
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  std::shared_ptr<vpDisplay> display4 = vpDisplayFactory::createDisplay(I_hist_eq, I_color.getWidth(), I_color.getHeight() + 80, "Histogram equalization");
+  std::shared_ptr<vpDisplay> display4 = vpDisplayFactory::createDisplay(I_hist_eq, static_cast<int>(I_color.getWidth()), static_cast<int>(I_color.getHeight()) + 80, "Histogram equalization");
 #else
-  vpDisplay *display4 = vpDisplayFactory::allocateDisplay(I_hist_eq, I_color.getWidth(), I_color.getHeight() + 80, "Histogram equalization");
+  vpDisplay *display4 = vpDisplayFactory::allocateDisplay(I_hist_eq, static_cast<int>(I_color.getWidth()), static_cast<int>(I_color.getHeight()) + 80, "Histogram equalization");
 #endif
 
   //! [CLAHE]
@@ -108,9 +108,9 @@ int main(int argc, const char **argv)
   VISP_NAMESPACE_NAME::clahe(I_color, I_clahe, blockRadius, bins, slope);
   //! [CLAHE]
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  std::shared_ptr<vpDisplay> display5 = vpDisplayFactory::createDisplay(I_clahe, 0, 2 * I_color.getHeight() + 80, "CLAHE");
+  std::shared_ptr<vpDisplay> display5 = vpDisplayFactory::createDisplay(I_clahe, 0, 2 * static_cast<int>(I_color.getHeight()) + 80, "CLAHE");
 #else
-  vpDisplay *display5 = vpDisplayFactory::allocateDisplay(I_clahe, 0, 2 * I_color.getHeight() + 80, "CLAHE");
+  vpDisplay *display5 = vpDisplayFactory::allocateDisplay(I_clahe, 0, 2 * static_cast<int>(I_color.getHeight()) + 80, "CLAHE");
 #endif
 
   //! [Unsharp mask]
@@ -118,9 +118,9 @@ int main(int argc, const char **argv)
   VISP_NAMESPACE_NAME::unsharpMask(I_clahe, I_unsharp, sigma, weight);
   //! [Unsharp mask]
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  std::shared_ptr<vpDisplay> display6 = vpDisplayFactory::createDisplay(I_unsharp, I_color.getWidth(), 2 * I_color.getHeight() + 80, "Unsharp mask");
+  std::shared_ptr<vpDisplay> display6 = vpDisplayFactory::createDisplay(I_unsharp, static_cast<int>(I_color.getWidth()), 2 * static_cast<int>(I_color.getHeight()) + 80, "Unsharp mask");
 #else
-  vpDisplay *display6 = vpDisplayFactory::allocateDisplay(I_unsharp, I_color.getWidth(), 2 * I_color.getHeight() + 80, "Unsharp mask");
+  vpDisplay *display6 = vpDisplayFactory::allocateDisplay(I_unsharp, static_cast<int>(I_color.getWidth()), 2 * static_cast<int>(I_color.getHeight()) + 80, "Unsharp mask");
 #endif
 
   vpDisplay::display(I_color);

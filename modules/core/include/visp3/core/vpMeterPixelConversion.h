@@ -347,7 +347,7 @@ public:
 
 #if defined(VISP_HAVE_OPENCV) && \
     (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D)) || \
-    ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_CALIB) && defined(HAVE_OPENCV_3D)))
+    ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_CALIB) && defined(HAVE_OPENCV_GEOMETRY)))
   /** @name Using OpenCV camera parameters  */
   //@{
   static void convertEllipse(const cv::Mat &cameraMatrix, const vpCircle &circle, vpImagePoint &center, double &n20_p,

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ public:
   vpMocapQualisysImpl()
     : m_rtProtocol(), m_basePort(22222), m_udpPort(6734), m_majorVersion(1), m_minorVersion(19), m_bigEndian(false),
     m_dataAvailable(false), m_streamFrames(false), m_verbose(false), m_serverAddr()
-  { }
+  {}
 
   virtual ~vpMocapQualisysImpl() { close(); }
 
@@ -146,7 +146,7 @@ public:
     }
   }
 
-  bool getBodyPose(int iBody, std::string &name, vpHomogeneousMatrix &M, CRTPacket *rtPacket)
+  bool getBodyPose(unsigned int iBody, std::string &name, vpHomogeneousMatrix &M, CRTPacket *rtPacket)
   {
     float fX, fY, fZ;
     float rotationMatrix[9];
@@ -260,7 +260,7 @@ private:
 /*!
  * Default constructor.
  */
-vpMocapQualisys::vpMocapQualisys() : m_impl(new vpMocapQualisysImpl()) { }
+vpMocapQualisys::vpMocapQualisys() : m_impl(new vpMocapQualisysImpl()) {}
 
 /*!
  * Destructor.
@@ -318,5 +318,5 @@ END_VISP_NAMESPACE
 #else
 // Work around to avoid warning:
 // libvisp_sensor.a(vpMocapQualisys.cpp.o) has no symbols
-void dummy_vpMocapQualisys() { }
+void dummy_vpMocapQualisys() {}
 #endif

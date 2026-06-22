@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,8 +118,8 @@ void vpMatrix::blas_dgemv(char trans, unsigned int M, unsigned int N, double alp
   unsigned int A_cols = (Trans == CblasNoTrans) ? N : M;
 
   gsl_matrix_view A = gsl_matrix_view_array_with_tda(A_data, A_rows, A_cols, lda);
-  gsl_vector_view x = gsl_vector_view_array_with_stride(x_data, incx, N);
-  gsl_vector_view y = gsl_vector_view_array_with_stride(y_data, incy, M);
+  gsl_vector_view x = gsl_vector_view_array_with_stride(x_data, static_cast<size_t>(incx), N);
+  gsl_vector_view y = gsl_vector_view_array_with_stride(y_data, static_cast<size_t>(incy), M);
 
   gsl_blas_dgemv(Trans, alpha, &A.matrix, &x.vector, beta, &y.vector);
 }
@@ -167,7 +167,7 @@ END_VISP_NAMESPACE
 #else
 // Work around to avoid warning LNK4221: This object file does not define any
 // previously undefined public symbols
-void dummy_vpMatrix_blas() { }
+void dummy_vpMatrix_blas() {}
 #endif
 
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -112,7 +112,7 @@ class VISP_EXPORT vpViper
 public:
   vpViper();
   vpViper(const vpViper &viper);
-  virtual ~vpViper() { }
+  virtual ~vpViper() {}
   vpViper &operator=(const vpViper &viper);
 
   /** @name Inherited functionalities from vpViper */

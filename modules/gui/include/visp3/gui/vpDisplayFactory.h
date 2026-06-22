@@ -250,7 +250,8 @@ void makeDisplayGridHelper(std::vector<std::shared_ptr<vpDisplay>> &res, const G
                           currentPixelY + maxRowHeightPixel  + settings.paddingY, 0, name, I, args...);
   }
   else {
-    std::shared_ptr<vpDisplay> display = vpDisplayFactory::createDisplay(I, currentPixelX, currentPixelY, name);
+    std::shared_ptr<vpDisplay> display = vpDisplayFactory::createDisplay(I, static_cast<int>(currentPixelX),
+                                                                         static_cast<int>(currentPixelY), name);
     vpDisplay::display(I);
     vpDisplay::flush(I);
     res.push_back(display);

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -191,7 +191,7 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
         const int argc = 3;
         for (const auto &jsonElem : j.items()) {
           if (jsonElem.key().rfind("flag", 0) != 0) {
-            modifyJson([&jsonElem](json &j) { j.erase(jsonElem.key()); });
+            modifyJson([&jsonElem](json &js) { js.erase(jsonElem.key()); });
             const char *argv[] = {
               "program",
               "--config",
@@ -206,7 +206,7 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
         const int argc = 3;
         for (const auto &jsonElem : j.items()) {
           if (jsonElem.key().rfind("flag", 0) != 0) {
-            modifyJson([&jsonElem](json &j) { j[jsonElem.key()] = nullptr; });
+            modifyJson([&jsonElem](json &js) { js[jsonElem.key()] = nullptr; });
             const char *argv[] = {
               "program",
               "--config",
@@ -248,7 +248,7 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
         std::tie(argc, argv) = convertToArgcAndArgv(args);
         REQUIRE_NOTHROW(parser.parse(argc, (const char **)(&argv[0])));
         REQUIRE(a == newa);
-        REQUIRE(b == newb);
+        REQUIRE(b == Catch::Approx(newb));
         REQUIRE(c == newc);
         REQUIRE(d == newd);
         REQUIRE(ea == newea);
@@ -271,7 +271,7 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
         std::tie(argc, argv) = convertToArgcAndArgv(args);
         REQUIRE_NOTHROW(parser.parse(argc, (const char **)(&argv[0])));
         REQUIRE(a == newa);
-        REQUIRE(b == newb);
+        REQUIRE(b == Catch::Approx(newb));
         REQUIRE(c == j["c"]);
         REQUIRE(d == j["d"]);
         REQUIRE(ea == j["e"]["a"]);
@@ -315,7 +315,7 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
       };
 
       REQUIRE_NOTHROW(parser.parse(argc, argv));
-      REQUIRE(b == bcopy);
+      REQUIRE(b == Catch::Approx(bcopy));
     }
   }
   WHEN("Instantiating a parser with nested parameters")
@@ -333,7 +333,7 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
       };
 
       REQUIRE_NOTHROW(parser.parse(argc, argv));
-      REQUIRE(b == bcopy);
+      REQUIRE(b == Catch::Approx(bcopy));
     }
   }
   WHEN("Instantiating a parser with some documentation")

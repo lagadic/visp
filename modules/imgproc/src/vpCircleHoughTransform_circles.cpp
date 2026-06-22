@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +67,7 @@ typedef struct vpDataUpdateRadAccum
   vpDataUpdateRadAccum(const vpImage<float> &dIx, const vpImage<float> &dIy)
     : m_dIx(dIx)
     , m_dIy(dIy)
-  { }
+  {}
 } vpDataUpdateRadAccum;
 
 void
@@ -88,10 +88,10 @@ updateRadiusAccumulator(const vpDataUpdateRadAccum &data, std::vector<float> &ra
     if ((r < (data.m_minRadius + (data.m_mergingRadiusDiffThresh * 0.5f)))
         || (r >(data.m_minRadius + (data.m_mergingRadiusDiffThresh * (static_cast<float>(data.m_nbBins - 1) + 0.5f))))) {
       // If the radius is at the very beginning of the allowed radii or at the very end, we do not span the vote
-      radiusAccumList[r_bin] += 1.f;
-      radiusActualValueList[r_bin] += r;
+      radiusAccumList[static_cast<size_t>(r_bin)] += 1.f;
+      radiusActualValueList[static_cast<size_t>(r_bin)] += r;
       if (data.m_recordVotingPoints) {
-        votingPoints[r_bin].push_back(data.m_edgePoint);
+        votingPoints[static_cast<size_t>(r_bin)].push_back(data.m_edgePoint);
       }
     }
     else {
@@ -103,26 +103,26 @@ updateRadiusAccumulator(const vpDataUpdateRadAccum &data, std::vector<float> &ra
         // The radius is at  the end of the current bin or beginning of the next, we span the vote with the next bin
         float voteCurBin = (midRadiusNextBin - r) / data.m_mergingRadiusDiffThresh; // If the difference is big, it means that we are closer to the current bin
         float voteNextBin = 1.f - voteCurBin;
-        radiusAccumList[r_bin] += voteCurBin;
-        radiusActualValueList[r_bin] += r * voteCurBin;
-        radiusAccumList[r_bin + 1] += voteNextBin;
-        radiusActualValueList[r_bin + 1] += r * voteNextBin;
+        radiusAccumList[static_cast<size_t>(r_bin)] += voteCurBin;
+        radiusActualValueList[static_cast<size_t>(r_bin)] += r * voteCurBin;
+        radiusAccumList[static_cast<size_t>(r_bin + 1)] += voteNextBin;
+        radiusActualValueList[static_cast<size_t>(r_bin + 1)] += r * voteNextBin;
         if (data.m_recordVotingPoints) {
-          votingPoints[r_bin].push_back(data.m_edgePoint);
-          votingPoints[r_bin + 1].push_back(data.m_edgePoint);
+          votingPoints[static_cast<size_t>(r_bin)].push_back(data.m_edgePoint);
+          votingPoints[static_cast<size_t>(r_bin + 1)].push_back(data.m_edgePoint);
         }
       }
       else {
         // The radius is at the end of the previous bin or beginning of the current, we span the vote with the previous bin
         float votePrevBin = (r - midRadiusPrevBin) / data.m_mergingRadiusDiffThresh; // If the difference is big, it means that we are closer to the previous bin
         float voteCurBin = 1.f - votePrevBin;
-        radiusAccumList[r_bin] += voteCurBin;
-        radiusActualValueList[r_bin] += r * voteCurBin;
-        radiusAccumList[r_bin - 1] += votePrevBin;
-        radiusActualValueList[r_bin - 1] += r * votePrevBin;
+        radiusAccumList[static_cast<size_t>(r_bin)] += voteCurBin;
+        radiusActualValueList[static_cast<size_t>(r_bin)] += r * voteCurBin;
+        radiusAccumList[static_cast<size_t>(r_bin - 1)] += votePrevBin;
+        radiusActualValueList[static_cast<size_t>(r_bin - 1)] += r * votePrevBin;
         if (data.m_recordVotingPoints) {
-          votingPoints[r_bin].push_back(data.m_edgePoint);
-          votingPoints[r_bin - 1].push_back(data.m_edgePoint);
+          votingPoints[static_cast<size_t>(r_bin)].push_back(data.m_edgePoint);
+          votingPoints[static_cast<size_t>(r_bin - 1)].push_back(data.m_edgePoint);
         }
       }
     }
@@ -152,13 +152,13 @@ vpCircleHoughTransform::computeCircleCandidates()
   data.m_recordVotingPoints = m_algoParams.m_recordVotingPoints;
 
   for (size_t i = 0; i < nbCenterCandidates; ++i) {
-    std::vector<std::vector<std::pair<unsigned int, unsigned int> > > votingPoints(nbBins); // Vectors that contain the points voting for each radius bin
+    std::vector<std::vector<std::pair<unsigned int, unsigned int> > > votingPoints(static_cast<size_t>(nbBins)); // Vectors that contain the points voting for each radius bin
     std::pair<float, float> centerCandidate = m_centerCandidatesList[i];
     // Initialize the radius accumulator of the candidate with 0s
     radiusAccumList.clear();
-    radiusAccumList.resize(nbBins, 0);
+    radiusAccumList.resize(static_cast<size_t>(nbBins), 0);
     radiusActualValueList.clear();
-    radiusActualValueList.resize(nbBins, 0.);
+    radiusActualValueList.resize(static_cast<size_t>(nbBins), 0.);
 
     const unsigned int nbEdgePoints = static_cast<unsigned int>(m_edgePointsList.size());
     for (unsigned int e = 0; e < nbEdgePoints; ++e) {
@@ -195,21 +195,21 @@ vpCircleHoughTransform::computeCircleCandidates()
     std::vector<std::vector<std::pair<unsigned int, unsigned int> > > v_votingPoints_effective; // Vector of voting points after the merge step
     std::vector<bool> v_hasMerged_effective; // Vector indicating if merge has been performed for the different candidates
     for (int idBin = 0; idBin < nbBins; ++idBin) {
-      float r_effective = computeEffectiveRadius(radiusAccumList[idBin], radiusActualValueList[idBin]);
-      float votes_effective = radiusAccumList[idBin];
-      std::vector<std::pair<unsigned int, unsigned int> > votingPoints_effective = votingPoints[idBin];
+      float r_effective = computeEffectiveRadius(radiusAccumList[static_cast<size_t>(idBin)], radiusActualValueList[static_cast<size_t>(idBin)]);
+      float votes_effective = radiusAccumList[static_cast<size_t>(idBin)];
+      std::vector<std::pair<unsigned int, unsigned int> > votingPoints_effective = votingPoints[static_cast<size_t>(idBin)];
       bool is_r_effective_similar = (r_effective > 0.f);
       // Looking for potential similar radii in the following bins
       // If so, compute the barycenter radius between them
       int idCandidate = idBin + 1;
       bool hasMerged = false;
       while ((idCandidate < nbBins) && is_r_effective_similar) {
-        float r_effective_candidate = computeEffectiveRadius(radiusAccumList[idCandidate], radiusActualValueList[idCandidate]);
+        float r_effective_candidate = computeEffectiveRadius(radiusAccumList[static_cast<size_t>(idCandidate)], radiusActualValueList[static_cast<size_t>(idCandidate)]);
         if (std::abs(r_effective_candidate - r_effective) < m_algoParams.m_mergingRadiusDiffThresh) {
-          r_effective = ((r_effective * votes_effective) + (r_effective_candidate * radiusAccumList[idCandidate])) / (votes_effective + radiusAccumList[idCandidate]);
-          votes_effective += radiusAccumList[idCandidate];
-          radiusAccumList[idCandidate] = -.1f;
-          radiusActualValueList[idCandidate] = -1.f;
+          r_effective = ((r_effective * votes_effective) + (r_effective_candidate * radiusAccumList[static_cast<size_t>(idCandidate)])) / (votes_effective + radiusAccumList[static_cast<size_t>(idCandidate)]);
+          votes_effective += radiusAccumList[static_cast<size_t>(idCandidate)];
+          radiusAccumList[static_cast<size_t>(idCandidate)] = -.1f;
+          radiusActualValueList[static_cast<size_t>(idCandidate)] = -1.f;
           is_r_effective_similar = true;
           if (m_algoParams.m_recordVotingPoints) {
             // Move elements from votingPoints[idCandidate] to votingPoints_effective.
@@ -217,14 +217,14 @@ vpCircleHoughTransform::computeCircleCandidates()
 #if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
             votingPoints_effective.insert(
               votingPoints_effective.end(),
-              std::make_move_iterator(votingPoints[idCandidate].begin()),
-              std::make_move_iterator(votingPoints[idCandidate].end())
+              std::make_move_iterator(votingPoints[static_cast<size_t>(idCandidate)].begin()),
+              std::make_move_iterator(votingPoints[static_cast<size_t>(idCandidate)].end())
             );
 #else
             votingPoints_effective.insert(
               votingPoints_effective.end(),
-              votingPoints[idCandidate].begin(),
-              votingPoints[idCandidate].end()
+              votingPoints[static_cast<size_t>(idCandidate)].begin(),
+              votingPoints[static_cast<size_t>(idCandidate)].end()
             );
 #endif
             hasMerged = true;

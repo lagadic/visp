@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,7 +86,7 @@ public:
     DT_INVALID = 4
   };
 
-  vpRBDenseDepthTracker() : vpRBFeatureTracker(), m_step(2), m_maxFeatures(0), m_useMask(false), m_minMaskConfidence(0.f), m_displayType(vpDisplayType::DT_SIMPLE) { }
+  vpRBDenseDepthTracker() : vpRBFeatureTracker(), m_step(2), m_maxFeatures(0), m_useMask(false), m_minMaskConfidence(0.f), m_displayType(vpDisplayType::DT_SIMPLE) {}
 
   virtual ~vpRBDenseDepthTracker() = default;
 
@@ -152,19 +152,19 @@ public:
   /**
    * @brief Method called when starting a tracking iteration
    */
-  void onTrackingIterStart(const vpRBFeatureTrackerInput &, const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE { }
-  void onTrackingIterEnd(const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE { }
+  void onTrackingIterStart(const vpRBFeatureTrackerInput &, const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE {}
+  void onTrackingIterEnd(const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE {}
 
   void extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix &cMo) VP_OVERRIDE;
-  void trackFeatures(const vpRBFeatureTrackerInput &/*frame*/, const vpRBFeatureTrackerInput &/*previousFrame*/, const vpHomogeneousMatrix &/*cMo*/) VP_OVERRIDE { }
-  void initVVS(const vpRBFeatureTrackerInput &/*frame*/, const vpRBFeatureTrackerInput &/*previousFrame*/, const vpHomogeneousMatrix &/*cMo*/) VP_OVERRIDE { }
+  void trackFeatures(const vpRBFeatureTrackerInput &/*frame*/, const vpRBFeatureTrackerInput &/*previousFrame*/, const vpHomogeneousMatrix &/*cMo*/) VP_OVERRIDE {}
+  void initVVS(const vpRBFeatureTrackerInput &/*frame*/, const vpRBFeatureTrackerInput &/*previousFrame*/, const vpHomogeneousMatrix &/*cMo*/) VP_OVERRIDE {}
   void computeVVSIter(const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cMo, unsigned int iteration) VP_OVERRIDE;
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth) const VP_OVERRIDE;
 
   struct vpDepthPoint
   {
-    vpDepthPoint() { }
+    vpDepthPoint() {}
   public:
     std::array<double, 3> oX, observation, objectNormal;
     std::array<double, 2> pixelPos;
@@ -211,6 +211,7 @@ public:
 #pragma omp parallel for
 #endif
       for (int i = 0; i < static_cast<int>(numPoints); ++i) {
+        const unsigned int i_ = static_cast<unsigned int>(i);
 
         //Step 1: update and filter out points that are no longer valid
         {
@@ -220,7 +221,7 @@ public:
           }
           // Plane points away from the camera: this surface is no longer visible due to rotation
           if (m_cNt[2][i] >= 0.0) {
-            m_valid[i] = false;
+            m_valid[i_] = false;
             continue;
           }
           double x, y, u, v;
@@ -230,17 +231,17 @@ public:
           vpMeterPixelConversion::convertPointWithoutDistortion(cam, x, y, u, v);
           // Point is no longer in image: depth value cannot be sampled
           if (u < 0 || v < 0 || u >= depth.getWidth() || v >= depth.getHeight()) {
-            m_valid[i] = false;
+            m_valid[i_] = false;
             continue;
           }
           const double Z = depth[static_cast<unsigned int>(v)][static_cast<unsigned int>(u)];
           // Z value in the depth image from the camera is invalid
           if (Z <= 0.0) {
-            m_valid[i] = false;
+            m_valid[i_] = false;
             continue;
           }
 
-          m_valid[i] = true;
+          m_valid[i_] = true;
           m_observations[0][i] = x * Z;
           m_observations[1][i] = y * Z;
           m_observations[2][i] = Z;
@@ -253,14 +254,14 @@ public:
           const double D = -((nX * X) + (nY  * Y) + (nZ * Z));
           double projNormal = nX * m_observations[0][i] + nY  * m_observations[1][i] + nZ * m_observations[2][i];
 
-          e[i] = D + projNormal;
+          e[i_] = D + projNormal;
 
-          L[i][0] = nX;
-          L[i][1] = nY;
-          L[i][2] = nZ;
-          L[i][3] = nZ * Y - nY * Z;
-          L[i][4] = nX * Z - nZ * X;
-          L[i][5] = nY * X - nX * Y;
+          L[i_][0] = nX;
+          L[i_][1] = nY;
+          L[i_][2] = nZ;
+          L[i_][3] = nZ * Y - nY * Z;
+          L[i_][4] = nX * Z - nZ * X;
+          L[i_][5] = nY * X - nX * Y;
 
         }
       }

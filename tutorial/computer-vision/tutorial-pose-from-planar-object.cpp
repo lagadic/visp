@@ -290,7 +290,8 @@ std::map<Model::Id, vpImagePoint> getKeypointsFromUser(vpImage<vpRGBa> color_img
 
   vpImage<vpRGBa> I_help {};
   vpImageIo::read(I_help, parent_data + "/data/d435_box_keypoints_user_helper.jpg");
-  Display disp_help(I_help, disp_color.getWindowXPosition() + color_img.getWidth(), disp_color.getWindowYPosition(),
+  Display disp_help(I_help, disp_color.getWindowXPosition() + static_cast<int>(color_img.getWidth()),
+                    disp_color.getWindowYPosition(),
                     "Keypoints [help]", DispScaleType);
   disp_help.display(I_help);
   disp_help.flush(I_help);
@@ -316,9 +317,9 @@ std::map<Model::Id, vpImagePoint> getKeypointsFromUser(vpImage<vpRGBa> color_img
     vpDisplay::displayText(color_img, 15 * ++disp_lane, 15, "Click to select a point", vpColor::green);
 
     // Display already selected points
-    for (const auto &[id, keypoint] : keypoints) {
+    for (const auto &[selected_id, keypoint] : keypoints) {
       vpDisplay::displayCross(color_img, keypoint, 15, vpColor::green);
-      vpDisplay::displayText(color_img, keypoint + vpImagePoint(10, 10), Model::to_string(id), vpColor::green);
+      vpDisplay::displayText(color_img, keypoint + vpImagePoint(10, 10), Model::to_string(selected_id), vpColor::green);
     }
     disp_color.flush(color_img);
 
@@ -358,7 +359,7 @@ int main(int, char *argv[])
 
   vpImage<unsigned char> depth_img {};
   vpImageConvert::createDepthHistogram(depth_raw, depth_img);
-  Display display_depth(depth_img, display_color.getWindowXPosition() + display_color.getWidth(), 0, "Depth",
+  Display display_depth(depth_img, display_color.getWindowXPosition() + static_cast<int>(display_color.getWidth()), 0, "Depth",
                         DispScaleType);
   display_depth.display(depth_img);
   display_depth.flush(depth_img);
@@ -398,7 +399,7 @@ int main(int, char *argv[])
   //! [Plane_Estimation]
 
   Display display_heat_map(heat_map, display_depth.getWindowXPosition(),
-                           display_depth.getWindowYPosition() + display_depth.getHeight(), "Plane Estimation Heat map",
+                           display_depth.getWindowYPosition() + static_cast<int>(display_depth.getHeight()), "Plane Estimation Heat map",
                            DispScaleType);
   display_heat_map.display(heat_map);
   display_heat_map.flush(heat_map);

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -514,7 +514,7 @@ private:
     ArithmeticType s_high = static_cast<ArithmeticType>(hsv_range[index_3]);
     ArithmeticType v_low = static_cast<ArithmeticType>(hsv_range[index_4]);
     ArithmeticType v_high = static_cast<ArithmeticType>(hsv_range[index_5]);
-    int size_ = Iin.getSize();
+    int size_ = static_cast<int>(Iin.getSize());
     mask.resize(Iin.getRows(), Iin.getCols());
     int cpt_in_range = 0;
 
@@ -829,7 +829,7 @@ public:
   unsigned int threadid;
 
 public:
-  vpUndistortInternalType() : src(nullptr), dst(nullptr), width(0), height(0), cam(), nthreads(0), threadid(0) { }
+  vpUndistortInternalType() : src(nullptr), dst(nullptr), width(0), height(0), cam(), nthreads(0), threadid(0) {}
 
   vpUndistortInternalType(const vpUndistortInternalType<Type> &u) { *this = u; }
   vpUndistortInternalType &operator=(const vpUndistortInternalType<Type> &u)

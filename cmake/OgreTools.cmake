@@ -79,14 +79,20 @@ endif(UNIX)
 # - on unix, VISP_OGRE_PLUGIN_DIR=OGRE_PLUGIN_DIR
 # - on windws, VISP_OGRE_PLUGIN_DIR=OGRE_PLUGIN_DIR with "/" replaced with "\"
 macro(vp_set_ogre_plugin)
-  if(EXISTS "${OGRE_CONFIG_DIR}/plugins.cfg")
-    # Prepare var used in plugind.cfg
-    set(VISP_OGRE_PLUGIN_DIR ${OGRE_PLUGIN_DIR})
+  # Determine which config file to use, and which plugin dir it implies
+  if(EXISTS "${OGRE_PLUGIN_DIR}/plugins.cfg")
+    set(_ogre_cfg_dir "${OGRE_PLUGIN_DIR}")
+    set(VISP_OGRE_PLUGIN_DIR "${OGRE_PLUGIN_DIR}")
+  elseif(EXISTS "${OGRE_CONFIG_DIR}/plugins.cfg")
+    set(_ogre_cfg_dir "${OGRE_CONFIG_DIR}")
+    set(VISP_OGRE_PLUGIN_DIR "${OGRE_PLUGIN_DIR}")  # intentional: always OGRE_PLUGIN_DIR
+  endif()
 
+  if(_ogre_cfg_dir)
     # Get all the lines that contains "Plugin="
-    file(STRINGS "${OGRE_CONFIG_DIR}/plugins.cfg" OGRE_PLUGIN_LINES REGEX "^[ \t]*#?[ \t]*Plugin=")
+    file(STRINGS "${_ogre_cfg_dir}/plugins.cfg" OGRE_PLUGIN_LINES REGEX "^[ \t]*#?[ \t]*Plugin=")
 
-    if (WIN32)
+    if(WIN32)
       # Replace / with \
       string(REPLACE "/" "\\" VISP_OGRE_PLUGIN_DIR "${VISP_OGRE_PLUGIN_DIR}")
 

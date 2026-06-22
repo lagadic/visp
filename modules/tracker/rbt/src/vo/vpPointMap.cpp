@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ void vpPointMap::getPoints(const vpArray2D<int> &indices, vpMatrix &X)
 {
   X.resize(indices.getRows(), 3, false, false);
   for (unsigned int i = 0; i < indices.getRows(); ++i) {
-    unsigned idx = indices[i][0];
+    unsigned int idx = static_cast<unsigned int>(indices[i][0]);
     X[i][0] = m_X[idx][0];
     X[i][1] = m_X[idx][1];
     X[i][2] = m_X[idx][2];
@@ -68,7 +68,7 @@ void vpPointMap::project(const vpArray2D<int> &indices, const vpHomogeneousMatri
 {
   vpMatrix X(indices.getRows(), 3);
   for (unsigned int i = 0; i < indices.getRows(); ++i) {
-    unsigned idx = indices[i][0];
+    unsigned int idx = static_cast<unsigned int>(indices[i][0]);
     X[i][0] = m_X[idx][0];
     X[i][1] = m_X[idx][1];
     X[i][2] = m_X[idx][2];
@@ -120,7 +120,7 @@ void vpPointMap::getVisiblePoints(const unsigned int h, const unsigned int w, co
     if (fabs(Z - expectedZ[i]) > m_maxDepthErrorVisible) {
       continue;
     }
-    indices.push_back(i);
+    indices.push_back(static_cast<int>(i));
   }
 }
 
@@ -151,7 +151,7 @@ void vpPointMap::getVisiblePoints(const unsigned int h, const unsigned int w, co
 #ifdef VISP_HAVE_OPENMP
 #pragma omp single
     {
-      unsigned int numThreads = omp_get_num_threads();
+      unsigned int numThreads = static_cast<unsigned int>(omp_get_num_threads());
       indicesPerThread.resize(numThreads);
     }
 #else
@@ -161,7 +161,7 @@ void vpPointMap::getVisiblePoints(const unsigned int h, const unsigned int w, co
 #endif
 
 #ifdef VISP_HAVE_OPENMP
-    unsigned int threadIdx = omp_get_thread_num();
+    unsigned int threadIdx = static_cast<unsigned int>(omp_get_thread_num());
 #else
     unsigned int threadIdx = 0;
 #endif
@@ -169,24 +169,24 @@ void vpPointMap::getVisiblePoints(const unsigned int h, const unsigned int w, co
     double u, v;
 
 #ifdef VISP_HAVE_OPENMP
-    localIndices.reserve(m_X.getRows() / omp_get_num_threads());
+    localIndices.reserve(m_X.getRows() / static_cast<unsigned int>(omp_get_num_threads()));
 #pragma omp for nowait
 #endif
     for (int i = 0; i < static_cast<int>(m_X.getRows()); ++i) {
-
+      unsigned int i_ = static_cast<unsigned int>(i);
 
       // Filter points that are behind the camera
-      const double Z = cX[i][2] + t[2];
+      const double Z = cX[i_][2] + t[2];
       if (Z <= 0.0) {
         continue;
       }
-      const double X = cX[i][0] + t[0], Y = cX[i][1] + t[1];
+      const double X = cX[i_][0] + t[0], Y = cX[i_][1] + t[1];
 
       // Filter points that are on the other side of the object
       if (m_normals.getRows() > 0) {
         cameraRay = { X, Y, Z };
         cameraRay.normalize();
-        double dotProd = cN[i][0] * cameraRay[0] + cN[i][1] * cameraRay[1] + cN[i][2] * cameraRay[2];
+        double dotProd = cN[i_][0] * cameraRay[0] + cN[i_][1] * cameraRay[1] + cN[i_][2] * cameraRay[2];
         double angle = acos(dotProd);
         if (angle < normalThreshold) {
           continue;
@@ -199,10 +199,10 @@ void vpPointMap::getVisiblePoints(const unsigned int h, const unsigned int w, co
         continue;
       }
 
-      unsigned int uint = static_cast<unsigned int>(u), vint = static_cast<unsigned int>(v);
+      unsigned int u_uint = static_cast<unsigned int>(u), v_uint = static_cast<unsigned int>(v);
       // Filter points whose reprojection does not match the depth map: self occlusion when rendered depth map,
       // occlusion or noise in the case of a true depth image
-      if (fabs(Z - depth[vint][uint]) > m_maxDepthErrorVisible) {
+      if (fabs(Z - depth[v_uint][u_uint]) > m_maxDepthErrorVisible) {
         continue;
       }
       localIndices.push_back(i);
@@ -255,21 +255,21 @@ vpMatrix &oXs, vpMatrix &oNs, std::vector<int> &validCandidateIndices)
 
   for (unsigned int i = 0; i < uvs.getRows(); ++i) {
     double u = uvs[i][0], v = uvs[i][1];
-    unsigned int uint = static_cast<unsigned int>(u), vint = static_cast<unsigned int>(v);
+    unsigned int u_uint = static_cast<unsigned int>(u), v_uint = static_cast<unsigned int>(v);
     double Z;
     if (modelDepth.getSize() == 0) { // We are performing odometry or do not have a depth oracle
-      Z = static_cast<double>(depth[vint][uint]);
+      Z = static_cast<double>(depth[v_uint][u_uint]);
       if (Z <= 0.0) {
         continue;
       }
     }
     else {
-      double renderZ = modelDepth[vint][uint];
+      double renderZ = modelDepth[v_uint][u_uint];
       if (renderZ <= 0.f) {
         continue;
       }
-      if (depth.getSize() > 0 && depth[vint][uint] > 0.f) { // Depth information from camera is available
-        Z = depth[vint][uint];
+      if (depth.getSize() > 0 && depth[v_uint][u_uint] > 0.f) { // Depth information from camera is available
+        Z = depth[v_uint][u_uint];
         // Check if depth from model and camera match
         if (m_maxDepthErrorCandidate > 0.0 && fabs(renderZ - Z) >=  m_maxDepthErrorCandidate) {
           continue;
@@ -310,7 +310,7 @@ vpMatrix &oXs, vpMatrix &oNs, std::vector<int> &validCandidateIndices)
       validoXList.push_back({ oX[0], oX[1], oX[2] });
       validCandidateIndices.push_back(originalIndices[i][0]);
       if (normals.getSize() > 0) {
-        vpRGBf n = normals[vint][uint];
+        vpRGBf n = normals[v_uint][u_uint];
         validoNList.push_back({ n.R, n.G, n.B });
       }
     }
@@ -320,17 +320,17 @@ vpMatrix &oXs, vpMatrix &oNs, std::vector<int> &validCandidateIndices)
   oNs.resize(static_cast<unsigned int>(validoNList.size()), 3, false, false);
 
   unsigned int i = 0;
-  for (const std::array<double, 3> &oX: validoXList) {
-    oXs[i][0] = oX[0];
-    oXs[i][1] = oX[1];
-    oXs[i][2] = oX[2];
+  for (const std::array<double, 3> &valid_oX: validoXList) {
+    oXs[i][0] = valid_oX[0];
+    oXs[i][1] = valid_oX[1];
+    oXs[i][2] = valid_oX[2];
     ++i;
   }
   i = 0;
-  for (const std::array<double, 3> &oN: validoNList) {
-    oNs[i][0] = oN[0];
-    oNs[i][1] = oN[1];
-    oNs[i][2] = oN[2];
+  for (const std::array<double, 3> &valid_oN: validoNList) {
+    oNs[i][0] = valid_oN[0];
+    oNs[i][1] = valid_oN[1];
+    oNs[i][2] = valid_oN[2];
     ++i;
   }
 }
@@ -355,12 +355,12 @@ vpMatrix removeAndAdd(const vpMatrix &oldArray, unsigned int newSize, const std:
       throw vpException(vpException::dimensionError, "Removed row is out of bounds");
     }
 #endif
-    unsigned int copiedRows = removedRow - oldXIndex;
+    unsigned int copiedRows = static_cast<unsigned int>(removedRow) - oldXIndex;
     if (copiedRows > 0) {
       memcpy(newX[newXIndex], oldArray[oldXIndex], copiedRows * numCols * sizeof(double));
       newXIndex += copiedRows;
     }
-    oldXIndex = removedRow + 1;
+    oldXIndex = static_cast<unsigned int>(removedRow) + 1;
   }
   // Copy from last removed row to the end of the array
   unsigned int copiedRows = oldArray.getRows() - oldXIndex;
@@ -381,15 +381,15 @@ void vpPointMap::updatePoints(const vpArray2D<int> &indicesToRemove, const vpMat
   if (normalsToAdd.getRows() > 0 && normalsToAdd.getRows() != pointsToAdd.getRows()) {
     throw vpException(vpException::dimensionError, "Adding normal data to point map, but number of points and normals do not match");
   }
-  int newSize = m_X.getRows() - indicesToRemove.getRows() + pointsToAdd.getRows();
+  unsigned int newSize = m_X.getRows() - indicesToRemove.getRows() + pointsToAdd.getRows();
   for (unsigned int i = 0; i < indicesToRemove.getRows(); ++i) {
     removedIndices.push_back(indicesToRemove[i][0]);
   }
 
-  int maxPoints = static_cast<int>(m_maxPoints);
+  unsigned int maxPoints = m_maxPoints;
   std::sort(removedIndices.begin(), removedIndices.end());
   if (newSize > maxPoints) {
-    int shouldBeRemoved = newSize - maxPoints;
+    unsigned int shouldBeRemoved = newSize - maxPoints;
     newSize = maxPoints;
 
     // If the first values are filtered by indicesToRemove, we need to further increment the start index

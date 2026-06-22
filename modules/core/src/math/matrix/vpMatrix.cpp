@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -204,7 +204,7 @@ vpMatrix::vpMatrix(const vpTranslationVector &t)
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 vpMatrix::vpMatrix(vpMatrix &&A) : vpArray2D<double>(std::move(A))
-{ }
+{}
 
 /*!
   Construct a matrix from a list of double values.
@@ -233,7 +233,7 @@ vpMatrix::vpMatrix(vpMatrix &&A) : vpArray2D<double>(std::move(A))
   4  5.5  6
   \endcode
 */
-vpMatrix::vpMatrix(const std::initializer_list<double> &list) : vpArray2D<double>(list) { }
+vpMatrix::vpMatrix(const std::initializer_list<double> &list) : vpArray2D<double>(list) {}
 
 /*!
   Construct a matrix from a list of double values.
@@ -264,7 +264,7 @@ vpMatrix::vpMatrix(const std::initializer_list<double> &list) : vpArray2D<double
  */
 vpMatrix::vpMatrix(unsigned int nrows, unsigned int ncols, const std::initializer_list<double> &list)
   : vpArray2D<double>(nrows, ncols, list)
-{ }
+{}
 
 /*!
   Construct a matrix from a list of double values.
@@ -290,7 +290,7 @@ vpMatrix::vpMatrix(unsigned int nrows, unsigned int ncols, const std::initialize
   4  5.5  6
   \endcode
  */
-vpMatrix::vpMatrix(const std::initializer_list<std::initializer_list<double> > &lists) : vpArray2D<double>(lists) { }
+vpMatrix::vpMatrix(const std::initializer_list<std::initializer_list<double> > &lists) : vpArray2D<double>(lists) {}
 #endif
 
 /**
@@ -1260,7 +1260,7 @@ vpColVector vpMatrix::eigenValues() const
     double wkopt;
     vpMatrix::blas_dsyev(jobz, uplo, rowNum, A.data, colNum, evalue.data, &wkopt, lwork, info);
     lwork = static_cast<int>(wkopt);
-    WORK.resize(lwork);
+    WORK.resize(static_cast<unsigned int>(lwork));
     vpMatrix::blas_dsyev(jobz, uplo, rowNum, A.data, colNum, evalue.data, WORK.data, lwork, info);
   }
 #endif
@@ -1392,7 +1392,7 @@ void vpMatrix::eigenValues(vpColVector &evalue, vpMatrix &evector) const
     double wkopt;
     vpMatrix::blas_dsyev(jobz, uplo, rowNum, A.data, colNum, evalue.data, &wkopt, lwork, info);
     lwork = static_cast<int>(wkopt);
-    WORK.resize(lwork);
+    WORK.resize(static_cast<unsigned int>(lwork));
     vpMatrix::blas_dsyev(jobz, uplo, rowNum, A.data, colNum, evalue.data, WORK.data, lwork, info);
     evector = A.t();
   }

@@ -17,7 +17,8 @@ int main()
   {
     std::cout << "From OpenCV to ViSP conversion" << std::endl;
     //! [Create OpenCV matrix]
-    cv::Mat M_cv = (cv::Mat_<double>(3, 4) << 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
+    double data[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
+    cv::Mat M_cv = cv::Mat(3, 4, CV_64F, data).clone();
     std::cout << "M_cv: \n" << M_cv << std::endl;
     //! [Create OpenCV matrix]
 

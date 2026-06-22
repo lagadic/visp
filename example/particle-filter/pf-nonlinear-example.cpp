@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -373,7 +373,7 @@ struct SoftwareArguments
     , m_ampliMaxVy(0.5)
     , m_seedPF(4224)
     , m_nbThreads(1)
-  { }
+  {}
 
   int parseArgs(const int argc, const char *argv[])
   {
@@ -381,15 +381,15 @@ struct SoftwareArguments
     while (i < argc) {
       std::string arg(argv[i]);
       if ((arg == "--nb-steps-main") && ((i+1) < argc)) {
-        m_nbSteps = std::atoi(argv[i + 1]);
+        m_nbSteps = static_cast<unsigned int>(std::atoi(argv[i + 1]));
         ++i;
       }
       else if ((arg == "--nb-steps-warmup") && ((i+1) < argc)) {
-        m_nbStepsWarmUp = std::atoi(argv[i + 1]);
+        m_nbStepsWarmUp = static_cast<unsigned int>(std::atoi(argv[i + 1]));
         ++i;
       }
       else if ((arg == "--dt") && ((i+1) < argc)) {
-        m_dt = std::atoi(argv[i + 1]);
+        m_dt = std::atof(argv[i + 1]);
         ++i;
       }
       else if ((arg == "--stdev-range") && ((i+1) < argc)) {
@@ -433,7 +433,7 @@ struct SoftwareArguments
         ++i;
       }
       else if (((arg == "-N") || (arg == "--nb-particles")) && ((i+1) < argc)) {
-        m_N = std::atoi(argv[i + 1]);
+        m_N = static_cast<unsigned int>(std::atoi(argv[i + 1]));
         ++i;
       }
       else if ((arg == "--seed") && ((i+1) < argc)) {
@@ -463,7 +463,7 @@ struct SoftwareArguments
       else if (arg == "-d") {
         m_useDisplay = false;
       }
-      else if (arg == "-c" ) {
+      else if (arg == "-c") {
         m_useUserInteraction = false;
       }
       else if ((arg == "-h") || (arg == "--help")) {
