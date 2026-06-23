@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +42,10 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImagePoint.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 #if defined(VISP_HAVE_CATCH2)
 
 #if defined(VISP_BUILD_CATCH2)
@@ -50,9 +54,6 @@
 #include <catch2/catch_all.hpp>
 #endif
 
-#ifdef ENABLE_VISP_NAMESPACE
-using namespace VISP_NAMESPACE_NAME;
-#endif
 TEST_CASE("Test comparison operator", "[operator]")
 {
   vpImagePoint ip1, ip2, ip3;
