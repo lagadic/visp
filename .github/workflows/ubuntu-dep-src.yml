@@ -346,3 +346,7 @@ jobs:
         cd visp_started-build
         cmake ..
         make -j$(nproc)
+
+    - name: Check ViSP build warnings
+      working-directory: build
+      run: test ! -s warnings.log
