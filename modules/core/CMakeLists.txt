@@ -358,3 +358,10 @@ vp_add_tests(CTEST_EXCLUDE_PATH network DEPENDS_ON visp_io visp_gui PRIVATE_INCL
 vp_glob_module_copy_data("test/math/data/*.pgm" "modules/core" NO_INSTALL)
 # copy font
 vp_glob_module_copy_data("src/image/private/Rubik-Regular.ttf" "data/font")
+
+if(CMAKE_COMPILER_IS_GNUCXX)
+  set_source_files_properties(
+    test/image/testHSVGradient.cpp
+    PROPERTIES COMPILE_FLAGS "-Wno-strict-overflow"
+  )
+endif()

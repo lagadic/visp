@@ -2587,7 +2587,8 @@ private:
     // Computing the difference and sign for row 1 column 0
     Idiff[nbCols] = static_cast<OutputType>(I.bitmap[nbCols + 1].V - I.bitmap[nbCols].V);
 
-    for (unsigned int iter = 1; iter < nbCols - 1; ++iter) {
+    unsigned int limit = nbCols - 1;
+    for (unsigned int iter = 1; iter < limit; ++iter) {
       // Computing the difference and sign for row 0
       OutputType distanceRow0 = static_cast<OutputType>(I.bitmap[iter + 1].V - I.bitmap[iter].V);
       Idiff[iter] = distanceRow0;
@@ -2716,6 +2717,7 @@ private:
   }
 
 #ifdef VISP_HAVE_OPENMP
+
   template <typename HSVType, bool useFullScale, typename OutputType>
   static typename std::enable_if<std::is_arithmetic<OutputType>::value, void>::type initGradientFilterDifferenceImageX(
     const vpImage<vpHSV<HSVType, useFullScale>> &I, std::vector<OutputType> &Idiff,
@@ -2931,6 +2933,7 @@ private:
       }
     }
   }
+
 #endif
 #endif
 };
