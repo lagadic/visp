@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -213,7 +213,7 @@ void CallBackVirtuose(VirtContext VC, void *ptr)
     p_max[i] = localPosition0[i] + cube_size / 2;
   }
 
-  for (int i = 0; i < 3; i++) {
+  for (unsigned int i = 0; i < 3; ++i) {
     if ((p_min[i] >= localPosition[i])) {
       forceFeedback[i] = (p_min[i] - localPosition[i]) * force_increase_rate;
       if (forceFeedback[i] >= force_limit)
@@ -228,7 +228,7 @@ void CallBackVirtuose(VirtContext VC, void *ptr)
       forceFeedback[i] = 0;
   }
 
-  for (unsigned int j = 0; j < 6; j++)
+  for (unsigned int j = 0; j < 6; ++j)
     finalForce[j] = forceFeedback[j] + forceEe[j];
 
   // Set force feedback
