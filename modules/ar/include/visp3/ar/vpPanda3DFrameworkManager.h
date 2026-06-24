@@ -38,9 +38,9 @@
 #include <pandaFramework.h>
 #include <pandaSystem.h>
 
+BEGIN_VISP_NAMESPACE
 class vpPanda3DBaseRenderer;
 
-BEGIN_VISP_NAMESPACE
 /**
  * \ingroup group_ar_renderer_panda3d
  *

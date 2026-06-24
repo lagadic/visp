@@ -33,6 +33,7 @@
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include VISP_NLOHMANN_JSON(json_fwd.hpp)
 
+BEGIN_VISP_NAMESPACE
 std::shared_ptr<vpRBConvergenceMetric> vpRBConvergenceMetric::loadFromJSON(const nlohmann::json &j)
 {
   const std::string key = j.at("type");
@@ -51,6 +52,8 @@ std::shared_ptr<vpRBConvergenceMetric> vpRBConvergenceMetric::loadFromJSON(const
   throw vpException(vpException::badValue, "Tried to parse an incorrect convergence metric type: %s", key.c_str());
 
 }
+#else
+BEGIN_VISP_NAMESPACE
 #endif
 
 
@@ -132,3 +135,4 @@ double vpRBConvergenceReprojectionMetric::operator()(const vpCameraParameters &c
   }
   return error / static_cast<double>(uv1.getRows());
 }
+END_VISP_NAMESPACE

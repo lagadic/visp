@@ -44,8 +44,11 @@
 
 #include "core/utils.hpp"
 
-void bindings_vpPixelMeterConversion(py::class_<vpPixelMeterConversion, std::shared_ptr<vpPixelMeterConversion>> &pyPM)
+void bindings_vpPixelMeterConversion(py::class_<VISP_NAMESPACE_ADDRESSING vpPixelMeterConversion, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpPixelMeterConversion>> &pyPM)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   pyPM.def_static("convertPoints", [](const vpCameraParameters &cam, const py::array_t<double> &us, const py::array_t<double> &vs) {
     py::buffer_info bufu = us.request(), bufv = vs.request();
     if (bufu.ndim != bufv.ndim || bufu.shape != bufv.shape) {
@@ -107,8 +110,11 @@ Example usage:
 )doc", py::arg("cam"), py::arg("us"), py::arg("vs"));
 }
 
-void bindings_vpMeterPixelConversion(py::class_<vpMeterPixelConversion, std::shared_ptr<vpMeterPixelConversion>> &pyMP)
+void bindings_vpMeterPixelConversion(py::class_<VISP_NAMESPACE_ADDRESSING vpMeterPixelConversion, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpMeterPixelConversion>> &pyMP)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   pyMP.def_static("convertPoints", [](const vpCameraParameters &cam, const py::array_t<double> &xs, const py::array_t<double> &ys) {
     py::buffer_info bufx = xs.request(), bufy = ys.request();
     if (bufx.ndim != bufy.ndim || bufx.shape != bufy.shape) {

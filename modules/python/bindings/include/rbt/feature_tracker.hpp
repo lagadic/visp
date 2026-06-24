@@ -35,10 +35,10 @@
 #include <pybind11/pybind11.h>
 
 
-class TrampolineRBFeatureTracker : public vpRBFeatureTracker
+class TrampolineRBFeatureTracker : public VISP_NAMESPACE_ADDRESSING vpRBFeatureTracker
 {
 public:
-  using vpRBFeatureTracker::vpRBFeatureTracker;
+  using VISP_NAMESPACE_ADDRESSING vpRBFeatureTracker::vpRBFeatureTracker;
 
   TrampolineRBFeatureTracker() : vpRBFeatureTracker() { }
 
@@ -69,7 +69,7 @@ public:
       );
   }
 
-  virtual void onTrackingIterStart(const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cMo) VP_OVERRIDE
+  virtual void onTrackingIterStart(const VISP_NAMESPACE_ADDRESSING vpRBFeatureTrackerInput &frame, const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &cMo) VP_OVERRIDE
   {
     PYBIND11_OVERRIDE_PURE(
       void,           /* Return type */
@@ -80,7 +80,7 @@ public:
     );
   }
 
-  virtual void onTrackingIterEnd(const vpHomogeneousMatrix &cMo) VP_OVERRIDE
+  virtual void onTrackingIterEnd(const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &cMo) VP_OVERRIDE
   {
     PYBIND11_OVERRIDE_PURE(
       void,           /* Return type */
@@ -90,7 +90,7 @@ public:
     );
   }
 
-  virtual void extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix &cMo)
+  virtual void extractFeatures(const VISP_NAMESPACE_ADDRESSING vpRBFeatureTrackerInput &frame, const VISP_NAMESPACE_ADDRESSING vpRBFeatureTrackerInput &previousFrame, const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &cMo)
     VP_OVERRIDE
   {
     pybind11::gil_scoped_acquire gil;  // Acquire the GIL while in this scope.
@@ -102,7 +102,7 @@ public:
     }
   }
 
-    virtual void trackFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix &cMo)
+    virtual void trackFeatures(const VISP_NAMESPACE_ADDRESSING vpRBFeatureTrackerInput &frame, const VISP_NAMESPACE_ADDRESSING vpRBFeatureTrackerInput &previousFrame, const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &cMo)
     VP_OVERRIDE
   {
     pybind11::gil_scoped_acquire gil;  // Acquire the GIL while in this scope.
@@ -114,7 +114,7 @@ public:
     }
   }
 
-    virtual void initVVS(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix &cMo) VP_OVERRIDE
+    virtual void initVVS(const VISP_NAMESPACE_ADDRESSING vpRBFeatureTrackerInput &frame, const VISP_NAMESPACE_ADDRESSING vpRBFeatureTrackerInput &previousFrame, const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &cMo) VP_OVERRIDE
   {
     pybind11::gil_scoped_acquire gil;  // Acquire the GIL while in this scope.
     // Try to look up the overridden method on the Python side.
@@ -125,7 +125,7 @@ public:
     }
   }
 
-  virtual void computeVVSIter(const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cMo, unsigned int iteration) VP_OVERRIDE
+  virtual void computeVVSIter(const VISP_NAMESPACE_ADDRESSING vpRBFeatureTrackerInput &frame, const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &cMo, unsigned int iteration) VP_OVERRIDE
   {
     pybind11::gil_scoped_acquire gil;  // Acquire the GIL while in this scope.
     // Try to look up the overridden method on the Python side.
@@ -145,7 +145,7 @@ public:
       );
   }
 
-  virtual void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth) const VP_OVERRIDE
+  virtual void display(const VISP_NAMESPACE_ADDRESSING vpCameraParameters &cam, const VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I, const VISP_NAMESPACE_ADDRESSING vpImage<VISP_NAMESPACE_ADDRESSING vpRGBa> &IRGB, const VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &depth) const VP_OVERRIDE
   {
     pybind11::gil_scoped_acquire gil;  // Acquire the GIL while in this scope.
     // Try to look up the overridden method on the Python side.
@@ -156,10 +156,10 @@ public:
     }
   }
 
-  virtual const vpMatrix getCovariance() const VP_OVERRIDE
+  virtual const VISP_NAMESPACE_ADDRESSING vpMatrix getCovariance() const VP_OVERRIDE
   {
     PYBIND11_OVERRIDE(
-      vpMatrix,           /* Return type */
+      VISP_NAMESPACE_ADDRESSING vpMatrix,           /* Return type */
       vpRBFeatureTracker,     /* Parent class */
       getCovariance,       /* Name of function in C++ (must match Python name) */
 
@@ -186,19 +186,19 @@ public:
     );
   }
 
-  virtual vpMatrix getLTL() const VP_OVERRIDE
+  virtual VISP_NAMESPACE_ADDRESSING vpMatrix getLTL() const VP_OVERRIDE
   {
     PYBIND11_OVERRIDE(
-      vpMatrix,           /* Return type */
+      VISP_NAMESPACE_ADDRESSING vpMatrix,           /* Return type */
       vpRBFeatureTracker,     /* Parent class */
       getLTL,
       );
   }
 
-  virtual vpColVector getLTR() const VP_OVERRIDE
+  virtual VISP_NAMESPACE_ADDRESSING vpColVector getLTR() const VP_OVERRIDE
   {
     PYBIND11_OVERRIDE(
-      vpColVector,           /* Return type */
+      VISP_NAMESPACE_ADDRESSING vpColVector,           /* Return type */
       vpRBFeatureTracker,     /* Parent class */
       getLTR,      /* Name of function in C++ (must match Python name) */
       );

@@ -204,9 +204,9 @@ private:
 
   unsigned int supPowerOf2(unsigned int n);
 };
+END_VISP_NAMESPACE
 #endif
 
-END_VISP_NAMESPACE
 
 #endif
 #endif

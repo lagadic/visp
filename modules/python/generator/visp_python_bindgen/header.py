@@ -112,19 +112,21 @@ class HeaderFile():
     self.header_repr: ParsedData = parse_string(self.preprocessed_header_str, options=ParserOptions(verbose=False, convert_void_to_zero_params=True)) # Get the cxxheaderparser representation of the header
 
     # Get dependencies of this header. This is important for the code generation order
-    for cls in self.header_repr.namespace.classes:
-      name_cpp_no_template = '::'.join([seg.name for seg in cls.class_decl.typename.segments])
-      self.contains.append(name_cpp_no_template)
+    for namespace_name, ns in self.header_repr.namespace.namespaces.items():
 
-      # Add parent classes as dependencies
-      for base_class in cls.class_decl.bases:
-        base_class_str_no_template = '::'.join([segment.name for segment in base_class.typename.segments])
-        if base_class_str_no_template.startswith('vp'):
-            self.depends.append(base_class_str_no_template)
+      for cls in ns.classes:
+        name_cpp_no_template = '::'.join([seg.name for seg in cls.class_decl.typename.segments])
+        self.contains.append(name_cpp_no_template)
 
-      # Get documentation if available, only one document supported for now
-      if self.documentation_holder_path is None:
-        self.documentation_holder_path = DocumentationData.get_xml_path_if_exists(name_cpp_no_template, DocumentationObjectKind.Class)
+        # Add parent classes as dependencies
+        for base_class in cls.class_decl.bases:
+          base_class_str_no_template = '::'.join([segment.name for segment in base_class.typename.segments])
+          if base_class_str_no_template.startswith('vp'):
+              self.depends.append(base_class_str_no_template)
+
+        # Get documentation if available, only one document supported for now
+        if self.documentation_holder_path is None:
+          self.documentation_holder_path = DocumentationData.get_xml_path_if_exists(name_cpp_no_template, DocumentationObjectKind.Class)
 
   def run_preprocessor(self):
     logging.info(f'Preprocessing header {self.path.name}')
@@ -205,6 +207,10 @@ class HeaderFile():
 
     for cls in self.header_repr.namespace.classes:
       self.generate_class(bindings_container, cls, self.environment)
+    for namespace_name, ns in self.header_repr.namespace.namespaces.items():
+      for cls in ns.classes:
+        self.generate_class(bindings_container, cls, self.environment)
+
     enum_bindings = get_enum_bindings(self.header_repr.namespace, self.environment.mapping, self.submodule, self)
     for enum_binding in enum_bindings:
       bindings_container.add_bindings(enum_binding)
@@ -259,6 +265,7 @@ class HeaderFile():
 
       python_ident = f'py{name_python}' if owner == 'submodule' else f'py{owner}{name_python}'
       name_cpp = get_typename(cls.class_decl.typename, owner_specs, header_env.mapping)
+      logging.info(f'Generating data for {name_cpp}')
       class_doc = None
 
       # A name cannot start with a digit
@@ -583,6 +590,8 @@ class HeaderFile():
       return
 
     cls_config = self.submodule.get_class_config(name_cpp_no_template)
+
+    logging.info(f'Class configuration: {cls_config}')
 
     # Warning for potential double frees
     acknowledged_pointer_fields = cls_config.get('acknowledge_pointer_or_ref_fields') or []

@@ -37,6 +37,7 @@
 // Warning: this file shouldn't be included by the user. Internal usage only to reduce length of vpImage.h
 #include <visp3/core/vpImageTools.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Apply a warping (affine or perspective) transformation to an image.
 
@@ -730,5 +731,6 @@ inline void vpImageTools::warpLinear(const vpImage<vpRGBa> &src, const vpMatrix 
     }
   }
 }
+END_VISP_NAMESPACE
 
 #endif

@@ -1528,9 +1528,10 @@ inline void vpImageTools::resize(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires
 }
 #endif
 
+END_VISP_NAMESPACE
+
 #ifdef ENABLE_IMAGE_TOOLS_WARP
 #include <visp3/core/vpImageTools_warp.h>
 #endif
 
-END_VISP_NAMESPACE
 #endif

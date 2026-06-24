@@ -5,14 +5,14 @@
 #include <visp3/rbt/vpRBVisualOdometry.h>
 #include <pybind11/pybind11.h>
 
-class TrampolineRBVisualOdometry : public vpRBVisualOdometry
+class TrampolineRBVisualOdometry : public VISP_NAMESPACE_ADDRESSING vpRBVisualOdometry
 {
 public:
   using vpRBVisualOdometry::vpRBVisualOdometry;
 
   TrampolineRBVisualOdometry() : vpRBVisualOdometry() { }
 
-  virtual void compute(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &previousFrame) VP_OVERRIDE
+  virtual void compute(const VISP_NAMESPACE_ADDRESSING vpRBFeatureTrackerInput &frame, const VISP_NAMESPACE_ADDRESSING vpRBFeatureTrackerInput &previousFrame) VP_OVERRIDE
   {
     pybind11::gil_scoped_acquire gil;  // Acquire the GIL while in this scope.
     // Try to look up the overridden method on the Python side.
@@ -23,20 +23,20 @@ public:
     }
   }
 
-  virtual vpHomogeneousMatrix getCameraMotion() const VP_OVERRIDE
+  virtual VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix getCameraMotion() const VP_OVERRIDE
   {
     PYBIND11_OVERRIDE_PURE(
-      vpHomogeneousMatrix,           /* Return type */
+      VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix,           /* Return type */
       vpRBVisualOdometry,     /* Parent class */
       getCameraMotion,       /* Name of function in C++ (must match Python name) */
 
       );
   }
 
-  virtual vpHomogeneousMatrix getCameraPose() const VP_OVERRIDE
+  virtual VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix getCameraPose() const VP_OVERRIDE
   {
     PYBIND11_OVERRIDE_PURE(
-      vpHomogeneousMatrix,           /* Return type */
+      VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix,           /* Return type */
       vpRBVisualOdometry,     /* Parent class */
       getCameraPose,       /* Name of function in C++ (must match Python name) */
 

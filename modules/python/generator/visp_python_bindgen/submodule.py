@@ -174,6 +174,9 @@ class Submodule():
 {includes_str}
 
 namespace py = pybind11;
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 {publicists}
 
@@ -212,7 +215,10 @@ options.disable_enum_members_docstring();
   def class_should_be_ignored(self, class_name: str) -> bool:
     if 'ignored_classes' not in self.config:
       return False
-    return class_name in self.config['ignored_classes']
+
+    is_ignored = class_name in self.config['ignored_classes']
+    logging.info(f'{class_name} is ignored: {is_ignored}')
+    return is_ignored
 
   def header_should_be_ignored(self, header_name: str) -> bool:
     if 'ignored_headers' not in self.config:

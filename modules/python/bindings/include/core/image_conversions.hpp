@@ -116,7 +116,7 @@ struct SimpleConversionStruct
   unsigned int srcBytesPerPixel;
   unsigned int destBytesPerPixel;
 
-  void add_conversion_binding(py::class_<vpImageConvert, std::shared_ptr<vpImageConvert>> &pyImageConvert)
+  void add_conversion_binding(py::class_<VISP_NAMESPACE_ADDRESSING vpImageConvert, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpImageConvert>> &pyImageConvert)
   {
 
     pyImageConvert.def_static(name.c_str(), [*this](py::array_t<unsigned char, py::array::c_style> &src,
@@ -142,7 +142,7 @@ struct SimpleConversionStruct<ConversionFunction2DWithFlip>
   unsigned int srcBytesPerPixel;
   unsigned int destBytesPerPixel;
 
-  void add_conversion_binding(py::class_<vpImageConvert, std::shared_ptr<vpImageConvert>> &pyImageConvert)
+  void add_conversion_binding(py::class_<VISP_NAMESPACE_ADDRESSING vpImageConvert, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpImageConvert>> &pyImageConvert)
   {
     pyImageConvert.def_static(name.c_str(), [*this](py::array_t<unsigned char, py::array::c_style> &src,
                                                     py::array_t<unsigned char, py::array::c_style> &dest, bool flip) {
@@ -167,7 +167,7 @@ struct SimpleConversionStruct<ConversionFunction2DWithFlipAndNThreads>
   unsigned int srcBytesPerPixel;
   unsigned int destBytesPerPixel;
 
-  void add_conversion_binding(py::class_<vpImageConvert, std::shared_ptr<vpImageConvert>> &pyImageConvert)
+  void add_conversion_binding(py::class_<VISP_NAMESPACE_ADDRESSING vpImageConvert, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpImageConvert>> &pyImageConvert)
   {
     pyImageConvert.def_static(name.c_str(), [*this](py::array_t<unsigned char, py::array::c_style> &src,
                                                     py::array_t<unsigned char, py::array::c_style> &dest, bool flip, unsigned int threads) {
@@ -192,7 +192,7 @@ struct SimpleConversionStruct<ConversionFunction2DWithNThreads>
   unsigned int srcBytesPerPixel;
   unsigned int destBytesPerPixel;
 
-  void add_conversion_binding(py::class_<vpImageConvert, std::shared_ptr<vpImageConvert>> &pyImageConvert)
+  void add_conversion_binding(py::class_<VISP_NAMESPACE_ADDRESSING vpImageConvert, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpImageConvert>> &pyImageConvert)
   {
     pyImageConvert.def_static(name.c_str(), [*this](py::array_t<unsigned char, py::array::c_style> &src,
                                                     py::array_t<unsigned char, py::array::c_style> &dest, unsigned int threads) {
@@ -218,7 +218,7 @@ struct ConversionFromYUVLike
 
   unsigned int destBytesPerPixel;
 
-  void add_conversion_binding(py::class_<vpImageConvert, std::shared_ptr<vpImageConvert>> &pyImageConvert)
+  void add_conversion_binding(py::class_<VISP_NAMESPACE_ADDRESSING vpImageConvert, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpImageConvert>> &pyImageConvert)
   {
     pyImageConvert.def_static(name.c_str(), [this](py::array_t<unsigned char, py::array::c_style> &src,
                                                    py::array_t<unsigned char, py::array::c_style> &dest) {
@@ -294,7 +294,7 @@ void rgb_or_rgba_to_hsv_verification(const py::buffer_info &bufsrc, const py::bu
   }
 }
 
-void add_hsv_double_to_rgb_or_rgba_binding(py::class_<vpImageConvert, std::shared_ptr<vpImageConvert>> &pyImageConvert,
+void add_hsv_double_to_rgb_or_rgba_binding(py::class_<VISP_NAMESPACE_ADDRESSING vpImageConvert, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpImageConvert>> &pyImageConvert,
                                     void (*fn)(const double *, const double *, const double *, unsigned char *, unsigned int), const char *name, const unsigned destBytes)
 {
   pyImageConvert.def_static(name, [fn, destBytes](py::array_t<double, py::array::c_style> &src,
@@ -313,7 +313,7 @@ void add_hsv_double_to_rgb_or_rgba_binding(py::class_<vpImageConvert, std::share
   }, "Convert from HSV Planes (as a 3 x H x W array) to a an RGB/RGBA array (as an H x W x 3 or H x W x 4 array)", py::arg("hsv"), py::arg("rgb"));
 }
 
-void add_hsv_uchar_to_rgb_or_rgba_binding(py::class_<vpImageConvert, std::shared_ptr<vpImageConvert>> &pyImageConvert,
+void add_hsv_uchar_to_rgb_or_rgba_binding(py::class_<VISP_NAMESPACE_ADDRESSING vpImageConvert, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpImageConvert>> &pyImageConvert,
                                     void (*fn)(const unsigned char *, const unsigned char *, const unsigned char *, unsigned char *, unsigned int, bool), const char *name, const unsigned destBytes)
 {
   pyImageConvert.def_static(name, [fn, destBytes](py::array_t<unsigned char, py::array::c_style> &src,
@@ -332,7 +332,7 @@ void add_hsv_uchar_to_rgb_or_rgba_binding(py::class_<vpImageConvert, std::shared
   }, "Convert from HSV Planes (as a 3 x H x W array) to a an RGB/RGBA array (as an H x W x 3 or H x W x 4 array)", py::arg("hsv"), py::arg("rgb"), py::arg("h_full") = true);
 }
 
-void add_rgb_or_rgba_uchar_to_hsv_binding(py::class_<vpImageConvert, std::shared_ptr<vpImageConvert>> &pyImageConvert,
+void add_rgb_or_rgba_uchar_to_hsv_binding(py::class_<VISP_NAMESPACE_ADDRESSING vpImageConvert, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpImageConvert>> &pyImageConvert,
                                     void (*fn)(const unsigned char *, unsigned char *, unsigned char *, unsigned char *, unsigned int, bool), const char *name, const unsigned destBytes)
 {
   pyImageConvert.def_static(name, [fn, destBytes](py::array_t<unsigned char, py::array::c_style> &src,
@@ -352,7 +352,7 @@ void add_rgb_or_rgba_uchar_to_hsv_binding(py::class_<vpImageConvert, std::shared
   }, "Convert from HSV Planes (as a 3 x H x W array) to a an RGB/RGBA array (as an H x W x 3 or H x W x 4 array)", py::arg("rgb"), py::arg("hsv"), py::arg("h_full") = true);
 }
 
-void add_rgb_or_rgba_double_to_hsv_binding(py::class_<vpImageConvert, std::shared_ptr<vpImageConvert>> &pyImageConvert,
+void add_rgb_or_rgba_double_to_hsv_binding(py::class_<VISP_NAMESPACE_ADDRESSING vpImageConvert, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpImageConvert>> &pyImageConvert,
                                     void (*fn)(const unsigned char *, double *, double *, double *, unsigned int), const char *name, const unsigned destBytes)
 {
   pyImageConvert.def_static(name, [fn, destBytes](py::array_t<unsigned char, py::array::c_style> &src,
@@ -373,7 +373,7 @@ void add_rgb_or_rgba_double_to_hsv_binding(py::class_<vpImageConvert, std::share
 
 /* Demosaicing implem */
 template <class DataType>
-void add_demosaic_to_rgba_fn(py::class_<vpImageConvert, std::shared_ptr<vpImageConvert>> &pyImageConvert, void (*fn)(const DataType *, DataType *, unsigned int, unsigned int, unsigned int), const char *name)
+void add_demosaic_to_rgba_fn(py::class_<VISP_NAMESPACE_ADDRESSING vpImageConvert, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpImageConvert>> &pyImageConvert, void (*fn)(const DataType *, DataType *, unsigned int, unsigned int, unsigned int), const char *name)
 {
   pyImageConvert.def_static(name, [fn](py::array_t<DataType, py::array::c_style> &src,
                                        py::array_t<DataType, py::array::c_style> &dest,
@@ -407,8 +407,11 @@ void add_demosaic_to_rgba_fn(py::class_<vpImageConvert, std::shared_ptr<vpImageC
 
 }
 
-void bindings_vpImageConvert(py::class_<vpImageConvert, std::shared_ptr<vpImageConvert>> &pyImageConvert)
+void bindings_vpImageConvert(py::class_<VISP_NAMESPACE_ADDRESSING vpImageConvert, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpImageConvert>> &pyImageConvert)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   // Simple conversions where the size input is a single argument
   {
     std::vector<SimpleConversionStruct<ConversionFunction1D>> conversions = {
