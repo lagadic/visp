@@ -1549,7 +1549,7 @@ public:
 #ifdef VISP_HAVE_OPENMP
       }
 #endif
-    }
+      }
   }
 
   /**
@@ -1880,23 +1880,23 @@ public:
       sigma = static_cast<FilterType>((size - 1) / 6.0);
     }
 
-    int middle = (static_cast<int>(size) - 1) / 2;
+    // Utilisation de unsigned int
+    unsigned int middle = (size - 1) / 2;
     FilterType sigma2 = static_cast<FilterType>(vpMath::sqr(static_cast<double>(sigma)));
     FilterType coef1 = static_cast<FilterType>(1. / (static_cast<double>(sigma) * sqrt(2. * M_PI)));
     FilterType v_2_sigma2 = static_cast<FilterType>(2. * static_cast<double>(sigma2));
-    for (int i = 0; i <= middle; ++i) {
-      filter[i] = coef1 * static_cast<FilterType>(exp(static_cast<double>(-static_cast<FilterType>(i * i) / v_2_sigma2)));
+
+    for (unsigned int i = 0; i <= middle; ++i) {
+      filter[i] = coef1 * static_cast<FilterType>(exp(static_cast<double>(-(double)(i * i) / v_2_sigma2)));
     }
+
     if (normalize) {
       // renormalization
-      FilterType sum = 0;
-      const unsigned int val2 = 2U;
-      for (int i = 1; i <= middle; ++i) {
-        sum += val2 * filter[i];
+      FilterType sum = filter[0];
+      for (unsigned int i = 1; i <= middle; ++i) {
+        sum += static_cast<FilterType>(2) * filter[i];
       }
-      sum += filter[0];
-
-      for (int i = 0; i <= middle; ++i) {
+      for (unsigned int i = 0; i <= middle; ++i) {
         filter[i] = filter[i] / sum;
       }
     }
@@ -1928,29 +1928,31 @@ public:
       sigma = static_cast<FilterType>((size - 1) / 6.0);
     }
 
-    const int half = 2;
-    int middle = (static_cast<int>(size) - 1) / half;
+    const unsigned int half = 2;
+    unsigned int middle = (size - 1) / half;
     FilterType sigma2 = static_cast<FilterType>(vpMath::sqr(static_cast<double>(sigma)));
     FilterType coef_1 = static_cast<FilterType>(1. / (static_cast<double>(sigma) * sqrt(2. * M_PI)));
     FilterType coef_1_over_2 = coef_1 / static_cast<FilterType>(2.);
     FilterType v_2_coef_1 = static_cast<FilterType>(2.) * coef_1;
     FilterType v_2_sigma2 = static_cast<FilterType>(2.) * sigma2;
+
     filter[0] = 0.;
-    for (int i = 1; i <= middle; ++i) {
+    for (unsigned int i = 1; i <= middle; ++i) {
       FilterType i_plus_1 = static_cast<FilterType>(i + 1);
       FilterType i_minus_1 = static_cast<FilterType>(i - 1);
-      filter[i] = -coef_1_over_2 * (static_cast<FilterType>(exp(-static_cast<double>(i_plus_1 * i_plus_1 / v_2_sigma2))) - static_cast<FilterType>(exp(-static_cast<double>(i_minus_1 * i_minus_1 / v_2_sigma2))));
+      filter[i] = -coef_1_over_2 * (static_cast<FilterType>(exp(-(double)(i_plus_1 * i_plus_1) / v_2_sigma2)) -
+                                    static_cast<FilterType>(exp(-(double)(i_minus_1 * i_minus_1) / v_2_sigma2)));
     }
 
     if (normalize) {
       FilterType sum = static_cast<FilterType>(0);
-      for (int i = 1; i <= middle; ++i) {
+      for (unsigned int i = 1; i <= middle; ++i) {
         FilterType i_ = static_cast<FilterType>(i);
         sum += v_2_coef_1 * static_cast<FilterType>(exp(-static_cast<double>(i_ * i_ / v_2_sigma2)));
       }
       sum += coef_1;
 
-      for (int i = 1; i <= middle; ++i) {
+      for (unsigned int i = 1; i <= middle; ++i) {
         filter[i] = filter[i] / sum;
       }
     }
