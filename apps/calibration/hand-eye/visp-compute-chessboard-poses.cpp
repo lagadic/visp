@@ -353,11 +353,11 @@ int main(int argc, const char **argv)
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
       if (display) {
         delete display;
+      }
+#endif
     }
 #endif
   }
-#endif
-}
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
   }
@@ -376,8 +376,8 @@ int main()
 #if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION < 0x050000) && !defined(HAVE_OPENCV_CALIB3D)
   std::cerr << "OpenCV calib3d module is requested to compute the pose of the chessboard." << std::endl;
 #endif
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x050000) && !defined(HAVE_OPENCV_GEOMETRY)
-  std::cerr << "OpenCV 3d module is requested to compute the pose of the chessboard." << std::endl;
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x050000) && !defined(HAVE_OPENCV_CALIB)
+  std::cerr << "OpenCV calib module is requested to compute the pose of the chessboard." << std::endl;
 #endif
 #if !defined(VISP_HAVE_PUGIXML)
   std::cout << "pugixml built-in 3rdparty is requested to compute the pose of the chessboard." << std::endl;
