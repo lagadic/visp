@@ -222,9 +222,6 @@ void convertDepthImageToDisplayImage(const vpImage<float> &Idepth, vpImage<unsig
 */
 int main(int argc, const char **argv)
 {
-#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-  vpDisplay *display = nullptr;
-#endif
   try {
     std::string env_ipath;
     std::string opt_ipath;
