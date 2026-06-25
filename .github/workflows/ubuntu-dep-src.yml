@@ -286,6 +286,7 @@ jobs:
         LD_LIBRARY_PATH: /opt/openrobots/lib
       working-directory: build
       run: |
+        set -o pipefail
         make -j$(nproc) install 2>&1 | tee make_install.log
         echo "VISP_DIR=$(pwd)/install" >> $GITHUB_ENV
         echo $VISP_DIR

@@ -130,6 +130,7 @@ jobs:
     - name: Compile
       working-directory: build
       run: |
+        set -o pipefail
         make -j$(nproc) install 2>&1 | tee make_install.log
         # Filter and group warnings into a separate file
         # grep exits with status 1 when no match is found: don't let that fail the step
