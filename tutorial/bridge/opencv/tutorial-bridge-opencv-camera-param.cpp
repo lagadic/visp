@@ -36,8 +36,8 @@ int main()
   //! [Set OpenCV camera parameters]
 #if (VISP_HAVE_OPENCV_VERSION >= 0x050000)
   cv::Mat K = cv::Mat_<double>(3, 3);
-  K.at<double>(0, 0) = cam.get_px();K.at<double>(0, 1) = 0; K.at<double>(0, 2) = cam.get_u0();
-  K.at<double>(1, 0) = 0.;K.at<double>(1, 1) = cam.get_py();K.at<double>(1, 2) = cam.get_v0();
+  K.at<double>(0, 0) = cam.get_px(); K.at<double>(0, 1) = 0; K.at<double>(0, 2) = cam.get_u0();
+  K.at<double>(1, 0) = 0.; K.at<double>(1, 1) = cam.get_py(); K.at<double>(1, 2) = cam.get_v0();
   K.at<double>(2, 0) = 0; K.at<double>(2, 1) = 0; K.at<double>(2, 2) = 1;
   cv::Mat D = cv::Mat_<double>(4, 1, 0.);
   D.at<double>(0, 0) = cam.get_kud();
@@ -86,7 +86,7 @@ int main()
   std::cout << "This tutorial requires OpenCV calib3d module." << std::endl;
 #endif
 #if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x050000) && !defined(HAVE_OPENCV_GEOMETRY)
-  std::cout << "This tutorial requires OpenCV 3d module." << std::endl;
+  std::cout << "This tutorial requires OpenCV geometry module." << std::endl;
 #endif
   return EXIT_SUCCESS;
 }
