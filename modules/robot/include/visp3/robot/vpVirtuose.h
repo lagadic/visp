@@ -166,7 +166,7 @@ public:
   bool getPower() const;
   vpColVector getVelocity() const;
 
-  void init();
+  void init() VP_OVERRIDE;
 
   void setArticularForce(const vpColVector &articularForce);
   void setArticularPosition(const vpColVector &articularPosition);

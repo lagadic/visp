@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -113,7 +113,7 @@ public:
   void setPosition(const vpRobot::vpControlFrameType frame, const vpPoseVector &pose);
   void setPositioningVelocity(double velocity);
 
-  vpRobot::vpRobotStateType setRobotState(vpRobot::vpRobotStateType newState);
+  vpRobot::vpRobotStateType setRobotState(vpRobot::vpRobotStateType newState) VP_OVERRIDE;
   void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel) VP_OVERRIDE;
 
   void set_eMc(const vpHomogeneousMatrix &eMc);
@@ -122,12 +122,12 @@ public:
 
 private:
   // Not implemented yet
-  void get_eJe(vpMatrix &) VP_OVERRIDE { }
-  void get_fJe(vpMatrix &) VP_OVERRIDE { }
-  void getDisplacement(const vpRobot::vpControlFrameType, vpColVector &) VP_OVERRIDE { }
+  void get_eJe(vpMatrix &) VP_OVERRIDE {}
+  void get_fJe(vpMatrix &) VP_OVERRIDE {}
+  void getDisplacement(const vpRobot::vpControlFrameType, vpColVector &) VP_OVERRIDE {}
 
 protected:
-  void init();
+  void init() VP_OVERRIDE;
 
   std::shared_ptr<ur_rtde::RTDEReceiveInterface> m_rtde_receive;
   std::shared_ptr<ur_rtde::RTDEControlInterface> m_rtde_control;

@@ -114,7 +114,7 @@ public:
   void setPosition(const vpRobot::vpControlFrameType frame, const double &q1, const double &q2);
   void setPosition(const char *filename);
   void setPositioningVelocity(double velocity);
-  vpRobot::vpRobotStateType setRobotState(vpRobot::vpRobotStateType newState);
+  vpRobot::vpRobotStateType setRobotState(vpRobot::vpRobotStateType newState) VP_OVERRIDE;
 
   void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &q_dot) VP_OVERRIDE;
 

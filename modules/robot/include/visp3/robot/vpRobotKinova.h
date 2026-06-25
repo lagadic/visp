@@ -167,7 +167,7 @@ public:
 protected:
   void closePlugin();
   void getJointPosition(vpColVector &q);
-  void init();
+  void init() VP_OVERRIDE;
   void loadPlugin();
   void setCartVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &v);
   void setJointVelocity(const vpColVector &qdot);
