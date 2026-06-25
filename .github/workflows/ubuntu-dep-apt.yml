@@ -226,4 +226,8 @@ jobs:
 
     - name: Check ViSP build warnings
       working-directory: build
-      run: test ! -s warnings.log
+      run: |
+        if [ -s warnings.log ]; then
+          echo "ViSP build has produced warnings."
+          exit 1
+        fi
