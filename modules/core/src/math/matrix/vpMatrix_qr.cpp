@@ -223,7 +223,7 @@ vpMatrix vpMatrix::inverseByQRLapack() const
     integer lda = static_cast<integer>(rowNum_); // lda is the number of rows because we don't use a submatrix
     integer dimTau = std::min<integer>(rowNum_, colNum_);
     integer dimWork = -1;
-    double *tau = new double[dimTau];
+    double *tau = new double[static_cast<std::size_t>(dimTau)];
     double *work = new double[1];
     integer info;
     vpMatrix C;
@@ -564,8 +564,8 @@ unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, dou
     return 0;
 
   integer dimWork = -1;
-  double *qrdata = new double[m * na];
-  double *tau = new double[std::min<integer>(m, q)];
+  double *qrdata = new double[static_cast<std::size_t>(m * na)];
+  double *tau = new double[static_cast<std::size_t>(std::min<integer>(m, q))];
   double *work = new double[1];
   integer info;
 
@@ -772,10 +772,10 @@ unsigned int vpMatrix::qrPivotLapack(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool
 
   integer dimWork = -1;
   integer min_q_m = std::min<integer>(q, m);
-  double *qrdata = new double[m * na];
-  double *tau = new double[min_q_m];
+  double *qrdata = new double[static_cast<std::size_t>(m * na)];
+  double *tau = new double[static_cast<std::size_t>(min_q_m)];
   double *work = new double[1];
-  integer *p = new integer[na];
+  integer *p = new integer[static_cast<std::size_t>(na)];
   for (int i = 0; i < na; ++i) {
     p[i] = 0;
   }
