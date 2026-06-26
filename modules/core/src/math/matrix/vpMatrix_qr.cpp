@@ -89,7 +89,7 @@ int allocate_work(double **work)
 {
   integer dimWork = static_cast<integer>((*work)[0]);
   delete[] * work;
-  *work = new double[dimWork];
+  *work = new double[static_cast<size_t>(dimWork)];
   return static_cast<int>(dimWork);
 }
 #endif
