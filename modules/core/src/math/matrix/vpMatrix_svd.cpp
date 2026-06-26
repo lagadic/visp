@@ -531,7 +531,7 @@ void vpMatrix::svdLapack(vpColVector &w, vpMatrix &V)
     double wkopt;
     double *work;
 
-    integer *iwork = new integer[8 * static_cast<integer>(std::min<integer>(nr, nc))];
+    integer *iwork = new integer[static_cast<std::size_t>(8 * static_cast<integer>(std::min<integer>(nr, nc)))];
 
     double *s = w.data;
     double *u = V.data;
