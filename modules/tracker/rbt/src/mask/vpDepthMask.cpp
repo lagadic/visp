@@ -96,13 +96,15 @@ void vpDepthMask::updateMask(const vpRBFeatureTrackerInput &frame,
     const int left = static_cast<int>(renderBB.getLeft());
     const int bottom = std::min(static_cast<int>(frame.depth.getHeight()) - 1, static_cast<int>(renderBB.getBottom()));
     const int right = std::min(static_cast<int>(frame.depth.getWidth()) - 1, static_cast<int>(renderBB.getRight()));
+    const int bottomExcl = bottom + 1;  // Exclusive limit
+    const int rightExcl = right + 1;
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-    for (int i = top; i <= bottom; ++i) {
+    for (int i = top; i < bottomExcl; ++i) {
       float *const maskRow = mask[i];
       const float *const depthRow = frame.depth[i];
-      for (int j = left; j <= right; ++j) {
+      for (int j = left; j < rightExcl; ++j) {
         maskRow[j] = getProba(depthRow[j]);
       }
     }
