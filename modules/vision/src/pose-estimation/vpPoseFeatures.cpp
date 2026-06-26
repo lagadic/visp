@@ -43,50 +43,60 @@ vpPoseFeatures::vpPoseFeatures()
   m_covarianceMatrix(), m_featurePoint_Point_list(), m_featurePoint3D_Point_list(), m_featureVanishingPoint_Point_list(),
   m_featureVanishingPoint_DuoLine_list(), m_featureEllipse_Sphere_list(), m_featureEllipse_Circle_list(),
   m_featureLine_Line_list(), m_featureLine_DuoLineInt_List(), m_featureSegment_DuoPoints_list()
-{ }
+{}
 
 vpPoseFeatures::~vpPoseFeatures() { clear(); }
 
 void vpPoseFeatures::clear()
 {
-  for (int i = static_cast<int>(m_featurePoint_Point_list.size()) - 1; i >= 0; i--)
-    delete m_featurePoint_Point_list[static_cast<unsigned int>(i)].desiredFeature;
+  for (unsigned int i = m_featurePoint_Point_list.size() - 1; i-- > 0;) {
+    delete m_featurePoint_Point_list[i].desiredFeature;
+  }
   m_featurePoint_Point_list.clear();
 
-  for (int i = static_cast<int>(m_featurePoint3D_Point_list.size()) - 1; i >= 0; i--)
-    delete m_featurePoint3D_Point_list[static_cast<unsigned int>(i)].desiredFeature;
+  for (unsigned int i = m_featurePoint3D_Point_list.size() - 1; i-- > 0;) {
+    delete m_featurePoint3D_Point_list[i].desiredFeature;
+  }
   m_featurePoint3D_Point_list.clear();
 
-  for (int i = static_cast<int>(m_featureVanishingPoint_Point_list.size()) - 1; i >= 0; i--)
-    delete m_featureVanishingPoint_Point_list[static_cast<unsigned int>(i)].desiredFeature;
+  for (unsigned int i = m_featureVanishingPoint_Point_list.size() - 1; i-- > 0;) {
+    delete m_featureVanishingPoint_Point_list[i].desiredFeature;
+  }
   m_featureVanishingPoint_Point_list.clear();
 
-  for (int i = static_cast<int>(m_featureVanishingPoint_DuoLine_list.size()) - 1; i >= 0; i--)
-    delete m_featureVanishingPoint_DuoLine_list[static_cast<unsigned int>(i)].desiredFeature;
+  for (unsigned int i = m_featureVanishingPoint_DuoLine_list.size() - 1; i-- > 0;) {
+    delete m_featureVanishingPoint_DuoLine_list[i].desiredFeature;
+  }
   m_featureVanishingPoint_DuoLine_list.clear();
 
-  for (int i = static_cast<int>(m_featureEllipse_Sphere_list.size()) - 1; i >= 0; i--)
-    delete m_featureEllipse_Sphere_list[static_cast<unsigned int>(i)].desiredFeature;
+  for (unsigned int i = m_featureEllipse_Sphere_list.size() - 1; i-- > 0;) {
+    delete m_featureEllipse_Sphere_list[i].desiredFeature;
+  }
   m_featureEllipse_Sphere_list.clear();
 
-  for (int i = static_cast<int>(m_featureEllipse_Circle_list.size()) - 1; i >= 0; i--)
-    delete m_featureEllipse_Circle_list[static_cast<unsigned int>(i)].desiredFeature;
+  for (unsigned int i = m_featureEllipse_Circle_list.size() - 1; i-- > 0;) {
+    delete m_featureEllipse_Circle_list[i].desiredFeature;
+  }
   m_featureEllipse_Circle_list.clear();
 
-  for (int i = static_cast<int>(m_featureLine_Line_list.size()) - 1; i >= 0; i--)
-    delete m_featureLine_Line_list[static_cast<unsigned int>(i)].desiredFeature;
+  for (unsigned int i = m_featureLine_Line_list.size() - 1; i-- > 0;) {
+    delete m_featureLine_Line_list[i].desiredFeature;
+  }
   m_featureLine_Line_list.clear();
 
-  for (int i = static_cast<int>(m_featureLine_DuoLineInt_List.size()) - 1; i >= 0; i--)
-    delete m_featureLine_DuoLineInt_List[static_cast<unsigned int>(i)].desiredFeature;
+  for (unsigned int i = m_featureLine_DuoLineInt_List.size() - 1; i-- > 0;) {
+    delete m_featureLine_DuoLineInt_List[i].desiredFeature;
+  }
   m_featureLine_DuoLineInt_List.clear();
 
-  for (int i = static_cast<int>(m_featureSegment_DuoPoints_list.size()) - 1; i >= 0; i--)
-    delete m_featureSegment_DuoPoints_list[static_cast<unsigned int>(i)].desiredFeature;
+  for (unsigned int i = m_featureSegment_DuoPoints_list.size() - 1; i-- > 0;) {
+    delete m_featureSegment_DuoPoints_list[i].desiredFeature;
+  }
   m_featureSegment_DuoPoints_list.clear();
 
-  for (int i = static_cast<int>(m_featureSpecific_list.size()) - 1; i >= 0; i--)
-    delete m_featureSpecific_list[static_cast<unsigned int>(i)];
+  for (unsigned int i = m_featureSpecific_list.size() - 1; i-- > 0;) {
+    delete m_featureSpecific_list[i];
+  }
   m_featureSpecific_list.clear();
 
   m_maxSize = 0;
@@ -471,5 +481,5 @@ END_VISP_NAMESPACE
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_vision.a(vpPoseFeatures.cpp.o) has no symbols
-void dummy_vpPoseFeatures() { }
+void dummy_vpPoseFeatures() {}
 #endif
