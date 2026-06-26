@@ -327,6 +327,9 @@ vp_create_compat_headers("include/visp3/core/vpConfig.h")
 if (UNIX)
   vp_set_source_file_compile_flag(src/image/vpFont.cpp -Wno-misleading-indentation -Wno-float-equal -Wno-sign-conversion -Wno-strict-overflow)
   vp_set_source_file_compile_flag(src/tools/file/vpIoTools_npy.cpp -Wno-strict-aliasing -Wno-sign-conversion -Wno-strict-overflow)
+  vp_set_source_file_compile_flag(src/math/matrix/vpMatrix_cholesky.cpp -Wno-strict-overflow) # warnings due to eigen3
+  vp_set_source_file_compile_flag(src/math/matrix/vpMatrix_lu.cpp -Wno-strict-overflow) # warnings due to eigen3
+  vp_set_source_file_compile_flag(src/math/matrix/vpMatrix_svd.cpp -Wno-strict-overflow) # warnings due to eigen3
 elseif(MSVC AND CMAKE_CXX_COMPILER_ID MATCHES "Clang") # clang-cl usage
   vp_set_source_file_compile_flag(src/image/vpFont.cpp -Wno-reserved-identifier -Wno-sign-conversion -Wno-zero-as-null-pointer-constant -Wno-old-style-cast -Wno-sign-conversion -Wno-float-equal -Wno-cast-qual -Wno-switch-default -Wno-c++23-extensions -Wno-implicit-fallthrough -Wno-implicit-int-float-conversion -Wno-cast-qual -Wno-comma -Wno-double-promotion)
   vp_set_source_file_compile_flag(src/tools/file/vpIoTools_npy.cpp -Wno-old-style-cast -Wno-sign-conversion -Wno-switch-default -Wno-sign-conversion -Wno-comma -Wno-zero-as-null-pointer-constant -Wno-tautological-type-limit-compare -Wno-cast-align -Wno-extra-semi-stmt -Wno-missing-prototypes)
@@ -360,8 +363,6 @@ vp_glob_module_copy_data("test/math/data/*.pgm" "modules/core" NO_INSTALL)
 vp_glob_module_copy_data("src/image/private/Rubik-Regular.ttf" "data/font")
 
 if(CMAKE_COMPILER_IS_GNUCXX)
-  set_source_files_properties(
-    test/image/testHSVGradient.cpp
-    PROPERTIES COMPILE_FLAGS "-Wno-strict-overflow"
-  )
+  set_source_files_properties(test/image/testHSVGradient.cpp PROPERTIES COMPILE_FLAGS "-Wno-strict-overflow")
+  set_source_files_properties(test/math/perfMatrixMultiplication.cpp PROPERTIES COMPILE_FLAGS "-Wno-strict-overflow")
 endif()
