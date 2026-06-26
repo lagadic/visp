@@ -124,7 +124,7 @@ void vpRBKltTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const
       }
     }
     // Remove tracking from klt: iterate in reverse order to invalidate iterator i (shifting in the klt list)
-    for (int i = static_cast<int>(kltIndicesToRemove.size()) - 1; i >= 0; --i) {
+    for (size_t i = kltIndicesToRemove.size() - 1; i-- > 0;) {
       m_klt.suppressFeature(static_cast<int>(kltIndicesToRemove[static_cast<unsigned int>(i)]));
     }
   }
@@ -210,7 +210,8 @@ void vpRBKltTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const
 
 void vpRBKltTracker::trackFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &/*previousFrame*/, const vpHomogeneousMatrix &cMo)
 {
-  int nbKltFeatures = m_klt.getNbFeatures();
+  const unsigned int nbKltFeatures = static_cast<unsigned int>(m_klt.getNbFeatures());
+
   if (nbKltFeatures > 0) {
     m_klt.track(m_I);
   }
@@ -218,13 +219,12 @@ void vpRBKltTracker::trackFeatures(const vpRBFeatureTrackerInput &frame, const v
   const vpHomogeneousMatrix oMc = cMo.inverse();
 
   bool testMask = m_useMask && frame.hasMask();
-  nbKltFeatures = m_klt.getNbFeatures();
   std::vector<unsigned> kltIndicesToRemove;
-  for (int i = 0; i < nbKltFeatures; ++i) {
+  for (unsigned int i = 0; i < nbKltFeatures; ++i) {
     long id = 0;
     float u = 0.f, v = 0.f;
     double x = 0.0, y = 0.0;
-    m_klt.getFeature(i, id, u, v);
+    m_klt.getFeature(static_cast<int>(i), id, u, v);
     unsigned int uu = static_cast<unsigned int>(round(u)), uv = static_cast<unsigned int>(round(v));
     // Filter points that are too close to image borders and cannot be reliably tracked
     if (isTooCloseToBorder(uv, uu, frame.renders.depth.getRows(), frame.renders.depth.getCols(), m_border)) {
@@ -254,7 +254,7 @@ void vpRBKltTracker::trackFeatures(const vpRBFeatureTrackerInput &frame, const v
   }
 
   // Remove tracking from klt: iterate in reverse order to invalidate iterator i (shifting in the klt list)
-  for (int i = static_cast<int>(kltIndicesToRemove.size()) - 1; i >= 0; --i) {
+  for (size_t i = kltIndicesToRemove.size() - 1; i-- > 0;) {
     m_klt.suppressFeature(static_cast<int>(kltIndicesToRemove[static_cast<unsigned int>(i)]));
   }
 
