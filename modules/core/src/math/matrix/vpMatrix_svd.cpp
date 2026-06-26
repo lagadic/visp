@@ -521,8 +521,8 @@ void vpMatrix::svdLapack(vpColVector &w, vpMatrix &V)
       memcpy(a, this->data, this->getRows() * this->getCols() * sizeof(double));
     }
 
-    integer m = (integer)(nc);
-    integer n = (integer)(nr);
+    integer m = static_cast<integer>(nc);
+    integer n = static_cast<integer>(nr);
     integer lda = nc;
     integer ldu = nc;
     integer ldvt = std::min<integer>(nr, nc);
@@ -531,7 +531,7 @@ void vpMatrix::svdLapack(vpColVector &w, vpMatrix &V)
     double wkopt;
     double *work;
 
-    integer *iwork = new integer[8 * static_cast<integer>(std::min<integer>(nr, nc))];
+    integer *iwork = new integer[static_cast<std::size_t>(8 * static_cast<integer>(std::min<integer>(nr, nc)))];
 
     double *s = w.data;
     double *u = V.data;

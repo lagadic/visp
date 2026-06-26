@@ -63,10 +63,10 @@ typedef MKL_INT integer;
 
 integer allocate_work(double **work)
 {
-  integer dimWork = (integer)((*work)[0]);
+  integer dimWork = static_cast<integer>((*work)[0]);
   delete[] * work;
   *work = new double[dimWork];
-  return (integer)dimWork;
+  return static_cast<integer>(dimWork);
 }
 #elif !defined(VISP_HAVE_GSL)
 #ifdef VISP_HAVE_LAPACK_BUILT_IN
@@ -87,9 +87,9 @@ int allocate_work(double **work);
 
 int allocate_work(double **work)
 {
-  unsigned int dimWork = static_cast<unsigned int>((*work)[0]);
+  integer dimWork = static_cast<integer>((*work)[0]);
   delete[] * work;
-  *work = new double[dimWork];
+  *work = new double[static_cast<size_t>(dimWork)];
   return static_cast<int>(dimWork);
 }
 #endif
@@ -218,12 +218,12 @@ vpMatrix vpMatrix::inverseByQRLapack() const
                               rowNum, colNum));
     }
 
-    integer rowNum_ = (integer)this->getRows();
-    integer colNum_ = (integer)this->getCols();
-    integer lda = (integer)rowNum_; // lda is the number of rows because we don't use a submatrix
+    integer rowNum_ = static_cast<integer>(this->getRows());
+    integer colNum_ = static_cast<integer>(this->getCols());
+    integer lda = static_cast<integer>(rowNum_); // lda is the number of rows because we don't use a submatrix
     integer dimTau = std::min<integer>(rowNum_, colNum_);
     integer dimWork = -1;
-    double *tau = new double[dimTau];
+    double *tau = new double[static_cast<std::size_t>(dimTau)];
     double *work = new double[1];
     integer info;
     vpMatrix C;
@@ -542,8 +542,8 @@ unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, dou
 
   return r;
 #else
-  integer m = (integer)rowNum; // also rows of Q
-  integer n = (integer)colNum; // also columns of R
+  integer m = static_cast<integer>(rowNum); // also rows of Q
+  integer n = static_cast<integer>(colNum); // also columns of R
   integer r = std::min<integer>(n, m);  // a priori non-null rows of R = rank of R
   integer q = r;               // columns of Q and rows of R
   integer na = n;              // columns of A
@@ -564,8 +564,8 @@ unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, dou
     return 0;
 
   integer dimWork = -1;
-  double *qrdata = new double[m * na];
-  double *tau = new double[std::min<integer>(m, q)];
+  double *qrdata = new double[static_cast<std::size_t>(m * na)];
+  double *tau = new double[static_cast<std::size_t>(std::min<integer>(m, q))];
   double *work = new double[1];
   integer info;
 
@@ -772,10 +772,10 @@ unsigned int vpMatrix::qrPivotLapack(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool
 
   integer dimWork = -1;
   integer min_q_m = std::min<integer>(q, m);
-  double *qrdata = new double[m * na];
-  double *tau = new double[min_q_m];
+  double *qrdata = new double[static_cast<std::size_t>(m * na)];
+  double *tau = new double[static_cast<std::size_t>(min_q_m)];
   double *work = new double[1];
-  integer *p = new integer[na];
+  integer *p = new integer[static_cast<std::size_t>(na)];
   for (int i = 0; i < na; ++i) {
     p[i] = 0;
   }
@@ -1249,7 +1249,7 @@ vpMatrix vpMatrix::inverseTriangular(bool upper) const
 
   return inv;
 #else
-  integer n = (integer)rowNum; // lda is the number of rows because we don't use a submatrix
+  integer n = static_cast<integer>(rowNum); // lda is the number of rows because we don't use a submatrix
 
   vpMatrix R = *this;
   integer info;

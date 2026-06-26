@@ -308,7 +308,7 @@ public: /* Methode publiques */
 
   /* --- ETAT ------------------------------------------------------------- */
 
-  vpRobot::vpRobotStateType setRobotState(vpRobot::vpRobotStateType newState);
+  vpRobot::vpRobotStateType setRobotState(vpRobot::vpRobotStateType newState) VP_OVERRIDE;
 
   /* --- VITESSE ---------------------------------------------------------- */
 

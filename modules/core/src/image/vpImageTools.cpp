@@ -803,9 +803,10 @@ void vpImageTools::templateMatching(const vpImage<unsigned char> &I, const vpIma
 #endif
     for (int cpt = 0; cpt < end; ++cpt) {
       unsigned int i_width = I.getWidth();
+      unsigned int cpt_u = static_cast<unsigned int>(cpt);
       for (unsigned int j = 0; j < (i_width - width_tpl); j += step_u) {
-        I_score[vec_step_v[cpt]][j] =
-          normalizedCorrelation(I_double, I_tpl_double, II, IIsq, II_tpl, IIsq_tpl, vec_step_v[cpt], j);
+        I_score[vec_step_v[cpt_u]][j] =
+          normalizedCorrelation(I_double, I_tpl_double, II, IIsq, II_tpl, IIsq_tpl, vec_step_v[cpt_u], j);
       }
     }
 #endif

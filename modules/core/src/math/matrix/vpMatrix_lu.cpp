@@ -346,12 +346,12 @@ vpMatrix vpMatrix::inverseByLULapack() const
       throw(vpException(vpException::fatalError, "Cannot inverse a non square matrix (%ux%u) by LU", rowNum, colNum));
     }
 
-    integer dim = (integer)rowNum;
+    integer dim = static_cast<integer>(rowNum);
     integer lda = dim;
     integer info;
     integer lwork = dim * dim;
-    integer *ipiv = new integer[dim + 1];
-    double *work = new double[lwork];
+    integer *ipiv = new integer[static_cast<std::size_t>(dim + 1)];
+    double *work = new double[static_cast<std::size_t>(lwork)];
 
     vpMatrix A = *this;
 
@@ -441,10 +441,10 @@ double vpMatrix::detByLULapack() const
                         rowNum, colNum));
     }
 
-    integer dim = (integer)rowNum;
+    integer dim = static_cast<integer>(rowNum);
     integer lda = dim;
     integer info;
-    integer *ipiv = new integer[dim + 1];
+    integer *ipiv = new integer[static_cast<std::size_t>(dim + 1)];
 
     vpMatrix A = *this;
 

@@ -490,7 +490,7 @@ public: /* Methode publiques */
   void setPositioningVelocity(double velocity);
 
   // State
-  vpRobot::vpRobotStateType setRobotState(vpRobot::vpRobotStateType newState);
+  vpRobot::vpRobotStateType setRobotState(vpRobot::vpRobotStateType newState) VP_OVERRIDE;
 
   // Velocity control
   void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &velocity) VP_OVERRIDE;

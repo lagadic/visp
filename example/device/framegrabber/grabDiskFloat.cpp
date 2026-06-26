@@ -45,6 +45,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <visp3/core/vpConfig.h>
+
 #if defined(VISP_HAVE_DISPLAY)
 
 #include <visp3/core/vpImage.h>
@@ -222,9 +223,6 @@ void convertDepthImageToDisplayImage(const vpImage<float> &Idepth, vpImage<unsig
 */
 int main(int argc, const char **argv)
 {
-#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-  vpDisplay *display = nullptr;
-#endif
   try {
     std::string env_ipath;
     std::string opt_ipath;
@@ -355,11 +353,6 @@ int main(int argc, const char **argv)
   }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-    if (display != nullptr) {
-      delete display;
-    }
-#endif
     return EXIT_FAILURE;
   }
 }
