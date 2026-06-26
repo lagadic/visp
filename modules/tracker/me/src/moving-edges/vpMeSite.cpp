@@ -61,9 +61,12 @@ struct vpMeSiteHypothesis
 
 static bool outsideImage(int i, int j, int half, int rows, int cols)
 {
-  int half_1 = half + 1;
-  int half_3 = half + 3;
-  return ((0 < (half_1 - i)) || (((i - rows) + half_3) > 0) || (0 < (half_1 - j)) || (((j - cols) + half_3) > 0));
+  const int min_boundary = half + 1;
+  const int max_row_boundary = rows - half - 3;
+  const int max_col_boundary = cols - half - 3;
+
+  return (i < min_boundary || i > max_row_boundary ||
+          j < min_boundary || j > max_col_boundary);
 }
 #endif
 
