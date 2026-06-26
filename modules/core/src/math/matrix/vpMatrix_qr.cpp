@@ -63,10 +63,10 @@ typedef MKL_INT integer;
 
 integer allocate_work(double **work)
 {
-  integer dimWork = (integer)((*work)[0]);
+  integer dimWork = static_cast<integer>((*work)[0]);
   delete[] * work;
   *work = new double[dimWork];
-  return (integer)dimWork;
+  return static_cast<integer>(dimWork);
 }
 #elif !defined(VISP_HAVE_GSL)
 #ifdef VISP_HAVE_LAPACK_BUILT_IN
@@ -87,7 +87,7 @@ int allocate_work(double **work);
 
 int allocate_work(double **work)
 {
-  unsigned int dimWork = static_cast<unsigned int>((*work)[0]);
+  integer dimWork = static_cast<integer>((*work)[0]);
   delete[] * work;
   *work = new double[dimWork];
   return static_cast<int>(dimWork);
@@ -218,9 +218,9 @@ vpMatrix vpMatrix::inverseByQRLapack() const
                               rowNum, colNum));
     }
 
-    integer rowNum_ = (integer)this->getRows();
-    integer colNum_ = (integer)this->getCols();
-    integer lda = (integer)rowNum_; // lda is the number of rows because we don't use a submatrix
+    integer rowNum_ = static_cast<integer>(this->getRows());
+    integer colNum_ = static_cast<integer>(this->getCols());
+    integer lda = static_cast<integer>(rowNum_); // lda is the number of rows because we don't use a submatrix
     integer dimTau = std::min<integer>(rowNum_, colNum_);
     integer dimWork = -1;
     double *tau = new double[dimTau];
@@ -542,8 +542,8 @@ unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, dou
 
   return r;
 #else
-  integer m = (integer)rowNum; // also rows of Q
-  integer n = (integer)colNum; // also columns of R
+  integer m = static_cast<integer>(rowNum); // also rows of Q
+  integer n = static_cast<integer>(colNum); // also columns of R
   integer r = std::min<integer>(n, m);  // a priori non-null rows of R = rank of R
   integer q = r;               // columns of Q and rows of R
   integer na = n;              // columns of A
@@ -1249,7 +1249,7 @@ vpMatrix vpMatrix::inverseTriangular(bool upper) const
 
   return inv;
 #else
-  integer n = (integer)rowNum; // lda is the number of rows because we don't use a submatrix
+  integer n = static_cast<integer>(rowNum); // lda is the number of rows because we don't use a submatrix
 
   vpMatrix R = *this;
   integer info;
