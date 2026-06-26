@@ -268,13 +268,15 @@ vpCircleHoughTransform::computeCenterCandidates()
         nbVotes = std::max<int>(nbVotes, static_cast<int>(centersAccum[y][x]));
       }
       else if (left >= 0) {
-        int cx = static_cast<int>(((left + x) - 1) * 0.5f);
+        int cx = (left + x - 1) / 2;
         float sumVotes = 0., x_avg = 0., y_avg = 0.;
         int averagingWindowHalfSize = m_algoParams.m_averagingWindowSize / 2;
         int startingRow = std::max<int>(0, y - averagingWindowHalfSize);
         int startingCol = std::max<int>(0, cx - averagingWindowHalfSize);
-        int endRow = std::min<int>(accumulatorHeight, y + averagingWindowHalfSize + 1);
-        int endCol = std::min<int>(accumulatorWidth, cx + averagingWindowHalfSize + 1);
+        const int rowUpperBound = y + averagingWindowHalfSize + 1;
+        const int colUpperBound = cx + averagingWindowHalfSize + 1;
+        int endRow = std::min<int>(accumulatorHeight, rowUpperBound);
+        int endCol = std::min<int>(accumulatorWidth, colUpperBound);
         for (int r = startingRow; r < endRow; ++r) {
           for (int c = startingCol; c < endCol; ++c) {
             sumVotes += centersAccum[r][c];
