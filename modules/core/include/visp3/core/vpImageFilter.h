@@ -2733,7 +2733,8 @@ private:
     // Computing the difference and sign for row 1 column 0, which corresponds to the current row of the image
     Idiff[static_cast<size_t>(nbCols)] = static_cast<OutputType>(I.bitmap[istart + 1].V - I.bitmap[istart].V);
 
-    for (int iter = 1; iter < nbCols - 1; ++iter) {
+    const int nbColsM1 = nbCols - 1;
+    for (int iter = 1; iter < nbColsM1; ++iter) {
       if (iam > 0) {
         // Computing the difference and sign for row 0, which corresponds to the previous row of the image
         OutputType distanceRow0 = static_cast<OutputType>(I.bitmap[istart - nbCols + iter + 1].V - I.bitmap[istart - nbCols + iter].V);

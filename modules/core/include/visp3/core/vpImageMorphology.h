@@ -482,7 +482,7 @@ void vpImageMorphology::imageOperation(vpImage<T> &I, vpPixelOperation<T> *opera
   for (int r = 0; r < height_in; ++r) {
     // Computing the rows we can explore without going outside the limits of the image
     int r_iterator_start = -halfKernelSize, r_iterator_stop = halfKernelSize + 1;
-    if ((r - halfKernelSize) < 0) {
+    if (r < halfKernelSize) {
       r_iterator_start = -r;
     }
     else if ((r + halfKernelSize) >= height_in) {
@@ -492,7 +492,7 @@ void vpImageMorphology::imageOperation(vpImage<T> &I, vpPixelOperation<T> *opera
       T value = I[r][c];
       // Computing the columns we can explore without going outside the limits of the image
       int c_iterator_start = -halfKernelSize, c_iterator_stop = halfKernelSize + 1;
-      if ((c - halfKernelSize) < 0) {
+      if (c < halfKernelSize) {
         c_iterator_start = -c;
       }
       else if ((c + halfKernelSize) >= width_in) {
