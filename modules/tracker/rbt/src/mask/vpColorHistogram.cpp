@@ -138,15 +138,18 @@ void vpColorHistogram::computeProbas(const vpImage<vpRGBa> &image, vpImage<float
   const int h = static_cast<int>(image.getHeight()), w = static_cast<int>(image.getWidth());
   const int top = static_cast<int>(bb.getTop());
   const int left = static_cast<int>(bb.getLeft());
-  const int bottom = std::min(h- 1, static_cast<int>(bb.getBottom()));
+  const int bottom = std::min(h - 1, static_cast<int>(bb.getBottom()));
   const int right = std::min(w - 1, static_cast<int>(bb.getRight()));
+  const int bottomExcl = bottom + 1;  // Exclusive limit
+  const int rightExcl = right + 1;
+
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-  for (int i = top; i <= bottom; ++i) {
+  for (int i = top; i < bottomExcl; ++i) {
     const vpRGBa *colorRow = image[i];
     float *probaRow = proba[i];
-    for (int j = left; j <= right; ++j) {
+    for (int j = left; j < rightExcl; ++j) {
       probaRow[j] = m_probas[colorToIndex(colorRow[j])];
     }
   }
