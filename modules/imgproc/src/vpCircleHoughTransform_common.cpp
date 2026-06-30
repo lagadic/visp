@@ -327,16 +327,6 @@ vpCircleHoughTransform::detect(const vpImage<unsigned char> &I)
   return m_finalCircles;
 }
 
-VISP_EXPORT bool operator==(const vpImageCircle &a, const vpImageCircle &b)
-{
-  vpImagePoint aCenter = a.getCenter();
-  vpImagePoint bCenter = b.getCenter();
-  bool haveSameCenter = (std::abs(aCenter.get_u() - bCenter.get_u())
-                         + std::abs(aCenter.get_v() - bCenter.get_v())) <= (2. * std::numeric_limits<double>::epsilon());
-  bool haveSameRadius = std::abs(a.getRadius() - b.getRadius()) <= (2.f * std::numeric_limits<float>::epsilon());
-  return (haveSameCenter && haveSameRadius);
-}
-
 std::string
 vpCircleHoughTransform::toString() const
 {
