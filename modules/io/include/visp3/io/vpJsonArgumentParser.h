@@ -63,7 +63,7 @@ nlohmann::json convertCommandLineArgument(const std::string &arg)
  * @return nlohmann::json The JSON representation of the string
  */
 template<>
-nlohmann::json convertCommandLineArgument<std::string>(const std::string &arg)
+inline nlohmann::json convertCommandLineArgument<std::string>(const std::string &arg)
 {
   nlohmann::json j = arg;
   return j;
