@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -210,9 +210,6 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ba
 */
 int main(int argc, const char **argv)
 {
-#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-  vpDisplay *display = nullptr;
-#endif
   try {
     std::string env_ipath;
     std::string opt_ipath;
@@ -342,17 +339,12 @@ int main(int argc, const char **argv)
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
     if (display != nullptr) {
       delete display;
-  }
+    }
 #endif
     return EXIT_SUCCESS;
-}
+  }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-    if (display != nullptr) {
-      delete display;
-  }
-#endif
     return EXIT_FAILURE;
   }
 }

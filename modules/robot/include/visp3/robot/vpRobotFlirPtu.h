@@ -138,14 +138,14 @@ public:
   void setTiltPosLimits(const vpColVector &tilt_limits);
 
   void setPositioningVelocity(double velocity);
-  vpRobot::vpRobotStateType setRobotState(vpRobot::vpRobotStateType newState);
+  vpRobot::vpRobotStateType setRobotState(vpRobot::vpRobotStateType newState) VP_OVERRIDE;
   void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel) VP_OVERRIDE;
   void stopMotion();
 
   static void emergencyStop(int signo);
 
 protected:
-  void init();
+  void init() VP_OVERRIDE;
   void getLimits();
   void getJointPosition(vpColVector &q);
   void setCartVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &v);
