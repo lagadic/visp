@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@
   \brief Wrapper over Haption Virtuose SDK to control haptic devices.
 */
 
-#ifndef _vpVirtuose_h_
-#define _vpVirtuose_h_
+#ifndef VP_VIRTUOSE_H
+#define VP_VIRTUOSE_H
 
 #include <ostream>
 #include <visp3/core/vpConfig.h>
@@ -166,7 +166,7 @@ public:
   bool getPower() const;
   vpColVector getVelocity() const;
 
-  void init() VP_OVERRIDE;
+  void init();
 
   void setArticularForce(const vpColVector &articularForce);
   void setArticularPosition(const vpColVector &articularPosition);

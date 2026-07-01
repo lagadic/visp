@@ -1212,7 +1212,7 @@ float vpImageCircle::get_n11() const
 bool operator==(const vpImageCircle &a, const vpImageCircle &b)
 {
   bool sameCenter = (a.getCenter() == b.getCenter());
-  bool sameRadius = std::abs(a.getRadius() - b.getRadius()) < 1e-6;
+  bool sameRadius = std::abs(a.getRadius() - b.getRadius()) <= (2.f * std::numeric_limits<float>::epsilon());
 
   return (sameCenter && sameRadius);
 }
