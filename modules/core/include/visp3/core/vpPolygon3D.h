@@ -229,17 +229,19 @@ END_VISP_NAMESPACE
 #  pragma clang diagnostic ignored "-Wexit-time-destructors"
 #endif
 
-NLOHMANN_JSON_SERIALIZE_ENUM(VISP_NAMESPACE_ADDRESSING vpPolygon3D::vpPolygon3DClippingType, {
-    {VISP_NAMESPACE_ADDRESSING vpPolygon3D::NO_CLIPPING, "none"},
-    {VISP_NAMESPACE_ADDRESSING vpPolygon3D::NEAR_CLIPPING, "near"},
-    {VISP_NAMESPACE_ADDRESSING vpPolygon3D::FAR_CLIPPING, "far"},
-    {VISP_NAMESPACE_ADDRESSING vpPolygon3D::LEFT_CLIPPING, "left"},
-    {VISP_NAMESPACE_ADDRESSING vpPolygon3D::RIGHT_CLIPPING, "right"},
-    {VISP_NAMESPACE_ADDRESSING vpPolygon3D::UP_CLIPPING, "up"},
-    {VISP_NAMESPACE_ADDRESSING vpPolygon3D::DOWN_CLIPPING, "down"},
-    {VISP_NAMESPACE_ADDRESSING vpPolygon3D::FOV_CLIPPING, "fov"},
-    {VISP_NAMESPACE_ADDRESSING vpPolygon3D::ALL_CLIPPING, "all"}
+BEGIN_VISP_NAMESPACE
+NLOHMANN_JSON_SERIALIZE_ENUM(vpPolygon3D::vpPolygon3DClippingType, {
+    {vpPolygon3D::NO_CLIPPING, "none"},
+    {vpPolygon3D::NEAR_CLIPPING, "near"},
+    {vpPolygon3D::FAR_CLIPPING, "far"},
+    {vpPolygon3D::LEFT_CLIPPING, "left"},
+    {vpPolygon3D::RIGHT_CLIPPING, "right"},
+    {vpPolygon3D::UP_CLIPPING, "up"},
+    {vpPolygon3D::DOWN_CLIPPING, "down"},
+    {vpPolygon3D::FOV_CLIPPING, "fov"},
+    {vpPolygon3D::ALL_CLIPPING, "all"}
 });
+END_VISP_NAMESPACE
 
 #if defined(__clang__)
 #  pragma clang diagnostic pop

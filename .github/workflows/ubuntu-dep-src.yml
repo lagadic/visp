@@ -286,6 +286,7 @@ jobs:
         LD_LIBRARY_PATH: /opt/openrobots/lib
       working-directory: build
       run: |
+        set -o pipefail
         make -j$(nproc) install 2>&1 | tee make_install.log
         echo "VISP_DIR=$(pwd)/install" >> $GITHUB_ENV
         echo $VISP_DIR
@@ -346,3 +347,11 @@ jobs:
         cd visp_started-build
         cmake ..
         make -j$(nproc)
+
+    - name: Check ViSP build warnings
+      working-directory: build
+      run: |
+        if [ -s warnings.log ]; then
+          echo "ViSP build has produced warnings."
+          exit 1
+        fi

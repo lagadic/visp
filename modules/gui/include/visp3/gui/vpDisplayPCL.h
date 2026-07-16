@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +43,7 @@
 #include <string>
 
 #include <visp3/core/vpColor.h>
+#include <visp3/core/vpColVector.h>
 
 #include <pcl/visualization/cloud_viewer.h>
 #include <pcl/visualization/pcl_visualizer.h>
@@ -109,6 +110,7 @@ public:
   void addPointCloud(std::mutex &mutex, pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud);
   void setPosition(int posx, int posy);
   void setWindowName(const std::string &window_name);
+  void setCameraPosition(const vpColVector &pos, const vpColVector &view, const vpColVector &up);
   void stop();
 private:
   void run();

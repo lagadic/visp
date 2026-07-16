@@ -39,10 +39,12 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_HIGHGUI) &&  defined(HAVE_OPENCV_IMGPROC) && defined(VISP_HAVE_PUGIXML) \
-  && (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_GEOMETRY))) \
-  && ((VISP_HAVE_OPENCV_VERSION >= 0x040700) && defined(HAVE_OPENCV_OBJDETECT)) \
-  && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_HIGHGUI) \
+  && defined(HAVE_OPENCV_IMGPROC) && defined(VISP_HAVE_PUGIXML) \
+  && (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D)) \
+   || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_GEOMETRY))) \
+  && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) \
+  && ((VISP_HAVE_OPENCV_VERSION < 0x040700) || defined(HAVE_OPENCV_OBJDETECT))
 
 #include <map>
 
@@ -56,7 +58,9 @@
 #include <opencv2/calib.hpp>
 #endif
 
+#if (VISP_HAVE_OPENCV_VERSION >= 0x040700)
 #include <opencv2/objdetect/charuco_detector.hpp>
+#endif
 
 #if defined(HAVE_OPENCV_CONTRIB)
 #include <opencv2/contrib/contrib.hpp> // Needed on Ubuntu 16.04 with OpenCV 2.4.9.1
@@ -89,8 +93,13 @@ static void usage(const char *argv[], int error)
     << " [--init-from-xml <camera-init.xml>]"
     << " [--camera-name <name>]"
     << " [--aspect-ratio <ratio>]"
+    << " [--init-px <px>]"
+    << " [--opencv-calib]"
+    << " [--opencv-calib-flags <flag>]"
     << " [--save]"
+    << " [--save-jpg]"
     << " [--output <file.xml>]"
+    << " [--fast-display]"
     << " [--help, -h]" << std::endl
     << std::endl;
   std::cout << "Description" << std::endl
@@ -110,15 +119,17 @@ static void usage(const char *argv[], int error)
     << "    to unset any constraint for px and py parameters." << std::endl
     << "    Default: -1." << std::endl
     << std::endl
-    << "  --init-focal" << std::endl
-    << "    By default, the initial camera focal length is computed such as:" << std::endl
+    << "  --init-px <px>" << std::endl
+    << "    Let us denote px the ratio between the focal length and the size of a pixel." << std::endl
+    << "    By default, the initial px value is computed such as:" << std::endl
     << "    (image_width / 640) x 600." << std::endl
-    << "    The user can instead supply a desired camera focal length using this parameter." << std::endl
+    << "    The user can instead supply a desired px value using this parameter." << std::endl
+    << "    Default: 600" << std::endl
     << std::endl
     << "  --opencv-calib" << std::endl
     << "    Flag to also perform the calibration using the OpenCV calibration pipeline." << std::endl
     << std::endl
-    << "  --opencv-calib-flags" << std::endl
+    << "  --opencv-calib-flags <flag>" << std::endl
     << "    Flags to be passed to the calibrateCameraRO() function." << std::endl
     << "    By default it corresponds to: CALIB_USE_INTRINSIC_GUESS+CALIB_USE_LU." << std::endl
     << "    Concatenation is possible, e.g.: CALIB_USE_INTRINSIC_GUESS+CALIB_FIX_PRINCIPAL_POINT." << std::endl
@@ -198,7 +209,7 @@ int main(int argc, const char *argv[])
       else if (std::string(argv[i]) == "--aspect-ratio" && i + 1 < argc) {
         opt_aspect_ratio = std::atof(argv[++i]);
       }
-      else if (std::string(argv[i]) == "--init-focal" && i + 1 < argc) {
+      else if (std::string(argv[i]) == "--init-px" && i + 1 < argc) {
         opt_use_focal_cmd_line = true;
         opt_init_focal = std::atof(argv[++i]);
       }
@@ -283,6 +294,7 @@ int main(int argc, const char *argv[])
         << " config file is correct..." << "\n";
       return EXIT_FAILURE;
     }
+    std::cout << "Image size: " << I.getWidth() << " x " << I.getHeight() << std::endl;
 
     std::shared_ptr<vpDisplay> d = vpDisplayFactory::createDisplay(I, -1, -1, "", vpDisplay::SCALE_AUTO);
 
@@ -325,6 +337,7 @@ int main(int argc, const char *argv[])
     std::vector<vpCalibration> calibrator;
 
     // Create board 3D object points
+#if (VISP_HAVE_OPENCV_VERSION >= 0x040700)
     if (s.calibrationPattern == Settings::CHARUCOBOARD) {
       for (int i = 0; i < s.boardSize.height-1; i++) {
         for (int j = 0; j < s.boardSize.width-1; j++) {
@@ -350,7 +363,13 @@ int main(int argc, const char *argv[])
       ch_board->setLegacyPattern(s.legacyPattern);
       ch_detector = cv::makePtr<cv::aruco::CharucoDetector>(cv::aruco::CharucoDetector(*ch_board));
     }
-
+#else
+    for (int i = 0; i < s.boardSize.height; i++) {
+      for (int j = 0; j < s.boardSize.width; j++) {
+        model.push_back(vpPoint(j * s.squareSize, i * s.squareSize, 0));
+      }
+    }
+#endif
     std::vector<CalibInfo> calib_info;
     std::multimap<double, vpCameraParameters, std::less<double> > map_cam_sorted; // Sorted by residual
     map_cam_sorted.insert(std::make_pair(1000, cam_init));
@@ -371,7 +390,11 @@ int main(int argc, const char *argv[])
       vpImageConvert::convert(I, cvI);
 
       tee << "Process frame: " << frame_name;
-      bool found = extractCalibrationPoints(s, cvI, ch_detector, pointBuf);
+#if (VISP_HAVE_OPENCV_VERSION >= 0x040700)
+      bool found = extractCalibrationPoints(s, cvI, pointBuf, ch_detector);
+#else
+      bool found = extractCalibrationPoints(s, cvI, pointBuf);
+#endif
 
       tee << ", grid detection status: " << found;
       if (!found)
@@ -462,9 +485,15 @@ int main(int argc, const char *argv[])
     }
 
     // Display calibration pattern occupancy
+#if (VISP_HAVE_OPENCV_VERSION >= 0x040700)
     drawCalibrationOccupancy(I, calib_info,
                              static_cast<unsigned int>(s.boardSize.width),
                              s.calibrationPattern == Settings::CHARUCOBOARD);
+#else
+    drawCalibrationOccupancy(I, calib_info,
+                             static_cast<unsigned int>(s.boardSize.width),
+                             false);
+#endif
 
     cv::Mat1b img(static_cast<int>(I.getHeight()), static_cast<int>(I.getWidth()));
     vpImageConvert::convert(I, img);
@@ -532,9 +561,11 @@ int main(int argc, const char *argv[])
       ss_additional_info << "Circles grid";
       break;
 
+#if (VISP_HAVE_OPENCV_VERSION >= 0x040700)
     case Settings::CHARUCOBOARD:
       ss_additional_info << "ChArUco";
       break;
+#endif
 
     case Settings::UNDEFINED:
     default:
@@ -720,7 +751,12 @@ int main(int argc, const char *argv[])
                                  15 * static_cast<int>(vpDisplay::getDownScalingFactor(I_dist_undist)),
                                  "Draw lines from first / last points.", vpColor::red);
           std::vector<vpImagePoint> grid_points = calib_info[idx].m_imPts;
+
+#if (VISP_HAVE_OPENCV_VERSION >= 0x040700)
           const int offset = (s.calibrationPattern == Settings::CHARUCOBOARD) ? -1 : 0;
+#else
+          const int offset = 0;
+#endif
           for (int i = 0; i < s.boardSize.height+offset; i++) {
             std::vector<vpImagePoint> current_line(grid_points.begin() + i * (s.boardSize.width+offset),
                                                    grid_points.begin() + (i + 1) * (s.boardSize.width+offset));
@@ -744,7 +780,11 @@ int main(int argc, const char *argv[])
           std::vector<cv::Point2f> pointBuf;
           vpImageConvert::convert(I_undist, cvI);
 
-          bool found = extractCalibrationPoints(s, cvI, ch_detector, pointBuf);
+#if (VISP_HAVE_OPENCV_VERSION >= 0x040700)
+          bool found = extractCalibrationPoints(s, cvI, pointBuf, ch_detector);
+#else
+          bool found = extractCalibrationPoints(s, cvI, pointBuf);
+#endif
           if (found) {
             std::vector<vpImagePoint> found_grid_points;
             for (unsigned int i = 0; i < pointBuf.size(); i++) {
@@ -1122,16 +1162,22 @@ int main(int argc, const char *argv[])
       case Settings::CIRCLES_GRID:
         cv_patternType = CV_CIRCLES_GRID;
         break;
+#if (VISP_HAVE_OPENCV_VERSION >= 0x040700)
       case Settings::CHARUCOBOARD:
         cv_patternType = CV_CHARUCOBOARD;
         break;
+#endif
       default:
         tee << "Unsupported calibration pattern type between ViSP (" << s.calibrationPattern << ") and OpenCV." << "\n";
         throw vpException(vpException::badValue, "Unsupported calibration pattern type between ViSP and OpenCV.");
       }
       float cv_squareSize = s.squareSize;
+#if (VISP_HAVE_OPENCV_VERSION >= 0x040700)
       float cv_grid_width = cv_squareSize *
         (cv_patternType != CV_CHARUCOBOARD ? (cv_boardSize.width - 1) : (cv_boardSize.width - 2));
+#else
+      float cv_grid_width = cv_squareSize * (cv_boardSize.width - 1);
+#endif
       bool cv_release_object = false;
       float cv_aspectRatio = 1;
       cv::Matx33d cv_cameraMatrix_ = cv::Matx33d::eye();
@@ -1252,7 +1298,11 @@ int main(int argc, const char *argv[])
                                    15 * static_cast<int>(vpDisplay::getDownScalingFactor(I_dist_undist)),
                                    "Draw lines from first / last points.", vpColor::red);
             std::vector<vpImagePoint> grid_points = calib_info[idx].m_imPts;
+#if (VISP_HAVE_OPENCV_VERSION >= 0x040700)
             const int offset = (s.calibrationPattern == Settings::CHARUCOBOARD) ? -1 : 0;
+#else
+            const int offset = 0;
+#endif
             for (int i = 0; i < s.boardSize.height; i++) {
               std::vector<vpImagePoint> current_line(grid_points.begin() + i * (s.boardSize.width+offset),
                                                      grid_points.begin() + (i + 1) * (s.boardSize.width+offset));
@@ -1276,7 +1326,11 @@ int main(int argc, const char *argv[])
             std::vector<cv::Point2f> pointBuf;
             vpImageConvert::convert(I_undist, cvI);
 
-            bool found = extractCalibrationPoints(s, cvI, ch_detector, pointBuf);
+#if (VISP_HAVE_OPENCV_VERSION >= 0x040700)
+            bool found = extractCalibrationPoints(s, cvI, pointBuf, ch_detector);
+#else
+            bool found = extractCalibrationPoints(s, cvI, pointBuf);
+#endif
             if (found) {
               std::vector<vpImagePoint> found_grid_points;
               for (unsigned int i = 0; i < pointBuf.size(); i++) {

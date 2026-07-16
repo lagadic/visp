@@ -514,7 +514,7 @@ void vpDetectorDNNOpenCV::postProcess(DetectionCandidates &proposals)
     break;
   case SSD_MOBILENET:
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-    void postProcess_SSD_MobileNet(DetectionCandidates & proposals, std::vector<cv::Mat> &dnnRes, const NetConfig & netConfig);
+    postProcess_SSD_MobileNet(proposals, m_dnnRes, m_netConfig);
 #else
     // NB: the two SSD-MobileNet DNNs that have been tested worked only
     // using the ResNet-10 parsing method

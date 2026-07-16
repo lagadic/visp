@@ -190,8 +190,8 @@ vpMatrix vpMatrix::inverseByCholeskyLapack() const
                               rowNum, colNum));
     }
 
-    integer rowNum_ = (integer)this->getRows();
-    integer lda = (integer)rowNum_; // lda is the number of rows because we don't use a submatrix
+    integer rowNum_ = static_cast<integer>(this->getRows());
+    integer lda = static_cast<integer>(rowNum_); // lda is the number of rows because we don't use a submatrix
     integer info;
 
     vpMatrix A = *this;
@@ -248,8 +248,8 @@ vpMatrix vpMatrix::choleskyByLapack()const
                             rowNum, colNum));
   }
 
-  integer rowNum_ = (integer)this->getRows();
-  integer lda = (integer)rowNum_; // lda is the number of rows because we don't use a submatrix
+  integer rowNum_ = static_cast<integer>(this->getRows());
+  integer lda = static_cast<integer>(rowNum_); // lda is the number of rows because we don't use a submatrix
   integer info;
   dpotrf_((char *)"L", &rowNum_, L.data, &lda, &info);
   L = L.transpose(); // For an unknown reason, dpotrf seems to return the transpose of L

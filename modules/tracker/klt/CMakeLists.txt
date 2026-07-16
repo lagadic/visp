@@ -70,6 +70,10 @@ if(USE_OPENCV)
     # We import only required OpenCV libraries
     list(APPEND OpenCV_REQUIRED_LIB_COMPONENTS "opencv_video")
 
+    if(OpenCV_VERSION AND OpenCV_VERSION VERSION_GREATER_EQUAL 5.0.0)
+      list(APPEND OpenCV_REQUIRED_LIB_COMPONENTS "opencv_features")
+    endif()
+
     foreach(component_ ${OpenCV_REQUIRED_LIB_COMPONENTS})
       string(TOUPPER "${component_}" component_UP)
       if(${component_UP}_FOUND)

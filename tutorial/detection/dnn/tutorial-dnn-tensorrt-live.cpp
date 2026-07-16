@@ -39,6 +39,7 @@
 
 //! [TRT header files]
 #include <NvInfer.h>
+#include <NvInferVersion.h>
 #include <NvOnnxParser.h>
 //! [TRT header files]
 
@@ -57,8 +58,13 @@ void preprocessImage(cv::Mat &img, float *gpu_input, const nvinfer1::Dims &dims,
   }
 
   cv::cuda::GpuMat gpu_frame;
+  // Convert BGR to RGB
+  cv::Mat img_rgb;
+  cv::cvtColor(img, img_rgb, cv::COLOR_BGR2RGB);
+
   // Upload image to GPU
   gpu_frame.upload(img);
+
 
   // input_dims is in NxCxHxW format.
   auto input_width = dims.d[3];
@@ -175,8 +181,12 @@ struct TRTDestroy
 {
   template <class T> void operator()(T *obj) const
   {
+#if TRT_MAJOR_ENTERPRISE >= 11
+    delete obj;
+#else
     if (obj)
       obj->destroy();
+#endif
   }
 };
 
@@ -227,7 +237,11 @@ bool parseOnnxModel(const std::string &model_path, TRTUniquePtr<nvinfer1::ICudaE
 
     // Recreate the inference runtime
     TRTUniquePtr<nvinfer1::IRuntime> infer { nvinfer1::createInferRuntime(gLogger) };
+#if TRT_MAJOR_ENTERPRISE >= 11
+    engine.reset(infer->deserializeCudaEngine(engineStream, engineSize));
+#else
     engine.reset(infer->deserializeCudaEngine(engineStream, engineSize, nullptr));
+#endif
     context.reset(engine->createExecutionContext());
 
     return true;
@@ -242,8 +256,15 @@ bool parseOnnxModel(const std::string &model_path, TRTUniquePtr<nvinfer1::ICudaE
     }
 
     TRTUniquePtr<nvinfer1::IBuilder> builder { nvinfer1::createInferBuilder(gLogger) };
+#if TRT_MAJOR_ENTERPRISE >= 11
     TRTUniquePtr<nvinfer1::INetworkDefinition> network {
-        builder->createNetworkV2(1U << static_cast<uint32_t>(nvinfer1::NetworkDefinitionCreationFlag::kEXPLICIT_BATCH)) };
+        builder->createNetworkV2(0)
+    };
+#else
+    TRTUniquePtr<nvinfer1::INetworkDefinition> network {
+        builder->createNetworkV2(1U << static_cast<uint32_t>(nvinfer1::NetworkDefinitionCreationFlag::kEXPLICIT_BATCH))
+    };
+#endif
     TRTUniquePtr<nvonnxparser::IParser> parser { nvonnxparser::createParser(*network, gLogger) };
 
     // parse ONNX
@@ -254,13 +275,21 @@ bool parseOnnxModel(const std::string &model_path, TRTUniquePtr<nvinfer1::ICudaE
 
     TRTUniquePtr<nvinfer1::IBuilderConfig> config { builder->createBuilderConfig() };
     // allow TRT to use up to 1GB of GPU memory for tactic selection
+#if TRT_MAJOR_ENTERPRISE >= 11
+    config->setMemoryPoolLimit(nvinfer1::MemoryPoolType::kWORKSPACE, 32 << 20);
+#else
     config->setMaxWorkspaceSize(32 << 20);
+#endif
+
+#if TRT_MAJOR_ENTERPRISE >= 11
+// TensorRT 11.x removed all weak-typing precision flags (kFP16, kINT8, etc.) — networks are now "strongly typed" by default and precision is controlled at the tensor/layer level, not with a global builder flag
+#else
     // use FP16 mode if possible
     if (builder->platformHasFastFp16()) {
       config->setFlag(nvinfer1::BuilderFlag::kFP16);
     }
-
     builder->setMaxBatchSize(1);
+#endif
 
     engine.reset(builder->buildEngineWithConfig(*network, *config));
     context.reset(engine->createExecutionContext());
@@ -379,18 +408,53 @@ int main(int argc, char **argv)
 
   std::vector<nvinfer1::Dims> input_dims;
   std::vector<nvinfer1::Dims> output_dims;
-  std::vector<void *> buffers(engine->getNbBindings()); // buffers for input and output data.
+#if TRT_MAJOR_ENTERPRISE >= 11
+  std::vector<std::string> input_names;
+  std::vector<std::string> output_names;
+#endif
+
+  int nbBindings = 0;
+#if TRT_MAJOR_ENTERPRISE >= 11
+  nbBindings = engine->getNbIOTensors();
+#else
+  nbBindings = engine->getNbBindings();
+#endif
+
+  std::vector<void *> buffers(nbBindings); // buffers for input and output data.
 
   //! [Get I/O dimensions]
-  for (int i = 0; i < engine->getNbBindings(); ++i) {
-    auto binding_size = getSizeByDim(engine->getBindingDimensions(i)) * batch_size * sizeof(float);
+  for (int i = 0; i < nbBindings; ++i) {
+    const char *tensorName = engine->getIOTensorName(i);
+    nvinfer1::Dims bindingDims;
+#if TRT_MAJOR_ENTERPRISE >= 11
+    bindingDims = engine->getTensorShape(tensorName);
+    nvinfer1::Dims dims = bindingDims;
+    if (dims.d[0] == -1) dims.d[0] = batch_size; // resolve dynamic batch axis
+    auto binding_size = getSizeByDim(dims) * sizeof(float);
+#else
+    bindingDims = engine->getBindingDimensions(i);
+    auto binding_size = getSizeByDim(bindingDims) * batch_size * sizeof(float);
+#endif
+
     cudaMalloc(&buffers[i], binding_size);
 
-    if (engine->bindingIsInput(i)) {
-      input_dims.emplace_back(engine->getBindingDimensions(i));
+    bool isInput;
+#if TRT_MAJOR_ENTERPRISE >= 11
+    isInput = (engine->getTensorIOMode(tensorName) == nvinfer1::TensorIOMode::kINPUT);
+#else
+    isInput = engine->bindingIsInput(i);
+#endif
+    if (isInput) {
+      input_dims.emplace_back(bindingDims);
+#if TRT_MAJOR_ENTERPRISE >= 11
+      input_names.push_back(engine->getIOTensorName(i));
+#endif
     }
     else {
-      output_dims.emplace_back(engine->getBindingDimensions(i));
+      output_dims.emplace_back(bindingDims);
+#if TRT_MAJOR_ENTERPRISE >= 11
+      output_names.push_back(engine->getIOTensorName(i));
+#endif
     }
   }
 
@@ -446,7 +510,16 @@ int main(int argc, char **argv)
 #endif
 
   double start, stop;
-  //! [Main loop]
+#if TRT_MAJOR_ENTERPRISE >= 11
+  cudaStream_t stream;
+  cudaStreamCreate(&stream);
+
+  for (int i = 0; i < engine->getNbIOTensors(); ++i) {
+    const char *name = engine->getIOTensorName(i);
+    context->setTensorAddress(name, buffers[i]);
+  }
+#endif
+//! [Main loop]
   while (!vpDisplay::getClick(I, false)) {
     // get frame.
     capture >> frame;
@@ -458,7 +531,27 @@ int main(int argc, char **argv)
     preprocessImage(frame, (float *)buffers[0], input_dims[0], meanR, meanG, meanB);
 
     // inference.
+#if TRT_MAJOR_ENTERPRISE >= 11
+    unsigned int nbInputLayers = input_dims.size();
+    for (unsigned int idLayer = 0; idLayer < nbInputLayers; ++idLayer) {
+      auto input_width = input_dims[idLayer].d[3];
+      auto input_height = input_dims[idLayer].d[2];
+      auto channels = input_dims[idLayer].d[1];
+      const auto &input_name = input_names[idLayer];
+      context->setInputShape(input_name.c_str(), nvinfer1::Dims4 { batch_size, channels, input_height, input_width }); // if input is dynamic
+    }
+
+    context->enqueueV3(stream); // note: stream is required, not optional
+    // wait for it to finish before reading results
+    cudaStreamSynchronize(stream);
+
+    // refresh output shapes now that input shape is known
+    for (size_t i = 0; i < output_names.size(); ++i) {
+      output_dims[i] = context->getTensorShape(output_names[i].c_str()); // keep a parallel name list from setup
+    }
+#else
     context->enqueue(batch_size, buffers.data(), 0, nullptr);
+#endif
 
     // post-process
     boxesNMS = postprocessResults(buffers, output_dims, batch_size, width, height, confThresh, nmsThresh, classIds);
@@ -477,6 +570,11 @@ int main(int argc, char **argv)
     vpDisplay::flush(I);
   }
   //! [Main loop]
+
+#if TRT_MAJOR_ENTERPRISE >= 11
+// when you're done with it entirely
+  cudaStreamDestroy(stream);
+#endif
 
   for (void *buf : buffers)
     cudaFree(buf);

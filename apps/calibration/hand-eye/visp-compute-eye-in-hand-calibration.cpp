@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -185,7 +185,7 @@ int main(int argc, const char *argv[])
         std::cout << "Unable to read data from " << file_cPo << ". Skip data" << std::endl;
         continue;
       }
-      std::cout << "Use data from " << opt_data_path << "/" << file_rPe << " and from " << file_cPo << std::endl;
+      std::cout << "Use data from " << file_rPe << " and from " << file_cPo << std::endl;
       rMe.push_back(vpHomogeneousMatrix(rPe));
       cMo.push_back(vpHomogeneousMatrix(cPo));
     }

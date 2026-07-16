@@ -522,7 +522,10 @@ private:
 #pragma omp parallel for reduction(+:cpt_in_range)
 #endif
     for (int i = 0; i < size_; ++i) {
-      bool check_h_low_high_hue = (h_low <= Iin.bitmap[i].H) && (Iin.bitmap[i].H <= h_high);
+      bool check_h_low_high_hue = (
+      ((h_low <= h_high) && ((h_low <= Iin.bitmap[i].H) && (Iin.bitmap[i].H <= h_high))) ||
+      ((h_low > h_high) && ((h_low <= Iin.bitmap[i].H) || (Iin.bitmap[i].H <= h_high)))
+    );
       bool check_s_low_high_saturation = (s_low <= Iin.bitmap[i].S) && (Iin.bitmap[i].S <= s_high);
       bool check_v_low_high_value = (v_low <= Iin.bitmap[i].V) && (Iin.bitmap[i].V <= v_high);
       if (check_h_low_high_hue && check_s_low_high_saturation && check_v_low_high_value) {

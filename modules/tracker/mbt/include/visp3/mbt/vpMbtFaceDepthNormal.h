@@ -349,6 +349,7 @@ END_VISP_NAMESPACE
 #  pragma clang diagnostic ignored "-Wexit-time-destructors"
 #endif
 
+BEGIN_VISP_NAMESPACE
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS)
 NLOHMANN_JSON_SERIALIZE_ENUM(VISP_NAMESPACE_ADDRESSING vpMbtFaceDepthNormal::vpFeatureEstimationType, {
     {VISP_NAMESPACE_ADDRESSING vpMbtFaceDepthNormal::ROBUST_FEATURE_ESTIMATION, "robust"},
@@ -361,6 +362,7 @@ NLOHMANN_JSON_SERIALIZE_ENUM(VISP_NAMESPACE_ADDRESSING vpMbtFaceDepthNormal::vpF
     {VISP_NAMESPACE_ADDRESSING vpMbtFaceDepthNormal::ROBUST_SVD_PLANE_ESTIMATION, "robustSVD"}
 });
 #endif
+END_VISP_NAMESPACE
 
 #if defined(__clang__)
 #  pragma clang diagnostic pop

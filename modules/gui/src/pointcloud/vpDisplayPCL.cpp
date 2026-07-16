@@ -446,6 +446,37 @@ void vpDisplayPCL::setWindowName(const std::string &window_name)
 }
 
 /*!
+ * Set the camera viewpoint position used to render the point cloud in the PCL viewer.
+ *
+ * This method allows to programmatically control the position and orientation
+ * of the camera, instead of relying on the default view or interactive mouse
+ * navigation. It relies on `pcl::visualization::PCLVisualizer::setCameraPosition()`
+ * internally. If the viewer has not been created yet, it is automatically
+ * initialized by a call to createViewer().
+ *
+ * \param[in] pos : Camera position expressed as a 3D vector \f$(x, y, z)\f$, i.e.
+ * the location of the camera in the world (or point cloud) reference frame.
+ * \param[in] view : Focal point, i.e. the 3D point \f$(x, y, z)\f$ the camera is
+ * looking at.
+ * \param[in] up : Up vector \f$(x, y, z)\f$ that defines the vertical orientation
+ * of the camera (i.e. which direction is "up" in the rendered view).
+ */
+void vpDisplayPCL::setCameraPosition(const vpColVector &pos, const vpColVector &view, const vpColVector &up)
+{
+  if (!m_viewer) {
+    createViewer();
+  }
+  if ((pos.size() != 3) || (view.size() != 3) || (up.size() != 3)) {
+    throw(vpException(vpException::dimensionError, "Wrong vector size in vpDisplayPCL::setCameraView()"));
+  }
+  m_viewer->setCameraPosition(
+    pos[0], pos[1], pos[2],
+    view[0], view[1], view[2],
+    up[0], up[1], up[2]
+  );
+}
+
+/*!
  * Stop the viewer thread and join.
  */
 void vpDisplayPCL::stop()

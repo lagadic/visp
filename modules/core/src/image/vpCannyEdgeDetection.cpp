@@ -530,9 +530,9 @@ vpCannyEdgeDetection::performEdgeThinning(const float &lowerThreshold)
           if ((grad >= gradPlus) && (grad >= gradMinus)) {
             // Keeping the edge point that has the highest gradient
 #ifdef VISP_HAVE_OPENMP
-            localMemoryEdgeCandidates.push_back(std::pair<unsigned int, float>(iter, grad));
+            localMemoryEdgeCandidates.push_back(std::pair<unsigned int, float>(static_cast<unsigned int>(iter), grad));
 #else
-            m_edgeCandidateAndGradient.push_back(std::pair<unsigned int, float>(iter, grad));
+            m_edgeCandidateAndGradient.push_back(std::pair<unsigned int, float>(static_cast<unsigned int>(iter), grad));
 #endif
           }
         }

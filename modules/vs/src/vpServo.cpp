@@ -1207,7 +1207,8 @@ vpColVector vpServo::secondaryTaskJointLimitAvoidance(const vpColVector &q, cons
     else {
       vpColVector Pg_i(n);
       Pg_i = (P * g.getCol(i));
-      double b = (vpMath::abs(dq[i])) / (vpMath::abs(Pg_i[i]));
+      double Pg_i_abs = vpMath::abs(Pg_i[i]);
+      double b = (Pg_i_abs >= (std::numeric_limits<double>::epsilon() * 10.) ? (vpMath::abs(dq[i]) / Pg_i_abs) : 1.0);
 
       if (q[i] < q_l1_min[i] || q[i] > q_l1_max[i]) {
         // Zone C1: b without limit, maximum correction required

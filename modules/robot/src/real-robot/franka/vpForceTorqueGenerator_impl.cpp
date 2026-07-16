@@ -54,7 +54,6 @@
 #include <Eigen/Core> // TODO: Remove when initial_position var is removed
 
 BEGIN_VISP_NAMESPACE
-vpColVector ft_cart_des_prev(6, 0);
 
 void vpForceTorqueGenerator::control_thread(franka::Robot *robot, std::atomic_bool &stop, const std::string &log_folder,
                                             const vpRobot::vpControlFrameType &frame,
@@ -138,6 +137,8 @@ void vpForceTorqueGenerator::control_thread(franka::Robot *robot, std::atomic_bo
   std::ofstream log_tau_diff;
   std::ofstream log_tau_diff_prev;
 
+  vpColVector ft_cart_des_prev(6, 0);
+
   auto force_joint_control_callback =
     [=, &log_time, &log_tau_cmd, &log_tau_d, &log_tau_mes, &time, &model, &initial_position, &stop, &zero_torques,
     &robot_state, &tau_joint_d, &tau_error_integral, &mutex,
@@ -153,9 +154,11 @@ void vpForceTorqueGenerator::control_thread(franka::Robot *robot, std::atomic_bo
       }
     }
 
+    std::array<double, 7> tau_J_des_local;
     {
       std::lock_guard<std::mutex> lock(mutex);
       robot_state = state;
+      tau_J_des_local = tau_J_des;
     }
 
     Eigen::Map<const Eigen::Matrix<double, 7, 1> > tau_measured(state.tau_J.data());
@@ -168,7 +171,7 @@ void vpForceTorqueGenerator::control_thread(franka::Robot *robot, std::atomic_bo
 
     // Smoothly update the mass to reach the desired target value
     for (Eigen::Index i = 0; i < 7; i++) {
-      tau_joint_d[i] = filter_gain * tau_J_des[static_cast<size_t>(i)] + (1 - filter_gain) * tau_joint_d[i];
+      tau_joint_d[i] = filter_gain * tau_J_des_local[static_cast<size_t>(i)] + (1 - filter_gain) * tau_joint_d[i];
     }
 
     // FF + PI control
@@ -204,7 +207,7 @@ void vpForceTorqueGenerator::control_thread(franka::Robot *robot, std::atomic_bo
   auto force_cart_control_callback = [=, &log_time, &log_tau_cmd, &log_tau_d, &log_tau_mes, &log_tau_diff,
     &log_tau_diff_prev, &time, &model, /*&initial_position, */
     &stop, &zero_torques, &robot_state, &tau_cart_d, &tau_error_integral, &mutex,
-    &ft_cart_des](const franka::RobotState &state,
+    &ft_cart_des, &ft_cart_des_prev](const franka::RobotState &state,
                   franka::Duration period) -> franka::Torques {
                     time += period.toSec();
 
@@ -224,9 +227,11 @@ void vpForceTorqueGenerator::control_thread(franka::Robot *robot, std::atomic_bo
                       }
                     }
 
+                    vpColVector ft_cart_des_local;
                     {
                       std::lock_guard<std::mutex> lock(mutex);
                       robot_state = state;
+                      ft_cart_des_local = ft_cart_des;
                     }
 
                     // get state variables
@@ -242,7 +247,7 @@ void vpForceTorqueGenerator::control_thread(franka::Robot *robot, std::atomic_bo
 
                     // Apply force with gradually increasing the force
                     for (Eigen::Index i = 0; i < 7; i++) {
-                      tau_cart_d[i] = filter_gain * ft_cart_des[i] + (1 - filter_gain) * tau_cart_d[i];
+                      tau_cart_d[i] = filter_gain * ft_cart_des_local[i] + (1 - filter_gain) * tau_cart_d[i];
                     }
 
                     tau_d << jacobian.transpose() * tau_cart_d;
@@ -262,14 +267,14 @@ void vpForceTorqueGenerator::control_thread(franka::Robot *robot, std::atomic_bo
                       log_tau_mes << std::fixed << std::setprecision(8) << tau_ext[0] << " " << tau_ext[1] << " " << tau_ext[2] << " "
                         << tau_ext[3] << " " << tau_ext[4] << " " << tau_ext[5] << " " << tau_ext[6] << std::endl;
                       log_tau_diff << std::fixed << std::setprecision(8);
-                      for (Eigen::Index i = 0; i < ft_cart_des.size(); i++) {
-                        log_tau_diff << ft_cart_des[i] - tau_cart_d[i] << " ";
+                      for (Eigen::Index i = 0; i < ft_cart_des_local.size(); i++) {
+                        log_tau_diff << ft_cart_des_local[i] - tau_cart_d[i] << " ";
                       }
                       log_tau_diff << std::endl;
 
                       log_tau_diff_prev << std::fixed << std::setprecision(8);
-                      for (size_t i = 0; i < ft_cart_des.size(); i++) {
-                        log_tau_diff_prev << ft_cart_des[i] - ft_cart_des_prev[i] << " ";
+                      for (size_t i = 0; i < ft_cart_des_local.size(); i++) {
+                        log_tau_diff_prev << ft_cart_des_local[i] - ft_cart_des_prev[i] << " ";
                       }
                       log_tau_diff_prev << std::endl;
                     }
@@ -285,14 +290,12 @@ void vpForceTorqueGenerator::control_thread(franka::Robot *robot, std::atomic_bo
                       }
                       return franka::MotionFinished(zero_torques);
                     }
-
-                    ft_cart_des_prev = ft_cart_des;
-
+                    ft_cart_des_prev = ft_cart_des_local;
                     return tau_d_array;
     };
 
 #if !(VISP_HAVE_FRANKA_VERSION < 0x000500)
-  double cutoff_frequency = 10;
+  double cutoff_frequency = 3;
 #endif
 
   switch (frame) {

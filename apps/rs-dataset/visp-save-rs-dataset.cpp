@@ -713,8 +713,8 @@ private:
   bool m_pcl_npz_fmt;
   bool m_img_jpeg_fmt;
 #ifndef VISP_HAVE_PCL
-  int m_size_height;
-  int m_size_width;
+  uint32_t m_size_height;
+  uint32_t m_size_width;
 #endif
 };
 } // Namespace

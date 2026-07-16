@@ -460,7 +460,6 @@ private:
 #  pragma clang diagnostic ignored "-Wexit-time-destructors"
 #endif
 
-#include VISP_NLOHMANN_JSON(json.hpp)
 NLOHMANN_JSON_SERIALIZE_ENUM(vpCameraParameters::vpCameraParametersProjType, {
     {vpCameraParameters::perspectiveProjWithoutDistortion, "perspectiveWithoutDistortion"},
     {vpCameraParameters::perspectiveProjWithDistortion, "perspectiveWithDistortion"},

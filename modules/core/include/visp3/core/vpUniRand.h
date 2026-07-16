@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -154,7 +154,7 @@ public:
     std::vector<T> shuffled = inputVector;
 #if (VISP_CXX_STANDARD <= VISP_CXX_STANDARD_11)
     if (seed > 0) {
-      std::srand(seed);
+      std::srand(static_cast<unsigned int>(seed));
     }
     else {
       std::srand(std::time(0));
@@ -180,7 +180,7 @@ private:
 
     vpPcgStateSetSeq64t(uint64_t state_ = 0x853c49e6748fea9bULL, uint64_t inc_ = 0xda3e39cb94b95bdbULL)
       : state(state_), inc(inc_)
-    { }
+    {}
   };
   typedef struct vpPcgStateSetSeq64t pcg32_random_t;
 

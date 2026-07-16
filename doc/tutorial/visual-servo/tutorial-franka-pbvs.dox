@@ -173,10 +173,12 @@ $ sudo make install
 \endcode
 
 3. Help finding libpinocchio<br>
-  To help finding Pinocchio libraries, you may update `LD_LIBRARY_PATH` env var. The following line could also be added
-in `${HOME}/.bashrc` file.
+
+To ensure that the Pinocchio libraries are correctly discovered at runtime, you must add the installation path to
+the system's dynamic linker configuration:
 \code{.sh}
-$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/openrobots/lib
+$ echo "/opt/openrobots/lib" | sudo tee /etc/ld.so.conf.d/openrobots.conf
+$ sudo ldconfig
 \endcode
 
 \subsection franka_prereq_librealsense 2.4. Install Realsense library

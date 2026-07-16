@@ -95,7 +95,11 @@ public:
     tempo = 1.f;
   }
 
+#if (VISP_HAVE_OPENCV_VERSION >= 0x040700)
   enum Pattern { UNDEFINED, CHESSBOARD, CIRCLES_GRID, CHARUCOBOARD };
+#else
+  enum Pattern { UNDEFINED, CHESSBOARD, CIRCLES_GRID };
+#endif
 
   bool read(const std::string &filename) // Read the parameters
   {
@@ -113,6 +117,7 @@ public:
     tee << "grid height: " << boardSize.height << "\n";
     tee << "square size: " << squareSize << "\n";
     tee << "pattern    : " << patternToUse << "\n";
+#if (VISP_HAVE_OPENCV_VERSION >= 0x040700)
     if (patternToUse.compare("CHARUCOBOARD") == 0) {
       vpIoTools::readConfigVar("Charuco_Marker_Size:", markerSize);
       vpIoTools::readConfigVar("Charuco_Dictionary:", dictionnary);
@@ -122,6 +127,7 @@ public:
       tee << "  - ChArUco dictionnary: " << dictionnary << "\n";
       tee << "  - ChArUco legacy pattern?: " << legacyPattern << "\n";
     }
+#endif
     tee << "input seq  : " << input << "\n";
     tee << "tempo      : " << tempo << "\n";
     interprate();
@@ -148,6 +154,7 @@ public:
       calibrationPattern = CHESSBOARD;
     else if (patternToUse.compare("CIRCLES_GRID") == 0)
       calibrationPattern = CIRCLES_GRID;
+#if (VISP_HAVE_OPENCV_VERSION >= 0x040700)
     else if (patternToUse.compare("CHARUCOBOARD") == 0) {
       calibrationPattern = CHARUCOBOARD;
 
@@ -160,6 +167,7 @@ public:
         goodInput = false;
       }
     }
+#endif
     if (calibrationPattern == UNDEFINED) {
       tee << " Inexistent camera calibration mode: " << patternToUse << "\n";
       goodInput = false;
@@ -244,14 +252,17 @@ std::vector<vpImagePoint> undistort(const vpCameraParameters &cam_dist, const st
 }
 
 bool extractCalibrationPoints(const Settings &s, const cv::Mat &cvI,
-  const cv::Ptr<cv::aruco::CharucoDetector> &ch_detector, std::vector<cv::Point2f> &pointBuf)
+                              std::vector<cv::Point2f> &pointBuf
+#if (VISP_HAVE_OPENCV_VERSION >= 0x040700)
+                              , const cv::Ptr<cv::aruco::CharucoDetector> &ch_detector
+#endif
+                             )
 {
-  std::vector<int> markerIds;
   bool found = false;
 
   switch (s.calibrationPattern) // Find feature points on the input format
   {
-  case Settings::CHESSBOARD:
+  case Settings::CHESSBOARD: {
     found =
       findChessboardCorners(cvI, s.boardSize, pointBuf,
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
@@ -260,13 +271,19 @@ bool extractCalibrationPoints(const Settings &s, const cv::Mat &cvI,
       CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FAST_CHECK | CV_CALIB_CB_NORMALIZE_IMAGE);
 #endif
     break;
-  case Settings::CIRCLES_GRID:
+  }
+  case Settings::CIRCLES_GRID: {
     found = findCirclesGrid(cvI, s.boardSize, pointBuf, cv::CALIB_CB_SYMMETRIC_GRID);
     break;
-  case Settings::CHARUCOBOARD:
+  }
+#if (VISP_HAVE_OPENCV_VERSION >= 0x040700)
+  case Settings::CHARUCOBOARD: {
+    std::vector<int> markerIds;
     ch_detector->detectBoard(cvI, pointBuf, markerIds);
     found = pointBuf.size() == static_cast<std::size_t>(s.boardSize.width - 1) * static_cast<std::size_t>(s.boardSize.height - 1);
     break;
+  }
+#endif
   case Settings::UNDEFINED:
   default:
     break;

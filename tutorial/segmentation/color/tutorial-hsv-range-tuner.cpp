@@ -19,7 +19,7 @@
 #include <visp3/sensor/vpRealSense2.h>
 
 VP_ATTRIBUTE_NO_DESTROY std::vector<int> hsv_values_trackbar(6);
-VP_ATTRIBUTE_NO_DESTROY const cv::String window_detection_name = "Object Detection";
+VP_ATTRIBUTE_NO_DESTROY const cv::String window_detection_name = "Object Color Segmentation";
 
 void set_trackbar_H_min(int val)
 {
@@ -45,14 +45,43 @@ void set_trackbar_V_max(int val)
 {
   cv::setTrackbarPos("High V", window_detection_name, val);
 }
+
+#if VISP_HAVE_OPENCV_VERSION >= 0x040000
+static void on_low_H_thresh_trackbar(int val, void *)
+{
+  hsv_values_trackbar[0] = val;
+}
+static void on_high_H_thresh_trackbar(int val, void *)
+{
+  hsv_values_trackbar[1] = val;
+}
+static void on_low_S_thresh_trackbar(int val, void *)
+{
+  hsv_values_trackbar[2] = std::min(hsv_values_trackbar[3] - 1, val);
+  set_trackbar_S_min(hsv_values_trackbar[2]);
+}
+static void on_high_S_thresh_trackbar(int val, void *)
+{
+  hsv_values_trackbar[3] = std::max(val, hsv_values_trackbar[2] + 1);
+  set_trackbar_S_max(hsv_values_trackbar[3]);
+}
+static void on_low_V_thresh_trackbar(int val, void *)
+{
+  hsv_values_trackbar[4] = std::min(hsv_values_trackbar[5] - 1, val);
+  set_trackbar_V_min(hsv_values_trackbar[4]);
+}
+static void on_high_V_thresh_trackbar(int val, void *)
+{
+  hsv_values_trackbar[5] = std::max(val, hsv_values_trackbar[4] + 1);
+  set_trackbar_V_max(hsv_values_trackbar[5]);
+}
+#else
 static void on_low_H_thresh_trackbar(int, void *)
 {
-  hsv_values_trackbar[0] = std::min(hsv_values_trackbar[1]-1, hsv_values_trackbar[0]);
   set_trackbar_H_min(hsv_values_trackbar[0]);
 }
 static void on_high_H_thresh_trackbar(int, void *)
 {
-  hsv_values_trackbar[1] = std::max(hsv_values_trackbar[1], hsv_values_trackbar[0]+1);
   set_trackbar_H_max(hsv_values_trackbar[1]);
 }
 static void on_low_S_thresh_trackbar(int, void *)
@@ -75,6 +104,7 @@ static void on_high_V_thresh_trackbar(int, void *)
   hsv_values_trackbar[5] = std::max(hsv_values_trackbar[5], hsv_values_trackbar[4]+1);
   set_trackbar_V_max(hsv_values_trackbar[5]);
 }
+#endif
 
 int main(int argc, const char *argv[])
 {
@@ -198,12 +228,29 @@ int main(int argc, const char *argv[])
   }
 
   // Trackbars to set thresholds for HSV values
+#if VISP_HAVE_OPENCV_VERSION >= 0x040000
+  cv::createTrackbar("Low H", window_detection_name, nullptr, max_value_H, on_low_H_thresh_trackbar);
+  cv::createTrackbar("High H", window_detection_name, nullptr, max_value_H, on_high_H_thresh_trackbar);
+  cv::createTrackbar("Low S", window_detection_name, nullptr, max_value, on_low_S_thresh_trackbar);
+  cv::createTrackbar("High S", window_detection_name, nullptr, max_value, on_high_S_thresh_trackbar);
+  cv::createTrackbar("Low V", window_detection_name, nullptr, max_value, on_low_V_thresh_trackbar);
+  cv::createTrackbar("High V", window_detection_name, nullptr, max_value, on_high_V_thresh_trackbar);
+
+  // Initialize trackbars values (start callbacks)
+  cv::setTrackbarPos("Low H", window_detection_name, hsv_values_trackbar[0]);
+  cv::setTrackbarPos("High H", window_detection_name, hsv_values_trackbar[1]);
+  cv::setTrackbarPos("Low S", window_detection_name, hsv_values_trackbar[2]);
+  cv::setTrackbarPos("High S", window_detection_name, hsv_values_trackbar[3]);
+  cv::setTrackbarPos("Low V", window_detection_name, hsv_values_trackbar[4]);
+  cv::setTrackbarPos("High V", window_detection_name, hsv_values_trackbar[5]);
+#else
   cv::createTrackbar("Low H", window_detection_name, &hsv_values_trackbar[0], max_value_H, on_low_H_thresh_trackbar);
   cv::createTrackbar("High H", window_detection_name, &hsv_values_trackbar[1], max_value_H, on_high_H_thresh_trackbar);
   cv::createTrackbar("Low S", window_detection_name, &hsv_values_trackbar[2], max_value, on_low_S_thresh_trackbar);
   cv::createTrackbar("High S", window_detection_name, &hsv_values_trackbar[3], max_value, on_high_S_thresh_trackbar);
   cv::createTrackbar("Low V", window_detection_name, &hsv_values_trackbar[4], max_value, on_low_V_thresh_trackbar);
   cv::createTrackbar("High V", window_detection_name, &hsv_values_trackbar[5], max_value, on_high_V_thresh_trackbar);
+#endif
 
   vpImage<unsigned char> mask(height, width);
   vpImage<vpRGBa> I_segmented(height, width);
@@ -253,8 +300,8 @@ int main(int argc, const char *argv[])
     vpDisplay::display(I);
     vpDisplay::display(I_segmented);
     vpDisplay::displayText(I, 20, 20, "Left click to learn HSV value...", vpColor::red);
-    vpDisplay::displayText(I, 40, 20, "Middle click to get HSV value...", vpColor::red);
-    vpDisplay::displayText(I, 60, 20, "Right click to quit...", vpColor::red);
+    vpDisplay::displayText(I, 40, 20, "Middle click to print RGB/HSV values...", vpColor::red);
+    vpDisplay::displayText(I, 60, 20, "Right click to save yaml file and quit...", vpColor::red);
     vpImagePoint ip;
     vpMouseButton::vpMouseButtonType button;
     if (vpDisplay::getClick(I, ip, button, false)) {

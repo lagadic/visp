@@ -233,9 +233,9 @@ private:
   /*!
    * This function is not implemented.
    */
-  void getDisplacement(const vpRobot::vpControlFrameType, vpColVector &) VP_OVERRIDE { }
+  void getDisplacement(const vpRobot::vpControlFrameType, vpColVector &) VP_OVERRIDE {}
 
-  void init();
+  void init() VP_OVERRIDE;
 
   franka::Robot *m_handler;   //!< Robot handler
   franka::Gripper *m_gripper; //!< Gripper handler
@@ -362,7 +362,7 @@ public:
   void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &position) VP_OVERRIDE;
   void setPositioningVelocity(double velocity);
 
-  vpRobot::vpRobotStateType setRobotState(vpRobot::vpRobotStateType newState);
+  vpRobot::vpRobotStateType setRobotState(vpRobot::vpRobotStateType newState) VP_OVERRIDE;
   void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel) VP_OVERRIDE;
 
   void stopMotion();

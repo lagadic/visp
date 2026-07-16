@@ -873,6 +873,7 @@ void vpRobotFranka::setVelocity(const vpRobot::vpControlFrameType frame, const v
 
     vpColVector vel_sat = vpRobot::saturateVelocities(vel, vel_max, true);
 
+    std::lock_guard<std::mutex> lock(m_mutex);
     for (unsigned int i = 0; i < m_dq_des.size(); ++i) { // TODO create a function to convert
       m_dq_des[i] = vel_sat[i];
     }
@@ -897,6 +898,7 @@ void vpRobotFranka::setVelocity(const vpRobot::vpControlFrameType frame, const v
       vel_max[i] = getMaxRotationVelocity();
     }
 
+    std::lock_guard<std::mutex> lock(m_mutex);
     m_v_cart_des = vpRobot::saturateVelocities(vel, vel_max, true);
 
     break;
@@ -940,6 +942,7 @@ void vpRobotFranka::setForceTorque(const vpRobot::vpControlFrameType frame, cons
                              ft.size());
     }
 
+    std::lock_guard<std::mutex> lock(m_mutex);
     for (unsigned int i = 0; i < m_tau_J_des.size(); ++i) { // TODO create a function to convert
       m_tau_J_des[i] = ft[i];
     }
@@ -957,6 +960,7 @@ void vpRobotFranka::setForceTorque(const vpRobot::vpControlFrameType frame, cons
                              ft.size());
     }
 
+    std::lock_guard<std::mutex> lock(m_mutex);
     m_ft_cart_des = ft;
     // TODO: Introduce force/torque saturation
 
