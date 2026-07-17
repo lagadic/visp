@@ -194,8 +194,8 @@ void vpFeatureMomentCentered::compute_interaction()
   if (!found_moment_gravity)
     throw vpException(vpException::notInitialized, "vpMomentGravityCenter not found");
 
-  unsigned int delta;
-  unsigned int epsilon;
+  int delta;
+  int epsilon;
   const vpMomentObject &momentObject = moment->getObject();
   order = momentObject.getOrder() + 1;
   interaction_matrices.resize(order * order);
@@ -223,8 +223,8 @@ void vpFeatureMomentCentered::compute_interaction()
   unsigned int WY = 4;
   unsigned int WZ = 5;
 
-  interaction_matrices[0][0][VX] = -(delta)*A * mu00;
-  interaction_matrices[0][0][VY] = -(delta)*B * mu00;
+  interaction_matrices[0][0][VX] = -delta*A * mu00;
+  interaction_matrices[0][0][VY] = -delta*B * mu00;
 
   // Since mu10=0 and mu01=0
   // interaction_matrices[0][0][WX] =  (3*delta)*MU(0,1)+(3*delta)*Yg*mu00;
@@ -240,6 +240,7 @@ void vpFeatureMomentCentered::compute_interaction()
   for (unsigned int i = 1; i < order_u - 1; i++) {
     unsigned int im1 = i - 1;
     unsigned int ip1 = i + 1;
+    int i_ = static_cast<int>(i);
 
     double mu_im10 = momentCentered.get(im1, 0);
     double mu_ip10 = momentCentered.get(ip1, 0);
@@ -247,21 +248,22 @@ void vpFeatureMomentCentered::compute_interaction()
     double mu_i0 = momentCentered.get(i, 0);
     double mu_i1 = momentCentered.get(i, 1);
 
-    interaction_matrices[i][0][VX] = -(i + delta) * A * mu_i0 - (i * B * mu_im11);
-    interaction_matrices[i][0][VY] = -(delta)*B * mu_i0;
+    interaction_matrices[i][0][VX] = -(i_ + delta) * A * mu_i0 - (i_ * B * mu_im11);
+    interaction_matrices[i][0][VY] = -delta*B * mu_i0;
 
     interaction_matrices[i][0][WX] =
-      (i + 3 * delta) * mu_i1 + (i + 3 * delta) * Yg * mu_i0 + i * Xg * mu_im11 - i * epsilon * n11 * mu_im10;
+      (i_ + 3 * delta) * mu_i1 + (i_ + 3 * delta) * Yg * mu_i0 + i_ * Xg * mu_im11 - i_ * epsilon * n11 * mu_im10;
     interaction_matrices[i][0][WY] =
-      -(i + 3 * delta) * mu_ip10 - (2 * i + 3 * delta) * Xg * mu_i0 + i * epsilon * n20 * mu_im10;
+      -(i_ + 3 * delta) * mu_ip10 - (2 * i_ + 3 * delta) * Xg * mu_i0 + i_ * epsilon * n20 * mu_im10;
     interaction_matrices[i][0][VZ] =
-      -A * interaction_matrices[i][0][WY] + B * interaction_matrices[i][0][WX] + (i + 2 * delta) * C * mu_i0;
-    interaction_matrices[i][0][WZ] = i * mu_im11;
+      -A * interaction_matrices[i][0][WY] + B * interaction_matrices[i][0][WX] + (i_ + 2 * delta) * C * mu_i0;
+    interaction_matrices[i][0][WZ] = i_ * mu_im11;
   }
 
   for (unsigned int j = 1; j < order_u - 1; j++) {
     unsigned int jm1 = j - 1;
     unsigned int jp1 = j + 1;
+    int j_ = static_cast<int>(j);
 
     double mu_0jm1 = momentCentered.get(0, jm1);
     double mu_0jp1 = momentCentered.get(0, jp1);
@@ -269,24 +271,26 @@ void vpFeatureMomentCentered::compute_interaction()
     double mu_0j = momentCentered.get(0, j);
     double mu_1j = momentCentered.get(1, j);
 
-    interaction_matrices[j * order][0][VX] = -(delta)*A * mu_0j;
-    interaction_matrices[j * order][0][VY] = -j * A * mu_1jm1 - (j + delta) * B * mu_0j;
+    interaction_matrices[j * order][0][VX] = -delta*A * mu_0j;
+    interaction_matrices[j * order][0][VY] = -j_ * A * mu_1jm1 - (j_ + delta) * B * mu_0j;
 
     interaction_matrices[j * order][0][WX] =
-      (j + 3 * delta) * mu_0jp1 + (2 * j + 3 * delta) * Yg * mu_0j - j * epsilon * n02 * mu_0jm1;
+      (j_ + 3 * delta) * mu_0jp1 + (2 * j_ + 3 * delta) * Yg * mu_0j - j_ * epsilon * n02 * mu_0jm1;
     interaction_matrices[j * order][0][WY] =
-      -(j + 3 * delta) * mu_1j - (j + 3 * delta) * Xg * mu_0j - j * Yg * mu_1jm1 + j * epsilon * n11 * mu_0jm1;
+      -(j_ + 3 * delta) * mu_1j - (j_ + 3 * delta) * Xg * mu_0j - j_ * Yg * mu_1jm1 + j_ * epsilon * n11 * mu_0jm1;
     interaction_matrices[j * order][0][VZ] = -A * interaction_matrices[j * order][0][WY] +
-      B * interaction_matrices[j * order][0][WX] + (j + 2 * delta) * C * mu_0j;
-    interaction_matrices[j * order][0][WZ] = -j * mu_1jm1;
+      B * interaction_matrices[j * order][0][WX] + (j_ + 2 * delta) * C * mu_0j;
+    interaction_matrices[j * order][0][WZ] = -j_ * mu_1jm1;
   }
 
   for (unsigned int j = 1; j < order_u - 1; j++) {
     unsigned int jm1_ = j - 1;
     unsigned int jp1_ = j + 1;
+    int j_ = static_cast<int>(j);
     for (unsigned int i = 1; i < order_u - j - 1; i++) {
       unsigned int im1 = i - 1;
       unsigned int ip1 = i + 1;
+      int i_ = static_cast<int>(i);
 
       double mu_ijm1 = momentCentered.get(i, jm1_);
       double mu_ij = momentCentered.get(i, j);
@@ -296,19 +300,19 @@ void vpFeatureMomentCentered::compute_interaction()
       double mu_ip1jm1 = momentCentered.get(ip1, jm1_);
       double mu_ip1j = momentCentered.get(ip1, j);
 
-      interaction_matrices[j * order + i][0][VX] = -(i + delta) * A * mu_ij - i * B * mu_im1jp1;
-      interaction_matrices[j * order + i][0][VY] = -j * A * mu_ip1jm1 - (j + delta) * B * mu_ij;
+      interaction_matrices[j * order + i][0][VX] = -(i_ + delta) * A * mu_ij - i_ * B * mu_im1jp1;
+      interaction_matrices[j * order + i][0][VY] = -j_ * A * mu_ip1jm1 - (j_ + delta) * B * mu_ij;
 
-      interaction_matrices[j * order + i][0][WX] = (i + j + 3 * delta) * mu_ijp1 +
-        (i + 2 * j + 3 * delta) * Yg * mu_ij + i * Xg * mu_im1jp1 -
-        i * epsilon * n11 * mu_im1j - j * epsilon * n02 * mu_ijm1;
-      interaction_matrices[j * order + i][0][WY] = -(i + j + 3 * delta) * mu_ip1j -
-        (2 * i + j + 3 * delta) * Xg * mu_ij - j * Yg * mu_ip1jm1 +
-        i * epsilon * n20 * mu_im1j + j * epsilon * n11 * mu_ijm1;
+      interaction_matrices[j * order + i][0][WX] = (i_ + j_ + 3 * delta) * mu_ijp1 +
+        (i_ + 2 * j_ + 3 * delta) * Yg * mu_ij + i_ * Xg * mu_im1jp1 -
+        i_ * epsilon * n11 * mu_im1j - j_ * epsilon * n02 * mu_ijm1;
+      interaction_matrices[j * order + i][0][WY] = -(i_ + j_ + 3 * delta) * mu_ip1j -
+        (2 * i_ + j_ + 3 * delta) * Xg * mu_ij - j_ * Yg * mu_ip1jm1 +
+        i_ * epsilon * n20 * mu_im1j + j_ * epsilon * n11 * mu_ijm1;
       interaction_matrices[j * order + i][0][VZ] = -A * interaction_matrices[j * order + i][0][WY] +
         B * interaction_matrices[j * order + i][0][WX] +
-        (i + j + 2 * delta) * C * mu_ij;
-      interaction_matrices[j * order + i][0][WZ] = i * mu_im1jp1 - j * mu_ip1jm1;
+        (i_ + j_ + 2 * delta) * C * mu_ij;
+      interaction_matrices[j * order + i][0][WZ] = i_ * mu_im1jp1 - j_ * mu_ip1jm1;
     }
   }
 #endif // #ifdef VISP_MOMENTS_COMBINE_MATRICES
