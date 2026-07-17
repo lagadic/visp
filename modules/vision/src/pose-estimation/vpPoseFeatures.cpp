@@ -49,55 +49,75 @@ vpPoseFeatures::~vpPoseFeatures() { clear(); }
 
 void vpPoseFeatures::clear()
 {
-  for (unsigned int i = m_featurePoint_Point_list.size() - 1; i-- > 0;) {
-    delete m_featurePoint_Point_list[i].desiredFeature;
+  if (m_featurePoint_Point_list.size() > 0) {
+    for (unsigned int i = m_featurePoint_Point_list.size() - 1; i-- > 0;) {
+      delete m_featurePoint_Point_list[i].desiredFeature;
+    }
+    m_featurePoint_Point_list.clear();
   }
-  m_featurePoint_Point_list.clear();
 
-  for (unsigned int i = m_featurePoint3D_Point_list.size() - 1; i-- > 0;) {
-    delete m_featurePoint3D_Point_list[i].desiredFeature;
+  if (m_featurePoint3D_Point_list.size() > 0) {
+    for (unsigned int i = m_featurePoint3D_Point_list.size() - 1; i-- > 0;) {
+      delete m_featurePoint3D_Point_list[i].desiredFeature;
+    }
+    m_featurePoint3D_Point_list.clear();
   }
-  m_featurePoint3D_Point_list.clear();
 
-  for (unsigned int i = m_featureVanishingPoint_Point_list.size() - 1; i-- > 0;) {
-    delete m_featureVanishingPoint_Point_list[i].desiredFeature;
+  if (m_featureVanishingPoint_Point_list.size() > 0) {
+    for (unsigned int i = m_featureVanishingPoint_Point_list.size() - 1; i-- > 0;) {
+      delete m_featureVanishingPoint_Point_list[i].desiredFeature;
+    }
+    m_featureVanishingPoint_Point_list.clear();
   }
-  m_featureVanishingPoint_Point_list.clear();
 
-  for (unsigned int i = m_featureVanishingPoint_DuoLine_list.size() - 1; i-- > 0;) {
-    delete m_featureVanishingPoint_DuoLine_list[i].desiredFeature;
+  if (m_featureVanishingPoint_DuoLine_list.size() > 0) {
+    for (unsigned int i = m_featureVanishingPoint_DuoLine_list.size() - 1; i-- > 0;) {
+      delete m_featureVanishingPoint_DuoLine_list[i].desiredFeature;
+    }
+    m_featureVanishingPoint_DuoLine_list.clear();
   }
-  m_featureVanishingPoint_DuoLine_list.clear();
 
-  for (unsigned int i = m_featureEllipse_Sphere_list.size() - 1; i-- > 0;) {
-    delete m_featureEllipse_Sphere_list[i].desiredFeature;
+  if (m_featureEllipse_Sphere_list.size() > 0) {
+    for (unsigned int i = m_featureEllipse_Sphere_list.size() - 1; i-- > 0;) {
+      delete m_featureEllipse_Sphere_list[i].desiredFeature;
+    }
+    m_featureEllipse_Sphere_list.clear();
   }
-  m_featureEllipse_Sphere_list.clear();
 
-  for (unsigned int i = m_featureEllipse_Circle_list.size() - 1; i-- > 0;) {
-    delete m_featureEllipse_Circle_list[i].desiredFeature;
+  if (m_featureEllipse_Circle_list.size() > 0) {
+    for (unsigned int i = m_featureEllipse_Circle_list.size() - 1; i-- > 0;) {
+      delete m_featureEllipse_Circle_list[i].desiredFeature;
+    }
+    m_featureEllipse_Circle_list.clear();
   }
-  m_featureEllipse_Circle_list.clear();
 
-  for (unsigned int i = m_featureLine_Line_list.size() - 1; i-- > 0;) {
-    delete m_featureLine_Line_list[i].desiredFeature;
+  if (m_featureLine_Line_list.size() > 0) {
+    for (unsigned int i = m_featureLine_Line_list.size() - 1; i-- > 0;) {
+      delete m_featureLine_Line_list[i].desiredFeature;
+    }
+    m_featureLine_Line_list.clear();
   }
-  m_featureLine_Line_list.clear();
 
-  for (unsigned int i = m_featureLine_DuoLineInt_List.size() - 1; i-- > 0;) {
-    delete m_featureLine_DuoLineInt_List[i].desiredFeature;
+  if (m_featureLine_DuoLineInt_List.size() > 0) {
+    for (unsigned int i = m_featureLine_DuoLineInt_List.size() - 1; i-- > 0;) {
+      delete m_featureLine_DuoLineInt_List[i].desiredFeature;
+    }
+    m_featureLine_DuoLineInt_List.clear();
   }
-  m_featureLine_DuoLineInt_List.clear();
 
-  for (unsigned int i = m_featureSegment_DuoPoints_list.size() - 1; i-- > 0;) {
-    delete m_featureSegment_DuoPoints_list[i].desiredFeature;
+  if (m_featureSegment_DuoPoints_list.size() > 0) {
+    for (unsigned int i = m_featureSegment_DuoPoints_list.size() - 1; i-- > 0;) {
+      delete m_featureSegment_DuoPoints_list[i].desiredFeature;
+    }
+    m_featureSegment_DuoPoints_list.clear();
   }
-  m_featureSegment_DuoPoints_list.clear();
 
-  for (unsigned int i = m_featureSpecific_list.size() - 1; i-- > 0;) {
-    delete m_featureSpecific_list[i];
+  if (m_featureSpecific_list.size() > 0) {
+    for (unsigned int i = m_featureSpecific_list.size() - 1; i-- > 0;) {
+      delete m_featureSpecific_list[i];
+    }
+    m_featureSpecific_list.clear();
   }
-  m_featureSpecific_list.clear();
 
   m_maxSize = 0;
   m_totalSize = 0;
