@@ -77,7 +77,7 @@ inline void vpRBKltTracker::tryAddNewPoint(
 vpRBKltTracker::vpRBKltTracker() :
   vpRBFeatureTracker(), m_numPointsReinit(20), m_newPointsDistanceThreshold(5.0), m_border(5),
   m_maxErrorOutliersPixels(10.0), m_useMask(false), m_minMaskConfidence(0.0)
-{}
+{ }
 
 void vpRBKltTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput & /*previousFrame*/, const vpHomogeneousMatrix &/*cMo*/)
 {
@@ -124,8 +124,11 @@ void vpRBKltTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const
       }
     }
     // Remove tracking from klt: iterate in reverse order to invalidate iterator i (shifting in the klt list)
-    for (size_t i = kltIndicesToRemove.size() - 1; i-- > 0;) {
-      m_klt.suppressFeature(static_cast<int>(kltIndicesToRemove[static_cast<unsigned int>(i)]));
+    if (kltIndicesToRemove.size() > 0) {
+      size_t startIdx = kltIndicesToRemove.size() - 1;
+      for (size_t i = startIdx; i > 0; --i) {
+        m_klt.suppressFeature(static_cast<int>(kltIndicesToRemove[static_cast<unsigned int>(i)]));
+      }
     }
   }
 
@@ -210,7 +213,7 @@ void vpRBKltTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const
 
 void vpRBKltTracker::trackFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &/*previousFrame*/, const vpHomogeneousMatrix &cMo)
 {
-  const unsigned int nbKltFeatures = static_cast<unsigned int>(m_klt.getNbFeatures());
+  unsigned int nbKltFeatures = static_cast<unsigned int>(m_klt.getNbFeatures());
 
   if (nbKltFeatures > 0) {
     m_klt.track(m_I);
@@ -219,6 +222,7 @@ void vpRBKltTracker::trackFeatures(const vpRBFeatureTrackerInput &frame, const v
   const vpHomogeneousMatrix oMc = cMo.inverse();
 
   bool testMask = m_useMask && frame.hasMask();
+  nbKltFeatures = static_cast<unsigned int>(m_klt.getNbFeatures()); // Update number of features, because there might be more or less than before after performing tracking
   std::vector<unsigned> kltIndicesToRemove;
   for (unsigned int i = 0; i < nbKltFeatures; ++i) {
     long id = 0;
@@ -254,8 +258,10 @@ void vpRBKltTracker::trackFeatures(const vpRBFeatureTrackerInput &frame, const v
   }
 
   // Remove tracking from klt: iterate in reverse order to invalidate iterator i (shifting in the klt list)
-  for (size_t i = kltIndicesToRemove.size() - 1; i-- > 0;) {
-    m_klt.suppressFeature(static_cast<int>(kltIndicesToRemove[static_cast<unsigned int>(i)]));
+  if (kltIndicesToRemove.size() > 0) {
+    for (size_t i = kltIndicesToRemove.size() - 1; i > 0; --i) {
+      m_klt.suppressFeature(static_cast<int>(kltIndicesToRemove[static_cast<unsigned int>(i)]));
+    }
   }
 
   m_points = newPoints;
