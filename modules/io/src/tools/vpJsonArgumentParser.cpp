@@ -97,7 +97,7 @@ std::string vpJsonArgumentParser::help() const
 vpJsonArgumentParser &vpJsonArgumentParser::addFlag(const std::string &name, bool &parameter, const std::string &help)
 {
   m_argumentType[name] = FLAG;
-  const auto getter = [name, this](nlohmann::json &j, bool create) -> nlohmann::json * {
+  const auto getter = [name, this](nlohmann::json &j, bool create) -> nlohmann::json *{
     size_t pos = 0;
     nlohmann::json *f = &j;
     std::string token;
@@ -190,7 +190,7 @@ bool vpJsonArgumentParser::parse(int argc, const char *argv[])
 
       if (m_parsers.find(arg) != m_parsers.end()) {
         if (m_argumentType[arg] == WITH_FIELD) {
-          if (i < argc - 1) {
+          if (i  + 1 < argc) {
             m_updaters[arg](j, std::string(argv[i + 1]));
             ++i;
           }
