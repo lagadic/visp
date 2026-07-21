@@ -628,23 +628,22 @@ int qrsolv(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb, doub
     }
   }
 
-  if (nsing >= 0) {
-    for (k = 0; k < nsing; ++k) {
-      i = nsing - 1 - k;
-      double sum = 0.0;
-      int jp1 = i + 1;
+  for (k = 0; k < nsing; ++k) {
+    i = nsing - 1 - k;
+    double sum = 0.0;
+    int jp1 = i + 1;
 
-      if (nsing >= jp1) {
-        for (j = jp1; j < nsing; ++j) {
-          sum += *MIJ(r, i, j, ldr) * wa[j];
-        }
+    if (nsing >= jp1) {
+      for (j = jp1; j < nsing; ++j) {
+        sum += *MIJ(r, i, j, ldr) * wa[j];
       }
-      wa[i] = (wa[i] - sum) / sdiag[i];
     }
+    wa[i] = (wa[i] - sum) / sdiag[i];
   }
+
   /*
-   *  permutation arriere des composants de z et des componants de x.
-   */
+  *  permutation arriere des composants de z et des componants de x.
+  */
 
   for (j = 0; j < n; ++j) {
     l = ipvt[j];
