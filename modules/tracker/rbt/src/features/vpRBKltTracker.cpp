@@ -126,7 +126,8 @@ void vpRBKltTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const
     // Remove tracking from klt: iterate in reverse order to invalidate iterator i (shifting in the klt list)
     if (kltIndicesToRemove.size() > 0) {
       size_t startIdx = kltIndicesToRemove.size() - 1;
-      for (size_t i = startIdx; i > 0; --i) {
+      size_t cpt = 0, countMax = kltIndicesToRemove.size();
+      for (size_t i = startIdx; cpt < countMax; --i, ++cpt) {
         m_klt.suppressFeature(static_cast<int>(kltIndicesToRemove[static_cast<unsigned int>(i)]));
       }
     }
@@ -259,7 +260,8 @@ void vpRBKltTracker::trackFeatures(const vpRBFeatureTrackerInput &frame, const v
 
   // Remove tracking from klt: iterate in reverse order to invalidate iterator i (shifting in the klt list)
   if (kltIndicesToRemove.size() > 0) {
-    for (size_t i = kltIndicesToRemove.size() - 1; i > 0; --i) {
+    size_t idx = 0, stopIdx = kltIndicesToRemove.size();
+    for (size_t i = kltIndicesToRemove.size() - 1; idx < stopIdx; --i, ++idx) {
       m_klt.suppressFeature(static_cast<int>(kltIndicesToRemove[static_cast<unsigned int>(i)]));
     }
   }
