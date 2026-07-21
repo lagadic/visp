@@ -270,7 +270,7 @@ vpLuminancePCA vpLuminancePCA::learn(const vpMatrix &images, const unsigned int 
 }
 
 //vpMatrixZigZagIndex
-vpLuminanceDCT::vpMatrixZigZagIndex::vpMatrixZigZagIndex() {}
+vpLuminanceDCT::vpMatrixZigZagIndex::vpMatrixZigZagIndex() { }
 
 void vpLuminanceDCT::vpMatrixZigZagIndex::init(unsigned int rows, unsigned int cols)
 {
@@ -338,7 +338,7 @@ void vpLuminanceDCT::vpMatrixZigZagIndex::init(unsigned int rows, unsigned int c
   }
 
   // Print the next half zig-zag pattern
-  unsigned int maxdim = std::max(rowCount, rowCount) - 1;
+  unsigned int maxdim = std::max(rowCount, colCount) - 1;
   for (unsigned int len, diag = maxdim; diag > 0; --diag) {
 
     if (diag > mindim) {
