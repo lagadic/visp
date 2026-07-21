@@ -181,13 +181,13 @@ vpCircleHoughTransform::computeCenterCandidates()
   int minimumXposition = std::max<int>(m_algoParams.m_centerXlimits.first, -1 * static_cast<int>(m_algoParams.m_maxRadius));
   int maximumXposition = std::min<int>(m_algoParams.m_centerXlimits.second, static_cast<int>(m_algoParams.m_maxRadius + nbCols));
   minimumXposition = std::min<int>(minimumXposition, maximumXposition - 1);
+  if (maximumXposition < minimumXposition) {
+    throw(vpException(vpException::dimensionError, "[vpCircleHoughTransform::computeCenterCandidates] Accumulator width <= 0!"));
+  }
   float minimumXpositionFloat = static_cast<float>(minimumXposition);
   float maximumXpositionFloat = static_cast<float>(maximumXposition);
   int offsetX = minimumXposition;
   int accumulatorWidth = (maximumXposition - minimumXposition) + 1;
-  if (accumulatorWidth <= 0) {
-    throw(vpException(vpException::dimensionError, "[vpCircleHoughTransform::computeCenterCandidates] Accumulator width <= 0!"));
-  }
 
   // Computing the minimum and maximum vertical position of the center candidates
   // The miminum vertical position of the center is at worst -maxRadius outside the image
@@ -196,13 +196,13 @@ vpCircleHoughTransform::computeCenterCandidates()
   int minimumYposition = std::max<int>(m_algoParams.m_centerYlimits.first, -1 * static_cast<int>(m_algoParams.m_maxRadius));
   int maximumYposition = std::min<int>(m_algoParams.m_centerYlimits.second, static_cast<int>(m_algoParams.m_maxRadius + nbRows));
   minimumYposition = std::min<int>(minimumYposition, maximumYposition - 1);
+  if (maximumYposition < minimumYposition) {
+    throw(vpException(vpException::dimensionError, "[vpCircleHoughTransform::computeCenterCandidates] Accumulator height <= 0!"));
+  }
   float minimumYpositionFloat = static_cast<float>(minimumYposition);
   float maximumYpositionFloat = static_cast<float>(maximumYposition);
   int offsetY = minimumYposition;
   int accumulatorHeight = (maximumYposition - minimumYposition) + 1;
-  if (accumulatorHeight <= 0) {
-    throw(vpException(vpException::dimensionError, "[vpCircleHoughTransform::computeCenterCandidates] Accumulator height <= 0!"));
-  }
 
   /*!< Votes for the center candidates.*/
   vpImage<float> centersAccum(static_cast<unsigned int>(accumulatorHeight),
