@@ -152,8 +152,12 @@ int lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb, doubl
    *  carres.
    */
   nsing = n;
+  if (n < 0) {
+    throw(vpException(vpException::fatalError, "The number of singularities of the matrix should not be negative"));
+  }
+  const unsigned int n_uint = static_cast<unsigned int>(n);
 
-  for (int i = 0; i < n; ++i) {
+  for (unsigned int i = 0; i < n_uint; ++i) {
     wa1[i] = qtb[i];
     double *pt = MIJ(r, i, i, ldr);
     if ((std::fabs(*pt) <= std::numeric_limits<double>::epsilon()) && (nsing == n)) {
@@ -180,7 +184,7 @@ int lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb, doubl
     }
   }
 
-  for (int j = 0; j < n; ++j) {
+  for (unsigned int j = 0; j < n_uint; ++j) {
     l = ipvt[j];
     x[l] = wa1[j];
   }
@@ -192,7 +196,7 @@ int lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb, doubl
    */
   iter = 0;
 
-  for (int i = 0; i < n; ++i) {
+  for (unsigned int i = 0; i < n_uint; ++i) {
     wa2[i] = diag[i] * x[i];
   }
 
@@ -209,7 +213,7 @@ int lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb, doubl
     double parl = 0.0;
 
     if (nsing >= n) {
-      for (int i = 0; i < n; ++i) {
+      for (unsigned int i = 0; i < n_uint; ++i) {
         l = ipvt[i];
         wa1[i] = diag[l] * (wa2[l] / dxnorm);
       }
@@ -235,10 +239,10 @@ int lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb, doubl
      *  calcul d'une limite superieure, paru, pour le zero de la
      *  fonction.
      */
-    for (int i = 0; i < n; ++i) {
+    for (unsigned int i = 0; i < n_uint; ++i) {
       double sum = 0.0;
 
-      for (int j = 0; j <= i; ++j) {
+      for (unsigned int j = 0; j <= i; ++j) {
         sum += *MIJ(r, i, j, ldr) * qtb[j];
       }
 
@@ -284,13 +288,13 @@ int lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb, doubl
 
       temp = sqrt(*par);
 
-      for (int i = 0; i < n; ++i) {
+      for (unsigned int i = 0; i < n_uint; ++i) {
         wa1[i] = temp * diag[i];
       }
 
       qrsolv(n, r, ldr, ipvt, wa1, qtb, x, sdiag, wa2);
 
-      for (int i = 0; i < n; ++i) {
+      for (unsigned int i = 0; i < n_uint; ++i) {
         wa2[i] = diag[i] * x[i];
       }
 
@@ -317,17 +321,17 @@ int lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb, doubl
        *        calcul de la correction de Newton.
        */
 
-      for (int i = 0; i < n; ++i) {
+      for (unsigned int i = 0; i < n_uint; ++i) {
         l = ipvt[i];
         wa1[i] = diag[l] * (wa2[l] / dxnorm);
       }
 
-      for (unsigned int i = 0; i < static_cast<unsigned int>(n); ++i) {
+      for (unsigned int i = 0; i < n_uint; ++i) {
         wa1[i] = wa1[i] / sdiag[i];
         temp = wa1[i];
         unsigned int jp1 = i + 1;
-        if (static_cast<unsigned int>(n) >= jp1) {
-          for (unsigned int j = jp1; j < static_cast<unsigned int>(n); ++j) {
+        if (n_uint >= jp1) {
+          for (unsigned int j = jp1; j < n_uint; ++j) {
             wa1[j] -= (*MIJ(r, i, j, ldr) * temp);
           }
         }
