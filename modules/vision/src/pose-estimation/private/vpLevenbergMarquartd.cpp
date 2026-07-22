@@ -161,7 +161,7 @@ int lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb, doubl
     wa1[i] = qtb[i];
     double *pt = MIJ(r, i, i, ldr);
     if ((std::fabs(*pt) <= std::numeric_limits<double>::epsilon()) && (nsing == n)) {
-      nsing = i - 1;
+      nsing = static_cast<int>(i) - 1;
     }
 
     if (nsing < n) {

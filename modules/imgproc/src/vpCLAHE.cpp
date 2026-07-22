@@ -244,7 +244,7 @@ void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blo
   if (fast) {
     const unsigned int val_2 = 2U;
     unsigned int blockSize = (val_2 * blockRadiusUInt) + 1U;
-    unsigned int limit = static_cast<unsigned int>(((slope * blockSize * blockSize) / bins) + 0.5);
+    int limit = static_cast<int>(((slope * blockSize * blockSize) / bins) + 0.5);
     /* div */
     unsigned int nc = I1.getWidth() / static_cast<unsigned int>(blockSize);
     unsigned int nr = I1.getHeight() / static_cast<unsigned int>(blockSize);
@@ -267,7 +267,7 @@ void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blo
       break;
     default:
       cs.resize(nc + val_2);
-      cs[0] = blockRadius + 1U;
+      cs[0] = blockRadiusUInt + 1U;
       for (unsigned int i = 0; i < nc; ++i) {
         cs[static_cast<std::size_t>(i + 1U)] = (i * blockSize) + blockRadiusUInt + 1U + (cm / val_2);
       }
@@ -293,8 +293,8 @@ void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blo
     default:
       rs.resize(static_cast<size_t>(nr + val_2));
       rs[0] = blockRadiusUInt + 1U;
-      for (int i = 0; i < static_cast<int>(nr); ++i) {
-        rs[static_cast<std::size_t>(i + 1)] = (i * blockSize) + blockRadiusUInt + 1 + (rm / val_2);
+      for (unsigned int i = 0; i < nr; ++i) {
+        rs[static_cast<std::size_t>(i + 1)] = (i * blockSize) + blockRadiusUInt + 1U + (rm / val_2);
       }
       rs[static_cast<std::size_t>(nr + 1)] = I1.getHeight() - blockRadiusUInt - 1U;
     }
@@ -332,7 +332,7 @@ void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blo
             br = tr;
           }
           else {
-            createHistogram(blockRadius, bins, cs[static_cast<std::size_t>(c1)], rs[static_cast<std::size_t>(r1)], I1, hist);
+            createHistogram(blockRadius, bins, static_cast<int>(cs[static_cast<std::size_t>(c1)]), static_cast<int>(rs[static_cast<std::size_t>(r1)]), I1, hist);
             br = createTransfer(hist, limit, cdfs);
           }
         }
