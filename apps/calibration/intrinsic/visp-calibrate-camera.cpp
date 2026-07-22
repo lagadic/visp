@@ -769,8 +769,8 @@ int main(int argc, const char *argv[])
 #endif
           const unsigned int heightWithOffset = static_cast<unsigned int>(s.boardSize.height+offset);
           for (unsigned int i = 0; i < heightWithOffset; i++) {
-            std::vector<vpImagePoint> current_line(grid_points.begin() + i * (s.boardSize.width+offset),
-                                                   grid_points.begin() + (i + 1) * (s.boardSize.width+offset));
+            std::vector<vpImagePoint> current_line(grid_points.begin() + i * static_cast<unsigned int>(s.boardSize.width+offset),
+                                                   grid_points.begin() + (i + 1U) * static_cast<unsigned int>(s.boardSize.width+offset));
 
             std::vector<vpImagePoint> current_line_undist = undistort(cam, current_line);
             double a = 0, b = 0, c = 0;
@@ -807,8 +807,8 @@ int main(int argc, const char *argv[])
                                    static_cast<int>(I.getWidth()) + 15 * static_cast<int>(vpDisplay::getDownScalingFactor(I_dist_undist)),
                                    calib_info[idx].m_frame_name + std::string(" undistorted"), vpColor::red);
             for (unsigned int i = 0; i < heightWithOffset; i++) {
-              std::vector<vpImagePoint> current_line(found_grid_points.begin() + i * (s.boardSize.width+offset),
-                                                     found_grid_points.begin() + (i + 1) * (s.boardSize.width+offset));
+              std::vector<vpImagePoint> current_line(found_grid_points.begin() + i * static_cast<unsigned int>(s.boardSize.width+offset),
+                                                     found_grid_points.begin() + (i + 1) * static_cast<unsigned int>(s.boardSize.width+offset));
 
               double a = 0, b = 0, c = 0;
               double line_fitting_error = vpMath::lineFitting(current_line, a, b, c);
