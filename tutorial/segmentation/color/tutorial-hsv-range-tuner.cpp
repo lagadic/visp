@@ -336,12 +336,13 @@ int main(int argc, const char *argv[])
         int v = static_cast<int>(V[i][j]);
 #endif
         int offset = 30;
-        hsv_values_trackbar[0] = std::max(0, h - offset);
-        hsv_values_trackbar[1] = std::min(max_value_H, h + offset);
-        hsv_values_trackbar[2] = std::max(0, s - offset);
-        hsv_values_trackbar[3] = std::min(max_value, s + offset);
-        hsv_values_trackbar[4] = std::max(0, v - offset);
-        hsv_values_trackbar[5] = std::min(max_value, v + offset);
+        // NB: using pattern ( cond ? val_true : val_false ) to avoid warning "assuming signed overflow does not occur when changing X +- C1 cmp C2 to X cmp C2 -+ C1 "
+        hsv_values_trackbar[0] = (h < offset ? 0 : h - offset);
+        hsv_values_trackbar[1] = (max_value_H < h + offset ? max_value_H : h + offset);
+        hsv_values_trackbar[2] = (s < offset ? 0 : s - offset);
+        hsv_values_trackbar[3] = (max_value < s + offset ? max_value : s + offset);
+        hsv_values_trackbar[4] = (v < offset ? 0 : v - offset);
+        hsv_values_trackbar[5] = (max_value < v + offset ? max_value : v + offset);
         std::cout << "HSV learned: " << h << " " << s << " " << v << std::endl;
         set_trackbar_H_min(hsv_values_trackbar[0]);
         set_trackbar_H_max(hsv_values_trackbar[1]);
