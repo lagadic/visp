@@ -126,6 +126,7 @@ static void usage(const char *argv[], int error)
     << "    The user can instead supply a desired px value using this parameter." << std::endl
     << "    Default: 600" << std::endl
     << std::endl
+#if (VISP_HAVE_OPENCV_VERSION >= 0x040000) // cv::calibrateCameraRO() only available since OpenCV 4.0.0
     << "  --opencv-calib" << std::endl
     << "    Flag to also perform the calibration using the OpenCV calibration pipeline." << std::endl
     << std::endl
@@ -145,6 +146,7 @@ static void usage(const char *argv[], int error)
     << "        - CALIB_USE_QR" << std::endl
     << "        - CALIB_USE_LU" << std::endl
     << std::endl
+#endif
     << "  --fast-display" << std::endl
     << "    Flag to not show:" << std::endl
     << "        - side-by-side comparison between original and undistorted images" << std::endl
@@ -191,9 +193,11 @@ int main(int argc, const char *argv[])
     double opt_init_focal = 600.0;
     std::string opt_img_ext = ".png";
     bool opt_save_results = false;
+#if (VISP_HAVE_OPENCV_VERSION >= 0x040000) // cv::calibrateCameraRO() only available since OpenCV 4.0.0
     bool perform_opencv_calib = false;
     int cv_flags = 0;
     std::string cv_flags_str = "CALIB_USE_INTRINSIC_GUESS+CALIB_USE_LU";
+#endif
     bool fast_display = false;
 
     for (int i = 2; i < argc; i++) {
@@ -213,12 +217,14 @@ int main(int argc, const char *argv[])
         opt_use_focal_cmd_line = true;
         opt_init_focal = std::atof(argv[++i]);
       }
+#if (VISP_HAVE_OPENCV_VERSION >= 0x040000) // cv::calibrateCameraRO() only available since OpenCV 4.0.0
       else if (std::string(argv[i]) == "--opencv-calib") {
         perform_opencv_calib = true;
       }
       else if (std::string(argv[i]) == "--opencv-calib-flags" && i + 1 < argc) {
         cv_flags_str = std::string(argv[++i]);
       }
+#endif
       else if (std::string(argv[i]) == "--fast-display") {
         fast_display = true;
       }
@@ -1130,6 +1136,7 @@ int main(int argc, const char *argv[])
       return EXIT_FAILURE;
     }
 
+#if (VISP_HAVE_OPENCV_VERSION >= 0x040000) // cv::calibrateCameraRO() only available since OpenCV 4.0.0
     //
     // OpenCV calibration
     //
@@ -1630,7 +1637,7 @@ int main(int argc, const char *argv[])
 
       } // if (cv_calib_status)
     } // if (perform_opencv_calib)
-
+#endif
 
     double end_time = vpTime::measureTimeMs();
     int milli = (end_time-start_time);
@@ -1642,6 +1649,7 @@ int main(int argc, const char *argv[])
 
     tee << "\nCamera calibration succeeded. Results are saved in " << "\"" << opt_output_file_name
       << "\". Total time: " << minutes << " min " << seconds << " sec " << milli << " ms." << "\n";
+
     return EXIT_SUCCESS;
   }
   catch (const vpException &e) {

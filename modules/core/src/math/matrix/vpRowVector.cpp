@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -448,13 +448,19 @@ vpRowVector vpRowVector::operator+(const vpRowVector &v) const
 }
 
 /*!
-   Operator that allows to add two row vectors that have the same size.
-   \exception vpException::dimensionError If the size of the two vectors
-   differ.
+ * In-place addition of a row vector.
+ * If the current vector is empty, it is automatically resized to the dimensions of \e v.
+ *
+ * \param v The row vector to add.
+ * \return A reference to the current row vector.
+ * \exception vpException::dimensionError If the dimensions do not match and the vector is not empty.
  */
-vpRowVector &vpRowVector::operator+=(vpRowVector v)
+vpRowVector &vpRowVector::operator+=(const vpRowVector &v)
 {
-  if (getCols() != v.getCols()) {
+  if (getCols() == 0) {
+    resize(v.getCols(), true);
+  }
+  else if (getCols() != v.getCols()) {
     throw(vpException(vpException::dimensionError, "Cannot add (1x%d) row vector to (1x%d) row vector", getCols(),
                       v.getCols()));
   }
@@ -466,13 +472,19 @@ vpRowVector &vpRowVector::operator+=(vpRowVector v)
 }
 
 /*!
-   Operator that allows to subtract two row vectors that have the same size.
-   \exception vpException::dimensionError If the size of the two vectors
-   differ.
+ * In-place subtraction of a row vector.
+ * If the current vector is empty, it is automatically resized to the dimensions of \e v.
+ *
+ * \param v The row vector to subtract.
+ * \return A reference to the current row vector.
+ * \exception vpException::dimensionError If the dimensions do not match and the vector is not empty.
  */
-vpRowVector &vpRowVector::operator-=(vpRowVector v)
+vpRowVector &vpRowVector::operator-=(const vpRowVector &v)
 {
-  if (getCols() != v.getCols()) {
+  if (getCols() == 0) {
+    resize(v.getCols(), true);
+  }
+  else if (getCols() != v.getCols()) {
     throw(vpException(vpException::dimensionError, "Cannot subtract (1x%d) row vector to (1x%d) row vector", getCols(),
                       v.getCols()));
   }
@@ -621,7 +633,7 @@ vpRowVector::vpRowVector(const vpRowVector &v, unsigned int c, unsigned int ncol
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 vpRowVector::vpRowVector(vpRowVector &&v) : vpArray2D<double>(std::move(v))
-{ }
+{}
 #endif
 
 /*!

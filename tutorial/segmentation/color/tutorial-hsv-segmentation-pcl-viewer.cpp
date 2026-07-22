@@ -238,7 +238,7 @@ int main(int argc, const char *argv[])
 
   //! [Create pcl viewer object]
   std::mutex pointcloud_mutex;
-  vpDisplayPCL pcl_viewer(opt_width, opt_height);
+  vpDisplayPCL pcl_viewer(opt_width, opt_height, 0, static_cast<int>(I.getHeight()), "Point cloud viewer");
   if (opt_mode == DisplayMode::THREADED) {
     if (opt_pcl_textured) {
       pcl_viewer.startThread(std::ref(pointcloud_mutex), pointcloud_color);

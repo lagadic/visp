@@ -51,7 +51,7 @@ BEGIN_VISP_NAMESPACE
 vpDisplay::vpDisplay()
   : m_displayHasBeenInitialized(false), m_windowXPosition(0), m_windowYPosition(0), m_width(0), m_height(0), m_title(),
   m_scale(1), m_scaleType(SCALE_DEFAULT)
-{ }
+{}
 
 /*!
   Copy constructor.
@@ -60,7 +60,7 @@ vpDisplay::vpDisplay(const vpDisplay &d)
   : m_displayHasBeenInitialized(d.m_displayHasBeenInitialized), m_windowXPosition(d.m_windowXPosition),
   m_windowYPosition(d.m_windowYPosition), m_width(d.m_width), m_height(d.m_height), m_title(d.m_title),
   m_scale(d.m_scale), m_scaleType(d.m_scaleType)
-{ }
+{}
 
 /*!
   Destructor that deallocates memory.
@@ -251,8 +251,8 @@ unsigned int vpDisplay::computeAutoScale(unsigned int width, unsigned int height
 {
   unsigned int screen_width, screen_height;
   getScreenSize(screen_width, screen_height);
-  double wscale = std::max<double>(1., ceil((2. * static_cast<double>(width)) / static_cast<double>(screen_width)));
-  double hscale = std::max<double>(1., ceil((2. * static_cast<double>(height)) / static_cast<double>(screen_height)));
+  double wscale = std::max<double>(1., ceil((1.5 * static_cast<double>(width)) / static_cast<double>(screen_width)));
+  double hscale = std::max<double>(1., ceil((1.5 * static_cast<double>(height)) / static_cast<double>(screen_height)));
   unsigned int scale = std::max<unsigned int>(1u, std::max<unsigned int>(static_cast<unsigned int>(wscale), static_cast<unsigned int>(hscale)));
   return scale;
 }

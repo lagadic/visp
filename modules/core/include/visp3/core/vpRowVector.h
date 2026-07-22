@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -124,15 +124,15 @@ class VISP_EXPORT vpRowVector : public vpArray2D<double>
 {
 public:
   //! Basic constructor that creates an empty 0-size row vector.
-  vpRowVector() : vpArray2D<double>() { }
+  vpRowVector() : vpArray2D<double>() {}
   //! Construct a row vector of size n. All the elements are initialized to
   //! zero.
-  VP_EXPLICIT vpRowVector(unsigned int n) : vpArray2D<double>(1, n) { }
+  VP_EXPLICIT vpRowVector(unsigned int n) : vpArray2D<double>(1, n) {}
   //! Construct a row vector of size n. Each element is set to \e val.
-  vpRowVector(unsigned int n, double val) : vpArray2D<double>(1, n, val) { }
+  vpRowVector(unsigned int n, double val) : vpArray2D<double>(1, n, val) {}
   //! Copy constructor that allows to construct a row vector from an other
   //! one.
-  vpRowVector(const vpRowVector &v) : vpArray2D<double>(v) { }
+  vpRowVector(const vpRowVector &v) : vpArray2D<double>(v) {}
   vpRowVector(const vpRowVector &v, unsigned int c, unsigned int ncols);
   VP_EXPLICIT vpRowVector(const vpMatrix &M);
   vpRowVector(const vpMatrix &M, unsigned int i);
@@ -140,7 +140,7 @@ public:
   VP_EXPLICIT vpRowVector(const std::vector<float> &v);
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpRowVector(vpRowVector &&v);
-  VP_EXPLICIT vpRowVector(const std::initializer_list<double> &list) : vpArray2D<double>(list) { }
+  VP_EXPLICIT vpRowVector(const std::initializer_list<double> &list) : vpArray2D<double>(list) {}
 #endif
 
   static vpRowVector view(double *raw_data, unsigned int ncols);
@@ -259,10 +259,10 @@ public:
   vpRowVector &operator/=(double x);
 
   vpRowVector operator+(const vpRowVector &v) const;
-  vpRowVector &operator+=(vpRowVector v);
+  vpRowVector &operator+=(const vpRowVector &v);
 
   vpRowVector operator-(const vpRowVector &v) const;
-  vpRowVector &operator-=(vpRowVector v);
+  vpRowVector &operator-=(const vpRowVector &v);
   vpRowVector operator-() const;
 
   vpRowVector &operator<<(const vpRowVector &v);
@@ -337,7 +337,7 @@ public:
      \deprecated Provided only for compat with previous releases.
      This function does nothing.
    */
-  VP_DEPRECATED void init() { }
+  VP_DEPRECATED void init() {}
   /*!
      \deprecated You should rather use stack(const vpRowVector &)
    */

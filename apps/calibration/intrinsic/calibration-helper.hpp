@@ -597,6 +597,7 @@ void calcChessboardCorners(cv::Size boardSize, float squareSize, std::vector<cv:
   }
 }
 
+#if (VISP_HAVE_OPENCV_VERSION >= 0x040000) // cv::calibrateCameraRO() only available since OpenCV 4.0.0
 void saveCameraParams(const std::string &filename,
                       cv::Size imageSize, cv::Size boardSize,
                       float squareSize, float aspectRatio, int flags,
@@ -774,6 +775,7 @@ bool runAndSave(const std::string &outputFilename,
                      totalAvgErr);
   return ok;
 }
+#endif
 
 std::vector<vpImagePoint> cv_undistort(const cv::Mat &cv_cam, const cv::Mat &cv_dist,
   const std::vector<vpImagePoint> &imPts)
@@ -925,10 +927,12 @@ void parseOpenCVCalibFlags(const std::string &str, int &cv_flags, Tee &tee)
     cv_flags |= cv::CALIB_FIX_K3;
     tee << "CALIB_FIX_K3" << "\n";
   }
+#if (VISP_HAVE_OPENCV_VERSION > 0x030301)
   if (str.find("CALIB_USE_QR") != std::string::npos) {
     cv_flags |= cv::CALIB_USE_QR;
     tee << "CALIB_USE_QR" << "\n";
   }
+#endif
   if (str.find("CALIB_USE_LU") != std::string::npos) {
     cv_flags |= cv::CALIB_USE_LU;
     tee << "CALIB_USE_LU" << "\n";

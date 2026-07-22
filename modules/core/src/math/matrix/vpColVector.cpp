@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,7 +89,10 @@ vpTranslationVector vpColVector::operator+(const vpTranslationVector &t) const
 
 vpColVector &vpColVector::operator+=(const vpColVector &v)
 {
-  if (getRows() != v.getRows()) {
+  if (getRows() == 0) {
+    resize(v.getRows(), true);
+  }
+  else if (getRows() != v.getRows()) {
     throw(vpException(vpException::dimensionError, "Cannot add (%dx1) column vector to (%dx1) column vector", getRows(),
                       v.getRows()));
   }
@@ -102,7 +105,10 @@ vpColVector &vpColVector::operator+=(const vpColVector &v)
 
 vpColVector &vpColVector::operator+=(const vpTranslationVector &t)
 {
-  if (getRows() != t.getRows()) {
+  if (getRows() == 0) {
+    resize(t.getRows(), true);
+  }
+  else if (getRows() != t.getRows()) {
     throw(vpException(vpException::dimensionError, "Cannot add (%dx1) translation vector to (%dx1) column vector",
                       getRows(), t.getRows()));
   }
@@ -115,7 +121,10 @@ vpColVector &vpColVector::operator+=(const vpTranslationVector &t)
 
 vpColVector &vpColVector::operator-=(const vpColVector &v)
 {
-  if (getRows() != v.getRows()) {
+  if (getRows() == 0) {
+    resize(v.getRows(), true);
+  }
+  else if (getRows() != v.getRows()) {
     throw(vpException(vpException::dimensionError, "Cannot subtract (%dx1) column vector to (%dx1) column vector",
                       getRows(), v.getRows()));
   }
@@ -128,7 +137,10 @@ vpColVector &vpColVector::operator-=(const vpColVector &v)
 
 vpColVector &vpColVector::operator-=(const vpTranslationVector &t)
 {
-  if (getRows() != t.getRows()) {
+  if (getRows() == 0) {
+    resize(t.getRows(), true);
+  }
+  else if (getRows() != t.getRows()) {
     throw(vpException(vpException::dimensionError, "Cannot subtract (%dx1) translation vector to (%dx1) column vector",
                       getRows(), t.getRows()));
   }
