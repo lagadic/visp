@@ -179,13 +179,14 @@ std::vector<float> createTransfer(const std::vector<int> &hist, int limit, std::
 
 float transferValue(int v, std::vector<int> &clippedHist)
 {
-  int clippedHistLength = static_cast<int>(clippedHist.size());
-  int hMin = clippedHistLength - 1;
-  int idxStop = hMin;
-  int i = 0;
+  size_t clippedHistLength = clippedHist.size();
+  size_t hMin = clippedHistLength - 1;
+  size_t idxStop = hMin;
+  size_t i = 0;
+  size_t vv = static_cast<size_t>(v);
   bool hasNotFoundFirstNotZero = true;
   while ((i<idxStop) && hasNotFoundFirstNotZero) {
-    if (clippedHist[static_cast<std::size_t>(i)] != 0) {
+    if (clippedHist[i] != 0) {
       hMin = i;
       hasNotFoundFirstNotZero = false;
     }
@@ -193,16 +194,16 @@ float transferValue(int v, std::vector<int> &clippedHist)
   }
 
   int cdf = 0;
-  for (i = hMin; i <= v; ++i) {
-    cdf += clippedHist[static_cast<std::size_t>(i)];
+  for (i = hMin; i <= vv; ++i) {
+    cdf += clippedHist[i];
   }
 
   int cdfMax = cdf;
-  for (i = v + 1; i < clippedHistLength; ++i) {
-    cdfMax += clippedHist[static_cast<std::size_t>(i)];
+  for (i = vv + 1; i < clippedHistLength; ++i) {
+    cdfMax += clippedHist[i];
   }
 
-  int cdfMin = clippedHist[static_cast<std::size_t>(hMin)];
+  int cdfMin = clippedHist[hMin];
   return (cdf - cdfMin) / static_cast<float>(cdfMax - cdfMin);
 }
 
