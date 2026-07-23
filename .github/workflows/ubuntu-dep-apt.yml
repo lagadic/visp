@@ -124,7 +124,8 @@ jobs:
                  -DUSE_CXX_STANDARD=$CXX_STANDARD \
                  -DACTIVATE_WARNING_SHADOW=ON \
                  -DACTIVATE_WARNING_FLOAT_EQUAL=ON \
-                 -DACTIVATE_WARNING_SIGN_CONVERSION=ON
+                 -DACTIVATE_WARNING_SIGN_CONVERSION=ON \
+                 -DACTIVATE_WARNING_STRICT_OVERFLOW=ON
         cat ViSP-third-party.txt
 
     - name: Compile

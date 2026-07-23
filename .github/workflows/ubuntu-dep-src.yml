@@ -271,7 +271,8 @@ jobs:
         cmake .. -DCMAKE_INSTALL_PREFIX=$(pwd)/install \
                  -DACTIVATE_WARNING_SHADOW=ON \
                  -DACTIVATE_WARNING_FLOAT_EQUAL=ON \
-                 -DACTIVATE_WARNING_SIGN_CONVERSION=ON
+                 -DACTIVATE_WARNING_SIGN_CONVERSION=ON \
+                 -DACTIVATE_WARNING_STRICT_OVERFLOW=ON
         cat ViSP-third-party.txt
 
     - name: Build visp-config script
