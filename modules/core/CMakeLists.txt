@@ -368,4 +368,5 @@ vp_glob_module_copy_data("src/image/private/Rubik-Regular.ttf" "data/font")
 if(CMAKE_COMPILER_IS_GNUCXX)
   set_source_files_properties(test/image/testHSVGradient.cpp PROPERTIES COMPILE_FLAGS "-Wno-strict-overflow")
   set_source_files_properties(test/math/perfMatrixMultiplication.cpp PROPERTIES COMPILE_FLAGS "-Wno-strict-overflow")
+  set_source_files_properties(test/math/catchEigenConversion.cpp PROPERTIES COMPILE_FLAGS "-Wno-strict-overflow") # warnings due to eigen3
 endif()
