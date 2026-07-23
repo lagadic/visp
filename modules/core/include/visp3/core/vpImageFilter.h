@@ -2724,26 +2724,27 @@ private:
     const int &istart, const int &iam
   )
   {
-    const int nbCols = static_cast<int>(I.getCols());
+    const unsigned int nbCols = I.getCols();
+    const unsigned int start = static_cast<unsigned int>(istart);
 
     if (iam > 0) {
-      Idiff[0] = static_cast<OutputType>(I.bitmap[istart - nbCols + 1].V - I.bitmap[istart - nbCols].V);
+      Idiff[0] = static_cast<OutputType>(I.bitmap[start - nbCols + 1].V - I.bitmap[start - nbCols].V);
     }
 
     // Computing the difference and sign for row 1 column 0, which corresponds to the current row of the image
-    Idiff[static_cast<size_t>(nbCols)] = static_cast<OutputType>(I.bitmap[istart + 1].V - I.bitmap[istart].V);
+    Idiff[static_cast<size_t>(nbCols)] = static_cast<OutputType>(I.bitmap[start + 1].V - I.bitmap[start].V);
 
-    const int nbColsM1 = nbCols - 1;
-    for (int iter = 1; iter < nbColsM1; ++iter) {
+    const unsigned int nbColsM1 = nbCols - 1;
+    for (unsigned int iter = 1; iter < nbColsM1; ++iter) {
       if (iam > 0) {
         // Computing the difference and sign for row 0, which corresponds to the previous row of the image
-        OutputType distanceRow0 = static_cast<OutputType>(I.bitmap[istart - nbCols + iter + 1].V - I.bitmap[istart - nbCols + iter].V);
-        Idiff[static_cast<size_t>(iter)] = distanceRow0;
+        OutputType distanceRow0 = static_cast<OutputType>(I.bitmap[start - nbCols + iter + 1].V - I.bitmap[start - nbCols + iter].V);
+        Idiff[iter] = distanceRow0;
       }
 
       // Computing the difference and sign for row 1, which corresponds to the current row of the image
-      OutputType distanceRow1 = static_cast<OutputType>(I.bitmap[istart + iter + 1].V - I.bitmap[istart + iter].V);
-      Idiff[static_cast<size_t>(nbCols + iter)] = distanceRow1;
+      OutputType distanceRow1 = static_cast<OutputType>(I.bitmap[start + iter + 1].V - I.bitmap[start + iter].V);
+      Idiff[nbCols + iter] = distanceRow1;
     }
   }
 
@@ -2836,17 +2837,18 @@ private:
     const int &istart
   )
   {
-    const int nbCols = static_cast<int>(I.getCols());
+    const unsigned int nbCols = I.getCols();
     // Computing the sign and distance for the first row, which corresponds to the row above the beginning of the gradient computation in the thread
-    int idDiff = 0;
-    for (int iter = istart - nbCols; iter < istart; ++iter) {
+    unsigned int idDiff = 0;
+    const unsigned int start = static_cast<unsigned int>(istart);
+    for (unsigned int iter = start - nbCols; iter < start; ++iter) {
       OutputType distance = static_cast<OutputType>(I.bitmap[iter + nbCols].V - I.bitmap[iter].V);
-      Idiff[static_cast<size_t>(idDiff)] = distance;
+      Idiff[idDiff] = distance;
       ++idDiff;
     }
     // Computing the distance and sign for I[1][0]
-    OutputType distance = static_cast<OutputType>(I.bitmap[static_cast<size_t>(nbCols + nbCols)].V - I.bitmap[static_cast<size_t>(nbCols)].V);
-    Idiff[static_cast<size_t>(nbCols)] = distance;
+    OutputType distance = static_cast<OutputType>(I.bitmap[nbCols + nbCols].V - I.bitmap[nbCols].V);
+    Idiff[nbCols] = distance;
   }
 
   template <typename HSVType, bool useFullScale, typename OutputType>
@@ -2870,6 +2872,10 @@ private:
 
     int iam, nt, irows, rstart, istart, istop;
 
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstrict-overflow"
+#endif
 #pragma omp parallel default(shared) private(iam, nt, irows, rstart, istart, istop) num_threads(nbThread)
     {
       iam = omp_get_thread_num();
@@ -2904,7 +2910,6 @@ private:
           futureDiff = static_cast<OutputType>(I.bitmap[static_cast<size_t>(iter + nbCols +1)].V - I.bitmap[static_cast<size_t>(iter + offsetIdiff)].V);
           Idiff[static_cast<size_t>(iter - istart + nbCols + offsetIdiff)] = futureDiff;
         }
-
         if (counter) {
           if ((counter != resetCounter)) {
             if (checkBooleanMask(p_mask, iter)) {
@@ -2932,9 +2937,11 @@ private:
       {
         std::memcpy(GI.bitmap + istart, GItemp.data(), GItemp.size() * sizeof(OutputType));
       }
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic pop
+#endif
     }
   }
-
 #endif
 #endif
 };
