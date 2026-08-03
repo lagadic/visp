@@ -57,9 +57,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_NLOHMANN_JSON) && defined(VISP_HAVE_CATCH2)
-#include VISP_NLOHMANN_JSON(json.hpp)
-using json = nlohmann::json; //! json namespace shortcut
+#if defined(VISP_HAVE_CATCH2)
 
 #if defined(VISP_BUILD_CATCH2)
 #include <catch_amalgamated.hpp>

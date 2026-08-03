@@ -348,8 +348,8 @@ missingArg:
 void vpParseArgv::printUsage(vpArgvInfo *argTable, int flags)
 {
   vpArgvInfo *infoPtr;
-  int width;
-  int numSpaces;
+  size_t width;
+  size_t numSpaces;
 #define NUM_SPACES 20
   static char spaces[] = "                    ";
   /*   char tmp[30]; */
@@ -368,11 +368,11 @@ void vpParseArgv::printUsage(vpArgvInfo *argTable, int flags)
   width = 4;
   for (unsigned int i = 0; i < 2; ++i) {
     for (infoPtr = i ? defaultTable : argTable; infoPtr->type != ARGV_END; ++infoPtr) {
-      int length;
+      size_t length;
       if (infoPtr->key == nullptr) {
         continue;
       }
-      length = static_cast<int>(strlen(infoPtr->key));
+      length = strlen(infoPtr->key);
       if (length > width) {
         width = length;
       }
@@ -387,7 +387,7 @@ void vpParseArgv::printUsage(vpArgvInfo *argTable, int flags)
         continue;
       }
       FPRINTF(stderr, "\n %s:", infoPtr->key);
-      numSpaces = width + 1 - static_cast<int>(strlen(infoPtr->key));
+      numSpaces = ((width + 1) >= strlen(infoPtr->key) ? width + 1 - strlen(infoPtr->key) : 0);
       while (numSpaces > 0) {
         if (numSpaces >= NUM_SPACES) {
           FPRINTF(stderr, "%s", spaces);
@@ -395,7 +395,7 @@ void vpParseArgv::printUsage(vpArgvInfo *argTable, int flags)
         else {
           FPRINTF(stderr, "%s", spaces + NUM_SPACES - numSpaces);
         }
-        numSpaces -= NUM_SPACES;
+        numSpaces = (numSpaces >= NUM_SPACES ? numSpaces - NUM_SPACES : 0);
       }
       FPRINTF(stderr, "%s", infoPtr->help);
       switch (infoPtr->type) {
