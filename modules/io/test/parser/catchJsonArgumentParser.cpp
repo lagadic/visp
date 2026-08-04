@@ -393,10 +393,10 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
 
 int main(int argc, char *argv[])
 {
-  Catch::Session session; // There must be exactly one instance
+  Catch::Session session;
   session.applyCommandLine(argc, argv);
-
   int numFailed = session.run();
+  std::cout << (numFailed ? "Test failed" : "Test succeed") << std::endl;
   return numFailed;
 }
 
@@ -404,6 +404,7 @@ int main(int argc, char *argv[])
 
 int main()
 {
+  std::cout << "Test skipped because Catch2 is not available" << std::endl;
   return EXIT_SUCCESS;
 }
 

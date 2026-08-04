@@ -1549,7 +1549,7 @@ public:
 #ifdef VISP_HAVE_OPENMP
       }
 #endif
-    }
+      }
   }
 
   /**
@@ -1880,23 +1880,23 @@ public:
       sigma = static_cast<FilterType>((size - 1) / 6.0);
     }
 
-    int middle = (static_cast<int>(size) - 1) / 2;
+    // Utilisation de unsigned int
+    unsigned int middle = (size - 1) / 2;
     FilterType sigma2 = static_cast<FilterType>(vpMath::sqr(static_cast<double>(sigma)));
     FilterType coef1 = static_cast<FilterType>(1. / (static_cast<double>(sigma) * sqrt(2. * M_PI)));
     FilterType v_2_sigma2 = static_cast<FilterType>(2. * static_cast<double>(sigma2));
-    for (int i = 0; i <= middle; ++i) {
-      filter[i] = coef1 * static_cast<FilterType>(exp(static_cast<double>(-static_cast<FilterType>(i * i) / v_2_sigma2)));
+
+    for (unsigned int i = 0; i <= middle; ++i) {
+      filter[i] = coef1 * static_cast<FilterType>(exp(static_cast<double>(-(double)(i * i) / v_2_sigma2)));
     }
+
     if (normalize) {
       // renormalization
-      FilterType sum = 0;
-      const unsigned int val2 = 2U;
-      for (int i = 1; i <= middle; ++i) {
-        sum += val2 * filter[i];
+      FilterType sum = filter[0];
+      for (unsigned int i = 1; i <= middle; ++i) {
+        sum += static_cast<FilterType>(2) * filter[i];
       }
-      sum += filter[0];
-
-      for (int i = 0; i <= middle; ++i) {
+      for (unsigned int i = 0; i <= middle; ++i) {
         filter[i] = filter[i] / sum;
       }
     }
@@ -1928,29 +1928,31 @@ public:
       sigma = static_cast<FilterType>((size - 1) / 6.0);
     }
 
-    const int half = 2;
-    int middle = (static_cast<int>(size) - 1) / half;
+    const unsigned int half = 2;
+    unsigned int middle = (size - 1) / half;
     FilterType sigma2 = static_cast<FilterType>(vpMath::sqr(static_cast<double>(sigma)));
     FilterType coef_1 = static_cast<FilterType>(1. / (static_cast<double>(sigma) * sqrt(2. * M_PI)));
     FilterType coef_1_over_2 = coef_1 / static_cast<FilterType>(2.);
     FilterType v_2_coef_1 = static_cast<FilterType>(2.) * coef_1;
     FilterType v_2_sigma2 = static_cast<FilterType>(2.) * sigma2;
+
     filter[0] = 0.;
-    for (int i = 1; i <= middle; ++i) {
+    for (unsigned int i = 1; i <= middle; ++i) {
       FilterType i_plus_1 = static_cast<FilterType>(i + 1);
       FilterType i_minus_1 = static_cast<FilterType>(i - 1);
-      filter[i] = -coef_1_over_2 * (static_cast<FilterType>(exp(-static_cast<double>(i_plus_1 * i_plus_1 / v_2_sigma2))) - static_cast<FilterType>(exp(-static_cast<double>(i_minus_1 * i_minus_1 / v_2_sigma2))));
+      filter[i] = -coef_1_over_2 * (static_cast<FilterType>(exp(-(double)(i_plus_1 * i_plus_1) / v_2_sigma2)) -
+                                    static_cast<FilterType>(exp(-(double)(i_minus_1 * i_minus_1) / v_2_sigma2)));
     }
 
     if (normalize) {
       FilterType sum = static_cast<FilterType>(0);
-      for (int i = 1; i <= middle; ++i) {
+      for (unsigned int i = 1; i <= middle; ++i) {
         FilterType i_ = static_cast<FilterType>(i);
         sum += v_2_coef_1 * static_cast<FilterType>(exp(-static_cast<double>(i_ * i_ / v_2_sigma2)));
       }
       sum += coef_1;
 
-      for (int i = 1; i <= middle; ++i) {
+      for (unsigned int i = 1; i <= middle; ++i) {
         filter[i] = filter[i] / sum;
       }
     }
@@ -2585,7 +2587,8 @@ private:
     // Computing the difference and sign for row 1 column 0
     Idiff[nbCols] = static_cast<OutputType>(I.bitmap[nbCols + 1].V - I.bitmap[nbCols].V);
 
-    for (unsigned int iter = 1; iter < nbCols - 1; ++iter) {
+    unsigned int limit = nbCols - 1;
+    for (unsigned int iter = 1; iter < limit; ++iter) {
       // Computing the difference and sign for row 0
       OutputType distanceRow0 = static_cast<OutputType>(I.bitmap[iter + 1].V - I.bitmap[iter].V);
       Idiff[iter] = distanceRow0;
@@ -2714,31 +2717,34 @@ private:
   }
 
 #ifdef VISP_HAVE_OPENMP
+
   template <typename HSVType, bool useFullScale, typename OutputType>
   static typename std::enable_if<std::is_arithmetic<OutputType>::value, void>::type initGradientFilterDifferenceImageX(
     const vpImage<vpHSV<HSVType, useFullScale>> &I, std::vector<OutputType> &Idiff,
     const int &istart, const int &iam
   )
   {
-    const int nbCols = static_cast<int>(I.getCols());
+    const unsigned int nbCols = I.getCols();
+    const unsigned int start = static_cast<unsigned int>(istart);
 
     if (iam > 0) {
-      Idiff[0] = static_cast<OutputType>(I.bitmap[istart - nbCols + 1].V - I.bitmap[istart - nbCols].V);
+      Idiff[0] = static_cast<OutputType>(I.bitmap[start - nbCols + 1].V - I.bitmap[start - nbCols].V);
     }
 
     // Computing the difference and sign for row 1 column 0, which corresponds to the current row of the image
-    Idiff[static_cast<size_t>(nbCols)] = static_cast<OutputType>(I.bitmap[istart + 1].V - I.bitmap[istart].V);
+    Idiff[static_cast<size_t>(nbCols)] = static_cast<OutputType>(I.bitmap[start + 1].V - I.bitmap[start].V);
 
-    for (int iter = 1; iter < nbCols - 1; ++iter) {
+    const unsigned int nbColsM1 = nbCols - 1;
+    for (unsigned int iter = 1; iter < nbColsM1; ++iter) {
       if (iam > 0) {
         // Computing the difference and sign for row 0, which corresponds to the previous row of the image
-        OutputType distanceRow0 = static_cast<OutputType>(I.bitmap[istart - nbCols + iter + 1].V - I.bitmap[istart - nbCols + iter].V);
-        Idiff[static_cast<size_t>(iter)] = distanceRow0;
+        OutputType distanceRow0 = static_cast<OutputType>(I.bitmap[start - nbCols + iter + 1].V - I.bitmap[start - nbCols + iter].V);
+        Idiff[iter] = distanceRow0;
       }
 
       // Computing the difference and sign for row 1, which corresponds to the current row of the image
-      OutputType distanceRow1 = static_cast<OutputType>(I.bitmap[istart + iter + 1].V - I.bitmap[istart + iter].V);
-      Idiff[static_cast<size_t>(nbCols + iter)] = distanceRow1;
+      OutputType distanceRow1 = static_cast<OutputType>(I.bitmap[start + iter + 1].V - I.bitmap[start + iter].V);
+      Idiff[nbCols + iter] = distanceRow1;
     }
   }
 
@@ -2831,17 +2837,18 @@ private:
     const int &istart
   )
   {
-    const int nbCols = static_cast<int>(I.getCols());
+    const unsigned int nbCols = I.getCols();
     // Computing the sign and distance for the first row, which corresponds to the row above the beginning of the gradient computation in the thread
-    int idDiff = 0;
-    for (int iter = istart - nbCols; iter < istart; ++iter) {
+    unsigned int idDiff = 0;
+    const unsigned int start = static_cast<unsigned int>(istart);
+    for (unsigned int iter = start - nbCols; iter < start; ++iter) {
       OutputType distance = static_cast<OutputType>(I.bitmap[iter + nbCols].V - I.bitmap[iter].V);
-      Idiff[static_cast<size_t>(idDiff)] = distance;
+      Idiff[idDiff] = distance;
       ++idDiff;
     }
     // Computing the distance and sign for I[1][0]
-    OutputType distance = static_cast<OutputType>(I.bitmap[static_cast<size_t>(nbCols + nbCols)].V - I.bitmap[static_cast<size_t>(nbCols)].V);
-    Idiff[static_cast<size_t>(nbCols)] = distance;
+    OutputType distance = static_cast<OutputType>(I.bitmap[nbCols + nbCols].V - I.bitmap[nbCols].V);
+    Idiff[nbCols] = distance;
   }
 
   template <typename HSVType, bool useFullScale, typename OutputType>
@@ -2865,6 +2872,10 @@ private:
 
     int iam, nt, irows, rstart, istart, istop;
 
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstrict-overflow"
+#endif
 #pragma omp parallel default(shared) private(iam, nt, irows, rstart, istart, istop) num_threads(nbThread)
     {
       iam = omp_get_thread_num();
@@ -2899,7 +2910,6 @@ private:
           futureDiff = static_cast<OutputType>(I.bitmap[static_cast<size_t>(iter + nbCols +1)].V - I.bitmap[static_cast<size_t>(iter + offsetIdiff)].V);
           Idiff[static_cast<size_t>(iter - istart + nbCols + offsetIdiff)] = futureDiff;
         }
-
         if (counter) {
           if ((counter != resetCounter)) {
             if (checkBooleanMask(p_mask, iter)) {
@@ -2927,6 +2937,9 @@ private:
       {
         std::memcpy(GI.bitmap + istart, GItemp.data(), GItemp.size() * sizeof(OutputType));
       }
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic pop
+#endif
     }
   }
 #endif

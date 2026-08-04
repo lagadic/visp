@@ -94,17 +94,15 @@ void close_keyword(void) { close_hash(); }
  */
 static void open_hash(void)
 {
-  Bucket **head, **bend;
-
   if ((hash_tbl = (Bucket **)malloc(sizeof(Bucket *) * PRIME)) == NULL) {
     static char proc_name[] = "open_hash";
     perror(proc_name);
     throw vpException(vpException::fatalError, "Error in open_hash");
   }
-  head = hash_tbl;
-  bend = head + PRIME;
-  for (; head < bend; *head++ = NULL) {
-  };
+
+  for (unsigned int i = 0; i < PRIME; ++i) {
+    hash_tbl[i] = NULL;
+  }
 }
 
 /*
@@ -112,18 +110,20 @@ static void open_hash(void)
  */
 static void close_hash(void)
 {
-  Bucket **head = hash_tbl;
-  Bucket **bend = head + PRIME;
-  Bucket *bp;   /* element courant  */
-  Bucket *next; /* element suivant  */
+  if (hash_tbl == NULL) return;
 
-  for (; head < bend; head++) { /* libere les listes  */
-    for (bp = *head; bp != NULL; bp = next) {
-      next = bp->next;
-      free((char *)bp);
+  // Utilisation d'un index pour parcourir la table
+  for (unsigned int i = 0; i < PRIME; ++i) {
+    Bucket *bp = hash_tbl[i];
+    while (bp != NULL) {
+      Bucket *next = bp->next;
+      free(bp);
+      bp = next;
     }
   }
-  free((char *)hash_tbl); /* libere la table  */
+
+  free(hash_tbl); // Libération de la table elle-même
+  hash_tbl = NULL;
 }
 
 /*

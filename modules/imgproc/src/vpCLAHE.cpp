@@ -179,13 +179,14 @@ std::vector<float> createTransfer(const std::vector<int> &hist, int limit, std::
 
 float transferValue(int v, std::vector<int> &clippedHist)
 {
-  int clippedHistLength = static_cast<int>(clippedHist.size());
-  int hMin = clippedHistLength - 1;
-  int idxStop = hMin;
-  int i = 0;
+  size_t clippedHistLength = clippedHist.size();
+  size_t hMin = clippedHistLength - 1;
+  size_t idxStop = hMin;
+  size_t i = 0;
+  size_t vv = static_cast<size_t>(v);
   bool hasNotFoundFirstNotZero = true;
   while ((i<idxStop) && hasNotFoundFirstNotZero) {
-    if (clippedHist[static_cast<std::size_t>(i)] != 0) {
+    if (clippedHist[i] != 0) {
       hMin = i;
       hasNotFoundFirstNotZero = false;
     }
@@ -193,16 +194,16 @@ float transferValue(int v, std::vector<int> &clippedHist)
   }
 
   int cdf = 0;
-  for (i = hMin; i <= v; ++i) {
-    cdf += clippedHist[static_cast<std::size_t>(i)];
+  for (i = hMin; i <= vv; ++i) {
+    cdf += clippedHist[i];
   }
 
   int cdfMax = cdf;
-  for (i = v + 1; i < clippedHistLength; ++i) {
-    cdfMax += clippedHist[static_cast<std::size_t>(i)];
+  for (i = vv + 1; i < clippedHistLength; ++i) {
+    cdfMax += clippedHist[i];
   }
 
-  int cdfMin = clippedHist[static_cast<std::size_t>(hMin)];
+  int cdfMin = clippedHist[hMin];
   return (cdf - cdfMin) / static_cast<float>(cdfMax - cdfMin);
 }
 
@@ -239,109 +240,109 @@ bool checkClaheInputs(const int &blockRadius, const int &bins, const unsigned in
 void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blockRadius, int bins, float slope, bool fast)
 {
   if (!checkClaheInputs(blockRadius, bins, I1.getWidth(), I1.getHeight())) { return; }
-
+  unsigned int blockRadiusUInt = static_cast<unsigned int>(blockRadius);
   I2.resize(I1.getHeight(), I1.getWidth());
   if (fast) {
-    const int val_2 = 2;
-    int blockSize = (val_2 * blockRadius) + 1;
+    const unsigned int val_2 = 2U;
+    unsigned int blockSize = (val_2 * blockRadiusUInt) + 1U;
     int limit = static_cast<int>(((slope * blockSize * blockSize) / bins) + 0.5);
     /* div */
     unsigned int nc = I1.getWidth() / static_cast<unsigned int>(blockSize);
     unsigned int nr = I1.getHeight() / static_cast<unsigned int>(blockSize);
     /* % */
-    int cm = static_cast<int>(I1.getWidth()) - (static_cast<int>(nc) * blockSize);
-    std::vector<int> cs;
+    unsigned int cm = I1.getWidth() - (nc * blockSize);
+    std::vector<unsigned int> cs;
     switch (cm) {
     case 0:
-      cs.resize(static_cast<std::size_t>(nc));
-      for (int i = 0; i < static_cast<int>(nc); ++i) {
-        cs[static_cast<std::size_t>(i)] = (i * blockSize) + blockRadius + 1;
+      cs.resize(nc);
+      for (unsigned int i = 0U; i < nc; ++i) {
+        cs[i] = (i * blockSize) + blockRadiusUInt + 1U;
       }
       break;
     case 1:
-      cs.resize(static_cast<std::size_t>(nc + 1));
-      for (int i = 0; i < static_cast<int>(nc); ++i) {
-        cs[static_cast<std::size_t>(i)] = (i * blockSize) + blockRadius + 1;
+      cs.resize(nc + 1U);
+      for (unsigned int i = 0U; i < nc; ++i) {
+        cs[i] = (i * blockSize) + blockRadiusUInt + 1U;
       }
-      cs[nc] = static_cast<int>(I1.getWidth()) - blockRadius - 1;
+      cs[nc] = I1.getWidth() - blockRadiusUInt - 1U;
       break;
     default:
       cs.resize(nc + val_2);
-      cs[0] = blockRadius + 1;
-      for (int i = 0; i < static_cast<int>(nc); ++i) {
-        cs[static_cast<std::size_t>(i + 1)] = (i * blockSize) + blockRadius + 1 + (cm / val_2);
+      cs[0] = blockRadiusUInt + 1U;
+      for (unsigned int i = 0; i < nc; ++i) {
+        cs[static_cast<std::size_t>(i + 1U)] = (i * blockSize) + blockRadiusUInt + 1U + (cm / val_2);
       }
-      cs[nc + 1] = static_cast<int>(I1.getWidth()) - blockRadius - 1;
+      cs[nc + 1] = I1.getWidth() - blockRadiusUInt - 1U;
     }
 
-    int rm = static_cast<int>(I1.getHeight()) - (static_cast<int>(nr) * blockSize);
-    std::vector<int> rs;
+    unsigned int rm = I1.getHeight() - (nr * blockSize);
+    std::vector<unsigned int> rs;
     switch (rm) {
     case 0:
       rs.resize(static_cast<size_t>(nr));
-      for (int i = 0; i < static_cast<int>(nr); ++i) {
-        rs[static_cast<std::size_t>(i)] = (i * blockSize) + blockRadius + 1;
+      for (unsigned int i = 0; i < nr; ++i) {
+        rs[static_cast<std::size_t>(i)] = (i * blockSize) + blockRadiusUInt + 1U;
       }
       break;
     case 1:
-      rs.resize(static_cast<size_t>(nr + 1));
-      for (int i = 0; i < static_cast<int>(nr); ++i) {
-        rs[static_cast<std::size_t>(i)] = (i * blockSize) + blockRadius + 1;
+      rs.resize(static_cast<size_t>(nr + 1U));
+      for (unsigned int i = 0; i < nr; ++i) {
+        rs[static_cast<std::size_t>(i)] = (i * blockSize) + blockRadiusUInt + 1U;
       }
-      rs[static_cast<std::size_t>(nr)] = static_cast<int>(I1.getHeight()) - blockRadius - 1;
+      rs[static_cast<std::size_t>(nr)] = I1.getHeight() - blockRadiusUInt - 1U;
       break;
     default:
       rs.resize(static_cast<size_t>(nr + val_2));
-      rs[0] = blockRadius + 1;
-      for (int i = 0; i < static_cast<int>(nr); ++i) {
-        rs[static_cast<std::size_t>(i + 1)] = (i * blockSize) + blockRadius + 1 + (rm / val_2);
+      rs[0] = blockRadiusUInt + 1U;
+      for (unsigned int i = 0; i < nr; ++i) {
+        rs[static_cast<std::size_t>(i + 1)] = (i * blockSize) + blockRadiusUInt + 1U + (rm / val_2);
       }
-      rs[static_cast<std::size_t>(nr + 1)] = static_cast<int>(I1.getHeight()) - blockRadius - 1;
+      rs[static_cast<std::size_t>(nr + 1)] = I1.getHeight() - blockRadiusUInt - 1U;
     }
 
     std::vector<int> hist(static_cast<size_t>(bins + 1)), cdfs(static_cast<size_t>(bins + 1));
     std::vector<float> tl, tr, br, bl;
-    int rs_size = static_cast<int>(rs.size());
-    for (int r = 0; r <= rs_size; ++r) {
-      int r0 = std::max<int>(0, r - 1);
-      int r1 = std::min<int>(static_cast<int>(rs.size()) - 1, r);
-      int dr = rs[static_cast<std::size_t>(r1)] - rs[static_cast<std::size_t>(r0)];
-      createHistogram(blockRadius, bins, cs[0], rs[static_cast<std::size_t>(r0)], I1, hist);
+    unsigned int rs_size = static_cast<unsigned int>(rs.size());
+    for (unsigned int r = 0; r <= rs_size; ++r) {
+      unsigned int r0 = (r == 0 ? 0U : r - 1);
+      unsigned int r1 = std::min<unsigned int>(rs_size - 1U, r);
+      unsigned int dr = rs[static_cast<std::size_t>(r1)] - rs[static_cast<std::size_t>(r0)];
+      createHistogram(blockRadius, bins, static_cast<int>(cs[0]), static_cast<int>(rs[static_cast<std::size_t>(r0)]), I1, hist);
       tr = createTransfer(hist, limit, cdfs);
       if (r0 == r1) {
         br = tr;
       }
       else {
-        createHistogram(blockRadius, bins, cs[0], rs[static_cast<std::size_t>(r1)], I1, hist);
+        createHistogram(blockRadius, bins, static_cast<int>(cs[0]), static_cast<int>(rs[static_cast<std::size_t>(r1)]), I1, hist);
         br = createTransfer(hist, limit, cdfs);
       }
 
-      int yMin = (r == 0 ? 0 : rs[static_cast<std::size_t>(r0)]);
-      int yMax = (r < static_cast<int>(rs.size()) ? static_cast<int>(rs[static_cast<std::size_t>(r1)]) : static_cast<int>(I1.getHeight()));
-      int cs_size = static_cast<int>(cs.size());
-      for (int c = 0; c <= cs_size; ++c) {
-        int c0 = std::max<int>(0, c - 1);
-        int c1 = std::min<int>(static_cast<int>(cs.size()) - 1, c);
-        int dc = cs[static_cast<std::size_t>(c1)] - cs[static_cast<std::size_t>(c0)];
+      unsigned int yMin = (r == 0 ? 0U : rs[static_cast<std::size_t>(r0)]);
+      unsigned int yMax = (r < rs_size ? rs[static_cast<std::size_t>(r1)] : I1.getHeight());
+      unsigned int cs_size = static_cast<unsigned int>(cs.size());
+      for (unsigned int c = 0; c <= cs_size; ++c) {
+        unsigned int c0 = (c == 0U ? 0 : c - 1);
+        unsigned int c1 = std::min<unsigned int>(static_cast<unsigned int>(cs.size()) - 1U, c);
+        unsigned int dc = cs[static_cast<std::size_t>(c1)] - cs[static_cast<std::size_t>(c0)];
         tl = tr;
         bl = br;
         if (c0 != c1) {
-          createHistogram(blockRadius, bins, cs[static_cast<std::size_t>(c1)], rs[static_cast<std::size_t>(r0)], I1, hist);
+          createHistogram(blockRadius, bins, static_cast<int>(cs[static_cast<std::size_t>(c1)]), static_cast<int>(rs[static_cast<std::size_t>(r0)]), I1, hist);
           tr = createTransfer(hist, limit, cdfs);
           if (r0 == r1) {
             br = tr;
           }
           else {
-            createHistogram(blockRadius, bins, cs[static_cast<std::size_t>(c1)], rs[static_cast<std::size_t>(r1)], I1, hist);
+            createHistogram(blockRadius, bins, static_cast<int>(cs[static_cast<std::size_t>(c1)]), static_cast<int>(rs[static_cast<std::size_t>(r1)]), I1, hist);
             br = createTransfer(hist, limit, cdfs);
           }
         }
 
-        int xMin = (c == 0 ? 0 : cs[static_cast<std::size_t>(c0)]);
-        int xMax = (c < static_cast<int>(cs.size()) ? static_cast<int>(cs[static_cast<std::size_t>(c1)]) : static_cast<int>(I1.getWidth()));
-        for (int y = yMin; y < yMax; ++y) {
+        unsigned int xMin = (c == 0 ? 0 : cs[static_cast<std::size_t>(c0)]);
+        unsigned int xMax = ((c < cs_size) ? cs[static_cast<std::size_t>(c1)] : I1.getWidth());
+        for (unsigned int y = yMin; y < yMax; ++y) {
           float wy = static_cast<float>(rs[static_cast<std::size_t>(r1)] - y) / dr;
-          for (int x = xMin; x < xMax; ++x) {
+          for (unsigned int x = xMin; x < xMax; ++x) {
             float wx = static_cast<float>(cs[static_cast<std::size_t>(c1)] - x) / dc;
             int v = fastRound((I1[y][x] / 255.0f) * bins);
             float t00 = tl[static_cast<std::size_t>(v)];

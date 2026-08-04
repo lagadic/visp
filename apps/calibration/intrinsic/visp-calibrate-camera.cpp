@@ -344,16 +344,18 @@ int main(int argc, const char *argv[])
 
     // Create board 3D object points
 #if (VISP_HAVE_OPENCV_VERSION >= 0x040700)
+    unsigned int boardHeight = static_cast<unsigned int>(s.boardSize.height), boardHeightMinusOne = static_cast<unsigned int>(s.boardSize.height)-1U;
+    unsigned int boardWidth = static_cast<unsigned int>(s.boardSize.width), boardWidthMinusOne = static_cast<unsigned int>(s.boardSize.width)-1U;
     if (s.calibrationPattern == Settings::CHARUCOBOARD) {
-      for (int i = 0; i < s.boardSize.height-1; i++) {
-        for (int j = 0; j < s.boardSize.width-1; j++) {
+      for (unsigned int i = 0; i < boardHeightMinusOne; i++) {
+        for (unsigned int j = 0; j < boardWidthMinusOne; j++) {
           model.push_back(vpPoint(j * s.squareSize, i * s.squareSize, 0));
         }
       }
     }
     else {
-      for (int i = 0; i < s.boardSize.height; i++) {
-        for (int j = 0; j < s.boardSize.width; j++) {
+      for (unsigned int i = 0; i < boardHeight; i++) {
+        for (unsigned int j = 0; j < boardWidth; j++) {
           model.push_back(vpPoint(j * s.squareSize, i * s.squareSize, 0));
         }
       }
@@ -370,8 +372,10 @@ int main(int argc, const char *argv[])
       ch_detector = cv::makePtr<cv::aruco::CharucoDetector>(cv::aruco::CharucoDetector(*ch_board));
     }
 #else
-    for (int i = 0; i < s.boardSize.height; i++) {
-      for (int j = 0; j < s.boardSize.width; j++) {
+    unsigned int boardHeight = static_cast<unsigned int>(s.boardSize.height);
+    unsigned int boardWidth = static_cast<unsigned int>(s.boardSize.width);
+    for (unsigned int i = 0; i < boardHeight; i++) {
+      for (unsigned int j = 0; j < boardWidth; j++) {
         model.push_back(vpPoint(j * s.squareSize, i * s.squareSize, 0));
       }
     }
@@ -763,9 +767,10 @@ int main(int argc, const char *argv[])
 #else
           const int offset = 0;
 #endif
-          for (int i = 0; i < s.boardSize.height+offset; i++) {
-            std::vector<vpImagePoint> current_line(grid_points.begin() + i * (s.boardSize.width+offset),
-                                                   grid_points.begin() + (i + 1) * (s.boardSize.width+offset));
+          const unsigned int heightWithOffset = static_cast<unsigned int>(s.boardSize.height+offset);
+          for (unsigned int i = 0; i < heightWithOffset; i++) {
+            std::vector<vpImagePoint> current_line(grid_points.begin() + i * static_cast<unsigned int>(s.boardSize.width+offset),
+                                                   grid_points.begin() + (i + 1U) * static_cast<unsigned int>(s.boardSize.width+offset));
 
             std::vector<vpImagePoint> current_line_undist = undistort(cam, current_line);
             double a = 0, b = 0, c = 0;
@@ -801,9 +806,9 @@ int main(int argc, const char *argv[])
             vpDisplay::displayText(I_dist_undist, 15 * static_cast<int>(vpDisplay::getDownScalingFactor(I_dist_undist)),
                                    static_cast<int>(I.getWidth()) + 15 * static_cast<int>(vpDisplay::getDownScalingFactor(I_dist_undist)),
                                    calib_info[idx].m_frame_name + std::string(" undistorted"), vpColor::red);
-            for (int i = 0; i < s.boardSize.height+offset; i++) {
-              std::vector<vpImagePoint> current_line(found_grid_points.begin() + i * (s.boardSize.width+offset),
-                                                     found_grid_points.begin() + (i + 1) * (s.boardSize.width+offset));
+            for (unsigned int i = 0; i < heightWithOffset; i++) {
+              std::vector<vpImagePoint> current_line(found_grid_points.begin() + i * static_cast<unsigned int>(s.boardSize.width+offset),
+                                                     found_grid_points.begin() + (i + 1) * static_cast<unsigned int>(s.boardSize.width+offset));
 
               double a = 0, b = 0, c = 0;
               double line_fitting_error = vpMath::lineFitting(current_line, a, b, c);

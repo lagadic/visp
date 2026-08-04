@@ -313,6 +313,7 @@ int computeThresholdTriangle(vpHistogram &hist)
   int left_bound = -1, right_bound = -1, max_idx = -1, max_value = 0;
   // Find max value index and left / right most index
   int hist_size = static_cast<int>(hist.getSize());
+  const unsigned int cpt_right_initial_val = (hist.getSize() == 0 ? 0 : hist.getSize() - 1U);
   for (int cpt = 0; cpt < hist_size; ++cpt) {
     if ((left_bound == -1) && (hist[cpt] > 0)) {
       left_bound = static_cast<int>(cpt);
@@ -330,7 +331,7 @@ int computeThresholdTriangle(vpHistogram &hist)
 
   // First / last index when hist(cpt) == 0
   left_bound = left_bound > 0 ? (left_bound - 1) : left_bound;
-  right_bound = right_bound < (static_cast<int>(hist.getSize()) - 1) ? (right_bound + 1) : right_bound;
+  right_bound = (right_bound + 1) < static_cast<int>(hist.getSize()) ? (right_bound + 1) : right_bound;
 
   // Use the largest bound
   bool flip = false;
@@ -338,8 +339,9 @@ int computeThresholdTriangle(vpHistogram &hist)
     // Flip histogram to get the largest bound to the left
     flip = true;
 
-    int cpt_left = 0;
-    int cpt_right = static_cast<int>(hist.getSize()) - 1;
+
+    unsigned int cpt_left = 0;
+    unsigned int cpt_right = cpt_right_initial_val;
     for (; cpt_left < cpt_right; ++cpt_left, --cpt_right) {
       unsigned int temp = hist[cpt_left];
       hist.set(cpt_left, hist[cpt_right]);

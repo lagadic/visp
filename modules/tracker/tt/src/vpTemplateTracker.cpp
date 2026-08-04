@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -731,8 +731,8 @@ void vpTemplateTracker::trackPyr(const vpImage<unsigned char> &I)
         zoneTracked = &zoneTrackedPyr[i];
       }
 
-      for (int i = static_cast<int>(nbLvlPyr) - 1; i >= 0; i--) {
-        if (i >= static_cast<int>(l0Pyr)) {
+      for (unsigned int i = nbLvlPyr - 1; i-- > 0;) {
+        if (i >= l0Pyr) {
           templateSize = templateSizePyr[i];
           ptTemplate = ptTemplatePyr[i];
           ptTemplateSelect = ptTemplateSelectPyr[i];

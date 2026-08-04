@@ -250,12 +250,15 @@ void vp_writePFM_HDR(const vpImage<float> &I, const std::string &filename)
 
   // Write the bitmap
   size_t nbyte = I.getWidth();
-  for (int i = static_cast<int>(I.getHeight()) - 1; i >= 0; i--) {
-    size_t ierr = fwrite(I[i], sizeof(float), nbyte, fd);
-    if (ierr != nbyte) {
-      fclose(fd);
-      throw(vpImageException(vpImageException::ioError, "Cannot save PFM file \"%s\": only %d bytes over %d saved ",
-                             filename.c_str(), ierr, nbyte));
+  if (I.getHeight() > 0) {
+    for (unsigned int i = I.getHeight(); i > 0; --i) {
+      unsigned int row_idx = i - 1;
+      size_t ierr = fwrite(I[row_idx], sizeof(float), nbyte, fd);
+      if (ierr != nbyte) {
+        fclose(fd);
+        throw(vpImageException(vpImageException::ioError, "Cannot save PFM file \"%s\": only %d bytes over %d saved ",
+                               filename.c_str(), ierr, nbyte));
+      }
     }
   }
 
@@ -286,12 +289,15 @@ void vp_writePFM_HDR(const vpImage<vpRGBf> &I, const std::string &filename)
 
   // Write the bitmap
   size_t nbyte = I.getWidth() * 3;
-  for (int i = static_cast<int>(I.getHeight()) - 1; i >= 0; i--) {
-    size_t ierr = fwrite(I[i], sizeof(float), nbyte, fd);
-    if (ierr != nbyte) {
-      fclose(fd);
-      throw(vpImageException(vpImageException::ioError, "Cannot save PFM file \"%s\": only %d bytes over %d saved ",
-                             filename.c_str(), ierr, nbyte));
+  if (I.getHeight() > 0) {
+    for (unsigned int i = I.getHeight(); i > 0; --i) {
+      unsigned int row_idx = i - 1;
+      size_t ierr = fwrite(I[row_idx], sizeof(float), nbyte, fd);
+      if (ierr != nbyte) {
+        fclose(fd);
+        throw(vpImageException(vpImageException::ioError, "Cannot save PFM file \"%s\": only %d bytes over %d saved ",
+                               filename.c_str(), ierr, nbyte));
+      }
     }
   }
 
@@ -360,8 +366,9 @@ void vp_writePGM(const vpImage<short> &I, const std::string &filename)
 
   Iuc.resize(nrows, ncols);
 
-  for (unsigned int i = 0; i < nrows * ncols; ++i)
+  for (unsigned int i = 0; i < nrows * ncols; ++i) {
     Iuc.bitmap[i] = (unsigned char)I.bitmap[i];
+  }
 
   vp_writePGM(Iuc, filename);
 }
@@ -513,11 +520,14 @@ void vp_readPFM_HDR(vpImage<float> &I, const std::string &filename)
 #else
   bool swapEndianness = littleEndian;
 #endif
-  for (int i = static_cast<int>(I.getHeight()) - 1; i >= 0; i--) {
-    fd.read((char *)I[i], static_cast<unsigned int>(sizeof(float) * w * channels));
-    if (swapEndianness) {
-      for (unsigned int j = 0; j < w * channels; ++j) {
-        I[i][j] = vpEndian::swapFloat(I[i][j]);
+  if (I.getHeight() > 0) {
+    for (unsigned int i = I.getHeight(); i > 0; --i) {
+      unsigned int row_idx = i - 1;
+      fd.read((char *)I[row_idx], static_cast<unsigned int>(sizeof(float) * w * channels));
+      if (swapEndianness) {
+        for (unsigned int j = 0; j < w * channels; ++j) {
+          I[row_idx][j] = vpEndian::swapFloat(I[row_idx][j]);
+        }
       }
     }
   }
@@ -588,13 +598,16 @@ void vp_readPFM_HDR(vpImage<vpRGBf> &I, const std::string &filename)
 #else
   bool swapEndianness = littleEndian;
 #endif
-  for (int i = static_cast<int>(I.getHeight()) - 1; i >= 0; i--) {
-    fd.read((char *)I[i], static_cast<unsigned int>(sizeof(float) * w * channels));
-    if (swapEndianness) {
-      for (unsigned int j = 0; j < w; ++j) {
-        I[i][j].R = vpEndian::swapFloat(I[i][j].R);
-        I[i][j].G = vpEndian::swapFloat(I[i][j].G);
-        I[i][j].B = vpEndian::swapFloat(I[i][j].B);
+  if (I.getHeight() > 0) {
+    for (unsigned int i = I.getHeight(); i > 0; --i) {
+      unsigned int row_idx = i - 1;
+      fd.read((char *)I[row_idx], static_cast<unsigned int>(sizeof(float) * w * channels));
+      if (swapEndianness) {
+        for (unsigned int j = 0; j < w; ++j) {
+          I[row_idx][j].R = vpEndian::swapFloat(I[row_idx][j].R);
+          I[row_idx][j].G = vpEndian::swapFloat(I[row_idx][j].G);
+          I[row_idx][j].B = vpEndian::swapFloat(I[row_idx][j].B);
+        }
       }
     }
   }

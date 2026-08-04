@@ -99,6 +99,8 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
   const int left = static_cast<int>(renderBB.getLeft());
   const int bottom = std::min(height - 1, static_cast<int>(renderBB.getBottom()));
   const int right = std::min(width - 1, static_cast<int>(renderBB.getRight()));
+  const int bottomExcl = bottom + 1;  // Exclusive limit
+  const int rightExcl = right + 1;
 
   const vpImage<float> &renderDepth = frame.renders.depth;
   const vpImage<float> &depth = previousFrame.depth.getSize() == 0 ? frame.depth : previousFrame.depth;
@@ -106,8 +108,8 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-    for (int i = top; i <= bottom; ++i) {
-      for (int j = left; j <= right; ++j) {
+    for (int i = top; i < bottomExcl; ++i) {
+      for (int j = left; j < rightExcl; ++j) {
         unsigned int i_ = static_cast<unsigned int>(i);
         unsigned int j_ = static_cast<unsigned int>(j);
         m_mask[i_][j_] = renderDepth[i_][j_] > 0.f && (depth[i_][j_] > 0.f && fabs(renderDepth[i_][j_] - depth[i_][j_]) <= m_depthErrorTolerance);
@@ -118,8 +120,8 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-    for (int i = top; i <= bottom; ++i) {
-      for (int j = left; j <= right; ++j) {
+    for (int i = top; i < bottomExcl; ++i) {
+      for (int j = left; j < rightExcl; ++j) {
         unsigned int i_ = static_cast<unsigned int>(i);
         unsigned int j_ = static_cast<unsigned int>(j);
         m_mask[i_][j_] = renderDepth[i_][j_] > 0.f;
@@ -152,8 +154,8 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-    for (int i = top; i <= bottom; ++i) {
-      for (int j = left; j <= right; ++j) {
+    for (int i = top; i < bottomExcl; ++i) {
+      for (int j = left; j < rightExcl; ++j) {
         unsigned int index = m_histObject.colorToIndex(frame.IRGB[i][j]);
         mask[i][j] = probas(index);
       }

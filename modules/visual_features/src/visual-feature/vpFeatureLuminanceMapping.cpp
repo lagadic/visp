@@ -270,7 +270,7 @@ vpLuminancePCA vpLuminancePCA::learn(const vpMatrix &images, const unsigned int 
 }
 
 //vpMatrixZigZagIndex
-vpLuminanceDCT::vpMatrixZigZagIndex::vpMatrixZigZagIndex() {}
+vpLuminanceDCT::vpMatrixZigZagIndex::vpMatrixZigZagIndex() { }
 
 void vpLuminanceDCT::vpMatrixZigZagIndex::init(unsigned int rows, unsigned int cols)
 {
@@ -279,19 +279,19 @@ void vpLuminanceDCT::vpMatrixZigZagIndex::init(unsigned int rows, unsigned int c
   m_rowIndex.resize(rows * cols);
   m_rows = rows;
   m_cols = cols;
-  int rowCount = static_cast<int>(rows);
-  int colCount = static_cast<int>(cols);
+  unsigned int rowCount = rows;
+  unsigned int colCount = cols;
 
   unsigned int index = 0;
-  int row = 0, col = 0;
+  unsigned int row = 0, col = 0;
+  bool row_inc = false;
 
-  bool row_inc = 0;
+  unsigned int mindim = std::min(rows, cols);
 
-  int mindim = std::min(rowCount, colCount);
-  for (int len = 1; len <= mindim; ++len) {
-    for (int i = 0; i < len; ++i) {
-      m_rowIndex[index] = static_cast<unsigned int>(row);
-      m_colIndex[index] = static_cast<unsigned int>(col);
+  for (unsigned int len = 1; len <= mindim; ++len) {
+    for (unsigned int i = 0; i < len; ++i) {
+      m_rowIndex[index] = row;
+      m_colIndex[index] = col;
       ++index;
       if (i + 1 == len) {
         break;
@@ -338,8 +338,8 @@ void vpLuminanceDCT::vpMatrixZigZagIndex::init(unsigned int rows, unsigned int c
   }
 
   // Print the next half zig-zag pattern
-  int maxdim = std::max(rowCount, rowCount) - 1;
-  for (int len, diag = maxdim; diag > 0; --diag) {
+  unsigned int maxdim = std::max(rowCount, colCount) - 1;
+  for (unsigned int len, diag = maxdim; diag > 0; --diag) {
 
     if (diag > mindim) {
       len = mindim;
@@ -348,9 +348,9 @@ void vpLuminanceDCT::vpMatrixZigZagIndex::init(unsigned int rows, unsigned int c
       len = diag;
     }
 
-    for (int i = 0; i < len; ++i) {
-      m_rowIndex[index] = static_cast<unsigned int>(row);
-      m_colIndex[index] = static_cast<unsigned int>(col);
+    for (unsigned int i = 0; i < len; ++i) {
+      m_rowIndex[index] = row;
+      m_colIndex[index] = col;
       ++index;
 
       if (i + 1 == len) {

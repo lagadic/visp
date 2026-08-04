@@ -758,19 +758,17 @@ inline void vpImageTools::binarise(vpImage<Type> &I, Type threshold1, Type thres
     std::cerr << "LUT not available for this type ! Will use the iteration method." << std::endl;
   }
 
-  Type v;
-  Type *p = I.bitmap;
-  Type *pend = I.bitmap + (I.getWidth() * I.getHeight());
-  for (; p < pend; ++p) {
-    v = *p;
+  const size_t size = I.getWidth() * I.getHeight();
+  for (size_t i = 0; i < size; ++i) {
+    Type v = I.bitmap[i];
     if (v < threshold1) {
-      *p = value1;
+      I.bitmap[i] = value1;
     }
     else if (v > threshold2) {
-      *p = value3;
+      I.bitmap[i] = value3;
     }
     else {
-      *p = value2;
+      I.bitmap[i] = value2;
     }
   }
 }

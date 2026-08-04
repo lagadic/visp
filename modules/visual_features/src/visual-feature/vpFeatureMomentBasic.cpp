@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ BEGIN_VISP_NAMESPACE
   vpFeatureMomentBasic::vpFeatureMomentBasic(vpMomentDatabase &data_base, double A_, double B_, double C_,
                                              vpFeatureMomentDatabase *featureMoments)
   : vpFeatureMoment(data_base, A_, B_, C_, featureMoments), order(0)
-{ }
+{}
 
 /*!
  * Computes interaction matrix for basic moment. Called internally.
@@ -56,7 +56,7 @@ BEGIN_VISP_NAMESPACE
  */
 void vpFeatureMomentBasic::compute_interaction()
 {
-  int delta;
+  unsigned int delta;
   const vpMomentObject &m = moment->getObject();
   order = m.getOrder() + 1;
   interaction_matrices.resize(order * order);
@@ -83,11 +83,12 @@ void vpFeatureMomentBasic::compute_interaction()
     3 * delta * (A * m.get(1, 0) + B * m.get(0, 1) + C * m.get(0, 0)) - delta * C * m.get(0, 0);
 
   interaction_matrices[0][0][WX] = 3 * delta * m.get(0, 1);
-  interaction_matrices[0][0][WY] = -3 * delta * m.get(1, 0);
+  interaction_matrices[0][0][WY] = -(3 * delta * m.get(1, 0));
   interaction_matrices[0][0][WZ] = 0;
 
   // int i=0;
-  for (int j = 1; j < static_cast<int>(order) - 1; j++) {
+  const unsigned int order_u = static_cast<unsigned int>(order);
+  for (unsigned int j = 1; j < order_u - 1; j++) {
     unsigned int j_ = static_cast<unsigned int>(j);
     unsigned int jm1_ = j_ - 1;
     unsigned int jp1_ = j_ + 1;
@@ -104,7 +105,7 @@ void vpFeatureMomentBasic::compute_interaction()
   }
 
   // int j=0;
-  for (int i = 1; i < static_cast<int>(order) - 1; i++) {
+  for (unsigned int i = 1; i < order_u - 1; i++) {
     unsigned int i_ = static_cast<unsigned int>(i);
     unsigned int im1_ = i_ - 1;
     unsigned int ip1_ = i_ + 1;
@@ -120,12 +121,12 @@ void vpFeatureMomentBasic::compute_interaction()
     interaction_matrices[i_][0][WZ] = i * m.get(im1_, 1);
   }
 
-  for (int j = 1; j < static_cast<int>(order) - 1; j++) {
+  for (unsigned int j = 1; j < order_u - 1; j++) {
     unsigned int j_ = static_cast<unsigned int>(j);
     unsigned int jm1_ = j_ - 1;
     unsigned int jp1_ = j_ + 1;
 
-    for (int i = 1; i < static_cast<int>(order) - j - 1; i++) {
+    for (unsigned int i = 1; i < order_u - j - 1; i++) {
       unsigned int i_ = static_cast<unsigned int>(i);
       unsigned int im1_ = i_ - 1;
       unsigned int ip1_ = i_ + 1;

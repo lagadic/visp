@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,11 +61,11 @@ struct vpHistogram_Param_t
   const vpImage<unsigned char> *m_I;
   const vpImage<bool> *m_mask;
 
-  vpHistogram_Param_t() : m_start_index(0), m_end_index(0), m_lut(), m_histogram(nullptr), m_I(nullptr), m_mask(nullptr) { }
+  vpHistogram_Param_t() : m_start_index(0), m_end_index(0), m_lut(), m_histogram(nullptr), m_I(nullptr), m_mask(nullptr) {}
 
   vpHistogram_Param_t(unsigned int start_index, unsigned int end_index, const vpImage<unsigned char> *const I, const vpImage<bool> *const mask)
     : m_start_index(start_index), m_end_index(end_index), m_lut(), m_histogram(nullptr), m_I(I), m_mask(mask)
-  { }
+  {}
 
   ~vpHistogram_Param_t()
   {
@@ -749,7 +749,9 @@ bool vpHistogram::getPeaks(unsigned char dist, vpHistogramPeak &peakl, vpHistogr
   for (unsigned i = 0; i < index_highest_peak; ++i) {
     if ((peak[index_highest_peak] - peak[i]) > dist) {
       prof = 0;
-      for (int j = peak[i]; j <= (peak[index_highest_peak] - dist); ++j) {
+      unsigned int start_j = static_cast<unsigned int>(peak[i]);
+      unsigned int end_j = static_cast<unsigned int>(peak[index_highest_peak] - dist);
+      for (unsigned int j = start_j; j <= end_j; ++j) {
         if ((m_histogram[peak[i]] - m_histogram[j]) > prof) {
           prof = m_histogram[peak[i]] - m_histogram[j];
         }
@@ -766,7 +768,9 @@ bool vpHistogram::getPeaks(unsigned char dist, vpHistogramPeak &peakl, vpHistogr
   for (unsigned i = index_highest_peak + 1; i < nbpeaks; ++i) {
     if ((peak[i] - peak[index_highest_peak]) > dist) {
       prof = 0;
-      for (int j = peak[index_highest_peak] + dist; j <= peak[i]; ++j) {
+      unsigned int start_j = static_cast<unsigned int>(peak[index_highest_peak] + dist);
+      unsigned int end_j = static_cast<unsigned int>(peak[i]);
+      for (unsigned int j = start_j; j < end_j; ++j) {
         if ((m_histogram[peak[i]] - m_histogram[j]) > prof) {
           prof = m_histogram[peak[i]] - m_histogram[j];
         }

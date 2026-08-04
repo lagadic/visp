@@ -68,7 +68,7 @@ private:
   std::ofstream &file;
 
 public:
-  Tee(std::ostream &os_, std::ofstream &file_) : os(os_), file(file_) {}
+  Tee(std::ostream &os_, std::ofstream &file_) : os(os_), file(file_) { }
 
   template <typename T>
   Tee &operator<<(const T &thing)
@@ -199,7 +199,7 @@ struct CalibInfo
   CalibInfo(const vpImage<unsigned char> &img, const std::vector<vpPoint> &points,
             const std::vector<vpImagePoint> &imPts, const std::string &frame_name)
     : m_img(img), m_points(points), m_imPts(imPts), m_frame_name(frame_name)
-  {}
+  { }
 
   vpImage<unsigned char> m_img;
   std::vector<vpPoint> m_points;
@@ -568,26 +568,27 @@ void calcChessboardCorners(cv::Size boardSize, float squareSize, std::vector<cv:
     CvPattern patternType = CV_CHESSBOARD)
 {
   corners.resize(0);
-
+  unsigned int boardHeight = static_cast<unsigned int>(boardSize.height), boardHeightMinusOne = static_cast<unsigned int>(boardSize.height) - 1;
+  unsigned int boardWidth = static_cast<unsigned int>(boardSize.width), boardWidthMinusOne = static_cast<unsigned int>(boardSize.width) - 1;
   switch (patternType) {
   case CV_CHESSBOARD:
   case CV_CIRCLES_GRID:
-    for (int i = 0; i < boardSize.height; i++)
-      for (int j = 0; j < boardSize.width; j++)
+    for (unsigned int i = 0; i < boardHeight; i++)
+      for (unsigned int j = 0; j < boardWidth; j++)
         corners.push_back(cv::Point3f(float(j*squareSize),
                                       float(i*squareSize), 0));
     break;
 
   case CV_ASYMMETRIC_CIRCLES_GRID:
-    for (int i = 0; i < boardSize.height; i++)
-      for (int j = 0; j < boardSize.width; j++)
+    for (unsigned int i = 0; i < boardHeight; i++)
+      for (unsigned int j = 0; j < boardWidth; j++)
         corners.push_back(cv::Point3f(float((2*j + i % 2)*squareSize),
                                       float(i*squareSize), 0));
     break;
 
   case CV_CHARUCOBOARD:
-    for (int i = 0; i < boardSize.height-1; i++)
-      for (int j = 0; j < boardSize.width-1; j++)
+    for (unsigned int i = 0; i < boardHeightMinusOne; i++)
+      for (unsigned int j = 0; j < boardWidthMinusOne; j++)
         corners.push_back(cv::Point3f(float(j*squareSize),
                                       float(i*squareSize), 0));
     break;

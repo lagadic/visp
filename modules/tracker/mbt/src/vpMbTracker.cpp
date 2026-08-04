@@ -2511,8 +2511,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
       //   "Exception: basic_ios::clear: iostream error"
       char c_circle;
       fileId.get(c_circle);
-      int nb_circles = c_circle - '0';
-      if (nb_circles > 0) {
+      if (c_circle > '0') {
         fileId.unget();
 
         /* Extract the circles */

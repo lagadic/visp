@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1370,13 +1370,12 @@ void vpImageConvert::merge(const vpImage<unsigned char> *R, const vpImage<unsign
 void vpImageConvert::MONO16ToGrey(unsigned char *grey16, unsigned char *grey, unsigned int size)
 {
   const int val_256 = 256;
-  int i = (static_cast<int>(size) * 2) - 1;
-  int j = static_cast<int>(size) - 1;
-
-  while (i >= 0) {
-    int y = grey16[i--];
-    grey[j--] = static_cast<unsigned char>((y + (grey16[i] * val_256)) / val_256);
-    --i;
+  // Utilisons size_t pour les indices
+  for (size_t j = 0; j < size; ++j) {
+    // Lecture par paire (2 octets par pixel)
+    size_t i = j * 2;
+    int y = grey16[i + 1];
+    grey[j] = static_cast<unsigned char>((y + (grey16[i] * val_256)) / val_256);
   }
 }
 
@@ -1393,17 +1392,16 @@ void vpImageConvert::MONO16ToGrey(unsigned char *grey16, unsigned char *grey, un
 */
 void vpImageConvert::MONO16ToRGBa(unsigned char *grey16, unsigned char *rgba, unsigned int size)
 {
-  int i = (static_cast<int>(size) * 2) - 1;
-  int j = (static_cast<int>(size) * 4) - 1;
-
-  while (i >= 0) {
-    int y = grey16[i--];
+  for (size_t j = 0; j < size; ++j) {
+    size_t i = j * 2;
+    size_t k = j * 4;
+    int y = grey16[i + 1];
     unsigned char v = static_cast<unsigned char>((y + (grey16[i] * 256)) / 256);
-    --i;
-    rgba[j--] = vpRGBa::alpha_default;
-    rgba[j--] = v;
-    rgba[j--] = v;
-    rgba[j--] = v;
+
+    rgba[k] = v;
+    rgba[k + 1] = v;
+    rgba[k + 2] = v;
+    rgba[k + 3] = vpRGBa::alpha_default;
   }
 }
 

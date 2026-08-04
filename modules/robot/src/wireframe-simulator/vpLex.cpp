@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -730,7 +730,7 @@ static void next_source(void)
 #define ERR_STACK_MAX 32
 
 static const char *err_stack[ERR_STACK_MAX];
-static int size_stack = 0;
+static unsigned int size_stack = 0;
 
 /*
  * La procedure "count" calcule la distance en espaces entre
@@ -763,7 +763,7 @@ void lexerr(const char *path, ...)
 {
   va_list ap;
   char *cp;
-  int i;
+  unsigned int i;
 
   /* Pointe sur le caractere fautif.  */
 
@@ -792,7 +792,7 @@ void lexerr(const char *path, ...)
  */
 void poperr(void)
 {
-  if (--size_stack < 0) {
+  if (size_stack == 0) {
     static char proc_name[] = "poperr";
     fprintf(stderr, "%s: error stack underflow\n", proc_name);
     throw vpException(vpException::fatalError, "Error in poperr");
@@ -804,7 +804,7 @@ void poperr(void)
  */
 void popuperr(const char *str)
 {
-  if (size_stack <= 0) {
+  if (size_stack == 0) {
     static const char proc_name[] = "popuerr";
     fprintf(stderr, "%s: error stack underflow\n", proc_name);
     throw vpException(vpException::fatalError, "Error in popuperr");

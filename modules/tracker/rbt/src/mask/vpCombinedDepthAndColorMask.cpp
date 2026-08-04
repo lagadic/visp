@@ -64,14 +64,17 @@ void vpCombinedDepthAndColorMask::updateMask(const vpRBFeatureTrackerInput &fram
     const int left = static_cast<int>(renderBB.getLeft());
     const int bottom = std::min(static_cast<int>(m_color.getHeight()) - 1, static_cast<int>(renderBB.getBottom()));
     const int right = std::min(static_cast<int>(m_color.getWidth()) - 1, static_cast<int>(renderBB.getRight()));
+    const int bottomExcl = bottom + 1;  // Exclusive limit
+    const int rightExcl = right + 1;
+
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-    for (int i = top; i <= bottom; ++i) {
+    for (int i = top; i < bottomExcl; ++i) {
       const float *const colorProbaRow = m_color[i];
       const float *const depthProbaRow = m_depth[i];
       float *const maskRow = mask[i];
-      for (int j = left; j <= right; ++j) {
+      for (int j = left; j < rightExcl; ++j) {
         unsigned int j_ = static_cast<unsigned int>(j);
         maskRow[j_] = std::min(colorProbaRow[j_], depthProbaRow[j]);
       }
