@@ -91,9 +91,11 @@ public:
     for (auto &s : m_storage) {
       m_ptrs.push_back(s.c_str());
     }
+
+    m_ptrs.push_back(nullptr); // A conventional C argv array is normally terminated with a null pointer
   }
 
-  int argc() const { return static_cast<int>(m_ptrs.size()); }
+  int argc() const { return (static_cast<int>(m_ptrs.size()) - 1); /* minus one not to count the nullptr*/ }
   const char **argv() { return m_ptrs.data(); }
 
 private:

@@ -387,7 +387,7 @@ void vpParseArgv::printUsage(vpArgvInfo *argTable, int flags)
         continue;
       }
       FPRINTF(stderr, "\n %s:", infoPtr->key);
-      numSpaces = ((width + 1) >= strlen(infoPtr->key) ? width + 1 - strlen(infoPtr->key) : 0);
+      numSpaces = ((width + 1) >= strlen(infoPtr->key) ? ((width + 1) - strlen(infoPtr->key)) : 0);
       while (numSpaces > 0) {
         if (numSpaces >= NUM_SPACES) {
           FPRINTF(stderr, "%s", spaces);
