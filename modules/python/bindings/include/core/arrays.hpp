@@ -153,42 +153,37 @@ void add_cpp_print_helper(PybindClass &pyCls, std::ostream &(T:: *fn)(std::ostre
 template<typename PyClass, typename Class, typename Item>
 void define_get_item_2d_array(PyClass &pyClass)
 {
-  pyClass.def("__getitem__", [](const Class &self, std::pair<int, int> pair) -> Item {
-    int i = pair.first, j = pair.second;
-    const int rows = (int)self.getRows(), cols = (int)self.getCols();
-    if (i >= rows || j >= cols || i < -rows || j < -cols) {
-      std::stringstream ss;
-      ss << "Invalid indexing into a 2D array: got indices " << shape_to_string({ i, j })
-        << " but array has dimensions " << shape_to_string({ rows, cols });
-      throw std::runtime_error(ss.str());
-    }
-    if (i < 0) {
-      i = rows + i;
-    }
-    if (j < 0) {
-      j = cols + j;
-    }
-    return self[i][j];
-  });
-  pyClass.def("__getitem__", [](const Class &self, int i) -> np_array_cf<Item> {
-    const int rows = (int)self.getRows();
-    if (i >= rows || i < -rows) {
-      std::stringstream ss;
-      ss << "Invalid indexing into a 2D array: got row index " << shape_to_string({ i })
-        << " but array has " << rows << " rows";
-      throw std::runtime_error(ss.str());
-    }
-    if (i < 0) {
-      i = rows + i;
-    }
-    return (py::cast(self).template cast<np_array_cf<Item> >())[py::cast(i)].template cast<np_array_cf<Item>>();
-  }, py::keep_alive<0, 1>());
-  pyClass.def("__getitem__", [](const Class &self, py::slice slice) -> py::array_t<Item> {
-    return (py::cast(self).template cast<np_array_cf<Item> >())[slice].template cast<np_array_cf<Item>>();
-  }, py::keep_alive<0, 1>());
-  pyClass.def("__getitem__", [](const Class &self, py::tuple tuple) {
-    return (py::cast(self).template cast<np_array_cf<Item> >())[tuple].template cast<py::array_t<Item>>();
-  }, py::keep_alive<0, 1>());
+  pyClass.def("__getitem__",
+    [](const Class &self, py::object index) -> py::object {
+      if (py::isinstance<py::slice>(index)) {
+        // slice handling
+        py::slice slice = index.cast<py::slice>();
+        return (py::cast(self).template cast<np_array_cf<Item> >())[slice].template cast<np_array_cf<Item>>();
+      }
+
+      if (py::isinstance<py::int_>(index)) {
+          // row handling
+        int i = index.cast<int>();
+        const int rows = (int)self.getRows();
+        if (i >= rows || i < -rows) {
+          std::stringstream ss;
+          ss << "Invalid indexing into a 2D array: got row index " << shape_to_string({ i })
+            << " but array has " << rows << " rows";
+          throw std::runtime_error(ss.str());
+        }
+        if (i < 0) {
+          i = rows + i;
+        }
+        return (py::cast(self).template cast<np_array_cf<Item> >())[py::cast(i)].template cast<np_array_cf<Item>>();
+      }
+
+      if (py::isinstance<py::tuple>(index)) {
+        py::tuple tuple = index.cast<py::tuple>();
+        return (py::cast(self).template cast<np_array_cf<Item> >())[tuple].template cast<py::array_t<Item>>();
+      }
+
+      throw py::type_error("Invalid index");
+    }, py::keep_alive<0, 1>());
 }
 
 /*
