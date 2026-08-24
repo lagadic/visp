@@ -153,7 +153,11 @@ BEGIN_VISP_NAMESPACE
   \endcode
 
 */
-class VISP_EXPORT vpColor final : public vpRGBa
+class VISP_EXPORT vpColor
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+  final
+#endif
+  : public vpRGBa
 {
 public:
   /*! Predefined colors identifier. */
