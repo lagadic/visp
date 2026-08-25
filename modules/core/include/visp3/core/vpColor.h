@@ -153,7 +153,11 @@ BEGIN_VISP_NAMESPACE
   \endcode
 
 */
-class VISP_EXPORT vpColor : public vpRGBa
+class VISP_EXPORT vpColor
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+  final
+#endif
+  : public vpRGBa
 {
 public:
   /*! Predefined colors identifier. */
@@ -224,9 +228,6 @@ public:
   /*! Default destructor. */
 #if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
   vpColor(const vpColor &) = default;
-  virtual ~vpColor() = default;
-#else
-  virtual ~vpColor() { }
 #endif
   /*!
     Construct a color from its RGB values.
