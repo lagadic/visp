@@ -29,6 +29,12 @@
           ]
         },
         {
+          "python_name": "ImageBool",
+          "arguments": [
+            "bool"
+          ]
+        },
+        {
           "python_name": "ImageUInt16",
           "arguments": [
             "uint16_t"

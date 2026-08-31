@@ -1073,6 +1073,7 @@
       ]
     },
     "vpImageFilter": {
+      "additional_bindings": "bindings_vpImageFilter",
       "methods": [
         {
           "static": true,
