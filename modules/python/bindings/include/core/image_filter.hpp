@@ -414,6 +414,124 @@ Example usage:
 )doc", py::arg("input"), py::arg("output"), py::arg("filter"), py::arg("size"), py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
 }
 
+
+
+template<typename ImageType>
+void define_gaussianFilter(py::class_<VISP_NAMESPACE_ADDRESSING vpImageFilter, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpImageFilter>> &pyClass)
+{
+#ifdef ENABLE_VISP_NAMESPACE
+	using namespace VISP_NAMESPACE_NAME;
+#endif
+
+	pyClass.def_static(
+		"gaussianFilter",
+		[](const vpImage<ImageType> &input,
+			unsigned int r,
+			unsigned int c) -> double {
+				return vpImageFilter::gaussianFilter(input, r, c);
+			}, R"doc(
+Apply a 5x5 Gaussian filter to one image pixel.
+
+:param input: The image to filter.
+:param r: Row coordinate of the pixel.
+:param c: Column coordinate of the pixel.
+
+:return: The filtered pixel value.
+
+Example usage:
+
+.. testcode::
+
+  from visp.core import ImageGray, ImageFilter
+
+  Iin = ImageGray(100, 100, 0)
+  Iin[25:75, 25:75] = 50
+
+  filtered_value = ImageFilter.gaussianFilter(Iin, 50, 50)
+  assert isinstance(filtered_value, float)
+)doc",
+    py::arg("input"),
+    py::arg("r"),
+    py::arg("c"));
+}
+
+template<typename ImageType, typename FilterType>
+void define_gaussianBlur(
+	py::class_<VISP_NAMESPACE_ADDRESSING vpImageFilter, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpImageFilter>> &pyClass)
+{
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
+	pyClass.def_static(
+		"gaussianBlur",
+		[](const vpImage<ImageType> &input,
+			vpImage<FilterType> &output,
+			unsigned int size,
+			double sigma,
+			bool normalize,
+			const std::optional<vpImage<bool>> &mask) -> void {
+      			if (!mask) {
+        			vpImageFilter::gaussianBlur(input, output, size, sigma, normalize, nullptr);
+				}
+				else {
+					vpImageFilter::gaussianBlur(
+					input, output, size, sigma, normalize, &(mask.value()));
+				}
+    },
+    R"doc(
+Apply a Gaussian blur to an image.
+
+:param input: The input image.
+:param output: The resulting blurred image.
+:param size: Filter size. This value should be odd.
+:param sigma: Gaussian standard deviation. If it is zero or negative,
+  it is computed from the filter size as ``(size - 1) / 6``.
+:param normalize: If True, normalize the Gaussian filter coefficients.
+:param mask: Optional mask indicating which pixels to consider. True
+  means that the pixel is considered, while False means that it is ignored.
+
+Example usage:
+
+.. testcode::
+
+  from visp.core import ImageGray, ImageDouble, ImageBool, ImageFilter
+
+  Iin = ImageGray(100, 100, 0)
+  Iin[25:75, 25:75] = 50
+
+  Iout = ImageDouble()
+  ImageFilter.gaussianBlur(Iin, Iout)
+
+  assert Iout.getRows() == Iin.getRows()
+  assert Iout.getCols() == Iin.getCols()
+
+  mask = ImageBool(100, 100, True)
+
+  Iout = ImageDouble()
+  ImageFilter.gaussianBlur(
+      Iin,
+      Iout,
+      size=7,
+      sigma=0.0,
+      normalize=True,
+      mask=mask
+  )
+
+  assert Iout.getRows() == Iin.getRows()
+  assert Iout.getCols() == Iin.getCols()
+)doc",
+    py::arg("input"),
+    py::arg("output"),
+    py::arg("size") = 7,
+    py::arg("sigma") = 0.,
+    py::arg("normalize") = true,
+    py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
+}
+
+
+
+
   /*
    * vpImageFilter
    */
@@ -431,5 +549,14 @@ bindings_vpImageFilter(py::class_<VISP_NAMESPACE_ADDRESSING vpImageFilter, std::
   define_complex_getGradXY<unsigned char, double>(pyImageFilter);
   define_complex_getGradXY<float, float>(pyImageFilter);
   define_complex_getGradXY<double, double>(pyImageFilter);
+
+  define_gaussianFilter<unsigned char>(pyImageFilter);
+  define_gaussianFilter<double>(pyImageFilter);
+  define_gaussianFilter<float>(pyImageFilter);
+
+  define_gaussianBlur<unsigned char, float>(pyImageFilter);
+  define_gaussianBlur<unsigned char, double>(pyImageFilter);
+  define_gaussianBlur<float, float>(pyImageFilter);
+  define_gaussianBlur<double, double>(pyImageFilter);
 }
 #endif
