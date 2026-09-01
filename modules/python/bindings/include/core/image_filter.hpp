@@ -526,6 +526,71 @@ Example usage:
   py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
 }
 
+void define_canny(
+  py::class_<VISP_NAMESPACE_ADDRESSING vpImageFilter, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpImageFilter>> &pyClass)
+{
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
+  pyClass.def_static(
+    "canny",
+    [](const vpImage<unsigned char> &input,
+      vpImage<unsigned char> &output,
+      unsigned int gaussianFilterSize,
+      float lowerThreshold,
+      float upperThreshold,
+      unsigned int apertureGradient,
+      float gaussianStdev,
+      float lowerThresholdRatio,
+      float upperThresholdRatio,
+      bool normalizeGradients,
+      vpImageFilter::vpCannyBackendType cannyBackend,
+      vpImageFilter::vpCannyFilteringAndGradientType cannyFilteringSteps,
+      const std::optional<vpImage<bool>> &mask) -> void
+      {
+        if (!mask) {
+          vpImageFilter::canny(input, output, gaussianFilterSize, lowerThreshold, upperThreshold, apertureGradient, gaussianStdev,
+            lowerThresholdRatio, upperThresholdRatio, normalizeGradients, cannyBackend, cannyFilteringSteps, nullptr);
+        }
+        else {
+          vpImageFilter::canny(input, output, gaussianFilterSize, lowerThreshold, upperThreshold, apertureGradient, gaussianStdev,
+            lowerThresholdRatio, upperThresholdRatio, normalizeGradients, cannyBackend, cannyFilteringSteps, &(mask.value()));
+				}
+      },
+    R"doc(
+Apply the Canny edge detector to a grayscale image.
+
+:param input: The input grayscale image.
+:param output: The resulting edge image. Edge pixels have value 255, non-edge pixels have value 0.
+:param gaussianFilterSize: Size of the Gaussian filter. Must be odd.
+:param lowerThreshold: Lower Canny threshold. If negative, it is computed automatically.
+:param upperThreshold: Upper Canny threshold. If negative, it is computed automatically.
+:param apertureGradient: Size of the Sobel or Scharr gradient mask. Must be odd.
+:param gaussianStdev: Gaussian standard deviation. If non-positive, it is computed from the Gaussian filter size.
+:param lowerThresholdRatio: Ratio between the lower and upper thresholds when thresholds are computed automatically.
+:param upperThresholdRatio: Ratio used to compute the upper threshold when thresholds are computed automatically.
+:param normalizeGradients: Normalize gradients before computing thresholds.
+:param cannyBackend: Backend used by the Canny implementation.
+:param cannyFilteringSteps: Filtering and gradient operators used by Canny.
+:param mask: Optional mask. True pixels are processed and False pixels are ignored.
+)doc",
+    py::arg("input"),
+    py::arg("output"),
+    py::arg("gaussianFilterSize"),
+    py::arg("lowerThreshold"),
+    py::arg("upperThreshold"),
+    py::arg("apertureGradient"),
+    py::arg("gaussianStdev"),
+    py::arg("lowerThresholdRatio"),
+    py::arg("upperThresholdRatio"),
+    py::arg("normalizeGradients"),
+    py::arg("cannyBackend"),
+    py::arg("cannyFilteringSteps"),
+    py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt)
+  );
+}
+
 
 
   /*
@@ -554,5 +619,7 @@ bindings_vpImageFilter(py::class_<VISP_NAMESPACE_ADDRESSING vpImageFilter, std::
   define_gaussianBlur<unsigned char, double>(pyImageFilter);
   define_gaussianBlur<float, float>(pyImageFilter);
   define_gaussianBlur<double, double>(pyImageFilter);
+
+  define_canny(pyImageFilter);
 }
 #endif
