@@ -130,6 +130,7 @@ jobs:
         make -j$(nproc) install
         echo "VTK_DIR=$(pwd)/install" >> $GITHUB_ENV
         echo $VTK_DIR
+        echo "VTK_REL=$LATEST_TAG" >> $GITHUB_ENV
 
     - name: Build OpenCV from source
       run: |
@@ -167,7 +168,14 @@ jobs:
         GIT_ADDRESS="https://github.com/PointCloudLibrary/pcl.git"
         LATEST_TAG=`eval ${FUNCTION_GET_LATEST}`
         echo "Newest tag is ${LATEST_TAG}"
-        git clone --depth 1 --branch ${LATEST_TAG} ${GIT_ADDRESS} ${HOME}/pcl
+        if [[ "$VTK_REL" == "v9.7.0" &&  "${LATEST_TAG}" == "pcl-1.15.1" ]]
+        then
+          BRANCH=master
+          echo "Because it is not compatible with vtk ${VTK_REL} we will use the branch ${BRANCH} instead"
+        else
+          BRANCH=${LATEST_TAG}
+        fi
+        git clone --depth 1 --branch ${BRANCH} ${GIT_ADDRESS} ${HOME}/pcl
         cd ${HOME}/pcl
         mkdir build && cd build && mkdir install
         # By default PCL is built with march=native
