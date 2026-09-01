@@ -561,19 +561,19 @@ void define_canny(
     R"doc(
 Apply the Canny edge detector to a grayscale image.
 
-:param input: The input grayscale image.
-:param output: The resulting edge image. Edge pixels have value 255, non-edge pixels have value 0.
-:param gaussianFilterSize: Size of the Gaussian filter. Must be odd.
-:param lowerThreshold: Lower Canny threshold. If negative, it is computed automatically.
-:param upperThreshold: Upper Canny threshold. If negative, it is computed automatically.
-:param apertureGradient: Size of the Sobel or Scharr gradient mask. Must be odd.
-:param gaussianStdev: Gaussian standard deviation. If non-positive, it is computed from the Gaussian filter size.
-:param lowerThresholdRatio: Ratio between the lower and upper thresholds when thresholds are computed automatically.
-:param upperThresholdRatio: Ratio used to compute the upper threshold when thresholds are computed automatically.
-:param normalizeGradients: Normalize gradients before computing thresholds.
-:param cannyBackend: Backend used by the Canny implementation.
-:param cannyFilteringSteps: Filtering and gradient operators used by Canny.
-:param mask: Optional mask. True pixels are processed and False pixels are ignored.
+:param Isrc	: The input grayscale image.
+:param Ires	: The resulting edge image. Edge pixels have value 255, non-edge pixels have value 0.
+:param gaussianFilterSize	: Size of the Gaussian filter. Must be odd.
+:param lowerThreshold	: The lower threshold for the Canny operator. Values lower than this value are rejected. If negative, it will be set to one third of the thresholdCanny.
+:param upperThreshold	: The upper threshold for the Canny operator. Only value greater than this value are marked as an edge. If negative, it will be automatically computed, along with the lower threshold. Otherwise, the lower threshold will be set to one third of the upper threshold.
+:param apertureGradient	: Size of the Sobel or Scharr gradient mask. Must be odd.
+:param gaussianStdev	: The standard deviation of the Gaussian filter to apply. If it is non-positive, it is computed from kernel size (gaussianKernelSize parameter) as σ=0.3∗((gaussianKernelSize−1)∗0.5−1)+0.8.
+:param lowerThresholdRatio	: The ratio of the upper threshold the lower threshold must be equal to. It is used only if the user asks to compute the Canny thresholds.
+:param upperThresholdRatio	: The ratio of pixels whose absolute gradient is lower or equal to define the upper threshold. It is used only if the user asks to compute the Canny thresholds.
+:param normalizeGradients	: Needs to be true if asking to compute the upperThreshold, otherwise it depends on the user application and user-defined thresholds.
+:param cannyBackend	: The backend to use to perform the Canny edge filtering.
+:param cannyFilteringSteps	: The filtering + gradient operators to apply to compute the gradient in the early stage of the Canny algorithm.
+:param p_mask	: Optional mask. True pixels are processed and False pixels are ignored.
 )doc",
     py::arg("input"),
     py::arg("output"),
