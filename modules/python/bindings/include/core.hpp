@@ -37,6 +37,7 @@
 #include "core/utils.hpp"
 #include "core/arrays.hpp"
 #include "core/images.hpp"
+#include "core/image_filter.hpp"
 #include "core/pixel_meter.hpp"
 #include "core/image_conversions.hpp"
 #include "core/display.hpp"
