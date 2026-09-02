@@ -414,6 +414,185 @@ Example usage:
 )doc", py::arg("input"), py::arg("output"), py::arg("filter"), py::arg("size"), py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
 }
 
+
+
+template<typename ImageType>
+void define_gaussianFilter(py::class_<VISP_NAMESPACE_ADDRESSING vpImageFilter, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpImageFilter>> &pyClass)
+{
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
+  pyClass.def_static(
+    "gaussianFilter",
+    [](const vpImage<ImageType> &input,
+      unsigned int r,
+      unsigned int c) -> double {
+        return vpImageFilter::gaussianFilter(input, r, c);
+      }, R"doc(
+Apply a 5x5 Gaussian filter to one image pixel.
+
+:param input: The image to filter.
+:param r: Row coordinate of the pixel.
+:param c: Column coordinate of the pixel.
+
+:return: The filtered pixel value.
+
+Example usage:
+
+.. testcode::
+
+  from visp.core import ImageGray, ImageFilter
+
+  Iin = ImageGray(100, 100, 0)
+  Iin[25:75, 25:75] = 50
+
+  filtered_value = ImageFilter.gaussianFilter(Iin, 50, 50)
+  assert isinstance(filtered_value, float)
+)doc",
+    py::arg("input"),
+    py::arg("r"),
+    py::arg("c"));
+}
+
+template<typename ImageType, typename FilterType>
+void define_gaussianBlur(
+  py::class_<VISP_NAMESPACE_ADDRESSING vpImageFilter, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpImageFilter>> &pyClass)
+{
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
+  pyClass.def_static(
+    "gaussianBlur",
+    [](const vpImage<ImageType> &input,
+      vpImage<FilterType> &output,
+      unsigned int size,
+      double sigma,
+      bool normalize,
+      const std::optional<vpImage<bool>> &mask) -> void {
+        if (!mask) {
+          vpImageFilter::gaussianBlur(input, output, size, sigma, normalize, nullptr);
+        }
+        else {
+          vpImageFilter::gaussianBlur(input, output, size, sigma, normalize, &(mask.value()));
+				}
+    },
+    R"doc(
+Apply a Gaussian blur to an image.
+
+:param input: The input image.
+:param output: The resulting blurred image.
+:param size: Filter size. This value should be odd.
+:param sigma: Gaussian standard deviation. If it is zero or negative, it is computed from the filter size as ``(size - 1) / 6``.
+:param normalize: If True, normalize the Gaussian filter coefficients.
+:param mask: Optional mask indicating which pixels to consider. True means that the pixel is considered, while False means that it is ignored.
+
+Example usage:
+
+.. testcode::
+
+  from visp.core import ImageGray, ImageDouble, ImageBool, ImageFilter
+
+  Iin = ImageGray(100, 100, 0)
+  Iin[25:75, 25:75] = 50
+
+  Iout = ImageDouble()
+  ImageFilter.gaussianBlur(Iin, Iout)
+
+  assert Iout.getRows() == Iin.getRows()
+  assert Iout.getCols() == Iin.getCols()
+
+  mask = ImageBool(100, 100, True)
+
+  Iout = ImageDouble()
+  ImageFilter.gaussianBlur(
+    Iin,
+    Iout,
+    size=7,
+    sigma=0.0,
+    normalize=True,
+    mask=mask
+  )
+
+  assert Iout.getRows() == Iin.getRows()
+  assert Iout.getCols() == Iin.getCols()
+)doc",
+  py::arg("input"),
+  py::arg("output"),
+  py::arg("size") = 7,
+  py::arg("sigma") = 0.,
+  py::arg("normalize") = true,
+  py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
+}
+
+void define_canny(
+  py::class_<VISP_NAMESPACE_ADDRESSING vpImageFilter, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpImageFilter>> &pyClass)
+{
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
+  pyClass.def_static(
+    "canny",
+    [](const vpImage<unsigned char> &input,
+      vpImage<unsigned char> &output,
+      unsigned int gaussianFilterSize,
+      float lowerThreshold,
+      float upperThreshold,
+      unsigned int apertureGradient,
+      float gaussianStdev,
+      float lowerThresholdRatio,
+      float upperThresholdRatio,
+      bool normalizeGradients,
+      vpImageFilter::vpCannyBackendType cannyBackend,
+      vpImageFilter::vpCannyFilteringAndGradientType cannyFilteringSteps,
+      const std::optional<vpImage<bool>> &mask) -> void
+      {
+        if (!mask) {
+          vpImageFilter::canny(input, output, gaussianFilterSize, lowerThreshold, upperThreshold, apertureGradient, gaussianStdev,
+            lowerThresholdRatio, upperThresholdRatio, normalizeGradients, cannyBackend, cannyFilteringSteps, nullptr);
+        }
+        else {
+          vpImageFilter::canny(input, output, gaussianFilterSize, lowerThreshold, upperThreshold, apertureGradient, gaussianStdev,
+            lowerThresholdRatio, upperThresholdRatio, normalizeGradients, cannyBackend, cannyFilteringSteps, &(mask.value()));
+				}
+      },
+    R"doc(
+Apply the Canny edge detector to a grayscale image.
+
+:param Isrc	: The input grayscale image.
+:param Ires	: The resulting edge image. Edge pixels have value 255, non-edge pixels have value 0.
+:param gaussianFilterSize	: Size of the Gaussian filter. Must be odd.
+:param lowerThreshold	: The lower threshold for the Canny operator. Values lower than this value are rejected. If negative, it will be set to one third of the thresholdCanny.
+:param upperThreshold	: The upper threshold for the Canny operator. Only value greater than this value are marked as an edge. If negative, it will be automatically computed, along with the lower threshold. Otherwise, the lower threshold will be set to one third of the upper threshold.
+:param apertureGradient	: Size of the Sobel or Scharr gradient mask. Must be odd.
+:param gaussianStdev	: The standard deviation of the Gaussian filter to apply. If it is non-positive, it is computed from kernel size (gaussianKernelSize parameter) as σ=0.3∗((gaussianKernelSize−1)∗0.5−1)+0.8.
+:param lowerThresholdRatio	: The ratio of the upper threshold the lower threshold must be equal to. It is used only if the user asks to compute the Canny thresholds.
+:param upperThresholdRatio	: The ratio of pixels whose absolute gradient is lower or equal to define the upper threshold. It is used only if the user asks to compute the Canny thresholds.
+:param normalizeGradients	: Needs to be true if asking to compute the upperThreshold, otherwise it depends on the user application and user-defined thresholds.
+:param cannyBackend	: The backend to use to perform the Canny edge filtering.
+:param cannyFilteringSteps	: The filtering + gradient operators to apply to compute the gradient in the early stage of the Canny algorithm.
+:param p_mask	: Optional mask. True pixels are processed and False pixels are ignored.
+)doc",
+    py::arg("input"),
+    py::arg("output"),
+    py::arg("gaussianFilterSize"),
+    py::arg("lowerThreshold"),
+    py::arg("upperThreshold"),
+    py::arg("apertureGradient"),
+    py::arg("gaussianStdev"),
+    py::arg("lowerThresholdRatio"),
+    py::arg("upperThresholdRatio"),
+    py::arg("normalizeGradients"),
+    py::arg("cannyBackend"),
+    py::arg("cannyFilteringSteps"),
+    py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt)
+  );
+}
+
+
+
   /*
    * vpImageFilter
    */
@@ -431,5 +610,16 @@ bindings_vpImageFilter(py::class_<VISP_NAMESPACE_ADDRESSING vpImageFilter, std::
   define_complex_getGradXY<unsigned char, double>(pyImageFilter);
   define_complex_getGradXY<float, float>(pyImageFilter);
   define_complex_getGradXY<double, double>(pyImageFilter);
+
+  define_gaussianFilter<unsigned char>(pyImageFilter);
+  define_gaussianFilter<double>(pyImageFilter);
+  define_gaussianFilter<float>(pyImageFilter);
+
+  define_gaussianBlur<unsigned char, float>(pyImageFilter);
+  define_gaussianBlur<unsigned char, double>(pyImageFilter);
+  define_gaussianBlur<float, float>(pyImageFilter);
+  define_gaussianBlur<double, double>(pyImageFilter);
+
+  define_canny(pyImageFilter);
 }
 #endif
