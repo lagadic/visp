@@ -478,29 +478,11 @@ void vpRobotFranka::getPosition(const vpRobot::vpControlFrameType frame, vpPoseV
     throw(vpException(vpException::fatalError, "Cannot get Franka joint position as a pose vector"));
   }
 
-  franka::RobotState robot_state = getRobotInternalState();
-
-  std::array<double, 16> pose_array = robot_state.O_T_EE;
-  vpHomogeneousMatrix fMe;
-  for (unsigned int i = 0; i < 4; ++i) {
-    for (unsigned int j = 0; j < 4; ++j) {
-      fMe[i][j] = pose_array[j * 4 + i];
-    }
-  }
-
-  switch (frame) {
-  case END_EFFECTOR_FRAME: {
-    pose.buildFrom(fMe);
-    break;
-  }
-  case TOOL_FRAME: {
-    pose.buildFrom(fMe * m_eMc);
-    break;
-  }
-  default: {
-    throw(vpException(vpException::fatalError, "Cannot get Franka cartesian position: not implemented"));
-  }
-  }
+  vpColVector position;
+  getPosition(frame, position);
+  vpTranslationVector t(position.extract(0, 3));
+  vpThetaUVector tu(position.extract(3, 3));
+  pose.buildFrom(t, tu);
 }
 
 /*!
@@ -990,6 +972,9 @@ franka::RobotState vpRobotFranka::getRobotInternalState()
   franka::RobotState robot_state;
 
   if (!m_velControlThreadIsRunning && !m_ftControlThreadIsRunning) {
+    // The first readOnce() clears the residual UDP buffer if the robot was idle.
+    // The second waits for the most recent 1 kHz packet.
+    m_handler->readOnce();
     robot_state = m_handler->readOnce();
 
     std::lock_guard<std::mutex> lock(m_mutex);
