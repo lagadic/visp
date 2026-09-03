@@ -148,6 +148,10 @@ environments.
           (visp-conda-ws) $ mkdir build-conda && cd build-conda
           (visp-conda-ws) $ cmake ../ -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
                                       -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
+                                      -DCMAKE_FIND_ROOT_PATH=$CONDA_PREFIX \
+                                      -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=ONLY \
+                                      -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY \
+                                      -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY \
                                       -DBUILD_TESTS=OFF \
                                       -DCMAKE_POLICY_VERSION_MINIMUM=3.5
           (visp-conda-ws) $ make -j$(nproc) install
@@ -163,6 +167,10 @@ environments.
           (visp-conda-ws) $ mkdir build-conda && cd build-conda
           (visp-conda-ws) $ cmake ../ -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
                                       -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
+                                      -DCMAKE_FIND_ROOT_PATH=$CONDA_PREFIX \
+                                      -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=ONLY \
+                                      -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY \
+                                      -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY \
                                       -DBUILD_TESTS=OFF \
                                       -DCMAKE_POLICY_VERSION_MINIMUM=3.5
           (visp-conda-ws) $ make -j$(nproc) install
@@ -224,7 +232,16 @@ for example `python=3.10` to the previous command lines.
 
         (visp-conda-ws) $ mkdir visp-build-bindings
         (visp-conda-ws) $ cd visp-build-bindings
-        (visp-conda-ws) $ cmake ../visp -DCMAKE_PREFIX_PATH=$CONDA_PREFIX -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX
+        (visp-conda-ws) $ cmake ../visp \
+                            -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
+                            -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
+                            -DCMAKE_FIND_ROOT_PATH=$CONDA_PREFIX \
+                            -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=ONLY \
+                            -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY \
+                            -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY \
+                            -DPython3_FIND_STRATEGY=LOCATION \
+                            -DPython3_FIND_REGISTRY=NEVER \
+                            -DPython3_EXECUTABLE=$CONDA_PREFIX/bin/python
 
   - **C. On Windows**:
 
@@ -240,6 +257,7 @@ for example `python=3.10` to the previous command lines.
     \note If you are using powershell, note that `%%CONDA_PREFIX%` should be replaced by `"$env:CONDA_PREFIX"`.
 
 - At this point, in the build folder there is the `ViSP-third-party.txt` file in which you should see something similar
+  to the following:
 
   - **A. On macOS** or **B. On Ubuntu or other linux-like**:
 
@@ -740,7 +758,17 @@ identify those you haven't installed in the Conda environment with `conda instal
 An other solution is to call `cmake` with `--debug-find` command line option that will explicitly show the search
 path for the 3rd parties:
 \code{.sh}
-(visp-conda-ws) $ cmake ../visp -DCMAKE_PREFIX_PATH=$CONDA_PREFIX -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX --debug-find
+(visp-conda-ws) $ cmake ../visp \
+                    -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
+                    -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
+                    -DCMAKE_FIND_ROOT_PATH=$CONDA_PREFIX \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=ONLY \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY \
+                    -DPython3_FIND_STRATEGY=LOCATION \
+                    -DPython3_FIND_REGISTRY=NEVER \
+                    -DPython3_EXECUTABLE=$CONDA_PREFIX/bin/python \
+                    --debug-find
 \endcode
 
 In our case, we produced the CMake warning mentioned before by installing Panda3D and Ogre as system libraries.
@@ -748,10 +776,18 @@ In our case, we produced the CMake warning mentioned before by installing Panda3
 The solution is to deactivate the use of these two third parties as long as they are not needed, or simply to check
 that by not using them the CMake warnings disappear. After cleaning the `visp-build` folder you may run:
 \code{.sh}
-(visp-conda-ws) $ cmake ../visp -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
-                                -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
-                                -DUSE_OGRE=OFF \
-                                -DUSE_PANDA3D=OFF
+(visp-conda-ws) $ cmake ../visp \
+                    -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
+                    -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
+                    -DCMAKE_FIND_ROOT_PATH=$CONDA_PREFIX \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=ONLY \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY \
+                    -DPython3_FIND_STRATEGY=LOCATION \
+                    -DPython3_FIND_REGISTRY=NEVER \
+                    -DPython3_EXECUTABLE=$CONDA_PREFIX/bin/python \
+                    -DUSE_OGRE=OFF \
+                    -DUSE_PANDA3D=OFF
 \endcode
 
 Once confirmed that the warnings were due to the disabled 3rd parties, if they exist you can try installing them in
@@ -771,7 +807,16 @@ $ conda activate visp-conda-ws
 - before running CMake and helping CMake to find Panda3d headers
 \code{.sh}
 (visp-conda-ws) $ export Panda3D_DIR=$CONDA_PREFIX/share/panda3d
-(visp-conda-ws) $ cmake ../visp -DCMAKE_PREFIX_PATH=$CONDA_PREFIX -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX
+(visp-conda-ws) $ cmake ../visp \
+                    -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
+                    -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
+                    -DCMAKE_FIND_ROOT_PATH=$CONDA_PREFIX \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=ONLY \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY \
+                    -DPython3_FIND_STRATEGY=LOCATION \
+                    -DPython3_FIND_REGISTRY=NEVER \
+                    -DPython3_EXECUTABLE=$CONDA_PREFIX/bin/python
 \endcode
 
 \subsection py_bindings_known_errors_build 6.2. When building ViSP
@@ -801,7 +846,16 @@ To fix this build issue:
 \code{.sh}
 (visp-conda-ws) $ conda install xorg-libx11 xorg-libxfixes xorg-xorgprot
 (visp-conda-ws) $ cd visp-build-bindings
-(visp-conda-ws) $ cmake ../visp -DCMAKE_PREFIX_PATH=$CONDA_PREFIX -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX
+(visp-conda-ws) $ cmake ../visp \
+                    -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
+                    -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
+                    -DCMAKE_FIND_ROOT_PATH=$CONDA_PREFIX \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=ONLY \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY \
+                    -DPython3_FIND_STRATEGY=LOCATION \
+                    -DPython3_FIND_REGISTRY=NEVER \
+                    -DPython3_EXECUTABLE=$CONDA_PREFIX/bin/python
 (visp-conda-ws) $ make -j$(sysctl -n hw.logicalcpu) visp_python_bindings
 \endcode
 
@@ -850,7 +904,16 @@ From here you need to rebuild the python bindings from scratch:
 \code{.sh}
 (visp-conda-ws) $ cd $VISP_WS/visp-build-bindings
 (visp-conda-ws) $ rm -rf *
-(visp-conda-ws) $ cmake ../visp -DCMAKE_PREFIX_PATH=$CONDA_PREFIX -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX
+(visp-conda-ws) $ cmake ../visp \
+                    -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
+                    -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
+                    -DCMAKE_FIND_ROOT_PATH=$CONDA_PREFIX \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=ONLY \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY \
+                    -DPython3_FIND_STRATEGY=LOCATION \
+                    -DPython3_FIND_REGISTRY=NEVER \
+                    -DPython3_EXECUTABLE=$CONDA_PREFIX/bin/python
 (visp-conda-ws) $ make -j10 visp_python_bindings
 \endcode
 
@@ -965,7 +1028,16 @@ tools are correctly installed within your Conda environment. After installing th
 And re-running CMake while pointing to your environment's prefix:
 
 \code{.sh}
-(visp-conda-ws) $ cmake ../visp -DCMAKE_PREFIX_PATH=$CONDA_PREFIX -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX
+(visp-conda-ws) $ cmake ../visp \
+                    -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
+                    -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
+                    -DCMAKE_FIND_ROOT_PATH=$CONDA_PREFIX \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=ONLY \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY \
+                    -DPython3_FIND_STRATEGY=LOCATION \
+                    -DPython3_FIND_REGISTRY=NEVER \
+                    -DPython3_EXECUTABLE=$CONDA_PREFIX/bin/python
 \endcode
 
 You should see that both the `Python interpreter` and `Pybind11` are now correctly sourced from the Conda environment:
