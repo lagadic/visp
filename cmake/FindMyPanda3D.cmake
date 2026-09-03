@@ -87,9 +87,10 @@ find_path(Panda3D_INCLUDE_DIRS panda.h PATHS ${PANDA3D_INCLUDE_SEARCH_PATHS} PAT
 include(FindPackageHandleStandardArgs)
 # Handle the QUIETLY and REQUIRED arguments and set the Panda3D_FOUND to TRUE
 # if all listed variables are TRUE
-find_package_handle_standard_args(Panda3D DEFAULT_MSG ALL_LIBS_FOUND Panda3D_INCLUDE_DIRS)
+find_package_handle_standard_args(MyPanda3D DEFAULT_MSG ALL_LIBS_FOUND Panda3D_INCLUDE_DIRS)
 
-if(Panda3D_FOUND)
+if(MyPanda3D_FOUND)
+  set(Panda3D_FOUND TRUE)
   vp_parse_header2(Panda3D "${Panda3D_INCLUDE_DIRS}/pandaVersion.h" PANDA_VERSION_STR)
 endif()
 
