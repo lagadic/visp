@@ -148,6 +148,10 @@ environments.
           (visp-conda-ws) $ mkdir build-conda && cd build-conda
           (visp-conda-ws) $ cmake ../ -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
                                       -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
+                                      -DCMAKE_FIND_ROOT_PATH=$CONDA_PREFIX \
+                                      -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=ONLY \
+                                      -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY \
+                                      -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY \
                                       -DBUILD_TESTS=OFF \
                                       -DCMAKE_POLICY_VERSION_MINIMUM=3.5
           (visp-conda-ws) $ make -j$(nproc) install
@@ -163,6 +167,10 @@ environments.
           (visp-conda-ws) $ mkdir build-conda && cd build-conda
           (visp-conda-ws) $ cmake ../ -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
                                       -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
+                                      -DCMAKE_FIND_ROOT_PATH=$CONDA_PREFIX \
+                                      -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=ONLY \
+                                      -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY \
+                                      -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY \
                                       -DBUILD_TESTS=OFF \
                                       -DCMAKE_POLICY_VERSION_MINIMUM=3.5
           (visp-conda-ws) $ make -j$(nproc) install
@@ -224,7 +232,16 @@ for example `python=3.10` to the previous command lines.
 
         (visp-conda-ws) $ mkdir visp-build-bindings
         (visp-conda-ws) $ cd visp-build-bindings
-        (visp-conda-ws) $ cmake ../visp -DCMAKE_PREFIX_PATH=$CONDA_PREFIX -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX
+        (visp-conda-ws) $ cmake ../visp \
+                            -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
+                            -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
+                            -DCMAKE_FIND_ROOT_PATH=$CONDA_PREFIX \
+                            -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=ONLY \
+                            -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY \
+                            -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY \
+                            -DPython3_FIND_STRATEGY=LOCATION \
+                            -DPython3_FIND_REGISTRY=NEVER \
+                            -DPython3_EXECUTABLE=$CONDA_PREFIX/bin/python
 
   - **C. On Windows**:
 
@@ -240,6 +257,7 @@ for example `python=3.10` to the previous command lines.
     \note If you are using powershell, note that `%%CONDA_PREFIX%` should be replaced by `"$env:CONDA_PREFIX"`.
 
 - At this point, in the build folder there is the `ViSP-third-party.txt` file in which you should see something similar
+  to the following:
 
   - **A. On macOS** or **B. On Ubuntu or other linux-like**:
 
@@ -740,7 +758,17 @@ identify those you haven't installed in the Conda environment with `conda instal
 An other solution is to call `cmake` with `--debug-find` command line option that will explicitly show the search
 path for the 3rd parties:
 \code{.sh}
-(visp-conda-ws) $ cmake ../visp -DCMAKE_PREFIX_PATH=$CONDA_PREFIX -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX --debug-find
+(visp-conda-ws) $ cmake ../visp \
+                    -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
+                    -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
+                    -DCMAKE_FIND_ROOT_PATH=$CONDA_PREFIX \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=ONLY \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY \
+                    -DPython3_FIND_STRATEGY=LOCATION \
+                    -DPython3_FIND_REGISTRY=NEVER \
+                    -DPython3_EXECUTABLE=$CONDA_PREFIX/bin/python \
+                    --debug-find
 \endcode
 
 In our case, we produced the CMake warning mentioned before by installing Panda3D and Ogre as system libraries.
@@ -748,10 +776,18 @@ In our case, we produced the CMake warning mentioned before by installing Panda3
 The solution is to deactivate the use of these two third parties as long as they are not needed, or simply to check
 that by not using them the CMake warnings disappear. After cleaning the `visp-build` folder you may run:
 \code{.sh}
-(visp-conda-ws) $ cmake ../visp -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
-                                -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
-                                -DUSE_OGRE=OFF \
-                                -DUSE_PANDA3D=OFF
+(visp-conda-ws) $ cmake ../visp \
+                    -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
+                    -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
+                    -DCMAKE_FIND_ROOT_PATH=$CONDA_PREFIX \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=ONLY \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY \
+                    -DPython3_FIND_STRATEGY=LOCATION \
+                    -DPython3_FIND_REGISTRY=NEVER \
+                    -DPython3_EXECUTABLE=$CONDA_PREFIX/bin/python \
+                    -DUSE_OGRE=OFF \
+                    -DUSE_PANDA3D=OFF
 \endcode
 
 Once confirmed that the warnings were due to the disabled 3rd parties, if they exist you can try installing them in
@@ -771,7 +807,16 @@ $ conda activate visp-conda-ws
 - before running CMake and helping CMake to find Panda3d headers
 \code{.sh}
 (visp-conda-ws) $ export Panda3D_DIR=$CONDA_PREFIX/share/panda3d
-(visp-conda-ws) $ cmake ../visp -DCMAKE_PREFIX_PATH=$CONDA_PREFIX -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX
+(visp-conda-ws) $ cmake ../visp \
+                    -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
+                    -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
+                    -DCMAKE_FIND_ROOT_PATH=$CONDA_PREFIX \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=ONLY \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY \
+                    -DPython3_FIND_STRATEGY=LOCATION \
+                    -DPython3_FIND_REGISTRY=NEVER \
+                    -DPython3_EXECUTABLE=$CONDA_PREFIX/bin/python
 \endcode
 
 \subsection py_bindings_known_errors_build 6.2. When building ViSP
@@ -801,7 +846,16 @@ To fix this build issue:
 \code{.sh}
 (visp-conda-ws) $ conda install xorg-libx11 xorg-libxfixes xorg-xorgprot
 (visp-conda-ws) $ cd visp-build-bindings
-(visp-conda-ws) $ cmake ../visp -DCMAKE_PREFIX_PATH=$CONDA_PREFIX -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX
+(visp-conda-ws) $ cmake ../visp \
+                    -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
+                    -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
+                    -DCMAKE_FIND_ROOT_PATH=$CONDA_PREFIX \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=ONLY \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY \
+                    -DPython3_FIND_STRATEGY=LOCATION \
+                    -DPython3_FIND_REGISTRY=NEVER \
+                    -DPython3_EXECUTABLE=$CONDA_PREFIX/bin/python
 (visp-conda-ws) $ make -j$(sysctl -n hw.logicalcpu) visp_python_bindings
 \endcode
 
@@ -815,7 +869,7 @@ Requirement already satisfied: pybind11-stubgen in /home/user/miniforge3/envs/vi
 Traceback (most recent call last):
   File "/home/user/miniforge3/envs/visp-conda-ws/lib/python3.13/site-packages/visp/__init__.py", line 44, in <module>
     from ._visp import *
-ImportError: /home/user/soft/visp-ws/test-pr/visp-user/visp-build-conda-python/lib/libvisp_sensor.so.3.6: undefined symbol: rs2_create_context_ex
+ImportError: /home/user/visp-ws/visp-build-conda-python/lib/libvisp_sensor.so.3.6: undefined symbol: rs2_create_context_ex
 \endcode
 
 This error is related to `librealsense` 3rdparty that was installed twice. This could be checked running
@@ -850,7 +904,16 @@ From here you need to rebuild the python bindings from scratch:
 \code{.sh}
 (visp-conda-ws) $ cd $VISP_WS/visp-build-bindings
 (visp-conda-ws) $ rm -rf *
-(visp-conda-ws) $ cmake ../visp -DCMAKE_PREFIX_PATH=$CONDA_PREFIX -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX
+(visp-conda-ws) $ cmake ../visp \
+                    -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
+                    -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
+                    -DCMAKE_FIND_ROOT_PATH=$CONDA_PREFIX \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=ONLY \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY \
+                    -DPython3_FIND_STRATEGY=LOCATION \
+                    -DPython3_FIND_REGISTRY=NEVER \
+                    -DPython3_EXECUTABLE=$CONDA_PREFIX/bin/python
 (visp-conda-ws) $ make -j10 visp_python_bindings
 \endcode
 
@@ -858,7 +921,7 @@ At the end of the build process, you should see something similar to:
 \code{.sh}
 [100%] Generating Python stubs with pybind11-stubgen...
 Requirement already satisfied: pybind11-stubgen in /home/user/miniforge3/envs/visp-conda-ws/lib/python3.13/site-packages (2.5.3)
-Processing /home/user/soft/visp-ws/test-pr/visp-user/visp-build-conda-python/modules/python/stubs
+Processing /home/user/visp-ws/visp-build-conda-python/modules/python/stubs
   Installing build dependencies ... done
   Getting requirements to build wheel ... done
   Preparing metadata (pyproject.toml) ... done
@@ -949,7 +1012,7 @@ General configuration information for ViSP 3.7.1
     Pybind11:                    /usr/lib/cmake/pybind11 (2.11.1)            <-- Currently using system Pybind11
     Package version:             3.7.1
     Wrapped modules:             core dnn_tracker gui imgproc io klt me sensor ar blob robot visual_features vs vision detection mbt rbt tt tt_mi
-    Generated input config:      /home/fspindle/soft/visp-ws/visp/visp-build-bindings/modules/python/cmake_config.json
+    Generated input config:      /home/user/soft/visp-ws/visp/visp-build-bindings/modules/python/cmake_config.json
 \endcode
 
 As shown above, both the Python3 interpreter and Pybind11 are being sourced from the system paths rather than the
@@ -965,7 +1028,16 @@ tools are correctly installed within your Conda environment. After installing th
 And re-running CMake while pointing to your environment's prefix:
 
 \code{.sh}
-(visp-conda-ws) $ cmake ../visp -DCMAKE_PREFIX_PATH=$CONDA_PREFIX -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX
+(visp-conda-ws) $ cmake ../visp \
+                    -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
+                    -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
+                    -DCMAKE_FIND_ROOT_PATH=$CONDA_PREFIX \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=ONLY \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY \
+                    -DPython3_FIND_STRATEGY=LOCATION \
+                    -DPython3_FIND_REGISTRY=NEVER \
+                    -DPython3_EXECUTABLE=$CONDA_PREFIX/bin/python
 \endcode
 
 You should see that both the `Python interpreter` and `Pybind11` are now correctly sourced from the Conda environment:
@@ -1112,17 +1184,17 @@ following errors that have occurred with Visual C++ on Windows, you can check wh
 implemented in a header file.
 
 \code{.sh}
-Création de la bibliothèque C:/visp-ws/test-pr/visp-fspindle/visp-build-bindings/lib/Release/_visp.lib et de l'objet C:/visp-ws/test-pr/visp-fspindle/visp-build-bindings/lib/Release/_visp.exp
-vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: class std::vector<unsigned int,class std::allocator<unsigned int> > const & __cdecl vpBasicKeyPoint::getMatchedReferencePoints(void)const" (__imp_?getMatchedReferencePoints@vpBasicKeyPoint@@QEBAAEBV?$vector@IV?$allocator@I@std@@@std@@XZ) [C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
-vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: class std::vector<class vpImagePoint,class std::allocator<class vpImagePoint> > const & __cdecl vpBasicKeyPoint::getCurrentImagePointsList(void)const"(__imp_?getCurrentImagePointsList@vpBasicKeyPoint@@QEBAAEBV?$vector@VvpImagePoint@@V?$allocator@VvpImagePoint@@@std@@@std@@XZ) [C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
-vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: class std::vector<class vpImagePoint,class std::allocator<class vpImagePoint> > const & __cdecl vpBasicKeyPoint::getReferenceImagePointsList(void)const" (__imp_?getReferenceImagePointsList@vpBasicKeyPoint@@QEBAAEBV?$vector@VvpImagePoint@@V?$allocator@VvpImagePoint@@@std@@@std@@XZ) [C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
-vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: unsigned int __cdecl vpBasicKeyPoint::getMatchedPointNumber(void)const " (__imp_?getMatchedPointNumber@vpBasicKeyPoint@@QEBAIXZ) [C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
-vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: unsigned int __cdecl vpBasicKeyPoint::getReferencePointNumber(void)const " (__imp_?getReferencePointNumber@vpBasicKeyPoint@@QEBAIXZ) [C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
-vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: unsigned int __cdecl vpBasicKeyPoint::getIndexInAllReferencePointList(unsigned int)" (__imp_?getIndexInAllReferencePointList@vpBasicKeyPoint@@QEAAII@Z)[C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
-vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: void __cdecl vpBasicKeyPoint::getMatchedPoints(unsigned int,class vpImagePoint &,class vpImagePoint &)" (__imp_?getMatchedPoints@vpBasicKeyPoint@@QEAAXIAEAVvpImagePoint@@0@Z) [C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
-vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: void __cdecl vpBasicKeyPoint::getReferencePoint(unsigned int,class vpImagePoint &)" (__imp_?getReferencePoint@vpBasicKeyPoint@@QEAAXIAEAVvpImagePoint@@@Z) [C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
-vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: bool __cdecl vpBasicKeyPoint::referenceBuilt(void)const " (__imp_?referenceBuilt@vpBasicKeyPoint@@QEBA_NXZ) [C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
-C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\visp\_visp.cp310-win_amd64.pyd : fatal error LNK1120: 9 externes non résolus [C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\_visp.
+Création de la bibliothèque C:/visp-ws/visp-build-bindings/lib/Release/_visp.lib et de l'objet C:/visp-ws/visp-build-bindings/lib/Release/_visp.exp
+vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: class std::vector<unsigned int,class std::allocator<unsigned int> > const & __cdecl vpBasicKeyPoint::getMatchedReferencePoints(void)const" (__imp_?getMatchedReferencePoints@vpBasicKeyPoint@@QEBAAEBV?$vector@IV?$allocator@I@std@@@std@@XZ) [C:\visp-ws\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
+vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: class std::vector<class vpImagePoint,class std::allocator<class vpImagePoint> > const & __cdecl vpBasicKeyPoint::getCurrentImagePointsList(void)const"(__imp_?getCurrentImagePointsList@vpBasicKeyPoint@@QEBAAEBV?$vector@VvpImagePoint@@V?$allocator@VvpImagePoint@@@std@@@std@@XZ) [C:\visp-ws\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
+vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: class std::vector<class vpImagePoint,class std::allocator<class vpImagePoint> > const & __cdecl vpBasicKeyPoint::getReferenceImagePointsList(void)const" (__imp_?getReferenceImagePointsList@vpBasicKeyPoint@@QEBAAEBV?$vector@VvpImagePoint@@V?$allocator@VvpImagePoint@@@std@@@std@@XZ) [C:\visp-ws\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
+vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: unsigned int __cdecl vpBasicKeyPoint::getMatchedPointNumber(void)const " (__imp_?getMatchedPointNumber@vpBasicKeyPoint@@QEBAIXZ) [C:\visp-ws\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
+vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: unsigned int __cdecl vpBasicKeyPoint::getReferencePointNumber(void)const " (__imp_?getReferencePointNumber@vpBasicKeyPoint@@QEBAIXZ) [C:\visp-ws\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
+vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: unsigned int __cdecl vpBasicKeyPoint::getIndexInAllReferencePointList(unsigned int)" (__imp_?getIndexInAllReferencePointList@vpBasicKeyPoint@@QEAAII@Z)[C:\visp-ws\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
+vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: void __cdecl vpBasicKeyPoint::getMatchedPoints(unsigned int,class vpImagePoint &,class vpImagePoint &)" (__imp_?getMatchedPoints@vpBasicKeyPoint@@QEAAXIAEAVvpImagePoint@@0@Z) [C:\visp-ws\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
+vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: void __cdecl vpBasicKeyPoint::getReferencePoint(unsigned int,class vpImagePoint &)" (__imp_?getReferencePoint@vpBasicKeyPoint@@QEAAXIAEAVvpImagePoint@@@Z) [C:\visp-ws\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
+vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: bool __cdecl vpBasicKeyPoint::referenceBuilt(void)const " (__imp_?referenceBuilt@vpBasicKeyPoint@@QEBA_NXZ) [C:\visp-ws\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
+C:\visp-ws\visp-build-bindings\modules\python\bindings\visp\_visp.cp310-win_amd64.pyd : fatal error LNK1120: 9 externes non résolus [C:\visp-ws\visp-build-bindings\modules\python\bindings\_visp.
 vcxproj]
 \endcode
 
@@ -1352,10 +1424,105 @@ Type "help", "copyright", "credits" or "license" for more information.
 \endcode
 \note If this is not the case and you still have the `ImportError`, return to step 4
 
+\subsection py_bindings_known_errors_stubs 6.5. When compiling the stubs
 
-\subsection py_bindings_known_errors_import 6.5. When importing ViSP In Python
+\subsubsection py_bindings_known_errors_stubs_timeout 6.5.1. RuntimeError: Timeout waiting for subprocess
 
-\subsubsection py_bindings_known_errors_same_name 6.5.1. Static and member methods have the same name
+When generating the Python stubs, you may encounter a timeout error:
+\code{.sh}
+(visp-conda-ws) $ cmake --build . --config Release --target visp_python_bindings --parallel 8
+...
+[100%] Linking CXX shared module visp/_visp.cpython-314-darwin.so
+/Users/user/miniforge3/envs/visp-conda-ws/bin/arm64-apple-darwin20.0.0-strip: warning: changes being made to the file will invalidate the code signature in: /Users/user/visp_ws/visp-build-bindings/modules/python/bindings/visp/_visp.cpython-314-darwin.so
+[cctools-port]: generating fake signature for '/Users/user/visp_ws/visp-build-bindings/modules/python/bindings/visp/_visp.cpython-314-darwin.so.strip'
+[100%] Built target _visp
+Processing ./.
+  Installing build dependencies ... done
+  Getting requirements to build wheel ... done
+  Preparing metadata (pyproject.toml) ... done
+Building wheels for collected packages: visp
+  Building wheel for visp (pyproject.toml) ... done
+  Created wheel for visp: filename=visp-3.7.1-cp314-cp314-macosx_26_0_arm64.whl size=2957260 sha256=0aa5306b12f1014b802feb39116ea596cacfefc6e8d54d342ac0560e6748edd8
+  Stored in directory: /private/var/folders/4z/tvsm23k55kd164g5d73jncfrlzbg6h/T/pip-ephem-wheel-cache-6smlhilq/wheels/cd/2f/2e/f8814a9a173c90d52582c176bf97bfdf14ac1db4b5c97e28b9
+Successfully built visp
+Installing collected packages: visp
+  Attempting uninstall: visp
+    Found existing installation: visp 3.7.1
+    Uninstalling visp-3.7.1:
+      Successfully uninstalled visp-3.7.1
+Successfully installed visp-3.7.1
+[100%] Built target visp_python_bindings_install
+[100%] Generating Python stubs...
+Processing ./.
+  Installing build dependencies ... done
+  Getting requirements to build wheel ... error
+  error: subprocess-exited-with-error
+
+  × Getting requirements to build wheel did not run successfully.
+  │ exit code: 1
+  ╰─> [42 lines of output]
+      Traceback (most recent call last):
+        File "/private/var/folders/4z/tvsm23k55kd164g5d73jncfrlzbg6h/T/pip-build-env-lzlwwriy/overlay/bin/stubgen", line 6, in <module>
+          sys.exit(main())
+                   ~~~~^^
+        File "mypy/stubgen.py", line 2060, in main
+        File "mypy/stubgen.py", line 1847, in generate_stubs
+          py_modules, pyc_modules, c_modules = collect_build_targets(options, mypy_opts)
+        File "mypy/stubgen.py", line 1599, in collect_build_targets
+          py_modules, c_modules = find_module_paths_using_imports(
+        File "mypy/stubgen.py", line 1626, in find_module_paths_using_imports
+          found = list(walk_packages(inspect, packages, verbose))
+        File "mypy/stubutil.py", line 81, in walk_packages
+        File "mypy/moduleinspect.py", line 146, in get_package_properties
+        File "mypy/moduleinspect.py", line 172, in _get_from_queue
+          raise RuntimeError("Timeout waiting for subprocess")
+      RuntimeError: Timeout waiting for subprocess
+      Running stubs generator
+      Traceback (most recent call last):
+        File "/Users/user/miniforge3/envs/visp-conda-ws/lib/python3.14/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py", line 389, in <module>
+          main()
+          ~~~~^^
+        File "/Users/user/miniforge3/envs/visp-conda-ws/lib/python3.14/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py", line 373, in main
+          json_out["return_val"] = hook(**hook_input["kwargs"])
+                                   ~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/Users/user/miniforge3/envs/visp-conda-ws/lib/python3.14/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py", line 143, in get_requires_for_build_wheel
+          return hook(config_settings)
+        File "/private/var/folders/4z/tvsm23k55kd164g5d73jncfrlzbg6h/T/pip-build-env-lzlwwriy/overlay/lib/python3.14/site-packages/setuptools/build_meta.py", line 333, in get_requires_for_build_wheel
+          return self._get_build_requires(config_settings, requirements=[])
+                 ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/private/var/folders/4z/tvsm23k55kd164g5d73jncfrlzbg6h/T/pip-build-env-lzlwwriy/overlay/lib/python3.14/site-packages/setuptools/build_meta.py", line 301, in _get_build_requires
+          self.run_setup()
+          ~~~~~~~~~~~~~~^^
+        File "/private/var/folders/4z/tvsm23k55kd164g5d73jncfrlzbg6h/T/pip-build-env-lzlwwriy/overlay/lib/python3.14/site-packages/setuptools/build_meta.py", line 317, in run_setup
+          exec(code, locals())  # noqa: S102 # exec is intentional here
+          ~~~~^^^^^^^^^^^^^^^^
+        File "<string>", line 107, in <module>
+        File "<string>", line 54, in run
+        File "<string>", line 62, in generate_stubs
+        File "/Users/user/miniforge3/envs/visp-conda-ws/lib/python3.14/subprocess.py", line 578, in run
+          raise CalledProcessError(retcode, process.args,
+                                   output=stdout, stderr=stderr)
+      subprocess.CalledProcessError: Command '['stubgen', '-o', '/Users/user/visp_ws/visp-build-bindings/modules/python/stubs/gen', '--ignore-errors', '--include-docstrings', '-p', 'visp._visp']' returned non-zero exit status 1.
+      [end of output]
+
+  note: This error originates from a subprocess, and is likely not a problem with pip.
+ERROR: Failed to build 'file:///Users/user/visp_ws/visp-build-bindings/modules/python/stubs' when getting requirements to build wheel
+make[3]: *** [modules/python/stubs/CMakeFiles/visp_python_bindings_stubs.dir/build.make:71: modules/python/stubs/CMakeFiles/visp_python_bindings_stubs] Error 1
+make[2]: *** [CMakeFiles/Makefile2:32828: modules/python/stubs/CMakeFiles/visp_python_bindings_stubs.dir/all] Error 2
+make[1]: *** [CMakeFiles/Makefile2:32721: modules/python/CMakeFiles/visp_python_bindings.dir/rule] Error 2
+make: *** [Makefile:8213: visp_python_bindings] Error 2
+\endcode
+
+The fix consists in running again the build command. The timeout error is due to a subprocess that takes too long
+to run and is killed by the stub generator.
+
+\code{.sh}
+(visp-conda-ws) $ cmake --build . --config Release --target visp_python_bindings --parallel 8
+\endcode
+
+\subsection py_bindings_known_errors_import 6.6. When importing ViSP In Python
+
+\subsubsection py_bindings_known_errors_same_name 6.6.1. Static and member methods have the same name
 
 If, when importing visp in Python, you encounter this message:
 \code{.sh}
@@ -1368,7 +1535,7 @@ You have to rename one or the other by modifying the bindings through JSON confi
 
 This error may also happen when generating the Python stubs (after the bindings compilation and linking step).
 
-\subsubsection py_bindings_known_errors_test 6.5.2. When building the tests
+\subsubsection py_bindings_known_errors_test 6.6.2. When building the tests
 
 The following error may occur when building Python tests on Ubuntu 22.04 when ros-2 humble is installed:
 
