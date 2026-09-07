@@ -116,7 +116,7 @@ OPTIONS:                                               Default\n\
      Number of visual servoing iterations.\n\
 \n\
   -l %%f                                               %f\n\
-     Number of visual servoing iterations.\n\
+     Gain parameter for the Gauss-Newton method.\n\
 \n\
   -h\n\
      Print the help.\n",
@@ -211,10 +211,11 @@ int main(int argc, const char **argv)
     std::string opt_method = "dct";
     unsigned opt_numDbImages = 2000;
     unsigned opt_numComponents = 32;
-    double opt_lambda = 5.0;
-    double lambdaGN;
-
+    double lambda_levenberg_marquardt = 5.0; // Gain used during Levenberg-Marquardt optimization
+    double opt_lambda_gauss_newton = lambda_levenberg_marquardt;
+    double lambda = lambda_levenberg_marquardt;
     double mu = 0.01; // mu = 0 : Gauss Newton ; mu != 0  : LM
+
 
     const double Z = 0.8;
     const unsigned int ih = 240;
@@ -232,11 +233,9 @@ int main(int argc, const char **argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_ipath, opt_click_allowed, opt_display, opt_niter, opt_method,
-                   opt_numDbImages, opt_numComponents, opt_lambda) == false) {
+                   opt_numDbImages, opt_numComponents, opt_lambda_gauss_newton) == false) {
       return EXIT_FAILURE;
     }
-
-    lambdaGN = opt_lambda;
 
     // Get the option values
     if (!opt_ipath.empty())
@@ -255,7 +254,7 @@ int main(int argc, const char **argv)
 
     // Test if an input path is set
     if (opt_ipath.empty() && env_ipath.empty()) {
-      usage(argv[0], nullptr, ipath, opt_niter, opt_method, opt_numDbImages, opt_numComponents, opt_lambda);
+      usage(argv[0], nullptr, ipath, opt_niter, opt_method, opt_numDbImages, opt_numComponents, opt_lambda_gauss_newton);
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
         << "  environment variable to specify the location of the " << std::endl
@@ -499,8 +498,10 @@ int main(int argc, const char **argv)
       sI.buildFrom(I);
       sI.getMapping()->inverse(sI.get_s(), Irec);
 
+      // Specific parameters for Gauss-Newton
       if (iter > iterGN) {
         mu = 0.0001;
+        lambda = opt_lambda_gauss_newton;
       }
       sI.interaction(L);
       sI.error(sId, error);
@@ -511,7 +512,7 @@ int main(int argc, const char **argv)
       }
       H = ((mu * diagHs) + Hs).inverseByLU();
       // Compute the control law
-      v = -opt_lambda * H * L.t() * error;
+      v = -lambda * H * L.t() * error;
       normError = error.sumSquare();
 
       std::cout << " |e| = " << normError << std::endl;
