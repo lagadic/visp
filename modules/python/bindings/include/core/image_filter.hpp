@@ -573,7 +573,7 @@ Apply the Canny edge detector to a grayscale image.
 :param normalizeGradients	: Needs to be true if asking to compute the upperThreshold, otherwise it depends on the user application and user-defined thresholds.
 :param cannyBackend	: The backend to use to perform the Canny edge filtering.
 :param cannyFilteringSteps	: The filtering + gradient operators to apply to compute the gradient in the early stage of the Canny algorithm.
-:param p_mask	: Optional mask. True pixels are processed and False pixels are ignored.
+:param mask	: Optional mask. True pixels are processed and False pixels are ignored.
 )doc",
     py::arg("input"),
     py::arg("output"),
