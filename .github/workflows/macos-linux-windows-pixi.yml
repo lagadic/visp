@@ -68,9 +68,10 @@ jobs:
 
       - name: Get doxygen backtrace
         run: |
+          pixi run -e ${{ matrix.environment }} doxygen --version
           ulimit -c unlimited
           cd .pixi/envs/full-ci-python-supported/visp-build
-          /Users/runner/work/visp/visp/.pixi/envs/full-ci-python-supported/bin/doxygen doc/config-doxygen-xml || true
+          pixi run -e ${{ matrix.environment }} doxygen doc/config-doxygen-xml || true
           lldb -c /cores/core.* -o "bt" -o "quit" 2>/dev/null || gdb -batch -ex "bt" $(which doxygen) core 2>/dev/null
 
       - name: Build Visp [MacOS/Linux/Windows]
