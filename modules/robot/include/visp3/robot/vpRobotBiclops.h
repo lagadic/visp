@@ -204,7 +204,7 @@ public:
    * \warning Re is not the embedded camera frame. It corresponds to the frame
    * associated to the tilt axis (see also get_cMe).
    *
-   * \param eJe : Jacobian between end effector frame and end effector frame (on
+   * \param e_J_e : Jacobian between end effector frame and end effector frame (on
    * tilt axis).
    */
   void get_eJe(vpMatrix &e_J_e) VP_OVERRIDE;
@@ -212,7 +212,7 @@ public:
   /*!
    * Get the robot jacobian expressed in the robot reference frame
    *
-   * \param fJe : Jacobian between reference frame (or fix frame) and end
+   * \param f_J_e : Jacobian between reference frame (or fix frame) and end
    * effector frame (on tilt axis).
    */
   void get_fJe(vpMatrix &f_J_e) VP_OVERRIDE;
