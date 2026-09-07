@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -212,11 +212,9 @@ int main(int argc, const char **argv)
     unsigned opt_numDbImages = 2000;
     unsigned opt_numComponents = 32;
     double opt_lambda = 5.0;
+    double lambdaGN;
 
     double mu = 0.01; // mu = 0 : Gauss Newton ; mu != 0  : LM
-    double lambdaGN = opt_lambda;
-
-
 
     const double Z = 0.8;
     const unsigned int ih = 240;
@@ -237,6 +235,8 @@ int main(int argc, const char **argv)
                    opt_numDbImages, opt_numComponents, opt_lambda) == false) {
       return EXIT_FAILURE;
     }
+
+    lambdaGN = opt_lambda;
 
     // Get the option values
     if (!opt_ipath.empty())
@@ -269,8 +269,9 @@ int main(int argc, const char **argv)
     vpImageIo::read(Itexture, filename);
 
     vpColVector X[4];
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 4; ++i) {
       X[i].resize(3);
+    }
     // Top left corner
     X[0][0] = -(scenew / 2.0);
     X[0][1] = -(sceneh / 2.0);
@@ -306,7 +307,6 @@ int main(int argc, const char **argv)
     vpHomogeneousMatrix cdMo;
     cdMo[2][3] = Z;
 
-
     vpCameraParameters cam(870, 870, 160, 120);
     std::shared_ptr<vpLuminanceMapping> sMapping = nullptr;
     std::shared_ptr<vpLuminanceMapping> sdMapping = nullptr;
@@ -328,15 +328,18 @@ int main(int argc, const char **argv)
       std::vector<vpImage<unsigned char>> images(opt_numDbImages);
       for (unsigned i = 0; i < opt_numDbImages; ++i) {
         vpColVector to(3, 0.0), positionNoise(3, 0.0);
-        const double noiseDiv = 16.0;
+        const double noiseDiv = 4.0;
         positionNoise[0] = random.uniform(-scenew / noiseDiv, scenew / noiseDiv);
         positionNoise[1] = random.uniform(-sceneh / noiseDiv, sceneh / noiseDiv);
-        positionNoise[2] = random.uniform(0.0, Z / noiseDiv);
-        const double noiseDivTo = 16.0;
+        positionNoise[2] = random.uniform(0.0, 0.3);
+        const double noiseDivTo = 8.0;
         to[0] = random.uniform(-scenew / noiseDivTo, scenew / noiseDivTo);
         to[1] = random.uniform(-sceneh / noiseDivTo, sceneh / noiseDivTo);
         const vpColVector from = vpColVector(cdMo.getTranslationVector()) + positionNoise;
-        vpRotationMatrix Rrot(0.0, 0.0, vpMath::rad(random.uniform(-10, 10)));
+
+        vpRotationMatrix Rrot(vpMath::rad(random.uniform(-20, 20)),
+                               vpMath::rad(random.uniform(-20, 20)),
+                               vpMath::rad(random.uniform(-15, 15)));
         vpHomogeneousMatrix dbMo = vpMath::lookAt(from, to, Rrot * vpColVector({ 0.0, 1.0, 0.0 }));
         sim.setCameraPosition(dbMo);
         sim.getImage(I, cam);
@@ -498,7 +501,6 @@ int main(int argc, const char **argv)
 
       if (iter > iterGN) {
         mu = 0.0001;
-        opt_lambda = lambdaGN;
       }
       sI.interaction(L);
       sI.error(sId, error);
