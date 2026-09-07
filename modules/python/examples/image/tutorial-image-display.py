@@ -1,11 +1,12 @@
 import sys
 
 # ViSP Python bindings
-from visp.core import ImageGray, ImageRGBa
+from visp.core import ImageRGBa
 from visp.io import ImageIo
 from visp.core import Display
 from visp.python.display_utils import get_display
 
+# Image path
 path = sys.path[0] + "/monkey.jpeg"
 
 # Read the image 
