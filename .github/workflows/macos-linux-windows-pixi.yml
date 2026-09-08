@@ -71,12 +71,7 @@ jobs:
         env:
           VISP_BUILD_TYPE: ${{ matrix.build_type }}
         run: |
-          pixi run -e ${{ matrix.environment }} doxygen --version
-          ulimit -c unlimited
           pixi run -e ${{ matrix.environment }} configure
-          cd .pixi/envs/full-ci-python-supported/visp-build
-          pixi run -e ${{ matrix.environment }} doxygen doc/config-doxygen-xml || true
-          lldb -c /cores/core.* -o "bt" -o "quit" 2>/dev/null || gdb -batch -ex "bt" $(which doxygen) core 2>/dev/null
           pixi run -e ${{ matrix.environment }} build
 
       - name: Run tests [MacOS/Linux/Windows]
