@@ -16,7 +16,7 @@ In this tutorial you will learn how to :
 Prerequisites
 ---------------------------
 
-You should first read the `Getting started with images <none>`_ tutorial.
+You should first read the `Getting started with images <tutorial-image-getting-started.html>`_ tutorial.
 
 Display an image
 ===========================
@@ -89,7 +89,7 @@ We then import the image from the disk as the `ImageRGBa <https://visp-doc.inria
 
 .. note::
 
-	 For more information about reading and writing images, see the `Read an write an image <none>`_ tutorial.
+	 For more information about reading and writing images, see the `Read an write an image <tutorial-image-io.html>`_ tutorial.
 
 Next, we create a `Display <https://visp-doc.inria.fr/doxygen/visp-python-daily/_autosummary/visp.core.Display.html#visp.core.Display>`_ object d using the `get_display() <https://visp-doc.inria.fr/doxygen/visp-python-daily/_autosummary/visp.display_utils.get_display.html#visp.display_utils.get_display>`_ method, and initialize it with the dimensions of the image :
 
@@ -209,4 +209,4 @@ The result should look similar to this window :
 Next Tutorial
 ===========================
 
-You are now ready to learn how to `Read an write an image <none>`_.
+You are now ready to learn how to `Read an write an image <tutorial-image-io.html>`_.
