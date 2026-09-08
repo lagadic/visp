@@ -1,5 +1,8 @@
 import sys
+
+# [imports]
 import matplotlib.pyplot as plt
+# [end-imports]
 
 # ViSP Python bindings
 from visp.core import ImageRGBa
@@ -16,8 +19,10 @@ except:
   print(f"Cannot read image {path}")
   sys.exit()
 
+# [display-image]
 # Display using Matplotlib
 plt.imshow(I)
 plt.axis('off')
 plt.title("monkey.jpeg")
 plt.show()
+# [end-display-image]
