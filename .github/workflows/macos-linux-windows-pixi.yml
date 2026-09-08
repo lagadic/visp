@@ -66,6 +66,11 @@ jobs:
           echo "VISP_INPUT_IMAGE_PATH=$HOME/visp-images" >> $GITHUB_ENV
           echo ${VISP_INPUT_IMAGE_PATH}
 
+      - name: Find owner of the conflicting link.exe
+        shell: bash -el {0}
+        run: |
+          grep -l "usr/bin/link.exe" .pixi/envs/full-ci-python-supported/conda-meta/*.json
+
       - name: Build Visp [MacOS/Linux/Windows]
         shell: bash -el {0}
         env:
