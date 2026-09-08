@@ -78,7 +78,7 @@ We define a helper function to display the images that we manipulate:
 
 .. note::
 
-  For a more detailed explanation of this function, see the `Display an image in a window <tutorial-image-display.html>`_ tutorial.
+  For a more detailed explanation of this function, see the `Display an image <tutorial-image-display.html>`_ tutorial.
 
 .. code-block:: python
 
