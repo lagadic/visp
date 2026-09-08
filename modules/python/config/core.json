@@ -1092,6 +1092,44 @@
               "TypeFilterable"
             ]
           ]
+        },
+        {
+          "static": true,
+          "signature": "void canny(const vpImage< unsigned char > &, vpImage< unsigned char > &, const unsigned int &, const float &, const float &, const unsigned int &)",
+          "param_is_input": [
+            true,
+            false,
+            true,
+            true,
+            true,
+            true
+          ],
+          "param_is_output": [
+            false,
+            true,
+            false,
+            false,
+            false,
+            false
+          ]
+        },
+        {
+          "static": true,
+          "signature": "void canny(const vpImage< unsigned char > &, vpImage< unsigned char > &, const unsigned int &, const float &, const unsigned int &)",
+          "param_is_input": [
+            true,
+            false,
+            true,
+            true,
+            true
+          ],
+          "param_is_output": [
+            false,
+            true,
+            false,
+            false,
+            false
+          ]
         }
       ]
     },
