@@ -32,7 +32,7 @@ except Exception as e:
   sys.exit()
 
 # Display the image
-display(I, "Image")
+display(I, "Loaded image")
 
 
 # Convert the image into a grayscale image
@@ -47,7 +47,6 @@ try:
   print(f"Image successfully written to '{outputPath}'")
 except Exception as e:
   print(e)
-  sys.exit()
 
 # Display the image
-display(Igray, "Grayscale image")
+display(Igray, "Written image")
