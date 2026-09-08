@@ -67,9 +67,10 @@ jobs:
           echo ${VISP_INPUT_IMAGE_PATH}
 
       - name: Find owner of the conflicting link.exe
+        if: runner.os == 'Windows'
         shell: bash -el {0}
         run: |
-          grep -l "usr/bin/link.exe" .pixi/envs/${{ matrix.environment }}/conda-meta/*.json
+          grep -l "usr/bin/link.exe" .pixi/envs/${{ matrix.environment }}/conda-meta/*.json || echo "No package found containing that path"
 
       - name: Build Visp [MacOS/Linux/Windows]
         shell: bash -el {0}
