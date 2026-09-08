@@ -66,10 +66,6 @@ jobs:
           echo "VISP_INPUT_IMAGE_PATH=$HOME/visp-images" >> $GITHUB_ENV
           echo ${VISP_INPUT_IMAGE_PATH}
 
-      - name: Debug link.exe resolution
-        shell: bash -el {0}
-        run: pixi run -e ${{ matrix.environment }} where link
-
       - name: Build Visp [MacOS/Linux/Windows]
         shell: bash -el {0}
         env:
