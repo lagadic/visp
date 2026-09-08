@@ -69,7 +69,7 @@ jobs:
       - name: Find owner of the conflicting link.exe
         shell: bash -el {0}
         run: |
-          grep -l "usr/bin/link.exe" .pixi/envs/full-ci-python-supported/conda-meta/*.json
+          grep -l "usr/bin/link.exe" .pixi/envs/${{ matrix.environment }}/conda-meta/*.json
 
       - name: Build Visp [MacOS/Linux/Windows]
         shell: bash -el {0}
