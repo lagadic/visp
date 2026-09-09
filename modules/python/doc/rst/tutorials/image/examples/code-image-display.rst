@@ -1,3 +1,5 @@
+.. _code-image-display:
+
 tutorial-image-display.py
 =========================
 

@@ -1,3 +1,5 @@
+.. _code-image-display-scaled-manu:
+
 tutorial-image-display-scaled-manu.py
 ========================================
 

@@ -1,3 +1,5 @@
+.. _code-image-display-scaled-default:
+
 tutorial-image-display-scaled-default.py
 ========================================
 
