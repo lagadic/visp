@@ -14,12 +14,12 @@ In this tutorial you will learn how to:
 
 - Read an image from a file
 - Write an image to a file.
-- Use the `ImageIo <file:///home/sjourdro/visp-ws/visp-build-bindings/doc/python/_autosummary/visp.io.ImageIo.html>`_ class.
+- Use the :py:class:`~visp.io.ImageIo` class.
 
 Prerequisites
 ---------------------------
 
-You should first read the `Getting started with images <tutorial-image-getting-started.html>`_ tutorial.
+You should first read the :ref:`Getting started with images <tutorial-image-getting-started>` tutorial.
 
 Read and write an image
 ===========================
@@ -27,7 +27,8 @@ Read and write an image
 Code
 ---------------------------
 
-The following `example <examples/code-image-io.html>`_ reads the ``monkey.jpeg`` file, converts it into a grayscale image, and saves the result as ``grayscale_monkey.jpeg``:
+The following :ref:`example <code-image-io>` reads the ``monkey.jpeg`` file, converts it into a grayscale image,
+and saves the result as ``grayscale_monkey.jpeg``:
 
 .. literalinclude:: /examples/image/tutorial-image-io.py
 	:language: python
@@ -60,88 +61,65 @@ The input and output images are available in:
 Explanation
 ---------------------------
 
-We first import the classes required to create, convert and display images:
+We first import the classes required to create, convert and display images.
+We also import :py:class:`~visp.io.ImageIo`,
+which we use to read and write image files:
 
-.. code-block:: python
-
-	import sys
-
-	from visp.core import ImageGray, ImageRGBa, ImageConvert
-	from visp.core import Display
-	from visp.python.display_utils import get_display
-
-We also import `ImageIo <file:///home/sjourdro/visp-ws/visp-build-bindings/doc/python/_autosummary/visp.io.ImageIo.html>`_, which we use to read and write image files:
-
-.. code-block:: python
-
-	from visp.io import ImageIo
+.. literalinclude:: /examples/image/tutorial-image-io.py
+  :language: python
+  :end-before: # Function displaying an image
 
 We define a helper function to display the images that we manipulate:
 
+.. literalinclude:: /examples/image/tutorial-image-io.py
+  :language: python
+  :start-after: # Function displaying an image
+  :end-before: # Read the image
+
 .. note::
 
-  For a more detailed explanation of this function, see the `Display an image <tutorial-image-display.html>`_ tutorial.
+  For a more detailed explanation of how displays work in ViSP, see the :ref:`Display an image <tutorial-image-display>` tutorial.
 
-.. code-block:: python
-
-	def display(I, title):
-	  d = get_display()
-	  d.init(I)
-	  Display.setTitle(I, title)
-	  Display.display(I)
-	  Display.flush(I)
-
-	  print("A click to quit...")
-	  Display.getClick(I)
-
-We then read the image ``monkey.jpeg`` using the `ImageIo.read() <file:///home/sjourdro/visp-ws/visp-build-bindings/doc/python/_autosummary/visp.io.ImageIo.html#visp.io.ImageIo.read>`_ method.
+We then read the image ``monkey.jpeg`` using the :py:meth:`~visp.io.ImageIo.read` method.
 
 We use an exception handler so that we can stop the program in case the reading fails because the remaining operations require a valid input image:
 
-.. code-block:: python
-
-	inputPath = sys.path[0] + "/monkey.jpeg"
-	I = ImageRGBa()
-	try:
-	  ImageIo.read(I, inputPath)
-	  print(f"Successfully loaded image: {inputPath}")
-	except Exception as e:
-	  print(e)
-	  sys.exit()
+.. literalinclude:: /examples/image/tutorial-image-io.py
+  :language: python
+  :start-after: # Read the image
+  :end-before: # Display the loaded image
 
 We display the loaded image with the helper function defined previously:
 
-.. code-block:: python
-
-	display(I, "Loaded image")
+.. literalinclude:: /examples/image/tutorial-image-io.py
+  :language: python
+  :start-after: # Display the loaded image
+  :end-before: # Convert the image into a grayscale image
 
 We convert the input image into a grayscale image with:
 
-.. code-block:: python
+.. literalinclude:: /examples/image/tutorial-image-io.py
+  :language: python
+  :start-after: # Convert the image into a grayscale image
+  :end-before: # Write the image
 
-	Igray = ImageGray()
-	ImageConvert.convert(I, Igray)
-
-We write the grayscale image to the ``grayscale_monkey.jpeg`` file with `ImageIo.write() <file:///home/sjourdro/visp-ws/visp-build-bindings/doc/python/_autosummary/visp.io.ImageIo.html#visp.io.ImageIo.write>`_.
+We write the grayscale image to the ``grayscale_monkey.jpeg`` file with :py:meth:`~visp.io.ImageIo.write`.
 
 The exception handler is non-blocking this time, because further processing does not depend on the output file:
 
-.. code-block:: python
+.. literalinclude:: /examples/image/tutorial-image-io.py
+  :language: python
+  :start-after: # Write the image
+  :end-before: # Display the written image
 
-	outputPath = sys.path[0] + "/grayscale_monkey.jpeg"
-	try:
-	  ImageIo.write(Igray, outputPath)
-	  print(f"Image successfully written to '{outputPath}'")
-	except Exception as e:
-	  print(e)
 
 Finally, we display the grayscale image:
 
-.. code-block:: python
-
-	display(Igray, "Written image")
+.. literalinclude:: /examples/image/tutorial-image-io.py
+  :language: python
+  :start-after: # Display the written image
 
 Next Tutorial
 ===========================
 
-You are now ready to learn how to `Insert basic drawings in an image <tutorial-image-drawings.html>`_.
+You are now ready to learn how to :ref:`Insert basic drawings in an image <tutorial-image-drawings>`.

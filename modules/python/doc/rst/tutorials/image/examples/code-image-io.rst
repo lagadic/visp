@@ -1,3 +1,5 @@
+.. _code-image-io:
+
 tutorial-image-io.py
 =========================
 

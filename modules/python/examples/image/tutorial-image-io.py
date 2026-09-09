@@ -1,11 +1,10 @@
 import sys
 
-# ViSP Python bindings
 from visp.core import ImageGray, ImageRGBa, ImageConvert
-from visp.io import ImageIo
 from visp.core import Display
 from visp.python.display_utils import get_display
 
+from visp.io import ImageIo
 
 # Function displaying an image
 def display(I, title):
@@ -20,7 +19,6 @@ def display(I, title):
   print("A click to quit...")
   Display.getClick(I)
 
-
 # Read the image
 inputPath = sys.path[0] + "/monkey.jpeg"
 I = ImageRGBa()
@@ -31,14 +29,12 @@ except Exception as e:
   print(e)
   sys.exit()
 
-# Display the image
+# Display the loaded image
 display(I, "Loaded image")
-
 
 # Convert the image into a grayscale image
 Igray = ImageGray()
 ImageConvert.convert(I, Igray)
-
 
 # Write the image
 outputPath = sys.path[0] + "/grayscale_monkey.jpeg"
@@ -48,5 +44,5 @@ try:
 except Exception as e:
   print(e)
 
-# Display the image
+# Display the written image
 display(Igray, "Written image")
