@@ -1,4 +1,5 @@
 import sys
+from pathlib import Path
 
 # import matplotlib
 import matplotlib.pyplot as plt
@@ -8,7 +9,7 @@ from visp.core import ImageRGBa
 from visp.io import ImageIo
 
 # Image path
-path = sys.path[0] + "/monkey.jpeg"
+path = str(Path(__file__).parent) + "/monkey.jpeg"
 
 # Read the image 
 I = ImageRGBa()
