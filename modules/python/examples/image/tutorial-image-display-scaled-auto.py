@@ -7,7 +7,9 @@ from visp.python.display_utils import get_display
 # Create a gray image
 I = ImageGray(2160, 3840, 0)
 d = get_display()
+# [downscaling-factor]
 d.setDownScalingFactor(Display.SCALE_AUTO)
+# [end-downscaling-factor]
 d.init(I)
 Display.setTitle(I, "Automatic scale")
 
