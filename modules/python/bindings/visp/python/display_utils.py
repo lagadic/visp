@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2026 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -80,10 +80,10 @@ VISP_DEFAULT_DISPLAY_PREFERENCE = ['x', 'opencv', 'gtk', 'win32', 'gdi']
 
 def get_display(preferences: Optional[List[str]] = None) -> Optional[Display]:
   '''
-  Get a new ViSP display instance, dependending on what display driver is available.
+  Get a new ViSP display instance, depending on what display driver is available.
 
   :param preference: An optional list of preferred backends to use.
-  The backends are tested in the order they are specified, and the first match is instanciated.
+  The backends are tested in the order they are specified, and the first match is instantiated.
   If preference is None, a default list of display is used. This list contains all basic displays.
   The specified values are case insensitive and may include. See VISP_DEFAULT_DISPLAY_PREFERENCE for the available options
 
