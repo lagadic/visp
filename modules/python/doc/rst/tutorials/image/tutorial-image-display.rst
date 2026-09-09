@@ -65,7 +65,7 @@ as well as the :py:class:`~visp.core.Display` class and the
 
   The :py:func:`~visp.python.display_utils.get_display` function
   detects the available GUI backend and returns a display object that can be
-  used by the application. See the `GUI overview <~visp.gui.html>`_
+  used by the application. See the :py:mod:`~visp.gui` module
   for more information.
 
 We then import the image from the disk as the :py:class:`~visp.core.ImageRGBa` object I:
