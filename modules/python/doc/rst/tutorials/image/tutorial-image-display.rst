@@ -58,7 +58,7 @@ as well as the :py:class:`~visp.core.Display` class and the
 
 .. literalinclude:: /examples/image/tutorial-image-display.py
   :language: python
-  :end-before: # Image path
+  :end-at: from visp.python.display_utils import get_display
 
 .. note::
 
@@ -72,8 +72,8 @@ We then import the image from the disk as the :py:class:`~visp.core.ImageRGBa` o
 
 .. literalinclude:: /examples/image/tutorial-image-display.py
   :language: python
-  :start-after: # Image path
-  :end-before: # Create the display
+  :start-at: # Image path
+  :end-at:   sys.exit()
 
 .. note::
 
@@ -86,16 +86,16 @@ and set the title of the display using :py:meth:`~visp.core.Display.setTitle`:
 
 .. literalinclude:: /examples/image/tutorial-image-display.py
    :language: python
-   :start-after: # Create the display
-   :end-before: # Display the image
+   :start-at: # Create the display
+   :end-at: Display.setTitle(I, "monkey.jpeg")
 
 The image is then drawn in the display with the :py:class:`~visp.core.Display` method.
 The :py:meth:`~visp.core.Display.flush` method finally shows the window on screen:
 
 .. literalinclude:: /examples/image/tutorial-image-display.py
   :language: python
-  :start-after: # Display the image
-  :end-before: # Wait for user input
+  :start-at: # Display the image
+  :end-at: Display.flush(I)
 
 The :py:meth:`~visp.core.Display.flush` method does not stop the program execution.
 We therefore call the :py:meth:`~visp.core.Display.getClick` method, to
@@ -103,7 +103,7 @@ pause the program until the user clicks in the display:
 
 .. literalinclude:: /examples/image/tutorial-image-display.py
   :language: python
-  :start-after: # Wait for user input
+  :start-at: # Wait for user input
 
 Other Options
 ===========================
@@ -134,8 +134,8 @@ To scale the image automatically so that it fits on the screen, call
 
 .. literalinclude:: /examples/image/tutorial-image-display-scaled-auto.py
   :language: python
-  :start-after: # Set Downscaling factor
-  :end-before: # Continue creating the display 
+  :start-at: # Set Downscaling factor
+  :end-at: d.setDownScalingFactor(Display.SCALE_AUTO)
 
 You can test this behavior with the following :ref:`example <code-image-display-scaled-auto>`:
 
@@ -148,8 +148,8 @@ code divides the image width and height by five:
 
 .. literalinclude:: /examples/image/tutorial-image-display-scaled-manu.py
   :language: python
-  :start-after: # Set Downscaling factor
-  :end-before: # Continue creating the display 
+  :start-at: # Set Downscaling factor
+  :end-at: d.setDownScalingFactor(Display.SCALE_5) 
 
 You can test this behavior with the following :ref:`example <code-image-display-scaled-manu>`:
 
@@ -169,14 +169,14 @@ You can also use Matplotlib to display the image. First, import
 
 .. literalinclude:: /examples/image/tutorial-image-display-matplotlib.py
   :language: python
-  :start-after: # import matplotlib
-  :end-before: # import ViSP bindings
+  :start-at: import matplotlib.pyplot as plt
+  :end-at: import matplotlib.pyplot as plt
 
 Then display the image in a figure:
 
 .. literalinclude:: /examples/image/tutorial-image-display-matplotlib.py
   :language: python
-  :start-after: # Display using Matplotlib
+  :start-at: # Display using Matplotlib
 
 The following :ref:`example <code-image-display-matplotlib>` shows this approach:
 

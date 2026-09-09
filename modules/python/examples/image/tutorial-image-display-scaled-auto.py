@@ -12,7 +12,6 @@ d = get_display()
 # Set Downscaling factor
 d.setDownScalingFactor(Display.SCALE_AUTO)
 
-# Continue creating the display
 d.init(I)
 Display.setTitle(I, "Automatic scale")
 
