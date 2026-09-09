@@ -1,4 +1,3 @@
-# ViSP Python bindings
 from visp.core import ImageGray, ImageCircle, ImagePoint, Color
 from visp.io import ImageIo
 from visp.core import Display
@@ -18,3 +17,4 @@ Display.flush(I)
 # Wait for user input
 print("A click to quit...")
 d.getClick(I)
+

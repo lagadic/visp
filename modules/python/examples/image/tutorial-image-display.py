@@ -1,4 +1,5 @@
 import sys
+from pathlib import Path
 
 from visp.core import ImageRGBa
 from visp.io import ImageIo
@@ -7,7 +8,7 @@ from visp.core import Display
 from visp.python.display_utils import get_display
 
 # Image path
-path = sys.path[0] + "/monkey.jpeg"
+path = str(Path(__file__).parent) + "/monkey.jpeg"
 
 # Read the image
 I = ImageRGBa()
@@ -29,3 +30,4 @@ Display.flush(I)
 # Wait for user input
 print("A click to quit...")
 Display.getClick(I)
+

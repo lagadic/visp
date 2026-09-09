@@ -134,8 +134,8 @@ To scale the image automatically so that it fits on the screen, call
 
 .. literalinclude:: /examples/image/tutorial-image-display-scaled-auto.py
   :language: python
-  :start-after: # [downscaling-factor]
-  :end-before: # [end-downscaling-factor]
+  :start-after: # Set Downscaling factor
+  :end-before: # Continue creating the display 
 
 You can test this behavior with the following :ref:`example <code-image-display-scaled-auto>`:
 
@@ -148,8 +148,8 @@ code divides the image width and height by five:
 
 .. literalinclude:: /examples/image/tutorial-image-display-scaled-manu.py
   :language: python
-  :start-after: # [downscaling-factor]
-  :end-before: # [end-downscaling-factor]
+  :start-after: # Set Downscaling factor
+  :end-before: # Continue creating the display 
 
 You can test this behavior with the following :ref:`example <code-image-display-scaled-manu>`:
 
@@ -169,15 +169,14 @@ You can also use Matplotlib to display the image. First, import
 
 .. literalinclude:: /examples/image/tutorial-image-display-matplotlib.py
   :language: python
-  :start-after: # [imports]
-  :end-before: # [end-imports]
+  :start-after: # import matplotlib
+  :end-before: # import ViSP bindings
 
 Then display the image in a figure:
 
 .. literalinclude:: /examples/image/tutorial-image-display-matplotlib.py
   :language: python
-  :start-after: # [display-image]
-  :end-before: # [end-display-image]
+  :start-after: # Display using Matplotlib
 
 The following :ref:`example <code-image-display-matplotlib>` shows this approach:
 
