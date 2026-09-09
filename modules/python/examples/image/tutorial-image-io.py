@@ -47,4 +47,3 @@ except Exception as e:
 
 # Display the written image
 display(Igray, "Written image")
-
