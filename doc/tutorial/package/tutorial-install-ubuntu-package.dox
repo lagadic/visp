@@ -26,7 +26,7 @@ $ sudo apt-get install visp-images-data
 
 To install ViSP html documentation you can run:
 \verbatim
-$ sudo apt-get install visp-doc
+$ sudo apt-get install libvisp-doc
 \endverbatim
 
 \section install_ubuntu_package_next Next tutorial
