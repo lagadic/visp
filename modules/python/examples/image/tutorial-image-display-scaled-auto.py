@@ -1,4 +1,3 @@
-# ViSP Python bindings
 from visp.core import ImageGray, ImageCircle, ImagePoint, Color
 from visp.io import ImageIo
 from visp.core import Display
@@ -6,10 +5,14 @@ from visp.python.display_utils import get_display
 
 # Create a gray image
 I = ImageGray(2160, 3840, 0)
+
+# Create the display
 d = get_display()
-# [downscaling-factor]
+
+# Set Downscaling factor
 d.setDownScalingFactor(Display.SCALE_AUTO)
-# [end-downscaling-factor]
+
+# Continue creating the display 
 d.init(I)
 Display.setTitle(I, "Automatic scale")
 
@@ -21,3 +24,4 @@ Display.flush(I)
 # Wait for user input
 print("A click to quit...")
 d.getClick(I)
+
