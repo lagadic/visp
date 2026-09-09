@@ -1,3 +1,5 @@
+.. _tutorial-image-display:
+
 ================================================
 Display an image
 ================================================
@@ -11,12 +13,12 @@ Goal
 In this tutorial you will learn how to:
 
 - Display an image in a window.
-- Use the `Display <https://visp-doc.inria.fr/doxygen/visp-python-daily/_autosummary/visp.core.Display.html#visp.core.Display>`_ class.
+- Use the :py:class:`~visp.core.Display` class.
 
 Prerequisites
 ---------------------------
 
-You should first read the `Getting started with images <tutorial-image-getting-started.html>`_ tutorial.
+You should first read the :ref:`Getting started with images <tutorial-image-getting-started>` tutorial.
 
 Display an image
 ===========================
@@ -24,7 +26,7 @@ Display an image
 Code
 ---------------------------
 
-The following `example <examples/code-image-display.html>`_ reads the ``monkey.jpeg`` file as an `ImageRGBa <https://visp-doc.inria.fr/doxygen/visp-python-daily/_autosummary/visp.core.ImageRGBa.html#visp.core.ImageRGBa>`_ object and displays it:
+The following :ref:`example <code-image-display>` reads the ``monkey.jpeg`` file as an :py:class:`~visp.core.ImageRGBa` object and displays it:
 
 .. literalinclude:: /examples/image/tutorial-image-display.py
   :language: python
@@ -51,59 +53,57 @@ Explanation
 ---------------------------
 
 We first import the classes required to read and use the image,
-as well as the `Display <https://visp-doc.inria.fr/doxygen/visp-python-daily/_autosummary/visp.core.Display.html#visp.core.Display>`_ class and the
-`get_display() <https://visp-doc.inria.fr/doxygen/visp-python-daily/_autosummary/visp.display_utils.get_display.html#visp.display_utils.get_display>`_ function:
+as well as the :py:class:`~visp.core.Display` class and the
+:py:func:`~visp.python.display_utils.get_display` function:
 
 .. literalinclude:: /examples/image/tutorial-image-display.py
   :language: python
-  :start-after: # [imports]
-  :end-before: # [end-imports]
+  :end-before: # Image path
 
 .. note::
 
-  The `get_display() <https://visp-doc.inria.fr/doxygen/visp-python-daily/_autosummary/visp.display_utils.get_display.html#visp.display_utils.get_display>`_ function
+  The :py:func:`~visp.python.display_utils.get_display` function
   detects the available GUI backend and returns a display object that can be
-  used by the application. See the `GUI overview <https://visp-doc.inria.fr/doxygen/visp-python-daily/_autosummary/visp.gui.html>`_
+  used by the application. See the :py:class:`~visp.gui` class
   for more information.
 
-We then import the image from the disk as the `ImageRGBa <https://visp-doc.inria.fr/doxygen/visp-python-daily/_autosummary/visp.core.ImageRGBa.html#visp.core.ImageRGBa>`_ object I:
+We then import the image from the disk as the :py:class:`~visp.core.ImageRGBa` object I:
 
 
 .. literalinclude:: /examples/image/tutorial-image-display.py
   :language: python
-  :start-after: # [read-image]
-  :end-before: # [end-read-image]
+  :start-after: # Image path
+  :end-before: # Create the display
 
 .. note::
 
-  For more information about reading and writing images, see the `Read an write an image <tutorial-image-io.html>`_ tutorial.
+  For more information about reading and writing images, see the :ref:`Read an write an image file <tutorial-image-io>` tutorial.
 
-Next, we create a `Display <https://visp-doc.inria.fr/doxygen/visp-python-daily/_autosummary/visp.core.Display.html#visp.core.Display>`_ object d
-using the `get_display() <https://visp-doc.inria.fr/doxygen/visp-python-daily/_autosummary/visp.display_utils.get_display.html#visp.display_utils.get_display>`_ method, and initialize it with the dimensions of the image.
-
+Next, we create a :py:class:`~visp.core.Display` object d
+using the :py:func:`~visp.python.display_utils.get_display` method, and initialize it with the dimensions of the image.
 We then initialize it to the dimensions of the image we want to display,
-and set the title of the display using `setTitle() <https://visp-doc.inria.fr/doxygen/visp-python-daily/_autosummary/visp.core.Display.html#visp.core.Display.setTitle>`_.
+and set the title of the display using :py:meth:`~visp.core.Display.setTitle`:
 
 .. literalinclude:: /examples/image/tutorial-image-display.py
    :language: python
-   :start-after: # [initialize-display]
-   :end-before: # [end-initialize-display]
+   :start-after: # Create the display
+   :end-before: # Display the image
 
-The image is then drawn in the display with the `display() <https://visp-doc.inria.fr/doxygen/visp-python-daily/_autosummary/visp.core.Display.html#visp.core.Display.display>`_ method.
-The `flush() <https://visp-doc.inria.fr/doxygen/visp-python-daily/_autosummary/visp.core.Display.html#visp.core.Display.flush>`_ method finally shows the window on screen:
+The image is then drawn in the display with the :py:class:`~visp.core.Display` method.
+The :py:meth:`~visp.core.Display.flush` method finally shows the window on screen:
 
 .. literalinclude:: /examples/image/tutorial-image-display.py
   :language: python
-  :start-after: # [display-image]
-  :end-before: # [end-display-image]
+  :start-after: # Display the image
+  :end-before: # Wait for user input
 
-The `flush() <https://visp-doc.inria.fr/doxygen/visp-python-daily/_autosummary/visp.core.Display.html#visp.core.Display.flush>`_ method does not stop the program execution. We therefore call the `getClick() <https://visp-doc.inria.fr/doxygen/visp-python-daily/_autosummary/visp.core.Display.html#visp.core.Display.getClick>`_ method, to
+The :py:meth:`~visp.core.Display.flush` method does not stop the program execution.
+We therefore call the :py:meth:`~visp.core.Display.getClick` method, to
 pause the program until the user clicks in the display:
 
 .. literalinclude:: /examples/image/tutorial-image-display.py
   :language: python
-  :start-after: # [wait-for-click]
-  :end-before: # [end-wait-for-click]
+  :start-after: # Wait for user input
 
 Other Options
 ===========================
@@ -114,7 +114,7 @@ Change scaling factor
 Depending on the image dimensions and your screen resolution, the display window
 may be too large to fit on the screen.
 
-The following `example <examples/code-image-display-scaled-default.html>`_ creates a 2160 x 3840 image with a red circle in its center and displays it.
+The following :ref:`example <code-image-display-scaled-default>` creates a 2160 x 3840 image with a red circle in its center and displays it.
 Run it with:
 
 .. code-block:: bash
@@ -129,14 +129,15 @@ on a 1920 x 1080 display:
   :alt: Image
   :align: center
 
-To scale the image automatically so that it fits on the screen, call `setDownScalingFactor() <https://visp-doc.inria.fr/doxygen/visp-python-daily/_autosummary/visp.core.Display.html#visp.core.Display.setDownScalingFactor>`_ method after initializing the display:
+To scale the image automatically so that it fits on the screen, call
+:py:meth:`~visp.core.Display.setDownScalingFactor` method after initializing the display:
 
 .. literalinclude:: /examples/image/tutorial-image-display-scaled-auto.py
   :language: python
   :start-after: # [downscaling-factor]
   :end-before: # [end-downscaling-factor]
 
-You can test this behavior with the following `example <examples/code-image-display-scaled-auto.html>`_:
+You can test this behavior with the following :ref:`example <code-image-display-scaled-auto>`:
 
 .. code-block:: bash
 
@@ -150,7 +151,7 @@ code divides the image width and height by five:
   :start-after: # [downscaling-factor]
   :end-before: # [end-downscaling-factor]
 
-You can test this behavior with the following `example <examples/code-image-display-scaled-manu.html>`_:
+You can test this behavior with the following :ref:`example <code-image-display-scaled-manu>`:
 
 .. code-block:: bash
 
@@ -178,7 +179,7 @@ Then display the image in a figure:
   :start-after: # [display-image]
   :end-before: # [end-display-image]
 
-The following `example <examples/code-image-display-matplotlib.html>`_ shows this approach:
+The following :ref:`example <code-image-display-matplotlib>` shows this approach:
 
 .. code-block:: bash
 
@@ -193,4 +194,4 @@ The result should look similar to this window:
 Next Tutorial
 ===========================
 
-You are now ready to learn how to `Read an write an image <tutorial-image-io.html>`_.
+You are now ready to learn how to :ref:`Read an write an image file <tutorial-image-io>`.

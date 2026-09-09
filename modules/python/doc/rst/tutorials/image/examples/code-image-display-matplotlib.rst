@@ -1,3 +1,5 @@
+.. _code-image-display-matplotlib:
+
 tutorial-image-display-matplotlib.py
 ========================================
 
