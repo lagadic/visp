@@ -58,14 +58,13 @@ as well as the :py:class:`~visp.core.Display` class and the
 
 .. literalinclude:: /examples/image/tutorial-image-display.py
   :language: python
-  :start-after: # [imports]
-  :end-before: # [end-imports]
+  :end-before: # Image path
 
 .. note::
 
   The :py:func:`~visp.python.display_utils.get_display` function
   detects the available GUI backend and returns a display object that can be
-  used by the application. See the :py:mod:`~visp.gui` module
+  used by the application. See the :py:class:`~visp.gui` class
   for more information.
 
 We then import the image from the disk as the :py:class:`~visp.core.ImageRGBa` object I:
@@ -73,8 +72,8 @@ We then import the image from the disk as the :py:class:`~visp.core.ImageRGBa` o
 
 .. literalinclude:: /examples/image/tutorial-image-display.py
   :language: python
-  :start-after: # [read-image]
-  :end-before: # [end-read-image]
+  :start-after: # Image path
+  :end-before: # Create the display
 
 .. note::
 
@@ -82,22 +81,21 @@ We then import the image from the disk as the :py:class:`~visp.core.ImageRGBa` o
 
 Next, we create a :py:class:`~visp.core.Display` object d
 using the :py:func:`~visp.python.display_utils.get_display` method, and initialize it with the dimensions of the image.
-
 We then initialize it to the dimensions of the image we want to display,
-and set the title of the display using :py:meth:`~visp.core.Display.setTitle`.
+and set the title of the display using :py:meth:`~visp.core.Display.setTitle`:
 
 .. literalinclude:: /examples/image/tutorial-image-display.py
    :language: python
-   :start-after: # [initialize-display]
-   :end-before: # [end-initialize-display]
+   :start-after: # Create the display
+   :end-before: # Display the image
 
 The image is then drawn in the display with the :py:class:`~visp.core.Display` method.
 The :py:meth:`~visp.core.Display.flush` method finally shows the window on screen:
 
 .. literalinclude:: /examples/image/tutorial-image-display.py
   :language: python
-  :start-after: # [display-image]
-  :end-before: # [end-display-image]
+  :start-after: # Display the image
+  :end-before: # Wait for user input
 
 The :py:meth:`~visp.core.Display.flush` method does not stop the program execution.
 We therefore call the :py:meth:`~visp.core.Display.getClick` method, to
@@ -105,8 +103,7 @@ pause the program until the user clicks in the display:
 
 .. literalinclude:: /examples/image/tutorial-image-display.py
   :language: python
-  :start-after: # [wait-for-click]
-  :end-before: # [end-wait-for-click]
+  :start-after: # Wait for user input
 
 Other Options
 ===========================
@@ -132,7 +129,8 @@ on a 1920 x 1080 display:
   :alt: Image
   :align: center
 
-To scale the image automatically so that it fits on the screen, call :py:meth:`~visp.core.Display.setDownScalingFactor` method after initializing the display:
+To scale the image automatically so that it fits on the screen, call
+:py:meth:`~visp.core.Display.setDownScalingFactor` method after initializing the display:
 
 .. literalinclude:: /examples/image/tutorial-image-display-scaled-auto.py
   :language: python
