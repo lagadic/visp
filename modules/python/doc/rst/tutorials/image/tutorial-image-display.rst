@@ -63,7 +63,7 @@ as well as the `Display <https://visp-doc.inria.fr/doxygen/visp-python-daily/_au
 
   The `get_display() <https://visp-doc.inria.fr/doxygen/visp-python-daily/_autosummary/visp.display_utils.get_display.html#visp.display_utils.get_display>`_ function
   detects the available GUI backend and returns a display object that can be
-  used by the application. See the `GUI module overview <https://visp.inria.fr/gui/>`_
+  used by the application. See the `GUI overview <https://visp-doc.inria.fr/doxygen/visp-python-daily/_autosummary/visp.gui.html>`_
   for more information.
 
 We then import the image from the disk as the `ImageRGBa <https://visp-doc.inria.fr/doxygen/visp-python-daily/_autosummary/visp.core.ImageRGBa.html#visp.core.ImageRGBa>`_ object I:
@@ -97,7 +97,7 @@ The `flush() <https://visp-doc.inria.fr/doxygen/visp-python-daily/_autosummary/v
   :start-after: # [display-image]
   :end-before: # [end-display-image]
 
-The `flush() <https://visp-doc.inria.fr/doxygen/visp-python-daily/_autosummary/visp.core.Display.html#visp.core.Display.flush>`_ function does not stop the program execution. We therefore call the `getClick() <https://visp-doc.inria.fr/doxygen/visp-python-daily/_autosummary/visp.core.Display.html#visp.core.Display.getClick>`_ method, to
+The `flush() <https://visp-doc.inria.fr/doxygen/visp-python-daily/_autosummary/visp.core.Display.html#visp.core.Display.flush>`_ method does not stop the program execution. We therefore call the `getClick() <https://visp-doc.inria.fr/doxygen/visp-python-daily/_autosummary/visp.core.Display.html#visp.core.Display.getClick>`_ method, to
 pause the program until the user clicks in the display:
 
 .. literalinclude:: /examples/image/tutorial-image-display.py

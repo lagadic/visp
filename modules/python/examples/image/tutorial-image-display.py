@@ -9,7 +9,6 @@ from visp.core import Display
 from visp.python.display_utils import get_display
 # [end-imports]
 
-
 # [read-image]
 # Image path
 path = sys.path[0] + "/monkey.jpeg"
@@ -23,7 +22,6 @@ except:
   sys.exit()
 # [end-read-image]
 
-
 # [initialize-display]
 # Display the image
 d = get_display()
@@ -31,12 +29,10 @@ d.init(I)
 Display.setTitle(I, "monkey.jpeg")
 # [end-initialize-display]
 
-
 # [display-image]
 Display.display(I)
 Display.flush(I)
 # [end-display-image]
-
 
 # [wait-for-click]
 # Wait for user input
