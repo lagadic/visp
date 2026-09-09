@@ -7,7 +7,7 @@ Read and write an image file
 Introduction
 ===========================
 
-Objective
+Goal
 ---------------------------
 
 In this tutorial you will learn how to:
@@ -21,8 +21,8 @@ Prerequisites
 
 You should first read the :ref:`Getting started with images <tutorial-image-getting-started>` tutorial.
 
-Read and write an image
-===========================
+Read and write an image file
+============================
 
 Code
 ---------------------------
@@ -50,7 +50,6 @@ The example displays the input image followed by the converted grayscale image:
   * - .. image:: images/result-image-io-input.png
 
     - .. image:: images/result-image-io-output.png
-
 
 The input and output images are available in:
 
@@ -81,7 +80,6 @@ We define a helper function to display the images that we manipulate:
   For a more detailed explanation of how displays work in ViSP, see the :ref:`Display an image <tutorial-image-display>` tutorial.
 
 We then read the image ``monkey.jpeg`` using the :py:meth:`~visp.io.ImageIo.read` method.
-
 We use an exception handler so that we can stop the program in case the reading fails because the remaining operations require a valid input image:
 
 .. literalinclude:: /examples/image/tutorial-image-io.py
@@ -104,7 +102,6 @@ We convert the input image into a grayscale image with:
   :end-before: # Write the image
 
 We write the grayscale image to the ``grayscale_monkey.jpeg`` file with :py:meth:`~visp.io.ImageIo.write`.
-
 The exception handler is non-blocking this time, because further processing does not depend on the output file:
 
 .. literalinclude:: /examples/image/tutorial-image-io.py

@@ -1,4 +1,4 @@
-.. _tutorial-image-srawings:
+.. _tutorial-image-drawings:
 
 =================================
 Insert basic drawings in an image

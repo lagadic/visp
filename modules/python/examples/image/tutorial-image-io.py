@@ -1,4 +1,5 @@
 import sys
+from pathlib import Path
 
 from visp.core import ImageGray, ImageRGBa, ImageConvert
 from visp.core import Display
@@ -20,7 +21,7 @@ def display(I, title):
   Display.getClick(I)
 
 # Read the image
-inputPath = sys.path[0] + "/monkey.jpeg"
+inputPath = str(Path(__file__).parent) + "/monkey.jpeg"
 I = ImageRGBa()
 try:
   ImageIo.read(I, inputPath)
@@ -37,7 +38,7 @@ Igray = ImageGray()
 ImageConvert.convert(I, Igray)
 
 # Write the image
-outputPath = sys.path[0] + "/grayscale_monkey.jpeg"
+outputPath = str(Path(__file__).parent) + "/grayscale_monkey.jpeg"
 try:
   ImageIo.write(Igray, outputPath)
   print(f"Image successfully written to '{outputPath}'")
