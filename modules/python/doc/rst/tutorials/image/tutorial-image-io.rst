@@ -66,14 +66,14 @@ which we use to read and write image files:
 
 .. literalinclude:: /examples/image/tutorial-image-io.py
   :language: python
-  :end-before: # Function displaying an image
+  :end-at: from visp.io import ImageIo
 
 We define a helper function to display the images that we manipulate:
 
 .. literalinclude:: /examples/image/tutorial-image-io.py
   :language: python
-  :start-after: # Function displaying an image
-  :end-before: # Read the image
+  :start-at: # Function displaying an image
+  :end-at:   Display.getClick(I)
 
 .. note::
 
@@ -84,37 +84,37 @@ We use an exception handler so that we can stop the program in case the reading 
 
 .. literalinclude:: /examples/image/tutorial-image-io.py
   :language: python
-  :start-after: # Read the image
-  :end-before: # Display the loaded image
+  :start-at: # Read the image
+  :end-at:   sys.exit()
 
 We display the loaded image with the helper function defined previously:
 
 .. literalinclude:: /examples/image/tutorial-image-io.py
   :language: python
-  :start-after: # Display the loaded image
-  :end-before: # Convert the image into a grayscale image
+  :start-at: # Display the loaded image
+  :end-at: display(I, "Loaded image")
 
 We convert the input image into a grayscale image with:
 
 .. literalinclude:: /examples/image/tutorial-image-io.py
   :language: python
-  :start-after: # Convert the image into a grayscale image
-  :end-before: # Write the image
+  :start-at: # Convert the image into a grayscale image
+  :end-at: ImageConvert.convert(I, Igray)
 
 We write the grayscale image to the ``grayscale_monkey.jpeg`` file with :py:meth:`~visp.io.ImageIo.write`.
 The exception handler is non-blocking this time, because further processing does not depend on the output file:
 
 .. literalinclude:: /examples/image/tutorial-image-io.py
   :language: python
-  :start-after: # Write the image
-  :end-before: # Display the written image
+  :start-at: # Write the image
+  :end-at:   print(e)
 
 
 Finally, we display the grayscale image:
 
 .. literalinclude:: /examples/image/tutorial-image-io.py
   :language: python
-  :start-after: # Display the written image
+  :start-at: # Display the written image
 
 Next Tutorial
 ===========================

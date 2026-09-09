@@ -1,10 +1,8 @@
 import sys
 from pathlib import Path
 
-# import matplotlib
 import matplotlib.pyplot as plt
 
-# import ViSP bindings
 from visp.core import ImageRGBa
 from visp.io import ImageIo
 
