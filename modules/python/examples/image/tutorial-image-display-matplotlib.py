@@ -11,7 +11,7 @@ from visp.io import ImageIo
 # Image path
 path = str(Path(__file__).parent) + "/monkey.jpeg"
 
-# Read the image 
+# Read the image
 I = ImageRGBa()
 try:
   ImageIo.read(I, path)
@@ -24,4 +24,3 @@ plt.imshow(I)
 plt.axis('off')
 plt.title("monkey.jpeg")
 plt.show()
-

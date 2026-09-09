@@ -17,4 +17,3 @@ Display.flush(I)
 # Wait for user input
 print("A click to quit...")
 d.getClick(I)
-
