@@ -1,6 +1,6 @@
+# [imports]
 import sys
 
-# [imports]
 # ViSP Python bindings
 from visp.core import ImageRGBa
 from visp.io import ImageIo
