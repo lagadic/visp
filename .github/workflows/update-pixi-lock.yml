@@ -40,7 +40,7 @@ jobs:
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ steps.generate-token.outputs.token }}
-          commit-message: 'pixi: Update pixi lockfile'
+          commit-message: '[SKIP-CI ALL][ENABLE-CI PIXI] pixi: Update pixi lockfile'
           title: Update pixi lockfile
           body-path: diff.md
           branch: topic/update-pixi

@@ -44,6 +44,9 @@ zbar = "*"
 llvm-openmp = "*"
 zbar = "*"
 
+[target.osx-64.dependencies]
+doxygen = "1.17.0"
+
 [activation]
 scripts = ["development/scripts/pixi/activation.sh"]
 
