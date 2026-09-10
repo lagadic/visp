@@ -1,58 +1,74 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-# ViSP Python bindings
 from visp.core import ImageGray
 from visp.core import ImageDraw, ImagePoint, Rect, Font
 
 # Create a Matplotlib figure
-fig, axes = plt.subplots(2, 3)
+fig, axes = plt.subplots(2, 4)
 axes = axes.ravel()
 
 # Create subplots for the figure
 def create_subplot(i, title):
-	axes[i].set_title(title)
-	axes[i].axis('off')
-	axes[i].imshow(I[i], interpolation='nearest', cmap="gray", vmin=0, vmax=255)
+  axes[i].set_title(title)
+  axes[i].axis('off')
+  axes[i].imshow(I[i], interpolation='nearest', cmap="gray", vmin=0, vmax=255)
 
-# Create 6 black images
-I = [ImageGray(100, 100, 0) for _ in range(6)]
+# Create 8 black images
+I = [ImageGray(200, 200, 0) for _ in range(8)]
 
 # Draw a point
-ip = ImagePoint(50, 50)
+ip = ImagePoint(100, 100)
 ImageDraw.drawPoint(I[0], ip, 255, 3)
 create_subplot(0, "Point")
 
 # Draw a line
-ip1 = ImagePoint(25, 25)
-ip2 = ImagePoint(75, 75)
+ip1 = ImagePoint(50, 50)
+ip2 = ImagePoint(150, 150)
 ImageDraw.drawLine(I[1], ip1, ip2, 255, 3)
 create_subplot(1, "Line")
 
 # Draw a circle
-ip = ImagePoint(50, 50)
-ImageDraw.drawCircle(I[2], ip, 40, 255, 3)
+ip = ImagePoint(100, 100)
+ImageDraw.drawCircle(I[2], ip, 80, 255, 3)
 create_subplot(2, "Circle")
 
 # Draw a rectangle
-ip = ImagePoint(25, 10)
-w = 80
-h = 50
+ip = ImagePoint(50, 20)
+w = 160
+h = 100
 ImageDraw.drawRectangle(I[3], Rect(ip, w, h), 255, 3)
 create_subplot(3, "Rectangle")
 
+# Draw a polygone
+points = [
+  ImagePoint(100, 20),
+  ImagePoint(176, 75),
+  ImagePoint(147, 165),
+  ImagePoint(53, 165),
+  ImagePoint(24, 75),
+]
+ImageDraw.drawPolygon(I[4], points, 255, 3)
+create_subplot(4, "Polygone")
+
 # Draw a cross
-ip = ImagePoint(50, 50)
-ImageDraw.drawCross(I[4], ip, 25, 255, 3)
-create_subplot(4, "Cross")
+ip = ImagePoint(100, 100)
+ImageDraw.drawCross(I[5], ip, 50, 255, 3)
+create_subplot(5, "Cross")
+
+# Draw an arrow
+start = ImagePoint(100, 50)
+end = ImagePoint(100, 150)
+ImageDraw.drawArrow(I[6], start, end, 255, 25, 25, 3)
+create_subplot(6, "Arrow")
 
 # Insert text
-ip = ImagePoint(43, 25)
+ip = ImagePoint(86, 50)
 color = 255 # white
 background = 0 # black
-font = Font(14, Font.FontFamily.GENERIC_MONOSPACE)
-font.drawText(I[5], "Test...", ip, color, background)
-create_subplot(5, "Text")
+font = Font(28, Font.FontFamily.GENERIC_MONOSPACE)
+font.drawText(I[7], "Test...", ip, color, background)
+create_subplot(7, "Text")
 
 # Display results
 plt.show()
