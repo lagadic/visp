@@ -26,7 +26,8 @@ Display an image
 Code
 ---------------------------
 
-The following :ref:`example <code-image-display>` reads the ``monkey.jpeg`` file as an :py:class:`~visp.core.ImageRGBa` object and displays it:
+The following :ref:`example <code-image-display>` reads the ``monkey.jpeg`` file as an :py:class:`~visp.core.ImageRGBa`
+object and displays it:
 
 .. literalinclude:: /examples/image/tutorial-image-display.py
   :language: python
@@ -77,7 +78,8 @@ We then import the image from the disk as the :py:class:`~visp.core.ImageRGBa` o
 
 .. note::
 
-  For more information about reading and writing images, see the :ref:`Read an write an image file <tutorial-image-io>` tutorial.
+  For more information about reading and writing images, see the :ref:`Read an write an image file <tutorial-image-io>`
+  tutorial.
 
 Next, we create a :py:class:`~visp.core.Display` object d
 using the :py:func:`~visp.python.display_utils.get_display` method, and initialize it with the dimensions of the image.
@@ -114,7 +116,8 @@ Change scaling factor
 Depending on the image dimensions and your screen resolution, the display window
 may be too large to fit on the screen.
 
-The following :ref:`example <code-image-display-scaled-default>` creates a 2160 x 3840 image with a red circle in its center and displays it.
+The following :ref:`example <code-image-display-scaled-default>` creates a 2160 x 3840 image with a red circle in its
+center and displays it.
 Run it with:
 
 .. code-block:: bash
@@ -149,7 +152,7 @@ code divides the image width and height by five:
 .. literalinclude:: /examples/image/tutorial-image-display-scaled-manu.py
   :language: python
   :start-at: # Set Downscaling factor
-  :end-at: d.setDownScalingFactor(Display.SCALE_5) 
+  :end-at: d.setDownScalingFactor(Display.SCALE_5)
 
 You can test this behavior with the following :ref:`example <code-image-display-scaled-manu>`:
 

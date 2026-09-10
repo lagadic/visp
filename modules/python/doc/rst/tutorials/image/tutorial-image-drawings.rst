@@ -157,7 +157,7 @@ Draw text on an image
 To draw a text on an image, you will need to use the :py:class:`~visp.core.Font` class.
 
 First create a :py:class:`~visp.core.Font` object to specify the font properties,
-then use the :py:meth:`~visp.core.Font.drawText` method to apply text on your image :
+then use the :py:meth:`~visp.core.Font.drawText` method to apply text on your image:
 
 .. literalinclude:: /examples/image/tutorial-image-drawings-shapes.py
   :language: python

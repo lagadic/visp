@@ -43,7 +43,7 @@ You can run the example with:
 Result
 ---------------------------
 
-The example displays the input image followed by the converted grayscale image: 
+The example displays the input image followed by the converted grayscale image:
 
 .. list-table::
 
@@ -77,10 +77,12 @@ We define a helper function to display the images that we manipulate:
 
 .. note::
 
-  For a more detailed explanation of how displays work in ViSP, see the :ref:`Display an image <tutorial-image-display>` tutorial.
+  For a more detailed explanation of how displays work in ViSP, see the :ref:`Display an image <tutorial-image-display>`
+  tutorial.
 
 We then read the image ``monkey.jpeg`` using the :py:meth:`~visp.io.ImageIo.read` method.
-We use an exception handler so that we can stop the program in case the reading fails because the remaining operations require a valid input image:
+We use an exception handler so that we can stop the program in case the reading fails because the remaining operations
+require a valid input image:
 
 .. literalinclude:: /examples/image/tutorial-image-io.py
   :language: python

@@ -40,7 +40,7 @@ h = 100
 ImageDraw.drawRectangle(I[3], Rect(ip, w, h), 255, 3)
 create_subplot(3, "Rectangle")
 
-# Draw a polygone
+# Draw a polygon
 points = [
   ImagePoint(100, 20),
   ImagePoint(176, 75),
@@ -49,7 +49,7 @@ points = [
   ImagePoint(24, 75),
 ]
 ImageDraw.drawPolygon(I[4], points, 255, 3)
-create_subplot(4, "Polygone")
+create_subplot(4, "Polygon")
 
 # Draw a cross
 ip = ImagePoint(100, 100)
