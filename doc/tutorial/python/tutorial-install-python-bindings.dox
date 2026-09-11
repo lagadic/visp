@@ -454,7 +454,7 @@ Now, while you are still in your ViSP workspace (VISP_WS), activate your new vir
 
 And install Pybind11:
 
-    (venv) $ pip install pybind11[global]
+    (venv) $ pip install "pybind11[global]"
 
 Your Python environment should now be ready: you can compile continue and compile the bindings.
 

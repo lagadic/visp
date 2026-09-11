@@ -67,7 +67,7 @@ jobs:
         echo "Activate virtual env"
         . venv/bin/activate
         echo "Install pybind11"
-        pip install pybind11[global]
+        pip install "pybind11[global]"
         echo "Configure"
         cmake .. -DBUILD_DEPRECATED_FUNCTIONS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TUTORIALS=OFF -DBUILD_TESTS=OFF -DBUILD_APPS=OFF -DBUILD_DEMOS=OFF
         echo "Build python bindings"
