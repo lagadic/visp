@@ -16,3 +16,4 @@ Image manipulation
     image/tutorial-image-io.rst
     image/tutorial-image-drawings.rst
     image/tutorial-image-interactions.rst
+    image/tutorial-image-filter.rst
