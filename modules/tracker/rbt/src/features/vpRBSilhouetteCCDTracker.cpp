@@ -422,7 +422,6 @@ void vpRBSilhouetteCCDTracker::display(const vpCameraParameters &/*cam*/, const 
 
       weightPerPoint[i] = sum / nerror_per_point;
     }
-    const vpColor bestColor = vpColor::green;
     unsigned idx = 0;
     for (const vpRBSilhouetteControlPoint &p : m_controlPoints) {
       const double weight = weightPerPoint[idx];
@@ -622,7 +621,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
       vic_ptr[10 * negative_normal + 9] = exp(-dist2[0] * dist2[0] / (2 * sigma * sigma)) / (sqrt(2 * M_PI) * sigma);
       normalized_param[kk_][1] += vic_ptr[10 * negative_normal + 7];
     }
-  }
+    }
 
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
@@ -725,7 +724,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
           m2_o2[m * 3 + n] += wp2 * pixelNeg[m] * pixelNeg[n];
         }
       }
-    }
+      }
     mean_vic_ptr[0] = m1[0] / w1;
     mean_vic_ptr[1] = m1[1] / w1;
     mean_vic_ptr[2] = m1[2] / w1;
@@ -742,8 +741,8 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
       cov_vic_ptr[m * 3 + m] += m_ccdParameters.kappa;
       cov_vic_ptr[9 + m * 3 + m] += m_ccdParameters.kappa;
     }
+    }
   }
-}
 
 
 
