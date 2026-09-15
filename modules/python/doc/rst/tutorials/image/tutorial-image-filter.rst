@@ -1,5 +1,5 @@
 ===========================
-Filtering images
+Filter an image
 ===========================
 
 Introduction
@@ -41,7 +41,7 @@ Code
 ---------------------------
 
 The following :ref:`example <code-image-filter>` reads the ``monkey.jpeg``
-file, converts it into a grayscale image, and applies a Gaussian blur filter:
+file as a grayscale image, and applies a Gaussian blur filter:
 
 .. literalinclude:: /examples/image/tutorial-image-filter.py
   :language: python
@@ -71,7 +71,7 @@ images. We also import the :py:class:`~visp.core.ImageFilter` who provides filte
   :language: python
   :end-at: from visp.core import ImageFilter
 
-We read the image ``monkey.jpeg``. We read it as a grayscale image, as the Gaussian blur method cannot accept color images as input:
+We read the image ``monkey.jpeg`` as a grayscale image:
 
 .. literalinclude:: /examples/image/tutorial-image-filter.py
   :language: python
