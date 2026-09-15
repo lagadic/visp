@@ -78,7 +78,7 @@ We read the image ``monkey.jpeg`` as a grayscale image:
   :start-at: # Read the image
   :end-at:   sys.exit()
 
-We then create an output image and apply a Gaussian blur with the method :py:meth:`~visp.core.ImageFilter.GaussianBlur`, with a filter size of
+We then create an output image and apply a Gaussian blur with the method :py:meth:`~visp.core.ImageFilter.gaussianBlur`, with a filter size of
 ``7``, while letting ViSP determine the Gaussian standard
 deviation automatically using ``0``:
 
