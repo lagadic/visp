@@ -619,6 +619,7 @@ bindings_vpImageFilter(py::class_<VISP_NAMESPACE_ADDRESSING vpImageFilter, std::
   define_gaussianBlur<unsigned char, double>(pyImageFilter);
   define_gaussianBlur<float, float>(pyImageFilter);
   define_gaussianBlur<double, double>(pyImageFilter);
+  define_gaussianBlur<vpRGBa, vpRGBa>(pyImageFilter);
 
   define_canny(pyImageFilter);
 }
