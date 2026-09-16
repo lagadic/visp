@@ -17,3 +17,13 @@ Image manipulation
     image/tutorial-image-drawings.rst
     image/tutorial-image-interactions.rst
     image/tutorial-image-filter.rst
+
+
+Visual servoing
+-----------------------
+
+.. toctree::
+    :glob:
+    :maxdepth: 1
+
+    servoing/tutorial-servoing-realsense.rst

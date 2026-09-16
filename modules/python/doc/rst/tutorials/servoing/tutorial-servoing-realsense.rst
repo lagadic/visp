@@ -1,0 +1,172 @@
+.. _tutorial-servoing-realsense::
+
+==================================================
+Display a RealSense camera stream
+==================================================
+
+Introduction
+==================================================
+
+Goal
+--------------------------------------------------
+
+In this tutorial you will learn how to:
+
+- Configure an RealSense camera.
+- Use :py:class:`~visp.core.Display` to display a video stream.
+
+Prerequisites
+--------------------------------------------------
+
+You should first read the following tutorials :
+- :ref:`tutorial-image-getting-started`
+- :ref:`tutorial-image-display`
+
+You also need the ``numpy`` and ``pyrealsense2`` Python packages.
+Install them with:
+
+.. code-block:: bash
+
+  pip install numpy pyrealsense2
+
+Display a camera stream
+==================================================
+
+The following :ref:`example <code-servoing-realsense>` displays the color stream
+from a RealSense camera in a ViSP display window:
+
+.. literalinclude:: /examples/servoing/tutorial-servoing-realsense.py
+  :language: python
+  :linenos:
+
+Running the example
+--------------------------------------------------
+
+You can run the example with:
+
+.. code-block:: bash
+
+  python3 $VISP_WS/visp/modules/python/examples/servoing/tutorial-servoing-realsense.py
+
+Result
+--------------------------------------------------
+
+A window opens and displays the live color stream from the camera.
+Click on the window to stop the example.
+
+Explanation
+==================================================
+
+The program performs three main tasks:
+
+1. It configures and starts the camera.
+2. It creates a ViSP image and display window.
+3. It continuously copies camera frames into the displayed image.
+
+Import the required modules
+--------------------------------------------------
+
+We well need ``pyrealsense2`` to communicate with the RealSense camera,
+``numpy`` to manipulate image data, and ViSP :py:class:`~visp.core.ImageRGBa`
+and :py:class:`~visp.core.Display` classes to store and display the camera image:
+
+.. literalinclude:: /examples/servoing/tutorial-servoing-realsense.py
+  :language: python
+  :start-at: import numpy as np
+  :end-at: from visp.python.display_utils import get_display
+
+Configure the camera
+--------------------------------------------------
+
+First, we configure the camera to enable the color stream,
+with a 640 × 480 pixels resolution, using RGB format, and at a frame rate of 60 frames per second:
+
+.. literalinclude:: /examples/servoing/tutorial-servoing-realsense.py
+  :language: python
+  :start-at: # Set the camera image dimensions
+  :end-at: config.enable_stream(rs.stream.color, WIDTH, HEIGHT, rs.format.rgb8, 60)
+
+The RealSense pipeline manages frame acquisition. Start it with the
+configuration created above:
+
+.. literalinclude:: /examples/servoing/tutorial-servoing-realsense.py
+  :language: python
+  :start-at: # Start streaming frames from the camera
+  :end-at: pipeline.start(config)
+
+Initialize the display
+--------------------------------------------------
+
+Before entering the acquisition loop, we create a :py:class:`~visp.core.ImageRGBa`
+image with the same dimensions as the camera frames.
+We then obtain a display object and associate it with the image:
+
+.. literalinclude:: /examples/servoing/tutorial-servoing-realsense.py
+  :language: python
+  :start-at: # Create and initialize the display image
+  :end-at: display.init(image)
+
+The display window will show the contents of ``image``, while the image itself is
+updated during every iteration of the acquisition loop.
+
+To update the image efficiently, we create a NumPy view of its underlying
+storage:
+
+.. literalinclude:: /examples/servoing/tutorial-servoing-realsense.py
+  :language: python
+  :start-at: # Access the display image data as a NumPy array
+  :end-at: image_array = np.asarray(image)
+
+This does not create a separate copy of the image. Instead, ``image_array``
+refers to the data already stored in ``image``. Changes made through the
+NumPy array are therefore visible in the display image.
+
+Acquire and displaying frames
+--------------------------------------------------
+
+The program now enters an infinite loop. On each iteration, it waits for the
+next set of frames from the camera:
+
+.. literalinclude:: /examples/servoing/tutorial-servoing-realsense.py
+  :language: python
+  :start-at: # Capture the latest camera frame
+  :end-at: color_frame = frames.get_color_frame()
+
+We then select the color frame from the returned frame set.
+The frame data is converted into a NumPy array, and copied
+into the first three channels of ``image``:
+
+.. literalinclude:: /examples/servoing/tutorial-servoing-realsense.py
+  :language: python
+  :start-at: # Convert the color frame to a NumPy array
+  :end-at: image_array[..., :3] = color_image
+
+The expression ``image_array[..., :3]`` selects the red, green, and blue
+channels provided by the camera while leaving the fourth alpha channel unchanged.
+
+The updated image is then rendered:
+
+.. literalinclude:: /examples/servoing/tutorial-servoing-realsense.py
+  :language: python
+  :start-at: # Render the updated image
+  :end-at: Display.flush(image)
+
+Stop the program
+--------------------------------------------------
+
+The loop ends when the user clicks inside the display window:
+
+.. literalinclude:: /examples/servoing/tutorial-servoing-realsense.py
+  :language: python
+  :start-at: # Stop when the user clicks inside the display
+  :end-at: break
+
+After the loop exits, we stop the RealSense pipeline:
+
+.. literalinclude:: /examples/servoing/tutorial-servoing-realsense.py
+  :language: python
+  :start-at: # Stop streaming when the program exits
+  :end-at: pipeline.stop()
+
+Next Tutorial
+==================================================
