@@ -1,7 +1,7 @@
 import numpy as np
 import pyrealsense2 as rs
 
-from visp.core import ImageRGBa, Display
+from visp.core import ImageGray, ImageRGBa, ImageConvert, Display
 from visp.python.display_utils import get_display
 
 
@@ -20,12 +20,15 @@ pipeline.start(config)
 
 try:
   # Create and initialize the display image
-  image = ImageRGBa(HEIGHT, WIDTH)
+  image = ImageGray(HEIGHT, WIDTH)
   display = get_display()
   display.init(image)
 
-  # Access the display image data as a NumPy array
-  image_array = np.asarray(image)
+  # Create a RGBa image to store each frame
+  image_rgba= ImageRGBa(HEIGHT, WIDTH)
+
+  # Access the RGBa image data as a NumPy array
+  image_array = np.asarray(image_rgba)
 
   while True:
     # Capture the latest camera frame
@@ -35,8 +38,11 @@ try:
     # Convert the color frame to a NumPy array
     color_image = np.asanyarray(color_frame.get_data())
 
-    # Copy the camera image into the display image
+    # Copy the camera image into the display imageconvert it to grayscale format
     image_array[..., :3] = color_image
+
+    # Convert it to grayscale format
+    ImageConvert.convert(image_rgba, image)
 
     # Render the updated image
     Display.display(image)

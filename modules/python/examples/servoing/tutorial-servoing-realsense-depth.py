@@ -12,7 +12,7 @@ FPS = 60
 
 # Configure the camera stream
 config = rs.config()
-config.enable_stream(rs.stream.color, WIDTH, HEIGHT, rs.format.rgb8, FPS)
+config.enable_stream(rs.stream.depth, WIDTH, HEIGHT, rs.format.z16, FPS)
 
 # Start streaming frames from the camera
 pipeline = rs.pipeline()
@@ -27,16 +27,22 @@ try:
   # Access the display image data as a NumPy array
   image_array = np.asarray(image)
 
+  # Get a colorizer to convert raw depth values into a color image
+  colorizer = rs.colorizer()
+
   while True:
     # Capture the latest camera frame
     frames = pipeline.wait_for_frames()
-    color_frame = frames.get_color_frame()
+    depth_frame = frames.get_depth_frame()
 
-    # Convert the color frame to a NumPy array
-    color_image = np.asanyarray(color_frame.get_data())
+    # Colorize the depth image for visualization
+    depth_color_frame = colorizer.colorize(depth_frame)
+
+    # Convert the depth frame to a NumPy array
+    depth_image = np.asanyarray(depth_color_frame.get_data())
 
     # Copy the camera image into the display image
-    image_array[..., :3] = color_image
+    image_array[..., :3] = depth_image
 
     # Render the updated image
     Display.display(image)
