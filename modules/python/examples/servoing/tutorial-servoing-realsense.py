@@ -10,11 +10,11 @@ WIDTH = 640
 HEIGHT = 480
 
 # Configure the camera stream
-pipeline = rs.pipeline()
 config = rs.config()
 config.enable_stream(rs.stream.color, WIDTH, HEIGHT, rs.format.rgb8, 60)
 
 # Start streaming frames from the camera
+pipeline = rs.pipeline()
 pipeline.start(config)
 
 try:
