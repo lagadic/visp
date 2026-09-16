@@ -13,12 +13,13 @@ Goal
 In this tutorial you will learn how to:
 
 - Configure an RealSense camera.
-- Use :py:class:`~visp.core.Display` to display a video stream.
+- Use the :py:class:`~visp.core.Display` class to display a video stream.
 
 Prerequisites
 --------------------------------------------------
 
-You should first read the following tutorials :
+You should first read the following tutorials:
+
 - :ref:`tutorial-image-getting-started`
 - :ref:`tutorial-image-display`
 
@@ -84,7 +85,7 @@ with a 640 × 480 pixels resolution, using RGB format, and at a frame rate of 60
 .. literalinclude:: /examples/servoing/tutorial-servoing-realsense.py
   :language: python
   :start-at: # Set the camera image dimensions
-  :end-at: config.enable_stream(rs.stream.color, WIDTH, HEIGHT, rs.format.rgb8, 60)
+  :end-at: config.enable_stream(rs.stream.color, WIDTH, HEIGHT, rs.format.rgb8, FPS)
 
 The RealSense pipeline manages frame acquisition. Start it with the
 configuration created above:
@@ -168,5 +169,84 @@ After the loop exits, we stop the RealSense pipeline:
   :start-at: # Stop streaming when the program exits
   :end-at: pipeline.stop()
 
-Next Tutorial
+Other options
 ==================================================
+
+Display a grayscale stream
+--------------------------------------------------
+
+RealSense cameras provide color and depth streams, but not a native grayscale stream.
+To display a grayscale image, acquire the color stream and convert each frame before displaying it.
+
+The complete example is available here:
+:ref:`example <code-servoing-realsense-grayscale>`.
+
+Run it with:
+
+.. code-block:: bash
+
+  python3 $VISP_WS/visp/modules/python/examples/servoing/tutorial-servoing-realsense-grayscale.py
+
+We use a :py:class:`~visp.core.ImageGray` instead of a
+:py:class:`~visp.core.ImageRGBa` to display the stream:
+
+.. literalinclude:: /examples/servoing/tutorial-servoing-realsense-grayscale.py
+  :language: python
+  :start-at: # Create and initialize the display image
+  :end-at: display.init(image)
+
+The :py:class:`~visp.core.ImageRGBa` is still needed to store the frame data:
+
+.. literalinclude:: /examples/servoing/tutorial-servoing-realsense-grayscale.py
+  :language: python
+  :start-at: # Create a RGBa image to store each frame
+  :end-at: image_rgba= ImageRGBa(HEIGHT, WIDTH)
+
+Then, we just have to convert the :py:class:`~visp.core.ImageRGBa` obtained
+using the :py:meth:`~visp.core.ImageConvert.convert` method:
+
+.. literalinclude:: /examples/servoing/tutorial-servoing-realsense-grayscale.py
+  :language: python
+  :start-at: # Convert it to grayscale format
+  :end-at: ImageConvert.convert(image_rgba, image)
+
+Display depth
+--------------------------------------------------
+
+A RealSense camera can also provide depth data.
+
+You can display a colorized view of this as shown in this
+:ref:`example <code-servoing-realsense-depth>`.
+
+You can run it with:
+
+.. code-block:: bash
+
+  python3 $VISP_WS/visp/modules/python/examples/servoing/tutorial-servoing-realsense-depth.py
+
+We first enable the depth stream instead of the color stream:
+
+.. literalinclude:: /examples/servoing/tutorial-servoing-realsense-depth.py
+  :language: python
+  :start-at: config.enable_stream(rs.stream.depth, WIDTH, HEIGHT, rs.format.z16, FPS)
+  :end-at: config.enable_stream(rs.stream.depth, WIDTH, HEIGHT, rs.format.z16, FPS)
+
+.. note::
+
+  Both streams can be received without isues.
+
+The raw depth values are not directly suitable for display because they
+represent distances rather than display intensities.
+We then create a ``colorizer`` object to convert the depth values into a color image:
+
+.. literalinclude:: /examples/servoing/tutorial-servoing-realsense-depth.py
+  :language: python
+  :start-at: # Get a colorizer to convert raw depth values into a color image
+  :end-at: colorizer = rs.colorizer()
+
+It will let us colorize the frame in the acquisition loop before rendering:
+
+.. literalinclude:: /examples/servoing/tutorial-servoing-realsense-depth.py
+  :language: python
+  :start-at: # Colorize the depth image for visualization
+  :end-at: depth_color_frame = colorizer.colorize(depth_frame)
