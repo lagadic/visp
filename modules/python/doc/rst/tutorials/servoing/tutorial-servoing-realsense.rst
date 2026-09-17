@@ -12,7 +12,7 @@ Goal
 
 In this tutorial you will learn how to:
 
-- Configure an RealSense camera.
+- Configure a RealSense camera.
 - Use the :py:class:`~visp.core.Display` class to display a video stream.
 
 Prerequisites
@@ -24,11 +24,16 @@ You should first read the following tutorials:
 - :ref:`tutorial-image-display`
 
 You also need the ``numpy`` and ``pyrealsense2`` Python packages.
-Install them with:
 
+- Install them with `pip`:
 .. code-block:: bash
 
   pip install numpy pyrealsense2
+
+- or with `conda`:
+.. code-block:: bash
+
+  conda install numpy pyrealsense2
 
 Display a camera stream
 ==================================================
@@ -233,7 +238,7 @@ We first enable the depth stream instead of the color stream:
 
 .. note::
 
-  Both streams can be received without isues.
+  Both streams can be received without issues.
 
 The raw depth values are not directly suitable for display because they
 represent distances rather than display intensities.

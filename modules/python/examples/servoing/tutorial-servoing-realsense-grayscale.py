@@ -38,7 +38,7 @@ try:
     # Convert the color frame to a NumPy array
     color_image = np.asanyarray(color_frame.get_data())
 
-    # Copy the camera image into the display imageconvert it to grayscale format
+    # Copy the camera image into the display image
     image_array[..., :3] = color_image
 
     # Convert it to grayscale format
