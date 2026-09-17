@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,10 +65,15 @@ void quitHandler(int sig)
   (void)sig;
 }
 
-void usage(const char *argv[], int error)
+void usage(const char *argv[], int error, const std::string &server_address, unsigned short base_port,
+           unsigned short udp_port, const std::string &only_body)
 {
   std::cout << "SYNOPSIS" << std::endl
-    << "  " << argv[0] << " [--server-address <address>] [-sa]"
+    << "  " << argv[0]
+    << " [--server-address <address>] [-sa]"
+    << " [--base-port <port>]"
+    << " [--udp-port <port>]"
+    << " [--big-endian]"
     << " [--only-body] [-ob]"
     << " [--all-bodies]"
     << " [--verbose] [-v]"
@@ -77,17 +82,29 @@ void usage(const char *argv[], int error)
   std::cout << "DESCRIPTION" << std::endl
     << "  --server-address <address>" << std::endl
     << "    Server address." << std::endl
-    << "    Default: 192.168.30.42." << std::endl
+    << "    Default: " << server_address << std::endl
+    << std::endl
+    << "  --base-port <port>" << std::endl
+    << "    Set the base port used to connect to the Qualisys server." << std::endl
+    << "    Default: " << base_port << std::endl
+    << std::endl
+    << "  --udp-port <port>" << std::endl
+    << "    Set the UDP port used to stream data from the Qualisys server." << std::endl
+    << "    Default: " << udp_port << std::endl
+    << std::endl
+    << "  --big-endian" << std::endl
+    << "    Enable big endian mode for the data received from the Qualisys server." << std::endl
+    << "    Default: little endian" << std::endl
     << std::endl
     << "  --only-body <name>" << std::endl
     << "    Name of the specific body you want to be displayed." << std::endl
-    << "    Default: ''" << std::endl
+    << "    Default: \"" << only_body << "\"" << std::endl
     << std::endl
     << "  --all-bodies" << std::endl
     << "    When used, get all bodies pose including non visible bodies." << std::endl
     << std::endl
     << "  --verbose, -v" << std::endl
-    << "    Enable verbose mode." << std::endl
+    << "    Enable verbose mode to display object poses." << std::endl
     << std::endl
     << "  --help, -h" << std::endl
     << "    Print this helper message." << std::endl
@@ -104,12 +121,16 @@ void usage(const char *argv[], int error)
   }
 }
 
-void mocap_loop(std::mutex &lock, bool opt_verbose, bool opt_all_bodies, std::string &opt_serverAddress,
-                std::string &opt_onlyBody, std::map<std::string, vpHomogeneousMatrix> &current_bodies_pose)
+void mocap_loop(std::mutex &lock, bool opt_verbose, bool opt_all_bodies, std::string &opt_server_address,
+                std::string &opt_only_body, bool opt_big_endian, unsigned short opt_base_port,
+                unsigned short opt_udp_port, std::map<std::string, vpHomogeneousMatrix> &current_bodies_pose)
 {
   vpMocapQualisys qualisys;
   qualisys.setVerbose(opt_verbose);
-  qualisys.setServerAddress(opt_serverAddress);
+  qualisys.setServerAddress(opt_server_address);
+  qualisys.setBigEndian(opt_big_endian);
+  qualisys.setBasePort(opt_base_port);
+  qualisys.setUDPPort(opt_udp_port);
   if (!qualisys.connect()) {
     std::cout << "Qualisys connection error. Check the Qualisys Task Manager or your IP address." << std::endl;
     return;
@@ -117,17 +138,17 @@ void mocap_loop(std::mutex &lock, bool opt_verbose, bool opt_all_bodies, std::st
   while (!g_quit) {
     std::map<std::string, vpHomogeneousMatrix> bodies_pose;
 
-    if (opt_onlyBody == "") {
+    if (opt_only_body == "") {
       if (!qualisys.getBodiesPose(bodies_pose, opt_all_bodies)) {
         std::cout << "Qualisys error. Check the Qualisys Task Manager" << std::endl;
       }
     }
     else {
       vpHomogeneousMatrix pose;
-      if (!qualisys.getSpecificBodyPose(opt_onlyBody, pose)) {
+      if (!qualisys.getSpecificBodyPose(opt_only_body, pose)) {
         std::cout << "Qualisys error. Check the Qualisys Task Manager" << std::endl;
       }
-      bodies_pose[opt_onlyBody] = pose;
+      bodies_pose[opt_only_body] = pose;
     }
 
     lock.lock();
@@ -158,7 +179,7 @@ void display_loop(std::mutex &lock, const std::map<std::string, vpHomogeneousMat
           std::cout << vpMath::deg(rxyz[i]) << " ";
         }
         std::cout << std::endl;
-        std::cout << " Transformation Matrix wMb:\n" << it->second << std::endl;
+        std::cout << "  Transformation Matrix world_M_body:\n" << it->second << std::endl;
       }
     }
 
@@ -169,44 +190,56 @@ void display_loop(std::mutex &lock, const std::map<std::string, vpHomogeneousMat
 int main(int argc, const char *argv[])
 {
   bool opt_verbose = false;
-  std::string opt_serverAddress = "192.168.30.42";
-  std::string opt_onlyBody = "";
+  std::string opt_server_address = "10.135.2.40";
+  std::string opt_only_body = "";
   bool opt_all_bodies = false;
+  bool opt_big_endian = false;
+  unsigned short opt_base_port = 22222;
+  unsigned short opt_udp_port = 6734;
 
   // Map containig all the current poses of the drones
   std::map<std::string, vpHomogeneousMatrix> current_bodies_pose;
 
   signal(SIGINT, quitHandler);
 
-  for (int i = 1; i < argc; i++) {
+  for (int i = 1; i < argc; ++i) {
     if (std::string(argv[i]) == "--verbose" || std::string(argv[i]) == "-v") {
       opt_verbose = true;
     }
-    else if (std::string(argv[i]) == "--server-address" || std::string(argv[i]) == "-sa") {
-      opt_serverAddress = std::string(argv[i + 1]);
-      i++;
+    else if ((std::string(argv[i]) == "--server-address" || std::string(argv[i]) == "-sa") && (i + 1 < argc)) {
+      opt_server_address = std::string(argv[++i]);
     }
-    else if (std::string(argv[i]) == "--only-body" || std::string(argv[i]) == "-ob") {
-      opt_onlyBody = std::string(argv[i + 1]);
-      i++;
+    else if ((std::string(argv[i]) == "--base-port") && (i + 1 < argc)) {
+      opt_base_port = static_cast<unsigned short>(std::atoi(argv[++i]));
+    }
+    else if ((std::string(argv[i]) == "--udp-port") && (i + 1 < argc)) {
+      opt_udp_port = static_cast<unsigned short>(std::atoi(argv[++i]));
+    }
+    else if (std::string(argv[i]) == "--big-endian") {
+      opt_big_endian = true;
+    }
+    else if ((std::string(argv[i]) == "--only-body" || std::string(argv[i]) == "-ob") && (i + 1 < argc)) {
+      opt_only_body = std::string(argv[++i]);
     }
     else if (std::string(argv[i]) == "--all-bodies") {
       opt_all_bodies = true;
     }
-    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-      usage(argv, 0);
+    else if ((std::string(argv[i]) == "--help") || (std::string(argv[i]) == "-h")) {
+      usage(argv, 0, opt_server_address, opt_base_port, opt_udp_port, opt_only_body);
       return EXIT_SUCCESS;
     }
     else {
-      usage(argv, i);
+      usage(argv, i, opt_server_address, opt_base_port, opt_udp_port, opt_only_body);
       return EXIT_FAILURE;
     }
   }
 
   std::mutex lock;
   std::thread mocap_thread(
-      [&lock, &opt_verbose, &opt_all_bodies, &opt_serverAddress, &opt_onlyBody, &current_bodies_pose]() {
-        mocap_loop(lock, opt_verbose, opt_all_bodies, opt_serverAddress, opt_onlyBody, current_bodies_pose);
+      [&lock, &opt_verbose, &opt_all_bodies, &opt_server_address, &opt_only_body,
+       &opt_big_endian, &opt_base_port, &opt_udp_port, &current_bodies_pose]() {
+         mocap_loop(lock, opt_verbose, opt_all_bodies, opt_server_address, opt_only_body,
+                    opt_big_endian, opt_base_port, opt_udp_port, current_bodies_pose);
       });
   std::thread display_thread(
       [&lock, &current_bodies_pose, &opt_verbose]() { display_loop(lock, current_bodies_pose, opt_verbose); });

@@ -50,7 +50,7 @@ class vpMocapQualisys::vpMocapQualisysImpl
 {
 public:
   vpMocapQualisysImpl()
-    : m_rtProtocol(), m_basePort(22222), m_udpPort(6734), m_majorVersion(1), m_minorVersion(19), m_bigEndian(false),
+    : m_rtProtocol(), m_base_port(22222), m_udp_port(6734), m_big_endian(false),
     m_dataAvailable(false), m_streamFrames(false), m_verbose(false), m_serverAddr()
   {}
 
@@ -64,49 +64,51 @@ public:
 
   bool connect()
   {
-    int n_attempt = 2;
-    for (auto i = 0; i < n_attempt; i++) {
-      if (!m_rtProtocol.Connected()) {
-        if (!m_rtProtocol.Connect(m_serverAddr.c_str(), m_basePort, &m_udpPort, m_majorVersion, m_minorVersion,
-                                  m_bigEndian)) {
-          std::cout << "Qualisys connection error: " << m_rtProtocol.GetErrorString() << std::endl;
-
-          vpTime::sleepMs(1000);
-        }
+    unsigned int n_attempt = 2;
+    unsigned int attempt = 0;
+    while (attempt < n_attempt && !m_rtProtocol.Connected()) {
+      if (!m_rtProtocol.Connect(m_serverAddr.c_str(), m_base_port, &m_udp_port, MAJOR_VERSION, MINOR_VERSION, m_big_endian)) {
+        std::cout << "Qualisys connection error: " << m_rtProtocol.GetErrorString() << std::endl;
+        vpTime::sleepMs(1000);
       }
       else {
         if (m_verbose) {
-          std::cout << "Qualisys connected" << std::endl;
+          unsigned int major, minor;
+          if (m_rtProtocol.GetVersion(major, minor)) {
+            std::cout << "Qualisys RT Protocol Version " << major << "." << minor << std::endl;
+          }
+
+          std::string qtmVersion;
+          if (m_rtProtocol.GetQTMVersion(qtmVersion)) {
+            std::cout << "Qualisys connected to " << qtmVersion.data() << std::endl;
+          }
         }
-        return verifyDataStreamed();
       }
+      ++attempt;
     }
 
-    std::cout << "Qualisys connection timeout" << std::endl;
-
-    return false;
+    return verifyDataStreamed(n_attempt);
   }
 
-  bool verifyDataStreamed()
+  bool verifyDataStreamed(unsigned int n_attempt)
   {
     bool readSettingsOK = false;
 
-    for (auto i = 0; i < 6; i++) {
-      if (!m_dataAvailable) {
-        if (!m_rtProtocol.Read6DOFSettings(m_dataAvailable)) {
-          if (m_verbose) {
-            std::cout << "Reading 6DOF settings error: " << m_rtProtocol.GetErrorString() << std::endl;
-          }
-
-          vpTime::sleepMs(1000);
-        }
+    unsigned int attempt = 0;
+    while (attempt < n_attempt) {
+      if (m_verbose) {
+        std::cout << "Waiting for data available" << std::endl;
+      }
+      if (!m_dataAvailable && !m_rtProtocol.Read6DOFSettings(m_dataAvailable)) {
+        vpTime::sleepMs(1000);
       }
       else {
         if (m_verbose && !readSettingsOK) {
-          std::cout << "Reading 6DOF settings succeded." << std::endl;
+          std::cout << "Reading 6DOF settings succeeded." << std::endl;
         }
         readSettingsOK = true;
       }
+      ++attempt;
     }
 
     if (!readSettingsOK) {
@@ -115,35 +117,35 @@ public:
       }
       return false;
     }
-    else {
-      for (auto i = 0; i < 6; i++) {
-        if (!m_streamFrames) {
+
+    attempt = 0;
+    while (attempt < n_attempt) {
+      if (!m_streamFrames) {
 #if (VP_VERSION_INT(MAJOR_VERSION, MINOR_VERSION, 0) >= VP_VERSION_INT(1, 27, 0))
-          if (!m_rtProtocol.StreamFrames(CRTProtocol::EStreamRate::RateAllFrames, 0, m_udpPort, nullptr, CRTProtocol::cComponent6d))
+        if (!m_rtProtocol.StreamFrames(CRTProtocol::EStreamRate::RateAllFrames, 0, m_udp_port, nullptr, CRTProtocol::cComponent6d))
 #else
-          if (!m_rtProtocol.StreamFrames(CRTProtocol::RateAllFrames, 0, m_udpPort, nullptr, CRTProtocol::cComponent6d))
+        if (!m_rtProtocol.StreamFrames(CRTProtocol::RateAllFrames, 0, m_udp_port, nullptr, CRTProtocol::cComponent6d))
 #endif
-          {
-            if (m_verbose) {
-              std::cout << "Streaming frames error: " << m_rtProtocol.GetErrorString() << std::endl;
-            }
-
-            vpTime::sleepMs(1000);
-          }
-          m_streamFrames = true;
-        }
-        else {
+        {
           if (m_verbose) {
-            std::cout << "Starting to stream 6DOF data" << std::endl;
+            std::cout << "Streaming frames error: " << m_rtProtocol.GetErrorString() << std::endl;
           }
-          return true;
+
+          vpTime::sleepMs(1000);
         }
+        m_streamFrames = true;
       }
-
-      std::cout << "Streaming frames timeout: " << std::endl;
-
-      return false;
+      else {
+        if (m_verbose) {
+          std::cout << "Starting to stream 6DOF data" << std::endl;
+        }
+        return true;
+      }
+      ++attempt;
     }
+
+    std::cout << "Streaming frames timeout: " << std::endl;
+    return false;
   }
 
   bool getBodyPose(unsigned int iBody, std::string &name, vpHomogeneousMatrix &M, CRTPacket *rtPacket)
@@ -217,7 +219,7 @@ public:
       if (bodies_pose.find(body_name) != bodies_pose.end()) {
         body_pose = bodies_pose[body_name];
         if (m_verbose) {
-          std::cout << "I found bodyName" << body_name << std::endl;
+          std::cout << "I found bodyName: " << body_name << std::endl;
         }
         return true;
       }
@@ -237,15 +239,19 @@ public:
 
   void setServerAddress(const std::string &serverAddr) { m_serverAddr = serverAddr; }
 
+  void setBigEndian(bool big_endian) { m_big_endian = big_endian; }
+
+  void setBasePort(unsigned short port) { m_base_port = port; }
+
+  void setUDPPort(unsigned short port) { m_udp_port = port; }
+
   void setVerbose(bool verbose) { m_verbose = verbose; }
 
 private:
   CRTProtocol m_rtProtocol;
-  unsigned short m_basePort;
-  unsigned short m_udpPort;
-  int m_majorVersion;
-  int m_minorVersion;
-  bool m_bigEndian;
+  unsigned short m_base_port;
+  unsigned short m_udp_port;
+  bool m_big_endian;
   bool m_dataAvailable;
   bool m_streamFrames;
   bool m_verbose;
@@ -258,7 +264,12 @@ private:
  */
 
 /*!
- * Default constructor.
+ * Default constructor with:
+ * - base port set by default to 22222
+ * - UDP port set by default to 6734
+ * - data received as little endian (big endian set to false).
+ *
+ * \sa setServerAddress(), setBasePort(), setBigEndian(), setUDPPort()
  */
 vpMocapQualisys::vpMocapQualisys() : m_impl(new vpMocapQualisysImpl()) {}
 
@@ -273,7 +284,11 @@ vpMocapQualisys::~vpMocapQualisys() { delete m_impl; }
 void vpMocapQualisys::close() { m_impl->close(); }
 
 /*!
- * Connect to Qualisys mocap server with IP address set using setServerAddress().
+ * Connect to Qualisys mocap server with:
+ * - IP address set using setServerAddress()
+ * - Base port set by default to 22222 or modified using setBasePort()
+ * - UDP port set by default to 6734 or modified using setUDPPort()
+ * - Endianness set by default to little endian or modified using setBigENdian()
  *
  * \return true when connection succeed, false otherwise.
  */
@@ -308,6 +323,32 @@ bool vpMocapQualisys::getSpecificBodyPose(const std::string &body_name, vpHomoge
  * \sa connect()
  */
 void vpMocapQualisys::setServerAddress(const std::string &serverAddr) { m_impl->setServerAddress(serverAddr); }
+
+/*!
+ * Set the base port used to connect to the Qualisys server. By default, the base port is set to 22222.
+ * \param[in] port : Base port number.
+ *
+ * \sa connect()
+ */
+void vpMocapQualisys::setBasePort(unsigned short port) { m_impl->setBasePort(port); }
+
+/*!
+ * Enable or disable big endian mode for the data received from the Qualisys server.
+ *
+ * \param[in] big_endian : When true, the data received from the server is considered as big endian, otherwise
+ * it is considered as little endian.
+ *
+ * \sa connect()
+ */
+void vpMocapQualisys::setBigEndian(bool big_endian) { m_impl->setBigEndian(big_endian); }
+
+/*!
+ * Set the UDP port used to stream data from the Qualisys server. By default, the UDP port is set to 6734.
+ * \param[in] port : UDP port number.
+ *
+ * \sa connect()
+ */
+void vpMocapQualisys::setUDPPort(unsigned short port) { m_impl->setUDPPort(port); }
 
 /*!
  * Enable or disable verbose mode.
