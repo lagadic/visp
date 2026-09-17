@@ -19,11 +19,11 @@ Image manipulation
     image/tutorial-image-filter.rst
 
 
-Visual servoing
+Camera acquisition
 -----------------------
 
 .. toctree::
     :glob:
     :maxdepth: 1
 
-    servoing/tutorial-servoing-realsense.rst
+    camera/tutorial-camera-realsense.rst

@@ -1,4 +1,4 @@
-.. _tutorial-servoing-realsense::
+.. _tutorial-camera-realsense::
 
 ==================================================
 Display a RealSense camera stream
@@ -38,10 +38,10 @@ You also need the ``numpy`` and ``pyrealsense2`` Python packages.
 Display a camera stream
 ==================================================
 
-The following :ref:`example <code-servoing-realsense>` displays the color stream
+The following :ref:`example <code-camera-realsense>` displays the color stream
 from a RealSense camera in a ViSP display window:
 
-.. literalinclude:: /examples/servoing/tutorial-servoing-realsense.py
+.. literalinclude:: /examples/camera/tutorial-camera-realsense.py
   :language: python
   :linenos:
 
@@ -52,7 +52,7 @@ You can run the example with:
 
 .. code-block:: bash
 
-  python3 $VISP_WS/visp/modules/python/examples/servoing/tutorial-servoing-realsense.py
+  python3 $VISP_WS/visp/modules/python/examples/camera/tutorial-camera-realsense.py
 
 Result
 --------------------------------------------------
@@ -76,7 +76,7 @@ We well need ``pyrealsense2`` to communicate with the RealSense camera,
 ``numpy`` to manipulate image data, and ViSP :py:class:`~visp.core.ImageRGBa`
 and :py:class:`~visp.core.Display` classes to store and display the camera image:
 
-.. literalinclude:: /examples/servoing/tutorial-servoing-realsense.py
+.. literalinclude:: /examples/camera/tutorial-camera-realsense.py
   :language: python
   :start-at: import numpy as np
   :end-at: from visp.python.display_utils import get_display
@@ -87,7 +87,7 @@ Configure the camera
 First, we configure the camera to enable the color stream,
 with a 640 × 480 pixels resolution, using RGB format, and at a frame rate of 60 frames per second:
 
-.. literalinclude:: /examples/servoing/tutorial-servoing-realsense.py
+.. literalinclude:: /examples/camera/tutorial-camera-realsense.py
   :language: python
   :start-at: # Set the camera image dimensions
   :end-at: config.enable_stream(rs.stream.color, WIDTH, HEIGHT, rs.format.rgb8, FPS)
@@ -95,7 +95,7 @@ with a 640 × 480 pixels resolution, using RGB format, and at a frame rate of 60
 The RealSense pipeline manages frame acquisition. Start it with the
 configuration created above:
 
-.. literalinclude:: /examples/servoing/tutorial-servoing-realsense.py
+.. literalinclude:: /examples/camera/tutorial-camera-realsense.py
   :language: python
   :start-at: # Start streaming frames from the camera
   :end-at: pipeline.start(config)
@@ -107,7 +107,7 @@ Before entering the acquisition loop, we create a :py:class:`~visp.core.ImageRGB
 image with the same dimensions as the camera frames.
 We then obtain a display object and associate it with the image:
 
-.. literalinclude:: /examples/servoing/tutorial-servoing-realsense.py
+.. literalinclude:: /examples/camera/tutorial-camera-realsense.py
   :language: python
   :start-at: # Create and initialize the display image
   :end-at: display.init(image)
@@ -118,7 +118,7 @@ updated during every iteration of the acquisition loop.
 To update the image efficiently, we create a NumPy view of its underlying
 storage:
 
-.. literalinclude:: /examples/servoing/tutorial-servoing-realsense.py
+.. literalinclude:: /examples/camera/tutorial-camera-realsense.py
   :language: python
   :start-at: # Access the display image data as a NumPy array
   :end-at: image_array = np.asarray(image)
@@ -133,7 +133,7 @@ Acquire and displaying frames
 The program now enters an infinite loop. On each iteration, it waits for the
 next set of frames from the camera:
 
-.. literalinclude:: /examples/servoing/tutorial-servoing-realsense.py
+.. literalinclude:: /examples/camera/tutorial-camera-realsense.py
   :language: python
   :start-at: # Capture the latest camera frame
   :end-at: color_frame = frames.get_color_frame()
@@ -142,7 +142,7 @@ We then select the color frame from the returned frame set.
 The frame data is converted into a NumPy array, and copied
 into the first three channels of ``image``:
 
-.. literalinclude:: /examples/servoing/tutorial-servoing-realsense.py
+.. literalinclude:: /examples/camera/tutorial-camera-realsense.py
   :language: python
   :start-at: # Convert the color frame to a NumPy array
   :end-at: image_array[..., :3] = color_image
@@ -152,7 +152,7 @@ channels provided by the camera while leaving the fourth alpha channel unchanged
 
 The updated image is then rendered:
 
-.. literalinclude:: /examples/servoing/tutorial-servoing-realsense.py
+.. literalinclude:: /examples/camera/tutorial-camera-realsense.py
   :language: python
   :start-at: # Render the updated image
   :end-at: Display.flush(image)
@@ -162,14 +162,14 @@ Stop the program
 
 The loop ends when the user clicks inside the display window:
 
-.. literalinclude:: /examples/servoing/tutorial-servoing-realsense.py
+.. literalinclude:: /examples/camera/tutorial-camera-realsense.py
   :language: python
   :start-at: # Stop when the user clicks inside the display
   :end-at: break
 
 After the loop exits, we stop the RealSense pipeline:
 
-.. literalinclude:: /examples/servoing/tutorial-servoing-realsense.py
+.. literalinclude:: /examples/camera/tutorial-camera-realsense.py
   :language: python
   :start-at: # Stop streaming when the program exits
   :end-at: pipeline.stop()
@@ -183,26 +183,26 @@ Display a grayscale stream
 RealSense cameras provide color and depth streams, but not a native grayscale stream.
 To display a grayscale image, acquire the color stream and convert each frame before displaying it.
 
-The complete example is available here:
-:ref:`example <code-servoing-realsense-grayscale>`.
+You can try it with this
+:ref:`example <code-camera-realsense-grayscale>`.
 
 Run it with:
 
 .. code-block:: bash
 
-  python3 $VISP_WS/visp/modules/python/examples/servoing/tutorial-servoing-realsense-grayscale.py
+  python3 $VISP_WS/visp/modules/python/examples/camera/tutorial-camera-realsense-grayscale.py
 
 We use a :py:class:`~visp.core.ImageGray` instead of a
 :py:class:`~visp.core.ImageRGBa` to display the stream:
 
-.. literalinclude:: /examples/servoing/tutorial-servoing-realsense-grayscale.py
+.. literalinclude:: /examples/camera/tutorial-camera-realsense-grayscale.py
   :language: python
   :start-at: # Create and initialize the display image
   :end-at: display.init(image)
 
 The :py:class:`~visp.core.ImageRGBa` is still needed to store the frame data:
 
-.. literalinclude:: /examples/servoing/tutorial-servoing-realsense-grayscale.py
+.. literalinclude:: /examples/camera/tutorial-camera-realsense-grayscale.py
   :language: python
   :start-at: # Create a RGBa image to store each frame
   :end-at: image_rgba= ImageRGBa(HEIGHT, WIDTH)
@@ -210,7 +210,7 @@ The :py:class:`~visp.core.ImageRGBa` is still needed to store the frame data:
 Then, we just have to convert the :py:class:`~visp.core.ImageRGBa` obtained
 using the :py:meth:`~visp.core.ImageConvert.convert` method:
 
-.. literalinclude:: /examples/servoing/tutorial-servoing-realsense-grayscale.py
+.. literalinclude:: /examples/camera/tutorial-camera-realsense-grayscale.py
   :language: python
   :start-at: # Convert it to grayscale format
   :end-at: ImageConvert.convert(image_rgba, image)
@@ -221,17 +221,17 @@ Display depth
 A RealSense camera can also provide depth data.
 
 You can display a colorized view of this as shown in this
-:ref:`example <code-servoing-realsense-depth>`.
+:ref:`example <code-camera-realsense-depth>`.
 
 You can run it with:
 
 .. code-block:: bash
 
-  python3 $VISP_WS/visp/modules/python/examples/servoing/tutorial-servoing-realsense-depth.py
+  python3 $VISP_WS/visp/modules/python/examples/camera/tutorial-camera-realsense-depth.py
 
 We first enable the depth stream instead of the color stream:
 
-.. literalinclude:: /examples/servoing/tutorial-servoing-realsense-depth.py
+.. literalinclude:: /examples/camera/tutorial-camera-realsense-depth.py
   :language: python
   :start-at: config.enable_stream(rs.stream.depth, WIDTH, HEIGHT, rs.format.z16, FPS)
   :end-at: config.enable_stream(rs.stream.depth, WIDTH, HEIGHT, rs.format.z16, FPS)
@@ -244,14 +244,14 @@ The raw depth values are not directly suitable for display because they
 represent distances rather than display intensities.
 We then create a ``colorizer`` object to convert the depth values into a color image:
 
-.. literalinclude:: /examples/servoing/tutorial-servoing-realsense-depth.py
+.. literalinclude:: /examples/camera/tutorial-camera-realsense-depth.py
   :language: python
   :start-at: # Get a colorizer to convert raw depth values into a color image
   :end-at: colorizer = rs.colorizer()
 
 It will let us colorize the frame in the acquisition loop before rendering:
 
-.. literalinclude:: /examples/servoing/tutorial-servoing-realsense-depth.py
+.. literalinclude:: /examples/camera/tutorial-camera-realsense-depth.py
   :language: python
   :start-at: # Colorize the depth image for visualization
   :end-at: depth_color_frame = colorizer.colorize(depth_frame)
