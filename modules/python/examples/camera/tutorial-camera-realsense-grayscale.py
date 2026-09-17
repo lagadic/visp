@@ -22,7 +22,7 @@ try:
   # Create and initialize the display image
   image = ImageGray(HEIGHT, WIDTH)
   display = get_display()
-  display.init(image)
+  display.init(image, 0, 0, "Grayscale view")
 
   # Create a RGBa image to store each frame
   image_rgba= ImageRGBa(HEIGHT, WIDTH)

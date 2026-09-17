@@ -72,7 +72,7 @@ The program performs three main tasks:
 Import the required modules
 --------------------------------------------------
 
-We well need ``pyrealsense2`` to communicate with the RealSense camera,
+We will need ``pyrealsense2`` to communicate with the RealSense camera,
 ``numpy`` to manipulate image data, and ViSP :py:class:`~visp.core.ImageRGBa`
 and :py:class:`~visp.core.Display` classes to store and display the camera image:
 
@@ -110,7 +110,7 @@ We then obtain a display object and associate it with the image:
 .. literalinclude:: /examples/camera/tutorial-camera-realsense.py
   :language: python
   :start-at: # Create and initialize the display image
-  :end-at: display.init(image)
+  :end-at: display.init(image, 0, 0, "Camera view")
 
 The display window will show the contents of ``image``, while the image itself is
 updated during every iteration of the acquisition loop.
@@ -198,7 +198,7 @@ We use a :py:class:`~visp.core.ImageGray` instead of a
 .. literalinclude:: /examples/camera/tutorial-camera-realsense-grayscale.py
   :language: python
   :start-at: # Create and initialize the display image
-  :end-at: display.init(image)
+  :end-at: display.init(image, 0, 0, "Grayscale view")
 
 The :py:class:`~visp.core.ImageRGBa` is still needed to store the frame data:
 
@@ -220,7 +220,7 @@ Display depth
 
 A RealSense camera can also provide depth data.
 
-You can display a colorized view of this as shown in this
+You can display a colorized view of depth as shown in this
 :ref:`example <code-camera-realsense-depth>`.
 
 You can run it with:
@@ -235,10 +235,6 @@ We first enable the depth stream instead of the color stream:
   :language: python
   :start-at: config.enable_stream(rs.stream.depth, WIDTH, HEIGHT, rs.format.z16, FPS)
   :end-at: config.enable_stream(rs.stream.depth, WIDTH, HEIGHT, rs.format.z16, FPS)
-
-.. note::
-
-  Both streams can be received without issues.
 
 The raw depth values are not directly suitable for display because they
 represent distances rather than display intensities.
@@ -255,3 +251,14 @@ It will let us colorize the frame in the acquisition loop before rendering:
   :language: python
   :start-at: # Colorize the depth image for visualization
   :end-at: depth_color_frame = colorizer.colorize(depth_frame)
+
+Display both color and depth views
+--------------------------------------------------
+
+This :ref:`example <code-camera-realsense-depth>` let you display both color and depth views.
+
+You can run it with:
+
+.. code-block:: bash
+
+  python3 $VISP_WS/visp/modules/python/examples/camera/tutorial-camera-realsense-dual-view.py

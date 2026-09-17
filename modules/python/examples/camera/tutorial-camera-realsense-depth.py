@@ -22,7 +22,7 @@ try:
   # Create and initialize the display image
   image = ImageRGBa(HEIGHT, WIDTH)
   display = get_display()
-  display.init(image)
+  display.init(image, 0, 0, "Depth view")
 
   # Access the display image data as a NumPy array
   image_array = np.asarray(image)
