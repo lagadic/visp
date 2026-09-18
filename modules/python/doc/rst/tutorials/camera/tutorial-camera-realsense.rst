@@ -262,3 +262,70 @@ You can run it with:
 .. code-block:: bash
 
   python3 $VISP_WS/visp/modules/python/examples/camera/tutorial-camera-realsense-dual-view.py
+
+Get the camera intrinsics parameters
+--------------------------------------------------
+
+Many ViSP image operations require to know the camera's intrinsic parameters.
+These parameters must be stored in a
+:py:class:`~visp.core.CameraParameters` object.
+
+This :ref:`example <code-camera-realsense-intrinsics>` shows how to
+retrieve the parameters for the RealSense color and depth streams.
+
+Run it with:
+
+.. code-block:: bash
+
+  python3 $VISP_WS/visp/modules/python/examples/camera/tutorial-camera-realsense-intrinsics.py
+
+We first import the :py:class:`~visp.core.CameraParameters` class:
+
+.. literalinclude:: /examples/camera/tutorial-camera-realsense-intrinsics.py
+  :language: python
+  :start-at: from visp.core import CameraParameters
+  :end-at: from visp.core import CameraParameters
+
+We then get the profile of the camera while starting the RealSense pipeline:
+
+.. literalinclude:: /examples/camera/tutorial-camera-realsense-intrinsics.py
+  :language: python
+  :start-at: # Start streaming and get the active camera profile
+  :end-at: profile = pipeline.start(config)
+
+The profile contains the calibration data for each enabled video stream.
+We define a helper function that retrieves the stream's intrinsic parameters and
+convert then to a :py:class:`~visp.core.CameraParameters` object:
+
+.. literalinclude:: /examples/camera/tutorial-camera-realsense-intrinsics.py
+  :language: python
+  :start-at: def get_camera_parameters(profile, stream_type):
+  :end-at: return CameraParameters(intrinsics.fx, intrinsics.fy, intrinsics.ppx, intrinsics.ppy)
+
+We call this function separately for the color and depth streams, as they come from different cameras:
+
+.. literalinclude:: /examples/camera/tutorial-camera-realsense-intrinsics.py
+  :language: python
+  :start-at: # Read the color camera intrinsics
+  :end-at: print(f"  ViSP parameters: {depth_camera}")
+
+You should obtain an output similar to this (with your own values):
+
+.. code-block:: text
+
+  Color camera intrinsics:
+    ViSP parameters: Camera parameters for perspective projection without distortion:
+    px = 387.232   py = 386.652
+    u0 = 325.677   v0 = 236.252
+
+  Depth camera intrinsics:
+    ViSP parameters: Camera parameters for perspective projection without distortion:
+    px = 390.406   py = 390.406
+    u0 = 326.319   v0 = 239.871
+
+Here:
+
+- ``px`` and ``py`` are the focal lengths in pixels along the horizontal and
+  vertical image axes.
+- ``u0`` and ``v0`` are the coordinates of the principal point in pixels.
+  This point is usually near the center of the image.
