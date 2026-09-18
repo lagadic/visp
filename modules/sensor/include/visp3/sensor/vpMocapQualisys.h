@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,6 +56,9 @@ public:
 
   bool getBodiesPose(std::map<std::string, vpHomogeneousMatrix> &bodies_pose, bool all_bodies = false);
   bool getSpecificBodyPose(const std::string &body_name, vpHomogeneousMatrix &body_pose);
+  void setBasePort(unsigned short port);
+  void setBigEndian(bool big_endian);
+  void setUDPPort(unsigned short port);
   void setServerAddress(const std::string &serverAddr);
   void setVerbose(bool verbose);
 

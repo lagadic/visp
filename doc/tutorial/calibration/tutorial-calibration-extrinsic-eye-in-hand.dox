@@ -569,7 +569,7 @@ $ ./visp-compute-chessboard-poses        \
 
 \subsubsection calib_eih_usecase_ur_emc 4.2.3: Estimate extrinsic transformation
 
-Finally you can estimate the extrinsic transformation between end-effector and you camera, running:
+Finally you can estimate the extrinsic transformation between end-effector and your camera, running:
 
 \code{.sh}
 $ ./visp-compute-eye-in-hand-calibration \
@@ -613,6 +613,128 @@ $ python hand_eye_calibration_show_extrinsics.py   \
     --cPo-file-pattern data-ur/ur_pose_cPo_%d.yaml \
     --square-size 0.0262                           \
     --focal-px 605.146728515625
+\endcode
+
+\subsection calib_eih_usecase_mocap 4.3. Mocap + Realsense
+
+In this section, we assume that you have a Motion Capture System (either Qualisys or Vicon) and a RealSense camera
+attached to a body. A typical use case would be a drone equipped with an onboard RealSense camera, such as a D435
+or D455. The motion capture system is used to track the pose of the drone's body frame. The goal here is to acquire
+data in order to estimate the transformation from the body frame to the camera frame.
+
+We also assume that you have installed the RealSense SDK and one of the motion capture systems (Qualisys or Vicon)
+supported by ViSP.
+
+Installation instructions:
+- The RealSense SDK is covered in section \ref install_ubuntu_3rdparty_realsense for Ubuntu or macOS,
+  and in section \ref install_win11_msvc18_3rdparty_realsense for Windows.
+- The Qualisys SDK is covered in section \ref install_ubuntu_3rdparty_qualisys for Ubuntu,
+  section \ref install_brew_3rdparty_qualisys on macOS, and section \ref install_win10_msvc17_3rdparty_qualisys
+  under Windows.
+- The Vicon SDK is covered in section \ref install_ubuntu_3rdparty_vicon for Ubuntu,
+  section \ref install_brew_3rdparty_vicon on macOS, and section \ref install_win10_msvc17_3rdparty_vicon under Windows.
+
+\subsubsection calib_eih_usecase_mocap_acq 4.3.1 Acquire data
+
+Connect the RealSense camera to the computer, place the chessboard within the camera's field of view, navigate to
+the `apps/calibration/hand-eye` folder, and run the `visp-acquire-mocap-calib-data` binary to acquire the images
+and their corresponding body poses:
+
+\code{.sh}
+$ cd apps/calibration/hand-eye
+$ ./visp-acquire-mocap-calib-data --help
+\endcode
+
+The following example shows how to capture images at a resolution of 848x480 from the RealSense camera and retrieve
+body poses using a Qualisys motion capture system with server IP `10.135.2.40`:
+
+\code{.sh}
+$ ./visp-acquire-mocap-calib-data \
+    --qualisys-ip 10.135.2.40     \
+    --body-name mkQuadro4         \
+    --image-width 848             \
+    --image-height 480            \
+    --output-folder data-mocap
+\endcode
+
+Click in the image with the left mouse button to acquire data.
+This saves the following outputs in the `data-mocap` folder:
+
+- `camera.xml`: an XML file containing the intrinsic camera parameters extracted from the camera firmware
+- Pairs of `chessboard_image-<number>.png` and `mocap_pose_world_P_body-<number>.yaml`, with numbers starting from 1.
+  `mocap_pose_world_P_body-<number>.yaml` represents the pose of the body expressed in the motion capture world frame,
+  while `chessboard_image-<number>.png` is the image captured at the corresponding position.
+
+The source code corresponding to the binary is available in visp-acquire-universal-robots-calib-data.cpp. If your
+setup is different, it could be easily adapted to your robot or camera.
+
+\subsubsection calib_eih_usecase_mocap_pose 4.3.2 Compute chessboard poses
+
+Given the camera intrinsic parameters and the set of images, you can compute the camera poses by running:
+\code{.sh}
+$ ./visp-compute-chessboard-poses                              \
+    --square-size 0.0262                                       \
+    --input data-mocap/chessboard_image-%d.png                 \
+    --intrinsic data-mocap/camera.xml                          \
+    --output data-mocap/mocap_pose_camera_P_chessboard-%d.yaml
+\endcode
+
+For each input image `data-mocap/chessboard_image-%d.png`, this will output the corresponding pose of the chessboard
+in the camera frame.
+
+\subsubsection calib_eih_usecase_mocap_emc 4.3.3: Estimate extrinsic transformation
+
+Finally, you can estimate the extrinsic transformation between the body frame and your camera by running:
+
+\code{.sh}
+$ ./visp-compute-eye-in-hand-calibration                 \
+    --data-path data-mocap/                              \
+    --rPe mocap_pose_world_P_body%d.yaml                 \
+    --cPo mocap_pose_camera_P_chessboard%d.yaml          \
+    --output-ePc data-mocap/mocap_body_P_camera.yaml     \
+    --output-rPo data-mocap/mocap_body_P_chessboard.yaml
+\endcode
+
+This will generate `mocap_body_P_camera.yaml` (containing the pose as a `vpPoseVector`) as well as
+`mocap_body_P_camera.txt` (containing the corresponding homogeneous transformation matrix that defines the position
+and orientation of the camera frame relative to the body frame):
+\code{.sh}
+$ more data-mocap/mocap_body_P_camera.yaml
+rows: 6
+cols: 1
+data:
+  - [0.0262712]
+  - [0.0779589]
+  - [-0.0967382]
+  - [-1.80333]
+  - [0.773545]
+  - [-0.512418]
+
+$ more data-mocap/mocap_body_P_camera.txt
+ 0.6982625501   -0.2621849817   0.6660994269   0.02627120021
+-0.7156056777   -0.2317666102   0.6589330409   0.07795888752
+-0.01838274108  -0.9367727973  -0.3494550058  -0.09673817826
+ 0               0              0              1
+\endcode
+
+\subsubsection calib_eih_usecase_mocap_visu 4.3.4. Cameta poses analysis tool
+
+To analyze the results, you can visualize the camera poses:
+- First, retrieve the `px` intrinsic camera parameter:
+\code{.sh}
+$ grep px data-mocap/camera.xml
+      <px>606.94915771484375</px>
+\endcode
+
+- Assuming you have 8 images and their corresponding poses in the `data-mocap/` folder, you can visualize them by
+running:
+\code{.sh}
+$ python $VISP_DIR/visp/apps/calibration/hand-eye/hand_eye_calibration_show_extrinsics.py  \
+    --ndata 8                                                                              \
+    --eMc-yaml data-mocap/mocap_body_P_camera.yaml                                         \
+    --cPo-file-pattern data-mocap/mocap_pose_camera_P_chessboard-%d.yaml                   \
+    --square-size 0.0262                                                                   \
+    --focal-px 606.94915771484375
 \endcode
 
 \section calib_eih_next 5. Next tutorial
