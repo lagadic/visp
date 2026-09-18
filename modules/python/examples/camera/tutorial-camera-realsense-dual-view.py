@@ -10,7 +10,7 @@ WIDTH = 640
 HEIGHT = 480
 FPS = 60
 
-# Configure the camera stream
+# Configure the camera streams
 config = rs.config()
 config.enable_stream(rs.stream.color, WIDTH, HEIGHT, rs.format.rgb8, FPS)
 config.enable_stream(rs.stream.depth, WIDTH, HEIGHT, rs.format.z16, FPS)
