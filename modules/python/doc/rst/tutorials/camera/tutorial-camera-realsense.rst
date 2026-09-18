@@ -205,7 +205,7 @@ The :py:class:`~visp.core.ImageRGBa` is still needed to store the frame data:
 .. literalinclude:: /examples/camera/tutorial-camera-realsense-grayscale.py
   :language: python
   :start-at: # Create a RGBa image to store each frame
-  :end-at: image_rgba= ImageRGBa(HEIGHT, WIDTH)
+  :end-at: image_rgba = ImageRGBa(HEIGHT, WIDTH)
 
 Then, we just have to convert the :py:class:`~visp.core.ImageRGBa` obtained
 using the :py:meth:`~visp.core.ImageConvert.convert` method:
