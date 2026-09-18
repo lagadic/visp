@@ -218,9 +218,6 @@ public:
     if (getBodiesPose(bodies_pose, true)) {
       if (bodies_pose.find(body_name) != bodies_pose.end()) {
         body_pose = bodies_pose[body_name];
-        if (m_verbose) {
-          std::cout << "I found bodyName: " << body_name << std::endl;
-        }
         return true;
       }
       else {
