@@ -17,3 +17,13 @@ Image manipulation
     image/tutorial-image-drawings.rst
     image/tutorial-image-interactions.rst
     image/tutorial-image-filter.rst
+
+
+Camera acquisition
+-----------------------
+
+.. toctree::
+    :glob:
+    :maxdepth: 1
+
+    camera/tutorial-camera-realsense.rst
