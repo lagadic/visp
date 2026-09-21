@@ -30,14 +30,13 @@
  * Description:
  * Motion capture using Vicon device.
  */
-#ifndef vpMocapVicon_h
-#define vpMocapVicon_h
+#ifndef VP_MOCAP_VICON_H
+#define VP_MOCAP_VICON_H
 
 #include <visp3/core/vpConfig.h>
+#include <visp3/sensor/vpMocap.h>
 
 #ifdef VISP_HAVE_VICON
-
-#include <visp3/sensor/vpMocap.h>
 
 BEGIN_VISP_NAMESPACE
 

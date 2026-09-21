@@ -30,14 +30,13 @@
  * Description:
  * Motion capture using Qualisys device.
  */
-#ifndef vpMocapQualisys_h
-#define vpMocapQualisys_h
+#ifndef VP_MOCAP_QUALISYS_H
+#define VP_MOCAP_QUALISYS_H
 
 #include <visp3/core/vpConfig.h>
+#include <visp3/sensor/vpMocap.h>
 
 #ifdef VISP_HAVE_QUALISYS
-
-#include <visp3/sensor/vpMocap.h>
 
 BEGIN_VISP_NAMESPACE
 /*!
