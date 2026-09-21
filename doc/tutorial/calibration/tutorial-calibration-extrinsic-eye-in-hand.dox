@@ -374,8 +374,8 @@ sphere over the grid.
 
 \subsection calib_eih_usecase_franka 4.1. Franka robot + Realsense
 
-In this section we suppose that you have a Franka robot from Franka Emika with a Realsense camera attached to its
-end-effector.
+In this section we suppose that you have a Panda robot from Franka Emika or a Franka Research 3 (FR3)
+from Franka Robotics with a Realsense camera attached to its end-effector.
 
 \image html img-franka-calib-setup.jpg Franka robot in eye-in hand configuration with a RealSense D435 camera attached to its end-effector.
 
@@ -638,7 +638,7 @@ Dont't forget to build again ViSP after installing a third-party.
 
 \subsubsection calib_eih_usecase_mocap_acq 4.3.1 Acquire data
 
-Connect the RealSense camera to the computer, place the chessboard within the camera's field of view, navigate to
+Connect the RealSense camera to the computer, place the 9x6 chessboard within the camera's field of view, navigate to
 the `apps/calibration/hand-eye` folder, and run the `visp-acquire-mocap-calib-data` binary to acquire the images
 and their corresponding body poses:
 
@@ -654,8 +654,8 @@ body poses using a Qualisys motion capture system with server IP `10.135.2.40`:
 $ ./visp-acquire-mocap-calib-data \
     --qualisys-ip 10.135.2.40     \
     --body-name mkQuadro4         \
-    --image-width 848             \
-    --image-height 480            \
+    --img-width 848               \
+    --img-height 480              \
     --output-folder data-mocap
 \endcode
 
@@ -667,7 +667,7 @@ This saves the following outputs in the `data-mocap` folder:
   `mocap_pose_world_P_body-<number>.yaml` represents the pose of the body expressed in the motion capture world frame,
   while `chessboard_image-<number>.png` is the image captured at the corresponding position.
 
-The source code corresponding to the binary is available in visp-acquire-universal-robots-calib-data.cpp. If your
+The source code corresponding to the binary is available in visp-acquire-mocap-calib-data.cpp. If your
 setup is different, it could be easily adapted to your robot or camera.
 
 \subsubsection calib_eih_usecase_mocap_pose 4.3.2 Compute chessboard poses

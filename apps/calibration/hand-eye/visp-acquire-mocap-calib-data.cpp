@@ -87,9 +87,55 @@ void mocapThreadFunction(vpMocap *mocap, const std::string &object_name)
     }
   }
 }
+
+void usage(const char **argv, int error,
+           const std::string &vicon_host, const std::string &qualisys_host, int img_width, int img_height,
+           const std::string &output_folder)
+{
+  std::cout << "\nUsage: " << std::endl
+    << argv[0]
+    << " [--img-width <width>]"
+    << " [--img-height <height>]"
+    << " [--without-mocap]"
+    << " [--vicon-ip <address:port>]"
+    << " [--qualisys-ip <address:port>]"
+    << " [--body-name <name>]"
+    << " [--help] [-h]\n"
+    << std::endl;
+  std::cout << "Options: " << std::endl
+    << "--img-width <width>" << std::endl
+    << "\tImage width. Default: " << img_width << std::endl
+    << std::endl
+    << "--img-height <height>" << std::endl
+    << "\tImage height. Default: " << img_height << std::endl
+    << std::endl
+    << "--without-mocap" << std::endl
+    << "\tDoesn't connect to Vicon or Qualisys to get object pose." << std::endl
+    << std::endl
+    << "--vicon-ip <address:port>" << std::endl
+    << "\tVicon router IP address and port like: " << vicon_host << std::endl
+    << std::endl
+    << "--qualisys-ip <address:port>" << std::endl
+    << "\tQualisys router IP address and port like: " << qualisys_host << std::endl
+    << std::endl
+    << "--body-name <name>" << std::endl
+    << "\tName of the tracked object by the mocap system. Default: " << qualisys_host << std::endl
+    << std::endl
+    << "--output-folder <name>" << std::endl
+    << "\tName of the folder that will contain acquired data. Default: " << output_folder << std::endl
+    << std::endl
+    << "--help, -h" << std::endl
+    << "\tPrint this helper message" << std::endl
+    << std::endl;
+  if (error) {
+    std::cout << "Error" << std::endl
+      << "  "
+      << "Unsupported parameter " << argv[error] << std::endl;
+  }
+}
 } // namespace
 
-int main(int argc, char **argv)
+int main(int argc, const char **argv)
 {
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
   vpDisplay *pdisp = nullptr;
@@ -135,46 +181,11 @@ int main(int argc, char **argv)
         opt_output_folder = std::string(argv[++i]);
       }
       else if ((std::string(argv[i]) == "--help") || (std::string(argv[i]) == "-h")) {
-        std::cout << "\nUsage: " << std::endl
-          << argv[0]
-          << " [--img-width <width>]"
-          << " [--img-height <height>]"
-          << " [--without-mocap]"
-          << " [--vicon-ip <address:port>]"
-          << " [--qualisys-ip <address:port>]"
-          << " [--body-name <name>]"
-          << " [--help] [-h]\n"
-          << std::endl;
-        std::cout << "Options: " << std::endl
-          << "--img-width <width>" << std::endl
-          << "\tImage width. Default: " << opt_img_width << std::endl
-          << std::endl
-          << "--img-height <height>" << std::endl
-          << "\tImage height. Default: " << opt_img_height << std::endl
-          << std::endl
-          << "--without-mocap" << std::endl
-          << "\tDoesn't connect to Vicon or Qualisys to get object pose." << std::endl
-          << std::endl
-          << "--vicon-ip <address:port>" << std::endl
-          << "\tVicon router IP address and port like: " << opt_vicon_host << std::endl
-          << std::endl
-          << "--qualisys-ip <address:port>" << std::endl
-          << "\tQualisys router IP address and port like: " << opt_qualisys_host << std::endl
-          << std::endl
-          << "--body-name <name>" << std::endl
-          << "\tName of the tracked object by the mocap system. Default: " << opt_qualisys_host << std::endl
-          << std::endl
-          << "--output-folder <name>" << std::endl
-          << "\tName of the folder that will contain acquired data. Default: " << opt_output_folder << std::endl
-          << std::endl
-          << "--help, -h" << std::endl
-          << "\tPrint this helper message" << std::endl
-          << std::endl;
+        usage(argv, 0, opt_vicon_host, opt_qualisys_host, opt_img_width, opt_img_height, opt_output_folder);
         return EXIT_SUCCESS;
       }
       else {
-        std::cout << "Error: unknown command line option" << std::endl;
-        std::cout << "See " << argv[0] << " --help" << std::endl;
+        usage(argv, i, opt_vicon_host, opt_qualisys_host, opt_img_width, opt_img_height, opt_output_folder);
         return EXIT_FAILURE;
       }
     }
@@ -307,7 +318,7 @@ int main(int argc, char **argv)
           if (!opt_without_mocap) {
             if (opt_with_vicon || opt_with_qualisys) {
               if (fMe_valid) {
-                ss_pose << vpIoTools::createFilePath(opt_output_folder, "/mocap_pose_world_P_body") << cpt << ".yaml";
+                ss_pose << vpIoTools::createFilePath(opt_output_folder, "/mocap_pose_world_P_body-") << cpt << ".yaml";
                 vpPoseVector::saveYAML(ss_pose.str(), vpPoseVector(fMe));
               }
               else {

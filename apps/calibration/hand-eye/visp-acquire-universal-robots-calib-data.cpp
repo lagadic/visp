@@ -47,20 +47,30 @@
     defined(VISP_HAVE_DISPLAY) && defined(VISP_HAVE_UR_RTDE) && defined(VISP_HAVE_PUGIXML) && \
     defined(VISP_HAVE_MODULE_GUI) && defined(VISP_HAVE_MODULE_ROBOT) && defined(VISP_HAVE_MODULE_SENSOR) // optional
 
-void usage(const char **argv, int error, const std::string &robot_ip)
+void usage(const char **argv, int error, const std::string &robot_ip, int img_width, int img_height,
+           const std::string &output_folder)
 {
   std::cout << "Synopsis" << std::endl
     << "  " << argv[0]
-    << " [--ip <address>] [--output-folder <name>] [--help, -h]" << std::endl
+    << " [--ip <address>]"
+    << " [--output-folder <name>]"
+    << " [--img-width <width>]"
+    << " [--img-height <height>]"
+    << " [--help, -h]" << std::endl
     << std::endl;
   std::cout << "Description" << std::endl
     << "  --ip <address>" << std::endl
     << "    Ethernet address to dial with the Panda robot." << std::endl
     << "    Default: " << robot_ip << std::endl
     << std::endl
+    << "  --img-width <width>" << std::endl
+    << "    Image width. Default: " << img_width << std::endl
+    << std::endl
+    << "  --img-height <height>" << std::endl
+    << "    Image height. Default: " << img_height << std::endl
+    << std::endl
     << "  --output-folder <name>" << std::endl
-    << "    Acquired data output folder." << std::endl
-    << "    Default: ./" << std::endl
+    << "    Name of the folder that will contain acquired data. Default: " << output_folder << std::endl
     << std::endl
     << "  --help, -h  Print this helper message." << std::endl
     << std::endl;
@@ -81,21 +91,29 @@ int main(int argc, const char **argv)
 #endif
   try {
     std::string opt_robot_ip = "192.168.0.100";
-    std::string opt_output_folder = "./";
+    std::string opt_output_folder = "./data-ur";
+    int opt_img_width = 640;
+    int opt_img_height = 480;
 
     for (int i = 1; i < argc; i++) {
-      if (std::string(argv[i]) == "--ip" && i + 1 < argc) {
+      if ((std::string(argv[i]) == "--ip") && (i + 1 < argc)) {
         opt_robot_ip = std::string(argv[++i]);
       }
-      else if (std::string(argv[i]) == "--output-folder" && i + 1 < argc) {
+      else if ((std::string(argv[i]) == "--img-width") && (i + 1 < argc)) {
+        opt_img_width = std::atoi(argv[++i]);
+      }
+      else if ((std::string(argv[i]) == "--img-height") && (i + 1 < argc)) {
+        opt_img_height = std::atoi(argv[++i]);
+      }
+      else if ((std::string(argv[i]) == "--output-folder") && (i + 1 < argc)) {
         opt_output_folder = std::string(argv[++i]);
       }
-      else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-        usage(argv, 0, opt_robot_ip);
+      else if ((std::string(argv[i]) == "--help") || (std::string(argv[i]) == "-h")) {
+        usage(argv, 0, opt_robot_ip, opt_img_width, opt_img_height, opt_output_folder);
         return EXIT_SUCCESS;
       }
       else {
-        usage(argv, i, opt_robot_ip);
+        usage(argv, i, opt_robot_ip, opt_img_width, opt_img_height, opt_output_folder);
         return EXIT_FAILURE;
       }
     }
@@ -114,7 +132,7 @@ int main(int argc, const char **argv)
     rs2::config config;
     config.disable_stream(RS2_STREAM_DEPTH);
     config.disable_stream(RS2_STREAM_INFRARED);
-    config.enable_stream(RS2_STREAM_COLOR, 640, 480, RS2_FORMAT_RGBA8, 30);
+    config.enable_stream(RS2_STREAM_COLOR, opt_img_width, opt_img_height, RS2_FORMAT_RGBA8, 30);
     g.open(config);
     g.acquire(I);
 
