@@ -9,7 +9,7 @@ This tutorial focuses estimation of the homogeneous transformation between the r
 in the case of a camera attached to the robot end-effector. This configuration is also called eye-in-hand.
 
 As a use case, we will consider in this tutorial the case of either:
-- a Panda robot in its research version from,
+- a Franka robot in its research version from,
   <a href="https://franka.de/">Franka Emika</a> equipped with an Intel Realsense
   <a href="https://www.intelrealsense.com/depth-camera-d435/">D435</a> camera mounted on its end-effector
 - or a robot from Universal Robots also equipped with an Intel Realsense
@@ -109,7 +109,7 @@ If you want the parameters with distortion, you need to achieve a calibration as
 \ref tutorial-calibration-intrinsic.
 
 As an example, in ViSP build folder you will find a dataset in `"data-eye-in-hand"` folder corresponding to data
-acquired with a real Panda robot that has a camera attached to its end-effector. These data were acquired with
+acquired with a real Franka robot that has a camera attached to its end-effector. These data were acquired with
 visp-acquire-franka-calib-data.cpp binary described in section \ref calib_eih_usecase_franka.
 \code{.sh}
 $ cd $VISP_WS/visp-build/apps/calibration/hand-eye
@@ -372,15 +372,15 @@ sphere over the grid.
 
 \section calib_eih_usecase 4. Use cases
 
-\subsection calib_eih_usecase_franka 4.1. Panda robot + Realsense
+\subsection calib_eih_usecase_franka 4.1. Franka robot + Realsense
 
-In this section we suppose that you have a Panda robot from Franka Emika with a Realsense camera attached to its
+In this section we suppose that you have a Franka robot from Franka Emika with a Realsense camera attached to its
 end-effector.
 
-\image html img-franka-calib-setup.jpg Panda robot in eye-in hand configuration with a RealSense D435 camera attached to its end-effector.
+\image html img-franka-calib-setup.jpg Franka robot in eye-in hand configuration with a RealSense D435 camera attached to its end-effector.
 
 If not already done, follow \ref franka_configure_ethernet and \ref franka_connect_desk instructions to power on the
-Panda robot. Then if this is not already done, follow \ref franka_prereq_libfranka and \ref franka_prereq_visp_build.
+Franka robot. Then if this is not already done, follow \ref franka_prereq_libfranka and \ref franka_prereq_visp_build.
 
 If not already done, you need also to install \ref install_ubuntu_3rdparty_realsense and build ViSP to enable
 vpRealSense2 class usage.
@@ -622,10 +622,10 @@ attached to a body. A typical use case would be a drone equipped with an onboard
 or D455. The motion capture system is used to track the pose of the drone's body frame. The goal here is to acquire
 data in order to estimate the transformation from the body frame to the camera frame.
 
-We also assume that you have installed the RealSense SDK and one of the motion capture systems (Qualisys or Vicon)
-supported by ViSP.
+\image html img-drone-mkQuadro5.jpg Example of a drone equipped with a Realsense D435 camera.
 
-Installation instructions:
+We also assume that you have installed the RealSense SDK and one of the motion capture systems (Qualisys or Vicon)
+supported by ViSP. If not already done, we recall installation instructions:
 - The RealSense SDK is covered in section \ref install_ubuntu_3rdparty_realsense for Ubuntu or macOS,
   and in section \ref install_win11_msvc18_3rdparty_realsense for Windows.
 - The Qualisys SDK is covered in section \ref install_ubuntu_3rdparty_qualisys for Ubuntu,
@@ -633,6 +633,8 @@ Installation instructions:
   under Windows.
 - The Vicon SDK is covered in section \ref install_ubuntu_3rdparty_vicon for Ubuntu,
   section \ref install_brew_3rdparty_vicon on macOS, and section \ref install_win10_msvc17_3rdparty_vicon under Windows.
+.
+Dont't forget to build again ViSP after installing a third-party.
 
 \subsubsection calib_eih_usecase_mocap_acq 4.3.1 Acquire data
 
@@ -641,7 +643,7 @@ the `apps/calibration/hand-eye` folder, and run the `visp-acquire-mocap-calib-da
 and their corresponding body poses:
 
 \code{.sh}
-$ cd apps/calibration/hand-eye
+$ cd $VISP_DIR/visp-build/apps/calibration/hand-eye
 $ ./visp-acquire-mocap-calib-data --help
 \endcode
 
@@ -673,13 +675,15 @@ setup is different, it could be easily adapted to your robot or camera.
 Given the camera intrinsic parameters and the set of images, you can compute the camera poses by running:
 \code{.sh}
 $ ./visp-compute-chessboard-poses                              \
-    --square-size 0.0262                                       \
+    --square-size 0.0247                                       \
     --input data-mocap/chessboard_image-%d.png                 \
     --intrinsic data-mocap/camera.xml                          \
     --output data-mocap/mocap_pose_camera_P_chessboard-%d.yaml
 \endcode
 
-For each input image `data-mocap/chessboard_image-%d.png`, this will output the corresponding pose of the chessboard
+Here, we assume that each square on the 9x6 chessboard has a side length of 0.0247 meters.
+
+For each input image `data-mocap/chessboard_image-%%d.png`, this will output the corresponding pose of the chessboard
 in the camera frame.
 
 \subsubsection calib_eih_usecase_mocap_emc 4.3.3: Estimate extrinsic transformation
@@ -689,8 +693,8 @@ Finally, you can estimate the extrinsic transformation between the body frame an
 \code{.sh}
 $ ./visp-compute-eye-in-hand-calibration                 \
     --data-path data-mocap/                              \
-    --rPe mocap_pose_world_P_body%d.yaml                 \
-    --cPo mocap_pose_camera_P_chessboard%d.yaml          \
+    --rPe mocap_pose_world_P_body-%d.yaml                \
+    --cPo mocap_pose_camera_P_chessboard-%d.yaml         \
     --output-ePc data-mocap/mocap_body_P_camera.yaml     \
     --output-rPo data-mocap/mocap_body_P_chessboard.yaml
 \endcode
@@ -717,25 +721,65 @@ $ more data-mocap/mocap_body_P_camera.txt
  0               0              0              1
 \endcode
 
-\subsubsection calib_eih_usecase_mocap_visu 4.3.4. Cameta poses analysis tool
+\subsubsection calib_eih_usecase_mocap_visu 4.3.4. Cameta poses analysis
 
-To analyze the results, you can visualize the camera poses:
-- First, retrieve the `px` intrinsic camera parameter:
+- A first check is to analyse the residual given by `visp-compute-eye-in-hand-calibration`.
+\code{.sh}
+$ ./visp-compute-eye-in-hand-calibration                 \
+    --data-path data-mocap/                              \
+    --rPe mocap_pose_world_P_body-%d.yaml                \
+    --cPo mocap_pose_camera_P_chessboard-%d.yaml         \
+    --output-ePc data-mocap/mocap_body_P_camera.yaml     \
+    --output-rPo data-mocap/mocap_body_P_chessboard.yaml
+Use data from data-mocap/mocap_pose_world_P_body-1.yaml and from data-mocap/mocap_pose_camera_P_chessboard-1.yaml
+Use data from data-mocap/mocap_pose_world_P_body-2.yaml and from data-mocap/mocap_pose_camera_P_chessboard-2.yaml
+Use data from data-mocap/mocap_pose_world_P_body-3.yaml and from data-mocap/mocap_pose_camera_P_chessboard-3.yaml
+Use data from data-mocap/mocap_pose_world_P_body-4.yaml and from data-mocap/mocap_pose_camera_P_chessboard-4.yaml
+Use data from data-mocap/mocap_pose_world_P_body-5.yaml and from data-mocap/mocap_pose_camera_P_chessboard-5.yaml
+Use data from data-mocap/mocap_pose_world_P_body-6.yaml and from data-mocap/mocap_pose_camera_P_chessboard-6.yaml
+Use data from data-mocap/mocap_pose_world_P_body-7.yaml and from data-mocap/mocap_pose_camera_P_chessboard-7.yaml
+Use data from data-mocap/mocap_pose_world_P_body-8.yaml and from data-mocap/mocap_pose_camera_P_chessboard-8.yaml
+Distance theta between rMo/rMc(0) and mean (deg) = 0.794365
+Distance theta between rMo/rMc(1) and mean (deg) = 0.306589
+Distance theta between rMo/rMc(2) and mean (deg) = 0.613741
+Distance theta between rMo/rMc(3) and mean (deg) = 0.454231
+Distance theta between rMo/rMc(4) and mean (deg) = 0.704085
+Distance theta between rMo/rMc(5) and mean (deg) = 0.159052
+Distance theta between rMo/rMc(6) and mean (deg) = 0.940786
+Distance theta between rMo/rMc(7) and mean (deg) = 0.396738
+Mean residual rMo/rMc(8) - rotation (deg) = 0.599117
+Distance d between rMo/rMc(0) and mean (m) = 0.0129497
+Distance d between rMo/rMc(1) and mean (m) = 0.00356527
+Distance d between rMo/rMc(2) and mean (m) = 0.00339072
+Distance d between rMo/rMc(3) and mean (m) = 0.0108204
+Distance d between rMo/rMc(4) and mean (m) = 0.00729273
+Distance d between rMo/rMc(5) and mean (m) = 0.00772465
+Distance d between rMo/rMc(6) and mean (m) = 0.00391765
+Distance d between rMo/rMc(7) and mean (m) = 0.0172658
+Mean residual rMo/rMc(8) - translation (m) = 0.00958707
+Mean residual rMo/rMc(8) - global = 0.0100312
+
+Eye-in-hand calibration succeed
+\endcode
+
+- You can also visualize the camera poses:
+  - First, retrieve the `px` intrinsic camera parameter:
 \code{.sh}
 $ grep px data-mocap/camera.xml
       <px>606.94915771484375</px>
 \endcode
 
-- Assuming you have 8 images and their corresponding poses in the `data-mocap/` folder, you can visualize them by
+  - Assuming you have 8 images and their corresponding poses in the `data-mocap/` folder, you can visualize them by
 running:
 \code{.sh}
-$ python $VISP_DIR/visp/apps/calibration/hand-eye/hand_eye_calibration_show_extrinsics.py  \
+$ python3 $VISP_DIR/visp/apps/calibration/hand-eye/hand_eye_calibration_show_extrinsics.py  \
     --ndata 8                                                                              \
     --eMc-yaml data-mocap/mocap_body_P_camera.yaml                                         \
     --cPo-file-pattern data-mocap/mocap_pose_camera_P_chessboard-%d.yaml                   \
     --square-size 0.0262                                                                   \
     --focal-px 606.94915771484375
 \endcode
+\image html img-calib-mocap-result.jpg
 
 \section calib_eih_next 5. Next tutorial
 
