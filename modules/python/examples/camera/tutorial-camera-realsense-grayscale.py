@@ -25,7 +25,7 @@ try:
   display.init(image, 0, 0, "Grayscale view")
 
   # Create a RGBa image to store each frame
-  image_rgba= ImageRGBa(HEIGHT, WIDTH)
+  image_rgba = ImageRGBa(HEIGHT, WIDTH)
 
   # Access the RGBa image data as a NumPy array
   image_array = np.asarray(image_rgba)
