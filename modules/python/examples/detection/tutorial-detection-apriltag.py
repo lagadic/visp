@@ -1,51 +1,69 @@
 import sys
-import time
+from pathlib import Path
 
-from visp.core import ImageGray, ImageRGBa, Color, CameraParameters
+from visp.core import ImageGray, Color, CameraParameters
 from visp.io import ImageIo
-
 from visp.detection import DetectorAprilTag
-
 from visp.core import Display
 from visp.python.display_utils import get_display
 
-# 
-#INPUT_PATH = "apriltag2.png"
-INPUT_PATH = "visp-images/AprilTag/AprilTag.png"
-TAG_SIZE = 0.053
+# Configuration
+IMAGE_PATH = str(Path(__file__).parent) + "/AprilTag.png"
+TAG_SIZE = 0.053 # in meters
 
-# Initialize the camera
+# Camera intrinsics parameters
+CAMERA_PX = 615.1674805 # horizontal focal length
+CAMERA_PY = 615.1675415 # vertical focal length
+CAMERA_U0 = 312.1889954 # principal point x
+CAMERA_V0 = 243.4373779 # principal point y
+
+# Create the camera model
 camera = CameraParameters()
-camera.initPersProjWithoutDistortion(615.1674805, 615.1675415, 312.1889954, 243.4373779)
+camera.initPersProjWithoutDistortion(CAMERA_PX, CAMERA_PY, CAMERA_U0, CAMERA_V0)
 
 # Read the image
 image = ImageGray()
+
 try:
-  ImageIo.read(image, INPUT_PATH)
+  ImageIo.read(image, IMAGE_PATH)
 except Exception as exception:
   print(f"Could not read image: {exception}")
   sys.exit(1)
 
-# Detect tags on the image
+# Display the image
+display = get_display()
+display.init(image, 0, 0, "Original image")
+Display.display(image)
+Display.flush(image)
+Display.getClick(image)
+
+# Detect the tags on the image
 detector = DetectorAprilTag()
 detected, tag_poses = detector.detect(image, TAG_SIZE, camera)
-print(f"detected {detector.getNbObjects()} tags")
+
+number_of_tags = detector.getNbObjects()
+print(f"Detected {number_of_tags} AprilTag(s)")
 
 if not detected:
-  sys.exit()
+  print("No AprilTags found.")
+  sys.exit(0)
 
-# Get tags informations
+# Print the tag information
 print("Tag IDs:", detector.getTagsId())
 print("Decision margins:", detector.getTagsDecisionMargin())
 print("Hamming distances:", detector.getTagsHammingDistance())
 
-corners = detector.getTagsCorners()
+# Get the tag corners
+tag_corners = detector.getTagsCorners()
 
-# Display the image with tags boxes
+# Display the image with tags frames and axes
 display = get_display()
-display.init(image)
+display.init(image, 0, 0, "Image with AprilTags frames and axes")
 Display.display(image)
-detector.displayTags(image, corners, Color.none, 3)
+detector.displayTags(image, tag_corners, Color.none, 3)
+
+# Draw the tags borders and coordinate frames
 detector.displayFrames(image, tag_poses, camera, TAG_SIZE / 2.0, Color.none, 3)
+
 Display.flush(image)
 Display.getClick(image)
