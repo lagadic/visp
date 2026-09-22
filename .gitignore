@@ -21,3 +21,6 @@ samples/android/local.properties
 tutorial/ios/*/visp3.framework
 tutorial/ios/*/visp3.xcframework
 tutorial/ios/*/*.xcodeproj/project.xcworkspace/xcuserdata
+
+# Generated images by Python bindings
+modules/python/examples/image/grayscale_monkey.jpeg
