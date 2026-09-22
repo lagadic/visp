@@ -51,8 +51,7 @@ You can run the example with:
 Result
 --------------------------------------------------
 
-The example displays the input image in grayscale followed by 
-the addition of the detected tag borders and coordinate frames:
+The example displays the input image in grayscale and in overlay the detected tag borders and coordinate frames:
 
 .. list-table::
 
@@ -60,15 +59,27 @@ the addition of the detected tag borders and coordinate frames:
 
     - .. image:: images/result-detection-apriltag-output.png
 
-It also prints the number of detected tags, their IDs, decision margins,
-and Hamming distances:
+It also prints the number of detected tags, their IDs, decision margins, Hamming distances and for each tag
+its center of gravity and the coordinates of the 4 corners:
 
 .. code-block:: text
 
   Detected 12 AprilTag(s)
   Tag IDs: [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
-  Decision margins: [78.44377899169922, 86.25739288330078, 101.34090423583984, 74.03752899169922, 101.83423614501953, 108.31098175048828, 104.10408020019531, 97.47992706298828, 97.76911163330078, 118.44223022460938, 116.25943756103516, 81.77754211425781]
+  Decision margins: [78.44377899169922, 86.25739288330078, 101.3409194946289, 74.03752899169922, 101.83423614501953, 108.31098175048828, 104.10406494140625, 97.47992706298828, 97.76911163330078, 118.44223022460938, 116.25943756103516, 81.77754211425781]
   Hamming distances: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  Tag 0 with ID 8 has cog: 54.2943, 286.518 and has 4 corners: [51.5299, 245.279, 74.2249, 283.907, 56.063, 327.523, 35.3594, 289.362]
+  Tag 1 with ID 9 has cog: 91.2506, 334.585 and has 4 corners: [74.745, 302.952, 106.629, 302.952, 107.699, 368.496, 75.9296, 363.94]
+  Tag 2 with ID 10 has cog: 118.824, 406.399 and has 4 corners: [116.01, 359.003, 145.225, 410.403, 119.874, 453.762, 94.1869, 402.429]
+  Tag 3 with ID 11 has cog: 82.39, 233.993 and has 4 corners: [96.7007, 269.058, 66.1396, 262.882, 67.399, 201.307, 99.3205, 202.725]
+  Tag 4 with ID 12 has cog: 123.084, 274.781 and has 4 corners: [119.996, 226.395, 150.021, 271.028, 124.646, 323.348, 97.6717, 278.352]
+  Tag 5 with ID 13 has cog: 147.621, 347.246 and has 4 corners: [144.569, 296.831, 177.27, 347.959, 149.087, 397.517, 119.556, 346.676]
+  Tag 6 with ID 14 has cog: 104.749, 159.094 and has 4 corners: [101.686, 111.292, 130.168, 148.714, 106.84, 207.385, 80.3039, 168.984]
+  Tag 7 with ID 15 has cog: 143.151, 199.523 and has 4 corners: [139.507, 148.153, 172.79, 190.745, 145.026, 251.276, 115.284, 207.918]
+  Tag 8 with ID 16 has cog: 189, 257.17 and has 4 corners: [157.104, 243.891, 197.746, 201.936, 223.189, 272.666, 177.962, 310.188]
+  Tag 9 with ID 17 has cog: 137.71, 73.5261 and has 4 corners: [133.703, 21.6882, 167.46, 56.248, 139.955, 126.626, 109.722, 89.5427]
+  Tag 10 with ID 18 has cog: 183.489, 119.469 and has 4 corners: [207.731, 68.1279, 208.076, 154.342, 160.17, 166.989, 157.977, 88.4176]
+  Tag 11 with ID 19 has cog: 237.174, 179.625 and has 4 corners: [232.618, 117.444, 280.43, 167.733, 238.449, 242.11, 197.199, 191.212]
 
 Explanation
 ==================================================
@@ -130,13 +141,6 @@ because AprilTag detection operates on grayscale images:
   :start-at: # Read the image
   :end-at: sys.exit(1)
 
-Then we display it:
-
-.. literalinclude:: /examples/detection/tutorial-detection-apriltag.py
-  :language: python
-  :start-at: # Display the image
-  :end-at: Display.getClick(image)
-
 Detect and inspect the AprilTags
 --------------------------------------------------
 
@@ -172,16 +176,21 @@ We can obtain the number of detected tags with
 
 The detector also provides additional information about the detections.
 We retrieve the identifier of each detected tag,
-the decision margin associated with each detection,
-the Hamming distances, and the image coordinates of the detected tag corners.
+the decision margin associated with each detection and the Hamming distances.
 
 .. literalinclude:: /examples/detection/tutorial-detection-apriltag.py
   :language: python
-  :start-at: # Print the tag information
-  :end-at: tag_corners = detector.getTagsCorners()
+  :start-at: # Get and print the tag information
+  :end-at: print("Hamming distances:", detector.getTagsHammingDistance())
 
-These entries follow the order of the
-detected tags IDs.
+We can also retrieve the image coordinates of the detected tag center of gravity (cog) and the 4 corners.
+These entries follow the order of the detected tags IDs.
+
+.. literalinclude:: /examples/detection/tutorial-detection-apriltag.py
+  :language: python
+  :start-at: # Get and print the tag cog and corners
+  :end-at: print(f"Tag {i} with ID {tags_ids[i]} has cog: {detector.getCog(i)} and has 4 corners: {tag_corners[i]}")
+
 
 Display the tag frames
 --------------------------------------------------

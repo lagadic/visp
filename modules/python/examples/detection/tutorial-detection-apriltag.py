@@ -30,13 +30,6 @@ except Exception as exception:
   print(f"Could not read image: {exception}")
   sys.exit(1)
 
-# Display the image
-display = get_display()
-display.init(image, 0, 0, "Original image")
-Display.display(image)
-Display.flush(image)
-Display.getClick(image)
-
 # Detect the tags on the image
 detector = DetectorAprilTag()
 detected, tag_poses = detector.detect(image, TAG_SIZE, camera)
@@ -48,13 +41,16 @@ if not detected:
   print("No AprilTags found.")
   sys.exit(0)
 
-# Print the tag information
-print("Tag IDs:", detector.getTagsId())
+# Get and print the tag information
+tags_ids = detector.getTagsId()
+print("Tag IDs:", tags_ids)
 print("Decision margins:", detector.getTagsDecisionMargin())
 print("Hamming distances:", detector.getTagsHammingDistance())
 
-# Get the tag corners
+# Get and print the tag cog and corners
 tag_corners = detector.getTagsCorners()
+for i in range(number_of_tags):
+  print(f"Tag {i} with ID {tags_ids[i]} has cog: {detector.getCog(i)} and has 4 corners: {tag_corners[i]}")
 
 # Display the image with tags frames and axes
 display = get_display()
