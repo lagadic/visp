@@ -27,3 +27,13 @@ Camera acquisition
     :maxdepth: 1
 
     camera/tutorial-camera-realsense.rst
+
+
+Detection
+-----------------------
+
+.. toctree::
+    :glob:
+    :maxdepth: 1
+
+    detection/tutorial-detection-apriltag.rst

@@ -1,4 +1,4 @@
-.. _tutorial-camera-realsense::
+.. _tutorial-camera-realsense:
 
 ==================================================
 Display a RealSense camera stream
