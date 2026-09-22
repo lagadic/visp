@@ -25,6 +25,18 @@ You should first read the
 :ref:`Getting started with images <tutorial-image-getting-started>`
 tutorial.
 
+You will also need the ``matplotlib`` Python package to run the example.
+
+- Install it with `pip`:
+.. code-block:: bash
+
+  pip install matplotlib
+
+- or with `conda`:
+.. code-block:: bash
+
+  conda install matplotlib
+
 Draw a shape in an image
 ========================
 
