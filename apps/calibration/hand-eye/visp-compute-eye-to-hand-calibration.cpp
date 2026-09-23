@@ -41,46 +41,46 @@
 #include <visp3/core/vpIoTools.h>
 #include <visp3/vision/vpHandEyeCalibration.h>
 
-void usage(const char *argv[], int error)
+void usage(const char *argv[], int error, const std::string &data_path, const std::string &w_P_ee_files,
+           const std::string &c_P_o_files, const std::string &ee_P_o_file, const std::string &w_P_c_file)
 {
   std::cout << "Synopsis" << std::endl
     << "  " << argv[0]
     << " [--data-path <path>]"
-    << " [--rPe <generic name>]"
-    << " [--cPo <generic name>]"
-    << " [--output-ePo <filename>]"
-    << " [--output-rPc <filename>]"
+    << " [--w_P_ee <generic name>]"
+    << " [--c_P_o <generic name>]"
+    << " [--output-ee_P_o <filename>]"
+    << " [--output-w_P_c <filename>]"
     << " [--help, -h]" << std::endl
     << std::endl;
   std::cout << "Description" << std::endl
     << "  Compute eye-to-hand calibration." << std::endl
     << std::endl
     << "  --data-path <path>" << std::endl
-    << "    Path to the folder containing pose_rPe_%d.yaml and pose_cPo_%d.yaml data files." << std::endl
-    << "    Default: \"./\"" << std::endl
+    << "    Path to the folder containing data (poses, camera parameters)." << std::endl
+    << "    Default: \"" << data_path << "\"" << std::endl
     << std::endl
-    << "  --rPe <generic name>" << std::endl
+    << "  --w_P_ee <generic name>" << std::endl
     << "    Generic name of the yaml files containing the pose of the end-effector expressed in the robot" << std::endl
-    << "    base frame and located in the data path folder." << std::endl
-    << "    Default: pose_rPe_%d.yaml" << std::endl
+    << "    world frame and located in the data path folder." << std::endl
+    << "    Default: \"" << w_P_ee_files << "\"" << std::endl
     << std::endl
-    << "  --cPo <generic name>" << std::endl
-    << "    Generic name of the yaml files" << std::endl
-    << "    containing the pose of the calibration grid expressed in the camera frame and located in the" << std::endl
-    << "    data path folder." << std::endl
-    << "    Default: pose_cPo_%d.yaml" << std::endl
+    << "  --c_P_o <generic name>" << std::endl
+    << "    Generic name of the yaml files containing the pose of the chessboard grid " << std::endl
+    << "    expressed in the camera frame and located in the data path folder." << std::endl
+    << "    Default: \"" << c_P_o_files << "\"" << std::endl
     << std::endl
-    << "  --output-ePo <filename>" << std::endl
+    << "  --output-ee_P_o <filename>" << std::endl
     << "    File in yaml format containing the pose of the object" << std::endl
-    << "    in the end-effector frame (eMo). Data are saved as a pose vector with first the 3 translations" << std::endl
+    << "    in the end-effector frame (ee_M_o). Data are saved as a pose vector with first the 3 translations" << std::endl
     << "    along X,Y,Z in [m] and then the 3 rotations in axis-angle representation (thetaU) in [rad]." << std::endl
-    << "    Default: ePo.yaml" << std::endl
+    << "    Default: \"" << ee_P_o_file << "\"" << std::endl
     << std::endl
-    << "  --output-rPc <filename>" << std::endl
+    << "  --output-w_P_c <filename>" << std::endl
     << "    File in yaml format containing the pose of the camera" << std::endl
-    << "    in the robot reference frame (rMc). Data are saved as a pose vector with first the 3 translations" << std::endl
+    << "    in the robot reference frame (w_M_c). Data are saved as a pose vector with first the 3 translations" << std::endl
     << "    along X,Y,Z in [m] and then the 3 rotations in axis-angle representation (thetaU) in [rad]." << std::endl
-    << "    Default: rPc.yaml" << std::endl
+    << "    Default: \"" << w_P_c_file << "\"" << std::endl
     << std::endl
     << "  --help, -h" << std::endl
     << "    Print this helper message." << std::endl
@@ -99,182 +99,182 @@ int main(int argc, const char *argv[])
 #endif
 
   std::string opt_data_path = "./";
-  std::string opt_rPe_files = "pose_rPe_%d.yaml";
-  std::string opt_cPo_files = "pose_cPo_%d.yaml";
-  std::string opt_ePo_file = "ePo.yaml";
-  std::string opt_rPc_file = "rPc.yaml";
+  std::string opt_w_P_ee_files = "pose_w_P_ee_%d.yaml";
+  std::string opt_c_P_o_files = "pose_c_P_o_%d.yaml";
+  std::string opt_ee_P_o_file = "ee_P_o.yaml";
+  std::string opt_w_P_c_file = "w_P_c.yaml";
 
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--data-path" && i + 1 < argc) {
       opt_data_path = std::string(argv[++i]);
     }
-    else if (std::string(argv[i]) == "--rPe" && i + 1 < argc) {
-      opt_rPe_files = std::string(argv[++i]);
+    else if (std::string(argv[i]) == "--w_P_ee" && i + 1 < argc) {
+      opt_w_P_ee_files = std::string(argv[++i]);
     }
-    else if (std::string(argv[i]) == "--cPo" && i + 1 < argc) {
-      opt_cPo_files = std::string(argv[++i]);
+    else if (std::string(argv[i]) == "--c_P_o" && i + 1 < argc) {
+      opt_c_P_o_files = std::string(argv[++i]);
     }
-    else if (std::string(argv[i]) == "--output-ePo" && i + 1 < argc) {
-      opt_ePo_file = std::string(argv[++i]);
+    else if (std::string(argv[i]) == "--output-ee_P_o" && i + 1 < argc) {
+      opt_ee_P_o_file = std::string(argv[++i]);
     }
-    else if (std::string(argv[i]) == "--output-rPc" && i + 1 < argc) {
-      opt_rPc_file = std::string(argv[++i]);
+    else if (std::string(argv[i]) == "--output-w_P_c" && i + 1 < argc) {
+      opt_w_P_c_file = std::string(argv[++i]);
     }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-      usage(argv, 0);
+      usage(argv, 0, opt_data_path, opt_w_P_ee_files, opt_c_P_o_files, opt_ee_P_o_file, opt_w_P_c_file);
       return EXIT_SUCCESS;
     }
     else {
-      usage(argv, i);
+      usage(argv, i, opt_data_path, opt_w_P_ee_files, opt_c_P_o_files, opt_ee_P_o_file, opt_w_P_c_file);
       return EXIT_FAILURE;
     }
   }
 
   // Create output folder if necessary
-  std::string output_parent = vpIoTools::getParent(opt_ePo_file);
+  std::string output_parent = vpIoTools::getParent(opt_ee_P_o_file);
   if (!vpIoTools::checkDirectory(output_parent)) {
     std::cout << "Create output directory: " << output_parent << std::endl;
     vpIoTools::makeDirectory(output_parent);
   }
 
-  std::vector<vpHomogeneousMatrix> oMc;
-  std::vector<vpHomogeneousMatrix> rMe;
-  vpHomogeneousMatrix eMo;
-  vpHomogeneousMatrix rMc;
+  std::vector<vpHomogeneousMatrix> o_M_c;
+  std::vector<vpHomogeneousMatrix> w_M_ee;
+  vpHomogeneousMatrix ee_M_o;
+  vpHomogeneousMatrix w_M_c;
 
-  std::map<long, std::string> map_rPe_files;
-  std::map<long, std::string> map_cPo_files;
+  std::map<long, std::string> map_w_P_ee_files;
+  std::map<long, std::string> map_c_P_o_files;
   std::vector<std::string> files = vpIoTools::getDirFiles(opt_data_path);
   for (unsigned int i = 0; i < files.size(); i++) {
-    long index_rPe = vpIoTools::getIndex(files[i], opt_rPe_files);
-    long index_cPo = vpIoTools::getIndex(files[i], opt_cPo_files);
-    if (index_rPe != -1) {
-      map_rPe_files[index_rPe] = files[i];
+    long index_w_P_ee = vpIoTools::getIndex(files[i], opt_w_P_ee_files);
+    long index_c_P_o = vpIoTools::getIndex(files[i], opt_c_P_o_files);
+    if (index_w_P_ee != -1) {
+      map_w_P_ee_files[index_w_P_ee] = files[i];
     }
-    if (index_cPo != -1) {
-      map_cPo_files[index_cPo] = files[i];
+    if (index_c_P_o != -1) {
+      map_c_P_o_files[index_c_P_o] = files[i];
     }
   }
 
-  if (map_rPe_files.size() == 0) {
-    std::cout << "No " << opt_rPe_files
-      << " files found. Use --data-path <path> or --rPe <generic name> to be able to read your data." << std::endl;
+  if (map_w_P_ee_files.size() == 0) {
+    std::cout << "No " << opt_w_P_ee_files
+      << " files found. Use --data-path <path> or --w_P_ee <generic name> to be able to read your data." << std::endl;
     std::cout << "Use --help option to see full usage..." << std::endl;
     return EXIT_FAILURE;
   }
-  if (map_cPo_files.size() == 0) {
-    std::cout << "No " << opt_cPo_files
-      << " files found. Use --data-path <path> or --cPo <generic name> to be able to read your data." << std::endl;
+  if (map_c_P_o_files.size() == 0) {
+    std::cout << "No " << opt_c_P_o_files
+      << " files found. Use --data-path <path> or --c_P_o <generic name> to be able to read your data." << std::endl;
     std::cout << "Use --help option to see full usage..." << std::endl;
     return EXIT_FAILURE;
   }
 
-  for (std::map<long, std::string>::const_iterator it_rPe = map_rPe_files.begin(); it_rPe != map_rPe_files.end();
-    ++it_rPe) {
-    std::string file_rPe = vpIoTools::createFilePath(opt_data_path, it_rPe->second);
-    std::map<long, std::string>::const_iterator it_cPo = map_cPo_files.find(it_rPe->first);
-    if (it_cPo != map_cPo_files.end()) {
-      vpPoseVector rPe;
-      if (rPe.loadYAML(file_rPe, rPe) == false) {
-        std::cout << "Unable to read data from " << file_rPe << ". Skip data" << std::endl;
+  for (std::map<long, std::string>::const_iterator it_w_P_ee = map_w_P_ee_files.begin(); it_w_P_ee != map_w_P_ee_files.end();
+    ++it_w_P_ee) {
+    std::string file_w_P_ee = vpIoTools::createFilePath(opt_data_path, it_w_P_ee->second);
+    std::map<long, std::string>::const_iterator it_c_P_o = map_c_P_o_files.find(it_w_P_ee->first);
+    if (it_c_P_o != map_c_P_o_files.end()) {
+      vpPoseVector w_P_ee;
+      if (w_P_ee.loadYAML(file_w_P_ee, w_P_ee) == false) {
+        std::cout << "Unable to read data from " << file_w_P_ee << ". Skip data" << std::endl;
         continue;
       }
 
-      vpPoseVector cPo;
-      std::string file_cPo = vpIoTools::createFilePath(opt_data_path, it_cPo->second);
-      if (cPo.loadYAML(file_cPo, cPo) == false) {
-        std::cout << "Unable to read data from " << file_cPo << ". Skip data" << std::endl;
+      vpPoseVector c_P_o;
+      std::string file_c_P_o = vpIoTools::createFilePath(opt_data_path, it_c_P_o->second);
+      if (c_P_o.loadYAML(file_c_P_o, c_P_o) == false) {
+        std::cout << "Unable to read data from " << file_c_P_o << ". Skip data" << std::endl;
         continue;
       }
-      std::cout << "Use data from " << file_rPe << " and from " << file_cPo << std::endl;
-      rMe.push_back(vpHomogeneousMatrix(rPe));
-      vpHomogeneousMatrix cMo, cMo_inv;
-      cMo.buildFrom(cPo);
-      cMo_inv = cMo.inverse();
-      vpPoseVector oPc(cMo_inv);
-      oMc.push_back(vpHomogeneousMatrix(oPc));
+      std::cout << "Use data from " << file_w_P_ee << " and from " << file_c_P_o << std::endl;
+      w_M_ee.push_back(vpHomogeneousMatrix(w_P_ee));
+      vpHomogeneousMatrix c_M_o, c_M_o_inv;
+      c_M_o.buildFrom(c_P_o);
+      c_M_o_inv = c_M_o.inverse();
+      vpPoseVector o_P_c(c_M_o_inv);
+      o_M_c.push_back(vpHomogeneousMatrix(o_P_c));
     }
   }
 
-  if (rMe.size() < 3) {
+  if (w_M_ee.size() < 3) {
     std::cout << "Not enough data pairs found." << std::endl;
     return EXIT_FAILURE;
   }
 
-  int ret = vpHandEyeCalibration::calibrate(oMc, rMe, eMo, rMc);
+  int ret = vpHandEyeCalibration::calibrate(o_M_c, w_M_ee, ee_M_o, w_M_c);
 
   if (ret == 0) {
     std::cout << std::endl << "Eye-to-hand calibration succeed" << std::endl;
-    std::cout << std::endl << "Estimated hand-object (eMo) transformation:" << std::endl;
+    std::cout << std::endl << "Estimated hand-object (ee_M_o) transformation:" << std::endl;
     std::cout << "-------------------------------------------" << std::endl;
-    //std::cout << eMo << std::endl;
-    vpMatrix(eMo).print(std::cout, 15, "eMo");
-    std::cout << "- Corresponding pose vector [tx ty tz tux tuy tuz] in [m] and [rad]: " << vpPoseVector(eMo).t() << std::endl;
+    //std::cout << ee_M_o << std::endl;
+    vpMatrix(ee_M_o).print(std::cout, 15, "ee_M_o");
+    std::cout << "- Corresponding pose vector [tx ty tz tux tuy tuz] in [m] and [rad]: " << vpPoseVector(ee_M_o).t() << std::endl;
 
-    vpThetaUVector ero(eMo.getRotationMatrix());
-    std::cout << std::endl << "- Translation [m]: " << eMo[0][3] << " " << eMo[1][3] << " " << eMo[2][3] << std::endl;
+    vpThetaUVector ero(ee_M_o.getRotationMatrix());
+    std::cout << std::endl << "- Translation [m]: " << ee_M_o[0][3] << " " << ee_M_o[1][3] << " " << ee_M_o[2][3] << std::endl;
     std::cout << "- Rotation (theta-u representation) [rad]: " << ero.t() << std::endl;
     std::cout << "- Rotation (theta-u representation) [deg]: " << vpMath::deg(ero[0]) << " " << vpMath::deg(ero[1])
       << " " << vpMath::deg(ero[2]) << std::endl;
-    vpQuaternionVector quaternion(eMo.getRotationMatrix());
+    vpQuaternionVector quaternion(ee_M_o.getRotationMatrix());
     std::cout << "- Rotation (quaternion representation) [rad]: " << quaternion.t() << std::endl;
-    vpRxyzVector rxyz(eMo.getRotationMatrix());
+    vpRxyzVector rxyz(ee_M_o.getRotationMatrix());
     std::cout << "- Rotation (r-x-y-z representation) [rad]: " << rxyz.t() << std::endl;
     std::cout << "- Rotation (r-x-y-z representation) [deg]: " << vpMath::deg(rxyz).t() << std::endl;
 
-    std::cout << std::endl << "Estimated robot reference to camera frames (rMc) transformation:" << std::endl;
+    std::cout << std::endl << "Estimated robot reference to camera frames (w_M_c) transformation:" << std::endl;
     std::cout << "----------------------------------------------------------------" << std::endl;
-    //std::cout << rMc << std::endl;
-    vpMatrix(rMc).print(std::cout, 15, "rMc");
-    std::cout << "- Corresponding pose vector [tx ty tz tux tuy tuz] in [m] and [rad]: " << vpPoseVector(rMc).t() << std::endl;
+    //std::cout << w_M_c << std::endl;
+    vpMatrix(w_M_c).print(std::cout, 15, "w_M_c");
+    std::cout << "- Corresponding pose vector [tx ty tz tux tuy tuz] in [m] and [rad]: " << vpPoseVector(w_M_c).t() << std::endl;
 
-    vpThetaUVector wrc(rMc.getRotationMatrix());
-    std::cout << std::endl << "- Translation [m]: " << rMc[0][3] << " " << rMc[1][3] << " " << rMc[2][3] << std::endl;
+    vpThetaUVector wrc(w_M_c.getRotationMatrix());
+    std::cout << std::endl << "- Translation [m]: " << w_M_c[0][3] << " " << w_M_c[1][3] << " " << w_M_c[2][3] << std::endl;
     std::cout << "- Rotation (theta-u representation) [rad]: " << wrc.t() << std::endl;
     std::cout << "- Rotation (theta-u representation) [deg]: " << vpMath::deg(wrc[0]) << " " << vpMath::deg(wrc[1])
       << " " << vpMath::deg(wrc[2]) << std::endl;
-    vpQuaternionVector quaternion2(rMc.getRotationMatrix());
+    vpQuaternionVector quaternion2(w_M_c.getRotationMatrix());
     std::cout << "- Rotation (quaternion representation) [rad]: " << quaternion2.t() << std::endl;
-    vpRxyzVector rxyz2(rMc.getRotationMatrix());
+    vpRxyzVector rxyz2(w_M_c.getRotationMatrix());
     std::cout << "- Rotation (r-x-y-z representation) [rad]: " << rxyz2.t() << std::endl;
     std::cout << "- Rotation (r-x-y-z representation) [deg]: " << vpMath::deg(rxyz).t() << std::endl;
 
     {
-      // save eMo
-      std::string name_we = vpIoTools::createFilePath(vpIoTools::getParent(opt_ePo_file), vpIoTools::getNameWE(opt_ePo_file)) + ".txt";
-      std::cout << std::endl << "Save transformation matrix eMo as an homogeneous matrix in: " << name_we << std::endl;
+      // save ee_M_o
+      std::string name_we = vpIoTools::createFilePath(vpIoTools::getParent(opt_ee_P_o_file), vpIoTools::getNameWE(opt_ee_P_o_file)) + ".txt";
+      std::cout << std::endl << "Save transformation matrix ee_M_o as an homogeneous matrix in: " << name_we << std::endl;
 
 #if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
-      std::ofstream file_eMo(name_we);
+      std::ofstream file_ee_M_o(name_we);
 #else
-      std::ofstream file_eMo(name_we.c_str());
+      std::ofstream file_ee_M_o(name_we.c_str());
 #endif
 
-      eMo.save(file_eMo);
+      ee_M_o.save(file_ee_M_o);
 
-      vpPoseVector pose_vec(eMo);
-      std::string output_filename = vpIoTools::createFilePath(vpIoTools::getParent(opt_ePo_file), vpIoTools::getName(opt_ePo_file));
-      std::cout << "Save transformation matrix eMo as a vpPoseVector in       : " << output_filename << std::endl;
-      pose_vec.saveYAML(output_filename, pose_vec, "Robot end-effector to object frames transformation (eMo)");
+      vpPoseVector pose_vec(ee_M_o);
+      std::string output_filename = vpIoTools::createFilePath(vpIoTools::getParent(opt_ee_P_o_file), vpIoTools::getName(opt_ee_P_o_file));
+      std::cout << "Save transformation matrix ee_M_o as a vpPoseVector in       : " << output_filename << std::endl;
+      pose_vec.saveYAML(output_filename, pose_vec, "Robot end-effector to object frames transformation (ee_M_o)");
     }
 
     {
-      // save rMc
-      std::string name_we = vpIoTools::createFilePath(vpIoTools::getParent(opt_rPc_file), vpIoTools::getNameWE(opt_rPc_file)) + ".txt";
-      std::cout << std::endl << "Save transformation matrix rMc as an homogeneous matrix in: " << name_we << std::endl;
+      // save w_M_c
+      std::string name_we = vpIoTools::createFilePath(vpIoTools::getParent(opt_w_P_c_file), vpIoTools::getNameWE(opt_w_P_c_file)) + ".txt";
+      std::cout << std::endl << "Save transformation matrix w_M_c as an homogeneous matrix in: " << name_we << std::endl;
 
 #if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
-      std::ofstream file_rMc(name_we);
+      std::ofstream file_w_M_c(name_we);
 #else
-      std::ofstream file_rMc(name_we.c_str());
+      std::ofstream file_w_M_c(name_we.c_str());
 #endif
 
-      rMc.save(file_rMc);
+      w_M_c.save(file_w_M_c);
 
-      vpPoseVector pose_vec(rMc);
-      std::string output_filename = vpIoTools::createFilePath(vpIoTools::getParent(opt_rPc_file), vpIoTools::getName(opt_rPc_file));
-      std::cout << "Save transformation matrix rMc as a vpPoseVector in       : " << output_filename << std::endl;
-      pose_vec.saveYAML(output_filename, pose_vec, "Robot reference to camera frames transformation (rMc)");
+      vpPoseVector pose_vec(w_M_c);
+      std::string output_filename = vpIoTools::createFilePath(vpIoTools::getParent(opt_w_P_c_file), vpIoTools::getName(opt_w_P_c_file));
+      std::cout << "Save transformation matrix w_M_c as a vpPoseVector in       : " << output_filename << std::endl;
+      pose_vec.saveYAML(output_filename, pose_vec, "Robot reference to camera frames transformation (w_M_c)");
     }
   }
   else {

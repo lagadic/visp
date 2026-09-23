@@ -90,25 +90,25 @@ BEGIN_VISP_NAMESPACE
     vpThetaUVector P(R);
     // theta = Riemannian distance d(Rm,Ri)
     double theta = sqrt(P.sumSquare());
-    std::cout << "Distance theta between rMo/rMc(" << i << ") and mean (deg) = " << vpMath::deg(theta) << std::endl;
+    std::cout << "Distance theta between w_M_o/w_M_c(" << i << ") and mean (deg) = " << vpMath::deg(theta) << std::endl;
     // Euclidean distance d(Rm,Ri) not used
     // theta = 2.0*sqrt(2.0)*sin(theta/2.0);
     resRot += theta * theta;
   }
   resRot = sqrt(resRot / nbPose);
-  std::cout << "Mean residual rMo/rMc(" << nbPose << ") - rotation (deg) = " << vpMath::deg(resRot) << std::endl;
+  std::cout << "Mean residual w_M_o/w_M_c(" << nbPose << ") - rotation (deg) = " << vpMath::deg(resRot) << std::endl;
   // standard deviation, translational part
   double resTrans = 0.0;
   for (unsigned int i = 0; i < nbPose; ++i) {
     vpColVector errTrans = vpColVector(rTo[i] - meanTrans);
     resTrans += errTrans.sumSquare();
-    std::cout << "Distance d between rMo/rMc(" << i << ") and mean (m) = " << sqrt(errTrans.sumSquare()) << std::endl;
+    std::cout << "Distance d between w_M_o/w_M_c(" << i << ") and mean (m) = " << sqrt(errTrans.sumSquare()) << std::endl;
   }
   resTrans = sqrt(resTrans / nbPose);
-  std::cout << "Mean residual rMo/rMc(" << nbPose << ") - translation (m) = " << resTrans << std::endl;
+  std::cout << "Mean residual w_M_o/w_M_c(" << nbPose << ") - translation (m) = " << resTrans << std::endl;
   double resPos = (resRot * resRot + resTrans * resTrans) * nbPose;
   resPos = sqrt(resPos / (2 * nbPose));
-  std::cout << "Mean residual rMo/rMc(" << nbPose << ") - global = " << resPos << std::endl;
+  std::cout << "Mean residual w_M_o/w_M_c(" << nbPose << ") - global = " << resPos << std::endl;
 }
 
 /*!

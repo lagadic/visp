@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2026 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -45,12 +45,16 @@ set(apps_cpp
   visp-compute-eye-to-hand-calibration.cpp
 )
 
-if(VISP_HAVE_FRANKA)
+if(VISP_HAVE_REALSENSE2 AND VISP_HAVE_FRANKA)
   list(APPEND apps_cpp visp-acquire-franka-calib-data.cpp)
 endif()
 
-if(VISP_HAVE_UR_RTDE)
+if(VISP_HAVE_REALSENSE2 AND VISP_HAVE_UR_RTDE)
   list(APPEND apps_cpp visp-acquire-universal-robots-calib-data.cpp)
+endif()
+
+if(VISP_HAVE_REALSENSE2)
+  list(APPEND apps_cpp visp-acquire-mocap-calib-data.cpp)
 endif()
 
 foreach(cpp ${apps_cpp})
