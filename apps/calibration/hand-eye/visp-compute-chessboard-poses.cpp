@@ -80,7 +80,9 @@ void calcChessboardCorners(int width, int height, double squareSize, std::vector
   }
 }
 
-void usage(const char **argv, int error)
+void usage(const char **argv, int error, int chessboard_width, int chessboard_height,
+           double chessboard_square_size, const std::string &input_img_files, const std::string &intrinsic_file,
+           const std::string &camera_name, const std::string &output_pose_files)
 {
   std::cout << "Synopsis" << std::endl
     << "  " << argv[0] << " [-w <width>] [-h <height>]"
@@ -96,32 +98,32 @@ void usage(const char **argv, int error)
     << std::endl
     << "  -w <width>" << std::endl
     << "    Chessboard width." << std::endl
-    << "    Default: 9" << std::endl
+    << "    Default: " << chessboard_width << std::endl
     << std::endl
     << "  -h <height>" << std::endl
     << "    Chessboard height." << std::endl
-    << "    Default: 6" << std::endl
+    << "    Default: " << chessboard_height << std::endl
     << std::endl
     << "  --square-size <size>" << std::endl
     << "    Chessboard square size in [m]." << std::endl
-    << "    Default: 0.03" << std::endl
+    << "    Default: " << chessboard_square_size << std::endl
     << std::endl
     << "  --input <images filename>" << std::endl
     << "    Generic name of the images to process." << std::endl
     << "    Default: empty" << std::endl
-    << "    Example: \"image-%d.jpg\"" << std::endl
+    << "    Example: \"" << input_img_files << "\"" << std::endl
     << std::endl
     << "  --intrinsic <xml file>" << std::endl
     << "    XML file that contains camera intrinsic parameters. " << std::endl
-    << "    Default: \"camera.xml\"" << std::endl
+    << "    Default: \"" << intrinsic_file << "\"" << std::endl
     << std::endl
     << "  --camera-name <name>" << std::endl
     << "    Camera name in the XML file that contains camera intrinsic parameters." << std::endl
-    << "    Default: \"Camera\"" << std::endl
+    << "    Default: \"" << camera_name << "\"" << std::endl
     << std::endl
     << "  --output <poses filename>" << std::endl
     << "    Generic name of the yaml files that contains the resulting tag poses." << std::endl
-    << "    Default: \"pose_cPo_%d.yaml\"" << std::endl
+    << "    Default: \"" << output_pose_files << "\"" << std::endl
     << std::endl
 #if defined(VISP_HAVE_MODULE_GUI)
     << "  --no-interactive" << std::endl
@@ -184,11 +186,13 @@ int main(int argc, const char **argv)
     }
 #endif
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-      usage(argv, 0);
+      usage(argv, 0, opt_chessboard_width, opt_chessboard_height, opt_chessboard_square_size, opt_input_img_files,
+            opt_intrinsic_file, opt_camera_name, opt_output_pose_files);
       return EXIT_SUCCESS;
     }
     else {
-      usage(argv, i);
+      usage(argv, i, opt_chessboard_width, opt_chessboard_height, opt_chessboard_square_size, opt_input_img_files,
+            opt_intrinsic_file, opt_camera_name, opt_output_pose_files);
       return EXIT_FAILURE;
     }
   }
@@ -325,7 +329,8 @@ int main(int argc, const char **argv)
 
       if (found) {
         vpPoseVector pose_vec(cMo);
-        std::string  filename = vpIoTools::formatString(opt_output_pose_files, reader.getFrameIndex());
+        std::string filename = vpIoTools::formatString(opt_output_pose_files, reader.getFrameIndex());
+        std::cout << "Save " << filename << std::endl;
         pose_vec.saveYAML(filename, pose_vec);
       }
 

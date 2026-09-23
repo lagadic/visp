@@ -19,7 +19,7 @@ Let us note:
   end-effector frames transformation that allows to transform the velocity from point e in end-effector frame to
   point c in camera frame
 - \f$ {^c}{\bf V}_f \f$ the 6-by-6 velocity twist matrix corresponding to the \f$ {^c}{\bf M}_f \f$ camera to
-  robot reference frames transformation that allows to transform the velocity from point f in robot reference frame to
+  robot reference frames transformation that allows to transform the velocity from point f in robot world frame to
   point c in camera frame
 - \f$ {^f}{\bf V}_e \f$ the 6-by-6 velocity twist matrix corresponding to the \f$ {^f}{\bf M}_e \f$ robot reference to
   robot end-effector frames transformation that allows to transform the velocity from point e in robot end-effector
@@ -135,7 +135,7 @@ $ ../../../apps/calibration/hand-eye/visp-acquire-franka-calib-data --ip 192.168
   - `franka_camera.xml`: XML file that contains the intrinsic camera parameters extracted from camera firmware
   - couples of `franka_image-<number>.png` + `franka_pose_rPe-<number>.txt` with number
     starting from 1. `franka_pose_rPe-<number>.yaml` is the pose of the end-effector expressed in the robot reference
-    frame \f$^r{\bf M}_e\f$, while `franka_image-<number>.png` is the image captured at the corresponding robot position.
+    frame \f$^{\mathrm{w}}\mathbf{M}_{\mathrm{ee}}\f$, while `franka_image-<number>.png` is the image captured at the corresponding robot position.
 - Given the camera intrinsic parameters estimated previously and the set of images, compute now the tag poses running
   (adapt the tag size parameter to your use case):
 \code{.sh}
@@ -144,15 +144,15 @@ $ ../../../apps/calibration/hand-eye/visp-compute-apriltag-poses \
     --tag-size  0.048                   \
     --input     franka_image-%d.png     \
     --intrinsic franka_camera_visp.xml  \
-    --output    franka_pose_cPo_%d.yaml
+    --output    franka_pose_c_P_o-%d.yaml
 \endcode
 - Finally estimate the extrinsic parameters, running:
 \code{.sh}
 $ cd ${VISP_WS}/visp-build/example/servo-franka/data-calib/
 $ ../../../apps/calibration/hand-eye/visp-compute-eye-to-hand-calibration \
     --data-path  .                       \
-    --rPe        franka_pose_rPe_%d.yaml \
-    --cPo        franka_pose_cPo_%d.yaml \
+    --w_P_ee        franka_pose_w_P_ee-%d.yaml \
+    --c_P_o        franka_pose_c_P_o-%d.yaml \
     --output-rPc franka_rPc.yaml         \
     --output-ePo franka_ePo.yaml
 \endcode

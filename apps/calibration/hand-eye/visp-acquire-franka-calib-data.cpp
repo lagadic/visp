@@ -147,7 +147,7 @@ int main(int argc, const char **argv)
 
     cam = g.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithDistortion);
     vpXmlParserCamera xml_camera;
-    xml_camera.save(cam, opt_output_folder + "/franka_camera.xml", "Camera", width, height);
+    xml_camera.save(cam, vpIoTools::createFilePath(opt_output_folder, "/franka-camera.xml"), "Camera", width, height);
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     std::shared_ptr<vpDisplay> pdisp = vpDisplayFactory::createDisplay(I, 10, 10, "Color image");
@@ -169,16 +169,16 @@ int main(int argc, const char **argv)
         if (button == vpMouseButton::button1) {
           cpt++;
 
-          vpPoseVector rPe;
-          robot.getPosition(vpRobot::END_EFFECTOR_FRAME, rPe);
+          vpPoseVector w_P_ee;
+          robot.getPosition(vpRobot::END_EFFECTOR_FRAME, w_P_ee);
 
           std::stringstream ss_img, ss_pos;
 
-          ss_img << opt_output_folder + "/franka_image-" << cpt << ".png";
-          ss_pos << opt_output_folder + "/franka_pose_rPe_" << cpt << ".yaml";
+          ss_img << vpIoTools::createFilePath(opt_output_folder, "/franka_image-") << cpt << ".png";
+          ss_pos << vpIoTools::createFilePath(opt_output_folder, "/franka_w_P_ee-") << cpt << ".yaml";
           std::cout << "Save: " << ss_img.str() << " and " << ss_pos.str() << std::endl;
           vpImageIo::write(I, ss_img.str());
-          rPe.saveYAML(ss_pos.str(), rPe);
+          w_P_ee.saveYAML(ss_pos.str(), w_P_ee);
         }
         else if (button == vpMouseButton::button3) {
           end = true;

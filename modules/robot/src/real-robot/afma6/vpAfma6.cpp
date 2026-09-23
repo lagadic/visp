@@ -164,7 +164,7 @@ void vpAfma6::init(void)
   kinematics and to the end-effector to camera transformation.
 
   \param camera_extrinsic_parameters : Filename containing the constant
-  parameters of the robot kinematics \f$^e{\bf M}_c \f$ transformation.
+  parameters of the robot kinematics \f$^{\mathrm{ee}}\mathbf{M}_{\mathrm{c}} \f$ transformation.
 
   \param camera_intrinsic_parameters : Filename containing the camera
   extrinsic parameters.

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,6 +59,7 @@ using namespace VISP_NAMESPACE_NAME;
 
 namespace
 {
+#if defined(VISP_HAVE_VICON) || defined(VISP_HAVE_QUALISYS)
 // Shared state between the mocap polling thread and the main thread
 std::mutex g_mocap_mutex;
 vpHomogeneousMatrix g_mocap_pose;
@@ -87,6 +88,7 @@ void mocapThreadFunction(vpMocap *mocap, const std::string &object_name)
     }
   }
 }
+#endif
 
 void usage(const char **argv, int error,
            const std::string &vicon_host, const std::string &qualisys_host, int img_width, int img_height,
@@ -148,8 +150,10 @@ int main(int argc, const char **argv)
     std::string opt_vicon_host = "10.135.2.39";
     std::string opt_qualisys_host = "10.135.2.40";
     std::string opt_body_name = "mkQuadro5";
-    std::string opt_output_folder = "./data/";
+    std::string opt_output_folder = "./data-mocap/";
+#if defined(VISP_HAVE_QUALISYS)
     bool opt_qualisys_big_endian = false;
+#endif
     int opt_img_width = 640;
     int opt_img_height = 480;
 
@@ -171,9 +175,11 @@ int main(int argc, const char **argv)
         opt_qualisys_host = std::string(argv[++i]);
         opt_with_qualisys = true;
       }
+#if defined(VISP_HAVE_QUALISYS)
       else if (std::string(argv[i]) == "--qualisys-big-endian") {
         opt_qualisys_big_endian = true;
       }
+#endif
       else if ((std::string(argv[i]) == "--body-name") && (i + 1 < argc)) {
         opt_body_name = std::string(argv[++i]);
       }
@@ -226,8 +232,11 @@ int main(int argc, const char **argv)
     }
 
     vpImage<unsigned char> I;
+
+#if defined(VISP_HAVE_VICON) || defined(VISP_HAVE_QUALISYS)
     vpMocap *mocap = nullptr;
     std::thread mocap_thread;
+#endif
 
     vpRealSense2 g;
     rs2::config config;
@@ -246,7 +255,7 @@ int main(int argc, const char **argv)
     vpCameraParameters cam;
     cam = g.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithDistortion);
     vpXmlParserCamera xml_camera;
-    xml_camera.save(cam, vpIoTools::createFilePath(opt_output_folder, "/camera.xml"), "Camera", width, height);
+    xml_camera.save(cam, vpIoTools::createFilePath(opt_output_folder, "/mocap_camera.xml"), "Camera", width, height);
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     std::shared_ptr<vpDisplay> pdisp = vpDisplayFactory::createDisplay(I, 10, 10, "Color image");
@@ -291,16 +300,16 @@ int main(int argc, const char **argv)
     }
 
     while (!end) {
-      vpHomogeneousMatrix fMe;
-      bool fMe_valid = false;
+      vpHomogeneousMatrix w_M_body;
+      bool w_M_body_valid = false;
       g.acquire(I);
 
       if (!opt_without_mocap) {
         if (opt_with_vicon || opt_with_qualisys) {
 #if defined(VISP_HAVE_VICON)|| defined(VISP_HAVE_QUALISYS)
           std::lock_guard<std::mutex> lock(g_mocap_mutex);
-          fMe = g_mocap_pose;
-          fMe_valid = g_mocap_pose_valid;
+          w_M_body = g_mocap_pose;
+          w_M_body_valid = g_mocap_pose_valid;
 #endif
         }
       }
@@ -317,9 +326,9 @@ int main(int argc, const char **argv)
           // Save pose from Vicon or Qualisys
           if (!opt_without_mocap) {
             if (opt_with_vicon || opt_with_qualisys) {
-              if (fMe_valid) {
-                ss_pose << vpIoTools::createFilePath(opt_output_folder, "/mocap_pose_world_P_body-") << cpt << ".yaml";
-                vpPoseVector::saveYAML(ss_pose.str(), vpPoseVector(fMe));
+              if (w_M_body_valid) {
+                ss_pose << vpIoTools::createFilePath(opt_output_folder, "/mocap_w_P_ee-") << cpt << ".yaml";
+                vpPoseVector::saveYAML(ss_pose.str(), vpPoseVector(w_M_body));
               }
               else {
                 std::cout << "No valid pose available yet, skipping pose save" << std::endl;

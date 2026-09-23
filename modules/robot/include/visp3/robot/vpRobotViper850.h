@@ -109,7 +109,7 @@ BEGIN_VISP_NAMESPACE
     two tool changers, with \f$^f{\bf M}_e = 0{\bf M}_7 \f$
 
   - \f$ {\cal F}_c \f$: the camera or tool frame, with \f$^f{\bf M}_c = ^f{\bf
-    M}_e \; ^e{\bf M}_c \f$ where \f$ ^e{\bf M}_c \f$ is the result of
+    M}_e \; ^{\mathrm{ee}}\mathbf{M}_{\mathrm{c}} \f$ where \f$ ^{\mathrm{ee}}\mathbf{M}_{\mathrm{c}} \f$ is the result of
     a calibration stage. We can also consider a custom tool
     vpViper850::TOOL_CUSTOM and set this during robot initialisation or using
     set_eMc().
@@ -151,9 +151,9 @@ BEGIN_VISP_NAMESPACE
   }
   \endcode
 
-  This initialize the robot kinematics with the \f$^e{\bf M}_c\f$
+  This initialize the robot kinematics with the \f$^{\mathrm{ee}}\mathbf{M}_{\mathrm{c}}\f$
   extrinsic camera parameters obtained with a projection model without
-  distortion. To set the robot kinematics with the \f$^e{\bf M}_c\f$
+  distortion. To set the robot kinematics with the \f$^{\mathrm{ee}}\mathbf{M}_{\mathrm{c}}\f$
   transformation obtained with a camera perspective model including
   distortion you need to initialize the robot with:
 

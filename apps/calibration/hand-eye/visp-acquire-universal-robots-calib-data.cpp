@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -144,7 +144,8 @@ int main(int argc, const char **argv)
     vpCameraParameters cam;
     vpXmlParserCamera xml_camera;
     cam = g.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithDistortion);
-    xml_camera.save(cam, opt_output_folder + "/ur_camera.xml", "Camera", width, height);
+    xml_camera.save(cam, vpIoTools::createFilePath(opt_output_folder, "/camera.xml"), "Camera", width, height);
+
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     std::shared_ptr<vpDisplay> pdisp = vpDisplayFactory::createDisplay(I, 10, 10, "Color image");
@@ -166,19 +167,19 @@ int main(int argc, const char **argv)
         if (button == vpMouseButton::button1) {
           cpt++;
 
-          vpPoseVector rPe;
+          vpPoseVector w_P_ee;
           std::cout << "Connect to robot to get its position..." << std::endl;
           robot.connect(opt_robot_ip);
-          robot.getPosition(vpRobot::END_EFFECTOR_FRAME, rPe);
+          robot.getPosition(vpRobot::END_EFFECTOR_FRAME, w_P_ee);
           robot.disconnect();
 
           std::stringstream ss_img, ss_pos;
+          ss_img << vpIoTools::createFilePath(opt_output_folder, "/chessboard_image-") << cpt << ".png";
+          ss_pos << vpIoTools::createFilePath(opt_output_folder, "/ur_w_P_ee-") << cpt << ".yaml";
 
-          ss_img << opt_output_folder + "/ur_image-" << cpt << ".png";
-          ss_pos << opt_output_folder + "/ur_pose_rPe_" << cpt << ".yaml";
           std::cout << "Save: " << ss_img.str() << " and " << ss_pos.str() << std::endl;
           vpImageIo::write(I, ss_img.str());
-          rPe.saveYAML(ss_pos.str(), rPe);
+          w_P_ee.saveYAML(ss_pos.str(), w_P_ee);
         }
         else if (button == vpMouseButton::button3) {
           end = true;

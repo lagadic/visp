@@ -325,12 +325,12 @@ servoFrankaPBVS.cpp.
 
 - Attach your Realsense camera to the robot end-effector
 - Put an Apriltag in the camera field of view
-- If not already done, follow \ref tutorial-calibration-extrinsic-eye-in-hand to estimate \f$^e{\bf M}_c\f$ the
+- If not already done, follow \ref tutorial-calibration-extrinsic-eye-in-hand to estimate \f$^{\mathrm{ee}}\mathbf{M}_{\mathrm{c}}\f$ the
   homogeneous transformation between robot end-effector and camera frame. We suppose here that the file is located
   in `apps/calibration/intrinsic/eMc.yaml`.
 
 Now enter in `example/servo-franka folder` and run `servoFrankaPBVS` binary using `--eMc` to locate the file containing
-the \f$^e{\bf M}_c\f$ transformation. Other options are available. Using `--help` show them:
+the \f$^{\mathrm{ee}}\mathbf{M}_{\mathrm{c}}\f$ transformation. Other options are available. Using `--help` show them:
 
 \code{.sh}
 $ cd example/servo-franka
