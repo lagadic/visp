@@ -1013,6 +1013,11 @@ if(DOXYGEN_FOUND)
     set(DOXYGEN_HTML_EXTRA_STYLESHEET "${DOXYGEN_AWESOME_DIR}/doxygen-awesome.css ${VISP_SOURCE_DIR}/doc/doxygen-awesome.custom.css")
   endif()
 
+  set(DOXY_HEADER_RAW   ${CMAKE_BINARY_DIR}/doxygen_header_raw.html)
+  set(DOXY_FOOTER_RAW   ${CMAKE_BINARY_DIR}/doxygen_footer_raw.html)
+  set(DOXY_CSS_RAW      ${CMAKE_BINARY_DIR}/doxygen_stylesheet_raw.css)
+  set(DOXY_HEADER_FINAL ${CMAKE_BINARY_DIR}/doxygen_header.html)
+
   # HTML version of the doc
   set(DOXYGEN_GENERATE_HTML "YES")
   set(DOXYGEN_GENERATE_XML "NO")
