@@ -418,11 +418,11 @@ between the farthest and closest object points in the camera).
 
 | Field | Type | Description
 | :---- | :---- | :----
-| type | string | Either "relative" or "absolute". If relative, specified as a fraction of the difference between the clipping planes. If absolute, specified in meters.
-| value | double | Value of the threshold.
+| type | string | Either "relative" or "absolute".
+| value | double | Value of the threshold. If "type" is "relative", specified as a fraction of the difference between the clipping planes. If "type" is "absolute", specified in meters.
 
 The thresholding parameters are used to determine whether a point belongs to the silhouette, but processing the whole
-silhouette may too cumbersome as there can thousands of contour pixels.
+silhouette may be too cumbersome as there can thousands of contour pixels.
 Thus, we can sample the silhouette to obtain a subset of points. Sampling as a strong impact on the runtime performance
 of the tracker.
 
