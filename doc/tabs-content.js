@@ -12,6 +12,6 @@ function openTab(evt, tabName) {
       tablinks[i].className = tablinks[i].className.replace(" active", "");
     }
 
-    container.querySelector('#' + tabName).style.display = "block";
+    container.querySelector('[data-tab="' + tabName + '"]').style.display = "block";
     evt.currentTarget.className += " active";
   }

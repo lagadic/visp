@@ -59,7 +59,7 @@ if(DOXYGEN_FOUND)
   file(READ ${DOXY_HEADER_RAW} DOXY_HEADER_CONTENT)
   string(REPLACE
     "</head>"
-    "<script type=\"text/javascript\" src=\"$relpath^tabs.js\"></script>\n</head>"
+    "<script type=\"text/javascript\" src=\"$relpath^tabs-content.js\"></script>\n</head>"
     DOXY_HEADER_CONTENT
     "${DOXY_HEADER_CONTENT}"
   )
