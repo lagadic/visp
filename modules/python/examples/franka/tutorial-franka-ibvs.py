@@ -58,8 +58,9 @@ TAG_FAMILY = DetectorAprilTag.TAG_36h11
 TAG_SIZE = 0.053 # in meters
 
 # Set the visual servoing parameters
-DISTANCE_TO_TAG = 0.3 # in meters
-CONVERGENCE_THRESHOLD = 0.00005
+DISTANCE_TO_TAG = 0.2 # in meters
+#CONVERGENCE_THRESHOLD = 0.00005
+CONVERGENCE_THRESHOLD = 0.00001
 
 try:
   ##########
@@ -123,7 +124,7 @@ try:
 
   trajectory = []
   frame_number = 0
-  error = None
+  error = float('inf')
   can_move = False
 
   # Start the time measurement
@@ -175,10 +176,15 @@ try:
       # Compute the error
       error = task.getError().sumSquare()
 
+      # Stop the robot if the threshold is passed
+      if error < CONVERGENCE_THRESHOLD:
+        can_move = False
+        velocity = ColVector(6, 0)
+
       # Save the position center of the tag
       if frame_number % 10 == 0:
         trajectory.append(detector.getCog(0))
-        frame_number += 1
+      frame_number += 1
 
     else :
       velocity = ColVector(6, 0)
@@ -200,9 +206,8 @@ try:
     ServoDisplay.display(task, camera, image, Color.green, Color.red)
 
     # Display the trajectory
-    if can_move:
-      for point in trajectory:
-        Display.displayCross(image, point, 5, Color.blue, 1)
+    for i in range(len(trajectory)-1):
+      Display.displayLine(image, trajectory[i], trajectory[i+1], Color.blue, 2)
 
     # Print status information on the display
     if can_move:
@@ -217,9 +222,7 @@ try:
 
     # Print the robot state and velocity
     Display.displayText(image, 300, 20, "Moving: " + str(can_move), text_color)
-    if error:
-      error = round(error, 5)
-      Display.displayText(image, 320, 20, "Error: " + str(error), text_color)
+    Display.displayText(image, 320, 20, "Error: " + str(round(error, 5)), text_color)
     Display.displayText(image, 340, 20, "Velocity:", text_color)
     for i in range(velocity.size()):
       Display.displayText(image, 360 + 20*i, 20, str(round(velocity[i], 3)), text_color)
