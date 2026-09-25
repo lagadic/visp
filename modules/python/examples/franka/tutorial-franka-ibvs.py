@@ -128,7 +128,6 @@ try:
   task.setLambda(LAMBDA)
 
   trajectory = []
-  frame_number = 0
   error = float('inf')
   can_move = False
   start_time = measureTimeMs()
@@ -163,7 +162,7 @@ try:
     tag_corners = detector.getTagsCorners()
 
     # Check if only one tag is detected
-    if can_move and detector.getNbObjects() == 1:
+    if detector.getNbObjects() == 1:
       # Get the tag position
       tag_position = tag_poses[0]
 
@@ -184,16 +183,14 @@ try:
         can_move = False
         velocity = ColVector(6, 0)
 
-      # Save the position center of the tag
-      if frame_number % 10 == 0:
-        trajectory.append(detector.getCog(0))
-      frame_number += 1
-
     else :
       velocity = ColVector(6, 0)
 
     # Move the robot
-    robot.setVelocity(Robot.CAMERA_FRAME, velocity)
+    if can_move:
+      robot.setVelocity(Robot.CAMERA_FRAME, velocity)
+    else:
+      robot.setVelocity(Robot.CAMERA_FRAME, ColVector(6, 0))
 
     # -----------------------------------------------------------------------------
     # Display camera stream
@@ -209,6 +206,9 @@ try:
     ServoDisplay.display(task, camera, image, Color.green, Color.red)
 
     # Display the trajectory
+    if can_move and detector.getNbObjects() == 1:
+      trajectory.append(detector.getCog(0))
+      
     for i in range(len(trajectory)-1):
       Display.displayLine(image, trajectory[i], trajectory[i+1], Color.blue, 2)
 
