@@ -13,7 +13,7 @@ Goal
 In this tutorial you will learn how to:
 
 - Connect to a Franka robot with :py:class:`~visp.robot.RobotFranka` and :py:class:`~visp.robot.Robot`.
-- Compute a visual servoing movement with :py:class:`~visp.core.Servo`.
+- Compute a visual servoing task with :py:class:`~visp.core.Servo` using a 3D point (X, Y, Z) as visual feature.
 
 Prerequisites
 --------------------------------------------------
@@ -23,21 +23,23 @@ You should first read the following tutorials:
 - :ref:`tutorial-camera-realsense`
 - :ref:`tutorial-detection-apriltag`
 
-
-To run or edit the code presented, you will need the ``numpy`` and ``pyrealsense2`` Python packages,
-and to download the Franka module for ViSP.
+To run or edit the provided code, you will need the ``numpy`` and ``pyrealsense2`` Python packages. You also need
+to install the `libfranka <https://visp-doc.inria.fr/doxygen/visp-daily/supported-material.html#material_robots_franka>`_
+third-party library and rebuild the ViSP Python bindings from source to ensure that the
+:py:class:`~visp.robot.RobotFranka` class is available.
 
 You will also need the following hardware:
 
-- A Franka robot.
-- A RealSense camera mounted on it.
+- A Franka robot (Panda or FR3).
+- A RealSense camera (D435, D455, D405...) mounted on it.
 - An AprilTag (see :ref:`here <tutorial-image-display>` how to generate one)
 
 Visual servoing
 ==================================================
 
-The following :ref:`example <code-franka-ibvs>` detects an AprilTag with the RealSense camera
-and move the Franka robot to place its gravity center at the center of the streamed image, at a specific distance:
+The following :ref:`example <code-franka-ibvs>` detects an AprilTag using the RealSense camera
+and moves the Franka robot to align its center of gravity with the center of the streamed image at a specific
+distance Z:
 
 .. literalinclude:: /examples/franka/tutorial-franka-ibvs.py
   :language: python
@@ -61,35 +63,36 @@ Usage
 
 A window opens and displays the stream of the camera.
 
-At startup, the robot movement is disabled, as shown on the ``Idle state`` picture.
+At startup, the robot movement is disabled, as shown on the ``Idle state`` image.
 You can click the left mouse button to start or stop the visual servoing,
-and click the right mouse button to stop the programm.
+and click the right mouse button to stop the program.
 
-When activated, if one AprilTag is detected, the robot moves to match the center of gravity of the tag with the center of the screen, at a set distance.
-You can see the two centers represented by respectively the green and red crosses on the ``Starting`` image.
+When activated, if one and only one AprilTag is detected, the robot moves to match the center of gravity of the tag
+with the center of the screen, at a set distance.
+In the ``Starting`` image, you can see the two centers represented by respectively the green and red crosses.
 The trajectory of the tag center is shown by the blue trail on the ``Moving state`` image.
 After reaching the desired position within a specified margin, the robot stops, as on the ``Stopping`` image.
 
 .. list-table::
 
   * - **Idle state**
-  
+
       .. image:: images/result-franka-ibvs-idle.png
 
     - **Starting**
-      
+
       .. image:: images/result-franka-ibvs-start.png
 
   * - **Moving State**
-  
+
       .. image:: images/result-franka-ibvs-moving.png
 
     - **Stopping**
-    
+
       .. image:: images/result-franka-ibvs-stop.png
 
 
-The visual servoing error and the robot velocities are shown at all time.
+The visual servoing error and the robot Cartesian velocities are displayed as a green overlay on the image.
 
 Explanation
 ==================================================
@@ -101,9 +104,9 @@ The program performs four main tasks:
 3. It computes the next movement and moves the robot accordingly.
 4. It displays the camera image and relevant information.
 
-We will only describe here how the visual servoing task and Franka robot initialization and movement are effectued.
-The RealSense camera configuration and its stream acquisition,
-as well as the Apriltag detection, are the same as in their dedicated tutorials.
+This section focuses exclusively on initializing and controlling the visual servoing task and the Franka robot.
+The RealSense camera configuration, stream acquisition, and AprilTag detection
+follow the same procedure as described in their dedicated tutorials.
 
 Import the required modules
 --------------------------------------------------
@@ -137,12 +140,17 @@ First, we define the homogeneous transformation between the robot :math:`e` and 
   \mathbf{0}^T & 1
   \end{bmatrix}
 
-The transformation is created from the extrinsic camera parameters:
+The transformation is created from the extrinsic camera parameters that are hard coded:
 
 .. literalinclude:: /examples/franka/tutorial-franka-ibvs.py
   :language: python
   :start-at: # Get the camera extrinsics parameters
   :end-at: extrinsics_matrix = HomogeneousMatrix(extrinsics)
+
+.. Note::
+
+  To estimate the extrinsic camera parameters for your specific camera mount, refer to the
+  `extrinsic camera calibration tutorial <https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-calibration-extrinsic-eye-in-hand.html>`_.
 
 It is then passed to the robot with :meth:`~visp.core.RobotFranka.set_eMc`, along with its IP adress.
 This allows the robot interface to situate the camera in space, and move accordingly towards the desired position:
@@ -171,9 +179,9 @@ It is done by giving the two :py:class:`~visp.visual_features.FeaturePoint3D` to
   :start-at: # Create the visual servoing task
   :end-at: task.setLambda(LAMBDA)
 
-The ``LAMBDA`` parameter is the gain of the movement. It can be fixe or adaptative.
-An adaptive gain starts with a larger value and decreases as the robot approaches the desired position.
-This can improve convergence speed while reducing motion near the target.
+The ``LAMBDA`` parameter is the gain of the movement. It can be constant or adaptative.
+An adaptive gain starts with a smaller value and increases as the robot approaches the desired position.
+This can improve convergence speed.
 
 Visual servoing loop
 --------------------------------------------------
@@ -187,6 +195,9 @@ The control law computes a camera velocity from the visual-feature error:
 
 where :math:`\lambda` is the control gain, :math:`\widehat{\mathbf{L}}_s` is the estimated interaction matrix,
 and :math:`\mathbf{s}` and :math:`\mathbf{s}^{*}` are respectively the current and desired visual features.
+In our case, we set :math:`\mathbf{s}^{*} = (0, 0, Z^*)` where :math:`Z^*` is the desired distance between the camera
+and the tag center of gravity defined in ``DISTANCE_TO_TAG``, and where :math:`\mathbf{s} = (X, Y, Z)` is the current
+3D position of the tag center of gravity in the camera frame.
 
 After detecting the AprilTag, the detector returns its pose within the camera frame.
 The origin of the tag frame is its center, so transforming it gives the 3D position of the tag center:
