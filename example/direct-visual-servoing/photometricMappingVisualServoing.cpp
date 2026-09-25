@@ -522,7 +522,8 @@ int main(int argc, const char **argv)
       for (unsigned int i = 0; i < n; i++) {
         diagHs[i][i] = Hs[i][i];
       }
-      H = ((mu * diagHs) + Hs).inverseByLU();
+      // H = ((mu * diagHs) + Hs).inverseByLU();
+      H = ((mu * diagHs) + Hs).pseudoInverse();
       // Compute the control law
       v = -lambda * H * L.t() * error;
       normError = error.sumSquare();
