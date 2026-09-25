@@ -1,6 +1,7 @@
 import argparse
 import math
 import sys
+import yaml
 import numpy as np
 import pyrealsense2 as rs
 
@@ -24,12 +25,13 @@ from visp.python.display_utils import get_display
 
 parser = argparse.ArgumentParser(description='Python example of eye-in-hand visual servoing using a Franka robot and a Realsense Camera')
 parser.add_argument("--ip", type=str, default="192.168.30.10", dest="robot_ip", help="Franka robot IP address. Default: %(default)s")
-parser.add_argument("--tag-size", type=float, default=0.120, dest="tag_size", help="AprilTag size in meters. Default: %(default)s")
-parser.add_argument("--emc", type=str, default="", dest="emc_file", metavar="FILE", help="File containing the homogeneous transformation matrix between the robot and camera frame.")
+parser.add_argument("--tag-size", type=float, default=0.053, dest="tag_size", help="AprilTag size in meters. Default: %(default)s")
+parser.add_argument("--extrinsics-parameters", type=str, default="", dest="extrinsics_parameters_file", help="YAML file containing the camera extrinsics")
 parser.add_argument("--adaptive-gain", action="store_true", dest="adaptive_gain", help="Enable adaptive gain.")
 parser.add_argument("--convergence-threshold", type=float, default=0.00005, dest="convergence_threshold", help="Convergence threshold of the servoing before stopping. Default: %(default)s")
 parser.add_argument("--no-convergence-threshold", action="store_true", dest="no_convergence_threshold", help="Disable the convergence threshold used to stop visual servoing.")
 parser.add_argument("--distance-to-tag", type=float, default=0.4, dest="distance_to_tag", help="Desired distance to the AprilTag in meters. Default: %(default)s")
+parser.add_argument("--no-trajectory", action="store_true", dest="no_trajectory", help="Disable the display of the trajectory.")
 
 args = parser.parse_args()
 
@@ -44,21 +46,18 @@ CAMERA_FPS = 60
 
 # Set the camera extrinsics parameters (the camera pose relative to the robot)
 extrinsics = PoseVector(0, 0, 0, 0, 0, 0)
-if args.emc_file:
-  with open(args.emc_file, "r") as file:
-    i = 0
+if args.extrinsics_parameters_file:
+  with open(args.extrinsics_parameters_file, "r") as file:
+    data = yaml.safe_load(file)
+    values = data.get("data", [])
 
-    for line in file:
-      line = line.strip()
+    if len(values) != 6:
+      raise ValueError("The YAML file must contain exactly six values under 'data'.")
+      
+    for i, value in enumerate(values):
+      extrinsics[i] = float(value[0])
 
-      if not line or line.startswith("#"):
-        continue
-
-      extrinsics[i] = float(line)
-      i += 1
-
-      if i >= 6:
-        break
+print(extrinsics)
 
 # Set the Franka robot parameters
 FRANKA_IP = args.robot_ip
@@ -139,7 +138,6 @@ try:
   task.setLambda(LAMBDA)
 
   trajectory = []
-  error = float('inf')
   can_move = False
   start_time = measureTimeMs()
 
@@ -173,7 +171,8 @@ try:
     tag_corners = detector.getTagsCorners()
 
     # Check if only one tag is detected
-    if detector.getNbObjects() == 1:
+    nb_tags = detector.getNbObjects()
+    if nb_tags == 1:
       # Get the tag position
       tag_position = tag_poses[0]
 
@@ -214,10 +213,11 @@ try:
     detector.displayTags(image, tag_corners, Color.none, 3)
 
     # Display the servoing
-    ServoDisplay.display(task, camera, image, Color.green, Color.red)
+    if nb_tags == 1:
+      ServoDisplay.display(task, camera, image, Color.green, Color.red)
 
     # Display the trajectory
-    if can_move and detector.getNbObjects() == 1:
+    if can_move and nb_tags == 1 and not args.no_trajectory:
       trajectory.append(detector.getCog(0))
       
     for i in range(len(trajectory)-1):
@@ -236,10 +236,15 @@ try:
 
     # Print the robot state and velocity
     Display.displayText(image, 300, 20, "Moving: " + str(can_move), text_color)
-    Display.displayText(image, 320, 20, "Error: " + str(round(error, 5)), text_color)
-    Display.displayText(image, 340, 20, "Velocity:", text_color)
-    for i in range(velocity.size()):
-      Display.displayText(image, 360 + 20*i, 20, str(round(velocity[i], 3)), text_color)
+    if nb_tags == 1:
+      Display.displayText(image, 320, 20, "Error: " + str(round(error, 5)), text_color)
+      if can_move:
+        Display.displayText(image, 340, 20, "Velocity:", text_color)
+        for i in range(velocity.size()):
+          vel = str(round(velocity[i], 3))
+          if vel[0] != '-':
+            vel = ' ' + vel
+          Display.displayText(image, 360 + 20*i, 20, vel, text_color)
 
     Display.flush(image)
 
