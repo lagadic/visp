@@ -191,7 +191,6 @@ These entries follow the order of the detected tags IDs.
   :start-at: # Get and print the tag cog and corners
   :end-at: print(f"Tag {i} with ID {tags_ids[i]} has cog: {detector.getCog(i)} and has 4 corners: {tag_corners[i]}")
 
-
 Display the tag frames
 --------------------------------------------------
 

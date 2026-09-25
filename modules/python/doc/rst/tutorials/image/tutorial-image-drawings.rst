@@ -22,7 +22,7 @@ Prerequisites
 -------------
 
 You should first read the
-:ref:`Getting started with images <tutorial-image-getting-started>`
+:ref:`tutorial-image-getting-started`
 tutorial.
 
 You will also need the ``matplotlib`` Python package to run the example.
@@ -180,4 +180,4 @@ Next tutorial
 =============
 
 You are now ready to learn how to
-:ref:`Interact with a displayed image <tutorial-image-interactions>`.
+:ref:`tutorial-image-interactions`.
