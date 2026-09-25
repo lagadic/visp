@@ -25,7 +25,7 @@ from visp.python.display_utils import get_display
 parser = argparse.ArgumentParser(description='Python example of eye-in-hand visual servoing using a Franka robot and a Realsense Camera')
 parser.add_argument("--ip", type=str, default="192.168.30.10", dest="robot_ip", help="Franka robot IP address. Default: %(default)s")
 parser.add_argument("--tag-size", type=float, default=0.120, dest="tag_size", help="AprilTag size in meters. Default: %(default)s")
-parser.add_argument("--eMc", type=str, default="", dest="emc_file", metavar="FILE", help="File containing the homogeneous transformation matrix between the robot and camera frame.")
+parser.add_argument("--emc", type=str, default="", dest="emc_file", metavar="FILE", help="File containing the homogeneous transformation matrix between the robot and camera frame.")
 parser.add_argument("--adaptive-gain", action="store_true", dest="adaptive_gain", help="Enable adaptive gain.")
 parser.add_argument("--convergence-threshold", type=float, default=0.00005, dest="convergence_threshold", help="Convergence threshold of the servoing before stopping. Default: %(default)s")
 parser.add_argument("--no-convergence-threshold", action="store_true", dest="no_convergence_threshold", help="Disable the convergence threshold used to stop visual servoing.")
@@ -43,12 +43,22 @@ IMAGE_HEIGHT = 480
 CAMERA_FPS = 60
 
 # Set the camera extrinsics parameters (the camera pose relative to the robot)
-CAMERA_TX = 0.05963842756 # in meters
-CAMERA_TY = -0.04413103437
-CAMERA_TZ = 0.04261230688
-CAMERA_TUX = math.radians(-0.721) # in radiants
-CAMERA_TUY = math.radians(0.168)
-CAMERA_TUZ = math.radians(44.123)
+extrinsics = PoseVector(0, 0, 0, 0, 0, 0)
+if args.emc_file:
+  with open(args.emc_file, "r") as file:
+    i = 0
+
+    for line in file:
+      line = line.strip()
+
+      if not line or line.startswith("#"):
+        continue
+
+      extrinsics[i] = float(line)
+      i += 1
+
+      if i >= 6:
+        break
 
 # Set the Franka robot parameters
 FRANKA_IP = args.robot_ip
@@ -67,6 +77,8 @@ if args.no_convergence_threshold:
   CONVERGENCE_THRESHOLD = 0.0
 else:
   CONVERGENCE_THRESHOLD = args.convergence_threshold
+
+
 
 try:
   # -----------------------------------------------------------------------------
@@ -104,7 +116,6 @@ try:
   # -----------------------------------------------------------------------------
 
   # Get the camera extrinsics parameters
-  extrinsics = PoseVector(CAMERA_TX, CAMERA_TY, CAMERA_TZ, CAMERA_TUX, CAMERA_TUY, CAMERA_TUZ)
   extrinsics_matrix = HomogeneousMatrix(extrinsics)
 
   # Connect and initialize the Franka robot
@@ -254,7 +265,7 @@ try:
 except Exception as error:
  print(f"Exception raised: {error}")
  raise
-
+"""
 finally:
   # Stop the robot
   try:
@@ -270,4 +281,4 @@ finally:
   except Exception as error:
     print(f"Exception raised: {error}")
     raise
-
+"""
