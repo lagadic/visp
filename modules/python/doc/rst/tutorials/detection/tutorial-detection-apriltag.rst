@@ -191,7 +191,6 @@ These entries follow the order of the detected tags IDs.
   :start-at: # Get and print the tag cog and corners
   :end-at: print(f"Tag {i} with ID {tags_ids[i]} has cog: {detector.getCog(i)} and has 4 corners: {tag_corners[i]}")
 
-
 Display the tag frames
 --------------------------------------------------
 
@@ -252,3 +251,25 @@ You can quickly generate an AprilTag, using this `website <https://chev.me/aruco
 
 Alternatively, you can download pre-generated tag families on the
 `apriltag-imgs GitHub repository <https://github.com/AprilRobotics/apriltag-imgs>`_.
+
+Detect AprilTags on RealSense camera stream
+--------------------------------------------------
+
+AprilTags can also be detected in real time from a RealSense camera stream,
+as demonstrated in this :ref:`example <code-detection-apriltag-live>`.
+
+You can run it with:
+
+.. code-block:: bash
+
+  python3 $VISP_WS/visp/modules/python/examples/detection/tutorial-detection-apriltag-live.py
+
+.. note::
+
+  You will need to connect a RealSense camera to run this example.
+
+It takes the color stream from the camera, convert each frame into an :py:meth:`~visp.core.ImageGray`, 
+and detect the tags on the image, before displaying their frames and poses.
+
+You can learn how to get the camera stream as an :py:meth:`~visp.core.ImageGray`
+in this :ref:`example <tutorial-camera-realsense-display-a-grayscale-stream>`.
