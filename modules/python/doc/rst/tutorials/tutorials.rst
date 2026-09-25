@@ -4,7 +4,7 @@ Tutorials
 ====================
 
 
-Image manipulation
+Image Manipulation
 -----------------------
 
 .. toctree::
@@ -19,7 +19,7 @@ Image manipulation
     image/tutorial-image-filter.rst
 
 
-Camera acquisition
+Camera Acquisition
 -----------------------
 
 .. toctree::
@@ -29,7 +29,7 @@ Camera acquisition
     camera/tutorial-camera-realsense.rst
 
 
-Detection
+AprilTag Detection
 -----------------------
 
 .. toctree::
@@ -38,7 +38,7 @@ Detection
 
     detection/tutorial-detection-apriltag.rst
 
-Franka usage
+Visual Servoing
 -----------------------
 
 .. toctree::
