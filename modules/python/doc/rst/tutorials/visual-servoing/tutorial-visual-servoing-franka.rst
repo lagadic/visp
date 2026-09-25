@@ -13,7 +13,7 @@ Goal
 In this tutorial you will learn how to:
 
 - Connect to a Franka robot with :py:class:`~visp.robot.RobotFranka` and :py:class:`~visp.robot.Robot`.
-- Compute a visual servoing task with :py:class:`~visp.core.Servo` using a 3D point (X, Y, Z) as visual feature.
+- Compute a visual servoing task with :py:class:`~visp.vs.Servo` using a 3D point (X, Y, Z) as visual feature.
 
 Prerequisites
 --------------------------------------------------
@@ -58,32 +58,40 @@ You can run the example with:
 
   python3 $VISP_WS/visp/modules/python/examples/visual-servoing/tutorial-visual-servoing-franka.py
 
+You can also specify the following command-line options:
+
+- ``--ip ROBOT_IP`` Franka robot IP address. Default: ``192.168.30.10``
+- ``--tag-size TAG_SIZE`` AprilTag size in meters. Default: ``0.053``
+- ``--extrinsics-parameters EXTRINSICS_PARAMETERS_FILE`` YAML file containing the camera extrinsics. Default: no file
+- ``--adaptive-gain`` Enable adaptive gain.
+- ``--convergence-threshold CONVERGENCE_THRESHOLD`` Convergence threshold of the servoing before stopping. Default: ``0.00005``
+- ``--no-convergence-threshold`` Disable the convergence threshold used to stop visual servoing.
+- ``--distance-to-tag DISTANCE_TO_TAG`` Desired distance to the AprilTag in meters. Default: ``0.4``
+- ``--no-trajectory`` Disable the display of the trajectory.
+- ``--help`` Display the help message and exit.
+
 Usage
 --------------------------------------------------
 
 A window opens and displays the stream of the camera.
 
-At startup, the robot movement is disabled, as shown on the ``Idle state`` image.
+At startup, the robot movement is disabled.
 You can click the left mouse button to start or stop the visual servoing,
 and click the right mouse button to stop the program.
 
-When activated, if one and only one AprilTag is detected, the robot moves to match the center of gravity of the tag
-with the center of the screen, at a set distance.
+When activated, if one and only one AprilTag is detected,
+the robot moves to match the center of gravity of the tag with the center of the screen, at a set distance.
 In the ``Starting`` image, you can see the two centers represented by respectively the green and red crosses.
 The trajectory of the tag center is shown by the blue trail on the ``Moving state`` image.
 After reaching the desired position within a specified margin, the robot stops, as on the ``Stopping`` image.
 
 .. list-table::
 
-  * - **Idle state**
-
-      .. image:: images/result-visual-servoing-franka-idle.png
-
-    - **Starting**
+  * - **Starting**
 
       .. image:: images/result-visual-servoing-franka-start.png
 
-  * - **Moving State**
+    - **Moving State**
 
       .. image:: images/result-visual-servoing-franka-moving.png
 
@@ -120,7 +128,7 @@ We will use :py:class:`~visp.core.PoseVector`, :py:class:`~visp.core.Homogeneous
 The Franka robot is manipulated with :py:class:`~visp.robot.Robot` and :py:class:`~visp.robot.RobotFranka`,
 and the visual-servoing task is implemented with :py:class:`~visp.vs.Servo`.
 The result is displayed with :py:class:`~visp.core.Display`,
-:py:func:`~visp.python.display_utils.get_display`, and :py:class:`~visp.vs.ServoDisplay`.
+:py:func:`~visp.python.display_utils.get_display`, and :py:class:`~visp.vs.ServoDisplay`:
 
 .. literalinclude:: /examples/visual-servoing/tutorial-visual-servoing-franka.py
   :language: python
@@ -152,7 +160,7 @@ The transformation is created from the extrinsic camera parameters that are hard
   To estimate the extrinsic camera parameters for your specific camera mount, refer to the
   `extrinsic camera calibration tutorial <https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-calibration-extrinsic-eye-in-hand.html>`_.
 
-It is then passed to the robot with :meth:`~visp.core.RobotFranka.set_eMc`, along with its IP adress.
+It is then passed to the robot with :meth:`~visp.robot.RobotFranka.set_eMc`, along with its IP adress.
 This allows the robot interface to situate the camera in space, and move accordingly towards the desired position:
 
 .. literalinclude:: /examples/visual-servoing/tutorial-visual-servoing-franka.py
