@@ -13,7 +13,7 @@ Goal
 In this tutorial you will learn how to:
 
 - Connect to a Franka robot with :py:class:`~visp.robot.RobotFranka` and :py:class:`~visp.robot.Robot`.
-- Compute a visual servoing task with :py:class:`~visp.core.Servo` using a 3D point (X, Y, Z) as visual feature.
+- Compute a visual servoing task with :py:class:`~visp.vs.Servo` using a 3D point (X, Y, Z) as visual feature.
 
 Prerequisites
 --------------------------------------------------
