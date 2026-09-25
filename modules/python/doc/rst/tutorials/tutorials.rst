@@ -37,3 +37,12 @@ Detection
     :maxdepth: 1
 
     detection/tutorial-detection-apriltag.rst
+
+Franka usage
+-----------------------
+
+.. toctree::
+    :glob:
+    :maxdepth: 1
+
+    franka/tutorial-franka-ibvs.rst

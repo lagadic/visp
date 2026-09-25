@@ -18,18 +18,20 @@ from visp.visual_features import FeaturePoint3D
 from visp.core import Display
 from visp.python.display_utils import get_display
 
-##########
+# -----------------------------------------------------------------------------
 # Parser
-##########
+# -----------------------------------------------------------------------------
 
-parser = argparse.ArgumentParser(description='Python wrapper example over vpRobotFranka ViSP class')
-parser.add_argument('--ip', type=str, default="192.168.30.10", dest='robot_ip', help='Robot IP address: --robot_ip [ip]')
+parser = argparse.ArgumentParser(description='Python example of eye-in-hand visual servoing using a Franka robot and a Realsense Camera')
+parser.add_argument("--ip", type=str, default="192.168.30.10", dest="robot_ip", help="Franka robot IP address. Default: %(default)s")
+parser.add_argument("--tag-size", type=float, default=0.120, dest="tag_size", help="AprilTag size in meters. Default: %(default)s")
+parser.add_argument("--eMc", type=str, default="", dest="emc_file", metavar="FILE", help="File containing the homogeneous transformation matrix between the robot and camera frame.")
+parser.add_argument("--adaptive-gain", action="store_true", dest="adaptive_gain", help="Enable adaptive gain.")
+parser.add_argument("--convergence-threshold", type=float, default=0.00005, dest="convergence_threshold", help="Convergence threshold of the servoing before stopping. Default: %(default)s")
+parser.add_argument("--no-convergence-threshold", action="store_true", dest="no_convergence_threshold", help="Disable the convergence threshold used to stop visual servoing.")
+parser.add_argument("--distance-to-tag", type=float, default=0.4, dest="distance_to_tag", help="Desired distance to the AprilTag in meters. Default: %(default)s")
 
-args, unknown_args = parser.parse_known_args()
-if unknown_args:
-  print(f"The following arguments are not recognized and will not be used: {unknown_args}")
-  print('Exiting...')
-  sys.exit(1)
+args = parser.parse_args()
 
 # -----------------------------------------------------------------------------
 # Program parameters
@@ -49,23 +51,27 @@ CAMERA_TUY = math.radians(0.168)
 CAMERA_TUZ = math.radians(44.123)
 
 # Set the Franka robot parameters
-FRANKA_IP = "192.168.100.3"
-LAMBDA = 0.5
-LAMBDA = AdaptiveGain(1.5, 0.4, 30.0)
+FRANKA_IP = args.robot_ip
+if args.adaptive_gain:
+  LAMBDA = AdaptiveGain(1.5, 0.4, 30.0)
+else:
+  LAMBDA = 0.5
 
 # Set the AprilTags parameters
 TAG_FAMILY = DetectorAprilTag.TAG_36h11
-TAG_SIZE = 0.053 # in meters
+TAG_SIZE = args.tag_size
 
 # Set the visual servoing parameters
-DISTANCE_TO_TAG = 0.2 # in meters
-#CONVERGENCE_THRESHOLD = 0.00005
-CONVERGENCE_THRESHOLD = 0.00001
+DISTANCE_TO_TAG = args.distance_to_tag # in meters
+if args.no_convergence_threshold:
+  CONVERGENCE_THRESHOLD = 0.0
+else:
+  CONVERGENCE_THRESHOLD = args.convergence_threshold
 
 try:
-  ##########
-  # Camera
-  ##########
+  # -----------------------------------------------------------------------------
+  # Camera initialization
+  # -----------------------------------------------------------------------------
 
   # Configure the camera stream
   config = rs.config()
@@ -93,25 +99,24 @@ try:
   # Initialize the AprilTag detection
   detector = DetectorAprilTag(TAG_FAMILY)
 
-  ##########
-  # Franka
-  ##########
+  # -----------------------------------------------------------------------------
+  # Franka initialization
+  # -----------------------------------------------------------------------------
 
   # Get the camera extrinsics parameters
   extrinsics = PoseVector(CAMERA_TX, CAMERA_TY, CAMERA_TZ, CAMERA_TUX, CAMERA_TUY, CAMERA_TUZ)
   extrinsics_matrix = HomogeneousMatrix(extrinsics)
 
+  # Connect and initialize the Franka robot
   robot = RobotFranka()
+  robot.connect(FRANKA_IP, RobotFranka.RealtimeConfig.kEnforce)
+  robot.set_eMc(extrinsics_matrix)
+  robot.setRobotState(Robot.STATE_VELOCITY_CONTROL)
 
   # Create the current and desired position
   centroid = FeaturePoint3D()
   centroid_desired = FeaturePoint3D()
   centroid_desired.buildFrom(0, 0, DISTANCE_TO_TAG)
-
-  # Connect and initialize the Franka robot
-  robot.connect(FRANKA_IP, RobotFranka.RealtimeConfig.kEnforce)
-  robot.set_eMc(extrinsics_matrix)
-  robot.setRobotState(Robot.STATE_VELOCITY_CONTROL)
 
   # Create the visual servoing task
   task = Servo()
@@ -126,14 +131,12 @@ try:
   frame_number = 0
   error = float('inf')
   can_move = False
-
-  # Start the time measurement
   start_time = measureTimeMs()
 
   while True:
-    ##########
+    # -----------------------------------------------------------------------------
     # Image acquisition
-    ##########
+    # -----------------------------------------------------------------------------
 
     # Capture the latest camera frame
     frames = pipeline.wait_for_frames()
@@ -151,9 +154,9 @@ try:
     # Convert it to grayscale format
     ImageConvert.convert(image, image_gray)
 
-    ##########
+    # -----------------------------------------------------------------------------
     # Visual servoing
-    ##########
+    # -----------------------------------------------------------------------------
 
     # Detect the tags on the image
     _, tag_poses = detector.detect(image_gray, TAG_SIZE, camera)
@@ -192,9 +195,9 @@ try:
     # Move the robot
     robot.setVelocity(Robot.CAMERA_FRAME, velocity)
 
-    ##########
-    # Display
-    ##########
+    # -----------------------------------------------------------------------------
+    # Display camera stream
+    # -----------------------------------------------------------------------------
 
     # Render the updated image
     Display.display(image)
@@ -229,9 +232,9 @@ try:
 
     Display.flush(image)
 
-    ##########
+    # -----------------------------------------------------------------------------
     # End of loop
-    ##########
+    # -----------------------------------------------------------------------------
 
     # Check for the user click
     button = MouseButton.MouseButtonType(0)
