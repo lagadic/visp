@@ -45,4 +45,4 @@ Visual Servoing
     :glob:
     :maxdepth: 1
 
-    franka/tutorial-franka-ibvs.rst
+    visual-servoing/tutorial-visual-servoing-franka.rst
