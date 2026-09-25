@@ -57,7 +57,7 @@ using namespace VISP_NAMESPACE_NAME;
 
 
 // List of allowed command line options
-#define GETOPTARGS "cdi:n:p:m:k:hl:"
+#define GETOPTARGS "cdi:n:p:m:k:hl:t"
 
 void usage(const char *name, const char *badparam, const std::string &ipath, int niter, const std::string &method, unsigned numDbImages, const unsigned numComponents, const double lambda);
 bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_allowed, bool &display, int &niter, std::string &method, unsigned &numDbImages, unsigned &numComponents, double &lambda);
@@ -140,7 +140,8 @@ OPTIONS:                                               Default\n\
 
 */
 bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_allowed, bool &display,
-                 int &niter, std::string &method, unsigned int &numDbImages, unsigned int &numComponents, double &lambda)
+                 int &niter, std::string &method, unsigned int &numDbImages, unsigned int &numComponents,
+                 double &lambda, bool &test_LM)
 {
   const char *optarg_;
   int c;
@@ -170,6 +171,9 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_all
       break;
     case 'l':
       lambda = atof(optarg_);
+      break;
+    case 't':
+      test_LM = true;
       break;
     case 'h':
       usage(argv[0], nullptr, ipath, niter, method, numDbImages, numComponents, lambda);
@@ -215,6 +219,7 @@ int main(int argc, const char **argv)
     double opt_lambda_gauss_newton = lambda_levenberg_marquardt;
     double lambda = lambda_levenberg_marquardt;
     double mu = 0.01; // mu = 0 : Gauss Newton ; mu != 0  : LM
+    bool opt_test_LM = false;
 
 
     const double Z = 0.8;
@@ -233,7 +238,7 @@ int main(int argc, const char **argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_ipath, opt_click_allowed, opt_display, opt_niter, opt_method,
-                   opt_numDbImages, opt_numComponents, opt_lambda_gauss_newton) == false) {
+                   opt_numDbImages, opt_numComponents, opt_lambda_gauss_newton, opt_test_LM) == false) {
       return EXIT_FAILURE;
     }
 
@@ -473,7 +478,8 @@ int main(int argc, const char **argv)
 
     int iter = 1;
     int iterGN = opt_niter / 8;
-    double normError = 0;
+    double normError = 0, normError_prev = 1e12;
+    vpHomogeneousMatrix cMo_prev = cMo;
     vpColVector v; // camera velocity sent to the robot
     vpColVector error(sI.dimension_s(), 0);
 
@@ -482,6 +488,10 @@ int main(int argc, const char **argv)
     vpMatrix Hs(n, n);
     vpMatrix H;
     vpMatrix diagHs(n, n);
+
+    if (opt_test_LM) {
+      lambda = opt_lambda_gauss_newton;
+    }
 
     vpChrono chrono;
     chrono.start();
@@ -499,9 +509,11 @@ int main(int argc, const char **argv)
       sI.getMapping()->inverse(sI.get_s(), Irec);
 
       // Specific parameters for Gauss-Newton
-      if (iter > iterGN) {
-        mu = 0.0001;
-        lambda = opt_lambda_gauss_newton;
+      if (!opt_test_LM) {
+        if (iter > iterGN) {
+          mu = 0.0001;
+          lambda = opt_lambda_gauss_newton;
+        }
       }
       sI.interaction(L);
       sI.error(sId, error);
@@ -515,6 +527,7 @@ int main(int argc, const char **argv)
       v = -lambda * H * L.t() * error;
       normError = error.sumSquare();
 
+      std::cout << " |mu| = " << mu << " / |lambda| = " << lambda << std::endl;
       std::cout << " |e| = " << normError << std::endl;
       std::cout << " |v| = " << sqrt(v.sumSquare()) << std::endl;
 
@@ -529,10 +542,34 @@ int main(int argc, const char **argv)
       }
 #endif
 
-      // send the robot velocity
-      robot.setVelocity(vpRobot::CAMERA_FRAME, v);
-      wMc = robot.getPosition();
-      cMo = wMc.inverse() * wMo;
+      if (opt_test_LM) {
+        if (normError_prev < normError) {
+          cMo = cMo_prev;
+          mu *= 10;
+
+          if (mu > 1.0) {
+            throw vpException(vpException::fatalError, "Optimization diverged");
+          }
+        }
+        else {
+          cMo_prev = cMo;
+          normError_prev = normError;
+          if (iter-1 > 1 && mu > 1e-12) {
+            mu /= 10.0;
+          }
+
+          // send the robot velocity
+          robot.setVelocity(vpRobot::CAMERA_FRAME, v);
+          wMc = robot.getPosition();
+          cMo = wMc.inverse() * wMo;
+        }
+      }
+      else {
+        // send the robot velocity
+        robot.setVelocity(vpRobot::CAMERA_FRAME, v);
+        wMc = robot.getPosition();
+        cMo = wMc.inverse() * wMo;
+      }
     } while (normError > 200 && iter < opt_niter);
 
     chrono.stop();

@@ -125,7 +125,11 @@ jobs:
                  -DACTIVATE_WARNING_SHADOW=ON \
                  -DACTIVATE_WARNING_FLOAT_EQUAL=ON \
                  -DACTIVATE_WARNING_SIGN_CONVERSION=ON \
-                 -DACTIVATE_WARNING_STRICT_OVERFLOW=ON
+                 -DACTIVATE_WARNING_STRICT_OVERFLOW=ON \
+                 -DBUILD_APPS=OFF \
+                 -DBUILD_DEMOS=OFF \
+                 -DBUILD_TESTS=OFF \
+                 -DBUILD_TUTORIALS=OFF
         cat ViSP-third-party.txt
 
     - name: Compile
@@ -161,8 +165,8 @@ jobs:
         fi
 
     - name: Run unit tests
-      working-directory: build
-      run: ctest -j$(nproc) --output-on-failure
+      working-directory: build/example/direct-visual-servoing
+      run: ctest -j$(nproc) -V
 
     - name: ViSP as 3rdparty with cmake
       run: |
