@@ -57,7 +57,7 @@ using namespace VISP_NAMESPACE_NAME;
 
 
 // List of allowed command line options
-#define GETOPTARGS "cdi:n:p:m:k:hl:"
+#define GETOPTARGS "cdi:n:p:m:k:hl:t"
 
 void usage(const char *name, const char *badparam, const std::string &ipath, int niter, const std::string &method, unsigned numDbImages, const unsigned numComponents, const double lambda);
 bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_allowed, bool &display, int &niter, std::string &method, unsigned &numDbImages, unsigned &numComponents, double &lambda);
@@ -140,7 +140,8 @@ OPTIONS:                                               Default\n\
 
 */
 bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_allowed, bool &display,
-                 int &niter, std::string &method, unsigned int &numDbImages, unsigned int &numComponents, double &lambda)
+                 int &niter, std::string &method, unsigned int &numDbImages, unsigned int &numComponents,
+                 double &lambda, bool &usePseudoInv)
 {
   const char *optarg_;
   int c;
@@ -170,6 +171,9 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_all
       break;
     case 'l':
       lambda = atof(optarg_);
+      break;
+    case 't':
+      usePseudoInv = true;
       break;
     case 'h':
       usage(argv[0], nullptr, ipath, niter, method, numDbImages, numComponents, lambda);
@@ -215,6 +219,7 @@ int main(int argc, const char **argv)
     double opt_lambda_gauss_newton = lambda_levenberg_marquardt;
     double lambda = lambda_levenberg_marquardt;
     double mu = 0.01; // mu = 0 : Gauss Newton ; mu != 0  : LM
+    bool opt_usePseudoInv = false;
 
 
     const double Z = 0.8;
@@ -233,7 +238,7 @@ int main(int argc, const char **argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_ipath, opt_click_allowed, opt_display, opt_niter, opt_method,
-                   opt_numDbImages, opt_numComponents, opt_lambda_gauss_newton) == false) {
+                   opt_numDbImages, opt_numComponents, opt_lambda_gauss_newton, opt_usePseudoInv) == false) {
       return EXIT_FAILURE;
     }
 
@@ -510,12 +515,17 @@ int main(int argc, const char **argv)
       for (unsigned int i = 0; i < n; i++) {
         diagHs[i][i] = Hs[i][i];
       }
-      H = ((mu * diagHs) + Hs).pseudoInverse();
+      if (opt_usePseudoInv) {
+        H = ((mu * diagHs) + Hs).pseudoInverse();
+      }
+      else {
+        H = ((mu * diagHs) + Hs).inverseByLU();
+      }
       // Compute the control law
       v = -lambda * H * L.t() * error;
       normError = error.sumSquare();
 
-      std::cout << " |mu| = " << mu << " / |lambda| = " << lambda << std::endl;
+      std::cout << " |mu| = " << mu << " / |lambda| = " << lambda << " / opt_usePseudoInv? " << opt_usePseudoInv << std::endl;
       std::cout << " |e| = " << normError << std::endl;
       std::cout << " |v| = " << sqrt(v.sumSquare()) << std::endl;
 
