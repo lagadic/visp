@@ -166,7 +166,7 @@ jobs:
 
     - name: Run unit tests
       working-directory: build/example/direct-visual-servoing
-      run: ctest -V
+      run: ctest -j$(nproc) --output-on-failure
 
     - name: ViSP as 3rdparty with cmake
       run: |
