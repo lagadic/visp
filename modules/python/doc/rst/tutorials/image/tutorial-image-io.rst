@@ -77,7 +77,7 @@ We define a helper function to display the images that we manipulate:
 
 .. note::
 
-  For a more detailed explanation of how displays work in ViSP, see the :ref:`Display an image <tutorial-image-display>`
+  For a more detailed explanation of how displays work in ViSP, see the :ref:`tutorial-image-display`
   tutorial.
 
 We then read the image ``monkey.jpeg`` using the :py:meth:`~visp.io.ImageIo.read` method.
@@ -121,4 +121,4 @@ Finally, we display the grayscale image:
 Next Tutorial
 ===========================
 
-You are now ready to learn how to :ref:`Insert basic drawings in an image <tutorial-image-drawings>`.
+You are now ready to learn how to :ref:`tutorial-image-drawings`.

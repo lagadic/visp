@@ -196,4 +196,4 @@ The result should look similar to this window:
 Next Tutorial
 ===========================
 
-You are now ready to learn how to :ref:`Read an write an image file <tutorial-image-io>`.
+You are now ready to learn how to :ref:`tutorial-image-io`.

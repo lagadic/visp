@@ -180,6 +180,8 @@ Other options
 Display a grayscale stream
 --------------------------------------------------
 
+.. _tutorial-camera-realsense-display-a-grayscale-stream:
+
 RealSense cameras provide color and depth streams, but not a native grayscale stream.
 To display a grayscale image, acquire the color stream and convert each frame before displaying it.
 
