@@ -43,6 +43,7 @@ zbar = "*"
 [target.osx.dependencies]
 llvm-openmp = "*"
 zbar = "*"
+libharfbuzz-devel=">=14.4.0"
 
 [target.osx-64.dependencies]
 doxygen = "1.17.0"
