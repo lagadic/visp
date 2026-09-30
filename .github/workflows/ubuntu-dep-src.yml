@@ -168,7 +168,7 @@ jobs:
         GIT_ADDRESS="https://github.com/PointCloudLibrary/pcl.git"
         LATEST_TAG=`eval ${FUNCTION_GET_LATEST}`
         echo "Newest tag is ${LATEST_TAG}"
-        if [[ "$VTK_REL" == "v9.7.0" &&  "${LATEST_TAG}" == "pcl-1.15.1" ]]
+        if [[ ( "$VTK_REL" == "v9.7.0" &&  "${LATEST_TAG}" == "pcl-1.15.1" ) || ( "$VTK_REL" == "v9.7.1" &&  "${LATEST_TAG}" == "pcl-1.15.1" ) ]]
         then
           BRANCH=master
           echo "Because it is not compatible with vtk ${VTK_REL} we will use the branch ${BRANCH} instead"
