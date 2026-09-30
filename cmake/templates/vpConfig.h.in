@@ -131,6 +131,10 @@ namespace vp = VISP_NAMESPACE_NAME;
 // Defined if the warp() methods of vpImageTools are enabled
 #cmakedefine ENABLE_IMAGE_TOOLS_WARP
 
+// Embed build environment details (compiler, flags, timestamps) in vpIoTools::getBuildInformation().
+// Note: Breaks build reproducibility when defined
+#cmakedefine ENABLE_BUILD_INFO
+
 // Enable debug and trace printings
 #cmakedefine VP_TRACE
 #cmakedefine VP_DEBUG

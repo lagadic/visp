@@ -132,14 +132,20 @@ void replaceAll(std::string &str, const std::string &search, const std::string &
 
 BEGIN_VISP_NAMESPACE
 /*!
-  Return build informations (OS, compiler, build flags, used 3rd parties...).
+  Returns build information (OS, compiler, build flags, used 3rd parties...).
+  This information is only available if the CMake `ENABLE_BUILD_INFO` option is turned `ON`.
  */
-  const std::string &vpIoTools::getBuildInformation()
+const std::string &vpIoTools::getBuildInformation()
 {
-  VP_ATTRIBUTE_NO_DESTROY static std::string build_info =
+#ifdef ENABLE_BUILD_INFO
+  VP_ATTRIBUTE_NO_DESTROY static const std::string build_info =
 #include "version_string.inc"
     ;
   return build_info;
+#else
+  VP_ATTRIBUTE_NO_DESTROY static const std::string build_info = "Build info is not available";
+  return build_info;
+#endif
 }
 
 /*!
