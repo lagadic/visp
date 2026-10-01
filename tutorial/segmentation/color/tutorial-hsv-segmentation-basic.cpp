@@ -52,6 +52,9 @@ int main()
   //! [Without vpHSV]
   unsigned int width = I.getWidth();
   unsigned int height = I.getHeight();
+
+  std::cout << "Image size: " << width << " x " << height << std::endl;
+
   vpImage<unsigned char> H(height, width);
   vpImage<unsigned char> S(height, width);
   vpImage<unsigned char> V(height, width);

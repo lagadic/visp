@@ -102,25 +102,32 @@ int main(int argc, const char *argv[])
   std::string opt_hsv_filename = "calib/hsv-thresholds.yml";
   bool opt_pcl_textured = false;
   bool opt_verbose = false;
-  unsigned int opt_width = 848;
-  unsigned int opt_height = 480;
-  int opt_fps = 60;
+  unsigned int opt_rs2_width = 640;
+  unsigned int opt_rs2_height = 480;
+  int opt_rs2_fps = 30;
   DisplayMode opt_mode = DisplayMode::MONOTHREAD;
+  bool show_helper = false;
 
   int i = 1;
   while (i < argc) {
-    if (((std::string(argv[i]) == "--width") || (std::string(argv[i]) == "-v")) && ((i+1) < argc)) {
-      opt_width = static_cast<unsigned int>(std::atoi(argv[++i]));
+    if (((std::string(argv[i]) == "--rs2-width") || (std::string(argv[i]) == "-w")) && ((i+1) < argc)) {
+      opt_rs2_width = static_cast<unsigned int>(std::stoi(argv[++i]));
     }
-    else if (((std::string(argv[i]) == "--height") || (std::string(argv[i]) == "-h")) && ((i+1) < argc)) {
-      opt_height = static_cast<unsigned int>(std::atoi(argv[++i]));
+    else if (((std::string(argv[i]) == "--rs2-height") || (std::string(argv[i]) == "-h")) && ((i+1) < argc)) {
+      opt_rs2_height = static_cast<unsigned int>(std::stoi(argv[++i]));
+    }
+    else if ((std::string(argv[i]) == "--hsv-thresholds") && ((i+1) < argc)) {
+      opt_hsv_filename = std::string(argv[++i]);
+    }
+    else if ((std::string(argv[i]) == "--verbose")  || (std::string(argv[i]) == "-v")) {
+      opt_verbose = true;
     }
     else if (std::string(argv[i]) == "--display-mode" && i + 1 < argc) {
       opt_mode = displayModeFromString(std::string(argv[i + 1]));
       ++i;
     }
     else if ((std::string(argv[i]) == "--fps") && ((i+1) < argc)) {
-      opt_fps = std::atoi(argv[++i]);
+      opt_rs2_fps = std::atoi(argv[++i]);
     }
     else if (std::string(argv[i]) == "--texture") {
       opt_pcl_textured = true;
@@ -131,29 +138,37 @@ int main(int argc, const char *argv[])
     else if ((std::string(argv[i]) == "--verbose")  || (std::string(argv[i]) == "-v")) {
       opt_verbose = true;
     }
-    else if ((std::string(argv[i]) == "--help") || (std::string(argv[i]) == "-h")) {
+    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+      show_helper = true;
+    }
+    else {
+      std::cout << "Unknown option: " << argv[i] << std::endl;
+      show_helper = true;
+    }
+    if (show_helper) {
       std::cout << "\nSYNOPSIS " << std::endl
         << argv[0]
-        << " [--width,-w <image width>]"
-        << " [--height,-h <image height>]"
+        << " [--rs2-img-width,-w <width>]"
+        << " [--rs2-img-height,-h <height>]"
         << " [--fps <framerate>]"
         << " [--texture]"
         << " [--hsv-thresholds <filename.yml>]"
+        << " [--display-mode <mode>]"
         << " [--verbose,-v]"
         << " [--help,-h]"
         << std::endl;
       std::cout << "\nOPTIONS " << std::endl
-        << "  --width,-w <image width>" << std::endl
-        << "    Realsense camera image width." << std::endl
-        << "    Default: " << opt_width << std::endl
+        << "  --rs2-width,-w <width>" << std::endl
+        << "    Set the width of the RGB image from Realsense camera."<<std::endl
+        << "    Default: " << opt_rs2_width << std::endl
         << std::endl
-        << "  --height,-h <image height>" << std::endl
-        << "    Realsense camera image height." << std::endl
-        << "    Default: " << opt_height << std::endl
+        << "  --rs2-height,-h <height>"<<std::endl
+        << "    Set the height of the RGB image from Realsense camera."<<std::endl
+        << "    Default: " << opt_rs2_height << std::endl
         << std::endl
         << "  --fps <framerate>" << std::endl
         << "    Realsense camera framerate." << std::endl
-        << "    Default: " << opt_fps << std::endl
+        << "    Default: " << opt_rs2_fps << std::endl
         << std::endl
         << "  --texture" << std::endl
         << "    Enable textured point cloud adding RGB information to the 3D point." << std::endl
@@ -194,8 +209,8 @@ int main(int argc, const char *argv[])
 
   vpRealSense2 rs;
   rs2::config config;
-  config.enable_stream(RS2_STREAM_COLOR, static_cast<int>(opt_width), static_cast<int>(opt_height), RS2_FORMAT_RGBA8, opt_fps);
-  config.enable_stream(RS2_STREAM_DEPTH, static_cast<int>(opt_width), static_cast<int>(opt_height), RS2_FORMAT_Z16, opt_fps);
+  config.enable_stream(RS2_STREAM_COLOR, static_cast<int>(opt_rs2_width), static_cast<int>(opt_rs2_height), RS2_FORMAT_RGBA8, opt_rs2_fps);
+  config.enable_stream(RS2_STREAM_DEPTH, static_cast<int>(opt_rs2_width), static_cast<int>(opt_rs2_height), RS2_FORMAT_Z16, opt_rs2_fps);
   config.disable_stream(RS2_STREAM_INFRARED, 1);
   config.disable_stream(RS2_STREAM_INFRARED, 2);
   rs2::align align_to(RS2_STREAM_COLOR);
@@ -206,10 +221,18 @@ int main(int argc, const char *argv[])
   vpCameraParameters cam_depth = rs.getCameraParameters(RS2_STREAM_DEPTH,
                                                         vpCameraParameters::perspectiveProjWithoutDistortion);
 
-  vpImage<vpRGBa> I(opt_height, opt_width);
-  vpImage<unsigned char> mask(opt_height, opt_width);
-  vpImage<uint16_t> depth_raw(opt_height, opt_width);
-  vpImage<vpRGBa> I_segmented(opt_height, opt_width);
+
+  vpImage<vpRGBa> I;
+  rs.acquire(I);
+
+  unsigned int width = I.getWidth();
+  unsigned int height = I.getHeight();
+
+  std::cout << "Image size: " << width << " x " << height << std::endl;
+
+  vpImage<unsigned char> mask(height, width);
+  vpImage<uint16_t> depth_raw(height, width);
+  vpImage<vpRGBa> I_segmented(height, width);
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpImage<vpHSV<unsigned char, true>> Ihsv;
@@ -217,9 +240,9 @@ int main(int argc, const char *argv[])
   std::shared_ptr<vpDisplay> d_I = vpDisplayFactory::createDisplay(I, 0, 0, "Current frame");
   std::shared_ptr<vpDisplay> d_I_segmented = vpDisplayFactory::createDisplay(I_segmented, static_cast<int>(I.getWidth())+75, 0, "HSV segmented frame");
 #else
-  vpImage<unsigned char> H(opt_height, opt_width);
-  vpImage<unsigned char> S(opt_height, opt_width);
-  vpImage<unsigned char> V(opt_height, opt_width);
+  vpImage<unsigned char> H(height, width);
+  vpImage<unsigned char> S(height, width);
+  vpImage<unsigned char> V(height, width);
 
   vpDisplay *d_I = vpDisplayFactory::allocateDisplay(I, 0, 0, "Current frame");
   vpDisplay *d_I_segmented = vpDisplayFactory::allocateDisplay(I_segmented, static_cast<int>(I.getWidth())+75, 0, "HSV segmented frame");
@@ -238,7 +261,7 @@ int main(int argc, const char *argv[])
 
   //! [Create pcl viewer object]
   std::mutex pointcloud_mutex;
-  vpDisplayPCL pcl_viewer(opt_width, opt_height, 0, static_cast<int>(I.getHeight()), "Point cloud viewer");
+  vpDisplayPCL pcl_viewer(width, height, 0, static_cast<int>(I.getHeight()), "Point cloud viewer");
   if (opt_mode == DisplayMode::THREADED) {
     if (opt_pcl_textured) {
       pcl_viewer.startThread(std::ref(pointcloud_mutex), pointcloud_color);
