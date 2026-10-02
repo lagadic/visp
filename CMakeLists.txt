@@ -537,6 +537,7 @@ VP_OPTION(BUILD_WITH_STATIC_CRT  "" "" "Enables use of staticaly linked CRT for 
 # Build options
 # ----------------------------------------------------------------------------
 VISP_OPTION(ENABLE_CONFIG_VERIFICATION "Fail build if actual configuration doesn't match requested (WITH_XXX != HAVE_XXX)" OFF)
+VISP_OPTION(ENABLE_BUILD_INFO "Embed build environment details (compiler, flags, timestamps) in vpIoTools::getBuildInformation(). Note: Breaks build reproducibility" OFF)
 VP_OPTION(ENABLE_SOLUTION_FOLDERS "" "" "Solution folder in Visual Studio or in other IDEs" "" (MSVC_IDE OR CMAKE_GENERATOR MATCHES Xcode))
 # Note that it is better to set ENABLE_MOMENTS_COMBINE_MATRICES to OFF
 VP_OPTION(ENABLE_MOMENTS_COMBINE_MATRICES  "" "" "Use linear combination of matrices instead of linear combination of moments to compute interaction matrices." "" OFF)
