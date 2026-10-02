@@ -41,10 +41,10 @@ int main(int argc, const char *argv[])
       }
     }
     else if (((std::string(argv[i]) == "--rs2-width") || (std::string(argv[i]) == "-w")) && ((i+1) < argc)) {
-      opt_rs2_width = static_cast<unsigned int>(std::stoi(argv[++i]));
+      opt_rs2_width = static_cast<unsigned int>(std::atoi(argv[++i]));
     }
     else if (((std::string(argv[i]) == "--rs2-height") || (std::string(argv[i]) == "-h")) && ((i+1) < argc)) {
-      opt_rs2_height = static_cast<unsigned int>(std::stoi(argv[++i]));
+      opt_rs2_height = static_cast<unsigned int>(std::atoi(argv[++i]));
     }
     else if ((std::string(argv[i]) == "--rs2-fps") && ((i+1) < argc)) {
       opt_rs2_fps = std::atoi(argv[++i]);
