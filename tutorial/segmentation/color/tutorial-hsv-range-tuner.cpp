@@ -115,6 +115,9 @@ int main(int argc, const char *argv[])
   bool opt_save_img = false;
   std::string opt_hsv_filename = "calib/hsv-thresholds.yml";
   std::string opt_img_filename;
+  unsigned int opt_rs2_width = 640;
+  unsigned int opt_rs2_height = 480;
+  int opt_rs2_fps = 30;
   bool show_helper = false;
   for (int i = 1; i < argc; i++) {
     if ((std::string(argv[i]) == "--hsv-thresholds") && ((i+1) < argc)) {
@@ -126,10 +129,29 @@ int main(int argc, const char *argv[])
     else if (std::string(argv[i]) == "--save-img") {
       opt_save_img = true;
     }
-    if (show_helper || std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+    else if (((std::string(argv[i]) == "--rs2-width") || (std::string(argv[i]) == "-w")) && ((i+1) < argc)) {
+      opt_rs2_width = static_cast<unsigned int>(std::stoi(argv[++i]));
+    }
+    else if (((std::string(argv[i]) == "--rs2-height") || (std::string(argv[i]) == "-h")) && ((i+1) < argc)) {
+      opt_rs2_height = static_cast<unsigned int>(std::stoi(argv[++i]));
+    }
+    else if (((std::string(argv[i]) == "--rs2-fps") || (std::string(argv[i]) == "-fps")) && ((i+1) < argc)) {
+      opt_rs2_fps = std::atoi(argv[++i]);
+    }
+    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+      show_helper = true;
+    }
+    else {
+      std::cout << "Unknown option: " << argv[i] << std::endl;
+      show_helper = true;
+    }
+    if (show_helper) {
       std::cout << "\nSYNOPSIS " << std::endl
         << argv[0]
         << " [--image <input image>]"
+        << " [--rs2-width,-w <width>]"
+        << " [--rs2-height,-h <height>]"
+        << " [--rs2-fps,-fps <framerate>]"
         << " [--hsv-thresholds <output filename.yml>]"
         << " [--save-img]"
         << " [--help,-h]"
@@ -137,8 +159,23 @@ int main(int argc, const char *argv[])
       std::cout << "\nOPTIONS " << std::endl
         << "  --image <input image>" << std::endl
         << "    Name of the input image filename." << std::endl
-        << "    When this option is not set, we use librealsense to stream images from a Realsense camera. " << std::endl
+        << "    When this option is set, we use the input image to tune HSV thresholds." << std::endl
+        << "    Otherwise, we use librealsense to stream images from a Realsense camera. " << std::endl
+        << "    When Realsense camera is used, you can specify image size with " << std::endl
+        << "    --rs2-width and --rs2-height options." << std::endl
         << "    Example: --image ballons.jpg" << std::endl
+        << std::endl
+        << "  --rs2-width,-w <width>" << std::endl
+        << "    Width of the image stream from Realsense camera." << std::endl
+        << "    Default: " << opt_rs2_width << std::endl
+        << std::endl
+        << "  --rs2-height,-h <height>" << std::endl
+        << "    Height of the image stream from Realsense camera." << std::endl
+        << "    Default: " << opt_rs2_height << std::endl
+        << std::endl
+        << "  --rs2-fps,-fps <framerate>" << std::endl
+        << "    Realsense camera framerate." << std::endl
+        << "    Default: " << opt_rs2_fps << std::endl
         << std::endl
         << "  --hsv-thresholds <output filename.yml>" << std::endl
         << "    Name of the output filename with yaml extension that will contain HSV low/high thresholds." << std::endl
@@ -183,7 +220,6 @@ int main(int argc, const char *argv[])
   hsv_values_trackbar[5] = max_value;   // High V
 
   vpImage<vpRGBa> I;
-  unsigned int width, height;
 
 #if defined(VISP_HAVE_REALSENSE2)
   vpRealSense2 rs;
@@ -191,10 +227,8 @@ int main(int argc, const char *argv[])
 
   if (use_realsense) {
 #if defined(VISP_HAVE_REALSENSE2)
-    width = 848; height = 480;
-    int fps = 60;
     rs2::config config;
-    config.enable_stream(RS2_STREAM_COLOR, static_cast<int>(width), static_cast<int>(height), RS2_FORMAT_RGBA8, fps);
+    config.enable_stream(RS2_STREAM_COLOR, static_cast<int>(opt_rs2_width), static_cast<int>(opt_rs2_height), RS2_FORMAT_RGBA8, opt_rs2_fps);
     config.disable_stream(RS2_STREAM_DEPTH);
     config.disable_stream(RS2_STREAM_INFRARED, 1);
     config.disable_stream(RS2_STREAM_INFRARED, 2);
@@ -210,9 +244,11 @@ int main(int argc, const char *argv[])
       std::cout << e.getStringMessage() << std::endl;
       return EXIT_FAILURE;
     }
-    width = I.getWidth();
-    height = I.getHeight();
   }
+
+  unsigned int width = I.getWidth();
+  unsigned int height = I.getHeight();
+  std::cout << "Image size: " << width << " x " << height << std::endl;
 
   cv::namedWindow(window_detection_name);
 

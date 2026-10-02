@@ -22,6 +22,9 @@ int main(int argc, const char *argv[])
 
   std::string opt_hsv_filename = "calib/hsv-thresholds.yml";
   std::string opt_video_filename;
+  unsigned int opt_rs2_width = 640;
+  unsigned int opt_rs2_height = 480;
+  int opt_rs2_fps = 30;
   bool show_helper = false;
 
   for (int i = 1; i < argc; i++) {
@@ -37,18 +40,52 @@ int main(int argc, const char *argv[])
         std::cout << "ERROR \nMissing input video name after parameter " << std::string(argv[i]) << std::endl;
       }
     }
-    else if (show_helper || std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+    else if (((std::string(argv[i]) == "--rs2-width") || (std::string(argv[i]) == "-w")) && ((i+1) < argc)) {
+      opt_rs2_width = static_cast<unsigned int>(std::atoi(argv[++i]));
+    }
+    else if (((std::string(argv[i]) == "--rs2-height") || (std::string(argv[i]) == "-h")) && ((i+1) < argc)) {
+      opt_rs2_height = static_cast<unsigned int>(std::atoi(argv[++i]));
+    }
+    else if ((std::string(argv[i]) == "--rs2-fps") && ((i+1) < argc)) {
+      opt_rs2_fps = std::atoi(argv[++i]);
+    }
+    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+      show_helper = true;
+    }
+    else {
+      std::cout << "Unknown option: " << argv[i] << std::endl;
+      show_helper = true;
+    }
+    if (show_helper) {
       std::cout << "\nSYNOPSIS " << std::endl
         << argv[0]
         << " [--video <input video>]"
-        << " [--hsv-thresholds <filename.yml>]"
+        << " [--rs2-width,-w <width>]"
+        << " [--rs2-height,-h <height>]"
+        << " [--rs2-fps <framerate>]"
+        << " [--hsv-thresholds <output filename.yml>]"
         << " [--help,-h]"
         << std::endl;
       std::cout << "\nOPTIONS " << std::endl
         << "  --video <input video>" << std::endl
         << "    Name of the input video filename." << std::endl
-        << "    When this option is not set, we use librealsense to stream images from a Realsense camera. " << std::endl
-        << "    Example: --video image-%04d.jpg" << std::endl
+        << "    When this option is set, we use the input video to tune HSV thresholds." << std::endl
+        << "    Otherwise, we use librealsense to stream images from a Realsense camera. " << std::endl
+        << "    When Realsense camera is used, you can specify image size with " << std::endl
+        << "    --rs2-width and --rs2-height options." << std::endl
+        << "    Example: --image image-%04d.jpg" << std::endl
+        << std::endl
+        << "  --rs2-width,-w <width>" << std::endl
+        << "    Width of the image stream from Realsense camera." << std::endl
+        << "    Default: " << opt_rs2_width << std::endl
+        << std::endl
+        << "  --rs2-height,-h <height>" << std::endl
+        << "    Height of the image stream from Realsense camera." << std::endl
+        << "    Default: " << opt_rs2_height << std::endl
+        << std::endl
+        << "  --rs2-fps <framerate>" << std::endl
+        << "    Realsense camera framerate." << std::endl
+        << "    Default: " << opt_rs2_fps << std::endl
         << std::endl
         << "  --hsv-thresholds <filename.yaml>" << std::endl
         << "    Path to a yaml filename that contains H <min,max>, S <min,max>, V <min,max> threshold values." << std::endl
@@ -84,6 +121,10 @@ int main(int argc, const char *argv[])
     return EXIT_FAILURE;
   }
 
+  if (use_realsense) {
+    std::cout << "Use images from Realsense camera" << std::endl;
+  }
+
   vpColVector hsv_values;
   if (vpColVector::loadYAML(opt_hsv_filename, hsv_values)) {
     std::cout << "Load HSV threshold values from " << opt_hsv_filename << std::endl;
@@ -95,8 +136,6 @@ int main(int argc, const char *argv[])
   }
 
   vpImage<vpRGBa> I;
-  unsigned int width = 848;
-  unsigned int height = 480;
 
   vpVideoReader g;
 #if defined(VISP_HAVE_REALSENSE2)
@@ -105,9 +144,8 @@ int main(int argc, const char *argv[])
 
   if (use_realsense) {
 #if defined(VISP_HAVE_REALSENSE2)
-    int fps = 60;
     rs2::config config;
-    config.enable_stream(RS2_STREAM_COLOR, static_cast<int>(width), static_cast<int>(height), RS2_FORMAT_RGBA8, fps);
+    config.enable_stream(RS2_STREAM_COLOR, static_cast<int>(opt_rs2_width), static_cast<int>(opt_rs2_height), RS2_FORMAT_RGBA8, opt_rs2_fps);
     config.disable_stream(RS2_STREAM_DEPTH);
     config.disable_stream(RS2_STREAM_INFRARED, 1);
     config.disable_stream(RS2_STREAM_INFRARED, 2);
@@ -124,9 +162,12 @@ int main(int argc, const char *argv[])
       std::cout << e.getStringMessage() << std::endl;
       return EXIT_FAILURE;
     }
-    width = I.getWidth();
-    height = I.getHeight();
   }
+
+  unsigned int width = I.getWidth();
+  unsigned int height = I.getHeight();
+
+  std::cout << "Image size: " << width << " x " << height << std::endl;
 
   vpImage<unsigned char> mask(height, width);
   vpImage<vpRGBa> I_segmented(height, width);

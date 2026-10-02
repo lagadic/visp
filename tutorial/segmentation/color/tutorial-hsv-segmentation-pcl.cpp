@@ -20,15 +20,38 @@ int main(int argc, const char *argv[])
 #endif
 
   std::string opt_hsv_filename = "calib/hsv-thresholds.yml";
+  unsigned int opt_rs2_width = 640;
+  unsigned int opt_rs2_height = 480;
+  int opt_rs2_fps = 30;
+  bool show_helper = false;
 
   for (int i = 1; i < argc; i++) {
     if ((std::string(argv[i]) == "--hsv-thresholds") && ((i+1) < argc)) {
       opt_hsv_filename = std::string(argv[++i]);
     }
+    else if (((std::string(argv[i]) == "--rs2-width") || (std::string(argv[i]) == "-w")) && ((i+1) < argc)) {
+      opt_rs2_width = static_cast<unsigned int>(std::stoi(argv[++i]));
+    }
+    else if (((std::string(argv[i]) == "--rs2-height") || (std::string(argv[i]) == "-h")) && ((i+1) < argc)) {
+      opt_rs2_height = static_cast<unsigned int>(std::stoi(argv[++i]));
+    }
+    else if ((std::string(argv[i]) == "--rs2-fps") && ((i+1) < argc)) {
+      opt_rs2_fps = std::atoi(argv[++i]);
+    }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+      show_helper = true;
+    }
+    else {
+      std::cout << "Unknown option: " << argv[i] << std::endl;
+      show_helper = true;
+    }
+    if (show_helper) {
       std::cout << "\nSYNOPSIS " << std::endl
         << argv[0]
         << " [--hsv-thresholds <filename.yml>]"
+        << " [--rs2-width,-w <width>]"
+        << " [--rs2-height,-h <height>]"
+        << " [--rs2-fps <framerate>]"
         << " [--help,-h]"
         << std::endl;
       std::cout << "\nOPTIONS " << std::endl
@@ -44,6 +67,17 @@ int main(int argc, const char *argv[])
         << "        - [237]" << std::endl
         << "        - [148]" << std::endl
         << "        - [208]" << std::endl
+        << "  --rs2-width,-w <width>" << std::endl
+        << "    Width of the image stream from Realsense camera." << std::endl
+        << "    Default: " << opt_rs2_width << std::endl
+        << std::endl
+        << "  --rs2-height,-h <height>" << std::endl
+        << "    Height of the image stream from Realsense camera." << std::endl
+        << "    Default: " << opt_rs2_height << std::endl
+        << std::endl
+        << "  --rs2-fps <framerate>" << std::endl
+        << "    Realsense camera framerate." << std::endl
+        << "    Default: " << opt_rs2_fps << std::endl
         << std::endl
         << "  --help, -h" << std::endl
         << "    Display this helper message." << std::endl
@@ -63,12 +97,10 @@ int main(int argc, const char *argv[])
   }
 
   //! [Config RS2 RGB and depth]
-  unsigned int width = 848, height = 480;
-  int fps = 60;
   vpRealSense2 rs;
   rs2::config config;
-  config.enable_stream(RS2_STREAM_COLOR, static_cast<int>(width), static_cast<int>(height), RS2_FORMAT_RGBA8, fps);
-  config.enable_stream(RS2_STREAM_DEPTH, static_cast<int>(width), static_cast<int>(height), RS2_FORMAT_Z16, fps);
+  config.enable_stream(RS2_STREAM_COLOR, static_cast<int>(opt_rs2_width), static_cast<int>(opt_rs2_height), RS2_FORMAT_RGBA8, opt_rs2_fps);
+  config.enable_stream(RS2_STREAM_DEPTH, static_cast<int>(opt_rs2_width), static_cast<int>(opt_rs2_height), RS2_FORMAT_Z16, opt_rs2_fps);
   config.disable_stream(RS2_STREAM_INFRARED, 1);
   config.disable_stream(RS2_STREAM_INFRARED, 2);
   rs2::align align_to(RS2_STREAM_COLOR);
@@ -82,7 +114,15 @@ int main(int argc, const char *argv[])
                                                         vpCameraParameters::perspectiveProjWithoutDistortion);
   //! [Get RS2 intrinsics]
 
-  vpImage<vpRGBa> I(height, width);
+
+  vpImage<vpRGBa> I;
+  rs.acquire(I);
+
+  unsigned int width = I.getWidth();
+  unsigned int height = I.getHeight();
+
+  std::cout << "Image size: " << width << " x " << height << std::endl;
+
   vpImage<unsigned char> mask(height, width, 0);
   vpImage<uint16_t> depth_raw(height, width);
   vpImage<vpRGBa> I_segmented(height, width);
