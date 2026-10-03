@@ -1,11 +1,12 @@
 {
+  atlas,
   cmake,
   coin3d,
   darwin,
   doxygen,
   eigen,
   #fetchFromGitHub,
-  lapack,
+  #lapack,
   lib,
   libdc1394,
   libdmtx,
@@ -28,9 +29,10 @@
   xorg,
   zbar,
   zlib,
+  llvmPackages_15,
 }:
 
-stdenv.mkDerivation (finalAttrs: {
+llvmPackages_15.stdenv.mkDerivation (finalAttrs: {
   pname = "visp";
   version = "3.6.0";
 
@@ -45,8 +47,9 @@ stdenv.mkDerivation (finalAttrs: {
 
   buildInputs =
     [
+      atlas
       eigen
-      lapack
+      #lapack
       libdc1394
       libdmtx
       libglvnd
