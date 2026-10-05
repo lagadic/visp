@@ -31,4 +31,6 @@
 .tab-content {
   padding: 15px;
   border: 1px solid var(--borderColor, #ccc);
+  background: var(--page-background-color);
+  color: var(--page-foreground-color);
 }
