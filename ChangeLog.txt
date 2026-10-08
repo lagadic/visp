@@ -51,7 +51,9 @@ ViSP 3.7.1 (current version)
     . [#1984] Link issue when libfranka needs pinocchio
     . [#1992] Valgrind: uninitialised value in vpMeLine::getExtremities() when moving-edges list is empty
               (front()/back() on empty std::list)
+    . [#2000] Python bindings return inconsistent values for visp.core.Color predefined colors
     . [#2006] Fix outdated robot state retrieval in vpRobotFranka::getPosition()
+    . [#2031] libvisp_core.so not reproducible: is not the same every time it is built
 
 ----------------------------------------------
 ViSP 3.7.0 (released December 19, 2025)
