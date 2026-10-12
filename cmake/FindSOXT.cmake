@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2026 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,38 +37,32 @@
 #
 #############################################################################
 
-IF(UNIX)
+if(UNIX)
 
-FIND_LIBRARY(SOXT_LIBRARY
+  find_library(SOXT_LIBRARY
     NAMES SoXt
     PATHS
-    /usr/lib
-    /usr/local/lib
-    /lib
-    "$ENV{COIN_DIR}/lib"
-    "$ENV{COINDIR}/lib"
-    )
-MARK_AS_ADVANCED(
+      "$ENV{COIN_DIR}/lib"
+      "$ENV{COINDIR}/lib"
+  )
+  mark_as_advanced(
     SOXT_LIBRARY
-    )
-  #MESSAGE(STATUS "DBG SOXT_LIBRARY=${SOXT_LIBRARY}")
+  )
+  #message(STATUS "DBG SOXT_LIBRARY=${SOXT_LIBRARY}")
 
-  ## --------------------------------
-
-  IF(SOXT_LIBRARY)
-
+  if(SOXT_LIBRARY)
 		SET(SOXT_LIBRARIES ${SOXT_LIBRARY})
     SET(SOXT_FOUND TRUE)
-    MARK_AS_ADVANCED(
-    SOXT_LIBRARIES
-    )
-  ELSE(SOXT_LIBRARY)
+    mark_as_advanced(
+      SOXT_LIBRARIES
+      )
+  else()
     SET(SOXT_FOUND FALSE)
-    #MESSAGE("SoXt library not found.")
-  ENDIF(SOXT_LIBRARY)
+    #message("SoXt library not found.")
+  endif()
 
-  #MESSAGE(STATUS "SOXT_FOUND : ${SOXT_FOUND}")
+  #message(STATUS "SOXT_FOUND : ${SOXT_FOUND}")
 
-ELSE(UNIX)
+else()
   SET(SOXT_FOUND FALSE)
-ENDIF(UNIX)
+endif()

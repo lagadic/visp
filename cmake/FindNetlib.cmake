@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2026 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -96,10 +96,6 @@ else(WIN32)
     $ENV{LAPACK_DIR}
     $ENV{LAPACK_HOME}/lib
     $ENV{LAPACK_DIR}/lib
-    /usr/lib
-    /usr/lib64
-    /usr/local/lib
-    /usr/local/lib64
   )
   find_library(NETLIB_LIBRARY_LAPACK
     NAMES lapack

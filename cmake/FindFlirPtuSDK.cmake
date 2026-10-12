@@ -1,3 +1,19 @@
+#############################################################################
+#
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2026 by Inria. All rights reserved.
+#
+# This software is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# See the file LICENSE.txt at the root directory of this source
+# distribution for additional information about the GNU GPL.
+#
+# For using ViSP with software that can not be combined with the GNU
+# GPL, please contact Inria about acquiring a ViSP Professional
+# Edition License.
+#
 # See https://visp.inria.fr for more information.
 #
 # This software was developed at:
@@ -22,7 +38,6 @@
 #############################################################################
 
 set(FLIRPTUSDK_INC_SEARCH_PATH)
-list(APPEND FLIRPTUSDK_INC_SEARCH_PATH /usr/include)
 list(APPEND FLIRPTUSDK_INC_SEARCH_PATH /usr/include/cerial)
 list(APPEND FLIRPTUSDK_INC_SEARCH_PATH "$ENV{FLIRPTUSDK_HOME}")
 list(APPEND FLIRPTUSDK_INC_SEARCH_PATH "$ENV{FLIRPTUSDK_HOME}/cerial")
@@ -31,7 +46,6 @@ list(APPEND FLIRPTUSDK_INC_SEARCH_PATH "${FLIRPTUSDK_HOME}/cerial")
 
 
 set(FLIRPTUSDK_LIB_SEARCH_PATH)
-list(APPEND FLIRPTUSDK_LIB_SEARCH_PATH /usr/lib)
 list(APPEND FLIRPTUSDK_LIB_SEARCH_PATH "$ENV{FLIRPTUSDK_HOME}")
 list(APPEND FLIRPTUSDK_LIB_SEARCH_PATH "${FLIRPTUSDK_HOME}")
 
@@ -74,4 +88,3 @@ mark_as_advanced(
   FLIRPTUSDK_INC_SEARCH_PATH
   FLIRPTUSDK_LIB_SEARCH_PATH
 )
-

@@ -1,7 +1,7 @@
-# ############################################################################
+#############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2026 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,23 +37,20 @@
 # QUALISYS_LIBRARIES
 # QUALISYS_VERSION
 #
-# ############################################################################
+#############################################################################
 
 find_path(QUALISYS_INCLUDE_DIR
   NAMES qualisys_cpp_sdk/RTProtocol.h
   PATHS
   $ENV{QUALISYS_DIR}/include
   ${QUALISYS_DIR}/include
-  /usr/include
-  /usr/local/include)
+)
 
 find_library(QUALISYS_LIBRARY
   NAMES qualisys_cpp_sdk
   PATHS
   $ENV{QUALISYS_DIR}/lib
   ${QUALISYS_DIR}/lib
-  /usr/lib
-  /usr/local/lib
 )
 
 if(QUALISYS_LIBRARY AND QUALISYS_INCLUDE_DIR)

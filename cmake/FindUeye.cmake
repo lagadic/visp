@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2026 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -53,9 +53,6 @@ list(APPEND UEYE_LIB_SEARCH_PATH ${UEYE_DIR}/lib)
 if(MSVC)
   list(APPEND UEYE_INC_SEARCH_PATH "C:/Program Files/IDS/uEye/Develop/include")
   list(APPEND UEYE_LIB_SEARCH_PATH "C:/Program Files/IDS/uEye/Develop/lib")
-else()
-  list(APPEND UEYE_INC_SEARCH_PATH /usr/include)
-  list(APPEND UEYE_LIB_SEARCH_PATH /usr/lib)
 endif()
 
 find_path(UEYE_INCLUDE_DIRS ueye.h

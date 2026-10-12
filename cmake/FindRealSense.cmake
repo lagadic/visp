@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2026 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -39,8 +39,8 @@
 #
 #############################################################################
 
-set(REALSENSE_INC_SEARCH_PATH /usr/local/include)
-set(REALSENSE_LIB_SEARCH_PATH /usr/local/lib)
+set(REALSENSE_INC_SEARCH_PATH)
+set(REALSENSE_LIB_SEARCH_PATH)
 
 if(MSVC)
   list(APPEND REALSENSE_INC_SEARCH_PATH "C:/librealsense/include")
@@ -62,9 +62,6 @@ if(MSVC)
   endif()
 
 else()
-  list(APPEND REALSENSE_INC_SEARCH_PATH /usr/include)
-  list(APPEND REALSENSE_LIB_SEARCH_PATH /usr/lib)
-
   list(APPEND REALSENSE_INC_SEARCH_PATH $ENV{REALSENSE_HOME}/include)
   list(APPEND REALSENSE_LIB_SEARCH_PATH $ENV{REALSENSE_HOME}/lib)
 endif()

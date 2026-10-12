@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2026 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -42,16 +42,12 @@
 
 find_path(DMTX_INCLUDE_DIRS dmtx.h
   $ENV{DMTX_DIR}/include
-  /usr/include
-  /usr/local/include
 )
 
 find_library(DMTX_LIBRARIES
   NAMES dmtx
   PATHS
     $ENV{DMTX_DIR}/lib
-    /usr/lib
-    /usr/local/lib
 )
 
 if(DMTX_INCLUDE_DIRS AND DMTX_LIBRARIES)

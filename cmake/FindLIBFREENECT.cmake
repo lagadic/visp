@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2026 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -44,38 +44,32 @@ if(WIN32)
     $ENV{LIBFREENECT_HOME}/include
     $ENV{LIBFREENECT_HPP_INCLUDE_DIR}
     $ENV{LIBFREENECT_H_INCLUDE_DIR}
-    )
+  )
   find_path(LIBFREENECT_H_INCLUDE_DIR libfreenect.h
     $ENV{LIBFREENECT_HOME}/include
     $ENV{LIBFREENECT_HPP_INCLUDE_DIR}
     $ENV{LIBFREENECT_H_INCLUDE_DIR}
-    )
+  )
   find_library(LIBFREENECT_LIBRARY freenect
     $ENV{LIBFREENECT_HOME}/lib
     $ENV{LIBFREENECT_LIBRARY_DIR}
     "c:/libfreenect/lib"
-    )
+  )
 else()
   find_path(LIBFREENECT_HPP_INCLUDE_DIR libfreenect.hpp
     $ENV{LIBFREENECT_HOME}/include
-    /usr/include
-    /usr/local/include
     /usr/include/libfreenect
     /usr/local/include/libfreenect
-    )
+  )
   find_path(LIBFREENECT_H_INCLUDE_DIR libfreenect.h
     $ENV{LIBFREENECT_HOME}/include
-    /usr/include
-    /usr/local/include
     /usr/include/libfreenect
     /usr/local/include/libfreenect
-    )
+  )
   find_library(LIBFREENECT_LIBRARY freenect
     $ENV{LIBFREENECT_HOME}/lib
     $ENV{LIBFREENECT_HOME}/build/lib
-    /usr/lib
-    /usr/local/lib
-    )
+  )
 endif()
 
 ## --------------------------------

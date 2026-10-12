@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2026 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -42,13 +42,11 @@ find_path(ARIA_INCLUDE_DIR Aria.h
   $ENV{ARIA_HOME}/include
   /usr/local/Aria/include
   /usr/Aria/include
-  /usr/include
   /usr/include/Aria
-  /usr/local/include
   /usr/local/include/Aria
   "C:/Program Files/MobileRobots/Aria/include"
 )
-#MESSAGE("DBG ARIA_INCLUDE_DIR=${ARIA_INCLUDE_DIR}")
+#message("DBG ARIA_INCLUDE_DIR=${ARIA_INCLUDE_DIR}")
 
 if(UNIX)
   find_library(ARIA_LIBRARY
@@ -57,10 +55,8 @@ if(UNIX)
     $ENV{ARIA_HOME}/lib
     /usr/local/Aria/lib
     /usr/Aria/lib
-    /usr/lib
-    /usr/local/lib
   )
-  #MESSAGE("DBG ARIA_LIBRARY=${ARIA_LIBRARY}")
+  #message("DBG ARIA_LIBRARY=${ARIA_LIBRARY}")
 else()
   if(MSVC12)
     set(ARIA_SUFFIX_NAME VC12)

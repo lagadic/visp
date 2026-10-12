@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2026 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -46,42 +46,39 @@ else(NOT UNIX AND NOT WIN32)
 
   find_path(BICLOPS_INCLUDE_DIR Biclops.h
     $ENV{BICLOPS_HOME}/include
-    /usr/include )
+  )
 
   #message("DBG BICLOPS_INCLUDE_DIR=${BICLOPS_INCLUDE_DIR}")
 
   find_path(PMD_INCLUDE_DIR PMD.h
     $ENV{BICLOPS_HOME}/include
     $ENV{BICLOPS_PMD_HOME}/include
-    /usr/include )
+  )
 
   find_path(UTILS_INCLUDE_DIR utility.h
     $ENV{BICLOPS_HOME}/include
     $ENV{BICLOPS_UTILS_HOME}/include
-    /usr/include )
+  )
 
   find_library(BICLOPS_LIBRARY
     NAMES Biclops libBiclops libBiclopsD
     PATHS
-    $ENV{BICLOPS_HOME}/lib
-    /usr/lib
-    )
+      $ENV{BICLOPS_HOME}/lib
+  )
 
   find_library(PMD_LIBRARY
     NAMES PMD libPMD libPMDD
     PATHS
-    $ENV{BICLOPS_HOME}/lib
-    $ENV{BICLOPS_PMD_HOME}/lib
-    /usr/lib
-    )
+      $ENV{BICLOPS_HOME}/lib
+      $ENV{BICLOPS_PMD_HOME}/lib
+  )
 
   find_library(UTILS_LIBRARY
     NAMES Utils libUtils libUtilsD
     PATHS
-    $ENV{BICLOPS_HOME}/lib
-    $ENV{BICLOPS_UTILS_HOME}/lib
-    /usr/lib
-    )
+      $ENV{BICLOPS_HOME}/lib
+      $ENV{BICLOPS_UTILS_HOME}/lib
+  )
   #message("DBG BICLOPS_LIBRARY=${BICLOPS_LIBRARY}")
 
   ## --------------------------------

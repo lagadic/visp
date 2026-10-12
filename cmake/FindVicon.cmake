@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2026 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -43,8 +43,6 @@ find_path(VICON_INCLUDE_DIR
   PATHS
     $ENV{VICON_DIR}
     ${VICON_DIR}
-    /usr/include
-    /usr/local/include
 )
 
 find_library(VICON_LIBRARY
@@ -54,8 +52,6 @@ find_library(VICON_LIBRARY
     ${VICON_DIR}
     $ENV{VICON_DIR}/bin/Release
     ${VICON_DIR}/bin/Release
-    /usr/lib
-    /usr/local/lib
     )
 
 if(VICON_LIBRARY AND VICON_INCLUDE_DIR)
