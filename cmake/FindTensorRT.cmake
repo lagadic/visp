@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2026 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -43,10 +43,6 @@ set(TENSORRT_LIB_SEARCH_PATHS
   $ENV{TENSORRT_DIR}/lib
   ${TENSORRT_HOME}/lib
   ${TENSORRT_DIR}/lib
-  /usr/local/lib
-  /usr/local/lib64
-  /usr/lib
-  /usr/lib64
 )
 
 set(TENSORRT_INC_SEARCH_PATHS
@@ -54,8 +50,6 @@ set(TENSORRT_INC_SEARCH_PATHS
   $ENV{TENSORRT_DIR}/include
   ${TENSORRT_HOME}/include
   ${TENSORRT_DIR}/include
-  /usr/local/include
-  /usr/include
 )
 
 

@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2026 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -41,16 +41,12 @@
 find_path(COMEDI_INCLUDE_DIRS comedilib.h
   PATHS
     $ENV{COMEDI_HOME}/include
-    /usr/include
-    /usr/local/include
 )
 
 find_library(COMEDI_LIBRARIES
   NAMES comedi
   PATHS
     $ENV{COMEDI_HOME}/lib
-    /usr/lib
-    /usr/local/lib
 )
 
 if(COMEDI_LIBRARIES AND COMEDI_INCLUDE_DIRS)

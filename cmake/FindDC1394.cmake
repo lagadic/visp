@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2026 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ else(NOT UNIX)
   find_path(DC1394_INCLUDE_DIR dc1394/control.h
     $ENV{DC1394_HOME}/include
     $ENV{DC1394_DIR}/include
-    /usr/include )
+  )
   #MESSAGE("DBG DC1394_INCLUDE_DIR=${DC1394_INCLUDE_DIR}")
 
   find_library(DC1394_LIBRARY
@@ -66,8 +66,7 @@ else(NOT UNIX)
     PATHS
     $ENV{DC1394_HOME}/lib
     $ENV{DC1394_DIR}/lib
-    /usr/lib
-    )
+  )
   #MESSAGE("DBG DC1394_LIBRARY=${DC1394_LIBRARY}")
 
   if(DC1394_LIBRARY AND DC1394_INCLUDE_DIR)

@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2026 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -90,21 +90,18 @@ if(WIN32)
     SOQT_LIBRARY_DEBUG
     SOQT_LIBRARY_RELEASE
     SOQT_INCLUDE_DIR
-    )
+  )
 
 else(WIN32)
   # Detection of the SoQt library on Unix
   find_library(SOQT_LIBRARY
     NAMES SoQt
-    PATHS
-    "$ENV{COIN_DIR}/lib"
-    "$ENV{SOQT_DIR}/lib"
-    "$ENV{COINDIR}/lib"
-    "$ENV{SOQTDIR}/lib"
-    /usr/lib
-    /usr/local/lib
-    /lib
-    /Library/Frameworks/SoQt.framework/Libraries
+      PATHS
+      "$ENV{COIN_DIR}/lib"
+      "$ENV{SOQT_DIR}/lib"
+      "$ENV{COINDIR}/lib"
+      "$ENV{SOQTDIR}/lib"
+      /Library/Frameworks/SoQt.framework/Libraries
     )
 
   if(SOQT_INCLUDE_DIR AND SOQT_LIBRARY)

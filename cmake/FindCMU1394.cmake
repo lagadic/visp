@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2026 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -40,48 +40,48 @@
 #############################################################################
 
 if(WIN32)
-  FIND_PATH(CMU1394_INCLUDE_DIR 1394Camera.h
+  find_path(CMU1394_INCLUDE_DIR 1394Camera.h
     $ENV{CMU1394_HOME}/include
-	"C:/Program Files (x86)/CMU/1394Camera/include"
-	"C:/Program Files/CMU/1394Camera/include"
-    )
-  #MESSAGE("DBG CMU1394_INCLUDE_DIR=${CMU1394_INCLUDE_DIR}")
+    "C:/Program Files (x86)/CMU/1394Camera/include"
+    "C:/Program Files/CMU/1394Camera/include"
+  )
+  #message("DBG CMU1394_INCLUDE_DIR=${CMU1394_INCLUDE_DIR}")
 
   if(CMAKE_CL_64)
-    FIND_LIBRARY(CMU1394_LIBRARY_DEBUG
+    find_library(CMU1394_LIBRARY_DEBUG
       NAMES 1394camerad
       PATHS
-      $ENV{CMU1394_HOME}/lib64/x64
-	  "C:/Program Files (x86)/CMU/1394Camera/lib64/x64"
-	  "C:/Program Files/CMU/1394Camera/lib64/x64"
-      )
+        $ENV{CMU1394_HOME}/lib64/x64
+        "C:/Program Files (x86)/CMU/1394Camera/lib64/x64"
+        "C:/Program Files/CMU/1394Camera/lib64/x64"
+    )
 
-    FIND_LIBRARY(CMU1394_LIBRARY_RELEASE
+    find_library(CMU1394_LIBRARY_RELEASE
       NAMES 1394camera
       PATHS
-      $ENV{CMU1394_HOME}/lib64/x64
-	  "C:/Program Files (x86)/CMU/1394Camera/lib64/x64"
-	  "C:/Program Files/CMU/1394Camera/lib64/x64"
-      )
+        $ENV{CMU1394_HOME}/lib64/x64
+        "C:/Program Files (x86)/CMU/1394Camera/lib64/x64"
+        "C:/Program Files/CMU/1394Camera/lib64/x64"
+    )
   else()
-    FIND_LIBRARY(CMU1394_LIBRARY_DEBUG
+    find_library(CMU1394_LIBRARY_DEBUG
       NAMES 1394camerad
       PATHS
-      $ENV{CMU1394_HOME}/lib
-	  "C:/Program Files (x86)/CMU/1394Camera/lib"
-	  "C:/Program Files/CMU/1394Camera/lib"
-      )
+        $ENV{CMU1394_HOME}/lib
+        "C:/Program Files (x86)/CMU/1394Camera/lib"
+        "C:/Program Files/CMU/1394Camera/lib"
+    )
 
-    FIND_LIBRARY(CMU1394_LIBRARY_RELEASE
+    find_library(CMU1394_LIBRARY_RELEASE
       NAMES 1394camera
       PATHS
-      $ENV{CMU1394_HOME}/lib
-	  "C:/Program Files (x86)/CMU/1394Camera/lib"
-	  "C:/Program Files/CMU/1394Camera/lib"
-      )
+        $ENV{CMU1394_HOME}/lib
+        "C:/Program Files (x86)/CMU/1394Camera/lib"
+        "C:/Program Files/CMU/1394Camera/lib"
+    )
   endif()
-  #MESSAGE("DBG CMU1394_LIBRARY_DEBUG=${CMU1394_LIBRARY_DEBUG}")
-  #MESSAGE("DBG CMU1394_LIBRARY_RELEASE=${CMU1394_LIBRARY_RELEASE}")
+  #message("DBG CMU1394_LIBRARY_DEBUG=${CMU1394_LIBRARY_DEBUG}")
+  #message("DBG CMU1394_LIBRARY_RELEASE=${CMU1394_LIBRARY_RELEASE}")
 
   set(CMU1394_LIBRARIES "")
   if(CMU1394_LIBRARY_RELEASE AND CMU1394_INCLUDE_DIR)
@@ -93,12 +93,12 @@ if(WIN32)
     set(CMU1394_INCLUDE_DIRS ${CMU1394_INCLUDE_DIR})
     list(APPEND CMU1394_LIBRARIES debug ${CMU1394_LIBRARY_DEBUG})
     set(CMU1394_FOUND TRUE)
-  ENDIF()
+  endif()
 
-  MARK_AS_ADVANCED(
+  mark_as_advanced(
     CMU1394_INCLUDE_DIR
     CMU1394_LIBRARY
     CMU1394_LIBRARY_DEBUG
     CMU1394_LIBRARY_RELEASE
-    )
+  )
 endif()

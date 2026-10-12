@@ -1,3 +1,5 @@
+#############################################################################
+#
 # COPYRIGHT
 #
 # All contributions by the University of California:
@@ -55,6 +57,7 @@
 #  OpenBLAS_LAPACK_LIB
 #  OpenBLAS_LIBRARIES
 #  OpenBLAS_VERSION
+#############################################################################
 
 set(OpenBLAS_INCLUDE_SEARCH_PATHS
   $ENV{OpenBLAS_HOME}
@@ -67,10 +70,8 @@ set(OpenBLAS_INCLUDE_SEARCH_PATHS
   /usr/local/opt/openblas/include
   /usr/local/include/openblas
   /usr/local/include/openblas-base
-  /usr/local/include
   /usr/include/openblas
   /usr/include/openblas-base
-  /usr/include
 )
 
 set(OpenBLAS_LIB_SEARCH_PATHS
@@ -82,14 +83,8 @@ set(OpenBLAS_LIB_SEARCH_PATHS
   $ENV{OpenBLAS_DIR}/lib
   /opt/OpenBLAS/lib
   /usr/local/opt/openblas/lib
-  /usr/local/lib
-  /usr/local/lib64
   /usr/lib/openblas-base
-  /usr/lib
-  /usr/lib64
   /lib/openblas-base
-  /lib/
-  /lib64/
 )
 
 find_path(OpenBLAS_INCLUDE_DIR NAMES cblas.h PATHS ${OpenBLAS_INCLUDE_SEARCH_PATHS} NO_DEFAULT_PATH)

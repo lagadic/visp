@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2026 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -48,8 +48,8 @@ if(MINGW)
     NAMES
       libavcodec/avcodec.h
     PATHS
-    "$ENV{MINGW_DIR}/include"
-    C:/mingw/include
+      "$ENV{MINGW_DIR}/include"
+      C:/mingw/include
     PATH_SUFFIXES
       ffmpeg
   )
@@ -58,8 +58,8 @@ if(MINGW)
     NAMES
       libavformat/avformat.h
     PATHS
-    "$ENV{MINGW_DIR}/include"
-    C:/mingw/include
+      "$ENV{MINGW_DIR}/include"
+      C:/mingw/include
     PATH_SUFFIXES
       ffmpeg
   )
@@ -68,8 +68,8 @@ if(MINGW)
     NAMES
       libavutil/avutil.h
     PATHS
-    "$ENV{MINGW_DIR}/include"
-    C:/mingw/include
+      "$ENV{MINGW_DIR}/include"
+      C:/mingw/include
     PATH_SUFFIXES
       ffmpeg
   )
@@ -78,8 +78,8 @@ if(MINGW)
     NAMES
       libswscale/swscale.h
     PATHS
-    "$ENV{MINGW_DIR}/include"
-    C:/mingw/include
+      "$ENV{MINGW_DIR}/include"
+      C:/mingw/include
     PATH_SUFFIXES
       libswscale
       ffmpeg
@@ -90,48 +90,46 @@ if(MINGW)
     NAMES
       avutil
     PATHS
-   "$ENV{MINGW_DIR}/lib64"
-    C:/mingw/lib64
+      "$ENV{MINGW_DIR}/lib64"
+      C:/mingw/lib64
   )
   find_library(FFMPEG_AVCODEC_LIBRARY
     NAMES
       avcodec
     PATHS
-    "$ENV{MINGW_DIR}/lib64"
-    C:/mingw/lib64
+      "$ENV{MINGW_DIR}/lib64"
+      C:/mingw/lib64
   )
   find_library(FFMPEG_AVFORMAT_LIBRARY
     NAMES
       avformat
     PATHS
-    "$ENV{MINGW_DIR}/lib64"
-    C:/mingw/lib64
+      "$ENV{MINGW_DIR}/lib64"
+      C:/mingw/lib64
   )
 
   find_library(FFMPEG_AVCORE_LIBRARY
     NAMES
       avcore
     PATHS
-    "$ENV{MINGW_DIR}/lib64"
-    C:/mingw/lib64
+      "$ENV{MINGW_DIR}/lib64"
+      C:/mingw/lib64
   )
 
   find_library(FFMPEG_SWSCALE_LIBRARY
     NAMES
       swscale
     PATHS
-    "$ENV{MINGW_DIR}/lib64"
-    C:/mingw/lib64
+      "$ENV{MINGW_DIR}/lib64"
+      C:/mingw/lib64
   )
 else(MINGW)
   find_path(FFMPEG_INCLUDE_DIR_AVCODEC
     NAMES
       libavcodec/avcodec.h
     PATHS
-    "/usr/include"
-    "/usr/local/include"
-    $ENV{FFMPEG_DIR}/include
-    $ENV{FFMPEG_DIR}
+      $ENV{FFMPEG_DIR}/include
+      $ENV{FFMPEG_DIR}
     PATH_SUFFIXES
       ffmpeg
   )
@@ -140,10 +138,8 @@ else(MINGW)
     NAMES
       libavformat/avformat.h
     PATHS
-    "/usr/include"
-    "/usr/local/include"
-    $ENV{FFMPEG_DIR}/include
-    $ENV{FFMPEG_DIR}
+      $ENV{FFMPEG_DIR}/include
+      $ENV{FFMPEG_DIR}
     PATH_SUFFIXES
       ffmpeg
   )
@@ -152,10 +148,8 @@ else(MINGW)
     NAMES
       libavutil/avutil.h
     PATHS
-    "/usr/include"
-    "/usr/local/include"
-    $ENV{FFMPEG_DIR}/include
-    $ENV{FFMPEG_DIR}
+      $ENV{FFMPEG_DIR}/include
+      $ENV{FFMPEG_DIR}
     PATH_SUFFIXES
       ffmpeg
   )
@@ -164,10 +158,8 @@ else(MINGW)
     NAMES
       libswscale/swscale.h
     PATHS
-    "/usr/include"
-    "/usr/local/include"
-    $ENV{FFMPEG_DIR}/include
-    $ENV{FFMPEG_DIR}
+      $ENV{FFMPEG_DIR}/include
+      $ENV{FFMPEG_DIR}
     PATH_SUFFIXES
       libswscale
       ffmpeg
@@ -178,58 +170,43 @@ else(MINGW)
     NAMES
       avutil
     PATHS
-    /usr/lib
-    /usr/local/lib
-    /lib
-    $ENV{FFMPEG_DIR}/lib
-    $ENV{FFMPEG_DIR}/Release
-    $ENV{FFMPEG_DIR}
+      $ENV{FFMPEG_DIR}/lib
+      $ENV{FFMPEG_DIR}/Release
+      $ENV{FFMPEG_DIR}
   )
   find_library(FFMPEG_AVCODEC_LIBRARY
     NAMES
       avcodec
     PATHS
-    /usr/lib
-    /usr/local/lib
-    /lib
-    $ENV{FFMPEG_DIR}/lib
-    $ENV{FFMPEG_DIR}/Release
-    $ENV{FFMPEG_DIR}
+      $ENV{FFMPEG_DIR}/lib
+      $ENV{FFMPEG_DIR}/Release
+      $ENV{FFMPEG_DIR}
   )
   find_library(FFMPEG_AVFORMAT_LIBRARY
     NAMES
       avformat
     PATHS
-    /usr/lib
-    /usr/local/lib
-    /lib
-    $ENV{FFMPEG_DIR}/lib
-    $ENV{FFMPEG_DIR}/Release
-    $ENV{FFMPEG_DIR}
+      $ENV{FFMPEG_DIR}/lib
+      $ENV{FFMPEG_DIR}/Release
+      $ENV{FFMPEG_DIR}
   )
 
   find_library(FFMPEG_AVCORE_LIBRARY
     NAMES
       avcore
     PATHS
-    /usr/lib
-    /usr/local/lib
-    /lib
-    $ENV{FFMPEG_DIR}/lib
-    $ENV{FFMPEG_DIR}/Release
-    $ENV{FFMPEG_DIR}
+      $ENV{FFMPEG_DIR}/lib
+      $ENV{FFMPEG_DIR}/Release
+      $ENV{FFMPEG_DIR}
   )
 
   find_library(FFMPEG_SWSCALE_LIBRARY
     NAMES
       swscale
     PATHS
-    /usr/lib
-    /usr/local/lib
-    /lib
-    $ENV{FFMPEG_DIR}/lib
-    $ENV{FFMPEG_DIR}/Release
-    $ENV{FFMPEG_DIR}
+      $ENV{FFMPEG_DIR}/lib
+      $ENV{FFMPEG_DIR}/Release
+      $ENV{FFMPEG_DIR}
   )
 endif(MINGW)
 
@@ -241,10 +218,10 @@ find_package(ZLIB)
 # while with CMake 2.8, the name is FindBZIP2.cmake
 # that is why we need to call FIND_PACKAGE(BZip2) and FIND_PACKAGE(BZIP2)
 find_package(BZIP2 QUIET)
-# MESSAGE("BZIP2_FOUND: ${BZIP2_FOUND}")
+# message("BZIP2_FOUND: ${BZIP2_FOUND}")
 if(NOT BZIP2_FOUND)
   find_package(BZip2 QUIET)
-  # MESSAGE("BZIP2_FOUND: ${BZIP2_FOUND}")
+  # message("BZIP2_FOUND: ${BZIP2_FOUND}")
 endif()
 
 # FFMpeg may depend also on iconv since probably version 1.1.3 where if detected,

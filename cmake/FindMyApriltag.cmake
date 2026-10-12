@@ -46,8 +46,6 @@
 set(MyApriltag_INCLUDE_SEARCH_PATHS
   $ENV{apriltag_DIR}/include
   ${apriltag_DIR}/include
-  /usr/include
-  /usr/local/include
 )
 
 set(MyApriltag_LIBRARIES_SEARCH_PATHS
@@ -55,9 +53,6 @@ set(MyApriltag_LIBRARIES_SEARCH_PATHS
   $ENV{apriltag_DIR}/lib/x86_64-linux-gnu
   ${apriltag_DIR}/lib
   ${apriltag_DIR}/lib/x86_64-linux-gnu
-  /usr/lib
-  /usr/local/lib
-  /usr/lib/x86_64-linux-gnu
 )
 
 set(MyApriltag_CMAKE_CONFIG_SEARCH_PATHS

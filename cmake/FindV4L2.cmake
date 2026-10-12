@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2026 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -41,34 +41,28 @@
 #############################################################################
 
 if(NOT UNIX)
-  # MESSAGE("FindV4L2.cmake: only available for Unix.")
+  # message("FindV4L2.cmake: only available for Unix.")
   set(V4L2_FOUND FALSE)
 else(NOT UNIX)
 
   find_path(V4L2_INCLUDE_VIDEODEV2 linux/videodev2.h
     $ENV{V4L2_HOME}/include
     $ENV{V4L2_DIR}/include
-    /usr/include
-    /usr/local/include
     /usr/src/linux/include
   )
-  #MESSAGE("DBG V4L2_INCLUDE_VIDEODEV2=${V4L2_INCLUDE_VIDEODEV2}")
+  #message("DBG V4L2_INCLUDE_VIDEODEV2=${V4L2_INCLUDE_VIDEODEV2}")
 
   find_path(V4L2_INCLUDE_LIBV4L2 libv4l2.h
     $ENV{V4L2_HOME}/include
     $ENV{V4L2_DIR}/include
-    /usr/include
-    /usr/local/include
   )
-  #MESSAGE("DBG V4L2_INCLUDE_LIBV4L2=${V4L2_INCLUDE_LIBV4L2}")
+  #message("DBG V4L2_INCLUDE_LIBV4L2=${V4L2_INCLUDE_LIBV4L2}")
 
   find_library(V4L2_LIBRARY_LIBV4L2
     NAMES v4l2
     PATHS
     $ENV{V4L2_HOME}/lib
     $ENV{V4L2_DIR}/lib
-    /usr/lib
-    /usr/local/lib
   )
 
   find_library(V4L2_LIBRARY_LIBV4LCONVERT
@@ -76,13 +70,7 @@ else(NOT UNIX)
     PATHS
     $ENV{V4L2_HOME}/lib
     $ENV{V4L2_DIR}/lib
-    /usr/lib
-    /usr/local/lib
   )
-
-
-  ## --------------------------------
-
 
   if(V4L2_INCLUDE_VIDEODEV2 AND V4L2_INCLUDE_LIBV4L2 AND V4L2_LIBRARY_LIBV4L2 AND V4L2_LIBRARY_LIBV4LCONVERT)
     set(V4L2_INCLUDE_DIRS ${V4L2_INCLUDE_VIDEODEV2} ${V4L2_INCLUDE_LIBV4L2})

@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2026 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -39,8 +39,8 @@
 #
 #############################################################################
 
-set(ZBAR_INC_SEARCH_PATH "")
-set(ZBAR_LIB_SEARCH_PATH "")
+set(ZBAR_INC_SEARCH_PATH)
+set(ZBAR_LIB_SEARCH_PATH)
 
 if(MSVC)
   list(APPEND ZBAR_INC_SEARCH_PATH $ENV{ZBAR_DIR}/include)
@@ -62,11 +62,6 @@ if(MSVC)
 
 else()
   list(APPEND ZBAR_INC_SEARCH_PATH $ENV{ZBAR_DIR}/include)
-  list(APPEND ZBAR_INC_SEARCH_PATH /usr/include)
-  list(APPEND ZBAR_INC_SEARCH_PATH /usr/local/include)
-
-  list(APPEND ZBAR_LIB_SEARCH_PATH /usr/lib)
-  list(APPEND ZBAR_LIB_SEARCH_PATH /usr/local/lib)
 endif()
 
 find_path(ZBAR_INCLUDE_DIRS zbar.h

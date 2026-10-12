@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2026 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -52,10 +52,6 @@ else()
     $ENV{LIBUSB_1_HOME}/build/lib
     $ENV{LIBUSB_1_DIR}/lib
     $ENV{LIBUSB_1_DIR}/build/lib
-    /lib/
-    /lib64/
-    /usr/lib
-    /usr/local/lib
     )
   find_path(LIBUSB_1_INCLUDE_DIR libusb.h
     $ENV{LIBUSB_1_HOME}/include/libusb-1.0
