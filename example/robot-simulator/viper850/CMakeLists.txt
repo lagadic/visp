@@ -50,8 +50,10 @@ foreach(cpp ${example_cpp})
   endif()
 
   # Add test
-  # Workaround for github action issue when using std::mutex by removing the test
+  # Workaround for github action issue under windows when using std::mutex by removing the test
   # See https://github.com/actions/runner-images/issues/10020
-  # get_filename_component(target ${cpp} NAME_WE)
-  # add_test(${target} ${target} -c ${SHORT_OPTION_TO_DISABLE_DISPLAY})
+  if(NOT WIN32)
+    get_filename_component(target ${cpp} NAME_WE)
+    add_test(${target} ${target} -c ${SHORT_OPTION_TO_DISABLE_DISPLAY})
+  endif()
 endforeach()
