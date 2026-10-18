@@ -41,7 +41,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-14, macos-latest]
+        os: [macos-15, macos-latest]
 
     steps:
     - name: Checkout repository
@@ -60,27 +60,10 @@ jobs:
       run: |
         brew install libpng libjpeg-turbo libdc1394 opencv pcl librealsense zbar pkg-config nlohmann-json
 
-    - name: Install dependencies on macos-14
-      # XXX Testing this on macos-14
-      # ----------------
-      # On macos-13 we need to do a specific action
-      # ==> Pouring python@3.12--3.12.1_1.ventura.bottle.tar.gz
-      # Error: The `brew link` step did not complete successfully
-      # The formula built, but is not symlinked into /usr/local
-      # Could not symlink bin/2to3-3.12
-      # Target /usr/local/bin/2to3-3.12
-      # already exists. You may want to remove it:
-      #   rm '/usr/local/bin/2to3-3.12'
-      #
-      # To force the link and overwrite all conflicting files:
-      #   brew link --overwrite python@3.12
-      #
-      # Fix proposed in https://github.com/actions/runner-images/issues/6817
-      # ----------------
-      # TODO Might be merged with macos-latest deps installation if succeed
-      if: matrix.os == 'macos-14'
+    - name: Install dependencies on macos-15
+      if: matrix.os == 'macos-15'
       run: |
-        brew install libpng libjpeg-turbo libdc1394 opencv pcl librealsense zbar pkg-config nlohmann-json
+        brew install libpng libjpeg-turbo libdc1394 opencv pcl librealsense zbar pkg-config nlohmann-json eigen
       #  brew update
       #  brew upgrade || true
       #  brew install libpng libjpeg-turbo libdc1394 pcl librealsense zbar pkg-config nlohmann-json
