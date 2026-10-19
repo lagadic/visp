@@ -73,6 +73,7 @@ Example usage:
   filter = np.zeros((1,1))
   ImageFilter.getGaussianKernel(filter, size, sigma, normalize)
   assert filter.shape[0] == 1 and filter.shape[1] == ((size + 1)/2)
+  assert filter.numpy().any()
     )doc", py::arg("filter"), py::arg("size"), py::arg("sigma") = 0., py::arg("normalize") = true);
 
   pyClass.def_static("getGaussianKernel", [](vpArray2D<FilterType> &filter, unsigned int size, FilterType sigma, bool normalize) -> void {
@@ -97,6 +98,7 @@ Example usage:
   filter = ArrayDouble2D(1,1)
   ImageFilter.getGaussianKernel(filter, size, sigma, normalize)
   assert filter.getRows() == 1 and filter.getCols() == ((size + 1)/2)
+  assert filter.numpy().any()
     )doc", py::arg("filter"), py::arg("size"), py::arg("sigma") = 0., py::arg("normalize") = true);
 
   pyClass.def_static("getGaussianDerivativeKernel", [](py::array_t<FilterType> &filter, unsigned int size, FilterType sigma, bool normalize) -> void {
@@ -147,6 +149,7 @@ Example usage:
   filter = ArrayDouble2D(1,1)
   ImageFilter.getGaussianDerivativeKernel(filter, size, sigma, normalize)
   assert filter.getRows() == 1 and filter.getCols() == ((size + 1)/2)
+  assert filter.numpy().any()
     )doc", py::arg("filter"), py::arg("size"), py::arg("sigma") = 0., py::arg("normalize") = true);
 }
 
@@ -183,10 +186,12 @@ Example usage:
   Iout = ImageDouble()
   ImageFilter.getGradX(Iin, Iout, None)
   assert Iout.getRows() == Iin.getRows() and Iout.getCols() == Iin.getCols()
+  assert Iout.numpy().any()
   Iout = ImageDouble()
   mask = ImageBool(100,100,True)
   ImageFilter.getGradX(Iin, Iout, mask)
   assert Iout.getRows() == Iin.getRows() and Iout.getCols() == Iin.getCols()
+  assert Iout.numpy().any()
     )doc", py::arg("input"), py::arg("output"), py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
 
   pyClass.def_static("getGradY", [](const vpImage<unsigned char> &input, vpImage<FilterType> &output, const std::optional<vpImage<bool>> &mask) -> void {
@@ -215,10 +220,12 @@ Example usage:
   Iout = ImageDouble()
   ImageFilter.getGradY(Iin, Iout, None)
   assert Iout.getRows() == Iin.getRows() and Iout.getCols() == Iin.getCols()
+  assert Iout.numpy().any()
   Iout = ImageDouble()
   mask = ImageBool(100,100,True)
   ImageFilter.getGradY(Iin, Iout, mask)
   assert Iout.getRows() == Iin.getRows() and Iout.getCols() == Iin.getCols()
+  assert Iout.numpy().any()
 )doc", py::arg("input"), py::arg("output"), py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
 }
 
@@ -270,10 +277,12 @@ Example usage:
   Iout = ImageDouble()
   ImageFilter.getGradX(Iin, Iout, filter, size, None)
   assert Iout.getRows() == Iin.getRows() and Iout.getCols() == Iin.getCols()
+  assert Iout.numpy().any()
   Iout = ImageDouble()
   mask = ImageBool(100,100,True)
   ImageFilter.getGradX(Iin, Iout, filter, size, mask)
   assert Iout.getRows() == Iin.getRows() and Iout.getCols() == Iin.getCols()
+  assert Iout.numpy().any()
     )doc", py::arg("input"), py::arg("output"), py::arg("filter"), py::arg("size"), py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
 
   pyClass.def_static("getGradX", [](const vpImage<ImageType> &input, vpImage<FilterType> &output, const vpArray2D<FilterType> &filter, unsigned int size, const std::optional<vpImage<bool>> &mask) -> void {
@@ -315,10 +324,12 @@ Example usage:
   Iout = ImageDouble()
   ImageFilter.getGradX(Iin, Iout, filter, size, None)
   assert Iout.getRows() == Iin.getRows() and Iout.getCols() == Iin.getCols()
+  assert Iout.numpy().any()
   Iout = ImageDouble()
   mask = ImageBool(100,100,True)
   ImageFilter.getGradX(Iin, Iout, filter, size, mask)
   assert Iout.getRows() == Iin.getRows() and Iout.getCols() == Iin.getCols()
+  assert Iout.numpy().any()
 )doc", py::arg("input"), py::arg("output"), py::arg("filter"), py::arg("size"), py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
 
   pyClass.def_static("getGradY", [](const vpImage<ImageType> &input, vpImage<FilterType> &output, const py::array_t<FilterType> &filter, unsigned int size, const std::optional<vpImage<bool>> &mask) -> void {
@@ -362,10 +373,12 @@ Example usage:
   Iout = ImageDouble()
   ImageFilter.getGradY(Iin, Iout, filter, size, None)
   assert Iout.getRows() == Iin.getRows() and Iout.getCols() == Iin.getCols()
+  assert Iout.numpy().any()
   Iout = ImageDouble()
   mask = ImageBool(100,100,True)
   ImageFilter.getGradY(Iin, Iout, filter, size, mask)
   assert Iout.getRows() == Iin.getRows() and Iout.getCols() == Iin.getCols()
+  assert Iout.numpy().any()
 )doc", py::arg("input"), py::arg("output"), py::arg("filter"), py::arg("size"), py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
 
   pyClass.def_static("getGradY", [](const vpImage<ImageType> &input, vpImage<FilterType> &output, const vpArray2D<FilterType> &filter, unsigned int size, const std::optional<vpImage<bool>> &mask) -> void {
@@ -407,10 +420,12 @@ Example usage:
   Iout = ImageDouble()
   ImageFilter.getGradY(Iin, Iout, filter, size, None)
   assert Iout.getRows() == Iin.getRows() and Iout.getCols() == Iin.getCols()
+  assert Iout.numpy().any()
   Iout = ImageDouble()
   mask = ImageBool(100,100,True)
   ImageFilter.getGradY(Iin, Iout, filter, size, mask)
   assert Iout.getRows() == Iin.getRows() and Iout.getCols() == Iin.getCols()
+  assert Iout.numpy().any()
 )doc", py::arg("input"), py::arg("output"), py::arg("filter"), py::arg("size"), py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
 }
 
