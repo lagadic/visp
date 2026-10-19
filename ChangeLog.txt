@@ -25,6 +25,8 @@ ViSP 3.7.1 (current version)
       - Embedded Build: Fall back to the built-in version available directly in the 3rdparty/catch2 folder. This
         version was upgraded to Catch2 3.13.0
     . Fix warnings detected on Ubuntu with -Wshadow -Wfloat-equal -Wsign-conversion
+    . Ready to use docker container with Ubuntu 26.04.
+      See https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-docker.html
   - Applications
     . Camera intrinsic calibration app: visp-calibrate-camera.cpp
       - Add lens distortion displacement map visualization
