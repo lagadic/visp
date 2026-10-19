@@ -138,12 +138,7 @@ $ su -c "yum install ogre-devel ogre-samples ois-devel"
 
 \subsection soft_ar_Panda3D Panda3D
 
-Panda3D installation instructions are provided in \ref tutorial-panda3d.
-- <b>\ref tutorial-panda3d-install-ubuntu</b>
-
-- <b>\ref tutorial-panda3d-install-macos</b>
-
-- <b>\ref tutorial-panda3d-install-windows</b>
+Panda3D installation instructions are provided in \ref tutorial-panda3d-install section.
 
 \subsection soft_ar_Coin3D Coin3D
 
