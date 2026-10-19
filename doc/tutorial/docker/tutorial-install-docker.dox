@@ -14,86 +14,113 @@ size (compressed size) and contain minimal things to discover and start to play 
 
 \section install_docker_engine 2. Prerequisites: Install Docker Engine
 
-\subsection install_docker_engine_ubuntu 2.1. On Ubuntu host
+\htmlonly
+<div class="tab-container">
+  <div class="tab-buttons">
+    <button class="tab-btn active" onclick="openTab(event, 'ubuntu')">Ubuntu</button>
+    <button class="tab-btn" onclick="openTab(event, 'macos')">macOS</button>
+  </div>
 
-As mentioned [here](https://docs.docker.com/engine/install/ubuntu/), to install Docker Engine on Ubuntu host using the
-repository, follow the instructions:
-
-- Update the apt package index and install packages to allow apt to use a repository over HTTPS:
-\verbatim
-$ sudo apt-get update
-
-$ sudo apt-get install \
+  <div data-tab="ubuntu" class="tab-content" style="display:block;">
+    As mentioned <a href="https://docs.docker.com/engine/install/ubuntu/">here</a>, to install Docker Engine on
+    Ubuntu host using the repository, follow the instructions:
+    <ul>
+      <li>
+        Update the apt package index and install packages to allow apt to use a repository over HTTPS:
+        <pre class="fragment">
+$ sudo apt-get update && sudo apt-get install \
     apt-transport-https \
     ca-certificates \
     curl \
     gnupg-agent \
     software-properties-common
-\endverbatim
-
-- Add Docker’s official GPG key:
-\verbatim
+        </pre>
+      </li>
+      <li>
+        Add Docker’s official GPG key:
+        <pre class="fragment">
 $ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-\endverbatim
-
-- Use the following command to set up the stable repository
-\verbatim
+        </pre>
+      </li>
+      <li>
+        Use the following command to set up the stable repository:
+        <pre class="fragment">
 $ sudo add-apt-repository \
     "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
     $(lsb_release -cs) \
     stable"
-\endverbatim
+        </pre>
+      </li>
+      <li>
+        Update the apt package index, and install the latest version of Docker Engine and containerd:
+        <pre class="fragment">
+$ sudo apt-get update && sudo apt-get install docker-ce docker-ce-cli containerd.io
+        </pre>
+      </li>
+    </ul>
+  </div>
 
-- Update the apt package index, and install the latest version of Docker Engine and containerd
-\verbatim
-$ sudo apt-get update
-$ sudo apt-get install docker-ce docker-ce-cli containerd.io
-\endverbatim
+  <div data-tab="macos" class="tab-content" style="display:none;">
+    <ul>
+      <li>To install Docker Engine on MacOS host, first go to the
+      <a href="https://hub.docker.com/editions/community/docker-ce-desktop-mac">Docker Store</a>
+      and download Docker Desktop for Mac.</li>
 
-\subsection install_docker_engine_mac 2.2. On MacOS host
+      <li>Double-click <kbd>Docker.dmg</kbd> to open the installer, then drag Moby the whale to the Applications folder.</li>
 
-- To install Docker Engine on MacOS host, first go to the
-  [Docker Store](https://hub.docker.com/editions/community/docker-ce-desktop-mac) and download Docker Desktop for Mac.
+      <li>Double-click <kbd>Docker.app</kbd> in the Applications folder to start Docker.</li>
 
-- Double-click Docker.dmg to open the installer, then drag Moby the whale to the Applications folder.
+      <li>You are prompted to authorize Docker.app with your system password after you launch it. Privileged access is needed
+        to install networking components and links to the Docker apps.</li>
 
-- Double-click Docker.app in the Applications folder to start Docker.
-
-- You are prompted to authorize Docker.app with your system password after you launch it. Privileged access is needed
-  to install networking components and links to the Docker apps.
-
-- In order to run GUIs from the container, you will need to:
-  - Install [XQuartz](https://www.xquartz.org/) 2.7.11 or later
-  - After installing XQuartz, start it and open XQuartz -> Preferences from the menu bar. Go to the last tab, Security,
-    and enable both "Allow connections from network clients" and "Authenticate connections" checkboxes and restart XQuartz.
-    \image html img-xquartz-security.jpg
-  - Now your Mac will be listening on port 6000 for X11 connections. Record the IP Address of your Mac as you will need
-    it in your containers.
-  - Restart X11 server or reboot your Mac to take into account previous changes
+      <li>In order to run GUIs from the container, you will need to:
+        <ul>
+          <li>Install <a href="https://www.xquartz.org/">XQuartz</a> 2.7.11 or later</li>
+          <li>After installing XQuartz, start it and open XQuartz -> Preferences from the menu bar. Go to the last tab, Security,
+            and enable both "Allow connections from network clients" and "Authenticate connections" checkboxes and restart XQuartz.
+            <br><img src="img-xquartz-security.jpg" alt="X11 Security Preferences">
+          </li>
+          <li>Now your Mac will be listening on port 6000 for X11 connections. Record the IP Address of your Mac as you will need
+            it in your containers.</li>
+          <li>Restart X11 server or reboot your Mac to take into account previous changes</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</div>
+\endhtmlonly
 
 \section docker_visp_pull 3. Pull existing docker image
 
 In [Docker Hub](https://hub.docker.com/repository/docker/vispci/vispci), we provide several ready-to-use Docker
-images that can be used on an Ubuntu or macOS host with ViSP already built. Instead, there is also the possibility to
+Ubuntu images that can be used on an Ubuntu or macOS host with ViSP already built. Instead, there is also the possibility to
 build docker images from a `Dockerfile` following instruction given in \ref docker_visp_build section.
 
-\subsection docker_visp_pull_ubuntu_22_04 3.1. Pull Ubuntu 22.04 image
+\htmlonly
+<div class="tab-container">
+  <div class="tab-buttons">
+    <button class="tab-btn" onclick="openTab(event, 'ubuntu-18.04')">Ubuntu 18.04</button>
+    <button class="tab-btn" onclick="openTab(event, 'ubuntu-20.04')">Ubuntu 20.04</button>
+    <button class="tab-btn active" onclick="openTab(event, 'ubuntu-22.04')">Ubuntu 22.04</button>
+  </div>
 
-\verbatim
-$ docker pull vispci/vispci:ubuntu-22.04
-\endverbatim
-
-\subsection docker_visp_pull_ubuntu_20_04 3.2. Pull Ubuntu 20.04 image
-
-\verbatim
-$ docker pull vispci/vispci:ubuntu-20.04
-\endverbatim
-
-\subsection docker_visp_pull_ubuntu_18_04 3.3. Pull Ubuntu 18.04 image
-
-\verbatim
+  <div data-tab="ubuntu-18.04" class="tab-content" style="display:none;">
+    <pre class="fragment">
 $ docker pull vispci/vispci:ubuntu-18.04
-\endverbatim
+    </pre>
+  </div>
+  <div data-tab="ubuntu-20.04" class="tab-content" style="display:none;">
+    <pre class="fragment">
+$ docker pull vispci/vispci:ubuntu-20.04
+    </pre>
+  </div>
+  <div data-tab="ubuntu-22.04" class="tab-content" style="display:block;">
+    <pre class="fragment">
+$ docker pull vispci/vispci:ubuntu-22.04
+    </pre>
+  </div>
+</div>
+\endhtmlonly
 
 \section docker_visp_build 4. Build docker image from Dockerfile
 
@@ -101,79 +128,128 @@ We suppose here that you cloned ViSP from github in your workspace.
 
 Change directory to access the `Dockerfile` and build the corresponding docker image
 
-\subsection docker_visp_build_ubuntu_24_04 4.1. Build Ubuntu 24.04 image
+\htmlonly
+<div class="tab-container">
+  <div class="tab-buttons">
+    <button class="tab-btn" onclick="openTab(event, 'ubuntu-18.04')">Ubuntu 18.04</button>
+    <button class="tab-btn" onclick="openTab(event, 'ubuntu-20.04')">Ubuntu 20.04</button>
+    <button class="tab-btn" onclick="openTab(event, 'ubuntu-22.04')">Ubuntu 22.04</button>
+    <button class="tab-btn" onclick="openTab(event, 'ubuntu-24.04')">Ubuntu 24.04</button>
+    <button class="tab-btn active" onclick="openTab(event, 'ubuntu-26.04')">Ubuntu 26.04</button>
+  </div>
 
-\verbatim
-$ cd $VISP_WS/visp/ci/docker/ubuntu-24.04
-$ docker build -t vispci/vispci:ubuntu-24.04 .
-\endverbatim
-
-\subsection docker_visp_build_ubuntu_22_04 4.2. Build Ubuntu 22.04 image
-
-\verbatim
-$ cd $VISP_WS/visp/ci/docker/ubuntu-22.04
-$ docker build -t vispci/vispci:ubuntu-22.04 .
-\endverbatim
-
-\subsection docker_visp_build_ubuntu_20_04 4.3. Build Ubuntu 20.04 image
-
-\verbatim
-$ cd $VISP_WS/visp/ci/docker/ubuntu-20.04
-$ docker build -t vispci/vispci:ubuntu-20.04 .
-\endverbatim
-
-\subsection docker_visp_build_ubuntu_18_04 4.4. Build Ubuntu 18.04 image
-
-\verbatim
+  <div data-tab="ubuntu-18.04" class="tab-content" style="display:none;">
+    <pre class="fragment">
 $ cd $VISP_WS/visp/ci/docker/ubuntu-18.04
 $ docker build -t vispci/vispci:ubuntu-18.04 .
-\endverbatim
+    </pre>
+  </div>
+  <div data-tab="ubuntu-20.04" class="tab-content" style="display:none;">
+    <pre class="fragment">
+$ cd $VISP_WS/visp/ci/docker/ubuntu-20.04
+$ docker build -t vispci/vispci:ubuntu-20.04 .
+    </pre>
+  </div>
+  <div data-tab="ubuntu-22.04" class="tab-content" style="display:none;">
+    <pre class="fragment">
+$ cd $VISP_WS/visp/ci/docker/ubuntu-22.04
+$ docker build -t vispci/vispci:ubuntu-22.04 .
+    </pre>
+  </div>
+  <div data-tab="ubuntu-24.04" class="tab-content" style="display:none;">
+    <pre class="fragment">
+$ cd $VISP_WS/visp/ci/docker/ubuntu-24.04
+$ docker build -t vispci/vispci:ubuntu-24.04 .
+    </pre>
+  </div>
+  <div data-tab="ubuntu-24.04" class="tab-content" style="display:none;">
+    <pre class="fragment">
+$ cd $VISP_WS/visp/ci/docker/ubuntu-24.04
+$ docker build -t vispci/vispci:ubuntu-24.04 .
+    </pre>
+  </div>
+  <div data-tab="ubuntu-26.04" class="tab-content" style="display:block;">
+    <pre class="fragment">
+$ cd $VISP_WS/visp/ci/docker/ubuntu-26.04
+$ docker build -t vispci/vispci:ubuntu-26.04 .
+    </pre>
+  </div>
+</div>
+\endhtmlonly
+
 
 \section docker_visp_start 5. Start ViSP container
 
-\subsection docker_visp_start_ubuntu 5.1. On Ubuntu host
+\htmlonly
+<div class="tab-container">
+  <div class="tab-buttons">
+    <button class="tab-btn active" onclick="openTab(event, 'ubuntu')">Ubuntu host</button>
+    <button class="tab-btn" onclick="openTab(event, 'macos')">macOS host</button>
+  </div>
 
-- On your computer running Ubuntu, allow access to the X11 server
+  <!-- Onglet Ubuntu (affiché par défaut) -->
+  <div data-tab="ubuntu" class="tab-content" style="display: block;">
+    <ul>
+      <li>
+        On your computer running Ubuntu, allow access to the X11 server:
+        <pre class="fragment">
+$ xhost +local:docker
+non-network local connections being added to access control list
+        </pre>
+      </li>
+      <li>
+        Run your Docker container. The following command connects to the <code>ubuntu-26.04</code> Docker container.
+        It can be easily adapted to any other container name.
+        <pre class="fragment">
+$ docker run --rm -it --network=host --privileged \
+          --env=DISPLAY \
+          --env=QT_X11_NO_MITSHM=1 \
+          --volume=/tmp/.X11-unix:/tmp/.X11-unix:rw \
+          --volume=/dev:/dev \
+          vispci/vispci:ubuntu-26.04
+vispci@6c8d67579659:~$ pwd
+/home/vispci
+        </pre>
+      </li>
+    </ul>
+  </div>
 
-      $ xhost +local:docker
-      non-network local connections being added to access control list
-
-- Run your Docker container. The following command connects to the ubuntu-22.04 Docker container.
-  It can be easily adapted to any other container name.
-
-      $ docker run --rm -it --network=host --privileged \
-                --env=DISPLAY \
-                --env=QT_X11_NO_MITSHM=1 \
-                --volume=/tmp/.X11-unix:/tmp/.X11-unix:rw \
-                --volume=/dev:/dev \
-                vispci/vispci:ubuntu-22.04
-      vispci@6c8d67579659:~$ pwd
-      /home/vispci
-
-\subsection docker_visp_start_macos 5.2. On MacOS host
-
-- Get your MacOS computer IP address
-
-      $ IP=$(/usr/sbin/ipconfig getifaddr en0)
-      $ echo $IP
-      $ 192.168.1.18
-
-- Allow connections from MacOS to XQuartz
-
-      $ xhost + "$IP"
-      192.168.1.18 being added to access control list
-
-- Run your Docker container. The following command connects to the ubuntu-22.04 Docker container.
-  It can be easily adapted to any other container name.
-
-      $ docker run --rm -it --network=host --privileged \
-                --env=DISPLAY="${IP}:0" \
-                --env=QT_X11_NO_MITSHM=1 \
-                --volume=/tmp/.X11-unix:/tmp/.X11-unix:rw \
-                --volume=/dev:/dev \
-                vispci/vispci:ubuntu-22.04
-      vispci@6c8d67579659:~$ pwd
-      /home/vispci
+  <!-- Onglet macOS (masqué par défaut si votre script gère le masquage, sinon display:none) -->
+  <div data-tab="macos" class="tab-content" style="display: none;">
+    <ul>
+      <li>
+        Get your MacOS computer IP address:
+        <pre class="fragment">
+$ IP=$(/usr/sbin/ipconfig getifaddr en0)
+$ echo $IP
+192.168.1.18
+        </pre>
+      </li>
+      <li>
+        Allow connections from MacOS to XQuartz:
+        <pre class="fragment">
+$ xhost + "$IP"
+192.168.1.18 being added to access control list
+        </pre>
+      </li>
+      <li>
+        Run your Docker container. The following command connects to the <code>ubuntu-26.04</code> Docker container.
+        It can be easily adapted to any other container name.
+        <pre class="fragment">
+$ docker run --rm -it --network=host --privileged \
+          --env=DISPLAY="${IP}:0" \
+          --env=QT_X11_NO_MITSHM=1 \
+          --volume=/tmp/.X11-unix:/tmp/.X11-unix:rw \
+          --volume=/dev:/dev \
+          vispci/vispci:ubuntu-26.04
+vispci@6c8d67579659:~$ pwd
+/home/vispci
+        </pre>
+      </li>
+    </ul>
+  </div>
+</div>
+\endhtmlonly
 
 \section docker_visp_usage 6. How to use ViSP container
 
