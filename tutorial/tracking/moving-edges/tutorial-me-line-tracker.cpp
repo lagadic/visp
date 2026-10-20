@@ -37,7 +37,6 @@
 
 #ifdef VISP_HAVE_MODULE_SENSOR
 //! [camera headers]
-#include <visp3/sensor/vp1394CMUGrabber.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 #include <visp3/sensor/vpFlyCaptureGrabber.h>
 #include <visp3/sensor/vpRealSense2.h>

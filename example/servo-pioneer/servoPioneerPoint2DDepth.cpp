@@ -50,7 +50,6 @@
 #include <visp3/core/vpVelocityTwistMatrix.h>
 #include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/robot/vpRobotPioneer.h> // Include first to avoid build issues with Status, None, isfinite
-#include <visp3/sensor/vp1394CMUGrabber.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 #include <visp3/sensor/vpV4l2Grabber.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>

@@ -36,8 +36,8 @@ The following code also available in tutorial-blob-tracker-live.cpp file provide
 allows to grab images from a firewire camera and track a blob. The initialisation is done with a user mouse click on
 a pixel that belongs to the blob.
 
-To acquire images from a firewire camera we use vp1394TwoGrabber class on unix-like systems or vp1394CMUGrabber class
-under Windows. These classes are described in the \ref tutorial-grabber.
+To acquire images from a firewire camera we use vp1394TwoGrabber class on unix-like systems.
+This class is described in the \ref tutorial-grabber.
 
 \include tutorial-blob-tracker-live.cpp
 

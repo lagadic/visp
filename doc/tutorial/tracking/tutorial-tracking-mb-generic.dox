@@ -1484,7 +1484,6 @@ to use a camera in order to test the tracker live.
 This example tries to use the first grabber that is available in the following list:
 - vpV4l2Grabber
 - vp1394TwoGrabber
-- vp1394CMUGrabber
 - vpFlyCaptureGrabber
 - vpRealSense2
 - cv::VideoCapture
