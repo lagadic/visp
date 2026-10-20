@@ -1503,7 +1503,6 @@ $ cd $VISP_WS/visp/tutorial/tracking/model-based/generic
 $ gedit tutorial-mb-generic-tracker-live.cpp
 #undef VISP_HAVE_V4L2
 #undef VISP_HAVE_DC1394
-#undef VISP_HAVE_CMU1394
 #undef VISP_HAVE_FLYCAPTURE
 //#undef VISP_HAVE_REALSENSE2
 \endcode

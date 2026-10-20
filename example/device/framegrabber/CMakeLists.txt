@@ -42,7 +42,6 @@ find_package(VISP REQUIRED visp_core visp_sensor visp_io visp_gui)
 set(example_cpp
   getRealSense2Info.cpp
   grab1394Two.cpp
-  grab1394CMU.cpp
   grabDisk.cpp
   grabDiskFloat.cpp
   grabV4l2.cpp

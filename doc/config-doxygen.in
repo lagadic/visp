@@ -2532,7 +2532,6 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_APRILTAG_COPY_FCT \
                          VISP_HAVE_APRILTAG_POSE_FCT \
                          VISP_HAVE_ATIDAQ \
-                         VISP_HAVE_CMU1394 \
                          VISP_HAVE_BICLOPS \
                          VISP_HAVE_CLIPPER \
                          VISP_HAVE_COIN3D \

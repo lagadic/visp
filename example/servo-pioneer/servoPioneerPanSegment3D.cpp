@@ -81,7 +81,7 @@ int main(int argc, char **argv)
   using namespace VISP_NAMESPACE_NAME;
 #endif
 
-#if defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_CMU1394)
+#if defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_V4L2)
 #if defined(VISP_HAVE_DISPLAY)
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   std::shared_ptr<vpDisplay> display;
@@ -187,15 +187,6 @@ int main(int argc, char **argv)
     vp1394TwoGrabber g(false);
     g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
     g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_30);
-    // AVT Pike 032C parameters
-    cam.initPersProjWithoutDistortion(800, 795, 320, 216);
-#elif defined(VISP_HAVE_CMU1394)
-    // Create a grabber based on CMU 1394 third party lib (for firewire
-    // cameras under windows)
-    vp1394CMUGrabber g;
-    g.setVideoMode(0, 5); // 640x480 MONO8
-    g.setFramerate(4);    // 30 Hz
-    g.open(I);
     // AVT Pike 032C parameters
     cam.initPersProjWithoutDistortion(800, 795, 320, 216);
 #endif

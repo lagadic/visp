@@ -7,7 +7,6 @@
 // Comment / uncomment following lines to use the specific 3rd party compatible with your camera
 // #undef VISP_HAVE_V4L2
 // #undef VISP_HAVE_DC1394
-// #undef VISP_HAVE_CMU1394
 // #undef VISP_HAVE_FLYCAPTURE
 // #undef VISP_HAVE_REALSENSE2
 // #undef HAVE_OPENCV_HIGHGUI
@@ -15,7 +14,7 @@
 //! [Undef grabber]
 
 #if defined(VISP_HAVE_DISPLAY) && defined(VISP_HAVE_PUGIXML) && \
-    (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || \
+    (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || \
      defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2)) || defined(VISP_HAVE_OPENCV) && \
      (((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || \
       ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)))
@@ -148,12 +147,6 @@ int main(int argc, const char **argv)
     vp1394TwoGrabber g;
     g.open(I);
     cam.initPersProjWithoutDistortion(840, 840, I.getWidth() / 2, I.getHeight() / 2); // Default parameters
-#elif defined(VISP_HAVE_CMU1394)
-    (void)opt_device; // To avoid non used warning
-    std::cout << "Use CMU1394 grabber" << std::endl;
-    vp1394CMUGrabber g;
-    g.open(I);
-    cam.initPersProjWithoutDistortion(840, 840, I.getWidth() / 2, I.getHeight() / 2); // Default parameters
 #elif defined(VISP_HAVE_FLYCAPTURE)
     (void)opt_device; // To avoid non used warning
     std::cout << "Use FlyCapture grabber" << std::endl;
@@ -231,8 +224,7 @@ int main(int argc, const char **argv)
     while (!quit) {
       double t_begin = vpTime::measureTimeMs();
       // Image Acquisition
-#if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || \
-    defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2)
+#if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2)
       g.acquire(I);
 #elif ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI))|| ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
       g >> frame;
