@@ -23,14 +23,13 @@ $ pkg-config --cflags visp
 \verbatim
 $ pkg-config --libs visp
 \endverbatim
-
 \note If `visp.pc` file used by `pkg-config` is not found, you may set `PKG_CONFIG_PATH`
 environment variable with the path to access to `visp.pc` using a command similar to:
 \verbatim
 $ export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:<visp install tree>/lib/pkgconfig
 \endverbatim
 
-To build a file named `HelloWorld.cpp`, both command could be used in a `Makefile` which content would be the following:
+- To build a file named `HelloWorld.cpp`, both command could be used in a `Makefile` which content would be the following:
 \verbatim
 CXX            = g++
 VISP_CFLAGS    = `pkg-config --cflags visp`
@@ -55,7 +54,7 @@ $ visp-config --cflags visp
 $ visp-config --libs visp
 \endverbatim
 
-To build a file named `HelloWorld.cpp`, both command could be used in a `Makefile` which content would be the following:
+- To build a file named `HelloWorld.cpp`, both command could be used in a `Makefile` which content would be the following:
 \verbatim
 CXX            = g++
 VISP_BUILD_DIR = ${VISP_WS}/visp-build
