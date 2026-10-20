@@ -18,7 +18,8 @@
 #  MKL_SEQUENTIAL_LAYER_LIBRARY - MKL sequential layer library
 #  MKL_CORE_LIBRARY - MKL core library
 #
-#  The environment variables MKLROOT and INTEL are used to find the library.
+#  The MKLROOT (CMake or environment) and INTEL (environment) variables are
+#  used to find the library.
 #  Everything else is ignored. If MKL is found "-DMKL_ILP64" is added to
 #  CMAKE_C_FLAGS and CMAKE_CXX_FLAGS.
 #
@@ -30,16 +31,16 @@
 #  endif()
 
 # If already in cache, be silent
-if (MKL_INCLUDE_DIRS AND MKL_LIBRARIES AND MKL_INTERFACE_LIBRARY AND
-    MKL_SEQUENTIAL_LAYER_LIBRARY AND MKL_CORE_LIBRARY)
-  set (MKL_FIND_QUIETLY TRUE)
+if(MKL_INCLUDE_DIRS AND MKL_LIBRARIES AND MKL_INTERFACE_LIBRARY AND
+   MKL_SEQUENTIAL_LAYER_LIBRARY AND MKL_CORE_LIBRARY)
+  set(MKL_FIND_QUIETLY TRUE)
 endif()
 
 # Only support of 64 bits architecture
-if (CMAKE_CXX_SIZEOF_DATA_PTR EQUAL 8)
+if(CMAKE_CXX_SIZEOF_DATA_PTR EQUAL 8)
   include(CheckTypeSize)
-  CHECK_TYPE_SIZE(int _sizeof_int)
-  if (_sizeof_int EQUAL 4)
+  check_type_size(int _sizeof_int)
+  if(_sizeof_int EQUAL 4)
     set(INT_LIB "mkl_intel_lp64")
   else()
     set(INT_LIB "mkl_intel_ilp64")
@@ -50,36 +51,45 @@ if (CMAKE_CXX_SIZEOF_DATA_PTR EQUAL 8)
   set(COR_LIB "mkl_core")
 endif()
 
-find_path(MKL_INCLUDE_DIR NAMES mkl.h HINTS $ENV{MKLROOT}/include)
+set(MKL_SEARCH_HINTS
+  ${MKLROOT}
+  $ENV{MKLROOT}
+)
+if(DEFINED ENV{INTEL})
+  list(APPEND MKL_SEARCH_HINTS "$ENV{INTEL}/mkl")
+endif()
+set(MKL_LIB_SUFFIXES lib lib/intel64)
+
+find_path(MKL_INCLUDE_DIR
+  NAMES mkl.h
+  HINTS ${MKL_SEARCH_HINTS}
+  PATH_SUFFIXES include
+)
 
 find_library(MKL_INTERFACE_LIBRARY
-             NAMES ${INT_LIB}
-             PATHS $ENV{MKLROOT}/lib
-                   $ENV{MKLROOT}/lib/intel64
-                   $ENV{INTEL}/mkl/lib/intel64
-             NO_DEFAULT_PATH)
+  NAMES ${INT_LIB}
+  HINTS ${MKL_SEARCH_HINTS}
+  PATH_SUFFIXES ${MKL_LIB_SUFFIXES}
+  NO_DEFAULT_PATH
+)
 
 find_library(MKL_SEQUENTIAL_LAYER_LIBRARY
-             NAMES ${SEQ_LIB}
-             PATHS $ENV{MKLROOT}/lib
-                   $ENV{MKLROOT}/lib/intel64
-                   $ENV{INTEL}/mkl/lib/intel64
-             NO_DEFAULT_PATH)
+  NAMES ${SEQ_LIB}
+  HINTS ${MKL_SEARCH_HINTS}
+  PATH_SUFFIXES ${MKL_LIB_SUFFIXES}
+  NO_DEFAULT_PATH
+)
 
 find_library(MKL_CORE_LIBRARY
-             NAMES ${COR_LIB}
-             PATHS $ENV{MKLROOT}/lib
-                   $ENV{MKLROOT}/lib/intel64
-                   $ENV{INTEL}/mkl/lib/intel64
-             NO_DEFAULT_PATH)
+  NAMES ${COR_LIB}
+  HINTS ${MKL_SEARCH_HINTS}
+  PATH_SUFFIXES ${MKL_LIB_SUFFIXES}
+  NO_DEFAULT_PATH
+)
 
-set(MKL_INCLUDE_DIRS ${MKL_INCLUDE_DIR})
-set(MKL_LIBRARIES ${MKL_INTERFACE_LIBRARY} ${MKL_SEQUENTIAL_LAYER_LIBRARY} ${MKL_CORE_LIBRARY})
-
-if (MKL_INCLUDE_DIR AND
-    MKL_INTERFACE_LIBRARY AND
-    MKL_SEQUENTIAL_LAYER_LIBRARY AND
-    MKL_CORE_LIBRARY)
+if(MKL_INCLUDE_DIR AND MKL_INTERFACE_LIBRARY AND MKL_SEQUENTIAL_LAYER_LIBRARY AND MKL_CORE_LIBRARY)
+  set(MKL_INCLUDE_DIRS ${MKL_INCLUDE_DIR})
+  set(MKL_LIBRARIES ${MKL_INTERFACE_LIBRARY} ${MKL_SEQUENTIAL_LAYER_LIBRARY} ${MKL_CORE_LIBRARY})
 else()
   set(MKL_INCLUDE_DIRS "")
   set(MKL_LIBRARIES "")
@@ -90,7 +100,12 @@ endif()
 
 # Handle the QUIETLY and REQUIRED arguments and set MKL_FOUND to TRUE if
 # all listed variables are TRUE.
-INCLUDE(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(MKL DEFAULT_MSG MKL_LIBRARIES MKL_INCLUDE_DIRS MKL_INTERFACE_LIBRARY MKL_SEQUENTIAL_LAYER_LIBRARY MKL_CORE_LIBRARY)
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(MKL DEFAULT_MSG MKL_LIBRARIES MKL_INCLUDE_DIRS MKL_INTERFACE_LIBRARY MKL_SEQUENTIAL_LAYER_LIBRARY MKL_CORE_LIBRARY)
 
-MARK_AS_ADVANCED(MKL_INCLUDE_DIR MKL_INCLUDE_DIRS MKL_LIBRARIES MKL_INTERFACE_LIBRARY MKL_SEQUENTIAL_LAYER_LIBRARY MKL_CORE_LIBRARY)
+mark_as_advanced(
+  MKL_INCLUDE_DIR
+  MKL_INTERFACE_LIBRARY
+  MKL_SEQUENTIAL_LAYER_LIBRARY
+  MKL_CORE_LIBRARY
+)

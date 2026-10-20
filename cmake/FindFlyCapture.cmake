@@ -29,7 +29,7 @@
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
 # Description:
-# Try to find Cerebellum Irisa library API to dial with the robot Afma6
+# Try to find FLIR FlyCapture SDK
 #
 # FLYCAPTURE_FOUND
 # FLYCAPTURE_INCLUDE_DIRS
@@ -38,46 +38,49 @@
 #
 #############################################################################
 
-set(FLYCAPTURE_INC_SEARCH_PATH /usr/include/flycapture)
-set(FLYCAPTURE_LIB_SEARCH_PATH)
+# Layouts handled, relative to each standard prefix and to FLYCAPTURE_HOME:
+#   <prefix>/include/flycapture (e.g. /usr/include/flycapture), <prefix>/lib
+#   <prefix>/include, <prefix>/lib or lib64 (Windows FlyCapture2 install)
+set(FLYCAPTURE_SEARCH_HINTS
+  ${FLYCAPTURE_HOME}
+  $ENV{FLYCAPTURE_HOME}
+)
+set(FLYCAPTURE_SEARCH_PATHS "")
+set(FLYCAPTURE_LIB_SUFFIXES lib)
 
 set(FLYCAPTURE_VERSION "n/a")
 
 if(MSVC)
   if(CMAKE_CL_64)
-    list(APPEND FLYCAPTURE_INC_SEARCH_PATH "C:/Program Files/Point Grey Research/FlyCapture2/include")
-    list(APPEND FLYCAPTURE_INC_SEARCH_PATH "$ENV{FLYCAPTURE_HOME}/include/flycapture")
-    list(APPEND FLYCAPTURE_LIB_SEARCH_PATH "C:/Program Files/Point Grey Research/FlyCapture2/lib64")
-    list(APPEND FLYCAPTURE_LIB_SEARCH_PATH "$ENV{FLYCAPTURE_HOME}/lib64")
+    list(APPEND FLYCAPTURE_SEARCH_PATHS "C:/Program Files/Point Grey Research/FlyCapture2")
+    set(FLYCAPTURE_LIB_SUFFIXES lib64)
   else()
-    list(APPEND FLYCAPTURE_INC_SEARCH_PATH "C:/Program Files (x86)/Point Grey Research/FlyCapture2/include")
-    list(APPEND FLYCAPTURE_INC_SEARCH_PATH "$ENV{FLYCAPTURE_HOME}/include/flycapture")
-    list(APPEND FLYCAPTURE_LIB_SEARCH_PATH "C:/Program Files (x86)/Point Grey Research/FlyCapture2/lib")
-    list(APPEND FLYCAPTURE_LIB_SEARCH_PATH "$ENV{FLYCAPTURE_HOME}/lib")
+    list(APPEND FLYCAPTURE_SEARCH_PATHS "C:/Program Files (x86)/Point Grey Research/FlyCapture2")
   endif()
 endif()
 
-find_path(FLYCAPTURE_INCLUDE_DIRS FlyCapture2.h
-  PATHS
-    ${FLYCAPTURE_INC_SEARCH_PATH}
+find_path(FLYCAPTURE_INCLUDE_DIR FlyCapture2.h
+  HINTS ${FLYCAPTURE_SEARCH_HINTS}
+  PATHS ${FLYCAPTURE_SEARCH_PATHS}
+  PATH_SUFFIXES include/flycapture include flycapture
 )
 
-find_library(FLYCAPTURE_LIBRARIES
+find_library(FLYCAPTURE_LIBRARY
   NAMES flycapture FlyCapture2 FlyCapture2_v100
-  PATHS
-    ${FLYCAPTURE_LIB_SEARCH_PATH}
-  NO_DEFAULT_PATH
+  HINTS ${FLYCAPTURE_SEARCH_HINTS}
+  PATHS ${FLYCAPTURE_SEARCH_PATHS}
+  PATH_SUFFIXES ${FLYCAPTURE_LIB_SUFFIXES}
 )
 
-if(FLYCAPTURE_LIBRARIES AND FLYCAPTURE_INCLUDE_DIRS)
+if(FLYCAPTURE_LIBRARY AND FLYCAPTURE_INCLUDE_DIR)
+  set(FLYCAPTURE_INCLUDE_DIRS ${FLYCAPTURE_INCLUDE_DIR})
+  set(FLYCAPTURE_LIBRARIES ${FLYCAPTURE_LIBRARY})
   set(FLYCAPTURE_FOUND TRUE)
 else()
   set(FLYCAPTURE_FOUND FALSE)
 endif()
 
 mark_as_advanced(
-  FLYCAPTURE_INCLUDE_DIRS
-  FLYCAPTURE_LIBRARIES
-  FLYCAPTURE_INC_SEARCH_PATH
-  FLYCAPTURE_LIB_SEARCH_PATH
+  FLYCAPTURE_INCLUDE_DIR
+  FLYCAPTURE_LIBRARY
 )

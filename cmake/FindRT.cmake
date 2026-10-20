@@ -36,31 +36,29 @@
 #
 #############################################################################
 
+
 if(NOT UNIX)
   # message("FindRT.cmake: only available for Unix.")
   set(RT_FOUND FALSE)
 else()
+  set(RT_SEARCH_HINTS
+    ${RT_HOME}
+    $ENV{RT_HOME}
+  )
 
   find_library(RT_LIBRARY
     NAMES rt
-    PATHS
-      $ENV{RT_HOME}/lib
+    HINTS ${RT_SEARCH_HINTS}
+    PATH_SUFFIXES lib
   )
-
   #message("DBG RT_LIBRARY=${RT_LIBRARY}")
-
-  ## --------------------------------
 
   if(RT_LIBRARY)
     set(RT_LIBRARIES ${RT_LIBRARY})
     set(RT_FOUND TRUE)
   else()
     set(RT_FOUND FALSE)
-    #message(SEND_ERROR "rt library not found.")
   endif()
 
-  mark_as_advanced(
-    RT_LIBRARIES
-    RT_LIBRARY
-  )
+  mark_as_advanced(RT_LIBRARY)
 endif()

@@ -38,40 +38,48 @@
 #
 #############################################################################
 
+
 set(SOQT_FOUND FALSE)
+
+# Layouts handled, relative to each standard prefix and to COIN_DIR, SOQT_DIR, COINDIR or SOQTDIR:
+#   <prefix>/include, <prefix>/include/Coin2, <prefix>/include/Coin3 (e.g. /usr/include/Coin3)
+#   <prefix>/lib
+#   /Library/Frameworks/SoQt.framework/Headers and Libraries (macOS)
+set(SOQT_SEARCH_HINTS
+  ${COIN_DIR}
+  $ENV{COIN_DIR}
+  ${SOQT_DIR}
+  $ENV{SOQT_DIR}
+  ${COINDIR}
+  $ENV{COINDIR}
+  ${SOQTDIR}
+  $ENV{SOQTDIR}
+)
+set(SOQT_SEARCH_PATHS "")
+if(APPLE)
+  list(APPEND SOQT_SEARCH_PATHS /Library/Frameworks/SoQt.framework)
+endif()
 
 # detection of the SoQt headers location
 find_path(SOQT_INCLUDE_DIR Inventor/Qt/SoQt.h
-  "$ENV{COIN_DIR}/include"
-  "$ENV{SOQT_DIR}/include"
-  "$ENV{COIN_DIR}"
-  "$ENV{SOQT_DIR}"
-  "$ENV{COINDIR}/include"
-  "$ENV{SOQTDIR}/include"
-  /usr/include/Coin2
-  /usr/include/Coin3
-  /Library/Frameworks/SoQt.framework/Headers
-  )
+  HINTS ${SOQT_SEARCH_HINTS}
+  PATHS ${SOQT_SEARCH_PATHS}
+  PATH_SUFFIXES include include/Coin2 include/Coin3 Coin2 Coin3 Headers
+)
 #message("DBG SOQT_INCLUDE_DIR=${SOQT_INCLUDE_DIR}")
 
 if(WIN32)
   # Detection of the SoQt library on Windows
   find_library(SOQT_LIBRARY_RELEASE
     NAMES soqt1 #only shared libraries under windows
-    PATHS
-    "$ENV{COIN_DIR}/lib"
-    "$ENV{SOQT_DIR}/lib"
-    "$ENV{COINDIR}/lib"
-    "$ENV{SOQTDIR}/lib"
-    )
+    HINTS ${SOQT_SEARCH_HINTS}
+    PATH_SUFFIXES lib
+  )
   find_library(SOQT_LIBRARY_DEBUG
     NAMES soqt1d #only shared libraries under windows
-    PATHS
-    "$ENV{COIN_DIR}/lib"
-    "$ENV{SOQT_DIR}/lib"
-    "$ENV{COINDIR}/lib"
-    "$ENV{SOQTDIR}/lib"
-    )
+    HINTS ${SOQT_SEARCH_HINTS}
+    PATH_SUFFIXES lib
+  )
 
   if(SOQT_INCLUDE_DIR AND SOQT_LIBRARY_RELEASE)
     set(SOQT_INCLUDE_DIRS ${SOQT_INCLUDE_DIR})
@@ -86,23 +94,19 @@ if(WIN32)
   endif()
 
   mark_as_advanced(
-    SOQT_LIBRARIES
     SOQT_LIBRARY_DEBUG
     SOQT_LIBRARY_RELEASE
     SOQT_INCLUDE_DIR
   )
-
-else(WIN32)
+else()
   # Detection of the SoQt library on Unix
   find_library(SOQT_LIBRARY
     NAMES SoQt
-      PATHS
-      "$ENV{COIN_DIR}/lib"
-      "$ENV{SOQT_DIR}/lib"
-      "$ENV{COINDIR}/lib"
-      "$ENV{SOQTDIR}/lib"
-      /Library/Frameworks/SoQt.framework/Libraries
-    )
+    HINTS ${SOQT_SEARCH_HINTS}
+    PATHS ${SOQT_SEARCH_PATHS}
+    PATH_SUFFIXES lib Libraries
+  )
+  #message(STATUS "DBG SOQT_LIBRARY=${SOQT_LIBRARY}")
 
   if(SOQT_INCLUDE_DIR AND SOQT_LIBRARY)
     set(SOQT_INCLUDE_DIRS ${SOQT_INCLUDE_DIR})
@@ -111,12 +115,7 @@ else(WIN32)
   endif()
 
   mark_as_advanced(
-    SOQT_LIBRARIES
     SOQT_LIBRARY
     SOQT_INCLUDE_DIR
   )
-  #message(STATUS "DBG SOQT_LIBRARY=${SOQT_LIBRARY}")
-
-endif(WIN32)
-
-#MESSAGE(STATUS "SOQT_FOUND : ${SOQT_FOUND}")
+endif()

@@ -218,6 +218,7 @@ if(USE_CATCH2)
     vp_clear_vars(Catch2_FOUND)
   else()
     find_package(Catch2 QUIET)
+    mark_as_advanced(Catch2_DIR)
   endif()
 
   if(Catch2_FOUND AND (Catch2_VERSION VERSION_GREATER_EQUAL 3.1.1))

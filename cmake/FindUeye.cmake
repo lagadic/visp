@@ -39,52 +39,45 @@
 #
 #############################################################################
 
-set(UEYE_INC_SEARCH_PATH)
-set(UEYE_LIB_SEARCH_PATH)
 
-list(APPEND UEYE_INC_SEARCH_PATH $ENV{UEYE_HOME}/include)
-list(APPEND UEYE_LIB_SEARCH_PATH $ENV{UEYE_HOME}/lib)
-list(APPEND UEYE_INC_SEARCH_PATH $ENV{UEYE_DIR}/include)
-list(APPEND UEYE_LIB_SEARCH_PATH $ENV{UEYE_DIR}/lib)
-list(APPEND UEYE_INC_SEARCH_PATH ${UEYE_DIR}/include)
-list(APPEND UEYE_LIB_SEARCH_PATH ${UEYE_DIR}/lib)
-
-
-if(MSVC)
-  list(APPEND UEYE_INC_SEARCH_PATH "C:/Program Files/IDS/uEye/Develop/include")
-  list(APPEND UEYE_LIB_SEARCH_PATH "C:/Program Files/IDS/uEye/Develop/lib")
-endif()
-
-find_path(UEYE_INCLUDE_DIRS ueye.h
-  PATHS
-    ${UEYE_INC_SEARCH_PATH}
+set(UEYE_SEARCH_HINTS
+  ${UEYE_HOME}
+  $ENV{UEYE_HOME}
+  ${UEYE_DIR}
+  $ENV{UEYE_DIR}
 )
-
-set(lib_suffix)
+set(UEYE_SEARCH_PATHS "")
+set(UEYE_LIB_NAME ueye_api)
 if(MSVC)
+  list(APPEND UEYE_SEARCH_PATHS "C:/Program Files/IDS/uEye/Develop")
   if(CMAKE_CL_64)
-    set(lib_suffix "_64")
+    set(UEYE_LIB_NAME ueye_api_64)
   endif()
 endif()
 
-find_library(UEYE_LIBRARY_API
-  NAMES ueye_api${lib_suffix}
-  PATHS
-    ${UEYE_LIB_SEARCH_PATH}
+find_path(UEYE_INCLUDE_DIR ueye.h
+  HINTS ${UEYE_SEARCH_HINTS}
+  PATHS ${UEYE_SEARCH_PATHS}
+  PATH_SUFFIXES include
 )
 
-if(UEYE_LIBRARY_API AND UEYE_INCLUDE_DIRS)
-  set(UEYE_FOUND TRUE)
+find_library(UEYE_LIBRARY_API
+  NAMES ${UEYE_LIB_NAME}
+  HINTS ${UEYE_SEARCH_HINTS}
+  PATHS ${UEYE_SEARCH_PATHS}
+  PATH_SUFFIXES lib
+)
+
+if(UEYE_LIBRARY_API AND UEYE_INCLUDE_DIR)
+  set(UEYE_INCLUDE_DIRS ${UEYE_INCLUDE_DIR})
   set(UEYE_LIBRARIES ${UEYE_LIBRARY_API})
-  vp_parse_header4(UEYE "${UEYE_INCLUDE_DIRS}/ueye.h" "UEYE_VERSION_CODE" UEYE_VERSION)
+  set(UEYE_FOUND TRUE)
+  vp_parse_header4(UEYE "${UEYE_INCLUDE_DIR}/ueye.h" "UEYE_VERSION_CODE" UEYE_VERSION)
 else()
   set(UEYE_FOUND FALSE)
 endif()
 
 mark_as_advanced(
-  UEYE_INCLUDE_DIRS
-  UEYE_LIBRARIES
+  UEYE_INCLUDE_DIR
   UEYE_LIBRARY_API
-  UEYE_INC_SEARCH_PATH
-  UEYE_LIB_SEARCH_PATH
 )

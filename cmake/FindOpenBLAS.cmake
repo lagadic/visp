@@ -59,56 +59,68 @@
 #  OpenBLAS_VERSION
 #############################################################################
 
-set(OpenBLAS_INCLUDE_SEARCH_PATHS
-  $ENV{OpenBLAS_HOME}
-  $ENV{OpenBLAS_HOME}/include
-  $ENV{OpenBLAS_HOME}/include/openblas
-  $ENV{OpenBLAS_DIR}
-  $ENV{OpenBLAS_DIR}/include
-  $ENV{OpenBLAS_DIR}/include/openblas
-  /opt/OpenBLAS/include
-  /usr/local/opt/openblas/include
-  /usr/local/include/openblas
-  /usr/local/include/openblas-base
-  /usr/include/openblas
-  /usr/include/openblas-base
-)
 
-set(OpenBLAS_LIB_SEARCH_PATHS
-  $ENV{OpenBLAS}
-  $ENV{OpenBLAS}/lib
+set(OpenBLAS_SEARCH_HINTS
+  ${OpenBLAS_HOME}
   $ENV{OpenBLAS_HOME}
-  $ENV{OpenBLAS_HOME}/lib
+  ${OpenBLAS_DIR}
   $ENV{OpenBLAS_DIR}
-  $ENV{OpenBLAS_DIR}/lib
-  /opt/OpenBLAS/lib
-  /usr/local/opt/openblas/lib
-  /usr/lib/openblas-base
-  /lib/openblas-base
 )
+# OpenBLAS specific install locations (Homebrew keg-only installs on Intel and Apple Silicon)
+set(OpenBLAS_SEARCH_PATHS
+  /opt/OpenBLAS
+  /usr/local/opt/openblas
+  /opt/homebrew/opt/openblas
+)
+# OpenBLAS specific sub-directories of the standard prefixes (/usr, /usr/local, ...)
+# e.g. /usr/include/openblas, /usr/include/openblas-base, /usr/lib/openblas-base
+set(OpenBLAS_INCLUDE_SEARCH_PATHS "")
+set(OpenBLAS_LIB_SEARCH_PATHS "")
+foreach(_prefix ${CMAKE_SYSTEM_PREFIX_PATH})
+  list(APPEND OpenBLAS_INCLUDE_SEARCH_PATHS ${_prefix}/include/openblas ${_prefix}/include/openblas-base)
+  list(APPEND OpenBLAS_LIB_SEARCH_PATHS ${_prefix}/lib/openblas-base)
+endforeach()
 
-find_path(OpenBLAS_INCLUDE_DIR NAMES cblas.h PATHS ${OpenBLAS_INCLUDE_SEARCH_PATHS} NO_DEFAULT_PATH)
+# First search in OpenBLAS specific locations to avoid picking up a cblas.h from Atlas or Netlib
+find_path(OpenBLAS_INCLUDE_DIR
+  NAMES cblas.h
+  HINTS ${OpenBLAS_SEARCH_HINTS}
+  PATHS ${OpenBLAS_SEARCH_PATHS} ${OpenBLAS_INCLUDE_SEARCH_PATHS}
+  PATH_SUFFIXES include include/openblas
+  NO_DEFAULT_PATH
+)
 if(NOT OpenBLAS_INCLUDE_DIR)
   # Search in default system directories, e.g. in Ubuntu 20.04 (0.3.8+ds-1ubuntu0.20.04.1) cblas.h are in
   # /usr/include/x86_64-linux-gnu/cblas.h (will be found)
   # /usr/include/x86_64-linux-gnu/openblas-pthread/cblas.h
   # Both files are identical
-  find_path(OpenBLAS_INCLUDE_DIR NAMES cblas.h PATHS ${OpenBLAS_INCLUDE_SEARCH_PATHS})
+  find_path(OpenBLAS_INCLUDE_DIR NAMES cblas.h)
 endif()
 
 # Here we are looking for lapack library to be able to switch between OpenBLAS, Atlas and Netlib
 # with update-alternatives --config libblas.so.3-<multiarch>
 # and also for openblas library to be sure that openblas is installed
 if(UNIX AND NOT APPLE)
-  find_library(OpenBLAS_LAPACK_LIB NAMES lapack PATHS ${OpenBLAS_LIB_SEARCH_PATHS})
+  find_library(OpenBLAS_LAPACK_LIB
+    NAMES lapack
+    HINTS ${OpenBLAS_SEARCH_HINTS} $ENV{OpenBLAS}
+    PATHS ${OpenBLAS_SEARCH_PATHS} ${OpenBLAS_LIB_SEARCH_PATHS}
+    PATH_SUFFIXES lib
+  )
 endif()
-find_library(OpenBLAS_LIB NAMES openblas PATHS ${OpenBLAS_LIB_SEARCH_PATHS} NO_DEFAULT_PATH)
+find_library(OpenBLAS_LIB
+  NAMES openblas
+  HINTS ${OpenBLAS_SEARCH_HINTS} $ENV{OpenBLAS}
+  PATHS ${OpenBLAS_SEARCH_PATHS} ${OpenBLAS_LIB_SEARCH_PATHS}
+  PATH_SUFFIXES lib
+  NO_DEFAULT_PATH
+)
 if(NOT OpenBLAS_LIB)
   # Search in default system directories, e.g. in Ubuntu 20.04 (0.3.8+ds-1ubuntu0.20.04.1) libopenblas are in
   # /usr/lib/x86_64-linux-gnu/libopenblas.so (will be found)
   # /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblas.so
   # Both files are identical
-  find_library(OpenBLAS_LIB NAMES openblas PATHS ${OpenBLAS_LIB_SEARCH_PATHS})
+  find_library(OpenBLAS_LIB NAMES openblas)
 endif()
 
 set(OpenBLAS_FOUND ON)

@@ -35,22 +35,24 @@
 # QUALISYS_FOUND
 # QUALISYS_INCLUDE_DIRS
 # QUALISYS_LIBRARIES
-# QUALISYS_VERSION
 #
 #############################################################################
 
+set(QUALISYS_SEARCH_HINTS
+  ${QUALISYS_DIR}
+  $ENV{QUALISYS_DIR}
+)
+
 find_path(QUALISYS_INCLUDE_DIR
   NAMES qualisys_cpp_sdk/RTProtocol.h
-  PATHS
-  $ENV{QUALISYS_DIR}/include
-  ${QUALISYS_DIR}/include
+  HINTS ${QUALISYS_SEARCH_HINTS}
+  PATH_SUFFIXES include
 )
 
 find_library(QUALISYS_LIBRARY
   NAMES qualisys_cpp_sdk
-  PATHS
-  $ENV{QUALISYS_DIR}/lib
-  ${QUALISYS_DIR}/lib
+  HINTS ${QUALISYS_SEARCH_HINTS}
+  PATH_SUFFIXES lib
 )
 
 if(QUALISYS_LIBRARY AND QUALISYS_INCLUDE_DIR)
